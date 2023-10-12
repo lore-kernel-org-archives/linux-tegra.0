@@ -2,109 +2,106 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431D0CDB47E
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 19:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99259CDB474
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 21:21:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235775AbjJLTAa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Oct 2023 15:00:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59354 "EHLO
+        id S1443013AbjJLVVD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Oct 2023 17:21:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229576AbjJLTA3 (ORCPT
+        with ESMTP id S1443010AbjJLVVC (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Oct 2023 15:00:29 -0400
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA164CC;
-        Thu, 12 Oct 2023 12:00:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1697137225; x=1728673225;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Y/XP8q1lDbCREfgUptfNDz2/kh/GMSzr+qayc0xvTes=;
-  b=J31F/wGoQesM6St9oufyMWzDCZp9Q38qSQ5yOCWeOKUFQSW/XMeuRRAW
-   o/IdE4BUjJaGXSaYZGO16j9PdTvJW4NnJnZIg+aSpZWkZr0UHF35w+vKN
-   RSlSEiV1t1QHOh4a9F3/JEBnnlrWfHt4o1j2lcyHT1tr/olec4vz52Hdw
-   II5mLANegb7+JXPMV9dsVr++REHF0o/eEq/B9a+saCPK4K/kBtSiCMtvm
-   ycsDBzzF8Ok/CtUQvvLVxsUQv4d0BZVN4IYlEjdoCr7NG7xEx9DHZLejD
-   LBj01+LTHZ7lJzud72wg5icvBoTKiJpkR2ytlv6rsxgkf4gxaw3JCZdMA
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10861"; a="471254779"
-X-IronPort-AV: E=Sophos;i="6.03,219,1694761200"; 
-   d="scan'208";a="471254779"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2023 12:00:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10861"; a="878209762"
-X-IronPort-AV: E=Sophos;i="6.03,219,1694761200"; 
-   d="scan'208";a="878209762"
-Received: from lkp-server02.sh.intel.com (HELO f64821696465) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 12 Oct 2023 12:00:20 -0700
-Received: from kbuild by f64821696465 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1qr0uv-0003lT-2G;
-        Thu, 12 Oct 2023 19:00:17 +0000
-Date:   Fri, 13 Oct 2023 02:59:14 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Kartik <kkartik@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, keescook@chromium.org, andy@kernel.org,
-        akpm@linux-foundation.org, arnd@arndb.de, petlozup@nvidia.com,
-        pshete@nvidia.com, ulf.hansson@linaro.org, frank.li@vivo.com,
-        robh@kernel.org, stefank@nvidia.com, pdeschrijver@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-mm@kvack.org
-Cc:     oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v4 7/8] soc/tegra: fuse: Add ACPI support for Tegra194
- and Tegra234
-Message-ID: <202310130245.1Ndq4Syg-lkp@intel.com>
-References: <20231011093412.7994-8-kkartik@nvidia.com>
+        Thu, 12 Oct 2023 17:21:02 -0400
+Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E37BE;
+        Thu, 12 Oct 2023 14:21:00 -0700 (PDT)
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 4S62cT30VwzCT;
+        Thu, 12 Oct 2023 23:20:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1697145658; bh=TaFBxjLod3uos3quRT45Zb/J+JK5WWkvgFBpk4JPSEU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i3vS/REggArqteGlr9HGCH5hE+NNntBKcU1JhqPMggIKfY4K8p2o6auKIptfIP4jA
+         jIp39nMRAP9qPeg57o3mqc0Dc+UBL1wCDWoLrCXx0IxWklAUSiyYeyI7bYDWA9Jmp/
+         ukto59bZzrjHBwqFyrdHJSViqfz6VHB72G9ZNYJr2TbBUSrgnnRNsRp4ESwtJl2RXe
+         u8JPM7mHdD3JMVJ7EdePsRVmJMSjjPO5UJ+mcSsCK2hWN0rYIu8GRFl2gzcOgFBXec
+         0/f10TvlpDLx50aTTqY8ZMfbEq45i1OjlX/FDOAstT7cVvWCpawvwnP7tC6OfmFpgV
+         IdcuNZ1R1ezxg==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.103.10 at mail
+Date:   Thu, 12 Oct 2023 23:20:55 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Peter Geis <pgwipeout@gmail.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Chen <peter.chen@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] usb: chipidea: Simplify Tegra DMA alignment code
+Message-ID: <ZShjNzj-8wR1f3qu@qmqm.qmqm.pl>
+References: <cover.1695934946.git.mirq-linux@rere.qmqm.pl>
+ <a0d917d492b1f91ee0019e68b8e8bca9c585393f.1695934946.git.mirq-linux@rere.qmqm.pl>
+ <ZScZWFJCCMr7oWwX@orome.fritz.box>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-2
 Content-Disposition: inline
-In-Reply-To: <20231011093412.7994-8-kkartik@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZScZWFJCCMr7oWwX@orome.fritz.box>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Kartik,
+On Wed, Oct 11, 2023 at 11:53:28PM +0200, Thierry Reding wrote:
+> On Thu, Sep 28, 2023 at 11:06:03PM +0200, Micha³ Miros³aw wrote:
+> > The USB host on Tegra3 works with 32-bit alignment. Previous code tried
+> > to align the buffer, but it did align the wrapper struct instead, so
+> > the buffer was at a constant offset of 8 bytes (two pointers) from
+> > expected alignment.  Since kmalloc() guarantees at least 8-byte
+> > alignment already, the alignment-extending is removed.
+> > 
+> > Fixes: fc53d5279094 ("usb: chipidea: tegra: Support host mode")
+> > Signed-off-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
+> > ---
+> >  drivers/usb/chipidea/host.c | 45 +++++++++++++++----------------------
+> >  1 file changed, 18 insertions(+), 27 deletions(-)
+> > 
+> > diff --git a/drivers/usb/chipidea/host.c b/drivers/usb/chipidea/host.c
+> > index abddd39d1ff1..0cce19208370 100644
+> > --- a/drivers/usb/chipidea/host.c
+> > +++ b/drivers/usb/chipidea/host.c
+> > @@ -30,8 +30,7 @@ struct ehci_ci_priv {
+> >  };
+> >  
+> >  struct ci_hdrc_dma_aligned_buffer {
+> > -	void *kmalloc_ptr;
+> > -	void *old_xfer_buffer;
+> > +	void *original_buffer;
+> >  	u8 data[];
+> >  };
+> >  
+> > @@ -380,60 +379,52 @@ static int ci_ehci_bus_suspend(struct usb_hcd *hcd)
+> >  	return 0;
+> >  }
+> >  
+> > -static void ci_hdrc_free_dma_aligned_buffer(struct urb *urb)
+> > +static void ci_hdrc_free_dma_aligned_buffer(struct urb *urb, bool copy_back)
+> >  {
+> >  	struct ci_hdrc_dma_aligned_buffer *temp;
+> > -	size_t length;
+> >  
+> >  	if (!(urb->transfer_flags & URB_ALIGNED_TEMP_BUFFER))
+> >  		return;
+> > +	urb->transfer_flags &= ~URB_ALIGNED_TEMP_BUFFER;
+> 
+> This threw me off a bit until I realized it was already there
+> previously, just in a different place. Is there a particular reason why
+> this is moved?
 
-kernel test robot noticed the following build warnings:
+I figured that it is easier to understand if the test and clear of the
+URB_ALIGNED_TEMP_BUFFER bit is in a single place. Seeing it again, I
+think it could be replaced with __test_and_clear_bit() in a future commit.
 
-[auto build test WARNING on tegra/for-next]
-[also build test WARNING on kees/for-next/hardening akpm-mm/mm-everything linus/master v6.6-rc5 next-20231012]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kartik/mm-util-Introduce-kmemdup_array-to-duplicate-an-array/20231011-192039
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-patch link:    https://lore.kernel.org/r/20231011093412.7994-8-kkartik%40nvidia.com
-patch subject: [PATCH v4 7/8] soc/tegra: fuse: Add ACPI support for Tegra194 and Tegra234
-config: arm64-randconfig-002-20231012 (https://download.01.org/0day-ci/archive/20231013/202310130245.1Ndq4Syg-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231013/202310130245.1Ndq4Syg-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202310130245.1Ndq4Syg-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/soc/tegra/fuse/fuse-tegra.c:314:36: warning: 'tegra_fuse_acpi_match' defined but not used [-Wunused-const-variable=]
-     314 | static const struct acpi_device_id tegra_fuse_acpi_match[] = {
-         |                                    ^~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/tegra_fuse_acpi_match +314 drivers/soc/tegra/fuse/fuse-tegra.c
-
-   313	
- > 314	static const struct acpi_device_id tegra_fuse_acpi_match[] = {
-   315		{ "NVDA200F" },
-   316		{ /* sentinel */ }
-   317	};
-   318	MODULE_DEVICE_TABLE(acpi, tegra_fuse_acpi_match);
-   319	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best Regards
+Micha³ Miros³aw
