@@ -2,67 +2,67 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB15CDB482
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 13:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4901CDB46E
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 13:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377883AbjJLN27 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Oct 2023 09:28:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39784 "EHLO
+        id S1347275AbjJLNaz (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Oct 2023 09:30:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378354AbjJLN26 (ORCPT
+        with ESMTP id S1343875AbjJLNas (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Oct 2023 09:28:58 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 505FBBE
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Oct 2023 06:28:56 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-53b8f8c6b1fso1765428a12.0
-        for <linux-tegra@vger.kernel.org>; Thu, 12 Oct 2023 06:28:56 -0700 (PDT)
+        Thu, 12 Oct 2023 09:30:48 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3308101
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Oct 2023 06:30:46 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-9ad810be221so153295966b.2
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Oct 2023 06:30:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697117335; x=1697722135; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1697117445; x=1697722245; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6iQ+5YRvl249aSILtZYibyxifJm9i1fC55K/yhiEbKw=;
-        b=QuPtxbophMl0b+1YFK7JxtMHuOz2+HJcpZO0yty4cYXbChr0/pfCuTLESWZBpW0MGS
-         9B5ED6vxWubJPjpacOuY+H+jDnikf0W54cUqhYwSpqVT+5obJCKUcwhY8UxA9YcUPoxn
-         0J6wtQj6TQDFhZ3D1y+qdFD8xTY0lVHEQ5Nyqs/BFZ2NhBy9llBnGYtONhCWSeYtHxNc
-         k7bdMsEpfi3O8kW1x2mpQNpA4vF+c9Z2z6bKG22exKA1gENsJA31JTFEX/7YMVoYlwp7
-         55HDT31Qz7wERUrt6JzWLDox8TKUvdQzmdydgbrskxSyhQ6NXH4MrtYrUuQ6rMvRwwGy
-         WXaA==
+        bh=zD3hJYVlKoXgEdKQ4cFlH1B4VwAdNqTA4nnEJY33OkY=;
+        b=GALtk4yzSvqWzYb5k2PeONq8S+juCtkz3YVw9L5BPt1G5SlbOO0EgLfTuPCybIpiux
+         SLxhPL6fzeAuRaHYXdpdgAGUtalSSOV2ss/BhusnirqZpfvBoCmP6Uq6M/KsZLSS6dW1
+         FIAlpGnUB1rlAEY4LhJtqIZ83PNykUsm04KIzwMRopFLcT+UqTOHcrS/FvCA25VeHHjY
+         XkvpRUEmBBLSM6/8w3iHecrXS7kKVKHsUnIB5pLSEAXrKKxkT5M4Ks6LFSbFxyxw4CMi
+         NXD7QUDx6OgSqfdmTFLTrGOm2WqnJ4tLOFNEiBnwRqns3t9PXB0sEGLWVjEveZuH6poV
+         dEHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697117335; x=1697722135;
+        d=1e100.net; s=20230601; t=1697117445; x=1697722245;
         h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
          :to:content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6iQ+5YRvl249aSILtZYibyxifJm9i1fC55K/yhiEbKw=;
-        b=i4/Kc8RsxlTEj+sLJ29gfdOeNihtiuyZ9wIOdYQq35yb7rZ2NMLVZHGsjCA0c3vhYK
-         9L72h7LtIhOzxV1kkmBKy4+/8Q2Bkx5vwMPksc+91l0nVlfmfuqAPV2GV6+xSvLmD4D6
-         n+F8JokiQPzdM+JVxs0iJ4x6yrej2Lt6tMBxl6fIFp1vorAqygcj5sbaqMpQKAihH4sH
-         gxv9QRim+5Ie+DCDO2sx4HhADOU2B/nWFiq+iaEkbu8ypMm1rXijlSRhYj0g3p2CLt3d
-         1TSWtNsNI97w+5J09Jnz9pdLfGHRioOwcoG7PS5JKDS2JZW2eTk1ITivUYnxml37svw9
-         YLmA==
-X-Gm-Message-State: AOJu0YxK+KtItdw/TzzHhtCoXbdZjTZD1j0+eXzSpDEJdzqJ6NTSuejg
-        7lvc/nAIirBnk3ekcrkN4/dRiQ==
-X-Google-Smtp-Source: AGHT+IFZ+VhPFfjp/5FweLA69uBxL5J1qYpJ1sLPAZZY25pUN/V3nPzgrEl4m+gfQgMKtVvUq5O4uQ==
-X-Received: by 2002:a17:906:25d:b0:9ba:1d1a:1e2c with SMTP id 29-20020a170906025d00b009ba1d1a1e2cmr10742879ejl.34.1697117334758;
-        Thu, 12 Oct 2023 06:28:54 -0700 (PDT)
+        bh=zD3hJYVlKoXgEdKQ4cFlH1B4VwAdNqTA4nnEJY33OkY=;
+        b=aFDyXW7Hm2pjg1CrHldUbEmg+W1yLZHimNr1jM3sszVXh9VQKn/gp0scWLa+JXQgtu
+         Ki7Em8ttcNEit++hBYqofV6osH88vkxhsww6EzVSYCBZ5xhqlie8OrnCKXpz3K8/3e+K
+         mAO/aRxxQfNc4vCGipkFWoy6lsIERt6YDe+eYvtvBBReBnwfaIcJt82XWAoa0CtRMLQY
+         Ir2jyZiMxD9ZpioRzc+ABHafHGxugJS9xBhpgTCW4uv5IWktoYaJx04PgqA4O4zqagFd
+         0wm/4mURQoIxSD4CQr1Z2ziWxcFZ7s08+dQiDEGhlLeXc274nqhc/kjGxJj/pXfbV2DL
+         rQng==
+X-Gm-Message-State: AOJu0Yx+Gp4OGUb+h0nrkVTWgwSJlkzKYpSNZXg3rhIRH6LkULRuBSVc
+        P5lHx1xSgz+GTrZW4zxRRxJkUw==
+X-Google-Smtp-Source: AGHT+IF+ODd4WLdHzTYFvWcBwSkxN/gvlgpBRjUAdTh7XIM8onjVXm6EZHUIVVdOsTUpUrornKt12A==
+X-Received: by 2002:a17:907:7703:b0:9b9:f46f:8921 with SMTP id kw3-20020a170907770300b009b9f46f8921mr14809301ejc.11.1697117445037;
+        Thu, 12 Oct 2023 06:30:45 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.219.100])
-        by smtp.gmail.com with ESMTPSA id h16-20020a17090619d000b00997e99a662bsm11002967ejd.20.2023.10.12.06.28.53
+        by smtp.gmail.com with ESMTPSA id l17-20020a170906415100b009a1dbf55665sm10921644ejk.161.2023.10.12.06.30.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Oct 2023 06:28:54 -0700 (PDT)
-Message-ID: <edef23cb-c88f-4b98-afa8-a29c122f0a6c@linaro.org>
-Date:   Thu, 12 Oct 2023 15:28:53 +0200
+        Thu, 12 Oct 2023 06:30:44 -0700 (PDT)
+Message-ID: <251a1efb-196d-495c-b490-7d70dd57834d@linaro.org>
+Date:   Thu, 12 Oct 2023 15:30:43 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v2 2/2] memory: tegra: set BPMP msg flags to reset IPC
- channels
+Subject: Re: [PATCH] memory: tegra: Add Tegra234 clients for RCE and VI
 Content-Language: en-US
-To:     Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     bbasu@nvidia.com
-References: <20231009100557.18224-1-sumitg@nvidia.com>
- <20231009100557.18224-3-sumitg@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Johnny Liu <johnliu@nvidia.com>,
+        Ankur Pawar <ankurp@nvidia.com>
+References: <20231012104909.48518-1-jonathanh@nvidia.com>
+ <ZSfSj42AXcnI895C@orome.fritz.box>
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -108,29 +108,33 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20231009100557.18224-3-sumitg@nvidia.com>
+In-Reply-To: <ZSfSj42AXcnI895C@orome.fritz.box>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 09/10/2023 12:05, Sumit Gupta wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On 12/10/2023 13:03, Thierry Reding wrote:
+> On Thu, Oct 12, 2023 at 11:49:09AM +0100, Jon Hunter wrote:
+>> Add the Tegra234 memory client entries for the Real-time Camera Engine
+>> (RCE) and Video Input (VI) devices.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/memory/tegra/tegra234.c | 60 +++++++++++++++++++++++++++++++++
+>>  1 file changed, 60 insertions(+)
 > 
-> Set the 'TEGRA_BPMP_MESSAGE_RESET' bit in newly added 'flags' field
-> of 'struct tegra_bpmp_message' to request for the reset of BPMP IPC
-> channels. This is used along with the 'suspended' check in BPMP driver
-> for handling early bandwidth requests due to the hotplug of CPU's
-> during system resume before the driver gets resumed.
+> Krzysztof,
 > 
-> Fixes: f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth")
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> Co-developed-by: Sumit Gupta <sumitg@nvidia.com>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> again, let me know how you want to handle this. I can pick it up into
+> the Tegra tree along with Sumit's 2-patch series, or you can take these
+> if you prefer, in which case:
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I think there are no conflicts with the second patchset, so I just
+grabbed it. Thanks.
 
 Best regards,
 Krzysztof
