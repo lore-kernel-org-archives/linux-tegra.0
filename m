@@ -2,100 +2,130 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6F4CDB485
-	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 17:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 624CCCDB46E
+	for <linux-tegra@archiver.kernel.org>; Thu, 12 Oct 2023 18:05:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1441880AbjJLR7J (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 12 Oct 2023 13:59:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41442 "EHLO
+        id S1347349AbjJLSFH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 12 Oct 2023 14:05:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442086AbjJLR7B (ORCPT
+        with ESMTP id S1344076AbjJLSFG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 12 Oct 2023 13:59:01 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20CECDC;
-        Thu, 12 Oct 2023 10:59:00 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9a645e54806so195597566b.0;
-        Thu, 12 Oct 2023 10:59:00 -0700 (PDT)
+        Thu, 12 Oct 2023 14:05:06 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C43FBE
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Oct 2023 11:05:04 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id a640c23a62f3a-9b64b98656bso204899166b.0
+        for <linux-tegra@vger.kernel.org>; Thu, 12 Oct 2023 11:05:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697133538; x=1697738338; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1697133903; x=1697738703; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zs3+sAOJu0kBwxZ0dser/vItknBWGT6p32J9u+acJCk=;
-        b=iaZrBED548IW1oaqTyFiylNlS6rwaa4z3MIZSWBZTELGs75jurHxDiaMqPtYtFatkC
-         jKWtL0Z5mkePuA2Vgj9Zh6VbblaNBeriNGZ82HcLwlbHAe1Mn/xbmXu0KNFHh9IItMtW
-         m0OwQadbq88HgS4TS16Oi+UbYEbFdL/aGWfNQtvBvGtktLAbgFwNPrfukBVtGqf8QvXi
-         Om+YEvEJVJQsmXfbtBo00j/fnFRnPK/fXk3Xh7CbFqDxWtyuBYdT7BXJEnbJh9j3wogU
-         R6RDelqlnddhWTcoh3tuUuqT+C1feOjKueUzAeest1aExHbSF/nwh8oymVYie++Oryar
-         KScg==
+        bh=QfIb1D07nfI+0Ch1761SwKK3aO/nbsGIC751epSoaTc=;
+        b=lhjSzRfa4+b4yVZ9f/VR2Ir3r4bjkhcUwnZUVTIK646RDNKe9MwzaqHCZ0Q/xPtQgN
+         Pk/1DgAD7ON1X+ICGZb63PvhfL0m18TISGWyXc30YXa/L+6OjUmsDKT113Le/Ni9Ozx2
+         FTNE/XmnCJ+tiZWmhLYjAkIO+3nGot11UQJw4SqXo+bVAcpSdXku2YiBsUwpXSpdKuXB
+         7D0DtBJ1YE0d3OhvnBRP0LK63AUH4pRLbgnDqzWqICOodL/iAPLSm0KSZry87miYmPhc
+         gSw0xoy5fMiMny5z1ApKBDTpGs49hGWe3OELX09zt/EOlMnGPAhxerQn3YnNMTDDfXKT
+         58jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697133538; x=1697738338;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1697133903; x=1697738703;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zs3+sAOJu0kBwxZ0dser/vItknBWGT6p32J9u+acJCk=;
-        b=bG/D3MhY8I9z0X0CjA30vzFavwCY5e3R5cI9wsAQ9S0jmOMfeMwuK6xXh4zLaBw44A
-         7U6/kjg8Hx1orBr9xme8Rq03+ya3uIIzxSZ+XD0DyE/ClQATlhYpHohnUVxnWypYRet7
-         3I9yz9ZX5kXB/an+w0h5jkr6vsb6mjHfB12WjB7ceycR1LckYJpsnmDS3EUIjnriKQ2m
-         ybLc2jaRTqgQf3plmFCebUW8lEUTDhDPSi8uyRtrCGboWzuFS2vNcHvJzN55D5UHWSMO
-         3XIvzeIUkullUvHWoKzE/NH6FzSxlkQ7BNh0wAYfKMx/VFwVpm8cpxLd8TF5qRH3srQs
-         lTKw==
-X-Gm-Message-State: AOJu0YxC0226hRWjqt1mjxVd86hLb8HwIvR9bwauTQ5iVDKptawE8Otz
-        PH/6g9U4se+NHuqW7ckXxCs=
-X-Google-Smtp-Source: AGHT+IF/YU8vd6JUNl+eP3lbnEbdb/071IgSnsQGblva12Ql0JpQaNX94lXgXn3I3hzmtY1egSQFgw==
-X-Received: by 2002:a17:907:774c:b0:9b2:7a4e:69fc with SMTP id kx12-20020a170907774c00b009b27a4e69fcmr22373760ejc.19.1697133538582;
-        Thu, 12 Oct 2023 10:58:58 -0700 (PDT)
-Received: from localhost (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id cf7-20020a170906b2c700b009b296ce13a3sm11628560ejb.18.2023.10.12.10.58.58
+        bh=QfIb1D07nfI+0Ch1761SwKK3aO/nbsGIC751epSoaTc=;
+        b=wzTKEf0ChN2YFBNfXYHwNrynmdpUA8svLs9YJRlu3QwdXsoPmpsZsIovcehVZm1Rda
+         7RzE69Nq0KQJwjEks1PovQWqGHs7Zn1az/YSlYfKpzYhNSjt22oU8HUfy5Dx9GTiw+9j
+         whGcpmCiPUWwXLCsrayPfpk/HCKxtyxXNxpPYw92BsQrkGK90SGywSGgwtnqi6aKFEiy
+         +ge0U+1Q72ZnLnZrqNOQZbAICE/1MN7jr8PDXZYTmOeQsR0PsBw0eW98jfufqdovGatH
+         DL+VfFUm01iZbFaGF1yaFeclPLBG4rclUcZI3ws2X7IGQCjoaJE1mgDNumnBrckPzTxi
+         Walw==
+X-Gm-Message-State: AOJu0Yw83dNtp5UYRIk3y2AhdZGbkriALc1rWpKSQWP868vLVpi6/TOM
+        nP1qIcxNuEeWCBTuk6HKIe4=
+X-Google-Smtp-Source: AGHT+IFdStcd3c2GGinYpRXye7AwYjUTLBoOWruKg6//W80bNpLA3+vpu34T9qw3GrF5BXwkZ696Ig==
+X-Received: by 2002:a17:906:310b:b0:9ae:5765:c134 with SMTP id 11-20020a170906310b00b009ae5765c134mr22622471ejx.15.1697133902720;
+        Thu, 12 Oct 2023 11:05:02 -0700 (PDT)
+Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id a24-20020a170906685800b009828e26e519sm11289137ejs.122.2023.10.12.11.05.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Oct 2023 10:58:58 -0700 (PDT)
+        Thu, 12 Oct 2023 11:05:02 -0700 (PDT)
+Date:   Thu, 12 Oct 2023 20:05:00 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc:     Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH v2 13/13] thermal: Enforce self-encapsulation
-Date:   Thu, 12 Oct 2023 19:58:36 +0200
-Message-ID: <20231012175836.3408077-16-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231012175836.3408077-1-thierry.reding@gmail.com>
-References: <20231012175836.3408077-1-thierry.reding@gmail.com>
+To:     Nathan Chancellor <nathan@kernel.org>
+Cc:     broonie@kernel.org, robh@kernel.org, lgirdwood@gmail.com,
+        jonathanh@nvidia.com, ndesaulniers@google.com, trix@redhat.com,
+        alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org,
+        llvm@lists.linux.dev, patches@lists.linux.dev
+Subject: Re: [PATCH] ASoC: tegra: Fix -Wuninitialized in
+ tegra210_amx_platform_probe()
+Message-ID: <ZSg1TEvIMu2qDzhm@orome.fritz.box>
+References: <20231011-asoc-tegra-fix-uninit-soc_data-v1-1-0ef0ab44cf48@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="edj+BPVW5o8cXPI2"
+Content-Disposition: inline
+In-Reply-To: <20231011-asoc-tegra-fix-uninit-soc_data-v1-1-0ef0ab44cf48@kernel.org>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
 
-With the last driver being fixed to not reach into the core anymore,
-make sure that no new drivers will be able to do so by generating a
-build error when they try to do so.
+--edj+BPVW5o8cXPI2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/thermal/thermal_core.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Oct 11, 2023 at 01:21:51PM -0700, Nathan Chancellor wrote:
+> Clang warns (or errors with CONFIG_WERROR=3Dy):
+>=20
+>   sound/soc/tegra/tegra210_amx.c:553:10: error: variable 'soc_data' is un=
+initialized when used here [-Werror,-Wuninitialized]
+>     553 |                                             soc_data->regmap_co=
+nf);
+>         |                                             ^~~~~~~~
+>=20
+> A refactoring removed the initialization of this variable but its use
+> was not updated. Use the soc_data value in the amx variable to resolve
+> the warning and remove the soc_data variable, as it is now entirely
+> unused.
+>=20
+> Closes: https://github.com/ClangBuiltLinux/linux/issues/1943
+> Fixes: 9958d85968ed ("ASoC: Use device_get_match_data()")
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
+>  sound/soc/tegra/tegra210_amx.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-index 91d9d4f63609..9c599658b866 100644
---- a/drivers/thermal/thermal_core.h
-+++ b/drivers/thermal/thermal_core.h
-@@ -15,7 +15,7 @@
- #include "thermal_netlink.h"
- 
- #ifndef THERMAL_CORE_SUBSYS
--#warning This header can only be included by the thermal core code
-+#error This header can only be included by the thermal core code
- #endif
- 
- /* Default Thermal Governor */
--- 
-2.42.0
+I see that Mark was quicker and this is already applied, but just for
+the record, this fixes an OOPS that I started seeing recently but hadn't
+gotten around to look at more closely, so I guess:
 
+Tested-by: Thierry Reding <treding@nvidia.com>
+
+And thanks!
+
+Thierry
+
+--edj+BPVW5o8cXPI2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUoNUwACgkQ3SOs138+
+s6FvjxAAsd5bwFFR8vGCLIUjLqquDW0xtQm0nZacYaJmO059dJTozlND+izhpVvt
+wwh1GxcniMG5Qg55FmxG82icd4V+3JmtKvCjSx32DO0CsdlOUg/JHTwifRI8mr2d
+9a45DaeInh8pCQpYiEf3EjPZ+vuoDH0YKivuJwL+UGcCTzWyuA4Aoh8NciHJASQw
+4Bwc3uq4dmvS/Ax2DgUO3/9hY0nEHT6o0Ke9xyPeQ+ZlBi9m304dY7Y53jNi8IWG
+p8BF62VBiLqDh3icmqFTVd7NuBdkhjDP3BFvv8WjKssC5dv/e+/3wZT6od4EBK3j
+ru+ZTDwzkx7sOuaS+UZ01D49LjCRS9Jq64XJxe1vUo5w97w297KanCgCIMo5AFQA
+brqk8n9t9EluL2hgSlT7PidybAvsFO59dfhh+IraBhKUIe0j1gmFLtqU6UIVGosb
+PoMqiQyuW29sLUABzGQY3zus38U8XI64DQC+nqAsrsvpSkwk5KgRdDqJ5DYhqVE1
+qbFzPC9ONgM21oDzSybEuN1hDG1fHhhrLg8vMjWTjyDQInsv0J+vpobpnzuAdhOX
+qVxYan5FyZThbet9v2/s/fK50P5S1+a9ShKSLlNkpAw9MLTrepd/SP9w7cw2ZLF2
+TGp2g902Pnle5sSbNPqTYrtbEx1+lnhCpJvee8+Uf3WwrTzZbAc=
+=WcBW
+-----END PGP SIGNATURE-----
+
+--edj+BPVW5o8cXPI2--
