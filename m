@@ -2,197 +2,94 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C83CCDB47E
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Oct 2023 11:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 601C0CDB47E
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Oct 2023 12:25:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231166AbjJMLnY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Oct 2023 07:43:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47802 "EHLO
+        id S231792AbjJMMZq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Oct 2023 08:25:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231161AbjJMLnX (ORCPT
+        with ESMTP id S231736AbjJMMZh (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Oct 2023 07:43:23 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D016BD;
-        Fri, 13 Oct 2023 04:43:21 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9b98a699f45so315107866b.3;
-        Fri, 13 Oct 2023 04:43:21 -0700 (PDT)
+        Fri, 13 Oct 2023 08:25:37 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC07DDE;
+        Fri, 13 Oct 2023 05:25:16 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-405361bba99so20403425e9.2;
+        Fri, 13 Oct 2023 05:25:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697197400; x=1697802200; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1697199915; x=1697804715; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vZlpw4y4gEaoKsPgIReoXlzuapyQfA8qP/fBmVpWYGk=;
-        b=XS1ad79y21f7QpUIHrcl4gzAvSwAthh2mPMHhIeLfdu/ldpBS9vNQnBcoeEoDTbVB5
-         UmCmrzbe+6AAGNRDBLZpTA9zmIxYWTPcc7KkPr/DVoDSKGlKcX+RScuqnrMDqElSgmeM
-         gEuM2MxhXwuZCFrzJMFDqzAAiA5/Th4iYPefHKzH7VZF72Eloh79n7KLRR8GqppiGK01
-         5fBTC9vY/lwMPzM9ZWggDlsuDBnQJICOTtkrFCCQWHmnfh9V+o5fEoW2+6EplaIn8p2w
-         J2pSg07arak216Dx6Xjyp6Rau2fEC60a6pPEPm+NVOFVpYNVW7ZV8YbcBoLRy/ej5Vfj
-         OTIg==
+        bh=/CKZgUBJGWMajbilOFgGQRLxqanUY/9c6S2xkAT6//E=;
+        b=aLqEwbMBI2G7QB9UdrT0dQSPZwETTQRae0YKIbIFg6Pd1qqInfbGPJJpay0ejX9Rz9
+         GiOGxpn8s47HtJpGmoj210ggnzrDUxzdRtRMS/Xe5bSyyXJWnDVyqyAcsbCwkCdGFs0c
+         Qd9N9uQFuuV23D50wCKSVzFM9MPSeg/zKJp2DMMTn7qa6De+agfVpNdk8NT7xWiqmYwU
+         4zXUh0VZlg/HkUjkRkPMWeBPTYX69qeSq37Khc6ZhpHVW6/vxJjLgwxH30J46rx9+xde
+         oeSYK43zAIFYguymNgkXxCls2Py8jEFp2PPPZFJmJhsN1k7p+FfmIgssqRfhIqKPsvIv
+         IlJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697197400; x=1697802200;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1697199915; x=1697804715;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vZlpw4y4gEaoKsPgIReoXlzuapyQfA8qP/fBmVpWYGk=;
-        b=Z/5vPA7KDtzxyoF+EygtcYIP/8nQ7ydKLWY7THvrnaW2sYGbgx9ynJ0gJ9Ue4tPR0k
-         KwAzEWTk0GwMfx0wTELP7KIOZjMrQkVIHeTGg4eC6HtxxTlDvgitePYwjckApGaxWunP
-         8+3G7SZxVfQZqugf300xPOnrTmt/YKcw0Arem5XoyKa9J3voCXDlxRD0TYZ87fexSYSf
-         2gDYHDF0R8K6Mt6A+3LUyazfac66p/Vqmuj+TFwfHUEBYlojIDq+drDnnWaZqDtKliYr
-         bBwBXRdYNlpR7edK5DElHzKoexQBHLpaMkSDYxobYTn8cNMG1kfl7K8EgeAjETrn4180
-         ZRbQ==
-X-Gm-Message-State: AOJu0YyqWz2tx2ubeA1zn9kU4YTUdaswkktxOz6uq4BjOhl2QL9x9Sqo
-        jQpLO4EXEXcCuNUORAo5Ruo=
-X-Google-Smtp-Source: AGHT+IGCa2zpM9AB40+JO6jiETF/OfaJVdPzw1xPbggYiJKABWAlrav7L27HHnfQOo89D3+Z6h3VYQ==
-X-Received: by 2002:a17:907:360b:b0:9bd:a619:db38 with SMTP id bk11-20020a170907360b00b009bda619db38mr1189980ejc.39.1697197399727;
-        Fri, 13 Oct 2023 04:43:19 -0700 (PDT)
-Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id lu20-20020a170906fad400b0099297782aa9sm12189802ejb.49.2023.10.13.04.43.18
+        bh=/CKZgUBJGWMajbilOFgGQRLxqanUY/9c6S2xkAT6//E=;
+        b=Hgcj6mtzXRqfiRco7zoB41QTu/gKAXKekv2EmhZslapxw/roJuGPBhyoQDJLAXMJsx
+         coSu3BcQza2fIDxJM2tBWKJMp0nATVpAe1rW8RB3RDrke3qoAmAQS1StWJQvepjBKvje
+         6uUdwX3r4PaveAm2fds3GPb5SeMsK6+4pU7Gnf8wQNRNOxhWKiM30Ijl2jgggpdbaZHS
+         3oWKkz4Lnrmxh7nWqb4H+7g0SWDGzpgbZ3tjUuwxL0P0GxP7VkX0l6nN71KFB19x6EQc
+         aKG6kZc1qvY748o0psQrbWgmcEmPZCt8mnec+Scc7Yd2gbLicMge9PIopA8xeBNxAzTr
+         upbA==
+X-Gm-Message-State: AOJu0Yy+WUZ97Tvfm4EwgWNwGFwP9OTlAtJJ4AI3Zrld9/mXzDhBVFzO
+        YsxULrLU3O6foRHuHQuJ6Sw=
+X-Google-Smtp-Source: AGHT+IFW0BAz1KE2TBSE/stD6qY/zQ48xnUqepGAqzzL7WODejJrsoSYGevMUD6mGnM2HNqNVX1GcA==
+X-Received: by 2002:a05:600c:2284:b0:401:b493:f7c1 with SMTP id 4-20020a05600c228400b00401b493f7c1mr25124421wmf.35.1697199914681;
+        Fri, 13 Oct 2023 05:25:14 -0700 (PDT)
+Received: from localhost (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 20-20020a05600c021400b003fe2b081661sm2410086wmi.30.2023.10.13.05.25.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Oct 2023 04:43:19 -0700 (PDT)
-Date:   Fri, 13 Oct 2023 13:43:17 +0200
+        Fri, 13 Oct 2023 05:25:14 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Nicolas Chauvet <kwizart@gmail.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 00/13] thermal: tegra: Do not register cooling device
-Message-ID: <ZSktVaje_h2Hiyy6@orome.fritz.box>
-References: <20231012175836.3408077-1-thierry.reding@gmail.com>
- <CABr+WTkT4LSYrMPVpxYO4VT87xoFA98qA9wFQMwoO4b4J8gF3g@mail.gmail.com>
+To:     jonathanh@nvidia.com, krzysztof.kozlowski@linaro.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sumit Gupta <sumitg@nvidia.com>
+Cc:     bbasu@nvidia.com
+Subject: Re: (subset) [Patch v2 0/2] Fix hang due to CPU BW request as BPMP suspended
+Date:   Fri, 13 Oct 2023 14:25:12 +0200
+Message-ID: <169719989291.3880029.32092032379655248.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231009100557.18224-1-sumitg@nvidia.com>
+References: <20231009100557.18224-1-sumitg@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sw5sjewipfOoKclJ"
-Content-Disposition: inline
-In-Reply-To: <CABr+WTkT4LSYrMPVpxYO4VT87xoFA98qA9wFQMwoO4b4J8gF3g@mail.gmail.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding@nvidia.com>
 
---sw5sjewipfOoKclJ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 13, 2023 at 11:14:25AM +0200, Nicolas Chauvet wrote:
-> Le jeu. 12 oct. 2023 =C3=A0 19:58, Thierry Reding
-> <thierry.reding@gmail.com> a =C3=A9crit :
-> >
-> > From: Thierry Reding <treding@nvidia.com>
-> >
-> > Hi,
-> >
-> > this set of patches removes the registration of the SOCTHERM internal
-> > throttling mechanism as cooling device. Since this throttling starts
-> > automatically once a certain temperature threshold is crossed, it
-> > doesn't make sense to represent it as a cooling device, which are
-> > typically "manually" activated by the thermal framework when thermal
-> > sensors report temperature thresholds being crossed.
-> >
-> > Instead of using the cooling device mechanism, this statically programs
-> > the throttling mechanism when it is configured in device tree. In order
-> > to do this, an additional device tree property is needed to replace the
-> > information that was previously contained in trip points.
-> >
-> > There's a few preparatory patches to make the removal a bit simpler and
-> > also some follow up cleanups included as well.
-> >
-> > Changes in v2:
-> > - rework the device tree bindings:
-> >   - add nvidia,thermal-zones property to attach throttling to zones
-> >   - use -millicelsius suffix and add hysteresis
-> > - add patch to store thermal zone device tree node for later use
-> > - add patch to enforce self-encapsulation of the thermal core now that
-> >   no drivers need to reach into it anymore
-> >
-> > This applies on top of Daniel's self-encapsulation hardening series:
-> >
-> >         https://lore.kernel.org/all/20231012102700.2858952-1-daniel.lez=
-cano@linaro.org/
-> >
-> > Thierry
-> >
-> > Thierry Reding (13):
-> >   thermal: Store device tree node for thermal zone devices
-> >   dt-bindings: thermal: tegra: Document throttle temperature
-> >   dt-bindings: thermal: tegra: Add nvidia,thermal-zones property
-> >   thermal: tegra: Use driver-private data consistently
-> >   thermal: tegra: Constify SoC-specific data
-> >   thermal: tegra: Do not register cooling device
-> >   thermal: tegra: Use unsigned int where appropriate
-> >   thermal: tegra: Avoid over-allocation of temporary array
-> >   thermal: tegra: Remove gratuitous error assignment
-> >   thermal: tegra: Minor stylistic cleanups
-> >   ARM: tegra: Rework SOCTHERM on Tegra124
-> >   arm64: tegra: Rework SOCTHERM on Tegra132 and Tegra210
-> >   thermal: Enforce self-encapsulation
-> >
-> >  .../thermal/nvidia,tegra124-soctherm.yaml     |  19 +
-> >  arch/arm/boot/dts/nvidia/tegra124.dtsi        |  68 +--
-> >  arch/arm64/boot/dts/nvidia/tegra132.dtsi      |  66 +--
-> >  arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  86 +--
-> >  drivers/thermal/tegra/soctherm.c              | 525 ++++++++----------
-> >  drivers/thermal/tegra/soctherm.h              |   1 +
-> >  drivers/thermal/tegra/tegra124-soctherm.c     |   4 +
-> >  drivers/thermal/tegra/tegra132-soctherm.c     |   4 +
-> >  drivers/thermal/tegra/tegra210-soctherm.c     |   4 +
-> >  drivers/thermal/thermal_core.h                |   2 +-
-> >  drivers/thermal/thermal_of.c                  |   3 +
-> >  11 files changed, 329 insertions(+), 453 deletions(-)
-> >
-> > --
-> > 2.42.0
-> >
->=20
-> I'm still experiencing the following message on jetson-tx1 with this
-> serie applied on top of 6.6-rc5 (with iommu-next and tegra-next
-> applied).
-> oct. 13 10:53:16 jetson-tx1 kernel: max77620-thermal max77620-thermal:
-> Failed to register thermal zone: -19
+On Mon, 09 Oct 2023 15:35:55 +0530, Sumit Gupta wrote:
+> This patch set fixes hang during system resume which started coming
+> after adding Memory Interconnect and OPP support to the Tegra194 CPUFREQ
+> in below change:
+>  f41e1442ac5b ("cpufreq: tegra194: add OPP support and set bandwidth").
+> 
+> Tegra194 CPUFREQ driver uses 'CPUFREQ_NEED_INITIAL_FREQ_CHECK' flag
+> which causes a CPU frequency set request from the 'cpuhp_cpufreq_online'
+> hotplug notifier during resume. The CPU frequency set call also triggers
+> a DRAM bandwidth set request but the BPMP driver hasn't resumed yet
+> which results in hang during resume.
+> 
+> [...]
 
-Not sure about this one. I don't think I've seen it. Do you know if
-that's somehow caused by this series, or is it preexisting?
+Applied, thanks!
 
-> oct. 13 10:53:16 jetson-tx1 kernel: tegra_soctherm
-> 700e2000.thermal-sensor: throttle-cfg: heavy: no throt prop or invalid
-> prop
->=20
-> Is this expected ?
+[2/2] memory: tegra: set BPMP msg flags to reset IPC channels
+      (no commit info)
 
-This one is definitely not expected. I have seen this before, and it
-happens when the device tree doesn't contain all the properties that are
-expected. Patch 12 in this series should take care of that. Have you
-made sure that that's been applied and is what the kernel uses to boot
-with?
-
-Thierry
-
---sw5sjewipfOoKclJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUpLVUACgkQ3SOs138+
-s6EE+w/+LMqg4g3pwPXwpNR44sbHgjRhLQHktgJMaVKUEd8ih+q436JMxKNFSIKL
-Q2uw9OxcwnV10oAYXlSAUeRU+D/QOwPBQ2g2/jnMKrvYnBFZSFyOdYR8x8b0EYUB
-N5MXENSgwhZ9H/0Dg+XRSY+ktuULw+Yc9G/1CB7qzz9wIFqqAUoT97Rz9yThxDTe
-uqH2e/g2QJ0wsp2uyxch/LdRKqX2mRCv9Y73KLOzMmPCWBcGT+S0zV9tE/zzTRuQ
-wFTPkwRwyNQwc6P66BxtPt4ueGt1X+IORR7rUF3Phr6Rq1u5rq9WY5kQ+oQ9Zcrd
-4forIHadH6nKmgAMi+sd9ryVCly9eyfzSgBvK6FL+fJSUbSRScjixHIg+jvhpU4U
-I4bxUVarKmm4k23F29aVn7Lj8yXXqCw8v3j0y1BduUm8IzzT7PcJXnrAekP7JrNl
-yX6KCI5H9kE4gzpm8qcSlV1t6FZl24Z2/Ck3lUXESvLtvPC7MolpFGQVfCnhzuEh
-IXlTKbdYzbkeAHdzJDv9SsBnSPU7jmgkwEkSVyxsSSex9D8FOQCaqs+JRH9h+nLg
-lATGrSEyWWzV3Q3Oopkj7rTyggYwpjDtP4LqnSrf6tV0IssoZWhisl3/T+aujy4k
-gUNvkDDx+Qitz881VrIf83pgAUaGPg0Stv4thiPiUbC9y2TN7Hg=
-=kSo1
------END PGP SIGNATURE-----
-
---sw5sjewipfOoKclJ--
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
