@@ -2,88 +2,196 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 846D0CDB483
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Oct 2023 12:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA67CDB47E
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Oct 2023 12:46:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231705AbjJMMn4 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Oct 2023 08:43:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40900 "EHLO
+        id S231359AbjJMMqO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Oct 2023 08:46:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231680AbjJMMny (ORCPT
+        with ESMTP id S230006AbjJMMqM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Oct 2023 08:43:54 -0400
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F47291
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Oct 2023 05:43:53 -0700 (PDT)
-Received: by mail-wm1-x32a.google.com with SMTP id 5b1f17b1804b1-405524e6768so21108105e9.2
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Oct 2023 05:43:52 -0700 (PDT)
+        Fri, 13 Oct 2023 08:46:12 -0400
+Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06CB8C9;
+        Fri, 13 Oct 2023 05:46:10 -0700 (PDT)
+Received: by mail-ot1-x334.google.com with SMTP id 46e09a7af769-6c4b9e09528so1293853a34.3;
+        Fri, 13 Oct 2023 05:46:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697201031; x=1697805831; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1697201169; x=1697805969; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SG3HmGe+27aKsRFtsa+ottrkWvA9Hk/0pT0LlGcbDV0=;
-        b=UiB+J+YKfMCUGSTchDltlUddx4t5A61fS8SyN34Q4Q9V433Bi9KBGMScCkJ7pxVG7J
-         CCK3sXqr3/zS7S+g0wyREyz2yeBK7jBG6kEd5nd/JxtvX5xHX7piK6bZOTvwXOWRJAbx
-         +WaNaSSM4cX93gYjVK+H/UiH7mbAOhgtObD0iCmw7XOEb0ChuVugMy/moUtf66SoLlGx
-         ZlpjIkKbVLHjKyQgOL8lY5DdAc33m2La5Ssboy7lFMsmfAOaGgXvXmzdky4yrGw/riZh
-         C0uEjoiRBT9ZELqONh4U1CxrwsH2Hb+csD//K7CbZT/lDsXleJKawrdcz0u9ycMSTxSz
-         3msQ==
+        bh=Ff7HfvAhb1UMBPqBacU+KVHJKUyK4NxVafqckPtz1Tc=;
+        b=miV0qHkv0izPOizyniBaJPiembj6O9bo1uVy/J03aHd96Onjv9NfbNUSPlecvMxd3f
+         xJS2xI+6WK52SW0d4UJ8nF8UUS7ej0oaXvuFGHZfE85+iptUoUX2gQEg9y7OUNrqOYDG
+         CPxxYKako7Ggoy9Rhs0AMvqUopoP8cGOZlbf3qJokKoSC95LMx4lAV6+7Aill0bCgpJS
+         5kekxQTGucRmI3Afv8SzCggMW366P1+BoMoQRIAhcCN7D4eVsQmR4+zn9tajCrBGBuRx
+         M7v0O9riDhTjgP17jBcYCN+OMOKZaBU/buHK2uJ+3ycZBTBlITTJiQccM5lrsxRHBMs5
+         M56Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697201031; x=1697805831;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1697201169; x=1697805969;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SG3HmGe+27aKsRFtsa+ottrkWvA9Hk/0pT0LlGcbDV0=;
-        b=pJ1Nhme1OWBzpUkyK2dZ16taYqdtC62nrND8wb3eFt/QLgvtUXtGnN2EJyNK1yW5cC
-         fGGrOflxHa7Ot+fB70JajGdtcZdaBqleiA/ZE7DWcJ8YpUS5TXcG+p8sg8NAesO6OAhg
-         xMX4ZshTonDdzLB2VYWE2olQ3D8SUxGClNRfK4jz95GpgZBx0kaFGr4wND0Ex9cx4Jya
-         sG4TgcOjpESMda5xMgkehIkqbeoPZPVujtnMvtaMFo8DSCEgFcdQXyDzJzV4gCrDrW+o
-         LcxcsbdPD68vmB1d83xe30NJXDIDuQadhdjHlOxMMgB6j6LUX4sArGZeOT1adVP5RXs5
-         BWIQ==
-X-Gm-Message-State: AOJu0YzaCOgsn28Zq0y13j1AYP2QQ3UQIR+9bn1SHb2aYMUsZgqwr5+/
-        4QokJ6nj72qiDX/L7NaB8KycRz5s8LA=
-X-Google-Smtp-Source: AGHT+IGZ8mS5ViKDnkIPVoCHENBBlptXIRyKPMmenijCvJ7SOtPGxgfTGR9gqiDZhwlaKaBAUsJO4Q==
-X-Received: by 2002:a7b:cd98:0:b0:405:1ba2:4fcb with SMTP id y24-20020a7bcd98000000b004051ba24fcbmr24354517wmj.16.1697201031267;
-        Fri, 13 Oct 2023 05:43:51 -0700 (PDT)
-Received: from localhost (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id s6-20020a05600c45c600b00401d8181f8bsm29372wmo.25.2023.10.13.05.43.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Oct 2023 05:43:50 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Shubhi Garg <shgarg@nvidia.com>
-Subject: Re: [PATCH] arm64: tegra: Use correct interrupts for Tegra234 TKE
-Date:   Fri, 13 Oct 2023 14:43:49 +0200
-Message-ID: <169720099121.3883934.4023345936837730133.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231012124311.3009393-1-thierry.reding@gmail.com>
-References: <20231012124311.3009393-1-thierry.reding@gmail.com>
+        bh=Ff7HfvAhb1UMBPqBacU+KVHJKUyK4NxVafqckPtz1Tc=;
+        b=xHNQ9X/PXg1Oibd3AgIxct/QQqpwyJ+ew41HhIkBSdiXyaJsfXhPqtW6NJLypOiHXm
+         Sx3/wxMB9DBcfdCjGPDfnm7SchkkMPhKVgaeZ5ubDavnUofyYWH0gaW/9YBGozTcwpJv
+         NWMOr/Lwz0t7fwWVaaQnodxc2rtndHtn0t+5CqKbYo7uTNcldsqN9nLxxoL7EiELCC0F
+         g6oM+4O15z8YzSaJPCY4AcCVesnn/X8rJOPZuETK877UCNLGuS9RvsdPrP7fNYM0jMiL
+         25w+2E4Vwus1eUXfGrcmacDkX8s47fO150CHSr8UNZfsN+xJ0UDsNIcFI0mBe3DN3P02
+         XlJQ==
+X-Gm-Message-State: AOJu0Yy9d9J7YLMYoKeO6oM74lEn25ZAxwkEYeA4WI7HfHmuquxOKghm
+        AIgFDe9tV38eKF0TnMQq8F4hT/SrAdSJfg/kmaY=
+X-Google-Smtp-Source: AGHT+IFGPDfwzJhaqs/Ltq2iQe4wWiJjdhO7Us5y+BmOpuU1iCYaB5FzqnNLqhsPWD6NY139KuUv7tJUkl8WNMEVoRg=
+X-Received: by 2002:a9d:7843:0:b0:6c4:f095:7b76 with SMTP id
+ c3-20020a9d7843000000b006c4f0957b76mr26382558otm.31.1697201169172; Fri, 13
+ Oct 2023 05:46:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20231012175836.3408077-1-thierry.reding@gmail.com>
+ <CABr+WTkT4LSYrMPVpxYO4VT87xoFA98qA9wFQMwoO4b4J8gF3g@mail.gmail.com> <ZSktVaje_h2Hiyy6@orome.fritz.box>
+In-Reply-To: <ZSktVaje_h2Hiyy6@orome.fritz.box>
+From:   Nicolas Chauvet <kwizart@gmail.com>
+Date:   Fri, 13 Oct 2023 14:45:57 +0200
+Message-ID: <CABr+WTk9EGqVQ3_5579RmLVvOZj_NzNN3U8JMbyrQze5-9Wx8A@mail.gmail.com>
+Subject: Re: [PATCH v2 00/13] thermal: tegra: Do not register cooling device
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Le ven. 13 oct. 2023 =C3=A0 13:43, Thierry Reding
+<thierry.reding@gmail.com> a =C3=A9crit :
+>
+> On Fri, Oct 13, 2023 at 11:14:25AM +0200, Nicolas Chauvet wrote:
+> > Le jeu. 12 oct. 2023 =C3=A0 19:58, Thierry Reding
+> > <thierry.reding@gmail.com> a =C3=A9crit :
+> > >
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >
+> > > Hi,
+> > >
+> > > this set of patches removes the registration of the SOCTHERM internal
+> > > throttling mechanism as cooling device. Since this throttling starts
+> > > automatically once a certain temperature threshold is crossed, it
+> > > doesn't make sense to represent it as a cooling device, which are
+> > > typically "manually" activated by the thermal framework when thermal
+> > > sensors report temperature thresholds being crossed.
+> > >
+> > > Instead of using the cooling device mechanism, this statically progra=
+ms
+> > > the throttling mechanism when it is configured in device tree. In ord=
+er
+> > > to do this, an additional device tree property is needed to replace t=
+he
+> > > information that was previously contained in trip points.
+> > >
+> > > There's a few preparatory patches to make the removal a bit simpler a=
+nd
+> > > also some follow up cleanups included as well.
+> > >
+> > > Changes in v2:
+> > > - rework the device tree bindings:
+> > >   - add nvidia,thermal-zones property to attach throttling to zones
+> > >   - use -millicelsius suffix and add hysteresis
+> > > - add patch to store thermal zone device tree node for later use
+> > > - add patch to enforce self-encapsulation of the thermal core now tha=
+t
+> > >   no drivers need to reach into it anymore
+> > >
+> > > This applies on top of Daniel's self-encapsulation hardening series:
+> > >
+> > >         https://lore.kernel.org/all/20231012102700.2858952-1-daniel.l=
+ezcano@linaro.org/
+> > >
+> > > Thierry
+> > >
+> > > Thierry Reding (13):
+> > >   thermal: Store device tree node for thermal zone devices
+> > >   dt-bindings: thermal: tegra: Document throttle temperature
+> > >   dt-bindings: thermal: tegra: Add nvidia,thermal-zones property
+> > >   thermal: tegra: Use driver-private data consistently
+> > >   thermal: tegra: Constify SoC-specific data
+> > >   thermal: tegra: Do not register cooling device
+> > >   thermal: tegra: Use unsigned int where appropriate
+> > >   thermal: tegra: Avoid over-allocation of temporary array
+> > >   thermal: tegra: Remove gratuitous error assignment
+> > >   thermal: tegra: Minor stylistic cleanups
+> > >   ARM: tegra: Rework SOCTHERM on Tegra124
+> > >   arm64: tegra: Rework SOCTHERM on Tegra132 and Tegra210
+> > >   thermal: Enforce self-encapsulation
+> > >
+> > >  .../thermal/nvidia,tegra124-soctherm.yaml     |  19 +
+> > >  arch/arm/boot/dts/nvidia/tegra124.dtsi        |  68 +--
+> > >  arch/arm64/boot/dts/nvidia/tegra132.dtsi      |  66 +--
+> > >  arch/arm64/boot/dts/nvidia/tegra210.dtsi      |  86 +--
+> > >  drivers/thermal/tegra/soctherm.c              | 525 ++++++++--------=
+--
+> > >  drivers/thermal/tegra/soctherm.h              |   1 +
+> > >  drivers/thermal/tegra/tegra124-soctherm.c     |   4 +
+> > >  drivers/thermal/tegra/tegra132-soctherm.c     |   4 +
+> > >  drivers/thermal/tegra/tegra210-soctherm.c     |   4 +
+> > >  drivers/thermal/thermal_core.h                |   2 +-
+> > >  drivers/thermal/thermal_of.c                  |   3 +
+> > >  11 files changed, 329 insertions(+), 453 deletions(-)
+> > >
+> > > --
+> > > 2.42.0
+> > >
+> >
+> > I'm still experiencing the following message on jetson-tx1 with this
+> > serie applied on top of 6.6-rc5 (with iommu-next and tegra-next
+> > applied).
+> > oct. 13 10:53:16 jetson-tx1 kernel: max77620-thermal max77620-thermal:
+> > Failed to register thermal zone: -19
+>
+> Not sure about this one. I don't think I've seen it. Do you know if
+> that's somehow caused by this series, or is it preexisting?
 
+It's pre-existing from this serie.
 
-On Thu, 12 Oct 2023 14:43:11 +0200, Thierry Reding wrote:
-> The shared interrupts 0-9 of the TKE are mapped to interrupts 0-9, but
-> shared interrupts 10-15 are mapped to 256-261. Correct the mapping for
-> the final 6 interrupts. This prevents the TKE from requesting the RTC
-> interrupt (along with several GTE and watchdog interrupts).
-> 
-> 
+> > oct. 13 10:53:16 jetson-tx1 kernel: tegra_soctherm
+> > 700e2000.thermal-sensor: throttle-cfg: heavy: no throt prop or invalid
+> > prop
+> >
+> > Is this expected ?
+>
+> This one is definitely not expected. I have seen this before, and it
+> happens when the device tree doesn't contain all the properties that are
+> expected. Patch 12 in this series should take care of that. Have you
+> made sure that that's been applied and is what the kernel uses to boot
+> with?
 
-Applied, thanks!
+Yes, this dtb change in patch12 is propagated to the device (as seen
+in /boot/dtbs)
+But comparing with what's available at runtime in /proc/device-tree, I
+see some changes
 
-[1/1] arm64: tegra: Use correct interrupts for Tegra234 TKE
-      commit: c0b80988eb78d6423249ab530bfbc6b238790a26
+                        heavy {
+-                               hysteresis-millicelsius =3D <0xfa0>;
++                               #cooling-cells =3D <0x02>;
+                                nvidia,cpu-throt-percent =3D <0x55>;
+                                nvidia,gpu-throt-level =3D <0x03>;
+                                nvidia,priority =3D <0x64>;
+-                               nvidia,thermal-zones =3D <0x49 0x4a>;
+-                               temperature-millicelsius =3D <0x180c4>;
++                               phandle =3D <0x130>;
+                        };
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+I'm using u-boot 2023.07 with EFI boot (L4T 32.7.4).
+Could it be that the bootloader has changed these entries ? Can this
+be prevented ?
+(MAC ethernet address is set as appropropriate).
+
+Thanks
