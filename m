@@ -2,85 +2,147 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C909CDB482
-	for <linux-tegra@archiver.kernel.org>; Fri, 13 Oct 2023 09:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB026CDB47E
+	for <linux-tegra@archiver.kernel.org>; Fri, 13 Oct 2023 11:40:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230332AbjJMJWO (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 13 Oct 2023 05:22:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56810 "EHLO
+        id S230175AbjJMLkt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 13 Oct 2023 07:40:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230273AbjJMJWO (ORCPT
+        with ESMTP id S229903AbjJMLks (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 13 Oct 2023 05:22:14 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06BD5B7
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Oct 2023 02:22:12 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-5a7fb84f6ceso20764257b3.1
-        for <linux-tegra@vger.kernel.org>; Fri, 13 Oct 2023 02:22:11 -0700 (PDT)
+        Fri, 13 Oct 2023 07:40:48 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD107B7;
+        Fri, 13 Oct 2023 04:40:46 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-51e28cac164so6505692a12.1;
+        Fri, 13 Oct 2023 04:40:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697188931; x=1697793731; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1697197245; x=1697802045; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F8SGxNakBdg/eVn7PIGX4hM/sVFT3VICvg5gS9TqXYU=;
-        b=ePGxTHedJgq+x2NfArPc8AXEgphXX8+AVGvo2ci3Cde4p8Ehe031nOYNB/8MBUBLCY
-         1C1KD/HUAQ2ZpGvBHmMZ8+gacEiyjAlk4JwnmQ3sZvxfanvbw2jHRVkrPe+yrpYYd6vu
-         RMy/bvSAShf5Ss3Y0UOJygkJhW0awFpETI9/gPbPihmh/dB5TUhC7GUqRdjKhVFHe01Z
-         uu6Sp0OxlCTLK2qvhbmkcWkuPddm26/wdJcxq8eG4nUPQ8VRTKZEv4GgIetejoNRK4Es
-         /14ZKbBIkLSsZgSh34XzB8MIYTuSg0W9EvwoyKSQUcO+dRIYEx8KUzCx/dGXuomui8wp
-         vlYQ==
+        bh=mH4tRv4+dZr4M5iR8AWhdg07jhklJyUHM7PsxthvZxU=;
+        b=J4PGRdrKCKcqudNRCfRPHTrecxSEEGoMaPAy/mIf7Qxi+oCrkGkJ+Tcll0S6cY2h4z
+         eSj4XmlNsY/WGUvs7DfA/3NykWwljbsZCdUgseHiIazTfcNAbNG/BTyMH/5UxMR5KX5o
+         gcUmhZlWhQwHmTtKjriUurWLFKR4IubJkqwHUUcJXIw8olxZGRgPOxKJFi7iCoIDc1Y/
+         VfyXhfhyimaM/360TRMablwAVZsIJdB4w79Oyw4aW++/8ZZT4ylrjC5XMB9qjB2EjgSC
+         cp+VU/Z5upumAMbGX6IQ7vvApZdOQhSnh7Mr6cVRzj/Ox4iFGTtCm/gzoM/VNoe9bQ1v
+         xFiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697188931; x=1697793731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1697197245; x=1697802045;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F8SGxNakBdg/eVn7PIGX4hM/sVFT3VICvg5gS9TqXYU=;
-        b=nIa5Z9tItDKYHW5PMZEbgORvoS2ycSzrnNA3/O2CTr826HP1qvoIet34Q4gnGY0mXe
-         J4tyH7DIVB9Ig/oQjM5MGahVfgGFObHZ+GFX8QmFNhMyOmKF8e1EvKi12TXSjJ8baa8/
-         N/Lja10HAlLdWxkzLkKQPkGspd3XjvUHhnCevtggOQpfeGDJ3MgPAgap5dJuVyGRW+cG
-         jnutkA/JlH5qCsXeQy1faPgwLVUnZLkfeVY8dSh9s3yrVT+aJB8huFTThKOwb7559C9E
-         oDBMHnpw7gJoGloPcD0aNRKzOE/gfBr/0ixnOXy0ipcp85byGyg5ybkLgOfQRrGjOxiI
-         CI+A==
-X-Gm-Message-State: AOJu0YzSjd5O7V3m9Wf2N6g58W5HYyovgi/53NbSxdBuJtlV7PPnbtRe
-        sxpRfVUrKUss2SvfeGCJG5YlHvj0SMIYbxalBo0d6Q==
-X-Google-Smtp-Source: AGHT+IEjUM6QSsdSZkuqSoUoeb4zdk5rMs26kzkqd85aMBvo/kCgSPeF7NujSuPVw/r4lCqKepQvz1vCuwu8uOhiG1s=
-X-Received: by 2002:a81:a247:0:b0:599:b570:2db7 with SMTP id
- z7-20020a81a247000000b00599b5702db7mr26076473ywg.30.1697188931174; Fri, 13
- Oct 2023 02:22:11 -0700 (PDT)
+        bh=mH4tRv4+dZr4M5iR8AWhdg07jhklJyUHM7PsxthvZxU=;
+        b=k4u9ycTfRogK+jxbZTZjU9VnToUgnOXqVtAY4ko9tiHQ6m2wSOmsKDTQ/KVr9PGhRF
+         uPRzqaT/m/+fm3Mevxqp0pEO3QKvf9qOrSTLP0eVb0GrzN5RxbNiBtMgvIZZVpd4q+3N
+         TkjkIRh2iwmTmb9kuerQQpAz3tdxHphMCs6m0BXBY6+bezfeMaYN7Bbdd2x5xMBVqzJE
+         Wv+mgmur0fF64OAhqYDKc9TUxpsTbG+sbFWRFC6Jgkof525o0gRoXyMD2XDokTUfnyub
+         UUUuPhrY4xuLjfVz/TM4UeMr/MUe6MJUL2xT4b5tfRdS5vGUQKPtKkCF0CYBV639HWfk
+         9FVA==
+X-Gm-Message-State: AOJu0YxS5hL/fkiDXEgDbaplheH/hE6WaxqA/znLtn/hYwK/B/XY3gj9
+        Ouz/EsJx1dBI35j5YBnuj7c=
+X-Google-Smtp-Source: AGHT+IEUKKrj+yWWt0k1ic4SMvRZQ3sKRrfjY9N2UXsvbFceieqAee1KOZsE/sjmr/6DlTtZcPEKDg==
+X-Received: by 2002:a05:6402:40c1:b0:527:1855:be59 with SMTP id z1-20020a05640240c100b005271855be59mr20152782edb.3.1697197245072;
+        Fri, 13 Oct 2023 04:40:45 -0700 (PDT)
+Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id v3-20020a056402174300b0053e3839fc79sm916698edx.96.2023.10.13.04.40.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Oct 2023 04:40:44 -0700 (PDT)
+Date:   Fri, 13 Oct 2023 13:40:42 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 04/13] thermal: tegra: Use driver-private data
+ consistently
+Message-ID: <ZSksuix4Imy2zonN@orome.fritz.box>
+References: <20231012175836.3408077-1-thierry.reding@gmail.com>
+ <20231012175836.3408077-5-thierry.reding@gmail.com>
+ <24073646-373e-452d-94b6-3d91101ac5e2@linaro.org>
 MIME-Version: 1.0
-References: <20231010151709.4104747-1-andriy.shevchenko@linux.intel.com> <20231010151709.4104747-2-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20231010151709.4104747-2-andriy.shevchenko@linux.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 13 Oct 2023 11:21:59 +0200
-Message-ID: <CACRpkdaPfBBW4a-AQZs21J=CCwMVNSdzBicu5CTS4xzT2=Qmiw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/4] gpiolib: provide gpio_device_find_by_fwnode()
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Dipen Patel <dipenp@nvidia.com>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, timestamp@lists.linux.dev,
-        linux-tegra@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Andy Shevchenko <andy@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="esywz0M3I1a4TjD0"
+Content-Disposition: inline
+In-Reply-To: <24073646-373e-452d-94b6-3d91101ac5e2@linaro.org>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Tue, Oct 10, 2023 at 5:18=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
 
+--esywz0M3I1a4TjD0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> One of the ways of looking up GPIO devices is using their fwnode.
-> Provide a helper for that to avoid every user implementing their
-> own matching function.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Fri, Oct 13, 2023 at 10:04:33AM +0200, Daniel Lezcano wrote:
+> On 12/10/2023 19:58, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Instead of passing around platform and plain devices and figuring out
+> > the driver-private data within each helper, directly pass around the
+> > driver-private data when it's available.
+> >=20
+> > Also store a pointer to the parent device in the main driver-private
+> > data structure for easier access.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+>=20
+> [ ... ]
+>=20
+> > -static void soctherm_debug_init(struct platform_device *pdev)
+> > +static void soctherm_debug_init(struct tegra_soctherm *tegra)
+> >   {
+> > -	struct tegra_soctherm *tegra =3D platform_get_drvdata(pdev);
+> >   	struct dentry *root;
+> >   	root =3D debugfs_create_dir("soctherm", NULL);
+> >   	tegra->debugfs_dir =3D root;
+> > -	debugfs_create_file("reg_contents", 0644, root, pdev, &regs_fops);
+> > +	debugfs_create_file("reg_contents", 0644, root, tegra, &regs_fops);
+>=20
+> (Orthogonal to this series) : in case you are not aware of it there is the
+> debugfs_create_regset32() function. That may make go away a bunch of code
+> related to the debugfs code here.
+>=20
+> cf. https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git/tre=
+e/drivers/thermal/mediatek/lvts_thermal.c?h=3Dthermal/bleeding-edge#n159
 
-This makes sense to me! (But I haven't looked at the rest of the
-patches in the series. Yet.)
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Doesn't look like we could 1:1 transition to that because a bunch of the
+output is parameterized on some per-SoC variables, but it might be
+possible to rework the whole debugfs interfaces and split it up into
+multiple directories and files, much like LVTS does this. That's going
+to be quite a bit of work, but I can add it to my TODO list to look at
+when I get some spare time.
 
-Yours,
-Linus Walleij
+Thierry
+
+--esywz0M3I1a4TjD0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmUpLLoACgkQ3SOs138+
+s6GY3RAAwVtMi2CkaD1HK7reJ2BEu/fUIm+/GXGamvccsDnDcoWUa+qiaHz1TnU+
+bt2tPh1qqcF+d28iThxflAFDWsEPzYa4E0YSp+OnFjDeyuXS3jEvq+9fem8VwL0c
+sPx6haZ4aun6NVW0XrJwSjfBlDIkrHCY7mbNG2pWY0GznWR2bNnWcfc5VCbvQa8U
+OyBAeF8UOHZ8Vj2GCpDRhiK25NLaXtLmTO38fDMHO2TMI8QHVw+wSYmc5vzGjJrs
+NKtKEDfpNpfS+hrlSq6Nv5WqrY3xdaJJL1jmuwM406xZ2guQfaafZjhwDRViJQBJ
+EhYASoE7giyw6v5ZM4dfk5NeQC9OlWDWcAVgB66jlZpE28NrE7XV6obwqpK2U5LE
+HAKWkSoJYYFD0t9/EAaKWRyaPlzOW9eYSxNuCnO5DRhz7iesqIVlZXHtCMWdLm7n
+WpyTk7WJWtUzyTKB5UIt7yR6InXNm83Xfqa6aqjSWCD1V5rEyozAxN8po7JgpP+k
+Y2IWGCXjfKhSeR6tPPFB9d8uEazePKPuBhHqwNgk5XjmGmlSEDV1wCKF7bKtwRGH
+0B7eF7hfPzDlmwb1RdWcejh0xAEjx0cp0Lglic+dCCfWZAmbGFRSNxpsfz1/P0dl
+Rcwco02sHxqs8XFR/QH52J8YEu0djT5JnLwpLbbL4lhEehMEFEc=
+=Uxnh
+-----END PGP SIGNATURE-----
+
+--esywz0M3I1a4TjD0--
