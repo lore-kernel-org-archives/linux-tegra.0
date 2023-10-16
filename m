@@ -2,252 +2,150 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FF3C46CA1
-	for <linux-tegra@archiver.kernel.org>; Sat, 14 Oct 2023 22:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1550DCDB474
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Oct 2023 05:34:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233368AbjJNWAa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 14 Oct 2023 18:00:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36186 "EHLO
+        id S230442AbjJPFe0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Oct 2023 01:34:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231987AbjJNWA3 (ORCPT
+        with ESMTP id S229611AbjJPFeZ (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 14 Oct 2023 18:00:29 -0400
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B6C6C9
-        for <linux-tegra@vger.kernel.org>; Sat, 14 Oct 2023 15:00:28 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qrmfV-0001zq-2D; Sat, 14 Oct 2023 23:59:33 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qrmfI-001hum-RA; Sat, 14 Oct 2023 23:59:20 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1qrmfI-00GSU5-Fm; Sat, 14 Oct 2023 23:59:20 +0200
-Date:   Sat, 14 Oct 2023 23:59:18 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     soc@kernel.org
-Cc:     Nishanth Menon <nm@ti.com>,
-        Herve Codina <herve.codina@bootlin.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-        Mateusz Holenko <mholenko@antmicro.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Conor.Dooley" <conor.dooley@microchip.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-riscv@lists.infradead.org,
-        Karol Gugala <kgugala@antmicro.com>,
-        Qiang Zhao <qiang.zhao@nxp.com>,
-        Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
-        Rob Herring <robh@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        Ruan Jinjie <ruanjinjie@huawei.com>,
-        Yinbo Zhu <zhuyinbo@loongson.cn>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        linux-rockchip@lists.infradead.org,
-        Gabriel Somlo <gsomlo@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Huisong Li <lihuisong@huawei.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        Sumit Gupta <sumitg@nvidia.com>,
-        "zhang.songyi" <zhang.songyi@zte.com.cn>,
-        Zev Weiss <zev@bewilderbeest.net>,
-        Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Krzysztof Halasa <khalasa@piap.pl>, loongarch@lists.linux.dev,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        linux-tegra@vger.kernel.org, Michal Simek <michal.simek@amd.com>,
-        linux-arm-kernel@lists.infradead.org,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Daire McNamara <daire.mcnamara@microchip.com>,
-        linux-kernel@vger.kernel.org,
-        Shang XiaoJing <shangxiaojing@huawei.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-mediatek@lists.infradead.org,
-        Nick Alcock <nick.alcock@oracle.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [GIT PULL] Convert drivers/soc to struct
- platform_driver::remove_new()
-Message-ID: <20231014215918.prqhkk7kp2vobe3a@pengutronix.de>
-References: <20230925095532.1984344-1-u.kleine-koenig@pengutronix.de>
- <CACPK8XeROYz_XaB3TvUhdXm7Vm8fjC8yU+mfvA58=_FiDrBy-g@mail.gmail.com>
- <1b2fddf8-c0a6-4afa-8ad0-f280dea1607f@app.fastmail.com>
- <f4hvrslynlgmxu4a2gogc5idvumskhaalxgwildy56yqk2wz7d@lkh4swkv52mi>
- <20230928061449.xxqhyyrg6e357dn2@pengutronix.de>
+        Mon, 16 Oct 2023 01:34:25 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2058.outbound.protection.outlook.com [40.107.92.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C86CDA1;
+        Sun, 15 Oct 2023 22:34:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MqQn9iEM6FAQgVuE+qkX+T71NJCFDJ1dVdfD2VA8KNhveIhtU/eBKan6ZjouwTWvossieZ4cmx2yWWA7mbdfhurIeIMUArR5RByugfQJMh0hwIhg5sX3iAh1MScOy1ZeEXxZ7uynD7OdhKj9KZBxFQ53oAjJbm/NJ+VqrfcyHlXRvFoMWpN4HR9pFYhEr62h9TJtgerXATfC4ieuQX2rN5MeArKrXNEOSUjKj6Wn1qL535oeg0JmJ6pC78CZJO9XMxEuWG/cRluptKaFJp1jT55GJEAW4bo2UcpYNTEQBakB4DO/UUJNNXD82i4j8oF292H2EBvlF0ldi0qvv/WMdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4lMcHtHlfc+scOjuKrrrGbzEQEpskvGWFEsC9BqVUaI=;
+ b=AbtpbL4QdCV9i3t6ZmzwvhKyj+9KLfrOc9ep+LhuVRG6oEMS0BemtIBGVOwpou5KxGqmLBV7A7kwaVNBE56rFB0K6cDlQeHSjNiP0s4G/13lbIG1JhEVzindi8aZpn6Uc9UvOIxX8hh7NvOUPHbw0A9eaFlBHSC9imkgZnPI2fU8DjAu5WCdk0FFtPNvKoYKDdPRQVptqqqHoylVs2N9hGLRBjlv6EfRbzD/VHcbilNaD5UVLpz8c/UYJjKOt39lxnLB1xxRCqd3NfOCpDxJ106rwTI9vZeZ1H5KPZgShZfy7+uAJDGrxwCoul/8KZjxTHZj35nrjqWW/HawevaGIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4lMcHtHlfc+scOjuKrrrGbzEQEpskvGWFEsC9BqVUaI=;
+ b=m8+BDF1HJaEK8tk+k1yvx4SGEQsVtpBAJAUZGAt5Tb1GivtTNSywDqsOWQk55vX3giW99T9fKRNbZWLFYi+8S0n7iK50o39vvqcf0jJpnH8txmQVxi1h4H7TvuRESE+shqf3CHTXfRtMlEyvkVejq/DMV4pS/tbo/JUlK2Ho6aokDYksY4FRuKddOk+6zVqcU6VduH8A2csLdNB72/puFVAZj6ewlWAg8DEBjLBrXWkf0G7kN+ZU6nLaYNc5Wf3iwRbUP0rTwxd4yUA0aj+kvyQipR9+H0myAh+lSpyQzkC1rroUxA4/ZhASKbl1HMWu1beR/ypMsh+eDF00H48wnQ==
+Received: from SA9PR13CA0077.namprd13.prod.outlook.com (2603:10b6:806:23::22)
+ by DS0PR12MB8414.namprd12.prod.outlook.com (2603:10b6:8:fb::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6886.34; Mon, 16 Oct 2023 05:34:21 +0000
+Received: from SA2PEPF00001508.namprd04.prod.outlook.com
+ (2603:10b6:806:23:cafe::89) by SA9PR13CA0077.outlook.office365.com
+ (2603:10b6:806:23::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.18 via Frontend
+ Transport; Mon, 16 Oct 2023 05:34:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SA2PEPF00001508.mail.protection.outlook.com (10.167.242.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6838.22 via Frontend Transport; Mon, 16 Oct 2023 05:34:21 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Sun, 15 Oct
+ 2023 22:34:20 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Sun, 15 Oct 2023 22:34:20 -0700
+Received: from localhost.localdomain (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.986.41 via Frontend
+ Transport; Sun, 15 Oct 2023 22:34:15 -0700
+From:   Kartik <kkartik@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <keescook@chromium.org>, <andy@kernel.org>,
+        <akpm@linux-foundation.org>, <arnd@arndb.de>,
+        <ulf.hansson@linaro.org>, <linus.walleij@linaro.org>,
+        <kkartik@nvidia.com>, <pshete@nvidia.com>, <petlozup@nvidia.com>,
+        <frank.li@vivo.com>, <robh@kernel.org>, <stefank@nvidia.com>,
+        <pdeschrijver@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <linux-mm@kvack.org>
+Subject: [PATCH v5 0/8] soc/tegra: fuse: Add ACPI support
+Date:   Mon, 16 Oct 2023 11:04:03 +0530
+Message-ID: <20231016053411.3380-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7gysnf7ldsm65nug"
-Content-Disposition: inline
-In-Reply-To: <20230928061449.xxqhyyrg6e357dn2@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001508:EE_|DS0PR12MB8414:EE_
+X-MS-Office365-Filtering-Correlation-Id: f096e474-f2b3-4087-65e9-08dbce098cd5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: MgdpyCs04jsBpD4mpW5Wb+M60f8Qa47GT5/qVPbXnKb/OdX8qq5J8uydtE0GZCpd8jp5nHwOd7xki742L5uSfzdz6djExefdajA5z44TbZ57sB7hEHvKyaLV0GpV1ba818PEUtCMhliJ8/iFAWFEYGm5zk4QpymWFi7moG/Nvc2q3hvZjc6K1P0qQMvp+aW7UNuV48AFbIeWg0tBufPMowQdHhyK+MUq6YfzNKGRwJHFG1VgzRsFGSmio5WGb3t9snDJrQqPfkp6AlP8oRMkItRdC+Nh2efWbxvBLXVg04ltuIV/SW/AWSEFgYu21wt0EGGH4QAEfRXuHzk0RkzITgRO3riSxB4szPHapPFIOv95KkA0MfGhCcbVngeeMljmuGkLIq01RDHEaDJAKoGevUjttLrq55dHj7OBET66OqJXi6q48jn2UvYalpnYnELmU2jpM8mCDPm1zljEM7qJ+LZs+sJZeOVbRrh9fsF5UG2P2XKLe4hquSmQ7a3Ckljw6LN4F5l5LwrEG92yAa/Dblh0lfDSdbg9G2Rw93Bi22mxubEvsis5v57S9mcK62B+LsOFLJIz70aE3ofAle9QnXHLb37j1VGnobo2fhOJiaI35z6Bv2wctZD0CvaU31mAE9GbNV9XT1PZwtv+/jcrOAAkHxAcyDyiXTf9gKljdN3g7RjPFhKcNHtJF+8pJPJ0CL+6nkmWwVNyUDyhKW8TIVAEEyELRKyEHzMQbgCXSEHvsOleCztkQuOmnhApWikp2jSsXpZKN0EZxRs49Z+xyfNTB3I5LJu0gITmWJY42vXrIBXLkChLCBXCYqPuzpn9
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(346002)(136003)(39860400002)(376002)(230922051799003)(451199024)(82310400011)(64100799003)(186009)(1800799009)(46966006)(40470700004)(36840700001)(40460700003)(40480700001)(82740400003)(36756003)(7636003)(921005)(356005)(36860700001)(47076005)(83380400001)(6666004)(26005)(426003)(70586007)(70206006)(316002)(478600001)(1076003)(336012)(2616005)(110136005)(7416002)(41300700001)(2906002)(86362001)(5660300002)(8936002)(8676002)(2101003)(83996005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2023 05:34:21.4473
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f096e474-f2b3-4087-65e9-08dbce098cd5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF00001508.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8414
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+This series of patches add ACPI support for Tegra194 and Tegra234 in
+Tegra fuse and apbmisc drivers. It also adds support for Tegra241
+which uses ACPI boot.
 
---7gysnf7ldsm65nug
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Kartik (8):
+  mm/util: Introduce kmemdup_array()
+  soc/tegra: fuse: Use dev_err_probe for probe failures
+  soc/tegra: fuse: Refactor resource mapping
+  soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
+  soc/tegra: fuse: Add function to add lookups
+  soc/tegra: fuse: Add function to print SKU info
+  soc/tegra: fuse: Add ACPI support for Tegra194 and Tegra234
+  soc/tegra: fuse: Add support for Tegra241
 
-Hello Arnd,
+ drivers/soc/tegra/Kconfig              |   5 ++
+ drivers/soc/tegra/fuse/fuse-tegra.c    | 114 ++++++++++++++++++-------
+ drivers/soc/tegra/fuse/fuse-tegra30.c  |  20 +++++
+ drivers/soc/tegra/fuse/fuse.h          |   5 ++
+ drivers/soc/tegra/fuse/tegra-apbmisc.c | 110 ++++++++++++++++++++----
+ include/linux/string.h                 |   1 +
+ include/soc/tegra/fuse.h               |   1 +
+ mm/util.c                              |  17 ++++
+ 8 files changed, 228 insertions(+), 45 deletions(-)
 
-the following changes since commit 0bb80ecc33a8fb5a682236443c1e740d5c917d1d:
+---
+v3 -> v4:
+	* Added following patch to introduce kmemdup_array:
+	  "mm/util: Introduce kmemdup_array() to duplicate an array"
+	* Add "soc/tegra: fuse: Use dev_err_probe for probe failures".
+v2 -> v3:
+	* Minor changes in following patches:
+	  soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
+	  soc/tegra: fuse: Add ACPI support for Tegra194 and Tegra234
 
-  Linux 6.6-rc1 (2023-09-10 16:28:41 -0700)
+v1 -> v2:
+	* Used '--patience' while formatting patches.
+	* Added "soc/tegra: fuse: Refactor resource mapping" to share
+	  the common code between tegra_init_apbmisc() and
+	  tegra_acpi_init_apbmisc() functions.
+	* Dropped "soc/tegra: fuse: Add function to register nvmem"
+	  as ACPI and device-tree boot are sharing the same probe.
+	  So, no need to refactor the code here.
+---
+-- 
+2.34.1
 
-are available in the Git repository at:
-
-  https://git.pengutronix.de/git/ukl/linux tags/platform-remove-void-soc-fo=
-r-6.7-rc
-
-for you to fetch changes up to e77e6e3e909d33361c58af848a96e1f7f71ba7e4:
-
-  soc/pxa: ssp: Convert to platform remove callback returning void (2023-10=
--14 23:27:34 +0200)
-
-----------------------------------------------------------------
-Convert drivers/soc to struct platform_driver::remove_new()
-
-This PR contains the patches I sent in the series available at
-https://lore.kernel.org/all/20230925095532.1984344-1-u.kleine-koenig@pengut=
-ronix.de
-that were not yet picked up in next as of next-20231013.
-
-It converts all drivers below drivers/soc to let their remove callback
-return void. See commit 5c5a7680e67b ("platform: Provide a remove
-callback that returns no value") for the rationale.
-
-----------------------------------------------------------------
-
-On Thu, Sep 28, 2023 at 08:14:49AM +0200, Uwe Kleine-K=F6nig wrote:
-> On Wed, Sep 27, 2023 at 04:01:58PM -0700, Bjorn Andersson wrote:
-> > On Wed, Sep 27, 2023 at 10:43:16AM +0200, Arnd Bergmann wrote:
-> > > On Wed, Sep 27, 2023, at 04:25, Joel Stanley wrote:
-> > > > On Mon, 25 Sept 2023 at 09:55, Uwe Kleine-K=F6nig <u.kleine-koenig@=
-pengutronix.de> wrote:
-> > > >>
-> > > >> this series converts all platform drivers below drivers/soc to use
-> > > >> .remove_new(). The motivation is to get rid of an integer return c=
-ode
-> > > >> that is (mostly) ignored by the platform driver core and error pro=
-ne on
-> > > >> the driver side.
-> > > >>
-> > > >> See commit 5c5a7680e67b ("platform: Provide a remove callback that
-> > > >> returns no value") for an extended explanation and the eventual go=
-al.
-> > > >>
-> > > >> As there is no single maintainer team for drivers/soc, I suggest t=
-he
-> > > >> individual maintainers to pick up "their" patches.
-> > > >
-> > > > I'd be happy if Arnd merged the lot at once. Arnd, what do you thin=
-k?
-> > > >
-> > > > If that will be too messy then I understand. I have queued the aspe=
-ed
-> > > > ones locally and will push that out if we decide that's the best way
-> > > > to go.
-> > >=20
-> > > The main downside of merging it all at once through the soc tree
-> > > is that there may be patches that conflict with other work going on
-> > > in individual drivers.
-> > >=20
-> > > What I'd suggest doing here is:
-> > >=20
-> > > - have platform maintainers pick up patches for their drivers
-> > >   if that is their preference for any reason
-> >=20
-> > I'd prefer this for the qcom drivers at least, please let me know if you
-> > would like me to proceed.
->
-> I can send a pull request as Arnd suggested. So iff you want the qcom
-> drivers not be a part of that PR, just make sure they appear in next
-> during the next week. :-)
->
-> > > - get a pull request from Uwe for the soc tree for anything that has
-> > >  not been picked up in one or two weeks from now
-
-Here comes the promised PR. The qcom patches are among the set of
-patches dropped here as they are already in next.
-
-To state the obvious: This is merge window material and the idea is that
-it's pulled into armsoc and then included in the armsoc v6.7-rc1 PR to
-Linus Torvalds. I hope it's not too late for that already.
-
-Best regards and thanks
-Uwe
-
-Uwe Kleine-K=F6nig (12):
-      soc/fsl: dpaa2-console: Convert to platform remove callback returning=
- void
-      soc/fsl: cpm: qmc: Convert to platform remove callback returning void
-      soc/fsl: cpm: tsa: Convert to platform remove callback returning void
-      soc/fujitsu: a64fx-diag: Convert to platform remove callback returnin=
-g void
-      soc/hisilicon: kunpeng_hccs: Convert to platform remove callback retu=
-rning void
-      soc/ixp4xx: ixp4xx-npe: Convert to platform remove callback returning=
- void
-      soc/ixp4xx: ixp4xx-qmgr: Convert to platform remove callback returnin=
-g void
-      soc/litex: litex_soc_ctrl: Convert to platform remove callback return=
-ing void
-      soc/loongson: loongson2_guts: Convert to platform remove callback ret=
-urning void
-      soc/mediatek: mtk-devapc: Convert to platform remove callback returni=
-ng void
-      soc/mediatek: mtk-mmsys: Convert to platform remove callback returnin=
-g void
-      soc/pxa: ssp: Convert to platform remove callback returning void
-
- drivers/soc/fsl/dpaa2-console.c       | 6 ++----
- drivers/soc/fsl/qe/qmc.c              | 6 ++----
- drivers/soc/fsl/qe/tsa.c              | 5 ++---
- drivers/soc/fujitsu/a64fx-diag.c      | 6 ++----
- drivers/soc/hisilicon/kunpeng_hccs.c  | 6 ++----
- drivers/soc/ixp4xx/ixp4xx-npe.c       | 6 ++----
- drivers/soc/ixp4xx/ixp4xx-qmgr.c      | 5 ++---
- drivers/soc/litex/litex_soc_ctrl.c    | 5 ++---
- drivers/soc/loongson/loongson2_guts.c | 6 ++----
- drivers/soc/mediatek/mtk-devapc.c     | 6 ++----
- drivers/soc/mediatek/mtk-mmsys.c      | 6 ++----
- drivers/soc/pxa/ssp.c                 | 6 ++----
- 12 files changed, 24 insertions(+), 45 deletions(-)
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---7gysnf7ldsm65nug
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmUrDzUACgkQj4D7WH0S
-/k5j4gf/bF9kgxVuSiift0gAwVEYG58vErpILxnhavoGUJkIvS/2rxDkuHmTNQ5X
-QalfUGigAoE8LztKGVtaC0Xx+ie+VRIk5mw7tId7GP1bfzJnrekEsnRe0feT2zy4
-2d7Jc3JZ2H+C31SObKtmKNcav5jLzXd8vN/RS+w/tj9/nE/paVB+kcHIX17ZPGE2
-zIumGo0OqOAmN6fNwoqyqQuy22i5ECmPHi9DAJkeOg4/Hu017wBfW2V/FvHA+eee
-KpnkXofsyZDqGCLvlNHd4qBQG/88+W7qcVxbCoDebo18y86tj2IbgeeFfbihxKLO
-lcwKEm4ptKtWDPzYdLgO7nELl73FRw==
-=h2pz
------END PGP SIGNATURE-----
-
---7gysnf7ldsm65nug--
