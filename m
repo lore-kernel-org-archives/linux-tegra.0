@@ -2,85 +2,92 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCC2C46CA1
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Oct 2023 11:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83514CDB482
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Oct 2023 12:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231631AbjJPLWa (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Oct 2023 07:22:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53796 "EHLO
+        id S233470AbjJPMmk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Oct 2023 08:42:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231442AbjJPLW3 (ORCPT
+        with ESMTP id S233424AbjJPMmj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Oct 2023 07:22:29 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C88CADC;
-        Mon, 16 Oct 2023 04:22:27 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F070AC433C9;
-        Mon, 16 Oct 2023 11:22:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697455347;
-        bh=ttoJu22J3ZNoep78K/TkZ2dS7zV+ZRCWVhQETFFVyrg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QkJcaZmbFHlpred0dmnDL/LT+uT0GZqUUXDZOhhDrQ7s5wSmSkxTo4dSYYcfi56bF
-         LHn5weAhYPOxV54sCMpgDJYeP3EkKii+zIRmoJavMIt0KL4NxgrQitqygaKF9XSqtO
-         7YS5s9LF74bIZSsaXTY/EWJjjxavcXKzIFnG6AO7yYxlazOZRx3/cME0+5Fc/IBi4X
-         uSlzddMlptIIC0nE00l/sZ5xOL5vr7DXiSao6ij6f6gahVzI4cXK9yilKRPdF/7NPi
-         /DgNid/jRFxpF+LL53c9HLYv3MG1jxBo8Wki15y96JtwcLq5NOe0ULt/VmzmpJzZwQ
-         +sTs+3ETa9g8A==
-Date:   Mon, 16 Oct 2023 16:52:22 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Mohan Kumar D <mkumard@nvidia.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        "krzysztof.kozlowski+dt@linaro.org" 
-        <krzysztof.kozlowski+dt@linaro.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH V1 0/2] Support dma channel mask
-Message-ID: <ZS0c7tvLLfkQhC+u@matsya>
-References: <20231009063509.2269-1-mkumard@nvidia.com>
- <ZS0Z2G64rjrQTobg@matsya>
- <DM6PR12MB4435D21F738FF9CA2662D79EC1D7A@DM6PR12MB4435.namprd12.prod.outlook.com>
+        Mon, 16 Oct 2023 08:42:39 -0400
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7CC8E8;
+        Mon, 16 Oct 2023 05:42:37 -0700 (PDT)
+X-IronPort-AV: E=McAfee;i="6600,9927,10863"; a="7079914"
+X-IronPort-AV: E=Sophos;i="6.03,229,1694761200"; 
+   d="scan'208";a="7079914"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2023 05:42:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10863"; a="929336265"
+X-IronPort-AV: E=Sophos;i="6.03,229,1694761200"; 
+   d="scan'208";a="929336265"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orsmga005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Oct 2023 05:42:32 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97-RC2)
+        (envelope-from <andy@kernel.org>)
+        id 1qsMvU-00000005zXU-35Id;
+        Mon, 16 Oct 2023 15:42:28 +0300
+Date:   Mon, 16 Oct 2023 15:42:28 +0300
+From:   Andy Shevchenko <andy@kernel.org>
+To:     Kartik <kkartik@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        keescook@chromium.org, akpm@linux-foundation.org, arnd@arndb.de,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        pshete@nvidia.com, petlozup@nvidia.com, frank.li@vivo.com,
+        robh@kernel.org, stefank@nvidia.com, pdeschrijver@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v6 7/8] soc/tegra: fuse: Add ACPI support for Tegra194
+ and Tegra234
+Message-ID: <ZS0vtOwDVwSMErK4@smile.fi.intel.com>
+References: <20231016101436.7146-1-kkartik@nvidia.com>
+ <20231016101436.7146-8-kkartik@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DM6PR12MB4435D21F738FF9CA2662D79EC1D7A@DM6PR12MB4435.namprd12.prod.outlook.com>
+In-Reply-To: <20231016101436.7146-8-kkartik@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 16-10-23, 11:14, Mohan Kumar D wrote:
-> Sure, will send rebased patch soon.
+On Mon, Oct 16, 2023 at 03:44:35PM +0530, Kartik wrote:
+> Add ACPI support for Tegra194 & Tegra243 SoC's. This requires
+> following modifications to the probe when ACPI boot is used:
+>  - Initialize soc data.
+>  - Add nvmem lookups.
+>  - Register soc device.
+>  - use devm_clk_get_optional() instead of devm_clk_get() to get
+>    fuse->clk, as fuse clocks are not required when using ACPI boot.
 > 
+> Also, drop '__init' keyword for tegra_soc_device_register() as this is also
+> used by tegra_fuse_probe() and use dev_err_probe() wherever applicable.
 
-Please **do ** not ** top post! and use a Linux friendly MUA to send
-replies!
+...
 
-> -----Original Message-----
-> From: Vinod Koul <vkoul@kernel.org> 
-> Sent: Monday, October 16, 2023 4:39 PM
-> To: Mohan Kumar D <mkumard@nvidia.com>
-> Cc: robh+dt@kernel.org; thierry.reding@gmail.com; Jonathan Hunter <jonathanh@nvidia.com>; Laxman Dewangan <ldewangan@nvidia.com>; krzysztof.kozlowski+dt@linaro.org; dmaengine@vger.kernel.org; linux-tegra@vger.kernel.org; devicetree@vger.kernel.org
-> Subject: Re: [PATCH V1 0/2] Support dma channel mask
-> 
-> External email: Use caution opening links or attachments
-> 
-> 
-> On 09-10-23, 12:05, Mohan Kumar wrote:
-> > To reserve the dma channel using dma-channel-mask property for Tegra 
-> > platforms.
-> >
-> > Mohan Kumar (2):
-> >   dt-bindings: dma: Add dma-channel-mask to nvidia,tegra210-adma
-> >   dmaengine: tegra210-adma: Support dma-channel-mask property
-> 
-> This fails to apply for me, pls rebase
-> 
-> --
-> ~Vinod
+> +static const struct acpi_device_id __maybe_unused tegra_fuse_acpi_match[] = {
+
+Drop __maybe_unused along with ACPI_PTR(), they are more confusing than helpful.
+
+> +	{ "NVDA200F" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(acpi, tegra_fuse_acpi_match);
+> +
+>  static struct platform_driver tegra_fuse_driver = {
+>  	.driver = {
+>  		.name = "tegra-fuse",
+>  		.of_match_table = tegra_fuse_match,
+> +		.acpi_match_table = ACPI_PTR(tegra_fuse_acpi_match),
+>  		.pm = &tegra_fuse_pm,
+>  		.suppress_bind_attrs = true,
+>  	},
 
 -- 
-~Vinod
+With Best Regards,
+Andy Shevchenko
+
+
