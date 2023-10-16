@@ -2,143 +2,123 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3632CCDB482
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Oct 2023 12:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E16FCDB482
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Oct 2023 14:03:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233562AbjJPM4Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Oct 2023 08:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55374 "EHLO
+        id S233830AbjJPODd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Oct 2023 10:03:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233571AbjJPM4N (ORCPT
+        with ESMTP id S233695AbjJPODU (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Oct 2023 08:56:13 -0400
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2041.outbound.protection.outlook.com [40.107.100.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 172D9F0;
-        Mon, 16 Oct 2023 05:56:12 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CiGB6MJPc2VdZjCG4PGRjAflHotknwl26c0g4d9+AvQ5cTzp4UCtMMzzpWe2vHHkvEhBEVGN+0ZzNu8QUsTiXPFt1AeRkI85sP/I17q5FWXCtIRi0Q05uJRXElaazjInxwg4Fo3ISDwZPjYo5qEYMNrFu5MT+m4UrxK+otht7kr8KVjGVSkiFTgqHQSiDGPj60E1bB5JtYMxbdGJbtaZ/z+tkJNagP7FJY0k/vZMnrtusdkW2xFXeWbmzVz3uBOeMfNsJBHvu5JP+rly5ERpXWZ/43ybFTvvLPkp+dWjjVFoODW0XGCdTtkPapOU4SOnBoNitWzAuRAzhrOGVItU7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BGZTWbe16FlEM8eEjP0poL7KwuGV9hnSbvKJqqdWZv0=;
- b=TLE1970zZhw76ie03asGZih2y08Jg7mf0vC9rzijm+nrh377eK9+VR5Uv0wf19I6I15ftMDeeKf+6dNUj69gJoYXtG1zrm0JQUqvfLmvgiFQROdA/F4tcoB+nDAv8AQhPbrJwsLkGJLIxTzYljWIYNoM+VnuPORWNOdwoOC98yL5CYz7MeL836HOJlqwoNQG0evOj5fmkrbWyfnd/cMik/AUpEEDaffe69UhLzc0uiPtoIMPyMJXgUh2xJ1eDE7oRYCxIcluzYmOXVHqrp5/MrJWwnu31B/fn3hIyoVdPmUYRfRi049ppuZmr9eQoH7yoLWgyF7OlET8jBoH0X+KoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BGZTWbe16FlEM8eEjP0poL7KwuGV9hnSbvKJqqdWZv0=;
- b=YCpYcNzcPnYUczHC3CCDsTpYpiGtPl1VUfV6fzFSyaY3xhQOsNP0jqCxPfFvdaLdu1wL2b/ureYVTJWhzXY+bn237D+IdnFlFu4bWc03VbeI4EEvtL6nOMOGPpRNu9wX5iIppWbQCwX4WfPeAAODHyd2oChNVuhkFupR80xiZq6fSaI0Ep8xdikIiOU3z2XTlRiUA6cnSvbE0hCQr/Pf271D5zN0eNK6jBtLpmR2+qoz083a+DGsVATl7HcH1Y3wGwnfcm41P4UIVHCYLJ2O9UJtle1Dcstg/skRxiIsVhNpd36div/9Pm4Nu83DJXQPHD6Mn7J/QK3Rp68DD7PAFQ==
-Received: from BN9PR03CA0175.namprd03.prod.outlook.com (2603:10b6:408:f4::30)
- by DS0PR12MB8815.namprd12.prod.outlook.com (2603:10b6:8:14f::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.36; Mon, 16 Oct
- 2023 12:56:09 +0000
-Received: from SA2PEPF0000150B.namprd04.prod.outlook.com
- (2603:10b6:408:f4:cafe::53) by BN9PR03CA0175.outlook.office365.com
- (2603:10b6:408:f4::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.36 via Frontend
- Transport; Mon, 16 Oct 2023 12:56:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF0000150B.mail.protection.outlook.com (10.167.242.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.6838.22 via Frontend Transport; Mon, 16 Oct 2023 12:56:09 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 16 Oct
- 2023 05:56:01 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 16 Oct
- 2023 05:56:00 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
- Transport; Mon, 16 Oct 2023 05:56:00 -0700
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
-        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
-        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-        <rwarsow@gmx.de>, <conor@kernel.org>,
-        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.1 000/131] 6.1.59-rc1 review
-In-Reply-To: <20231016084000.050926073@linuxfoundation.org>
-References: <20231016084000.050926073@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Mon, 16 Oct 2023 10:03:20 -0400
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 945751AC;
+        Mon, 16 Oct 2023 07:02:52 -0700 (PDT)
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6c64a3c4912so3236411a34.3;
+        Mon, 16 Oct 2023 07:02:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697464971; x=1698069771;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aPwOcKolA5h59LfiwhDD2NsiWDiYTaeF64Ez9uATyPQ=;
+        b=RonnbeL+twCYiA6d79iP+7XIaQC0Hn0CNAMI1GIvR0bTCMeoN1hldlyjNV9YumgPIQ
+         XTWhCQrnD15vxNwOkCkuDaY93zj0cnua8cLzbYw0E3aDMnNaJNWqLdtsCrG8YmugD0h+
+         a+4cHXkF3xI2lShe1vjqf9h0d3bd3wMEW9YCroHGDGYSwDkuWUty6vA148fSTxDhRHct
+         4T6L2YlgHkbEpHA1HD8MzJogUYJiQt/6eSKho9Ja3dsN7JV4hVicsUrk+KVLQHi03+7b
+         1IrjY19CvkiqcxBrVV/wV+6e75p8lAMhZe8w5BnyLB5euiytrCIdhpkOvw6KPuT7nuVj
+         BLbQ==
+X-Gm-Message-State: AOJu0YwDH3DzPTFzhioWbdsEdSNsz0ZC05eyQqAZa9npotInM/yo3gyO
+        NagfO/Ss3ONIjNLcKIjVWw==
+X-Google-Smtp-Source: AGHT+IGtFSHkWAYs7Rmg3ynupfWgMC2K0w58JDQY6Ll10QBud020o2yHbCZ3OrASx4vDGZ+riEGT+A==
+X-Received: by 2002:a05:6870:7d12:b0:1ea:3746:b7d6 with SMTP id os18-20020a0568707d1200b001ea3746b7d6mr4026697oab.28.1697464971594;
+        Mon, 16 Oct 2023 07:02:51 -0700 (PDT)
+Received: from robh_at_kernel.org (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id gk24-20020a0568703c1800b001dcde628a6fsm2016544oab.42.2023.10.16.07.02.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Oct 2023 07:02:50 -0700 (PDT)
+Received: (nullmailer pid 2677955 invoked by uid 1000);
+        Mon, 16 Oct 2023 14:02:49 -0000
+Date:   Mon, 16 Oct 2023 09:02:49 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 02/13] dt-bindings: thermal: tegra: Document throttle
+ temperature
+Message-ID: <20231016140249.GA2655027-robh@kernel.org>
+References: <20231012175836.3408077-1-thierry.reding@gmail.com>
+ <20231012175836.3408077-3-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Message-ID: <b306c0fb-36df-4498-af3d-41e7d759a886@rnnvmail204.nvidia.com>
-Date:   Mon, 16 Oct 2023 05:56:00 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF0000150B:EE_|DS0PR12MB8815:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2f6f3d64-4f91-4d65-54e2-08dbce4744dc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: T2IQNk7FihwMd4QYpN+f/73iZpULOsg4MdkLPtjS4ZXrdSx/ji5L7ze4xY1MNhYK50tujvM7lRNCE+2KKS5i074ZHdwFSxwDhYR4mfJ5nfKwKrkEyskmaAz0ul/d+xDeT0C4w9ZTMubiwUJvor1D7A+P4DHB5R2ltwKr6NJvYqZVokutz63aYku+2OrUO+QxfWPV0e5D0nFYAvwjoJ8KeZfusOrQspxXdWNJEboqkPIM4jOHWvXFEcprl9VrBaMTmJtGuNGRGa5WsKEcVuaobbGZfVe+096DMlzuTGoPtNSC5jA8xJaKyZjmjUrraDheiTFbeucDhi/d/QNtjgtiwbxKqc29RYCWhFsZUOKVhotJPuUkqobcVWlcN6ADP2RJ/MEvxKggBj+gRRMWJvaYenGq2ZsczQpt9C2BZZLVKMPdJjkciswzpoa9+wTEVTF+QW2foILgHcKgJOpbaOOvWSJZD6U87b4eWKrZCq+0hVEZOILZhr88w79oyUe+UY68c/ul6df44TX1BWiImOSf84VnaZYHJkH6lrHtmiHd7s/dGPYgzZj69LWNoReVTQj6hukYRNPl2Cd8X0sJHvy2wj9iA8/G2auJ+OrHtoM3WyxgjDmBSRPczc/q16bHiiMZ/NGC7jD7fqc5bbHNTAipwiBfgwk4Q6EWPJB3cnqgHo5G3r2BjRcYaQOHavo1aiwXveeJfuLOZQxeqAwJJAEWf0nvB+c0tTtwGk6H0hGSX0YruetfAPI+fWkPZ6GM4ESOCTSHDfiq7f3Z4FFa8mtSVjFvU12UZ0cDCgpf4V1Dne4=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(376002)(346002)(39860400002)(136003)(230922051799003)(1800799009)(186009)(451199024)(82310400011)(64100799003)(36840700001)(40470700004)(46966006)(86362001)(41300700001)(36860700001)(7416002)(47076005)(5660300002)(8936002)(4326008)(8676002)(31686004)(31696002)(2906002)(70586007)(70206006)(316002)(426003)(336012)(6916009)(54906003)(356005)(7636003)(40480700001)(478600001)(82740400003)(40460700003)(26005)(966005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Oct 2023 12:56:09.4941
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f6f3d64-4f91-4d65-54e2-08dbce4744dc
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SA2PEPF0000150B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8815
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231012175836.3408077-3-thierry.reding@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 16 Oct 2023 10:39:43 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.59 release.
-> There are 131 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, Oct 12, 2023 at 07:58:23PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Responses should be made by Wed, 18 Oct 2023 08:39:40 +0000.
-> Anything received after that time might be too late.
+> Each throttling configuration needs to specify the temperature threshold
+> at which it should start throttling. Previously this was tied to a given
+> trip point as a cooling device and used the temperature specified for
+> that trip point. This doesn't work well because the throttling mechanism
+> is not a cooling device in the traditional sense.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.59-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
+> Instead, allow device trees to specify the throttle temperature in the
+> throttle configuration directly so that the throttle doesn't need to be
+> exposed as a cooling device.
 > 
-> thanks,
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v2:
+> - rename temperature to temperature-millicelsius and drop $ref
+> - add hysteresis-millicelsius property
 > 
-> greg k-h
+>  .../bindings/thermal/nvidia,tegra124-soctherm.yaml | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
+> index 04a2ba1aa946..0eb6277082fe 100644
+> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.yaml
+> @@ -121,6 +121,20 @@ properties:
+>                # high (85%, TEGRA_SOCTHERM_THROT_LEVEL_HIGH)
+>                - 3
+>  
+> +          temperature-millicelsius:
 
-All tests passing for Tegra ...
+'temperature' is redundant since we have units. Perhaps 
+'throttle-millicelsius' or 'auto-throttle-millicelsius' instead to say 
+what the temperature is for.
 
-Test results for stable-v6.1:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+> +            minimum: -273000
+> +            maximum: 200000
 
-Linux version:	6.1.59-rc1-g9b707223d2e9
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Quite impressive operating range.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+> +            description: The temperature threshold (in millicelsius) that,
+> +              when crossed, will trigger the configured automatic throttling.
+> +
+> +          hysteresis-millicelsius:
+> +            description: An unsigned integer expressing the hysteresis delta
+> +              (in millicelsius) with respect to the threshold temperature
+> +              property above. Throttling will be initiated when the
+> +              temperature falls below (temperature - hysteresis). This avoids
+> +              situations where throttling is repeatedly initiated and stopped
+> +              because of minor temperature variations.
+> +
+>            # optional
+>            # Tegra210 specific and valid only for OCx throttle events
+>            nvidia,count-threshold:
+> -- 
+> 2.42.0
+> 
