@@ -2,334 +2,80 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4B8CDB482
-	for <linux-tegra@archiver.kernel.org>; Mon, 16 Oct 2023 18:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC08CDB465
+	for <linux-tegra@archiver.kernel.org>; Mon, 16 Oct 2023 19:49:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233032AbjJPSTV (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 16 Oct 2023 14:19:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53090 "EHLO
+        id S233412AbjJPTte (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 16 Oct 2023 15:49:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232936AbjJPSTU (ORCPT
+        with ESMTP id S233707AbjJPTtd (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 16 Oct 2023 14:19:20 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D67BEE8
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Oct 2023 11:19:15 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-53d9b94731aso8659352a12.1
-        for <linux-tegra@vger.kernel.org>; Mon, 16 Oct 2023 11:19:15 -0700 (PDT)
+        Mon, 16 Oct 2023 15:49:33 -0400
+Received: from mail-ot1-x331.google.com (mail-ot1-x331.google.com [IPv6:2607:f8b0:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2186DF3
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Oct 2023 12:49:29 -0700 (PDT)
+Received: by mail-ot1-x331.google.com with SMTP id 46e09a7af769-6c6504c9ac5so3447104a34.0
+        for <linux-tegra@vger.kernel.org>; Mon, 16 Oct 2023 12:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697480354; x=1698085154; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yHxnwMIuOK6pun4FBy6K8m98uQdlQ5j3Zr63BQJ4VwE=;
-        b=ryfDFKBR//BHm5yLeVLYxiDiksAsxv2jQLH4sey9IbaTwN+sVWh3aJOD9gcojk3Dks
-         4GYIBP+pj8hTuCfJ8JgMZ6weUiYmTTvQRVSrrLU9/WSGaG9hB4gbbF/NMVsb5fZ8Mz5+
-         /PjOizwC7whJXwJ8RumtRzt0g/+Qnu7q/og1dCWllOyGb+szbdY9SaYOAaU+r/eXCVcw
-         p51cnTiYTlFt9jasyQXUt7T64FQH6gSo/uAbCIXx269bs4d0Qmj6gVnC2/bhoFWfwQVK
-         0N1nWDTqN0xEt5ROx+ZXjXyVPJiGwk7EXxTuSq6nHv+bH2rRO5gvsinMO2IwTlnsDNGS
-         s7EA==
+        d=chromium.org; s=google; t=1697485768; x=1698090568; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TDEvoDDFlhaScQdoPW2tJhTzTU/5dfUG14nxqzDs2yA=;
+        b=JsWsXFp7B+tTYU2ItV0yg6gp2M0FieKyfLU1u65a9OD1zULLXTI9IUZjcTP7nPF7Cn
+         YSCdjyak05QNzkxjgILMkBBeuFuaEDcGmtspaaZ0UkOdFWCCO9Y+CEAiN6jstBqMGYAA
+         5fy3L2H023WgcLg5FJNBOoKl/Kgvhf3HtIiXQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697480354; x=1698085154;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yHxnwMIuOK6pun4FBy6K8m98uQdlQ5j3Zr63BQJ4VwE=;
-        b=ZgaudiFYle0aDsNrngvC9in2IhJNPUFggzXhNSmfE38If6hQItGynK1BRARiiv1Jj1
-         vucE68ANwBdHtiqwMtegCb0yEbOK5ROSJaleZ5L72CmRD5zeIecoxuL7PN9pLmNPzbTG
-         boj2kOYc5LWAYnbzAhZkq71Igo6PyVoCy2jX0mMexPp6ashrEYauZfehPGA+lfE43+CB
-         5o/5MqEuqAO9g7909LpdBr3vShDMMV4h9bxCyWLhGQPsypOcz4X9Zy2V3Zzw2jGhKWcz
-         xIy18NllSZXF/c886xinxFHhUn1ghI8Yb7JvEzTWrOIlJahHyQWEVa3A8LfWcVbfSymF
-         XHuA==
-X-Gm-Message-State: AOJu0YwaKmyf2tQbRt2zCa3JGBcfTQ04l3yVf46l/lKhxjN+sUNGM0D9
-        tPUM+xPSLAmiRPzrsgLmqEwJRg==
-X-Google-Smtp-Source: AGHT+IHaIMFNUycBgL3Pnr/xgETpMNd73VZDZCmkin8neQ/N99qgETS78YHHg5F5PDrGT6N3LQzRHg==
-X-Received: by 2002:a05:6402:4405:b0:53e:343a:76c4 with SMTP id y5-20020a056402440500b0053e343a76c4mr7073eda.30.1697480354326;
-        Mon, 16 Oct 2023 11:19:14 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.154])
-        by smtp.gmail.com with ESMTPSA id cw3-20020a056402228300b005333922efb0sm237483edb.78.2023.10.16.11.19.12
+        d=1e100.net; s=20230601; t=1697485768; x=1698090568;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TDEvoDDFlhaScQdoPW2tJhTzTU/5dfUG14nxqzDs2yA=;
+        b=OW5aUZNXh3fr+ZZrRm7K8g6V/cgWDdfZd4zfyZ4mfRz7VqTzw+QjhPPG0j5hu0SVAN
+         VTNRJNAvx8U4g2O9jUeHobzL56uC9PKTvYqGZbmjWuCozaODR1gNDgznJ0zJ9ED30H/f
+         b4cvY2cD+1BJgVLNdksk9PiysLIq3IbtCCG/q92FTj0Z8HQrIpsYXIiUL5vH9echE50j
+         cBF7XeS9iOyTLqkVR0dIgEJ7CcY0WbYAr5rkoPGHCNf3aECO4exlOn2QW8AuQq4zHQxu
+         3qCZ7vNSLAFwgVM7W1Vf8UnkE9ETic7CFoFxA/4A320TB1f8wc8yMC7rkkn7UM41RERt
+         p7iA==
+X-Gm-Message-State: AOJu0YwAO4coAYOivSb5lfCoBC4Vx3bdBb75+t7QOQ4L5K7xqSjwAJhO
+        Vkoq4vdj5X3SYhfbsPOe/IjmDA==
+X-Google-Smtp-Source: AGHT+IGzztkRAoioNbwxGtaNyJL8FtTv0uRRmTERYsx7mf9E05Z0DIj6n8vDcTI8S1PZr6xfpA678g==
+X-Received: by 2002:a9d:6d9a:0:b0:6b8:807b:b50 with SMTP id x26-20020a9d6d9a000000b006b8807b0b50mr221886otp.22.1697485768484;
+        Mon, 16 Oct 2023 12:49:28 -0700 (PDT)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id v67-20020a626146000000b00690d1269691sm309260pfb.22.2023.10.16.12.49.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Oct 2023 11:19:13 -0700 (PDT)
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2] dt-bindings: serial: re-order entries to match coding convention
-Date:   Mon, 16 Oct 2023 20:19:09 +0200
-Message-Id: <20231016181909.368429-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
+        Mon, 16 Oct 2023 12:49:27 -0700 (PDT)
+Date:   Mon, 16 Oct 2023 12:49:27 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Kartik <kkartik@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, andy@kernel.org,
+        akpm@linux-foundation.org, arnd@arndb.de, ulf.hansson@linaro.org,
+        linus.walleij@linaro.org, pshete@nvidia.com, petlozup@nvidia.com,
+        frank.li@vivo.com, robh@kernel.org, stefank@nvidia.com,
+        pdeschrijver@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v5 1/8] mm/util: Introduce kmemdup_array()
+Message-ID: <202310161249.A59D2AE2@keescook>
+References: <20231016053411.3380-1-kkartik@nvidia.com>
+ <20231016053411.3380-2-kkartik@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231016053411.3380-2-kkartik@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The DT schema coding convention expressed in
-Documentation/devicetree/bindings/example-schema.yaml expects entries in
-following order:
- - properties, patternProperties
- - required
- - if blocks, allOf with if-blocks
- - additionalProperties/unevaluatedProperties
+On Mon, Oct 16, 2023 at 11:04:04AM +0530, Kartik wrote:
+> Introduce kmemdup_array() API to duplicate `n` number of elements
+> from a given array. This internally uses kmemdup to allocate and duplicate
+> the `src` array.
+> 
+> Signed-off-by: Kartik <kkartik@nvidia.com>
 
-Re-order few schemas to match the convention to avoid repeating review
-comments for new patches using existing code as template.  No functional
-changes.
+Acked-by: Kees Cook <keescook@chromium.org>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
----
-
-Changes in v2:
-1. Fix typos in commit msg.
-2. Add Geert's review tag.
----
- .../bindings/serial/nvidia,tegra20-hsuart.yaml   | 10 +++++-----
- .../bindings/serial/qcom,msm-uart.yaml           |  4 ++--
- .../bindings/serial/qcom,msm-uartdm.yaml         |  4 ++--
- .../bindings/serial/renesas,em-uart.yaml         | 14 +++++++-------
- .../bindings/serial/renesas,hscif.yaml           |  4 ++--
- .../bindings/serial/renesas,scifa.yaml           |  4 ++--
- .../bindings/serial/renesas,scifb.yaml           |  4 ++--
- .../devicetree/bindings/serial/samsung_uart.yaml |  4 ++--
- .../devicetree/bindings/serial/serial.yaml       | 16 ++++++++--------
- 9 files changed, 32 insertions(+), 32 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
-index 04d55fecf47c..a5d67563cd53 100644
---- a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
-+++ b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.yaml
-@@ -91,11 +91,6 @@ properties:
-         - description: range upper bound
-         - description: adjustment (in permyriad, i.e. 0.01%)
- 
--allOf:
--  - $ref: serial.yaml
--
--unevaluatedProperties: false
--
- required:
-   - compatible
-   - reg
-@@ -106,6 +101,11 @@ required:
-   - dmas
-   - dma-names
- 
-+allOf:
-+  - $ref: serial.yaml
-+
-+unevaluatedProperties: false
-+
- examples:
-   - |
-     #include <dt-bindings/clock/tegra30-car.h>
-diff --git a/Documentation/devicetree/bindings/serial/qcom,msm-uart.yaml b/Documentation/devicetree/bindings/serial/qcom,msm-uart.yaml
-index a052aaef21f4..ea6abfe2d95e 100644
---- a/Documentation/devicetree/bindings/serial/qcom,msm-uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/qcom,msm-uart.yaml
-@@ -40,11 +40,11 @@ required:
-   - interrupts
-   - reg
- 
--unevaluatedProperties: false
--
- allOf:
-   - $ref: /schemas/serial/serial.yaml#
- 
-+unevaluatedProperties: false
-+
- examples:
-   - |
-     serial@a9c00000 {
-diff --git a/Documentation/devicetree/bindings/serial/qcom,msm-uartdm.yaml b/Documentation/devicetree/bindings/serial/qcom,msm-uartdm.yaml
-index 484b9a51f6a9..ee52bf8e8917 100644
---- a/Documentation/devicetree/bindings/serial/qcom,msm-uartdm.yaml
-+++ b/Documentation/devicetree/bindings/serial/qcom,msm-uartdm.yaml
-@@ -78,8 +78,6 @@ required:
-   - interrupts
-   - reg
- 
--unevaluatedProperties: false
--
- allOf:
-   - $ref: /schemas/serial/serial.yaml#
- 
-@@ -97,6 +95,8 @@ allOf:
-         reg:
-           maxItems: 1
- 
-+unevaluatedProperties: false
-+
- examples:
-   - |
-     #include <dt-bindings/interrupt-controller/arm-gic.h>
-diff --git a/Documentation/devicetree/bindings/serial/renesas,em-uart.yaml b/Documentation/devicetree/bindings/serial/renesas,em-uart.yaml
-index 3fc2601f1338..89f1eb0f2c5a 100644
---- a/Documentation/devicetree/bindings/serial/renesas,em-uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,em-uart.yaml
-@@ -38,6 +38,13 @@ properties:
-       - const: sclk
-       - const: pclk
- 
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
- allOf:
-   - $ref: serial.yaml#
- 
-@@ -53,13 +60,6 @@ allOf:
-         clock-names:
-           minItems: 2
- 
--required:
--  - compatible
--  - reg
--  - interrupts
--  - clocks
--  - clock-names
--
- unevaluatedProperties: false
- 
- examples:
-diff --git a/Documentation/devicetree/bindings/serial/renesas,hscif.yaml b/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
-index 1c7f1276aed6..2046e2dc0a3d 100644
---- a/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
-@@ -111,8 +111,6 @@ required:
-   - clock-names
-   - power-domains
- 
--unevaluatedProperties: false
--
- if:
-   properties:
-     compatible:
-@@ -125,6 +123,8 @@ then:
-   required:
-     - resets
- 
-+unevaluatedProperties: false
-+
- examples:
-   - |
-     #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
-diff --git a/Documentation/devicetree/bindings/serial/renesas,scifa.yaml b/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
-index 499507678cdf..c98657cf4666 100644
---- a/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,scifa.yaml
-@@ -77,8 +77,6 @@ required:
-   - clock-names
-   - power-domains
- 
--unevaluatedProperties: false
--
- if:
-   properties:
-     compatible:
-@@ -89,6 +87,8 @@ then:
-   required:
-     - resets
- 
-+unevaluatedProperties: false
-+
- examples:
-   - |
-     #include <dt-bindings/clock/r8a7790-cpg-mssr.h>
-diff --git a/Documentation/devicetree/bindings/serial/renesas,scifb.yaml b/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
-index 810d8a991fdd..fb695b3111ac 100644
---- a/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
-@@ -77,8 +77,6 @@ required:
-   - clock-names
-   - power-domains
- 
--unevaluatedProperties: false
--
- if:
-   properties:
-     compatible:
-@@ -89,6 +87,8 @@ then:
-   required:
-     - resets
- 
-+unevaluatedProperties: false
-+
- examples:
-   - |
-     #include <dt-bindings/clock/r8a7740-clock.h>
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-index 8bd88d5cbb11..aecb6761b49c 100644
---- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -86,8 +86,6 @@ required:
-   - interrupts
-   - reg
- 
--unevaluatedProperties: false
--
- allOf:
-   - $ref: serial.yaml#
- 
-@@ -128,6 +126,8 @@ allOf:
-             - const: uart
-             - const: clk_uart_baud0
- 
-+unevaluatedProperties: false
-+
- examples:
-   - |
-     #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
-diff --git a/Documentation/devicetree/bindings/serial/serial.yaml b/Documentation/devicetree/bindings/serial/serial.yaml
-index 468af429c3e6..65804ca274ae 100644
---- a/Documentation/devicetree/bindings/serial/serial.yaml
-+++ b/Documentation/devicetree/bindings/serial/serial.yaml
-@@ -87,14 +87,6 @@ properties:
-     description:
-       TX FIFO threshold configuration (in bytes).
- 
--if:
--  required:
--    - uart-has-rtscts
--then:
--  properties:
--    cts-gpios: false
--    rts-gpios: false
--
- patternProperties:
-   "^(bluetooth|bluetooth-gnss|gnss|gps|mcu)$":
-     if:
-@@ -136,6 +128,14 @@ patternProperties:
-       required:
-         - compatible
- 
-+if:
-+  required:
-+    - uart-has-rtscts
-+then:
-+  properties:
-+    cts-gpios: false
-+    rts-gpios: false
-+
- additionalProperties: true
- 
- examples:
 -- 
-2.34.1
-
+Kees Cook
