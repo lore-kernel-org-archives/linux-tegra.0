@@ -2,102 +2,84 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2446BC46CA1
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Oct 2023 10:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A308FCDB474
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Oct 2023 18:35:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234627AbjJQKvI (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Oct 2023 06:51:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36598 "EHLO
+        id S233170AbjJQSfP (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Oct 2023 14:35:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234877AbjJQKvF (ORCPT
+        with ESMTP id S232268AbjJQSfO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Oct 2023 06:51:05 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F7711A;
-        Tue, 17 Oct 2023 03:51:03 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7994CC433C8;
-        Tue, 17 Oct 2023 10:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697539863;
-        bh=I+hZXCRSadJ6Ma6lmW3r6cYmgD3Kp3hZpu79EC10yHM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TCSzJHabUzcbY0Ftxmk3DZ934hJeRo43luzPuEcl4P6rQyrO5+Q/M+JTXRGHLpT31
-         9w5+DxCbryRStjrKzka2iSyCYCSfjUyh3sWm7f2Dcotq3qz4hBytpx3LYESSzNUv1h
-         6bZnXgGbsTdGPzV91qkyvlG5gRshzbQlRk4hxe5E/mboxjAcMD8WX1ud+07KdDnraq
-         hus+MJuWPEDOnS+tA97VidHfGhdwMtfkvVNBNLC//7pzkE/sUzU4ErnZVoBr24qw7h
-         byBUsQ6PvuI+f/0eM0DXyAgsqTBNeKAJn5RltNAYAOH2JfyRsmgsbmiY694Sdn0Hu8
-         YI2tSSJp9wvzA==
-Date:   Tue, 17 Oct 2023 11:50:59 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Damien Le Moal <dlemoal@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: ata: tegra: Disallow undefined properties
-Message-ID: <20231017-headscarf-reenact-0a5f589cc0a8@spud>
-References: <20231016155555.2974051-1-robh@kernel.org>
+        Tue, 17 Oct 2023 14:35:14 -0400
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D6EE9E;
+        Tue, 17 Oct 2023 11:35:13 -0700 (PDT)
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3af6cd01323so3729508b6e.3;
+        Tue, 17 Oct 2023 11:35:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697567713; x=1698172513;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IvrIiJWq+n8YDLTkOFBATbZgJOnUihq2U+eENPEqdgI=;
+        b=r07r7jF4FZo4PQAUWLZHeouVmB89GI3FxMVqspmPByc3Zd6ds4Nr/iITI2g+cYl4Sn
+         h8Odrr9dm2YykJfgMm/9zf7+fSdBk6uMFn87HbpsGOcrdefO0QzIPeY0yC/jW5FgHz9N
+         7H5M6oFiYtjE2SLFgtTmF3cFjHzo8Poyu2EB0tXKxBDlgQkdCGM0TE+k5gkm/E4WZ/Qp
+         uN0uN7ev6CdH4h6vCMsEwdfkNXbinWgORTHbfBsNGwAor8gyLMRDHqTnPITcPEF03lti
+         f4LCQX8QfC45I3Is8QUI4lmQTBOdpdiDN9Ta8GpJxX9122mwYfC5JVcUr2RHvxa9GDAV
+         RU/w==
+X-Gm-Message-State: AOJu0Yz75WIFSf4f1daR43y+psrBYRll0Oc9jSglR5eKaIj/rhurRmva
+        a/y1PCsoELYmZLyCMN0pqA==
+X-Google-Smtp-Source: AGHT+IFwrG2G9V+WzMR8t6/VcVQnYVQqqTMf+zxSRlMmdCuFJWQL/bWxYXJZN3yLyevIWE8VSZNj1w==
+X-Received: by 2002:a05:6808:94:b0:3b0:da4a:4823 with SMTP id s20-20020a056808009400b003b0da4a4823mr3195106oic.56.1697567712826;
+        Tue, 17 Oct 2023 11:35:12 -0700 (PDT)
+Received: from herring.priv (66-90-144-107.dyn.grandenetworks.net. [66.90.144.107])
+        by smtp.gmail.com with ESMTPSA id bp18-20020a056808239200b003af644e6e81sm346268oib.45.2023.10.17.11.35.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Oct 2023 11:35:12 -0700 (PDT)
+Received: (nullmailer pid 2484073 invoked by uid 1000);
+        Tue, 17 Oct 2023 18:35:11 -0000
+Date:   Tue, 17 Oct 2023 13:35:11 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Mohan Kumar <mkumard@nvidia.com>
+Cc:     devicetree@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
+        thierry.reding@gmail.com, linux-tegra@vger.kernel.org,
+        vkoul@kernel.org, ldewangan@nvidia.com, robh+dt@kernel.org,
+        dmaengine@vger.kernel.org, jonathanh@nvidia.com
+Subject: Re: [PATCH V2 1/2] dt-bindings: dma: Add dma-channel-mask to
+ nvidia,tegra210-adma
+Message-ID: <169756769843.2483754.101770522333028835.robh@kernel.org>
+References: <20231017091816.2490-1-mkumard@nvidia.com>
+ <20231017091816.2490-2-mkumard@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="D+7CrOTvugCnq/Gc"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231016155555.2974051-1-robh@kernel.org>
+In-Reply-To: <20231017091816.2490-2-mkumard@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---D+7CrOTvugCnq/Gc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Oct 16, 2023 at 10:55:54AM -0500, Rob Herring wrote:
-> Device specific bindings should not allow undefined properties. This is
-> accomplished in json-schema with 'additionalProperties: false'.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-Thanks,
-Conor.
-
+On Tue, 17 Oct 2023 14:48:15 +0530, Mohan Kumar wrote:
+> Add dma-channel-mask binding doc support to nvidia,tegra210-adma
+> to reserve the adma channel usage
+> 
+> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
 > ---
->  Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml=
- b/Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
-> index 3c7a2425f3e6..a17297cbefcb 100644
-> --- a/Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
-> +++ b/Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.yaml
-> @@ -151,7 +151,7 @@ allOf:
->          - interconnects
->          - power-domains
-> =20
-> -additionalProperties: true
-> +additionalProperties: false
-> =20
->  examples:
->    - |
-> --=20
-> 2.42.0
->=20
->=20
+>  .../devicetree/bindings/dma/nvidia,tegra210-adma.yaml          | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
---D+7CrOTvugCnq/Gc
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZS5nEwAKCRB4tDGHoIJi
-0qzPAPwPTStgsGxo3i7fsXQp2OINfuKyEV3O6xG5wvRqPuUZ1QEA0a/b4tlrqCso
-Xdvq0NzJCTV9apOqJbMlYt7JIXavZwQ=
-=lhzd
------END PGP SIGNATURE-----
+If a tag was not added on purpose, please state why and what changed.
 
---D+7CrOTvugCnq/Gc--
+Missing tags:
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+
+
