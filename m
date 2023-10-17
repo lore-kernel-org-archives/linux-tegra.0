@@ -2,98 +2,113 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ACFFC41513
-	for <linux-tegra@archiver.kernel.org>; Tue, 17 Oct 2023 07:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E23DCDB474
+	for <linux-tegra@archiver.kernel.org>; Tue, 17 Oct 2023 09:18:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234652AbjJQHjH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 17 Oct 2023 03:39:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48056 "EHLO
+        id S234855AbjJQJSt (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 17 Oct 2023 05:18:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229666AbjJQHjH (ORCPT
+        with ESMTP id S234864AbjJQJSr (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 17 Oct 2023 03:39:07 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E83FA83;
-        Tue, 17 Oct 2023 00:39:05 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008E3C433C8;
-        Tue, 17 Oct 2023 07:39:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697528345;
-        bh=E3VbYqSMvyiuHUGdccKqMdLJPOjqHC/bdo4qEHIAeUI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eLRvHJ6pDXK67WrNVe+iczMpc4sdd59wHvXDtmiVyYSS4kgiT4gY4ESbvC+D/aBeC
-         mC0Qwe0Pf6qNjvoTklFkR/LNPL3woOPLeqBg9eL4uh9auBBuwaZjYKeg2ZoweXnk5s
-         r1ZgKXgGv5MyEmvpKOOykYGYFeLWK5YUMO5a2usoVBDmZD1vvap2blDYtu1s1X8MuI
-         e05vOHVl0RODMOxM2NLuBkSrYob321SgQ9iJd9QfwK6xrc556uESKDQmgS3cSIJjLV
-         +vZmqqC6kxurd2YmCYbMZpVHDWbvyHmDr3JR/IQ/dXHXlwtS7+SzjYvHrUd1eYZZsJ
-         k8ZUKAQCsxN3w==
-Date:   Tue, 17 Oct 2023 08:38:59 +0100
-From:   Conor Dooley <conor@kernel.org>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: serial: re-order entries to match coding
- convention
-Message-ID: <20231017-grandma-unsuited-e922a2fd24de@spud>
-References: <20231016181909.368429-1-krzysztof.kozlowski@linaro.org>
+        Tue, 17 Oct 2023 05:18:47 -0400
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2070.outbound.protection.outlook.com [40.107.237.70])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B89FDFB;
+        Tue, 17 Oct 2023 02:18:45 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ppa3bX3HIF5/6Cp5w6h5tIVzaWAzLCsETMd4sfw86cI+D8oFVoMchgnVnaPa/M8HEC90gqr9ee24+NrYNQ11c2TPcHwmsY/HZNpoRfMUyDD8lYM4VtBOpcXED2RLTZg2Y8/TafVS/nPc2EDz+qGJE3h0LHlD7ea0mCecMba0cJpX0kWw9H029a2sH7HbyvXYJngUjGHxNv+cjw8c+kTTeOV2tPVVpG7m3E9s0as1lYlAsMbCnP8vykxrsKcmO7+8b3oPIty0XYt2VpwBR0rAxcKIKNlSk1ccydg2yMnf/NwHkkXGvdzIkk5GyvtphYBMGDN3nmM2QV6WJn1tJARi1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t3KQXlpi54W4lYTL0TH4pmkDKa6qxHZ9Uc6hxiVOVRU=;
+ b=kV28as7r7mv/hWcJr/6IFwVx1sVvb68KwQukLa1odHhM/WkPWJoTUElw6Y83CnaVQRElgYhD1FxYp6rnWY98RBDZYy3/XZ50JkhWGw1rdSW3rpq5GXJAFDxldlDQ5noaKk3JHP6mwTON1/bDV3sAtzSk3ujSm9Qn6+GVhgKIrNQTGelIe+RFua7qzWxIM7qHlDgtZ39JCCu+bGVRu9Q5LCoJxw3V7skHLh9xRf3bmyX+LRbCRhLnvCp/F9BV7B2q0j6pWYOSHWEmIU+CzlfAx5SdM5WpiIOVhoe0lljUZtfEBMmDh8i/xUCsh4fcNssDbII0wK1qoVJ/dF2fGhc1UQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t3KQXlpi54W4lYTL0TH4pmkDKa6qxHZ9Uc6hxiVOVRU=;
+ b=IjLDhAyZv9VRGnd2cCYA/0YdpoPybTyO5oycHvpC1IkzqL/4XXfyyYooMQbDBxxvdlorGSagWmvYafT2npjZJfIj6op4pXOtgxeAPWuy0EO0K5ww2lZ426d6ZQH8fZsFXTw1Wye9VU4lCE+bQanu9WMOyrMpwqlDT4IMTH/Wmxq0sHZnpN6WSTAteVMRmtyeBAYVVtHnQu4Wdhl8L1yiq43SucjDRTuo3jYIABzGdvfRzPMiM1swLKF25VqJWyc1EZsN4YenbrirkOIscwIalVx+nhJClX/oGiRVRhqxN1LpHzeeIoEBjTVBCniMSy+GZZD2qeNlLoJgRBFHrekUcg==
+Received: from BL0PR1501CA0014.namprd15.prod.outlook.com
+ (2603:10b6:207:17::27) by PH8PR12MB6673.namprd12.prod.outlook.com
+ (2603:10b6:510:1c0::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6863.45; Tue, 17 Oct
+ 2023 09:18:43 +0000
+Received: from BL6PEPF0001AB4B.namprd04.prod.outlook.com
+ (2603:10b6:207:17:cafe::a1) by BL0PR1501CA0014.outlook.office365.com
+ (2603:10b6:207:17::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6886.36 via Frontend
+ Transport; Tue, 17 Oct 2023 09:18:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL6PEPF0001AB4B.mail.protection.outlook.com (10.167.242.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6838.22 via Frontend Transport; Tue, 17 Oct 2023 09:18:43 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 17 Oct
+ 2023 02:18:35 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Tue, 17 Oct 2023 02:18:34 -0700
+Received: from mkumard.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.986.41 via Frontend
+ Transport; Tue, 17 Oct 2023 02:18:32 -0700
+From:   Mohan Kumar <mkumard@nvidia.com>
+To:     <vkoul@kernel.org>, <robh+dt@kernel.org>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <ldewangan@nvidia.com>, <krzysztof.kozlowski+dt@linaro.org>
+CC:     <dmaengine@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Mohan Kumar <mkumard@nvidia.com>
+Subject: [PATCH V2 0/2] Support dma channel mask
+Date:   Tue, 17 Oct 2023 14:48:14 +0530
+Message-ID: <20231017091816.2490-1-mkumard@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1+71Q60Wioam/cGb"
-Content-Disposition: inline
-In-Reply-To: <20231016181909.368429-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4B:EE_|PH8PR12MB6673:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe1fc924-8ff1-428c-ba3f-08dbcef20f08
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: SW+ND7eoo6a5oGtqwPaOX81OOV5QTkFKzhLGzcRLLooArPa+KrzOBdJ5PrgG7vhFE7M5aV6QMIEz3Bwki0dfxdk8TJb/dJJAHNZNU38XXZ3egBYi7tgY01sCExa3YiI5hZdbEJTpLtNYGY1CrsCc9HDtcv/hqlzMJE667bBBWOT4HARGaOmdIvc0DlbpQgN+LdWUiCayObQOmU0ORO8Nq5Tvc6jhYPB8Qta9yC7nijGGLR6hS2zUh1dVrGCwr0lNnZHVmg0OZUJErfSPP6dOXcg3Qk8eoU39dA461CFrhCFd9dwE/7OsDdC+fD/H1Hn1hYEcax8XFzJhjqTTynSOR0owlwjBTfsyo+5VPKEDftwVkgPRBfny+hjENajivRIJhHdcuJRG6SWVT2BlPSXLB04u3txdkMsseoUrqiJXoHCeoY3SL9zGw2aoURBx38iN6RLl4ORyzySqaJ2Jq791qX/KX+i+O711nmFWlQM3QsEbRmmVFDQEv32RpY0fgLir/zoWMejtRAMaMn8dsxSfqD+FcccpqRds5MPQvMn5eZ8ChEzwU8SqPXWBkVD91fl2Jt8mRT14w9Y94bUNHmKgIqKPVqiBJwsVSIKwG6bGyUv/a+IEpSOiO108JXL2vwX0VyMrLicX+lLGmHaB+ZPWzrii0uOMaW+mNufL7SAB8J2NuCj1gMTUuQk+UplUngUN1w4hO86++r9jQ4fweXaxAkr6QcnOjZCVlduvKgkyv1Zxl0cTwA/t8A8uiXAdJphN
+X-Forefront-Antispam-Report: CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(136003)(39860400002)(346002)(396003)(376002)(230922051799003)(82310400011)(64100799003)(186009)(451199024)(1800799009)(46966006)(36840700001)(40470700004)(47076005)(7696005)(478600001)(36860700001)(83380400001)(2616005)(26005)(7636003)(40460700003)(426003)(40480700001)(336012)(2906002)(6666004)(70206006)(4744005)(8676002)(41300700001)(4326008)(5660300002)(86362001)(316002)(70586007)(110136005)(36756003)(54906003)(107886003)(1076003)(82740400003)(8936002)(356005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Oct 2023 09:18:43.0819
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe1fc924-8ff1-428c-ba3f-08dbcef20f08
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB4B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6673
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
+To reserve the dma channel using dma-channel-mask property for Tegra 
+platforms.
 
---1+71Q60Wioam/cGb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Mohan Kumar (2):
+  dt-bindings: dma: Add dma-channel-mask to nvidia,tegra210-adma
+  dmaengine: tegra210-adma: Support dma-channel-mask property
 
-On Mon, Oct 16, 2023 at 08:19:09PM +0200, Krzysztof Kozlowski wrote:
-> The DT schema coding convention expressed in
-> Documentation/devicetree/bindings/example-schema.yaml expects entries in
-> following order:
->  - properties, patternProperties
->  - required
->  - if blocks, allOf with if-blocks
->  - additionalProperties/unevaluatedProperties
->=20
-> Re-order few schemas to match the convention to avoid repeating review
-> comments for new patches using existing code as template.  No functional
-> changes.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+ .../bindings/dma/nvidia,tegra210-adma.yaml    |  3 ++
+ drivers/dma/tegra210-adma.c                   | 35 +++++++++++++++++--
+ 2 files changed, 36 insertions(+), 2 deletions(-)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+-- 
+2.17.1
 
-Thanks,
-Conor.
-
---1+71Q60Wioam/cGb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZS46EwAKCRB4tDGHoIJi
-0iYrAP97qYyTlCLaxrpzHug1qLPaMkDNoEDl6vLYwErKorOmjAEA+o9HNVu2/Vnk
-aEwghWPY16NO2j39CEu9MQuwz4GAawM=
-=mnUY
------END PGP SIGNATURE-----
-
---1+71Q60Wioam/cGb--
