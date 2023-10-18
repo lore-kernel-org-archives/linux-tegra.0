@@ -2,188 +2,225 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 724ABCDB483
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Oct 2023 11:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FCECDB47E
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Oct 2023 13:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230233AbjJRL66 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Oct 2023 07:58:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39130 "EHLO
+        id S231159AbjJRNE7 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Oct 2023 09:04:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230303AbjJRL6y (ORCPT
+        with ESMTP id S231206AbjJRNE6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Oct 2023 07:58:54 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77BA895;
-        Wed, 18 Oct 2023 04:58:51 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id 2adb3069b0e04-5079eed8bfbso6589686e87.1;
-        Wed, 18 Oct 2023 04:58:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1697630329; x=1698235129; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2HZjnaGwa5TvV5dl/sxySQcLOHk4EGrD00dll5PVeJA=;
-        b=Lo3VHsSiB66SLdquW962+1d7evyV/+IIhgPRTgXKTCIlg5NwtVGo6dQs9hkyjik8kW
-         nFz8AOSH55jrDPT+yjoh56RE6z7tOzAQ6Ndpwt4QKkvttq1jB9vPIuTRFMYCl00Tw0nH
-         irrDtUqp5DGIQEOBHHvQUmQRxGypB3W+ZNAIj9FDoQw6KkmfHJr2pLJJx34x7Be2ziTh
-         u4sQbZJtKMUutwxUVpkQsnqk+Bzyt90WAtRvcONYhlmnQCbXlwXgRYmUAIWpq94H3TUA
-         1a5Di7N34q+OwzBrrmazi60xSLBcMuR/yVeSQfLSOU3CDTkNSddhDg7uciiIwQB101eZ
-         JNzQ==
+        Wed, 18 Oct 2023 09:04:58 -0400
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E759119;
+        Wed, 18 Oct 2023 06:04:56 -0700 (PDT)
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-582a82e6d10so10282eaf.0;
+        Wed, 18 Oct 2023 06:04:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697630329; x=1698235129;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2HZjnaGwa5TvV5dl/sxySQcLOHk4EGrD00dll5PVeJA=;
-        b=S0TL1E3PtoYLfSUmc5/5BETUWdE67C0Io/XBJW8pTEryY9l095yBFTLNJqSeJJhB2d
-         Bo19CCS/HYrzhV8mHO6YZDhjkyJWWzC3OpjZ7dQO6tmNsVfxdPqTjXngr9GNZkdRmbNk
-         30Id4tIP/ZGSQKPbA3BlefcvkoshiZf2Sb+YISGSFgIZxs77r2Y9OO3XmC8fOepXuIyi
-         cGHfb65+O/Wgmuj+mMvpPsa/alFjatoXqojSYa1Ck/nseRIPffhtIk/kOSJvdgctG/W9
-         1srSZz/MGAwjhZPpspavspw6/6x12vzF9f3H/yQNsxDL8VvxCFL3raZXboSZ1xJrE4Ph
-         XWuA==
-X-Gm-Message-State: AOJu0YyYJqEfEGJgkma7BAuVQs6/CtCKSqxJwTw8S15QTLDfrPMI9n2t
-        HktG4cUfzUcNvpzIMOC5r3Q=
-X-Google-Smtp-Source: AGHT+IGDRs6ujQYt61uHUyuK2nZPaUHqMKNTJs1USNR1zu9RKEbLV1M3xtEtAllA7nWWty8ovI/qTw==
-X-Received: by 2002:ac2:528a:0:b0:507:9625:5fd3 with SMTP id q10-20020ac2528a000000b0050796255fd3mr3691084lfm.32.1697630329349;
-        Wed, 18 Oct 2023 04:58:49 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id f13-20020a056512360d00b005007fc9ccccsm679059lfs.122.2023.10.18.04.58.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Oct 2023 04:58:48 -0700 (PDT)
-Date:   Wed, 18 Oct 2023 14:58:46 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/7] PCI: dwc: Use FIELD_GET/PREP()
-Message-ID: <3o4neokfqofk42zrx5t5su72qmdu2x62rq5u2ywfobqyyg23rc@aksd3afajhwr>
-References: <20231018113254.17616-1-ilpo.jarvinen@linux.intel.com>
- <20231018113254.17616-3-ilpo.jarvinen@linux.intel.com>
+        d=1e100.net; s=20230601; t=1697634295; x=1698239095;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D0SRSPeAfVm/OB4Q86vFV9kJ7aNqnSHVhsB69HY3UnI=;
+        b=MXPzXyEfhZKaHYhUoVcMY49WBpGGN4dYDNA3DDPyZafsLfFLV3lenVRbyKTHIZBO4A
+         Ut5G7KmZ0SNWHs6ltdihN413ul8Dyagr3Jp2/gglvWfejSr0MFZBlra3J4zt0VcHkeeK
+         v5f0yeXUNV+EEJ+GsL9qdvaBEW68Qldvx4ObLuIVVFv/1zdZ9UyqyRCrOnblWUL0zoW6
+         Cf4r/1M0NfGuUNgIe9u4InkhGWsnJ0eog4SHw6Q6fOw3yA30z3xE9wUi+pqKgEBF9cso
+         AoCDl2sDkuc0Fh6PFU0Rjd4Qu2CbEkwtGY5KaEdhGfisZ2zc6M7HkjyhFIgp5CWl0vpe
+         CPRA==
+X-Gm-Message-State: AOJu0YxSakaxgK549IcSzK+sUSidcZZUSUghEsgAyrPK9glJa1Kyv49f
+        ZtGFZXAb5tlReuT4L5wOxtKwijDrtdExaMojqj0=
+X-Google-Smtp-Source: AGHT+IG57X3mbn4wBvOm5puVsKIvyX8GcNe2LUDaudB1ZSTZwuqMifIfoBTQX8YgUfnsWPlF16tTzjXeFrD39Ja0WKE=
+X-Received: by 2002:a4a:d898:0:b0:581:84e9:a7ad with SMTP id
+ b24-20020a4ad898000000b0058184e9a7admr5226358oov.1.1697634295252; Wed, 18 Oct
+ 2023 06:04:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231018113254.17616-3-ilpo.jarvinen@linux.intel.com>
+References: <20231014105426.26389-1-sumitg@nvidia.com> <20231014105426.26389-3-sumitg@nvidia.com>
+In-Reply-To: <20231014105426.26389-3-sumitg@nvidia.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 18 Oct 2023 15:04:43 +0200
+Message-ID: <CAJZ5v0ivZd-+wRtCNE4t1P=SjJSEJmW6s7GyuYELWg-v87Tw2w@mail.gmail.com>
+Subject: Re: [Patch v5 2/2] ACPI: processor: reduce CPUFREQ thermal reduction
+ pctg for Tegra241
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     rafael@kernel.org, rui.zhang@intel.com, lenb@kernel.org,
+        linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, treding@nvidia.com,
+        jonathanh@nvidia.com, bbasu@nvidia.com, sanjayc@nvidia.com,
+        ksitaraman@nvidia.com, srikars@nvidia.com, jbrasen@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Oct 18, 2023 at 02:32:49PM +0300, Ilpo Järvinen wrote:
-> Convert open-coded variants of PCI field access into FIELD_GET/PREP()
-> to make the code easier to understand.
-> 
-> Add two missing defines into pci_regs.h. Logically, the Max No-Snoop
-> Latency Register is a separate word sized register in the PCIe spec,
-> but the pre-existing LTR defines in pci_regs.h with dword long values
-> seem to consider the registers together (the same goes for the only
-> user). Thus, follow the custom and make the new values also take both
-> word long LTR registers as a joint dword register.
-
-Nice work. Thanks! Could you also have a look at
-drivers/pci/controller/dwc/pcie-designware.c
-?
-It contains two open-coded patterns:
-(bar << 8) - FIELD_PREP()
-next_cap_ptr = (reg & 0xff00) >> 8; - FIELD_GET().
-next_cap_ptr = (reg & 0x00ff); - FIELD_GET().
-At least the later two statements concern the generic PCIe capability CSR.
-
--Serge(y)
-
-
-> 
-> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+On Sat, Oct 14, 2023 at 12:55â€¯PM Sumit Gupta <sumitg@nvidia.com> wrote:
+>
+> From: Srikar Srimath Tirumala <srikars@nvidia.com>
+>
+> Current implementation of processor_thermal performs software throttling
+> in fixed steps of "20%" which can be too coarse for some platforms.
+> We observed some performance gain after reducing the throttle percentage.
+> Change the CPUFREQ thermal reduction percentage and maximum thermal steps
+> to be configurable. Also, update the default values of both for Nvidia
+> Tegra241 (Grace) SoC. The thermal reduction percentage is reduced to "5%"
+> and accordingly the maximum number of thermal steps are increased as they
+> are derived from the reduction percentage.
+>
+> Signed-off-by: Srikar Srimath Tirumala <srikars@nvidia.com>
+> Co-developed-by: Sumit Gupta <sumitg@nvidia.com>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 > ---
->  drivers/pci/controller/dwc/pcie-designware-ep.c | 7 ++++---
->  drivers/pci/controller/dwc/pcie-tegra194.c      | 5 ++---
->  include/uapi/linux/pci_regs.h                   | 2 ++
->  3 files changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index f9182f8d552f..20bef1436bfb 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -6,6 +6,7 @@
->   * Author: Kishon Vijay Abraham I <kishon@ti.com>
+>  drivers/acpi/arm64/Makefile          |  1 +
+>  drivers/acpi/arm64/thermal_cpufreq.c | 20 ++++++++++++++++
+>  drivers/acpi/processor_thermal.c     | 35 +++++++++++++++++++++++++---
+>  include/linux/acpi.h                 |  9 +++++++
+>  4 files changed, 62 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/acpi/arm64/thermal_cpufreq.c
+>
+> diff --git a/drivers/acpi/arm64/Makefile b/drivers/acpi/arm64/Makefile
+> index 143debc1ba4a..3f181d8156cc 100644
+> --- a/drivers/acpi/arm64/Makefile
+> +++ b/drivers/acpi/arm64/Makefile
+> @@ -5,3 +5,4 @@ obj-$(CONFIG_ACPI_GTDT)         += gtdt.o
+>  obj-$(CONFIG_ACPI_APMT)        += apmt.o
+>  obj-$(CONFIG_ARM_AMBA)         += amba.o
+>  obj-y                          += dma.o init.o
+> +obj-$(CONFIG_ACPI)             += thermal_cpufreq.o
+> diff --git a/drivers/acpi/arm64/thermal_cpufreq.c b/drivers/acpi/arm64/thermal_cpufreq.c
+> new file mode 100644
+> index 000000000000..de834fb013e7
+> --- /dev/null
+> +++ b/drivers/acpi/arm64/thermal_cpufreq.c
+> @@ -0,0 +1,20 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +#include <linux/acpi.h>
+> +
+> +#ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
+> +#define SMCCC_SOC_ID_T241      0x036b0241
+> +
+> +int acpi_thermal_cpufreq_pctg(void)
+> +{
+> +       s32 soc_id = arm_smccc_get_soc_id_version();
+> +
+> +       /*
+> +        * Check JEP106 code for NVIDIA Tegra241 chip (036b:0241) and
+> +        * reduce the CPUFREQ Thermal reduction percentage to 5%.
+> +        */
+> +       if (soc_id == SMCCC_SOC_ID_T241)
+> +               return 5;
+> +
+> +       return 0;
+> +}
+> +#endif
+
+This part needs an ACK from the ARM folks.
+
+> diff --git a/drivers/acpi/processor_thermal.c b/drivers/acpi/processor_thermal.c
+> index b7c6287eccca..52f316e4e260 100644
+> --- a/drivers/acpi/processor_thermal.c
+> +++ b/drivers/acpi/processor_thermal.c
+> @@ -26,7 +26,16 @@
 >   */
->  
-> +#include <linux/bitfield.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  
-> @@ -334,7 +335,7 @@ static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no, u8 vfunc_no)
->  	if (!(val & PCI_MSI_FLAGS_ENABLE))
->  		return -EINVAL;
->  
-> -	val = (val & PCI_MSI_FLAGS_QSIZE) >> 4;
-> +	val = FIELD_GET(PCI_MSI_FLAGS_QSIZE, val);
->  
->  	return val;
+>
+>  #define CPUFREQ_THERMAL_MIN_STEP 0
+> -#define CPUFREQ_THERMAL_MAX_STEP 3
+> +
+> +static int cpufreq_thermal_max_step __read_mostly = 3;
+> +
+> +/*
+> + * Minimum throttle percentage for processor_thermal cooling device.
+> + * The processor_thermal driver uses it to calculate the percentage amount by
+> + * which cpu frequency must be reduced for each cooling state. This is also used
+> + * to calculate the maximum number of throttling steps or cooling states.
+> + */
+> +static int cpufreq_thermal_pctg __read_mostly = 20;
+
+I'd call this cpufreq_thermal_reduction_step, because the value
+multiplied by it already is in percent.
+
+>
+>  static DEFINE_PER_CPU(unsigned int, cpufreq_thermal_reduction_pctg);
+>
+> @@ -71,7 +80,7 @@ static int cpufreq_get_max_state(unsigned int cpu)
+>         if (!cpu_has_cpufreq(cpu))
+>                 return 0;
+>
+> -       return CPUFREQ_THERMAL_MAX_STEP;
+> +       return cpufreq_thermal_max_step;
 >  }
-> @@ -357,7 +358,7 @@ static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
->  	reg = ep_func->msi_cap + func_offset + PCI_MSI_FLAGS;
->  	val = dw_pcie_readw_dbi(pci, reg);
->  	val &= ~PCI_MSI_FLAGS_QMASK;
-> -	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
-> +	val |= FIELD_PREP(PCI_MSI_FLAGS_QMASK, interrupts);
->  	dw_pcie_dbi_ro_wr_en(pci);
->  	dw_pcie_writew_dbi(pci, reg, val);
->  	dw_pcie_dbi_ro_wr_dis(pci);
-> @@ -584,7 +585,7 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
->  
->  	reg = ep_func->msix_cap + func_offset + PCI_MSIX_TABLE;
->  	tbl_offset = dw_pcie_readl_dbi(pci, reg);
-> -	bir = (tbl_offset & PCI_MSIX_TABLE_BIR);
-> +	bir = FIELD_GET(PCI_MSIX_TABLE_BIR, tbl_offset);
->  	tbl_offset &= PCI_MSIX_TABLE_OFFSET;
->  
->  	msix_tbl = ep->epf_bar[bir]->addr + tbl_offset;
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 248cd9347e8f..12d5ab2f5219 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -126,7 +126,6 @@
->  
->  #define APPL_LTR_MSG_1				0xC4
->  #define LTR_MSG_REQ				BIT(15)
-> -#define LTR_MST_NO_SNOOP_SHIFT			16
->  
->  #define APPL_LTR_MSG_2				0xC8
->  #define APPL_LTR_MSG_2_LTR_MSG_REQ_STATE	BIT(3)
-> @@ -496,8 +495,8 @@ static irqreturn_t tegra_pcie_ep_irq_thread(int irq, void *arg)
->  		ktime_t timeout;
->  
->  		/* 110us for both snoop and no-snoop */
-> -		val = 110 | (2 << PCI_LTR_SCALE_SHIFT) | LTR_MSG_REQ;
-> -		val |= (val << LTR_MST_NO_SNOOP_SHIFT);
-> +		val = 110 | FIELD_PREP(PCI_LTR_SCALE_SHIFT, 2) | LTR_MSG_REQ;
-> +		val |= FIELD_PREP(PCI_LTR_NOSNOOP_VALUE, val);
->  		appl_writel(pcie, val, APPL_LTR_MSG_1);
->  
->  		/* Send LTR upstream */
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index e5f558d96493..495f0ae4ecd5 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -975,6 +975,8 @@
->  #define  PCI_LTR_VALUE_MASK	0x000003ff
->  #define  PCI_LTR_SCALE_MASK	0x00001c00
->  #define  PCI_LTR_SCALE_SHIFT	10
-> +#define  PCI_LTR_NOSNOOP_VALUE	0x03ff0000 /* Max No-Snoop Latency Value */
-> +#define  PCI_LTR_NOSNOOP_SCALE	0x1c000000 /* Scale for Max Value */
->  #define PCI_EXT_CAP_LTR_SIZEOF	8
->  
->  /* Access Control Service */
-> -- 
-> 2.30.2
-> 
+>
+>  static int cpufreq_get_cur_state(unsigned int cpu)
+> @@ -113,7 +122,8 @@ static int cpufreq_set_cur_state(unsigned int cpu, int state)
+>                 if (!policy)
+>                         return -EINVAL;
+>
+> -               max_freq = (policy->cpuinfo.max_freq * (100 - reduction_pctg(i) * 20)) / 100;
+> +               max_freq = (policy->cpuinfo.max_freq *
+> +                           (100 - reduction_pctg(i) * cpufreq_thermal_pctg)) / 100;
+>
+>                 cpufreq_cpu_put(policy);
+>
+> @@ -126,10 +136,29 @@ static int cpufreq_set_cur_state(unsigned int cpu, int state)
+>         return 0;
+>  }
+>
+> +static void acpi_thermal_cpufreq_config(void)
+> +{
+> +       int cpufreq_pctg = acpi_thermal_cpufreq_pctg();
+> +
+> +       if (!cpufreq_pctg)
+> +               return;
+> +
+> +       cpufreq_thermal_pctg = cpufreq_pctg;
+> +
+> +       /*
+> +        * Derive the MAX_STEP from minimum throttle percentage so that the reduction
+> +        * percentage doesn't end up becoming negative. Also, cap the MAX_STEP so that
+> +        * the CPU performance doesn't become 0.
+> +        */
+> +       cpufreq_thermal_max_step = (100 / cpufreq_thermal_pctg) - 1;
+
+Why don't you use the local variable in the expression on the right-hand side?
+
+Also please note that the formula doesn't allow the default
+combination of reduction_step and max_step to be produced which is a
+bit odd.
+
+What would be wrong with max_step = 60 / reduction_step?
+
+> +}
+> +
+>  void acpi_thermal_cpufreq_init(struct cpufreq_policy *policy)
+>  {
+>         unsigned int cpu;
+>
+> +       acpi_thermal_cpufreq_config();
+> +
+>         for_each_cpu(cpu, policy->related_cpus) {
+>                 struct acpi_processor *pr = per_cpu(processors, cpu);
+>                 int ret;
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index ba3f601b6e3d..407617670221 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1541,4 +1541,13 @@ static inline void acpi_device_notify(struct device *dev) { }
+>  static inline void acpi_device_notify_remove(struct device *dev) { }
+>  #endif
+>
+> +#ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
+> +int acpi_thermal_cpufreq_pctg(void);
+> +#else
+> +static inline int acpi_thermal_cpufreq_pctg(void)
+> +{
+> +       return 0;
+> +}
+> +#endif
+> +
+
+This can go into drivers/acpi/internal.h as far as I'm concerned.
+
+>  #endif /*_LINUX_ACPI_H*/
+> --
