@@ -2,225 +2,196 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FCECDB47E
-	for <linux-tegra@archiver.kernel.org>; Wed, 18 Oct 2023 13:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF13CDB47E
+	for <linux-tegra@archiver.kernel.org>; Wed, 18 Oct 2023 13:06:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231159AbjJRNE7 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 18 Oct 2023 09:04:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42196 "EHLO
+        id S230391AbjJRNGQ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 18 Oct 2023 09:06:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231206AbjJRNE6 (ORCPT
+        with ESMTP id S230368AbjJRNGO (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 18 Oct 2023 09:04:58 -0400
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E759119;
-        Wed, 18 Oct 2023 06:04:56 -0700 (PDT)
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-582a82e6d10so10282eaf.0;
-        Wed, 18 Oct 2023 06:04:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697634295; x=1698239095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D0SRSPeAfVm/OB4Q86vFV9kJ7aNqnSHVhsB69HY3UnI=;
-        b=MXPzXyEfhZKaHYhUoVcMY49WBpGGN4dYDNA3DDPyZafsLfFLV3lenVRbyKTHIZBO4A
-         Ut5G7KmZ0SNWHs6ltdihN413ul8Dyagr3Jp2/gglvWfejSr0MFZBlra3J4zt0VcHkeeK
-         v5f0yeXUNV+EEJ+GsL9qdvaBEW68Qldvx4ObLuIVVFv/1zdZ9UyqyRCrOnblWUL0zoW6
-         Cf4r/1M0NfGuUNgIe9u4InkhGWsnJ0eog4SHw6Q6fOw3yA30z3xE9wUi+pqKgEBF9cso
-         AoCDl2sDkuc0Fh6PFU0Rjd4Qu2CbEkwtGY5KaEdhGfisZ2zc6M7HkjyhFIgp5CWl0vpe
-         CPRA==
-X-Gm-Message-State: AOJu0YxSakaxgK549IcSzK+sUSidcZZUSUghEsgAyrPK9glJa1Kyv49f
-        ZtGFZXAb5tlReuT4L5wOxtKwijDrtdExaMojqj0=
-X-Google-Smtp-Source: AGHT+IG57X3mbn4wBvOm5puVsKIvyX8GcNe2LUDaudB1ZSTZwuqMifIfoBTQX8YgUfnsWPlF16tTzjXeFrD39Ja0WKE=
-X-Received: by 2002:a4a:d898:0:b0:581:84e9:a7ad with SMTP id
- b24-20020a4ad898000000b0058184e9a7admr5226358oov.1.1697634295252; Wed, 18 Oct
- 2023 06:04:55 -0700 (PDT)
+        Wed, 18 Oct 2023 09:06:14 -0400
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2080.outbound.protection.outlook.com [40.107.223.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7565B10F;
+        Wed, 18 Oct 2023 06:06:11 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hWBK7xL0pcewK9g7f7okcTvLaGZCigTPYrxyDVBzSiEgA8/72AhcoN5XWoikh7zd8IU6khX9K+v9aUe4UUI5MAeDm4BmogDFoSDmH0HZTvU+230JPOxJA+y+SkYZnecqYWnk56sdYTJTUW3liW5i29M1nMfuBkyvQBezxKFbkaXGGEZespinVgkjisPCwUc23qZJKZTi8mYkq7E1+VV7zaI7fuLxgoe37YqV6LB1/sQDq+hO0b4m21CTXXFqBVW976VbnDvjypJCIDyw4AhNolIjCoNqS87cv/vPTY75RQMjVPOTD3Q+UMnG2EDfC1XWZTrJt10Q9OaMuQAfefmx5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Mgc64HneaXWmkf4iLuq59ahhL/P6EBbY1HjvRfgsrUs=;
+ b=Y9pG8gsN7GbYhGjdvnKeFUgfbTczZcGiwdIzenkbE3yeWR5Ma2zq4Rv0xGBmbhGQs7b84eGWrNph9BeAbMuyDgh2HrQN5+IZtBdcuqG0YD1SggE9Z2tMWE6XIYeNuLZlPE7MuWnI8tNFIMbDenQwx+Vwo+ooTUfo7vmnmwMHjG0Qu4YG0Vqu8E+MPgeSDpa1Ynsf92HJZMDj/oNSZVA7y5BlTBhqX36M57dt9ZsOkmpGr3q2zQxWfjhQcltZImegMeEyCTf9B8i6vlc/gk9RYOrQi6atMdb2ncsJjiluK4ZOi/7i/y5w1Xr34gjgNOB0paOkLJSnhtYJH5GkOUvxlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mgc64HneaXWmkf4iLuq59ahhL/P6EBbY1HjvRfgsrUs=;
+ b=Chwz6mW7a+cjv1vXN9nHbljY5g3i6kmv5U+Y2DrKY2kYrOzvLwQjHdobUA//B7N7iJW9NA53CQ+TClNo/9Pyt8y+WUOzxTesRkVSA/kpRvhdLt9+p6/ZkI4SUu4h+bNlwgWXh2XqCljIQ50sXLHfUR9iwZjo3ZHs+FcSaw7mVd2g+HCUSZiPmKrq0UjaAQf3VgfOISPhd+DOu7xZLH16oQGMRq5dgDldstXXrguac+bbk81v2Qg+dow96d92s7Md14BnFBWfH4r47cSZDVgWMY6eYcO5L8UPTRCQYyK3ZBM9zN+6kOAz94K00dfKMcML5d7UAVoFWoiaJWXh6NMcqA==
+Received: from MN2PR20CA0031.namprd20.prod.outlook.com (2603:10b6:208:e8::44)
+ by BY5PR12MB5512.namprd12.prod.outlook.com (2603:10b6:a03:1df::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.24; Wed, 18 Oct
+ 2023 13:06:09 +0000
+Received: from BL6PEPF0001AB53.namprd02.prod.outlook.com
+ (2603:10b6:208:e8:cafe::68) by MN2PR20CA0031.outlook.office365.com
+ (2603:10b6:208:e8::44) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6907.24 via Frontend
+ Transport; Wed, 18 Oct 2023 13:06:09 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF0001AB53.mail.protection.outlook.com (10.167.241.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6838.22 via Frontend Transport; Wed, 18 Oct 2023 13:06:08 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 18 Oct
+ 2023 06:05:54 -0700
+Received: from [10.41.21.79] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 18 Oct
+ 2023 06:05:50 -0700
+Message-ID: <6a5710f6-bfbb-5dfd-11cd-0cd02220cee7@nvidia.com>
+Date:   Wed, 18 Oct 2023 18:35:47 +0530
 MIME-Version: 1.0
-References: <20231014105426.26389-1-sumitg@nvidia.com> <20231014105426.26389-3-sumitg@nvidia.com>
-In-Reply-To: <20231014105426.26389-3-sumitg@nvidia.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 18 Oct 2023 15:04:43 +0200
-Message-ID: <CAJZ5v0ivZd-+wRtCNE4t1P=SjJSEJmW6s7GyuYELWg-v87Tw2w@mail.gmail.com>
-Subject: Re: [Patch v5 2/2] ACPI: processor: reduce CPUFREQ thermal reduction
- pctg for Tegra241
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     rafael@kernel.org, rui.zhang@intel.com, lenb@kernel.org,
-        linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, treding@nvidia.com,
-        jonathanh@nvidia.com, bbasu@nvidia.com, sanjayc@nvidia.com,
-        ksitaraman@nvidia.com, srikars@nvidia.com, jbrasen@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] arm64: Provide an AMU-based version of
+ arch_freq_get_on_cpu
+Content-Language: en-US
+To:     Beata Michalska <beata.michalska@arm.com>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
+        <will@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <sudeep.holla@arm.com>, <ionela.voinescu@arm.com>,
+        <yang@os.amperecomputing.com>, <linux-tegra@vger.kernel.org>,
+        Sumit Gupta <sumitg@nvidia.com>,
+        "Sanjay Chandrashekara" <sanjayc@nvidia.com>
+References: <20230606155754.245998-1-beata.michalska@arm.com>
+ <8e755438-4b1f-b3d6-b2b8-a5efcca813bc@nvidia.com>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <8e755438-4b1f-b3d6-b2b8-a5efcca813bc@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB53:EE_|BY5PR12MB5512:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6d88439-04db-4a34-4861-08dbcfdaff01
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 69nCBobvn1xeUG27TVhMzlBxrZpJoIcEKKeQPxMHKCtatGAHrFVzqouVEkU0KYcLDP8vzEhOQ/U13TDbv5cllv3IAdk7eKYTHgz34uH+CmYwvzFxPL6+0ixUzEKvDzm+P5zpkU4jF6FKAIBYKg7DGkKz68YrpSToZYeP8QED+w1ezcL22RcG/byqmbvGPZpGePMR5LNmMODZMnN4Cxy4Pw1b4EXmM/hZW79NNsb0CKKglJ8TM1ZisSZQKlRz4IYLOWx7WtNZQiVnqFKZ9ir2x8JetyAv0YKfEZTnq1lnk8H3djjjhZj6jpIkVKABZSXgrMxCHHQDlJ7b5+XCVSFBoyWo4rlXHhfgydZr8bmDY033KrBDUCqRjJqh7UKzRMksxu1lQogjhpynQVLHhfon9IE9wbvpgSqLjS9oh//KysUz7Bs3aYaxb7pAbTCCv8JPdvM3YViR4JP7u2u2R09M/EQ/cRLHlfZ8QS1Q3SfNqZvatBl0NiwNxPEuSUUbNnZrTmUNOtafA3pnXOZXRIyjOMNor0cUR8bTi/Q53sb0Y6nziLOof7o4k8KtFzjec9quEL3nvruxl+MUMSUZnFXJzNWA+oTI/EVA+wQhy494fze/2TsRcK/7Qx1ZiIdME/VSV2hMQ1+hhdle18COqRC/eZ00E00dB/03l7YepnQMOKdGJH8Jdb3350g42r0ZhdPyJCQgu97ZjARq9ZG+ApuMNLSFyQz5+2rQua3FgWDUCUK7A6qFYhJ0hLSuHi7EsxYEm0+U4ZpfcL3JZahqCh16DmYw/0grro66VfLBnRVmJEbKiccDJI6fhpDQiea5coUydom+yjDHTnoeNES2z17Sqf9boJdQ70LbxobNj59lhaSGTtYtAcji3D/sikd6s3Sm
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(396003)(376002)(39860400002)(136003)(230922051799003)(451199024)(82310400011)(186009)(1800799009)(64100799003)(40470700004)(36840700001)(46966006)(83380400001)(40480700001)(40460700003)(107886003)(36756003)(2616005)(31696002)(2906002)(86362001)(316002)(16576012)(110136005)(70206006)(41300700001)(54906003)(5660300002)(7416002)(70586007)(4326008)(8676002)(8936002)(478600001)(6666004)(53546011)(966005)(336012)(426003)(7636003)(356005)(26005)(16526019)(82740400003)(36860700001)(31686004)(47076005)(43740500002)(2101003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Oct 2023 13:06:08.8807
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6d88439-04db-4a34-4861-08dbcfdaff01
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB53.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB5512
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Oct 14, 2023 at 12:55 PM Sumit Gupta <sumitg@nvidia.com> wrote:
->
-> From: Srikar Srimath Tirumala <srikars@nvidia.com>
->
-> Current implementation of processor_thermal performs software throttling
-> in fixed steps of "20%" which can be too coarse for some platforms.
-> We observed some performance gain after reducing the throttle percentage.
-> Change the CPUFREQ thermal reduction percentage and maximum thermal steps
-> to be configurable. Also, update the default values of both for Nvidia
-> Tegra241 (Grace) SoC. The thermal reduction percentage is reduced to "5%"
-> and accordingly the maximum number of thermal steps are increased as they
-> are derived from the reduction percentage.
->
-> Signed-off-by: Srikar Srimath Tirumala <srikars@nvidia.com>
-> Co-developed-by: Sumit Gupta <sumitg@nvidia.com>
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  drivers/acpi/arm64/Makefile          |  1 +
->  drivers/acpi/arm64/thermal_cpufreq.c | 20 ++++++++++++++++
->  drivers/acpi/processor_thermal.c     | 35 +++++++++++++++++++++++++---
->  include/linux/acpi.h                 |  9 +++++++
->  4 files changed, 62 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/acpi/arm64/thermal_cpufreq.c
->
-> diff --git a/drivers/acpi/arm64/Makefile b/drivers/acpi/arm64/Makefile
-> index 143debc1ba4a..3f181d8156cc 100644
-> --- a/drivers/acpi/arm64/Makefile
-> +++ b/drivers/acpi/arm64/Makefile
-> @@ -5,3 +5,4 @@ obj-$(CONFIG_ACPI_GTDT)         += gtdt.o
->  obj-$(CONFIG_ACPI_APMT)        += apmt.o
->  obj-$(CONFIG_ARM_AMBA)         += amba.o
->  obj-y                          += dma.o init.o
-> +obj-$(CONFIG_ACPI)             += thermal_cpufreq.o
-> diff --git a/drivers/acpi/arm64/thermal_cpufreq.c b/drivers/acpi/arm64/thermal_cpufreq.c
-> new file mode 100644
-> index 000000000000..de834fb013e7
-> --- /dev/null
-> +++ b/drivers/acpi/arm64/thermal_cpufreq.c
-> @@ -0,0 +1,20 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include <linux/acpi.h>
-> +
-> +#ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
-> +#define SMCCC_SOC_ID_T241      0x036b0241
-> +
-> +int acpi_thermal_cpufreq_pctg(void)
-> +{
-> +       s32 soc_id = arm_smccc_get_soc_id_version();
-> +
-> +       /*
-> +        * Check JEP106 code for NVIDIA Tegra241 chip (036b:0241) and
-> +        * reduce the CPUFREQ Thermal reduction percentage to 5%.
-> +        */
-> +       if (soc_id == SMCCC_SOC_ID_T241)
-> +               return 5;
-> +
-> +       return 0;
-> +}
-> +#endif
 
-This part needs an ACK from the ARM folks.
 
-> diff --git a/drivers/acpi/processor_thermal.c b/drivers/acpi/processor_thermal.c
-> index b7c6287eccca..52f316e4e260 100644
-> --- a/drivers/acpi/processor_thermal.c
-> +++ b/drivers/acpi/processor_thermal.c
-> @@ -26,7 +26,16 @@
->   */
->
->  #define CPUFREQ_THERMAL_MIN_STEP 0
-> -#define CPUFREQ_THERMAL_MAX_STEP 3
-> +
-> +static int cpufreq_thermal_max_step __read_mostly = 3;
-> +
-> +/*
-> + * Minimum throttle percentage for processor_thermal cooling device.
-> + * The processor_thermal driver uses it to calculate the percentage amount by
-> + * which cpu frequency must be reduced for each cooling state. This is also used
-> + * to calculate the maximum number of throttling steps or cooling states.
-> + */
-> +static int cpufreq_thermal_pctg __read_mostly = 20;
+On 15/06/23 00:29, Sumit Gupta wrote:
+> 
+> 
+> On 06/06/23 21:27, Beata Michalska wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> With the Frequency Invariance Engine (FIE) being already wired up with
+>> sched tick and making use of relevant (core counter and constant
+>> counter) AMU counters, getting the current frequency for a given CPU
+>> on supported platforms, can be achieved by utilizing the frequency scale
+>> factor which reflects an average CPU frequency for the last tick period
+>> length.
+>>
+>> With that at hand, arch_freq_get_on_cpu dedicated implementation
+>> gets enrolled into cpuinfo_cur_freq policy sysfs attribute handler,
+>> which is expected to represent the current frequency of a given CPU,
+>> as obtained by the hardware. This is exactly the type of feedback that
+>> cycle counters provide.
+>>
+>> In order to avoid calling arch_freq_get_on_cpu from the scaling_cur_freq
+>> attribute handler for platforms that do provide cpuinfo_cur_freq, and
+>> yet keeping things intact for those platform that do not, its use gets
+>> conditioned on the presence of cpufreq_driver (*get) callback (which also
+>> seems to be the case for creating cpuinfo_cur_freq attribute).
+>>
+> 
+> Tested the change with frequency switch stress test but was getting big 
+> delta between set and get freq.
+> After passing "nohz=off" and commenting "wfi" in "cpu_do_idle()", the
+> delta is less. This confirms that more delta is due to AMU counters
+> stopping at "WFI".
+> 
+>    +++ b/arch/arm64/kernel/idle.c
+>    @@ -27,7 +27,7 @@ void noinstr cpu_do_idle(void)
+>            arm_cpuidle_save_irq_context(&context);
+> 
+>            dsb(sy);
+>    -       wfi();
+>    +//     wfi();
+> 
+> I am not sure if the expected behavior here is right.
+> In our tests, we compare the last set frequency against the re-generated
+> value from counters to confirm that the CPU is actually running at the
+> requested frequency and the counters are working correct. But that won't
+> happen with this change.
+> 
+> In [1] and later in the updated patch within [2], we are busy looping
+> on the target CPU and avoid WFI to get the actual frequency.
+> 
+> Please share what you think is the right expected behavior.
+> 
+> [1] https://lore.kernel.org/lkml/20230418113459.12860-7-sumitg@nvidia.com/
+> [2] 
+> https://lore.kernel.org/lkml/cde1d8a9-3a21-e82b-7895-40603a14d898@nvidia.com/T/#mb898a75fd0c72d166b26b04da3ad162afe068a82
 
-I'd call this cpufreq_thermal_reduction_step, because the value
-multiplied by it already is in percent.
+Observed another issue where CPUFREQ is coming too high when the
+performance governor is set as default.
 
->
->  static DEFINE_PER_CPU(unsigned int, cpufreq_thermal_reduction_pctg);
->
-> @@ -71,7 +80,7 @@ static int cpufreq_get_max_state(unsigned int cpu)
->         if (!cpu_has_cpufreq(cpu))
->                 return 0;
->
-> -       return CPUFREQ_THERMAL_MAX_STEP;
-> +       return cpufreq_thermal_max_step;
->  }
->
->  static int cpufreq_get_cur_state(unsigned int cpu)
-> @@ -113,7 +122,8 @@ static int cpufreq_set_cur_state(unsigned int cpu, int state)
->                 if (!policy)
->                         return -EINVAL;
->
-> -               max_freq = (policy->cpuinfo.max_freq * (100 - reduction_pctg(i) * 20)) / 100;
-> +               max_freq = (policy->cpuinfo.max_freq *
-> +                           (100 - reduction_pctg(i) * cpufreq_thermal_pctg)) / 100;
->
->                 cpufreq_cpu_put(policy);
->
-> @@ -126,10 +136,29 @@ static int cpufreq_set_cur_state(unsigned int cpu, int state)
->         return 0;
->  }
->
-> +static void acpi_thermal_cpufreq_config(void)
-> +{
-> +       int cpufreq_pctg = acpi_thermal_cpufreq_pctg();
-> +
-> +       if (!cpufreq_pctg)
-> +               return;
-> +
-> +       cpufreq_thermal_pctg = cpufreq_pctg;
-> +
-> +       /*
-> +        * Derive the MAX_STEP from minimum throttle percentage so that the reduction
-> +        * percentage doesn't end up becoming negative. Also, cap the MAX_STEP so that
-> +        * the CPU performance doesn't become 0.
-> +        */
-> +       cpufreq_thermal_max_step = (100 / cpufreq_thermal_pctg) - 1;
+Below change solves that by using the new API arch_freq_get_on_cpu()
+if present over the existing one, while verifying the currently set 
+frequency.
 
-Why don't you use the local variable in the expression on the right-hand side?
+  diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+  index 62face349fd2..2c74e70f701e 100644
+  --- a/drivers/cpufreq/cpufreq.c
+  +++ b/drivers/cpufreq/cpufreq.c
+  @@ -1761,9 +1761,12 @@ static unsigned int 
+cpufreq_verify_current_freq(struct cpufreq_policy *policy, b
+   {
+  		unsigned int new_freq;
 
-Also please note that the formula doesn't allow the default
-combination of reduction_step and max_step to be produced which is a
-bit odd.
+  -       new_freq = cpufreq_driver->get(policy->cpu);
+  -       if (!new_freq)
+  -               return 0;
+  +       new_freq = arch_freq_get_on_cpu(policy->cpu);
+  +       if (!new_freq) {
+  +               new_freq = cpufreq_driver->get(policy->cpu);
+  +               if (!new_freq)
+  +                       return 0;
+  +       }
 
-What would be wrong with max_step = 60 / reduction_step?
 
-> +}
-> +
->  void acpi_thermal_cpufreq_init(struct cpufreq_policy *policy)
->  {
->         unsigned int cpu;
->
-> +       acpi_thermal_cpufreq_config();
-> +
->         for_each_cpu(cpu, policy->related_cpus) {
->                 struct acpi_processor *pr = per_cpu(processors, cpu);
->                 int ret;
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index ba3f601b6e3d..407617670221 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -1541,4 +1541,13 @@ static inline void acpi_device_notify(struct device *dev) { }
->  static inline void acpi_device_notify_remove(struct device *dev) { }
->  #endif
->
-> +#ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
-> +int acpi_thermal_cpufreq_pctg(void);
-> +#else
-> +static inline int acpi_thermal_cpufreq_pctg(void)
-> +{
-> +       return 0;
-> +}
-> +#endif
-> +
-
-This can go into drivers/acpi/internal.h as far as I'm concerned.
-
->  #endif /*_LINUX_ACPI_H*/
-> --
+Best Regards,
+Sumit Gupta
