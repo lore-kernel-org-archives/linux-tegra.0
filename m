@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A17C001E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Oct 2023 09:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB28C00A8F
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Oct 2023 09:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233278AbjJWJzD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Oct 2023 05:55:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42410 "EHLO
+        id S233529AbjJWJzR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Oct 2023 05:55:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233381AbjJWJyy (ORCPT
+        with ESMTP id S233437AbjJWJy7 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Oct 2023 05:54:54 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3547510C1
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:48 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-507b18cf2e1so4190596e87.3
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:48 -0700 (PDT)
+        Mon, 23 Oct 2023 05:54:59 -0400
+Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9438610F6
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:52 -0700 (PDT)
+Received: by mail-wr1-x430.google.com with SMTP id ffacd0b85a97d-32d9d8284abso2141674f8f.3
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698054886; x=1698659686; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698054891; x=1698659691; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mg1xiJ4tpWrc01TGrYLaIzComQYv1hvzEAR610Ntv3U=;
-        b=JvPo8itjnZKIOL3UKj+h26Qsqnz1vIHwnQKAtfZbht61ULhSuht5nI6AGqtZeMKihV
-         +MdVA6scm4aoYbJPRY+ddPNe+Um0dLrSMB2M54HXv5g7zjV9U+UcgemyI/b0dM4Du3sz
-         cV8fFiQ7g0s9UKrkVurikbBmR7/nlOv0sZGbIkwvQ2r1iV0WD8t/ZDbsDCPS7tLqTLxE
-         CVBqJH8DSQQlaTj0Qi93iQxCeu4ElE4i2i0ljbv8NSNNPnf7TbnwG3yYpkjHru5A0eOl
-         jIgxsipz3FiEJR0pzuAMCjo48lahAxBWPWg9kS6BEecVnd/vgxeEEwBGZKzznkSCsNIm
-         EXFA==
+        bh=9PvbddIvQlG0l/ZDn5njSVhrq4RgzTBlbX25/MYIgFc=;
+        b=QL3y9JEcLadLoCqVFZ81Hw0SF59gHlxSpxmeZjKjaxcnzAg4Ay57nfed9ds+wXaoCa
+         CXX6nVrSEHDEbQ+2wl7+sJr6ijlxjbdzBPc3uO/aY6qgiAEz1WZfl3cvrbUB3odjeBu/
+         bDPZrthuoGecsPKU9G3XJlQb5qYtYqBM9Ip+92a4dEV47oezPwEDSQDd197DJbwtKDgB
+         mpQvvoNTDA9tgqC9xbP2AzkdfYMnoplOQqx+ZPqzEUyg8+5VPTw/cDw2tVXHa1piqm8X
+         J3DhZRQu39hKSBi6tVKhOh7XLU7D2Px1CWCP8zBqSbgD5tTbracrkk0pEsDpNGV7Eewn
+         +svQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698054886; x=1698659686;
+        d=1e100.net; s=20230601; t=1698054891; x=1698659691;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mg1xiJ4tpWrc01TGrYLaIzComQYv1hvzEAR610Ntv3U=;
-        b=TczXBX7gGYn43aRUaoshC5rb4Lw1qG6dnJLxqkMd1XDgMjbu4ca3dBib/MEp38h5vo
-         0L9DTzMhEwV+daKDuJOQj4dsquShsoAE5KFo5T/TB0hZ+g0nh5QmOA/8dypIUb7ICfKR
-         V9EvKkPPcXv24+R/g9JnS8SqBl17E7YqQM8NX/LDeUj9sDMoIoomjhapLbZvcFWOVngt
-         u0W8fW15aC2vTb19uhCMa0KU2lJOcvcF+zRucHes361hnNKA/37jh9N4MjKZzCCy8kO4
-         Lr/n2rrFhpBgGS5xw8+SE7LXVifd6NI7eoXGRaIWyCbv3uASZSnjymPcPOa51xlv/S2c
-         ekoA==
-X-Gm-Message-State: AOJu0YzRqJ/JsD+qoJQZzqF1hh2dhiFq5CuNoukpCSxaJobdIBf8w4Yu
-        4hcxqne8LzAkNge8I5Flnc6GJw==
-X-Google-Smtp-Source: AGHT+IGVnDVUzhqtZG2Rxtx8SwcXnzeMCoNHkuKGJvqRY3jD0nxvOcWU8+AB175lzXv5OfVrm4BxmA==
-X-Received: by 2002:ac2:4430:0:b0:500:b7ed:105a with SMTP id w16-20020ac24430000000b00500b7ed105amr6312430lfl.29.1698054886439;
-        Mon, 23 Oct 2023 02:54:46 -0700 (PDT)
+        bh=9PvbddIvQlG0l/ZDn5njSVhrq4RgzTBlbX25/MYIgFc=;
+        b=kABEYsfwx84oVWHlwoi1S/3TM4JV53ozC8Jx0/c9uqnRz9ShGyKiE0cm3aD4au7A0V
+         Qq/c99gDgZdtSfNwNum1aHOELRcTyAvSdwyXh3hZr4UCdhZa/PJP5zuq+gSvXTCnCoCq
+         KUThiktSzA1jIi8UWF8m4TGWUStEyLunmzabQ0RxSa/22vSFm1WALt8FT0ijDhkWmwTa
+         +9lgfgq3BJozAymAveLXBnTNnvtMPQS7KxNACh56athNZgVozKtBvLPAgrY+b5HrZ7zz
+         TeHpfBdHwRY7adshfqCGvmSU2+3s6Btu1GG8nkadvHQ3sbXSL5lchobsUZA0RAOX4rQw
+         6UqA==
+X-Gm-Message-State: AOJu0Yz43hnLtCg8WJH4Ixa70El66zY+CRlHBdZBL6NHPSfpgkKMwYaW
+        s6iv8CdVd3BGUOG7CUeChRdoAA==
+X-Google-Smtp-Source: AGHT+IEmmCcXMvV2AiWhQpKHX0IqP6/STlrOm+onc5uiN24/C1EAIXqoQxx+Ad9L+iK6N0Yq3GEInA==
+X-Received: by 2002:a5d:5709:0:b0:32d:9fd1:91f9 with SMTP id a9-20020a5d5709000000b0032d9fd191f9mr5739165wrv.60.1698054890848;
+        Mon, 23 Oct 2023 02:54:50 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id u14-20020a5d468e000000b00323330edbc7sm7428801wrq.20.2023.10.23.02.54.44
+        by smtp.gmail.com with ESMTPSA id u14-20020a5d468e000000b00323330edbc7sm7428801wrq.20.2023.10.23.02.54.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 02:54:46 -0700 (PDT)
+        Mon, 23 Oct 2023 02:54:50 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -71,9 +71,9 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [RFT PATCH 06/17] ASoC: codecs: rt5682s: Handle component name prefix
-Date:   Mon, 23 Oct 2023 11:54:17 +0200
-Message-Id: <20231023095428.166563-7-krzysztof.kozlowski@linaro.org>
+Subject: [RFT PATCH 08/17] ASoC: codecs: wcd9335: Handle component name prefix
+Date:   Mon, 23 Oct 2023 11:54:19 +0200
+Message-Id: <20231023095428.166563-9-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
 References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
@@ -88,25 +88,54 @@ to include also the component's name prefix.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- sound/soc/codecs/rt5682s.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/wcd9335.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/sound/soc/codecs/rt5682s.c b/sound/soc/codecs/rt5682s.c
-index 68ac5ea50396..c261c33c4be7 100644
---- a/sound/soc/codecs/rt5682s.c
-+++ b/sound/soc/codecs/rt5682s.c
-@@ -1323,9 +1323,9 @@ static int set_i2s_event(struct snd_soc_dapm_widget *w,
- 	if (SND_SOC_DAPM_EVENT_ON(event))
- 		on = 1;
+diff --git a/sound/soc/codecs/wcd9335.c b/sound/soc/codecs/wcd9335.c
+index a05b553e6472..43c648efd0d9 100644
+--- a/sound/soc/codecs/wcd9335.c
++++ b/sound/soc/codecs/wcd9335.c
+@@ -3296,31 +3296,31 @@ static int wcd9335_codec_enable_interpolator(struct snd_soc_dapm_widget *w,
+ 	int val;
+ 	int offset_val = 0;
  
--	if (!strcmp(w->name, "I2S1") && !rt5682s->wclk_enabled)
-+	if (!snd_soc_dapm_widget_name_cmp(w, "I2S1") && !rt5682s->wclk_enabled)
- 		rt5682s_set_i2s(rt5682s, RT5682S_AIF1, on);
--	else if (!strcmp(w->name, "I2S2"))
-+	else if (!snd_soc_dapm_widget_name_cmp(w, "I2S2"))
- 		rt5682s_set_i2s(rt5682s, RT5682S_AIF2, on);
- 
- 	return 0;
+-	if (!(strcmp(w->name, "RX INT0 INTERP"))) {
++	if (!(snd_soc_dapm_widget_name_cmp(w, "RX INT0 INTERP"))) {
+ 		reg = WCD9335_CDC_RX0_RX_PATH_CTL;
+ 		gain_reg = WCD9335_CDC_RX0_RX_VOL_CTL;
+-	} else if (!(strcmp(w->name, "RX INT1 INTERP"))) {
++	} else if (!(snd_soc_dapm_widget_name_cmp(w, "RX INT1 INTERP"))) {
+ 		reg = WCD9335_CDC_RX1_RX_PATH_CTL;
+ 		gain_reg = WCD9335_CDC_RX1_RX_VOL_CTL;
+-	} else if (!(strcmp(w->name, "RX INT2 INTERP"))) {
++	} else if (!(snd_soc_dapm_widget_name_cmp(w, "RX INT2 INTERP"))) {
+ 		reg = WCD9335_CDC_RX2_RX_PATH_CTL;
+ 		gain_reg = WCD9335_CDC_RX2_RX_VOL_CTL;
+-	} else if (!(strcmp(w->name, "RX INT3 INTERP"))) {
++	} else if (!(snd_soc_dapm_widget_name_cmp(w, "RX INT3 INTERP"))) {
+ 		reg = WCD9335_CDC_RX3_RX_PATH_CTL;
+ 		gain_reg = WCD9335_CDC_RX3_RX_VOL_CTL;
+-	} else if (!(strcmp(w->name, "RX INT4 INTERP"))) {
++	} else if (!(snd_soc_dapm_widget_name_cmp(w, "RX INT4 INTERP"))) {
+ 		reg = WCD9335_CDC_RX4_RX_PATH_CTL;
+ 		gain_reg = WCD9335_CDC_RX4_RX_VOL_CTL;
+-	} else if (!(strcmp(w->name, "RX INT5 INTERP"))) {
++	} else if (!(snd_soc_dapm_widget_name_cmp(w, "RX INT5 INTERP"))) {
+ 		reg = WCD9335_CDC_RX5_RX_PATH_CTL;
+ 		gain_reg = WCD9335_CDC_RX5_RX_VOL_CTL;
+-	} else if (!(strcmp(w->name, "RX INT6 INTERP"))) {
++	} else if (!(snd_soc_dapm_widget_name_cmp(w, "RX INT6 INTERP"))) {
+ 		reg = WCD9335_CDC_RX6_RX_PATH_CTL;
+ 		gain_reg = WCD9335_CDC_RX6_RX_VOL_CTL;
+-	} else if (!(strcmp(w->name, "RX INT7 INTERP"))) {
++	} else if (!(snd_soc_dapm_widget_name_cmp(w, "RX INT7 INTERP"))) {
+ 		reg = WCD9335_CDC_RX7_RX_PATH_CTL;
+ 		gain_reg = WCD9335_CDC_RX7_RX_VOL_CTL;
+-	} else if (!(strcmp(w->name, "RX INT8 INTERP"))) {
++	} else if (!(snd_soc_dapm_widget_name_cmp(w, "RX INT8 INTERP"))) {
+ 		reg = WCD9335_CDC_RX8_RX_PATH_CTL;
+ 		gain_reg = WCD9335_CDC_RX8_RX_VOL_CTL;
+ 	} else {
 -- 
 2.34.1
 
