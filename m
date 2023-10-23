@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E75F2CDB474
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Oct 2023 09:55:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F86C001E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Oct 2023 09:56:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232598AbjJWJz5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Oct 2023 05:55:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44746 "EHLO
+        id S233064AbjJWJ4M (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Oct 2023 05:56:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233608AbjJWJz0 (ORCPT
+        with ESMTP id S233637AbjJWJzj (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Oct 2023 05:55:26 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F19719A7
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:55:06 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id ffacd0b85a97d-32da7ac5c4fso2149104f8f.1
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:55:06 -0700 (PDT)
+        Mon, 23 Oct 2023 05:55:39 -0400
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 205291BC3
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:55:09 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id 5b1f17b1804b1-40790b0a224so24135195e9.0
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:55:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698054905; x=1698659705; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698054907; x=1698659707; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Uu/sTtccUwF0ah9E+SK4dukpMAzlv54jZyNo0CSiF0c=;
-        b=UP0pQimVCO/Olvg/XVQwTCUP910mxq9CLnCLR6jJECqgs+p+4GvDlE02eQVnksCGUN
-         /DT6DtAWOHeeEtU2StWC/7nGojTqkoeFNDZwJ1iPpkX5wKLOxt142JhCXOXH7eiXUI7q
-         NcDPZXsyX2HBCpLsvEZtlsd4p6CaobOm/VQYPkUtz+sOtP5wH5qzQbvsBI/UUkCdtKRC
-         7HQcZprlXhozZBzmkhnDULobcUTiE1ZySfnzcrWXub9NexaGI0J0plt6/0FJbo9hUaZy
-         T5D+K3piClH3scjE8CekXADoo2cWWbZcgADcIpq64UYaeKKHfvkX/fmlWyClfNX/cmVA
-         mKYw==
+        bh=L7AsNVigM8lbJ2TEkTHkh3DJVAWVStJtaNwYVukOeww=;
+        b=DuW7m69MJUZyDMMaLEHKeDXQ6wD+G61sC8fZ16YyymVEqlNXVe7AnBKFDSmXP3XCKH
+         JRnr9kpslZm7Gf3TeA98V+nyedTM85hSGzi9FGY/m21Sr0YhyOgCZReGf8p61anwclUI
+         qG8i/WBSKvflG3tTFFfL+cF+y0z5ZOsvrSdJiLTNXfvqy4p8Uf3f4ds0lx4CE4RdddSy
+         Dp9CisqOqmN5feVp6vZiQ7dIDLiNt89GWe2mJ/8XnnExPhPoRcjfCaQekjALMW8ImDii
+         sos2+sb4/AvUpJkJE7YmjSKT6puWXianmfGI2yHny1CeWfsWEEAcJjR1keoI4T7D1mF/
+         Gpfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698054905; x=1698659705;
+        d=1e100.net; s=20230601; t=1698054907; x=1698659707;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Uu/sTtccUwF0ah9E+SK4dukpMAzlv54jZyNo0CSiF0c=;
-        b=IpfPCU3Yrl/teWU2sqCKl5kYd+ErpIhfuioW+1OipFEipanmsoOi7jeNU+ocenJp6e
-         wwwHUcc0otZCQvL0TEndeDYzedhOWNeaJ237IJsTN1/HZcI2G3If+Lakb5bfpva9MeaL
-         poGeHaHkcA2uzeUtYQJ3F1zCWpuJpcBe49Q/h55tu5eoibyujDqLxaVrmDk7g2nxI4ER
-         pFGEV7HNI7JcwKerI/BFYr1n1qx3tUlVDNAa6JXv6a4Fk9WoDx1DOZHMMXhNjhzvak1r
-         0sJsHGasyM1ou0jj6zBPlHejoF/Ma+DR4pa8iugf/AW5LS67fwC6Lui6cpTRdcJALkpa
-         sKkA==
-X-Gm-Message-State: AOJu0YwbCKYW6UBaXrBSJNRWD6+nLmg86ewDRd4fEDU8cIoHm+l0d1ON
-        tN2MCnAFtPP6lDafGlohSlJKLw==
-X-Google-Smtp-Source: AGHT+IFC/yAsny5qrYVg+EkJz4fUi483BdHJQWDTMZauGOFIlXds5DqFSdeJFZSj0XyhBOmMbTRyIg==
-X-Received: by 2002:a5d:5267:0:b0:31f:f65f:74ac with SMTP id l7-20020a5d5267000000b0031ff65f74acmr7213785wrc.70.1698054905019;
-        Mon, 23 Oct 2023 02:55:05 -0700 (PDT)
+        bh=L7AsNVigM8lbJ2TEkTHkh3DJVAWVStJtaNwYVukOeww=;
+        b=ssmscN3n0AnS+V1aUw/nNrtyl8ycY5x/9kwFG68C23heoHbJqP2gs6dkIR0t1KVCRR
+         Rl5QcQS8aI4EaOH4GlPN7Ezjwy51ZrT5Y6IxR1tDYk6nbBOQbiyuBEXI5lX7YKZdZ8Qf
+         vilBmxgUs1FoG20eFCwShzgb1vC11E0TB6wpK7oGqb9/v6/BizhbMi2I3XmR/RIApOfV
+         jXNCItK/12U55GR9dQQqlMBefeXFEXxgHH6tD4p8k7/01BWjQW9gFq1buKYzWcU9i9H4
+         8b1MdYkmyHh1Ge6SuDYTChCMUjAcr7KK2NdCOlBht3Mc1PbqjgQml8Ep43crvoKvrMZt
+         C1jQ==
+X-Gm-Message-State: AOJu0YxfhwlDuD30nMPq0gc2Z2Suyd4F7a9rDCdlai57KZtaVIdlzNky
+        btK0rye8LOPa1ujtpTl6ewbajQ==
+X-Google-Smtp-Source: AGHT+IG0DaJTatBkYQl759RhB3DEXbNMmxDZLlPU/SGS2hOJRk1TRuMc/RVGopj7Uuqttkf+UNyBLw==
+X-Received: by 2002:adf:cf11:0:b0:32d:967d:1baf with SMTP id o17-20020adfcf11000000b0032d967d1bafmr5476727wrj.1.1698054907228;
+        Mon, 23 Oct 2023 02:55:07 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id u14-20020a5d468e000000b00323330edbc7sm7428801wrq.20.2023.10.23.02.55.02
+        by smtp.gmail.com with ESMTPSA id u14-20020a5d468e000000b00323330edbc7sm7428801wrq.20.2023.10.23.02.55.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 02:55:04 -0700 (PDT)
+        Mon, 23 Oct 2023 02:55:06 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -71,9 +71,9 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [RFT PATCH 14/17] ASoC: mediatek: mt8188: Handle component name prefix
-Date:   Mon, 23 Oct 2023 11:54:25 +0200
-Message-Id: <20231023095428.166563-15-krzysztof.kozlowski@linaro.org>
+Subject: [RFT PATCH 15/17] ASoC: mediatek: mt8192: Handle component name prefix
+Date:   Mon, 23 Oct 2023 11:54:26 +0200
+Message-Id: <20231023095428.166563-16-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
 References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
@@ -88,29 +88,52 @@ to include also the component's name prefix.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- sound/soc/mediatek/mt8188/mt8188-dai-etdm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/mediatek/mt8192/mt8192-dai-adda.c | 4 ++--
+ sound/soc/mediatek/mt8192/mt8192-dai-i2s.c  | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/mediatek/mt8188/mt8188-dai-etdm.c b/sound/soc/mediatek/mt8188/mt8188-dai-etdm.c
-index 16440dd0a89c..2a48f5fd6826 100644
---- a/sound/soc/mediatek/mt8188/mt8188-dai-etdm.c
-+++ b/sound/soc/mediatek/mt8188/mt8188-dai-etdm.c
-@@ -576,13 +576,13 @@ static int mtk_apll_event(struct snd_soc_dapm_widget *w,
+diff --git a/sound/soc/mediatek/mt8192/mt8192-dai-adda.c b/sound/soc/mediatek/mt8192/mt8192-dai-adda.c
+index 4919535e2759..36d33032a37a 100644
+--- a/sound/soc/mediatek/mt8192/mt8192-dai-adda.c
++++ b/sound/soc/mediatek/mt8192/mt8192-dai-adda.c
+@@ -435,7 +435,7 @@ static int mtk_adda_mtkaif_cfg_event(struct snd_soc_dapm_widget *w,
+ 			regmap_write(afe->regmap, AFE_ADDA6_MTKAIF_CFG0,
+ 				     0x00010000);
+ 
+-			if (strcmp(w->name, "ADDA_MTKAIF_CFG") == 0 &&
++			if (snd_soc_dapm_widget_name_cmp(w, "ADDA_MTKAIF_CFG") == 0 &&
+ 			    (afe_priv->mtkaif_chosen_phase[0] < 0 ||
+ 			     afe_priv->mtkaif_chosen_phase[1] < 0)) {
+ 				dev_warn(afe->dev,
+@@ -444,7 +444,7 @@ static int mtk_adda_mtkaif_cfg_event(struct snd_soc_dapm_widget *w,
+ 					 afe_priv->mtkaif_chosen_phase[0],
+ 					 afe_priv->mtkaif_chosen_phase[1]);
+ 				break;
+-			} else if (strcmp(w->name, "ADDA6_MTKAIF_CFG") == 0 &&
++			} else if (snd_soc_dapm_widget_name_cmp(w, "ADDA6_MTKAIF_CFG") == 0 &&
+ 				   afe_priv->mtkaif_chosen_phase[2] < 0) {
+ 				dev_warn(afe->dev,
+ 					 "%s(), mtkaif_chosen_phase[2]:%d\n",
+diff --git a/sound/soc/mediatek/mt8192/mt8192-dai-i2s.c b/sound/soc/mediatek/mt8192/mt8192-dai-i2s.c
+index ea516d63d94d..47dc7ec4cae7 100644
+--- a/sound/soc/mediatek/mt8192/mt8192-dai-i2s.c
++++ b/sound/soc/mediatek/mt8192/mt8192-dai-i2s.c
+@@ -623,13 +623,13 @@ static int mtk_apll_event(struct snd_soc_dapm_widget *w,
  
  	switch (event) {
  	case SND_SOC_DAPM_PRE_PMU:
 -		if (strcmp(w->name, APLL1_W_NAME) == 0)
 +		if (snd_soc_dapm_widget_name_cmp(w, APLL1_W_NAME) == 0)
- 			mt8188_apll1_enable(afe);
+ 			mt8192_apll1_enable(afe);
  		else
- 			mt8188_apll2_enable(afe);
+ 			mt8192_apll2_enable(afe);
  		break;
  	case SND_SOC_DAPM_POST_PMD:
 -		if (strcmp(w->name, APLL1_W_NAME) == 0)
 +		if (snd_soc_dapm_widget_name_cmp(w, APLL1_W_NAME) == 0)
- 			mt8188_apll1_disable(afe);
+ 			mt8192_apll1_disable(afe);
  		else
- 			mt8188_apll2_disable(afe);
+ 			mt8192_apll2_disable(afe);
 -- 
 2.34.1
 
