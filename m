@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE29C001E0
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Oct 2023 09:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA8EC004C0
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Oct 2023 09:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233068AbjJWJyk (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Oct 2023 05:54:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57802 "EHLO
+        id S229575AbjJWJyq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Oct 2023 05:54:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbjJWJyj (ORCPT
+        with ESMTP id S233111AbjJWJyl (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Oct 2023 05:54:39 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14147DA
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:37 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-31f71b25a99so2082825f8f.2
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:37 -0700 (PDT)
+        Mon, 23 Oct 2023 05:54:41 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0342BE4
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:39 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-32d834ec222so2098522f8f.0
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698054875; x=1698659675; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698054877; x=1698659677; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4YC/W8702n/IhtK2/nRJYRFXj5SA3+z6eWXwAmZT4eY=;
-        b=z8wzB8ADL91wvnnXhOGSny0rBqZvEsstAaA622VYDARD0xigKUTqXyak+lEh8S0YQO
-         AkjrNpQXEyRaRszo1z3IYkKQNiU0gRG62OdzhB9vohlAkm+thWM+PpELgG94GSn3n/lf
-         4wEOsr37gIReLlnkN9fqZNvgaprkJ0F71vh6PdD8LeE0G8yuvLk9idvMd/QZ7RnMtIx+
-         AkjltU+uoXU+SXhOpPrFJo7TXlMEo0zeLW+vZgHwWM2N+M+dhtL+ttiFsXvrtZ4nnk1v
-         lb4AmITxRCfVvHvUktw/RY0kveaJdfItkNEWcrZjyjtr2eJmF4vZaqpBuXm/kIw+DLL5
-         raoQ==
+        bh=xJErgU+nUAjpf1N+MX3RFSZtoYrYFdNiReNrVNbPccY=;
+        b=hmVeL1P/ij1fv6Iv9vFwD9B3HWyQfQMCIaVad7JXndz7emTjBmt3LbnG/Umkhw/K3i
+         m9ssoZtsBTsgwoI/RY9gzD0Ei8klrTy6S2GBhd8D44RGQZtIWQM11QyyknVQzXdLm3GT
+         1cLXuyMZ9Tvao3v6hx6j/YlKf1ejvEM+SC48Kkv0wYjoRb/CpIyOjAA+poD6WC6qDGHc
+         9iw+GKImIu2SP1qm8DIVgypIvvCGcennBJ+vJjjOZVtJ7rHIUKcdRst1TcSR9l0h4upC
+         0mnrQO0aTDSoguHJaBkgBaaY70XgDx6UEftJnF/4x2iWmSag/izSj+CNP2+4VmHMKPM2
+         sVRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698054875; x=1698659675;
+        d=1e100.net; s=20230601; t=1698054877; x=1698659677;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4YC/W8702n/IhtK2/nRJYRFXj5SA3+z6eWXwAmZT4eY=;
-        b=Qfa0ch8zx6HaPQcoVMB6hq/7cjkGfW8VTM/kbGU5dBAa5L4tyB4rWZkPp+7TzEVMF4
-         qxfyHuA+CYk4Qmr+QnriA8rCVAcF91o8MJM9aSg7b5x8XoXzr4NH79v3RdkZwOvPGeUS
-         oquygeLwg1jxuxv8QTfq4wEee6qXOV4159HBOLeDDTAcvA18Qg2nqvqIZ6pFocmwOGrG
-         1Wv1Nbaya2LEhCqKOIovIhcaSODWKER4xb2fyfMw+AMZ1c5UJ32D2nSmu7qgpo8hfwNH
-         wgZrnKNBMO2Yg9VURx4RwjyBC+IKXOxlYZ9nzOkgCxV6amidH4w97fAnfrBpj4CwQNT/
-         XtUg==
-X-Gm-Message-State: AOJu0Yw7JPXAJl3Gd2qQJ6OhFGS1WA4RA8tBvhsIqELVfE05ITNVo3tc
-        UCsVCj4+3EjmiiUZWNR7+TYPig==
-X-Google-Smtp-Source: AGHT+IEHt7MU0pVVH3QtAU35Dth6+VQAGLU4qZyA/p6jZNdd35Imw6TEqgJZWhxMs2mnHadLP+Eb6A==
-X-Received: by 2002:adf:fc09:0:b0:323:10b8:543e with SMTP id i9-20020adffc09000000b0032310b8543emr5848249wrr.49.1698054875438;
-        Mon, 23 Oct 2023 02:54:35 -0700 (PDT)
+        bh=xJErgU+nUAjpf1N+MX3RFSZtoYrYFdNiReNrVNbPccY=;
+        b=H58v6LkeJqp0iqegf/ALA2hm8Z1ZrRPuIEKmsUbN0r2zr5CkiuAq5YabdRn0VbKHqe
+         tHal7vebmvDXrhrAuBcalH/3LZqMn7cb1uLwDZsq1NtwX/8iwo3AcKKpoTaTUC0hhTlQ
+         J7CWaQkg35KleE5I5RIaPM8W4mb7IdjXnzZNMSkduP5+pm27ryMjzrMT9OtTEzJvn5j1
+         BHvID4VbAYYuqctLYBq+xc4+6794fX5j4TRoP2ArnFsZS8dPFFhLxGXEFNOY+AEqlHFs
+         Kb/Ya1CsZi5/vv7tFs5C5zlSIHF5NxTNiHlGkLs6t8RAZUz2ewMzHkcX7ydoNpWN9HiF
+         auyg==
+X-Gm-Message-State: AOJu0YwWY3XoB1pzf/8vC+MwJd+leFVZSbAoKnJBB7OSfGwX/+qM/TrV
+        2sPDHpOFf5GctPn7QPPwUrEZdg==
+X-Google-Smtp-Source: AGHT+IGm+wzbFOSTt4RIIX0gXAgxOLyRHhiU4Y3meUgY+Qffx0kn9EZ6h3swR1er/PSz6I6OP4nsNQ==
+X-Received: by 2002:a5d:4483:0:b0:319:8a66:f695 with SMTP id j3-20020a5d4483000000b003198a66f695mr6356947wrq.55.1698054877529;
+        Mon, 23 Oct 2023 02:54:37 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id u14-20020a5d468e000000b00323330edbc7sm7428801wrq.20.2023.10.23.02.54.33
+        by smtp.gmail.com with ESMTPSA id u14-20020a5d468e000000b00323330edbc7sm7428801wrq.20.2023.10.23.02.54.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 02:54:35 -0700 (PDT)
+        Mon, 23 Oct 2023 02:54:37 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -71,9 +71,9 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [RFT PATCH 01/17] ASoC: codecs: 88pm860x: Handle component name prefix
-Date:   Mon, 23 Oct 2023 11:54:12 +0200
-Message-Id: <20231023095428.166563-2-krzysztof.kozlowski@linaro.org>
+Subject: [RFT PATCH 02/17] ASoC: codecs: adau1373: Handle component name prefix
+Date:   Mon, 23 Oct 2023 11:54:13 +0200
+Message-Id: <20231023095428.166563-3-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
 References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
@@ -88,25 +88,22 @@ to include also the component's name prefix.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- sound/soc/codecs/88pm860x-codec.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/adau1373.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/88pm860x-codec.c b/sound/soc/codecs/88pm860x-codec.c
-index d99b674d574b..be01f0928393 100644
---- a/sound/soc/codecs/88pm860x-codec.c
-+++ b/sound/soc/codecs/88pm860x-codec.c
-@@ -400,9 +400,9 @@ static int pm860x_dac_event(struct snd_soc_dapm_widget *w,
- 	unsigned int dac = 0;
- 	int data;
+diff --git a/sound/soc/codecs/adau1373.c b/sound/soc/codecs/adau1373.c
+index b0ab0a69b207..3582c4b968a0 100644
+--- a/sound/soc/codecs/adau1373.c
++++ b/sound/soc/codecs/adau1373.c
+@@ -834,7 +834,7 @@ static int adau1373_check_aif_clk(struct snd_soc_dapm_widget *source,
+ 	else
+ 		clk = "SYSCLK2";
  
--	if (!strcmp(w->name, "Left DAC"))
-+	if (!snd_soc_dapm_widget_name_cmp(w, "Left DAC"))
- 		dac = DAC_LEFT;
--	if (!strcmp(w->name, "Right DAC"))
-+	if (!snd_soc_dapm_widget_name_cmp(w, "Right DAC"))
- 		dac = DAC_RIGHT;
- 	switch (event) {
- 	case SND_SOC_DAPM_PRE_PMU:
+-	return strcmp(source->name, clk) == 0;
++	return snd_soc_dapm_widget_name_cmp(source, clk) == 0;
+ }
+ 
+ static int adau1373_check_src(struct snd_soc_dapm_widget *source,
 -- 
 2.34.1
 
