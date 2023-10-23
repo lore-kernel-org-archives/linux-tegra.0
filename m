@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA8EC004C0
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Oct 2023 09:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41225C001E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Oct 2023 09:54:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbjJWJyq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S233296AbjJWJyq (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Mon, 23 Oct 2023 05:54:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57850 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233111AbjJWJyl (ORCPT
+        with ESMTP id S229671AbjJWJyp (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Oct 2023 05:54:41 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0342BE4
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:39 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-32d834ec222so2098522f8f.0
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:38 -0700 (PDT)
+        Mon, 23 Oct 2023 05:54:45 -0400
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1030DF7
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:41 -0700 (PDT)
+Received: by mail-wr1-x434.google.com with SMTP id ffacd0b85a97d-32dff202b4bso382609f8f.1
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698054877; x=1698659677; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698054879; x=1698659679; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xJErgU+nUAjpf1N+MX3RFSZtoYrYFdNiReNrVNbPccY=;
-        b=hmVeL1P/ij1fv6Iv9vFwD9B3HWyQfQMCIaVad7JXndz7emTjBmt3LbnG/Umkhw/K3i
-         m9ssoZtsBTsgwoI/RY9gzD0Ei8klrTy6S2GBhd8D44RGQZtIWQM11QyyknVQzXdLm3GT
-         1cLXuyMZ9Tvao3v6hx6j/YlKf1ejvEM+SC48Kkv0wYjoRb/CpIyOjAA+poD6WC6qDGHc
-         9iw+GKImIu2SP1qm8DIVgypIvvCGcennBJ+vJjjOZVtJ7rHIUKcdRst1TcSR9l0h4upC
-         0mnrQO0aTDSoguHJaBkgBaaY70XgDx6UEftJnF/4x2iWmSag/izSj+CNP2+4VmHMKPM2
-         sVRw==
+        bh=P05PzWbQ4hBl2fNZN6KJaeVrZFnQ7VS3APzpcXPmWmM=;
+        b=YyDzZncK1SgwNW8rl1WP9CGxpz9ct7i6WJ/499vb1v5JotULi+8q8XvQkkrJhCo0LE
+         pX8cNofs2Tg4KWQOSr/zPBGkIRMtp1rpV9GGiOyPkWCrIOQlb3kY/g7APkMBvGA6qq0J
+         uOOdz+Tjjue5Vssjbxj1/x3+stedYP7onNInINMnWiYC8cICOPSKN1j/BTthbT+NDnzb
+         HTrs1Cd9hnNtMPnrSidKxLfhQzCZwsLphCjjCwtFg79hmoc9VZagiA2Wo0SHsUeK7XPV
+         3Exp506pfU0Lvvfpy1Av4ttNcFoEpY0pWxJZpZq4mKWEXfOh+/sn8AeDg1uzBjxRx9Xa
+         P9aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698054877; x=1698659677;
+        d=1e100.net; s=20230601; t=1698054879; x=1698659679;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xJErgU+nUAjpf1N+MX3RFSZtoYrYFdNiReNrVNbPccY=;
-        b=H58v6LkeJqp0iqegf/ALA2hm8Z1ZrRPuIEKmsUbN0r2zr5CkiuAq5YabdRn0VbKHqe
-         tHal7vebmvDXrhrAuBcalH/3LZqMn7cb1uLwDZsq1NtwX/8iwo3AcKKpoTaTUC0hhTlQ
-         J7CWaQkg35KleE5I5RIaPM8W4mb7IdjXnzZNMSkduP5+pm27ryMjzrMT9OtTEzJvn5j1
-         BHvID4VbAYYuqctLYBq+xc4+6794fX5j4TRoP2ArnFsZS8dPFFhLxGXEFNOY+AEqlHFs
-         Kb/Ya1CsZi5/vv7tFs5C5zlSIHF5NxTNiHlGkLs6t8RAZUz2ewMzHkcX7ydoNpWN9HiF
-         auyg==
-X-Gm-Message-State: AOJu0YwWY3XoB1pzf/8vC+MwJd+leFVZSbAoKnJBB7OSfGwX/+qM/TrV
-        2sPDHpOFf5GctPn7QPPwUrEZdg==
-X-Google-Smtp-Source: AGHT+IGm+wzbFOSTt4RIIX0gXAgxOLyRHhiU4Y3meUgY+Qffx0kn9EZ6h3swR1er/PSz6I6OP4nsNQ==
-X-Received: by 2002:a5d:4483:0:b0:319:8a66:f695 with SMTP id j3-20020a5d4483000000b003198a66f695mr6356947wrq.55.1698054877529;
-        Mon, 23 Oct 2023 02:54:37 -0700 (PDT)
+        bh=P05PzWbQ4hBl2fNZN6KJaeVrZFnQ7VS3APzpcXPmWmM=;
+        b=K9wzHZswBjg676f3P3fRPG16L+CZzb/PCrYaZrHGBtWgySyp6pNnmCmfHJlWkvNQC5
+         FkZp7AtFKZpauavNMsjeF6KGURp9ym9d+fo05vijCwf5hGAnt4ag1qA/c4+jQwbvNO+E
+         i2uTWSeCW4cbgqjqbix6zcl/tCmzYjBsutbftG4YztVcsFlzly+rx7iOb4pbATuPvMLJ
+         5mcHIQA8evKVgBvBF4zMbmIFS1cnWSn85I0ubLmh5+tg68q6Tzp9MBWo4QXBufExamRd
+         nKu3HEF8/ZY67xo8CcHRrwW9kNMmrVQTxX176oE6chgzi1R1s30fBmTrB4adv33pBalO
+         NNow==
+X-Gm-Message-State: AOJu0YzUc66DKQ07BM5pulODN+q4+JMoB9eVrrVq69ZBiHqmXtmvlPOs
+        cyN9vn0meqWD7gtNTA9wMDyq+w==
+X-Google-Smtp-Source: AGHT+IE7M5wXmUXIEeObjapurzse0V6MkE8fsf1gV1jhgG074/79sH+mXQ9giKjm7AVwWA1w8KdepA==
+X-Received: by 2002:a5d:67c5:0:b0:32d:b7d4:b90 with SMTP id n5-20020a5d67c5000000b0032db7d40b90mr4943276wrw.39.1698054879636;
+        Mon, 23 Oct 2023 02:54:39 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id u14-20020a5d468e000000b00323330edbc7sm7428801wrq.20.2023.10.23.02.54.35
+        by smtp.gmail.com with ESMTPSA id u14-20020a5d468e000000b00323330edbc7sm7428801wrq.20.2023.10.23.02.54.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 02:54:37 -0700 (PDT)
+        Mon, 23 Oct 2023 02:54:39 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -71,9 +71,9 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [RFT PATCH 02/17] ASoC: codecs: adau1373: Handle component name prefix
-Date:   Mon, 23 Oct 2023 11:54:13 +0200
-Message-Id: <20231023095428.166563-3-krzysztof.kozlowski@linaro.org>
+Subject: [RFT PATCH 03/17] ASoC: codecs: adav80x: Handle component name prefix
+Date:   Mon, 23 Oct 2023 11:54:14 +0200
+Message-Id: <20231023095428.166563-4-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
 References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
@@ -88,22 +88,22 @@ to include also the component's name prefix.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- sound/soc/codecs/adau1373.c | 2 +-
+ sound/soc/codecs/adav80x.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/adau1373.c b/sound/soc/codecs/adau1373.c
-index b0ab0a69b207..3582c4b968a0 100644
---- a/sound/soc/codecs/adau1373.c
-+++ b/sound/soc/codecs/adau1373.c
-@@ -834,7 +834,7 @@ static int adau1373_check_aif_clk(struct snd_soc_dapm_widget *source,
- 	else
- 		clk = "SYSCLK2";
+diff --git a/sound/soc/codecs/adav80x.c b/sound/soc/codecs/adav80x.c
+index bb08969c5917..c8c0fc928211 100644
+--- a/sound/soc/codecs/adav80x.c
++++ b/sound/soc/codecs/adav80x.c
+@@ -229,7 +229,7 @@ static int adav80x_dapm_sysclk_check(struct snd_soc_dapm_widget *source,
+ 		return 0;
+ 	}
  
 -	return strcmp(source->name, clk) == 0;
 +	return snd_soc_dapm_widget_name_cmp(source, clk) == 0;
  }
  
- static int adau1373_check_src(struct snd_soc_dapm_widget *source,
+ static int adav80x_dapm_pll_check(struct snd_soc_dapm_widget *source,
 -- 
 2.34.1
 
