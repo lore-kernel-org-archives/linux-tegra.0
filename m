@@ -2,54 +2,54 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C21FCDB474
-	for <linux-tegra@archiver.kernel.org>; Mon, 23 Oct 2023 09:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A17C001E0
+	for <linux-tegra@archiver.kernel.org>; Mon, 23 Oct 2023 09:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233441AbjJWJy7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 23 Oct 2023 05:54:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57904 "EHLO
+        id S233278AbjJWJzD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 23 Oct 2023 05:55:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233337AbjJWJys (ORCPT
+        with ESMTP id S233381AbjJWJyy (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 23 Oct 2023 05:54:48 -0400
-Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA7D6E6
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:45 -0700 (PDT)
-Received: by mail-wr1-x42d.google.com with SMTP id ffacd0b85a97d-32d9d8284abso2141605f8f.3
-        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:45 -0700 (PDT)
+        Mon, 23 Oct 2023 05:54:54 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3547510C1
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:48 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id 2adb3069b0e04-507b18cf2e1so4190596e87.3
+        for <linux-tegra@vger.kernel.org>; Mon, 23 Oct 2023 02:54:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1698054884; x=1698659684; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1698054886; x=1698659686; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TezS6fAbmZRfIE/9gAJPYUtZvuonet12GZ8K7ihJ9/I=;
-        b=ayJhQrpXmLmMXWo1EwzEqgPt++PCP8UH54XqBtXG4HoxoZG6P8WO3bRbxxOGjerUUT
-         7Htx1d5FbDG9piodG2LDi2AxETFHr9R/XVQWeO8EIYz++bBQp/8kXCvWRNW0wuiQYxJB
-         dv1SBgFSCpGf9LsXPOrvldEzO/2JdfzmC71rFVbbabfKwSlhixo7/6a0DAaQ70/EGxhx
-         qyfhgIfeHd7MITkf23r0XmZJAEASQFzDVFIQy4sCbftIP4MxZvaZphl5wDhTn6Jkhjzo
-         bxOgyFMWvWll9IVGBcUmuBsRv5xx3asLYV/Mbd++wonwNkk9AMYE6cGTd2nIjEsmmQLq
-         9+DA==
+        bh=mg1xiJ4tpWrc01TGrYLaIzComQYv1hvzEAR610Ntv3U=;
+        b=JvPo8itjnZKIOL3UKj+h26Qsqnz1vIHwnQKAtfZbht61ULhSuht5nI6AGqtZeMKihV
+         +MdVA6scm4aoYbJPRY+ddPNe+Um0dLrSMB2M54HXv5g7zjV9U+UcgemyI/b0dM4Du3sz
+         cV8fFiQ7g0s9UKrkVurikbBmR7/nlOv0sZGbIkwvQ2r1iV0WD8t/ZDbsDCPS7tLqTLxE
+         CVBqJH8DSQQlaTj0Qi93iQxCeu4ElE4i2i0ljbv8NSNNPnf7TbnwG3yYpkjHru5A0eOl
+         jIgxsipz3FiEJR0pzuAMCjo48lahAxBWPWg9kS6BEecVnd/vgxeEEwBGZKzznkSCsNIm
+         EXFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698054884; x=1698659684;
+        d=1e100.net; s=20230601; t=1698054886; x=1698659686;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TezS6fAbmZRfIE/9gAJPYUtZvuonet12GZ8K7ihJ9/I=;
-        b=oteFudcxHhlKphUiua6/MPI78mWvP+XgB26h4PiohA540I5w7n1vik3obueZsA5SlW
-         3oeG1hxd78ResoBbkvgMNZeIvFHBz6e6DtC4KmE53WyXKSWGDVZJnCPGPWspQBn11m17
-         +lHc7azYQNO1xJq5zy46G74nRUpHDX3Ko0GvRDWX1Q8LbV7uc807v89V/prWxLW2rwx8
-         ZOrYECcUPc3LpaCGLMkQoWipwkdKohxjCeUP6/Yd4JHVsiMwWQPUPbGtxFQ+YGHF3bJO
-         PePnlyOD6l1oRBVpQTmZyZNu6J/rD/VZsXTPJIQJ3GVwmRMQg7RD0r7zM0rKNI3FUaJp
-         4opA==
-X-Gm-Message-State: AOJu0YzXLhgctYQnmH3a7iPGD2tU+Rfvqb3XQlLN1CgLXoLBpF4EXVCU
-        Gva6+sj1sgkU0N0QpqyPY28qy/mxfPIB8kiL3T0=
-X-Google-Smtp-Source: AGHT+IHsx/9dXkgIRE0i/tyQBHSemsOVRBosIhYnxE5jqsYSPyBJogKhqbIAWQxRyZ17AF8k0sON7w==
-X-Received: by 2002:adf:f603:0:b0:31a:d450:c513 with SMTP id t3-20020adff603000000b0031ad450c513mr6210328wrp.26.1698054884307;
-        Mon, 23 Oct 2023 02:54:44 -0700 (PDT)
+        bh=mg1xiJ4tpWrc01TGrYLaIzComQYv1hvzEAR610Ntv3U=;
+        b=TczXBX7gGYn43aRUaoshC5rb4Lw1qG6dnJLxqkMd1XDgMjbu4ca3dBib/MEp38h5vo
+         0L9DTzMhEwV+daKDuJOQj4dsquShsoAE5KFo5T/TB0hZ+g0nh5QmOA/8dypIUb7ICfKR
+         V9EvKkPPcXv24+R/g9JnS8SqBl17E7YqQM8NX/LDeUj9sDMoIoomjhapLbZvcFWOVngt
+         u0W8fW15aC2vTb19uhCMa0KU2lJOcvcF+zRucHes361hnNKA/37jh9N4MjKZzCCy8kO4
+         Lr/n2rrFhpBgGS5xw8+SE7LXVifd6NI7eoXGRaIWyCbv3uASZSnjymPcPOa51xlv/S2c
+         ekoA==
+X-Gm-Message-State: AOJu0YzRqJ/JsD+qoJQZzqF1hh2dhiFq5CuNoukpCSxaJobdIBf8w4Yu
+        4hcxqne8LzAkNge8I5Flnc6GJw==
+X-Google-Smtp-Source: AGHT+IGVnDVUzhqtZG2Rxtx8SwcXnzeMCoNHkuKGJvqRY3jD0nxvOcWU8+AB175lzXv5OfVrm4BxmA==
+X-Received: by 2002:ac2:4430:0:b0:500:b7ed:105a with SMTP id w16-20020ac24430000000b00500b7ed105amr6312430lfl.29.1698054886439;
+        Mon, 23 Oct 2023 02:54:46 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id u14-20020a5d468e000000b00323330edbc7sm7428801wrq.20.2023.10.23.02.54.42
+        by smtp.gmail.com with ESMTPSA id u14-20020a5d468e000000b00323330edbc7sm7428801wrq.20.2023.10.23.02.54.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Oct 2023 02:54:43 -0700 (PDT)
+        Mon, 23 Oct 2023 02:54:46 -0700 (PDT)
 From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -71,9 +71,9 @@ To:     Liam Girdwood <lgirdwood@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [RFT PATCH 05/17] ASoC: codecs: max9867: Handle component name prefix
-Date:   Mon, 23 Oct 2023 11:54:16 +0200
-Message-Id: <20231023095428.166563-6-krzysztof.kozlowski@linaro.org>
+Subject: [RFT PATCH 06/17] ASoC: codecs: rt5682s: Handle component name prefix
+Date:   Mon, 23 Oct 2023 11:54:17 +0200
+Message-Id: <20231023095428.166563-7-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
 References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
@@ -88,31 +88,25 @@ to include also the component's name prefix.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- sound/soc/codecs/max9867.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/codecs/rt5682s.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/max9867.c b/sound/soc/codecs/max9867.c
-index b616ad39858c..3b9dd158c34b 100644
---- a/sound/soc/codecs/max9867.c
-+++ b/sound/soc/codecs/max9867.c
-@@ -56,13 +56,13 @@ static int max9867_adc_dac_event(struct snd_soc_dapm_widget *w,
- 	struct max9867_priv *max9867 = snd_soc_component_get_drvdata(component);
- 	enum max9867_adc_dac adc_dac;
+diff --git a/sound/soc/codecs/rt5682s.c b/sound/soc/codecs/rt5682s.c
+index 68ac5ea50396..c261c33c4be7 100644
+--- a/sound/soc/codecs/rt5682s.c
++++ b/sound/soc/codecs/rt5682s.c
+@@ -1323,9 +1323,9 @@ static int set_i2s_event(struct snd_soc_dapm_widget *w,
+ 	if (SND_SOC_DAPM_EVENT_ON(event))
+ 		on = 1;
  
--	if (!strcmp(w->name, "ADCL"))
-+	if (!snd_soc_dapm_widget_name_cmp(w, "ADCL"))
- 		adc_dac = MAX9867_ADC_LEFT;
--	else if (!strcmp(w->name, "ADCR"))
-+	else if (!snd_soc_dapm_widget_name_cmp(w, "ADCR"))
- 		adc_dac = MAX9867_ADC_RIGHT;
--	else if (!strcmp(w->name, "DACL"))
-+	else if (!snd_soc_dapm_widget_name_cmp(w, "DACL"))
- 		adc_dac = MAX9867_DAC_LEFT;
--	else if (!strcmp(w->name, "DACR"))
-+	else if (!snd_soc_dapm_widget_name_cmp(w, "DACR"))
- 		adc_dac = MAX9867_DAC_RIGHT;
- 	else
- 		return 0;
+-	if (!strcmp(w->name, "I2S1") && !rt5682s->wclk_enabled)
++	if (!snd_soc_dapm_widget_name_cmp(w, "I2S1") && !rt5682s->wclk_enabled)
+ 		rt5682s_set_i2s(rt5682s, RT5682S_AIF1, on);
+-	else if (!strcmp(w->name, "I2S2"))
++	else if (!snd_soc_dapm_widget_name_cmp(w, "I2S2"))
+ 		rt5682s_set_i2s(rt5682s, RT5682S_AIF2, on);
+ 
+ 	return 0;
 -- 
 2.34.1
 
