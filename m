@@ -2,41 +2,41 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F738C25B47
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Oct 2023 08:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5386C25B48
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Oct 2023 08:55:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234159AbjJXIzU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        id S234168AbjJXIzU (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
         Tue, 24 Oct 2023 04:55:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49180 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234090AbjJXIzF (ORCPT
+        with ESMTP id S234112AbjJXIzG (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 Oct 2023 04:55:05 -0400
+        Tue, 24 Oct 2023 04:55:06 -0400
 Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CDED1713;
-        Tue, 24 Oct 2023 01:54:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D50B172A;
+        Tue, 24 Oct 2023 01:54:43 -0700 (PDT)
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
         (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: kholk11)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 2B2D76607324;
-        Tue, 24 Oct 2023 09:54:40 +0100 (BST)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 5BEDE6607331;
+        Tue, 24 Oct 2023 09:54:41 +0100 (BST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1698137681;
+        s=mail; t=1698137682;
         bh=VI/Y25XEqSA3SbhcywY0RAYmG7kmKXN4kUFw9lzcX+k=;
         h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=hxXKixMYA8uGV+JtRbFbhMk8P5mEagP8YYp9wipvRCfb8Qh8y6vOUmZp6+TCWkCuZ
-         IFJ1+SH9h9pW7OVXNt24mHJbdB4vpM5IccdtUwe4HDwR/QvToxoHElURTRkH7GGofS
-         LziwQ+sg5aPuLqsQzUNePA6kojjSMkmnHm9DlbIt82SxRT+AoxmBytblzjIXPx2tJq
-         rVMFHc8Mvre2wZVYRu6ah6+JzXWUMCgnH7AXrSiRnTNGN9lfdQ47QBDma6pJ9v03oz
-         1Mcduurdja2BlZvMeZmedcgNKg2B4el02XJUNz97Vwf2B1+Gboubc1KYuG6XRxqfuk
-         PF8UAbpmWOpOA==
-Message-ID: <2038380d-1ea2-4130-b567-eb16ba6dcbec@collabora.com>
-Date:   Tue, 24 Oct 2023 10:54:37 +0200
+        b=j90A8ETr4geEi4CEGY63sExDY6LWoWzC9w34VLmFbz0Ax27274b3bX6FLA5Yla7Ye
+         NrvHZFwdSWyZFEV1FV2AkxkUpE/uT/dcNVpASPz2NOgr+WmX53SHpee81XPUdzxx2T
+         VQrE89O2dlVmhg74VaAI77C0/JKZytqyKv4VQx6T2O7VnWSvnBxTvNhJa1E9dwWeTq
+         dwgAX6K71QVhXaU102he57qygE3ubL4CBtJIrP9dUER7mAYpixoOZotRZltP4yRR8X
+         qzAC91kVbLPsz9qwuKOIR60Tec2gtPiWVDY8EgQtgbpDBHbWPazJHQ7YNTsAUiuzFq
+         u+TOsYfNg1szA==
+Message-ID: <72e5b30e-d65b-4530-ba6e-31082a059cb1@collabora.com>
+Date:   Tue, 24 Oct 2023 10:54:41 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFT PATCH 14/17] ASoC: mediatek: mt8188: Handle component name
+Subject: Re: [RFT PATCH 12/17] ASoC: mediatek: mt8183: Handle component name
  prefix
 Content-Language: en-US
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -58,10 +58,10 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
 References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
- <20231023095428.166563-15-krzysztof.kozlowski@linaro.org>
+ <20231023095428.166563-13-krzysztof.kozlowski@linaro.org>
 From:   AngeloGioacchino Del Regno 
         <angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20231023095428.166563-15-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20231023095428.166563-13-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
