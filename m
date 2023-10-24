@@ -2,83 +2,78 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCB4C07545
-	for <linux-tegra@archiver.kernel.org>; Tue, 24 Oct 2023 08:13:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F78AC00A8F
+	for <linux-tegra@archiver.kernel.org>; Tue, 24 Oct 2023 08:55:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233083AbjJXINu (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 24 Oct 2023 04:13:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37066 "EHLO
+        id S234107AbjJXIzT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 24 Oct 2023 04:55:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233902AbjJXINs (ORCPT
+        with ESMTP id S234171AbjJXIzE (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 24 Oct 2023 04:13:48 -0400
-X-Greylist: delayed 339 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 24 Oct 2023 01:13:46 PDT
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 430738F
-        for <linux-tegra@vger.kernel.org>; Tue, 24 Oct 2023 01:13:45 -0700 (PDT)
-Received: from localhost (unknown [124.16.138.129])
-        by APP-05 (Coremail) with SMTP id zQCowAA3PYVeezdlt5+TAA--.2862S2;
-        Tue, 24 Oct 2023 16:07:58 +0800 (CST)
-From:   Chen Ni <nichen@iscas.ac.cn>
-To:     thierry.reding@gmail.com, mperttunen@nvidia.com, airlied@gmail.com,
-        daniel@ffwll.ch, jonathanh@nvidia.com
-Cc:     dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] drm/tegra: dsi: Add missing check for of_find_device_by_node
-Date:   Tue, 24 Oct 2023 08:07:38 +0000
-Message-Id: <20231024080738.825553-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+        Tue, 24 Oct 2023 04:55:04 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32AFD1724;
+        Tue, 24 Oct 2023 01:54:41 -0700 (PDT)
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: kholk11)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 95BE966072F6;
+        Tue, 24 Oct 2023 09:54:38 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1698137679;
+        bh=dr+lBL0FhFKWb9fkKS+Z6wsuWwCRxXkpjetaSpWWU+U=;
+        h=Date:Subject:To:References:From:In-Reply-To:From;
+        b=ifelwKcb3an0VpTpu9qbwzXJhr/WmrDR/RqxpI9+1u7spvHLHzIb1XvWnzbnHGoyQ
+         t9/9M2BxRSPx+1wvGBXqDU6bSBl1SlNcL/lfixtdsfhpgmvb2whna8wyecEJUNw97m
+         qseei79MZLdAdAQ7QYKhpXUQ2u8sOSBqv49lLhPDuJV7YiewnhS+HaESASEx/p3gjC
+         u7u2L4q8HmvpRctEQ+Qvq+IZnTLWGrdEF3vhg1/lCSx1/WDSlK8aSgtKS8wuAP+5qp
+         xIZTA0mLK2TVV5JhWmbxw7smn7UJ97OzQC8nHgDDZqdiGQqdecAb1X2WoTFs2hvCX2
+         8jGQId2sfVldg==
+Message-ID: <46f21faa-7e67-4339-a75b-c5d531baf844@collabora.com>
+Date:   Tue, 24 Oct 2023 10:54:35 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAA3PYVeezdlt5+TAA--.2862S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XryfGr18Wry8Jry8XF1xAFb_yoWDGFb_Wr
-        y8Zr98W3409r4kArsrZrya9Fy2yF9Y9FW2vFyjva4fK345J347XryjgryxurZrua1qkFyD
-        G34UWF4rZFsxGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbf8YjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I
-        8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8Jr0_Cr
-        1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjcxG6xCI17CEII8vrVW3
-        JVW8Jr1lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8ZwCF04k20xvY0x0EwI
-        xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-        Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-        IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-        6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-        AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7xR_mLvJUUUUU==
-X-Originating-IP: [124.16.138.129]
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFT PATCH 15/17] ASoC: mediatek: mt8192: Handle component name
+ prefix
+Content-Language: en-US
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Banajit Goswami <bgoswami@quicinc.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
+References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
+ <20231023095428.166563-16-krzysztof.kozlowski@linaro.org>
+From:   AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20231023095428.166563-16-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Add check for the return value of of_find_device_by_node() and return
-the error if it fails in order to avoid NULL pointer dereference.
+Il 23/10/23 11:54, Krzysztof Kozlowski ha scritto:
+> Use snd_soc_dapm_widget_name_cmp() helper when comparing widget names,
+> to include also the component's name prefix.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Fixes: e94236cde4d5 ("drm/tegra: dsi: Add ganged mode support")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/gpu/drm/tegra/dsi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
-index a9870c828374..4101b2e01211 100644
---- a/drivers/gpu/drm/tegra/dsi.c
-+++ b/drivers/gpu/drm/tegra/dsi.c
-@@ -1543,9 +1543,11 @@ static int tegra_dsi_ganged_probe(struct tegra_dsi *dsi)
- 	np = of_parse_phandle(dsi->dev->of_node, "nvidia,ganged-mode", 0);
- 	if (np) {
- 		struct platform_device *gangster = of_find_device_by_node(np);
-+		of_node_put(np);
-+		if (!gangster)
-+			return -EPROBE_DEFER;
- 
- 		dsi->slave = platform_get_drvdata(gangster);
--		of_node_put(np);
- 
- 		if (!dsi->slave) {
- 			put_device(&gangster->dev);
--- 
-2.25.1
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
