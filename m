@@ -2,56 +2,56 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A11C25B48
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Oct 2023 05:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AFCC25B48
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Oct 2023 05:43:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229705AbjJZFm2 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 Oct 2023 01:42:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60718 "EHLO
+        id S229554AbjJZFnY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Oct 2023 01:43:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229554AbjJZFm1 (ORCPT
+        with ESMTP id S233628AbjJZFnW (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 Oct 2023 01:42:27 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78CDF90;
-        Wed, 25 Oct 2023 22:42:25 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id 4fb4d7f45d1cf-53de0d1dc46so717391a12.3;
-        Wed, 25 Oct 2023 22:42:25 -0700 (PDT)
+        Thu, 26 Oct 2023 01:43:22 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EBAD115;
+        Wed, 25 Oct 2023 22:43:19 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9bf86b77a2aso72636266b.0;
+        Wed, 25 Oct 2023 22:43:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698298944; x=1698903744; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1698298998; x=1698903798; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O18ACdOlxBoaBz1z4uRBsuAuyaadjOVTHABGOAlW9Lc=;
-        b=RizroLFceyNCH7nUtYUQb3ykdWectyra2zQeewt7DoZoHAObTyqk+ns0hiRvQvnW/7
-         kCAZe7oKwSES+7UWlU+LpVFqWm9vZsjwWJ6lwW7v/rCsfG1u6mSM6vG22/y2LMshTAYD
-         ib7sRIWmjhBh4NCwvaLFFuF2v5bPy/UfB0Jg/UjPgGPfTdPFkS3ryEY3ZS35clbrF3Km
-         AwCfxKn0f48kGhWiCZ6Ebg2aBP2tRgpuugIcKi90uNU/6rma6EDyGnz288cD4RCGx9pM
-         xFq3JUfRmmK/ovAteQjTlOVb4iB1l6LrNN146HMJxqPGLoIciWkJwm2lOjHQm2zb4zjc
-         2kSg==
+        bh=rG2UysggiUwoOTUDtuwATYwEsAqlGEHP6tlUqmAyNpE=;
+        b=ar/2J/JqFPEjVt2wsBrYSbQxJkTFugSvD28HqhB4i6WP0frX1rJIMEtIcCC4kA6TSN
+         RjwSxf8sgawbIpLxGUzJSZ8xR7VIz+BgHfWE13fv3RB3FhMAgjwp+ZCWi75WjI2VTXby
+         nsOqHgZ/YUIydNai0CgjOVISCncl7z15UmxAcfjcu0lbFNTS2hIl8JcavJeFVhdy61GS
+         8ZPzYUbMnZZQuWlkU9V4eDFJ/suvWdhoOB7kXEQ+grUVVNG7lpa43Qrm98pAX97vBD8R
+         mbu4CQ8e4UllMU8leEz+0BTPXaNJjcEZnhkonQC0lj7zZmBK+FZLs1ApQHU/peeAxWN9
+         Cqiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698298944; x=1698903744;
+        d=1e100.net; s=20230601; t=1698298998; x=1698903798;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=O18ACdOlxBoaBz1z4uRBsuAuyaadjOVTHABGOAlW9Lc=;
-        b=ANi9xFEl/02YfXFJuh2Q7lnyHr6gCoBISomm2PVM8kTMSNS/7eR2rGsY6YVmDyb7Dn
-         /oBTI2vJNcpmCRWSUWcYccAz2xbaBFsRNvVZpzUO6kd2QlIvHkm+14fdqzER9X07AZmM
-         us1Srhcl2Cn266HtJXiiWDOMWnvQy3xaIMmuX8e0TCFz7iNNG9nJQvDv5iX3p8srdWYZ
-         NoHaoa/7OpjXUlzkbIjH7a8+25MmKaE3IcZCT5IqmschffWj9Hir1z24pdR6ZDMXd4xy
-         6S0qMQoUxrC9Ukgx4oxwKrXSFZP+30/VneUhG4e3vgQTujBrBKSpO+dzA1jKAmDNG3A3
-         yh/Q==
-X-Gm-Message-State: AOJu0YxfldO7Thk/LOcY2/8JAYJHvLt2rDGcRf46EVbcQWS5rESNKaE/
-        SsF5sOdgE0KMRI7Kl4K8imE=
-X-Google-Smtp-Source: AGHT+IHmMO3TLhv7sxxKLpdaJx+E9H3rUYUWCTNqp9Fy0oskRy3AJT3yW6Ydo3VAks2ONiqNvcp/xg==
-X-Received: by 2002:a17:907:3d9f:b0:9c1:9b3a:4cd1 with SMTP id he31-20020a1709073d9f00b009c19b3a4cd1mr12788174ejc.3.1698298943815;
-        Wed, 25 Oct 2023 22:42:23 -0700 (PDT)
+        bh=rG2UysggiUwoOTUDtuwATYwEsAqlGEHP6tlUqmAyNpE=;
+        b=QyT1OyXNxmokemeGnsWcnIRZcThaYIiSI3SFXRxGiWIhuCoEsnB66C+We5ucrOUcj5
+         rbtBWn9yC/dEEVftVJCySKVfsxYcdJGJ9R4nWu2Af4ywsM36Pr0wMl5l6tXKP0aExoJV
+         C6vI431b5d+F32KjuSnSMmBVrmmx7VLApqPuLOpTeapCzZCciG0tOJDAU2t21kf2qmni
+         c0TrLqeK6kaMZ5fvOa43uOeXdeoG6u+IVOnh1s/6LCpKtLlhgVhMgq0Ak+ZY83rroLlC
+         jFf1/AfR4fyooLa89Ti2z9nWwwBX2ZSM5Y6G6I1sWhhU1OQAIs70UtNOlQgwRS48aKMo
+         qTKg==
+X-Gm-Message-State: AOJu0YywaBo7XuKmYRVKw/h9zc1B+ovxoIyDOJLpr6kVl4GsWs+wI3aW
+        SS3400440D0AbyYnoZcUUBLVelI7lzmlq6gNMn4=
+X-Google-Smtp-Source: AGHT+IE2Vvk6/8UrLk+Fqp68uEGIMn/w0ixG329AL4BRaLr6Z9i9Tbw3TAkzOcjxqMEkG/Sa24yY7g==
+X-Received: by 2002:a17:907:7285:b0:9b2:be5e:7545 with SMTP id dt5-20020a170907728500b009b2be5e7545mr13394942ejc.36.1698298997475;
+        Wed, 25 Oct 2023 22:43:17 -0700 (PDT)
 Received: from ?IPv6:2001:a61:3456:4e01:6ae:b55a:bd1d:57fc? ([2001:a61:3456:4e01:6ae:b55a:bd1d:57fc])
-        by smtp.gmail.com with ESMTPSA id 10-20020a17090602ca00b009b2f2451381sm11117028ejk.182.2023.10.25.22.42.22
+        by smtp.gmail.com with ESMTPSA id y19-20020a170906519300b009adc7733f98sm11085906ejk.97.2023.10.25.22.43.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 22:42:23 -0700 (PDT)
-Message-ID: <65d6ffc4c7bd6ce0ae75f7fb7d1f622467bfe9a7.camel@gmail.com>
-Subject: Re: [RFT PATCH 05/17] ASoC: codecs: max9867: Handle component name
+        Wed, 25 Oct 2023 22:43:17 -0700 (PDT)
+Message-ID: <a9bb417341ee2f13c63f13afc1a5a3be330dcf07.camel@gmail.com>
+Subject: Re: [RFT PATCH 03/17] ASoC: codecs: adav80x: Handle component name
  prefix
 From:   Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
 To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
@@ -74,45 +74,47 @@ To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         patches@opensource.cirrus.com,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-Date:   Thu, 26 Oct 2023 07:42:22 +0200
-In-Reply-To: <20231023095428.166563-6-krzysztof.kozlowski@linaro.org>
+Date:   Thu, 26 Oct 2023 07:43:15 +0200
+In-Reply-To: <20231023095428.166563-4-krzysztof.kozlowski@linaro.org>
 References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
-         <20231023095428.166563-6-krzysztof.kozlowski@linaro.org>
+         <20231023095428.166563-4-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-T24gTW9uLCAyMDIzLTEwLTIzIGF0IDExOjU0ICswMjAwLCBLcnp5c3p0b2YgS296bG93c2tpIHdy
-b3RlOgo+IFVzZSBzbmRfc29jX2RhcG1fd2lkZ2V0X25hbWVfY21wKCkgaGVscGVyIHdoZW4gY29t
-cGFyaW5nIHdpZGdldCBuYW1lcywKPiB0byBpbmNsdWRlIGFsc28gdGhlIGNvbXBvbmVudCdzIG5h
-bWUgcHJlZml4Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IEtyenlzenRvZiBLb3psb3dza2kgPGtyenlz
-enRvZi5rb3psb3dza2lAbGluYXJvLm9yZz4KPiAtLS0KClJldmlld2VkLWJ5OiBOdW5vIFNhIDxu
-dW5vLnNhQGFuYWxvZy5jb20+Cgo+IMKgc291bmQvc29jL2NvZGVjcy9tYXg5ODY3LmMgfCA4ICsr
-KystLS0tCj4gwqAxIGZpbGUgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygt
-KQo+IAo+IGRpZmYgLS1naXQgYS9zb3VuZC9zb2MvY29kZWNzL21heDk4NjcuYyBiL3NvdW5kL3Nv
-Yy9jb2RlY3MvbWF4OTg2Ny5jCj4gaW5kZXggYjYxNmFkMzk4NThjLi4zYjlkZDE1OGMzNGIgMTAw
-NjQ0Cj4gLS0tIGEvc291bmQvc29jL2NvZGVjcy9tYXg5ODY3LmMKPiArKysgYi9zb3VuZC9zb2Mv
-Y29kZWNzL21heDk4NjcuYwo+IEBAIC01NiwxMyArNTYsMTMgQEAgc3RhdGljIGludCBtYXg5ODY3
-X2FkY19kYWNfZXZlbnQoc3RydWN0IHNuZF9zb2NfZGFwbV93aWRnZXQgKncsCj4gwqDCoMKgwqDC
-oMKgwqDCoHN0cnVjdCBtYXg5ODY3X3ByaXYgKm1heDk4NjcgPSBzbmRfc29jX2NvbXBvbmVudF9n
-ZXRfZHJ2ZGF0YShjb21wb25lbnQpOwo+IMKgwqDCoMKgwqDCoMKgwqBlbnVtIG1heDk4NjdfYWRj
-X2RhYyBhZGNfZGFjOwo+IMKgCj4gLcKgwqDCoMKgwqDCoMKgaWYgKCFzdHJjbXAody0+bmFtZSwg
-IkFEQ0wiKSkKPiArwqDCoMKgwqDCoMKgwqBpZiAoIXNuZF9zb2NfZGFwbV93aWRnZXRfbmFtZV9j
-bXAodywgIkFEQ0wiKSkKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGFkY19kYWMg
-PSBNQVg5ODY3X0FEQ19MRUZUOwo+IC3CoMKgwqDCoMKgwqDCoGVsc2UgaWYgKCFzdHJjbXAody0+
-bmFtZSwgIkFEQ1IiKSkKPiArwqDCoMKgwqDCoMKgwqBlbHNlIGlmICghc25kX3NvY19kYXBtX3dp
-ZGdldF9uYW1lX2NtcCh3LCAiQURDUiIpKQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgYWRjX2RhYyA9IE1BWDk4NjdfQURDX1JJR0hUOwo+IC3CoMKgwqDCoMKgwqDCoGVsc2UgaWYg
-KCFzdHJjbXAody0+bmFtZSwgIkRBQ0wiKSkKPiArwqDCoMKgwqDCoMKgwqBlbHNlIGlmICghc25k
-X3NvY19kYXBtX3dpZGdldF9uYW1lX2NtcCh3LCAiREFDTCIpKQo+IMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgYWRjX2RhYyA9IE1BWDk4NjdfREFDX0xFRlQ7Cj4gLcKgwqDCoMKgwqDC
-oMKgZWxzZSBpZiAoIXN0cmNtcCh3LT5uYW1lLCAiREFDUiIpKQo+ICvCoMKgwqDCoMKgwqDCoGVs
-c2UgaWYgKCFzbmRfc29jX2RhcG1fd2lkZ2V0X25hbWVfY21wKHcsICJEQUNSIikpCj4gwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBhZGNfZGFjID0gTUFYOTg2N19EQUNfUklHSFQ7Cj4g
-wqDCoMKgwqDCoMKgwqDCoGVsc2UKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHJl
-dHVybiAwOwoK
+On Mon, 2023-10-23 at 11:54 +0200, Krzysztof Kozlowski wrote:
+> Use snd_soc_dapm_widget_name_cmp() helper when comparing widget names,
+> to include also the component's name prefix.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+
+> =C2=A0sound/soc/codecs/adav80x.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/sound/soc/codecs/adav80x.c b/sound/soc/codecs/adav80x.c
+> index bb08969c5917..c8c0fc928211 100644
+> --- a/sound/soc/codecs/adav80x.c
+> +++ b/sound/soc/codecs/adav80x.c
+> @@ -229,7 +229,7 @@ static int adav80x_dapm_sysclk_check(struct snd_soc_d=
+apm_widget
+> *source,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0return 0;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> =C2=A0
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return strcmp(source->name, cl=
+k) =3D=3D 0;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return snd_soc_dapm_widget_nam=
+e_cmp(source, clk) =3D=3D 0;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static int adav80x_dapm_pll_check(struct snd_soc_dapm_widget *sourc=
+e,
 
