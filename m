@@ -2,134 +2,166 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C11AAC25B67
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Oct 2023 17:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FA81C25B6B
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Oct 2023 21:49:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231771AbjJZRKc (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 Oct 2023 13:10:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50914 "EHLO
+        id S232168AbjJZVr7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Oct 2023 17:47:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235048AbjJZRKa (ORCPT
+        with ESMTP id S229633AbjJZVr6 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 Oct 2023 13:10:30 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 977C0D4B;
-        Thu, 26 Oct 2023 10:10:25 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28356C433CD;
-        Thu, 26 Oct 2023 17:10:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1698340225;
-        bh=Va1jEBWyzwHMFJmzyliMsvcYTsQhokdCctBTTd7BWks=;
-        h=From:To:In-Reply-To:References:Subject:Date:From;
-        b=PhIcRJkAlRvEUJKrmKS2QMIqgY34kubBOM7CJ2dz9jx7eL/QMCkhRfmsJygzZf/cQ
-         DlrzJl4vB5hk4L6rcHwKbGdUGfx2P9LIIEn7xYjzdaTpX1aZoRRQw3IReF+Duv/Gud
-         lFTgp3N/zdkkA1VTMjkdtkeDcx9Tqr2vDotqSL/pqYAFZDutEnNid/HWFiRCHVSI9q
-         7XWl3TAWHeb78ij9BENyAptFlO3Elvew6KX+mk22drx7L/Wg66PR5MUfmW55RJMQ3M
-         tFuMYbozMKxsHov4K4u2DHDxeiwG+mLafID8JZemuGSS8g6pgy1v6q0IhE5KSgCUXx
-         pWjp0dPIJFVwA==
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami <bgoswami@quicinc.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
+        Thu, 26 Oct 2023 17:47:58 -0400
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89BFC10E
+        for <linux-tegra@vger.kernel.org>; Thu, 26 Oct 2023 14:47:56 -0700 (PDT)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qw8Ci-0008Ej-2b; Thu, 26 Oct 2023 23:47:48 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qw8Ch-004Uru-35; Thu, 26 Oct 2023 23:47:47 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1qw8Cg-006rUl-Pt; Thu, 26 Oct 2023 23:47:46 +0200
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
-References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [RFT PATCH 00/17] ASoC: fix widget name comparisons (consider
- DAI name prefix)
-Message-Id: <169834021871.149939.12687771696008766047.b4-ty@kernel.org>
-Date:   Thu, 26 Oct 2023 18:10:18 +0100
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-staging@lists.linux.dev, kernel@pengutronix.de
+Subject: [PATCH] staging: media: tegra-video: Convert to platform remove callback returning void
+Date:   Thu, 26 Oct 2023 23:47:40 +0200
+Message-ID: <20231026214739.2509271-2-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.42.0.482.g2e8e77cbac8a.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13-dev-0438c
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3764; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=iBWQN6tc6+dQj6E3HP/luLO0rOWhalDDwsT2ZGTAUxI=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlOt57AkMwARJu7sPBBSAb9BFaMZxaXeb9t4OL4 4FFRgoQ/zeJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZTreewAKCRCPgPtYfRL+ Thi8B/4unyhduYQ2gWu6CS/UsbMMzqGUriLjsC5YAURyJSkRLWApCJ1K2GKWVyQZdoIj2hYiySu VgRyRI9xbEPFiUTXV2rXdDa7Ed5v0hEsbRGbze6T2DUxMSRhuyNdWPLB7FnjcYw6bB+6xmt/WCN bUjs/oiYwUDx8eh5LS6HW7S7n/EwuS6QH19PJ2tOlcguEseNuywNkWd1KNVQBNpv0aFp0CF5P7/ W6XLtrygIxA55F5jLZQRNjRH0A2l8+xn9+mgk1vFKDDW3D9YhP3DzM4V3KdTOEZmeHMKiQ4LEKJ wQmFnxDfQfNgMsLo8OKKJQczS8wRh0WMBywktB7+0wETM1G7
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 23 Oct 2023 11:54:11 +0200, Krzysztof Kozlowski wrote:
-> Some codec drivers compare widget names with strcmp, ignoring
-> the component name prefix.  If prefix is used, the comparisons start failing.
-> 
-> Except Qualcomm lpass-rx-macro, none of the patches were tested
-> on hardware.
-> 
-> Best regards,
-> Krzysztof
-> 
-> [...]
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
 
-Applied to
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Trivially convert the three tegra-video drivers from always returning
+zero in the remove callback to the void returning variant.
 
-Thanks!
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/staging/media/tegra-video/csi.c | 6 ++----
+ drivers/staging/media/tegra-video/vi.c  | 6 ++----
+ drivers/staging/media/tegra-video/vip.c | 6 ++----
+ 3 files changed, 6 insertions(+), 12 deletions(-)
 
-[01/17] ASoC: codecs: 88pm860x: Handle component name prefix
-        commit: ccd0c6c7097b52b01a2c5951cfe96714d4421cd2
-[02/17] ASoC: codecs: adau1373: Handle component name prefix
-        commit: 7a0762587a814387e631c07ae81169a7c646f012
-[03/17] ASoC: codecs: adav80x: Handle component name prefix
-        commit: ecea1812b911fed5e675b2d37b29ad4265c067ce
-[04/17] ASoC: codecs: lpass-rx-macro: Handle component name prefix
-        commit: 5efc1c903e2b43a267ad13696698fcc152ed873a
-[05/17] ASoC: codecs: max9867: Handle component name prefix
-        commit: a1fa72a780f428ddc956cf5ed4b97e2be76ceba3
-[06/17] ASoC: codecs: rt5682s: Handle component name prefix
-        commit: b2056ce3cf61a39796041dc5c94d7255de7f9f0c
-[07/17] ASoC: codecs: rtq9128: Handle component name prefix
-        commit: e2d38e1196f61735716f9c2dd89dff32c0655529
-[08/17] ASoC: codecs: wcd9335: Handle component name prefix
-        commit: 7df1e6a3c608ab0c345b8898f9ee5d5ac19f2eb4
-[09/17] ASoC: codecs: wm8962: Handle component name prefix
-        commit: e54db8826f48c9ca52f2abd108d6e030ff20cae5
-[10/17] ASoC: codecs: wm8994: Handle component name prefix
-        commit: e13b63c47578a27dbf8907974f0dcba0bb2efe58
-[11/17] ASoC: codecs: wm8995: Handle component name prefix
-        commit: 343b62590d5b950c8bf7f78fef7c81103c5f982c
-[12/17] ASoC: mediatek: mt8183: Handle component name prefix
-        commit: e84c7f5db97474cb4becd863a93d4ea541dc4110
-[13/17] ASoC: mediatek: mt8186: Handle component name prefix
-        commit: 0fe153a99fcc2edeae4e863b03c5a8f71376629e
-[14/17] ASoC: mediatek: mt8188: Handle component name prefix
-        commit: d1ecaabe9f1a669354de7420261bd8737da4bf48
-[15/17] ASoC: mediatek: mt8192: Handle component name prefix
-        commit: 86cfaf99e4d3c7b4707fb8cc9eb06d8db10c1414
-[16/17] ASoC: samsung: speyside: Handle component name prefix
-        commit: 317dd0dbadd8bd4de2d69fa6a0611456f3e15b1a
-[17/17] ASoC: tegra: machine: Handle component name prefix
-        commit: f82eb06a40c86c9a82537e956de401d497203d3a
+diff --git a/drivers/staging/media/tegra-video/csi.c b/drivers/staging/media/tegra-video/csi.c
+index 9aa72863c213..0d94115b9bbb 100644
+--- a/drivers/staging/media/tegra-video/csi.c
++++ b/drivers/staging/media/tegra-video/csi.c
+@@ -818,15 +818,13 @@ static int tegra_csi_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int tegra_csi_remove(struct platform_device *pdev)
++static void tegra_csi_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_csi *csi = platform_get_drvdata(pdev);
+ 
+ 	host1x_client_unregister(&csi->client);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+-
+-	return 0;
+ }
+ 
+ #if defined(CONFIG_ARCH_TEGRA_210_SOC)
+@@ -852,5 +850,5 @@ struct platform_driver tegra_csi_driver = {
+ 		.pm		= &tegra_csi_pm_ops,
+ 	},
+ 	.probe			= tegra_csi_probe,
+-	.remove			= tegra_csi_remove,
++	.remove_new		= tegra_csi_remove,
+ };
+diff --git a/drivers/staging/media/tegra-video/vi.c b/drivers/staging/media/tegra-video/vi.c
+index 94171e62dee9..61169ff13ec5 100644
+--- a/drivers/staging/media/tegra-video/vi.c
++++ b/drivers/staging/media/tegra-video/vi.c
+@@ -1944,7 +1944,7 @@ static int tegra_vi_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int tegra_vi_remove(struct platform_device *pdev)
++static void tegra_vi_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_vi *vi = platform_get_drvdata(pdev);
+ 
+@@ -1953,8 +1953,6 @@ static int tegra_vi_remove(struct platform_device *pdev)
+ 	if (vi->ops->vi_enable)
+ 		vi->ops->vi_enable(vi, false);
+ 	pm_runtime_disable(&pdev->dev);
+-
+-	return 0;
+ }
+ 
+ static const struct of_device_id tegra_vi_of_id_table[] = {
+@@ -1979,5 +1977,5 @@ struct platform_driver tegra_vi_driver = {
+ 		.pm = &tegra_vi_pm_ops,
+ 	},
+ 	.probe = tegra_vi_probe,
+-	.remove = tegra_vi_remove,
++	.remove_new = tegra_vi_remove,
+ };
+diff --git a/drivers/staging/media/tegra-video/vip.c b/drivers/staging/media/tegra-video/vip.c
+index e95cc7bb190e..8504b9ea9cea 100644
+--- a/drivers/staging/media/tegra-video/vip.c
++++ b/drivers/staging/media/tegra-video/vip.c
+@@ -254,15 +254,13 @@ static int tegra_vip_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int tegra_vip_remove(struct platform_device *pdev)
++static void tegra_vip_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_vip *vip = platform_get_drvdata(pdev);
+ 
+ 	host1x_client_unregister(&vip->client);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+-
+-	return 0;
+ }
+ 
+ #if defined(CONFIG_ARCH_TEGRA_2x_SOC)
+@@ -283,5 +281,5 @@ struct platform_driver tegra_vip_driver = {
+ 		.of_match_table	= tegra_vip_of_id_table,
+ 	},
+ 	.probe			= tegra_vip_probe,
+-	.remove			= tegra_vip_remove,
++	.remove_new		= tegra_vip_remove,
+ };
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+base-commit: 2ef7141596eed0b4b45ef18b3626f428a6b0a822
+-- 
+2.42.0
 
