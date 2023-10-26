@@ -2,127 +2,118 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CD0C25B47
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Oct 2023 00:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C4FC25B48
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Oct 2023 05:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbjJZA7y (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Oct 2023 20:59:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48144 "EHLO
+        id S229705AbjJZFl5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Oct 2023 01:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229596AbjJZA7x (ORCPT
+        with ESMTP id S229554AbjJZFl4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Oct 2023 20:59:53 -0400
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77F7AC;
-        Wed, 25 Oct 2023 17:59:51 -0700 (PDT)
-Received: by mail-qt1-x82a.google.com with SMTP id d75a77b69052e-41cb9419975so2341151cf.2;
-        Wed, 25 Oct 2023 17:59:51 -0700 (PDT)
+        Thu, 26 Oct 2023 01:41:56 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2704513A;
+        Wed, 25 Oct 2023 22:41:49 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-9a6190af24aso80311666b.0;
+        Wed, 25 Oct 2023 22:41:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698281991; x=1698886791; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L91FCdOLv7HzCEyiSduMvdZ7o8Qfr4r81H8+5xAX/80=;
-        b=Py1UiMYs8a5Gv3sMTGTmS+cj3l3dkcrhwyqIFCF1srPQs5QO+5DdQ+zfLPWT4ed1Ec
-         9tldyLisFBbAYIZMWM9s9wr47p9wHwjqbCeDGUpKm8oYEpMJKIo5SJJnePAH4Ii4FTQP
-         s3mqRvraW9UYYWkePWxroUJi22Pur9cZ82O1CN2YR+xu3cUTbRZ/GALQBvGqAn8hJZgb
-         tkrYbQ+5Sg+DeGNNEkABSXTug82Wnadp7QXXvatnIJQMhiGlsg4TVLS/e/6PuJnywsM5
-         BLFd6aB1Sgj+gP5Vl6ezZZBBjSSBgPJS1h16ywyYhD5Jr3OBfESnzmPC2EjpOibUeghr
-         e23A==
+        d=gmail.com; s=20230601; t=1698298907; x=1698903707; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v88cIuoMfKK/xscvmw4mP2AX4C1KpNxy9EGTFm/wXII=;
+        b=SYXJHRoIVN0by8Qyi+kKq59ReFb3FcWFRWDzTtkCCQD6rZNjUkUuBS2qZdRWhr/I0t
+         ct6T+zW+Xy6GhzFUVQ2Ub6QJsQA4RPMVIZ9flFd8BIPLGhicsyuly/EH8dqsA1vdwAYq
+         9C8nFmVa4YcHNmOtey6uqrNq6jb0X/i7SUDyGXLIuquKktViRoO/lcRfuXCihk15Ejsj
+         7vn4sHMKLDmkujl8x4PrVs74pMEfCHZruaiE2Lu2h1a4jvRArG6/r8fJnyeTlssle4oT
+         zTvxKJop7HNmwyrJFjj/wqgHwCpBjmnIEBivWynVF/DtLg8x8iEbcxl+q4212OMelXGt
+         3TBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698281991; x=1698886791;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L91FCdOLv7HzCEyiSduMvdZ7o8Qfr4r81H8+5xAX/80=;
-        b=Dt6ZMI0RJpBZJVy3EWW8APGhfGugFCDa3FLhpmzV3VlI0eO0uGXI7/tgamtQy59wNj
-         qBl4Z/80WRirgoVQm0oPlM+kUe1iJKEFjE77ZJpoNu8/jFCr+4tSUj/8FOUSnOPbBNgQ
-         Ot90BGIdOfEhFNLspIAAz3eERjgAHd3BccHz2orC1x4v3armcgJeW4B8trn1UdqRI+Cf
-         AglKWeVROMxdCXOTjLF0qZz/hlKGwZfO0Xk4rovBJWUQc6sY53POuNCs5LjVDVe1eCQp
-         lWEJprooJLyHyOW1qKJ76WAfMcW4lfYXUzKqv5/e5cSCUUa4AP+jW27IjFS6p+IKFSPd
-         bIIw==
-X-Gm-Message-State: AOJu0Yx1+rxV0ldO4hP4yNDnnA2j/jzJUBeZu6k7CzfKbcY6Ko15Mvnd
-        BOIqZrQqCqed+sb2mRglH4w=
-X-Google-Smtp-Source: AGHT+IF5F7TAUEDUwPzOkkiFdmU/3guXYi/wawowb1UgSyaIwbru+Zhs1gggNZeP0jwjPqNORye2gA==
-X-Received: by 2002:ac8:7f96:0:b0:419:a2c6:820e with SMTP id z22-20020ac87f96000000b00419a2c6820emr21795601qtj.12.1698281990906;
-        Wed, 25 Oct 2023 17:59:50 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id x17-20020a25acd1000000b00da05d771097sm1407705ybd.22.2023.10.25.17.59.50
+        d=1e100.net; s=20230601; t=1698298907; x=1698903707;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=v88cIuoMfKK/xscvmw4mP2AX4C1KpNxy9EGTFm/wXII=;
+        b=jVCOh/CN3htLwF6HnyOqwIJgEhkh718Kk6wm9HgQ7U8+aYUn35YTKVK8HquGVZCsrd
+         aaEGD1hOsWB8VSObZliYb9zrs0pi8Oh09POQV8Vlis5EAmgoFJJTXYGRSJokxO4vTA9F
+         GVD+4UkEUhWHIX6vJ5iPx1iZotnn5+FvnWrEm+Lf4MFLO2ygFpVmpRl663D+R0tDNfGU
+         KQP7rFqmH9I8eZ7GGfr3RkDUgVYar6rkgFnVsS/c2lg5Y13/37psl13FccHtbWl5v8wz
+         7QfBMcsoUAkT4+dSWPZP3xLDl6QlMNSbKVN33qpE1nQaG3tTen+rWxzhh6+owvF0MlpO
+         y4hA==
+X-Gm-Message-State: AOJu0Yz50FSgvG/+xY7KnHftJ9JKmebdwL0hguPUko8nJypG3JC3vJYk
+        MwEbSQEidSzYl4p+88TicAM=
+X-Google-Smtp-Source: AGHT+IE/n0OoxifurTDgldQZqpLM8AuCp+gQ7fUFj2/TTGB+7QsX1WZ+ulAcFK2YO66Nv03gm0DH7A==
+X-Received: by 2002:a17:907:9286:b0:9b9:facb:d950 with SMTP id bw6-20020a170907928600b009b9facbd950mr13315954ejc.72.1698298907263;
+        Wed, 25 Oct 2023 22:41:47 -0700 (PDT)
+Received: from ?IPv6:2001:a61:3456:4e01:6ae:b55a:bd1d:57fc? ([2001:a61:3456:4e01:6ae:b55a:bd1d:57fc])
+        by smtp.gmail.com with ESMTPSA id h11-20020a1709063b4b00b009b9aa8fffdasm10997701ejf.131.2023.10.25.22.41.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 17:59:50 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Wed, 25 Oct 2023 17:59:49 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
+        Wed, 25 Oct 2023 22:41:46 -0700 (PDT)
+Message-ID: <c44c8c13a91a695d758154335b38488c71de1d1c.camel@gmail.com>
+Subject: Re: [RFT PATCH 02/17] ASoC: codecs: adau1373: Handle component name
+ prefix
+From:   Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Banajit Goswami <bgoswami@quicinc.com>,
+        Oder Chiou <oder_chiou@realtek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno 
+        <angelogioacchino.delregno@collabora.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Ninad Malwade <nmalwade@nvidia.com>,
-        Rajkumar Kasirajan <rkasirajan@nvidia.com>
-Subject: Re: [PATCH V5 3/4] hwmon: ina3221: Add support for channel summation
- disable
-Message-ID: <e1c2f42a-5297-41f3-882c-094a207f8b00@roeck-us.net>
-References: <20230929103650.86074-1-jonathanh@nvidia.com>
- <20230929103650.86074-4-jonathanh@nvidia.com>
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
+Date:   Thu, 26 Oct 2023 07:41:45 +0200
+In-Reply-To: <20231023095428.166563-3-krzysztof.kozlowski@linaro.org>
+References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
+         <20231023095428.166563-3-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230929103650.86074-4-jonathanh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Sep 29, 2023 at 11:36:49AM +0100, Jon Hunter wrote:
-> From: Ninad Malwade <nmalwade@nvidia.com>
-> 
-> The INA3221 allows the Critical alert pin to be controlled by the
-> summation control function. This function adds the single
-> shunt-voltage conversions for the desired channels in order to compare
-> the combined sum to the programmed limit. The Shunt-Voltage Sum Limit
-> register contains the programmed value that is compared to the value in
-> the Shunt-Voltage Sum register in order to determine if the total summed
-> limit is exceeded. If the shunt-voltage sum limit value is exceeded, the
-> Critical alert pin pulls low.
-> 
-> For the summation limit to have a meaningful value, we have to use the
-> same shunt-resistor value on all included channels. Unless equal
-> shunt-resistor values are used for each channel, the summation control
-> function cannot be used and it is not enabled by the driver.
-> 
-> To address this, add support to disable the summation of specific
-> channels via device tree property "ti,summation-disable". The channel
-> which has this property would be excluded from the calculation of
-> summation control function.
-> 
-> For example, summation control function calculates Shunt-Voltage Sum as:
-> 
-> - input_shunt_voltage_summation = input_shunt_voltage_channel1
->                                 + input_shunt_voltage_channel2
->                                 + input_shunt_voltage_channel3
-> 
-> If we want the summation to only use channel1 and channel3, we can add
-> 'ti,summation-disable' property in device tree node for channel2. Then
-> the calculation will skip channel2.
-> 
-> - input_shunt_voltage_summation = input_shunt_voltage_channel1
->                                 + input_shunt_voltage_channel3
-> 
-> Note that we only want the channel to be skipped for summation control
-> function rather than completely disabled. Therefore, even if we add the
-> property 'ti,summation-disable', the channel is still enabled and
-> functional.
-> 
-> Finally, create debugfs entries that display if summation is disabled
-> for each of the channels.
-> 
-> Signed-off-by: Rajkumar Kasirajan <rkasirajan@nvidia.com>
-> Signed-off-by: Ninad Malwade <nmalwade@nvidia.com>
-> Co-developed-by: Jon Hunter <jonathanh@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+On Mon, 2023-10-23 at 11:54 +0200, Krzysztof Kozlowski wrote:
+> Use snd_soc_dapm_widget_name_cmp() helper when comparing widget names,
+> to include also the component's name prefix.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Applied.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-Thanks,
-Guenter
+> =C2=A0sound/soc/codecs/adau1373.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/sound/soc/codecs/adau1373.c b/sound/soc/codecs/adau1373.c
+> index b0ab0a69b207..3582c4b968a0 100644
+> --- a/sound/soc/codecs/adau1373.c
+> +++ b/sound/soc/codecs/adau1373.c
+> @@ -834,7 +834,7 @@ static int adau1373_check_aif_clk(struct snd_soc_dapm=
+_widget
+> *source,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0else
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0clk =3D "SYSCLK2";
+> =C2=A0
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return strcmp(source->name, cl=
+k) =3D=3D 0;
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return snd_soc_dapm_widget_nam=
+e_cmp(source, clk) =3D=3D 0;
+> =C2=A0}
+> =C2=A0
+> =C2=A0static int adau1373_check_src(struct snd_soc_dapm_widget *source,
+
