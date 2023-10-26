@@ -2,56 +2,56 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD53C25B6B
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Oct 2023 00:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83D41C25B47
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Oct 2023 00:59:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbjJZA6T (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 25 Oct 2023 20:58:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60818 "EHLO
+        id S229928AbjJZA7K (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 25 Oct 2023 20:59:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbjJZA6S (ORCPT
+        with ESMTP id S229596AbjJZA7K (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 25 Oct 2023 20:58:18 -0400
-Received: from mail-vk1-xa36.google.com (mail-vk1-xa36.google.com [IPv6:2607:f8b0:4864:20::a36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F13E5;
-        Wed, 25 Oct 2023 17:58:16 -0700 (PDT)
-Received: by mail-vk1-xa36.google.com with SMTP id 71dfb90a1353d-4a403fdebedso169586e0c.1;
-        Wed, 25 Oct 2023 17:58:16 -0700 (PDT)
+        Wed, 25 Oct 2023 20:59:10 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D46B0AC;
+        Wed, 25 Oct 2023 17:59:07 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-5a8ee23f043so2536457b3.3;
+        Wed, 25 Oct 2023 17:59:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698281896; x=1698886696; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1698281947; x=1698886747; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QdYFjAzOOYN5oRUxBefG+Kgpog1nqz5V+k6zzEGqHT4=;
-        b=LcPYZJJujfRlf7JIGiQWVEq2+ZziJAjvCgQctvP5uE/oJ2oBY9G9HWgupUM4HTrJMX
-         hWn28OL2LgVq55wsZskFqpRRWzuerKdm9jWw898TcE1Piak5o9yxU03fIADexOlMIltK
-         FoUkPuMa8M1he56e2Put1DVi/N/tozY+SMA8gVgqErqzxytARaUW4oX33fEvinbiyf2E
-         4grHQOm8vIGLibYxtmqv3IcZfjvHQpzxYSEHlJm48f6SJ6uQxJmeO7aF2L5rBkoC8A8a
-         K1tAEDVPYd3aPOU+Uh8R54h+awZJZJMMehpjLXqydeuT1d74C7ojhkssHjADk7Ma0sXH
-         QhKg==
+        bh=BdAmNWZIblXHsje63jq4bChALsXyN+72GiZH3tRHbSc=;
+        b=E3i/oGklMVMWvk8o2rrSJOOP6emKfcPPclrDzVXZYoxpL2X6OorxUcMiW9cAwyGfmG
+         icHHuxwyXeFSBGSWRthbAJ2VxGO5VQdCOxjXzkySJKB81cGf6Qvy4E0ZGrBNMQK+qhGx
+         Wx7hN5VKXVd/Q7tVcp6irb7Jgs8Y6WPt7+mSrMsfDpiYHvO6u6lm9qoj2n08IBaeP3hp
+         sRheNus3B7jTGkFbIvh5IGiuTQEOi3Etf2fvsC4SBjXKrkyhuMs7Lf4853iv0lgMxZvD
+         1KmXBH9OXAa+rhqObkMogu2HH6YlTVu+wxblLZQsw4/pvnTh8WrHNMwuU3TrDu0eYqkA
+         R3Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698281896; x=1698886696;
+        d=1e100.net; s=20230601; t=1698281947; x=1698886747;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QdYFjAzOOYN5oRUxBefG+Kgpog1nqz5V+k6zzEGqHT4=;
-        b=QepTi/RcXOz9wFBG4Z4J7GzVw23ZgZ8toZatAzeW9pL643AY8JMUehpkbyyEmplLf9
-         mzBFe20719UUP8y44l4jBQcrFBPL3OQ9777GqER1RpdpLsWtcmzJ8wO/LTjIL8Zfyvwx
-         S6yV+836JM7A16lvz1U8SNqYN4S6CjzkRzs09ynoPHXQlamhUErNbxkoEivuK8mMf5AT
-         7exKoe9WxdFQdEQWuynK8bhGpxQLunudDTlR8hMAQ3L5EvtVxpG/BPlLNUEvu5sHgphb
-         5oX6CnFYMnmip55KluWvNZa6d85EeOAEhynuhLLuehvUW3uBz6sSTOcV5tz6Wv9u7ikD
-         sADQ==
-X-Gm-Message-State: AOJu0YxaM7PGIY4f8h3CgU7HlVFDrWz/ZvNK0m0dgFvmMTMRHaFi0u9T
-        VBpiP2xSerQbn7Douwv+b8M=
-X-Google-Smtp-Source: AGHT+IFx10g6y/YQxI1ofYFocjdct+E/Fn/oERCg/4WMF0iz0iwR+hkRnxNa0HZxMFDBZKCYwlaURA==
-X-Received: by 2002:a1f:1cd4:0:b0:49d:8fc1:3fce with SMTP id c203-20020a1f1cd4000000b0049d8fc13fcemr14047411vkc.0.1698281895794;
-        Wed, 25 Oct 2023 17:58:15 -0700 (PDT)
+        bh=BdAmNWZIblXHsje63jq4bChALsXyN+72GiZH3tRHbSc=;
+        b=lYznIdHNW5VzF+rkrskHe+YAlto/bOs7pjzXLitt0hRlzUK/Wq/uKQGJq41BRmv7Qi
+         dn49liOu0GL8wzvM/go/gZEtRZWeuFAdYqvYrcPD9E0TUH3N3xCUvp0XpdqkFg2MKoZf
+         g858hKQchrQWz3aABOn7hWw3/DsDuOuDGzmx0SVzPmHRSrDFqC8Oe1R0oMqmb7rsxG7N
+         H+qbdIIjzK/BAKXgegFPqOk/qeaRkO/Gpxc5H2v5Nx/0Wp8b9ukhGTKupZdPMpUrzlkj
+         l7jjFwWMqrN1oK81yCDw02ND35vCm8oSTFJfleCx3MrrCeEnEx2N7/VsZ0DKNEgE5Vgk
+         gP2w==
+X-Gm-Message-State: AOJu0YxmNtpjFxBieFdUwIZmlNoGQ33KEwdhdq88ik/vPtVib8p0A4vy
+        PaO+lYXCI/1HZRjI4YWkj4U=
+X-Google-Smtp-Source: AGHT+IGc9muzvV5yXOHdtJqBAdqVro+06IfF1jSwWJeaA0Lo/rftXG6i24lFiBGmEz60C7vI8kkkIg==
+X-Received: by 2002:a81:5dd7:0:b0:5a7:af72:ad6a with SMTP id r206-20020a815dd7000000b005a7af72ad6amr15875988ywb.43.1698281947031;
+        Wed, 25 Oct 2023 17:59:07 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id o188-20020a8173c5000000b005a7dd6b7eefsm5508796ywc.66.2023.10.25.17.58.15
+        by smtp.gmail.com with ESMTPSA id j143-20020a819295000000b005a8a7d4f9a5sm5491471ywg.28.2023.10.25.17.59.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 17:58:15 -0700 (PDT)
+        Wed, 25 Oct 2023 17:59:06 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Wed, 25 Oct 2023 17:58:14 -0700
+Date:   Wed, 25 Oct 2023 17:59:05 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     Jon Hunter <jonathanh@nvidia.com>
 Cc:     Jean Delvare <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
@@ -59,43 +59,49 @@ Cc:     Jean Delvare <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
         Conor Dooley <conor+dt@kernel.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, Ninad Malwade <nmalwade@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH V5 1/4] dt-bindings: hwmon: ina3221: Convert to
- json-schema
-Message-ID: <c17f1c01-27ff-4c66-aa1a-321bc05e0570@roeck-us.net>
+        linux-tegra@vger.kernel.org, Ninad Malwade <nmalwade@nvidia.com>
+Subject: Re: [PATCH V5 2/4] dt-bindings: hwmon: ina3221: Add
+ ti,summation-disable
+Message-ID: <25b7c720-8676-4c05-a78a-1179096d1339@roeck-us.net>
 References: <20230929103650.86074-1-jonathanh@nvidia.com>
- <20230929103650.86074-2-jonathanh@nvidia.com>
+ <20230929103650.86074-3-jonathanh@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230929103650.86074-2-jonathanh@nvidia.com>
+In-Reply-To: <20230929103650.86074-3-jonathanh@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Sep 29, 2023 at 11:36:47AM +0100, Jon Hunter wrote:
-> From: Ninad Malwade <nmalwade@nvidia.com>
+On Fri, Sep 29, 2023 at 11:36:48AM +0100, Jon Hunter wrote:
+> The INA3221 has a critical alert pin that can be controlled by the
+> summation control function. This function adds the single
+> shunt-voltage conversions for the desired channels in order to
+> compare the combined sum to the programmed limit. The Shunt-Voltage
+> Sum Limit register contains the programmed value that is compared
+> to the value in the Shunt-Voltage Sum register in order to
+> determine if the total summed limit is exceeded. If the
+> shunt-voltage sum limit value is exceeded, the critical alert pin
+> pulls low.
 > 
-> Convert the TI INA3221 bindings from the free-form text format to
-> json-schema.
+> For the summation limit to have a meaningful value, it is necessary
+> to use the same shunt-resistor value on all included channels. Add a new
+> vendor specific property, 'ti,summation-disable', to allow specific
+> channels to be excluded from the summation control function if the shunt
+> resistor is different to other channels or the channel should not be
+> considered for triggering the critical alert pin.
 > 
-> Note that the INA3221 input channels default to enabled in the chip.
-> Unless channels are explicitly disabled in device-tree, input
-> channels will be enabled.
+> Note that the ina3221 has always supported summing the various input
+> channels and summation is enabled by default if the shunt-resistor
+> values are the same. This change simply provides a way to exclude
+> inputs from the summation. If this property is not populated, then the
+> functionality of the driver does not change.
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Ninad Malwade <nmalwade@nvidia.com>
 > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Ninad Malwade <nmalwade@nvidia.com>
 > Reviewed-by: Rob Herring <robh@kernel.org>
 
 Applied.
 
-Note that checkpatch complains
-
-WARNING: DT binding docs and includes should be a separate patch.
-See: Documentation/devicetree/bindings/submitting-patches.rst
-
-but I take that as a false positive.
-
+Thanks,
 Guenter
