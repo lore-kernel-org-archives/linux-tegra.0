@@ -2,119 +2,102 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AFCC25B48
-	for <linux-tegra@archiver.kernel.org>; Thu, 26 Oct 2023 05:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A822C25B6B
+	for <linux-tegra@archiver.kernel.org>; Thu, 26 Oct 2023 07:53:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229554AbjJZFnY (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 26 Oct 2023 01:43:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58932 "EHLO
+        id S1344474AbjJZHxw (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 26 Oct 2023 03:53:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233628AbjJZFnW (ORCPT
+        with ESMTP id S1344506AbjJZHxu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 26 Oct 2023 01:43:22 -0400
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EBAD115;
-        Wed, 25 Oct 2023 22:43:19 -0700 (PDT)
-Received: by mail-ej1-x632.google.com with SMTP id a640c23a62f3a-9bf86b77a2aso72636266b.0;
-        Wed, 25 Oct 2023 22:43:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698298998; x=1698903798; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rG2UysggiUwoOTUDtuwATYwEsAqlGEHP6tlUqmAyNpE=;
-        b=ar/2J/JqFPEjVt2wsBrYSbQxJkTFugSvD28HqhB4i6WP0frX1rJIMEtIcCC4kA6TSN
-         RjwSxf8sgawbIpLxGUzJSZ8xR7VIz+BgHfWE13fv3RB3FhMAgjwp+ZCWi75WjI2VTXby
-         nsOqHgZ/YUIydNai0CgjOVISCncl7z15UmxAcfjcu0lbFNTS2hIl8JcavJeFVhdy61GS
-         8ZPzYUbMnZZQuWlkU9V4eDFJ/suvWdhoOB7kXEQ+grUVVNG7lpa43Qrm98pAX97vBD8R
-         mbu4CQ8e4UllMU8leEz+0BTPXaNJjcEZnhkonQC0lj7zZmBK+FZLs1ApQHU/peeAxWN9
-         Cqiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698298998; x=1698903798;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=rG2UysggiUwoOTUDtuwATYwEsAqlGEHP6tlUqmAyNpE=;
-        b=QyT1OyXNxmokemeGnsWcnIRZcThaYIiSI3SFXRxGiWIhuCoEsnB66C+We5ucrOUcj5
-         rbtBWn9yC/dEEVftVJCySKVfsxYcdJGJ9R4nWu2Af4ywsM36Pr0wMl5l6tXKP0aExoJV
-         C6vI431b5d+F32KjuSnSMmBVrmmx7VLApqPuLOpTeapCzZCciG0tOJDAU2t21kf2qmni
-         c0TrLqeK6kaMZ5fvOa43uOeXdeoG6u+IVOnh1s/6LCpKtLlhgVhMgq0Ak+ZY83rroLlC
-         jFf1/AfR4fyooLa89Ti2z9nWwwBX2ZSM5Y6G6I1sWhhU1OQAIs70UtNOlQgwRS48aKMo
-         qTKg==
-X-Gm-Message-State: AOJu0YywaBo7XuKmYRVKw/h9zc1B+ovxoIyDOJLpr6kVl4GsWs+wI3aW
-        SS3400440D0AbyYnoZcUUBLVelI7lzmlq6gNMn4=
-X-Google-Smtp-Source: AGHT+IE2Vvk6/8UrLk+Fqp68uEGIMn/w0ixG329AL4BRaLr6Z9i9Tbw3TAkzOcjxqMEkG/Sa24yY7g==
-X-Received: by 2002:a17:907:7285:b0:9b2:be5e:7545 with SMTP id dt5-20020a170907728500b009b2be5e7545mr13394942ejc.36.1698298997475;
-        Wed, 25 Oct 2023 22:43:17 -0700 (PDT)
-Received: from ?IPv6:2001:a61:3456:4e01:6ae:b55a:bd1d:57fc? ([2001:a61:3456:4e01:6ae:b55a:bd1d:57fc])
-        by smtp.gmail.com with ESMTPSA id y19-20020a170906519300b009adc7733f98sm11085906ejk.97.2023.10.25.22.43.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Oct 2023 22:43:17 -0700 (PDT)
-Message-ID: <a9bb417341ee2f13c63f13afc1a5a3be330dcf07.camel@gmail.com>
-Subject: Re: [RFT PATCH 03/17] ASoC: codecs: adav80x: Handle component name
- prefix
-From:   Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To:     Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Banajit Goswami <bgoswami@quicinc.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Thu, 26 Oct 2023 03:53:50 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59854186;
+        Thu, 26 Oct 2023 00:53:47 -0700 (PDT)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 39Q36JS3006400;
+        Thu, 26 Oct 2023 07:53:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-03-30; bh=g28l6GSOBmSfSFI3TH423xZ/It8yYFXLRt+Nab+zghw=;
+ b=d03e/dsOUr5p8dyargQ+j7CnMsByuK4ZKE02Sw/xz4xIHp8yyNc1L83xCV9UG7d+qs1d
+ AsNSCyc1CfTnXlFtRbC9GbOZ32GHg46gU9uZGnA9suE2MI20bz4V0HOjiNq+A2g01m2a
+ 8nHB1XqsrK0+5KtAGL2GToV75SHyiGjBCi/GGk/05jsLayGjU7yUKUTy96PRcTQxdqpC
+ l4yVjyZv7gN1/HZuNftM3nZlIIT2QD43mZX6Iu01isHd7Yktgcb2Z5xXfPryA7TTF4BJ
+ waAajb165A79B631HBN1TYV3xKJEbQRGPaYTeSCN00kahmRGb4+4AyAieJimW5dHmSHL gQ== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3tv581tcx7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Oct 2023 07:53:34 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 39Q7I1Zq031168;
+        Thu, 26 Oct 2023 07:53:33 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3tv53eb0fp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 26 Oct 2023 07:53:33 +0000
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 39Q7rWde032431;
+        Thu, 26 Oct 2023 07:53:32 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3tv53eb0f5-1;
+        Thu, 26 Oct 2023 07:53:32 +0000
+From:   Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To:     Dipen Patel <dipenp@nvidia.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-Date:   Thu, 26 Oct 2023 07:43:15 +0200
-In-Reply-To: <20231023095428.166563-4-krzysztof.kozlowski@linaro.org>
-References: <20231023095428.166563-1-krzysztof.kozlowski@linaro.org>
-         <20231023095428.166563-4-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        timestamp@lists.linux.dev, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] hte: tegra: Fix missing error code in tegra_hte_test_probe()
+Date:   Thu, 26 Oct 2023 00:53:28 -0700
+Message-ID: <20231026075328.996704-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.42.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.980,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2023-10-26_05,2023-10-25_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0 mlxscore=0
+ suspectscore=0 spamscore=0 adultscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2310170001
+ definitions=main-2310260065
+X-Proofpoint-GUID: m44YvrSfAsxhxhvjoX4Wz3HA9NWhe5uk
+X-Proofpoint-ORIG-GUID: m44YvrSfAsxhxhvjoX4Wz3HA9NWhe5uk
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Mon, 2023-10-23 at 11:54 +0200, Krzysztof Kozlowski wrote:
-> Use snd_soc_dapm_widget_name_cmp() helper when comparing widget names,
-> to include also the component's name prefix.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+The value of 'ret' is zero when of_hte_req_count() fails to get number
+of entitties to timestamp. And returning success(zero) on this failure
+path is incorrect.
 
-Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+Fixes: 9a75a7cd03c9 ("hte: Add Tegra HTE test driver")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is found using static analysis with smatch, only compile tested.
+---
+ drivers/hte/hte-tegra194-test.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> =C2=A0sound/soc/codecs/adav80x.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/sound/soc/codecs/adav80x.c b/sound/soc/codecs/adav80x.c
-> index bb08969c5917..c8c0fc928211 100644
-> --- a/sound/soc/codecs/adav80x.c
-> +++ b/sound/soc/codecs/adav80x.c
-> @@ -229,7 +229,7 @@ static int adav80x_dapm_sysclk_check(struct snd_soc_d=
-apm_widget
-> *source,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return 0;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return strcmp(source->name, cl=
-k) =3D=3D 0;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return snd_soc_dapm_widget_nam=
-e_cmp(source, clk) =3D=3D 0;
-> =C2=A0}
-> =C2=A0
-> =C2=A0static int adav80x_dapm_pll_check(struct snd_soc_dapm_widget *sourc=
-e,
+diff --git a/drivers/hte/hte-tegra194-test.c b/drivers/hte/hte-tegra194-test.c
+index ba37a5efbf82..ab2edff018eb 100644
+--- a/drivers/hte/hte-tegra194-test.c
++++ b/drivers/hte/hte-tegra194-test.c
+@@ -153,8 +153,10 @@ static int tegra_hte_test_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	cnt = of_hte_req_count(hte.pdev);
+-	if (cnt < 0)
++	if (cnt < 0) {
++		ret = cnt;
+ 		goto free_irq;
++	}
+ 
+ 	dev_info(&pdev->dev, "Total requested lines:%d\n", cnt);
+ 
+-- 
+2.39.3
 
