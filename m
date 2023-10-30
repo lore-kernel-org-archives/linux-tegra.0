@@ -2,91 +2,183 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBCDC27C48
-	for <linux-tegra@archiver.kernel.org>; Sat, 28 Oct 2023 11:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BF2C4167D
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Oct 2023 13:20:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229960AbjJ1LGd (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sat, 28 Oct 2023 07:06:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58514 "EHLO
+        id S233308AbjJ3NUC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Oct 2023 09:20:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbjJ1LGb (ORCPT
+        with ESMTP id S232176AbjJ3NUB (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sat, 28 Oct 2023 07:06:31 -0400
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC960C0;
-        Sat, 28 Oct 2023 04:06:28 -0700 (PDT)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6F82140E0171;
-        Sat, 28 Oct 2023 11:06:26 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-        header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-        by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id kPqXeTtDDo9z; Sat, 28 Oct 2023 11:06:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-        t=1698491183; bh=EHjBb96lcMnmWWDcbNaD4wXBmqS+NphkqDuHPnHecec=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VtY4ftls8QE2bTI6UlkII5vgHpZDr946Z5wLzVI4b+EqGpZX0QOrAdqXl6GuXlsoR
-         xYA9/F6VbaKNNhUnuKA1aI6JSePqlZrm5v9k5xoGAm40uKreUPU6WM4VTxT5Ee2nz2
-         hFmaeo0wKpYxzoE1o3/beUTixBnskz0v+rbE6cbUAsmVFWouQ3bEykTm3MXuxGFBVG
-         iLyHGhsQMDgS9oJ+LQ6B38Hj6iGJMM/s5LiDescjhj0kn1F+ChxNjskhu4jKjtbDnl
-         oDoAtjt6/vvF8qPRU/NgZ7ctWREEX+OcHY3U44MbzFxDHX/0MW8I2RIVsQElTIqLju
-         zljXPpWDJS3fRMGSkFA8MBxCpJuji8yaWvRuwHR3fByzDda2UmesgxA8DAwc0fck7J
-         /9rs62sWTn6AsGQ4914uT3dHZP2j+KLbNCDyf2P8wtvev2Ibn1hrnP9g5GcOr6l7f8
-         MUAYbyh0JNdr7HaREza30ZChjyVNUAI+cBWa5zFWPxsjuLgOoEqfvCa/pj/BHkXJNW
-         CYJuySDFXF3Pk1grJBBoxYWgfTqA0aIOtfTqi5fE2Pka6Jv5Z0S0X5xElWXqG6bCPY
-         M6en9OhQ8CAntqGN9GEorQrtCV8JovYdU6uBIHc5Wl899IK+vuILYrFLVh2ugmzfIk
-         72ZKBG9OsUn4VrOTbzVR0Fis=
-Received: from zn.tnic (pd95304da.dip0.t-ipconnect.de [217.83.4.218])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-        (No client certificate requested)
-        by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5F7E640E018F;
-        Sat, 28 Oct 2023 11:06:10 +0000 (UTC)
-Date:   Sat, 28 Oct 2023 13:06:04 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jeshua Smith <jeshuas@nvidia.com>
-Cc:     keescook@chromium.org, tony.luck@intel.com, gpiccoli@igalia.com,
-        rafael@kernel.org, lenb@kernel.org, james.morse@arm.com,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, linux-tegra@vger.kernel.org,
-        treding@nvidia.com, jonathanh@nvidia.com
-Subject: Re: [PATCH V3] ACPI: APEI: Use ERST timeout for slow devices
-Message-ID: <20231028110604.GCZTzrHKnsDB+Dmljr@fat_crate.local>
-References: <20231027223309.22883-1-jeshuas@nvidia.com>
+        Mon, 30 Oct 2023 09:20:01 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D1301C9;
+        Mon, 30 Oct 2023 06:19:58 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DFABFEC;
+        Mon, 30 Oct 2023 06:20:40 -0700 (PDT)
+Received: from e129154.nice.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F25103F64C;
+        Mon, 30 Oct 2023 06:19:53 -0700 (PDT)
+Date:   Mon, 30 Oct 2023 14:19:06 +0100
+From:   Beata Michalska <beata.michalska@arm.com>
+To:     Sumit Gupta <sumitg@nvidia.com>
+Cc:     Zeng Heng <zengheng4@huawei.com>, broonie@kernel.org,
+        joey.gouly@arm.com, will@kernel.org, amit.kachhap@arm.com,
+        rafael@kernel.org, catalin.marinas@arm.com, james.morse@arm.com,
+        maz@kernel.org, viresh.kumar@linaro.org,
+        yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        wangxiongfeng2@huawei.com, xiexiuqi@huawei.com,
+        Ionela Voinescu <ionela.voinescu@arm.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 2/3] cpufreq: CPPC: Keep the target core awake when
+ reading its cpufreq rate
+Message-ID: <ZT-tSoCYR-818pa3@e129154.nice.arm.com>
+References: <20231025093847.3740104-1-zengheng4@huawei.com>
+ <20231025093847.3740104-3-zengheng4@huawei.com>
+ <ZTjz2Ox_iqorbejw@FVFF77S0Q05N>
+ <28a6e60c-4492-105b-5fcf-3129ca868349@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231027223309.22883-1-jeshuas@nvidia.com>
+In-Reply-To: <28a6e60c-4492-105b-5fcf-3129ca868349@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Oct 27, 2023 at 10:33:09PM +0000, Jeshua Smith wrote:
-> Slow devices such as flash may not meet the default 1ms timeout value,
-> so use the ERST max execution time value as the timeout if it is larger
-> and if the ERST has the "slow" attribute set.
+On Wed, Oct 25, 2023 at 08:27:23PM +0530, Sumit Gupta wrote:
 > 
-> Example:
-> A NOR flash spec lists "Page program time (256 bytes)" as 120us typical,
-> and 1800us max. A 32KB error log would be (32K/256) = 128 nor-flash
-> pages. Writing those 128 nor-flash pages would then take
-> 120us * 128 = 15ms typical, or 1800us * 128 = 230.4ms max.
 > 
-> Without this change, when pstore calls APEI's ERST code to write a 32KB
-> error log to the NOR flash in the example, the code will flag a timeout
-> after 1ms and return an error to pstore. With this change, unless the
-> max time value from the ERST table is exceeded, the code will not flag a
-> timeout and will return success to pstore after the operation completes.
 > 
-> Signed-off-by: Jeshua Smith <jeshuas@nvidia.com>
-> ---
+> > [adding Ionela]
+> > 
+> > On Wed, Oct 25, 2023 at 05:38:46PM +0800, Zeng Heng wrote:
+> > > As ARM AMU's document says, all counters are subject to any changes
+> > > in clock frequency, including clock stopping caused by the WFI and WFE
+> > > instructions.
+> > > 
+> > > Therefore, using smp_call_on_cpu() to trigger target CPU to
+> > > read self's AMU counters, which ensures the counters are working
+> > > properly while cstate feature is enabled.
+> > 
+> > IIUC there's a pretty deliberate split with all the actual reading of the AMU
+> > living in arch/arm64/kernel/topolgy.c, and the driver code being (relatively)
+> > generic.
+> > 
+> > We already have code in arch/arm64/kernel/topolgy.c to read counters on a
+> > specific CPU; why can't e reuse that (and avoid exporting cpu_has_amu_feat())?
+> 
+> 
+> This patch seems mostly based on my previous patch [1] and discussed here
+> [2] already. Beata [CCed] shared an alternate approach [3] leveraging
+> existing code from 'topology.c' to get the average freq for last tick
+> period.
+> 
+> 
+> Beata,
+> 
+> Could you share v2 of [3] with the request to merge. We can try to solve the
+> issue with CPU IDLE case later on top?
+>
+Will do (same for the below request if feasible)
 
-Reviewed-by: Borislav Petkov (AMD) <bp@alien8.de>
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+---
+BR
+B.
+> Additionally, also please include the fix in [4] if it looks fine.
+> 
+> Best Regards,
+> Sumit Gupta
+> 
+> [1] https://lore.kernel.org/all/20230418113459.12860-7-sumitg@nvidia.com/
+> [2] https://lore.kernel.org/lkml/cde1d8a9-3a21-e82b-7895-40603a14d898@nvidia.com/T/#m2174305de4706006e0bd9c103a0e5ff61cea7a12
+> [3]
+> https://lore.kernel.org/lkml/20230606155754.245998-1-beata.michalska@arm.com/
+> [4]
+> https://lore.kernel.org/lkml/6a5710f6-bfbb-5dfd-11cd-0cd02220cee7@nvidia.com/
+> 
+> 
+> > > 
+> > > Reported-by: Sumit Gupta <sumitg@nvidia.com>
+> > > Link: https://lore.kernel.org/all/20230418113459.12860-7-sumitg@nvidia.com/
+> > > Signed-off-by: Zeng Heng <zengheng4@huawei.com>
+> > > ---
+> > >   drivers/cpufreq/cppc_cpufreq.c | 39 ++++++++++++++++++++++++++--------
+> > >   1 file changed, 30 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> > > index fe08ca419b3d..321a9dc9484d 100644
+> > > --- a/drivers/cpufreq/cppc_cpufreq.c
+> > > +++ b/drivers/cpufreq/cppc_cpufreq.c
+> > > @@ -90,6 +90,12 @@ static int cppc_perf_from_fbctrs(struct cppc_cpudata *cpu_data,
+> > >                                 struct cppc_perf_fb_ctrs *fb_ctrs_t0,
+> > >                                 struct cppc_perf_fb_ctrs *fb_ctrs_t1);
+> > > 
+> > > +struct fb_ctr_pair {
+> > > +     u32 cpu;
+> > > +     struct cppc_perf_fb_ctrs fb_ctrs_t0;
+> > > +     struct cppc_perf_fb_ctrs fb_ctrs_t1;
+> > > +};
+> > > +
+> > >   /**
+> > >    * cppc_scale_freq_workfn - CPPC arch_freq_scale updater for frequency invariance
+> > >    * @work: The work item.
+> > > @@ -840,9 +846,24 @@ static int cppc_perf_from_fbctrs(struct cppc_cpudata *cpu_data,
+> > >        return (reference_perf * delta_delivered) / delta_reference;
+> > >   }
+> > > 
+> > > +static int cppc_get_perf_ctrs_pair(void *val)
+> > > +{
+> > > +     struct fb_ctr_pair *fb_ctrs = val;
+> > > +     int cpu = fb_ctrs->cpu;
+> > > +     int ret;
+> > > +
+> > > +     ret = cppc_get_perf_ctrs(cpu, &fb_ctrs->fb_ctrs_t0);
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     udelay(2); /* 2usec delay between sampling */
+> > > +
+> > > +     return cppc_get_perf_ctrs(cpu, &fb_ctrs->fb_ctrs_t1);
+> > > +}
+> > > +
+> > >   static unsigned int cppc_cpufreq_get_rate(unsigned int cpu)
+> > >   {
+> > > -     struct cppc_perf_fb_ctrs fb_ctrs_t0 = {0}, fb_ctrs_t1 = {0};
+> > > +     struct fb_ctr_pair fb_ctrs = { .cpu = cpu, };
+> > >        struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+> > >        struct cppc_cpudata *cpu_data = policy->driver_data;
+> > >        u64 delivered_perf;
+> > > @@ -850,18 +871,18 @@ static unsigned int cppc_cpufreq_get_rate(unsigned int cpu)
+> > > 
+> > >        cpufreq_cpu_put(policy);
+> > > 
+> > > -     ret = cppc_get_perf_ctrs(cpu, &fb_ctrs_t0);
+> > > -     if (ret)
+> > > -             return 0;
+> > > -
+> > > -     udelay(2); /* 2usec delay between sampling */
+> > > +     if (cpu_has_amu_feat(cpu))
+> > > +             ret = smp_call_on_cpu(cpu, cppc_get_perf_ctrs_pair,
+> > > +                                   &fb_ctrs, false);
+> > > +     else
+> > > +             ret = cppc_get_perf_ctrs_pair(&fb_ctrs);
+> > > 
+> > > -     ret = cppc_get_perf_ctrs(cpu, &fb_ctrs_t1);
+> > >        if (ret)
+> > >                return 0;
+> > > 
+> > > -     delivered_perf = cppc_perf_from_fbctrs(cpu_data, &fb_ctrs_t0,
+> > > -                                            &fb_ctrs_t1);
+> > > +     delivered_perf = cppc_perf_from_fbctrs(cpu_data,
+> > > +                                           &fb_ctrs.fb_ctrs_t0,
+> > > +                                           &fb_ctrs.fb_ctrs_t1);
+> > > 
+> > >        return cppc_cpufreq_perf_to_khz(cpu_data, delivered_perf);
+> > >   }
+> > > --
+> > > 2.25.1
+> > > 
