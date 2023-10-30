@@ -2,183 +2,160 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05BF2C4167D
-	for <linux-tegra@archiver.kernel.org>; Mon, 30 Oct 2023 13:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F818C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 30 Oct 2023 15:30:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233308AbjJ3NUC (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 30 Oct 2023 09:20:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44316 "EHLO
+        id S231395AbjJ3Pa5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 30 Oct 2023 11:30:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232176AbjJ3NUB (ORCPT
+        with ESMTP id S232176AbjJ3Pa4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 30 Oct 2023 09:20:01 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D1301C9;
-        Mon, 30 Oct 2023 06:19:58 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1DFABFEC;
-        Mon, 30 Oct 2023 06:20:40 -0700 (PDT)
-Received: from e129154.nice.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F25103F64C;
-        Mon, 30 Oct 2023 06:19:53 -0700 (PDT)
-Date:   Mon, 30 Oct 2023 14:19:06 +0100
-From:   Beata Michalska <beata.michalska@arm.com>
-To:     Sumit Gupta <sumitg@nvidia.com>
-Cc:     Zeng Heng <zengheng4@huawei.com>, broonie@kernel.org,
-        joey.gouly@arm.com, will@kernel.org, amit.kachhap@arm.com,
-        rafael@kernel.org, catalin.marinas@arm.com, james.morse@arm.com,
-        maz@kernel.org, viresh.kumar@linaro.org,
-        yang@os.amperecomputing.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        wangxiongfeng2@huawei.com, xiexiuqi@huawei.com,
-        Ionela Voinescu <ionela.voinescu@arm.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/3] cpufreq: CPPC: Keep the target core awake when
- reading its cpufreq rate
-Message-ID: <ZT-tSoCYR-818pa3@e129154.nice.arm.com>
-References: <20231025093847.3740104-1-zengheng4@huawei.com>
- <20231025093847.3740104-3-zengheng4@huawei.com>
- <ZTjz2Ox_iqorbejw@FVFF77S0Q05N>
- <28a6e60c-4492-105b-5fcf-3129ca868349@nvidia.com>
+        Mon, 30 Oct 2023 11:30:56 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8C3DB3;
+        Mon, 30 Oct 2023 08:30:51 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9a58dbd5daeso710123066b.2;
+        Mon, 30 Oct 2023 08:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1698679850; x=1699284650; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fucSBr7KI97NI+mfq5QKSGfLCAvmSHTUlbKwSB46i8M=;
+        b=FyeD1hi7Q70290DBZmyismC8doWU9c9J9ZCN6nhoBnZ/hAK2onXFD+5AplnoMwZl7C
+         5mB9EpjQZgNAW1q0WbXX5+TJkaAW39opDVsp+rKti3wHpgvJOklFMvY1F+w1JvtNoCmW
+         4ewguXHNZWDiTF8shw5308BQiYqBc+3RjN5Jxm1qUTsflU4NyjAQmffj1zEg/VDH1OMs
+         NyYTsycCjeSAZNrNXuzFZqbPXhe1fv48/Ort4XT+mfQvrMODGIrYx9M5Y6ZAhtNQK3eJ
+         Sj+KIqCP1/0Vdb3VySY7WRasiWSYoZGxgOeZ9Q7A72pDMDvLo6aiIsninANKDd5xkKkz
+         /cfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698679850; x=1699284650;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fucSBr7KI97NI+mfq5QKSGfLCAvmSHTUlbKwSB46i8M=;
+        b=B12ExwBMXvYYRo8JcWwIe4VjGeUTk4Rsq+sF3nMnDDONRlHMh/cGWkn+c8xzMkkeXm
+         coW4cOjWR676Eu9r9dvoRkSJCa46OqTFD8YMPfZUjU/VmFCc+FdxMzdJcS3755jlvTy8
+         VtVOtbnP8xnis/7Mqs8YUQ/Ws6I6U6RqFh8VVOkC95oPecf3OxBJ5Wkk3omYe+85bwr2
+         8p+T45swtbb49180Fpw4oWmzBpLC5C5fu+ulGJK72BdEN8wmmY9YJz+c6p0Gx8VUGmrq
+         MahE8Chqns4WrM8IYwBrtvPVvKEGA27T9zcQ063BpqSCwvekixS4+isI/ulZ4sJjRvx1
+         SJGQ==
+X-Gm-Message-State: AOJu0YwJLyhtzkvtCpA/bhUkXUB11kM/MAv0Ai4DP50xjqD79sXfrd2o
+        yWmX0RGlTAgGQHOnCsYQIgrUVStJvyc=
+X-Google-Smtp-Source: AGHT+IHQSz27xYdC8l13VusKgW8ymoWqjteGO/wj2sa3TzwVQ905mfNPeAsWlsqdiV8MCkI5ddpiug==
+X-Received: by 2002:a17:907:7f9e:b0:9c6:8190:359f with SMTP id qk30-20020a1709077f9e00b009c68190359fmr9810526ejc.33.1698679850002;
+        Mon, 30 Oct 2023 08:30:50 -0700 (PDT)
+Received: from orome.fritz.box (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id q17-20020a17090622d100b0098921e1b064sm6138533eja.181.2023.10.30.08.30.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Oct 2023 08:30:49 -0700 (PDT)
+Date:   Mon, 30 Oct 2023 16:30:48 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Baolu Lu <baolu.lu@linux.intel.com>
+Cc:     Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+        linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] iommu/tegra-smmu: fix error checking for
+ debugfs_create_dir()
+Message-ID: <ZT_MKDVkqMECiv4I@orome.fritz.box>
+References: <20231025110140.2034650-1-dario.binacchi@amarulasolutions.com>
+ <1acd75d0-67a7-4a17-99c7-707cca305f37@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tiC6UW8JeMZZZOlp"
 Content-Disposition: inline
-In-Reply-To: <28a6e60c-4492-105b-5fcf-3129ca868349@nvidia.com>
+In-Reply-To: <1acd75d0-67a7-4a17-99c7-707cca305f37@linux.intel.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Oct 25, 2023 at 08:27:23PM +0530, Sumit Gupta wrote:
-> 
-> 
-> 
-> > [adding Ionela]
-> > 
-> > On Wed, Oct 25, 2023 at 05:38:46PM +0800, Zeng Heng wrote:
-> > > As ARM AMU's document says, all counters are subject to any changes
-> > > in clock frequency, including clock stopping caused by the WFI and WFE
-> > > instructions.
-> > > 
-> > > Therefore, using smp_call_on_cpu() to trigger target CPU to
-> > > read self's AMU counters, which ensures the counters are working
-> > > properly while cstate feature is enabled.
-> > 
-> > IIUC there's a pretty deliberate split with all the actual reading of the AMU
-> > living in arch/arm64/kernel/topolgy.c, and the driver code being (relatively)
-> > generic.
-> > 
-> > We already have code in arch/arm64/kernel/topolgy.c to read counters on a
-> > specific CPU; why can't e reuse that (and avoid exporting cpu_has_amu_feat())?
-> 
-> 
-> This patch seems mostly based on my previous patch [1] and discussed here
-> [2] already. Beata [CCed] shared an alternate approach [3] leveraging
-> existing code from 'topology.c' to get the average freq for last tick
-> period.
-> 
-> 
-> Beata,
-> 
-> Could you share v2 of [3] with the request to merge. We can try to solve the
-> issue with CPU IDLE case later on top?
->
-Will do (same for the below request if feasible)
 
----
-BR
-B.
-> Additionally, also please include the fix in [4] if it looks fine.
-> 
-> Best Regards,
-> Sumit Gupta
-> 
-> [1] https://lore.kernel.org/all/20230418113459.12860-7-sumitg@nvidia.com/
-> [2] https://lore.kernel.org/lkml/cde1d8a9-3a21-e82b-7895-40603a14d898@nvidia.com/T/#m2174305de4706006e0bd9c103a0e5ff61cea7a12
-> [3]
-> https://lore.kernel.org/lkml/20230606155754.245998-1-beata.michalska@arm.com/
-> [4]
-> https://lore.kernel.org/lkml/6a5710f6-bfbb-5dfd-11cd-0cd02220cee7@nvidia.com/
-> 
-> 
-> > > 
-> > > Reported-by: Sumit Gupta <sumitg@nvidia.com>
-> > > Link: https://lore.kernel.org/all/20230418113459.12860-7-sumitg@nvidia.com/
-> > > Signed-off-by: Zeng Heng <zengheng4@huawei.com>
-> > > ---
-> > >   drivers/cpufreq/cppc_cpufreq.c | 39 ++++++++++++++++++++++++++--------
-> > >   1 file changed, 30 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> > > index fe08ca419b3d..321a9dc9484d 100644
-> > > --- a/drivers/cpufreq/cppc_cpufreq.c
-> > > +++ b/drivers/cpufreq/cppc_cpufreq.c
-> > > @@ -90,6 +90,12 @@ static int cppc_perf_from_fbctrs(struct cppc_cpudata *cpu_data,
-> > >                                 struct cppc_perf_fb_ctrs *fb_ctrs_t0,
-> > >                                 struct cppc_perf_fb_ctrs *fb_ctrs_t1);
-> > > 
-> > > +struct fb_ctr_pair {
-> > > +     u32 cpu;
-> > > +     struct cppc_perf_fb_ctrs fb_ctrs_t0;
-> > > +     struct cppc_perf_fb_ctrs fb_ctrs_t1;
-> > > +};
-> > > +
-> > >   /**
-> > >    * cppc_scale_freq_workfn - CPPC arch_freq_scale updater for frequency invariance
-> > >    * @work: The work item.
-> > > @@ -840,9 +846,24 @@ static int cppc_perf_from_fbctrs(struct cppc_cpudata *cpu_data,
-> > >        return (reference_perf * delta_delivered) / delta_reference;
-> > >   }
-> > > 
-> > > +static int cppc_get_perf_ctrs_pair(void *val)
-> > > +{
-> > > +     struct fb_ctr_pair *fb_ctrs = val;
-> > > +     int cpu = fb_ctrs->cpu;
-> > > +     int ret;
-> > > +
-> > > +     ret = cppc_get_perf_ctrs(cpu, &fb_ctrs->fb_ctrs_t0);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     udelay(2); /* 2usec delay between sampling */
-> > > +
-> > > +     return cppc_get_perf_ctrs(cpu, &fb_ctrs->fb_ctrs_t1);
-> > > +}
-> > > +
-> > >   static unsigned int cppc_cpufreq_get_rate(unsigned int cpu)
-> > >   {
-> > > -     struct cppc_perf_fb_ctrs fb_ctrs_t0 = {0}, fb_ctrs_t1 = {0};
-> > > +     struct fb_ctr_pair fb_ctrs = { .cpu = cpu, };
-> > >        struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-> > >        struct cppc_cpudata *cpu_data = policy->driver_data;
-> > >        u64 delivered_perf;
-> > > @@ -850,18 +871,18 @@ static unsigned int cppc_cpufreq_get_rate(unsigned int cpu)
-> > > 
-> > >        cpufreq_cpu_put(policy);
-> > > 
-> > > -     ret = cppc_get_perf_ctrs(cpu, &fb_ctrs_t0);
-> > > -     if (ret)
-> > > -             return 0;
-> > > -
-> > > -     udelay(2); /* 2usec delay between sampling */
-> > > +     if (cpu_has_amu_feat(cpu))
-> > > +             ret = smp_call_on_cpu(cpu, cppc_get_perf_ctrs_pair,
-> > > +                                   &fb_ctrs, false);
-> > > +     else
-> > > +             ret = cppc_get_perf_ctrs_pair(&fb_ctrs);
-> > > 
-> > > -     ret = cppc_get_perf_ctrs(cpu, &fb_ctrs_t1);
-> > >        if (ret)
-> > >                return 0;
-> > > 
-> > > -     delivered_perf = cppc_perf_from_fbctrs(cpu_data, &fb_ctrs_t0,
-> > > -                                            &fb_ctrs_t1);
-> > > +     delivered_perf = cppc_perf_from_fbctrs(cpu_data,
-> > > +                                           &fb_ctrs.fb_ctrs_t0,
-> > > +                                           &fb_ctrs.fb_ctrs_t1);
-> > > 
-> > >        return cppc_cpufreq_perf_to_khz(cpu_data, delivered_perf);
-> > >   }
-> > > --
-> > > 2.25.1
-> > > 
+--tiC6UW8JeMZZZOlp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 25, 2023 at 07:25:50PM +0800, Baolu Lu wrote:
+> On 2023/10/25 19:01, Dario Binacchi wrote:
+> > The return value of debugfs_create_dir() should be checked using the
+> > IS_ERR() function.
+> >=20
+> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> > ---
+> >=20
+> >   drivers/iommu/tegra-smmu.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> > index e445f80d0226..cd1d80c4c673 100644
+> > --- a/drivers/iommu/tegra-smmu.c
+> > +++ b/drivers/iommu/tegra-smmu.c
+> > @@ -1056,7 +1056,7 @@ DEFINE_SHOW_ATTRIBUTE(tegra_smmu_clients);
+> >   static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
+> >   {
+> >   	smmu->debugfs =3D debugfs_create_dir("smmu", NULL);
+> > -	if (!smmu->debugfs)
+> > +	if (IS_ERR(smmu->debugfs))
+> >   		return;
+>=20
+> This check can be removed, as debugfs_create_file() can handle the case
+> where @parent is an error pointer.
+
+A patch for this has been in linux-next for a few weeks, see:
+
+commit f7da9c081517daba70f9f9342e09d7a6322ba323
+Author: Jinjie Ruan <ruanjinjie@huawei.com>
+Date:   Fri Sep 1 15:30:56 2023 +0800
+
+    iommu/tegra-smmu: Drop unnecessary error check for for debugfs_create_d=
+ir()
+   =20
+    The debugfs_create_dir() function returns error pointers.
+    It never returns NULL.
+   =20
+    As Baolu suggested, this patch removes the error checking for
+    debugfs_create_dir in tegra-smmu.c. This is because the DebugFS kernel =
+API
+    is developed in a way that the caller can safely ignore the errors that
+    occur during the creation of DebugFS nodes. The debugfs APIs have
+    a IS_ERR() judge in start_creating() which can handle it gracefully. So
+    these checks are unnecessary.
+   =20
+    Fixes: d1313e7896e9 ("iommu/tegra-smmu: Add debugfs support")
+    Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+    Suggested-by: Baolu Lu <baolu.lu@linux.intel.com>
+    Acked-by: Thierry Reding <treding@nvidia.com>
+    Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+    Link: https://lore.kernel.org/r/20230901073056.1364755-1-ruanjinjie@hua=
+wei.com
+    Signed-off-by: Joerg Roedel <jroedel@suse.de>
+
+Thierry
+
+--tiC6UW8JeMZZZOlp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmU/zCgACgkQ3SOs138+
+s6E+Ew//bfW6yOHM4+iM8OVsK+t0vyqrUeQ74ao0+QMKgBje2qbrxeWcV5cIdeaZ
+rL39jdMkomI2H3G7JXUrfqigRkRH6y2ObXU5fPX1VbXG9Olom9wqRiN6xCEDKzP1
+hI6EbvDYhHB5otD9t9/NUy926QQLrNs2N1g+fHJZjT4H7oZKUg5U/ayO2ZqfBuPI
+pG3kb/n+Yr6IGjGtsFaX3xgp8uu0YFe6znrUqIHXgrxga6DmHCSm/TCjb5ykZMKk
+s/8fiZKJlAl+emIvzh3h9vyNqjzCTjz5T84KQIFxJFPytmxGqc0kQlmlUOn65Ren
+K6XVfcoy0R1XFY+z6uGZwk31qo72afJSvOIG+T299r16mgTfopBpQhXXW1i/FaM2
+s8wYy6C33/GbB3pTtbSSuVxbd5ZwPA/eFXZQfn/Zs+J2BgKJ1eG0DULMnGowcNQq
+RHox8DQeQpuL52B7ncg1qc4DACuqZPbK+b1BLQ+T9LWILhDnoMVE+l5LfpmVTcXa
+Awt5nJnxPQy85qD4fP8Vij+rLwi82NiJRrQzy+P1efAO512SoYAouJ/trug9LkRT
+uhzqFB2tUojtdEtxR57uo0EnX6lX7V13yqNJHIkb5PhgKjFOkzFttHB2cj2wDmxD
+L/yGOHwED8cXLV4a/WWFStNKeOlCJfUUGfsShh8lsKcpjExog+Y=
+=+7dL
+-----END PGP SIGNATURE-----
+
+--tiC6UW8JeMZZZOlp--
