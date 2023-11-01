@@ -2,157 +2,142 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64EECC4332F
-	for <linux-tegra@archiver.kernel.org>; Tue, 31 Oct 2023 07:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4BBC4332F
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Nov 2023 10:09:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343799AbjJaHy7 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 31 Oct 2023 03:54:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44078 "EHLO
+        id S234822AbjKAKJL (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Nov 2023 06:09:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343812AbjJaHy4 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Tue, 31 Oct 2023 03:54:56 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6221E137
-        for <linux-tegra@vger.kernel.org>; Tue, 31 Oct 2023 00:54:44 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id 3f1490d57ef6-d865854ef96so4757217276.2
-        for <linux-tegra@vger.kernel.org>; Tue, 31 Oct 2023 00:54:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1698738883; x=1699343683; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=imGUTfdIv1UEQvIw5qZ3sOkWlbHODvlpW7n7ZTnXfW4=;
-        b=oBtG90Sb6gOeIZfWGLPc5o/DwbAgCs92Eg2QzymX1sMlA/ktWqUZ86pKwYGiboXjhG
-         Dv4l9FCSV8pNumMwjK54QcXqAvLD92vQ98w98Ih7mVYStJECwYHOw9PG0YWuwCHUHHPB
-         TjW6XupL3Sv3c6GrbUgOazsbwlWao6oPhZnx0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698738883; x=1699343683;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=imGUTfdIv1UEQvIw5qZ3sOkWlbHODvlpW7n7ZTnXfW4=;
-        b=uflW+yZtUbvyEQ3YF8vlMJZHNPRclo5VaMO0U0fUie8IkefZcoFAcT4W97RBUaSJkC
-         RK/B7hNqlmSXqISeqHGIPz2vxu1x5pqzSbKgOW/CKZJbQdUmW3jHzH6ZFBrTZR04hb7q
-         g2po25vVyDLay97uBinrQ5uEsa9tRikpXgeuY1DUZb5twmWMk/nzEI9qQTfHG9sjaPkm
-         tFR7z/46qiaQT6y2Ck9MQUEG0ucolGoNSbz1eH8BgcYk75yo1MV3Z6cJqOqiXqy0kmVv
-         1ou50pT1JPNDjh1L7xVRda33gXfPa1pb0ZWJCerL2w/joJYTd9k6e39i9rGuGcyclkCb
-         VoPg==
-X-Gm-Message-State: AOJu0Yw9QMeyN5nYoRI0Czy+7e1Ub0fGpMXyZ9HIZZxcNjAsTcn8x6o9
-        Y04tuFR4zWzWm+ERlesK3t2FBJ54/UuNViBeJAneLQ==
-X-Google-Smtp-Source: AGHT+IGuq0HOWs5OUTkDduu4V89OJcaIxGppI4qyD54zITZougK0zbZNP1p83UdXtqz7X/Iv55M353/8oTA/1gDd+B8=
-X-Received: by 2002:a25:aa27:0:b0:da0:3c22:8374 with SMTP id
- s36-20020a25aa27000000b00da03c228374mr12109008ybi.5.1698738883370; Tue, 31
- Oct 2023 00:54:43 -0700 (PDT)
+        with ESMTP id S234882AbjKAKJH (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Nov 2023 06:09:07 -0400
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2086.outbound.protection.outlook.com [40.107.93.86])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E90E110;
+        Wed,  1 Nov 2023 03:08:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g/canm5YUrbKe+U2DSes67O5A+bPPPZ8GN0JJ5oib2L4EE9Qs3bX/GD4XRX5/Iw6rEDMUrB/KlJD/eA08r6YavAIzu8yn4YOejhpGiEiCOdoMUb6NOJEKWSmFpCSGfYWpoHic/eyaoJAhfu3HDM436OnOHwri9EQz7Zl8q7pWbwzejp2i3WseAfdVTrKrfgv2vOMK6z5wSqdaizlwFAhKGzz3+ZzTkFlTYt4KS+aQRaNVnImqny10Uc6uA/zFg3yOVlm+CSi6E8E22ba2jBf9NznyX0r97mA57Rm8Bik34TP/NnU0WYzBNQ9J3QpJlA5vUm00i8IS3H/cwM5Aw9NJw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Waa1+zFQd17VlSMgpECeFDborX4/Nszc1ADXTIXCJQo=;
+ b=hBRgxbkAYmKdpL8t9SP9F7II1fRPfWDwUFYmIiOFh0QKFX1Y7DBcptFGJybqq0h4UM4mbuuBfz9r+wHXlR3/atmHuLl1gaM24wrRLiuvDzg2WNRtgAHSA0cmquKfcLxyLtOmhjp0ggWALLBnpKUk7xrTUIVV2bKXwL3jJg8snnYjlMUh0MCXahzOO06r6tdJOiNO5Q/FIBGHq5HHoa0fNkw+dez1olg2zXO6DA4pSXowGPbRLudgsZlSkU4IjesHNHRhUTNMRoAaRW/M8ILtWMc/HKu4Cza01kv7qfML51TJ7L0Tzg7k2XaUZ5xmv14mVVJAK/MTQ52gDRQOegyw0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Waa1+zFQd17VlSMgpECeFDborX4/Nszc1ADXTIXCJQo=;
+ b=oi1SND4IiIyt0Cim7UBPsWGZMmkJbEE/WoeQ/O4Auuq1Q6G8cSi9Lny3hmlrlg0RTUiwW4fTBV32OYJkBxoWkDjRVuwsM8o/qcaegJASoK1tz4sVivSIHRYTf9XAeAh4L4LCSC0maJBlSe1XohXlnBZmQihUYHsNO6dqg90tHKBKwmaNAMPepzzjqgXy22UO6kH64BHai7U1VI3ch2uPMfdffxBmlwd69znVHcqVsJ42v5NRs+dAQ0KFWMQG/2Jg2CywN2sfMd/THtYd33ehumnTZEYiP4JNP8ETTDR1J3D01ViOdzNUzT0QCHbWYMw5W2/K4/5xAO8BrNxDpj88/Q==
+Received: from BL0PR02CA0049.namprd02.prod.outlook.com (2603:10b6:207:3d::26)
+ by SA3PR12MB9226.namprd12.prod.outlook.com (2603:10b6:806:396::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.19; Wed, 1 Nov
+ 2023 10:08:37 +0000
+Received: from BL6PEPF0001AB4D.namprd04.prod.outlook.com
+ (2603:10b6:207:3d:cafe::36) by BL0PR02CA0049.outlook.office365.com
+ (2603:10b6:207:3d::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.19 via Frontend
+ Transport; Wed, 1 Nov 2023 10:08:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL6PEPF0001AB4D.mail.protection.outlook.com (10.167.242.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6954.19 via Frontend Transport; Wed, 1 Nov 2023 10:08:36 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 1 Nov 2023
+ 03:08:23 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 1 Nov 2023
+ 03:08:23 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
+ Transport; Wed, 1 Nov 2023 03:08:22 -0700
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <conor@kernel.org>,
+        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.5 000/112] 6.5.10-rc1 review
+In-Reply-To: <20231031165901.318222981@linuxfoundation.org>
+References: <20231031165901.318222981@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-References: <20231025110140.2034650-1-dario.binacchi@amarulasolutions.com>
- <1acd75d0-67a7-4a17-99c7-707cca305f37@linux.intel.com> <ZT_MKDVkqMECiv4I@orome.fritz.box>
-In-Reply-To: <ZT_MKDVkqMECiv4I@orome.fritz.box>
-From:   Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date:   Tue, 31 Oct 2023 08:54:31 +0100
-Message-ID: <CABGWkvrG8OWKpkY3g46XEje196zSXZ5rfekMRRDWMtp-uMrw-g@mail.gmail.com>
-Subject: Re: [PATCH] iommu/tegra-smmu: fix error checking for debugfs_create_dir()
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Baolu Lu <baolu.lu@linux.intel.com>, linux-kernel@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <5744ef15-bf0c-4796-a3f1-0cb016e8daf5@rnnvmail202.nvidia.com>
+Date:   Wed, 1 Nov 2023 03:08:22 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4D:EE_|SA3PR12MB9226:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9179dadc-98ca-4f73-a79c-08dbdac283a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0ZvLiQMAQKsvnh836q9L/urkO/cgVocNBALYJAmKNdU1UDeNpvyNFKTSk2d7OGkfDsLLXdTYmSwaf1s1k2+K+Q8EMAuaoow1dhd8cAPHK04SKQ6XdJoey25/6R+HnUdtF4Zw6iZRBar5/wqrLuX1WnZUyk+1hRCEub1RQ1pAfNZUytdB2BOxt9HCQYpZ+ucbaSKjFb1yLPskHb1Uh4fqOo//ElSrxb5J3j8RZ3GZb5XzBuLUajx6NtxO+DbflJsO/kS60y2EOFxMW86zN21CKBuT2CNYmUylQaxC4ALn/sAerhrveonv0NISE+4WAd2EGVpuX+2i53o3KoEEwRlu5beXSEHmapk54XXRC25RjCLsuyLoC3HXlxpSZ7BZ4EvnpoGDmY6yItw1vVJgmrQiRCUJ0uPhJ3PkReGOwhrAFmtaG4USZ0r1kZ04QwXPzZ4aoPlBwnKcf/j71ykyBaTuPAn5GxddImzYSNDBN5n51DThabL6uNz4UYFUk0ocr/LOaBXdv2V7aSNEpPY2U16SKZHS/W0oMxJouMnXS1AEv29lEZKyFfHm7jTVCsrqJJ2cKNAjwwAMa8jm7U9tkZbxGChB1DW1rM/Ke/CVGLlrUe1SI8eZZz4FwuTI2qgkK7mLjZmcxYxNUXScjfzorOrwKrqXWkI1RCMJ5W5I5vMpFelDKoUSA/p/fMH0pCebYueAgDZCrMrjyBuzUPmxMA9TLaCfyOL0V9vA+dHN7/aiSJbwktLR2olJPqYvmFP5aa28HBhEdnhWtwuqbT2Y+sv/yNV34q2nFWkja3LdTZm4IxE=
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(136003)(376002)(39860400002)(396003)(346002)(230922051799003)(186009)(64100799003)(451199024)(82310400011)(1800799009)(36840700001)(40470700004)(46966006)(40480700001)(4326008)(8936002)(8676002)(426003)(336012)(26005)(7416002)(36860700001)(40460700003)(82740400003)(356005)(7636003)(31696002)(86362001)(2906002)(5660300002)(47076005)(41300700001)(31686004)(966005)(478600001)(6916009)(70586007)(54906003)(316002)(70206006);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2023 10:08:36.7920
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9179dadc-98ca-4f73-a79c-08dbdac283a3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB4D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9226
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello Thierry,
+On Tue, 31 Oct 2023 18:00:01 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.5.10 release.
+> There are 112 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 02 Nov 2023 16:58:38 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.5.10-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.5.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-On Mon, Oct 30, 2023 at 4:30=E2=80=AFPM Thierry Reding <thierry.reding@gmai=
-l.com> wrote:
->
-> On Wed, Oct 25, 2023 at 07:25:50PM +0800, Baolu Lu wrote:
-> > On 2023/10/25 19:01, Dario Binacchi wrote:
-> > > The return value of debugfs_create_dir() should be checked using the
-> > > IS_ERR() function.
-> > >
-> > > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> > > ---
-> > >
-> > >   drivers/iommu/tegra-smmu.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> > > index e445f80d0226..cd1d80c4c673 100644
-> > > --- a/drivers/iommu/tegra-smmu.c
-> > > +++ b/drivers/iommu/tegra-smmu.c
-> > > @@ -1056,7 +1056,7 @@ DEFINE_SHOW_ATTRIBUTE(tegra_smmu_clients);
-> > >   static void tegra_smmu_debugfs_init(struct tegra_smmu *smmu)
-> > >   {
-> > >     smmu->debugfs =3D debugfs_create_dir("smmu", NULL);
-> > > -   if (!smmu->debugfs)
-> > > +   if (IS_ERR(smmu->debugfs))
-> > >             return;
-> >
-> > This check can be removed, as debugfs_create_file() can handle the case
-> > where @parent is an error pointer.
->
-> A patch for this has been in linux-next for a few weeks, see:
->
-> commit f7da9c081517daba70f9f9342e09d7a6322ba323
-> Author: Jinjie Ruan <ruanjinjie@huawei.com>
-> Date:   Fri Sep 1 15:30:56 2023 +0800
->
->     iommu/tegra-smmu: Drop unnecessary error check for for debugfs_create=
-_dir()
->
->     The debugfs_create_dir() function returns error pointers.
->     It never returns NULL.
->
->     As Baolu suggested, this patch removes the error checking for
->     debugfs_create_dir in tegra-smmu.c. This is because the DebugFS kerne=
-l API
->     is developed in a way that the caller can safely ignore the errors th=
-at
->     occur during the creation of DebugFS nodes. The debugfs APIs have
->     a IS_ERR() judge in start_creating() which can handle it gracefully. =
-So
->     these checks are unnecessary.
->
->     Fixes: d1313e7896e9 ("iommu/tegra-smmu: Add debugfs support")
->     Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->     Suggested-by: Baolu Lu <baolu.lu@linux.intel.com>
->     Acked-by: Thierry Reding <treding@nvidia.com>
->     Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
->     Link: https://lore.kernel.org/r/20230901073056.1364755-1-ruanjinjie@h=
-uawei.com
->     Signed-off-by: Joerg Roedel <jroedel@suse.de>
->
+All tests passing for Tegra ...
 
-Thanks for the explanation,
-regards
-Dario
+Test results for stable-v6.5:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    102 tests:	102 pass, 0 fail
 
-> Thierry
+Linux version:	6.5.10-rc1-g43ad4fdc1845
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-
---=20
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+Jon
