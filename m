@@ -2,210 +2,122 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E21EEC0018C
-	for <linux-tegra@archiver.kernel.org>; Wed,  1 Nov 2023 17:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51E7AC4332F
+	for <linux-tegra@archiver.kernel.org>; Wed,  1 Nov 2023 17:55:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344741AbjKARVD (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 1 Nov 2023 13:21:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52804 "EHLO
+        id S232303AbjKARzm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 1 Nov 2023 13:55:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344778AbjKARVB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Nov 2023 13:21:01 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D1813E;
-        Wed,  1 Nov 2023 10:20:26 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-98377c5d53eso6937666b.0;
-        Wed, 01 Nov 2023 10:20:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1698859225; x=1699464025; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YCWX20pm7NUxv4hyK070ttliGC4ogoFW2BX+CCQgl0k=;
-        b=ENKqDS1ma7w4GONjM2BAmjXsmoo0O9fOOOLhT3DkDVb/kxfTyGigj/A/z3ZuFbslM+
-         dCoVo5gFmI+vbwNUkAEm0Rq216RcvrtqrL1iGfEH9SLPniYt2kEmBkEzIfwO1kNnmKoO
-         oB0ShOzmB9lPznwFBJsuC69tUVPDhKOapAUA+UqWxtI7MRBJIsrochSKnU3zLeRIiJM6
-         YOGzw2JvsaiPgyw7gd1Mr5nOeBydSfROkiWZ7XJPvkL7eXgyHF2xI2GRh8BkisaLNc82
-         2m9qQqyx8RKILLHTcntZBOdlmi2wEXbjQBEOIotjwsNF3Gtm973twLUR1szcVBmHNiHP
-         h7uw==
+        with ESMTP id S231258AbjKARzl (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 1 Nov 2023 13:55:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FC9B120
+        for <linux-tegra@vger.kernel.org>; Wed,  1 Nov 2023 10:54:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1698861293;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NnKpb4EeK07qAJufbEwOR+W4LEQMu0mtbC3uRm1Hwfg=;
+        b=T7CKSQCo+4p1EXCJcHJXjv9u0OyIl6Ot25lEZxWl6RpND63Y3OijiBHgUdLb9nnLwRgajh
+        50PsAXY6bdWRVcCfMA7ZQBtCEcNeKSJAYxaPwtgPKeIlHebYHzJdYg/7Dcm1PCjCZsxK07
+        4cmSjxjLuK4T04WqN3YjyX0Ee0nQbdM=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-362-jGal8JYpPMKlX48EP5et0g-1; Wed, 01 Nov 2023 13:54:50 -0400
+X-MC-Unique: jGal8JYpPMKlX48EP5et0g-1
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-54001189946so32496a12.0
+        for <linux-tegra@vger.kernel.org>; Wed, 01 Nov 2023 10:54:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698859225; x=1699464025;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YCWX20pm7NUxv4hyK070ttliGC4ogoFW2BX+CCQgl0k=;
-        b=N1byOcS5DlYEte74EvGuteQH/Z8jmQLXswI6fbbds4UK3ONVC7w1zCvFckw3F0ffhc
-         WnIl0pP6VjtFGS2ioXm2O1II9ipskCpRPQDIwuFDNZZTZ1qTsn3YQFrYg6XATXw9kuHj
-         7IXa8zpm/1sGpggRZv8v30plWvVvFUaEMD3NQOQ6W0eDgH5bh9uTiymDMOny4nL86Fjd
-         U6Jqc0z0HIPvo7cmxMDA7F8Y+WiK0RuF/Ko3zGJRh85e0ZSXhd125F+kD0d2lfDFKu3k
-         BNtpqvoBCgik9qtBBgQEu15TK6o0dARqE51AF8C8Qtd8E7UsE+1lDzSyralQOukwo3qV
-         GvhQ==
-X-Gm-Message-State: AOJu0YxlhH4kQPFEOqvi+WhSPxpN/Rnp4scFlzPLLp+uucAsPOkTyjpo
-        Z6PuZl1AVDSvyngzIKPv31Sjto9hOp0=
-X-Google-Smtp-Source: AGHT+IELfHY0ppV6/oc/rv+QctOqXbA+B/dAZdJV4WnAElYHxcL5x8bScFtIyqNY3pUPUxYOY5G1GA==
-X-Received: by 2002:a17:907:6d16:b0:9be:d55a:81c3 with SMTP id sa22-20020a1709076d1600b009bed55a81c3mr2300010ejc.67.1698859225126;
-        Wed, 01 Nov 2023 10:20:25 -0700 (PDT)
-Received: from localhost (p200300e41f3f4900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3f:4900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id i18-20020a170906115200b009ad8acac02asm160956eja.172.2023.11.01.10.20.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Nov 2023 10:20:24 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Hans de Goede <hdegoede@redhat.com>, Helge Deller <deller@gmx.de>
+        d=1e100.net; s=20230601; t=1698861289; x=1699466089;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NnKpb4EeK07qAJufbEwOR+W4LEQMu0mtbC3uRm1Hwfg=;
+        b=FWWlJwW27xial916Zef/63c2pOCdrc7VYXRQ3DKOeSBQWTXXVb5OotgjRPlfagjP+O
+         aDTO8dkAkeKXoY/jcnruFlvdC5RtyZIkcJZaIbWFG07yy3dWt3piaEMCXLyTFqHTXx+V
+         DglTp7sOeTPrx7eYYiHlKvUWiQ3UUTNhy8L6xOv+4LxQZOl7vJ4sqGwQJdFkIcFZDcmc
+         HLmDYn4jG42ncRvbDWNyKcJRv+O+VGB2Vw3ZH7uvxfA8aCB8XLWq5uuRnf2s+rJQYVvo
+         2X6wPE7zaZDToltrXeH564SkDBrDM/Sg7cgXeP5Aj3zfRzhcyhb7bB4ycSNBtPz5jmxa
+         Lqqg==
+X-Gm-Message-State: AOJu0Yy7dOOPGnwSLugYIc9h/k6fjehLX7OY9n+muDufnPtjbtjNIZMz
+        Rmv8RRz+JYdotYn9kifhSv7YEb/vi3x+Ro/KDAboMbTaxsaPVUHFGVAVlLt9z78zL3aedoDObrQ
+        4TKu51FLf0WmjtVTh3hHifn8=
+X-Received: by 2002:aa7:d0ca:0:b0:530:74ed:fc8a with SMTP id u10-20020aa7d0ca000000b0053074edfc8amr13224038edo.41.1698861289533;
+        Wed, 01 Nov 2023 10:54:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHVnFRMTGJHQlmpCorHWXgjX/JDj2IwGcvCvUpQyXc80EQmO4QlCuNvR898VgWual5BmnPZQQ==
+X-Received: by 2002:aa7:d0ca:0:b0:530:74ed:fc8a with SMTP id u10-20020aa7d0ca000000b0053074edfc8amr13224026edo.41.1698861289276;
+        Wed, 01 Nov 2023 10:54:49 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id l2-20020a50d6c2000000b0054018a76825sm1353748edj.8.2023.11.01.10.54.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Nov 2023 10:54:48 -0700 (PDT)
+Message-ID: <56fbbe6c-0342-01d9-9840-40c7fa13f1f2@redhat.com>
+Date:   Wed, 1 Nov 2023 18:54:48 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 0/2] fbdev/simplefb: Add missing simple-framebuffer
+ features
+Content-Language: en-US, nl
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Helge Deller <deller@gmx.de>
 Cc:     Robert Foss <rfoss@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
         linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH v2 2/2] fbdev/simplefb: Add support for generic power-domains
-Date:   Wed,  1 Nov 2023 18:20:17 +0100
-Message-ID: <20231101172017.3872242-3-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231101172017.3872242-1-thierry.reding@gmail.com>
 References: <20231101172017.3872242-1-thierry.reding@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20231101172017.3872242-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Hi,
 
-The simple-framebuffer device tree bindings document the power-domains
-property, so make sure that simplefb supports it. This ensures that the
-power domains remain enabled as long as simplefb is active.
+On 11/1/23 18:20, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Hi,
+> 
+> This contains two patches that bring simplefb up to feature parity with
+> simpledrm. The patches add support for the "memory-region" property that
+> provides an alternative to the "reg" property to describe the memory
+> used for the framebuffer and allow attaching the simple-framebuffer
+> device to one or more generic power domains to make sure they aren't
+> turned off during the boot process and take down the display
+> configuration.
+> 
+> Changes in v2:
+> - remove unnecessary call to simplefb_detach_genpds() since that's
+>   already done automatically by devres
+> - fix crash if power-domains property is missing in DT
 
-v2: - remove unnecessary call to simplefb_detach_genpds() since that's
-      already done automatically by devres
-    - fix crash if power-domains property is missing in DT
+Thanks, the new version looks good to me:
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/video/fbdev/simplefb.c | 93 ++++++++++++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-index 18025f34fde7..fe682af63827 100644
---- a/drivers/video/fbdev/simplefb.c
-+++ b/drivers/video/fbdev/simplefb.c
-@@ -25,6 +25,7 @@
- #include <linux/of_clk.h>
- #include <linux/of_platform.h>
- #include <linux/parser.h>
-+#include <linux/pm_domain.h>
- #include <linux/regulator/consumer.h>
- 
- static const struct fb_fix_screeninfo simplefb_fix = {
-@@ -78,6 +79,11 @@ struct simplefb_par {
- 	unsigned int clk_count;
- 	struct clk **clks;
- #endif
-+#if defined CONFIG_OF && defined CONFIG_PM_GENERIC_DOMAINS
-+	unsigned int num_genpds;
-+	struct device **genpds;
-+	struct device_link **genpd_links;
-+#endif
- #if defined CONFIG_OF && defined CONFIG_REGULATOR
- 	bool regulators_enabled;
- 	u32 regulator_count;
-@@ -432,6 +438,89 @@ static void simplefb_regulators_enable(struct simplefb_par *par,
- static void simplefb_regulators_destroy(struct simplefb_par *par) { }
- #endif
- 
-+#if defined CONFIG_OF && defined CONFIG_PM_GENERIC_DOMAINS
-+static void simplefb_detach_genpds(void *res)
-+{
-+	struct simplefb_par *par = res;
-+	unsigned int i = par->num_genpds;
-+
-+	if (par->num_genpds <= 1)
-+		return;
-+
-+	while (i--) {
-+		if (par->genpd_links[i])
-+			device_link_del(par->genpd_links[i]);
-+
-+		if (!IS_ERR_OR_NULL(par->genpds[i]))
-+			dev_pm_domain_detach(par->genpds[i], true);
-+	}
-+}
-+
-+static int simplefb_attach_genpds(struct simplefb_par *par,
-+				  struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	unsigned int i;
-+	int err;
-+
-+	err = of_count_phandle_with_args(dev->of_node, "power-domains",
-+					 "#power-domain-cells");
-+	if (err < 0) {
-+		dev_info(dev, "failed to parse power-domains: %d\n", err);
-+		return err;
-+	}
-+
-+	par->num_genpds = err;
-+
-+	/*
-+	 * Single power-domain devices are handled by the driver core, so
-+	 * nothing to do here.
-+	 */
-+	if (par->num_genpds <= 1)
-+		return 0;
-+
-+	par->genpds = devm_kcalloc(dev, par->num_genpds, sizeof(*par->genpds),
-+				   GFP_KERNEL);
-+	if (!par->genpds)
-+		return -ENOMEM;
-+
-+	par->genpd_links = devm_kcalloc(dev, par->num_genpds,
-+					sizeof(*par->genpd_links),
-+					GFP_KERNEL);
-+	if (!par->genpd_links)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < par->num_genpds; i++) {
-+		par->genpds[i] = dev_pm_domain_attach_by_id(dev, i);
-+		if (IS_ERR(par->genpds[i])) {
-+			err = PTR_ERR(par->genpds[i]);
-+			if (err == -EPROBE_DEFER) {
-+				simplefb_detach_genpds(par);
-+				return err;
-+			}
-+
-+			dev_warn(dev, "failed to attach domain %u: %d\n", i, err);
-+			continue;
-+		}
-+
-+		par->genpd_links[i] = device_link_add(dev, par->genpds[i],
-+						      DL_FLAG_STATELESS |
-+						      DL_FLAG_PM_RUNTIME |
-+						      DL_FLAG_RPM_ACTIVE);
-+		if (!par->genpd_links[i])
-+			dev_warn(dev, "failed to link power-domain %u\n", i);
-+	}
-+
-+	return devm_add_action_or_reset(dev, simplefb_detach_genpds, par);
-+}
-+#else
-+static int simplefb_attach_genpds(struct simplefb_par *par,
-+				  struct platform_device *pdev)
-+{
-+	return 0;
-+}
-+#endif
-+
- static int simplefb_probe(struct platform_device *pdev)
- {
- 	int ret;
-@@ -518,6 +607,10 @@ static int simplefb_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto error_clocks;
- 
-+	ret = simplefb_attach_genpds(par, pdev);
-+	if (ret < 0)
-+		goto error_regulators;
-+
- 	simplefb_clocks_enable(par, pdev);
- 	simplefb_regulators_enable(par, pdev);
- 
--- 
-2.42.0
+for the series.
+
+Helge, will you pick these 2 up, or shall I push them to drm-misc-fixes?
+
+Regards,
+
+Hans
+
+
+
+
+
+> Thierry Reding (2):
+>   fbdev/simplefb: Support memory-region property
+>   fbdev/simplefb: Add support for generic power-domains
+> 
+>  drivers/video/fbdev/simplefb.c | 128 +++++++++++++++++++++++++++++++--
+>  1 file changed, 123 insertions(+), 5 deletions(-)
+> 
 
