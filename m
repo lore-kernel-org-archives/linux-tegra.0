@@ -2,122 +2,223 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A43F6C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu,  2 Nov 2023 10:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3803AC4332F
+	for <linux-tegra@archiver.kernel.org>; Fri,  3 Nov 2023 16:45:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346709AbjKBKzr (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 2 Nov 2023 06:55:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51468 "EHLO
+        id S1345460AbjKCQpN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 3 Nov 2023 12:45:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346817AbjKBKzq (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 2 Nov 2023 06:55:46 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDEAF131
-        for <linux-tegra@vger.kernel.org>; Thu,  2 Nov 2023 03:55:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1698922501;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rDScEF2O82i+YasDdzJYzr0zXZ3g8ZG6cVf0gZaER+0=;
-        b=TnqhCl3aVB9MTU9NESx/V29j5HpBCjsR7gYriVvmUmHKC3tpkZ4E/nQ7ffzypKCQxuFUjG
-        yF19YtZC4I4MbqS8bzpcqN9fz06Mc3pdw/tSFzVCHIuudrP/ucgNZZBXyx/NN4SOyYiKJJ
-        bZpcdEk/+cAnPp9ytZ4DoVk1FpVsqkU=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-611-OYqqmkOFNkueVsYn7Lu4bg-1; Thu, 02 Nov 2023 06:55:00 -0400
-X-MC-Unique: OYqqmkOFNkueVsYn7Lu4bg-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-99bca0b9234so54844766b.2
-        for <linux-tegra@vger.kernel.org>; Thu, 02 Nov 2023 03:54:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1698922498; x=1699527298;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rDScEF2O82i+YasDdzJYzr0zXZ3g8ZG6cVf0gZaER+0=;
-        b=b2jlcOY0B2Kw3cvWUNhzHBv4zH3NaEm5X559GeIGuBSBp91mYSBb3pZKpFXWrMsBg3
-         hTq28NsyUDGbDf8sJHCG0lioWfAEormaZT+VdAK2bpuxUMv9kdZ/uyOcWF0vFGBtgKLV
-         WgNC6/2VBLOrKEyRCJ8S30SQnZ/l5LVevPv6GLIgKR7Yk6BAStqcuoyHsED7e60zwbZU
-         MzCRMiFIvoWL+EatRDwYtce8OuSqktLOlqWojfOOBNqqGqBm7iLNoQENXdfP2n5M9bMp
-         FhdlwnKsDuzD5tYLiVWjSBLCEC/ZKOF7+tzq3SF0TsOdQv2JGwaMJdk8fsyYcJA9MBsR
-         YqrA==
-X-Gm-Message-State: AOJu0Yzqx80mSN8/IXokIfxdu43UtcA1f82GfKVQJrOuzarTc6snxTgA
-        kKvykVqradbARuh/EmNEzqayjOoUaZkmsiJgx/+Tp2ftIKk/VAv4UR7/HcHoFeoEiJZKvVn8new
-        uafSUbEZaeiWGVJi331Z49MBgIkut09I=
-X-Received: by 2002:a17:907:25c6:b0:9bd:e74b:abf1 with SMTP id ae6-20020a17090725c600b009bde74babf1mr3812315ejc.8.1698922498528;
-        Thu, 02 Nov 2023 03:54:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGpOoo/gHPrFW7q5k0Nk4IT1LkiKH6+7Adch5Y9SLGgRh4AyMOkHjDcasHc9ORZJ/8+aHt9Sw==
-X-Received: by 2002:a17:907:25c6:b0:9bd:e74b:abf1 with SMTP id ae6-20020a17090725c600b009bde74babf1mr3812300ejc.8.1698922498200;
-        Thu, 02 Nov 2023 03:54:58 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? ([2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id d25-20020a170906175900b009c657110cf2sm990147eje.99.2023.11.02.03.54.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Nov 2023 03:54:57 -0700 (PDT)
-Message-ID: <80081ce9-f6a6-312b-a798-d64655d8e5d4@redhat.com>
-Date:   Thu, 2 Nov 2023 11:54:54 +0100
+        with ESMTP id S1344250AbjKCQpM (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Fri, 3 Nov 2023 12:45:12 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2065.outbound.protection.outlook.com [40.107.102.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B29FFB;
+        Fri,  3 Nov 2023 09:45:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FVhdUo+X2FOY4JuB0/pPr+RnbDrEodMCH5QyfzY5NngA2YJXLBMx53Et7VcUGEcAzzsWFM0AWB2lXipYY7zL5+EO4VesaeepJOBeyYgdeMapIDoW987qOHrNjbSHpu8nPWgKnRTk3xC2SB4L6p9fxVTRUguS2A0fqq/tVJoinNva7l61GwT0HiWv3XBHtTCsS1vXAOSh3h07smWBWnqfGj1j6+jUV3ltn/7jqf4NTU32N83i66u4WdEMj8SrMnFw5xf7QHnesdqOLIvMxZT4z1VMGCJMOsGSdIpN+QWsFTopuPVl1DnFMCFGhSazJrAiGkLCO2H34MMTZwtvdGuRMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TnoHHRW9wGxYObBfp5jd7EnMs8P21nURFY58S4rMak0=;
+ b=ca+YpUMoFGwmuSQLnpZBZWTy+JOkfEKOEVFngkR/yUo7hWLNu9//6HugxRq4ZWPJBsvNGmOdDvakptciRQOHKI7QdzFdH/sfJ9CQiL8Zz6QzipAH/7R7TCzbj8d/qb8iHbWA58bSy8YfuDTJtPt2S7YeYofw+FEWxvnNoqRW03K2/2jgTuVASLS3mnOM68z307MAKBQ3SyQXgXF7zKZ82ndNSgwdPY9UqEeqLUtcUn7zZRcRIrxx56hfdOPfncVt3IFWtMjl+d06bLIsULjTXVkbm5GLdYUU81rULtqiX2FnU4Yc5B9tX8iOy9g8w9+6y26N64CtPtB42PMKxtj5eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TnoHHRW9wGxYObBfp5jd7EnMs8P21nURFY58S4rMak0=;
+ b=fgFyWL8y2hhCPeRB3QREn7Uuh58Tup5xgeQRI1TAYRqqv27pTe6tsY9S0SQc6yUa9BaQx/XIqo1k/RqOXF/+AkiFVPZSVYIfhdiDmnAsXFx81d2o5yCRGZ0a6eBPF8TqDMWkjqXR2m5GKehRjHva6egvNif895ewxMZ6rSmeSQfsj7TE67zwPQbQwJpD09DbSQNXLviiCBZOyBkzQYCuZ+O8TQXBG9Sf3FLGLauPLm7JLs5qbxF3RcIC+lmPk9MDwu0ZT6HhksJLU25EywFBSKDUL633ZfBYTLUkaZNI3Rm/tw2w8VkA7P4ibnDKT0koO6zlJrj0B+YCKVpj2JMqEA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
+ by PH0PR12MB7886.namprd12.prod.outlook.com (2603:10b6:510:26e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.21; Fri, 3 Nov
+ 2023 16:45:04 +0000
+Received: from LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::b53a:1092:9be2:cfb9]) by LV2PR12MB5869.namprd12.prod.outlook.com
+ ([fe80::b53a:1092:9be2:cfb9%4]) with mapi id 15.20.6933.027; Fri, 3 Nov 2023
+ 16:45:03 +0000
+From:   Jason Gunthorpe <jgg@nvidia.com>
+To:     acpica-devel@lists.linuxfoundation.org,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dexuan Cui <decui@microsoft.com>, devicetree@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-snps-arc@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hector Martin <marcan@marcan.st>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Sven Peter <sven@svenpeter.dev>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Vineet Gupta <vgupta@kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>
+Cc:     Zhenhua Huang <quic_zhenhuah@quicinc.com>
+Subject: [PATCH RFC 04/17] acpi: Do not return struct iommu_ops from acpi_iommu_configure_id()
+Date:   Fri,  3 Nov 2023 13:44:49 -0300
+Message-ID: <4-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+In-Reply-To: <0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+References: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BL1PR13CA0187.namprd13.prod.outlook.com
+ (2603:10b6:208:2be::12) To LV2PR12MB5869.namprd12.prod.outlook.com
+ (2603:10b6:408:176::16)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 0/2] fbdev/simplefb: Add missing simple-framebuffer
- features
-Content-Language: en-US, nl
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Helge Deller <deller@gmx.de>
-Cc:     Robert Foss <rfoss@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-tegra@vger.kernel.org
-References: <20231101172017.3872242-1-thierry.reding@gmail.com>
- <56fbbe6c-0342-01d9-9840-40c7fa13f1f2@redhat.com>
-In-Reply-To: <56fbbe6c-0342-01d9-9840-40c7fa13f1f2@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|PH0PR12MB7886:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1627afca-1b54-4898-fd7d-08dbdc8c3a5f
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: e8QoeXLZ+gfP4uFtmX3rpPUEYK4aMVIdFjtnwwv0LWasitsNVPChD1F9rU/qPrILSEBI/JTl0bv2y1Ku/SEFHMeYFVcPDN0VA57mc7mu2IXzyNJ9IjFMi6hz6K5vSqgsQI63k/uxDgv5oV4thGFeoE9vWdEJOdvOzBLnG9nqdPW02mrBkVnlrYsnrwkDf7Qn1NTeFC4t+pufkZn6DAKMvxs7OBbKk+qPvbX9cgTbGt2CooJarL9xFVUCdS+DKjx48iwEAtH32MFE/MCUBmQMh5yP88yVMgVRksdBLG+IRvKr6PA9E5Kon25B+5AgNwWxyVHLg5ZJaNU+cBKNfXqYKbzrLsl64ZpbA/O1Cv7cI+p+i6w05nDql+O2pAG/Tv2NLEFMQ6zusfiVWzxKF7zpjpSTMg3aFGxAJxoc8SqE2z6DZDmX/TuVeqknPF8vdaPiHp5/Q2AN5v1c7bQSvZ0KoUWtD2cIY7FSvpIyLrpkezAIsJe/b8T0qTkCrbL9Xl9ssF8UQXO753GZJfbQu3qZ7L+jgVOGVgDqbSJL1DghBrZHuK1jOGXuS9GbOp93P+rfAyFwXF09zqWh3SzQ0KfP3CHFQNeoWCOumMxnn7ky+Ltoodco4JUJZh7bdEQPR/Ey
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(39860400002)(396003)(366004)(376002)(136003)(230922051799003)(64100799003)(451199024)(1800799009)(186009)(6486002)(66946007)(8936002)(66556008)(8676002)(316002)(4326008)(2906002)(7416002)(7406005)(110136005)(66476007)(5660300002)(6666004)(478600001)(6512007)(2616005)(41300700001)(26005)(6506007)(83380400001)(921008)(38100700002)(86362001)(36756003)(4216001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?c4NbtvSKUiJgXewWvYQXS49KGtlWWqE19IrJwNq2h1/ubx5Nb6JqxpT4zitD?=
+ =?us-ascii?Q?UQhqfgK0Mks20f6BmOdUIkBIu9y+S5y/VyUdgzpbTtT6XGjT6982S3kXt3CL?=
+ =?us-ascii?Q?gYxsurEM8bKOEkRth6TBcWqyOX06uIM8ixvyA1DEzHSzKX35/ITqPpqFw7kB?=
+ =?us-ascii?Q?wUHmXC4y/isyCAjWgTcLxnlL0YlY4CPRUvVq4diL9cR1Zv9ufyYHsonY6g5u?=
+ =?us-ascii?Q?1vdYSl72Di8F10cBY9VCl3r4dqreoIhSw+fB3SgD1/8/IckbLtWQdbqL7frX?=
+ =?us-ascii?Q?+NoZ+V03g0/vIhzntFvXXGOcc473e3YvofLPTw8Urt8FygI5QkjSVtcS3yI6?=
+ =?us-ascii?Q?BjXbAp1n3MFY3kEQ8Y3t8bb40OQoj9ZwaEWWHXvQau45HaWNs9HvkmKA3S+v?=
+ =?us-ascii?Q?Loxw7kEk91Y4oT6nEA1Bpf71kBZj+2OgZZpVPJWLq3sMYnNZBkREqvsVG42r?=
+ =?us-ascii?Q?jj4uK0opw+SxGh79x0ULbTORWqweQygzIquD7C7sX3tGeY5S9kjn1IrxKQV9?=
+ =?us-ascii?Q?NMsSHMqIh/Bu4kRmj8NaWh0d/N9qLNn4fbCZCeTv5ntKpLliAX3xDa5nZcgF?=
+ =?us-ascii?Q?IzqLgIyHUTDo2LfTLYVbWZC58owLuE4dCw4EOvnsf//F6gJqqz82uhWTKFBC?=
+ =?us-ascii?Q?hxF+TOLo+SZbuIe+oPVvHzFswLBtdOK07XS9ZQ4ZNLuTB7uzD/WcrHc7NIet?=
+ =?us-ascii?Q?NxAaPRTffXek0E6TRXzlC5NEFieUvTPnB27s4DdwfGZU1Ju09Bl+/xcpo6Cl?=
+ =?us-ascii?Q?AYJ5K+XDma07d7rtPHQu0dEd+7j1bTCDt/dHIIkXpEs1iwgIBXbvhIrNY+mO?=
+ =?us-ascii?Q?djUVM1/dDVjWkCazY4OVk3H8Ll0EH9y0q31F7xh9zauAkL7WE1ZvZiyVGboi?=
+ =?us-ascii?Q?YF6D/1Ksb0vRRtaMmcfEh2EA5h9DQnc0YsUvdPLR34E6hM16sz+g+ruXLN3S?=
+ =?us-ascii?Q?/cRhSdqQuRTHv7Xh27tFJgvW3+xuEeTbscPz80JIdMf4mPxjsWDuL+4GFJv2?=
+ =?us-ascii?Q?La+FSjleK/THAHJ7KT9iZSgKL8GFz7ipOodgv7MMxp9vq+nRrC0Qu6U5ZPMs?=
+ =?us-ascii?Q?Hc12O6oG3IvTHc1cntZMkIIpWaBUDhRd0LbANv44I9UppD5TCbrPASTvbbOB?=
+ =?us-ascii?Q?0qW7Iq/YAbreoh5BfEwRldWW1RDpmQuD44HKa6yxz1R3UUgo1mck18m0+dOf?=
+ =?us-ascii?Q?fYWmq/SjZ5/SJiL/u8LTpAjaMvV/opyASuVSqHe+Xqjr4Ycnm+7m7P/aqG4V?=
+ =?us-ascii?Q?yDT2TDKTM3lLFyigI8r3G9EInd/7+K0EHvrwLv1C18aq0UsXkrj78YhlUQ9z?=
+ =?us-ascii?Q?Appp9+qnp1EY78NZ7siNgfLCOL0flhStbRGjNLf78/rhI5jM2ZU+dVAQnqJs?=
+ =?us-ascii?Q?PoY/UWWhg706NsT87h/G0ODZrH+1yw+OpCX/bkSLj2JJpBjscEiP/5P8JBkm?=
+ =?us-ascii?Q?7oimomhU4WGtCXP/DCuG65Q1lnABgaIoDRxXTx2ba6AINPfHDGwewBnvvBYk?=
+ =?us-ascii?Q?td/z71X+Nc2+uUTxNyOMLaz/iY/YqLdCmiz3Yzh7w/RyFPbYDVZXkfTDcNK7?=
+ =?us-ascii?Q?sq3Knk3lSukf97Fkwms=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1627afca-1b54-4898-fd7d-08dbdc8c3a5f
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2023 16:45:03.7907
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oat6TdcMlK87Pn45YNa4lzlJQZrxRi5y3G9EyZQgkWg2oJ8Vzvos60W26a9ynCo/
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7886
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi,
+Nothing needs this pointer. Return a normal error code with the usual
+IOMMU semantic that ENODEV means 'there is no IOMMU driver'.
 
-On 11/1/23 18:54, Hans de Goede wrote:
-> Hi,
-> 
-> On 11/1/23 18:20, Thierry Reding wrote:
->> From: Thierry Reding <treding@nvidia.com>
->>
->> Hi,
->>
->> This contains two patches that bring simplefb up to feature parity with
->> simpledrm. The patches add support for the "memory-region" property that
->> provides an alternative to the "reg" property to describe the memory
->> used for the framebuffer and allow attaching the simple-framebuffer
->> device to one or more generic power domains to make sure they aren't
->> turned off during the boot process and take down the display
->> configuration.
->>
->> Changes in v2:
->> - remove unnecessary call to simplefb_detach_genpds() since that's
->>   already done automatically by devres
->> - fix crash if power-domains property is missing in DT
-> 
-> Thanks, the new version looks good to me:
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> for the series.
-> 
-> Helge, will you pick these 2 up, or shall I push them to drm-misc-fixes?
+Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+---
+ drivers/acpi/scan.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-I have pushed this to drm-misc-next now.
-
-I now I said drm-misc-fixes at first, but on a second look
-these really are not fixes, so getting them in mainline
-will have to wait to the next merge-window.
-
-Regards,
-
-Hans
-
-
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index a6891ad0ceee2c..fbabde001a23a2 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1562,8 +1562,7 @@ static inline const struct iommu_ops *acpi_iommu_fwspec_ops(struct device *dev)
+ 	return fwspec ? fwspec->ops : NULL;
+ }
+ 
+-static const struct iommu_ops *acpi_iommu_configure_id(struct device *dev,
+-						       const u32 *id_in)
++static int acpi_iommu_configure_id(struct device *dev, const u32 *id_in)
+ {
+ 	int err;
+ 	const struct iommu_ops *ops;
+@@ -1574,7 +1573,7 @@ static const struct iommu_ops *acpi_iommu_configure_id(struct device *dev,
+ 	 */
+ 	ops = acpi_iommu_fwspec_ops(dev);
+ 	if (ops)
+-		return ops;
++		return 0;
+ 
+ 	err = iort_iommu_configure_id(dev, id_in);
+ 	if (err && err != -EPROBE_DEFER)
+@@ -1589,12 +1588,14 @@ static const struct iommu_ops *acpi_iommu_configure_id(struct device *dev,
+ 
+ 	/* Ignore all other errors apart from EPROBE_DEFER */
+ 	if (err == -EPROBE_DEFER) {
+-		return ERR_PTR(err);
++		return err;
+ 	} else if (err) {
+ 		dev_dbg(dev, "Adding to IOMMU failed: %d\n", err);
+-		return NULL;
++		return -ENODEV;
+ 	}
+-	return acpi_iommu_fwspec_ops(dev);
++	if (!acpi_iommu_fwspec_ops(dev))
++		return -ENODEV;
++	return 0;
+ }
+ 
+ #else /* !CONFIG_IOMMU_API */
+@@ -1623,7 +1624,7 @@ static const struct iommu_ops *acpi_iommu_configure_id(struct device *dev,
+ int acpi_dma_configure_id(struct device *dev, enum dev_dma_attr attr,
+ 			  const u32 *input_id)
+ {
+-	const struct iommu_ops *iommu;
++	int ret;
+ 
+ 	if (attr == DEV_DMA_NOT_SUPPORTED) {
+ 		set_dma_ops(dev, &dma_dummy_ops);
+@@ -1632,10 +1633,15 @@ int acpi_dma_configure_id(struct device *dev, enum dev_dma_attr attr,
+ 
+ 	acpi_arch_dma_setup(dev);
+ 
+-	iommu = acpi_iommu_configure_id(dev, input_id);
+-	if (PTR_ERR(iommu) == -EPROBE_DEFER)
++	ret = acpi_iommu_configure_id(dev, input_id);
++	if (ret == -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
+ 
++	/*
++	 * Historically this routine doesn't fail driver probing due to errors
++	 * in acpi_iommu_configure()
++	 */
++
+ 	arch_setup_dma_ops(dev, 0, U64_MAX, attr == DEV_DMA_COHERENT);
+ 
+ 	return 0;
+-- 
+2.42.0
 
