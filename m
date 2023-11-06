@@ -2,60 +2,22 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F450C4167D
-	for <linux-tegra@archiver.kernel.org>; Sun,  5 Nov 2023 17:56:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC7AC4167B
+	for <linux-tegra@archiver.kernel.org>; Mon,  6 Nov 2023 07:17:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229478AbjKER42 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 5 Nov 2023 12:56:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39688 "EHLO
+        id S229785AbjKFHRn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 6 Nov 2023 02:17:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbjKER41 (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Sun, 5 Nov 2023 12:56:27 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D287DE
-        for <linux-tegra@vger.kernel.org>; Sun,  5 Nov 2023 09:55:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1699206939;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fd/39Q+ldoVf5VWKnHQ/ghXrqcDy2syROa9KrYZuz/I=;
-        b=IqXVHE7tfpxVOeimPXn4vyvH7OY2t3kQqxvtrcPGQru73zPBo30S+fpExZk81iANyfk6tv
-        boEQWrMeaDpMj0U1KyE0BeObcS+QyzrEbIfSfyZeZh4N1wpGH4GP+kg0Dqdu8fPz5NfynA
-        LRW05RH0mhNQrWV3FT5v268dz1WrbPI=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-480-h91D2IHTN3upXpqo4sW8TQ-1; Sun, 05 Nov 2023 12:55:37 -0500
-X-MC-Unique: h91D2IHTN3upXpqo4sW8TQ-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6bcefd3b248so3750944b3a.3
-        for <linux-tegra@vger.kernel.org>; Sun, 05 Nov 2023 09:55:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699206936; x=1699811736;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fd/39Q+ldoVf5VWKnHQ/ghXrqcDy2syROa9KrYZuz/I=;
-        b=Ia86gp+PGagnRqva3uqBxFFFpIvYT/cnVbtCfnO38anKqHZ0ADlykQllrVAxq/BCVx
-         2p66y0XmWdsCCjjZfz6PY/hM+j+6w7v9lQUXVq0f3kyhTZVwMGO/+miOrGfyWcmCK1MY
-         yVyEuCVSw4/rRl0Uf0G/ySmBJpIQ6ivFiCpdDoP1ENjPlIYsuXJgrWr/BLzs7QNrkTHs
-         ADL2zNKFQZTQP9HnuGQVFF8Gu+RppH5+yu94YGMKQuM2fAtwwQipWyreTlKTJqYKwbgf
-         utRyEHIIkqTA1OkKGaFjp7YAmAorkRPFZ0DLtYMo1GHsiHB2kfQz6KjyoeqlL4blYNWA
-         oRHQ==
-X-Gm-Message-State: AOJu0YzCQK+tugTL4P4FJOrdTTNEoiNaCgYIKuPjPPWc0QdEPoIWzRXa
-        PcX7waM5zLZ05hPh4whCQmt6hQX5/VwYzB+qfDF3EG+YI0jsZdYVNkKU35ghPn18X8nJ74xwrz1
-        oliAEzzfgzH1cQeP4yMueIVU=
-X-Received: by 2002:a05:6a00:14d6:b0:6be:4e6e:2a85 with SMTP id w22-20020a056a0014d600b006be4e6e2a85mr36240601pfu.30.1699206936709;
-        Sun, 05 Nov 2023 09:55:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFk2pBjd4CJ2rMONJoZ1WOco/rxQ9zWrHoyH1EeQbHLv9sJvLzIuEzeP3ARVcsr8N00dE/hMg==
-X-Received: by 2002:a05:6a00:14d6:b0:6be:4e6e:2a85 with SMTP id w22-20020a056a0014d600b006be4e6e2a85mr36240554pfu.30.1699206936324;
-        Sun, 05 Nov 2023 09:55:36 -0800 (PST)
-Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id ff7-20020a056a002f4700b0068620bee456sm4312142pfb.209.2023.11.05.09.55.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Nov 2023 09:55:35 -0800 (PST)
-Date:   Sun, 5 Nov 2023 10:55:34 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
+        with ESMTP id S229755AbjKFHRm (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Mon, 6 Nov 2023 02:17:42 -0500
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD66CC;
+        Sun,  5 Nov 2023 23:17:39 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 4BBAD6732D; Mon,  6 Nov 2023 08:17:33 +0100 (CET)
+Date:   Mon, 6 Nov 2023 08:17:33 +0100
+From:   Christoph Hellwig <hch@lst.de>
 To:     Jason Gunthorpe <jgg@nvidia.com>
 Cc:     acpica-devel@lists.linuxfoundation.org,
         Alyssa Rosenzweig <alyssa@rosenzweig.io>,
@@ -96,57 +58,26 @@ Cc:     acpica-devel@lists.linuxfoundation.org,
         virtualization@lists.linux-foundation.org,
         Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>,
         Zhenhua Huang <quic_zhenhuah@quicinc.com>
-Subject: Re: [PATCH RFC 04/17] acpi: Do not return struct iommu_ops from
- acpi_iommu_configure_id()
-Message-ID: <oe2b62jjtcki7ti4qw6ktzvat7eszrpm7vphgsdvfp5uwdoj3r@wc62cpauchw6>
-References: <0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
- <4-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
- <xvgdxrlcpvafst6qypgwehtleaihsedgoiat6akv6au2j4xrjw@rk4dl4xbnq6o>
- <20231105132409.GA258408@nvidia.com>
+Subject: Re: [PATCH RFC 01/17] iommu: Remove struct iommu_ops *iommu from
+ arch_setup_dma_ops()
+Message-ID: <20231106071733.GA17258@lst.de>
+References: <0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com> <1-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20231105132409.GA258408@nvidia.com>
+In-Reply-To: <1-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sun, Nov 05, 2023 at 09:24:09AM -0400, Jason Gunthorpe wrote:
-> On Fri, Nov 03, 2023 at 05:48:01PM -0700, Jerry Snitselaar wrote:
-> > > @@ -1632,10 +1633,15 @@ int acpi_dma_configure_id(struct device *dev, enum dev_dma_attr attr,
-> > >  
-> > >  	acpi_arch_dma_setup(dev);
-> > >  
-> > > -	iommu = acpi_iommu_configure_id(dev, input_id);
-> > > -	if (PTR_ERR(iommu) == -EPROBE_DEFER)
-> > > +	ret = acpi_iommu_configure_id(dev, input_id);
-> > > +	if (ret == -EPROBE_DEFER)
-> > >  		return -EPROBE_DEFER;
-> > >  
-> >                 return ret; ?
-> 
-> Maybe? Like this seemed to be a pattern in this code so I left it
+On Fri, Nov 03, 2023 at 01:44:46PM -0300, Jason Gunthorpe wrote:
+> This is not being used to pass ops, it is just a way to tell if an
+> iommu driver was probed. These days this can be detected directly via
+> device_iommu_mapped(). Call device_iommu_mapped() in the two places that
+> need to check it and remove the iommu parameter everywhere.
 
-Yeah, it is fine. I think it just caught my eye, because of this earlier
-bit in the patch:
+Yes, that's much better than exposing the iommu ops to a place that
+should not care about them:
 
-        if (err == -EPROBE_DEFER) {
--               return ERR_PTR(err);
-+               return err;
-
-which needed to get rid of the ERR_PTR.
-
-Regards,
-Jerry
-
-> 
-> > > +	/*
-> > > +	 * Historically this routine doesn't fail driver probing due to errors
-> > > +	 * in acpi_iommu_configure()
-> > 
-> >               acpi_iommu_configure_id()
-> 
-> Thanks
-> 
-> Jason
-
+Acked-by: Christoph Hellwig <hch@lst.de>
