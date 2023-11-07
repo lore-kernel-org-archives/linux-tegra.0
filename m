@@ -2,179 +2,142 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA68C4332F
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Nov 2023 11:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D88DC4167B
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Nov 2023 11:43:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232147AbjKGLnB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Nov 2023 06:43:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36226 "EHLO
+        id S233674AbjKGLnT (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Nov 2023 06:43:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232141AbjKGLnB (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Nov 2023 06:43:01 -0500
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43305114
-        for <linux-tegra@vger.kernel.org>; Tue,  7 Nov 2023 03:42:57 -0800 (PST)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-4094301d505so41605325e9.2
-        for <linux-tegra@vger.kernel.org>; Tue, 07 Nov 2023 03:42:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699357375; x=1699962175; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uGEhvTNxvZ+h5Fkt3dC7zUDQ3XMREvl5ehstpoBinnw=;
-        b=RMmsv0OIsg4TdNKekMswuxc+vP26J4tzrXBgNLbPOYU/gyciK4VuItbzBJtskkEJe2
-         z3rmmJQ/+gYtL1+l3HdcV18suQtBa0cQSZy1Il2/tCwg1KChVURzaQctREbj33ZJ+3B2
-         /OWDN6rbmur1MS1MhILrmbsm0Q/f9nj5RrCRQh2KkSYL1ERtkskdTmYe0ZR3s7aUrpEb
-         1YhiLApm/x39+LQeRS3rfqtK161lrOO6J7trllfYzKiSnebfoJsogvre6DeE1sJanA64
-         TOt1DT+5NowqjBkzcRMz1vj0A6BEmVD6+dUsY/at7OtB0BTn0elmeKbS0wEYVY4y2Akb
-         rcfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699357375; x=1699962175;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uGEhvTNxvZ+h5Fkt3dC7zUDQ3XMREvl5ehstpoBinnw=;
-        b=wx+YBBUW+WJX4aszKuc+G/y/yM9/yR4Gl9zvbOCdasC5LeY/wMqpEB0Ojk0Rl/ioD+
-         T+uX8PI3DjVyibw8ANemo0RxYOu8b8DtgcfVOJam0YIbMak+yKVXLTPCEZbrjSvzeHCe
-         sE3XQE5kHitcFcAf7aCE83/04PSSKT7uXB8HZznfjO0MXtD6ulC+zF2WWi7ZXk+B/UJ6
-         EPBagJ014PtubDIBqbsWZsZXijhA8+TnwttUtRKg47ZpVns62X7N11yEF2IQiSZHDw8O
-         wk0k+jn+zTX5mboGmdRIx+TlcT7KqttxgQbn5VQT2hRFGAs8Rqv7KK+bzKK6p1KTMWSn
-         D5pg==
-X-Gm-Message-State: AOJu0YwMib1V+wfhjIbySlIbzUguZgyCnbvuA/5g2/zwQarhRvEGiBSq
-        +fdnrU061t1740ae5LTc6kfBgg==
-X-Google-Smtp-Source: AGHT+IFQm+hjdtB132m69rSJ4kVRTuI8mxFwCRQqrnTpYUp2PSe9s5IudWPhcJJNHt4IRDBYB1VO5A==
-X-Received: by 2002:a05:600c:4f91:b0:401:a0b1:aef6 with SMTP id n17-20020a05600c4f9100b00401a0b1aef6mr2528408wmq.2.1699357375591;
-        Tue, 07 Nov 2023 03:42:55 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.218.126])
-        by smtp.gmail.com with ESMTPSA id j8-20020a05600c1c0800b004063977eccesm15656575wms.42.2023.11.07.03.42.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Nov 2023 03:42:55 -0800 (PST)
-Message-ID: <f2de1860-4f7d-4ca6-8e77-649cf0be10fe@linaro.org>
-Date:   Tue, 7 Nov 2023 12:42:53 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] memory: tegra: Add SID override programming for MC
- clients
-Content-Language: en-US
-To:     Ashish Mhetre <amhetre@nvidia.com>,
-        kernel test robot <lkp@intel.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, dmitry.osipenko@collabora.com
-Cc:     oe-kbuild-all@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20231107052824.29418-1-amhetre@nvidia.com>
- <202311071607.IzbwSn2f-lkp@intel.com>
- <1bf51dd9-459a-466f-8b82-a55f7b84bda3@nvidia.com>
-From:   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <1bf51dd9-459a-466f-8b82-a55f7b84bda3@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+        with ESMTP id S233967AbjKGLnS (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Nov 2023 06:43:18 -0500
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2056.outbound.protection.outlook.com [40.107.243.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4534A120;
+        Tue,  7 Nov 2023 03:43:11 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ha+Ulxx+Yin4PW+jSjDpkVj4ZqMmiVZeJy0+L+Y58ovNUjl83mYGKXJp0fTAwAvbE83s5RgAxAjUEpISWrEOzXO4fg2QL/BRlUXXj13iTmzAdx2i3Jrq7Y3dO0EMWx+YqKdqo/++s8PyCTBZUlDRRAzm4bD/xGBOU+SK46Mqa2wetA2l326Zn+hRMR26zrfBnmhZZgM/nrxbgYL71B+KbMjeGp6jw7EbH+BbVbZsXkK0gRqRzHo+1SD17N6eu4KWIIXmkSkyDYmqb9Obp/qRoi1o2SDt5NJ85xrDQc7cMyrheAjUuhW3uW95AGJMy4yUjuP/33+JncB8HdE8bzulhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bEc6hzfB85CkGKsRy7pDDZGpGerkwq+V5ovZLngUAB8=;
+ b=QAKL0UCRM31XHdSjoaIMkkqkoWYznYIkyzwlx+f7ADwztEHPkpUK2+iADk3XFz4uOG9MYMTglqiv3uaspX7K4wMNgqkB1LdUnD61GsyTR/+tQ6W630yNPQV/DWVyC4YPkbKp5VdfINTIr/6sNwHFSB6wcRkQvyaD9l5ssWLm9ckTGgtNQTkgYIJiqRXY9qMvnQbiiBOxsuThXH3SYCyr1pjEyJxAFTvjo6ecxerV9Kiy234lgzu4WFjChoZQVmmyj1YTa7aP7SuJxVjjN8j8REzy8mLgWhufTUKta4WQ39+hiYCqYehZLzZbnBokCvT7CRb/bhT96r/DK4dQNW+l7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bEc6hzfB85CkGKsRy7pDDZGpGerkwq+V5ovZLngUAB8=;
+ b=NRPAPFaqN1NJE1illrkGSPYXKr/DGnBn8bu/BUjszKAbK7/aY+/szs5kAOFZbFiHNPQrClynhJc926Zc7H0oxvCYPqX+ul8n2ZtMEryal+FONCVgrXHN6su6w9YT9MmR77FSHnqfJzavOOW8TnSZCr/cIisZN+O4iBe56dIpvoVPdtfPhTsvTuzBR8TmrFouf0xoQU8eOxchYlQGDylvBlemDNWDj4ci0FrnWHMhAmsWXTGGYzgp2hSZyDkSt1ZFj6Ie8bCqfO21Wd44u96yU5f4mkOzKtX84by/R0M9UY32/I3irz1RJEryf9jibu45FuFCCm6cHHyqdo4/MGJ3gw==
+Received: from DM6PR08CA0044.namprd08.prod.outlook.com (2603:10b6:5:1e0::18)
+ by BN9PR12MB5260.namprd12.prod.outlook.com (2603:10b6:408:101::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.28; Tue, 7 Nov
+ 2023 11:43:09 +0000
+Received: from DS2PEPF0000343E.namprd02.prod.outlook.com
+ (2603:10b6:5:1e0:cafe::62) by DM6PR08CA0044.outlook.office365.com
+ (2603:10b6:5:1e0::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.29 via Frontend
+ Transport; Tue, 7 Nov 2023 11:43:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ DS2PEPF0000343E.mail.protection.outlook.com (10.167.18.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6977.16 via Frontend Transport; Tue, 7 Nov 2023 11:43:08 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 7 Nov 2023
+ 03:43:00 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Tue, 7 Nov 2023 03:43:00 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
+ Transport; Tue, 7 Nov 2023 03:43:00 -0800
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <lkft-triage@lists.linaro.org>, <pavel@denx.de>,
+        <jonathanh@nvidia.com>, <f.fainelli@gmail.com>,
+        <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+        <rwarsow@gmx.de>, <conor@kernel.org>,
+        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/95] 5.10.200-rc1 review
+In-Reply-To: <20231106130304.678610325@linuxfoundation.org>
+References: <20231106130304.678610325@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Message-ID: <b45d5fd9-3571-485d-9f19-4ef966025d8c@drhqmail202.nvidia.com>
+Date:   Tue, 7 Nov 2023 03:43:00 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF0000343E:EE_|BN9PR12MB5260:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf4a45c4-cba3-49f8-116c-08dbdf86b6b8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: SZXvJ7SzBptEzM1YDNWAJuE/5liXbaghPuoX/yRx6bI63IhAfPJGil8FqU6zJLchpe9IgD8Uei8HnTf97PBtZBO/dvv5OgWd8DzbJBlOEf/fldBnXPnGjlQYh2vHOQBPYfslY7gDCakMYOgYjekfDaL6CHk4sPlp/4xi5cc9GrmrVfUDtO52fpPnkL7J46Q6lLgixj/F85z2Ql9gzWZXkKeKh1B2KmfA07eeWPGU4nn6y98KxvMbzO1SsbEVD1k2zVpOWgwo1noYyguI1+IBq7VRWuzdD/k9NQtKBJc1ZfHJ4cVloXoy78GLPMhIiVZpnbF0wEAfFtiBD3fHfw0QMFbqN45VbdRWVo2+1E8duANfVzizoLX5t0zYhXPxDqX+oRBGFKfODaOQ+3zyM6V/q82dnd/RUvt1kczK37XcydTvf4IZDM3rbkMdj/cwbHyANqGipSvqSLgv3/dMER1CLk19BRRfuNLka6UMNwGa7LFOYFqzf7ytFsO1wHxr9v4DTf5+62I5Xji+wdrswk6eBEl3DpLt4zdoVUKQQpmTPX+bzDJIkx2fh42B3Cd5pJ1nBudIQLc7RN6Lu3W6oJDWp+8csLT+vREU/wKVtGDVTGHUmNuhhL8NOuqfwJAQU/UbSFqk1FeB2CJvpNON87feNBKiOFP3Zj0G9Q+iB5dVXeKCxBk4+LffHR1ZFOhRwh6JG8QIjCYzGHBEu3svIiXIUmOCEstie3EWqiSf3L1z+LmE7kezEXTbNwXoZwDhVSih06Ttr7l4cJzSSxz1zFTSGgUm+hZlHtUTeczXP4bBshg=
+X-Forefront-Antispam-Report: CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(136003)(346002)(376002)(39860400002)(230922051799003)(64100799003)(1800799009)(451199024)(186009)(82310400011)(40470700004)(36840700001)(46966006)(86362001)(7416002)(5660300002)(36860700001)(40460700003)(41300700001)(2906002)(31696002)(7636003)(356005)(82740400003)(336012)(426003)(478600001)(31686004)(70206006)(70586007)(26005)(316002)(6916009)(54906003)(47076005)(966005)(40480700001)(8936002)(4326008)(8676002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2023 11:43:08.5778
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf4a45c4-cba3-49f8-116c-08dbdf86b6b8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DS2PEPF0000343E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5260
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On 07/11/2023 12:40, Ashish Mhetre wrote:
+On Mon, 06 Nov 2023 14:03:28 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.200 release.
+> There are 95 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On 11/7/2023 2:46 PM, kernel test robot wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> Hi Ashish,
->>
->> kernel test robot noticed the following build warnings:
->>
->> [auto build test WARNING on tegra/for-next]
->> [also build test WARNING on linus/master v6.6 next-20231107]
->> [cannot apply to tegra-drm/drm/tegra/for-next]
->> [If your patch is applied to the wrong git tree, kindly drop us a note.
->> And when submitting patch, we suggest to use '--base' as documented in
->> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/Ashish-Mhetre/memory-tegra-Skip-SID-programming-if-SID-registers-aren-t-set/20231107-133149
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
->> patch link:    https://lore.kernel.org/r/20231107052824.29418-1-amhetre%40nvidia.com
->> patch subject: [PATCH 1/2] memory: tegra: Add SID override programming for MC clients
->> config: arm64-defconfig (https://download.01.org/0day-ci/archive/20231107/202311071607.IzbwSn2f-lkp@intel.com/config)
->> compiler: aarch64-linux-gcc (GCC) 13.2.0
->> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231107/202311071607.IzbwSn2f-lkp@intel.com/reproduce)
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <lkp@intel.com>
->> | Closes: https://lore.kernel.org/oe-kbuild-all/202311071607.IzbwSn2f-lkp@intel.com/
->>
->> All warnings (new ones prefixed by >>):
->>
->>     drivers/memory/tegra/tegra186.c: In function 'tegra186_mc_resume':
->>     drivers/memory/tegra/tegra186.c:78:17: error: implicit declaration of function 'tegra186_mc_client_sid_override' [-Werror=implicit-function-declaration]
->>        78 |                 tegra186_mc_client_sid_override(mc, client, client->sid);
->>           |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>     drivers/memory/tegra/tegra186.c: At top level:
->>>> drivers/memory/tegra/tegra186.c:85:13: warning: conflicting types for 'tegra186_mc_client_sid_override'; have 'void(struct tegra_mc *, const struct tegra_mc_client *, unsigned int)'
->>        85 | static void tegra186_mc_client_sid_override(struct tegra_mc *mc,
->>           |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>     drivers/memory/tegra/tegra186.c:85:13: error: static declaration of 'tegra186_mc_client_sid_override' follows non-static declaration
->>     drivers/memory/tegra/tegra186.c:78:17: note: previous implicit declaration of 'tegra186_mc_client_sid_override' with type 'void(struct tegra_mc *, const struct tegra_mc_client *, unsigned int)'
->>        78 |                 tegra186_mc_client_sid_override(mc, client, client->sid);
->>           |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>     cc1: some warnings being treated as errors
->>
-> Fixed all of the warnings and errors in V2 of this series.
-> V1 wasn't applied properly in our testing because of which these build
+> Responses should be made by Wed, 08 Nov 2023 13:02:46 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.200-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I would suggest to test what you develop, not apply it somewhere else.
-Unless you develop on entirely different tree, but then this is the problem.
+All tests passing for Tegra ...
 
-> errors weren't caught. Sorry for sending V1 with build issues. Please
-> use V2 of this series for the reviews.
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    68 tests:	68 pass, 0 fail
 
-One version per day. Anyway you could wait till merge window finishes.
-Nothing is going to happen with your patch now.
+Linux version:	5.10.200-rc1-gfed6441dbe52
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Best regards,
-Krzysztof
-
+Jon
