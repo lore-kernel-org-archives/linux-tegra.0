@@ -2,163 +2,160 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 006B1C4332F
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Nov 2023 09:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7964C4332F
+	for <linux-tegra@archiver.kernel.org>; Tue,  7 Nov 2023 11:27:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233732AbjKGJRs (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Nov 2023 04:17:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50972 "EHLO
+        id S229720AbjKGL1l (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 7 Nov 2023 06:27:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233701AbjKGJRr (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Nov 2023 04:17:47 -0500
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81331113;
-        Tue,  7 Nov 2023 01:17:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1699348664; x=1730884664;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P71XwON/JZ6FXbku3xz98s//Jj44TIH+098MqA3/xKw=;
-  b=M/t536hovMpT9bVbl2AwmcJp33m2cv6JkJBw0YoHQJYhAFlTm7t+9Vj3
-   7L0nJmwzrPp+vXuy2hpkVgX3lQTVJEF6z2M+85zEqbdE+v/pz765pksfZ
-   D3Ph2B9IqIc1BGKuGQNEH2fK7UPLWw9Hy5e3MrLfbeYFuZqntHptY6CS3
-   ZQgJiHDp7idJCliD15fSBiP7dl8kZEKcBewUbva879VPdiF0ZQlzRbG7/
-   7O5ebsK3AnhlwVHXH8+BgrNHy+6R8QzdFK/CsU+eh+ZxK2VwJZZFcdYhl
-   vb+K00VUhaiSr+MjnfLfyP5wPTM/uYEDzMVmzg5w8ZrEylwdr3/Wz4/0G
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10886"; a="369662257"
-X-IronPort-AV: E=Sophos;i="6.03,283,1694761200"; 
-   d="scan'208";a="369662257"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Nov 2023 01:17:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10886"; a="906357335"
-X-IronPort-AV: E=Sophos;i="6.03,283,1694761200"; 
-   d="scan'208";a="906357335"
-Received: from lkp-server01.sh.intel.com (HELO 17d9e85e5079) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 07 Nov 2023 01:17:42 -0800
-Received: from kbuild by 17d9e85e5079 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1r0IDL-00070S-2U;
-        Tue, 07 Nov 2023 09:17:39 +0000
-Date:   Tue, 7 Nov 2023 17:16:14 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Ashish Mhetre <amhetre@nvidia.com>, krzysztof.kozlowski@linaro.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        dmitry.osipenko@collabora.com
-Cc:     oe-kbuild-all@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ashish Mhetre <amhetre@nvidia.com>
-Subject: Re: [PATCH 1/2] memory: tegra: Add SID override programming for MC
- clients
-Message-ID: <202311071607.IzbwSn2f-lkp@intel.com>
-References: <20231107052824.29418-1-amhetre@nvidia.com>
+        with ESMTP id S229643AbjKGL1k (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Nov 2023 06:27:40 -0500
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2083.outbound.protection.outlook.com [40.107.243.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAD8DDF;
+        Tue,  7 Nov 2023 03:27:37 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=URcLZR8rSYxLcCH6zCQuQW1Sazj1r4olb2Y/cSNOPeajlS8d4SSD2o54mCsEz3wWPLB6tfs5MJz+RvTHcdMg2HK49VGgdeggfBZlK2o+ba++5dat3KARwIwL0nm5JeSv3CNn4Gt1Md5YGM6jkWoqQkNpMz/p3cOhj91G8s2/pO6TS7q2AGN9NQUGB9IsPrFeN/MtOjV7pdaZDGrSSWk0M4B7IC3JJkTUqLLFP83wKujEXmvJaAqOTWI+lZQ6UIPXs1SKlQx5g/y4WeEx7yPWeitQeWYQDwsSic5Rpyh72JH+ssYjw+u77avZ/+Eni651OnaGH+PSXaF/YKxuXlL4fg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8rPTrI4N6EiP01QE8/dQYzX7H4QBEz64YIafMXZMSjI=;
+ b=XUgdcMwyFKP5v0d/lBLKs1bketsjPsQvqK9Ses09Lg+mG4MnK/pCnoDL/nGTu+C7c7TtccVqy6zUjU/ldPiwKU3TBF73/vG0vP1jUR0Unv40miLHcOdXDcVmhW64nnXF9w8AMcA31mcvnhgLKW37UrGh9ubvoOJIOPPejSPZGNBKkpbc4SwBO0pZijpt9d/E9C0Lcjvhd0m+MJc5gsWLjzvBN2lQPp8QIwQnBfJsvpLNz0N7dikJCvwS3YMR62PC8pDUNetELJn1DX1gNejSbipRJejSsNKmO+KDBPsVpAgtJcRtS2KuSx3qz/l1gO9XlJwLbPHs6qFxyGSlwgSuZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8rPTrI4N6EiP01QE8/dQYzX7H4QBEz64YIafMXZMSjI=;
+ b=Cx2Fo5Xki0jldVILYxCaBsvm8RyeSdMb42ekXuc/jGQZ7BEgCTPsRbko9xnQyYBNISgqqHGbn4tikLgFzBN7sSojFx+CMn9aAgx7/Narbap4bLZdelS4jMlXnG4JaHzCDQ8UbVgPwad9sFMKW/s3Ib1hbGAUii/W9NHr00P9zR5XZPe8P2IKXYuYy3poVwYRZObami6cI1IrD5sULNgKs42JMznNlgcs2JUu2x7bh6lRk5a+UZm0XwRMVP1jRNtNa0h1OHvNGxB4rl9kBgj0VEC8tiWOaO/EMBxxO0vdVA4a5wJ5T2SfyYl9FyU3XOZ3Zfqj7tXlw/QblxCc1F5MNw==
+Received: from MW3PR06CA0010.namprd06.prod.outlook.com (2603:10b6:303:2a::15)
+ by CO6PR12MB5458.namprd12.prod.outlook.com (2603:10b6:5:35b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.29; Tue, 7 Nov
+ 2023 11:27:35 +0000
+Received: from CO1PEPF000042A7.namprd03.prod.outlook.com
+ (2603:10b6:303:2a:cafe::48) by MW3PR06CA0010.outlook.office365.com
+ (2603:10b6:303:2a::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6954.28 via Frontend
+ Transport; Tue, 7 Nov 2023 11:27:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000042A7.mail.protection.outlook.com (10.167.243.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.6977.16 via Frontend Transport; Tue, 7 Nov 2023 11:27:35 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 7 Nov 2023
+ 03:27:18 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 7 Nov 2023
+ 03:27:18 -0800
+Received: from amhetre.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.986.41 via Frontend
+ Transport; Tue, 7 Nov 2023 03:27:16 -0800
+From:   Ashish Mhetre <amhetre@nvidia.com>
+To:     <krzysztof.kozlowski@linaro.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <dmitry.osipenko@collabora.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Ashish Mhetre" <amhetre@nvidia.com>
+Subject: [Patch V2 1/2] memory: tegra: Add SID override programming for MC clients
+Date:   Tue, 7 Nov 2023 16:57:12 +0530
+Message-ID: <20231107112713.21399-1-amhetre@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231107052824.29418-1-amhetre@nvidia.com>
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042A7:EE_|CO6PR12MB5458:EE_
+X-MS-Office365-Filtering-Correlation-Id: 98aa63bf-4b11-4be4-ee29-08dbdf848a58
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: avq4TTAHnU50OxbTTroOvOtGD0AcyjCXplec6CnjY+5tCcYsF4klDf9qLgAM7ALHzIgrCgv6OVdSXhdW0LTLLXotQ7+Hg0XiyhqXfsvQm0bEc3zSb+rJJhHvD5bQGHEcmWvDxx5Tom+3E8Vdr9uHpr/JtvnutecRsAxFgcojP8gbOVQ4zbUzpkce6ctqIMtAxr74EN9vXpn6pSVDgAYH57AmriBTCoucw04QEiAF07nWLPUR8ai5pzAAKP/xMI/JEZqpGpEODXoGRTvssZ8WcEeKdP6ocf11xR/s2c39ZK98Kf/bS/7LoM3PkYVFh2vJVbHxrwCSPlgtSRuEBSfGT2XH2rT7Mo9KPHUVTdCywZ9ASBGEmmIrB1d66mSshqiPkYU+EEx2zsTYG5jYTj8EwvvO5CqNN9pocZEQBoaxzeqMsPRA2OIZIIrGHqw18KUvrJJlhsiq2niDjFZUlzWhuMRmcPGpLP0Iv8WdUkJuqDqgh0n5SF2TvqEZ566q/FH2vEiTOQV7iabn5X8BxaT4c5j2ek/mHkqpcivqp2rQf3cxGcQBgb46Qwg0z1N7A0Gi+lXH5t4C9CdUWFJUhU/GDEVflzM3KShCRachhcRmpjhL+cQnY/cJyf0oSMdlUZ9O1fJKoV/SzZ4urMOLqhvYe2oXQiOG3BBCZWwBD9x8WHhXOZJMxzJ24KyTejEH10RoLSUG0wMEnxNAW8yMjmkemTHa17nhV4a4kVnenssnyUVz2p2yAS8RfbCybI1nZOaq
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(396003)(136003)(376002)(346002)(230922051799003)(82310400011)(64100799003)(186009)(1800799009)(451199024)(36840700001)(46966006)(40470700004)(41300700001)(1076003)(478600001)(47076005)(7696005)(2616005)(6666004)(336012)(426003)(8676002)(8936002)(316002)(83380400001)(36860700001)(2906002)(5660300002)(70586007)(4326008)(110136005)(54906003)(70206006)(26005)(356005)(7636003)(107886003)(82740400003)(86362001)(36756003)(40480700001)(40460700003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2023 11:27:35.1255
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98aa63bf-4b11-4be4-ee29-08dbdf848a58
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000042A7.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR12MB5458
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi Ashish,
+For some devices the bootloader/firmware may set up the device in
+bypass. Memory clients like display needs kernel to program SID after
+resume because bootloader/firmware programs the SID of display device to
+bypass. In order to make sure that kernel IOMMU mappings for these
+devices work after resume, add SID override programming support for all
+memory clients on memory controller resume.
 
-kernel test robot noticed the following build warnings:
+This partially reverts 'commit ef86b2c2807f ("memory: tegra: Remove
+clients SID override programming")'
 
-[auto build test WARNING on tegra/for-next]
-[also build test WARNING on linus/master v6.6 next-20231107]
-[cannot apply to tegra-drm/drm/tegra/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+---
+Changes in v2:
+- Fixed build issues reported by Kernel test robot from v1
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ashish-Mhetre/memory-tegra-Skip-SID-programming-if-SID-registers-aren-t-set/20231107-133149
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git for-next
-patch link:    https://lore.kernel.org/r/20231107052824.29418-1-amhetre%40nvidia.com
-patch subject: [PATCH 1/2] memory: tegra: Add SID override programming for MC clients
-config: arm64-defconfig (https://download.01.org/0day-ci/archive/20231107/202311071607.IzbwSn2f-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231107/202311071607.IzbwSn2f-lkp@intel.com/reproduce)
+ drivers/memory/tegra/tegra186.c | 14 ++++++++++++++
+ include/soc/tegra/mc.h          |  1 +
+ 2 files changed, 15 insertions(+)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202311071607.IzbwSn2f-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/memory/tegra/tegra186.c: In function 'tegra186_mc_resume':
-   drivers/memory/tegra/tegra186.c:78:17: error: implicit declaration of function 'tegra186_mc_client_sid_override' [-Werror=implicit-function-declaration]
-      78 |                 tegra186_mc_client_sid_override(mc, client, client->sid);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/memory/tegra/tegra186.c: At top level:
->> drivers/memory/tegra/tegra186.c:85:13: warning: conflicting types for 'tegra186_mc_client_sid_override'; have 'void(struct tegra_mc *, const struct tegra_mc_client *, unsigned int)'
-      85 | static void tegra186_mc_client_sid_override(struct tegra_mc *mc,
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/memory/tegra/tegra186.c:85:13: error: static declaration of 'tegra186_mc_client_sid_override' follows non-static declaration
-   drivers/memory/tegra/tegra186.c:78:17: note: previous implicit declaration of 'tegra186_mc_client_sid_override' with type 'void(struct tegra_mc *, const struct tegra_mc_client *, unsigned int)'
-      78 |                 tegra186_mc_client_sid_override(mc, client, client->sid);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +85 drivers/memory/tegra/tegra186.c
-
-7355c7b9ae0d45 Thierry Reding 2021-06-02   70  
-142620fbbbbba0 Ashish Mhetre  2023-11-07   71  static int tegra186_mc_resume(struct tegra_mc *mc)
-142620fbbbbba0 Ashish Mhetre  2023-11-07   72  {
-142620fbbbbba0 Ashish Mhetre  2023-11-07   73  	unsigned int i;
-142620fbbbbba0 Ashish Mhetre  2023-11-07   74  
-142620fbbbbba0 Ashish Mhetre  2023-11-07   75  	for (i = 0; i < mc->soc->num_clients; i++) {
-142620fbbbbba0 Ashish Mhetre  2023-11-07   76  		const struct tegra_mc_client *client = &mc->soc->clients[i];
-142620fbbbbba0 Ashish Mhetre  2023-11-07   77  
-142620fbbbbba0 Ashish Mhetre  2023-11-07  @78  		tegra186_mc_client_sid_override(mc, client, client->sid);
-142620fbbbbba0 Ashish Mhetre  2023-11-07   79  	}
-142620fbbbbba0 Ashish Mhetre  2023-11-07   80  
-142620fbbbbba0 Ashish Mhetre  2023-11-07   81  	return 0;
-142620fbbbbba0 Ashish Mhetre  2023-11-07   82  }
-142620fbbbbba0 Ashish Mhetre  2023-11-07   83  
-eaf89f1cd38cf7 Arnd Bergmann  2021-07-22   84  #if IS_ENABLED(CONFIG_IOMMU_API)
-393d66fd2cacba Thierry Reding 2021-06-03  @85  static void tegra186_mc_client_sid_override(struct tegra_mc *mc,
-393d66fd2cacba Thierry Reding 2021-06-03   86  					    const struct tegra_mc_client *client,
-393d66fd2cacba Thierry Reding 2021-06-03   87  					    unsigned int sid)
-393d66fd2cacba Thierry Reding 2021-06-03   88  {
-393d66fd2cacba Thierry Reding 2021-06-03   89  	u32 value, old;
-393d66fd2cacba Thierry Reding 2021-06-03   90  
-393d66fd2cacba Thierry Reding 2021-06-03   91  	value = readl(mc->regs + client->regs.sid.security);
-393d66fd2cacba Thierry Reding 2021-06-03   92  	if ((value & MC_SID_STREAMID_SECURITY_OVERRIDE) == 0) {
-393d66fd2cacba Thierry Reding 2021-06-03   93  		/*
-393d66fd2cacba Thierry Reding 2021-06-03   94  		 * If the secure firmware has locked this down the override
-393d66fd2cacba Thierry Reding 2021-06-03   95  		 * for this memory client, there's nothing we can do here.
-393d66fd2cacba Thierry Reding 2021-06-03   96  		 */
-393d66fd2cacba Thierry Reding 2021-06-03   97  		if (value & MC_SID_STREAMID_SECURITY_WRITE_ACCESS_DISABLED)
-393d66fd2cacba Thierry Reding 2021-06-03   98  			return;
-393d66fd2cacba Thierry Reding 2021-06-03   99  
-393d66fd2cacba Thierry Reding 2021-06-03  100  		/*
-393d66fd2cacba Thierry Reding 2021-06-03  101  		 * Otherwise, try to set the override itself. Typically the
-393d66fd2cacba Thierry Reding 2021-06-03  102  		 * secure firmware will never have set this configuration.
-393d66fd2cacba Thierry Reding 2021-06-03  103  		 * Instead, it will either have disabled write access to
-393d66fd2cacba Thierry Reding 2021-06-03  104  		 * this field, or it will already have set an explicit
-393d66fd2cacba Thierry Reding 2021-06-03  105  		 * override itself.
-393d66fd2cacba Thierry Reding 2021-06-03  106  		 */
-393d66fd2cacba Thierry Reding 2021-06-03  107  		WARN_ON((value & MC_SID_STREAMID_SECURITY_OVERRIDE) == 0);
-393d66fd2cacba Thierry Reding 2021-06-03  108  
-393d66fd2cacba Thierry Reding 2021-06-03  109  		value |= MC_SID_STREAMID_SECURITY_OVERRIDE;
-393d66fd2cacba Thierry Reding 2021-06-03  110  		writel(value, mc->regs + client->regs.sid.security);
-393d66fd2cacba Thierry Reding 2021-06-03  111  	}
-393d66fd2cacba Thierry Reding 2021-06-03  112  
-393d66fd2cacba Thierry Reding 2021-06-03  113  	value = readl(mc->regs + client->regs.sid.override);
-393d66fd2cacba Thierry Reding 2021-06-03  114  	old = value & MC_SID_STREAMID_OVERRIDE_MASK;
-393d66fd2cacba Thierry Reding 2021-06-03  115  
-393d66fd2cacba Thierry Reding 2021-06-03  116  	if (old != sid) {
-393d66fd2cacba Thierry Reding 2021-06-03  117  		dev_dbg(mc->dev, "overriding SID %x for %s with %x\n", old,
-393d66fd2cacba Thierry Reding 2021-06-03  118  			client->name, sid);
-393d66fd2cacba Thierry Reding 2021-06-03  119  		writel(sid, mc->regs + client->regs.sid.override);
-393d66fd2cacba Thierry Reding 2021-06-03  120  	}
-393d66fd2cacba Thierry Reding 2021-06-03  121  }
-eaf89f1cd38cf7 Arnd Bergmann  2021-07-22  122  #endif
-393d66fd2cacba Thierry Reding 2021-06-03  123  
-
+diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+index 533f85a4b2bd..8203f0db1350 100644
+--- a/drivers/memory/tegra/tegra186.c
++++ b/drivers/memory/tegra/tegra186.c
+@@ -136,9 +136,23 @@ static int tegra186_mc_probe_device(struct tegra_mc *mc, struct device *dev)
+ 	return 0;
+ }
+ 
++static int tegra186_mc_resume(struct tegra_mc *mc)
++{
++	unsigned int i;
++
++	for (i = 0; i < mc->soc->num_clients; i++) {
++		const struct tegra_mc_client *client = &mc->soc->clients[i];
++
++		tegra186_mc_client_sid_override(mc, client, client->sid);
++	}
++
++	return 0;
++}
++
+ const struct tegra_mc_ops tegra186_mc_ops = {
+ 	.probe = tegra186_mc_probe,
+ 	.remove = tegra186_mc_remove,
++	.resume = tegra186_mc_resume,
+ 	.probe_device = tegra186_mc_probe_device,
+ 	.handle_irq = tegra30_mc_handle_irq,
+ };
+diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+index 71ae37d3bedd..af1d73a7f0cd 100644
+--- a/include/soc/tegra/mc.h
++++ b/include/soc/tegra/mc.h
+@@ -162,6 +162,7 @@ struct tegra_mc_ops {
+ 	 */
+ 	int (*probe)(struct tegra_mc *mc);
+ 	void (*remove)(struct tegra_mc *mc);
++	int (*resume)(struct tegra_mc *mc);
+ 	irqreturn_t (*handle_irq)(int irq, void *data);
+ 	int (*probe_device)(struct tegra_mc *mc, struct device *dev);
+ };
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1
+
