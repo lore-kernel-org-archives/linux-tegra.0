@@ -2,117 +2,118 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B3DCC4167D
-	for <linux-tegra@archiver.kernel.org>; Tue,  7 Nov 2023 16:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1B1C4332F
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Nov 2023 08:01:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235322AbjKGQb0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Tue, 7 Nov 2023 11:31:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40662 "EHLO
+        id S231971AbjKHIBR (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Nov 2023 03:01:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235327AbjKGQbJ (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Tue, 7 Nov 2023 11:31:09 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E5851734;
-        Tue,  7 Nov 2023 07:49:37 -0800 (PST)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 285FDC433BA;
-        Tue,  7 Nov 2023 15:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1699372176;
-        bh=H+WJmK5ts6VrNFEW8hzF571ahL4rflmJxgfJkLTP3Uo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QnSmsQFhAxuTDgTJom87pELzSAcBdIg9c3jleVtylC5BcHWXV1Q+2VY5FFYB+Re/e
-         U9B9vQ1ae6G/8FMFTpZU0608i3h+xYbwVCEfht92L1TIFYs772lNRRJJqwRqmYW6Br
-         /yYFRKJwC6nvXDTRKW5lepmrduV/Ps7ap6m5q/LR95+ILAZf7q4/v+r4cxx8//9Tih
-         Sj51CuAx7ckvaRaQAlBMlkdyF/PC9iJNt0mPi5huPJubIPhDJlcfZ9skLI3PiE8DJD
-         h2xzLF83QfaBzA7GTRyNuRmPeTm7I2zDXJWcxHYSkmZ5ZUjoIfAayyF13U7pfzWO+8
-         v8D0HBHoY4PHw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, lpieralisi@kernel.org,
-        kw@linux.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mani@kernel.org, sumitg@nvidia.com, u.kleine-koenig@pengutronix.de,
-        vidyas@nvidia.com, yoshihiro.shimoda.uh@renesas.com,
-        linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.5 18/34] PCI: tegra194: Use FIELD_GET()/FIELD_PREP() with Link Width fields
-Date:   Tue,  7 Nov 2023 10:47:58 -0500
-Message-ID: <20231107154846.3766119-18-sashal@kernel.org>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20231107154846.3766119-1-sashal@kernel.org>
-References: <20231107154846.3766119-1-sashal@kernel.org>
+        with ESMTP id S231674AbjKHIBQ (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Nov 2023 03:01:16 -0500
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC0ED199;
+        Wed,  8 Nov 2023 00:01:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1699430474; x=1730966474;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=waktInfzOKtDW0E1oxAKk3EhbspNu0YVHIgYOQNzgfM=;
+  b=eGv830VZu/h48EEjXQoZ1P5X0i07nYT87xghWfqFuh2aS0yFIK/67CRF
+   Do0F40Nwz8o5PkWkHK1ObKgE+MLjf4BR1+FBT9mEW79kZN6NQ9Gp40di7
+   dxRWHTBUFaEYEa5e6sb6Y7EiEy4Dxhm6l0FXxSnr06Kc0KA4XoqCbmgou
+   cLLlYGcW54YtHLCwoD8d/w66oRuYs5jrrkDM2CNrQuR57dTnUzeaHwtVu
+   Sv/HcQzFaonYUhah7EwIAwIsbf85gL/kmnLyhuKI/1hjp3XpsmOXB2W4a
+   dL1b3yRQ1n8CwcrR3ORPqg9dJX7JD5G6FoZOJn0+VJ8fcOa91h3dIz7dW
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10887"; a="369050180"
+X-IronPort-AV: E=Sophos;i="6.03,285,1694761200"; 
+   d="scan'208";a="369050180"
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2023 00:01:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10887"; a="833411924"
+X-IronPort-AV: E=Sophos;i="6.03,285,1694761200"; 
+   d="scan'208";a="833411924"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.254.215.63]) ([10.254.215.63])
+  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2023 00:01:01 -0800
+Message-ID: <99edf0cf-a570-43de-a79a-a040a403607e@linux.intel.com>
+Date:   Wed, 8 Nov 2023 16:01:00 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.5.10
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc:     baolu.lu@linux.intel.com, Zhenhua Huang <quic_zhenhuah@quicinc.com>
+Subject: Re: [PATCH RFC 01/17] iommu: Remove struct iommu_ops *iommu from
+ arch_setup_dma_ops()
+To:     Jason Gunthorpe <jgg@nvidia.com>,
+        acpica-devel@lists.linuxfoundation.org,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dexuan Cui <decui@microsoft.com>, devicetree@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-snps-arc@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hector Martin <marcan@marcan.st>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Sven Peter <sven@svenpeter.dev>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Vineet Gupta <vgupta@kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>
+References: <1-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+Content-Language: en-US
+From:   Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <1-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-From: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+On 2023/11/4 0:44, Jason Gunthorpe wrote:
+> This is not being used to pass ops, it is just a way to tell if an
+> iommu driver was probed. These days this can be detected directly via
+> device_iommu_mapped(). Call device_iommu_mapped() in the two places that
+> need to check it and remove the iommu parameter everywhere.
+> 
+> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+> ---
+>   arch/arc/mm/dma.c               |  2 +-
+>   arch/arm/mm/dma-mapping-nommu.c |  2 +-
+>   arch/arm/mm/dma-mapping.c       | 10 +++++-----
+>   arch/arm64/mm/dma-mapping.c     |  4 ++--
+>   arch/mips/mm/dma-noncoherent.c  |  2 +-
+>   arch/riscv/mm/dma-noncoherent.c |  2 +-
+>   drivers/acpi/scan.c             |  3 +--
+>   drivers/hv/hv_common.c          |  2 +-
+>   drivers/of/device.c             |  2 +-
+>   include/linux/dma-map-ops.h     |  4 ++--
+>   10 files changed, 16 insertions(+), 17 deletions(-)
 
-[ Upstream commit 759574abd78e3b47ec45bbd31a64e8832cf73f97 ]
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-Use FIELD_GET() to extract PCIe Negotiated Link Width field instead of
-custom masking and shifting.
-
-Similarly, change custom code that misleadingly used
-PCI_EXP_LNKSTA_NLW_SHIFT to prepare value for PCI_EXP_LNKCAP write
-to use FIELD_PREP() with correct field define (PCI_EXP_LNKCAP_MLW).
-
-Link: https://lore.kernel.org/r/20230919125648.1920-5-ilpo.jarvinen@linux.intel.com
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pci/controller/dwc/pcie-tegra194.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index ccff8cde5cff6..07cb0818a5138 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -9,6 +9,7 @@
-  * Author: Vidya Sagar <vidyas@nvidia.com>
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
-@@ -347,8 +348,7 @@ static void apply_bad_link_workaround(struct dw_pcie_rp *pp)
- 	 */
- 	val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA);
- 	if (val & PCI_EXP_LNKSTA_LBMS) {
--		current_link_width = (val & PCI_EXP_LNKSTA_NLW) >>
--				     PCI_EXP_LNKSTA_NLW_SHIFT;
-+		current_link_width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val);
- 		if (pcie->init_link_width > current_link_width) {
- 			dev_warn(pci->dev, "PCIe link is bad, width reduced\n");
- 			val = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base +
-@@ -761,8 +761,7 @@ static void tegra_pcie_enable_system_interrupts(struct dw_pcie_rp *pp)
- 
- 	val_w = dw_pcie_readw_dbi(&pcie->pci, pcie->pcie_cap_base +
- 				  PCI_EXP_LNKSTA);
--	pcie->init_link_width = (val_w & PCI_EXP_LNKSTA_NLW) >>
--				PCI_EXP_LNKSTA_NLW_SHIFT;
-+	pcie->init_link_width = FIELD_GET(PCI_EXP_LNKSTA_NLW, val_w);
- 
- 	val_w = dw_pcie_readw_dbi(&pcie->pci, pcie->pcie_cap_base +
- 				  PCI_EXP_LNKCTL);
-@@ -921,7 +920,7 @@ static int tegra_pcie_dw_host_init(struct dw_pcie_rp *pp)
- 	/* Configure Max lane width from DT */
- 	val = dw_pcie_readl_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP);
- 	val &= ~PCI_EXP_LNKCAP_MLW;
--	val |= (pcie->num_lanes << PCI_EXP_LNKSTA_NLW_SHIFT);
-+	val |= FIELD_PREP(PCI_EXP_LNKCAP_MLW, pcie->num_lanes);
- 	dw_pcie_writel_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKCAP, val);
- 
- 	/* Clear Slot Clock Configuration bit if SRNS configuration */
--- 
-2.42.0
-
+Best regards,
+baolu
