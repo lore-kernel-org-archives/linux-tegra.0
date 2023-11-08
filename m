@@ -2,57 +2,58 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACE5C4167D
-	for <linux-tegra@archiver.kernel.org>; Wed,  8 Nov 2023 18:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C12DC4167D
+	for <linux-tegra@archiver.kernel.org>; Wed,  8 Nov 2023 18:35:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229989AbjKHSNF (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 8 Nov 2023 13:13:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46004 "EHLO
+        id S229705AbjKHSfH (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 8 Nov 2023 13:35:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230118AbjKHSNE (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Nov 2023 13:13:04 -0500
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9EAD1FFB
-        for <linux-tegra@vger.kernel.org>; Wed,  8 Nov 2023 10:13:01 -0800 (PST)
-Received: by mail-lj1-x22b.google.com with SMTP id 38308e7fff4ca-2c7369df9d6so19520591fa.1
-        for <linux-tegra@vger.kernel.org>; Wed, 08 Nov 2023 10:13:01 -0800 (PST)
+        with ESMTP id S229460AbjKHSfF (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>); Wed, 8 Nov 2023 13:35:05 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B1032102
+        for <linux-tegra@vger.kernel.org>; Wed,  8 Nov 2023 10:35:03 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-4079ed65582so53613855e9.1
+        for <linux-tegra@vger.kernel.org>; Wed, 08 Nov 2023 10:35:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1699467180; x=1700071980; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1699468502; x=1700073302; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=XyM6VQ+HEN7IzJJ5bMoPN5/yYHnG+EAx9sBxv2Z/Ai8=;
-        b=Lz2Jw7ANw1o+YV6f3bPla8aS+dt3X553EcMsu2E/HGveSuIdvE7kFjv0RrsL0+vTD2
-         UOJkqS7fZHlMfpIs1EbsGSvS/0fMeYSUq0Q1hySCAQm5KwiQAQWbiFbh/8q7+yxCZGAf
-         hmHaHlFrOTNRtov3lrUAmGRSX6iBucGrmgD5OrzOpdqSeIyTl2K9gXBncsNTMkBMELcf
-         IOwmLlQz6a7xq1pqmRDx/PrC5yoUKMb7992TuLvtkN5k6pEc6r6Y65ITy/5VC9bmE5nv
-         GxwRCumKBjLstfKXxfljTPuFQQZopeD+vMVwkAxls8LP44k18WSWpagZkr3pC4Hss4Lf
-         6bmA==
+        bh=n9ZiV2Esj98CTfgH59OBDcgahkXqDMdEC5lhTkmlSa0=;
+        b=Ag/sekfgYdN+QO2qNzC+r6BzqCMo9dzcsxvOu4xJN0ribyHewu9zogJx6FWNSomfI9
+         4Sjlt/qA4mplNZMnvot6/g+6cmnze23j+AP62wX8o67Qahuu0IX9K7PX266zjkQY/wRe
+         hNpOh576uhk6o2F1atbxeeQelw6dBU2ObOSQ9yQGCGBdBys3mjvoiuXA1WEspYXM7dqL
+         8or59NUpDHRURUG6WDvo92ajLicd3w5fF4NJHO6NtHIf4rNDQeB2t6EQLDVDKgiNAp4S
+         f8GgfhkHm4K6E2W6wIdOxZzpJIJC9NgohDiD7zD6auJ87yEubapy07YfOPudCdJ85XuR
+         nD9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699467180; x=1700071980;
+        d=1e100.net; s=20230601; t=1699468502; x=1700073302;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XyM6VQ+HEN7IzJJ5bMoPN5/yYHnG+EAx9sBxv2Z/Ai8=;
-        b=B7N//awvVd3G7bJ7EDOTuxV/M2PnSGVTDXqyTof4nFKnfFPSyNn0rkgguvwP/+Rhjr
-         GH7XT315HHe69u08fuRW0jHOgHZzz1gpwxsI8aytYRLcOdwlOa6S6w23PdK44rpYPYAF
-         wyQ9aZIpktOcONYWuZTKot5r4MKMMkcDQCMMc3o0eMeAaSSd5MMZH8lNC2qWdqk79tmp
-         oCK103qTvK6NUoJ3wvznUT9PnzrUcfjooPdnWEZbPxJZKRbZEm11zsK9ItxO/4EHfE1k
-         Squ0U+CrSaWjIZCJ1ldVFCoSbBeRy2XYJu9Dji5ZVqpnSq8hLoiyh00XQ6azCy3NHcSA
-         Izhg==
-X-Gm-Message-State: AOJu0YzDPQ2dyAIYWXfz9jhW5htkX4r+RueYpfIlQaMTPWfoeJByuwPe
-        nEjnqsmsWxvBkuYoUDlVToCkKQ==
-X-Google-Smtp-Source: AGHT+IEAPIM/7orU2/kUz+9e+TY8CYDTNJKLdVzPi+Pze4e6FKjzPA1Tq2W37LpeXm1IyotL7oPMlg==
-X-Received: by 2002:a2e:8e7b:0:b0:2c5:582:fd8d with SMTP id t27-20020a2e8e7b000000b002c50582fd8dmr2179335ljk.30.1699467179768;
-        Wed, 08 Nov 2023 10:12:59 -0800 (PST)
-Received: from [10.1.1.118] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id d20-20020a05600c4c1400b003fd2d3462fcsm739766wmp.1.2023.11.08.10.12.57
+        bh=n9ZiV2Esj98CTfgH59OBDcgahkXqDMdEC5lhTkmlSa0=;
+        b=eRJOfnVtvT4O6Yd1/hylJ1A75F/NxiEq1RWOhCC1GiUL5+AQ6n94oWi5gyAwbSwckO
+         dLMq8kdv2GfyZvrns/RHambGdTmFTD216I0nuDVPX+FiS4CI35uQeMpRY9KGSheP11U8
+         +Fe1AdNWVE1BrovzBaAlwalSs/FbkSwuF78KMZxnphR1q7l+0DvTeLuwdcyR/AMbfpkL
+         tQ4rRhy4rYJTpIESlvWm++UvMEwhiT++wJY/a50KHZeYeq4MdeUXId2APFWJqA4qc15G
+         QhfipD1C+K8DHllHq2yPoyixHquYVJtH4cC2mD5ykf97TkxBjNLt0PURipS1vz6JC2UA
+         QM4A==
+X-Gm-Message-State: AOJu0YyiZrgYmULdlrv0gTY8sDS1Jam3sj7qZDytpMnmGJqwANFMPFNc
+        rT25NJJc2+ozRKucU6k3vvex4w==
+X-Google-Smtp-Source: AGHT+IEerzRoblFu8LqWqAyQVzl32Dow78v7sZDoe2sPpmQgBWRRfSrEcftCpyNmsXV1yimnvtHQ6A==
+X-Received: by 2002:a05:600c:190e:b0:405:1c19:b747 with SMTP id j14-20020a05600c190e00b004051c19b747mr2262734wmq.15.1699468501866;
+        Wed, 08 Nov 2023 10:35:01 -0800 (PST)
+Received: from salami.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id g4-20020a05600c310400b004068e09a70bsm20156528wmo.31.2023.11.08.10.34.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Nov 2023 10:12:58 -0800 (PST)
-Message-ID: <e57f11915745674521b8c73d88a198a0b9c32c21.camel@linaro.org>
-Subject: Re: [PATCH RFC 12/17] iommu: Make iommu_ops_from_fwnode() static
+        Wed, 08 Nov 2023 10:35:00 -0800 (PST)
+Message-ID: <d6664edcccd81edc5caa54e8da43b5c571a3ea76.camel@linaro.org>
+Subject: Re: [PATCH RFC 00/17] Solve iommu probe races around iommu_fwspec
 From:   =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To:     Jason Gunthorpe <jgg@nvidia.com>,
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Zhenhua Huang <quic_zhenhuah@quicinc.com>,
         acpica-devel@lists.linuxfoundation.org,
         Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
@@ -91,13 +92,12 @@ To:     Jason Gunthorpe <jgg@nvidia.com>,
         Vineet Gupta <vgupta@kernel.org>,
         virtualization@lists.linux-foundation.org,
         Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>
-Cc:     Zhenhua Huang <quic_zhenhuah@quicinc.com>
-Date:   Wed, 08 Nov 2023 18:12:56 +0000
-In-Reply-To: <12-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
-References: <12-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+Date:   Wed, 08 Nov 2023 18:34:58 +0000
+In-Reply-To: <0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+References: <0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4-1 
+User-Agent: Evolution 3.50.1-1 
 MIME-Version: 1.0
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
@@ -106,67 +106,26 @@ X-Mailing-List: linux-tegra@vger.kernel.org
 Hi Jason,
 
 On Fri, 2023-11-03 at 13:44 -0300, Jason Gunthorpe wrote:
-> There are no external callers now.
+> This is a more complete solution that the first attempt here:
+> https://lore.kernel.org/r/1698825902-10685-1-git-send-email-quic_zhenhuah=
+@quicinc.com
 >=20
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
-> =C2=A0drivers/iommu/iommu.c | 3 ++-
-> =C2=A0include/linux/iommu.h | 6 ------
-> =C2=A02 files changed, 2 insertions(+), 7 deletions(-)
->=20
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 62c82a28cd5db3..becd1b881e62dc 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -2945,7 +2945,8 @@ bool iommu_default_passthrough(void)
-> =C2=A0}
-> =C2=A0EXPORT_SYMBOL_GPL(iommu_default_passthrough);
-> =C2=A0
-> -const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle
-> *fwnode)
-> +static const struct iommu_ops *
-> +iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0const struct iommu_ops *o=
-ps =3D NULL;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct iommu_device *iomm=
-u;
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 27e4605d498850..37948eee8d7394 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -701,7 +701,6 @@ static inline void iommu_fwspec_free(struct
-> device *dev)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev->iommu->fwspec =3D NU=
-LL;
-> =C2=A0}
-> =C2=A0int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids)=
-;
-> -const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle
-> *fwnode);
-> =C2=A0int iommu_fwspec_append_ids(struct iommu_fwspec *fwspec, u32 *ids,
-> int num_ids);
-> =C2=A0
-> =C2=A0static inline struct iommu_fwspec *dev_iommu_fwspec_get(struct
-> device *dev)
-> @@ -1044,11 +1043,6 @@ static inline int iommu_fwspec_add_ids(struct
-> device *dev, u32 *ids,
-> =C2=A0}
-> =C2=A0
-> =C2=A0static inline
-> -const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle
-> *fwnode)
-> -{
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return NULL;
-> -}
-> -
-> =C2=A0static inline int
-> =C2=A0iommu_dev_enable_feature(struct device *dev, enum iommu_dev_feature=
-s
-> feat)
+> I haven't been able to test this on any HW that touches these paths, so i=
+f
+> some people with HW can help get it in shape it can become non-RFC.
 
-This leaves the extra line with 'static inline', it should also be
-removed.
+Thank you for this series.
+
+Please note that we're also observing this issue on 6.1.
+I think this series is a good candidate for a back port (slightly complicat=
+ed by
+the fact that various refactors have happened since).
+
+For me, it's working fine so far on master, and I've also done my own back =
+port
+to 6.1 and am currently testing both. An official back port once finalised
+could be useful, though :-)
+
 
 Cheers,
 Andre'
