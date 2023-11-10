@@ -2,127 +2,234 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7586C4332F
-	for <linux-tegra@archiver.kernel.org>; Thu,  9 Nov 2023 20:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D31AC05055
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Nov 2023 17:57:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345200AbjKIUaf (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 9 Nov 2023 15:30:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
+        id S235249AbjKJR4p (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Nov 2023 12:56:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345238AbjKIUaS (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>); Thu, 9 Nov 2023 15:30:18 -0500
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4892D4ECF
-        for <linux-tegra@vger.kernel.org>; Thu,  9 Nov 2023 12:29:41 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1BeH-0002yL-0M; Thu, 09 Nov 2023 21:29:09 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1BeC-007rWU-Et; Thu, 09 Nov 2023 21:29:04 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1BeC-00GGtM-3f; Thu, 09 Nov 2023 21:29:04 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jay Fang <f.fangjian@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Tony Lindgren <tony@atomide.com>,
-        "Sicelo A. Mhlongo" <absicsz@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Liu Ying <victor.liu@nxp.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Nick Alcock <nick.alcock@oracle.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Yangtao Li <frank.li@vivo.com>, Yuan Can <yuancan@huawei.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
-Subject: [PATCH 00/12] bus: Convert to platform remove callback returning void
-Date:   Thu,  9 Nov 2023 21:28:30 +0100
-Message-ID: <20231109202830.4124591-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0.586.gbc5204569f7d.dirty
+        with ESMTP id S229891AbjKJR4P (ORCPT
+        <rfc822;linux-tegra@vger.kernel.org>);
+        Fri, 10 Nov 2023 12:56:15 -0500
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20F3D39CF5;
+        Fri, 10 Nov 2023 06:52:07 -0800 (PST)
+Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-9e5dd91b0acso169383266b.1;
+        Fri, 10 Nov 2023 06:52:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699627925; x=1700232725; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RUEzrt6LnSYKVuLiy7Ui5TbYUeY2rCJFWs9eh21yfSQ=;
+        b=N459vG7Lw0zP4FERRd9c5HrSTv1DgCxlMg5Yva0Vj4vfxwmGJ9iR3XkXIstez9Qc9T
+         gbLozGPz0p2W2zP9wSPNpedzsV5MtnWI0lw7y3DWZxLDjJtIhhS9PxPBR7cBsJ6f4qqT
+         Os5Mgg+zxHZ+jPq9gqHmcTYSni7WOe5Hn25NgS7E4gzxbWiQW49UceF3KE/ncOznbzKk
+         biI91hE1pdBaWHFoRgjgKoIckcSlmKegupCMoIe64Iv7luiV9AlPfsgFQvsHz806qIO2
+         CBNtHpn+cf5uocMbEImeNAwPiK2uuqolOVlLBGb+TZFWv0RKTK3OKQvsKUSJXrC1J7LK
+         9EJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699627925; x=1700232725;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RUEzrt6LnSYKVuLiy7Ui5TbYUeY2rCJFWs9eh21yfSQ=;
+        b=wQxRGK77gSyC6dGn112nW+v5BF7GOPWbfGhLsnc05KtuXTuoQcKP0Zr7xhZj+WvDhc
+         shHfI8iuN//jmemtItbXdvfRS84oPnrtUbUeuhS4OoUYXJ1xdH4VO9frefpNcn6r98IO
+         bYNET9O9rLfVHbSLxbA5YN+7GMdLtjsRVGD+Nt0X78rNhS1hCNdhttK+nlFeL5nXZ12J
+         uqP5CWHtihMf/K8BVRdMMSUGoJsbs1HtYhH/3pAMYmtrWDrGQqtuu1D1BbMX2XLOwtOe
+         iKCzy9i2gsRSu5/8sPfqcaj6FAugmcw11+4yScA/gO+ctY/G41+q4cpgXO3qKRng8cD4
+         StHA==
+X-Gm-Message-State: AOJu0Yw4rfRmFNXxTekwKcIMZcbg36jgCkbAEL/mQeXhVVu93W1VjZm/
+        y3PGEisSGiUyf6zoys7Jmwc=
+X-Google-Smtp-Source: AGHT+IESaXlUINHGuDXQaH0aNuCKd4f12GL8A8lvqxsxSuyNg3jrVz+dUUX7L52wthxGmDaz3sfDvQ==
+X-Received: by 2002:a17:906:6ad2:b0:9e3:b1e5:aec3 with SMTP id q18-20020a1709066ad200b009e3b1e5aec3mr6851814ejs.0.1699627925167;
+        Fri, 10 Nov 2023 06:52:05 -0800 (PST)
+Received: from orome.fritz.box (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id w21-20020a50d795000000b0053de19620b9sm1258895edi.2.2023.11.10.06.52.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Nov 2023 06:52:04 -0800 (PST)
+Date:   Fri, 10 Nov 2023 15:52:03 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 06/13] thermal: tegra: Do not register cooling device
+Message-ID: <ZU5Dk6IAcCr7Yk94@orome.fritz.box>
+References: <20231012175836.3408077-1-thierry.reding@gmail.com>
+ <20231012175836.3408077-7-thierry.reding@gmail.com>
+ <ea6c4056-9e7c-4aa3-b207-a97436682b8e@linaro.org>
+ <ZU42Qx0TbtEswEuA@orome.fritz.box>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2306; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=J6a3im7lNbnTqrSTHauek+j417sdu4W8300ivumT3qU=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlTUDuVSwm6Dry76QAgY1MQyxgniK5Ur0yUy/Cg DW8XtvPhlCJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZU1A7gAKCRCPgPtYfRL+ TonZB/4nfsBuFdJxCVjGRqREV3frv3i56Yi9aUTm3cZVViaDV6rrVzn83paMyvZOMcV+Qntq2tX 7WQ5SPanfT1NJ1AfbG/XwNxY6PS3hUii1I+bPm9FjxoxiyDrW0S2+D6+JEzITZZrJE7B8YHT0I2 Mf0d40VtdzK5EZ00R/it9N/7Pqn6lruK/C1HUU05s1WsFol+DMhIi62hlmt6UoLuPVZIoYHGZcu KtiwLuPKFLIuOikg/fK/+o/C+jl4BIv0TSXd6ezG6EL+9m0N1RQrTAAh6kI2ULO6AfQDkNbiMoF 1DoqM5OyvFMQd4GG4MjyGP6ulmlIBjWUtD4VZ5yBOlwjhO2c
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uiM2cXXv5cXnyflD"
+Content-Disposition: inline
+In-Reply-To: <ZU42Qx0TbtEswEuA@orome.fritz.box>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hello,
 
-this series converts all drivers below drivers/bus to struct
-platform_driver::remove_new(). See commit 5c5a7680e67b ("platform:
-Provide a remove callback that returns no value") for an extended
-explanation and the eventual goal.
+--uiM2cXXv5cXnyflD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-drivers/bus/fsl-mc was already addressed earlier with a separate
-series[1].
+On Fri, Nov 10, 2023 at 02:55:15PM +0100, Thierry Reding wrote:
+> On Fri, Oct 13, 2023 at 05:57:13PM +0200, Daniel Lezcano wrote:
+> > On 12/10/2023 19:58, Thierry Reding wrote:
+> > > From: Thierry Reding <treding@nvidia.com>
+> > >=20
+> > > The SOCTHERM's built-in throttling mechanism doesn't map well to the
+> > > concept of a cooling device because it will automatically start to
+> > > throttle when the programmed temperature threshold is crossed.
+> > >=20
+> > > Remove the cooling device implementation and instead unconditionally
+> > > program the throttling for the CPU and GPU thermal zones.
+> > >=20
+> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > > ---
+> >=20
+> > [ ... ]
+> >=20
+> > > +	ret =3D of_property_read_u32(np, "temperature-millicelsius",
+> > > +				   &stc->temperature);
+> > > +	if (ret < 0)
+> > > +		goto err;
+> > > +
+> > > +	ret =3D of_property_read_u32(np, "hysteresis-millicelsius",
+> > > +				   &stc->hysteresis);
+> > > +	if (ret < 0)
+> > > +		goto err;
+> > > +
+> > > +	stc->num_zones =3D of_count_phandle_with_args(np, "nvidia,thermal-z=
+ones",
+> > > +						    NULL);
+> > > +	if (stc->num_zones > 0) {
+> > > +		struct device_node *zone;
+> > > +		unsigned int i;
+> > > +
+> > > +		stc->zones =3D devm_kcalloc(ts->dev, stc->num_zones, sizeof(zone),
+> > > +					  GFP_KERNEL);
+> > > +		if (!stc->zones)
+> > > +			return -ENOMEM;
+> > > +
+> > > +		for (i =3D 0; i < stc->num_zones; i++) {
+> > > +			zone =3D of_parse_phandle(np, "nvidia,thermal-zones", i);
+> > > +			stc->zones[i] =3D zone;
+> > > +		}
+> > > +	}
+> >=20
+> > What is the connection between the temperature sensor and the hardware
+> > limiter?
+> >=20
+> > I mean, one hand there is the hardware limiter which is not connected t=
+o the
+> > sensor neither a thermal zone and it could be self contained in a separ=
+ate
+> > driver. And then there is the temperature sensor.
+> >=20
+> > The thermal zone phandle things connected with the throttling bindings
+> > sounds like strange to me.
+> >=20
+> > What prevents to split the throttling and the sensor into separate code?
+>=20
+> Both the temperature sensor and the hardware throttle mechanism are part
+> of the same IP block, so it would be quite difficult (and unnecessary)
+> to split them into separate drivers.
+>=20
+> The hardware throttler uses the temperature sensor's data to initiate
+> throttling automatically when certain (programmable) temperature
+> thresholds are reached.
+>=20
+> The reason why we need to reference the thermal zone is because the
+> registers needed to program the throttler are contained within the
+> sensor group (which are effectively mapped to thermal zones).
+>=20
+> I suppose there are a number of other ways how this could be described.
+> The thermal zones could be extended with extra information about the
+> throttling, or we could use just the sensor group ID instead of a full
+> phandle to reference this.
+>=20
+> I was sort of trying to keep things somewhat aligned with the concept of
+> thermal zones and not rewrite the entire thing, but perhaps I should go
+> back to the drawing board and think about whether there's an even better
+> way to describe this in DT.
 
-All conversations are trivial, because all .remove() callbacks returned
-zero unconditionally.
+I've looked at the documentation in a bit more details and here's an
+high-level overview of what SOCTHERM is.
 
-Some of the drivers touched here don't have a maintainer and there is no
-maintainer for all of drivers/bus. It would be great if someone could pick up
-the whole series, maybe Arnd might do that?
+We have four groups (CPU, GPU, MEM and PLLX), each of which can be
+programmed at four different levels (each level is an identical set of
+registers to program temperature thresholds, throttling and enable or
+disable). For temperature thresholds an interrupt can be configured.
 
-Best regards
-Uwe
+There's an additional "thermtrip" level, which only has a threshold
+that, when reached, will cause an emergency, hardware-induced shutdown
+of the system.
 
-[1] https://lore.kernel.org/lkml/20231103230001.3652259-3-u.kleine-koenig@pengutronix.de
+Any of the generic levels can be used in whatever way we want. The
+convention currently is to program the thermal zone trip points using
+level 0. So for each group we create a thermal zone and level 0 for each
+of the zones is programmed with the low and high thresholds for a given
+trip point.
 
-Uwe Kleine-König (12):
-  bus: hisi_lpc: Convert to platform remove callback returning void
-  bus: omap-ocp2scp: Convert to platform remove callback returning void
-  bus: omap_l3_smx: Convert to platform remove callback returning void
-  bus: qcom-ssc-block-bus: Convert to platform remove callback returning
-    void
-  bus: simple-pm-bus: Convert to platform remove callback returning void
-  bus: sun50i-de2: Convert to platform remove callback returning void
-  bus: sunxi-rsb: Convert to platform remove callback returning void
-  bus: tegra-aconnect: Convert to platform remove callback returning
-    void
-  bus: tegra-gmi: Convert to platform remove callback returning void
-  bus: ti-pwmss: Convert to platform remove callback returning void
-  bus: ti-sysc: Convert to platform remove callback returning void
-  bus: ts-nbus: Convert to platform remove callback returning void
+Currently we also use levels 1 and 2 to program the "light" and "heavy"
+throttling "indicators". These will in turn be used to generate outputs
+to the actual throttling mechanisms (CPU-light, CPU-heavy, GPU-light and
+GPU-heavy).
 
- drivers/bus/hisi_lpc.c           | 6 ++----
- drivers/bus/omap-ocp2scp.c       | 6 ++----
- drivers/bus/omap_l3_smx.c        | 6 ++----
- drivers/bus/qcom-ssc-block-bus.c | 6 ++----
- drivers/bus/simple-pm-bus.c      | 7 +++----
- drivers/bus/sun50i-de2.c         | 5 ++---
- drivers/bus/sunxi-rsb.c          | 6 ++----
- drivers/bus/tegra-aconnect.c     | 6 ++----
- drivers/bus/tegra-gmi.c          | 6 ++----
- drivers/bus/ti-pwmss.c           | 5 ++---
- drivers/bus/ti-sysc.c            | 6 ++----
- drivers/bus/ts-nbus.c            | 6 ++----
- 12 files changed, 25 insertions(+), 46 deletions(-)
+There are a few other things that can be done, but I don't fully
+understand how they would be useful and I don't think they've ever been
+used, so I'll skip those for now.
 
-base-commit: b622d91ca201bf97582e9b09ebbaab005ecee86f
--- 
-2.42.0
+Given the above, the thermal zone trip points are fairly clear. They are
+fine as they are implemented. For the throttling mechanism we could do
+something that maps more explicitly to the above groups and levels
+concepts, but I think that could easily conflict with the trip points
+programming, so keeping with the current conventions seems good and
+designing the device tree bindings accordingly would help avoid any
+conflicts.
 
+So I think keeping the throttle-cfgs node is a good fit. We don't really
+need to establish a connection between the thermal zone and the throttle
+mechanism, though. We can derive the level from the indicator (light or
+heavy) and for the group we only need an ID. The reason why I proposed a
+link to the thermal-zone is because that thermal zone contains that ID
+already, but we could equally well just add an nvidia,group property or
+something along those lines so we know which group to use rather than
+try and get it from a thermal zone.
+
+I'll revise the bindings to see if I can come up with something.
+
+Thierry
+
+--uiM2cXXv5cXnyflD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmVOQ5AACgkQ3SOs138+
+s6Epgg//e56A3BC6nklcLSQfJlb8LMfKw7cfhKBYvPOVwtl9lpTKHYwtIUzVTxj6
+MCgXB3YxP0xn7LkcS35YSw3+BQSqvNbGhrSIxRXe2U5RIyYUYxZMUpKHq77Oud6h
+/YZWH7KP8XLwmEvUcJXk7FHvrKX2NffbA8SCs6vK1xO8YAtZGF6SoJfZJMp9LinJ
+1JdUT6YNLAH9onFNqsd9HvN91M1ogMqoSHVQ8xEhbPMggBuv8FJYeAOgo3fFSZRD
+0ckvdpvS0ysegRWQ5Z2iBvUiAhwWGoVf6AMdJC3ekRJwQdr2qdyZwOPygteHtj7c
+nXGLoYtM0Ylm78vrceVQ7nbgP3pXPhyAiDPY+IjaB8LNtLTedNgEk2WzVdpWTGpM
+vNaPJVi3iKwNJ9cTIOu8Dzh40pAaYEqBsYpTicFXsxTqqO0YkFncLcQzzl6I0Ksj
+YQMztE8YMz5oj78mxbMsxiUEZ5rzcPF1SaVZK4xwcyFoyVn2BAS+GO0B6noSd/e6
+KRqcPyeoSzAJl1aL5f46qz/a/8O6/CFcU0FzST3NVS9gm0o1ZKHnd0gRHk2T9yVo
+ZaIrjSi2B+SvvJ5ESL7A3qOjkjqaT8idGQSd+uqXTsJJcPrhTtZBsSIe3qhQberr
+rM6xiL0fR2TndClqxK1CYeozWiQHZbRzg8/2b1f34M4MXf78eAs=
+=Ne01
+-----END PGP SIGNATURE-----
+
+--uiM2cXXv5cXnyflD--
