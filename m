@@ -2,108 +2,129 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1B0C4332F
-	for <linux-tegra@archiver.kernel.org>; Fri, 10 Nov 2023 19:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C94C072A2
+	for <linux-tegra@archiver.kernel.org>; Fri, 10 Nov 2023 19:46:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235734AbjKJTke (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Fri, 10 Nov 2023 14:40:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34690 "EHLO
+        id S1346064AbjKJTqN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 10 Nov 2023 14:46:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236136AbjKJTjr (ORCPT
+        with ESMTP id S1346675AbjKJTp4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Fri, 10 Nov 2023 14:39:47 -0500
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C343B3AE1B
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Nov 2023 07:31:00 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1TT8-0006Vs-CC; Fri, 10 Nov 2023 16:30:50 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1TT7-0083Li-Ky; Fri, 10 Nov 2023 16:30:49 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r1TT7-00Gnxz-Bw; Fri, 10 Nov 2023 16:30:49 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh@kernel.org>, kernel@pengutronix.de,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [PATCH 48/52] serial: tegra-tcu: Convert to platform remove callback returning void
-Date:   Fri, 10 Nov 2023 16:30:16 +0100
-Message-ID: <20231110152927.70601-49-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0.586.gbc5204569f7d.dirty
-In-Reply-To: <20231110152927.70601-1-u.kleine-koenig@pengutronix.de>
-References: <20231110152927.70601-1-u.kleine-koenig@pengutronix.de>
+        Fri, 10 Nov 2023 14:45:56 -0500
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED2D2768D;
+        Thu,  9 Nov 2023 22:32:43 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 01E4B3200A68;
+        Fri, 10 Nov 2023 01:32:40 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 10 Nov 2023 01:32:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-transfer-encoding:content-type:content-type:date
+        :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to; s=fm3; t=
+        1699597960; x=1699684360; bh=vpqlrKxX6mSBUJFrH57/cRKqR73F6veHo7/
+        WoW+1YPE=; b=gEE+MfXa/NACn9/dTW54Jhx+0xprgHek51JOAX1KpBGCYxNsgpf
+        wUe9213m5iv96CUcGrt22/DYYoHaji9XCKDOJm1a/IgZGvN8kNLjcoVH70/Few+Y
+        MEHveRKRG8zVdv2EWE9+inKAwE+V4af2prhBx87pN0hw3oH1Bvir6if2pWT3yiAW
+        dLMjJVjvRbsypVRxRzwl/+jjIdCTi+U/SznbtZoTHClfz/e0C979r24j20I0Qwsw
+        rwiYyj2PKoMTPkbBcq8s+SNqJyvezBEhkp1l72MJJ2+l4+xII1zJ8bc6+bZ3TK0Y
+        3cxzsdcViGrMOAupQgSBx6Qs1h0z+KNjQyg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:content-type:date:date:feedback-id:feedback-id
+        :from:from:in-reply-to:in-reply-to:message-id:mime-version
+        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+        1699597960; x=1699684360; bh=vpqlrKxX6mSBUJFrH57/cRKqR73F6veHo7/
+        WoW+1YPE=; b=riSI7q9yFK52nLj5y2/FhQK7u42nxRuJyTWKkRdzvSVl6wC6mAw
+        xU9k/JxKtz/itp7hC/eSicq96jJ6Q2b3pEUSVR0mJ5Bsrc07D+/F761Dn8EpmxPb
+        O3PaQbuX3iVugyRWU4wFmunQu11KY3gC9L+VeYQuIoCMYmXD57BVvJQIDv1277x5
+        KsAaMHoM5yJbxPfN/BGPOE6XE+TNiO+g5BhisoIjTTx4l0aSWlptqSG8wPhFS5Y8
+        gvkGA4EuonjQXupHPabc1leSuKpV6oP1DoSdWWpq5WscZJ6p+MARCM7ADwmI4SlJ
+        9BWpyaQKSfoqQh1XyKMQvotw33YWIVKDMdQ==
+X-ME-Sender: <xms:hs5NZXUXOWXp3isMudOyVbUJomXV5TqgLfelZrQGQ4U3vopl8xTy2g>
+    <xme:hs5NZfk2NMKyF11VPQWcBiRov1ujMcAnYpIJ36mz_fHvaiAEcJwn7nFcYa1SQwGuq
+    epS4wRWIbyLoykxTz0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedruddvvddgleegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:hs5NZTZ2iywI27swS8tz5PiX2BoWXHWfdfaq1uXcxdPMTedVJInxQA>
+    <xmx:hs5NZSVFQVZ_It6ReJCDW3YpFrBeITbMNopkTRsCgIUgs1b8MX3Ryw>
+    <xmx:hs5NZRlzSW6u_AI5qVkrDrL0JB-DAFqwGeLmGLGBXn-9e3QtzUIoyQ>
+    <xmx:iM5NZU5XlSlNHx-hJA-LY3kTEZ3cPwD-t-BglpUXGwb2yxO8KZTZVA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 28EA2B60089; Fri, 10 Nov 2023 01:32:38 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1108-g3a29173c6d-fm-20231031.005-g3a29173c
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1884; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=swhoAVWkrMA1knLpinhSt78hBhGNQA0uOcknMNn7oHE=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlTkyUQtzMD5FVl3PDgSX036X6YAVoStTH23z85 lRajOE6YUyJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZU5MlAAKCRCPgPtYfRL+ TrJLCACTXSSwXRfVKE8mNLNndtxd/K2yp4IbhNEu6zhTuS/S+8w+maZ7jBYj27IihUFrYwr5FkB Eyv3Q+LNFc2WV5kH2hQ8TKafa/6npOp533lnKpOPOyOtA3Kgp5jKNvvsgfnT3zkoO6XWpeGpUOT dkwpAzKfpmL8O1EOH9mSAKVUr+zLLMZHRfzFbL5AUBpYyriBZBWfUw0P1a5iIUEi/ztoDvS1Svn 2yd9WqczWY1U4AGXDgkxaba/xQKX9zOG9Q3hcOQ0lAf2SC8GPL+802+xVhb/h3imgxKojCyG3S3 RCyMIoJWMY+XUidK1d1DXTwJkZ/wprpGRSn0TXAWPxzHo02v
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Message-Id: <1e5e1008-707b-449a-9dbf-48324eb2b248@app.fastmail.com>
+In-Reply-To: <20231109202830.4124591-1-u.kleine-koenig@pengutronix.de>
+References: <20231109202830.4124591-1-u.kleine-koenig@pengutronix.de>
+Date:   Fri, 10 Nov 2023 07:32:01 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        "Jay Fang" <f.fangjian@huawei.com>,
+        "Rob Herring" <robh@kernel.org>,
+        "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+        "Laurentiu Tudor" <laurentiu.tudor@nxp.com>,
+        "Tony Lindgren" <tony@atomide.com>,
+        "Sicelo A. Mhlongo" <absicsz@gmail.com>,
+        "Andy Gross" <agross@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        "Konrad Dybcio" <konrad.dybcio@linaro.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Liu Ying" <victor.liu@nxp.com>,
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Luis Chamberlain" <mcgrof@kernel.org>,
+        "Nick Alcock" <nick.alcock@oracle.com>,
+        "Chen-Yu Tsai" <wens@csie.org>,
+        "Samuel Holland" <samuel@sholland.org>,
+        "Hans de Goede" <hdegoede@redhat.com>,
+        "Yangtao Li" <frank.li@vivo.com>, "Yuan Can" <yuancan@huawei.com>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        "Jon Hunter" <jonathanh@nvidia.com>
+Cc:     linux-kernel@vger.kernel.org,
+        "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+        linux-tegra@vger.kernel.org,
+        Linux-OMAP <linux-omap@vger.kernel.org>
+Subject: Re: [PATCH 00/12] bus: Convert to platform remove callback returning void
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is ignored (apart
-from emitting a warning) and this typically results in resource leaks.
+On Thu, Nov 9, 2023, at 21:28, Uwe Kleine-K=C3=B6nig wrote:
+> Hello,
+>
+> this series converts all drivers below drivers/bus to struct
+> platform_driver::remove_new(). See commit 5c5a7680e67b ("platform:
+> Provide a remove callback that returns no value") for an extended
+> explanation and the eventual goal.
+>
+> drivers/bus/fsl-mc was already addressed earlier with a separate
+> series[1].
+>
+> All conversations are trivial, because all .remove() callbacks returned
+> zero unconditionally.
+>
+> Some of the drivers touched here don't have a maintainer and there is =
+no
+> maintainer for all of drivers/bus. It would be great if someone could =
+pick up
+> the whole series, maybe Arnd might do that?
 
-To improve here there is a quest to make the remove callback return
-void. In the first step of this quest all drivers are converted to
-.remove_new(), which already returns void. Eventually after all drivers
-are converted, .remove_new() will be renamed to .remove().
+Sure, please send a pull request to soc@kernel.org if there
+are no further comments.
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/tty/serial/tegra-tcu.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/tty/serial/tegra-tcu.c b/drivers/tty/serial/tegra-tcu.c
-index 65069daf36ec..d9c78320eb02 100644
---- a/drivers/tty/serial/tegra-tcu.c
-+++ b/drivers/tty/serial/tegra-tcu.c
-@@ -266,7 +266,7 @@ static int tegra_tcu_probe(struct platform_device *pdev)
- 	return err;
- }
- 
--static int tegra_tcu_remove(struct platform_device *pdev)
-+static void tegra_tcu_remove(struct platform_device *pdev)
- {
- 	struct tegra_tcu *tcu = platform_get_drvdata(pdev);
- 
-@@ -277,8 +277,6 @@ static int tegra_tcu_remove(struct platform_device *pdev)
- 	uart_remove_one_port(&tcu->driver, &tcu->port);
- 	uart_unregister_driver(&tcu->driver);
- 	mbox_free_channel(tcu->tx);
--
--	return 0;
- }
- 
- static const struct of_device_id tegra_tcu_match[] = {
-@@ -293,7 +291,7 @@ static struct platform_driver tegra_tcu_driver = {
- 		.of_match_table = tegra_tcu_match,
- 	},
- 	.probe = tegra_tcu_probe,
--	.remove = tegra_tcu_remove,
-+	.remove_new = tegra_tcu_remove,
- };
- module_platform_driver(tegra_tcu_driver);
- 
--- 
-2.42.0
-
+      Arnd
