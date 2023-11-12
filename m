@@ -2,144 +2,292 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0BBDC4332F
-	for <linux-tegra@archiver.kernel.org>; Sun, 12 Nov 2023 07:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B03BAC4332F
+	for <linux-tegra@archiver.kernel.org>; Sun, 12 Nov 2023 17:35:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229599AbjKLHEZ (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 12 Nov 2023 02:04:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58420 "EHLO
+        id S229535AbjKLRf3 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 12 Nov 2023 12:35:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbjKLHEY (ORCPT
+        with ESMTP id S229804AbjKLRf2 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Nov 2023 02:04:24 -0500
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4C672D7C
-        for <linux-tegra@vger.kernel.org>; Sat, 11 Nov 2023 23:04:20 -0800 (PST)
-Received: from pop-os.home ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id 24W0rp1dBgXzu24W0rWg1a; Sun, 12 Nov 2023 08:04:18 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1699772658;
-        bh=0TwurGk4N8xQeF0I50WBdPaLE9khS76hRB9u8ImU++k=;
-        h=From:To:Cc:Subject:Date;
-        b=XEmgaPpTdQuZF/aHvzBpkgEAq0ntM1YMzVvOVVRUefQjYa3Ck9LJrTl2lgbbOOBhY
-         4KqLFMXLrMcdlA1jj6Ocv6AQvyZ3uBOCOru3FIwC7UBg8US+Y0lnJ7QqQc85qhpxRU
-         AWM2+fbv5ytvZ5dfyFXs/vWBO0J+SCoqO7MaQsqnb0mSUXlRTo0HGqTzHtmAdBoADL
-         L1tPaKbr2VlmM0HX09RpmShrZMSiyZkVfTOSnFJlvXZ+f/gzfUE7X819CIyjuZCVuy
-         B8mfUDGGZ/hJzfZ88OA4uYdmqlEOybGT6+jj2ILZlMhrx+ifZqowt7YpFcctlUoGz6
-         jURZKhQWRe8/A==
-X-ME-Helo: pop-os.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 12 Nov 2023 08:04:18 +0100
-X-ME-IP: 86.243.2.178
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH] soc/tegra: pmc: Remove some old and deprecated functions and constants
-Date:   Sun, 12 Nov 2023 08:04:14 +0100
-Message-Id: <9d352be8797f01ffe6193da70e3d9d1e2684c6b4.1699772620.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.34.1
+        Sun, 12 Nov 2023 12:35:28 -0500
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0595D211B;
+        Sun, 12 Nov 2023 09:35:25 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1cc4f777ab9so26246275ad.0;
+        Sun, 12 Nov 2023 09:35:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699810524; x=1700415324;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WoHWK6gINi+EEwKTGP1Dg7yIjtZGVaNrtn4vb+1P0Pc=;
+        b=fqSD7VGKbfWxci9Tr/tCTUhiRZutfr1bbi0M0yqzqJT9HTcf8uNJS0cRKm5EOhL0LI
+         7Ixh6IxqVX71ODB9qVFPb6iOxa8mnVcdurFKh+N+W9XL7n5Ou3GJrXdxip25sTrgXbf/
+         oVnHy7sE1ILzcZdUSXZoF1s+4gXdYEMuGByVVMXvHHAhxIYa3vME5skzwYjzUPA82rFI
+         f+QkMglQ1Fl429L5fGyhsYuwPHClAROLV0VmJ771lJs9yELqNFAboOb3WXqYIf7ZEkXC
+         AVcDCIqSNaHTZ/7rVAMN1BjgpfPMS5+Lxphj8Pgx6laj+VrdL9bH4e83DENHly6pkxFc
+         6+rA==
+X-Gm-Message-State: AOJu0Yzc914Lv5i0bm+S9ZjYowbav/3ZQghCkUnP5cWFIu5RMuhH+DnY
+        cOdy1RHLxn4kShITR8vb0zE=
+X-Google-Smtp-Source: AGHT+IFd+7BefBv/n/fSSGw7xmysLeuCAiNT7/refCQp1UZ16kLfECcyF3DpQcfnxFHM4Pm1w5+ajw==
+X-Received: by 2002:a17:902:b618:b0:1cc:138a:287b with SMTP id b24-20020a170902b61800b001cc138a287bmr2491072pls.3.1699810524296;
+        Sun, 12 Nov 2023 09:35:24 -0800 (PST)
+Received: from localhost ([156.39.10.100])
+        by smtp.gmail.com with ESMTPSA id b5-20020a170903228500b001cc32f46757sm2761359plh.107.2023.11.12.09.35.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 Nov 2023 09:35:23 -0800 (PST)
+Date:   Sun, 12 Nov 2023 09:35:23 -0800
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     acpica-devel@lists.linuxfoundation.org,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dexuan Cui <decui@microsoft.com>, devicetree@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-snps-arc@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hector Martin <marcan@marcan.st>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Sven Peter <sven@svenpeter.dev>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Vineet Gupta <vgupta@kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>,
+        Zhenhua Huang <quic_zhenhuah@quicinc.com>
+Subject: Re: [PATCH RFC 01/17] iommu: Remove struct iommu_ops *iommu from
+ arch_setup_dma_ops()
+Message-ID: <ZVEM23qFzLnnXiEz@archbook>
+References: <0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+ <1-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-These TEGRA_IO_RAIL_... functions and constants have been deprecated in
-commit 21b499105178 ("soc/tegra: pmc: Add I/O pad voltage support") in
-2016-11.
+On Fri, Nov 03, 2023 at 01:44:46PM -0300, Jason Gunthorpe wrote:
+> This is not being used to pass ops, it is just a way to tell if an
+> iommu driver was probed. These days this can be detected directly via
+> device_iommu_mapped(). Call device_iommu_mapped() in the two places that
+> need to check it and remove the iommu parameter everywhere.
+> 
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 
-There seems to be no users since kernel 4.16.
-
-Remove them now.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/soc/tegra/pmc.c | 24 ------------------------
- include/soc/tegra/pmc.h | 18 ------------------
- 2 files changed, 42 deletions(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index f432aa022ace..6dfcc7f50ece 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1777,30 +1777,6 @@ static int tegra_io_pad_get_voltage(struct tegra_pmc *pmc, enum tegra_io_pad id)
- 	return TEGRA_IO_PAD_VOLTAGE_3V3;
- }
- 
--/**
-- * tegra_io_rail_power_on() - enable power to I/O rail
-- * @id: Tegra I/O pad ID for which to enable power
-- *
-- * See also: tegra_io_pad_power_enable()
-- */
--int tegra_io_rail_power_on(unsigned int id)
--{
--	return tegra_io_pad_power_enable(id);
--}
--EXPORT_SYMBOL(tegra_io_rail_power_on);
--
--/**
-- * tegra_io_rail_power_off() - disable power to I/O rail
-- * @id: Tegra I/O pad ID for which to disable power
-- *
-- * See also: tegra_io_pad_power_disable()
-- */
--int tegra_io_rail_power_off(unsigned int id)
--{
--	return tegra_io_pad_power_disable(id);
--}
--EXPORT_SYMBOL(tegra_io_rail_power_off);
--
- #ifdef CONFIG_PM_SLEEP
- enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
- {
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index aadb845d281d..c545875d0ff1 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -148,10 +148,6 @@ enum tegra_io_pad {
- 	TEGRA_IO_PAD_AO_HV,
- };
- 
--/* deprecated, use TEGRA_IO_PAD_{HDMI,LVDS} instead */
--#define TEGRA_IO_RAIL_HDMI	TEGRA_IO_PAD_HDMI
--#define TEGRA_IO_RAIL_LVDS	TEGRA_IO_PAD_LVDS
--
- #ifdef CONFIG_SOC_TEGRA_PMC
- int tegra_powergate_power_on(unsigned int id);
- int tegra_powergate_power_off(unsigned int id);
-@@ -164,10 +160,6 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
- int tegra_io_pad_power_enable(enum tegra_io_pad id);
- int tegra_io_pad_power_disable(enum tegra_io_pad id);
- 
--/* deprecated, use tegra_io_pad_power_{enable,disable}() instead */
--int tegra_io_rail_power_on(unsigned int id);
--int tegra_io_rail_power_off(unsigned int id);
--
- void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode);
- void tegra_pmc_enter_suspend_mode(enum tegra_suspend_mode mode);
- 
-@@ -211,16 +203,6 @@ static inline int tegra_io_pad_get_voltage(enum tegra_io_pad id)
- 	return -ENOSYS;
- }
- 
--static inline int tegra_io_rail_power_on(unsigned int id)
--{
--	return -ENOSYS;
--}
--
--static inline int tegra_io_rail_power_off(unsigned int id)
--{
--	return -ENOSYS;
--}
--
- static inline void tegra_pmc_set_suspend_mode(enum tegra_suspend_mode mode)
- {
- }
--- 
-2.34.1
-
+Reviewed-by: Moritz Fischer <mdf@kernel.org>
+> ---
+>  arch/arc/mm/dma.c               |  2 +-
+>  arch/arm/mm/dma-mapping-nommu.c |  2 +-
+>  arch/arm/mm/dma-mapping.c       | 10 +++++-----
+>  arch/arm64/mm/dma-mapping.c     |  4 ++--
+>  arch/mips/mm/dma-noncoherent.c  |  2 +-
+>  arch/riscv/mm/dma-noncoherent.c |  2 +-
+>  drivers/acpi/scan.c             |  3 +--
+>  drivers/hv/hv_common.c          |  2 +-
+>  drivers/of/device.c             |  2 +-
+>  include/linux/dma-map-ops.h     |  4 ++--
+>  10 files changed, 16 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
+> index 2a7fbbb83b7056..197707bc765889 100644
+> --- a/arch/arc/mm/dma.c
+> +++ b/arch/arc/mm/dma.c
+> @@ -91,7 +91,7 @@ void arch_sync_dma_for_cpu(phys_addr_t paddr, size_t size,
+>   * Plug in direct dma map ops.
+>   */
+>  void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+> -			const struct iommu_ops *iommu, bool coherent)
+> +			bool coherent)
+>  {
+>  	/*
+>  	 * IOC hardware snoops all DMA traffic keeping the caches consistent
+> diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
+> index cfd9c933d2f09c..b94850b579952a 100644
+> --- a/arch/arm/mm/dma-mapping-nommu.c
+> +++ b/arch/arm/mm/dma-mapping-nommu.c
+> @@ -34,7 +34,7 @@ void arch_sync_dma_for_cpu(phys_addr_t paddr, size_t size,
+>  }
+>  
+>  void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+> -			const struct iommu_ops *iommu, bool coherent)
+> +			bool coherent)
+>  {
+>  	if (IS_ENABLED(CONFIG_CPU_V7M)) {
+>  		/*
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index 5409225b4abc06..6c359a3af8d9c7 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -1713,7 +1713,7 @@ void arm_iommu_detach_device(struct device *dev)
+>  EXPORT_SYMBOL_GPL(arm_iommu_detach_device);
+>  
+>  static void arm_setup_iommu_dma_ops(struct device *dev, u64 dma_base, u64 size,
+> -				    const struct iommu_ops *iommu, bool coherent)
+> +				    bool coherent)
+>  {
+>  	struct dma_iommu_mapping *mapping;
+>  
+> @@ -1748,7 +1748,7 @@ static void arm_teardown_iommu_dma_ops(struct device *dev)
+>  #else
+>  
+>  static void arm_setup_iommu_dma_ops(struct device *dev, u64 dma_base, u64 size,
+> -				    const struct iommu_ops *iommu, bool coherent)
+> +				    bool coherent)
+>  {
+>  }
+>  
+> @@ -1757,7 +1757,7 @@ static void arm_teardown_iommu_dma_ops(struct device *dev) { }
+>  #endif	/* CONFIG_ARM_DMA_USE_IOMMU */
+>  
+>  void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+> -			const struct iommu_ops *iommu, bool coherent)
+> +			bool coherent)
+>  {
+>  	/*
+>  	 * Due to legacy code that sets the ->dma_coherent flag from a bus
+> @@ -1776,8 +1776,8 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  	if (dev->dma_ops)
+>  		return;
+>  
+> -	if (iommu)
+> -		arm_setup_iommu_dma_ops(dev, dma_base, size, iommu, coherent);
+> +	if (device_iommu_mapped(dev))
+> +		arm_setup_iommu_dma_ops(dev, dma_base, size, coherent);
+>  
+>  	xen_setup_dma_ops(dev);
+>  	dev->archdata.dma_ops_setup = true;
+> diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+> index 3cb101e8cb29ba..61886e43e3a10f 100644
+> --- a/arch/arm64/mm/dma-mapping.c
+> +++ b/arch/arm64/mm/dma-mapping.c
+> @@ -47,7 +47,7 @@ void arch_teardown_dma_ops(struct device *dev)
+>  #endif
+>  
+>  void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+> -			const struct iommu_ops *iommu, bool coherent)
+> +			bool coherent)
+>  {
+>  	int cls = cache_line_size_of_cpu();
+>  
+> @@ -58,7 +58,7 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+>  		   ARCH_DMA_MINALIGN, cls);
+>  
+>  	dev->dma_coherent = coherent;
+> -	if (iommu)
+> +	if (device_iommu_mapped(dev))
+>  		iommu_setup_dma_ops(dev, dma_base, dma_base + size - 1);
+>  
+>  	xen_setup_dma_ops(dev);
+> diff --git a/arch/mips/mm/dma-noncoherent.c b/arch/mips/mm/dma-noncoherent.c
+> index 3c4fc97b9f394b..0f3cec663a12cd 100644
+> --- a/arch/mips/mm/dma-noncoherent.c
+> +++ b/arch/mips/mm/dma-noncoherent.c
+> @@ -138,7 +138,7 @@ void arch_sync_dma_for_cpu(phys_addr_t paddr, size_t size,
+>  
+>  #ifdef CONFIG_ARCH_HAS_SETUP_DMA_OPS
+>  void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+> -		const struct iommu_ops *iommu, bool coherent)
+> +		bool coherent)
+>  {
+>  	dev->dma_coherent = coherent;
+>  }
+> diff --git a/arch/riscv/mm/dma-noncoherent.c b/arch/riscv/mm/dma-noncoherent.c
+> index b76e7e192eb183..f91fa741c41211 100644
+> --- a/arch/riscv/mm/dma-noncoherent.c
+> +++ b/arch/riscv/mm/dma-noncoherent.c
+> @@ -135,7 +135,7 @@ void arch_dma_prep_coherent(struct page *page, size_t size)
+>  }
+>  
+>  void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+> -		const struct iommu_ops *iommu, bool coherent)
+> +			bool coherent)
+>  {
+>  	WARN_TAINT(!coherent && riscv_cbom_block_size > ARCH_DMA_MINALIGN,
+>  		   TAINT_CPU_OUT_OF_SPEC,
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index 691d4b7686ee7e..a6891ad0ceee2c 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -1636,8 +1636,7 @@ int acpi_dma_configure_id(struct device *dev, enum dev_dma_attr attr,
+>  	if (PTR_ERR(iommu) == -EPROBE_DEFER)
+>  		return -EPROBE_DEFER;
+>  
+> -	arch_setup_dma_ops(dev, 0, U64_MAX,
+> -				iommu, attr == DEV_DMA_COHERENT);
+> +	arch_setup_dma_ops(dev, 0, U64_MAX, attr == DEV_DMA_COHERENT);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index ccad7bca3fd3da..fd938b6dfa7ed4 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -489,7 +489,7 @@ void hv_setup_dma_ops(struct device *dev, bool coherent)
+>  	 * Hyper-V does not offer a vIOMMU in the guest
+>  	 * VM, so pass 0/NULL for the IOMMU settings
+>  	 */
+> -	arch_setup_dma_ops(dev, 0, 0, NULL, coherent);
+> +	arch_setup_dma_ops(dev, 0, 0, coherent);
+>  }
+>  EXPORT_SYMBOL_GPL(hv_setup_dma_ops);
+>  
+> diff --git a/drivers/of/device.c b/drivers/of/device.c
+> index 1ca42ad9dd159d..65c71be71a8d45 100644
+> --- a/drivers/of/device.c
+> +++ b/drivers/of/device.c
+> @@ -193,7 +193,7 @@ int of_dma_configure_id(struct device *dev, struct device_node *np,
+>  	dev_dbg(dev, "device is%sbehind an iommu\n",
+>  		iommu ? " " : " not ");
+>  
+> -	arch_setup_dma_ops(dev, dma_start, size, iommu, coherent);
+> +	arch_setup_dma_ops(dev, dma_start, size, coherent);
+>  
+>  	if (!iommu)
+>  		of_dma_set_restricted_buffer(dev, np);
+> diff --git a/include/linux/dma-map-ops.h b/include/linux/dma-map-ops.h
+> index f2fc203fb8a1a2..2cb98a12c50348 100644
+> --- a/include/linux/dma-map-ops.h
+> +++ b/include/linux/dma-map-ops.h
+> @@ -426,10 +426,10 @@ bool arch_dma_unmap_sg_direct(struct device *dev, struct scatterlist *sg,
+>  
+>  #ifdef CONFIG_ARCH_HAS_SETUP_DMA_OPS
+>  void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+> -		const struct iommu_ops *iommu, bool coherent);
+> +		bool coherent);
+>  #else
+>  static inline void arch_setup_dma_ops(struct device *dev, u64 dma_base,
+> -		u64 size, const struct iommu_ops *iommu, bool coherent)
+> +		u64 size, bool coherent)
+>  {
+>  }
+>  #endif /* CONFIG_ARCH_HAS_SETUP_DMA_OPS */
+> -- 
+> 2.42.0
+> 
