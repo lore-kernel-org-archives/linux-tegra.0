@@ -2,134 +2,87 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E29C4167D
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Nov 2023 10:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40FF1C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Nov 2023 14:06:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229454AbjKMKQK convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Nov 2023 05:16:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42850 "EHLO
+        id S231440AbjKMOGB (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Nov 2023 09:06:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbjKMKQK (ORCPT
+        with ESMTP id S231331AbjKMOFu (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Nov 2023 05:16:10 -0500
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83B1CD79;
-        Mon, 13 Nov 2023 02:16:05 -0800 (PST)
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5842a7fdc61so2194679eaf.3;
-        Mon, 13 Nov 2023 02:16:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699870564; x=1700475364;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uTO0ERk3BWfb6UISnsbuegKh0j43MXQ3l4j0lmIgta4=;
-        b=JfGLhsNo5m8suJvgK+8n0BsIsiyUaFUsLjcAunR0AVy8ay9gdDT7LgYtcoF7QqfGMy
-         Ar4ua7pR+w2iY4XltNotEOevA2YbFKbsBqnRUx9p0zqZjqn/VGYgGV2Z9U2XEK9PREMY
-         vBNjks/2D46148SiaSKzUvpE/X4EjSjg/6wIYhFRPPJO5ogQKVxL5AgLieQoZ8UKyEKE
-         dbzEStmGLvayqFHnS5XJLOkRHnSdf0hj1DXW+AeYjnYNvSS+3Ugp/T0x+CHeWTtr3ueP
-         +iF08RhBCnerq3ai4sUoMIjApXnx1cuxC6QpzGI6/t5Gy+C+MbdCZ/4pMdohaZ6vlM9M
-         tsQQ==
-X-Gm-Message-State: AOJu0Yyh1hkmB8rhSwWkYelg4+JPfSNIKg8FlDgWCvEdAXUD9r1oVVJ4
-        BBlA2E9oEBHs6I7aajvRxCrIT5SpGZwLkQ==
-X-Google-Smtp-Source: AGHT+IGy4cVdjJ2mQP6WMbuJtvBHqDH9VWqBbeWjRiz/nWrUeGAptgpvQBJQm8420lPJQtPC++1Wfg==
-X-Received: by 2002:a4a:d291:0:b0:581:f2de:25f8 with SMTP id h17-20020a4ad291000000b00581f2de25f8mr5711593oos.0.1699870564572;
-        Mon, 13 Nov 2023 02:16:04 -0800 (PST)
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com. [209.85.167.179])
-        by smtp.gmail.com with ESMTPSA id v8-20020a4a8c48000000b00581df2cb1e6sm933209ooj.32.2023.11.13.02.16.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Nov 2023 02:16:04 -0800 (PST)
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3b2f507c03cso2428811b6e.2;
-        Mon, 13 Nov 2023 02:16:04 -0800 (PST)
-X-Received: by 2002:a0d:d74d:0:b0:5a7:d86c:988 with SMTP id
- z74-20020a0dd74d000000b005a7d86c0988mr6382133ywd.28.1699870543575; Mon, 13
- Nov 2023 02:15:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20231110152927.70601-1-u.kleine-koenig@pengutronix.de> <20231110152927.70601-4-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20231110152927.70601-4-u.kleine-koenig@pengutronix.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 13 Nov 2023 11:15:31 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU8nCWzTuBeSTPkR=heWqdAYrhAJ9ZgydzWNRqkTuT+xg@mail.gmail.com>
-Message-ID: <CAMuHMdU8nCWzTuBeSTPkR=heWqdAYrhAJ9ZgydzWNRqkTuT+xg@mail.gmail.com>
-Subject: Re: [PATCH 03/52] serial: 8250: Convert to platform remove callback
- returning void
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@codeconstruct.com.au>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Al Cooper <alcooperx@gmail.com>,
-        =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno 
-        <angelogioacchino.delregno@collabora.com>,
+        Mon, 13 Nov 2023 09:05:50 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44A651981;
+        Mon, 13 Nov 2023 06:05:44 -0800 (PST)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95728C433BF;
+        Mon, 13 Nov 2023 14:05:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1699884343;
+        bh=sxsc1as84ufBJ/QWw+HF6gUxx16PTyNBJZX2C9hWzFg=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=lA4FOOmVCxOsLUhsXylSsn0uQGk1cRkWNFFB6hIAml7Syoj4pWqKUW+f5D9ijJp+o
+         Xp7V5hUeMiGcWL6NiqOFEgsS7BQUKEDbDe/mpoD411tpclM83GCoAWtSuJoD/zahbk
+         VPg0CJR9J0cukizX6yczfOqSbmuDRo7ve9OMIv4hNaLd9HKNhlHpnz+nBTIWQ0bu7Y
+         w+7JoPKdOJqPRGqN04epRNOdRle7bJicQh95Sq6OGuCMGsrDxdLRKNWRk3jtRziMpX
+         M5rFjw/9gHgVU8bMuQPEEfYk4omp1HcrEisfzhbcWMraVsrJdMbuC13MSLKRc31IgD
+         l/kEmWi0paWpA==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Lindgren <tony@atomide.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Johan Hovold <johan@kernel.org>,
-        Chen-Yu Tsai <wenst@chromium.org>,
-        Andi Shyti <andi.shyti@linux.intel.com>,
-        Thomas Richard <thomas.richard@bootlin.com>,
-        Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        kernel@pengutronix.de, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org,
-        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <b78685e4103f12931ddb09c1654bc6b04b640868.1699724240.git.christophe.jaillet@wanadoo.fr>
+References: <b78685e4103f12931ddb09c1654bc6b04b640868.1699724240.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: tegra: convert not to use
+ dma_request_slave_channel()
+Message-Id: <169988434099.3280890.15869529541068548630.b4-ty@kernel.org>
+Date:   Mon, 13 Nov 2023 14:05:40 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13-dev-0438c
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Fri, Nov 10, 2023 at 4:31 PM Uwe Kleine-König
-<u.kleine-koenig@pengutronix.de> wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is ignored (apart
-> from emitting a warning) and this typically results in resource leaks.
->
-> To improve here there is a quest to make the remove callback return
-> void. In the first step of this quest all drivers are converted to
-> .remove_new(), which already returns void. Eventually after all drivers
-> are converted, .remove_new() will be renamed to .remove().
->
-> Trivially convert this driver from always returning zero in the remove
-> callback to the void returning variant.
->
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+On Sat, 11 Nov 2023 18:37:39 +0100, Christophe JAILLET wrote:
+> dma_request_slave_channel() is deprecated. dma_request_chan() should
+> be used directly instead.
+> 
+> Switch to the preferred function and update the error handling accordingly.
+> 
+> 
 
->  drivers/tty/serial/8250/8250_dw.c           | 6 ++----
->  drivers/tty/serial/8250/8250_em.c           | 5 ++---
+Applied to
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Gr{oetje,eeting}s,
+Thanks!
 
-                        Geert
+[1/1] ASoC: tegra: convert not to use dma_request_slave_channel()
+      commit: 8df735701a7051825254ec7a12a661307bb7bdc1
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
