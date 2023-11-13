@@ -2,111 +2,131 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C122C4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Nov 2023 15:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C3CC4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Nov 2023 20:03:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229556AbjKMPsl (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Nov 2023 10:48:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40082 "EHLO
+        id S229816AbjKMUDN (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Nov 2023 15:03:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjKMPsl (ORCPT
+        with ESMTP id S229511AbjKMUDM (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Nov 2023 10:48:41 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95972D63;
-        Mon, 13 Nov 2023 07:48:37 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2c503da4fd6so58591541fa.1;
-        Mon, 13 Nov 2023 07:48:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699890515; x=1700495315; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PXnf0eXrDDD8zHz/bTp9TBZLf7/Ul4A7eXzOYgBnS0o=;
-        b=FkUqRK3oFLT9imv+K+Fpe9D6klNt3x433OOxTytajgzzoRZkKreKHzyMmRJUPBOHCq
-         lG6eLjoUtAk5OCqKY1hwOHbUuwNXsrQivXQjsF6Wm5SKlTlHOpa7/vEMeDt1eTiXh3ff
-         +DZDo7bki2RxnVgMiC7gs3iibz+ygPBwjlDZDXIs4+b6SSGxMXm6s0VMZyTgRgMDPxEU
-         8CVcvETHu/jc3P2nwcYJ+U3nANl2HkSVJlPJfpQosJfRwtFw4aZgJeqBs0Q2EmucvhSp
-         6WjXqn+gDt8lirz/GsvX6FgDfe/0R2JqBhOToV8QELGR35j/Cak80nlW0ZLj/E1cg7xm
-         9Eyw==
+        Mon, 13 Nov 2023 15:03:12 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54BB5D5D
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Nov 2023 12:02:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1699905764;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=x5sbsbZrhM7njh7UJ8Gfj3jbjPzQiV5xODIk6atjKoU=;
+        b=FC7cvOMY36DbgQF+XdGUaq5cSkrqnGGK8IZ5rJQqIIfaIxYX+Mn86Wz7CycVKWpBCKUfuz
+        bcYI/a7egw3rPRjnbMrvjM4Su5TfBp0kxvoVe27CFAJ4Z3/jA18aUyGsKozAbK9ssl+Yso
+        27Xgx5Y3DlLNQDeGasEJTIBsGoXsR9g=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-582-8Q-CjMguPTmw11G5qlKwnA-1; Mon, 13 Nov 2023 15:02:43 -0500
+X-MC-Unique: 8Q-CjMguPTmw11G5qlKwnA-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-66fbd3bc8ebso63263606d6.1
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Nov 2023 12:02:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699890515; x=1700495315;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PXnf0eXrDDD8zHz/bTp9TBZLf7/Ul4A7eXzOYgBnS0o=;
-        b=rcfKaghUyNrrQ8dVGDdC9YpKmF0mFXhKlu3IvldV4X4VnK6gorfIK2Z99PF3eLa7ZB
-         ShhuWoZmVgI9A04p6rPgS25jXqIPQU/DuebJvgMNDVQHKufx6sinRAxXQA+42j4iZLWW
-         nfT0xDVxZ5XzUlwC7JLD4Bkib3NaKeuFdvCPR49rHrT1eIu4gysSyRrfTY36WcWKIomM
-         k+KFM9ueJ3oB7/CyBV38MvSnafdpPbFFSIWZHSi6lqUmeWfwli9MtFXQ7kbtCtuCkNwT
-         BLWUpCbK3xuMhytMqteegVqTLX1D8V9MNEEGfKN3sdRmvsndd6FZpcwlEywaLVdZgdO2
-         8qXw==
-X-Gm-Message-State: AOJu0YyTY4HTGLI9/ysLSg3fNyLp4hQ3zVTmArHaCw1PCsomQIzwwNYm
-        Q2gjrawGRjZ8mzhIX4r5Yxg=
-X-Google-Smtp-Source: AGHT+IGjshQ2RR3uLR3NR5XH4kZGq0bKwKJa9nFrnJR2Ve3ZB8NkzMtucWJSHIFp3cqZB2IgNChubw==
-X-Received: by 2002:a2e:5151:0:b0:2c5:2eaa:5397 with SMTP id b17-20020a2e5151000000b002c52eaa5397mr4840794lje.11.1699890514398;
-        Mon, 13 Nov 2023 07:48:34 -0800 (PST)
-Received: from PCBABN.skidata.net ([91.230.2.244])
-        by smtp.gmail.com with ESMTPSA id d14-20020a05600c34ce00b00406443c8b4fsm14255122wmq.19.2023.11.13.07.48.32
+        d=1e100.net; s=20230601; t=1699905763; x=1700510563;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x5sbsbZrhM7njh7UJ8Gfj3jbjPzQiV5xODIk6atjKoU=;
+        b=uKP98R7MnSv7Oj99XvZICG5ryGHdD5UI1KBN9q42Xk39NY637pYlSNsmXnhWRDkYHS
+         SvvMIQsWCs1T+f1spSCFDrfgFhpCFDlBP1UDUvlSeRjO7ErReM2n3jeHLSaeN58pGAqV
+         vNZpqcYOL0JzL26HlosxOhPgljtBdm3/LfGAlzC77tBoGOyMs7c8ipPvQSvOJc8IsFTo
+         hwHgfS+FDGBAq/zFMcWCMYTZhCpHiqTsRJ4Dixk+tAgS/Nu8xDhim6T2R13n6MjAoR0m
+         POJWTSp90Hlj+UPwlsx3nW4Vc2D4dB0DneKt1o9tAq+ast0VaaRIJwqYdQOAXH2kzJn+
+         VAdA==
+X-Gm-Message-State: AOJu0YyKiZnm8bYm1N9Lj0rYQlZOqtecxDMcdBuCp05ttsXrn4b5E7JH
+        6qwzDhueAx2hlhvM20v+vdMNTc4BzMz8v8kpQyy7R2agP4nTA/1FiEdzmzVQSdJYP/k/I706/mp
+        CfOEF0YBd4TYGg2Gir/J1Vxg=
+X-Received: by 2002:a0c:f9d2:0:b0:66d:9970:6464 with SMTP id j18-20020a0cf9d2000000b0066d99706464mr233529qvo.13.1699905762793;
+        Mon, 13 Nov 2023 12:02:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHVvfJ/8QycB4sitSkyNc9BJr+XhgbESVoJGYkT8lKAjf1cMgXzof7Oqc5lCEmlPE1oL2APNQ==
+X-Received: by 2002:a0c:f9d2:0:b0:66d:9970:6464 with SMTP id j18-20020a0cf9d2000000b0066d99706464mr233490qvo.13.1699905762358;
+        Mon, 13 Nov 2023 12:02:42 -0800 (PST)
+Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
+        by smtp.gmail.com with ESMTPSA id vr2-20020a05620a55a200b007757fefea79sm2097337qkn.130.2023.11.13.12.02.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Nov 2023 07:48:33 -0800 (PST)
-From:   Benjamin Bara <bbara93@gmail.com>
-To:     macroalpha82@gmail.com
-Cc:     bbara93@gmail.com, benjamin.bara@skidata.com,
-        dmitry.osipenko@collabora.com, heiko@sntech.de,
-        jonathanh@nvidia.com, lee@kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-        max.schwarz@online.de, nm@ti.com, peterz@infradead.org,
-        rafael.j.wysocki@intel.com, richard.leitner@linux.dev,
-        stable@vger.kernel.org, treding@nvidia.com,
-        wsa+renesas@sang-engineering.com, wsa@kernel.org
-Subject: Re: [PATCH v7 2/5] i2c: core: run atomic i2c xfer when !preemptible
-Date:   Mon, 13 Nov 2023 16:48:26 +0100
-Message-Id: <20231113154826.2856145-1-bbara93@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <655238b2.050a0220.209e.4ad5@mx.google.com>
-References: <655238b2.050a0220.209e.4ad5@mx.google.com>
+        Mon, 13 Nov 2023 12:02:41 -0800 (PST)
+Date:   Mon, 13 Nov 2023 13:02:40 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     acpica-devel@lists.linuxfoundation.org,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dexuan Cui <decui@microsoft.com>, devicetree@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Christoph Hellwig <hch@lst.de>, iommu@lists.linux.dev,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-snps-arc@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hector Martin <marcan@marcan.st>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Sven Peter <sven@svenpeter.dev>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Vineet Gupta <vgupta@kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>,
+        Zhenhua Huang <quic_zhenhuah@quicinc.com>
+Subject: Re: [PATCH RFC 12/17] iommu: Make iommu_ops_from_fwnode() static
+Message-ID: <gg6ecoukkia32t33vjfunny4y54pulz6k6zfkfpp6nahav4otj@z6e62pbavceb>
+References: <0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+ <12-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Hi!
+On Fri, Nov 03, 2023 at 01:44:57PM -0300, Jason Gunthorpe wrote:
+...
+> @@ -1044,11 +1043,6 @@ static inline int iommu_fwspec_add_ids(struct device *dev, u32 *ids,
+>  }
+>  
+>  static inline
 
-Thanks for testing and the feedback!
+   ^ was missed in the deletion below
 
-On Mon, 13 Nov 2023 at 15:54, Chris Morgan <macroalpha82@gmail.com> wrote:
-> I can confirm I no longer get any of the errors with this patch. Tested
-> on both an Anbernic RG353P (RK3566 with an RK817 PMIC) and an Odroid
-> Go Advance (RK3326 with an RK817 PMIC). The device appears to shut
-> down consistently again and I no longer see these messages in my dmesg
-> log when I shut down.
-
-Just to make sure: Are you compiling with CONFIG_PREEMPTION (and
-therefore CONFIG_PREEMPT_COUNT)?
-
-If yes, could you please also test the following patch? Because I am not
-sure yet how polling can be false in a "polling required" situation,
-meaning .master_xfer() is called instead of .master_xfer_atomic() (while
-your test shows that irq_disabled() is true, which is basically done
-with !preemptible()). The patch should test the other way round: if the
-situation is found, force an atomic transfer instead.
-
-Thank you!
-
-diff --git a/drivers/i2c/busses/i2c-rk3x.c b/drivers/i2c/busses/i2c-rk3x.c
-index a044ca0c35a1..6e3e8433018f 100644
---- a/drivers/i2c/busses/i2c-rk3x.c
-+++ b/drivers/i2c/busses/i2c-rk3x.c
-@@ -1131,6 +1131,10 @@ static int rk3x_i2c_xfer_common(struct i2c_adapter *adap,
- static int rk3x_i2c_xfer(struct i2c_adapter *adap,
-                         struct i2c_msg *msgs, int num)
- {
-+       if (irqs_disabled()) {
-+               WARN_ONCE(1, "Landed in non-atomic handler with disabled IRQs");
-+               return rk3x_i2c_xfer_common(adap, msgs, num, true);
-+       }
-        return rk3x_i2c_xfer_common(adap, msgs, num, false);
- }
+> -const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+> -{
+> -	return NULL;
+> -}
+> -
+>  static inline int
+>  iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
+>  {
+> -- 
+> 2.42.0
+> 
 
