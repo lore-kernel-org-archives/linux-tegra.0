@@ -2,60 +2,60 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A739C4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Nov 2023 20:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E11DC41535
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Nov 2023 20:13:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229718AbjKMUND (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Nov 2023 15:13:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53064 "EHLO
+        id S230023AbjKMUN5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Mon, 13 Nov 2023 15:13:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229511AbjKMUND (ORCPT
+        with ESMTP id S229839AbjKMUN4 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Nov 2023 15:13:03 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DF84D5D
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Nov 2023 12:12:38 -0800 (PST)
+        Mon, 13 Nov 2023 15:13:56 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5BE5D73
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Nov 2023 12:13:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1699906358;
+        s=mimecast20190719; t=1699906408;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
         bh=sqWGwV812/CXYndzj2W50PA7KOMPm+tHC+e+xjD2/M0=;
-        b=b66pjEtOs3F0OiGf1Ys1lGuJR8+mUhGTo3FEnUfR3Q5Mp9T26m0ZpgeYu4h7lCqC8Aq1jv
-        IKhl6mX+0zd8fPFIgO/lY5O8iZGuB2htK4tVOkweP8ubXdCaWS+1GLz3NlR2hHXuGOqPtT
-        HTbGJ+hRbr3Hpr7ImbxQ3LHx/gfbcIE=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        b=BTAMur/cBw2cWs7noaCA7jACSGU6/fvCxXI4GJgjtzQYKK2uSIjJubLxewIvr1eKap3KxK
+        okVLNJjrjh79wGXuQUJU3CJDv2c8C3wHRnDIMnjE7dvjZ80shYOXX5AV8C16fIIsH0ZUWh
+        jVvWHxvR5bZzXFBHvR2B3c+tOforPGk=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-587-bt6sDyHiMFWBK48x8uq_xQ-1; Mon, 13 Nov 2023 15:12:36 -0500
-X-MC-Unique: bt6sDyHiMFWBK48x8uq_xQ-1
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-5af592fed43so56353887b3.2
-        for <linux-tegra@vger.kernel.org>; Mon, 13 Nov 2023 12:12:36 -0800 (PST)
+ us-mta-328-kadz8b95OPyz9PXFO2ixrg-1; Mon, 13 Nov 2023 15:13:27 -0500
+X-MC-Unique: kadz8b95OPyz9PXFO2ixrg-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6707401e1aeso54954036d6.0
+        for <linux-tegra@vger.kernel.org>; Mon, 13 Nov 2023 12:13:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699906356; x=1700511156;
+        d=1e100.net; s=20230601; t=1699906406; x=1700511206;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
         bh=sqWGwV812/CXYndzj2W50PA7KOMPm+tHC+e+xjD2/M0=;
-        b=u0Y7RdOeJ5ICtY2LKovVqoWWxDhbfWHWIgEucnFadiIIweDLL6da7TjcFb6WDnh4Yq
-         qzQtpXgfB2ExmJBgwhSsvmLkQJZM+B76A0anUubohVcXEbIZ7DG//OctmueeKtx2TCgC
-         jujkrhMZn3BvsUaHyUABT6gJ1uhVnbRyFOgwpz3orfsXDwFwOdi89wFL3IuMcF29AupA
-         EmxJPhsX2qXaUJ4+yibITfpk1Zo64BvnMZw8j/b9HA+YZaQXvnzk1g1bUyIo/Feb4tPi
-         t/Sk069fE6tLHqcN3Db5LCVNzRCWfUmYEEQj7d/2ff/adjQhgIRWxzkONADuTrFK67et
-         Yq0g==
-X-Gm-Message-State: AOJu0YwLlD3HSu9nni0k2nkJCgKJ2Ih2krCja8Ig+yr1XskDVmW0jEvg
-        GRWGfc8ag+3sbU7JCLaYZIadwdkeIKxGwfOZKcuhwniiCg22dEcworsFefwu6b+FzYWgeI1bT5E
-        5b/RaE0CalM3oAc+M6Y1H6L4=
-X-Received: by 2002:a81:a1c8:0:b0:5a7:b8e6:6441 with SMTP id y191-20020a81a1c8000000b005a7b8e66441mr5681677ywg.16.1699906356197;
-        Mon, 13 Nov 2023 12:12:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE8TAFaS4ERYYFs+8jp6ZPsOwc5cP1r90IboZbxfRfwy6gwcqiZWRR9jIiN36BiWY+6zJFv5g==
-X-Received: by 2002:a81:a1c8:0:b0:5a7:b8e6:6441 with SMTP id y191-20020a81a1c8000000b005a7b8e66441mr5681632ywg.16.1699906355905;
-        Mon, 13 Nov 2023 12:12:35 -0800 (PST)
+        b=CA8+0PnKYVFMB/vFA031U34Bj+anOiaElYw9rE0LKGvEuUjD3Hp1Dn4m8RSlV4v0pC
+         JaixBcGuyi+ptC7gc8H3dhTIKONOKTkDMGv+zLBD/Wz8CfS2WfOB0DvBJgJNfmeXSrvJ
+         xd57+KlOyW6KuC6LMz6PO5kIPsIZvGdC5EuQ/+gqyYASKWOcA5UBgQbdOtOruJplk3i1
+         a22EdOpm0b9Ib/bVz7JeVu6KUyjqz5xScPNFELNxGyYsKsLPgozOWwQc1qaxPkYD7wgm
+         n6DCzns7FTPkJ/Lvba2SbyFdqcEgJtQ89vuA4kVgVwZrz7PU+kA6OR8nfexDzyboino/
+         2DhQ==
+X-Gm-Message-State: AOJu0YxnV4xEQQSZMbiY1S/V7DyE3l7gZBuZhdBuy8FJCsxdWbRY8Xmr
+        5v+8DHC0GrnSgV+/4rXVMABFy283Bj4b+bRwy/rXY/u2y5iq8nE4W8n/JSQt31S5QgM4ktcbM/G
+        jQwF+He/7y7UMCZ9eCdhc5pQ=
+X-Received: by 2002:ad4:4bad:0:b0:65b:2660:f577 with SMTP id i13-20020ad44bad000000b0065b2660f577mr248814qvw.3.1699906406587;
+        Mon, 13 Nov 2023 12:13:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFsDIxiixJLIxKwkxODRjUhycdO5JesTQ8JOYTeYOzxmk+ReEPp+gf8876uIJbrOmvoudG57Q==
+X-Received: by 2002:ad4:4bad:0:b0:65b:2660:f577 with SMTP id i13-20020ad44bad000000b0065b2660f577mr248760qvw.3.1699906406355;
+        Mon, 13 Nov 2023 12:13:26 -0800 (PST)
 Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id a10-20020a0dd80a000000b005a7ba08b2acsm1972894ywe.0.2023.11.13.12.12.35
+        by smtp.gmail.com with ESMTPSA id c4-20020a05621401c400b006754772bfd4sm2302000qvt.21.2023.11.13.12.13.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Nov 2023 12:12:35 -0800 (PST)
-Date:   Mon, 13 Nov 2023 13:12:34 -0700
+        Mon, 13 Nov 2023 12:13:25 -0800 (PST)
+Date:   Mon, 13 Nov 2023 13:13:24 -0700
 From:   Jerry Snitselaar <jsnitsel@redhat.com>
 To:     Jason Gunthorpe <jgg@nvidia.com>
 Cc:     acpica-devel@lists.linuxfoundation.org,
@@ -97,14 +97,15 @@ Cc:     acpica-devel@lists.linuxfoundation.org,
         virtualization@lists.linux-foundation.org,
         Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>,
         Zhenhua Huang <quic_zhenhuah@quicinc.com>
-Subject: Re: [PATCH RFC 09/17] iommu: Add iommu_fwspec_append_ids()
-Message-ID: <xv2544jtubq5aefvzaiabazmz5uf32alw6blcdbvsui6wn37ep@vpykzk2vvyp5>
+Subject: Re: [PATCH RFC 10/17] acpi: Do not use dev->iommu within
+ acpi_iommu_configure()
+Message-ID: <aqbuvpgu577fdpf4ndhoghfgewki7lg4hf2yewljonxf6y6oxv@xisq2p5bi3kb>
 References: <0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
- <9-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+ <10-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
+In-Reply-To: <10-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
