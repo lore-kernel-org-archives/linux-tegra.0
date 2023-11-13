@@ -2,148 +2,172 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3C3C4332F
-	for <linux-tegra@archiver.kernel.org>; Mon, 13 Nov 2023 01:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F43C4332F
+	for <linux-tegra@archiver.kernel.org>; Mon, 13 Nov 2023 03:46:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230044AbjKMBM0 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Sun, 12 Nov 2023 20:12:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44694 "EHLO
+        id S232958AbjKMDqm (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Sun, 12 Nov 2023 22:46:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbjKMBMZ (ORCPT
+        with ESMTP id S230457AbjKMDql (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Sun, 12 Nov 2023 20:12:25 -0500
-Received: from mail-oa1-x34.google.com (mail-oa1-x34.google.com [IPv6:2001:4860:4864:20::34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1625FD1;
-        Sun, 12 Nov 2023 17:12:22 -0800 (PST)
-Received: by mail-oa1-x34.google.com with SMTP id 586e51a60fabf-1e9c9d181d6so2522722fac.0;
-        Sun, 12 Nov 2023 17:12:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699837941; x=1700442741; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=BykRQa61TmxkQ2aJIQrB52hdaOo4yv0JvlCUuaXQp4E=;
-        b=iwgIocclF+dstaKlsU3LsVFbiC45zoaAO8rZ6Zf/biBZthkZ9H55c00e3DLYebFiy7
-         lzKFGWLq0JFKU/F+meljKWJvLJ40AOeblgVLva93eCIwUZCMuYg+18ybpYmDVy5fJYHX
-         bJ+bP3ae5w4uNhlYRwTPMBp6Q5zv6pTE+oNZ3YyaE9Zo2miSLj85qs3AgrITiKVVgROO
-         sb2b4iEsUNeouNH0ZpTwoMPcHNbU9OplmodH5j5tN0T86++Mt/uoY+G7S+UYs/4hD6RH
-         beis23l+/2Kin5CRbkiaLEJVeHFdAiLYtgz6b6gDn+hBXMASkT3lmm5nLx/Srs63pz7p
-         jQrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699837941; x=1700442741;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BykRQa61TmxkQ2aJIQrB52hdaOo4yv0JvlCUuaXQp4E=;
-        b=B3NBr+tctt+Ef2u8SUFAq23f41VQ8HyI3xUdg+12g3yTomq6063LZcRbZlmQEQyu51
-         ibLDpbybsTbMVUrMY7k2E+EgPbJtlQoV+PpoUW6Uz68I6Qdk2eAu8SNnC7pHb6Ge+2Yg
-         AQT2pEtJEazb8DIH0FEehb3xgba7nSG5gCNrGC8dXez8RFZ46TCWO3DA2f6zcB5nYZdg
-         p50wnPFm1m5pXjADvdRsd1ZWUE7KtmT+XWzwkLENHc/ID6jqhD9E9Nisp52pD5Aovr+G
-         sioA/LluVP7hIt/R1F4vVQycaRUcHb+S4jz3WE98f5A4FvCQdAZkTl2GXlp9JGHhM7W4
-         jJEg==
-X-Gm-Message-State: AOJu0YwtAoNLWzXprqhcV/lI1g4SpLKciJ9IG1sa0oLscu5VbPgTqNfi
-        sxIToakBkQugcQVbG//Dws8=
-X-Google-Smtp-Source: AGHT+IEfdsKyflENvLWfBGllYfegw42Agn4IZSoOohVpE21eLGGFklIzel+5lXB5EbERfl2tC5vLvA==
-X-Received: by 2002:a05:6870:d3cc:b0:1ef:abaa:cae0 with SMTP id l12-20020a056870d3cc00b001efabaacae0mr7153000oag.29.1699837941098;
-        Sun, 12 Nov 2023 17:12:21 -0800 (PST)
-Received: from neuromancer. ([75.28.21.198])
-        by smtp.gmail.com with ESMTPSA id pu27-20020a0568709e9b00b001f49285a366sm849666oab.45.2023.11.12.17.12.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Nov 2023 17:12:20 -0800 (PST)
-Message-ID: <655177f4.050a0220.d85c9.3ba0@mx.google.com>
-X-Google-Original-Message-ID: <ZVF38Btn9FmFGK7l@neuromancer.>
-Date:   Sun, 12 Nov 2023 19:12:16 -0600
-From:   Chris Morgan <macroalpha82@gmail.com>
-To:     Benjamin Bara <bbara93@gmail.com>
+        Sun, 12 Nov 2023 22:46:41 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D19C111;
+        Sun, 12 Nov 2023 19:46:38 -0800 (PST)
+Received: from [10.3.2.161] (zone.collabora.co.uk [167.235.23.81])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dmitry.osipenko)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 383FB66071EF;
+        Mon, 13 Nov 2023 03:46:35 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1699847196;
+        bh=IYaMjc+qTvS7LQ5LbfeS/pcvc+pAiE5iS07jfl+bqtU=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=P1THUFvdl7/Ghu3ZCKMSYlY0BKgMc5jnQG09WFUrEnHyat1Chjki2Nxy+kJ/lHGbg
+         Z3BfdVGX59JeHi89FD8K21PFJMbKAtlnS9y7PQfAr82wZAHVzFI1DDiaGCnGW+16Ky
+         STN28oMW55Wb0lXmvUYSawOvUxo0uFCzHZAJuEYOPHo18TSWZTZ+t7BL9WB8D+TK7Z
+         23xbXofCSRGr7aRzMVc7axNMxiA1xnsB6wOway4UzA+OwoNTosPGWsrlelXpD4OIGA
+         urFBrIdE6EonOvKSmoSajswDJL8uLxEe8cuz8fMwjrsxuqt6OlmbFw11/VyB34cq/o
+         6uyb22O/c/vwQ==
+Message-ID: <69941f8e-de1f-0319-6729-58625b362b8e@collabora.com>
+Date:   Mon, 13 Nov 2023 06:46:30 +0300
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v7 2/5] i2c: core: run atomic i2c xfer when !preemptible
+Content-Language: en-US
+To:     Chris Morgan <macroalpha82@gmail.com>,
+        Benjamin Bara <bbara93@gmail.com>
 Cc:     Wolfram Sang <wsa@kernel.org>, Lee Jones <lee@kernel.org>,
         rafael.j.wysocki@intel.com,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        dmitry.osipenko@collabora.com, peterz@infradead.org,
-        jonathanh@nvidia.com, richard.leitner@linux.dev,
-        treding@nvidia.com, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        peterz@infradead.org, jonathanh@nvidia.com,
+        richard.leitner@linux.dev, treding@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
         Benjamin Bara <benjamin.bara@skidata.com>,
         stable@vger.kernel.org, Nishanth Menon <nm@ti.com>,
         heiko@sntech.de, max.schwarz@online.de
-Subject: Re: [PATCH v7 2/5] i2c: core: run atomic i2c xfer when !preemptible
 References: <20230327-tegra-pmic-reboot-v7-0-18699d5dcd76@skidata.com>
  <20230327-tegra-pmic-reboot-v7-2-18699d5dcd76@skidata.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230327-tegra-pmic-reboot-v7-2-18699d5dcd76@skidata.com>
+ <655177f4.050a0220.d85c9.3ba0@mx.google.com>
+From:   Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <655177f4.050a0220.d85c9.3ba0@mx.google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Sat, Jul 15, 2023 at 09:53:24AM +0200, Benjamin Bara wrote:
-> From: Benjamin Bara <benjamin.bara@skidata.com>
+On 11/13/23 04:12, Chris Morgan wrote:
+> On Sat, Jul 15, 2023 at 09:53:24AM +0200, Benjamin Bara wrote:
+>> From: Benjamin Bara <benjamin.bara@skidata.com>
+>>
+>> Since bae1d3a05a8b, i2c transfers are non-atomic if preemption is
+>> disabled. However, non-atomic i2c transfers require preemption (e.g. in
+>> wait_for_completion() while waiting for the DMA).
+>>
+>> panic() calls preempt_disable_notrace() before calling
+>> emergency_restart(). Therefore, if an i2c device is used for the
+>> restart, the xfer should be atomic. This avoids warnings like:
+>>
+>> [   12.667612] WARNING: CPU: 1 PID: 1 at kernel/rcu/tree_plugin.h:318 rcu_note_context_switch+0x33c/0x6b0
+>> [   12.676926] Voluntary context switch within RCU read-side critical section!
+>> ...
+>> [   12.742376]  schedule_timeout from wait_for_completion_timeout+0x90/0x114
+>> [   12.749179]  wait_for_completion_timeout from tegra_i2c_wait_completion+0x40/0x70
+>> ...
+>> [   12.994527]  atomic_notifier_call_chain from machine_restart+0x34/0x58
+>> [   13.001050]  machine_restart from panic+0x2a8/0x32c
+>>
+>> Use !preemptible() instead, which is basically the same check as
+>> pre-v5.2.
+>>
+>> Fixes: bae1d3a05a8b ("i2c: core: remove use of in_atomic()")
+>> Cc: stable@vger.kernel.org # v5.2+
+>> Suggested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>> Acked-by: Wolfram Sang <wsa@kernel.org>
+>> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>> Tested-by: Nishanth Menon <nm@ti.com>
+>> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
 > 
-> Since bae1d3a05a8b, i2c transfers are non-atomic if preemption is
-> disabled. However, non-atomic i2c transfers require preemption (e.g. in
-> wait_for_completion() while waiting for the DMA).
+> For kernel 6.7 I'm having an issue when I shutdown or reboot my
+> Rockchip RK3326 or Rockchip RK3566 based devices, and I've bisected
+> the issue down to this specific commit.
 > 
-> panic() calls preempt_disable_notrace() before calling
-> emergency_restart(). Therefore, if an i2c device is used for the
-> restart, the xfer should be atomic. This avoids warnings like:
+> When I shutdown or restart the device, I receive messages in the kernel
+> log like the following:
 > 
-> [   12.667612] WARNING: CPU: 1 PID: 1 at kernel/rcu/tree_plugin.h:318 rcu_note_context_switch+0x33c/0x6b0
-> [   12.676926] Voluntary context switch within RCU read-side critical section!
-> ...
-> [   12.742376]  schedule_timeout from wait_for_completion_timeout+0x90/0x114
-> [   12.749179]  wait_for_completion_timeout from tegra_i2c_wait_completion+0x40/0x70
-> ...
-> [   12.994527]  atomic_notifier_call_chain from machine_restart+0x34/0x58
-> [   13.001050]  machine_restart from panic+0x2a8/0x32c
+> [   37.121148] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x3
+> [   37.122178] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x3
+> [   37.123212] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x3
+> [   37.124226] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x3
+> [   37.125242] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x3
+> [   37.126133] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x1
 > 
-> Use !preemptible() instead, which is basically the same check as
-> pre-v5.2.
-> 
-> Fixes: bae1d3a05a8b ("i2c: core: remove use of in_atomic()")
-> Cc: stable@vger.kernel.org # v5.2+
-> Suggested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> Acked-by: Wolfram Sang <wsa@kernel.org>
-> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> Tested-by: Nishanth Menon <nm@ti.com>
-> Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
+> The device will also occasionally freeze instead of rebooting or
+> shutting down. The i2c errors are consistent, but the freezing
+> behavior is not.
 
-For kernel 6.7 I'm having an issue when I shutdown or reboot my
-Rockchip RK3326 or Rockchip RK3566 based devices, and I've bisected
-the issue down to this specific commit.
+I couldn't reproduce your issue with v6.7-rc1 and RK3399 that also uses rk3x-i2c. Though, the rk3x-i2c driver looks suspicious. Please try this patch:
 
-When I shutdown or restart the device, I receive messages in the kernel
-log like the following:
+diff --git a/drivers/i2c/busses/i2c-rk3x.c b/drivers/i2c/busses/i2c-rk3x.c
+index a044ca0c35a1..aad00e9909cc 100644
+--- a/drivers/i2c/busses/i2c-rk3x.c
++++ b/drivers/i2c/busses/i2c-rk3x.c
+@@ -219,6 +219,8 @@ struct rk3x_i2c {
+ 	enum rk3x_i2c_state state;
+ 	unsigned int processed;
+ 	int error;
++
++	int irq;
+ };
+ 
+ static inline void i2c_writel(struct rk3x_i2c *i2c, u32 value,
+@@ -1090,8 +1092,10 @@ static int rk3x_i2c_xfer_common(struct i2c_adapter *adap,
+ 		rk3x_i2c_start(i2c);
+ 
+ 		if (!polling) {
++			enable_irq(i2c->irq);
+ 			timeout = wait_event_timeout(i2c->wait, !i2c->busy,
+ 						     msecs_to_jiffies(WAIT_TIMEOUT));
++			disable_irq(i2c->irq);
+ 		} else {
+ 			timeout = rk3x_i2c_wait_xfer_poll(i2c);
+ 		}
+@@ -1236,7 +1240,6 @@ static int rk3x_i2c_probe(struct platform_device *pdev)
+ 	int ret = 0;
+ 	int bus_nr;
+ 	u32 value;
+-	int irq;
+ 	unsigned long clk_rate;
+ 
+ 	i2c = devm_kzalloc(&pdev->dev, sizeof(struct rk3x_i2c), GFP_KERNEL);
+@@ -1299,11 +1302,14 @@ static int rk3x_i2c_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* IRQ setup */
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return irq;
++	i2c->irq = platform_get_irq(pdev, 0);
++	if (i2c->irq < 0)
++		return i2c->irq;
++
++	/* interrupt will be enabled during of transfer time */
++	irq_set_status_flags(i2c->irq, IRQ_NOAUTOEN);
+ 
+-	ret = devm_request_irq(&pdev->dev, irq, rk3x_i2c_irq,
++	ret = devm_request_irq(&pdev->dev, i2c->irq, rk3x_i2c_irq,
+ 			       0, dev_name(&pdev->dev), i2c);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "cannot request IRQ\n");
 
-[   37.121148] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x3
-[   37.122178] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x3
-[   37.123212] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x3
-[   37.124226] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x3
-[   37.125242] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x3
-[   37.126133] rk3x-i2c fdd40000.i2c: irq in STATE_IDLE, ipd = 0x1
 
-The device will also occasionally freeze instead of rebooting or
-shutting down. The i2c errors are consistent, but the freezing
-behavior is not.
+-- 
+Best regards,
+Dmitry
 
-Thank you.
-
-> ---
->  drivers/i2c/i2c-core.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
-> index 1247e6e6e975..05b8b8dfa9bd 100644
-> --- a/drivers/i2c/i2c-core.h
-> +++ b/drivers/i2c/i2c-core.h
-> @@ -29,7 +29,7 @@ int i2c_dev_irq_from_resources(const struct resource *resources,
->   */
->  static inline bool i2c_in_atomic_xfer_mode(void)
->  {
-> -	return system_state > SYSTEM_RUNNING && irqs_disabled();
-> +	return system_state > SYSTEM_RUNNING && !preemptible();
->  }
->  
->  static inline int __i2c_lock_bus_helper(struct i2c_adapter *adap)
-> 
-> -- 
-> 2.34.1
-> 
