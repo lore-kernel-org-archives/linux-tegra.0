@@ -2,126 +2,117 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 050BDC4167D
-	for <linux-tegra@archiver.kernel.org>; Tue, 14 Nov 2023 04:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C0EDC4167B
+	for <linux-tegra@archiver.kernel.org>; Tue, 14 Nov 2023 18:43:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229645AbjKNE6Q (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 13 Nov 2023 23:58:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35352 "EHLO
+        id S233930AbjKNSnn (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Tue, 14 Nov 2023 13:43:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229580AbjKNE6P (ORCPT
+        with ESMTP id S229770AbjKNSnn (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 13 Nov 2023 23:58:15 -0500
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FC8F123;
-        Mon, 13 Nov 2023 20:58:12 -0800 (PST)
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-        by mx0a-0031df01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 3AE4dQxp015496;
-        Tue, 14 Nov 2023 04:57:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=qcppdkim1;
- bh=Ut+LP/oQgS6AHmq27TArlkMKu8wbNEjr6zcLsTELHGU=;
- b=P4U9JNsZ9twinkAM6crKSroq7yTQNIGWmkH2jnosKDAz9K5IrD0KC+OFma4jfeDqxQq+
- Jios5YHkR/P1oDpeARKJM2+nQJAHIoy/AU39G733GUA7X/t+IfSA/Um81F8A6iCtQL26
- XG4dtUswJSuAwmlGjkGcZuNFHb330V24H5OqAeBwm6fW/02agttPnGwa8mYMhC8YNPDL
- TSKl5hj7Y9fOX8//4nAwpHHKR4ae/Pebp5Zv8rijSDAyEzEk9K9W2+AIslRM+tKCuR55
- lfIA8BS+uF4K4AD8r57Ipm+m83CMrPvY4hiFvL9PLI1Y49qIQrtqpSe+/TUS76UcnzFQ vA== 
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-        by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ubuswrmww-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Nov 2023 04:57:04 +0000
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-        by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 3AE4v2nN010730
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 14 Nov 2023 04:57:02 GMT
-Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.39; Mon, 13 Nov
- 2023 20:56:53 -0800
-Message-ID: <ee647939-3f47-4b82-b1e4-a0c9414a1e8e@quicinc.com>
-Date:   Tue, 14 Nov 2023 12:56:43 +0800
+        Tue, 14 Nov 2023 13:43:43 -0500
+Received: from mail-oi1-x22e.google.com (mail-oi1-x22e.google.com [IPv6:2607:f8b0:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2082ECC;
+        Tue, 14 Nov 2023 10:43:40 -0800 (PST)
+Received: by mail-oi1-x22e.google.com with SMTP id 5614622812f47-3b6c31e604cso3600393b6e.2;
+        Tue, 14 Nov 2023 10:43:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699987419; x=1700592219; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iad1M7sTlxmoH5/Gz+DQ7dI9dCA8jhAGqNXduqEs6bo=;
+        b=Qgd4PSIAU6ZL/6b7ELPOhZ8QxtHywJnhZe0b8NpNrxH5K4Lxv/zx6z5whEoUipPGmv
+         kpmweA1T6DPnvnjmC13iz1FULNZhfBSMf54vj/vhGwubz4bdgOd/BXuiwe6am3IdoOrn
+         Tnvn7wVjcRReZ7WZy/7cXMA87Z0thnCxWvMmYitW9dutvupZIBDJ9NMQMlAVySaZBpNb
+         +roKSWPbe8fCwOA/vUCaFsvOUqv0AdxIrd71J36DKayRPPcg5BQe5DTv5/yISXPGoDsF
+         qCCWbKGEa5fxe4M3VRj7l3rBYlt0Ihlf3SSTkyNElVL8titV65+NgTOCe/fmylI4bbRB
+         KRLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1699987419; x=1700592219;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iad1M7sTlxmoH5/Gz+DQ7dI9dCA8jhAGqNXduqEs6bo=;
+        b=fdRFVbFn/A7vcBTB7DXJN9goOOSObSF6Jn26xwlvtgGyk1i04cv+SEeyeyE9qQE7L5
+         Sk+83agVGyYei7+JwFFOyfb6gUdNGIcKTdJvmAoxb71T5aAXzVdyngPQUPKkBQ2MQfRw
+         xYVyd7+EbJzekRPEsc+4pJ1ybNSncFurx3dFb47svUfZOxEG4MgLgqFx+oF8WUOmOYJK
+         FMMtvZeuM2zfwk+Muo4K1DvDqt+hnhNVwof4Ti48e7/MhRoKK7ldkvsurL8TMvFXs/Yk
+         negehR54GFVYtqBUwgaqVWGyV/RvzMcujEsW67iDE7AE3HVKwQP8cxrzdKxCzV54sPn8
+         Bmsg==
+X-Gm-Message-State: AOJu0Yx9vS60JEH7STlAoQ+AJO273YAJXYgqM41R5PMkm4LqYAJ5/9ZN
+        9rTusgTQQyKGJXnbHZQiwo4=
+X-Google-Smtp-Source: AGHT+IH98vlzW4/W9fI0+WeMmjyz/fdNutPArPXFhZ5iM81GrHnw6IYD0fyPYRqcN6w9w9NBy4yOGg==
+X-Received: by 2002:a05:6870:3d99:b0:1e9:8780:a0e with SMTP id lm25-20020a0568703d9900b001e987800a0emr14899288oab.28.1699987419384;
+        Tue, 14 Nov 2023 10:43:39 -0800 (PST)
+Received: from neuromancer. ([75.28.21.198])
+        by smtp.gmail.com with ESMTPSA id ec21-20020a0568708c1500b001e5ad4b2f65sm1470312oab.19.2023.11.14.10.43.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Nov 2023 10:43:38 -0800 (PST)
+Message-ID: <6553bfda.050a0220.b2675.7cce@mx.google.com>
+X-Google-Original-Message-ID: <ZVO/2ZR/bzbmbiVv@neuromancer.>
+Date:   Tue, 14 Nov 2023 12:43:37 -0600
+From:   Chris Morgan <macroalpha82@gmail.com>
+To:     Benjamin Bara <bbara93@gmail.com>
+Cc:     benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
+        heiko@sntech.de, jonathanh@nvidia.com, lee@kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, max.schwarz@online.de, nm@ti.com,
+        peterz@infradead.org, rafael.j.wysocki@intel.com,
+        richard.leitner@linux.dev, stable@vger.kernel.org,
+        treding@nvidia.com, wsa+renesas@sang-engineering.com,
+        wsa@kernel.org
+Subject: Re: [PATCH v7 2/5] i2c: core: run atomic i2c xfer when !preemptible
+References: <655238b2.050a0220.209e.4ad5@mx.google.com>
+ <20231113154826.2856145-1-bbara93@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 00/17] Solve iommu probe races around iommu_fwspec
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>,
-        <acpica-devel@lists.linuxfoundation.org>,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Albert Ou <aou@eecs.berkeley.edu>, <asahi@lists.linux.dev>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dexuan Cui <decui@microsoft.com>, <devicetree@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Christoph Hellwig <hch@lst.de>, <iommu@lists.linux.dev>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Len Brown <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-hyperv@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-        <linux-riscv@lists.infradead.org>,
-        <linux-snps-arc@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hector Martin <marcan@marcan.st>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Sven Peter <sven@svenpeter.dev>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Vineet Gupta <vgupta@kernel.org>,
-        <virtualization@lists.linux-foundation.org>,
-        Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>
-References: <0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
-From:   Zhenhua Huang <quic_zhenhuah@quicinc.com>
-In-Reply-To: <0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.80.80.8]
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: W9mLspwTBqhYvV5ajR8gt_t_BuX4RknD
-X-Proofpoint-ORIG-GUID: W9mLspwTBqhYvV5ajR8gt_t_BuX4RknD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.987,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2023-11-14_03,2023-11-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 clxscore=1011 mlxlogscore=917
- impostorscore=0 adultscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
- mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311060000 definitions=main-2311140037
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231113154826.2856145-1-bbara93@gmail.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Thanks Jason.
-
-On 2023/11/4 0:44, Jason Gunthorpe wrote:
-> This is a more complete solution that the first attempt here:
-> https://lore.kernel.org/r/1698825902-10685-1-git-send-email-quic_zhenhuah@quicinc.com
+On Mon, Nov 13, 2023 at 04:48:26PM +0100, Benjamin Bara wrote:
+> Hi!
 > 
-> I haven't been able to test this on any HW that touches these paths, so if
-> some people with HW can help get it in shape it can become non-RFC.
+> Thanks for testing and the feedback!
+> 
+> On Mon, 13 Nov 2023 at 15:54, Chris Morgan <macroalpha82@gmail.com> wrote:
+> > I can confirm I no longer get any of the errors with this patch. Tested
+> > on both an Anbernic RG353P (RK3566 with an RK817 PMIC) and an Odroid
+> > Go Advance (RK3326 with an RK817 PMIC). The device appears to shut
+> > down consistently again and I no longer see these messages in my dmesg
+> > log when I shut down.
+> 
+> Just to make sure: Are you compiling with CONFIG_PREEMPTION (and
+> therefore CONFIG_PREEMPT_COUNT)?
+> 
+> If yes, could you please also test the following patch? Because I am not
+> sure yet how polling can be false in a "polling required" situation,
+> meaning .master_xfer() is called instead of .master_xfer_atomic() (while
+> your test shows that irq_disabled() is true, which is basically done
+> with !preemptible()). The patch should test the other way round: if the
+> situation is found, force an atomic transfer instead.
+> 
+> Thank you!
+> 
+> diff --git a/drivers/i2c/busses/i2c-rk3x.c b/drivers/i2c/busses/i2c-rk3x.c
+> index a044ca0c35a1..6e3e8433018f 100644
+> --- a/drivers/i2c/busses/i2c-rk3x.c
+> +++ b/drivers/i2c/busses/i2c-rk3x.c
+> @@ -1131,6 +1131,10 @@ static int rk3x_i2c_xfer_common(struct i2c_adapter *adap,
+>  static int rk3x_i2c_xfer(struct i2c_adapter *adap,
+>                          struct i2c_msg *msgs, int num)
+>  {
+> +       if (irqs_disabled()) {
+> +               WARN_ONCE(1, "Landed in non-atomic handler with disabled IRQs");
+> +               return rk3x_i2c_xfer_common(adap, msgs, num, true);
+> +       }
+>         return rk3x_i2c_xfer_common(adap, msgs, num, false);
+>  }
+> 
 
-Thank you for addressing it quickly with a thorough way. I have 
-backported it to Android common kernel 6.1 and tested basic sanity well.
-I will share these to OEMs and see if they can reproduce further, thanks.
+I have CONFIG_PREEMPT_VOLUNTARY=y but CONFIG_PREEMPTION is not set.
 
-Thanks,
-Zhenhua
+Thank you.
