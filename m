@@ -2,63 +2,32 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 047A5C07533
-	for <linux-tegra@archiver.kernel.org>; Wed, 15 Nov 2023 15:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F42C2BB3F
+	for <linux-tegra@archiver.kernel.org>; Wed, 15 Nov 2023 15:22:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344320AbjKOPJo (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Wed, 15 Nov 2023 10:09:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55274 "EHLO
+        id S1344398AbjKOPW1 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Wed, 15 Nov 2023 10:22:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344364AbjKOPJn (ORCPT
+        with ESMTP id S1344389AbjKOPW0 (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Wed, 15 Nov 2023 10:09:43 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4FFD19B
-        for <linux-tegra@vger.kernel.org>; Wed, 15 Nov 2023 07:09:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1700060980;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=sqWGwV812/CXYndzj2W50PA7KOMPm+tHC+e+xjD2/M0=;
-        b=TE0BjkblIJxd273sku6M5cmgSJahzXo0uMO76VlcnMw2mrREa9lW1byVg+lmXntCN9Ba+B
-        CNu/2AA/ohgSHKI7a8V5JTPA1wt2hfhjxhFbxED19csmQJ6Z0Dj+MOVSr0aDS1nOwSx9eg
-        SV67K9jIwuT5SQS5oQKoqZv13qx4XxA=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-228-UmwREaeMNcuhvPsfnTcuBw-1; Wed, 15 Nov 2023 10:09:38 -0500
-X-MC-Unique: UmwREaeMNcuhvPsfnTcuBw-1
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-421af801578so52975161cf.3
-        for <linux-tegra@vger.kernel.org>; Wed, 15 Nov 2023 07:09:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700060978; x=1700665778;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sqWGwV812/CXYndzj2W50PA7KOMPm+tHC+e+xjD2/M0=;
-        b=mvZcupMRnXXx8ee0RE05wJPh8HeHDH2PrphNtG3q9zApiB8RNWEgZV1yL03CXyJZnR
-         8di6IsTnPZ+4SQ3nSXNUb6qALFrcl5yJ8cDTvxhMqbmHSEhP+8QjTawRHptByjL8XJni
-         0yrCvJFmXM1iXEKPerNxg9OlliDDmOYiVatFQLvOP+RUifKpcVRCX6Xg62S0jqLMZYNY
-         QrrVLsKWHH7USQIveZ7Qr1jNvW5CQyEEwo56YRIbbl7yX89UwJdx4k86FAVG5fQg3h+X
-         kOvfIcGNbznrBOhTfSLcUKZP8l+e0ML2Ws2KRt/Gvn15sZJkP9tSjjvOQkX0D6IRanJ5
-         9lGw==
-X-Gm-Message-State: AOJu0YzgVtDQzme8HL0nC5tXZFXhb1Tlsotw1DZgTSdMFsEVoqYYVBdn
-        KdAMMdFDVQM4niRXnKWEATK0YlZpAy0p20lNSzNo2azqmLxXiHkETY/TDAERHMI9FWeSHfVHkBq
-        B45uxPRGyA89k3hUNUXh1Zp4=
-X-Received: by 2002:ac8:570f:0:b0:418:a58:1cd2 with SMTP id 15-20020ac8570f000000b004180a581cd2mr6938294qtw.51.1700060978307;
-        Wed, 15 Nov 2023 07:09:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFJQ4sai83VgKMNcVk7LBkPO+lmGyR543b/SO2885Ys+XYhGZt/IKDco0l9338e20RsJ7UBFA==
-X-Received: by 2002:ac8:570f:0:b0:418:a58:1cd2 with SMTP id 15-20020ac8570f000000b004180a581cd2mr6938210qtw.51.1700060977944;
-        Wed, 15 Nov 2023 07:09:37 -0800 (PST)
-Received: from localhost (ip98-179-76-75.ph.ph.cox.net. [98.179.76.75])
-        by smtp.gmail.com with ESMTPSA id b3-20020ac85403000000b0041ea59e639bsm3597148qtq.70.2023.11.15.07.09.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Nov 2023 07:09:37 -0800 (PST)
-Date:   Wed, 15 Nov 2023 08:09:36 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     acpica-devel@lists.linux.dev,
+        Wed, 15 Nov 2023 10:22:26 -0500
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 05BD6AD;
+        Wed, 15 Nov 2023 07:22:22 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F4BB1595;
+        Wed, 15 Nov 2023 07:23:07 -0800 (PST)
+Received: from [10.57.83.164] (unknown [10.57.83.164])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30E023F641;
+        Wed, 15 Nov 2023 07:22:11 -0800 (PST)
+Message-ID: <1316b55e-8074-4b2f-99df-585df2f3dd06@arm.com>
+Date:   Wed, 15 Nov 2023 15:22:09 +0000
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/17] Solve iommu probe races around iommu_fwspec
+Content-Language: en-GB
+To:     Jason Gunthorpe <jgg@nvidia.com>, acpica-devel@lists.linux.dev,
         Alyssa Rosenzweig <alyssa@rosenzweig.io>,
         Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -84,7 +53,6 @@ Cc:     acpica-devel@lists.linux.dev,
         "Rafael J. Wysocki" <rafael@kernel.org>,
         Robert Moore <robert.moore@intel.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
         Sudeep Holla <sudeep.holla@arm.com>,
         Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
         Sven Peter <sven@svenpeter.dev>,
@@ -93,25 +61,130 @@ Cc:     acpica-devel@lists.linux.dev,
         Krishna Reddy <vdumpa@nvidia.com>,
         Vineet Gupta <vgupta@kernel.org>,
         virtualization@lists.linux.dev, Wei Liu <wei.liu@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>,
+        Will Deacon <will@kernel.org>
+Cc:     =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Christoph Hellwig <hch@lst.de>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
         Moritz Fischer <mdf@kernel.org>,
         Zhenhua Huang <quic_zhenhuah@quicinc.com>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 12/17] iommu: Make iommu_ops_from_fwnode() static
-Message-ID: <fc3a6krgqyi7awvm6dcjg5edbem5lead66b4tyi5ttetkcfdpp@iaya3ijkywwv>
 References: <0-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
- <12-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <0-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+On 2023-11-15 2:05 pm, Jason Gunthorpe wrote:
+> [Several people have tested this now, so it is something that should sit in
+> linux-next for a while]
 
+What's the aim here? This is obviously far, far too much for a stable 
+fix, but then it's also not the refactoring we want for the future 
+either, since it's moving in the wrong direction of cementing the 
+fundamental brokenness further in place rather than getting any closer 
+to removing it.
+
+Thanks,
+Robin.
+
+> The iommu subsystem uses dev->iommu to store bits of information about the
+> attached iommu driver. This has been co-opted by the ACPI/OF code to also
+> be a place to pass around the iommu_fwspec before a driver is probed.
+> 
+> Since both are using the same pointers without any locking it triggers
+> races if there is concurrent driver loading:
+> 
+>       CPU0                                     CPU1
+> of_iommu_configure()                iommu_device_register()
+>   ..                                   bus_iommu_probe()
+>    iommu_fwspec_of_xlate()              __iommu_probe_device()
+>                                          iommu_init_device()
+>     dev_iommu_get()
+>                                            .. ops->probe fails, no fwspec ..
+>                                            dev_iommu_free()
+>     dev->iommu->fwspec    *crash*
+> 
+> My first attempt get correct locking here was to use the device_lock to
+> protect the entire *_iommu_configure() and iommu_probe() paths. This
+> allowed safe use of dev->iommu within those paths. Unfortuately enough
+> drivers abuse the of_iommu_configure() flow without proper locking and
+> this approach failed.
+> 
+> This approach removes touches of dev->iommu from the *_iommu_configure()
+> code. The few remaining required touches are moved into iommu.c and
+> protected with the existing iommu_probe_device_lock.
+> 
+> To do this we change *_iommu_configure() to hold the iommu_fwspec on the
+> stack while it is being built. Once it is fully formed the core code will
+> install it into the dev->iommu when it calls probe.
+> 
+> This also removes all the touches of iommu_ops from
+> the *_iommu_configure() paths and makes that mechanism private to the
+> iommu core.
+> 
+> A few more lockdep assertions are added to discourage future mis-use.
+> 
+> This is on github: https://github.com/jgunthorpe/linux/commits/iommu_fwspec
+> 
+> v2:
+>   - Fix all the kconfig randomization 0-day stuff
+>   - Add missing kdoc parameters
+>   - Remove NO_IOMMU, replace it with ENODEV
+>   - Use PTR_ERR to print errno in the new/moved logging
+> v1: https://lore.kernel.org/r/0-v1-5f734af130a3+34f-iommu_fwspec_jgg@nvidia.com
+> 
+> Jason Gunthorpe (17):
+>    iommu: Remove struct iommu_ops *iommu from arch_setup_dma_ops()
+>    iommmu/of: Do not return struct iommu_ops from of_iommu_configure()
+>    iommu/of: Use -ENODEV consistently in of_iommu_configure()
+>    acpi: Do not return struct iommu_ops from acpi_iommu_configure_id()
+>    iommu: Make iommu_fwspec->ids a distinct allocation
+>    iommu: Add iommu_fwspec_alloc/dealloc()
+>    iommu: Add iommu_probe_device_fwspec()
+>    iommu/of: Do not use dev->iommu within of_iommu_configure()
+>    iommu: Add iommu_fwspec_append_ids()
+>    acpi: Do not use dev->iommu within acpi_iommu_configure()
+>    iommu: Hold iommu_probe_device_lock while calling ops->of_xlate
+>    iommu: Make iommu_ops_from_fwnode() static
+>    iommu: Remove dev_iommu_fwspec_set()
+>    iommu: Remove pointless iommu_fwspec_free()
+>    iommu: Add ops->of_xlate_fwspec()
+>    iommu: Mark dev_iommu_get() with lockdep
+>    iommu: Mark dev_iommu_priv_set() with a lockdep
+> 
+>   arch/arc/mm/dma.c                           |   2 +-
+>   arch/arm/mm/dma-mapping-nommu.c             |   2 +-
+>   arch/arm/mm/dma-mapping.c                   |  10 +-
+>   arch/arm64/mm/dma-mapping.c                 |   4 +-
+>   arch/mips/mm/dma-noncoherent.c              |   2 +-
+>   arch/riscv/mm/dma-noncoherent.c             |   2 +-
+>   drivers/acpi/arm64/iort.c                   |  42 ++--
+>   drivers/acpi/scan.c                         | 104 +++++----
+>   drivers/acpi/viot.c                         |  45 ++--
+>   drivers/hv/hv_common.c                      |   2 +-
+>   drivers/iommu/amd/iommu.c                   |   2 -
+>   drivers/iommu/apple-dart.c                  |   1 -
+>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c |   9 +-
+>   drivers/iommu/arm/arm-smmu/arm-smmu.c       |  23 +-
+>   drivers/iommu/intel/iommu.c                 |   2 -
+>   drivers/iommu/iommu.c                       | 227 +++++++++++++++-----
+>   drivers/iommu/of_iommu.c                    | 133 +++++-------
+>   drivers/iommu/omap-iommu.c                  |   1 -
+>   drivers/iommu/tegra-smmu.c                  |   1 -
+>   drivers/iommu/virtio-iommu.c                |   8 +-
+>   drivers/of/device.c                         |  24 ++-
+>   include/acpi/acpi_bus.h                     |   8 +-
+>   include/linux/acpi_iort.h                   |   8 +-
+>   include/linux/acpi_viot.h                   |   5 +-
+>   include/linux/dma-map-ops.h                 |   4 +-
+>   include/linux/iommu.h                       |  47 ++--
+>   include/linux/of_iommu.h                    |  13 +-
+>   27 files changed, 424 insertions(+), 307 deletions(-)
+> 
+> 
+> base-commit: b85ea95d086471afb4ad062012a4d73cd328fa86
