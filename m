@@ -2,184 +2,150 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF454C54FB9
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Nov 2023 11:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 384F5C197A0
+	for <linux-tegra@archiver.kernel.org>; Thu, 16 Nov 2023 14:36:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345150AbjKPLx5 (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Nov 2023 06:53:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36350 "EHLO
+        id S1344167AbjKPOgh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Thu, 16 Nov 2023 09:36:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344985AbjKPLxz (ORCPT
+        with ESMTP id S235365AbjKPOgg (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Nov 2023 06:53:55 -0500
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27ACB193
-        for <linux-tegra@vger.kernel.org>; Thu, 16 Nov 2023 03:53:52 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r3avq-0003lL-PZ; Thu, 16 Nov 2023 12:53:14 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r3avk-009RKv-1F; Thu, 16 Nov 2023 12:53:08 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r3avj-002aey-NF; Thu, 16 Nov 2023 12:53:07 +0100
-Date:   Thu, 16 Nov 2023 12:53:07 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Arnd Bergmann <arnd@arndb.de>, soc@kernel.org
-Cc:     Jay Fang <f.fangjian@huawei.com>, Rob Herring <robh@kernel.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Tony Lindgren <tony@atomide.com>,
-        "Sicelo A. Mhlongo" <absicsz@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Liu Ying <victor.liu@nxp.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Nick Alcock <nick.alcock@oracle.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Yangtao Li <frank.li@vivo.com>, Yuan Can <yuancan@huawei.com>,
+        Thu, 16 Nov 2023 09:36:36 -0500
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E8C7D4B;
+        Thu, 16 Nov 2023 06:36:33 -0800 (PST)
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6d67d32adc2so453120a34.2;
+        Thu, 16 Nov 2023 06:36:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1700145392; x=1700750192;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hQe83AHexfh3GazMLDTY5AyEL167MohegfRBMKLl7I8=;
+        b=gNgC8dPRqLpw2x9mM5EFEyinbYSiySY+yTYN5Cu0s8Bap4S+L5cfNbYGyTh9YixSso
+         sLdKjQOqZyNphUb5EAIJSkEOtBu37K7JkAeBUcZB92nPzMXLT3dm3enWGxXQeixZXGyN
+         PiKol+kvyAtt0NmCupHw4grxx7aizpbEdPIEbiuSei039njKHok+Ja1oWK9o17bom+2m
+         bfVMzzzOLVb7invMry6VkDlmfZZff0C22pFj7INoJ1vibbfj5FrrE9FxeDZieAJcbyId
+         5aPr5n2jAU1325SdWHLtxbT6BW/ZqsXtpD2h41lhNPJdA+M73cmUdh/pKdKn023c7EDV
+         YGcA==
+X-Gm-Message-State: AOJu0YzZwOPeuoAheeJhryleNtZZTA97BCQnndpTQNQJXCW5s/WXFjLo
+        DIDdY19R4xTkyCrZ39zLw8M=
+X-Google-Smtp-Source: AGHT+IHU4Lxx+/myT+H5YB5iQwSXHLDIA41zmD2u+pjBktk3mb+GPBhIH+yVJJ2/AO7NCTzQtZy56A==
+X-Received: by 2002:a05:6830:10c7:b0:6c4:ae52:9599 with SMTP id z7-20020a05683010c700b006c4ae529599mr9476568oto.7.1700145392505;
+        Thu, 16 Nov 2023 06:36:32 -0800 (PST)
+Received: from localhost ([2600:380:7a60:430d:7a98:972a:884d:31ff])
+        by smtp.gmail.com with ESMTPSA id l2-20020a9d7082000000b006cd099bb052sm912460otj.1.2023.11.16.06.36.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Nov 2023 06:36:32 -0800 (PST)
+Date:   Thu, 16 Nov 2023 06:36:30 -0800
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     acpica-devel@lists.linux.dev,
+        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+        Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Dexuan Cui <decui@microsoft.com>, devicetree@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>, iommu@lists.linux.dev,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-snps-arc@lists.infradead.org, linux-tegra@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Hector Martin <marcan@marcan.st>,
+        Palmer Dabbelt <palmer@dabbelt.com>, patches@lists.linux.dev,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Sven Peter <sven@svenpeter.dev>,
         Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-tegra@vger.kernel.org,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        linux-sunxi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: [PULL] bus: Convert to platform remove callback returning void
-Message-ID: <20231116115307.32rovgcej2s5pe4r@pengutronix.de>
-References: <20231109202830.4124591-1-u.kleine-koenig@pengutronix.de>
- <1e5e1008-707b-449a-9dbf-48324eb2b248@app.fastmail.com>
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Krishna Reddy <vdumpa@nvidia.com>,
+        Vineet Gupta <vgupta@kernel.org>,
+        virtualization@lists.linux.dev, Wei Liu <wei.liu@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Moritz Fischer <mdf@kernel.org>,
+        Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 12/17] iommu: Make iommu_ops_from_fwnode() static
+Message-ID: <ZVYo7s_dV9HDm1qU@archbook>
+References: <0-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
+ <12-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uz4ywpyf2v5xtmw3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1e5e1008-707b-449a-9dbf-48324eb2b248@app.fastmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <12-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-
---uz4ywpyf2v5xtmw3
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello Arnd,
-
-On Fri, Nov 10, 2023 at 07:32:01AM +0100, Arnd Bergmann wrote:
-> On Thu, Nov 9, 2023, at 21:28, Uwe Kleine-K=F6nig wrote:
-> > this series converts all drivers below drivers/bus to struct
-> > platform_driver::remove_new(). See commit 5c5a7680e67b ("platform:
-> > Provide a remove callback that returns no value") for an extended
-> > explanation and the eventual goal.
-> >
-> > drivers/bus/fsl-mc was already addressed earlier with a separate
-> > series[1].
-> >
-> > All conversations are trivial, because all .remove() callbacks returned
-> > zero unconditionally.
-> >
-> > Some of the drivers touched here don't have a maintainer and there is no
-> > maintainer for all of drivers/bus. It would be great if someone could p=
-ick up
-> > the whole series, maybe Arnd might do that?
->=20
-> Sure, please send a pull request to soc@kernel.org if there
-> are no further comments.
-
-here it comes:
-
-The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
-
-  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
-
-are available in the Git repository at:
-
-  https://git.pengutronix.de/git/ukl/linux tags/bus-platform-remove-void
-
-for you to fetch changes up to 7d6da8800a35d2257ff8b4b7d7c4551978f0a71a:
-
-  bus: ts-nbus: Convert to platform remove callback returning void (2023-11=
--16 12:43:57 +0100)
-
-----------------------------------------------------------------
-This series converts all drivers below drivers/bus to struct
-platform_driver::remove_new(). See commit 5c5a7680e67b ("platform:
-Provide a remove callback that returns no value") for an extended
-explanation and the eventual goal.
-
-After the initial simplification in commit 864acca58000 ("bus: fsl-mc:
-Drop if block with always false condition") all conversations are
-trivial because the remove callbacks all return zero unconditionally.
-
-----------------------------------------------------------------
-Uwe Kleine-K=F6nig (14):
-      bus: fsl-mc: Drop if block with always false condition
-      bus: fsl-mc: Convert to platform remove callback returning void
-      bus: hisi_lpc: Convert to platform remove callback returning void
-      bus: omap-ocp2scp: Convert to platform remove callback returning void
-      bus: omap_l3_smx: Convert to platform remove callback returning void
-      bus: qcom-ssc-block-bus: Convert to platform remove callback returnin=
-g void
-      bus: simple-pm-bus: Convert to platform remove callback returning void
-      bus: sun50i-de2: Convert to platform remove callback returning void
-      bus: sunxi-rsb: Convert to platform remove callback returning void
-      bus: tegra-aconnect: Convert to platform remove callback returning vo=
-id
-      bus: tegra-gmi: Convert to platform remove callback returning void
-      bus: ti-pwmss: Convert to platform remove callback returning void
-      bus: ti-sysc: Convert to platform remove callback returning void
-      bus: ts-nbus: Convert to platform remove callback returning void
-
- drivers/bus/fsl-mc/fsl-mc-bus.c  | 16 +++-------------
- drivers/bus/hisi_lpc.c           |  6 ++----
- drivers/bus/omap-ocp2scp.c       |  6 ++----
- drivers/bus/omap_l3_smx.c        |  6 ++----
- drivers/bus/qcom-ssc-block-bus.c |  6 ++----
- drivers/bus/simple-pm-bus.c      |  7 +++----
- drivers/bus/sun50i-de2.c         |  5 ++---
- drivers/bus/sunxi-rsb.c          |  6 ++----
- drivers/bus/tegra-aconnect.c     |  6 ++----
- drivers/bus/tegra-gmi.c          |  6 ++----
- drivers/bus/ti-pwmss.c           |  5 ++---
- drivers/bus/ti-sysc.c            |  6 ++----
- drivers/bus/ts-nbus.c            |  6 ++----
- 13 files changed, 28 insertions(+), 59 deletions(-)
-
-Thanks for considering these changes,
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---uz4ywpyf2v5xtmw3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVWAqIACgkQj4D7WH0S
-/k4d1gf/TpLJMgm0K7phGR6IWiPk7QZqX2jnAbl6qyTi+9xjRHbuz/D4C7zAO46l
-ZHY9vIM/qpv5F+ym/qOFKjh1byHDqtIdhJiICka50uHZfsH7LhgPtrf6O3sUWzeu
-iA2Rv+ntUK7EabnEka/zzepJYvXPUiulla0N7to+syQffGo24ialHAubU9e2BztQ
-q78IWAu/LKAgcMT6uxHCELNmTMuORFiN+DI2T4wVwbzLGh8IinScezVi1pmRREDI
-gZTzC0dqmgDbLT57PFwpRRDWUrzj+B2HIzBd6BcZiG3eR6JQID4Z2ahfCDQTMM0o
-9HDdblXjmhubXbN71G1MA0Mi7knPWQ==
-=u4Db
------END PGP SIGNATURE-----
-
---uz4ywpyf2v5xtmw3--
+On Wed, Nov 15, 2023 at 10:06:03AM -0400, Jason Gunthorpe wrote:
+> There are no external callers now.
+> 
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+Reviewed-by: Moritz Fischer <mdf@kernel.org>
+> ---
+>  drivers/iommu/iommu.c | 3 ++-
+>  include/linux/iommu.h | 7 -------
+>  2 files changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 5af98cad06f9ef..ea6aede326131e 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -2928,7 +2928,8 @@ bool iommu_default_passthrough(void)
+>  }
+>  EXPORT_SYMBOL_GPL(iommu_default_passthrough);
+>  
+> -const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+> +static const struct iommu_ops *
+> +iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+>  {
+>  	const struct iommu_ops *ops = NULL;
+>  	struct iommu_device *iommu;
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 72ec71bd31a376..05c5ad6bad6339 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -831,7 +831,6 @@ static inline void iommu_fwspec_free(struct device *dev)
+>  	dev->iommu->fwspec = NULL;
+>  }
+>  int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids);
+> -const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode);
+>  int iommu_fwspec_append_ids(struct iommu_fwspec *fwspec, u32 *ids, int num_ids);
+>  
+>  static inline struct iommu_fwspec *dev_iommu_fwspec_get(struct device *dev)
+> @@ -1187,12 +1186,6 @@ static inline int iommu_fwspec_add_ids(struct device *dev, u32 *ids,
+>  	return -ENODEV;
+>  }
+>  
+> -static inline
+> -const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+> -{
+> -	return NULL;
+> -}
+> -
+>  static inline int
+>  iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
+>  {
+> -- 
+> 2.42.0
+> 
