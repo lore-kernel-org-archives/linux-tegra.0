@@ -2,150 +2,206 @@ Return-Path: <linux-tegra-owner@vger.kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384F5C197A0
-	for <linux-tegra@archiver.kernel.org>; Thu, 16 Nov 2023 14:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331AAC197A0
+	for <linux-tegra@archiver.kernel.org>; Fri, 17 Nov 2023 10:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344167AbjKPOgh (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Thu, 16 Nov 2023 09:36:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54406 "EHLO
+        id S235701AbjKQKih (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
+        Fri, 17 Nov 2023 05:38:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235365AbjKPOgg (ORCPT
+        with ESMTP id S234972AbjKQKig (ORCPT
         <rfc822;linux-tegra@vger.kernel.org>);
-        Thu, 16 Nov 2023 09:36:36 -0500
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E8C7D4B;
-        Thu, 16 Nov 2023 06:36:33 -0800 (PST)
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6d67d32adc2so453120a34.2;
-        Thu, 16 Nov 2023 06:36:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700145392; x=1700750192;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hQe83AHexfh3GazMLDTY5AyEL167MohegfRBMKLl7I8=;
-        b=gNgC8dPRqLpw2x9mM5EFEyinbYSiySY+yTYN5Cu0s8Bap4S+L5cfNbYGyTh9YixSso
-         sLdKjQOqZyNphUb5EAIJSkEOtBu37K7JkAeBUcZB92nPzMXLT3dm3enWGxXQeixZXGyN
-         PiKol+kvyAtt0NmCupHw4grxx7aizpbEdPIEbiuSei039njKHok+Ja1oWK9o17bom+2m
-         bfVMzzzOLVb7invMry6VkDlmfZZff0C22pFj7INoJ1vibbfj5FrrE9FxeDZieAJcbyId
-         5aPr5n2jAU1325SdWHLtxbT6BW/ZqsXtpD2h41lhNPJdA+M73cmUdh/pKdKn023c7EDV
-         YGcA==
-X-Gm-Message-State: AOJu0YzZwOPeuoAheeJhryleNtZZTA97BCQnndpTQNQJXCW5s/WXFjLo
-        DIDdY19R4xTkyCrZ39zLw8M=
-X-Google-Smtp-Source: AGHT+IHU4Lxx+/myT+H5YB5iQwSXHLDIA41zmD2u+pjBktk3mb+GPBhIH+yVJJ2/AO7NCTzQtZy56A==
-X-Received: by 2002:a05:6830:10c7:b0:6c4:ae52:9599 with SMTP id z7-20020a05683010c700b006c4ae529599mr9476568oto.7.1700145392505;
-        Thu, 16 Nov 2023 06:36:32 -0800 (PST)
-Received: from localhost ([2600:380:7a60:430d:7a98:972a:884d:31ff])
-        by smtp.gmail.com with ESMTPSA id l2-20020a9d7082000000b006cd099bb052sm912460otj.1.2023.11.16.06.36.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Nov 2023 06:36:32 -0800 (PST)
-Date:   Thu, 16 Nov 2023 06:36:30 -0800
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     acpica-devel@lists.linux.dev,
-        Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dexuan Cui <decui@microsoft.com>, devicetree@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>, iommu@lists.linux.dev,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-snps-arc@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Hector Martin <marcan@marcan.st>,
-        Palmer Dabbelt <palmer@dabbelt.com>, patches@lists.linux.dev,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Sven Peter <sven@svenpeter.dev>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Krishna Reddy <vdumpa@nvidia.com>,
-        Vineet Gupta <vgupta@kernel.org>,
-        virtualization@lists.linux.dev, Wei Liu <wei.liu@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Zhenhua Huang <quic_zhenhuah@quicinc.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 12/17] iommu: Make iommu_ops_from_fwnode() static
-Message-ID: <ZVYo7s_dV9HDm1qU@archbook>
-References: <0-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
- <12-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
+        Fri, 17 Nov 2023 05:38:36 -0500
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E80ACD4D;
+        Fri, 17 Nov 2023 02:38:31 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FOvqTZHVa4lix9syKPt4shcH6LhMRPDZw1e0+ylWsTrxINMD0nTLyRF58kM2Q5De3VRP+RKs6Q3CKWUZZoGyL6D+okUujGwZ0zvIb4SV76R32K/rwHly0u9zDA/8dnukBvf9Q6Gga3hYsuNRT+qpdEeUqodNLPsdOTpXteHQ8b5E7LkHcJYwxjpqS2CLwfMAkYgC64mub2BYnJJWjHh+uxNfdHIjQZgbqaOSoq8luVIe9zRY9LIliHYPvqVB9iV9F9zDpLwB/TIFVMOAQ0jCFVI701eia1/EiqhERLmazcGbJuatO8UOEr0Tph+FoUuPiTM0eJkDc7wYRacx2yYyag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y4J6mzjOC51bHlnWkNkFsK9sqod8LcIKsIgJMP2rilM=;
+ b=U5pPLPj4ppN7lrn6A8NFt2LpiYDzFWW/R2fV3diODXYkTzqYDH9P70lUNpRLNJXYk5mC+AXhWPGF9WvN3fm0QQrtrQazZZKcSR862H4VNKTTkS+x799WVy55lD8Tdt/rlbIAxKu8lMXLKhTHwCdSCcvObUNxmZjnYIlneHj3wHlpeRjE5ziSl209J9vlmWxycCKsyGQ8JOZIreL+Bve6OW9NNg7YmUtQZsDIJYc9SMm2jmMS+Z/hEMVIbKGQmtAC08W6v9r53plmU1mk4X8eHj88o1iDJkdBgsb88OIJfFOVL97qvGLwM51bnUtIuMiN1kwVSNF6Ewjs9P6zuLLbWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y4J6mzjOC51bHlnWkNkFsK9sqod8LcIKsIgJMP2rilM=;
+ b=ogThwPXgWw3SQEATS0Surun68KUaGVHcNRflO0fhazsmuHOtDC59os6EyO3dmfoqievs2YBgE0xNTq2VDAgETj6dJreaCATq47uIsUV2yTpPIjXlhurlSLnTXZeyVa1XHoG5vnG7arpTWH2ZnSoVtTzD2OeODQ0Ctb4mmViuwEKqGLEMntBj10EJYgCVSemMvH5Pkxye0a4Wtkq1fi2ouH2U80HCzEfdPX2sA5fJYAeqVYGBDEShdrfPsSbfXz08A8bZnqOqglzmDJ1TZUTBk2InAYoaCrBwagEmYQ3pySEtLJCH2qKf5RoXAg/Z8GaSB1ySHkOZdLIOWnyWD38Tdg==
+Received: from PA7P264CA0009.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:2d3::7)
+ by SJ0PR12MB6759.namprd12.prod.outlook.com (2603:10b6:a03:44b::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7002.18; Fri, 17 Nov
+ 2023 10:38:26 +0000
+Received: from SN1PEPF0002BA4F.namprd03.prod.outlook.com
+ (2603:10a6:102:2d3:cafe::25) by PA7P264CA0009.outlook.office365.com
+ (2603:10a6:102:2d3::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7002.21 via Frontend
+ Transport; Fri, 17 Nov 2023 10:38:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SN1PEPF0002BA4F.mail.protection.outlook.com (10.167.242.72) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7025.12 via Frontend Transport; Fri, 17 Nov 2023 10:38:24 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 17 Nov
+ 2023 02:38:10 -0800
+Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 17 Nov
+ 2023 02:38:05 -0800
+Message-ID: <027b049d-28ad-fd13-d581-cda86041f7b6@nvidia.com>
+Date:   Fri, 17 Nov 2023 16:08:02 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [Patch v6 2/2] ACPI: processor: reduce CPUFREQ thermal reduction
+ pctg for Tegra241
+Content-Language: en-US
+To:     Sudeep Holla <sudeep.holla@arm.com>
+CC:     <rafael@kernel.org>, <rui.zhang@intel.com>, <lenb@kernel.org>,
+        <lpieralisi@kernel.org>, <guohanjun@huawei.com>,
+        <linux-acpi@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <treding@nvidia.com>,
+        <jonathanh@nvidia.com>, <bbasu@nvidia.com>, <sanjayc@nvidia.com>,
+        <ksitaraman@nvidia.com>, <srikars@nvidia.com>,
+        <jbrasen@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
+References: <20231109183322.28039-1-sumitg@nvidia.com>
+ <20231109183322.28039-3-sumitg@nvidia.com> <20231110101507.GB1505974@bogus>
+From:   Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <20231110101507.GB1505974@bogus>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4F:EE_|SJ0PR12MB6759:EE_
+X-MS-Office365-Filtering-Correlation-Id: 638cfd6e-01e9-4762-62fa-08dbe7595396
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: NMFSR15VS7sZh6mSZ5NK3XHbqYMLI3oQ1WPDXgsPNZTPkmKdYuilEPNUOlGd+GnxKJBgJ2NAeYkMIPo4JMeB963jrHN68DOQA/Tt9Hs26B/ETj5PYP5hnsE5M/vRrnZPqijnue4xElocWBx/OD2bLtLyW32fftMw4bDw2mEInVa4XNBdPEp3f4gw5Ea7WYlCOhuUGavzqN0B6ky2ihVoImWJgskQkYb4oEqsLej+ZpvV9W3qdHxhsWagQN8q1nuywURI2Xf2iy4II6qu5o2jWUBsGzIllh7qWxC9QDK3cwxiaIIjpUrR5c0mn+vpLehzCOV9KWviQ+YxeZ6LQFNB+CE2C6k+JeZkLx0BhpOeAfq1lcZ9D10Bf065kcBkOxHpY9vqasty5DU0wkGX69DSJhU0VoqPZOVZBOAeA8wQ2wE2S/oKD/8AVCAcNigkWW1+jUZ57lYQbwsWEQozHS0KzS99rX4JP7mV6dXSGp/fUJCDcMX7+sDxhkrOrZQLYfNCEpSPk5EltPX7b3mzB2m2Ab+Y7FZbHJO7dIOIwt07bPBraqLVFnDBLMsPVMt+1ti13ajYQQz4n248J7CR0dYDu1lyqO9oteTY/BSH/FSd+tVE1f80gfuFSNCfEwo30+Kxmjwe1xAFPSz9cylaG2qOOR10y0CqYw6kPx/DASNk9ihIcd0zvshMHUu47ofKvGoMTXjK1NmZ6vuaa+Nn0PBFUYApwhhrMTYu2Y24Z+lzuEca9LroKS7V+cH8cDexfjyNLeol9bPkONHPhaY2T6ChHw==
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(376002)(39860400002)(396003)(136003)(230922051799003)(64100799003)(186009)(1800799009)(82310400011)(451199024)(40470700004)(36840700001)(46966006)(2616005)(36756003)(36860700001)(40480700001)(107886003)(8676002)(2906002)(4326008)(8936002)(31686004)(82740400003)(16526019)(26005)(83380400001)(41300700001)(426003)(356005)(47076005)(7636003)(336012)(6666004)(6916009)(316002)(16576012)(54906003)(70206006)(70586007)(86362001)(7416002)(40460700003)(5660300002)(478600001)(31696002)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2023 10:38:24.2121
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 638cfd6e-01e9-4762-62fa-08dbe7595396
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SN1PEPF0002BA4F.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6759
 Precedence: bulk
 List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
 
-On Wed, Nov 15, 2023 at 10:06:03AM -0400, Jason Gunthorpe wrote:
-> There are no external callers now.
+
+>> Current implementation of processor_thermal performs software throttling
+>> in fixed steps of "20%" which can be too coarse for some platforms.
+>> We observed some performance gain after reducing the throttle percentage.
+>> Change the CPUFREQ thermal reduction percentage and maximum thermal steps
+>> to be configurable. Also, update the default values of both for Nvidia
+>> Tegra241 (Grace) SoC. The thermal reduction percentage is reduced to "5%"
+>> and accordingly the maximum number of thermal steps are increased as they
+>> are derived from the reduction percentage.
+>>
+>> Signed-off-by: Srikar Srimath Tirumala <srikars@nvidia.com>
+>> Co-developed-by: Sumit Gupta <sumitg@nvidia.com>
+>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>> ---
+>>   drivers/acpi/arm64/Makefile          |  1 +
+>>   drivers/acpi/arm64/thermal_cpufreq.c | 22 +++++++++++++
+>>   drivers/acpi/internal.h              |  9 +++++
+>>   drivers/acpi/processor_thermal.c     | 49 +++++++++++++++++++++++-----
+>>   4 files changed, 72 insertions(+), 9 deletions(-)
+>>   create mode 100644 drivers/acpi/arm64/thermal_cpufreq.c
+>>
+>> diff --git a/drivers/acpi/arm64/Makefile b/drivers/acpi/arm64/Makefile
+>> index 143debc1ba4a..726944648c9b 100644
+>> --- a/drivers/acpi/arm64/Makefile
+>> +++ b/drivers/acpi/arm64/Makefile
+>> @@ -5,3 +5,4 @@ obj-$(CONFIG_ACPI_GTDT)       += gtdt.o
+>>   obj-$(CONFIG_ACPI_APMT)      += apmt.o
+>>   obj-$(CONFIG_ARM_AMBA)               += amba.o
+>>   obj-y                                += dma.o init.o
+>> +obj-y                                += thermal_cpufreq.o
+>> diff --git a/drivers/acpi/arm64/thermal_cpufreq.c b/drivers/acpi/arm64/thermal_cpufreq.c
+>> new file mode 100644
+>> index 000000000000..40d5806ed528
+>> --- /dev/null
+>> +++ b/drivers/acpi/arm64/thermal_cpufreq.c
+>> @@ -0,0 +1,22 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +#include <linux/acpi.h>
+>> +
+>> +#include "../internal.h"
+>> +
+>> +#ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
+>> +#define SMCCC_SOC_ID_T241      0x036b0241
 > 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-Reviewed-by: Moritz Fischer <mdf@kernel.org>
-> ---
->  drivers/iommu/iommu.c | 3 ++-
->  include/linux/iommu.h | 7 -------
->  2 files changed, 2 insertions(+), 8 deletions(-)
+> Sorry for missing this earlier. Not sure if the above define needs to be
+> conditional. Even if it has to be, CONFIG_ARM_SMCCC_SOC_ID is more
+> appropriate.
 > 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 5af98cad06f9ef..ea6aede326131e 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -2928,7 +2928,8 @@ bool iommu_default_passthrough(void)
->  }
->  EXPORT_SYMBOL_GPL(iommu_default_passthrough);
->  
-> -const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
-> +static const struct iommu_ops *
-> +iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
->  {
->  	const struct iommu_ops *ops = NULL;
->  	struct iommu_device *iommu;
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 72ec71bd31a376..05c5ad6bad6339 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -831,7 +831,6 @@ static inline void iommu_fwspec_free(struct device *dev)
->  	dev->iommu->fwspec = NULL;
->  }
->  int iommu_fwspec_add_ids(struct device *dev, u32 *ids, int num_ids);
-> -const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode);
->  int iommu_fwspec_append_ids(struct iommu_fwspec *fwspec, u32 *ids, int num_ids);
->  
->  static inline struct iommu_fwspec *dev_iommu_fwspec_get(struct device *dev)
-> @@ -1187,12 +1186,6 @@ static inline int iommu_fwspec_add_ids(struct device *dev, u32 *ids,
->  	return -ENODEV;
->  }
->  
-> -static inline
-> -const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
-> -{
-> -	return NULL;
-> -}
-> -
->  static inline int
->  iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
->  {
-> -- 
-> 2.42.0
+
+Will remove the ifdef.
+
+>> +
+>> +int acpi_arch_thermal_cpufreq_pctg(void)
+>> +{
+>> +     s32 soc_id = arm_smccc_get_soc_id_version();
+>> +
+>> +     /*
+>> +      * Check JEP106 code for NVIDIA Tegra241 chip (036b:0241) and
+>> +      * reduce the CPUFREQ Thermal reduction percentage to 5%.
+>> +      */
+>> +     if (soc_id == SMCCC_SOC_ID_T241)
+>> +             return 5;
+>> +
+>> +     return 0;
+>> +}
+>> +#endif
+>> diff --git a/drivers/acpi/internal.h b/drivers/acpi/internal.h
+>> index 866c7c4ed233..ee213a8cddc5 100644
+>> --- a/drivers/acpi/internal.h
+>> +++ b/drivers/acpi/internal.h
+>> @@ -85,6 +85,15 @@ bool acpi_scan_is_offline(struct acpi_device *adev, bool uevent);
+>>   acpi_status acpi_sysfs_table_handler(u32 event, void *table, void *context);
+>>   void acpi_scan_table_notify(void);
+>>
+>> +#ifdef CONFIG_HAVE_ARM_SMCCC_DISCOVERY
 > 
+> It looks weird to add a such specific ARM config option in generic ACPI
+> code/header.
+> 
+> Does it make sense to add some new config this new feature you are adding
+> or just use ARM64 and have CONFIG_HAVE_ARM_SMCCC_DISCOVERY check internally
+> in the arch specific call.
+> 
+> --
+> Regards,
+> Sudeep
+
+Ok, will use CONFIG_ARM64 instead.
+I think we don't need to check for CONFIG_HAVE_ARM_SMCCC_DISCOVERY 
+inside the arch call as it returns zero if the soc_id value is different 
+from Tegra241.
+
+Best Regards,
+Sumit Gupta
+
+
+
