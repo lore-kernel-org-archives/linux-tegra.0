@@ -1,181 +1,166 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ddZv4SPR"
-Received: from mail-ua1-x931.google.com (mail-ua1-x931.google.com [IPv6:2607:f8b0:4864:20::931])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30056BC;
-	Mon, 20 Nov 2023 17:17:47 -0800 (PST)
-Received: by mail-ua1-x931.google.com with SMTP id a1e0cc1a2514c-7c143044625so1665359241.1;
-        Mon, 20 Nov 2023 17:17:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1700529466; x=1701134266; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EGmXn5CKggOy3q7NTIoSqYnfOjlh20rWLQ9IBsAKDA0=;
-        b=ddZv4SPRwUdCMvK2XSlEZ2ec65W180Qh64LnlGVyCj7qYkE+ZNPD+dH0Soy12tKptw
-         h38seOvxIJ+uzRZSNAFM8sI2AyocvZ4qmnBAQZTjL16umfUUfW9f+fZ512za0BDgd/SO
-         dNj3M03GJu2T4VFqh213urVPkJ8Irz2mrVBN60/5J3c9lNTEHIN77A48N3pxHTwkBArR
-         EMPFEOcCIxonRDPKy0SHIJdzFQ7ezE0xcWwas0dgJ9lVorUHylKUvfQgBLHC/cWhMK1w
-         9878BAXXf296idguMV8E/zvI6+Y6MdrFdWtQhh/cBtdzrRhI51nItIuWyhlmWJapIWHi
-         dsRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700529466; x=1701134266;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EGmXn5CKggOy3q7NTIoSqYnfOjlh20rWLQ9IBsAKDA0=;
-        b=X8BZZq8DTw6aPwnYxX4DNFLIaDT6amuQohDaq8Qa2cL3Vw45E0AlhhB4nyIlZ/xTTP
-         99I7JdDoHd9SoHKnXy4GE5rcOz8DA2GHThJ+6D3cZAfOHg6800kXxz9tdKvJxOtWzcqz
-         hSKsO/HiInmHJ/R4QQ4uyouENkvrttuUa8oe/Tq5BWuCv95QnNFoh8snoW1WyvSVhkUk
-         Bl1jXJSW1kS1mkvFgPQOcpCQkd6oUM8dG+61Y9TeKMRG7eLUlC3A590srZ9Z0y5zEWxv
-         sAVA8GR4K036rkG/ZBpAItZxnqH0OCOUSHTQUiKYWVCtu8ZBubk2wqRfKCOn64BBZVgu
-         QRQQ==
-X-Gm-Message-State: AOJu0YxrY5FuvGKKjb5ON2Xjp11ci3lh+zdpnZ4GaAEINd4pmqQdjtsk
-	jsMPSgTK2J7yKwO39+4ha59Wbhdp4Ux0tw==
-X-Google-Smtp-Source: AGHT+IH4yvMfT5ZViqlXyz8d4XoznDEEdpFcjJCiKurqj9qJF+62XmoN9YfZy7w1HBAEF5/tmx8ioA==
-X-Received: by 2002:a67:fd50:0:b0:462:99ec:8f50 with SMTP id g16-20020a67fd50000000b0046299ec8f50mr4006091vsr.32.1700529466170;
-        Mon, 20 Nov 2023 17:17:46 -0800 (PST)
-Received: from localhost ([2607:fea8:529e:7800::80ec])
-        by smtp.gmail.com with ESMTPSA id pe6-20020a056214494600b0064f4e0b2089sm3464205qvb.33.2023.11.20.17.17.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Nov 2023 17:17:45 -0800 (PST)
-Date: Mon, 20 Nov 2023 20:17:41 -0500
-From: Richard Acayan <mailingradian@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Helge Deller <deller@gmx.de>,
-	Robert Foss <rfoss@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] fbdev/simplefb: Add support for generic
- power-domains
-Message-ID: <ZVwFNfkqjrvhFHM0@radian>
-References: <20231101172017.3872242-1-thierry.reding@gmail.com>
- <20231101172017.3872242-3-thierry.reding@gmail.com>
+	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="yBZ7Udel"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BEDF90;
+	Mon, 20 Nov 2023 22:48:03 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: marcan@marcan.st)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id EDDAF42137;
+	Tue, 21 Nov 2023 06:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+	t=1700549281; bh=ujaYq3QQkb3U4N6JNFFQq4uH4QKQpO8RJp9aJVbB0w0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=yBZ7Udel893+M2pzDMgdTushmaUgXq0nIf/5xxASROF107adcyenfoQIJKpJop3QE
+	 1+yTIUhVbWxOP7swSXHE/1waIz+ytnfqIeOR+pXsrjnxJ9YDy9OcehudknnZZfDU0W
+	 yBoxtsLq/eITHB2A8C7zHMk/QpuQDhn54/ueeppNZr5bacp1NBly8id6vI/+HcZLF9
+	 Y3o89xan9Av9novKYwloiJeRxCXK4RdvbSm3KrREtUx62PnuC+h7WkJf1goRn4PDd/
+	 8BaauSYV42Ok4T8UBbrfnw8aItI789XfEb5enuqF6bZ2I7QNWWCAUkdCy2CTlvEfD+
+	 wJAB4I2ql495A==
+Message-ID: <90855bbf-e845-4e4d-a713-df71d1e477d2@marcan.st>
+Date: Tue, 21 Nov 2023 15:47:48 +0900
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231101172017.3872242-3-thierry.reding@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/17] iommu: Add iommu_fwspec_alloc/dealloc()
+Content-Language: en-US
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: acpica-devel@lists.linux.dev, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+ Catalin Marinas <catalin.marinas@arm.com>, Dexuan Cui <decui@microsoft.com>,
+ devicetree@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+ Frank Rowand <frowand.list@gmail.com>, Hanjun Guo <guohanjun@huawei.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, iommu@lists.linux.dev,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ "K. Y. Srinivasan" <kys@microsoft.com>, Len Brown <lenb@kernel.org>,
+ linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-hyperv@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-snps-arc@lists.infradead.org,
+ linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, patches@lists.linux.dev,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Robert Moore <robert.moore@intel.com>, Rob Herring <robh+dt@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Krishna Reddy <vdumpa@nvidia.com>, Vineet Gupta <vgupta@kernel.org>,
+ virtualization@lists.linux.dev, Wei Liu <wei.liu@kernel.org>,
+ Will Deacon <will@kernel.org>
+References: <6-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
+ <20a7ef6d-a8ca-4bd8-ad7e-11856db617a2@marcan.st>
+ <1eb12c35-e64e-4c32-af99-8743dc2ec266@marcan.st>
+ <20231119141329.GA6083@nvidia.com>
+From: Hector Martin <marcan@marcan.st>
+In-Reply-To: <20231119141329.GA6083@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-On Wed, Nov 01, 2023 at 06:20:17PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> The simple-framebuffer device tree bindings document the power-domains
-> property, so make sure that simplefb supports it. This ensures that the
-> power domains remain enabled as long as simplefb is active.
->
-> v2: - remove unnecessary call to simplefb_detach_genpds() since that's
->       already done automatically by devres
->     - fix crash if power-domains property is missing in DT
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/video/fbdev/simplefb.c | 93 ++++++++++++++++++++++++++++++++++
->  1 file changed, 93 insertions(+)
->
-> diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
-> index 18025f34fde7..fe682af63827 100644
-> --- a/drivers/video/fbdev/simplefb.c
-> +++ b/drivers/video/fbdev/simplefb.c
-> @@ -25,6 +25,7 @@
->  #include <linux/of_clk.h>
->  #include <linux/of_platform.h>
->  #include <linux/parser.h>
-> +#include <linux/pm_domain.h>
->  #include <linux/regulator/consumer.h>
->  
->  static const struct fb_fix_screeninfo simplefb_fix = {
-> @@ -78,6 +79,11 @@ struct simplefb_par {
->  	unsigned int clk_count;
->  	struct clk **clks;
->  #endif
-> +#if defined CONFIG_OF && defined CONFIG_PM_GENERIC_DOMAINS
-> +	unsigned int num_genpds;
 
-This is the cause of the crash that occurred on the older patch series.
-The field is unsigned, a deviation from v6.6:drivers/remoteproc/imx_rproc.c.
+On 2023/11/19 23:13, Jason Gunthorpe wrote:
+> On Sun, Nov 19, 2023 at 06:19:43PM +0900, Hector Martin wrote:
+>>>> +static int iommu_fwspec_assign_iommu(struct iommu_fwspec *fwspec,
+>>>> +				     struct device *dev,
+>>>> +				     struct fwnode_handle *iommu_fwnode)
+>>>> +{
+>>>> +	const struct iommu_ops *ops;
+>>>> +
+>>>> +	if (fwspec->iommu_fwnode) {
+>>>> +		/*
+>>>> +		 * fwspec->iommu_fwnode is the first iommu's fwnode. In the rare
+>>>> +		 * case of multiple iommus for one device they must point to the
+>>>> +		 * same driver, checked via same ops.
+>>>> +		 */
+>>>> +		ops = iommu_ops_from_fwnode(iommu_fwnode);
+>>>
+>>> This carries over a related bug from the original code: If a device has
+>>> two IOMMUs and the first one probes but the second one defers, ops will
+>>> be NULL here and the check will fail with EINVAL.
+>>>
+>>> Adding a check for that case here fixes it:
+>>>
+>>> 		if (!ops)
+>>> 			return driver_deferred_probe_check_state(dev);
+> 
+> Yes!
+> 
+>>> With that, for the whole series:
+>>>
+>>> Tested-by: Hector Martin <marcan@marcan.st>
+>>>
+>>> I can't specifically test for the probe races the series intends to fix
+>>> though, since that bug we only hit extremely rarely. I'm just testing
+>>> that nothing breaks.
+>>
+>> Actually no, this fix is not sufficient. If the first IOMMU is ready
+>> then the xlate path allocates dev->iommu, which then
+>> __iommu_probe_device takes as a sign that all IOMMUs are ready and does
+>> the device init.
+> 
+> It doesn't.. The code there is:
+> 
+> 	if (!fwspec && dev->iommu)
+> 		fwspec = dev->iommu->fwspec;
+> 	if (fwspec)
+> 		ops = fwspec->ops;
+> 	else
+> 		ops = dev->bus->iommu_ops;
+> 	if (!ops) {
+> 		ret = -ENODEV;
+> 		goto out_unlock;
+> 	}
+> 
+> Which is sensitive only to !NULL fwspec, and if EPROBE_DEFER is
+> returned fwspec will be freed and dev->iommu->fwspec will be NULL
+> here.
+> 
+> In the NULL case it does a 'bus probe' with a NULL fwspec and all the
+> fwspec drivers return immediately from their probe functions.
+> 
+> Did I miss something?
 
-Instead of making it signed, this version emits an error whenever the
-count is negative.
+apple_dart is not a fwspec driver and doesn't do that :-)
 
-> +	struct device **genpds;
-> +	struct device_link **genpd_links;
-> +#endif
->  #if defined CONFIG_OF && defined CONFIG_REGULATOR
->  	bool regulators_enabled;
->  	u32 regulator_count;
-> @@ -432,6 +438,89 @@ static void simplefb_regulators_enable(struct simplefb_par *par,
->  static void simplefb_regulators_destroy(struct simplefb_par *par) { }
->  #endif
->  
-> +#if defined CONFIG_OF && defined CONFIG_PM_GENERIC_DOMAINS
-> +static void simplefb_detach_genpds(void *res)
-> +{
-> +	struct simplefb_par *par = res;
-> +	unsigned int i = par->num_genpds;
-> +
-> +	if (par->num_genpds <= 1)
-> +		return;
-> +
-> +	while (i--) {
-> +		if (par->genpd_links[i])
-> +			device_link_del(par->genpd_links[i]);
-> +
-> +		if (!IS_ERR_OR_NULL(par->genpds[i]))
-> +			dev_pm_domain_detach(par->genpds[i], true);
-> +	}
-> +}
-> +
-> +static int simplefb_attach_genpds(struct simplefb_par *par,
-> +				  struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	unsigned int i;
-> +	int err;
-> +
-> +	err = of_count_phandle_with_args(dev->of_node, "power-domains",
-> +					 "#power-domain-cells");
-> +	if (err < 0) {
-> +		dev_info(dev, "failed to parse power-domains: %d\n", err);
-> +		return err;
+> 
+>> Then when the xlate comes along again after suceeding
+>> with the second IOMMU, __iommu_probe_device sees the device is already
+>> in a group and never initializes the second IOMMU, leaving the device
+>> with only one IOMMU.
+> 
+> This should be fixed by the first hunk to check every iommu and fail?
+> 
+> BTW, do you have a systems with same device attached to multiple
+> iommus?
 
-This error path is taken when there is no power-domains property in the
-device tree with err = -ENOENT.
+Yes, Apple ARM64 machines all have multiple ganged IOMMUs for certain
+devices (USB and ISP). We also attach all display IOMMUs to the global
+virtual display-subsystem device to handle framebuffer mappings, instead
+of trying to dynamically map them to a bunch of individual display
+controllers (which is a lot more painful). That last one is what
+reliably reproduces this problem, display breaks without both previous
+patches ever since we started supporting more than one display output.
+The first one is not enough.
 
-Strangely, this does not suppress the error like the next if statement,
-even though it is possible that nothing is wrong.
+> I've noticed another bug here, many drivers don't actually support
+> differing iommu instances and nothing seems to check it..
 
-> +	}
-> +
-> +	par->num_genpds = err;
-> +
-> +	/*
-> +	 * Single power-domain devices are handled by the driver core, so
-> +	 * nothing to do here.
-> +	 */
-> +	if (par->num_genpds <= 1)
-> +		return 0;
-> +
-> +	par->genpds = devm_kcalloc(dev, par->num_genpds, sizeof(*par->genpds),
-> +				   GFP_KERNEL);
-<snip>
-> @@ -518,6 +607,10 @@ static int simplefb_probe(struct platform_device *pdev)
->  	if (ret < 0)
->  		goto error_clocks;
->  
-> +	ret = simplefb_attach_genpds(par, pdev);
-> +	if (ret < 0)
-> +		goto error_regulators;
+apple-dart does (as long as all the IOMMUs are using that driver).
 
-With the error case specified above, not specifying power-domains (which
-is valid according to dtschema) causes the entire driver to fail
-whenever there are no power domains in the device tree.
+> 
+> Thanks,
+> Jason
+> 
+> 
 
-On google-sargo, this causes a bug where the framebuffer fails to probe:
-
-    [    0.409290] simple-framebuffer 9c000000.framebuffer: failed to parse power-domains: -2
-    [    0.409340] simple-framebuffer: probe of 9c000000.framebuffer failed with error -2
+- Hector
