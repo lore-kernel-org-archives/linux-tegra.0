@@ -1,107 +1,43 @@
-Return-Path: <linux-tegra-owner@vger.kernel.org>
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8545DC197A0
-	for <linux-tegra@archiver.kernel.org>; Mon, 20 Nov 2023 21:23:37 +0000 (UTC)
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229759AbjKTVXj (ORCPT <rfc822;linux-tegra@archiver.kernel.org>);
-        Mon, 20 Nov 2023 16:23:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60168 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbjKTVXj (ORCPT
-        <rfc822;linux-tegra@vger.kernel.org>);
-        Mon, 20 Nov 2023 16:23:39 -0500
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75E60D2
-        for <linux-tegra@vger.kernel.org>; Mon, 20 Nov 2023 13:23:35 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r5Bjr-0004El-AH; Mon, 20 Nov 2023 22:23:27 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r5Bjq-00AR9R-B5; Mon, 20 Nov 2023 22:23:26 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1r5Bjq-004dnV-1t; Mon, 20 Nov 2023 22:23:26 +0100
-Date:   Mon, 20 Nov 2023 22:23:25 +0100
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Luca Ceresoli <luca.ceresoli@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-tegra@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-staging@lists.linux.dev, kernel@pengutronix.de,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH] staging: media: tegra-video: Convert to platform remove
- callback returning void
-Message-ID: <20231120212325.4wbjoys6ez73gtfq@pengutronix.de>
-References: <20231026214739.2509271-2-u.kleine-koenig@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mz5q3snxap7iktcd"
-Content-Disposition: inline
-In-Reply-To: <20231026214739.2509271-2-u.kleine-koenig@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBAE525A
+	for <linux-tegra@vger.kernel.org>; Tue, 21 Nov 2023 01:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pK9834Qs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55308C433C7;
+	Tue, 21 Nov 2023 01:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1700529075;
+	bh=WydedWHI5hgSzmjYaAgFcEvQrWisnvd0Tah1sl3VwoE=;
+	h=Date:From:To:Subject:From;
+	b=pK9834QskxlRe2p3VT9N7Lf6kgXIcz9N0d26iDdRulghXAqX++JKKldjXkjHYXrYg
+	 2DIHH9h+wmWaMjFHVdfiaNP+xGPIfD7GaGaDkXAWYPhls7x+nTbB2d13bdHpzX++eU
+	 1LC1zT9+kaPh4AqsRHURSPflKL6IS0RgEC3+tYpU=
+Date: Mon, 20 Nov 2023 20:11:14 -0500
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: linux-tegra@vger.kernel.org
+Subject: PSA: this list has moved to new vger infra (no action required)
+Message-ID: <20231120-military-bullmastiff-of-action-db3b71@nitro>
 Precedence: bulk
-List-ID: <linux-tegra.vger.kernel.org>
 X-Mailing-List: linux-tegra@vger.kernel.org
-
-
---mz5q3snxap7iktcd
-Content-Type: text/plain; charset=iso-8859-1
+List-Id: <linux-tegra.vger.kernel.org>
+List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hello, all:
 
-On Thu, Oct 26, 2023 at 11:47:40PM +0200, Uwe Kleine-K=F6nig wrote:
-> The .remove() callback for a platform driver returns an int which makes
-> many driver authors wrongly assume it's possible to do error handling by
-> returning an error code. However the value returned is ignored (apart
-> from emitting a warning) and this typically results in resource leaks.
->=20
-> To improve here there is a quest to make the remove callback return
-> void. In the first step of this quest all drivers are converted to
-> .remove_new(), which already returns void. Eventually after all drivers
-> are converted, .remove_new() will be renamed to .remove().
->=20
-> Trivially convert the three tegra-video drivers from always returning
-> zero in the remove callback to the void returning variant.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+This list has been migrated to new vger infrastructure. No action is required
+on your part and there should be no change in how you interact with this list.
 
-who feels responsible to pick up this patch?
+This message acts as a verification test that the archives are properly
+updating.
 
-Best regards
-Uwe
+If something isn't working or looking right, please reach out to
+helpdesk@kernel.org.
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---mz5q3snxap7iktcd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVbzk0ACgkQj4D7WH0S
-/k7r5wf8CX9mMyqwzyJ6tpB5hPAG+N8GGNa/IoiYHFr08gcvADUL3t1smIjE85W1
-u3t4a2ZC1tv6u6xDjLAuiz8XPZONpPYaXuNBBHHJpM9jjt4yGB02vI+GhKDyRQ2n
-YoZdAc88NK6YgYT6AMynNTXI09N0GL5V0H1bZj4hNxQZIgbawhqi1dyOW4U7vWXz
-y/TXPuCjDBa9hnPDYHTx37S8ShwXyZ4MK3wiBMVIa4WftBxOJBWP47RPAaOQ8LNq
-aCdH8AcSRoY6/3jmemxjBGfjdtzUl0xYOb6XLD4LoPGLk24L/VKbQz1h5DPa1JAv
-Hc9dKbIEvkS4a0mvzjbw4sTkq1viCw==
-=21Dw
------END PGP SIGNATURE-----
-
---mz5q3snxap7iktcd--
+Best regards,
+-K
