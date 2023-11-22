@@ -1,251 +1,177 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a8LTOuFu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A37D4A1
-	for <linux-tegra@vger.kernel.org>; Wed, 22 Nov 2023 00:42:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700642558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JklgPZMO6OqmeViq25n8y74P+opPCcYmBt1jmDMzJaw=;
-	b=a8LTOuFuUOnKgzxKbq6PXhLg+2RU1//ZUL4RAXfplITjg5R/jEtATAtwme1t2+JrlfY4U0
-	/jx4qdpnKmOGvnqzpcwebndcVl/bjTKc4NfMCsgM2JDVctEIfJooa+EiF7O7U923wBBP4/
-	pmFqIzHtVCAHuAQzChVde01jrpv/CF0=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-465-52CViw7pPXWAVUXigK4OQA-1; Wed, 22 Nov 2023 03:42:37 -0500
-X-MC-Unique: 52CViw7pPXWAVUXigK4OQA-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-544b5d65a1aso4575551a12.2
-        for <linux-tegra@vger.kernel.org>; Wed, 22 Nov 2023 00:42:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700642556; x=1701247356;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JklgPZMO6OqmeViq25n8y74P+opPCcYmBt1jmDMzJaw=;
-        b=Uq3xqGddPRpZfHBG+AEDg8qoN6tRinBylJI3q5piQbuABOgp0FHWGjYaQvZxTb/qIZ
-         c1vyChV3d329ndIcN+v9sc3crRKml46KwuJz4LWwpfGnE4zWpXQn9j3s+pPm8zZAIAzc
-         yB8Dj4hFOISXLd/IWI+whOArKBHdys/3rgiFphWzT+d/pDYsLINXKAqJz8WuZf/aQh3h
-         hiFE7OQvc7hFQQ7xFz90wi3k8hHqDxdbogsV/0HuCRCIbAvEgSIpQ6QQqkroXfYMg2uq
-         v2esF1MMxNbngsoXk8tVPKKlipZW/AiuYpp8cv/1dGABgggFSiSLAXzD8xkGddCktlSY
-         Y6nw==
-X-Gm-Message-State: AOJu0Yyw0VkFiNqBwXqo6oTwuLrOQITj0UBiL7dztvYHJ4NSFdlncWuT
-	b6MtgzbGeNWZTUHJ9hu2BhrUrfCmkf8poQBwodQz0IrNkwzgbEfpB9+NO78F/YGm6tyoAIw7cgo
-	6evTdyj4WickjCFd5Ahgi3SA=
-X-Received: by 2002:a50:ee8e:0:b0:532:bf2a:8cbc with SMTP id f14-20020a50ee8e000000b00532bf2a8cbcmr1074594edr.16.1700642556337;
-        Wed, 22 Nov 2023 00:42:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGxArAdliv8159t4/mg6wNprGb74aZdGoe+N5rfxMIglonZ4sDjt0/8JuUuvDqRR7ldDuvEIg==
-X-Received: by 2002:a50:ee8e:0:b0:532:bf2a:8cbc with SMTP id f14-20020a50ee8e000000b00532bf2a8cbcmr1074578edr.16.1700642555975;
-        Wed, 22 Nov 2023 00:42:35 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id u10-20020aa7db8a000000b00546cf67c348sm5795023edt.59.2023.11.22.00.42.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 00:42:35 -0800 (PST)
-Message-ID: <3e7a7b77-9104-4141-b8a9-3caca05416dd@redhat.com>
-Date: Wed, 22 Nov 2023 09:42:34 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Cwc4M1iy"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2053.outbound.protection.outlook.com [40.107.223.53])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31533D7A;
+	Wed, 22 Nov 2023 04:55:35 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m+R6KrFTsec6eYZBP87jvW6+8mrY/S6W8DNC8UutDE1ewXXmPxR7NMt1Fl3p+M224NYQerOtHUKbV6Z2M3/VICxrnFlOTuA16X9B+QoyBVC6opqsnhDpnHndnde1iEh4HRK3dOPsQOtbdH+lu9erkAPYT3S0/0Fm2dMcRgR5UvM4h5ehUVVO1W4JOM6GxsXlOMmpW08/XfVxJzbxynemKEN5UaonGOKKMd8QaaUoMWkKQthjE1XQos1tbkBzE3zwYQ1CD23+YW7bqDKeUjo2VBql7ymtkwWWP7Cp5iAVcNa3KW1+e6pxbl5Uy3XBnpGucQDza0AQcYLzz0hXxBtPbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MmO4T8d7DZEX8iTwukvKw6VvBoyloUQuRlLhBuYaWek=;
+ b=XRSbExyt9ydV9tSqKClew/ua5p9c9yBMOYmHpbqDvdGG06dpKRb64F9aPy0rphGwGq+4VUfgwis6TKz3k6KhYmxlax0EnvIg33EqSINpFFEWF+aA2Tm54rEVkpMr+QXNa4ThSuh/oOIzx92hG42jzpM1lC74XKSsS1dhnZmelOhZep/UXEx/5XJqrv5U+po7LzztSzouj8lvHj0HUTiGqxzyeQoGVNyZ7kynfmZ32tbismlfVFF2D6UOa+W0hjNDb5yc7VSH3Mtct/WhJBdFX7pcFsDfBbhwBLPI7VTolTLqQ+HLUqF+XNTq6WA+xtEGA8hC7iIExRfG/6Km++Vpqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MmO4T8d7DZEX8iTwukvKw6VvBoyloUQuRlLhBuYaWek=;
+ b=Cwc4M1iym/zi4zAWjc75z1cvRpXl9mIO01cBLOn3D36uprJ2Mvxvd0pzV0j/VcYFyeVzyqbs30lZIDC9XfFSDz8tDD+YtorHMIHY1ETmZ4Wf7sAbGuzTggFvYPP8/T6rpyS81Zy9nFuUjH/Qm1dDhSe+SmyfCfx+i4OOuyFzv8pS5mPkGkIvJx21JTnygJcNkznmGSZPq97d5/xw6GCHdOKWzIEu8mKbB81CCoawC1Q//5TbLLBXc/r/8kZU0plzRnI8g6iwUFFrxl8EdhluUHbEn+bCpbvVyUJcB9XHLB6WlFI7ml0m0I4jZ1jICnKYU+e0Anh4eKn5T9YwTWIjEQ==
+Received: from BL0PR1501CA0027.namprd15.prod.outlook.com
+ (2603:10b6:207:17::40) by MW4PR12MB6682.namprd12.prod.outlook.com
+ (2603:10b6:303:1e3::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.19; Wed, 22 Nov
+ 2023 12:55:31 +0000
+Received: from MN1PEPF0000ECD4.namprd02.prod.outlook.com
+ (2603:10b6:207:17:cafe::b7) by BL0PR1501CA0027.outlook.office365.com
+ (2603:10b6:207:17::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7002.30 via Frontend
+ Transport; Wed, 22 Nov 2023 12:55:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000ECD4.mail.protection.outlook.com (10.167.242.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7025.12 via Frontend Transport; Wed, 22 Nov 2023 12:55:31 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 22 Nov
+ 2023 04:55:17 -0800
+Received: from [10.41.21.79] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 22 Nov
+ 2023 04:55:13 -0800
+Message-ID: <7b4f8911-90ef-8419-78dc-c2bffe9b9a3f@nvidia.com>
+Date: Wed, 22 Nov 2023 18:25:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] fbdev/simplefb: Add support for generic
- power-domains
-To: Richard Acayan <mailingradian@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Helge Deller <deller@gmx.de>,
- Robert Foss <rfoss@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
- linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org
-References: <20231101172017.3872242-1-thierry.reding@gmail.com>
- <20231101172017.3872242-3-thierry.reding@gmail.com> <ZVwFNfkqjrvhFHM0@radian>
- <60319873-e1f5-43b4-aa22-68a5671d413b@redhat.com> <ZV1E1aigUFcLceWK@radian>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <ZV1E1aigUFcLceWK@radian>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [Patch v6 1/2] ACPI: thermal: Add Thermal fast Sampling Period
+ (_TFP) support
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+CC: <rui.zhang@intel.com>, <lenb@kernel.org>, <lpieralisi@kernel.org>,
+	<guohanjun@huawei.com>, <sudeep.holla@arm.com>, <linux-acpi@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <treding@nvidia.com>,
+	<jonathanh@nvidia.com>, <bbasu@nvidia.com>, <sanjayc@nvidia.com>,
+	<ksitaraman@nvidia.com>, <srikars@nvidia.com>, <jbrasen@nvidia.com>, "Sumit
+ Gupta" <sumitg@nvidia.com>
+References: <20231109183322.28039-1-sumitg@nvidia.com>
+ <20231109183322.28039-2-sumitg@nvidia.com>
+ <CAJZ5v0jEXYP-V93XJ02cZ8UbMwKei2E27Sc0He0WnKvNXpUECg@mail.gmail.com>
+Content-Language: en-US
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <CAJZ5v0jEXYP-V93XJ02cZ8UbMwKei2E27Sc0He0WnKvNXpUECg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD4:EE_|MW4PR12MB6682:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1284d936-787c-4e02-9728-08dbeb5a4f86
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	XndK1z4wpVWxhCVO50RS8J2dbL1dCQBU3W68mDm1KX0l7mIhr5QaXcmlrPDvdk6xjLKovb++lRDGwRNF8muQoDR4aMo0IkBLtEL/i795XHo3FdGDSoa8APnBwodGyrpvzpUE3V45dyAd3vLl0PsagjoJNZLrhr49srb3kaNIo7Hragzu9jluCjry/masf80bZONPClOQc1gM+ufmsMkSsU9ERty0KGr66SwFSpu+e11fIO7W1KurqQJwPtsRXd45US7PIDBApJYw2MyFaz7YvAmB53hEZudDvhP7zbyDcYhM2NWFq4oVUQmXRuD9DQmc+E6dPvi47CG71E6E8uAb4cs0UHuslmPEZwpNrrsSB2Fh5JYv8Iyg80Ge1HxhoRYSF3/aJLnIxGMago2zXzDt5J6GlALyqgUWkIJuRxwfUMHt6HlE/HpBalNDqVQf2GR2H4VrVF4S+vEGL4Fsg9ED8AFlwz+Ib4zLZrbAsw9H58zoRoBixsvCJCtDrPgFLQcBZ6N1HCCBkcQBNcj6goRyMTIMYSpfvoDxXbO0zWutSiRGsucz8w/Cst5Dmay2WnqAwP0feYNVdrLtpKF0LAdWdriQQHwBJOH8z5zrV6AmriMVYAZIbBUW5EiNhpxYO8y2ZiQMwzVrPKdWnW9Eem9JpBBIoUMIztnv9G8wuFYI2MEf4K/y4KZ6aiuCbfHqq/wIHOczki9PUSno9QKxxA3dcncktq3brKxJMeqAZ2ajIqltSF2p9b004QROYIN6mY0/4U7YrVMyzHnMLNgSqP45toSKaJR+eprzrklN+K3SI5SET6Vs5suDahJRa3F152Ac
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(376002)(136003)(346002)(39860400002)(396003)(230173577357003)(230922051799003)(230273577357003)(451199024)(82310400011)(1800799012)(64100799003)(186009)(36840700001)(46966006)(40470700004)(40460700003)(7416002)(2906002)(31696002)(86362001)(2616005)(478600001)(8676002)(16526019)(26005)(107886003)(53546011)(54906003)(16576012)(6916009)(316002)(4326008)(36756003)(70586007)(8936002)(70206006)(36860700001)(47076005)(82740400003)(426003)(336012)(7636003)(83380400001)(356005)(5660300002)(41300700001)(31686004)(40480700001)(43740500002);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2023 12:55:31.4986
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1284d936-787c-4e02-9728-08dbeb5a4f86
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000ECD4.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6682
 
-Hi,
 
-On 11/22/23 01:01, Richard Acayan wrote:
-> On Tue, Nov 21, 2023 at 10:01:18AM +0100, Hans de Goede wrote:
->> Hi,
->>
->> On 11/21/23 02:17, Richard Acayan wrote:
->>> Hello,
->>>
->>> On Wed, Nov 01, 2023 at 06:20:17PM +0100, Thierry Reding wrote:
->>>> From: Thierry Reding <treding@nvidia.com>
->>>>
->>>> The simple-framebuffer device tree bindings document the power-domains
->>>> property, so make sure that simplefb supports it. This ensures that the
->>>> power domains remain enabled as long as simplefb is active.
->>>>
->>>> v2: - remove unnecessary call to simplefb_detach_genpds() since that's
->>>>       already done automatically by devres
->>>>     - fix crash if power-domains property is missing in DT
->>>>
->>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>>> ---
->>>>  drivers/video/fbdev/simplefb.c | 93 ++++++++++++++++++++++++++++++++++
->>>>  1 file changed, 93 insertions(+)
->>>>
->>>> diff --git a/drivers/video/fbdev/simplefb.c b/drivers/video/fbdev/simplefb.c
->>>> index 18025f34fde7..fe682af63827 100644
->>>> --- a/drivers/video/fbdev/simplefb.c
->>>> +++ b/drivers/video/fbdev/simplefb.c
->>>> @@ -25,6 +25,7 @@
->>>>  #include <linux/of_clk.h>
->>>>  #include <linux/of_platform.h>
->>>>  #include <linux/parser.h>
->>>> +#include <linux/pm_domain.h>
->>>>  #include <linux/regulator/consumer.h>
->>>>  
->>>>  static const struct fb_fix_screeninfo simplefb_fix = {
->>>> @@ -78,6 +79,11 @@ struct simplefb_par {
->>>>  	unsigned int clk_count;
->>>>  	struct clk **clks;
->>>>  #endif
->>>> +#if defined CONFIG_OF && defined CONFIG_PM_GENERIC_DOMAINS
->>>> +	unsigned int num_genpds;
->>>
->>> This is the cause of the crash that occurred on the older patch series.
->>> The field is unsigned, a deviation from v6.6:drivers/remoteproc/imx_rproc.c.
->>>
->>> Instead of making it signed, this version emits an error whenever the
->>> count is negative.
->>
->> I'm not sure what you are trying to say here ?
+
+On 22/11/23 01:29, Rafael J. Wysocki wrote:
+> External email: Use caution opening links or attachments
 > 
-> In v1 of the patch, there was no error propagation from of_count_phandle_with_args
-> and this field was directly assigned to the return value. This was a
-> problem (the "crash" as mentioned in this patch's changelog) when the
-> return value is negative, since unsigned integers cannot hold negative
-> values. On mainstream architectures, the driver would believe that there
-> is an absurd amount of power domains.
 > 
-> I compared the versions of this patch and figured that the fix to the
-> crash was more error handling.
+> On Thu, Nov 9, 2023 at 7:34 PM Sumit Gupta <sumitg@nvidia.com> wrote:
+>>
+>> From: Jeff Brasen <jbrasen@nvidia.com>
+>>
+>> Add support of "Thermal fast Sampling Period (_TFP)" for Passive cooling.
+>> As per [1], _TFP overrides the "Thermal Sampling Period (_TSP)" if both
+>> are present in a Thermal zone.
+>>
+>> [1] ACPI Specification 6.4 - section 11.4.17. _TFP (Thermal fast Sampling
+>>      Period)"
+>>
+>> Signed-off-by: Jeff Brasen <jbrasen@nvidia.com>
+>> Co-developed-by: Sumit Gupta <sumitg@nvidia.com>
+>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>> ---
+>>   drivers/acpi/thermal.c | 12 +++++++++---
+>>   1 file changed, 9 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+>> index f74d81abdbfc..3b75eb2260d7 100644
+>> --- a/drivers/acpi/thermal.c
+>> +++ b/drivers/acpi/thermal.c
+>> @@ -90,7 +90,7 @@ struct acpi_thermal_passive {
+>>          struct acpi_thermal_trip trip;
+>>          unsigned long tc1;
+>>          unsigned long tc2;
+>> -       unsigned long tsp;
+>> +       unsigned long delay;
+>>   };
+>>
+>>   struct acpi_thermal_active {
+>> @@ -404,11 +404,17 @@ static bool passive_trip_params_init(struct acpi_thermal *tz)
+>>
+>>          tz->trips.passive.tc2 = tmp;
+>>
+>> +       status = acpi_evaluate_integer(tz->device->handle, "_TFP", NULL, &tmp);
+>> +       if (ACPI_SUCCESS(status)) {
+>> +               tz->trips.passive.delay = tmp;
+>> +               return true;
+>> +       }
+>> +
+>>          status = acpi_evaluate_integer(tz->device->handle, "_TSP", NULL, &tmp);
+>>          if (ACPI_FAILURE(status))
+>>                  return false;
+>>
+>> -       tz->trips.passive.tsp = tmp;
+>> +       tz->trips.passive.delay = tmp * 100;
+>>
+>>          return true;
+>>   }
+>> @@ -904,7 +910,7 @@ static int acpi_thermal_add(struct acpi_device *device)
+>>
+>>          acpi_trip = &tz->trips.passive.trip;
+>>          if (acpi_thermal_trip_valid(acpi_trip)) {
+>> -               passive_delay = tz->trips.passive.tsp * 100;
+>> +               passive_delay = tz->trips.passive.delay;
+>>
+>>                  trip->type = THERMAL_TRIP_PASSIVE;
+>>                  trip->temperature = acpi_thermal_temp(tz, acpi_trip->temp_dk);
+>> --
 > 
-> Basically, if "unsigned" was removed, the error handling for the call to
-> of_count_phandle_with_args could be dropped with few consequences.
-
-I see, thank you for explaining.
-
-I believe that actually handling the error is better then storing
-a negative value, so I believe that the fix in v2 is correct.
-
->>>> +	struct device **genpds;
->>>> +	struct device_link **genpd_links;
->>>> +#endif
->>>>  #if defined CONFIG_OF && defined CONFIG_REGULATOR
->>>>  	bool regulators_enabled;
->>>>  	u32 regulator_count;
->>>> @@ -432,6 +438,89 @@ static void simplefb_regulators_enable(struct simplefb_par *par,
->>>>  static void simplefb_regulators_destroy(struct simplefb_par *par) { }
->>>>  #endif
->>>>  
->>>> +#if defined CONFIG_OF && defined CONFIG_PM_GENERIC_DOMAINS
->>>> +static void simplefb_detach_genpds(void *res)
->>>> +{
->>>> +	struct simplefb_par *par = res;
->>>> +	unsigned int i = par->num_genpds;
->>>> +
->>>> +	if (par->num_genpds <= 1)
->>>> +		return;
->>>> +
->>>> +	while (i--) {
->>>> +		if (par->genpd_links[i])
->>>> +			device_link_del(par->genpd_links[i]);
->>>> +
->>>> +		if (!IS_ERR_OR_NULL(par->genpds[i]))
->>>> +			dev_pm_domain_detach(par->genpds[i], true);
->>>> +	}
->>>> +}
->>>> +
->>>> +static int simplefb_attach_genpds(struct simplefb_par *par,
->>>> +				  struct platform_device *pdev)
->>>> +{
->>>> +	struct device *dev = &pdev->dev;
->>>> +	unsigned int i;
->>>> +	int err;
->>>> +
->>>> +	err = of_count_phandle_with_args(dev->of_node, "power-domains",
->>>> +					 "#power-domain-cells");
->>>> +	if (err < 0) {
->>>> +		dev_info(dev, "failed to parse power-domains: %d\n", err);
->>>> +		return err;
->>>
->>> This error path is taken when there is no power-domains property in the
->>> device tree with err = -ENOENT.
->>>
->>> Strangely, this does not suppress the error like the next if statement,
->>> even though it is possible that nothing is wrong.
->>>
->>>> +	}
->>>> +
->>>> +	par->num_genpds = err;
->>>> +
->>>> +	/*
->>>> +	 * Single power-domain devices are handled by the driver core, so
->>>> +	 * nothing to do here.
->>>> +	 */
->>>> +	if (par->num_genpds <= 1)
->>>> +		return 0;
->>>> +
->>>> +	par->genpds = devm_kcalloc(dev, par->num_genpds, sizeof(*par->genpds),
->>>> +				   GFP_KERNEL);
->>> <snip>
->>>> @@ -518,6 +607,10 @@ static int simplefb_probe(struct platform_device *pdev)
->>>>  	if (ret < 0)
->>>>  		goto error_clocks;
->>>>  
->>>> +	ret = simplefb_attach_genpds(par, pdev);
->>>> +	if (ret < 0)
->>>> +		goto error_regulators;
->>>
->>> With the error case specified above, not specifying power-domains (which
->>> is valid according to dtschema) causes the entire driver to fail
->>> whenever there are no power domains in the device tree.
->>>
->>> On google-sargo, this causes a bug where the framebuffer fails to probe:
->>>
->>>     [    0.409290] simple-framebuffer 9c000000.framebuffer: failed to parse power-domains: -2
->>>     [    0.409340] simple-framebuffer: probe of 9c000000.framebuffer failed with error -2
->>
->> Ok so this is a problem, sorry for not catching this during review.
->>
->> I believe that this should be fixed by changing the code to:
->>
->> 	err = of_count_phandle_with_args(dev->of_node, "power-domains",
->> 					 "#power-domain-cells");
->> 	if (err < 0) {
->> 		if (err == -ENOENT)
->> 			return 0;
->>
->> 		dev_info(dev, "failed to parse power-domains: %d\n", err);
->> 		return err;
->> 	}
->>
->> Can you submit a (tested) patch fixing this? Then I'll push it
->> to drm-misc-next right away.
+> So does the second patch in the series really depend on this one?
 > 
-> Okay, will do. If my above response changes the preferred fix, let me
-> know.
+> If not, I can apply it I think.
 
-Please move ahead with the proposed fixed, thank you.
+Yes, this patch can be applied independently. Thank you!
 
-> Thank you for committing to having this fixed.
-
-You're welcome.
-
-Regards,
-
-Hans
-
-
-
+Best Regards,
+Sumit Gupta
