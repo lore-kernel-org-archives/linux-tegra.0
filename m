@@ -1,135 +1,105 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E76E219D;
-	Wed, 22 Nov 2023 05:34:35 -0800 (PST)
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-1d542f05b9aso1068626fac.1;
-        Wed, 22 Nov 2023 05:34:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700660075; x=1701264875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rIuQT6P2ZqLebzsy5/CEWAZOpDUd4LYipSd432nJBas=;
-        b=FfhaYFQb2E5MCtLx7LDJhGNFPfXZmjfWe88ovaU+BFKOraA+hvBskXgxJdcmBEGRzr
-         +RIj3FP2Pw84NWm653ilJC5N1fUTcoEIj9EtSd6tW720AQmDkzGw5cc+4MdM9nBXQpRV
-         d7eh8P+RLuG+hc0GRPuNY55P1TF09IFl8SMUmOQRJZXd4PKJeBfZf7CtZJ88EkUVlz4O
-         GSQad33xq3BJ+yjJ2+CiOM+VkKmbE6cEsqS9aDQFOVBWyuLZbKJQc9oRpu+4vQcAgHhG
-         n1NsBAxnpM6Gk+aupmLj0j0RY7dUwCOK6HiCHYiSfKWo8bYnbdbQGcbC8hOMV6FN7jDO
-         WWfQ==
-X-Gm-Message-State: AOJu0YwjUWrd2FKp/HQlJo9SyG8460y3/Uk6V4VE04nRc9neg6RHc8hM
-	k45z34kdW4IUGaaaTP5/0Fi61MiKUR+nMzGGYTc=
-X-Google-Smtp-Source: AGHT+IHO4Xc/rF2fQLAzIZemKE6Z8t/9X8s1KCk8lA4m3Pr02O8bIkVAxEJWoFXpmxzQdjnG7AHL7y/Vw4yarOuAN4M=
-X-Received: by 2002:a05:6871:724a:b0:1e9:8ab9:11ca with SMTP id
- ml10-20020a056871724a00b001e98ab911camr3149747oac.3.1700660075045; Wed, 22
- Nov 2023 05:34:35 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bf5Nk4oJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.115])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9ABC11F;
+	Wed, 22 Nov 2023 15:23:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1700695422; x=1732231422;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=wLu90c2ONU3nwRPuECsbNVwdI6Y/3s1bCFsGjUjQWds=;
+  b=bf5Nk4oJ25NpqPjcgoH0qyyZwaybM8J+HOuiEmIO+HYRtQc7HJtYqal7
+   Xs6igblHASFh/Y92xTaxgbiG4V3iH0btRpQW8ZIkVrC5Fijb+x6nfUubX
+   kmDfCySXX0xtVXGnB2zosltPyG8fEZmZdgr0egi+j+szfzdU1V1u19SnK
+   B0K0ta1uZwmDnPK+ye3IU6hZVH4wdaN/LF8wPNHFd0jtn1LdujloI3HCd
+   3x5oYtSHQvxUN/dL2QoZVyznAo+5s2Y0cnuuL4oPJt15WKo60XkD73Osx
+   jBZj8XLvkvmJAw82wWq7HTfR3tshGqVD80KOiVry0/Kpqyp39vNQYt9So
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="391935051"
+X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
+   d="scan'208";a="391935051"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 15:23:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10902"; a="760507612"
+X-IronPort-AV: E=Sophos;i="6.04,219,1695711600"; 
+   d="scan'208";a="760507612"
+Received: from amongesa-mobl.ger.corp.intel.com (HELO intel.com) ([10.252.57.132])
+  by orsmga007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2023 15:23:31 -0800
+Date: Thu, 23 Nov 2023 00:23:28 +0100
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Uwe =?iso-8859-15?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Ilpo =?iso-8859-15?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tony Lindgren <tony@atomide.com>, Petr Mladek <pmladek@suse.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Johan Hovold <johan@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Thomas Richard <thomas.richard@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	kernel@pengutronix.de, linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 03/52] serial: 8250: Convert to platform remove callback
+ returning void
+Message-ID: <ZV6NcAXBUcj5wYx8@ashyti-mobl2.lan>
+References: <20231110152927.70601-1-u.kleine-koenig@pengutronix.de>
+ <20231110152927.70601-4-u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231109183322.28039-1-sumitg@nvidia.com> <20231109183322.28039-2-sumitg@nvidia.com>
- <CAJZ5v0jEXYP-V93XJ02cZ8UbMwKei2E27Sc0He0WnKvNXpUECg@mail.gmail.com> <7b4f8911-90ef-8419-78dc-c2bffe9b9a3f@nvidia.com>
-In-Reply-To: <7b4f8911-90ef-8419-78dc-c2bffe9b9a3f@nvidia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 22 Nov 2023 14:34:24 +0100
-Message-ID: <CAJZ5v0g-f8MSyu5Y83c7WvdpAjq9mWBBD9XqMKzZ1rUGmML-+w@mail.gmail.com>
-Subject: Re: [Patch v6 1/2] ACPI: thermal: Add Thermal fast Sampling Period
- (_TFP) support
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, rui.zhang@intel.com, lenb@kernel.org, 
-	lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, 
-	linux-acpi@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	treding@nvidia.com, jonathanh@nvidia.com, bbasu@nvidia.com, 
-	sanjayc@nvidia.com, ksitaraman@nvidia.com, srikars@nvidia.com, 
-	jbrasen@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20231110152927.70601-4-u.kleine-koenig@pengutronix.de>
 
-On Wed, Nov 22, 2023 at 1:55=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> wro=
-te:
->
->
->
-> On 22/11/23 01:29, Rafael J. Wysocki wrote:
-> > External email: Use caution opening links or attachments
-> >
-> >
-> > On Thu, Nov 9, 2023 at 7:34=E2=80=AFPM Sumit Gupta <sumitg@nvidia.com> =
-wrote:
-> >>
-> >> From: Jeff Brasen <jbrasen@nvidia.com>
-> >>
-> >> Add support of "Thermal fast Sampling Period (_TFP)" for Passive cooli=
-ng.
-> >> As per [1], _TFP overrides the "Thermal Sampling Period (_TSP)" if bot=
-h
-> >> are present in a Thermal zone.
-> >>
-> >> [1] ACPI Specification 6.4 - section 11.4.17. _TFP (Thermal fast Sampl=
-ing
-> >>      Period)"
-> >>
-> >> Signed-off-by: Jeff Brasen <jbrasen@nvidia.com>
-> >> Co-developed-by: Sumit Gupta <sumitg@nvidia.com>
-> >> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> >> ---
-> >>   drivers/acpi/thermal.c | 12 +++++++++---
-> >>   1 file changed, 9 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
-> >> index f74d81abdbfc..3b75eb2260d7 100644
-> >> --- a/drivers/acpi/thermal.c
-> >> +++ b/drivers/acpi/thermal.c
-> >> @@ -90,7 +90,7 @@ struct acpi_thermal_passive {
-> >>          struct acpi_thermal_trip trip;
-> >>          unsigned long tc1;
-> >>          unsigned long tc2;
-> >> -       unsigned long tsp;
-> >> +       unsigned long delay;
-> >>   };
-> >>
-> >>   struct acpi_thermal_active {
-> >> @@ -404,11 +404,17 @@ static bool passive_trip_params_init(struct acpi=
-_thermal *tz)
-> >>
-> >>          tz->trips.passive.tc2 =3D tmp;
-> >>
-> >> +       status =3D acpi_evaluate_integer(tz->device->handle, "_TFP", N=
-ULL, &tmp);
-> >> +       if (ACPI_SUCCESS(status)) {
-> >> +               tz->trips.passive.delay =3D tmp;
-> >> +               return true;
-> >> +       }
-> >> +
-> >>          status =3D acpi_evaluate_integer(tz->device->handle, "_TSP", =
-NULL, &tmp);
-> >>          if (ACPI_FAILURE(status))
-> >>                  return false;
-> >>
-> >> -       tz->trips.passive.tsp =3D tmp;
-> >> +       tz->trips.passive.delay =3D tmp * 100;
-> >>
-> >>          return true;
-> >>   }
-> >> @@ -904,7 +910,7 @@ static int acpi_thermal_add(struct acpi_device *de=
-vice)
-> >>
-> >>          acpi_trip =3D &tz->trips.passive.trip;
-> >>          if (acpi_thermal_trip_valid(acpi_trip)) {
-> >> -               passive_delay =3D tz->trips.passive.tsp * 100;
-> >> +               passive_delay =3D tz->trips.passive.delay;
-> >>
-> >>                  trip->type =3D THERMAL_TRIP_PASSIVE;
-> >>                  trip->temperature =3D acpi_thermal_temp(tz, acpi_trip=
-->temp_dk);
-> >> --
-> >
-> > So does the second patch in the series really depend on this one?
-> >
-> > If not, I can apply it I think.
->
-> Yes, this patch can be applied independently. Thank you!
+Hi Uwe,
 
-OK, applied as 6.8 material (with some changelog edits), thanks!
+On Fri, Nov 10, 2023 at 04:29:31PM +0100, Uwe Kleine-König wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is ignored (apart
+> from emitting a warning) and this typically results in resource leaks.
+> 
+> To improve here there is a quest to make the remove callback return
+> void. In the first step of this quest all drivers are converted to
+> .remove_new(), which already returns void. Eventually after all drivers
+> are converted, .remove_new() will be renamed to .remove().
+> 
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+
+Thanks,
+Andi
