@@ -1,127 +1,128 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="o/L6lebv"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2085.outbound.protection.outlook.com [40.107.92.85])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A31C19D;
-	Wed, 22 Nov 2023 22:12:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WZNuIy3E63aBpdEm0B3q6/yVF2MlxWiKklT2kzkVCO7k5vKfFmSSAMpzOew4zRrVRDIHxPd8LjWhtANDnSvm0/LVKjfEuoezEpGNr/um4P4u7JnarLGnpSGE7nK1NE+ZmyqLMx3hS9/ykhz5M2WloyQ6yfBKCPWZoN3SlTaw3NjtRG6mcTxzAFLUABRp/2YrOHCvFAYZtpedJQoOoxF7gythJ2FGnt8aRiNJN/aZHgpDw2JnduPLn6xET9XYlvjpNrYJkrRUdV1OeJklkDJml+CY63mPW375efzaWB9H/CZ0KmS/gycdSgcgjpMpxUbO2tOyH1cCcTt9F9XYwI7oOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DsewroVGgFflXzhuj5kumgX+BUuSSpBaCj+bLWL0rwQ=;
- b=DPZrYQ6VfJxnRozLCOrhFPRcxI4JHl1BQl+GOihpD8UikgLOhRwTmdkDYXe+V39gYaFhAaf0TiTT2VF+IYp5GroAzuOIQh0NRVbgVMiF6PH9sENNsfY7s8rKNV8+twXon8iE4mCVzfz8wBX+0cLDvYRKOXB/sYZSm6B7+MJUM1KD4ohz5VU+ntr2JPOxD8XZLerOO3q2OU8x4PhhcY+i4Cyen+KEAdCd+vBA/3yETkpdsgZXQiai5oKEBJPX61aQnNCMqwLexGXuNx29tMSKKoyoK/8z2O7XLQRlKppLKzUCo6Gug/Iati+dXBNnz6s25pNJHa/K2N8Gy/V4qoCz4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=8bytes.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DsewroVGgFflXzhuj5kumgX+BUuSSpBaCj+bLWL0rwQ=;
- b=o/L6lebvrcHNnDzucTbwJ8eg2CjhkiKo1T65FIWSDGty10xdvkChDFjCz2b5Nn8Uiy7t/uZkUJv3sF0oOG4xQF9j5xV5xKsFBcPqYO3t6b0UeKDjIkxFvMw9JBQ02FN3LzR1OgfQamkLIdVII7r0WCgPeZkNc4H1dqur2kQbJTeC8kjGVZQSVyz9dakDiGG+haSWf1mxm1PdpFILXA4ep03AgSwULK8N991PlEzz+gVtbSJa6z9Rc42u0zVAMOqjL4Z7h8aOrrLSvZZMWMdRzDcW4YxFbA0B5q2TfXOlwiwNGjvxo25x3o4CdzQ5kVXR0juOII7yuo3G0FAGvi6RaA==
-Received: from BY3PR05CA0011.namprd05.prod.outlook.com (2603:10b6:a03:254::16)
- by SA1PR12MB8095.namprd12.prod.outlook.com (2603:10b6:806:33f::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.18; Thu, 23 Nov
- 2023 06:12:20 +0000
-Received: from CO1PEPF000044F3.namprd05.prod.outlook.com
- (2603:10b6:a03:254:cafe::2) by BY3PR05CA0011.outlook.office365.com
- (2603:10b6:a03:254::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.18 via Frontend
- Transport; Thu, 23 Nov 2023 06:12:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000044F3.mail.protection.outlook.com (10.167.241.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7025.12 via Frontend Transport; Thu, 23 Nov 2023 06:12:19 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 22 Nov
- 2023 22:12:07 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 22 Nov
- 2023 22:12:07 -0800
-Received: from amhetre.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.986.41 via Frontend
- Transport; Wed, 22 Nov 2023 22:12:04 -0800
-From: Ashish Mhetre <amhetre@nvidia.com>
-To: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
-	<robh@kernel.org>, <treding@nvidia.com>
-CC: <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, Ashish Mhetre <amhetre@nvidia.com>
-Subject: [PATCH] iommu: Don't reserve IOVA when address and size are zero
-Date: Thu, 23 Nov 2023 11:42:01 +0530
-Message-ID: <20231123061201.16614-1-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-X-NVConfidentiality: public
+	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="bEylMheX"
+Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1015610E;
+	Thu, 23 Nov 2023 01:08:49 -0800 (PST)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: marcan@marcan.st)
+	by mail.marcansoft.com (Postfix) with ESMTPSA id 9BDB241EF0;
+	Thu, 23 Nov 2023 09:08:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
+	t=1700730528; bh=tKvmM8VauJ2SKlC76Ts+IMS9Y0f1D93gbN6PS2aS1RQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=bEylMheXkP1AY7uDhyUgpvOvmafAgnH8kYOyGsGvzSEm3AG0TuKGO12XpHG7pIpPk
+	 7DWjDpQ/2UVGkEBlWmpkMsK+kkFSTbFl2mNZf+evyauyJJjLkxYiIMvQnQZccc7GYl
+	 eyA+fRFKB/4nH2lfKLFZ7jOWf+ZnhEEAdxplIRYiCSC8oH9YCENIvFOPHr97tQOVpS
+	 vFMyIE8sCHGbUWmMQTW6+kNNQZA2kAYPQ/d2k1mzDzQUzP4vU581SpL8b4NQXqoDyL
+	 Nq2SuV6KB6PtAtBepsn6kZamgJlbVvwi56sMxTDqNBWGfHkerXitbj24KAHWAlJH6q
+	 nnb+VrbjJRB5A==
+Message-ID: <ab23469f-19ce-4681-afc9-65518730b51b@marcan.st>
+Date: Thu, 23 Nov 2023 18:08:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F3:EE_|SA1PR12MB8095:EE_
-X-MS-Office365-Filtering-Correlation-Id: 08b28bd9-61a8-4250-ce16-08dbebeb2673
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	8Yww6NmGKgXsHlTMOOYWi9rHDou5qfo1muFvInFrsYpLDyfu017v+39GdiKLRH8IE96et4Lvtrso3+QpEb65w9w2U+uw9X/cfPN9u1eKvWhBrFt2GmrbzqKz4dw3o8/rtkxdSQYcw1AEXDMsbAEB6tAZpctqTHMpLwJ8N7ZsKttn0v0+T7b70WL9Y7he8J+GE8j/9UXqjBvU68+BL8juKfgMWm3omRwZkdNhN082DXcXHQSq3pHShNzdtU5dHkBOHmKnAmSSofKuJnv9X6WdFJipnWsWNXvlmw3OK3DyLoRSlseGMQsboxNNrYK2wdaIg5xCDut8mfTB4RPXQi2T7Deb0udzV0vdgaVlPzAvMDT1wWfFm3rdPQYSdY0hR8PyP5z9ApLi/Tkfe2uPvV9EapGJ6hwm2wrK74Xfdjcl2Wgi9LhudVqeFOqCs7Ted91KlNDnh6/yM8tEFH/JhyC5nybYeAUP36w/PTeQxKvH/KB8w5DN4HGWUjKNEtJdU+/yi4Af9YuzmRvJscybSa4mdftsvOfzhGjnKL3pNDYbRbGh96xJgjC4Gmb9mO4wqy75CR/cJtGfbjTqU3TxcZdA7ytRHE4SGFJZh0yHFKxaJiEjsJ8jP4tldRHaewNs/GtcPNvVhjVyGGGDDs/t+p5gAlZzf3JBLFPpVi4tfHUx/AVPYoLZRKCX5yZ8LWdpX7qmyFz1P5SAnQkWLObYGwa5u3g3c5TR5s1SNZQ+Ca7TUtL5LXlX/gRdOK5zeIrX4PYfqC/eUApFJg0xqjkJxj5Aqg==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(376002)(39860400002)(136003)(396003)(346002)(230922051799003)(451199024)(64100799003)(186009)(82310400011)(1800799012)(36840700001)(40470700004)(46966006)(40460700003)(26005)(107886003)(336012)(6666004)(7696005)(426003)(2616005)(36860700001)(478600001)(4326008)(8936002)(41300700001)(47076005)(8676002)(2906002)(5660300002)(1076003)(316002)(6636002)(70206006)(110136005)(54906003)(70586007)(86362001)(36756003)(82740400003)(356005)(7636003)(40480700001)(66899024)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2023 06:12:19.6460
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08b28bd9-61a8-4250-ce16-08dbebeb2673
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8095
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/17] iommu: Add iommu_fwspec_alloc/dealloc()
+Content-Language: en-US
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: acpica-devel@lists.linux.dev, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+ Catalin Marinas <catalin.marinas@arm.com>, Dexuan Cui <decui@microsoft.com>,
+ devicetree@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
+ Frank Rowand <frowand.list@gmail.com>, Hanjun Guo <guohanjun@huawei.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, iommu@lists.linux.dev,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ "K. Y. Srinivasan" <kys@microsoft.com>, Len Brown <lenb@kernel.org>,
+ linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-hyperv@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-snps-arc@lists.infradead.org,
+ linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, patches@lists.linux.dev,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Robert Moore <robert.moore@intel.com>, Rob Herring <robh+dt@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Krishna Reddy <vdumpa@nvidia.com>, Vineet Gupta <vgupta@kernel.org>,
+ virtualization@lists.linux.dev, Wei Liu <wei.liu@kernel.org>,
+ Will Deacon <will@kernel.org>
+References: <6-v2-36a0088ecaa7+22c6e-iommu_fwspec_jgg@nvidia.com>
+ <20a7ef6d-a8ca-4bd8-ad7e-11856db617a2@marcan.st>
+ <1eb12c35-e64e-4c32-af99-8743dc2ec266@marcan.st>
+ <20231119141329.GA6083@nvidia.com>
+ <90855bbf-e845-4e4d-a713-df71d1e477d2@marcan.st>
+ <20231121160058.GG6083@nvidia.com>
+From: Hector Martin <marcan@marcan.st>
+In-Reply-To: <20231121160058.GG6083@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When the bootloader/firmware doesn't setup the framebuffers, their
-address and size are zero in "iommu-addresses" property. If we intend to
-use display driver in kernel without framebuffer then it's causing
-the display IOMMU mappings to fail as IOVA is reserved with size and
-address as zero.
-An ideal solution would be firmware removing the "iommu-addresses"
-property and corresponding "memory-region" if display is not present.
-But the kernel should be able to handle this by checking for size and
-address of IOVA and skipping the IOVA reservation if both are 0.
+On 2023/11/22 1:00, Jason Gunthorpe wrote:
+> On Tue, Nov 21, 2023 at 03:47:48PM +0900, Hector Martin wrote:
+>>> Which is sensitive only to !NULL fwspec, and if EPROBE_DEFER is
+>>> returned fwspec will be freed and dev->iommu->fwspec will be NULL
+>>> here.
+>>>
+>>> In the NULL case it does a 'bus probe' with a NULL fwspec and all the
+>>> fwspec drivers return immediately from their probe functions.
+>>>
+>>> Did I miss something?
+>>
+>> apple_dart is not a fwspec driver and doesn't do that :-)
+> 
+> It implements of_xlate that makes it a driver using the fwspec probe
+> path.
+> 
+> The issue is in apple-dart. Its logic for avoiding bus probe vs
+> fwspec probe is not correct.
+> 
+> It does:
+> 
+> static int apple_dart_of_xlate(struct device *dev, struct of_phandle_args *args)
+> {
+>  [..]
+>  	dev_iommu_priv_set(dev, cfg);
+> 
+> 
+> Then:
+> 
+> static struct iommu_device *apple_dart_probe_device(struct device *dev)
+> {
+> 	struct apple_dart_master_cfg *cfg = dev_iommu_priv_get(dev);
+> 	struct apple_dart_stream_map *stream_map;
+> 	int i;
+> 
+> 	if (!cfg)
+> 		return ERR_PTR(-ENODEV);
+> 
+> Which leaks the cfg memory on rare error cases and wrongly allows the
+> driver to probe without a fwspec, which I think is what you are
+> hitting.
+> 
+> It should be
+> 
+>        if (!dev_iommu_fwspec_get(dev) || !cfg)
+> 		return ERR_PTR(-ENODEV);
+> 
+> To ensure the driver never probes on the bus path.
+> 
+> Clearing the dev->iommu in the core code has the side effect of
+> clearing (and leaking) the cfg which would hide this issue.
 
-Fixes: a5bf3cfce8cb ("iommu: Implement of_iommu_get_resv_regions()")
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- drivers/iommu/of_iommu.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Aha! Yes, that makes it work with only the first change. I'll throw the
+apple-dart fix into our tree (and submit it once I get to clearing out
+the branch; the affected consumer driver isn't upstream yet so this
+isn't particularly urgent).
 
-diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-index 157b286e36bf..150ef65d357a 100644
---- a/drivers/iommu/of_iommu.c
-+++ b/drivers/iommu/of_iommu.c
-@@ -255,6 +255,10 @@ void of_iommu_get_resv_regions(struct device *dev, struct list_head *list)
- 				size_t length;
- 
- 				maps = of_translate_dma_region(np, maps, &iova, &length);
-+				if (iova == 0 && length == 0) {
-+					dev_dbg(dev, "Skipping IOVA reservation as address and size are zero\n");
-+					continue;
-+				}
- 				type = iommu_resv_region_get_type(dev, &phys, iova, length);
- 
- 				region = iommu_alloc_resv_region(iova, length, prot, type,
--- 
-2.17.1
-
+- Hector
