@@ -1,109 +1,92 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAE7czg6"
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5812FD6;
-	Tue, 28 Nov 2023 03:25:20 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-54af0eca12dso5617002a12.3;
-        Tue, 28 Nov 2023 03:25:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1701170719; x=1701775519; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NNUOJ8uqp2dGRLuoBkbadBA/67h+j2C/uKAs+8CYKXM=;
-        b=cAE7czg6I3oNenklweRaFBjEdrf+2YjUL3e3znEXmQ3+sxR2VTF3qAdLi2p3tySGeA
-         MB6IQd14yIhvlt/3JwhHJ6jRyOLBBdnSWphjpR4+TrC/wlkH4kno93yNerevUhhcwtFD
-         ltE0ryzwVLkeZClWZoAe6qp6pBDt8UfxlDQrlp+/YzqSiiWHWBod8/2M0JjJUVX0R958
-         mt13vNhBFPEoGr17cPhuiMQ8vBKV3bDKqpRRsxy7S/kQMFj4p8fmIL+EQyfuWcnJOPEc
-         MMxIhnA1hGL88vJ9yGx3jW8+bhI9nIbyvbKpL7kPbT7MjRAZTD/KEe5xtZlwl8EIcv1y
-         sJGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701170719; x=1701775519;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NNUOJ8uqp2dGRLuoBkbadBA/67h+j2C/uKAs+8CYKXM=;
-        b=Je81wdYKviKlHsQ8ttWJNcQ6NeZTvih1vRvKakTFFuOd6JFb05KZKm5NR5H6frH18e
-         4jZHmYKERWnYE2xHhrXJehshiaE7kGUn7k3RFKIwc9FNy5jDLb+qxavUld8CE9IqAUXW
-         7XGr/47AGHAV7G5oNsGzn0otmfRuBCAS961kOHRT4xuwLKMGLGwX8SOq/I0MO/T7qDBo
-         ayVpyECjrlaP9u1rnXE4Ivm/PNmQBMJyr31mA55H/jez6DIjd7yC+POVdp6QJnEEQrUP
-         fxsb2N216sgxrH3GBTFV11S2Ec1GGb2rwR4pn7R3Bvw1s5A5POuThZNBmL0qvQazCemL
-         SQfg==
-X-Gm-Message-State: AOJu0Yw6AoLnQNrBVMQ6QSKj6WZefZMGTaShPNW5YTspSrwINVJrkBbr
-	MfncQVECKgoBvFZ7ouhmxao=
-X-Google-Smtp-Source: AGHT+IHqbMoYr9M/PBSf9Q1XSD3aTt9QqOplQiVgAE1r6Wwb8HV4II+bQf9Ppd8QDWo6j6Q7X3fGSg==
-X-Received: by 2002:a17:906:7691:b0:a04:837e:87af with SMTP id o17-20020a170906769100b00a04837e87afmr11132340ejm.33.1701170718549;
-        Tue, 28 Nov 2023 03:25:18 -0800 (PST)
-Received: from orome.fritz.box (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id pw11-20020a17090720ab00b00a0f1025b17asm2417847ejb.130.2023.11.28.03.25.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Nov 2023 03:25:18 -0800 (PST)
-Date: Tue, 28 Nov 2023 12:25:16 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	linux-kernel@vger.kernel.org, Baolu Lu <baolu.lu@linux.intel.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Krishna Reddy <vdumpa@nvidia.com>,
-	Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>,
-	iommu@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2] iommu/tegra-smmu: drop error checking for
- debugfs_create_dir()
-Message-ID: <ZWXOHI48GyIJsdnT@orome.fritz.box>
-References: <20231025152609.2042815-1-dario.binacchi@amarulasolutions.com>
- <ZWRhDMgPCjP_hlZW@8bytes.org>
+Authentication-Results: smtp.subspace.kernel.org; dkim=none
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8AD981A5;
+	Tue, 28 Nov 2023 06:01:56 -0800 (PST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2D431FB;
+	Tue, 28 Nov 2023 06:02:43 -0800 (PST)
+Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.78.69])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E7D003F6C4;
+	Tue, 28 Nov 2023 06:01:55 -0800 (PST)
+Date: Tue, 28 Nov 2023 14:01:54 +0000
+From: Ionela Voinescu <ionela.voinescu@arm.com>
+To: Beata Michalska <beata.michalska@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, sumitg@nvidia.com, sudeep.holla@arm.covm,
+	will@kernel.org, catalin.marinas@arm.com, viresh.kumar@linaro.org,
+	rafael@kernel.org, yang@os.amperecomputing.com,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] cpufreq: Wire-up arch-flavored freq info into
+ cpufreq_verify_current_freq
+Message-ID: <ZWXy0h/fFfQh+Rhy@arm.com>
+References: <20231127160838.1403404-1-beata.michalska@arm.com>
+ <20231127160838.1403404-3-beata.michalska@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nNpisfqc0N5bJikl"
-Content-Disposition: inline
-In-Reply-To: <ZWRhDMgPCjP_hlZW@8bytes.org>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-
-
---nNpisfqc0N5bJikl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20231127160838.1403404-3-beata.michalska@arm.com>
 
-On Mon, Nov 27, 2023 at 10:27:40AM +0100, Joerg Roedel wrote:
-> On Wed, Oct 25, 2023 at 05:25:58PM +0200, Dario Binacchi wrote:
-> > The return value of debugfs_create_dir() should be checked using the
-> > IS_ERR() function. The patch, however, drops the check statement without
-> > fixing it because the subsequent functions (i. e. debugfs_create_file())
-> > can handle the case where `@parent` is an error pointer.
->=20
-> This deserves a comment in the code explaining why no error checking is
-> needed.
+Hi Beata, Sumit,
 
-This is a duplicate of f7da9c081517 ("iommu/tegra-smmu: Drop unnecessary
-error check for for debugfs_create_dir()"), which is already in v6.7-rc1
-so I think we can ignore this one.
+On Monday 27 Nov 2023 at 16:08:38 (+0000), Beata Michalska wrote:
+> From: Sumit Gupta <sumitg@nvidia.com>
+> 
+> When available, use arch_freq_get_on_cpu to obtain current frequency
+> (usually an average reported over given period of time)
+> to better align the cpufreq's view on the current state of affairs.
+> This also automatically pulls in the update for cpuinfo_cur_freq sysfs
+> attribute, aligning it with the scaling_cur_freq one, and thus providing
+> consistent view on relevant platforms.
+> 
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> [BM: Subject & commit msg]
+> Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> ---
+>  drivers/cpufreq/cpufreq.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> index 8c4f9c2f9c44..109559438f45 100644
+> --- a/drivers/cpufreq/cpufreq.c
+> +++ b/drivers/cpufreq/cpufreq.c
+> @@ -1756,7 +1756,8 @@ static unsigned int cpufreq_verify_current_freq(struct cpufreq_policy *policy, b
+>  {
+>  	unsigned int new_freq;
+>  
+> -	new_freq = cpufreq_driver->get(policy->cpu);
+> +	new_freq = arch_freq_get_on_cpu(policy->cpu);
+> +	new_freq = new_freq ?: cpufreq_driver->get(policy->cpu);
 
-Thierry
+Given that arch_freq_get_on_cpu() is an average frequency, it does not
+seem right to me to trigger the sync & update process of
+cpufreq_verify_current_freq() based on it.
 
---nNpisfqc0N5bJikl
-Content-Type: application/pgp-signature; name="signature.asc"
+cpufreq_verify_current_freq() will at least modify the internal state of
+the policy and send PRE and POST notifications, if not do a full frequency
+update, based on this average frequency, which is likely different from
+the current frequency, even beyond the 1MHz threshold.
 
------BEGIN PGP SIGNATURE-----
+While I believe it's okay to return this average frequency in
+cpuinfo_cur_freq, I don't think it should be used as an indication of
+an accurate current frequency, which is what
+cpufreq_verify_current_freq() expects.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmVlzhwACgkQ3SOs138+
-s6HGDRAAgujp8COqpO6Y7LdZQaRa4p7ssRczFgQWmdy2vpheWyCgu7OyKfl+9EHL
-tT5/soH/rqrC0i3oq8qqWHOUjRSYYoIqCGz8j/4y8KkdVYQ8GTto0mp4rtIpB1ie
-g1Cc32zVimxrZHqaxU4K0U6Jq6fWM5WWs12ZCzlbdjl7U8hwD44vNh/kS76Y6JZh
-XNVuTL1ijVskDAdxQLULdoBW7S5qCOWjfDbNbW3v9AxOyr789oW5llERZwddvw5G
-ndiKBnvtfCsA72jGO71z7A/Vg9gXKkfBJLxTsd1aShhOCW/psC3s+jVC27AJ82xo
-giT0rssa9TQlgy4foU+N0JRJ30GODYFF5vRApYREIIHU2bb2qaiG3s6Oavl51gVY
-jdihwdz31vjcHrHcj4lC93AvIjl+N418uzaAjvGPhPrVsOw3qQI5onR4WMQ0ZwP+
-Tk40z9FyDHFQQKpseUo8+S+qrmlUVYZUm950DMA0mzk7d+KpCKEsPswNnTcStsKU
-MnPMzS4w35d8k9JOwfILR5cy5ouXtAwOXbrnKdjLMazFNhlpAYyb3MZgMnCQgLtz
-f97/E56oMdODosYuc5S42wKn8CR5Xmd7vnXy7+DXXg8aS4LubEE5jk1YGAgdHh3V
-A332A20cCAWZKvgFYbE46Tj6A0eQBD4O5edw0bJZxQQofvNYOfY=
-=mBlz
------END PGP SIGNATURE-----
+Sumit, can you give more details on the issue at [1] and why this change
+fixes it?
 
---nNpisfqc0N5bJikl--
+[1] https://lore.kernel.org/lkml/6a5710f6-bfbb-5dfd-11cd-0cd02220cee7@nvidia.com/
+
+Thank you,
+Ionela.
+
+>  	if (!new_freq)
+>  		return 0;
+>  
+> -- 
+> 2.25.1
+> 
