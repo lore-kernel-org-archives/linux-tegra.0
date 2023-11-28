@@ -1,187 +1,204 @@
-Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C4841BE
-	for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 09:50:00 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r82DD-0008Kh-R5; Tue, 28 Nov 2023 18:49:31 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r82DA-00CEE8-AI; Tue, 28 Nov 2023 18:49:28 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1r82DA-00AItg-0H; Tue, 28 Nov 2023 18:49:28 +0100
-Date: Tue, 28 Nov 2023 18:49:27 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Arnd Bergmann <arnd@arndb.de>, soc@kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Tony Lindgren <tony@atomide.com>, Yuan Can <yuancan@huawei.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Rob Herring <robh@kernel.org>, Samuel Holland <samuel@sholland.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>, Chen-Yu Tsai <wens@csie.org>,
-	Andy Gross <agross@kernel.org>, linux-sunxi@lists.linux.dev,
-	Nick Alcock <nick.alcock@oracle.com>,
-	Yangtao Li <frank.li@vivo.com>, Liu Ying <victor.liu@nxp.com>,
-	linux-arm-msm@vger.kernel.org, Jay Fang <f.fangjian@huawei.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-tegra@vger.kernel.org,
-	Linux-OMAP <linux-omap@vger.kernel.org>,
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="alMS/GLI"
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0814F19AD
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 12:49:42 -0800 (PST)
+Received: by mail-qk1-x72f.google.com with SMTP id af79cd13be357-77dbdc184fdso16915585a.1
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 12:49:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1701204581; x=1701809381; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FsBQ1c03W+bPyqjQatoY3AtDcRPwnaylyTF2JWK/6Qg=;
+        b=alMS/GLIxw3ls2/A/aDYm19ouFrvpua3I3pNdCaGjL5qbpXTbOaISDHTzVEPc6fLe7
+         meXRIE1FuyxGSA/zEeg+Jez6cowKKFRllQ4oicINWr9Gtn5uMwhVduMnxw67Njlhktgp
+         vUKyJhK9plRHYks0eU2zL2AYgJAqYLd11S6SrXKzQi2XefE6n2IkloDI6dH5wRyLHqZK
+         uDT+kE5Nuz5RIrQlyn30kWx4hHd/a03pa8oQL+Gewfcb0V6Obd6TR4PAT7knPv4OlZc6
+         ONLo/T0kLcebPBROohbBZA1qrMfO+o2Fkmtp58m9Z585Uft2HzIGDB59sWzmQEvbLGaJ
+         0rvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701204581; x=1701809381;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FsBQ1c03W+bPyqjQatoY3AtDcRPwnaylyTF2JWK/6Qg=;
+        b=eXH4c/XfDSgjGDM1YExLJH+hltAjyEIcpm2pEQfvL2XXmF9GYCByYoTbGMssZRfFhV
+         i8i9wXcHV/8TCBg+mGbcoRycya22WbIWtAc6NN+F9TtBQtpzm4hlattdcmh5IqpUVHFU
+         jtlyKEyz36v3Gve18PZYayOdqqh+B6H7hNZUG19Ip2xvmQnEHYmiF3yRmCD9O+BS7bVR
+         N2pirn7cIwpQbn1/byKwgtOAyKa7EG0ghi8mGTXkoig/TCT6Hiqug18W3TrRgiE41AYY
+         bK5rybQjD3P2MCSKQlTYV5Qsznj6iP4t8T3vO1czMU6GvtbN1S7KkcgnLS3DBah9mGvw
+         4Rog==
+X-Gm-Message-State: AOJu0Yz/EtP649x9Dha/+HQDaVEunYx1DEMgrpBcCVUFlbMXuI8dEMVD
+	ZUdAppno+MVwRU1bqRpeU+ONoA==
+X-Google-Smtp-Source: AGHT+IEGKj81OhPPfZGrAMOrKOsHXDo+wy0whZdL8ikR2KmUyXglOYylmfrRjMDC83oWuy4vndr7lg==
+X-Received: by 2002:a05:620a:1452:b0:77d:c593:f63c with SMTP id i18-20020a05620a145200b0077dc593f63cmr2543824qkl.24.1701204581121;
+        Tue, 28 Nov 2023 12:49:41 -0800 (PST)
+Received: from soleen.c.googlers.com.com (55.87.194.35.bc.googleusercontent.com. [35.194.87.55])
+        by smtp.gmail.com with ESMTPSA id d11-20020a0cfe8b000000b0067a56b6adfesm1056863qvs.71.2023.11.28.12.49.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Nov 2023 12:49:40 -0800 (PST)
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+To: akpm@linux-foundation.org,
+	alex.williamson@redhat.com,
+	alim.akhtar@samsung.com,
+	alyssa@rosenzweig.io,
+	asahi@lists.linux.dev,
+	baolu.lu@linux.intel.com,
+	bhelgaas@google.com,
+	cgroups@vger.kernel.org,
+	corbet@lwn.net,
+	david@redhat.com,
+	dwmw2@infradead.org,
+	hannes@cmpxchg.org,
+	heiko@sntech.de,
+	iommu@lists.linux.dev,
+	jasowang@redhat.com,
+	jernej.skrabec@gmail.com,
+	jgg@ziepe.ca,
+	jonathanh@nvidia.com,
+	joro@8bytes.org,
+	kevin.tian@intel.com,
+	krzysztof.kozlowski@linaro.org,
+	kvm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-	"Sicelo A. Mhlongo" <absicsz@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Andersson <andersson@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PULL v2] bus: Convert to platform remove callback returning void
-Message-ID: <20231128174927.m46dgp4juig2omci@pengutronix.de>
-References: <20231109202830.4124591-1-u.kleine-koenig@pengutronix.de>
- <1e5e1008-707b-449a-9dbf-48324eb2b248@app.fastmail.com>
- <20231116115307.32rovgcej2s5pe4r@pengutronix.de>
+	linux-mm@kvack.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	lizefan.x@bytedance.com,
+	marcan@marcan.st,
+	mhiramat@kernel.org,
+	mst@redhat.com,
+	m.szyprowski@samsung.com,
+	netdev@vger.kernel.org,
+	pasha.tatashin@soleen.com,
+	paulmck@kernel.org,
+	rdunlap@infradead.org,
+	robin.murphy@arm.com,
+	samuel@sholland.org,
+	suravee.suthikulpanit@amd.com,
+	sven@svenpeter.dev,
+	thierry.reding@gmail.com,
+	tj@kernel.org,
+	tomas.mudrunka@gmail.com,
+	vdumpa@nvidia.com,
+	virtualization@lists.linux.dev,
+	wens@csie.org,
+	will@kernel.org,
+	yu-cheng.yu@intel.com
+Subject: [PATCH 00/16] IOMMU memory observability
+Date: Tue, 28 Nov 2023 20:49:22 +0000
+Message-ID: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.43.0.rc2.451.g8631bc7472-goog
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="53zsv2odqs745utj"
-Content-Disposition: inline
-In-Reply-To: <20231116115307.32rovgcej2s5pe4r@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+From: Pasha Tatashin <tatashin@google.com>
 
---53zsv2odqs745utj
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+IOMMU subsystem may contain state that is in gigabytes. Majority of that
+state is iommu page tables. Yet, there is currently, no way to observe
+how much memory is actually used by the iommu subsystem.
 
-Hello Arnd,
+This patch series solves this problem by adding both observability to
+all pages that are allocated by IOMMU, and also accountability, so
+admins can limit the amount if via cgroups.
 
-On Thu, Nov 16, 2023 at 12:53:07PM +0100, Uwe Kleine-K=F6nig wrote:
-> On Fri, Nov 10, 2023 at 07:32:01AM +0100, Arnd Bergmann wrote:
-> > On Thu, Nov 9, 2023, at 21:28, Uwe Kleine-K=F6nig wrote:
-> > > this series converts all drivers below drivers/bus to struct
-> > > platform_driver::remove_new(). See commit 5c5a7680e67b ("platform:
-> > > Provide a remove callback that returns no value") for an extended
-> > > explanation and the eventual goal.
-> > >
-> > > drivers/bus/fsl-mc was already addressed earlier with a separate
-> > > series[1].
-> > >
-> > > All conversations are trivial, because all .remove() callbacks return=
-ed
-> > > zero unconditionally.
-> > >
-> > > Some of the drivers touched here don't have a maintainer and there is=
- no
-> > > maintainer for all of drivers/bus. It would be great if someone could=
- pick up
-> > > the whole series, maybe Arnd might do that?
-> >=20
-> > Sure, please send a pull request to soc@kernel.org if there
-> > are no further comments.
->=20
-> here it comes:
->=20
-> The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa=
-86:
->=20
->   Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+The system-wide observability is using /proc/meminfo:
+SecPageTables:    438176 kB
 
-Here comes an updated PR. The only change is that it also includes two
-Reviewed-by tags for Jernej Skrabec that came in after I sent the PR.
-Obviously that changed the commit hash which made it necessary to redo
-the PR. I hope it doesn't disturb your tooling that there are now two
-similar pull requests.
+Contains IOMMU and KVM memory.
 
-Best regards
-Uwe
+Per-node observability:
+/sys/devices/system/node/nodeN/meminfo
+Node N SecPageTables:    422204 kB
 
-The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
+Contains IOMMU and KVM memory memory in the given NUMA node.
 
-  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
+Per-node IOMMU only observability:
+/sys/devices/system/node/nodeN/vmstat
+nr_iommu_pages 105555
 
-are available in the Git repository at:
+Contains number of pages IOMMU allocated in the given node.
 
-  https://git.pengutronix.de/git/ukl/linux tags/bus-platform-remove-void
+Accountability: using sec_pagetables cgroup-v2 memory.stat entry.
 
-for you to fetch changes up to fc540426f7baa0c7d4b477e80435d075659092a2:
+With the change, iova_stress[1] stops as limit is reached:
 
-  bus: ts-nbus: Convert to platform remove callback returning void (2023-11=
--28 18:43:27 +0100)
+# ./iova_stress
+iova space:     0T      free memory:   497G
+iova space:     1T      free memory:   495G
+iova space:     2T      free memory:   493G
+iova space:     3T      free memory:   491G
 
-----------------------------------------------------------------
-This series converts all drivers below drivers/bus to struct
-platform_driver::remove_new(). See commit 5c5a7680e67b ("platform:
-Provide a remove callback that returns no value") for an extended
-explanation and the eventual goal.
+stops as limit is reached.
 
-After the initial simplification in commit 864acca58000 ("bus: fsl-mc:
-Drop if block with always false condition") all conversations are
-trivial because the remove callbacks all return zero unconditionally.
+This series encorporates suggestions that came from the discussion
+at LPC [2].
 
-----------------------------------------------------------------
-Uwe Kleine-K=F6nig (14):
-      bus: fsl-mc: Drop if block with always false condition
-      bus: fsl-mc: Convert to platform remove callback returning void
-      bus: hisi_lpc: Convert to platform remove callback returning void
-      bus: omap-ocp2scp: Convert to platform remove callback returning void
-      bus: omap_l3_smx: Convert to platform remove callback returning void
-      bus: qcom-ssc-block-bus: Convert to platform remove callback returnin=
-g void
-      bus: simple-pm-bus: Convert to platform remove callback returning void
-      bus: sun50i-de2: Convert to platform remove callback returning void
-      bus: sunxi-rsb: Convert to platform remove callback returning void
-      bus: tegra-aconnect: Convert to platform remove callback returning vo=
-id
-      bus: tegra-gmi: Convert to platform remove callback returning void
-      bus: ti-pwmss: Convert to platform remove callback returning void
-      bus: ti-sysc: Convert to platform remove callback returning void
-      bus: ts-nbus: Convert to platform remove callback returning void
+[1] https://github.com/soleen/iova_stress
+[2] https://lpc.events/event/17/contributions/1466
 
- drivers/bus/fsl-mc/fsl-mc-bus.c  | 16 +++-------------
- drivers/bus/hisi_lpc.c           |  6 ++----
- drivers/bus/omap-ocp2scp.c       |  6 ++----
- drivers/bus/omap_l3_smx.c        |  6 ++----
- drivers/bus/qcom-ssc-block-bus.c |  6 ++----
- drivers/bus/simple-pm-bus.c      |  7 +++----
- drivers/bus/sun50i-de2.c         |  5 ++---
- drivers/bus/sunxi-rsb.c          |  6 ++----
- drivers/bus/tegra-aconnect.c     |  6 ++----
- drivers/bus/tegra-gmi.c          |  6 ++----
- drivers/bus/ti-pwmss.c           |  5 ++---
- drivers/bus/ti-sysc.c            |  6 ++----
- drivers/bus/ts-nbus.c            |  6 ++----
- 13 files changed, 28 insertions(+), 59 deletions(-)
+Pasha Tatashin (16):
+  iommu/vt-d: add wrapper functions for page allocations
+  iommu/amd: use page allocation function provided by iommu-pages.h
+  iommu/io-pgtable-arm: use page allocation function provided by
+    iommu-pages.h
+  iommu/io-pgtable-dart: use page allocation function provided by
+    iommu-pages.h
+  iommu/io-pgtable-arm-v7s: use page allocation function provided by
+    iommu-pages.h
+  iommu/dma: use page allocation function provided by iommu-pages.h
+  iommu/exynos: use page allocation function provided by iommu-pages.h
+  iommu/fsl: use page allocation function provided by iommu-pages.h
+  iommu/iommufd: use page allocation function provided by iommu-pages.h
+  iommu/rockchip: use page allocation function provided by iommu-pages.h
+  iommu/sun50i: use page allocation function provided by iommu-pages.h
+  iommu/tegra-smmu: use page allocation function provided by
+    iommu-pages.h
+  iommu: observability of the IOMMU allocations
+  iommu: account IOMMU allocated memory
+  vhost-vdpa: account iommu allocations
+  vfio: account iommu allocations
 
+ Documentation/admin-guide/cgroup-v2.rst |   2 +-
+ Documentation/filesystems/proc.rst      |   4 +-
+ drivers/iommu/amd/amd_iommu.h           |   8 -
+ drivers/iommu/amd/init.c                |  91 +++++-----
+ drivers/iommu/amd/io_pgtable.c          |  13 +-
+ drivers/iommu/amd/io_pgtable_v2.c       |  20 +-
+ drivers/iommu/amd/iommu.c               |  13 +-
+ drivers/iommu/dma-iommu.c               |   8 +-
+ drivers/iommu/exynos-iommu.c            |  14 +-
+ drivers/iommu/fsl_pamu.c                |   5 +-
+ drivers/iommu/intel/dmar.c              |  10 +-
+ drivers/iommu/intel/iommu.c             |  47 ++---
+ drivers/iommu/intel/iommu.h             |   2 -
+ drivers/iommu/intel/irq_remapping.c     |  10 +-
+ drivers/iommu/intel/pasid.c             |  12 +-
+ drivers/iommu/intel/svm.c               |   7 +-
+ drivers/iommu/io-pgtable-arm-v7s.c      |   9 +-
+ drivers/iommu/io-pgtable-arm.c          |   7 +-
+ drivers/iommu/io-pgtable-dart.c         |  37 ++--
+ drivers/iommu/iommu-pages.h             | 231 ++++++++++++++++++++++++
+ drivers/iommu/iommufd/iova_bitmap.c     |   6 +-
+ drivers/iommu/rockchip-iommu.c          |  14 +-
+ drivers/iommu/sun50i-iommu.c            |   7 +-
+ drivers/iommu/tegra-smmu.c              |  18 +-
+ drivers/vfio/vfio_iommu_type1.c         |   8 +-
+ drivers/vhost/vdpa.c                    |   3 +-
+ include/linux/mmzone.h                  |   5 +-
+ mm/vmstat.c                             |   3 +
+ 28 files changed, 415 insertions(+), 199 deletions(-)
+ create mode 100644 drivers/iommu/iommu-pages.h
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+-- 
+2.43.0.rc2.451.g8631bc7472-goog
 
---53zsv2odqs745utj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVmKCcACgkQj4D7WH0S
-/k66uAf+KEj6yCYL/fZUMESxp+ruHd0CIqqyeqoXs8QJkSZpBYf6q/1nJvHP8UV8
-uwqqXDJ+/qN0XvfzFFY8sBUbw8aZhyPKUsrdXsauHjCYGMwjVDB2fWrmchk8J2cN
-6yS1cKfZjexAhBrZm/02p1b6zTV6AMj3HYKEmTsFmZ3G9FcANo/zOro3prS0M4W6
-79xe6KqnjNr0MCIHeBnnig/94vz408lqk+ebBS25Fy7JIkfsNTGrntTrQ/zbyQ/T
-Oaegx6m+33HBtpLeK/L+dOLBzdSblKXZpSbbKD1NVT1q0aDcfnlXU8CHp080y0u/
-Ppx52VMZg3hOXuwZtKcIZA1COE/NyA==
-=jxQg
------END PGP SIGNATURE-----
-
---53zsv2odqs745utj--
