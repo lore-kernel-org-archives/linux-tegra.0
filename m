@@ -1,155 +1,187 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 00EA91B6;
-	Tue, 28 Nov 2023 07:13:53 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2ADAFC15;
-	Tue, 28 Nov 2023 07:14:41 -0800 (PST)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.78.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53D2F3F6C4;
-	Tue, 28 Nov 2023 07:13:53 -0800 (PST)
-Date: Tue, 28 Nov 2023 15:13:51 +0000
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, sumitg@nvidia.com, sudeep.holla@arm.covm,
-	will@kernel.org, catalin.marinas@arm.com, viresh.kumar@linaro.org,
-	rafael@kernel.org, yang@os.amperecomputing.com,
-	linux-tegra@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v2 1/2] arm64: Provide an AMU-based version of
- arch_freq_get_on_cpu
-Message-ID: <ZWYDr6JJJzBvsqf0@arm.com>
-References: <20231127160838.1403404-2-beata.michalska@arm.com>
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C4841BE
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 09:50:00 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r82DD-0008Kh-R5; Tue, 28 Nov 2023 18:49:31 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r82DA-00CEE8-AI; Tue, 28 Nov 2023 18:49:28 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1r82DA-00AItg-0H; Tue, 28 Nov 2023 18:49:28 +0100
+Date: Tue, 28 Nov 2023 18:49:27 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Arnd Bergmann <arnd@arndb.de>, soc@kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Tony Lindgren <tony@atomide.com>, Yuan Can <yuancan@huawei.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Rob Herring <robh@kernel.org>, Samuel Holland <samuel@sholland.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>, Chen-Yu Tsai <wens@csie.org>,
+	Andy Gross <agross@kernel.org>, linux-sunxi@lists.linux.dev,
+	Nick Alcock <nick.alcock@oracle.com>,
+	Yangtao Li <frank.li@vivo.com>, Liu Ying <victor.liu@nxp.com>,
+	linux-arm-msm@vger.kernel.org, Jay Fang <f.fangjian@huawei.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-tegra@vger.kernel.org,
+	Linux-OMAP <linux-omap@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	"Sicelo A. Mhlongo" <absicsz@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PULL v2] bus: Convert to platform remove callback returning void
+Message-ID: <20231128174927.m46dgp4juig2omci@pengutronix.de>
+References: <20231109202830.4124591-1-u.kleine-koenig@pengutronix.de>
+ <1e5e1008-707b-449a-9dbf-48324eb2b248@app.fastmail.com>
+ <20231116115307.32rovgcej2s5pe4r@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="53zsv2odqs745utj"
 Content-Disposition: inline
-In-Reply-To: <20231127160838.1403404-2-beata.michalska@arm.com>
+In-Reply-To: <20231116115307.32rovgcej2s5pe4r@pengutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
-Hi Beata,
 
-On Monday 27 Nov 2023 at 16:08:37 (+0000), Beata Michalska wrote:
-> With the Frequency Invariance Engine (FIE) being already wired up with
-> sched tick and making use of relevant (core counter and constant
-> counter) AMU counters, getting the current frequency for a given CPU
-> on supported platforms, can be achieved by utilizing the frequency scale
-> factor which reflects an average CPU frequency for the last tick period
-> length.
-> 
-> Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
-> Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
-> 
-> Notes:
->     Due to [1], if merged, there might be a need to modify the patch to
->     accommodate changes [1] introduces:
->     
->     	freq = cpufreq_get_hw_max_freq(cpu) >> SCHED_CAPACITY_SHIFT
->     	to
->     	freq = per_cpu(capacity_freq_ref, cpu); >> SCHED_CAPACITY_SHIFT
->     [1]
->     https://lore.kernel.org/linux-arm-kernel/20231121154349.GA1938@willie-the-truck/T/#mcb018d076dbce6f60ed2779634a9b6ffe622641e
-> 
->  arch/arm64/kernel/topology.c | 39 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 39 insertions(+)
-> 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index 615c1a20129f..ae2445f6e7da 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -17,6 +17,7 @@
->  #include <linux/cpufreq.h>
->  #include <linux/init.h>
->  #include <linux/percpu.h>
-> +#include <linux/sched/isolation.h>
->  
->  #include <asm/cpu.h>
->  #include <asm/cputype.h>
-> @@ -186,6 +187,44 @@ static void amu_scale_freq_tick(void)
->  	this_cpu_write(arch_freq_scale, (unsigned long)scale);
->  }
->  
-> +unsigned int arch_freq_get_on_cpu(int cpu)
-> +{
-> +	unsigned int freq;
-> +	u64 scale;
-> +
-> +	if (!cpumask_test_cpu(cpu, amu_fie_cpus))
-> +		return 0;
-> +
-> +	/*
-> +	 * For those CPUs that are in full dynticks mode, try an alternative
-> +	 * source for the counters (and thus freq scale),
-> +	 * if available for given policy
-> +	 */
-> +	if (!housekeeping_cpu(cpu, HK_TYPE_TICK)) {
-> +		struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-> +		int ref_cpu = nr_cpu_ids;
-> +
-> +		if (cpumask_intersects(housekeeping_cpumask(HK_TYPE_TICK),
-> +				       policy->cpus))
-> +			ref_cpu = cpumask_nth_and(cpu, policy->cpus,
-> +						  housekeeping_cpumask(HK_TYPE_TICK));
-> +		cpufreq_cpu_put(policy);
-> +		if (ref_cpu >= nr_cpu_ids)
-> +			return 0;
-> +		cpu = ref_cpu;
-> +	}
-> +
-> +	/*
-> +	 * Reversed computation to the one used to determine
-> +	 * the arch_freq_scale value
-> +	 * (see amu_scale_freq_tick for details)
-> +	 */
-> +	scale = per_cpu(arch_freq_scale, cpu);
+--53zsv2odqs745utj
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Any reason for not using arch_scale_freq_capacity() here?
+Hello Arnd,
 
-To me it seems a bit nicer to use the "official" function to return the
-frequency scale factor.
+On Thu, Nov 16, 2023 at 12:53:07PM +0100, Uwe Kleine-K=F6nig wrote:
+> On Fri, Nov 10, 2023 at 07:32:01AM +0100, Arnd Bergmann wrote:
+> > On Thu, Nov 9, 2023, at 21:28, Uwe Kleine-K=F6nig wrote:
+> > > this series converts all drivers below drivers/bus to struct
+> > > platform_driver::remove_new(). See commit 5c5a7680e67b ("platform:
+> > > Provide a remove callback that returns no value") for an extended
+> > > explanation and the eventual goal.
+> > >
+> > > drivers/bus/fsl-mc was already addressed earlier with a separate
+> > > series[1].
+> > >
+> > > All conversations are trivial, because all .remove() callbacks return=
+ed
+> > > zero unconditionally.
+> > >
+> > > Some of the drivers touched here don't have a maintainer and there is=
+ no
+> > > maintainer for all of drivers/bus. It would be great if someone could=
+ pick up
+> > > the whole series, maybe Arnd might do that?
+> >=20
+> > Sure, please send a pull request to soc@kernel.org if there
+> > are no further comments.
+>=20
+> here it comes:
+>=20
+> The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa=
+86:
+>=20
+>   Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
 
-> +	freq = cpufreq_get_hw_max_freq(cpu) >> SCHED_CAPACITY_SHIFT;
+Here comes an updated PR. The only change is that it also includes two
+Reviewed-by tags for Jernej Skrabec that came in after I sent the PR.
+Obviously that changed the commit hash which made it necessary to redo
+the PR. I hope it doesn't disturb your tooling that there are now two
+similar pull requests.
 
-Given Vincent's patch at [1] I think here might be best to call
-arch_scale_freq_ref() instead. That's because the frequency scale factor
-will use that frequency as the maximum frequency in its calculations and
-we'd not want to use a different one here.
+Best regards
+Uwe
 
-The annoyance is coping with capacity_freq_ref not having been set
-yet, and that would be easy if capacity_freq_ref was initialized to 0.
-Luckily with Vincent's changes it can now be 0. I'll comments on his
-patches and ask him to make this change.
+The following changes since commit b85ea95d086471afb4ad062012a4d73cd328fa86:
 
-So I think you can safely use arch_scale_freq_ref() here. If
-arch_scale_freq_ref() returns 0, arch_freq_get_on_cpu() will just return
-0 as well.
+  Linux 6.7-rc1 (2023-11-12 16:19:07 -0800)
 
-[1] https://lore.kernel.org/lkml/20231109101438.1139696-8-vincent.guittot@linaro.org/
+are available in the Git repository at:
 
-> +	freq *= scale;
+  https://git.pengutronix.de/git/ukl/linux tags/bus-platform-remove-void
 
-In some scenarios the frequencies visible to cpufreq might not look like
-actual frequencies, but some scaled abstract performance values. One
-example is cppc_cpufreq when one does not provide the optional frequency
-information in the CPC objects but just the performance information.
+for you to fetch changes up to fc540426f7baa0c7d4b477e80435d075659092a2:
 
-Therefore the maximum frequency seen here can be quite a small value, so
-it might be best to do the multiplication first and the shift after that.
+  bus: ts-nbus: Convert to platform remove callback returning void (2023-11=
+-28 18:43:27 +0100)
 
-Thanks,
-Ionela.
+----------------------------------------------------------------
+This series converts all drivers below drivers/bus to struct
+platform_driver::remove_new(). See commit 5c5a7680e67b ("platform:
+Provide a remove callback that returns no value") for an extended
+explanation and the eventual goal.
 
-> +	return freq;
-> +}
-> +
->  static struct scale_freq_data amu_sfd = {
->  	.source = SCALE_FREQ_SOURCE_ARCH,
->  	.set_freq_scale = amu_scale_freq_tick,
-> -- 
-> 2.25.1
-> 
+After the initial simplification in commit 864acca58000 ("bus: fsl-mc:
+Drop if block with always false condition") all conversations are
+trivial because the remove callbacks all return zero unconditionally.
+
+----------------------------------------------------------------
+Uwe Kleine-K=F6nig (14):
+      bus: fsl-mc: Drop if block with always false condition
+      bus: fsl-mc: Convert to platform remove callback returning void
+      bus: hisi_lpc: Convert to platform remove callback returning void
+      bus: omap-ocp2scp: Convert to platform remove callback returning void
+      bus: omap_l3_smx: Convert to platform remove callback returning void
+      bus: qcom-ssc-block-bus: Convert to platform remove callback returnin=
+g void
+      bus: simple-pm-bus: Convert to platform remove callback returning void
+      bus: sun50i-de2: Convert to platform remove callback returning void
+      bus: sunxi-rsb: Convert to platform remove callback returning void
+      bus: tegra-aconnect: Convert to platform remove callback returning vo=
+id
+      bus: tegra-gmi: Convert to platform remove callback returning void
+      bus: ti-pwmss: Convert to platform remove callback returning void
+      bus: ti-sysc: Convert to platform remove callback returning void
+      bus: ts-nbus: Convert to platform remove callback returning void
+
+ drivers/bus/fsl-mc/fsl-mc-bus.c  | 16 +++-------------
+ drivers/bus/hisi_lpc.c           |  6 ++----
+ drivers/bus/omap-ocp2scp.c       |  6 ++----
+ drivers/bus/omap_l3_smx.c        |  6 ++----
+ drivers/bus/qcom-ssc-block-bus.c |  6 ++----
+ drivers/bus/simple-pm-bus.c      |  7 +++----
+ drivers/bus/sun50i-de2.c         |  5 ++---
+ drivers/bus/sunxi-rsb.c          |  6 ++----
+ drivers/bus/tegra-aconnect.c     |  6 ++----
+ drivers/bus/tegra-gmi.c          |  6 ++----
+ drivers/bus/ti-pwmss.c           |  5 ++---
+ drivers/bus/ti-sysc.c            |  6 ++----
+ drivers/bus/ts-nbus.c            |  6 ++----
+ 13 files changed, 28 insertions(+), 59 deletions(-)
+
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--53zsv2odqs745utj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmVmKCcACgkQj4D7WH0S
+/k66uAf+KEj6yCYL/fZUMESxp+ruHd0CIqqyeqoXs8QJkSZpBYf6q/1nJvHP8UV8
+uwqqXDJ+/qN0XvfzFFY8sBUbw8aZhyPKUsrdXsauHjCYGMwjVDB2fWrmchk8J2cN
+6yS1cKfZjexAhBrZm/02p1b6zTV6AMj3HYKEmTsFmZ3G9FcANo/zOro3prS0M4W6
+79xe6KqnjNr0MCIHeBnnig/94vz408lqk+ebBS25Fy7JIkfsNTGrntTrQ/zbyQ/T
+Oaegx6m+33HBtpLeK/L+dOLBzdSblKXZpSbbKD1NVT1q0aDcfnlXU8CHp080y0u/
+Ppx52VMZg3hOXuwZtKcIZA1COE/NyA==
+=jxQg
+-----END PGP SIGNATURE-----
+
+--53zsv2odqs745utj--
