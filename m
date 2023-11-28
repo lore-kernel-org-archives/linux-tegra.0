@@ -1,39 +1,40 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="L2M2Qprf"
-Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 567271998
-	for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 15:08:49 -0800 (PST)
-Received: by mail-qt1-x834.google.com with SMTP id d75a77b69052e-423dcd5e86bso5791441cf.2
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 15:08:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="hAjmDOgU"
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12DDB19B2
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 15:32:58 -0800 (PST)
+Received: by mail-qt1-x832.google.com with SMTP id d75a77b69052e-423a9cb7e80so18586801cf.3
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 15:32:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1701212928; x=1701817728; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZwfH1boRaqUSm7vYG/zdQBuuZhpN21nmfcJNTWlLUDE=;
-        b=L2M2Qprf4E13EmuQfMCiF96aDL6KRUKn30A8AJ9b64X816aPXJAY9oxw7B1ln8iZHi
-         48FDR+YptH8ftAV2+eOX/vl7Oe5bDpdaafnB96VWxqu5tkeNY7SunuexF2cs/fzyj/PF
-         52SOZGEcxMRPEPkYoIZQOTGi2wnFe8v/w1oF10w6RQwekK+EzxkxlYt0qcfzwiJQts+H
-         2tMU1YUY+TjpQSYKZH1l+OlSp3m7dzueKnbvTL7NXjfpV4JEEkxClWrtUUf4jcXVj6jt
-         e7sejvPKLZx1EPf+lDFFwqdwpKQonrOaiVG5Lue0KJdEEO6Oz2qRGuU1t6eH92/gwk6X
-         Cj3w==
+        d=soleen.com; s=google; t=1701214377; x=1701819177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T5E8YxJ+6DFizX8w/tjdr1Q20AjeSOztly1v+T84HO0=;
+        b=hAjmDOgURwcCKRyzsQ2r9G/hrW5XB5oPAgH+truRdM7Ubd9bwhx+SUNOk769wz6aTr
+         VYfsuUmPAUDpDhIramOnNZVkmzbTcE1UjeRmD5rqVTIW9Q/tz+C/MvLNj9eOiZz8qsGp
+         +W6GO2qUsEaJy2fEIylTKL+Xx1ZDQQkwQ0zT405NTPg3borX7TjETTNniEkz183RclQt
+         60Kvw5avLZcFCPd2vHJhiHAi7jNEPvFiNyGXUg6AxM1NyQ95U51usNeoyOM0Xz4qTxwS
+         9F58JT1vDhwM60ZIjXHSSHHZeWT5IrJ4U3G7m2fIhWwODX7PcRzchcRkIZ7xRhpL3pFh
+         TUNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701212928; x=1701817728;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZwfH1boRaqUSm7vYG/zdQBuuZhpN21nmfcJNTWlLUDE=;
-        b=c5zls7vb5NR/Ewr5xYH/rZqL65BCAVZ9SfAEhHOBE/t8LY/gKWevB6/YhjSbGjW1ov
-         KZreumQrlDtLVwrUtCRtyQBNZGPrYhwBDS4V+prf7jD7eCYno2d3r1DR7l6pEUyV7cqj
-         5lN//lHwKh6Q3Vvxc/lMUWUWmGtvJwLx/k837uF+dStVVQTDM2+K82fpNd1BlGtvziu3
-         gU6eKQyQV9HizTzLzfx+7526uZsM9Cd/GmOuH7vkhHrPeORooPiTDahy1I2/TAAPNdus
-         oQKa/sQsy1uCdtgzCsKq6Yz/EhmrdcweI5C2wNOOg4kvHVdr+z8N7snLBZl/IyQMv9aM
-         UwlQ==
-X-Gm-Message-State: AOJu0YxTh5ULgq14VOHpzVu456uoM6zTeJYpo5feNdOPh3+i+Ql03IrQ
-	JBGXiTY5dVM3eBXcHAeOC29k4tsq8K9lUc8zUWUxCA==
-X-Google-Smtp-Source: AGHT+IH+DSzeg4H32kbSmeDdX42LwmFTBbiExz1cQ9Spo9pVMTh9OFSxf1oX9/Sr0tuUo1qYELK4l02okd8aqJLSMys=
-X-Received: by 2002:a05:622a:d2:b0:423:7f91:3a17 with SMTP id
- p18-20020a05622a00d200b004237f913a17mr22124861qtw.21.1701212928489; Tue, 28
- Nov 2023 15:08:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1701214377; x=1701819177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T5E8YxJ+6DFizX8w/tjdr1Q20AjeSOztly1v+T84HO0=;
+        b=mPPNiiVhj12EIWoMpQBQfVi8h64CqUZ+klLdnbRjI2tf5vUknTBoxlpahfp+WoEgr6
+         JjbKVtxqGnV4A9S/ExetAnBAKvRMVfm7Kd2t7oRJDCul2MrIDwDsfSKAkL6F25rRsw2a
+         AOfp//qfDbqVvhx5egp2H4YGmtBweK+LVp+uPLAg+wbHdOAAnhz+giqCXONVIELueR5g
+         BX8ebz+jGK6uPBeQn7/ebihuehOpQZexlwhvAc6qHRDghXiMG2lLeKE/V/t1r6Y//EGE
+         5lIzGRdWhWAIW7aG2UpIwOjHgWcOTYFXiKwYOHbvHfbPAh4HLHTseaWzhi+q4zulLoIb
+         pJ3w==
+X-Gm-Message-State: AOJu0YwGp4sI2hErlN8nmNvBEzsrECT4KHkK9ctEhIFhv+A4Srm4hVkw
+	YL0s9xRD5AHrzEt8Ap/H5cMRyc98w6HY2IHqOx65Kw==
+X-Google-Smtp-Source: AGHT+IEOuxWHhR77aLWnHKpzlrX1TcnL7YFPpFLtYSrpaVGNIqLOq9dSsp5P0HO6NZm9ZocGV6nook5EATgkphMBWlk=
+X-Received: by 2002:ac8:5c06:0:b0:419:a2c6:820e with SMTP id
+ i6-20020ac85c06000000b00419a2c6820emr19578443qti.12.1701214377257; Tue, 28
+ Nov 2023 15:32:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -41,13 +42,14 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
- <20231128204938.1453583-7-pasha.tatashin@soleen.com> <d99e0d4a-94a9-482b-b5b5-833cba518b86@arm.com>
- <CA+CK2bDswtrqiOMt3+0LBb0+7nJY9aBpzZdsmrWRzy9WxBqKEg@mail.gmail.com> <79c397ee-b71b-470e-9184-401b4b96a0d2@arm.com>
-In-Reply-To: <79c397ee-b71b-470e-9184-401b4b96a0d2@arm.com>
+ <20231128204938.1453583-6-pasha.tatashin@soleen.com> <8e1961c9-0359-4450-82d8-2b2fcb2c5557@arm.com>
+ <CA+CK2bDFAi1+397fd4cYetUgmHxqE2hUG4fa2m9Fi3weykQdpA@mail.gmail.com> <6f9ff0aa-7713-4de1-869e-4725828942e4@arm.com>
+In-Reply-To: <6f9ff0aa-7713-4de1-869e-4725828942e4@arm.com>
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 28 Nov 2023 18:08:11 -0500
-Message-ID: <CA+CK2bDZUHSLWB=ec6Jdjbi+y6fD8=j96bK-kPHYKc1uiVLZWw@mail.gmail.com>
-Subject: Re: [PATCH 06/16] iommu/dma: use page allocation function provided by iommu-pages.h
+Date: Tue, 28 Nov 2023 18:32:20 -0500
+Message-ID: <CA+CK2bDKaXqemr2Hp=MRxxMB_=AoRnUK_D2SGm9cDkKa+JaT7A@mail.gmail.com>
+Subject: Re: [PATCH 05/16] iommu/io-pgtable-arm-v7s: use page allocation
+ function provided by iommu-pages.h
 To: Robin Murphy <robin.murphy@arm.com>
 Cc: akpm@linux-foundation.org, alex.williamson@redhat.com, 
 	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
@@ -68,25 +70,30 @@ Cc: akpm@linux-foundation.org, alex.williamson@redhat.com,
 	vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org, 
 	will@kernel.org, yu-cheng.yu@intel.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > This is true, however, we want to account and observe the pages
-> > allocated by IOMMU subsystem for DMA buffers, as they are essentially
-> > unmovable locked pages. Should we separate IOMMU memory from KVM
-> > memory all together and add another field to /proc/meminfo, something
-> > like "iommu -> iommu pagetable and dma memory", or do we want to
-> > export DMA memory separately from IOMMU page tables?
+On Tue, Nov 28, 2023 at 6:08=E2=80=AFPM Robin Murphy <robin.murphy@arm.com>=
+ wrote:
 >
-> These are not allocated by "the IOMMU subsystem", they are allocated by
-> the DMA API. Even if you want to claim that a driver pinning memory via
-> iommu_dma_ops is somehow different from the same driver pinning the same
-> amount of memory via dma-direct when iommu.passthrough=1, it's still
-> nonsense because you're failing to account the pages which iommu_dma_ops
-> gets from CMA, dma_common_alloc_pages(), dynamic SWIOTLB, the various
-> pools, and so on.
+> On 2023-11-28 10:55 pm, Pasha Tatashin wrote:
+> >>>                kmem_cache_free(data->l2_tables, table);
+> >
+> > We only account page allocations, not subpages, however, this is
+> > something I was surprised about this particular architecture of why do
+> > we allocate l2 using kmem ? Are the second level tables on arm v7s
+> > really sub-page in size?
+>
+> Yes, L2 tables are 1KB, so the kmem_cache could still quite easily end
+> up consuming significantly more memory than the L1 table, which is
+> usually 16KB (but could potentially be smaller depending on the config,
+> or up to 64KB with the Mediatek hacks).
 
-I see, IOMMU variants are used only for discontiguous allocations, and
-the common ones are defined outside of driver/iommu. Alright, I can
-remove all the changes for all no-page table related IOMMU
-allocations.
+I am OK removing support for this architecture, or keeping only info
+for L1, I do not think there is a reason to worry about sub-page
+accounting only for v7s.
 
 Pasha
+
+>
+> Thanks,
+> Robin.
