@@ -1,15 +1,15 @@
 Authentication-Results: smtp.subspace.kernel.org; dkim=none
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id E02CAB0;
-	Wed, 29 Nov 2023 08:48:53 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3DA7890;
+	Wed, 29 Nov 2023 09:58:18 -0800 (PST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 96AD0C15;
-	Wed, 29 Nov 2023 08:49:40 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B3AD1474;
+	Wed, 29 Nov 2023 09:59:05 -0800 (PST)
 Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 69D1A3F73F;
-	Wed, 29 Nov 2023 08:48:47 -0800 (PST)
-Message-ID: <52de3aca-41b1-471e-8f87-1a77de547510@arm.com>
-Date: Wed, 29 Nov 2023 16:48:43 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1ABB43F5A1;
+	Wed, 29 Nov 2023 09:58:10 -0800 (PST)
+Message-ID: <788519ac-9ad7-459c-a57d-bfe1ec96db3e@arm.com>
+Date: Wed, 29 Nov 2023 17:58:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -17,105 +17,150 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/16] iommu/fsl: use page allocation function provided by
- iommu-pages.h
+Subject: Re: [PATCH 06/10] iommu: Replace iommu_device_lock with
+ iommu_probe_device_lock
 Content-Language: en-GB
-To: Jason Gunthorpe <jgg@ziepe.ca>, Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alex.williamson@redhat.com,
- alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev,
- baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org,
- corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org,
- heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com,
- jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
- kevin.tian@intel.com, krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st,
- mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com,
- netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org,
- samuel@sholland.org, suravee.suthikulpanit@amd.com, sven@svenpeter.dev,
- thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com,
- vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org,
- will@kernel.org, yu-cheng.yu@intel.com
-References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
- <20231128204938.1453583-9-pasha.tatashin@soleen.com>
- <1c6156de-c6c7-43a7-8c34-8239abee3978@arm.com>
- <CA+CK2bCOtwZxTUS60PHOQ3szXdCzau7OpopgFEbbC6a9Frxafg@mail.gmail.com>
- <20231128235037.GC1312390@ziepe.ca>
+To: Jason Gunthorpe <jgg@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
+ asahi@lists.linux.dev, Catalin Marinas <catalin.marinas@arm.com>,
+ Danilo Krummrich <dakr@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Dexuan Cui <decui@microsoft.com>, devicetree@vger.kernel.org,
+ dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ David Woodhouse <dwmw2@infradead.org>, Frank Rowand
+ <frowand.list@gmail.com>, Hanjun Guo <guohanjun@huawei.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, iommu@lists.linux.dev,
+ Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Karol Herbst <kherbst@redhat.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>, Len Brown <lenb@kernel.org>,
+ linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-hyperv@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-snps-arc@lists.infradead.org,
+ linux-tegra@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, nouveau@lists.freedesktop.org,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Vineet Gupta <vgupta@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Christoph Hellwig <hch@lst.de>,
+ Jerry Snitselaar <jsnitsel@redhat.com>, Hector Martin <marcan@marcan.st>,
+ Moritz Fischer <mdf@kernel.org>, patches@lists.linux.dev,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Rob Herring <robh@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+References: <6-v1-720585788a7d+811b-iommu_fwspec_p1_jgg@nvidia.com>
 From: Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20231128235037.GC1312390@ziepe.ca>
+In-Reply-To: <6-v1-720585788a7d+811b-iommu_fwspec_p1_jgg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 28/11/2023 11:50 pm, Jason Gunthorpe wrote:
-> On Tue, Nov 28, 2023 at 06:00:13PM -0500, Pasha Tatashin wrote:
->> On Tue, Nov 28, 2023 at 5:53 PM Robin Murphy <robin.murphy@arm.com> wrote:
->>>
->>> On 2023-11-28 8:49 pm, Pasha Tatashin wrote:
->>>> Convert iommu/fsl_pamu.c to use the new page allocation functions
->>>> provided in iommu-pages.h.
->>>
->>> Again, this is not a pagetable. This thing doesn't even *have* pagetables.
->>>
->>> Similar to patches #1 and #2 where you're lumping in configuration
->>> tables which belong to the IOMMU driver itself, as opposed to pagetables
->>> which effectively belong to an IOMMU domain's user. But then there are
->>> still drivers where you're *not* accounting similar configuration
->>> structures, so I really struggle to see how this metric is useful when
->>> it's so completely inconsistent in what it's counting :/
->>
->> The whole IOMMU subsystem allocates a significant amount of kernel
->> locked memory that we want to at least observe. The new field in
->> vmstat does just that: it reports ALL buddy allocator memory that
->> IOMMU allocates. However, for accounting purposes, I agree, we need to
->> do better, and separate at least iommu pagetables from the rest.
->>
->> We can separate the metric into two:
->> iommu pagetable only
->> iommu everything
->>
->> or into three:
->> iommu pagetable only
->> iommu dma
->> iommu everything
->>
->> What do you think?
+On 29/11/2023 12:48 am, Jason Gunthorpe wrote:
+> The iommu_device_lock protects the iommu_device_list which is only read by
+> iommu_ops_from_fwnode().
 > 
-> I think I said this at LPC - if you want to have fine grained
-> accounting of memory by owner you need to go talk to the cgroup people
-> and come up with something generic. Adding ever open coded finer
-> category breakdowns just for iommu doesn't make alot of sense.
-> 
-> You can make some argument that the pagetable memory should be counted
-> because kvm counts it's shadow memory, but I wouldn't go into further
-> detail than that with hand coded counters..
+> This is now always called under the iommu_probe_device_lock, so we don't
+> need to double lock the linked list. Use the iommu_probe_device_lock on
+> the write side too.
 
-Right, pagetable memory is interesting since it's something that any 
-random kernel user can indirectly allocate via iommu_domain_alloc() and 
-iommu_map(), and some of those users may even be doing so on behalf of 
-userspace. I have no objection to accounting and potentially applying 
-limits to *that*.
-
-Beyond that, though, there is nothing special about "the IOMMU 
-subsystem". The amount of memory an IOMMU driver needs to allocate for 
-itself in order to function is not of interest beyond curiosity, it just 
-is what it is; limiting it would only break the IOMMU, and if a user 
-thinks it's "too much", the only actionable thing that might help is to 
-physically remove devices from the system. Similar for DMA buffers; it 
-might be intriguing to account those, but it's not really an actionable 
-metric - in the overwhelming majority of cases you can't simply tell a 
-driver to allocate less than what it needs. And that is of course 
-assuming if we were to account *all* DMA buffers, since whether they 
-happen to have an IOMMU translation or not is irrelevant (we'd have 
-already accounted the pagetables as pagetables if so).
-
-I bet "the networking subsystem" also consumes significant memory on the 
-same kind of big systems where IOMMU pagetables would be of any concern. 
-I believe some of the some of the "serious" NICs can easily run up 
-hundreds of megabytes if not gigabytes worth of queues, SKB pools, etc. 
-- would you propose accounting those too?
+Please no, iommu_probe_device_lock() is a hack and we need to remove the 
+*reason* it exists at all. And IMO just because iommu_present() is 
+deprecated doesn't justify making it look utterly nonsensical - in no 
+way does that have any relationship with probe_device, much less need to 
+serialise against it!
 
 Thanks,
 Robin.
+
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> ---
+>   drivers/iommu/iommu.c | 30 +++++++++++++-----------------
+>   1 file changed, 13 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 08f29a1dfcd5f8..9557c2ec08d915 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -146,7 +146,6 @@ struct iommu_group_attribute iommu_group_attr_##_name =		\
+>   	container_of(_kobj, struct iommu_group, kobj)
+>   
+>   static LIST_HEAD(iommu_device_list);
+> -static DEFINE_SPINLOCK(iommu_device_lock);
+>   
+>   static const struct bus_type * const iommu_buses[] = {
+>   	&platform_bus_type,
+> @@ -262,9 +261,9 @@ int iommu_device_register(struct iommu_device *iommu,
+>   	if (hwdev)
+>   		iommu->fwnode = dev_fwnode(hwdev);
+>   
+> -	spin_lock(&iommu_device_lock);
+> +	mutex_lock(&iommu_probe_device_lock);
+>   	list_add_tail(&iommu->list, &iommu_device_list);
+> -	spin_unlock(&iommu_device_lock);
+> +	mutex_unlock(&iommu_probe_device_lock);
+>   
+>   	for (int i = 0; i < ARRAY_SIZE(iommu_buses) && !err; i++)
+>   		err = bus_iommu_probe(iommu_buses[i]);
+> @@ -279,9 +278,9 @@ void iommu_device_unregister(struct iommu_device *iommu)
+>   	for (int i = 0; i < ARRAY_SIZE(iommu_buses); i++)
+>   		bus_for_each_dev(iommu_buses[i], NULL, iommu, remove_iommu_group);
+>   
+> -	spin_lock(&iommu_device_lock);
+> +	mutex_lock(&iommu_probe_device_lock);
+>   	list_del(&iommu->list);
+> -	spin_unlock(&iommu_device_lock);
+> +	mutex_unlock(&iommu_probe_device_lock);
+>   
+>   	/* Pairs with the alloc in generic_single_device_group() */
+>   	iommu_group_put(iommu->singleton_group);
+> @@ -316,9 +315,9 @@ int iommu_device_register_bus(struct iommu_device *iommu,
+>   	if (err)
+>   		return err;
+>   
+> -	spin_lock(&iommu_device_lock);
+> +	mutex_lock(&iommu_probe_device_lock);
+>   	list_add_tail(&iommu->list, &iommu_device_list);
+> -	spin_unlock(&iommu_device_lock);
+> +	mutex_unlock(&iommu_probe_device_lock);
+>   
+>   	err = bus_iommu_probe(bus);
+>   	if (err) {
+> @@ -2033,9 +2032,9 @@ bool iommu_present(const struct bus_type *bus)
+>   
+>   	for (int i = 0; i < ARRAY_SIZE(iommu_buses); i++) {
+>   		if (iommu_buses[i] == bus) {
+> -			spin_lock(&iommu_device_lock);
+> +			mutex_lock(&iommu_probe_device_lock);
+>   			ret = !list_empty(&iommu_device_list);
+> -			spin_unlock(&iommu_device_lock);
+> +			mutex_unlock(&iommu_probe_device_lock);
+>   		}
+>   	}
+>   	return ret;
+> @@ -2980,17 +2979,14 @@ EXPORT_SYMBOL_GPL(iommu_default_passthrough);
+>   
+>   const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+>   {
+> -	const struct iommu_ops *ops = NULL;
+>   	struct iommu_device *iommu;
+>   
+> -	spin_lock(&iommu_device_lock);
+> +	lockdep_assert_held(&iommu_probe_device_lock);
+> +
+>   	list_for_each_entry(iommu, &iommu_device_list, list)
+> -		if (iommu->fwnode == fwnode) {
+> -			ops = iommu->ops;
+> -			break;
+> -		}
+> -	spin_unlock(&iommu_device_lock);
+> -	return ops;
+> +		if (iommu->fwnode == fwnode)
+> +			return iommu->ops;
+> +	return NULL;
+>   }
+>   
+>   int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode,
