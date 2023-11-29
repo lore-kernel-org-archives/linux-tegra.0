@@ -1,50 +1,50 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q66W6vPz"
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9346A2703
-	for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 22:06:05 -0800 (PST)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-5ce16bc121aso68692467b3.1
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 22:06:05 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4hz6Fo0z"
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B12BBD
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 22:09:08 -0800 (PST)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-5d29c50d337so744357b3.3
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Nov 2023 22:09:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1701237965; x=1701842765; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1701238147; x=1701842947; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BFBgGZHgdrEFpnu/cpKOcJzser1reIBdXzg/6fniV64=;
-        b=q66W6vPzM7okuZ9Mx4XIk8VNR+c1Amb08ha3K6IyxL3kfGNjEzHARUvK1MbtPPtEFp
-         ZPOD1wgCX8lknocIHcP0VGD5HDPJQxpBXosT1oXyajw7zu37sVQoc6Y1j7UbI2+eeJCm
-         K9bkfvk7rTaDRA8xFD+fhnMOLFisGgWZ9LBMH2HUdJ5ePFW3DCLjb8eJeFA8H7lFIMsI
-         ePfBdYk3uEHvo8u74wAYaNCs0OlhSDKNJDF/nudnkW/uTKyvKeykaRXv/kPEYS/cWK4r
-         eDqNFhS93XPBXVQkpoZ9PEsnaevZp9Tvm43EaDXvRArQRLd/Y6aOCXYhgYrAvLa4pD4B
-         AQXA==
+        bh=KtrAPaslMvSrZFznq3cpY4nyS514mOCdxUhLK1bsTtI=;
+        b=4hz6Fo0zr13+6MdTqERmKQ2VkYDymvvESL+rjVDOPONoVDKJ89JS5vZAr9cGWgmXeI
+         iCe4Gr1jGA18zFyltB0mAD/LvIZELVoE4c6EchCPHovFaQBUpiekq7sj9kf+v7Wo8EJx
+         Bm88PjF0fpSLVtBhcE5rMR6F2oPPd6VcEL7z3yoUssqZtKKmZXq1surFKjBwgpE7KTGB
+         45g0aomlFJveBDLt1HtrdcU0h7pVzqQqVGdMrOL48/QkMYR4xYLFGf/1+0gDvqZJ/CB6
+         Go1mLYlC8a6PciJgAAiTpf4CoQrR+BbzOfToCpWOsL7ZNwT+lyqyaGCbo+M6Eii4LMDn
+         IpRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701237965; x=1701842765;
+        d=1e100.net; s=20230601; t=1701238147; x=1701842947;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BFBgGZHgdrEFpnu/cpKOcJzser1reIBdXzg/6fniV64=;
-        b=wmzuQ9pVJz6bg0HzIkpIrVIU4vw0QMI3JzJsuzPWhqtX9E4PCqk7m3mheEuBIbHe1n
-         nYid78Yw5PScogue/GJXeLJaBzhT59fpx0ocfCSJ9IWY8i3dq98e/lEev9VIbs2vtDwC
-         Tmh9Vz11db2HwxdggIMVnTqhUdmY4Gb9LpoV+Tazxrjp2sKBUOpbtNnm5Xn6XxU3MjNc
-         eiTyQUT1aQva4dgqhgCQmtE4KzRE7peKoMZcZOQe05FhfRZUiPKsWplTJOX6LfLT6HFA
-         k9VAjD5Q/SmLRkMM871/7CGmmO8RZevrdxUI7gUU/06IOzObYw0LKfuN9tgW6bkXNYkW
-         vvRA==
-X-Gm-Message-State: AOJu0YxDpewuN6Tk3sCGXvnVvsZtP3pi766yIWsLxYCida+lOW06tiI7
-	/29PTLp6WpvXLw8TABCXNm8nBWwaBK6v
-X-Google-Smtp-Source: AGHT+IG4ZcbE3hB8V6+vKX0zxYUr0OpHfbf/WNlvcGBdlOoo8eTYBCxtpp+7m/8KdVPZTHDTWhORx94znMfW
+        bh=KtrAPaslMvSrZFznq3cpY4nyS514mOCdxUhLK1bsTtI=;
+        b=lf9aC5QTIfp4Wf5wLIJIHfaG9JH7R9EPDFI0+D/8bdwe+04ukWnhAIJ8eVDR22hYps
+         IWcfi6r5MWEkZVqDHxC6oCsOssH48qrhvlV4NsKakVMGoAVg9b1vrPBSqu79/naSYYRQ
+         GMq7i9WqkGh8lM3lAXfGN/j5CBs0jJ2h9A6KH1nHnvYWU9AAxI4ymJw7bUohRjBqOX7d
+         htCQeDHvnXbayJsFzKZZkG1FhVE3r59f3fpVQdmgQHHvglZip4TF3UxueYVzveVxJLmh
+         tMS+qYcDr2mOe1Bimf1L/XxW8xQHD3q4W9tZPuz5uJ8//N5FnKxgQxS3QSjNZjvHdx8I
+         qgAQ==
+X-Gm-Message-State: AOJu0Yx14/UJN5RL06c6N2q4+w+NKvrLVUUdqy6VEX5QpDBYip7BoiY2
+	XSW3rr6RIA1Cfk/67ldzpchjfjkzzyzp
+X-Google-Smtp-Source: AGHT+IErKpR33sSuZDb458AGzbTTTl+rmkeUZNxvoUYyius6/ySrcsirHg/Fcs0NR9CFHutX0EyL3PHfE3h2
 X-Received: from morats.c.googlers.com ([fda3:e722:ac3:cc00:14:4d90:c0a8:d9e])
- (user=moritzf job=sendgmr) by 2002:a25:c044:0:b0:db5:1f69:704e with SMTP id
- c65-20020a25c044000000b00db51f69704emr38263ybf.1.1701237964651; Tue, 28 Nov
- 2023 22:06:04 -0800 (PST)
-Date: Wed, 29 Nov 2023 06:06:03 +0000
-In-Reply-To: <4-v1-720585788a7d+811b-iommu_fwspec_p1_jgg@nvidia.com>
+ (user=moritzf job=sendgmr) by 2002:a25:3741:0:b0:db5:2a4:aef1 with SMTP id
+ e62-20020a253741000000b00db502a4aef1mr107973yba.13.1701238147290; Tue, 28 Nov
+ 2023 22:09:07 -0800 (PST)
+Date: Wed, 29 Nov 2023 06:09:06 +0000
+In-Reply-To: <7-v1-720585788a7d+811b-iommu_fwspec_p1_jgg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <0-v1-720585788a7d+811b-iommu_fwspec_p1_jgg@nvidia.com> <4-v1-720585788a7d+811b-iommu_fwspec_p1_jgg@nvidia.com>
-Message-ID: <20231129060603.hxtmbsefxurxnwkh@google.com>
-Subject: Re: [PATCH 04/10] iommu: Mark dev_iommu_get() with lockdep
+References: <0-v1-720585788a7d+811b-iommu_fwspec_p1_jgg@nvidia.com> <7-v1-720585788a7d+811b-iommu_fwspec_p1_jgg@nvidia.com>
+Message-ID: <20231129060906.qti7uztsk2u7ehlp@google.com>
+Subject: Re: [PATCH 07/10] acpi: Do not return struct iommu_ops from acpi_iommu_configure_id()
 From: Moritz Fischer <moritzf@google.com>
 To: Jason Gunthorpe <jgg@nvidia.com>
 Cc: David Airlie <airlied@gmail.com>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
@@ -75,32 +75,107 @@ Cc: David Airlie <airlied@gmail.com>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
 	Rob Herring <robh@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 
-On Tue, Nov 28, 2023 at 08:48:00PM -0400, Jason Gunthorpe wrote:
-> Allocation of dev->iommu must be done under the
-> iommu_probe_device_lock. Mark this with lockdep to discourage future
-> mistakes.
+On Tue, Nov 28, 2023 at 08:48:03PM -0400, Jason Gunthorpe wrote:
+> Nothing needs this pointer. Return a normal error code with the usual
+> IOMMU semantic that ENODEV means 'there is no IOMMU driver'.
 
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
 > Tested-by: Hector Martin <marcan@marcan.st>
 > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
->   drivers/iommu/iommu.c | 2 ++
->   1 file changed, 2 insertions(+)
+>   drivers/acpi/scan.c | 29 +++++++++++++++++------------
+>   1 file changed, 17 insertions(+), 12 deletions(-)
 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 0d25468d53a68a..4323b6276e977f 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -334,6 +334,8 @@ static struct dev_iommu *dev_iommu_get(struct device  
-> *dev)
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index 444a0b3c72f2d8..340ba720c72129 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -1562,8 +1562,7 @@ static inline const struct iommu_ops  
+> *acpi_iommu_fwspec_ops(struct device *dev)
+>   	return fwspec ? fwspec->ops : NULL;
+>   }
+
+> -static const struct iommu_ops *acpi_iommu_configure_id(struct device  
+> *dev,
+> -						       const u32 *id_in)
+> +static int acpi_iommu_configure_id(struct device *dev, const u32 *id_in)
 >   {
->   	struct dev_iommu *param = dev->iommu;
+>   	int err;
+>   	const struct iommu_ops *ops;
+> @@ -1577,7 +1576,7 @@ static const struct iommu_ops  
+> *acpi_iommu_configure_id(struct device *dev,
+>   	ops = acpi_iommu_fwspec_ops(dev);
+>   	if (ops) {
+>   		mutex_unlock(&iommu_probe_device_lock);
+> -		return ops;
+> +		return 0;
+>   	}
 
-> +	lockdep_assert_held(&iommu_probe_device_lock);
+>   	err = iort_iommu_configure_id(dev, id_in);
+> @@ -1594,12 +1593,14 @@ static const struct iommu_ops  
+> *acpi_iommu_configure_id(struct device *dev,
+
+>   	/* Ignore all other errors apart from EPROBE_DEFER */
+>   	if (err == -EPROBE_DEFER) {
+> -		return ERR_PTR(err);
+> +		return err;
+>   	} else if (err) {
+>   		dev_dbg(dev, "Adding to IOMMU failed: %d\n", err);
+> -		return NULL;
+> +		return -ENODEV;
+>   	}
+> -	return acpi_iommu_fwspec_ops(dev);
+> +	if (!acpi_iommu_fwspec_ops(dev))
+> +		return -ENODEV;
+> +	return 0;
+>   }
+
+>   #else /* !CONFIG_IOMMU_API */
+> @@ -1611,10 +1612,9 @@ int acpi_iommu_fwspec_init(struct device *dev, u32  
+> id,
+>   	return -ENODEV;
+>   }
+
+> -static const struct iommu_ops *acpi_iommu_configure_id(struct device  
+> *dev,
+> -						       const u32 *id_in)
+> +static int acpi_iommu_configure_id(struct device *dev, const u32 *id_in)
+>   {
+> -	return NULL;
+> +	return -ENODEV;
+>   }
+
+>   #endif /* !CONFIG_IOMMU_API */
+> @@ -1628,7 +1628,7 @@ static const struct iommu_ops  
+> *acpi_iommu_configure_id(struct device *dev,
+>   int acpi_dma_configure_id(struct device *dev, enum dev_dma_attr attr,
+>   			  const u32 *input_id)
+>   {
+> -	const struct iommu_ops *iommu;
+> +	int ret;
+
+>   	if (attr == DEV_DMA_NOT_SUPPORTED) {
+>   		set_dma_ops(dev, &dma_dummy_ops);
+> @@ -1637,10 +1637,15 @@ int acpi_dma_configure_id(struct device *dev,  
+> enum dev_dma_attr attr,
+
+>   	acpi_arch_dma_setup(dev);
+
+> -	iommu = acpi_iommu_configure_id(dev, input_id);
+> -	if (PTR_ERR(iommu) == -EPROBE_DEFER)
+> +	ret = acpi_iommu_configure_id(dev, input_id);
+> +	if (ret == -EPROBE_DEFER)
+>   		return -EPROBE_DEFER;
+
+> +	/*
+> +	 * Historically this routine doesn't fail driver probing due to errors
+> +	 * in acpi_iommu_configure_id()
+> +	 */
 > +
->   	if (param)
->   		return param;
+>   	arch_setup_dma_ops(dev, 0, U64_MAX, attr == DEV_DMA_COHERENT);
 
+>   	return 0;
 > --
 > 2.42.0
 
