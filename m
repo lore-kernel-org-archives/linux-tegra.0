@@ -1,40 +1,40 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="FdbZffxY"
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 435B010C4
-	for <linux-tegra@vger.kernel.org>; Wed, 29 Nov 2023 12:45:02 -0800 (PST)
-Received: by mail-lf1-x134.google.com with SMTP id 2adb3069b0e04-507bd19eac8so365497e87.0
-        for <linux-tegra@vger.kernel.org>; Wed, 29 Nov 2023 12:45:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="OExQ1cLL"
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0885D7D
+	for <linux-tegra@vger.kernel.org>; Wed, 29 Nov 2023 13:36:49 -0800 (PST)
+Received: by mail-qt1-x830.google.com with SMTP id d75a77b69052e-423f47eb13dso1463831cf.2
+        for <linux-tegra@vger.kernel.org>; Wed, 29 Nov 2023 13:36:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1701290700; x=1701895500; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1701293809; x=1701898609; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tlZYiStM5KCC7J/v+177rjHqt9KWJCfJWFMkelab9t4=;
-        b=FdbZffxY5wQE+/0cxXCbRI/zPDDidiVXjjUtYaRCjcBeQNV8h6tZEhOFNmoiYL7FiG
-         h1K6pRO8QjrrRpKLtVPO4KusIRh7cFjdTbXZrtnRwsrN9zOW761HtsD0DnDQGZcBO4B4
-         zZlRZaXN56UCW9RjgD3piveQC/RlmHoA707iaWD4ZKMsSGCKKX0wS590lk9hL1bOd4IZ
-         7f3rTyKVruPGPNdmdliTvnn9TTnMX3gBAn3rgBg3AHi7tU6xptVxJXv22YHnauF+xp/J
-         vi7OWlea2BYfXpETx4UFSoOwGVhEA35lLfaJJPqVDZIFT4A3eDZKoi2IYAMKrMsVwmSJ
-         8bzQ==
+        bh=RKdw1vp5oLSx4gO3m1/rl4eR0j44oWuSmpeWEj8OyEg=;
+        b=OExQ1cLLwtG7+490nris8noYiYxSqXI4ie1YhzAm/VeuczmafNkSzFv5qw9D0HcErf
+         ffPPn9sEPfg40Js8rnPoqm6IcpzTOTgPB/jswA+tpg/pJ5KrztQfCo7fsvLJA1skHJ4T
+         Yt8NEPNif1go0SwFQYpEqCyd0fEz7D6QZBqhq+gAHOnWwnB4owKJhGROi7yWrwSiBZGS
+         j7TrWhwDpwdt3UTK+XtFGEJ5vM2sYeDU7Qz9OlwbkKdaZ28zC4A0R/JYxs5DgNxTa26i
+         RemFAI0Y90he8C4fmshjw22bDbsjE+K5y8NllC55xEQhe2wyuDKLxWvJpO9FKnkikNo2
+         5P2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1701290700; x=1701895500;
+        d=1e100.net; s=20230601; t=1701293809; x=1701898609;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tlZYiStM5KCC7J/v+177rjHqt9KWJCfJWFMkelab9t4=;
-        b=ccX17hu6inOcgBYXkoGue2KO1d5ROPjFL+AAE8pgpDF3TLinTEG7UKDPZvn4DdC3pm
-         ImHWo4ouoJbGbE4chzlJ8zockk9qculzmoig89dNPdjUsMT+at+mBPg1BGKcW+llXqXN
-         xMvZ3JIbTG9FAGYF1bFAGIaB+yq5mvoic+HtFJForH3CdW1+PuL/v6i3BeOR4EL8BTIN
-         Vf/mDmYTA1BTanhwudRm9dyYEzdvkIZexr5m/Fyk0pfVOW7enodcwX8rMrf7btjFu0dx
-         Y408+3ZhjE/IcNEmD24K8AkF8LJSAr6fr6CPzAt6liLSa2cOTeRAyUMd2LvD9yDg0J3B
-         KV2A==
-X-Gm-Message-State: AOJu0YxsPBbz9qYzXuPN7Iy92n5E/dYUGKi3UNiAiVXxQnmHGQlzu+gM
-	S4vOf+s2hNSS8xj8bay1fFaladFCY6tQ6HA+RFn5fg==
-X-Google-Smtp-Source: AGHT+IGMB2fUN71OTthlqnqBV10GCXDIRhuYgMFmlKYXWcCU4XgzYTup+BcRc5IJEjmMB4Fgw8Ibq0j5FX6Di+vVaiM=
-X-Received: by 2002:ac2:4a6f:0:b0:50b:cb50:401 with SMTP id
- q15-20020ac24a6f000000b0050bcb500401mr153882lfp.34.1701290700342; Wed, 29 Nov
- 2023 12:45:00 -0800 (PST)
+        bh=RKdw1vp5oLSx4gO3m1/rl4eR0j44oWuSmpeWEj8OyEg=;
+        b=lgHZnvQHgSST2tDl0k8wao/WNfrwdzgLyQYnGEJXoOrGamOxMDrPa2G2i4b3ldURIq
+         /d307SBUvnH8AtIxEp4uo6ZtFHBYhkQKzTHVcCZHLBsfB1BQo8OjKw/nNqmL1swKchxM
+         BPo/smJ1WF5nn3zhOeZQjMpvaLTWvOqpTykK+q1OMpzVGHSqJ+zgDr3dhze/6mhk8DeO
+         w1zxLe6lj/2VvABhcQcdpqmIimhd8RtWtosG7k43Rf+rroa0//A5UI7ctTrjTVcBR/RJ
+         t7Y/dRegNqQZ2rzmQfcnrtRyfzxfR1SbBdeKYUx8KtsnjI2m5M84byUusVUXBZkVnxBm
+         fYUw==
+X-Gm-Message-State: AOJu0YzqfOAu2rpXrM9U+yRdaDg0aeF5tJaLjYi/wcgpgeZ0X+PMIF1Y
+	3SGNFbsgssuBK2i8SjQI+QHJ8cUieFrwOpMr2GyG+w==
+X-Google-Smtp-Source: AGHT+IH1s42XbpuMqfnRK8jqZvUrCxoQ7Or7Gzckcwkn35i1gPeN3cfJsGoJeMBusJpvpuIBcFrnBzJ4nZCRPQFGmZI=
+X-Received: by 2002:ac8:5c0e:0:b0:423:6e2a:1c36 with SMTP id
+ i14-20020ac85c0e000000b004236e2a1c36mr29092766qti.35.1701293808838; Wed, 29
+ Nov 2023 13:36:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,24 +42,20 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
- <20231128204938.1453583-9-pasha.tatashin@soleen.com> <1c6156de-c6c7-43a7-8c34-8239abee3978@arm.com>
- <CA+CK2bCOtwZxTUS60PHOQ3szXdCzau7OpopgFEbbC6a9Frxafg@mail.gmail.com>
- <20231128235037.GC1312390@ziepe.ca> <52de3aca-41b1-471e-8f87-1a77de547510@arm.com>
- <CA+CK2bCcfS1Fo8RvTeGXj_ejPRX9--sh5Jz8nzhkZnut4juDmg@mail.gmail.com> <20231129200305.GI1312390@ziepe.ca>
-In-Reply-To: <20231129200305.GI1312390@ziepe.ca>
+ <20231128204938.1453583-17-pasha.tatashin@soleen.com> <20231128235357.GF1312390@ziepe.ca>
+In-Reply-To: <20231128235357.GF1312390@ziepe.ca>
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 29 Nov 2023 15:44:21 -0500
-Message-ID: <CA+CK2bA05Bh+H4qsP7ZM6ZcnBXu64frEfpCDYZuLOQ4UxJC4EA@mail.gmail.com>
-Subject: Re: [PATCH 08/16] iommu/fsl: use page allocation function provided by iommu-pages.h
+Date: Wed, 29 Nov 2023 16:36:12 -0500
+Message-ID: <CA+CK2bBK=4qbHJG_6B=HSMOXe1vmg7D9TZmsJFhsqVmQau503g@mail.gmail.com>
+Subject: Re: [PATCH 16/16] vfio: account iommu allocations
 To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Robin Murphy <robin.murphy@arm.com>, akpm@linux-foundation.org, 
-	alex.williamson@redhat.com, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jasowang@redhat.com, jernej.skrabec@gmail.com, 
-	jonathanh@nvidia.com, joro@8bytes.org, kevin.tian@intel.com, 
-	krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org, 
+Cc: akpm@linux-foundation.org, alex.williamson@redhat.com, 
+	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
+	baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org, 
+	corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, 
+	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com, 
+	jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org, 
+	kevin.tian@intel.com, krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
@@ -67,53 +63,28 @@ Cc: Robin Murphy <robin.murphy@arm.com>, akpm@linux-foundation.org,
 	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
 	mhiramat@kernel.org, mst@redhat.com, m.szyprowski@samsung.com, 
 	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org, 
-	samuel@sholland.org, suravee.suthikulpanit@amd.com, sven@svenpeter.dev, 
-	thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com, 
-	vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org, 
-	will@kernel.org, yu-cheng.yu@intel.com
+	robin.murphy@arm.com, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, virtualization@lists.linux.dev, 
+	wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 29, 2023 at 3:03=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
+On Tue, Nov 28, 2023 at 6:53=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
 e:
 >
-> On Wed, Nov 29, 2023 at 02:45:03PM -0500, Pasha Tatashin wrote:
->
-> > > same kind of big systems where IOMMU pagetables would be of any conce=
-rn.
-> > > I believe some of the some of the "serious" NICs can easily run up
-> > > hundreds of megabytes if not gigabytes worth of queues, SKB pools, et=
-c.
-> > > - would you propose accounting those too?
+> On Tue, Nov 28, 2023 at 08:49:38PM +0000, Pasha Tatashin wrote:
+> > iommu allocations should be accounted in order to allow admins to
+> > monitor and limit the amount of iommu memory.
 > >
-> > Yes. Any kind of kernel memory that is proportional to the workload
-> > should be accountable. Someone is using those resources compared to
-> > the idling system, and that someone should be charged.
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > ---
+> >  drivers/vfio/vfio_iommu_type1.c | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
 >
-> There is a difference between charged and accounted
->
-> You should be running around adding GFP_KERNEL_ACCOUNT, yes. I already
-> did a bunch of that work. Split that out from this series and send it
-> to the right maintainers.
+> You should send the seperately and directly to Alex.
 
-I will do that.
+Thanks, I will.
 
 >
-> Adding a counter for allocations and showing in procfs is a very
-> different question. IMHO that should not be done in micro, the
-> threshold to add a new counter should be high.
-
-I agree, /proc/meminfo, should not include everything, however overall
-network consumption that includes memory allocated by network driver
-would be useful to have, may be it should be exported by device
-drivers and added to the protocol memory. We already have network
-protocol memory consumption in procfs:
-
-# awk '{printf "%-10s %s\n", $1, $4}' /proc/net/protocols | grep  -v '\-1'
-protocol   memory
-UDPv6      22673
-TCPv6      16961
-
-> There is definately room for a generic debugging feature to break down
-> GFP_KERNEL_ACCOUNT by owernship somehow. Maybe it can already be done
-> with BPF. IDK
+> Jason
