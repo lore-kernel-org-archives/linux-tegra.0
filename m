@@ -1,136 +1,219 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MJ1rkvHB"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D980134;
-	Tue,  5 Dec 2023 03:11:18 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=b6BWde+PNB8yRTt5KL+d4U3Op8Un+8AjrefWcjJNmv6ojPhQN/M/bDs3emgVbUTZz8okoiVq2xr0AH6xyh9Nf4I1TXuOYiHZOAtrjHiqntfmXZ/zHTpNmTD1nZGWTzpcSlxB4ebEyhUZshNtFHB9uxO7rlWrB1N2cxdXR3gjKTPUr3rvqP/Jg2CLJ9W590xgKU7ytrkCjpDM6q+bIzghpYa1Nk1xHm0R8MEQBaydTT02zfVpC+w8HSXfYZHe+WmO0PI5n180qu8h6l6yu89aVPfuccHtYovpDYkFYNSMjLobkinWx0ST5FyoR90kotYmClo/5mrP8IuU2H7f6/E5Hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c4xi4TTRNMYqEilJW2FCVn0Wz22xDQ/HzDWCYVsQAEw=;
- b=db7cdfZ5YJc80IIikflFuKEXET0rh1ydQwBmBKiTtGsNgKTylsIjBNAIV75Bt0oKbdlNFnxSON0uSjJR6jY2xIH+aupVqh/vPSwEpwC3JBdbPrHtKu3JsPxPfxiKpjRBiXB+9Jd4QoxFUtmUsqEC7NHWBPSW3qUpYQHKk6s2zU85t1QmzbSGpBjvSkgfXC/KYiPo1ElARgY9DWxR8seDpQAxcMA7zVP3Lnf2JhcIWKa07cpD9CM0hi9i889tHFIzigGgBfiR3843UpM2Eh2EHxwn1TPRpXOgT5hlc03wSo09BvbWRsJoLeQtNGreANCmr1V+3Ys0gwyJJHPvF6S5RQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c4xi4TTRNMYqEilJW2FCVn0Wz22xDQ/HzDWCYVsQAEw=;
- b=MJ1rkvHBEIHalo65u+B94x0Y/egIeMJ9axZq1cYTHOpUbn7OFbEAwpCokCFj4Ca+cvBw2IbslW/coeEvy4sgfrLxhgmwSAXCHU65e0fDCZnMeDJiH2+wmyPZ7ylamw1m6p853scSQ71vGy0e1RlcFE4g/NZAZKJtVldFF1z3eVK8TcSVKMtMfq0GrXpiBUcEond3Ow5s5gvHdVTRasKI97lIKsfm+UC5GofkAO1QsnP8aAFiCd9snBbxdJ6GMfz24AgzJ3GTKi7ae6y63FNwQhqTJBNGJXqdeMIM0aHBvv+AXDNxgFdbA8k4aJ6XaGBI3LgoJxn7CSWmb0ZaOW9wfg==
-Received: from MW4PR03CA0114.namprd03.prod.outlook.com (2603:10b6:303:b7::29)
- by DS7PR12MB6046.namprd12.prod.outlook.com (2603:10b6:8:85::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.34; Tue, 5 Dec
- 2023 11:11:12 +0000
-Received: from CO1PEPF000042AC.namprd03.prod.outlook.com
- (2603:10b6:303:b7:cafe::95) by MW4PR03CA0114.outlook.office365.com
- (2603:10b6:303:b7::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.34 via Frontend
- Transport; Tue, 5 Dec 2023 11:11:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CO1PEPF000042AC.mail.protection.outlook.com (10.167.243.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7068.20 via Frontend Transport; Tue, 5 Dec 2023 11:11:12 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 5 Dec 2023
- 03:10:57 -0800
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 5 Dec 2023
- 03:10:56 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
- Transport; Tue, 5 Dec 2023 03:10:56 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.10 000/134] 5.10.203-rc2 review
-In-Reply-To: <20231205043610.004070706@linuxfoundation.org>
-References: <20231205043610.004070706@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FHIlajuw"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E18ECD7;
+	Tue,  5 Dec 2023 05:01:54 -0800 (PST)
+Received: from pendragon.ideasonboard.com (213-243-189-158.bb.dnainternet.fi [213.243.189.158])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1F33E36C;
+	Tue,  5 Dec 2023 14:01:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1701781272;
+	bh=pqrMo45XLA+bav+5b36fJEzlNW7O+STZWXja5pScV44=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FHIlajuwC/EXeMMy6kazf5uDaFG84v6dGUKjJM70PY601BbxdXKg1/6M9KqrDGwbl
+	 yZMy0T/pvgibWwAjiJZr27bBJsIs9fLXHSSW83gLr4lOGbZUVYi+xfmlWXOy8kp06U
+	 hwPyhEdh4ZA7b/NYpTnMfmmD9knjghIwNXPZq2R8=
+Date: Tue, 5 Dec 2023 15:01:59 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-media@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Leon Luo <leonl@leopardimaging.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	Pavel Machek <pavel@ucw.cz>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Ricardo Ribalda <ribalda@kernel.org>,
+	Rui Miguel Silva <rmfrfs@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] media: v4l2-subdev: Add which field to struct
+ v4l2_subdev_frame_interval
+Message-ID: <20231205130159.GD22111@pendragon.ideasonboard.com>
+References: <20231127111359.30315-1-laurent.pinchart@ideasonboard.com>
+ <20231127111359.30315-3-laurent.pinchart@ideasonboard.com>
+ <849b9333-6155-4e52-ac06-fd47d565a5c8@xs4all.nl>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <57d2dd1f-7e5e-407c-ad73-c61ab7f0ec93@rnnvmail205.nvidia.com>
-Date: Tue, 5 Dec 2023 03:10:56 -0800
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042AC:EE_|DS7PR12MB6046:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f1a04cb-7deb-4bac-3552-08dbf582e3ea
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	XlHbLPN2JkZf9fqKQ75nMzvmABFQooF78WxNoKFm+/pSkpXvgpPrdJbcx6y6VwnhC31yuIX1AWxMeuLxzOtIeNrtK5fhK9fvauJRxcUIL6eGwy8TQ/6aL6n2zjyfpIMZNXnFoly11SzErWURps7ofYHH+65usJSTIQQF2OYU+MzB7+TPylr8cLX4xqroPjxDTwp2/h9sRjB7rlSH8we49DEAKyNPHdRGs859ygiOtX2AdZGv7iznEXtpJz0dVmDMvHxmR50gNXw1KZesU91ig8VjhENkombkO+r0WGm6h0QThN71GGiot1eYQhEP53sEtUTFbUT/Saqn42BC/gNfCs0jgl4U4jxsz97YLiDIc77kNjw1XZ0VmdtjaVIs/mqEIY85wW27Xk3fk0nMVqieIBwIU5nuO+w7ESNXpX80HF0Hit3iNsp74Sy2aPI1Ycro/Ag/TFcan3ke9APW1B7T02C0CNH4io8gJNX6YqQp2o5tK697h13wfd0Otz1NpcayhGNwBM9zaf6bnse4T19u38xcMV9RuMQkpCNDWrEkDiqOF3hvjyuw1rHjazMVGFAWgWGN/t2EW2PqnsLbeMGZcf++gYp77jNACFgkd/VrIbm7CYnh33EeXgtz5ki2n6leLj0wlqhJBk3CvbTIaExwMDjI4/TK/TBuRtqlUs0sGFtPB7hngYvpTnuunm8XaEJapsSEsT299BiEyh+/E6+AZM/MTZ1GsZoBId3XJYZX5n8bjqCQGw1tGAKJCImB80DimN4I3i42vSBk3tyLzhzpV7C2Jc4sjjpKqxwANTK0qLw=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(346002)(136003)(396003)(376002)(230922051799003)(186009)(1800799012)(82310400011)(64100799003)(451199024)(36840700001)(46966006)(40470700004)(31686004)(40480700001)(356005)(47076005)(7636003)(2906002)(82740400003)(36860700001)(336012)(41300700001)(426003)(26005)(7416002)(5660300002)(966005)(86362001)(40460700003)(478600001)(31696002)(8936002)(4326008)(8676002)(6916009)(316002)(54906003)(70206006)(70586007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2023 11:11:12.0606
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f1a04cb-7deb-4bac-3552-08dbf582e3ea
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042AC.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6046
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <849b9333-6155-4e52-ac06-fd47d565a5c8@xs4all.nl>
 
-On Tue, 05 Dec 2023 13:36:53 +0900, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.203 release.
-> There are 134 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Hans,
+
+On Tue, Nov 28, 2023 at 10:32:28AM +0100, Hans Verkuil wrote:
+> On 27/11/2023 12:13, Laurent Pinchart wrote:
+> > Due to a historical mishap, the v4l2_subdev_frame_interval structure
+> > is the only part of the V4L2 subdev userspace API that doesn't contain a
+> > 'which' field. This prevents trying frame intervals using the subdev
+> > 'TRY' state mechanism.
+> > 
+> > Adding a 'which' field is simple as the structure has 8 reserved fields.
+> > This would however break userspace as the field is currently set to 0,
+> > corresponding to V4L2_SUBDEV_FORMAT_TRY, while the corresponding ioctls
+> > currently operate on the 'ACTIVE' state. We thus need to add a new
+> > subdev client cap, V4L2_SUBDEV_CLIENT_CAP_WHICH_INTERVAL, to indicate
+> > that userspace is aware of this new field.
+> > 
+> > All drivers that implement the subdev .get_frame_interval() and
+> > .set_frame_interval() operations are updated to return -EINVAL when
+> > operating on the TRY state, preserving the current behaviour.
+> > 
+> > While at it, fix a bad copy&paste in the documentation of the struct
+> > v4l2_subdev_frame_interval_enum 'which' field.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > ---
+> > Changes since v1:
+> > 
+> > - Fix .[gs]et_frame_interval() operation names in commit message
+> > - Fix typo in commit message
+> > ---
+> >  .../media/v4l/vidioc-subdev-g-client-cap.rst  |  5 ++++
+> >  .../v4l/vidioc-subdev-g-frame-interval.rst    | 17 ++++++++-----
+> >  drivers/media/i2c/adv7180.c                   |  3 +++
+> >  drivers/media/i2c/et8ek8/et8ek8_driver.c      |  6 +++++
+> >  drivers/media/i2c/imx214.c                    |  3 +++
+> >  drivers/media/i2c/imx274.c                    |  6 +++++
+> >  drivers/media/i2c/max9286.c                   |  6 +++++
+> >  drivers/media/i2c/mt9m111.c                   |  6 +++++
+> >  drivers/media/i2c/mt9m114.c                   |  6 +++++
+> >  drivers/media/i2c/mt9v011.c                   |  6 +++++
+> >  drivers/media/i2c/mt9v111.c                   |  6 +++++
+> >  drivers/media/i2c/ov2680.c                    |  3 +++
+> >  drivers/media/i2c/ov5640.c                    |  6 +++++
+> >  drivers/media/i2c/ov5648.c                    |  3 +++
+> >  drivers/media/i2c/ov5693.c                    |  3 +++
+> >  drivers/media/i2c/ov6650.c                    |  6 +++++
+> >  drivers/media/i2c/ov7251.c                    |  6 +++++
+> >  drivers/media/i2c/ov7670.c                    |  4 +++
+> >  drivers/media/i2c/ov772x.c                    |  6 +++++
+> >  drivers/media/i2c/ov8865.c                    |  3 +++
+> >  drivers/media/i2c/ov9650.c                    |  6 +++++
+> >  drivers/media/i2c/s5c73m3/s5c73m3-core.c      |  6 +++++
+> >  drivers/media/i2c/s5k5baf.c                   |  6 +++++
+> >  drivers/media/i2c/thp7312.c                   |  6 +++++
+> >  drivers/media/i2c/tvp514x.c                   |  4 +++
+> >  drivers/media/v4l2-core/v4l2-subdev.c         | 25 ++++++++++++-------
+> >  .../media/atomisp/i2c/atomisp-gc0310.c        |  3 +++
+> >  .../media/atomisp/i2c/atomisp-gc2235.c        |  3 +++
+> >  .../media/atomisp/i2c/atomisp-mt9m114.c       |  3 +++
+> >  .../media/atomisp/i2c/atomisp-ov2722.c        |  3 +++
+> >  drivers/staging/media/imx/imx-ic-prp.c        |  6 +++++
+> >  drivers/staging/media/imx/imx-ic-prpencvf.c   |  6 +++++
+> >  drivers/staging/media/imx/imx-media-csi.c     |  6 +++++
+> >  drivers/staging/media/imx/imx-media-vdic.c    |  6 +++++
+> >  drivers/staging/media/tegra-video/csi.c       |  3 +++
+> >  include/uapi/linux/v4l2-subdev.h              | 13 ++++++++--
+> >  36 files changed, 198 insertions(+), 17 deletions(-)
+> > 
+> > diff --git a/Documentation/userspace-api/media/v4l/vidioc-subdev-g-client-cap.rst b/Documentation/userspace-api/media/v4l/vidioc-subdev-g-client-cap.rst
+> > index 20f12a1cc0f7..f168140ebd59 100644
+> > --- a/Documentation/userspace-api/media/v4l/vidioc-subdev-g-client-cap.rst
+> > +++ b/Documentation/userspace-api/media/v4l/vidioc-subdev-g-client-cap.rst
+> > @@ -71,6 +71,11 @@ is unknown to the kernel.
+> >          of 'stream' fields (referring to the stream number) with various
+> >          ioctls. If this is not set (which is the default), the 'stream' fields
+> >          will be forced to 0 by the kernel.
+> > +    * - ``V4L2_SUBDEV_CLIENT_CAP_WHICH_INTERVAL``
+> > +      - The client is aware of the :c:type:`v4l2_subdev_frame_interval`
+> > +        ``which`` field. If this is not set (which is the default), the
+> > +        ``which`` field is forced to ``V4L2_SUBDEV_FORMAT_ACTIVE`` by the
+> > +        kernel.
+> >  
+> >  Return Value
+> >  ============
+> > diff --git a/Documentation/userspace-api/media/v4l/vidioc-subdev-g-frame-interval.rst b/Documentation/userspace-api/media/v4l/vidioc-subdev-g-frame-interval.rst
+> > index 842f962d2aea..41e0e2c8ecc3 100644
+> > --- a/Documentation/userspace-api/media/v4l/vidioc-subdev-g-frame-interval.rst
+> > +++ b/Documentation/userspace-api/media/v4l/vidioc-subdev-g-frame-interval.rst
+> > @@ -58,8 +58,9 @@ struct
+> >  contains the current frame interval as would be returned by a
+> >  ``VIDIOC_SUBDEV_G_FRAME_INTERVAL`` call.
+> >  
+> > -Calling ``VIDIOC_SUBDEV_S_FRAME_INTERVAL`` on a subdev device node that has been
+> > -registered in read-only mode is not allowed. An error is returned and the errno
+> > +If the subdev device node has been registered in read-only mode, calls to
+> > +``VIDIOC_SUBDEV_S_FRAME_INTERVAL`` are only valid if the ``which`` field is set
+> > +to ``V4L2_SUBDEV_FORMAT_TRY``, otherwise an error is returned and the errno
+> >  variable is set to ``-EPERM``.
+> >  
+> >  Drivers must not return an error solely because the requested interval
+> > @@ -93,7 +94,11 @@ the same sub-device is not defined.
+> >        - ``stream``
+> >        - Stream identifier.
+> >      * - __u32
+> > -      - ``reserved``\ [8]
+> > +      - ``which``
+> > +      - Active or try frame interval, from enum
+> > +	:ref:`v4l2_subdev_format_whence <v4l2-subdev-format-whence>`.
+> > +    * - __u32
+> > +      - ``reserved``\ [7]
+> >        - Reserved for future extensions. Applications and drivers must set
+> >  	the array to zero.
+> >  
+> > @@ -114,9 +119,9 @@ EBUSY
+> >  EINVAL
+> >      The struct
+> >      :c:type:`v4l2_subdev_frame_interval`
+> > -    ``pad`` references a non-existing pad, or the pad doesn't support
+> > -    frame intervals.
+> > +    ``pad`` references a non-existing pad, the ``which`` field references a
+> > +    non-existing frame interval, or the pad doesn't support frame intervals.
 > 
-> Responses should be made by Thu, 07 Dec 2023 04:35:38 +0000.
-> Anything received after that time might be too late.
+> "the ``which`` field references a non-existing frame interval": that's a rather
+> vague sentence.
+
+I'm not sure I would call it vague, but it's certainly not very
+understandable.
+
+> I noticed it was probably copy-and-pasted (VIDIOC_SUBDEV_G_FMT has
+> a similar phrase), but it is not clear in that documentation either.
+
+Yes, that's where it came from.
+
+> I expect EINVAL if 'which' is set to something other than TRY or ACTIVE, or the
+> driver does not support TRY. Is that what you meant with "references a non-existing
+> frame interval"?
+
+That's what it means for all the subdev ioctls that have a 'which'
+field, yes.
+
+> The 'references a non-existing' phrase works for pads since pad is an index
+> into a pad array, but that's not the case for 'which', which is effectively an
+> enum, so there is no obvious indexing going on.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.203-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+> I think a separate patch clarifying this EINVAL description for the relevant subdev
+> ioctls might be useful.
+
+I agree. I'll include a patch in the next version of the series.
+
+> In any case, since this just copies existing text it isn't a blocker.
 > 
-> thanks,
-> 
-> greg k-h
+> >  EPERM
+> >      The ``VIDIOC_SUBDEV_S_FRAME_INTERVAL`` ioctl has been called on a read-only
+> > -    subdevice.
+> > +    subdevice and the ``which`` field is set to ``V4L2_SUBDEV_FORMAT_ACTIVE``.
 
-All tests passing for Tegra ...
+[snip]
 
-Test results for stable-v5.10:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    64 tests:	64 pass, 0 fail
+-- 
+Regards,
 
-Linux version:	5.10.203-rc2-g9245256c4454
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Laurent Pinchart
