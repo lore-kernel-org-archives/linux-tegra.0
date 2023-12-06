@@ -1,34 +1,34 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="soqbHJHY"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2055.outbound.protection.outlook.com [40.107.244.55])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1826ED3;
-	Wed,  6 Dec 2023 03:50:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C4ifNDH4"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2084.outbound.protection.outlook.com [40.107.93.84])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ED4E90;
+	Wed,  6 Dec 2023 05:28:39 -0800 (PST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SW3pkLyEYYCfOa57SqY5p7m55ugB+149tKIbuF07mJFNehdOyq77q1HHEoJo0G322zI14FY6BTvxH76wDeX2PoIR8FISGDOJTtMxpe4GR02rovrIRBPouil6CQceQAw3KJZgkdBhdrtZyzwrBhpMmyCIlsTUewFWHXZkR5vGBjAmzCpExbNbjyQaBO3I7k3g2WkRQ+SaoqMp9i8QrlHnZsCQzdEOLade3rKPJukiDZBKYHt15tOqzSq03wVd7kxLdKPd7pbGxqsjDHhHBu8E0DlzulLySB6T0hyhmv9ncbkWNbQilFfaPbMi5ItIy1M0SSUcGAkJuQ0KML2czZxuTQ==
+ b=UIZ4srhRCA5XuXHw13B15fe0N6jsSQJDfOJfMl1H3kTE95JDnQWw97kj8t+VV7jVJq3ggQbJa947iusKCqVszUIHfBenj9JmiqjyaXPtElwI3SfxSHKbtnAncrsvNs36b21NgmF5Yl5hMuqh7ChHc3WcSr3yc1aLFwKscLXvJv/wgZUpiuos748Ef5z11vj7qF7xGX8djL8pLri7vWzJALoUUFntk/2iC8E8neBCQtAzqVXcS2wEEKKOVoVnckLanP/AbfoP3VTC6EFXMceYYhHjWQneaQQTldV5CSV4QAKow5fjUvTKHPJatkkSBm6l7NlRQhbI0YgB//TXqtvCug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=I8R7N6KRBvDeoCcGwMc9nb9IyLJBgbxuZp7V6+lHzj8=;
- b=bAxgl8Mr/2xQci0SbMV/EeDuxsRt06boYWJS9xIrFhycSRCXvurpMUJNlmIxmbWxLif41AWhTZKx35WNO4Ud1r3blKzedAOy8LtGxXsSB9LyoCSowkSbroPkwlYUSmzWpdhXSfa7IwFmD4Gk5Qu5xJ6PTQGZSN521UxNbgbHG9vyx5r8rpA6RDcj2kE8iKt0Vvb+3xlfcSVxPHaEtmG6H+txi9KmuQYvSRdO4mFJ1K+Lle1aF1B2OF/+l0ody2xnQreewU81TbxPjwBQYFQc1j7RtKugshU30lhc9KlrRh4NdVX5Fcc5MVnQubTvKoJyo/MzRfqowxILWnPFY4fvng==
+ bh=JjkRkEjkdlCD34ZfTL2i6C4i5bZUPFPUbxEvCdt5drA=;
+ b=UPXnXuMrbSH/s5sOxfGNko6lC/awUte4WgCdXk3HTDB/hh9IpA8hf1tybGQ0mVeOaKywdWtxHe9qT/DM5mJeJrpPsQZIzmpruQgXPaBXA5Af+G3pU/I47mEVmva2UmOORZZ+k1tKEYcZFi9LBeUVr2x2ZcKAeJQFZXqu136tXj8InWQEACdJlxdetYsSkd5DZ0IGxoe9pPVeYWwPOXE9nTjYFygl6i3Mc4g7n5V/TDhzYk8em7n1MfHv3BgoCbG/2qfq2ovUkBVjDdSMJYGLa63rCDswG+6vuJV7T43MLt0lNd8w6expfz4QazMs+hZqiWfL9G4FBn53mKmPHCIh4g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+ 216.228.117.160) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=I8R7N6KRBvDeoCcGwMc9nb9IyLJBgbxuZp7V6+lHzj8=;
- b=soqbHJHY+BxdhzXp5dy66q2dWjfdvD7+YEkPpsVk0RJaXA+Yo6wFaA6EdoV68YjOxjY9d5PIOSJndYo0QlLHCtO8S87kbw6H2RmX27w/6EYO6GZP/lPhbE9Ka3y2cY8p7D9h0ufPIWg0mn1wT1RutHcQ0GCOZuWnscCKUnYgeujZT7x5ZQugVt/FPkNH5FWRhKARMv0R+zvQs5d5Fgqmzb1pA5uQ9i1iqbnX/HDtnNnNt4rxiij6MA6cCB7HRlrOhEeeY7xBtNLRdz7/eyL4ogVMzyfgZuCsx7DGkjVVCwP3q1QtO8t11Etzqcf5Tt4yzdHrvmxcxF+hT5YhkbAKwg==
-Received: from BL1PR13CA0165.namprd13.prod.outlook.com (2603:10b6:208:2bd::20)
- by SA1PR12MB6971.namprd12.prod.outlook.com (2603:10b6:806:24e::18) with
+ bh=JjkRkEjkdlCD34ZfTL2i6C4i5bZUPFPUbxEvCdt5drA=;
+ b=C4ifNDH4U9LD/M+5gLaM2YCq1ZbrEHBxiwi47SOwS1LJvlFIMTRd/qW0b72uUOely3ecX88TiU2hzscXVVLHghhLXQfy9c3JWhxaEQhIypDj3ssLq/duTk6NJ8nbgdFuuOYT6rXcwMteu+ngcnPfUVHPfjrBdMgqLOMGamFFgImMz1VZogwH+/9dXZD3b8GNGuCKwkTqh0SoHaKqcwGIN6+qMtyr7migaQN0WlBFuKxX4fpq56Pmv/zXzMUoDly9eWsxfMT7HekFpjAxBLiJYIIk8FVOOdiEkziopxOw2ZEXE5gkKtev7s0z2AH/V7tyh+wCaEPOMnT1Y74QPVwZeg==
+Received: from SA9P221CA0029.NAMP221.PROD.OUTLOOK.COM (2603:10b6:806:25::34)
+ by PH7PR12MB7377.namprd12.prod.outlook.com (2603:10b6:510:20c::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.34; Wed, 6 Dec
- 2023 11:50:39 +0000
-Received: from MN1PEPF0000ECD4.namprd02.prod.outlook.com
- (2603:10b6:208:2bd:cafe::73) by BL1PR13CA0165.outlook.office365.com
- (2603:10b6:208:2bd::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.25 via Frontend
- Transport; Wed, 6 Dec 2023 11:50:39 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7025.27; Wed, 6 Dec
+ 2023 13:28:36 +0000
+Received: from SA2PEPF00001507.namprd04.prod.outlook.com
+ (2603:10b6:806:25:cafe::ba) by SA9P221CA0029.outlook.office365.com
+ (2603:10b6:806:25::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7046.34 via Frontend
+ Transport; Wed, 6 Dec 2023 13:28:36 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -36,101 +36,144 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.160 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.160) by
- MN1PEPF0000ECD4.mail.protection.outlook.com (10.167.242.132) with Microsoft
+ SA2PEPF00001507.mail.protection.outlook.com (10.167.242.39) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7068.20 via Frontend Transport; Wed, 6 Dec 2023 11:50:39 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ 15.20.7068.20 via Frontend Transport; Wed, 6 Dec 2023 13:28:36 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 6 Dec 2023
- 03:50:19 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 6 Dec 2023
- 03:50:18 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ 05:28:23 -0800
+Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
- Transport; Wed, 6 Dec 2023 03:50:18 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 5.15 00/64] 5.15.142-rc2 review
-In-Reply-To: <20231205183238.954685317@linuxfoundation.org>
-References: <20231205183238.954685317@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 6 Dec 2023
+ 05:28:20 -0800
+Message-ID: <c8b4d391-681e-f4a6-2839-e5951429f043@nvidia.com>
+Date: Wed, 6 Dec 2023 18:58:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <846112a8-e3f7-47d8-82ae-35ede14d22c8@rnnvmail201.nvidia.com>
-Date: Wed, 6 Dec 2023 03:50:18 -0800
-X-NV-OnPremToCloud: ExternallySecured
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2 2/2] cpufreq: Wire-up arch-flavored freq info into
+ cpufreq_verify_current_freq
+Content-Language: en-US
+To: Ionela Voinescu <ionela.voinescu@arm.com>
+CC: Beata Michalska <beata.michalska@arm.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
+	<sudeep.holla@arm.covm>, <will@kernel.org>, <catalin.marinas@arm.com>,
+	<viresh.kumar@linaro.org>, <rafael@kernel.org>,
+	<yang@os.amperecomputing.com>, <linux-tegra@vger.kernel.org>, Sumit Gupta
+	<sumitg@nvidia.com>
+References: <20231127160838.1403404-1-beata.michalska@arm.com>
+ <20231127160838.1403404-3-beata.michalska@arm.com> <ZWXy0h/fFfQh+Rhy@arm.com>
+ <3e6077bb-907c-057f-0896-d0a5814a4229@nvidia.com> <ZW8D5TfSwuJfdYeD@arm.com>
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <ZW8D5TfSwuJfdYeD@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD4:EE_|SA1PR12MB6971:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2113c4be-a723-4b91-4de0-08dbf6519167
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001507:EE_|PH7PR12MB7377:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8532a01f-9e24-42f6-4b0d-08dbf65f4074
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	0TEdvpKb8AWL5INibB8J5S6MAXoirr34DmQTgNLnEyhAZp84x2VQHdspWUgI+6TJaPmve4gEbzSNnT/+iqnUDceqDTyG8xi+zO3i2dnNhuQws54Px2xsvzGIv2LoE0sZfvZ3+uP3wkcPN9tpdkSC/kkU1IbV013uwgiKfLWSRsTqbyaq/ZrjJqKIfZJDmowPomhWxLyWwCIhDwh1bwYduvJAec+TkZK6+Nai8xYSuwATiwjlStQif94PMc8A2cBFi+WzcfcLrzw4jrArzKhSqD0dEOlGK3jlv5IBpOeolMDqfS/81URH9eBkR454YmDXYg12xf/7aZCRWYP08OAMd6+/CfPXOmkiuzt8VE4cHZAYIiiWglFonlL/oIVlNHCQxFl9q1UPj59mJC8GQeraFvGlGSp7pXIEOxCcWXmenAaiDqtCKKMvjW1mrvC8CvfVGVSqf9TrTNgK29NAKtVqpdR/lwUfKEUQ96PhXbzOFtt5tVLexXh39rcRR5ewieh+K7RgoSdd8Y6SFDZL4eTs+JkUHFBD3JLqv5b7VUhCr2miMaS2zYKxrP6omLM4UJ3MEqHpkSiy2cjoUG2yWfJVc/NyTUFjBoRAW6eJ2S9iajqJEVubQsNPSdJkwsfIXa7fSO28UuGfMAqW0anN2gT4XNYY9Wnb45fSQpvME6+fTfzKyNBKmdy6AAVjOeqyfiKloyFU4Ps/CzQ4mj0NPW5mzOdOAqEfp9oXwKwbApodzHJLz+TGMMk86fOIxmXp45QCex7faVi6XA+onveK5pHi5it/bKALa8c6PfQrKdyuE2E=
+	qXvSnq58WHrDU9EJ+NMT5ws77LD5KSLLbywmKgO6RiKXGF1eQFR+/pdm48jGJsQnNsp62uVzwcNhV+KRJ1TFIT9DH8MYwoNUjWstRQ/FQbPKtQoOKxQ69Assk7wnH0C2QrlRaLFezvSID8MMYgausCCP9C/TjBHVqSKdpMjFdSH+HIlz9xgjfyYgqLE77j/GdW5NBHWLWbkRbEMvSEFQsLCUBuHuOAn0MLaZ6BuVn10uT3EsscA4EeraZtViofALDRqGWDAjv16MCK1mBYtwOc2u4z7xuGkBudTK6516pDqZktWodLE8SEg94+HVIZGtt5CKUnGW+ziDWdLWiz4/9vMbQA+iMHFFaGdkWOyjM5F0Z6rPq4jHhGiRVwp4uYKhCrTDI1kwdOz4LpiT1CSiZywmbCov0RhM7G7MSC8f9jHBGgcSp+vf1Drg87Tz4Ua1djjNGVQaWw7yzEi3it42L9mi8lNc9Kz8A7brgcjUJOihDhSgj1qb5TViacI4qY0JhMzOWfn2FmAry074DiBEYjpDcTfvuwU7tY/HU2UPL6xsV0w7m9o6nI/E4eK0BTPS4IA0Stx548Vflq5LxIW9GMccnMbHe3JJ3QsFaq+u4IP4RtWboPwyjoJgKSjaM81OiEGUiliJmW00kLdvcWnfaQZi5z02pOZY7sFPjXvoF4z4mQjAT1AMOylOtLG4QS0ypKqcUOActFEKB+kd35binfbCTM6G0fEz9cis7xQNh81k94SKA/5yBZEt0yIRffgRh7yiu5zPkF4VGU9mHpcTwUEtMvX6oaWDl+1E/d/oPBruBiN1Yr9F6glVBUJCUM0ys+pmvLNV1IbnltaMBlDdM3trqi2hk/JVaipfbLhitu6uHvoKfNaLSu8A7jA2FGDybqMDKiGvHiYhfNxM6uZAmQ==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(346002)(376002)(136003)(396003)(230922051799003)(186009)(451199024)(64100799003)(1800799012)(82310400011)(36840700001)(40470700004)(46966006)(41300700001)(31696002)(7416002)(40460700003)(5660300002)(2906002)(86362001)(40480700001)(82740400003)(26005)(426003)(336012)(966005)(478600001)(47076005)(356005)(7636003)(36860700001)(31686004)(8676002)(4326008)(8936002)(6916009)(316002)(70586007)(70206006)(54906003);DIR:OUT;SFP:1101;
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(376002)(136003)(39860400002)(396003)(230273577357003)(230922051799003)(230173577357003)(82310400011)(64100799003)(1800799012)(451199024)(186009)(36840700001)(46966006)(40470700004)(36756003)(41300700001)(107886003)(26005)(31686004)(7636003)(2906002)(356005)(83380400001)(40480700001)(82740400003)(7416002)(2616005)(336012)(5660300002)(426003)(86362001)(47076005)(16526019)(36860700001)(4326008)(8676002)(6666004)(8936002)(31696002)(53546011)(478600001)(966005)(40460700003)(70206006)(54906003)(16576012)(316002)(70586007)(6916009)(43740500002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2023 11:50:39.3276
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2023 13:28:36.5340
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2113c4be-a723-4b91-4de0-08dbf6519167
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8532a01f-9e24-42f6-4b0d-08dbf65f4074
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD4.namprd02.prod.outlook.com
+	SA2PEPF00001507.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6971
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7377
 
-On Wed, 06 Dec 2023 04:22:31 +0900, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.142 release.
-> There are 64 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+
+On 05/12/23 16:35, Ionela Voinescu wrote:
+> External email: Use caution opening links or attachments
 > 
-> Responses should be made by Thu, 07 Dec 2023 18:32:16 +0000.
-> Anything received after that time might be too late.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.142-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
+> Hi Sumit,
 > 
-> thanks,
+> On Friday 01 Dec 2023 at 18:32:10 (+0530), Sumit Gupta wrote:
+>> Hi Ionela,
+>>
+>>>> --- a/drivers/cpufreq/cpufreq.c
+>>>> +++ b/drivers/cpufreq/cpufreq.c
+>>>> @@ -1756,7 +1756,8 @@ static unsigned int cpufreq_verify_current_freq(struct cpufreq_policy *policy, b
+>>>>    {
+>>>>         unsigned int new_freq;
+>>>>
+>>>> -     new_freq = cpufreq_driver->get(policy->cpu);
+>>>> +     new_freq = arch_freq_get_on_cpu(policy->cpu);
+>>>> +     new_freq = new_freq ?: cpufreq_driver->get(policy->cpu);
+>>>
+>>> Given that arch_freq_get_on_cpu() is an average frequency, it does not
+>>> seem right to me to trigger the sync & update process of
+>>> cpufreq_verify_current_freq() based on it.
+>>>
+>>> cpufreq_verify_current_freq() will at least modify the internal state of
+>>> the policy and send PRE and POST notifications, if not do a full frequency
+>>> update, based on this average frequency, which is likely different from
+>>> the current frequency, even beyond the 1MHz threshold.
+>>>
+>>> While I believe it's okay to return this average frequency in
+>>> cpuinfo_cur_freq, I don't think it should be used as an indication of
+>>> an accurate current frequency, which is what
+>>> cpufreq_verify_current_freq() expects.
+>>>
+>>> Sumit, can you give more details on the issue at [1] and why this change
+>>> fixes it?
+>>>
+>>> [1] https://lore.kernel.org/lkml/6a5710f6-bfbb-5dfd-11cd-0cd02220cee7@nvidia.com/
+>>>
+>>> Thank you,
+>>> Ionela.
+>>>
+>> cpufreq_verify_current_freq() also updates 'policy->cur' in POST
+>> notification if the frequency from hardware has more delta (out of sync).
+>>
+>> As the value from 'cpufreq_driver->get()' is not reliable due to [1],
+>> calling the 'get' hook can update the 'policy->cur' with a wrong value when
+>> governor starts in cpufreq_start_governor().
+>> And if the frequency is never changed after the governor starts during
+>> boot e.g. when performance governor is set as default, then
+>> 'scaling_cur_freq' always returns wrong value.
+>>
+>> Instead, the arch_freq_get_on_cpu() API updates 'policy->cur' with a more
+>> stable freq value.
+>>
+>> [1] https://lore.kernel.org/lkml/20230418113459.12860-7-sumitg@nvidia.com/
 > 
-> greg k-h
+> Got it, many thanks!
+> 
+> As the code is right now in v2, arch_freq_get_on_cpu() is called on
+> show_scaling_cur_freq(), so the problem you describe would not show up.
+> policy->cur would still be incorrect, but 'scaling_cur_freq' would
+> return the value from arch_freq_get_on_cpu().
+> 
+> Would it be enough if arch_freq_get_on_cpu() gets also called from
+> show_cpuinfo_cur_freq() instead of cpufreq_verify_current_freq()?
+> 
+> Thanks,
+> Ionela.
+> 
 
-All tests passing for Tegra ...
+Yes.
+I am not sure if making both the nodes 'scaling_cur_freq' and 
+'cpuinfo_cur_freq' same is fine?
 
-Test results for stable-v5.15:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    90 tests:	90 pass, 0 fail
-
-Linux version:	5.15.142-rc2-gfef113ea8057
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Best Regards,
+Sumit Gupta
