@@ -1,140 +1,166 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2D2592113;
-	Thu,  7 Dec 2023 01:22:09 -0800 (PST)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D895A12FC;
-	Thu,  7 Dec 2023 01:22:54 -0800 (PST)
-Received: from localhost (ionvoi01-desktop.cambridge.arm.com [10.2.78.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 744783F6C4;
-	Thu,  7 Dec 2023 01:22:08 -0800 (PST)
-Date: Thu, 7 Dec 2023 09:22:06 +0000
-From: Ionela Voinescu <ionela.voinescu@arm.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: Beata Michalska <beata.michalska@arm.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	sudeep.holla@arm.covm, will@kernel.org, catalin.marinas@arm.com,
-	viresh.kumar@linaro.org, rafael@kernel.org,
-	yang@os.amperecomputing.com, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] cpufreq: Wire-up arch-flavored freq info into
- cpufreq_verify_current_freq
-Message-ID: <ZXGOvsE4mKOsdoLp@arm.com>
-References: <20231127160838.1403404-1-beata.michalska@arm.com>
- <20231127160838.1403404-3-beata.michalska@arm.com>
- <ZWXy0h/fFfQh+Rhy@arm.com>
- <3e6077bb-907c-057f-0896-d0a5814a4229@nvidia.com>
- <ZW8D5TfSwuJfdYeD@arm.com>
- <c8b4d391-681e-f4a6-2839-e5951429f043@nvidia.com>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043E132C61;
+	Thu,  7 Dec 2023 09:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QBXRsV2o"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DE0C433C8;
+	Thu,  7 Dec 2023 09:31:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1701941483;
+	bh=ic0z5MdiV/0Is1elWTXze/Uq9YLCT3pb49zs6lpdupM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QBXRsV2obUFdVvgOkKaTQaGJdzTrnhg9uSomhvsreRT8HRHyc5IG+RMnyWtyzvZpb
+	 f3GdVQvOTZ9gkuxJLMI83k4bELO1q4xaViHGbpt7ZmZEOqicjc3wqx3clO2sgBNsfZ
+	 rV946/t9MsngKplwyDm0tMpjkfbYstmcymvkQDL+942ZbTuaaDQbJg7HH3oUqVYAJ6
+	 9oQiTWxwzjNyCUxnuTX62sBPbCtXyLJ80kT4O408PLO/zLcUTwYGsO3ro106Y1xPUX
+	 dtpHUO10E6Gy8eIxVOgLDweVqaJrguuBu1Qd7IP0bYqnVZJTVUaND7gjEQq4BTvHEz
+	 z4SDPBma0Wxhg==
+Date: Thu, 7 Dec 2023 15:01:12 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Cc: bhelgaas@google.com, thierry.reding@gmail.com, petlozup@nvidia.com,
+	rafael.j.wysocki@intel.com, lpieralisi@kernel.org, robh@kernel.org,
+	jeffy.chen@rock-chips.com, krzysztof.kozlowski+dt@linaro.org,
+	jonathanh@nvidia.com, dmitry.osipenko@collabora.com,
+	viresh.kumar@linaro.org, gregkh@linuxfoundation.org,
+	steven.price@arm.com, kw@linux.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+	vidyas@nvidia.com
+Subject: Re: [RFC,v14 4/5] arm64: tegra: Add PCIe port node with PCIe WAKE#
+ for C1 controller
+Message-ID: <20231207093112.GH2932@thinkpad>
+References: <20230208111645.3863534-1-mmaddireddy@nvidia.com>
+ <20230208111645.3863534-5-mmaddireddy@nvidia.com>
+ <20231206153627.GJ12802@thinkpad>
+ <c86e8f75-f74a-491e-9ac0-2431a6ec4b80@nvidia.com>
+ <20231207075952.GG2932@thinkpad>
+ <6e282e1b-39d2-4a08-bdd4-a9d02b2b7f74@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c8b4d391-681e-f4a6-2839-e5951429f043@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6e282e1b-39d2-4a08-bdd4-a9d02b2b7f74@nvidia.com>
 
-On Wednesday 06 Dec 2023 at 18:58:17 (+0530), Sumit Gupta wrote:
+On Thu, Dec 07, 2023 at 02:23:46PM +0530, Manikanta Maddireddy wrote:
 > 
-> 
-> On 05/12/23 16:35, Ionela Voinescu wrote:
+> On 07-12-2023 13:29, Manivannan Sadhasivam wrote:
 > > External email: Use caution opening links or attachments
 > > 
 > > 
-> > Hi Sumit,
-> > 
-> > On Friday 01 Dec 2023 at 18:32:10 (+0530), Sumit Gupta wrote:
-> > > Hi Ionela,
-> > > 
-> > > > > --- a/drivers/cpufreq/cpufreq.c
-> > > > > +++ b/drivers/cpufreq/cpufreq.c
-> > > > > @@ -1756,7 +1756,8 @@ static unsigned int cpufreq_verify_current_freq(struct cpufreq_policy *policy, b
-> > > > >    {
-> > > > >         unsigned int new_freq;
+> > On Thu, Dec 07, 2023 at 12:54:04PM +0530, Manikanta Maddireddy wrote:
+> > > On 06-12-2023 21:06, Manivannan Sadhasivam wrote:
+> > > > External email: Use caution opening links or attachments
+> > > > 
+> > > > 
+> > > > On Wed, Feb 08, 2023 at 04:46:44PM +0530, Manikanta Maddireddy wrote:
+> > > > > Add PCIe port node under the PCIe controller-1 device tree node to support
+> > > > > PCIe WAKE# interrupt for WiFi.
 > > > > > 
-> > > > > -     new_freq = cpufreq_driver->get(policy->cpu);
-> > > > > +     new_freq = arch_freq_get_on_cpu(policy->cpu);
-> > > > > +     new_freq = new_freq ?: cpufreq_driver->get(policy->cpu);
+> > > > > Signed-off-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> > > > > ---
+> > > > > 
+> > > > > Changes in v14:
+> > > > > New patch in the series to support PCIe WAKE# in NVIDIA Jetson AGX Orin.
+> > > > > 
+> > > > >    .../dts/nvidia/tegra234-p3737-0000+p3701-0000.dts     | 11 +++++++++++
+> > > > >    1 file changed, 11 insertions(+)
+> > > > > 
+> > > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+> > > > > index 8a9747855d6b..9c89be263141 100644
+> > > > > --- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+> > > > > +++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+> > > > > @@ -2147,6 +2147,17 @@ pcie@14100000 {
+> > > > > 
+> > > > >                         phys = <&p2u_hsio_3>;
+> > > > >                         phy-names = "p2u-0";
+> > > > > +
+> > > > > +                     pci@0,0 {
+> > > > > +                             reg = <0x0000 0 0 0 0>;
+> > > > > +                             #address-cells = <3>;
+> > > > > +                             #size-cells = <2>;
+> > > > > +                             ranges;
+> > > > > +
+> > > > > +                             interrupt-parent = <&gpio>;
+> > > > > +                             interrupts = <TEGRA234_MAIN_GPIO(L, 2) IRQ_TYPE_LEVEL_LOW>;
+> > > > > +                             interrupt-names = "wakeup";
+> > > > WAKE# should be part of the PCIe controller, not device. And the interrupt name
+> > > > should be "wake".
 > > > > 
-> > > > Given that arch_freq_get_on_cpu() is an average frequency, it does not
-> > > > seem right to me to trigger the sync & update process of
-> > > > cpufreq_verify_current_freq() based on it.
-> > > > 
-> > > > cpufreq_verify_current_freq() will at least modify the internal state of
-> > > > the policy and send PRE and POST notifications, if not do a full frequency
-> > > > update, based on this average frequency, which is likely different from
-> > > > the current frequency, even beyond the 1MHz threshold.
-> > > > 
-> > > > While I believe it's okay to return this average frequency in
-> > > > cpuinfo_cur_freq, I don't think it should be used as an indication of
-> > > > an accurate current frequency, which is what
-> > > > cpufreq_verify_current_freq() expects.
-> > > > 
-> > > > Sumit, can you give more details on the issue at [1] and why this change
-> > > > fixes it?
-> > > > 
-> > > > [1] https://lore.kernel.org/lkml/6a5710f6-bfbb-5dfd-11cd-0cd02220cee7@nvidia.com/
-> > > > 
-> > > > Thank you,
-> > > > Ionela.
-> > > > 
-> > > cpufreq_verify_current_freq() also updates 'policy->cur' in POST
-> > > notification if the frequency from hardware has more delta (out of sync).
+> > > > - Mani
+> > > Hi,
 > > > 
-> > > As the value from 'cpufreq_driver->get()' is not reliable due to [1],
-> > > calling the 'get' hook can update the 'policy->cur' with a wrong value when
-> > > governor starts in cpufreq_start_governor().
-> > > And if the frequency is never changed after the governor starts during
-> > > boot e.g. when performance governor is set as default, then
-> > > 'scaling_cur_freq' always returns wrong value.
+> > > Please refer to the discussion in below link, WAKE# is per PCI bridge.
+> > > https://patchwork.ozlabs.org/project/linux-pci/patch/20171226020806.32710-2-jeffy.chen@rock-chips.com/
 > > > 
-> > > Instead, the arch_freq_get_on_cpu() API updates 'policy->cur' with a more
-> > > stable freq value.
-> > > 
-> > > [1] https://lore.kernel.org/lkml/20230418113459.12860-7-sumitg@nvidia.com/
+> > PCIe Host controller (RC) usually represents host bridge + PCI-PCI bridge. We do
+> > not represent the PCI-PCI bridge in devicetree for any platforms, but only RC as
+> > a whole.
 > > 
-> > Got it, many thanks!
+> > Moreover, PERST# is already defined in RC node. So it becomes confusing if
+> > WAKE# is defined in a child node representing bridge.
 > > 
-> > As the code is right now in v2, arch_freq_get_on_cpu() is called on
-> > show_scaling_cur_freq(), so the problem you describe would not show up.
-> > policy->cur would still be incorrect, but 'scaling_cur_freq' would
-> > return the value from arch_freq_get_on_cpu().
+> > So please move WAKE# to RC node.
 > > 
-> > Would it be enough if arch_freq_get_on_cpu() gets also called from
-> > show_cpuinfo_cur_freq() instead of cpufreq_verify_current_freq()?
-> > 
-> > Thanks,
-> > Ionela.
-> > 
+> > - Mani
 > 
-> Yes.
-> I am not sure if making both the nodes 'scaling_cur_freq' and
-> 'cpuinfo_cur_freq' same is fine?
-
-That would happen anyway if arch_freq_get_on_cpu() is called from
-cpufreq_verify_current_freq().
-
-In principle, according to [1], it would be correct to use it for
-'cpuinfo_cur_freq' and not 'scaling_cur_freq'. But the call from
-show_scaling_cur_freq() is already there before these patches,
-introduced a long time ago for x86.
-
-The topic was discussed at [2] and the agreement so far was that it
-would be best to keep the behaviour the same for both x86 and arm.
-
-I don't like going against the user-guide, but these patches don't
-actually go against the user-guide. The old call to
-arch_freq_get_on_cpu() from show_scaling_cur_freq() goes against it.
-But I agree that's something necessary to keep, as legacy for x86.
-Additionally, you also mentioned that you'd prefer to have a more
-accurate frequency returned for 'scaling_cur_freq'.
-
-[1] https://www.kernel.org/doc/Documentation/cpu-freq/user-guide.txt
-[2] https://lore.kernel.org/lkml/20230609043922.eyyqutbwlofqaddz@vireshk-i7/
-
-Thanks,
-Ionela.
-
+> Hi,
 > 
-> Best Regards,
-> Sumit Gupta
+> We can define PCI-PCI bridge in device tree, refer to below device tree
+> which has 3 ports under a controller,
+> with PERST#(reset-gpios) defined per port.
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/apple/t8103.dtsi#n749
+> 
+
+Hmm. For RCs with single bridge, we never defined a DT node (atleast on Qcom
+platforms). But I think it is the time to fix them.
+
+> Also, of_pci_setup_wake_irq() in below patch is parsing "wakeup" from PCI
+> bridge, not from the host bridge.
+> https://patchwork.ozlabs.org/project/linux-pci/patch/20230208111645.3863534-4-mmaddireddy@nvidia.com/
+> 
+
+I didn't say that WAKE# should be parsed from host bridge, it doesn't make
+sense. But I get your point.
+
+> If a controller has only one port it has to define a PCI bridge under
+> controller device tree node and
+> add wakeup interrupt property, refer to below patch from original author.
+> 
+> https://www.spinics.net/lists/linux-pci/msg135569.html
+> 
+
+Yes, I agree. Thanks for the clarification.
+
+- Mani
+
+> Thanks,
+> Manikanta
+> > 
+> > > I carried wakeup name defined in previous version, but wake seems to be
+> > > sufficient.
+> > > 
+> > > Thanks,
+> > > Manikanta
+> > > > > +                     };
+> > > > >                 };
+> > > > > 
+> > > > >                 pcie@14160000 {
+> > > > > --
+> > > > > 2.25.1
+> > > > > 
+> > > > --
+> > > > மணிவண்ணன் சதாசிவம்
+> > --
+> > மணிவண்ணன் சதாசிவம்
+
+-- 
+மணிவண்ணன் சதாசிவம்
