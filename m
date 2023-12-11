@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283B54A986;
-	Mon, 11 Dec 2023 15:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F634A986;
+	Mon, 11 Dec 2023 15:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A209N3Rw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09FF7C433C7;
-	Mon, 11 Dec 2023 15:04:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F22xU4oE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C608DC433C9;
+	Mon, 11 Dec 2023 15:04:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702307063;
-	bh=6YPTpmneh2xOLLFp7HB+g9pk93OOl5wyKTQWmwlvyBY=;
+	s=k20201202; t=1702307073;
+	bh=e6CXrMobZvPrjdB6OvAR3xnF7KHYIQZ/dEC/uDNZ1bM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=A209N3RwTmTf9qNW4JLthFdDYscWbS6svzgzXePytW9dVoVLfqXJFFd0vFj0uxY2N
-	 PZCtAZY+22sFadCQ9SmUZRk2gUxX2wFKadbHKVHXN7W5fzIp5tZLIePv3vxSoJAlfJ
-	 PluUY167kBTI4BJQsz9HtFXKNYUvTvJ+8Wu3sGgHVuQpaTP26YaCExvUT/Tl1WrF4J
-	 lszBBwQIAu5V+YvMshL5CNu6jGbZZk19BEB4zt3x09aGb03GN9FMHBE0H5VwKQ97B4
-	 wjXIh2M3DbaoKz5yh7Qw0D/R8v07d9wmiHz1jmXfl7ShlVaqtvMQVzPNbew8rUk2ks
-	 6wFIAsBnpLe9w==
+	b=F22xU4oEYxG9GvfWb/KYdQEu9zL+aWcYtzSFP6Xv4l0GCVu0RApN2VSCYZwMF/mgX
+	 CrnZPkFZgZtjdLiZc3jhvUffq03e282SGutNa8ipxbY64rmhpvT7ZYlnUvNULZWQXU
+	 FadEwMg4CiKr7Ksy7EtaEnLdSJWgQf5aWgVhJqfQKaZjPEPaM9BrjdWTr7R+mWPIwB
+	 hCWQLDFrr02bwgHD3xGzPDX+49UGrBsjAr1Ok+jAr4bp11b0YqLxlJnPqSMndF7LbR
+	 OERgEgGwPrfUX4+bgtOl+V7U2ZY0m/lExGe9lfKMLe0ar+Fs+oduOoWPtYU+JcLKUD
+	 Z5qQ1iyJz6gNw==
 From: Vinod Koul <vkoul@kernel.org>
-To: robh+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com, 
- ldewangan@nvidia.com, krzysztof.kozlowski+dt@linaro.org, 
- Mohan Kumar <mkumard@nvidia.com>
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, 
- devicetree@vger.kernel.org
-In-Reply-To: <20231009063509.2269-1-mkumard@nvidia.com>
-References: <20231009063509.2269-1-mkumard@nvidia.com>
-Subject: Re: [PATCH V1 0/2] Support dma channel mask
-Message-Id: <170230706064.319997.12594760561127798160.b4-ty@kernel.org>
-Date: Mon, 11 Dec 2023 20:34:20 +0530
+To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+ conor+dt@kernel.org, Mohan Kumar <mkumard@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, 
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20231128071615.31447-1-mkumard@nvidia.com>
+References: <20231128071615.31447-1-mkumard@nvidia.com>
+Subject: Re: [RESEND PATCH V2 0/2] Support dma channel mask
+Message-Id: <170230707042.319997.2049992718193941560.b4-ty@kernel.org>
+Date: Mon, 11 Dec 2023 20:34:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -39,9 +39,9 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.12.3
 
 
-On Mon, 09 Oct 2023 12:05:07 +0530, Mohan Kumar wrote:
-> To reserve the dma channel using dma-channel-mask property
-> for Tegra platforms.
+On Tue, 28 Nov 2023 12:46:13 +0530, Mohan Kumar wrote:
+> To reserve the dma channel using dma-channel-mask property for Tegra
+> platforms.
 > 
 > Mohan Kumar (2):
 >   dt-bindings: dma: Add dma-channel-mask to nvidia,tegra210-adma
