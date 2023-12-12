@@ -1,90 +1,76 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K1mV0W5+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92F3799
-	for <linux-tegra@vger.kernel.org>; Tue, 12 Dec 2023 06:24:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702391056; x=1733927056;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+WqteZjNXiXFUqUfy0YtsA4/JhEpKi9URcDUxPzjKr8=;
-  b=K1mV0W5+qkxH5/F6vRkl7hX4L8/uBBJoKzYaT0wXEDMFyZ35RTMGGa/3
-   mNWHXjbFwAvPgnpDn07+WYN0V1iMNBm5crAeQDYAQKmyKDPqKZBHLPCPO
-   SADDfY685o9YlpJGEniRnovZP7Ye8fNC6u94mbys208z7TQgUlJLlmuRi
-   2aHY/es9txBlo391DnbIRdvEDlDaNacGOhFKB96bgJlRqqMItsDF74wmr
-   GjnCszJb7vH1oc65M9OqcT9B9nW6oIlQiaWCQqNfn2wQ62HVSbzA5KxtE
-   Hb9/ZMhYflcC/3C0G4X3XhBDIt11Me2c1n/b3sNsWClNFJKEAd+pcxBYO
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="1968440"
-X-IronPort-AV: E=Sophos;i="6.04,270,1695711600"; 
-   d="scan'208";a="1968440"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2023 06:24:16 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="891608935"
-X-IronPort-AV: E=Sophos;i="6.04,270,1695711600"; 
-   d="scan'208";a="891608935"
-Received: from ggilardi-mobl1.amr.corp.intel.com (HELO localhost) ([10.252.49.147])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2023 06:24:14 -0800
-From: Jani Nikula <jani.nikula@intel.com>
-To: linux-tegra@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Cc: jani.nikula@intel.com
-Subject: [PATCH] drm/tegra: include drm/drm_edid.h only where needed
-Date: Tue, 12 Dec 2023 16:24:09 +0200
-Message-Id: <20231212142409.3826544-1-jani.nikula@intel.com>
-X-Mailer: git-send-email 2.39.2
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C49EB9
+	for <linux-tegra@vger.kernel.org>; Tue, 12 Dec 2023 09:27:00 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rD6Wx-0001uP-MN; Tue, 12 Dec 2023 18:26:51 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rD6Ww-00FOPM-QL; Tue, 12 Dec 2023 18:26:50 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rD6Ww-001nbh-H3; Tue, 12 Dec 2023 18:26:50 +0100
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Russell King <linux@armlinux.org.uk>
+Cc: linux-clk@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Rob Herring <robh@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: [PATCH 3/5] memory: tegra210-emc: Simplify usage of clk_rate_exclusive_get()
+Date: Tue, 12 Dec 2023 18:26:40 +0100
+Message-ID:  <1b4321a975ac1a903a0c816ef2cce80e7d75eae3.1702400947.git.u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
+References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=956; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=ie4CKnPihpbljeuxgdDQACHBuHzPJFsgaUm9SE/yLlM=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBleJfQjouCGPQwbVTQpZHCH3+mc5P4eZ8kxEPs7 4nUI3a0K5aJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZXiX0AAKCRCPgPtYfRL+ TrPSCACJPDSfzHiFme8LNMO5WXJD8MYT1blleR5sU2wv13himlwKpRz181lEcgpDPwv/d7r/nBn ovlNOR/cPdj22iF2Np1psWwvsUfXhnOijVNvyUuyZgsqjUW8TVMBoqg+yxKPfy1Ci+Xd6Em/Xl9 MsSz5I6yQHlYt79kc9K+UoSimvBDW7R8bFM91X+Fzb3PCkCVDDG8jKeAAORmcuILHZdB5+nRmpB AQAfTK3wpi13Fwr54EQ83CvVNencH39m0Y68owZMIH97xru6ER+rWbaNlR/yq6BgTqIY+S8REsv eH/xD+T8INlM+XNf0qnAttCf1OAC4WgQh9IiGZ7cSabVpWXK
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
-Reduce the need for rebuilds when drm_edid.h is modified by including it
-only where needed.
+clk_rate_exclusive_get() returns 0 unconditionally. So remove error
+handling. This prepares making clk_rate_exclusive_get() return void.
 
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/gpu/drm/tegra/drm.h    | 2 +-
- drivers/gpu/drm/tegra/output.c | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/memory/tegra/tegra210-emc-core.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index ccb5d74fa227..682011166a8f 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -13,7 +13,6 @@
+diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
+index 3300bde47c13..957bcaadb24f 100644
+--- a/drivers/memory/tegra/tegra210-emc-core.c
++++ b/drivers/memory/tegra/tegra210-emc-core.c
+@@ -2001,11 +2001,7 @@ static int __maybe_unused tegra210_emc_suspend(struct device *dev)
+ 	struct tegra210_emc *emc = dev_get_drvdata(dev);
+ 	int err;
  
- #include <drm/drm_atomic.h>
- #include <drm/drm_bridge.h>
--#include <drm/drm_edid.h>
- #include <drm/drm_encoder.h>
- #include <drm/drm_fixed.h>
- #include <drm/drm_probe_helper.h>
-@@ -26,6 +25,7 @@
- /* XXX move to include/uapi/drm/drm_fourcc.h? */
- #define DRM_FORMAT_MOD_NVIDIA_SECTOR_LAYOUT BIT_ULL(22)
+-	err = clk_rate_exclusive_get(emc->clk);
+-	if (err < 0) {
+-		dev_err(emc->dev, "failed to acquire clock: %d\n", err);
+-		return err;
+-	}
++	clk_rate_exclusive_get(emc->clk);
  
-+struct edid;
- struct reset_control;
+ 	emc->resume_rate = clk_get_rate(emc->clk);
  
- struct tegra_drm {
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index dc2dcb5ca1c8..88af956ad0e7 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -8,6 +8,7 @@
- #include <linux/of.h>
- 
- #include <drm/drm_atomic_helper.h>
-+#include <drm/drm_edid.h>
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
- #include <drm/drm_simple_kms_helper.h>
 -- 
-2.39.2
+2.42.0
 
