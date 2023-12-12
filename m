@@ -1,135 +1,131 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D1C8A0
-	for <linux-tegra@vger.kernel.org>; Tue, 12 Dec 2023 09:27:22 -0800 (PST)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rD6X1-0001uR-3P; Tue, 12 Dec 2023 18:26:55 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rD6Wx-00FOPS-AU; Tue, 12 Dec 2023 18:26:51 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rD6Wx-001nbp-0U; Tue, 12 Dec 2023 18:26:51 +0100
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>
-Cc: linux-clk@vger.kernel.org,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-amlogic@lists.infradead.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Rob Herring <robh@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	kernel@pengutronix.de
-Subject: [PATCH 5/5] clk: Make clk_rate_exclusive_get() return void
-Date: Tue, 12 Dec 2023 18:26:42 +0100
-Message-ID:  <3f556647c09162be61edba6b50e76d235aace590.1702400947.git.u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
-References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R9GgjRot"
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B0BB0
+	for <linux-tegra@vger.kernel.org>; Tue, 12 Dec 2023 13:57:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1702418249; x=1733954249;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Z73/hOSxGYVupXLmXbwMfHy1VRD17NY40HD1VCffAhI=;
+  b=R9GgjRotuNJgoEEqPnPdU1ZBoDrdFax1pW6L6nSkv6pyyENOBt1p9fKK
+   wmHgRvj2TTPYht+EwTVh6N6eQAVZUzvAWUFbxxgOoXaINOjzAwBbq+eNU
+   7ypCiseAr5cKQBVBaNSGHo3AUQmuFQV6JH2Zykt9zPOg60zGuLUMxnm3x
+   Yh2w50lXMsUFbcAD6R6PJWchw92JpxpUQsTI3vEyD31JbnE/evuU0v3Ke
+   8+eEBZ7ZTIk2M3l8lmU7e+4DbHtIH8GwKxqfCgloz1EOFk2jZatpRKSyA
+   KdRX9ajVY92/bDci6IQiEA2QsnvrxYS/2yDKzspp2yayACA5VjPjOiAka
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="397661381"
+X-IronPort-AV: E=Sophos;i="6.04,271,1695711600"; 
+   d="scan'208";a="397661381"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2023 13:57:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="897068463"
+X-IronPort-AV: E=Sophos;i="6.04,271,1695711600"; 
+   d="scan'208";a="897068463"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 12 Dec 2023 13:57:10 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rDAkS-000Jln-1j;
+	Tue, 12 Dec 2023 21:57:04 +0000
+Date: Wed, 13 Dec 2023 05:56:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jani Nikula <jani.nikula@intel.com>, linux-tegra@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Cc: oe-kbuild-all@lists.linux.dev, jani.nikula@intel.com
+Subject: Re: [PATCH] drm/tegra: include drm/drm_edid.h only where needed
+Message-ID: <202312130548.FrTZXIdd-lkp@intel.com>
+References: <20231212142409.3826544-1-jani.nikula@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2265; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=qJe1s9wVwLl8m/pFpVrdi1+PKSyFn6KyEhyiKlqeWWk=; b=owGbwMvMwMXY3/A7olbonx/jabUkhtSK6Zf0mliZ79remRRaoTdVj3sjX5Z43dTfXEr7MubN7 cv5Yz2jk9GYhYGRi0FWTJHFvnFNplWVXGTn2n+XYQaxMoFMYeDiFICJuD3nYNgg+PrYSkuD2Eki L1U4HRwVOm/VLGkPWWUoV1WYwxBfEWYmlb5vdk5eXETUxLjPjnuM9m124lwrkvHnX3X3TrfzUWd XtRVfrdwx53zY0iitL8q7iiOm/RSY41yVxy7Q3SF+Yf3DO/PK2hbZC6n2+hisPicuvTMhrsv85J +QOu6/GZ3CmxdfOB8buHp9dNSn+ZszIi1YT3amxbtM0I1SV/vT2/G2XCwjeaJz5bNzS+UOnBYu3 8VyICqoSHNi9dnMPxmiJx7qHy3ZySo1tTiDY5NraL5Po03Y7PjDOWnuQoe36p20d9SY6BYbPV8/ xLjJxNLi0Z73rq0//xkv+LSD59R1XatNPzx3tk47vXM3AA==
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <20231212142409.3826544-1-jani.nikula@intel.com>
 
-The function currently returns 0 unconditionally. This isn't very useful
-and makes users create dead code error paths. So let this function
-return no value. All users were adapted before to ignore the returned
-value.
+Hi Jani,
 
-Also fix a few typos in the kernel doc comment for
-clk_rate_exclusive_get().
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Uwe Kleine-KÃ¶nig <u.kleine-koenig@pengutronix.de>
----
- drivers/clk/clk.c   | 6 ++----
- include/linux/clk.h | 8 +++-----
- 2 files changed, 5 insertions(+), 9 deletions(-)
+[auto build test ERROR on drm/drm-next]
+[also build test ERROR on drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip linus/master v6.7-rc5 next-20231212]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 2253c154a824..af2011c2a93b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -925,17 +925,15 @@ static void clk_core_rate_restore_protect(struct clk_core *core, int count)
-  * clk_rate_exclusive_put(). Calls to this function may sleep.
-  * Returns 0 on success, -EERROR otherwise
-  */
--int clk_rate_exclusive_get(struct clk *clk)
-+void clk_rate_exclusive_get(struct clk *clk)
- {
- 	if (!clk)
--		return 0;
-+		return;
- 
- 	clk_prepare_lock();
- 	clk_core_rate_protect(clk->core);
- 	clk->exclusive_count++;
- 	clk_prepare_unlock();
--
--	return 0;
- }
- EXPORT_SYMBOL_GPL(clk_rate_exclusive_get);
- 
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 06f1b292f8a0..f88c407925f8 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -190,16 +190,14 @@ bool clk_is_match(const struct clk *p, const struct clk *q);
-  *
-  * This function allows drivers to get exclusive control over the rate of a
-  * provider. It prevents any other consumer to execute, even indirectly,
-- * opereation which could alter the rate of the provider or cause glitches
-+ * operation which could alter the rate of the provider or cause glitches
-  *
-- * If exlusivity is claimed more than once on clock, even by the same driver,
-+ * If exclusivity is claimed more than once on clock, even by the same driver,
-  * the rate effectively gets locked as exclusivity can't be preempted.
-  *
-  * Must not be called from within atomic context.
-- *
-- * Returns success (0) or negative errno.
-  */
--int clk_rate_exclusive_get(struct clk *clk);
-+void clk_rate_exclusive_get(struct clk *clk);
- 
- /**
-  * clk_rate_exclusive_put - release exclusivity over the rate control of a
+url:    https://github.com/intel-lab-lkp/linux/commits/Jani-Nikula/drm-tegra-include-drm-drm_edid-h-only-where-needed/20231212-222603
+base:   git://anongit.freedesktop.org/drm/drm drm-next
+patch link:    https://lore.kernel.org/r/20231212142409.3826544-1-jani.nikula%40intel.com
+patch subject: [PATCH] drm/tegra: include drm/drm_edid.h only where needed
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20231213/202312130548.FrTZXIdd-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231213/202312130548.FrTZXIdd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202312130548.FrTZXIdd-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/gpu/drm/tegra/sor.c: In function 'tegra_sor_hdmi_setup_avi_infoframe':
+>> drivers/gpu/drm/tegra/sor.c:1928:15: error: implicit declaration of function 'drm_hdmi_avi_infoframe_from_display_mode' [-Werror=implicit-function-declaration]
+    1928 |         err = drm_hdmi_avi_infoframe_from_display_mode(&frame,
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/drm_hdmi_avi_infoframe_from_display_mode +1928 drivers/gpu/drm/tegra/sor.c
+
+459cc2c6800b54 Thierry Reding 2015-07-30  1911  
+459cc2c6800b54 Thierry Reding 2015-07-30  1912  static int
+459cc2c6800b54 Thierry Reding 2015-07-30  1913  tegra_sor_hdmi_setup_avi_infoframe(struct tegra_sor *sor,
+459cc2c6800b54 Thierry Reding 2015-07-30  1914  				   const struct drm_display_mode *mode)
+459cc2c6800b54 Thierry Reding 2015-07-30  1915  {
+459cc2c6800b54 Thierry Reding 2015-07-30  1916  	u8 buffer[HDMI_INFOFRAME_SIZE(AVI)];
+459cc2c6800b54 Thierry Reding 2015-07-30  1917  	struct hdmi_avi_infoframe frame;
+459cc2c6800b54 Thierry Reding 2015-07-30  1918  	u32 value;
+459cc2c6800b54 Thierry Reding 2015-07-30  1919  	int err;
+459cc2c6800b54 Thierry Reding 2015-07-30  1920  
+459cc2c6800b54 Thierry Reding 2015-07-30  1921  	/* disable AVI infoframe */
+459cc2c6800b54 Thierry Reding 2015-07-30  1922  	value = tegra_sor_readl(sor, SOR_HDMI_AVI_INFOFRAME_CTRL);
+459cc2c6800b54 Thierry Reding 2015-07-30  1923  	value &= ~INFOFRAME_CTRL_SINGLE;
+459cc2c6800b54 Thierry Reding 2015-07-30  1924  	value &= ~INFOFRAME_CTRL_OTHER;
+459cc2c6800b54 Thierry Reding 2015-07-30  1925  	value &= ~INFOFRAME_CTRL_ENABLE;
+459cc2c6800b54 Thierry Reding 2015-07-30  1926  	tegra_sor_writel(sor, value, SOR_HDMI_AVI_INFOFRAME_CTRL);
+459cc2c6800b54 Thierry Reding 2015-07-30  1927  
+13d0add333afea Ville Syrjälä  2019-01-08 @1928  	err = drm_hdmi_avi_infoframe_from_display_mode(&frame,
+13d0add333afea Ville Syrjälä  2019-01-08  1929  						       &sor->output.connector, mode);
+459cc2c6800b54 Thierry Reding 2015-07-30  1930  	if (err < 0) {
+459cc2c6800b54 Thierry Reding 2015-07-30  1931  		dev_err(sor->dev, "failed to setup AVI infoframe: %d\n", err);
+459cc2c6800b54 Thierry Reding 2015-07-30  1932  		return err;
+459cc2c6800b54 Thierry Reding 2015-07-30  1933  	}
+459cc2c6800b54 Thierry Reding 2015-07-30  1934  
+459cc2c6800b54 Thierry Reding 2015-07-30  1935  	err = hdmi_avi_infoframe_pack(&frame, buffer, sizeof(buffer));
+459cc2c6800b54 Thierry Reding 2015-07-30  1936  	if (err < 0) {
+459cc2c6800b54 Thierry Reding 2015-07-30  1937  		dev_err(sor->dev, "failed to pack AVI infoframe: %d\n", err);
+459cc2c6800b54 Thierry Reding 2015-07-30  1938  		return err;
+459cc2c6800b54 Thierry Reding 2015-07-30  1939  	}
+459cc2c6800b54 Thierry Reding 2015-07-30  1940  
+459cc2c6800b54 Thierry Reding 2015-07-30  1941  	tegra_sor_hdmi_write_infopack(sor, buffer, err);
+459cc2c6800b54 Thierry Reding 2015-07-30  1942  
+459cc2c6800b54 Thierry Reding 2015-07-30  1943  	/* enable AVI infoframe */
+459cc2c6800b54 Thierry Reding 2015-07-30  1944  	value = tegra_sor_readl(sor, SOR_HDMI_AVI_INFOFRAME_CTRL);
+459cc2c6800b54 Thierry Reding 2015-07-30  1945  	value |= INFOFRAME_CTRL_CHECKSUM_ENABLE;
+459cc2c6800b54 Thierry Reding 2015-07-30  1946  	value |= INFOFRAME_CTRL_ENABLE;
+459cc2c6800b54 Thierry Reding 2015-07-30  1947  	tegra_sor_writel(sor, value, SOR_HDMI_AVI_INFOFRAME_CTRL);
+459cc2c6800b54 Thierry Reding 2015-07-30  1948  
+459cc2c6800b54 Thierry Reding 2015-07-30  1949  	return 0;
+459cc2c6800b54 Thierry Reding 2015-07-30  1950  }
+459cc2c6800b54 Thierry Reding 2015-07-30  1951  
+
 -- 
-2.42.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
