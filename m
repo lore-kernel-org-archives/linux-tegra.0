@@ -1,131 +1,134 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R9GgjRot"
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.24])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73B0BB0
-	for <linux-tegra@vger.kernel.org>; Tue, 12 Dec 2023 13:57:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702418249; x=1733954249;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=Z73/hOSxGYVupXLmXbwMfHy1VRD17NY40HD1VCffAhI=;
-  b=R9GgjRotuNJgoEEqPnPdU1ZBoDrdFax1pW6L6nSkv6pyyENOBt1p9fKK
-   wmHgRvj2TTPYht+EwTVh6N6eQAVZUzvAWUFbxxgOoXaINOjzAwBbq+eNU
-   7ypCiseAr5cKQBVBaNSGHo3AUQmuFQV6JH2Zykt9zPOg60zGuLUMxnm3x
-   Yh2w50lXMsUFbcAD6R6PJWchw92JpxpUQsTI3vEyD31JbnE/evuU0v3Ke
-   8+eEBZ7ZTIk2M3l8lmU7e+4DbHtIH8GwKxqfCgloz1EOFk2jZatpRKSyA
-   KdRX9ajVY92/bDci6IQiEA2QsnvrxYS/2yDKzspp2yayACA5VjPjOiAka
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="397661381"
-X-IronPort-AV: E=Sophos;i="6.04,271,1695711600"; 
-   d="scan'208";a="397661381"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Dec 2023 13:57:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="897068463"
-X-IronPort-AV: E=Sophos;i="6.04,271,1695711600"; 
-   d="scan'208";a="897068463"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 12 Dec 2023 13:57:10 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rDAkS-000Jln-1j;
-	Tue, 12 Dec 2023 21:57:04 +0000
-Date: Wed, 13 Dec 2023 05:56:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jani Nikula <jani.nikula@intel.com>, linux-tegra@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Cc: oe-kbuild-all@lists.linux.dev, jani.nikula@intel.com
-Subject: Re: [PATCH] drm/tegra: include drm/drm_edid.h only where needed
-Message-ID: <202312130548.FrTZXIdd-lkp@intel.com>
-References: <20231212142409.3826544-1-jani.nikula@intel.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jbmtwUBy"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2041.outbound.protection.outlook.com [40.107.92.41])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3C9DAA;
+	Tue, 12 Dec 2023 14:18:44 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SJVW+FvGMMsSpLOt5PzZypINFEABHAH1ywtZim4P5qKQARpG9ld8caAArSKuSrj0vjHpWahegALXAPQFq1v/PbWbgNo0XI/WUf792jzQeSdEeEHvSLFcq9pWzRrZ8v+FfVv/OSdbLpMoFE5+f1yYI7BdasLP8YqLCmjw07NLn8nUM4S95DJ8DQUQFJmqjUMcI57yaqsHFTJNYbfnWI9SslLwjw8qwfIh6gbkhi4/ge6mZ03ke+WNKVCDYdXL26bJP/QrTocOca9KoxWE9fbtmZd+3FKQ9JTWH1CovrcGd1F1jPLVHM34QHbwKJEaEo/kSSX19dC3yXP0YDLkwseTUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tpdYe3ZMLf7fVQ9cJcwJqSvnx6knyR7RMxE4UsL6/g8=;
+ b=J5aLSPLDzAH5h1vBjuHbR1F9J5Bhq5Ym7yJyVyj8YhoK6NJL384SEzCcmPTjSn4YPk5D3FQt9lcfoLSm2p/t0QaH5bXhpY4Ds407iGLJc7wU6TRSQof3cmSxLNGN9Ozz2VjwyK2C+K8t6nao4lmuunRSZXlG7vtyQtHgLUEsKUTRVuLVwAruShstdCDSmQN7Jzxi91zrtdk2wU9qLmjBkEIgvXDVDiF15l5eNbPQTeISrXWzsBekb80ruUdiTYgpcmmRM03tUa4HotXzBEHJYtJB+LBgNnmg5prf2BGxSz0kVtQ5t8RtUeABLJZh9OYDMZD2TqgayDoR6b6pbDMUrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tpdYe3ZMLf7fVQ9cJcwJqSvnx6knyR7RMxE4UsL6/g8=;
+ b=jbmtwUByGklLLmss23J+irkmiCBZVdNpKkGo9QylpaxOCVyjH8npQZsaiDc48sNWke4rr/dRN7I77F/PxS3+36JxTgBski5YR2gx5JFk1CZGbOJzVVVwq6rQ1OWMm3n6gFPt6AFpAbDozKthIC5XIcwygEpdfC200ejgJNM1IAbUloeY1dGfJF/tsY+mtasrPhERupiMN7t+rm5SA+rz5Ql9K5ymjpTsJSttSb3S07CZOEtAkY2fnyBj8sFNTs7O8qA0l43aff9GVHSK8B75JKbmkYgXiMPoOhDUOpvtL9Y9RHlO39WE8sBvX0O6iZmkqfBlBCj4b8X0CIoZv6PIRg==
+Received: from MN2PR16CA0034.namprd16.prod.outlook.com (2603:10b6:208:134::47)
+ by MW3PR12MB4428.namprd12.prod.outlook.com (2603:10b6:303:57::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.26; Tue, 12 Dec
+ 2023 22:18:41 +0000
+Received: from MN1PEPF0000F0DF.namprd04.prod.outlook.com
+ (2603:10b6:208:134:cafe::e2) by MN2PR16CA0034.outlook.office365.com
+ (2603:10b6:208:134::47) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.26 via Frontend
+ Transport; Tue, 12 Dec 2023 22:18:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ MN1PEPF0000F0DF.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7091.18 via Frontend Transport; Tue, 12 Dec 2023 22:18:40 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 12 Dec
+ 2023 14:18:17 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 12 Dec
+ 2023 14:18:17 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
+ Transport; Tue, 12 Dec 2023 14:18:17 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.14 00/24] 4.14.333-rc2 review
+In-Reply-To: <20231212120146.831816822@linuxfoundation.org>
+References: <20231212120146.831816822@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231212142409.3826544-1-jani.nikula@intel.com>
+Message-ID: <ed91a245-88ed-4ac2-802e-3b417d5c9cda@rnnvmail201.nvidia.com>
+Date: Tue, 12 Dec 2023 14:18:17 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0DF:EE_|MW3PR12MB4428:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67bb482f-8118-404c-848c-08dbfb604bd5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	AfZTCfzGfAuKEY4qEx1kpjcDUNUcS89jC/SbeNnGP7JASAZaKrLNv4EhLyWJS8b/Mqcjx61qkYkDcmMjBUpyzyruXKcSeTtNxJMVhRXXCYfWfPC2gqnxz6JW1WVkxI9vVAb+IptTevlO1I1L/OdPezbEjSdCj9b7g7djS/7fmYikGs0LYoeZalAqglV+uBmIn+6BpwuxgQ1yC3/Vu2kyyXKzrxQfrt24aN6OrEOFOsPlrwxEL7QH566dbQ8gMD/CmPxpvcu1KhrRVp9vLAFC04tBZ1NbIrLcbgW8FVWuIzt8Jjw4dfwFeO6eknqrHhnBD1JSJmSNxZL8QQRKNCfZ64X8k9G1qC2ZVSCKAc5huLZLrTWq7WozeXj8Z4r2MvL3PQul6URJhNdPjP/a+GWJT08KedieuFf1HbBX98MEekCd1bbv88ozT/dX9G1Cb3tLeBpc6CihjCXRrFogmMJabgh7vBUCqM5OT09Q+qEBDhkYjcuTiIIe/tppUwoRNCcghBJ1sQbROIvOvQvbYQ7icU5D4WdWjy9JNQ3r3uwyhwZvcOuN14d8N5TIwdPFH5pVJS+TApAgYGc9MneA1UJ46AoQjUXTP+YTBGq2hwhJivUoBuP9hFthdfRLINwYvv1pgdWHTOUld5wCP5T8WJAe2usmGU4QqPhfMxqtJiFtOEuQncE2ZFsN+0fx5bWMZL9LHpUu1r7o2LxIjXqzeR1AE0T6+ixdKsAEgmq2/QpxT4b/HotqrsVzRrR/W99Fe3qdx99XEvoFqsuMTJwFQakqqgpUH54jF6+IC0eVbOXKrwM=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(136003)(376002)(396003)(346002)(230922051799003)(451199024)(1800799012)(82310400011)(64100799003)(186009)(46966006)(40470700004)(36840700001)(40460700003)(336012)(426003)(47076005)(36860700001)(8676002)(5660300002)(4326008)(8936002)(26005)(41300700001)(7416002)(2906002)(966005)(478600001)(316002)(6916009)(54906003)(70206006)(82740400003)(70586007)(31696002)(86362001)(356005)(7636003)(40480700001)(31686004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Dec 2023 22:18:40.8742
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67bb482f-8118-404c-848c-08dbfb604bd5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0DF.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4428
 
-Hi Jani,
+On Tue, 12 Dec 2023 13:05:03 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.333 release.
+> There are 24 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 14 Dec 2023 12:01:26 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.333-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-kernel test robot noticed the following build errors:
+All tests passing for Tegra ...
 
-[auto build test ERROR on drm/drm-next]
-[also build test ERROR on drm-exynos/exynos-drm-next drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip linus/master v6.7-rc5 next-20231212]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Test results for stable-v4.14:
+    10 builds:	10 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    32 tests:	32 pass, 0 fail
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jani-Nikula/drm-tegra-include-drm-drm_edid-h-only-where-needed/20231212-222603
-base:   git://anongit.freedesktop.org/drm/drm drm-next
-patch link:    https://lore.kernel.org/r/20231212142409.3826544-1-jani.nikula%40intel.com
-patch subject: [PATCH] drm/tegra: include drm/drm_edid.h only where needed
-config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20231213/202312130548.FrTZXIdd-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231213/202312130548.FrTZXIdd-lkp@intel.com/reproduce)
+Linux version:	4.14.333-rc2-g68f9b81cad70
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202312130548.FrTZXIdd-lkp@intel.com/
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-All errors (new ones prefixed by >>):
-
-   drivers/gpu/drm/tegra/sor.c: In function 'tegra_sor_hdmi_setup_avi_infoframe':
->> drivers/gpu/drm/tegra/sor.c:1928:15: error: implicit declaration of function 'drm_hdmi_avi_infoframe_from_display_mode' [-Werror=implicit-function-declaration]
-    1928 |         err = drm_hdmi_avi_infoframe_from_display_mode(&frame,
-         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/drm_hdmi_avi_infoframe_from_display_mode +1928 drivers/gpu/drm/tegra/sor.c
-
-459cc2c6800b54 Thierry Reding 2015-07-30  1911  
-459cc2c6800b54 Thierry Reding 2015-07-30  1912  static int
-459cc2c6800b54 Thierry Reding 2015-07-30  1913  tegra_sor_hdmi_setup_avi_infoframe(struct tegra_sor *sor,
-459cc2c6800b54 Thierry Reding 2015-07-30  1914  				   const struct drm_display_mode *mode)
-459cc2c6800b54 Thierry Reding 2015-07-30  1915  {
-459cc2c6800b54 Thierry Reding 2015-07-30  1916  	u8 buffer[HDMI_INFOFRAME_SIZE(AVI)];
-459cc2c6800b54 Thierry Reding 2015-07-30  1917  	struct hdmi_avi_infoframe frame;
-459cc2c6800b54 Thierry Reding 2015-07-30  1918  	u32 value;
-459cc2c6800b54 Thierry Reding 2015-07-30  1919  	int err;
-459cc2c6800b54 Thierry Reding 2015-07-30  1920  
-459cc2c6800b54 Thierry Reding 2015-07-30  1921  	/* disable AVI infoframe */
-459cc2c6800b54 Thierry Reding 2015-07-30  1922  	value = tegra_sor_readl(sor, SOR_HDMI_AVI_INFOFRAME_CTRL);
-459cc2c6800b54 Thierry Reding 2015-07-30  1923  	value &= ~INFOFRAME_CTRL_SINGLE;
-459cc2c6800b54 Thierry Reding 2015-07-30  1924  	value &= ~INFOFRAME_CTRL_OTHER;
-459cc2c6800b54 Thierry Reding 2015-07-30  1925  	value &= ~INFOFRAME_CTRL_ENABLE;
-459cc2c6800b54 Thierry Reding 2015-07-30  1926  	tegra_sor_writel(sor, value, SOR_HDMI_AVI_INFOFRAME_CTRL);
-459cc2c6800b54 Thierry Reding 2015-07-30  1927  
-13d0add333afea Ville Syrjälä  2019-01-08 @1928  	err = drm_hdmi_avi_infoframe_from_display_mode(&frame,
-13d0add333afea Ville Syrjälä  2019-01-08  1929  						       &sor->output.connector, mode);
-459cc2c6800b54 Thierry Reding 2015-07-30  1930  	if (err < 0) {
-459cc2c6800b54 Thierry Reding 2015-07-30  1931  		dev_err(sor->dev, "failed to setup AVI infoframe: %d\n", err);
-459cc2c6800b54 Thierry Reding 2015-07-30  1932  		return err;
-459cc2c6800b54 Thierry Reding 2015-07-30  1933  	}
-459cc2c6800b54 Thierry Reding 2015-07-30  1934  
-459cc2c6800b54 Thierry Reding 2015-07-30  1935  	err = hdmi_avi_infoframe_pack(&frame, buffer, sizeof(buffer));
-459cc2c6800b54 Thierry Reding 2015-07-30  1936  	if (err < 0) {
-459cc2c6800b54 Thierry Reding 2015-07-30  1937  		dev_err(sor->dev, "failed to pack AVI infoframe: %d\n", err);
-459cc2c6800b54 Thierry Reding 2015-07-30  1938  		return err;
-459cc2c6800b54 Thierry Reding 2015-07-30  1939  	}
-459cc2c6800b54 Thierry Reding 2015-07-30  1940  
-459cc2c6800b54 Thierry Reding 2015-07-30  1941  	tegra_sor_hdmi_write_infopack(sor, buffer, err);
-459cc2c6800b54 Thierry Reding 2015-07-30  1942  
-459cc2c6800b54 Thierry Reding 2015-07-30  1943  	/* enable AVI infoframe */
-459cc2c6800b54 Thierry Reding 2015-07-30  1944  	value = tegra_sor_readl(sor, SOR_HDMI_AVI_INFOFRAME_CTRL);
-459cc2c6800b54 Thierry Reding 2015-07-30  1945  	value |= INFOFRAME_CTRL_CHECKSUM_ENABLE;
-459cc2c6800b54 Thierry Reding 2015-07-30  1946  	value |= INFOFRAME_CTRL_ENABLE;
-459cc2c6800b54 Thierry Reding 2015-07-30  1947  	tegra_sor_writel(sor, value, SOR_HDMI_AVI_INFOFRAME_CTRL);
-459cc2c6800b54 Thierry Reding 2015-07-30  1948  
-459cc2c6800b54 Thierry Reding 2015-07-30  1949  	return 0;
-459cc2c6800b54 Thierry Reding 2015-07-30  1950  }
-459cc2c6800b54 Thierry Reding 2015-07-30  1951  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jon
