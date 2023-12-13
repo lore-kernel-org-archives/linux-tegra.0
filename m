@@ -1,23 +1,23 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FeuddR8g"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::223])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D1EA4;
-	Wed, 13 Dec 2023 02:02:00 -0800 (PST)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 27B4160003;
-	Wed, 13 Dec 2023 10:01:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dH5F+2tR"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16C42AC;
+	Wed, 13 Dec 2023 02:14:49 -0800 (PST)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DF19FC000A;
+	Wed, 13 Dec 2023 10:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1702461719;
+	t=1702462488;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Nzq47vFlv97cazTquttyDrHhz//pHKUF4LDlvhQgbK8=;
-	b=FeuddR8grSkUeA+v5ZTM+a/fzRBdjj6sOJAYGGxdsWfw+lQ1/aY+jL0UALte6wGRqEUd1t
-	1HFRLyh/Io9ijAL9ZDbryHUYHOXdJOmdvfrBQcGCAP6Mr1GsCR2N/lfRRsnvptIIcytA16
-	KKJdUr5uHCVftzX2qfJa9jav20TraCwvyXvvhNNKdC4bMxmwLdKVrw3TpFJ9aALmtTFKW3
-	pTM9MaUqOqsk7ViGBVjyRSgZK1cWBD+yYPf2W1u0YG/iJwceIs9jvIkaCEEgYikgYJFm37
-	ruoF4C8h3+Fk4eqlLM1yyK3p5/VyOhV6dRNVPsVEXEDOy9d2KpBYyhu3ohaw4A==
-Date: Wed, 13 Dec 2023 11:01:54 +0100
+	bh=MLFvzHrlurDDiJ9fwrCennWA8j0DQ+B1g0medVOvn24=;
+	b=dH5F+2tRMK76OGGohcrS/NXdCDmBhV4EcdF0FjTlYeE+OPGDutcYd2hZ0U/vEAPL94Zfs1
+	ERc34e9cqi5gFzja5y8RmIBHI+GLT9lJZTNSFGbiXiv2mfnH8HEE3G37dWMeXqppewq61h
+	1nCEC1LjB25k+YGNr3OEK5Elp+d/e0B+soZ0XaVb0VkXbfDO+6twicSZgf4YWmMrnfoUw5
+	y9uidhUdgU4vHoPyBnWWoGYtz8X4TuWNGsUlSlOBvQFvDCjWW2OL+miYI1RwhGskjaIaAq
+	zcSWRtLiYa1SLt9+GW+qBWt4WZCR7MaElSg1CSDiHcpYpNQXRYqbKWNwMwcaYw==
+Date: Wed, 13 Dec 2023 11:14:44 +0100
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Cc: linux-media@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>,
@@ -36,12 +36,12 @@ Cc: linux-media@vger.kernel.org, Akinobu Mita <akinobu.mita@gmail.com>,
  <slongerbeam@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Thierry Reding <thierry.reding@gmail.com>, Tomi Valkeinen
  <tomi.valkeinen@ideasonboard.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 2/8] media: v4l2-subdev: Turn .[gs]_frame_interval
- into pad operations
-Message-ID: <20231213110154.21024f41@booty>
-In-Reply-To: <20231208181648.13568-2-laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 3/8] media: v4l2-subdev: Add which field to struct
+ v4l2_subdev_frame_interval
+Message-ID: <20231213111444.34145eab@booty>
+In-Reply-To: <20231208181648.13568-3-laurent.pinchart@ideasonboard.com>
 References: <20231208181442.13356-1-laurent.pinchart@ideasonboard.com>
-	<20231208181648.13568-2-laurent.pinchart@ideasonboard.com>
+	<20231208181648.13568-3-laurent.pinchart@ideasonboard.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
@@ -56,41 +56,38 @@ X-GND-Sasl: luca.ceresoli@bootlin.com
 
 Hi Laurent,
 
-On Fri,  8 Dec 2023 20:16:42 +0200
+On Fri,  8 Dec 2023 20:16:43 +0200
 Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
 
-> The subdev .[gs]_frame_interval are video operations, but they operate
-> on pads (and even on streams). Not only is this confusing, it causes
-> practical issues for drivers as the operations don't receive a subdev
-> state pointer, requiring manual state handling.
+> Due to a historical mishap, the v4l2_subdev_frame_interval structure
+> is the only part of the V4L2 subdev userspace API that doesn't contain a
+> 'which' field. This prevents trying frame intervals using the subdev
+> 'TRY' state mechanism.
 > 
-> To improve the situation, turn the operations into pad operations, and
-> extend them to receive a state pointer like other pad operations.
+> Adding a 'which' field is simple as the structure has 8 reserved fields.
+> This would however break userspace as the field is currently set to 0,
+> corresponding to V4L2_SUBDEV_FORMAT_TRY, while the corresponding ioctls
+> currently operate on the 'ACTIVE' state. We thus need to add a new
+> subdev client cap, V4L2_SUBDEV_CLIENT_CAP_WHICH_INTERVAL, to indicate
+> that userspace is aware of this new field.
 > 
-> While at it, rename the operations to .[gs]et_frame_interval at the same
-> time to match the naming scheme of other pad operations. This isn't
-> strictly necessary, but given that all drivers using those operations
-> need to be modified, handling the rename separately would generate more
-> churn for very little gain (if at all).
+> All drivers that implement the subdev .get_frame_interval() and
+> .set_frame_interval() operations are updated to return -EINVAL when
+> operating on the TRY state, preserving the current behaviour.
+> 
+> While at it, fix a bad copy&paste in the documentation of the struct
+> v4l2_subdev_frame_interval_enum 'which' field.
 > 
 > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 > Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de> # for imx-media
+> Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+
 ...
->  drivers/media/v4l2-core/v4l2-common.c         |  8 +--
->  drivers/media/v4l2-core/v4l2-subdev.c         | 63 +++++++++++--------
-...
->  drivers/staging/media/tegra-video/csi.c       |  9 +--
->  include/media/v4l2-common.h                   |  4 +-
->  include/media/v4l2-subdev.h                   | 22 ++++---
+
+>  drivers/staging/media/tegra-video/csi.c       |  3 +++
 
 For tegra-video:
 Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
-I'm afraid I cannot test it as the tegra-video hardware I have has a
-parallel camera only, no CSI.
-
-Luca
 
 -- 
 Luca Ceresoli, Bootlin
