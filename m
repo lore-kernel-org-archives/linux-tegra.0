@@ -1,129 +1,94 @@
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1288C17742;
+	Wed, 13 Dec 2023 07:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gk/9z0LA"
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E8FBAD
-	for <linux-tegra@vger.kernel.org>; Tue, 12 Dec 2023 22:37:08 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id 4fb4d7f45d1cf-54cd8f5bb5cso8344955a12.1
-        for <linux-tegra@vger.kernel.org>; Tue, 12 Dec 2023 22:37:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702449426; x=1703054226; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YiVWYZ/VHGjewdIh92D/rkp5vMzLkVA7VJu78RFLjBo=;
-        b=Gk/9z0LAiTkn/a5ql7sFWYjGz+h90MVMBRSguS8g3ML73akDtSXUlfENlre1N1sbKO
-         bHjLJ1J0Re+8cTEBUa8RebZo7WGEwtFZSdMtC6SZzkaXFu3oaHrMsf7PHnaEt1yZJPD6
-         iTaGvLZRypJV2+iKDU8d5st0V7QKSmywwJ3xzL9CWOL39kPoJE0yMY715W5SfzTS/fbb
-         ypbSDCrxARgwFoE0xpLZVrqrYMRLdx1bji4EMouT5JYEl7CkcSicES2B9D9z6y5ootqV
-         zmBzvn3pj+WeMeHGKFcZG6H9HXLJHXRiSXOmBpuc1klvGYboinGTrTlB2J4ZrNgO1GGw
-         5S/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702449426; x=1703054226;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YiVWYZ/VHGjewdIh92D/rkp5vMzLkVA7VJu78RFLjBo=;
-        b=Qi9+J4U8urnsy6iOTE4tewBQHwFbVabsH9NPGUKBmCk/X5/GR84fQLvplIE8rMlbvM
-         hCYGHu3O5GirEoTNAEDHioMXIqEI4LrystmTkrHVJfqoOVoGYmAfWJ6YccNfimrlPR7X
-         ItkpNe4PEk/ARt+4e50LD/kmNq8Qa0vBg1cNjbt4hxiTdln7KB9kZeqzLdXdMh1F0XqB
-         qWftKEdES3271PH/Pia5CKB+xY2OkSIMAlsI0ulSZA7P6M08wXv0VpVurnu5T73biflD
-         KtzJ/0Ci8olwdcIUjGVF4knWW8KiU2RXce1uxzOnkXeQOK7LJZVrJEYd/lFVxd4cwdF4
-         fErg==
-X-Gm-Message-State: AOJu0Yyb/TeAyduiG/UyGuTT8Pl0ikF8kV0UvPgHRuLCIYFntdEwIBoJ
-	ZY0LN5RnYIMSwWMWyJtvAmTw2w==
-X-Google-Smtp-Source: AGHT+IGfVpzGzxTJvbe9Y0ofX7JUYkeqsL0M5Mdt14uiJr8kkcFqQYX26kqgUbrKB4gqwtTHdEyZDA==
-X-Received: by 2002:a50:d0c8:0:b0:551:d08e:782d with SMTP id g8-20020a50d0c8000000b00551d08e782dmr699728edf.6.1702449426617;
-        Tue, 12 Dec 2023 22:37:06 -0800 (PST)
-Received: from localhost (h3220.n1.ips.mtn.co.ug. [41.210.178.32])
-        by smtp.gmail.com with ESMTPSA id a15-20020a50c30f000000b0054bde4df7f0sm5512866edb.66.2023.12.12.22.37.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Dec 2023 22:37:06 -0800 (PST)
-Date: Wed, 13 Dec 2023 09:37:02 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: mkumard@nvidia.com
-Cc: linux-tegra@vger.kernel.org
-Subject: [bug report] dmaengine: tegra210-adma: Support dma-channel-mask
- property
-Message-ID: <9aeefd2b-2ba7-40be-9b0e-564cfd4ece6f@moroto.mountain>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkJyYqUq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 022A2C433C8;
+	Wed, 13 Dec 2023 07:16:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702451767;
+	bh=rjW4FqNS7dqFf2D6s0wEqUZechtIxjdG/6g1Uueb+xU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XkJyYqUqmsv8rO254rdUW4eXIFC+gLoifUFXtE7qCu7DsCIBON/xSS0U0wc21QazB
+	 rJK8Lq60VmOKEcAS3bIh5/xesPMvfpwujc4U7mejCJcNShGXQXY+2tvEMdgA2cSOzV
+	 zMUrYTcAi4ytjc2q1YjCXcUYEjp5b4r4MbsUbSVpzz5/TRYnrhPrdHCwssy6siBKVA
+	 4g3d+lWT/ZEApSO5LSYHOKo3uawaCfiDJtwvdfr33JCmtluqt6RM8Rdz6/tufvqvOr
+	 tMV3BKbcKQwe5paAnsZTd+kTQI40qefYumD/PkP7gptEep5V/lYPBjk/RJk2g6gFGl
+	 mQbcT5pj2oZFw==
+Date: Wed, 13 Dec 2023 08:16:04 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, linux-tegra@vger.kernel.org, 
+	Johan Hovold <johan+linaro@kernel.org>, Georgi Djakov <djakov@kernel.org>, kernel@pengutronix.de
+Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
+Message-ID: <ki5n3rz5n4oxj2hhc3rj6xpn3e2tdi7fcp2q7exjbzilrlqflp@przautvhuy4g>
+References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="m7hyngpcks2t5pei"
 Content-Disposition: inline
+In-Reply-To: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
 
-Hello Mohan Kumar,
 
-The patch 25b636225a08: "dmaengine: tegra210-adma: Support
-dma-channel-mask property" from Nov 28, 2023 (linux-next), leads to
-the following Smatch static checker warning:
+--m7hyngpcks2t5pei
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	drivers/dma/tegra210-adma.c:887 tegra_adma_probe()
-	warn: passing casted pointer 'tdma->dma_chan_mask' to 'of_property_read_u32_array()' 64 vs 32.
+Hi,
 
-drivers/dma/tegra210-adma.c
-    845 static int tegra_adma_probe(struct platform_device *pdev)
-    846 {
-    847         const struct tegra_adma_chip_data *cdata;
-    848         struct tegra_adma *tdma;
-    849         int ret, i;
-    850 
-    851         cdata = of_device_get_match_data(&pdev->dev);
-    852         if (!cdata) {
-    853                 dev_err(&pdev->dev, "device match data not found\n");
-    854                 return -ENODEV;
-    855         }
-    856 
-    857         tdma = devm_kzalloc(&pdev->dev,
-    858                             struct_size(tdma, channels, cdata->nr_channels),
-    859                             GFP_KERNEL);
-    860         if (!tdma)
-    861                 return -ENOMEM;
-    862 
-    863         tdma->dev = &pdev->dev;
-    864         tdma->cdata = cdata;
-    865         tdma->nr_channels = cdata->nr_channels;
-    866         platform_set_drvdata(pdev, tdma);
-    867 
-    868         tdma->base_addr = devm_platform_ioremap_resource(pdev, 0);
-    869         if (IS_ERR(tdma->base_addr))
-    870                 return PTR_ERR(tdma->base_addr);
-    871 
-    872         tdma->ahub_clk = devm_clk_get(&pdev->dev, "d_audio");
-    873         if (IS_ERR(tdma->ahub_clk)) {
-    874                 dev_err(&pdev->dev, "Error: Missing ahub controller clock\n");
-    875                 return PTR_ERR(tdma->ahub_clk);
-    876         }
-    877 
-    878         tdma->dma_chan_mask = devm_kzalloc(&pdev->dev,
-    879                                            BITS_TO_LONGS(tdma->nr_channels) * sizeof(unsigned long),
-    880                                            GFP_KERNEL);
-    881         if (!tdma->dma_chan_mask)
-    882                 return -ENOMEM;
-    883 
-    884         /* Enable all channels by default */
-    885         bitmap_fill(tdma->dma_chan_mask, tdma->nr_channels);
-    886 
---> 887         ret = of_property_read_u32_array(pdev->dev.of_node, "dma-channel-mask",
-    888                                          (u32 *)tdma->dma_chan_mask,
+On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-K=F6nig wrote:
+> Hello,
+>=20
+> clk_rate_exclusive_get() returns zero unconditionally. Most users "know"
+> that and don't check the return value. This series fixes the four users
+> that do error checking on the returned value and then makes function
+> return void.
+>=20
+> Given that the changes to the drivers are simple and so merge conflicts
+> (if any) should be easy to handle, I suggest to merge this complete
+> series via the clk tree.
 
-I don't think this will work on big endian systems...  Do we care about
-that?
+I don't think it's the right way to go about it.
 
-    889                                          BITS_TO_U32(tdma->nr_channels));
-    890         if (ret < 0 && (ret != -EINVAL)) {
-    891                 dev_err(&pdev->dev, "dma-channel-mask is not complete.\n");
-    892                 return ret;
-    893         }
-    894 
-    895         INIT_LIST_HEAD(&tdma->dma_dev.channels);
-    896         for (i = 0; i < tdma->nr_channels; i++) {
-    897                 struct tegra_adma_chan *tdc = &tdma->channels[i];
-    898 
-    899                 /* skip for reserved channels */
-    900                 if (!test_bit(i, tdma->dma_chan_mask))
-    901                         continue;
-    902 
+clk_rate_exclusive_get() should be expected to fail. For example if
+there's another user getting an exclusive rate on the same clock.
 
-regards,
-dan carpenter
+If we're not checking for it right now, then it should probably be
+fixed, but the callers checking for the error are right to do so if they
+rely on an exclusive rate. It's the ones that don't that should be
+modified.
+
+Maxime
+
+--m7hyngpcks2t5pei
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZXlaNAAKCRDj7w1vZxhR
+xdMoAP0SfIOFl6Fc7FcIbVyoWZh/iWhJLszL7a709z02B76E0QEApMmexIdN3NIS
+P/kaPqH5SfyvBxS6tWkFW1spZ1vSVQE=
+=f1uM
+-----END PGP SIGNATURE-----
+
+--m7hyngpcks2t5pei--
