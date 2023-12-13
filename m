@@ -1,154 +1,137 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03251EB35;
-	Wed, 13 Dec 2023 11:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjnnVZ0S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC807C433C8;
-	Wed, 13 Dec 2023 11:54:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1702468457;
-	bh=iHthuXB7sfzZcg98+EKwHTXcS8ZvmQ4BanSBcAsrHIE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MjnnVZ0S7rVIKkqnGTiQ4DlqE2/wYLDD+AwPYhVsgGx6Eii2AQtoaWS7SymKrgfJF
-	 Ttkwe0ZPFeMuRktLhUTlDjtSv+F0Euq61k8svBaGRGYZIkq8ylsQsBIBfwbf4AnqWo
-	 VDKv7GvOb0WtVWDbzkCxmes4wW6Qhes/ZC5J2Xq5JiutrXqMccJLknAKOIqSNHcQoA
-	 1cS6vcPQtfv/3ocOXTNm36GO4yA3C8uiDNEy1eUrlM4g3ReHOjoYYVLiBUCDL+5aqu
-	 5NE/cfH4OP74Pg+t5zJ7YzInYoIFTK11scS0e4Nd8Uwh8X7GLXRNKNFcXUZzibD43+
-	 hNyjWepgZ0BMw==
-Date: Wed, 13 Dec 2023 12:54:14 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Daniel Vetter <daniel@ffwll.ch>, 
-	Michael Turquette <mturquette@baylibre.com>, dri-devel@lists.freedesktop.org, 
-	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>, linux-clk@vger.kernel.org, 
-	Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Russell King <linux@armlinux.org.uk>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Chen-Yu Tsai <wens@csie.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, 
-	linux-sunxi@lists.linux.dev, kernel@pengutronix.de, linux-pm@vger.kernel.org, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	Johan Hovold <johan+linaro@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Georgi Djakov <djakov@kernel.org>
-Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
-Message-ID: <6wnsxbi27xdxjtaqaaaq5wtwwilp4jfw4mg5y2ctdl7xrs44ry@ns6y36pf7hge>
-References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
- <ki5n3rz5n4oxj2hhc3rj6xpn3e2tdi7fcp2q7exjbzilrlqflp@przautvhuy4g>
- <20231213074300.4bq7wkfqd4jhhcr4@pengutronix.de>
- <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
- <20231213110829.bjaxjjiyy4ug7o67@pengutronix.de>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="t0QxIhv1"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2080.outbound.protection.outlook.com [40.107.93.80])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3949E12D;
+	Wed, 13 Dec 2023 04:20:58 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GjiB0fZF/6jg57iccZmrf7NZroZOSTJk7lzrRfk3LAxHTcLt9oDIOEvUpQm0P/aAQINl7Az1/AUDTrED5S9jYKycjEnH8Wh4Wx+1FvuMLcnJ5f3/vmPvL+pQLQiUn8Kgz3tUHqVNtDJkuuLsJkJy5BmbLSa262+1FBLDk8VV/dJX18Lyjr9cHiu7ks6HenIOVFXHDMHsoyPOzRN2AkqapjQS0pfFuh9nmNvd8sYVbohln1TdvrnNA0keH/dj0aPhGnxA3fkeaX9LPOxUXGL4G3ZMe2jr5Ilw3UNdPmkobr+Mtkk5LAGxn7CbyNb06pfqcdMQluNC7LKA/2tNPzpdvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wIOXHeEKqp6Dp2DeXIbuqDfw4F6RrUwb4jhPhi8qfyA=;
+ b=j8SZGNMWQ1CqP2wEze6LlpOIAasWdbMGcBomxcycwLqn6d65slzyPBdrzJ7zRpBLjGn5RIwYAxHQhka/m896UihwdHR9FxX4CyvyGOmx16cLdnlLxAA5xgSLagj8pbHvJsw3m4Nh894Bh2Q5nKChR5xqzHxtYGQB0pTdu9SBBThwNxpd989u0f5kiUuTr1IqFAhTifCRNmog5joUQh5W2CFQqjiwSgAAhgJd5a1d9qU68ccAyU9syZqGi887lcyUvjHeBEkrYUDT4uguNa65Ypf+gN6SpFcEKCisqQ4Gj59qTfCrpL//S7gyQrI4Ck5Hd2+SMlVtkMiNNIDkxfzzSw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=gondor.apana.org.au
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wIOXHeEKqp6Dp2DeXIbuqDfw4F6RrUwb4jhPhi8qfyA=;
+ b=t0QxIhv1fIz6bTUejayKBUAH5YucUov/XKcIvnhtXwDXxYAqiu7uxQ5+NIGAqGQ70ByoRrhuGCWfOKYv2StRiTIJe9N4ss7//x5HrT/yConAx/Icg1I/QZxMLUxTl3V+FuxOUzKUobF8jVLdUkBDHXpqsADdwsZ/BwFSp5uAGR1kqRrQtzgZ0pZxSCIis50XnMeMcPiRInUaQ6Vj5uSMhO9W5ezjGFiniIIJ1nDFzgVpoCayBt21/5m5ujm+0PFnmJQJv3uwBm2Y6iBBcuzL/h9AlanhyBDKfU/Yiah8OpinC7YY0aC0L9A8huof83y4UGzKk69HSQinR+U0ZoSiWA==
+Received: from CH0PR03CA0011.namprd03.prod.outlook.com (2603:10b6:610:b0::16)
+ by DM4PR12MB7600.namprd12.prod.outlook.com (2603:10b6:8:108::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.33; Wed, 13 Dec
+ 2023 12:20:56 +0000
+Received: from DS2PEPF00003439.namprd02.prod.outlook.com
+ (2603:10b6:610:b0:cafe::99) by CH0PR03CA0011.outlook.office365.com
+ (2603:10b6:610:b0::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7068.33 via Frontend
+ Transport; Wed, 13 Dec 2023 12:20:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ DS2PEPF00003439.mail.protection.outlook.com (10.167.18.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7091.26 via Frontend Transport; Wed, 13 Dec 2023 12:20:54 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 13 Dec
+ 2023 04:20:39 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Wed, 13 Dec 2023 04:20:39 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.986.41 via Frontend
+ Transport; Wed, 13 Dec 2023 04:20:37 -0800
+From: Akhil R <akhilrajeev@nvidia.com>
+To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<linux-tegra@vger.kernel.org>
+CC: Akhil R <akhilrajeev@nvidia.com>
+Subject: [PATCH 0/5] Add Tegra Security Engine driver
+Date: Wed, 13 Dec 2023 17:50:25 +0530
+Message-ID: <20231213122030.11734-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nuge2gzlt63erkrn"
-Content-Disposition: inline
-In-Reply-To: <20231213110829.bjaxjjiyy4ug7o67@pengutronix.de>
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003439:EE_|DM4PR12MB7600:EE_
+X-MS-Office365-Filtering-Correlation-Id: e182b08c-fe75-4c5d-b51b-08dbfbd5f464
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	K4ZzryhwII1KUk4NUPtWvlR1FzZr/1DAJbEjomVII0kAHfOqrKSpXq5HQyxr+dskRkxIr0b5d9/i1nXxK216CXaeU+Ih89ZeY4JNOGVwUwuPjak0CYERX0WUj1j13lq6K7TxKaY+BWiE2c4kllVjYeCOTnMaz6epGTCBBW7Bq/TEeJquZhamLSyp3gNFIO7YSC7WBRDOpuFjuEa4kysnL9pT6nh/N+eXZ++dtVvrnf01h55qgPrdnMGHVGlxaeK+1GZCMXctwSawxWPoDC8rabRicC06MhIyNs3gteJ423Fv5Wvxsgw9xY86HlXm68PmNyFNqD17/4ap73XmmMwLIEiQCqANmYHpDtRoavfXp9BHKV5eJ2yY33uFgeD5JMXx3TSoIPZbfvH//QkYY47KogitXACDwH2+YpZLQJbEu2R8zUpFXc8OwWGuxHU3NCGi4qoQOoCa+TXItQzMQ1N9HoQKBTJHt29M3MgyppYFebYQIzNW/c9SQI3k/cqwg3V37KoapGufIgakRXsh5gwE2XfXQFsvgr7eQ3OW19RlEL3ffSNZ4W4KIR09EpnAL4NrjdCRwcNo8VtqfFhrIgaXFno9XJlTXQzmoyPvEp4h1/nzKGq1Asf09aagP75lvOBOu+uiOC4PlnjeZ+snuYyiEOx2VNTa5YnZvfbI4LH7d7j570OuiI3BE4nGMoAStX4gkcRrkqnpOVzRIsLV7CkkkPo8XczDHmejh3/e0l9RmSPmmWg+gX8ymRGuaxpS/1in5ZovDVsv5WZBiAaqNX4URA==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(396003)(346002)(136003)(39860400002)(376002)(230922051799003)(64100799003)(82310400011)(186009)(451199024)(1800799012)(36840700001)(40470700004)(46966006)(40480700001)(36756003)(86362001)(40460700003)(70206006)(7696005)(70586007)(110136005)(6666004)(82740400003)(2616005)(1076003)(356005)(41300700001)(26005)(7636003)(107886003)(426003)(83380400001)(336012)(47076005)(2906002)(8676002)(15650500001)(478600001)(4326008)(5660300002)(36860700001)(8936002)(316002)(357404004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2023 12:20:54.8184
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e182b08c-fe75-4c5d-b51b-08dbfbd5f464
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003439.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7600
 
+Add support for Tegra Security Engine which can accelerates various
+crypto algorithms. The Engine has two separate instances within for
+AES and HASH algorithms respectively.
 
---nuge2gzlt63erkrn
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The driver registers two crypto engines - one for AES and another for
+HASH algorithms and these operate independently and both uses the host1x
+bus. Additionally, it provides  hardware-assisted key protection for up to
+15 symmetric keys which it can use for the cipher operations.
 
-On Wed, Dec 13, 2023 at 12:08:29PM +0100, Uwe Kleine-K=F6nig wrote:
-> On Wed, Dec 13, 2023 at 09:36:49AM +0100, Maxime Ripard wrote:
-> > On Wed, Dec 13, 2023 at 08:43:00AM +0100, Uwe Kleine-K=F6nig wrote:
-> > > On Wed, Dec 13, 2023 at 08:16:04AM +0100, Maxime Ripard wrote:
-> > > > On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-K=F6nig wrote:
-> > > > > clk_rate_exclusive_get() returns zero unconditionally. Most users=
- "know"
-> > > > > that and don't check the return value. This series fixes the four=
- users
-> > > > > that do error checking on the returned value and then makes funct=
-ion
-> > > > > return void.
-> > > > >=20
-> > > > > Given that the changes to the drivers are simple and so merge con=
-flicts
-> > > > > (if any) should be easy to handle, I suggest to merge this comple=
-te
-> > > > > series via the clk tree.
-> > > >=20
-> > > > I don't think it's the right way to go about it.
-> > > >=20
-> > > > clk_rate_exclusive_get() should be expected to fail. For example if
-> > > > there's another user getting an exclusive rate on the same clock.
-> > > >=20
-> > > > If we're not checking for it right now, then it should probably be
-> > > > fixed, but the callers checking for the error are right to do so if=
- they
-> > > > rely on an exclusive rate. It's the ones that don't that should be
-> > > > modified.
-> > >=20
-> > > If some other consumer has already "locked" a clock that I call
-> > > clk_rate_exclusive_get() for, this isn't an error. In my bubble I call
-> > > this function because I don't want the rate to change e.g. because I
-> > > setup some registers in the consuming device to provide a fixed UART
-> > > baud rate or i2c bus frequency (and that works as expected).
-> >=20
-> > [a long text of mostly right things (Uwe's interpretation) that are
-> > however totally unrelated to the patches under discussion.]
+Akhil R (5):
+  dt-bindings: crypto: Add Tegra SE DT binding doc
+  gpu: host1x: Add Tegra SE to SID table
+  crypto: tegra: Add Tegra Security Engine driver
+  arm64: defconfig: Enable Tegra Security Engine
+  arm64: tegra: Add Tegra Security Engine DT nodes
 
-I'm glad you consider it "mostly" right.
+ .../crypto/nvidia,tegra234-se-aes.yaml        |   53 +
+ .../crypto/nvidia,tegra234-se-hash.yaml       |   53 +
+ MAINTAINERS                                   |    5 +
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      |   16 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/crypto/Kconfig                        |    8 +
+ drivers/crypto/Makefile                       |    1 +
+ drivers/crypto/tegra/Makefile                 |    9 +
+ drivers/crypto/tegra/tegra-se-aes.c           | 1934 +++++++++++++++++
+ drivers/crypto/tegra/tegra-se-hash.c          | 1026 +++++++++
+ drivers/crypto/tegra/tegra-se-key.c           |  155 ++
+ drivers/crypto/tegra/tegra-se-main.c          |  485 +++++
+ drivers/crypto/tegra/tegra-se.h               |  589 +++++
+ drivers/gpu/host1x/dev.c                      |   24 +
+ 14 files changed, 4359 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/nvidia,tegra234-se-aes.yaml
+ create mode 100644 Documentation/devicetree/bindings/crypto/nvidia,tegra234-se-hash.yaml
+ create mode 100644 drivers/crypto/tegra/Makefile
+ create mode 100644 drivers/crypto/tegra/tegra-se-aes.c
+ create mode 100644 drivers/crypto/tegra/tegra-se-hash.c
+ create mode 100644 drivers/crypto/tegra/tegra-se-key.c
+ create mode 100644 drivers/crypto/tegra/tegra-se-main.c
+ create mode 100644 drivers/crypto/tegra/tegra-se.h
 
->=20
-> The clk API works with and without my patches in exactly the same way.
-> It just makes more explicit that clk_rate_exclusive_get() cannot fail
-> today and removes the error handling from consumers that is never used.
+-- 
+2.17.1
 
-Not really, no.
-
-An API is an interface, meant to provide an abstraction. The only
-relevant thing is whether or not that function, from an abstract point
-of view, can fail.
-
-Can you fail to get the exclusivity? Yes. On a theoretical basis, you
-can, and the function was explicitly documented as such.
-
-Whether or not the function actually can fail in its current
-implementation is irrelevant.
-
-> Yes, my series doesn't fix any race conditions that are there without
-> doubt in some consumers. It also doesn't make the situation any worse.
-
-Sure it does. If we ever improve that function to handle those unrelated
-cases, then all your patches will have to be reverted, while we already
-had code to deal with it written down.
-
-> It also doesn't fix other problems that are orthogonal to the intention
-> of this patch series (neither makes it any of them any worse).
->=20
-> It's just dead code removal and making sure no new dead code of the same
-> type is introduced in the future.
-
-Again, it's not. It's a modification of the abstraction.
-
-> Is there anyone working on improving the clk framework regarding how clk
-> rate exclusivity works? I'd probably not notice, but I guess there is
-> noone that I need to consider for.
-
-I started working on it.
-
-Maxime
-
---nuge2gzlt63erkrn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZXmbZgAKCRDj7w1vZxhR
-xeNbAPsE+NnFuPDNbesYJ/zccKjzlV8dYIxZVV6ktpsHP6v5fwEAuyJ0fCkI9TXf
-zyJQ9dsVbHuR1MO93Vzy2Jkp7HckJg8=
-=gX+r
------END PGP SIGNATURE-----
-
---nuge2gzlt63erkrn--
