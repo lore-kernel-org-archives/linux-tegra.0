@@ -1,228 +1,306 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="te6aMkCG"
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F400ADD
-	for <linux-tegra@vger.kernel.org>; Wed, 13 Dec 2023 08:44:32 -0800 (PST)
-Received: by mail-wm1-x336.google.com with SMTP id 5b1f17b1804b1-40c55872d80so10622825e9.1
-        for <linux-tegra@vger.kernel.org>; Wed, 13 Dec 2023 08:44:32 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e/xVOQ/f"
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5446F109
+	for <linux-tegra@vger.kernel.org>; Wed, 13 Dec 2023 10:01:36 -0800 (PST)
+Received: by mail-io1-xd2e.google.com with SMTP id ca18e2360f4ac-7b435966249so315449439f.0
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Dec 2023 10:01:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702485871; x=1703090671; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xr6toAXCsIC/bmSJ5B/sgzDjMz3Z0Uajw+zCN70ZLA8=;
-        b=te6aMkCGNKekPIOONKwcqy+m4Q/3GWoRKKb7EGXkY8WQMlJvIPLXJJ7TrzasovU384
-         8OOXRaL4jJUkGLibwOB3xu2sgFaQPrcumTA43j3GD+l11OfBJ08c1g2Yu7LVw1AX4qgI
-         naV8vU4VyrLVXyTVi99B+nd+XBH7wtrXDcSa558pgIrinjn7QCm9K8oNjDixzdnEFaBE
-         IunS8m7NRbTfBD88cEBl9Eysbp7FhlKylra+M0WWl3BVx0BVG+Ij8gtCwmqbBptqrwHH
-         BWWKnWV43z17nkUJpYKK7AeqA4hxW0LejiyeKt4F40A2zLX38qaZb18vlELGZSNeul/i
-         AIqQ==
+        d=chromium.org; s=google; t=1702490495; x=1703095295; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XHJkvyGkozEZfAn1foMxSDGndxq7Z3rvVOkqL1kGsfY=;
+        b=e/xVOQ/fNvuwsoyIMhGmxORiCBN5toQu+SfZ1PYaIIv1/IROHvZzj3qqMGEguy1YnU
+         8y6C+HjiIotuBoYZffehxPy0eoKlaAwZIDUWHutN7y2EIXivn+ubz4B3TTA9oeoPziB7
+         DHGVvlv4xv/XkwztWmoZiWLimbUlwMZ8s00yc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702485871; x=1703090671;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xr6toAXCsIC/bmSJ5B/sgzDjMz3Z0Uajw+zCN70ZLA8=;
-        b=RL4U9Waqd782gkbApaJC7vNBaK9TVNNxDFgjyIfEdgehndrEcWgRD5OrqtqfdBc9Bc
-         CccVJQu0hrkjFnAUngBxK6y9h5iE6YU0CIFqTIM0EkakNU5A+iN1t3rfwbbXx703sHQ+
-         ItyyDU5W0y9Kayjx/9vMg5OEKHP82Wly3Bb7xigYLwYmPArxK/dRXQrrIFjGBWH+Spsp
-         WndQ4usA+9rG/C1E0IU4Rexxermh/q7MG9s0H+MnPpPeLay7581MJGgU2kphsZWe87up
-         r9C393DYOwGfOq0CBTHoAUcHrkUEmgSGZlqebLS4zOlxV5pm8PBNDqTMRPEsKFZb3ujR
-         FAVw==
-X-Gm-Message-State: AOJu0YzNeApyqQ5fvng6viv6VrN6Tsjfr1oiav49YNq3M+1JagWDBmr3
-	MeWLAWX2Y7GB4rBXy8g7x3d0+g==
-X-Google-Smtp-Source: AGHT+IHmb8ewYnbRlq6v/5rMQRoMcMWRfLl01skabFTAXrcQx6eTujOz4Paqf/1jHchf7eivqMmEQQ==
-X-Received: by 2002:a05:600c:2246:b0:40b:2a46:6f1 with SMTP id a6-20020a05600c224600b0040b2a4606f1mr4313509wmm.2.1702485870981;
-        Wed, 13 Dec 2023 08:44:30 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:ac4e:a5fe:7f71:8d59? ([2a01:e0a:982:cbb0:ac4e:a5fe:7f71:8d59])
-        by smtp.gmail.com with ESMTPSA id o4-20020a5d58c4000000b0033333bee379sm13767115wrf.107.2023.12.13.08.44.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Dec 2023 08:44:30 -0800 (PST)
-Message-ID: <212239ae-60ab-46f3-a838-39a4d61091fe@linaro.org>
-Date: Wed, 13 Dec 2023 17:44:28 +0100
+        d=1e100.net; s=20230601; t=1702490495; x=1703095295;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XHJkvyGkozEZfAn1foMxSDGndxq7Z3rvVOkqL1kGsfY=;
+        b=uFFUrqCsIGVfQwfK+Rtm+IB4sapFRQ5pNhCTXq2NjSipoU4JOymPX7qbDeJ6DlYzj0
+         5WVLADG5wYP7boIiOHyhkNZ0Z39sOpld/zaFEb6qNrfKpVTPffkJaYA8s/9RI67zluAT
+         tBkjp5Rh08s54PGE/uuBpVQoeSi+EUPcrQ8VTvB2xjBSkfbo+5hrksq1dkQTysiiin2F
+         0yentvNQ3Ubjbe85qRDAQWOP2pt+BaSJ/sqORd+I/nY0E5+pD26xN3YvR2np78WEXp9P
+         7c84gzxaWy/OlLTdV1oMVWxQyphJuHiLTxL0ZymgL841WS8TpqX5jskaDW8q5FXgXG1c
+         i/2g==
+X-Gm-Message-State: AOJu0YxuL8ySsJMFDVFehIjDNe1MMKbtZtPobDxLGsHpWPzSDcolkPEK
+	ZRoYKlg+yi2cxIHf13T/QT/CqQ==
+X-Google-Smtp-Source: AGHT+IFlYJgoIT3A6azjL3KGWGM2LFNYIuooaQV3GC7pc2NQaP0QcsiTJdhp9S5ZzNvKJJo5ucv2Lg==
+X-Received: by 2002:a5d:948e:0:b0:7b7:70fe:2913 with SMTP id v14-20020a5d948e000000b007b770fe2913mr2509400ioj.19.1702490495596;
+        Wed, 13 Dec 2023 10:01:35 -0800 (PST)
+Received: from markhas1.corp.google.com ([100.107.108.224])
+        by smtp.gmail.com with ESMTPSA id o28-20020a02cc3c000000b0046671f9717csm3161206jap.109.2023.12.13.10.01.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Dec 2023 10:01:35 -0800 (PST)
+From: Mark Hasemeyer <markhas@chromium.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Raul Rangel <rrangel@chromium.org>,
+	Mark Hasemeyer <markhas@chromium.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Andy Gross <agross@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Baruch Siach <baruch@tkos.co.il>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Claudiu Beznea <claudiu.beznea@microchip.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Paul Barker <paul.barker@sancloud.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	cros-qcom-dts-watchers@chromium.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v1 2/6] arm: arm64: dts: Enable cros-ec-spi as wake source
+Date: Wed, 13 Dec 2023 11:00:20 -0700
+Message-ID: <20231213110009.v1.2.I274b2d2255eb539cc9d251c9d65a385cc4014c79@changeid>
+X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
+In-Reply-To: <20231213110009.v1.1.Ifd0903f1c351e84376d71dbdadbd43931197f5ea@changeid>
+References: <20231213110009.v1.1.Ifd0903f1c351e84376d71dbdadbd43931197f5ea@changeid>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
-Content-Language: en-GB
-To: Maxime Ripard <mripard@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- dri-devel@lists.freedesktop.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>,
- linux-clk@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
- Rob Herring <robh@kernel.org>, Samuel Holland <samuel@sholland.org>,
- Kevin Hilman <khilman@baylibre.com>, Russell King <linux@armlinux.org.uk>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Chanwoo Choi
- <cw00.choi@samsung.com>, Chen-Yu Tsai <wens@csie.org>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Johan Hovold <johan+linaro@kernel.org>, linux-sunxi@lists.linux.dev,
- Thomas Zimmermann <tzimmermann@suse.de>, linux-pm@vger.kernel.org,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
- kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org,
- Stephen Boyd <sboyd@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>,
- Daniel Vetter <daniel@ffwll.ch>, Georgi Djakov <djakov@kernel.org>
-References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
- <ki5n3rz5n4oxj2hhc3rj6xpn3e2tdi7fcp2q7exjbzilrlqflp@przautvhuy4g>
- <20231213074300.4bq7wkfqd4jhhcr4@pengutronix.de>
- <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
-From: Neil Armstrong <neil.armstrong@linaro.org>
-In-Reply-To: <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Maxime,
+The cros_ec driver currently assumes that cros-ec-spi compatible device
+nodes are a wakeup-source even though the wakeup-source property is not
+defined.
 
-Le 13/12/2023 à 09:36, Maxime Ripard a écrit :
-> Hi,
-> 
-> On Wed, Dec 13, 2023 at 08:43:00AM +0100, Uwe Kleine-König wrote:
->> On Wed, Dec 13, 2023 at 08:16:04AM +0100, Maxime Ripard wrote:
->>> On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-König wrote:
->>>> clk_rate_exclusive_get() returns zero unconditionally. Most users "know"
->>>> that and don't check the return value. This series fixes the four users
->>>> that do error checking on the returned value and then makes function
->>>> return void.
->>>>
->>>> Given that the changes to the drivers are simple and so merge conflicts
->>>> (if any) should be easy to handle, I suggest to merge this complete
->>>> series via the clk tree.
->>>
->>> I don't think it's the right way to go about it.
->>>
->>> clk_rate_exclusive_get() should be expected to fail. For example if
->>> there's another user getting an exclusive rate on the same clock.
->>>
->>> If we're not checking for it right now, then it should probably be
->>> fixed, but the callers checking for the error are right to do so if they
->>> rely on an exclusive rate. It's the ones that don't that should be
->>> modified.
->>
->> If some other consumer has already "locked" a clock that I call
->> clk_rate_exclusive_get() for, this isn't an error. In my bubble I call
->> this function because I don't want the rate to change e.g. because I
->> setup some registers in the consuming device to provide a fixed UART
->> baud rate or i2c bus frequency (and that works as expected).
-> 
-> I guess it's a larger conversation, but I don't see how that can
-> possibly work.
-> 
-> The way the API is designed, you have no guarantee (outside of
-> clk_rate_exclusive_*) that the rate is going to change.
-> 
-> And clk_rate_exclusive_get() doesn't allow the rate to change while in
-> the "critical section".
-> 
-> So the only possible thing to do is clk_set_rate() +
-> clk_rate_exclusive_get().
+Add the wakeup-source property to all cros-ec-spi compatible device
+nodes to match expected behavior.
 
-There's clk_set_rate_exclusive() for this purpose.
+Signed-off-by: Mark Hasemeyer <markhas@chromium.org>
+---
 
-> 
-> So there's a window where the clock can indeed be changed, and the
-> consumer that is about to lock its rate wouldn't be aware of it.
-> 
-> I guess it would work if you don't care about the rate at all, you just
-> want to make sure it doesn't change.
-> 
-> Out of the 7 users of that function, 3 are in that situation, so I guess
-> it's fair.
-> 
-> 3 are open to that race condition I mentioned above.
-> 
-> 1 is calling clk_set_rate while in the critical section, which works if
-> there's a single user but not if there's multiple, so it should be
-> discouraged.
-> 
->> In this case I won't be able to change the rate of the clock, but that
->> is signalled by clk_set_rate() failing (iff and when I need awother
->> rate) which also seems the right place to fail to me.
-> 
-> Which is ignored by like half the callers, including the one odd case I
-> mentioned above.
-> 
-> And that's super confusing still: you can *always* get exclusivity, but
-> not always do whatever you want with the rate when you have it? How are
-> drivers supposed to recover from that? You can handle failing to get
-> exclusivity, but certainly not working around variable guarantees.
-> 
->> It's like that since clk_rate_exclusive_get() was introduced in 2017
->> (commit 55e9b8b7b806ec3f9a8817e13596682a5981c19c).
-> 
-> Right, but "it's always been that way" surely can't be an argument,
-> otherwise you wouldn't have done that series in the first place.
-> 
->> BTW, I just noticed that my assertion "Most users \"know\" that
->> [clk_rate_exclusive_get() returns zero unconditionally]" is wrong. As of
->> next-20231213 there are 3 callers ignoring the return value of
->> clk_rate_exclusive_get() and 4 that handle (imaginary) returned errors.
->> I expected this function to be used more extensively. (In fact I think
->> it should be used more as several drivers rely on the clk rate not
->> changing.)
-> 
-> Yes, but also it's super difficult to use in practice, and most devices
-> don't care.
-> 
-> The current situation is something like this:
-> 
->    * Only a handful of devices really care about their clock rate, and
->      often only for one of their clock if they have several. You would
->      probably get all the devices that create an analog signal somehow
->      there, so audio, display, i2c, spi, uarts, etc. Plus the ones doing
->      frequency scaling so CPU and GPUs.
-> 
->    * CPUs and GPUs are very likely to have a dedicated clock, so we can
->      rule the "another user is going to mess with my clock" case.
-> 
->    * UARTs/i2c/etc. are usually taking their clock from the bus interface
->      directly which is pretty much never going to change (for good
->      reason). And the rate of the bus is not really likely to change.
-> 
->    * SPI/NAND/MMC usually have their dedicated clock too, and the bus
->      rate is not likely to change after the initial setup either.
-> 
-> So, the only affected devices are the ones generating external signals,
-> with the rate changing during the life of the system. Even for audio or
-> video devices, that's fairly unlikely to happen. And you need to have
-> multiple devices sharing the same clock tree for that issue to occur,
-> which is further reducing the chances it happens.
+ arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi              | 1 +
+ arch/arm/boot/dts/nvidia/tegra124-venice2.dts            | 1 +
+ arch/arm/boot/dts/rockchip/rk3288-veyron-chromebook.dtsi | 1 +
+ arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts       | 1 +
+ arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts        | 1 +
+ arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi             | 1 +
+ arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi           | 1 +
+ arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi         | 1 +
+ arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi         | 1 +
+ arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi          | 1 +
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts           | 1 +
+ arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi             | 1 +
+ arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi           | 1 +
+ arch/arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi           | 1 +
+ arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi               | 1 +
+ arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi             | 1 +
+ 16 files changed, 16 insertions(+)
 
-Well, thanks for HW designers, this exists and some SoCs has less PLLs than
-needed, and they can't be dedicated for some hw blocks.
+diff --git a/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi b/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
+index a2ee371802004..8125c1b3e8d79 100644
+--- a/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
+@@ -338,6 +338,7 @@ cros_ec: cros-ec@0 {
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(C, 7) IRQ_TYPE_LEVEL_LOW>;
+ 			reg = <0>;
++			wakeup-source;
+ 
+ 			google,cros-ec-spi-msg-delay = <2000>;
+ 
+diff --git a/arch/arm/boot/dts/nvidia/tegra124-venice2.dts b/arch/arm/boot/dts/nvidia/tegra124-venice2.dts
+index 3924ee385dee0..df98dc2a67b85 100644
+--- a/arch/arm/boot/dts/nvidia/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/nvidia/tegra124-venice2.dts
+@@ -857,6 +857,7 @@ cros_ec: cros-ec@0 {
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(C, 7) IRQ_TYPE_LEVEL_LOW>;
+ 			reg = <0>;
++			wakeup-source;
+ 
+ 			google,cros-ec-spi-msg-delay = <2000>;
+ 
+diff --git a/arch/arm/boot/dts/rockchip/rk3288-veyron-chromebook.dtsi b/arch/arm/boot/dts/rockchip/rk3288-veyron-chromebook.dtsi
+index 092316be67f74..1554fe36e60fe 100644
+--- a/arch/arm/boot/dts/rockchip/rk3288-veyron-chromebook.dtsi
++++ b/arch/arm/boot/dts/rockchip/rk3288-veyron-chromebook.dtsi
+@@ -112,6 +112,7 @@ cros_ec: ec@0 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&ec_int>;
+ 		spi-max-frequency = <3000000>;
++		wakeup-source;
+ 
+ 		i2c_tunnel: i2c-tunnel {
+ 			compatible = "google,cros-ec-i2c-tunnel";
+diff --git a/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts b/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
+index 4e757b6e28e1c..3759742d38cac 100644
+--- a/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/samsung/exynos5420-peach-pit.dts
+@@ -967,6 +967,7 @@ cros_ec: cros-ec@0 {
+ 		reg = <0>;
+ 		spi-max-frequency = <3125000>;
+ 		google,has-vbc-nvram;
++		wakeup-source;
+ 
+ 		controller-data {
+ 			samsung,spi-feedback-delay = <1>;
+diff --git a/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts b/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts
+index f91bc4ae008e4..9bbbdce9103a6 100644
+--- a/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/samsung/exynos5800-peach-pi.dts
+@@ -949,6 +949,7 @@ cros_ec: cros-ec@0 {
+ 		reg = <0>;
+ 		spi-max-frequency = <3125000>;
+ 		google,has-vbc-nvram;
++		wakeup-source;
+ 
+ 		controller-data {
+ 			samsung,spi-feedback-delay = <1>;
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
+index 4dd21dd317026..f0395da659a86 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi
+@@ -1168,6 +1168,7 @@ cros_ec: ec@0 {
+ 		interrupt-parent = <&pio>;
+ 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+ 		google,cros-ec-spi-msg-delay = <500>;
++		wakeup-source;
+ 
+ 		i2c_tunnel: i2c-tunnel0 {
+ 			compatible = "google,cros-ec-i2c-tunnel";
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+index 44647d462e20b..359859f23b1fd 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+@@ -1013,6 +1013,7 @@ cros_ec: cros-ec@0 {
+ 		interrupts = <151 IRQ_TYPE_LEVEL_LOW>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&ec_ap_int_odl>;
++		wakeup-source;
+ 
+ 		i2c_tunnel: i2c-tunnel {
+ 			compatible = "google,cros-ec-i2c-tunnel";
+diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
+index 5f62dc83013f0..74c534d475cb0 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
+@@ -1918,6 +1918,7 @@ cros_ec: ec@0 {
+ 		interrupts = <13 IRQ_TYPE_LEVEL_LOW>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&ec_ap_int>;
++		wakeup-source;
+ 
+ 		i2c_tunnel: i2c-tunnel {
+ 			compatible = "google,cros-ec-i2c-tunnel";
+diff --git a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+index a29da53d17894..4594287d60926 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+@@ -1454,6 +1454,7 @@ cros_ec: ec@0 {
+ 		spi-max-frequency = <3000000>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cros_ec_int>;
++		wakeup-source;
+ 
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+index 37a3e9de90ff7..a5ace1b02c3d2 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+@@ -1034,6 +1034,7 @@ cros_ec: ec@0 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cros_ec_int>;
+ 		spi-max-frequency = <3000000>;
++		wakeup-source;
+ 
+ 		keyboard-backlight {
+ 			compatible = "google,cros-kbd-led-backlight";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+index bbc2e9bef08da..14d58859bb55c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+@@ -762,6 +762,7 @@ ec: cros-ec@0 {
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(C, 7) IRQ_TYPE_LEVEL_LOW>;
+ 			reg = <0>;
++			wakeup-source;
+ 
+ 			google,cros-ec-spi-msg-delay = <2000>;
+ 
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi b/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
+index 5a33e16a8b677..e6a2ed0463997 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi
+@@ -650,6 +650,7 @@ cros_ec: ec@0 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&ap_ec_int_l>;
+ 		spi-max-frequency = <3000000>;
++		wakeup-source;
+ 
+ 		cros_ec_pwm: pwm {
+ 			compatible = "google,cros-ec-pwm";
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+index 9ea6636125ad9..2ba4ea60cb147 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi
+@@ -548,6 +548,7 @@ cros_ec: ec@0 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&ap_ec_int_l>;
+ 		spi-max-frequency = <3000000>;
++		wakeup-source;
+ 
+ 		cros_ec_pwm: pwm {
+ 			compatible = "google,cros-ec-pwm";
+diff --git a/arch/arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi b/arch/arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi
+index ebae545c587c4..fbfac7534d3c6 100644
+--- a/arch/arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7280-idp-ec-h1.dtsi
+@@ -19,6 +19,7 @@ cros_ec: ec@0 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&ap_ec_int_l>;
+ 		spi-max-frequency = <3000000>;
++		wakeup-source;
+ 
+ 		cros_ec_pwm: pwm {
+ 			compatible = "google,cros-ec-pwm";
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+index f86e7acdfd99f..d8eb45662c931 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
+@@ -838,6 +838,7 @@ cros_ec: ec@0 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&ec_ap_int_l>;
+ 		spi-max-frequency = <3000000>;
++		wakeup-source;
+ 
+ 		cros_ec_pwm: pwm {
+ 			compatible = "google,cros-ec-pwm";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+index c9bf1d5c3a426..69a0b34f0615b 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-gru.dtsi
+@@ -602,6 +602,7 @@ cros_ec: ec@0 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&ec_ap_int_l>;
+ 		spi-max-frequency = <3000000>;
++		wakeup-source;
+ 
+ 		i2c_tunnel: i2c-tunnel {
+ 			compatible = "google,cros-ec-i2c-tunnel";
+-- 
+2.43.0.472.g3155946c3a-goog
 
-> 
-> Realistically speaking, this only occurs with multi-head display outputs
-> where it's somewhat likely to have all the display controllers feeding
-> from the same clock, and the power up of the various output is done in
-> sequence which creates that situation.
-> 
-> And even then, the clk_rate_exclusive_* interface effectively locks the
-> entire clock subtree to its current rate, so the effect on the rest of
-> the devices can be significant.
-> 
-> So... yeah. Even though you're right, it's trying to address a problem
-> that is super unlikely to happen with a pretty big hammer that might be
-> too much for most. So it's not really surprising it's not used more.
-
-Honestly I tried my best to find a smart way to set the DSI clock tree
-with only 2 endpoints of the tree, but CCF will explore all possibilities
-and since you cannot set constraints, locking a sub-tree is the smartest
-way I found.
-In this case, the PLL is common between the DSI controller and video generator,
-so to keep the expected clock ratio, the smart way is to set the freq on
-one side, lock the subtree and set the rate on the other side.
-An API permitting to set multiple rates to multiple clocks in a single call
-would be the solution, but not sure if we could possibly write such algorithm.
-
-> 
-> Maxime
-
-Neil
