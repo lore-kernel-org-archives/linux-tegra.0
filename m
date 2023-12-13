@@ -1,107 +1,156 @@
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bughmRQV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CC97AC
-	for <linux-tegra@vger.kernel.org>; Wed, 13 Dec 2023 02:19:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702462796; x=1733998796;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=IH2FdGE4NUSK2FxuYO6GsfwFcJicp3jgO7olFptwvLo=;
-  b=bughmRQVqhElVtwxh3FBSrHhmbOVmlZCj+Cmb03fjEtNLSRRyi/zEguH
-   AlOQBAmAFBVhSPmj/1L5SNK7e7rIXBVoBJ1F9mk4SXuL8TVyd06YK6Z8x
-   oyZ2vWlfbWh9o4uK1ks1J5sAuQ9Wh1jkXFiuseD8WulAee9AKd3Jw/MS4
-   ybqwAtrjU1TRoz6A5jvj60t9fzqg19Hkc/TtzCjukhnLnN9BJfm7aBIyu
-   71XuSZBBwruVXMyf0XLrjtnHwo1EIFYNvrCfMtyaD0QulgM5DThL31W0U
-   hno4+peUW/1P9RSnYRT9nx5u4Jhfmv0j/eBzRGXmqu34xI+Lh9oUpIyou
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="8330846"
-X-IronPort-AV: E=Sophos;i="6.04,272,1695711600"; 
-   d="scan'208";a="8330846"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 02:19:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10922"; a="1105263673"
-X-IronPort-AV: E=Sophos;i="6.04,272,1695711600"; 
-   d="scan'208";a="1105263673"
-Received: from oostoia-mobl.ger.corp.intel.com (HELO localhost) ([10.252.50.15])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 02:19:54 -0800
-From: Jani Nikula <jani.nikula@intel.com>
-To: Jani Nikula <jani.nikula@intel.com>,
-	linux-tegra@vger.kernel.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH v2] drm/tegra: include drm/drm_edid.h only where needed
-Date: Wed, 13 Dec 2023 12:19:51 +0200
-Message-Id: <20231213101951.3932273-1-jani.nikula@intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20231212142409.3826544-1-jani.nikula@intel.com>
-References: <20231212142409.3826544-1-jani.nikula@intel.com>
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [IPv6:2a0a:edc0:2:b01:1d::104])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1652132
+	for <linux-tegra@vger.kernel.org>; Wed, 13 Dec 2023 03:09:07 -0800 (PST)
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rDN6O-0002aF-Kp; Wed, 13 Dec 2023 12:08:32 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rDN6M-00FYCV-Ag; Wed, 13 Dec 2023 12:08:30 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rDN6M-002FTL-0C; Wed, 13 Dec 2023 12:08:30 +0100
+Date: Wed, 13 Dec 2023 12:08:29 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Daniel Vetter <daniel@ffwll.ch>,
+	Michael Turquette <mturquette@baylibre.com>,
+	dri-devel@lists.freedesktop.org,
+	Thierry Reding <thierry.reding@gmail.com>,
+	David Airlie <airlied@gmail.com>, linux-clk@vger.kernel.org,
+	Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Chen-Yu Tsai <wens@csie.org>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	linux-sunxi@lists.linux.dev, kernel@pengutronix.de,
+	linux-pm@vger.kernel.org,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Georgi Djakov <djakov@kernel.org>
+Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
+Message-ID: <20231213110829.bjaxjjiyy4ug7o67@pengutronix.de>
+References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
+ <ki5n3rz5n4oxj2hhc3rj6xpn3e2tdi7fcp2q7exjbzilrlqflp@przautvhuy4g>
+ <20231213074300.4bq7wkfqd4jhhcr4@pengutronix.de>
+ <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kl2l3xgmnlmlkt4p"
+Content-Disposition: inline
+In-Reply-To: <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
-Reduce the need for rebuilds when drm_edid.h is modified by including it
-only where needed.
 
-v2: Fix build (kernel test robot <lkp@intel.com>)
+--kl2l3xgmnlmlkt4p
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
----
- drivers/gpu/drm/tegra/drm.h    | 2 +-
- drivers/gpu/drm/tegra/output.c | 1 +
- drivers/gpu/drm/tegra/sor.c    | 1 +
- 3 files changed, 3 insertions(+), 1 deletion(-)
+Hello Maxime,
 
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index ccb5d74fa227..682011166a8f 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -13,7 +13,6 @@
- 
- #include <drm/drm_atomic.h>
- #include <drm/drm_bridge.h>
--#include <drm/drm_edid.h>
- #include <drm/drm_encoder.h>
- #include <drm/drm_fixed.h>
- #include <drm/drm_probe_helper.h>
-@@ -26,6 +25,7 @@
- /* XXX move to include/uapi/drm/drm_fourcc.h? */
- #define DRM_FORMAT_MOD_NVIDIA_SECTOR_LAYOUT BIT_ULL(22)
- 
-+struct edid;
- struct reset_control;
- 
- struct tegra_drm {
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index dc2dcb5ca1c8..88af956ad0e7 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -8,6 +8,7 @@
- #include <linux/of.h>
- 
- #include <drm/drm_atomic_helper.h>
-+#include <drm/drm_edid.h>
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
- #include <drm/drm_simple_kms_helper.h>
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 83341576630d..bad3b8fcc726 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -20,6 +20,7 @@
- #include <drm/display/drm_scdc_helper.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_debugfs.h>
-+#include <drm/drm_edid.h>
- #include <drm/drm_eld.h>
- #include <drm/drm_file.h>
- #include <drm/drm_panel.h>
--- 
-2.39.2
+On Wed, Dec 13, 2023 at 09:36:49AM +0100, Maxime Ripard wrote:
+> On Wed, Dec 13, 2023 at 08:43:00AM +0100, Uwe Kleine-K=F6nig wrote:
+> > On Wed, Dec 13, 2023 at 08:16:04AM +0100, Maxime Ripard wrote:
+> > > On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-K=F6nig wrote:
+> > > > clk_rate_exclusive_get() returns zero unconditionally. Most users "=
+know"
+> > > > that and don't check the return value. This series fixes the four u=
+sers
+> > > > that do error checking on the returned value and then makes function
+> > > > return void.
+> > > >=20
+> > > > Given that the changes to the drivers are simple and so merge confl=
+icts
+> > > > (if any) should be easy to handle, I suggest to merge this complete
+> > > > series via the clk tree.
+> > >=20
+> > > I don't think it's the right way to go about it.
+> > >=20
+> > > clk_rate_exclusive_get() should be expected to fail. For example if
+> > > there's another user getting an exclusive rate on the same clock.
+> > >=20
+> > > If we're not checking for it right now, then it should probably be
+> > > fixed, but the callers checking for the error are right to do so if t=
+hey
+> > > rely on an exclusive rate. It's the ones that don't that should be
+> > > modified.
+> >=20
+> > If some other consumer has already "locked" a clock that I call
+> > clk_rate_exclusive_get() for, this isn't an error. In my bubble I call
+> > this function because I don't want the rate to change e.g. because I
+> > setup some registers in the consuming device to provide a fixed UART
+> > baud rate or i2c bus frequency (and that works as expected).
+>=20
+> [a long text of mostly right things (Uwe's interpretation) that are
+> however totally unrelated to the patches under discussion.]
 
+The clk API works with and without my patches in exactly the same way.
+It just makes more explicit that clk_rate_exclusive_get() cannot fail
+today and removes the error handling from consumers that is never used.
+
+Yes, my series doesn't fix any race conditions that are there without
+doubt in some consumers. It also doesn't make the situation any worse.
+It also doesn't fix other problems that are orthogonal to the intention
+of this patch series (neither makes it any of them any worse).
+
+It's just dead code removal and making sure no new dead code of the same
+type is introduced in the future.
+
+Is there anyone working on improving the clk framework regarding how clk
+rate exclusivity works? I'd probably not notice, but I guess there is
+noone that I need to consider for. And if in the future someone
+redesigns how all that works *and* clk_rate_exclusive_get() stays around
+*and* that makes it possible that clk_rate_exclusive_get() fails (and
+thus breaking all consumers that don't care for the actual clk rate and
+only want it to not change), then they'll have to review all users
+anyhow and reintroduce error handling. I can live with that and suggest
+until then we're happy that we have a few drivers with less dead code
+than before.
+
+Cheers!
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--kl2l3xgmnlmlkt4p
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmV5kK0ACgkQj4D7WH0S
+/k4Eugf/TStPMZiYghA+qeYfwNXsEudTquLXEPqhja/JKNv9WiKYrt43bIE6RaeZ
+uqnkw/3MfPy9251IlDl8hjB/hahPAVFA1/FP1n1+q+G4fWTLeEHj8+SErxvfZyrv
+QHRLnpLc5OFul0s5WRLBUR6S7Vnu22YiZ0fWFGsakm5CS/BsVxJ/IDsZdss7XBTp
+Auy00X3wur3dEdwcVZin6favSPTHv/pLecde0Jh7GsTUmenaP74HE5jWnutVqPRh
+D/YfxJz4FVfe8iaFR02v9z7oBlnGuZyCQU9vyebyVNVV6orHYSXgFN8WhdZ1WuBT
+RxqsIej1c9x4ergK7wRTHJUz6ZP3Lg==
+=b9cr
+-----END PGP SIGNATURE-----
+
+--kl2l3xgmnlmlkt4p--
