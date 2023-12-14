@@ -1,161 +1,152 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mhqcXjxd"
-Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C58510A
-	for <linux-tegra@vger.kernel.org>; Thu, 14 Dec 2023 10:02:17 -0800 (PST)
-Received: by mail-il1-x12e.google.com with SMTP id e9e14a558f8ab-35f69467104so1555ab.1
-        for <linux-tegra@vger.kernel.org>; Thu, 14 Dec 2023 10:02:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1702576936; x=1703181736; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u/dpKKuYQW5rtb0ApzQxLFyCdBQuf8dsFO4Akckbgdg=;
-        b=mhqcXjxdHPrWJ1nocR+9ZQJ6fbtn1YT7nGxh6pSjAKUjlCJfq6+H4gfm6+KOhMsz07
-         2On9bo5NGmMttewt/jmYV/pVPFzbCGrgp8VbuYXmEJXl8nfHQUDfY685jRrfYF/8Rm0b
-         sG3SD9iE8xfT9yETwYm6f7IJELvWl9BnzQPzm388ebP9DGPpKWx0AsQ2K5CdyBPEvE2b
-         CY+gom4JYI6crsZTzitwG99OFWoGpq3FIuydkdWSBM+qKVwGAiifU4hgnKEqyQJGvvMD
-         6TH1bNmGUKm43wFIAEXH3hT8ZgHdXIF9z0A5iDTQcAXy8+wh23INpirLMA7a0nlArpfF
-         43dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702576936; x=1703181736;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u/dpKKuYQW5rtb0ApzQxLFyCdBQuf8dsFO4Akckbgdg=;
-        b=t/NyRKMHdwdqg8d7+7FdekM8SgoiAfxCoSme33Np5l5ePQHtCOdh8Vz3III6KU+TWg
-         BMpYywpkRzFDTWu3JEQnX8aPFLPFWFs4gvtBwf86LDmdF5P/fzP5eWfTRHU065vj/aVG
-         0+U0DTfryLw3h6ZakCBJgS7TndVoBVXKcS2PiTLl6sgeLOjZVYcTu0fPL7xkYTkV/mBR
-         eCVrJ4hnut2sQZW7Y2iLAErGf8XMXFLkXyKQINYFd6HWNX6S/Hyh02qeFaBo54HKWdV0
-         6QlH/hKw1aicHukZkAkoDjiWo7DTEIRacUtr6rGtEGjdScZKr5ZSAcB3OnOgVLrekXiz
-         npwA==
-X-Gm-Message-State: AOJu0YwYt/+oGjsO8BkgMq23L3+yMv2IesI6qzb1RgO8P71ABZ6caNxF
-	JBcZXAC7s8v3rd5fxcuBMCOuog==
-X-Google-Smtp-Source: AGHT+IGGaPI6cnZcFngPnCAkiSRePhz5Ew4wWckTDOMgQet1/XMgO7hA9mFqQFlIbu1sIxtOg+DrJA==
-X-Received: by 2002:a92:d209:0:b0:35f:7cfd:c5d0 with SMTP id y9-20020a92d209000000b0035f7cfdc5d0mr271054ily.22.1702576936243;
-        Thu, 14 Dec 2023 10:02:16 -0800 (PST)
-Received: from [2620:0:1008:15:740b:4c24:bdb6:a42a] ([2620:0:1008:15:740b:4c24:bdb6:a42a])
-        by smtp.gmail.com with ESMTPSA id fm21-20020a056a002f9500b006cea0fd9afdsm12411929pfb.92.2023.12.14.10.02.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 10:02:15 -0800 (PST)
-Date: Thu, 14 Dec 2023 10:02:14 -0800 (PST)
-From: David Rientjes <rientjes@google.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-    asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-    cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-    dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-    iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
-    joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-    linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-    linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-    mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-    rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-    suravee.suthikulpanit@amd.com, sven@svenpeter.dev, 
-    thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com, 
-    vdumpa@nvidia.com, wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com
-Subject: Re: [PATCH v2 10/10] iommu: account IOMMU allocated memory
-In-Reply-To: <20231130201504.2322355-11-pasha.tatashin@soleen.com>
-Message-ID: <c0d23d3e-39e6-57af-fd38-eb1b885d7da4@google.com>
-References: <20231130201504.2322355-1-pasha.tatashin@soleen.com> <20231130201504.2322355-11-pasha.tatashin@soleen.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eWQXK28E"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5E67123;
+	Thu, 14 Dec 2023 10:09:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1702577381; x=1734113381;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kQsTyReN6U5/B4j4CeAMns8RYLO2IGmgecq4Y3yTN6Q=;
+  b=eWQXK28E7cw+A0LqiVZ+2g607VPCrwTR8H7aAh+U3tu7+TpQ9SNOITtn
+   4qFX6axLpY11OeYjjYoOs9zhi3N2VlWDsQkM2O7Kg01tRIvRUu5NonR8q
+   iRgoY0dazhEHCXL5QLeimy8QmkBH9/UwjOtLZtSpnCM4SHmutivymVibn
+   Z+58/rJEo7qqhswecRcAo5v8KsXa8mdphVHgzwOMBhbcrMvUxrzBnLrtW
+   MvIYZsBieCAvVZRpZZU0gkcqFbMreXRSPTxsW2M01Af0K2seoYwaOJdKV
+   ZfDWFBmg5sdaFHDFTWRzcLo4SMSuJ/f5SXoDfahict2Q7EmKWwQX7XL9i
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="13852775"
+X-IronPort-AV: E=Sophos;i="6.04,276,1695711600"; 
+   d="scan'208";a="13852775"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 10:09:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="897825349"
+X-IronPort-AV: E=Sophos;i="6.04,276,1695711600"; 
+   d="scan'208";a="897825349"
+Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
+  by orsmga004.jf.intel.com with ESMTP; 14 Dec 2023 10:09:37 -0800
+Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rDq9A-000MSI-11;
+	Thu, 14 Dec 2023 18:09:27 +0000
+Date: Fri, 15 Dec 2023 02:08:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Akhil R <akhilrajeev@nvidia.com>, herbert@gondor.apana.org.au,
+	davem@davemloft.net, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, linux-tegra@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Akhil R <akhilrajeev@nvidia.com>
+Subject: Re: [PATCH 3/5] crypto: tegra: Add Tegra Security Engine driver
+Message-ID: <202312150118.ydw2nowl-lkp@intel.com>
+References: <20231213122030.11734-4-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231213122030.11734-4-akhilrajeev@nvidia.com>
 
-On Thu, 30 Nov 2023, Pasha Tatashin wrote:
+Hi Akhil,
 
-> In order to be able to limit the amount of memory that is allocated
-> by IOMMU subsystem, the memory must be accounted.
-> 
-> Account IOMMU as part of the secondary pagetables as it was discussed
-> at LPC.
-> 
-> The value of SecPageTables now contains mmeory allocation by IOMMU
-> and KVM.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  Documentation/admin-guide/cgroup-v2.rst | 2 +-
->  Documentation/filesystems/proc.rst      | 4 ++--
->  drivers/iommu/iommu-pages.h             | 2 ++
->  include/linux/mmzone.h                  | 2 +-
->  4 files changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-> index 3f85254f3cef..e004e05a7cde 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -1418,7 +1418,7 @@ PAGE_SIZE multiple when read back.
->  	  sec_pagetables
->  		Amount of memory allocated for secondary page tables,
->  		this currently includes KVM mmu allocations on x86
-> -		and arm64.
-> +		and arm64 and IOMMU page tables.
+kernel test robot noticed the following build warnings:
 
-Hmm, if existing users are parsing this field and alerting when it exceeds 
-an expected value (a cloud provider, let's say), is it safe to add in a 
-whole new set of page tables?
+[auto build test WARNING on herbert-cryptodev-2.6/master]
+[also build test WARNING on drm/drm-next arm64/for-next/core robh/for-next linus/master v6.7-rc5 next-20231214]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I understand the documentation allows for it, but I think potential impact 
-on userspace would be more interesting.
+url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/dt-bindings-crypto-Add-Tegra-SE-DT-binding-doc/20231213-202407
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+patch link:    https://lore.kernel.org/r/20231213122030.11734-4-akhilrajeev%40nvidia.com
+patch subject: [PATCH 3/5] crypto: tegra: Add Tegra Security Engine driver
+config: parisc-allmodconfig (https://download.01.org/0day-ci/archive/20231215/202312150118.ydw2nowl-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231215/202312150118.ydw2nowl-lkp@intel.com/reproduce)
 
->  
->  	  percpu (npn)
->  		Amount of memory used for storing per-cpu kernel
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 49ef12df631b..86f137a9b66b 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -1110,8 +1110,8 @@ KernelStack
->  PageTables
->                Memory consumed by userspace page tables
->  SecPageTables
-> -              Memory consumed by secondary page tables, this currently
-> -              currently includes KVM mmu allocations on x86 and arm64.
-> +              Memory consumed by secondary page tables, this currently includes
-> +              KVM mmu and IOMMU allocations on x86 and arm64.
->  NFS_Unstable
->                Always zero. Previous counted pages which had been written to
->                the server, but has not been committed to stable storage.
-> diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
-> index 69895a355c0c..cdd257585284 100644
-> --- a/drivers/iommu/iommu-pages.h
-> +++ b/drivers/iommu/iommu-pages.h
-> @@ -27,6 +27,7 @@ static inline void __iommu_alloc_account(struct page *pages, int order)
->  	const long pgcnt = 1l << order;
->  
->  	mod_node_page_state(page_pgdat(pages), NR_IOMMU_PAGES, pgcnt);
-> +	mod_lruvec_page_state(pages, NR_SECONDARY_PAGETABLE, pgcnt);
->  }
->  
->  /**
-> @@ -39,6 +40,7 @@ static inline void __iommu_free_account(struct page *pages, int order)
->  	const long pgcnt = 1l << order;
->  
->  	mod_node_page_state(page_pgdat(pages), NR_IOMMU_PAGES, -pgcnt);
-> +	mod_lruvec_page_state(pages, NR_SECONDARY_PAGETABLE, -pgcnt);
->  }
->  
->  /**
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 1a4d0bba3e8b..aaabb385663c 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -199,7 +199,7 @@ enum node_stat_item {
->  	NR_KERNEL_SCS_KB,	/* measured in KiB */
->  #endif
->  	NR_PAGETABLE,		/* used for pagetables */
-> -	NR_SECONDARY_PAGETABLE, /* secondary pagetables, e.g. KVM pagetables */
-> +	NR_SECONDARY_PAGETABLE, /* secondary pagetables, KVM & IOMMU */
->  #ifdef CONFIG_IOMMU_SUPPORT
->  	NR_IOMMU_PAGES,		/* # of pages allocated by IOMMU */
->  #endif
-> -- 
-> 2.43.0.rc2.451.g8631bc7472-goog
-> 
-> 
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202312150118.ydw2nowl-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/crypto/tegra/tegra-se-hash.c:22:
+   drivers/crypto/tegra/tegra-se-hash.c: In function 'tegra_sha_get_config':
+   drivers/crypto/tegra/tegra-se.h:55:57: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
+      55 | #define SE_SHA_CFG_ENC_ALG(x)                           FIELD_PREP(GENMASK(15, 12), x)
+         |                                                         ^~~~~~~~~~
+   drivers/crypto/tegra/tegra-se.h:59:57: note: in expansion of macro 'SE_SHA_CFG_ENC_ALG'
+      59 | #define SE_SHA_ENC_ALG_SHA                              SE_SHA_CFG_ENC_ALG(3)
+         |                                                         ^~~~~~~~~~~~~~~~~~
+   drivers/crypto/tegra/tegra-se-hash.c:53:24: note: in expansion of macro 'SE_SHA_ENC_ALG_SHA'
+      53 |                 cfg |= SE_SHA_ENC_ALG_SHA;
+         |                        ^~~~~~~~~~~~~~~~~~
+   drivers/crypto/tegra/tegra-se-hash.c: In function 'tegra_sha_init':
+>> drivers/crypto/tegra/tegra-se-hash.c:457:21: warning: variable 'algname' set but not used [-Wunused-but-set-variable]
+     457 |         const char *algname;
+         |                     ^~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/algname +457 drivers/crypto/tegra/tegra-se-hash.c
+
+   450	
+   451	static int tegra_sha_init(struct ahash_request *req)
+   452	{
+   453		struct tegra_sha_reqctx *rctx = ahash_request_ctx(req);
+   454		struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+   455		struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
+   456		struct tegra_se *se = ctx->se;
+ > 457		const char *algname;
+   458	
+   459		if (ctx->fallback)
+   460			return tegra_sha_fallback_init(req);
+   461	
+   462		algname = crypto_tfm_alg_name(&tfm->base);
+   463	
+   464		rctx->total_len = 0;
+   465		rctx->datbuf.size = 0;
+   466		rctx->residue.size = 0;
+   467		rctx->key_id = ctx->key_id;
+   468		rctx->task = SHA_FIRST;
+   469		rctx->alg = ctx->alg;
+   470		rctx->blk_size = crypto_ahash_blocksize(tfm);
+   471		rctx->digest.size = crypto_ahash_digestsize(tfm);
+   472	
+   473		rctx->digest.buf = dma_alloc_coherent(se->dev, rctx->digest.size,
+   474						      &rctx->digest.addr, GFP_KERNEL);
+   475		if (!rctx->digest.buf)
+   476			goto digbuf_fail;
+   477	
+   478		rctx->residue.buf = dma_alloc_coherent(se->dev, rctx->blk_size,
+   479						       &rctx->residue.addr, GFP_KERNEL);
+   480		if (!rctx->residue.buf)
+   481			goto resbuf_fail;
+   482	
+   483		rctx->datbuf.buf = dma_alloc_coherent(se->dev, SE_SHA_BUFLEN,
+   484						      &rctx->datbuf.addr, GFP_KERNEL);
+   485		if (!rctx->datbuf.buf)
+   486			goto datbuf_fail;
+   487	
+   488		return 0;
+   489	
+   490	datbuf_fail:
+   491		dma_free_coherent(se->dev, rctx->blk_size, rctx->residue.buf,
+   492				  rctx->residue.addr);
+   493	resbuf_fail:
+   494		dma_free_coherent(se->dev, SE_SHA_BUFLEN, rctx->datbuf.buf,
+   495				  rctx->datbuf.addr);
+   496	digbuf_fail:
+   497		return -ENOMEM;
+   498	}
+   499	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
