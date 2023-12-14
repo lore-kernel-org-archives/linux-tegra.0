@@ -1,84 +1,121 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mu/piGOt"
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA32411A;
-	Thu, 14 Dec 2023 09:07:52 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id 5b1f17b1804b1-40c2c65e6aaso87243925e9.2;
-        Thu, 14 Dec 2023 09:07:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NsDlk9J5"
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2CBCA7;
+	Thu, 14 Dec 2023 09:08:33 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id ffacd0b85a97d-3363aa1b7d2so1790258f8f.0;
+        Thu, 14 Dec 2023 09:08:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702573671; x=1703178471; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1702573712; x=1703178512; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AWlfYf0pCm80vcpzCm+bipZIaDRTb8fv8eSh+cPPghI=;
-        b=Mu/piGOtGg3tgLRSvz0PCPmaP2OSLRQag+rBnTGNeQArICHwZgiv+r4qiF50LVHYai
-         RMatIjtVG4eD7JuG5FgU/BNk2Lx7yIZKIYt+wBeryJN8Td8H2OGEG5GW/6seXG1aEvB5
-         VpilUBXVF8a7xPL+iyIy58K9CcLCxATuqpnyyPbxfcZVrY3VQ5NAxDLQAxmXX46kEMSg
-         dVx6w6R7Ja6bv3FymhkaaJNxefa8Ay0GIwIyURE9r1k1iOSAWyi45GIai73yZJz6N+bp
-         BVwIHtFyhDTq9Mwvjh4jy7qn/KfQq0sz3+b1WhgE4mNdIJofAf7CM+S+2uamThH/d3wI
-         Ka7A==
+        bh=8OE/8mXjrMU0VRAVo2/zTiAmO3H3nOr6wGjTnBkrh1Y=;
+        b=NsDlk9J5olvYaC4Rh4NKLu8zhjr+AJus3QeUsLXhhG0S3CjYhfXaNB0FTvqFVuu0/h
+         SaPe6Hu62u0meKlAAq+atGI9sWytsH9u9+LCSNe82gHHzt7tUOLaZYxU1mVsYGke0KEo
+         tE8kZEfdlxL8xmdNwAC1dgGWRoivViEMHL4hcAcRHv3sg4vbxflF6M5VvYD0YV9MuIsp
+         FFnty0g6Pc/v5kp1E1XfzrcBOLJrc5JStpCl70fZrn8lbrs1Z77uEeic+wCqU/ZIKVlV
+         0OIGcbJCRVmPvbmKXAcdJz/Bs56ZYARMYVE/c02Oe8hOp7eIwBgdhkWaJ0/Pbet9NFF2
+         +bWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702573671; x=1703178471;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1702573712; x=1703178512;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AWlfYf0pCm80vcpzCm+bipZIaDRTb8fv8eSh+cPPghI=;
-        b=S+0fSHS3lHj9V5X0yb+eH+a8d7YW1wbtYy+CTK69AD7aWtT/gtNFPRBzmApQNpRIpZ
-         WANJCeJPtIhRpLP07k8jhx68NcR36M5JK5VdIQdI4lG6x2qh2FkXP0ku/vOpDFzrKmbu
-         96MHdDSEj82qtA2Bb2sx7gFBnWQddY0lhVur5SECbA388SfIpIDdpeYRTyPQWvLBzxVQ
-         3gMaQSR0ux6KJLtroLTmWz7uf2CXXNbjCpaBis+OjB084QPJJr1QhVOEbE/WS6kUt1AE
-         DsR2LiDOP/NxkSd41jxNYOgj018MZ3FfcLEWHQS7m/C12NgeDvIwiq2g2lkATRZwCCZ2
-         MymQ==
-X-Gm-Message-State: AOJu0YxGdWpOwUKRvIwpRGaaH5Le1DNcMCt/NrhnelFXi8nhTOIFB7/o
-	oIUIiMKZJHtGBKW1FvpJNaJtbEib45M=
-X-Google-Smtp-Source: AGHT+IGjNYp182ul1zT962B79H1WOiHlYyzKDxdLC7ymb6diuX/SEPsEusgr4F0O7r8OAgwSEO9Fgg==
-X-Received: by 2002:a05:600c:3b08:b0:40b:357e:28be with SMTP id m8-20020a05600c3b0800b0040b357e28bemr4519002wms.16.1702573670931;
-        Thu, 14 Dec 2023 09:07:50 -0800 (PST)
-Received: from localhost (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id w6-20020a5d6806000000b00336103442d2sm15171517wru.76.2023.12.14.09.07.50
+        bh=8OE/8mXjrMU0VRAVo2/zTiAmO3H3nOr6wGjTnBkrh1Y=;
+        b=wBPf2Alk1BzUmczD4IQqXSoLtNpLEDOuEHQ1dDW8y3GzSUj8R2KGP9OX5TavtqL2Ny
+         0IHl+1Ad3+VikEFqMpjnd0vN4sfyypbWZf8a9WOl4wrVLyQJEdxgwzU8Vg3XpWIdQydZ
+         YzgECigtDWmLRFdxoCbmzj3TJnKxkh2asE752ehjDNa4dYwk8Fy0OwzN0TgViunoL1N/
+         f16cnh9IxZgEcwL80YORS7hBubjyxlmW8Hn9DMdmTo/iMOMlrewH0qVR+9KYHxAiUDSD
+         HuLu1tqj7bZ5IDIfZ3PBxqoEX6fnP2VtbPBc4/wh4aFW6NpqGJf14+vhx4iyba2km6BE
+         06jA==
+X-Gm-Message-State: AOJu0YzMtAz3oAvNXjkx4LdV4O0m5wJEPZtTxciUoR0qOdMI/wRrsTiC
+	yvRhuZ+R+Q1d6lqATB8VWt0=
+X-Google-Smtp-Source: AGHT+IEAUYfOBXYYnc2yQqqz71wshDGUNQnukfsm5O9xbU1g8r/c72f5CCNKZoJCbdtbW9F8wDuiQg==
+X-Received: by 2002:adf:cc92:0:b0:336:4c79:3236 with SMTP id p18-20020adfcc92000000b003364c793236mr156665wrj.38.1702573712021;
+        Thu, 14 Dec 2023 09:08:32 -0800 (PST)
+Received: from orome.fritz.box (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id r8-20020a056000014800b003364360839esm3372357wrx.81.2023.12.14.09.08.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 09:07:50 -0800 (PST)
+        Thu, 14 Dec 2023 09:08:31 -0800 (PST)
+Date: Thu, 14 Dec 2023 18:08:29 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] soc/tegra: pmc: Remove some old and deprecated functions and constants
-Date: Thu, 14 Dec 2023 18:07:46 +0100
-Message-ID: <170257365192.3829873.9539341059036334904.b4-ty@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <9d352be8797f01ffe6193da70e3d9d1e2684c6b4.1699772620.git.christophe.jaillet@wanadoo.fr>
-References: <9d352be8797f01ffe6193da70e3d9d1e2684c6b4.1699772620.git.christophe.jaillet@wanadoo.fr>
+To: Kartik <kkartik@nvidia.com>
+Cc: jonathanh@nvidia.com, keescook@chromium.org, andy@kernel.org,
+	akpm@linux-foundation.org, arnd@arndb.de, ulf.hansson@linaro.org,
+	linus.walleij@linaro.org, pshete@nvidia.com, petlozup@nvidia.com,
+	frank.li@vivo.com, robh@kernel.org, stefank@nvidia.com,
+	pdeschrijver@nvidia.com, christophe.jaillet@wanadoo.fr,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 0/8] soc/tegra: fuse: Add ACPI support
+Message-ID: <ZXs2jVeQtzU7668I@orome.fritz.box>
+References: <20231017052322.2636-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7ihAXFEyzJFczZOQ"
+Content-Disposition: inline
+In-Reply-To: <20231017052322.2636-1-kkartik@nvidia.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-From: Thierry Reding <treding@nvidia.com>
 
+--7ihAXFEyzJFczZOQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 12 Nov 2023 08:04:14 +0100, Christophe JAILLET wrote:
-> These TEGRA_IO_RAIL_... functions and constants have been deprecated in
-> commit 21b499105178 ("soc/tegra: pmc: Add I/O pad voltage support") in
-> 2016-11.
-> 
-> There seems to be no users since kernel 4.16.
-> 
-> Remove them now.
-> 
-> [...]
+On Tue, Oct 17, 2023 at 10:53:14AM +0530, Kartik wrote:
+> This series of patches add ACPI support for Tegra194 and Tegra234 in
+> Tegra fuse and apbmisc drivers. It also adds support for Tegra241
+> which uses ACPI boot.
+>=20
+> Kartik (8):
+>   mm/util: Introduce kmemdup_array()
+>   soc/tegra: fuse: Use dev_err_probe for probe failures
+>   soc/tegra: fuse: Refactor resource mapping
+>   soc/tegra: fuse: Add tegra_acpi_init_apbmisc()
+>   soc/tegra: fuse: Add function to add lookups
+>   soc/tegra: fuse: Add function to print SKU info
+>   soc/tegra: fuse: Add ACPI support for Tegra194 and Tegra234
+>   soc/tegra: fuse: Add support for Tegra241
+>=20
+>  drivers/soc/tegra/Kconfig              |   5 ++
+>  drivers/soc/tegra/fuse/fuse-tegra.c    | 112 ++++++++++++++++++-------
+>  drivers/soc/tegra/fuse/fuse-tegra30.c  |  20 +++++
+>  drivers/soc/tegra/fuse/fuse.h          |   5 ++
+>  drivers/soc/tegra/fuse/tegra-apbmisc.c | 110 ++++++++++++++++++++----
+>  include/linux/string.h                 |   1 +
+>  include/soc/tegra/fuse.h               |   1 +
+>  mm/util.c                              |  17 ++++
+>  8 files changed, 227 insertions(+), 44 deletions(-)
 
-Applied, thanks!
+Applied, thanks.
 
-[1/1] soc/tegra: pmc: Remove some old and deprecated functions and constants
-      commit: c4ae5addc4c53c504b1bdbd77ce72601ef51da8e
+Thierry
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+--7ihAXFEyzJFczZOQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmV7No0ACgkQ3SOs138+
+s6HdXg/9FA/vYnQmXMQe06CT1xhFNbKB6aJgVm5DTwnTHPo0dBQNy3x2dgMK5DT3
+j+jmOJcl53GaKXKwUbA6u0nnebvP3kmLJWxbLnuAw3TcJdPJLzrzrRyynvwWAwM7
+Nxi13gAVW/YV039w4As0c8IoTIfwcswNJzXjfPDnw5vokT6FkzKOx4YutiCWGfFo
+QcxOD8PbxPAAHvsuJmP/BEBtpHxGS+Yl9pd/CTS42uRkaGvHJq/DflviF38aTcXE
+6Qczt0rfVZRRncz5rc0RMNJT54eMrbKd2PVMu8VjFuKsCz29Hfk/A2CahJ0XZn5K
+bbzWgMCTgyaBQu+1/L1tY++t6eeC8tVY0JUqs9vykJqOwukp6uOOZy2wv4hJ5i86
+BZ106BkBaBUyA7uKz00cOBoxSTJwNRuyrQZ8kZ1+sb4aZAlQ5Hbsn8tKRij7yvBa
+WmDngH/DwqjnHp3YHtegotb9pjwG2MBoPHuNFftT4xnaI+rWbDIsW1pOmxAx6lmp
+r1oljZt8p0+g09O4iylPNGrDzebW5X0KdB1uZqa8t4TAwsjN/pEKDdx9SdoIhOA5
+BGMHyXgIbVFv7xktVZcwHXu459g4yalCgq+GZrd/3OTt0rdwfY/iJwn6Lp5GiDvu
+39Pb9kuWKwpUdW48lkCSIET6gzy6omQry42gAscqFTW7m2nxrA0=
+=dqlZ
+-----END PGP SIGNATURE-----
+
+--7ihAXFEyzJFczZOQ--
