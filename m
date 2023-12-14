@@ -1,51 +1,54 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUBaWFlm"
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B026E93
-	for <linux-tegra@vger.kernel.org>; Thu, 14 Dec 2023 09:23:45 -0800 (PST)
-Received: by mail-ej1-x62d.google.com with SMTP id a640c23a62f3a-a1f8510883aso769928266b.3
-        for <linux-tegra@vger.kernel.org>; Thu, 14 Dec 2023 09:23:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cQKdi02F"
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4421EB7;
+	Thu, 14 Dec 2023 09:27:43 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id 5b1f17b1804b1-40c580ba223so29611195e9.3;
+        Thu, 14 Dec 2023 09:27:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1702574624; x=1703179424; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1702574862; x=1703179662; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NjfgAmCHro8WpwTbdDICAMGVZxRX0DY8en3op8vtBmg=;
-        b=DUBaWFlmqkb7pUzbv/N3kdZVEYc90GQvDrMXF/poIfqB+ZjD+UkLapqtvFWaROiN3U
-         J4nJt+QQqe2Uiwqn8tYTUGPLJYhGMLLXmKvn+fX32vLP5JSYZD42S8C2z18vocPS5Cnx
-         fT/lg3L8pRun58fGyI/E7y1IUrEwQ/7oG3iBiqtFzpv/CoMBmdwrgzLr8iwHMepb4GTR
-         +cZm7dcM1GNH/t62i4LslirzhN0YdD+7fmH/Qdh9TEb4SmbtQ0RaedVFecld7Z5UcYkn
-         dZtvt8zPZtyFVpxkx9GkPHlhfr6iySLOKcMrB0h4O582G/MfuwdOO4rRmaK9sSKWZxHt
-         uCnw==
+        bh=bhNXYxyAPYzPWe6n1/YVvZ3TcijeuBnRICz1efGH75o=;
+        b=cQKdi02F5sAauJLM9oqT9m2bNn9h8tz51M/z2AShDCnxFukeEW6lPcJVydqHLiq73M
+         lR6Re8GTIx1QzqZgLwJ5t2l+5lkoYx+ARl+WVnBaBRqd8HmdCiXUDiC3wd+Y8wizFTt7
+         WnM8fOv43r4gc6B/qwrDOoOtzH18F79Rs9Oedo1rZQQSbXdqU8v1NFjUCdp395Jna/Pb
+         fNdJEkbJQVbDfQM4VQ8y3bgldZ5ktZW4enk/YXyGTaEcg75sGOKEw6wnLJK6q3yGWiSr
+         SLaJObVRUatRsUZWjj6jvmmzF01CyHAH9OAohZkzFtAyZoY2Qk5Cg31gGxqMJjoeoxu7
+         pAHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702574624; x=1703179424;
+        d=1e100.net; s=20230601; t=1702574862; x=1703179662;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NjfgAmCHro8WpwTbdDICAMGVZxRX0DY8en3op8vtBmg=;
-        b=mfqjk7qwdEz3VDLvQgU86fk3IWseKvm3+Z9T2QiWHJtLxpKqL95BUoLb0FkqZyDXiy
-         YGekrE0FQ7I1NgGYERlvh4PAJhbqxPSK4etUVm5cfFef1GrEYljImcSWHB6exJOqBa5x
-         D3h4P/PZtmFnJDBCgyOHKEeThwgWjwRbxOj/Dj+DbcXPwq/0Jqo+Mw1ZtMuPDrKgWisF
-         9smE+9vPwlKs0apg9q64hbEGd228vTUnQfCPGQvLgySnG8nI6lSuPbKyzRtSZCUo5DDA
-         K0B3frZthOURrvkduQmIq0fGH0i737tzAQ0YCRo2xHooNhAVr9MN3cin7z02eZuDxkv4
-         Dw7w==
-X-Gm-Message-State: AOJu0YwlIDhcMZoP54C264efvL9OI/ydFqgg0TwlJE9A7YVbUL2O7QtO
-	XtRF7l/5vBgx+Nhq0UGB30w=
-X-Google-Smtp-Source: AGHT+IFtbQpVVn4O3orT5ng99RxXEB37KZytm/DB87hmngzw/A4f5W/EwLa4VEQiP4pyUJOX5ku0pg==
-X-Received: by 2002:a17:907:e8f:b0:a1f:5d99:fa8c with SMTP id ho15-20020a1709070e8f00b00a1f5d99fa8cmr3562053ejc.77.1702574623908;
-        Thu, 14 Dec 2023 09:23:43 -0800 (PST)
+        bh=bhNXYxyAPYzPWe6n1/YVvZ3TcijeuBnRICz1efGH75o=;
+        b=DQoG+9E/fdQ2avjZCGH7OUESH2EQ1f5WDyO/tfPnaKDJCfPzNNeDIVULynDVF9VV8j
+         RChfreDHnmewHMZAER1SdRtIIsNVHeRU3VIzWKc5TwnN24JYSJx+NDhn85RG5bGDSW6m
+         54XrEnN4YLiF8nYNE725o+jjgSOD0cdYJ/bIDD5nKEzl7na4iPsTxEkxhpM6Gxk4gsPK
+         EFDEmd6a14e38++lRLc3btnpAEBI3Xehz3RZuM3pb2cQCJ+Udgsoo94hBbPQYCSgyPWe
+         Q/+ciEqLkcI4BF37jVzPUdsdA6hx4C9eRCpW6ohnuFviHisZKEOK35BwhmnSY+fS5sY1
+         9mjQ==
+X-Gm-Message-State: AOJu0YxMd5MLj6N865rkLysTVPVVxmKnmdKAzd2EeBefo4UVbT0vFCYq
+	9Mi7nrjSdIirSpHiwy//veMIUfmNHMc=
+X-Google-Smtp-Source: AGHT+IH6Yd3h0/uGmjXlcw9M/CRAc2BZ/TlpTItAVqacJkRFU0Q0k2bvne3xpqFXQ6P2hTW1lBP24w==
+X-Received: by 2002:a05:600c:501e:b0:40b:5e1d:83a8 with SMTP id n30-20020a05600c501e00b0040b5e1d83a8mr5741736wmr.60.1702574861554;
+        Thu, 14 Dec 2023 09:27:41 -0800 (PST)
 Received: from orome.fritz.box (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ub26-20020a170907c81a00b00a1c96e987c4sm9747583ejc.101.2023.12.14.09.23.43
+        by smtp.gmail.com with ESMTPSA id h2-20020a05600c350200b0040c44b4a282sm17521133wmq.43.2023.12.14.09.27.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 09:23:43 -0800 (PST)
-Date: Thu, 14 Dec 2023 18:23:42 +0100
+        Thu, 14 Dec 2023 09:27:41 -0800 (PST)
+Date: Thu, 14 Dec 2023 18:27:39 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2] drm/tegra: include drm/drm_edid.h only where needed
-Message-ID: <ZXs6HtH0-qa4xgQr@orome.fritz.box>
-References: <20231212142409.3826544-1-jani.nikula@intel.com>
- <20231213101951.3932273-1-jani.nikula@intel.com>
+To: Zhang Shurong <zhang_shurong@foxmail.com>
+Cc: mperttunen@nvidia.com, airlied@gmail.com, daniel@ffwll.ch,
+	jonathanh@nvidia.com, p.zabel@pengutronix.de, lgirdwood@gmail.com,
+	broonie@kernel.org, dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/tegra: dpaux: Fix PM disable depth imbalance in
+ tegra_dpaux_probe
+Message-ID: <ZXs7C6Yp77UoMCYV@orome.fritz.box>
+References: <tencent_B13DB7F6C0023C46157250A524966F326A09@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -53,52 +56,53 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nyW34cH9WClVZ6vc"
+	protocol="application/pgp-signature"; boundary="2ga4bhpKz+XbSCEL"
 Content-Disposition: inline
-In-Reply-To: <20231213101951.3932273-1-jani.nikula@intel.com>
+In-Reply-To: <tencent_B13DB7F6C0023C46157250A524966F326A09@qq.com>
 User-Agent: Mutt/2.2.12 (2023-09-09)
 
 
---nyW34cH9WClVZ6vc
+--2ga4bhpKz+XbSCEL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 13, 2023 at 12:19:51PM +0200, Jani Nikula wrote:
-> Reduce the need for rebuilds when drm_edid.h is modified by including it
-> only where needed.
+On Wed, Oct 04, 2023 at 10:10:55PM +0800, Zhang Shurong wrote:
+> The pm_runtime_enable function increases the power disable depth,
+> which means that we must perform a matching decrement on the error
+> handling path to maintain balance within the given context.
+> Additionally, we need to address the same issue for pm_runtime_get_sync.
+> We fix this by invoking pm_runtime_disable and pm_runtime_put_sync
+> when error returns.
 >=20
-> v2: Fix build (kernel test robot <lkp@intel.com>)
->=20
-> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+> Fixes: 82b81b3ec1a7 ("drm/tegra: dpaux: Implement runtime PM")
+> Signed-off-by: Zhang Shurong <zhang_shurong@foxmail.com>
 > ---
->  drivers/gpu/drm/tegra/drm.h    | 2 +-
->  drivers/gpu/drm/tegra/output.c | 1 +
->  drivers/gpu/drm/tegra/sor.c    | 1 +
->  3 files changed, 3 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/tegra/dpaux.c | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---nyW34cH9WClVZ6vc
+--2ga4bhpKz+XbSCEL
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmV7Oh4ACgkQ3SOs138+
-s6Gl5A/8DEwIypqGfhipLCj04MtME1RYd0WRLM08GUYZdzuiodYu1O1/JC+vYBFk
-ABPOBWW7E7DCo+M+IEJ2itv/IVpafamwmyjALbKDuxeRjI+t+zsfLciTEvM/5AAw
-peWUW8hwkpJIkPYizpoPeceU/LhbuC3L51pAJNY4RZg0OqjzMJU/wl6E6vflBL+x
-N0KDqjzEXHJTDesGWYPtX9AnrSk6kxmZld2KnfQBL30h/s/sS144rqTj2rBvdKv1
-/GR6qITkUFh775bywQgmIL2clsU+zwZIWdVdFXtJNDIdf19njkHMRCwiRrPFXBUu
-9nGjGbeAwmbvVzd0/krnZFAglJH6gux8v1dh8053AhdqocFnbPUhkDWa0l6ZVwgs
-J8ZNIuJWhBVe9sQdHzBx0k/8WaHkmLzGdvO47w8a+NeaOq3FXf4JKYrP4sMUf78e
-HmefU/K3hfHpp4pKNtK0OfX+ucicWAkTAjrd0LoJvnPcol+pb2g287RUkWwn10Pb
-blyRAfJGkP1WJjdC041BOSUMQ2rXcYSKtEHOV7ohNOsmzjHo5vOyPF+1utqLXzcd
-29hfRCubfm71iidEbfGR/zjFdbhdNdlK9bPMz5VTmRDU50zRzRMTtrUXgNGUMh7P
-nduzc3raj3dKbi2mXNPSZiTTb+ZZosQsslVFZqGFjmZp8Eo0v+g=
-=/P37
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmV7OwsACgkQ3SOs138+
+s6GKVg//eVk62JGZsNwcomhQ8UjV7GIdFwOYPfRJbaYoFtmZ2jZqMOdYE/NDYYMt
+BkvN6UEK87BP4lslecYI7ooR2ORjKjtyX2/8NLqhQSsDxUCbrBjU1VhRO0eyiQvm
+0wwFvEF8nWMLnKtmmklnpO9i9T5EuKGOSshRYaRxgN6gJYJGrZLOt+snSMuGx1Pi
+BKsyukdE2vHVQ68oiyvMyoFkkEKjQljc8/mkOAhsKxFqObbOwWUJUVZusvE0AoPh
++NuzFBtkCubHntRUaUdMmomqWBufK+xzFPxSuGu3IhJFOfed6y+ENu+shaF0vP98
+vHz11q1n5UX6DRgfUhTp2yZLc3HDC/qWzUj44dvccd6HUOUW8he9o2yjle49ZOEG
+pwFpmJUICX805jFGhgsL0FenugXkacrQM+VHAnWrfQJfsXR7U5HW9H52So+V/mC/
++e3Vg2Bo7OuDwYR0z2qpxwptT1tH3igfX4t+YZOQxpHPhswPrqwtNW+4ZHWj/bD2
+J/A56TIedeoEaL2NdiwhXEV+rqEgh6kTT+OQxkUC+9r36954a2oNi7dUaA69waLk
+l+NCMB/lCA8GgFyDTQNWMTNirz0/vficWJx/lE1YArchkglCtlfIIDtiYF3udAzb
+4JeZocrkxuxwUxIZltPCyz+rMoS7FUds237S8hXO68sON4uIxRk=
+=EYX6
 -----END PGP SIGNATURE-----
 
---nyW34cH9WClVZ6vc--
+--2ga4bhpKz+XbSCEL--
