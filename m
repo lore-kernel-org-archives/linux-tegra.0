@@ -1,94 +1,239 @@
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA4069788
+	for <linux-tegra@vger.kernel.org>; Thu, 14 Dec 2023 19:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="v6h+6mtn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EBqUYNS/"
-Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8146B112;
-	Thu, 14 Dec 2023 10:44:08 -0800 (PST)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.nyi.internal (Postfix) with ESMTP id B015E5C00C5;
-	Thu, 14 Dec 2023 13:44:07 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Thu, 14 Dec 2023 13:44:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1702579447; x=1702665847; bh=X7rphW4VDo
-	ZT8qg4z5kE8QsYzJauPYLpJpQftgurR88=; b=v6h+6mtncNMb4KnQJq5252fQhu
-	edQcz5SLLee88IUDTtBPxn6i9wHU5LozeoKNMWgy9Y67YOO+wVyX9B8KMQ1td8K7
-	epLzVPacsZN8X341znVv8Cwhxh451LYmKtBNoKvpSwbl0xU6FhI9uEfB6p3Tk7bc
-	QpaJcLI+tftYM0jwzLLkBXUWgtzqCjsUoBiZAhaq7TBWo6AGhs6jFNJiVh128W9V
-	ZEJlVf/VO4TQ0QFFClz8A2aqtxXWlsTNEmR00VfCGcJASufffOyu6X2gAysjVHzY
-	e4f3yvrCrETJpyMGmAujFBCKbwDdbj0o2PVLzkq3Y9+BnefxGrWEkRZdlqWQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1702579447; x=1702665847; bh=X7rphW4VDoZT8qg4z5kE8QsYzJau
-	PYLpJpQftgurR88=; b=EBqUYNS/hO3pSLPpAnEpJ6Sn2UwfzL5OLMaX9yGHqnDA
-	E4z9s4Q2HVgM69AvG6vLlhpqiOllUMqULjHolQsAZq7kXNvgqV6sw/qwf1G2GSZ/
-	7+l7RN0RAY645LCwbVN8EZiLBP1ZOH9dR6deGfyq/QVzXTA1plvZqLceH6xkziBa
-	y9GosBdZLAMwtM9ZPF5SNCe13szDXWSjNL5onBjwQxruUnIsXzK14dZf5J1QsXsk
-	7JN4aJaDElR4bpMxxlkGSJbylC8d65lTYB7RUr588Oib7fg2m49jmWCudUEPUXyt
-	MILregVlkfcazQ50v2YPHlEFwNx2lLMBcN9TEqZSrw==
-X-ME-Sender: <xms:90x7ZeNVvEAh0rNpZgCVuhTmbe6jajCo-mVArzBBioux1AVoVwwkKw>
-    <xme:90x7Zc-flBTeKvTqXq1ezA6-RYiF2DL6jQzCxVEqB4yyfNmw4cip45RPqwPeMTFX0
-    iajgftMZoSsX_XRPNg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudelledgudduhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
-    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:90x7ZVRdEBeWr78om2hpUGSvTDt7J8NTmC0itahInRb23UCIT39ynQ>
-    <xmx:90x7ZeugJKxHg-XX26zTF2ITjfVJ4_B9e0sq2nE4n7ZG45Q0R1b0Vw>
-    <xmx:90x7ZWdqE5OfXs7PpO6D7Duws9hgh6v6CVaAYkidbU0Dn7Sv34CT4Q>
-    <xmx:90x7ZZuswon83KhNY6jQslMLhOZMBGdXdpwk6NsdEipo6ErvSF8gTA>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 656A1B6008D; Thu, 14 Dec 2023 13:44:07 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.9.0-alpha0-1283-g327e3ec917-fm-20231207.002-g327e3ec9
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="ZprlJCGr"
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-425860bf009so61165631cf.2
+        for <linux-tegra@vger.kernel.org>; Thu, 14 Dec 2023 11:17:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1702581441; x=1703186241; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O2wAVapsX3d4Wu5zcLkO1Y9GXGGh0W89rcgF3jgTa1I=;
+        b=ZprlJCGrVSIpyUiDmp2/IzTG6YFUGMyWp9w+Ix9/Vj2z3UtQz6rlen2BjAWSlirmBy
+         nv79chpSvzOUg+bsKPB0SLk1O5HCCC0KKuwg0wSlyI5ky2A0b3pFl+naX28MxmWx8kYM
+         kcXSOpRLqDe56ncRyS/kqAGl4M/A4ZwjCZfTy/QV8piACkozLHePd0iEY3COnM3+PxOp
+         7v6mcLVGFjGFYNGQW2BK1ZTxwqhciMzzrIvjxAGDoj3sdF6p8zfGjXbfnMdYSv3EpiFy
+         rBF4w2t32Z0cTgi3L1IvRNPcr+ycvFAaMq9vON6sbKX6R6Fh1SX2MO4EU1JHMxtqav4x
+         vvDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702581441; x=1703186241;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O2wAVapsX3d4Wu5zcLkO1Y9GXGGh0W89rcgF3jgTa1I=;
+        b=LdXki44XyDn8Xdi8vrJ1aMfBkwqm6U2XG6rqf4VftEi8e0YKepE80HsW7Ish/CU/le
+         S5WKyvP7yROZce+Pv8Xo7OfFA5U0ejGZIKTduyfUb5sbPh3eaoUMVo9FadGQeaR+rjFL
+         snlFXDsWzOWk5A46xPCKpPcOr33zTmKN5eOpjRoXRaYa83gnlnjdxlPmmNr1NbpzJssN
+         GsWIBVdp79tiiAOWsSFTAB6OLLvL7/QrsJNHwP7xxZ2Gn4ZE5zVEsywMdZN5Dj0kB+aq
+         YEwv9b8HhjLTQADZOd7eZGR40+alevCSCKu13Z12EElGco6xuFGfPznwPSfz8gju5bIy
+         TNnw==
+X-Gm-Message-State: AOJu0YwzrxxqUCTUwstVasM8nd/sWTETNZPHQJ06EZg7zeqk7daswm5g
+	QBWFGzagliOnmgBXean+eAuNGkjZwFlA5zdGUf3OEg==
+X-Google-Smtp-Source: AGHT+IFzRCB9Md6JcXtZ2Es25f4UOuYMeLP9Itx6hDPrn436g7L6e3bJmetcIjga0ApETmdpPvmDW7XHrih7qp2afIE=
+X-Received: by 2002:a05:622a:452:b0:423:a4f6:9aa2 with SMTP id
+ o18-20020a05622a045200b00423a4f69aa2mr12441941qtx.6.1702581441062; Thu, 14
+ Dec 2023 11:17:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <d84156ff-897c-440a-bafa-75933203a3f1@app.fastmail.com>
-In-Reply-To: <ZXs2jVeQtzU7668I@orome.fritz.box>
-References: <20231017052322.2636-1-kkartik@nvidia.com>
- <ZXs2jVeQtzU7668I@orome.fritz.box>
-Date: Thu, 14 Dec 2023 18:43:47 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thierry Reding" <thierry.reding@gmail.com>, Kartik <kkartik@nvidia.com>
-Cc: "Jon Hunter" <jonathanh@nvidia.com>, "Kees Cook" <keescook@chromium.org>,
- "Andy Shevchenko" <andy@kernel.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Ulf Hansson" <ulf.hansson@linaro.org>,
- "Linus Walleij" <linus.walleij@linaro.org>, pshete@nvidia.com,
- petlozup@nvidia.com, "Yangtao Li" <frank.li@vivo.com>,
- "Rob Herring" <robh@kernel.org>, stefank@nvidia.com, pdeschrijver@nvidia.com,
- "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v7 0/8] soc/tegra: fuse: Add ACPI support
-Content-Type: text/plain
+References: <20231130201504.2322355-1-pasha.tatashin@soleen.com>
+ <20231130201504.2322355-2-pasha.tatashin@soleen.com> <776e17af-ae25-16a0-f443-66f3972b00c0@google.com>
+In-Reply-To: <776e17af-ae25-16a0-f443-66f3972b00c0@google.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 14 Dec 2023 14:16:44 -0500
+Message-ID: <CA+CK2bA8iJ_w8CSx2Ed=d2cVSujrC0-TpO7U9j+Ow-gfk1nyfQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] iommu/vt-d: add wrapper functions for page allocations
+To: David Rientjes <rientjes@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, alim.akhtar@samsung.com, 
+	alyssa@rosenzweig.io, asahi@lists.linux.dev, baolu.lu@linux.intel.com, 
+	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net, 
+	david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
+	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
+	will@kernel.org, yu-cheng.yu@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 14, 2023, at 17:08, Thierry Reding wrote:
-> On Tue, Oct 17, 2023 at 10:53:14AM +0530, Kartik wrote:
->> This series of patches add ACPI support for Tegra194 and Tegra234 in
->> Tegra fuse and apbmisc drivers. It also adds support for Tegra241
->> which uses ACPI boot.
+On Thu, Dec 14, 2023 at 12:58=E2=80=AFPM David Rientjes <rientjes@google.co=
+m> wrote:
 >
-> Applied, thanks.
+> On Thu, 30 Nov 2023, Pasha Tatashin wrote:
+>
+> > diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
+> > new file mode 100644
+> > index 000000000000..2332f807d514
+> > --- /dev/null
+> > +++ b/drivers/iommu/iommu-pages.h
+> > @@ -0,0 +1,199 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Copyright (c) 2023, Google LLC.
+> > + * Pasha Tatashin <pasha.tatashin@soleen.com>
+> > + */
+> > +
+> > +#ifndef __IOMMU_PAGES_H
+> > +#define __IOMMU_PAGES_H
+> > +
+> > +#include <linux/vmstat.h>
+> > +#include <linux/gfp.h>
+> > +#include <linux/mm.h>
+> > +
+> > +/*
+> > + * All page allocation that are performed in the IOMMU subsystem must =
+use one of
+> > + * the functions below.  This is necessary for the proper accounting a=
+s IOMMU
+> > + * state can be rather large, i.e. multiple gigabytes in size.
+> > + */
+> > +
+> > +/**
+> > + * __iommu_alloc_pages_node - allocate a zeroed page of a given order =
+from
+> > + * specific NUMA node.
+> > + * @nid: memory NUMA node id
+>
+> NUMA_NO_NODE if no locality requirements?
 
-I'm still a bit puzzled by this series, can you provide some more background?
+If no locality is required, there is a better interface:
+__iommu_alloc_pages(). That one will also take a look at the calling
+process policies to determine the proper NUMA node when nothing is
+specified. However, when policies should be ignored, and no locality
+required, NUMA_NO_NODE can be passed.
 
-Why does an ACPI based system require access to SoC drivers? Shouldn't
-this all be abstracted by the BIOS in some form so the device drivers
-can work standalone rather than calling into this driver?
+>
+> > + * @gfp: buddy allocator flags
+> > + * @order: page order
+> > + *
+> > + * returns the head struct page of the allocated page.
+> > + */
+> > +static inline struct page *__iommu_alloc_pages_node(int nid, gfp_t gfp=
+,
+> > +                                                 int order)
+> > +{
+> > +     struct page *pages;
+>
+> s/pages/page/ here and later in this file.
 
-      Arnd
+In this file, where there a page with an "order", I reference it with
+"pages", when no order (i.e. order =3D 0), I reference it with "page"
+
+I.e.: __iommu_alloc_page vs. __iommu_alloc_pages
+
+>
+> > +
+> > +     pages =3D alloc_pages_node(nid, gfp | __GFP_ZERO, order);
+> > +     if (!pages)
+>
+> unlikely()?
+
+Will add it.
+
+>
+> > +             return NULL;
+> > +
+> > +     return pages;
+> > +}
+> > +
+> > +/**
+> > + * __iommu_alloc_pages - allocate a zeroed page of a given order.
+> > + * @gfp: buddy allocator flags
+> > + * @order: page order
+> > + *
+> > + * returns the head struct page of the allocated page.
+> > + */
+> > +static inline struct page *__iommu_alloc_pages(gfp_t gfp, int order)
+> > +{
+> > +     struct page *pages;
+> > +
+> > +     pages =3D alloc_pages(gfp | __GFP_ZERO, order);
+> > +     if (!pages)
+> > +             return NULL;
+> > +
+> > +     return pages;
+> > +}
+> > +
+> > +/**
+> > + * __iommu_alloc_page_node - allocate a zeroed page at specific NUMA n=
+ode.
+> > + * @nid: memory NUMA node id
+> > + * @gfp: buddy allocator flags
+> > + *
+> > + * returns the struct page of the allocated page.
+> > + */
+> > +static inline struct page *__iommu_alloc_page_node(int nid, gfp_t gfp)
+> > +{
+> > +     return __iommu_alloc_pages_node(nid, gfp, 0);
+> > +}
+> > +
+> > +/**
+> > + * __iommu_alloc_page - allocate a zeroed page
+> > + * @gfp: buddy allocator flags
+> > + *
+> > + * returns the struct page of the allocated page.
+> > + */
+> > +static inline struct page *__iommu_alloc_page(gfp_t gfp)
+> > +{
+> > +     return __iommu_alloc_pages(gfp, 0);
+> > +}
+> > +
+> > +/**
+> > + * __iommu_free_pages - free page of a given order
+> > + * @pages: head struct page of the page
+>
+> I think "pages" implies more than one page, this is just a (potentially
+> compound) page?
+
+Yes, more than one page, basically, when order may be > 0.
+
+> > +/**
+> > + * iommu_free_page - free page
+> > + * @virt: virtual address of the page to be freed.
+> > + */
+> > +static inline void iommu_free_page(void *virt)
+> > +{
+> > +     iommu_free_pages(virt, 0);
+> > +}
+> > +
+> > +/**
+> > + * iommu_free_pages_list - free a list of pages.
+> > + * @pages: the head of the lru list to be freed.
+>
+> Document the locking requirements for this?
+
+Thank you for the review. I will add info about locking requirements,
+in fact they are very relaxed.
+
+These pages are added to the list by unmaps or remaps operation in
+Intel IOMMU implementation. These calls assume that whoever is doing
+those operations has exclusive access to the VA range in the page
+table of that operation. The pages in this freelist only belong to the
+former page-tables from the IOVA range for those operations.
+
+> > + */
+> > +static inline void iommu_free_pages_list(struct list_head *pages)
+> > +{
+> > +     while (!list_empty(pages)) {
+> > +             struct page *p =3D list_entry(pages->prev, struct page, l=
+ru);
+> > +
+> > +             list_del(&p->lru);
+> > +             put_page(p);
+> > +     }
+> > +}
