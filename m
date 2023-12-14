@@ -1,45 +1,46 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XOy08tAL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.151])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70BB2AD;
-	Wed, 13 Dec 2023 21:19:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zepmh8NQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19278B9;
+	Wed, 13 Dec 2023 23:14:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702531196; x=1734067196;
+  t=1702538042; x=1734074042;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=LP1hgWHB8YhuPGik6J6Bc7+zlLntvB/l6rZVFN707T4=;
-  b=XOy08tALqK/UC5ISwCN8jiAjHQbypOJa5HAnMctwbOb5g4eaLJWgJmDy
-   CtlWNOiIa379eCORDJ8zCk8dNBN3iMMEca4nHU5WZ2d4sBBf6UAjDgOFE
-   hSjM9bkIjL0xY7c4IZwVpvBQKBBPhxn4c3RWlhCQ32OuETuhd8ZeMWt/M
-   YPCY2NfVD0acx6idrP1WNXE2xLrF/tvtvyRZFsDogXKUk+2lTApo7iQfq
-   fnbQjz7+6Affz2ki3ZbZ1vycjZlKmgs15L5qY3O2WfqsBVqSD9YuvFGzx
-   XP5vYHjQr7U0n2+whsFOEug7vQCVOKnjCsZlavOI/qhL0ROLVCZ1x+LMp
+  bh=GN22NQP6pMAziWGVyIMCN9j8aXdvqe/Q9qp2AF7ybkA=;
+  b=Zepmh8NQbAeg1EgeCNEpR6Psrk83518QOEs1Kx8F728Z5afn0WW7zWko
+   MpsgoABPMVSufUP1a3SfdhWW2VvV9Qwwb0CPpKOdpljLr7vscmZNdVu+5
+   N5gkJS9wfI7k0xUDb5D8n27U1DskkqsAccACZ0N0LNSLpHpQK4Hk1TfL/
+   EZyUBrs1KQYYfuDy9K7YmDutnjlimVpzSYraKYGtKu6e1+xF4eLQsmWJo
+   7yiWhpCggAjAVz/NitPNNEQIDMnWT9YJilCOA4Ajdc/asBPBH73q4tx3E
+   Rey2kBv0Lw8amKu200gUBdyP+UbBKR9vspdduG3xl6RCsa+XR8DkuSJeS
    w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="375225560"
+X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="393950394"
 X-IronPort-AV: E=Sophos;i="6.04,274,1695711600"; 
-   d="scan'208";a="375225560"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 21:19:55 -0800
+   d="scan'208";a="393950394"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2023 23:14:01 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="897612760"
+X-IronPort-AV: E=McAfee;i="6600,9927,10923"; a="750421412"
 X-IronPort-AV: E=Sophos;i="6.04,274,1695711600"; 
-   d="scan'208";a="897612760"
+   d="scan'208";a="750421412"
 Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 13 Dec 2023 21:19:52 -0800
+  by orsmga006.jf.intel.com with ESMTP; 13 Dec 2023 23:13:58 -0800
 Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1rDe8U-000LcB-08;
-	Thu, 14 Dec 2023 05:19:50 +0000
-Date: Thu, 14 Dec 2023 13:19:48 +0800
+	id 1rDfuu-000Lj2-0F;
+	Thu, 14 Dec 2023 07:13:56 +0000
+Date: Thu, 14 Dec 2023 15:12:57 +0800
 From: kernel test robot <lkp@intel.com>
 To: Akhil R <akhilrajeev@nvidia.com>, herbert@gondor.apana.org.au,
 	davem@davemloft.net, linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
 	jonathanh@nvidia.com, linux-tegra@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Akhil R <akhilrajeev@nvidia.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Akhil R <akhilrajeev@nvidia.com>
 Subject: Re: [PATCH 3/5] crypto: tegra: Add Tegra Security Engine driver
-Message-ID: <202312141305.pZ3rThjo-lkp@intel.com>
+Message-ID: <202312141448.599zJgqd-lkp@intel.com>
 References: <20231213122030.11734-4-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -65,34 +66,61 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/dt-bindings-crypt
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
 patch link:    https://lore.kernel.org/r/20231213122030.11734-4-akhilrajeev%40nvidia.com
 patch subject: [PATCH 3/5] crypto: tegra: Add Tegra Security Engine driver
-reproduce: (https://download.01.org/0day-ci/archive/20231214/202312141305.pZ3rThjo-lkp@intel.com/reproduce)
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20231214/202312141448.599zJgqd-lkp@intel.com/config)
+compiler: clang version 17.0.0 (https://github.com/llvm/llvm-project.git 4a5ac14ee968ff0ad5d2cc1ffa0299048db4c88a)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231214/202312141448.599zJgqd-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202312141305.pZ3rThjo-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202312141448.599zJgqd-lkp@intel.com/
 
-versioncheck warnings: (new ones prefixed by >>)
-   INFO PATH=/opt/cross/clang/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -Wformat-overflow -Wformat-truncation -Wstringop-overflow -Wrestrict -Wenum-conversion W=1 --keep-going HOSTCC=gcc-12 CC=gcc-12 -j32 KBUILD_MODPOST_WARN=1 ARCH=x86_64 versioncheck
-   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
-   	-name '*.[hcS]' -type f -print | sort \
-   	| xargs perl -w ./scripts/checkversion.pl
-   ./drivers/accessibility/speakup/genmap.c: 13 linux/version.h not needed.
-   ./drivers/accessibility/speakup/makemapdata.c: 13 linux/version.h not needed.
->> ./drivers/crypto/tegra/tegra-se.h: 12 linux/version.h not needed.
-   ./drivers/staging/media/atomisp/include/linux/atomisp.h: 23 linux/version.h not needed.
-   ./samples/bpf/spintest.bpf.c: 8 linux/version.h not needed.
-   ./samples/trace_events/trace_custom_sched.c: 11 linux/version.h not needed.
-   ./sound/soc/codecs/cs42l42.c: 14 linux/version.h not needed.
-   ./tools/lib/bpf/bpf_helpers.h: 403: need linux/version.h
-   ./tools/testing/selftests/bpf/progs/dev_cgroup.c: 9 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/netcnt_prog.c: 3 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
-   ./tools/testing/selftests/wireguard/qemu/init.c: 27 linux/version.h not needed.
+All warnings (new ones prefixed by >>):
+
+>> drivers/crypto/tegra/tegra-se-main.c:283:51: warning: variable 'i' is uninitialized when used here [-Wuninitialized]
+     283 |                 dev_err(se->dev, "failed to set %d clock rate", i);
+         |                                                                 ^
+   include/linux/dev_printk.h:144:65: note: expanded from macro 'dev_err'
+     144 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                                        ^~~~~~~~~~~
+   include/linux/dev_printk.h:110:23: note: expanded from macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                                     ^~~~~~~~~~~
+   drivers/crypto/tegra/tegra-se-main.c:273:7: note: initialize the variable 'i' to silence this warning
+     273 |         int i, ret;
+         |              ^
+         |               = 0
+   1 warning generated.
+
+
+vim +/i +283 drivers/crypto/tegra/tegra-se-main.c
+
+   270	
+   271	static int tegra_se_clk_init(struct tegra_se *se)
+   272	{
+   273		int i, ret;
+   274	
+   275		se->clk = devm_clk_get(se->dev, NULL);
+   276		if (IS_ERR(se->clk)) {
+   277			dev_err(se->dev, "failed to get clock\n");
+   278			return PTR_ERR(se->clk);
+   279		}
+   280	
+   281		ret = clk_set_rate(se->clk, ULONG_MAX);
+   282		if (ret) {
+ > 283			dev_err(se->dev, "failed to set %d clock rate", i);
+   284			return ret;
+   285		}
+   286	
+   287		ret = clk_prepare_enable(se->clk);
+   288		if (ret) {
+   289			dev_err(se->dev, "failed to enable clocks\n");
+   290			return ret;
+   291		}
+   292	
+   293		return 0;
+   294	}
+   295	
 
 -- 
 0-DAY CI Kernel Test Service
