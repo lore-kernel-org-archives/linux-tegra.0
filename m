@@ -1,46 +1,46 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XY6n0fKP"
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34C1C118
-	for <linux-tegra@vger.kernel.org>; Thu, 14 Dec 2023 05:15:45 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id 38308e7fff4ca-2cc3f5e7451so15426751fa.2
-        for <linux-tegra@vger.kernel.org>; Thu, 14 Dec 2023 05:15:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TL8ajCZl"
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03EA0124
+	for <linux-tegra@vger.kernel.org>; Thu, 14 Dec 2023 05:15:47 -0800 (PST)
+Received: by mail-lj1-x233.google.com with SMTP id 38308e7fff4ca-2c9f572c4c5so121042571fa.2
+        for <linux-tegra@vger.kernel.org>; Thu, 14 Dec 2023 05:15:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1702559743; x=1703164543; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hsy3l+28Wlzo8cXaOBVgUpQ+5XTYvjbT3bX9woEdBdk=;
-        b=XY6n0fKPFM4ylqgrT+DP76vnVBxqSarH7iMtVLY8BSDMOhHRf/hj2cgzV6Z2bP1q1S
-         pg4zff30ctvffBQbZbZ79zSc5B0zsQ9Tfek6gdPQiHRYWRrZsEl/SICIdfiF/7HAc104
-         o8YXB6BEiTotSUiemKqQf4I8rtO+lOeyP4fLIFKG7eZMl0i+IWrOWaC4iagqJED4ArC8
-         d1T4XMYTFKdjlPhIelCh0AkKgDD0TuseyDky/ByMBVxSidGIMeEz7wOaTfoz/B44Jwv7
-         FOHF61fDmfANI7mQD4HasB75MbTro1hmLI8BgjxRrb+6cQKm+oUU/BzZnIWFjBAMP8YV
-         52ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702559743; x=1703164543;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1702559745; x=1703164545; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Hsy3l+28Wlzo8cXaOBVgUpQ+5XTYvjbT3bX9woEdBdk=;
-        b=vScjCOyUU+ruXNSxvNgwyq/qbPAn8BojX9ZP8xm2s8yZJlWzOTk+zi/9KqWrenjXLT
-         ZWFr/TqqC052qk2tvHQxzdhD/SJePkmcc/afwmM0jIKpwxnRqyNRKehKMikKB9Osq7hm
-         BDkayLf4itEqt7fiItlqDqkdkjRst36O0Y2Ec/rMmKQcP6/0hwyxYZHgHm5yAJ63p9HU
-         LRSmK1gjyKFdI/lgl5tAQ476vjxpEq3mrmynp1mCwLALPCVewMQtNfZaGJVNIPEitRbg
-         9T07TR4mzmabeVfsJFPwaUafi56U4A422XBrN91ORT5SCdfTs7boieT9TJpgRzHbTN7j
-         TVeQ==
-X-Gm-Message-State: AOJu0YxmAb9jvYad/so4m03JbGnEHHtWTOEvlw0JhggCMnXVfkKAT7fb
-	xMhVSfpMZTKwX6p9XEsznRbUJg==
-X-Google-Smtp-Source: AGHT+IGG2eNJ8YdSSOtikRyhfKzL54YiZt8kpDvWZmOdjaLZ+i16vshFSugATB9RNQ2q9+lT0N5dlA==
-X-Received: by 2002:a2e:8447:0:b0:2ca:31a:4e8 with SMTP id u7-20020a2e8447000000b002ca031a04e8mr4281616ljh.72.1702559743254;
-        Thu, 14 Dec 2023 05:15:43 -0800 (PST)
+        bh=Zl/2P+gDfIp0TQYPTG0vKiGyNkTIQEmbjw6ExQX0Pf0=;
+        b=TL8ajCZl/2yefj7BwasT5VYrfRFUzgKpwg5OTH4JBluvoKED4AGmviQdoBslouEie8
+         tk1Iz3U7aG4QCHTIuBU4ORNnJyk0kZs0QB72LuDolmWF6d07hbJhrq0qUGB460X93bWc
+         lRBlpkKbpomhkMhMTMzXvRiQjURgNSw6MLL582wkFnpRNgZIywM2hmLjzUyS9iHLkLUw
+         8Bsv277sXbLLNHJKsFM2cHw5SUCFY97qfCNth2DRvDAhl1VYeKJAyNE9HesNabOZgB/m
+         QX1o110arehY/3HMUp2izvt0sjqsrGW163gFdMdeSoLIC4JsZ4wJbHcjcrrVmmkmiyXW
+         Wo9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702559745; x=1703164545;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zl/2P+gDfIp0TQYPTG0vKiGyNkTIQEmbjw6ExQX0Pf0=;
+        b=FR1PcXP0uP38c4F9D2ZfatUm/vuhVITVIWvHdZkIn6W3oDtvzIqWhuMgZpxH1wyh7i
+         PtdT2j/dIQfmL4mndvtiPZ8UDoFdGqTZNZmlQI8OD5Q869hgDu78/VC2eaXyoF+/fh19
+         Seq5KLje3/tKOG2G7NgpBrWSdglpliqhB82xqGwPVVNxCFNppVIXjfBI4fhSf8wCVA2c
+         ixGL0MaI4zjDemEN4Df+nZ3sFocRGrc2rPzHuZ5+oggPumPuygAXPGB5XCyobxgE5RyM
+         zLdoryoC4vyiU1ettTlKAoWscgtX8NnhFvfCdeheht5JHTP54QxcBTaIjKHVVuiD/TMG
+         y49g==
+X-Gm-Message-State: AOJu0YyGBM2sSMt4EGMi0Pi+U+9dqyfwefMs45/xIlJobhSk5LEthhao
+	mWNvWrTPyt9iGz0kvxPQHRBmlg==
+X-Google-Smtp-Source: AGHT+IGLIizoYzjhcP0yvk0sz4u3yPAe8upgnxL+cRqGZY/tUMOhZBAjkVQRfIg1sZ28AJa+AoI7CQ==
+X-Received: by 2002:a05:651c:110:b0:2ca:f17:dd69 with SMTP id a16-20020a05651c011000b002ca0f17dd69mr4501498ljb.43.1702559745303;
+        Thu, 14 Dec 2023 05:15:45 -0800 (PST)
 Received: from [127.0.1.1] ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id p23-20020a2e93d7000000b002ca02ceae84sm2080478ljh.83.2023.12.14.05.15.42
+        by smtp.gmail.com with ESMTPSA id p23-20020a2e93d7000000b002ca02ceae84sm2080478ljh.83.2023.12.14.05.15.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Dec 2023 05:15:42 -0800 (PST)
+        Thu, 14 Dec 2023 05:15:44 -0800 (PST)
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 0/4] GPIO inclusion fixes to misc sound drivers
-Date: Thu, 14 Dec 2023 14:15:41 +0100
-Message-Id: <20231214-gpio-descriptors-sound-misc-v1-0-e3004176bd8b@linaro.org>
+Date: Thu, 14 Dec 2023 14:15:43 +0100
+Subject: [PATCH 2/4] ASoC: qcom: sc7180: Drop GPIO include
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -49,9 +49,9 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAP3/emUC/x3MwQqDMAwA0F+RnA0slQ3Zr4gHbdMuh7UlURHEf
- 1/Z8V3eBcYqbPDuLlA+xKTkBuo78J8lJ0YJzeAebiBHDlOVgoHNq9StqKGVPQf8inkcV08vGp4
- jR4I2VOUo53+f5vv+ASS6OIxtAAAA
+Message-Id: <20231214-gpio-descriptors-sound-misc-v1-2-e3004176bd8b@linaro.org>
+References: <20231214-gpio-descriptors-sound-misc-v1-0-e3004176bd8b@linaro.org>
+In-Reply-To: <20231214-gpio-descriptors-sound-misc-v1-0-e3004176bd8b@linaro.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
  Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
  Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
@@ -65,30 +65,27 @@ Cc: linux-sound@vger.kernel.org, alsa-devel@alsa-project.org,
  Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.12.4
 
-Mostly dropping unused headers, and a single driver rewrite.
+This driver is including the legacy GPIO header <linux/gpio.h>
+but not using any symbols from it. Drop the include.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
-Linus Walleij (4):
-      ASoC: hisilicon: Drop GPIO include
-      ASoC: qcom: sc7180: Drop GPIO include
-      ASoC: simple-card-utils: Drop GPIO include
-      ASoC: tegra: tegra20_ac97: Convert to use GPIO descriptors
+ sound/soc/qcom/sc7180.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi |  2 +-
- sound/soc/generic/audio-graph-card.c          |  1 -
- sound/soc/generic/audio-graph-card2.c         |  1 -
- sound/soc/generic/simple-card-utils.c         |  1 -
- sound/soc/hisilicon/hi6210-i2s.c              |  1 -
- sound/soc/qcom/sc7180.c                       |  1 -
- sound/soc/tegra/tegra20_ac97.c                | 55 +++++++++++++--------------
- sound/soc/tegra/tegra20_ac97.h                |  4 +-
- 8 files changed, 29 insertions(+), 37 deletions(-)
----
-base-commit: b85ea95d086471afb4ad062012a4d73cd328fa86
-change-id: 20231212-gpio-descriptors-sound-misc-8bc161358ef1
+diff --git a/sound/soc/qcom/sc7180.c b/sound/soc/qcom/sc7180.c
+index b0320a74d508..4ab34a8842ce 100644
+--- a/sound/soc/qcom/sc7180.c
++++ b/sound/soc/qcom/sc7180.c
+@@ -6,7 +6,6 @@
+ 
+ #include <dt-bindings/sound/sc7180-lpass.h>
+ #include <dt-bindings/sound/qcom,q6afe.h>
+-#include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
 
-Best regards,
 -- 
-Linus Walleij <linus.walleij@linaro.org>
+2.34.1
 
