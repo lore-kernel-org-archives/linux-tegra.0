@@ -1,152 +1,94 @@
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eWQXK28E"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5E67123;
-	Thu, 14 Dec 2023 10:09:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1702577381; x=1734113381;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kQsTyReN6U5/B4j4CeAMns8RYLO2IGmgecq4Y3yTN6Q=;
-  b=eWQXK28E7cw+A0LqiVZ+2g607VPCrwTR8H7aAh+U3tu7+TpQ9SNOITtn
-   4qFX6axLpY11OeYjjYoOs9zhi3N2VlWDsQkM2O7Kg01tRIvRUu5NonR8q
-   iRgoY0dazhEHCXL5QLeimy8QmkBH9/UwjOtLZtSpnCM4SHmutivymVibn
-   Z+58/rJEo7qqhswecRcAo5v8KsXa8mdphVHgzwOMBhbcrMvUxrzBnLrtW
-   MvIYZsBieCAvVZRpZZU0gkcqFbMreXRSPTxsW2M01Af0K2seoYwaOJdKV
-   ZfDWFBmg5sdaFHDFTWRzcLo4SMSuJ/f5SXoDfahict2Q7EmKWwQX7XL9i
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="13852775"
-X-IronPort-AV: E=Sophos;i="6.04,276,1695711600"; 
-   d="scan'208";a="13852775"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2023 10:09:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10924"; a="897825349"
-X-IronPort-AV: E=Sophos;i="6.04,276,1695711600"; 
-   d="scan'208";a="897825349"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 14 Dec 2023 10:09:37 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rDq9A-000MSI-11;
-	Thu, 14 Dec 2023 18:09:27 +0000
-Date: Fri, 15 Dec 2023 02:08:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Akhil R <akhilrajeev@nvidia.com>, herbert@gondor.apana.org.au,
-	davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, linux-tegra@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Akhil R <akhilrajeev@nvidia.com>
-Subject: Re: [PATCH 3/5] crypto: tegra: Add Tegra Security Engine driver
-Message-ID: <202312150118.ydw2nowl-lkp@intel.com>
-References: <20231213122030.11734-4-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="v6h+6mtn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EBqUYNS/"
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8146B112;
+	Thu, 14 Dec 2023 10:44:08 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.nyi.internal (Postfix) with ESMTP id B015E5C00C5;
+	Thu, 14 Dec 2023 13:44:07 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Thu, 14 Dec 2023 13:44:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1702579447; x=1702665847; bh=X7rphW4VDo
+	ZT8qg4z5kE8QsYzJauPYLpJpQftgurR88=; b=v6h+6mtncNMb4KnQJq5252fQhu
+	edQcz5SLLee88IUDTtBPxn6i9wHU5LozeoKNMWgy9Y67YOO+wVyX9B8KMQ1td8K7
+	epLzVPacsZN8X341znVv8Cwhxh451LYmKtBNoKvpSwbl0xU6FhI9uEfB6p3Tk7bc
+	QpaJcLI+tftYM0jwzLLkBXUWgtzqCjsUoBiZAhaq7TBWo6AGhs6jFNJiVh128W9V
+	ZEJlVf/VO4TQ0QFFClz8A2aqtxXWlsTNEmR00VfCGcJASufffOyu6X2gAysjVHzY
+	e4f3yvrCrETJpyMGmAujFBCKbwDdbj0o2PVLzkq3Y9+BnefxGrWEkRZdlqWQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1702579447; x=1702665847; bh=X7rphW4VDoZT8qg4z5kE8QsYzJau
+	PYLpJpQftgurR88=; b=EBqUYNS/hO3pSLPpAnEpJ6Sn2UwfzL5OLMaX9yGHqnDA
+	E4z9s4Q2HVgM69AvG6vLlhpqiOllUMqULjHolQsAZq7kXNvgqV6sw/qwf1G2GSZ/
+	7+l7RN0RAY645LCwbVN8EZiLBP1ZOH9dR6deGfyq/QVzXTA1plvZqLceH6xkziBa
+	y9GosBdZLAMwtM9ZPF5SNCe13szDXWSjNL5onBjwQxruUnIsXzK14dZf5J1QsXsk
+	7JN4aJaDElR4bpMxxlkGSJbylC8d65lTYB7RUr588Oib7fg2m49jmWCudUEPUXyt
+	MILregVlkfcazQ50v2YPHlEFwNx2lLMBcN9TEqZSrw==
+X-ME-Sender: <xms:90x7ZeNVvEAh0rNpZgCVuhTmbe6jajCo-mVArzBBioux1AVoVwwkKw>
+    <xme:90x7Zc-flBTeKvTqXq1ezA6-RYiF2DL6jQzCxVEqB4yyfNmw4cip45RPqwPeMTFX0
+    iajgftMZoSsX_XRPNg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrudelledgudduhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:90x7ZVRdEBeWr78om2hpUGSvTDt7J8NTmC0itahInRb23UCIT39ynQ>
+    <xmx:90x7ZeugJKxHg-XX26zTF2ITjfVJ4_B9e0sq2nE4n7ZG45Q0R1b0Vw>
+    <xmx:90x7ZWdqE5OfXs7PpO6D7Duws9hgh6v6CVaAYkidbU0Dn7Sv34CT4Q>
+    <xmx:90x7ZZuswon83KhNY6jQslMLhOZMBGdXdpwk6NsdEipo6ErvSF8gTA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 656A1B6008D; Thu, 14 Dec 2023 13:44:07 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.9.0-alpha0-1283-g327e3ec917-fm-20231207.002-g327e3ec9
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231213122030.11734-4-akhilrajeev@nvidia.com>
+Message-Id: <d84156ff-897c-440a-bafa-75933203a3f1@app.fastmail.com>
+In-Reply-To: <ZXs2jVeQtzU7668I@orome.fritz.box>
+References: <20231017052322.2636-1-kkartik@nvidia.com>
+ <ZXs2jVeQtzU7668I@orome.fritz.box>
+Date: Thu, 14 Dec 2023 18:43:47 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thierry Reding" <thierry.reding@gmail.com>, Kartik <kkartik@nvidia.com>
+Cc: "Jon Hunter" <jonathanh@nvidia.com>, "Kees Cook" <keescook@chromium.org>,
+ "Andy Shevchenko" <andy@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Ulf Hansson" <ulf.hansson@linaro.org>,
+ "Linus Walleij" <linus.walleij@linaro.org>, pshete@nvidia.com,
+ petlozup@nvidia.com, "Yangtao Li" <frank.li@vivo.com>,
+ "Rob Herring" <robh@kernel.org>, stefank@nvidia.com, pdeschrijver@nvidia.com,
+ "Christophe JAILLET" <christophe.jaillet@wanadoo.fr>,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 0/8] soc/tegra: fuse: Add ACPI support
+Content-Type: text/plain
 
-Hi Akhil,
+On Thu, Dec 14, 2023, at 17:08, Thierry Reding wrote:
+> On Tue, Oct 17, 2023 at 10:53:14AM +0530, Kartik wrote:
+>> This series of patches add ACPI support for Tegra194 and Tegra234 in
+>> Tegra fuse and apbmisc drivers. It also adds support for Tegra241
+>> which uses ACPI boot.
+>
+> Applied, thanks.
 
-kernel test robot noticed the following build warnings:
+I'm still a bit puzzled by this series, can you provide some more background?
 
-[auto build test WARNING on herbert-cryptodev-2.6/master]
-[also build test WARNING on drm/drm-next arm64/for-next/core robh/for-next linus/master v6.7-rc5 next-20231214]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Why does an ACPI based system require access to SoC drivers? Shouldn't
+this all be abstracted by the BIOS in some form so the device drivers
+can work standalone rather than calling into this driver?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/dt-bindings-crypto-Add-Tegra-SE-DT-binding-doc/20231213-202407
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-patch link:    https://lore.kernel.org/r/20231213122030.11734-4-akhilrajeev%40nvidia.com
-patch subject: [PATCH 3/5] crypto: tegra: Add Tegra Security Engine driver
-config: parisc-allmodconfig (https://download.01.org/0day-ci/archive/20231215/202312150118.ydw2nowl-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231215/202312150118.ydw2nowl-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202312150118.ydw2nowl-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/crypto/tegra/tegra-se-hash.c:22:
-   drivers/crypto/tegra/tegra-se-hash.c: In function 'tegra_sha_get_config':
-   drivers/crypto/tegra/tegra-se.h:55:57: error: implicit declaration of function 'FIELD_PREP' [-Werror=implicit-function-declaration]
-      55 | #define SE_SHA_CFG_ENC_ALG(x)                           FIELD_PREP(GENMASK(15, 12), x)
-         |                                                         ^~~~~~~~~~
-   drivers/crypto/tegra/tegra-se.h:59:57: note: in expansion of macro 'SE_SHA_CFG_ENC_ALG'
-      59 | #define SE_SHA_ENC_ALG_SHA                              SE_SHA_CFG_ENC_ALG(3)
-         |                                                         ^~~~~~~~~~~~~~~~~~
-   drivers/crypto/tegra/tegra-se-hash.c:53:24: note: in expansion of macro 'SE_SHA_ENC_ALG_SHA'
-      53 |                 cfg |= SE_SHA_ENC_ALG_SHA;
-         |                        ^~~~~~~~~~~~~~~~~~
-   drivers/crypto/tegra/tegra-se-hash.c: In function 'tegra_sha_init':
->> drivers/crypto/tegra/tegra-se-hash.c:457:21: warning: variable 'algname' set but not used [-Wunused-but-set-variable]
-     457 |         const char *algname;
-         |                     ^~~~~~~
-   cc1: some warnings being treated as errors
-
-
-vim +/algname +457 drivers/crypto/tegra/tegra-se-hash.c
-
-   450	
-   451	static int tegra_sha_init(struct ahash_request *req)
-   452	{
-   453		struct tegra_sha_reqctx *rctx = ahash_request_ctx(req);
-   454		struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-   455		struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
-   456		struct tegra_se *se = ctx->se;
- > 457		const char *algname;
-   458	
-   459		if (ctx->fallback)
-   460			return tegra_sha_fallback_init(req);
-   461	
-   462		algname = crypto_tfm_alg_name(&tfm->base);
-   463	
-   464		rctx->total_len = 0;
-   465		rctx->datbuf.size = 0;
-   466		rctx->residue.size = 0;
-   467		rctx->key_id = ctx->key_id;
-   468		rctx->task = SHA_FIRST;
-   469		rctx->alg = ctx->alg;
-   470		rctx->blk_size = crypto_ahash_blocksize(tfm);
-   471		rctx->digest.size = crypto_ahash_digestsize(tfm);
-   472	
-   473		rctx->digest.buf = dma_alloc_coherent(se->dev, rctx->digest.size,
-   474						      &rctx->digest.addr, GFP_KERNEL);
-   475		if (!rctx->digest.buf)
-   476			goto digbuf_fail;
-   477	
-   478		rctx->residue.buf = dma_alloc_coherent(se->dev, rctx->blk_size,
-   479						       &rctx->residue.addr, GFP_KERNEL);
-   480		if (!rctx->residue.buf)
-   481			goto resbuf_fail;
-   482	
-   483		rctx->datbuf.buf = dma_alloc_coherent(se->dev, SE_SHA_BUFLEN,
-   484						      &rctx->datbuf.addr, GFP_KERNEL);
-   485		if (!rctx->datbuf.buf)
-   486			goto datbuf_fail;
-   487	
-   488		return 0;
-   489	
-   490	datbuf_fail:
-   491		dma_free_coherent(se->dev, rctx->blk_size, rctx->residue.buf,
-   492				  rctx->residue.addr);
-   493	resbuf_fail:
-   494		dma_free_coherent(se->dev, SE_SHA_BUFLEN, rctx->datbuf.buf,
-   495				  rctx->datbuf.addr);
-   496	digbuf_fail:
-   497		return -ENOMEM;
-   498	}
-   499	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+      Arnd
