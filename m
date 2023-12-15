@@ -1,227 +1,131 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CDC3A8E6
-	for <linux-tegra@vger.kernel.org>; Fri, 15 Dec 2023 15:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rE9up-0002dd-7g; Fri, 15 Dec 2023 16:15:51 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rE9um-00G3bn-Ay; Fri, 15 Dec 2023 16:15:48 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rE9um-003ekE-0W; Fri, 15 Dec 2023 16:15:48 +0100
-Date: Fri, 15 Dec 2023 16:15:47 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	dri-devel@lists.freedesktop.org,
-	Thierry Reding <thierry.reding@gmail.com>,
-	David Airlie <airlied@gmail.com>, linux-clk@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>, Chen-Yu Tsai <wens@csie.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	linux-sunxi@lists.linux.dev,
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-pm@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org,
-	kernel@pengutronix.de, Johan Hovold <johan+linaro@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Daniel Vetter <daniel@ffwll.ch>, Georgi Djakov <djakov@kernel.org>
-Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
-Message-ID: <20231215151547.y23fgs6hskng5izg@pengutronix.de>
-References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
- <ki5n3rz5n4oxj2hhc3rj6xpn3e2tdi7fcp2q7exjbzilrlqflp@przautvhuy4g>
- <20231213074300.4bq7wkfqd4jhhcr4@pengutronix.de>
- <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
- <20231213110829.bjaxjjiyy4ug7o67@pengutronix.de>
- <6wnsxbi27xdxjtaqaaaq5wtwwilp4jfw4mg5y2ctdl7xrs44ry@ns6y36pf7hge>
- <20231213155252.eq6cdzk2vuwllzdu@pengutronix.de>
- <nsa54fwu4ewmcaehesuqefoo5r7z3tuvj76hjb4ngtkaygxwxx@h73ihjon5gby>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC783EA81;
+	Fri, 15 Dec 2023 16:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOF4R7Ew"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-551e6b99490so965681a12.0;
+        Fri, 15 Dec 2023 08:43:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1702658622; x=1703263422; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VOzvwi19OPlgKFIB3mLEXQoYMykkFmAS0SbNNcFti/o=;
+        b=mOF4R7Ewx6jaGkKXCD0LpFxwv1MXX/vQNTIoUB8UpgQtoqANcjRE1fZCKP1yI3p4b7
+         dcvvRbpznfIhJiXBD81IzlEv/ow8xgg/M0YO2k5adi9uGCMaJFg8sH1EnB1cvrbqlNC0
+         ZPmYTbgE6EQnuKzLHcvogZJWADHZ6YSMZAwFUKjvxQbtxpEsVybvc2G20tm5qrbiXeKK
+         DvclI6/Qi3md68rXEZmiAs6leStMYu3XR4I2My05Jwqp+uLj3vaHS+upmD4iXQRo7KRP
+         69/Hbp56edLqArVH10eufm65wlffjQKX9JBNyrEIKrsdILsVMmouQzMcLRqXAUmYSPXk
+         D2fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1702658622; x=1703263422;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VOzvwi19OPlgKFIB3mLEXQoYMykkFmAS0SbNNcFti/o=;
+        b=TpGXwVVvuct8cy5h4UloWCyyoEJmoJtZq/orKgcJzgqFFawyGG3eswFedAZ0eusRWE
+         XgetMMkk+UkQAqiVD874ozKrDLZmgpG7+yhAeRApqgkzWPqNG7F2rxMygtBIauZqBgXP
+         kkxjrAT/uBD/BH399WyNf8KVtiVdrP50OFH2SHOOO6Fk8Iw0Ywmvlt/D8e2H4ca6N/Jm
+         A07OLTduCUQ06i3LXVJFU1CKchAZltamgaGpZvU0n8k3mtsJiEeNKY4t/PNyDvcnIrDY
+         Ch1Fd/4w8/28P5OKLM9VyaS4PbIAxo5XgALzQEpqSfcUV9XRipZIkviIq0/FyAw9UR8M
+         HNJQ==
+X-Gm-Message-State: AOJu0YxBAGl3MAbZVqBoyObBp+lZ/teMV40aWHDERTGWXemvIqUA9/J6
+	pk7hptDC2uf/QlmOxLKx16I=
+X-Google-Smtp-Source: AGHT+IFGNHmiZgDx3Ro8+s7DTnlQDfs6+UIJmQaxqG0BiVfr6mKkxbGgZPORQ/8y75GUd+SiLWSThw==
+X-Received: by 2002:a50:a446:0:b0:552:df01:d77d with SMTP id v6-20020a50a446000000b00552df01d77dmr212059edb.167.1702658621966;
+        Fri, 15 Dec 2023 08:43:41 -0800 (PST)
+Received: from orome.fritz.box (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id u30-20020a50951e000000b0054ca7afdf35sm8257006eda.86.2023.12.15.08.43.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Dec 2023 08:43:41 -0800 (PST)
+Date: Fri, 15 Dec 2023 17:43:39 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kartik <kkartik@nvidia.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Kees Cook <keescook@chromium.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>, pshete@nvidia.com,
+	petlozup@nvidia.com, Yangtao Li <frank.li@vivo.com>,
+	Rob Herring <robh@kernel.org>, stefank@nvidia.com,
+	pdeschrijver@nvidia.com,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 0/8] soc/tegra: fuse: Add ACPI support
+Message-ID: <ZXyCOydl9VOfwKp-@orome.fritz.box>
+References: <20231017052322.2636-1-kkartik@nvidia.com>
+ <ZXs2jVeQtzU7668I@orome.fritz.box>
+ <d84156ff-897c-440a-bafa-75933203a3f1@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2dztccxgltw7uqlb"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="w4dYamGUEkjnuhl6"
 Content-Disposition: inline
-In-Reply-To: <nsa54fwu4ewmcaehesuqefoo5r7z3tuvj76hjb4ngtkaygxwxx@h73ihjon5gby>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <d84156ff-897c-440a-bafa-75933203a3f1@app.fastmail.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
 
---2dztccxgltw7uqlb
-Content-Type: text/plain; charset=iso-8859-1
+--w4dYamGUEkjnuhl6
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-On Fri, Dec 15, 2023 at 01:34:26PM +0100, Maxime Ripard wrote:
-> On Wed, Dec 13, 2023 at 04:52:52PM +0100, Uwe Kleine-K=F6nig wrote:
-> > On Wed, Dec 13, 2023 at 12:54:14PM +0100, Maxime Ripard wrote:
-> > > On Wed, Dec 13, 2023 at 12:08:29PM +0100, Uwe Kleine-K=F6nig wrote:
-> > > > On Wed, Dec 13, 2023 at 09:36:49AM +0100, Maxime Ripard wrote:
-> > > > > On Wed, Dec 13, 2023 at 08:43:00AM +0100, Uwe Kleine-K=F6nig wrot=
-e:
-> > > > > > On Wed, Dec 13, 2023 at 08:16:04AM +0100, Maxime Ripard wrote:
-> > > > > > > On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-K=F6nig =
-wrote:
-> > > > > > > > clk_rate_exclusive_get() returns zero unconditionally. Most=
- users "know"
-> > > > > > > > that and don't check the return value. This series fixes th=
-e four users
-> > > > > > > > that do error checking on the returned value and then makes=
- function
-> > > > > > > > return void.
-> > > > > > > >=20
-> > > > > > > > Given that the changes to the drivers are simple and so mer=
-ge conflicts
-> > > > > > > > (if any) should be easy to handle, I suggest to merge this =
-complete
-> > > > > > > > series via the clk tree.
-> > > > > > >=20
-> > > > > > > I don't think it's the right way to go about it.
-> > > > > > >=20
-> > > > > > > clk_rate_exclusive_get() should be expected to fail. For exam=
-ple if
-> > > > > > > there's another user getting an exclusive rate on the same cl=
-ock.
-> > > > > > >=20
-> > > > > > > If we're not checking for it right now, then it should probab=
-ly be
-> > > > > > > fixed, but the callers checking for the error are right to do=
- so if they
-> > > > > > > rely on an exclusive rate. It's the ones that don't that shou=
-ld be
-> > > > > > > modified.
-> > > > > >=20
-> > > > > > If some other consumer has already "locked" a clock that I call
-> > > > > > clk_rate_exclusive_get() for, this isn't an error. In my bubble=
- I call
-> > > > > > this function because I don't want the rate to change e.g. beca=
-use I
-> > > > > > setup some registers in the consuming device to provide a fixed=
- UART
-> > > > > > baud rate or i2c bus frequency (and that works as expected).
-> > > > >=20
-> > > > > [a long text of mostly right things (Uwe's interpretation) that a=
-re
-> > > > > however totally unrelated to the patches under discussion.]
-> > >=20
-> > > I'm glad you consider it "mostly" right.
-> >=20
-> > there was no offense intended. I didn't agree to all points, but didn't
-> > think it was helpful to discuss that given that I considered them
-> > orthogonal to my suggested modifications.
-> > =20
-> > > > The clk API works with and without my patches in exactly the same w=
-ay.
-> > > > It just makes more explicit that clk_rate_exclusive_get() cannot fa=
-il
-> > > > today and removes the error handling from consumers that is never u=
-sed.
-> > >=20
-> > > Not really, no.
-> >=20
-> > What exactly do you oppose here? Both of my sentences are correct?!
+On Thu, Dec 14, 2023 at 06:43:47PM +0000, Arnd Bergmann wrote:
+> On Thu, Dec 14, 2023, at 17:08, Thierry Reding wrote:
+> > On Tue, Oct 17, 2023 at 10:53:14AM +0530, Kartik wrote:
+> >> This series of patches add ACPI support for Tegra194 and Tegra234 in
+> >> Tegra fuse and apbmisc drivers. It also adds support for Tegra241
+> >> which uses ACPI boot.
+> >
+> > Applied, thanks.
 >=20
-> That the API works in the exact same way.
-
-Yeah ok, if you call clk_rate_exclusive_get() and want to check the
-return code you always got 0 before and now you get a compiler error. So
-there is a difference. What I meant is: Calling clk_rate_exclusive_get()
-with my patches has the exact same effects as before (apart from setting
-the register used to transport the return value to zero).
-=20
-> > > Can you fail to get the exclusivity? Yes. On a theoretical basis, you
-> > > can, and the function was explicitly documented as such.
-> >=20
-> > Sure, you could modify the clk internals such that
-> > clk_rate_exclusive_get() needs to allocate memory. Or that it fails if
-> > another consumer already has called it. At least the latter is a change
-> > in semantics that requires to review (and maybe fix) all users. Also
-> > note that calling clk_rate_exclusive_get() essentially locks all parent
-> > clocks up to the root clock. So if clk_rate_exclusive_get() fails in the
-> > presence of another locker, you can only have one locker per clock
-> > hierarchy because it's impossible that both grab the lock on the root
-> > clock.
+> I'm still a bit puzzled by this series, can you provide some more backgro=
+und?
 >=20
-> We're not discussing the same thing. You're talking about from a
-> technical point of view, I'm talking about it from an abstraction point
-> of view.
+> Why does an ACPI based system require access to SoC drivers? Shouldn't
+> this all be abstracted by the BIOS in some form so the device drivers
+> can work standalone rather than calling into this driver?
 
-In your abstract argumentation clk_rate_exclusive_get() has a
-different and stronger semantic than it has today. This stronger
-semantic indeed will make this function not succeed in every case. It
-should return an error indication and users should check it.
+This driver exposes a couple of things such as SoC family and SKU
+information that is not otherwise available. It also exposes FUSE
+data which can be used to calibrate certain devices. Most of the
+region that contains the fuses is in the keep-out, so perhaps they
+aren't needed on Tegra241.
 
-But as your clk_rate_exclusive_get() is a different function than
-today's clk_rate_exclusive_get(), I still think our argument isn't
-helpful. I want to do something with apples and you're arguing against
-that by only talking about oranges.
+I suppose things like SoC family and such could be exposed differently.
+Not sure if ACPI has other ways to expose that.
 
-> Let's use another example: kmalloc cannot fail.
+Let's see if Kartik can shed some light on this.
 
-Oh really?
+Thierry
 
-=2E.. [a few greps later] ...
-
-While the memory allocation stuff is sufficiently complex that I don't
-claim to have grokked it, I think it can (and should) fail. Either I
-missed something, or I just burned some more time to convince myself
-that kmalloc is just another orange :-\
-
-> Are we going to remove every possible check for a null pointer in the
-> kernel?
-
-If you were right with your claim that kmalloc() cannot fail, we should
-IMHO consider that. Or maybe better make it robust (in the sense that a
-caller of kmalloc() can indeed use the memory returned by it) which
-enforces that it might fail at times as even on big machines there is
-only a finite amount of memory.
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---2dztccxgltw7uqlb
+--w4dYamGUEkjnuhl6
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmV8baIACgkQj4D7WH0S
-/k574Af+N2CJpUlfOzeu0Ie59AWgqwUJO8RgmZG7ynlUPdOq+yqygCn7OuG54h66
-klHRjMgofoNzO9F7Yikj18FMsGWtxtpS2bcDkeSA2NATIYBdPFH7PhSqmKmvCVPW
-2GpNaqjaV7OMKEXnwzW5oexC2jYFKefUv1qhDk2WXnga1x19Tz+kZqcH8JQWaCz1
-wAxb5L/CsAtZh5MMsSbz/vMXXy/qwzprpsBsU1cfMZLYH9qUtyavOy5CNaBhZow1
-U5EH5dzuzN0srHzapLG9kKOnZpXRljVjhe2f4mCmC953cX1iO9ikjuGbcojvPFkK
-9lfT1JY71pcZtjZOSYsvGZ/9IYU3hg==
-=vfQ4
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmV8gjkACgkQ3SOs138+
+s6HWuw//XpwqBNokaMNgLTXzrHKgWSJTWUiR5GzPLuvLX5qT3CCkXWrrM904L5oL
+2cHLpDkp4byRIjqqTa13vpa3vWP71GCCkTCioS5jn+Wob58ibyRbwzKpkNVKh4ET
+iXnf7hhsCp314XwpsJaR37m8FcO8LNjgPmBpaEOLZv+ua3G3ItzJjWM7HXQp+LE+
+OJ9G3lWDAA9HNag6t6qAdb5piiEDbAEnab+HJJru0T7JsN5T8TCcmLXbrhjh2yfP
+V4XXXUpehfcgqKddk/RBYgM176MmutUnJ45P6hv5/5fUyNc0cpWbSVxJbq8KQIBe
+ExvhgiM5QSjXXD0Rpv1pJ/buTw5/CuCNuC/Ae6Gg0cK3lqsDui/jXC5/yMi+xOed
+gZw1VIIHnKhUqt47Ra63iARhk3w6VAEfuH+bG729GFZzO50tQDalbxtuIWIVqRcd
+n7KjMV0hZZkVXrEeBunPczD/P0ResTyq9cbgUa4Ormgy6HS7IbSKTYp3I2lsr6Xj
+TQZ2juWe9zO0zQMUPMSRdYh62rca0Y6BV0fhL5mNgPcaGRfcQ042iH+NmLHWHdq5
+/cVLlFsCG5gGYo8u2G1oPGID6cE9byGoxTOnZJHrkyOGVowSQezNa9a82hAcgFEV
+1e7u2tYC3+b6FwQAvTpoPDC0aERZdN6l0Zz8vseDnov+q5iPPP4=
+=d3DY
 -----END PGP SIGNATURE-----
 
---2dztccxgltw7uqlb--
+--w4dYamGUEkjnuhl6--
