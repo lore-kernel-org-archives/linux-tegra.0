@@ -1,238 +1,193 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED0418B10
-	for <linux-tegra@vger.kernel.org>; Fri, 15 Dec 2023 09:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEFE2C68D;
+	Fri, 15 Dec 2023 12:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MmW9aKb9"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40c1e3ea2f2so4538335e9.2
-        for <linux-tegra@vger.kernel.org>; Fri, 15 Dec 2023 01:54:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1702634073; x=1703238873; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZaQhIJpC8RnPN69nCWAUDpbxZF8DURVfb/kY7Z31L0E=;
-        b=MmW9aKb9cBhK1fkm06ijDsKssiCZuCzW7Us4FR9IMhFPh3/AHi8Xe49wFfxVm/zMnU
-         JSfUmPebplSCmkCkdxcOPSfM0cDJmTRplt4iOVfAVt/Z0LMcDPT3mNlAW/iUHbjQSIiF
-         F+KS6CZtS2Ln9KbywUfyVy0sb1NaTtBhAYftMYdrXFrDk44ONmQlQGjYj77OIgAjs0Fd
-         empZCO1CoDMhDANu0s3EcsNVThxt4+O8U1HvfPvvnyuGdp6ZgyuFT4rzN/cRjLNWzxOJ
-         fal7KVICDQXdeZ7ZSLu0KEIJ0VqeS90uFF3nC3fOSetBJ7e1qS3jaQTYL7C/inkO//Ax
-         33IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702634073; x=1703238873;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZaQhIJpC8RnPN69nCWAUDpbxZF8DURVfb/kY7Z31L0E=;
-        b=L2xTCGdgyAmKJ9j6I8nS/FNzU4ju7nLLAVpURZi5sVjHyKlg3NghC4W4D7v31g0rpV
-         kmrNwpbGDV4E/KGSLKqqaQ3EA28XpOJTk81EybSircYYrCi0kQfbon14IxekzfGMVLJ4
-         EmmLbBZv/HoFbar/lfZEqrymnaS10MUMC0NpnTQenoN258UHVrmJ+X2l4b7y31Qx0KFq
-         0rjDH3OEZRBPsilqqkM1e+u1ceqCd4y/Cj9WwyubIQuMRhQKUASZd5i0ak5ZsRK0IY7H
-         plwgQpxLvKgw8xvLyTxyq/BHSQfnO1TXeH88SiTz5JSFa29W+8gkLmHwIEHchWfQqkiQ
-         aWQA==
-X-Gm-Message-State: AOJu0YwjfVR2m+Hs9XhGjod4MpdbTUz50IqqWpQ3fWwqPnYIWO8GcZBi
-	wCezytqHwJmCeTbiU6xBw81DaA==
-X-Google-Smtp-Source: AGHT+IFyuXAp+tPAhav4a3ImTRzZILmdqALz+G2oA3xWOMRjoAp1+b20I3piaoNv4URjDTOgIxk8Lg==
-X-Received: by 2002:a05:600c:470c:b0:40c:6bb8:17f2 with SMTP id v12-20020a05600c470c00b0040c6bb817f2mr286370wmo.59.1702634072718;
-        Fri, 15 Dec 2023 01:54:32 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:6e16:8a51:92cc:c70e])
-        by smtp.gmail.com with ESMTPSA id je5-20020a05600c1f8500b0040c6b667ce3sm1461288wmb.1.2023.12.15.01.54.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Dec 2023 01:54:32 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GqGTdqkS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45979C433C8;
+	Fri, 15 Dec 2023 12:34:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702643668;
+	bh=FaCZ2fNraad49PiDtX3wes78ymtVFrS8O37vDr/7Bwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GqGTdqkSJTbeNCkys9izOFrKzzGLhSAUGY0S7zmNMp1fq9I+nGBTZ82rMYGw37rBh
+	 YzsNrhE8bM3v+zM28ABp2cZCG3Xndyrx42SAlCImrSLIixr9CIiqpCuoWbH11oSw1o
+	 H6d2m1s6vJpfhUc+yl3E8goo8CkW2kf2Z5GnIEz9BdmyvAem7g3SL0PJlPC9T0sf8G
+	 bJrNdNN631TrOa5WbwoBq4/yfSS0xIg/FVZ+6BEmBDR5OaswBheC9dSsAnaMqFSG31
+	 3oCNJU4tNUgVycsGEWUuuAQY6lh1gZPM4LKW/3+mAxzk6GGV5DIlHW3//laGWdYu0E
+	 BvWrQPiud4/0w==
+Date: Fri, 15 Dec 2023 13:34:26 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	dri-devel@lists.freedesktop.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>, linux-clk@vger.kernel.org, 
+	Jerome Brunet <jbrunet@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Samuel Holland <samuel@sholland.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Russell King <linux@armlinux.org.uk>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Chen-Yu Tsai <wens@csie.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Johan Hovold <johan+linaro@kernel.org>, linux-sunxi@lists.linux.dev, Daniel Vetter <daniel@ffwll.ch>, 
+	linux-pm@vger.kernel.org, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, linux-tegra@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, kernel@pengutronix.de, Georgi Djakov <djakov@kernel.org>
+Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
+Message-ID: <nsa54fwu4ewmcaehesuqefoo5r7z3tuvj76hjb4ngtkaygxwxx@h73ihjon5gby>
 References: <cover.1702400947.git.u.kleine-koenig@pengutronix.de>
  <ki5n3rz5n4oxj2hhc3rj6xpn3e2tdi7fcp2q7exjbzilrlqflp@przautvhuy4g>
  <20231213074300.4bq7wkfqd4jhhcr4@pengutronix.de>
  <2nvbag657mlniqwq7fbilapc6vfw5qumab3yd6bqul25ot6wcn@wdlkh5az2fgs>
- <212239ae-60ab-46f3-a838-39a4d61091fe@linaro.org>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Maxime Ripard <mripard@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>, Michael Turquette
- <mturquette@baylibre.com>, dri-devel@lists.freedesktop.org, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>, Thierry Reding
- <thierry.reding@gmail.com>, David Airlie <airlied@gmail.com>,
- linux-clk@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>, Rob
- Herring <robh@kernel.org>, Samuel Holland <samuel@sholland.org>, Kevin
- Hilman <khilman@baylibre.com>, Russell King <linux@armlinux.org.uk>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonathan Hunter
- <jonathanh@nvidia.com>, Chanwoo Choi <cw00.choi@samsung.com>, Chen-Yu Tsai
- <wens@csie.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Johan Hovold
- <johan+linaro@kernel.org>, linux-sunxi@lists.linux.dev, Thomas Zimmermann
- <tzimmermann@suse.de>, linux-pm@vger.kernel.org, Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, linux-tegra@vger.kernel.org,
- linux-amlogic@lists.infradead.org, kernel@pengutronix.de,
- linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
- Kyungmin Park <kyungmin.park@samsung.com>, Daniel Vetter
- <daniel@ffwll.ch>, Georgi Djakov <djakov@kernel.org>
-Subject: Re: [PATCH 0/5] clk: Make clk_rate_exclusive_get() return void
-Date: Fri, 15 Dec 2023 10:46:29 +0100
-In-reply-to: <212239ae-60ab-46f3-a838-39a4d61091fe@linaro.org>
-Message-ID: <1ja5qbpz8o.fsf@starbuckisacylon.baylibre.com>
+ <20231213110829.bjaxjjiyy4ug7o67@pengutronix.de>
+ <6wnsxbi27xdxjtaqaaaq5wtwwilp4jfw4mg5y2ctdl7xrs44ry@ns6y36pf7hge>
+ <20231213155252.eq6cdzk2vuwllzdu@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wu77dsjz7uev4rk4"
+Content-Disposition: inline
+In-Reply-To: <20231213155252.eq6cdzk2vuwllzdu@pengutronix.de>
+
+
+--wu77dsjz7uev4rk4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 13, 2023 at 04:52:52PM +0100, Uwe Kleine-K=F6nig wrote:
+> On Wed, Dec 13, 2023 at 12:54:14PM +0100, Maxime Ripard wrote:
+> > On Wed, Dec 13, 2023 at 12:08:29PM +0100, Uwe Kleine-K=F6nig wrote:
+> > > On Wed, Dec 13, 2023 at 09:36:49AM +0100, Maxime Ripard wrote:
+> > > > On Wed, Dec 13, 2023 at 08:43:00AM +0100, Uwe Kleine-K=F6nig wrote:
+> > > > > On Wed, Dec 13, 2023 at 08:16:04AM +0100, Maxime Ripard wrote:
+> > > > > > On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-K=F6nig wr=
+ote:
+> > > > > > > clk_rate_exclusive_get() returns zero unconditionally. Most u=
+sers "know"
+> > > > > > > that and don't check the return value. This series fixes the =
+four users
+> > > > > > > that do error checking on the returned value and then makes f=
+unction
+> > > > > > > return void.
+> > > > > > >=20
+> > > > > > > Given that the changes to the drivers are simple and so merge=
+ conflicts
+> > > > > > > (if any) should be easy to handle, I suggest to merge this co=
+mplete
+> > > > > > > series via the clk tree.
+> > > > > >=20
+> > > > > > I don't think it's the right way to go about it.
+> > > > > >=20
+> > > > > > clk_rate_exclusive_get() should be expected to fail. For exampl=
+e if
+> > > > > > there's another user getting an exclusive rate on the same cloc=
+k.
+> > > > > >=20
+> > > > > > If we're not checking for it right now, then it should probably=
+ be
+> > > > > > fixed, but the callers checking for the error are right to do s=
+o if they
+> > > > > > rely on an exclusive rate. It's the ones that don't that should=
+ be
+> > > > > > modified.
+> > > > >=20
+> > > > > If some other consumer has already "locked" a clock that I call
+> > > > > clk_rate_exclusive_get() for, this isn't an error. In my bubble I=
+ call
+> > > > > this function because I don't want the rate to change e.g. becaus=
+e I
+> > > > > setup some registers in the consuming device to provide a fixed U=
+ART
+> > > > > baud rate or i2c bus frequency (and that works as expected).
+> > > >=20
+> > > > [a long text of mostly right things (Uwe's interpretation) that are
+> > > > however totally unrelated to the patches under discussion.]
+> >=20
+> > I'm glad you consider it "mostly" right.
+>=20
+> there was no offense intended. I didn't agree to all points, but didn't
+> think it was helpful to discuss that given that I considered them
+> orthogonal to my suggested modifications.
+> =20
+> > > The clk API works with and without my patches in exactly the same way.
+> > > It just makes more explicit that clk_rate_exclusive_get() cannot fail
+> > > today and removes the error handling from consumers that is never use=
+d.
+> >=20
+> > Not really, no.
+>=20
+> What exactly do you oppose here? Both of my sentences are correct?!
 
-On Wed 13 Dec 2023 at 17:44, Neil Armstrong <neil.armstrong@linaro.org> wro=
-te:
+That the API works in the exact same way.
 
-> Hi Maxime,
->
-> Le 13/12/2023 =C3=A0 09:36, Maxime Ripard a =C3=A9crit=C2=A0:
->> Hi,
->> On Wed, Dec 13, 2023 at 08:43:00AM +0100, Uwe Kleine-K=C3=B6nig wrote:
->>> On Wed, Dec 13, 2023 at 08:16:04AM +0100, Maxime Ripard wrote:
->>>> On Tue, Dec 12, 2023 at 06:26:37PM +0100, Uwe Kleine-K=C3=B6nig wrote:
->>>>> clk_rate_exclusive_get() returns zero unconditionally. Most users "kn=
-ow"
->>>>> that and don't check the return value. This series fixes the four use=
-rs
->>>>> that do error checking on the returned value and then makes function
->>>>> return void.
->>>>>
->>>>> Given that the changes to the drivers are simple and so merge conflic=
-ts
->>>>> (if any) should be easy to handle, I suggest to merge this complete
->>>>> series via the clk tree.
->>>>
->>>> I don't think it's the right way to go about it.
->>>>
->>>> clk_rate_exclusive_get() should be expected to fail. For example if
->>>> there's another user getting an exclusive rate on the same clock.
->>>>
->>>> If we're not checking for it right now, then it should probably be
->>>> fixed, but the callers checking for the error are right to do so if th=
-ey
->>>> rely on an exclusive rate. It's the ones that don't that should be
->>>> modified.
->>>
->>> If some other consumer has already "locked" a clock that I call
->>> clk_rate_exclusive_get() for, this isn't an error. In my bubble I call
->>> this function because I don't want the rate to change e.g. because I
->>> setup some registers in the consuming device to provide a fixed UART
->>> baud rate or i2c bus frequency (and that works as expected).
->> I guess it's a larger conversation, but I don't see how that can
->> possibly work.
->> The way the API is designed, you have no guarantee (outside of
->> clk_rate_exclusive_*) that the rate is going to change.
->> And clk_rate_exclusive_get() doesn't allow the rate to change while in
->> the "critical section".
->> So the only possible thing to do is clk_set_rate() +
->> clk_rate_exclusive_get().
->
-> There's clk_set_rate_exclusive() for this purpose.
->
->> So there's a window where the clock can indeed be changed, and the
->> consumer that is about to lock its rate wouldn't be aware of it.
->> I guess it would work if you don't care about the rate at all, you just
->> want to make sure it doesn't change.
->> Out of the 7 users of that function, 3 are in that situation, so I guess
->> it's fair.
->> 3 are open to that race condition I mentioned above.
->> 1 is calling clk_set_rate while in the critical section, which works if
->> there's a single user but not if there's multiple, so it should be
->> discouraged.
->>=20
->>> In this case I won't be able to change the rate of the clock, but that
->>> is signalled by clk_set_rate() failing (iff and when I need awother
->>> rate) which also seems the right place to fail to me.
->> Which is ignored by like half the callers, including the one odd case I
->> mentioned above.
->> And that's super confusing still: you can *always* get exclusivity, but
->> not always do whatever you want with the rate when you have it? How are
->> drivers supposed to recover from that? You can handle failing to get
->> exclusivity, but certainly not working around variable guarantees.
->>=20
->>> It's like that since clk_rate_exclusive_get() was introduced in 2017
->>> (commit 55e9b8b7b806ec3f9a8817e13596682a5981c19c).
->> Right, but "it's always been that way" surely can't be an argument,
->> otherwise you wouldn't have done that series in the first place.
->>=20
->>> BTW, I just noticed that my assertion "Most users \"know\" that
->>> [clk_rate_exclusive_get() returns zero unconditionally]" is wrong. As of
->>> next-20231213 there are 3 callers ignoring the return value of
->>> clk_rate_exclusive_get() and 4 that handle (imaginary) returned errors.
->>> I expected this function to be used more extensively. (In fact I think
->>> it should be used more as several drivers rely on the clk rate not
->>> changing.)
->> Yes, but also it's super difficult to use in practice, and most devices
->> don't care.
->> The current situation is something like this:
->>    * Only a handful of devices really care about their clock rate, and
->>      often only for one of their clock if they have several. You would
->>      probably get all the devices that create an analog signal somehow
->>      there, so audio, display, i2c, spi, uarts, etc. Plus the ones doing
->>      frequency scaling so CPU and GPUs.
->>    * CPUs and GPUs are very likely to have a dedicated clock, so we can
->>      rule the "another user is going to mess with my clock" case.
->>    * UARTs/i2c/etc. are usually taking their clock from the bus interface
->>      directly which is pretty much never going to change (for good
->>      reason). And the rate of the bus is not really likely to change.
->>    * SPI/NAND/MMC usually have their dedicated clock too, and the bus
->>      rate is not likely to change after the initial setup either.
->> So, the only affected devices are the ones generating external signals,
->> with the rate changing during the life of the system. Even for audio or
->> video devices, that's fairly unlikely to happen. And you need to have
->> multiple devices sharing the same clock tree for that issue to occur,
->> which is further reducing the chances it happens.
->
-> Well, thanks for HW designers, this exists and some SoCs has less PLLs th=
-an
-> needed, and they can't be dedicated for some hw blocks.
+> > An API is an interface, meant to provide an abstraction. The only
+> > relevant thing is whether or not that function, from an abstract point
+> > of view, can fail.
+>=20
+> What is the ideal API that you imagine? For me the ideal API is:
+>=20
+> A consumer might call clk_rate_exclusive_get() and after that returns
+> all other consumers are prohibited to change the rate of the clock
+> (directly and indirectly) until clk_rate_exclusive_put() is called. If
+> this ends in a double lock (i.e. two different consumers locked the
+> clock), then I cannot change the rate (and neither can anybody else).
+>=20
+> That is fine iff I don't need to change the rate and just want to rely
+> on it to keep its current value (which is a valid use case). And if I
+> want to change the rate but another consumer prevents that, I handle
+> that in the same away as I handle all other failures to set the rate to
+> the value I need. I have to prepare for that anyhow even if I have
+> ensured that I'm the only one having exclusivity on that clock.
+>=20
+> Letting clk_rate_exclusive_get() fail in the assumption that the
+> consumer also wants to modify the rate is wrong. The obvious point where
+> to stop such consumers is when they call clk_rate_set(). And those who
+> don't modify the rate then continue without interruption even if there
+> are two lockers.
+>=20
+> This can easily be implemented without clk_rate_exclusive_get() ever
+> failing.
+>=20
+> > Can you fail to get the exclusivity? Yes. On a theoretical basis, you
+> > can, and the function was explicitly documented as such.
+>=20
+> Sure, you could modify the clk internals such that
+> clk_rate_exclusive_get() needs to allocate memory. Or that it fails if
+> another consumer already has called it. At least the latter is a change
+> in semantics that requires to review (and maybe fix) all users. Also
+> note that calling clk_rate_exclusive_get() essentially locks all parent
+> clocks up to the root clock. So if clk_rate_exclusive_get() fails in the
+> presence of another locker, you can only have one locker per clock
+> hierarchy because it's impossible that both grab the lock on the root
+> clock.
 
-Indeed. Even if there are enough PLLs, the exclusive API might help.
-The idea is to force the second consumer to pick another "free" PLL if
-it needs another rate.
+We're not discussing the same thing. You're talking about from a
+technical point of view, I'm talking about it from an abstraction point
+of view. Let's use another example: kmalloc cannot fail. Are we going to
+remove every possible check for a null pointer in the kernel?
 
-If it can work with the rate currently locked by the first consumer,
-then CCF may just pick that one, saving a PLL for future use. If it cant,
-the protection will force the use of another PLL.
+No, of course we won't, because at some point it might and the error
+handling will be valuable.
 
-Without the exclusive API, the second consummer may just wreck the PLL of
-the first consummer, regardless of the other PLL available.
+Same story here.
 
-Of course, if there is enough PLL, the other solution is manual
-allocation, using assigned-parent and CLK_NO_REPARENT.
+Maxime
 
->
->> Realistically speaking, this only occurs with multi-head display outputs
->> where it's somewhat likely to have all the display controllers feeding
->> from the same clock, and the power up of the various output is done in
->> sequence which creates that situation.
->> And even then, the clk_rate_exclusive_* interface effectively locks the
->> entire clock subtree to its current rate, so the effect on the rest of
->> the devices can be significant.
->> So... yeah. Even though you're right, it's trying to address a problem
->> that is super unlikely to happen with a pretty big hammer that might be
->> too much for most. So it's not really surprising it's not used more.
->
-> Honestly I tried my best to find a smart way to set the DSI clock tree
-> with only 2 endpoints of the tree, but CCF will explore all possibilities
-> and since you cannot set constraints, locking a sub-tree is the smartest
-> way I found.
-> In this case, the PLL is common between the DSI controller and video gene=
-rator,
-> so to keep the expected clock ratio, the smart way is to set the freq on
-> one side, lock the subtree and set the rate on the other side.
-> An API permitting to set multiple rates to multiple clocks in a single ca=
-ll
-> would be the solution, but not sure if we could possibly write such algor=
-ithm.
->
->> Maxime
->
-> Neil
+--wu77dsjz7uev4rk4
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
---=20
-Jerome
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZXxH0gAKCRDj7w1vZxhR
+xV/qAQD3/+x4S05zuQ5N2nfPdpjw4SxrkhoevmzHBpy1FgHZiQD/VV4FJjb2kuQG
+qaKs9P5j71Zv3P0kGzQhaFxK9fkLCws=
+=lYpt
+-----END PGP SIGNATURE-----
+
+--wu77dsjz7uev4rk4--
