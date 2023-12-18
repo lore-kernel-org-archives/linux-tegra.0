@@ -1,122 +1,145 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2042.outbound.protection.outlook.com [40.107.244.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DA045BF9
-	for <linux-tegra@vger.kernel.org>; Sun, 17 Dec 2023 14:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rEs9f-0006VJ-OC; Sun, 17 Dec 2023 15:30:07 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rEs9b-00GUh4-VU; Sun, 17 Dec 2023 15:30:03 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1rEs9b-004hyq-J9; Sun, 17 Dec 2023 15:30:03 +0100
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: kernel@pengutronix.de,
-	Markus Mayer <mmayer@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	linux-mips@vger.kernel.org,
-	Yong Wu <yong.wu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-mediatek@lists.infradead.org,
-	Roger Quadros <rogerq@kernel.org>,
-	Tony Lindgren <tony@atomide.com>,
-	linux-omap@vger.kernel.org,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Nick Alcock <nick.alcock@oracle.com>,
-	linux-tegra@vger.kernel.org,
-	Rob Herring <robh@kernel.org>
-Subject: [PATCH 00/15] memory: Convert to platform remove callback returning void
-Date: Sun, 17 Dec 2023 15:29:26 +0100
-Message-ID: <cover.1702822744.git.u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.42.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B176C16408;
+	Mon, 18 Dec 2023 10:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Qb+N0XGq"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k8iaJNy2hdG1PbaYThxsPMyrXZehAVvUNKdYPDSOxeM5O4miOgvA35vTXrL3yNvG3jzg21+68lbrmIOia79J1mBSTvo73AgXdVnEHrbBbdT1l4j/6sEnSyMdgnRymK3OT2/t5/AHlJkT/r/ENL6C7J7GyLVqWA9GS9byHM/HvYtmj0REA9e2BnxAptBNDx71B5uLeXGTvXHfIFK2BhRlx+VooqkD9n8eUC21jvlQPFERgjBERmHNJMVlPjJTkg+5PmtmWb1dEAqtCFCXXbgJf0HnfwNhqPpVZwtSoIi83vjs2HsNmwWwSpWo/C8wB4pOcfhpvaNYq8lyJxPUXXuHUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b6MMuppckFBoewfR2ux1DUxTv1PH7Z27IhLBDzZUVFs=;
+ b=PxbeuuY34utwUKIkOFrnMHCLK0zaQAtWj9ohzqUBJ3UXqUwOau9QpCu4I3R2xxNqIZQALs1PFGsuoX5xS/DL91JgjmmTSCC7tbdtKpSHSjeyW04kcDmPlVNH97GhHIN3LMjd0ZMEjLSV8bOztCWEyZ5T4IjLM0OyASRNWS+te7FEvGAiFAECHh2Jx44sv0fEnbJ8NUa67cF/WsOt1sRH3ULhD5MzVjTLNI9uAo9ETK33hVQZOD+FsqgL+xKzjDayVqCp8Y1pdLs79qvmDkTshbpKMVOC6EF7SynMu9DMsyE/9POBqyk3RkvT+S9t94cVc5kF9kKFvNvTJVUtPL91dQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b6MMuppckFBoewfR2ux1DUxTv1PH7Z27IhLBDzZUVFs=;
+ b=Qb+N0XGq7ALzdfmeonyM/yM/lBzX+yy/p08gnH8oBrDhUcc4FX+CvVCGXwp42Vn+mpHsdPedbqUom7SMgwlRH/5wMPzIkpAqrU8UVEmXZOHJ/sDNDHrXua/Jr7CZUr76AFl9cVrOwq8ndZYiSl5NOuULWeJozB0vdd8HOrShblaQ2gX9vihDNcCa6qlhnBfE0LCCxWp8l/Kx7yk4z3gF10ixdU7sx5cRKLdC8RJgt2gmcxQMHJLQ7TrnZCBSRDVgVa6woFLuoqs9g8/XD9y8LJ7NTps2a6jvyjYhwPQrwRZi59v9nBKsK5+XBzzASV3PDJWj7x1ZqsOsq5K2Fe2K2w==
+Received: from MW4PR04CA0381.namprd04.prod.outlook.com (2603:10b6:303:81::26)
+ by IA0PR12MB8352.namprd12.prod.outlook.com (2603:10b6:208:3dd::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.37; Mon, 18 Dec
+ 2023 10:46:17 +0000
+Received: from CO1PEPF000044F4.namprd05.prod.outlook.com
+ (2603:10b6:303:81:cafe::28) by MW4PR04CA0381.outlook.office365.com
+ (2603:10b6:303:81::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7091.38 via Frontend
+ Transport; Mon, 18 Dec 2023 10:46:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1PEPF000044F4.mail.protection.outlook.com (10.167.241.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7113.14 via Frontend Transport; Mon, 18 Dec 2023 10:46:16 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 18 Dec
+ 2023 02:46:08 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Mon, 18 Dec 2023 02:46:08 -0800
+Received: from localhost.localdomain (10.127.8.12) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.986.41 via Frontend
+ Transport; Mon, 18 Dec 2023 02:46:02 -0800
+From: Kartik <kkartik@nvidia.com>
+To: <thierry.reding@gmail.com>
+CC: <akpm@linux-foundation.org>, <andy@kernel.org>, <arnd@arndb.de>,
+	<christophe.jaillet@wanadoo.fr>, <frank.li@vivo.com>, <jonathanh@nvidia.com>,
+	<keescook@chromium.org>, <kkartik@nvidia.com>, <linus.walleij@linaro.org>,
+	<linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-tegra@vger.kernel.org>,
+	<pdeschrijver@nvidia.com>, <petlozup@nvidia.com>, <pshete@nvidia.com>,
+	<robh@kernel.org>, <stefank@nvidia.com>, <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v7 0/8] soc/tegra: fuse: Add ACPI support
+Date: Mon, 18 Dec 2023 16:15:59 +0530
+Message-ID: <20231218104559.3286-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ZXyCOydl9VOfwKp-@orome.fritz.box>
+References: <ZXyCOydl9VOfwKp-@orome.fritz.box>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2631; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=FyuyHaIj5jd4bPxOXQjJ+ozo7s7sihGMLWkkNmVGnME=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlfwXFp0yrTZyYp2KFK2fwTyu80UmXy69MORJAs wm48iAIgimJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZX8FxQAKCRCPgPtYfRL+ TgNJB/9eFZpgOAoyZMQMzWGucpEqIvWX6W0eNcnXBmurNkaFQmk9v1UHmj1xyNFW24mvDrwXPRz PaBLdyRO1QyT7ZOOWdkxvvYU+/g6yBUmpw+P5lihn0tefw+vl6Ej1suMnbs2tMdJ0FTQYQZRyQL ZnZyl3AYPprWtaCsKyu9b4pRwdQGJ4KG1NnvRkE562N+Wg7eXkwU5ah9EQWW4t+Jcs6SgvZHMhp 1quJkD1SA//uBFFZXLUV5UysntvLZwazuV3zLV81y6r02+H5X8Y3mcj7mX2qPf8Ubh9GWDrcybC h8kJTYL4+I5P2Hh+7xPkiTW8Rt32gZGaprL2X8zZ8V/x9QkC
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Type: text/plain; charset="UTF-8"
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F4:EE_|IA0PR12MB8352:EE_
+X-MS-Office365-Filtering-Correlation-Id: e49658e9-20bb-45dd-bb2b-08dbffb69017
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	Z643rmyS5VbJLZGgK2ZoGwawqNrXEGDranG5eChVTUVu3GkJv1RK7VbSoWYSiiqKvGe/zZo6hgCMhN7FPGbqIigYB8T8nGkS1em4cBRwVmCCEdnpF9FA1lKzXLzt6Xf+4X0jWL470zKjDEe6im9jVI2k7Xdsd9YZh5v6TW2dQxEFu4p5h2yg3j2ylWSEi7pjWhhoUqv5yg5eXYOkytsMmmmYLZXpG2JoTiiw4pVKpZUe9ORr7xBJZ7lD9VO6sq0nleeKouJI2+telcfxjpAfXmmlB/098blt1HPsFTrx8fifdbrx+X7X3X0t9xvK6fjVfACL8K7GEereJQFXr+fZ9bzu/Uzr3Gbz2IgdaJTIsj2RgTV/jOT4vnREWKRSXNngi8glLgwWlCS7NRexC6s732nkTkDOMRpatoSk6papYeq1Lnh5Bow7izszx3s4+i65LNOFWpUwSH1ek0MVEmAURuViIENq34K37b0ajWjgllaNrO8ryeSC8kwAuskC3o+0taeh9JMzd7eKq4fd9ilB35JqYxEeBsr6Z2V3KxzVmUaBpE6u+9Vp3W0UaO2Q1dikp0JeYA0JGyiBr7x4tvJ3EYQ9e06xavCKrnsMCFz5QIxtqAJkLt719J87em2oOaQb+WVmiqXcR9x222E4kQfEW9jpkHi7IHl06kPvB89SSRJw8mK5gih/eIDHjpnhhK0wQzdvy0QQwNzdJI9YS3qo1Ridm8K23Rbx0hWu97+Gm7DfnphEtaM7xlqkK6V5ndpz
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(376002)(39860400002)(396003)(136003)(230922051799003)(451199024)(1800799012)(82310400011)(64100799003)(186009)(46966006)(40470700004)(36840700001)(26005)(1076003)(2616005)(6666004)(426003)(36860700001)(5660300002)(83380400001)(47076005)(478600001)(2906002)(7416002)(70206006)(8676002)(8936002)(4326008)(4001150100001)(54906003)(70586007)(6916009)(316002)(41300700001)(7636003)(356005)(336012)(82740400003)(36756003)(86362001)(40460700003)(40480700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2023 10:46:16.8724
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e49658e9-20bb-45dd-bb2b-08dbffb69017
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8352
 
-Hello,
+On Fri, 2023-12-15 at 17:43 +0100, Thierry Reding wrote
+> On Thu, Dec 14, 2023 at 06:43:47PM +0000, Arnd Bergmann wrote:
+> > On Thu, Dec 14, 2023, at 17:08, Thierry Reding wrote:
+> > > On Tue, Oct 17, 2023 at 10:53:14AM +0530, Kartik wrote:
+> > >> This series of patches add ACPI support for Tegra194 and Tegra234 in
+> > >> Tegra fuse and apbmisc drivers. It also adds support for Tegra241
+> > >> which uses ACPI boot.
+> > >
+> > > Applied, thanks.
+> > 
+> > I'm still a bit puzzled by this series, can you provide some more background?
+> > 
+> > Why does an ACPI based system require access to SoC drivers? Shouldn't
+> > this all be abstracted by the BIOS in some form so the device drivers
+> > can work standalone rather than calling into this driver?
+> 
+> This driver exposes a couple of things such as SoC family and SKU
+> information that is not otherwise available. It also exposes FUSE
+> data which can be used to calibrate certain devices. Most of the
+> region that contains the fuses is in the keep-out, so perhaps they
+> aren't needed on Tegra241.
+> 
+> I suppose things like SoC family and such could be exposed differently.
+> Not sure if ACPI has other ways to expose that.
+> 
+> Let's see if Kartik can shed some light on this.
+> 
+> Thierry
 
-this series converts the platform drivers below drivers/memory to make
-use of .remove_new. See commit 5c5a7680e67b ("platform: Provide a remove
-callback that returns no value") for an extended explanation and the
-eventual goal. The TL;DR; is to make it harder for driver authors to
-leak resources without noticing.
+Hi Thierry, Arnd,
 
-This is merge window material. All patches are pairwise independent of
-each other so they can be applied individually. Still it would be great
-to let them go in all together.
+Although the keep-out contains most of the FUSE region. The driver still
+expose FUSE data with tegra_fuse_readl(), which can be used by drivers to
+get the required calibration data. Hence the reason to add ACPI support.
 
-Best regards
-Uwe
+The keep-out region is only used by nvmem interface, which allows reading the
+FUSE data from userspace as well as kernel modules. Currently on Tegra241,
+there are no users needing this information via nvmem interface.
 
-Uwe Kleine-König (15):
-  memory: brcmstb_dpfe: Convert to platform remove callback returning void
-  memory: brcmstb_memc: Convert to platform remove callback returning void
-  memory: emif: Convert to platform remove callback returning void
-  memory: fsl-corenet-cf: Convert to platform remove callback returning void
-  memory: fsl_ifc: Convert to platform remove callback returning void
-  memory: jz4780-nemc: Convert to platform remove callback returning void
-  memory: mtk-smi: Convert to platform remove callback returning void
-  memory: omap-gpmc: Convert to platform remove callback returning void
-  memory: renesas-rpc-if: Convert to platform remove callback returning void
-  memory: exynos5422-dmc: Convert to platform remove callback returning void
-  memory: stm32-fmc2-ebi: Convert to platform remove callback returning void
-  memory: tegra186-emc: Convert to platform remove callback returning void
-  memory: tegra210-emc: Convert to platform remove callback returning void
-  memory: ti-aemif: Convert to platform remove callback returning void
-  memory: ti-emif-pm: Convert to platform remove callback returning void
-
- drivers/memory/brcmstb_dpfe.c            |  6 ++----
- drivers/memory/brcmstb_memc.c            |  6 ++----
- drivers/memory/emif.c                    |  6 ++----
- drivers/memory/fsl-corenet-cf.c          |  6 ++----
- drivers/memory/fsl_ifc.c                 |  6 ++----
- drivers/memory/jz4780-nemc.c             |  5 ++---
- drivers/memory/mtk-smi.c                 | 10 ++++------
- drivers/memory/omap-gpmc.c               |  6 ++----
- drivers/memory/renesas-rpc-if.c          |  6 ++----
- drivers/memory/samsung/exynos5422-dmc.c  |  6 ++----
- drivers/memory/stm32-fmc2-ebi.c          |  6 ++----
- drivers/memory/tegra/tegra186-emc.c      |  6 ++----
- drivers/memory/tegra/tegra210-emc-core.c |  6 ++----
- drivers/memory/ti-aemif.c                |  5 ++---
- drivers/memory/ti-emif-pm.c              |  6 ++----
- 15 files changed, 32 insertions(+), 60 deletions(-)
-
-base-commit: 17cb8a20bde66a520a2ca7aad1063e1ce7382240
--- 
-2.42.0
+Regards,
+Kartik
