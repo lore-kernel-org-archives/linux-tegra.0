@@ -1,99 +1,111 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9521B13FF5;
-	Wed, 20 Dec 2023 06:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F0E219F3;
+	Wed, 20 Dec 2023 11:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zoiVQdE5"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=yy3Pd8xxVQGvQhu3e4sEndMfOiP5mA8UbKObDBwiH1M=; b=zoiVQdE5Br0fTA1+Sn9IQcEluf
-	Rx4NTC6svRwUJDH66srMrY7jrUKBnydtcGe07wqhqh0JCnqVRLs0IqOE82URdB+ApI6LK4/wuE4IB
-	zl4MPSktxQrlM+d+yTk+003gJlaho8XEXWLM3azSgOYDcWGcozqvdbQ7yh3TJmuJaQH//xhIlm2eT
-	6gpi6NLKpwqgVRRtpWzN+bLFvRTgNhmCSJ5+V6PH/jfW3QYWIR4Mh/YDKT2YbualcJp61E1A0xEIS
-	+ECesDqDt2apeC6OUu0E/gpQXrJuN7nnyraKRlBh3VLUI8c+2tRjwLtPVcCFKnz85jB/F8h8U0V1H
-	G9zsY5vw==;
-Received: from [50.53.46.231] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-	id 1rFq8O-00GJ40-2Q;
-	Wed, 20 Dec 2023 06:32:48 +0000
-Message-ID: <9c955128-6867-4d0a-b2f1-eab692748315@infradead.org>
-Date: Tue, 19 Dec 2023 22:32:48 -0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7gPLQEq"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-550dd0e3304so6966957a12.1;
+        Wed, 20 Dec 2023 03:43:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1703072618; x=1703677418; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i3Hrrww3/q9zrrOhRgX3lPr2/9drbsz7GbzoFtUlfZk=;
+        b=Y7gPLQEq2IvAlO+THPxTy5SlibYV9avbEpOycjOSp2EhUzAcevjxs8EJkWLuptj3yb
+         aa/GTwbQeVxpcTyO/MDpqFHahlVZjNEPEgCD2ivq/PGNTk97sGbW1SwsT3yZ1rfN/FbG
+         7IGoMVYC64B1EyqKqq6NSjPI0HRBdDj5I4SJl1tUJy9HAXlTyudBHTw8HJ9b6IquwqET
+         w4F11ub3Np15mSHKEphxGUabK/5BmGES0IidACPCX9ms46kinRvkv5VpaJnPbojU5V98
+         GLdhpsXntgOuA7Rvub0mscZqEEjNib6Q/pfFbfkGBU/+iAtM7HSz8B0WR5AkSUh3n0Gk
+         +lKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1703072618; x=1703677418;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i3Hrrww3/q9zrrOhRgX3lPr2/9drbsz7GbzoFtUlfZk=;
+        b=fUcECrdw/5oox+FqEe42NqaKNdJWpg2PRM4YPG3Vcu/PpTHttX/rygXUYAru4mYxWy
+         WtR6QLxfYDRskW92FidydqCzpg6vg9VzLilualZZF1pUjbN9quiwSv2LEpd0Ns9t71zO
+         H0+fu6VwILpLlIJxTnWcJBK7Nq6GjfaQPV9S8+l53oHXp5YeRUT/UfArE3MujYzjdz5Y
+         lCMWtZNGvH6AorYsIkGjo0NGglCQjhxTAJvrFPHQZC46UdlWJboV1pmcmqZdqg3HB8rh
+         bq6Ql9EBUtVrh4+psSTkcclJZm3QhvOFtSQnapAdqQR/d0dh76EuvnBH2frA/cAd0s/u
+         Y5Xg==
+X-Gm-Message-State: AOJu0YwFLz4vdhsVIID00HvCu3c1A3o4xrtUCVWBzGumR7kvq8ieaczS
+	ieBFhyr606oIXjyNyhLxwkRGQnFhmAg=
+X-Google-Smtp-Source: AGHT+IFeS+mwiDKoz41d/4hOnWmA2xl8RlSjK/74CEiNQqJjreS0w3KGmyDMuAaWkzOWrkXPMUw5QQ==
+X-Received: by 2002:a17:906:3f5a:b0:a19:35eb:7c8a with SMTP id f26-20020a1709063f5a00b00a1935eb7c8amr10781626ejj.3.1703072618174;
+        Wed, 20 Dec 2023 03:43:38 -0800 (PST)
+Received: from orome.fritz.box (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id tm6-20020a170907c38600b00a1ca6f5f189sm16725673ejc.179.2023.12.20.03.43.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Dec 2023 03:43:37 -0800 (PST)
+Date: Wed, 20 Dec 2023 12:43:36 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kartik <kkartik@nvidia.com>
+Cc: rdunlap@infradead.org, sfr@canb.auug.org.au, jonathanh@nvidia.com,
+	frank.li@vivo.com, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc/tegra: fuse: Define tegra194_soc_attr_group for
+ Tegra241
+Message-ID: <ZYLTaMvCClFKAL8h@orome.fritz.box>
+References: <20231220061013.120173-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc/tegra: fuse: Define tegra194_soc_attr_group for
- Tegra241
-Content-Language: en-US
-To: Kartik <kkartik@nvidia.com>, sfr@canb.auug.org.au,
- thierry.reding@gmail.com, jonathanh@nvidia.com, frank.li@vivo.com,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20231220061013.120173-1-kkartik@nvidia.com>
-From: Randy Dunlap <rdunlap@infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kASl1LDAhVZzDkAk"
+Content-Disposition: inline
 In-Reply-To: <20231220061013.120173-1-kkartik@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
 
+--kASl1LDAhVZzDkAk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 12/19/23 22:10, Kartik wrote:
+On Wed, Dec 20, 2023 at 11:40:13AM +0530, Kartik wrote:
 > Tegra241 SoC data uses tegra194_soc_attr_group, which is only defined
 > if config CONFIG_ARCH_TEGRA_194_SOC or CONFIG_ARCH_TEGRA_234_SOC or
 > both are enabled. This causes a build failure if both of these configs
 > are disabled and CONFIG_ARCH_TEGRA_241_SOC is enabled.
-> 
+>=20
 > Define tegra194_soc_attr_group if CONFIG_ARCH_TEGRA_241_SOC is enabled.
-> 
+>=20
 > Signed-off-by: Kartik <kkartik@nvidia.com>
-
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-
-Thanks.
-
 > ---
 >  drivers/soc/tegra/fuse/fuse-tegra.c | 3 ++-
 >  drivers/soc/tegra/fuse/fuse.h       | 3 ++-
 >  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/fuse/fuse-tegra.c b/drivers/soc/tegra/fuse/fuse-tegra.c
-> index 233b8e7bb41b..c34efa5bf44c 100644
-> --- a/drivers/soc/tegra/fuse/fuse-tegra.c
-> +++ b/drivers/soc/tegra/fuse/fuse-tegra.c
-> @@ -407,7 +407,8 @@ const struct attribute_group tegra_soc_attr_group = {
->  };
->  
->  #if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
-> -    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
-> +    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC) || \
-> +    IS_ENABLED(CONFIG_ARCH_TEGRA_241_SOC)
->  static ssize_t platform_show(struct device *dev, struct device_attribute *attr,
->  			     char *buf)
->  {
-> diff --git a/drivers/soc/tegra/fuse/fuse.h b/drivers/soc/tegra/fuse/fuse.h
-> index f3b705327c20..9fee6ad6ad9e 100644
-> --- a/drivers/soc/tegra/fuse/fuse.h
-> +++ b/drivers/soc/tegra/fuse/fuse.h
-> @@ -124,7 +124,8 @@ extern const struct tegra_fuse_soc tegra186_fuse_soc;
->  #endif
->  
->  #if IS_ENABLED(CONFIG_ARCH_TEGRA_194_SOC) || \
-> -    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC)
-> +    IS_ENABLED(CONFIG_ARCH_TEGRA_234_SOC) || \
-> +    IS_ENABLED(CONFIG_ARCH_TEGRA_241_SOC)
->  extern const struct attribute_group tegra194_soc_attr_group;
->  #endif
->  
 
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+Applied, thanks.
+
+Thierry
+
+--kASl1LDAhVZzDkAk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmWC02gACgkQ3SOs138+
+s6ELmg/9GJAdHN1hEHfiDcG0vjrGjYDxD46wDykHZUpZwOdQolddlH7uTSNGZVSR
+VkF53NY3rOLLZAToLCOzzweTVFiG4D/54k5DHWd+YXHd18lYaHsaySP29go2oYEl
+jdzRE/FoEpdY3Tx5RURYXSyqFoy8DK4fUIAdvOg82L2EOCKF8YLXMKxS0D+S+z/g
+h95ObHrkD8pN/SZdQSb8CzAlZQxoRMCQqvdPqoFisJgBe1Tu+J8TDcSoxe4zYqzB
+Qza7AqLNlbQTpBdhkWJUKfwxe/AQ/bCgIRRKRErtWpMRjPY4SjFhzlcPMDoYiUbI
+rJFgYsv9WGIxp3qcaraEJyVFQ/UlNYdpgLr9N3d2R2l23elVxgg5OPApb69h6nzS
+Rccw3FCYL1Z/JjGyuRDKP0RRb/GMYRjqUxWm8y0tsGkn/ROdCbJUkzsVBMfhsa1L
+Elq4gxVkSgCNLpR2LiArZOIzkmYB3HoJ4jGJeA5Rv1r+YmFX8ePg/PU02PjYfpFb
+ofC/KDuaI/BMEZIO+P1q7m+c9dotn2ZcG4kXa8XRF+AhpKtU5KXeWJTMk2V45ZTt
+TCvHt2Xivsn+9DNzxdMBITmG+U6fByFraS05wY6FdrL5BswTW3U1bp0v1XmgYafv
+FvPpywWRbXKr0eFOIJdZAtbE3ON7SdQgIBnznXNURge5Saphgv0=
+=bO4k
+-----END PGP SIGNATURE-----
+
+--kASl1LDAhVZzDkAk--
