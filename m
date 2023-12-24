@@ -1,65 +1,150 @@
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357E41DFC4
-	for <linux-tegra@vger.kernel.org>; Fri, 22 Dec 2023 22:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51224E56E
+	for <linux-tegra@vger.kernel.org>; Sun, 24 Dec 2023 21:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jc1gwCwy"
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6da4894a8d6so1452086a34.2
-        for <linux-tegra@vger.kernel.org>; Fri, 22 Dec 2023 14:30:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SRTPNLji"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1d42ed4cdc7so135065ad.0
+        for <linux-tegra@vger.kernel.org>; Sun, 24 Dec 2023 13:30:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1703284254; x=1703889054; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwejgOu3CLIEy7WBg6DtMDhgjRDGncrbITb/o+9tVKM=;
-        b=jc1gwCwyQC21YuJLxDsICmF8Dbjr0sHq5z+GvXy0tBzbhINVUHXoKTR0gSBjt4G+w8
-         eDOeDBMbAgN9/1sDZrT6xsfOPHi9t9AWRVlSc2GGUBCLE3/GMmblVr2nA6eqkaKl4dop
-         eKga4UW2c2Ia9GROQ/9shFmdwHRT9crzltIKc=
+        d=google.com; s=20230601; t=1703453452; x=1704058252; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7/MCgJrzTYbobYDGPWMaxVSPHC8aF5GoN3HBnQNC1yE=;
+        b=SRTPNLjideYw9jSGZ8cUkT5/otA6oF+uTtO9hzMRBAtUksp1Ly6esmEEqd8Sz5RQtL
+         u1QMSLwFrNxt0HO0byJUc+V9D2BXDnZrsamcGxitgSwSy0cu3zr4kYL/qLOeGj8kAJYo
+         Vv/04MUWRZUKKQ9yGFHG9S0tL0ViVTHWXHDKuz8QiLHFd3uQ9DwJWh+Uywg6sRgxm5+f
+         +LEE7uJjCSxXJG7VaVqyX/399wQBEHyxhtGEk7cx6ovrYGExu5VRdLOfEkNL1iBHUssj
+         iLC7qVIriSD1e+LbEEvDQegtsmZUTubLjEb+Gs7JCHATC1208JN4rgoEURuG2uu7sDrX
+         igSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703284254; x=1703889054;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WwejgOu3CLIEy7WBg6DtMDhgjRDGncrbITb/o+9tVKM=;
-        b=P5Y0Zi3PQZbQBe/+nawnPoPdcp1cLZdurDB5VU2klMHUqnpfqmFh6Q8D7ptaz6nKN+
-         z1OrqEsw3ufj3K71cBDP3DVeY4dqlcoVDcx/rxw0BCnV1pH811Sd/7r7DPRE9uOKrEJ7
-         WkfWmdAj4usyZNC5MgXfwibUt25O1Xt5pEoNVstPYy1KFI+eEYjKHMWKY6HmYN+wmasu
-         hcmDZV4PGarE2BusCd8/ty1Wah3wQEL0NHzlYMwbl18+gll30rSDdlonSP0BUos1Iv+g
-         lFts30p/G7KVA0dTd7zSVwwxkdRoTBcfELl6Cx7B3nH/1SlkLbXHltQX/cQvdSZmej2a
-         X7Pw==
-X-Gm-Message-State: AOJu0YzBndmhSBAj9zL8dJNFUCokVzH+FG0cyDdq1Je0wUY/AGZDok+X
-	IbcptSRT/DtovbJNO72b8E01b1T4Cd/cIlH/X4Nx2dGx2Etu
-X-Google-Smtp-Source: AGHT+IER1bh8jMPP1/3cXJs8YlZWz0DMEgd5cLDf4OrRRbTGp5gF9dbStw6xbzqvzSRoXTPBelayfBgYtrmw0We3VHY=
-X-Received: by 2002:a05:6830:97:b0:6db:c040:b5e9 with SMTP id
- a23-20020a056830009700b006dbc040b5e9mr1589627oto.51.1703284254400; Fri, 22
- Dec 2023 14:30:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1703453452; x=1704058252;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7/MCgJrzTYbobYDGPWMaxVSPHC8aF5GoN3HBnQNC1yE=;
+        b=oBudaAZCgb4WCI+i0ag73b9EQf2tAMFRjupbDxdwKPPG+3dTewtCITIr/tioUPCf6A
+         RM10z42og8fAb59OLdCRg3jJzLSc1W5XN43IpE6Z28cQeJlKNXW8A2DGDXsSBFp4HZF0
+         uvlR4MPxlQa4Fztq4sdfI2litePjdwEdiI/3m/+MhMo5y9rzYxJNfdTkIYdtSx+cd2yW
+         Cxu8HT6g7dWfvUkWfrAhWBgIcNUlGTw0xFj23BMSX727Qu7CKQSZCB1Lp7bHYzpbYrTl
+         aZHJPC/PieeHfi0/ymRuWakVzvHxodz8NtuKdaYy9nkbAQkbh52l8FlnrY4AZXDuV6JQ
+         DQEw==
+X-Gm-Message-State: AOJu0YzUsj1e3+t6ed4JUT8zCB66g1kjSKVWgmE1TAanPrg6fvyXySMT
+	//WVl7c1B3gSfYWu/L+AVtxZgYLmXZjF
+X-Google-Smtp-Source: AGHT+IGEdm29d6jmw+nANphFK7SbhaR7mM9JSy5/jGKgQinKhgDaZxXLk5PDheL/k90mn9Ft6aU5hg==
+X-Received: by 2002:a17:902:bb84:b0:1d4:55b3:45d9 with SMTP id m4-20020a170902bb8400b001d455b345d9mr28530pls.6.1703453451456;
+        Sun, 24 Dec 2023 13:30:51 -0800 (PST)
+Received: from [2620:0:1008:15:c723:e11e:854b:ac88] ([2620:0:1008:15:c723:e11e:854b:ac88])
+        by smtp.gmail.com with ESMTPSA id b14-20020a170902d50e00b001d3dacffde3sm6890413plg.226.2023.12.24.13.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Dec 2023 13:30:50 -0800 (PST)
+Date: Sun, 24 Dec 2023 13:30:50 -0800 (PST)
+From: David Rientjes <rientjes@google.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, alim.akhtar@samsung.com, 
+    alyssa@rosenzweig.io, asahi@lists.linux.dev, baolu.lu@linux.intel.com, 
+    bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net, 
+    david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+    iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+    joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+    linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+    linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+    mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+    rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+    suravee.suthikulpanit@amd.com, sven@svenpeter.dev, 
+    thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com, 
+    vdumpa@nvidia.com, wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com
+Subject: Re: [PATCH v2 01/10] iommu/vt-d: add wrapper functions for page
+ allocations
+In-Reply-To: <CA+CK2bA8iJ_w8CSx2Ed=d2cVSujrC0-TpO7U9j+Ow-gfk1nyfQ@mail.gmail.com>
+Message-ID: <1fd66377-030c-2e48-e658-4669bbf037e9@google.com>
+References: <20231130201504.2322355-1-pasha.tatashin@soleen.com> <20231130201504.2322355-2-pasha.tatashin@soleen.com> <776e17af-ae25-16a0-f443-66f3972b00c0@google.com> <CA+CK2bA8iJ_w8CSx2Ed=d2cVSujrC0-TpO7U9j+Ow-gfk1nyfQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231220235459.2965548-1-markhas@chromium.org> <ZYRAuY1LGdD8_u5K@smile.fi.intel.com>
-In-Reply-To: <ZYRAuY1LGdD8_u5K@smile.fi.intel.com>
-From: Mark Hasemeyer <markhas@chromium.org>
-Date: Fri, 22 Dec 2023 15:30:43 -0700
-Message-ID: <CANg-bXDw+bYNTu-HFaNAPb4e+_oKt2ExR6PehWR_==vpboKGaw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/22] Improve IRQ wake capability reporting and update
- the cros_ec driver to use it
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, chrome-platform@lists.linux.dev, 
-	cros-qcom-dts-watchers@chromium.org, devicetree@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="2003067076-655310594-1703453450=:2163178"
 
-> Just wondering if you used --histogram diff algo when preparing patches.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Not knowingly. I use patman which uses 'git format-patch' under the
-covers with some added options:
-https://github.com/siemens/u-boot/blob/master/tools/patman/gitutil.py#L308
+--2003067076-655310594-1703453450=:2163178
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Thu, 14 Dec 2023, Pasha Tatashin wrote:
+
+> On Thu, Dec 14, 2023 at 12:58 PM David Rientjes <rientjes@google.com> wrote:
+> >
+> > On Thu, 30 Nov 2023, Pasha Tatashin wrote:
+> >
+> > > diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
+> > > new file mode 100644
+> > > index 000000000000..2332f807d514
+> > > --- /dev/null
+> > > +++ b/drivers/iommu/iommu-pages.h
+> > > @@ -0,0 +1,199 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > > +/*
+> > > + * Copyright (c) 2023, Google LLC.
+> > > + * Pasha Tatashin <pasha.tatashin@soleen.com>
+> > > + */
+> > > +
+> > > +#ifndef __IOMMU_PAGES_H
+> > > +#define __IOMMU_PAGES_H
+> > > +
+> > > +#include <linux/vmstat.h>
+> > > +#include <linux/gfp.h>
+> > > +#include <linux/mm.h>
+> > > +
+> > > +/*
+> > > + * All page allocation that are performed in the IOMMU subsystem must use one of
+> > > + * the functions below.  This is necessary for the proper accounting as IOMMU
+> > > + * state can be rather large, i.e. multiple gigabytes in size.
+> > > + */
+> > > +
+> > > +/**
+> > > + * __iommu_alloc_pages_node - allocate a zeroed page of a given order from
+> > > + * specific NUMA node.
+> > > + * @nid: memory NUMA node id
+> >
+> > NUMA_NO_NODE if no locality requirements?
+> 
+> If no locality is required, there is a better interface:
+> __iommu_alloc_pages(). That one will also take a look at the calling
+> process policies to determine the proper NUMA node when nothing is
+> specified. However, when policies should be ignored, and no locality
+> required, NUMA_NO_NODE can be passed.
+> 
+
+Gotcha, thanks!
+
+> >
+> > > + * @gfp: buddy allocator flags
+> > > + * @order: page order
+> > > + *
+> > > + * returns the head struct page of the allocated page.
+> > > + */
+> > > +static inline struct page *__iommu_alloc_pages_node(int nid, gfp_t gfp,
+> > > +                                                 int order)
+> > > +{
+> > > +     struct page *pages;
+> >
+> > s/pages/page/ here and later in this file.
+> 
+> In this file, where there a page with an "order", I reference it with
+> "pages", when no order (i.e. order = 0), I reference it with "page"
+> 
+> I.e.: __iommu_alloc_page vs. __iommu_alloc_pages
+> 
+
+Eh, the struct page points to a (potentially compound) page, not a set or 
+list of pages.  I won't bikeshed on it, but "struct page *pages" never 
+makes sense unless it's **pages or *pages[] :)
+--2003067076-655310594-1703453450=:2163178--
