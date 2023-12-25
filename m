@@ -1,118 +1,99 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C62052F63
-	for <linux-tegra@vger.kernel.org>; Mon, 25 Dec 2023 16:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0B2537EF;
+	Mon, 25 Dec 2023 19:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D9mqPlfT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1703520585;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VqafsTsLWFL6NUacBRAsGtc9kpoOdr+j/kVqdz2KGps=;
-	b=D9mqPlfTwYuNJi4B6KW9virIn25oAF6KJO1DPRjL3QgxGoYi/aZvQhQ6SxaAucfl1mfkTI
-	2BhAsqnTfOgOxR+qFBkoEO02/lLWZdSG4DtRAMJ7mE1KRUKAFVGeLstdjJ6VVrBdaG+4BT
-	HC6YfH4aB8ZfJIQTKQ076gm3A3IuBSk=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-627-cHmiVgwlNOidML5B4Aqeww-1; Mon, 25 Dec 2023 11:09:44 -0500
-X-MC-Unique: cHmiVgwlNOidML5B4Aqeww-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-40d47b001f7so22264935e9.3
-        for <linux-tegra@vger.kernel.org>; Mon, 25 Dec 2023 08:09:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703520583; x=1704125383;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VqafsTsLWFL6NUacBRAsGtc9kpoOdr+j/kVqdz2KGps=;
-        b=ra8mytY/BrGgvz83jj2YxZbEl8i+upjog/SzoIZukiliRTQyw5tnAS+nSWmX63+e55
-         cCiMGbn754TOhiqc6QGTcgj3rBJgaprP5zsuog1yyUAbfA6a8FFHcgn0ePrUENS4qikr
-         aKFT78udUuAhanykVhCOvuW/lq6ixws6GV2mwMPzp33KJGJl/O9DzzBMo6HI/0c4KfPB
-         cQEZ8CKJfoVL5+17TGqUr1NMAEI6OaFt9LAV7hiHAjmezsBS3ztZx7trrwgdsTeF6wTF
-         v31jelBr7+ZyisqIQeDkoc475nA0yM/RfEk6KFm4Yr83N7kMVmfnPatk0QJGOMQWQxws
-         qfUQ==
-X-Gm-Message-State: AOJu0Yz4ywYhtISVLu4sOZTPtWruFTghagPNkEYYith/f+PdZJ7HUmEp
-	MPz7stzgoZVIOLNrj1Zi1u0txivt6FDxwUfMRhITFOHmPBTG/L5XfcymxmYXlwFWUHd8UqjSFe8
-	MUeV9sdc+Kqd6D3Ga7EvFzC/u6UYM2OA=
-X-Received: by 2002:a05:600c:4587:b0:40c:33be:d193 with SMTP id r7-20020a05600c458700b0040c33bed193mr4060359wmo.78.1703520582992;
-        Mon, 25 Dec 2023 08:09:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHfGGCax+SlWX/roShT1Wqm6zJg2zHkXbA4PNy8JwUTudzLUljk5TaAwhoH/7jZ8kvUv2pY7Q==
-X-Received: by 2002:a05:600c:4587:b0:40c:33be:d193 with SMTP id r7-20020a05600c458700b0040c33bed193mr4060329wmo.78.1703520582646;
-        Mon, 25 Dec 2023 08:09:42 -0800 (PST)
-Received: from redhat.com ([2a06:c701:73ef:4100:2cf6:9475:f85:181e])
-        by smtp.gmail.com with ESMTPSA id f12-20020a05600c4e8c00b0040d3db8186fsm16769282wmq.5.2023.12.25.08.09.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Dec 2023 08:09:41 -0800 (PST)
-Date: Mon, 25 Dec 2023 11:09:37 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alex.williamson@redhat.com,
-	alim.akhtar@samsung.com, alyssa@rosenzweig.io,
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com,
-	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net,
-	david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org,
-	heiko@sntech.de, iommu@lists.linux.dev, jasowang@redhat.com,
-	jernej.skrabec@gmail.com, jgg@ziepe.ca, jonathanh@nvidia.com,
-	joro@8bytes.org, kevin.tian@intel.com,
-	krzysztof.kozlowski@linaro.org, kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com,
-	marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com,
-	netdev@vger.kernel.org, paulmck@kernel.org, rdunlap@infradead.org,
-	robin.murphy@arm.com, samuel@sholland.org,
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev,
-	thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com,
-	vdumpa@nvidia.com, virtualization@lists.linux.dev, wens@csie.org,
-	will@kernel.org, yu-cheng.yu@intel.com
-Subject: Re: [PATCH 15/16] vhost-vdpa: account iommu allocations
-Message-ID: <20231225110930-mutt-send-email-mst@kernel.org>
-References: <20231128204938.1453583-1-pasha.tatashin@soleen.com>
- <20231128204938.1453583-16-pasha.tatashin@soleen.com>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ewJKlnWB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
+	t=1703531926; x=1704136726; i=markus.elfring@web.de;
+	bh=IaAm0WH4z0TXKCwsXTfWMMZiVW5H3xtLRNKz36NJgmM=;
+	h=X-UI-Sender-Class:Date:To:From:Subject:Cc;
+	b=ewJKlnWBon/YFQvM0LsjiHpYgHYALpKQn17J9D8AEMznf7v7cDZctq6JcEzh8nz3
+	 AEMIQOKMjDrnG9b7E0y5sAYyp1o35gXrHKAAR8s1FZU0Ng3EBYnX771dmtyYA6rTp
+	 QLZh5827+wkZonIYpVk1d1MxzteLtswFeTsKjdp/UqoGcjy2G/roXUcCh3nZvRD5N
+	 WiMrpll4WYbMlH6h0Jt/YYSfKCENFYU2a1otZPgqNAF9nJMyaIwOTtArk/kxbKoYy
+	 Y8NfzW5NBqUcyziXtkwsWo/Wle3sq3U+kead83/rXt+naPytC8d3gnywNt0F1Lh26
+	 tz9cjlkqnC9ahn7Y1A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mo6Jl-1qtoKb1un5-00pEOD; Mon, 25
+ Dec 2023 20:18:46 +0100
+Message-ID: <07ca2474-560f-4cbb-9740-db987227416a@web.de>
+Date: Mon, 25 Dec 2023 20:18:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231128204938.1453583-16-pasha.tatashin@soleen.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB
+To: linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Jonathan Hunter <jonathanh@nvidia.com>, Justin Stitt
+ <justinstitt@google.com>, Kees Cook <keescook@chromium.org>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] firmware: tegra: bpmp: Return directly after a failed
+ kzalloc() in get_filename()
+Cc: LKML <linux-kernel@vger.kernel.org>, cocci@inria.fr
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:1Dx6vLiujrwX/styXNp1tR5nNZwKVUpxfUgckaGAeQMhLhd72JR
+ g0k1oxnB2Q1MhQ/TSR/IL3LKWsuqy+7AKhSTDj3Pr6sfEtwvaC2JVFbseTlG2oBlnCls4d8
+ SBqOZFh5sZKijbwlfQLmykM/YS3eFE59/s0L5WrFqcju9/NvOeKEbFzQwJRp+XdiaJVbkhV
+ GX2BiN4pFB+1gRGNF4drQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9EhpqDUh4eU=;/MCHgEjnuTlr8ORYlyOXc1Ibztp
+ P/eDlh0Xd+VwkT1u2/mXCgGa0USATF/EuWmdAFDe1/szSxKf5GLUmE3cd9TZX4wh0DdT6Buf2
+ J0ZBXt2zDnr9ABwV80Nc26px4XJct7b1M/KpCpPv73FF9vZ4HD/1I2hi7XSoLRSsg+yn62Qcj
+ clL/Do5LfXZ81gDQOCaQtImxCDgY4aqmnfviideEoQ4Vx/PgUY58pHe3she58E7CxCwKdVPw1
+ ABQxnrQ0mx2iuIvYf7TfPWlgx1rH+gghNu8XFJftZw4NIlZ5W6CW9XiZGWyqKqAPnb3ABlag4
+ HClPdWbN6x5Duk/c1zdKLE9o7GrGzzrAjm/0VCKuxiUxZBpKcUyBjdDYRg1jL12t9VLUc8eUR
+ I9fEWTWTLwvgqpztDIoNn7rkdeu90iqM0xZi5JN6TFQ/m3DKF6NuCqfTWrO/arBGuMpY29VWM
+ YUtI6to0e8O7Z6c10nfbFW0ZkvcT+tFVUxxDD7yCuKUv2ZFsm+bpCb6fiBB/LnWN4+kDtRAzP
+ X3vkUQZA49LI2dgeQHtjJIibEY0notIcdDLkW9KLjN1fvEeSWVgWln9i8DVCi6sWhpOiGEwp6
+ s5I7FzyatBNPgruwLuADNTDj3rfXrFlo59zgn7S1zSkLcs6OGiA3dGAjagN5AB+RrjKFI8mdn
+ /N07gXIcvYNZJBAfSzp/hJVxyplUFjV6zCEYZcUXlOLgcdqPOduphTekxQO+59rix1Ihy5+IC
+ n7LxF9c1hOHSxdnhwUklF0FuSVtboT4ZmkQrckEYwtMNtBrQ+LXaET6fs957iv88kN7CvIdAr
+ EI742ipRd1pzF7p1KBU/rbkVLqSAuDL5o70sxru9jvvJfkoASUH1WcfO8nXsSlGp+V1ERAjya
+ NAHQTFWsfnKtsoObvMiACa3sRALKBRGVgmz4lugo9HFoVV3kNKYqT6Dw2+pFBYuoXz5M+FOHL
+ 7jfSNg==
 
-On Tue, Nov 28, 2023 at 08:49:37PM +0000, Pasha Tatashin wrote:
-> iommu allocations should be accounted in order to allow admins to
-> monitor and limit the amount of iommu memory.
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 25 Dec 2023 20:03:56 +0100
 
+The kfree() function was called in one case by
+the get_filename() function during error handling
+even if the passed variable contained a null pointer.
+This issue was detected by using the Coccinelle software.
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Thus return directly after a call of the function =E2=80=9Ckzalloc=E2=80=
+=9D failed
+at the beginning.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/firmware/tegra/bpmp-debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/vhost/vdpa.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> index da7ec77cdaff..a51c69c078d9 100644
-> --- a/drivers/vhost/vdpa.c
-> +++ b/drivers/vhost/vdpa.c
-> @@ -968,7 +968,8 @@ static int vhost_vdpa_map(struct vhost_vdpa *v, struct vhost_iotlb *iotlb,
->  			r = ops->set_map(vdpa, asid, iotlb);
->  	} else {
->  		r = iommu_map(v->domain, iova, pa, size,
-> -			      perm_to_iommu_flags(perm), GFP_KERNEL);
-> +			      perm_to_iommu_flags(perm),
-> +			      GFP_KERNEL_ACCOUNT);
->  	}
->  	if (r) {
->  		vhost_iotlb_del_range(iotlb, iova, iova + size - 1);
-> -- 
-> 2.43.0.rc2.451.g8631bc7472-goog
+diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegr=
+a/bpmp-debugfs.c
+index bbcdd9fed3fb..4221fed70ad4 100644
+=2D-- a/drivers/firmware/tegra/bpmp-debugfs.c
++++ b/drivers/firmware/tegra/bpmp-debugfs.c
+@@ -77,7 +77,7 @@ static const char *get_filename(struct tegra_bpmp *bpmp,
+
+ 	root_path_buf =3D kzalloc(root_path_buf_len, GFP_KERNEL);
+ 	if (!root_path_buf)
+-		goto out;
++		return NULL;
+
+ 	root_path =3D dentry_path(bpmp->debugfs_mirror, root_path_buf,
+ 				root_path_buf_len);
+=2D-
+2.43.0
 
