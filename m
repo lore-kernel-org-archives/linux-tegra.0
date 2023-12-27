@@ -1,37 +1,55 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3109449888
-	for <linux-tegra@vger.kernel.org>; Wed, 27 Dec 2023 21:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A428C482C6
+	for <linux-tegra@vger.kernel.org>; Wed, 27 Dec 2023 21:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
 Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1rIb3L-0000t1-Me; Wed, 27 Dec 2023 22:02:59 +0100
+	id 1rIb3M-0000le-3j; Wed, 27 Dec 2023 22:03:00 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1rIb3K-001wFN-4t; Wed, 27 Dec 2023 22:02:59 +0100
+	id 1rIb3H-001wEi-AR; Wed, 27 Dec 2023 22:02:56 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1rIb3L-001ZVw-0V;
-	Wed, 27 Dec 2023 22:02:59 +0100
+	id 1rIb3I-001ZVE-0o;
+	Wed, 27 Dec 2023 22:02:56 +0100
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
+Cc: linux-kernel@vger.kernel.org,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-sunxi@lists.linux.dev,
+	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
+	Michal Simek <michal.simek@amd.com>,
 	kernel@pengutronix.de
-Subject: [PATCH 11/12] mailbox: tegra-hsp: Convert to platform remove callback returning void
-Date: Wed, 27 Dec 2023 22:02:39 +0100
-Message-ID:  <8e00bbc23e1115d9ff185d4b98c6d764607036df.1703710628.git.u.kleine-koenig@pengutronix.de>
+Subject: [PATCH 00/12] mailbox: Convert to platform remove callback returning void
+Date: Wed, 27 Dec 2023 22:02:28 +0100
+Message-ID: <cover.1703710628.git.u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1703710628.git.u.kleine-koenig@pengutronix.de>
-References: <cover.1703710628.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -39,7 +57,7 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1705; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=PYLOV0x2mjDrqYc2WOt4MZWPAGaq8meNv350E++Xqz4=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBljJDxKf9dkG1I03uOMN9mSF6cbRm7XcpAFwVg0 hQObdda4w2JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZYyQ8QAKCRCPgPtYfRL+ ToRJB/9LAqLeEDXl6LyRgrBJMUDfPV5gfr4iqzE2TfwlmQtMY9VVZgSzBclmKAp67Bbm/0T/UDQ WQhJApBRY3tDJ6nbdJRiM+X2RqemRskrEpDlrgs8TeSBp+kSzc1D2Vt6mGNLc1z/r/gZrbTFt1o vBbYu411RH9zW7g92zneQxlLLwATK7Pd6poTrBDIWJr8hKPxA/zut4gUqsqzrnID55PyUzK8rn5 huukRLE4HTpWVspSJFxgep0Gz2FiTTPsJt4i9c/NhPq1txhd50cf++t/+yDYPPq9TtoNAE9zbER ey/05V7M2b7TcaR1mlbT1iDSAlnr97gMhjSr9UTe7LvbM0Zz
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2241; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=TnloZYpKIYRmaOM4Vyp6tR8nMUztNxQOKpyjV0rpvQ4=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBljJDlF5RcQbsMo+jn9Hk4Fn0DGB3DTp1LZRoam 4uXEKKoj2GJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZYyQ5QAKCRCPgPtYfRL+ TmefCACxCqozxo0GnqWmhu00tf7kElJNTysNznKKdidgf7fo9mcsJuA7Ck125Ja84llYdplJCvv Dsdgd+ignUqSSvOgP0rhHT1pxzc3t9CgKIvLUZMIwaiFUxnPuGs0iLILF0hhUoUb6JLwyAFJw/W pPtgJ/owxsaEcqXJEcIL+CMDaCWvE8mUTxuY4pmJCm6WMPBEM3f8affobB2FMtJ7qI2crJx7ojl xgvXdsuX9EtOecBbxd/N706v8sAbPO2cSehuoXojKHPV81zg+QhoTYPjdqW75nODS26hacjnboO xL/0decenMphAvdsq/GieTqJqbXlITNBQapQQbyLQwxG+KFY
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -47,52 +65,52 @@ X-SA-Exim-Mail-From: ukl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is ignored (apart
-from emitting a warning) and this typically results in resource leaks.
+Hello,
 
-To improve here there is a quest to make the remove callback return
-void. In the first step of this quest all drivers are converted to
-.remove_new(), which already returns void. Eventually after all drivers
-are converted, .remove_new() will be renamed to .remove().
+this series converts all platform drivers below drivers/mailbox that
+make use of .remove() to use .remove_new() instead.
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+See commit 5c5a7680e67b ("platform: Provide a remove callback that
+returns no value") for an extended explanation and the eventual goal.
+The TL;DR; is to make it harder for driver authors to leak resources
+without noticing. The drivers here get it right though and so can be
+converted trivially.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/mailbox/tegra-hsp.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+This is merge window material. All patches are pairwise independent, so
+they can be applied individually.
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index fe29fc2ca526..19ef56cbcfd3 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -868,13 +868,11 @@ static int tegra_hsp_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int tegra_hsp_remove(struct platform_device *pdev)
-+static void tegra_hsp_remove(struct platform_device *pdev)
- {
- 	struct tegra_hsp *hsp = platform_get_drvdata(pdev);
- 
- 	lockdep_unregister_key(&hsp->lock_key);
--
--	return 0;
- }
- 
- static int __maybe_unused tegra_hsp_resume(struct device *dev)
-@@ -953,7 +951,7 @@ static struct platform_driver tegra_hsp_driver = {
- 		.pm = &tegra_hsp_pm_ops,
- 	},
- 	.probe = tegra_hsp_probe,
--	.remove = tegra_hsp_remove,
-+	.remove_new = tegra_hsp_remove,
- };
- 
- static int __init tegra_hsp_init(void)
+Best regards
+Uwe
+
+Uwe Kleine-König (12):
+  mailbox: bcm-flexrm: Convert to platform remove callback returning void
+  mailbox: bcm-pdc: Convert to platform remove callback returning void
+  mailbox: imx: Convert to platform remove callback returning void
+  mailbox: mailbox-test: Convert to platform remove callback returning void
+  mailbox: mtk-cmdq: Convert to platform remove callback returning void
+  mailbox: omap: Convert to platform remove callback returning void
+  mailbox: qcom-apcs-ipc: Convert to platform remove callback returning void
+  mailbox: qcom-ipcc: Convert to platform remove callback returning void
+  mailbox: stm32-ipcc: Convert to platform remove callback returning void
+  mailbox: sun6i-msgbox: Convert to platform remove callback returning void
+  mailbox: tegra-hsp: Convert to platform remove callback returning void
+  mailbox: zynqmp-ipi: Convert to platform remove callback returning void
+
+ drivers/mailbox/bcm-flexrm-mailbox.c    | 6 ++----
+ drivers/mailbox/bcm-pdc-mailbox.c       | 5 ++---
+ drivers/mailbox/imx-mailbox.c           | 6 ++----
+ drivers/mailbox/mailbox-test.c          | 6 ++----
+ drivers/mailbox/mtk-cmdq-mailbox.c      | 5 ++---
+ drivers/mailbox/omap-mailbox.c          | 6 ++----
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 6 ++----
+ drivers/mailbox/qcom-ipcc.c             | 6 ++----
+ drivers/mailbox/stm32-ipcc.c            | 6 ++----
+ drivers/mailbox/sun6i-msgbox.c          | 6 ++----
+ drivers/mailbox/tegra-hsp.c             | 6 ++----
+ drivers/mailbox/zynqmp-ipi-mailbox.c    | 6 ++----
+ 12 files changed, 24 insertions(+), 46 deletions(-)
+
+base-commit: 39676dfe52331dba909c617f213fdb21015c8d10
 -- 
 2.43.0
 
