@@ -1,267 +1,164 @@
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5605D18C24
-	for <linux-tegra@vger.kernel.org>; Wed,  3 Jan 2024 10:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB802199A0;
+	Wed,  3 Jan 2024 12:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xjai7+k5"
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1d4c767d3a8so7830905ad.1
-        for <linux-tegra@vger.kernel.org>; Wed, 03 Jan 2024 02:48:25 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M4eUVlXl"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-50ea9db9e12so58356e87.0;
+        Wed, 03 Jan 2024 04:49:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1704278904; x=1704883704; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pdPU059J9ZVWznV8an692mayob38PCXn1K2je3VxOtQ=;
-        b=Xjai7+k5VtQKzf7LA/eVAKNTdK5PaEGp+RJS0s8tEczECFIeq4sHN1bRTCyrNRSvTH
-         HzjWUV8v3oP/MIgelm1Yc/mnDLqCouyguWsANLDhcd7a04K5TelP14m+dNGRGpSIDkrl
-         xFUCt8fnOKBPEPrRHHBln4CjX1EGi/a/8Lknyayu1bVwqXU0ayNQPwQX2jEWd9GiZFai
-         8YpEmYqmSoUFBAGj6ENaI3qq5i0MTwFxn1FbGLFdRO/iEM7RfzDkvFEgEELBJkUarbwn
-         sHJteICa4PT1bmW3Hhgj7Mx+Ql4bmSDrRjsRlOUD3+06+tPK9e09jEcHVGCCDh//yyE/
-         el6A==
+        d=gmail.com; s=20230601; t=1704286179; x=1704890979; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wlvdoIdh11FpuRMZ6FedfzqCuHP7jE4LAthy5mimGQ4=;
+        b=M4eUVlXlnNKPbawHLNel63bX+s5Co1T15fJ/5Z+gIQ94DNktS4t2uaypEeH25Vliwt
+         254Ku5dJvFvW0T8XEpvHicUNXXFUADvqJdE8Wszu4MrlHz4nsiuQYiFO/Pgwn4+4uLmR
+         NHYlCj7onUVHPLmvj2n6+eRoY1OVpfDqK5sHD1rfvl0fuNkGP+8n7W4szRSsiW73r1hR
+         KFNAjpy4Ef92gdCNlKinXmZVJFGXc67PKXGajSGLgdKdLVt8mInhxCV/0FJwom4BMF7B
+         j/NiA+VdjoG8AiTS6LKHKAx4qAbP1lhEVmbXhQRa5h/SeIjfO8n5gSgPyHbO8Aj2B0D9
+         mmBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704278904; x=1704883704;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1704286179; x=1704890979;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=pdPU059J9ZVWznV8an692mayob38PCXn1K2je3VxOtQ=;
-        b=Yk4wWVj+seMe00m70hQs223QDo+9HkyEIH7KVw9xNl7Nol3cVO+ws6+NRNGdo+9NAA
-         e9oCiYq9dYSjBlQQbW/erbCIMmtd7tUsyjPKjV/y0UJWWKHPCafaRTiH3qpn9hTkwl2T
-         js+GXyBkj/E9o3Z096bQsP6OFgucBzNTCJIEFmmYt2Z8AgFZTGAR3tPT3XbUjq1Z9hwJ
-         4sCvsyVRucGCHd6cigtd8y9b3Zz0lvrFKi29OLnf4I7EqrBnmaj8D4RxYfZ/qTrElYzZ
-         WjRFuFX5/iABJclWmBI4Sl5PuIrk/QnJcK0LqRT4rDOGUT2qXenMN4vSLPxXUqyJeQE6
-         k3GQ==
-X-Gm-Message-State: AOJu0YyGsJNmLV2NGkWRS0AcP6TqpCvvmWztSZKAoZpZEIbyCCeL0Xlv
-	ZpmicFFv9X2CsjRWJme1Os64dlFamTRs8A==
-X-Google-Smtp-Source: AGHT+IGiwlRazKmwSv9SQEFS3/AG7SEW3FZuxDqnkmfBlfZ6Y+vxPON78qJPQ3mDacfO3RhGKwzv5g==
-X-Received: by 2002:a17:902:da81:b0:1d4:c2ad:8ff8 with SMTP id j1-20020a170902da8100b001d4c2ad8ff8mr1891688plx.34.1704278904539;
-        Wed, 03 Jan 2024 02:48:24 -0800 (PST)
-Received: from localhost ([122.172.86.168])
-        by smtp.gmail.com with ESMTPSA id z20-20020a170902ee1400b001d3a9676973sm23495578plb.111.2024.01.03.02.48.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jan 2024 02:48:24 -0800 (PST)
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Dmitry Osipenko <digetx@gmail.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Viresh Kumar <vireshk@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"James E.J. Bottomley" <jejb@linux.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	linux-pm@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-scsi@vger.kernel.org
-Subject: [PATCH] OPP: Remove the unused argument to config_clks_t
-Date: Wed,  3 Jan 2024 16:18:18 +0530
-Message-Id: <f24f32f1213b4b9e9ff2b4a36922f8d6e3abac51.1704278832.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
+        bh=wlvdoIdh11FpuRMZ6FedfzqCuHP7jE4LAthy5mimGQ4=;
+        b=fO9Z0xGa6xx7MInb/O3Ahqe9l+/Kfkorxd+AkLj2sZJvBolyIcDj+6iWkyw7jrid69
+         EgntWHc+VeU5v2zAcx1x47VTNBNzXO+RaFaKbdrgXTIHYd9owyetgV5cVmP60WVOlPyy
+         P9r7Ua9ba1h29+l7AmnGkyWwsmbMq2iSP6fJ+BiLVx9B7YD7plr/fvHcl9usx/XjLERV
+         cxiB/HvJYP8VHbQONZTSd6gphiYRbArtHQwupKdENNYvfkJm0s+ij6XNPiAGDj4Fxl9V
+         0uuPXaTT1aYrqTWnpIrNs1O0RpVfoFNTEQNEQW8pBBS+HJ6/h+mpcO+t1dhCkIXzFhNZ
+         AxsQ==
+X-Gm-Message-State: AOJu0YwGCtm/2jan1+dGwrJO+37u7jyEF9iSUWSsP6wNY312Ghzl3+Jf
+	b+fJPW6d5pw4nTNCvQrHhVxDrllRpuUKJSZzRoA=
+X-Google-Smtp-Source: AGHT+IF5nUu5SjTdeixsvM0AnrVzAg36rJLUQKIKz0wXFwrkqJgkNYNb/njuK9ibM12aGzMMq1XCAbpPloAxjBeWqfA=
+X-Received: by 2002:a05:6512:98a:b0:50e:3b0b:8cd1 with SMTP id
+ w10-20020a056512098a00b0050e3b0b8cd1mr6626174lft.95.1704286178705; Wed, 03
+ Jan 2024 04:49:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20230327-tegra-pmic-reboot-v7-2-18699d5dcd76@skidata.com>
+ <20240102150350.3180741-1-mwalle@kernel.org> <CAJpcXm7W2vckakdFYiT4jssea-AzrZMsjHijfa+QpfzDVL+E3A@mail.gmail.com>
+ <5e13f5e2da9c4f8fc0d4da2ab4b40383@kernel.org>
+In-Reply-To: <5e13f5e2da9c4f8fc0d4da2ab4b40383@kernel.org>
+From: Benjamin Bara <bbara93@gmail.com>
+Date: Wed, 3 Jan 2024 13:49:27 +0100
+Message-ID: <CAJpcXm5gFMYnJ9bSA9nOXhKoibfedxjhRfu92dCmi6sVG3e=7Q@mail.gmail.com>
+Subject: Re: [PATCH v7 2/5] Re: i2c: core: run atomic i2c xfer when !preemptible
+To: Michael Walle <mwalle@kernel.org>
+Cc: benjamin.bara@skidata.com, dmitry.osipenko@collabora.com, 
+	jonathanh@nvidia.com, lee@kernel.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, nm@ti.com, 
+	peterz@infradead.org, rafael.j.wysocki@intel.com, richard.leitner@linux.dev, 
+	stable@vger.kernel.org, treding@nvidia.com, wsa+renesas@sang-engineering.com, 
+	wsa@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The OPP core needs to take care of a special case, where the OPPs aren't
-available for a device, but in order to keep the same unified interface
-for the driver, the same OPP core API must take care of performing a
-simple clk_set_rate() for the device.
+Hi Michael,
 
-This required the extra argument, but that is used only within the OPP
-core and the drivers don't need to take care of that.
+On Wed, 3 Jan 2024 at 10:20, Michael Walle <mwalle@kernel.org> wrote:
+> >> With preemption disabled, this boils down to
+> >>   return system_state > SYSTEM_RUNNING (&& !0)
+> >>
+> >> and will then generate a backtrace splash on each reboot on our
+> >> board:
+> >>
+> >> # reboot -f
+> >> [   12.687169] No atomic I2C transfer handler for 'i2c-0'
+> >> ...
+> >> [   12.806359] Call trace:
+> >> [   12.808793]  i2c_smbus_xfer+0x100/0x118
+> >> ...
+> >>
+> >> I'm not sure if this is now the expected behavior or not. There will
+> >> be
+> >> no backtraces, if I build a preemptible kernel, nor will there be
+> >> backtraces if I revert this patch.
+> >
+> >
+> > thanks for the report.
+> >
+> > In your case, the warning comes from shutting down a regulator during
+> > device_shutdown(), so nothing really problematic here.
+>
+> I tend to disagree. Yes it's not problematic. But from a users point of
+> view, you get a splash of *many* backtraces on every reboot. Btw, one
+> should really turn this into a WARN_ONCE(). But even in this case you
+> might scare users which will eventually lead to more bug reports.
 
-Simplify the external API and handle it differently within the OPP core.
+Sure, but the correct "fix" would be to implement an atomic handler if
+the i2c is used during this late stage. I just meant that the
+device_shutdown() is less problematic than the actual reboot handler.
+Your PMIC seems to not have a reboot handler (registered (yet)), and is
+therefore not "affected".
 
-This shouldn't result in any functional change.
+> > However, later in
+> > the "restart sequence", IRQs are disabled before the restart handlers
+> > are called. If the reboot handlers would rely on irq-based
+> > ("non-atomic") i2c transfer, they might not work properly.
+>
+> I get this from a technical point of view and agree that the correct
+> fix is to add the atomic variant to the i2c driver, which begs the
+> question, if adding the atomic variant to the driver will be considered
+> as a Fixes patch.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-I will be taking this through the PM tree for the upcoming merge window.
-Hopefully this won't create any issues for the ufs and devfreq driver as there
-is no functional change for them.
+I can add a Fixes when I post it. Although the initial patch just makes
+the actual problem "noisier".
 
- drivers/devfreq/tegra30-devfreq.c |  2 +-
- drivers/opp/core.c                | 37 +++++++++++++------------------
- drivers/ufs/core/ufshcd.c         |  3 +--
- include/linux/pm_opp.h            |  5 ++---
- include/ufs/ufshcd.h              |  3 +--
- 5 files changed, 20 insertions(+), 30 deletions(-)
+> Do I get it correct, that in my case the interrupts are still enabled?
+> Otherwise I'd have gotten this warning even before your patch, correct?
 
-diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-index 4a4f0106ab9d..730c6618abc5 100644
---- a/drivers/devfreq/tegra30-devfreq.c
-+++ b/drivers/devfreq/tegra30-devfreq.c
-@@ -823,7 +823,7 @@ static int devm_tegra_devfreq_init_hw(struct device *dev,
- 
- static int tegra_devfreq_config_clks_nop(struct device *dev,
- 					 struct opp_table *opp_table,
--					 struct dev_pm_opp *opp, void *data,
-+					 struct dev_pm_opp *opp,
- 					 bool scaling_down)
- {
- 	/* We want to skip clk configuration via dev_pm_opp_set_opp() */
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 29f8160c3e38..ba5f692e2161 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -940,24 +940,11 @@ static int _set_opp_voltage(struct device *dev, struct regulator *reg,
- 	return ret;
- }
- 
--static int
--_opp_config_clk_single(struct device *dev, struct opp_table *opp_table,
--		       struct dev_pm_opp *opp, void *data, bool scaling_down)
-+static int _opp_clk_set_rate(struct device *dev, struct opp_table *opp_table,
-+			     unsigned long freq)
- {
--	unsigned long *target = data;
--	unsigned long freq;
- 	int ret;
- 
--	/* One of target and opp must be available */
--	if (target) {
--		freq = *target;
--	} else if (opp) {
--		freq = opp->rates[0];
--	} else {
--		WARN_ON(1);
--		return -EINVAL;
--	}
--
- 	ret = clk_set_rate(opp_table->clk, freq);
- 	if (ret) {
- 		dev_err(dev, "%s: failed to set clock rate: %d\n", __func__,
-@@ -969,12 +956,19 @@ _opp_config_clk_single(struct device *dev, struct opp_table *opp_table,
- 	return ret;
- }
- 
-+static int
-+_opp_config_clk_single(struct device *dev, struct opp_table *opp_table,
-+		       struct dev_pm_opp *opp, bool scaling_down)
-+{
-+	return _opp_clk_set_rate(dev, opp_table, opp->rates[0]);
-+}
-+
- /*
-  * Simple implementation for configuring multiple clocks. Configure clocks in
-  * the order in which they are present in the array while scaling up.
-  */
- int dev_pm_opp_config_clks_simple(struct device *dev,
--		struct opp_table *opp_table, struct dev_pm_opp *opp, void *data,
-+		struct opp_table *opp_table, struct dev_pm_opp *opp,
- 		bool scaling_down)
- {
- 	int ret, i;
-@@ -1183,7 +1177,7 @@ static int _disable_opp_table(struct device *dev, struct opp_table *opp_table)
- }
- 
- static int _set_opp(struct device *dev, struct opp_table *opp_table,
--		    struct dev_pm_opp *opp, void *clk_data, bool forced)
-+		    struct dev_pm_opp *opp, bool forced)
- {
- 	struct dev_pm_opp *old_opp;
- 	int scaling_down, ret;
-@@ -1243,7 +1237,7 @@ static int _set_opp(struct device *dev, struct opp_table *opp_table,
- 	}
- 
- 	if (opp_table->config_clks) {
--		ret = opp_table->config_clks(dev, opp_table, opp, clk_data, scaling_down);
-+		ret = opp_table->config_clks(dev, opp_table, opp, scaling_down);
- 		if (ret)
- 			return ret;
- 	}
-@@ -1322,8 +1316,7 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
- 		 * equivalent to a clk_set_rate()
- 		 */
- 		if (!_get_opp_count(opp_table)) {
--			ret = opp_table->config_clks(dev, opp_table, NULL,
--						     &target_freq, false);
-+			ret = _opp_clk_set_rate(dev, opp_table, target_freq);
- 			goto put_opp_table;
- 		}
- 
-@@ -1355,7 +1348,7 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
- 		forced = opp_table->rate_clk_single != target_freq;
- 	}
- 
--	ret = _set_opp(dev, opp_table, opp, &target_freq, forced);
-+	ret = _set_opp(dev, opp_table, opp, forced);
- 
- 	if (target_freq)
- 		dev_pm_opp_put(opp);
-@@ -1387,7 +1380,7 @@ int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
- 		return PTR_ERR(opp_table);
- 	}
- 
--	ret = _set_opp(dev, opp_table, opp, NULL, false);
-+	ret = _set_opp(dev, opp_table, opp, false);
- 	dev_pm_opp_put_opp_table(opp_table);
- 
- 	return ret;
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index bce0d2a9a7f3..51d6c8567189 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -1064,8 +1064,7 @@ static int ufshcd_set_clk_freq(struct ufs_hba *hba, bool scale_up)
- }
- 
- int ufshcd_opp_config_clks(struct device *dev, struct opp_table *opp_table,
--			   struct dev_pm_opp *opp, void *data,
--			   bool scaling_down)
-+			   struct dev_pm_opp *opp, bool scaling_down)
- {
- 	struct ufs_hba *hba = dev_get_drvdata(dev);
- 	struct list_head *head = &hba->clk_list_head;
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 76dcb7f37bcd..c99a66e88e78 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -50,7 +50,7 @@ typedef int (*config_regulators_t)(struct device *dev,
- 			struct regulator **regulators, unsigned int count);
- 
- typedef int (*config_clks_t)(struct device *dev, struct opp_table *opp_table,
--			struct dev_pm_opp *opp, void *data, bool scaling_down);
-+			struct dev_pm_opp *opp, bool scaling_down);
- 
- /**
-  * struct dev_pm_opp_config - Device OPP configuration values
-@@ -181,8 +181,7 @@ int dev_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config);
- int devm_pm_opp_set_config(struct device *dev, struct dev_pm_opp_config *config);
- void dev_pm_opp_clear_config(int token);
- int dev_pm_opp_config_clks_simple(struct device *dev,
--		struct opp_table *opp_table, struct dev_pm_opp *opp, void *data,
--		bool scaling_down);
-+		struct opp_table *opp_table, struct dev_pm_opp *opp, bool scaling_down);
- 
- struct dev_pm_opp *dev_pm_opp_xlate_required_opp(struct opp_table *src_table, struct opp_table *dst_table, struct dev_pm_opp *src_opp);
- int dev_pm_opp_xlate_performance_state(struct opp_table *src_table, struct opp_table *dst_table, unsigned int pstate);
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 7f0b2c5599cd..156e47dd4d9c 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -1255,8 +1255,7 @@ void ufshcd_mcq_enable_esi(struct ufs_hba *hba);
- void ufshcd_mcq_config_esi(struct ufs_hba *hba, struct msi_msg *msg);
- 
- int ufshcd_opp_config_clks(struct device *dev, struct opp_table *opp_table,
--			   struct dev_pm_opp *opp, void *data,
--			   bool scaling_down);
-+			   struct dev_pm_opp *opp, bool scaling_down);
- /**
-  * ufshcd_set_variant - set variant specific data to the hba
-  * @hba: per adapter instance
--- 
-2.31.1.272.g89b43f80a514
+Yes, device_shutdown() is called during
+kernel_{shutdown,restart}_prepare(), before
+machine_{power_off,restart}() is called. The interrupts should therefore
+still be enabled in your case.
 
+> Excuse my ignorance, but when are the interrupts actually disabled
+> during shutdown?
+
+This is usually one of the first things done in machine_restart(),
+before the architecture-specific restart handlers are called (which
+might use i2c). Same for machine_power_off().
+
+> >> OTOH, the driver I'm using (drivers/i2c/busses/i2c-mt65xx.c) has no
+> >> *_atomic(). So the warning is correct. There is also [1], which seems
+> >> to
+> >> be the same issue I'm facing.
+> >>
+> >> -michael
+> >>
+> >> [1]
+> >> https://lore.kernel.org/linux-i2c/13271b9b-4132-46ef-abf8-2c311967bb46@mailbox.org/
+> >
+> >
+> > I tried to implement an atomic handler for the mt65xx, but I don't have
+> > the respective hardware available to test it. I decided to use a
+> > similar
+> > approach as done in drivers/i2c/busses/i2c-rk3x.c, which calls the IRQ
+> > handler in a while loop if an atomic xfer is requested. IMHO, this
+> > should work with IRQs enabled and disabled, but I am not sure if this
+> > is
+> > the best approach...
+>
+> Thanks for already looking into that. Do you want to submit it as an
+> actual patch? If so, you can add
+>
+> Tested-by: Michael Walle <mwalle@kernel.org>
+
+Yes, I can do that - thanks for the quick feedback.
+
+> But again, it would be nice if we somehow can get rid of this huge
+> splash
+> of backtraces on 6.7.x (I guess it's already too late 6.7).
+
+IMHO, converting the error to WARN_ONCE() makes sense to reduce the
+noise, but helps having more reliable reboot handling via i2c. Do you
+think this is a sufficient "short-term solution" to reduce the noise
+before the missing atomic handlers are actually implemented?
