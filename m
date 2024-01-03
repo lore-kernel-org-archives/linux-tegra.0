@@ -1,117 +1,188 @@
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFA018647
-	for <linux-tegra@vger.kernel.org>; Tue,  2 Jan 2024 21:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB85B18027;
+	Wed,  3 Jan 2024 07:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J/iviGxT"
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7b7fbe3db16so507815239f.3
-        for <linux-tegra@vger.kernel.org>; Tue, 02 Jan 2024 13:08:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1704229735; x=1704834535; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6xWplU6V/74zhrE0fU+phMJuFQc01H2ditVc3hsW/nY=;
-        b=J/iviGxTnseTosGYD18/rbF8CRnnRPLnuoyhM+uMxt2rHo8zsjpoIu858je2rx9fSw
-         nNFtxc1LOzjg1Bb5JrY3peV4KD6mCmd/qEqnogrUal+3AjklC1X68C2uWM0UK6ZPDF1m
-         MCEH3hKAIXs4HL84mb8+Hlm2oT8Lv2Jt3Vbtk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704229735; x=1704834535;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6xWplU6V/74zhrE0fU+phMJuFQc01H2ditVc3hsW/nY=;
-        b=SV7g025RUAGbT0VINEv1wJ/fKdURETlANNHcx+P5m8WAiGtJDfyBjRaeVq9Lhpc/az
-         sCcbaXt1wbaibbasKXfELu0Nrv9czT6RVCLCfqF08WiGXla7DbhKdgMO38ifKmK4rqV0
-         FW9CKtAlg+0KzruFvtOqnpXZLT6L6QYYERksjKgp3OzZVmUx0UlbMC0eJQ+DOcg2qfqL
-         yb8boyT7eZXGqhWrb5dxGy1MRRYrx5hlPQCCb4k/MHn0fMnOVns0t8O9KxXLmbM9tF2b
-         9qrAvyVP0KH/LZ3nsm0Q/p+H5xTF9nefZa97Ir95+JuCZVVjpH69QXyktzmG4xr6BQG1
-         /RZw==
-X-Gm-Message-State: AOJu0Yz3TmRIplIJBt8/2aAbGNN08tnA5j59CHrYJaS4DwFiZCNKOuyf
-	6B18ShRPVUdki3yIpAxlvXFu3REb5Y6R
-X-Google-Smtp-Source: AGHT+IHfOsWwH7XeGwxyO82lQ7Beiea2aMSZMszgEK2VhB9dcZJ2V4KeyfBreF3d8IlhWEEKQTrnQw==
-X-Received: by 2002:a05:6e02:1be1:b0:360:2197:4bbe with SMTP id y1-20020a056e021be100b0036021974bbemr15914894ilv.59.1704229735102;
-        Tue, 02 Jan 2024 13:08:55 -0800 (PST)
-Received: from markhas1.lan (71-218-50-136.hlrn.qwest.net. [71.218.50.136])
-        by smtp.gmail.com with ESMTPSA id bo18-20020a056638439200b0046993034c91sm6956978jab.77.2024.01.02.13.08.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jan 2024 13:08:54 -0800 (PST)
-From: Mark Hasemeyer <markhas@chromium.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Raul Rangel <rrangel@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Mark Hasemeyer <markhas@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v4 13/24] arm64: dts: tegra: Enable cros-ec-spi as wake source
-Date: Tue,  2 Jan 2024 14:07:37 -0700
-Message-ID: <20240102140734.v4.13.Ic12bf13efe60f9ffaa444126c55a35fbf6c521cc@changeid>
-X-Mailer: git-send-email 2.43.0.472.g3155946c3a-goog
-In-Reply-To: <20240102210820.2604667-1-markhas@chromium.org>
-References: <20240102210820.2604667-1-markhas@chromium.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Xj7tqw2e"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=m8TIT8ZR/ef2G14NcDFdzrTsyCWSxdFRa0ILBJY3y7inPJ4IMKCYDKDJQbn+3QnTQ8PRlrZLKogciECh1mrmxVCxUJb0/BPhg1ID2Ou3Tv87iRjhq/msJR4Jd0O0EbLLo3DgvMYRYa85y/dHQM33Cm8bS2DxWRQNVb2JIiXObJCC8FvesPum3lx6mnA0AtOJHpar4wAjs6/r6qlWdpjFGUUJBad/gVq9kfaBiBu0kV28UoTzoUVyonugfDKVozODNUA4wl3rqcupDXUL35ek5UrFwPXwqG4F7HxIS5vYh+mToPIepYZ9D+N1OTGGGqabADPTMMEwoFtRWQU3CG7XyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K2S9g/srkZm20I/OWFO0ZtrquDdfYchOBOrmYfcxkaY=;
+ b=CCR80AJuI3o4CxBkGw5tjshLEYBUxGbhhSgJlvRuWFRabkVYH5cTH4ETKfCwvhLtN/FCpFPiuNocXdRGszyO1UYlBXa2VtaCkah8PgsuINjdOaQb1mMkE3Y9aEN55nD/XRIRPZJp/EM7fSwFfa+yZp+pcZYsUxtXwsv862baRNJ2Uo31N1pOKT5Sq81RKIZfyyT1AeSBA3fC3iOzjo88W8/QL0H6agyLrXpueaX65UWJTMpTqEgRwwVl8gFRyfs4zNniF8ip6OXhtuMDdNhTB7Cwd/KfqoNpXcBYW2bXDlnBQBEuF/4m+pKr4IUxQSTV3MSdc9Mgyokl++8UuncUtw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K2S9g/srkZm20I/OWFO0ZtrquDdfYchOBOrmYfcxkaY=;
+ b=Xj7tqw2exD8gmDs/7fabf1XaMz0v8XK/aBHf7peGAqS8Gi/c5YwiEA9YzyEyfKayg1SrVwB79CF/pYLw6t3zfMisDY2Bfl7ynMcEm6r82kEjo3LyWKUntA0W918y3wJqsQnrPurpapqAoLullVpzpVYL2zvlTLO3DXA7h8QQlEo0L+Yr57MrYdXhOe1YcHmy3yKEcR0qAMS3HSc+NwBT58DjjTKGFF3kwyzn9jKGoJLTHWPGrJz7YBN9oWBd9DPe+eBemu+5mZowhzhc+QMn6So21Mo7N4PMRg3FoxX+yr0MtO73c7FLqVf2M3H37oAIJOhbpUwV6ctCS0ptN/YaqQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com (2603:10b6:a03:134::32)
+ by DM4PR12MB5914.namprd12.prod.outlook.com (2603:10b6:8:67::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7135.25; Wed, 3 Jan
+ 2024 07:02:17 +0000
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::48ee:1bc7:7fdf:cd13]) by BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::48ee:1bc7:7fdf:cd13%7]) with mapi id 15.20.7159.013; Wed, 3 Jan 2024
+ 07:02:16 +0000
+Message-ID: <b041d536-213f-490e-a83f-d86fc4149eaa@nvidia.com>
+Date: Wed, 3 Jan 2024 12:32:07 +0530
+User-Agent: Mozilla Thunderbird
+Subject: ASoC: dt-bindings: Query on audio-graph-card DT binding
+To: alsa-devel@alsa-project.org,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ devicetree@vger.kernel.org, robh+dt@kernel.org,
+ Mark Brown <broonie@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, robh+dt@kernel.org,
+ Thierry Reding <thierry.reding@gmail.com>, Jon Hunter
+ <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+References: <dfe363ef-4638-4b5e-8308-73e286ac0b50@nvidia.com>
+Content-Language: en-US
+From: Sameer Pujar <spujar@nvidia.com>
+In-Reply-To: <dfe363ef-4638-4b5e-8308-73e286ac0b50@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN2PR01CA0075.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:23::20) To BYAPR12MB3205.namprd12.prod.outlook.com
+ (2603:10b6:a03:134::32)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR12MB3205:EE_|DM4PR12MB5914:EE_
+X-MS-Office365-Filtering-Correlation-Id: d112455c-8e8b-48d3-1d44-08dc0c29eb58
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	i4yqqM+DdW95de67/CfRFCQZiK4NsNRresMAc23EoD36+SpVHHbNiLd6EFaYGlp/qObSZBwCiZ62MwDS9iHR2Sig4jeqI0osZBhqak70CkQOdLRzFcvWzgLlhRGrEUvtRJSctS3+CuQpSJcgEZknpGlutL9Gin5ZMLQlbC1IRktBnDddZ4VSuF6BxmlRY0Df0vo8lYgLJcM1DzFNyTNzxFhP2TWYr/LicL7RrmrXc/BZcXDBqal1geLva1UnmpA0hkXx16LDOyaIUQ3cTnyyvYMi/7ZhWd9a5IT2u0Cp3fp5PIZed+k6fGPG3Ka1HdAw5Fqy+gXchsQ9/ag47ZITJ6fh8pV/R0NNY3pN+uxGCYA4uD9Z7aFCajxxCoyrmO/u83jPzptPxrClaPC7Njhd02UbKtgR//wpTK5SJQmBSFU+5q7hc0NLxAwqfyrR6cTMJftfGAiwvYL++t8IGbKZhzbHJseOA2rGTWFm9SXASoVztBuvCw5OB/Zo5lafXZa1XZESyFFzVNm7++PBYCIKem+LsU7u2Ef8qALdOU/HucD06w3XqZeG/b6YAkXp5s0lYQzAVyFI3Ysnkcc8vceMbf8ZnP6uVqJPaMUPFCNrWGQ/pBNPvyDFZWFdPFKCdC6EMXWh3emn/h1EVERSkjD1T7XOpITnHJ8v3Blo2O4iuUdrJ/tH+SL5Zj4fD4NXvTZC
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3205.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(376002)(366004)(39860400002)(346002)(396003)(230922051799003)(451199024)(1800799012)(64100799003)(186009)(6512007)(26005)(2616005)(6486002)(4326008)(8676002)(5660300002)(8936002)(41300700001)(6666004)(6506007)(54906003)(2906002)(66556008)(478600001)(66946007)(316002)(66476007)(110136005)(2013699003)(31696002)(86362001)(36756003)(31686004)(38100700002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?emNvS3prUHVIWFhsZy9IMlVpZm5LTnB0Q2VPTzgyMFh2M3hTamlMc0hUdWsx?=
+ =?utf-8?B?VXJFYmNxNldQSEdPbWMrdEUyaVdFcDZCOElwbUc2cVJ2NjRmT09YdjhsalpW?=
+ =?utf-8?B?SjIxVjF1Mnd1QnRtNWNYT0JHeGtzQ1Z6K1RpU1JRbVY0V3oyTWJBVnVCYWpL?=
+ =?utf-8?B?dm9IWDZtdlZMQXlEeTBPTzA4L3NLRDI3c3RTOTRtQmRSQWVNNmJGTENFbjNl?=
+ =?utf-8?B?TTJ2bWdNcUhuTjZhQm80ckl2dkhTQ1lEZkg1SUFGU3dGT05sNFFGbUNGQVZU?=
+ =?utf-8?B?amV6RThkMXJsdzMvVzR4bVBicy95bURFT05nTnFSVVFRc3JMcmYwQldzRGhI?=
+ =?utf-8?B?a1IrczQvSnhNUzMwMmR6cHpRMW50V2p6Y21aUjZkalhCNmRNWldCcjY3ZUZ3?=
+ =?utf-8?B?dExONDduTjVJN2h1WHUyTVIrUUZpcEcreE9KYThnMkRBOFJFS3dpbGFZTEx0?=
+ =?utf-8?B?bk9jWUFGelV5MUdhZGNuVzZlUERSeXp4WmJmc1FLenp1NTZGeEo4SThnNCtU?=
+ =?utf-8?B?aitBN0MzeG1jYW41TmpwcG1qZVI3Wlowdlh6QTVsbTN6K05OWWFXNFRROGdO?=
+ =?utf-8?B?TW43VER1dU94cjdtM0g3bjc2cFNkNDh2UG5PNWl0VFJVdWNsU1dVVkkrRlcw?=
+ =?utf-8?B?R0R0V2d6eWRKamw3R2kyWlVGMUtjQk8vMUNiMGJ1RTZZMkJ0NkFoVys0RTJt?=
+ =?utf-8?B?UHg5bVdJMmdnYlBPYXNEZU5kRGtIVjZoeWloL2dHc2t1eHh0RDB2YUlqZTdI?=
+ =?utf-8?B?L1M1MnJja1VwL1NSUklqaTE5dGI3NXhBTk0vT0VkUVNsVUl6ZVExaHlsRkZB?=
+ =?utf-8?B?eDMzRDJrQ09SY3NqekpxMUY0Yld2ckRnNjE4ME1KOVZ6SGRrcWU4eWlyMXUy?=
+ =?utf-8?B?bDFDK2hEZ01YbGp4ek1udTJJVDFaVFU3cVplZmcrYlEycEthVVQzdVZJa0pw?=
+ =?utf-8?B?Yzh5K1ozR2UzbzRqSklTZDMxMDdpN0dOVHpER2R2OWhQYXU2WXVyb2RqM0pw?=
+ =?utf-8?B?Rmt3ZGpSWXpVeXVhZ21WWHEwN3FBRFBWYVkxL1FrNTFhVVNOSUpsZDUrcEpP?=
+ =?utf-8?B?U0pHN1hEMWVWOWlVMnNCa216WUpRdEZYT3I5S3FuZzZaemVkVXRiY1Robm5u?=
+ =?utf-8?B?YzN0TzdIenlNdmVBeUpIeERXdnZNVXRtalVmUXVFVjZGWmRsbGxUcUUzQXdp?=
+ =?utf-8?B?T2xDWEQrSW9iOEtwTnc0ZDZoMUdpNWFwak1UYTNzbkZDNjRCRDAxL0hUL0lU?=
+ =?utf-8?B?UWQ3Q2c1RW8wZGhjWHdtZWpaOG12R3JJZ0lWclE4V3FFN0krellMNUxqOEJs?=
+ =?utf-8?B?ZW54WjZlcVNsWUNZRkJIRjhrWi93ME5heE5EMUdjVXNNQUVUMEhSWWVJVWJr?=
+ =?utf-8?B?cUxTSXh3OW1pRXdpSjU4YlhFUTUxS2szamZsb3RMQzhja1FBSHozZWRPTklR?=
+ =?utf-8?B?aDg3QmVGa1VLL2tvdCtwTDNaSkhmaGVzU0JyaDF5cGZTYU9SdHRZRzR0S25o?=
+ =?utf-8?B?K2x4MzN4dHlhdjIxdzc3WXd3MTZBZkR5OXBPUmplNnpTZHF5S1dWTzIxZXV3?=
+ =?utf-8?B?dlkwUFhQRjdNYUFZcWRXVlNQZEJlcTg3TFZZbFVuR0VhaWRra0Vsa1dySkNU?=
+ =?utf-8?B?b0Z1MzhTYndNTWxQZk4zVk80aEc5M1F5MUZhcldWdlJseEJ6aFlya292TW44?=
+ =?utf-8?B?Q3FWUUt0dkpqc25MUDd5NWVvQ3hBSTBBK2Zha2dmblNac0EzNFZQTUtjcWVH?=
+ =?utf-8?B?RlZaeGswMWxzT1U2SHZOSEVheXprNlpPT2svTHZOcHdmbnlaalEvVm9URTl5?=
+ =?utf-8?B?aFNFZU5WejNqY1AvTXNuUzB0Vi9ZNXpvNi93aFVTbWxmRjdrdUFDdXE1WWJl?=
+ =?utf-8?B?VThITGFXbFl5OE5BaG1hRVYyZ0hIMFJRUWV2V1R2cmJJczExUmRkTjJvR29H?=
+ =?utf-8?B?OXdFcGZiMWV4UXc5cmsyTmdXNCs1U3BZZ2g3alJNMFN1ek5kSWQ1S3JqRWI3?=
+ =?utf-8?B?UnBzNktDL3dUd3dkOWJ6WjV6QnV5RSthNGg5bVBLZEdLdXJlcUJIWDdJbzFR?=
+ =?utf-8?B?alJLYWtVdTNIY0tUcEhhTjdtYWxZeDBob29ORjlZUGRhdnhDMTczbHNVclFu?=
+ =?utf-8?Q?qdzSG7Q1jnDwipomYj7BJY6yx?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d112455c-8e8b-48d3-1d44-08dc0c29eb58
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3205.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jan 2024 07:02:16.3197
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nux0EfYoo4lT/YDWyukkp9xh12bTistSaPWhj96vy56VzYAPW4vR3jEa50BGqZvft9+vE1oCo6lV/exgQ6scoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5914
 
-The cros_ec driver currently assumes that cros-ec-spi compatible device
-nodes are a wakeup-source even though the wakeup-source property is not
-defined.
+Hi Rob, Mark, Morimoto-san
 
-Some Chromebooks use a separate wake pin, while others overload the
-interrupt for wake and IO. With the current assumption, spurious wakes
-can occur on systems that use a separate wake pin. It is planned to
-update the driver to no longer assume that the EC interrupt pin should
-be enabled for wake.
 
-Add the wakeup-source property to all cros-ec-spi compatible device
-nodes to signify to the driver that they should still be a valid wakeup
-source.
+Build error in the example mentioned earlier seems to be expected since 
+it requires one to one connection between remote endpoints.
 
-Signed-off-by: Mark Hasemeyer <markhas@chromium.org>
----
+Pasting the error I get:
 
-(no changes since v3)
+DTC arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb
+dtc: scripts/dtc/livetree.c:437: propval_cell: Assertion `prop->val.len 
+== sizeof(cell_t)' failed.
+Aborted (core dumped)
+make[3]: *** [scripts/Makefile.lib:419: 
+arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dtb] Error 134
+make[2]: *** [scripts/Makefile.build:480: arch/arm64/boot/dts/nvidia] 
+Error 2
+make[1]: *** [/home/spujar/upstream/kernel/Makefile:1476: dtbs] Error 2
+make[1]: *** Waiting for unfinished jobs....
+   CALL    scripts/checksyscalls.sh
+make: *** [Makefile:234: __sub-make] Error 2
+Execution failed.
 
-Changes in v3:
--Update commit message to provide details of the motivation behind the
-change
+Given this, how an endpoint can be shared? Is only solution is to create 
+dummy endpoints for CPU and connect them to each codec?
+Can you please suggest how this can be addressed?
 
-Changes in v2:
--Split by arch/soc
-
- arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-index bbc2e9bef08da..14d58859bb55c 100644
---- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-@@ -762,6 +762,7 @@ ec: cros-ec@0 {
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(C, 7) IRQ_TYPE_LEVEL_LOW>;
- 			reg = <0>;
-+			wakeup-source;
- 
- 			google,cros-ec-spi-msg-delay = <2000>;
- 
--- 
-2.43.0.472.g3155946c3a-goog
+> Hi Morimoto-san,
+>
+> This question is regarding audio-graph-card.c driver related DT binding.
+>
+> I am looking to enable following DAI link connection in device tree 
+> for Tegra audio:
+>
+>               /-----> codec1 endpoint
+>              /
+> CPU endpoint \
+>               \-----> codec2 endpoint
+>
+>
+> I see that, "remote-endpoint" property can only specify single phandle 
+> object for connection to a remote endpoint. In other words, the link 
+> can be one-to-one. For illustration, please see below example. However 
+> I see it leads to a build error if phandle-array is provided for 
+> "remote-endpoint" property.
+>
+>  cpu_port {
+>      cpu_ep: endpoint {
+>          remote-endpoint = <&codec1_ep>, <&codec2_ep>;
+>      };
+>  };
+>
+>  codec1 {
+>      codec1_ep: endpoint {
+>          remote-endpoint = <&cpu_ep>;
+>      };
+>  };
+>
+>  codec2 {
+>      codec2_ep: endpoint {
+>          remote-endpoint = <&cpu_ep>;
+>      };
+>  };
+>
+> Is there a possibility to re-use the same CPU endpoint for connecting 
+> to multiple codec endpoints like shown in above example?
+>
 
