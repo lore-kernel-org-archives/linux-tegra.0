@@ -1,174 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2042.outbound.protection.outlook.com [40.107.220.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A261A704;
-	Wed,  3 Jan 2024 15:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33AA21375;
+	Thu,  4 Jan 2024 12:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LY8TF53j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CB11C433C8;
-	Wed,  3 Jan 2024 15:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704294458;
-	bh=FCWeGqBB2LoWam8qeYDl6io0kV3y6U6ulHjprFNadU4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LY8TF53jXlgvYfoUfXYHSI9V4LXC6wAVztuySm8Gxb7i58suU6vAm/h8ua4URP2cT
-	 /by7N5Nh0NOpimjVHMZru0eArpOwYgSVyWyo2a8UYjoXkv9Ra3IToB2y6/YxtSYWSF
-	 z2DeGg3H88S5XuwQImnNSdnXoGJ16Ohmb5bGvircawzncFDVHFpARL069/eigGH2bJ
-	 QBtBHohxOsMHrQW2X1JB5WV9o8/Fa7s9udZPAtnJpzzt9jS7SYxyLug5m4wLijU4NE
-	 I7mrM2wNmGlLCVu2FCBIaRN9DZrJE2hUDrqB8pGdSEAW6UIzqLswghBSCdIIA/wgU2
-	 044qpmw1I+azQ==
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UQg5Irm0"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FJ+5MhhtoglouewM3aEyJMjawO0wgaNrm1/3P38pmAcf53eVNd4s0h/rwC7LnhWAbSXDMDmPUmExcAXciPm0nia7GgWwpEsQ2aNBlBJEMpDwtdHQVWzZhedyhdxj4nafdDMSnERyRos9BL8MeTK2U0Hl1xobY6UhnBGdkbmNZCGHU2Pc3uHDalCFvqhPqxM9n60ZFAqRhiapU9E4OXTKI9I+8rAcRB1mnAG71ZjpXGmU5mFIrPx01ZzHT/FSery3pKl9CfievLrTdO85Zh3Hk4yydqm+J9Ael3+7HwPZhB+cEiG1YISfc2+acL+QBYv0f3I8ePuG1X7sgIq5NaSaMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tvcgBwo07ZqkE3UcXqlebkCXSGftW6sAwGPj8JUJ1ns=;
+ b=SlQMZ1Gn5DDfXKvqxEH8kgM5lFXMwDWSR4g9NI9iJ2HmVQIt5oeZhXNMCUfDDYBvEBKOfWRl3FhivbwOXF6J1cWaS78eGePvI4MFlDTeqZIhPdNUp06eXcgAFiuXKt1/IAldCvwaPDXX9kBynz+RY35RVtckIhcfzkrLKFPhel2+5BPunITc255WcV0u0ZtTW8tn52r+sw5v9CyCZBnPXZWL6PqjSiuY3Zv/HCtr2hzLuRqLsTjUN1I/VepqPT6zJvkJYeyATVNMNFWBy0nthGxxr2pjpvq8VhAlz3VWUqaC1KYCfVKZXqxyVfVxn6ulKvn/Loj/1XH2DIrvC26Vig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tvcgBwo07ZqkE3UcXqlebkCXSGftW6sAwGPj8JUJ1ns=;
+ b=UQg5Irm02D1JXYzYHDXR1MPhAxUS2nMV4qj9ElgMQhub7GuTSa61eyf80fagxX0do4poB8LZkRWAMji4DhSMP6C+2mioQngVSUkXO0nqDas4cFs4CetcyCynJQSe1UYRG0uQo0aszaj3ze3oCNdtytzjwXdvHMo38PQjoaLu2S7K2z4/pQQF5LXntEaJB+slRxEAozgRKjpi0SC+WM8noAPl+Qhj6n2iEn/iS7big1U7OxEWIvcYjzCaHp7lUM/fsa21NmtPk6/E3tFUciuk+lFGCwWGB5V9ZObUB4Qgxbd5bOhH2d4JlTsEKPn+D6KkfdEwGpRy7T/lrjR4KMkggA==
+Received: from DM6PR06CA0076.namprd06.prod.outlook.com (2603:10b6:5:336::9) by
+ SA0PR12MB7461.namprd12.prod.outlook.com (2603:10b6:806:24b::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7159.13; Thu, 4 Jan 2024 12:11:49 +0000
+Received: from CY4PEPF0000FCBE.namprd03.prod.outlook.com
+ (2603:10b6:5:336:cafe::d7) by DM6PR06CA0076.outlook.office365.com
+ (2603:10b6:5:336::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.14 via Frontend
+ Transport; Thu, 4 Jan 2024 12:11:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CY4PEPF0000FCBE.mail.protection.outlook.com (10.167.242.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7159.9 via Frontend Transport; Thu, 4 Jan 2024 12:11:48 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 4 Jan 2024
+ 04:11:42 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Thu, 4 Jan 2024 04:11:42 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
+ Transport; Thu, 4 Jan 2024 04:11:42 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/75] 5.10.206-rc1 review
+In-Reply-To: <20240103164842.953224409@linuxfoundation.org>
+References: <20240103164842.953224409@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 03 Jan 2024 16:07:32 +0100
-From: Michael Walle <mwalle@kernel.org>
-To: Benjamin Bara <bbara93@gmail.com>
-Cc: benjamin.bara@skidata.com, dmitry.osipenko@collabora.com,
- jonathanh@nvidia.com, lee@kernel.org, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, nm@ti.com,
- peterz@infradead.org, rafael.j.wysocki@intel.com, richard.leitner@linux.dev,
- stable@vger.kernel.org, treding@nvidia.com,
- wsa+renesas@sang-engineering.com, wsa@kernel.org
-Subject: Re: [PATCH v7 2/5] Re: i2c: core: run atomic i2c xfer when
- !preemptible
-In-Reply-To: <CAJpcXm5gFMYnJ9bSA9nOXhKoibfedxjhRfu92dCmi6sVG3e=7Q@mail.gmail.com>
-References: <20230327-tegra-pmic-reboot-v7-2-18699d5dcd76@skidata.com>
- <20240102150350.3180741-1-mwalle@kernel.org>
- <CAJpcXm7W2vckakdFYiT4jssea-AzrZMsjHijfa+QpfzDVL+E3A@mail.gmail.com>
- <5e13f5e2da9c4f8fc0d4da2ab4b40383@kernel.org>
- <CAJpcXm5gFMYnJ9bSA9nOXhKoibfedxjhRfu92dCmi6sVG3e=7Q@mail.gmail.com>
-Message-ID: <6f321c457d1c66783480382929c94e0c@kernel.org>
-X-Sender: mwalle@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <c8cf41ba-ee61-49ee-9a9a-0eb1a8da5585@drhqmail203.nvidia.com>
+Date: Thu, 4 Jan 2024 04:11:42 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBE:EE_|SA0PR12MB7461:EE_
+X-MS-Office365-Filtering-Correlation-Id: adce727d-0199-4822-7a65-08dc0d1e53eb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	F8p3bFohfH1Heh02anvsY75qieNrpcdyBQf42E+dIA3CCW8E6UUY0hxr6ZB0nHoqieI2CHWDOLkxwFetOfg9ZS+WM5dehK28WKXuDcaQx8SeqVhXlkQOQSeEfO9mhWJ8M80FHVYU892W38I90R+qqSFK9ZM/7xuKJX2s8Ba7nB7ENlfExTdMaUwj/zoCEO0cnolBBmxg7YcmnWPiHDS8cLsbsrMjfSkVU6J3c7RttH7CqvcTJhnjWMeJmzmOO7ZcxlKWzNyxzLH0EdDfRbu9Ba4Bt411W2eOQGDB2ZxZj+2BfXuLpc5qWESWnOv+auRWpyOP4HYoJN4y7uiKPeZPkKyCHf0Q6NaPbWjfZx/ZDCygXpFVN+xHcmhY6tQ3clLwqN1F/R1RB7fvNlhiAFNL4L/Fe1wzjNcVTZ/olVwd62scrL/K7dba8Uqx3KPZzvn7phuufS47VITTMEhOLWUC1EGdnPu5y0gbn2Xc8Y8UUb/iLwwxBaTKtt7xoIcajp2Ty9hoGywrjBx82nMUo5SVCv0DPJDd/N8Mw1a5qS8pce6F/aK8CruM82Rl7XmiMWVLVTnh/dAfb4Bn3SKCLyl9MQeXwexK8CxxpGpa/o0glP2T6sbgm9APQ/8Kcujbhb1WvDF9N6M42y1AYBxKEfIVtkL8kNQTN4pmiah9rAZV0qcvwcYZ5OAYZXo5+U7tpeKtpdyUSm3v2wnoTPT+qHhTtN/XM/cuxm8+q3+RFobJMHYKB/sYLrwnS1WeiA6hVqpGC3uz/B2WTk79VGDHEY+675Pwl74fE9Ei1y7U/NyttXA=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(396003)(346002)(136003)(376002)(230922051799003)(64100799003)(451199024)(1800799012)(82310400011)(186009)(36840700001)(40470700004)(46966006)(31696002)(86362001)(356005)(7636003)(478600001)(966005)(70206006)(70586007)(31686004)(54906003)(6916009)(26005)(336012)(426003)(7416002)(5660300002)(2906002)(8676002)(316002)(8936002)(4326008)(36860700001)(82740400003)(40480700001)(40460700003)(47076005)(41300700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jan 2024 12:11:48.6951
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: adce727d-0199-4822-7a65-08dc0d1e53eb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCBE.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7461
 
-Hi Benjamin,
+On Wed, 03 Jan 2024 17:54:41 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.206 release.
+> There are 75 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 05 Jan 2024 16:47:49 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.206-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
->> >> With preemption disabled, this boils down to
->> >>   return system_state > SYSTEM_RUNNING (&& !0)
->> >>
->> >> and will then generate a backtrace splash on each reboot on our
->> >> board:
->> >>
->> >> # reboot -f
->> >> [   12.687169] No atomic I2C transfer handler for 'i2c-0'
->> >> ...
->> >> [   12.806359] Call trace:
->> >> [   12.808793]  i2c_smbus_xfer+0x100/0x118
->> >> ...
->> >>
->> >> I'm not sure if this is now the expected behavior or not. There will
->> >> be
->> >> no backtraces, if I build a preemptible kernel, nor will there be
->> >> backtraces if I revert this patch.
->> >
->> >
->> > thanks for the report.
->> >
->> > In your case, the warning comes from shutting down a regulator during
->> > device_shutdown(), so nothing really problematic here.
->> 
->> I tend to disagree. Yes it's not problematic. But from a users point 
->> of
->> view, you get a splash of *many* backtraces on every reboot. Btw, one
->> should really turn this into a WARN_ONCE(). But even in this case you
->> might scare users which will eventually lead to more bug reports.
-> 
-> Sure, but the correct "fix" would be to implement an atomic handler if
-> the i2c is used during this late stage. I just meant that the
-> device_shutdown() is less problematic than the actual reboot handler.
-> Your PMIC seems to not have a reboot handler (registered (yet)), and is
-> therefore not "affected".
-> 
->> > However, later in
->> > the "restart sequence", IRQs are disabled before the restart handlers
->> > are called. If the reboot handlers would rely on irq-based
->> > ("non-atomic") i2c transfer, they might not work properly.
->> 
->> I get this from a technical point of view and agree that the correct
->> fix is to add the atomic variant to the i2c driver, which begs the
->> question, if adding the atomic variant to the driver will be 
->> considered
->> as a Fixes patch.
-> 
-> I can add a Fixes when I post it. Although the initial patch just makes
-> the actual problem "noisier".
+All tests passing for Tegra ...
 
-As far as I understand, there was no problem (for me at least),
-because the interrupts were still enabled at this time. But now,
-there is the problem with getting these backtraces and with that
-the user reports.
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    68 tests:	68 pass, 0 fail
 
-Don't get me wrong, I'm all for the correct fix here. But at the
-same time I fear all the reports we'll be getting. And in the meantime
-there was already a new one.
+Linux version:	5.10.206-rc1-g6ed2e58a1d40
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
->> Do I get it correct, that in my case the interrupts are still enabled?
->> Otherwise I'd have gotten this warning even before your patch, 
->> correct?
-> 
-> Yes, device_shutdown() is called during
-> kernel_{shutdown,restart}_prepare(), before
-> machine_{power_off,restart}() is called. The interrupts should 
-> therefore
-> still be enabled in your case.
-> 
->> Excuse my ignorance, but when are the interrupts actually disabled
->> during shutdown?
-> 
-> This is usually one of the first things done in machine_restart(),
-> before the architecture-specific restart handlers are called (which
-> might use i2c). Same for machine_power_off().
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Thanks for explaining.
-
->> >> OTOH, the driver I'm using (drivers/i2c/busses/i2c-mt65xx.c) has no
->> >> *_atomic(). So the warning is correct. There is also [1], which seems
->> >> to
->> >> be the same issue I'm facing.
->> >>
->> >> -michael
->> >>
->> >> [1]
->> >> https://lore.kernel.org/linux-i2c/13271b9b-4132-46ef-abf8-2c311967bb46@mailbox.org/
->> >
->> >
->> > I tried to implement an atomic handler for the mt65xx, but I don't have
->> > the respective hardware available to test it. I decided to use a
->> > similar
->> > approach as done in drivers/i2c/busses/i2c-rk3x.c, which calls the IRQ
->> > handler in a while loop if an atomic xfer is requested. IMHO, this
->> > should work with IRQs enabled and disabled, but I am not sure if this
->> > is
->> > the best approach...
->> 
->> Thanks for already looking into that. Do you want to submit it as an
->> actual patch? If so, you can add
->> 
->> Tested-by: Michael Walle <mwalle@kernel.org>
-> 
-> Yes, I can do that - thanks for the quick feedback.
-> 
->> But again, it would be nice if we somehow can get rid of this huge
->> splash
->> of backtraces on 6.7.x (I guess it's already too late 6.7).
-> 
-> IMHO, converting the error to WARN_ONCE() makes sense to reduce the
-> noise, but helps having more reliable reboot handling via i2c. Do you
-> think this is a sufficient "short-term solution" to reduce the noise
-> before the missing atomic handlers are actually implemented?
-
-Turning that WARN into a WARN_ONCE is one thing. But it is still odd
-that don't I get a warning with preemption enabled. Is that because
-preemptible() will still return 1 until interrupts are actually 
-disabled?
-Can we achieve something similar with kernels without preemption 
-support?
-IOW, just warn iff there is an actual error, that is if i2c_xfer()
-is called with interrupt off?
-
--michael
+Jon
