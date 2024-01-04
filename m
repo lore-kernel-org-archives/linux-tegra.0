@@ -1,79 +1,143 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E802230B;
-	Thu,  4 Jan 2024 12:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573FE241E4;
+	Thu,  4 Jan 2024 15:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdF1P6fb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44BC1C433C7;
-	Thu,  4 Jan 2024 12:56:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704372972;
-	bh=hJwTVTNH2vMOH8QEELzhJd21g+u5Zo0IhLOmEiOa2FQ=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=SdF1P6fbSuP2XN1mOCPcpcchu1Env+KErc6rlATyaUk1S0JX4KH6Q6zB9HoRpidDm
-	 vOA4qhhL6u+ZSRA+jurELNvacJU7Wd81xOvhCYYzfavlS3Xi83JXLZPivdztdczDCD
-	 5D7NZ56DoEhA/bFbMt2VtOOhVq+KlfOE3yAToRipWGs+sbmnD8lQCJBXtxQco7D7Gl
-	 uE6BtpBK2DLBMag6blwDoc+r5985POYv2rkmYXq3UatubqGr3iEP5rWS4+rHltA2Sb
-	 V+1Yjk3E0RBrautonp+nqrPuYrLjhSr7mkTCHg32A4btF4tIpjYVjjocfX7aJkUNOo
-	 pMfGusoCFv2mA==
-Message-ID: <d994e6c3-f69e-4910-b699-65cb3ab6c72b@kernel.org>
-Date: Thu, 4 Jan 2024 13:56:03 +0100
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Pae+nnL8";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="d4W1wAY3"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CBE9822090;
+	Thu,  4 Jan 2024 15:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1704382280; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fzC23ESDAqjrYsUUWU3jTenMnuzE0UYEATU9SXb7+hA=;
+	b=Pae+nnL8GFn/90/6MVvjWD52MleXZMEQSfyVMqUsSKCAAx6kTTQ7y/fR66ckCQIKBeUAWK
+	ZfkewmROo/43t3zJCXwA4wYyzrHCpas+/WrNiHncgarksTqf+Lw1E9AYw5YalW31ApoY+p
+	y/Ok7gnLnUEo3mCXBRa4HaaMb+5GVtI=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1704382279; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fzC23ESDAqjrYsUUWU3jTenMnuzE0UYEATU9SXb7+hA=;
+	b=d4W1wAY3OJtJtth1XCzoTR7umctbQgU0lYLtet8VnS+QUeM0A3AJQV+WHXCTfVtktmNHnL
+	9d5K3STBwSK115bhRlI9joaJ/AMggRm/BXcBxrrEBrOVb2hmKluJ3nUltLD//+znrx279P
+	D3ebRpFcyuqMyw7qj9a8bYKRWfjXt9Q=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 11D3A13722;
+	Thu,  4 Jan 2024 15:31:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cw50A0fPlmUBUAAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Thu, 04 Jan 2024 15:31:19 +0000
+Date: Thu, 4 Jan 2024 16:31:17 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, 
+	alyssa@rosenzweig.io, asahi@lists.linux.dev, baolu.lu@linux.intel.com, 
+	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, iommu@lists.linux.dev, 
+	jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org, 
+	krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	lizefan.x@bytedance.com, marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com, 
+	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
+	yu-cheng.yu@intel.com, rientjes@google.com
+Subject: Re: [PATCH v3 00/10] IOMMU memory observability
+Message-ID: <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] OPP: Remove the unused argument to config_clks_t
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Bart Van Assche <bvanassche@acm.org>, Dmitry Osipenko <digetx@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Viresh Kumar <vireshk@kernel.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Alim Akhtar <alim.akhtar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org,
- Avri Altman <avri.altman@wdc.com>, Bjorn Andersson <andersson@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <f24f32f1213b4b9e9ff2b4a36922f8d6e3abac51.1704278832.git.viresh.kumar@linaro.org>
- <64ee255e-9a5a-405e-b342-e91c55bd95ce@kernel.org>
-In-Reply-To: <64ee255e-9a5a-405e-b342-e91c55bd95ce@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3miwvahtspdiywqu"
+Content-Disposition: inline
+In-Reply-To: <20231226200205.562565-1-pasha.tatashin@soleen.com>
+X-Spam-Level: 
+X-Spam-Level: 
+X-Spam-Score: -0.42
+X-Rspamd-Queue-Id: CBE9822090
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=d4W1wAY3
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Bar: /
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-0.42 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	 URIBL_BLOCKED(0.00)[suse.com:dkim,soleen.com:email];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	 BAYES_HAM(-0.01)[51.19%];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	 DKIM_TRACE(0.00)[suse.com:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_TWELVE(0.00)[44];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim];
+	 SIGNED_PGP(-2.00)[];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+,1:+,2:~];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 FREEMAIL_CC(0.00)[linux-foundation.org,samsung.com,rosenzweig.io,lists.linux.dev,linux.intel.com,google.com,vger.kernel.org,lwn.net,redhat.com,infradead.org,cmpxchg.org,sntech.de,gmail.com,nvidia.com,8bytes.org,linaro.org,kvack.org,lists.infradead.org,bytedance.com,marcan.st,kernel.org,arm.com,sholland.org,amd.com,svenpeter.dev,csie.org,intel.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
 
 
+--3miwvahtspdiywqu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 4.01.2024 13:53, Konrad Dybcio wrote:
-> 
-> On 3.01.2024 11:48, Viresh Kumar wrote:
->> The OPP core needs to take care of a special case, where the OPPs aren't
->> available for a device, but in order to keep the same unified interface
->> for the driver, the same OPP core API must take care of performing a
->> simple clk_set_rate() for the device.
->>
->> This required the extra argument, but that is used only within the OPP
->> core and the drivers don't need to take care of that.
->>
->> Simplify the external API and handle it differently within the OPP core.
->>
->> This shouldn't result in any functional change.
-> Hi, so this apparently breaks serial on Qualcomm platforms using
-> "qcom,geni-debug-uart".. I'm seeing garbage on the console, likely
-> meaning that ratesetting wasn't done.
+Hello.
 
-+CC Bjorn, Dmitry
+On Tue, Dec 26, 2023 at 08:01:55PM +0000, Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
+> This patch series solves this problem by adding both observability to
+> all pages that are allocated by IOMMU, and also accountability, so
+> admins can limit the amount if via cgroups.
 
-Probably also worth noting it only happens when an OPP table is present
-in the device tree.
+Maybe this is a mismatch in vocabulary what you mean by the verb
+"limit". But I don't see in the patchset that the offending pages would
+be allocated with GFP_ACCOUNT. So the result is that the pages are
+accounted (you can view the amount in memory.stat) but they are not
+subject to memcg limits.
 
-Konrad
+Is that what you intend?
+
+
+Regards,
+Michal
+
+--3miwvahtspdiywqu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZZbPOgAKCRAGvrMr/1gc
+jk4WAQCSVaG9CWTytNlHm4t/CSbpxTWFYWcybzn/jqIJ0y0DDgEA0/XJAjN4NyF+
+F6HbClZ0bzyKHY2eGvX2UwXRtcfFPQM=
+=GWPV
+-----END PGP SIGNATURE-----
+
+--3miwvahtspdiywqu--
