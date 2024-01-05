@@ -1,148 +1,110 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBC022F04;
-	Fri,  5 Jan 2024 09:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A116124A13
+	for <linux-tegra@vger.kernel.org>; Fri,  5 Jan 2024 10:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="LOl7umdX";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="oXf6BzBU"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C4C9D21F4F;
-	Fri,  5 Jan 2024 09:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1704445339; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/Hmj9D9VfyQx+ZfVXhsSYh7Uls173247uQLnYHxXG1M=;
-	b=LOl7umdXMasBBJC+adYeUl4Qi2+31gpUnZx2Dszu/570f6w9mSpa5Zj2pQL35AmskmGqPM
-	bRGrv8eW8BsoW3ia+yEWFtC0eKHgC6MUnRuXnnLFT3B0EOt4qzWhLqyTowMGBaNBPaCyEI
-	ginbt+IEW3mLW7T0tgfzQTVplxmymGQ=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1704445338; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/Hmj9D9VfyQx+ZfVXhsSYh7Uls173247uQLnYHxXG1M=;
-	b=oXf6BzBUGOHvQ67mDKNH8+c9QYm0uiGfDeK4Ufa8ynqSMGwJKittfVFmT+4clTun94BiM9
-	zEnRGSQskkF33k+CycmilhUBqsV+8Aw6RSsF4gcF7o1WH7RzsB2jc/9clyNEy65noVfvVK
-	WrhQcDV6UJKqajwr2AxsXuroJXVKJpU=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93371137E8;
-	Fri,  5 Jan 2024 09:02:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zoe2I5rFl2VvRgAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Fri, 05 Jan 2024 09:02:18 +0000
-Date: Fri, 5 Jan 2024 10:02:17 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, 
-	alyssa@rosenzweig.io, asahi@lists.linux.dev, baolu.lu@linux.intel.com, 
-	bhelgaas@google.com, cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, iommu@lists.linux.dev, 
-	jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org, 
-	krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	lizefan.x@bytedance.com, marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com, 
-	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
-	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
-	yu-cheng.yu@intel.com, rientjes@google.com
-Subject: Re: [PATCH v3 00/10] IOMMU memory observability
-Message-ID: <elsuzdcx2qpnazvz2ayzmco4ctms5ci3iet3k7ggbjt3p2pfk2@tvr3plow26oi>
-References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
- <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
- <CA+CK2bBE1bQuqZy3cbWiv8V3vJ8YNJZRayp6Wv-j2_9i37XT4g@mail.gmail.com>
- <eng4vwaci5hwlicszgcld6uny55vll2bfs3vp2yjbjf3exhamg@zf6yc2uhax7w>
- <CA+CK2bCUGepLLA2Hsmq00XEhPzLWPb5CjzY_UPT0qWSKastjAQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B4n0J9fo"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1d426ad4433so9427015ad.0
+        for <linux-tegra@vger.kernel.org>; Fri, 05 Jan 2024 02:36:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1704450962; x=1705055762; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aYVk8A2W+FUtJ8Xy1Wnlgo/2i74l4ok4AKaqwgOLkgQ=;
+        b=B4n0J9fo8Ijo8Pif/PrLgphBQxS+cnNkdD0yjCVLLWzjSL+MgVnsRRGSPrLje1yc4O
+         Vk3bTc7kkFjGWcuXHeVM5Hk6HNo63tUGjxmfsr9/g0AdsiFeAtZhYQ74ai/i7zpWlyfX
+         s+vazXxvZTmYnhx/NF2wqbuXRDMfWUl7xIoeJGVtyKZ7hhou0mltw1sUIj99fagILEUj
+         cVn6lr7/M8y0ufeamZYHPuH+quR1j1nJFBWOPtaNKMn625Dg1G1+WZCQLNJi9fVGbNFf
+         Yl70CMhxLmtleVgriNhbymQKCQZuRDjQWyNEdU//udzx7/4K/i4T0qHYZ91Eo5fCBtOR
+         zBeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704450962; x=1705055762;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aYVk8A2W+FUtJ8Xy1Wnlgo/2i74l4ok4AKaqwgOLkgQ=;
+        b=pvYPnGd6PIel2xSfrPS2CCUfAr7pYUO1OZK6/is3EStXyOGsO7yCMdjw7w+EaAy1c0
+         Fjgsa2c2jIXKWbsqbAnwip3FLoOcNzyelRcxNK3ZC12cS2SlF6ZGlO1AHy7LUp4UnD52
+         az0D80JLnzhlZ9YzZoiMYEeQzcijA3eWJ2yjLjQkGAUhfniVsIC+z5kzvPzSM0inqEMG
+         IiKtPV3+b5m+KtbqRpozbi8sq21poehIVm1hcmFce9v8mHnWFgZLJd+5djn6PKTew1i0
+         GThaoX4EN2MD1CeTNRXrwW41qX5OnEGa3lvJFzd47k1u2hjYqBeJPuYMPLJLQnMG5v3q
+         sOzQ==
+X-Gm-Message-State: AOJu0Yz/KDI5s3N65DMGVqbEHk6XP3tX3uDYNAVN9IJZigLgFPhT+nef
+	eCVHeJuOsHr1uYyXCBLyEIAtWvO2bqNriBZ6n0ehv/2143U=
+X-Google-Smtp-Source: AGHT+IHoKcEtt38NlGK00XipqMe2SBKo1AhufkFFOv92P9hxGY8Eq/awqID3GPMUNAoD8jAAyAXh8Q==
+X-Received: by 2002:a17:903:1c4:b0:1d4:2732:5cfb with SMTP id e4-20020a17090301c400b001d427325cfbmr1971565plh.100.1704450962074;
+        Fri, 05 Jan 2024 02:36:02 -0800 (PST)
+Received: from localhost ([122.172.86.168])
+        by smtp.gmail.com with ESMTPSA id g13-20020a170902d5cd00b001d08bbcf78bsm1103069plh.74.2024.01.05.02.36.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jan 2024 02:36:01 -0800 (PST)
+Date: Fri, 5 Jan 2024 16:05:59 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bart Van Assche <bvanassche@acm.org>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, Viresh Kumar <vireshk@kernel.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	MyungJoo Ham <myungjoo.ham@samsung.com>, Nishanth Menon <nm@ti.com>,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Avri Altman <avri.altman@wdc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH] OPP: Remove the unused argument to config_clks_t
+Message-ID: <20240105103559.jj4vbo4fnhodayvx@vireshk-i7>
+References: <f24f32f1213b4b9e9ff2b4a36922f8d6e3abac51.1704278832.git.viresh.kumar@linaro.org>
+ <64ee255e-9a5a-405e-b342-e91c55bd95ce@kernel.org>
+ <d994e6c3-f69e-4910-b699-65cb3ab6c72b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p5ofvbvnu5dmxsky"
-Content-Disposition: inline
-In-Reply-To: <CA+CK2bCUGepLLA2Hsmq00XEhPzLWPb5CjzY_UPT0qWSKastjAQ@mail.gmail.com>
-X-Spam-Level: 
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=oXf6BzBU
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-5.22 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 TO_DN_SOME(0.00)[];
-	 R_RATELIMIT(0.00)[to_ip_from(RLn3qdfh3r5akp7hsapswoh51s)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.com:+];
-	 MX_GOOD(-0.01)[];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 SIGNED_PGP(-2.00)[];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+,1:+,2:~];
-	 BAYES_HAM(-0.11)[66.01%];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	 URIBL_BLOCKED(0.00)[suse.com:dkim,soleen.com:email];
-	 FROM_HAS_DN(0.00)[];
-	 DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
-	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	 RCPT_COUNT_TWELVE(0.00)[44];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[linux-foundation.org,samsung.com,rosenzweig.io,lists.linux.dev,linux.intel.com,google.com,vger.kernel.org,lwn.net,redhat.com,infradead.org,cmpxchg.org,sntech.de,gmail.com,nvidia.com,8bytes.org,linaro.org,kvack.org,lists.infradead.org,bytedance.com,marcan.st,kernel.org,arm.com,sholland.org,amd.com,svenpeter.dev,csie.org,intel.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:104:10:150:64:97:from]
-X-Spam-Score: -5.22
-X-Rspamd-Queue-Id: C4C9D21F4F
-X-Spam-Flag: NO
-
-
---p5ofvbvnu5dmxsky
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <d994e6c3-f69e-4910-b699-65cb3ab6c72b@kernel.org>
 
-On Thu, Jan 04, 2024 at 02:12:26PM -0500, Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
-> Yes, we will have a difference between GFP_ACCOUNT and what
-> NR_IOMMU_PAGES shows. GFP_ACCOUNT is set only where it makes sense to
-> charge to user processes, i.e. IOMMU Page Tables, but there more IOMMU
-> shared data that should not really be charged to a specific process.
+On 04-01-24, 13:56, Konrad Dybcio wrote:
+> 
+> 
+> On 4.01.2024 13:53, Konrad Dybcio wrote:
+> > 
+> > On 3.01.2024 11:48, Viresh Kumar wrote:
+> >> The OPP core needs to take care of a special case, where the OPPs aren't
+> >> available for a device, but in order to keep the same unified interface
+> >> for the driver, the same OPP core API must take care of performing a
+> >> simple clk_set_rate() for the device.
+> >>
+> >> This required the extra argument, but that is used only within the OPP
+> >> core and the drivers don't need to take care of that.
+> >>
+> >> Simplify the external API and handle it differently within the OPP core.
+> >>
+> >> This shouldn't result in any functional change.
+> > Hi, so this apparently breaks serial on Qualcomm platforms using
+> > "qcom,geni-debug-uart".. I'm seeing garbage on the console, likely
+> > meaning that ratesetting wasn't done.
+> 
+> +CC Bjorn, Dmitry
+> 
+> Probably also worth noting it only happens when an OPP table is present
+> in the device tree.
 
-I see. I'd suggest adding this explanation to commit 10/10 message
-(perhaps with some ballpark numbers of pages). In order to have a
-reference and understadning if someone decided to charge (and limit) all
-in the future.
+Found the issue. Dropped the patch for now. Not sure if there is a
+clean way of handling it right now.
 
-Thanks,
-Michal
-
---p5ofvbvnu5dmxsky
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZZfFiAAKCRAGvrMr/1gc
-jvXNAQC/s1r4INt0DOMzuMTQyF7r+E2pYEbj7Prf+TyU1lbn7QD/bVGBlsIv9kpI
-Hr5Fq+4l1uV/keTc7yErY9BpbizGVQ0=
-=aBiM
------END PGP SIGNATURE-----
-
---p5ofvbvnu5dmxsky--
+-- 
+viresh
