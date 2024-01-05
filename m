@@ -1,112 +1,163 @@
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BE32C18E
-	for <linux-tegra@vger.kernel.org>; Thu,  4 Jan 2024 19:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BD05228;
+	Fri,  5 Jan 2024 04:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="F/ZnFVg7"
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-6dc36e501e1so517116a34.1
-        for <linux-tegra@vger.kernel.org>; Thu, 04 Jan 2024 11:13:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1704395583; x=1705000383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/+vYEuDAPJ/iEdESxX2pInRN4g9EPXyQ5h9FSdd/4u4=;
-        b=F/ZnFVg7p6RCRwo6c599coMU7gxw34TnRuIn9tv4NSDTLCFyNIcCycMnVBIoSBhUaf
-         5VePqzrdqqOPRKKkraOQpG8XlgFm3zjmU3ROzjemte9baJ4kCqNNrgdAqngJeCHvlLMT
-         ccN+J71GjNlNUYaCcvaMn9xh9mjC0xYx+SwN4B6qr/yTTMnZRYvNOhLp64UX+NkJd/Vy
-         YSkeOW4R3gS7ZDU8/YKly32rHGE+xlyTcPg4qLxF5bOlnB3yUbFqy9azk3VRBB7HpFXx
-         waNjhIskVtiY0gZZye1eBD20fLHFMqL1LxWwap0rGSneRmh7FVOv1Qc8SWhK/C/qEkoW
-         tynA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704395583; x=1705000383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/+vYEuDAPJ/iEdESxX2pInRN4g9EPXyQ5h9FSdd/4u4=;
-        b=virUmZE9IWusBiBEJb/S4X78IZCR/8LCnklFkK01ViHCQmq+98Qpt7Hi44B3PaM2BG
-         aHwb9U7IZ4ik2gAexCdv8I+Hw4OkhG1tG4Eiigw2QQsmrcVshyFPQXgwRMZR4OR5Nzto
-         rZM0Aot/1JlLRpY3wZHP1yNFLUFKqmxim/h/O2aEj/YoiPrJ0+lTkrg1hUVqi8mxzH2T
-         xY22zZLEFb3mvZkkxrvcU7JVE0k6eHz0W/tYuchCQ589wXhV98KnKTRHd9a2GEYJrxOK
-         rdn1ZiC/tQW2kiHeGehiiszLDEUkchnBO4yhv+8/1EPgfqHF6/6fZfwpt+8GOppjEOWV
-         KvNA==
-X-Gm-Message-State: AOJu0YwQOurkepqQpJ2pvhCxR8b7dkwL+LtVzr0IFgKy/w45r3W6bicn
-	NaYuBqdev3ViCcn//dbzg6Hd8n1IRjK/+vM16tEk7XTAlqBbtw==
-X-Google-Smtp-Source: AGHT+IF/5x1qWEeEN53jwIdamLjEry3P/nE1f12xa2taaKft/YlEJdrBP6aDzExJ1bDcrqKpemuFKkiIEAFmrNQGE5k=
-X-Received: by 2002:a05:6358:8828:b0:174:b7f2:51db with SMTP id
- hv40-20020a056358882800b00174b7f251dbmr1188037rwb.19.1704395582852; Thu, 04
- Jan 2024 11:13:02 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hgiuhsQF"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kWu1xHngqbfdp2Sw0ggPeJnB3ehuTI8zD3ksUxawk2sobubHujoDt5ZXK0IelJM5ZE3ZjTRl0iqfq3XnhW4IK7ujiNsT96PsN26QqmFz+18VMbaOavwmyPzkOuyIXQCRqihW7MegFz1YgzTpQxKsoYaubW0MvVrnjgH6KprBaW2LQznvydf2dnPKCQDvKGuG8l07FB8pR8zLfr+KW4RUYDN8VxjuaRzFm1Eicl1+78Sug1hRa1KkwU+go8eykjZHXuvRrqpEF+4kRs87/PButgtb52+bSt7DfQH+B4QyYNNad0BbVZg2FkQJQJBcMxCgBkZ1UC4JbZyo9c69bbbuAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z9Q01E6HOzlASmQ34hVpCXl9hlptHHM5uIRpczARrrU=;
+ b=OV3ZhAsmZXWS3YmOBfxo13c6JZlTim0Gw0pAb0Mm4ve9PE/HslVC8XpQmYhFqvtgjIVPEDbEbh/sVmgGtfMiKKVvWVo6Hl6Sao2XmvGLIkQEt48pl6zmuvCZ51uTPjGc98wHBfIhAK2gCjyUwoVyTWjW36C77vlGxIPD8eY4gr1Fiaas/OixNGdGnysxZmFqFxpibVkzyr4nvRbCU7SK6cE4pp9bHyg3DOEeC5lhrSYzqFPBpl/ZqTxzY9WIPFv/giBEbRsOCXfIGhoZj95LfHztMNc0Pbj0ir4y+qc208kgxVTtSrri5O+0hC+aZPZcVBMHA7GU+9CAwon2QCZyDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z9Q01E6HOzlASmQ34hVpCXl9hlptHHM5uIRpczARrrU=;
+ b=hgiuhsQFc7zLoDkh7Lu+IvLPKxQK1fOZDd5EsxtquD6VlssFECl6bRPl64LzX/31CKSPECa6QliiE5sfrzufFeyr6k3aYNHVY4pn29EabAZThxzdIVMUhVypVgYF1RfO2UjO5wXgdD90A7328BfZtACrs8EiXSrrI14ItBCy0NAJgHamMiteia/4BR1HhfQnv/t3EnHLM8pb2b/WkgYGFMuxGxpDMQoHdGFzA3bIOvW9wqV7qDSoKl0OfwqRMh2T5ZV4ysy4U5+/2PKYp+OScjC17mcp3M2Wqj7DwhqAruJuyhWm5m7kZc2CNk4bBIA7pMwTnQqfDUtdS4mf8VYX4A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com (2603:10b6:a03:134::32)
+ by BN9PR12MB5276.namprd12.prod.outlook.com (2603:10b6:408:101::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.16; Fri, 5 Jan
+ 2024 04:54:27 +0000
+Received: from BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::48ee:1bc7:7fdf:cd13]) by BYAPR12MB3205.namprd12.prod.outlook.com
+ ([fe80::48ee:1bc7:7fdf:cd13%7]) with mapi id 15.20.7159.015; Fri, 5 Jan 2024
+ 04:54:26 +0000
+Message-ID: <3faec2e9-8cd9-46f9-8807-801922de0edf@nvidia.com>
+Date: Fri, 5 Jan 2024 10:24:18 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: Query on audio-graph-card DT binding
+Content-Language: en-US
+To: Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: alsa-devel@alsa-project.org,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ devicetree@vger.kernel.org, robh+dt@kernel.org,
+ Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+References: <dfe363ef-4638-4b5e-8308-73e286ac0b50@nvidia.com>
+ <ZZblyhfzQjzyoUc_@orome.fritz.box>
+ <42c0c4fa-585e-4194-bbe4-e0377c87e632@sirena.org.uk>
+From: Sameer Pujar <spujar@nvidia.com>
+In-Reply-To: <42c0c4fa-585e-4194-bbe4-e0377c87e632@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN2PR01CA0254.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:21a::20) To BYAPR12MB3205.namprd12.prod.outlook.com
+ (2603:10b6:a03:134::32)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
- <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
- <CA+CK2bBE1bQuqZy3cbWiv8V3vJ8YNJZRayp6Wv-j2_9i37XT4g@mail.gmail.com> <eng4vwaci5hwlicszgcld6uny55vll2bfs3vp2yjbjf3exhamg@zf6yc2uhax7w>
-In-Reply-To: <eng4vwaci5hwlicszgcld6uny55vll2bfs3vp2yjbjf3exhamg@zf6yc2uhax7w>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Thu, 4 Jan 2024 14:12:26 -0500
-Message-ID: <CA+CK2bCUGepLLA2Hsmq00XEhPzLWPb5CjzY_UPT0qWSKastjAQ@mail.gmail.com>
-Subject: Re: [PATCH v3 00/10] IOMMU memory observability
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
-	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
-	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
-	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR12MB3205:EE_|BN9PR12MB5276:EE_
+X-MS-Office365-Filtering-Correlation-Id: b60b7eae-3744-49de-d811-08dc0daa6478
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	MJIYukjhHixb7HFfkXVEDExH/TPElfgzzDoS9PksjPB9il9vURKOvAyv83KR4da+qarTPWotPf8avMw6lNIfhHo2W3oVK8k66lATMf/UjnH7TBB3V4mML3WDMSHrErVrk1ujLBTXDrEph52CZc3us7nc3mHE+sLksg5N+hX8nktH+99C1hBeAVSmS0A7RfnjfCg59w5M+/EwS77gmoYTvQfMhUVpIGRJ5vePAnc9+zVM19VhmfVa2cXgKmnITYVVqgxt9v7rPWJLq5BZ+8dELauljX3UV9j3PQfdqEU7sGL/NapbYK+MO4AroQYK2wsllJsfDFNyO/hU4gzBwcDcpgtfT2jw6mjgqLS+Sx3N6OJbmEkPXnYZ5v54GytHubx5nc9knSXUICQXHqAaN6jmsxukwa9ecIc1/j49ANOEA4Ez5mL6Q/qYvvCwiaSRtmb9oED22rBvX7gV5xG6N3U8oI2hfzJGk0W0YBZ/+30nt/5bP8UT5pqmJgVLYTL6reTsLVraDA3iiZH9c5y/W0tinsOd5xYiOQ/ygyt8FzxCgVG6JkV1T5eiEJ7ttAeQl2dUOSAd0Hb0O1f+evsNZ0NlnmF4jzl8vb+HwQIN+gvYb8HJweYhJBGBnuO1ABILWWLad+gtzZaJ5tZBQV8Y03M2ioyjtoiBTbe3WVFu3JAAJcrFZFxV3/GzxRqIuKnW67dqJq3Xf7IjVA/UvlfltVKRLKtuwWLcM5rfc/bYkonQ3Tg=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3205.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(376002)(366004)(39860400002)(396003)(136003)(230273577357003)(230173577357003)(230922051799003)(451199024)(1800799012)(186009)(64100799003)(2616005)(26005)(6666004)(53546011)(6506007)(6512007)(86362001)(83380400001)(4326008)(316002)(54906003)(110136005)(8676002)(8936002)(2906002)(36756003)(5660300002)(6486002)(478600001)(66476007)(66556008)(66946007)(38100700002)(31696002)(31686004)(41300700001)(2013699003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UHFheG1nRlc4d1dEVFBUNmp3Z2pHM3F6V3psZmpqWW1URmlHWGsyNzAzNmx6?=
+ =?utf-8?B?bEdYVU1mY2Nza1RIa1lIY1lPUWg0cEY4MWd4NHVJNjJQWEJpLzJvNlJvVzdj?=
+ =?utf-8?B?azBGb3Y3MnlmbWpCOFBrNS8wVFFJZFc1Z1FDWnh5SW1XRTh4SDlReU42ZXdL?=
+ =?utf-8?B?aWZFYVF0aDRjczZ0bmVZQW94RGRZWFJJMGtqQlJTVFpEK3FXR25Hc2NsR0p1?=
+ =?utf-8?B?SzFUc3ZIZDAxRkxnZWlEL2Z4WlpCTUFMUkQ2SXhUWld3T3BUV1Q1NEk3Mm5N?=
+ =?utf-8?B?ZUhwUEc4NnlqSDlVK1cvUThYUXQ3ME44WUd5R3hTU0N0aC9IZkZ6cERGMHJ6?=
+ =?utf-8?B?OVVzY3lLbm85aGtDR05NMXJXcUo4Nm5sTFBwaE04ekJtb2FMTnNybCt5K2dI?=
+ =?utf-8?B?N2wyTk9XZ2pXVWxzTjBTZEdWZWVYY1hKL3FEM3lERVBIZUtrTEFmd2w1eS9k?=
+ =?utf-8?B?YnJLNUFSVFlXb1AvT3NFMUNHNjhCZXNlWTlvdHN1Q210aVVaTDVTUUJOUVpS?=
+ =?utf-8?B?eGhZcWo3QWJYdHFnT2pYNEpnZUhJVXJxNkQ3SXh3QzFmeStvM3VIODQrV1Jh?=
+ =?utf-8?B?d2FMWE1DZDVGemJ3VHEzZGowVlRLRVlXUmNYVHZ3RGI5MDVhRDBQanhxK0l5?=
+ =?utf-8?B?ZklCNnhrTkc2UFNxT3FrM2N2NkU3WjNlejJYMm1neUZDWUppM3dvMjMrazlw?=
+ =?utf-8?B?ektHOUgyYmxJRng1SU5GbHY4bVlOWFUxUEE1Qm1rSTlBVGNSdzRhTnRqUDRq?=
+ =?utf-8?B?V2dIbHZrQkZoRmd3eU1ScHM0NzdMN0VVRElVQVNpNEs0TVFoZFlXTzVzL0Nq?=
+ =?utf-8?B?aFdQWTdsNVJiU3FoTVMwY2lERGxEekNDT1JqUUdDOHV6U3ZrcXUzWEJ4azZh?=
+ =?utf-8?B?MTRvYjVTVFVISVV2eGVlVjlkckhjVDNjRW4wSUdBTERvZHRZdnpZVW5GQlh4?=
+ =?utf-8?B?SVdBSFhqRzY4aTYvNTRYZ09sMXdJT25Kai9sVmZSVnpkRTdmOU9BbWlORVo3?=
+ =?utf-8?B?d1ZMVWx1WTBkWmMrT1ZXcHFYcm5wOVNXRHBJREd0aFR5aE9EWUxuY2IxVXQ1?=
+ =?utf-8?B?Q3dqOFR5eFNudStPRFRYd0tJQU9NYjUvUnZmc0wwWHZWSjROdXFrVHpJeFFq?=
+ =?utf-8?B?clpEd0xYUU9YOGJmNTdCN0JBbVlINGs3VHc4STBib1lSZE9DM1VFL1Q3RXM5?=
+ =?utf-8?B?dGlQZ3NzbFZnT3JtSHM5YmY1ZE9hRElkMmJkZFRMbmFyK3JIL2YzOUhTRjFi?=
+ =?utf-8?B?Y2tIWEx6NStRSzJwSFhVQldhRDNtMkNtSFduc25MMWZrSUVPYStYM0xzcWxz?=
+ =?utf-8?B?c21jdldXZnBONy9WbFQ2ZERBYnE3ZzZJTE9OeEQ4VzFxVGJZSUN6RVNOaTdH?=
+ =?utf-8?B?RmlPUzhJVEFvQ2VWeFVhYmp3Sk1Rb0c3WGxXOHNFNFNrNkN5NXFmMk0xbmps?=
+ =?utf-8?B?LzFTVUs4b1pxY1F6ZjR0em9LbnViWFJUUCswdmlibHJGMndoUjdneEMyRWNV?=
+ =?utf-8?B?NTc3WXd5SDJCbDBTSjVWWlFiZXk2RkdOL0oyeloyd200b3FoaGJWaG0vTTV3?=
+ =?utf-8?B?bnpqRWdwbGZieWhTR0R4T284Vk5jN25qV1MzSGJMRkI0aEpJcU8zOFRWSnV1?=
+ =?utf-8?B?aU5QNEcwanl5K0tCRkdFTy9QNFZPZUs3RWEvZHB5QjFTd0EwZDZ5Nlo0SkFk?=
+ =?utf-8?B?czNwbUdqOHQxYVc4RktsYnFKZ1hMMkVDdlc3RVo4aEE5YU5COVBvTXZUQ09I?=
+ =?utf-8?B?QW82RG96U3RVRWpKS1drQXBWQVJoMEpSYXhUQ0FhUHZJcGZadU5QTlJ6MEVG?=
+ =?utf-8?B?cjZScUIrQ0JhN0htdEEweTBMdkpqNUdNWXFHZTBZTXVGd1UwWlJyalA5UTBL?=
+ =?utf-8?B?d1R0T0tpTTFSRy9Iam8xUk1kdjVCZkNLdGRZMFNXOGREa3lWNlJHZUgxVFhD?=
+ =?utf-8?B?bHgwZ1RXUWpHUVlFeDFSY1h3WFJ3dDAvbm85Vlp2SjJWTGtPVXh0ekF4RkhD?=
+ =?utf-8?B?cExFN01ub3c0bFRjMlhFZW1ZZVdTQjVyQUVpU1lSdFBWL2o5Tk53dzc2OUJj?=
+ =?utf-8?B?TjUxNVQvYjltUVdxb2FiWmxpaGtBdHppMDk2OTIxS1NUbzAyOTZ0SWNPdWxz?=
+ =?utf-8?Q?zMLmMUIJqvdp099TzkCysDWzm?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b60b7eae-3744-49de-d811-08dc0daa6478
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3205.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jan 2024 04:54:26.4336
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UOuYdsX2jyeqCDTo7jCDlK8hjXBcLKs4HJclb3vk5jpnIsmxdwqja82Fhd1UB/rnX0ia/pzyk1+0SgupE2dOKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5276
 
-On Thu, Jan 4, 2024 at 12:04=E2=80=AFPM Michal Koutn=C3=BD <mkoutny@suse.co=
-m> wrote:
->
-> On Thu, Jan 04, 2024 at 11:29:43AM -0500, Pasha Tatashin <pasha.tatashin@=
-soleen.com> wrote:
-> > Thank you for taking a look at this. The two patches [1] [2] which add
-> > GFP_KERNEL_ACCOUNT were sent separate from this series at request of
-> > reviewers:
->
-> Ah, I didn't catch that.
->
-> Though, I mean the patch 02/10 calls iommu_alloc_pages() with GFP_KERNEL
-> (and not a passed gfp from iommu_map).
-> Then patch 09/10 accounts all iommu_alloc_pages() under NR_IOMMU_PAGES.
->
-> I think there is a difference between what's shown NR_IOMMU_PAGES and
-> what will have __GFP_ACCOUNT because of that.
->
-> I.e. is it the intention that this difference is not subject to
-> limiting?
 
-Yes, we will have a difference between GFP_ACCOUNT and what
-NR_IOMMU_PAGES shows. GFP_ACCOUNT is set only where it makes sense to
-charge to user processes, i.e. IOMMU Page Tables, but there more IOMMU
-shared data that should not really be charged to a specific process.
-The charged and uncharged data will be visible via /proc/vmstat
-nr_iommu_pages field.
 
-Pasha
+On 04-01-2024 22:52, Mark Brown wrote:
+> On Thu, Jan 04, 2024 at 06:07:22PM +0100, Thierry Reding wrote:
+>> On Tue, Dec 26, 2023 at 09:58:02PM +0530, Sameer Pujar wrote:
+>>>                /-----> codec1 endpoint
+>>>               /
+>>> CPU endpoint \
+>>>                \-----> codec2 endpoint
+>> Can you describe the use-case? Is there a need to switch between codec1
+>> and codec2 endpoints or do they receive the same data in parallel all
+>> the time?
+>> Could this perhaps be described by adding multiple CPU ports with one
+>> endpoint each?
+> Don't know about the specific use case that Sameer is looking at but to
+> me this looks like a surround sound setup where multiple stereo (or
+> mono) DACs are wired in parallel, either with a TDM setup or with
+> multiple data lines.  There's multiple CODECs all taking input from a
+> single host controller.
 
->
-> (Note: I'm not familiar with iommu code and moreover I'm only looking at
-> the two patch sets, not the complete code applied. So you may correct my
-> reasoning.)
->
->
-> Thanks,
-> Michal
+Yes, it is a TDM use case where the same clock and data line is shared 
+with multiple CODECs. Each CODEC is expected to pickup data based on the 
+allotted TDM slot.
+
+It is possible to create multiple CPU dummy endpoints and use these in 
+DT binding for each CODEC. I am not sure if this is the best way right 
+now. There are few things to note here with dummy endpoints. First, it 
+leads to bit of duplication of endpoint DAIs and DAI links for these. 
+Please note that host controller pins are actually shared with external 
+CODECs. So shouldn't DT provide a way to represent this connection? 
+Second, ASoC provides a way to represent multiple CODECs on a single DAI 
+link in the driver and my concern is to understand if present binding 
+can be extended to represent this scenario. Third, one of the user 
+wanted to connect 6 CODECs and that is the maximum request I have seen 
+so far. I can expose additional dummy CPU DAIs keeping this maximum 
+request in mind, but not sure if users would like to extend it further. 
+The concern I have is, how can we make this easily extendible and 
+simpler to use?
+
+With custom DT bindings it may be simpler to resolve this, but Tegra 
+audio presently relies on standard graph remote-endpoints binding. So I 
+guess diverging from this may not be preferable?
