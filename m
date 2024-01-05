@@ -1,242 +1,99 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2069.outbound.protection.outlook.com [40.107.244.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE14F28E1A;
-	Fri,  5 Jan 2024 11:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FE62E637
+	for <linux-tegra@vger.kernel.org>; Fri,  5 Jan 2024 15:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gDrAvNh1"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IkSaA6KJXTEJGZXwHVBMwUrrKoycqZgBXaHQqDKxrY7WyPvreyxTGnzVXkSVcQzyVwrW7Z5HjKTY+vzGUg1w5s+oKf7p+joof58KfXsfuNzd1b2k6Nuim2xNT/3NWGYFh7mESqGsIcZd4oylf/p53zaz+kOzlZd6QqJebOuNR7TBeIGWPn2VosapJ1cJ9N8IKf+DrHmahK1lq0sPdhb6cuqYdlOS9vaKvvLR3mDJsiXU8VjynEbXOxaMo/vMFkZEr7aqaprtrZEoJBVwmlH5aKZ1Xr2T86NJPUMrtCOV3dk2v1lppkY0VUmyEOfyWZSOX9yUhiaO2ZgxLyJn9PkNKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RQHWQTRy5r2/GwauXCXvTQk5Mui9tLiGcvEdABNgQ00=;
- b=aF7tIWVjd3Tv+EFOtDXtl2JWA450cxeep6MB5RHajX4cwyGUvIslLoOK/8VoezTjmGdvjxOv35+3PVrZrEiAKPjQ2GgAy4drZmgmtuiIB3KQTt5qoYruPHqJ/EbzsxCUDssDVoAqdDlm6fwrvQy3aV5/HPKysRb0guKTGSQp76HFBuEWPJZhOQplr0KV2CRukNmFrXdJUTuoZTo97/g6tE5ZnHnEXLDGEob1KjA9465MwjLnoUewkOwmWGZPsL39X76acfoHTUEXdiIVL3rZhtt0qtIUWhCfSTctWx23E6P1VsGTH+pvaTeCpdLi/J9sEw1B1SFgDU4gKUHL6Ai5oA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RQHWQTRy5r2/GwauXCXvTQk5Mui9tLiGcvEdABNgQ00=;
- b=gDrAvNh1U7kQYlIQooPov9RZUL7fxEySfEiv8sWmbsGx06URmGz+8wjfcNUCMkjkKbMeV0212kPDtmbOdT0TDmQTcICryClUHNcR9jc83U7SvkCzyeky5F0NlFE7Dn7jVAtC6WiClWtOet3/sMMAcZ3T55AIqEv7IaWE7JAZpsch4PcUFcLdGm+E6MZx+XlDR3Sxp5TkCAYY3uQWmnKFb2TMVQydqk2qSyCFE+heFm6eKDSaut2ht+A3zd6SwquqM6zn2BQePei1zN7G9A1KIgS/WKi5nd6pudXFd7oWWdEkiPrWKUc+vOhqqMKs5KZmNGC+KFPK4AMhoQqlOPs7Ow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BYAPR12MB3205.namprd12.prod.outlook.com (2603:10b6:a03:134::32)
- by CH3PR12MB8581.namprd12.prod.outlook.com (2603:10b6:610:15d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.16; Fri, 5 Jan
- 2024 11:19:55 +0000
-Received: from BYAPR12MB3205.namprd12.prod.outlook.com
- ([fe80::48ee:1bc7:7fdf:cd13]) by BYAPR12MB3205.namprd12.prod.outlook.com
- ([fe80::48ee:1bc7:7fdf:cd13%7]) with mapi id 15.20.7159.015; Fri, 5 Jan 2024
- 11:19:55 +0000
-Message-ID: <8241c953-8ae5-4f26-b108-fccf826ed87a@nvidia.com>
-Date: Fri, 5 Jan 2024 16:49:44 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: Query on audio-graph-card DT binding
-Content-Language: en-US
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- devicetree@vger.kernel.org, robh+dt@kernel.org,
- Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-References: <dfe363ef-4638-4b5e-8308-73e286ac0b50@nvidia.com>
- <ZZblyhfzQjzyoUc_@orome.fritz.box>
- <42c0c4fa-585e-4194-bbe4-e0377c87e632@sirena.org.uk>
- <3faec2e9-8cd9-46f9-8807-801922de0edf@nvidia.com>
- <ZZe5sTNz005Tt4jk@orome.fritz.box>
-From: Sameer Pujar <spujar@nvidia.com>
-In-Reply-To: <ZZe5sTNz005Tt4jk@orome.fritz.box>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0123.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:11d::6) To BYAPR12MB3205.namprd12.prod.outlook.com
- (2603:10b6:a03:134::32)
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="EFV5pVvH"
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-427f5cc49afso8406731cf.2
+        for <linux-tegra@vger.kernel.org>; Fri, 05 Jan 2024 07:34:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1704468855; x=1705073655; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0TY2tK1Et5681qdWkhQWK7TKRb/9setDuVBnoXVgexU=;
+        b=EFV5pVvHiQnqoV9y7BQQq9nRu87mykB2Rai0EIP6qviKgt54hRLI0m9de01VYYt1AX
+         q0UwruXuBCSkrZCZRieqIg7+aevZFSab5kMlO8Jyz2nDpiDlf/Z5Ukub/JzndhhJtuUo
+         8kGZeGqt2vARqYzwIXSAOAVHTNbUBANkLmINPM45sLwhjIxuoA54PLpdUVLS8OMKrfs/
+         qzvQsiIlQ3xMVnvhcKlrxWcl2v9Kgmy7yj69GVJBQLRDbzjkgug6Q4E1c8eG94U3uNhw
+         18Iyqmj1bzy1OkC8j1mxXToPWjmVekiW0bfg8cpp/1/3GgrRhENtdnle6+I78mggTVZE
+         ioaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1704468855; x=1705073655;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0TY2tK1Et5681qdWkhQWK7TKRb/9setDuVBnoXVgexU=;
+        b=OEQswgp97QfA5ISFUCb1TGsIYmfQUdcYUCEh4KjBLre0j/CoaDVhouu78hmozcFSpj
+         //eGAIIe1hsF7C7w/gAUh3xZaSe5RB+QePNmxau1ZNeP3ft9HHriU2cut7JqiQ1OBs+f
+         4O81LhAbVwK8Kor5bM1Oz664AfaSXx/N69IpAvdtl0WaW1esbRD+zt6NoJn6DSEVI36n
+         IdNqH7t8ofLA2+KgW99dVOmA2p+uNUewSjIBR9X2ATEwr8Sjb4hOfkNttLQeUGv+s+Cd
+         0idOUE8ot6MVTkcDGhRJtsQsu1M60owdPrVDlepnHWAr3ht6dnTB92Qlxffeoj4DU8+G
+         PKRQ==
+X-Gm-Message-State: AOJu0YyE7EPvaFtEdPQBCCX7RUemywl3EyZf/Wg4JnZLBR/g/UoRb9zL
+	mh3c+IX/+V/3RtiGFQ2qDxX6+m7ejIylypuOuDR7m8bVHbsuig==
+X-Google-Smtp-Source: AGHT+IHfTfqU5MoKE0X4xG8QNmKPONd8jiakcdkHu4vud6eBZ8WvRO+n1CsOMpfQPwUC05tcfTICXquuDV0OuNZPOR0=
+X-Received: by 2002:a05:622a:1349:b0:429:791f:9708 with SMTP id
+ w9-20020a05622a134900b00429791f9708mr909674qtk.35.1704468854882; Fri, 05 Jan
+ 2024 07:34:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR12MB3205:EE_|CH3PR12MB8581:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8243135c-9fb8-4adf-2545-08dc0de03e40
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	RbUz6Ek4ymqNzSPHyMrwKK+aNQ3yukRib6dVrM+D8Nao76MpCJ8t7WLBusq8RyL2hZXFW6eqZJke1393sIJqOM6Dl1BLrCP+AIyyZfEpOese50WoHsmBzXA89VzQkqShvq4p4WKfp8SGkZla2oXAzNftnVsfYWCrDQJwxHqz5qigmcWw33oPjmBVsSpox87VVYTe1BYVkEKFu5CEYeeIh+qs3j8dSbjm5JBaP8nJVQ8hYUEAZh/f5bD28DDTG5KCb0iRqq9wodIi4qDsM0JmraFdCFy1vs4BBmxCZe5DgupMXGBDuTF7MyEuWRdA2FjWs/Vs1kl82MEJBAz6RxAU3vWVWYPtGGimz2PqpKjVByDFSYBrDJDlA7g3yNDCjhWFTfz+zMB535SyGfLdLnD/x8+CuWyDMcke3hMOTZ7vk9M8UYZuGnnW85vTXmvndmebwqme/YqfmHOhUduWs5OBDzrp61ER6nogKT7wQCwGp+WzxJxkLpa1+2Hk5Hi6hCehZsTWD9epm+B1LcYI4a6vOrXC6/HmgTOWRS3jt3P8Rwd64HDd13okikZ1Ny0+iFdvSl6WkgqKBCuy5Nya2dKji3NXtZ+ubzuCJ+lIB+o+suWqCZlEk/qshAAo77odw7unjYYnwLd3Rmr9d4Nc/HJYrIosW3dfHmwMY4BHSA0z8rhz4j71XKgDX81lGt1GkQAM9z08iPvCUHM0J4dwNK5UKF9jZyQlyxX/XWyLWRYfSTI=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3205.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(376002)(136003)(346002)(39860400002)(366004)(230922051799003)(230273577357003)(230173577357003)(64100799003)(1800799012)(186009)(451199024)(2013699003)(2616005)(53546011)(26005)(478600001)(6506007)(6486002)(6512007)(6666004)(83380400001)(2906002)(41300700001)(66476007)(66556008)(66946007)(54906003)(316002)(8936002)(8676002)(4326008)(5660300002)(6916009)(38100700002)(86362001)(36756003)(31696002)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?KzIyQ2JIbXBlRjhYN2Vhcld2enRZN0Zqb3FsUWk1K25KbE1uYytMOThWRyti?=
- =?utf-8?B?TkpheGJ6cWpGZXU1RDl0bTNuOFN2UmlZTGdvM0RRQzh2Vng0TExEZngzaVZo?=
- =?utf-8?B?WXVmazBsdGpmSDdMQnJ1V2RqU0Zyb2RHTWFRVjdzczloMVNXd1dGNTJzNUxa?=
- =?utf-8?B?aFBtcnRuMURTMGNRVDdJNHh2UFU3RDdWZ0t3OU1wcGNlWWQzRnVQRDVBUDh6?=
- =?utf-8?B?TEFxZ2dQMU4yc3pGWXArb0VmZjFvQllSMlFTTDVtMVU4cEdRUXNjNXYvWSth?=
- =?utf-8?B?RWRScDdKendiSW9hY1p4Szg2Vk9ERVZ6VVRWdVg1N1hGRUhBWEJrSXVTNkRn?=
- =?utf-8?B?M25PdG4vMHBlcFpmTG5qSXAwZ0R0bm10b3RWZi9SUGNmR1BETjdMSm5YR3ZF?=
- =?utf-8?B?QmtuWmljSE5HdmU4bmkyb3FYaE9hd0gzZnJlS2ZiU0pUYmNqbHNTcHhhcS9G?=
- =?utf-8?B?MlpBeDNPQ05SSFJxUWZDWms1TnFQSDlYdnB4K09NRGNYaDhUTU9QbEVBdFBP?=
- =?utf-8?B?UmVocm8vMEJCV2NGeHdzQ2RUcGJtL0xOVERkL3VWaEZwanUyK0VMcno3VFQ3?=
- =?utf-8?B?eTdhbnFWS1k5Mk5CbVlVZUhNbUVhMlM1WDkxVEI2V3FzL1VXSkFXNHc5YXlD?=
- =?utf-8?B?U2tiWTRmbEcvcG8zei9lMGYweWtZdlhMeDdnSEphQjVpVjFPWFJRT2pUN3JV?=
- =?utf-8?B?QU80d29lSXhleTY0UnNQSHVremJBSmlWM0kweEJIb3c0NWFDdDN3cDFmVTMw?=
- =?utf-8?B?enV3bzlnUHlSOVpwZzZnYUhwakZaZW5DTk1zdFo2YTB0QkZubTdCTTdRY0Nk?=
- =?utf-8?B?WkpFNWxLRkJ2bzRyb0Z6UUR2M2F6Z1ZBRE11OHlJa1krUHNXN1FpaitGdkY2?=
- =?utf-8?B?QTRVUDdYekdNbm9YN0xzMEtFQXlNRWxtVDRDRlV0aUwramdvZzNGeG9OZ2lD?=
- =?utf-8?B?UUtEMWFyMkM3ZUg3S2w3QW9pM3c3cHI4bXczRXJ4bENBdVdHbXRHdzZyakZa?=
- =?utf-8?B?UXhnVm1ZRFJhNmxMT1NrYWZtT3l0UlVpSWU5Z05iRFdFbnFyeFQ3YTdxek1h?=
- =?utf-8?B?ck1hVkhCZmFhVEphSnkvNlJiWVdkZkpQTTV5cWJYTjRzNzVEMi81YWdDSkxi?=
- =?utf-8?B?TWtyYW9YeUdRVVE4dnVDenFuUnA2dDE4M3k0V2xEdkdyOHhDdzRGZm1mdWlJ?=
- =?utf-8?B?U1FOV2lKSHBuZGZNR21pM2VHQi9NM3hoM3lxY0tiQUJEUTBrQmlCY1ZXTTU1?=
- =?utf-8?B?a2lhV2kvRGREbjBYREZObVpvSXBPU1FnTklYQ2JtSUdzUzhZN040RlZ0SXY0?=
- =?utf-8?B?Tkw4YVYxc2RQdmo0TzlObzlmZUlZVmhPVC9kVldya04zTG5MTldxQjNrZVRi?=
- =?utf-8?B?OVJ1YU1vSjJDaUNUNmJWVWVuZ2RGTXNucXVzQndReGcvTUZsb3RJTXkrcFlv?=
- =?utf-8?B?aDA1THpuWnk2SlBBZjRDeTd4UlQwODl2VE9JdlF3RlY4RFJPSTFkTnV2NDZ3?=
- =?utf-8?B?T3orT3c0NjZDRzQ0SVE4NS9aVzArVmQ4K0xhNG1LNVdOU0tMYUVJa1dpZXJv?=
- =?utf-8?B?OWh4emVibTg4VmhQWnQ0NWp4dkZmM2hxT2dYT1NvYUZDNUFSdWxQU0Y2Mk5D?=
- =?utf-8?B?aHViUDgyWDlRN3luajJIQ2paTlJxSWE5bEx6RHBtUndDWUNZWWh4UlZJL0p3?=
- =?utf-8?B?VFJrWTJDN1FHZE16M21kN2NhRHBUeWdwVlJLZ0lBYVJocDFPNzlObnZOdFo4?=
- =?utf-8?B?azd0U0U5VlhvWUt0YThoeTk1R2tKMkcxaGh6RndRRFRDZVZaSXV0aTYrb3hT?=
- =?utf-8?B?MElUdG9HUXEvVG84dnFQRndzMHVhTGJRU2ZOYTdMT0drOGwwVXBzSk9FaXFu?=
- =?utf-8?B?Qzl6dmxBcnNRMmNOSVZTSWlJTHJ4ZGZ1WDl4VnFsaWJjSWh5RE03VjZnaHBr?=
- =?utf-8?B?UWJ6TmY0MytRQ1Y5Zm9saDlGQmd5bk5xZHBQUm9BT0tCc1JEb0MvcWl2T2ZB?=
- =?utf-8?B?Z3J6Q3ZvME9lY3VtNHEwOE5qeTF5Vkxsb2pLS2pCdzVTeVZ2VTMwcUFnVGZh?=
- =?utf-8?B?aUwzcExXZ2xGYm5xT005ZzdMM0VTR2o5ZGYwaEZqemlOcVRMVlVlaVdHblNO?=
- =?utf-8?Q?onS4EFJ5pRBFyvOuMVK2GeeDp?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8243135c-9fb8-4adf-2545-08dc0de03e40
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3205.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jan 2024 11:19:55.1479
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AskYfOBGY5YvlsKoJmqNITtl/50BMQRRDsy8/YXHqcsh3EeeG1gY2FMGhUYHCYBaYawFcguQI9E7s07NjkBd8A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8581
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
+ <eqkpplwwyeqqd356ka3g6isaoboe62zrii77krsb7zwzmvdusr@5i3lzfhpt2xe>
+ <CA+CK2bBE1bQuqZy3cbWiv8V3vJ8YNJZRayp6Wv-j2_9i37XT4g@mail.gmail.com>
+ <eng4vwaci5hwlicszgcld6uny55vll2bfs3vp2yjbjf3exhamg@zf6yc2uhax7w>
+ <CA+CK2bCUGepLLA2Hsmq00XEhPzLWPb5CjzY_UPT0qWSKastjAQ@mail.gmail.com> <elsuzdcx2qpnazvz2ayzmco4ctms5ci3iet3k7ggbjt3p2pfk2@tvr3plow26oi>
+In-Reply-To: <elsuzdcx2qpnazvz2ayzmco4ctms5ci3iet3k7ggbjt3p2pfk2@tvr3plow26oi>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 5 Jan 2024 10:33:38 -0500
+Message-ID: <CA+CK2bD7gPP6TFR_sYPd=4U4yYrYHNu=qMLJdT+kgT_gbz6wBQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] IOMMU memory observability
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
+	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
+	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 05-01-2024 13:41, Thierry Reding wrote:
-> On Fri, Jan 05, 2024 at 10:24:18AM +0530, Sameer Pujar wrote:
->>
->> On 04-01-2024 22:52, Mark Brown wrote:
->>> On Thu, Jan 04, 2024 at 06:07:22PM +0100, Thierry Reding wrote:
->>>> On Tue, Dec 26, 2023 at 09:58:02PM +0530, Sameer Pujar wrote:
->>>>>                 /-----> codec1 endpoint
->>>>>                /
->>>>> CPU endpoint \
->>>>>                 \-----> codec2 endpoint
->>>> Can you describe the use-case? Is there a need to switch between codec1
->>>> and codec2 endpoints or do they receive the same data in parallel all
->>>> the time?
->>>> Could this perhaps be described by adding multiple CPU ports with one
->>>> endpoint each?
->>> Don't know about the specific use case that Sameer is looking at but to
->>> me this looks like a surround sound setup where multiple stereo (or
->>> mono) DACs are wired in parallel, either with a TDM setup or with
->>> multiple data lines.  There's multiple CODECs all taking input from a
->>> single host controller.
->> Yes, it is a TDM use case where the same clock and data line is shared with
->> multiple CODECs. Each CODEC is expected to pickup data based on the allotted
->> TDM slot.
->>
->> It is possible to create multiple CPU dummy endpoints and use these in DT
->> binding for each CODEC. I am not sure if this is the best way right now.
->> There are few things to note here with dummy endpoints. First, it leads to
->> bit of duplication of endpoint DAIs and DAI links for these. Please note
->> that host controller pins are actually shared with external CODECs. So
->> shouldn't DT provide a way to represent this connection? Second, ASoC
->> provides a way to represent multiple CODECs on a single DAI link in the
->> driver and my concern is to understand if present binding can be extended to
->> represent this scenario. Third, one of the user wanted to connect 6 CODECs
->> and that is the maximum request I have seen so far. I can expose additional
->> dummy CPU DAIs keeping this maximum request in mind, but not sure if users
->> would like to extend it further. The concern I have is, how can we make this
->> easily extendible and simpler to use?
->>
->> With custom DT bindings it may be simpler to resolve this, but Tegra audio
->> presently relies on standard graph remote-endpoints binding. So I guess
->> diverging from this may not be preferable?
-> This seems like a legitimate use-case for the graph bindings, but
-> perhaps one that nobody has run into yet. It might be worth looking into
-> extending the bindings to account for this.
+On Fri, Jan 5, 2024 at 4:02=E2=80=AFAM Michal Koutn=C3=BD <mkoutny@suse.com=
+> wrote:
 >
-> I think there are two pieces for this. On one hand we have the DTC that
-> complains, which I think is what you were seeing. It's a bit tricky to
-> update because it checks for bidirectionality of the endpoints, which is
-> trivial to do with 1:1 but more complicated with 1:N relationships. I've
-> done some prototyping but not sure if my test DT is exactly what you
-> need. Can you send a snippet of what your DT looks like to test the DTC
-> changes against?
+> On Thu, Jan 04, 2024 at 02:12:26PM -0500, Pasha Tatashin <pasha.tatashin@=
+soleen.com> wrote:
+> > Yes, we will have a difference between GFP_ACCOUNT and what
+> > NR_IOMMU_PAGES shows. GFP_ACCOUNT is set only where it makes sense to
+> > charge to user processes, i.e. IOMMU Page Tables, but there more IOMMU
+> > shared data that should not really be charged to a specific process.
+>
+> I see. I'd suggest adding this explanation to commit 10/10 message
+> (perhaps with some ballpark numbers of pages). In order to have a
+> reference and understadning if someone decided to charge (and limit) all
+> in the future.
 
-This is the snippet I was trying to test:
+Sure, I will update the commit log in 10/10 with this info if we will have =
+v4.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi 
-b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-index eb79e80..22a97e2 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
-@@ -13,7 +13,8 @@
-                                                 port@1 {
-                                                         endpoint {
-dai-format = "i2s";
-- remote-endpoint = <&rt5640_ep>;
-+ remote-endpoint = <&rt5640_ep>,
-+ <&rt5640_ep2>;
-                                                         };
-                                                 };
-                                         };
-@@ -53,10 +54,14 @@
-                                 sound-name-prefix = "CVB-RT";
-
-                                 port {
--                                       rt5640_ep: endpoint {
-+                                       rt5640_ep: endpoint@0 {
-                                                 remote-endpoint = 
-<&i2s1_dap>;
-                                                 mclk-fs = <256>;
-                                         };
-+
-+                                       rt5640_ep2: endpoint@1 {
-+                                               remote-endpoint = 
-<&i2s1_dap>;
-+                                       };
-                                 };
-                         };
-                 };
-
+Pasha
 
 >
-> The other part is the DT schema which currently restricts the
-> remote-endpoint property to be a single phandle. We would want
-> phandle-array in this case with an updated description. Something like
-> this:
->
-> --- >8 ---
-> diff --git a/dtschema/schemas/graph.yaml b/dtschema/schemas/graph.yaml
-> index bca450514640..1459b88b9b77 100644
-> --- a/dtschema/schemas/graph.yaml
-> +++ b/dtschema/schemas/graph.yaml
-> @@ -42,8 +42,9 @@ $defs:
->   
->         remote-endpoint:
->           description: |
-> -          phandle to an 'endpoint' subnode of a remote device node.
-> -        $ref: /schemas/types.yaml#/definitions/phandle
-> +          A list of phandles to 'endpoint' subnodes of one or more remote
-> +          device node.
-> +        $ref: /schemas/types.yaml#/definitions/phandle-array
->   
->     port-base:
->       type: object
-> --- >8 ---
->
-> Thierry
-
+> Thanks,
+> Michal
