@@ -1,60 +1,73 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180F4208D7;
-	Fri,  5 Jan 2024 08:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C538920B29;
+	Fri,  5 Jan 2024 08:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WcmqHkZZ"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a28bf46ea11so59807766b.1;
-        Fri, 05 Jan 2024 00:11:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwNM06PZ"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-40d604b4b30so1537015e9.1;
+        Fri, 05 Jan 2024 00:20:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1704442292; x=1705047092; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1704442828; x=1705047628; darn=vger.kernel.org;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DDc3X/vTCrv9i8PxCPyqlLpcrg6iDYAL/aeEr+2xMyc=;
-        b=WcmqHkZZGkfCtZYRe5WnKJlQNN0i8ae0vjADPUow1Mkzpwed9Z1MHjG+Gyk5pwKbOi
-         tEiHjQbeuWh6PfsFj4t0SatNODGIrGXYtMW/DgyF6wq79TyaQygb4qF2H3raCzbcs1WM
-         W4uvjtlIORwcd0EKYfaw0Vr8l2cecBY/PjIztjDb7LpzCPeQw6aVqLhWT/lA0pnK7tp8
-         2qjZFBxzk6oWm9rtcSAeIQ1vk3lTjNVlcxd9JeAKNmlMZHeyOIyApsRimo2xcprFunF/
-         FxCmuonPoEKudcUD1YeJi39Jg5cUHOiYoXpcvwMljr7or63KnWfnmuEanEKM5qKITCHl
-         E9lA==
+        bh=UirpifrpW6YIRosDr0Ki+l8kjsuIejuWaHX21FvuZXo=;
+        b=kwNM06PZJap/F/hq6cDd3/9e4mf8q16HbuxZEfDrYasfWHM1ar3BENGRDj1mbRnnl3
+         F/qugWH8GA8d3jbB9fJ7CkSImbnIGgoPX2awJhAKJVlKf/9Z6ImYfSvFuGvvyDYBfl2k
+         8imbrymeTOCgfYO/1vuzl/QEzU8C+R66JNjt7LLPl7Bv7vX32eApSBgyH07b9TQD3mSw
+         1R5jvZPD4iIFVnKDJ1HPA3lqxoLvCnywOF9ZYGrc5p/UCGRMe8SnjAdJfGJuPuhvilnW
+         dSOaPKQL9m4Dns6yItaMygiZYitM2uwmEGQ9CPZqPs+iYwO+2rgKNK5B7Uv0nsiba6ZF
+         kWkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1704442292; x=1705047092;
+        d=1e100.net; s=20230601; t=1704442828; x=1705047628;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DDc3X/vTCrv9i8PxCPyqlLpcrg6iDYAL/aeEr+2xMyc=;
-        b=PG81r9zh6RzGPhWx5mJqNv4b2EffiZRQ0UZtR/ZmK+oBs24oKiqL1WeYRFEqy75cZ1
-         yWPpiNZzTJfLsUkySQi+CcCVuWKSPBWyUVvRhlrqObPr+xFtya34ceku8ZwV+YmhjPZX
-         iufs7b+hw1FrifWkyZ3ET35ovfHsJ4DY6dD+9iH34wa+xFzi6dxo5JJhl8csRaZHRD+E
-         JuCkosrnDGDCqUSd+w3sDfVHLRjDodsWyF/f3OqNtcvz/7I68EX9b2a9ubypyB4MhG53
-         /rvk0AVxQSbAXVShAmxvJIiDBiF/C/0Np+wE27v37kMOnl0yD23JcSjdwRh+DbO6gKy3
-         x5Pw==
-X-Gm-Message-State: AOJu0Yyw3grXiWJvBbtfjNhG43q5Bfqpv1JThM2Yro/XPR5ewNhhqOZM
-	GvdiVA5cn5hrMEjQo8ruwUI=
-X-Google-Smtp-Source: AGHT+IEtSoG6+TQ5lp2vD5o78oLq7FNxPf6otoqjX5IdT3AGC6plY2CLaP4BqbV0ImHtO+r+DFIGtA==
-X-Received: by 2002:a17:906:34d7:b0:a23:671c:2284 with SMTP id h23-20020a17090634d700b00a23671c2284mr1666245ejb.29.1704442291971;
-        Fri, 05 Jan 2024 00:11:31 -0800 (PST)
+        bh=UirpifrpW6YIRosDr0Ki+l8kjsuIejuWaHX21FvuZXo=;
+        b=hxsl7IgTR8Fxrt+MlQ6WpS0aA3ZmCAN+vBh0fRK07Z7PAaO++WlJjYaltmuzXrobYv
+         kvzVwYUW24YFCiZsZdXItDKK0sEVO2qCjj5xqxY1ipZzL7DAZsIQZDCfPSMZhnP4ZFSW
+         i/dW76/dQng7Jz6iS1aEpuwSNGOWThp+60189kHLhKDDccTkRXRqhxADOlR3x2UHkQhx
+         Wz5eAJzDzO0adYOHaThdZNaU1av6CB+VVoWVJY9IV6/YlwKzHd3RU1KQ7pkeZTe/k91+
+         3S/7aHzZJg58GPe4OKMYZb/jVV1AcmXXVNyn+USxlDqMVvmZRnUxDuw0VrUTQzuY24Vp
+         LmeQ==
+X-Gm-Message-State: AOJu0YzmupXOIr08XptNYHj92un+/DWZNKxFSqYIozxjdI1CLZGVnfcK
+	ivHmsG38hnt3j/T+HjX0SIY=
+X-Google-Smtp-Source: AGHT+IHMgrGKGIkfpqwpUlWkD6o90yPervTOv/x0T4n2N+OmVuREFRfDKOS87FVN6VWMXcJ9sQ/Mcw==
+X-Received: by 2002:a05:600c:5486:b0:40e:3538:a5c0 with SMTP id iv6-20020a05600c548600b0040e3538a5c0mr821797wmb.1.1704442827675;
+        Fri, 05 Jan 2024 00:20:27 -0800 (PST)
 Received: from orome.fritz.box (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id r17-20020a170906551100b00a2356a7eafasm420985ejp.199.2024.01.05.00.11.30
+        by smtp.gmail.com with ESMTPSA id j26-20020a05600c1c1a00b0040e3804ea71sm806474wms.10.2024.01.05.00.20.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jan 2024 00:11:30 -0800 (PST)
-Date: Fri, 5 Jan 2024 09:11:29 +0100
+        Fri, 05 Jan 2024 00:20:26 -0800 (PST)
+Date: Fri, 5 Jan 2024 09:20:23 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Sameer Pujar <spujar@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	devicetree@vger.kernel.org, robh+dt@kernel.org,
-	Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: Query on audio-graph-card DT binding
-Message-ID: <ZZe5sTNz005Tt4jk@orome.fritz.box>
-References: <dfe363ef-4638-4b5e-8308-73e286ac0b50@nvidia.com>
- <ZZblyhfzQjzyoUc_@orome.fritz.box>
- <42c0c4fa-585e-4194-bbe4-e0377c87e632@sirena.org.uk>
- <3faec2e9-8cd9-46f9-8807-801922de0edf@nvidia.com>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com,
+	alyssa@rosenzweig.io, asahi@lists.linux.dev,
+	baolu.lu@linux.intel.com, bhelgaas@google.com,
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com,
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de,
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com,
+	jonathanh@nvidia.com, joro@8bytes.org,
+	krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com,
+	marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com,
+	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com,
+	samuel@sholland.org, suravee.suthikulpanit@amd.com,
+	sven@svenpeter.dev, tj@kernel.org, tomas.mudrunka@gmail.com,
+	vdumpa@nvidia.com, wens@csie.org, will@kernel.org,
+	yu-cheng.yu@intel.com, rientjes@google.com
+Subject: Re: [PATCH v3 08/10] iommu/tegra-smmu: use page allocation function
+ provided by iommu-pages.h
+Message-ID: <ZZe7x-l3Lxwp-4kq@orome.fritz.box>
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
+ <20231226200205.562565-9-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -62,125 +75,47 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="eGTPasXYebqI3XK+"
+	protocol="application/pgp-signature"; boundary="8IeHlBnAmdcVLGIU"
 Content-Disposition: inline
-In-Reply-To: <3faec2e9-8cd9-46f9-8807-801922de0edf@nvidia.com>
+In-Reply-To: <20231226200205.562565-9-pasha.tatashin@soleen.com>
 User-Agent: Mutt/2.2.12 (2023-09-09)
 
 
---eGTPasXYebqI3XK+
-Content-Type: text/plain; charset=utf-8
+--8IeHlBnAmdcVLGIU
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 05, 2024 at 10:24:18AM +0530, Sameer Pujar wrote:
+On Tue, Dec 26, 2023 at 08:02:03PM +0000, Pasha Tatashin wrote:
+> Convert iommu/tegra-smmu.c to use the new page allocation functions
+> provided in iommu-pages.h.
 >=20
->=20
-> On 04-01-2024 22:52, Mark Brown wrote:
-> > On Thu, Jan 04, 2024 at 06:07:22PM +0100, Thierry Reding wrote:
-> > > On Tue, Dec 26, 2023 at 09:58:02PM +0530, Sameer Pujar wrote:
-> > > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 /-----> codec1 endpoint
-> > > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 /
-> > > > CPU endpoint \
-> > > >  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 \-----> codec2 endpoint
-> > > Can you describe the use-case? Is there a need to switch between code=
-c1
-> > > and codec2 endpoints or do they receive the same data in parallel all
-> > > the time?
-> > > Could this perhaps be described by adding multiple CPU ports with one
-> > > endpoint each?
-> > Don't know about the specific use case that Sameer is looking at but to
-> > me this looks like a surround sound setup where multiple stereo (or
-> > mono) DACs are wired in parallel, either with a TDM setup or with
-> > multiple data lines.  There's multiple CODECs all taking input from a
-> > single host controller.
->=20
-> Yes, it is a TDM use case where the same clock and data line is shared wi=
-th
-> multiple CODECs. Each CODEC is expected to pickup data based on the allot=
-ted
-> TDM slot.
->=20
-> It is possible to create multiple CPU dummy endpoints and use these in DT
-> binding for each CODEC. I am not sure if this is the best way right now.
-> There are few things to note here with dummy endpoints. First, it leads to
-> bit of duplication of endpoint DAIs and DAI links for these. Please note
-> that host controller pins are actually shared with external CODECs. So
-> shouldn't DT provide a way to represent this connection? Second, ASoC
-> provides a way to represent multiple CODECs on a single DAI link in the
-> driver and my concern is to understand if present binding can be extended=
- to
-> represent this scenario. Third, one of the user wanted to connect 6 CODECs
-> and that is the maximum request I have seen so far. I can expose addition=
-al
-> dummy CPU DAIs keeping this maximum request in mind, but not sure if users
-> would like to extend it further. The concern I have is, how can we make t=
-his
-> easily extendible and simpler to use?
->=20
-> With custom DT bindings it may be simpler to resolve this, but Tegra audio
-> presently relies on standard graph remote-endpoints binding. So I guess
-> diverging from this may not be preferable?
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Acked-by: David Rientjes <rientjes@google.com>
+> ---
+>  drivers/iommu/tegra-smmu.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
 
-This seems like a legitimate use-case for the graph bindings, but
-perhaps one that nobody has run into yet. It might be worth looking into
-extending the bindings to account for this.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-I think there are two pieces for this. On one hand we have the DTC that
-complains, which I think is what you were seeing. It's a bit tricky to
-update because it checks for bidirectionality of the endpoints, which is
-trivial to do with 1:1 but more complicated with 1:N relationships. I've
-done some prototyping but not sure if my test DT is exactly what you
-need. Can you send a snippet of what your DT looks like to test the DTC
-changes against?
-
-The other part is the DT schema which currently restricts the
-remote-endpoint property to be a single phandle. We would want
-phandle-array in this case with an updated description. Something like
-this:
-
---- >8 ---
-diff --git a/dtschema/schemas/graph.yaml b/dtschema/schemas/graph.yaml
-index bca450514640..1459b88b9b77 100644
---- a/dtschema/schemas/graph.yaml
-+++ b/dtschema/schemas/graph.yaml
-@@ -42,8 +42,9 @@ $defs:
-=20
-       remote-endpoint:
-         description: |
--          phandle to an 'endpoint' subnode of a remote device node.
--        $ref: /schemas/types.yaml#/definitions/phandle
-+          A list of phandles to 'endpoint' subnodes of one or more remote
-+          device node.
-+        $ref: /schemas/types.yaml#/definitions/phandle-array
-=20
-   port-base:
-     type: object
---- >8 ---
-
-Thierry
-
---eGTPasXYebqI3XK+
+--8IeHlBnAmdcVLGIU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmWXua4ACgkQ3SOs138+
-s6Fx3Q//e7NFejG5s5nQFCW5feme6nEY++g6ZhvBaKWOn/i6PaC3cMLq+WB4tOXQ
-l3x8Spxx/zbbfqMsd9ZbNWp2ayrPjpM3x0NOgdVEDkaX/mQOWskZbjI94rTOqV2O
-qeUoeHivqjmidvel+cjFYMpmCRNGQDv3NQUvHdREbRB9OQu63RyIAiVousP1Y35y
-meXii3XRc0dmp5o4fpb7eQcI0wYAQmJpNhGYSUepqSz5sKvHiBEJszz5Wy5u7ncu
-uM5zdNlTRJGaWH20Tx1YfI5kI6XDvoVRGv9AfRTpZ6vLJplAWB0X1yOWzHNH/F/E
-STMru2d/eq1MHss1aHk7w9l/vR0I6xbyaCjZv2N4xFjxxePMTybzAePDcYNDBFVq
-7DSjCN4q0q715jBiSiFBsXTGJs2D8Ni8PstNdHBcM7QNP1gf22erSiqtvNADTo1v
-wPd5iv0iRiCsiQcI5lJTAH+Ac5hte8Y+O9onaFtdIy8inhZP/5mpyZdrlIHotQef
-oDQ9zXuSYCYqLNytrId+3QzvbaiV4A2v3l+WLMVDhym2fZ4zVnh3Lct7oG3GYfrG
-VvSxeBX8+0C9ktrYWLYxoNf9KxuJ4pMxLtur79GXF/LxTAzkY0V2znfk0eWyBNtO
-66Hx+c26rIiJOC7+lIAVn39TFH+iGAfH6e64ydz6thKdToeDhto=
-=b9dE
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmWXu8cACgkQ3SOs138+
+s6HXkg//YOz2qzNPS3zbXb9R+gceE/gBdW73WaBVARCvXhhc5PWwWZctFyPH4Hf7
+KDyc0njiNk3tDVY28wbWI3Ex8fbdkb+B8CUlZihhhRxtYaEUiHjkUK7cyR8i81Dq
+pv2Bw67wRrXUthITgzpBOOqdeI+FpB/ch6GKIH0S13F/NpIwmLemg/u5THAgTAyw
+IBi+44VeFWXKky8rT2s/rENv2JAhz5ltYql0CGxFEYhqiIunEb2eqDPgbfr8vLKv
+2mvQmIOZsY04NO86V6eTKTM7+Ue5tzt+jHrMVr0gH/DkHkcmbOoPTn/lBsZ8IFi/
+3nhtBB5ofmX/+80r6w9u/reWpqxUWyvRcJYsE06Nw/AAZN6IZM1ds+6bal1QJ8Zn
+Cw+zagqq5Sqj2ah/tQ/W3rOzbs/XLMD0xLkRl7/kcjjOq+LfZFAzx3zqNyB3Vzlp
+/q+60iAGtwkI04MSGlkKjVkHpIrtSKQFWXbnM79/c5GEevy4r/W2/d7k+phM0y/Y
+GrblcAFFlQfSm4K19PEWARzu0mHOHFqIIcd6vfRONCuGFSAcmtvdB3KOfap5jP4H
+ebZ1R6zDoreUq4hYVBSiRxYxmfDgRUyTQcOTDhEGy/JyteRgvKVhDwgPH+ql3OGS
+wSPkv6/wg5Y8w2lR1QHCG/KXFjZ84iBLdT38/7QZqAR6hfMBGno=
+=MX0T
 -----END PGP SIGNATURE-----
 
---eGTPasXYebqI3XK+--
+--8IeHlBnAmdcVLGIU--
