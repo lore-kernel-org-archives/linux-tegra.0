@@ -1,92 +1,82 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB395232;
-	Sat,  6 Jan 2024 08:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BA263AA;
+	Sat,  6 Jan 2024 09:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XmZYJmzd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD6F5C433C8;
-	Sat,  6 Jan 2024 08:39:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1704530385;
-	bh=D5mTId9xO5LvfbJ1Ot2qK6+t7m/AMhshXdY3og+Kmgg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XmZYJmzdXjAR1gYbAIMr96MQphfu7/knn1bRGk60K7T8EA7Qh7Blv4fWA1JEL65xj
-	 YOLDDWksnioZ789zZGTtV6l5oSy6waba2jsbUOmSPsI7/fAjuO+FlfMMSKY3/AYldV
-	 qK9mn5sHXsUjznJWsyRcXMTg1YhuuVy61iABU4P8=
-Date: Sat, 6 Jan 2024 09:39:42 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 4.14 00/21] 4.14.335-rc1 review
-Message-ID: <2024010633-unviable-agreeably-3456@gregkh>
-References: <20240105143811.536282337@linuxfoundation.org>
- <5bf8a4d9-2a83-4503-b041-09c45207fe0c@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iVmmIGax"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BDD5C433C8;
+	Sat,  6 Jan 2024 09:51:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1704534712;
+	bh=a9bpUDKg0i4oaQbSQwd8PEIMaUV1RvH3ujiDlLgX5h8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=iVmmIGaxylLEURen//u/q2GCXloOV30pGLe/EN/c7yxmPWM8Ju8WX4RquGn4tD99U
+	 9NdAhzF6AjQ0tKdAaeaVKhPB+CJ2PUIr6VSG//ANIaftDZWq/tfNJyZ3+h3fhJIURy
+	 ECnC56Dos6PLexpau3jillqhSRWPsSuuFS+gtlB2BRvf8HC1c7IMAVOgbrya5Xa+Gk
+	 pGe5Tkku4ccI6vtHhOwCeNSa7jgjSNqjDUs8M5Icf7Nd6XEwZT941HwfOqNCBkAVDx
+	 KqspovayBz7Tpqb4TwKXkmn5sLka3ahb8elLfPmfqV3p64dGnj3Z9vVn8PCcSLfJog
+	 Uh2AzK33XP6KA==
+Received: (nullmailer pid 703195 invoked by uid 1000);
+	Sat, 06 Jan 2024 09:51:50 -0000
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5bf8a4d9-2a83-4503-b041-09c45207fe0c@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+To: Petlozu Pravareshwar <petlozup@nvidia.com>
+Cc: conor+dt@kernel.org, cai.huoqing@linux.dev, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, ulf.hansson@linaro.org, thierry.reding@gmail.com, krzysztof.kozlowski+dt@linaro.org, p.zabel@pengutronix.de, spatra@nvidia.com, linux-tegra@vger.kernel.org, kkartik@nvidia.com, robh+dt@kernel.org, dmitry.osipenko@collabora.com, jonathanh@nvidia.com
+In-Reply-To: <20240106075134.3933491-2-petlozup@nvidia.com>
+References: <20240106075134.3933491-1-petlozup@nvidia.com>
+ <20240106075134.3933491-2-petlozup@nvidia.com>
+Message-Id: <170453471019.703179.18182038720980471680.robh@kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: tegra: pmc: Update scratch as an
+ optional aperture
+Date: Sat, 06 Jan 2024 02:51:50 -0700
 
-On Fri, Jan 05, 2024 at 04:23:00PM +0000, Jon Hunter wrote:
-> Hi Greg,
-> 
-> On 05/01/2024 14:38, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.14.335 release.
-> > There are 21 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sun, 07 Jan 2024 14:38:02 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.335-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > -------------
-> > Pseudo-Shortlog of commits:
-> 
-> ...
-> 
-> 
-> > Alexis Lothoré <alexis.lothore@bootlin.com>
-> >      pinctrl: at91-pio4: use dedicated lock class for IRQ
-> 
-> 
-> I am seeing the following build error for ARM ...
-> 
-> drivers/pinctrl/pinctrl-at91-pio4.c: In function ‘atmel_pinctrl_probe’:
-> drivers/pinctrl/pinctrl-at91-pio4.c:1054:3: error: too many arguments to function ‘irq_set_lockdep_class’
->    irq_set_lockdep_class(irq, &atmel_lock_key, &atmel_request_key);
->    ^~~~~~~~~~~~~~~~~~~~~
-> In file included from include/linux/irq.h:517:0,
->                  from include/linux/gpio/driver.h:7,
->                  from drivers/pinctrl/pinctrl-at91-pio4.c:18:
-> include/linux/irqdesc.h:250:1: note: declared here
->  irq_set_lockdep_class(unsigned int irq, struct lock_class_key *class)
->  ^~~~~~~~~~~~~~~~~~~~~
-> 
-> I am guessing it is the above commit.
 
-Thanks, now dropped.
+On Sat, 06 Jan 2024 07:51:33 +0000, Petlozu Pravareshwar wrote:
+> Scratch address space register is used to store reboot reason. For
+> some Tegra234 systems, the scratch space is not available to store
+> the reboot reason. This is because scratch region on these systems
+> is not accessible by the kernel as restricted by the Hypervisor.
+> Such systems would delist scratch aperture from PMC DT node.
+> 
+> Accordingly, this change makes "scratch" as an optional aperture for
+> Tegra234 in PMC dt-binding document.
+> 
+> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> ---
+>  .../arm/tegra/nvidia,tegra186-pmc.yaml        | 83 +++++++++++++------
+>  1 file changed, 58 insertions(+), 25 deletions(-)
+> 
 
-greg k-h
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml:85:12: [warning] wrong indentation: expected 12 but found 11 (indentation)
+
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240106075134.3933491-2-petlozup@nvidia.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
