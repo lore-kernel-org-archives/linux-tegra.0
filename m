@@ -1,165 +1,92 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2082.outbound.protection.outlook.com [40.107.220.82])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F57263AD;
-	Sat,  6 Jan 2024 07:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB395232;
+	Sat,  6 Jan 2024 08:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WjUapb+W"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bSIW+RCe8zIINW1R09pfVE06zzYv5wxkdaJyyVbIukB51o6SAbfWUjIYYP0ELXOXDm4aEFzs9xffgprbaDDIfSuMPqJ4jaNL9hikC+3s1X0ICm7hxOON0UEm/sm/GSFpmtwDfYHoyEek1eVZUaRW5n74LUX0d2TFuFRrAptanL2AZ6o4jOua1WSGxhm4jl0nGpZOobwmaPv0/4HFm0txOIYlkiDoY3eddeUobY8DbzAFic0gTTmDH1S0GKhNlnpQTpKl38QuSnZcbju73Tkp5wdynjuGckvAMh5QwFQ7y3y2iuApedHuMDIu0FVMgPuDtzfm0k43a8kNKFetzkKB2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x+zSkDCkegGMZxyQOmJbK7cVsTWX8LzEg2S9aez9dMM=;
- b=Ab+5VTKlsRNcLtSDWWMQ0s4WKRAh9tKjo3avzqPFhuZhFLIpFO8IYQGsT7+ELKkHDd0Lt63P0zB/ZsSqxxTXYC73f5obOtUhGPOFApXe8GNMo05YO/Hhh2IP4yo49ajbIHiziqv3sFC1XaBeWE5K/JUwOjbYnKnrAcKUYWinnV0XIX7+PUfqDl9WL0ur5wG0z2pxjWbHqkHswZDvm0vWs+TXPkYDbCrQkWbpAKFAFe/Z0S2cxMapvgdFroJ6OIXN82y+bFoxcEk5x4elokLE2h1uLjKO024DDtm4J0+KAtqfO6V7gzkJrgd5K531gG3/QDwQxecrexUXFXvXs34Z2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x+zSkDCkegGMZxyQOmJbK7cVsTWX8LzEg2S9aez9dMM=;
- b=WjUapb+Wz2wRv6Ch34xgB+DesNRv+ExkCrRV24+eE/ufdR0a3WVcyCPl/dGVTDXA1P4y15C0fIVy+YfXQ16ag5L+NXPOzgPfIZn2tiiBA16HF41i1/HPoxxJOO4d/hcOToC2tGY/gmGq7hocLUIBNQvCJPXcW2eW3pTp3BWEnL5EYJAqpIbIlomOi1hvlHpd1vvU7fBAYW30awYxehs067awPemIXB2af5loUCoWxM6v0hGRc6j1gJT28ikqyf+icQoouNuhT2DKE7nDkwx4mCuUY06CuIK6VGem79aGPVxy0o5LgP9SohnxRRkWoB0qFXIAY+X5AGg1Az8WfcPSQw==
-Received: from BL1PR13CA0389.namprd13.prod.outlook.com (2603:10b6:208:2c0::34)
- by SJ1PR12MB6122.namprd12.prod.outlook.com (2603:10b6:a03:45b::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.18; Sat, 6 Jan
- 2024 07:53:02 +0000
-Received: from BL02EPF0001A108.namprd05.prod.outlook.com
- (2603:10b6:208:2c0:cafe::e1) by BL1PR13CA0389.outlook.office365.com
- (2603:10b6:208:2c0::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.15 via Frontend
- Transport; Sat, 6 Jan 2024 07:53:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL02EPF0001A108.mail.protection.outlook.com (10.167.241.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7181.12 via Frontend Transport; Sat, 6 Jan 2024 07:53:01 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 5 Jan 2024
- 23:52:45 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 5 Jan 2024
- 23:52:44 -0800
-Received: from build-petlozup-20231217T213756539.nvidia.com (10.127.8.12) by
- mail.nvidia.com (10.129.68.7) with Microsoft SMTP Server id 15.2.986.41 via
- Frontend Transport; Fri, 5 Jan 2024 23:52:44 -0800
-From: Petlozu Pravareshwar <petlozup@nvidia.com>
-To: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<p.zabel@pengutronix.de>, <dmitry.osipenko@collabora.com>,
-	<ulf.hansson@linaro.org>, <kkartik@nvidia.com>, <cai.huoqing@linux.dev>,
-	<spatra@nvidia.com>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <petlozup@nvidia.com>
-Subject: [PATCH 3/3] soc/tegra: pmc: Update scratch as an optional aperture
-Date: Sat, 6 Jan 2024 07:51:34 +0000
-Message-ID: <20240106075134.3933491-3-petlozup@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240106075134.3933491-1-petlozup@nvidia.com>
-References: <20240106075134.3933491-1-petlozup@nvidia.com>
-X-NVConfidentiality: public
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XmZYJmzd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD6F5C433C8;
+	Sat,  6 Jan 2024 08:39:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1704530385;
+	bh=D5mTId9xO5LvfbJ1Ot2qK6+t7m/AMhshXdY3og+Kmgg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XmZYJmzdXjAR1gYbAIMr96MQphfu7/knn1bRGk60K7T8EA7Qh7Blv4fWA1JEL65xj
+	 YOLDDWksnioZ789zZGTtV6l5oSy6waba2jsbUOmSPsI7/fAjuO+FlfMMSKY3/AYldV
+	 qK9mn5sHXsUjznJWsyRcXMTg1YhuuVy61iABU4P8=
+Date: Sat, 6 Jan 2024 09:39:42 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 4.14 00/21] 4.14.335-rc1 review
+Message-ID: <2024010633-unviable-agreeably-3456@gregkh>
+References: <20240105143811.536282337@linuxfoundation.org>
+ <5bf8a4d9-2a83-4503-b041-09c45207fe0c@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A108:EE_|SJ1PR12MB6122:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf76b01f-1af1-444b-160c-08dc0e8c81e2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	qRbB3J1c57UEm4+efbUTEFi/oXSPg7fzOHO3Uxe1maYAGdlUV5ffPaTg2WC/o1i82c4C0nQMUFCME94yoNyHMVcPk7EfP1is/xYqv2P0o4COwCqRdM7TMe50N0TlnwVP05/C2XR042atGEv1Yj3ZXDUGOrVxSdjSlxWeu0V1i8rUQKrM3uZM17CPYbQMogRVy4msS6ViXYaWYJK5Jld1zFr7hwhjFyWPrri1mZZLMdHQGkDrBL4pdkbRN8zCisGs7vDfXW6Bii/NKN9ijlrKCvyRTTZJ+T6HssUvuL1fXUa1R8lha85xeWVeUQfDssaA5kez7JdHhqND6CE5/PIQqeM1yYky50nzxOXq1tDruUTCQWHtlqvHL4yJs8YjC4q7H64hWkBQ1bjHxzeKSCW6ocdeWzSCJVuF7XCeMP/f4nM1sUIYL0W2WV8rNr70WynAy5daNG7wGIUs0iF9kU2pVwOKPQcGI0lmJXjor7NQSrkfVlmC8jQIKJz9LtMAhfNxihbvin+tB9XtRnc5uzeQLwKmJIN09fQ7LUjli30LE4bNP1gHYT1+5onp0bHfJbkTXxL5skWE1VYdnyFfoAky5eMLxB72bnkJbYGadEzEfrnuMJz8J6QUV6YvoBFLu/0P23DcJN0BrYBAk+FJRCxRLHCuitCz03bVOrGhavSG1OxG6Y/OPMLl/tCy/M4afh8O4ZMOAdB2RhKL8UEM9BUq7ol94vScDETJg5rTCTGg+m3wrTcKnpx8sO5M8w0EfqZk
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(346002)(396003)(39860400002)(376002)(136003)(230922051799003)(186009)(82310400011)(1800799012)(64100799003)(451199024)(36840700001)(46966006)(40470700004)(107886003)(2616005)(7696005)(83380400001)(26005)(336012)(426003)(1076003)(921011)(41300700001)(86362001)(4326008)(7416002)(8676002)(8936002)(110136005)(316002)(5660300002)(2906002)(36756003)(70206006)(70586007)(6666004)(478600001)(36860700001)(356005)(7636003)(47076005)(40480700001)(82740400003)(40460700003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jan 2024 07:53:01.5024
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf76b01f-1af1-444b-160c-08dc0e8c81e2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A108.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6122
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5bf8a4d9-2a83-4503-b041-09c45207fe0c@nvidia.com>
 
-Scratch address space register is used to store reboot reason. For
-some Tegra234 systems, the scratch space is not available to store
-the reboot reason. This is because scratch region on these systems
-is not accessible by the kernel as restricted by the Hypervisor.
-Such systems would delist scratch aperture from PMC DT node.
+On Fri, Jan 05, 2024 at 04:23:00PM +0000, Jon Hunter wrote:
+> Hi Greg,
+> 
+> On 05/01/2024 14:38, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.14.335 release.
+> > There are 21 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sun, 07 Jan 2024 14:38:02 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.335-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> > -------------
+> > Pseudo-Shortlog of commits:
+> 
+> ...
+> 
+> 
+> > Alexis Lothoré <alexis.lothore@bootlin.com>
+> >      pinctrl: at91-pio4: use dedicated lock class for IRQ
+> 
+> 
+> I am seeing the following build error for ARM ...
+> 
+> drivers/pinctrl/pinctrl-at91-pio4.c: In function ‘atmel_pinctrl_probe’:
+> drivers/pinctrl/pinctrl-at91-pio4.c:1054:3: error: too many arguments to function ‘irq_set_lockdep_class’
+>    irq_set_lockdep_class(irq, &atmel_lock_key, &atmel_request_key);
+>    ^~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/irq.h:517:0,
+>                  from include/linux/gpio/driver.h:7,
+>                  from drivers/pinctrl/pinctrl-at91-pio4.c:18:
+> include/linux/irqdesc.h:250:1: note: declared here
+>  irq_set_lockdep_class(unsigned int irq, struct lock_class_key *class)
+>  ^~~~~~~~~~~~~~~~~~~~~
+> 
+> I am guessing it is the above commit.
 
-Hence this change makes scratch as optional aperture and also avoids
-registering reboot notifier if scratch address space isn't mapped.
+Thanks, now dropped.
 
-Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
----
- drivers/soc/tegra/pmc.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 0bc983f6b088..6948f78c7a4a 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -2903,11 +2903,16 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 		if (IS_ERR(pmc->aotag))
- 			return PTR_ERR(pmc->aotag);
- 
-+		/* "scratch" is an optional aperture */
- 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
- 						"scratch");
--		pmc->scratch = devm_ioremap_resource(&pdev->dev, res);
--		if (IS_ERR(pmc->scratch))
--			return PTR_ERR(pmc->scratch);
-+		if (res) {
-+			pmc->scratch = devm_ioremap_resource(&pdev->dev, res);
-+			if (IS_ERR(pmc->scratch))
-+				return PTR_ERR(pmc->scratch);
-+		} else {
-+			pmc->scratch = NULL;
-+		}
- 	}
- 
- 	pmc->clk = devm_clk_get_optional(&pdev->dev, "pclk");
-@@ -2919,12 +2924,15 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 	 * PMC should be last resort for restarting since it soft-resets
- 	 * CPU without resetting everything else.
- 	 */
--	err = devm_register_reboot_notifier(&pdev->dev,
--					    &tegra_pmc_reboot_notifier);
--	if (err) {
--		dev_err(&pdev->dev, "unable to register reboot notifier, %d\n",
--			err);
--		return err;
-+	if (pmc->scratch) {
-+		err = devm_register_reboot_notifier(&pdev->dev,
-+						    &tegra_pmc_reboot_notifier);
-+		if (err) {
-+			dev_err(&pdev->dev,
-+				"unable to register reboot notifier, %d\n",
-+				err);
-+			return err;
-+		}
- 	}
- 
- 	err = devm_register_sys_off_handler(&pdev->dev,
--- 
-2.17.1
-
+greg k-h
