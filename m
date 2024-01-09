@@ -1,162 +1,177 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2126.outbound.protection.outlook.com [40.107.114.126])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B467F55C10;
-	Mon,  8 Jan 2024 19:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D57664A;
+	Tue,  9 Jan 2024 02:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byx30lTj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E9DC433C8;
-	Mon,  8 Jan 2024 19:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704743940;
-	bh=f29NR9MAWVjCDyn/MbeDD98XbHXmd6KpipbtrQODkYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=byx30lTjWW7I2tbCrnCBwOs8/77H/g7oT+9KwXCn64R7j3LxUbDHirurOo0CWv06k
-	 SdeSgHz2spp26eS006ixX052ZjXOYDCVvbIg4VhU0Ts2bi2YKsILGxnocmRDMzR/dO
-	 fV9lJug4nmflknc9DDlatdGQ8WhRm5yrU6pqIhfi0f7MFElIXxyZ4LIBHlUZM2r8JH
-	 EyIHmIXnHgHImocleXUEhRVN8dmqa7G9SKiQq1dLhAb3EBGgpw32rtAq6Ccwse6W1n
-	 iOPt826kcZg5Nvo37TuMbcujTvSD6AI0j0MIgRQDEzYsJ4L3FkyVknRY+VGulGgxgF
-	 5t0llNtVvIKGA==
-Received: (nullmailer pid 2013297 invoked by uid 1000);
-	Mon, 08 Jan 2024 19:58:57 -0000
-Date: Mon, 8 Jan 2024 12:58:57 -0700
-From: Rob Herring <robh@kernel.org>
-To: Petlozu Pravareshwar <petlozup@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, p.zabel@pengutronix.de, dmitry.osipenko@collabora.com, ulf.hansson@linaro.org, kkartik@nvidia.com, cai.huoqing@linux.dev, spatra@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: tegra: pmc: Update scratch as an
- optional aperture
-Message-ID: <20240108195857.GA1959040-robh@kernel.org>
-References: <20240106075134.3933491-1-petlozup@nvidia.com>
- <20240106075134.3933491-2-petlozup@nvidia.com>
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="Oc/XAG+g"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bSv4hUiUtYl/fQfn1Hm6xjI5mII4fb6tyxoq8Z5KBIec9saEWdK2ghgx4c7ccKyUOeN/McP6wL/ZpIFN95nHGNA4M0BwF3pgTLpwq/F7pUOHaQmD3rv2EWMH1TICzvBuG0kftGveyk3aMFvH0dCXW2Zv53CB1zuqRiJTpQv7be5dPG9UjVdsIa3+3R303Vx+fEliCc6tkFHu0N0gqdLKIJsFfNiD8h+uRsjF1z7xJEJNoxsZ1ABF/5ADhbICZLq/ZCrhagQEXzaeu6wAeP86k2Zi+fXn5iXO4LzfWdO+m6j4DDL5gV1t3Nv9o+U3cCz7kSR6Ge/BniJoVnmlBeIhsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=klqRr6/8+a4sTaVdQ3FY2UrdJi2bxntpe83F94aSq8E=;
+ b=V6xSTp+iH4aBlf4T124kEHr1LFslEtPW5tJv9sZ54ZFAiVElq8odzRLZ39kdn2OQhSfF0vHrl5o2KMmtCZoif0l2rYSwtfiSKjHeeYu8jOcZQAEz0EIDlHKuEg9Xo6ntj9Q0zuDohOOClXDyU3nY9BUg9Ng6OQ+dvtMuasnIcqlCgxQroz/FB8fbrR2Qg8PDl6pJqbsLC+KE7Up5lB/mybM9rXufdB4vK0HYMaDBYMbX9+RFM9hfDDFU4P+pSfxveJVN21xPTfyvKVxlwRRgZWLtDf4fx7618VUS7C7K7629ewiC4BL8sJwa9g/QelcoLihGIeRdXDWAvqPzq6unfQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=klqRr6/8+a4sTaVdQ3FY2UrdJi2bxntpe83F94aSq8E=;
+ b=Oc/XAG+gTL9rq2iwT7ikbTlD9xWfUFldsiZX+k9pVUD93H/xrC72dfkTV6GGRhbHML4XXvso8Eh7MYnaxIX8FpBpHnKZjQ5iFrALQEtz3UnZnhQH7yOYeTTDE4eSeXBQvJY/sROdr9Z9hlma9o3kh5dRS4OabrvAD6f32jxdTI0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by TYWPR01MB11111.jpnprd01.prod.outlook.com
+ (2603:1096:400:3f3::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.15; Tue, 9 Jan
+ 2024 02:17:04 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::91d:1bfa:edc4:1c5b]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::91d:1bfa:edc4:1c5b%7]) with mapi id 15.20.7181.015; Tue, 9 Jan 2024
+ 02:17:04 +0000
+Message-ID: <875y03i739.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Sameer Pujar <spujar@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	Jon Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org
+Subject: Re: Query on audio-graph-card DT binding
+In-Reply-To: <8241c953-8ae5-4f26-b108-fccf826ed87a@nvidia.com>
+References: <dfe363ef-4638-4b5e-8308-73e286ac0b50@nvidia.com>
+	<ZZblyhfzQjzyoUc_@orome.fritz.box>
+	<42c0c4fa-585e-4194-bbe4-e0377c87e632@sirena.org.uk>
+	<3faec2e9-8cd9-46f9-8807-801922de0edf@nvidia.com>
+	<ZZe5sTNz005Tt4jk@orome.fritz.box>
+	<8241c953-8ae5-4f26-b108-fccf826ed87a@nvidia.com>
+User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 9 Jan 2024 02:17:04 +0000
+X-ClientProxiedBy: TYCPR01CA0129.jpnprd01.prod.outlook.com
+ (2603:1096:400:26d::16) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240106075134.3933491-2-petlozup@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYWPR01MB11111:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4b09540-32e7-45a8-03ce-08dc10b9126b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	A4+4ukqMVe8q2xWroMbzJcaqgz1PgScuqMls70UrjAcNdtqhowd3J+u5/uBnzJVCuis2oGc9pgNCTU8cQaFwDM7mRMXvxL+4zi62vyo+nTVrx9kiIk/+BluROdA8HgWI4DLPwwquk8DcLu3qf6X7LzZ+50W0YB6exve+6UIjeqVXOaleuQLjWd+0z1m5YNUEX/7kiS4UGRfcYSW+XcptlCqXo7p3mHlD1tIwq32o670ReBCy8GhXJ4iiI2FxIW9IjKRRVmmweaTgVL2ZHoR4ce1RpvJIR2yNbvqIKKGv7mAYBQbkN4loi14t5O32t/A0zm70FO644KJTiSImpD2iX0yZ/tZXaxfFOnkyUb4GwTyaypgNiJWQn9ROIQZs/k5iH3O/yUgpx4snmaiI0flV2DNH2BqyJA3aPVbjtzpKTuDJXej+3aRe6zrOFXcLeBvTXyQ9kObhKcZeF8SW/HronzIlW9sHdpUTYfoBegBcWA/jick3BAVMa8+h2Hbhlz3ZhJw4CkP4dLpNUezfSlQUu1zTiOsXIHUXH3rCC3cCPWc/w2o1HsJZcH2/QKoIsuevMAWoPx0I2MOrhuT9NgjbW6ZPRcEdTdf/aIuybR9u67W+b3rkuJtdWlOuNf3kJA4+9CXOpT0sz17CNnF6ClM+Hg==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(136003)(366004)(396003)(346002)(39860400002)(230922051799003)(186009)(64100799003)(1800799012)(451199024)(478600001)(4326008)(8676002)(8936002)(6486002)(26005)(2616005)(6512007)(6506007)(66476007)(66556008)(66946007)(52116002)(316002)(6916009)(54906003)(5660300002)(2906002)(38100700002)(41300700001)(38350700005)(2013699003)(86362001)(36756003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?yOrMHDcunZ5rYbRUA3xgKfGcc+isOMUaGvEFQYByltPe2+xUzCxHcCnyPf?=
+ =?iso-8859-1?Q?vGpY51VntttLBOw5CP5n0Ee0c42dA5O5+C20MVgBLa7cxPatEXCsbNdgi0?=
+ =?iso-8859-1?Q?AvokZCtVGK6TlkhBkvwJqa/bxk8iMwQ3O5ZFEeo6Ar90mg6LnZrSV7j4nY?=
+ =?iso-8859-1?Q?oU3owwUKDZMPD8xUBttcfg35BHWBwElze0xAJ0tm4csV8Qg++YKTwH66vl?=
+ =?iso-8859-1?Q?D9jmD7Wr4/ZI92aVp9vPLE2XBSHLFdVHE1R2xV2C+xi6Ny/4NHPYcGoCZR?=
+ =?iso-8859-1?Q?zAWWmqVPEeA316lETso1k/Pb1zIHMo7o7bEuyh3s1l9M7PfpNUHG0DgKFA?=
+ =?iso-8859-1?Q?lF2CGxhWVxbbT2BCEhVUMPhnUfACBo997N8zMg5llIZ0Bg4jpmPvDhwhea?=
+ =?iso-8859-1?Q?o8xy/Zdtc2LYpIAQRZ/WZ4MYD6EYUYKSVti7lbCdB+13gcmnI80sFG0Hf/?=
+ =?iso-8859-1?Q?x2TDKGUWi3LKH6wOyQ64yVXua/MoRwa46jhJRbmZ0vziF6q+ZyU2tbb+nI?=
+ =?iso-8859-1?Q?nqIAP3xLclPMWJk4CKOMXBNJOHDwtDE5POEXqzqxFEcmedEi6Mz4YEaAjW?=
+ =?iso-8859-1?Q?y+2Pg7Kl1CSU+PtJ4s16gq2bGHM8nsXbFhsmDOh6OhzbA7ztftOOnv0R9Z?=
+ =?iso-8859-1?Q?D7mjCTlxcUPDPZOH4vjyBMXoTbrpPZ/j0ONItuKtOs/hILG4MjYWpiY93n?=
+ =?iso-8859-1?Q?hXgLYogLZJke0vS2N7kVAbyUwj1fpJpY+I/11kRgG1ZcND8XlIytN2SKkH?=
+ =?iso-8859-1?Q?nW1lrRBhtE8MBrY45clUQBRsRSe+8HZfHnAyT7DVcR+V686NUTfaFJfXdi?=
+ =?iso-8859-1?Q?hkkUDFFBQm8+DGO76PkIN6sIw7pcWQx8uq77JwXshiyydxvhGoX1iYTUc0?=
+ =?iso-8859-1?Q?bxMbNrRgN8bmKooxiVvKbQHPK08f8AKV7/J3WN0V7vz3unr2fO6qxS7o8C?=
+ =?iso-8859-1?Q?QFrFCFgE1ziExqYUj9iC8we8yKbZREcmfkGEhRDPfICrA5SOdR3Pnx9FVV?=
+ =?iso-8859-1?Q?CwyIsy7Y1aIMkocNOF1JIdYUsTR/kp3kMRHPSeJvcwrv3c6sx2DUSoZqby?=
+ =?iso-8859-1?Q?y5lM76iUzyEdmmBog6lVjaP/Hz+tYRHshvCws2DDQ/my1B4xl2Ef9KTNrm?=
+ =?iso-8859-1?Q?icJ8TZjH+XDJ2aIcBuIT+Q4DZHmLYW5/gnnEj/qpwUV1rGIp9Fu9PjBqd6?=
+ =?iso-8859-1?Q?ha8ViSOkMNqiGkplWkyv6csIWokXO/qbHR2Tf9hvxKF2wEPZxp0s7vo4S7?=
+ =?iso-8859-1?Q?gNrebb2bdWk0riZJHePg8RFvAWXeO7vRYupyt2gueKycyKK1sAgf2H+jyD?=
+ =?iso-8859-1?Q?IikIOwUSBue1Coxz5iHNpEpgKb8JKocPBfWAz4A71JBvzSwEAEXvZ6/WtJ?=
+ =?iso-8859-1?Q?TXNK9fF7+naoj5EJsh2tTrsOw9tUd7y7KjBkR0+wrB+2BFGY/RZsIVrO7V?=
+ =?iso-8859-1?Q?LUzJtIX20BK2CTBOoOjb9iRWbxGnv75eYq74nlCPYTadP/uyBqoLMoJB84?=
+ =?iso-8859-1?Q?LoXAhQ2kQUWanqfwC87DDxaAx62pIRxhcYuDAySMCy4AkWzQCg0SiqR6pX?=
+ =?iso-8859-1?Q?KvrwghohYJ4ppqsPWx0q+2VhvpDGdqmayivB/OCdjLm8j+2ftdlKEDzlLI?=
+ =?iso-8859-1?Q?RiZDECdRhCn2DmSap7lNyqvYjvuhOOFaitf7xVrM32t0y7K/U/GuGlZKF/?=
+ =?iso-8859-1?Q?/lWTsLblMUJEXhxrF2A=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4b09540-32e7-45a8-03ce-08dc10b9126b
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2024 02:17:04.4781
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EtfES2L4nvg8pXWyTBfyvwOt+pkeIpTTf+fSuCYa6JKJrFZBjEmGZPpBL8EX0oipDKLrPM78Z0qjt1Vzvo/TWvigQqyap6O7SC6sUo9eqen+EBo6ORjO6t+3z42U5x24
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11111
 
-On Sat, Jan 06, 2024 at 07:51:33AM +0000, Petlozu Pravareshwar wrote:
-> Scratch address space register is used to store reboot reason. For
-> some Tegra234 systems, the scratch space is not available to store
-> the reboot reason. This is because scratch region on these systems
-> is not accessible by the kernel as restricted by the Hypervisor.
-> Such systems would delist scratch aperture from PMC DT node.
-> 
-> Accordingly, this change makes "scratch" as an optional aperture for
-> Tegra234 in PMC dt-binding document.
-> 
-> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
-> ---
->  .../arm/tegra/nvidia,tegra186-pmc.yaml        | 83 +++++++++++++------
->  1 file changed, 58 insertions(+), 25 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
-> index 0faa403f68c8..2716610a1a02 100644
-> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
-> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
-> @@ -23,12 +23,7 @@ properties:
->  
->    reg-names:
->      minItems: 4
-> -    items:
-> -      - const: pmc
-> -      - const: wake
-> -      - const: aotag
-> -      - const: scratch
-> -      - const: misc
-> +    maxItems: 5
 
-You can just make the 4th entry: enum: [ scratch, misc ]
+Hi Sameer
 
->  
->    interrupt-controller: true
->  
-> @@ -41,25 +36,63 @@ properties:
->      description: If present, inverts the PMU interrupt signal.
->      $ref: /schemas/types.yaml#/definitions/flag
->  
-> -if:
-> -  properties:
-> -    compatible:
-> -      contains:
-> -        const: nvidia,tegra186-pmc
-> -then:
-> -  properties:
-> -    reg:
-> -      maxItems: 4
-> -
-> -    reg-names:
-> -      maxItems: 4
-> -else:
-> -  properties:
-> -    reg:
-> -      minItems: 5
-> -
-> -    reg-names:
-> -      minItems: 5
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra186-pmc
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 4
-> +        reg-names:
-> +          items:
-> +            - const: pmc
-> +            - const: wake
-> +            - const: aotag
-> +            - const: scratch
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra194-pmc
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 5
-> +        reg-names:
-> +          items:
-> +            - const: pmc
-> +            - const: wake
-> +            - const: aotag
-> +            - const: scratch
-> +            - const: misc
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra234-pmc
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 4
-> +          maxItems: 5
-> +        reg-names:
-> +          anyOf:
-> +           - items:
-> +               - const: pmc
-> +               - const: wake
-> +               - const: aotag
-> +               - const: misc
-> +           - items:
-> +               - const: pmc
-> +               - const: wake
-> +               - const: aotag
-> +               - const: scratch
-> +               - const: misc
->  
->  patternProperties:
->    "^[a-z0-9]+-[a-z0-9]+$":
-> -- 
-> 2.17.1
-> 
+> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 /-----> codec1 endpoint
+> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 /
+>CPU endpoint \
+> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 \-----> codec2 endpoint
+
+It sounds "Single CPU - Mult Codec" connection, and if my understanding
+was correct, current ASoC is not supporting it so far.
+But dummy CPU with Multi-CPU/Codec connection helps you ?
+I'm not 100% sure though...
+See
+	${LINUX}/sound/soc/generic/audio-graph-card2-custom-sample.dtsi
+
+DT looks like
+
+	[Multi-CPU/Codec]
+			 +-+		 +-+
+		cpu   <--| |<-@--------->| |-> codec1
+		dummy <--| |		 | |-> codec2
+			 +-+		 +-+
+
+Use Multi-CPU/Codec connection with dummy.
+
+	audio-graph-card2 {
+		compatible =3D "audio-graph-card2";
+		links =3D <&mcpu>;
+
+		multi {
+			ports@0 {
+			/* [Multi-CPU] */
+			mcpu:	port@0 { mcpu0_ep: endpoint { remote-endpoint =3D <&mcodec0_ep>; }=
+; };
+				port@1 { mcpu1_ep: endpoint { remote-endpoint =3D <&cpu_ep>;     }; };
+				port@2 { mcpu2_ep: endpoint { remote-endpoint =3D <&dummy_ep>;   }; };
+			};
+
+			/* [Multi-Codec] */
+			ports@1 {
+				port@0 { mcodec0_ep: endpoint { remote-endpoint =3D <&mcpu0_ep>;  }; };
+				port@1 { mcodec1_ep: endpoint { remote-endpoint =3D <&codec1_ep>; }; };
+				port@2 { mcodec2_ep: endpoint { remote-endpoint =3D <&codec2_ep>; }; };
+			};
+		};
+	};
+
+	test_cpu {
+		compatible =3D "test-cpu";
+		port { dummy_ep: endpoint { remote-endpoint =3D <&mcpu2_ep>; }; };
+	};
+
+Thank you for your help !!
+
+Best regards
+---
+Renesas Electronics
+Ph.D. Kuninori Morimoto
