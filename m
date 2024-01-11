@@ -1,60 +1,152 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9146D3BB53;
-	Wed, 10 Jan 2024 09:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A7E82F4;
-	Wed, 10 Jan 2024 01:12:56 -0800 (PST)
-Received: from [192.168.1.100] (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 188653F64C;
-	Wed, 10 Jan 2024 01:12:07 -0800 (PST)
-Message-ID: <dfe99d03-2d44-28c5-0125-b18993de9fa9@arm.com>
-Date: Wed, 10 Jan 2024 09:12:07 +0000
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2091.outbound.protection.outlook.com [40.107.113.91])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55BBEA3;
+	Thu, 11 Jan 2024 00:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="C52Lg1eh"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Njr9rBAyo2X6BKXdEvw9Ewk/lh7XmICyWkEuyEuy9S3LpCgrc+1ByHfy6xDfv9I8YszUPM4qGMaZ+UxOIXL2Qjcsj9DLQMCURZJiyi/BZSpVN6X7MuE+otOim6WVDxKdQPGNYuq+L44lxGR+x/FMHi9XAQgVSw6GWKhCHj1IZLqN0FMR5mdhqfOGuPHvX1REfhCYdRqVS9eeGM+yGoS65cSSTXZMNAl/xzLP0IOE8V/shEqNiiM2lZvu2+2OKrlxhXoAm6/ofahi1o8QEfjLUkJWFhx7BzP2Lwg+UEe2h2vqwhaj4DDovHv6BzLN6pzHQ/6O0O3PHb63BpMAcMP4Vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3UEpDNystJ9JB9faFO04TlwOPAhd6QkTw0OdBwiBcXE=;
+ b=ghLSGcjZdxJih+qcT5aZoDRNvZ98A7SHqCXSvsE6LazjMyj5kRDeSdiy4gYjBncN2v3nxcWmrKraTJ8cMErsEiv6h/DCiuOreIYMlCendmYmwr23VzSdnQx6qtMRYUCkidSR74oXaG5LyfeFydo4LFPwDOiLaqJKlC1+T1H5hs5S3PPPoeHRTMMUrbpYJbYVbAjExFwOZkE5WoWfeWmhwD6mOExXgcJqdpZ/E975W6tMD8OQ6eotjBri9XeMf5CT5dWAko9GRrIuuW106/i82nG5tkV6XbiiuHi2FA4+MCEIyVL5GZ0ZC5u9GL50uyGc7gTPUwmaKQnoGAvZhOwUbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3UEpDNystJ9JB9faFO04TlwOPAhd6QkTw0OdBwiBcXE=;
+ b=C52Lg1eh4qfgdmEE5G3V3iqcItkJVVBWedsNJHh7PCa0dcARv0MZV/5bMZH2LQv6K2Ky0Ai0AZ0qb7xPWSaMVIKGHyAuM+3MzaNSWlNrt6WX2CrOgN6F7vX7F4frssjN2GC6HqNMPbBtduHbxLZ1lik914vNWjPHsk1wraHCzDY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by OS0PR01MB5426.jpnprd01.prod.outlook.com
+ (2603:1096:604:96::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7202.13; Thu, 11 Jan
+ 2024 00:44:58 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::91d:1bfa:edc4:1c5b]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::91d:1bfa:edc4:1c5b%7]) with mapi id 15.20.7181.015; Thu, 11 Jan 2024
+ 00:44:58 +0000
+Message-ID: <8734v4y9yu.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Sameer Pujar <spujar@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Mark Brown <broonie@kernel.org>,
+ alsa-devel@alsa-project.org, devicetree@vger.kernel.org, robh+dt@kernel.org,
+ Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+Subject: Re: Query on audio-graph-card DT binding
+In-Reply-To: <cde6d5d5-b6ab-4c64-93f8-78d721a492bb@nvidia.com>
+References: <dfe363ef-4638-4b5e-8308-73e286ac0b50@nvidia.com>	<ZZblyhfzQjzyoUc_@orome.fritz.box>	<42c0c4fa-585e-4194-bbe4-e0377c87e632@sirena.org.uk>	<3faec2e9-8cd9-46f9-8807-801922de0edf@nvidia.com>	<ZZe5sTNz005Tt4jk@orome.fritz.box>	<8241c953-8ae5-4f26-b108-fccf826ed87a@nvidia.com>	<875y03i739.wl-kuninori.morimoto.gx@renesas.com>	<e7f9085d-9db1-4c5e-9940-e461835b20aa@nvidia.com>	<87il42gkua.wl-kuninori.morimoto.gx@renesas.com>	<cde6d5d5-b6ab-4c64-93f8-78d721a492bb@nvidia.com>
+User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Thu, 11 Jan 2024 00:44:58 +0000
+X-ClientProxiedBy: TYAPR01CA0065.jpnprd01.prod.outlook.com
+ (2603:1096:404:2b::29) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v1 0/3] arm64: Support Neoverse-V2 for Perf Arm SPE
-Content-Language: en-US
-To: Besar Wicaksono <bwicaksono@nvidia.com>, acme@redhat.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-perf-users@vger.kernel.org, linux-tegra@vger.kernel.org,
- treding@nvidia.com, jonathanh@nvidia.com, catalin.marinas@arm.com,
- will@kernel.org, john.g.garry@oracle.com, mike.leach@linaro.org,
- peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, namhyung@kernel.org,
- irogers@google.com, alisaidi@amazon.com, vsethi@nvidia.com,
- rwiley@nvidia.com, ywan@nvidia.com
-References: <20240109192310.16234-1-bwicaksono@nvidia.com>
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <20240109192310.16234-1-bwicaksono@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS0PR01MB5426:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8415f29a-9e79-4842-5c88-08dc123e8954
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	1YgUb9MyrJWaQUJ8hWD3gmm2GogGfZ/wRhKR9459R3XZ7tsvrIODdZOAo95fJ/QIMHYblotNJjIR06KA7KCmbzLCIIC0e6Cev9i4uU1qJBxQnR1Kos34+Fbc/Ch9K2W2oNXuOyONSzFtUcblYuGTRr/195xgvbPxdsL6Ks+N8O0MXy5n3qthPbbIc6WdgFvmW1t5cgb+7OeQVaxnmzJ79XJdRoeRXbcOVz0iZbgajQcQuTqRd9Ew0KtyVNOBg6HTWPXW9VRR1sf3jF6Mdh51yzhU3gmOSkpYQT0BACytg2qmVvU+bZ51WKg7MBT8qV48vBFRT/eU2N8tai8czpR69sxtAo3I0QJEr8B3DIY3FthFD+Hgu5l+B89DTwIio1Ea2EbHsPqlGJlPj4NTs6NzcQJmK8dYyO0FADUhcXNcV/ZYQJjdIENnu2tlFSUJkT+7SvXKMhEaNn21QmS3Bq88DESpFPqRSOO9AfEhcnE/A7AUk+nDgZzLYy4fWinjlNrHyiyaVL5h2B0NPLTuE2nvzZCAagvzPmD4sxjqut3FtvwdBXjPahYOs4fbuNxJl34Wab2URvQhJl7XPfhBMDzDDlGDC+NgQ2Djr0EwCNQpGLB266Z5UcyAIV3KQuGv+Xfn
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(396003)(136003)(346002)(39860400002)(376002)(230922051799003)(1800799012)(186009)(64100799003)(451199024)(5660300002)(8676002)(4326008)(8936002)(2906002)(6916009)(66946007)(54906003)(66556008)(66476007)(316002)(6512007)(6506007)(966005)(6486002)(478600001)(2013699003)(38350700005)(52116002)(36756003)(2616005)(26005)(41300700001)(86362001)(38100700002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DnEWx+m5fM5z0Z61j7uuZO2CK9Ho7SM0OQiSt/8+Efg6WxElR3GzqZSSCMZl?=
+ =?us-ascii?Q?6UyUylvUjjsD3CqAjqJUkow3JSWX9PeMnikwv5qlIa/YFGbVuef/klp0KNhy?=
+ =?us-ascii?Q?zTTBrl4K3SRE4RqzoW6N19tz+2PBxZ0YX+uuJsIXTPL2BL9l9xwUGIVIeyDL?=
+ =?us-ascii?Q?u/e2gclgrLSo4ZALe6xUsMCTouvNfso2IzlmcO7QmFbFVoiYCE7yRF0T36nP?=
+ =?us-ascii?Q?itzJBDA27YbYVGMfiQb+pwoouYsLGGXZWAE0UArY4XaRCwdxds/JxY4CejCn?=
+ =?us-ascii?Q?rJPDsbVfcV6/hwgL7iU62B8Z6sPTDYHYw73l2phc+hCs/G24ie/bOikNna/P?=
+ =?us-ascii?Q?BrwmR6pNVECaRHLFV54kIHb0kVlkFRr/I/RVauijt/c3rXMMhbAfsM0EegPW?=
+ =?us-ascii?Q?GnxumbqV/451vGr2W67IPRpOZhiVlOc5KgHUAtcMReYPvgkMCS7duTCex1ia?=
+ =?us-ascii?Q?8aax1Wz75cFBwCeGUUxQ88RvRNR3cQOzyZwkHOar9CYiuLWf+BUhzAlkeQzC?=
+ =?us-ascii?Q?ZufCcpcFBQVlvFkyVc5ianrl49ErkxrH416vwLyw4gif3ufO3DGKa9QVd7b5?=
+ =?us-ascii?Q?vali7M2VojQraCpHPb0qbsef2B3WvFqxiIbk80jX0uWanB0OxTNPtc5lPd8n?=
+ =?us-ascii?Q?5XKC0Pjhf7x9gW0mc0MrfoSPASE1NBLsVIiJA8yi744pahkq99b1TusInCLL?=
+ =?us-ascii?Q?sSoiNViPeri37wKo3nb7dVGbTTARHHwdUVn6qn96M67hm74PmBWR7hmVlqps?=
+ =?us-ascii?Q?SFvfVqVy6ZvVDcBof7u/wlp7f67dLVVKHh0cclkwgyMvZJmVpFmVl51hai9O?=
+ =?us-ascii?Q?NBubGmMHx4IWbdE4Sk3IxSjDlyReBYUtEfLFqEydvJMoOInFBnSK+d5UD+gg?=
+ =?us-ascii?Q?e858eZ8QjxLfa669VdRCfnzq3l5J/fUBF/BOrGm+OYJ/lGvvgPyMG7H7056m?=
+ =?us-ascii?Q?oCdg2P7AAHbzVNfHNaKRUv1LDrZOC4u3BK7/DLwWv9BddRB6cGkAPbUq4EIc?=
+ =?us-ascii?Q?Ovg6Z4Ej0XSV3MvrV4gNKRk0mJUxmZUpN51ZHOmrNq3vfpyRJhuMay079+w1?=
+ =?us-ascii?Q?2vLi56k7TJqxnFjRTaCzmAYvKRuJ40nEWp1kYAbGuWOjc0x/cUzBiWhtfPho?=
+ =?us-ascii?Q?JpVDfyfWh1P1gFuqbxgmKCFuytVYTXPjKMhoPxheWYy0s+nm/tKuc4dFD4ID?=
+ =?us-ascii?Q?zofdXxRo7ZNVXB2kqNVnMF6Vn0Bw7BKKwz1lZuRAsPsmRxTg0BT/ApRhnACP?=
+ =?us-ascii?Q?bMTy22VKFnnqewPJKNmO64eGIRDpwQ0MGlGwgEFpo9wWAHzw514CjZo8wbuv?=
+ =?us-ascii?Q?vri2FnTiLCI0YCqVhtct+zq29gxMeVA/TQbPUxEkRTWndMHuV5jsQRPW040U?=
+ =?us-ascii?Q?2pEUZSSLnOxtlyHVD28VlxA3e3NvM7dohon8YwtcqCv282fQ8J8ySsyONi5Y?=
+ =?us-ascii?Q?Rp4LyiGxZsJRN70jg1Bl6hi2VAbczUKZsqYDMANmEWV17SaU7nnTWoXivNoi?=
+ =?us-ascii?Q?9Qjg65dtSWJIOp7mNREkgRHxETKw1bEAQFDypvASoW4YYSUfJTUxsiMplNCC?=
+ =?us-ascii?Q?OWtQyq0raky41A+3MhAqlgdNJgFGBSmUIyEPjuZ5h5J7/dvAH4ZO6vBlx62r?=
+ =?us-ascii?Q?dLuBosnMMyuwp7aKaoOV3hs=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8415f29a-9e79-4842-5c88-08dc123e8954
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jan 2024 00:44:58.3168
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BHBbhA7mnE4P1uX+wkzkULWQ72UVkJUVLTyvBErVfVzLkVIuRqaagW+nUnllTYkHiUNMzoi56YXvO1Pv8scGhX27n/FUcsubAd3onuTdmFfruDGvCYFZKVpEgpsczHJ/
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5426
 
 
+Hi Sameer
 
-On 09/01/2024 19:23, Besar Wicaksono wrote:
-> This series support Neoverse-V2 CPU in Perf Arm SPE.
-> The first patch adds the Neoverse-V2 part number in kernel header.
-> The second patch syncs the kernel change to the tools header.
-> The third patch adds Neoverse-V2 into perf's Neoverse SPE data source list.
+> > CPU
+> >          port {
+> >                  cpu_endpoint0: endpoint@0 { remote-endpoint = <&codec1_endpoint>; };
+> >                  cpu_endpoint1: endpoint@1 { remote-endpoint = <&codec2_endpoint>; };
+> >          };
+> >
+> > Codec1
+> >          port {
+> >                  codec1_endpoint: endpoint { remote-endpoint = <&cpu_endpoint0>; };
+> >          };
+> >
+> > Codec2
+> >          port {
+> >                  codec2_endpoint: endpoint { remote-endpoint = <&cpu_endpoint1>; };
+> >          };
+> >
 > 
-> Besar Wicaksono (3):
->   arm64: Add Neoverse-V2 part
->   tools headers arm64: Add Neoverse-V2 part
->   perf arm-spe: Add Neoverse-V2 to neoverse list
-> 
->  arch/arm64/include/asm/cputype.h       | 2 ++
->  tools/arch/arm64/include/asm/cputype.h | 2 ++
->  tools/perf/util/arm-spe.c              | 1 +
->  3 files changed, 5 insertions(+)
-> 
-> 
-> base-commit: d988c9f511af71a3445b6a4f3a2c67208ff8e480
+> This is a workaround. Note that CPU endpoint@1 doesn't exist and a dummy 
+> endpoint needs to be created. Like I mentioned in previous replies, the 
+> number of dummy endpoints that need to be created depends on how many 
+> CODECs user want to connect and it doesn't look scalable.
 
-Reviewed-by: James Clark <james.clark@arm.com>
+I'm not DT-man, but it sounds you are misunderstanding about port vs endpoint ?
+"port" is for physical interface, "endpoint" is for connection.
+If 1 CPU physical interface is connected to 2 Codecs physical interfaces,
+above is for it in my understanding.
+
+Can Audio-Graph-Card2 N:M connection [1][2][3] help you ?
+Sample is for 2:3 connection, but it should be OK for 1:2.
+You need v6.8 or later
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/tree/sound/soc/generic/audio-graph-card2-custom-sample.dtsi?h=asoc-v6.8#n67
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/tree/sound/soc/generic/audio-graph-card2-custom-sample.dtsi?h=asoc-v6.8#n339
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/tree/sound/soc/generic/audio-graph-card2-custom-sample.dtsi?h=asoc-v6.8#n372
+
+Thank you for your help !!
+
+Best regards
+---
+Renesas Electronics
+Ph.D. Kuninori Morimoto
