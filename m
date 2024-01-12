@@ -1,115 +1,140 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2064.outbound.protection.outlook.com [40.107.100.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C50C55799
-	for <linux-tegra@vger.kernel.org>; Fri, 12 Jan 2024 09:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F414C6DCEB;
+	Fri, 12 Jan 2024 14:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NtkZjywE"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-40e67e90d04so1455155e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 12 Jan 2024 01:33:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705051994; x=1705656794; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GdbKxRGvPxBWpCgBSE4r1aRsqUVNPZmEs29C2GWmhhw=;
-        b=NtkZjywEsvJE26ej7S/k7KKBrdYFy0w4H+gygNKhdDlq4uVtnOJLVPpeBuuqxoP45R
-         59e1Qp64gdxg2faGMhay5hlUiGButmUWiPmdlHBuvls6RpHcOIqn0/vqNlkJlvO+uiA6
-         F6gzE/RK32SG6mWk/xcmmRsFlvQO/4Tg9Z1uA4z5zy+O40PHRJgZf8ZCTm2hnhYZfCM8
-         PJWa0x2hYx6vD912l/tPugkfgLxm+ok11GMefy6y0uooG7UrVHsWlNX+CNOVdg8M/R7c
-         2jzTbeuhq+XyHRcEQgU+I/O/wxL2tt3b+mSLZi2RwNvyhuQTqnFD6LInrJ+Kb4YRwECi
-         spPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705051994; x=1705656794;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GdbKxRGvPxBWpCgBSE4r1aRsqUVNPZmEs29C2GWmhhw=;
-        b=JE989+zvb0yKs+InbLUytYrU3URFmIEAdb7ijORI8hdvEfzz6kP7UFevcQbBNXsq/y
-         aYhi7SVpq1Y32yD38IqJe3OF13VVpl1Tc8Agl6swkLL3oWlRhpDCh4xONhaDTFf08AV6
-         j1ucBbU7XNI36L3z9JLqOGDye7RQlFIDVBs4UpPRjhKT5swewR38R01/FdoN25jDKxDJ
-         7FMzNN1MEhYP7Va8sEbq8zhI6RKjgAuEzz+HNVuud63JsRNS/jyL2E8LC5OYLEbDrZBz
-         MxSzZsmxwnTR7nXZxzGgVJDFA5/ninz+BGIp8EGp+c2TyoodY+SGBkTvHQCfX+xecuh1
-         kXKQ==
-X-Gm-Message-State: AOJu0YxWscTKkEr8Rge3/xjxkvld9PfYWkiHfMhV+VkLFBsgN1M+xV/U
-	fc6gxWUJ+RFnAfBuB1LdEjreYvzzX10=
-X-Google-Smtp-Source: AGHT+IF/NYjSIRTtayVBqUULHpCAh0GBqTmTrozHFjuRpQzT7UHUArYsbC+B8pvYzKVfm3Q1fZAmRA==
-X-Received: by 2002:a05:600c:45cf:b0:40e:64c6:c877 with SMTP id s15-20020a05600c45cf00b0040e64c6c877mr374746wmo.123.1705051994543;
-        Fri, 12 Jan 2024 01:33:14 -0800 (PST)
-Received: from morpheus.home.roving-it.com (2.1.9.e.d.3.3.1.6.1.e.d.5.3.a.e.1.8.6.2.1.1.b.f.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:fb11:2681:ea35:de16:133d:e912])
-        by smtp.googlemail.com with ESMTPSA id t5-20020a05600c450500b0040d6d755c90sm5081692wmo.42.2024.01.12.01.33.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jan 2024 01:33:14 -0800 (PST)
-From: Peter Robinson <pbrobinson@gmail.com>
-To: linux-tegra@vger.kernel.org
-Cc: Peter Robinson <pbrobinson@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Sameer Pujar <spujar@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH v2 2/2] dmaengine: tegra210-adma: Update dependency to ARCH_TEGRA
-Date: Fri, 12 Jan 2024 09:32:56 +0000
-Message-ID: <20240112093310.329642-2-pbrobinson@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240112093310.329642-1-pbrobinson@gmail.com>
-References: <20240112093310.329642-1-pbrobinson@gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tOfZRD9v"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GmyPuvGHY4OI1JbyJDXuDgFwaB8Yy48BAWdP5mBMc4JodqXNnccwax88HRqlrDTqoNZJt/oOdOFOVj8Aj5DHCdc8LAqpQEMSxsphccZV4xX7CaIE4Mn94r+/C8kz3CeFDyAV0P+BJUjU57VtT6BJsfBgWJGNmJD7Z14qZLL47/Ymagc0arqJef/Ym/vqtm3sMsrqsmX5cVlX71TC7W8PqnK3U/NlCns3vslDR9jhtG/mW5k1g5ZzpshTeqgnQ1y2zopsSAS0cubQoihvHc2BGWDK6qbZOBdumXSOFvpZSIm8k0SN6HSyzNRVPG+X2yNYzNRZOTC2+BUFxVwUokCvcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fISCV+I/C64XNPusOqnlTMPROHtFCHOnwaczqIvdW30=;
+ b=HsQmmmMAdbtUlvpubY5QPp+k7pjm1eio1XhfKwSqwFU0n/VVxhe+aPnne8mtDSJObwyx7MEaugfXYOZfhGZdb1MzQlbjLn8YxNbH0VzVDSxB08kEaE1Wl3oqwVvNF0s7LIU9YR3xh0qI3ukSXGKreEUHx4S07aTR+/Yi5LOeltx29no3Jy9c9DnJ7AhSoaLoeD+VzEXffcbsdcc7gY/iwTHLZqP+mCGQvjoxjUoR1ZaVCSnADa+T/NQGXpzs+k9i5miBMC+Yv6hdQImh6oZ6vp5K+YmHoq9XlwE3VTsFYl285xKipNQvktDhV0cs777UxUgHVVp3qBFhcujFTMaQbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fISCV+I/C64XNPusOqnlTMPROHtFCHOnwaczqIvdW30=;
+ b=tOfZRD9vXsJbBho0W9D1GRWhKWpVrV9znyHrluIsUrQX2EW/XRaclrhRxmzh0yzQbM4RkiQuukot0yL/uLa84dsjJyU6OTzw0Ad7t0KmM3k7zGSPvid4j0z5kNfhLEaHe8d1d04UkTyePOTZP5+On8u6KPWuuSdecHO6iiyT+uLBDsyOpyEmVP2GURiXmUxtiEj9la3ujyaasvNl5ve+Qvjar8ccNQP4OysYvP4veWDUXvl+msKTFEf2gmT1o+1sFwebwSR5h9ZU6H7o8lKl7L93GeH2o8hQfBJZWECUx1nxI2y6usrkqmhOD73uMTtqXEHIMBHJwWx8ggu0ItvdKA==
+Received: from SN6PR05CA0004.namprd05.prod.outlook.com (2603:10b6:805:de::17)
+ by BL1PR12MB5160.namprd12.prod.outlook.com (2603:10b6:208:311::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.21; Fri, 12 Jan
+ 2024 14:27:25 +0000
+Received: from SN1PEPF0002BA4D.namprd03.prod.outlook.com
+ (2603:10b6:805:de:cafe::41) by SN6PR05CA0004.outlook.office365.com
+ (2603:10b6:805:de::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7202.13 via Frontend
+ Transport; Fri, 12 Jan 2024 14:27:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SN1PEPF0002BA4D.mail.protection.outlook.com (10.167.242.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7181.14 via Frontend Transport; Fri, 12 Jan 2024 14:27:25 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 12 Jan
+ 2024 06:27:08 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 12 Jan
+ 2024 06:27:08 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
+ Transport; Fri, 12 Jan 2024 06:27:07 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 0/7] 5.10.207-rc1 review
+In-Reply-To: <20240111094700.222742213@linuxfoundation.org>
+References: <20240111094700.222742213@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <4b833322-3722-470b-99a0-0be4c6f2abab@rnnvmail205.nvidia.com>
+Date: Fri, 12 Jan 2024 06:27:07 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4D:EE_|BL1PR12MB5160:EE_
+X-MS-Office365-Filtering-Correlation-Id: be2c8de2-9238-4ec4-dce2-08dc137a98ea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	cilJAbPWMkAwG30t/BjeND0XMbuaZnD9Bzp400Tr9CyiYc1Rh3ko7ukoBBHURzKl5ZzKGxavG/fAcOzqw2kmaq9+ZCldz5rRYH5QwzD0fJAMGr3uAwQ7f1p85UZLsYZL/bS8ovOzzemcn7KRP1AhtSjU8Woo9lrcxsabda14u4qtV0F0H7TtiJvEDxXMwvkw3Vfdw7BwLTy+JfzTMR/RIgHgDjEfoLDqEKYXQtREQ5qbvyt0zGBVu2gAbbDAyQk8wRfj+0PiJILnjg6sq/n7E47E0sloNZt+dKo9h+dgi9MVUsv45yG6EqK+W+Yc2QLNXnXDWTa/jtTG7tISqctVJiiiRMJcY9nnRH8NRhQP7xhyaFvIovlesSNw2mos8rcHRCNf8e8ILQbeeJzxC2ieEGqiWmcISVr89g+l8p57dhmRyj4qiDgbycw4X4XaCt67QjC07YwqE/Ggzux5JL7q7NYQZttB6R29d+cqArt0Sfhf4lctx9EIEhd8wahpjG2B8oQUnVYybC6rOQtn/R1Pc4yQt/62msRnDoDctcoGqLCW5DnU4aBTp7BBgVBhuIH0hhbeKvjhZMLd35/Xiall4BCLzVJ/4D5Bo3APZ5WAEJV4JIof9QxQhyAN6KijCY5Lfc+jI59/qhaboIq9iez9zdyDwpGR1HmeQGyH2xutK/90ENx+zDWL/EyPHfHJAccCc5NJsUDCfs5nKIuuV15QEidzvsngUdH57+47LXRdyDER5xoSKdfMt8+zV1y7nFmnjk2vVJKlRYxvEpDvPAEii5eDenC0T97LQ3J7XcV1yDU=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(376002)(346002)(136003)(396003)(39860400002)(230922051799003)(186009)(64100799003)(82310400011)(1800799012)(451199024)(46966006)(36840700001)(40470700004)(31686004)(40480700001)(40460700003)(7416002)(2906002)(5660300002)(41300700001)(478600001)(4326008)(8676002)(8936002)(54906003)(70586007)(70206006)(6916009)(316002)(966005)(86362001)(31696002)(7636003)(82740400003)(47076005)(36860700001)(26005)(336012)(426003)(356005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2024 14:27:25.0828
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: be2c8de2-9238-4ec4-dce2-08dc137a98ea
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF0002BA4D.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5160
 
-Update the architecture dependency to be the generic Tegra
-because the driver works on the four latest Tegra generations
-not just T210, if you build a kernel with a specific
-ARCH_TEGRA_xxx_SOC option that excludes 210 you don't get
-this driver.
+On Thu, 11 Jan 2024 10:52:49 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.207 release.
+> There are 7 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 13 Jan 2024 09:46:53 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.207-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Fixes: 433de642a76c9 ("dmaengine: tegra210-adma: add support for Tegra186/Tegra194")
-Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Sameer Pujar <spujar@nvidia.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
----
+All tests passing for Tegra ...
 
-v2: fix spelling of option
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    68 tests:	68 pass, 0 fail
 
- drivers/dma/Kconfig | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Linux version:	5.10.207-rc1-g9d64f2ec9cf9
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-index 70ba506dabab5..de6eb370d485d 100644
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -629,16 +629,16 @@ config TEGRA20_APB_DMA
- 
- config TEGRA210_ADMA
- 	tristate "NVIDIA Tegra210 ADMA support"
--	depends on (ARCH_TEGRA_210_SOC || COMPILE_TEST)
-+	depends on (ARCH_TEGRA || COMPILE_TEST)
- 	select DMA_ENGINE
- 	select DMA_VIRTUAL_CHANNELS
- 	help
--	  Support for the NVIDIA Tegra210 ADMA controller driver. The
--	  DMA controller has multiple DMA channels and is used to service
--	  various audio clients in the Tegra210 audio processing engine
--	  (APE). This DMA controller transfers data from memory to
--	  peripheral and vice versa. It does not support memory to
--	  memory data transfer.
-+	  Support for the NVIDIA Tegra210/Tegra186/Tegra194/Tegra234 ADMA
-+	  controller driver. The DMA controller has multiple DMA channels
-+	  and is used to service various audio clients in the Tegra210
-+	  audio processing engine (APE). This DMA controller transfers
-+	  data from memory to peripheral and vice versa. It does not
-+	  support memory to memory data transfer.
- 
- config TIMB_DMA
- 	tristate "Timberdale FPGA DMA support"
--- 
-2.43.0
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
+Jon
