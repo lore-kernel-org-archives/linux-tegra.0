@@ -1,162 +1,99 @@
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2075.outbound.protection.outlook.com [40.107.212.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3F55D73E;
-	Fri, 12 Jan 2024 08:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4059451C2E
+	for <linux-tegra@vger.kernel.org>; Fri, 12 Jan 2024 09:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="L/mWY4Ri"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VS0vwW8WpeYIloZH7tfwPz4g7WNGQv2MV9HakEVUhvhZR3EnSKY+Ar43S3EMlI3/qloOBiqFWBFfacLCtqzl2u70Z3Fzo+8LOvM/Fw62Fi4cqzPeBKJjxMKpSKv8eKNCNX9wT9/aDLAO3s4zyjN5hECFJwH9HEEwfr9eVCXrNmoSpJGVIR3DdfSIGj6Z7Lyx82V+jREAnceaSAVpr3g/OnO529XzRETg2iO/xycGKjwpm9WrqZxSU0/1x47MPhtDOE3Ux5aTtLA9NeUhhFs/5bxIw51KQi9jfXqT3fzpLm2eM1Mv3LCUYrVetgRFxW+SCwskPGMQW0npeylg6D8fvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7hdiNfQMJnxYWZr5GKBHKHiqLo24H5jmEouAHpdpVuw=;
- b=DyeEbgD6zEtd38ibj6TiryZs1QFIeXTK33oAWUrfpQZrtraTZL5pZlB72+EoV5IPJyj+IWSTUIFlEzlsZdn/xqLs8YnagzmqLEi6ZawFSFb2qbZkOPnsdeBLuapA3pykFwd88Ws62ifGL5DoePltLoyJRmbhyl5RGoRmWmY3jvCaT06MH7HWGhIGTLp2yG23H5u9Cx/BL2lWFJkSQ0RPguE5AGoK9lFneoqxWvGLtiq4a9CHmSTm27vY+SGFwQE5V346vS5otwU0hkdeGe+wK8lGR8tbgh1GabhBDtgjgfIoqRlfMl1H7E3liEuG5SSZeud/95wkac67oPUXrIsocQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7hdiNfQMJnxYWZr5GKBHKHiqLo24H5jmEouAHpdpVuw=;
- b=L/mWY4RiEtpBINLo1RnvqpB30lpe001rF7XmlhzCVCVkKVqCbuTr8gklgUuHe3KtAh4hZXBmBmK6CjMtdmtLjUb5aCfLqDleGWIqYC1u4QTV5HIGXhqrcV4b4u0wVz2BFgqWP7a7uKqer9TzXzN9Vb+NQ4tw/kKRr5XQ2+epMfF2v2yEI7n+MPiehduVGPF727PpDEMMDHMuvazQKSvdistEkD2BV3mVXeONR2HnagQjm7DAPdSYR33mOg4Xh+/xLuamW78qvo5jukSb2C1EiSqG6iFUVPXWyIRVDx/lqwoTGCCJpSIkbB1IFqtAQtyJxqd8rVcotbDCqy3/u0+3mw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB7706.namprd12.prod.outlook.com (2603:10b6:930:85::18)
- by DM4PR12MB6231.namprd12.prod.outlook.com (2603:10b6:8:a6::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7159.23; Fri, 12 Jan
- 2024 08:09:40 +0000
-Received: from CY8PR12MB7706.namprd12.prod.outlook.com
- ([fe80::c6c5:6b6c:2422:b70c]) by CY8PR12MB7706.namprd12.prod.outlook.com
- ([fe80::c6c5:6b6c:2422:b70c%7]) with mapi id 15.20.7159.020; Fri, 12 Jan 2024
- 08:09:40 +0000
-Message-ID: <dc984f84-6877-497e-9b47-d116c8f3c42b@nvidia.com>
-Date: Fri, 12 Jan 2024 13:39:34 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: Query on audio-graph-card DT binding
-Content-Language: en-US
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Mark Brown
- <broonie@kernel.org>, alsa-devel@alsa-project.org,
- devicetree@vger.kernel.org, robh+dt@kernel.org,
- Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-References: <dfe363ef-4638-4b5e-8308-73e286ac0b50@nvidia.com>
- <ZZblyhfzQjzyoUc_@orome.fritz.box>
- <42c0c4fa-585e-4194-bbe4-e0377c87e632@sirena.org.uk>
- <3faec2e9-8cd9-46f9-8807-801922de0edf@nvidia.com>
- <ZZe5sTNz005Tt4jk@orome.fritz.box>
- <8241c953-8ae5-4f26-b108-fccf826ed87a@nvidia.com>
- <875y03i739.wl-kuninori.morimoto.gx@renesas.com>
- <e7f9085d-9db1-4c5e-9940-e461835b20aa@nvidia.com>
- <87il42gkua.wl-kuninori.morimoto.gx@renesas.com>
- <cde6d5d5-b6ab-4c64-93f8-78d721a492bb@nvidia.com>
- <8734v4y9yu.wl-kuninori.morimoto.gx@renesas.com>
- <eeb61f8a-697c-425a-9873-b7b60c0a5558@nvidia.com>
- <87o7dswjry.wl-kuninori.morimoto.gx@renesas.com>
- <c868bce1-9a99-49d9-97cd-ead8d0295504@nvidia.com>
- <87le8wwi2u.wl-kuninori.morimoto.gx@renesas.com>
- <d10f9857-4259-4dff-a7f3-764086ac5a8b@nvidia.com>
- <87v87zeasq.wl-kuninori.morimoto.gx@renesas.com>
-From: Sameer Pujar <spujar@nvidia.com>
-In-Reply-To: <87v87zeasq.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA0PR01CA0074.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ad::7) To CY8PR12MB7706.namprd12.prod.outlook.com
- (2603:10b6:930:85::18)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RflXBjXq"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3373bc6d625so5168278f8f.3
+        for <linux-tegra@vger.kernel.org>; Fri, 12 Jan 2024 01:33:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705051994; x=1705656794; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uqnb0b2kXfoCoynTrOB54knZ4i7Z41VS+t4+yg4qHtw=;
+        b=RflXBjXqdSNqDk1aQNFST+iWOjiPnBrw2buxYko7F37fINDhWGd+VFyuj5rkSFOKiq
+         ejT//NtEvgIt85po7SPC5Wk6TX0c8EroOsqhx+gRqSV/+3yahH7PFJRRZxkVaLtzc5I8
+         8B+YpHna+C8X6IFUkN2jsQZgVWUoAMSHHjdVvrbDg0ChbobGFtBOjcInoITy7VgTHAeV
+         zjPd379CekVqqMK3gGt6heNH5t2q5OJJHSEpnZHhKlWhlBc4cH3HDc+0Kv+wA4PeVdKI
+         j2lRQUtJOdJI7yGeoLlRFlKH3bjRlZrsDJ00EzMcj7DsbxmvNN4f8ziy7eSMRGo9kcRT
+         smmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705051994; x=1705656794;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uqnb0b2kXfoCoynTrOB54knZ4i7Z41VS+t4+yg4qHtw=;
+        b=i1OFIMPP0haXhaPp4HpdykN3+egkA2m/7lsoJ7TZSFk7IJm44HUotusCC1mQqlNkUP
+         A+be0zY4ATDVNtATRF0DW0b4TObXNXQegrjj822KVOBsoGOMx9nnSNo4aT8HnR3JwG8e
+         NYNcy9sxlD4kep0udrOOjcVpeF6bKcer6UBjVHANiei6lJC3aRpRN5nqX18dY4lhCTyC
+         v+oS9bNgIoHx8u4ZkhyZSv8CpelMeSRmuY7cLYY+BxOa27x2ZSNA1UcVkuEo0QDv5kV6
+         72FV6r9MJPIFuMxA6JSWm/JDI7QFAe+Bu3GCrXKBgDSkfKITfHqo3DuhVUiLHtAbOMa9
+         m8tw==
+X-Gm-Message-State: AOJu0YwXEMgELR64LkaszEYdhdFpACn2bqM1KXjq/zAyn+rUJATK9fM1
+	ipHmVZOLgTZrgQmWBqw+D+HgQcLOKHc=
+X-Google-Smtp-Source: AGHT+IE6+h8/DYbmSXiJYqZjqp+/qLkxkD8sj3JjatRq5XQMFKgb9sgj7nOINdycp6uSUKYLMm+3EA==
+X-Received: by 2002:a05:600c:a3a0:b0:40e:3645:f029 with SMTP id hn32-20020a05600ca3a000b0040e3645f029mr577465wmb.81.1705051994038;
+        Fri, 12 Jan 2024 01:33:14 -0800 (PST)
+Received: from morpheus.home.roving-it.com (2.1.9.e.d.3.3.1.6.1.e.d.5.3.a.e.1.8.6.2.1.1.b.f.0.b.8.0.1.0.0.2.ip6.arpa. [2001:8b0:fb11:2681:ea35:de16:133d:e912])
+        by smtp.googlemail.com with ESMTPSA id t5-20020a05600c450500b0040d6d755c90sm5081692wmo.42.2024.01.12.01.33.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jan 2024 01:33:13 -0800 (PST)
+From: Peter Robinson <pbrobinson@gmail.com>
+To: linux-tegra@vger.kernel.org
+Cc: Peter Robinson <pbrobinson@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>
+Subject: [PATCH v2 1/2] bus: tegra-aconnect: Update dependency to ARCH_TEGRA
+Date: Fri, 12 Jan 2024 09:32:55 +0000
+Message-ID: <20240112093310.329642-1-pbrobinson@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB7706:EE_|DM4PR12MB6231:EE_
-X-MS-Office365-Filtering-Correlation-Id: 76b93d12-0f4f-4f2d-d972-08dc1345d33c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	5w4SrbOuRLJCBiGBnSrzN6lWYmeADFgLjrKRFCANmWxEVGKvWgSwSDIC5tmRO2zarwLgJ+BuRHZVLySVwBL6pFhQNv+P+kGSKC6ZJnBlXXbWH/Gd6GX2+GLrs3F1ITIIAwfq2g9knoAZROqyEBuoMbbJGsVTHINWLuiLlsvRvBC+0HQb+tSIb6GJ8sySCi0GZ8duQp3Z79C/bhGysNKj0hTSZ2zpB6wG85ru2EIf21Ak8tFL1b0IhTJ0nOF1AvKX/ImHFkEVPvOuKGjgyuPGlMqGgQrZOYb5DiLNzP14CHg0PdFIar58lSWpPIyhk5wcv/aG2G1A0+Qclm748Uz6mXWThy/+5s2ZdiK2FV6t2TuVb+Ef9AGToW09qQ+OpFJixSPN8zuSyFpSqGq4P8GTJcBAkxO60FhX9GwHgZMaTm2zorRmTP9dkP8INWpRvv76yCqbEqfAXNwEunXJ0Owrlzscv4r6v+6uraCEafp9SC/JNRarznr06xSzZo5T+wwOsZgQ/+XnrTQix4GOY+a93y7hR7u6s9xPTMiMG8gthbr3LZVOtm0rplsVJkcBFT9iROYDxaawVz8M/D2AJ8Cd0M9dwXJQgDy3wW7p9y081nscC6rqAwUpbyJHIk5KG5rmMx5NEt5BHSsalQBRDXEBvRM3WhTNjupjzayGOj6e6GGiaxGQXuME7J4OWzfIxMfuCWagpIRyAgo7jJYYf2EeFnCahXC5WTcqGdW2jp6ly7Y=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7706.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(376002)(366004)(136003)(396003)(39860400002)(230922051799003)(64100799003)(186009)(1800799012)(451199024)(478600001)(966005)(2013699003)(2616005)(6486002)(8936002)(4326008)(66946007)(8676002)(316002)(36756003)(66476007)(54906003)(66556008)(86362001)(6916009)(53546011)(31696002)(38100700002)(6512007)(26005)(6666004)(31686004)(6506007)(5660300002)(2906002)(41300700001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TThURW5PTmlSQUUzL1Y3YVhTVUgrQmNvOUU0ZkhPb042MkhmdkorZFhNMG16?=
- =?utf-8?B?dGpPT3UyREtXNkkwYkV1cmZjbG9UMmtMekxrZkEwTnBSMkIxaCtUaTFYS3VZ?=
- =?utf-8?B?MEtFOCs2bVRhQmNkbHdQRFVOWVdnNlJ2ZEZDcE5uL1dISGNxYmhRYnhDUS9L?=
- =?utf-8?B?VUs4bWg2bGZNbVdnV3doRWVLZVkxTXE2ZGRXQ1dEMGFBc2FhT3JIZHNoMVhp?=
- =?utf-8?B?QmM4SnNNSEZ6U1ZEazVLbWw3Sm5iMjlFdWNpbXFuT2Y5aXhpYjd4RnpQQ00v?=
- =?utf-8?B?Q2FwcGt1cVV3aGlXcjlvRjl1WEhsN25mWjBMN1RsWTFGODI2eU5HMmVyUVpU?=
- =?utf-8?B?ZGovT25lQjd0TTRIci9rdjZOM09iQmNCeUorVi9valZvMjdzY1NDanI0Nzd0?=
- =?utf-8?B?WlpmUjNZUEZmaGpabTlsWjhQTHZYcldtNHFhMG42M29adzM0dWRybFZmeW53?=
- =?utf-8?B?QVdoS3EvN2NCZWRNa0xYVmdVNXNmRU9kSXNqK1N0Mmc5NFZaTE5BRCt3ei9k?=
- =?utf-8?B?UndjS3M5UWRwMm9hUnRUbVpqY0xYTHBZcGZ5bjk0eW5CVmVLakFhYktmTFNF?=
- =?utf-8?B?cWI4amx3cFZWWnFIamh0Z3FNUDZOemxIWG5rSGc4S2pFS0RTYThuR29GNGRa?=
- =?utf-8?B?SVpncm5iZEt2NE90em92eEM4cTE5WHVYNFZiRTgvdzNwZWkrdUpkVDU3K2x6?=
- =?utf-8?B?clRabWt0MzZYSlk4cDY4azgwbmNCank4TXNGNXUzeFVzNGc3MHE1aVArNWtJ?=
- =?utf-8?B?akRXSnhLRXg1dU9sekcrT2pONnYwTXJrSGRJd1JEcUU3MndOd3kxRVkzKzg2?=
- =?utf-8?B?Z0FwWXpLNE5EaHg2Y3JJajIvcGY4UlJ0Uk9SQTFJcXgzNTNjcmFISFpianVI?=
- =?utf-8?B?SmUwU2tUVzRMYm1sbWRDZ0kweUZJSzB1bEhUL051cXBaR3UvVWZMN0hUQmtV?=
- =?utf-8?B?SXNHTzQ2c29RZW9xSXNNdzFlNXd5UTlGaWdLUks0emRCNmtvY0tUbUswQTdk?=
- =?utf-8?B?VlRhMjI3bVdmNWdpZkNORE5oVUNQbUxLNElEVXlQS2hoaG1mSnZHbTVKcHhm?=
- =?utf-8?B?Nnh3STNBcDhyY2tObVRNV3hHK21wNzcwVC9kYmhCSjgxSkE5VldWTjV4T2t6?=
- =?utf-8?B?VVo0eTNiK0RIeGRNS3Y3enRTT0MrMEhWbkRkYksrd0lGT25BT1ZFM2xuYnAv?=
- =?utf-8?B?QVZJMkI5ekRlVHorSXRQUUx1a0t1eHZmUFdCNDk0Y090NDNERHgvckFOT0RP?=
- =?utf-8?B?ZWVtdDhVeGdGQVRlWDltWGZxKy9oS2ovbm4xc1p1azZFSWVBMTNRSm8vcWdH?=
- =?utf-8?B?OXdiTCtaaytmVGFNblFtRWVVeFBlM015SHlqcUNLdi9VaHJDVTNXdi9wdjJW?=
- =?utf-8?B?OS9ZWTRvTUw0b1JKVmlaUUI1OTZWVXlhRUNCeXdnOWZYMnpwMCtSVDZ2YnU0?=
- =?utf-8?B?b3Z5aGZTYmNTNzQ4WVdmT3luaVF5OWVxRXRYVjAwNVJRS3BuSzZVSi9OQWtl?=
- =?utf-8?B?OFlodjJkb1l6UjhZb2w3bmk1Mzd4UFhKMk5NcFphSFV6OU1BNnlUOGR5Uzlp?=
- =?utf-8?B?Q1N6dzBwS1dZMk1sbzZmSExyQndCTUFvSmg5am54WklrcTR2Rk9yWmJSN3Zr?=
- =?utf-8?B?WWkyajlUdlNkTTVrQk95WVczNkZHVmY4MWdsUVV1YnFYUzgxR2J5QlROa0cw?=
- =?utf-8?B?TnI0eS91VTM2Smo0UkJhN05rUnJNRi91a1pJamdxa2dsZDFoTGxEMTk2cDBa?=
- =?utf-8?B?OW5FMHFFMXVCZGFsS2kzVHVvMWJ5VGxUQ0piWkFpOW9ablNrZUMwdFlUMnVC?=
- =?utf-8?B?WGRVdTlnK05aL3Izd2JWODVOak9KVS9Tbkh3TGY2ODNielR2K25DL3Bkb0tC?=
- =?utf-8?B?N0pFZ3JSRVZZUEZQVnl4L3JQaXZ3RzV1ZGVSaXIvL3gwd2prM2dLQ3JvRVVz?=
- =?utf-8?B?bnlYNC9DcEMwQW85WkhLK2lDRERITzNUTHZxTm9Yam9LYUxNQkJiQlJiMVh6?=
- =?utf-8?B?UGgzQkpla3YyT0h6ZVUxUkFmWm5CN2xKUkVrODY4MEpqNit1VlROeG9FTXFZ?=
- =?utf-8?B?YnNYMHc2cDAzcVpTQmw3V3pXbE9XNlBwajMxSURnYVYxclpBZkhsbGJsaFNH?=
- =?utf-8?Q?Z94KEzlW+TBV/DmjPe/3Px/iF?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 76b93d12-0f4f-4f2d-d972-08dc1345d33c
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7706.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2024 08:09:40.0785
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QOLQDMOKXjd6sRa0oMj0Q0AUDlBULNDtt4/p/HrAnuw9RQXdT0iNHOGRw+QfPM4QNhfh4Zp9hD2GOQiI1FNHpA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6231
+Content-Transfer-Encoding: 8bit
 
+Update the architecture dependency to be the generic Tegra
+because the driver works on the four latest Tegra generations
+not just T210, if you build a kernel with a specific
+ARCH_TEGRA_xxx_SOC option that excludes 210 you don't get
+this driver.
 
+Fixes: 46a88534afb59 ("bus: Add support for Tegra ACONNECT")
+Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>
+---
 
-On 12-01-2024 04:29, Kuninori Morimoto wrote:
->> What I am asking is, with audio-graph-card2, when you declare 1:N
->> connection in DT bindings, how many DAI links you create in the driver.
->> Is it like the audio-graph-card2 driver parses the whole 1:N connection
->> and creates only one DAI link in ASoC core or it breaks them into
->> multiple links and create N+1 DAI links in ASoC core?
->>
->> In other words,
->>
->> 1:N connection in DT == 1 DAI link in ASoC core?
->> Or
->> 1:N connection in DT == N+1 DAI links in ASoC core?
-> If you create it as Multi-CPU/Codec connection,
-> 1:N connection will be 1 DAI link [1]. I think your case is this.
-> But if you create it as DPCM connection, 1:N connection will be
-> N+1 DAI links [2].
->
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/tree/sound/soc/generic/audio-graph-card2-custom-sample.dtsi?h=for-6.8#n179
-> [2] https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git/tree/sound/soc/generic/audio-graph-card2-custom-sample.dtsi?h=for-6.8#n199
+v2: fix spelling of option
 
-Thanks Morimoto-san for references. I need a lot more understanding on 
-"card2" before commenting anything further. Right now I look to continue 
-using "card" driver and have an easy DT extension, if possible, without 
-disturbing existing Tegra users. I hope it would be fine to push changes 
-to "card" without affecting existing users.
+ drivers/bus/Kconfig | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+index e6742998f372c..b003dad62d596 100644
+--- a/drivers/bus/Kconfig
++++ b/drivers/bus/Kconfig
+@@ -186,11 +186,12 @@ config SUNXI_RSB
+ 
+ config TEGRA_ACONNECT
+ 	tristate "Tegra ACONNECT Bus Driver"
+-	depends on ARCH_TEGRA_210_SOC
++	depends on ARCH_TEGRA
+ 	depends on OF && PM
+ 	help
+ 	  Driver for the Tegra ACONNECT bus which is used to interface with
+-	  the devices inside the Audio Processing Engine (APE) for Tegra210.
++	  the devices inside the Audio Processing Engine (APE) for
++	  Tegra210/Tegra186/Tegra194/Tegra234.
+ 
+ config TEGRA_GMI
+ 	tristate "Tegra Generic Memory Interface bus driver"
+-- 
+2.43.0
+
