@@ -1,99 +1,151 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2123.outbound.protection.outlook.com [40.107.114.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E41FBEA;
-	Sat, 13 Jan 2024 04:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098661841;
+	Mon, 15 Jan 2024 01:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F/605MET"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1705121670; x=1736657670;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WL/QqSd1Bk1dMQtp6aDp3jGsFXAHfb+taVAOlJrMvNc=;
-  b=F/605METF9ZVAln3e8OBqFiocfDKLZZbp7AymsfXutzNmvjTo1/oANHr
-   b21SdWYmFiO7l9EDhIF864Z10UgmbobQuC7C9S6UIDC+Enl1zl95cOpUX
-   4Cc/QaqTNFs5IGcBNojLPctiSBSstcxi+pEjIihXdMtuo3jTso92Mp1Jl
-   7wSaae+B/2OXYtslYg2g/zFc3ZhLs7mK2rfxB3TvpynsMrPZIjGotFwPT
-   Yke490Fj0bi4fN2hxsz3xkp4blcnL6yhuv7mKkpNjQTcE4rNQNViho9kK
-   09DZlOJRWbEpm/WzOJ8msn9fHaZtqAhdQJuDzsivTtcqSh+I+SctxeKlt
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10951"; a="12715720"
-X-IronPort-AV: E=Sophos;i="6.04,191,1695711600"; 
-   d="scan'208";a="12715720"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2024 20:54:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10951"; a="786570253"
-X-IronPort-AV: E=Sophos;i="6.04,191,1695711600"; 
-   d="scan'208";a="786570253"
-Received: from lkp-server02.sh.intel.com (HELO b07ab15da5fe) ([10.239.97.151])
-  by fmsmga007.fm.intel.com with ESMTP; 12 Jan 2024 20:54:24 -0800
-Received: from kbuild by b07ab15da5fe with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rOW2I-000A6u-22;
-	Sat, 13 Jan 2024 04:54:22 +0000
-Date: Sat, 13 Jan 2024 12:53:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: Akhil R <akhilrajeev@nvidia.com>, herbert@gondor.apana.org.au,
-	davem@davemloft.net, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	thierry.reding@gmail.com, jonathanh@nvidia.com,
-	catalin.marinas@arm.com, will@kernel.org, mperttunen@nvidia.com,
-	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	krzk@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Akhil R <akhilrajeev@nvidia.com>
-Subject: Re: [PATCH v3 3/5] crypto: tegra: Add Tegra Security Engine driver
-Message-ID: <202401131257.8RjvB7OG-lkp@intel.com>
-References: <20240109091708.66977-4-akhilrajeev@nvidia.com>
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="ReE+qO5C"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Uurj3mE55/RW8sa6WSNe/NCixcOdnxwjFiaK7VM3akqs5gwdZuEzoe/saQkYlk6QYh4ggChFvFlzXWrc5/1q3WLwIPnxSubGJx7FRsMxQb9nCTrlgGsYyk/+7QfaaDhkL1NmWi75DZURRvMshtNOn5ZTNC7SYa7p0k4By+C7w/vL/Tt6I1QC2wuS37x5cATOZtGjkP5yNQxzgdhXSJOAJuzYGfFAv7h9uBXbADh/2rjDszpMIX7zSpump2D0Bl+52kcNTh+SVyKHbZ3DiXAHyMi8u3cy2WjRnjXNqtHegcxKLm6T1BKpfdGFHzPe3RP+r8Vi7tS+4Z4LZv9qbt+t1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vkl9qPwerggBcLpJqgFrSOFTvGhwZNyoc0vvY1qNzkg=;
+ b=AYoKaMav8gXjJnlSzgWAUWRE2wR22iq5Q8vz5i93n9bOcMAci/PTLkxkLAUsL2oDfAcUZeMXgcS8g+q4tloZ+OqELQtgFhIgE7VGujDlJ7kAp00HH8pouJj1O7lz/L9XMzU9upLRTBXwpHGlwwRhfCZ7TjPaDreiAuOlzEpRyEn7+j4Hg3hxaXjYphCDRwiqNuDziS80Nb3hRHf28FZYoEPskFkR+gWCQPZ9SWkvXmo1irs/4HgDv2dY0YBDVyYDjbFSPp+J1JLo5nT6As4Ez9X15QZgaSDKGHRa9Xv0e5i7MWTYT/xB57JVJln2HO9RmuyubsYd3J1MM90tymr3Dw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vkl9qPwerggBcLpJqgFrSOFTvGhwZNyoc0vvY1qNzkg=;
+ b=ReE+qO5Ch7tIX5tyFPXl6MaCpb7p/nKatmM0XRsAl7h1kJk17utERVZ5+8KDDfxDNYTvzXfKjxgZ4AenIFjDeMrYgW7AqKStfTCDSoQcAONuNmtrhRSz7gPGPpxSLFBqp7QEIdScrgSBh6bhxGJvov5hj4HmO+yBX7yqJXPJ07w=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by TYAPR01MB6281.jpnprd01.prod.outlook.com
+ (2603:1096:400:86::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7202.17; Mon, 15 Jan
+ 2024 01:43:17 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::91d:1bfa:edc4:1c5b]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::91d:1bfa:edc4:1c5b%7]) with mapi id 15.20.7202.017; Mon, 15 Jan 2024
+ 01:43:17 +0000
+Message-ID: <87mst7tlqi.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Sameer Pujar <spujar@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Mark Brown
+ <broonie@kernel.org>,
+	alsa-devel@alsa-project.org,
+	devicetree@vger.kernel.org,
+	robh+dt@kernel.org,
+	Jon Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org
+Subject: Re: Query on audio-graph-card DT binding
+In-Reply-To: <dc984f84-6877-497e-9b47-d116c8f3c42b@nvidia.com>
+References: <dfe363ef-4638-4b5e-8308-73e286ac0b50@nvidia.com>
+	<ZZblyhfzQjzyoUc_@orome.fritz.box>
+	<42c0c4fa-585e-4194-bbe4-e0377c87e632@sirena.org.uk>
+	<3faec2e9-8cd9-46f9-8807-801922de0edf@nvidia.com>
+	<ZZe5sTNz005Tt4jk@orome.fritz.box>
+	<8241c953-8ae5-4f26-b108-fccf826ed87a@nvidia.com>
+	<875y03i739.wl-kuninori.morimoto.gx@renesas.com>
+	<e7f9085d-9db1-4c5e-9940-e461835b20aa@nvidia.com>
+	<87il42gkua.wl-kuninori.morimoto.gx@renesas.com>
+	<cde6d5d5-b6ab-4c64-93f8-78d721a492bb@nvidia.com>
+	<8734v4y9yu.wl-kuninori.morimoto.gx@renesas.com>
+	<eeb61f8a-697c-425a-9873-b7b60c0a5558@nvidia.com>
+	<87o7dswjry.wl-kuninori.morimoto.gx@renesas.com>
+	<c868bce1-9a99-49d9-97cd-ead8d0295504@nvidia.com>
+	<87le8wwi2u.wl-kuninori.morimoto.gx@renesas.com>
+	<d10f9857-4259-4dff-a7f3-764086ac5a8b@nvidia.com>
+	<87v87zeasq.wl-kuninori.morimoto.gx@renesas.com>
+	<dc984f84-6877-497e-9b47-d116c8f3c42b@nvidia.com>
+User-Agent: Wanderlust/2.15.9 Emacs/27.1 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Mon, 15 Jan 2024 01:43:17 +0000
+X-ClientProxiedBy: TYWPR01CA0040.jpnprd01.prod.outlook.com
+ (2603:1096:400:17f::9) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240109091708.66977-4-akhilrajeev@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYAPR01MB6281:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e5e5109-bedb-49b4-1689-08dc156b58d3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	Kd019Ttzy6eWKRMS9EgLIegFUrFX0hOP6vFIUf2ZBV5DMEqUro9hqKFPyNBb0+zKJwzh3xgm0AGnNIV4wZipTzzsnYS7ZHpMGyZN5VpGP2BIm9T17ClHb4Qs4dXwedSIfBgKxMOcLCTI9nNCxBD6qdMQRDOasqWoRak09D0wsL9yLvTGevMr+Jq73phj9EfJNxfeMHJwk4mTBSwqvCQWw7DhcEJXocUpFkaaJty9m+WxVqQ+hpRnoSANC9ENSdoYQMnA3j9/VDKvoTk/ZJkSt2+ia5AqLl8yL5xlVNa0S2KZwNFtYnFWmy5UorFbq/Rh33S84IisBuWyHH7i3+kdUfsQ/uMpNDqjLvqmryaN/n0LQZdcssFhlM/qFwNvmsWCP1pI1VezdIWz9YluDLSSwSqPXKV404YoQSIfMG2Uc7su5SRYXXZS27tOhrbSVghE65BXGqHt3WpaOKvBttpRmfsWp6+hN06d0OKsVovr3+OkpskLmx9Fr+JkNjvXGnyLe42adEgL/5psLH9XGP/M20RTPYHHdYax9qhkez1DCxLmxypyAr/tKCIYnybzH9pidKnZiwlcza83NAzfjAeG6qmkOwdQSC30GLtdXWuw6uUAp1U8D/i5tLlyurKX5+VnaVQdnmRbAemkZc9gHC1lIQ==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(376002)(366004)(396003)(136003)(346002)(230922051799003)(186009)(64100799003)(1800799012)(451199024)(6506007)(6512007)(26005)(2013699003)(86362001)(36756003)(38350700005)(38100700002)(4326008)(5660300002)(2616005)(52116002)(8936002)(6916009)(316002)(66476007)(478600001)(8676002)(54906003)(66946007)(66556008)(4744005)(41300700001)(6486002)(2906002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?a23qxHtxqjuu14+7Rq3TbNP8lLNdmR9GJx51b18sJbk0SpSGMquIrW39VTI/?=
+ =?us-ascii?Q?W3Jvxeg8wOimsCwvqOtxlq7rLPMq3YzptF02vniOMntQv6mOLMwJONoHXUlX?=
+ =?us-ascii?Q?9k/SWPd9EBtHa0x/aNftbuQhi9ALbuJndz4vb0R47pEM/fdw7W5ZWyVZ41Js?=
+ =?us-ascii?Q?u3La7CXsual++8bdtz5cWhpa8FIJ3vvLSs85FLOP5j+8sz+Gti+O6fjsQiZx?=
+ =?us-ascii?Q?6NPw1oygHKgw1VDLMiNS/LhyWmCn0yigHM6wxCEbLqsgjD9+3OvxsITwAd1Z?=
+ =?us-ascii?Q?YdHp0OnkbNdDV40gbRZ4fz/1Yw8qqk9JyEeg1AxdukBYnLYTEkkx1lOc99/y?=
+ =?us-ascii?Q?aNoKHPooM0BMz/MbjNuHXUoSQmVR3uzErwhhsU32lgSIP2ypsCAVB0XXBTC1?=
+ =?us-ascii?Q?cvrhWR66mSU2BTqKQSrYT1KQYctohxhXNmFq6kcWp+Z03PUdiB4Ku4rvxU+M?=
+ =?us-ascii?Q?vWf/NPTob6adhJ/crVAAU5dd//9gB4HLLkp3YBfpJ40wSteQfFz+3UDKp1WP?=
+ =?us-ascii?Q?wozRbA7q4nehH9bVNTk5t7Eu3rh7SjToiPowj/EDJgPK2mfWiH7xGCdxBqEp?=
+ =?us-ascii?Q?Gap/uBewyxoWidPCvbXVj0veh+QpEsuvklnLyOaYcFZlp4on+dKid8EiiehR?=
+ =?us-ascii?Q?zhYoUbc7Oi112+E3DnufxKi8BM6b8N+DAFf4v7vO+qJhTGMAzWcCXDoTSrZR?=
+ =?us-ascii?Q?5F5Z4rRiKkCigMjRBLw3xR8k8/AsUVLck4IckO4lgyx0dNHytKevsY6yzzgE?=
+ =?us-ascii?Q?Obiz+hI3qwafu3/1La6Och2A5wnk3Kz/WNYDabiV7n9NnvkBMjxKEEiWTiGp?=
+ =?us-ascii?Q?8NMxPXAXiz+OxV5iaZVtDxyx6GCfUuygcxZJSePYtWbnrljN8yZnSwMd6dOH?=
+ =?us-ascii?Q?ssxuTtDe3/61S95G5U6R6tcWGAM2UpLnJIIAqP3XZU0PtaM3aZqhLgRTZfgR?=
+ =?us-ascii?Q?dXIdpPUmstzvCWJDrOhJU37Ses8FOvTx4tEKJk0MNYkOLd+OxzM2JIGZ3Ujg?=
+ =?us-ascii?Q?kf721p6HMnCdaJLs5K0plX5K9A8Vw5rfGi6r5nOncnMW3flZGiNAHvQaOMOp?=
+ =?us-ascii?Q?yEgLoMl6rRAMXMNfzsKy9fvLYuZIe7/h6ehhgWbNGDYIhxn4pwjmmp4AHW4u?=
+ =?us-ascii?Q?89PsCJOG091DAkzusbxRkUETdjTBQZNr/VKanXBc9zPCk7A7PwaShABnl6Fb?=
+ =?us-ascii?Q?Fh6q3d1yJHpwzwXoSohL+Xv8qVfboMwsOXrZsMhLDPuOzHTE5RUbTPgGRiqH?=
+ =?us-ascii?Q?/lQTC5aPng9Cq3XgXCQBk5GwU9knXraGJUBWXrI6PWNMvsYgmqk7KKsUG67F?=
+ =?us-ascii?Q?LsuUSMW1VrRQ1hY0J1qC57ZC/0oVGenIqXnqIWFGWotFxlBm5C9tP5R/BrMK?=
+ =?us-ascii?Q?xM3+L6gVQPOfy+azEcbMmFOi60CAhxx9JMJczo/w4qf2FU5wFFI4mJGkS7ze?=
+ =?us-ascii?Q?3OI1qOHLsQsOYCxkSHeyNILVoo4CvUYDJ7QlNE+OcCQ1LWiFBM9xZytvbUBh?=
+ =?us-ascii?Q?ICiOzoBcRjqbRj2lLoUpC+D8ylAronu5NfoUEvSM6qsKQYkQwKKNgl5OL6EK?=
+ =?us-ascii?Q?7oHFB6q3KQRRQI/oqa0AVFweU1lnE98ou7t60QIjEkJRTpMXW46FSK1NXY/8?=
+ =?us-ascii?Q?oNF1K96k+UMyfu5yo7RmpOE=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e5e5109-bedb-49b4-1689-08dc156b58d3
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2024 01:43:17.7076
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2qfKnA68MKmwJV517i674C/0DHTm13Vxg70f4+bWd7jVMABy3wfuG2wFy9Y89EUUYIR41Aul7w6TV/WEJzIxzvpqrGLX230hAXeNDBwyymbuE2ZA90ZdFIIrGBpgc7aS
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB6281
 
-Hi Akhil,
 
-kernel test robot noticed the following build warnings:
+Hi Sameer
 
-[auto build test WARNING on herbert-cryptodev-2.6/master]
-[also build test WARNING on herbert-crypto-2.6/master tegra/for-next linus/master v6.7 next-20240112]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Thanks Morimoto-san for references. I need a lot more understanding on
+> "card2" before commenting anything further. Right now I look to
+> continue using "card" driver and have an easy DT extension, if
+> possible, without disturbing existing Tegra users. I hope it would be
+> fine to push changes to "card" without affecting existing users.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/dt-bindings-crypto-Add-Tegra-Security-Engine/20240109-172454
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-patch link:    https://lore.kernel.org/r/20240109091708.66977-4-akhilrajeev%40nvidia.com
-patch subject: [PATCH v3 3/5] crypto: tegra: Add Tegra Security Engine driver
-config: powerpc64-randconfig-r123-20240112 (https://download.01.org/0day-ci/archive/20240113/202401131257.8RjvB7OG-lkp@intel.com/config)
-compiler: clang version 16.0.4 (https://github.com/llvm/llvm-project.git ae42196bc493ffe877a7e3dff8be32035dea4d07)
-reproduce: (https://download.01.org/0day-ci/archive/20240113/202401131257.8RjvB7OG-lkp@intel.com/reproduce)
+"card" and "card2" are indeed different, but similar I think.
+I hope you can use "card2", but if you want to use "card",
+you can use "custome card" feature which is zero effect to
+existing "card" users. "tegra_audio_graph_card.c" is already using
+this feature. see audio_graph_parse_of()
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202401131257.8RjvB7OG-lkp@intel.com/
+Thank you for your help !!
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/crypto/tegra/tegra-se-key.c:20:1: sparse: sparse: symbol 'kslt_lock' was not declared. Should it be static?
-   drivers/crypto/tegra/tegra-se-key.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/umh.h, include/linux/kmod.h, ...):
-   include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
-
-vim +/kslt_lock +20 drivers/crypto/tegra/tegra-se-key.c
-
-    18	
-    19	/* Mutex lock to guard keyslots */
-  > 20	DEFINE_MUTEX(kslt_lock);
-    21	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards
+---
+Renesas Electronics
+Ph.D. Kuninori Morimoto
