@@ -1,165 +1,145 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2072.outbound.protection.outlook.com [40.107.94.72])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE751B96F;
-	Tue, 16 Jan 2024 11:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36B61DFEC;
+	Wed, 17 Jan 2024 12:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1705494427; cv=none; b=AbUm4DlfDW7e1i30sjOuM7xJwa11TZHx+4QEsooj9nWgBnbtwpO+6KRinq8Ng+NgAD9z7cVfy/nL3GZXuFF15ytV7kSw3cNfcB4duKz+1jVqEb+Q4VuyVxttP8/tT+6pyF7cUdO7kAF+tZEPZjz7ehKrw3lqAuzQbTqyPyWmw38=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1705494427; c=relaxed/simple;
+	bh=SPxDYahHv0nLu9NS4KwJmiOrGhMzRJC83ePBpU4CLVQ=;
+	h=DKIM-Signature:X-IronPort-AV:X-IronPort-AV:Received:X-ExtLoop1:
+	 X-IronPort-AV:X-IronPort-AV:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=UOfcufC9ZOXLonuFxdzxEyB/Mq4vZy334/NMso71PekLIv8hcAdhdyVOf0NWuo5aQi/I/kRkfFf4Lc5KSGWQJhi0puwxS+uR6HSIyTjD9kE4hsfqwcBpJVlw1tWsX6vK0hIAycNsB3no/abkcZqbkLzHAOrsFqA7WHzWszi1NIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Va+ueg3V; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="diOL8NOo"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MhiIk2mh9lyPmPjaDZGLfRldO6nEOH2cp5/Q9tUo4U2vOOmpAPec+YDzJ5LRiTtRAV5tirhr6eMQwNDZLnGbN9rgqa9hCdwhmS08PCiKkQmEWO8xEEdu3TLBD8j8+QSotBD6+U9LVNWr+QqJk67ixMR0DqaYeJRGeNy0tMl0bjPkceav8H51g/1V0+N0A9QQcYMnGs3E3gBq2PmaUGhRIw3mTbNo6vN+ApUNM5nfVYD7o4mYbW0zDDS5XhbSfTBeJq9ERGB4Nr3zPJ1Z1SejilgQuLU+5n8cgBJZ5H1eIQCg/kQUVOdna8GDZAQt6e1PiZyDJuBsZSKSS++mrf9HJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WqAlyeWm5KWLX0BzuSxwsTtHhRJPt37Lq4jARKhl1eA=;
- b=CGuQLUf1FpWHWC811VjgGwpWH+oryT5ABgTa8pHsl6UBUVPgiVHuX9eAQ1vuhvSMifzUpEQioXF2R6LDDj0AMYrKT56mlK8co9R/FMMCxSowd20fl7s7+0N5ix8ahcDZLLEYcd/IHfdysvIqS8Dz2FDD/tF/AuLv60wtMBp8yY2LxNZ9+Rwo9q6TXOLZHC9OF9gg8k+LgiHZvmWQWonlIbD7oey9U0JM1Wqg1pNEIk2stRm06K3I/oNqp5DEnpgM4HpGoaJAxJQILwaLUxIiuo+QgCczPSDjm/nkHYEHojNI89RKxAgsX4BSVnOM3x9Vf7ioAfy1qThJntdMgaP+Sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WqAlyeWm5KWLX0BzuSxwsTtHhRJPt37Lq4jARKhl1eA=;
- b=diOL8NOoPppKM7JymJpQyHkMv9I0u0BE5wlY32G1HjhMxLu0vbUEJjKQ0yfjnc6gfs42zvlmq+7B70joo8D4tOZReWmmLjOvnKoEyKlcpJKjJq3ntBWOL2PWvgU2BTGlKqLZDkm8NZ99xHkrgWddvFkl5BNhpFA5Xv/fSVqeznkU/BUHwBt6BAsvRrU2PtGUOrbTgT2jFhjjNaAOtiFyai58zYxDDp1mUPU9EsO3CtNS3EKAS0QOPKIfdwVPVbDZ/Ncmp1aJA/2gYTqIRMfFsdc5EdHdbLAvjC6xsQBc9wUgmbtX15iE9K7pLpAcfuvLkF9Rg+nNYiF99/vKXr7/2w==
-Received: from PH0PR07CA0002.namprd07.prod.outlook.com (2603:10b6:510:5::7) by
- LV3PR12MB9260.namprd12.prod.outlook.com (2603:10b6:408:1b4::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7202.23; Tue, 16 Jan
- 2024 11:59:56 +0000
-Received: from SA2PEPF000015C9.namprd03.prod.outlook.com
- (2603:10b6:510:5:cafe::a8) by PH0PR07CA0002.outlook.office365.com
- (2603:10b6:510:5::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.28 via Frontend
- Transport; Tue, 16 Jan 2024 11:59:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF000015C9.mail.protection.outlook.com (10.167.241.199) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7202.16 via Frontend Transport; Tue, 16 Jan 2024 11:59:55 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 16 Jan
- 2024 03:59:42 -0800
-Received: from pohsuns-pegasus.nvidia.com (10.126.230.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Tue, 16 Jan 2024 03:59:40 -0800
-From: Pohsun Su <pohsuns@nvidia.com>
-To: <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
-	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC: <sumitg@nvidia.com>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, Pohsun Su <pohsuns@nvidia.com>
-Subject: [PATCH 2/2] clocksource/drivers/timer-tegra186: fix watchdog self-pinging.
-Date: Tue, 16 Jan 2024 19:58:38 +0800
-Message-ID: <20240116115838.16544-3-pohsuns@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240116115838.16544-1-pohsuns@nvidia.com>
-References: <20240116115838.16544-1-pohsuns@nvidia.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Va+ueg3V"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1705494426; x=1737030426;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SPxDYahHv0nLu9NS4KwJmiOrGhMzRJC83ePBpU4CLVQ=;
+  b=Va+ueg3VyKLME0NjPbSrhJItg9qKUGE4RrXteaDXtsEI6q3ZXgDJCmBb
+   Tzw2Ju2uf/+DHUQ8chHre9wpAx8pp39P385kIE6GJwKLrS9ejZTkp0BAc
+   zXRBkVW85+5+xJ8BamiazlwVuTzMjP5C5WYOJCzujpx59qrlpjMnYvoMj
+   W+YoZM65N+PO7syDtPDSr0XhmUfjLHNTfadHbjji9Au7B+yD06W4i+OJk
+   ooiMNgYP+pl3vF1YlohACBbtPhiJ8S0VLJ1kDc+Ag6Tmp2Qd6xhmyFzIg
+   3vdJDASX1GnT0QD9t/QLOSpK8f+1yWO9yBWLVfgxT83R+qN65gwbZvHVE
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10955"; a="40816"
+X-IronPort-AV: E=Sophos;i="6.05,200,1701158400"; 
+   d="scan'208";a="40816"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2024 04:27:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10955"; a="907745448"
+X-IronPort-AV: E=Sophos;i="6.05,200,1701158400"; 
+   d="scan'208";a="907745448"
+Received: from lkp-server01.sh.intel.com (HELO 961aaaa5b03c) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 17 Jan 2024 04:27:01 -0800
+Received: from kbuild by 961aaaa5b03c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rQ50V-0001yl-0l;
+	Wed, 17 Jan 2024 12:26:59 +0000
+Date: Wed, 17 Jan 2024 20:26:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pohsun Su <pohsuns@nvidia.com>, daniel.lezcano@linaro.org,
+	tglx@linutronix.de, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: oe-kbuild-all@lists.linux.dev, sumitg@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Pohsun Su <pohsuns@nvidia.com>
+Subject: Re: [PATCH 1/2] clocksource/drivers/timer-tegra186: add
+ WDIOC_GETTIMELEFT support
+Message-ID: <202401172015.KdPd7tda-lkp@intel.com>
+References: <20240116115838.16544-2-pohsuns@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015C9:EE_|LV3PR12MB9260:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c65761f-05bc-47b5-b04f-08dc168aa7cb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	5pdeVyNAINZwAR/1iPvdXwlQX2uhdVwJE0LHJ3GXHnI7clhddeZhgY4YtXxnEtVE+1Nb+8ciduEuh3wym0MF0dO/soVXlegBU1wzhB+/z9HRJSOtp5X7JJsZYENxchKgnUs3qelQLNnx7JVqv5oTryCjx44KRFXgWNVCD0GkD+p4exLhykcf4e6cPpkbVFy9TTB6kv2pKQIF+61WYP1Gc/TJG8NM09nL8LtW6wTMWPUNDQxCktnEaRGWDiux+qrOAYQYzC515WXAN+dfHuN6v6/nex6X48HBRy/ciu6oBDA0M175IoIpTAihyPlHN0Jzru7v21tv498DdPXGFzGXFiLbIEiUFpZasGDNZwiZjUgqdKvZuWE7k3+TAAKP7UCyLut9a0m2uw00sDySDcNcYLnzU/ctK9wmeqHW/mt4x2Wzo0eYic81eyzFNRWcEhz08icTpnvrR4j4fohJJ8lR2xU87FnohVZscq9tgdoyvcxOpQvhQ+eNoK79dwRhGy+GJlv8JPcPUrf9hAAsquIF8RUzlbWuWareI9ZEJIAEmgno3qYG32HXRNmPILijPUKL9l5GOGaFYp5LcPXdoKasBPOyPugA2IR3dsv3+UhIFYxlJmbcKy174iBZGEb9jgvfZSkirgbmXN8XcTGlJ1lmzqP4gzzyojMw2V0jJhqbupQEOmJmN8538KMoprGgaez6l5ZnQdeLYL0aQlIibqRfBWL4tTUvlGCEfPoG9BK7IOohxqChp5DtanlMGFgO9TYKvNCID0W5bko3rxlKXNMMtA==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(396003)(376002)(346002)(136003)(230922051799003)(1800799012)(64100799003)(186009)(451199024)(82310400011)(40470700004)(36840700001)(46966006)(82740400003)(2906002)(5660300002)(36860700001)(36756003)(86362001)(41300700001)(7636003)(356005)(54906003)(6636002)(316002)(2616005)(110136005)(70586007)(70206006)(478600001)(7696005)(83380400001)(47076005)(16526019)(26005)(1076003)(107886003)(336012)(4326008)(8676002)(8936002)(426003)(40480700001)(40460700003)(2101003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2024 11:59:55.4803
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c65761f-05bc-47b5-b04f-08dc168aa7cb
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015C9.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9260
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240116115838.16544-2-pohsuns@nvidia.com>
 
-This change removes watchdog self-pinging behavior.
+Hi Pohsun,
 
-The timer irq handler is triggered due to the 1st expiration,
-the handler disables and enables watchdog but also implicitly
-clears the expiration count so the count can only be 0 or 1.
+kernel test robot noticed the following build errors:
 
-Since this watchdog supports opened, configured, or pinged by
-systemd, We remove this behavior or the watchdog may not bark
-when systemd crashes since the 5th expiration never comes.
+[auto build test ERROR on tip/timers/core]
+[also build test ERROR on linus/master v6.7 next-20240117]
+[cannot apply to daniel-lezcano/clockevents/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
----
- drivers/clocksource/timer-tegra186.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Pohsun-Su/clocksource-drivers-timer-tegra186-add-WDIOC_GETTIMELEFT-support/20240116-200217
+base:   tip/timers/core
+patch link:    https://lore.kernel.org/r/20240116115838.16544-2-pohsuns%40nvidia.com
+patch subject: [PATCH 1/2] clocksource/drivers/timer-tegra186: add WDIOC_GETTIMELEFT support
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20240117/202401172015.KdPd7tda-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240117/202401172015.KdPd7tda-lkp@intel.com/reproduce)
 
-diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
-index 685c6689a2da..963c12c81f4d 100644
---- a/drivers/clocksource/timer-tegra186.c
-+++ b/drivers/clocksource/timer-tegra186.c
-@@ -174,7 +174,8 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
- 		value |= WDTCR_PERIOD(1);
- 
- 		/* enable local interrupt for WDT petting */
--		value |= WDTCR_LOCAL_INT_ENABLE;
-+		if (0)
-+			value |= WDTCR_LOCAL_INT_ENABLE;
- 
- 		/* enable local FIQ and remote interrupt for debug dump */
- 		if (0)
-@@ -406,18 +407,6 @@ static int tegra186_timer_usec_init(struct tegra186_timer *tegra)
- 	return clocksource_register_hz(&tegra->usec, USEC_PER_SEC);
- }
- 
--static irqreturn_t tegra186_timer_irq(int irq, void *data)
--{
--	struct tegra186_timer *tegra = data;
--
--	if (watchdog_active(&tegra->wdt->base)) {
--		tegra186_wdt_disable(tegra->wdt);
--		tegra186_wdt_enable(tegra->wdt);
--	}
--
--	return IRQ_HANDLED;
--}
--
- static int tegra186_timer_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -469,17 +458,8 @@ static int tegra186_timer_probe(struct platform_device *pdev)
- 		goto unregister_osc;
- 	}
- 
--	err = devm_request_irq(dev, irq, tegra186_timer_irq, 0,
--			       "tegra186-timer", tegra);
--	if (err < 0) {
--		dev_err(dev, "failed to request IRQ#%u: %d\n", irq, err);
--		goto unregister_usec;
--	}
--
- 	return 0;
- 
--unregister_usec:
--	clocksource_unregister(&tegra->usec);
- unregister_osc:
- 	clocksource_unregister(&tegra->osc);
- unregister_tsc:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202401172015.KdPd7tda-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/clocksource/timer-tegra186.c: In function 'tegra186_wdt_get_timeleft':
+>> drivers/clocksource/timer-tegra186.c:263:22: error: implicit declaration of function 'FIELD_GET' [-Werror=implicit-function-declaration]
+     263 |         expiration = FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, readl_relaxed(wdt->regs + WDTSR));
+         |                      ^~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/FIELD_GET +263 drivers/clocksource/timer-tegra186.c
+
+   240	
+   241	static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wdd)
+   242	{
+   243		struct tegra186_wdt *wdt = to_tegra186_wdt(wdd);
+   244		u32 timeleft;
+   245		u32 expiration;
+   246	
+   247		if (!watchdog_active(&wdt->base)) {
+   248			/* return zero if the watchdog timer is not activated. */
+   249			return 0;
+   250		}
+   251	
+   252		/*
+   253		 * System power-on reset occurs on the fifth expiration of the watchdog timer and so
+   254		 * when the watchdog timer is configured, the actual value programmed into the counter
+   255		 * is 1/5 of the timeout value. Once the counter reaches 0, expiration count will be
+   256		 * increased by 1 and the down counter restarts.
+   257		 * Hence to get the time left before system reset we must combine 2 parts:
+   258		 * 1. value of the current down counter
+   259		 * 2. (number of counter expirations remaining) * (timeout/5)
+   260		 */
+   261	
+   262		/* Get the current number of counter expirations. Should be a value between 0 and 4. */
+ > 263		expiration = FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, readl_relaxed(wdt->regs + WDTSR));
+   264	
+   265		/* Convert the current counter value to seconds, rounding up to the nearest second. */
+   266		timeleft = FIELD_GET(TMRSR_PCV, readl_relaxed(wdt->tmr->regs + TMRSR));
+   267		timeleft = (timeleft + USEC_PER_SEC / 2) / USEC_PER_SEC;
+   268	
+   269		/*
+   270		 * Calculate the time remaining by adding the time for the counter value
+   271		 * to the time of the counter expirations that remain.
+   272		 */
+   273		timeleft += wdt->base.timeout * (4 - expiration) / 5;
+   274		return timeleft;
+   275	}
+   276	
+
 -- 
-2.17.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
