@@ -1,224 +1,149 @@
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2079.outbound.protection.outlook.com [40.107.93.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B841528DA2;
-	Thu, 18 Jan 2024 14:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705588036; cv=none; b=mz6HV9Ui4Hrxn4wAHObEZQkuC7d9McJFuljzOnEhDathD0WspnlmHwb8jd6I0ILeCPPRKMLs73ejKK1ZhMeKbm1Xw037SIvKjNO/k1tP5xn+ZZjtQ+0lJkFeFpxgBs2IGLHbeHDLyl6tFZ5TVEeoxqvW2wx1McDvmwPCmkAoiaE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705588036; c=relaxed/simple;
-	bh=ArYdL5PIjdacMWQIjZ3vdX8WmxylPVL+VvMknj+Av0E=;
-	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:From:
-	 To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding; b=BMW6M7r2S1lMmDb5dglrS5ZO2Uguvb5xYaEHZJjKe60BsZioYDqODn2H1PLAFAWsSqGAPf+7ayWt8AIoVu6P2CYrH9Xc3cOyEbGV0d+8lf4fM1hPn36Szpg7XftH7jyzLHeFcIiiywbPoC15dV/Ftm2lX4Lo5KE/a/6VrRL+XJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c1NclnWB; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F146053802;
+	Fri, 19 Jan 2024 14:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1705673483; cv=fail; b=OvKTCA3ozrOS+EuBOrqMt58xPQT4shOVFy3d7RE/FyBzcIcsovWKs9o6pvB21p0x3qWeQJMwGp60JttiEnp1940lyFRumRTIX1U+DoqztubgzxbdAmLn/UtRUDfl8m+351N6Xq1hirpi4TYGPehdNkGdVscGWZ1DQFBlHRyQAMM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1705673483; c=relaxed/simple;
+	bh=9D3mRXtISyb6wvtty9jPOSTw1CfbgcbLZupUgq0TKGc=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=WyYcb21Ik00LwBp3036C0VSDiJDWq1eTSgtMVOsvv+iIh8MRsitvRmFPMxkWkSRXNIUeIDq4zFXtPEyMD0yFCSUJJ0yeBJafOWb+SkwSCnVn1ORgoPpNMomFyngnc+MQclatMoKzWQ8tNnXSG0Ov9ehcVUqcE3vbIhvt/YQ6B+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MiPmHmXE; arc=fail smtp.client-ip=40.107.93.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c1NclnWB"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-557dcb0f870so12569711a12.2;
-        Thu, 18 Jan 2024 06:27:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705588033; x=1706192833; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=78IVCKRXca7thRE7ARfIyH1pMO0QE5lIEZ3L5dbnlKk=;
-        b=c1NclnWBqbJnmlBUVxDOIlysr2yrIFAwz+VKJIu8BmQsnWX5YHwHb7K/6980d8A6mZ
-         7dr0USSXmqSWchpJhxBIZz+GJiZB/7DwnX/0qY2tQ6WhQyD3rt8cJao5NbFH9FJq0o2q
-         vPCjU4A+ZFKPzg363UTVaGVHuLMreX3M7tgUR5gsul16cj0jYklJo8P59m2GWWYmrW5j
-         /JPs3eI7v3EcMrDPJJ/JYEub2y9pEZMce0Huhu2/YnVTEon4XI8nQ9FXSgl75xGiYYzH
-         T7wi0EariPt7cbqcsdU+IMvoAdfa3mNQdVzRp32JeG2fWkXkbmxgcXbsa+wYgzK398hq
-         DoLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705588033; x=1706192833;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=78IVCKRXca7thRE7ARfIyH1pMO0QE5lIEZ3L5dbnlKk=;
-        b=ol+/9BYlBTTr7eMoxDvYnoxoCSg8Q9M29KuALiKO0zGNDZYz4b3nGBmryCbSpG5XuG
-         c4OzJ6WbVkXulm12fTOgLE/nUYE7YuYhP0Q2eReJUhLA1FHwDFRgAeHCwXavJVCXSI+6
-         aIkG+DjwdTnSaDGX9SnKrkfmChmCchqbF9dMnZ9DsJPuAORQz6OlXV32U3yVvzKGBG2/
-         MS/GQgr9yCGSXGgwaO3EWvqH2wF0YS8hVQQ5LFaQXGjpav/0ZqioAO75tavGM+YrcwFU
-         VqscoJugGU9fUvxdpjjZRtkmCQN+7Hd1Z/1nLf4/HX9R+KqEEtN4xa2np/s9vKYPLI8l
-         DmKw==
-X-Gm-Message-State: AOJu0YxxmkLr3jtsmg59oiFrUtVuiNbpM4yX8F1i2WfKmebyUj4XW8ET
-	aM0IUL9m1pzVPyeKSF2rAtndBcBlgIc4w8n1S5Mlw1haAUb3RPgk
-X-Google-Smtp-Source: AGHT+IH6ORuEmtQx+qjHZhnbKTw9oDOMB02TWbVb1eVUKbXZ7AB4RSKYDuA74ANl4jgjpy8I1OzxfQ==
-X-Received: by 2002:a05:6402:1a28:b0:559:f5fe:e1d5 with SMTP id be8-20020a0564021a2800b00559f5fee1d5mr601806edb.62.1705588032691;
-        Thu, 18 Jan 2024 06:27:12 -0800 (PST)
-Received: from localhost (p200300e41f0fa600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f0f:a600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id r1-20020a056402018100b00558e2a97fc2sm7961039edv.68.2024.01.18.06.27.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jan 2024 06:27:12 -0800 (PST)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	Sameer Pujar <spujar@nvidia.com>,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: sound: tegra: Correct clocks and resets for HDA
-Date: Thu, 18 Jan 2024 15:27:06 +0100
-Message-ID: <20240118142706.4179146-2-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240118142706.4179146-1-thierry.reding@gmail.com>
-References: <20240118142706.4179146-1-thierry.reding@gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MiPmHmXE"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Pdod+vxajNgWVagu4iPh3fd8Irwslu7W70Rd7H5ana2nKcGSsBE+2vBtazkJCze55bApBg5o9v5GpVyYAL+HJ5NYFRUDlf+493MHCGFXkcXWNcutK7GTBlBT27sFBsjAhOBPaZ/QnaVAa2YH0T6tr99YqNRTEpcbr8yHxHdEdbvC1ubd1eOLaDBsNtLYDAhIdGUI1yisdzfFZ5KKyEb8XcGrCV/AA/IfBDORnqrTsWFLy0NYUgBc8vvxkADir2Rp7BXnGE8fpD2YDrczVHo1colhvRIPPYYxgkg4CsjrH00oMpY/dcYym+RJm54kKkJ4xJ2QMcJPKtxGyNT9WbISTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CN5O/hu2SL2EhJxW0+xlRZtj3WWsU6ikfnXlvVnzHdg=;
+ b=V1n1YM4S6ymtJwhmZ5utCRx0wGQEb7oq7cI4RzRC9YQwB4ZGsv0HXi1L/4S4nTT2+sq9Zh7S2aGpL1Ih9k3rptrkgRpQrvr1aDlv0ytjJMdl7kuWp2i6SWM8Dwivd9rZD39AEgbiKPLdg9uyxMHEwL2ZoFXjsgQohmaosUxNEewkZJKwOEsLBY1qxgcQ1SJxb9ZPvqgwGFXmrX1nH0u08RDP8wzuU7QO35wEha94rcByZgwjkLpRk0LB9MQrKXe51f3A3o6MpCrH1MYLr0rZN2f4VEnhkFthKErmQBF1e+oNYH46iHiC+4bwhfgSxQ9OGHsLyJR02yFexC7VhAzrWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CN5O/hu2SL2EhJxW0+xlRZtj3WWsU6ikfnXlvVnzHdg=;
+ b=MiPmHmXElq61AZfHQCLYu1cGKVYlBxH8aYJf85bibLpbprzrb675xnF7qutOKMWFMncY01CgVTTU5yOt8RxfkoPjCqZz976XHleuWa0oK2hSHfUt67FO/svtvRcn3/0Z19iJHIWTfYP9h1rKoN+A0YPYaTUZIGmH+2iO+yJwCGyZ5mB1JhvWYgV48m/0MvRdRmHiSmSpS+yGHuMMwCWp/02lsXDZ6Vme2jYJhNgl6icKIhEpGhBycqkuJcUvKPL1Yeqw1DBxXElQ6JU6Dc1+e6LjHsepziqTAtN5X7+aobXBqIdri70N+bHHZ/1bmu6Aq4u4OjdMlwlaJ1jXx5g8gg==
+Received: from SJ0PR05CA0149.namprd05.prod.outlook.com (2603:10b6:a03:33d::34)
+ by DS0PR12MB8019.namprd12.prod.outlook.com (2603:10b6:8:14e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7202.24; Fri, 19 Jan
+ 2024 14:11:18 +0000
+Received: from SJ5PEPF000001C8.namprd05.prod.outlook.com
+ (2603:10b6:a03:33d:cafe::3a) by SJ0PR05CA0149.outlook.office365.com
+ (2603:10b6:a03:33d::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.8 via Frontend
+ Transport; Fri, 19 Jan 2024 14:11:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ5PEPF000001C8.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7202.16 via Frontend Transport; Fri, 19 Jan 2024 14:11:17 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 19 Jan
+ 2024 06:11:07 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.41; Fri, 19 Jan 2024 06:11:07 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
+ Transport; Fri, 19 Jan 2024 06:11:07 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.6 000/150] 6.6.13-rc1 review
+In-Reply-To: <20240118104320.029537060@linuxfoundation.org>
+References: <20240118104320.029537060@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <79f6a662-1b96-4c19-a22b-9744b7c638f1@drhqmail203.nvidia.com>
+Date: Fri, 19 Jan 2024 06:11:07 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001C8:EE_|DS0PR12MB8019:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4546445-928d-4759-92be-08dc18f88127
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	C2Lk9SLO2OEyBhYPq/kD0T4iTIHiFrsc32FnU1YjwENWwDnJb5FiwYJyVNJjO1/o0G49hg6RnblMcG+v4YnAnkn80R2lKmZBEyQzS4Ge6he+cvG6lGzfzCqYyqbNrDEIw4mcWveIMxrYTAvy00ON89hWgQcANb/mKl+Cg8/akWKmYZSwaLOq/BRHDAGxx2GIpMz4gx5L9VsAb6ZxSNY0a15gyQoJXHIYsDxDrwg7B5c0Gep2RxTLUamWy+LPH+QJVBSWCfOSF4La0WyrZDcQ1J79KxYWXWOrWXaaNRF+PIYZB7ZmfFSd5LKfgubNNkPBE6dfQ7aCP0CNxCpinLkehRJe0F18vqAcG+4DWX1wfQ3kePyxRVgKVV509NmTxrNYmCUm2KIXl0FQwlc6f8rx7KaqvCpm5jVGeDhu0VkapBxHHbZe98W9lLFjHksO36GUXu8xvfiSq/7QDssIZ+JJIokrP64hxw7andMAITiMaIgimoTg9VLo+FYieMdAApO+lNFVRtSq75KKK37GSjt+ZxNd55Grt2PDHySrSZbl37OtBz8F4y0O0zYyZ8OaccNXgn5QYo4XeCykcZ7yk3KLpcLa63r81hJQvrvdvuoVdC3kyXWpWZeg3IWclbMTryxbiPP4qRtNxBsXmThHcFkbmqZqnjowor38fmxaS8/d/M+dNAvIILkpRcCX+ZoteCgGHksotGw0UKP8G6tS1hOxGyKQIT4Ah7XOmhVJpCz6FjrXOsRNjUNfbCIExTA9NamnKcEE8i2hXoK9HSU4GRbKmbPKCkPJgINitD/fwC/xntk=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(346002)(396003)(136003)(376002)(230922051799003)(186009)(1800799012)(82310400011)(451199024)(64100799003)(40470700004)(36840700001)(46966006)(31696002)(36860700001)(82740400003)(426003)(47076005)(356005)(7636003)(336012)(70586007)(6916009)(54906003)(70206006)(2906002)(8936002)(5660300002)(7416002)(4326008)(41300700001)(316002)(8676002)(966005)(478600001)(26005)(40460700003)(40480700001)(86362001)(31686004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jan 2024 14:11:17.7265
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4546445-928d-4759-92be-08dc18f88127
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001C8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8019
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, 18 Jan 2024 11:47:02 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.13 release.
+> There are 150 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 20 Jan 2024 10:42:49 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.13-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-The HDA controller on Tegra194 and Tegra234 uses a slightly different
-set of clocks and resets, so describe those accurately in the bindings.
+All tests passing for Tegra ...
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- .../bindings/sound/nvidia,tegra30-hda.yaml    | 95 +++++++++++++++++--
- 1 file changed, 85 insertions(+), 10 deletions(-)
+Test results for stable-v6.6:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-index 12c31b4b99e1..e64c99b6b20b 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.yaml
-@@ -23,8 +23,6 @@ properties:
-       - const: nvidia,tegra30-hda
-       - items:
-           - enum:
--              - nvidia,tegra234-hda
--              - nvidia,tegra194-hda
-               - nvidia,tegra186-hda
-               - nvidia,tegra210-hda
-               - nvidia,tegra124-hda
-@@ -33,6 +31,8 @@ properties:
-           - const: nvidia,tegra132-hda
-           - const: nvidia,tegra124-hda
-           - const: nvidia,tegra30-hda
-+      - const: nvidia,tegra194-hda
-+      - const: nvidia,tegra234-hda
- 
-   reg:
-     maxItems: 1
-@@ -47,10 +47,7 @@ properties:
- 
-   clock-names:
-     minItems: 2
--    items:
--      - const: hda
--      - const: hda2hdmi
--      - const: hda2codec_2x
-+    maxItems: 3
- 
-   resets:
-     minItems: 2
-@@ -58,10 +55,7 @@ properties:
- 
-   reset-names:
-     minItems: 2
--    items:
--      - const: hda
--      - const: hda2hdmi
--      - const: hda2codec_2x
-+    maxItems: 3
- 
-   power-domains:
-     maxItems: 1
-@@ -83,6 +77,87 @@ properties:
-       The user-visible name of this sound complex. If this property is
-       not specified then boards can use default name provided in hda driver.
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - nvidia,tegra30-hda
-+              - nvidia,tegra114-hda
-+              - nvidia,tegra124-hda
-+              - nvidia,tegra132-hda
-+              - nvidia,tegra210-hda
-+              - nvidia,tegra186-hda
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
-+          maxItems: 3
-+
-+        clock-names:
-+          items:
-+            - const: hda
-+            - const: hda2hdmi
-+            - const: hda2codec_2x
-+
-+        resets:
-+          minItems: 3
-+          maxItems: 3
-+
-+        reset-names:
-+          items:
-+            - const: hda
-+            - const: hda2hdmi
-+            - const: hda2codec_2x
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nvidia,tegra194-hda
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
-+
-+        clock-names:
-+          items:
-+            - const: hda
-+            - const: hda2hdmi
-+            - const: hda2codec_2x
-+
-+        resets:
-+          maxItems: 2
-+
-+        reset-names:
-+          items:
-+            - const: hda
-+            - const: hda2hdmi
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: nvidia,tegra234-hda
-+    then:
-+      properties:
-+        clocks:
-+          maxItems: 2
-+
-+        clock-names:
-+          items:
-+            - const: hda
-+            - const: hda2codec_2x
-+
-+        resets:
-+          maxItems: 2
-+
-+        reset-names:
-+          items:
-+            - const: hda
-+            - const: hda2codec_2x
-+
- required:
-   - compatible
-   - reg
--- 
-2.43.0
+Linux version:	6.6.13-rc1-g61450019c62b
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
