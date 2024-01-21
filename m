@@ -1,124 +1,336 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C50E52F8B
-	for <linux-tegra@vger.kernel.org>; Fri, 19 Jan 2024 15:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F332A8D3;
+	Sun, 21 Jan 2024 13:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705678676; cv=none; b=JqUkLJnhFyMq9VKu5h5oZWKwdbqFpiQzMmJRtQcJ2kKL6zvJituZ7Ddz0wmPmb2053k0j7bYMmMwuO5jKSh6vI/tx/YCht2gIt6EOD7ewtcgiedYknjAAIFR3o9udQqZ8ZuaTCeqjzjNpNlU/3R+jHSm6z4GLEtluFj7cPtS6k8=
+	t=1705843639; cv=none; b=SwJOobf+2658phMKa54aO/vEhDbTEFMM9zufh/RE/TicRaLVBJhpkDMrVuXobKr5N8C4fZnIP7bMBp3HAmMP53+r4BOe8q5R+iBP1ZKQQ89+md75l/n6ucnHRD4jz5drac7Ko+uLfHfUWe9xPCoI1SwgRrDSMXAtXs7Iyr7sbsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705678676; c=relaxed/simple;
-	bh=JjR0AYz7MzjTmToDQPkG5shmXXsBv2j0kXL7I446AbU=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To; b=FSz1eckCMkZeMnP8CLtZxLeTs4aRYL9V4mZGcRcY7z7dsYPgHdQBPzGxeSqNusLJ7igxcE7g+iFQuIe9omODIpW0HPndQk5DBQ6Wcmn5qBq1VtQy6s1CVwDEv1sEEfmD42otIqHVOjcnuxY1kpK2tT60gw8UuMMRqjPEnYRtwUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sr7uYiAt; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1705843639; c=relaxed/simple;
+	bh=YvEOmwEWqmM2FzYz9JyLhCNzNVvl/cz5AWUT5qlVscQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EpEFatjGC73KmZ/ImIcyelXzRtCZb7hXfWrkLXt729R4zuzxaKfEWtQHkXP5LrJGy/TNhBsz3FUDM0q+7ClTInsy3ylcpeqKw8Va4B0utPTXPz83LK+evTJcO0abIyqcvIN8nB8eK+fdNDvZ4Xm6wIEQPPPnt4WR0150vgZrDHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vbpn10cQ; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sr7uYiAt"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-336c8ab0b20so815434f8f.1
-        for <linux-tegra@vger.kernel.org>; Fri, 19 Jan 2024 07:37:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705678673; x=1706283473; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=r7aUUKpGi5v+0/dHHEI5adIhSZcHy5gbHjGJGB37a4I=;
-        b=Sr7uYiAtmeLOztePn3cE5FdRCGngEB/F1QfNrT28KfonY70e7IzFkdJJB/6YNex1DI
-         JGDkd4yoRYHs8B0BBPqUDJR6IpPLIMaePLlTtoFq8zFEayQdNCNLYvD8WORL9xijt4PX
-         M5xSZk4LKkBodBmvo+Jg2+mcSah0WjyuEl/st7da7Alt1eh1FQ8ZbkK/o0tjLHAIEyAH
-         9V9LvfD8+bGXaAH9FJeYxFDMVKf/Pp/UKQ2loHyGg9T1eqEuoE2vipqjMla7g5qGpTRO
-         LVPJVC626O9IlVS6hHGmHk8+OrAoBmASg5D0XYKGjzi0iokvQWnwkNrBWRmtlUn16J9c
-         h9BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705678673; x=1706283473;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r7aUUKpGi5v+0/dHHEI5adIhSZcHy5gbHjGJGB37a4I=;
-        b=oUf0eT8JiWGny9ev4ShXXmghbDo4dFIZDnV1/1gm94RzRO2bD2oZUqr6zvhd3QVdDt
-         o6znqv2z3Xe+vmhmm6Gq+IIJCRAFKp/gBlmjdPBBRhwV8g80wh+sjPWFfFrXJbNh7SmQ
-         Bb3Rfc+2o1+pfEBNC5BwaH+0GBj0t31DF4sE8hq59TPqkN+dBcNpfLKj9kqnttl5rT5e
-         7gsXfLwJNvGIlO8GB4eEG2SHm2DpwznzAL/ED960ZWFAYJDcbt09rLemNBmkWQOGT3b9
-         ws+oxXpqVzsB7Wv2kQ4OEPClnhnbL+f2zYTY7cke8YRa+yZvCnte9Mf/1Cn+EuuR9Qq4
-         7IqQ==
-X-Gm-Message-State: AOJu0YyadErPi08WcwZMET/CbD92df+T7VY2ecX9xvAGTK0GkzwQo7nQ
-	u8wSKeiDqPRvGmYMKIHPC2sCvV+01MEIVo1ehjhlaIOi6kSfEK4zNlA/rMi7
-X-Google-Smtp-Source: AGHT+IF1Vk97Tu48BFOPrFck5gxLES+RTnzR2qTkj04ANQao/NCymiwLEb9ZTMvuxKbc/BUAif381g==
-X-Received: by 2002:a05:600c:5106:b0:40e:9699:141e with SMTP id o6-20020a05600c510600b0040e9699141emr1188780wms.54.1705678672400;
-        Fri, 19 Jan 2024 07:37:52 -0800 (PST)
-Received: from localhost (p200300e41f147f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f14:7f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id pw27-20020a17090720bb00b00a2714f1ba8asm10346088ejb.160.2024.01.19.07.37.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Jan 2024 07:37:52 -0800 (PST)
-Content-Type: multipart/signed;
- boundary=e6354818a726b702253a84ecc3adfb3720b1e41010125ecac4d74d3409df;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Fri, 19 Jan 2024 16:37:51 +0100
-Message-Id: <CYISMKA6PGPD.1PS4SOG93N9H3@gmail.com>
-Cc: "Jon Hunter" <jonathanh@nvidia.com>, "Thierry Reding"
- <treding@nvidia.com>, "Sameer Pujar" <spujar@nvidia.com>, "Laxman Dewangan"
- <ldewangan@nvidia.com>
-Subject: Re: [PATCH v2 2/2] dmaengine: tegra210-adma: Update dependency to
- ARCH_TEGRA
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Peter Robinson" <pbrobinson@gmail.com>, <linux-tegra@vger.kernel.org>
-X-Mailer: aerc 0.15.2
-References: <20240112093310.329642-1-pbrobinson@gmail.com>
- <20240112093310.329642-2-pbrobinson@gmail.com>
-In-Reply-To: <20240112093310.329642-2-pbrobinson@gmail.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vbpn10cQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1705843636; x=1737379636;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YvEOmwEWqmM2FzYz9JyLhCNzNVvl/cz5AWUT5qlVscQ=;
+  b=Vbpn10cQH5JnCNXLNrTbko8OAc6VMBpBmPtlNDRjI9ZoLW8QOihM4KJ7
+   9pSU2/MdvSyHsMy9C19j2hRZUbQZahiIWSlhUoLpooN84uauvRngKWcUg
+   0+C7nJqF50O8Lwif7vs5JQyUqKLa9+cDitkGfFsmJwWh3riuTuocIw/js
+   zuzzsokYdpzJvUXriJAv1bxmCbvK6b34PitxKyvo+XivCk6yC3AV91pX5
+   bmaUBbTRXkvI/MaF9xgIgirnlE7vtDreAxvo8xeJ1DPQBeKoDv9Des4lv
+   1AjXgiOGrbiCNToLy9OTX651wrIncANmwJMzQ7os6cg501irbYTAfxV0w
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10959"; a="927559"
+X-IronPort-AV: E=Sophos;i="6.05,209,1701158400"; 
+   d="scan'208";a="927559"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2024 05:27:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,209,1701158400"; 
+   d="scan'208";a="33799535"
+Received: from lkp-server01.sh.intel.com (HELO 961aaaa5b03c) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 21 Jan 2024 05:27:13 -0800
+Received: from kbuild by 961aaaa5b03c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rRXqw-0005wm-0r;
+	Sun, 21 Jan 2024 13:27:10 +0000
+Date: Sun, 21 Jan 2024 21:27:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Pohsun Su <pohsuns@nvidia.com>, daniel.lezcano@linaro.org,
+	tglx@linutronix.de, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, sumitg@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Pohsun Su <pohsuns@nvidia.com>
+Subject: Re: [PATCH 2/2] clocksource/drivers/timer-tegra186: fix watchdog
+ self-pinging.
+Message-ID: <202401212150.DUcfhGzx-lkp@intel.com>
+References: <20240116115838.16544-3-pohsuns@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240116115838.16544-3-pohsuns@nvidia.com>
 
---e6354818a726b702253a84ecc3adfb3720b1e41010125ecac4d74d3409df
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Hi Pohsun,
 
-On Fri Jan 12, 2024 at 10:32 AM CET, Peter Robinson wrote:
-> Update the architecture dependency to be the generic Tegra
-> because the driver works on the four latest Tegra generations
-> not just T210, if you build a kernel with a specific
-> ARCH_TEGRA_xxx_SOC option that excludes 210 you don't get
-> this driver.
->
-> Fixes: 433de642a76c9 ("dmaengine: tegra210-adma: add support for Tegra186=
-/Tegra194")
-> Signed-off-by: Peter Robinson <pbrobinson@gmail.com>
-> Cc: Jon Hunter <jonathanh@nvidia.com>
-> Cc: Thierry Reding <treding@nvidia.com>
-> Cc: Sameer Pujar <spujar@nvidia.com>
-> Cc: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
->
-> v2: fix spelling of option
->
->  drivers/dma/Kconfig | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+kernel test robot noticed the following build warnings:
 
-Same comments as for the ACONNECT patch.
+[auto build test WARNING on tip/timers/core]
+[also build test WARNING on linus/master v6.7 next-20240119]
+[cannot apply to daniel-lezcano/clockevents/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thierry
+url:    https://github.com/intel-lab-lkp/linux/commits/Pohsun-Su/clocksource-drivers-timer-tegra186-add-WDIOC_GETTIMELEFT-support/20240116-200217
+base:   tip/timers/core
+patch link:    https://lore.kernel.org/r/20240116115838.16544-3-pohsuns%40nvidia.com
+patch subject: [PATCH 2/2] clocksource/drivers/timer-tegra186: fix watchdog self-pinging.
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240121/202401212150.DUcfhGzx-lkp@intel.com/config)
+compiler: ClangBuiltLinux clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240121/202401212150.DUcfhGzx-lkp@intel.com/reproduce)
 
---e6354818a726b702253a84ecc3adfb3720b1e41010125ecac4d74d3409df
-Content-Type: application/pgp-signature; name="signature.asc"
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202401212150.DUcfhGzx-lkp@intel.com/
 
------BEGIN PGP SIGNATURE-----
+All warnings (new ones prefixed by >>):
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmWql1AACgkQ3SOs138+
-s6Fctg//TOyCjJ4OD++E9t0Ix/pi6ykffcB/aJ4X1v0jo35Gg+Km1bKl2bxUF33T
-+Hh/kk4CozZs/zGkfGOkSCuDhg1f8ZWsLygZ6f1uRKiG03MvN9S4JUIYStBsa2t+
-YufVVW3yKdRm0fzhGTruyJSPBMpgxQvS8c0tTfFtHceZAralthWp/kcHwSJrGVnj
-uFmMuAJhJMKdBEqFoKmJusdl8bOSevQOS5Tdn7LqmTD5DcLdSLcdhjfPsAUDoBPG
-gTAgcxn7QLGHC2dFs/uQKKlPTnsarnuQJCxGLW9am3oWdgPnHTDCecE614MZLL+W
-mAKCvljbAU2mHdeq52j3PO6OOr/ENx7oqYieUGl/BkUWDn0/AqBPTVpdh9PWaFvx
-sQL0tSXLoJn1n7zlJ+aK9HmmKNsMTZDg7KG2TEZB6x79y2Z7Ne6GYI7ZO9FfOX/W
-zok1Pmob1mdXJ8ImPPpUl7YwmSSGWa+qdMmeB9wskGywcTEnU8QD7uWevoscPWl1
-QdLBIcHStMNQvCOibpT9BH3RHdXOPAyoBCRzP8k/M9J0H+hmZ0W420vhsP2m3T0d
-eLOFUCHIauR4VD8iiPfnT4816hx+6O7S3ueh6uQQa106LnuGpVvfrgoyYkD8JsPR
-8qHtZFv6wXv6caSNrvF6KTlSkKwfuSuVVMpWyuzfp7zGANoFh/c=
-=eovf
------END PGP SIGNATURE-----
+   drivers/clocksource/timer-tegra186.c:264:15: error: call to undeclared function 'FIELD_GET'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     264 |         expiration = FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, readl_relaxed(wdt->regs + WDTSR));
+         |                      ^
+>> drivers/clocksource/timer-tegra186.c:414:15: warning: variable 'irq' set but not used [-Wunused-but-set-variable]
+     414 |         unsigned int irq;
+         |                      ^
+   1 warning and 1 error generated.
 
---e6354818a726b702253a84ecc3adfb3720b1e41010125ecac4d74d3409df--
+
+vim +/irq +414 drivers/clocksource/timer-tegra186.c
+
+42cee19a9f839f Thierry Reding 2022-07-04  241  
+3d6bf45a82fb12 Pohsun Su      2024-01-16  242  static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wdd)
+3d6bf45a82fb12 Pohsun Su      2024-01-16  243  {
+3d6bf45a82fb12 Pohsun Su      2024-01-16  244  	struct tegra186_wdt *wdt = to_tegra186_wdt(wdd);
+3d6bf45a82fb12 Pohsun Su      2024-01-16  245  	u32 timeleft;
+3d6bf45a82fb12 Pohsun Su      2024-01-16  246  	u32 expiration;
+3d6bf45a82fb12 Pohsun Su      2024-01-16  247  
+3d6bf45a82fb12 Pohsun Su      2024-01-16  248  	if (!watchdog_active(&wdt->base)) {
+3d6bf45a82fb12 Pohsun Su      2024-01-16  249  		/* return zero if the watchdog timer is not activated. */
+3d6bf45a82fb12 Pohsun Su      2024-01-16  250  		return 0;
+3d6bf45a82fb12 Pohsun Su      2024-01-16  251  	}
+3d6bf45a82fb12 Pohsun Su      2024-01-16  252  
+3d6bf45a82fb12 Pohsun Su      2024-01-16  253  	/*
+3d6bf45a82fb12 Pohsun Su      2024-01-16  254  	 * System power-on reset occurs on the fifth expiration of the watchdog timer and so
+3d6bf45a82fb12 Pohsun Su      2024-01-16  255  	 * when the watchdog timer is configured, the actual value programmed into the counter
+3d6bf45a82fb12 Pohsun Su      2024-01-16  256  	 * is 1/5 of the timeout value. Once the counter reaches 0, expiration count will be
+3d6bf45a82fb12 Pohsun Su      2024-01-16  257  	 * increased by 1 and the down counter restarts.
+3d6bf45a82fb12 Pohsun Su      2024-01-16  258  	 * Hence to get the time left before system reset we must combine 2 parts:
+3d6bf45a82fb12 Pohsun Su      2024-01-16  259  	 * 1. value of the current down counter
+3d6bf45a82fb12 Pohsun Su      2024-01-16  260  	 * 2. (number of counter expirations remaining) * (timeout/5)
+3d6bf45a82fb12 Pohsun Su      2024-01-16  261  	 */
+3d6bf45a82fb12 Pohsun Su      2024-01-16  262  
+3d6bf45a82fb12 Pohsun Su      2024-01-16  263  	/* Get the current number of counter expirations. Should be a value between 0 and 4. */
+3d6bf45a82fb12 Pohsun Su      2024-01-16 @264  	expiration = FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, readl_relaxed(wdt->regs + WDTSR));
+3d6bf45a82fb12 Pohsun Su      2024-01-16  265  
+3d6bf45a82fb12 Pohsun Su      2024-01-16  266  	/* Convert the current counter value to seconds, rounding up to the nearest second. */
+3d6bf45a82fb12 Pohsun Su      2024-01-16  267  	timeleft = FIELD_GET(TMRSR_PCV, readl_relaxed(wdt->tmr->regs + TMRSR));
+3d6bf45a82fb12 Pohsun Su      2024-01-16  268  	timeleft = (timeleft + USEC_PER_SEC / 2) / USEC_PER_SEC;
+3d6bf45a82fb12 Pohsun Su      2024-01-16  269  
+3d6bf45a82fb12 Pohsun Su      2024-01-16  270  	/*
+3d6bf45a82fb12 Pohsun Su      2024-01-16  271  	 * Calculate the time remaining by adding the time for the counter value
+3d6bf45a82fb12 Pohsun Su      2024-01-16  272  	 * to the time of the counter expirations that remain.
+3d6bf45a82fb12 Pohsun Su      2024-01-16  273  	 */
+3d6bf45a82fb12 Pohsun Su      2024-01-16  274  	timeleft += wdt->base.timeout * (4 - expiration) / 5;
+3d6bf45a82fb12 Pohsun Su      2024-01-16  275  	return timeleft;
+3d6bf45a82fb12 Pohsun Su      2024-01-16  276  }
+3d6bf45a82fb12 Pohsun Su      2024-01-16  277  
+42cee19a9f839f Thierry Reding 2022-07-04  278  static const struct watchdog_ops tegra186_wdt_ops = {
+42cee19a9f839f Thierry Reding 2022-07-04  279  	.owner = THIS_MODULE,
+42cee19a9f839f Thierry Reding 2022-07-04  280  	.start = tegra186_wdt_start,
+42cee19a9f839f Thierry Reding 2022-07-04  281  	.stop = tegra186_wdt_stop,
+42cee19a9f839f Thierry Reding 2022-07-04  282  	.ping = tegra186_wdt_ping,
+42cee19a9f839f Thierry Reding 2022-07-04  283  	.set_timeout = tegra186_wdt_set_timeout,
+3d6bf45a82fb12 Pohsun Su      2024-01-16  284  	.get_timeleft = tegra186_wdt_get_timeleft,
+42cee19a9f839f Thierry Reding 2022-07-04  285  };
+42cee19a9f839f Thierry Reding 2022-07-04  286  
+42cee19a9f839f Thierry Reding 2022-07-04  287  static struct tegra186_wdt *tegra186_wdt_create(struct tegra186_timer *tegra,
+42cee19a9f839f Thierry Reding 2022-07-04  288  						unsigned int index)
+42cee19a9f839f Thierry Reding 2022-07-04  289  {
+42cee19a9f839f Thierry Reding 2022-07-04  290  	unsigned int offset = 0x10000, source;
+42cee19a9f839f Thierry Reding 2022-07-04  291  	struct tegra186_wdt *wdt;
+42cee19a9f839f Thierry Reding 2022-07-04  292  	u32 value;
+42cee19a9f839f Thierry Reding 2022-07-04  293  	int err;
+42cee19a9f839f Thierry Reding 2022-07-04  294  
+42cee19a9f839f Thierry Reding 2022-07-04  295  	offset += tegra->soc->num_timers * 0x10000 + index * 0x10000;
+42cee19a9f839f Thierry Reding 2022-07-04  296  
+42cee19a9f839f Thierry Reding 2022-07-04  297  	wdt = devm_kzalloc(tegra->dev, sizeof(*wdt), GFP_KERNEL);
+42cee19a9f839f Thierry Reding 2022-07-04  298  	if (!wdt)
+42cee19a9f839f Thierry Reding 2022-07-04  299  		return ERR_PTR(-ENOMEM);
+42cee19a9f839f Thierry Reding 2022-07-04  300  
+42cee19a9f839f Thierry Reding 2022-07-04  301  	wdt->regs = tegra->regs + offset;
+42cee19a9f839f Thierry Reding 2022-07-04  302  	wdt->index = index;
+42cee19a9f839f Thierry Reding 2022-07-04  303  
+42cee19a9f839f Thierry Reding 2022-07-04  304  	/* read the watchdog configuration since it might be locked down */
+42cee19a9f839f Thierry Reding 2022-07-04  305  	value = wdt_readl(wdt, WDTCR);
+42cee19a9f839f Thierry Reding 2022-07-04  306  
+42cee19a9f839f Thierry Reding 2022-07-04  307  	if (value & WDTCR_LOCAL_INT_ENABLE)
+42cee19a9f839f Thierry Reding 2022-07-04  308  		wdt->locked = true;
+42cee19a9f839f Thierry Reding 2022-07-04  309  
+42cee19a9f839f Thierry Reding 2022-07-04  310  	source = value & WDTCR_TIMER_SOURCE_MASK;
+42cee19a9f839f Thierry Reding 2022-07-04  311  
+42cee19a9f839f Thierry Reding 2022-07-04  312  	wdt->tmr = tegra186_tmr_create(tegra, source);
+42cee19a9f839f Thierry Reding 2022-07-04  313  	if (IS_ERR(wdt->tmr))
+42cee19a9f839f Thierry Reding 2022-07-04  314  		return ERR_CAST(wdt->tmr);
+42cee19a9f839f Thierry Reding 2022-07-04  315  
+42cee19a9f839f Thierry Reding 2022-07-04  316  	wdt->base.info = &tegra186_wdt_info;
+42cee19a9f839f Thierry Reding 2022-07-04  317  	wdt->base.ops = &tegra186_wdt_ops;
+42cee19a9f839f Thierry Reding 2022-07-04  318  	wdt->base.min_timeout = 1;
+42cee19a9f839f Thierry Reding 2022-07-04  319  	wdt->base.max_timeout = 255;
+42cee19a9f839f Thierry Reding 2022-07-04  320  	wdt->base.parent = tegra->dev;
+42cee19a9f839f Thierry Reding 2022-07-04  321  
+42cee19a9f839f Thierry Reding 2022-07-04  322  	err = watchdog_init_timeout(&wdt->base, 5, tegra->dev);
+42cee19a9f839f Thierry Reding 2022-07-04  323  	if (err < 0) {
+42cee19a9f839f Thierry Reding 2022-07-04  324  		dev_err(tegra->dev, "failed to initialize timeout: %d\n", err);
+42cee19a9f839f Thierry Reding 2022-07-04  325  		return ERR_PTR(err);
+42cee19a9f839f Thierry Reding 2022-07-04  326  	}
+42cee19a9f839f Thierry Reding 2022-07-04  327  
+42cee19a9f839f Thierry Reding 2022-07-04  328  	err = devm_watchdog_register_device(tegra->dev, &wdt->base);
+42cee19a9f839f Thierry Reding 2022-07-04  329  	if (err < 0) {
+42cee19a9f839f Thierry Reding 2022-07-04  330  		dev_err(tegra->dev, "failed to register WDT: %d\n", err);
+42cee19a9f839f Thierry Reding 2022-07-04  331  		return ERR_PTR(err);
+42cee19a9f839f Thierry Reding 2022-07-04  332  	}
+42cee19a9f839f Thierry Reding 2022-07-04  333  
+42cee19a9f839f Thierry Reding 2022-07-04  334  	return wdt;
+42cee19a9f839f Thierry Reding 2022-07-04  335  }
+42cee19a9f839f Thierry Reding 2022-07-04  336  
+42cee19a9f839f Thierry Reding 2022-07-04  337  static u64 tegra186_timer_tsc_read(struct clocksource *cs)
+42cee19a9f839f Thierry Reding 2022-07-04  338  {
+42cee19a9f839f Thierry Reding 2022-07-04  339  	struct tegra186_timer *tegra = container_of(cs, struct tegra186_timer,
+42cee19a9f839f Thierry Reding 2022-07-04  340  						    tsc);
+42cee19a9f839f Thierry Reding 2022-07-04  341  	u32 hi, lo, ss;
+42cee19a9f839f Thierry Reding 2022-07-04  342  
+42cee19a9f839f Thierry Reding 2022-07-04  343  	hi = readl_relaxed(tegra->regs + TKETSC1);
+42cee19a9f839f Thierry Reding 2022-07-04  344  
+42cee19a9f839f Thierry Reding 2022-07-04  345  	/*
+42cee19a9f839f Thierry Reding 2022-07-04  346  	 * The 56-bit value of the TSC is spread across two registers that are
+42cee19a9f839f Thierry Reding 2022-07-04  347  	 * not synchronized. In order to read them atomically, ensure that the
+42cee19a9f839f Thierry Reding 2022-07-04  348  	 * high 24 bits match before and after reading the low 32 bits.
+42cee19a9f839f Thierry Reding 2022-07-04  349  	 */
+42cee19a9f839f Thierry Reding 2022-07-04  350  	do {
+42cee19a9f839f Thierry Reding 2022-07-04  351  		/* snapshot the high 24 bits */
+42cee19a9f839f Thierry Reding 2022-07-04  352  		ss = hi;
+42cee19a9f839f Thierry Reding 2022-07-04  353  
+42cee19a9f839f Thierry Reding 2022-07-04  354  		lo = readl_relaxed(tegra->regs + TKETSC0);
+42cee19a9f839f Thierry Reding 2022-07-04  355  		hi = readl_relaxed(tegra->regs + TKETSC1);
+42cee19a9f839f Thierry Reding 2022-07-04  356  	} while (hi != ss);
+42cee19a9f839f Thierry Reding 2022-07-04  357  
+42cee19a9f839f Thierry Reding 2022-07-04  358  	return (u64)hi << 32 | lo;
+42cee19a9f839f Thierry Reding 2022-07-04  359  }
+42cee19a9f839f Thierry Reding 2022-07-04  360  
+42cee19a9f839f Thierry Reding 2022-07-04  361  static int tegra186_timer_tsc_init(struct tegra186_timer *tegra)
+42cee19a9f839f Thierry Reding 2022-07-04  362  {
+42cee19a9f839f Thierry Reding 2022-07-04  363  	tegra->tsc.name = "tsc";
+42cee19a9f839f Thierry Reding 2022-07-04  364  	tegra->tsc.rating = 300;
+42cee19a9f839f Thierry Reding 2022-07-04  365  	tegra->tsc.read = tegra186_timer_tsc_read;
+42cee19a9f839f Thierry Reding 2022-07-04  366  	tegra->tsc.mask = CLOCKSOURCE_MASK(56);
+42cee19a9f839f Thierry Reding 2022-07-04  367  	tegra->tsc.flags = CLOCK_SOURCE_IS_CONTINUOUS;
+42cee19a9f839f Thierry Reding 2022-07-04  368  
+42cee19a9f839f Thierry Reding 2022-07-04  369  	return clocksource_register_hz(&tegra->tsc, 31250000);
+42cee19a9f839f Thierry Reding 2022-07-04  370  }
+42cee19a9f839f Thierry Reding 2022-07-04  371  
+42cee19a9f839f Thierry Reding 2022-07-04  372  static u64 tegra186_timer_osc_read(struct clocksource *cs)
+42cee19a9f839f Thierry Reding 2022-07-04  373  {
+42cee19a9f839f Thierry Reding 2022-07-04  374  	struct tegra186_timer *tegra = container_of(cs, struct tegra186_timer,
+42cee19a9f839f Thierry Reding 2022-07-04  375  						    osc);
+42cee19a9f839f Thierry Reding 2022-07-04  376  
+42cee19a9f839f Thierry Reding 2022-07-04  377  	return readl_relaxed(tegra->regs + TKEOSC);
+42cee19a9f839f Thierry Reding 2022-07-04  378  }
+42cee19a9f839f Thierry Reding 2022-07-04  379  
+42cee19a9f839f Thierry Reding 2022-07-04  380  static int tegra186_timer_osc_init(struct tegra186_timer *tegra)
+42cee19a9f839f Thierry Reding 2022-07-04  381  {
+42cee19a9f839f Thierry Reding 2022-07-04  382  	tegra->osc.name = "osc";
+42cee19a9f839f Thierry Reding 2022-07-04  383  	tegra->osc.rating = 300;
+42cee19a9f839f Thierry Reding 2022-07-04  384  	tegra->osc.read = tegra186_timer_osc_read;
+42cee19a9f839f Thierry Reding 2022-07-04  385  	tegra->osc.mask = CLOCKSOURCE_MASK(32);
+42cee19a9f839f Thierry Reding 2022-07-04  386  	tegra->osc.flags = CLOCK_SOURCE_IS_CONTINUOUS;
+42cee19a9f839f Thierry Reding 2022-07-04  387  
+42cee19a9f839f Thierry Reding 2022-07-04  388  	return clocksource_register_hz(&tegra->osc, 38400000);
+42cee19a9f839f Thierry Reding 2022-07-04  389  }
+42cee19a9f839f Thierry Reding 2022-07-04  390  
+42cee19a9f839f Thierry Reding 2022-07-04  391  static u64 tegra186_timer_usec_read(struct clocksource *cs)
+42cee19a9f839f Thierry Reding 2022-07-04  392  {
+42cee19a9f839f Thierry Reding 2022-07-04  393  	struct tegra186_timer *tegra = container_of(cs, struct tegra186_timer,
+42cee19a9f839f Thierry Reding 2022-07-04  394  						    usec);
+42cee19a9f839f Thierry Reding 2022-07-04  395  
+42cee19a9f839f Thierry Reding 2022-07-04  396  	return readl_relaxed(tegra->regs + TKEUSEC);
+42cee19a9f839f Thierry Reding 2022-07-04  397  }
+42cee19a9f839f Thierry Reding 2022-07-04  398  
+42cee19a9f839f Thierry Reding 2022-07-04  399  static int tegra186_timer_usec_init(struct tegra186_timer *tegra)
+42cee19a9f839f Thierry Reding 2022-07-04  400  {
+42cee19a9f839f Thierry Reding 2022-07-04  401  	tegra->usec.name = "usec";
+42cee19a9f839f Thierry Reding 2022-07-04  402  	tegra->usec.rating = 300;
+42cee19a9f839f Thierry Reding 2022-07-04  403  	tegra->usec.read = tegra186_timer_usec_read;
+42cee19a9f839f Thierry Reding 2022-07-04  404  	tegra->usec.mask = CLOCKSOURCE_MASK(32);
+42cee19a9f839f Thierry Reding 2022-07-04  405  	tegra->usec.flags = CLOCK_SOURCE_IS_CONTINUOUS;
+42cee19a9f839f Thierry Reding 2022-07-04  406  
+42cee19a9f839f Thierry Reding 2022-07-04  407  	return clocksource_register_hz(&tegra->usec, USEC_PER_SEC);
+42cee19a9f839f Thierry Reding 2022-07-04  408  }
+42cee19a9f839f Thierry Reding 2022-07-04  409  
+42cee19a9f839f Thierry Reding 2022-07-04  410  static int tegra186_timer_probe(struct platform_device *pdev)
+42cee19a9f839f Thierry Reding 2022-07-04  411  {
+42cee19a9f839f Thierry Reding 2022-07-04  412  	struct device *dev = &pdev->dev;
+42cee19a9f839f Thierry Reding 2022-07-04  413  	struct tegra186_timer *tegra;
+42cee19a9f839f Thierry Reding 2022-07-04 @414  	unsigned int irq;
+42cee19a9f839f Thierry Reding 2022-07-04  415  	int err;
+42cee19a9f839f Thierry Reding 2022-07-04  416  
+42cee19a9f839f Thierry Reding 2022-07-04  417  	tegra = devm_kzalloc(dev, sizeof(*tegra), GFP_KERNEL);
+42cee19a9f839f Thierry Reding 2022-07-04  418  	if (!tegra)
+42cee19a9f839f Thierry Reding 2022-07-04  419  		return -ENOMEM;
+42cee19a9f839f Thierry Reding 2022-07-04  420  
+42cee19a9f839f Thierry Reding 2022-07-04  421  	tegra->soc = of_device_get_match_data(dev);
+42cee19a9f839f Thierry Reding 2022-07-04  422  	dev_set_drvdata(dev, tegra);
+42cee19a9f839f Thierry Reding 2022-07-04  423  	tegra->dev = dev;
+42cee19a9f839f Thierry Reding 2022-07-04  424  
+42cee19a9f839f Thierry Reding 2022-07-04  425  	tegra->regs = devm_platform_ioremap_resource(pdev, 0);
+42cee19a9f839f Thierry Reding 2022-07-04  426  	if (IS_ERR(tegra->regs))
+42cee19a9f839f Thierry Reding 2022-07-04  427  		return PTR_ERR(tegra->regs);
+42cee19a9f839f Thierry Reding 2022-07-04  428  
+42cee19a9f839f Thierry Reding 2022-07-04  429  	err = platform_get_irq(pdev, 0);
+42cee19a9f839f Thierry Reding 2022-07-04  430  	if (err < 0)
+42cee19a9f839f Thierry Reding 2022-07-04  431  		return err;
+42cee19a9f839f Thierry Reding 2022-07-04  432  
+42cee19a9f839f Thierry Reding 2022-07-04  433  	irq = err;
+42cee19a9f839f Thierry Reding 2022-07-04  434  
+42cee19a9f839f Thierry Reding 2022-07-04  435  	/* create a watchdog using a preconfigured timer */
+42cee19a9f839f Thierry Reding 2022-07-04  436  	tegra->wdt = tegra186_wdt_create(tegra, 0);
+42cee19a9f839f Thierry Reding 2022-07-04  437  	if (IS_ERR(tegra->wdt)) {
+42cee19a9f839f Thierry Reding 2022-07-04  438  		err = PTR_ERR(tegra->wdt);
+42cee19a9f839f Thierry Reding 2022-07-04  439  		dev_err(dev, "failed to create WDT: %d\n", err);
+42cee19a9f839f Thierry Reding 2022-07-04  440  		return err;
+42cee19a9f839f Thierry Reding 2022-07-04  441  	}
+42cee19a9f839f Thierry Reding 2022-07-04  442  
+42cee19a9f839f Thierry Reding 2022-07-04  443  	err = tegra186_timer_tsc_init(tegra);
+42cee19a9f839f Thierry Reding 2022-07-04  444  	if (err < 0) {
+42cee19a9f839f Thierry Reding 2022-07-04  445  		dev_err(dev, "failed to register TSC counter: %d\n", err);
+42cee19a9f839f Thierry Reding 2022-07-04  446  		return err;
+42cee19a9f839f Thierry Reding 2022-07-04  447  	}
+42cee19a9f839f Thierry Reding 2022-07-04  448  
+42cee19a9f839f Thierry Reding 2022-07-04  449  	err = tegra186_timer_osc_init(tegra);
+42cee19a9f839f Thierry Reding 2022-07-04  450  	if (err < 0) {
+42cee19a9f839f Thierry Reding 2022-07-04  451  		dev_err(dev, "failed to register OSC counter: %d\n", err);
+42cee19a9f839f Thierry Reding 2022-07-04  452  		goto unregister_tsc;
+42cee19a9f839f Thierry Reding 2022-07-04  453  	}
+42cee19a9f839f Thierry Reding 2022-07-04  454  
+42cee19a9f839f Thierry Reding 2022-07-04  455  	err = tegra186_timer_usec_init(tegra);
+42cee19a9f839f Thierry Reding 2022-07-04  456  	if (err < 0) {
+42cee19a9f839f Thierry Reding 2022-07-04  457  		dev_err(dev, "failed to register USEC counter: %d\n", err);
+42cee19a9f839f Thierry Reding 2022-07-04  458  		goto unregister_osc;
+42cee19a9f839f Thierry Reding 2022-07-04  459  	}
+42cee19a9f839f Thierry Reding 2022-07-04  460  
+42cee19a9f839f Thierry Reding 2022-07-04  461  	return 0;
+42cee19a9f839f Thierry Reding 2022-07-04  462  
+42cee19a9f839f Thierry Reding 2022-07-04  463  unregister_osc:
+42cee19a9f839f Thierry Reding 2022-07-04  464  	clocksource_unregister(&tegra->osc);
+42cee19a9f839f Thierry Reding 2022-07-04  465  unregister_tsc:
+42cee19a9f839f Thierry Reding 2022-07-04  466  	clocksource_unregister(&tegra->tsc);
+42cee19a9f839f Thierry Reding 2022-07-04  467  	return err;
+42cee19a9f839f Thierry Reding 2022-07-04  468  }
+42cee19a9f839f Thierry Reding 2022-07-04  469  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
