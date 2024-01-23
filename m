@@ -1,166 +1,158 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2070.outbound.protection.outlook.com [40.107.220.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0E25A0E6;
-	Tue, 23 Jan 2024 09:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706001628; cv=fail; b=NxYEDp+/V3eFGGjDQz+j+lpgzn254gHl2wkRZi+MGjUeBvXXoastibHwvm2MnC0fQLT6kXenRxNwhwp80GIKxK9g2F511/u1uuGWL3cigk2CPZe6KMrWsEP6T5rTRR7q7l5IVgaDsG9GriHeKkxsOHwVLy1jxCnmhRx9RGHvz4o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706001628; c=relaxed/simple;
-	bh=5msEozwNtR+p8sTFTzKgWX6nrWpHfNTyoWNbbKQYh+o=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bI6kDzPWpUKSs/OgyQN/MG2mDbSZYUaE2kHu/r1Y19cXWd0kTGFrk1PAvQO9cBKUtmuP7VwIjkq25aoo18J66i+dKx/jBrYIUOq4pwYnO3xhrZj0c5hQAo91WsyvuHTqLSt6GwLxOustqBQlWSThTAYM3JnzLunaMHAEwzUon7Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rAXucEgN; arc=fail smtp.client-ip=40.107.220.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3CB5FDAB
+	for <linux-tegra@vger.kernel.org>; Tue, 23 Jan 2024 09:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706003137; cv=none; b=ADysc1f2rfljxhU88mv3UYQQOzv62MfMSxLZO92LKBIl56wpfoMXaLa4Y6mnM8OjI0KEZ5G/fdbEY1iu3Jl6FUh8OhusUkkqKGyyLBnl+sXouvZOYuYFTtF3giJdP7U8aI5ds0LzrmU0FzorsFp7voFH+6rDZUJhjH3i2w+NOCA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706003137; c=relaxed/simple;
+	bh=odkxBY8FHAysxrkRcY9fITRfwH8TqSDhGBgzysz/3Xk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=r1/+QxNOWPdoHayZqdKvKIcZewq31EtMPCdVbHo5tm2tPr1D41KMbQrh28PmIz5a212UOz/Ug7VFEfv+sw376bK7bRPQT+CTV8/1lsEcY3KYYq3R8l7xD6WQC+sQfsexOmiK3vNGrfD+fEES2XKoNJHH0hqx+2DY8oJgETHqIFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SRf6BcNk; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rAXucEgN"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hP68ZUfJBCSMhrrXC3PCofEgjF87ZdNZ+TDPwHIc0dhTjal52c2ug/WcN3BtFfRKph4jPz4NBw63oJD6DBz7XWwG9yf0uL1Ypa+kU93qElUC+Qda+E5nClQduF17RXMNfdfX9y4bdGnIJA2P6/A8geJ5HALseB09kbPcuSj3Ag2BdR5rWar39t/3IIUivVevVEsNDHd4NNn1RAQY0ifdwIsjzm2fydBfBldq22A4rTSMvU5gbovk/oFPntLQR9wozBhtUwajriSJMKRZiwE8E16IFzuQSRr+4jZw9hWB6PohGNdzs/jbj0K5WI1yRAfP9fN21ZBAH8n7t2+GizMqGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0eotP0HO+Z6+FG1fjaHby3cvHNZrgTWqnoeLWQmun0k=;
- b=oGyC+OBKyqpCcU0G6E8/JqjdFIhcrK1RxCQkfoYw6Q3QuFMGgpt6Ro/be+3Tqj7o3w2B26AOkyBLnQ1zI0cTVXwyfsg9hG9ugDSeXdcw3Gt/x3hgWvUWA07ZpPhCvZutkzhGmevRy60jvD9uDcAKKrEhIpRljvkcKWIwNJfZFB6XL0rU+v5nFvsoEqNqJvw+Nb+QvGdCNoX9UXKOQAxdXkyGeGCyk1A6sxvfjoOlUV2LsNOYvzSdFxGPPoRHHeEDc+JynRbCjRsDKm62fFnoazl8b9zmrsbWLV+A6URpvWvSBsWaKfDkXLN0/16YcWU1PBeA/GLIA5XkhPMhrthUgg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0eotP0HO+Z6+FG1fjaHby3cvHNZrgTWqnoeLWQmun0k=;
- b=rAXucEgN4+Ii8t7biKEXXsbYeMNV2lVrE5Jn8HmLqJ/4fgjiPb4tBJRInUik7HMNtICduFB0DBrGw8+hyPy4DMX+mXYa5GM1txS05WerpCkMuDTRQrGS8CBf+v/1qkjKiqSCIALnTioP8/JBpI2UGVnsQxQc8PBF3RDkIDCOiu7VwxwooUO5oIKOjgpwNG86r9wNU72sa+ydDwx8kDs62OrgoAqFtr7q/N18Icqau/E4gEhvEnwqcfd4lwcsBmRbmxJDGk6qtDs3E+V+AXaHms4BWnQhLnoj1zaIuXZyGPZKAQfXyFPS+V6PspGRUuQSEf6CPqgLb2zPv675/fiP/Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- DS0PR12MB7971.namprd12.prod.outlook.com (2603:10b6:8:14e::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7202.37; Tue, 23 Jan 2024 09:20:24 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::acb6:8bd8:e40b:2bfe]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::acb6:8bd8:e40b:2bfe%3]) with mapi id 15.20.7202.034; Tue, 23 Jan 2024
- 09:20:23 +0000
-Message-ID: <a00a3d5f-9d96-4886-9ebe-4e2962667ab3@nvidia.com>
-Date: Tue, 23 Jan 2024 09:20:18 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: memory-controllers: narrow regex for unit
- address to hex numbers
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>, Dmitry Osipenko
- <digetx@gmail.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20240123083517.21091-1-krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20240123083517.21091-1-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0263.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:37c::12) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SRf6BcNk"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-339261a6ec2so2569405f8f.0
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Jan 2024 01:45:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1706003132; x=1706607932; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=u4+mDft7U4+grrKWrx4KfPJ3Se1pTXr+hv+2847ZCNk=;
+        b=SRf6BcNkcwC27XOOfKeVTKU7GmBbr+AW7gUm8atwjSpa0Z7PnmxQ+rA5OVq84Zk6/S
+         DPKqxNMKeT11oxliTyzZbA7JF3wh5DIM8CawupE99/QW6sWVUtaOJRrtvfkn9BtcT5O/
+         9+1xTcvAJ4Hkvpd2U86buqnVaOSxgXTD1htJbsSl11fJoBQoISjL0C6wvmQ8ZXXS54aq
+         5JPhCCvEEaThL+GF24XV4zuWfmk2rUQkZNZX9pvcVeAOpcVX/DeRxm5FVjxr6b6oJyMm
+         KHD0HZfwppFaQq68EjqFEouIeObIBO3AGxrWbqkkfyDADwID+SIv785wBiJb5y8IA5XA
+         Az9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706003132; x=1706607932;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u4+mDft7U4+grrKWrx4KfPJ3Se1pTXr+hv+2847ZCNk=;
+        b=kEAq2pClCbo1+6QjOtlENfKYwXQdYnofWQ1DoAnnlqjTUFXOtlXSTB1ot+xuV0qDfs
+         e9/3QxO3XOnXtulWPQ7Q5hXTEUmP4HKN0zVwQLpdNr14KAuUmWuOiD4K4RSMrGFlXOBA
+         Q0zwxBW6NwpSe67R2YSdYP0dnRI6eiKBRNUaa8ksrFkYaSM/z0bN4TZYJJU0LfvL7SlW
+         btpzAAQkC4wPo2J5eHSO1GRUsKBhShwqmS6WTjpKD+pJVks36n8Nv4gUaePn13R1T3+y
+         J5F2n+7ZFF6JH5FN0i0cWuzaoNgn5IMEi6yGW4Y55cYlnjeZTUcWWD/AqO31wVs1wltC
+         lBqA==
+X-Gm-Message-State: AOJu0YwrvgmUnU1+RH/ISU/M09n5ZZtZVb7dTp/9rG/JjbUG/7fNNEGg
+	O+DMerU+D0E4TQdE3gkhbP/SFboiKD1bI9amiN9+NhJJ+9Vm4M11yK+/UGWfHAA=
+X-Google-Smtp-Source: AGHT+IGeUk4uevU136+WqgA6qK2GCWU3c+cQQnNPm3FHUaU5vvheb5Io6OPMK7/kyI6zteDSYvzpug==
+X-Received: by 2002:a5d:4903:0:b0:337:bc26:5d43 with SMTP id x3-20020a5d4903000000b00337bc265d43mr3398320wrq.4.1706003132548;
+        Tue, 23 Jan 2024 01:45:32 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.215.66])
+        by smtp.gmail.com with ESMTPSA id d12-20020adfe88c000000b00337be3b02aasm15889985wrm.100.2024.01.23.01.45.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jan 2024 01:45:32 -0800 (PST)
+Message-ID: <e19f2aa5-5040-4cab-8c67-557436883e40@linaro.org>
+Date: Tue, 23 Jan 2024 10:45:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|DS0PR12MB7971:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1a9124f2-96bd-41cb-f26c-08dc1bf48752
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	yskk5E1JpQ+L12OK7ygp4BvAzzesIHh0SBoTJgNJoacgzeXXfxgIsS7ZsvpAEB2yOuFxqdOdWCMQjEGFpknwdjDCmw0u2Bekf8IZj+74CGa6++udfp4aR+oPIh1g1g7MJR31VS8H4/qWRJMocsuYjySzVXplDZCRID8StF415fYZXxNPKwxsSlIM87OYukp8+JDhHJBFUmYKnzltoYsnGhs+GhhqaSOG/Fr2pstwtH+4mBZX51meydkldkSXQsJcC0EvsLINijvU3JYZ3v68NgrtbG2OGQGbUsuVit/JsLDRH8ID+UXB3XmjQjrDyyy99ESvTRxVGFnG/twxPfgXGKwUb8GJaNOTjfDNMYWPS1NpWWhPnGCbJjnwSA1ottiHHzPUlna8Yt0n5yp/fvx0piHwEsml1AKvRXDDQtc68h7T0yBqUvZ7qnredVmHFFlpKv2zejv3cSPGtF1aPMpsF1Mw/xcMdOEoKvUDhf8zVIc3bqlTNRG9XJXXU8amwgPYQlbCGzLAaFhM4ChFyFWd/PJEUlB+zdKLAElKImMd6SRw1AXRtxgjIb5VjS12IwFOSvxTGu5zK5UteknSiz26sK5GYsxlKLtqawTH9tuSDdoBi08oHa6guIWs7I+g3t2lv5sjBXc7AfvUopN42ZIoQQ==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(346002)(136003)(39860400002)(376002)(366004)(230922051799003)(451199024)(1800799012)(64100799003)(186009)(316002)(8936002)(478600001)(8676002)(26005)(36756003)(6486002)(83380400001)(53546011)(6506007)(55236004)(6666004)(2616005)(6512007)(41300700001)(66476007)(5660300002)(31696002)(31686004)(38100700002)(2906002)(66946007)(66556008)(110136005)(86362001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VHlQbUdtYmkvQ3czOWJ2WXZxb2tpbWZtb2VRYWJlMXVsQ3VBTjB1d2o3Tm9h?=
- =?utf-8?B?OG1JTGlmL2JUbGk0YTQ3RFJWUlV5OThpNGJYQlFlT013YkMzZGFOeTlRMVlU?=
- =?utf-8?B?NS9IbjBUY3NqU296MDBzSFc0Y1NCRmliRXNiR1o4T2JHZEZQWFhtRlhFS2JC?=
- =?utf-8?B?OTIxYnJtU2NKS0Q2dC9YaFh6K1o4eW41YzZoRmpQUVZzYzJwaE1zOC8rNUVZ?=
- =?utf-8?B?dmxkZ3ZrelhrdTA5OEtaVEQ0R0c1R0hjU283b0ZiQmg5SzVjdDZHZHZRbjBh?=
- =?utf-8?B?bVlJL2syMjQvM1RMRG5OZ2dQNzgzUWhaYTRId3B6dXZNRXFFSFJhQ1RwbjRz?=
- =?utf-8?B?R0ltajRoOUFOczBpQTloOXg4N3BPOE5HaUExMnhNVFR2Ry9xRTFtaE1nN01K?=
- =?utf-8?B?YzB3MkRuUEd4Zm5KeXZKQ2ZnSmpvVWJpK1g5VHJmU2lveUk3Z0VrK1p3SGJ4?=
- =?utf-8?B?UHIzTUN2ODV1cXNOeitmNlViMlNyU0ZjYVUvcmhsMm02WWQ0N1UzNWdnV3Nr?=
- =?utf-8?B?a0lDYmNPQnhFMUE3K0NPbWF2cFRnRWFvdlRUVXM2WnpKcEZ1OG41R2MwclpN?=
- =?utf-8?B?Y1NuSEF1clR5SzI3WitmQ1hodUpiMDFOOWNMV3BvalNiak9HSGlkc1BMVWtP?=
- =?utf-8?B?Q2kySjdrUlF3bVJ3WUo3M0NYMFhhUGZ3VjJOZklpaTU4SzRjM3c5L1h6Sm1z?=
- =?utf-8?B?c2NwOTJVUHVkSitQMDVEWHZjSnBhMG1YaVRrampXN3FUSTRMTThDMVF0NTZt?=
- =?utf-8?B?cmFPbk5JYlpQZjY0UGd6N3IvRFRYTXdIOStnTTZneDBKSi9HaXBGVVFVUDQy?=
- =?utf-8?B?S2cwdUVLb0NOSFRQSVVpZXcrK0tKL1BHQnlvYzlJZkpOTTJlaWhoZ1dIN1JR?=
- =?utf-8?B?cmIxNThsd2dZTnord202djZyWEtFNzN3Wi8xcVFFdTdYV1FwQzFoeDhwRlAv?=
- =?utf-8?B?NTlVQ2RObHFFRnE2UUxXMGRVOUFUSlY4c0RrMHNTM0l4QnlKVGRYUGtqV2ZR?=
- =?utf-8?B?blZUbXJXRTVIbXNIWTFmdDk3VWhyazM2eDJqUTFCNFBwVHpxTUpIbU5ZalZJ?=
- =?utf-8?B?M1RkY3Q3WTR3N00rbzlDWThHMnJVZzlVUUoyYUl6bWx0NGVWbVZyOWFFUk5S?=
- =?utf-8?B?YUtoUzRoSDJDR0F1V0hKTWFvTlE2WUE1WWEvdVVGVVZBRTlRRU5RSi9vUGVF?=
- =?utf-8?B?SmdLK1RuMzRyeDdCbVV1WnV4MWVGZ3MyMDV4MFpaakNQMjZTdWk5bTBJbVpz?=
- =?utf-8?B?bHU2ajVEMHR1U0xqNDF4UVRYdTFmY1UvWmsrV0NUblNtbnBoYWtld1NZODlT?=
- =?utf-8?B?QVVqWG54K0FQSXgvWllRaHZBQ21Pcm02K1NKNitqRHlzUU1tbFZ5Yjd6N3FE?=
- =?utf-8?B?S0J2OHcvMjNxRGtjY1ZGZnQwNHd2VGEyR3VPa0Y5amxGYkNqK1BxV3prcWQv?=
- =?utf-8?B?bUluYVAxOFY4VVZPTEJrdVRtckpQYXBoLzZaL3ZLVnY2SHhIRk1Db2UwQ2ZP?=
- =?utf-8?B?N2ZoT0kyR1dTMm5GN0F2SStuWFR6eWlXdjJmTTc5Tkg3aXA1MmZXZDJlclN6?=
- =?utf-8?B?cERtQnRvWGVmSWt1aVlvMWg5dk9oUUdaQ05sQVYzalhQVVV0cHBCYTZ5RXI3?=
- =?utf-8?B?d0p1Q3lVQkg1OEV4MG9pWnozdk9hMjVZdmhqZ1MrdFNFNzZaWHpVcFdiTHFk?=
- =?utf-8?B?R1c0U0hUSGJvTllnZ3lnOVNXdWg0cTBWSVdFL3lxcnBzcXA4NTl5TXo4OWhY?=
- =?utf-8?B?SlVMQTFqalNEeWlPYkxMZWtoTm84SXRhWXB2cE5hNUZCa3NIek4xbkUwSjZD?=
- =?utf-8?B?MHV4d0ltYjVaL2ZqUU5ZZHRqNnJvMVYzZHhGWmVMa0tCOVdOelorUGZDajRU?=
- =?utf-8?B?YXN0UW9Pbmk5dWNwVW1JZ2lkcENHRFJ3ZlNFSDNxcVptNVBrUVZweWpaaFdn?=
- =?utf-8?B?eHRwMlVBQmNxa25yWVRhVEc0eFlwL0UwK09uam42MjhJdXZxamMwYW95TTJD?=
- =?utf-8?B?aWIrVGNWNnplU1ZUUVUyV0w0aWZUZEtYZFpXbWtSREFxSGhwckRFUlVGZ1hx?=
- =?utf-8?B?Z1Z3bmdRNG1RR0Z5TGxkN09sSnBnWWozWkQzNlNlR0gwaWVPZTVoUjdHK2p0?=
- =?utf-8?B?cFZMS2xBRWtPdEhyN3JEQzE0ajdGYW9wUDQyNVJuSFJSelhsU1d0UERxblIv?=
- =?utf-8?B?U0E9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a9124f2-96bd-41cb-f26c-08dc1bf48752
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2024 09:20:23.8485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WPrjNbIwbqYa73wojdCwuzEOkFON7cqzooY1fl5FPWRkOUfBi7Qir6ATKAS2rLrSo7tHa0akYByn5v0R+XKEIg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7971
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: memory-controllers: narrow regex for unit
+ address to hex numbers
+To: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Dmitry Osipenko <digetx@gmail.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20240123083517.21091-1-krzysztof.kozlowski@linaro.org>
+ <a00a3d5f-9d96-4886-9ebe-4e2962667ab3@nvidia.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <a00a3d5f-9d96-4886-9ebe-4e2962667ab3@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On 23/01/2024 08:35, Krzysztof Kozlowski wrote:
-> Regular expression used to match the unit address part should not allow
-> non-hex numbers.
+On 23/01/2024 10:20, Jon Hunter wrote:
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   .../bindings/memory-controllers/nvidia,tegra20-emc.yaml         | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> On 23/01/2024 08:35, Krzysztof Kozlowski wrote:
+>> Regular expression used to match the unit address part should not allow
+>> non-hex numbers.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>   .../bindings/memory-controllers/nvidia,tegra20-emc.yaml         | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
+>> index f54e553e6c0e..71896cb10692 100644
+>> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
+>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
+>> @@ -145,7 +145,7 @@ patternProperties:
+>>     "^emc-table@[0-9]+$":
+>>       $ref: "#/$defs/emc-table"
+>>   
+>> -  "^emc-tables@[a-z0-9-]+$":
+>> +  "^emc-tables@[a-f0-9-]+$":
+>>       type: object
+>>       properties:
+>>         reg:
 > 
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
-> index f54e553e6c0e..71896cb10692 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
-> @@ -145,7 +145,7 @@ patternProperties:
->     "^emc-table@[0-9]+$":
->       $ref: "#/$defs/emc-table"
->   
-> -  "^emc-tables@[a-z0-9-]+$":
-> +  "^emc-tables@[a-f0-9-]+$":
->       type: object
->       properties:
->         reg:
+> 
+> Thanks! We could add the fixes tag ...
+> 
+> Fixes: de3d7018372c dt-bindings: memory: tegra20: emc: Convert to schema
 
+There is no bug here, really. At least no bug with impact, because dtc
+won't allow DTS with non-hex numbers.
 
-Thanks! We could add the fixes tag ...
+Best regards,
+Krzysztof
 
-Fixes: de3d7018372c dt-bindings: memory: tegra20: emc: Convert to schema
-
-Otherwise ...
-
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
-
--- 
-nvpublic
