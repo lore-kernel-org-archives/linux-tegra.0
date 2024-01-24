@@ -1,208 +1,154 @@
-Received: from aposti.net (aposti.net [89.234.176.197])
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200AA43154;
-	Wed, 24 Jan 2024 15:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.234.176.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAE77F7C3
+	for <linux-tegra@vger.kernel.org>; Wed, 24 Jan 2024 17:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706109510; cv=none; b=W/nqwCzabHaVRCMEdXNigLHt8vQb8dS+Kk6Rqmnntf+UeH+/j4oDD/5VKoHDW5Dd9vcDyFgaWRCbmqKHlzmXEhWWiAdMfFMNaKkKGKh7ouDZbFg/lVQgNUX/vyFbYMALMrPqd5mFHrL+XnqPlRFVQAipJtq8s3CHA176pQyPwr8=
+	t=1706115785; cv=none; b=Y9pyUX5LZeuUuzXqdGG4vW8l0LgH+awhaivlUEUdFEzf4ZIIxWaWLo2+Ks6yctWeUadLuqxkRNyFXVfFygMwSCGDBwOQafr7+iu6cZG7kcaz2mcMZBFh+li15txStDkFvK7+09y6GTzJZVX/maZLgMiuxg7FGN94gfMwJ/T6HDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706109510; c=relaxed/simple;
-	bh=w8A9JHdanRpfyHvSrn/mEIENOTNdAlcHthcwWFUPqfM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Nb/8hHd+F26L2DCtduUoKiuatWXBkzxR4HGE+p1hzao2HXktL1nSMuoOh1y96lnjTMHOWdXIutsKRZJknLRcHn6RVswURnC/l4cVim77G+dOXleXGxkv/jfxxdtKbSLyzy4/gl+KBElrL4ZQ5DuZWZbnfeOBfFZ2ZMLl1W1oQ0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net; spf=pass smtp.mailfrom=crapouillou.net; dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b=ljaCEeJO; arc=none smtp.client-ip=89.234.176.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=crapouillou.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crapouillou.net
+	s=arc-20240116; t=1706115785; c=relaxed/simple;
+	bh=OckWe4XG0ixqeMakKtCo9WUR9ythXnbH2cRxgj0L6AY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tqTUuWHBqQc4itoSsJEMMyHCgsD5SUfgww3DCKhh3tAon00oyjbGqF5XZ5rQpoKcAcUHfAeeUy8YsvGTR8l+ECX96eTfoNgyF/+5wwcey8z+8JYXqT8prrOPzOTVpI6uX8Yf8bhUD9eSHjkVZqKbMlp8QHcFs4Ey1l5z5tTMyFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=oGOd4ErV; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="ljaCEeJO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-	s=mail; t=1706109507;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=w8A9JHdanRpfyHvSrn/mEIENOTNdAlcHthcwWFUPqfM=;
-	b=ljaCEeJOT9n4ixyZCsmlbmZ/mLC1U0SpQajYOvnaqklofY3LVw/urX5058dAD4U9Mgs3M1
-	jf0yYxzuKAKQrZJAi4DPRYTQaiyGz3QjhBYWn53s7fP++GQ1B5VBmg+zPGHZ7mZYOOentd
-	wCNIHiCQsBErUiJMJPaXvxdxzK3E2e4=
-Message-ID: <fa113407241a6e9c0b7815d87a6294035ac98459.camel@crapouillou.net>
-Subject: Re: [PATCH 19/21] gpio: swnode: replace gpiochip_find() with
- gpio_device_find_by_label()
-From: Paul Cercueil <paul@crapouillou.net>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Janusz Krzysztofik
- <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>, Russell King
- <linux@armlinux.org.uk>, Mika Westerberg <mika.westerberg@linux.intel.com>,
-  Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Linus Walleij
- <linus.walleij@linaro.org>, Dipen Patel <dipenp@nvidia.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Hans de
- Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>,
- linux-arm-kernel@lists.infradead.org,  linux-omap@vger.kernel.org,
- linux-kernel@vger.kernel.org,  linux-gpio@vger.kernel.org,
- linux-acpi@vger.kernel.org,  timestamp@lists.linux.dev,
- linux-tegra@vger.kernel.org,  platform-driver-x86@vger.kernel.org, Bartosz
- Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Wed, 24 Jan 2024 16:18:24 +0100
-In-Reply-To: <CAMRc=MdwAaQ1Prtweu9znEL+mbyxSmmKhL65PG+=YKniCD1c9w@mail.gmail.com>
-References: <20230905185309.131295-1-brgl@bgdev.pl>
-	 <20230905185309.131295-20-brgl@bgdev.pl>
-	 <83ad61e2f9d62621f42d8738f6028103fe8bfb94.camel@crapouillou.net>
-	 <CAMRc=MdwAaQ1Prtweu9znEL+mbyxSmmKhL65PG+=YKniCD1c9w@mail.gmail.com>
-Autocrypt: addr=paul@crapouillou.net; prefer-encrypt=mutual;
- keydata=mQENBF0KhcEBCADkfmrzdTOp/gFOMQX0QwKE2WgeCJiHPWkpEuPH81/HB2dpjPZNW03ZMLQfECbbaEkdbN4YnPfXgcc1uBe5mwOAPV1MBlaZcEt4M67iYQwSNrP7maPS3IaQJ18ES8JJ5Uf5UzFZaUawgH+oipYGW+v31cX6L3k+dGsPRM0Pyo0sQt52fsopNPZ9iag0iY7dGNuKenaEqkYNjwEgTtNz8dt6s3hMpHIKZFL3OhAGi88wF/21isv0zkF4J0wlf9gYUTEEY3Eulx80PTVqGIcHZzfavlWIdzhe+rxHTDGVwseR2Y1WjgFGQ2F+vXetAB8NEeygXee+i9nY5qt9c07m8mzjABEBAAG0JFBhdWwgQ2VyY3VlaWwgPHBhdWxAY3JhcG91aWxsb3UubmV0PokBTgQTAQoAOBYhBNdHYd8OeCBwpMuVxnPua9InSr1BBQJdCoXBAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHPua9InSr1BgvIH/0kLyrI3V0f33a6D3BJwc1grbygPVYGuC5l5eMnAI+rDmLR19E2yvibRpgUc87NmPEQPpbbtAZt8On/2WZoE5OIPdlId/AHNpdgAtGXo0ZX4LGeVPjxjdkbrKVHxbcdcnY+zzaFglpbVSvp76pxqgVg8PgxkAAeeJV+ET4t0823Gz2HzCL/6JZhvKAEtHVulOWoBh368SYdolp1TSfORWmHzvQiCCCA+j0cMkYVGzIQzEQhX7Urf9N/nhU5/SGLFEi9DcBfXoGzhyQyLXflhJtKm3XGB1K/pPulbKaPcKAl6rIDWPuFpHkSbmZ9r4KFlBwgAhlGy6nqP7O3u7q23hRW5AQ0EXQqFwQEIAMo+MgvYHsyjX3Ja4Oolg1Txzm8woj30ch2nACFCqaO0R/1kLj2VVeLrDyQUOlXx9PD6IQI4M8wy8m0sR4wV2p/g/paw7k65cjzYYLh+FdLNyO7IW
-	YXndJO+wDPi3aK/YKUYepqlP+QsmaHNYNdXEQDRKqNfJg8t0f5rfzp9ryxd1tCnbV+tG8VHQWiZXNqN7062DygSNXFUfQ0vZ3J2D4oAcIAEXTymRQ2+hr3Hf7I61KMHWeSkCvCG2decTYsHlw5Erix/jYWqVOtX0roOOLqWkqpQQJWtU+biWrAksmFmCp5fXIg1Nlg39v21xCXBGxJkxyTYuhdWyu1yDQ+LSIUAEQEAAYkBNgQYAQoAIBYhBNdHYd8OeCBwpMuVxnPua9InSr1BBQJdCoXBAhsMAAoJEHPua9InSr1B4wsH/Az767YCT0FSsMNt1jkkdLCBi7nY0GTW+PLP1a4zvVqFMo/vD6uz1ZflVTUAEvcTi3VHYZrlgjcxmcGu239oruqUS8Qy/xgZBp9KF0NTWQSl1iBfVbIU5VV1vHS6r77W5x0qXgfvAUWOH4gmN3MnF01SH2zMcLiaUGF+mcwl15rHbjnT3Nu2399aSE6cep86igfCAyFUOXjYEGlJy+c6UyT+DUylpjQg0nl8MlZ/7Whg2fAU9+FALIbQYQzGlT4c71SibR9T741jnegHhlmV4WXXUD6roFt54t0MSAFSVxzG8mLcSjR2cLUJ3NIPXixYUSEn3tQhfZj07xIIjWxAYZo=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="oGOd4ErV"
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2144ce7ff41so1603593fac.3
+        for <linux-tegra@vger.kernel.org>; Wed, 24 Jan 2024 09:03:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1706115782; x=1706720582; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=46DW82ZGTZFbq/v3xqfovKBaw5pAkplLqD4lqGmbUT4=;
+        b=oGOd4ErVGS4RtxzGAn3zTp2+m7+eiCS+ZmuC6kGxU8QavUCQl6Di32HQrHSVUha9vI
+         q7SDBvxI1AkOQn0xamTqmEmbRDaNfbqPKLmkL3cEddSWShtJEQOPatAbK0h7OeF+9m16
+         1Ia1cIosbzuq+JJ3RKDiP225052pxwBxtqoOoDlhFpFyQ9WOQy8pWKhdEzG9+1fR582c
+         j2BIbk29p2KOGUjEjYTuZIlekpGkZCa/wIUtde32SpK/aIreN/MLWUOal0enddMyxv3c
+         wO2oGEH2tcRKDF+wu5inO4EI1ZqBX72e/7im3v+4Q6lDpq9wGdfcpAIuPpTmSToh183u
+         8qHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706115782; x=1706720582;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=46DW82ZGTZFbq/v3xqfovKBaw5pAkplLqD4lqGmbUT4=;
+        b=RXV67dGe95K5z8jAdCA8EcsSVPifJEGTFR/3ZZidx12pMEesOxA9xTP4GcDFvDJ2YY
+         xU7u3sa+mPZKjZj4RKHzvodBlosJLzvi1gn2j/k9yMKkxR7mbdNzlAzGgm8Wg2yQq6+p
+         68Jhe8c0zv/6KAnVn2vbtCULDKiqK+7Y9qF64y1nCA3wFejsD+TDBshRuEBUz5fDQOxk
+         yLUs8neEkXESrj3OJymB369n8jPXu9grgNRVvhNa05HHKSUUAQiahzdPqXpS4EvPhCvy
+         LjLGkITI9aZm87vhi5pzB5rlm4HgbmQ8fhLPrUKsH3CqohrEjxTaqMvRFjWHLCZWuYaJ
+         TAsw==
+X-Gm-Message-State: AOJu0YwfE0ginKjq8F9I+5BTRCfFJidJ++wuDgghnStNckpOL2CHqjVC
+	zEozBAssazPZqsTvksgdKDUTGmoYh3U1XqizRjWyefTBtp+jYQZH4mMnwAcK3qQ=
+X-Google-Smtp-Source: AGHT+IEFELpRVBGWhMjKivd//Up4NeyH4XQb924O+IsJi62S9Y4yx3cDs6tr3yd1JgyFgpvf+uHklw==
+X-Received: by 2002:a05:6870:7d16:b0:214:24ca:1cd6 with SMTP id os22-20020a0568707d1600b0021424ca1cd6mr3852737oab.18.1706115782357;
+        Wed, 24 Jan 2024 09:03:02 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id qa12-20020a056871e70c00b00210d2c251cbsm2878811oac.39.2024.01.24.09.03.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jan 2024 09:03:01 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1rSgeS-008q7W-2p;
+	Wed, 24 Jan 2024 13:03:00 -0400
+Date: Wed, 24 Jan 2024 13:03:00 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, thierry.reding@gmail.com,
+	vdumpa@nvidia.com, joro@8bytes.org, will@kernel.org,
+	jonathanh@nvidia.com, baolu.lu@linux.intel.com, jsnitsel@redhat.com,
+	jroedel@suse.de, linux-tegra@vger.kernel.org, iommu@lists.linux.dev,
+	regressions@lists.linux.dev
+Subject: Re: [REGRESSION] Failed buffer allocation in Tegra fbdev
+Message-ID: <20240124170300.GU50608@ziepe.ca>
+References: <bbmhcoghrprmbdibnjum6lefix2eoquxrde7wyqeulm4xabmlm@b6jy32saugqh>
+ <20240123151508.GR50608@ziepe.ca>
+ <pgund4coabp5pdlmwze5o2d7ogrdncktqz267yzukjcvmikudc@7svrwdci7ujl>
+ <55cab5e0-0abf-47d0-becc-05cdf1d22fac@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55cab5e0-0abf-47d0-becc-05cdf1d22fac@arm.com>
 
-Le mercredi 24 janvier 2024 =C3=A0 16:04 +0100, Bartosz Golaszewski a
-=C3=A9crit=C2=A0:
-> On Wed, Jan 24, 2024 at 3:59=E2=80=AFPM Paul Cercueil <paul@crapouillou.n=
-et>
-> wrote:
-> >=20
-> > Hi Bartosz,
-> >=20
-> > Le mardi 05 septembre 2023 =C3=A0 20:53 +0200, Bartosz Golaszewski a
-> > =C3=A9crit :
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >=20
-> > > We're porting all users of gpiochip_find() to using
-> > > gpio_device_find().
-> > > Update the swnode GPIO code.
-> > >=20
-> > > Signed-off-by: Bartosz Golaszewski
-> > > <bartosz.golaszewski@linaro.org>
-> > > ---
-> > > =C2=A0drivers/gpio/gpiolib-swnode.c | 29 ++++++++++++----------------=
--
-> > > =C2=A01 file changed, 12 insertions(+), 17 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpio/gpiolib-swnode.c
-> > > b/drivers/gpio/gpiolib-
-> > > swnode.c
-> > > index b5a6eaf3729b..56c8519be538 100644
-> > > --- a/drivers/gpio/gpiolib-swnode.c
-> > > +++ b/drivers/gpio/gpiolib-swnode.c
-> > > @@ -31,31 +31,26 @@ static void swnode_format_propname(const char
-> > > *con_id, char *propname,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 strscpy(propname, "gpios", max_size);
-> > > =C2=A0}
-> > >=20
-> > > -static int swnode_gpiochip_match_name(struct gpio_chip *chip,
-> > > void
-> > > *data)
-> > > +static struct gpio_device *swnode_get_gpio_device(struct
-> > > fwnode_handle *fwnode)
-> > > =C2=A0{
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 return !strcmp(chip->label, data);
-> > > -}
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 const struct software_node *gdev_node;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 struct gpio_device *gdev;
-> > >=20
-> > > -static struct gpio_chip *swnode_get_chip(struct fwnode_handle
-> > > *fwnode)
-> > > -{
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 const struct software_node *chip_node;
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 struct gpio_chip *chip;
-> > > -
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 chip_node =3D to_software_node(fwnode);
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 if (!chip_node || !chip_node->name)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 gdev_node =3D to_software_node(fwnode);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (!gdev_node || !gdev_node->name)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 return ERR_PTR(-EINVAL);
-> > >=20
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 chip =3D gpiochip_find((void *)chip_node->n=
-ame,
-> > > swnode_gpiochip_match_name);
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 return chip ?: ERR_PTR(-EPROBE_DEFER);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 gdev =3D gpio_device_find_by_label((void *)=
-gdev_node->name);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 return gdev ?: ERR_PTR(-EPROBE_DEFER);
-> > > =C2=A0}
-> > >=20
-> > > =C2=A0struct gpio_desc *swnode_find_gpio(struct fwnode_handle *fwnode=
-,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *con_id, unsign=
-ed int
-> > > idx,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long *flags)
-> > > =C2=A0{
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 struct gpio_device *gdev __free(gpio_device=
-_put) =3D NULL;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct software_node *swnode;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct fwnode_reference_args args;
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 struct gpio_chip *chip;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct gpio_desc *desc;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char propname[32]; /* 32 is max size o=
-f property name */
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int error;
-> > > @@ -77,12 +72,12 @@ struct gpio_desc *swnode_find_gpio(struct
-> > > fwnode_handle *fwnode,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 return ERR_PTR(error);
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > >=20
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 chip =3D swnode_get_chip(args.fwnode);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 gdev =3D swnode_get_gpio_device(args.fwnode=
-);
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fwnode_handle_put(args.fwnode);
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(chip))
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 return ERR_CAST(chip);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(gdev))
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 return ERR_CAST(gdev);
-> >=20
-> > I'm a bit late to the party, sorry.
-> >=20
-> > I'm looking at how __free() should be used to use it in my own
-> > patchset, and I was wondering if this code actually works.
-> >=20
-> > What happens if swnode_get_gpio_device() returns an error pointer?
-> > Won't that cause a call to gpio_device_put() with the invalid
-> > pointer?
-> >=20
-> > Cheers,
-> > -Paul
-> >=20
->=20
-> No. because the __free() callback is defined as:
->=20
-> DEFINE_FREE(gpio_device_put, struct gpio_device *,
-> =C2=A0=C2=A0=C2=A0 if (!IS_ERR_OR_NULL(_T)) gpio_device_put(_T))
+On Wed, Jan 24, 2024 at 11:46:59AM +0000, Robin Murphy wrote:
+> > > > This may be connected with an error in of_iommu_configure() that
+> > > > became visible after commit 6ff6e184f1f4d:
+> > > > 
+> > > > [    1.200004] host1x drm: iommu configuration for device failed with -ENOENT
+> > > 
+> > > Hmmm
+> > > 
+> > > This is a new logging, so it doesn't necessarily mean something has
+> > > changed in the code flow.
+> > > 
+> > > It seems the issue is something in there is returning ENOENT when it
+> > > probably should be ENODEV, but I haven't been able to guess where it
+> > > comes from.
+> > > 
+> > > Can you do some tracing and figure out where under
+> > > of_iommu_configure() this ENOENT return code is from?
+> > 
+> > I did the tracing and found that the ENOENT is coming from
+> > sysfs_do_create_link_sd() in the following function call chain:
+> > 
+> > of_iommu_configure() -> iommu_probe_device() -> __iommu_probe_device() ->
+> 
+> What's the call path leading up to that? If it's the one from
+> host1x_device_add() then it's expected and benign - for fiddly reasons,
+> iommu_probe_device() ends up being called too early, but will soon be run
+> again in the correct circumstances once we proceed into
+> host1x_subdev_register()->device_add(). That will have been happening for
+> years, we just never reported errors in that spot before (and frankly I'm
+> not convinced it's valuable to have added it now).
 
-Disregard my previous email, I'm stupid. This actually checks that the
-pointer is non-null.
+Hmm. Prior to
 
-Cheers,
--Paul
+commit 14891af3799e ("iommu: Move the iommu driver sysfs setup into
+iommu_init/deinit_device()")
 
->=20
-> Bart
->=20
-> > >=20
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0 desc =3D gpiochip_get_desc(chip, args.args[=
-0]);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0 desc =3D gpiochip_get_desc(gdev->chip, args=
-.args[0]);
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *flags =3D args.args[1]; /* We expect =
-native GPIO flags */
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pr_debug("%s: parsed '%s' property of =
-node '%pfwP[%d]' -
-> > > status (%d)\n",
-> >=20
+The error from iommu_device_link() was ignored. It seems like for most
+of the years the probe actually succeeded, just with a mangled sysfs?
 
+Though that host1x_device_add() ignored the return code does make me
+wonder..
+
+This is the only clue I see:
+
+commit c95469aa5a188384ccf8ac520ece931c66caf8aa
+Author: Alexandre Courbot <acourbot@nvidia.com>
+Date:   Fri Feb 26 18:06:53 2016 +0900
+
+    gpu: host1x: Set DMA ops on device creation
+    
+    Currently host1x-instanciated devices have their dma_ops left to NULL,
+    which makes any DMA operation (like buffer import) on ARM64 fallback
+    to the dummy_dma_ops and fail with an error.
+    
+    This patch calls of_dma_configure() with the host1x node when creating
+    such a device, so the proper DMA operations are set.
+    
+    Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+    Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+    Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+Which is no longer happening anymore as failure of
+iommu_probe_device() will not cause the dma ops to be setup.
+
+So, if everything still works and something else is calling
+of_dma_configure() prior to using the struct device for any DMA
+operations (eg because a driver is always probed?) then we should just
+delete this call.
+
+Robin do you know more? Specifically where is the "soon be run again"?
+Was the above issue fixed in commit 07397df29e57 ("dma-mapping: move
+dma configuration to bus infrastructure") ?
+
+Jason
