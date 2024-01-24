@@ -1,149 +1,153 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2053.outbound.protection.outlook.com [40.107.220.53])
+Received: from smtp2.tecnico.ulisboa.pt (smtp2.tecnico.ulisboa.pt [193.136.128.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCCE18E28;
-	Wed, 24 Jan 2024 10:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706091820; cv=fail; b=cFWSNu6eOUuv0x/lZWDCzY1h9BIM1H6UrK+hCEu8yaMqi14laY0CNFbatWqYho3z2lI4lt4doS6vPDbte6DgBhXxWIhVcikYaQ6BwclCj0AG8D3+SXw9EgC7reSMPgPndbFwEF/TheuX9UtaoZJofYxH9lcgNfOc9lvpoGU1o6E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706091820; c=relaxed/simple;
-	bh=GOY3wTA2HDnrrMHppCxXBTzn1QnUf/Hwq5kqtGp7EhM=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=sEHoZsJUMTEXXYxKbY9yZYa+J74/h/40M/Q4Fnr2+ahmdBXr9WR0O7ZVTn+igU0PL96V1NhCPvfG02DM1HaPVYQqtzAgi2gZJVlGbhyVHUyi/Rdzdf4Ud/Pek8yV2dMJ4oYvnpo9EYILz9qcKZqNJUR2IFs9TAwlggPgkq5O8b4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rF6usM/V; arc=fail smtp.client-ip=40.107.220.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6BE18EAB
+	for <linux-tegra@vger.kernel.org>; Wed, 24 Jan 2024 10:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.22
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706092222; cv=none; b=E78kl9VQCyfDYt8HAOB02eITmAzhrBHYfovDV8A2wQov04ULsvBfhMw4qy7a/iguzUFJkjtOn75QKEScASj2P9FNCr4yUz/Qy2Zr09G1tT3E8mTX9eblBti/IiPAGsip1c1JfJTgdO/fsPMYh5SIDenzLF8/4RsxEsiQTsJrnrA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706092222; c=relaxed/simple;
+	bh=5CDUqzJMAZY3PKBL2rXEO+/UNgNnihux3d57o5Ukzbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jnfTx9/ebZvX3Zq7koVWKXwSG2bN8hNboDS4Xoi8pY9fA3+tSwgr4j/+vZUZ2fhQacZRP3s+wsMJASi2D0rMiVKHJnSqeth7HSN9LSKl1ESE9Ca+lqJkjAxBJVX58vaYpXze0vph3CUEP6wYP3ZvVBotbsj4+pBTaVgBWGgtLrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=LL40N9/1; arc=none smtp.client-ip=193.136.128.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rF6usM/V"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BgDLnxchhas9FxhqVavwkTUq79wjJlzC4MSztTZx5ex7Hqbtifc9zUff8iqqiu38wlfoJcvVaS2D9jd05xvWuMlVDKD3VzWkaFxiAbrSBOOeY8CEmPoj+RktsxHCf4YWKkZhUjAJAkj1tMLeq6u+yODrSKpbdsunF5UmLPDCJ154PZeGELFHa0IoasLEdAUulNbXFNl/3xzO55o+FOrbhatv8LQDqv3tK4PgHWbSHJx7nogclANVNwY7xAJuaSd4vjAGUswgt/EeCH4YLpEw5AkZ3fjd7w6nIyAsgpyaCyePRZjdr8wrJ8rIWQcPwgts+e2vvcUDIZyioF2FkfA+Sw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1+wOooAoqjDdCw5PpK+Fjn/w8u3IP58BkYOTWhE5JdY=;
- b=De0I1LyqkHWVupZwIypE+uz/D54iDzBvEt6YGKIc+Cs5s3fO6tVNIwV2t5FyEbwfegUWJx9aV6z6XrPzd8M+RyQu82yp5GMguVbwM7hwBFhUJYbmR8BOzCY055pdnK0SEw+L0u6tYv8Fu75YKr5PdCkBQMeh7+9W4kTjvEywlQvNl1g4puMxIQOtWzJ0/XX5pimY5Yv3FPMTkTFdf2WUHI6q2lDfOY8EtfIIOdMNvGAWvH3VGUANXe/fIXAVMaPg2+dW/L6TnBzSMx2jbXS/7ertteY9/qCzr2quifWFDw5RZXwvknE1ywAicZWBmRt2uU9QboNnquSVDVBD00nomA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1+wOooAoqjDdCw5PpK+Fjn/w8u3IP58BkYOTWhE5JdY=;
- b=rF6usM/VRkvbXq2oJn7m+UKID1GFz7vGFVaSX8yvIFBFGfW53b3UvenhpRQG/+Bo7Sg3TvfGWQhMTPVxvzwJx1uYdFdcLbOEs4CBedZvCy0MlYku0CfP7uDOG67ZnH3jYWbaT6H8AbErpN+Bj5eigvGicHQnT6vRIUxR1vmwXBUBxEiMXYwgAZbjd85HtMBZUPz4vTY+sNCO2t/P9FV8jzARtx3MgGBCNtv/2ciRxyypAH80ipianiQzTwRha4OC871o/Us7kQmuXMVqJd2fAvTR+Pbb+GlvqLzUFJkADy8IO6uSMOdKO/VOIYRfVuDXuh7E4c12JzVC9079lhiqwQ==
-Received: from SJ0PR03CA0368.namprd03.prod.outlook.com (2603:10b6:a03:3a1::13)
- by PH7PR12MB7212.namprd12.prod.outlook.com (2603:10b6:510:207::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.22; Wed, 24 Jan
- 2024 10:23:36 +0000
-Received: from SJ5PEPF000001CA.namprd05.prod.outlook.com
- (2603:10b6:a03:3a1:cafe::8b) by SJ0PR03CA0368.outlook.office365.com
- (2603:10b6:a03:3a1::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.22 via Frontend
- Transport; Wed, 24 Jan 2024 10:23:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SJ5PEPF000001CA.mail.protection.outlook.com (10.167.242.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7202.16 via Frontend Transport; Wed, 24 Jan 2024 10:23:34 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 24 Jan
- 2024 02:23:26 -0800
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.41; Wed, 24 Jan 2024 02:23:26 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41 via Frontend
- Transport; Wed, 24 Jan 2024 02:23:26 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.6 000/580] 6.6.14-rc2 review
-In-Reply-To: <20240123174533.427864181@linuxfoundation.org>
-References: <20240123174533.427864181@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="LL40N9/1"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp2.tecnico.ulisboa.pt (Postfix) with ESMTP id 4D7E4245475;
+	Wed, 24 Jan 2024 10:30:16 +0000 (WET)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp2.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp2.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id IyU5-JFK2aih; Wed, 24 Jan 2024 10:30:14 +0000 (WET)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp2.tecnico.ulisboa.pt (Postfix) with ESMTPS id 0AAF424550C;
+	Wed, 24 Jan 2024 10:30:14 +0000 (WET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1706092214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vaM8GoQBuR9IqAMYNSv4ZJfgDsTGjPYtjrOi0zLDe6Y=;
+	b=LL40N9/1hlWpnG+4UDHZm+rcnVFIvoNwQCf0VjqfcDz2uWrOTYyoo9KaZvRLgWjqi/grD7
+	N+3kR/W9f6ITeGN4Li1drKXga9b35SCI9yXFdJMDFrURyAuj5t1B5vWcFuGl2XfUqevdEn
+	QMYeBG3xGrUcX9yTZf21R4bIk/cYXrw=
+Received: from diogo-gram (unknown [IPv6:2001:8a0:7ae3:e700:a921:1147:531c:b1e7])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id B878B360097;
+	Wed, 24 Jan 2024 10:30:12 +0000 (WET)
+Date: Wed, 24 Jan 2024 10:30:09 +0000
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, thierry.reding@gmail.com, 
+	vdumpa@nvidia.com, joro@8bytes.org, will@kernel.org, robin.murphy@arm.com, 
+	baolu.lu@linux.intel.com, jsnitsel@redhat.com, jroedel@suse.de, 
+	linux-tegra@vger.kernel.org, iommu@lists.linux.dev, regressions@lists.linux.dev, 
+	diogo.ivo@tecnico.ulisboa.pt
+Subject: Re: Re: [REGRESSION] Failed buffer allocation in Tegra fbdev
+Message-ID: <xwvre6uqvakg7aqrnkxa3xrek4rkjoj36isiip2iphzanmmxch@gzqrwgqeljsi>
+References: <bbmhcoghrprmbdibnjum6lefix2eoquxrde7wyqeulm4xabmlm@b6jy32saugqh>
+ <20240123151508.GR50608@ziepe.ca>
+ <1754c86c-704e-4c80-93c3-1b75a9a247df@tecnico.ulisboa.pt>
+ <b0334c5e-3a6c-4b58-b525-e72bed8899b3@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <8a728685-451d-4335-9d63-68d9813e8a31@drhqmail202.nvidia.com>
-Date: Wed, 24 Jan 2024 02:23:26 -0800
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CA:EE_|PH7PR12MB7212:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75ab3dc3-48f2-4614-e2d5-08dc1cc68665
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	1tZ2Jp6nmA+F1nepxk5kCfSpzhn6u42OAnUavYY/EZx6SKGUWL9FdZx3b9fwcXbl8Q9zNd22pPQ+ckpirx0cSKuPfrZT5B0lgvaxFlgEfkkulMTD4vChnKhQkIXjQxxlHGWhvOrlHazaM9Gwbfc/2Aty4usWH2GVzfMCAQDdhUpVE6IkPHOwpc/6Vg5Talgu85Omkngp+ZWFR8TihWafe0vHmROxCdvgjsXU9MHsgQ6aZ7rgUA4m4+KnJMYyV8b8VvuB+3MXLudIy2z7AHMjtWYhNelHPZYY4imbzkVDa1OxxzF3PwVMh71OOYmzUiPVXV9fhUabMWvZX+IPbNl1MeWPMGLRQAc5HzQeJhlz+r/VyobXYOvIqvVG4B1/wLJ86MgxairmCzRbiXR5NFICgXzTa6o80hSnBZmVqEOBP2ND67rs9HLMMiEqL6n1bpAnJyQmi4J/X/4FLBlUvsMMhwaqllWAj6BcUGCYRDV1bGi7UN4VbOjv4VJIORXgo88z9qS7YOmOBaWZqWFuYuOC1wmlsN7aul945g/+VHXE4KIBGqxfcn9ZXEg+ADsOmne1Shj56iW5wJfm/pYtHa4iEhQQloYTLSLsOb9b1g0kY/Oi7V8KvsMnMwlTWJsMHPYZekLDFFJ0LS7A0CQzGGi6Vh4VHygMm3m1IpeiZrjRX+hvxpdyHjS7ZLoLo9AZgueeV+bjow1Ak/QjZzQ98UHeqZIB+yZ3O3OldtH+zQci3ZgQMoPItkuv3Zeuy6y3ZSe+R9krAzrlu0DL1zAZT9e5g0EQaMFTXa2qPogd5MEf2S8=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(376002)(346002)(396003)(136003)(39860400002)(230922051799003)(82310400011)(1800799012)(64100799003)(451199024)(186009)(36840700001)(46966006)(40470700004)(4326008)(8676002)(8936002)(7636003)(356005)(70206006)(316002)(6916009)(54906003)(70586007)(2906002)(31696002)(5660300002)(41300700001)(86362001)(7416002)(31686004)(40480700001)(40460700003)(47076005)(966005)(26005)(478600001)(336012)(36860700001)(426003)(82740400003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2024 10:23:34.3694
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75ab3dc3-48f2-4614-e2d5-08dc1cc68665
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CA.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7212
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b0334c5e-3a6c-4b58-b525-e72bed8899b3@nvidia.com>
 
-On Tue, 23 Jan 2024 09:47:11 -0800, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.14 release.
-> There are 580 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Jan 24, 2024 at 10:15:34AM +0000, Jon Hunter wrote:
 > 
-> Responses should be made by Thu, 25 Jan 2024 17:44:18 +0000.
-> Anything received after that time might be too late.
+> On 23/01/2024 18:44, Diogo Ivo wrote:
+> > 
+> > On 1/23/24 15:15, Jason Gunthorpe wrote:
+> > > On Tue, Jan 23, 2024 at 02:33:15PM +0000,
+> > > diogo.ivo@tecnico.ulisboa.pt wrote:
+> > > > Commit c8cc2655cc6c in the recent IOMMU changes breaks Tegra fbdev
+> > > > at least on the Pixel C with the following error message reporting
+> > > > a failed buffer allocation:
+> > > > 
+> > > > [    1.857660] drm drm: failed to allocate buffer of size 18432000
+> > > > 
+> > > > This error message is printed from tegra_bo_alloc() which is called by
+> > > > tegra_bo_create() in tegra_fbdev_probe(), which may indicate that other
+> > > > allocations would fail as well, not just the framebuffer.
+> > > Presumably this is because iommu_map_sgtable() under
+> > > tegra_bo_iommu_map() fails?
+> > > 
+> > > Which I suspect is because of the logic in
+> > > host1x_client_iommu_attach().
+> > > 
+> > > After c8cc2655cc6c iommu_get_domain_for_dev() will never return NULL.
+> > > 
+> > > So this:
+> > > 
+> > >     if (domain && domain != tegra->domain)
+> > >         return 0;
+> > > 
+> > > Will happen and the domain will be left at IDENTITY, while I suppose
+> > > the tegra_bo_iommu_map() assumes the domain was switched to
+> > > tegra->domain.
+> > > 
+> > > Does this solve your issue?
+> > > 
+> > > diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> > > index ff36171c8fb700..15c7910b2e1c76 100644
+> > > --- a/drivers/gpu/drm/tegra/drm.c
+> > > +++ b/drivers/gpu/drm/tegra/drm.c
+> > > @@ -960,7 +960,7 @@ int host1x_client_iommu_attach(struct
+> > > host1x_client *client)
+> > >           * not the shared IOMMU domain, don't try to attach it to a
+> > > different
+> > >           * domain. This allows using the IOMMU-backed DMA API.
+> > >           */
+> > > -       if (domain && domain != tegra->domain)
+> > > +       if (domain && domain->type != IOMMU_DOMAIN_IDENTITY &&
+> > > domain != tegra->domain)
+> > >                  return 0;
+> > >          if (tegra->domain) {
+> > > 
+> > > > This may be connected with an error in of_iommu_configure() that
+> > > > became visible after commit 6ff6e184f1f4d:
+> > > > 
+> > > > [    1.200004] host1x drm: iommu configuration for device failed
+> > > > with -ENOENT
+> > > Hmmm
+> > > 
+> > > This is a new logging, so it doesn't necessarily mean something has
+> > > changed in the code flow.
+> > > 
+> > > It seems the issue is something in there is returning ENOENT when it
+> > > probably should be ENODEV, but I haven't been able to guess where it
+> > > comes from.
+> > > 
+> > > Can you do some tracing and figure out where under
+> > > of_iommu_configure() this ENOENT return code is from?
+> > > 
+> > > Jason
+> > 
+> > Yes, this does fix the issue!
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.14-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
 > 
-> thanks,
+> I am seeing the same error message on Tegra194 AGX Jetson. However, the
+> above does not seem to fix it. In this case it is slightly different as I am
+> not seeing the DRM allocation failure. In this case, it appears to be the
+> of_dma_configure_id() call from the host1x_memory_context_list_init()
+> function that is failing.
 > 
-> greg k-h
+> Jon
 
-All tests passing for Tegra ...
+Just to clarify, when you mention the same error message which one are
+you referring to? In my case only the drm allocation is fixed with the
+above patch, and I am still getting the ENOENT.
 
-Test results for stable-v6.6:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
-
-Linux version:	6.6.14-rc2-g86b2b02ae53b
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Diogo
