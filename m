@@ -1,93 +1,141 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C1B45966
-	for <linux-tegra@vger.kernel.org>; Thu, 25 Jan 2024 11:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169E43B19D
+	for <linux-tegra@vger.kernel.org>; Thu, 25 Jan 2024 12:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706180679; cv=none; b=hVM6BzFiPn/RQvxLPDi0G1P9csHtNEWI9wUxSIN9Bm+WSWqrvPyl416bzY95GxLzx4qy8rM3F7sRupDrHmsWms7GfHRNaszPcQg4Sh8fBkNFhVEIynNRfb8VPRzEQvuyIDIjuiTj6yPMWEW5rWc5RqkgbAdcZRlxYCMHEPY84JI=
+	t=1706184667; cv=none; b=JnR+2tduX7g5fkgqe2dJhQXOItHQkz5yyk+9TaA4MHj6fZkC8/3PsvpyjcBrKJjuGtVssmZrWA5ktgUUoIOGsIErLf9WHa3Pu0VDvvX+RLKylWMsa873Fw8J/KQa956UU9qj4YQuSi7897lAlmOayzUD7ruoV6j/aVgplnFHP9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706180679; c=relaxed/simple;
-	bh=Ts9q+13xetCVwAeVTuiXnLneaHqI4vRmZWMNM3PN1Cs=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DdjhVYbb+PaHaaSbdltZY4GZrwZR1TdQntcc63fhY+oE+a3iYPK5DNhKd5GamTUiUCs9blo8WU8hdgmRpbf+H5dmY0sLkjvv1hsze4ri/bH2ZymdYbEirGPpslKvxNvYWT1frMhWdQ/W/9n/539vd191IbvieoWGBnKLmTaOINw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tXUmYTYV; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tXUmYTYV"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2cd33336b32so88259451fa.0
-        for <linux-tegra@vger.kernel.org>; Thu, 25 Jan 2024 03:04:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1706180674; x=1706785474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IqKqhdtGXtBOJU6ppRXF6CRxwiYujmvPhfvNz+SyAaQ=;
-        b=tXUmYTYVa0WLhR88zn0j9XmDE0X3ehOYjh3Zk1fUhLLINqr6Hj+itidQ2n0qii1eFr
-         JTLZoGYVDxCO40ah+4LuRc1MT8Sj5IbV5vhrc/yjYBoLaOsXD5Mxul4yLQ0w1T2kG2Ag
-         4gqB/CSj+jNiI9S5jTPsrVIERjNBMTozr/1feTgYASrebfQP6NYdXv/C8C7Az9V5rTpu
-         Vw4cIlU5o138T7huGn4Qtd8eng1F37V60Gr1BF74q6WG4jrFsQucEEy0+GHeO1w7LHU8
-         LBLXT57KqvvkaOYRe0eYt63On4CCUpMqd5tSyg0HZ0mKMCg5F6/VPn+frA87lkQAeCH4
-         ON2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706180674; x=1706785474;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IqKqhdtGXtBOJU6ppRXF6CRxwiYujmvPhfvNz+SyAaQ=;
-        b=FOGJUN7YDrYVY6IV4fQGo6yb9T9TjFRnGOOzOrNjxnyqKIYWiQS4meuKFKnf2kUiN1
-         hMbTyx0lcmCw9P9PNCOjDowXKELlqVXBmbUexw9yXrcP3ipqdtCUJZ4FpRXWQkmClDV/
-         Y2FhV6kniweyNIhX85xDTect2h96nvexsJU4rvcVPzqx1YeojpC1pxcN3iOQphYhSMMD
-         ZzlbY0KL0fF6fPCaWqToAt4ghHeMbRtYVmH6OuJZDhq9qEyUieVTTVrLfu2gGWa92maV
-         CKUZQ8/+ZUUMBCMw/ukR3JJknksmNy8VyFpvLThekVaLfj6botaYIncApEZG1anGMNgu
-         uMWg==
-X-Gm-Message-State: AOJu0YxD0/N6xs8pvHjF4N2V9KYjcXQ2k5Bu5S61qjKm40U3OQU7EuGB
-	X44YHkKRzELrsSDnKVjfbg5fuZZnJiH96VPiCG7hJmzkoh+f895a0M0uUh11bCsejaFOmY7QFFT
-	G
-X-Google-Smtp-Source: AGHT+IHRN0EYIlVEghtEqMxeg1S3Go+WMINZWoqrHECHlbWMgqI/DcQDJtzKvV4+NTQvJ6/PflKb+w==
-X-Received: by 2002:a2e:300d:0:b0:2cd:9503:f91 with SMTP id w13-20020a2e300d000000b002cd95030f91mr465395ljw.15.1706180674614;
-        Thu, 25 Jan 2024 03:04:34 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.215.66])
-        by smtp.gmail.com with ESMTPSA id tj3-20020a170907c24300b00a2fde3a8097sm209847ejc.74.2024.01.25.03.04.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jan 2024 03:04:34 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-tegra@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240123083517.21091-1-krzysztof.kozlowski@linaro.org>
-References: <20240123083517.21091-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: memory-controllers: narrow regex for unit
- address to hex numbers
-Message-Id: <170618067286.174727.5575658659915083123.b4-ty@linaro.org>
-Date: Thu, 25 Jan 2024 12:04:32 +0100
+	s=arc-20240116; t=1706184667; c=relaxed/simple;
+	bh=ebKMXnAsgUoMVzGUKzFok8qdL3jXBmTQSndbavx1WdA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WapUxUs5jXbjQjQBaSqf/vkH3Y4CzFGQ4G0P4/DCGdxcok5AyoWRf+iAAUgxG3bb7MlvR3CJ80Z8qAFuLAVSac7FopM2u+8PXLnXST/QliaVy6jl4frr8bLp9KdWI1+q8y+4N1ZVnQLUz1ZcV+/JMu1hQq/xzxFa4/pUwnuNMdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rSyZQ-0004Zg-3r; Thu, 25 Jan 2024 13:11:00 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rSyZO-002HUr-FP; Thu, 25 Jan 2024 13:10:58 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1rSyZO-007n4b-1H;
+	Thu, 25 Jan 2024 13:10:58 +0100
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-pwm@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: [PATCH v5 096/111] pwm: tegra: Make use of devm_pwmchip_alloc() function
+Date: Thu, 25 Jan 2024 13:09:58 +0100
+Message-ID:  <f347f9227d39ca9a495fbae7ba10e048f49f95f7.1706182805.git.u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1706182805.git.u.kleine-koenig@pengutronix.de>
+References: <cover.1706182805.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2576; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=ebKMXnAsgUoMVzGUKzFok8qdL3jXBmTQSndbavx1WdA=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlsk+qHIDcLPfYn7CK5Z8mvB4QNx2K5SFvDhho8 3UzfloHJkyJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZbJPqgAKCRCPgPtYfRL+ TiJlCACrg8Ww/TyKGjGSMip6A+aCOpbJ3cjZsxfto0eOAf3m/sgDWrZZt5ENN+bC4shKeLRJbnM UTNDkphMi5tDU/H95wWoYHvbtHzJIsTQUeG985nrBIy4meoIU7iIIK7bMwh2H5+dQT8Bf63pisz AysAj58eQ/gFLTYiyDBRns+2IWEMW5UYHWX7/VBVM4sYoc6oRqmwZeIfh7S5U/zDJGILnzQR0wI F4JcF87NSu+0aCqSL17jpr8SiH7Jx586yifeTFPwBxSiCKRu/UUQfGu2YHTa6Jy9tPbcEitrhsT e3bVQWiTgRC3WMZITKuGdVRrx55u6EwU1e/eJOlCiRHNBu6F
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
+This prepares the pwm-tegra driver to further changes of the pwm core
+outlined in the commit introducing devm_pwmchip_alloc(). There is no
+intended semantical change and the driver should behave as before.
 
-On Tue, 23 Jan 2024 09:35:17 +0100, Krzysztof Kozlowski wrote:
-> Regular expression used to match the unit address part should not allow
-> non-hex numbers.
-> 
-> 
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/pwm/pwm-tegra.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-Applied, thanks!
-
-[1/1] dt-bindings: memory-controllers: narrow regex for unit address to hex numbers
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/2f542c937c48c2bd5a8ddf180b417fbe7152559f
-
-Best regards,
+diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
+index 82ee2f0754f9..5eb7bdfb84d8 100644
+--- a/drivers/pwm/pwm-tegra.c
++++ b/drivers/pwm/pwm-tegra.c
+@@ -65,7 +65,6 @@ struct tegra_pwm_soc {
+ };
+ 
+ struct tegra_pwm_chip {
+-	struct pwm_chip chip;
+ 	struct device *dev;
+ 
+ 	struct clk *clk;
+@@ -81,7 +80,7 @@ struct tegra_pwm_chip {
+ 
+ static inline struct tegra_pwm_chip *to_tegra_pwm_chip(struct pwm_chip *chip)
+ {
+-	return container_of(chip, struct tegra_pwm_chip, chip);
++	return pwmchip_get_drvdata(chip);
+ }
+ 
+ static inline u32 pwm_readl(struct tegra_pwm_chip *pc, unsigned int offset)
+@@ -272,14 +271,19 @@ static const struct pwm_ops tegra_pwm_ops = {
+ 
+ static int tegra_pwm_probe(struct platform_device *pdev)
+ {
++	struct pwm_chip *chip;
+ 	struct tegra_pwm_chip *pc;
++	const struct tegra_pwm_soc *soc;
+ 	int ret;
+ 
+-	pc = devm_kzalloc(&pdev->dev, sizeof(*pc), GFP_KERNEL);
+-	if (!pc)
+-		return -ENOMEM;
++	soc = of_device_get_match_data(&pdev->dev);
+ 
+-	pc->soc = of_device_get_match_data(&pdev->dev);
++	chip = devm_pwmchip_alloc(&pdev->dev, soc->num_channels, sizeof(*pc));
++	if (IS_ERR(chip))
++		return PTR_ERR(chip);
++	pc = to_tegra_pwm_chip(chip);
++
++	pc->soc = soc;
+ 	pc->dev = &pdev->dev;
+ 
+ 	pc->regs = devm_platform_ioremap_resource(pdev, 0);
+@@ -328,11 +332,9 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+ 
+ 	reset_control_deassert(pc->rst);
+ 
+-	pc->chip.dev = &pdev->dev;
+-	pc->chip.ops = &tegra_pwm_ops;
+-	pc->chip.npwm = pc->soc->num_channels;
++	chip->ops = &tegra_pwm_ops;
+ 
+-	ret = pwmchip_add(&pc->chip);
++	ret = pwmchip_add(chip);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
+ 		reset_control_assert(pc->rst);
+@@ -350,9 +352,10 @@ static int tegra_pwm_probe(struct platform_device *pdev)
+ 
+ static void tegra_pwm_remove(struct platform_device *pdev)
+ {
+-	struct tegra_pwm_chip *pc = platform_get_drvdata(pdev);
++	struct pwm_chip *chip = platform_get_drvdata(pdev);
++	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
+ 
+-	pwmchip_remove(&pc->chip);
++	pwmchip_remove(chip);
+ 
+ 	reset_control_assert(pc->rst);
+ 
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
