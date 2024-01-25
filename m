@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169E43B19D
-	for <linux-tegra@vger.kernel.org>; Thu, 25 Jan 2024 12:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F2B3F8CA
+	for <linux-tegra@vger.kernel.org>; Thu, 25 Jan 2024 12:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706184667; cv=none; b=JnR+2tduX7g5fkgqe2dJhQXOItHQkz5yyk+9TaA4MHj6fZkC8/3PsvpyjcBrKJjuGtVssmZrWA5ktgUUoIOGsIErLf9WHa3Pu0VDvvX+RLKylWMsa873Fw8J/KQa956UU9qj4YQuSi7897lAlmOayzUD7ruoV6j/aVgplnFHP9g=
+	t=1706184861; cv=none; b=CTgPg1OLaDsj/cO1S+uy5xMIjzFAyLHIea4Vnax2yWM7TrTdp30NIYuQiRCl832UgEVTtlPKOwuBdO6ZFkjuhvnUuo6wuXrP5PIug+tSqGHogCBJjqJ/D14jXfWIZrHUqMSokZJi1sbfKjESb+euV0EGsbUcroOHhOYvBVtjaPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706184667; c=relaxed/simple;
-	bh=ebKMXnAsgUoMVzGUKzFok8qdL3jXBmTQSndbavx1WdA=;
+	s=arc-20240116; t=1706184861; c=relaxed/simple;
+	bh=xFZHrY/7C9PRNt99L0vl8g6j3yX1l4H0eIirFXKiC6s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WapUxUs5jXbjQjQBaSqf/vkH3Y4CzFGQ4G0P4/DCGdxcok5AyoWRf+iAAUgxG3bb7MlvR3CJ80Z8qAFuLAVSac7FopM2u+8PXLnXST/QliaVy6jl4frr8bLp9KdWI1+q8y+4N1ZVnQLUz1ZcV+/JMu1hQq/xzxFa4/pUwnuNMdw=
+	 MIME-Version:Content-Type; b=Y94SgKb9Y57qcf/L6xEjFEOalazxJ7kLwN4EytgABu6YpE8lKK0R7T3hAh09uPe6XiEczNKy28Akdo4T09DIuNls86jNVN/qAaew0pmRHG5taH4B7mMeqshG79HwPI4oj2lsquDU/hgiZ8HSlBJHz8y4IZgfjb4mJh66kLJuQYY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,25 +18,114 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1rSyZQ-0004Zg-3r; Thu, 25 Jan 2024 13:11:00 +0100
+	id 1rSyZH-00048C-Nh; Thu, 25 Jan 2024 13:10:51 +0100
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1rSyZO-002HUr-FP; Thu, 25 Jan 2024 13:10:58 +0100
+	id 1rSyZD-002HR8-To; Thu, 25 Jan 2024 13:10:47 +0100
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1rSyZO-007n4b-1H;
-	Thu, 25 Jan 2024 13:10:58 +0100
+	id 1rSyZD-007n0k-2K;
+	Thu, 25 Jan 2024 13:10:47 +0100
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Thierry Reding <thierry.reding@gmail.com>,
+To: linux-pwm@vger.kernel.org,
+	Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Benson Leung <bleung@chromium.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	=?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hammer Hsieh <hammerh0314@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-pwm@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: [PATCH v5 096/111] pwm: tegra: Make use of devm_pwmchip_alloc() function
-Date: Thu, 25 Jan 2024 13:09:58 +0100
-Message-ID:  <f347f9227d39ca9a495fbae7ba10e048f49f95f7.1706182805.git.u.kleine-koenig@pengutronix.de>
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Sean Anderson <sean.anderson@seco.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Anjelique Melendez <quic_amelende@quicinc.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Lu Hongfei <luhongfei@vivo.com>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Luca Weiss <luca@z3ntu.xyz>,
+	Johan Hovold <johan@kernel.org>,
+	Alex Elder <elder@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel@pengutronix.de,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	Guenter Roeck <groeck@chromium.org>,
+	chrome-platform@lists.linux.dev,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-mips@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org,
+	greybus-dev@lists.linaro.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH v5 039/111] pwm: Provide wrappers for storing and getting driver private data
+Date: Thu, 25 Jan 2024 13:09:01 +0100
+Message-ID:  <1c873808bfc93ab51f49be799334dee6e8ab398a.1706182805.git.u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1706182805.git.u.kleine-koenig@pengutronix.de>
 References: <cover.1706182805.git.u.kleine-koenig@pengutronix.de>
@@ -47,7 +136,7 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2576; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=ebKMXnAsgUoMVzGUKzFok8qdL3jXBmTQSndbavx1WdA=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlsk+qHIDcLPfYn7CK5Z8mvB4QNx2K5SFvDhho8 3UzfloHJkyJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZbJPqgAKCRCPgPtYfRL+ TiJlCACrg8Ww/TyKGjGSMip6A+aCOpbJ3cjZsxfto0eOAf3m/sgDWrZZt5ENN+bC4shKeLRJbnM UTNDkphMi5tDU/H95wWoYHvbtHzJIsTQUeG985nrBIy4meoIU7iIIK7bMwh2H5+dQT8Bf63pisz AysAj58eQ/gFLTYiyDBRns+2IWEMW5UYHWX7/VBVM4sYoc6oRqmwZeIfh7S5U/zDJGILnzQR0wI F4JcF87NSu+0aCqSL17jpr8SiH7Jx586yifeTFPwBxSiCKRu/UUQfGu2YHTa6Jy9tPbcEitrhsT e3bVQWiTgRC3WMZITKuGdVRrx55u6EwU1e/eJOlCiRHNBu6F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1920; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=xFZHrY/7C9PRNt99L0vl8g6j3yX1l4H0eIirFXKiC6s=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlsk9naZ43cfZqRmm0PAwRVRHazfdHqUBSCmiRl 7SkEynbJGKJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZbJPZwAKCRCPgPtYfRL+ TqyWB/0Xq9H2qxz5a4NBliO3W2OBOYrNCAIPS+YFIK+/psR+8hFCNvRcL8LkTcvrGhz+wH1p+Pb F64/cTSgbYddbvZjoDx1kSNtuKvpvYsZy3B/swnxRBzzhjM4qRl0nLRqI7tuxKsMoJ6KChrenmP ZHuoEbNaT3Jq0uJ3jCQX+OWAPfMUgSkbUr5A7m+b7JrBvE1+EcTZ0ltF9cqru7Gex1/GIk5STLR s4XqyNlr+QqQS2lKFYFTNPQKFohdM4YpL+GcQjYEZZG2zihg6J+r6Mx1mefplrODntBtd+WIXCL uGNCMjCbN1xcJ1N2Xx2QisJNxxGcBaZCqQD7Iqx5HLe1eACQ
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -55,87 +144,62 @@ X-SA-Exim-Mail-From: ukl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
-This prepares the pwm-tegra driver to further changes of the pwm core
-outlined in the commit introducing devm_pwmchip_alloc(). There is no
-intended semantical change and the driver should behave as before.
+These functions are useful to store and query driver private data a
+After struct pwm_chip got its own struct device, this can make use of
+dev_get_drvdata() and dev_set_drvdata() on that device.  These functions
+are required already now to convert drivers to pwmchip_alloc() which
+must happen before changing pwm_chip::dev.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
- drivers/pwm/pwm-tegra.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ include/linux/pwm.h | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/pwm/pwm-tegra.c b/drivers/pwm/pwm-tegra.c
-index 82ee2f0754f9..5eb7bdfb84d8 100644
---- a/drivers/pwm/pwm-tegra.c
-+++ b/drivers/pwm/pwm-tegra.c
-@@ -65,7 +65,6 @@ struct tegra_pwm_soc {
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index d7966918f301..2c49d2fe2fe7 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -272,6 +272,7 @@ struct pwm_ops {
+  * @npwm: number of PWMs controlled by this chip
+  * @of_xlate: request a PWM device given a device tree PWM specifier
+  * @atomic: can the driver's ->apply() be called in atomic context
++ * @driver_data: Private pointer for driver specific info
+  * @pwms: array of PWM devices allocated by the framework
+  */
+ struct pwm_chip {
+@@ -286,6 +287,7 @@ struct pwm_chip {
+ 	bool atomic;
+ 
+ 	/* only used internally by the PWM framework */
++	void *driver_data;
+ 	struct pwm_device *pwms;
  };
  
- struct tegra_pwm_chip {
--	struct pwm_chip chip;
- 	struct device *dev;
- 
- 	struct clk *clk;
-@@ -81,7 +80,7 @@ struct tegra_pwm_chip {
- 
- static inline struct tegra_pwm_chip *to_tegra_pwm_chip(struct pwm_chip *chip)
- {
--	return container_of(chip, struct tegra_pwm_chip, chip);
-+	return pwmchip_get_drvdata(chip);
+@@ -294,6 +296,24 @@ static inline struct device *pwmchip_parent(struct pwm_chip *chip)
+ 	return chip->dev;
  }
  
- static inline u32 pwm_readl(struct tegra_pwm_chip *pc, unsigned int offset)
-@@ -272,14 +271,19 @@ static const struct pwm_ops tegra_pwm_ops = {
- 
- static int tegra_pwm_probe(struct platform_device *pdev)
- {
-+	struct pwm_chip *chip;
- 	struct tegra_pwm_chip *pc;
-+	const struct tegra_pwm_soc *soc;
- 	int ret;
- 
--	pc = devm_kzalloc(&pdev->dev, sizeof(*pc), GFP_KERNEL);
--	if (!pc)
--		return -ENOMEM;
-+	soc = of_device_get_match_data(&pdev->dev);
- 
--	pc->soc = of_device_get_match_data(&pdev->dev);
-+	chip = devm_pwmchip_alloc(&pdev->dev, soc->num_channels, sizeof(*pc));
-+	if (IS_ERR(chip))
-+		return PTR_ERR(chip);
-+	pc = to_tegra_pwm_chip(chip);
++static inline void *pwmchip_get_drvdata(struct pwm_chip *chip)
++{
++	/*
++	 * After pwm_chip got a dedicated struct device, this can be replaced by
++	 * dev_get_drvdata(&chip->dev);
++	 */
++	return chip->driver_data;
++}
 +
-+	pc->soc = soc;
- 	pc->dev = &pdev->dev;
- 
- 	pc->regs = devm_platform_ioremap_resource(pdev, 0);
-@@ -328,11 +332,9 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- 
- 	reset_control_deassert(pc->rst);
- 
--	pc->chip.dev = &pdev->dev;
--	pc->chip.ops = &tegra_pwm_ops;
--	pc->chip.npwm = pc->soc->num_channels;
-+	chip->ops = &tegra_pwm_ops;
- 
--	ret = pwmchip_add(&pc->chip);
-+	ret = pwmchip_add(chip);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "pwmchip_add() failed: %d\n", ret);
- 		reset_control_assert(pc->rst);
-@@ -350,9 +352,10 @@ static int tegra_pwm_probe(struct platform_device *pdev)
- 
- static void tegra_pwm_remove(struct platform_device *pdev)
- {
--	struct tegra_pwm_chip *pc = platform_get_drvdata(pdev);
-+	struct pwm_chip *chip = platform_get_drvdata(pdev);
-+	struct tegra_pwm_chip *pc = to_tegra_pwm_chip(chip);
- 
--	pwmchip_remove(&pc->chip);
-+	pwmchip_remove(chip);
- 
- 	reset_control_assert(pc->rst);
- 
++static inline void pwmchip_set_drvdata(struct pwm_chip *chip, void *data)
++{
++	/*
++	 * After pwm_chip got a dedicated struct device, this can be replaced by
++	 * dev_set_drvdata(&chip->dev, data);
++	 */
++	chip->driver_data = data;
++}
++
+ #if IS_ENABLED(CONFIG_PWM)
+ /* PWM user APIs */
+ int pwm_apply_might_sleep(struct pwm_device *pwm, const struct pwm_state *state);
 -- 
 2.43.0
 
