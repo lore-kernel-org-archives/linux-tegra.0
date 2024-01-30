@@ -1,171 +1,183 @@
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2052.outbound.protection.outlook.com [40.107.223.52])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61277CF19
-	for <linux-tegra@vger.kernel.org>; Tue, 30 Jan 2024 16:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706631349; cv=fail; b=n6tffner0jaWbz3AB/aDJEBxBkqOS55Z70IuEdyMZYvtQDEm01hZpFHpwIGXhFuG0x3tt135/BL1iNsG2caVHFXWHSBYcuFVuYsgPPK0rUM47d0ZZ2Gbf2yPZe9iJJ0HR94YdZRAm+GoUu1vttFoKxWA2T0XRD7Xks+pui5cnTM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706631349; c=relaxed/simple;
-	bh=MYn0Z+gQlgE7ry33N0EutlR08mQs6KvP12oBl/A/9/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=LXmVS9e3vlp16J1w82TYGngsuqXzrVAOrYNUQJ3HYcYUH+CDgtGL/GIvOcRy+bJ5q0WIDkarZdbHyI6T6qtlgk5kX9648llVRThQT2fHlfMNYrY9ubHcUpyYz3sh8LArINcdePxaVI3V/QGcEuHZbdL4B3+riWpM8mbdz8Yk6/c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aaNmQeL3; arc=fail smtp.client-ip=40.107.223.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219A41292D6;
+	Tue, 30 Jan 2024 17:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706635151; cv=none; b=as8MDToy9YyJu+DFnSknJfZDS3JOweNP3Y8B3xVdyLE7aherVGjja+pO3zOsGV2bU+LAX+3fRIUkk0FHyaDUG0ssrn0pWadApKk+urhsffFp9i59t4SyAzAEYNUZvS3K2aps708D3WgV69DPin7IHmtf3zWY4Zq2NYZoesLmRDw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706635151; c=relaxed/simple;
+	bh=y4IszyoidWFXzhNhDY2c9NDxcMcu1lKzZ3vPlfsqW38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s3CMu204px1xN/sRajQlcBFUFvOu0uu3ruHTVAaAjq7syO3uninJdyGB3CV+q9dJ8lt5DG0PfuVmwEbXaiv7HnMaIfL6gQWdl8OQ7KHlhNHfOsmzFY7nrSi5MSlzCgUHnUOzHutQrKxB7Iqm07rCPe6WKZJJvf5SwheEPxbEn/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpLjzPUW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aaNmQeL3"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KMXzBk2guSrP0jAoSc6WmUIrbz/lS6w3mf/qygZjvAijgkiVK7k9irO7s/9jAwkwOCcqaDUbyiXBNgRpDtNQzt8ST2ldSmI8w0V1ddKAOWhBz/hjFFBf1EYkzGzHSLPbfCAGm/h6TOAfq2YzS16VLzp+ugK/C+YPgP2QYUbBni7QhOt7YEgBEdvMdkCJiydMOynkGzZ+MyM0xxC2LStX6vQsnK3B3OZ3VUiDL29hJURZNSFnhhNNlpGBqQwzZWYgQd5jQ0c0URz/8Y+7euC8jImxgeFBTgEVbmu6AD5sK10q03sDhUz66czzRObsCFxFAKr0g8wTa4GxWDzRYGXPhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sMtJrGMxaHYm5JEDt3pYGFYmWJoYQvvkAv9Sv32BgBE=;
- b=a3mu/YMtR8bNAUu4YVCHvdlZAckl2IJkClT1f3CwXosy0dJyhoUsjTcTqOTygQrtLdmUaZhZhz+59tZc6YpqtSgBvEFS7jpdkcBp69Ufmf93AhiGI6nvt1VkQWV1i+R8dA/eBxsTa9NdG6CDvfMpMdH6RgMW0sasDtPc3stIvf2aBqf98XF18e2s7k/VNvBMSiT1H411at7A0wJG1QdNpsg3GjCtURN5Wx/LOSdxv6xrHie4mq1e7LxDXMLFyT+xWqPAtLTZPCUyKcpNT00gutdlweJVPiFr7rZv7qIFeB8LrauEHlwmTkZb+Lx+iX41UNMdPgt475oH2iKTHfKRMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sMtJrGMxaHYm5JEDt3pYGFYmWJoYQvvkAv9Sv32BgBE=;
- b=aaNmQeL3QmJbNV+R7xdTevlUN6WkcVINIl65Yg0v/R3LaWskalYffhngJkAXZS0gUR+FT1INu4PECebqbsAcF/atFF/pwQPzUZUA+DVGYrsUrFJBkH8mRt79ucyLh+5QZZCVckj302B8nvrC9YmwjdjGwz4uP2OQ/oq9vKQ/lY9ru88Bb15AVxSLnD9it5bPf1hGI7SODqURpLOIJhQP93AjNyLDpeptAX85xspTvIRzRD0Z8pz2+o5t6HNIfnMMO3/iSEJA0gT8KxmSMiCld8Oz63uZfakX/LpmxgYgctYx6Mzv2aUiQ3GFLLY0mAbYOivOpczFLrTr5CgxINYQEg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by BN9PR12MB5193.namprd12.prod.outlook.com (2603:10b6:408:11a::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.34; Tue, 30 Jan
- 2024 16:15:45 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::96dd:1160:6472:9873]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::96dd:1160:6472:9873%6]) with mapi id 15.20.7228.029; Tue, 30 Jan 2024
- 16:15:45 +0000
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>
-Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	patches@lists.linux.dev
-Subject: [PATCH] drm/tegra: Remove of_dma_configure() from host1x_device_add()
-Date: Tue, 30 Jan 2024 12:15:43 -0400
-Message-ID: <0-v1-c76c50cd425e+15298-host1x_no_iommu_conf_jgg@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR03CA0005.namprd03.prod.outlook.com
- (2603:10b6:208:23a::10) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpLjzPUW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14E4C433C7;
+	Tue, 30 Jan 2024 17:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706635151;
+	bh=y4IszyoidWFXzhNhDY2c9NDxcMcu1lKzZ3vPlfsqW38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NpLjzPUWXqKV54fhDJhAYBoggAWgle3OxuN85QdeHkEbaDgS22ahV8cnmW+CwRNpO
+	 SIAcp+xgeFPt0rW4GBFx8d6u498AvJg6rfEbJf8z4srNRDx55/CEL4DGy3YDE4RHw0
+	 p6I4x5rFA7NMe73dKX7X3Q7xbPNBDhcfToS0rULHyT+XIvusI7y5jsOkAl6awCK9/F
+	 7LXkHo2wZT1wdYmcDT1qXwIaTSaXpCbkCjoDyqVmYiFFh3dAjVbYKJpRxr6jVUbLnV
+	 jVSuPZlSkOwnYqsRkbr8lSgJXzuS+IsycbymTehgrvqM88w9IsW5p+v3thCgAynqZL
+	 65iP3i0p/mhNA==
+Date: Tue, 30 Jan 2024 11:19:08 -0600
+From: Rob Herring <robh@kernel.org>
+To: Petlozu Pravareshwar <petlozup@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	p.zabel@pengutronix.de, dmitry.osipenko@collabora.com,
+	ulf.hansson@linaro.org, kkartik@nvidia.com, cai.huoqing@linux.dev,
+	spatra@nvidia.com, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH V2 2/3] dt-bindings: tegra: pmc: Update scratch as an
+ optional aperture
+Message-ID: <20240130171908.GA1964535-robh@kernel.org>
+References: <20240117202504.943476-1-petlozup@nvidia.com>
+ <20240117202504.943476-2-petlozup@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|BN9PR12MB5193:EE_
-X-MS-Office365-Filtering-Correlation-Id: a56972cf-645d-4120-3508-08dc21aeb657
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	E08Zrb/ngEBqWJdSJCAWcT9NoKOCZ2cBAjlvK/AlOfntny+/pJjqyEFIMY5ICj23YmTXD69jEaEwZQ84zqxgc2leew9AgiO6Lw9iaFUVSgUQ75DkpNm1enrEWcRtV34s9+kFWksA6LJ0WnGZFKdE+I3ElGC4ULsPtidnSph5Nuj1Rt2e6Lap3EpE2qn6OtDLjJYdRZqu6WvSqiJHjM6FNHTn7vqG+wy/P+OYHMX5DDse1BjP5YQauqg48XEu44IEjENpapXvOuAGgE6HbOjFD55U7oGn+UVVgRIeKDk2nTc7Qqg+ekcRo3j77D75YQdIXwqd0MtWxVeUrmsHFBiVhcVwBixbR6XaJDbtKOrVXjSgo0kS7K2eaRwoc66UdOoJSb+9gELJX+wKpnBSRYSVDW1Ru4CSaJ42bn7srFblxqLm3sWephmwIjxOnirjZlPOSvELHwDFowUtOHzOZsMbb/IAeKSi9gDIDdLekhDVSPwt/LNSaNWoGBA1X4oVClaXHC8xvPZqU++GlHtcqK/PMrBdoiI1yKg8oCG3Ml7HY8VFuUTl8TQp6E8bUk5cVIr4tOETEMvm0STXTn4K/6b9rRw7S5/7gRiU/giHTXqIGpTbbidZGxUBGknw4aeXm31ly5f+OM7z4uWq2Ff3BPkuivyesbB9+yh7yAghelpl4nz+p0Uk8OXsesWiI/iJ48OM9tiR8abEn1C944NumpIZ1A==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(366004)(396003)(346002)(136003)(39860400002)(230922051799003)(186009)(1800799012)(64100799003)(451199024)(26005)(6506007)(966005)(86362001)(5660300002)(2906002)(66556008)(8676002)(8936002)(110136005)(4326008)(66946007)(66476007)(6512007)(2616005)(316002)(54906003)(6486002)(478600001)(36756003)(41300700001)(83380400001)(38100700002)(4216001)(357404004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vgHyd8B75eqhRu+soh+M3w4pZgfDxjnOcjEMSGo4Unehe0Gfqm8veTzu488q?=
- =?us-ascii?Q?xGg89KbLuVT71zLpeHS3b5WzsoLDMeYPbzf+ZCPeVHHu+SPzMQj+WrTdCwWI?=
- =?us-ascii?Q?Ua/vTvCf/nSzQHoUTcQb5+j6OJPYFlOXskJmgydDpbIXrzOwjBDKnGznQMqd?=
- =?us-ascii?Q?fQ7Cau2Yv1lmBOq6mEQbbonE8G28ZqQ+es6LROAf0ajJMR6kNulUUZq8BGJB?=
- =?us-ascii?Q?GMvV6NYWMvQzHcVW8MjibcPBiZ3jqiepEPus39tbbz2/jxo8mi4CD0ddi2QP?=
- =?us-ascii?Q?2jBDsVUmUG0Bko3I2/z+lD60NYXo3yiRUq3gn7wMXZHZ9BWKonrjZ6PSAQPm?=
- =?us-ascii?Q?V6bfz6QsRBBjFnFJzg8Fw3GEHCBgsHGWP5kJGWl9KFwfcmIDWI272vXf8+SF?=
- =?us-ascii?Q?kAF2rdUDjVQ3H6am36DxaOCFn6MpYZLqlul/vdrG8XVeTu9oWRGx+NT6O6ed?=
- =?us-ascii?Q?H12ff+lkMoruZ4fdMZzkOlwwn9PYxi2zSws+A3GVjxn/eRz7dZhg3e1yP5n2?=
- =?us-ascii?Q?0yREsAtjdXru7emASnkAhM7Ah8NSjkqDDfQLn77NXzZm20lQFoWvHP/YIjCx?=
- =?us-ascii?Q?6+TVvEjILsYLC8G8xGdI+qtYD7Q/u0osTbwJSX++sMiTzHqxUqOhKynzoqGc?=
- =?us-ascii?Q?wG0n63+xxhgBTVEfCgBaRqHTTUBHTQXoGrmTZRAwN6Wlt1eulK88yaxQRsxX?=
- =?us-ascii?Q?CjSbyGW8eN+SFOIdHxfbqwA3JvKUgbzoLd0s7RFd8/8S+7/ZL4cOTkRjfzos?=
- =?us-ascii?Q?mTF7r+YJPA/S7A63aotr8g5QKa0T6bR7VHtEfsVl1xCgAbwlbk80wjv5807M?=
- =?us-ascii?Q?If1JVggWm8GI5leGGn1k/wC+aKB/g/BAF+C6BS2XntniKvSGxsjkf471ju7Q?=
- =?us-ascii?Q?Bl0zrBuknHtPMnLBIrieA+eHxIDMwYqlLCHCE4shcczlTNxlCUmBb7WgTWbH?=
- =?us-ascii?Q?T46SQ5LQi7XKnXV+2u+WXsb17Rwfi968BSeBMEDeA6jJHYmJhouWhJl1kb4E?=
- =?us-ascii?Q?aPoMgq+k4WOrqeYyJFUJTVWT5wAOswcoSPbHsUdXD7idx2nUiUp7TYcRiozd?=
- =?us-ascii?Q?1GOsLKGCt3Wwwgi0nLUpt4b3Z4CS+1TH2rpvEFWOcZ26temEEGda1QM4xRTA?=
- =?us-ascii?Q?abg4FcKlAIzVPUxYdgFse93tqGJXw3KhGvino2eqbFslm2TSIEZfUFz70QM5?=
- =?us-ascii?Q?FwsoXUObSrlSn8EQkKaCSTuot3xEDSp6dv44as27WCbZFul1Mj7P0xkUOEzI?=
- =?us-ascii?Q?2lGt5ax+rkM+kaEht6yGRxLWzMOr81hriBQveFCPGxUCAVBDKBLnlEs83KNc?=
- =?us-ascii?Q?JKOMpoda6qAy5Q/fWKNbUymfT7xKV39qO9Up2rF/5iAqxs5RcZuLqOefj4Yj?=
- =?us-ascii?Q?wKngB0r3fT3QpgERqoS8GRRiDNVqGyywkd+pWMDg0WEHwlFiXnq4T1Fsax+l?=
- =?us-ascii?Q?K3kytE5wUXGtWV+uH6s/8VE6e7EkjgfswvyKK7+OTNuGjNcMD39D6PX0LSFV?=
- =?us-ascii?Q?/6fbRZqJMg3bR6Dsc0qfzhp74KzZuBsTUqem7eValVeJWeMwcuZDoc0+lkRW?=
- =?us-ascii?Q?5H/iAXDQT51mWZ0jxjx65INVKUkwnaAoEMDmV6d7?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a56972cf-645d-4120-3508-08dc21aeb657
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2024 16:15:44.8871
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VSBIRncxtXAwYbBxEzAmybpwf3VH+KdGWCH+cCQCKCX/cYPGnyZb8N5cbO4wzblh
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5193
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240117202504.943476-2-petlozup@nvidia.com>
 
-This was added in commit c95469aa5a18 ("gpu: host1x: Set DMA ops on device
-creation") with the note:
+On Wed, Jan 17, 2024 at 08:25:03PM +0000, Petlozu Pravareshwar wrote:
+> Scratch address space register is used to store reboot reason. For
+> some Tegra234 systems, the scratch space is not available to store
+> the reboot reason. This is because scratch region on these systems
+> is not accessible by the kernel as restricted by the Hypervisor.
+> Such systems would delist scratch aperture from PMC DT node.
+> 
+> Accordingly, this change makes "scratch" as an optional aperture for
+> Tegra234 in PMC dt-binding document.
+> 
+> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> ---
+> Changes in v2:
+> - Fix dt_binding_check indentation warning.
+> - Update 'reg-names' property items list.
+> 
+>  .../arm/tegra/nvidia,tegra186-pmc.yaml        | 78 ++++++++++++++-----
+>  1 file changed, 58 insertions(+), 20 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
+> index 0faa403f68c8..79928824005d 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
+> @@ -27,7 +27,7 @@ properties:
+>        - const: pmc
+>        - const: wake
+>        - const: aotag
+> -      - const: scratch
+> +      - enum: [ scratch, misc ]
+>        - const: misc
+>  
+>    interrupt-controller: true
+> @@ -41,25 +41,63 @@ properties:
+>      description: If present, inverts the PMU interrupt signal.
+>      $ref: /schemas/types.yaml#/definitions/flag
+>  
+> -if:
+> -  properties:
+> -    compatible:
+> -      contains:
+> -        const: nvidia,tegra186-pmc
+> -then:
+> -  properties:
+> -    reg:
+> -      maxItems: 4
+> -
+> -    reg-names:
+> -      maxItems: 4
+> -else:
+> -  properties:
+> -    reg:
+> -      minItems: 5
+> -
+> -    reg-names:
+> -      minItems: 5
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nvidia,tegra186-pmc
+> +    then:
+> +      properties:
+> +        reg:
+> +          maxItems: 4
+> +        reg-names:
+> +          items:
+> +            - const: pmc
+> +            - const: wake
+> +            - const: aotag
+> +            - const: scratch
 
-    Currently host1x-instanciated devices have their dma_ops left to NULL,
-    which makes any DMA operation (like buffer import) on ARM64 fallback
-    to the dummy_dma_ops and fail with an error.
+There is no need to define the names and order again. Just this is 
+sufficient:
 
-Since commit 14891af3799e ("iommu: Move the iommu driver sysfs setup into
-iommu_init/deinit_device()") this call now fails because the struct device
-is not fully configured enough to setup the sysfs and we now catch that
-error.
+maxItems: 4
+contains:
+  const: scratch
 
-This failure means the DMA ops are no longer set during this failing call.
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nvidia,tegra194-pmc
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 5
+> +        reg-names:
+> +          items:
+> +            - const: pmc
+> +            - const: wake
+> +            - const: aotag
+> +            - const: scratch
+> +            - const: misc
 
-It seems this is no longer a problem because
-commit 07397df29e57 ("dma-mapping: move dma configuration to bus
-infrastructure") added another call to of_dma_configure() inside the
-bus_type->dma_configure() callback.
+Just 'minItems: 5' is sufficient here.
 
-So long as a driver is probed the to the device it will have DMA properly
-setup in the ordinary way.
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: nvidia,tegra234-pmc
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 4
+> +          maxItems: 5
 
-Remove the unnecessary call which also removes the new long print:
+That should already be the top-level constraint.
 
-[    1.200004] host1x drm: iommu configuration for device failed with -ENOENT
+> +        reg-names:
+> +          anyOf:
+> +            - items:
+> +                - const: pmc
+> +                - const: wake
+> +                - const: aotag
+> +                - const: misc
+> +            - items:
+> +                - const: pmc
+> +                - const: wake
+> +                - const: aotag
+> +                - const: scratch
+> +                - const: misc
 
-Reported-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Closes: https://lore.kernel.org/all/bbmhcoghrprmbdibnjum6lefix2eoquxrde7wyqeulm4xabmlm@b6jy32saugqh/
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Closes: https://lore.kernel.org/all/b0334c5e-3a6c-4b58-b525-e72bed8899b3@nvidia.com/
-Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
----
- drivers/gpu/host1x/bus.c | 2 --
- 1 file changed, 2 deletions(-)
+Only need:
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 84d042796d2e66..61214d35cadc34 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -458,8 +458,6 @@ static int host1x_device_add(struct host1x *host1x,
- 	device->dev.bus = &host1x_bus_type;
- 	device->dev.parent = host1x->dev;
- 
--	of_dma_configure(&device->dev, host1x->dev->of_node, true);
--
- 	device->dev.dma_parms = &device->dma_parms;
- 	dma_set_max_seg_size(&device->dev, UINT_MAX);
- 
-
-base-commit: 3049f92c481204f142226d3672711660025fbbb5
--- 
-2.43.0
-
+contains:
+  const: misc
