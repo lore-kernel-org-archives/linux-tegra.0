@@ -1,45 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219A41292D6;
-	Tue, 30 Jan 2024 17:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3EF24B47;
+	Tue, 30 Jan 2024 17:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706635151; cv=none; b=as8MDToy9YyJu+DFnSknJfZDS3JOweNP3Y8B3xVdyLE7aherVGjja+pO3zOsGV2bU+LAX+3fRIUkk0FHyaDUG0ssrn0pWadApKk+urhsffFp9i59t4SyAzAEYNUZvS3K2aps708D3WgV69DPin7IHmtf3zWY4Zq2NYZoesLmRDw=
+	t=1706637188; cv=none; b=Xuzn4KkPxIj6aWBbf5iLx2FnMeHChE0JzJX5sfPoC4a9bCpiwR+WHoVNZOLNVoMoyt+wQz83vExa1rTbliBT1rrTQm1CXiyaHZomSKV80xk8Mwhdfdg2ivlr7pmGehPgDmQU0UAuYEtQjvyGcmScuCyeIwRkdTTL3Gw7kbRzck0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706635151; c=relaxed/simple;
-	bh=y4IszyoidWFXzhNhDY2c9NDxcMcu1lKzZ3vPlfsqW38=;
+	s=arc-20240116; t=1706637188; c=relaxed/simple;
+	bh=kzOJE9stfeSCiAHvR3aeZE6VgovpgPYHm7MEosgUntQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s3CMu204px1xN/sRajQlcBFUFvOu0uu3ruHTVAaAjq7syO3uninJdyGB3CV+q9dJ8lt5DG0PfuVmwEbXaiv7HnMaIfL6gQWdl8OQ7KHlhNHfOsmzFY7nrSi5MSlzCgUHnUOzHutQrKxB7Iqm07rCPe6WKZJJvf5SwheEPxbEn/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpLjzPUW; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=qVQg4k8iilVYPKVSBnyAZEQzuTon0vNm3OkYySZUwtpOPMhGC0jTVe2qOaiioosLkwVAmVDwjEXP14GshhJfeG+YzTTxTOsuqSnTOdQNnDNXxteQsNRwLmnR2ZjabOJCww7Gz0PtHWEc3lbD555pa9WXBQQSIk2UG7vFPjn5CGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=daxL/qGX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpLjzPUW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14E4C433C7;
-	Tue, 30 Jan 2024 17:19:10 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="daxL/qGX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F62FC433C7;
+	Tue, 30 Jan 2024 17:53:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706635151;
-	bh=y4IszyoidWFXzhNhDY2c9NDxcMcu1lKzZ3vPlfsqW38=;
+	s=k20201202; t=1706637187;
+	bh=kzOJE9stfeSCiAHvR3aeZE6VgovpgPYHm7MEosgUntQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NpLjzPUWXqKV54fhDJhAYBoggAWgle3OxuN85QdeHkEbaDgS22ahV8cnmW+CwRNpO
-	 SIAcp+xgeFPt0rW4GBFx8d6u498AvJg6rfEbJf8z4srNRDx55/CEL4DGy3YDE4RHw0
-	 p6I4x5rFA7NMe73dKX7X3Q7xbPNBDhcfToS0rULHyT+XIvusI7y5jsOkAl6awCK9/F
-	 7LXkHo2wZT1wdYmcDT1qXwIaTSaXpCbkCjoDyqVmYiFFh3dAjVbYKJpRxr6jVUbLnV
-	 jVSuPZlSkOwnYqsRkbr8lSgJXzuS+IsycbymTehgrvqM88w9IsW5p+v3thCgAynqZL
-	 65iP3i0p/mhNA==
-Date: Tue, 30 Jan 2024 11:19:08 -0600
+	b=daxL/qGXw4MGXpKPBnxkeG3KYx0NQIotRUglHuNdgdawtQrYyzswougolY6oaYpZw
+	 sVrPMdeSRUzw0otUkl/o3hWY4JbfsMk0U7wJtMO8DC0cOlFlpL6OlZ9uQdj80jY8TE
+	 /jC4Lyud8n1w8Q0wZeydB09rQbBL5eLKpe3I3P8D9lVYaQHXcVPj35apHxRUNdExhs
+	 UZKcLBDgnnQJpMWeujgYA/yP9Vo13p63XZ7DTTW2ALVOANKOVA7aIWabfyxz+TxNh1
+	 YyuLwhIs7vQMXL09z98kWFeSaGxgK4hxvOUdRll/vj3IJuqAeMSZBeDLobHjUefGw8
+	 kATD1XePFW1HA==
+Date: Tue, 30 Jan 2024 11:53:05 -0600
 From: Rob Herring <robh@kernel.org>
-To: Petlozu Pravareshwar <petlozup@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	p.zabel@pengutronix.de, dmitry.osipenko@collabora.com,
-	ulf.hansson@linaro.org, kkartik@nvidia.com, cai.huoqing@linux.dev,
-	spatra@nvidia.com, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH V2 2/3] dt-bindings: tegra: pmc: Update scratch as an
- optional aperture
-Message-ID: <20240130171908.GA1964535-robh@kernel.org>
-References: <20240117202504.943476-1-petlozup@nvidia.com>
- <20240117202504.943476-2-petlozup@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jon Hunter <jonathanh@nvidia.com>, Sameer Pujar <spujar@nvidia.com>,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/2] ASoC: dt-bindings: tegra: Document iommus and
+ interconnects for ADMAIF
+Message-ID: <20240130175305.GA2051939-robh@kernel.org>
+References: <20240118142706.4179146-1-thierry.reding@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -48,136 +45,36 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240117202504.943476-2-petlozup@nvidia.com>
+In-Reply-To: <20240118142706.4179146-1-thierry.reding@gmail.com>
 
-On Wed, Jan 17, 2024 at 08:25:03PM +0000, Petlozu Pravareshwar wrote:
-> Scratch address space register is used to store reboot reason. For
-> some Tegra234 systems, the scratch space is not available to store
-> the reboot reason. This is because scratch region on these systems
-> is not accessible by the kernel as restricted by the Hypervisor.
-> Such systems would delist scratch aperture from PMC DT node.
+On Thu, Jan 18, 2024 at 03:27:05PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Accordingly, this change makes "scratch" as an optional aperture for
-> Tegra234 in PMC dt-binding document.
+> The ADMAIF is responsible for accessing system memory on behalf of other
+> components of the APE, so make sure it can be hooked up to an IOMMU and
+> memory controller.
 > 
-> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
-> Changes in v2:
-> - Fix dt_binding_check indentation warning.
-> - Update 'reg-names' property items list.
+>  .../bindings/sound/nvidia,tegra210-admaif.yaml       | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
->  .../arm/tegra/nvidia,tegra186-pmc.yaml        | 78 ++++++++++++++-----
->  1 file changed, 58 insertions(+), 20 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
-> index 0faa403f68c8..79928824005d 100644
-> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
-> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.yaml
-> @@ -27,7 +27,7 @@ properties:
->        - const: pmc
->        - const: wake
->        - const: aotag
-> -      - const: scratch
-> +      - enum: [ scratch, misc ]
->        - const: misc
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+> index 15ab40aeab1e..59304f02d063 100644
+> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra210-admaif.yaml
+> @@ -39,6 +39,18 @@ properties:
 >  
->    interrupt-controller: true
-> @@ -41,25 +41,63 @@ properties:
->      description: If present, inverts the PMU interrupt signal.
->      $ref: /schemas/types.yaml#/definitions/flag
+>    dma-names: true
 >  
-> -if:
-> -  properties:
-> -    compatible:
-> -      contains:
-> -        const: nvidia,tegra186-pmc
-> -then:
-> -  properties:
-> -    reg:
-> -      maxItems: 4
-> -
-> -    reg-names:
-> -      maxItems: 4
-> -else:
-> -  properties:
-> -    reg:
-> -      minItems: 5
-> -
-> -    reg-names:
-> -      minItems: 5
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra186-pmc
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 4
-> +        reg-names:
-> +          items:
-> +            - const: pmc
-> +            - const: wake
-> +            - const: aotag
-> +            - const: scratch
-
-There is no need to define the names and order again. Just this is 
-sufficient:
-
-maxItems: 4
-contains:
-  const: scratch
-
+> +  iommus:
+> +    maxItems: 1
 > +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra194-pmc
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 5
-> +        reg-names:
-> +          items:
-> +            - const: pmc
-> +            - const: wake
-> +            - const: aotag
-> +            - const: scratch
-> +            - const: misc
+> +  interconnects:
+> +    description: Description of the interconnect paths for the ADMA interface; see
+> +      ../interconnect/interconnect.txt for details.
 
-Just 'minItems: 5' is sufficient here.
+Don't need generic descriptions of common properties. What you need is 
+defining how many entries and a description for each entry.
 
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: nvidia,tegra234-pmc
-> +    then:
-> +      properties:
-> +        reg:
-> +          minItems: 4
-> +          maxItems: 5
-
-That should already be the top-level constraint.
-
-> +        reg-names:
-> +          anyOf:
-> +            - items:
-> +                - const: pmc
-> +                - const: wake
-> +                - const: aotag
-> +                - const: misc
-> +            - items:
-> +                - const: pmc
-> +                - const: wake
-> +                - const: aotag
-> +                - const: scratch
-> +                - const: misc
-
-Only need:
-
-contains:
-  const: misc
+Rob
