@@ -1,168 +1,123 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0E115DBB4
-	for <linux-tegra@vger.kernel.org>; Thu,  1 Feb 2024 12:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA11779E0;
+	Thu,  1 Feb 2024 15:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706790042; cv=none; b=iGMHvbHpVw9d7HFtrCxWUcuZdevaTXw1WjKka3eKfHvIHDKELiyv1YgaG/m6dKFy8K8zKf2aPA5qjP/+BY42n3MSXEyDtoBZrRw3YQZ1u/uYtpxCuR1ZGETig9zIT7hEBSKT65i8PiOSMlb015aFf9JeAicJmP2n+ue+ZhMhuv0=
+	t=1706800033; cv=none; b=ldynbnV3G3wbmiSYsfAe8IK26pFOiMTDxNl7S6rysZ7QkI8DWZBXYHPQ53nc7Zmjz2W06yeimqkH3481vejTE1QbCpRfl9VrgMyASehRXuri+HOIScQk1pM8YTwH1DzWhmPqvjer0i9yK59sNSWQa6f0TPn06IihgCnlLUwidx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706790042; c=relaxed/simple;
-	bh=/jxye04Ja1kmxTM6waNv/teRs+6hI5TXVj2SmVgSeDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qTe+2sTa5LnT9ECJh+O0PtrQxevHIGllK0PzytzvY2FCpfQ6wYt4VK4fFgwzHcW/2Z5L+I3sLpEDoBjbzRFtbMfl4aTzzp/ah9OoulJ8iaZ0DQhF+c90E8otS5Hklbcq589AWgD4DXnuqgwRZ2lF/x+365efnZCElLVijUThGI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AsX4FPoT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Cfv3qXyK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=m9U0TIpl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DoOQj4k/; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1706800033; c=relaxed/simple;
+	bh=h3pF1J2Y7kD2DXqK7FYxLp/Ne6w/RwV/LgnGUdj/cGQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=k0RHOhUw0d7KG7YkW4RikzNdRk/038WiAu7I8oP/Rtxa6jQri1IgqkS8d9qyvfSLOYxx84Rq/+v+fz9CUloykpfOS8sD8J5SgtGyJ3bz9h9ZtA/izwDIadTyIDEQ7Dgyi5Gzz2tz/yEjDvznnrXj5RY12y/YyTQsuoyTTfeNPeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TYF+RqoW; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AsX4FPoT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Cfv3qXyK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="m9U0TIpl";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DoOQj4k/"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A3B8121A85;
-	Thu,  1 Feb 2024 12:20:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706790037; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cMf/ueH98XO58PF9QnRzaA+uA5ttyXbJbTb6WXMA/24=;
-	b=AsX4FPoTyQF/yzkdJ/WFAa5qe0a4IVP20zalhrtU1cSXZ6lAzUSrSLZ97Mzb07AueJxQM8
-	/rybyED31opoV5NAceMiwcvgBzfI9AWOlpGyjPyyk4U655YLjYXkupgTOwbuc814iTwPEA
-	+/vOQkJ/trjLgU5Ezb4nxhPT/99nzUg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706790037;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cMf/ueH98XO58PF9QnRzaA+uA5ttyXbJbTb6WXMA/24=;
-	b=Cfv3qXyKrtQXFjmpXnUh++6X6GEpQsTegF/pBozDEElPWauNGJM7ZRQyv081ynjLRWUQ8C
-	e5zcWIaDnK1otkDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706790036; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cMf/ueH98XO58PF9QnRzaA+uA5ttyXbJbTb6WXMA/24=;
-	b=m9U0TIplEeX4/5rfQ7kb8MAn1M+eqr7Cs4mJOD1CkAiByKpvuV2kZF8In06KEr+v4JB+Jl
-	2OLfyjtrFWG2KjsefckwcX3ojEEwBFhYphQi/VByECFAF5kHhYuhyd723nWu9syYgbte+W
-	5W6q9OypNwgb5C+CnBfeu8R6y056+84=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706790036;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cMf/ueH98XO58PF9QnRzaA+uA5ttyXbJbTb6WXMA/24=;
-	b=DoOQj4k/ckvfclvgTcJrxWhfPzpFJC7GyVyNe+lMc160ZcXlHjnnAts9sVW1GWeQ8W+Csx
-	yf1BCX555Ptto6CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3B13E13672;
-	Thu,  1 Feb 2024 12:20:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1HYwDZSMu2W/MwAAD6G6ig
-	(envelope-from <jroedel@suse.de>); Thu, 01 Feb 2024 12:20:36 +0000
-Date: Thu, 1 Feb 2024 13:20:34 +0100
-From: Joerg Roedel <jroedel@suse.de>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Lu Baolu <baolu.lu@linux.intel.com>, diogo.ivo@tecnico.ulisboa.pt,
-	Jerry Snitselaar <jsnitsel@redhat.com>, patches@lists.linux.dev
-Subject: Re: [PATCH rc] drm/tegra: Do not assume that a NULL domain means no
- DMA IOMMU
-Message-ID: <ZbuMkm1ngn4uaSwW@suse.de>
-References: <0-v1-3049f92c4812+16691-host1x_def_dom_fix_jgg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TYF+RqoW"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-55790581457so1457656a12.3;
+        Thu, 01 Feb 2024 07:07:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706800029; x=1707404829; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c6kNM7+P4ZoD4vrIwh2/Maqu21Cod8+oG65RL/+v3EI=;
+        b=TYF+RqoWfP7RuD1udpB1vLIWDgEA4c5QVL6inBdvGXaV8GpmxetwYxelbNnhZx3CoJ
+         7qpp5OpZhXEHvDrzhiACXM62fsulEgUbC0Ly4RiLprjDMaV4WHn6ptatexa/SNOuGS8S
+         QagZ+yLX3XPOqrBiWxwDPTkDu8PZlv4scr85PRFHAzQXOQDAxSxH8cgaPNWr5yRW9Kl7
+         sRMImerRrxIC3+ENGcmoIFn/6Ffq8cKMlGxlXe1sbSsr+uu+3jC6pPnul28L7q4pm7C1
+         DltLkjhyKXklWPnTKjr1ykL5tYttANfWTMpmIp2gKSgKR1RbiRP6SDq2ZPJZF6J/ohYL
+         QAPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706800029; x=1707404829;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=c6kNM7+P4ZoD4vrIwh2/Maqu21Cod8+oG65RL/+v3EI=;
+        b=DEzCoD2ARG1NIMMMBBAjcDHkH3jDVZEgGLiSWAPz1qvajDCa36m1rsLDBe8XsoBnpD
+         UWrHYm10Fi1Il/L+Zu5SACz8ekpIcj7nfxtemprgGmW+XVtF69fShHva1/ako0V2g0M2
+         5undDsWL3jhV+51YUfmNNSN7AE91jvbVZYNYVwwNnajXz27+fKga+DpFiMqYi6zes3GG
+         R3Jo37INo3yzDP00gaxKr8cdZorY3PaF1dIz6cSNFBCxYTyCPkuwV6/avqM+BR5wzWYw
+         jqBRGbLbbE7IHE2ckUKf8HiMmmztmcxbAW9Y0ERf+mjbxe2Vhtk1r0gu2q+XsejRG+WK
+         SrnA==
+X-Gm-Message-State: AOJu0YyLmbsRFdZ+rCm6UMZcUuOUb8fEZsUXMqoefTXuxfngrpF/RjBg
+	T6MDp/wAtEN6LOVw3p+8LPceahnjraYvRSHt/jRy7XMZWyrlXuou0ZtwUIRA
+X-Google-Smtp-Source: AGHT+IEI6GYkYAaN2UQKxbqF0jFNrD3InRZixcUzz3s7038/VKRQQv7EOijspj3ZPOcnbX5jFyRbng==
+X-Received: by 2002:a17:906:806:b0:a36:459:51fd with SMTP id e6-20020a170906080600b00a36045951fdmr3768397ejd.69.1706800029163;
+        Thu, 01 Feb 2024 07:07:09 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCXXxpiQCZJqEx19t4J+GfFAE2DbpEq/i69JR4Er4q/chEhvQHsLUDkBsKj51c+JLihAYJLmgBJD2mhWExfdhRDwrGMLfbQL7YLTit/iaGvwuJT2QqNLzdmpyqUpuyuWqaC8pXo/ddj8k2+ehlLkALMvr/OjAfNiB58MNSSgNSfO3ThmS7v4lwNwgG/N/BAqnCtJ8kjkr+Wts1LCfWNQ1fb+gjz5mlzQXxKCUaAlo1mTl3OF3+ZXlEVe5uosT3ZB9843784RZi5ZsmhG1Oxnkg49eAw=
+Received: from localhost (p200300e41f147f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f14:7f00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id lz13-20020a170906fb0d00b00a317ca8b422sm6006663ejb.92.2024.02.01.07.07.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Feb 2024 07:07:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0-v1-3049f92c4812+16691-host1x_def_dom_fix_jgg@nvidia.com>
-X-Spam-Level: 
-X-Spamd-Bar: /
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=m9U0TIpl;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="DoOQj4k/"
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.01 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 MID_RHS_MATCH_FROM(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 BAYES_HAM(-0.00)[27.57%];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_TWELVE(0.00)[12];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,suse.de:dkim,suse.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FREEMAIL_CC(0.00)[gmail.com,ffwll.ch,lists.freedesktop.org,nvidia.com,vger.kernel.org,linux.intel.com,tecnico.ulisboa.pt,redhat.com,lists.linux.dev];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Score: -0.01
-X-Rspamd-Queue-Id: A3B8121A85
-X-Spam-Flag: NO
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 01 Feb 2024 16:07:08 +0100
+Message-Id: <CYTU44ED147E.2V11E1VTOPYSE@gmail.com>
+Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "Thierry
+ Reding" <treding@nvidia.com>
+Subject: Re: linux-next: Tree for Jan 29 (soc/tegra/fuse/fuse-tegra30.c)
+From: "Thierry Reding" <thierry.reding@gmail.com>
+To: "Arnd Bergmann" <arnd@arndb.de>, "Jon Hunter" <jonathanh@nvidia.com>,
+ "Randy Dunlap" <rdunlap@infradead.org>, "Stephen Rothwell"
+ <sfr@canb.auug.org.au>, "linux-next" <linux-next@vger.kernel.org>, "Kartik"
+ <kkartik@nvidia.com>
+X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
+References: <20240129143030.16647483@canb.auug.org.au>
+ <d0e1a7c1-06a2-4fa4-b4f8-df149af8eccb@infradead.org>
+ <61e8b6ae-fd30-4443-8473-6429f6de8768@nvidia.com>
+ <dafa2fb5-276d-4c87-b003-4b7f30d44f0a@app.fastmail.com>
+In-Reply-To: <dafa2fb5-276d-4c87-b003-4b7f30d44f0a@app.fastmail.com>
 
-On Tue, Jan 30, 2024 at 12:14:54PM -0400, Jason Gunthorpe wrote:
-> Previously with tegra-smmu, even with CONFIG_IOMMU_DMA, the default domain
-> could have been left as NULL. The NULL domain is specially recognized by
-> host1x_client_iommu_attach() as meaning it is not the DMA domain and
-> should be replaced with the special shared domain.
-> 
-> This happened prior to the below commit because tegra-smmu was using the
-> NULL domain to mean IDENTITY.
-> 
-> Now that the domain is properly labled the test in DRM doesn't see NULL.
-> Check for IDENTITY as well to enable the special domains.
-> 
-> Fixes: c8cc2655cc6c ("iommu/tegra-smmu: Implement an IDENTITY domain")
-> Reported-by: diogo.ivo@tecnico.ulisboa.pt
-> Closes: https://lore.kernel.org/all/bbmhcoghrprmbdibnjum6lefix2eoquxrde7wyqeulm4xabmlm@b6jy32saugqh/
-> Tested-by: diogo.ivo@tecnico.ulisboa.pt
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->  drivers/gpu/drm/tegra/drm.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+On Tue Jan 30, 2024 at 11:59 AM CET, Arnd Bergmann wrote:
+> On Tue, Jan 30, 2024, at 11:46, Jon Hunter wrote:
+> > On 30/01/2024 04:06, Randy Dunlap wrote:
+>
+> > Looks like we are missing the following ...
+> >
+> > diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c=20
+> > b/drivers/soc/tegra/fuse/fuse-tegra30.c
+> > index 2070d36c510d..eb14e5ff5a0a 100644
+> > --- a/drivers/soc/tegra/fuse/fuse-tegra30.c
+> > +++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+> > @@ -38,7 +38,8 @@
+> >       defined(CONFIG_ARCH_TEGRA_210_SOC) || \
+> >       defined(CONFIG_ARCH_TEGRA_186_SOC) || \
+> >       defined(CONFIG_ARCH_TEGRA_194_SOC) || \
+> > -    defined(CONFIG_ARCH_TEGRA_234_SOC)
+> > +    defined(CONFIG_ARCH_TEGRA_234_SOC) || \
+> > +    defined(CONFIG_ARCH_TEGRA_241_SOC)
+> >   static u32 tegra30_fuse_read_early(struct tegra_fuse *fuse, unsigned=
+=20
+> > int offset)
+> >
+> >
+> > Kartik, can you send a fix for this?
+>
+> If I get an Ack for my original patch, I can pick that
+> up into the soc tree directly:
+>
+> https://lore.kernel.org/all/20240103102654.3779458-1-arnd@kernel.org/
 
-Applied, thanks.
+Sorry for the delay on this. I guess you can't really apply that to ARM
+SoC directly because the patch that introduces Tegra241 support is only
+in the Tegra tree.
 
--- 
-Jörg Rödel
-jroedel@suse.de
+In any case, I've applied your patch now, so the fixed version should
+show up in tomorrow's linux-next.
 
-SUSE Software Solutions Germany GmbH
-Frankenstraße 146
-90461 Nürnberg
-Germany
-https://www.suse.com/
+I'm considering squashing it into the original since that'd preserve
+bisectability, though that'd probably be of limited usefulness because
+most people doing regression builds involving this will likely have one
+of the other bits enabled.
 
-Geschäftsführer: Ivo Totev, Andrew McDonald, Werner Knoblich
-(HRB 36809, AG Nürnberg)
+Thierry
