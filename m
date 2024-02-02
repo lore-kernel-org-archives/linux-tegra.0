@@ -1,166 +1,204 @@
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2089.outbound.protection.outlook.com [40.107.237.89])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BE4146913
-	for <linux-tegra@vger.kernel.org>; Fri,  2 Feb 2024 16:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706890549; cv=fail; b=t7ZUUZce8Zy2RTLttNmo5/lGLW2MpVXlpbKA7M/LVe9kYLzCoM1M26MfupSHuZ768ecfXEVeCXiA2GSn0bxeHycoh+xHrJdhEY7l/PDAM2SDZ/sFX73rfRBkCCRERvDHfj/DPjSiiVuE54QFaQ1sLlNpaw+Jz8+56GAYEdTooX0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706890549; c=relaxed/simple;
-	bh=LBuxSqCMvU+N5qYzGQPv1p3p/d5kADUcWWebZq2BceQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=WR2KxCNYmXh2o2ET0vFGMrcx65Q0lqVok64zQ3JD0v6mc+r2xLxPXwKmVm75sOjQCnZ0tWZcvOZVu4dcKG7w2qybnsgEAG8fD/gx187wddGgqZLnlumt/xdd/ywbYvSw1zmFx08q3jXRvPMRYaVpplEPZNwDCy9j2+4Dn/ihkag=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NPvrSY41; arc=fail smtp.client-ip=40.107.237.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DCEE148FFF;
+	Fri,  2 Feb 2024 17:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706896184; cv=none; b=YDIyMj6GsiKTX8FwYtRTnwXM96mOn5kMPIJJW93iXTK2aZs/z0r3zkxwNMulY6nQuK360wH/JfBAC6PSIZ/NGT5Pimm7fCm246K2+IqhpVgoDWHjJybKQrWzN05KyMCRmsnJ6YdJzsTux8mk7XY18prVk9ps/eGcCZgzpu07pt8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706896184; c=relaxed/simple;
+	bh=dOC6l/UpwJt+sDh73ImH2SYn2JbGC0ZF3A9tIFxdqtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q8FrLABDuJ2YzIBnCSTfQ0mx/QESP0eyj51NH5pTzUeiN1YQkwsEPIiwpG61oOjj1cpp2nV8hKqSxujoS0EoKhE3I7xeQQYwKDmJYKoY5d77619Du09xr8dgpdx2ekTtJVpmZVmaGY/i2ZW6d2KzcouZuQBeR4ZtW/ScZkcJzSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPJJYvAz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NPvrSY41"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NlIoS635lXTOrC1pwXZEVotyTXrM+Wj8PT5MCIWk4sLBLUoWn6Nr8PZKha79gDQYIfBD322muLtOG07Om8PqIw6LUowKKLjdGbeQpKNhDmVtbQeItHvixFdx0DFMioDDrB6GttXlnCyfYJtrMkPju27oIn+sUBRN8D09sTaybOfD2Lg2uvas5GPGsmke3m4hOsYftkq0q2mIgY9TAAsATw2o7UJLNQoZbuwz4xx7wSVfWO7et98vEFuJzrWl8VP/3Qh9G9wcA/zMS6wbl5RlK+fprvX95HYR96USVnIQGeHGD5uiTLi27YnF4RvsW0PcxQJnL27sYu05s7oP+Hqm6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FSNGtXGj97Pz13Fr07uNcAHu0LhWWo7eWS+hu7DzZ1o=;
- b=QNgp8j4LK3GT/ole7uLrHtlCWsdNjGkuY55xjrcW4qpBriuso0i78FwrZrvOs6hosAfwzMMQjzni1gktCFXU6RibA4gFmVoTA1nQQGenMlzOL/NmR4BBwswV8lLdfvm36aRhZvlrs4gkMHwlgjpTYudjzSfRZ1tFnFGbi7Z2DTEpTg5C0z3U6TZdyWoDpXL2W01QiaNQRxw8u+cCPbyqj5RzyOSM2JsP9phWP6CX7XsWWJ+p3n2X/RP+cCYZlEEXTq8ewYegMwTM6k7NxPnhczx+IJIRWx8ln2mx5L5+c2XGGIdJdJRD2Jujm9yKX/162ZauFulUSQ4wOR0AShkxEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FSNGtXGj97Pz13Fr07uNcAHu0LhWWo7eWS+hu7DzZ1o=;
- b=NPvrSY41ZRk6pCp/ai0Cy3obez8yjVjvVhQxYxMUkx4O1gHQBa6C3Rf0+PxthBQb6f64Jg54w1t9VXGNk0gnGBoFtjJn4VTxThWyz20PRJg2XXtfZv/DAGEj6vpULjX4hDa9Tz5jGS2bWpGwD1vQ/g6Yr1ehgseiNAgwXHizMYE+SpeiKJ81H4mZkeqS1pGsPFG+2exyFXiqZDKEGVV4RlRqqHD1NUoloztyWsWbdUERIH4OgvFVlyPg9/j1OiRGbcxXovNcLj6FkG/ZSWD2Yd7RxWHXhLTJWmrsz1NjCn3aRhzEZ6XEKhzxBF7J37i0dHdoZkMBdfnvkCwtPR3aJw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by CH0PR12MB5057.namprd12.prod.outlook.com (2603:10b6:610:e0::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7270.11; Fri, 2 Feb
- 2024 16:15:41 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::96dd:1160:6472:9873]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::96dd:1160:6472:9873%6]) with mapi id 15.20.7228.029; Fri, 2 Feb 2024
- 16:15:41 +0000
-Date: Fri, 2 Feb 2024 12:15:40 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	Mikko Perttunen <mperttunen@nvidia.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPJJYvAz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA7E5C433C7;
+	Fri,  2 Feb 2024 17:49:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706896184;
+	bh=dOC6l/UpwJt+sDh73ImH2SYn2JbGC0ZF3A9tIFxdqtk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WPJJYvAz83PqbWfJevH/VqATyZyF8CMELM/qsF5iGbGg+7c08RkvpLVnt1A5GE/cF
+	 tcu63FYZn4b7uhLLPzbN+EdUSZoRoygx/1agCdTpP9s/n883bAkiQP8gjBz/mp+kDW
+	 qAUTtz5OnUdUz5st4dAWc5OGoV8IM7DK0KDm2fKGNgkvkbFxVCqblojdOgeVCjK2WT
+	 8TgIKe63Wz1bq6Pwy73SdDw6XnGCRuLJmukJO4LPOLdK/c9MQGRTbs1oxi0ZYlm/v9
+	 h+6C4sTZAkHgIq2mWUe1PiL9Ix6Qz58Sj0f91Fwj4LzNhLlO4dG31aRGnZ1zxuS/WT
+	 KdHH/uaxwI7ag==
+Date: Fri, 2 Feb 2024 11:49:41 -0600
+From: Rob Herring <robh@kernel.org>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	"Lad,  Prabhakar" <prabhakar.csengg@gmail.com>,
+	=?iso-8859-1?Q?=22Niklas_S=C3=B6derlund=22?= <niklas.soderlund+renesas@ragnatech.se>,
+	=?iso-8859-1?Q?=22Uwe_Kleine-K=C3=B6nig=22?= <u.kleine-koenig@pengutronix.de>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Andy Gross <agross@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	David Airlie <airlied@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Emma Anholt <emma@anholt.net>,
+	Eugen Hristev <eugen.hristev@collabora.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Frank Rowand <frowand.list@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Helge Deller <deller@gmx.de>,
+	Hugues Fruchet <hugues.fruchet@foss.st.com>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Jacopo Mondi <jacopo@jmondi.org>, James Clark <james.clark@arm.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Liu Ying <victor.liu@nxp.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Marek Vasut <marex@denx.de>, Mark Brown <broonie@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Michal Simek <michal.simek@amd.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+	Rob Clark <robdclark@gmail.com>, Robert Foss <rfoss@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Stefan Agner <stefan@agner.ch>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Takashi Iwai <tiwai@suse.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, patches@lists.linux.dev
-Subject: Re: [PATCH] drm/tegra: Remove of_dma_configure() from
- host1x_device_add()
-Message-ID: <20240202161540.GU1455070@nvidia.com>
-References: <0-v1-c76c50cd425e+15298-host1x_no_iommu_conf_jgg@nvidia.com>
- <583b9145-cbbe-4a03-8120-e2a66a6093c7@nvidia.com>
- <20240131153312.GM1455070@nvidia.com>
- <a1597113-3ec9-445c-90d1-62df97406fb2@nvidia.com>
- <20240201200212.GQ1455070@nvidia.com>
- <96bc6d37-1000-4651-9a26-a8446dd64803@nvidia.com>
- <20240202143518.GS1455070@nvidia.com>
- <361dcaf5-352e-4162-a952-c690783a2251@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <361dcaf5-352e-4162-a952-c690783a2251@nvidia.com>
-X-ClientProxiedBy: BL6PEPF00016410.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:22e:400:0:1004:0:17) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Tim Harvey <tharvey@gateworks.com>,
+	Todor Tomov <todor.too@gmail.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Yannick Fertre <yannick.fertre@foss.st.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Leo Yan <leo.yan@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Mike Leach <mike.leach@linaro.org>, Sam Ravnborg <sam@ravnborg.org>,
+	Sean Paul <sean@poorly.run>, Tom Rix <trix@redhat.com>,
+	coresight@lists.linaro.org, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-fbdev@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v3 05/24] media: i2c: switch to use
+ of_graph_get_next_device_endpoint()
+Message-ID: <20240202174941.GA310089-robh@kernel.org>
+References: <87o7d26qla.wl-kuninori.morimoto.gx@renesas.com>
+ <87h6iu6qjs.wl-kuninori.morimoto.gx@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|CH0PR12MB5057:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f2f2fcc-efca-4838-5329-08dc240a3371
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	NXJIR4CkXVFVBwDcPiTOHoBDUcxbbHamsjp7mg1fkZJ+UvGMDHM2bjdgGBNJO09lXidSo8RQqcTBCRY4jALtDIqvspOek+XAbZbqxzkAw9fulu2ZRQYqtqqgQSeRMiPX5KtXq9ofc957V0oUm2jpAXqicP2C8EJU/2YikToqF9i35/9k+Fle8WEyCGymX8I3/BFKTodcwkrGyTzXWN3tSCc2oEUTIiTe1HRkOc9r5VHSGIk/vS6iTkoEDAfGebqSbGU4EAy9nYGeHCLORHhoqrW2nVcIxj6N2SHdzysS9/L5fcQV0OHAn1kb4jwwJwaok4F9VDcrO/1b1zcq6DroI7shiTRgQBY+iL5VTujx3G0Ocm8z7jVaqDJNn85Ohj1KBrIATeNrZO55k//4kbE2JggXq3mE+6nX5NZjUM551lYldgFFt5MFBvIE+29Tc94rOGKR6vIwGYrPw8CV9U1zhG3jIQ8WuXeIlV7c3tH4DJHSt3CE8o/Yfq1tP5CLwg3Ru6Tq/lbjb1127Qqw8TvIMxabLyFEG/1XJDraeU0v6QoeLn4MK8q6hw3Ha1MiX5OP04ILWH33Y2PrP3Fy4J8M5UGP+KBLh+J/S5shuG6zwOllauIQgbOmYSi7KWjbhDOA9kqYVvi7n+qFvT09IXibDEdSzlKUm85pu7+CROEkECY=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(366004)(346002)(376002)(396003)(39860400002)(230273577357003)(230173577357003)(230922051799003)(186009)(451199024)(64100799003)(1800799012)(83380400001)(1076003)(26005)(6512007)(38100700002)(2616005)(8936002)(5660300002)(66946007)(66476007)(4326008)(8676002)(54906003)(37006003)(6862004)(6486002)(2906002)(478600001)(6506007)(53546011)(66556008)(6636002)(316002)(86362001)(41300700001)(36756003)(33656002)(357404004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?sqQFL5Ji2GVsId5EF8e5My1NDPs+vpCPNnjpgMixZVeajCT7IFqKqxSjmbaN?=
- =?us-ascii?Q?oXC3gQBbj5fDkiuhpRPrwIb76FF8msgMNJ1MUHNsMqDV1eF9PY6n4bzrlfMH?=
- =?us-ascii?Q?gVSQFD9bbm5cewVeuvraIr6DgLNlmwMk5X9rELBUjO3++YiTTgEIzzHjMe0o?=
- =?us-ascii?Q?/IVIO2WUVlUfPOsK9sdFWEYK9iXerDqYAZ64V3bgZzvezuoEek0/ZzwpAudu?=
- =?us-ascii?Q?FAO8osFV/nEy8cxz4QT/9nmIx/6yy7mBSoXpztNQo5y4e6yZ5OUi5tkisNEC?=
- =?us-ascii?Q?/ZDYNvh4smeYzTNaDSYtgBbEYKM9oDQttz7LCLOw6jsvQxY8mJ53KpemyxjZ?=
- =?us-ascii?Q?ioyhK4m6IwUdBFnlg8uNQggQLm3Oje4/0xltBSKvboW6k6Fltt/3yJ2HZ5T4?=
- =?us-ascii?Q?EmbM2v7tQ0i/d5TK/+9JAaiEZtpNim6qvRwdKF7qlY2ZxEQWl6oQugZE5NZT?=
- =?us-ascii?Q?3nuQp0XXk05aai2zqRP/bg6eC2dc++Qetf2eIF2v7TrB8JmWr+wsL6527Iq9?=
- =?us-ascii?Q?5RTUF0jhpbwaEeh7+PmslvTMUR/Mmyqw2TgEn7uYmDbk6uq2nVm447mPPrvw?=
- =?us-ascii?Q?pbkCrJSI4nZLp3utCa9PZk5uADoQxzuc9O4U1oSYJHBzwcL6v/SonZCI1/5s?=
- =?us-ascii?Q?UHrq+Dc13c/p/8TFEKhREtyBCa4vD/QTJ8g9MRBoUqWMDZf/li20WAGBXsll?=
- =?us-ascii?Q?iR+UsGqQOA/Vp33CSaRPlZWoNBMsC7zhYAXqTQlJwNtD25K5jUyN3jR3vvXi?=
- =?us-ascii?Q?BVrty2BzFoHlYXc7D16JEDxS1d1ZpICSwddzMQFT9edhO9vyFIWyKZW0g1K5?=
- =?us-ascii?Q?f86IDCdROKOLDVA9QJ1U5Ve36d3WYM3Sb8nTE0gsUDT4paHjNoTSUMxcPlpy?=
- =?us-ascii?Q?l+A7kPSTOJqRYhZkzwTQD12RGbzzkndgP1W5h2Tg1VjBHF4OiBdE/1LAcPVP?=
- =?us-ascii?Q?9GwJmvjBs/SuxSs50ARMLla+oqU3m//TL3XQqFrhaYJ9gJfC9a3dUQhk5r9x?=
- =?us-ascii?Q?4D6yyFnGmpux3KoLKStnkzNS2bgA4gK3KT56ea+Ho0ecS5CCi0ZoIihQ+7QC?=
- =?us-ascii?Q?tzlax0DRxBOgwBW7FZ36lZmVYGnX1gnGV9fS/EPkTcu05SiqGwjj46IX83Nm?=
- =?us-ascii?Q?cCIF4toz0EmLyKW2gyy8AIPgYJ5G3vZnOkCgJa8SWX+r5pwzhcoRYP+fMQsT?=
- =?us-ascii?Q?9inFaAc7Tc07hrxXSSISkuwK7KOylCixmrBGVPJ3yVx6jgzO1F5rzemeTKoV?=
- =?us-ascii?Q?9gddNdTsP0fZO66lvUHqLx+Xuy24qI5SyIBIGLzBZKXQ1KKZeCyQ2rYZQicL?=
- =?us-ascii?Q?vf/E8QgMbg8koCFVIocux6UqXQ6waRRCwIDX7H9sGKh4eczNVpx4f6258e65?=
- =?us-ascii?Q?Q1eHk1riAFUcKOdK7mvPVco4OGZRV+WNlyZTbNsk6ladUnCsDIppK1j4cPpK?=
- =?us-ascii?Q?I+rWUKqrK0SM79jvlmkNk2aBbwqr4dhPKJv3Ofa/OzAs13vwzCQfDc24cpHT?=
- =?us-ascii?Q?IeKBjOm/9W+Pa90zglQkjs1w9bEMWnRZTANRBCk8wbbwy/3liXDfjPH3nfrB?=
- =?us-ascii?Q?5hz4KH/Vdb0jl50rKjXPUVhAyuQIPBDw67CrQ4c8?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f2f2fcc-efca-4838-5329-08dc240a3371
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Feb 2024 16:15:41.2512
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XvkBjNbSnqRowTQ5fScIVGqqobmv2h9gxCeDiWEZuMWWVYmDV1gqbJzYlrqfb60P
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB5057
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h6iu6qjs.wl-kuninori.morimoto.gx@renesas.com>
 
-On Fri, Feb 02, 2024 at 03:56:52PM +0000, Jon Hunter wrote:
+On Wed, Jan 31, 2024 at 05:05:27AM +0000, Kuninori Morimoto wrote:
+> of_graph_get_next_endpoint() is now renamed to
+> of_graph_get_next_device_endpoint(). Switch to it.
 > 
-> On 02/02/2024 14:35, Jason Gunthorpe wrote:
-> > On Fri, Feb 02, 2024 at 10:40:36AM +0000, Jon Hunter wrote:
-> > 
-> > > > But, what is the actual log output you see, is it -EEXIST?
-> > > 
-> > > I see ...
-> > > 
-> > >   ERR KERN host1x drm: iommu configuration for device failed with -ENOENT
-> > 
-> > So that shouldn't happen in you case as far as I can tell, the device
-> > is properly added, link->kobj should be fine and ENOENT shouldn't
-> > happen.
-> > 
-> > > > If it is coming and going is it a race of some kind?
-> > > 
-> > > It is consistent without the above. However, I did not think that the
-> > > above change would change the returning on -ENOENT? I will add more
-> > > debug.
-> > 
-> > I do not think it can either
-> > 
-> > Still wonder if there is some odd race..
-> > 
-> > Let me know when you figure out what is happening - I think there is
-> > some bug here it is not just a harmless warning.
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+>  drivers/media/i2c/adv7343.c              | 2 +-
+>  drivers/media/i2c/adv748x/adv748x-core.c | 2 +-
+>  drivers/media/i2c/adv7604.c              | 2 +-
+>  drivers/media/i2c/isl7998x.c             | 2 +-
+>  drivers/media/i2c/max9286.c              | 2 +-
+>  drivers/media/i2c/mt9p031.c              | 2 +-
+>  drivers/media/i2c/mt9v032.c              | 2 +-
+>  drivers/media/i2c/ov2659.c               | 2 +-
+>  drivers/media/i2c/ov5645.c               | 2 +-
+>  drivers/media/i2c/ov5647.c               | 2 +-
+>  drivers/media/i2c/s5c73m3/s5c73m3-core.c | 2 +-
+>  drivers/media/i2c/s5k5baf.c              | 2 +-
+>  drivers/media/i2c/tc358743.c             | 2 +-
+>  drivers/media/i2c/tda1997x.c             | 2 +-
+>  drivers/media/i2c/tvp514x.c              | 2 +-
+>  drivers/media/i2c/tvp5150.c              | 4 ++--
+>  drivers/media/i2c/tvp7002.c              | 2 +-
+>  17 files changed, 18 insertions(+), 18 deletions(-)
 > 
-> 
-> Yes looks like a race of some sort. Adding a bit of debug also makes the
-> issue go away so difficult to see what is happening.
+> diff --git a/drivers/media/i2c/adv7343.c b/drivers/media/i2c/adv7343.c
+> index ff21cd4744d3..7e4eb2f8bf0d 100644
+> --- a/drivers/media/i2c/adv7343.c
+> +++ b/drivers/media/i2c/adv7343.c
+> @@ -403,7 +403,7 @@ adv7343_get_pdata(struct i2c_client *client)
+>  	if (!IS_ENABLED(CONFIG_OF) || !client->dev.of_node)
+>  		return client->dev.platform_data;
+>  
+> -	np = of_graph_get_next_endpoint(client->dev.of_node, NULL);
+> +	np = of_graph_get_next_device_endpoint(client->dev.of_node, NULL);
 
-I'm wondering if it is racing with iommu driver probing? I looked but
-didn't notice anything obviously wrong there that would cause this
-though.
+This is assuming there's just 1 port and 1 endpoint, but let's be 
+specific as the bindings are (first endpoint on port 0):
 
-Though, it shouldn't be racing with self-removal of the device it just
-added, that would be crazy???
+of_graph_get_endpoint_by_regs(client->dev.of_node, 0, -1);
 
-Jason
+Note we could ask for endpoint 0 here, but the bindings generally allow 
+for more than 1.
+
+I imagine most of the other cases here are the same.
+
+>  	if (!np)
+>  		return NULL;
+>  
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> index 3eb6d5e8f082..4e9e4cef8954 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> @@ -657,7 +657,7 @@ static int adv748x_parse_dt(struct adv748x_state *state)
+>  	bool in_found = false;
+>  	int ret;
+>  
+> -	for_each_endpoint_of_node(state->dev->of_node, ep_np) {
+> +	for_each_device_endpoint_of_node(state->dev->of_node, ep_np) {
+
+I would skip the rename.
+
+Rob
