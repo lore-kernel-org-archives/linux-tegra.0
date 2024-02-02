@@ -1,155 +1,222 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F3314AD34;
-	Fri,  2 Feb 2024 18:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBA685954;
+	Fri,  2 Feb 2024 22:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706896890; cv=none; b=logxrat8pwAF1SZli5sHKNK9C7Lm4mBRVUjkxgg3MuI26ISwueUBJngfaaXIkYtw1X3QIHI3DZSxddkmRq6SwAwmEZec0n0rbE7kFynbHFtlcg43b/tKQ8IPxfd4Ju2/iFRf5y04UYKr8u+4RnEQydc+z/gwCVFbvup3RzRqnNo=
+	t=1706913307; cv=none; b=MbRcELY9HCoe7uDMebox6qQtbajU7bhjDQoQ55eLZtcI7pg7cRAFa4y9dKnP7VDimPYcqG84OaoMzjo4OVY6QpKrKGed3axCZy9hT1RCkju5KP0pH52gx7nxFuhSohYv+fIwC9qzmZE2Du2RFYSHAliBWtevQ9aWXv/sRaQl7CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706896890; c=relaxed/simple;
-	bh=nG1c1Dr5WvvpIPOp3w+4a7YAysmZsyzWk5n7RoQZn3w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X1hA/hS3+2RzRZLpQY6fShoYf0qF5fCLvisNaPlKT/1En+fsNBGJtFgj4TGWUMEOf5uq1RQGzZcvakkb71gW1IrwnNjw2zljPGaIX1ZpPGgewGyVF9ydaZ8mXPrPwQGO5kPsbPdpKrdwfLk5c412eHGlufrU6EajFE2g++r986g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDE2D19F0;
-	Fri,  2 Feb 2024 10:02:08 -0800 (PST)
-Received: from [10.57.9.194] (unknown [10.57.9.194])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8CBEC3F762;
-	Fri,  2 Feb 2024 10:01:11 -0800 (PST)
-Message-ID: <128e2760-6346-4c56-982b-42357a391ee4@arm.com>
-Date: Fri, 2 Feb 2024 18:01:02 +0000
+	s=arc-20240116; t=1706913307; c=relaxed/simple;
+	bh=piSJZV9wP11DN45leIZQLdOe8OAXQLdIK19f/zlcWl4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TN1aigFomZkzZid/f7CBN4XuU+yESioe87Tye4a+zppZL96W+3qcqzOdHk4AWTAchAyy5sWDAOo7YVD1b/4y0EWB3AgThYmGteyA0dNnzOExA9zIsR4MCd2gzar7KJm1pL27EC0vUk4CADF/3Bg5VolF0FaPlcZVIVBJXKBMOKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jF9t6KSP; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jF9t6KSP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F1EAC433F1;
+	Fri,  2 Feb 2024 22:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706913307;
+	bh=piSJZV9wP11DN45leIZQLdOe8OAXQLdIK19f/zlcWl4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jF9t6KSPmMvMVh1V9fW20wY/mwPs4yjcFfPG1BffzLlhv/w0/nHcX8v58Y9ztZIrp
+	 GFxS/7N/aEfGij7jg5zy9l84eu1gVAQloefohZhnUJFwD42M0wUo0VLR696txWpT3i
+	 xx5F9BEQhAhSFZfNd5rFVhKc4N5Lx1ZTvcwnZilOE+IMb/38zUI2e7BhFtT6cnKr/U
+	 qzcFm9BvFUxtTcY40dym3jov6+J6WwrVbzNhrxJ1NxU6sdHOnxvv21RBF/Q1BmFERS
+	 g0LGxkyuwnHERO1Y8rq1Al8K9KqHXzs/iQEh6WzC+G4ThXeKXZkBJiBElPyhFYbw4G
+	 uKTDgsm1Ozqkw==
+From: Rob Herring <robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: pinctrl: nvidia,tegra234-pinmux: Restructure common schema
+Date: Fri,  2 Feb 2024 16:34:53 -0600
+Message-ID: <20240202223454.1667383-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/24] hwtracing: switch to use
- of_graph_get_next_device_endpoint()
-Content-Language: en-GB
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
- =?UTF-8?Q?Niklas_S=C3=83=C2=B6derlund?=
- <niklas.soderlund+renesas@ragnatech.se>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=83=C2=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Alexey Brodkin <abrodkin@synopsys.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Andy Gross <agross@kernel.org>,
- Biju Das <biju.das.jz@bp.renesas.com>, Bjorn Andersson
- <andersson@kernel.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Daniel Vetter <daniel@ffwll.ch>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- David Airlie <airlied@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Emma Anholt <emma@anholt.net>,
- Eugen Hristev <eugen.hristev@collabora.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Frank Rowand <frowand.list@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Helge Deller <deller@gmx.de>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Jacopo Mondi <jacopo+renesas@jmondi.org>, Jacopo Mondi <jacopo@jmondi.org>,
- James Clark <james.clark@arm.com>, Jaroslav Kysela <perex@perex.cz>,
- Jonathan Hunter <jonathanh@nvidia.com>, Kevin Hilman <khilman@baylibre.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Liu Ying <victor.liu@nxp.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Marek Vasut <marex@denx.de>, Mark Brown <broonie@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Maxime Ripard <mripard@kernel.org>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Michal Simek <michal.simek@amd.com>, Miguel Ojeda <ojeda@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Philippe Cornu <philippe.cornu@foss.st.com>,
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
- Rob Clark <robdclark@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Robert Foss <rfoss@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Saravana Kannan <saravanak@google.com>, Sascha Hauer
- <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sowjanya Komatineni <skomatineni@nvidia.com>, Stefan Agner
- <stefan@agner.ch>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, Tim Harvey <tharvey@gateworks.com>,
- Todor Tomov <todor.too@gmail.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Yannick Fertre <yannick.fertre@foss.st.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, Fabio Estevam
- <festevam@gmail.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Jonas Karlman <jonas@kwiboo.se>,
- Leo Yan <leo.yan@linaro.org>, Marijn Suijten
- <marijn.suijten@somainline.org>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Mike Leach <mike.leach@linaro.org>, Sam Ravnborg <sam@ravnborg.org>,
- Sean Paul <sean@poorly.run>, Tom Rix <trix@redhat.com>,
- coresight@lists.linaro.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-fbdev@vger.kernel.org,
- linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com,
- linux-tegra@vger.kernel.org, llvm@lists.linux.dev
-References: <87o7d26qla.wl-kuninori.morimoto.gx@renesas.com>
- <87cyti6qj8.wl-kuninori.morimoto.gx@renesas.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <87cyti6qj8.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 31/01/2024 05:05, Kuninori Morimoto wrote:
-> of_graph_get_next_endpoint() is now renamed to
-> of_graph_get_next_device_endpoint(). Switch to it.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> ---
->   drivers/hwtracing/coresight/coresight-platform.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/drivers/hwtracing/coresight/coresight-platform.c
-> index 9d550f5697fa..944b2e66c04e 100644
-> --- a/drivers/hwtracing/coresight/coresight-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-platform.c
-> @@ -275,7 +275,7 @@ static int of_get_coresight_platform_data(struct device *dev,
->   	 */
->   	if (!parent) {
->   		/*
-> -		 * Avoid warnings in of_graph_get_next_endpoint()
-> +		 * Avoid warnings in of_graph_get_next_device_endpoint()
->   		 * if the device doesn't have any graph connections
->   		 */
->   		if (!of_graph_is_present(node))
-> @@ -286,7 +286,7 @@ static int of_get_coresight_platform_data(struct device *dev,
->   	}
->   
->   	/* Iterate through each output port to discover topology */
-> -	while ((ep = of_graph_get_next_endpoint(parent, ep))) {
-> +	while ((ep = of_graph_get_next_device_endpoint(parent, ep))) {
->   		/*
->   		 * Legacy binding mixes input/output ports under the
->   		 * same parent. So, skip the input ports if we are dealing
+The structure of the NVIDIA Tegra234 common pinmux schema doesn't work
+for restricting properties because a child node schema can't be extended
+with additional properties from another schema defining the same child
+node. The 2 child node schemas are evaluated independently as the
+schemas are not recursively combined in any way.
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+As the common schema is almost all the child node schema anyways, just
+remove the parent node from the common schema. Then add 'reg' and adjust
+the $ref's in the users of the common schema.
 
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ .../pinctrl/nvidia,tegra234-pinmux-aon.yaml   |  7 +-
+ .../nvidia,tegra234-pinmux-common.yaml        | 84 ++++++++-----------
+ .../pinctrl/nvidia,tegra234-pinmux.yaml       |  7 +-
+ 3 files changed, 45 insertions(+), 53 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml
+index f3deda9f7127..db8224dfba2c 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml
+@@ -10,18 +10,21 @@ maintainers:
+   - Thierry Reding <thierry.reding@gmail.com>
+   - Jon Hunter <jonathanh@nvidia.com>
+ 
+-$ref: nvidia,tegra234-pinmux-common.yaml
+-
+ properties:
+   compatible:
+     const: nvidia,tegra234-pinmux-aon
+ 
++  reg:
++    maxItems: 1
++
+ patternProperties:
+   "^pinmux(-[a-z0-9-]+)?$":
+     type: object
+ 
+     # pin groups
+     additionalProperties:
++      $ref: nvidia,tegra234-pinmux-common.yaml
++
+       properties:
+         nvidia,pins:
+           items:
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml
+index 4f9de78085e5..8cf9e4c915ff 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml
+@@ -10,57 +10,43 @@ maintainers:
+   - Thierry Reding <thierry.reding@gmail.com>
+   - Jon Hunter <jonathanh@nvidia.com>
+ 
+-properties:
+-  reg:
+-    items:
+-      - description: pinmux registers
+-
+-patternProperties:
+-  "^pinmux(-[a-z0-9-]+)?$":
+-    type: object
+-
+-    # pin groups
+-    additionalProperties:
+-      $ref: nvidia,tegra-pinmux-common.yaml
+-      # We would typically use unevaluatedProperties here but that has the
+-      # downside that all the properties in the common bindings become valid
+-      # for all chip generations. In this case, however, we want the per-SoC
+-      # bindings to be able to override which of the common properties are
+-      # allowed, since not all pinmux generations support the same sets of
+-      # properties. This way, the common bindings define the format of the
+-      # properties but the per-SoC bindings define which of them apply to a
+-      # given chip.
+-      additionalProperties: false
+-      properties:
+-        nvidia,function:
+-          enum: [ gp, uartc, i2c8, spi2, i2c2, can1, can0, rsvd0, eth0, eth2,
+-                  eth1, dp, eth3, i2c4, i2c7, i2c9, eqos, pe2, pe1, pe0, pe3,
+-                  pe4, pe5, pe6, pe7, pe8, pe9, pe10, qspi0, qspi1, qpsi,
+-                  sdmmc1, sce, soc, gpio, hdmi, ufs0, spi3, spi1, uartb, uarte,
+-                  usb, extperiph2, extperiph1, i2c3, vi0, i2c5, uarta, uartd,
+-                  i2c1, i2s4, i2s6, aud, spi5, touch, uartj, rsvd1, wdt, tsc,
+-                  dmic3, led, vi0_alt, i2s5, nv, extperiph3, extperiph4, spi4,
+-                  ccla, i2s1, i2s2, i2s3, i2s8, rsvd2, dmic5, dca, displayb,
+-                  displaya, vi1, dcb, dmic1, dmic4, i2s7, dmic2, dspk0, rsvd3,
+-                  tsc_alt, istctrl, vi1_alt, dspk1, igpu ]
++$ref: nvidia,tegra-pinmux-common.yaml
+ 
+-        # out of the common properties, only these are allowed for Tegra234
+-        nvidia,pins: true
+-        nvidia,pull: true
+-        nvidia,tristate: true
+-        nvidia,schmitt: true
+-        nvidia,enable-input: true
+-        nvidia,open-drain: true
+-        nvidia,lock: true
+-        nvidia,drive-type: true
+-        nvidia,io-hv: true
+-
+-      required:
+-        - nvidia,pins
++properties:
++  nvidia,function:
++    enum: [ gp, uartc, i2c8, spi2, i2c2, can1, can0, rsvd0, eth0, eth2,
++            eth1, dp, eth3, i2c4, i2c7, i2c9, eqos, pe2, pe1, pe0, pe3,
++            pe4, pe5, pe6, pe7, pe8, pe9, pe10, qspi0, qspi1, qpsi,
++            sdmmc1, sce, soc, gpio, hdmi, ufs0, spi3, spi1, uartb, uarte,
++            usb, extperiph2, extperiph1, i2c3, vi0, i2c5, uarta, uartd,
++            i2c1, i2s4, i2s6, aud, spi5, touch, uartj, rsvd1, wdt, tsc,
++            dmic3, led, vi0_alt, i2s5, nv, extperiph3, extperiph4, spi4,
++            ccla, i2s1, i2s2, i2s3, i2s8, rsvd2, dmic5, dca, displayb,
++            displaya, vi1, dcb, dmic1, dmic4, i2s7, dmic2, dspk0, rsvd3,
++            tsc_alt, istctrl, vi1_alt, dspk1, igpu ]
++
++  # out of the common properties, only these are allowed for Tegra234
++  nvidia,pins: true
++  nvidia,pull: true
++  nvidia,tristate: true
++  nvidia,schmitt: true
++  nvidia,enable-input: true
++  nvidia,open-drain: true
++  nvidia,lock: true
++  nvidia,drive-type: true
++  nvidia,io-hv: true
+ 
+ required:
+-  - compatible
+-  - reg
++  - nvidia,pins
++
++# We would typically use unevaluatedProperties here but that has the
++# downside that all the properties in the common bindings become valid
++# for all chip generations. In this case, however, we want the per-SoC
++# bindings to be able to override which of the common properties are
++# allowed, since not all pinmux generations support the same sets of
++# properties. This way, the common bindings define the format of the
++# properties but the per-SoC bindings define which of them apply to a
++# given chip.
++additionalProperties: false
+ 
+-additionalProperties: true
+ ...
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux.yaml
+index 17b865ecfcda..f5a3a881dec4 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux.yaml
+@@ -10,18 +10,21 @@ maintainers:
+   - Thierry Reding <thierry.reding@gmail.com>
+   - Jon Hunter <jonathanh@nvidia.com>
+ 
+-$ref: nvidia,tegra234-pinmux-common.yaml
+-
+ properties:
+   compatible:
+     const: nvidia,tegra234-pinmux
+ 
++  reg:
++    maxItems: 1
++
+ patternProperties:
+   "^pinmux(-[a-z0-9-]+)?$":
+     type: object
+ 
+     # pin groups
+     additionalProperties:
++      $ref: nvidia,tegra234-pinmux-common.yaml
++
+       properties:
+         nvidia,pins:
+           items:
+-- 
+2.43.0
 
