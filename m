@@ -1,53 +1,37 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE0B4643B;
-	Thu,  1 Feb 2024 22:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991766087A;
+	Fri,  2 Feb 2024 09:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706827730; cv=none; b=EWW+cDNQniT0Jpmtf56KInfPPkoxlJ7w2XBCeOoI4w6mbzknvb0NH7aBsbElDDitWfjhA5yXyh3rO5WAxrkqPyPLTTDiwSXDQhVz0a9HI7d86G3k+RARndokAF+RQEsqXDF/ZtW9uRkL7p+COU0xO1OM1pUzf2JYz+DUh1N/8sA=
+	t=1706864751; cv=none; b=BO/lOa15XpwKGcuxUUOCrR4RJ34oOC7ZAcEUPvPNNlZR8zkmnwe3QtT4kQinKQZI2snAbiMESlhMukmL5bSFp2MsM4eBCqI+vhXYPD3KYqgwvajPoZZJWiAjegOyE966NAmmirEzpvVG73A7Yb6J4AvJFetI+8KFE9fwO0lMuJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706827730; c=relaxed/simple;
-	bh=e8x2BkkjxYMoP713pO7VA7If6AbOHEDo8GQsevRtfDE=;
+	s=arc-20240116; t=1706864751; c=relaxed/simple;
+	bh=IKxvwNSUt3agfDzeeYKFG24bjgt9QnYU/2DpLutNLhM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EgXnA5Tv/KOwCjKGZCmYg9T8FHFGO+XxaAoC1uh4rNdJ4CLG+VJsVxw2DGpND1TqHoQ3zaxBJbbeaQY6i/DSc4wpP7ZF73zqHaw6HJ7Wt1PYIpFPBkyj7YfJmJF+ZKQE+3+oqmERDI3Xre64+AU51LphfHUXM2uo+IyEHs16T8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hn4+2HDY; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hn4+2HDY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09752C433F1;
-	Thu,  1 Feb 2024 22:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706827730;
-	bh=e8x2BkkjxYMoP713pO7VA7If6AbOHEDo8GQsevRtfDE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hn4+2HDY+u4MutWr8+gG2cnzJpisRMQFKWk+rzNs48SqxrZbbZ+CRY8MP+/HkmOob
-	 CXi3dBwibYjzrJSuVfk0MZ6ZYjEBjZ+X7RaN9hwes6S189lkFfGj5wkEnSY02mCJbq
-	 j3p1bPYLAWh7500uWUT/uNd8SzvAfkzOY/jq3J3zkO+6Mq+XJ/4k8jxgKamSTBuMWz
-	 vFdXQ/6J8q15MQrnvFJVWZBRZoSM5AHAIxDv28GdOu4hTNPlBBF7X/hgYIZos4dwJ0
-	 v6GlFScpfhAz8MDzUn4eGQi9mmy4YlZk7fdXQRCPUMhMXKvBtbZhRz7bTUVCOvMjMR
-	 3253Y8EQHpPPQ==
-Date: Thu, 1 Feb 2024 16:48:47 -0600
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Svyatoslav <clamor95@gmail.com>, Conor Dooley <conor@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kees Cook <keescook@chromium.org>,
-	Maxim Schwalm <maxim.schwalm@gmail.com>, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v1 1/4] dt-bindings: vendor-prefixes: add LG Electronics,
- Inc. prefix
-Message-ID: <20240201224847.GA1875713-robh@kernel.org>
-References: <20240131105153.8070-1-clamor95@gmail.com>
- <20240131105153.8070-2-clamor95@gmail.com>
- <20240131-elderly-passover-341b89f65189@spud>
- <656FDD69-D7B1-4910-B848-108CB985AAAC@gmail.com>
- <20240131-tractor-roundish-f6f90b5bd640@spud>
- <BCBF1994-C5AE-4D2B-B645-C3C67BE19000@gmail.com>
- <e77ac513-3f8c-4979-b887-f6b9aff6963f@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V1MRGygqHam3URTJ0CqPtOrtnW7YYFH1CcL6LELr3jBc2zFgQ/3sNE3Q6SopyNuo6ppAa2tvfPWVMTNEnoUIhWQDO1mesJJgQJXr4Orai8tQ/VkqS2pJoiZdCWDPj2PAqsxlWs5hkz165lsWXkOUzIpoGv/d3RXhH9TN45va7lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5F9EADA7;
+	Fri,  2 Feb 2024 01:06:30 -0800 (PST)
+Received: from e129154.nice.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 658B93F5A1;
+	Fri,  2 Feb 2024 01:05:42 -0800 (PST)
+Date: Fri, 2 Feb 2024 10:05:05 +0100
+From: Beata Michalska <beata.michalska@arm.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org, sumitg@nvidia.com, sudeep.holla@arm.covm,
+	will@kernel.org, catalin.marinas@arm.com, viresh.kumar@linaro.org,
+	ionela.voinescu@arm.com, yang@os.amperecomputing.com,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] cpufreq: Wire-up arch-flavored freq info into
+ cpufreq_verify_current_freq
+Message-ID: <ZbywQfY7J5DbF1Ev@e129154.nice.arm.com>
+References: <20231127160838.1403404-1-beata.michalska@arm.com>
+ <20231127160838.1403404-3-beata.michalska@arm.com>
+ <CAJZ5v0jh3mG3hyFS6war=0bk3PvsVtTwZ1_YwwWov36Bmz7q0w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -57,42 +41,76 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e77ac513-3f8c-4979-b887-f6b9aff6963f@linaro.org>
+In-Reply-To: <CAJZ5v0jh3mG3hyFS6war=0bk3PvsVtTwZ1_YwwWov36Bmz7q0w@mail.gmail.com>
 
-On Thu, Feb 01, 2024 at 09:48:28AM +0100, Krzysztof Kozlowski wrote:
-> On 31/01/2024 17:06, Svyatoslav wrote:
-> > 
-> > 
-> > 31 січня 2024 р. 18:02:31 GMT+02:00, Conor Dooley <conor@kernel.org> написав(-ла):
-> >> On Wed, Jan 31, 2024 at 05:30:58PM +0200, Svyatoslav wrote:
-> >>>
-> >>>
-> >>> 31 січня 2024 р. 17:28:49 GMT+02:00, Conor Dooley <conor@kernel.org> написав(-ла):
-> >>>> On Wed, Jan 31, 2024 at 12:51:50PM +0200, Svyatoslav Ryhel wrote:
-> >>>>> Add missing LG Electronics, Inc. prefix used by some older devices.
-> >>>>
-> >>>> Is it? You're only adding these devices now as far as I can see.
-> >>>>
-> >>>
-> >>> Hammerhead (LG Nexus 5)
-> >>
-> >> I have absolutely no idea what this means. Please link me the in-tree
-> >> devicetree of the user (or the patchset adding it).
-> >>
-> >> Thanks,
-> >> Conor
-> >>
-> > 
-> > Sure, here you go
-> > <https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/arch/arm/boot/dts/qcom-msm8974-lge-nexus5-hammerhead.dts?h=linux-6.4.y#n11>
-> > 
-> > So devices I have sent are not the first.
+Apologies for extremely late reply, juggling too many things at time ....
+
+On Wed, Dec 06, 2023 at 09:41:05PM +0100, Rafael J. Wysocki wrote:
+> On Mon, Nov 27, 2023 at 5:09 PM Beata Michalska <beata.michalska@arm.com> wrote:
+> >
+> > From: Sumit Gupta <sumitg@nvidia.com>
+> >
+> > When available, use arch_freq_get_on_cpu to obtain current frequency
+> > (usually an average reported over given period of time)
+> > to better align the cpufreq's view on the current state of affairs.
 > 
-> Please look for existing work doing the same...
+> And why is this a good idea?
+Apart from being problematic with an issue pointed at [1] (which will result
+in dropping the change in cpufreq) this was to keep the cpufreq core aware of
+potential frequency changes and take appropriate action (informing the governor)
+case it got out of sync.
+> 
+> Any problem statement?
+The problem has been raised here [2]
+> 
+> > This also automatically pulls in the update for cpuinfo_cur_freq sysfs
+> > attribute, aligning it with the scaling_cur_freq one, and thus providing
+> > consistent view on relevant platforms.
+> 
+> I have no idea what the above is supposed to mean, sorry.
+Bad wording I guess. With this change both 'cpuinfo_cur_freq' and
+'scaling_cur_freq' will use the arch_freq_get_on_cpu if available, and will use
+the same source of information (one depending on a platform).
 
-Took me a minute to parse this.
+> 
+> > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> > [BM: Subject & commit msg]
+> > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> > ---
+> >  drivers/cpufreq/cpufreq.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > index 8c4f9c2f9c44..109559438f45 100644
+> > --- a/drivers/cpufreq/cpufreq.c
+> > +++ b/drivers/cpufreq/cpufreq.c
+> > @@ -1756,7 +1756,8 @@ static unsigned int cpufreq_verify_current_freq(struct cpufreq_policy *policy, b
+> >  {
+> >         unsigned int new_freq;
+> >
+> > -       new_freq = cpufreq_driver->get(policy->cpu);
+> > +       new_freq = arch_freq_get_on_cpu(policy->cpu);
+> > +       new_freq = new_freq ?: cpufreq_driver->get(policy->cpu);
+> 
+> Please don't use ?: in general and it is not even useful here AFAICS.
+> 
+> What would be wrong with
+> 
+> new_freq = arch_freq_get_on_cpu(policy->cpu);
+> if (!new_freq)
+>         new_freq = cpufreq_driver->get(policy->cpu);
+> 
+> ?
+Nothing wrong with that.
 
-I believe what Krzysztof means is look at the link he posted and follow 
-the suggestion there. Fix the one case, lge,hammerhead, to use 'lg'.
-
-Rob
+---
+[1] https://lore.kernel.org/all/ZWXy0h%2FfFfQh+Rhy@arm.com/
+[2] https://lore.kernel.org/lkml/6a5710f6-bfbb-5dfd-11cd-0cd02220cee7@nvidia.com/
+---
+BR
+Beata
+> 
+> >         if (!new_freq)
+> >                 return 0;
+> >
+> > --
