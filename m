@@ -1,222 +1,156 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBA685954;
-	Fri,  2 Feb 2024 22:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B40F1CAA4;
+	Sat,  3 Feb 2024 11:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706913307; cv=none; b=MbRcELY9HCoe7uDMebox6qQtbajU7bhjDQoQ55eLZtcI7pg7cRAFa4y9dKnP7VDimPYcqG84OaoMzjo4OVY6QpKrKGed3axCZy9hT1RCkju5KP0pH52gx7nxFuhSohYv+fIwC9qzmZE2Du2RFYSHAliBWtevQ9aWXv/sRaQl7CM=
+	t=1706961602; cv=none; b=mea3E6TuI5aMGMLjFkOLGs7eiAWk9MWXd2XHkkkW55zGrF77SyfuAVjtRj1NmlQ1QpIy7WSsCphgKqhWb/HHe4KCrf9P436uCqGwxbBuMf5qi9uWaTzm0IVL88HUmAgemlboYNlC2e/VTEx9YAMDqUaIqOJ0YKZK0oaCtIaeNSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706913307; c=relaxed/simple;
-	bh=piSJZV9wP11DN45leIZQLdOe8OAXQLdIK19f/zlcWl4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TN1aigFomZkzZid/f7CBN4XuU+yESioe87Tye4a+zppZL96W+3qcqzOdHk4AWTAchAyy5sWDAOo7YVD1b/4y0EWB3AgThYmGteyA0dNnzOExA9zIsR4MCd2gzar7KJm1pL27EC0vUk4CADF/3Bg5VolF0FaPlcZVIVBJXKBMOKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jF9t6KSP; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1706961602; c=relaxed/simple;
+	bh=OaM3NQPREDdpKg0JK+QSLTqUnxO///RJV6jgIGAqKH8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HzwMsAmMSqjw/6gAnPE+BTyaQNPBd8fCDMg7RXl4bsvbv8Q7jYtobQRkdw1YS4IQ6pR0/RlW0xJ7UPZohq3spxumrJTctnQL1UPnToMDH6TGQbVbqhOFqgf5l1d8CLBqpEJkTk1LMFzAksoFaBWFNpgNKNQQz6axxLp4G+mMVvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=btXJjrnF; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jF9t6KSP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F1EAC433F1;
-	Fri,  2 Feb 2024 22:35:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706913307;
-	bh=piSJZV9wP11DN45leIZQLdOe8OAXQLdIK19f/zlcWl4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jF9t6KSPmMvMVh1V9fW20wY/mwPs4yjcFfPG1BffzLlhv/w0/nHcX8v58Y9ztZIrp
-	 GFxS/7N/aEfGij7jg5zy9l84eu1gVAQloefohZhnUJFwD42M0wUo0VLR696txWpT3i
-	 xx5F9BEQhAhSFZfNd5rFVhKc4N5Lx1ZTvcwnZilOE+IMb/38zUI2e7BhFtT6cnKr/U
-	 qzcFm9BvFUxtTcY40dym3jov6+J6WwrVbzNhrxJ1NxU6sdHOnxvv21RBF/Q1BmFERS
-	 g0LGxkyuwnHERO1Y8rq1Al8K9KqHXzs/iQEh6WzC+G4ThXeKXZkBJiBElPyhFYbw4G
-	 uKTDgsm1Ozqkw==
-From: Rob Herring <robh@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: pinctrl: nvidia,tegra234-pinmux: Restructure common schema
-Date: Fri,  2 Feb 2024 16:34:53 -0600
-Message-ID: <20240202223454.1667383-1-robh@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="btXJjrnF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706961600; x=1738497600;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=OaM3NQPREDdpKg0JK+QSLTqUnxO///RJV6jgIGAqKH8=;
+  b=btXJjrnFM9KelXjPU22Mz/JdfICOQKyAJrrHqTvH6R3DdjvnMabiJEpe
+   K+z9NXOo/Nie4TeWRkvmZD8VAElyfoBBupMH97Gfu1BwtJyZqra9RQpsA
+   xGafuKiQIeGUuKOdh8ZHRvO+lyBLpfftZcCN5KOUcugVIFrs/ch/CEVEU
+   3anw4xm01/LJxgBl1E80QC7OpO6/d5DvAG0jjFtWQiqd4qUGUJntf34xm
+   qYuZlnAZxepckPH2wR9mT9SH6/RyO4tEUn9gSyAFEzbFii2AQHmU1s8o7
+   Fo0DMBFJMlVeueuWBBYUjAYAcQGu3dEfuFPOvU2RsCEo9G70vJLbTEfWz
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10971"; a="17835200"
+X-IronPort-AV: E=Sophos;i="6.05,240,1701158400"; 
+   d="scan'208";a="17835200"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2024 03:59:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,240,1701158400"; 
+   d="scan'208";a="4911402"
+Received: from lkp-server02.sh.intel.com (HELO 59f4f4cd5935) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 03 Feb 2024 03:59:55 -0800
+Received: from kbuild by 59f4f4cd5935 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rWEga-000506-0C;
+	Sat, 03 Feb 2024 11:59:52 +0000
+Date: Sat, 3 Feb 2024 19:59:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH net-next 2/3] net: stmmac: Allow drivers to provide a
+ default AXI configuration
+Message-ID: <202402031948.IySiUm4u-lkp@intel.com>
+References: <20240201-stmmac-axi-config-v1-2-822e97b2d26e@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240201-stmmac-axi-config-v1-2-822e97b2d26e@nvidia.com>
 
-The structure of the NVIDIA Tegra234 common pinmux schema doesn't work
-for restricting properties because a child node schema can't be extended
-with additional properties from another schema defining the same child
-node. The 2 child node schemas are evaluated independently as the
-schemas are not recursively combined in any way.
+Hi Thierry,
 
-As the common schema is almost all the child node schema anyways, just
-remove the parent node from the common schema. Then add 'reg' and adjust
-the $ref's in the users of the common schema.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../pinctrl/nvidia,tegra234-pinmux-aon.yaml   |  7 +-
- .../nvidia,tegra234-pinmux-common.yaml        | 84 ++++++++-----------
- .../pinctrl/nvidia,tegra234-pinmux.yaml       |  7 +-
- 3 files changed, 45 insertions(+), 53 deletions(-)
+[auto build test WARNING on 51b70ff55ed88edd19b080a524063446bcc34b62]
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml
-index f3deda9f7127..db8224dfba2c 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-aon.yaml
-@@ -10,18 +10,21 @@ maintainers:
-   - Thierry Reding <thierry.reding@gmail.com>
-   - Jon Hunter <jonathanh@nvidia.com>
- 
--$ref: nvidia,tegra234-pinmux-common.yaml
--
- properties:
-   compatible:
-     const: nvidia,tegra234-pinmux-aon
- 
-+  reg:
-+    maxItems: 1
-+
- patternProperties:
-   "^pinmux(-[a-z0-9-]+)?$":
-     type: object
- 
-     # pin groups
-     additionalProperties:
-+      $ref: nvidia,tegra234-pinmux-common.yaml
-+
-       properties:
-         nvidia,pins:
-           items:
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml
-index 4f9de78085e5..8cf9e4c915ff 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux-common.yaml
-@@ -10,57 +10,43 @@ maintainers:
-   - Thierry Reding <thierry.reding@gmail.com>
-   - Jon Hunter <jonathanh@nvidia.com>
- 
--properties:
--  reg:
--    items:
--      - description: pinmux registers
--
--patternProperties:
--  "^pinmux(-[a-z0-9-]+)?$":
--    type: object
--
--    # pin groups
--    additionalProperties:
--      $ref: nvidia,tegra-pinmux-common.yaml
--      # We would typically use unevaluatedProperties here but that has the
--      # downside that all the properties in the common bindings become valid
--      # for all chip generations. In this case, however, we want the per-SoC
--      # bindings to be able to override which of the common properties are
--      # allowed, since not all pinmux generations support the same sets of
--      # properties. This way, the common bindings define the format of the
--      # properties but the per-SoC bindings define which of them apply to a
--      # given chip.
--      additionalProperties: false
--      properties:
--        nvidia,function:
--          enum: [ gp, uartc, i2c8, spi2, i2c2, can1, can0, rsvd0, eth0, eth2,
--                  eth1, dp, eth3, i2c4, i2c7, i2c9, eqos, pe2, pe1, pe0, pe3,
--                  pe4, pe5, pe6, pe7, pe8, pe9, pe10, qspi0, qspi1, qpsi,
--                  sdmmc1, sce, soc, gpio, hdmi, ufs0, spi3, spi1, uartb, uarte,
--                  usb, extperiph2, extperiph1, i2c3, vi0, i2c5, uarta, uartd,
--                  i2c1, i2s4, i2s6, aud, spi5, touch, uartj, rsvd1, wdt, tsc,
--                  dmic3, led, vi0_alt, i2s5, nv, extperiph3, extperiph4, spi4,
--                  ccla, i2s1, i2s2, i2s3, i2s8, rsvd2, dmic5, dca, displayb,
--                  displaya, vi1, dcb, dmic1, dmic4, i2s7, dmic2, dspk0, rsvd3,
--                  tsc_alt, istctrl, vi1_alt, dspk1, igpu ]
-+$ref: nvidia,tegra-pinmux-common.yaml
- 
--        # out of the common properties, only these are allowed for Tegra234
--        nvidia,pins: true
--        nvidia,pull: true
--        nvidia,tristate: true
--        nvidia,schmitt: true
--        nvidia,enable-input: true
--        nvidia,open-drain: true
--        nvidia,lock: true
--        nvidia,drive-type: true
--        nvidia,io-hv: true
--
--      required:
--        - nvidia,pins
-+properties:
-+  nvidia,function:
-+    enum: [ gp, uartc, i2c8, spi2, i2c2, can1, can0, rsvd0, eth0, eth2,
-+            eth1, dp, eth3, i2c4, i2c7, i2c9, eqos, pe2, pe1, pe0, pe3,
-+            pe4, pe5, pe6, pe7, pe8, pe9, pe10, qspi0, qspi1, qpsi,
-+            sdmmc1, sce, soc, gpio, hdmi, ufs0, spi3, spi1, uartb, uarte,
-+            usb, extperiph2, extperiph1, i2c3, vi0, i2c5, uarta, uartd,
-+            i2c1, i2s4, i2s6, aud, spi5, touch, uartj, rsvd1, wdt, tsc,
-+            dmic3, led, vi0_alt, i2s5, nv, extperiph3, extperiph4, spi4,
-+            ccla, i2s1, i2s2, i2s3, i2s8, rsvd2, dmic5, dca, displayb,
-+            displaya, vi1, dcb, dmic1, dmic4, i2s7, dmic2, dspk0, rsvd3,
-+            tsc_alt, istctrl, vi1_alt, dspk1, igpu ]
-+
-+  # out of the common properties, only these are allowed for Tegra234
-+  nvidia,pins: true
-+  nvidia,pull: true
-+  nvidia,tristate: true
-+  nvidia,schmitt: true
-+  nvidia,enable-input: true
-+  nvidia,open-drain: true
-+  nvidia,lock: true
-+  nvidia,drive-type: true
-+  nvidia,io-hv: true
- 
- required:
--  - compatible
--  - reg
-+  - nvidia,pins
-+
-+# We would typically use unevaluatedProperties here but that has the
-+# downside that all the properties in the common bindings become valid
-+# for all chip generations. In this case, however, we want the per-SoC
-+# bindings to be able to override which of the common properties are
-+# allowed, since not all pinmux generations support the same sets of
-+# properties. This way, the common bindings define the format of the
-+# properties but the per-SoC bindings define which of them apply to a
-+# given chip.
-+additionalProperties: false
- 
--additionalProperties: true
- ...
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux.yaml b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux.yaml
-index 17b865ecfcda..f5a3a881dec4 100644
---- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra234-pinmux.yaml
-@@ -10,18 +10,21 @@ maintainers:
-   - Thierry Reding <thierry.reding@gmail.com>
-   - Jon Hunter <jonathanh@nvidia.com>
- 
--$ref: nvidia,tegra234-pinmux-common.yaml
--
- properties:
-   compatible:
-     const: nvidia,tegra234-pinmux
- 
-+  reg:
-+    maxItems: 1
-+
- patternProperties:
-   "^pinmux(-[a-z0-9-]+)?$":
-     type: object
- 
-     # pin groups
-     additionalProperties:
-+      $ref: nvidia,tegra234-pinmux-common.yaml
-+
-       properties:
-         nvidia,pins:
-           items:
+url:    https://github.com/intel-lab-lkp/linux/commits/Thierry-Reding/net-stmmac-Pass-resources-to-DT-parsing-code/20240202-025357
+base:   51b70ff55ed88edd19b080a524063446bcc34b62
+patch link:    https://lore.kernel.org/r/20240201-stmmac-axi-config-v1-2-822e97b2d26e%40nvidia.com
+patch subject: [PATCH net-next 2/3] net: stmmac: Allow drivers to provide a default AXI configuration
+config: m68k-allyesconfig (https://download.01.org/0day-ci/archive/20240203/202402031948.IySiUm4u-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240203/202402031948.IySiUm4u-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202402031948.IySiUm4u-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:96: warning: Function parameter or struct member 'res' not described in 'stmmac_axi_setup'
+
+
+vim +96 drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+
+3b57de958e2aa3 Vince Bridgers     2014-07-31   86  
+afea03656add70 Giuseppe Cavallaro 2016-02-29   87  /**
+afea03656add70 Giuseppe Cavallaro 2016-02-29   88   * stmmac_axi_setup - parse DT parameters for programming the AXI register
+afea03656add70 Giuseppe Cavallaro 2016-02-29   89   * @pdev: platform device
+afea03656add70 Giuseppe Cavallaro 2016-02-29   90   * Description:
+afea03656add70 Giuseppe Cavallaro 2016-02-29   91   * if required, from device-tree the AXI internal register can be tuned
+afea03656add70 Giuseppe Cavallaro 2016-02-29   92   * by using platform parameters.
+afea03656add70 Giuseppe Cavallaro 2016-02-29   93   */
+af49f82367c1e3 Thierry Reding     2024-02-01   94  static struct stmmac_axi *stmmac_axi_setup(struct platform_device *pdev,
+af49f82367c1e3 Thierry Reding     2024-02-01   95  					   struct stmmac_resources *res)
+afea03656add70 Giuseppe Cavallaro 2016-02-29  @96  {
+afea03656add70 Giuseppe Cavallaro 2016-02-29   97  	struct device_node *np;
+afea03656add70 Giuseppe Cavallaro 2016-02-29   98  	struct stmmac_axi *axi;
+afea03656add70 Giuseppe Cavallaro 2016-02-29   99  
+afea03656add70 Giuseppe Cavallaro 2016-02-29  100  	np = of_parse_phandle(pdev->dev.of_node, "snps,axi-config", 0);
+af49f82367c1e3 Thierry Reding     2024-02-01  101  	if (!np && !res->axi)
+afea03656add70 Giuseppe Cavallaro 2016-02-29  102  		return NULL;
+afea03656add70 Giuseppe Cavallaro 2016-02-29  103  
+64f48e593a54a8 Joao Pinto         2017-03-07  104  	axi = devm_kzalloc(&pdev->dev, sizeof(*axi), GFP_KERNEL);
+4613b279bee795 Peter Chen         2016-08-01  105  	if (!axi) {
+af49f82367c1e3 Thierry Reding     2024-02-01  106  		if (np)
+4613b279bee795 Peter Chen         2016-08-01  107  			of_node_put(np);
+af49f82367c1e3 Thierry Reding     2024-02-01  108  
+afea03656add70 Giuseppe Cavallaro 2016-02-29  109  		return ERR_PTR(-ENOMEM);
+4613b279bee795 Peter Chen         2016-08-01  110  	}
+afea03656add70 Giuseppe Cavallaro 2016-02-29  111  
+af49f82367c1e3 Thierry Reding     2024-02-01  112  	if (res->axi)
+af49f82367c1e3 Thierry Reding     2024-02-01  113  		*axi = *res->axi;
+af49f82367c1e3 Thierry Reding     2024-02-01  114  
+af49f82367c1e3 Thierry Reding     2024-02-01  115  	if (np) {
+afea03656add70 Giuseppe Cavallaro 2016-02-29  116  		axi->axi_lpi_en = of_property_read_bool(np, "snps,lpi_en");
+afea03656add70 Giuseppe Cavallaro 2016-02-29  117  		axi->axi_xit_frm = of_property_read_bool(np, "snps,xit_frm");
+61d4f140943c47 Jisheng Zhang      2022-12-03  118  		axi->axi_kbbe = of_property_read_bool(np, "snps,kbbe");
+61d4f140943c47 Jisheng Zhang      2022-12-03  119  		axi->axi_fb = of_property_read_bool(np, "snps,fb");
+61d4f140943c47 Jisheng Zhang      2022-12-03  120  		axi->axi_mb = of_property_read_bool(np, "snps,mb");
+61d4f140943c47 Jisheng Zhang      2022-12-03  121  		axi->axi_rb =  of_property_read_bool(np, "snps,rb");
+afea03656add70 Giuseppe Cavallaro 2016-02-29  122  
+af49f82367c1e3 Thierry Reding     2024-02-01  123  		if (of_property_read_u32(np, "snps,wr_osr_lmt", &axi->axi_wr_osr_lmt)) {
+af49f82367c1e3 Thierry Reding     2024-02-01  124  			if (!res->axi)
+6b3374cb1c0bd4 Niklas Cassel      2016-12-05  125  				axi->axi_wr_osr_lmt = 1;
+af49f82367c1e3 Thierry Reding     2024-02-01  126  		}
+af49f82367c1e3 Thierry Reding     2024-02-01  127  
+af49f82367c1e3 Thierry Reding     2024-02-01  128  		if (of_property_read_u32(np, "snps,rd_osr_lmt", &axi->axi_rd_osr_lmt)) {
+af49f82367c1e3 Thierry Reding     2024-02-01  129  			if (!res->axi)
+6b3374cb1c0bd4 Niklas Cassel      2016-12-05  130  				axi->axi_rd_osr_lmt = 1;
+af49f82367c1e3 Thierry Reding     2024-02-01  131  		}
+af49f82367c1e3 Thierry Reding     2024-02-01  132  
+afea03656add70 Giuseppe Cavallaro 2016-02-29  133  		of_property_read_u32_array(np, "snps,blen", axi->axi_blen, AXI_BLEN);
+af49f82367c1e3 Thierry Reding     2024-02-01  134  
+4613b279bee795 Peter Chen         2016-08-01  135  		of_node_put(np);
+af49f82367c1e3 Thierry Reding     2024-02-01  136  	}
+afea03656add70 Giuseppe Cavallaro 2016-02-29  137  
+afea03656add70 Giuseppe Cavallaro 2016-02-29  138  	return axi;
+afea03656add70 Giuseppe Cavallaro 2016-02-29  139  }
+afea03656add70 Giuseppe Cavallaro 2016-02-29  140  
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
