@@ -1,39 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1357E12B142;
-	Tue,  6 Feb 2024 12:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E4F12FF9F;
+	Tue,  6 Feb 2024 12:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707223985; cv=none; b=FusSo9qE8XQHQcrtfyzota0vcFBlEvcAW24MMb3NxZUtB3/ayr05F+5rS9QHpNqNngpFJVqw6oIoqxnabbVIGHnlorFr8guYNJm0LMKiYeAKDuShnbftILhuAxubj027xfb/WjzZ6Yk52zKUUYuAMMWJfZRqqs3+RLuapoZjsO0=
+	t=1707224092; cv=none; b=jtzTs/YHE/YQd0FynmsG7wAAwNPdVdkYnL6M5XB5KwXGnIIe1codoxbrRmsDSjjIBhWeaAf0zy1SKjp3wdEiUGBQw7zzQCU5kg67/pLbGm4Y6AXQ5nuR7ZyIoPaY8B+0fYYsAyopDDa9F98UkcTD0Aahf70THaT9t9NY0i+Spn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707223985; c=relaxed/simple;
-	bh=cC1iXIgYkNIh5eG5Gpxr3dx4+vBY/05hPu9acNFeElM=;
+	s=arc-20240116; t=1707224092; c=relaxed/simple;
+	bh=5zDs4bCJCg9fhWhJufayFel6oMRJyIadeFkzq2VZtnM=;
 	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hiTma7j0FwE8MZlBsDHjNMU8ziZ4EEfzuhqwgFSo1UZq5RobUpcpINS3Zc0HmaqUvbKfU+riz1UwOiet9pwXpwf8GTMS7jvSzuq/8Mwl7a056yrofqKS8AT3Src9W3JhFXCPn/HaXi+OxHjsMJChTpriGjejwYD+kil7Zj7Pgzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k29cbhWS; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=JjNC59RIwmKbDKIkXySV4Pt1uQWeY5q6XIuzNB6UUh7KNpzJCyGSfZd9sc8masd8IKwZQkyWyNVhEDbBN3QD5tAo0mOmPczKwntqKguzJ8kkKvHzQUza3u0mh6jn2my/Fy6tKojkT5ZpwGLRgCLjLJSsGuxF8EfB2i2Iy42J3i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bU+oRkTq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k29cbhWS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A0DBC433C7;
-	Tue,  6 Feb 2024 12:53:04 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bU+oRkTq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2464C433F1;
+	Tue,  6 Feb 2024 12:54:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707223984;
-	bh=cC1iXIgYkNIh5eG5Gpxr3dx4+vBY/05hPu9acNFeElM=;
+	s=k20201202; t=1707224091;
+	bh=5zDs4bCJCg9fhWhJufayFel6oMRJyIadeFkzq2VZtnM=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k29cbhWS6DbbBWvLmOXATqMie993iIw7OOhgB8O5SsDgRv3ETZ4OtgZcTRGtsMfJY
-	 k4Q6fs2XLxOgjiqAZ1OJzIiEcRkSDl9qG14xeiNqdrvHyfqRuPCZSxo9WQBzcr0fxN
-	 l8TC75xfxnkM/CUq78l/VxHkL9mpbP6ssBEDxYwBo8VJfcyicwrdx4LEw15gJQJg1t
-	 4ZbUGoMqX+lbqMwBtMZMVDsmOreSYjt79mpUlrR9Sru2vJE3dt0kVue52lmdHA/wQo
-	 u7FO8tpmVYPMk+4Vg5DyxSaZaaHQUjOmr/j5v5FZ/I8rCGtYZjJcmabuMVVuwCxvQg
-	 oD6vDVz1d0OdA==
+	b=bU+oRkTqb1zaIpJ1yo9/YCK+2iXPfc+d0U0jKNJWzCFE7GnIfe9Bji/nrJiiNoUSo
+	 4bzbxjgsemqG4MJ4P3/4XQLnxl9qlgNlMkbq8f9kCgQIVCgcDwa4lj3UbbxsmX/7Ja
+	 Vz16y745ziRgIcvNkGuUdTTDHgvAcvxF/mqcgfdEh4rpzX0ezNXhH7upMoYirEXuT0
+	 6/kop5ZKomX9TAJs5jVVESQZojkmH+mfFxku4dgU1WTmjj67coF1utCvXsM28WcX5z
+	 SQSle5w+ShMKQTzhwnBFsHbFfp70z5Jsqvspw1ZfC0xDwSz9K9Tg7tyP+Ewo4Ek1JY
+	 36/KQutHmdwkA==
 Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
 	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.95)
 	(envelope-from <maz@kernel.org>)
-	id 1rXKwg-000obR-Ab;
-	Tue, 06 Feb 2024 12:53:02 +0000
-Date: Tue, 06 Feb 2024 12:53:01 +0000
-Message-ID: <86v87169g2.wl-maz@kernel.org>
+	id 1rXKyP-000ocS-He;
+	Tue, 06 Feb 2024 12:54:49 +0000
+Date: Tue, 06 Feb 2024 12:54:48 +0000
+Message-ID: <86ttml69d3.wl-maz@kernel.org>
 From: Marc Zyngier <maz@kernel.org>
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: Sumit Gupta <sumitg@nvidia.com>,
@@ -45,10 +45,11 @@ Cc: Sumit Gupta <sumitg@nvidia.com>,
 	amhetre@nvidia.com,
 	bbasu@nvidia.com
 Subject: Re: [Patch] memory: tegra: Skip SID override from Guest VM
-In-Reply-To: <252d6094-b2d6-496d-b28f-93507a193ede@nvidia.com>
+In-Reply-To: <c7e71e7e-ef01-4539-b481-9f4a95e6a444@nvidia.com>
 References: <20240206114852.8472-1-sumitg@nvidia.com>
 	<86wmrh6b2n.wl-maz@kernel.org>
 	<252d6094-b2d6-496d-b28f-93507a193ede@nvidia.com>
+	<c7e71e7e-ef01-4539-b481-9f4a95e6a444@nvidia.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -58,141 +59,38 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-SA-Exim-Connect-IP: 185.219.108.64
 X-SA-Exim-Rcpt-To: jonathanh@nvidia.com, sumitg@nvidia.com, treding@nvidia.com, krzysztof.kozlowski@linaro.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, amhetre@nvidia.com, bbasu@nvidia.com
 X-SA-Exim-Mail-From: maz@kernel.org
 X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Jon,
-
-On Tue, 06 Feb 2024 12:28:27 +0000,
+On Tue, 06 Feb 2024 12:51:35 +0000,
 Jon Hunter <jonathanh@nvidia.com> wrote:
-> 
-> Hi Marc,
-> 
-> On 06/02/2024 12:17, Marc Zyngier wrote:
-> > Hi Sumit,
-> > 
-> > On Tue, 06 Feb 2024 11:48:52 +0000,
-> > Sumit Gupta <sumitg@nvidia.com> wrote:
-> >> 
-> >> MC SID register access is restricted for Guest VM.
-> >> So, skip the SID override programming from the Guest VM.
-> >> 
-> >> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> >> ---
-> >>   drivers/memory/tegra/tegra186.c | 11 +++++++++++
-> >>   1 file changed, 11 insertions(+)
-> >> 
-> >> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
-> >> index 1b3183951bfe..df441896b69d 100644
-> >> --- a/drivers/memory/tegra/tegra186.c
-> >> +++ b/drivers/memory/tegra/tegra186.c
-> >> @@ -10,6 +10,7 @@
-> >>   #include <linux/of.h>
-> >>   #include <linux/of_platform.h>
-> >>   #include <linux/platform_device.h>
-> >> +#include <asm/virt.h>
-> >>     #include <soc/tegra/mc.h>
-> >>   @@ -118,6 +119,11 @@ static int tegra186_mc_probe_device(struct
-> >> tegra_mc *mc, struct device *dev)
-> >>   	unsigned int i, index = 0;
-> >>   	u32 sid;
-> >>   +	if (!is_kernel_in_hyp_mode()) {
-> >> +		dev_dbg(mc->dev, "Register access not allowed\n");
-> >> +		return 0;
-> >> +	}
-> >> +
-> >>   	if (!tegra_dev_iommu_get_stream_id(dev, &sid))
-> >>   		return 0;
-> >>   @@ -146,6 +152,11 @@ static int tegra186_mc_resume(struct
-> >> tegra_mc *mc)
-> >>   #if IS_ENABLED(CONFIG_IOMMU_API)
-> >>   	unsigned int i;
-> >>   +	if (!is_kernel_in_hyp_mode()) {
-> >> +		dev_dbg(mc->dev, "Register access not allowed\n");
-> >> +		return 0;
-> >> +	}
-> >> +
-> >>   	for (i = 0; i < mc->soc->num_clients; i++) {
-> >>   		const struct tegra_mc_client *client = &mc->soc->clients[i];
-> >>   
-> > 
-> > This doesn't look right. Multiple reasons:
-> > 
-> > - This helper really has nothing to do in a driver. This is
-> >    architectural stuff that is not intended for use outside of arch
-> >    core code.
-> 
-> We see a few other drivers using this ...
-> 
-> drivers/perf/arm_pmuv3.c
-> drivers/clocksource/arm_arch_timer.c
+>=20
+>=20
+> On 06/02/2024 12:28, Jon Hunter wrote:
+>=20
+> ...
+>=20
+> >> - My own tegra186 HW doesn't have VHE, since it is ARMv8.0, and this
+> >> =C2=A0=C2=A0 helper will always return 'false'. How could this result =
+in
+> >> =C2=A0=C2=A0 something that still works? Can I get a free CPU upgrade?
+> >=20
+> > I thought this API just checks to see if we are in EL2?
+>=20
+>=20
+> Sorry to add a bit more info, I see EL2 is used for hypervisor [0],
+> but on my Tegra186 with no hypervisor I see ...
+>=20
+>  CPU: All CPU(s) started at EL2
 
-These two are definitely part of the CPU architecture.
-
-> drivers/gpu/drm/amd/amdgpu/amdgpu_virt.h
-
-This is just a bug. Please don't copy this stuff.
-
-> drivers/hwtracing/coresight/coresight-etm4x-core.c
-> drivers/hwtracing/coresight/coresight-etm4x-core.c
-> drivers/irqchip/irq-apple-aic.c
-
-These are also part of the CPU architecture.
-
-> 
-> We were looking for a way to determine if the OS is a guest OS or
-> not. However, I can see that this is a ARM64 specific API and so
-> probably the above are only compiled for ARM64. Interestingly, the AMD
-> driver implements the following ...
-> 
-> static inline bool is_virtual_machine(void)
-> {
-> #if defined(CONFIG_X86)
->         return boot_cpu_has(X86_FEATURE_HYPERVISOR);
-> #elif defined(CONFIG_ARM64)
->         return !is_kernel_in_hyp_mode();
-> #else
->         return false;
-> #endif
-> }
-
-This stuff should simply be ripped out and burned. Whoever wrote it
-didn't understand how this works.
-
-> 
-> > - My own tegra186 HW doesn't have VHE, since it is ARMv8.0, and this
-> >    helper will always return 'false'. How could this result in
-> >    something that still works? Can I get a free CPU upgrade?
-> 
-> I thought this API just checks to see if we are in EL2?
-
-It does. And that's the problem. On ARMv8.0, we run the Linux kernel
-at EL1. Tegra186 is ARMv8.0 (Denver + A57). So as written, this change
-breaks the very platform it intends to support.
-
-> 
-> > - If you assign this device to a VM and that the hypervisor doesn't
-> >    correctly virtualise it, then it is a different device and you
-> >    should simply advertise it something else. Or even better, fix your
-> >    hypervisor.
-> 
-> Sumit can add some more details on why we don't completely disable the
-> device for guest OSs.
-
-It's not about disabling it. It is about correctly supporting it
-(providing full emulation for it), or advertising it as something
-different so that SW can handle it differently.
-
-Poking into the internals of how the kernel is booted for a driver
-that isn't tied to the core architecture (because it would need to
-access system registers, for example) is not an acceptable outcome.
-
-Thanks,
+Yes. and yet the kernel runs at EL1 (on ARMv8.0, we can't run the
+kernel at EL2 at all).
 
 	M.
 
--- 
+--=20
 Without deviation from the norm, progress is not possible.
