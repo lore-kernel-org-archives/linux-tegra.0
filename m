@@ -1,55 +1,76 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EEB134744;
-	Tue,  6 Feb 2024 12:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A13132462;
+	Tue,  6 Feb 2024 12:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707221297; cv=none; b=Jf+aSJL8iMHhjjmAdJZ1klsf0SXBSi4Bbls3+nAiCS/Hi8E8H1i/+4NO5HM6/XcIDi2tC2uAmQXoqjRRZO5wgJgwMxoTI0PFIXLMMr6XMYe6XBB6R4IbBjJQfZeC9t58t/9GR3Z41IZKDuOwo+RGgk4y+91D4fXLeeI77HmR46Q=
+	t=1707221875; cv=none; b=tJFxTIFiRSosVp8MwZMh7Sd83gKrSrypy0lvAOF75pqikiYT+Kj00BWR96QkQo51i1BwK6naVgKa4BDc1/b7x2dYtFu7y06aOEeiOAixuaHJ2PBgAn91jYlgpSN7Mgwr2RkF7acsgJhNOBnb1/xctIGuonoDRt6Sko6dDgZIhms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707221297; c=relaxed/simple;
-	bh=H098mPuy9mCSbtQ7HYZw+nmrKMVYVMCn1z01JgjG0ks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=grc9kRiK9LgmqnfdciYIJA3Fbc8XWZar9RZVhNEce2pIVxIcUn7fF5uSKrOPnTX5gawYrcr+dUrvwp1V4uNR9HsYuJp4V6sXkKgmpQdHduy2Ex14N1EEMgAR1jhQr+xjPSVgyFrAShIyNO6yeO+AUafI4RiuBUAtxonmyep7y2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8679B1FB;
-	Tue,  6 Feb 2024 04:08:57 -0800 (PST)
-Received: from FVFF77S0Q05N.cambridge.arm.com (FVFF77S0Q05N.cambridge.arm.com [10.1.31.158])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ADBFA3F762;
-	Tue,  6 Feb 2024 04:08:13 -0800 (PST)
-Date: Tue, 6 Feb 2024 12:08:07 +0000
-From: Mark Rutland <mark.rutland@arm.com>
+	s=arc-20240116; t=1707221875; c=relaxed/simple;
+	bh=6cGoZ9xn2z86dvXzudclTsATn7caJfz0ANjzsrSWXwI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MQuVWsHHuu4ja6TK6+PgZqlzl58nhWxUUmj9IUD3xczq3vIJ4ljhrXzxUmeIz4dRhL8SZdqPhi4TriMQMOcAWB56b6KliETrSGr23ceB3xiUSNKslGIy3/X5GtbOge+xZCgCFPvuHvFluf1HUbdKWxqALxHdyHYUkeArBOP8euo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NYvyxt96; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYvyxt96"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 112D3C433F1;
+	Tue,  6 Feb 2024 12:17:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707221875;
+	bh=6cGoZ9xn2z86dvXzudclTsATn7caJfz0ANjzsrSWXwI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NYvyxt96dLFX15ufMTUANHq/Ku10m9H6gA1NT9B5/sOzstyEwH+p/i26hYTzWs0KD
+	 xB9p8+4ku6TAekjZ7ysQYP/gesba0NmOv3vrs0pZQe/bGJcWc9FTzKogpUHzsjqRjR
+	 ch2TpSNN48FYBg/obV/jxD1QnN/M7MkZ12BniDAKFUjfY25M2OAKQyPHf3JlBB11sK
+	 swTagh7h4TtzFKKdotwYTeYdHAJQT0zCGpSG6Pd4hPPf596GkkuOWAUTJPYSjbr4+Q
+	 HwTTqGGWyODghjaFJX6NbCXXDbIhS6QwkqxsnSbSg4MpBv9X7wHbnn2R2osKsC7pul
+	 yDq33it+P2Ppg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1rXKOe-000nz4-Gx;
+	Tue, 06 Feb 2024 12:17:52 +0000
+Date: Tue, 06 Feb 2024 12:17:52 +0000
+Message-ID: <86wmrh6b2n.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
 To: Sumit Gupta <sumitg@nvidia.com>
-Cc: treding@nvidia.com, krzysztof.kozlowski@linaro.org,
-	jonathanh@nvidia.com, maz@kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, amhetre@nvidia.com, bbasu@nvidia.com
+Cc: <treding@nvidia.com>,
+	<krzysztof.kozlowski@linaro.org>,
+	<jonathanh@nvidia.com>,
+	<mark.rutland@arm.com>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>,
+	<amhetre@nvidia.com>,
+	<bbasu@nvidia.com>
 Subject: Re: [Patch] memory: tegra: Skip SID override from Guest VM
-Message-ID: <ZcIhJxPUZOTjOOYZ@FVFF77S0Q05N.cambridge.arm.com>
+In-Reply-To: <20240206114852.8472-1-sumitg@nvidia.com>
 References: <20240206114852.8472-1-sumitg@nvidia.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240206114852.8472-1-sumitg@nvidia.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: sumitg@nvidia.com, treding@nvidia.com, krzysztof.kozlowski@linaro.org, jonathanh@nvidia.com, mark.rutland@arm.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, amhetre@nvidia.com, bbasu@nvidia.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Feb 06, 2024 at 05:18:52PM +0530, Sumit Gupta wrote:
+Hi Sumit,
+
+On Tue, 06 Feb 2024 11:48:52 +0000,
+Sumit Gupta <sumitg@nvidia.com> wrote:
+> 
 > MC SID register access is restricted for Guest VM.
 > So, skip the SID override programming from the Guest VM.
 > 
 > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-
-Surely this is probed from the DT?
-
-Why would the hypervisor put this in the guest's DT if that hypervisor isn't
-exposing it to the guest?
-
-Mark.
-
 > ---
 >  drivers/memory/tegra/tegra186.c | 11 +++++++++++
 >  1 file changed, 11 insertions(+)
@@ -90,6 +111,25 @@ Mark.
 >  	for (i = 0; i < mc->soc->num_clients; i++) {
 >  		const struct tegra_mc_client *client = &mc->soc->clients[i];
 >  
-> -- 
-> 2.17.1
-> 
+
+This doesn't look right. Multiple reasons:
+
+- This helper really has nothing to do in a driver. This is
+  architectural stuff that is not intended for use outside of arch
+  core code.
+
+- My own tegra186 HW doesn't have VHE, since it is ARMv8.0, and this
+  helper will always return 'false'. How could this result in
+  something that still works? Can I get a free CPU upgrade?
+
+- If you assign this device to a VM and that the hypervisor doesn't
+  correctly virtualise it, then it is a different device and you
+  should simply advertise it something else. Or even better, fix your
+  hypervisor.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
