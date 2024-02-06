@@ -1,150 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B53B12FF7C;
-	Tue,  6 Feb 2024 14:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D286134756;
+	Tue,  6 Feb 2024 15:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707231256; cv=none; b=RtZ2hJ6aB6X1wd6v6uIYn7IAk/62Rr4AORNH1KT3h9Yex5b7t78pO+igkSLKh/L8gkGNodSGZww7TSVlDcLEd4JI2pRgpk+xscpljddM38zzV8OZqZcnVFTcdFilZzbl4w2ii+mhWRnfdvw/mxf6sd2PPKWSMBHbzzrGViWw18w=
+	t=1707235027; cv=none; b=VSzTL3Xesk+oPzFtaghsuvy7XnAH2+st8otOM1Kmhg6kVoLFAHimX5NykdIjSMQIpszq1uOeOO/5h04VOF/Kkm3D/6ULwGDPZF/56Nqyd/7mfDHqYrxe1u3GOhrTOVPW/72kQVfCuuPcBE3ORBUzVE+wCdMsGRl5oVZi9I1ULuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707231256; c=relaxed/simple;
-	bh=FZykc25Fgh62KQdzm9gVnouNp94N7q0i9r9a3bxaxdA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qhaw9DMJZiZCNBN+tsa9/gkfVv31zQL9uDf9A58RZmkvqosbTvZ4WY31zg7vcvFb+piwqXvmCM0Zo4wKAjZLe4FfB7NMWd+D3gUFkosd+LBtiR29khIE68Z+HwE+iJmeuIONSqHLOW7MIe4fV7cZh8guVwTWIj5zSCIefApjlnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOj7ThV4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707235027; c=relaxed/simple;
+	bh=teYxShqIxP/uLVM1uE3oK+u6Q9w7V0gJUpxrElVvNzE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=koom65YPtdiiIVUWUTOztd1SehNyrgFcqzXIO/D6o8F5WQq50lHoldKCQdG9eFRltb6BQv/W7iTXWOmS3pOasevxMoBXpuuX34VKX7YDlWL0emzFozIRj4yKZB1Fg7OE4cZYQ8UaVgEda/p2WUYMKe/QYIP+V4HP2YjwebkgEQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Glj47lM0; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOj7ThV4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E799DC433F1;
-	Tue,  6 Feb 2024 14:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707231255;
-	bh=FZykc25Fgh62KQdzm9gVnouNp94N7q0i9r9a3bxaxdA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=TOj7ThV4fk/3L3nP95TbiUIzZXXq/Md4A46Nqfcaf11sbfkRO1CYUYRvvlf07WhaJ
-	 vMMxDcdk/yaI0EpwSiWT0Vb0HLeXiEFd1MSTrn28FU3/TpTpxWYTACtOWI8ojUGCuT
-	 6+pugD2r9R+8HKoc+xRTFY+3FGz30hor1Wq9gp3wM2pKQM3eq6NqwZ2T0cHxXwzEPB
-	 e8quUcleAeaktBziCfNzYad/NvLs8uHuIffdXEgmjgxxzDIrHF/aVXyJXjJUNptuz1
-	 UIgquNUXAJM2Q6+YZZI4yHtBFxpPvNECUmURepE+MBq8IdY80XWUH/1z6Fh13s/wXP
-	 3GXEIs93OgDIg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1rXMpx-000qjP-L4;
-	Tue, 06 Feb 2024 14:54:13 +0000
-Date: Tue, 06 Feb 2024 14:54:12 +0000
-Message-ID: <86sf2563u3.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Thierry Reding" <thierry.reding@gmail.com>
-Cc: "Jon Hunter" <jonathanh@nvidia.com>,
-	"Sumit Gupta" <sumitg@nvidia.com>,
-	<treding@nvidia.com>,
-	<krzysztof.kozlowski@linaro.org>,
-	<mark.rutland@arm.com>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>,
-	<amhetre@nvidia.com>,
-	<bbasu@nvidia.com>
-Subject: Re: [Patch] memory: tegra: Skip SID override from Guest VM
-In-Reply-To: <CYY1YXL0FWK2.1L5CRNMKUF22J@gmail.com>
-References: <20240206114852.8472-1-sumitg@nvidia.com>
-	<86wmrh6b2n.wl-maz@kernel.org>
-	<252d6094-b2d6-496d-b28f-93507a193ede@nvidia.com>
-	<86v87169g2.wl-maz@kernel.org>
-	<CYY1YXL0FWK2.1L5CRNMKUF22J@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Glj47lM0"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-55fc7f63639so6768192a12.1;
+        Tue, 06 Feb 2024 07:57:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707235024; x=1707839824; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PSGpKzlxYKAshM9BfFGFO8H4EKQPq4yWk4Vf8BFZQD4=;
+        b=Glj47lM0yzIVtk/4iilJzMnhZpMcfWeovwbqCWS4btJFVQykHEntwRFLzJs1A4w+BS
+         iLKLC3jztyk0W7PyznWk3txIe0xPQssUosK3cMGU8WZ8E9oOlYlinwMzpOd3MePXXOWD
+         SNcFHocN9CUANBGOMj7Uxj1n+sIIUAvzDrNG3lp4HCN8v0T7Hlymh27EsNjv2Zru28w0
+         k14CCnWYALYTdXiXH6y0VH8teMX1JyAnLE7lsfQWUBLUj4NUMQBlurRHc5cgtcjmJnGx
+         60G1JH/66b91AgU8I9GZ+Ah3ZOevav/saS7lfHDcoWz9WgMw3kmDlWtrloqhRB3zG2Rg
+         s2FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707235024; x=1707839824;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PSGpKzlxYKAshM9BfFGFO8H4EKQPq4yWk4Vf8BFZQD4=;
+        b=FxMAFmoeAsuyMJqAZPegjBZs94BC3QFldo/ZeMFbawLPPQ00u4BHrlPFIktZFQIyjE
+         Xivj9Ke2pfspSEWp+A00jMg8ThhmcS75QPB8hfHDe0LTFsTblmnXH7P1BBZzKu4uw0Zn
+         cELBmCa4N1Qv/RDcz3GkWk+sHq6rpRTcPynz02HOfwRoZqJF5uAcjns9yLxssTML6JJx
+         YucZ2sL2hYFL4GF+b0mDELzrJxgU8s7GrfVTamMC/rstFJScamK5dvw+6CsCB2z+YWvY
+         2HXEIJwhR5P1xJmbX1qNicg1Po479Xah6LNuAuY8d4ZMvdXGcbcOGqBGnV7zREVxplj2
+         gZJQ==
+X-Gm-Message-State: AOJu0YxVXEiampXHxD5NkeWH4NzENmAx7+avOaK3dfqZ29uykh/9YSho
+	F1FQPlMrwKXDIkgr9z7nu51rD0inmY58ZpojgXox8b1D27SnalpmO1jqzwVM
+X-Google-Smtp-Source: AGHT+IErNoohgyuwuSnvIajwww/bNAqRr3vTucVpLOVuTmb2767RsWVe87TJheblWMpjSpxEtVOxGA==
+X-Received: by 2002:aa7:d88c:0:b0:55f:f32b:cd57 with SMTP id u12-20020aa7d88c000000b0055ff32bcd57mr2098125edq.4.1707235023876;
+        Tue, 06 Feb 2024 07:57:03 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCXFvEl/7pw62WXsSMlx9U03NoIY63KBCSxecTctzPun3JwWSv/zkyU9F153s93rfTCfX6tYMCassjQMr+BQRE2m5VvF1j5g0J+mmsnfdQ47q5BdPLt399wMQzRtJK19EbML+h2minYoFadjdeQPA8tyGZUKlGL+ZmtFhaqvk7qyC/2jlOVmvDSxy37y+QU6wqAy+vt9Wirj/zyPw66tcI0ErqyiSRnDqgjFGDDSPvBH5Q/dnkooFzkEHJlm83wDP7YmOqyzkFTfmCo2kncbfFLycNsRAusbj6yXsZkU+jEvp+T8BOLNvllUGDP4DizIR9dGKC04zSYc0KpJDDI4eduy3/WsE3NiEXWUIVP3zhXXx8hRFmy422vrL6jd+8o8sLaYBA==
+Received: from xeon.. ([188.163.112.49])
+        by smtp.gmail.com with ESMTPSA id ba14-20020a0564021ace00b005605716e755sm1149869edb.52.2024.02.06.07.57.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Feb 2024 07:57:03 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kees Cook <keescook@chromium.org>,
+	Maxim Schwalm <maxim.schwalm@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v3 0/3] Tegra30: add support for LG tegra based phones
+Date: Tue,  6 Feb 2024 17:56:40 +0200
+Message-Id: <20240206155643.28749-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com, treding@nvidia.com, krzysztof.kozlowski@linaro.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, amhetre@nvidia.com, bbasu@nvidia.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 06 Feb 2024 14:07:10 +0000,
-"Thierry Reding" <thierry.reding@gmail.com> wrote:
-> 
-> [1  <text/plain; UTF-8 (quoted-printable)>]
-> On Tue Feb 6, 2024 at 1:53 PM CET, Marc Zyngier wrote:
-> > On Tue, 06 Feb 2024 12:28:27 +0000, Jon Hunter <jonathanh@nvidia.com> wrote:
-> > > On 06/02/2024 12:17, Marc Zyngier wrote:
-> [...]
-> > > > - My own tegra186 HW doesn't have VHE, since it is ARMv8.0, and this
-> > > >    helper will always return 'false'. How could this result in
-> > > >    something that still works? Can I get a free CPU upgrade?
-> > > 
-> > > I thought this API just checks to see if we are in EL2?
-> >
-> > It does. And that's the problem. On ARMv8.0, we run the Linux kernel
-> > at EL1. Tegra186 is ARMv8.0 (Denver + A57). So as written, this change
-> > breaks the very platform it intends to support.
-> 
-> To clarify, the code that accesses these registers is shared across
-> Tegra186 and later chips. Tegra194 and later do support ARMv8.1 VHE.
+Bring up Tegra 3 based LG phones Optimus 4X HD and Optimus Vu based
+on LG X3 board.
 
-But even on these machines that are VHE-capable, not running at EL2
-doesn't mean we're running as a guest. The user can force the kernel
-to stick to EL1, using a command-line option such as kvm-arm.mode=nvhe
-which will force the kernel to stay at EL1 while deploying KVM at EL2.
+---
+Changes from v2:
+- switched from _ to - in node names
 
-> Granted, if it always returns false on Tegra186 that's not what we
-> want.
+Changes from v1:
+- switched from prefix lge to lg
+---
 
-I'm glad we agree here.
+Maxim Schwalm (1):
+  dt-bindings: arm: tegra: Add LG Optimus Vu P895 and Optimus 4X P880
 
-> > > > - If you assign this device to a VM and that the hypervisor doesn't
-> > > >    correctly virtualise it, then it is a different device and you
-> > > >    should simply advertise it something else. Or even better, fix your
-> > > >    hypervisor.
-> > > 
-> > > Sumit can add some more details on why we don't completely disable the
-> > > device for guest OSs.
-> >
-> > It's not about disabling it. It is about correctly supporting it
-> > (providing full emulation for it), or advertising it as something
-> > different so that SW can handle it differently.
-> 
-> It's really not a different device. It's exactly the same device except
-> that accessing some registers isn't permitted. We also can't easily
-> remove parts of the register region from device tree because these are
-> intermixed with other registers that we do want access to.
+Svyatoslav Ryhel (2):
+  ARM: tegra: Add device-tree for LG Optimus Vu (P895)
+  ARM: tegra: Add device-tree for LG Optimus 4X HD (P880)
 
-But that's the definition of being a different device. It has a
-different programming interface, hence it is different. The fact that
-it is the same HW block mediated by a hypervisor doesn't really change
-that.
-
-> > Poking into the internals of how the kernel is booted for a driver
-> > that isn't tied to the core architecture (because it would need to
-> > access system registers, for example) is not an acceptable outcome.
-> 
-> So what would be the better option? Use a different compatible string to
-> make the driver handle the device differently? Or adding a custom
-> property to the device tree node to mark this as running in a
-> virtualized environment?
-
-A different compatible string would be my preferred option. An extra
-property would work as well. As far as I am concerned, these two
-options are the right way to express the fact that you have something
-that isn't quite like the real thing.
-
-> Perhaps we can reuse the top-level hypervisor node? That seems to only
-> ever have been used for Xen on 32-bit ARM, so not sure if that'd still
-> be appropriate.
-
-I'd shy away from this. You would be deriving properties from a
-hypervisor implementation, instead of expressing those properties
-directly. In my experience, the direct method is always preferable.
-
-Thanks,
-
-	M.
+ .../devicetree/bindings/arm/tegra.yaml        |    8 +
+ arch/arm/boot/dts/nvidia/Makefile             |    2 +
+ arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts  |  489 +++++
+ arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts  |  496 +++++
+ arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi   | 1807 +++++++++++++++++
+ 5 files changed, 2802 insertions(+)
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.40.1
+
