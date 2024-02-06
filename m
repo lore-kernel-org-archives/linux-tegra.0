@@ -1,57 +1,57 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D73130E30;
-	Tue,  6 Feb 2024 15:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7ED1350E3;
+	Tue,  6 Feb 2024 15:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707235028; cv=none; b=H43upUKd5jiUdtCEhu/5C7m3zCsFi7g+mv93k7qT0UHqzYhRJ7+dKKVxWTCl5kCoPJHqmxFanIFxagt3BSVxkDVJRxnJnDzkiTKlmAvxaUwimtHmvEv7P7c/fFHTpjTMUk1KYlrFx8BBwlT1A7ebV4kxisHPP1CthW80qUc+4U4=
+	t=1707235031; cv=none; b=A0rqFHZDG2wmR9PaiGGTkhRT7ri7QQsyZDJLXZRPCh5Rs2wdeaOMecWztfn/v+03+UjJvku4buZjvHD1c8MQoilEOe4Tl/oZVo86kbRSrOgutpPVK03CsgL5g31aO8o70+stQth3yhmVYtbioTc9uGLVadJSdd7H/XosLrVZhXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707235028; c=relaxed/simple;
-	bh=yZxdr2dsDRt7puR0RK7vf8GPzQL3GlOUGyYoQ9A6MiA=;
+	s=arc-20240116; t=1707235031; c=relaxed/simple;
+	bh=Oiqj3czgWrNk4uJ5TS5zUfoVcWpLq/UjqyArJekAES4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=b6QpPMeBZ1hiGYg1iBfEcJwr948VQ9bk/7UMAovK8cnVTpDnns0Snf8p0UVzTylAy/0ZxNcJNyjPYEb2WIHhyziBDXoff/PJ9j5fPNUjtW3HNR3IeByCEfNbF+Y/+3vseOxp7zGMVxSjvmUxWngF/2SLsZKFN0d0CMPzf9uMWA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZbsX+eXw; arc=none smtp.client-ip=209.85.208.176
+	 MIME-Version; b=p43Kee+IfaWsjfOgS3aJBhnFnLXeFwsNdGbO0DXx5mjYmbahbAYdQRdGTslK4eQiOgNdMl26Q5tZkNtO5sROCW4S6F7OAwWUS4Dd/syStf+pCdWxSje/KVt8ZsylKF9/5KSN5buLGDLBlrwrYrwGzVxMgY3QK4mbC4Zr/ITt1PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhntsEO/; arc=none smtp.client-ip=209.85.208.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZbsX+eXw"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2d08d34ce3dso42201781fa.0;
-        Tue, 06 Feb 2024 07:57:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhntsEO/"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5605c7b0ca2so2989637a12.3;
+        Tue, 06 Feb 2024 07:57:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707235025; x=1707839825; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707235027; x=1707839827; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=95yg+DTXxQL4KdqLyvezyeLaZI+ZLzl6szC4BlO6nWQ=;
-        b=ZbsX+eXwxq9a5HKnhAFrWEREI8RfiH6fbcTsAtAh6Y/CWrjyJ6ohQxd+g67VOJI4/x
-         L+pMyotki7wfHFtYIWs9XO3i+hDB7xXchJ8Gt6jMBc+yRHEFRxkLeaZtHIA/oqWcJHTk
-         CGgqwf6aHsGqwHI9F/KxhS+zhsvxp19elhic9OnbCpTlXYQjK56Juo4JOxFmyr0xzFFK
-         Coc4ZhN7TJQlEmVAXgVH26eLQgU47al1yui5o67JNLv8NaGwSKlmtK+i06/qBiWkTIE1
-         noMdzwlUdCALvmlg25QKqC+43A2pa4E+w2Ugnow77IbbNbqK/pcs40jNqWgej1D9y3Lv
-         tfvg==
+        bh=176gRZ0aHCc+EOicp7S6VeOhWY+2nPq3bOkXh2u8lps=;
+        b=fhntsEO/N12eUaJA0mFmgUkqAR79krLurOv79qqLcI/WQuOXihbYc/vpb4PvSfQTHv
+         n/IDumBtMurpsXo55wf+aLo/nKsPb/d7saa7POW7E1UKSB8r19LmrwuCDU69MkYfT5Qx
+         csM8psYPBofjM+JKnuE4HjJVzerCoVQAkECMpm0b8TRyJlE2jQHYmweGUb9cDlk4cERf
+         VX+jdZNr1SIXxLxilxSs6FgCvXPVNK7ZEP4/Lns1hkkIRN7auDfaCzCLImPjfP4QxF98
+         t5/gNcg5eF/sB/GhwF7O3TdgKxJhmz1OpiCbSUakyqCRUjugssuV5xbk0qTTexqEd76i
+         lSZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707235025; x=1707839825;
+        d=1e100.net; s=20230601; t=1707235027; x=1707839827;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=95yg+DTXxQL4KdqLyvezyeLaZI+ZLzl6szC4BlO6nWQ=;
-        b=vNRdIElZCzVMuRt20qVIxa0rmdwj4jeXLugMwkBosnObvU2eQHZ2bwIXKReLUHgnVS
-         IO0jh9TsrIBlXUViyr3BwKEGQTdSr4OBio2AIxXHxgOJzPju45o++boiWrxAT4ovI5Z6
-         Z0ZtIZXXiqS2GZv8ISL5Y76jsscutS/HKNJkhgY+IflTL2faNTti9EcHndA9ivgtQDWD
-         IuuvLZ+ePPDIrh2iOTmkWnoMk1ZsLdmztqV41k6/bVmXlOzSXZTYLqrL7HQNZRTG7wV8
-         WB2BIi4Cz9NtnK5ovULxmYTdncGTMQTQZrbJ/71Kj9XeZtQB2ajDZA/XCBeD46H64QXJ
-         tlUA==
-X-Gm-Message-State: AOJu0YzZdv3aX7spN33mJ5bU9pttccD0qwe+DsNDl078lwKOLx6y+nxW
-	Dw8kzKa2zjNVRcfegzb3VgHShOQ0hcBDOzqPdP96+rCrXH7C/7GlLDtFttvE
-X-Google-Smtp-Source: AGHT+IEElEfg11Fm5ilaoCu9E/XweWbRKvfnK4ZZr+jGkrYtUBHUG7Kan/yNwYu1A3tb05mw7ED+mA==
-X-Received: by 2002:a2e:9496:0:b0:2d0:a3ff:33d1 with SMTP id c22-20020a2e9496000000b002d0a3ff33d1mr2458561ljh.9.1707235024814;
-        Tue, 06 Feb 2024 07:57:04 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCXNjphZgRXY6uxtd0ZcZp/kbUGqEyyN6j+A+PqZbGhVqjmIv8jf7E92pz1CYdSuHWO8lh0j73WrmEoEcYX9zXubQlIw/qyhJhzogaUjsLuy5FJXyg8KabH/SjDbnl+xsIvvcKGLllEr5sp1kdw0HY8zyoeSdfW+rQT9j+fNTaloCJV4tYdzgdw8YKxckjcb2Ytb2lh7Sv/syfdtAzER8qm1Lpi/+tYETy1Jf9ZwBLLXW8hmVyGaAl2tGNkgLFpmRu1dR5p8tECTI4+83NiP0pw76WThNzC/bdYdKhkzf2gDEZdGOgOGlriaIv8Ljo8D3aegF7umiJb05MyYDcwSwgPG3ygH3FotNfkRnkXGiOJW5wyEw3mNdot9nvSerfl5jJsPWQ==
+        bh=176gRZ0aHCc+EOicp7S6VeOhWY+2nPq3bOkXh2u8lps=;
+        b=D0xG8IAKXJkUifFQSIwf3GTTowod9Xj/r8Ej1W7LqD7zPkOdAsP7ZwHD/0AVaDJbti
+         6wGl914RdlaXccuzHf4/qa2Cu7eqHD6MWnaLQpOPudcYqYNdUXLsPZtqgSx3ZVztpPIV
+         /IugtVkHx63pspd6l0v5wDvKRq8ErolAu1xEkWzrqLY6xzUo9je2ljcGvhN0tPlb/6hL
+         tGg5zcsSd7/ahRVVtwrvdUd05LqFwtIlQ0kc0bD5yUv7W1EieKAj8yTLL3w2rySO93Jh
+         v9ox61QFiPmP/jzPmryNym0QygpJpD0ea432zVWa7rKzp80c55DThAkDQ0tjqOWx8jH0
+         GzfQ==
+X-Gm-Message-State: AOJu0Yz/4LDtYn4i+snVgiHrclWwoy/5mzBW4MVsNAeKB95v8rO1WkqR
+	amJlP/+poXZrXvul2vE2yESgPmRrOBl+OIRzYx5YGsmJR6yi/Thp
+X-Google-Smtp-Source: AGHT+IHowD2L078pZrH6Z28XtPQKTRBn7dWLC+bflwyhQa8IvdC7CXTzXR8mg/vSGK/VTlgBGDg1LA==
+X-Received: by 2002:a05:6402:782:b0:55f:fad8:4635 with SMTP id d2-20020a056402078200b0055ffad84635mr2004248edy.27.1707235027009;
+        Tue, 06 Feb 2024 07:57:07 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCUsm41f/BscG3dBwm+zVkxoHmWFDl/RIP9KtOpS0zxXDaTlaiCQSIu87yTl92bZjVUaJluAg3hc0ij/4ZW58IFbdeKC9zPJjxi8rfQy1esQCG/1TVadJ9vFmauMJle6jpj0OSKTF6thdEpZfLHnWEQIwT8m9ROt/L5Ub6Sb790GeDc6Q0TfBMZOgzB9Wkf7n1yjcVwmsJ5rEiAJ6b4tuPRL2KhsYIByH7KYVg227XWh7Vxmtt9Y9KD6gqTaJBQsfZlX5URVOECy9gLVCxY8mdQD4BMjvTUJ+bGJoXRbRzajsyUYyak+0kjc7GN1H1IztvA1340t70Q8Mu2qrybgo9hsNFOEV0Z0aSrjRhN8WG8w0FR+D9JgMao+UFy99UBGQGfTyg==
 Received: from xeon.. ([188.163.112.49])
-        by smtp.gmail.com with ESMTPSA id ba14-20020a0564021ace00b005605716e755sm1149869edb.52.2024.02.06.07.57.04
+        by smtp.gmail.com with ESMTPSA id ba14-20020a0564021ace00b005605716e755sm1149869edb.52.2024.02.06.07.57.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Feb 2024 07:57:04 -0800 (PST)
+        Tue, 06 Feb 2024 07:57:06 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -64,9 +64,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH v3 1/3] dt-bindings: arm: tegra: Add LG Optimus Vu P895 and Optimus 4X P880
-Date: Tue,  6 Feb 2024 17:56:41 +0200
-Message-Id: <20240206155643.28749-2-clamor95@gmail.com>
+Subject: [PATCH v3 3/3] ARM: tegra: Add device-tree for LG Optimus 4X HD (P880)
+Date: Tue,  6 Feb 2024 17:56:43 +0200
+Message-Id: <20240206155643.28749-4-clamor95@gmail.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240206155643.28749-1-clamor95@gmail.com>
 References: <20240206155643.28749-1-clamor95@gmail.com>
@@ -78,36 +78,523 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Maxim Schwalm <maxim.schwalm@gmail.com>
+Add device-tree for LG Optimus 4X HD P880, which is a NVIDIA
+Tegra30-based smartphone, originally running Android.
 
-Add a compatible for the LG Optimus Vu P895 and Optimus 4X P880.
-
-Signed-off-by: Maxim Schwalm <maxim.schwalm@gmail.com>
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/arm/tegra.yaml | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/boot/dts/nvidia/Makefile            |   1 +
+ arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts | 489 +++++++++++++++++++
+ 2 files changed, 490 insertions(+)
+ create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra.yaml b/Documentation/devicetree/bindings/arm/tegra.yaml
-index fcf956406168..8fb4923517d0 100644
---- a/Documentation/devicetree/bindings/arm/tegra.yaml
-+++ b/Documentation/devicetree/bindings/arm/tegra.yaml
-@@ -64,6 +64,14 @@ properties:
-       - items:
-           - const: asus,tf700t
-           - const: nvidia,tegra30
-+      - description: LG Optimus 4X P880
-+        items:
-+          - const: lg,p880
-+          - const: nvidia,tegra30
-+      - description: LG Optimus Vu P895
-+        items:
-+          - const: lg,p895
-+          - const: nvidia,tegra30
-       - items:
-           - const: toradex,apalis_t30-eval
-           - const: toradex,apalis_t30
+diff --git a/arch/arm/boot/dts/nvidia/Makefile b/arch/arm/boot/dts/nvidia/Makefile
+index f66337e5d188..96972559253c 100644
+--- a/arch/arm/boot/dts/nvidia/Makefile
++++ b/arch/arm/boot/dts/nvidia/Makefile
+@@ -39,6 +39,7 @@ dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += \
+ 	tegra30-cardhu-a02.dtb \
+ 	tegra30-cardhu-a04.dtb \
+ 	tegra30-colibri-eval-v3.dtb \
++	tegra30-lg-p880.dtb \
+ 	tegra30-lg-p895.dtb \
+ 	tegra30-ouya.dtb \
+ 	tegra30-pegatron-chagall.dtb
+diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts b/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
+new file mode 100644
+index 000000000000..2f7754fd42a1
+--- /dev/null
++++ b/arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
+@@ -0,0 +1,489 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++
++#include "tegra30-lg-x3.dtsi"
++
++/ {
++	model = "LG Optimus 4X HD P880";
++	compatible = "lg,p880", "nvidia,tegra30";
++
++	aliases {
++		mmc1 = &sdmmc3; /* uSD slot */
++		mmc2 = &sdmmc1; /* WiFi */
++	};
++
++	pinmux@70000868 {
++		pinctrl-names = "default";
++		pinctrl-0 = <&state_default>;
++
++		state_default: pinmux {
++			/* WLAN SDIO pinmux */
++			host-wlan-wake {
++				nvidia,pins = "pu4";
++				nvidia,function = "pwm1";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_ENABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
++			/* GNSS UART-B pinmux */
++			uartb-rxd {
++				nvidia,pins = "uart2_rxd_pc3";
++				nvidia,function = "uartb";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			uartb-txd {
++				nvidia,pins = "uart2_txd_pc2";
++				nvidia,function = "uartb";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			gps-reset {
++				nvidia,pins = "kb_row7_pr7";
++				nvidia,function = "kbc";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++
++			/* MicroSD pinmux */
++			sdmmc3-clk {
++				nvidia,pins = "sdmmc3_clk_pa6";
++				nvidia,function = "sdmmc3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			sdmmc3-data {
++				nvidia,pins = "sdmmc3_cmd_pa7",
++						"sdmmc3_dat0_pb7",
++						"sdmmc3_dat1_pb6",
++						"sdmmc3_dat2_pb5",
++						"sdmmc3_dat3_pb4";
++				nvidia,function = "sdmmc3";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++			microsd-detect {
++				nvidia,pins = "clk2_out_pw5";
++				nvidia,function = "rsvd2";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
++			/* GPIO keys pinmux */
++			volume-up {
++				nvidia,pins = "ulpi_data6_po7";
++				nvidia,function = "spi2";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
++			/* Sensors pinmux */
++			current-alert-irq {
++				nvidia,pins = "uart2_rts_n_pj6";
++				nvidia,function = "uartb";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
++
++			/* AUDIO pinmux */
++			sub-mic-ldo {
++				nvidia,pins = "gmi_cs7_n_pi6";
++				nvidia,function = "gmi";
++				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++		};
++	};
++
++	i2c@7000c400 {
++		touchscreen@20 {
++			rmi4-f11@11 {
++				syna,clip-x-high = <1110>;
++				syna,clip-y-high = <1973>;
++
++				touchscreen-inverted-y;
++			};
++		};
++	};
++
++	memory-controller@7000f000 {
++		emc-timings-0 {
++			/* SAMSUNG 1GB K4P8G304EB FGC1 533MHz */
++			nvidia,ram-code = <0>;
++
++			timing-12750000 {
++				clock-frequency = <12750000>;
++
++				nvidia,emem-configuration = < 0x00050001 0xc0000010
++					0x00000001 0x00000001 0x00000002 0x00000000
++					0x00000003 0x00000001 0x00000002 0x00000004
++					0x00000001 0x00000000 0x00000002 0x00000002
++					0x02020001 0x00060402 0x77230303 0x001f0000 >;
++			};
++
++			timing-25500000 {
++				clock-frequency = <25500000>;
++
++				nvidia,emem-configuration = < 0x00020001 0xc0000010
++					0x00000001 0x00000001 0x00000002 0x00000000
++					0x00000003 0x00000001 0x00000002 0x00000004
++					0x00000001 0x00000000 0x00000002 0x00000002
++					0x02020001 0x00060402 0x73e30303 0x001f0000 >;
++			};
++
++			timing-51000000 {
++				clock-frequency = <51000000>;
++
++				nvidia,emem-configuration = < 0x00010001 0xc0000010
++					0x00000001 0x00000001 0x00000002 0x00000000
++					0x00000003 0x00000001 0x00000002 0x00000004
++					0x00000001 0x00000000 0x00000002 0x00000002
++					0x02020001 0x00060402 0x72c30303 0x001f0000 >;
++			};
++
++			timing-102000000 {
++				clock-frequency = <102000000>;
++
++				nvidia,emem-configuration = < 0x00000001 0xc0000018
++					0x00000001 0x00000001 0x00000003 0x00000001
++					0x00000003 0x00000001 0x00000002 0x00000004
++					0x00000001 0x00000000 0x00000002 0x00000002
++					0x02020001 0x00060403 0x72430504 0x001f0000 >;
++			};
++
++			timing-204000000 {
++				clock-frequency = <204000000>;
++
++				nvidia,emem-configuration = < 0x00000003 0xc0000025
++					0x00000001 0x00000001 0x00000006 0x00000003
++					0x00000005 0x00000001 0x00000002 0x00000004
++					0x00000001 0x00000000 0x00000003 0x00000002
++					0x02030001 0x00070506 0x71e40a07 0x001f0000 >;
++			};
++
++			timing-266500000 {
++				clock-frequency = <266500000>;
++
++				nvidia,emem-configuration = < 0x00000004 0xC0000030
++					0x00000001 0x00000002 0x00000008 0x00000004
++					0x00000006 0x00000001 0x00000002 0x00000005
++					0x00000001 0x00000000 0x00000003 0x00000003
++					0x03030001 0x00090608 0x70040c09 0x001f0000 >;
++			};
++
++			timing-533000000 {
++				clock-frequency = <533000000>;
++
++				nvidia,emem-configuration = < 0x00000008 0xC0000060
++					0x00000003 0x00000004 0x00000010 0x0000000a
++					0x0000000d 0x00000002 0x00000002 0x00000008
++					0x00000002 0x00000000 0x00000004 0x00000005
++					0x05040002 0x00110b10 0x70281811 0x001f0000 >;
++			};
++		};
++	};
++
++	memory-controller@7000f400 {
++		emc-timings-0 {
++			/* SAMSUNG 1GB K4P8G304EB FGC1 533MHz */
++			nvidia,ram-code = <0>;
++
++			timing-12750000 {
++				clock-frequency = <12750000>;
++
++				nvidia,emc-auto-cal-interval = <0x001fffff>;
++				nvidia,emc-mode-1 = <0x00010022>;
++				nvidia,emc-mode-2 = <0x00020001>;
++				nvidia,emc-mode-reset = <0x00000000>;
++				nvidia,emc-zcal-cnt-long = <0x00000009>;
++				nvidia,emc-cfg-dyn-self-ref;
++				nvidia,emc-cfg-periodic-qrst;
++
++				nvidia,emc-configuration =  < 0x00000000
++					0x00000001 0x00000002 0x00000002 0x00000004
++					0x00000004 0x00000001 0x00000005 0x00000002
++					0x00000002 0x00000001 0x00000001 0x00000000
++					0x00000001 0x00000003 0x00000001 0x0000000b
++					0x00000009 0x0000002f 0x00000000 0x0000000b
++					0x00000001 0x00000001 0x00000002 0x00000000
++					0x00000001 0x00000007 0x00000002 0x00000002
++					0x00000003 0x00000008 0x00000004 0x00000001
++					0x00000002 0x00000036 0x00000004 0x00000004
++					0x00000000 0x00000000 0x00004282 0x007800a4
++					0x00008000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x00100220 0x0800201c 0x00000000
++					0x77ffc004 0x01f1f008 0x00000000 0x00000007
++					0x08000068 0x08000000 0x00000802 0x00064000
++					0x00000009 0x00090009 0xa0f10000 0x00000000
++					0x00000000 0x80000164 0xe0000000 0xff00ff00 >;
++			};
++
++			timing-25500000 {
++				clock-frequency = <25500000>;
++
++				nvidia,emc-auto-cal-interval = <0x001fffff>;
++				nvidia,emc-mode-1 = <0x00010022>;
++				nvidia,emc-mode-2 = <0x00020001>;
++				nvidia,emc-mode-reset = <0x00000000>;
++				nvidia,emc-zcal-cnt-long = <0x00000009>;
++				nvidia,emc-cfg-dyn-self-ref;
++				nvidia,emc-cfg-periodic-qrst;
++
++				nvidia,emc-configuration =  < 0x00000001
++					0x00000003 0x00000002 0x00000002 0x00000004
++					0x00000004 0x00000001 0x00000005 0x00000002
++					0x00000002 0x00000001 0x00000001 0x00000000
++					0x00000001 0x00000003 0x00000001 0x0000000b
++					0x00000009 0x00000060 0x00000000 0x00000018
++					0x00000001 0x00000001 0x00000002 0x00000000
++					0x00000001 0x00000007 0x00000004 0x00000004
++					0x00000003 0x00000008 0x00000004 0x00000001
++					0x00000002 0x0000006b 0x00000004 0x00000004
++					0x00000000 0x00000000 0x00004282 0x007800a4
++					0x00008000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x00100220 0x0800201c 0x00000000
++					0x77ffc004 0x01f1f008 0x00000000 0x00000007
++					0x08000068 0x08000000 0x00000802 0x00064000
++					0x0000000a 0x00090009 0xa0f10000 0x00000000
++					0x00000000 0x800001c5 0xe0000000 0xff00ff00 >;
++			};
++
++			timing-51000000 {
++				clock-frequency = <51000000>;
++
++				nvidia,emc-auto-cal-interval = <0x001fffff>;
++				nvidia,emc-mode-1 = <0x00010022>;
++				nvidia,emc-mode-2 = <0x00020001>;
++				nvidia,emc-mode-reset = <0x00000000>;
++				nvidia,emc-zcal-cnt-long = <0x00000009>;
++				nvidia,emc-cfg-dyn-self-ref;
++				nvidia,emc-cfg-periodic-qrst;
++
++				nvidia,emc-configuration =  < 0x00000003
++					0x00000006 0x00000002 0x00000002 0x00000004
++					0x00000004 0x00000001 0x00000005 0x00000002
++					0x00000002 0x00000001 0x00000001 0x00000000
++					0x00000001 0x00000003 0x00000001 0x0000000b
++					0x00000009 0x000000c0 0x00000000 0x00000030
++					0x00000001 0x00000001 0x00000002 0x00000000
++					0x00000001 0x00000007 0x00000008 0x00000008
++					0x00000003 0x00000008 0x00000004 0x00000001
++					0x00000002 0x000000d5 0x00000004 0x00000004
++					0x00000000 0x00000000 0x00004282 0x007800a4
++					0x00008000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x00100220 0x0800201c 0x00000000
++					0x77ffc004 0x01f1f008 0x00000000 0x00000007
++					0x08000068 0x08000000 0x00000802 0x00064000
++					0x00000013 0x00090009 0xa0f10000 0x00000000
++					0x00000000 0x80000287 0xe0000000 0xff00ff00 >;
++			};
++
++			timing-102000000 {
++				clock-frequency = <102000000>;
++
++				nvidia,emc-auto-cal-interval = <0x001fffff>;
++				nvidia,emc-mode-1 = <0x00010022>;
++				nvidia,emc-mode-2 = <0x00020001>;
++				nvidia,emc-mode-reset = <0x00000000>;
++				nvidia,emc-zcal-cnt-long = <0x0000000a>;
++				nvidia,emc-cfg-dyn-self-ref;
++				nvidia,emc-cfg-periodic-qrst;
++
++				nvidia,emc-configuration =  < 0x00000006
++					0x0000000d 0x00000004 0x00000002 0x00000004
++					0x00000004 0x00000001 0x00000005 0x00000002
++					0x00000002 0x00000001 0x00000001 0x00000000
++					0x00000001 0x00000003 0x00000001 0x0000000b
++					0x00000009 0x00000181 0x00000000 0x00000060
++					0x00000001 0x00000001 0x00000002 0x00000000
++					0x00000001 0x00000007 0x0000000f 0x0000000f
++					0x00000003 0x00000008 0x00000004 0x00000001
++					0x00000002 0x000001a9 0x00000004 0x00000004
++					0x00000000 0x00000000 0x00004282 0x007800a4
++					0x00008000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x000fc000 0x000fc000 0x000fc000
++					0x000fc000 0x00100220 0x0800201c 0x00000000
++					0x77ffc004 0x01f1f008 0x00000000 0x00000007
++					0x08000068 0x08000000 0x00000802 0x00064000
++					0x00000025 0x00090009 0xa0f10000 0x00000000
++					0x00000000 0x8000040b 0xe0000000 0xff00ff00 >;
++			};
++
++			timing-204000000 {
++				clock-frequency = <204000000>;
++
++				nvidia,emc-auto-cal-interval = <0x001fffff>;
++				nvidia,emc-mode-1 = <0x00010042>;
++				nvidia,emc-mode-2 = <0x00020001>;
++				nvidia,emc-mode-reset = <0x00000000>;
++				nvidia,emc-zcal-cnt-long = <0x00000013>;
++				nvidia,emc-cfg-dyn-self-ref;
++				nvidia,emc-cfg-periodic-qrst;
++
++				nvidia,emc-configuration =  < 0x0000000c
++					0x0000001a 0x00000008 0x00000003 0x00000005
++					0x00000004 0x00000001 0x00000006 0x00000003
++					0x00000003 0x00000002 0x00000002 0x00000000
++					0x00000001 0x00000003 0x00000001 0x0000000c
++					0x0000000a 0x00000303 0x00000000 0x000000c0
++					0x00000001 0x00000001 0x00000003 0x00000000
++					0x00000001 0x00000007 0x0000001d 0x0000001d
++					0x00000004 0x0000000b 0x00000005 0x00000001
++					0x00000002 0x00000351 0x00000004 0x00000006
++					0x00000000 0x00000000 0x00004282 0x004400a4
++					0x00008000 0x00070000 0x00070000 0x00070000
++					0x00070000 0x00070000 0x00070000 0x00070000
++					0x00070000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00080000 0x00080000 0x00080000
++					0x00080000 0x000e0220 0x0800201c 0x00000000
++					0x77ffc004 0x01f1f008 0x00000000 0x00000007
++					0x08000068 0x08000000 0x00000802 0x00064000
++					0x0000004a 0x00090009 0xa0f10000 0x00000000
++					0x00000000 0x80000713 0xe0000000 0xff00ff00 >;
++			};
++
++			timing-266500000 {
++				clock-frequency = <266500000>;
++
++				nvidia,emc-auto-cal-interval = <0x001fffff>;
++				nvidia,emc-mode-1 = <0x00010042>;
++				nvidia,emc-mode-2 = <0x00020002>;
++				nvidia,emc-mode-reset = <0x00000000>;
++				nvidia,emc-zcal-cnt-long = <0x00000018>;
++				nvidia,emc-cfg-periodic-qrst;
++
++				nvidia,emc-configuration =  < 0x0000000f
++					0x00000022 0x0000000b 0x00000004 0x00000005
++					0x00000005 0x00000001 0x00000007 0x00000004
++					0x00000004 0x00000002 0x00000002 0x00000000
++					0x00000002 0x00000005 0x00000002 0x0000000c
++					0x0000000b 0x000003ef 0x00000000 0x000000fb
++					0x00000001 0x00000001 0x00000004 0x00000000
++					0x00000001 0x00000009 0x00000026 0x00000026
++					0x00000004 0x0000000e 0x00000006 0x00000001
++					0x00000002 0x00000455 0x00000000 0x00000004
++					0x00000000 0x00000000 0x00006282 0x003200a4
++					0x00008000 0x00050000 0x00050000 0x00050000
++					0x00050000 0x00050000 0x00050000 0x00050000
++					0x00050000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00060000 0x00060000 0x00060000
++					0x00060000 0x000b0220 0x0800003d 0x00000000
++					0x77ffc004 0x01f1f008 0x00000000 0x00000007
++					0x08000068 0x08000000 0x00000802 0x00064000
++					0x00000060 0x000a000a 0xa0f10000 0x00000000
++					0x00000000 0x800008ee 0xe0000000 0xff00ff00 >;
++			};
++
++			timing-533000000 {
++				clock-frequency = <533000000>;
++
++				nvidia,emc-auto-cal-interval = <0x001fffff>;
++				nvidia,emc-mode-1 = <0x000100c2>;
++				nvidia,emc-mode-2 = <0x00020006>;
++				nvidia,emc-mode-reset = <0x00000000>;
++				nvidia,emc-zcal-cnt-long = <0x00000030>;
++				nvidia,emc-cfg-periodic-qrst;
++
++				nvidia,emc-configuration =  < 0x0000001f
++					0x00000045 0x00000016 0x00000009 0x00000008
++					0x00000009 0x00000003 0x0000000d 0x00000009
++					0x00000009 0x00000005 0x00000003 0x00000000
++					0x00000004 0x00000009 0x00000006 0x0000000d
++					0x00000010 0x000007df 0x00000000 0x000001f7
++					0x00000003 0x00000003 0x00000009 0x00000000
++					0x00000001 0x0000000f 0x0000004b 0x0000004b
++					0x00000008 0x0000001b 0x0000000c 0x00000001
++					0x00000002 0x000008aa 0x00000000 0x00000006
++					0x00000000 0x00000000 0x00006282 0xf0120091
++					0x00008000 0x0000000a 0x0000000a 0x0000000a
++					0x0000000a 0x0000000a 0x0000000a 0x0000000a
++					0x0000000a 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x00000000 0x00000000 0x00000000
++					0x00000000 0x0000000a 0x0000000a 0x0000000a
++					0x0000000a 0x00090220 0x0800003d 0x00000000
++					0x77ffc004 0x01f1f408 0x00000000 0x00000007
++					0x08000068 0x08000000 0x00000802 0x00064000
++					0x000000c0 0x000e000e 0xa0f10000 0x00000000
++					0x00000000 0x800010d9 0xe0000000 0xff00ff88 >;
++			};
++		};
++	};
++
++	sdmmc3: mmc@78000400 {
++		status = "okay";
++
++		cd-gpios = <&gpio TEGRA_GPIO(W, 5) GPIO_ACTIVE_LOW>;
++		bus-width = <4>;
++
++		vmmc-supply = <&vdd_usd>;
++		vqmmc-supply = <&vdd_1v8_vio>;
++	};
++
++	battery: battery-cell {
++		compatible = "simple-battery";
++		device-chemistry = "lithium-ion";
++		charge-full-design-microamp-hours = <2150000>;
++		energy-full-design-microwatt-hours = <8200000>;
++		operating-range-celsius = <0 45>;
++	};
++
++	gpio-keys {
++		key-volume-up {
++			label = "Volume Up";
++			gpios = <&gpio TEGRA_GPIO(O, 7) GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEUP>;
++			debounce-interval = <10>;
++			wakeup-event-action = <EV_ACT_ASSERTED>;
++			wakeup-source;
++		};
++	};
++
++	sound {
++		compatible = "lg,tegra-audio-max98089-p880",
++			     "nvidia,tegra-audio-max98089";
++		nvidia,model = "LG Optimus 4X HD MAX98089";
++
++		nvidia,int-mic-en-gpios = <&gpio TEGRA_GPIO(I, 6) GPIO_ACTIVE_HIGH>;
++	};
++};
 -- 
 2.40.1
 
