@@ -1,127 +1,55 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27490130AD4
-	for <linux-tegra@vger.kernel.org>; Tue,  6 Feb 2024 12:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EEB134744;
+	Tue,  6 Feb 2024 12:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707220849; cv=none; b=rzXjk+tl9ZVewPdkOW2zVnZVzQuD08OCoOWVySPJ/MR0rUf1/VVtGV2VSvNbVDGHRC5roMOD2uH4aY5TBl31kQCuIVFbTQgfSSizQfuG+M71gF60xBDIVudSE1gPpMxR2StSvW8+wIR+0Q/q74UdzzBBsH/77c4nmicqVIPSlKQ=
+	t=1707221297; cv=none; b=Jf+aSJL8iMHhjjmAdJZ1klsf0SXBSi4Bbls3+nAiCS/Hi8E8H1i/+4NO5HM6/XcIDi2tC2uAmQXoqjRRZO5wgJgwMxoTI0PFIXLMMr6XMYe6XBB6R4IbBjJQfZeC9t58t/9GR3Z41IZKDuOwo+RGgk4y+91D4fXLeeI77HmR46Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707220849; c=relaxed/simple;
-	bh=18lYvSeKmq38bs8N+84VmT5iHrgU5RFM7nhP+Zpxhno=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gJgvA8nrXpbTGhGWmpMY8Nb1I5LYinvUfANGtzkf+iqrsEFLg+Y20Tm1wsmb4BN9HBe/yty7ev91uZUzqhqc4xpf4ZOcojfmTi+JHTXtg+niqFGyaQTl9yEN7O0kRj/vjpmT5B6pGFuv/OUV7d8oq5ruSVuwwQ/QjrxDx25pZ00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uIALr5GL; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uIALr5GL"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-40fe2744e5cso2952695e9.1
-        for <linux-tegra@vger.kernel.org>; Tue, 06 Feb 2024 04:00:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707220846; x=1707825646; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=avTvuS762qmCgD6kqcgwSuKbF4TUne9nUly+9xf9U+Y=;
-        b=uIALr5GL7Rs/JvhSQu6xNYiEUoNNk3BgAYI58D1fGeU6/Lb8+z31ApR+219Qzs7tLR
-         SQBY7vGG3/fdPXyFY9bZyWt1vjz1FxfHx07963l+0n8EJ6fdToJAJw2umjNfpLSeeLeR
-         74sX/zLemATOxfXjb1vFFbG7RzN/84Ha+rfDWxg/TXN//xNcgIq+grB/olsY8happi+T
-         CZcJyRZplOAVvWsfz7UhekuXZoPit+NGssiQcM/mYHQL8XBLsqIrYJay+aL4f6kQqBfx
-         SbEgmNCl2V9xPLQ9V9Z8h5VkxzuXT4ln5KtSgNeEF77XVUDcetuZh8Pe0m49in6Ta30Q
-         WgiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707220846; x=1707825646;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=avTvuS762qmCgD6kqcgwSuKbF4TUne9nUly+9xf9U+Y=;
-        b=u5oAjFUcT1tWshsP29lKQkk1O9nPJML5iWbbySAlo4zwlPcjib1yg3MYDe4nuSMMHJ
-         n2iHPHqB1jvnWtKDExo9Yu6Zs8+6ZyZ/oPCJP40bdqN08Y0tB8ysaVHqQCidtLqyQMI8
-         gCRkX1Pjwvj6RontebN8wJ+AexeK5nk2I0mMlMAf9l5oPzsBSmxAPgMCABdrt713162I
-         ecxwrt2t6kMF8XoLv62hCB2f6lcpAxT2OIGFliDfCcxbjeKGrYUoKcuF8S2ubYkxKOuw
-         Zo6AXpl0PTN6AT1Rh+bp0FLcipbXCt1dPNy52aEow2e2RWzVNLOZ/uRDiAgFG1BTGBcJ
-         mNAw==
-X-Gm-Message-State: AOJu0Ywfzo/NS0XowD/p3/DyXLChGikt0Wtug7vkQILxB4kntOTJfYWK
-	GwdRyTZSQPgPs42lv33KUwmBnx+PWSjvUYiognUAK5wvp0UFVJjH+H9wZYkSovk=
-X-Google-Smtp-Source: AGHT+IH23PPTvp/q6Exz5xjfy1mPO/CAZzxSHy/N9EiLHdA2TLlOHNZ/7a57DAAVN43CWzL+bJVMiA==
-X-Received: by 2002:a05:600c:3552:b0:40f:b69e:aa1e with SMTP id i18-20020a05600c355200b0040fb69eaa1emr6523132wmq.13.1707220846416;
-        Tue, 06 Feb 2024 04:00:46 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWEvra0UCaEfz+U+lHYdsGUU4Mr6ByfWR8bqjc4vDVt/lZSKWoRUeSyIwE3xnjHboiWV+xKfXubHqa8cce4i3Hw6grMloIrv1Cpr/kw7vR9J6nFl55lG5LSblaMxRXdsjYvTOThx+xEzI4PsiUVzvvn4K2LGR9718QtCQHCqY0V+zQoHLP+GsobUOBSmHOWJYCGt5V+x60hheIs8X0Z9ohem9Yd/mn9FC31TMAh/qXxH560tftiL9GN0ki6iQ3n7XqM7ri8vVR1ZffkAA==
-Received: from [192.168.1.20] ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id d22-20020a05600c34d600b0040e3bdff98asm1847575wmq.23.2024.02.06.04.00.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Feb 2024 04:00:45 -0800 (PST)
-Message-ID: <2df227df-8bd4-44f1-a361-15b43aea0b47@linaro.org>
-Date: Tue, 6 Feb 2024 13:00:44 +0100
+	s=arc-20240116; t=1707221297; c=relaxed/simple;
+	bh=H098mPuy9mCSbtQ7HYZw+nmrKMVYVMCn1z01JgjG0ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=grc9kRiK9LgmqnfdciYIJA3Fbc8XWZar9RZVhNEce2pIVxIcUn7fF5uSKrOPnTX5gawYrcr+dUrvwp1V4uNR9HsYuJp4V6sXkKgmpQdHduy2Ex14N1EEMgAR1jhQr+xjPSVgyFrAShIyNO6yeO+AUafI4RiuBUAtxonmyep7y2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8679B1FB;
+	Tue,  6 Feb 2024 04:08:57 -0800 (PST)
+Received: from FVFF77S0Q05N.cambridge.arm.com (FVFF77S0Q05N.cambridge.arm.com [10.1.31.158])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ADBFA3F762;
+	Tue,  6 Feb 2024 04:08:13 -0800 (PST)
+Date: Tue, 6 Feb 2024 12:08:07 +0000
+From: Mark Rutland <mark.rutland@arm.com>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: treding@nvidia.com, krzysztof.kozlowski@linaro.org,
+	jonathanh@nvidia.com, maz@kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, amhetre@nvidia.com, bbasu@nvidia.com
+Subject: Re: [Patch] memory: tegra: Skip SID override from Guest VM
+Message-ID: <ZcIhJxPUZOTjOOYZ@FVFF77S0Q05N.cambridge.arm.com>
+References: <20240206114852.8472-1-sumitg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch] memory: tegra: Skip SID override from Guest VM
-Content-Language: en-US
-To: Sumit Gupta <sumitg@nvidia.com>, treding@nvidia.com,
- jonathanh@nvidia.com, maz@kernel.org, mark.rutland@arm.com,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: amhetre@nvidia.com, bbasu@nvidia.com
-References: <20240206114852.8472-1-sumitg@nvidia.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <20240206114852.8472-1-sumitg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 06/02/2024 12:48, Sumit Gupta wrote:
+On Tue, Feb 06, 2024 at 05:18:52PM +0530, Sumit Gupta wrote:
 > MC SID register access is restricted for Guest VM.
 > So, skip the SID override programming from the Guest VM.
 > 
 > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+
+Surely this is probed from the DT?
+
+Why would the hypervisor put this in the guest's DT if that hypervisor isn't
+exposing it to the guest?
+
+Mark.
+
 > ---
 >  drivers/memory/tegra/tegra186.c | 11 +++++++++++
 >  1 file changed, 11 insertions(+)
@@ -135,9 +63,6 @@ On 06/02/2024 12:48, Sumit Gupta wrote:
 >  #include <linux/of_platform.h>
 >  #include <linux/platform_device.h>
 > +#include <asm/virt.h>
-
-Are you sure this still compile tests?
-
 >  
 >  #include <soc/tegra/mc.h>
 >  
@@ -147,15 +72,24 @@ Are you sure this still compile tests?
 >  
 > +	if (!is_kernel_in_hyp_mode()) {
 > +		dev_dbg(mc->dev, "Register access not allowed\n");
-
-Doesn't this depend on hypervisor?
-
 > +		return 0;
 > +	}
 > +
 >  	if (!tegra_dev_iommu_get_stream_id(dev, &sid))
 >  		return 0;
-
-Best regards,
-Krzysztof
-
+>  
+> @@ -146,6 +152,11 @@ static int tegra186_mc_resume(struct tegra_mc *mc)
+>  #if IS_ENABLED(CONFIG_IOMMU_API)
+>  	unsigned int i;
+>  
+> +	if (!is_kernel_in_hyp_mode()) {
+> +		dev_dbg(mc->dev, "Register access not allowed\n");
+> +		return 0;
+> +	}
+> +
+>  	for (i = 0; i < mc->soc->num_clients; i++) {
+>  		const struct tegra_mc_client *client = &mc->soc->clients[i];
+>  
+> -- 
+> 2.17.1
+> 
