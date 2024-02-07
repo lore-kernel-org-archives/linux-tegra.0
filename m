@@ -1,316 +1,246 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41451BF24;
-	Wed,  7 Feb 2024 11:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707306998; cv=fail; b=ZJA0YVE2YCpoj7HouRJgPmqCTgHekji79wnY+ZCkzTnGtIP+n3rq7DBzxb/Nv2cGn8MpbRpghSrLPe428JI4cNWRVICBYzrBspeLCqoypiVvSF9hft8vGCtnaM24oZfOziw2y/UhV0Wi8LIHj12hB3r0eDILTaSWZpIG/835Ttc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707306998; c=relaxed/simple;
-	bh=RC6XTHldkY93z+M8mqt5cdQIdkSpLOlLOt9irQVSWG8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sqV+r8pYLA7gP//AtOZiUn7pEUp4dB5IywVcx5l9pgBxSk+QItPZqIItAxCLAweVfgc24ASIzEl/NVH91pFhd80YNMYOWqFdav6jd4saX7MOMqJJas0q6IdfHJKA7mPDhBirwT0s1yMlsJBbLCMi/kvykBVb57AO7HnrsAvX2iw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=L82nF6DA; arc=fail smtp.client-ip=40.107.236.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087FA5A0E9;
+	Wed,  7 Feb 2024 12:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707307427; cv=none; b=Kqsr1AlpeK53sGGvFF1AL1yQ6aJSeKfJtPe+RuEIrttHE/J7NjWeWZ+XrjPzOZbh8xym53e3F0nhboUClJR5cl+L0tuM/OzSn8ImUXq/vS6UyhDUz24ZtkCT87Zj1DKurzN5o4314XKTzAmvXisYlwWovGAMjdUjZ3xWB8IWgMo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707307427; c=relaxed/simple;
+	bh=a2Y7H1pRZaSET9eSXkWnLn1IAOa+qUY8ZdUduo6Wn/M=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R1SDMrP8Jepy0eyLHkhjhvwL123YprZaorW8eBPYjC2HbLKjpXPAj5X3UPGNZAYJJsUX7E5yxycZxFZFb7po1hKEXaOI/y2Uw9cs2u6OoCzuq/VZW1hfQWCgwVDDkHqvvs8GT9wW/C4oXaPvc6OXaSqQFhQubw+AZ7WAyDkW+9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfULpFCv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="L82nF6DA"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e0HKM7xrK2R7mX4OHSzj9CHbEXeQhX5U8wjhiQIudtRKlTbfpf1ZhtmEsaHQzJU2x3sl3lji1nvRn+wCnQLs1xi5aPYHsKqmFPQKkaRIlakYg8l19ou4EJ58upu5zgonEM9bat/3NJs60BX+Neukfj6Xji1nhk7BDCqyz8ir3HtudeGj4uoKERh3wJXlGk3L5i0adANhoyJXMD1FETjT07ZhABFCiwJOSSj1X8t7iJT9h7TvOV5B4kMlToHx+HNp8nMDMzf6mW7Ec3lWByQaZT48LUTMMGO7yMuMAFyZLNtwYlvq68AzyiAT3suxALVrJOZbRtE59W8hWTmN+2+9dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kpjZibRKgiBCeEEc5IiM/1bSP1xe9iLDPC4lU6+4wcw=;
- b=Ijw3M6udnO9Paee9Kz8WpNweecn3R6ccGA7KIox50RNfFHAcKU/U3IrghufYL7guoJQW51S2XIlJquZPu0Miq0WN7PDEdyH2VGZ1y6cBXTw0qvp8ffBTmqIrrKpoQJcVBwe8ROkKOVwEQ72OZUu0RGudQXY8r4a5F/N+PceOYMkGyff+D3vY7V+gXmAjzHELuodTrgQD8ZYjBkzP09opViy4pwmfTWFZhRmvqEu4/upGm1NekZVnsJQ3Za6Inbq9XaHApsIzgoPfy0of99aleOwq+XGSSFSg4JBiBKVcdkAjmuBxeUekhCii0hdpG96yrWNo1SH7PxREn+s09tgFmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kpjZibRKgiBCeEEc5IiM/1bSP1xe9iLDPC4lU6+4wcw=;
- b=L82nF6DAWQGDKLFOjrBM3viWI6rprQXvwHrJ5BnI2YE+HxbTMMeEA8d1h61GMjTq8F186OPJ9IvYz3FkwBaZY5427aTLszeGm76wX5JkCAoSBFnjJuuh/of3Bp/zIxfmmubo1cBVVigrEvsbz4ewI6WTUucF+0jCOQ9RfMFYmIH8jbMJJfbq8F8I6sdVwLIH55A1yTJd7hrVBayYJhdb7gQByBrag5u4Q2TABjNF826poP2NspHRGyBi0NEGs5rOBJzNLkK3KkSiKjWo23pmg3lYAZH4ivyLHZazzZjCdRnFZKpy8ZlGWgsl1wK6L8I11E7wCIp1I14sca4vySmq4Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- DM6PR12MB4450.namprd12.prod.outlook.com (2603:10b6:5:28e::18) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7292.10; Wed, 7 Feb 2024 11:56:33 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::acb6:8bd8:e40b:2bfe]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::acb6:8bd8:e40b:2bfe%3]) with mapi id 15.20.7270.016; Wed, 7 Feb 2024
- 11:56:33 +0000
-Message-ID: <c25eb595-8d91-40ea-9f52-efa15ebafdbc@nvidia.com>
-Date: Wed, 7 Feb 2024 11:56:26 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v4] net: stmmac: xgmac: fix handling of DPP safety
- error for DMA channels
-Content-Language: en-US
-To: Furong Xu <0x1207@gmail.com>, "David S. Miller" <davem@davemloft.net>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Joao Pinto
- <jpinto@synopsys.com>, Simon Horman <horms@kernel.org>,
- Serge Semin <fancer.lancer@gmail.com>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- xfr@outlook.com, rock.xu@nio.com,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20240203051439.1127090-1-0x1207@gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <20240203051439.1127090-1-0x1207@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P265CA0181.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:311::8) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfULpFCv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60D79C433F1;
+	Wed,  7 Feb 2024 12:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707307426;
+	bh=a2Y7H1pRZaSET9eSXkWnLn1IAOa+qUY8ZdUduo6Wn/M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IfULpFCvdYujQb/MqrhKnq116TrbWk3uVUVNO8cHUhx8myiFxw1DwWwPYq6EwnzNg
+	 pdYlnUn6Q6wIX91i4WFjpp76fErBFPC9C0pfXRMTDIOeDUPmzVR26Ox4X2AWM8UkeJ
+	 YBahrxcArgEcYodHo4RtIV5j47Vd16Oi2uhWpoArujTiY/olqQETVmA7Xk0YO5IZjz
+	 K0cYTqfUWm4eyCtCzxWOBv2RW2TQF3j/Ex08N0cdbjEnzPSDLEAoe9gI04JPerQ1Hh
+	 4WTUUzAa3kR1cG9y43+CU9L148r5f9BhjRpO6Io4TH6Y8WitnX2cZax4uLXdMM5vkn
+	 qLZfK84Y/lHmg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1rXgeW-00177V-0o;
+	Wed, 07 Feb 2024 12:03:44 +0000
+Date: Wed, 07 Feb 2024 12:03:43 +0000
+Message-ID: <86mssc5vmo.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: "Thierry Reding" <thierry.reding@gmail.com>
+Cc: "Jon Hunter" <jonathanh@nvidia.com>,
+	"Sumit Gupta" <sumitg@nvidia.com>,
+	<treding@nvidia.com>,
+	<krzysztof.kozlowski@linaro.org>,
+	<mark.rutland@arm.com>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>,
+	<amhetre@nvidia.com>,
+	<bbasu@nvidia.com>
+Subject: Re: [Patch] memory: tegra: Skip SID override from Guest VM
+In-Reply-To: <CYY5TXBRWCVF.6KNIROYGM631@gmail.com>
+References: <20240206114852.8472-1-sumitg@nvidia.com>
+	<86wmrh6b2n.wl-maz@kernel.org>
+	<252d6094-b2d6-496d-b28f-93507a193ede@nvidia.com>
+	<86v87169g2.wl-maz@kernel.org>
+	<CYY1YXL0FWK2.1L5CRNMKUF22J@gmail.com>
+	<86sf2563u3.wl-maz@kernel.org>
+	<CYY5TXBRWCVF.6KNIROYGM631@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|DM6PR12MB4450:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34f248cf-7ba1-41f5-b463-08dc27d3d444
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	U3+inSCB7dtR0JM72UHlQlnJUTjyN/l6utqFMgfM6uXNA6qK3mCcwKeviTA944CNiTygg2ZAT1zU098fjsu81J7hwrMXCdQry33ZzmOiyovmPt+TTSblqcHcev9NYoF4XZ3YWa3IlCNdtjZKHiab+OdYLc0amhC3aVNjoq8q5kzgsmvUi+fSPVxv3o6v/264N6F0qGLzCN9mAjSNDTp+ytZL/WDPcMx59lNrvvDO+WyYeC21+TvWT6adFGc5W64nRc+NmUg77C0/mOzpGuU4dWplNlEKe01VO6elasDkqWy+72L7ZMrSX62bh1rlmAtxRJjNu0TAqVbPCrvzSe9W8bspcgX7b/HJh76lU4wyIwftPm5cDNdHgzZTWM97VUFoxHfB5G/4bAMAWMm4Q5+TM8I6flGsyuTXfpU0I1WPrtMLuNlDLTsroLVlBwh5+Xk9oCkTBc9xlqIE1Jw5D8roG3xi2fO6xy2kTG1GuwTjB8gbt6eZhVAhL97smArgzK9bDehOBDsO+i4Hw6narvtf9PZV2IgLB7jUqbLP6mzdoWVwIGXJTKGHICV9fYKqZwFb408dHfHgBN0jzG6WTm62b7a+57FnYbH8hA0qLBKu6MI42vjXrFYjoHBlZ0Ao6D/mDTG7/smprYLJIYWYQQoPK77yWFB0TYe6aywZn6lAn1rHvJMCQfT3qlcMW4ov1M0+5WFA4JLZoLwfTXdRq7ftxQ==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(396003)(136003)(39860400002)(376002)(346002)(230922051799003)(1800799012)(64100799003)(451199024)(186009)(41300700001)(36756003)(6486002)(966005)(66946007)(110136005)(53546011)(6506007)(6512007)(66476007)(478600001)(6666004)(66556008)(8676002)(4326008)(8936002)(316002)(38100700002)(86362001)(2616005)(83380400001)(31696002)(5660300002)(921011)(2906002)(7416002)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NkR5N0hHWkNjUmo2STNoUWJSN0RXTTNSMnVLeitCYklpaURleFZRNTRvS0xS?=
- =?utf-8?B?V280TW93VTVwaERiUGV3QVVGT1VFRHVtVWlVbXorWDBsajJ6Y3JDaWlvMnZU?=
- =?utf-8?B?RlhRaHFWam1yU05KbG9hNUEyUXpvR3FxWStXVldQUVRzYmNhNURaZnlkd2pj?=
- =?utf-8?B?NWhCb09uM2dRak5YQnlUSVVCT2VSOWdRUVVjdDFValNxQVUxV3B5b0pweW10?=
- =?utf-8?B?UU5MZklnVEtuUS9yaTJIVXJPNVpUckYzSXlmamVTQXkxZ2Y1aXV6M0xmeXBN?=
- =?utf-8?B?YS80SThuY0dOeEVTZTJWYWpmWlUzMUhYc0gyQTdjS3JYUGRCcVBuZ2wveitY?=
- =?utf-8?B?L3BBM0lKSUxtL0hzaFFuYkVISEFjQ0VucUpmUHJaTXh2ZUdwUk5rR0F0OHBo?=
- =?utf-8?B?cXRwUWsrdVNYeVpDb2NqTitHS2luTTl0RFdIalA3QTNQMjN4cVNFWkNqSE1X?=
- =?utf-8?B?SFRyaGxJR01hQUhCbzF0NHJoTVo1Q041OUhpQTZpYU9NYmI0NVgvZEJvMnkv?=
- =?utf-8?B?T3BWWGJ6SEQwUWJyOWlnYnlzN0NqeTEvb0lWVXlJbjhJeEFOL0lRNnNML0Jz?=
- =?utf-8?B?VTNRcU5VZUJYT01UdDlCZmJtTThqSGthVU1lbHFNb0xSOEtCMkxCTGYzYUM0?=
- =?utf-8?B?cjZKQkpTckNIajgxbytqRDJwZkZiRXdYcHlDNUJya0I1alRaSnQyU0dPU01t?=
- =?utf-8?B?N0NDcmRLNDIzL3dOSEpuZm9CK0NpVTJENHd3NmRSbldNWDR5UFY4bVdZSEp5?=
- =?utf-8?B?aklPTDJIbHV6V0VJREtGRmo5bTZwUEVFTVJDY01uc0tGZ3ZlOUpqNzI1enBI?=
- =?utf-8?B?dEJYeTNRTC9yV3ZPUDNOelptNWtIMzBPSkpsNUdhTVpoRUwyamNLSnJyeUtr?=
- =?utf-8?B?bE1uMU5zQytCc1BZSDRZZE0ycEcxWkNvVzBkYUlpSEF5ZDZlVWIwdWdEM2k1?=
- =?utf-8?B?c1N6eXNNTlJFRmtCQktUa2NqVGsxUjg1TnNTdGl1NVpnK3JtRXR1TitkRTE3?=
- =?utf-8?B?MVhXU1ZyRU1pRDdITGd2U0FLdFYyNmhpTVNFNHl0eWdlVnRKYk5hTmhUSFBS?=
- =?utf-8?B?MDVRdGx2Mm84RzYzL09BcDlsbFdaNUU4QjdtUzVTREdDRVFJZUdIbGxlWUdn?=
- =?utf-8?B?ajBiVTdIQ0gwaGlWdlZaQjVqTDhDTWlJN0QvdjRGRm9ka0M4NTYySGVIcjJC?=
- =?utf-8?B?ck83RjRpK0dEZ3B3T0pDN05RM1lWNUM2K3NRd1A0bGZPaDRjWVlZTmhBSHZY?=
- =?utf-8?B?N1crZ1loNDBtVTFiWUVjVUwvTlFrNHVKZmJRKzhOd2xvbzN3aHpmd2ZwZisw?=
- =?utf-8?B?Q3g4eXVtTVRYRzNwems3dWNsK3NjK0l5ZGNHWE9TaWdjamJSL0tZdDNLdWR1?=
- =?utf-8?B?WExKekVISHJFT3ZieGNhYmxMQ2lxdjg1WVc1S1gwdnFtZU1IY0VJaTh4Y2lL?=
- =?utf-8?B?VzNjYjQ0Vm5JcTBscHcxYW9wYXl6dG9UYTZnY2pGUGV6aGc2VU5MVTkvNEVz?=
- =?utf-8?B?Tk5vQWY2TU1XNE95Tjd0TlNCd0hzWkUrQ01vSVU1cC9YZllkWkxwdzB5RlVl?=
- =?utf-8?B?d3c2R2ZlVGxPVU03bCs3THBta09FUTV4bXNtM1UwU251Y0t1bXdxaWM0YVB5?=
- =?utf-8?B?Y3VGS1BYTTNZSjdCRUkxVlh5M01ZWEZxUTdZeiswUWhPeU9tWGo4ZTB6NTJj?=
- =?utf-8?B?R01PQXpyRWVFblNsMndabTBEYjJCV3lDMERxRERkVjRJVTA0emdMc2l4eEVi?=
- =?utf-8?B?SnNBMVFBVkVFaWthVHNWZzJWVlk2d0FNVzl2SnNBV3MwWFBGa1JQWmg4aFBB?=
- =?utf-8?B?R1BxVzAvVEEraWdFYVFpcEgwRElQazNNdjdJQXBoRStMM3RwQnVlaEFzRFpl?=
- =?utf-8?B?VjBnZDNxUGJHZU5FTlF1RTRSUGZEYmxlL0J5NXIwWEhJci81YVNGdDNKN21L?=
- =?utf-8?B?cmRzTWhiOGkrdHhnbkdQeXpNOHZ4bUNxZHVJVkM2eHVYcDdpNVU1OGlmSGxV?=
- =?utf-8?B?N0NxRGE1RlB5cWtQbElvbnJIbm12aFMvWUI0RHNBZW5SZC9ITlI2ZUxUc3hq?=
- =?utf-8?B?amJGcXB3elphL0tobndYYTVIYVMvcDRLdm9xUkZudzVrUVZMbFgvTy9SS1hE?=
- =?utf-8?B?QWRidHM3eHBhTytpVXZQbmdDQSs0YytLbWlxTUR1bEQwbFNTb0FlaDFvMlo3?=
- =?utf-8?B?OEc2MmxKNG1FQWRXWUU2dlVMWFFtTktFUGx6UjV2eGZGOWcxM0djMmpQR01u?=
- =?utf-8?B?L3ZlbGlZaDFpZ0JZRUNDNEJSaVFRPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34f248cf-7ba1-41f5-b463-08dc27d3d444
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Feb 2024 11:56:33.4608
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: E0OAF3AJMGb9X7qntPtkTbA41S/NHyvz4FQV0XPWO/sE9mAe13Ge8Ou3qd7juY6OqYxmPqO3IVFT3enW03cBdg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4450
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com, treding@nvidia.com, krzysztof.kozlowski@linaro.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, amhetre@nvidia.com, bbasu@nvidia.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-
-On 03/02/2024 05:14, Furong Xu wrote:
-> Commit 56e58d6c8a56 ("net: stmmac: Implement Safety Features in
-> XGMAC core") checks and reports safety errors, but leaves the
-> Data Path Parity Errors for each channel in DMA unhandled at all, lead to
-> a storm of interrupt.
-> Fix it by checking and clearing the DMA_DPP_Interrupt_Status register.
+On Tue, 06 Feb 2024 17:08:42 +0000,
+"Thierry Reding" <thierry.reding@gmail.com> wrote:
 > 
-> Fixes: 56e58d6c8a56 ("net: stmmac: Implement Safety Features in XGMAC core")
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-> ---
-> Changes in v4:
->   - fix a typo name of DDPP bit, thanks Serge Semin
+> [1  <text/plain; UTF-8 (quoted-printable)>]
+> On Tue Feb 6, 2024 at 3:54 PM CET, Marc Zyngier wrote:
+> > On Tue, 06 Feb 2024 14:07:10 +0000,
+> > "Thierry Reding" <thierry.reding@gmail.com> wrote:
+> > > 
+> > > [1  <text/plain; UTF-8 (quoted-printable)>]
+> > > On Tue Feb 6, 2024 at 1:53 PM CET, Marc Zyngier wrote:
+> > > > On Tue, 06 Feb 2024 12:28:27 +0000, Jon Hunter <jonathanh@nvidia.com> wrote:
+> > > > > On 06/02/2024 12:17, Marc Zyngier wrote:
+> > > [...]
+> > > > > > - My own tegra186 HW doesn't have VHE, since it is ARMv8.0, and this
+> > > > > >    helper will always return 'false'. How could this result in
+> > > > > >    something that still works? Can I get a free CPU upgrade?
+> > > > > 
+> > > > > I thought this API just checks to see if we are in EL2?
+> > > >
+> > > > It does. And that's the problem. On ARMv8.0, we run the Linux kernel
+> > > > at EL1. Tegra186 is ARMv8.0 (Denver + A57). So as written, this change
+> > > > breaks the very platform it intends to support.
+> > > 
+> > > To clarify, the code that accesses these registers is shared across
+> > > Tegra186 and later chips. Tegra194 and later do support ARMv8.1 VHE.
+> >
+> > But even on these machines that are VHE-capable, not running at EL2
+> > doesn't mean we're running as a guest. The user can force the kernel
+> > to stick to EL1, using a command-line option such as kvm-arm.mode=nvhe
+> > which will force the kernel to stay at EL1 while deploying KVM at EL2.
+> >
+> > > Granted, if it always returns false on Tegra186 that's not what we
+> > > want.
+> >
+> > I'm glad we agree here.
+> >
+> > > > > > - If you assign this device to a VM and that the hypervisor doesn't
+> > > > > >    correctly virtualise it, then it is a different device and you
+> > > > > >    should simply advertise it something else. Or even better, fix your
+> > > > > >    hypervisor.
+> > > > > 
+> > > > > Sumit can add some more details on why we don't completely disable the
+> > > > > device for guest OSs.
+> > > >
+> > > > It's not about disabling it. It is about correctly supporting it
+> > > > (providing full emulation for it), or advertising it as something
+> > > > different so that SW can handle it differently.
+> > > 
+> > > It's really not a different device. It's exactly the same device except
+> > > that accessing some registers isn't permitted. We also can't easily
+> > > remove parts of the register region from device tree because these are
+> > > intermixed with other registers that we do want access to.
+> >
+> > But that's the definition of being a different device. It has a
+> > different programming interface, hence it is different. The fact that
+> > it is the same HW block mediated by a hypervisor doesn't really change
+> > that.
 > 
-> Changes in v3:
->   - code style fix, thanks Paolo Abeni
+> The programming model isn't really different in these cases, but rather
+> restricted. I think a compatible string is a suboptimal way to describe
+> this.
+
+It *is* different. If it wasn't different, you wouldn't need this
+patch. I'm puzzled that we have to argue on *that*. You can call it
+restricted, I call it broken. In both case, it is a *different*
+programming interface as you can't use existing SW for it.
+
 > 
-> Changes in v2:
->    - explicit enable Data Path Parity Protection
->    - add new counters to stmmac_safety_stats
->    - add detailed log
-> ---
->   drivers/net/ethernet/stmicro/stmmac/common.h  |  1 +
->   .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |  3 +
->   .../ethernet/stmicro/stmmac/dwxgmac2_core.c   | 57 ++++++++++++++++++-
->   3 files changed, 60 insertions(+), 1 deletion(-)
+> > > > Poking into the internals of how the kernel is booted for a driver
+> > > > that isn't tied to the core architecture (because it would need to
+> > > > access system registers, for example) is not an acceptable outcome.
+> > > 
+> > > So what would be the better option? Use a different compatible string to
+> > > make the driver handle the device differently? Or adding a custom
+> > > property to the device tree node to mark this as running in a
+> > > virtualized environment?
+> >
+> > A different compatible string would be my preferred option. An extra
+> > property would work as well. As far as I am concerned, these two
+> > options are the right way to express the fact that you have something
+> > that isn't quite like the real thing.
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-> index 721c1f8e892f..b4f60ab078d6 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/common.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-> @@ -216,6 +216,7 @@ struct stmmac_safety_stats {
->   	unsigned long mac_errors[32];
->   	unsigned long mtl_errors[32];
->   	unsigned long dma_errors[32];
-> +	unsigned long dma_dpp_errors[32];
->   };
->   
->   /* Number of fields in Safety Stats */
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> index 207ff1799f2c..5c67a3f89f08 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> @@ -303,6 +303,8 @@
->   #define XGMAC_RXCEIE			BIT(4)
->   #define XGMAC_TXCEIE			BIT(0)
->   #define XGMAC_MTL_ECC_INT_STATUS	0x000010cc
-> +#define XGMAC_MTL_DPP_CONTROL		0x000010e0
-> +#define XGMAC_DPP_DISABLE		BIT(0)
->   #define XGMAC_MTL_TXQ_OPMODE(x)		(0x00001100 + (0x80 * (x)))
->   #define XGMAC_TQS			GENMASK(25, 16)
->   #define XGMAC_TQS_SHIFT			16
-> @@ -385,6 +387,7 @@
->   #define XGMAC_DCEIE			BIT(1)
->   #define XGMAC_TCEIE			BIT(0)
->   #define XGMAC_DMA_ECC_INT_STATUS	0x0000306c
-> +#define XGMAC_DMA_DPP_INT_STATUS	0x00003074
->   #define XGMAC_DMA_CH_CONTROL(x)		(0x00003100 + (0x80 * (x)))
->   #define XGMAC_SPH			BIT(24)
->   #define XGMAC_PBLx8			BIT(16)
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-> index eb48211d9b0e..04d7c4dc2e35 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-> @@ -830,6 +830,43 @@ static const struct dwxgmac3_error_desc dwxgmac3_dma_errors[32]= {
->   	{ false, "UNKNOWN", "Unknown Error" }, /* 31 */
->   };
->   
-> +static const char * const dpp_rx_err = "Read Rx Descriptor Parity checker Error";
-> +static const char * const dpp_tx_err = "Read Tx Descriptor Parity checker Error";
-> +static const struct dwxgmac3_error_desc dwxgmac3_dma_dpp_errors[32] = {
-> +	{ true, "TDPES0", dpp_tx_err },
-> +	{ true, "TDPES1", dpp_tx_err },
-> +	{ true, "TDPES2", dpp_tx_err },
-> +	{ true, "TDPES3", dpp_tx_err },
-> +	{ true, "TDPES4", dpp_tx_err },
-> +	{ true, "TDPES5", dpp_tx_err },
-> +	{ true, "TDPES6", dpp_tx_err },
-> +	{ true, "TDPES7", dpp_tx_err },
-> +	{ true, "TDPES8", dpp_tx_err },
-> +	{ true, "TDPES9", dpp_tx_err },
-> +	{ true, "TDPES10", dpp_tx_err },
-> +	{ true, "TDPES11", dpp_tx_err },
-> +	{ true, "TDPES12", dpp_tx_err },
-> +	{ true, "TDPES13", dpp_tx_err },
-> +	{ true, "TDPES14", dpp_tx_err },
-> +	{ true, "TDPES15", dpp_tx_err },
-> +	{ true, "RDPES0", dpp_rx_err },
-> +	{ true, "RDPES1", dpp_rx_err },
-> +	{ true, "RDPES2", dpp_rx_err },
-> +	{ true, "RDPES3", dpp_rx_err },
-> +	{ true, "RDPES4", dpp_rx_err },
-> +	{ true, "RDPES5", dpp_rx_err },
-> +	{ true, "RDPES6", dpp_rx_err },
-> +	{ true, "RDPES7", dpp_rx_err },
-> +	{ true, "RDPES8", dpp_rx_err },
-> +	{ true, "RDPES9", dpp_rx_err },
-> +	{ true, "RDPES10", dpp_rx_err },
-> +	{ true, "RDPES11", dpp_rx_err },
-> +	{ true, "RDPES12", dpp_rx_err },
-> +	{ true, "RDPES13", dpp_rx_err },
-> +	{ true, "RDPES14", dpp_rx_err },
-> +	{ true, "RDPES15", dpp_rx_err },
-> +};
-> +
->   static void dwxgmac3_handle_dma_err(struct net_device *ndev,
->   				    void __iomem *ioaddr, bool correctable,
->   				    struct stmmac_safety_stats *stats)
-> @@ -841,6 +878,13 @@ static void dwxgmac3_handle_dma_err(struct net_device *ndev,
->   
->   	dwxgmac3_log_error(ndev, value, correctable, "DMA",
->   			   dwxgmac3_dma_errors, STAT_OFF(dma_errors), stats);
-> +
-> +	value = readl(ioaddr + XGMAC_DMA_DPP_INT_STATUS);
-> +	writel(value, ioaddr + XGMAC_DMA_DPP_INT_STATUS);
-> +
-> +	dwxgmac3_log_error(ndev, value, false, "DMA_DPP",
-> +			   dwxgmac3_dma_dpp_errors,
-> +			   STAT_OFF(dma_dpp_errors), stats);
->   }
->   
->   static int
-> @@ -881,6 +925,12 @@ dwxgmac3_safety_feat_config(void __iomem *ioaddr, unsigned int asp,
->   	value |= XGMAC_TMOUTEN; /* FSM Timeout Feature */
->   	writel(value, ioaddr + XGMAC_MAC_FSM_CONTROL);
->   
-> +	/* 5. Enable Data Path Parity Protection */
-> +	value = readl(ioaddr + XGMAC_MTL_DPP_CONTROL);
-> +	/* already enabled by default, explicit enable it again */
-> +	value &= ~XGMAC_DPP_DISABLE;
-> +	writel(value, ioaddr + XGMAC_MTL_DPP_CONTROL);
-> +
->   	return 0;
->   }
->   
-> @@ -914,7 +964,11 @@ static int dwxgmac3_safety_feat_irq_status(struct net_device *ndev,
->   		ret |= !corr;
->   	}
->   
-> -	err = dma & (XGMAC_DEUIS | XGMAC_DECIS);
-> +	/* DMA_DPP_Interrupt_Status is indicated by MCSIS bit in
-> +	 * DMA_Safety_Interrupt_Status, so we handle DMA Data Path
-> +	 * Parity Errors here
-> +	 */
-> +	err = dma & (XGMAC_DEUIS | XGMAC_DECIS | XGMAC_MCSIS);
->   	corr = dma & XGMAC_DECIS;
->   	if (err) {
->   		dwxgmac3_handle_dma_err(ndev, ioaddr, corr, stats);
-> @@ -930,6 +984,7 @@ static const struct dwxgmac3_error {
->   	{ dwxgmac3_mac_errors },
->   	{ dwxgmac3_mtl_errors },
->   	{ dwxgmac3_dma_errors },
-> +	{ dwxgmac3_dma_dpp_errors },
->   };
->   
->   static int dwxgmac3_safety_feat_dump(struct stmmac_safety_stats *stats,
+> Coincidentally there's another discussion with a lot of similarities
+> regarding simulated platforms. For these it's usually less about the
+> register set being restricted and more about certain quirks that are
+> needed which will not ultimately be necessary for silicon.
+> 
+> This could be a timeout that's longer in simulation, or it could be
+> certain programming that would be needed in silicon but isn't necessary
+> or functional in simulation (think I/O calibration, that sort of thing).
+> One could argue that these are also different devices when in simulation
+> but they really aren't. They're more like an approximation of the actual
+> device that will be in silicon chips.
 
+Simulation/DV environments are a very different kettle of fish. You
+generally treat passing time with a scaling factor, and you are likely
+to run  very hacked-up SW stack anyway.
 
-This change is breaking the build on some of our builders that are still using GCC 6.x ...
+In any case, this is not relevant to upstream stuff, unless you plan
+to ship your emulation environment.
 
-drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c:836:20: error: initialiser element is not constant
-   { true, "TDPES0", dpp_tx_err },
-                     ^~~~~~~~~~
-drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c:836:20: note: (near initialisation for ‘dwxgmac3_dma_dpp_errors[0].detailed_desc’)
-drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c:837:20: error: initialiser element is not constant
-   { true, "TDPES1", dpp_tx_err },
-                     ^~~~~~~~~~
-drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c:837:20: note: (near initialisation for ‘dwxgmac3_dma_dpp_errors[1].detailed_desc’)
-...
+> Another problem that both of the cases have in common is that they are
+> parameters that usually apply to the entire system. For some devices it
+> is easier to parameterize via DT (for example for certain devices we
+> have bindings with special register regions that are only available in
+> host OS mode), but for others this may not be true. Adding extra
+> compatible strings for virtualization/simulation is going to get quite
+> complex very quickly if we need to differentiate between all of these
+> scenarios.
 
-I know that this is quite old but the minimum supported by the kernel is v5.1 ...
+That's the price you pay for these inconsistencies. If your "HW" has a
+lot of variability and that you can't discover its capabilities from
+SW, then it either badly designed, badly implemented, badly emulated,
+or any combination thereof.
 
-https://www.kernel.org/doc/html/next/process/changes.html
+In any case, you get to keep the pieces.
 
-Jon
+> 
+> > > Perhaps we can reuse the top-level hypervisor node? That seems to only
+> > > ever have been used for Xen on 32-bit ARM, so not sure if that'd still
+> > > be appropriate.
+> >
+> > I'd shy away from this. You would be deriving properties from a
+> > hypervisor implementation, instead of expressing those properties
+> > directly. In my experience, the direct method is always preferable.
+> 
+> I would generally agree. However, I think especially the compatible
+> string solution could turn very ugly for this. If we express these
+> properties via compatible strings we may very well end up with many
+> different compatible strings to cover all cases.
+> 
+> Say you've got one hypervisor that changes the programming model in a
+> certain way and a second hypervisor that constrains in a different way.
+> Do we now need one compatible string for each hypervisor? Do we add
+> compatible strings for each restriction and have potentially very long
+> compatible string lists? Separate properties would work slightly better
+> for this.
+
+Again, the job of a hypervisor is to offer an architecturally correct
+view of some HW, emulated or not. If your hypervisors are implementing
+a large variety of diverging behaviours, SW needs to be able to
+distinguish between those. You can either add properties, use compat
+strings, or use a discovery protocol implemented by the device.
+
+In any case, each deviation needs to be uniquely identifiable, and be
+described either in FW or by the device itself, if only because Linux
+isn't the only game in town.
+
+> There are some cases where we can use register contents to determine
+> what the OS is allowed to do, but these registers don't exist for all HW
+> blocks. We may be able to get more added to new chips, but we obviously
+> can't retroactively add them for existing ones.
+> 
+> A central node or property would at least allow broad parameterization.
+> I would hope that at least hypervisor implementations don't vary too
+> much in terms of what they restrict and what they don't, so perhaps it
+> wouldn't be that bad. Perhaps that's also overly optimistic.
+
+Top level properties are no good unless what they express is forever
+immutable and described upfront. Identifying a hypervisor doesn't do
+that, and most of the time there will be all sorts of *variable*
+properties that need to be further discovered by a mechanism or
+another. In my (surely very limited) experience at writing hypervisors
+for some time, this eventually becomes an unmaintainable mess.
+
+You are of course free to do that in the drivers you maintain as long
+as you don't break my own toys, but I'd urge you to reconsider this
+and explore other possibilities.
+
+Thanks,
+
+	M.
 
 -- 
-nvpublic
+Without deviation from the norm, progress is not possible.
