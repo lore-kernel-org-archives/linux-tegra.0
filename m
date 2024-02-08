@@ -1,204 +1,181 @@
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA14D86AD2
-	for <linux-tegra@vger.kernel.org>; Wed,  7 Feb 2024 17:41:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D661D55D
+	for <linux-tegra@vger.kernel.org>; Thu,  8 Feb 2024 01:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707327685; cv=none; b=t70fhvWkDLJyUEzzfp37U9ENfFcPNNk2cLL1+1BMBTTccu/OvBMdWBGnPo2vahkwkTW2VYtXwtv1Oj01Y0CNjLdtouFUvV1nHKJ4h259NQH2VwFgCTIpS2bdLaHNHy7amXCjIkMwNN5a+rmtM72kmpQTBtAAHp5kTbO2V0gBG4E=
+	t=1707355374; cv=none; b=Uv7jGco7pASDEVU3mYdeD7mBvXfXDm8QB3q6+tqG4bC/cY5Y4yQvr5Zffz0D24tglyBt+R0+W1LayaEWcvv249+5Naw7I5rmznm8pAAkL7//N+uyOVrPbFSbg7pNHGc/n7WeGwZ33QFQtceMOf+muKBfPdkvDW6xBL7TESRjqS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707327685; c=relaxed/simple;
-	bh=PHns6xqLyHWVS2RFXaEsGlNTnkb0vFPfE2pekEJ/kfI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LUonKjjZqg3ukW/CcO3YtJVHK0cdPpdgAuJWiJH3lWJvyE91EPg6m1Lr/s0P//DWlWmE09I/X0T9k4Aaa0LAscgNkzusADMDzAC0rnrZkvVgzQCRkS51xW0akcItZpw49XHzVkiWg94rVzn96voBhUcA4a/PtdP7LWA5n3rofTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=arnOFxU5 reason="key not found in DNS"; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="arnOFxU5"
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7857bc09456so32306185a.3
-        for <linux-tegra@vger.kernel.org>; Wed, 07 Feb 2024 09:41:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1707327680; x=1707932480; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HrRTSlkta7nD8c1SJPx3AxPn1tn9y9LkFmhcOlF4lks=;
-        b=arnOFxU5cn85jYFGkJUyCJxEvYG2g4lb29V0lw7lYx6dhVbOMMj1ZJLlqlx++DPplJ
-         iilZAVjOvPgm///IjM6he5GyyUZ7k3FcvE1QswXro+J9VEWwR1FGRxzCU6YM1IfibVR4
-         YrLd3Uzl+fzzLH/OijQWbSNVnurl9YVsX9kotUtzYq11B+3sbIrdtPD1c3vE8qIvxeHj
-         m3+G8hf4JtneUetc3xoxy4KLQzIMQFKKPE2tnD4nga1XRdrJaxP8+zoWuFrqGuEs9wgn
-         vDi7CaXbMmWjW5JPft9hlCObEl5wpy78Zo/G3gbKEUbekgswPzzmphP7LisVOoqurr6t
-         8Tnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707327680; x=1707932480;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HrRTSlkta7nD8c1SJPx3AxPn1tn9y9LkFmhcOlF4lks=;
-        b=BT1/nRlUNhzWvC+hdhf7QXeVHHJhZKPaclkEIGnUR4WZUPPU+BMjTsvT1ofhbHliEb
-         n9eUg0x7ZWoX58X9gRTbwpOOcgcbHm4/BsPw/rYX/K5l8r2+QIt0UEQeQAwWXgR2epZj
-         EX2s9WKJhZcBylIFIXP7ejgQ874CxYUXJoCkKrnDyYk7Uw723+reT4csSPHUb5vDqOwU
-         uJI6r3ZUCwCMQrZQI0jlCQ1AO0QF0dCGRvxbmg8iiKKMr7S2UAtfW7k6TojuBXr5T8qJ
-         qHcEOb6gtFixYiouauv3zJSLxQ70+XD46p8G2gBFWTuo11IivnfJ2eS7J1bLzcvsBK22
-         d7NQ==
-X-Gm-Message-State: AOJu0Yx2hEHFYpRhDPcvj5Ugf9QMaRW56i9G5kXkUVfmomTly0Urg+HS
-	0CHauHQuJnr8/OdB9Vt1w5QAloxIiXE+D8cZoCd/wrUxxa/3RtlFmXnZlouBcpk=
-X-Google-Smtp-Source: AGHT+IHhb+pueaISZV6Y8tJp2t2CFo0mWlpmACo7IYuyoV1N2oy7KZrIG0XVhtVG+SmB5cwuhpqy+Q==
-X-Received: by 2002:a05:620a:12c8:b0:785:3887:de18 with SMTP id e8-20020a05620a12c800b007853887de18mr6401324qkl.65.1707327679899;
-        Wed, 07 Feb 2024 09:41:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUCDfKWFIl6QUubNKHOK+J/TQZfBk6GOATQV7+UROelHHizxj2bMScNb5yjy+7wEKvrKAVO938EhFK3MDp4QvVuIEMns3aJNEfZ4lLhVczSUx4hYdn3X7Qx8HTpAiobpDi+dY9UU0JFYWP3sxFQVS1xxl7fcBVSx0blttAqIQWkGbtG/8OFxy5YJX+xNhtsJb3t9pvZsef+YcrlQh+9z7K1HEh5YIvRBqpPod3dD8oKW9DDybH9+3HAaHHBY8iiIHdHyvvhg/Qqh/tY8U66rdo6r4QvsxgmBFMyxznrxlOPKUwMUFVhM2YvFghVr6hKgb6KzPzIvg28q6LrAw8lD7weD0eI2MrfirCmooqnAA/zgK7D0KurMOIDpabn9VkUHuhE88OEKQ8h62/Wa2gdcl4YDdMkJY4DDjELGulQmsDVBCrUtil9loYc5aX8Gh2jq/ztHo3kv5ymJnfZ/h7e7WZdfaZvxSbUL64wc23AYR/EczgayCdZpmGXX2jQE3/KPfSIPAL6DXV6qvHIwUWL4vG18mc7tiVYDE//uM4hJo7eMbISiBgH4sundju5RQWqxyjeA3VcVHj+VPU4vBDpsrZVdnHRZeaGTV3rwC8oZXb19D/7KR1Wm7euJ76N5bgFnA7vjZhfsEp+F03DZsEUpCkkLYMsxrQWrLbAZIy488QP+Zdz41QqcwwktLByJIdIxAeRSxHxin8RRSgrxaqXRKius9NFl4oDbRCD6svZoHMd4UnX0vfYrQ0s8umvFi83/7gbRVCzXY4TP8NJFByhRuhTVTALB1EBu6ny+PtNXEQLdFexeijpQwT5/ahI+mpZ9ajMM7oM3At8FGk5pnU/BL1Nonz5Y8fjdV6tPG/C5Zk6RhURg9qAf+9R8Omad1eFWXxT9K6yqaix3pq9xGAZ8o3pF+xFI149xhPQNCmvLnHRgEmJUeIIm7boC4KgdrC5bBoaux
- c6ozrLySOAxoy5JAAUBKnlhPctpWnwmvtfHeBXAM+mRt1+c/cu3MhP0MSUMt9WZHns3r/985c1KNIPq0blR6t+yh5SOQk7YDqh0wPxUpt4Kax6NjryE1iCgR1+E5QeDElNdAVf+hiKcPe5+DO4dGivJK8C2DQW1E5U+dX94X2hiWwHcHd0IHOFqpQBMw3MYyXVibLuxNZq6E5ml+47r+bMOyL/Bqfi3ViLUhztHQ6nikGjlZcsJYY7JUssc0W5vg58IiiHspK92+rwN2jGd4sH3ALx4bgyCF0SF9flcBEtXUjRUNSmob4ETrVkz7HKMS7If6nnJcyM0Vbo0UMoOZmd5knYt1xz+hu+YULQesXnetGwV4BBbVo0WA5dRc2eIzIsQXmdql1aXqiSjGCn5mug3+d3TEVV9PvmDpKEou6WN731U4KQNAZjHoQUf6UFZNlFysQJQPL4NE73c76duMdmUXiGxzZFehKgNvB7y4Wu+1/j
-Received: from soleen.c.googlers.com.com (249.240.85.34.bc.googleusercontent.com. [34.85.240.249])
-        by smtp.gmail.com with ESMTPSA id e10-20020a37db0a000000b007854018044bsm696310qki.134.2024.02.07.09.41.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 09:41:19 -0800 (PST)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: akpm@linux-foundation.org,
-	alim.akhtar@samsung.com,
-	alyssa@rosenzweig.io,
-	asahi@lists.linux.dev,
-	baolu.lu@linux.intel.com,
-	bhelgaas@google.com,
-	cgroups@vger.kernel.org,
-	corbet@lwn.net,
-	david@redhat.com,
-	dwmw2@infradead.org,
-	hannes@cmpxchg.org,
-	heiko@sntech.de,
-	iommu@lists.linux.dev,
-	jernej.skrabec@gmail.com,
-	jonathanh@nvidia.com,
-	joro@8bytes.org,
-	krzysztof.kozlowski@linaro.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	lizefan.x@bytedance.com,
-	marcan@marcan.st,
-	mhiramat@kernel.org,
-	m.szyprowski@samsung.com,
-	pasha.tatashin@soleen.com,
-	paulmck@kernel.org,
-	rdunlap@infradead.org,
-	robin.murphy@arm.com,
-	samuel@sholland.org,
-	suravee.suthikulpanit@amd.com,
-	sven@svenpeter.dev,
-	thierry.reding@gmail.com,
-	tj@kernel.org,
-	tomas.mudrunka@gmail.com,
-	vdumpa@nvidia.com,
-	wens@csie.org,
-	will@kernel.org,
-	yu-cheng.yu@intel.com,
-	rientjes@google.com,
-	bagasdotme@gmail.com,
-	mkoutny@suse.com
-Subject: [PATCH v4 10/10] iommu: account IOMMU allocated memory
-Date: Wed,  7 Feb 2024 17:41:02 +0000
-Message-ID: <20240207174102.1486130-11-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.43.0.594.gd9cf4e227d-goog
-In-Reply-To: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
-References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1707355374; c=relaxed/simple;
+	bh=uJkl8rQIIVzke3d5r1OPVklBSLEAlrL8ULekb9pG0xc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kMFzGScfb13wNSvp8BYh8dzWYAdi5WGl3ckgQBxck5Y6P8TshvMSXoaHLVjENGO4EIvJUaUwITrFL+K9Gna8TK6zoks3wIHz5lQ15Yjtuax9514BSSIkyfIakdPoSDRY72lp8iZJwDyDpJ/nX/kl3hDhGk0uJi08JB0xNUDY6As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F17871FB;
+	Wed,  7 Feb 2024 17:23:32 -0800 (PST)
+Received: from [10.57.49.110] (unknown [10.57.49.110])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E628A3F762;
+	Wed,  7 Feb 2024 17:22:48 -0800 (PST)
+Message-ID: <d5074c11-b03a-4a24-9e3a-dfa5743d80bb@arm.com>
+Date: Thu, 8 Feb 2024 01:22:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [REGRESSION] Failed buffer allocation in Tegra fbdev
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, thierry.reding@gmail.com,
+ vdumpa@nvidia.com, joro@8bytes.org, will@kernel.org, jonathanh@nvidia.com,
+ baolu.lu@linux.intel.com, jsnitsel@redhat.com, jroedel@suse.de,
+ linux-tegra@vger.kernel.org, iommu@lists.linux.dev,
+ regressions@lists.linux.dev
+References: <bbmhcoghrprmbdibnjum6lefix2eoquxrde7wyqeulm4xabmlm@b6jy32saugqh>
+ <20240123151508.GR50608@ziepe.ca>
+ <pgund4coabp5pdlmwze5o2d7ogrdncktqz267yzukjcvmikudc@7svrwdci7ujl>
+ <55cab5e0-0abf-47d0-becc-05cdf1d22fac@arm.com>
+ <20240124170300.GU50608@ziepe.ca>
+Content-Language: en-GB
+In-Reply-To: <20240124170300.GU50608@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In order to be able to limit the amount of memory that is allocated
-by IOMMU subsystem, the memory must be accounted.
+On 24/01/2024 5:03 pm, Jason Gunthorpe wrote:
+> On Wed, Jan 24, 2024 at 11:46:59AM +0000, Robin Murphy wrote:
+>>>>> This may be connected with an error in of_iommu_configure() that
+>>>>> became visible after commit 6ff6e184f1f4d:
+>>>>>
+>>>>> [    1.200004] host1x drm: iommu configuration for device failed with -ENOENT
+>>>>
+>>>> Hmmm
+>>>>
+>>>> This is a new logging, so it doesn't necessarily mean something has
+>>>> changed in the code flow.
+>>>>
+>>>> It seems the issue is something in there is returning ENOENT when it
+>>>> probably should be ENODEV, but I haven't been able to guess where it
+>>>> comes from.
+>>>>
+>>>> Can you do some tracing and figure out where under
+>>>> of_iommu_configure() this ENOENT return code is from?
+>>>
+>>> I did the tracing and found that the ENOENT is coming from
+>>> sysfs_do_create_link_sd() in the following function call chain:
+>>>
+>>> of_iommu_configure() -> iommu_probe_device() -> __iommu_probe_device() ->
+>>
+>> What's the call path leading up to that? If it's the one from
+>> host1x_device_add() then it's expected and benign - for fiddly reasons,
+>> iommu_probe_device() ends up being called too early, but will soon be run
+>> again in the correct circumstances once we proceed into
+>> host1x_subdev_register()->device_add(). That will have been happening for
+>> years, we just never reported errors in that spot before (and frankly I'm
+>> not convinced it's valuable to have added it now).
+> 
+> Hmm. Prior to
+> 
+> commit 14891af3799e ("iommu: Move the iommu driver sysfs setup into
+> iommu_init/deinit_device()")
+> 
+> The error from iommu_device_link() was ignored. It seems like for most
+> of the years the probe actually succeeded, just with a mangled sysfs?
 
-Account IOMMU as part of the secondary pagetables as it was discussed
-at LPC.
+Hmm, yeah, I suppose the iommu_group/<n>/devices/ dir just didn't get 
+populated and nobody noticed or cared (which TBH doesn't really surprise 
+me for a case where a kernel driver is expected to manage the IOMMU 
+anyway such that it's pretty much irrelevant to userspace).
 
-The value of SecPageTables now contains mmeory allocation by IOMMU
-and KVM.
+> Though that host1x_device_add() ignored the return code does make me
+> wonder..
+> 
+> This is the only clue I see:
+> 
+> commit c95469aa5a188384ccf8ac520ece931c66caf8aa
+> Author: Alexandre Courbot <acourbot@nvidia.com>
+> Date:   Fri Feb 26 18:06:53 2016 +0900
+> 
+>      gpu: host1x: Set DMA ops on device creation
+>      
+>      Currently host1x-instanciated devices have their dma_ops left to NULL,
+>      which makes any DMA operation (like buffer import) on ARM64 fallback
+>      to the dummy_dma_ops and fail with an error.
+>      
+>      This patch calls of_dma_configure() with the host1x node when creating
+>      such a device, so the proper DMA operations are set.
+>      
+>      Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+>      Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>      Signed-off-by: Thierry Reding <treding@nvidia.com>
+> 
+> Which is no longer happening anymore as failure of
+> iommu_probe_device() will not cause the dma ops to be setup.
+> 
+> So, if everything still works and something else is calling
+> of_dma_configure() prior to using the struct device for any DMA
+> operations (eg because a driver is always probed?) then we should just
+> delete this call.
 
-There is a difference between GFP_ACCOUNT and what NR_IOMMU_PAGES shows.
-GFP_ACCOUNT is set only where it makes sense to charge to user
-processes, i.e. IOMMU Page Tables, but there more IOMMU shared data
-that should not really be charged to a specific process.
+I've considered that before - arguably it could have been removed when 
+Mikko implemented the full bus model, but now I kind of don't want to 
+since it's one of the remaining few that *is* still in the right place 
+where it's always meant to be. The correct fix to meet the original 
+expectations *should* be simply:
 
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/admin-guide/cgroup-v2.rst | 2 +-
- Documentation/filesystems/proc.rst      | 4 ++--
- drivers/iommu/iommu-pages.h             | 2 ++
- include/linux/mmzone.h                  | 2 +-
- 4 files changed, 6 insertions(+), 4 deletions(-)
+----->8-----
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 84d042796d2e..6cab950690a0 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -455,11 +455,11 @@ static int host1x_device_add(struct host1x *host1x,
+  	device->dev.dma_mask = &device->dev.coherent_dma_mask;
+  	dev_set_name(&device->dev, "%s", driver->driver.name);
+  	device->dev.release = host1x_device_release;
+-	device->dev.bus = &host1x_bus_type;
+  	device->dev.parent = host1x->dev;
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 17e6e9565156..15f80fea8df7 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1432,7 +1432,7 @@ PAGE_SIZE multiple when read back.
- 	  sec_pagetables
- 		Amount of memory allocated for secondary page tables,
- 		this currently includes KVM mmu allocations on x86
--		and arm64.
-+		and arm64 and IOMMU page tables.
- 
- 	  percpu (npn)
- 		Amount of memory used for storing per-cpu kernel
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 104c6d047d9b..604b2dccdc5a 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -1110,8 +1110,8 @@ KernelStack
- PageTables
-               Memory consumed by userspace page tables
- SecPageTables
--              Memory consumed by secondary page tables, this currently
--              currently includes KVM mmu allocations on x86 and arm64.
-+              Memory consumed by secondary page tables, this currently includes
-+              KVM mmu and IOMMU allocations on x86 and arm64.
- NFS_Unstable
-               Always zero. Previous counted pages which had been written to
-               the server, but has not been committed to stable storage.
-diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
-index 7336f976b641..e3eb93857a73 100644
---- a/drivers/iommu/iommu-pages.h
-+++ b/drivers/iommu/iommu-pages.h
-@@ -27,6 +27,7 @@ static inline void __iommu_alloc_account(struct page *page, int order)
- 	const long pgcnt = 1l << order;
- 
- 	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, pgcnt);
-+	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, pgcnt);
- }
- 
- /**
-@@ -39,6 +40,7 @@ static inline void __iommu_free_account(struct page *page, int order)
- 	const long pgcnt = 1l << order;
- 
- 	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, -pgcnt);
-+	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, -pgcnt);
- }
- 
- /**
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index bb6bc504915a..a18edcf12d53 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -202,7 +202,7 @@ enum node_stat_item {
- 	NR_KERNEL_SCS_KB,	/* measured in KiB */
- #endif
- 	NR_PAGETABLE,		/* used for pagetables */
--	NR_SECONDARY_PAGETABLE, /* secondary pagetables, e.g. KVM pagetables */
-+	NR_SECONDARY_PAGETABLE, /* secondary pagetables, KVM & IOMMU */
- #ifdef CONFIG_IOMMU_SUPPORT
- 	NR_IOMMU_PAGES,		/* # of pages allocated by IOMMU */
- #endif
--- 
-2.43.0.594.gd9cf4e227d-goog
+  	of_dma_configure(&device->dev, host1x->dev->of_node, true);
 
++	device->dev.bus = &host1x_bus_type;
+  	device->dev.dma_parms = &device->dma_parms;
+  	dma_set_max_seg_size(&device->dev, UINT_MAX);
+
+-----8<-----
+
+...except you've now also broken that at the same time by removing the 
+dev->bus check from of_iommu_configure() :(
+
+> Robin do you know more? Specifically where is the "soon be run again"?
+
+I can't say why it's done in quite such a roundabout manner by 
+host1x_subdev_register(), but as I called out, we quickly get to the 
+actual device_add() call, wherein things proceed as normal. The only 
+thing going wrong here is that we "replay" the iommu_probe_device() call 
+*before* it ever could have happened normally.
+
+Frankly, for all you protest whenever I call you out for demonstrating a 
+lack of understanding of this tangled mess, I sure do seem to spend a 
+lot of time explaining it to you... :/
+
+I've never claimed it's *not* a horrible mess, but at the risk of 
+repeating myself, it *is* fragile, and the consequences of mucking about 
+with it are tricky to reason about even when one does understand all the 
+history of how it's intended to work vs. what actually happens. To coin 
+a phrase I find enjoyable, this is definitely "F around and find out" 
+code; as this and other threads show, now you're well into the finding 
+out part.
+
+> Was the above issue fixed in commit 07397df29e57 ("dma-mapping: move
+> dma configuration to bus infrastructure") ?
+
+Um, no. That commit was no more than code movement essentially 
+separating PCI from non-PCI configuration; merely host1x didn't need to 
+share the full path which ended up as platform_dma_configure() since 
+host1x doesn't support ACPI. Once again the fact that I've had to 
+explain that drives me to utter despair...
+
+Robin.
