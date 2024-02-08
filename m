@@ -1,246 +1,216 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0006DD1C;
-	Thu,  8 Feb 2024 09:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A386EB70;
+	Thu,  8 Feb 2024 11:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707386034; cv=none; b=tfRWodgIYEaa4RWzJWRxatproWMX2Z9MCg8ujnGE9EMcpCWYlp3xCxnXJzcHLyTdFu29LoTAfFeATj1REy7Px23HYcWSjYQd+N3PSOg/GCMOYAUivAEFnSQ3RJqHg2BZ3e6ceTlCKQPDOsxsn0NGI0zoRt0RbnF67HDK4WqhMZw=
+	t=1707392698; cv=none; b=F9v2WfOkPCrlNTrxzgXrqpnNOqIRIj3HyWEHEf/mseb/FmLfMUW58svpcAVJIO6WEU3zLWqdTrPq8lgoEfemnQMhA5cZuBCJZ7B3BjLUygcefG7ElDp+Oa4p+/aTvFNBk4fJznXDnEaeRQ9SceaZu+Pgk0wL1zG3nbV5O0+07KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707386034; c=relaxed/simple;
-	bh=nbfg0Gx52d/qcbW7/rm/yJ54WM1bD93/zqjyFrQALIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ma8hlx4aqMAl/d09t9Q1Oi2cbxNWq7g6iSiykoXoXgoeTKU7vwXEPu5sFLe6Pqnjmp5vvvi1rP8SFgMPYdD4EhC9tZNk47fwbssgeRIa1BJjhkyXSWnU5qXSVyrB05Q92SdhMSSO1s6eHc01g86FgbFnw8TqyVo6am4F73TVR24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RQi+rpdI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707392698; c=relaxed/simple;
+	bh=4RLrpLO9Lr9DKthkMv9dYVS7bKcH7m8SKjLUBGgExck=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ASgQq/bIsgpv7sDXYsZBvh4yYwX9ZMpQFEm2XcoJh0Ez8jjAEWBIwCYOJrHlKqXauQNiagNSKLCgkUBiWRfUYgGwThRGKcswV80/f6I1LpyyAE2ylMU2zNF7NQeMte5VUYsEPPNQUOmKxGwhuz23g76aezGv2Kge+D1FsQZbH1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RmnrDl+N; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RQi+rpdI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A331C433C7;
-	Thu,  8 Feb 2024 09:53:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707386033;
-	bh=nbfg0Gx52d/qcbW7/rm/yJ54WM1bD93/zqjyFrQALIQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RQi+rpdI22K+N6hKk7cWedZtbH5ITgmMjh65WTq8PO30GUPourd3yKw6ZR0fH6ylw
-	 LF8N+W94jek1r8JR87VILyd0ep1JfHefWx+tzNKbQXMR7GkD6dAXY0jpcJbxhzWZD8
-	 vaG6+NWeeVgN2W2dAHuZMVkzpQN7mEJ1YuarUQ2dusR9aD5AvTU6WFcM+vPxPkjoSg
-	 56UqDsNjNYLpUb11ZvzY2McnxmcJGSnUDV75d9+UMEGLKWFaoxgOppRRaKH0xfVc63
-	 dSLqsgAxYTGXEQE3Tl2eRcsZ0N+dublcOWs2q1UuwvbALZbBZBiQTkhj7PhBF7HPc/
-	 /aL8ew+rYMBXw==
-Date: Thu, 8 Feb 2024 09:53:48 +0000
-From: Simon Horman <horms@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Furong Xu <0x1207@gmail.com>, "David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>,
-	Serge Semin <fancer.lancer@gmail.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xfr@outlook.com, rock.xu@nio.com,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH net v4] net: stmmac: xgmac: fix handling of DPP safety
- error for DMA channels
-Message-ID: <20240208095348.GA1435458@kernel.org>
-References: <20240203051439.1127090-1-0x1207@gmail.com>
- <c25eb595-8d91-40ea-9f52-efa15ebafdbc@nvidia.com>
- <20240208092627.GP1297511@kernel.org>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RmnrDl+N"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1707392695; x=1738928695;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=4RLrpLO9Lr9DKthkMv9dYVS7bKcH7m8SKjLUBGgExck=;
+  b=RmnrDl+N3xQJo69LYDdDZp96I3eMI5CMPAYOtEdqt1lvjX8G1xX42JWo
+   YR1QbtVoEcZSLBCTf9ogl7yfDGSetakXSdmcYmdY27XFoMBamYVP0fBRP
+   HcLc295vQv3k8isqxvN92DQYa1uTh7Ez+aEBpX4DJXcXbrxmVRm0gR9Bf
+   g8XKeSK9CJI62k4rfA1tB4aCpcDnaPsM1nKmmYaxx1ZRrWHy01f2nJxSx
+   kRn6dmKAUALxa+ugEvMjxGRfGuXcBkF+5LrPVOqX31uW517ZiZUAB4OgU
+   za7xO7LgqEJDEVtxShZxqE7uDq6rPw8r200UcLMI4Bz4mspx/7ZWi44zD
+   g==;
+X-CSE-ConnectionGUID: 1FvkdppZRHmt/Dzk9vusdQ==
+X-CSE-MsgGUID: OJNdQtm/SPKx55/Ftri+9A==
+X-IronPort-AV: E=Sophos;i="6.05,253,1701154800"; 
+   d="scan'208";a="15964774"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Feb 2024 04:44:54 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 8 Feb 2024 04:44:34 -0700
+Received: from [10.40.56.22] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 8 Feb 2024 04:44:29 -0700
+From: Nayab Sayed <nayabbasha.sayed@microchip.com>
+Date: Thu, 8 Feb 2024 17:12:12 +0530
+Subject: [PATCH] dt-bindings: mtd: update references from partition.txt to
+ mtd.yaml
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240208092627.GP1297511@kernel.org>
+Message-ID: <20240208-partition-txt-v1-1-4398af3b7bb2@microchip.com>
+X-B4-Tracking: v=1; b=H4sIABO+xGUC/x2MQQqAIBAAvxJ7TjATsb4SHUy32ouJSgji35OOA
+ zNTIWEkTLAOFSK+lOjxHaZxAHsbfyEj1xkEF5ILrlkwMVPuFsslM6cQudWHVMsMvQkRTyr/b9t
+ b+wD7YKiJXwAAAA==
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
+	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring
+	<robh+dt@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>, Thierry Reding
+	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Han Xu
+	<han.xu@nxp.com>
+CC: <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Nayab Sayed
+	<nayabbasha.sayed@microchip.com>
+X-Mailer: b4 0.12.4
 
-On Thu, Feb 08, 2024 at 09:26:27AM +0000, Simon Horman wrote:
-> On Wed, Feb 07, 2024 at 11:56:26AM +0000, Jon Hunter wrote:
-> > 
-> > On 03/02/2024 05:14, Furong Xu wrote:
-> > > Commit 56e58d6c8a56 ("net: stmmac: Implement Safety Features in
-> > > XGMAC core") checks and reports safety errors, but leaves the
-> > > Data Path Parity Errors for each channel in DMA unhandled at all, lead to
-> > > a storm of interrupt.
-> > > Fix it by checking and clearing the DMA_DPP_Interrupt_Status register.
-> > > 
-> > > Fixes: 56e58d6c8a56 ("net: stmmac: Implement Safety Features in XGMAC core")
-> > > Signed-off-by: Furong Xu <0x1207@gmail.com>
-> > > Reviewed-by: Simon Horman <horms@kernel.org>
-> > > Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-> > > ---
-> > > Changes in v4:
-> > >   - fix a typo name of DDPP bit, thanks Serge Semin
-> > > 
-> > > Changes in v3:
-> > >   - code style fix, thanks Paolo Abeni
-> > > 
-> > > Changes in v2:
-> > >    - explicit enable Data Path Parity Protection
-> > >    - add new counters to stmmac_safety_stats
-> > >    - add detailed log
-> > > ---
-> > >   drivers/net/ethernet/stmicro/stmmac/common.h  |  1 +
-> > >   .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |  3 +
-> > >   .../ethernet/stmicro/stmmac/dwxgmac2_core.c   | 57 ++++++++++++++++++-
-> > >   3 files changed, 60 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-> > > index 721c1f8e892f..b4f60ab078d6 100644
-> > > --- a/drivers/net/ethernet/stmicro/stmmac/common.h
-> > > +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-> > > @@ -216,6 +216,7 @@ struct stmmac_safety_stats {
-> > >   	unsigned long mac_errors[32];
-> > >   	unsigned long mtl_errors[32];
-> > >   	unsigned long dma_errors[32];
-> > > +	unsigned long dma_dpp_errors[32];
-> > >   };
-> > >   /* Number of fields in Safety Stats */
-> > > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> > > index 207ff1799f2c..5c67a3f89f08 100644
-> > > --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> > > +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-> > > @@ -303,6 +303,8 @@
-> > >   #define XGMAC_RXCEIE			BIT(4)
-> > >   #define XGMAC_TXCEIE			BIT(0)
-> > >   #define XGMAC_MTL_ECC_INT_STATUS	0x000010cc
-> > > +#define XGMAC_MTL_DPP_CONTROL		0x000010e0
-> > > +#define XGMAC_DPP_DISABLE		BIT(0)
-> > >   #define XGMAC_MTL_TXQ_OPMODE(x)		(0x00001100 + (0x80 * (x)))
-> > >   #define XGMAC_TQS			GENMASK(25, 16)
-> > >   #define XGMAC_TQS_SHIFT			16
-> > > @@ -385,6 +387,7 @@
-> > >   #define XGMAC_DCEIE			BIT(1)
-> > >   #define XGMAC_TCEIE			BIT(0)
-> > >   #define XGMAC_DMA_ECC_INT_STATUS	0x0000306c
-> > > +#define XGMAC_DMA_DPP_INT_STATUS	0x00003074
-> > >   #define XGMAC_DMA_CH_CONTROL(x)		(0x00003100 + (0x80 * (x)))
-> > >   #define XGMAC_SPH			BIT(24)
-> > >   #define XGMAC_PBLx8			BIT(16)
-> > > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-> > > index eb48211d9b0e..04d7c4dc2e35 100644
-> > > --- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-> > > +++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
-> > > @@ -830,6 +830,43 @@ static const struct dwxgmac3_error_desc dwxgmac3_dma_errors[32]= {
-> > >   	{ false, "UNKNOWN", "Unknown Error" }, /* 31 */
-> > >   };
-> > > +static const char * const dpp_rx_err = "Read Rx Descriptor Parity checker Error";
-> > > +static const char * const dpp_tx_err = "Read Tx Descriptor Parity checker Error";
-> > > +static const struct dwxgmac3_error_desc dwxgmac3_dma_dpp_errors[32] = {
-> > > +	{ true, "TDPES0", dpp_tx_err },
-> > > +	{ true, "TDPES1", dpp_tx_err },
-> > > +	{ true, "TDPES2", dpp_tx_err },
-> > > +	{ true, "TDPES3", dpp_tx_err },
-> > > +	{ true, "TDPES4", dpp_tx_err },
-> > > +	{ true, "TDPES5", dpp_tx_err },
-> > > +	{ true, "TDPES6", dpp_tx_err },
-> > > +	{ true, "TDPES7", dpp_tx_err },
-> > > +	{ true, "TDPES8", dpp_tx_err },
-> > > +	{ true, "TDPES9", dpp_tx_err },
-> > > +	{ true, "TDPES10", dpp_tx_err },
-> > > +	{ true, "TDPES11", dpp_tx_err },
-> > > +	{ true, "TDPES12", dpp_tx_err },
-> > > +	{ true, "TDPES13", dpp_tx_err },
-> > > +	{ true, "TDPES14", dpp_tx_err },
-> > > +	{ true, "TDPES15", dpp_tx_err },
-> > > +	{ true, "RDPES0", dpp_rx_err },
-> > > +	{ true, "RDPES1", dpp_rx_err },
-> > > +	{ true, "RDPES2", dpp_rx_err },
-> > > +	{ true, "RDPES3", dpp_rx_err },
-> > > +	{ true, "RDPES4", dpp_rx_err },
-> > > +	{ true, "RDPES5", dpp_rx_err },
-> > > +	{ true, "RDPES6", dpp_rx_err },
-> > > +	{ true, "RDPES7", dpp_rx_err },
-> > > +	{ true, "RDPES8", dpp_rx_err },
-> > > +	{ true, "RDPES9", dpp_rx_err },
-> > > +	{ true, "RDPES10", dpp_rx_err },
-> > > +	{ true, "RDPES11", dpp_rx_err },
-> > > +	{ true, "RDPES12", dpp_rx_err },
-> > > +	{ true, "RDPES13", dpp_rx_err },
-> > > +	{ true, "RDPES14", dpp_rx_err },
-> > > +	{ true, "RDPES15", dpp_rx_err },
-> > > +};
-> > > +
-> > >   static void dwxgmac3_handle_dma_err(struct net_device *ndev,
-> > >   				    void __iomem *ioaddr, bool correctable,
-> > >   				    struct stmmac_safety_stats *stats)
-> > > @@ -841,6 +878,13 @@ static void dwxgmac3_handle_dma_err(struct net_device *ndev,
-> > >   	dwxgmac3_log_error(ndev, value, correctable, "DMA",
-> > >   			   dwxgmac3_dma_errors, STAT_OFF(dma_errors), stats);
-> > > +
-> > > +	value = readl(ioaddr + XGMAC_DMA_DPP_INT_STATUS);
-> > > +	writel(value, ioaddr + XGMAC_DMA_DPP_INT_STATUS);
-> > > +
-> > > +	dwxgmac3_log_error(ndev, value, false, "DMA_DPP",
-> > > +			   dwxgmac3_dma_dpp_errors,
-> > > +			   STAT_OFF(dma_dpp_errors), stats);
-> > >   }
-> > >   static int
-> > > @@ -881,6 +925,12 @@ dwxgmac3_safety_feat_config(void __iomem *ioaddr, unsigned int asp,
-> > >   	value |= XGMAC_TMOUTEN; /* FSM Timeout Feature */
-> > >   	writel(value, ioaddr + XGMAC_MAC_FSM_CONTROL);
-> > > +	/* 5. Enable Data Path Parity Protection */
-> > > +	value = readl(ioaddr + XGMAC_MTL_DPP_CONTROL);
-> > > +	/* already enabled by default, explicit enable it again */
-> > > +	value &= ~XGMAC_DPP_DISABLE;
-> > > +	writel(value, ioaddr + XGMAC_MTL_DPP_CONTROL);
-> > > +
-> > >   	return 0;
-> > >   }
-> > > @@ -914,7 +964,11 @@ static int dwxgmac3_safety_feat_irq_status(struct net_device *ndev,
-> > >   		ret |= !corr;
-> > >   	}
-> > > -	err = dma & (XGMAC_DEUIS | XGMAC_DECIS);
-> > > +	/* DMA_DPP_Interrupt_Status is indicated by MCSIS bit in
-> > > +	 * DMA_Safety_Interrupt_Status, so we handle DMA Data Path
-> > > +	 * Parity Errors here
-> > > +	 */
-> > > +	err = dma & (XGMAC_DEUIS | XGMAC_DECIS | XGMAC_MCSIS);
-> > >   	corr = dma & XGMAC_DECIS;
-> > >   	if (err) {
-> > >   		dwxgmac3_handle_dma_err(ndev, ioaddr, corr, stats);
-> > > @@ -930,6 +984,7 @@ static const struct dwxgmac3_error {
-> > >   	{ dwxgmac3_mac_errors },
-> > >   	{ dwxgmac3_mtl_errors },
-> > >   	{ dwxgmac3_dma_errors },
-> > > +	{ dwxgmac3_dma_dpp_errors },
-> > >   };
-> > >   static int dwxgmac3_safety_feat_dump(struct stmmac_safety_stats *stats,
-> > 
-> > 
-> > This change is breaking the build on some of our builders that are still using GCC 6.x ...
-> > 
-> > drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c:836:20: error: initialiser element is not constant
-> >   { true, "TDPES0", dpp_tx_err },
-> >                     ^~~~~~~~~~
-> > drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c:836:20: note: (near initialisation for ‘dwxgmac3_dma_dpp_errors[0].detailed_desc’)
-> > drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c:837:20: error: initialiser element is not constant
-> >   { true, "TDPES1", dpp_tx_err },
-> >                     ^~~~~~~~~~
-> > drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c:837:20: note: (near initialisation for ‘dwxgmac3_dma_dpp_errors[1].detailed_desc’)
-> > ...
-> > 
-> > I know that this is quite old but the minimum supported by the kernel is v5.1 ...
-> > 
-> > https://www.kernel.org/doc/html/next/process/changes.html
-> 
-> Thanks Jon,
-> 
-> I separately received a notification about this occurring with gcc 7.
-> 
-> https://lore.kernel.org/oe-kbuild-all/202402081135.lAxxBXHk-lkp@intel.com/
-> 
-> It is unclear to me why this occurs, as dpp_tx_err and dpp_tx_err are const.
-> But I do seem to be able to address this problem by using #defines for
-> these values instead.
-> 
-> I plan to post a patch shortly.
+Commit f902baa917b6 ("dt-bindings: mtd: Remove useless file about
+partitions") removed the file partition.txt. Hence, in this commit, the
+lines mentioning this file are updated to reference mtd.yaml, which now
+includes partition{,s}.yaml.
 
-Patch posted:
-- [PATCH net] net: stmmac: xgmac: use #define for string constants
-  https://lore.kernel.org/netdev/20240208-xgmac-const-v1-1-e69a1eeabfc8@kernel.org/
+Signed-off-by: Nayab Sayed <nayabbasha.sayed@microchip.com>
+---
+ Documentation/devicetree/bindings/mtd/davinci-nand.txt        | 2 +-
+ Documentation/devicetree/bindings/mtd/flctl-nand.txt          | 2 +-
+ Documentation/devicetree/bindings/mtd/fsl-upm-nand.txt        | 2 +-
+ Documentation/devicetree/bindings/mtd/gpio-control-nand.txt   | 2 +-
+ Documentation/devicetree/bindings/mtd/gpmi-nand.yaml          | 2 +-
+ Documentation/devicetree/bindings/mtd/hisi504-nand.txt        | 2 +-
+ Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt | 2 +-
+ Documentation/devicetree/bindings/mtd/orion-nand.txt          | 2 +-
+ Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt     | 2 +-
+ 9 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/mtd/davinci-nand.txt b/Documentation/devicetree/bindings/mtd/davinci-nand.txt
+index edebeae1f5b3..eb8e2ff4dbd2 100644
+--- a/Documentation/devicetree/bindings/mtd/davinci-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/davinci-nand.txt
+@@ -68,7 +68,7 @@ Deprecated properties:
+ 				false.
+ 
+ Nand device bindings may contain additional sub-nodes describing partitions of
+-the address space. See partition.txt for more detail. The NAND Flash timing
++the address space. See mtd.yaml for more detail. The NAND Flash timing
+ values must be programmed in the chip select’s node of AEMIF
+ memory-controller (see Documentation/devicetree/bindings/memory-controllers/
+ davinci-aemif.txt).
+diff --git a/Documentation/devicetree/bindings/mtd/flctl-nand.txt b/Documentation/devicetree/bindings/mtd/flctl-nand.txt
+index 427f46dc60ad..51518399d737 100644
+--- a/Documentation/devicetree/bindings/mtd/flctl-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/flctl-nand.txt
+@@ -15,7 +15,7 @@ The DMA fields are not used yet in the driver but are listed here for
+ completing the bindings.
+ 
+ The device tree may optionally contain sub-nodes describing partitions of the
+-address space. See partition.txt for more detail.
++address space. See mtd.yaml for more detail.
+ 
+ Example:
+ 
+diff --git a/Documentation/devicetree/bindings/mtd/fsl-upm-nand.txt b/Documentation/devicetree/bindings/mtd/fsl-upm-nand.txt
+index 25f07c1f9e44..530c017e014e 100644
+--- a/Documentation/devicetree/bindings/mtd/fsl-upm-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/fsl-upm-nand.txt
+@@ -22,7 +22,7 @@ Deprecated properties:
+ 	(R/B# pins not connected).
+ 
+ Each flash chip described may optionally contain additional sub-nodes
+-describing partitions of the address space. See partition.txt for more
++describing partitions of the address space. See mtd.yaml for more
+ detail.
+ 
+ Examples:
+diff --git a/Documentation/devicetree/bindings/mtd/gpio-control-nand.txt b/Documentation/devicetree/bindings/mtd/gpio-control-nand.txt
+index 486a17d533d7..0edf55d47ea8 100644
+--- a/Documentation/devicetree/bindings/mtd/gpio-control-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/gpio-control-nand.txt
+@@ -26,7 +26,7 @@ Optional properties:
+   read to ensure that the GPIO accesses have completed.
+ 
+ The device tree may optionally contain sub-nodes describing partitions of the
+-address space. See partition.txt for more detail.
++address space. See mtd.yaml for more detail.
+ 
+ Examples:
+ 
+diff --git a/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml b/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml
+index ba086c34626d..021c0da0b072 100644
+--- a/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml
++++ b/Documentation/devicetree/bindings/mtd/gpmi-nand.yaml
+@@ -12,7 +12,7 @@ maintainers:
+ description: |
+   The GPMI nand controller provides an interface to control the NAND
+   flash chips. The device tree may optionally contain sub-nodes
+-  describing partitions of the address space. See partition.txt for
++  describing partitions of the address space. See mtd.yaml for
+   more detail.
+ 
+ properties:
+diff --git a/Documentation/devicetree/bindings/mtd/hisi504-nand.txt b/Documentation/devicetree/bindings/mtd/hisi504-nand.txt
+index 8963983ae7cb..362203e7d50e 100644
+--- a/Documentation/devicetree/bindings/mtd/hisi504-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/hisi504-nand.txt
+@@ -22,7 +22,7 @@ The following ECC strength and step size are currently supported:
+  - nand-ecc-strength = <16>, nand-ecc-step-size = <1024>
+ 
+ Flash chip may optionally contain additional sub-nodes describing partitions of
+-the address space. See partition.txt for more detail.
++the address space. See mtd.yaml for more detail.
+ 
+ Example:
+ 
+diff --git a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+index e737e5beb7bf..4a00ec2b2540 100644
+--- a/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+@@ -39,7 +39,7 @@ Optional children node properties:
+ - wp-gpios: GPIO specifier for the write protect pin.
+ 
+ Optional child node of NAND chip nodes:
+-Partitions: see partition.txt
++Partitions: see mtd.yaml
+ 
+   Example:
+ 	nand-controller@70008000 {
+diff --git a/Documentation/devicetree/bindings/mtd/orion-nand.txt b/Documentation/devicetree/bindings/mtd/orion-nand.txt
+index 2d6ab660e603..b9997b1f13ac 100644
+--- a/Documentation/devicetree/bindings/mtd/orion-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/orion-nand.txt
+@@ -13,7 +13,7 @@ Optional properties:
+                registers in usecs
+ 
+ The device tree may optionally contain sub-nodes describing partitions of the
+-address space. See partition.txt for more detail.
++address space. See mtd.yaml for more detail.
+ 
+ Example:
+ 
+diff --git a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+index 09815c40fc8a..635455350660 100644
+--- a/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
++++ b/Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt
+@@ -19,7 +19,7 @@ Optional child properties:
+ 
+ Each child device node may optionally contain a 'partitions' sub-node,
+ which further contains sub-nodes describing the flash partition mapping.
+-See partition.txt for more detail.
++See mtd.yaml for more detail.
+ 
+ Example:
+ 
+
+---
+base-commit: 547ab8fc4cb04a1a6b34377dd8fad34cd2c8a8e3
+change-id: 20240208-partition-txt-d6ee0c8b4693
+
+Best regards,
+-- 
+Nayab Sayed <nayabbasha.sayed@microchip.com>
 
