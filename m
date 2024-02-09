@@ -1,191 +1,84 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC3F38F86
-	for <linux-tegra@vger.kernel.org>; Thu,  8 Feb 2024 20:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF5F2D61B;
+	Fri,  9 Feb 2024 10:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707424111; cv=none; b=Km4ju/F9V541QyVyOZgoLORI0gR4WisLBEs3FgYgx4HGZSiDTlO/NcFXNR6j1Bll23iDVIpEfgzaLqV2sQfbbnnaAobazMQeHQ3hYyhwwwlSZI7vcB+hvyAd+wspb88VFwrzfZxhMKdYUSnPckp2lQ6T8r4RNUvCYDfcQwNNHTA=
+	t=1707475822; cv=none; b=bx8BeZ9D1fmgYrH7AQppLfyhXPUCBoQ8Hqsxy6kb2tn0X0X3vD0+FJ99PTq+Q1D1Mw8KQbOEbBhAeqUWR7CWFB87T1cBiiCMsCTAZe+WQeM6NdORBh0a0scZfEbi7PclvH7SlZIDZP7ib/WLHwXplVykXL72OE9NYJIqP2QuWrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707424111; c=relaxed/simple;
-	bh=MaJXUgIclpf/EWglWjbhZesimNmRnmJ7sAoUT4K4IHo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MhwaXnYYO7UxD4bl31SOAmz6k/DDs5zmf1Q3/mn28u8t3kwOGEKNfOd319/K06gE1/MZVXu4+HR4GBzi94+Hi0S3giSA6Fquu7OeBbAnjmrASXPGEfXwcUJAIQ3+ZMs7DtP8NOUU/fovTX015AZ3jg2N+kkDKTGfzdFJtS7cMug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JpNIye8o; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1707475822; c=relaxed/simple;
+	bh=1l4xiU706H2waXh/SIkgEpJmrgL3FO4YrpToTkMtbVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nGg1Qui0d0SdnzwCu6SOUS0NDIDC2SLVzKTlDy//CuHRMj4OjSPj5HCJfRBb0bF/ZwAwnNV1N1Yayd+jP7rww2s97kzFC3HprQ30tNujYYg3q40X5W8qa8GaQUwtaayFg8J/1biAiqIuoowIWvNrSvbOuFpnJnMir3zGf8c/jIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=DXIjdvdY; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JpNIye8o"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40fc22f372cso2034075e9.1
-        for <linux-tegra@vger.kernel.org>; Thu, 08 Feb 2024 12:28:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707424108; x=1708028908; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mvrDBjoAHTErzMnmMJ2vCSaXAadIr1IUPSl1p95UmCk=;
-        b=JpNIye8oaEv5dRHBkQ0KzR+ZlQcGFatiRd9h40BYERWchtULfs8AK8UujSyfJ5/ddd
-         oHtuvPog+/z381chR1nGSXBjXWVumkUAot3QEliBlT/1bIFKT/DGqYS8/yyVT08Ay/B0
-         8nfyH8W10b/FRhpBzYlozPABJHZHRqzTFPyMKKbAZqw4k2RHK8+wNEXLm/gODRisRpGN
-         AZy9LjEr62V6uWFD8O83P7TwPGfcY5OvOFJ9jGDUfusMtXToGmESjj8nXWMw+Lrh6Gj7
-         1ptyKjC8lULdUk8wH3AltYGp1OnJZ49U63kXanYeMX9YieaFW/nyG6OsWWn4cE9rlAHv
-         eVDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707424108; x=1708028908;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mvrDBjoAHTErzMnmMJ2vCSaXAadIr1IUPSl1p95UmCk=;
-        b=wWNptOX87M0xVzrD7dPXokQZcOHcfl857BhMsTZotsAuTzyU++hkgYB7t9jzNtNiqU
-         efIqQqDopXCr1i70lR34C0TvnfjQbFj1+V9aGv3o5lpUjn8fav7usFFSzyNmDQom42FX
-         bNhs6D/avAivAl4y2Lq3QCwC8z5Esi79VxCbINlqpFiplmvUpiC/i0/XThh9Qsf+AygE
-         BBe3Pc5b5XXrhpm7z2FT6/B3KkiXz/oS57UqcqSOY12OY+j6HHrhgjkkFx+LVQSMJ0KZ
-         g2yC/dfOhEJt9zIa3IotIxTLD392tMFubU6oIdFUu2DRMucbgtezKOUVedEsVE36QDiN
-         gGiQ==
-X-Gm-Message-State: AOJu0Yw5w5fuv6Js/6u5Pe7OwSesmxU2gdF24Fu2eKiEjkSpPt1UVBh8
-	7d7WVqGVprQt9jX0rPd8Sy9tHuc6audbk4B3xar8w6JpRO0dA3vCJQtjpmamxyQ=
-X-Google-Smtp-Source: AGHT+IFMnvpCLLUh9jB2SQYbYHV+ofwXSAPTFyZLLd/Wjz22g2zfesy+qsAGKC1R3LU1pQkc7bDgSQ==
-X-Received: by 2002:adf:f88a:0:b0:33b:31f2:a957 with SMTP id u10-20020adff88a000000b0033b31f2a957mr381750wrp.21.1707424108366;
-        Thu, 08 Feb 2024 12:28:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUx2uTQ78/pzHPc0j0QINI8jebXKW5zA5HCUTsogwb5SVs+jPbq/h4F0k0suZBl8miv+iULjTLbEYP0SHNQiIb3+2QjFCpybqsCL9H161P+cxVAN/2XAUkSH/jcfEdv9xUdbZwlPbuShN09ouABAL3KAzh/U4oVWfOwQsqH9sELFB2yFboOhq/pdmExlOhJZFi3tdH/UZX6CH4cztvIgFd0dxayQZEg/8pvEQ1Zaer9v6pF6IfMZCn8adfzOf9lJ6mRDmYR4bg0KPs31OQI5lerl4BRMVJzM/HSHcYyvb7t43YeRgicapbmvVcW/8QYh8ZQtJteAbMK7aB/O2/+4XGOdiaWe0OfNff6oC+/hqIKCAwjNL91J4weQEqlvKleXUIh++GTvgC27iC43XBln08d5hodt7xOf8VfsJ44IZxnneGqVa5a//ei00fAN09vuCFrkloVJ0PpCr+Jq8ZMvBNXOKo9+DcVpdMiHGPsuLo0UAyTlrtCf0qHxdIM9qPlNJHWcykERRVqnK5cJEzbF/9/mymAMIMEiw5PNGr6v7DqQA==
-Received: from krzk-bin.. ([178.197.222.62])
-        by smtp.gmail.com with ESMTPSA id r16-20020adfce90000000b0033b47ee01f1sm114643wrn.49.2024.02.08.12.28.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Feb 2024 12:28:28 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Nishanth Menon <nm@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] pmdomain: constify of_phandle_args in add device and subdomain
-Date: Thu,  8 Feb 2024 21:28:22 +0100
-Message-Id: <20240208202822.631449-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240208202822.631449-1-krzysztof.kozlowski@linaro.org>
-References: <20240208202822.631449-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="DXIjdvdY"
+Received: from 8bytes.org (p4ffe0c3c.dip0.t-ipconnect.de [79.254.12.60])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 23B431C1D36;
+	Fri,  9 Feb 2024 11:50:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1707475819;
+	bh=1l4xiU706H2waXh/SIkgEpJmrgL3FO4YrpToTkMtbVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DXIjdvdYGrzwWVWMVI6Remj5A1/1opy6lpRHzFIYTZLWyMVxAS0GqiHt0QzLsiugc
+	 tvvxaVIiLYwWjLDketPdgB6IjeIzuRQjf0VXRq4uzWaUxF47AnNB7oFkRdbiNpNUbW
+	 HDmrYJbED+uweFULqbi7wy+SndFRaeBkGeZFChggfx9o340PcIvRurtq71ONFv2o7f
+	 s27ei5GDzj0AfGwrq5wl8tU5tEoNGwWKu9P94P6KWZA0kBrbD2nsaeccZF+eyuQp8t
+	 +eQxQXTJDI6ZkcdJbl70Peccoydsny5tIoOXDqlQ72EccI2IjbeNb/kQ6vb3dy6xwO
+	 XwUbAf264qglA==
+Date: Fri, 9 Feb 2024 11:50:17 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com,
+	alyssa@rosenzweig.io, asahi@lists.linux.dev,
+	baolu.lu@linux.intel.com, bhelgaas@google.com,
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com,
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de,
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com,
+	jonathanh@nvidia.com, krzysztof.kozlowski@linaro.org,
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com,
+	marcan@marcan.st, mhiramat@kernel.org, m.szyprowski@samsung.com,
+	paulmck@kernel.org, rdunlap@infradead.org, robin.murphy@arm.com,
+	samuel@sholland.org, suravee.suthikulpanit@amd.com,
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org,
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org,
+	will@kernel.org, yu-cheng.yu@intel.com, rientjes@google.com,
+	bagasdotme@gmail.com, mkoutny@suse.com
+Subject: Re: [PATCH v4 00/10] IOMMU memory observability
+Message-ID: <ZcYDaTRhQLaBAZ5H@8bytes.org>
+References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
 
-Pointer to of_phandle_args is not modified by of_genpd_add_device() and
-of_genpd_add_subdomain(), so it can be made pointer to const for code
-safety and readability.
+Hi Pasha,
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/pmdomain/core.c   | 12 ++++++------
- include/linux/pm_domain.h | 20 ++++++++++----------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+On Wed, Feb 07, 2024 at 05:40:52PM +0000, Pasha Tatashin wrote:
+> v4:
+> - Synced with v6.8-rc3 
+> - Updated commit log for "iommu: account IOMMU allocated memory" as
+>   suggested by Michal Koutný
+> - Added more Acked-bys David Rientjes and Thierry Reding
+> - Added Tested-by Bagas Sanjaya.
 
-diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-index ea4b29475206..4215ffd9b11c 100644
---- a/drivers/pmdomain/core.c
-+++ b/drivers/pmdomain/core.c
-@@ -2526,7 +2526,7 @@ EXPORT_SYMBOL_GPL(of_genpd_del_provider);
-  * on failure.
-  */
- static struct generic_pm_domain *genpd_get_from_provider(
--					struct of_phandle_args *genpdspec)
-+					const struct of_phandle_args *genpdspec)
- {
- 	struct generic_pm_domain *genpd = ERR_PTR(-ENOENT);
- 	struct of_genpd_provider *provider;
-@@ -2557,7 +2557,7 @@ static struct generic_pm_domain *genpd_get_from_provider(
-  * Looks-up an I/O PM domain based upon phandle args provided and adds
-  * the device to the PM domain. Returns a negative error code on failure.
-  */
--int of_genpd_add_device(struct of_phandle_args *genpdspec, struct device *dev)
-+int of_genpd_add_device(const struct of_phandle_args *genpdspec, struct device *dev)
- {
- 	struct generic_pm_domain *genpd;
- 	int ret;
-@@ -2591,8 +2591,8 @@ EXPORT_SYMBOL_GPL(of_genpd_add_device);
-  * provided and adds the subdomain to the parent PM domain. Returns a
-  * negative error code on failure.
-  */
--int of_genpd_add_subdomain(struct of_phandle_args *parent_spec,
--			   struct of_phandle_args *subdomain_spec)
-+int of_genpd_add_subdomain(const struct of_phandle_args *parent_spec,
-+			   const struct of_phandle_args *subdomain_spec)
- {
- 	struct generic_pm_domain *parent, *subdomain;
- 	int ret;
-@@ -2629,8 +2629,8 @@ EXPORT_SYMBOL_GPL(of_genpd_add_subdomain);
-  * provided and removes the subdomain from the parent PM domain. Returns a
-  * negative error code on failure.
-  */
--int of_genpd_remove_subdomain(struct of_phandle_args *parent_spec,
--			      struct of_phandle_args *subdomain_spec)
-+int of_genpd_remove_subdomain(const struct of_phandle_args *parent_spec,
-+			      const struct of_phandle_args *subdomain_spec)
- {
- 	struct generic_pm_domain *parent, *subdomain;
- 	int ret;
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 1a391ef1b6f8..772d3280d35f 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -364,11 +364,11 @@ int of_genpd_add_provider_simple(struct device_node *np,
- int of_genpd_add_provider_onecell(struct device_node *np,
- 				  struct genpd_onecell_data *data);
- void of_genpd_del_provider(struct device_node *np);
--int of_genpd_add_device(struct of_phandle_args *args, struct device *dev);
--int of_genpd_add_subdomain(struct of_phandle_args *parent_spec,
--			   struct of_phandle_args *subdomain_spec);
--int of_genpd_remove_subdomain(struct of_phandle_args *parent_spec,
--			      struct of_phandle_args *subdomain_spec);
-+int of_genpd_add_device(const struct of_phandle_args *args, struct device *dev);
-+int of_genpd_add_subdomain(const struct of_phandle_args *parent_spec,
-+			   const struct of_phandle_args *subdomain_spec);
-+int of_genpd_remove_subdomain(const struct of_phandle_args *parent_spec,
-+			      const struct of_phandle_args *subdomain_spec);
- struct generic_pm_domain *of_genpd_remove_last(struct device_node *np);
- int of_genpd_parse_idle_states(struct device_node *dn,
- 			       struct genpd_power_state **states, int *n);
-@@ -393,20 +393,20 @@ static inline int of_genpd_add_provider_onecell(struct device_node *np,
- 
- static inline void of_genpd_del_provider(struct device_node *np) {}
- 
--static inline int of_genpd_add_device(struct of_phandle_args *args,
-+static inline int of_genpd_add_device(const struct of_phandle_args *args,
- 				      struct device *dev)
- {
- 	return -ENODEV;
- }
- 
--static inline int of_genpd_add_subdomain(struct of_phandle_args *parent_spec,
--					 struct of_phandle_args *subdomain_spec)
-+static inline int of_genpd_add_subdomain(const struct of_phandle_args *parent_spec,
-+					 const struct of_phandle_args *subdomain_spec)
- {
- 	return -ENODEV;
- }
- 
--static inline int of_genpd_remove_subdomain(struct of_phandle_args *parent_spec,
--					struct of_phandle_args *subdomain_spec)
-+static inline int of_genpd_remove_subdomain(const struct of_phandle_args *parent_spec,
-+					    const struct of_phandle_args *subdomain_spec)
- {
- 	return -ENODEV;
- }
--- 
-2.34.1
+Thanks for these changes! To merge them I need more reviews and/or acks
+from the actual iommu driver maintainers.
 
+Thanks,
+
+	Joerg
