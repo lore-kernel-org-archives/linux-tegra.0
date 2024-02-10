@@ -1,498 +1,292 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E94820F1;
-	Sat, 10 Feb 2024 01:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CAB442F
+	for <linux-tegra@vger.kernel.org>; Sat, 10 Feb 2024 02:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707528429; cv=none; b=fBXUde75lupn+jwCPi/57XYQOJtek5e/bINBfiKCqlBL+C3HUU/PuNpyzkAnr4SVYHS2RDRisjnNSck84qxbc9KoF7mBC908gKkmzK6pDZLQIhgFInD82zuYIYkWzWkx2fFsn+pOYePHPSsisByzqfn9UbgNmSryTtVIUnG/Qyg=
+	t=1707531710; cv=none; b=DjhqOIgu9X9aij3COm8c5qyxIDDAzLTDHEoI6Pm2Jy9VRjAyG3bHAzZXizmpaK6T4fSATdDOISS32/sPdKZyymOijofctKquM90YfifGei4tRM7sBR1CVEZXFnXVBoMR1mmBRcpQfSlJcLIpmsKxdOC7D2GgwYFHIg2NOKBzktA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707528429; c=relaxed/simple;
-	bh=VTM6eclRc7ZgTOkzvIL/VKlkjU5B1sl7PeINzi+tXiM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S5xWRQdiuYl/rQKFu4rs0nDZ70OYKmbAj5CB1hWF0H1SdRo1JeBZ1fKSPTrY1Vd4hinvmoAaCB5fMUqtipi/9GtwwIVF10nDxZWkgV95KfyTKA+pFWDxuP9B67B/hV9lKwTQogPHWSFUi4DlbIv4u0GIYd04g4GS5TQOg9vt25Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZQfA8Mw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707531710; c=relaxed/simple;
+	bh=OEsr09Gb3Hzxbc+OG+EIkVQM7fLubAEWg7orSg+gNbQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G6gZX9Ba9niWeWJr4yy/h/eFyl0mrpj9JhUbmeP4OUUjhPruD8Y44MqzaXBCB6Neomry7ch+mrEOMpBnJrE93RS3k72FJY+ZCAYBwNNOoQ30gMjWQUuWMICJyD4CpRNDilM1FonefjFLkn7TkFoDHvVBKDXnseMt5awIrE4DjYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=E1MTeg84 reason="key not found in DNS"; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZQfA8Mw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D986AC433F1;
-	Sat, 10 Feb 2024 01:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707528428;
-	bh=VTM6eclRc7ZgTOkzvIL/VKlkjU5B1sl7PeINzi+tXiM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bZQfA8MwTOrq7YvNFK/mtxBvlmycVXhy8abocJ1VYVarBkg2kszPszSyHz3lSqz+D
-	 2d/F6McKZAGOaFXGiWPRzxr3+uLFU6zI3vvZSYu5joQaIlaOnBwFar/1E/yp/CVuIA
-	 aJ/SwhSTDC351lwiI13OhyKhDdkCnao6bZGpXYlt2pApiaTm1p/88vAFeUM+8Y2iFq
-	 PDQDrVkL/TLVukoj2SCHkUEf8codK90YiWj0rE9mlr2XDeAmBGVdHhmXUTJAWgPtg4
-	 LqXjyZrK5CEXG+9gKrzdpVqgDlNPmngkO6ykALNmaSVdrOHHtvJS0Y7Izq2SYCu2NS
-	 M7RrWRzd7iR4Q==
-From: Niklas Cassel <cassel@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>,
-	Roy Zang <roy.zang@nxp.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Allen Hubbe <allenbh@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	ntb@lists.linux.dev
-Subject: [PATCH 1/2] PCI: endpoint: Clean up hardware description for BARs
-Date: Sat, 10 Feb 2024 02:26:25 +0100
-Message-ID: <20240210012634.600301-2-cassel@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240210012634.600301-1-cassel@kernel.org>
-References: <20240210012634.600301-1-cassel@kernel.org>
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="E1MTeg84"
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-214c940145bso848680fac.1
+        for <linux-tegra@vger.kernel.org>; Fri, 09 Feb 2024 18:21:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1707531707; x=1708136507; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HxzMCuaeyhn3J9cU+FUkQXDQEw1s8FDPbrSZbrZddcs=;
+        b=E1MTeg84HyX2eWEqdtJvMGUHAsHw4vPk1Srm6/eP/13CA8Tx8MMWNdrD/i6sscuz4l
+         9fv6Gs64K4NTqllfuBu3vsarRxrHfYNSsuVBpTc2l0Un0jb9JOZ/TlixloFzfcBdXZz3
+         z0TuMS+MaAbQGHLMDunzgJy/a8WYYeY1f5XkbvefPkUSBlLi5fwDhyc4lwq5RO2E1sBx
+         kUTHIWvcpC1UhFlnEbxd95JKLlQkoSkd2Sofi3Y8uASJjJgUtZug7k9WbhWdkMsnZEvE
+         8fdnO6K7czYOK3g2d/kPvJlRh6RHbNGS6y81kTfaGKdH/RDJ3y2ezLlS3OiDxyIS6loJ
+         CWiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707531707; x=1708136507;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HxzMCuaeyhn3J9cU+FUkQXDQEw1s8FDPbrSZbrZddcs=;
+        b=jzjar61c4zuVn/EN0G3pMaIOWpowJ+BVPHTunHeX/hzzm7E4dgXfNRtOquaz6fAYWE
+         9WIP2uKuhQjoaouEQtBP4fKhr8A+OChqZZK8XRNxFceXlWKvJBXWlQyHqIlCCzZcxrEa
+         9nWLf5Nx8v9vOi94GAIFW6RXikzHT4hg8GZctSn3lpGQDQJCBse8YlnbxjFc0IvhGWjF
+         mCPD1UMOf4AqRpPExIn7oyYl68GTo+vWDHOsovCTUqL8K8XDuvhK7OWi+odQ3e9nkhdx
+         yUEC3A5yx+RsYQruA3wNA/Kj8/qiS+koyZ8uuyfuKDwTGbAEsP8mHfYX6oT8thH6jigZ
+         ryPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVj3yqlcWxN3/B8LE1SRRzlB+Kn4jk+w7rnFnHr4MLhCLsPQxU+eyKIERA6Piu2N/HajkdAxE2b1adLN0tw8AiI2ai3YjbW+xS+ooc=
+X-Gm-Message-State: AOJu0YwP8MMXQpPla8V2hNqGn1cjKw6ZVljbXX3cClNDJcM+c0i3sRHW
+	u7fRcN+sy1fXEprL0yT93DFr1Bwp6CrY93ayfiFQ/ceqW5XHJROd29zTpxeqYtnpYY/RzY8EL4J
+	dFpIJi9e58Zd+0HktKk7jLb7anbFGPC+3JvKgKQ==
+X-Google-Smtp-Source: AGHT+IFmCDzBaOTRJEg/f8FLkRS6yQpqqh3yX5ZW6I0WCsOQ72Tibv6RAzofMrIiMT9QniCTSK/5rtfk2WW8zRu6CiM=
+X-Received: by 2002:a05:6870:211:b0:218:f001:10bf with SMTP id
+ j17-20020a056870021100b00218f00110bfmr1150766oad.35.1707531707564; Fri, 09
+ Feb 2024 18:21:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
+ <20240207174102.1486130-2-pasha.tatashin@soleen.com> <8ce2cd7b-7702-45aa-b4c8-25a01c27ed83@arm.com>
+In-Reply-To: <8ce2cd7b-7702-45aa-b4c8-25a01c27ed83@arm.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 9 Feb 2024 21:21:10 -0500
+Message-ID: <CA+CK2bC=XyUhoSP9f0XBqEnQ-P5mMT2U=5dfzRSc9C=2b+bstQ@mail.gmail.com>
+Subject: Re: [PATCH v4 01/10] iommu/vt-d: add wrapper functions for page allocations
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
+	yu-cheng.yu@intel.com, rientjes@google.com, bagasdotme@gmail.com, 
+	mkoutny@suse.com
+Content-Type: text/plain; charset="UTF-8"
 
-The hardware description for BARs is scattered in many different variables
-in pci_epc_features. Some of these things are mutually exclusive, so it
-can create confusion over which variable that has precedence over another.
+Hi Robin,
 
-Improve the situation by creating a struct pci_epc_bar_desc, and a new
-enum pci_epc_bar_type, and convert the endpoint controller drivers to use
-this more well defined format.
+Thank you for reviewing this.
 
-Signed-off-by: Niklas Cassel <cassel@kernel.org>
----
- drivers/pci/controller/dwc/pci-imx6.c         |  3 +-
- drivers/pci/controller/dwc/pci-keystone.c     | 12 +++----
- .../pci/controller/dwc/pci-layerscape-ep.c    |  5 ++-
- drivers/pci/controller/dwc/pcie-keembay.c     |  8 +++--
- drivers/pci/controller/dwc/pcie-rcar-gen4.c   |  4 ++-
- drivers/pci/controller/dwc/pcie-tegra194.c    | 10 ++++--
- drivers/pci/controller/dwc/pcie-uniphier-ep.c | 15 ++++++--
- drivers/pci/controller/pcie-rcar-ep.c         | 14 +++++---
- drivers/pci/endpoint/functions/pci-epf-ntb.c  |  4 +--
- drivers/pci/endpoint/functions/pci-epf-test.c |  8 ++---
- drivers/pci/endpoint/functions/pci-epf-vntb.c |  2 +-
- drivers/pci/endpoint/pci-epc-core.c           | 32 +++++++++--------
- drivers/pci/endpoint/pci-epf-core.c           | 15 ++++----
- include/linux/pci-epc.h                       | 34 +++++++++++++++----
- 14 files changed, 108 insertions(+), 58 deletions(-)
+> > +#ifndef __IOMMU_PAGES_H
+> > +#define __IOMMU_PAGES_H
+> > +
+> > +#include <linux/vmstat.h>
+> > +#include <linux/gfp.h>
+> > +#include <linux/mm.h>
+> > +
+> > +/*
+> > + * All page allocation that are performed in the IOMMU subsystem must use one of
+>
+> "All page allocations" is too broad; As before, this is only about
+> pagetable allocations, or I guess for the full nuance, allocations of
+> pagetables and other per-iommu_domain configuration structures which are
+> reasonable to report as "pagetables" to userspace.
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index dc2c036ab28c..47a9a96484ed 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -1081,7 +1081,8 @@ static const struct pci_epc_features imx8m_pcie_epc_features = {
- 	.linkup_notifier = false,
- 	.msi_capable = true,
- 	.msix_capable = false,
--	.reserved_bar = 1 << BAR_1 | 1 << BAR_3,
-+	.bar[BAR_1] = { .type = BAR_RESERVED, },
-+	.bar[BAR_3] = { .type = BAR_RESERVED, },
- 	.align = SZ_64K,
- };
- 
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index c0c62533a3f1..b2b93b4fa82d 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -924,12 +924,12 @@ static const struct pci_epc_features ks_pcie_am654_epc_features = {
- 	.linkup_notifier = false,
- 	.msi_capable = true,
- 	.msix_capable = true,
--	.reserved_bar = 1 << BAR_0 | 1 << BAR_1,
--	.bar_fixed_64bit = 1 << BAR_0,
--	.bar_fixed_size[2] = SZ_1M,
--	.bar_fixed_size[3] = SZ_64K,
--	.bar_fixed_size[4] = 256,
--	.bar_fixed_size[5] = SZ_1M,
-+	.bar[BAR_0] = { .type = BAR_RESERVED, .only_64bit = true, },
-+	.bar[BAR_1] = { .type = BAR_RESERVED, },
-+	.bar[BAR_2] = { .type = BAR_FIXED, .fixed_size = SZ_1M, },
-+	.bar[BAR_3] = { .type = BAR_FIXED, .fixed_size = SZ_64K, },
-+	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = 256, },
-+	.bar[BAR_5] = { .type = BAR_FIXED, .fixed_size = SZ_1M, },
- 	.align = SZ_1M,
- };
- 
-diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-index 2e398494e7c0..1f6ee1460ec2 100644
---- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-+++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-@@ -250,7 +250,10 @@ static int __init ls_pcie_ep_probe(struct platform_device *pdev)
- 	pci->dev = dev;
- 	pci->ops = pcie->drvdata->dw_pcie_ops;
- 
--	ls_epc->bar_fixed_64bit = (1 << BAR_2) | (1 << BAR_4);
-+	ls_epc->bar[BAR_2].only_64bit = true;
-+	ls_epc->bar[BAR_3].type = BAR_RESERVED;
-+	ls_epc->bar[BAR_4].only_64bit = true;
-+	ls_epc->bar[BAR_5].type = BAR_RESERVED;
- 	ls_epc->linkup_notifier = true;
- 
- 	pcie->pci = pci;
-diff --git a/drivers/pci/controller/dwc/pcie-keembay.c b/drivers/pci/controller/dwc/pcie-keembay.c
-index 208d3b0ba196..5e8e54f597dd 100644
---- a/drivers/pci/controller/dwc/pcie-keembay.c
-+++ b/drivers/pci/controller/dwc/pcie-keembay.c
-@@ -312,8 +312,12 @@ static const struct pci_epc_features keembay_pcie_epc_features = {
- 	.linkup_notifier	= false,
- 	.msi_capable		= true,
- 	.msix_capable		= true,
--	.reserved_bar		= BIT(BAR_1) | BIT(BAR_3) | BIT(BAR_5),
--	.bar_fixed_64bit	= BIT(BAR_0) | BIT(BAR_2) | BIT(BAR_4),
-+	.bar[BAR_0]		= { .only_64bit = true, },
-+	.bar[BAR_1]		= { .type = BAR_RESERVED, },
-+	.bar[BAR_2]		= { .only_64bit = true, },
-+	.bar[BAR_3]		= { .type = BAR_RESERVED, },
-+	.bar[BAR_4]		= { .only_64bit = true, },
-+	.bar[BAR_5]		= { .type = BAR_RESERVED, },
- 	.align			= SZ_16K,
- };
- 
-diff --git a/drivers/pci/controller/dwc/pcie-rcar-gen4.c b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-index e9166619b1f9..0be760ed420b 100644
---- a/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-+++ b/drivers/pci/controller/dwc/pcie-rcar-gen4.c
-@@ -383,7 +383,9 @@ static const struct pci_epc_features rcar_gen4_pcie_epc_features = {
- 	.linkup_notifier = false,
- 	.msi_capable = true,
- 	.msix_capable = false,
--	.reserved_bar = 1 << BAR_1 | 1 << BAR_3 | 1 << BAR_5,
-+	.bar[BAR_1] = { .type = BAR_RESERVED, },
-+	.bar[BAR_3] = { .type = BAR_RESERVED, },
-+	.bar[BAR_5] = { .type = BAR_RESERVED, },
- 	.align = SZ_1M,
- };
- 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 7afa9e9aabe2..1f7b662cb8e1 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -2007,9 +2007,13 @@ static const struct pci_epc_features tegra_pcie_epc_features = {
- 	.core_init_notifier = true,
- 	.msi_capable = false,
- 	.msix_capable = false,
--	.reserved_bar = 1 << BAR_2 | 1 << BAR_3 | 1 << BAR_4 | 1 << BAR_5,
--	.bar_fixed_64bit = 1 << BAR_0,
--	.bar_fixed_size[0] = SZ_1M,
-+	.bar[BAR_0] = { .type = BAR_FIXED, .fixed_size = SZ_1M,
-+			.only_64bit = true, },
-+	.bar[BAR_1] = { .type = BAR_RESERVED, },
-+	.bar[BAR_2] = { .type = BAR_RESERVED, },
-+	.bar[BAR_3] = { .type = BAR_RESERVED, },
-+	.bar[BAR_4] = { .type = BAR_RESERVED, },
-+	.bar[BAR_5] = { .type = BAR_RESERVED, },
- };
- 
- static const struct pci_epc_features*
-diff --git a/drivers/pci/controller/dwc/pcie-uniphier-ep.c b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-index 3fced0d3e851..265f65fc673f 100644
---- a/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-uniphier-ep.c
-@@ -411,8 +411,12 @@ static const struct uniphier_pcie_ep_soc_data uniphier_pro5_data = {
- 		.msi_capable = true,
- 		.msix_capable = false,
- 		.align = 1 << 16,
--		.bar_fixed_64bit = BIT(BAR_0) | BIT(BAR_2) | BIT(BAR_4),
--		.reserved_bar =  BIT(BAR_4),
-+		.bar[BAR_0] = { .only_64bit = true, },
-+		.bar[BAR_1] = { .type = BAR_RESERVED, },
-+		.bar[BAR_2] = { .only_64bit = true, },
-+		.bar[BAR_3] = { .type = BAR_RESERVED, },
-+		.bar[BAR_4] = { .type = BAR_RESERVED, .only_64bit = true, },
-+		.bar[BAR_5] = { .type = BAR_RESERVED, },
- 	},
- };
- 
-@@ -425,7 +429,12 @@ static const struct uniphier_pcie_ep_soc_data uniphier_nx1_data = {
- 		.msi_capable = true,
- 		.msix_capable = false,
- 		.align = 1 << 12,
--		.bar_fixed_64bit = BIT(BAR_0) | BIT(BAR_2) | BIT(BAR_4),
-+		.bar[BAR_0] = { .only_64bit = true, },
-+		.bar[BAR_1] = { .type = BAR_RESERVED, },
-+		.bar[BAR_2] = { .only_64bit = true, },
-+		.bar[BAR_3] = { .type = BAR_RESERVED, },
-+		.bar[BAR_4] = { .only_64bit = true, },
-+		.bar[BAR_5] = { .type = BAR_RESERVED, },
- 	},
- };
- 
-diff --git a/drivers/pci/controller/pcie-rcar-ep.c b/drivers/pci/controller/pcie-rcar-ep.c
-index e6909271def7..05967c6c0b42 100644
---- a/drivers/pci/controller/pcie-rcar-ep.c
-+++ b/drivers/pci/controller/pcie-rcar-ep.c
-@@ -440,11 +440,15 @@ static const struct pci_epc_features rcar_pcie_epc_features = {
- 	.msi_capable = true,
- 	.msix_capable = false,
- 	/* use 64-bit BARs so mark BAR[1,3,5] as reserved */
--	.reserved_bar = 1 << BAR_1 | 1 << BAR_3 | 1 << BAR_5,
--	.bar_fixed_64bit = 1 << BAR_0 | 1 << BAR_2 | 1 << BAR_4,
--	.bar_fixed_size[0] = 128,
--	.bar_fixed_size[2] = 256,
--	.bar_fixed_size[4] = 256,
-+	.bar[BAR_0] = { .type = BAR_FIXED, .fixed_size = 128,
-+			.only_64bit = true, },
-+	.bar[BAR_1] = { .type = BAR_RESERVED, },
-+	.bar[BAR_2] = { .type = BAR_FIXED, .fixed_size = 256,
-+			.only_64bit = true, },
-+	.bar[BAR_3] = { .type = BAR_RESERVED, },
-+	.bar[BAR_4] = { .type = BAR_FIXED, .fixed_size = 256,
-+			.only_64bit = true, },
-+	.bar[BAR_5] = { .type = BAR_RESERVED, },
- };
- 
- static const struct pci_epc_features*
-diff --git a/drivers/pci/endpoint/functions/pci-epf-ntb.c b/drivers/pci/endpoint/functions/pci-epf-ntb.c
-index 43cd309ce22f..e01a98e74d21 100644
---- a/drivers/pci/endpoint/functions/pci-epf-ntb.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-ntb.c
-@@ -1012,13 +1012,13 @@ static int epf_ntb_config_spad_bar_alloc(struct epf_ntb *ntb,
- 
- 	epc_features = ntb_epc->epc_features;
- 	barno = ntb_epc->epf_ntb_bar[BAR_CONFIG];
--	size = epc_features->bar_fixed_size[barno];
-+	size = epc_features->bar[barno].fixed_size;
- 	align = epc_features->align;
- 
- 	peer_ntb_epc = ntb->epc[!type];
- 	peer_epc_features = peer_ntb_epc->epc_features;
- 	peer_barno = ntb_epc->epf_ntb_bar[BAR_PEER_SPAD];
--	peer_size = peer_epc_features->bar_fixed_size[peer_barno];
-+	peer_size = peer_epc_features->bar[peer_barno].fixed_size;
- 
- 	/* Check if epc_features is populated incorrectly */
- 	if ((!IS_ALIGNED(size, align)))
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 981894e40681..cd4ffb39dcdc 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -729,7 +729,7 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
- 		 */
- 		add = (epf_bar->flags & PCI_BASE_ADDRESS_MEM_TYPE_64) ? 2 : 1;
- 
--		if (!!(epc_features->reserved_bar & (1 << bar)))
-+		if (epc_features->bar[bar].type == BAR_RESERVED)
- 			continue;
- 
- 		ret = pci_epc_set_bar(epc, epf->func_no, epf->vfunc_no,
-@@ -856,7 +856,7 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
- 		if (bar == test_reg_bar)
- 			continue;
- 
--		if (!!(epc_features->reserved_bar & (1 << bar)))
-+		if (epc_features->bar[bar].type == BAR_RESERVED)
- 			continue;
- 
- 		base = pci_epf_alloc_space(epf, bar_size[bar], bar,
-@@ -874,13 +874,11 @@ static void pci_epf_configure_bar(struct pci_epf *epf,
- 				  const struct pci_epc_features *epc_features)
- {
- 	struct pci_epf_bar *epf_bar;
--	bool bar_fixed_64bit;
- 	int i;
- 
- 	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
- 		epf_bar = &epf->bar[i];
--		bar_fixed_64bit = !!(epc_features->bar_fixed_64bit & (1 << i));
--		if (bar_fixed_64bit)
-+		if (epc_features->bar[i].only_64bit)
- 			epf_bar->flags |= PCI_BASE_ADDRESS_MEM_TYPE_64;
- 	}
- }
-diff --git a/drivers/pci/endpoint/functions/pci-epf-vntb.c b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-index eda4b906868b..1de293411434 100644
---- a/drivers/pci/endpoint/functions/pci-epf-vntb.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-vntb.c
-@@ -422,7 +422,7 @@ static int epf_ntb_config_spad_bar_alloc(struct epf_ntb *ntb)
- 								epf->func_no,
- 								epf->vfunc_no);
- 	barno = ntb->epf_ntb_bar[BAR_CONFIG];
--	size = epc_features->bar_fixed_size[barno];
-+	size = epc_features->bar[barno].fixed_size;
- 	align = epc_features->align;
- 
- 	if ((!IS_ALIGNED(size, align)))
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index dcd4e66430c1..7fe8f4336765 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -87,7 +87,7 @@ EXPORT_SYMBOL_GPL(pci_epc_get);
-  * @epc_features: pci_epc_features structure that holds the reserved bar bitmap
-  *
-  * Invoke to get the first unreserved BAR that can be used by the endpoint
-- * function. For any incorrect value in reserved_bar return '0'.
-+ * function.
-  */
- enum pci_barno
- pci_epc_get_first_free_bar(const struct pci_epc_features *epc_features)
-@@ -102,32 +102,34 @@ EXPORT_SYMBOL_GPL(pci_epc_get_first_free_bar);
-  * @bar: the starting BAR number from where unreserved BAR should be searched
-  *
-  * Invoke to get the next unreserved BAR starting from @bar that can be used
-- * for endpoint function. For any incorrect value in reserved_bar return '0'.
-+ * for endpoint function.
-  */
- enum pci_barno pci_epc_get_next_free_bar(const struct pci_epc_features
- 					 *epc_features, enum pci_barno bar)
- {
--	unsigned long free_bar;
-+	int i;
- 
- 	if (!epc_features)
- 		return BAR_0;
- 
- 	/* If 'bar - 1' is a 64-bit BAR, move to the next BAR */
--	if ((epc_features->bar_fixed_64bit << 1) & 1 << bar)
-+	if (bar > 0 && epc_features->bar[bar - 1].only_64bit)
- 		bar++;
- 
--	/* Find if the reserved BAR is also a 64-bit BAR */
--	free_bar = epc_features->reserved_bar & epc_features->bar_fixed_64bit;
--
--	/* Set the adjacent bit if the reserved BAR is also a 64-bit BAR */
--	free_bar <<= 1;
--	free_bar |= epc_features->reserved_bar;
--
--	free_bar = find_next_zero_bit(&free_bar, 6, bar);
--	if (free_bar > 5)
--		return NO_BAR;
-+	for (i = bar; i < PCI_STD_NUM_BARS; i++) {
-+		/* If the BAR is not reserved, return it. */
-+		if (epc_features->bar[i].type != BAR_RESERVED)
-+			return i;
-+
-+		/*
-+		 * If the BAR is reserved, and marked as 64-bit only, then the
-+		 * succeeding BAR is also reserved.
-+		 */
-+		if (epc_features->bar[i].only_64bit)
-+			i++;
-+	}
- 
--	return free_bar;
-+	return NO_BAR;
- }
- EXPORT_SYMBOL_GPL(pci_epc_get_next_free_bar);
- 
-diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/pci-epf-core.c
-index f2b4d34454c4..0a28a0b0911b 100644
---- a/drivers/pci/endpoint/pci-epf-core.c
-+++ b/drivers/pci/endpoint/pci-epf-core.c
-@@ -260,7 +260,7 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
- 			  const struct pci_epc_features *epc_features,
- 			  enum pci_epc_interface_type type)
- {
--	u64 bar_fixed_size = epc_features->bar_fixed_size[bar];
-+	u64 bar_fixed_size = epc_features->bar[bar].fixed_size;
- 	size_t align = epc_features->align;
- 	struct pci_epf_bar *epf_bar;
- 	dma_addr_t phys_addr;
-@@ -271,13 +271,14 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t size, enum pci_barno bar,
- 	if (size < 128)
- 		size = 128;
- 
--	if (bar_fixed_size && size > bar_fixed_size) {
--		dev_err(&epf->dev, "requested BAR size is larger than fixed size\n");
--		return NULL;
--	}
--
--	if (bar_fixed_size)
-+	if (epc_features->bar[bar].type == BAR_FIXED && bar_fixed_size) {
-+		if (size > bar_fixed_size) {
-+			dev_err(&epf->dev,
-+				"requested BAR size is larger than fixed size\n");
-+			return NULL;
-+		}
- 		size = bar_fixed_size;
-+	}
- 
- 	if (align)
- 		size = ALIGN(size, align);
-diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-index 40ea18f5aa02..4ccb4f4f3883 100644
---- a/include/linux/pci-epc.h
-+++ b/include/linux/pci-epc.h
-@@ -145,6 +145,32 @@ struct pci_epc {
- 	unsigned long			function_num_map;
- };
- 
-+/**
-+ * @BAR_PROGRAMMABLE: The BAR mask can be configured by the EPC.
-+ * @BAR_FIXED: The BAR mask is fixed by the hardware.
-+ * @BAR_RESERVED: The BAR should not be touched by an EPF driver.
-+ */
-+enum pci_epc_bar_type {
-+	BAR_PROGRAMMABLE = 0,
-+	BAR_FIXED,
-+	BAR_RESERVED,
-+};
-+
-+/**
-+ * struct pci_epc_bar_desc - hardware description for a BAR
-+ * @type: the type of the BAR
-+ * @fixed_size: the fixed size, only applicable if type is BAR_FIXED_MASK.
-+ * @only_64bit: if true, an EPF driver is not allowed to choose if this BAR
-+ *		should be configured as 32-bit or 64-bit, the EPF driver must
-+ *		configure this BAR as 64-bit. Additionally, the BAR succeeding
-+ *		this BAR must be set to type BAR_RESERVED.
-+ */
-+struct pci_epc_bar_desc {
-+	enum pci_epc_bar_type type;
-+	u64 fixed_size;
-+	bool only_64bit;
-+};
-+
- /**
-  * struct pci_epc_features - features supported by a EPC device per function
-  * @linkup_notifier: indicate if the EPC device can notify EPF driver on link up
-@@ -152,9 +178,7 @@ struct pci_epc {
-  *			for initialization
-  * @msi_capable: indicate if the endpoint function has MSI capability
-  * @msix_capable: indicate if the endpoint function has MSI-X capability
-- * @reserved_bar: bitmap to indicate reserved BAR unavailable to function driver
-- * @bar_fixed_64bit: bitmap to indicate fixed 64bit BARs
-- * @bar_fixed_size: Array specifying the size supported by each BAR
-+ * @bar: array specifying the hardware description for each BAR
-  * @align: alignment size required for BAR buffer allocation
-  */
- struct pci_epc_features {
-@@ -162,9 +186,7 @@ struct pci_epc_features {
- 	unsigned int	core_init_notifier : 1;
- 	unsigned int	msi_capable : 1;
- 	unsigned int	msix_capable : 1;
--	u8	reserved_bar;
--	u8	bar_fixed_64bit;
--	u64	bar_fixed_size[PCI_STD_NUM_BARS];
-+	struct	pci_epc_bar_desc bar[PCI_STD_NUM_BARS];
- 	size_t	align;
- };
- 
--- 
-2.43.0
+I will update the comment.
 
+
+>
+> > + * the functions below.  This is necessary for the proper accounting as IOMMU
+> > + * state can be rather large, i.e. multiple gigabytes in size.
+> > + */
+> > +
+> > +/**
+> > + * __iommu_alloc_pages_node - allocate a zeroed page of a given order from
+> > + * specific NUMA node.
+> > + * @nid: memory NUMA node id
+> > + * @gfp: buddy allocator flags
+> > + * @order: page order
+> > + *
+> > + * returns the head struct page of the allocated page.
+> > + */
+> > +static inline struct page *__iommu_alloc_pages_node(int nid, gfp_t gfp,
+> > +                                                 int order)
+> > +{
+> > +     struct page *page;
+> > +
+> > +     page = alloc_pages_node(nid, gfp | __GFP_ZERO, order);
+> > +     if (unlikely(!page))
+> > +             return NULL;
+> > +
+> > +     return page;
+> > +}
+>
+> All 3 invocations of this only use the returned struct page to trivially
+> derive page_address(), so we really don't need it; just clean up these
+> callsites a bit more.
+
+I will remove this function, and update all invocations to use
+iommu_alloc_pages_node() directly.
+
+
+> > + * __iommu_alloc_pages - allocate a zeroed page of a given order.
+> > + * @gfp: buddy allocator flags
+> > + * @order: page order
+> > + *
+> > + * returns the head struct page of the allocated page.
+> > + */
+> > +static inline struct page *__iommu_alloc_pages(gfp_t gfp, int order)
+> > +{
+> > +     struct page *page;
+> > +
+> > +     page = alloc_pages(gfp | __GFP_ZERO, order);
+> > +     if (unlikely(!page))
+> > +             return NULL;
+> > +
+> > +     return page;
+> > +}
+>
+> Same for the single invocation of this one.
+
+I kept this function, but removed __iommu_alloc_page() that depends on
+it. This is because tegra-smmu needs a "struct page" allocator.
+
+>
+> > +
+> > +/**
+> > + * __iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
+> > + * @nid: memory NUMA node id
+> > + * @gfp: buddy allocator flags
+> > + *
+> > + * returns the struct page of the allocated page.
+> > + */
+> > +static inline struct page *__iommu_alloc_page_node(int nid, gfp_t gfp)
+> > +{
+> > +     return __iommu_alloc_pages_node(nid, gfp, 0);
+> > +}
+>
+> There are no users of this at all.
+
+Yes, I added it just for completeness, I will remove it.
+
+
+> > + * __iommu_alloc_page - allocate a zeroed page
+> > + * @gfp: buddy allocator flags
+> > + *
+> > + * returns the struct page of the allocated page.
+> > + */
+> > +static inline struct page *__iommu_alloc_page(gfp_t gfp)
+> > +{
+> > +     return __iommu_alloc_pages(gfp, 0);
+> > +}
+> > +
+> > +/**
+> > + * __iommu_free_pages - free page of a given order
+> > + * @page: head struct page of the page
+> > + * @order: page order
+> > + */
+> > +static inline void __iommu_free_pages(struct page *page, int order)
+> > +{
+> > +     if (!page)
+> > +             return;
+> > +
+> > +     __free_pages(page, order);
+> > +}
+> > +
+> > +/**
+> > + * __iommu_free_page - free page
+> > + * @page: struct page of the page
+> > + */
+> > +static inline void __iommu_free_page(struct page *page)
+> > +{
+> > +     __iommu_free_pages(page, 0);
+> > +}
+>
+> Beyond one more trivial Intel cleanup for __iommu_alloc_pages(), these 3
+> are then only used by tegra-smmu, so honestly I'd be inclined to just
+> open-code there page_address()/virt_to_page() conversions as appropriate
+> there (once again I think the whole thing could in fact be refactored to
+> not use struct pages at all because all it's ever ultimately doing with
+> them is page_address(), but that would be a bigger job so definitely
+> out-of-scope for this series).
+
+I removed __iommu_free_page(), but kept __iommu_free_pages() variant.
+
+>
+> > +
+> > +/**
+> > + * iommu_alloc_pages_node - allocate a zeroed page of a given order from
+> > + * specific NUMA node.
+> > + * @nid: memory NUMA node id
+> > + * @gfp: buddy allocator flags
+> > + * @order: page order
+> > + *
+> > + * returns the virtual address of the allocated page
+> > + */
+> > +static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp, int order)
+> > +{
+> > +     struct page *page = __iommu_alloc_pages_node(nid, gfp, order);
+> > +
+> > +     if (unlikely(!page))
+> > +             return NULL;
+>
+> As a general point I'd prefer to fold these checks into the accounting
+> function itself rather than repeat them all over.
+
+For the free functions this saves a few cycles by not repeating this
+check again inside __free_pages(), to keep things symmetrical it makes
+sense to keep __iomu_free_account and __iomu_alloc_account the same.
+With the other clean-up there are not that many of these checks left.
+
+> > + */
+> > +static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
+> > +{
+> > +     return iommu_alloc_pages_node(nid, gfp, 0);
+> > +}
+>
+> TBH I'm not entirely convinced that saving 4 characters per invocation
+> times 11 invocations makes this wrapper worthwhile :/
+
+Let's keep them. After the clean-up that you suggested, there are
+fewer functions left in this file, but I think that it is cleaner to
+keep these remaining, as it is beneficial to easily distinguish when
+exactly one page is allocated vs when multiple are allocated via code
+search.
+
+
+> > + *
+> > + * There are no locking requirement for these pages, as they are going to be
+> > + * put on a free list as soon as refcount reaches 0. Pages are put on this LRU
+> > + * list once they are removed from the IOMMU page tables. However, they can
+> > + * still be access through debugfs.
+> > + */
+> > +static inline void iommu_free_pages_list(struct list_head *page)
+>
+> Nit: I'd be inclined to call this iommu_put_pages_list for consistency.
+
+I will rename it to iommu_put_pages_list(), indeed a better name.
+
+>
+> > +{
+> > +     while (!list_empty(page)) {
+> > +             struct page *p = list_entry(page->prev, struct page, lru);
+> > +
+> > +             list_del(&p->lru);
+> > +             put_page(p);
+> > +     }
+> > +}
+>
+> I realise now you've also missed the common freelist freeing sites in
+> iommu-dma.
+
+Ah yes, thank you for catching that. I will fix it.
+
+Pasha
