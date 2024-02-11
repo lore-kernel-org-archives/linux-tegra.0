@@ -1,292 +1,280 @@
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2067.outbound.protection.outlook.com [40.107.243.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84CAB442F
-	for <linux-tegra@vger.kernel.org>; Sat, 10 Feb 2024 02:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707531710; cv=none; b=DjhqOIgu9X9aij3COm8c5qyxIDDAzLTDHEoI6Pm2Jy9VRjAyG3bHAzZXizmpaK6T4fSATdDOISS32/sPdKZyymOijofctKquM90YfifGei4tRM7sBR1CVEZXFnXVBoMR1mmBRcpQfSlJcLIpmsKxdOC7D2GgwYFHIg2NOKBzktA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707531710; c=relaxed/simple;
-	bh=OEsr09Gb3Hzxbc+OG+EIkVQM7fLubAEWg7orSg+gNbQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G6gZX9Ba9niWeWJr4yy/h/eFyl0mrpj9JhUbmeP4OUUjhPruD8Y44MqzaXBCB6Neomry7ch+mrEOMpBnJrE93RS3k72FJY+ZCAYBwNNOoQ30gMjWQUuWMICJyD4CpRNDilM1FonefjFLkn7TkFoDHvVBKDXnseMt5awIrE4DjYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=E1MTeg84 reason="key not found in DNS"; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4416836113;
+	Sun, 11 Feb 2024 17:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707671270; cv=fail; b=ByHlNDK7RSEFKusd803m2zgBDXCcBRsZmOR4t5zNkjD2gyfG7rFYzjkZ3qFGSIeV3BtCe7kqwWfrCm0xOR3DBbKc4Na+rHEO6Zx7kEtzCAnTPXIdwdWanhYjGy7aPpyqaS6P7QYAHUSUIFBC5lboZ+phZxoYVP8vo2if1kojDkc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707671270; c=relaxed/simple;
+	bh=MAoKqqs4zXZxk2v1hJGL+ASF9Bzti389p+jzrb595sQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=dy7/KL79qfWHkIutwryq2DKSOkWZALjuXLDIWiuFpPblTrQtCZx/GnHsH/W/XdxHFm9UPdwYoCvCGMiCkXnOuohUJvj7Gk16u90mVN/bULCGLFUfebZogfcdzexD3rMdOjdfaYXQ0yw8kMYRyHgicFGdLHWz+v8X3giW7gyKRzM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EoZHU3WK; arc=fail smtp.client-ip=40.107.243.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="E1MTeg84"
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-214c940145bso848680fac.1
-        for <linux-tegra@vger.kernel.org>; Fri, 09 Feb 2024 18:21:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1707531707; x=1708136507; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HxzMCuaeyhn3J9cU+FUkQXDQEw1s8FDPbrSZbrZddcs=;
-        b=E1MTeg84HyX2eWEqdtJvMGUHAsHw4vPk1Srm6/eP/13CA8Tx8MMWNdrD/i6sscuz4l
-         9fv6Gs64K4NTqllfuBu3vsarRxrHfYNSsuVBpTc2l0Un0jb9JOZ/TlixloFzfcBdXZz3
-         z0TuMS+MaAbQGHLMDunzgJy/a8WYYeY1f5XkbvefPkUSBlLi5fwDhyc4lwq5RO2E1sBx
-         kUTHIWvcpC1UhFlnEbxd95JKLlQkoSkd2Sofi3Y8uASJjJgUtZug7k9WbhWdkMsnZEvE
-         8fdnO6K7czYOK3g2d/kPvJlRh6RHbNGS6y81kTfaGKdH/RDJ3y2ezLlS3OiDxyIS6loJ
-         CWiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707531707; x=1708136507;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HxzMCuaeyhn3J9cU+FUkQXDQEw1s8FDPbrSZbrZddcs=;
-        b=jzjar61c4zuVn/EN0G3pMaIOWpowJ+BVPHTunHeX/hzzm7E4dgXfNRtOquaz6fAYWE
-         9WIP2uKuhQjoaouEQtBP4fKhr8A+OChqZZK8XRNxFceXlWKvJBXWlQyHqIlCCzZcxrEa
-         9nWLf5Nx8v9vOi94GAIFW6RXikzHT4hg8GZctSn3lpGQDQJCBse8YlnbxjFc0IvhGWjF
-         mCPD1UMOf4AqRpPExIn7oyYl68GTo+vWDHOsovCTUqL8K8XDuvhK7OWi+odQ3e9nkhdx
-         yUEC3A5yx+RsYQruA3wNA/Kj8/qiS+koyZ8uuyfuKDwTGbAEsP8mHfYX6oT8thH6jigZ
-         ryPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVj3yqlcWxN3/B8LE1SRRzlB+Kn4jk+w7rnFnHr4MLhCLsPQxU+eyKIERA6Piu2N/HajkdAxE2b1adLN0tw8AiI2ai3YjbW+xS+ooc=
-X-Gm-Message-State: AOJu0YwP8MMXQpPla8V2hNqGn1cjKw6ZVljbXX3cClNDJcM+c0i3sRHW
-	u7fRcN+sy1fXEprL0yT93DFr1Bwp6CrY93ayfiFQ/ceqW5XHJROd29zTpxeqYtnpYY/RzY8EL4J
-	dFpIJi9e58Zd+0HktKk7jLb7anbFGPC+3JvKgKQ==
-X-Google-Smtp-Source: AGHT+IFmCDzBaOTRJEg/f8FLkRS6yQpqqh3yX5ZW6I0WCsOQ72Tibv6RAzofMrIiMT9QniCTSK/5rtfk2WW8zRu6CiM=
-X-Received: by 2002:a05:6870:211:b0:218:f001:10bf with SMTP id
- j17-20020a056870021100b00218f00110bfmr1150766oad.35.1707531707564; Fri, 09
- Feb 2024 18:21:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EoZHU3WK"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YklQE14g0yRQ5pztqWdalSmrExNwnY9aH2fRVjrUSnb2z62NDqMkJsFo9eDpm8mzccNGjaGYfgBkK+kBzJVranA18p4K7T/bvke2HYjtlMBrQjmwi+/Iv2DI60Z0KnjeeEoW9Mi6k+hTpAaaHVqyDe1ZO2zv5tOEokws9XWZr+ma+sbwdZz2f7Yi0Ma351BGbQXeYTuUrzk9+lRRQi+N8iTyIjgfuchJMVOl8DWdgp9sCkMXtzYCAiKqweyrZd3HqkLy8DZxN/0Ga9dgerCWOi+6WUNeAL14yf3kwORcxSDuiq/SG/+/QnQF+YaCvmyC3deTO4zV4ZmYN9ADAkeIwA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RTuDxcquma5fPWfJuoOQmhEhoec7WG3DzuIYpDxTdvA=;
+ b=IUexOV3RyjBDg0lZICFTLyp5h2BP/WInkTAxMHSRDea9NkigMJyOgxafGSouEXrMBVS/guJsn8LczBoOQ6H9Ri1Lz1m+USqc0HEhmXnh7Gar49Hi6SVa2GD4JRkI33E00TAbeOznItP6n/1dD4M3rAD6NeLzBxOW/uVYNjLF62OgbxXX2+yiOiH5zJU7uf96IgeYigp9mad3qMCkqBzPYWt4K33EmJrOmfCRpR1dAQwblaIeV8cEYMJKraic+HzVVppxzoIMQGQN5SQszHmzaL9qWozuVCN5YxEFrXN5YkZnFiFz9qUAgxS4KBo7ldqdXB+cMjjju/Kq+mK8GXVSZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RTuDxcquma5fPWfJuoOQmhEhoec7WG3DzuIYpDxTdvA=;
+ b=EoZHU3WK5DQkFNRnBHVs1b9Haht4y2RRctgp3egge5GAMUy8AIa/BNExAVVJWANqLKmBmF8WQdkZb60LLDjAfTNZHMsZME1L2ZXUo1uacFSjpUubRreUxy/HWo9ZO4KioQGGP62u73sDIUUCjp7/05qfiA/zRMdOGlFyHNBdI7GIEGLIrd996EWy9PJJ/KNbvQ/tYkGr2ZcBEVb6glanCtmYhgBZb3d71dVHgdq/S7XsZM3hor8CNQ8bGzCSk/wv9RyWmY+WmEI6yI5DE3BKJqEG8mxcSkheX8piQgoHHr7fxyWlWvjH1JupJkpKgrXP6e4yn3v57+kvCMeuNNpKaA==
+Received: from IA0PR12MB8906.namprd12.prod.outlook.com (2603:10b6:208:481::9)
+ by SA0PR12MB4512.namprd12.prod.outlook.com (2603:10b6:806:71::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.18; Sun, 11 Feb
+ 2024 17:07:45 +0000
+Received: from IA0PR12MB8906.namprd12.prod.outlook.com
+ ([fe80::c1b:dfd5:17ba:bde9]) by IA0PR12MB8906.namprd12.prod.outlook.com
+ ([fe80::c1b:dfd5:17ba:bde9%7]) with mapi id 15.20.7270.016; Sun, 11 Feb 2024
+ 17:07:44 +0000
+From: Petlozu Pravareshwar <petlozup@nvidia.com>
+To: Rob Herring <robh@kernel.org>
+CC: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, "krzysztof.kozlowski+dt@linaro.org"
+	<krzysztof.kozlowski+dt@linaro.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"dmitry.osipenko@collabora.com" <dmitry.osipenko@collabora.com>,
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Kartik Rajput
+	<kkartik@nvidia.com>, "cai.huoqing@linux.dev" <cai.huoqing@linux.dev>,
+	Sandipan Patra <spatra@nvidia.com>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>
+Subject: RE: [PATCH V2 2/3] dt-bindings: tegra: pmc: Update scratch as an
+ optional aperture
+Thread-Topic: [PATCH V2 2/3] dt-bindings: tegra: pmc: Update scratch as an
+ optional aperture
+Thread-Index: AQHaSYNiQc3Ffh8ZXUOeuNNLMtgYTrDyrdYAgBLXPvA=
+Date: Sun, 11 Feb 2024 17:07:44 +0000
+Message-ID:
+ <IA0PR12MB8906A78CE7A5652181720561B5492@IA0PR12MB8906.namprd12.prod.outlook.com>
+References: <20240117202504.943476-1-petlozup@nvidia.com>
+ <20240117202504.943476-2-petlozup@nvidia.com>
+ <20240130171908.GA1964535-robh@kernel.org>
+In-Reply-To: <20240130171908.GA1964535-robh@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR12MB8906:EE_|SA0PR12MB4512:EE_
+x-ms-office365-filtering-correlation-id: 02d204f5-d89f-4411-656e-08dc2b23f6a4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ WE0sZt+lVZ+G2ktPe5kq1cZ6UUOu1ufaEVCSnYYr7HUxdeMpZJTYPgs8KuNUp+y29DmZsZ0iq4aO6Gxd8NRNpPbvS3PfkB1EmNVM1rk+SI5XLalo92sEa0yagiZ/6u1MGaNehwciW1Qq8LjW1aLNeQVsJCGCqTxHMfqTc5wVmKVCzM19V/57NBNZlL3+GV0KSJ5k3z96LBW+WSbccvhR/MVRk6h7m5CO3X0yZBAt5bUACfNI+OJWTFNaz53Pw01tiIQIYUlIa9ATDOlXfXmKz0LolVYi7yZfZQLsP8w0H23uJWB9bWGaPxb2Af0l8fJ45BwFplmAPLr0n+rf3Ktn+rGX/0IR+Q5iwKtAgAMJ8pckoP8BuGhlGqD9Tsm0l7azYC0CUXehlM+LIdP3V0lJIrsDAHcMl9XZYPKc3aI6r5FxJXcXudjKleiwf/e0JeWtT0QeWOM2Z/YcJh6vnmmY0li3honkl2iFlWPGBNVZCbF50Cy7p3UsoF2YNEkMR+uvZxRIxTgDnPVcW39xs66o2d2iB24YkrMtr7D9cdSiWTBD5XfKkFuOH0KYT/NO7JsKxW1+NgxSZzkFMz5Z1qRgbTBD2axaLYgkvn6+w/rDf+mx8U+anSTBenXGMeNgfOex
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8906.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(39860400002)(366004)(346002)(376002)(136003)(230922051799003)(230273577357003)(186009)(64100799003)(451199024)(1800799012)(4326008)(8936002)(52536014)(8676002)(5660300002)(7416002)(2906002)(15650500001)(83380400001)(38100700002)(33656002)(86362001)(26005)(122000001)(38070700009)(71200400001)(66946007)(316002)(66556008)(66476007)(6916009)(76116006)(66446008)(64756008)(54906003)(6506007)(7696005)(9686003)(478600001)(55016003)(41300700001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?iITa0vXEwKuB8gRM64LY06deP1KRWD7qosL1kNZx3jeVI4CWq9rOCMosyER8?=
+ =?us-ascii?Q?BFfdw9gCOIkpg7Fi9ynjbU3Qa0A8I+FRrQpCvPaT8LJRtB3T4pBcR0BTSCcz?=
+ =?us-ascii?Q?MrcqSPOv4mTk63jSRmfoj6sJILIvAoBoummbFRxs+gLAHtxbWEpEECgnnH3t?=
+ =?us-ascii?Q?+IwhC43Na4wm/CrRtY0ytZDHTLhwjgnGMsaUsYGMstAZ8qwq2ec9hoRzKBLz?=
+ =?us-ascii?Q?4c2YKVKsHe8cNvopOGnFJo3Q2LeVe5D2+54zEnXFFZ+dQhQJh5lkzdFA/PZB?=
+ =?us-ascii?Q?pvS0R1VNryPl0Be1KEx1r1LhKIBb4fg7KqBkSS7UyjE/57/dp6OHuaGdWt91?=
+ =?us-ascii?Q?nx6tAWhpC7YGoZFKFXissnyc4PBasTMeZEkwHG7oaqIaNL/xZsHreiydP5Fs?=
+ =?us-ascii?Q?FbJaglMWggNfzZuNh7cnpap0XQbjfZ+nvBSL+iCfsrBBDpogU5FRAFmyJ/Yf?=
+ =?us-ascii?Q?+Crf7zlNs9RICL4ghg3JCrOriW6B0E17wti35HNhWuVs+VGmJZvtPMMK/Oni?=
+ =?us-ascii?Q?1kfdCZGEX8i3fG0xWtQuK168HZ6FvW/bBSr3ke5W2H0b4O0PYyFwhkR8PAOH?=
+ =?us-ascii?Q?jn8nXAg4HXkCfWRp8S7yiFijzxwJadwiw7GGEVWvQ5ccl1FS5oe90i1TjTgQ?=
+ =?us-ascii?Q?vdCj6U0g6GSwXecjAss/lcEM1+NDAFsgDgkItLt6USx+UIys2w/NASeVlvai?=
+ =?us-ascii?Q?VUKM+sAwk6Jwws+kSYodlNT7qLclOhu0W06rTT8pF6w4epyST5iy78eZpZN/?=
+ =?us-ascii?Q?tLXNJYhruT1X2nRVpZdzqPu9SLbNRN95yEsIViY0CemRVFtAFMt8y3mIelUb?=
+ =?us-ascii?Q?gpu22nxIxQeXTIZuYl1aAzUSQjp6lShmt/xzAc6CChsrilOWYzS5WGkx8/Dt?=
+ =?us-ascii?Q?lDEZ05DMib9tcp2pCrT2T57IaiKjqf2KXmy5KPYR3rfrjA9mwHZA1D2K59D6?=
+ =?us-ascii?Q?gY9RdMeOp97HrVo5Bf0g4VukXnjczDQq3sEKtyefqhdQLRbeGxuTcQ+W8M3D?=
+ =?us-ascii?Q?0bSFrUe0DRkAGE4224Iticmm5wlU0RJ6PaTbYkeV5yLP5ISqD1nENMS5Kuqv?=
+ =?us-ascii?Q?gTLdn+95zD02llkidy6qaJPmHNL4Wj0DVhMl+NGOfewHRe1hKqoBEpZeQrB/?=
+ =?us-ascii?Q?z/ftPEfya+I86n2p3hHF/I/lD9QnBbjzUnD9/DUmexqK1F1AVr81eoFGgE4s?=
+ =?us-ascii?Q?syZLL4wjf9qbMcE6+kej6rCylg66mfkJY0WYfcXpIGavkW1sSM3vS443cRrI?=
+ =?us-ascii?Q?P3bC9htnhPbn66En13kI6BOLLRpOIWv70OHF0VXBdppqPrlI9NfaFs343X8a?=
+ =?us-ascii?Q?yUF17+I3xzteTIH3o5Qhm2pgv94/p05CeJfAAHT3z0qaHBP1Dft+1w+nLx/2?=
+ =?us-ascii?Q?9jwfsD622ZuY7FyutoZm3HZOi8K4cliMNU9odyWlHLNOmaiYvgRfyi+BouDK?=
+ =?us-ascii?Q?GF0s5s3jcy9v33HpNOpPtWpOVkvKLUsPJSOYN02EtiP5d6qvHnvjo5cUybQa?=
+ =?us-ascii?Q?JHp4bEoBMWqkmkHaU7z9EBw6GbcFPHK4KmMzhyAg1WKTqKBoMzrkGfaRx49i?=
+ =?us-ascii?Q?NfsPLiEorn/M+McqK8ZT8sYVYt2HA+ZDvl06s90V?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
- <20240207174102.1486130-2-pasha.tatashin@soleen.com> <8ce2cd7b-7702-45aa-b4c8-25a01c27ed83@arm.com>
-In-Reply-To: <8ce2cd7b-7702-45aa-b4c8-25a01c27ed83@arm.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Fri, 9 Feb 2024 21:21:10 -0500
-Message-ID: <CA+CK2bC=XyUhoSP9f0XBqEnQ-P5mMT2U=5dfzRSc9C=2b+bstQ@mail.gmail.com>
-Subject: Re: [PATCH v4 01/10] iommu/vt-d: add wrapper functions for page allocations
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
-	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-	rdunlap@infradead.org, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
-	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
-	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
-	yu-cheng.yu@intel.com, rientjes@google.com, bagasdotme@gmail.com, 
-	mkoutny@suse.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8906.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02d204f5-d89f-4411-656e-08dc2b23f6a4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2024 17:07:44.1061
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VuMZj8O4aXh87DQ+J/zVWs02V2O4KYYdNi+16gc2O1aM5bYwXGTeHn+sfS2FEttzNEm7roeNQLUu7Rjzorm10A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4512
 
-Hi Robin,
+> On Wed, Jan 17, 2024 at 08:25:03PM +0000, Petlozu Pravareshwar wrote:
+> > Scratch address space register is used to store reboot reason. For
+> > some Tegra234 systems, the scratch space is not available to store the
+> > reboot reason. This is because scratch region on these systems is not
+> > accessible by the kernel as restricted by the Hypervisor.
+> > Such systems would delist scratch aperture from PMC DT node.
+> >
+> > Accordingly, this change makes "scratch" as an optional aperture for
+> > Tegra234 in PMC dt-binding document.
+> >
+> > Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> > ---
+> > Changes in v2:
+> > - Fix dt_binding_check indentation warning.
+> > - Update 'reg-names' property items list.
+> >
+> >  .../arm/tegra/nvidia,tegra186-pmc.yaml        | 78 ++++++++++++++-----
+> >  1 file changed, 58 insertions(+), 20 deletions(-)
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-
+> pmc.yaml
+> > b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-
+> pmc.yaml
+> > index 0faa403f68c8..79928824005d 100644
+> > ---
+> > a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-
+> pmc.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-
+> pmc.
+> > +++ yaml
+> > @@ -27,7 +27,7 @@ properties:
+> >        - const: pmc
+> >        - const: wake
+> >        - const: aotag
+> > -      - const: scratch
+> > +      - enum: [ scratch, misc ]
+> >        - const: misc
+> >
+> >    interrupt-controller: true
+> > @@ -41,25 +41,63 @@ properties:
+> >      description: If present, inverts the PMU interrupt signal.
+> >      $ref: /schemas/types.yaml#/definitions/flag
+> >
+> > -if:
+> > -  properties:
+> > -    compatible:
+> > -      contains:
+> > -        const: nvidia,tegra186-pmc
+> > -then:
+> > -  properties:
+> > -    reg:
+> > -      maxItems: 4
+> > -
+> > -    reg-names:
+> > -      maxItems: 4
+> > -else:
+> > -  properties:
+> > -    reg:
+> > -      minItems: 5
+> > -
+> > -    reg-names:
+> > -      minItems: 5
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: nvidia,tegra186-pmc
+> > +    then:
+> > +      properties:
+> > +        reg:
+> > +          maxItems: 4
+> > +        reg-names:
+> > +          items:
+> > +            - const: pmc
+> > +            - const: wake
+> > +            - const: aotag
+> > +            - const: scratch
+>=20
+> There is no need to define the names and order again. Just this is
+> sufficient:
+>=20
+> maxItems: 4
+> contains:
+>   const: scratch
+>=20
+Agree. Will address this in the next patch.
 
-Thank you for reviewing this.
-
-> > +#ifndef __IOMMU_PAGES_H
-> > +#define __IOMMU_PAGES_H
 > > +
-> > +#include <linux/vmstat.h>
-> > +#include <linux/gfp.h>
-> > +#include <linux/mm.h>
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: nvidia,tegra194-pmc
+> > +    then:
+> > +      properties:
+> > +        reg:
+> > +          minItems: 5
+> > +        reg-names:
+> > +          items:
+> > +            - const: pmc
+> > +            - const: wake
+> > +            - const: aotag
+> > +            - const: scratch
+> > +            - const: misc
+>=20
+> Just 'minItems: 5' is sufficient here.
+>=20
+Will address this in the next patch.
+
 > > +
-> > +/*
-> > + * All page allocation that are performed in the IOMMU subsystem must use one of
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: nvidia,tegra234-pmc
+> > +    then:
+> > +      properties:
+> > +        reg:
+> > +          minItems: 4
+> > +          maxItems: 5
+>=20
+> That should already be the top-level constraint.
 >
-> "All page allocations" is too broad; As before, this is only about
-> pagetable allocations, or I guess for the full nuance, allocations of
-> pagetables and other per-iommu_domain configuration structures which are
-> reasonable to report as "pagetables" to userspace.
+Will address this in the next patch.
+=20
+> > +        reg-names:
+> > +          anyOf:
+> > +            - items:
+> > +                - const: pmc
+> > +                - const: wake
+> > +                - const: aotag
+> > +                - const: misc
+> > +            - items:
+> > +                - const: pmc
+> > +                - const: wake
+> > +                - const: aotag
+> > +                - const: scratch
+> > +                - const: misc
+>=20
+> Only need:
+>=20
+> contains:
+>   const: misc
+Will address this in the next patch.
 
-I will update the comment.
-
-
->
-> > + * the functions below.  This is necessary for the proper accounting as IOMMU
-> > + * state can be rather large, i.e. multiple gigabytes in size.
-> > + */
-> > +
-> > +/**
-> > + * __iommu_alloc_pages_node - allocate a zeroed page of a given order from
-> > + * specific NUMA node.
-> > + * @nid: memory NUMA node id
-> > + * @gfp: buddy allocator flags
-> > + * @order: page order
-> > + *
-> > + * returns the head struct page of the allocated page.
-> > + */
-> > +static inline struct page *__iommu_alloc_pages_node(int nid, gfp_t gfp,
-> > +                                                 int order)
-> > +{
-> > +     struct page *page;
-> > +
-> > +     page = alloc_pages_node(nid, gfp | __GFP_ZERO, order);
-> > +     if (unlikely(!page))
-> > +             return NULL;
-> > +
-> > +     return page;
-> > +}
->
-> All 3 invocations of this only use the returned struct page to trivially
-> derive page_address(), so we really don't need it; just clean up these
-> callsites a bit more.
-
-I will remove this function, and update all invocations to use
-iommu_alloc_pages_node() directly.
-
-
-> > + * __iommu_alloc_pages - allocate a zeroed page of a given order.
-> > + * @gfp: buddy allocator flags
-> > + * @order: page order
-> > + *
-> > + * returns the head struct page of the allocated page.
-> > + */
-> > +static inline struct page *__iommu_alloc_pages(gfp_t gfp, int order)
-> > +{
-> > +     struct page *page;
-> > +
-> > +     page = alloc_pages(gfp | __GFP_ZERO, order);
-> > +     if (unlikely(!page))
-> > +             return NULL;
-> > +
-> > +     return page;
-> > +}
->
-> Same for the single invocation of this one.
-
-I kept this function, but removed __iommu_alloc_page() that depends on
-it. This is because tegra-smmu needs a "struct page" allocator.
-
->
-> > +
-> > +/**
-> > + * __iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
-> > + * @nid: memory NUMA node id
-> > + * @gfp: buddy allocator flags
-> > + *
-> > + * returns the struct page of the allocated page.
-> > + */
-> > +static inline struct page *__iommu_alloc_page_node(int nid, gfp_t gfp)
-> > +{
-> > +     return __iommu_alloc_pages_node(nid, gfp, 0);
-> > +}
->
-> There are no users of this at all.
-
-Yes, I added it just for completeness, I will remove it.
-
-
-> > + * __iommu_alloc_page - allocate a zeroed page
-> > + * @gfp: buddy allocator flags
-> > + *
-> > + * returns the struct page of the allocated page.
-> > + */
-> > +static inline struct page *__iommu_alloc_page(gfp_t gfp)
-> > +{
-> > +     return __iommu_alloc_pages(gfp, 0);
-> > +}
-> > +
-> > +/**
-> > + * __iommu_free_pages - free page of a given order
-> > + * @page: head struct page of the page
-> > + * @order: page order
-> > + */
-> > +static inline void __iommu_free_pages(struct page *page, int order)
-> > +{
-> > +     if (!page)
-> > +             return;
-> > +
-> > +     __free_pages(page, order);
-> > +}
-> > +
-> > +/**
-> > + * __iommu_free_page - free page
-> > + * @page: struct page of the page
-> > + */
-> > +static inline void __iommu_free_page(struct page *page)
-> > +{
-> > +     __iommu_free_pages(page, 0);
-> > +}
->
-> Beyond one more trivial Intel cleanup for __iommu_alloc_pages(), these 3
-> are then only used by tegra-smmu, so honestly I'd be inclined to just
-> open-code there page_address()/virt_to_page() conversions as appropriate
-> there (once again I think the whole thing could in fact be refactored to
-> not use struct pages at all because all it's ever ultimately doing with
-> them is page_address(), but that would be a bigger job so definitely
-> out-of-scope for this series).
-
-I removed __iommu_free_page(), but kept __iommu_free_pages() variant.
-
->
-> > +
-> > +/**
-> > + * iommu_alloc_pages_node - allocate a zeroed page of a given order from
-> > + * specific NUMA node.
-> > + * @nid: memory NUMA node id
-> > + * @gfp: buddy allocator flags
-> > + * @order: page order
-> > + *
-> > + * returns the virtual address of the allocated page
-> > + */
-> > +static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp, int order)
-> > +{
-> > +     struct page *page = __iommu_alloc_pages_node(nid, gfp, order);
-> > +
-> > +     if (unlikely(!page))
-> > +             return NULL;
->
-> As a general point I'd prefer to fold these checks into the accounting
-> function itself rather than repeat them all over.
-
-For the free functions this saves a few cycles by not repeating this
-check again inside __free_pages(), to keep things symmetrical it makes
-sense to keep __iomu_free_account and __iomu_alloc_account the same.
-With the other clean-up there are not that many of these checks left.
-
-> > + */
-> > +static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
-> > +{
-> > +     return iommu_alloc_pages_node(nid, gfp, 0);
-> > +}
->
-> TBH I'm not entirely convinced that saving 4 characters per invocation
-> times 11 invocations makes this wrapper worthwhile :/
-
-Let's keep them. After the clean-up that you suggested, there are
-fewer functions left in this file, but I think that it is cleaner to
-keep these remaining, as it is beneficial to easily distinguish when
-exactly one page is allocated vs when multiple are allocated via code
-search.
-
-
-> > + *
-> > + * There are no locking requirement for these pages, as they are going to be
-> > + * put on a free list as soon as refcount reaches 0. Pages are put on this LRU
-> > + * list once they are removed from the IOMMU page tables. However, they can
-> > + * still be access through debugfs.
-> > + */
-> > +static inline void iommu_free_pages_list(struct list_head *page)
->
-> Nit: I'd be inclined to call this iommu_put_pages_list for consistency.
-
-I will rename it to iommu_put_pages_list(), indeed a better name.
-
->
-> > +{
-> > +     while (!list_empty(page)) {
-> > +             struct page *p = list_entry(page->prev, struct page, lru);
-> > +
-> > +             list_del(&p->lru);
-> > +             put_page(p);
-> > +     }
-> > +}
->
-> I realise now you've also missed the common freelist freeing sites in
-> iommu-dma.
-
-Ah yes, thank you for catching that. I will fix it.
-
-Pasha
+Thanks.
