@@ -1,280 +1,245 @@
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2067.outbound.protection.outlook.com [40.107.243.67])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2040.outbound.protection.outlook.com [40.107.92.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4416836113;
-	Sun, 11 Feb 2024 17:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6695C8E8;
+	Sun, 11 Feb 2024 17:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707671270; cv=fail; b=ByHlNDK7RSEFKusd803m2zgBDXCcBRsZmOR4t5zNkjD2gyfG7rFYzjkZ3qFGSIeV3BtCe7kqwWfrCm0xOR3DBbKc4Na+rHEO6Zx7kEtzCAnTPXIdwdWanhYjGy7aPpyqaS6P7QYAHUSUIFBC5lboZ+phZxoYVP8vo2if1kojDkc=
+	t=1707671874; cv=fail; b=OQ4a9hfxwqL/cjB8dOBGRtwgDyEWYfme96UhX4jzCfXzCATKfBTYB/CXEVClwMcsH/9wHLk9pUZCF0jHTXU0odm9DhBg9acTIqlq421tniUdtr2j+QWaeZG9qcPaVwoNu91TJjJqAimtqhsVPNyxALaOGYgFwwlobDKVC6p1OJg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707671270; c=relaxed/simple;
-	bh=MAoKqqs4zXZxk2v1hJGL+ASF9Bzti389p+jzrb595sQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dy7/KL79qfWHkIutwryq2DKSOkWZALjuXLDIWiuFpPblTrQtCZx/GnHsH/W/XdxHFm9UPdwYoCvCGMiCkXnOuohUJvj7Gk16u90mVN/bULCGLFUfebZogfcdzexD3rMdOjdfaYXQ0yw8kMYRyHgicFGdLHWz+v8X3giW7gyKRzM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EoZHU3WK; arc=fail smtp.client-ip=40.107.243.67
+	s=arc-20240116; t=1707671874; c=relaxed/simple;
+	bh=v/6kfZzCWHiNm5vC7FPHnuwBAam/D9ClaoYnW0ufOG0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VtdNehnLvhEGHMuwIopNO0EijSPlQCi5DaGB0olrv1VyPdyirHer6bsCLrzXu40O6bLHX8dxk9m94gZVaNW+rj75shpSewle9cAEs7ylvI9zbj2DNaam7rVIqhLEJIm0VX7qpEVc/P4NQc//iEIEjtW1IEdThZP6WSp0kr3ij7s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IFTrqQjW; arc=fail smtp.client-ip=40.107.92.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EoZHU3WK"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IFTrqQjW"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YklQE14g0yRQ5pztqWdalSmrExNwnY9aH2fRVjrUSnb2z62NDqMkJsFo9eDpm8mzccNGjaGYfgBkK+kBzJVranA18p4K7T/bvke2HYjtlMBrQjmwi+/Iv2DI60Z0KnjeeEoW9Mi6k+hTpAaaHVqyDe1ZO2zv5tOEokws9XWZr+ma+sbwdZz2f7Yi0Ma351BGbQXeYTuUrzk9+lRRQi+N8iTyIjgfuchJMVOl8DWdgp9sCkMXtzYCAiKqweyrZd3HqkLy8DZxN/0Ga9dgerCWOi+6WUNeAL14yf3kwORcxSDuiq/SG/+/QnQF+YaCvmyC3deTO4zV4ZmYN9ADAkeIwA==
+ b=LcFgulJ3O4SH1Oq4GhFJEOfnDCSTQPusyj2xMfFu31ZgPL3dPj+rm7wzP9ufxUVDNyQ0RWoH95cJOkZWw/8srTuAcrm6bH0cwWjkJowPyu9ypwDRocSP/rFST65UAtHhc2PsrHfUeLaNTswZR2N8hMyTvHfnPeh37GxGKjND5qyhfQe4d1F3/f5blYzAGbq+sLbCX1eiPwMgn5pt1neDpIHKZbOhD33UX6L1fhfTav3zciVNBGzuVhmbkTZoSsCNducldstQLC+H/WLtRC+Xr3RDN0Xp0A4+V2jdTSh/quqmgewyLYY4m5RgizVeUcShGQJSQHdGVpZXN4tRW1fJ2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RTuDxcquma5fPWfJuoOQmhEhoec7WG3DzuIYpDxTdvA=;
- b=IUexOV3RyjBDg0lZICFTLyp5h2BP/WInkTAxMHSRDea9NkigMJyOgxafGSouEXrMBVS/guJsn8LczBoOQ6H9Ri1Lz1m+USqc0HEhmXnh7Gar49Hi6SVa2GD4JRkI33E00TAbeOznItP6n/1dD4M3rAD6NeLzBxOW/uVYNjLF62OgbxXX2+yiOiH5zJU7uf96IgeYigp9mad3qMCkqBzPYWt4K33EmJrOmfCRpR1dAQwblaIeV8cEYMJKraic+HzVVppxzoIMQGQN5SQszHmzaL9qWozuVCN5YxEFrXN5YkZnFiFz9qUAgxS4KBo7ldqdXB+cMjjju/Kq+mK8GXVSZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=c4+f2+6GQvj5eZZnVGAaqcl7ZqQEdPgStIAodniK5Y0=;
+ b=h7WDaqsLPWUQjQYRIfmPcmupvyOIhV03mcSJ5FwPdan7MGEpc6NQdclB4Af30Y6vLwZCm14YvFbI8yswgFl7KXTwjlx4cy3zn+H0t/tARKms3Q7zCopm9bu6rvt4rELDSMyWQwVsS38Iw7uMYjcjOsHOzPaYNyBLQbUFND7V2bdqw2q8q9/F171Sv4VDsamjyIG3AHve6KoH+tSU++fL7gmkA+alckAZatCaPDiY/zfiyfqZzJeRtrRb8jAGPhWgbCX+NfBZPZSJCW4s1L2JFS8jdKy+fbwyXo5aUFSU4RMj+u4LXon0WIIlD1GrPY8LGJVaJHUhkEPc8AlBHnPW2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RTuDxcquma5fPWfJuoOQmhEhoec7WG3DzuIYpDxTdvA=;
- b=EoZHU3WK5DQkFNRnBHVs1b9Haht4y2RRctgp3egge5GAMUy8AIa/BNExAVVJWANqLKmBmF8WQdkZb60LLDjAfTNZHMsZME1L2ZXUo1uacFSjpUubRreUxy/HWo9ZO4KioQGGP62u73sDIUUCjp7/05qfiA/zRMdOGlFyHNBdI7GIEGLIrd996EWy9PJJ/KNbvQ/tYkGr2ZcBEVb6glanCtmYhgBZb3d71dVHgdq/S7XsZM3hor8CNQ8bGzCSk/wv9RyWmY+WmEI6yI5DE3BKJqEG8mxcSkheX8piQgoHHr7fxyWlWvjH1JupJkpKgrXP6e4yn3v57+kvCMeuNNpKaA==
-Received: from IA0PR12MB8906.namprd12.prod.outlook.com (2603:10b6:208:481::9)
- by SA0PR12MB4512.namprd12.prod.outlook.com (2603:10b6:806:71::9) with
+ bh=c4+f2+6GQvj5eZZnVGAaqcl7ZqQEdPgStIAodniK5Y0=;
+ b=IFTrqQjWv19kGCofs8b738Q1jAizyw+lyyEJEzo7SuxyfEqFQvBSPJTLPXF/j+zQqzObnrV+3cKoD/rB5bIfUmAA3WhR35cJ3W3bURKhSSt15O1d7gtXgH4YcFfpkYOJlzc5rZ6vfhoSIhdqNFen9mGccUXZtE87ayTcubjY+5MLJYV0Jfz+FWYcDWOPNWpgcfN4SwTV3SeEl4uDQDFUTb2KeKUZaulxsCdCTIK4tNxR4u6tzHDcwvAq5tumBR5x83xxOzdWpNZ9Lmk5/qn4yU3is3FObBhuq2csxPKlIhQBpwPulroxxJ2t7kPgUSbpEPXGpLAiJ9W1plw739ahjw==
+Received: from CH0P221CA0044.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:11d::27)
+ by IA1PR12MB6065.namprd12.prod.outlook.com (2603:10b6:208:3ef::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.18; Sun, 11 Feb
- 2024 17:07:45 +0000
-Received: from IA0PR12MB8906.namprd12.prod.outlook.com
- ([fe80::c1b:dfd5:17ba:bde9]) by IA0PR12MB8906.namprd12.prod.outlook.com
- ([fe80::c1b:dfd5:17ba:bde9%7]) with mapi id 15.20.7270.016; Sun, 11 Feb 2024
- 17:07:44 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.10; Sun, 11 Feb
+ 2024 17:17:47 +0000
+Received: from CH2PEPF0000009C.namprd02.prod.outlook.com
+ (2603:10b6:610:11d:cafe::5f) by CH0P221CA0044.outlook.office365.com
+ (2603:10b6:610:11d::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7270.38 via Frontend
+ Transport; Sun, 11 Feb 2024 17:17:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CH2PEPF0000009C.mail.protection.outlook.com (10.167.244.24) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7249.19 via Frontend Transport; Sun, 11 Feb 2024 17:17:47 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Sun, 11 Feb
+ 2024 09:17:45 -0800
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.12; Sun, 11 Feb 2024 09:17:45 -0800
+Received: from build-petlozup-20240117T042503953.internal (10.127.8.12) by
+ mail.nvidia.com (10.126.190.180) with Microsoft SMTP Server id 15.2.1258.12
+ via Frontend Transport; Sun, 11 Feb 2024 09:17:45 -0800
 From: Petlozu Pravareshwar <petlozup@nvidia.com>
-To: Rob Herring <robh@kernel.org>
-CC: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jonathan Hunter
-	<jonathanh@nvidia.com>, "krzysztof.kozlowski+dt@linaro.org"
-	<krzysztof.kozlowski+dt@linaro.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"dmitry.osipenko@collabora.com" <dmitry.osipenko@collabora.com>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, Kartik Rajput
-	<kkartik@nvidia.com>, "cai.huoqing@linux.dev" <cai.huoqing@linux.dev>,
-	Sandipan Patra <spatra@nvidia.com>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>
-Subject: RE: [PATCH V2 2/3] dt-bindings: tegra: pmc: Update scratch as an
- optional aperture
-Thread-Topic: [PATCH V2 2/3] dt-bindings: tegra: pmc: Update scratch as an
- optional aperture
-Thread-Index: AQHaSYNiQc3Ffh8ZXUOeuNNLMtgYTrDyrdYAgBLXPvA=
-Date: Sun, 11 Feb 2024 17:07:44 +0000
-Message-ID:
- <IA0PR12MB8906A78CE7A5652181720561B5492@IA0PR12MB8906.namprd12.prod.outlook.com>
-References: <20240117202504.943476-1-petlozup@nvidia.com>
- <20240117202504.943476-2-petlozup@nvidia.com>
- <20240130171908.GA1964535-robh@kernel.org>
-In-Reply-To: <20240130171908.GA1964535-robh@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA0PR12MB8906:EE_|SA0PR12MB4512:EE_
-x-ms-office365-filtering-correlation-id: 02d204f5-d89f-4411-656e-08dc2b23f6a4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- WE0sZt+lVZ+G2ktPe5kq1cZ6UUOu1ufaEVCSnYYr7HUxdeMpZJTYPgs8KuNUp+y29DmZsZ0iq4aO6Gxd8NRNpPbvS3PfkB1EmNVM1rk+SI5XLalo92sEa0yagiZ/6u1MGaNehwciW1Qq8LjW1aLNeQVsJCGCqTxHMfqTc5wVmKVCzM19V/57NBNZlL3+GV0KSJ5k3z96LBW+WSbccvhR/MVRk6h7m5CO3X0yZBAt5bUACfNI+OJWTFNaz53Pw01tiIQIYUlIa9ATDOlXfXmKz0LolVYi7yZfZQLsP8w0H23uJWB9bWGaPxb2Af0l8fJ45BwFplmAPLr0n+rf3Ktn+rGX/0IR+Q5iwKtAgAMJ8pckoP8BuGhlGqD9Tsm0l7azYC0CUXehlM+LIdP3V0lJIrsDAHcMl9XZYPKc3aI6r5FxJXcXudjKleiwf/e0JeWtT0QeWOM2Z/YcJh6vnmmY0li3honkl2iFlWPGBNVZCbF50Cy7p3UsoF2YNEkMR+uvZxRIxTgDnPVcW39xs66o2d2iB24YkrMtr7D9cdSiWTBD5XfKkFuOH0KYT/NO7JsKxW1+NgxSZzkFMz5Z1qRgbTBD2axaLYgkvn6+w/rDf+mx8U+anSTBenXGMeNgfOex
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8906.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(39860400002)(366004)(346002)(376002)(136003)(230922051799003)(230273577357003)(186009)(64100799003)(451199024)(1800799012)(4326008)(8936002)(52536014)(8676002)(5660300002)(7416002)(2906002)(15650500001)(83380400001)(38100700002)(33656002)(86362001)(26005)(122000001)(38070700009)(71200400001)(66946007)(316002)(66556008)(66476007)(6916009)(76116006)(66446008)(64756008)(54906003)(6506007)(7696005)(9686003)(478600001)(55016003)(41300700001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?iITa0vXEwKuB8gRM64LY06deP1KRWD7qosL1kNZx3jeVI4CWq9rOCMosyER8?=
- =?us-ascii?Q?BFfdw9gCOIkpg7Fi9ynjbU3Qa0A8I+FRrQpCvPaT8LJRtB3T4pBcR0BTSCcz?=
- =?us-ascii?Q?MrcqSPOv4mTk63jSRmfoj6sJILIvAoBoummbFRxs+gLAHtxbWEpEECgnnH3t?=
- =?us-ascii?Q?+IwhC43Na4wm/CrRtY0ytZDHTLhwjgnGMsaUsYGMstAZ8qwq2ec9hoRzKBLz?=
- =?us-ascii?Q?4c2YKVKsHe8cNvopOGnFJo3Q2LeVe5D2+54zEnXFFZ+dQhQJh5lkzdFA/PZB?=
- =?us-ascii?Q?pvS0R1VNryPl0Be1KEx1r1LhKIBb4fg7KqBkSS7UyjE/57/dp6OHuaGdWt91?=
- =?us-ascii?Q?nx6tAWhpC7YGoZFKFXissnyc4PBasTMeZEkwHG7oaqIaNL/xZsHreiydP5Fs?=
- =?us-ascii?Q?FbJaglMWggNfzZuNh7cnpap0XQbjfZ+nvBSL+iCfsrBBDpogU5FRAFmyJ/Yf?=
- =?us-ascii?Q?+Crf7zlNs9RICL4ghg3JCrOriW6B0E17wti35HNhWuVs+VGmJZvtPMMK/Oni?=
- =?us-ascii?Q?1kfdCZGEX8i3fG0xWtQuK168HZ6FvW/bBSr3ke5W2H0b4O0PYyFwhkR8PAOH?=
- =?us-ascii?Q?jn8nXAg4HXkCfWRp8S7yiFijzxwJadwiw7GGEVWvQ5ccl1FS5oe90i1TjTgQ?=
- =?us-ascii?Q?vdCj6U0g6GSwXecjAss/lcEM1+NDAFsgDgkItLt6USx+UIys2w/NASeVlvai?=
- =?us-ascii?Q?VUKM+sAwk6Jwws+kSYodlNT7qLclOhu0W06rTT8pF6w4epyST5iy78eZpZN/?=
- =?us-ascii?Q?tLXNJYhruT1X2nRVpZdzqPu9SLbNRN95yEsIViY0CemRVFtAFMt8y3mIelUb?=
- =?us-ascii?Q?gpu22nxIxQeXTIZuYl1aAzUSQjp6lShmt/xzAc6CChsrilOWYzS5WGkx8/Dt?=
- =?us-ascii?Q?lDEZ05DMib9tcp2pCrT2T57IaiKjqf2KXmy5KPYR3rfrjA9mwHZA1D2K59D6?=
- =?us-ascii?Q?gY9RdMeOp97HrVo5Bf0g4VukXnjczDQq3sEKtyefqhdQLRbeGxuTcQ+W8M3D?=
- =?us-ascii?Q?0bSFrUe0DRkAGE4224Iticmm5wlU0RJ6PaTbYkeV5yLP5ISqD1nENMS5Kuqv?=
- =?us-ascii?Q?gTLdn+95zD02llkidy6qaJPmHNL4Wj0DVhMl+NGOfewHRe1hKqoBEpZeQrB/?=
- =?us-ascii?Q?z/ftPEfya+I86n2p3hHF/I/lD9QnBbjzUnD9/DUmexqK1F1AVr81eoFGgE4s?=
- =?us-ascii?Q?syZLL4wjf9qbMcE6+kej6rCylg66mfkJY0WYfcXpIGavkW1sSM3vS443cRrI?=
- =?us-ascii?Q?P3bC9htnhPbn66En13kI6BOLLRpOIWv70OHF0VXBdppqPrlI9NfaFs343X8a?=
- =?us-ascii?Q?yUF17+I3xzteTIH3o5Qhm2pgv94/p05CeJfAAHT3z0qaHBP1Dft+1w+nLx/2?=
- =?us-ascii?Q?9jwfsD622ZuY7FyutoZm3HZOi8K4cliMNU9odyWlHLNOmaiYvgRfyi+BouDK?=
- =?us-ascii?Q?GF0s5s3jcy9v33HpNOpPtWpOVkvKLUsPJSOYN02EtiP5d6qvHnvjo5cUybQa?=
- =?us-ascii?Q?JHp4bEoBMWqkmkHaU7z9EBw6GbcFPHK4KmMzhyAg1WKTqKBoMzrkGfaRx49i?=
- =?us-ascii?Q?NfsPLiEorn/M+McqK8ZT8sYVYt2HA+ZDvl06s90V?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+To: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+	<p.zabel@pengutronix.de>, <dmitry.osipenko@collabora.com>,
+	<ulf.hansson@linaro.org>, <kkartik@nvidia.com>, <cai.huoqing@linux.dev>,
+	<spatra@nvidia.com>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <petlozup@nvidia.com>
+Subject: [PATCH V3 1/3] soc/tegra: pmc: Update address mapping sequence for PMC apertures
+Date: Sun, 11 Feb 2024 17:17:25 +0000
+Message-ID: <20240211171727.914595-1-petlozup@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000009C:EE_|IA1PR12MB6065:EE_
+X-MS-Office365-Filtering-Correlation-Id: df629d97-6bea-4984-2c2d-08dc2b255e13
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	Ik9caQ3qry0GksR2slkqZfDpGH24I/q6Apx/4I0pzt0wjj/CpT3UvaMw1u+ivIPu8BICcKK6vc1PmhkRWzCDoopuL5z+fAjcrHJRkyZC3qxokIqFX5dML5cw6l3YXOiV/GoTY7y5lCpwj6HuwZVdxX6+VA2x6z7oO6LZLvZbmI4D68jSEVETkR/HSNoihUMm+wgxI5dJeJ5OmH9dnaRkuRUwpLBOv+XWoGsE1YgN6/vlS5aogdGvTlvpzTOI9QlzsbeKZkce+8IZg6GNt0PGIGJ/IXuXwINvXcr2JsS5523vDxcSiJXsbMQ7v49HCCfY8FHL1JouT6QtVspqRTqCMD6OCCaejgAcBfGfgMaseXuQPzY3XTKLkrDyt3j7JKACTAa/pstdu1gUNK9weSRC77UOj+XGc6y7bJAOk6+MTvLr/pTZnAdQZYwcuaFPhemBjmMKYORRPleyhiZgstYvS3KesH0e+PxJ6o/VsyFnUmPb6KzG2oQIpavFm7iy+XxlNEoNUakq9agP+Vc4pbspoqNRmJv5hCM0mzLdNg9JFSXKp9ulNQLomCV0dSRwpt84b6g3pxHeTmNWzOqUw/CCwnv3w6j5Yk+ObttpqOEdPpEjpTAUFm2bPBNHYZYRMJkhOOc3Wsg+u2KJX2zCUGw8zg==
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(39860400002)(136003)(346002)(376002)(396003)(230922051799003)(1800799012)(82310400011)(64100799003)(186009)(451199024)(36840700001)(46966006)(40470700004)(70586007)(82740400003)(7636003)(356005)(921011)(83380400001)(41300700001)(6666004)(478600001)(4326008)(8676002)(426003)(316002)(8936002)(70206006)(26005)(107886003)(110136005)(2616005)(1076003)(336012)(86362001)(36756003)(5660300002)(2906002)(7416002);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8906.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02d204f5-d89f-4411-656e-08dc2b23f6a4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2024 17:07:44.1061
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2024 17:17:47.0304
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VuMZj8O4aXh87DQ+J/zVWs02V2O4KYYdNi+16gc2O1aM5bYwXGTeHn+sfS2FEttzNEm7roeNQLUu7Rjzorm10A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4512
+X-MS-Exchange-CrossTenant-Network-Message-Id: df629d97-6bea-4984-2c2d-08dc2b255e13
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000009C.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6065
 
-> On Wed, Jan 17, 2024 at 08:25:03PM +0000, Petlozu Pravareshwar wrote:
-> > Scratch address space register is used to store reboot reason. For
-> > some Tegra234 systems, the scratch space is not available to store the
-> > reboot reason. This is because scratch region on these systems is not
-> > accessible by the kernel as restricted by the Hypervisor.
-> > Such systems would delist scratch aperture from PMC DT node.
-> >
-> > Accordingly, this change makes "scratch" as an optional aperture for
-> > Tegra234 in PMC dt-binding document.
-> >
-> > Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
-> > ---
-> > Changes in v2:
-> > - Fix dt_binding_check indentation warning.
-> > - Update 'reg-names' property items list.
-> >
-> >  .../arm/tegra/nvidia,tegra186-pmc.yaml        | 78 ++++++++++++++-----
-> >  1 file changed, 58 insertions(+), 20 deletions(-)
-> >
-> > diff --git
-> > a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-
-> pmc.yaml
-> > b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-
-> pmc.yaml
-> > index 0faa403f68c8..79928824005d 100644
-> > ---
-> > a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-
-> pmc.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-
-> pmc.
-> > +++ yaml
-> > @@ -27,7 +27,7 @@ properties:
-> >        - const: pmc
-> >        - const: wake
-> >        - const: aotag
-> > -      - const: scratch
-> > +      - enum: [ scratch, misc ]
-> >        - const: misc
-> >
-> >    interrupt-controller: true
-> > @@ -41,25 +41,63 @@ properties:
-> >      description: If present, inverts the PMU interrupt signal.
-> >      $ref: /schemas/types.yaml#/definitions/flag
-> >
-> > -if:
-> > -  properties:
-> > -    compatible:
-> > -      contains:
-> > -        const: nvidia,tegra186-pmc
-> > -then:
-> > -  properties:
-> > -    reg:
-> > -      maxItems: 4
-> > -
-> > -    reg-names:
-> > -      maxItems: 4
-> > -else:
-> > -  properties:
-> > -    reg:
-> > -      minItems: 5
-> > -
-> > -    reg-names:
-> > -      minItems: 5
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: nvidia,tegra186-pmc
-> > +    then:
-> > +      properties:
-> > +        reg:
-> > +          maxItems: 4
-> > +        reg-names:
-> > +          items:
-> > +            - const: pmc
-> > +            - const: wake
-> > +            - const: aotag
-> > +            - const: scratch
->=20
-> There is no need to define the names and order again. Just this is
-> sufficient:
->=20
-> maxItems: 4
-> contains:
->   const: scratch
->=20
-Agree. Will address this in the next patch.
+On Tegra SoCs prior to Tegra186, PMC has single address range only.
+Starting from and after Tegra186, PMC has additional address ranges
+apart from base address range. Currently in PMC driver, we try to
+map these additional address ranges on all SoCs and if we fail then
+we assume that the range is not valid for an SoC. This change makes
+it more explicit on which address ranges are expected to be present
+on which SoCs and maps the additional address ranges only on SoCs
+from and after Tegra186.
 
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: nvidia,tegra194-pmc
-> > +    then:
-> > +      properties:
-> > +        reg:
-> > +          minItems: 5
-> > +        reg-names:
-> > +          items:
-> > +            - const: pmc
-> > +            - const: wake
-> > +            - const: aotag
-> > +            - const: scratch
-> > +            - const: misc
->=20
-> Just 'minItems: 5' is sufficient here.
->=20
-Will address this in the next patch.
+Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 34 ++++++++++++++++++++--------------
+ 1 file changed, 20 insertions(+), 14 deletions(-)
 
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: nvidia,tegra234-pmc
-> > +    then:
-> > +      properties:
-> > +        reg:
-> > +          minItems: 4
-> > +          maxItems: 5
->=20
-> That should already be the top-level constraint.
->
-Will address this in the next patch.
-=20
-> > +        reg-names:
-> > +          anyOf:
-> > +            - items:
-> > +                - const: pmc
-> > +                - const: wake
-> > +                - const: aotag
-> > +                - const: misc
-> > +            - items:
-> > +                - const: pmc
-> > +                - const: wake
-> > +                - const: aotag
-> > +                - const: scratch
-> > +                - const: misc
->=20
-> Only need:
->=20
-> contains:
->   const: misc
-Will address this in the next patch.
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 6dfcc7f50ece..0bc983f6b088 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -384,6 +384,7 @@ struct tegra_pmc_soc {
+ 	bool has_blink_output;
+ 	bool has_usb_sleepwalk;
+ 	bool supports_core_domain;
++	bool has_single_mmio_aperture;
+ };
+ 
+ /**
+@@ -2885,31 +2886,28 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "wake");
+-	if (res) {
++	if (pmc->soc->has_single_mmio_aperture) {
++		pmc->wake = base;
++		pmc->aotag = base;
++		pmc->scratch = base;
++	} else {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						"wake");
+ 		pmc->wake = devm_ioremap_resource(&pdev->dev, res);
+ 		if (IS_ERR(pmc->wake))
+ 			return PTR_ERR(pmc->wake);
+-	} else {
+-		pmc->wake = base;
+-	}
+ 
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "aotag");
+-	if (res) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						"aotag");
+ 		pmc->aotag = devm_ioremap_resource(&pdev->dev, res);
+ 		if (IS_ERR(pmc->aotag))
+ 			return PTR_ERR(pmc->aotag);
+-	} else {
+-		pmc->aotag = base;
+-	}
+ 
+-	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "scratch");
+-	if (res) {
++		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
++						"scratch");
+ 		pmc->scratch = devm_ioremap_resource(&pdev->dev, res);
+ 		if (IS_ERR(pmc->scratch))
+ 			return PTR_ERR(pmc->scratch);
+-	} else {
+-		pmc->scratch = base;
+ 	}
+ 
+ 	pmc->clk = devm_clk_get_optional(&pdev->dev, "pclk");
+@@ -3300,6 +3298,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+ 	.num_pmc_clks = 0,
+ 	.has_blink_output = true,
+ 	.has_usb_sleepwalk = true,
++	.has_single_mmio_aperture = true,
+ };
+ 
+ static const char * const tegra30_powergates[] = {
+@@ -3361,6 +3360,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output = true,
+ 	.has_usb_sleepwalk = true,
++	.has_single_mmio_aperture = true,
+ };
+ 
+ static const char * const tegra114_powergates[] = {
+@@ -3418,6 +3418,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output = true,
+ 	.has_usb_sleepwalk = true,
++	.has_single_mmio_aperture = true,
+ };
+ 
+ static const char * const tegra124_powergates[] = {
+@@ -3562,6 +3563,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output = true,
+ 	.has_usb_sleepwalk = true,
++	.has_single_mmio_aperture = true,
+ };
+ 
+ static const char * const tegra210_powergates[] = {
+@@ -3725,6 +3727,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+ 	.has_blink_output = true,
+ 	.has_usb_sleepwalk = true,
++	.has_single_mmio_aperture = true,
+ };
+ 
+ static const struct tegra_io_pad_soc tegra186_io_pads[] = {
+@@ -3922,6 +3925,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+ 	.num_pmc_clks = 0,
+ 	.has_blink_output = false,
+ 	.has_usb_sleepwalk = false,
++	.has_single_mmio_aperture = false,
+ };
+ 
+ static const struct tegra_io_pad_soc tegra194_io_pads[] = {
+@@ -4107,6 +4111,7 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
+ 	.num_pmc_clks = 0,
+ 	.has_blink_output = false,
+ 	.has_usb_sleepwalk = false,
++	.has_single_mmio_aperture = false,
+ };
+ 
+ static const struct tegra_io_pad_soc tegra234_io_pads[] = {
+@@ -4235,6 +4240,7 @@ static const struct tegra_pmc_soc tegra234_pmc_soc = {
+ 	.pmc_clks_data = NULL,
+ 	.num_pmc_clks = 0,
+ 	.has_blink_output = false,
++	.has_single_mmio_aperture = false,
+ };
+ 
+ static const struct of_device_id tegra_pmc_match[] = {
+-- 
+2.34.1
 
-Thanks.
