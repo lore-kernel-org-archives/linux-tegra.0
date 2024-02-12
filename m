@@ -1,175 +1,93 @@
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2084.outbound.protection.outlook.com [40.107.223.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198335C5FE;
-	Sun, 11 Feb 2024 17:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707671920; cv=fail; b=KbrsCERFhnNrfkhJ2/uMwpSB+VsdmYPqf9OQdToOYk4XVCGLxqDelwGVeQoKsVGKuort+X/p67vSKfiz7pNjgM8jpV/nN4L+qXswC/zNzHhrAQHFTkS6wfcLUCK8eQyzlFyc56XAT83YznOlgdGUkvT6LgqSNBFh2avhzBqZI/0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707671920; c=relaxed/simple;
-	bh=30YSgSNNoNq+yMHs0WYAIXa5CLC43HFXJJ3q/ku6Icc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rIDg01Cwtj3dCnML5UiI6kd89jyvfmXyj8xNAHd+mhAvwk411cl4K0Lhqc1je0n8CtqrsNhXmmRttRaf0kDamloBTa29InRlmbRijtaMr7iqQ4N9tdXBDKELYQrKF71CBBBmbuGNVmNKxpEuABXaTh7tHGUb3wFws8yyiPCDNH8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q8GVHTWg; arc=fail smtp.client-ip=40.107.223.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5213AEADF;
+	Mon, 12 Feb 2024 07:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707722350; cv=none; b=IbWZgZFpyEdxafZzyZ4coqR6liNBtL4CoFOKNyecldMNJIDeBIsLJQ8Nij1V1ODvdNJgRA9n170B5MKDmRnnboxG1BrBcVWGiTiavmunT9VUBYHh0ldT1gX5s5gKYcC8JWoXzuqXpVZsRbPZ1hfS1Z7COq7Q2/GHR/ql68ve5DE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707722350; c=relaxed/simple;
+	bh=tGkzgsfshKCNTYNBI2JO1PxZmWaw14PA3PJ9RbEK0v4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FyXXvexR0aDUKvSP198GCpHqAxhbLr2js4X7Eoz1mhkPQNUFkHSseW57b6CRNuVVZgiYEWv4PU3jtLhskphNTKF82/Lu/MPWEo/o7NjLb6ne4o3Q/jlUpdQTn46dUJDb42Uc4/mcmoicyPze8rpKiePnzOR3Vt2KZv0ziCQp6qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQQ2zHFM; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q8GVHTWg"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lqV2iQfHSZv2IrtJA5Zxy2VqSokctm+xWmmL7Y6cW95NiffaE4wLbzc5EjBbLFhE27DyLnAZLGdTllvSi2G5lzwiGU9Z8/dz5tfhQ5Ax3Tjpp4HaIARXBuS56Sn7mDYT5HNtLoM4KneFgK3j5ByM+PdAxuce6GlAtwWp6MxnQPstHyt1kirOdWYyHyyEj9q8ZJsKCXPFExECfTuWl9gNn1SHi00l/fobb/N0oEyxr3kKpmT+kEdMbCTkc/rIhm+o7xJHqT3TUw8a4A5YtB3lDDfDdROClvAfBbo08fJxbGZLpA+sFoGmr/KC5Oc3npczHEO5YrlvGUeJWwt/JDF8/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T25CKw4yoNxJRPj4qH1FP6xAkXLE8KmGIjCHeZ1zeNw=;
- b=S1TgwLrdSb2JTIqzKTETLL5ocMfbLtH3YuXZcUxI5uzHknIQ1eQmZHqrgW9JnZ4Kb9diI3Xd8p3hae7OxbCIm2ss8ClmMA+S4NiLt7vJp72MspZTNV3dUy+i71cpseI25lKKNqlLtxQRLKcF2CeHHJ6wZjpLLz8hLJQ199bfKSkMwmgKmToO8tZfCXHxbu9eWupq8Owj4asnwiYPt1R+59ZXOoefkLlDdw9GW3lt8p/YHcVxD++dWYPwo93hz6NavJg95bmBkShcXJUDGCTx9b1uLEBI+tbo+vRUIV3kkX1RfgU3bcLNZMRvWx3roEjJeijxDY/3uJhrsj+Dh1cyeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T25CKw4yoNxJRPj4qH1FP6xAkXLE8KmGIjCHeZ1zeNw=;
- b=q8GVHTWga28WPg7WdYej/C/m13xlSFtOx7r1hZPfAMDPrIWGY3I2kUxn8ltCehbFvvbHVPqiP3zXrpoqYSzOffOc9mWwBlxWRL5NscR1nE82pvTIX7y8bcd10iN6ON6XCQZL2bdqDPvl41dR2ZZ2F4qkWMjj+0t8+DtEq8w0EH5Iq1/1Tqm+yI8nOSz+rtXis2oK2O8Oodb+JwPecplu3gjTi4pvFEtZJdXiL5IBO9Rf9z2AYn0BE223+rEeflVFXbQpSLK2Bmlq2gwtASK3ZckmZNIltAsKGM8QVODpQbcBGXU5iNhUpE6dwOKNPd8TvyLnTa97Jz88csdTYjwmSA==
-Received: from CH0PR04CA0100.namprd04.prod.outlook.com (2603:10b6:610:75::15)
- by SJ2PR12MB8649.namprd12.prod.outlook.com (2603:10b6:a03:53c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.23; Sun, 11 Feb
- 2024 17:18:32 +0000
-Received: from CH2PEPF0000009F.namprd02.prod.outlook.com
- (2603:10b6:610:75:cafe::ef) by CH0PR04CA0100.outlook.office365.com
- (2603:10b6:610:75::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7270.37 via Frontend
- Transport; Sun, 11 Feb 2024 17:18:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CH2PEPF0000009F.mail.protection.outlook.com (10.167.244.21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7249.19 via Frontend Transport; Sun, 11 Feb 2024 17:18:32 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Sun, 11 Feb
- 2024 09:18:22 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.12; Sun, 11 Feb 2024 09:18:22 -0800
-Received: from build-petlozup-20240117T042503953.internal (10.127.8.12) by
- mail.nvidia.com (10.126.190.180) with Microsoft SMTP Server id 15.2.1258.12
- via Frontend Transport; Sun, 11 Feb 2024 09:18:22 -0800
-From: Petlozu Pravareshwar <petlozup@nvidia.com>
-To: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<p.zabel@pengutronix.de>, <dmitry.osipenko@collabora.com>,
-	<ulf.hansson@linaro.org>, <kkartik@nvidia.com>, <cai.huoqing@linux.dev>,
-	<spatra@nvidia.com>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <petlozup@nvidia.com>
-Subject: [PATCH V3 3/3] soc/tegra: pmc: Update scratch as an optional aperture
-Date: Sun, 11 Feb 2024 17:17:27 +0000
-Message-ID: <20240211171727.914595-3-petlozup@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240211171727.914595-1-petlozup@nvidia.com>
-References: <20240211171727.914595-1-petlozup@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQQ2zHFM"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-51183b02564so1117967e87.0;
+        Sun, 11 Feb 2024 23:19:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707722346; x=1708327146; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pIOSxIN7r278dt0Tf0zy54XV9Mva7+Eu/RjQv3pZW/I=;
+        b=HQQ2zHFMDM0BxLdbr4UhOlukSbfl9ySWN+nIR5XDHWewa/9RAVrKFHgnsgS63SuD7L
+         ky65gZhLTHiigYtuzmVI2IfLfnzf8xf7fAppxIlzYLHtfBX1U3tFFFqlIguJZMboGen2
+         Q/JJx9+Eo3DEX9BFi0B0x/nrvwXdYBptUAVpmbL//+G7slXLOSLO7tW8k4INF1LEBKgM
+         0DT0o1bBskWjJ5nydhDaW969WZhGMjvU2xpDzllOB3f2zExgd4BoL9h/A5xeFk+ZGnsC
+         VG0yhWDHQi9PD+maLrWmQUUGcm+4pZvYbsi7XrF4POqOKTK7L95MIcfxo5Nx/CMpGxLR
+         01PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707722346; x=1708327146;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pIOSxIN7r278dt0Tf0zy54XV9Mva7+Eu/RjQv3pZW/I=;
+        b=wEXSdLclQd7I/YMiQ00emuzkM6SoDWb27IJ+Ktk5k3xaJC1wEePOUi4sppF4LSuNBN
+         ChZma9teBwd+zwg1u2dEblZRApbE7pNDzgkrWpdVqXnSiYFjU+YySmT/Ov+V4bSO+hqc
+         dt6d5Gm+55hkPwRJoGNEuO+CBI4kHIjDHCLoc2KTbwsVFSg/quX/zY5Hwx7nwrhWwfY4
+         mBE8I8whVFIMJRtGJmVksQ6or1eNbq5Otr2syr6Pc0Bzvoxonc6CgemuROzxrHUqODjE
+         XHVMDj3LuHs4xvJaRcTXGhHXkMZBAkNgHogW2sTA1QuKs6qzv4Jq5AVWrOHNMob1viAK
+         JQ5Q==
+X-Gm-Message-State: AOJu0Yzzuvl75GM6logM/um/fYEUDfY0KqvcrVL0Nm2RhkZWbCf+hfME
+	E0sTyYhaiom2SXjY0QtZ/XQ5JSA7EfwJw4Qj7UMXPJUKvQzTHn7t
+X-Google-Smtp-Source: AGHT+IEiAFgLMJl1NdAOfwNlu93LjoEnlIu8EUkejwTSdpEw3b7Kvjuzhyes+CmiqCFAlTLIKWKgYQ==
+X-Received: by 2002:a05:6512:104b:b0:511:8101:baf7 with SMTP id c11-20020a056512104b00b005118101baf7mr4250741lfb.38.1707722346036;
+        Sun, 11 Feb 2024 23:19:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWreSjSfwPDIxHurifl74hTFVu0kBWoN2Hz5g1chDxJrXTizxTXPBb4o8SK5cx2WGPg+C0M/uTbhyr6Jr+3AajESn1zRU+hbH9MO5KEbJO9VVGT/bWY53xxbgDrXZZUjAGMHWnXiAboAv0ES1/5i0X+dJ5j1cllm5rRA9dny0bSnMjE5XyN9yOkmft+llwQCCpwdzJDYRGUVIrAlVQoeWqh9kL96ldRq/SerClucYZ4/6O/K9y2R/FF0yQbPpt/D8nxofEGBdC94Lkyx7xBndSBFWKj1YDsuGUiKvAAZnB1b+DAwEUiTPTBPzQp58nYX76Oehuxl1jFuQ==
+Received: from xeon.. ([188.163.112.49])
+        by smtp.gmail.com with ESMTPSA id g8-20020a05600c310800b00410cfc34260sm2340327wmo.2.2024.02.11.23.19.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Feb 2024 23:19:05 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Shubhi Garg <shgarg@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] Tegra114: switch Tegra Note 7 from tn7 to tegratab
+Date: Mon, 12 Feb 2024 09:18:41 +0200
+Message-Id: <20240212071843.6679-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000009F:EE_|SJ2PR12MB8649:EE_
-X-MS-Office365-Filtering-Correlation-Id: 371d86cc-3484-4a6e-9e42-08dc2b257913
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	2bKquhvJala/6kyPuMSla65bd6v4A9sR27NC+m5C6uJMJp26IhlZ4MK0Nhm03qtaow+tJMer+bpF4gABfgSU0yyjX4xQ7QCNsfj/giP7AItmUuTlrfXLYy4xJMX+ee+MeuHIwbqReHsu7QBafO3bX2xMhzEHnTPgNI6pWLAPSXigcElK9e4edl3NVgNMlDSwJpsCAoaCOtWBSD+2tYRRZtSimCwUjnG4BfoxSb64la45YtplkPMFspYl+aDL0HBFhF04KSVa3OtvEhfUC/eYAimxvQIqvpBL19JWNotKt9whRhISQGLW6uAgRjDHE9JKluIJFqM4mIoo2WCX8boX8xP1udJTT1RIMfsGfJO77HMjrDsbbEqVnmuBLwgousZidYa0zcfQZaFYK+RdcOJ/6WZqu89MnQDMb0ho4uDq2jUYoj7uX4CatWcODIorhPS/TQoEIzUXpHLCYWuhA6iFR+lnTBP1aYz2+EQCq3084v9FuXAKGSBxIfpi3IN0EGd1cl5deQVT3y0fL9xG6I6HsK1z9sefSmeeNjH6T+gyVYhMn6i8UhUnQ4QZZtzfJ0ar9xYyQXTwCgslRM/KuX4G3ITUDgSIZJ+3ihwOX44WzSzjj9fib/VVGbzKnwFbeFHH753QOcxI5GJHOCwKAcIXxg==
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(4636009)(376002)(136003)(39860400002)(396003)(346002)(230922051799003)(64100799003)(451199024)(186009)(82310400011)(1800799012)(40470700004)(36840700001)(46966006)(2906002)(426003)(336012)(2616005)(41300700001)(1076003)(107886003)(478600001)(26005)(7416002)(4326008)(5660300002)(8936002)(8676002)(70586007)(70206006)(83380400001)(921011)(36756003)(110136005)(86362001)(316002)(7636003)(356005)(82740400003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2024 17:18:32.3474
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 371d86cc-3484-4a6e-9e42-08dc2b257913
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000009F.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8649
 
-Scratch address space register is used to store reboot reason. For
-some Tegra234 systems, the scratch space is not available to store
-the reboot reason. This is because scratch region on these systems
-is not accessible by the kernel as restricted by the Hypervisor.
-Such systems would delist scratch aperture from PMC DT node.
+Currently Tegra Note 7 uses tn7 compatible and device tree name which is
+not quite correct. This device has proper codename which is tegratab.
+Switch tn7 in compatible to tegratab and set a better device tree name
+tegra114-nvidia-tegratab which aligns with newer trees.
 
-Hence this change makes scratch as optional aperture and also avoids
-registering reboot notifier if scratch address space isn't mapped.
+Svyatoslav Ryhel (2):
+  ARM: tegra: set correct naming for Tegra Note 7
+  dt-bindings: arm: tegra: document NVIDIA Tegra Note 7 properly
 
-Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
----
- drivers/soc/tegra/pmc.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ Documentation/devicetree/bindings/arm/tegra.yaml             | 5 ++++-
+ arch/arm/boot/dts/nvidia/Makefile                            | 4 ++--
+ .../{tegra114-tn7.dts => tegra114-nvidia-tegratab.dts}       | 5 +++--
+ 3 files changed, 9 insertions(+), 5 deletions(-)
+ rename arch/arm/boot/dts/nvidia/{tegra114-tn7.dts => tegra114-nvidia-tegratab.dts} (98%)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 0bc983f6b088..6948f78c7a4a 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -2903,11 +2903,16 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 		if (IS_ERR(pmc->aotag))
- 			return PTR_ERR(pmc->aotag);
- 
-+		/* "scratch" is an optional aperture */
- 		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
- 						"scratch");
--		pmc->scratch = devm_ioremap_resource(&pdev->dev, res);
--		if (IS_ERR(pmc->scratch))
--			return PTR_ERR(pmc->scratch);
-+		if (res) {
-+			pmc->scratch = devm_ioremap_resource(&pdev->dev, res);
-+			if (IS_ERR(pmc->scratch))
-+				return PTR_ERR(pmc->scratch);
-+		} else {
-+			pmc->scratch = NULL;
-+		}
- 	}
- 
- 	pmc->clk = devm_clk_get_optional(&pdev->dev, "pclk");
-@@ -2919,12 +2924,15 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 	 * PMC should be last resort for restarting since it soft-resets
- 	 * CPU without resetting everything else.
- 	 */
--	err = devm_register_reboot_notifier(&pdev->dev,
--					    &tegra_pmc_reboot_notifier);
--	if (err) {
--		dev_err(&pdev->dev, "unable to register reboot notifier, %d\n",
--			err);
--		return err;
-+	if (pmc->scratch) {
-+		err = devm_register_reboot_notifier(&pdev->dev,
-+						    &tegra_pmc_reboot_notifier);
-+		if (err) {
-+			dev_err(&pdev->dev,
-+				"unable to register reboot notifier, %d\n",
-+				err);
-+			return err;
-+		}
- 	}
- 
- 	err = devm_register_sys_off_handler(&pdev->dev,
 -- 
-2.34.1
+2.40.1
 
