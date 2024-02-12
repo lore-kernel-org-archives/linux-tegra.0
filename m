@@ -1,60 +1,60 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F945EADF
-	for <linux-tegra@vger.kernel.org>; Mon, 12 Feb 2024 07:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC3210A1D
+	for <linux-tegra@vger.kernel.org>; Mon, 12 Feb 2024 08:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707723204; cv=none; b=RL44VO+eEMtqW9E/8Nyu9XGAES9aIG1wai6B4CNbcUYKcq0g/EI0Bzoud6HDRfQ/rvkG7aX133FTlBTHcXZ4AvWV2Neo34tLFoFDD6jQMO4RVv8dLGpUA/QCjvJAAJjNZmG0tKKj3OoKXtbvsKULaaKYX12Lw/TNRyL9G1qtSgc=
+	t=1707724987; cv=none; b=X887Ctslpi/2TOxDiB55NmlnqZm89zS3AC920NVngUBtkCB57tXiPgk4/PijiwXsvP4sDzj9Aj+bwqADF/80TH2E3EBCbUbyHoBFERb8haz6u641jRrl/J+9hq0D5gzP1P8Q+4Uy20ml9nkOVS5iB4PUmvfBoeDMd7p0XuKDu/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707723204; c=relaxed/simple;
-	bh=ygG22VQHhvbC9ayaAxrFlAWyNS8EkAaHItkK7+npiLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wq/pZWequewQTG1t3njBfnzQj5b/mkzNxQ2dggzF/Ew8wphF9SmPekT2aacsd/P3H57XPywWhaAY5N45kfddNizcaY70FoMFdYr1BLQN5qvFsiykhYC6OBiRFU0WklXZA5gsYK140rr47N5NaqVQ7pseUgA28N5wOIwyuw1ihDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KNJB2oCp; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1707724987; c=relaxed/simple;
+	bh=kAxovZmLWfvjF3vG0GsqpWyXSczmtUn+7agLC31UIHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=tyNNUhV/beJnyut22ARLgBDAXKKI4qNOdprkLQkRdEBpt5uY8LnsYK7xMMqnCdk1icN+koTk1Itb3Qbp+cRdJs3IoPr7ThB16IVGnLPH7m6AZCkv/DBLTjfJ3CKaGdIyQ3myfYwrNWEmT/+7DpRW8jU9X2TVCL/4tdv79P/7i6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qT+G88uV; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KNJB2oCp"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5114fa38434so3087934e87.0
-        for <linux-tegra@vger.kernel.org>; Sun, 11 Feb 2024 23:33:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qT+G88uV"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41097f9a9a4so10983335e9.2
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Feb 2024 00:03:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707723201; x=1708328001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1707724984; x=1708329784; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ygG22VQHhvbC9ayaAxrFlAWyNS8EkAaHItkK7+npiLo=;
-        b=KNJB2oCpa5SYh5Ki+WMM9YbRmF6rod5/L7vcPgvHBZOKsOICHjcjHuhho3t6MNRyO6
-         ut+NZI3yarh7lY69vltpsKaBwwm3DmZAuF54JkkRWICI00LxM4xnhTck5HW9Xf1cs5zf
-         nfUaNcQhZ8nC5cHnZdeSR3yrv9QsfmRdAM8hDgaWgMZyOoU9/dCQ8DdnxLiy79B//gRU
-         Wq0oTQHY7vF8RzFQ0/qKSw4n2p0mHNId3AqeBfoQXnaPGV+4U9pSEkXk0PZcKY1Dk+Bi
-         fgZ1+nyEXYBaoKYqKoi/Am0ObYnjswZQ1GvnNQl7/GzAE4BjYrg57ZOcx6L3HqQd8cVg
-         GSJQ==
+        bh=CsHPp54eQHCGJh7ByCTccxA+V3kHGibCozRWtPwoGAA=;
+        b=qT+G88uVP1zL8rKL9ceSGVWNKogPwj4RGFS1M9wo/ibboDioGclrVI7zCYNIhZmXqz
+         UrElpgUjb7uIGvVEWe0NY6nwmvHHaf+xWvmG2GzCtTfttwi/VotyAjx5qdFTi++a4V6u
+         pHlIPFCJIjq3Qk5jLB2AQnPzDyupdcmraU78CnlYNh8tHxNTW9D4tBXDp4xKwXuPTLc2
+         MFYBFk6t4otHrJo+p6JIYwll6D97NEFj5FJJ2cHigGjBfRfVqCGwuLqfn0hRV574bYmA
+         qPtBxziKeNdlNMQp3VrDeM4FlDYBZOY9/WPDRmLbWD1oLVlDekavK5mnaiRW90mdQRa9
+         djCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707723201; x=1708328001;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1707724984; x=1708329784;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ygG22VQHhvbC9ayaAxrFlAWyNS8EkAaHItkK7+npiLo=;
-        b=SX1LXRLR5Y6HLSv59M3P5W1PMs5nbSxcIHNN4FG+o/O2fV958lkBopYyMZWrSc31GQ
-         B20Ilio43ZwgjGUtyy0uvlVU24aRUwIafL0sjm7PtsQk5rH0s0tm/DVjG0awJ+zfI8UP
-         C1FB8ZXnWXt4X/NhSUDO1ZZ/eFrOFKMCGVhiWdSJGEj9Mdw6OYryPxDxmcnPlER7EwUM
-         VCmtHWVC4IsltO8rd6b00kcA8N8p8Iq5tY02aDz4gac+9vkokg4TXUuV0U3NPvPQk/Io
-         S3PTLbNfBMqST0JBnOeGLYeb3h6FsF61YoGgXkxyXdi3XzOuPyrN1duHPz/rSI5VQ0sR
-         owUg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMog6/q3mCv6zrd+KfBtbP83PgvTCJ0uHNDizdSOcsWdxZrmjRjTAVM6cUB0sVZQarSVb7V8D8aTslARs84xLaROIM+UR1Jj2/Sos=
-X-Gm-Message-State: AOJu0YxREvKl/ncdY4TfgaX4G9KVwcNYVYn14Lx6wQs77/ARR739aKup
-	82FTO23xNQmi6Pn7iTJr0dQ2lxwMU1JQD4bKYf0D43f901v+Z1zsLV3384kubQ8=
-X-Google-Smtp-Source: AGHT+IHLSkZWKaNmWlNL9pYdze9pA3B1kD4UUGtcaeK/OXGhpQlYvF4EUq9rFTQe6hfTmggDhxpoWg==
-X-Received: by 2002:a05:6512:239c:b0:511:82c3:bc58 with SMTP id c28-20020a056512239c00b0051182c3bc58mr4503826lfv.3.1707723200840;
-        Sun, 11 Feb 2024 23:33:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV+03A+6CuPWbhcWQo3yDl/JT6bn5xDsH4xCPF8WJ20IdI+TGzg9VGbRnL7q0D3IMs4ERizmJx9J/fXDJ0PAG/M4T0TKC4YTONmZTlF2alqsHyNwLi4sWatj+uU9DeIZyapKNRDOF2YQsYOPqFLy6s7dQPjyFWoPPPDQoXaoqGrmzqisN4ZJyav8y+f7DKVrxuoh5n5zXuk9icDRXeHGjglvC3keVXdstdwN1TnSvahK0xzNqVgCOiCIPOH6NZ41v7FbwwIr+2Hh0MAw1UaIi82rOgqr1QbIL79DjxBpZ1L3C+Cfqo0tsTJBR4esc7lnmxSjmZFvnEIKg==
+        bh=CsHPp54eQHCGJh7ByCTccxA+V3kHGibCozRWtPwoGAA=;
+        b=He/8c+c62QDy10rJV/nBSKJiB5RO+uUIB3K7k8BhyLRqgN1qnY8ZJ9uHQ8m/JfAEn1
+         6LzjaxFnWHDjndnOQVqa+vFQUldOc6+lPp4/vqWKxFhGZ2KRGgtHwd4ZHCiKH9dST+rS
+         C1JaXWD5k3JT31B4ZYiz9SxkAX49QuzLc6uqZEGP24Z0Gc/33Zv9oIuwsZn+92bWSYRj
+         LfEvAXueIYj0sNlMJcsZHdUvjKAoQ3LpeJUbsUGg5uYHwWNqQheuwRxROnpTMw3/8YmS
+         RRMgwpcF9WKeL/N5H/dBNOPyKloBnI+14NHKGr5UbmKrqF5+HFIIf8e4JpvOKmPU8G0I
+         sebg==
+X-Forwarded-Encrypted: i=1; AJvYcCU48tTeUeF4RCRvE+1nQQcAGOdRnqZWixaJp3AQYfcsLBqLbAirF90tqIObjF2B7nJGDFtILkEGobblRt8kILedX2Iauzu98UnCfK8=
+X-Gm-Message-State: AOJu0YxywQpBNtC1vImn8XTEKcRX5ViZ7AhIGs2K9TnmhK/lp4qOBmWQ
+	9fbhCVIT0n4h7VAf/rzo6B8qwf1qun6rY3u72iVyuTEZ0I1OUkJi4730AjSWfis=
+X-Google-Smtp-Source: AGHT+IEcy4UIH6uwlU1XMh6MIT0AttHglLZLbuwTmKFJwKzSdxez8rZ15kJNy1K+ZmINvhsYhQ6O7w==
+X-Received: by 2002:a05:600c:4e8f:b0:40f:b01d:61a8 with SMTP id f15-20020a05600c4e8f00b0040fb01d61a8mr5206246wmq.38.1707724984338;
+        Mon, 12 Feb 2024 00:03:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVBQCuj8aTBYujTPMAaGEHT4kQD0FyWUTQDx+++6e6vaITxEfOyEAv+OJ69ICFBq8Po8tUuuUxfG1ugsPetrGKzGxS6FgjoPnBCdq2lzsvHSiLXZtwqPT03qJEOfSmng8C5Dl9myedQf4wx+mjSo4E67d5/q0ygDf7hABYGlde2YTUZOgm7UOfe1O0TViVWfXW2TACxo306g5ibogLvebTdgMW4rAA/IocC/XixxVjhvx6RElJkjWHCWtThP/NIvpI7E3zQiYFQTW6ZGUYkqkaDagHVzuh8tUeko4wK944/cfQrCQyOuavFynA1ZbymFh11HEZlWEWZ9X/en3ZOpchuw9T0Nb8ltmzENOPD5zlVp2QnJuCFKEdtW7aZfDyQVNFhdXMUkWs7UcsKuEz3/iTUxoJgkcGA2BMlHQNXgYXxYPB9/IY2oXfoR+Vhx25ksrOj/cy45hOrKL/NauN42H/8LuX3U5H5Ta4HX8CmJ8mWWyfDEqxeLkmTk2dEuvQ/Bzl4FUIE7KCoWd1BgIL95w==
 Received: from [192.168.1.20] ([178.197.223.6])
-        by smtp.gmail.com with ESMTPSA id d16-20020a05600c34d000b0040fdb244485sm7801137wmq.40.2024.02.11.23.33.19
+        by smtp.gmail.com with ESMTPSA id h16-20020a05600c351000b00410e6a6403esm980417wmq.34.2024.02.12.00.03.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Feb 2024 23:33:20 -0800 (PST)
-Message-ID: <f6cd0157-dc8a-46eb-8688-6e0ed56d6a69@linaro.org>
-Date: Mon, 12 Feb 2024 08:33:19 +0100
+        Mon, 12 Feb 2024 00:03:03 -0800 (PST)
+Message-ID: <7b265eef-a521-43c0-bdac-aa25562b968c@linaro.org>
+Date: Mon, 12 Feb 2024 09:03:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -62,17 +62,17 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] ARM: tegra: set correct naming for Tegra Note 7
+Subject: Re: [PATCH V3 2/3] dt-bindings: tegra: pmc: Update scratch as an
+ optional aperture
 Content-Language: en-US
-To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Shubhi Garg <shgarg@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240212071843.6679-1-clamor95@gmail.com>
- <20240212071843.6679-2-clamor95@gmail.com>
+To: Petlozu Pravareshwar <petlozup@nvidia.com>, thierry.reding@gmail.com,
+ jonathanh@nvidia.com, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, dmitry.osipenko@collabora.com,
+ ulf.hansson@linaro.org, kkartik@nvidia.com, cai.huoqing@linux.dev,
+ spatra@nvidia.com, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240211171727.914595-1-petlozup@nvidia.com>
+ <20240211171727.914595-2-petlozup@nvidia.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -118,20 +118,26 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240212071843.6679-2-clamor95@gmail.com>
+In-Reply-To: <20240211171727.914595-2-petlozup@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/02/2024 08:18, Svyatoslav Ryhel wrote:
-> Correct codename of Tegra Note 7 is "tegratab", while model
+On 11/02/2024 18:17, Petlozu Pravareshwar wrote:
+> Scratch address space register is used to store reboot reason. For
+> some Tegra234 systems, the scratch space is not available to store
+> the reboot reason. This is because scratch region on these systems
+> is not accessible by the kernel as restricted by the Hypervisor.
+> Such systems would delist scratch aperture from PMC DT node.
+> 
+> Accordingly, this change makes "scratch" as an optional aperture for
+> Tegra234 in PMC dt-binding document.
+> 
+> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> ---
+> Changes in v3:
+> - Update 'reg-names' property items as per the review comments.
 
-Which has nothing to do with compatible...
-
-> name should be "NVIDIA Tegra Note 7". Fix this inconsistency.
-
-That part is fine.
-
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
