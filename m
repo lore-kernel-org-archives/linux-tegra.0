@@ -1,143 +1,101 @@
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958291E88F;
-	Tue, 13 Feb 2024 14:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265EF5F568
+	for <linux-tegra@vger.kernel.org>; Tue, 13 Feb 2024 15:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707835447; cv=none; b=mIVrBUXTKG5DbkLbChw/0PjJvuWEGbP3nbvedjBsLqqwq6BbiWB1O/sfYD8HzyWGHx3W9cTK449jqEHDLWD6JImDyW6H+E7Ou2dkmpd4+fuSilBAMwoybkGeBr9aemEZNYZzgWaXBIgsCxdlSAquQesPLnDTGuMuh2dFJcbJYEA=
+	t=1707839134; cv=none; b=fxCy+bigU0iQQWY/frzk/O00O+cSNiiT1CM6uGIl9JC7PDsbEM1QycPI2x9nSC1dS9K8rPiRhSbk0wKZXJOERuaoOf3aeKM2AqkaC/M7b2L4jNb9XbkLdg7Q4XwKzNmO/DQIZkGH90SxN6gXeJt9OdjRmqEz5ui9q515ydpB9iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707835447; c=relaxed/simple;
-	bh=crbHlNdRuniw2NTMAltR/X7KbWQ8GebDd/koBr7yWkk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cKpd3frjPnS0zfpqX1oW5B5VIlWOrnXwSpZqwkNuaXLLPsz82K46HzEZ4Xs4dIHm91aWmVL4ch6T4biJXzPvYRiGWPHEJeDsHFeZ8PPvrTx35s1KrNtlCrcpELXnxvA8nzsrrcMnWgdAUpywI93cej5b8PKxdoISuAAAgTcTg2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=VTk1MIcw; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1707839134; c=relaxed/simple;
+	bh=Mb7cfkVoTPe9SpFqQPiRQCgZRgp43WdceLq+nhIl53M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RPOjNssdY1qHYq7v/AHJYwiEgALpkrVLQxMPKwKHw+YCK42oTfeHCKG+gBiZSJx2gcx9rd8A46Y1nVJMNdVCymuMR9j76C+vN/onQZUMWs/YBBKj7o9GoQXABlRvLDgQOCX9AaRhxT3ghc5FVcTjZMyChFS8wsbIb1M1uJ9zAfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=Vmj1mmLQ reason="key not found in DNS"; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="VTk1MIcw"
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-5dc816e4affso790069a12.2;
-        Tue, 13 Feb 2024 06:44:05 -0800 (PST)
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="Vmj1mmLQ"
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-785d5705681so188476685a.1
+        for <linux-tegra@vger.kernel.org>; Tue, 13 Feb 2024 07:45:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1707839131; x=1708443931; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=r+5lFm1GOYo46btsIaJvA6S/B+CQsp17IG3lccG/v6g=;
+        b=Vmj1mmLQ4yhugjb/lPfx3+kxHd1E/h0Kv5YjC6n1verDh8bforL8WJmTrmhqdYgyPX
+         56y9RZo1Mc5U/mF8FPCurWhd+rExv7UZueNkedhf/F3UMF4+TPDSL5z8wNhEeajGsva1
+         RCpTP8BbUJksyQEqy8waWFK14wWRVqePBgqfNsbDvyEJP5lN8zOpVxyRtyXGGxCqS9c+
+         eqSxQH/KlzMgGlgL+X73aBsTzO3bzsCM6zp8Bgti1AKInfQCsdy01WaodSCDPOx/76N3
+         k9pq74Hhw6oeQhYWQr/K8cMbwAzbnEL8K3HilA2scUgyGNxbQVBZCq4/4ORbpCYcCO5L
+         CfOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707835445; x=1708440245;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:dkim-signature:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yDRCf7ye9xUGIdI7KZ1wE8lwvkdkrKbfelIrWiQUH+M=;
-        b=TNB7JJiTc6DUCpx3Mp7zWfTt0srU8c+jfxyOJHBtGMcS+sgZo/jpaXKeGXlv0SO23t
-         AYSCLJkSFJlR3gTxvzZVMZ5BMwsI4t96Pwzpx5QepLfr0O8o9agNzijUeAEyI3XBKEnB
-         xlC5tKRoZg4rR4e3uUcK5ztJ4CjUumJ6kk1Hlpi7VMiXjK089MDkr4nIq78fsKabY3ZN
-         DhMw2zXIPK9tXVtGALL3AwlGrRUx7VIy8ID7jUZ6ILU/PZKb74z1d9G5eINfAFlueXcW
-         INTgrEgky2O1uofyhQCm2+o7elkUiHLua7+yxwKFmKT0NrLF0OSRILzCz4RTW4BNINLn
-         /fsw==
-X-Forwarded-Encrypted: i=1; AJvYcCWaZT/CUVdnYvCmJLzWbDXd8M4tSfMABL6jRJHQ59oJH4SHPUbggt9quXrAaS2oMCdtaZPZVLNaTPHmM6HTnl+jGEhDbHq2recerBmqLZBNDtj6kVPIXnv0fZcMlAlC2C6R59y3HuFW9rY=
-X-Gm-Message-State: AOJu0YwktO1+wuABXCwb9KbFQdVky7DdBJGulTcP4XV7QN/mip6zC86S
-	Qg0ZbIDyzdWOaxoNo0hr6gkt6WzEu3/THfCBh63pwR5EJCjKcFVpMNR7GD2SysF7Vw==
-X-Google-Smtp-Source: AGHT+IECKRQ10VVWIfTc7i8RGgPeMMQjZe6ON9CKBQ5AHK2U/7V0yqbkv1diwDwHiBighxb5JpNBwQ==
-X-Received: by 2002:a05:6a20:ac44:b0:19e:cf31:6a0e with SMTP id dh4-20020a056a20ac4400b0019ecf316a0emr4865642pzb.21.1707835444800;
-        Tue, 13 Feb 2024 06:44:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVyfbOB2X0I0PrSw+QrU98DWPh1l0diw2Aa3gK/TLI+rgap1TDwsM2KNfZEVtHr+VcuXMRrCBjV9NM0drF8i+uY+C/ieENiWrbp+vu6aAN+OoN139QFol72Ar+sRJk5BQRy790BF/vJGhG81F9mUPksm1TLhPSUx4TS+NtLuNVfWwSnTSITX6vgH3qAiouGk7kjEkr/cfp5v50alDJ5VoyRqdO0bF3n1S7hynBqsb56fQ/vS1rSgc5Eh3iZMoo619E=
-Received: from mail.marliere.net ([24.199.118.162])
-        by smtp.gmail.com with ESMTPSA id m8-20020aa78a08000000b006e05cb7fd1fsm7432886pfa.164.2024.02.13.06.44.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Feb 2024 06:44:03 -0800 (PST)
-From: "Ricardo B. Marliere" <ricardo@marliere.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marliere.net;
-	s=2024; t=1707835443;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=yDRCf7ye9xUGIdI7KZ1wE8lwvkdkrKbfelIrWiQUH+M=;
-	b=VTk1MIcw2cz8FjyYdu7eW21tm3izS9RYkPAtNDSYGsZzuYjtys9Dx4eYxi6On766QmoSQO
-	mXmUI4CAq6zxqd8sCmtFmjfVmJaMkINzvxHf3/ZNXHBEVMmUAq5VZ3HRAsZ/HZPJ5T+UA2
-	/cuOGIRSjgIWVoJTXOY4ZoXX/UYrTUSZnQAVcHTwOKTgTKlLWZgHY6ZF96+ogFesuaUU5j
-	42yazbDPpTPY+x45n8ilg27uwNRvCanMXemV0eF+HCbQ7VvckdI+/4S0jIwkzlojPqBADk
-	b3kez1O4G63VlnkO9jxmPkh+6a0K7SzD0u/Hrwsa326jPgxQAPUkAgsnpUANOA==
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=ricardo@marliere.net smtp.mailfrom=ricardo@marliere.net
-Date: Tue, 13 Feb 2024 11:44:40 -0300
-Subject: [PATCH] gpu: host1x: bus: make host1x_bus_type const
+        d=1e100.net; s=20230601; t=1707839131; x=1708443931;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r+5lFm1GOYo46btsIaJvA6S/B+CQsp17IG3lccG/v6g=;
+        b=pmodTXFp4oT4LaknkKEbUkQ25KH1AADkX8GOmNiD3PBXh6whKfbLsnIO5DZTl2yi1f
+         Q52BfhGe8jNzOmtX+CiRyFd8Le9ynldbqGQ1kOYqZbJvpQYz+txwtefI5HBBz3UktWpR
+         lQh/hMSU43Jk0QJDc+HcLvc+gUYkbGK6DZN0pw8QGPbTj90WRbgsXc5KHMsPXrn2KK4n
+         j+8iR/ZBov5RehrTg79RTh+9lU8CAnkMLYcwjFRgQBKbcrYkv7FPUdX1pq2SZl3eFBmJ
+         8TsL0yxCpr6J2lYYGR05re51riXtK4NSbjy8s2LUrbBpVM8KKiFOpr3c8OzMFA4jKP4B
+         pBDg==
+X-Gm-Message-State: AOJu0YwhU/KnJKcTSIu8G0L8PvlB0Ba27dBThBqHL//9LozcgTUtLPfi
+	3ksg+v/4Hqd1Ov0tZ2d5zLhGIR6M2Acc7Joyoi6/XdS3ZknCFb/Kf+/E9tRJj49hhHveiGl/zz0
+	GVS/9vdWqvDj5GlMNdhVFN73vMY16ZpAA6EhVTA==
+X-Google-Smtp-Source: AGHT+IFqChznTFjr/EeidSN571ZA0nQfVJvF+Fp0E+Y2flaP6eNCXc4z1s3ADkdtr1CrUfrPgpTF+9pex3Z052b1w5U=
+X-Received: by 2002:a05:620a:618b:b0:787:1db5:f0de with SMTP id
+ or11-20020a05620a618b00b007871db5f0demr2991955qkn.26.1707839131046; Tue, 13
+ Feb 2024 07:45:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240213-bus_cleanup-host1x-v1-1-54ec51b5d14f@marliere.net>
-X-B4-Tracking: v=1; b=H4sIAFeAy2UC/x3MTQqAIBBA4avErBPU/qirRITWWANh4VQI0d2Tl
- t/ivQcYAyFDlz0Q8Cam3SeoPINpNX5BQXMyaKlLqVUh7MXjtKHx1yHWnU8VhWxd42RdV9q2kMI
- joKP4T/vhfT8z1m2nZAAAAA==
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Ricardo B. Marliere" <ricardo@marliere.net>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1654; i=ricardo@marliere.net;
- h=from:subject:message-id; bh=crbHlNdRuniw2NTMAltR/X7KbWQ8GebDd/koBr7yWkk=;
- b=owEBbQKS/ZANAwAKAckLinxjhlimAcsmYgBly4BaVcxkCof6n/WVt9Egdz342JxvMV9lxVyXp
- DTWuj8m8xCJAjMEAAEKAB0WIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCZcuAWgAKCRDJC4p8Y4ZY
- pjF/D/9gmXE6O1HQMJGkb2GijzxXRF2Av0KO1ZnvItTkGhzuNS65CBGLsNlk7fzs6DJPl9CgQV1
- dYegZBcRf4a2A0Tdk1kBn0PUES0I7ZDXhmZLbPPZJzdzOc42wQy8aUzlbejQxVPI0CF1etv7+ps
- dJfK8CrA29vFlLXX8urUg+rvlpH4AtQX6E/gzGGm3QZCCegGcnyIoFzt27e9+I3DWUABlYWR7GZ
- AHOPkPSrKdDJfb+tFcQom6coxe25TRKVrCFKUH2vIj9xeczw3ObdEZzztiXGZpNpFkYRTSif88K
- 5OyNlB3q/kDp8Hz8aftr2RzFFvKF6y9sBZg+IwbsLVtsjBze7zWm0VFoQlQz9lCg1LbfPGc1GfV
- DiGUlMy+b99qnYwjJH5SnsmZjNO2viDwcAEF05PtfZBJf7Dj7uyVXP90WxQrTgZJg8zde6A+wKi
- m+vzkssHF3thQaBU+6CvzG9qqEr5eXZjT9D7KBnWRyxgdyHgTUcLB81yx96oXqoPENQQlkfMD8N
- yooGBuz5RAtUVbmysQBPW519pWdJx2yd9pkOPS0hAR2CIHxvb7cxYnJoF0EM5LCSIWbi5xi2KVv
- yz/d11vtdtluE4PLiwcjn+V5eKZylxhU4NO3lurksEp4mlOnNg0Wd7SC4qmkZIO3CIL6wBoU2t4
- h49Vh+/yY4TNwag==
-X-Developer-Key: i=ricardo@marliere.net; a=openpgp;
- fpr=030A8E9E424EE3C0655787E1C90B8A7C638658A6
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
+ <20231226200205.562565-11-pasha.tatashin@soleen.com> <20240213131210.GA28926@willie-the-truck>
+In-Reply-To: <20240213131210.GA28926@willie-the-truck>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 13 Feb 2024 10:44:53 -0500
+Message-ID: <CA+CK2bB4Z+z8tocO79AdsAy+gmN_4aVHgFUsm_gYLUJ2zV1A6A@mail.gmail.com>
+Subject: Re: [PATCH v3 10/10] iommu: account IOMMU allocated memory
+To: Will Deacon <will@kernel.org>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
+	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
+	yu-cheng.yu@intel.com, rientjes@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-Since commit d492cc2573a0 ("driver core: device.h: make struct
-bus_type a const *"), the driver core can properly handle constant
-struct bus_type, move the host1x_bus_type variable to be a constant
-structure as well, placing it into read-only memory which can not be
-modified at runtime.
+> >  SecPageTables
+> > -              Memory consumed by secondary page tables, this currently
+> > -              currently includes KVM mmu allocations on x86 and arm64.
+> > +              Memory consumed by secondary page tables, this currently includes
+> > +              KVM mmu and IOMMU allocations on x86 and arm64.
 
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Ricardo B. Marliere <ricardo@marliere.net>
----
- drivers/gpu/host1x/bus.c | 2 +-
- drivers/gpu/host1x/bus.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Hi Will,
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 4d16a3396c4a..a20dad7f0333 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -382,7 +382,7 @@ static const struct dev_pm_ops host1x_device_pm_ops = {
- 	.restore = pm_generic_restore,
- };
- 
--struct bus_type host1x_bus_type = {
-+const struct bus_type host1x_bus_type = {
- 	.name = "host1x",
- 	.match = host1x_device_match,
- 	.uevent = host1x_device_uevent,
-diff --git a/drivers/gpu/host1x/bus.h b/drivers/gpu/host1x/bus.h
-index a4adf9abc3b4..a80ceadfeb34 100644
---- a/drivers/gpu/host1x/bus.h
-+++ b/drivers/gpu/host1x/bus.h
-@@ -10,7 +10,7 @@
- struct bus_type;
- struct host1x;
- 
--extern struct bus_type host1x_bus_type;
-+extern const struct bus_type host1x_bus_type;
- 
- int host1x_register(struct host1x *host1x);
- int host1x_unregister(struct host1x *host1x);
+> While I can see the value in this for IOMMU mappings managed by VFIO,
+> doesn't this end up conflating that with the normal case of DMA domains?
+> For systems that e.g. rely on an IOMMU for functional host DMA, it seems
+> wrong to subject that to accounting constraints.
 
----
-base-commit: 2429b3c529da29d4277d519bd66d034842dcd70c
-change-id: 20240213-bus_cleanup-host1x-09f7f06652b9
+The accounting constraints are only applicable when GFP_KERNEL_ACCOUNT
+is passed to the iommu mapping functions. We do that from the vfio,
+iommufd, and vhost. Without this flag, the memory useage is reported
+in /proc/meminfo as part of  SecPageTables field, but not constrained
+in cgroup.
 
-Best regards,
--- 
-Ricardo B. Marliere <ricardo@marliere.net>
-
+Pasha
