@@ -1,166 +1,187 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6123B2A4;
-	Mon, 12 Feb 2024 16:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F833D994
+	for <linux-tegra@vger.kernel.org>; Tue, 13 Feb 2024 12:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707756624; cv=none; b=S0g1T4P63WJAd6ANO5FZX1pn+dCkvC66gN2SWsSCiypAna1aI/0hLNVDblwshiDLeFqWKBFF1K+dpuU5nfOy3yMdx344GPdvK46COru4WdtsgbeIZk3pGWcLUJLiaN+DMQ8yWnTR2BELSCS0rEoJfNoe+cRbCUdBwV800TSJIlg=
+	t=1707827636; cv=none; b=lfIFL1RYHfC90ta37pjHm/epcfhKBIKrUQXvqTaI0UuBrIj7Lx3iQEhiwtZFljheleLuNqPo/q80BPuL44Wcl3f9ksxfAZ6qaL66zEw+T5r0LwtfvnvDsYO5MfYOpERPnKwq63z6LPv/0fGaJONU4JqwKzhabNL7wbMuiot1lp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707756624; c=relaxed/simple;
-	bh=psAYolLubLnXKh+kFdLshH1IwolSJgEuJAOQ4J6CcLU=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Dflv+8i5hjEA9M+2CFJts669y+y2ibGCZ7UQ1FBm9c2zy7UGTe+KHIk3lCi3duFpUIapNp/hOjPflm61MYCaisbyA8ugMHKnbtYL5tH7Yruf6jS8GmX/zOFSOygxj/SOHMcMnaHGz0kvSjIxPhdEejzRgc+PWsDcql2UD0FZTGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNT2mCxz; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1707827636; c=relaxed/simple;
+	bh=qUG8PR2r8UZ6lS80DR72SY9ifyJEWN2so7+GelRjNxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M6L2czVIq6rwmozZ0ULjgtm26zIbFbIijHPEf6pPcy5iNyqdBDUpcJD3giatM1zNg/QYh9JtFKYMRFJDtSOzyAjTQ7mmS6aiUclAStyEYLawKbW25bZvO7Kj2OGouEfRH2BXLCVsVeHi1eJPZQAYlff6VgUjQzRebA7rMX3IdEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YMYtD1nz; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNT2mCxz"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-55ff5f6a610so4064821a12.3;
-        Mon, 12 Feb 2024 08:50:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YMYtD1nz"
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dc23bf7e5aaso3920468276.0
+        for <linux-tegra@vger.kernel.org>; Tue, 13 Feb 2024 04:33:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707756620; x=1708361420; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
+        d=linaro.org; s=google; t=1707827634; x=1708432434; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DbtCOz3u26hElchW0PWcPewu+ZG78Aj7zeMZmqh8H1Y=;
-        b=dNT2mCxzWEr53u2iUy94Ob2lLxy1+oONvYndOERnxF1t8JTnl+zutiVmPUomkG1oun
-         RrgOBxRneraUvByoknqwhckgHUiqtclhA1gO4NyIoLqi4AUzrw7eYq28GWYjRcWJjDqj
-         q4HBvL+2rFh2ydvwKQtONNE3BHMHLE1Twa7dmLGzqg1O5sJeP2QBL9+DX0v8uUxkJqom
-         hy3nrMzScBBGJpK7rvRnfndoqTpJhaIsW5Z1G8ivQtqQEoLeLJt3ksXTJ3ENjEjVavK0
-         ULUSV6FBgDBA/Xo44chKfbSN2pFPTuW/5JeQ45I191kz/mTaZQjIJKmbugoCVX4HNHHm
-         uWrw==
+        bh=CQkSTMTNz7Lw479EGzO5uGlI3m6Qr+ts8Yhi4TuIF9s=;
+        b=YMYtD1nz623uF5hA2py6rKKxyYq7VxopF9MUK+XPzG8kLIdC7spjdkDRQaipeEtiHn
+         Xk/h+k2oc94W9x74bz/Q/LbiL1UnZ1eSgJVLieaJtJFtaMiHBebBkN72hHDB+kjKH06D
+         PE5KHYDs6e9dt5mNNdaNUo0G5Jedz3PF/hn7TFC+CaXgZBYdPz2CbtTiEQhbAVAWO6TN
+         HyWcn1JkNQNUaRM3DZLVG0CNox+J7V4PUIlOHR5Uk2E7HwXlDwHfVV92uSoV5mkrjQAG
+         cWxVOyW8gALkuKcg80YPHIyIecQht31sO0+d7yfyt0+Z56SWqR49oLyVdGUyKyJzD166
+         /whw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707756620; x=1708361420;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
+        d=1e100.net; s=20230601; t=1707827634; x=1708432434;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DbtCOz3u26hElchW0PWcPewu+ZG78Aj7zeMZmqh8H1Y=;
-        b=nbHFMLY/PJXa/WN5sRqQNnuRVW8a6RolkarSBw3wkNwqM5Y3/IEElbdv4uageau+Ml
-         GVpqp8GFAEw427erg4PQ7gaxgx0QpIC/l1mZG6eKcMqXLDOUzTAWFOeAnOEp+nQuhlWv
-         zn6nGBJeLM4pfrxwk6bRxWYct1fuRACLRXpJlVbkCfHLEAytGUUqM916AgdpfQaTT1S/
-         adKASSY4IMzl7WaKwUCaYahrIxfw9S2Nj1jCFbbfpQht0qpM0U2AatySXiANA+v8AZnM
-         qVu0Dd3uOUFkWa9cr525Vtc3XaXh4ERokWB91I8ddPdxOir5YfFeX92Zrauf7GjAzzq4
-         EmiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwWuViV01a/4f4KsL2NPutsmvLkxNCYKeoW3+cwFCJB2p+uNKEKhziBs5VvoWln+Ol7F0YLF2U4w5S/ponwlL08TQJEKL9DkTjbPBla7Ly7/LCuRS3FphHo9unfMhRbyRolgLhnDKniZU=
-X-Gm-Message-State: AOJu0Yw8BJJf3RsVT+1CtcJC634nYnEgZMXPTC8zyuQ9ABjW80JRsocc
-	6aOSyn3DqhZ2Pa9tg0J2kM9nsszi4aoq/Ln2Q4lDzlASum+psQJP
-X-Google-Smtp-Source: AGHT+IFftF7HlCObOuwBQ/Rn6Zi2lSFub53JoK52ItcnhXkLZH4AbtnP3IeLI2bAJ9AZkCoRml7RVw==
-X-Received: by 2002:a05:6402:5d90:b0:561:9f62:8db3 with SMTP id if16-20020a0564025d9000b005619f628db3mr3335969edb.29.1707756620298;
-        Mon, 12 Feb 2024 08:50:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUjZZUQ9opbitxcj18TgINb330mLd5bs/QgDlAbVc+/b+TQo4HTAg3GgfMZ8auVW03Z1K+zY+oia7eAq3u5uS7adDcegYT2WYL8wWZxXkIaVCZW1t3ew+5ZopdP7hUwUNJ3VN9LK7iW3Lsrkct/FM5lg+yVeash9cqoJ6lSzXFHnR+6kCG+2usplPZH2qJlwCr+FAADAKNkiKU9NR0+4jbN8yQUJ5HGHmZ6sPtcLn9ygubDuPIzQ01ytxWScUDKCXou2wIcSabOInIYxvJHqUyIBae0aJx9kTe5ZlEH
-Received: from localhost (p200300e41f147f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f14:7f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id fd9-20020a056402388900b005607f899175sm2927160edb.70.2024.02.12.08.50.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Feb 2024 08:50:19 -0800 (PST)
-Content-Type: multipart/signed;
- boundary=7c640255eac135c68b597b52d418781ce4ba02d5840e4f5c2d60ce4c9520;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+        bh=CQkSTMTNz7Lw479EGzO5uGlI3m6Qr+ts8Yhi4TuIF9s=;
+        b=Z6VDBuHeNFMyOmpx7wWPi9rc8ei6t8+tCCpJ7efJgCnWpn/kpHHQxyYac/sjvECJ25
+         owsADO3fomNZnU7IPoh3yrF9posmTQgLIzeofhzcgUxNXHKhVw0Yd/RTjdxanlzFkXhZ
+         t1qhgb/ZfGk2L1pJDGqefl6ZJEIArGkpFaMX7yLFHHxHeuAXM4xTrgSrsV6HgX+xX8O4
+         e7Lkv487CwgHiP5sJyngHhGRUHUqpx+CFxbKjHzS8VT6YnSDaQW99DDhfMH36UpyWcFB
+         2bXDgu9Tp3crc70N+r3uKFq/IbvOqbuPqVXkDeb/U0zJjCQznXB65qVK4BK9h/KlEML3
+         ZMZg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7jmTfcNbaahntSrbcg1hEcepgUg0Frhnd+gx7dEFSqqbON/Zj1pBeCkVnLDyQ6qAvXviteR4ww5gXOJxWwl2CdHHoi9PsjJN09Pk=
+X-Gm-Message-State: AOJu0YzmVpUPuXcs83cHUFjKG5bT0svXNyB5AMqfvmfi3n0Bh9f744Rz
+	VRgr3EBHBv6P294X7WzDBbJ/rxs4qR2Res5hgj80N6C0IHXa+yWHbDcFGbYmPZk2B03vdhSlN8S
+	+b2AxDYykS/zO8MWtfLJ73HhaFmUIxTA7sTYKvw==
+X-Google-Smtp-Source: AGHT+IEItpPRp0JDqmMU5LM1yDLksBo5Ixso4A65GTlcQpvHvL7IBDZ3JMq2DOMT684roeylKkqheTZzDc/B7oATafQ=
+X-Received: by 2002:a25:db8b:0:b0:dc6:ba11:6edd with SMTP id
+ g133-20020a25db8b000000b00dc6ba116eddmr10543179ybf.8.1707827634082; Tue, 13
+ Feb 2024 04:33:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Mon, 12 Feb 2024 17:50:19 +0100
-Message-Id: <CZ3974AW5FT3.39WK876PU00AZ@gmail.com>
-Cc: <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] ARM: tegra: set correct naming for Tegra Note 7
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Jon Hunter" <jonathanh@nvidia.com>, "Svyatoslav Ryhel"
- <clamor95@gmail.com>, "Rob Herring" <robh+dt@kernel.org>, "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Shubhi Garg" <shgarg@nvidia.com>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240212071843.6679-1-clamor95@gmail.com>
- <20240212071843.6679-2-clamor95@gmail.com>
- <8ffbe7ae-67e9-4a3f-9866-3cd744729971@nvidia.com>
-In-Reply-To: <8ffbe7ae-67e9-4a3f-9866-3cd744729971@nvidia.com>
+MIME-Version: 1.0
+References: <20240208202822.631449-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240208202822.631449-1-krzysztof.kozlowski@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 13 Feb 2024 13:33:18 +0100
+Message-ID: <CAPDyKFr8rTEaJkQtvZwEsHiYz77hUGb7CvBw9oGfBOzxcWWV3g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pmdomain: constify of_phandle_args in xlate
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	NXP Linux Team <linux-imx@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---7c640255eac135c68b597b52d418781ce4ba02d5840e4f5c2d60ce4c9520
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-
-On Mon Feb 12, 2024 at 5:14 PM CET, Jon Hunter wrote:
+On Thu, 8 Feb 2024 at 21:28, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> On 12/02/2024 07:18, Svyatoslav Ryhel wrote:
-> > Correct codename of Tegra Note 7 is "tegratab", while model
-> > name should be "NVIDIA Tegra Note 7". Fix this inconsistency.
-> >=20
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >   arch/arm/boot/dts/nvidia/Makefile                            | 4 ++--
-> >   .../{tegra114-tn7.dts =3D> tegra114-nvidia-tegratab.dts}       | 5 ++=
-+--
-> >   2 files changed, 5 insertions(+), 4 deletions(-)
-> >   rename arch/arm/boot/dts/nvidia/{tegra114-tn7.dts =3D> tegra114-nvidi=
-a-tegratab.dts} (98%)
-> >=20
-> > diff --git a/arch/arm/boot/dts/nvidia/Makefile b/arch/arm/boot/dts/nvid=
-ia/Makefile
-> > index 7a422f150488..474f3fbbd99d 100644
-> > --- a/arch/arm/boot/dts/nvidia/Makefile
-> > +++ b/arch/arm/boot/dts/nvidia/Makefile
-> > @@ -2,8 +2,8 @@
-> >   dtb-$(CONFIG_ARCH_TEGRA_114_SOC) +=3D \
-> >   	tegra114-asus-tf701t.dtb \
-> >   	tegra114-dalmore.dtb \
-> > -	tegra114-roth.dtb \
-> > -	tegra114-tn7.dtb
-> > +	tegra114-nvidia-tegratab.dtb \
-> > +	tegra114-roth.dtb
-> >   dtb-$(CONFIG_ARCH_TEGRA_124_SOC) +=3D \
-> >   	tegra124-apalis-eval.dtb \
-> >   	tegra124-apalis-v1.2-eval.dtb \
-> > diff --git a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts b/arch/arm/boot/=
-dts/nvidia/tegra114-nvidia-tegratab.dts
-> > similarity index 98%
-> > rename from arch/arm/boot/dts/nvidia/tegra114-tn7.dts
-> > rename to arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab.dts
-> > index bfbdb345575a..30b2ed91be23 100644
-> > --- a/arch/arm/boot/dts/nvidia/tegra114-tn7.dts
-> > +++ b/arch/arm/boot/dts/nvidia/tegra114-nvidia-tegratab.dts
-> > @@ -5,8 +5,9 @@
-> >   #include "tegra114.dtsi"
-> >  =20
-> >   / {
-> > -	model =3D "Tegra Note 7";
-> > -	compatible =3D "nvidia,tn7", "nvidia,tegra114";
-> > +	model =3D "NVIDIA Tegra Note 7";
-> > +	compatible =3D "nvidia,tegratab", "nvidia,tegra114";
-> > +	chassis-type =3D "tablet";
+> The xlate callbacks are supposed to translate of_phandle_args to proper
+> provider without modifying the of_phandle_args.  Make the argument
+> pointer to const for code safety and readability.
 >
-> No mention of adding the chassis-type in the commit message. Seems like=
-=20
-> that should be a separate change.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Agreed. Along with Krzysztof's comments maybe this should just be a
-single patch that updates the model property and adds the chassis-type.
-We haven't used chassis-type before, but I see that the devicetree
-specification has it marked as "optional-but-recommended", so maybe we
-should make a pass over all files and add these as appropriate.
+Applied for next, thanks!
 
-Thierry
+Kind regards
+Uffe
 
---7c640255eac135c68b597b52d418781ce4ba02d5840e4f5c2d60ce4c9520
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXKTEsACgkQ3SOs138+
-s6FMYxAAtw170jJGnf2jjS+4ueekSK3Ym6O38q1r0QQu8S71dwn7SHUFfxLmnvzT
-b4eTV+3mSt9S1z2YGxseXo9YCV21ZmhOBqCtjpgnE3hf/yoBCMt6oOGw5O5TYtl7
-5Aa7fTdSBEWvG3zKT39kR73o0TtVn4FV5XecsZIu7922LA7IEqAEkb53T4p7mmTo
-lHmI6qUTzISgYO2T7JhAPTUsh+R3F66HM0mnDTU6s59Leaazi1WfoWX2gufWfDWP
-aUGXb0O+lTJKVIzE83vbGgPeC5MSYMHXlGe9bPIkaThJjbUnO066bUwEZ7e6F/WJ
-V+169e6ueZdPNxr7A/gDVbFN28e3KHbYon7khgdJZOPpfp2TWN0EGfkPPj5Jhdya
-dMnqvOLEt7OTWbDIcjfIzPNPsiKETsOMN9YrTYkCvJN3yOelvFF+oogrvDCkWFpn
-48WFVAxUq83nmPz1Rv71mpwWH2sySWhf6Oe5QesaDxmfaL8gIpmL1MPbtB3o8kz1
-U8LZ0G1+5HPUUsyvQDU6BPaU5TQqS9zqu0/YSwQydlAp/ZZ36H5xwkeMN2PBMNr+
-LKMJl2Sz5FmM0FkIWTkYEfPmCqQSE0i6vNeZqH8Y++qPXfnTCzoGNiBUouME4Cp+
-t5Yh3PnHtu3sCM6rmfWApTqRsJ10UBuDd7fF8BKFlf+tVeBG9Kk=
-=U8Ue
------END PGP SIGNATURE-----
-
---7c640255eac135c68b597b52d418781ce4ba02d5840e4f5c2d60ce4c9520--
+> ---
+>  drivers/pmdomain/core.c                     | 4 ++--
+>  drivers/pmdomain/imx/scu-pd.c               | 2 +-
+>  drivers/pmdomain/tegra/powergate-bpmp.c     | 2 +-
+>  drivers/pmdomain/ti/ti_sci_pm_domains.c     | 2 +-
+>  drivers/pmdomain/xilinx/zynqmp-pm-domains.c | 2 +-
+>  include/linux/pm_domain.h                   | 2 +-
+>  6 files changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> index 46331e71108a..ea4b29475206 100644
+> --- a/drivers/pmdomain/core.c
+> +++ b/drivers/pmdomain/core.c
+> @@ -2266,7 +2266,7 @@ static DEFINE_MUTEX(of_genpd_mutex);
+>   * to be a valid pointer to struct generic_pm_domain.
+>   */
+>  static struct generic_pm_domain *genpd_xlate_simple(
+> -                                       struct of_phandle_args *genpdspec,
+> +                                       const struct of_phandle_args *genpdspec,
+>                                         void *data)
+>  {
+>         return data;
+> @@ -2283,7 +2283,7 @@ static struct generic_pm_domain *genpd_xlate_simple(
+>   * the genpd_onecell_data struct when registering the provider.
+>   */
+>  static struct generic_pm_domain *genpd_xlate_onecell(
+> -                                       struct of_phandle_args *genpdspec,
+> +                                       const struct of_phandle_args *genpdspec,
+>                                         void *data)
+>  {
+>         struct genpd_onecell_data *genpd_data = data;
+> diff --git a/drivers/pmdomain/imx/scu-pd.c b/drivers/pmdomain/imx/scu-pd.c
+> index 891c1d925a9d..05841b0bf7f3 100644
+> --- a/drivers/pmdomain/imx/scu-pd.c
+> +++ b/drivers/pmdomain/imx/scu-pd.c
+> @@ -393,7 +393,7 @@ static int imx_sc_pd_power_off(struct generic_pm_domain *domain)
+>         return imx_sc_pd_power(domain, false);
+>  }
+>
+> -static struct generic_pm_domain *imx_scu_pd_xlate(struct of_phandle_args *spec,
+> +static struct generic_pm_domain *imx_scu_pd_xlate(const struct of_phandle_args *spec,
+>                                                   void *data)
+>  {
+>         struct generic_pm_domain *domain = ERR_PTR(-ENOENT);
+> diff --git a/drivers/pmdomain/tegra/powergate-bpmp.c b/drivers/pmdomain/tegra/powergate-bpmp.c
+> index 179ed895c279..b0138ca9f851 100644
+> --- a/drivers/pmdomain/tegra/powergate-bpmp.c
+> +++ b/drivers/pmdomain/tegra/powergate-bpmp.c
+> @@ -305,7 +305,7 @@ static void tegra_bpmp_remove_powergates(struct tegra_bpmp *bpmp)
+>  }
+>
+>  static struct generic_pm_domain *
+> -tegra_powergate_xlate(struct of_phandle_args *spec, void *data)
+> +tegra_powergate_xlate(const struct of_phandle_args *spec, void *data)
+>  {
+>         struct generic_pm_domain *domain = ERR_PTR(-ENOENT);
+>         struct genpd_onecell_data *genpd = data;
+> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> index c091d569ecd5..9dddf227a3a6 100644
+> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> @@ -85,7 +85,7 @@ static int ti_sci_pd_power_on(struct generic_pm_domain *domain)
+>   * @data: genpd core data for all the powerdomains on the device
+>   */
+>  static struct generic_pm_domain *ti_sci_pd_xlate(
+> -                                       struct of_phandle_args *genpdspec,
+> +                                       const struct of_phandle_args *genpdspec,
+>                                         void *data)
+>  {
+>         struct genpd_onecell_data *genpd_data = data;
+> diff --git a/drivers/pmdomain/xilinx/zynqmp-pm-domains.c b/drivers/pmdomain/xilinx/zynqmp-pm-domains.c
+> index 6fd514286d82..0b5831e5ba1b 100644
+> --- a/drivers/pmdomain/xilinx/zynqmp-pm-domains.c
+> +++ b/drivers/pmdomain/xilinx/zynqmp-pm-domains.c
+> @@ -210,7 +210,7 @@ static void zynqmp_gpd_detach_dev(struct generic_pm_domain *domain,
+>  }
+>
+>  static struct generic_pm_domain *zynqmp_gpd_xlate
+> -                               (struct of_phandle_args *genpdspec, void *data)
+> +                               (const struct of_phandle_args *genpdspec, void *data)
+>  {
+>         struct genpd_onecell_data *genpd_data = data;
+>         unsigned int i, idx = genpdspec->args[0];
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index fb91770ba4ba..1a391ef1b6f8 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -349,7 +349,7 @@ static inline void dev_pm_genpd_resume(struct device *dev) {}
+>  /* OF PM domain providers */
+>  struct of_device_id;
+>
+> -typedef struct generic_pm_domain *(*genpd_xlate_t)(struct of_phandle_args *args,
+> +typedef struct generic_pm_domain *(*genpd_xlate_t)(const struct of_phandle_args *args,
+>                                                    void *data);
+>
+>  struct genpd_onecell_data {
+> --
+> 2.34.1
+>
