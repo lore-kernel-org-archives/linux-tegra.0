@@ -1,122 +1,149 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DB5BE76;
-	Tue, 13 Feb 2024 18:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA0C60263;
+	Tue, 13 Feb 2024 19:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707849188; cv=none; b=VgByrfXtEKoT3GzNR1E5IgtP2QjqVFv+zJuYn+mvICfoABI3pGTusouWaU1dvGCs4V+2meol77H5/GDfV+M2j9Dnlrpd9gZi7KhlcAGlO8YEbLn37ld2+eJa8Iisa0CzVBxXgPdVTq1Ln2O+ZEsZqjvtwCbbJPB359as7vVFXA8=
+	t=1707852910; cv=none; b=U+wFv3M1ZQRZbedM83cQvho7GzUlaEz8I3OeEx6rhyNtWqAimcsHq70DZ8k7aAoxMYFRFNV1Kj5gwmwhVpqUwnEUZ/YbfNl5GcagRudQmozAQGD6f2+Nx7evh/+lOByN35fSliDeRxlO/Fke4b9guB7VJ8pJo5l9PLPKJPKWbjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707849188; c=relaxed/simple;
-	bh=e9HGOQ/n6jL9fKCLwsx+pvE+M/jpyedKt8hknX9BeAM=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=t3L/ZtQ5qsKeDBCGcOjBNX6FYOpe01w0Mr3XkHrMm5J6CaX2Ze23qcBOUyD1kJWqhG3iaehBAMiQh2v5i4nkEFCt2hfYOpiFNO9HTBbMXMC6i4VoVX3CrmToMLkeI1cy8msF9xCnLUq+QTl2SH7B8pNChMoNAi1S2LQhZcS56/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KruYy6I/; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1707852910; c=relaxed/simple;
+	bh=O2rijBlETPV1mvIsb2fGr/xbJahLcxzbFbT0uIUHBKg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rz95cV8kqQJLIcHoqzfCO82OWzq7lFnxGeRPbk5gbCGZDkGCcnPji+It01tnnqHwcogxj8g5Omv6SGZbDcWiASg9VF8qW1WNZz0FwpmVKaaRTGlMNaCvddFQqcIS1/22ebNanA5qX0z8g53idsUqd0PCIuhlTT/hSKEhj62B0r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bAHFe5L7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KruYy6I/"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a3566c0309fso571527166b.1;
-        Tue, 13 Feb 2024 10:33:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707849185; x=1708453985; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=B+PKDVGpsuB7nKSWQah+oYoMU6sDZbj7wuhtnl88f78=;
-        b=KruYy6I/cAtsNDq18GPU43gnqDTDhRhQ9kbWS0Q6RC5vPy1tkccVPZ9KYygeKaU5GO
-         21Wu4zTw/jr5NwyITyLv9Gutg9zDuqduubwOc/IuCy1U9mpomMxEz90fOYUWEmvulzZa
-         KUJCo+lLxpr/C+wESopA0RV00SoCHLUa3/Osq8n3Q6vEHGrquX3EPv7K2vlTuKy0UfmF
-         FnYNikn576J+ci6k1BPEVnXQN1fbVjIBven3b6az97IPJ2291k0a0F+7HPI7ymPI07bk
-         zX5pwAtoiGjqcxxDS26Z4/yEen3sO3licgREcLgdWkNdFhXd1Di0KKF4x9Jf1m/eLpJC
-         Gbcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707849185; x=1708453985;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=B+PKDVGpsuB7nKSWQah+oYoMU6sDZbj7wuhtnl88f78=;
-        b=ExxMi6YawUj6YXgW4ENU0LGRljjXeCOlUPgGIVm0vhQLDeaTkOHFIt8s/x5R/o72Du
-         5auNbU6p0+fu4Q1ty2eDyaBrCIVhaInD5LZPyVYu86F66iU21JAJ1FS3LH5l5Jwr7ETm
-         rGCeK51KpI1JwhZKYwg1FtSSXPkM1Od7WP5l39rjRUzMOhABJir+P5q6ArvEDMFELaHY
-         Guc0EZa6i8EUfsi7zGXW1KF9UyRr4HBqPIqSFltJ+RUbMUzrKBUyqaGnCD9BNFGjLLPu
-         hRIE6bdNGE58dqMh5Sl+L7D2fSHHTTAz9hxIfxYgDWIg6xzcvpvphnLR2FErlwkvrtBF
-         wRrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTAcdQh6iFIJRwq3lHX/YrXLf/pInd4dpqvHznZ/L9FYFtJ04qd7glt94U6quZ7lokcfqQwB9tGRmNeVzKOGj6f9ZJPpW/huFf9v7wEuY9oIOkxleda284NK5muGthvc7wleVWVAN8VkQ=
-X-Gm-Message-State: AOJu0YzI/fkHz7uIVH0oRCNfuKDO+2KYWQSl7NZGDBHcJdoRpNMkhEtt
-	MPAxmPAJwLBzz/+RJ0Jv9FPUYsqpGgaBPxh77dtSjIhCYbowaSs6jOBBXecN
-X-Google-Smtp-Source: AGHT+IGUs4TucCGfmD5ueF97+M1k8oOPVOqap+bz5i+YMzT3KIZDvbFd5xlNZtAj908r6TpXF2eLFg==
-X-Received: by 2002:a17:906:c44a:b0:a3d:14cd:f5a7 with SMTP id ck10-20020a170906c44a00b00a3d14cdf5a7mr116597ejb.24.1707849184936;
-        Tue, 13 Feb 2024 10:33:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXxKPneMdwPQnliJ/gUlhKG9r4ipF2STxArjZuwsHs2tzXcEZM8Qz+eP+bsl5azng37Z77u1C6pwdTcpQ184oPIfgZrJuj8f273xGM0ZyfUQbvijMqomJRx/7mAIgEUTZTkWy17pBUc7J5I0NgoCYLzUaUgaeIcTiKqEJubv0i8o7dChwwE9FP8F03EYe2YmFJNjio7RaEZA4h+Znj0IYWWUGsrJk67UwfvZ/CbnHEJutctNoyB9uKKvBu0+P0818k=
-Received: from localhost (p200300e41f147f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f14:7f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id th8-20020a1709078e0800b00a3d1897ab68sm526708ejc.113.2024.02.13.10.33.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Feb 2024 10:33:04 -0800 (PST)
-Content-Type: multipart/signed;
- boundary=0a9fa848bf13dc3f6d68d18f6c155adc6a5a027ae555b6806e8a7e69f548;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bAHFe5L7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70A66C433F1;
+	Tue, 13 Feb 2024 19:35:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707852909;
+	bh=O2rijBlETPV1mvIsb2fGr/xbJahLcxzbFbT0uIUHBKg=;
+	h=From:Subject:Date:List-Id:To:Cc:From;
+	b=bAHFe5L7UR7xP/kCitee/iv9eS0lpinKuT9Yamt03CiuUYMC7YJ8S4Mo8zhHyvvXy
+	 smFxcN0KVo8KGPSRn74E/DsZvyDbmiOw9J/sMQczNXr1h5eq06vGIQiQ323cA/mjOD
+	 AIURazkAWZvo+DmAwMndDAtePLjU7O+a1JwaRdMswSLa8kkV8Wgnnqs61BPbbm8W4S
+	 nx4RoBLQByL4sGoYmlGrGvVSTBTl2O8sOskTgzgaAn+sk0Gwid6QOtaxruZKGNBVYx
+	 3JKFh3NMw7YVWEgSHzVc/H2bHWxr8Yk82Rih7f0/OmBlzs1hXYaWV6p4YCKCR0A8dm
+	 bDrQYULSGpk5Q==
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH 0/6] dts: Fix dtc interrupt warnings
+Date: Tue, 13 Feb 2024 13:34:24 -0600
+Message-Id: <20240213-arm-dt-cleanups-v1-0-f2dee1292525@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Tue, 13 Feb 2024 19:33:03 +0100
-Message-Id: <CZ460BUC6Y7D.1BJ8X9RRVRVPE@gmail.com>
-Cc: <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] gpu: host1x: bus: make host1x_bus_type const
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Ricardo B. Marliere" <ricardo@marliere.net>, "Mikko Perttunen"
- <mperttunen@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240213-bus_cleanup-host1x-v1-1-54ec51b5d14f@marliere.net>
-In-Reply-To: <20240213-bus_cleanup-host1x-v1-1-54ec51b5d14f@marliere.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEDEy2UC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDI0Nj3cSiXN2UEt3knNTEvNKCYl1zs6QkcyOzlFRLEwsloK6CotS0zAq
+ widGxtbUANsZJ1WEAAAA=
+To: soc@kernel.org, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Tsahee Zidenberg <tsahee@annapurnalabs.com>, 
+ Antoine Tenart <atenart@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Ray Jui <rjui@broadcom.com>, 
+ Scott Branden <sbranden@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ =?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ =?utf-8?q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>, 
+ Tony Lindgren <tony@atomide.com>, Chanho Min <chanho.min@lge.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linusw@kernel.org>, 
+ Imre Kaloz <kaloz@openwrt.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+ openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-omap@vger.kernel.org, 
+ linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-kbuild@vger.kernel.org
+X-Mailer: b4 0.13-dev
 
---0a9fa848bf13dc3f6d68d18f6c155adc6a5a027ae555b6806e8a7e69f548
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+I had a branch with most of these changes sitting in my tree for some 
+time. Geert's asking about some errors not getting found prompted me to 
+clean it up and send it out. This series fixes all* interrupt related 
+warnings and enables the check by default. 
 
-On Tue Feb 13, 2024 at 3:44 PM CET, Ricardo B. Marliere wrote:
-> Since commit d492cc2573a0 ("driver core: device.h: make struct
-> bus_type a const *"), the driver core can properly handle constant
-> struct bus_type, move the host1x_bus_type variable to be a constant
-> structure as well, placing it into read-only memory which can not be
-> modified at runtime.
->
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Ricardo B. Marliere <ricardo@marliere.net>
-> ---
->  drivers/gpu/host1x/bus.c | 2 +-
->  drivers/gpu/host1x/bus.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+SoC maintainers, Can you please take this series directly. 
 
-Applied to drm-misc-next, thanks.
+Rob
 
-Thierry
+*There's a few Renesas warnings still Geert said he would fix.
 
---0a9fa848bf13dc3f6d68d18f6c155adc6a5a027ae555b6806e8a7e69f548
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+Rob Herring (6):
+      arm64: dts: freescale: Disable interrupt_map check
+      arm: dts: Fix dtc interrupt_provider warnings
+      arm64: dts: Fix dtc interrupt_provider warnings
+      arm: dts: Fix dtc interrupt_map warnings
+      arm64: dts: qcom: Fix interrupt-map cell sizes
+      dtc: Enable dtc interrupt_provider check
 
------BEGIN PGP SIGNATURE-----
+ arch/arm/boot/dts/amazon/alpine.dtsi                  |  1 -
+ arch/arm/boot/dts/aspeed/aspeed-g4.dtsi               | 14 --------------
+ arch/arm/boot/dts/aspeed/aspeed-g5.dtsi               | 15 +--------------
+ arch/arm/boot/dts/aspeed/aspeed-g6.dtsi               | 18 ++----------------
+ arch/arm/boot/dts/broadcom/bcm-cygnus.dtsi            |  3 +++
+ arch/arm/boot/dts/broadcom/bcm-hr2.dtsi               |  1 +
+ arch/arm/boot/dts/broadcom/bcm-nsp.dtsi               |  2 ++
+ .../boot/dts/intel/ixp/intel-ixp42x-gateway-7001.dts  |  2 ++
+ .../dts/intel/ixp/intel-ixp42x-goramo-multilink.dts   |  2 ++
+ arch/arm/boot/dts/marvell/kirkwood-l-50.dts           |  2 ++
+ arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi        |  2 ++
+ arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi     |  1 -
+ arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi          |  1 -
+ arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi         |  1 -
+ arch/arm/boot/dts/nxp/imx/imx6q-b850v3.dts            |  3 ---
+ arch/arm/boot/dts/nxp/imx/imx6q-bx50v3.dtsi           |  2 +-
+ arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi         |  1 -
+ arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi        |  1 -
+ arch/arm/boot/dts/nxp/imx/imx6qdl-emcon.dtsi          |  1 -
+ arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-pfla02.dtsi  |  1 +
+ .../boot/dts/nxp/imx/imx6qdl-phytec-phycore-som.dtsi  |  1 +
+ arch/arm/boot/dts/nxp/imx/imx7d-pico-dwarf.dts        |  1 +
+ arch/arm/boot/dts/nxp/vf/vf610-zii-dev-rev-b.dts      |  1 +
+ arch/arm/boot/dts/qcom/qcom-sdx55.dtsi                |  8 ++++----
+ arch/arm/boot/dts/st/stm32429i-eval.dts               |  1 -
+ arch/arm/boot/dts/st/stm32mp157c-dk2.dts              |  1 -
+ arch/arm/boot/dts/ti/omap/am5729-beagleboneai.dts     |  1 -
+ arch/arm64/boot/dts/amazon/alpine-v2.dtsi             |  1 -
+ arch/arm64/boot/dts/amazon/alpine-v3.dtsi             |  1 -
+ arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi      |  1 +
+ arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi   |  1 +
+ arch/arm64/boot/dts/freescale/Makefile                | 19 +++++++++++++++++++
+ arch/arm64/boot/dts/lg/lg1312.dtsi                    |  1 -
+ arch/arm64/boot/dts/lg/lg1313.dtsi                    |  1 -
+ arch/arm64/boot/dts/marvell/armada-ap80x.dtsi         |  1 -
+ arch/arm64/boot/dts/mediatek/mt8195-demo.dts          |  1 +
+ arch/arm64/boot/dts/qcom/ipq6018.dtsi                 |  8 ++++----
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi                 | 16 ++++++++--------
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi              |  4 ++++
+ scripts/Makefile.lib                                  |  3 +--
+ 40 files changed, 65 insertions(+), 81 deletions(-)
+---
+base-commit: 6613476e225e090cc9aad49be7fa504e290dd33d
+change-id: 20240213-arm-dt-cleanups-76bb726de948
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXLteAACgkQ3SOs138+
-s6FRzhAAgolp6TG5UNvoKNh0Qhzl1mr99uhsEB1A4oLSmdi7Z2KUPwmzs9FJGZRj
-2GwJBb12PzksSMOE3xIBNu3EK45diHi/00lPKjPY3jiaR08AtLaMcrPmy/O472fW
-d+JiyHMgne/SLoOuJvxRryx+MPZMrrUoAgIM574jxLOaWbNV7aCKjQVNoLhPsL0/
-ZKmvowbL6NTUVprnL0NvmblY4bz98JSxWXAN2f6EO34lo7gVhqDyk1IZuIWU4RBZ
-SD1VaVldr0g3PULLH6VVJe0hH/Mxoi7V/I4zlI+jagKpHdF6Brr9ViD+R/AE/tFo
-G+HOWjmC/OhJvBiW0/DXd51JyhwJVVqNYN+Qcbrdze6L4EsrxLAaab7L2rzrc1Bu
-3mWIRZ2jCQpNjEe0exAf1FQHddT+R/5gvLWAZr6szDD4uSV8crXgiEJl9dBssu0S
-z29PO+JNbnlvq5DcDi2iDtNoy9IAEdfCQk7v76IhXqBH7uZAEDfWVDF20CtNmk+/
-alfvn+nNEXzldW9+UPs40uYV88GfcbP6EIqN/SN4MxFXxtK3TQe7hKHjOVlXIT8E
-1f06zctOOTWczqXO26JwF5ObQh5tV8CPMwTXhP2n8WzeDcDuAQx7VHRe4/UuHisC
-L5n+7+GHCQdYDCWr8V920HmYiiB0/KBODHeeZXmkIE9JWDukODo=
-=aI8z
------END PGP SIGNATURE-----
+Best regards,
+-- 
+Rob Herring <robh@kernel.org>
 
---0a9fa848bf13dc3f6d68d18f6c155adc6a5a027ae555b6806e8a7e69f548--
