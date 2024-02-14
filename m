@@ -1,874 +1,191 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2083.outbound.protection.outlook.com [40.107.243.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DE4524CD
-	for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 13:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707916159; cv=none; b=WZXK9UT4fIGOdGeQhBajJ9d9RIaaUf+BI6TfF6rNBGb8pE9FDkqijaUJ+0JOnfDmJke+4UZVt8PVr2pYtdZ7sXsplFMsVIMcFTz8FrwJpVEaOUpgyMwLKJDmU0nRccmelz1D4xCfsOW8+Uqru60e6DA0EcNJrURNgPjunZFPszM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707916159; c=relaxed/simple;
-	bh=xieSOLYNkFs4rsuA+3U34JvSqSC1gyE4o1BhQgsraNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z8wfJtvcKeZ5uBLPDNo+LxLvgggl0CMP/p1i32VBvODqwkBsoVU/j/M1ql8kszp4XHWE4SBPzN1R1hWZ3jchBpSYq/EuFR/HtmGExAkXak32F85J05Tme/e2qwdC7GwRpNSiAF8lMR4vwqoN6eDTgxkX3qQyAldMWysKET0SEyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ky2OmMKc; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F71F1A58B;
+	Wed, 14 Feb 2024 13:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707916560; cv=fail; b=Pbug4UUjZHfgC723fZg2YUWQ6Uxat/OtCcLwidbUszP6WZWybyYK3+3npMEI9P7sVnu/B1S5ssBDqLZ/CvJoIkPk7i54mSLJwveQ6VOGrKwcdBHU8G3ppRiyZ6rHHHHDyAsQmIvXCOwkw8QhkjgRCcmKR06Vu9hRWpv0AHgrOII=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707916560; c=relaxed/simple;
+	bh=cZp7c3mysJFaHsk6rrz2gTg6p4H4Xab32Bb7arHYrG4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LU9xBMTiYrn0oHMs0AKjy/i4Bk8VYayD4JT8FoyF2TBrCIzKDuQKtSWz0aryIJ/xfzlTcPX4597LJQB13iyDuZCPG5z/q3Lx3CYnCr5w54ROtd8ONAgcfgoDJdQokr1cwuTsWgTc+ql5M2aaKZnmkuEcBhgdjn4fuPHZ1lVjf10=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oxEISDMl; arc=fail smtp.client-ip=40.107.243.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ky2OmMKc"
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41ECNlfU023825
-	for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 14:09:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=InXl5UoDm4p5xAnYCHuBFmJXlRp+v19rTe8ybBMvQjM=; b=ky
-	2OmMKcIVRui7a7l7V8SGgBYg/a4R/gIdBPFBLxaaJciGjAu5UbpNbozVFu9wP1Q5
-	Z1R9W8yycbJi9ctelaZzbLax/uhjk66fWmWcCckV9pkK7Hi1lz57O9YmLjvD7xUl
-	GoFzg26ge0SbTADP5YYFbdMyAzb3tM/djwzvzCSaxD1C4GduVfUP5YARUeNr2HJR
-	w+MqTMyketpUicqBRp8ebSgQD46gGUZ8yBtYp43Ik6fh5gJTi1hux20YdSJ7LAml
-	tQvNpb0kmx5aE234BpoaPeRzbDY2cUrTaMxE0qz7dwZmDlM0srTdz9P8KtqIuAbN
-	g3Hv0FXJw2Rg/wA4zQLw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3w62h0y62n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 14:09:14 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4460840046
-	for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 14:08:59 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A33C126C6C3;
-	Wed, 14 Feb 2024 14:08:54 +0100 (CET)
-Received: from [10.201.21.122] (10.201.21.122) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 14 Feb
- 2024 14:08:52 +0100
-Message-ID: <7cfd82ef-a9d4-448e-bacf-f85279cfac63@foss.st.com>
-Date: Wed, 14 Feb 2024 14:08:49 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oxEISDMl"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Wj6yk+Fnng+PyzGoVkJDIF8SyK6gWlOpwPxFN0rmDutsw/WUFnzgtNyb2t9xSNyyYIboOp7UtohO6rPS2lF5FtiELDbjzEsNV3rSb7dCTDGg4+BMbg5TtIqJ4ybHUnYTVo1bOqQ78qY7twLDhdfWpPz0vIb4d4syFuJyvWgUvBB26YLvkSoCgCQLLhGjlpso9lwOQQ84E7gqj+vVTQjjTo2r9olIccF/Qo/Fgl2pjSKXqdeaGCt1kvhEr4iImmeQWcPzf3DZU9piKgUOaDtEXHbvesfgBtcVkJTPRWfsYkTUDABhoYFOYzy933XfYBzYn1AkiOmxhyJakBVZvOwCIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sZ6roqwzRJjipoiX6YLBw+IIl3HGqLjn524FFheXK30=;
+ b=NQiCG2EqS1Qf7AU2REdRh/bQ6JW5zL/v2dEp1W6YQiQngoGpFus5vPh36RxcAAOcWUIs1bttOsICHG5j5iBeqTlA1jGAOnnAeXGPa8lujDehw52NQD0jJwU+E4uJGzS5LwGphcKZnSIwfruMyBKQHiraEW9VtP05w1wbZ/aCNjFr/nlJznTIjK8KxW+Uk3yLJ8PaFIeNxKzFhbLmzCilvlGH1ZgRVSiiIVImt5KH5LQHflnClQ8gg4P5Dj8nK3w13ruRCI2mbPLROEv2mzOQFNaiB+8zrSmjzYcJnYMruAjxc//Q8ZRtbDfYnnFaz0OcIv46ux+xi5x6rbZzlzOReg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sZ6roqwzRJjipoiX6YLBw+IIl3HGqLjn524FFheXK30=;
+ b=oxEISDMlzcMiYpoL8fXPQcCDdisSzPQC3nw0nFQ9fTtSNaFBad3y8756zgpcFutLN4kvwuOolMW2U9Mzcyl3gUyVADkfS3kYGfgqzO5VLO78mlquk5Id6mOZgULVy47fafSWTH9D3/OBy+O9Ll6N05ZgCmeUXtpjLMOAwxRrC3qyHk1bzWnTmpzSm/YmfHX2WqIK/QBvac1M+kNSHnSbVby5IUdSq2h+zzrfY9wgnstoGHW/xUCzWKNSvjS3OyeiuevxCqk5R/m2nBh5WflWR6Z9eA18zSbOtYP7qsd0h/Tq7Wj1lMKlUOxuE/VR4VAzy7UppUFLx55c3LNbvGmEMQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ DM8PR12MB5399.namprd12.prod.outlook.com (2603:10b6:8:34::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7292.25; Wed, 14 Feb 2024 13:15:53 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::f462:16b8:4857:38b7]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::f462:16b8:4857:38b7%5]) with mapi id 15.20.7316.012; Wed, 14 Feb 2024
+ 13:15:53 +0000
+Message-ID: <d74b1c1d-a0dd-43f4-ad6a-0dca69329c16@nvidia.com>
+Date: Wed, 14 Feb 2024 13:15:47 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/64] 6.1.78-rc1 review
+Content-Language: en-US
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20240213171844.702064831@linuxfoundation.org>
+ <83771838-c346-4a90-92c1-6ba592a620ac@nvidia.com>
+ <2024021422-reckless-remark-e721@gregkh>
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <2024021422-reckless-remark-e721@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO6P123CA0018.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:313::11) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] arm: dts: Fix dtc interrupt_provider warnings
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>, <soc@kernel.org>,
-        Shawn Guo
-	<shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix
- Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP
- Linux Team <linux-imx@nxp.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Tsahee Zidenberg <tsahee@annapurnalabs.com>,
-        Antoine
- Tenart <atenart@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery
-	<andrew@codeconstruct.com.au>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden
-	<sbranden@broadcom.com>,
-        Broadcom internal kernel review list
-	<bcm-kernel-feedback-list@broadcom.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth
-	<sebastian.hesselbarth@gmail.com>,
-        =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?=
-	<j.neuschaefer@gmx.net>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan
- Hunter <jonathanh@nvidia.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?=
-	<bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>, Chanho Min
-	<chanho.min@lge.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Geert
- Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linusw@kernel.org>,
-        Imre Kaloz <kaloz@openwrt.org>,
-        Bjorn
- Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Nathan Chancellor
-	<nathan@kernel.org>,
-        Nicolas Schier <nicolas@fjasle.eu>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-aspeed@lists.ozlabs.org>,
-        <openbmc@lists.ozlabs.org>, <linux-tegra@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-omap@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kbuild@vger.kernel.org>
-References: <20240213-arm-dt-cleanups-v1-0-f2dee1292525@kernel.org>
- <20240213-arm-dt-cleanups-v1-2-f2dee1292525@kernel.org>
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20240213-arm-dt-cleanups-v1-2-f2dee1292525@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-14_06,2024-02-14_01,2023-05-22_02
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|DM8PR12MB5399:EE_
+X-MS-Office365-Filtering-Correlation-Id: 537cee95-17c8-4904-0580-08dc2d5f1287
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	BiFSmMGlMornMe4zXXhbPg6lbRgPUJg3lO99B6qR+B+kP2N6hoPzFr0+X0xa335FJGi+aRMbGE/QW/fyJv1XYw6d75B310SIY3y7XI8AQhQRDkSn6RKTteLVtHv+GSq1W18MdkwS/FS9RQVb+iFKLwvYTNFAe8YkXH7OHN91UG4NPAO60BBvIDBXFoZwKclFtjKhxJaCq09Pg3WZzltTa1xxOCi3AaTpEXTUgB+v83+DCWmhzeKTiSgLzLx4j516hELgpSiIfUS0nVmeYsdEPn3QlFT+pk6Xd+0HsEjOdBdxai7RMAMM02Hk4Q4D1Wt4E5vvAY+vi6Wf17b+zl7qfQqL4Kfrr5+zM/avrYslk2g1LThVA1paFU36wN3l7154UxEAXJa4Fzs5NlP6UH6HeQ6V4hjwz0aRGaWlzJYkFgZZbNqgFTvCRLNkVu+ZFz6Xc8Y8G2BPreSENOhoV8iPsOS0dy/hbAQRfs99oal8CWXUZB8u4lRlHn7Hj6HAEEqzaGOg9HO42TOBZqWN+WaaYgE2QELESLdoQ0d3mmCw2M6EVnNb/EuptUALCy7kQ6ivIZ69NB+KbRYsMY62P9RBpUeAmENDC6H5c55U9fHxfs4=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(396003)(376002)(366004)(346002)(39860400002)(136003)(230922051799003)(451199024)(1800799012)(186009)(64100799003)(31686004)(478600001)(6512007)(966005)(6486002)(41300700001)(66899024)(8936002)(4326008)(8676002)(5660300002)(2906002)(7416002)(6506007)(55236004)(53546011)(6666004)(6916009)(66476007)(316002)(66556008)(66946007)(2616005)(31696002)(36756003)(86362001)(26005)(38100700002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NXkwMWpRZ1N0R0RFZUF1K0s5ZENUOG9VcU5TUzBpSm1iRGtNa3hPeWFhRDZD?=
+ =?utf-8?B?djVtOFJubW82MUNyNFpmTUxETmdFMm5RR3hYODhVdHV0S2dEVjR2cHJ4ZnNW?=
+ =?utf-8?B?djZwM0ZKNzRUaWMrZ2g5NjdpRGVlT2lEZFpBZXFtWUNGSFUydmN1QXlqUU1n?=
+ =?utf-8?B?bG1SKzRWYVFsUWhGMWs2bWFJWGNydWMrVkZCa3BiNGU0ZURaSHBQcFZNdzk1?=
+ =?utf-8?B?REFIZGtFNk5mZmFNZmJtTFc2V2I4c1NIK2xHRXI0eHU5UmYzOWFWQ1dkNi9q?=
+ =?utf-8?B?elVBU1NRTXlLTFduRHhHRDUvRmlESlgzcmxCbXYrM2hGM0VBYktIdGFRaGxG?=
+ =?utf-8?B?SXhScFJxQVpySkdydytjclZ5VzMrb0NPVHZlSkpmM1NzaTQ0Um1XNmdna21V?=
+ =?utf-8?B?dFZWYStTcjR5U0JpdUkvRmpnR1dYNVF5NGZtNDc4RHJ6aVMweHN6VVFHcXRB?=
+ =?utf-8?B?eU41cEE4bTVza3NLN1RXd0RpYURJWjdnYjNlK1pabEJLZko1NDUza2NCc3Av?=
+ =?utf-8?B?OXJodE4zdEVoLzVadmxjc3lWMUw4SERuV3BzZHpyNDlQMmE3b2REbm5sMFZB?=
+ =?utf-8?B?cm9ReE5wa0MwSjQvR1o5RUlHS1hhM3FORGt5T0MxdFBZWFQ4dTE1RS8xVkxJ?=
+ =?utf-8?B?aHdVU1VWUzhIN1ZxMW9MVlpPbUJtSWRUTnVwTk5TVWRadmpXMFhzVVhlenl1?=
+ =?utf-8?B?bjNEVkFZRkdOeGJuVkJmdTRvdjJaWmNQUUZ2WjZUai8xU2E3akU4SUpRTUsr?=
+ =?utf-8?B?S1BJb2Y1NUg3NThOc1hYV1BYZFFnSjFhamhQeUtOeE1OMnlUTUt1TGdERlN4?=
+ =?utf-8?B?cjRlNGpRcEhQR29INlFwMkt5YUZEZDY1cGptc3I5ZDFFWTNFNlBmRjJaZHF1?=
+ =?utf-8?B?a3pacnJOZ095a0pXV0xiVlJRWjhyWXptZ0VvYkNvZFd5a1h2a3FZQ3d4Q3Bs?=
+ =?utf-8?B?R0IxZi9uRVFXbDlUVmRhYnM0U2FOOU1jMFFYRnJZUXAxSXozWGVJb0FtNzMw?=
+ =?utf-8?B?ZVRtSWJLWExjQWtFTnFwN2FkL09VdmIyRnA3UUdWa0s2d1d6bXJ0Y0NiUGhQ?=
+ =?utf-8?B?SmE1Z1NYL2JyNlpqVk83dm1CVnp2V0h4ZjEweUdhYlgyQmc1U2pHdUpZajlt?=
+ =?utf-8?B?U1JGNDFJc0tuTnJCSTJxY2h3bE9qRFVmcWJDZDJCaldUOWU3cEY1TXh6ZVpw?=
+ =?utf-8?B?REJoVjhrdXcvSWpHQWVkVEhDUXgyMS9kUnl1TnU2dUdlNDZIbmJXNkpueDU3?=
+ =?utf-8?B?QUtDQ3RyUTJjNXlYMEJFQjdJME1DcE9DVVlEU1RpZFNYQUM4ZVQvaFB4N2x3?=
+ =?utf-8?B?NVFsRXlLcHlRc1JWUWJXNVNyaUxtY1BhcG5TQzRZUCtNYnVLaENxWC95VXJa?=
+ =?utf-8?B?YVdGUnpPQzlxdU5JYi9IdTdhVkdzbmpGL0FsVmdRWllhYzBBWGdReVRPc2t2?=
+ =?utf-8?B?NUQrWlEzVHhnSWpBNElZUlBQOWNTRFpNVVI4Z2hhYTZzTDFURWNMbzVZNGpP?=
+ =?utf-8?B?U2hRV3VCUEpZaEp1bS9oTDZNci9ZaHZLVnZId2w1eHFYZFJYb0xjc09YZGJ0?=
+ =?utf-8?B?MElBdVFJOGx2Y1JQWWpybDdZL1o4Zi9vUEp3TjVaM0oxczFXUi8zRFBha1RY?=
+ =?utf-8?B?SlJMVHJwMHJ5U1ZrdDRQbHhjcnlObG1pL1BBSzVZODFDK0UxOW0xUHQ3T0lo?=
+ =?utf-8?B?S1JKSUFnR1htYUZtWmQ5bjhNMGhOazZqWnFNdUVBK1dPcWw4UW5USHM2eVRl?=
+ =?utf-8?B?NSttdTRmZEYvK0tIcGFjaGd2NE94MThSR2ZrekNCdXZsREw5VEo4YnUvdC9H?=
+ =?utf-8?B?U01nanZDQ05hQzhJM3RTdStrZzB6R0ZKUHhXcnBJaEE3S1BIWUZqRTB3cmVU?=
+ =?utf-8?B?R2p1NDE3aHl0U2psOVVScWRQR0NhSFdibDBRT3oyZ09WVk5kc0RJc3lCNUts?=
+ =?utf-8?B?cW5ESDZCWko0Uk4zbkUranVCZWM1V21OdUk1VGhvNFVucUJiYXZmeXhlOXVx?=
+ =?utf-8?B?eUxiRDFJT3ZveVY5SXk2TkNDeTA5b2RsL21yZWh2V2xCQlVYaitQYi85QUov?=
+ =?utf-8?B?Qm1VQ2lVMGZNN0Y3VDNJczJPMWxRY1RZYmpTeldFSzlNdjF6NHZxaTZSdE5n?=
+ =?utf-8?Q?vFwmBlQA3zVxLK5tqR4lgbq32?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 537cee95-17c8-4904-0580-08dc2d5f1287
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2024 13:15:53.8117
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6lEszNtvi+pkgcMEUpJAvo2+lp7I410kxup4UVR8edeFING/fSjCywwy4o7fCe6B533YIitTfQFai2VMwib7+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR12MB5399
 
-Hi Rob
 
-On 2/13/24 20:34, Rob Herring wrote:
-> The dtc interrupt_provider warning is off by default. Fix all the warnings
-> so it can be enabled.
+On 14/02/2024 13:08, Greg Kroah-Hartman wrote:
+> On Wed, Feb 14, 2024 at 09:03:59AM +0000, Jon Hunter wrote:
+>> Hi Greg,
+>>
+>> On 13/02/2024 17:20, Greg Kroah-Hartman wrote:
+>>> This is the start of the stable review cycle for the 6.1.78 release.
+>>> There are 64 patches in this series, all will be posted as a response
+>>> to this one.  If anyone has any issues with these being applied, please
+>>> let me know.
+>>>
+>>> Responses should be made by Thu, 15 Feb 2024 17:18:29 +0000.
+>>> Anything received after that time might be too late.
+>>>
+>>> The whole patch series can be found in one patch at:
+>>> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.78-rc1.gz
+>>> or in the git tree and branch at:
+>>> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+>>> and the diffstat can be found below.
+>>>
+>>> thanks,
+>>>
+>>> greg k-h
+>>
+>>
+>> Builds are failing for Tegra ...
+>>
+>> Test results for stable-v6.1:
+>>      10 builds:	3 pass, 7 fail
+>>      6 boots:	6 pass, 0 fail
+>>      18 tests:	18 pass, 0 fail
+>>
+>> Linux version:	6.1.78-rc1-gb29c5b14893f
+>> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>>                  tegra30-cardhu-a04
+>>
+>> Builds failed:	aarch64+defconfig+jetson, arm+multi_v7
+>>
+>>
+>>> Furong Xu <0x1207@gmail.com>
+>>>       net: stmmac: xgmac: fix handling of DPP safety error for DMA channels
+>>
+>> The above commit is causing a build regression for older toolchains and
+>> I have reported this [0]. This is also seen on the mainline and -next and
+>> there is a fix in the works [1].
+>>
+>> Note this is breaking the build for linux-6.6.y and linux-6.7.y too.
 > 
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->   arch/arm/boot/dts/amazon/alpine.dtsi                   |  1 -
->   arch/arm/boot/dts/aspeed/aspeed-g4.dtsi                | 14 --------------
->   arch/arm/boot/dts/aspeed/aspeed-g5.dtsi                | 15 +--------------
->   arch/arm/boot/dts/aspeed/aspeed-g6.dtsi                | 18 ++----------------
->   arch/arm/boot/dts/broadcom/bcm-cygnus.dtsi             |  3 +++
->   arch/arm/boot/dts/broadcom/bcm-hr2.dtsi                |  1 +
->   arch/arm/boot/dts/broadcom/bcm-nsp.dtsi                |  2 ++
->   arch/arm/boot/dts/marvell/kirkwood-l-50.dts            |  2 ++
->   arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi         |  2 ++
->   arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi      |  1 -
->   arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi           |  1 -
->   arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi          |  1 -
->   arch/arm/boot/dts/nxp/imx/imx6q-b850v3.dts             |  3 ---
->   arch/arm/boot/dts/nxp/imx/imx6q-bx50v3.dtsi            |  2 +-
->   arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi          |  1 -
->   arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi         |  1 -
->   arch/arm/boot/dts/nxp/imx/imx6qdl-emcon.dtsi           |  1 -
->   arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-pfla02.dtsi   |  1 +
->   .../boot/dts/nxp/imx/imx6qdl-phytec-phycore-som.dtsi   |  1 +
->   arch/arm/boot/dts/nxp/imx/imx7d-pico-dwarf.dts         |  1 +
->   arch/arm/boot/dts/nxp/vf/vf610-zii-dev-rev-b.dts       |  1 +
->   arch/arm/boot/dts/st/stm32429i-eval.dts                |  1 -
->   arch/arm/boot/dts/st/stm32mp157c-dk2.dts               |  1 -
->   arch/arm/boot/dts/ti/omap/am5729-beagleboneai.dts      |  1 -
->   24 files changed, 18 insertions(+), 58 deletions(-)
-> 
+> Thanks, I've now queued up the fix.  Do you need me to push out a -rc2
+> for this issue for your testing?
 
-For ST part:
 
-Reviewed-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Ideally yes. That would be great.
 
 Thanks
-Alex
+Jon
 
-
-> diff --git a/arch/arm/boot/dts/amazon/alpine.dtsi b/arch/arm/boot/dts/amazon/alpine.dtsi
-> index ff68dfb4eb78..90bd12feac01 100644
-> --- a/arch/arm/boot/dts/amazon/alpine.dtsi
-> +++ b/arch/arm/boot/dts/amazon/alpine.dtsi
-> @@ -167,7 +167,6 @@ pcie@fbc00000 {
->   		msix: msix@fbe00000 {
->   			compatible = "al,alpine-msix";
->   			reg = <0x0 0xfbe00000 0x0 0x100000>;
-> -			interrupt-controller;
->   			msi-controller;
->   			al,msi-base-spi = <96>;
->   			al,msi-num-spis = <64>;
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi
-> index 530491ae5eb2..857cb26ed6d7 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-g4.dtsi
-> @@ -466,7 +466,6 @@ i2c_ic: interrupt-controller@0 {
->   	i2c0: i2c-bus@40 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x40 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -482,7 +481,6 @@ i2c0: i2c-bus@40 {
->   	i2c1: i2c-bus@80 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x80 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -498,7 +496,6 @@ i2c1: i2c-bus@80 {
->   	i2c2: i2c-bus@c0 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0xc0 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -515,7 +512,6 @@ i2c2: i2c-bus@c0 {
->   	i2c3: i2c-bus@100 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x100 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -532,7 +528,6 @@ i2c3: i2c-bus@100 {
->   	i2c4: i2c-bus@140 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x140 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -549,7 +544,6 @@ i2c4: i2c-bus@140 {
->   	i2c5: i2c-bus@180 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x180 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -566,7 +560,6 @@ i2c5: i2c-bus@180 {
->   	i2c6: i2c-bus@1c0 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x1c0 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -583,7 +576,6 @@ i2c6: i2c-bus@1c0 {
->   	i2c7: i2c-bus@300 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x300 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -600,7 +592,6 @@ i2c7: i2c-bus@300 {
->   	i2c8: i2c-bus@340 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x340 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -617,7 +608,6 @@ i2c8: i2c-bus@340 {
->   	i2c9: i2c-bus@380 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x380 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -634,7 +624,6 @@ i2c9: i2c-bus@380 {
->   	i2c10: i2c-bus@3c0 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x3c0 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -651,7 +640,6 @@ i2c10: i2c-bus@3c0 {
->   	i2c11: i2c-bus@400 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x400 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -668,7 +656,6 @@ i2c11: i2c-bus@400 {
->   	i2c12: i2c-bus@440 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x440 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> @@ -685,7 +672,6 @@ i2c12: i2c-bus@440 {
->   	i2c13: i2c-bus@480 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x480 0x40>;
->   		compatible = "aspeed,ast2400-i2c-bus";
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi
-> index 04f98d1dbb97..e6f3cf3c721e 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-g5.dtsi
-> @@ -363,6 +363,7 @@ sgpio: sgpio@1e780200 {
->   				interrupts = <40>;
->   				reg = <0x1e780200 0x0100>;
->   				clocks = <&syscon ASPEED_CLK_APB>;
-> +				#interrupt-cells = <2>;
->   				interrupt-controller;
->   				bus-frequency = <12000000>;
->   				pinctrl-names = "default";
-> @@ -594,7 +595,6 @@ i2c_ic: interrupt-controller@0 {
->   	i2c0: i2c-bus@40 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x40 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -610,7 +610,6 @@ i2c0: i2c-bus@40 {
->   	i2c1: i2c-bus@80 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x80 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -626,7 +625,6 @@ i2c1: i2c-bus@80 {
->   	i2c2: i2c-bus@c0 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0xc0 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -643,7 +641,6 @@ i2c2: i2c-bus@c0 {
->   	i2c3: i2c-bus@100 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x100 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -660,7 +657,6 @@ i2c3: i2c-bus@100 {
->   	i2c4: i2c-bus@140 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x140 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -677,7 +673,6 @@ i2c4: i2c-bus@140 {
->   	i2c5: i2c-bus@180 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x180 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -694,7 +689,6 @@ i2c5: i2c-bus@180 {
->   	i2c6: i2c-bus@1c0 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x1c0 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -711,7 +705,6 @@ i2c6: i2c-bus@1c0 {
->   	i2c7: i2c-bus@300 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x300 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -728,7 +721,6 @@ i2c7: i2c-bus@300 {
->   	i2c8: i2c-bus@340 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x340 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -745,7 +737,6 @@ i2c8: i2c-bus@340 {
->   	i2c9: i2c-bus@380 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x380 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -762,7 +753,6 @@ i2c9: i2c-bus@380 {
->   	i2c10: i2c-bus@3c0 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x3c0 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -779,7 +769,6 @@ i2c10: i2c-bus@3c0 {
->   	i2c11: i2c-bus@400 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x400 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -796,7 +785,6 @@ i2c11: i2c-bus@400 {
->   	i2c12: i2c-bus@440 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x440 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> @@ -813,7 +801,6 @@ i2c12: i2c-bus@440 {
->   	i2c13: i2c-bus@480 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   
->   		reg = <0x480 0x40>;
->   		compatible = "aspeed,ast2500-i2c-bus";
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-> index c4d1faade8be..29f94696d8b1 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-> @@ -474,6 +474,7 @@ sgpiom0: sgpiom@1e780500 {
->   				reg = <0x1e780500 0x100>;
->   				interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
->   				clocks = <&syscon ASPEED_CLK_APB2>;
-> +				#interrupt-cells = <2>;
->   				interrupt-controller;
->   				bus-frequency = <12000000>;
->   				pinctrl-names = "default";
-> @@ -488,6 +489,7 @@ sgpiom1: sgpiom@1e780600 {
->   				reg = <0x1e780600 0x100>;
->   				interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
->   				clocks = <&syscon ASPEED_CLK_APB2>;
-> +				#interrupt-cells = <2>;
->   				interrupt-controller;
->   				bus-frequency = <12000000>;
->   				pinctrl-names = "default";
-> @@ -902,7 +904,6 @@ &i2c {
->   	i2c0: i2c-bus@80 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x80 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -917,7 +918,6 @@ i2c0: i2c-bus@80 {
->   	i2c1: i2c-bus@100 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x100 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -932,7 +932,6 @@ i2c1: i2c-bus@100 {
->   	i2c2: i2c-bus@180 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x180 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -947,7 +946,6 @@ i2c2: i2c-bus@180 {
->   	i2c3: i2c-bus@200 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x200 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -962,7 +960,6 @@ i2c3: i2c-bus@200 {
->   	i2c4: i2c-bus@280 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x280 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -977,7 +974,6 @@ i2c4: i2c-bus@280 {
->   	i2c5: i2c-bus@300 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x300 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -992,7 +988,6 @@ i2c5: i2c-bus@300 {
->   	i2c6: i2c-bus@380 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x380 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -1007,7 +1002,6 @@ i2c6: i2c-bus@380 {
->   	i2c7: i2c-bus@400 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x400 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -1022,7 +1016,6 @@ i2c7: i2c-bus@400 {
->   	i2c8: i2c-bus@480 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x480 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -1037,7 +1030,6 @@ i2c8: i2c-bus@480 {
->   	i2c9: i2c-bus@500 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x500 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -1052,7 +1044,6 @@ i2c9: i2c-bus@500 {
->   	i2c10: i2c-bus@580 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x580 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -1067,7 +1058,6 @@ i2c10: i2c-bus@580 {
->   	i2c11: i2c-bus@600 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x600 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -1082,7 +1072,6 @@ i2c11: i2c-bus@600 {
->   	i2c12: i2c-bus@680 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x680 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -1097,7 +1086,6 @@ i2c12: i2c-bus@680 {
->   	i2c13: i2c-bus@700 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x700 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -1112,7 +1100,6 @@ i2c13: i2c-bus@700 {
->   	i2c14: i2c-bus@780 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x780 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> @@ -1127,7 +1114,6 @@ i2c14: i2c-bus@780 {
->   	i2c15: i2c-bus@800 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
-> -		#interrupt-cells = <1>;
->   		reg = <0x800 0x80>;
->   		compatible = "aspeed,ast2600-i2c-bus";
->   		clocks = <&syscon ASPEED_CLK_APB2>;
-> diff --git a/arch/arm/boot/dts/broadcom/bcm-cygnus.dtsi b/arch/arm/boot/dts/broadcom/bcm-cygnus.dtsi
-> index f9f79ed82518..07ca0d993c9f 100644
-> --- a/arch/arm/boot/dts/broadcom/bcm-cygnus.dtsi
-> +++ b/arch/arm/boot/dts/broadcom/bcm-cygnus.dtsi
-> @@ -167,6 +167,7 @@ gpio_crmu: gpio@3024800 {
->   			#gpio-cells = <2>;
->   			gpio-controller;
->   			interrupt-controller;
-> +			#interrupt-cells = <2>;
->   			interrupt-parent = <&mailbox>;
->   			interrupts = <0>;
->   		};
-> @@ -247,6 +248,7 @@ gpio_ccm: gpio@1800a000 {
->   			gpio-controller;
->   			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
->   			interrupt-controller;
-> +			#interrupt-cells = <2>;
->   		};
->   
->   		i2c1: i2c@1800b000 {
-> @@ -518,6 +520,7 @@ gpio_asiu: gpio@180a5000 {
->   			gpio-controller;
->   
->   			interrupt-controller;
-> +			#interrupt-cells = <2>;
->   			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
->   			gpio-ranges = <&pinctrl 0 42 1>,
->   					<&pinctrl 1 44 3>,
-> diff --git a/arch/arm/boot/dts/broadcom/bcm-hr2.dtsi b/arch/arm/boot/dts/broadcom/bcm-hr2.dtsi
-> index 788a6806191a..75545b10ef2f 100644
-> --- a/arch/arm/boot/dts/broadcom/bcm-hr2.dtsi
-> +++ b/arch/arm/boot/dts/broadcom/bcm-hr2.dtsi
-> @@ -200,6 +200,7 @@ gpiob: gpio@30000 {
->   			gpio-controller;
->   			ngpios = <4>;
->   			interrupt-controller;
-> +			#interrupt-cells = <2>;
->   			interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->   
-> diff --git a/arch/arm/boot/dts/broadcom/bcm-nsp.dtsi b/arch/arm/boot/dts/broadcom/bcm-nsp.dtsi
-> index 9d20ba3b1ffb..6a4482c93167 100644
-> --- a/arch/arm/boot/dts/broadcom/bcm-nsp.dtsi
-> +++ b/arch/arm/boot/dts/broadcom/bcm-nsp.dtsi
-> @@ -180,6 +180,7 @@ gpioa: gpio@20 {
->   			gpio-controller;
->   			ngpios = <32>;
->   			interrupt-controller;
-> +			#interrupt-cells = <2>;
->   			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
->   			gpio-ranges = <&pinctrl 0 0 32>;
->   		};
-> @@ -352,6 +353,7 @@ gpiob: gpio@30000 {
->   			gpio-controller;
->   			ngpios = <4>;
->   			interrupt-controller;
-> +			#interrupt-cells = <2>;
->   			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
->   		};
->   
-> diff --git a/arch/arm/boot/dts/marvell/kirkwood-l-50.dts b/arch/arm/boot/dts/marvell/kirkwood-l-50.dts
-> index dffb9f84e67c..c841eb8e7fb1 100644
-> --- a/arch/arm/boot/dts/marvell/kirkwood-l-50.dts
-> +++ b/arch/arm/boot/dts/marvell/kirkwood-l-50.dts
-> @@ -65,6 +65,7 @@ i2c@11000 {
->   			gpio2: gpio-expander@20 {
->   				#gpio-cells = <2>;
->   				#interrupt-cells = <2>;
-> +				interrupt-controller;
->   				compatible = "semtech,sx1505q";
->   				reg = <0x20>;
->   
-> @@ -79,6 +80,7 @@ gpio2: gpio-expander@20 {
->   			gpio3: gpio-expander@21 {
->   				#gpio-cells = <2>;
->   				#interrupt-cells = <2>;
-> +				interrupt-controller;
->   				compatible = "semtech,sx1505q";
->   				reg = <0x21>;
->   
-> diff --git a/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi b/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi
-> index fd671c7a1e5d..6e1f0f164cb4 100644
-> --- a/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi
-> +++ b/arch/arm/boot/dts/nuvoton/nuvoton-wpcm450.dtsi
-> @@ -120,6 +120,7 @@ gpio0: gpio@0 {
->   				interrupts = <2 IRQ_TYPE_LEVEL_HIGH>,
->   					     <3 IRQ_TYPE_LEVEL_HIGH>,
->   					     <4 IRQ_TYPE_LEVEL_HIGH>;
-> +				#interrupt-cells = <2>;
->   				interrupt-controller;
->   			};
->   
-> @@ -128,6 +129,7 @@ gpio1: gpio@1 {
->   				gpio-controller;
->   				#gpio-cells = <2>;
->   				interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
-> +				#interrupt-cells = <2>;
->   				interrupt-controller;
->   			};
->   
-> diff --git a/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi
-> index 1640763fd4af..ff0d684622f7 100644
-> --- a/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi
-> +++ b/arch/arm/boot/dts/nvidia/tegra30-apalis-v1.1.dtsi
-> @@ -997,7 +997,6 @@ touchscreen@41 {
->   			compatible = "st,stmpe811";
->   			reg = <0x41>;
->   			irq-gpio = <&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_LOW>;
-> -			interrupt-controller;
->   			id = <0>;
->   			blocks = <0x5>;
->   			irq-trigger = <0x1>;
-> diff --git a/arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi b/arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi
-> index 3b6fad273cab..d38f1dd38a90 100644
-> --- a/arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi
-> +++ b/arch/arm/boot/dts/nvidia/tegra30-apalis.dtsi
-> @@ -980,7 +980,6 @@ touchscreen@41 {
->   			compatible = "st,stmpe811";
->   			reg = <0x41>;
->   			irq-gpio = <&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_LOW>;
-> -			interrupt-controller;
->   			id = <0>;
->   			blocks = <0x5>;
->   			irq-trigger = <0x1>;
-> diff --git a/arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi b/arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi
-> index 4eb526fe9c55..81c8a5fd92cc 100644
-> --- a/arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi
-> +++ b/arch/arm/boot/dts/nvidia/tegra30-colibri.dtsi
-> @@ -861,7 +861,6 @@ touchscreen@41 {
->   			compatible = "st,stmpe811";
->   			reg = <0x41>;
->   			irq-gpio = <&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_LOW>;
-> -			interrupt-controller;
->   			id = <0>;
->   			blocks = <0x5>;
->   			irq-trigger = <0x1>;
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-b850v3.dts b/arch/arm/boot/dts/nxp/imx/imx6q-b850v3.dts
-> index db8c332df6a1..cad112e05475 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6q-b850v3.dts
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6q-b850v3.dts
-> @@ -227,7 +227,6 @@ bridge@1,0 {
->   
->   		#address-cells = <3>;
->   		#size-cells = <2>;
-> -		#interrupt-cells = <1>;
->   
->   		bridge@2,1 {
->   			compatible = "pci10b5,8605";
-> @@ -235,7 +234,6 @@ bridge@2,1 {
->   
->   			#address-cells = <3>;
->   			#size-cells = <2>;
-> -			#interrupt-cells = <1>;
->   
->   			/* Intel Corporation I210 Gigabit Network Connection */
->   			ethernet@3,0 {
-> @@ -250,7 +248,6 @@ bridge@2,2 {
->   
->   			#address-cells = <3>;
->   			#size-cells = <2>;
-> -			#interrupt-cells = <1>;
->   
->   			/* Intel Corporation I210 Gigabit Network Connection */
->   			switch_nic: ethernet@4,0 {
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-bx50v3.dtsi b/arch/arm/boot/dts/nxp/imx/imx6q-bx50v3.dtsi
-> index 99f4f6ac71d4..c1ae7c47b442 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6q-bx50v3.dtsi
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6q-bx50v3.dtsi
-> @@ -245,6 +245,7 @@ pca9539: pca9539@74 {
->   				reg = <0x74>;
->   				gpio-controller;
->   				#gpio-cells = <2>;
-> +				#interrupt-cells = <2>;
->   				interrupt-controller;
->   				interrupt-parent = <&gpio2>;
->   				interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-> @@ -390,7 +391,6 @@ pci_root: root@0,0 {
->   
->   		#address-cells = <3>;
->   		#size-cells = <2>;
-> -		#interrupt-cells = <1>;
->   	};
->   };
->   
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi
-> index 2ae93f57fe5a..ea40623d12e5 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis.dtsi
-> @@ -626,7 +626,6 @@ stmpe811@41 {
->   		blocks = <0x5>;
->   		id = <0>;
->   		interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
-> -		interrupt-controller;
->   		interrupt-parent = <&gpio4>;
->   		irq-trigger = <0x1>;
->   		pinctrl-names = "default";
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi
-> index 55c90f6393ad..d3a7a6eeb8e0 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi
-> @@ -550,7 +550,6 @@ stmpe811@41 {
->   		blocks = <0x5>;
->   		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
->   		interrupt-parent = <&gpio6>;
-> -		interrupt-controller;
->   		id = <0>;
->   		irq-trigger = <0x1>;
->   		pinctrl-names = "default";
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-emcon.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-emcon.dtsi
-> index a63e73adc1fc..42b2ba23aefc 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-emcon.dtsi
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-emcon.dtsi
-> @@ -225,7 +225,6 @@ da9063: pmic@58 {
->   		pinctrl-0 = <&pinctrl_pmic>;
->   		interrupt-parent = <&gpio2>;
->   		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-> -		interrupt-controller;
->   
->   		onkey {
->   			compatible = "dlg,da9063-onkey";
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-pfla02.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-pfla02.dtsi
-> index 113974520d54..c0c47adc5866 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-pfla02.dtsi
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-pfla02.dtsi
-> @@ -124,6 +124,7 @@ pmic@58 {
->   		reg = <0x58>;
->   		interrupt-parent = <&gpio2>;
->   		interrupts = <9 IRQ_TYPE_LEVEL_LOW>; /* active-low GPIO2_9 */
-> +		#interrupt-cells = <2>;
->   		interrupt-controller;
->   
->   		regulators {
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-phycore-som.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-phycore-som.dtsi
-> index 86b4269e0e01..85e278eb2016 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-phycore-som.dtsi
-> +++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-phytec-phycore-som.dtsi
-> @@ -100,6 +100,7 @@ pmic: pmic@58 {
->   		interrupt-parent = <&gpio1>;
->   		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
->   		interrupt-controller;
-> +		#interrupt-cells = <2>;
->   		gpio-controller;
->   		#gpio-cells = <2>;
->   
-> diff --git a/arch/arm/boot/dts/nxp/imx/imx7d-pico-dwarf.dts b/arch/arm/boot/dts/nxp/imx/imx7d-pico-dwarf.dts
-> index 12361fcbe24a..1b965652291b 100644
-> --- a/arch/arm/boot/dts/nxp/imx/imx7d-pico-dwarf.dts
-> +++ b/arch/arm/boot/dts/nxp/imx/imx7d-pico-dwarf.dts
-> @@ -63,6 +63,7 @@ pca9554: io-expander@25 {
->   		gpio-controller;
->   		#gpio-cells = <2>;
->   		#interrupt-cells = <2>;
-> +		interrupt-controller;
->   		reg = <0x25>;
->   	};
->   
-> diff --git a/arch/arm/boot/dts/nxp/vf/vf610-zii-dev-rev-b.dts b/arch/arm/boot/dts/nxp/vf/vf610-zii-dev-rev-b.dts
-> index b0ed68af0546..029f49be40e3 100644
-> --- a/arch/arm/boot/dts/nxp/vf/vf610-zii-dev-rev-b.dts
-> +++ b/arch/arm/boot/dts/nxp/vf/vf610-zii-dev-rev-b.dts
-> @@ -338,6 +338,7 @@ gpio6: io-expander@22 {
->   		reg = <0x22>;
->   		gpio-controller;
->   		#gpio-cells = <2>;
-> +		#interrupt-cells = <2>;
->   		interrupt-controller;
->   		interrupt-parent = <&gpio3>;
->   		interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
-> diff --git a/arch/arm/boot/dts/st/stm32429i-eval.dts b/arch/arm/boot/dts/st/stm32429i-eval.dts
-> index 576235ec3c51..afa417b34b25 100644
-> --- a/arch/arm/boot/dts/st/stm32429i-eval.dts
-> +++ b/arch/arm/boot/dts/st/stm32429i-eval.dts
-> @@ -222,7 +222,6 @@ stmpe1600: stmpe1600@42 {
->   		reg = <0x42>;
->   		interrupts = <8 3>;
->   		interrupt-parent = <&gpioi>;
-> -		interrupt-controller;
->   		wakeup-source;
->   
->   		stmpegpio: stmpe_gpio {
-> diff --git a/arch/arm/boot/dts/st/stm32mp157c-dk2.dts b/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-> index 510cca5acb79..7a701f7ef0c7 100644
-> --- a/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-> +++ b/arch/arm/boot/dts/st/stm32mp157c-dk2.dts
-> @@ -64,7 +64,6 @@ touchscreen@38 {
->   		reg = <0x38>;
->   		interrupts = <2 2>;
->   		interrupt-parent = <&gpiof>;
-> -		interrupt-controller;
->   		touchscreen-size-x = <480>;
->   		touchscreen-size-y = <800>;
->   		status = "okay";
-> diff --git a/arch/arm/boot/dts/ti/omap/am5729-beagleboneai.dts b/arch/arm/boot/dts/ti/omap/am5729-beagleboneai.dts
-> index c8e55642f9c6..3e834fc7e370 100644
-> --- a/arch/arm/boot/dts/ti/omap/am5729-beagleboneai.dts
-> +++ b/arch/arm/boot/dts/ti/omap/am5729-beagleboneai.dts
-> @@ -415,7 +415,6 @@ stmpe811@41 {
->   		reg = <0x41>;
->   		interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
->   		interrupt-parent = <&gpio2>;
-> -		interrupt-controller;
->   		id = <0>;
->   		blocks = <0x5>;
->   		irq-trigger = <0x1>;
-> 
+-- 
+nvpublic
