@@ -1,2427 +1,482 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C1F11197;
-	Wed, 14 Feb 2024 09:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFF314015
+	for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 09:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707901953; cv=none; b=PO3pYyfEZrfWa2FaSkuENPKoOGWdJVOPsmJv3Iqd0BmxQcEhvCRKepuVJvu7fED3LyjsUPqBnyCuwooRY+ixkJ+J2nZg7Gh692+s2RbSgXwVFyrgCfhZ2HFVG9Qx30SRouMWcutiIEdTb85CIrAQojVPnQZHoVK/l2qiG5OIm8s=
+	t=1707903264; cv=none; b=Boi7GeV+R5ZEvSZFsHH9NjPBooB12cj3AftAEroNYRr8pMOkvb+qAVm7/BzmeRjPeh0Ai/EfUbcrFq+wS6qHCqbhC8juVInNLRTHC5FT9n7TJ89Y3sq6zz8qEQJn76cCqajNvg8gFcZ6FOVkIkX6kAdaAOCCwe+T9wAbABvAJB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707901953; c=relaxed/simple;
-	bh=9KPTY5Q+Y1NEQ0rckkN5muvfznt0Kfl1rjpHQCwUd9U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fdXqt7426efr4CVDWWghStTtfILfQskeD01qH/ybmBuMReJ4F/wrXl7UNqIdDx5RSzDJhvmutGKo2z7Ug79F9Ht+LJHLZxuljcvPlj0TouKXK7XBabDd7kM6iTCctbpnhWceHLZR/0a8KvdWfKngLs2GpPZhNFncKZJYKKGy8L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eW3pSEu6; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eW3pSEu6"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40fd2f7ef55so2935075e9.0;
-        Wed, 14 Feb 2024 01:12:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707901947; x=1708506747; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ijJ3PWGA58VyxU9HmGvFZp3HX0eIDmosApcUTphu7BA=;
-        b=eW3pSEu60bfEf/lgU31ClWVeCmlUObdMQIHEoB2NTpCFysMTPspu4redGJaI2rcZZx
-         g1UqoSL2WhIH7S41c0vqwhw2gYt8+HRBbc7WELxPvX8Pdt//vf2BjU47rCxHDP+iVjj4
-         iuV4/Me07uljlSSddXOT1DY+iQYJlAt0Ieb46cUtUsxKZ5ohdMH62AqY4Nq7RJ3w1gvL
-         DCX461FIoW0VaSrWuJQ67TrAy5vxauisvgVp7T5ygHzxs7MjQCK3G506iD3X8OY7EUDw
-         CNA197klSpbqw8yyRCX8Qz7fLqMZEi0PKyPm567BgWjSJTQVz2qaYPo2+uYYq5V182J1
-         wKLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707901947; x=1708506747;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ijJ3PWGA58VyxU9HmGvFZp3HX0eIDmosApcUTphu7BA=;
-        b=jKPfpEAOsvvh1tgYCOzZqIAq0Am9fE33+K0Qgyjd/BmtCSCnU7dQAEOVF4IZ+j/DIO
-         00S2fUetcn8ny+8YdoJ8oi2Z4gMgUfvA3NsKUTVnaYZpAK99pGRoWe5P66jTOTo/lL/S
-         QS8x4QXi4YZwpPCG96UO5/jSAgQswrHu69LwnMZsxcO1oVA+UXi2mq8Nqn0tAQVg9pQe
-         zj8RdFzMoExfn2GfR95O5keMhdikS4J4XfHMS5q9N/WOCWdAFgbbuG53+S4GoOPQHnkP
-         HrM3EtQuaV8O0DIX1lNkriyDdxybzpZjH3vMskA/IasOOoI3noyW+dw6UkKiXK55YOvm
-         hGjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXv3ruWtlKtq5aq46Oe4mzmXnh7EPcOWpilExMOPVs2LWCFHENFlVnmaVzQEwbzkxPjMXSK2TfN3lyhfcVF2yjRdQDaHPSFmSARbD8QmiO4Z1d9bwoV35xFbk5mcdv+O0KwGotRQZ+AsmIE00iHuFowggE4RbEcEQ6okcCcJdyHL+0/zdNFetL4840=
-X-Gm-Message-State: AOJu0YyIHIkUY9Z5t80W0zRJboUKAOTUY0S0u57U1pBeyEHS/4VF0Njr
-	35fmjaM67+Fr63OSoN/thGGycfIrQmZDb9NRoY2fiLe0+F9TcVpW
-X-Google-Smtp-Source: AGHT+IFumqtlvvjirVa6kl4rcQgwokqjQmgad+HuCztp35SFHpZ5zq0Tq+zv4RyAZXWslZbLC2XPrw==
-X-Received: by 2002:adf:a2da:0:b0:33b:58e1:d281 with SMTP id t26-20020adfa2da000000b0033b58e1d281mr1423493wra.32.1707901947045;
-        Wed, 14 Feb 2024 01:12:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUfgkeOq2h6OmJeecGLtdzj7LR1PqXPOJAJ9Za04rxveqP7S8OU9QNVt7QwEdGrMwS5RcSE+MrDu9ife4a3puBUYHjKLBQBxWBBCcRGEzD0yzCt/IE1SR8IReQn7Z7O+w5Rz5U9NQ66WqZCH6RrWr924j8mH/ty5B5vlECMss7eECVwmDf7vwU9BZhib4ONA9GV0JDaQorBL72iikDKGVLqUm4XToXLu/Xp1uqO98S045IGGlVEaETaOWfZeZ+j6m8IRv3bGWq3LIjw0+Lr1i818uD0VV4qDLX11Lk2mw611ZuV5Q9IdXl31luBqUiTtBA7A3S1v2wALFO+5R5ZS2w69O2TakP91DFTC39+C6uXvTD3WNHMjU4Jjg4iOb0waMxQbw==
-Received: from xeon.. ([188.163.112.53])
-        by smtp.gmail.com with ESMTPSA id ay7-20020a5d6f07000000b0033cf053fa1esm738376wrb.106.2024.02.14.01.12.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Feb 2024 01:12:26 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	s=arc-20240116; t=1707903264; c=relaxed/simple;
+	bh=CNGsevl9ChWzSniQBjaArvHLd39E05H62NLiz3DIWx8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dHEWjdZGJJ1Lrs9QXYQvU07SbvbBzvAVqdcgyPeiYPG90PBq0m1ScDZ4vKwl+OvDLKXRf+EixX9hCLLSvnb4uuE9XV20wqzIXYWcDLggtkOduHV/Q1SivTXy9IRqetvlATWrY7Cc23XOxSneMM1074AywD3YlkvmnA+vvsMqEr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1raBek-0004Mp-GU; Wed, 14 Feb 2024 10:34:18 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1raBej-000f6O-Ok; Wed, 14 Feb 2024 10:34:17 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1raBej-004XzU-27;
+	Wed, 14 Feb 2024 10:34:17 +0100
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: linux-pwm@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	James Clark <james.clark@arm.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>,
+	Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Benson Leung <bleung@chromium.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	=?utf-8?q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hammer Hsieh <hammerh0314@gmail.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Sean Anderson <sean.anderson@seco.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Robert Foss <rfoss@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Anjelique Melendez <quic_amelende@quicinc.com>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
 	Kees Cook <keescook@chromium.org>,
-	Maxim Schwalm <maxim.schwalm@gmail.com>
-Cc: devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Alex Elder <elder@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel@pengutronix.de,
+	linux-doc@vger.kernel.org,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	Guenter Roeck <groeck@chromium.org>,
+	chrome-platform@lists.linux.dev,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	linux-mips@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org,
+	greybus-dev@lists.linaro.org,
+	linux-staging@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH v4 2/3] ARM: tegra: Add device-tree for LG Optimus Vu (P895)
-Date: Wed, 14 Feb 2024 11:12:00 +0200
-Message-Id: <20240214091201.17636-3-clamor95@gmail.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240214091201.17636-1-clamor95@gmail.com>
-References: <20240214091201.17636-1-clamor95@gmail.com>
+Subject: [PATCH v6 000/164] pwm: Improve lifetime tracking for pwm_chips
+Date: Wed, 14 Feb 2024 10:30:47 +0100
+Message-ID: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=18154; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=CNGsevl9ChWzSniQBjaArvHLd39E05H62NLiz3DIWx8=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBlzIhKJRx+A4qhMZUwqGztxruImTZ3uBdvqjamF FBPi1WKtnWJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZcyISgAKCRCPgPtYfRL+ TtlEB/0c/mjNEQL/08ZIteWRqppCG3//b5DlLDDtir/+ZOvPpIS2Bneq0yyKtwxVhnGfqLvcmKE vd7H2ucRljiA4C+JGLWtGhG0FC7e4QZVz7YhgUyerZIrr2zlx/GbWDZcJhFbMsqwc/tAKwTXoib IohkAa+CaOcYrsexxoNcZmTMFpHSySI2vH7MTmGmw0Vu+05nvPZvpA795ukWgC5jRaTsMunS4uE vEbhrf/xiYxq40U8/MdZkeOvNOVcGmEkXOmlgwc6+XIvzBnWQMgcP7ruq2ByKqWoqpPyA6MKqjY irweyasxqBWPP2d3ruiBIJFSin314rvzQC6yVjE9jFnOxdLo
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
-Add device-tree for LG Optimus Vu P895, which is a NVIDIA
-Tegra30-based smartphone, originally running Android.
+Hello,
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/nvidia/Makefile            |    1 +
- arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts |  496 +++++
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi  | 1812 ++++++++++++++++++
- 3 files changed, 2309 insertions(+)
- create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
- create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+this is v6 of the series introducing better lifetime tracking for
+pwmchips that addresses (for now theoretic) lifetime issues of pwm
+chips. Addressing these is a necessary precondition to introduce chardev
+support for PWMs.
 
-diff --git a/arch/arm/boot/dts/nvidia/Makefile b/arch/arm/boot/dts/nvidia/Makefile
-index 60091bf7e48b..f66337e5d188 100644
---- a/arch/arm/boot/dts/nvidia/Makefile
-+++ b/arch/arm/boot/dts/nvidia/Makefile
-@@ -39,5 +39,6 @@ dtb-$(CONFIG_ARCH_TEGRA_3x_SOC) += \
- 	tegra30-cardhu-a02.dtb \
- 	tegra30-cardhu-a04.dtb \
- 	tegra30-colibri-eval-v3.dtb \
-+	tegra30-lg-p895.dtb \
- 	tegra30-ouya.dtb \
- 	tegra30-pegatron-chagall.dtb
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-new file mode 100644
-index 000000000000..e32fafc7f5e0
---- /dev/null
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
-@@ -0,0 +1,496 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+
-+#include "tegra30-lg-x3.dtsi"
-+
-+/ {
-+	model = "LG Optimus Vu P895";
-+	compatible = "lg,p895", "nvidia,tegra30";
-+
-+	pinmux@70000868 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&state_default>;
-+
-+		state_default: pinmux {
-+			/* GNSS UART-B pinmux */
-+			uartb-cts-rxd {
-+				nvidia,pins = "uart2_cts_n_pj5",
-+						"uart2_rxd_pc3";
-+				nvidia,function = "uartb";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			uartb-rts-txd {
-+				nvidia,pins = "uart2_rts_n_pj6",
-+						"uart2_txd_pc2";
-+				nvidia,function = "uartb";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			gps-reset {
-+				nvidia,pins = "spdif_out_pk5";
-+				nvidia,function = "spdif";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* GPIO keys pinmux */
-+			memo-key {
-+				nvidia,pins = "sdmmc3_dat1_pb6";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			volume-up {
-+				nvidia,pins = "gmi_cs7_n_pi6";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* Sensors pinmux */
-+			current-alert-irq {
-+				nvidia,pins = "spi1_cs0_n_px6";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* Panel pinmux */
-+			panel-vdd {
-+				nvidia,pins = "pbb0";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* AUDIO pinmux */
-+			sub-mic-ldo {
-+				nvidia,pins = "gmi_dqs_pi2";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* Modem pinmux */
-+			usim-detect {
-+				nvidia,pins = "clk2_out_pw5";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* GPIO power/drive control */
-+			drive-sdmmc4 {
-+				nvidia,pins = "drive_gma",
-+						"drive_gmb",
-+						"drive_gmc",
-+						"drive_gmd";
-+				nvidia,pull-down-strength = <9>;
-+				nvidia,pull-up-strength = <9>;
-+				nvidia,slew-rate-rising = <TEGRA_PIN_SLEW_RATE_SLOWEST>;
-+				nvidia,slew-rate-falling = <TEGRA_PIN_SLEW_RATE_SLOWEST>;
-+			};
-+		};
-+	};
-+
-+	i2c@7000c400 {
-+		touchscreen@20 {
-+			rmi4-f11@11 {
-+				syna,clip-x-high = <1535>;
-+				syna,clip-y-high = <2047>;
-+			};
-+		};
-+	};
-+
-+	memory-controller@7000f000 {
-+		emc-timings-2 {
-+			/* Hynix 1GB H9TCNNN8JDMMPR LPDDR2 533MHz */
-+			nvidia,ram-code = <2>;
-+
-+			timing-12750000 {
-+				clock-frequency = <12750000>;
-+
-+				nvidia,emem-configuration = < 0x00020001 0xc0000010
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000003 0x00000001 0x00000002 0x00000004
-+					0x00000001 0x00000000 0x00000002 0x00000002
-+					0x02020001 0x00060402 0x77230303 0x001f0000 >;
-+			};
-+
-+			timing-25500000 {
-+				clock-frequency = <25500000>;
-+
-+				nvidia,emem-configuration = < 0x00030003 0xc0000010
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000003 0x00000001 0x00000002 0x00000004
-+					0x00000001 0x00000000 0x00000002 0x00000002
-+					0x02020001 0x00060402 0x73e30303 0x001f0000 >;
-+			};
-+
-+			timing-51000000 {
-+				clock-frequency = <51000000>;
-+
-+				nvidia,emem-configuration = < 0x00010003 0xc0000010
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000003 0x00000001 0x00000002 0x00000004
-+					0x00000001 0x00000000 0x00000002 0x00000002
-+					0x02020001 0x00060402 0x72c30303 0x001f0000 >;
-+			};
-+
-+			timing-102000000 {
-+				clock-frequency = <102000000>;
-+
-+				nvidia,emem-configuration = < 0x00000003 0xc0000018
-+					0x00000001 0x00000001 0x00000003 0x00000001
-+					0x00000003 0x00000001 0x00000002 0x00000004
-+					0x00000001 0x00000000 0x00000002 0x00000002
-+					0x02020001 0x00060403 0x72430504 0x001f0000 >;
-+			};
-+
-+			timing-204000000 {
-+				clock-frequency = <204000000>;
-+
-+				nvidia,emem-configuration = < 0x00000006 0xc0000025
-+					0x00000001 0x00000001 0x00000006 0x00000003
-+					0x00000005 0x00000001 0x00000002 0x00000004
-+					0x00000001 0x00000000 0x00000003 0x00000002
-+					0x02030001 0x00070506 0x71e40a07 0x001f0000 >;
-+			};
-+
-+			timing-266500000 {
-+				clock-frequency = <266500000>;
-+
-+				nvidia,emem-configuration = < 0x00000008 0xc0000030
-+					0x00000001 0x00000002 0x00000008 0x00000004
-+					0x00000006 0x00000001 0x00000002 0x00000005
-+					0x00000001 0x00000000 0x00000003 0x00000003
-+					0x03030001 0x00090608 0x70040c09 0x001f0000 >;
-+			};
-+
-+			timing-533000000 {
-+				clock-frequency = <533000000>;
-+
-+				nvidia,emem-configuration = < 0x0000000f 0xc0000060
-+					0x00000003 0x00000004 0x00000010 0x0000000a
-+					0x0000000d 0x00000002 0x00000002 0x00000008
-+					0x00000002 0x00000000 0x00000004 0x00000005
-+					0x05040002 0x00110b10 0x70281811 0x001f0000 >;
-+			};
-+		};
-+	};
-+
-+	memory-controller@7000f400 {
-+		emc-timings-2 {
-+			/* Hynix 1GB H9TCNNN8JDMMPR LPDDR2 533MHz */
-+			nvidia,ram-code = <2>;
-+
-+			timing-12750000 {
-+				clock-frequency = <12750000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x00010022>;
-+				nvidia,emc-mode-2 = <0x00020001>;
-+				nvidia,emc-mode-reset = <0x00000000>;
-+				nvidia,emc-zcal-cnt-long = <0x00000009>;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000000
-+					0x00000001 0x00000002 0x00000002 0x00000004
-+					0x00000004 0x00000001 0x00000005 0x00000002
-+					0x00000002 0x00000001 0x00000001 0x00000000
-+					0x00000001 0x00000003 0x00000001 0x0000000b
-+					0x00000009 0x0000002f 0x00000000 0x0000000b
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000001 0x00000007 0x00000002 0x00000002
-+					0x00000003 0x00000008 0x00000004 0x00000004
-+					0x00000002 0x00000036 0x00000004 0x00000004
-+					0x00000000 0x00000000 0x00004282 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00100220 0x0800201c 0x00000000
-+					0x77ffc004 0x01f1f008 0x00000000 0x00000007
-+					0x08000068 0x08000000 0x00000802 0x00064000
-+					0x00000009 0x00090009 0xa0f10000 0x00000000
-+					0x00000000 0x80000164 0xe0000000 0xff00ff00 >;
-+			};
-+
-+			timing-25500000 {
-+				clock-frequency = <25500000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x00010022>;
-+				nvidia,emc-mode-2 = <0x00020001>;
-+				nvidia,emc-mode-reset = <0x00000000>;
-+				nvidia,emc-zcal-cnt-long = <0x00000009>;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000001
-+					0x00000003 0x00000002 0x00000002 0x00000004
-+					0x00000004 0x00000001 0x00000005 0x00000002
-+					0x00000002 0x00000001 0x00000001 0x00000000
-+					0x00000001 0x00000003 0x00000001 0x0000000b
-+					0x00000009 0x00000060 0x00000000 0x00000018
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000001 0x00000007 0x00000004 0x00000004
-+					0x00000003 0x00000008 0x00000004 0x00000004
-+					0x00000002 0x0000006b 0x00000004 0x00000004
-+					0x00000000 0x00000000 0x00004282 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00100220 0x0800201c 0x00000000
-+					0x77ffc004 0x01f1f008 0x00000000 0x00000007
-+					0x08000068 0x08000000 0x00000802 0x00064000
-+					0x0000000a 0x00090009 0xa0f10000 0x00000000
-+					0x00000000 0x800001c5 0xd0000000 0xff00ff00 >;
-+			};
-+
-+			timing-51000000 {
-+				clock-frequency = <51000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x00010022>;
-+				nvidia,emc-mode-2 = <0x00020001>;
-+				nvidia,emc-mode-reset = <0x00000000>;
-+				nvidia,emc-zcal-cnt-long = <0x00000009>;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000003
-+					0x00000006 0x00000002 0x00000002 0x00000004
-+					0x00000004 0x00000001 0x00000005 0x00000002
-+					0x00000002 0x00000001 0x00000001 0x00000000
-+					0x00000001 0x00000003 0x00000001 0x0000000b
-+					0x00000009 0x000000c0 0x00000000 0x00000030
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000001 0x00000007 0x00000008 0x00000008
-+					0x00000003 0x00000008 0x00000004 0x00000004
-+					0x00000002 0x000000d5 0x00000004 0x00000004
-+					0x00000000 0x00000000 0x00004282 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00100220 0x0800201c 0x00000000
-+					0x77ffc004 0x01f1f008 0x00000000 0x00000007
-+					0x08000068 0x08000000 0x00000802 0x00064000
-+					0x00000013 0x00090009 0xa0f10000 0x00000000
-+					0x00000000 0x80000287 0xd0000000 0xff00ff00 >;
-+			};
-+
-+			timing-102000000 {
-+				clock-frequency = <102000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x00010022>;
-+				nvidia,emc-mode-2 = <0x00020001>;
-+				nvidia,emc-mode-reset = <0x00000000>;
-+				nvidia,emc-zcal-cnt-long = <0x0000000a>;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x00000006
-+					0x0000000d 0x00000004 0x00000002 0x00000004
-+					0x00000004 0x00000001 0x00000005 0x00000002
-+					0x00000002 0x00000001 0x00000001 0x00000000
-+					0x00000001 0x00000003 0x00000001 0x0000000b
-+					0x00000009 0x00000181 0x00000000 0x00000060
-+					0x00000001 0x00000001 0x00000002 0x00000000
-+					0x00000001 0x00000007 0x0000000f 0x0000000f
-+					0x00000003 0x00000008 0x00000004 0x00000004
-+					0x00000002 0x000001a9 0x00000004 0x00000006
-+					0x00000000 0x00000000 0x00004282 0x007800a4
-+					0x00008000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x000fc000 0x000fc000 0x000fc000
-+					0x000fc000 0x00100220 0x0800201c 0x00000000
-+					0x77ffc004 0x01f1f008 0x00000000 0x00000007
-+					0x08000068 0x08000000 0x00000802 0x00064000
-+					0x00000025 0x00090009 0xa0f10000 0x00000000
-+					0x00000000 0x8000040b 0xd0000000 0xff00ff00 >;
-+			};
-+
-+			timing-204000000 {
-+				clock-frequency = <204000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x00010042>;
-+				nvidia,emc-mode-2 = <0x00020001>;
-+				nvidia,emc-mode-reset = <0x00000000>;
-+				nvidia,emc-zcal-cnt-long = <0x00000013>;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x0000000c
-+					0x0000001a 0x00000008 0x00000003 0x00000005
-+					0x00000004 0x00000001 0x00000006 0x00000003
-+					0x00000003 0x00000002 0x00000002 0x00000000
-+					0x00000001 0x00000004 0x00000001 0x0000000c
-+					0x0000000a 0x00000303 0x00000000 0x000000c0
-+					0x00000001 0x00000001 0x00000003 0x00000000
-+					0x00000001 0x00000007 0x0000001d 0x0000001d
-+					0x00000004 0x0000000b 0x00000005 0x00000004
-+					0x00000002 0x00000351 0x00000005 0x00000004
-+					0x00000000 0x00000000 0x00004282 0x004400a4
-+					0x00008000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x00072000 0x00072000 0x00072000
-+					0x00072000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00080000 0x00080000 0x00080000
-+					0x00080000 0x000e0220 0x0800201c 0x00000000
-+					0x77ffc004 0x01f1f008 0x00000000 0x00000007
-+					0x08000068 0x08000000 0x00000802 0x00064000
-+					0x0000004a 0x00090009 0xa0f10000 0x00000000
-+					0x00000000 0x80000713 0xe0000000 0xff00ff00 >;
-+			};
-+
-+			timing-266500000 {
-+				clock-frequency = <266500000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x00010042>;
-+				nvidia,emc-mode-2 = <0x00020002>;
-+				nvidia,emc-mode-reset = <0x00000000>;
-+				nvidia,emc-zcal-cnt-long = <0x00000018>;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x0000000f
-+					0x00000022 0x0000000b 0x00000004 0x00000005
-+					0x00000005 0x00000001 0x00000007 0x00000004
-+					0x00000004 0x00000002 0x00000002 0x00000000
-+					0x00000002 0x00000005 0x00000002 0x0000000c
-+					0x0000000b 0x000003ef 0x00000000 0x000000fb
-+					0x00000001 0x00000001 0x00000004 0x00000000
-+					0x00000001 0x00000009 0x00000026 0x00000026
-+					0x00000004 0x0000000e 0x00000006 0x00000004
-+					0x00000002 0x00000455 0x00000000 0x00000004
-+					0x00000000 0x00000000 0x00006282 0x003200a4
-+					0x00008000 0x00070000 0x00070000 0x00070000
-+					0x00070000 0x00072000 0x00072000 0x00072000
-+					0x00072000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00080002 0x00080002 0x00080002
-+					0x00080002 0x000e0220 0x0800003d 0x00000000
-+					0x77ffc004 0x01f1f008 0x00000000 0x00000007
-+					0x08000068 0x08000000 0x00000802 0x00064000
-+					0x00000060 0x000a000a 0xa0f10000 0x00000000
-+					0x00000000 0x800008ee 0xe0000000 0xff00ff00 >;
-+			};
-+
-+			timing-533000000 {
-+				clock-frequency = <533000000>;
-+
-+				nvidia,emc-auto-cal-interval = <0x001fffff>;
-+				nvidia,emc-mode-1 = <0x000100c2>;
-+				nvidia,emc-mode-2 = <0x00020006>;
-+				nvidia,emc-mode-reset = <0x00000000>;
-+				nvidia,emc-zcal-cnt-long = <0x00000030>;
-+				nvidia,emc-cfg-periodic-qrst;
-+
-+				nvidia,emc-configuration =  < 0x0000001f
-+					0x00000045 0x00000016 0x00000009 0x00000008
-+					0x00000009 0x00000003 0x0000000d 0x00000009
-+					0x00000009 0x00000005 0x00000003 0x00000000
-+					0x00000004 0x0000000a 0x00000006 0x0000000d
-+					0x00000010 0x000007df 0x00000000 0x000001f7
-+					0x00000003 0x00000003 0x00000009 0x00000000
-+					0x00000001 0x0000000f 0x0000004b 0x0000004b
-+					0x00000008 0x0000001b 0x0000000c 0x00000004
-+					0x00000002 0x000008aa 0x00000000 0x00000004
-+					0x00000000 0x00000000 0x00006282 0xf0120091
-+					0x00008000 0x0000000c 0x0000000c 0x0000000c
-+					0x0000000c 0x0000000a 0x0000000a 0x0000000a
-+					0x0000000a 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x00000000 0x00000000 0x00000000
-+					0x00000000 0x0000000c 0x0000000c 0x0000000c
-+					0x0000000c 0x000c0220 0x0800003d 0x00000000
-+					0x77ffc004 0x01f1f408 0x00000000 0x00000007
-+					0x08000068 0x08000000 0x00000802 0x00064000
-+					0x000000c0 0x000e000e 0xa0f10000 0x00000000
-+					0x00000000 0x800010d9 0xe0000000 0xff00ff88 >;
-+			};
-+		};
-+	};
-+
-+	battery: battery-cell {
-+		compatible = "simple-battery";
-+		device-chemistry = "lithium-ion";
-+		charge-full-design-microamp-hours = <2080000>;
-+		energy-full-design-microwatt-hours = <7700000>;
-+		operating-range-celsius = <0 45>;
-+	};
-+
-+	gpio-keys {
-+		key-memo {
-+			label = "Memo";
-+			gpios = <&gpio TEGRA_GPIO(B, 6) GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_MEMO>;
-+			debounce-interval = <10>;
-+			wakeup-event-action = <EV_ACT_ASSERTED>;
-+			wakeup-source;
-+		};
-+
-+		key-volume-up {
-+			label = "Volume Up";
-+			gpios = <&gpio TEGRA_GPIO(I, 6) GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
-+			debounce-interval = <10>;
-+			wakeup-event-action = <EV_ACT_ASSERTED>;
-+			wakeup-source;
-+		};
-+	};
-+
-+	gpio-leds {
-+		led-power {
-+			label = "power::white";
-+			gpios = <&gpio TEGRA_GPIO(R, 3) GPIO_ACTIVE_HIGH>;
-+
-+			linux,default-trigger = "battery-charging";
-+
-+			color = <LED_COLOR_ID_WHITE>;
-+			function = LED_FUNCTION_CHARGING;
-+		};
-+	};
-+
-+	regulator-lcd3v {
-+		gpio = <&gpio TEGRA_GPIO(BB, 0) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	sound {
-+		compatible = "lg,tegra-audio-max98089-p895",
-+			     "nvidia,tegra-audio-max98089";
-+		nvidia,model = "LG Optimus Vu MAX98089";
-+
-+		nvidia,int-mic-en-gpios = <&gpio TEGRA_GPIO(I, 2) GPIO_ACTIVE_HIGH>;
-+	};
-+};
-diff --git a/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-new file mode 100644
-index 000000000000..909260a5d0fb
---- /dev/null
-+++ b/arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
-@@ -0,0 +1,1812 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <dt-bindings/input/gpio-keys.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/mfd/max77620.h>
-+#include <dt-bindings/thermal/thermal.h>
-+
-+#include "tegra30.dtsi"
-+#include "tegra30-cpu-opp.dtsi"
-+#include "tegra30-cpu-opp-microvolt.dtsi"
-+
-+/ {
-+	chassis-type = "handset";
-+
-+	aliases {
-+		mmc0 = &sdmmc4; /* eMMC */
-+		mmc1 = &sdmmc1; /* WiFi */
-+
-+		rtc0 = &pmic;
-+		rtc1 = "/rtc@7000e000";
-+
-+		serial0 = &uartd; /* Console */
-+		serial1 = &uartc; /* Bluetooth */
-+		serial2 = &uartb; /* GPS */
-+	};
-+
-+	/*
-+	 * The decompressor and also some bootloaders rely on a
-+	 * pre-existing /chosen node to be available to insert the
-+	 * command line and merge other ATAGS info.
-+	 */
-+	chosen { };
-+
-+	firmware {
-+		trusted-foundations {
-+			compatible = "tlm,trusted-foundations";
-+			tlm,version-major = <2>;
-+			tlm,version-minor = <8>;
-+		};
-+	};
-+
-+	memory@80000000 {
-+		reg = <0x80000000 0x40000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		linux,cma@80000000 {
-+			compatible = "shared-dma-pool";
-+			alloc-ranges = <0x80000000 0x30000000>;
-+			size = <0x10000000>;		/* 256MiB */
-+			linux,cma-default;
-+			reusable;
-+		};
-+
-+		ramoops@bed00000 {
-+			compatible = "ramoops";
-+			reg = <0xbed00000 0x10000>;	/* 64kB */
-+			console-size = <0x8000>;	/* 32kB */
-+			record-size = <0x400>;		/* 1kB */
-+			ecc-size = <16>;
-+		};
-+
-+		trustzone@bfe00000 {
-+			reg = <0xbfe00000 0x200000>;	/* 2MB */
-+			no-map;
-+		};
-+	};
-+
-+	vde@6001a000 {
-+		assigned-clocks = <&tegra_car TEGRA30_CLK_VDE>;
-+		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_P>;
-+		assigned-clock-rates = <408000000>;
-+	};
-+
-+	pinmux@70000868 {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&state_default>;
-+
-+		state_default: pinmux {
-+			/* WLAN SDIO pinmux */
-+			sdmmc1-clk {
-+				nvidia,pins = "sdmmc1_clk_pz0";
-+				nvidia,function = "sdmmc1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			sdmmc1-cmd {
-+				nvidia,pins = "sdmmc1_cmd_pz1",
-+						"sdmmc1_dat3_py4",
-+						"sdmmc1_dat2_py5",
-+						"sdmmc1_dat1_py6",
-+						"sdmmc1_dat0_py7";
-+				nvidia,function = "sdmmc1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			wlan-reset {
-+				nvidia,pins = "pv3";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			wlan-host-wake {
-+				nvidia,pins = "pu6";
-+				nvidia,function = "pwm3";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* GNSS UART-B pinmux */
-+			gps-pwr-en {
-+				nvidia,pins = "kb_row6_pr6";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			gps-ldo-en {
-+				nvidia,pins = "ulpi_dir_py1";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			gps-clk-ref {
-+				nvidia,pins = "gmi_ad8_ph0";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* Bluetooth UART-C pinmux */
-+			uartc-cts-rxd {
-+				nvidia,pins = "uart3_cts_n_pa1",
-+						"uart3_rxd_pw7";
-+				nvidia,function = "uartc";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			uartc-rts-txd {
-+				nvidia,pins = "uart3_rts_n_pc0",
-+						"uart3_txd_pw6";
-+				nvidia,function = "uartc";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			bt-reset {
-+				nvidia,pins = "clk2_req_pcc5";
-+				nvidia,function = "dap";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			bt-dev-wake {
-+				nvidia,pins = "kb_row11_ps3";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			bt-host-wake {
-+				nvidia,pins = "kb_row12_ps4";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			bt-pcm-dap4 {
-+				nvidia,pins = "dap4_fs_pp4",
-+						"dap4_din_pp5",
-+						"dap4_dout_pp6",
-+						"dap4_sclk_pp7";
-+				nvidia,function = "i2s3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* EMMC pinmux */
-+			sdmmc4-clk {
-+				nvidia,pins = "sdmmc4_clk_pcc4";
-+				nvidia,function = "sdmmc4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			sdmmc4-data {
-+				nvidia,pins = "sdmmc4_cmd_pt7",
-+						"sdmmc4_dat0_paa0",
-+						"sdmmc4_dat1_paa1",
-+						"sdmmc4_dat2_paa2",
-+						"sdmmc4_dat3_paa3",
-+						"sdmmc4_dat4_paa4",
-+						"sdmmc4_dat5_paa5",
-+						"sdmmc4_dat6_paa6",
-+						"sdmmc4_dat7_paa7";
-+				nvidia,function = "sdmmc4";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			sdmmc4-reset {
-+				nvidia,pins = "sdmmc4_rst_n_pcc3";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* I2C pinmux */
-+			gen1-i2c {
-+				nvidia,pins = "gen1_i2c_scl_pc4",
-+						"gen1_i2c_sda_pc5";
-+				nvidia,function = "i2c1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
-+				nvidia,lock = <TEGRA_PIN_DISABLE>;
-+			};
-+			gen2-i2c {
-+				nvidia,pins = "gen2_i2c_scl_pt5",
-+						"gen2_i2c_sda_pt6";
-+				nvidia,function = "i2c2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
-+				nvidia,lock = <TEGRA_PIN_DISABLE>;
-+			};
-+			cam-i2c {
-+				nvidia,pins = "cam_i2c_scl_pbb1",
-+						"cam_i2c_sda_pbb2";
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
-+				nvidia,lock = <TEGRA_PIN_DISABLE>;
-+			};
-+			ddc-i2c {
-+				nvidia,pins = "ddc_scl_pv4",
-+						"ddc_sda_pv5";
-+				nvidia,function = "i2c4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,lock = <TEGRA_PIN_DISABLE>;
-+			};
-+			pwr-i2c {
-+				nvidia,pins = "pwr_i2c_scl_pz6",
-+						"pwr_i2c_sda_pz7";
-+				nvidia,function = "i2cpwr";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
-+				nvidia,lock = <TEGRA_PIN_DISABLE>;
-+			};
-+			mhl-i2c {
-+				nvidia,pins = "kb_col6_pq6",
-+						"kb_col7_pq7";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* GPIO keys pinmux */
-+			power-key {
-+				nvidia,pins = "gmi_wp_n_pc7";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			volume-down {
-+				nvidia,pins = "ulpi_data3_po4";
-+				nvidia,function = "spi3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* Sensors pinmux */
-+			sen-vdd {
-+				nvidia,pins = "spi1_miso_px7";
-+				nvidia,function = "rsvd4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			proxi-vdd {
-+				nvidia,pins = "spi2_miso_px1";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			sen-vio {
-+				nvidia,pins = "lcd_dc1_pd2";
-+				nvidia,function = "rsvd4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			nct-irq {
-+				nvidia,pins = "gmi_iordy_pi5";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			bat-irq {
-+				nvidia,pins = "kb_row8_ps0";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			charger-irq {
-+				nvidia,pins = "gmi_cs1_n_pj2";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			mpu-irq {
-+				nvidia,pins = "gmi_ad12_ph4";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			compass-irq {
-+				nvidia,pins = "gmi_ad13_ph5";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			light-irq {
-+				nvidia,pins = "gmi_cs4_n_pk2";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* LED pinmux */
-+			backlight-en {
-+				nvidia,pins = "lcd_dc0_pn6";
-+				nvidia,function = "rsvd3";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			flash-led-en {
-+				nvidia,pins = "pbb3";
-+				nvidia,function = "vgp3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			keypad-led {
-+				nvidia,pins = "kb_row2_pr2",
-+						"kb_row3_pr3";
-+				nvidia,function = "rsvd3";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* NFC pinmux */
-+			nfc-irq {
-+				nvidia,pins = "spi2_cs1_n_pw2";
-+				nvidia,function = "spi2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			nfc-ven {
-+				nvidia,pins = "spi1_sck_px5";
-+				nvidia,function = "spi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			nfc-firm {
-+				nvidia,pins = "kb_row0_pr0";
-+				nvidia,function = "rsvd4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* DC pinmux */
-+			lcd-pwr {
-+				nvidia,pins = "lcd_pwr0_pb2",
-+						"lcd_pwr1_pc1";
-+				nvidia,function = "displaya";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			lcd-wr-n {
-+				nvidia,pins = "lcd_wr_n_pz3";
-+				nvidia,function = "displaya";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			lcd-id {
-+				nvidia,pins = "lcd_m1_pw1";
-+				nvidia,function = "displaya";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			lcd-pclk {
-+				nvidia,pins = "lcd_pclk_pb3",
-+						"lcd_de_pj1",
-+						"lcd_hsync_pj3",
-+						"lcd_vsync_pj4";
-+				nvidia,function = "displaya";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			lcd-rgb-blue {
-+				nvidia,pins = "lcd_d0_pe0",
-+						"lcd_d1_pe1",
-+						"lcd_d2_pe2",
-+						"lcd_d3_pe3",
-+						"lcd_d4_pe4",
-+						"lcd_d5_pe5",
-+						"lcd_d18_pm2",
-+						"lcd_d19_pm3";
-+				nvidia,function = "displaya";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			lcd-rgb-green {
-+				nvidia,pins = "lcd_d6_pe6",
-+						"lcd_d7_pe7",
-+						"lcd_d8_pf0",
-+						"lcd_d9_pf1",
-+						"lcd_d10_pf2",
-+						"lcd_d11_pf3",
-+						"lcd_d20_pm4",
-+						"lcd_d21_pm5";
-+				nvidia,function = "displaya";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			lcd-rgb-red {
-+				nvidia,pins = "lcd_d12_pf4",
-+						"lcd_d13_pf5",
-+						"lcd_d14_pf6",
-+						"lcd_d15_pf7",
-+						"lcd_d16_pm0",
-+						"lcd_d17_pm1",
-+						"lcd_d22_pm6",
-+						"lcd_d23_pm7";
-+				nvidia,function = "displaya";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* Bridge pinmux */
-+			bridge-reset {
-+				nvidia,pins = "ulpi_data1_po2";
-+				nvidia,function = "spi3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			rgb-ic-en {
-+				nvidia,pins = "gmi_a18_pb1";
-+				nvidia,function = "uartd";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			bridge-clk {
-+				nvidia,pins = "clk3_out_pee0";
-+				nvidia,function = "extperiph3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			rgb-bridge {
-+				nvidia,pins = "lcd_sdin_pz2",
-+						"lcd_sdout_pn5",
-+						"lcd_cs0_n_pn4",
-+						"lcd_sck_pz4";
-+				nvidia,function = "spi5";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* Panel pinmux */
-+			panel-reset {
-+				nvidia,pins = "lcd_cs1_n_pw0";
-+				nvidia,function = "rsvd4";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			panel-vio {
-+				nvidia,pins = "ulpi_clk_py0";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* Touchscreen pinmux */
-+			touch-vdd {
-+				nvidia,pins = "kb_col1_pq1";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			touch-vio {
-+				nvidia,pins = "spi1_mosi_px4";
-+				nvidia,function = "spi2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			touch-irq-n {
-+				nvidia,pins = "kb_col3_pq3";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			touch-rst-n {
-+				nvidia,pins = "ulpi_data0_po1";
-+				nvidia,function = "spi3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			touch-maker-id {
-+				nvidia,pins = "kb_col2_pq2";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* MHL pinmux */
-+			mhl-vio {
-+				nvidia,pins = "pv2";
-+				nvidia,function = "owr";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			mhl-rst-n {
-+				nvidia,pins = "clk3_req_pee1";
-+				nvidia,function = "dev3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			mhl-irq {
-+				nvidia,pins = "crt_vsync_pv7";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			mhl-sel {
-+				nvidia,pins = "kb_row10_ps2";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			hdmi-hpd {
-+				nvidia,pins = "hdmi_int_pn7";
-+				nvidia,function = "hdmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* AUDIO pinmux */
-+			hp-detect {
-+				nvidia,pins = "pbb6";
-+				nvidia,function = "vgp6";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			hp-hook {
-+				nvidia,pins = "ulpi_data4_po5";
-+				nvidia,function = "ulpi";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			ear-mic-en {
-+				nvidia,pins = "spi2_mosi_px0";
-+				nvidia,function = "spi2";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			audio-irq {
-+				nvidia,pins = "spi2_cs2_n_pw3";
-+				nvidia,function = "spi3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			audio-mclk {
-+				nvidia,pins = "clk1_out_pw4";
-+				nvidia,function = "extperiph1";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			dap-i2s0 {
-+				nvidia,pins = "dap1_fs_pn0",
-+						"dap1_din_pn1",
-+						"dap1_dout_pn2",
-+						"dap1_sclk_pn3";
-+				nvidia,function = "i2s0";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			dap-i2s1 {
-+				nvidia,pins = "dap2_fs_pa2",
-+						"dap2_sclk_pa3",
-+						"dap2_din_pa4",
-+						"dap2_dout_pa5";
-+				nvidia,function = "i2s1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* MUIC pinmux */
-+			muic-irq {
-+				nvidia,pins = "gmi_cs0_n_pj0";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			muic-dp2t {
-+				nvidia,pins = "pcc2";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			muic-usif {
-+				nvidia,pins = "ulpi_stp_py3";
-+				nvidia,function = "spi1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			ifx-usb-vbus-en {
-+				nvidia,pins = "kb_row4_pr4";
-+				nvidia,function = "rsvd4";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			pcb-rev {
-+				nvidia,pins = "gmi_wait_pi7",
-+						"gmi_rst_n_pi4";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			jtag-rtck {
-+				nvidia,pins = "jtag_rtck_pu7";
-+				nvidia,function = "rtck";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* Camera pinmux */
-+			cam-mclk {
-+				nvidia,pins = "cam_mclk_pcc0";
-+				nvidia,function = "vi_alt3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			cam-pmic-en {
-+				nvidia,pins = "pbb4";
-+				nvidia,function = "vgp4";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			front-cam-rst {
-+				nvidia,pins = "pbb5";
-+				nvidia,function = "vgp5";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			front-cam-vio {
-+				nvidia,pins = "ulpi_nxt_py2";
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			rear-cam-rst {
-+				nvidia,pins = "gmi_cs3_n_pk4";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			rear-cam-eprom-pr {
-+				nvidia,pins = "gmi_cs2_n_pk3";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			rear-cam-vcm-pwdn {
-+				nvidia,pins = "kb_row1_pr1";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* Haptic pinmux */
-+			haptic-en {
-+				nvidia,pins = "gmi_ad9_ph1";
-+				nvidia,function = "gmi";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			haptic-osc {
-+				nvidia,pins = "gmi_ad11_ph3";
-+				nvidia,function = "pwm3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+
-+			/* Modem pinmux */
-+			cp2ap-ack1-host-active {
-+				nvidia,pins = "pu5";
-+				nvidia,function = "rsvd4";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			cp2ap-ack2-host-wakeup {
-+				nvidia,pins = "pv0";
-+				nvidia,function = "rsvd4";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			ap2cp-ack2-suspend-req {
-+				nvidia,pins = "kb_row14_ps6";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			ap2cp-ack1-slave-wakeup {
-+				nvidia,pins = "kb_row15_ps7";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			cp-kkp {
-+				nvidia,pins = "kb_col0_pq0";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			cp-crash-irq {
-+				nvidia,pins = "kb_row13_ps5";
-+				nvidia,function = "kbc";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			ap2cp-uarta-tx-ipc {
-+				nvidia,pins = "pu0";
-+				nvidia,function = "uarta";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			ap2cp-uarta-rx-ipc {
-+				nvidia,pins = "pu1";
-+				nvidia,function = "uarta";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			fota-ap-cts-cp-rts {
-+				nvidia,pins = "pu2";
-+				nvidia,function = "uarta";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			fota-ap-rts-cp-cts {
-+				nvidia,pins = "pu3";
-+				nvidia,function = "uarta";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_ENABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+			modem-enable {
-+				nvidia,pins = "ulpi_data7_po0";
-+				nvidia,function = "hsi";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			modem-reset {
-+				nvidia,pins = "pv1";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+			};
-+			dap-i2s2 {
-+				nvidia,pins = "dap3_fs_pp0",
-+						"dap3_din_pp1",
-+						"dap3_dout_pp2",
-+						"dap3_sclk_pp3";
-+				nvidia,function = "i2s2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
-+
-+			/* GPIO power/drive control */
-+			drive-i2c {
-+				nvidia,pins = "drive_dbg",
-+						"drive_at5",
-+						"drive_gme",
-+						"drive_ddc",
-+						"drive_ao1";
-+				nvidia,high-speed-mode = <TEGRA_PIN_DISABLE>;
-+				nvidia,schmitt = <TEGRA_PIN_ENABLE>;
-+				nvidia,low-power-mode = <TEGRA_PIN_LP_DRIVE_DIV_1>;
-+				nvidia,pull-down-strength = <31>;
-+				nvidia,pull-up-strength = <31>;
-+				nvidia,slew-rate-rising = <TEGRA_PIN_SLEW_RATE_FASTEST>;
-+				nvidia,slew-rate-falling = <TEGRA_PIN_SLEW_RATE_FASTEST>;
-+			};
-+
-+			drive-uart3 {
-+				nvidia,pins = "drive_uart3";
-+				nvidia,high-speed-mode = <TEGRA_PIN_DISABLE>;
-+				nvidia,schmitt = <TEGRA_PIN_ENABLE>;
-+				nvidia,low-power-mode = <TEGRA_PIN_LP_DRIVE_DIV_1>;
-+				nvidia,pull-down-strength = <31>;
-+				nvidia,pull-up-strength = <31>;
-+				nvidia,slew-rate-rising = <TEGRA_PIN_SLEW_RATE_FASTEST>;
-+				nvidia,slew-rate-falling = <TEGRA_PIN_SLEW_RATE_FASTEST>;
-+			};
-+
-+			drive-gmi {
-+				nvidia,pins = "drive_at3";
-+				nvidia,high-speed-mode = <TEGRA_PIN_DISABLE>;
-+				nvidia,schmitt = <TEGRA_PIN_ENABLE>;
-+				nvidia,low-power-mode = <TEGRA_PIN_LP_DRIVE_DIV_1>;
-+				nvidia,pull-down-strength = <31>;
-+				nvidia,pull-up-strength = <31>;
-+				nvidia,slew-rate-rising = <TEGRA_PIN_SLEW_RATE_FASTEST>;
-+				nvidia,slew-rate-falling = <TEGRA_PIN_SLEW_RATE_FASTEST>;
-+			};
-+		};
-+	};
-+
-+	uartb: serial@70006040 {
-+		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
-+		/delete-property/ reg-shift;
-+		status = "okay";
-+
-+		/* GNSS GSD5T */
-+	};
-+
-+	uartc: serial@70006200 {
-+		compatible = "nvidia,tegra30-hsuart";
-+		reset-names = "serial";
-+		/delete-property/ reg-shift;
-+		status = "okay";
-+
-+		nvidia,adjust-baud-rates = <0 9600 100>,
-+					   <9600 115200 200>,
-+					   <1000000 4000000 136>;
-+
-+		/* BCM4330B1 37.4 MHz Class 1.5 ExtLNA */
-+		bluetooth {
-+			compatible = "brcm,bcm4330-bt";
-+			max-speed = <4000000>;
-+
-+			clocks = <&tegra_pmc TEGRA_PMC_CLK_BLINK>;
-+			clock-names = "txco";
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(S, 4) IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "host-wakeup";
-+
-+			device-wakeup-gpios = <&gpio TEGRA_GPIO(S, 3) GPIO_ACTIVE_HIGH>;
-+			shutdown-gpios = <&gpio TEGRA_GPIO(CC, 5) GPIO_ACTIVE_HIGH>;
-+
-+			vbat-supply = <&vdd_3v3_vbat>;
-+			vddio-supply = <&vdd_1v8_vio>;
-+		};
-+	};
-+
-+	uartd: serial@70006300 {
-+		/delete-property/ dmas;
-+		/delete-property/ dma-names;
-+		status = "okay";
-+
-+		/* Console */
-+	};
-+
-+	pwm@7000a000 {
-+		status = "okay";
-+	};
-+
-+	gen1_i2c: i2c@7000c000 {
-+		status = "okay";
-+		clock-frequency = <400000>;
-+
-+		/* Aichi AMI306 digital compass */
-+		magnetometer@e {
-+			compatible = "asahi-kasei,ak8974";
-+			reg = <0x0e>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(H, 5) IRQ_TYPE_EDGE_RISING>;
-+
-+			avdd-supply = <&vdd_3v0_sen>;
-+			dvdd-supply = <&vdd_1v8_vio>;
-+
-+			mount-matrix = "-1",  "0",  "0",
-+					"0",  "1",  "0",
-+					"0",  "0", "-1";
-+		};
-+
-+		max98089: audio-codec@10 {
-+			compatible = "maxim,max98089";
-+			reg = <0x10>;
-+
-+			clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+			clock-names = "mclk";
-+
-+			assigned-clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+			assigned-clock-parents = <&tegra_car TEGRA30_CLK_EXTERN1>;
-+		};
-+
-+		nfc@28 {
-+			compatible = "nxp,pn544-i2c";
-+			reg = <0x28>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(W, 2) IRQ_TYPE_EDGE_RISING>;
-+
-+			enable-gpios = <&gpio TEGRA_GPIO(X, 5) GPIO_ACTIVE_HIGH>;
-+			firmware-gpios = <&gpio TEGRA_GPIO(R, 0) GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		imu@68 {
-+			compatible = "invensense,mpu6050";
-+			reg = <0x68>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(H, 4) IRQ_TYPE_EDGE_RISING>;
-+
-+			vdd-supply = <&vdd_3v0_sen>;
-+			vddio-supply = <&vdd_1v8_sen>;
-+
-+			mount-matrix =  "1",  "0",  "0",
-+					"0",  "1",  "0",
-+					"0",  "0", "-1";
-+		};
-+	};
-+
-+	gen2_i2c: i2c@7000c400 {
-+		status = "okay";
-+		clock-frequency = <400000>;
-+
-+		/* Synaptics RMI4 S3203B touchcreen */
-+		touchscreen@20 {
-+			compatible = "syna,rmi4-i2c";
-+			reg = <0x20>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(Q, 3) IRQ_TYPE_EDGE_FALLING>;
-+
-+			vdd-supply = <&vdd_3v0_touch>;
-+			vio-supply = <&vdd_1v8_touch>;
-+
-+			syna,reset-delay-ms = <20>;
-+			syna,startup-delay-ms = <200>;
-+
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			rmi4-f01@1 {
-+				reg = <0x1>;
-+				syna,nosleep-mode = <1>;
-+			};
-+
-+			rmi4-f11@11 {
-+				reg = <0x11>;
-+				syna,sensor-type = <1>;
-+
-+				syna,clip-x-low = <0>;
-+				syna,clip-y-low = <0>;
-+			};
-+		};
-+	};
-+
-+	cam_i2c: i2c@7000c500 {
-+		status = "okay";
-+		clock-frequency = <400000>;
-+
-+		dw9714: coil@c {
-+			compatible = "dongwoon,dw9714";
-+			reg = <0x0c>;
-+
-+			enable-gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_HIGH>;
-+
-+			vcc-supply = <&vcc_focuser>;
-+		};
-+
-+		camera-pmic@7d {
-+			compatible = "ti,lp8720";
-+			reg = <0x7d>;
-+
-+			enable-gpios = <&gpio TEGRA_GPIO(BB, 4) GPIO_ACTIVE_HIGH>;
-+
-+			vt_1v2_front: ldo1 {
-+				regulator-name = "vt_1v2_dig";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+
-+			vt_2v7_front: ldo2 {
-+				regulator-name = "vt_2v7_vana";
-+				regulator-min-microvolt = <2700000>;
-+				regulator-max-microvolt = <2700000>;
-+			};
-+
-+			vdd_2v7_rear: ldo3 {
-+				regulator-name = "8m_2v7_vana";
-+				regulator-min-microvolt = <2700000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			vio_1v8_rear: ldo4 {
-+				regulator-name = "vio_1v8_cam";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			vcc_focuser: ldo5 {
-+				regulator-name = "8m_2v8_vcm";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			vdd_1v2_rear: buck {
-+				regulator-name = "8m_1v2_cam";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+		};
-+	};
-+
-+	hdmi_ddc: i2c@7000c700 {
-+		status = "okay";
-+		clock-frequency = <100000>;
-+	};
-+
-+	pwr_i2c: i2c@7000d000 {
-+		status = "okay";
-+		clock-frequency = <400000>;
-+
-+		pmic: max77663@1c {
-+			compatible = "maxim,max77663";
-+			reg = <0x1c>;
-+
-+			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+
-+			system-power-controller;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&max77663_default>;
-+
-+			max77663_default: pinmux {
-+				gpio1 {
-+					pins = "gpio1";
-+					function = "gpio";
-+					drive-open-drain = <1>;
-+				};
-+
-+				gpio4 {
-+					pins = "gpio4";
-+					function = "32k-out1";
-+				};
-+			};
-+
-+			fps {
-+				fps0 {
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
-+				};
-+
-+				fps1 {
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN1>;
-+				};
-+
-+				fps2 {
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
-+				};
-+			};
-+
-+			regulators {
-+				in-sd0-supply = <&vdd_5v0_vbus>;
-+				in-sd1-supply = <&vdd_5v0_vbus>;
-+				in-sd2-supply = <&vdd_5v0_vbus>;
-+				in-sd3-supply = <&vdd_5v0_vbus>;
-+
-+				in-ldo0-1-supply = <&vdd_1v8_vio>;
-+				in-ldo2-supply   = <&vdd_3v3_vbat>;
-+				in-ldo3-5-supply = <&vdd_3v3_vbat>;
-+				in-ldo4-6-supply = <&vdd_3v3_vbat>;
-+				in-ldo7-8-supply = <&vdd_1v8_vio>;
-+
-+				vdd_cpu: sd0 {
-+					regulator-name = "vdd_cpu";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1250000>;
-+					regulator-coupled-with = <&vdd_core>;
-+					regulator-coupled-max-spread = <300000>;
-+					regulator-max-step-microvolt = <100000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+
-+					nvidia,tegra-cpu-regulator;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				vdd_core: sd1 {
-+					regulator-name = "vdd_core";
-+					regulator-min-microvolt = <950000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-coupled-with = <&vdd_cpu>;
-+					regulator-coupled-max-spread = <300000>;
-+					regulator-max-step-microvolt = <100000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+
-+					nvidia,tegra-core-regulator;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
-+				};
-+
-+				vdd_1v8_vio: sd2 {
-+					regulator-name = "vdd_1v8_gen";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				sd3 {
-+					regulator-name = "vddio_ddr";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				ldo0 {
-+					regulator-name = "avdd_pll";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
-+				};
-+
-+				ldo1 {
-+					regulator-name = "vdd_ddr_hs";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				avdd_3v3_periph: ldo2 {
-+					regulator-name = "avdd_usb";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				vdd_usd: ldo3 {
-+					regulator-name = "vdd_sdmmc3";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+					regulator-always-on;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				ldo4 {
-+					regulator-name = "vdd_rtc";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+				};
-+
-+				vcore_emmc: ldo5 {
-+					regulator-name = "vdd_ddr_rx";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+				};
-+
-+				avdd_1v8_hdmi_pll: ldo6 {
-+					regulator-name = "avdd_osc";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				vdd_1v2_mhl: ldo7 {
-+					regulator-name = "vdd_1v2_mhl";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1250000>;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				ldo8 {
-+					regulator-name = "avdd_dsi_csi";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+			};
-+		};
-+
-+		fuel-gauge@36 {
-+			compatible = "maxim,max17043";
-+			reg = <0x36>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(S, 0) IRQ_TYPE_EDGE_FALLING>;
-+
-+			monitored-battery = <&battery>;
-+
-+			maxim,alert-low-soc-level = <10>;
-+			wakeup-source;
-+		};
-+
-+		power-sensor@40 {
-+			compatible = "ti,ina230";
-+			reg = <0x40>;
-+
-+			vs-supply = <&vdd_3v0_sen>;
-+		};
-+
-+		nct72: temperature-sensor@4c {
-+			compatible = "onnn,nct1008";
-+			reg = <0x4c>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(I, 5) IRQ_TYPE_EDGE_FALLING>;
-+
-+			vcc-supply = <&vdd_3v0_sen>;
-+			#thermal-sensor-cells = <1>;
-+		};
-+	};
-+
-+	i2c-mhl {
-+		compatible = "i2c-gpio";
-+
-+		sda-gpios = <&gpio TEGRA_GPIO(Q, 7) (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+		scl-gpios = <&gpio TEGRA_GPIO(Q, 6) (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+
-+		i2c-gpio,delay-us = <5>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	spi@7000dc00 {
-+		status = "okay";
-+		spi-max-frequency = <25000000>;
-+
-+		/* DSI bridge */
-+	};
-+
-+	pmc@7000e400 {
-+		status = "okay";
-+		nvidia,invert-interrupt;
-+		nvidia,suspend-mode = <2>;
-+		nvidia,cpu-pwr-good-time = <2000>;
-+		nvidia,cpu-pwr-off-time = <200>;
-+		nvidia,core-pwr-good-time = <3845 3845>;
-+		nvidia,core-pwr-off-time = <0>;
-+		nvidia,core-power-req-active-high;
-+		nvidia,sys-clock-req-active-high;
-+		core-supply = <&vdd_core>;
-+
-+		i2c-thermtrip {
-+			nvidia,i2c-controller-id = <4>;
-+			nvidia,bus-addr = <0x1c>;
-+			nvidia,reg-addr = <0x41>;
-+			nvidia,reg-data = <0x02>;
-+		};
-+	};
-+
-+	hda@70030000 {
-+		status = "okay";
-+	};
-+
-+	ahub@70080000 {
-+		/* HIFI CODEC */
-+		i2s@70080300 {		/* i2s0 */
-+			status = "okay";
-+		};
-+
-+		/* BASEBAND */
-+		i2s@70080500 {		/* i2s2 */
-+			status = "okay";
-+		};
-+
-+		/* BT SCO */
-+		i2s@70080600 {		/* i2s3 */
-+			status = "okay";
-+		};
-+	};
-+
-+	sdmmc1: mmc@78000000 {
-+		status = "okay";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		assigned-clocks = <&tegra_car TEGRA30_CLK_SDMMC1>;
-+		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_C>;
-+		assigned-clock-rates = <50000000>;
-+
-+		max-frequency = <50000000>;
-+		keep-power-in-suspend;
-+		bus-width = <4>;
-+		non-removable;
-+
-+		mmc-pwrseq = <&brcm_wifi_pwrseq>;
-+		vmmc-supply = <&vdd_3v3_vbat>;
-+		vqmmc-supply = <&vdd_1v8_vio>;
-+
-+		/* BCM4330B1 37.4 MHz Class 1.5 ExtLNA */
-+		wifi@1 {
-+			compatible = "brcm,bcm4329-fmac";
-+			reg = <1>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(U, 6) IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "host-wake";
-+		};
-+	};
-+
-+	sdmmc4: mmc@78000600 {
-+		status = "okay";
-+		bus-width = <8>;
-+
-+		non-removable;
-+		mmc-ddr-1_8v;
-+
-+		vmmc-supply = <&vcore_emmc>;
-+		vqmmc-supply = <&vdd_1v8_vio>;
-+	};
-+
-+	/* Micro USB */
-+	usb@7d000000 {
-+		compatible = "nvidia,tegra30-udc";
-+		status = "okay";
-+		dr_mode = "peripheral";
-+	};
-+
-+	usb-phy@7d000000 {
-+		status = "okay";
-+		dr_mode = "peripheral";
-+		nvidia,hssync-start-delay = <0>;
-+		nvidia,xcvr-lsfslew = <2>;
-+		nvidia,xcvr-lsrslew = <2>;
-+		vbus-supply = <&avdd_3v3_periph>;
-+	};
-+
-+	/* PMIC has a built-in 32KHz oscillator which is used by PMC */
-+	clk32k_in: clock-32k {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		clock-output-names = "pmic-oscillator";
-+	};
-+
-+	gps_refclk: clock-gps {
-+		compatible = "fixed-clock";
-+		clock-frequency = <26000000>;
-+		clock-accuracy = <100>;
-+		#clock-cells = <0>;
-+	};
-+
-+	gps_osc: clock-gps-osc-gate {
-+		compatible = "gpio-gate-clock";
-+		enable-gpios = <&gpio TEGRA_GPIO(H, 0) GPIO_ACTIVE_HIGH>;
-+		clocks = <&gps_refclk>;
-+		#clock-cells = <0>;
-+	};
-+
-+	cpus {
-+		cpu0: cpu@0 {
-+			cpu-supply = <&vdd_cpu>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
-+		};
-+		cpu1: cpu@1 {
-+			cpu-supply = <&vdd_cpu>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
-+		};
-+		cpu2: cpu@2 {
-+			cpu-supply = <&vdd_cpu>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
-+		};
-+		cpu3: cpu@3 {
-+			cpu-supply = <&vdd_cpu>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			#cooling-cells = <2>;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+
-+		key-power {
-+			label = "Power";
-+			gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			debounce-interval = <10>;
-+			wakeup-event-action = <EV_ACT_ASSERTED>;
-+			wakeup-source;
-+		};
-+
-+		key-volume-down {
-+			label = "Volume Down";
-+			gpios = <&gpio TEGRA_GPIO(O, 4) GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+			debounce-interval = <10>;
-+			wakeup-event-action = <EV_ACT_ASSERTED>;
-+			wakeup-source;
-+		};
-+	};
-+
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+
-+		led-keypad {
-+			label = "keypad::white";
-+			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_HIGH>;
-+
-+			color = <LED_COLOR_ID_WHITE>;
-+			function = LED_FUNCTION_KBD_BACKLIGHT;
-+		};
-+	};
-+
-+	opp-table-actmon {
-+		/delete-node/ opp-625000000;
-+		/delete-node/ opp-667000000;
-+		/delete-node/ opp-750000000;
-+		/delete-node/ opp-800000000;
-+		/delete-node/ opp-900000000;
-+	};
-+
-+	opp-table-emc {
-+		/delete-node/ opp-625000000-1200;
-+		/delete-node/ opp-625000000-1250;
-+		/delete-node/ opp-667000000-1200;
-+		/delete-node/ opp-750000000-1300;
-+		/delete-node/ opp-800000000-1300;
-+		/delete-node/ opp-900000000-1350;
-+	};
-+
-+	brcm_wifi_pwrseq: pwrseq-wifi {
-+		compatible = "mmc-pwrseq-simple";
-+
-+		clocks = <&tegra_pmc TEGRA_PMC_CLK_BLINK>;
-+		clock-names = "ext_clock";
-+
-+		reset-gpios = <&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_LOW>;
-+		post-power-on-delay-ms = <300>;
-+		power-off-delay-us = <300>;
-+	};
-+
-+	vdd_5v0_vbus: regulator-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	vdd_3v3_vbat: regulator-vbat {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_vbat";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		vin-supply = <&vdd_5v0_vbus>;
-+	};
-+
-+	vdd_3v0_sen: regulator-sen3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_3v0_sensor";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+		regulator-boot-on;
-+		gpio = <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
-+	vdd_3v0_proxi: regulator-proxi {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_3v0_proxi";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+		regulator-boot-on;
-+		gpio = <&gpio TEGRA_GPIO(X, 1) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
-+	vdd_1v8_sen: regulator-sen1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_1v8_sensor";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		gpio = <&gpio TEGRA_GPIO(D, 2) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
-+	vcc_3v0_lcd: regulator-lcd3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_3v0_lcd";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+		regulator-boot-on;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
-+	iovcc_1v8_lcd: regulator-lcd1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "iovcc_1v8_lcd";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		gpio = <&gpio TEGRA_GPIO(Y, 0) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
-+	vio_1v8_mhl: regulator-mhl1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vio_1v8_mhl";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		gpio = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
-+	vdd_3v0_touch: regulator-touchpwr {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_3v0_touch";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+		regulator-boot-on;
-+		gpio = <&gpio TEGRA_GPIO(Q, 1) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
-+	vdd_1v8_touch: regulator-touchvio {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vdd_1v8_touch";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		gpio = <&gpio TEGRA_GPIO(X, 4) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
-+	vcc_1v8_gps: regulator-gps {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc_1v8_gps";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		gpio = <&gpio TEGRA_GPIO(Y, 1) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
-+	vio_1v8_front: regulator-frontvio {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vt_1v8_cam_vio";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		gpio = <&gpio TEGRA_GPIO(Y, 2) GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		vin-supply = <&vdd_3v3_vbat>;
-+	};
-+
-+	sound {
-+		nvidia,audio-routing =
-+			"Headphone Jack", "HPL",
-+			"Headphone Jack", "HPR",
-+			"Int Spk", "SPKL",
-+			"Int Spk", "SPKR",
-+			"Earpiece", "RECL",
-+			"Earpiece", "RECR",
-+			"INA1", "Mic Jack",
-+			"MIC1", "MICBIAS",
-+			"MICBIAS", "Internal Mic 1",
-+			"MIC2", "Internal Mic 2";
-+
-+		nvidia,i2s-controller = <&tegra_i2s0>;
-+		nvidia,audio-codec = <&max98089>;
-+
-+		nvidia,hp-det-gpios = <&gpio TEGRA_GPIO(BB, 6) GPIO_ACTIVE_LOW>;
-+		nvidia,mic-det-gpios = <&gpio TEGRA_GPIO(O, 5) GPIO_ACTIVE_HIGH>;
-+		nvidia,ext-mic-en-gpios = <&gpio TEGRA_GPIO(X, 0) GPIO_ACTIVE_HIGH>;
-+		nvidia,coupled-mic-hp-det;
-+
-+		clocks = <&tegra_car TEGRA30_CLK_PLL_A>,
-+			 <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
-+			 <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+		clock-names = "pll_a", "pll_a_out0", "mclk";
-+
-+		assigned-clocks = <&tegra_car TEGRA30_CLK_EXTERN1>,
-+				  <&tegra_pmc TEGRA_PMC_CLK_OUT_1>;
-+
-+		assigned-clock-parents = <&tegra_car TEGRA30_CLK_PLL_A_OUT0>,
-+					 <&tegra_car TEGRA30_CLK_EXTERN1>;
-+	};
-+
-+	thermal-zones {
-+		/*
-+		 * NCT72 has two sensors:
-+		 *
-+		 *	0: internal that monitors ambient/skin temperature
-+		 *	1: external that is connected to the CPU's diode
-+		 *
-+		 * Ideally we should use userspace thermal governor,
-+		 * but it's a much more complex solution. The "skin"
-+		 * zone exists as a simpler solution which prevents
-+		 * this device from getting too hot from a user's
-+		 * tactile perspective. The CPU zone is intended to
-+		 * protect silicon from damage.
-+		 */
-+
-+		skin-thermal {
-+			polling-delay-passive = <1000>; /* milliseconds */
-+			polling-delay = <5000>; /* milliseconds */
-+
-+			thermal-sensors = <&nct72 0>;
-+
-+			trips {
-+				trip0: skin-alert {
-+					/* throttle at 50C until temperature drops to 49.8C */
-+					temperature = <50000>;
-+					hysteresis = <200>;
-+					type = "passive";
-+				};
-+
-+				trip1: skin-crit {
-+					/* shut down at 60C */
-+					temperature = <60000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&trip0>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&actmon THERMAL_NO_LIMIT
-+								  THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+
-+		cpu-thermal {
-+			polling-delay-passive = <1000>; /* milliseconds */
-+			polling-delay = <5000>; /* milliseconds */
-+
-+			thermal-sensors = <&nct72 1>;
-+
-+			trips {
-+				trip2: cpu-alert {
-+					/* throttle at 75C until temperature drops to 74.8C */
-+					temperature = <75000>;
-+					hysteresis = <200>;
-+					type = "passive";
-+				};
-+
-+				trip3: cpu-crit {
-+					/* shut down at 90C */
-+					temperature = <90000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+
-+			cooling-maps {
-+				map1 {
-+					trip = <&trip2>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&actmon THERMAL_NO_LIMIT
-+								  THERMAL_NO_LIMIT>;
-+				};
-+			};
-+		};
-+	};
-+};
+Locking got more complicated due to non-sleeping chips, so I dropped
+the character device patch because it got still more incomplete now.
+Also I'm not yet entirely sure about patches #162 and #163 and I expect
+them to change before they can go in. My plan for the next merge window
+is to get the patches in up to #160. After that the addition of chardev
+support (including correct locking) can continue without having to touch
+the lowlevel driver. So the idea of this series is to get the driver
+adaptions out of the way as this requires some cross-tree coordination.
+
+The patches that touch files outside of drivers/pwm include:
+
+ - gpio: mvebu: Make use of devm_pwmchip_alloc() function
+   It already has an Ack by Linus Walleij.
+
+ - drm/bridge: ti-sn65dsi86: Make use of pwmchip_parent() accessor
+ - drm/bridge: ti-sn65dsi86: Make use of devm_pwmchip_alloc() function
+   The 2nd already has an Ack by Douglas Anderson which I tend to assume
+   good enough to merge this via my pwm tree, too. An Ack for the first
+   patch would be nice.
+
+ - leds: qcom-lpg: Make use of devm_pwmchip_alloc() function
+   Already has an Ack by Lee Jones.
+
+ - staging: greybus: pwm: Change prototype of helpers to prepare further changes
+ - staging: greybus: pwm: Make use of pwmchip_parent() accessor
+ - staging: greybus: pwm: Rely on pwm framework to pass a valid hwpwm
+ - staging: greybus: pwm: Drop unused gb_connection_set_data()
+ - staging: greybus: pwm: Rework how the number of PWM lines is determined
+ - staging: greybus: pwm: Make use of devm_pwmchip_alloc() function
+   The greybus patches already got an Ack by Greg Kroah-Hartman in an
+   earlier series, but I dropped it as the patches changed considerably.
+
+For the patches that already have an Ack by the respective maintainers
+I'll assume this is good enough to merge the patches via the pwm tree.
+Please object if you don't agree.  For the others an Ack with that
+semantic would be nice. If you want to merge via your tree, that would
+need some coordination. The adaptions depend on patches #1 - #3, so this
+would involve an immutable branch or waiting until these patches reached
+your tree via the mainline tree. The series rebases fine on today's
+next, so at least for now there are no conflicts that git cannot resolve
+automatically.
+
+The biggest changes compared to v5 are:
+
+ - Make pwmchip_parent's parameter const
+ - Use pwmchip_parent also in drivers/pwm/sysfs.c and drivers/pwm/core.c
+ - Several bug fixes in the conversions I found during the rework
+ - Provide a non-devm pwmchip_alloc() function earlier (for the greybus
+   pwm driver)
+ - Increase alignment of driver private data to ARCH_DMA_MINALIGN bytes
+ - Split several patches to make the easier reviewable
+
+The series is available via git at
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm-lifetime-tracking
+
+if you want to give it a test. I'll keep this branch updated for the
+feedback I get here.
+
+Best regards
+Uwe
+
+Uwe Kleine-König (164):
+  pwm: Provide an inline function to get the parent device of a given
+    chip
+  pwm: Provide wrappers for storing and getting driver private data
+  pwm: Provide pwmchip_alloc() function and a devm variant of it
+  pwm: ab8500: Make use of pwmchip_parent() accessor
+  pwm: ab8500: Introduce a local pwm_chip variable in .probe()
+  pwm: ab8500: Make use of devm_pwmchip_alloc() function
+  pwm: apple: Make use of devm_pwmchip_alloc() function
+  pwm: atmel: Change prototype of a helper to prepare further changes
+  pwm: atmel: Make use of pwmchip_parent() accessor
+  pwm: atmel: Make use of devm_pwmchip_alloc() function
+  pwm: atmel-hlcdc: Prepare removing pwm_chip from driver data
+  pwm: atmel-hlcdc: Make use of devm_pwmchip_alloc() function
+  pwm: atmel-tcb: Make use of pwmchip_parent() accessor
+  pwm: atmel-tcb: Prepare removing pwm_chip from driver data
+  pwm: atmel-tcb: Make use of devm_pwmchip_alloc() function
+  pwm: bcm2835: Make use of devm_pwmchip_alloc() function
+  pwm: bcm-iproc: Make use of devm_pwmchip_alloc() function
+  pwm: bcm-kona: Make use of pwmchip_parent() accessor
+  pwm: bcm-kona: Make use of devm_pwmchip_alloc() function
+  pwm: berlin: Prepare removing pwm_chip from driver data
+  pwm: berlin: Make use of devm_pwmchip_alloc() function
+  pwm: brcmstb: Make use of devm_pwmchip_alloc() function
+  pwm: clk: Prepare removing pwm_chip from driver data
+  pwm: clk: Make use of devm_pwmchip_alloc() function
+  pwm: clps711x: Make use of devm_pwmchip_alloc() function
+  pwm: crc: Simplify code to determine the pwmchip's parent device
+  pwm: crc: Make use of pwmchip_parent() accessor
+  pwm: crc: Make use of devm_pwmchip_alloc() function
+  pwm: cros-ec: Change prototype of helpers to prepare further changes
+  pwm: cros-ec: Make use of pwmchip_parent() accessor
+  pwm: cros-ec: Make use of devm_pwmchip_alloc() function
+  pwm: dwc: Prepare removing pwm_chip from driver data
+  pwm: dwc: Make use of devm_pwmchip_alloc() function
+  pwm: dwc-core: Make use of pwmchip_parent() accessor
+  pwm: ep93xx: Make use of pwmchip_parent() accessor
+  pwm: ep93xx: Make use of devm_pwmchip_alloc() function
+  pwm: fsl-ftm: Change prototype of a helper to prepare further changes
+  pwm: fsl-ftm: Make use of pwmchip_parent() accessor
+  pwm: fsl-ftm: Prepare removing pwm_chip from driver data
+  pwm: fsl-ftm: Make use of devm_pwmchip_alloc() function
+  pwm: hibvt: Consistently name driver data hi_pwm_chip
+  pwm: hibvt: Make use of devm_pwmchip_alloc() function
+  pwm: img: Drop write-only variable from driver private data
+  pwm: img: Make use of pwmchip_parent() accessor
+  pwm: img: Prepare removing pwm_chip from driver data
+  pwm: img: Make use of devm_pwmchip_alloc() function
+  pwm: imx1: Make use of devm_pwmchip_alloc() function
+  pwm: imx27: Make use of pwmchip_parent() accessor
+  pwm: imx27: Make use of devm_pwmchip_alloc() function
+  pwm: imx-tpm: Make use of devm_pwmchip_alloc() function
+  pwm: intel-lgm: Make use of devm_pwmchip_alloc() function
+  pwm: iqs620a: Create a wrapper for converting a pwm_chip to driver
+    data
+  pwm: iqs620a: Prepare removing pwm_chip from driver data
+  pwm: iqs620a: Make use of devm_pwmchip_alloc() function
+  pwm: jz4740: Change prototype of a helper to prepare further changes
+  pwm: jz4740: Make use of pwmchip_parent() accessor
+  pwm: jz4740: Make use of devm_pwmchip_alloc() function
+  pwm: keembay: Make use of devm_pwmchip_alloc() function
+  pwm: lp3943: Make use of devm_pwmchip_alloc() function
+  pwm: lpc18xx-sct: Drop hardly used member from driver private data
+  pwm: lpc18xx-sct: Make use of pwmchip_parent() accessor
+  pwm: lpc18xx-sct: Prepare removing pwm_chip from driver data
+  pwm: lpc18xx-sct: Make use of devm_pwmchip_alloc() function
+  pwm: lpc32xx: Make use of devm_pwmchip_alloc() function
+  pwm: lpss: Make use of pwmchip_parent() accessor
+  pwm: lpss: Don't set driver data
+  pwm: lpss-*: Make use of devm_pwmchip_alloc() function
+  pwm: mediatek: Make use of pwmchip_parent() accessor
+  pwm: mediatek: Make use of devm_pwmchip_alloc() function
+  pwm: meson: Change prototype of a few helpers to prepare further
+    changes
+  pwm: meson: Make use of pwmchip_parent() accessor
+  pwm: meson: Make use of devm_pwmchip_alloc() function
+  pwm: microchip-core: Make use of devm_pwmchip_alloc() function
+  pwm: mtk-disp: Make use of pwmchip_parent() accessor
+  pwm: mtk-disp: Make use of devm_pwmchip_alloc() function
+  pwm: mxs: Make use of devm_pwmchip_alloc() function
+  pwm: ntxec: Make use of devm_pwmchip_alloc() function
+  pwm: omap-dmtimer: Make use of pwmchip_parent() accessor
+  pwm: omap-dmtimer: Prepare removing pwm_chip from driver data
+  pwm: omap-dmtimer: Make use of devm_pwmchip_alloc() function
+  pwm: pca9685: Prepare removing pwm_chip from driver data
+  pwm: pca9685: Make use of pwmchip_parent() accessor
+  pwm: pca9685: Make use of devm_pwmchip_alloc() function
+  pwm: pxa: Make use of devm_pwmchip_alloc() function
+  pwm: raspberrypi-poe: Make use of pwmchip_parent() accessor
+  pwm: raspberrypi-poe: Make use of devm_pwmchip_alloc() function
+  pwm: rcar: Make use of pwmchip_parent() accessor
+  pwm: rcar: Prepare removing pwm_chip from driver data
+  pwm: rcar: Make use of devm_pwmchip_alloc() function
+  pwm: renesas-tpu: Make use of devm_pwmchip_alloc() function
+  pwm: rochchip: Prepare removing pwm_chip from driver data
+  pwm: rockchip: Make use of devm_pwmchip_alloc() function
+  pwm: rz-mtu3: Make use of pwmchip_parent() accessor
+  pwm: rz-mtu3: Prepare removing pwm_chip from driver data
+  pwm: rz-mtu3: Make use of devm_pwmchip_alloc() function
+  pwm: samsung: Simplify code to determine the pwmchip's parent device
+  pwm: samsung: Change prototype of helpers to prepare further changes
+  pwm: samsung: Make use of pwmchip_parent() accessor
+  pwm: samsung: Simplify by using devm functions in probe
+  pwm: samsung: Simplify using dev_err_probe()
+  pwm: samsung: Make use of devm_pwmchip_alloc() function
+  pwm: sifive: Simplify code to determine the pwmchip's parent device
+  pwm: sifive: Prepare removing pwm_chip from driver data
+  pwm: sifive: Make use of pwmchip_parent() accessor
+  pwm: sifive: Make use of devm_pwmchip_alloc() function
+  pwm: sl28cpld: Make use of devm_pwmchip_alloc() function
+  pwm: spear: Make use of devm_pwmchip_alloc() function
+  pwm: sprd: Rework how the available channels are counted
+  pwm: sprd: Drop duplicated tracking of the parent device
+  pwm: sprd: Make use of devm_pwmchip_alloc() function
+  pwm: sti: Prepare removing pwm_chip from driver data
+  pwm: sti: Make use of devm_pwmchip_alloc() function
+  pwm: stm32: Simplify code to determine the pwmchip's parent device
+  pwm: stm32: Change prototype of a helper to prepare further changes
+  pwm: stm32: Prepare removing pwm_chip from driver data
+  pwm: stm32: Change prototype of helper that detects npwm to prepare
+    further changes
+  pwm: stm32: Make use of devm_pwmchip_alloc() function
+  pwm: stm32-lp: Simplify code to determine the pwmchip's parent device
+  pwm: stm32-lp: Prepare removing pwm_chip from driver data
+  pwm: stm32-lp: Make use of pwmchip_parent() accessor
+  pwm: stm32-lp: Make use of devm_pwmchip_alloc() function
+  pwm: stmpe: Make use of pwmchip_parent() accessor
+  pwm: stmpe: Make use of devm_pwmchip_alloc() function
+  pwm: sun4i: Make use of pwmchip_parent() accessor
+  pwm: sun4i: Prepare removing pwm_chip from driver data
+  pwm: sun4i: Consistently name driver data sun4ichip
+  pwm: sun4i: Make use of devm_pwmchip_alloc() function
+  pwm: sunplus: Make use of devm_pwmchip_alloc() function
+  pwm: tegra: Drop duplicated tracking of the parent device
+  pwm: tegra: Prepare removing pwm_chip from driver data
+  pwm: tegra: Make use of devm_pwmchip_alloc() function
+  pwm: tiecap: Simplify code to determine the pwmchip's parent device
+  pwm: tiecap: Change prototype of helpers to prepare further changes
+  pwm: tiecap: Make use of pwmchip_parent() accessor
+  pwm: tiecap: Make use of devm_pwmchip_alloc() function
+  pwm: tiehrpwm: Simplify code to determine the pwmchip's parent device
+  pwm: tiehrpwm: Change prototype of helpers to prepare further changes
+  pwm: tiehrpwm: Make use of pwmchip_parent() accessor
+  pwm: tiehrpwm: Make use of devm_pwmchip_alloc() function
+  pwm: twl: Make use of pwmchip_parent() accessor
+  pwm: twl: Make use of devm_pwmchip_alloc() function
+  pwm: twl-led: Make use of pwmchip_parent() accessor
+  pwm: twl-led: Make use of devm_pwmchip_alloc() function
+  pwm: visconti: Make use of devm_pwmchip_alloc() function
+  pwm: vt8500: Change prototype of a helper to prepare further changes
+  pwm: vt8500: Introduce a local pwm_chip variable in .probe()
+  pwm: vt8500: Make use of pwmchip_parent() accessor
+  pwm: vt8500: Make use of devm_pwmchip_alloc() function
+  pwm: xilinx: Prepare removing pwm_chip from driver data
+  pwm: xilinx: Make use of devm_pwmchip_alloc() function
+  gpio: mvebu: Make use of devm_pwmchip_alloc() function
+  drm/bridge: ti-sn65dsi86: Make use of pwmchip_parent() accessor
+  drm/bridge: ti-sn65dsi86: Make use of devm_pwmchip_alloc() function
+  leds: qcom-lpg: Make use of devm_pwmchip_alloc() function
+  staging: greybus: pwm: Change prototype of helpers to prepare further
+    changes
+  staging: greybus: pwm: Make use of pwmchip_parent() accessor
+  staging: greybus: pwm: Rely on pwm framework to pass a valid hwpwm
+  staging: greybus: pwm: Drop unused gb_connection_set_data()
+  staging: greybus: pwm: Rework how the number of PWM lines is
+    determined
+  staging: greybus: pwm: Make use of devm_pwmchip_alloc() function
+  pwm: Ensure that pwm_chips are allocated using pwmchip_alloc()
+  pwm: Ensure a struct pwm has the same lifetime as its pwm_chip
+  pwm: Ensure the memory backing a PWM chip isn't freed while used
+  pwm: Make pwmchip_[sg]et_drvdata() a wrapper around dev_set_drvdata()
+
+ .../driver-api/driver-model/devres.rst        |   1 +
+ Documentation/driver-api/pwm.rst              |  11 +-
+ drivers/gpio/gpio-mvebu.c                     |  18 +-
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c         |  31 +--
+ drivers/leds/rgb/leds-qcom-lpg.c              |  16 +-
+ drivers/pinctrl/intel/pinctrl-intel.c         |   6 +-
+ drivers/pwm/Kconfig                           |   4 -
+ drivers/pwm/Makefile                          |   3 +-
+ drivers/pwm/core.c                            | 184 +++++++++++++-----
+ drivers/pwm/pwm-ab8500.c                      |  36 ++--
+ drivers/pwm/pwm-apple.c                       |  18 +-
+ drivers/pwm/pwm-atmel-hlcdc.c                 |  37 ++--
+ drivers/pwm/pwm-atmel-tcb.c                   |  32 +--
+ drivers/pwm/pwm-atmel.c                       |  34 ++--
+ drivers/pwm/pwm-bcm-iproc.c                   |  19 +-
+ drivers/pwm/pwm-bcm-kona.c                    |  23 ++-
+ drivers/pwm/pwm-bcm2835.c                     |  19 +-
+ drivers/pwm/pwm-berlin.c                      |  29 +--
+ drivers/pwm/pwm-brcmstb.c                     |  17 +-
+ drivers/pwm/pwm-clk.c                         |  27 +--
+ drivers/pwm/pwm-clps711x.c                    |  17 +-
+ drivers/pwm/pwm-crc.c                         |  22 +--
+ drivers/pwm/pwm-cros-ec.c                     |  58 +++---
+ drivers/pwm/pwm-dwc-core.c                    |  26 +--
+ drivers/pwm/pwm-dwc.c                         |  17 +-
+ drivers/pwm/pwm-dwc.h                         |   9 +-
+ drivers/pwm/pwm-ep93xx.c                      |  21 +-
+ drivers/pwm/pwm-fsl-ftm.c                     |  49 ++---
+ drivers/pwm/pwm-hibvt.c                       |  70 ++++---
+ drivers/pwm/pwm-img.c                         |  60 +++---
+ drivers/pwm/pwm-imx-tpm.c                     |  34 ++--
+ drivers/pwm/pwm-imx1.c                        |  20 +-
+ drivers/pwm/pwm-imx27.c                       |  26 +--
+ drivers/pwm/pwm-intel-lgm.c                   |  17 +-
+ drivers/pwm/pwm-iqs620a.c                     |  30 +--
+ drivers/pwm/pwm-jz4740.c                      |  36 ++--
+ drivers/pwm/pwm-keembay.c                     |  17 +-
+ drivers/pwm/pwm-lp3943.c                      |  17 +-
+ drivers/pwm/pwm-lpc18xx-sct.c                 |  34 ++--
+ drivers/pwm/pwm-lpc32xx.c                     |  21 +-
+ drivers/pwm/pwm-lpss-pci.c                    |  10 +-
+ drivers/pwm/pwm-lpss-platform.c               |  10 +-
+ drivers/pwm/pwm-lpss.c                        |  34 ++--
+ drivers/pwm/pwm-lpss.h                        |   1 -
+ drivers/pwm/pwm-mediatek.c                    |  29 +--
+ drivers/pwm/pwm-meson.c                       |  57 +++---
+ drivers/pwm/pwm-microchip-core.c              |  17 +-
+ drivers/pwm/pwm-mtk-disp.c                    |  25 ++-
+ drivers/pwm/pwm-mxs.c                         |  32 +--
+ drivers/pwm/pwm-ntxec.c                       |  14 +-
+ drivers/pwm/pwm-omap-dmtimer.c                |  47 +++--
+ drivers/pwm/pwm-pca9685.c                     | 161 +++++++--------
+ drivers/pwm/pwm-pxa.c                         |  21 +-
+ drivers/pwm/pwm-raspberrypi-poe.c             |  20 +-
+ drivers/pwm/pwm-rcar.c                        |  27 ++-
+ drivers/pwm/pwm-renesas-tpu.c                 |  20 +-
+ drivers/pwm/pwm-rockchip.c                    |  24 +--
+ drivers/pwm/pwm-rz-mtu3.c                     |  60 +++---
+ drivers/pwm/pwm-samsung.c                     |  94 ++++-----
+ drivers/pwm/pwm-sifive.c                      |  30 +--
+ drivers/pwm/pwm-sl28cpld.c                    |  13 +-
+ drivers/pwm/pwm-spear.c                       |  18 +-
+ drivers/pwm/pwm-sprd.c                        |  58 +++---
+ drivers/pwm/pwm-sti.c                         |  61 +++---
+ drivers/pwm/pwm-stm32-lp.c                    |  31 ++-
+ drivers/pwm/pwm-stm32.c                       |  56 +++---
+ drivers/pwm/pwm-stmpe.c                       |  58 +++---
+ drivers/pwm/pwm-sun4i.c                       | 100 +++++-----
+ drivers/pwm/pwm-sunplus.c                     |  17 +-
+ drivers/pwm/pwm-tegra.c                       |  50 ++---
+ drivers/pwm/pwm-tiecap.c                      |  55 +++---
+ drivers/pwm/pwm-tiehrpwm.c                    |  72 +++----
+ drivers/pwm/pwm-twl-led.c                     |  55 +++---
+ drivers/pwm/pwm-twl.c                         |  50 +++--
+ drivers/pwm/pwm-visconti.c                    |  17 +-
+ drivers/pwm/pwm-vt8500.c                      |  43 ++--
+ drivers/pwm/pwm-xilinx.c                      |  34 ++--
+ drivers/pwm/sysfs.c                           |  45 +----
+ drivers/staging/greybus/pwm.c                 | 133 ++++++-------
+ include/linux/platform_data/x86/pwm-lpss.h    |   4 +-
+ include/linux/pwm.h                           |  56 ++++--
+ 81 files changed, 1502 insertions(+), 1423 deletions(-)
+
+
+base-commit: ab105bfee27776dd946f8003d1e895fbf7674a3f
 -- 
-2.40.1
+2.43.0
 
