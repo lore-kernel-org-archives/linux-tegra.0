@@ -1,191 +1,102 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB8D487BC;
-	Wed, 14 Feb 2024 12:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0764524CD;
+	Wed, 14 Feb 2024 13:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707914993; cv=none; b=sznRwNKpdWHU4MOVBbYd9sKgD4wiT1gnxEsK6dw7jqvRc/3nbXhkquDifGVw5jFfWIwfUFyXG3chcnqtx5tDKNLVqs9t+IdBXbP6FA7l+xsERw7nJi/d9lrXkpDChLdNfkZqh2wu5cMfiBprDNyYjnpp4/Ybs+QAWf7yLJeYwj8=
+	t=1707916127; cv=none; b=D8YDYmXh4JUP19LpxM+2LYF7hrkmGOer8IXNBi5gC76F+JESICTIkxE33xLBQ3737uE7zxf6qPkx8Hmy63NQjCTHmobYqG+P8KHXLVLt5n8LJ7D5i2N8sWNoGJ5sNednD47w+8dKIg6EwamR8NsTbjKTQJ8NthqWx4C88te1BT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707914993; c=relaxed/simple;
-	bh=VfFo/DkZzmeQyKntjmarBqvTj2pcgH+G7HGM6HxEwSk=;
+	s=arc-20240116; t=1707916127; c=relaxed/simple;
+	bh=IHcwF1sOsEfQq3VWY3GdXolnhsPbOpMy0ZYtGeksXTg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lLoMgMKggPVpNVEWOoPGh0YusOOXDoCQaiiTBAqOAsk9P21tN1uBrOpGl/KclCOnS4QHK/SHxR44eMLRFOdFbgenk3IVjxOjnLovlkfGP7BtHzUShJO4nPX6m9o0zPXtIUGPrbLVBNXt1tBUWOcFaAc6b/yjORCsk2gs6ROMSgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ftZDfTaH; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=AqrI90FZC3G35F11jJgieWUpYz2Tk2YbybiAeK7M62qyjU5cFZiET8h76OLgXIeBNQZqhZTOtuyxZf29xk4YkQd04Lqns0Tx96bV6+g9WlmCUTEIVLud5LmA6ut1qigOrNVYa3UlrnvgszyNdR/lZXZVn5XOgNwMGUfDd4KnSbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CGkHxOHC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ftZDfTaH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1707914992; x=1739450992;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=VfFo/DkZzmeQyKntjmarBqvTj2pcgH+G7HGM6HxEwSk=;
-  b=ftZDfTaHFwuNYapG9zcQMfaEbMidnt86i57VyyY2Y9kt6SPLzoxSDEw2
-   6JyCbYr4zBAxANqTOH69T1gLxpurXOE9BIeLTTlIuuNs4ecBgs6HBqEz9
-   Dz0P8f88A53ujj8v8O5JsZFpsmOtFKvKEeoO9bTuw7p6YWuvzkKNhft4D
-   tCVu1IX2EomsWb9E4GQAYNMqQz86Z6SRJ0JSUzydTC1xTb3Q2ufLnxQ9V
-   x2gJxBxsJnEX99RgYHCnaZl+GCi60AG2V00Dl4QpJ2oYbndm14XdY7Mgt
-   lx+N7U/h0irJmnOt1csds3r3h3qcQTF76MtoRxB0g/DexXpcvy7ddHA94
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10982"; a="1809717"
-X-IronPort-AV: E=Sophos;i="6.06,159,1705392000"; 
-   d="scan'208";a="1809717"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2024 04:49:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10982"; a="912083870"
-X-IronPort-AV: E=Sophos;i="6.06,159,1705392000"; 
-   d="scan'208";a="912083870"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2024 04:49:33 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1raEhb-00000004UXT-0JCa;
-	Wed, 14 Feb 2024 14:49:27 +0200
-Date: Wed, 14 Feb 2024 14:49:26 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	James Clark <james.clark@arm.com>, Mark Brown <broonie@kernel.org>,
-	linux-pwm@vger.kernel.org, Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Alexander Shiyan <shc_work@mail.ru>,
-	Benson Leung <bleung@chromium.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Michael Walle <mwalle@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Hammer Hsieh <hammerh0314@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	Sean Anderson <sean.anderson@seco.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Anjelique Melendez <quic_amelende@quicinc.com>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Kees Cook <keescook@chromium.org>, Rob Herring <robh@kernel.org>,
-	linux-doc@vger.kernel.org, kernel@pengutronix.de,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	Guenter Roeck <groeck@chromium.org>,
-	chrome-platform@lists.linux.dev, Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>, linux-mips@vger.kernel.org,
-	linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v6 003/164] pwm: Provide pwmchip_alloc() function and a
- devm variant of it
-Message-ID: <Zcy21tsntcK80hef@smile.fi.intel.com>
-References: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
- <9577d6053a5a52536057dc8654ff567181c2da82.1707900770.git.u.kleine-koenig@pengutronix.de>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CGkHxOHC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A620C433F1;
+	Wed, 14 Feb 2024 13:08:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1707916126;
+	bh=IHcwF1sOsEfQq3VWY3GdXolnhsPbOpMy0ZYtGeksXTg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CGkHxOHC41g8N0yA/P5KY/a2156nEPyA5bHeL44W9xbbcceIGO3sVZGSjpGljbA5l
+	 +tEsDMGegPnkPcZtasOFnLyIJySkxC+bypjQXpBP9c+2iSIXF2Qywy96vZUlQrYTYK
+	 rMLsFSrg4QptLba4OG+jC2OnxtwEo9FMuGXjF8qM=
+Date: Wed, 14 Feb 2024 14:08:42 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 6.1 00/64] 6.1.78-rc1 review
+Message-ID: <2024021422-reckless-remark-e721@gregkh>
+References: <20240213171844.702064831@linuxfoundation.org>
+ <83771838-c346-4a90-92c1-6ba592a620ac@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9577d6053a5a52536057dc8654ff567181c2da82.1707900770.git.u.kleine-koenig@pengutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <83771838-c346-4a90-92c1-6ba592a620ac@nvidia.com>
 
-On Wed, Feb 14, 2024 at 10:30:50AM +0100, Uwe Kleine-König wrote:
-> This function allocates a struct pwm_chip and driver data. Compared to
-> the status quo the split into pwm_chip and driver data is new, otherwise
-> it doesn't change anything relevant (yet).
+On Wed, Feb 14, 2024 at 09:03:59AM +0000, Jon Hunter wrote:
+> Hi Greg,
 > 
-> The intention is that after all drivers are switched to use this
-> allocation function, its possible to add a struct device to struct
-> pwm_chip to properly track the latter's lifetime without touching all
-> drivers again. Proper lifetime tracking is a necessary precondition to
-> introduce character device support for PWMs (that implements atomic
-> setting and doesn't suffer from the sysfs overhead of the /sys/class/pwm
-> userspace support).
+> On 13/02/2024 17:20, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.1.78 release.
+> > There are 64 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 15 Feb 2024 17:18:29 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.78-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> The new function pwmchip_priv() (obviously?) only works for chips
-> allocated with pwmchip_alloc().
+> 
+> Builds are failing for Tegra ...
+> 
+> Test results for stable-v6.1:
+>     10 builds:	3 pass, 7 fail
+>     6 boots:	6 pass, 0 fail
+>     18 tests:	18 pass, 0 fail
+> 
+> Linux version:	6.1.78-rc1-gb29c5b14893f
+> Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+>                 tegra30-cardhu-a04
+> 
+> Builds failed:	aarch64+defconfig+jetson, arm+multi_v7
+> 
+> 
+> > Furong Xu <0x1207@gmail.com>
+> >      net: stmmac: xgmac: fix handling of DPP safety error for DMA channels
+> 
+> The above commit is causing a build regression for older toolchains and
+> I have reported this [0]. This is also seen on the mainline and -next and
+> there is a fix in the works [1].
+> 
+> Note this is breaking the build for linux-6.6.y and linux-6.7.y too.
 
-...
+Thanks, I've now queued up the fix.  Do you need me to push out a -rc2
+for this issue for your testing?
 
-> +#define PWMCHIP_ALIGN ARCH_DMA_MINALIGN
-> +
-> +static void *pwmchip_priv(struct pwm_chip *chip)
-> +{
-> +	return (void *)chip + ALIGN(sizeof(*chip), PWMCHIP_ALIGN);
-> +}
+thanks,
 
-Why not use dma_get_cache_alignment() ?
-
-...
-
-> +/* This is the counterpart to pwmchip_alloc */
-
-pwmchip_alloc()
-
-...
-
-> +EXPORT_SYMBOL_GPL(pwmchip_put);
-
-> +EXPORT_SYMBOL_GPL(pwmchip_alloc);
-
-> +EXPORT_SYMBOL_GPL(devm_pwmchip_alloc);
-
-Are these exported via namespace? If no, can they be from day 1?
-
-...
-
-> +static inline void pwmchip_put(struct pwm_chip *chip)
-> +{
-> +}
-
-Can be one line, but it's up to the present style in this header.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+greg k-h
