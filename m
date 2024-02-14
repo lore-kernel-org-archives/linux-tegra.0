@@ -1,120 +1,191 @@
-Received: from mail.kapsi.fi (mail.kapsi.fi [91.232.154.25])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009F21B95C
-	for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 12:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB8D487BC;
+	Wed, 14 Feb 2024 12:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707913301; cv=none; b=VsVA1WCuybwMLajt0aIcy9FbETWOM4nUEBRhBW/3VzygLkBt6PBjukKfkcUPVGji9L6+aImfQQpuWUvudDOEYQ9GSEbVp2bUxfHCKsb/k847APbmi2ZztogTMc7JQYFWFpsjw0Gj/sUYgRTnfqH4EJuXMG3TEZTC1ELVqWn+2P4=
+	t=1707914993; cv=none; b=sznRwNKpdWHU4MOVBbYd9sKgD4wiT1gnxEsK6dw7jqvRc/3nbXhkquDifGVw5jFfWIwfUFyXG3chcnqtx5tDKNLVqs9t+IdBXbP6FA7l+xsERw7nJi/d9lrXkpDChLdNfkZqh2wu5cMfiBprDNyYjnpp4/Ybs+QAWf7yLJeYwj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707913301; c=relaxed/simple;
-	bh=C8k3ZC2ooU0lqoBxRoFNYIQlhqrzT+TxMtBbqLX1yuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MafRJtJmZ/rETdMk/l+R9ymYbOBtuqCfAqUHvZHBFXkc5zc14Lt3oFSOoqKFHXGFYaesmexnhVfO2GPDnW1Lzq++2EGhGnZojNQqhSdcE5dn142jgKmGMYkshSlnNSFKJaAVd0XHNDJr1xtEkgxgwDZQmDcB23RvfmIpOtlNwRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=sMkVIARR; arc=none smtp.client-ip=91.232.154.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
+	s=arc-20240116; t=1707914993; c=relaxed/simple;
+	bh=VfFo/DkZzmeQyKntjmarBqvTj2pcgH+G7HGM6HxEwSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lLoMgMKggPVpNVEWOoPGh0YusOOXDoCQaiiTBAqOAsk9P21tN1uBrOpGl/KclCOnS4QHK/SHxR44eMLRFOdFbgenk3IVjxOjnLovlkfGP7BtHzUShJO4nPX6m9o0zPXtIUGPrbLVBNXt1tBUWOcFaAc6b/yjORCsk2gs6ROMSgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ftZDfTaH; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="sMkVIARR"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-	s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
-	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=RzxRRhtdAnPm0aM2h8vavNmIk+E7Tg9BqH5yNtCHY5Y=; b=sMkVIARRDo2Z0YF97eLEIbunGL
-	g6UAVfZQ6BOec6wHg5lB95LiExD63s4N9kht2mbKrHL0dxX8a432fZT7ivNNx8+CQJIE88YI9uYB8
-	bGXG9HrJM4YAuFLE+ljdsoHyyg2CH12sZQELBtj/wCsvc0EVIdT+DTAMVMD0nhKahDz8XKoFDLsW+
-	WQBzgu0ktcPg5LRgBdq1oDu0F2Xc7LPSffhAknnFbJ6xkBleOwggnvh5vUvgSAt41u8nJinLiOyQr
-	roUmsbQTFHUYVR3uxMW2hwo59d0nfwUShJVwPs3e62YJSqW1EU/fxtFpDkmjXpjpjOvH+LDBKP/wT
-	CR+j+wzA==;
-Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
-	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <cyndis@kapsi.fi>)
-	id 1raDdd-00ChIO-0X;
-	Wed, 14 Feb 2024 13:41:17 +0200
-From: Mikko Perttunen <cyndis@kapsi.fi>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] gpu: host1x: Skip reset assert on Tegra186
-Date: Wed, 14 Feb 2024 13:40:49 +0200
-Message-ID: <20240214114049.1421463-1-cyndis@kapsi.fi>
-X-Mailer: git-send-email 2.42.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ftZDfTaH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1707914992; x=1739450992;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=VfFo/DkZzmeQyKntjmarBqvTj2pcgH+G7HGM6HxEwSk=;
+  b=ftZDfTaHFwuNYapG9zcQMfaEbMidnt86i57VyyY2Y9kt6SPLzoxSDEw2
+   6JyCbYr4zBAxANqTOH69T1gLxpurXOE9BIeLTTlIuuNs4ecBgs6HBqEz9
+   Dz0P8f88A53ujj8v8O5JsZFpsmOtFKvKEeoO9bTuw7p6YWuvzkKNhft4D
+   tCVu1IX2EomsWb9E4GQAYNMqQz86Z6SRJ0JSUzydTC1xTb3Q2ufLnxQ9V
+   x2gJxBxsJnEX99RgYHCnaZl+GCi60AG2V00Dl4QpJ2oYbndm14XdY7Mgt
+   lx+N7U/h0irJmnOt1csds3r3h3qcQTF76MtoRxB0g/DexXpcvy7ddHA94
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10982"; a="1809717"
+X-IronPort-AV: E=Sophos;i="6.06,159,1705392000"; 
+   d="scan'208";a="1809717"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2024 04:49:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10982"; a="912083870"
+X-IronPort-AV: E=Sophos;i="6.06,159,1705392000"; 
+   d="scan'208";a="912083870"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2024 04:49:33 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1raEhb-00000004UXT-0JCa;
+	Wed, 14 Feb 2024 14:49:27 +0200
+Date: Wed, 14 Feb 2024 14:49:26 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	James Clark <james.clark@arm.com>, Mark Brown <broonie@kernel.org>,
+	linux-pwm@vger.kernel.org, Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Alexander Shiyan <shc_work@mail.ru>,
+	Benson Leung <bleung@chromium.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Michael Walle <mwalle@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hammer Hsieh <hammerh0314@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	Sean Anderson <sean.anderson@seco.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	Anjelique Melendez <quic_amelende@quicinc.com>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Kees Cook <keescook@chromium.org>, Rob Herring <robh@kernel.org>,
+	linux-doc@vger.kernel.org, kernel@pengutronix.de,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	Guenter Roeck <groeck@chromium.org>,
+	chrome-platform@lists.linux.dev, Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>, linux-mips@vger.kernel.org,
+	linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH v6 003/164] pwm: Provide pwmchip_alloc() function and a
+ devm variant of it
+Message-ID: <Zcy21tsntcK80hef@smile.fi.intel.com>
+References: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
+ <9577d6053a5a52536057dc8654ff567181c2da82.1707900770.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 91.158.25.70
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+In-Reply-To: <9577d6053a5a52536057dc8654ff567181c2da82.1707900770.git.u.kleine-koenig@pengutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+On Wed, Feb 14, 2024 at 10:30:50AM +0100, Uwe Kleine-König wrote:
+> This function allocates a struct pwm_chip and driver data. Compared to
+> the status quo the split into pwm_chip and driver data is new, otherwise
+> it doesn't change anything relevant (yet).
+> 
+> The intention is that after all drivers are switched to use this
+> allocation function, its possible to add a struct device to struct
+> pwm_chip to properly track the latter's lifetime without touching all
+> drivers again. Proper lifetime tracking is a necessary precondition to
+> introduce character device support for PWMs (that implements atomic
+> setting and doesn't suffer from the sysfs overhead of the /sys/class/pwm
+> userspace support).
+> 
+> The new function pwmchip_priv() (obviously?) only works for chips
+> allocated with pwmchip_alloc().
 
-On Tegra186, other software components may rely on the kernel to
-keep Host1x operational even during suspend. As such, as a quirk,
-skip asserting Host1x's reset on Tegra186.
+...
 
-We don't need to keep the clocks enabled, as BPMP ensures the clock
-stays on while Host1x is being used. On newer SoC's, the reset line
-is inaccessible, so there is no need for the quirk.
+> +#define PWMCHIP_ALIGN ARCH_DMA_MINALIGN
+> +
+> +static void *pwmchip_priv(struct pwm_chip *chip)
+> +{
+> +	return (void *)chip + ALIGN(sizeof(*chip), PWMCHIP_ALIGN);
+> +}
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/host1x/dev.c | 15 +++++++++------
- drivers/gpu/host1x/dev.h |  1 +
- 2 files changed, 10 insertions(+), 6 deletions(-)
+Why not use dma_get_cache_alignment() ?
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index 42fd504abbcd..89983d7d73ca 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -169,6 +169,7 @@ static const struct host1x_info host1x06_info = {
- 	.num_sid_entries = ARRAY_SIZE(tegra186_sid_table),
- 	.sid_table = tegra186_sid_table,
- 	.reserve_vblank_syncpts = false,
-+	.skip_reset_assert = true,
- };
- 
- static const struct host1x_sid_entry tegra194_sid_table[] = {
-@@ -680,13 +681,15 @@ static int __maybe_unused host1x_runtime_suspend(struct device *dev)
- 	host1x_intr_stop(host);
- 	host1x_syncpt_save(host);
- 
--	err = reset_control_bulk_assert(host->nresets, host->resets);
--	if (err) {
--		dev_err(dev, "failed to assert reset: %d\n", err);
--		goto resume_host1x;
--	}
-+	if (!host->info->skip_reset_assert) {
-+		err = reset_control_bulk_assert(host->nresets, host->resets);
-+		if (err) {
-+			dev_err(dev, "failed to assert reset: %d\n", err);
-+			goto resume_host1x;
-+		}
- 
--	usleep_range(1000, 2000);
-+		usleep_range(1000, 2000);
-+	}
- 
- 	clk_disable_unprepare(host->clk);
- 	reset_control_bulk_release(host->nresets, host->resets);
-diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-index c8e302de7625..9c13e71a31ff 100644
---- a/drivers/gpu/host1x/dev.h
-+++ b/drivers/gpu/host1x/dev.h
-@@ -116,6 +116,7 @@ struct host1x_info {
- 	 * the display driver disables VBLANK increments.
- 	 */
- 	bool reserve_vblank_syncpts;
-+	bool skip_reset_assert;
- };
- 
- struct host1x {
+...
+
+> +/* This is the counterpart to pwmchip_alloc */
+
+pwmchip_alloc()
+
+...
+
+> +EXPORT_SYMBOL_GPL(pwmchip_put);
+
+> +EXPORT_SYMBOL_GPL(pwmchip_alloc);
+
+> +EXPORT_SYMBOL_GPL(devm_pwmchip_alloc);
+
+Are these exported via namespace? If no, can they be from day 1?
+
+...
+
+> +static inline void pwmchip_put(struct pwm_chip *chip)
+> +{
+> +}
+
+Can be one line, but it's up to the present style in this header.
+
 -- 
-2.42.0
+With Best Regards,
+Andy Shevchenko
+
 
