@@ -1,108 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.kapsi.fi (mail.kapsi.fi [91.232.154.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42B418635;
-	Wed, 14 Feb 2024 10:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009F21B95C
+	for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 12:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707907139; cv=none; b=np+6X3qzsbj/GFiYJ8ycgOGoZ9FQ0REFDu2gfJOH9Z+TBTiIYIEM86wWCLm+xQBE274Wtywn3gJ+rRXVl2juvV6YYmSN1D65OaQF3+IWc+ZEl1akG0H3v0WGnU+3YDzLOnvZOnrbQnlennqxM9r5EC/Di37BzRmcTwoHbVgqku0=
+	t=1707913301; cv=none; b=VsVA1WCuybwMLajt0aIcy9FbETWOM4nUEBRhBW/3VzygLkBt6PBjukKfkcUPVGji9L6+aImfQQpuWUvudDOEYQ9GSEbVp2bUxfHCKsb/k847APbmi2ZztogTMc7JQYFWFpsjw0Gj/sUYgRTnfqH4EJuXMG3TEZTC1ELVqWn+2P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707907139; c=relaxed/simple;
-	bh=eslzQormGDUUKR6M3wUfA/wR65g2VVIMI2OcUV5+luQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sGmiOxKTP5aigfW6Ejr05LluhYH4NDA2DiKCYH28SCxe0MXmw2dgsJhnok0jQrBeEVH4gPXeIG4bXq9xaXtLJp4Yo682pjSyAuSsA2OmEHBk/nb+MwpH09uub0KqAfYQppGKuQB+EXm4yoeNBxq9gor95lclggMSUhL3CC5oru4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NM4tcHce; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1707913301; c=relaxed/simple;
+	bh=C8k3ZC2ooU0lqoBxRoFNYIQlhqrzT+TxMtBbqLX1yuE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MafRJtJmZ/rETdMk/l+R9ymYbOBtuqCfAqUHvZHBFXkc5zc14Lt3oFSOoqKFHXGFYaesmexnhVfO2GPDnW1Lzq++2EGhGnZojNQqhSdcE5dn142jgKmGMYkshSlnNSFKJaAVd0XHNDJr1xtEkgxgwDZQmDcB23RvfmIpOtlNwRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=sMkVIARR; arc=none smtp.client-ip=91.232.154.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NM4tcHce"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55909C433C7;
-	Wed, 14 Feb 2024 10:38:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707907139;
-	bh=eslzQormGDUUKR6M3wUfA/wR65g2VVIMI2OcUV5+luQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NM4tcHcenWq1MQ46lCcjZguB2y0u9a08wBEfpVvvyTs7aHG6ltzW76Dp3veftpT3j
-	 i1Z8OUTTxKwVUAmyDMA+HXFG+VHMfUSpBXFYQKnXtfp4zAw9tSsPC4LsKRiXuq2zAg
-	 HvqopQ1KrOMmaeAddUivvw1SPeSBFS4rs/JYB6OWbu8LyMbywWfLlGHwIwSoPCUba+
-	 CR/KZxC/S7C6BvcQ6xEq1ZAT/XwXhgiHFAmVMnZNvfQpiBQ54hkBW5XE+iCSel8XF/
-	 fPXVUiky2QMlDUFAJiVqHbMLhldLNckU/yM4uw7ip+kHMlzdMUBZ1fj64JKT3Rpf6g
-	 dEPOCUfNAx76A==
-Date: Wed, 14 Feb 2024 11:38:47 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Kishon Vijay Abraham I <kvijayab@amd.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
-	Allen Hubbe <allenbh@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org,
-	linux-tegra@vger.kernel.org, ntb@lists.linux.dev
-Subject: Re: [PATCH 0/2] PCI endpoint BAR hardware description cleanup
-Message-ID: <ZcyYNzYo9HiQi4DY@x1-carbon>
-References: <20240210012634.600301-1-cassel@kernel.org>
- <7a243a1e-6b47-bc2f-c538-b57db1c9c580@amd.com>
+	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="sMkVIARR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+	s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=RzxRRhtdAnPm0aM2h8vavNmIk+E7Tg9BqH5yNtCHY5Y=; b=sMkVIARRDo2Z0YF97eLEIbunGL
+	g6UAVfZQ6BOec6wHg5lB95LiExD63s4N9kht2mbKrHL0dxX8a432fZT7ivNNx8+CQJIE88YI9uYB8
+	bGXG9HrJM4YAuFLE+ljdsoHyyg2CH12sZQELBtj/wCsvc0EVIdT+DTAMVMD0nhKahDz8XKoFDLsW+
+	WQBzgu0ktcPg5LRgBdq1oDu0F2Xc7LPSffhAknnFbJ6xkBleOwggnvh5vUvgSAt41u8nJinLiOyQr
+	roUmsbQTFHUYVR3uxMW2hwo59d0nfwUShJVwPs3e62YJSqW1EU/fxtFpDkmjXpjpjOvH+LDBKP/wT
+	CR+j+wzA==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <cyndis@kapsi.fi>)
+	id 1raDdd-00ChIO-0X;
+	Wed, 14 Feb 2024 13:41:17 +0200
+From: Mikko Perttunen <cyndis@kapsi.fi>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] gpu: host1x: Skip reset assert on Tegra186
+Date: Wed, 14 Feb 2024 13:40:49 +0200
+Message-ID: <20240214114049.1421463-1-cyndis@kapsi.fi>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7a243a1e-6b47-bc2f-c538-b57db1c9c580@amd.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 
-On Wed, Feb 14, 2024 at 09:47:54AM +0530, Kishon Vijay Abraham I wrote:
-> Hi Niklas,
-> 
-> On 2/10/2024 6:56 AM, Niklas Cassel wrote:
-> > The series is based on top of:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=endpoint
-> > 
-> > 
-> > Hello all,
-> > 
-> > This series cleans up the hardware description for PCI endpoint BARs.
-> > 
-> > The problems with the existing hardware description:
-> > -The documentation is lackluster.
-> > -Some of the names are confusingly similar, e.g. fixed_64bit and
-> >   fixed_size, even though these are for completely unrelated things.
-> > -The way that the BARs are defined in the endpoint controller drivers
-> >   is messy, because the left hand side is not a BAR, so you can mark a
-> >   BAR as e.g. both fixed size and reserved.
-> > 
-> > This series tries to address all the problems above.
-> > 
-> > Personally, I think that the code is more readable, both the endpoint
-> > controller drivers, but also pci-epc-core.c.
-> 
-> Thank you for cleaning this up!
-> 
-> FWIW:
-> Reviewed-by: Kishon Vijay Abraham I <kishon@kernel.org>
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-IMHO, a FWIW is quite the undersell here, as there is no R-b I would value
-higher than the R-b from the original author or the pci endpoint subsystem :)
+On Tegra186, other software components may rely on the kernel to
+keep Host1x operational even during suspend. As such, as a quirk,
+skip asserting Host1x's reset on Tegra186.
 
+We don't need to keep the clocks enabled, as BPMP ensures the clock
+stays on while Host1x is being used. On newer SoC's, the reset line
+is inaccessible, so there is no need for the quirk.
 
-Kind regards,
-Niklas
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/host1x/dev.c | 15 +++++++++------
+ drivers/gpu/host1x/dev.h |  1 +
+ 2 files changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 42fd504abbcd..89983d7d73ca 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -169,6 +169,7 @@ static const struct host1x_info host1x06_info = {
+ 	.num_sid_entries = ARRAY_SIZE(tegra186_sid_table),
+ 	.sid_table = tegra186_sid_table,
+ 	.reserve_vblank_syncpts = false,
++	.skip_reset_assert = true,
+ };
+ 
+ static const struct host1x_sid_entry tegra194_sid_table[] = {
+@@ -680,13 +681,15 @@ static int __maybe_unused host1x_runtime_suspend(struct device *dev)
+ 	host1x_intr_stop(host);
+ 	host1x_syncpt_save(host);
+ 
+-	err = reset_control_bulk_assert(host->nresets, host->resets);
+-	if (err) {
+-		dev_err(dev, "failed to assert reset: %d\n", err);
+-		goto resume_host1x;
+-	}
++	if (!host->info->skip_reset_assert) {
++		err = reset_control_bulk_assert(host->nresets, host->resets);
++		if (err) {
++			dev_err(dev, "failed to assert reset: %d\n", err);
++			goto resume_host1x;
++		}
+ 
+-	usleep_range(1000, 2000);
++		usleep_range(1000, 2000);
++	}
+ 
+ 	clk_disable_unprepare(host->clk);
+ 	reset_control_bulk_release(host->nresets, host->resets);
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index c8e302de7625..9c13e71a31ff 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -116,6 +116,7 @@ struct host1x_info {
+ 	 * the display driver disables VBLANK increments.
+ 	 */
+ 	bool reserve_vblank_syncpts;
++	bool skip_reset_assert;
+ };
+ 
+ struct host1x {
+-- 
+2.42.0
+
