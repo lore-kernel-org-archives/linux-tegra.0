@@ -1,54 +1,62 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB6384FA7
-	for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 17:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4660B604D6
+	for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 17:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707931190; cv=none; b=KP/9ixy9VoF9uw0B4EjgRbrlZ9qLkGLEM/31I1ZCBVejEflEjG2vA3syKWOUQoJrtZObfLsW087OCWngnVTciymABaxdSuwZF+UywOWgzL2PngnagMkupWWcLl82i/fPAKTNAX8Dz5Gyql1Bi72eX9UzNrCos+hASOWmE68XWQM=
+	t=1707931204; cv=none; b=ipYTJEg5bYbwzSOfsBmhi52XRgtx8x4lMQcZ+ZTVErhRSwrhWGgpNm3eBpQ4vBjrBjcx+Ht9Aw3N8wXEAbWnqNL4sQEYAVyiKYqV5DEStMkSvi2yEaF9toq2T2xZPaBApr/PDhtxeq9x2L6lQIBexqa6hWeSsOMZrULsdW2Gsbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707931190; c=relaxed/simple;
-	bh=Yku4QTzDRgKI/i8hKOFaa1PxharxpUPm5kuh1Z3KMas=;
+	s=arc-20240116; t=1707931204; c=relaxed/simple;
+	bh=zJ9UnsbBVQk+7CK64IucZXo37BDgEgF/64+egIlJnYc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Prkl1PrdbxSrEW8KB1XUM1hm4JDBwUDmdYOI5zIt6bMpgEHBTv+rBsdnfd82+XJpbPNBBRs7wO3t6a1pTwnYHlOj8l8vuaD1XeEkfSsa9YlddJ9nSRjdXlfEoxB18KXDLc5R0TLnsdf8rh8mTEVqamKJSsn2Saiit0tLMmlhV90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bz2viO5C; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 To:Cc:Content-Type; b=Tg/dX7BKg74TteCkgTpYxrVVVIztWcX0hi5b6QPP4uodQ3gDBeLxWD+ZKcoilpWPRld/O4fGnJ9pDGxCW5/VtwMu1dewur6wo/BbLFUlRj9XW19B9cS9A1g/A2jstIqZWMryEYRevmaRk9zrZ80eIX7nx2vaCdGBvO4GYrMfX/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GI5OsJ1w; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bz2viO5C"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1d94323d547so50368005ad.3
-        for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 09:19:47 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GI5OsJ1w"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-561f8b8c058so2042385a12.0
+        for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 09:20:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707931187; x=1708535987; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1707931200; x=1708536000; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kQJxYiPtkKunXHr1tWOWmm3RzE0fHMgYFU5N+FoanzQ=;
-        b=bz2viO5CXR43zHcNBPXSQpr8axEtMcy6ugW9CYGG1Dg3Ei1haWIZcwbHlbyoVQDMQ4
-         0jObCmRQs5ZYIbbHCKY/pVWw3MAdFFG+bU6GBKz5T1CaqR1veJY2i6RMqyA+cmOvBObq
-         UNfXg5sw3jDh1HpblzSn2ZKpUWwXmdbmWE4KtydlQylNrklVKXO2S0jq+0tn+rRZpxbn
-         OlIbro1TGzQwJLqrDh4txKaz52dlkrhX+Oqb50tGky4eJ1EKzIopcBTMKtzsiVUsv+dv
-         HKbLsM0cIzS+gIrtXfMjuhW7rppLJsCZ5fZ0TfTibyLLYvsmTcRNCgGn3eG7YTbUnvnB
-         36+Q==
+        bh=236lqzUHLILRkjMonxzcy3On2gm7C9J5rPgBDfLu9uc=;
+        b=GI5OsJ1wz5H57Sg4mAXsqobe1T4cnGXVVvPIZYy9/pYyPNM7H7qlJanQEFrYmi6fw0
+         5AunEgggKy9cS5hSKY5UfCfii2Sw2D1XK+mC6FBEuZ1c3KrX7G+6O/OGKMvZPYjNoSwK
+         sUt+1NPmOynEM9Mc6gCnvzntgqXkRcHQGhm4k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707931187; x=1708535987;
+        d=1e100.net; s=20230601; t=1707931200; x=1708536000;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kQJxYiPtkKunXHr1tWOWmm3RzE0fHMgYFU5N+FoanzQ=;
-        b=ofpO5/XrO5yEnrp0ptuYc/zlvKZar1EWgewpDDA0lX15Y7TcBI00TqTJpwLXXDnbBK
-         DqPXxneMnhI/9A2geagwk1Jhw2kuqAqrgrrC7EkC+4Rp80GoDtcOZ8mhgAJpU4LnCk2I
-         +urTTe0NU017z1e1HQ0vDq8Sg0jBr4T9VCrgFy+D3cDsCR/4p6BktZ1/I37d3nXesaXP
-         6wN3bHzHpwESdCuf1qc1BSE6yFWVGP2LMd/FBFtRejrptDHLwxc8096HShe0q6EMR5r+
-         bvJ89aHj0jRPND9aEbLJ/9Qk+QzCNPm5EW9xC1pNcJRsno4Zp3P/1BNqhpFsggJlMT0C
-         ouWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNqYJyPVbbg66o+cYMT19aQWcDlZaZn8BMKwRfVuHnIN5qAPdUIwuarpu8tb0NQgSSQn9o0ktzn5ch6xzxTaUmpNLANQQgsll+0AI=
-X-Gm-Message-State: AOJu0Ywvx0Y5KkvXQWGhszg0TkL2o5yrsJJtYdEquDFPlpTRU//DhpN8
-	b/pkp26DCMjRATOWuzenlnFeJpdsfSi1OgLcQ6LQmpsyfrch0OY0CEc7yuGvtmtrYhSbPV2zp3X
-	pWrNSbN034y1aTbuQVI4VjtaAVOK66NXsnCxKnQ==
-X-Google-Smtp-Source: AGHT+IE/4Jb60J8umLNZe6538ribl0j0RPOFasDoPpDRIFX5AjneBXpKfyUvuFsnp7LDN4A0Ix05qgk5V9Wx9geOoCA=
-X-Received: by 2002:a17:90b:351:b0:298:ba30:789b with SMTP id
- fh17-20020a17090b035100b00298ba30789bmr3088028pjb.32.1707931187327; Wed, 14
- Feb 2024 09:19:47 -0800 (PST)
+        bh=236lqzUHLILRkjMonxzcy3On2gm7C9J5rPgBDfLu9uc=;
+        b=fJNzr8cvyUOO4aLS5hw3LXrYTN/icvoDJoeA6q3r8ALHV3++QDWTN23q2pGrRR+YrZ
+         isQ52wwg7jPhPPaO7m+JWgAix8gwyuWW3peazB2Jde4dSHUkUuK1mF+YcTD5nJVKOIcp
+         zbv45vJA5l24rBGCcDyRt1vqu3/zwzX8f+O+WjWY9ghRWsCXpgfG5KSX3xhtoCfPMTWR
+         p46lNRyEYETWZeKll4G7IHESVcr+s5oMdt80iqCmjsA4KbRPa40wP5o4CQk3+BZw1XYW
+         WHEUZDext4f4VxVARLwpvXbpcUz43ZPTrl7YmXo5oA3n46latVYfTGaykXo/KabgKpUv
+         il0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXVmZKva5IbRPwm33lwaUj2cAbyAZhNmXwUgRd0PtEgDnmOFw3E1gYP+2uRzTsaoGSgy8VMb6Scup7ivEgDbqyKSpDrGRGUx1aUtOE=
+X-Gm-Message-State: AOJu0YyJlzKMySUOoCXrCKpgI9PqbUKUbTf6OqVRrig6imHCu2g34FMO
+	9IWHPLIop+wdzxygkLtJFdlMGvrN52ZNOpwW7G4xWaE9Rv3SSvDDZFHSzwI5VasdSRbQTcUltdk
+	YL3o=
+X-Google-Smtp-Source: AGHT+IHIK+SOGUqccjzXMe6YRZPuB5kN9Vjv6oJxEslyyh5NofGGwJbWrZ7GKL70k+sP9Ep2T9aTWw==
+X-Received: by 2002:a05:6402:5410:b0:561:5e21:8b89 with SMTP id ev16-20020a056402541000b005615e218b89mr2620839edb.13.1707931200052;
+        Wed, 14 Feb 2024 09:20:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVUnhA+5ZZzyEFDbDCeIPGMiLlvJHaK1hZHXB8eEmTGFSTtJS0/B21s35rEwLR+gnSwJEK3TMVYwf3c1XO7AkV3SM1Ps0NeF7W2pf8=
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id j2-20020aa7de82000000b005621b45daffsm993692edv.28.2024.02.14.09.19.59
+        for <linux-tegra@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Feb 2024 09:19:59 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5638ae09ec1so11455a12.0
+        for <linux-tegra@vger.kernel.org>; Wed, 14 Feb 2024 09:19:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXGDO+LPZkgY4BQaRJ2QWqWJbFPQxsyAPBTOBJgpP2iDBQ/P547QoOW9EJ96XChhOfDUMruGYWvoQpL4Qc8vjziT3FEaIbarlXnfME=
+X-Received: by 2002:a05:6402:5410:b0:561:5e21:8b89 with SMTP id
+ ev16-20020a056402541000b005615e218b89mr2620799edb.13.1707931198880; Wed, 14
+ Feb 2024 09:19:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -57,73 +65,24 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240114183600.135316-1-vincent.guittot@linaro.org> <6ec54a8f-a602-4f33-96ce-0204f07046e1@nvidia.com>
 In-Reply-To: <6ec54a8f-a602-4f33-96ce-0204f07046e1@nvidia.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 14 Feb 2024 18:19:35 +0100
-Message-ID: <CAKfTPtAR-yWG8odEv-b8XoZQa05OiYd3PLn56MA+AqPb4h=NJA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 14 Feb 2024 09:19:42 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgjiVanO4ZS1hy2sfAFTN_pYtQqVQb_g+dbrP34M6xTDw@mail.gmail.com>
+Message-ID: <CAHk-=wgjiVanO4ZS1hy2sfAFTN_pYtQqVQb_g+dbrP34M6xTDw@mail.gmail.com>
 Subject: Re: [PATCH] sched/fair: Fix frequency selection for non invariant case
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, wkarny@gmail.com, 
-	torvalds@linux-foundation.org, qyousef@layalina.io, tglx@linutronix.de, 
-	rafael@kernel.org, viresh.kumar@linaro.org, linux-kernel@vger.kernel.org, 
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	wkarny@gmail.com, qyousef@layalina.io, tglx@linutronix.de, rafael@kernel.org, 
+	viresh.kumar@linaro.org, linux-kernel@vger.kernel.org, 
 	linux-pm@vger.kernel.org, 
 	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, 
 	Sasha Levin <sashal@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, 
 	Shardar Mohammed <smohammed@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi John,
-
-On Wed, 14 Feb 2024 at 18:12, Jon Hunter <jonathanh@nvidia.com> wrote:
->
-> Hi Vincent,
->
-> On 14/01/2024 18:36, Vincent Guittot wrote:
-> > When frequency invariance is not enabled, get_capacity_ref_freq(policy)
-> > returns the current frequency and the performance margin applied by
-> > map_util_perf(), enabled the utilization to go above the maximum compute
-> > capacity and to select a higher frequency than the current one.
-> >
-> > The performance margin is now applied earlier in the path to take into
-> > account some utilization clampings and we can't get an utilization higher
-> > than the maximum compute capacity.
-> >
-> > We must use a frequency above the current frequency to get a chance to
-> > select a higher OPP when the current one becomes fully used. Apply
-> > the same margin and returns a frequency 25% higher than the current one in
-> > order to switch to the next OPP before we fully use the cpu at the current
-> > one.
-> >
-> > Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Closes: https://lore.kernel.org/lkml/CAHk-=wgWcYX2oXKtgvNN2LLDXP7kXkbo-xTfumEjmPbjSer2RQ@mail.gmail.com/
-> > Reported-by: Wyes Karny <wkarny@gmail.com>
-> > Closes: https://lore.kernel.org/lkml/20240114091240.xzdvqk75ifgfj5yx@wyes-pc/
-> > Fixes: 9c0b4bb7f630 ("sched/cpufreq: Rework schedutil governor performance estimation")
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > Tested-by: Wyes Karny <wkarny@gmail.com>
-> > ---
-> >   kernel/sched/cpufreq_schedutil.c | 6 +++++-
-> >   1 file changed, 5 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> > index 95c3c097083e..d12e95d30e2e 100644
-> > --- a/kernel/sched/cpufreq_schedutil.c
-> > +++ b/kernel/sched/cpufreq_schedutil.c
-> > @@ -133,7 +133,11 @@ unsigned long get_capacity_ref_freq(struct cpufreq_policy *policy)
-> >       if (arch_scale_freq_invariant())
-> >               return policy->cpuinfo.max_freq;
-> >
-> > -     return policy->cur;
-> > +     /*
-> > +      * Apply a 25% margin so that we select a higher frequency than
-> > +      * the current one before the CPU is full busy
-> > +      */
-> > +     return policy->cur + (policy->cur >> 2);
-> >   }
-> >
-> >   /**
->
+On Wed, 14 Feb 2024 at 09:12, Jon Hunter <jonathanh@nvidia.com> wrote:
 >
 > We have also observed a performance degradation on our Tegra platforms
 > with v6.8-rc1. Unfortunately, the above change does not fix the problem
@@ -149,27 +108,23 @@ On Wed, 14 Feb 2024 at 18:12, Jon Hunter <jonathanh@nvidia.com> wrote:
 >   9c0b4bb7f630 ("sched/cpufreq: Rework schedutil governor
 >
 > ... then the perf is similar to where it was ...
->
-> Linux v6.8-rc4 plus reverts:
-> [   31.768189] CPU0: Dhrystones per Second: 48421678 (27559 DMIPS)
-> [   36.556838] CPU1: Dhrystones per Second: 48401324 (27547 DMIPS)
-> [   41.343343] CPU2: Dhrystones per Second: 48421678 (27559 DMIPS)
-> [   46.163347] CPU3: Dhrystones per Second: 47679814 (27137 DMIPS)
->
-> All CPUs are running with the schedutil CPUFREQ governor. We have not
-> looked any further but wanted to report this in case you have any more
-> thoughts or suggestions for us to try.
 
-Have you tried this :
-https://lore.kernel.org/lkml/20240117190545.596057-1-vincent.guittot@linaro.org/
+Ok, guys, this whole scheduler / cpufreq rewrite seems to have been
+completely buggered.
 
-It's in driver-core-linus' branch and should be sent to Linus soon
+Please tell me why we shouldn't just revert things as per above?
 
-Vincent
+Sure, the problem _I_ experienced is fixed, but apparently there are
+others just lurking, and they are even bigger degradations than the
+one I saw.
 
->
-> Thanks
-> Jon
->
-> --
-> nvpublic
+We're now at rc4, we're not releasing a 6.8 with the above kinds of
+numbers. So either there's another obvious one-liner fix, or we need
+to revert this whole thing.
+
+Yes, dhrystones is a truly crappy benchmark, but partly _because_ it's
+such a horribly bad benchmark it's also a very simple case. It's pure
+CPU load with absolutely nothing interesting going on. Regressing on
+that by a factor of three is a sign of complete failure.
+
+                  Linus
