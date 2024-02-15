@@ -1,104 +1,57 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F4F55E7F;
-	Thu, 15 Feb 2024 22:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F77255E7F;
+	Thu, 15 Feb 2024 23:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708036986; cv=none; b=Q23UBbrQP9i17Cwb+4/lSltUfdM4spPvStdoF+RXpJOoHURASUJUuYxo9E7O9Z17YqU3S7Q0EnHLds0G9RPs2zn17XJCGMHWD2NMLCl0LpUOm4erqaMFpM0gUDAzs2Bf+HYH/a0OmkGynIvkQgJCcvvgohDsdUAlVRU+iTG72+0=
+	t=1708038735; cv=none; b=mPSb9K99t1xp3iGtr7uTiz/JQTq7DqFeIFS0UziTYoSihtzU10B1ucdUmW8HiPdWqUpqPsycrekKuW2OJHPnPz5EtPWcUnWbCGXiJwhGLhcIEzhIbkikenpCMK3o2L9ZQ/hnPfTyExsjXKdFJMmnHFHqY8PNzzpAun8SoSHkMDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708036986; c=relaxed/simple;
-	bh=CKJU0qV348zK5ydfwu0hXi5DFvYpoWmGby9n3Xbav48=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uUIiPuXCd8coITfIgIHArte2jBgWUlWBBQVdm4wLGngzU9SP+TujXtcpHudvBRegEEZ3L7r8akJUFCFi0oJiVeQYr2XHP3uY6WzI6j8dfDYiWJt5RoFuiiFAp8251EX9lMTJT+N2fCsGZJtlyfSscb/vcLGAw210U/OqCxzrN10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mcs3MblQ; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708038735; c=relaxed/simple;
+	bh=Eb/9YuG1ExOw9aKA1oqZbr3X02sG3sH9UxVJp/eMEdU=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:To:Date; b=A8/faeqstJc8uDPzLCJjE0eIfFPv5WdkhucizwpZgZSvofJ6mI3VeCM3wdu9dh8fOwi0LwcP/KEGmIs7wIC62nb3FxCehe6XlIY0YdgvBBsNcyPm90MA8msb6P5EhXkB8Fz0hTtF48K/5+eIlpLA4oi99v0j8VTngGgx9uV+UmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKWARMnY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mcs3MblQ"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-411d231ea71so11008385e9.1;
-        Thu, 15 Feb 2024 14:43:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708036983; x=1708641783; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PgvYXFeAtJ4eMTl/jZdy/AomuxUWsZvphnf9tLSxGTs=;
-        b=mcs3MblQW+P9CJJERAHyy+8xvJqP64RfocITHELhqgXUy3CX+GtzgIb7X98apWA3UX
-         z8BVchZCYKa5TlNeadXmgAilv9iFXOIiT4NOPB7KHd3gcFsWaXTfSU+YWloaB3R+8b9p
-         kWu7TR/Foe3f6BrChNa/8cxbEs8uiYMAc2tMte//Um7S7bxwwL366mxCWqxs3EOW37OX
-         nUhbe7jUUElnjGsS/DeoEkknTgGGDACWQU2TcIaayAVGh3BMqwA1T91RTVPGfc+G0WSs
-         X5ePihw/Tu797ZOOeucJIULlYJd2+cpK1FIHM10lDzLc+KwSpdUE6/wh/Ze9LmpfUR8p
-         gW1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708036983; x=1708641783;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PgvYXFeAtJ4eMTl/jZdy/AomuxUWsZvphnf9tLSxGTs=;
-        b=v7mDnxpJ3PesUZJCs6zeirsEJ6ETsk9VPJCo622Wmw9D9lb6OepFVgDLliRrWI5KL3
-         Gu/676K7CGCNxr7q6Zd9c+d1wgnv+Nm2y/z9sb14Ns7MqwP7Tkdwwl3doEt0bmVBEfzo
-         EWUJbO1cIp3V8YVz4lw4cA+eh+Kg/fPMx5gtBlowP6Ko0jr9UcdkatFVXIsyhhgJSAPg
-         Hu595Kwd4E7zq78WYg08n8tR4cmGRiPtoPjc4OWl16Ki5rhcEITTrH5EAFO5sNYOIb+E
-         ho6UHP+FvUoOkaugC+n3bm/1eY4lE3mS2R9n9xvAXVkHjieEl8QbUvVw5UJDTPcpEC72
-         MpLA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5x4CvBC5+fVLQnOy7bZu9mYjc77VNeKlU8YE2vcG8mnNIxf1JyTdqBAkv/8Li9JiEot3FHukadBcVS/Mt+OGynknffM/o3IbqdZuLFI/vNI6bPEYHQQOktX3bhiYgtEYXMYzeWxXDnTY=
-X-Gm-Message-State: AOJu0Yw114KfVhhGjCyoxNGiJ5YeNU/y/wMBwLacI4fRw5c4B1i6nYK6
-	trnlImbTWhHtPzRF061GLi1YG2xYi3m80pEyufimQIC8+yjD5qQJ
-X-Google-Smtp-Source: AGHT+IGcWuz3xcbAdY5/RWa5oBq7q97NdHSFkTnbKOefJLXg/93rMMe3WyK7u1MhDRLzQJEak9sv9Q==
-X-Received: by 2002:a05:600c:3549:b0:411:ff38:aa13 with SMTP id i9-20020a05600c354900b00411ff38aa13mr2348576wmq.27.1708036982510;
-        Thu, 15 Feb 2024 14:43:02 -0800 (PST)
-Received: from localhost (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.gmail.com with ESMTPSA id i6-20020a05600c354600b004107686650esm445978wmq.36.2024.02.15.14.43.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Feb 2024 14:43:02 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] gpu: host1x: remove redundant assignment to variable space
-Date: Thu, 15 Feb 2024 22:43:01 +0000
-Message-Id: <20240215224301.2073845-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKWARMnY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8FE2C433C7;
+	Thu, 15 Feb 2024 23:12:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708038734;
+	bh=Eb/9YuG1ExOw9aKA1oqZbr3X02sG3sH9UxVJp/eMEdU=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=VKWARMnYNviJPXiOtKuoccPiteYKCHSVFRLfobnKgCAmFe3rC2z0Wd3jsy6VvnDNO
+	 LU9halfyBb8j8Gtgt3x3Yl2qjLDsAaN4XWZY7vP2J42INqR9FJQbRW1OHvIkeGQQFp
+	 uBCYksmhH7HE6OaG4D9ym/b893RmduQl4SpP0JiZwyMF3BNC3fvmpvB1RmIpvsXepi
+	 DfFkHY0/gR6aJRNCjSdzlugiIA0yQlY7txVukxSAYJg5oBs5tW432Y/k7zJ3C35m36
+	 +j4EikR/4v5vFeyHEmEG7BhaHzvhhTsPRPWFIm8wrAx8nLp781+VxGDyfk8VT7NiAg
+	 cIy678urUpZjg==
+Message-ID: <38e7e80f61f7c67c984735cf55c3dfb3.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240208163710.512733-1-krzysztof.kozlowski@linaro.org>
+References: <20240208163710.512733-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] clk: constify the of_phandle_args argument of of_clk_provider
+From: Stephen Boyd <sboyd@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Jaroslav Kysela <perex@perex.cz>, Jonathan Hunter <jonathanh@nvidia.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michael Turquette <mturquette@baylibre.com>, NXP Linux Team <linux-imx@nxp.com>, Nishanth Menon <nm@ti.com>, Peng Fan <peng.fan@nxp.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Sudeep Holla <sudeep.holla@arm.com>, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>, alsa-devel@alsa-project.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-omap@vger.kernel.org, linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, patches@opensource.cirrus.com
+Date: Thu, 15 Feb 2024 15:12:12 -0800
+User-Agent: alot/0.10
 
-The variable space is being initialized with a value that is never read,
-it is being re-assigned later on. The initialization is redundant and
-can be removed. Also merge two declaration lines together.
+Quoting Krzysztof Kozlowski (2024-02-08 08:37:10)
+> None of the implementations of the get() and get_hw() callbacks of
+> "struct of_clk_provider" modify the contents of received of_phandle_args
+> pointer.  They treat it as read-only variable used to find the clock to
+> return.  Make obvious that implementations are not supposed to modify
+> the of_phandle_args, by making it a pointer to const.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Cleans up clang scan build warning:
-drivers/gpu/host1x/cdma.c:628:15: warning: Value stored to 'space'
-during its initialization is never read [deadcode.DeadStores]
-
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/host1x/cdma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
-index d1336e438f4f..407ed9b9cf64 100644
---- a/drivers/gpu/host1x/cdma.c
-+++ b/drivers/gpu/host1x/cdma.c
-@@ -625,8 +625,7 @@ void host1x_cdma_push_wide(struct host1x_cdma *cdma, u32 op1, u32 op2,
- 	struct host1x_channel *channel = cdma_to_channel(cdma);
- 	struct host1x *host1x = cdma_to_host1x(cdma);
- 	struct push_buffer *pb = &cdma->push_buffer;
--	unsigned int space = cdma->slots_free;
--	unsigned int needed = 2, extra = 0;
-+	unsigned int space, needed = 2, extra = 0;
- 
- 	if (host1x_debug_trace_cmdbuf)
- 		trace_host1x_cdma_push_wide(dev_name(channel->dev), op1, op2,
--- 
-2.39.2
-
+This will almost certainly break the build once it is merged to
+linux-next. What's your plan to merge this?
