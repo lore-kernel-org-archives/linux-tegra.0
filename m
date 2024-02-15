@@ -1,88 +1,140 @@
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+Received: from flow7-smtp.messagingengine.com (flow7-smtp.messagingengine.com [103.168.172.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C64B13FE0;
-	Thu, 15 Feb 2024 08:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58CC14006;
+	Thu, 15 Feb 2024 09:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707986715; cv=none; b=p0RPvk0truk8u6mEYEvcy6PaeaGdPzP6XZTAu5bm/d+EuIEmBcXI2vrcaUKJbh7+JSgwt+xI0zXwsCMjBFo1c7eoCKcwdJ4xuzsBhcwIbaetg05gGU11h1IDg/l3UpL9Y5D9wTgqDdoh6xNVaHSRPmJQMDXSfwiZk1EBk+lCNWQ=
+	t=1707988433; cv=none; b=Jx18HbnF9LZPgieQW+KfyNJj5n4c2BCLAI42Y+HjK8feLDtu1T8DW2GkKbqu6j1T1QfM38aY5n87lI9W8mnqczEGTZpB/EyO3VKZ4IqGn+gTHJioYD0FpkTIqqRC4xECqlaXBOEDyAIaEhCbkiTfSgcxSCZmgfQ1gf+JmBDYEQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707986715; c=relaxed/simple;
-	bh=P30eQt85pILS+8iYd/I7kRbfNwa0y6eSKTutvbbpLqc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jGRNQtpRlWa+9MZBJFevwIR6FRsXu1qLrOQ28dO523Uyp5IvOG1dXK5xqobxZUKsQy7vpznnGdX1qba75DzmvCCvlTui+nJZ4yUP4tq0eEMqKvUFD2vEa0kVyil55G/mkRY1LcQf6tUTjMiliQbDm/1WDMyegvnXoNTTZqwbRug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1raXMd-0007RI-1i; Thu, 15 Feb 2024 09:45:03 +0100
-Message-ID: <42052f23-d582-4533-a09d-a1de437836b7@leemhuis.info>
-Date: Thu, 15 Feb 2024 09:45:01 +0100
+	s=arc-20240116; t=1707988433; c=relaxed/simple;
+	bh=O/RwfPbZqb3ZvLhvEoH0BjeWEPwr1fYoyD00l7xYTL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0keAoOUf5JU3bIfNMhlZniBYIgeC2YSDWuatgHiJfCGGfpJFxMCFRUwwT9wOLOqpHZkAw68HH1+jVR3FjmAwfTsqoCnBg5c/KnUMCQg32TSdFjtY+oexG3HbZwHDm/eNmkXWpSWjvJNFUXEpqGZ9r2dn2Y1OcZelBF6WEBJ1NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=ieQ5BDR8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CtUvaV0g; arc=none smtp.client-ip=103.168.172.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="ieQ5BDR8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CtUvaV0g"
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailflow.nyi.internal (Postfix) with ESMTP id AD7AC2000F8;
+	Thu, 15 Feb 2024 04:13:50 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Thu, 15 Feb 2024 04:13:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1707988430; x=1707995630; bh=IC4m81oUgj
+	/tsdcLSrr2mqEGqSm9cd9fjfFWN3WrsQE=; b=ieQ5BDR8Bs4J8ZW50oIAXYAsao
+	UTrP6+iqpCdYfl+BE1ZU/iYQi40eFNZfAq5UehitINaslGjEjsylvNqg556xqtwP
+	vqT+ZXXZBsftS3968V0CdX63apikIw4AQ9rJTEg3DdarH/SuLjhlB7ApJVFu+WFZ
+	kisOFmznpVnDsSjXEvGiu90SF45Lcq0Xi/Wb894yfokeS34EKk3oskqJx5aTWTBB
+	V+/kyYYmMN1buQBiJdJwFSDH7D3kBl5sebixEGOd1v/ImizfbqiExBSA66SHJiYl
+	i3RwJIx90b6ybiWlmaN11RZFlwBGq2pypHKtv/3zXDgk0Ry3pT0oYaDMTp3A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1707988430; x=1707995630; bh=IC4m81oUgj/tsdcLSrr2mqEGqSm9
+	cd9fjfFWN3WrsQE=; b=CtUvaV0g2T8ifSQZWiCIE5LJK6NMOZ6lk3NlNBEvB7Ii
+	EHgTyVtYplEvuHy3DgmnELZpfTCAqBCmDhsGt3KnkxzTwRY2FroxVx0P2UiKiwH/
+	LGOk6Rki59VnzjG5qLmD4reI5GOxpjBoXK5krsGOCrwWk/cnRK86I/ZswQ9KFjNY
+	H/U0irm1accRpX/HGUkFk9o1PFVBGPIwersMNqtlJ7MXffDsXtDuOJkC5ETruE3x
+	3OSdI4ypz4DPoWJRHV0T+a98R5UlD9NGUCnITheXZPucfvVI+u8gd8JHOjEEk9OA
+	AbD9Xol0TDQLGhl4rsLl3++2COhaeAzrLU1ZmwSYxA==
+X-ME-Sender: <xms:zdXNZVmfO_RiDekOPDAVHtBn-NPqX5mTVRePn0b8oEulTwg_4jK5sg>
+    <xme:zdXNZQ3rjuquUHhf6-zg5hAltWOcuNtIUNdGxUYOp_gpCKbCctkDGNvt6PNbbQD8s
+    G6uYzluW9mMRQ>
+X-ME-Received: <xmr:zdXNZboaZDO3YBGaO93LVD-TAUt6mh-DX_MbjxhsG5YEbl4KnC2sT9J2CSMfM2nYs8-XqlYvkMhE1fo0-r-o1D84nJWqhpJT4w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddtucetufdoteggodetrfdotffvucfrrh
+    hofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfmjfcu
+    oehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepgeehueehgfdtle
+    dutdelkeefgeejteegieekheefudeiffdvudeffeelvedttddvnecuffhomhgrihhnpehk
+    vghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
+X-ME-Proxy: <xmx:zdXNZVnp_QUPhQz5CwySBHttpZNc1Xf-eWBRj2HJftKiRY9eINUqgA>
+    <xmx:zdXNZT0VEjVElFQlldwJh3isoTCKVkLLONzjR30Hm-FdC4oTDXMXhA>
+    <xmx:zdXNZUt16tIgFkoSN1XNMWaPLzG1Kt1Er7MMDoekQC7K2CEpyLgtyw>
+    <xmx:ztXNZWxfD0c6ofm_OMoiqXqAu-hjN5NFNX9jucnst7Hz7n8kGiKzBGEGti4>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 15 Feb 2024 04:13:48 -0500 (EST)
+Date: Thu, 15 Feb 2024 10:13:47 +0100
+From: Greg KH <greg@kroah.com>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Jon Hunter <jonathanh@nvidia.com>, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	wkarny@gmail.com, qyousef@layalina.io, tglx@linutronix.de,
+	rafael@kernel.org, viresh.kumar@linaro.org,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Sasha Levin <sashal@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Shardar Mohammed <smohammed@nvidia.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Linux kernel regressions list <regressions@lists.linux.dev>
+Subject: Re: [PATCH] sched/fair: Fix frequency selection for non invariant
+ case
+Message-ID: <2024021545-rise-plot-24c3@gregkh>
+References: <20240114183600.135316-1-vincent.guittot@linaro.org>
+ <6ec54a8f-a602-4f33-96ce-0204f07046e1@nvidia.com>
+ <CAHk-=wgjiVanO4ZS1hy2sfAFTN_pYtQqVQb_g+dbrP34M6xTDw@mail.gmail.com>
+ <CAKfTPtA8W+SijB9D3GtNbC7o_XHUV-umcL6chJQbMDxWeX7exg@mail.gmail.com>
+ <42052f23-d582-4533-a09d-a1de437836b7@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: Fix frequency selection for non invariant
- case
-Content-Language: en-US, de-DE
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
- bristot@redhat.com, vschneid@redhat.com, wkarny@gmail.com,
- qyousef@layalina.io, tglx@linutronix.de, rafael@kernel.org,
- viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@nvidia.com>,
- Laxman Dewangan <ldewangan@nvidia.com>,
- Shardar Mohammed <smohammed@nvidia.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <20240114183600.135316-1-vincent.guittot@linaro.org>
- <6ec54a8f-a602-4f33-96ce-0204f07046e1@nvidia.com>
- <CAHk-=wgjiVanO4ZS1hy2sfAFTN_pYtQqVQb_g+dbrP34M6xTDw@mail.gmail.com>
- <CAKfTPtA8W+SijB9D3GtNbC7o_XHUV-umcL6chJQbMDxWeX7exg@mail.gmail.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-In-Reply-To: <CAKfTPtA8W+SijB9D3GtNbC7o_XHUV-umcL6chJQbMDxWeX7exg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1707986713;be9aface;
-X-HE-SMSGID: 1raXMd-0007RI-1i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42052f23-d582-4533-a09d-a1de437836b7@leemhuis.info>
 
-Linus, what...
+On Thu, Feb 15, 2024 at 09:45:01AM +0100, Thorsten Leemhuis wrote:
+> Linus, what...
+> 
+> On 14.02.24 18:22, Vincent Guittot wrote:
+> > On Wed, 14 Feb 2024 at 18:20, Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> >> On Wed, 14 Feb 2024 at 09:12, Jon Hunter <jonathanh@nvidia.com> wrote:
+> >>> We have also observed a performance degradation on our Tegra platforms
+> >>> with v6.8-rc1. Unfortunately, the above change does not fix the problem
+> >>> for us and we are still seeing a performance issue with v6.8-rc4. For
+> >>> example, running Dhrystone on Tegra234 I am seeing the following ...
+> >>> [...]
+> >>> If I revert this change and the following ...
+> >>>   b3edde44e5d4 ("cpufreq/schedutil: Use a fixed reference frequency")
+> >>>   f12560779f9d ("sched/cpufreq: Rework iowait boost")
+> >>>   9c0b4bb7f630 ("sched/cpufreq: Rework schedutil governor
+> >>> ... then the perf is similar to where it was ...
+> >>
+> >> Ok, guys, this whole scheduler / cpufreq rewrite seems to have been
+> >> completely buggered.
+> >> [...]
+> > This should fix it:
+> > https://lore.kernel.org/lkml/20240117190545.596057-1-vincent.guittot@linaro.org/
+> 
+> ...do you want me to do in situations like this? I'm asking, as I see
+> situations like this frequently -- e.g. people reporting problems a
+> second, third, or fourth time while the fix is already sitting in -next
+> for a few days.
+> 
+> Want me to list them in the weekly reports so that you can cherry-pick
+> them from -next if you want?
 
-On 14.02.24 18:22, Vincent Guittot wrote:
-> On Wed, 14 Feb 2024 at 18:20, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->> On Wed, 14 Feb 2024 at 09:12, Jon Hunter <jonathanh@nvidia.com> wrote:
->>> We have also observed a performance degradation on our Tegra platforms
->>> with v6.8-rc1. Unfortunately, the above change does not fix the problem
->>> for us and we are still seeing a performance issue with v6.8-rc4. For
->>> example, running Dhrystone on Tegra234 I am seeing the following ...
->>> [...]
->>> If I revert this change and the following ...
->>>   b3edde44e5d4 ("cpufreq/schedutil: Use a fixed reference frequency")
->>>   f12560779f9d ("sched/cpufreq: Rework iowait boost")
->>>   9c0b4bb7f630 ("sched/cpufreq: Rework schedutil governor
->>> ... then the perf is similar to where it was ...
->>
->> Ok, guys, this whole scheduler / cpufreq rewrite seems to have been
->> completely buggered.
->> [...]
-> This should fix it:
-> https://lore.kernel.org/lkml/20240117190545.596057-1-vincent.guittot@linaro.org/
+Poke the maintainer to get off their butt and submit the pull request to
+Linus (note, this is me in this case...)
 
-...do you want me to do in situations like this? I'm asking, as I see
-situations like this frequently -- e.g. people reporting problems a
-second, third, or fourth time while the fix is already sitting in -next
-for a few days.
+I'll get it into the next -rc, sorry for the delay, other things got in
+the way, my fault.
 
-Want me to list them in the weekly reports so that you can cherry-pick
-them from -next if you want?
-
-Ciao, Thorsten
+greg k-h
