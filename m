@@ -1,124 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E9E171A2;
-	Wed, 14 Feb 2024 19:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C64B13FE0;
+	Thu, 15 Feb 2024 08:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707937971; cv=none; b=RonN0RFG4MqY5frDfXQvAwL40KBDqiN8ysMU6CCFmO82ZxJJd4uwhdFNzpU+JOzhdXdYFrtVoRLHDrIB4kDjUNQdNhQqTJlM7KeAu2+HNeWVXTSh1LgOeURUQWDQ2u86nFsZuz2u8bOVumeDvSbjz44V7GkNT5nuNRj2p96SNPw=
+	t=1707986715; cv=none; b=p0RPvk0truk8u6mEYEvcy6PaeaGdPzP6XZTAu5bm/d+EuIEmBcXI2vrcaUKJbh7+JSgwt+xI0zXwsCMjBFo1c7eoCKcwdJ4xuzsBhcwIbaetg05gGU11h1IDg/l3UpL9Y5D9wTgqDdoh6xNVaHSRPmJQMDXSfwiZk1EBk+lCNWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707937971; c=relaxed/simple;
-	bh=GaNW4qJLhcZQPDq6m88xXy4RMPI4Vwk6x2NaA/U2ssA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=rfu/R8oEsHNsg5jT43ErftGqK55ynG+Xp0u2CdFgKb3w142evcuNErpmLJm2bP+X0bxkdsJal2GQ120EramZPR2DuyI4ee+v3hpRHHd5LgAqeqqnlllnfHF6vkJM6F5Hha48hlu7QJi8KjVBC5H2aeJZThOdJMHrVd3xkjzEkn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4cChNzy; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4cChNzy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C9DC433C7;
-	Wed, 14 Feb 2024 19:12:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707937970;
-	bh=GaNW4qJLhcZQPDq6m88xXy4RMPI4Vwk6x2NaA/U2ssA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=F4cChNzyKBXOwwfxXYohSyCAMg1dlwLd7cLrxNDuPtwGDI382Mp2mpUlZQn8prFf/
-	 NdIU32bTxG4qoylo01LS3cDpCML72NtUL+SNhUdTb+GZev1zuUtUCZi8Zy+LNtKy4z
-	 tDEhQZZmpodutqmmBYham8OPm8HxdjIaaNgDx72vr/VowZGVFLXa4fOGHEl8cnUFXt
-	 EpU6rWFIc7mrdCoeTkIrjPPgXfFkXD6jMz4T8kFCmOoLHIZuQ9fJISSddWwaMewxMA
-	 n8Ox+OnzOe4tapu+/U0GoqEvw13IhuXjYdVFhTAy6fJU6pcSA/PFN+h1Op4gvLaT4S
-	 h7NGbTQbsSSFA==
-Date: Wed, 14 Feb 2024 13:12:49 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Vidya Sagar <vidyas@nvidia.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, bhelgaas@google.com,
-	robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, Kishon Vijay Abraham I <kishon@kernel.org>,
-	catalin.marinas@arm.com, Will Deacon <will@kernel.org>,
-	jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-	digetx@gmail.com, mperttunen@nvidia.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V16 13/13] PCI: tegra: Add Tegra194 PCIe support
-Message-ID: <20240214191249.GA1263222@bhelgaas>
+	s=arc-20240116; t=1707986715; c=relaxed/simple;
+	bh=P30eQt85pILS+8iYd/I7kRbfNwa0y6eSKTutvbbpLqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jGRNQtpRlWa+9MZBJFevwIR6FRsXu1qLrOQ28dO523Uyp5IvOG1dXK5xqobxZUKsQy7vpznnGdX1qba75DzmvCCvlTui+nJZ4yUP4tq0eEMqKvUFD2vEa0kVyil55G/mkRY1LcQf6tUTjMiliQbDm/1WDMyegvnXoNTTZqwbRug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1raXMd-0007RI-1i; Thu, 15 Feb 2024 09:45:03 +0100
+Message-ID: <42052f23-d582-4533-a09d-a1de437836b7@leemhuis.info>
+Date: Thu, 15 Feb 2024 09:45:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190813113627.27251-14-vidyas@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/fair: Fix frequency selection for non invariant
+ case
+Content-Language: en-US, de-DE
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ bristot@redhat.com, vschneid@redhat.com, wkarny@gmail.com,
+ qyousef@layalina.io, tglx@linutronix.de, rafael@kernel.org,
+ viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Thierry Reding <treding@nvidia.com>, Sasha Levin <sashal@nvidia.com>,
+ Laxman Dewangan <ldewangan@nvidia.com>,
+ Shardar Mohammed <smohammed@nvidia.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240114183600.135316-1-vincent.guittot@linaro.org>
+ <6ec54a8f-a602-4f33-96ce-0204f07046e1@nvidia.com>
+ <CAHk-=wgjiVanO4ZS1hy2sfAFTN_pYtQqVQb_g+dbrP34M6xTDw@mail.gmail.com>
+ <CAKfTPtA8W+SijB9D3GtNbC7o_XHUV-umcL6chJQbMDxWeX7exg@mail.gmail.com>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+In-Reply-To: <CAKfTPtA8W+SijB9D3GtNbC7o_XHUV-umcL6chJQbMDxWeX7exg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1707986713;be9aface;
+X-HE-SMSGID: 1raXMd-0007RI-1i
 
-Hi Vidya, question about ancient history:
+Linus, what...
 
-On Tue, Aug 13, 2019 at 05:06:27PM +0530, Vidya Sagar wrote:
-> Add support for Synopsys DesignWare core IP based PCIe host controller
-> present in Tegra194 SoC.
-> ...
+On 14.02.24 18:22, Vincent Guittot wrote:
+> On Wed, 14 Feb 2024 at 18:20, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>> On Wed, 14 Feb 2024 at 09:12, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>> We have also observed a performance degradation on our Tegra platforms
+>>> with v6.8-rc1. Unfortunately, the above change does not fix the problem
+>>> for us and we are still seeing a performance issue with v6.8-rc4. For
+>>> example, running Dhrystone on Tegra234 I am seeing the following ...
+>>> [...]
+>>> If I revert this change and the following ...
+>>>   b3edde44e5d4 ("cpufreq/schedutil: Use a fixed reference frequency")
+>>>   f12560779f9d ("sched/cpufreq: Rework iowait boost")
+>>>   9c0b4bb7f630 ("sched/cpufreq: Rework schedutil governor
+>>> ... then the perf is similar to where it was ...
+>>
+>> Ok, guys, this whole scheduler / cpufreq rewrite seems to have been
+>> completely buggered.
+>> [...]
+> This should fix it:
+> https://lore.kernel.org/lkml/20240117190545.596057-1-vincent.guittot@linaro.org/
 
-> +static int tegra_pcie_dw_host_init(struct pcie_port *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
-> +	u32 val, tmp, offset, speed;
-> +
-> +	tegra_pcie_prepare_host(pp);
-> +
-> +	if (dw_pcie_wait_for_link(pci)) {
-> +		/*
-> +		 * There are some endpoints which can't get the link up if
-> +		 * root port has Data Link Feature (DLF) enabled.
-> +		 * Refer Spec rev 4.0 ver 1.0 sec 3.4.2 & 7.7.4 for more info
-> +		 * on Scaled Flow Control and DLF.
-> +		 * So, need to confirm that is indeed the case here and attempt
-> +		 * link up once again with DLF disabled.
+...do you want me to do in situations like this? I'm asking, as I see
+situations like this frequently -- e.g. people reporting problems a
+second, third, or fourth time while the fix is already sitting in -next
+for a few days.
 
-This comment suggests that there's an issue with *Endpoints*, not an
-issue with the Root Port.  If so, it seems like this problem could
-occur with all Root Ports, not just Tegra194.  Do you remember any
-details about this?
+Want me to list them in the weekly reports so that you can cherry-pick
+them from -next if you want?
 
-I don't remember hearing about any similar issues, and this driver is
-the only place PCI_EXT_CAP_ID_DLF is referenced, so maybe it is
-actually something related to Tegra194?
-
-> +		val = appl_readl(pcie, APPL_DEBUG);
-> +		val &= APPL_DEBUG_LTSSM_STATE_MASK;
-> +		val >>= APPL_DEBUG_LTSSM_STATE_SHIFT;
-> +		tmp = appl_readl(pcie, APPL_LINK_STATUS);
-> +		tmp &= APPL_LINK_STATUS_RDLH_LINK_UP;
-> +		if (!(val == 0x11 && !tmp)) {
-> +			/* Link is down for all good reasons */
-> +			return 0;
-> +		}
-> +
-> +		dev_info(pci->dev, "Link is down in DLL");
-> +		dev_info(pci->dev, "Trying again with DLFE disabled\n");
-> +		/* Disable LTSSM */
-> +		val = appl_readl(pcie, APPL_CTRL);
-> +		val &= ~APPL_CTRL_LTSSM_EN;
-> +		appl_writel(pcie, val, APPL_CTRL);
-> +
-> +		reset_control_assert(pcie->core_rst);
-> +		reset_control_deassert(pcie->core_rst);
-> +
-> +		offset = dw_pcie_find_ext_capability(pci, PCI_EXT_CAP_ID_DLF);
-> +		val = dw_pcie_readl_dbi(pci, offset + PCI_DLF_CAP);
-> +		val &= ~PCI_DLF_EXCHANGE_ENABLE;
-> +		dw_pcie_writel_dbi(pci, offset, val);
-> +
-> +		tegra_pcie_prepare_host(pp);
-> +
-> +		if (dw_pcie_wait_for_link(pci))
-> +			return 0;
-> +	}
-> +
-> +	speed = dw_pcie_readw_dbi(pci, pcie->pcie_cap_base + PCI_EXP_LNKSTA) &
-> +		PCI_EXP_LNKSTA_CLS;
-> +	clk_set_rate(pcie->core_clk, pcie_gen_freq[speed - 1]);
-> +
-> +	tegra_pcie_enable_interrupts(pp);
-> +
-> +	return 0;
-> +}
+Ciao, Thorsten
