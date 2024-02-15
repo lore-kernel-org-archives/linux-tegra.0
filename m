@@ -1,140 +1,87 @@
-Received: from flow7-smtp.messagingengine.com (flow7-smtp.messagingengine.com [103.168.172.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58CC14006;
-	Thu, 15 Feb 2024 09:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.142
+Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59AF1862E
+	for <linux-tegra@vger.kernel.org>; Thu, 15 Feb 2024 09:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707988433; cv=none; b=Jx18HbnF9LZPgieQW+KfyNJj5n4c2BCLAI42Y+HjK8feLDtu1T8DW2GkKbqu6j1T1QfM38aY5n87lI9W8mnqczEGTZpB/EyO3VKZ4IqGn+gTHJioYD0FpkTIqqRC4xECqlaXBOEDyAIaEhCbkiTfSgcxSCZmgfQ1gf+JmBDYEQk=
+	t=1707989150; cv=none; b=eZ7aZSUJtycLVNggfINMwYjKIIBGtpVUckzUvN+0LELaoFokiV3n5ZBdSNz2/K+zYZ60dvwb360dw46vU+tHLDcF3x731PTZvJodgBQFKuCIMD6vb7GQl1o+WUw3MkWmto9Ay/5v0CkDiMwwRZV8DHJubCktbSJpatFSe5brpPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707988433; c=relaxed/simple;
-	bh=O/RwfPbZqb3ZvLhvEoH0BjeWEPwr1fYoyD00l7xYTL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0keAoOUf5JU3bIfNMhlZniBYIgeC2YSDWuatgHiJfCGGfpJFxMCFRUwwT9wOLOqpHZkAw68HH1+jVR3FjmAwfTsqoCnBg5c/KnUMCQg32TSdFjtY+oexG3HbZwHDm/eNmkXWpSWjvJNFUXEpqGZ9r2dn2Y1OcZelBF6WEBJ1NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=ieQ5BDR8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CtUvaV0g; arc=none smtp.client-ip=103.168.172.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="ieQ5BDR8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CtUvaV0g"
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailflow.nyi.internal (Postfix) with ESMTP id AD7AC2000F8;
-	Thu, 15 Feb 2024 04:13:50 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 15 Feb 2024 04:13:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1707988430; x=1707995630; bh=IC4m81oUgj
-	/tsdcLSrr2mqEGqSm9cd9fjfFWN3WrsQE=; b=ieQ5BDR8Bs4J8ZW50oIAXYAsao
-	UTrP6+iqpCdYfl+BE1ZU/iYQi40eFNZfAq5UehitINaslGjEjsylvNqg556xqtwP
-	vqT+ZXXZBsftS3968V0CdX63apikIw4AQ9rJTEg3DdarH/SuLjhlB7ApJVFu+WFZ
-	kisOFmznpVnDsSjXEvGiu90SF45Lcq0Xi/Wb894yfokeS34EKk3oskqJx5aTWTBB
-	V+/kyYYmMN1buQBiJdJwFSDH7D3kBl5sebixEGOd1v/ImizfbqiExBSA66SHJiYl
-	i3RwJIx90b6ybiWlmaN11RZFlwBGq2pypHKtv/3zXDgk0Ry3pT0oYaDMTp3A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1707988430; x=1707995630; bh=IC4m81oUgj/tsdcLSrr2mqEGqSm9
-	cd9fjfFWN3WrsQE=; b=CtUvaV0g2T8ifSQZWiCIE5LJK6NMOZ6lk3NlNBEvB7Ii
-	EHgTyVtYplEvuHy3DgmnELZpfTCAqBCmDhsGt3KnkxzTwRY2FroxVx0P2UiKiwH/
-	LGOk6Rki59VnzjG5qLmD4reI5GOxpjBoXK5krsGOCrwWk/cnRK86I/ZswQ9KFjNY
-	H/U0irm1accRpX/HGUkFk9o1PFVBGPIwersMNqtlJ7MXffDsXtDuOJkC5ETruE3x
-	3OSdI4ypz4DPoWJRHV0T+a98R5UlD9NGUCnITheXZPucfvVI+u8gd8JHOjEEk9OA
-	AbD9Xol0TDQLGhl4rsLl3++2COhaeAzrLU1ZmwSYxA==
-X-ME-Sender: <xms:zdXNZVmfO_RiDekOPDAVHtBn-NPqX5mTVRePn0b8oEulTwg_4jK5sg>
-    <xme:zdXNZQ3rjuquUHhf6-zg5hAltWOcuNtIUNdGxUYOp_gpCKbCctkDGNvt6PNbbQD8s
-    G6uYzluW9mMRQ>
-X-ME-Received: <xmr:zdXNZboaZDO3YBGaO93LVD-TAUt6mh-DX_MbjxhsG5YEbl4KnC2sT9J2CSMfM2nYs8-XqlYvkMhE1fo0-r-o1D84nJWqhpJT4w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddtucetufdoteggodetrfdotffvucfrrh
-    hofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
-    epfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfmjfcu
-    oehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepgeehueehgfdtle
-    dutdelkeefgeejteegieekheefudeiffdvudeffeelvedttddvnecuffhomhgrihhnpehk
-    vghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomh
-X-ME-Proxy: <xmx:zdXNZVnp_QUPhQz5CwySBHttpZNc1Xf-eWBRj2HJftKiRY9eINUqgA>
-    <xmx:zdXNZT0VEjVElFQlldwJh3isoTCKVkLLONzjR30Hm-FdC4oTDXMXhA>
-    <xmx:zdXNZUt16tIgFkoSN1XNMWaPLzG1Kt1Er7MMDoekQC7K2CEpyLgtyw>
-    <xmx:ztXNZWxfD0c6ofm_OMoiqXqAu-hjN5NFNX9jucnst7Hz7n8kGiKzBGEGti4>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 15 Feb 2024 04:13:48 -0500 (EST)
-Date: Thu, 15 Feb 2024 10:13:47 +0100
-From: Greg KH <greg@kroah.com>
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Jon Hunter <jonathanh@nvidia.com>, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	wkarny@gmail.com, qyousef@layalina.io, tglx@linutronix.de,
-	rafael@kernel.org, viresh.kumar@linaro.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Sasha Levin <sashal@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Shardar Mohammed <smohammed@nvidia.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Linux kernel regressions list <regressions@lists.linux.dev>
-Subject: Re: [PATCH] sched/fair: Fix frequency selection for non invariant
- case
-Message-ID: <2024021545-rise-plot-24c3@gregkh>
-References: <20240114183600.135316-1-vincent.guittot@linaro.org>
- <6ec54a8f-a602-4f33-96ce-0204f07046e1@nvidia.com>
- <CAHk-=wgjiVanO4ZS1hy2sfAFTN_pYtQqVQb_g+dbrP34M6xTDw@mail.gmail.com>
- <CAKfTPtA8W+SijB9D3GtNbC7o_XHUV-umcL6chJQbMDxWeX7exg@mail.gmail.com>
- <42052f23-d582-4533-a09d-a1de437836b7@leemhuis.info>
+	s=arc-20240116; t=1707989150; c=relaxed/simple;
+	bh=WW+WFmDnH2V+1GQsgAFG07eSRILRm8Qu3HVR57TR4a4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=hwsOqKoSO+LCdIvaNRrloeomtz2Neb8CMk6q+34+Dgt+ESH6gJh+Nn9gRg6ZC/ieLKXNHW0q0ywzCluOkPp7VitlANhp+esrFpsV83cC+P8FpsU5Hb/elWwix9lAh76vFyCukMtGNw4z1xwslsuS0p2hopMoERgPUTZooDKk6OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+	by 156.147.23.53 with ESMTP; 15 Feb 2024 17:55:46 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: chanho.min@lge.com
+Received: from unknown (HELO ?10.178.36.63?) (10.178.36.63)
+	by 156.147.1.121 with ESMTP; 15 Feb 2024 17:55:46 +0900
+X-Original-SENDERIP: 10.178.36.63
+X-Original-MAILFROM: chanho.min@lge.com
+Subject: Re: [PATCH 3/6] arm64: dts: Fix dtc interrupt_provider warnings
+To: Rob Herring <robh@kernel.org>, soc@kernel.org,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, NXP Linux Team <linux-imx@nxp.com>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Tsahee Zidenberg <tsahee@annapurnalabs.com>,
+ Antoine Tenart <atenart@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Stefan Agner <stefan@agner.ch>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+ Tony Lindgren <tony@atomide.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linusw@kernel.org>,
+ Imre Kaloz <kaloz@openwrt.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
+ <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+ openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-omap@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ Lee Gunho <gunho.lee@lge.com>
+References: <20240213-arm-dt-cleanups-v1-0-f2dee1292525@kernel.org>
+ <20240213-arm-dt-cleanups-v1-3-f2dee1292525@kernel.org>
+From: Chanho Min <chanho.min@lge.com>
+Message-ID: <f5aeffed-9365-b1db-4c32-4ed6da208ea0@lge.com>
+Date: Thu, 15 Feb 2024 17:55:46 +0900
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <42052f23-d582-4533-a09d-a1de437836b7@leemhuis.info>
+In-Reply-To: <20240213-arm-dt-cleanups-v1-3-f2dee1292525@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 15, 2024 at 09:45:01AM +0100, Thorsten Leemhuis wrote:
-> Linus, what...
+On 24. 2. 14. 4:34 Rob Herring wrote:
+> The dtc interrupt_provider warning is off by default. Fix all the warnings
+> so it can be enabled.
 > 
-> On 14.02.24 18:22, Vincent Guittot wrote:
-> > On Wed, 14 Feb 2024 at 18:20, Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> >> On Wed, 14 Feb 2024 at 09:12, Jon Hunter <jonathanh@nvidia.com> wrote:
-> >>> We have also observed a performance degradation on our Tegra platforms
-> >>> with v6.8-rc1. Unfortunately, the above change does not fix the problem
-> >>> for us and we are still seeing a performance issue with v6.8-rc4. For
-> >>> example, running Dhrystone on Tegra234 I am seeing the following ...
-> >>> [...]
-> >>> If I revert this change and the following ...
-> >>>   b3edde44e5d4 ("cpufreq/schedutil: Use a fixed reference frequency")
-> >>>   f12560779f9d ("sched/cpufreq: Rework iowait boost")
-> >>>   9c0b4bb7f630 ("sched/cpufreq: Rework schedutil governor
-> >>> ... then the perf is similar to where it was ...
-> >>
-> >> Ok, guys, this whole scheduler / cpufreq rewrite seems to have been
-> >> completely buggered.
-> >> [...]
-> > This should fix it:
-> > https://lore.kernel.org/lkml/20240117190545.596057-1-vincent.guittot@linaro.org/
-> 
-> ...do you want me to do in situations like this? I'm asking, as I see
-> situations like this frequently -- e.g. people reporting problems a
-> second, third, or fourth time while the fix is already sitting in -next
-> for a few days.
-> 
-> Want me to list them in the weekly reports so that you can cherry-pick
-> them from -next if you want?
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Poke the maintainer to get off their butt and submit the pull request to
-Linus (note, this is me in this case...)
+>   arch/arm64/boot/dts/lg/lg1312.dtsi                  | 1 -
+>   arch/arm64/boot/dts/lg/lg1313.dtsi                  | 1 -
+Acked-by: Chanho Min <chanho.min@lge.com>
 
-I'll get it into the next -rc, sorry for the delay, other things got in
-the way, my fault.
-
-greg k-h
