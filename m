@@ -1,177 +1,79 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6F212BEA5
-	for <linux-tegra@vger.kernel.org>; Thu, 15 Feb 2024 12:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C8512FF7C;
+	Thu, 15 Feb 2024 13:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707998565; cv=none; b=cZ311OwMPw8PHHjtK5tsormHkc/QuPcLWrTkpRdfpVcZTIbxpXX85koqoX1GGhZjfCS6n5pySe6v5zesFeuiSNsJfUVrwxpIXQ0O7FyMgeHoxjHW267KxnGjYXvsF+IcUjg5H+GfASJvJ50KAx3KDXPovqwgkaSLfRNXhGU78lg=
+	t=1708004719; cv=none; b=jjzG1PfnWK/LOlxEdSrlqyRK1mFEGIY0AjXXZ7P7t3cb/WbFe2XJKg6KIm3qW1/EEWOSVFMVnUMRzQbEPJUCfqdbAe1Nx+7Z5rLSOMLCL/vIBUUgv3l12n0tL7Oz7TNNg7pCAXP+q8v1ah1Etf3l8CxRS+dJcyHSgFXbSPdFjlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707998565; c=relaxed/simple;
-	bh=3jlg6YeJDDhpum/HJwBRurEn6l6PGW78sxf4+poXyDw=;
+	s=arc-20240116; t=1708004719; c=relaxed/simple;
+	bh=tfwPW1BfqUnBwuV7ndvI9kwgLvCcwttcwLBgnVwDmKo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S8lCY/32BHA9BUOc7FIGEHu99xly2NPMywwKOKHy58pOxcRTFtMu52W17W68T/PiIWO9tiNUvZ4nbuRNfXIBPOVqqmkDbVDgcwdhb+m/1X1m5978z9h7ziq+3DSUJWzfsS3mq7nQXC80tKPNDU861DYs27WkGlzYyXLXJ7Mox1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1raaRB-0000Gm-6C; Thu, 15 Feb 2024 13:01:57 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1raaR5-000sKN-Ds; Thu, 15 Feb 2024 13:01:51 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1raaR5-005KpH-0o;
-	Thu, 15 Feb 2024 13:01:51 +0100
-Date: Thu, 15 Feb 2024 13:01:51 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Michael Walle <mwalle@kernel.org>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, 
-	Linus Walleij <linus.walleij@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Paul Cercueil <paul@crapouillou.net>, linux-tegra@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	James Clark <james.clark@arm.com>, Pavel Machek <pavel@ucw.cz>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Guenter Roeck <groeck@chromium.org>, 
-	chrome-platform@lists.linux.dev, Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>, 
-	Fabio Estevam <festevam@gmail.com>, linux-riscv@lists.infradead.org, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Rob Herring <robh@kernel.org>, Samuel Holland <samuel@sholland.org>, 
-	linux-samsung-soc@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Sean Anderson <sean.anderson@seco.com>, Benson Leung <bleung@chromium.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Hammer Hsieh <hammerh0314@gmail.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, 
-	Michal Simek <michal.simek@amd.com>, NXP Linux Team <linux-imx@nxp.com>, linux-leds@vger.kernel.org, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	linux-mips@vger.kernel.org, linux-sunxi@lists.linux.dev, platform-driver-x86@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, Kees Cook <keescook@chromium.org>, 
-	Sven Peter <sven@svenpeter.dev>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Ray Jui <rjui@broadcom.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, Vladimir Zapolskiy <vz@mleia.com>, 
-	Hans de Goede <hdegoede@redhat.com>, Mark Brown <broonie@kernel.org>, 
-	linux-mediatek@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, linux-amlogic@lists.infradead.org, 
-	Orson Zhai <orsonzhai@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Alexander Shiyan <shc_work@mail.ru>, Scott Branden <sbranden@broadcom.com>, 
-	linux-gpio@vger.kernel.org, Daire McNamara <daire.mcnamara@microchip.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Hector Martin <marcan@marcan.st>, 
-	linux-stm32@st-md-mailman.stormreply.com, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Fabrice Gasnier <fabrice.gasnier@foss.st.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, asahi@lists.linux.dev, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Anjelique Melendez <quic_amelende@quicinc.com>
-Subject: Re: [PATCH v6 003/164] pwm: Provide pwmchip_alloc() function and a
- devm variant of it
-Message-ID: <ws4ybgtvfxqz53vk3i67suipzyqpy5y5fqeee5uf3ua6ow222n@i4ktjuorq3nl>
-References: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
- <9577d6053a5a52536057dc8654ff567181c2da82.1707900770.git.u.kleine-koenig@pengutronix.de>
- <Zcy21tsntcK80hef@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OtstF1mphlvL6PNBS+yBq7pMxc7j3ovmSNLFRHd/JBhKuc/LMqXCAtyYrPd6JTiF7fpnpeFQsVcVutP70aQ1kEJ5/2yKmRYXH4rWYkJ7mG+TCqoUAc0c5yZQj4Q+s6Gvhjq96dsDSdTChza2WyH7kZ0S5FpHUpMN7A87ZzWxP1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWI3RpXi; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWI3RpXi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 778EBC433F1;
+	Thu, 15 Feb 2024 13:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708004718;
+	bh=tfwPW1BfqUnBwuV7ndvI9kwgLvCcwttcwLBgnVwDmKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UWI3RpXixCcJyvLLteIW3OOg5247DhQ3Ti8by7iDTz8kN5iRS7jpv+OnuzuqlV2w7
+	 CgAi3pjaQyB5GwdSiv6CZlST3gSTM/aTrkfzZB/4FCXzJs5+BOLDVagaKWaDtdkuiQ
+	 bFMdkPN0AecQvEln2yrB2BQQaUKnxsU+Oa9ynSlzoxN79ULt94K8xdavkBbzCSNp8K
+	 vBmXehqIxnl+ues2Ghq+j+L/KwUhWFkqsy9X5waRncgxlUR8kwL+YXrIA4hBzYcxCg
+	 Mr52olTxr1jHI1foUKnYJttry0Z1/Eqm7B6nOKQNyTiMz8qk15+e26jmsn5QT14TSL
+	 0JDJIiezJcaHw==
+Date: Thu, 15 Feb 2024 07:45:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: Nayab Sayed <nayabbasha.sayed@microchip.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	linux-tegra@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+	devicetree@vger.kernel.org, linux-mtd@lists.infradead.org,
+	Richard Weinberger <richard@nod.at>, Han Xu <han.xu@nxp.com>,
+	Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>
+Subject: Re: [PATCH] dt-bindings: mtd: update references from partition.txt
+ to mtd.yaml
+Message-ID: <170800471457.4134974.8222118532104907656.robh@kernel.org>
+References: <20240208-partition-txt-v1-1-4398af3b7bb2@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eo4pepuhkmuwjzg5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zcy21tsntcK80hef@smile.fi.intel.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+In-Reply-To: <20240208-partition-txt-v1-1-4398af3b7bb2@microchip.com>
 
 
---eo4pepuhkmuwjzg5
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 08 Feb 2024 17:12:12 +0530, Nayab Sayed wrote:
+> Commit f902baa917b6 ("dt-bindings: mtd: Remove useless file about
+> partitions") removed the file partition.txt. Hence, in this commit, the
+> lines mentioning this file are updated to reference mtd.yaml, which now
+> includes partition{,s}.yaml.
+> 
+> Signed-off-by: Nayab Sayed <nayabbasha.sayed@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/mtd/davinci-nand.txt        | 2 +-
+>  Documentation/devicetree/bindings/mtd/flctl-nand.txt          | 2 +-
+>  Documentation/devicetree/bindings/mtd/fsl-upm-nand.txt        | 2 +-
+>  Documentation/devicetree/bindings/mtd/gpio-control-nand.txt   | 2 +-
+>  Documentation/devicetree/bindings/mtd/gpmi-nand.yaml          | 2 +-
+>  Documentation/devicetree/bindings/mtd/hisi504-nand.txt        | 2 +-
+>  Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt | 2 +-
+>  Documentation/devicetree/bindings/mtd/orion-nand.txt          | 2 +-
+>  Documentation/devicetree/bindings/mtd/samsung-s3c2410.txt     | 2 +-
+>  9 files changed, 9 insertions(+), 9 deletions(-)
+> 
 
-On Wed, Feb 14, 2024 at 02:49:26PM +0200, Andy Shevchenko wrote:
-> On Wed, Feb 14, 2024 at 10:30:50AM +0100, Uwe Kleine-K=F6nig wrote:
-> > This function allocates a struct pwm_chip and driver data. Compared to
-> > the status quo the split into pwm_chip and driver data is new, otherwise
-> > it doesn't change anything relevant (yet).
-> >=20
-> > The intention is that after all drivers are switched to use this
-> > allocation function, its possible to add a struct device to struct
-> > pwm_chip to properly track the latter's lifetime without touching all
-> > drivers again. Proper lifetime tracking is a necessary precondition to
-> > introduce character device support for PWMs (that implements atomic
-> > setting and doesn't suffer from the sysfs overhead of the /sys/class/pwm
-> > userspace support).
-> >=20
-> > The new function pwmchip_priv() (obviously?) only works for chips
-> > allocated with pwmchip_alloc().
->=20
-> ...
->=20
-> > +#define PWMCHIP_ALIGN ARCH_DMA_MINALIGN
-> > +
-> > +static void *pwmchip_priv(struct pwm_chip *chip)
-> > +{
-> > +	return (void *)chip + ALIGN(sizeof(*chip), PWMCHIP_ALIGN);
-> > +}
->=20
-> Why not use dma_get_cache_alignment() ?
+Acked-by: Rob Herring <robh@kernel.org>
 
-Hmm, that function returns 1 if ARCH_HAS_DMA_MINALIGN isn't defined. The
-idea of using ARCH_DMA_MINALIGN was to ensure that the priv data has the
-same minimal alignment as kmalloc(). Took my inspriration from
-https://lore.kernel.org/r/20240209-counter-align-fix-v2-1-5777ea0a2722@anal=
-og.com
-=2E The implementation of dma_get_cache_alignment suggests that not all
-archs provide ARCH_DMA_MINALIGN? Also there is ARCH_KMALLOC_MINALIGN.
-Hmm, don't know yet what to do here.
-
-> > +/* This is the counterpart to pwmchip_alloc */
->=20
-> pwmchip_alloc()
-
-Ack.
-=20
-> > +EXPORT_SYMBOL_GPL(pwmchip_put);
->=20
-> > +EXPORT_SYMBOL_GPL(pwmchip_alloc);
->=20
-> > +EXPORT_SYMBOL_GPL(devm_pwmchip_alloc);
->=20
-> Are these exported via namespace? If no, can they be from day 1?
-
-I added that to my todo list for all pwm functions. Will address that
-separately.
-
-Thanks for your feedback
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
-
---eo4pepuhkmuwjzg5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmXN/SUACgkQj4D7WH0S
-/k7Wcgf+PH/0QpqNNV4Y2/FkmhtRuwoboRFbLUmPSdsZXmpktX2oCcZmzsdo7ECA
-hWfFTUYhOspa5kHVcw+nxqCLWdGrQfQ4C0LtsPicyPjTXPVpP8W09vwdeatCiqVr
-GxgvULwRl/HxZXMUXZhJ5ToJRT/yuN1CLjpyjnINyIczC+jZFclxgx43quAbXMIf
-SCUAlxTR/Jm/mjCmH2N7Fftk64+hCNWB2gsjkaQsDUwtAelt3/J9u4h2He4NPzPi
-GaEZ3tfrkKkBWoolaCIhY1LqXtT3nU+qiP5t/bPD00DRDM2XtKsjvAk526Lx/OAu
-y+6AtGBx3n9HzXzyJ+bdew1oAMND9g==
-=44B0
------END PGP SIGNATURE-----
-
---eo4pepuhkmuwjzg5--
