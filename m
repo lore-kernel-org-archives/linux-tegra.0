@@ -1,57 +1,57 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDC212F36B
-	for <linux-tegra@vger.kernel.org>; Fri, 16 Feb 2024 14:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7153612F39D
+	for <linux-tegra@vger.kernel.org>; Fri, 16 Feb 2024 14:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708094440; cv=none; b=tL01EQ0UhzxJFxNc2UG07LmiWUq7/rL5ALjpgVu4/Ym3l0nQ+JlCZ4OfD8RlbUbhw/UQphacd4XFHsuN6bVUWUf3DZbR6O9ZGi9APpy7KIdHQhh+bJtLzWNHVwCHiuokdP1Og1CqPC49t1byalMPzXGWmq/RFotZbI6qbBXSJGY=
+	t=1708094442; cv=none; b=pkMS36Ws8s2jFB4AjobfmMz57aCSTuVw3SEJ7IeP9NSsybX5Mgc81E98xTd2sd3IU0e9Cr3ldroYPgqI4cFl0RT0OPDX/wZEl0/04G2jEnsncJgaeZdwX7ivoNMLBg2a8uCvsO5TL7Iuho8Y3H0u+vwULUgiiallX7op1+7Rmcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708094440; c=relaxed/simple;
-	bh=JRNY0w7Ro2R0aulceus9kSJUlVFLy2lL65NJT4HL82U=;
+	s=arc-20240116; t=1708094442; c=relaxed/simple;
+	bh=pD34V4Xis6XvSKzWyAyrm6YM5UjXrZYGLUr4MspUCqE=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T8OS5xYrTUhXoHa3/+B2ymlu37hBz7cHC49Q/0naAAv6Lpebdt/vJJzyEuCUAwvLKwegbF7799qFmHQmH2zaO0CvqNAhwTmDI96xmKRRltsZ5ZC0o0RG8Gua9ae2Ewq+IT2ndxP3+qlmriKD8AodaaDVimlmzddUOoCyTPI3ExI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HMBaU6me; arc=none smtp.client-ip=209.85.218.43
+	 MIME-Version; b=f9qOdr6kouWJCHuCSv2sJLhJ9r9vYJUItELeI1/erO9JWmAqfxays4y23+bkzeKjlNlE67Kp0ILDc11MoNyOBunkf+B9zjFCE5zGWeXwDpiGcjkqNV6hwK55hzRYjj5E3+qm00XJMTA5V39CcKw9Wfnejet46+lbv7e/UxpGr7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W49GTaCy; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HMBaU6me"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a3d159220c7so118241566b.2
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Feb 2024 06:40:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W49GTaCy"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5639c8cc449so1089133a12.2
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Feb 2024 06:40:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708094436; x=1708699236; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1708094439; x=1708699239; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=asD3ev0Cb3OxFqrbvaOTmglMW6LCxeDZuldyNVrUzqM=;
-        b=HMBaU6meM0zNFQx8a9qVCgBMTlIgdLdcpZA4R7rBTUt0icL5+6V4gr4mQxSwK/cJN9
-         Mbm6PDM2lU88SRDLKHL4Kop0MMe4om6ZsKAKJpHAQmczJJwxvtAZXsXQKYUUZe1Yyv/6
-         VKX/RWrR6gbEb0UKEjR5L/11s0GJaOpQTQ+JG/S0ZKuc6j5qJ6tq7DYngDXf+Uj4/r3b
-         Wi4r/8GYa5d+T3WQW30x1uXOHwAECEdBeg6OzhKPTdATJTqaiQhIz+oLMtsiOI4d76gU
-         50/XwMAoSY7T+5as8AillwaOru1Dii7w5OAEcPdmtNoU0tMIn15dW6GfjkkzbmHvDtN2
-         w0yA==
+        bh=ddHRp/a7ql2hO4wtU3P1Kr5z86y1yTWMkn8d+hM85z0=;
+        b=W49GTaCyJs11FwPkJ+dUvl8jE2fMAalodGP6ajU/LhFoLdb+Y1eKZ88yYH30g+//gN
+         XjOjsWtW5MqSrgpb72vRmcY8RXXCj0ET3rRtEKZahhg5Xbq1BKXSeAObBVpjqSel0F8l
+         miuw52CGK9EjBkxYqP4ZNJCn0BPq02EmRadZ5qoqVdkIV0MOrJoY5y1ArluR6aHSP6KM
+         QpUb5SC61Ds9K5yanjidGNDbYeHFjS42Sd4POQ2HOQ+a4BNbXkMAGR7MSWeiyNCt9Hpp
+         IqnLIjgGVV73epu2PL7OtbL4j86Ycpw0lYq5074zysRTYjDMIWFTiacVg/Bi9QVNzye3
+         Vf2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708094436; x=1708699236;
+        d=1e100.net; s=20230601; t=1708094439; x=1708699239;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=asD3ev0Cb3OxFqrbvaOTmglMW6LCxeDZuldyNVrUzqM=;
-        b=NSd9I6g6xyeIiFu5FTGX1wJUoTQYMjUtXhiLyyxjI2UsXJc8H2W0wNAwBYbfV069eJ
-         CS/mwAHFk0aqOM7/nHQ5wFcP+EDqAkopnXzm7e+zu8du0WJFNakT3HrqIdvggzJpGAOw
-         +DaJ1LUlw+5KRN5QhbJ/TYdpVufeW3pwXF02GE9r1hHUHe2wLgR5m0vKBOQ4kI36FqGJ
-         BFSjcZyiOLBcF0W61GoKkSooHmMJsXJMEuW1+zgxpdzhdJndpfxofNlC5bxWm33nlxVa
-         wtL/DKQHuEEfNa0a2C56gSYhu4Zi3bSugxrkV6S4bpHuJqTELxoQ061zVqSJKM20Ls1k
-         ilgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcraEl9Jez1ZnQeWxHm4h9BfDO+Ds9WpOO0/jztcrqowvBKC6eQwcvGdynlDAbVA2H/hFhJSrtzeGhRw7cJ1dlvQGffvWpdH6kSbo=
-X-Gm-Message-State: AOJu0YynykPLXixTBVYlbgLIyJCb+i8E7dyuKdgg3B88YwuNQCYNv6wq
-	Tjzg+rzVd5K1jqg0aR+BM8NXrwVDxu+v+rkpyNXcWY+/T1Ucm8dZI/dUqsNxykw=
-X-Google-Smtp-Source: AGHT+IGCyUGN+VLUaRlt1OZxHWuQFmwSgWLlGY6S3fHlEaQRS780PIZW2GJtYg2x+OIezg266xrJrQ==
-X-Received: by 2002:a17:906:7d86:b0:a3b:f054:92a2 with SMTP id v6-20020a1709067d8600b00a3bf05492a2mr3792983ejo.59.1708094436519;
-        Fri, 16 Feb 2024 06:40:36 -0800 (PST)
+        bh=ddHRp/a7ql2hO4wtU3P1Kr5z86y1yTWMkn8d+hM85z0=;
+        b=D5QI4v0hehzm+wI5nwEKy3r+QL7iZNr6DUAVfARON6s5Zf6SIE0xaeBLlWvYrGCbhB
+         2SjIwwOWiFj8XKk63he9qdiz6XKYpyKjXSoZ1MM3O+DihMY95a/qrXc0qZN/R6T9DR1M
+         zFyl1KK8AwrpENMKSmz9qIbfY7kRYHy7iF8Wvjs/zz9Ta38JbqgDer/bk+9jAixi7MKk
+         ArLnShPk69IyuN0txTSPEC3hdQORcBx1Z3shksZ45hiBrScfxUWdwtUK1XTMn6sxdn8Q
+         8uYjUFr3Fue3o8aUs43W25Up4Wh7lzAzqG8i6w+qxRpjTRWskIDfm/Y31ThirD32cOek
+         Z4Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFzcn2mrJnHSFlkumjSEmzasrmQkCtIpboU7W0F7luqFhqihBH5j36R/aDNMCjn2zMKVjbtrjepdyHZGGFRTBtfMG9s9NE5bNGGes=
+X-Gm-Message-State: AOJu0YzPuU0xRFiI33ZNI7FLG85qvkZjEHo/2VbSw9YhFWltMQbQYPww
+	NIWYtfqEQLI2ZJZRGgrgUOzUBctGDAeJdM0maM+YnZ+vlIo1Ka/kygtL7gROpDQ=
+X-Google-Smtp-Source: AGHT+IFjUr0pwHx7I9NJd2MhgZLwiZF/Q3I4EAlN6VBXxRxf0gB7BEu6U93gT2kjFbtxE6rZ4t4ByQ==
+X-Received: by 2002:a17:906:d7bb:b0:a3d:704:d688 with SMTP id pk27-20020a170906d7bb00b00a3d0704d688mr3675983ejb.47.1708094438802;
+        Fri, 16 Feb 2024 06:40:38 -0800 (PST)
 Received: from krzk-bin.. ([78.10.207.130])
-        by smtp.gmail.com with ESMTPSA id a8-20020a170906670800b00a3ce3c5b2a4sm1592942ejp.195.2024.02.16.06.40.34
+        by smtp.gmail.com with ESMTPSA id a8-20020a170906670800b00a3ce3c5b2a4sm1592942ejp.195.2024.02.16.06.40.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Feb 2024 06:40:36 -0800 (PST)
+        Fri, 16 Feb 2024 06:40:38 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Hector Martin <marcan@marcan.st>,
 	Sven Peter <sven@svenpeter.dev>,
@@ -90,9 +90,9 @@ To: Hector Martin <marcan@marcan.st>,
 	linux-sunxi@lists.linux.dev,
 	linux-tegra@vger.kernel.org,
 	virtualization@lists.linux.dev
-Subject: [PATCH 3/4] iommu: constify fwnode in iommu_ops_from_fwnode()
-Date: Fri, 16 Feb 2024 15:40:26 +0100
-Message-Id: <20240216144027.185959-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 4/4] iommu: re-use local fwnode variable in iommu_ops_from_fwnode()
+Date: Fri, 16 Feb 2024 15:40:27 +0100
+Message-Id: <20240216144027.185959-4-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240216144027.185959-1-krzysztof.kozlowski@linaro.org>
 References: <20240216144027.185959-1-krzysztof.kozlowski@linaro.org>
@@ -104,49 +104,28 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make pointer to fwnode_handle a pointer to const for code safety.
+iommu_ops_from_fwnode() stores &iommu_spec->np->fwnode in local
+variable, so use it to simplify the code (iommu_spec is not changed
+between these dereferences).
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/iommu/iommu.c | 2 +-
- include/linux/iommu.h | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/iommu/of_iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 26a31ba4f72d..a1f9bb8fa041 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2987,7 +2987,7 @@ bool iommu_default_passthrough(void)
- }
- EXPORT_SYMBOL_GPL(iommu_default_passthrough);
+diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
+index 719652b60840..3afe0b48a48d 100644
+--- a/drivers/iommu/of_iommu.c
++++ b/drivers/iommu/of_iommu.c
+@@ -29,7 +29,7 @@ static int of_iommu_xlate(struct device *dev,
+ 	    !of_device_is_available(iommu_spec->np))
+ 		return -ENODEV;
  
--const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
-+const struct iommu_ops *iommu_ops_from_fwnode(const struct fwnode_handle *fwnode)
- {
- 	const struct iommu_ops *ops = NULL;
- 	struct iommu_device *iommu;
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 600fc6e6f308..269ef0af7f20 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -903,7 +903,7 @@ int iommu_fwspec_init(struct device *dev, struct fwnode_handle *iommu_fwnode,
- 		      const struct iommu_ops *ops);
- void iommu_fwspec_free(struct device *dev);
- int iommu_fwspec_add_ids(struct device *dev, const u32 *ids, int num_ids);
--const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode);
-+const struct iommu_ops *iommu_ops_from_fwnode(const struct fwnode_handle *fwnode);
- 
- static inline struct iommu_fwspec *dev_iommu_fwspec_get(struct device *dev)
- {
-@@ -1253,7 +1253,7 @@ static inline int iommu_fwspec_add_ids(struct device *dev, u32 *ids,
- }
- 
- static inline
--const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
-+const struct iommu_ops *iommu_ops_from_fwnode(const struct fwnode_handle *fwnode)
- {
- 	return NULL;
- }
+-	ret = iommu_fwspec_init(dev, &iommu_spec->np->fwnode, ops);
++	ret = iommu_fwspec_init(dev, fwnode, ops);
+ 	if (ret)
+ 		return ret;
+ 	/*
 -- 
 2.34.1
 
