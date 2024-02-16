@@ -1,57 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F77255E7F;
-	Thu, 15 Feb 2024 23:12:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADF0FC01
+	for <linux-tegra@vger.kernel.org>; Fri, 16 Feb 2024 01:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708038735; cv=none; b=mPSb9K99t1xp3iGtr7uTiz/JQTq7DqFeIFS0UziTYoSihtzU10B1ucdUmW8HiPdWqUpqPsycrekKuW2OJHPnPz5EtPWcUnWbCGXiJwhGLhcIEzhIbkikenpCMK3o2L9ZQ/hnPfTyExsjXKdFJMmnHFHqY8PNzzpAun8SoSHkMDE=
+	t=1708045594; cv=none; b=JQu02VDRPaJPJiHMecqYQig08OywLoYztUBuaoyBrAO66Y2to8p+1J2Eqn4Le1lGlSowhEZ839t9fvD35XCmW9ylV/1LqW7cmiRNFT52krG1zeTlmdzk1lnval6rMV2pUONcl3Q1D0DnNYZTqsRt6rR3mzGlEaT56v0D/njjckY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708038735; c=relaxed/simple;
-	bh=Eb/9YuG1ExOw9aKA1oqZbr3X02sG3sH9UxVJp/eMEdU=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=A8/faeqstJc8uDPzLCJjE0eIfFPv5WdkhucizwpZgZSvofJ6mI3VeCM3wdu9dh8fOwi0LwcP/KEGmIs7wIC62nb3FxCehe6XlIY0YdgvBBsNcyPm90MA8msb6P5EhXkB8Fz0hTtF48K/5+eIlpLA4oi99v0j8VTngGgx9uV+UmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKWARMnY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708045594; c=relaxed/simple;
+	bh=pdX4YFmXvkCYJozarbc5NuAljGq2QKgP22r5bHoyo6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PKMXOO8JsG/2JaxSvebfCvGUJ/hY8Y5gyYf2xd6HWV94gQ7UBX6AjV5+pA+p78RpVy44Sz00u+7k7HqC9+UK+2mvlUiKWrL3U9kFYHewVVWxU70nMmYcM+rjdtbj5u4PTwbfLO4FIUjYLN6V+mISSpVhKRFXxgslZ/DoPdgdMxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=fMkLOjyd; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKWARMnY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8FE2C433C7;
-	Thu, 15 Feb 2024 23:12:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708038734;
-	bh=Eb/9YuG1ExOw9aKA1oqZbr3X02sG3sH9UxVJp/eMEdU=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=VKWARMnYNviJPXiOtKuoccPiteYKCHSVFRLfobnKgCAmFe3rC2z0Wd3jsy6VvnDNO
-	 LU9halfyBb8j8Gtgt3x3Yl2qjLDsAaN4XWZY7vP2J42INqR9FJQbRW1OHvIkeGQQFp
-	 uBCYksmhH7HE6OaG4D9ym/b893RmduQl4SpP0JiZwyMF3BNC3fvmpvB1RmIpvsXepi
-	 DfFkHY0/gR6aJRNCjSdzlugiIA0yQlY7txVukxSAYJg5oBs5tW432Y/k7zJ3C35m36
-	 +j4EikR/4v5vFeyHEmEG7BhaHzvhhTsPRPWFIm8wrAx8nLp781+VxGDyfk8VT7NiAg
-	 cIy678urUpZjg==
-Message-ID: <38e7e80f61f7c67c984735cf55c3dfb3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="fMkLOjyd"
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-42dd5c6c774so3758451cf.2
+        for <linux-tegra@vger.kernel.org>; Thu, 15 Feb 2024 17:06:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708045592; x=1708650392; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SJOk5GBoNGjtYX6UP2FD6x8pshcgNrZex6zZ50AbGYM=;
+        b=fMkLOjydWFzyo3tHChBuLpbIRXKs2SDBgSpHot0H0eZk+Mn7aohqz4yAeUXkcGbukN
+         tCIyuhwdsqBRQMkUJXoPVDVF1XEmf3gseQlQC4LZsyeSgnD5/KuSxFf45nfB3baDvU0i
+         C3vubDKbbYUj4B/0Kk0lhrHTVw6Pu9dI7ta4oTFx3U/1bPUWwN5LLwGjBvNM82vY5qDq
+         zGuZ5kAmJ3+rohu93m7E5zvDGTt0jy6rL1mV1jk8Ue7zRP4fK0U7ZsbSgVGTk7M4StmG
+         /L6CKRwJHr8psQ+pYeuWTvk0XGY/cPu5VBSKAEtGccMgdzH09vKaNVqiLW1lRTbzrLY9
+         y9Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708045592; x=1708650392;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SJOk5GBoNGjtYX6UP2FD6x8pshcgNrZex6zZ50AbGYM=;
+        b=MjlToFvwVihiXCA4oiVu3uADLpFj0+S2EB0psMbdFSy60ATLHb6xJWF58AMoFE0154
+         OWwMBiL5C+f/2/1a9poh/TOj9WB+h+rdVIhTPsOhtzhcdri3pUSI47+WJIvdCD0v1SnF
+         0ApJ2MUkfyyQSv+oz7CNGd5PHzKhp3rw8hsUqLMZbQKSNdMcC5Hs0ba/unPsF/F3HQlD
+         FEBdEyaPyvL55k53AorRHe+XgAAYX0FRku8PBys/JrLR5P4hR1YSZGpY87i3HIBOCQ45
+         bX0UiAmFw0zGS4SaF01l8M66+b28yflDjjRWQLEcBDrxQITtlDPP/Y7QCmYQcbG+ASoL
+         IoBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJz98EzEUeC8xwhbKKEIraBJ+HouoBAt+VoclnXZkeI81byCjGByWKprA48oW/fKXUZJ8dEgs0lRd1DhcWkJmFqZ5kLYwXhoAR6yc=
+X-Gm-Message-State: AOJu0Yw9fjAUP4jl7pgqnUWcMFcJjwbSDH0KErd9gMthvlE3abY3Urnd
+	F9UV7JAA+9RliOQ3tDHlW3jcOAbOzheFKmSpbi37tL8g5TguN5nBBMWgd8QL9ERoVJ9Oo68GTxG
+	a6KRgK27I+HBOcyeWIXJg53J3ZhG6PsA3r/Gxdw==
+X-Google-Smtp-Source: AGHT+IFn+h3r/AaoF4MfmIEWnQLUDUmnx1Kec57gXxwxEXHIeMLPIowE5fZkN66KK2rAD8UQkIaND2e8M33sIsMCnhQ=
+X-Received: by 2002:a05:622a:1048:b0:42c:798a:a053 with SMTP id
+ f8-20020a05622a104800b0042c798aa053mr4373943qte.55.1708045591818; Thu, 15 Feb
+ 2024 17:06:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240208163710.512733-1-krzysztof.kozlowski@linaro.org>
-References: <20240208163710.512733-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] clk: constify the of_phandle_args argument of of_clk_provider
-From: Stephen Boyd <sboyd@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Jaroslav Kysela <perex@perex.cz>, Jonathan Hunter <jonathanh@nvidia.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michael Turquette <mturquette@baylibre.com>, NXP Linux Team <linux-imx@nxp.com>, Nishanth Menon <nm@ti.com>, Peng Fan <peng.fan@nxp.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Sudeep Holla <sudeep.holla@arm.com>, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>, alsa-devel@alsa-project.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-omap@vger.kernel.org, linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, patches@opensource.cirrus.com
-Date: Thu, 15 Feb 2024 15:12:12 -0800
-User-Agent: alot/0.10
+References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
+ <20240207174102.1486130-2-pasha.tatashin@soleen.com> <8ce2cd7b-7702-45aa-b4c8-25a01c27ed83@arm.com>
+ <CA+CK2bC=XyUhoSP9f0XBqEnQ-P5mMT2U=5dfzRSc9C=2b+bstQ@mail.gmail.com> <b008bd2d-a189-481f-917d-bb045c43cb07@arm.com>
+In-Reply-To: <b008bd2d-a189-481f-917d-bb045c43cb07@arm.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 15 Feb 2024 20:05:55 -0500
+Message-ID: <CA+CK2bBTe93nXzY3Qhty+821LrkjBVnQDxro3m7Y-GVihSP18A@mail.gmail.com>
+Subject: Re: [PATCH v4 01/10] iommu/vt-d: add wrapper functions for page allocations
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
+	yu-cheng.yu@intel.com, rientjes@google.com, bagasdotme@gmail.com, 
+	mkoutny@suse.com
+Content-Type: text/plain; charset="UTF-8"
 
-Quoting Krzysztof Kozlowski (2024-02-08 08:37:10)
-> None of the implementations of the get() and get_hw() callbacks of
-> "struct of_clk_provider" modify the contents of received of_phandle_args
-> pointer.  They treat it as read-only variable used to find the clock to
-> return.  Make obvious that implementations are not supposed to modify
-> the of_phandle_args, by making it a pointer to const.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> >>> + */
+> >>> +static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
+> >>> +{
+> >>> +     return iommu_alloc_pages_node(nid, gfp, 0);
+> >>> +}
+> >>
+> >> TBH I'm not entirely convinced that saving 4 characters per invocation
+> >> times 11 invocations makes this wrapper worthwhile :/
+> >
+> > Let's keep them. After the clean-up that you suggested, there are
+> > fewer functions left in this file, but I think that it is cleaner to
+> > keep these remaining, as it is beneficial to easily distinguish when
+> > exactly one page is allocated vs when multiple are allocated via code
+> > search.
+>
+> But is it, really? It's not at all obvious to me *why* it would be
+> significantly interesting to distinguish fixed order-0 allocations from
+> higher-order or variable-order (which may still be 0) ones. After all,
+> there's no regular alloc_page_node() wrapper, yet plenty more callers of
+> alloc_pages_node(..., 0) :/
 
-This will almost certainly break the build once it is merged to
-linux-next. What's your plan to merge this?
+The pages that are allocated with order > 0 cannot be freed using
+iommu_put_pages_list(), without messing up refcounts in the tail
+pages. I think having a dedicated function that guarantees order = 0
+pages allocation makes it easier for the reviewer to follow the code,
+and ensures that only these pages are put on the freelist.
+
+Even in the existing code, the order=0 allocation is wrapped in the
+*alloc_pgtable_page() function.
+
+Pasha
+
+
+>
+> Thanks,
+> Robin.
