@@ -1,110 +1,158 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873F9768FE;
-	Fri, 16 Feb 2024 11:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644FC59B5F;
+	Fri, 16 Feb 2024 11:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708084028; cv=none; b=Q7mvDmWHiPIdiNkQOQVS2/iZGuC2+phZwmRQY8ku0D9iFcsXng4HXyjkLAmsf5eqcTgx5gXOjILEJzS2Rry2dr70omvZmX66J66cCh+V3axb9ZG8j5pjZGOkE6EG+AiFOVzfIJ2wcw4/dnpFhJLMsfit0i3XXPw+82aFdpCD3vc=
+	t=1708084403; cv=none; b=Ly/q5bt2ewconZGbrYma3/GcK4bkV/4g3bvVeLI2DY51uH1YItypRq+g0DcqkMgiop+LRsDkvoAFeM5mEC4BKazMlnsAPJ37uO4AAaLAmYsGXLDPZYPJ2bLIEl8k08Q43UpKbhW7NUI+1Ky6gRp/tVN44EqpMZLiLzv4+Uc3L1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708084028; c=relaxed/simple;
-	bh=brDqgu+veoHirwdkbKDf0308k8BngHj6rCKvWtbcL88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cxQAmC7f554DimfYKOs39as31NRbkTtH/zdd4CkoGkng1pyBpj5sq171Vw5QnFEZF/aj9jFZvQvZj8M+ZT1/VM2ZQVpU7Z4kj9syYaLaKrLT4xmQXLgHs9559/lsDyKoEQSkd/IkpC3BPfA+rAjEbqxIf0AVqfC41u6HU0yC8xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1708084403; c=relaxed/simple;
+	bh=rprh8FmcfW3UGidBPWanTNOuKUyGfL0148rKwu9AYlI=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=cBx0t46h05Aa8aab1kKZXWk7RWKFFRDb6bkeF8OphVhHb+1yc6aKjclFB+jyHj86vkY+OmvageWhVG77CyfGw6ObGMiJM705JZzmUXZyrlwsjNC+bLcZUAv7FlUkp+l7wtMnlqQOCCgaM/hj0rHWWwN9oLD8IvHzUTzLi26gc1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z+SYydbn; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-60782336a3aso4026707b3.2;
-        Fri, 16 Feb 2024 03:47:06 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z+SYydbn"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a2a17f3217aso248211866b.2;
+        Fri, 16 Feb 2024 03:53:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708084399; x=1708689199; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FONUejouVKRdUMu9T/GH3sU6Bm1U62wIrGpiqv/zAl8=;
+        b=Z+SYydbnv0Qv9993W+V8ECZtwJePy1QGv9N0Igz7kEveLKfk5qfirhKJj7piPqikqs
+         lZC75I6YQ+UP0FXci+bLPZeAnRjuLS+j/RD08FhgwMh5exWkww5Q99cx/AQccRnHqvS+
+         HO74MCIjubVPnARbJh2Xj6vf8gpZSnMpy2Cp3bEMxLX7PL4yft0h+Fz1L/EzhnwbByOs
+         8PdbqEtabrB+1L2Nl2hW0R1PZ0lfh/46j5jNHopxq1nE84D16dxEZxxlw+mVypc9XY/q
+         l6VMzkLJNSaX1po0CuIT9ZmuYi8DapqGIR04eUHDFPzBYSkiTJhDrrH0//5FAaKUvL5Z
+         V/Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708084023; x=1708688823;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lQ7tnAKFUkQOj4UEtgJN4h/6u4fraBJnTp0nHjLT6cQ=;
-        b=NuY6vEBgIG9KmAvbppjbFS0iSNqaQQuVcW03ilk952q3G+5H6TS4CO8yqNT+u2VI3E
-         h5kFZnwj4sGOtsD9dNyv6WnwGuIZ07vhSEItHlkLX/CJ5I7nNM5nr7aqOE7AIrPuAqOC
-         1XKFJGCT9qFDXTARisTu6nFk66N8wRk4wkySY+ND1QJ+zysyGX3J38J/IVVYv6j8tDfi
-         20wx1KqsCZMH8efFLpHr0WMGjRPEmFHaPIP49HMqDmw0yfzSwYltd8oc2VmrF/wI1e2F
-         oGUAg/tdv0NPahRl0wLeEigZJKPOf03+kjnEqL8vFXOmQHKuG40xd8+bpGSJZFNvTZGM
-         LlYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFzZ3g4WANKqtZZ9VlC7Jw/knLzFtY2VvPmEZNYbXXKPIK29Y8K2BD7BUsP+QXhKjLrNpKOR3XekjYlWQTBtSTMDqAEHdImF5IBY7jb0EIwuk276tqtUSsiYUK4dENO0BYX7/Z5tkyge9b9DM9jVgKGtN/6DMzcTjH6akhagdPVeRougKNRrc8ZhDepS2FEzk5dbEwTBKOqvh6petdRxzoDOnsASXDFRbb3wgTKDD3Acb5XhavvM4+B2NtdscptyH7AGGnweHO5QhSJ5zKhrKdEgMhqRLokglysst9E5w+RpAtXTBBCpXvz1I+rRprqc8bGJJBv+NbvFNzC6gQgVZm8tqBAbztCMNas0zOz0UkwdDDzdkdSrssNvIodA==
-X-Gm-Message-State: AOJu0Yy1PyopLybDwhsRhRNyhHoX7zLqkA7Fxhoch1PliJvUdKRss3Jo
-	5/dGVbJYGclu5g8Cgj+j7RgnUcW/JtnAUin0pzp9oJDY8PoNag4WzIlf3cFysgk=
-X-Google-Smtp-Source: AGHT+IGOZo23mSGj2qVG09ybbc13KqERNgE2Z8Lel0v6H8fWWUPfJQWUuJf9NEMeSLF+la3qPj88JQ==
-X-Received: by 2002:a81:4c8c:0:b0:607:8196:9d69 with SMTP id z134-20020a814c8c000000b0060781969d69mr4522995ywa.30.1708084023056;
-        Fri, 16 Feb 2024 03:47:03 -0800 (PST)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id a125-20020a818a83000000b006040f198d3esm301001ywg.142.2024.02.16.03.47.01
+        d=1e100.net; s=20230601; t=1708084399; x=1708689199;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FONUejouVKRdUMu9T/GH3sU6Bm1U62wIrGpiqv/zAl8=;
+        b=lvDdBnc1MggmjShlFYel+NnbnbnI2A+oV7qozLwtkaZNib9lGg9JZe6l1OUnTsBand
+         CJYm4TY8kS6NiuBnMFXKuaGvlHdW+R2+ODo4kO5be5q0CxuvuTDELr42nhwduojlWDAU
+         qODAzv7fBG9q3D6NYV44bwFnoI133xyUYceNGTNLGQge1NnTK55Gi4bVdBxwu0PwwqUP
+         fi47cJycV5zmPS4F8hlG6PjRlbobSRM/ZIjar0DRtjiqibV+/VIfSZcvHTCZFCsiFiN9
+         Eu0d1ExttedG+iSy4RzP3DUgCSfzf6ErOyqe6UQ7GVZbZr+kGXVmX1x0A9LAlTcpO2Bt
+         1NlA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1+fxjzsAr8z4jrslhUDsavcUG1nPl5c+KSQZ1jguUUkLDMyLgPQNW1AKJyIyDfMGJcnQeh9XyHs4efg0TxCG/pGGVUvX6VS0vS7HlTfaxsBhqCsafCxKyPDV0Vfn5kUtdC9SZj0ty1CI=
+X-Gm-Message-State: AOJu0YzhXfYfegUxOqrzMVaIYysSf+27LQwvE7XEwok6mRWISxQ6wU0K
+	UDB3qfmiBsDQVWuc3RfkgTQBlK7UHgpJ0bucVPg/tA4P1BBYsrf8+oTWSPuC
+X-Google-Smtp-Source: AGHT+IETKBqVDm9ABkmTptZnMQ26UxMCndCjuDTSarB5s9mLn3o//7N3rMAR3bUK8JqRgEzNJtXBDw==
+X-Received: by 2002:a17:906:4a17:b0:a38:107a:94f6 with SMTP id w23-20020a1709064a1700b00a38107a94f6mr3046427eju.71.1708084399406;
+        Fri, 16 Feb 2024 03:53:19 -0800 (PST)
+Received: from localhost (p200300e41f147f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f14:7f00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id sn24-20020a170906629800b00a3d296f46besm1471739ejc.120.2024.02.16.03.53.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Feb 2024 03:47:01 -0800 (PST)
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dcc71031680so609771276.2;
-        Fri, 16 Feb 2024 03:47:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX/33bHJ5WVDjuKg1h+K20HSFSmfoX0dje+Pdcke0G/yQOK9V0feprsSCKA1DfHeklL/Md53BZThhNi7KlefgL6OgBrBR3FWnNtPQ7QIZqprCc8UUjHH8if981HtunXUuEJu9HW12LvxQAxlh9H1gsyW8N6P906LUOaOkbuYSoI15GHqAhh/ny2zVu5VbToppT3ptxf5vmGpiPPnOXps/H9FUkUjH/pO7nThOnAMurKIZ+rTdWWgOxyXjr3swevrnkFK1Tne6+bGd4fNJCye27zGkM12CRl9rBM6E+cLly2ijj83hChsBpJ7DvDvy762C5JyHgc9UOieLPUd5+eKl7GtgZGvnAxKRaMCBCV6ksn7c38M2sdlkpOOvDXVA==
-X-Received: by 2002:a5b:708:0:b0:dc6:cc35:35e9 with SMTP id
- g8-20020a5b0708000000b00dc6cc3535e9mr4412013ybq.35.1708084021189; Fri, 16 Feb
- 2024 03:47:01 -0800 (PST)
+        Fri, 16 Feb 2024 03:53:19 -0800 (PST)
+Content-Type: multipart/signed;
+ boundary=9dee9a19cb63a77cc8f9975bef85216d69227f6fdf7a09b5460baac60383;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240208163710.512733-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240208163710.512733-1-krzysztof.kozlowski@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 16 Feb 2024 12:46:48 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXzObEqExtJZpUpXLfCWB5fW9ZhekbbotcxcMrN+uj0Ag@mail.gmail.com>
-Message-ID: <CAMuHMdXzObEqExtJZpUpXLfCWB5fW9ZhekbbotcxcMrN+uj0Ag@mail.gmail.com>
-Subject: Re: [PATCH] clk: constify the of_phandle_args argument of of_clk_provider
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	patches@opensource.cirrus.com, linux-stm32@st-md-mailman.stormreply.com, 
-	NXP Linux Team <linux-imx@nxp.com>, linux-amlogic@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-phy@lists.infradead.org, 
-	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Date: Fri, 16 Feb 2024 12:53:18 +0100
+Message-Id: <CZ6HDVZIGHOE.2SGOQNXEGENY3@gmail.com>
+Cc: <marvin24@gmx.de>, <ac100@lists.launchpad.net>,
+ <linux-tegra@vger.kernel.org>, <linux-staging@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Staging: nvec: nvec: fixed two usleep_range is
+ preferred over udelay warnings
+From: "Thierry Reding" <thierry.reding@gmail.com>
+To: "Nam Cao" <namcao@linutronix.de>, "Moritz C. Weber"
+ <mo.c.weber@gmail.com>
+X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
+References: <20240212133645.1836-1-mo.c.weber@gmail.com>
+ <20240212152110.4f8fe0e6@namcao>
+In-Reply-To: <20240212152110.4f8fe0e6@namcao>
+
+--9dee9a19cb63a77cc8f9975bef85216d69227f6fdf7a09b5460baac60383
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Thu, Feb 8, 2024 at 5:37=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> None of the implementations of the get() and get_hw() callbacks of
-> "struct of_clk_provider" modify the contents of received of_phandle_args
-> pointer.  They treat it as read-only variable used to find the clock to
-> return.  Make obvious that implementations are not supposed to modify
-> the of_phandle_args, by making it a pointer to const.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
->  drivers/clk/renesas/r9a06g032-clocks.c        |  2 +-
->  drivers/clk/renesas/renesas-cpg-mssr.c        |  2 +-
->  drivers/clk/renesas/rzg2l-cpg.c               |  2 +-
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
+On Mon Feb 12, 2024 at 3:21 PM CET, Nam Cao wrote:
+> On 12/Feb/2024 Moritz C. Weber wrote:
+> > Fixed a code style issue raised by checkpatch.
+> > ---
+> >  drivers/staging/nvec/nvec.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> > index 2823cacde..18c5471d5 100644
+> > --- a/drivers/staging/nvec/nvec.c
+> > +++ b/drivers/staging/nvec/nvec.c
+> > @@ -627,7 +627,7 @@ static irqreturn_t nvec_interrupt(int irq, void *de=
+v)
+> >  		break;
+> >  	case 2:		/* first byte after command */
+> >  		if (status =3D=3D (I2C_SL_IRQ | RNW | RCVD)) {
+> > -			udelay(33);
+> > +			usleep_range(32, 33);
+> >  			if (nvec->rx->data[0] !=3D 0x01) {
+> >  				dev_err(nvec->dev,
+> >  					"Read without prior read command\n");
+> > @@ -714,7 +714,7 @@ static irqreturn_t nvec_interrupt(int irq, void *de=
+v)
+> >  	 * We experience less incomplete messages with this delay than withou=
 t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> >  	 * it, but we don't know why. Help is appreciated.
+> >  	 */
+> > -	udelay(100);
+> > +	usleep_range(99, 100);
+> > =20
+> >  	return IRQ_HANDLED;
+> >  }
+>
+> I have zero knowledge about this driver, but nvec_interrupt() seems to be
+> a hard interrupt handler, and sleeping in an interrupt handler is a big n=
+o
+> no. So I think this change breaks the driver.
+>
+> Delaying like the driver is currently doing doesn't break things, but it =
+is
+> not very nice because this is interrupt handler and the processor cannot
+> switch to other tasks, so delaying is wasting processor's cycles here. Th=
+e
+> better fix would be to figure out how to remove the delay entirely, or
+> switch to threaded interrupt handler and then we can use usleep_range() i=
+n
+> there, but you need actual hardware to test such changes.
+
+Also, pay attention to what else is being said in the timers-howto.rst
+documentation. It specifically mentions that usleep_range() uses a range
+in order to give the scheduler some leeway in coalescing with other
+wakeups, so choosing a range of 32-33 us or 99-100 us isn't very useful.
+
+Thierry
+
+--9dee9a19cb63a77cc8f9975bef85216d69227f6fdf7a09b5460baac60383
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXPTK4ACgkQ3SOs138+
+s6HDBg/+P8CNOrCzq0UAXAn0mSLmDzBCDoTF2tNRfscugg1X/aUy1k62/Wrl3o8w
+g/kk1Co+PKjv/pikrkRxGq6Hw1mB0uCNeLF9WOeJ8ijLlLmuAB/AUsC4JV9vjPyz
+Wq88rVERC2yTV+Fltl7rCPBAGRusyiQsvin/ifMLdLnAvi5Oo0XXARCMzwTAT9e6
+a511+LMNYQhKShvpBLxY+nK2QhkxqdO8RoPYUq28PxRUkgSp2ubV3WQmXRLoQzub
+eJjdhHcCdphcToYj5qwoXYjXL70HdqJv4Ofm7dewaIXiNmPgcmBuqSfYmQQasPw8
+0CbI2oe0BLNvpCv152JyHm132Vm4oT8w3Wdbbsgxh+TEufI95pNH0dJZ99/y+m7R
+CRETAQWZMJZJMq0if6EttBWO36JrRNg0HbuBJNbvnxWb9zdV0UhEpB1b4Sm/bseG
+xec05cKaqzbzc+D5+Wl34k0dOrhgMJKuvTsguorqaIH/kuamMWYLCCl+qhfxBwlZ
+dOMGB83vevWj3F6C5TKyVk1Cu7VNzK51ydR7hukp780RvXm+DG6aUCtTAkBAQupc
+e6HInnb8n/Dou8TNA+BLFQ2FRWeio9zeA7pVii0pZS0bFPIFRBoAbYdOv+2Bmcef
++MxAelYKEZlY6KLJR/6sX2QV4kqt6VzcBtuRlIu5QSyCuAS0aAY=
+=ZEj0
+-----END PGP SIGNATURE-----
+
+--9dee9a19cb63a77cc8f9975bef85216d69227f6fdf7a09b5460baac60383--
