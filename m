@@ -1,58 +1,57 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E6177A0F;
-	Fri, 16 Feb 2024 11:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5F1017C6D;
+	Fri, 16 Feb 2024 11:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708083069; cv=none; b=oezQtxR0uD9jH3JvskO0g/NdQmdBYAN29IXuBQnMxHlVv+qSqpA22LhYKH5MgRFOPlOF6Il6dCwXTOnmC2KEpVEVSvk8EerCW0CAiisR/OchWYLEiaQC04HyZLc6IbyO42lQrTTts7AapyGW5YpMQe/RByo3W3l2yZaSQcOC8dY=
+	t=1708083283; cv=none; b=FSeSCw2GK3l6s6pTo6YNvighLXRoNeE5P7LzMLFXFK6v50swgTyteYpORKPGZBtnxjTpwjJaY3y3XKpuQNcn45wlGWQp3KyM5qfYlriUuzvlBw75nbxccud8o7u/QsRii6uNEiVme3bg6rYh7MRyZjVQ1YLxXLLogQHR/UwF6oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708083069; c=relaxed/simple;
-	bh=TJamkMeETVXAU6QkC7A8Ognn1K46paOc5DcsQ8n28aw=;
-	h=Content-Type:Mime-Version:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=XzmrKjQRZOec6rh2gb7oBdGCxZ38GWR2zMLQ2SIde2jwNqNCs8uzNKGNo2Edk3zJdJPcP7KMA1Qu9oc73atmjQ0+hZ9ZS2Odz76Wb9F7oxTarZa3+jVHDEhzc363mvWWEfznw0AFQPsVx1mA4DxtBVfY1h/omUq5R20vyNZimXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Li7BNrv4; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1708083283; c=relaxed/simple;
+	bh=e6V/HWz1Ktk32eEQXR0nxHlhgWt2dfGcCYPrGGek8Gw=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Subject:From:To:
+	 References:In-Reply-To; b=eqhIWwUmW39vAhJhnLHvc97WonkPVOcPrHx32SWROxM16VO2dYQ/zP1Vwq9LRvjLDEkBHxN85KbyUbjrGVef61zAfxeYDleLJqOJgNX3lFrz2MpINvm1lHLp9ZeqoV3kJKQrfyvCWR8HJaO2Fj+3Q2ouFTYXyrS6V43twfjONIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XA1KeJJZ; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Li7BNrv4"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a3d0d26182dso206566966b.1;
-        Fri, 16 Feb 2024 03:31:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XA1KeJJZ"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5611e54a92dso2592836a12.2;
+        Fri, 16 Feb 2024 03:34:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708083066; x=1708687866; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CeAZhE7j4dRyX+kzFFWa3n1YxsCqKudIIvx3LQHUXoE=;
-        b=Li7BNrv4q2VI1du3vLMHylWl+JrA2qipZETw4SN4+vUVBuNPKSjd5z6/lNiR7wheSv
-         iO5qUaI2J7kr4hmtwe8j8OkuuJGtv3tLEFj5SFWioRpD87ZA1clL04MS3TdGNAqONT3d
-         pYCPOIGg4pRCAkmAb0YYu4VVzy5OnOuoFvfRXOFxvFhWs6IIu0ZRETsMvGatD2TO5WVm
-         EV0y5U+5oM2BIKR5BBy4GOa0p5pKiD+8zEozt9i6zgvYhJcZhB/fE6uw29W1+ChmVqSS
-         9RwAlIF5sXrMf3+9AjhkPhTxGIC+rOq52q5xkdcTojQTj+3pPJ4Qc5JWrwfwRHzEWfry
-         urlQ==
+        d=gmail.com; s=20230601; t=1708083280; x=1708688080; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:message-id:date:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5vGNgG2f3G+UkQlriVVRU5p/C0qOFEiSsKyK9Ds93Cw=;
+        b=XA1KeJJZ5iDsGj3cbatSOeBs15R3VBH/WqyG3+mMpT9hjzsAxtrCxKQbytzOYnMWBr
+         iFuRweC6WC4e1KUmh4FWBAfAlSO1P+cPXRcgAqz1WsUCQ4I5v8DPaphza9tGTtSpTjMV
+         +HwdPYYKOrtG5TrgWUChNCnajGjqT8FX7j4gM4X06Tef3WhVmNTpM9cY9yh+KC8FPbYC
+         c98qJcd8/Z0/ThuDDj1yEtdb04wOPNgtGVGFUSsGjPDVHyk8xhlzEY4Yg8ONyUbSeNxs
+         HiQYDH7HVjQ5Jex/nX5hrDSBxKnMXrZjRjlG0uAYvx3mIt92xCfM/1q36a6Eb51CYvfl
+         vUxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708083066; x=1708687866;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CeAZhE7j4dRyX+kzFFWa3n1YxsCqKudIIvx3LQHUXoE=;
-        b=HB4uwJy2GXndECz0I5tr6hWmOGszGILrMRVQvvddr3SlEoVo88S+ONhqldcXRcWrD/
-         PpQwpu/RhiZGgdjVn6qhuHINrHcd3GajlD4Yn7PyrACG1q/SB1OaNGsBxmdLz+7dT5rw
-         CwBuWFB9x833vKQy+wclCdZjse1crIBA7tUBU0+XVmtM73WuyA7wnfIKOmurxdrew4jg
-         28oQwn92UNnxWILAdF+89dvbIKRUJhHJAMVbigCVNJgNm+6yBWoV0DgtV3U0QouS6svl
-         jUbaJ8CKiow3nOVcn2br9qTp6LJxiIEbnCRO+qe/kbxzyLqk1br23eec0YAvRPsjdzOR
-         CtWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmtOjIKyEoPepZk5Th/qwGodhpfIaHIvqUXNXUSZafs26h/Eju4Xmzxep9kWIZ8SXiFMYnHpQ7jXlCpPhBD1xwR77HU1aegOlljShBrgQ4EFvpt2TMWQytq18nE7BFoyjxmhXjMZa2FLN5RiqJq0++3M0BUNZRfLdWesCZokCorhavWVJ76AFQGpWdz4xUtfHtx3ozyNdflu0wGjIRW2BVZ2qyhbqzY2pPLupo7Q5sInLOKhHJTRapC4hiYE7RFqhKrbHU4Jh+xMm89ejTI72yr29KusSFqhdno3hJTWE6gtFy2jhOzxi+7ct/ITKnlR/2FVagnoqIWZr9oB0fEtLdMHFftUkyHsMqd3qpF8Z6yaDEfrHBegWRbGI=
-X-Gm-Message-State: AOJu0YySID0z82NQ5rnZS7KVunKsbfhiRr/4cV0TIGR/CVwvf2RfkHdP
-	/ruX/beMCmxrvfWMVVvO2if7sSHazbvFZH9mArmmWE5VmT7bueM3
-X-Google-Smtp-Source: AGHT+IGXWz97gD5gN+VSAVL7iY1zPTDMUokWZgtmUOJLcJDV64j1IaqQ0abnS0651OrxU9XfbwlwlQ==
-X-Received: by 2002:a17:906:11cc:b0:a3d:2cd0:c17a with SMTP id o12-20020a17090611cc00b00a3d2cd0c17amr3351354eja.58.1708083065855;
-        Fri, 16 Feb 2024 03:31:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708083280; x=1708688080;
+        h=in-reply-to:references:to:from:subject:message-id:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5vGNgG2f3G+UkQlriVVRU5p/C0qOFEiSsKyK9Ds93Cw=;
+        b=oG/237ys06Jp1JW9hE4lhEhKEHuAl/wwc0PL9RAh8Ez3Cj9Yl8Sth1wUPbeG9F4Gkx
+         7tw0OkLKFtmBZlrNKXBZDyFHvIug6XaZ+NmEjY2SUzuN9Grqq/KujW4jjJ/zMX5Qb+uS
+         TTwozbpdie6TfTxXvc6HBBNlt7QZwW0jynRwtA6MuT6DIXfU3AsCpqu+uHysjVb9KzOT
+         tw28opFGfb32a2RJbu0AvJ/AsYCUVrG+t/zPhyiCIxjSkP03oV+U43Ef5yXvBimAtnuo
+         rszjkyt/eaASNtYsYESnq3T88VGAc1+mgOF7anncmjThLxtZPAp9nYaY2mZIqFpOTtkB
+         258w==
+X-Forwarded-Encrypted: i=1; AJvYcCUWD+8dqKl9VdIQBXRnXEaQ/YxeW6forR4DSyU343u+HonD0QA2l1uGSo3YZv5D/nNLnjLECnDT0m77fWOdo4I/AzT+Zkw9S1T1onhdRb7fn7SSeYefiYXdxtWsLcuNZeA0CNT6DQBqw1g=
+X-Gm-Message-State: AOJu0YzgFgv4RzWO7Kb3xHCc3T2XNtEevZsXHNlU7uMmSx33w1MBE3Hv
+	6m1CNd3g/XO7wI3sFBZ+X4VKkRFF3PVGPWoGFgKUZq98/5MamDv/nBBSkdyN
+X-Google-Smtp-Source: AGHT+IHdC3DVtY8yfL9trVF62kPfAirRBoeXaa6wHJ40Jqnk6AwJjPdtXdR+EDYvwfI67RY/wqTAGg==
+X-Received: by 2002:a17:906:4a17:b0:a38:107a:94f6 with SMTP id w23-20020a1709064a1700b00a38107a94f6mr3013335eju.71.1708083279901;
+        Fri, 16 Feb 2024 03:34:39 -0800 (PST)
 Received: from localhost (p200300e41f147f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f14:7f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ts4-20020a170907c5c400b00a3df003b6a9sm242282ejc.119.2024.02.16.03.31.03
+        by smtp.gmail.com with ESMTPSA id wb3-20020a170907d50300b00a3d2e690abfsm1472443ejc.122.2024.02.16.03.34.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Feb 2024 03:31:05 -0800 (PST)
+        Fri, 16 Feb 2024 03:34:39 -0800 (PST)
 Content-Type: multipart/signed;
- boundary=b7223a00e4ef0df93c47d9276017bbb483a03ab38a891db7b003e5591ffa;
+ boundary=86f3d511563110b0118336ed3165a0d780ba36a3ab76703486e9fe5bdcaa;
  micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -60,114 +59,85 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Date: Fri, 16 Feb 2024 12:31:03 +0100
-Message-Id: <CZ6GWUQ73SSL.6HP29PU9Q7R@gmail.com>
-To: "Mark Hasemeyer" <markhas@chromium.org>, "LKML"
- <linux-kernel@vger.kernel.org>
-Cc: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Rob Herring"
- <robh@kernel.org>, "Konrad Dybcio" <konrad.dybcio@linaro.org>, "Sudeep
- Holla" <sudeep.holla@arm.com>, "Andy Shevchenko"
- <andriy.shevchenko@intel.com>, "Raul Rangel" <rrangel@chromium.org>,
- "Tzung-Bi Shih" <tzungbi@kernel.org>, "AKASHI Takahiro"
- <takahiro.akashi@linaro.org>, "Alexandre TORGUE" <alexandre.torgue@st.com>,
- "Alim Akhtar" <alim.akhtar@samsung.com>, "Andre Przywara"
- <andre.przywara@arm.com>, "Andrew Morton" <akpm@linux-foundation.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>, "Baoquan He"
- <bhe@redhat.com>, "Bartosz Golaszewski" <brgl@bgdev.pl>, "Benson Leung"
- <bleung@chromium.org>, "Bhanu Prakash Maiya" <bhanumaiya@chromium.org>,
- "Bjorn Andersson" <andersson@kernel.org>, "Chen-Yu Tsai"
- <wenst@chromium.org>, "Conor Dooley" <conor+dt@kernel.org>, "Daniel Scally"
- <djrscally@gmail.com>, "David Gow" <davidgow@google.com>, "Enric Balletbo i
- Serra" <eballetbo@gmail.com>, "Frank Rowand" <frowand.list@gmail.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Guenter Roeck"
- <groeck@chromium.org>, "Heikki Krogerus" <heikki.krogerus@linux.intel.com>,
- "Heiko Stuebner" <heiko@sntech.de>, "Jonathan Hunter"
- <jonathanh@nvidia.com>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Len
- Brown" <lenb@kernel.org>, "Linus Walleij" <linus.walleij@linaro.org>,
- "Manivannan Sadhasivam" <mani@kernel.org>, "Mark Brown"
- <broonie@kernel.org>, "Matthias Brugger" <matthias.bgg@gmail.com>, "Michal
- Simek" <michal.simek@amd.com>, "Mika Westerberg"
- <mika.westerberg@linux.intel.com>, "Nick Hawkins" <nick.hawkins@hpe.com>,
- "Prashant Malani" <pmalani@chromium.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Rob Barnes" <robbarnes@google.com>, "Rob Herring"
- <robh+dt@kernel.org>, "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "Stephen Boyd" <swboyd@chromium.org>, "Takashi Iwai" <tiwai@suse.de>, "Tony
- Lindgren" <tony@atomide.com>, =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
- <u.kleine-koenig@pengutronix.de>, "Wolfram Sang" <wsa@kernel.org>,
- <chrome-platform@lists.linux.dev>, <cros-qcom-dts-watchers@chromium.org>,
- <devicetree@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
- <linux-mediatek@lists.infradead.org>, <linux-rockchip@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v3 00/24] Improve IRQ wake capability reporting and
- update the cros_ec driver to use it
+Date: Fri, 16 Feb 2024 12:34:38 +0100
+Message-Id: <CZ6GZLO63NL2.3FNHFOQ3W3JSY@gmail.com>
+Subject: Re: [PATCH] soc/tegra: pmc: Add SD wake event for Tegra234
 From: "Thierry Reding" <thierry.reding@gmail.com>
+To: "Petlozu Pravareshwar" <petlozup@nvidia.com>, <jonathanh@nvidia.com>,
+ <pshete@nvidia.com>, <p.zabel@pengutronix.de>,
+ <dmitry.osipenko@collabora.com>, <ulf.hansson@linaro.org>,
+ <kkartik@nvidia.com>, <cai.huoqing@linux.dev>, <spatra@nvidia.com>,
+ <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20231226192149.1830592-1-markhas@chromium.org>
-In-Reply-To: <20231226192149.1830592-1-markhas@chromium.org>
+References: <20240216080450.456135-1-petlozup@nvidia.com>
+In-Reply-To: <20240216080450.456135-1-petlozup@nvidia.com>
 
---b7223a00e4ef0df93c47d9276017bbb483a03ab38a891db7b003e5591ffa
+--86f3d511563110b0118336ed3165a0d780ba36a3ab76703486e9fe5bdcaa
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 
-On Tue Dec 26, 2023 at 8:21 PM CET, Mark Hasemeyer wrote:
-> Currently the cros_ec driver assumes that its associated interrupt is
-> wake capable. This is an incorrect assumption as some Chromebooks use a
-> separate wake pin, while others overload the interrupt for wake and IO.
-> This patch train updates the driver to query the underlying ACPI/DT data
-> to determine whether or not the IRQ should be enabled for wake.
+On Fri Feb 16, 2024 at 9:04 AM CET, Petlozu Pravareshwar wrote:
+> From: Prathamesh Shete <pshete@nvidia.com>
 >
-> Both the device tree and ACPI systems have methods for reporting IRQ
-> wake capability. In device tree based systems, a node can advertise
-> itself as a 'wakeup-source'. In ACPI based systems, GpioInt and
-> Interrupt resource descriptors can use the 'SharedAndWake' or
-> 'ExclusiveAndWake' share types.
+> Add SD wake event for Tegra234 so that system can be woken up from
+> suspend when SD card hot-plug/unplug event is detected.
 >
-> Some logic is added to the platform, ACPI, and DT subsystems to more
-> easily pipe wakeirq information up to the driver.
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
-> Changes in v3:
-> -Rebase on linux-next
-> -See each patch for patch specific changes
->
-> Changes in v2:
-> -Rebase on linux-next
-> -Add cover letter
-> -See each patch for patch specific changes
->
-> Mark Hasemeyer (24):
-[...]
->   ARM: dts: tegra: Enable cros-ec-spi as wake source
-[...]
->   arm64: dts: tegra: Enable cros-ec-spi as wake source
-[...]
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 6dfcc7f50ece..dc4eab3191c2 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -3,7 +3,7 @@
+>   * drivers/soc/tegra/pmc.c
+>   *
+>   * Copyright (c) 2010 Google, Inc
+> - * Copyright (c) 2018-2023, NVIDIA CORPORATION. All rights reserved.
+> + * Copyright (c) 2018-2024, NVIDIA CORPORATION. All rights reserved.
+>   *
+>   * Author:
+>   *	Colin Cross <ccross@google.com>
+> @@ -4199,6 +4199,7 @@ static const struct tegra_wake_event tegra234_wake_=
+events[] =3D {
+>  	TEGRA_WAKE_IRQ("pmu", 24, 209),
+>  	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA234_AON_GPIO(EE, 4)),
+>  	TEGRA_WAKE_GPIO("mgbe", 56, 0, TEGRA234_MAIN_GPIO(Y, 3)),
+> +	TEGRA_WAKE_GPIO("sd_wake", 8, 0, TEGRA234_MAIN_GPIO(G, 7)),
 
-Both patches applied, thanks.
+I'd prefer to stick with - instead of _ in these names, like we do with
+sw-wake. No need to resend, I can make that change when applying,
+provided you don't have any objections.
 
 Thierry
 
---b7223a00e4ef0df93c47d9276017bbb483a03ab38a891db7b003e5591ffa
+>  	TEGRA_WAKE_IRQ("rtc", 73, 10),
+>  	TEGRA_WAKE_IRQ("sw-wake", SW_WAKE_ID, 179),
+>  };
+
+
+--86f3d511563110b0118336ed3165a0d780ba36a3ab76703486e9fe5bdcaa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXPR3kACgkQ3SOs138+
-s6FXyA//QEgOaLPJMLtFwzEUNlO0/8MF3SAbMW7kCkEt3S3OMXQ3wtyOeIC3nlyN
-zwxSqhOzC1I/qdbqdnc5ejbrPWB/9d6ohPyc45vT19QAS79mc9nB2ZQm3AoVlPaA
-HGQhrtMEx6KRBu+GjS9Sz9YQjBftSWl/kr8oAwXOs6wtg2m06tfm00LF3bVFLQEu
-aTZ1Jal4+fIpK0OK/yz/yhczCMQCbVnKBClkwuoKQWJpxh7z/xYCY2Gm50VD4sN7
-F60KcEQzW8DfY5dGd1eT9oY7UqqA+yoRDGNN7KNYYurFPoEL6jZqvSts1J26pp4u
-MjFQS2jY6bjbQFR0RRUwwjPRRmUXRcGpW3qHN/+ajof0pXgRa/rWnthIB2boTs4Q
-uApu3k81kwLXVgZZh9YRXCwcYf8sgMo7Qj849I8e5vRi/MuL6jwKyU7P8SwRrWRd
-xIY0v+EKupY6iDvxPApV4b5Mw8gyxbRO6Kcm5Ep7Z8DBCeCr+g3iZFHVUXpG3vll
-PjwZW9bC+U9kcn/W5qoJrdKqGFAsaqks7fzWoIBIX5rVNbNSNZpG7Dwi/EeNUmak
-T5tJqIr3VbtsNd0ni6f42Efs9z/m0vsUKL6H5mGZoX3oTGXvzO91XF2gfFMEqOO9
-8cxE1rJREy1F73S7VZWOE46nyNPlsD6qm5+fApxvV3eKGRO5wfU=
-=fOyD
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXPSE8ACgkQ3SOs138+
+s6Ft2Q/7BUsouJfMl7g2EdUjU8QMD1/QRt9NHwdPr6yaDYSXnxkDwY89GScmuBaP
+oF41QOLImcT+M8Z1U4GW9Kz9LjGF2d+wR4YdE3t/38jlScJf6ovO7x6Boa71ZCVQ
+zddKiaLvVN93noR0nBf26LXE3tFnF8PXjQOTo80Du799k59A9S5+bk00KiDUn3pJ
+zDFdmRBiHZA+DkN9fiC6l6Pc1JRKuAvBuhxr25gQBbDLAouj9xKzihcZonp5cLLS
+dksI86oRJ7qC8H7lde+T6ONheQ1X+C8XT8F0ftnuYGQHDjTgTQXmEmIWtChgGTp3
+PG8fTvefEIGhXpbu9QKOpMakIegSLY4rQ0dTQcpFBlbVse7z81dswG4p2BElWwy9
+1isj7KPZItYGA8UCVsf3Sq7jpe4LA3u+Uof5BkAVKli0om+yUYos4MihA0mHfll7
+Bd/5BEm9DwMXh6bdZDME+h+W9wjMQNFj9a0Q0hDCRHKCm6seVrCHNHIXgvoAcnzr
+AuR1I5rRalVg/nxNsStj9PNCTyn1UBNJjbBmMOEkzSk/QwV05DwGpFNHzqTEl5FV
+wsMHF1lJjDwoKLhfFVEpuHpTfN1xQ0cbQJrEMykYsE2KwnBUP1FiwBlmaNTo3NiK
+imgyHe2Wacxh0W22lXvC72+KxRJcue3p3L+eXNacdtlTbpQr80U=
+=cSkk
 -----END PGP SIGNATURE-----
 
---b7223a00e4ef0df93c47d9276017bbb483a03ab38a891db7b003e5591ffa--
+--86f3d511563110b0118336ed3165a0d780ba36a3ab76703486e9fe5bdcaa--
