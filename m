@@ -1,137 +1,110 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BF859169;
-	Fri, 16 Feb 2024 11:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873F9768FE;
+	Fri, 16 Feb 2024 11:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708083408; cv=none; b=BBs/OsxE3ZBrF7XHOYBo51HljETf7ad0F/FNV+swlm7BpB2Mq6W5Uq+ibZoiL+TjRNI811Qk5hcKFQDEn3SH2j5qz6Y4CKIoGVQTx6qIf/jeY42wqLt9aL1iuKieFYjZ+NJTy97kZd3Dj3WkhEVEXtPV6A0objP2bHT5M51ab00=
+	t=1708084028; cv=none; b=Q7mvDmWHiPIdiNkQOQVS2/iZGuC2+phZwmRQY8ku0D9iFcsXng4HXyjkLAmsf5eqcTgx5gXOjILEJzS2Rry2dr70omvZmX66J66cCh+V3axb9ZG8j5pjZGOkE6EG+AiFOVzfIJ2wcw4/dnpFhJLMsfit0i3XXPw+82aFdpCD3vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708083408; c=relaxed/simple;
-	bh=/aYZiCQV3Ziq90vP84iGl4qvR520PN8iVoyhRcLNOsQ=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Subject:From:To:
-	 References:In-Reply-To; b=kYq94lJNW44DmpQrL93eJ9MfYfDUEa+wNEafkI8/XBh4tqt636dAv0OfrIvIFv7NV4J7JUMoQkiMNAQqm8y/a3VNJmwIc+p8pHdYz2X3huNMLoxjGJYEk6BBxGTJ30fKiCkgQYO4VMrjQ7Sdz4wULediT9dKR3ZiWbbvofIddNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JZJ+TYrs; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1708084028; c=relaxed/simple;
+	bh=brDqgu+veoHirwdkbKDf0308k8BngHj6rCKvWtbcL88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cxQAmC7f554DimfYKOs39as31NRbkTtH/zdd4CkoGkng1pyBpj5sq171Vw5QnFEZF/aj9jFZvQvZj8M+ZT1/VM2ZQVpU7Z4kj9syYaLaKrLT4xmQXLgHs9559/lsDyKoEQSkd/IkpC3BPfA+rAjEbqxIf0AVqfC41u6HU0yC8xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JZJ+TYrs"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a26f73732c5so100403166b.3;
-        Fri, 16 Feb 2024 03:36:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708083405; x=1708688205; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:message-id:date:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=krj5k8+V71cWpO8vb8ZHzT1+fsI8D5xdWWG998LplEM=;
-        b=JZJ+TYrscPjEDthiB1xtbIAkow6eUU82Ul0kiC7avjztDs0pWd2pCkRnM8z9xyARVa
-         9hIDnFupCYQEYFlEuoX/RyLMM8Mp2wQhCDBQOq4gUC7bA5h4CG/RV2df0w3/QO4pWFI9
-         HxP66ydn+SK2ZdXWU1NvNHFvKLFfR+ETLkMOA2oFdSfMKyRfdD1lyMt7cvfq6auo9KOv
-         ISD3FOlkcjp8dKv3384j41aahGzeNOG1uBqR1LziMJc151yMIT+pmbBtC9C+sCayC0jo
-         Lkqo0HdunR+QiuYULjrdHtZ+AsBOzdwvNo7GI3ZAYsMyDso0QHAuEBVx/BArXuzPbZDf
-         q/ZQ==
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-60782336a3aso4026707b3.2;
+        Fri, 16 Feb 2024 03:47:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708083405; x=1708688205;
-        h=in-reply-to:references:to:from:subject:message-id:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=krj5k8+V71cWpO8vb8ZHzT1+fsI8D5xdWWG998LplEM=;
-        b=T7Gcp+Tb1VR3uB2ZRKwTLNvqmWMRy1tPXelHnnS3L5ZDk38YT3OpaYIhifiYeC/PBA
-         2WvG4fVoK5JqYodDXpuj94rSs/U+Rh+KrTgEMIbidYXyA9Z1P+6LNQnQaDtsk4MCbIVf
-         UO/Wmr/KZAXKoXQiz5KoQTLtLMVHoeR4OwoSs3vBy1Fe0MMFLtT1NP5hQgz7a9//C1KH
-         Psia1LehY8ehvLEyBTcwqkH5PqITefNgHwOU6tIFXWvgCrc7IbDU31apRMMc7TVan1Nj
-         MlJ6++HCzHN4l9kg4oaxUK+K8Aotuedhg9QYpUNytq61ddzjL+jzakfUvYl/zNM76p2q
-         qmSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXk/WUPkFX96IRvomHBl53lN4L+FQNsLzPsIxiq78wmfES5BHbZh3XGQ8ehAkZrzbe8O9fAp/3+U/4nh+67JrYZVnfMFu3eO6XIS8Zw8wSn7K8viiherq30f6dOtWtijxS9SeDQ0CS/hGQ=
-X-Gm-Message-State: AOJu0YygYTtBwR2a36/p3NBvOy87Yjv1Zdyt1z2gk5bkNTbw8Aoe5Aw/
-	pS0ljS+BOxpJKsxqdA/wZ/klvA4DIvkeqH9NCs9uMsqeorQeFcO1Jir6JZBT
-X-Google-Smtp-Source: AGHT+IGLbge1rHEsBBQQH35yemiF7YoxH2kRUo/mHs5+Vjmaxfi5yxh+gbpQUNnLgJDkcMQIEf55Nw==
-X-Received: by 2002:a17:906:b847:b0:a3c:b36d:dffb with SMTP id ga7-20020a170906b84700b00a3cb36ddffbmr3003663ejb.16.1708083405146;
-        Fri, 16 Feb 2024 03:36:45 -0800 (PST)
-Received: from localhost (p200300e41f147f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f14:7f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id vk4-20020a170907cbc400b00a3cf243de37sm1467694ejc.111.2024.02.16.03.36.44
+        d=1e100.net; s=20230601; t=1708084023; x=1708688823;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lQ7tnAKFUkQOj4UEtgJN4h/6u4fraBJnTp0nHjLT6cQ=;
+        b=NuY6vEBgIG9KmAvbppjbFS0iSNqaQQuVcW03ilk952q3G+5H6TS4CO8yqNT+u2VI3E
+         h5kFZnwj4sGOtsD9dNyv6WnwGuIZ07vhSEItHlkLX/CJ5I7nNM5nr7aqOE7AIrPuAqOC
+         1XKFJGCT9qFDXTARisTu6nFk66N8wRk4wkySY+ND1QJ+zysyGX3J38J/IVVYv6j8tDfi
+         20wx1KqsCZMH8efFLpHr0WMGjRPEmFHaPIP49HMqDmw0yfzSwYltd8oc2VmrF/wI1e2F
+         oGUAg/tdv0NPahRl0wLeEigZJKPOf03+kjnEqL8vFXOmQHKuG40xd8+bpGSJZFNvTZGM
+         LlYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFzZ3g4WANKqtZZ9VlC7Jw/knLzFtY2VvPmEZNYbXXKPIK29Y8K2BD7BUsP+QXhKjLrNpKOR3XekjYlWQTBtSTMDqAEHdImF5IBY7jb0EIwuk276tqtUSsiYUK4dENO0BYX7/Z5tkyge9b9DM9jVgKGtN/6DMzcTjH6akhagdPVeRougKNRrc8ZhDepS2FEzk5dbEwTBKOqvh6petdRxzoDOnsASXDFRbb3wgTKDD3Acb5XhavvM4+B2NtdscptyH7AGGnweHO5QhSJ5zKhrKdEgMhqRLokglysst9E5w+RpAtXTBBCpXvz1I+rRprqc8bGJJBv+NbvFNzC6gQgVZm8tqBAbztCMNas0zOz0UkwdDDzdkdSrssNvIodA==
+X-Gm-Message-State: AOJu0Yy1PyopLybDwhsRhRNyhHoX7zLqkA7Fxhoch1PliJvUdKRss3Jo
+	5/dGVbJYGclu5g8Cgj+j7RgnUcW/JtnAUin0pzp9oJDY8PoNag4WzIlf3cFysgk=
+X-Google-Smtp-Source: AGHT+IGOZo23mSGj2qVG09ybbc13KqERNgE2Z8Lel0v6H8fWWUPfJQWUuJf9NEMeSLF+la3qPj88JQ==
+X-Received: by 2002:a81:4c8c:0:b0:607:8196:9d69 with SMTP id z134-20020a814c8c000000b0060781969d69mr4522995ywa.30.1708084023056;
+        Fri, 16 Feb 2024 03:47:03 -0800 (PST)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id a125-20020a818a83000000b006040f198d3esm301001ywg.142.2024.02.16.03.47.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Feb 2024 03:36:44 -0800 (PST)
-Content-Type: multipart/signed;
- boundary=7dfaaa8787f0119adde6de01fee310d24161838f59b74c6b8992af9b9481;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+        Fri, 16 Feb 2024 03:47:01 -0800 (PST)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dcc71031680so609771276.2;
+        Fri, 16 Feb 2024 03:47:01 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX/33bHJ5WVDjuKg1h+K20HSFSmfoX0dje+Pdcke0G/yQOK9V0feprsSCKA1DfHeklL/Md53BZThhNi7KlefgL6OgBrBR3FWnNtPQ7QIZqprCc8UUjHH8if981HtunXUuEJu9HW12LvxQAxlh9H1gsyW8N6P906LUOaOkbuYSoI15GHqAhh/ny2zVu5VbToppT3ptxf5vmGpiPPnOXps/H9FUkUjH/pO7nThOnAMurKIZ+rTdWWgOxyXjr3swevrnkFK1Tne6+bGd4fNJCye27zGkM12CRl9rBM6E+cLly2ijj83hChsBpJ7DvDvy762C5JyHgc9UOieLPUd5+eKl7GtgZGvnAxKRaMCBCV6ksn7c38M2sdlkpOOvDXVA==
+X-Received: by 2002:a5b:708:0:b0:dc6:cc35:35e9 with SMTP id
+ g8-20020a5b0708000000b00dc6cc3535e9mr4412013ybq.35.1708084021189; Fri, 16 Feb
+ 2024 03:47:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Fri, 16 Feb 2024 12:36:44 +0100
-Message-Id: <CZ6H177U2UI5.2451NH03W3643@gmail.com>
-Subject: Re: [PATCH] soc/tegra: pmc: Add SD wake event for Tegra234
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Petlozu Pravareshwar" <petlozup@nvidia.com>, <jonathanh@nvidia.com>,
- <pshete@nvidia.com>, <p.zabel@pengutronix.de>,
- <dmitry.osipenko@collabora.com>, <ulf.hansson@linaro.org>,
- <kkartik@nvidia.com>, <cai.huoqing@linux.dev>, <spatra@nvidia.com>,
- <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240216080450.456135-1-petlozup@nvidia.com>
-In-Reply-To: <20240216080450.456135-1-petlozup@nvidia.com>
-
---7dfaaa8787f0119adde6de01fee310d24161838f59b74c6b8992af9b9481
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240208163710.512733-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240208163710.512733-1-krzysztof.kozlowski@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 16 Feb 2024 12:46:48 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXzObEqExtJZpUpXLfCWB5fW9ZhekbbotcxcMrN+uj0Ag@mail.gmail.com>
+Message-ID: <CAMuHMdXzObEqExtJZpUpXLfCWB5fW9ZhekbbotcxcMrN+uj0Ag@mail.gmail.com>
+Subject: Re: [PATCH] clk: constify the of_phandle_args argument of of_clk_provider
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	patches@opensource.cirrus.com, linux-stm32@st-md-mailman.stormreply.com, 
+	NXP Linux Team <linux-imx@nxp.com>, linux-amlogic@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-phy@lists.infradead.org, 
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Fri Feb 16, 2024 at 9:04 AM CET, Petlozu Pravareshwar wrote:
-> From: Prathamesh Shete <pshete@nvidia.com>
+On Thu, Feb 8, 2024 at 5:37=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+> None of the implementations of the get() and get_hw() callbacks of
+> "struct of_clk_provider" modify the contents of received of_phandle_args
+> pointer.  They treat it as read-only variable used to find the clock to
+> return.  Make obvious that implementations are not supposed to modify
+> the of_phandle_args, by making it a pointer to const.
 >
-> Add SD wake event for Tegra234 so that system can be woken up from
-> suspend when SD card hot-plug/unplug event is detected.
->
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> Signed-off-by: Petlozu Pravareshwar <petlozup@nvidia.com>
-> ---
->  drivers/soc/tegra/pmc.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 6dfcc7f50ece..dc4eab3191c2 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -3,7 +3,7 @@
->   * drivers/soc/tegra/pmc.c
->   *
->   * Copyright (c) 2010 Google, Inc
-> - * Copyright (c) 2018-2023, NVIDIA CORPORATION. All rights reserved.
-> + * Copyright (c) 2018-2024, NVIDIA CORPORATION. All rights reserved.
->   *
->   * Author:
->   *	Colin Cross <ccross@google.com>
-> @@ -4199,6 +4199,7 @@ static const struct tegra_wake_event tegra234_wake_=
-events[] =3D {
->  	TEGRA_WAKE_IRQ("pmu", 24, 209),
->  	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA234_AON_GPIO(EE, 4)),
->  	TEGRA_WAKE_GPIO("mgbe", 56, 0, TEGRA234_MAIN_GPIO(Y, 3)),
-> +	TEGRA_WAKE_GPIO("sd_wake", 8, 0, TEGRA234_MAIN_GPIO(G, 7)),
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-These are also meant to be ordered by wake ID, so I've moved this up to
-where it belongs.
+>  drivers/clk/renesas/r9a06g032-clocks.c        |  2 +-
+>  drivers/clk/renesas/renesas-cpg-mssr.c        |  2 +-
+>  drivers/clk/renesas/rzg2l-cpg.c               |  2 +-
 
-Thierry
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
---7dfaaa8787f0119adde6de01fee310d24161838f59b74c6b8992af9b9481
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXPSMwACgkQ3SOs138+
-s6HGcQ//f0JPfFQemTw/AVj0XnDY0Qyq4ffTv5okvdFIaRP3pUav403BUiPGz1N4
-85NYWHrawOTY6mjmwORsSNo/2Vjmj0ZUnf9CK8tRgXORsu434TVrQFr519YhDC7V
-yngQlDG5E1RpcaJhLTods46uFXugZ5c8u3yjiFjb9nwx7Ntq7HR6mj7+DWhhFx6H
-CkVua+IuPQMqREKsZn+cZzyOqj0S5hFNJDuK+a430lAn4z/KYV+zczTJsQrE4AxI
-CBJkV/jD9EuMc+Y4sfPFivo6WrwoUBdXtWbLYhl5vPbk4cVojTl4aTDzpoa8Z5sR
-/AE3GWptKpbT+fxSbdh4dduQB1YcqRf3KTqB4yHCQlPpmuHLUfSo+DNHRlvp5Cgr
-QFw1vySnPx2Oje/mKWrP/S6EXpxAHPQfaMFpDh8Zq1RVUmCCGsnULpM+WXNgO8M1
-1H+fGqxzFRffJqg4LnBcZdd9DUi1Gs3bGZM0H6OIAonppJ57fr+IR4RJCQKNbxNl
-JU9koXkRThejqqFPTFmoZc3JZmde7jVu1jAfVXZjbCWm8RliW4oHhr247YLU6VFo
-7Gff07i7IyInA1OSlkFkc1Nbl9isbSKflzGzpp4k0oCaRhNRTM4TQrwxkhzZSKRM
-MNmCPmCQ/1/R3BJhQfEtIkgC+3WZUKAegM96ED2iakcWgPnOk+Y=
-=XUQf
------END PGP SIGNATURE-----
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
---7dfaaa8787f0119adde6de01fee310d24161838f59b74c6b8992af9b9481--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
