@@ -1,186 +1,166 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561CC524A;
-	Mon, 19 Feb 2024 18:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AA74F1F5;
+	Mon, 19 Feb 2024 19:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708367570; cv=none; b=dtkNASEHv2K6X7lY3vzpBZ/hZgTSm+bwB+0ocUVvArFDVv8Ej9bTu/ZWskWZuPGqWOyBM/3GLWFGqfMEIuEqEPFHbiYwwHtRsGiY6KSmzRK1H+FcG3OOB36R2xroVmqBT8gPewpsnLmLJJoxAZnijZ38blMHkfP1r47uROYhhzg=
+	t=1708369710; cv=none; b=K2tPTbCe90WDMT/Sf0+Xxk9C0I7Ww/x3ntW8jvte4/pEqR5P+GmL3qw07v2AzHlXq3nwuT6jAItimxb6hEtvibo5Oul+kOGrpPxrXjR6B3Yyj+FKsODeC6dVRqc+Fp2JfaeWZuuHzmYOJplzDfFioDw0U6J6tOfdhZBcZc98f+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708367570; c=relaxed/simple;
-	bh=YrLX6h6zpUU+pvvsz6souDjSY0pfdoaPwuIuZPiNpKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WODYqCv2mXB2FENCqxCoMJozI8V01AsMnD/N4Al+2q2Wofe5ZSXKAmcyweFKSgNnGb//EJ76deFQUWMIi0Oe3x7/GpU3itIl/NTSTX+1vasGJ4AKPUdSsWNDL1Dzjf/oNffcQeCnlB8UGM9liyO4V4aCtYJ/2m/kaitmon5LOwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Brm9i47H; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708369710; c=relaxed/simple;
+	bh=Qgm4yRczBnXgjpxAD+i1bsbP2xXCEc56/SoGjrcpzPo=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:To:Date; b=IhsQqn8nJfn+/YdX3uuVkUY1Pscs9ttCr9naf3/GLoKglfjPCogc1hfwgjxFNVC/3DsMyD07xjFg+pIW/ffEIJMNqhQiHtZvK2OWJ0HccfgdZk0lroOjn7HQbdVXB1CJXdYcVBrqdCs+7mRW5iYrCwaYL2PxXOxrUsJsGzflh+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=atM/CvQ3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Brm9i47H"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-512b13bf764so1659595e87.0;
-        Mon, 19 Feb 2024 10:32:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708367566; x=1708972366; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yQmnFQAFKA09Z157wegtMc6k6Apxcc2vInoqwQQtLPM=;
-        b=Brm9i47HHywAaOZgyepjTpAreD++QgPbpeuE++ZLoimru2iyjbTe58Tj7Jo6FUH45A
-         ID4Ii6iXTEVCony6A9fXJy4EAkElfPdPaXwNH33oioMRhgJMp58C7NAj+tj7APagwieM
-         Wsz+G/DX5ZidKfEKpj6PMKcRuPuoP+G+PnhnLit+V+Kz06MOdMekzDgpAa9EJ6+8o8Ij
-         GlWrCMtd84zAc/nzy7R3/tHMQZsl/i2GNHEVOnWH9eeBAWYCB+rSfjaWA9HpGXqIIdWK
-         6idwiNBne0/g3ughiAL36uXQDd0v2fCsb5z/EW86WMupU3F0eVPojV3dgB0kTeE4GZyC
-         faJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708367566; x=1708972366;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yQmnFQAFKA09Z157wegtMc6k6Apxcc2vInoqwQQtLPM=;
-        b=hw83UODRRrK7CsU04kLXK8FTq1Te6op/1WTeztNh297v7VbRLhkiBWKsiZp9vkmKN9
-         +ZlAO10lprRf1UaJVZ7aBjZZmaXxtUa6fJO9kj3Kqaiew34sQQ32GNAugO+m8d2Ni7Yd
-         kCGInElOKhpXRgf13Femq9mR+M078ZFnaGeXFxFKjgELKqJuu4gYZWPUttpg1wiD6afN
-         pudPizsSHuEahoKjMPIs59YMiS3rPgKW0pawC6wi6QkAMQwh1hsNN0/odnTBkc1/+Gl7
-         m45NrwEZLqT2Q3XBElSZteSkl9hbqGUlSQNauPq7+HIGOPFk3IcLJik8MfKAbaR+/O/A
-         j0KA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxJFTghu6FBUcfXW1FrLRzDD18UfE+6I7RDaSw/UN71nG/eeOY6rCGa8PE0RhvIBSIPRdkLb9j8bD6hzB416weQtH8ZzaSsTmNo0mHlIYLubebOQtSvXUQGaSfsLuDJZRnUjltI3u4bwmoddjWo7IzU4fyUE4E4mgmuadB8Fz3PNI=
-X-Gm-Message-State: AOJu0YyAPZ+kW7HLnq3TbOfnPjrbHieBZIYYtrFaV5tgwIWNQmAoJ9ap
-	2GCdohRghc3fEUifhiaP4hLsKbopRJSIiehh93uuCwQl0KdwmOj6
-X-Google-Smtp-Source: AGHT+IECKkeoUmhv41g+UvxvTA6mP8LU7x576Bj2xMF5yqj4MUnSM2YoGVzChUo5R6uJ/18ng8WRFQ==
-X-Received: by 2002:a05:6512:3f08:b0:512:b087:4de0 with SMTP id y8-20020a0565123f0800b00512b0874de0mr3768185lfa.57.1708367566156;
-        Mon, 19 Feb 2024 10:32:46 -0800 (PST)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id f26-20020a19ae1a000000b00512b9147a7esm324479lfc.83.2024.02.19.10.32.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Feb 2024 10:32:45 -0800 (PST)
-Date: Mon, 19 Feb 2024 21:32:43 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH net-next v3 3/3] net: stmmac: Configure AXI on Tegra234
- MGBE
-Message-ID: <xne2i6jwqaptsrd2hjdahxbscysgtj7iabqendyjb75fnrjc5z@js7n7qngtzym>
-References: <20240219-stmmac-axi-config-v3-0-fca7f046e6ee@nvidia.com>
- <20240219-stmmac-axi-config-v3-3-fca7f046e6ee@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="atM/CvQ3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE033C433C7;
+	Mon, 19 Feb 2024 19:08:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708369709;
+	bh=Qgm4yRczBnXgjpxAD+i1bsbP2xXCEc56/SoGjrcpzPo=;
+	h=In-Reply-To:References:Subject:From:To:Date:From;
+	b=atM/CvQ3iM2Anizb1lzybkxvKx4jL0MqzynEc9xfeXYO4jST8XRzcHkXWB1rVSoXm
+	 QzyUkIxjMCH9R5YY/PaB5tsF3NM1FDm8ykl4d3vXKA5asaVD7k3T/dyEoh1VZZzkjV
+	 kIr74/S+E61h0sUkZdHfsYrdNzab1k3HMtQZRRFEGMUr+2ET8tOcs0ZuNnfT1ZRisK
+	 aGWGhy6Ua4SklPFh8q/0UhO+nzJXgQ6wsbcSkaoqa5RFwR1fvwJmxCB+5UNPA+m8me
+	 VnACdEWHC3NqCsBvhJZUamXJbuuKbNyTaBxaPGys8l0JPiznLYdaSAmdLDp4bqSWW0
+	 hCsk3eP26kWrw==
+Message-ID: <e760847bd911671f1e364271888481fd.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240219-stmmac-axi-config-v3-3-fca7f046e6ee@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <02461595-16b3-4fea-a029-54190e10e6f5@linaro.org>
+References: <20240208163710.512733-1-krzysztof.kozlowski@linaro.org> <38e7e80f61f7c67c984735cf55c3dfb3.sboyd@kernel.org> <02461595-16b3-4fea-a029-54190e10e6f5@linaro.org>
+Subject: Re: [PATCH] clk: constify the of_phandle_args argument of of_clk_provider
+From: Stephen Boyd <sboyd@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Jaroslav Kysela <perex@perex.cz>, Jonathan Hunter <jonathanh@nvidia.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Michael Turquette <mturquette@baylibre.com>, NXP Linux Team <linux-imx@nxp.com>, Nishanth Menon <nm@ti.com>, Peng Fan <peng.fan@nxp.com>, Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Sudeep Holla <sudeep.holla@arm.com>, Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>, alsa-devel@alsa-project.org, linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-omap@vger.kernel.org, linux-phy@lists.infradead.org, linux-renesas-soc@vger.kernel.org, linux-sound@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, patches@opensource.cirrus.com
+Date: Mon, 19 Feb 2024 11:08:27 -0800
+User-Agent: alot/0.10
 
-On Mon, Feb 19, 2024 at 05:46:06PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Allow the device to use bursts and increase the maximum number of
-> outstanding requests to improve performance. Measurements show an
-> increase in throughput of around 5x on a 1 Gbps link.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-> index bab57d1675df..b6bfa48f279d 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-> @@ -199,6 +199,12 @@ static void mgbe_uphy_lane_bringup_serdes_down(struct net_device *ndev, void *mg
->  	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
->  }
->  
-> +static const struct stmmac_axi tegra234_mgbe_axi = {
-> +	.axi_wr_osr_lmt = 63,
-> +	.axi_rd_osr_lmt = 63,
-> +	.axi_blen = { 256, },
-> +};
-> +
->  static int tegra_mgbe_probe(struct platform_device *pdev)
->  {
->  	struct plat_stmmacenet_data *plat;
-> @@ -284,6 +290,9 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
->  	if (err < 0)
->  		goto disable_clks;
->  
-> +	/* setup default AXI configuration */
-> +	res.axi = &tegra234_mgbe_axi;
-> +
->  	plat = devm_stmmac_probe_config_dt(pdev, &res);
->  	if (IS_ERR(plat)) {
->  		err = PTR_ERR(plat);
+Quoting Krzysztof Kozlowski (2024-02-15 23:12:29)
+> On 16/02/2024 00:12, Stephen Boyd wrote:
+> > Quoting Krzysztof Kozlowski (2024-02-08 08:37:10)
+> >> None of the implementations of the get() and get_hw() callbacks of
+> >> "struct of_clk_provider" modify the contents of received of_phandle_ar=
+gs
+> >> pointer.  They treat it as read-only variable used to find the clock to
+> >> return.  Make obvious that implementations are not supposed to modify
+> >> the of_phandle_args, by making it a pointer to const.
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >> ---
+> >=20
+> > This will almost certainly break the build once it is merged to
+> > linux-next. What's your plan to merge this?
+>=20
+> First problem is that it might not apply... I prepared it on next to be
+> sure all subsystems are updated.
+>=20
+> The idea is to get reviews and acks and then:
+> 1. Maybe it applies cleanly to your tree meaning there will be no
+> conflicts with other trees,
+> 2. If not, then I can keep rebasing it and it should be applied after rc1.
+>=20
 
-Let's get back to the v2 discussion:
+The struct clk based version is probably not going to be used in any new
+code. If you split the patch up and converted the struct clk based ones
+first then that would probably apply without breaking anything, because
+new code should only be using the struct clk_hw version.
 
-On Mon Feb 5, 2024 at 1:44 AM CET, Serge Semin wrote:
-> The entire series can be converted to just a few lines of change:
->     plat = devm_stmmac_probe_config_dt(pdev, res.mac);
->     if (IS_ERR(plat)) {
->             err = PTR_ERR(plat);
->             goto disable_clks;
->     }
-> +
-> +   if (IS_ERR_OR_NULL(plat->axi)) {
-> +           plat->axi = devm_kzalloc(&pdev->dev, sizeof(*axi), GFP_KERNEL);
-> +           if (!plat->axi) {
-> +                   ret = -ENOMEM;
-> +                   goto disable_clks;
-> +           }
-> +   } /* else memset plat->axi with zeros if you wish */
-> +
-> +   plat->axi->axi_wr_osr_lmt = 63;
-> +   plat->axi->axi_rd_osr_lmt = 63;
-> +   plat->axi->axi_blen[0] = 256;
->  
->     plat->has_xgmac = 1;
->     plat->flags |= STMMAC_FLAG_TSO_EN;
->     plat->pmt = 1;
->
-> Please don't overcomplicate the already overcomplicated driver with a
-> functionality which can be reached by the default one. In this case
-> the easiest way is to let the generic code work and then
-> override/replace/fix/etc the retrieved values. Thus there won't be
-> need in adding the redundant functionality and keep the generic
-> DT-platform code a bit simpler to read.
+The struct clk_hw version could be done in two steps. Introduce another
+get_hw callback with the const signature, and then update the world to
+use that callback, finally remove the old callback. We could call this
+callback 'get_clk_hw'. This is probably more work than it's worth
+though, but at least this way we don't have to worry about applying
+after rc1.
 
-You responded with:
+Or perhaps we need to cast everything and use macros? It would be bad if
+the callback actually did something with the clkspec and we cast it to
+const, but your patch shows that nobody is doing that. We would get rid
+of this macro garbage once everything is converted.
 
-On Tue, Feb 13, 2024 at 04:51:34PM +0100, Thierry Reding wrote:
-> I'm not sure I understand how this is overcomplicating things. The code
-> is pretty much unchanged, except that the AXI configuration can now have
-> driver-specified defaults before the DT is parsed. Perhaps I need to add
-> comments to make that a bit clearer?
-> 
-> While your version is certainly simpler it has the drawback that it no
-> longer allows the platform defaults to be overridden in device tree. I
-> would prefer if the defaults can be derived from the compatible string
-> but if need be for those defaults to still be overridable from device
-> tree.
-
-Currently available functionality is easier to read and understand: by
-default the data is retrieved from the DT, if no AXI DT-node found you
-can allocate/create your own AXI-configs, if there is AXI DT-node you
-can fix it up in whatever way your wish. Thus the default behavior is
-straightforward. You on the contrary suggest to add an additional
-field to the resources structure which would need to be merged in with
-the data retrieved from DT. It makes the stmmac_axi_setup() method and
-the entire logic more complex and thus harder to comprehend. The
-driver is already overwhelmed with flags and private/platform data
-fixing the code here and there (see plat_stmmacenet_data, it's a
-madness). So please justify in more details why do you need one more
-complexity added instead of:
-1. overriding the AXI-configs retrieved from DT,
-2. updating DT on your platform
-?
-
--Serge(y)
-
-> 
-> -- 
-> 2.43.2
-> 
+---8<---
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 2253c154a824..8e5ed16a97a0 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4818,7 +4818,7 @@ struct of_clk_provider {
+ 	struct list_head link;
+=20
+ 	struct device_node *node;
+-	struct clk *(*get)(struct of_phandle_args *clkspec, void *data);
++	struct clk *(*get)(const struct of_phandle_args *clkspec, void *data);
+ 	struct clk_hw *(*get_hw)(struct of_phandle_args *clkspec, void *data);
+ 	void *data;
+ };
+@@ -4880,8 +4880,8 @@ EXPORT_SYMBOL_GPL(of_clk_hw_onecell_get);
+  *
+  * This function is *deprecated*. Use of_clk_add_hw_provider() instead.
+  */
+-int of_clk_add_provider(struct device_node *np,
+-			struct clk *(*clk_src_get)(struct of_phandle_args *clkspec,
++int _of_clk_add_provider(struct device_node *np,
++			struct clk *(*clk_src_get)(const struct of_phandle_args *clkspec,
+ 						   void *data),
+ 			void *data)
+ {
+@@ -4914,7 +4914,7 @@ int of_clk_add_provider(struct device_node *np,
+=20
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(of_clk_add_provider);
++EXPORT_SYMBOL_GPL(_of_clk_add_provider);
+=20
+ /**
+  * of_clk_add_hw_provider() - Register a clock provider for a node
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 1293c38ddb7f..bfc660fa7c8f 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1531,10 +1531,11 @@ struct clk_hw_onecell_data {
+ 	}
+=20
+ #ifdef CONFIG_OF
+-int of_clk_add_provider(struct device_node *np,
+-			struct clk *(*clk_src_get)(struct of_phandle_args *args,
++int _of_clk_add_provider(struct device_node *np,
++			struct clk *(*clk_src_get)(const struct of_phandle_args *args,
+ 						   void *data),
+ 			void *data);
++
+ int of_clk_add_hw_provider(struct device_node *np,
+ 			   struct clk_hw *(*get)(struct of_phandle_args *clkspec,
+ 						 void *data),
+@@ -1559,8 +1560,8 @@ int of_clk_detect_critical(struct device_node *np, in=
+t index,
+=20
+ #else /* !CONFIG_OF */
+=20
+-static inline int of_clk_add_provider(struct device_node *np,
+-			struct clk *(*clk_src_get)(struct of_phandle_args *args,
++static inline int _of_clk_add_provider(struct device_node *np,
++			struct clk *(*clk_src_get)(const struct of_phandle_args *args,
+ 						   void *data),
+ 			void *data)
+ {
+@@ -1614,6 +1615,12 @@ static inline int of_clk_detect_critical(struct devi=
+ce_node *np, int index,
+ }
+ #endif /* CONFIG_OF */
+=20
++typedef struct clk *(*clk_src_get_fn)(const struct of_phandle_args *args, =
+void *data);
++
++#define of_clk_add_provider(np, get, data) ({				\
++		_of_clk_add_provider(np, (clk_src_get_fn)(get), data);		\
++})
++
+ void clk_gate_restore_context(struct clk_hw *hw);
+=20
+ #endif /* CLK_PROVIDER_H */
