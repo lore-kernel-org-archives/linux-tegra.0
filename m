@@ -1,58 +1,58 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BCA3308A;
-	Mon, 19 Feb 2024 16:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1EE37704;
+	Mon, 19 Feb 2024 16:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708358813; cv=none; b=qjOF2N1pqy6YRhi6orxF86PCL3KLd9HjpGyQMHfXb80x0NlcXKLWyIFjFuTW3KykSN6fo5SxG3hGJhMyrZLHscNVnBfySkZUbKrLyH5FgFsBOhHuTxFSfxHxQSOE9BOHsj3PjU2kjInrx5i0yQjVc+birxRmSKVe3o8sP8FXT3s=
+	t=1708359452; cv=none; b=TRVVyBWNLHHvEnlaEasE4BBoXs96JgHzPed6eqfiDDc8qHovGLaYcSTXR1ctLL2NQqHBVOMUs4gIjHnkQEDHCv0yOIN2KH+GC7aEWGRd8ZxDPFCVr5FGH+Qs3kglZTO3qNYPxYk7Hp3q/e1M6qWKtKavBBBQ+J9kr6u4PyeWGjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708358813; c=relaxed/simple;
-	bh=o/Tt/aNgskIIpJbtYfiY1C/VVmJ60rm2VifCiLV87cc=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=YYDg777YoRxhxpsfOLhLBiVbXuHlxc8wmXZP07Ogud9ZSkUUUyujvXdi4iIAUk4z8jl5Dhscwkr2XK6wtoLNCeRKwbGTZaaYFwUdl2X6gr+gUTdHVG4P96dQoCcoIYpUbPSKhB4qyPCdFRDwU1vH1nDFefCj+p6ZpDKxPdyYG1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+mGaHHQ; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1708359452; c=relaxed/simple;
+	bh=7FpHqGM9NSQ9oJ8wCMEWcQwBYs8k2HS8Pk/KO1rddLg=;
+	h=Content-Type:Mime-Version:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=me8mWxzfu6HYr3GnkcuzMe/XA7IeUATEVdDIudtFTPMvDUHPbVbFNgeJlVaCRKCBE4Hwicl4xxng8hsP7nE4vifdQXZLXnxIYUpCYBtzFcWf2Fr4GP57L2VX279ZMeDkcGYySfgRSiXE8++kaVopIsm+6usVMsvc0sBV3uu4K98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtsFcuHH; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+mGaHHQ"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4126ada76bcso3223365e9.1;
-        Mon, 19 Feb 2024 08:06:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtsFcuHH"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a3e4765c86eso217710366b.0;
+        Mon, 19 Feb 2024 08:17:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708358810; x=1708963610; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
+        d=gmail.com; s=20230601; t=1708359447; x=1708964247; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O6+K3p98rrkbJ5Yw3zsXbXs6AtGDMV+vIo5vbrjJJSM=;
-        b=Q+mGaHHQoXC4I4wCHmVfJ0sWcEMMJp6uREVNXyBSuva7ymn5ssCJdrYzyi3DTZKzW5
-         CIGgtRFsyM6zsRDTEWNEUh41QSkItTDbchfJWEm3BQDHVcdMIsGJZZxu8T+/4r6v/4e6
-         IhRgDWJzLP1Nak2ScocNh9Tgx6rCj9EdqbO7jhx3Tw2mnhLngUr2ST/Dfmgq38kzUjto
-         eQetmyuWXIJjO+w05WU8CY/quwyqKumSFVj3Yp2ha3SdsbGniX5xmDwa6wB34Vaf+drZ
-         R/bbcTcNp7ZtDv86PKfQ8tnxTtINgCn/ppca1yBuWwuAV1yO82BK3Rr+SP3EhInQCp7u
-         Quuw==
+        bh=LQx0b5ToM23dL9e3ut59o6I7ORybJM20K6cqxVU6TEY=;
+        b=MtsFcuHHWNabD1DlsDqdsA9GaOXlMRas5/qqxjnzTVbadpD7HWVeq4C3NyGgZ6oWk6
+         D36uMiQPnX0Lqm7K1+W2prJB1CujJC1Tp2t5yPOPZ5TmwS0cZHCOGxOiFEfiem0b9tcx
+         hqMpPXgCqY3bbJo0YopJseXsS1ojtN5mApG9fs8UVHWfgXiQDm/pzmKpHOC4qesPhEiv
+         D6kz55xjruvCNbPLkD6xk2vUbNnrCtL4z3JbUav3j02nuWyL8PVs9pI4B1Alrq0DNmQF
+         v4yjEHFYrPRMdiuOlHNrGkSfA71WMSmZ4NXEY8bBm4qiD/pQwXjF0EO3lP/b+CYCy43k
+         puTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708358810; x=1708963610;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
+        d=1e100.net; s=20230601; t=1708359447; x=1708964247;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=O6+K3p98rrkbJ5Yw3zsXbXs6AtGDMV+vIo5vbrjJJSM=;
-        b=aBjNVj7nKj8W4SraRekE6I/K+IXffvmUB+t97aAcdJltN0JkrDEXEcX2RMzA9F6Y5a
-         wDWUmzTWuoMB4DrQdzcW/hNRSUWa6d6Xw/dTjaGoyNiApfijWv6cWeD7uysls/cqjMCt
-         PII7Kce8PINsrOnDkd3XmuUpN3wQo4szQeCRQmdlNNjs4aII1W5qkE2Af6wWuubQWqoJ
-         +u/FOAOkkrPC2xrqfby5xexHdae4bB52N/iDzjXp9zEnzjTBFX6F4bUYQE4x9LtXapz4
-         6ktm7l1EdBbZOOFJ+MUbvCvyGFA0ANe5EcLMuM3QenOn/3nS9XpZpzAt+LRLv0pKk7QN
-         ntAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkjF3ttnMRjhj79sV7/kYrJ0G939lPFGdKH5w9cGVc7HUoIvfmIaMCdxmNsGe1eyDcTnAECpg8W9kUuazKUldYC4UI7FAFZYyvqJju/m/eKmL8FHzxf847Qnt4+szkZJUFjGLZqR2EWoc=
-X-Gm-Message-State: AOJu0YzMRPLbuNKUH2Rc8VxR8pZapk4zEgiYMP7HUPf1ovD141QER/lh
-	0mrHri89UWf0kuF9pE2AqhcOx+9mSglF+2AXvZo9xY5y4s8w6GnG
-X-Google-Smtp-Source: AGHT+IEQJSKKhZ9J1YWzcwu5vi6aRAzszLFKpFo670hirt/u2Fe2srKZeCZpFa4niPALbX0nE0ZRGw==
-X-Received: by 2002:a05:600c:45ce:b0:412:69c6:6be9 with SMTP id s14-20020a05600c45ce00b0041269c66be9mr974948wmo.4.1708358809505;
-        Mon, 19 Feb 2024 08:06:49 -0800 (PST)
+        bh=LQx0b5ToM23dL9e3ut59o6I7ORybJM20K6cqxVU6TEY=;
+        b=gGUTx5O0CY/bQbMqB+tV+5p3PXWy6F0up1AcU+DSADN2UuwTY+uJaYiXcat+kZ4E8m
+         E6xpmYBog79CHEBLuOapETaLWT6nQKnyGsMxoDQZsAMBnLsV+ifg8dQOFjx8e5amUCRe
+         I6AaTOhALoWad2aW6JWI+tZSO4YM8SjwCN+Sx/AY5O8JfJa9GFyrT2DvFS4uoGxW9nK+
+         pngk4qSU9D28S+0AAlRr3mnm3TWX9uO0Q58IBME8LT67QxEnphXftwIe5Bar5TPEk1hi
+         U9TBjgYW0KHumeUxeIde3hiKrW0b0cKh3kTYrRG2VsYN5p0+xA4Dl88T6Cmfk67C7H+V
+         mXWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVysxteD5x52+h3NAmY1lMIjR66bHG1CFc3Np32+5JHKG7OOYmmAUf4wgHbeDnWNOdKUeNHOL3avbuPAa27mZlHlfCyu94jN4/C23CAgwL3gUtkfI3BuoFI7unblr2YHTE11hGOj/EVb6w=
+X-Gm-Message-State: AOJu0YzRT1FRpp9DqgA6hHjaGUxakSq6Lk55rITGEvyp8kGw22b9EWN1
+	g5ymTRZZPMDa7XR9UokZlJdyLa3YrBDmwsselChQ8wevH1awKUsd
+X-Google-Smtp-Source: AGHT+IHz30EtXbUsDHHybZPNs80s80ImweIjNew1u/fXIGZ82mBpPBeMfLVVk7cu9MbgmkwQgY+KIQ==
+X-Received: by 2002:a17:906:a19a:b0:a3d:2a52:380f with SMTP id s26-20020a170906a19a00b00a3d2a52380fmr8275021ejy.72.1708359446972;
+        Mon, 19 Feb 2024 08:17:26 -0800 (PST)
 Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id t22-20020a7bc3d6000000b0040d5ae2906esm11691050wmj.30.2024.02.19.08.06.48
+        by smtp.gmail.com with ESMTPSA id lu16-20020a170906fad000b00a3d5efc65e0sm1770838ejb.91.2024.02.19.08.17.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Feb 2024 08:06:49 -0800 (PST)
+        Mon, 19 Feb 2024 08:17:26 -0800 (PST)
 Content-Type: multipart/signed;
- boundary=b0da0a27ceabff049215f580b6f79f3cc323727d60ffb73d4a209fb6824b;
+ boundary=e43bc9b7547ba2fb2d75f0caf653f23939e188d8e14bbe063075b337bdb3;
  micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -60,174 +60,85 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Date: Mon, 19 Feb 2024 17:06:48 +0100
-Message-Id: <CZ96NM6U8O59.3TXG2WKAL7L8F@gmail.com>
-Cc: <sumitg@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] clocksource/drivers/timer-tegra186: add
- WDIOC_GETTIMELEFT support
+Date: Mon, 19 Feb 2024 17:17:26 +0100
+Message-Id: <CZ96VR54894Z.TIAQI1OXCH2Z@gmail.com>
 From: "Thierry Reding" <thierry.reding@gmail.com>
 To: "Pohsun Su" <pohsuns@nvidia.com>, <daniel.lezcano@linaro.org>,
  <tglx@linutronix.de>, <jonathanh@nvidia.com>
+Cc: <sumitg@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] clocksource/drivers/timer-tegra186: fix watchdog
+ self-pinging.
 X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
 References: <20240216210258.24855-1-pohsuns@nvidia.com>
- <20240216210258.24855-2-pohsuns@nvidia.com>
-In-Reply-To: <20240216210258.24855-2-pohsuns@nvidia.com>
+ <20240216210258.24855-3-pohsuns@nvidia.com>
+In-Reply-To: <20240216210258.24855-3-pohsuns@nvidia.com>
 
---b0da0a27ceabff049215f580b6f79f3cc323727d60ffb73d4a209fb6824b
+--e43bc9b7547ba2fb2d75f0caf653f23939e188d8e14bbe063075b337bdb3
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 
 On Fri Feb 16, 2024 at 10:02 PM CET, Pohsun Su wrote:
-> This change adds support for WDIOC_GETTIMELEFT so userspace
-> programs can get the number of seconds before system reset by
-> the watchdog timer via ioctl.
+> This change removes watchdog self-pinging behavior.
+>
+> The timer irq handler is triggered due to the 1st expiration,
+> the handler disables and enables watchdog but also implicitly
+> clears the expiration count so the count can only be 0 or 1.
+>
+> Since this watchdog supports opened, configured, or pinged by
+> systemd, We remove this behavior or the watchdog may not bark
+> when systemd crashes since the 5th expiration never comes.
 >
 > Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
 > ---
->  drivers/clocksource/timer-tegra186.c | 44 +++++++++++++++++++++++++++-
->  1 file changed, 43 insertions(+), 1 deletion(-)
+>  drivers/clocksource/timer-tegra186.c | 27 ++-------------------------
+>  1 file changed, 2 insertions(+), 25 deletions(-)
 >
 > diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/t=
 imer-tegra186.c
-> index 304537dadf2c..8f516366da86 100644
+> index 8f516366da86..acff97da138a 100644
 > --- a/drivers/clocksource/timer-tegra186.c
 > +++ b/drivers/clocksource/timer-tegra186.c
-> @@ -1,8 +1,9 @@
->  // SPDX-License-Identifier: GPL-2.0-only
->  /*
-> - * Copyright (c) 2019-2020 NVIDIA Corporation. All rights reserved.
-> + * Copyright (c) 2019-2024 NVIDIA Corporation. All rights reserved.
->   */
+> @@ -175,7 +175,8 @@ static void tegra186_wdt_enable(struct tegra186_wdt *=
+wdt)
+>  		value |=3D WDTCR_PERIOD(1);
 > =20
-> +#include <linux/bitfield.h>
->  #include <linux/clocksource.h>
->  #include <linux/module.h>
->  #include <linux/interrupt.h>
-> @@ -29,6 +30,7 @@
-> =20
->  #define TMRSR 0x004
->  #define  TMRSR_INTR_CLR BIT(30)
-> +#define  TMRSR_PCV GENMASK(28, 0)
-> =20
->  #define TMRCSSR 0x008
->  #define  TMRCSSR_SRC_USEC (0 << 0)
-> @@ -45,6 +47,9 @@
->  #define  WDTCR_TIMER_SOURCE_MASK 0xf
->  #define  WDTCR_TIMER_SOURCE(x) ((x) & 0xf)
-> =20
-> +#define WDTSR 0x004
-> +#define  WDTSR_CURRENT_EXPIRATION_COUNT GENMASK(14, 12)
-> +
->  #define WDTCMDR 0x008
->  #define  WDTCMDR_DISABLE_COUNTER BIT(1)
->  #define  WDTCMDR_START_COUNTER BIT(0)
-> @@ -234,12 +239,49 @@ static int tegra186_wdt_set_timeout(struct watchdog=
-_device *wdd,
->  	return 0;
->  }
-> =20
-> +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wd=
-d)
-> +{
-> +	struct tegra186_wdt *wdt =3D to_tegra186_wdt(wdd);
-> +	u32 timeleft;
-> +	u32 expiration;
-> +
-> +	if (!watchdog_active(&wdt->base)) {
-> +		/* return zero if the watchdog timer is not activated. */
-> +		return 0;
-> +	}
-> +
-> +	/*
-> +	 * System power-on reset occurs on the fifth expiration of the watchdog=
- timer and so
+>  		/* enable local interrupt for WDT petting */
+> -		value |=3D WDTCR_LOCAL_INT_ENABLE;
+> +		if (0)
+> +			value |=3D WDTCR_LOCAL_INT_ENABLE;
 
-Is "system power-on reset" really what this is called? Power-on reset
-sounds like something that only happens after you power the device on,
-not something that can be triggered by the watchdog.
-
-> +	 * when the watchdog timer is configured, the actual value programmed i=
-nto the counter
-> +	 * is 1/5 of the timeout value. Once the counter reaches 0, expiration =
-count will be
-> +	 * increased by 1 and the down counter restarts.
-> +	 * Hence to get the time left before system reset we must combine 2 par=
-ts:
-> +	 * 1. value of the current down counter
-> +	 * 2. (number of counter expirations remaining) * (timeout/5)
-> +	 */
-
-Can you wrap this comment so that it fits within 80 columns? It's fine
-to occasionally go beyond that limit if there's a good reason for it,
-but this comment doesn't seem to fall into that category.
-
-> +
-> +	/* Get the current number of counter expirations. Should be a value bet=
-ween 0 and 4. */
-> +	expiration =3D FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, readl_relaxed(=
-wdt->regs + WDTSR));
-> +
-> +	/* Convert the current counter value to seconds, rounding up to the nea=
-rest second. */
-> +	timeleft =3D FIELD_GET(TMRSR_PCV, readl_relaxed(wdt->tmr->regs + TMRSR)=
-);
-> +	timeleft =3D (timeleft + USEC_PER_SEC / 2) / USEC_PER_SEC;
-
-Same for these. Maybe make an extra variable to store the register value
-in to get rid of some of that extra horizontal space.
-
-> +
-> +	/*
-> +	 * Calculate the time remaining by adding the time for the counter valu=
-e
-> +	 * to the time of the counter expirations that remain.
-> +	 */
-> +	timeleft +=3D wdt->base.timeout * (4 - expiration) / 5;
-
-This doesn't quite match what the comment above says. Shouldn't this be:
-
-	timeleft +=3D (wdt->base.timeout / 5) * (4 - expiration);
-
-instead?
+We probably shouldn't proliferate this scheme. In retrospect I should've
+removed the two other similar blocks back when I submitted the driver at
+the time since they don't really serve a purpose. The intention at the
+time was to keep them there and eventually replace the condition with
+something that could actually be toggled, but it's been almost four
+years and this hasn't happened, so I suspect that we just don't need it
+at all. So perhaps you could remove this line along with the comment in
+this patch and then add another patch that removes the other unused bits
+so that we don't carry around stuff that we just never use.
 
 Thierry
 
-> +	return timeleft;
-> +}
-> +
->  static const struct watchdog_ops tegra186_wdt_ops =3D {
->  	.owner =3D THIS_MODULE,
->  	.start =3D tegra186_wdt_start,
->  	.stop =3D tegra186_wdt_stop,
->  	.ping =3D tegra186_wdt_ping,
->  	.set_timeout =3D tegra186_wdt_set_timeout,
-> +	.get_timeleft =3D tegra186_wdt_get_timeleft,
->  };
-> =20
->  static struct tegra186_wdt *tegra186_wdt_create(struct tegra186_timer *t=
-egra,
-
-
---b0da0a27ceabff049215f580b6f79f3cc323727d60ffb73d4a209fb6824b
+--e43bc9b7547ba2fb2d75f0caf653f23939e188d8e14bbe063075b337bdb3
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXTfJgACgkQ3SOs138+
-s6GORA//ZiipCoOSu/wox8hsJdL/TpRaNXjRNKNMz0NErbEYulBe30SnI7eT5XTW
-lbTiLsc5jF+1u0PwmpYpOCpxH3iTWFbTR5GvSWE2DSjtVRkve+Laz6uYGetcip9w
-MdN4t53myl86ehPL9eWMJesi20aqyfRbKkLP/rG424LItSgjnAqdRNSMlnBGozBY
-2CFa3GGepna7+3VSFGhHcuvslCFc9xIyg4kGcdsiAStPRtnVrx0XEW8KSUFT+u+b
-IjZi3w4EU3rYLCxvrrCQ8EcV0XMSQ7lmhcxFohsXK1cHx4hVtrTQ9RtXZcNQ3IZC
-DxfwqBDa4eeCWmek+8Y4a8jLvE32gAzPyuVrfLwCckVkmvGDicMNrt91Dtu3UABU
-aEsuKfM6DQJ0DXQeEqhwF3tfWSqbxIu9n0P20cBY65E/Pvu2yd+0VDW1VGUdGQba
-64RHPWq/jvgQTOG+xX7S2gOjk/E/8Bnr2thKQ+eWsadU9ZMffOWFv+hyd+CfUnYk
-IQ6V0ZIWGf6zmvjubb1XK+UVigr8bD1CETRUF7QOkXppdlbm2+P7pACgaewdaMyY
-2nDFrpCCi8jextNbkKCsMk5tI/0kAsLJBhYg48Ki2gFl4s9L4FO8927CjxaBIJXd
-oWJZDv766LuFtbYtvYCEXfBoqJvRWzq5v+dq5YVbl3Gp5qfJiM8=
-=dCoG
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXTfxYACgkQ3SOs138+
+s6FFEg/7BXMzLKa4WV2MSGtBdio1idtwClBrHumI9gexB9N8RX7Cfcjq/SS7KAge
+X9q5BpU9wfis60LnMFmfYZGXa2ml5CsjzNY0qf8t8z++eTfvFcfICMpL0ObW0kIA
+ZXDpyFCGlOXEA/KD+OJT2p9HokwwfJYm1yTfvQYvDom3S45RYYP+E1nF8ouH6DCm
+V08ynrpLmm3dnI5YTBP+M4PvwsRFKCNyV3dgio6t0SaVj60vGnMNISq/kn/2T5bi
+01+H/usbwsWNkOM3BnXjlPqMkjugN/LfktB8a/YCeR6bLrQAi1bgBojmEOwbkueJ
+FKxVmwpPZ9ZUboa1+3xMPuGJ+uH45yCCHj4F8PrL8VMhhIrOcjIIsSwhjT54PVED
+k0Ge1PhY22oAFWXuMytB/CM9sXIhvp5ZBwaH4KeFll8rIJmdB/15HrPVaowYojT5
+hehtorUpcYwF315sTzZ9pxaGEsMGaDWkO06YGxp5/DskgUAyhdi8wI1XwV1jCcHO
+Q0VJbKooCrrzCPOa41k8BBOH9YRv3QTw9JpfCL09/fFtejJAeEm+EJWwPw05NVjr
+9Vac+0EQ/FeNVo8d8/QSMoAaEYwES4PN/U2Ye92qB6/4zzny7Ao6JLutSJfx6bwD
+S7/VWP11vM4eCheAy4vBhrbxBsFFSMJpKfA+FA3RpK4VfGXj4Mk=
+=18jf
 -----END PGP SIGNATURE-----
 
---b0da0a27ceabff049215f580b6f79f3cc323727d60ffb73d4a209fb6824b--
+--e43bc9b7547ba2fb2d75f0caf653f23939e188d8e14bbe063075b337bdb3--
