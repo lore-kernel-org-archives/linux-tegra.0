@@ -1,137 +1,168 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2074.outbound.protection.outlook.com [40.107.93.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C2341C83;
-	Mon, 19 Feb 2024 16:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708361177; cv=none; b=LDYCVwd86XQdTIlCCVggUOVAgIanCuJQrX3zVEaQarLJgI2Zksqu7w0IvZV+gQIzS5XcmgzVD49rlt7KTCB8UL6ANURpjJ4XfoJhjPxzjJ3kbux/gsUQ8mdOI48gEZbBuEN9Ax+WrLvO6yOfihpBIzIGI7G95WpJ7TNtsLusmHY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708361177; c=relaxed/simple;
-	bh=OpywkGjlXr/F1fc4QFUmendfbRWwwx4aY6lDCERPsGk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bEehgQ9q10JtGSd9jmQklTjQD7SnY/HzkIouEmDMLLwDPHHsaRxDGfB0EoWI4aa14u0Lt2MDKwfOdxdzjbDWLpUbY4vAqCXVekHWJk3Wdsd+uvRm+76L5pPHVmGIWnKEqRZzRE1GYp4oV749RxiVDMNfJb69g0FeXt475fZS9xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEyuVUvp; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FAD482C0;
+	Mon, 19 Feb 2024 17:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708363568; cv=fail; b=CcAKBk75J5793THMnnd+MizHH7T3CuGCwLiih/iagtRG8g4k1WAQdYMPwvHDRR8HakFFWNZeMGzu3otkSFhFdXDfOZmKXGrPkRGvzQtD2OU7ZeF6Kp26mE0mcoM13zj3FoCODBoakHvBYTru8qic9LXikoJXJ0QkawZNoQpaBgQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708363568; c=relaxed/simple;
+	bh=6eqcNqMIN3hhMhS9nrdbSBMfZW/xBNN9fKEBNaaApjc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S8x8tXbASN8eF9j/+8+wXelmLOD24GK2spG0i+hnwWOC46hk0ruNuZ3MiX9dQxJkGUL5UTnA3bIBvmUdm9kdGccjxdbGOUdCr+feUmB5VXjIkc2Hne6U5MVz91O/fSSjOlE1FCHlbGxfubHWGGj9VEtSLC3lRUCVYpMXprEVCSM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=c0MveooC; arc=fail smtp.client-ip=40.107.93.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEyuVUvp"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-563b7b3e3ecso5415306a12.0;
-        Mon, 19 Feb 2024 08:46:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708361174; x=1708965974; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RNjiIU+MnMIcoYvV35lNchbg525xkgaHmjWjHQnrgAI=;
-        b=KEyuVUvpd1wGnyN2IWL7e6I5l5sibMk4mOWe3HraY2EX94/9trbBFd15aJlyz9iXiX
-         N7rUfzKHF4YGqXS7RzeaZyIuucPtlGmUaw/Vz5JRM1ttUdSu6r/MXdTjAYlNSDy9CI6+
-         +tuV2cn5GNOvN7BBcBw5k5OG3ho1DOfvphbnjsA7SIXOlu9S4TxRzAxBzq5QXWoG3cMS
-         21NvFUxNFgADIDR4BUyfpRfTuo+S/bsDn/OdAACgUhRN8IcOCrHUmyAuucs51kGdgKdW
-         UM8pVRq1gam/GKRZmeKk844m/g9UQZvCwavdkkxPyQTzgVj9Vw4gZjKrd6fmdJ4ZD3PJ
-         zEAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708361174; x=1708965974;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RNjiIU+MnMIcoYvV35lNchbg525xkgaHmjWjHQnrgAI=;
-        b=AvEooShGgEeYHb+TOqx9lJleuskIr260qni3mKumESLRzJiYQFAsXUhO+pFLzsL3w3
-         XZ8EIDUW+USqngNQwbNoj0/0XZiom12Obd2u8EgJ+LUhsO02VAZV6+jMEjtNmAWI2Edw
-         IIsuXRUGq/Ry4GuUL3rzKdpA2Iqyq9W8qF3nDNWdAfTjOovX8bp331MQ5A61SUhg9W4Q
-         t8t3Ovix8Fr+7Jve35b3ob0GRJJfMnPZQG6Ik9Gk9cktOEitq33KvgMeHeyo4+GnlpEz
-         uxoPqE7H+N4L6tZaXt1GSOYAy5FrHPXvEiy4M1kijQ3pTiQS7P6qOVDU+LbFJT7tBhri
-         T8wA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfFYLn/hCXtqAZHq0HLYY8+B/YUK8Se08Ym7gxX1kt+Dx+SzlFZS6+LHlc9PkSek0VHOO7v+OV7Vdgu5hHRfx7PV299rWQ9PeKBR6bb8lZFEtxty/1PiPztNFMttek9Bj79h7Yli0VbrnZQaBQSR6CSSdNBEcGfdWSjHiYACGidbA=
-X-Gm-Message-State: AOJu0YxrMueonpo8ymn6DakC+hNXesCt2SnecBRbLbRadjLJoKzatv9V
-	RvBPUcNWeHxGM2zJwnbIFT4Kmzfq/j61FrAFRMm74iXQ54uhzunj
-X-Google-Smtp-Source: AGHT+IFeILrgwOmdxu67ncHUZUE4nXhvuhlNOkspzkSZnFXnnQtvp7fWPgo27EPTD8QyCHtOOaECPw==
-X-Received: by 2002:a05:6402:2696:b0:564:15b:9f57 with SMTP id w22-20020a056402269600b00564015b9f57mr5925624edd.11.1708361173701;
-        Mon, 19 Feb 2024 08:46:13 -0800 (PST)
-Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id fd11-20020a056402388b00b0056104738371sm2837765edb.65.2024.02.19.08.46.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Feb 2024 08:46:13 -0800 (PST)
-From: Thierry Reding <thierry.reding@gmail.com>
-Date: Mon, 19 Feb 2024 17:46:06 +0100
-Subject: [PATCH net-next v3 3/3] net: stmmac: Configure AXI on Tegra234
- MGBE
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="c0MveooC"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y//XYKgf2FfIDhDcbXBkT33NZuSXWKtaghmUtJ512ZcjI0ryIOe+83GgdvNBAcRAWmUr8ve+5cpR3wYl+nL4FaVCf6Bm5XlQ6jKoW9wikdc6wnEWVYt33v4ZeN9F52xZISNtKB+M083n9bzzHNYOKHLulRaONTv/VsFL8HQogNfnO61zICwfrNC40w++n6A1Esai0FaXxYcayCbI8FCUwXLenMXiSZKQjyLGUv0lXSffNUqCDMAZA3LmsZw+rJ7GiAfoOm/xPGCxrIl7G9bWafTQZFG1emk0Ba8QHk28oO2oc2U1QstwwrjEouiMWxOZ97f4TWp168mUUbDOMNSF0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=irmUWWBwz5LD6tafzqLlC1pSCXCF6FsXn1OzaSGMaQk=;
+ b=h8HWozvGr6zn3v8n2yD6p1gXtE1U3r0JPvW9eF1NHnqeHldkIrp1BAqTr/XpzbV0d0aHahRGi+TpgxpBlUi1XxoCXVukgbdwTiLjz1wXfr8IAYK8UGULfQgRxG8AmUXV5E3J7BNVfBr8Kvby6Wz3jLWj+NO2DsATpVSp1vS6FP7WPAVaDTl/goOVJbRH80Q39bO3mah5qAehmkrw4YRlpnVAb7oFfhhzgIoLaNiUpjbXMuy5mCk8fmjWI1ymwJ25xda/sDc94RCtCWJ4DiDssglE3N/F3hRoU8GvIOI9suYf1YigdjY/XiMvVPtdCPlvUj72CFlfhptIGQsObjsSkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=gondor.apana.org.au
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=irmUWWBwz5LD6tafzqLlC1pSCXCF6FsXn1OzaSGMaQk=;
+ b=c0MveooCarkvU6iU1r+bvmfV2dLz3AYoOgYmo/PWI/k/w57y9e7v+K+La1an5gQwSlGCIAxRqqWO1zb0g92N+ShzfFkXEyCwvl0qqD2zXzrlby0qbQuGqhji5tDozAVGq8eggVqOjfD1+eYbeKpu9vDVRm4WkDcQI8tIx3Xru8QRBR2vxFExqKSHtXFlnnIDzCRobCVu5Eq6RYrGUv0tQmsZUStTDqoWaeKEyo+iawY+SWF4uqJxqJ6GiY3N87lI5ZMGgraAIA4+tV6GA7j+T0bYnJsZ+txxCzk5w3D7Vk8ZyfT4KSqRpUNn+2BMEcGkiD9MPcf7EItNn3yVHZMplg==
+Received: from SJ0PR03CA0111.namprd03.prod.outlook.com (2603:10b6:a03:333::26)
+ by SA0PR12MB4461.namprd12.prod.outlook.com (2603:10b6:806:9c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.19; Mon, 19 Feb
+ 2024 17:26:04 +0000
+Received: from SJ5PEPF000001C9.namprd05.prod.outlook.com
+ (2603:10b6:a03:333:cafe::b7) by SJ0PR03CA0111.outlook.office365.com
+ (2603:10b6:a03:333::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.37 via Frontend
+ Transport; Mon, 19 Feb 2024 17:26:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001C9.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7292.25 via Frontend Transport; Mon, 19 Feb 2024 17:26:03 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 19 Feb
+ 2024 09:25:45 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Mon, 19 Feb
+ 2024 09:25:44 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Mon, 19 Feb 2024 09:25:40 -0800
+From: Akhil R <akhilrajeev@nvidia.com>
+To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <mperttunen@nvidia.com>,
+	<linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<krzk@kernel.org>
+CC: Akhil R <akhilrajeev@nvidia.com>
+Subject: [PATCH v5 0/5] Add Tegra Security Engine driver
+Date: Mon, 19 Feb 2024 22:55:25 +0530
+Message-ID: <20240219172530.20517-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+X-NVConfidentiality: public
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240219-stmmac-axi-config-v3-3-fca7f046e6ee@nvidia.com>
-References: <20240219-stmmac-axi-config-v3-0-fca7f046e6ee@nvidia.com>
-In-Reply-To: <20240219-stmmac-axi-config-v3-0-fca7f046e6ee@nvidia.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>
-Cc: Serge Semit <fancer.lancer@gmail.com>, netdev@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1341; i=treding@nvidia.com;
- h=from:subject:message-id; bh=FahNwLbVWpd8t2eBaIzLF59MdYIoMLjB5FhApvU3UBw=;
- b=owEBbQKS/ZANAwAIAd0jrNd/PrOhAcsmYgBl04XQ/0uAEXnL2R0DFCkdbK7AgOwWu4oUXANiH
- 26R0FoU+QeJAjMEAAEIAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCZdOF0AAKCRDdI6zXfz6z
- obeRD/0WpBZm0htLrSxWNAacexNdC3abLvhbs3ndyfACIDGwCU53kDkEqlMbz0gv3HT04VBGnie
- 9cn8oWrdmfouSWku3KZy0B13uPUOlZigCDOixje6BB+14wxnEDra8af9OGSLO+v0VjlG5rFs5Nk
- 0vMV2SH9hkJ0ArDHFp+9H3KSKRaBMIgkGn1ANcMDot8V44Lz03euWWGvbtcIyyxXo7vGSF8IObM
- tklx3v3obPjVPA1jyof873G2DD59ijCxSklfDDdBDvpev1lxeodCgDHV/kDZKDrCFrmiFIJTbJ0
- TVG7qT/3/xoO1yC0ANtVm5Id8GxUD08oZggVpGmqC4yTWnGC05uzRdvugwgD1AX+zG4GNrx7YMD
- 5w0KO0faOnQxjv3H8zUDIKh1r4HlpDgSgTea8auvPSKMRhTJTbk9iNxO+jhumrSAQ4NctSnRFOV
- B89KrwJXZN/qxNYQCudhwmbGzzPg3w1Ii+CK/a6H1ZX3SEVjy0aaPFkiPkbMtHZNbOF6us+FDpD
- 6orf236g/m4kNRitVuG9Ss0pwjprbjcQL3NgzVnZP1TTVF4fFFIV6PvHAIMBPlxj/WdJZYPFzh+
- gUgPfQeYNAH0UQrm3bWbEDlvjgskdXTPftihd8CBZUjkl3GvE0J2/678V9IpD/iQplM6l9LP6y0
- kZKxN/nhE4NHGTg==
-X-Developer-Key: i=treding@nvidia.com; a=openpgp;
- fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001C9:EE_|SA0PR12MB4461:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e4c12ac-1780-4b8b-c01c-08dc316fd96a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	kvfTDLc3RRyMU/stZxQuR8ulc8zXEAp7UDHVWGlgmtWXxKjnpnnc3UkjF6jeMNQNzHWe65OzdFyM9s04PfMaBb9GZ6uwjow0oQBEbiLzGw/Q5OvHY9NyRCA2x3zFxK/9Bo7JzRuFVHO3bopwOdfcoBGBuqlQj52pBttp/5r37GpLvG8xighU8Pw/dB2h8X1Fgeyv1It1xfwMZ+1AQ0kVAEGq7JymbGrmO6e9v4WaiNPLER+yMXe8xTLBfQ9+65WorXzNg+W25SZW5vqGT7qFBsa9PUriOSJSP/697J6POyU7IR0TZp4zzfSIp6kBu6x4z0pgTXtymIt9a95QyrpGJQsabwXI/TgLJzabef24QnfUYwISSkAoYrxFmIdsAzcZdrmDodqCG9F5tUmbGHXSRiA1evVqPG35emjx0oEqcT0Jl4ugyeV5RHIuFeQ9g6WsDN81ESof+4ZfBZhUZelhqjYoOK6v/dMBxancrnk/V5ZSXRvtp03eIzreRAR7rHR1HFoW6TuQPSZe3UHk/68OYlIAH2evm1rmo7PMTGzIKjU6QLs4PEPaQ+bI589nUnuTM7ffkI1tiP1CPBoTW9BFcu5tvOgvOglpPf5W5lmais0A6hl/gmxM9T6RtwYOvH/cnz9gMrrqgcADLBfWj8ey8vfAJAlt9XwTSnn6nVX34quNv4dp1EZxuDwWe+nGEddC
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(230273577357003)(36860700004)(46966006)(40470700004)(921011);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2024 17:26:03.5894
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e4c12ac-1780-4b8b-c01c-08dc316fd96a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001C9.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4461
 
-From: Thierry Reding <treding@nvidia.com>
+Add support for Tegra Security Engine which can accelerates various
+crypto algorithms. The Engine has two separate instances within for
+AES and HASH algorithms respectively.
 
-Allow the device to use bursts and increase the maximum number of
-outstanding requests to improve performance. Measurements show an
-increase in throughput of around 5x on a 1 Gbps link.
+The driver registers two crypto engines - one for AES and another for
+HASH algorithms and these operate independently and both uses the host1x
+bus. Additionally, it provides  hardware-assisted key protection for up to
+15 symmetric keys which it can use for the cipher operations.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+v4->v5:
+* Move copy/paste of intermediate results in export()/import() to
+  'update()' callback
+v3->v4:
+* Remove unused header in bindings doc.
+* Update commit message in host1x change.
+* Fix test bot warning.
+v2->v3:
+* Update compatible in driver and device trees.
+* Remove extra new lines and symbols in binding doc.
+v1->v2:
+* Update probe errors with 'dev_err_probe'.
+* Clean up function prototypes and redundant prints.
+* Remove readl/writel wrappers.
+* Fix test bot warnings.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-index bab57d1675df..b6bfa48f279d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-@@ -199,6 +199,12 @@ static void mgbe_uphy_lane_bringup_serdes_down(struct net_device *ndev, void *mg
- 	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
- }
- 
-+static const struct stmmac_axi tegra234_mgbe_axi = {
-+	.axi_wr_osr_lmt = 63,
-+	.axi_rd_osr_lmt = 63,
-+	.axi_blen = { 256, },
-+};
-+
- static int tegra_mgbe_probe(struct platform_device *pdev)
- {
- 	struct plat_stmmacenet_data *plat;
-@@ -284,6 +290,9 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
- 	if (err < 0)
- 		goto disable_clks;
- 
-+	/* setup default AXI configuration */
-+	res.axi = &tegra234_mgbe_axi;
-+
- 	plat = devm_stmmac_probe_config_dt(pdev, &res);
- 	if (IS_ERR(plat)) {
- 		err = PTR_ERR(plat);
+Akhil R (5):
+  dt-bindings: crypto: Add Tegra Security Engine
+  gpu: host1x: Add Tegra SE to SID table
+  crypto: tegra: Add Tegra Security Engine driver
+  arm64: defconfig: Enable Tegra Security Engine
+  arm64: tegra: Add Tegra Security Engine DT nodes
+
+ .../crypto/nvidia,tegra234-se-aes.yaml        |   52 +
+ .../crypto/nvidia,tegra234-se-hash.yaml       |   52 +
+ MAINTAINERS                                   |    5 +
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi      |   16 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/crypto/Kconfig                        |    8 +
+ drivers/crypto/Makefile                       |    1 +
+ drivers/crypto/tegra/Makefile                 |    9 +
+ drivers/crypto/tegra/tegra-se-aes.c           | 1932 +++++++++++++++++
+ drivers/crypto/tegra/tegra-se-hash.c          | 1048 +++++++++
+ drivers/crypto/tegra/tegra-se-key.c           |  156 ++
+ drivers/crypto/tegra/tegra-se-main.c          |  439 ++++
+ drivers/crypto/tegra/tegra-se.h               |  569 +++++
+ drivers/gpu/host1x/dev.c                      |   24 +
+ 14 files changed, 4312 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/nvidia,tegra234-se-aes.yaml
+ create mode 100644 Documentation/devicetree/bindings/crypto/nvidia,tegra234-se-hash.yaml
+ create mode 100644 drivers/crypto/tegra/Makefile
+ create mode 100644 drivers/crypto/tegra/tegra-se-aes.c
+ create mode 100644 drivers/crypto/tegra/tegra-se-hash.c
+ create mode 100644 drivers/crypto/tegra/tegra-se-key.c
+ create mode 100644 drivers/crypto/tegra/tegra-se-main.c
+ create mode 100644 drivers/crypto/tegra/tegra-se.h
 
 -- 
-2.43.2
+2.17.1
 
