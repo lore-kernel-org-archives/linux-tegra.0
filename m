@@ -1,135 +1,151 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D172D620
-	for <linux-tegra@vger.kernel.org>; Mon, 19 Feb 2024 16:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99663F9F8;
+	Mon, 19 Feb 2024 16:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708360283; cv=none; b=eB3FSLrFCB99U0PHwfyL4BpB5T0gz7K54GXXKgO+aGgz3d2bvIRlTy0yCpBNN+IaKdPNgGexiV717DlkAPSUCa3No40ipjATwIRtrKAgoWiLXMYNwbJrr48aL5Fi8QCRo3gn9yOYzlzAAjUhcvXPnQXJS9vi0dMvhDK3KNNeInY=
+	t=1708361173; cv=none; b=lIGgtgHdbJJYd68QBu1yEjBoa5D92SFRv3p4mhCZZNm/ipBE94dmOImGcvsDoiDQFSpYfIXkusAPOkSoHhqTc/J3JHpMGY6kiQuqs0H4SzwJgpB2AWeTJZoxQJgYBp350/TNiQcLqBdpOdrXmwrX7SB/3aSPuu0+B8tUkXZrhcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708360283; c=relaxed/simple;
-	bh=CJnshEXb5iP21arWLxZBg7eXP7IT09TyOJfu5lknJns=;
-	h=Content-Type:Mime-Version:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=m/iu4L/EojqVIpNtFHtbsXBn18UleMdlnq35v546lTj1uo67VceSKVCNF7WP65ichBmIDzudbl6QrFQlwoGCTFmUlAEqjF7eD4q4Ch6HeHtXiGPXLAM3LoIZUq5Yk+n0nUGmwgyBcVOyP2gNQM4vqlGAwpsGfivnXF6fuLRmYhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XDqbQ7k+; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1708361173; c=relaxed/simple;
+	bh=EEl2gY8IYqh43eRkVKCnR+nEv7c8AQM0pRrgpPbjuZI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jM/JU1Y1ZfBcCVC8imjesdKhiydj8MC5ZsYQMwFEKTF9CDbBQhADmMKI6OYcIct43sKQ7E2kHZbb5dbr51UZ59NdWCvB0UuobpCMHeECj01BJKgUDcrgrQjaTYMa7DxnkcPreJcCLp5zF4gQ9z5jNxCx5t/vi5naL8CyvwvM+7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffb8TRna; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDqbQ7k+"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a3566c0309fso529299266b.1
-        for <linux-tegra@vger.kernel.org>; Mon, 19 Feb 2024 08:31:19 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffb8TRna"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a3e7f7b3d95so160374866b.3;
+        Mon, 19 Feb 2024 08:46:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708360277; x=1708965077; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CJnshEXb5iP21arWLxZBg7eXP7IT09TyOJfu5lknJns=;
-        b=XDqbQ7k+OYRtZuxH7yN9qGODv25VdRoXye4kaMrxLZslF2Ii9Dh5gvUT5dPw286Kp+
-         aPTdh//oh2IZAlbHi3XDuKzBxR1uokTXzUI9wsHAOE2J4ASkyQjxBA4LLKi6TggPXlUR
-         1rH6R8/4YAYGI0fM88GPGIwLEY8fMaYjSTICJ38cxZuupgx+e8baqbGk7WG9mhh/tbjz
-         dPMeTVGPfv48go/n+y0Wqi4ui/u46b+IX71JBgEEK+ZUha3e1U5GUpqLwOeOj89b235b
-         UxP/M+EKMB1PHL2W/qmlZgoAPJMaePXajURsBGD4H+I87McLdER0XeSBOA+pbA5FqhQe
-         r4Iw==
+        d=gmail.com; s=20230601; t=1708361170; x=1708965970; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U2fCNWiM3gBWDcPsaPzkwgi85IdpiVc9Yy8EhbZ+rUg=;
+        b=ffb8TRnaqWLGpt/qu745qSPZBklYWvumcZUjit7/pDj553xV5rrRc554QMAcc3eSg4
+         q8thdMcMSaVOJ7fpwxnJebdUgDbaBk7wcyPsZs2uhFL+1I9Ao3IpZWqjd4sFvwpTtHxT
+         dVmuyRTtbYJCdgPIgRXyC3UL8bfH7zi7STyjsoByJHkAcuzgLNSKRc6VQM6G51humL7D
+         m7ZlrgxhavpOmwSbl6kxDqi2/tKv9J0UDWYrMA/+NQITItUU6T1kBOAW8STgemO3m0NT
+         eaPU4bNvFOmAgZAVvaQIGMTJAFDv+k+26hogG0PanWD2Y9wUsdGOattvlcABIO1ebaXd
+         sUyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708360277; x=1708965077;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1708361170; x=1708965970;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CJnshEXb5iP21arWLxZBg7eXP7IT09TyOJfu5lknJns=;
-        b=LNlXm8CmuNYM5ORChvre9lPYQgyjlqaLpGfMEIAG+I1KR0F6/VEQobEyS6yaqGdJfU
-         MU4zo3n8/Mgs7+W7TgvTD1tRcIOw/s44r/XjNYdAG8kromv8WsZaLOL/B4/3fx3e14n+
-         qa1kZSobmiu8Yqizb8yWZWy7EHKj++68VznUxjBa2cu3DDbMqM44CwNNfw0a2l4bWQHN
-         KYph5IplZrbiHmORzz6vBjgWzvr1RCfNV1G33I9is2AUppVS2hHbi3yKSk+4jpuqSMYH
-         QBXYVNZD21bYOlSr1qNxVKKmMnaL+XGkqw8QEP+Go2HvbGNSGEcYNAhzeiIiaMdCCfKW
-         RrBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQz6XQV3JzCivpe8xSTRjbnN+VQAb8jWFSOcKYbsOyPBjt8mE8roO5/CwI5NjaxVTCo8mHdDzr8Ek4YG8B/SezjQZH41UrkZv3/iE=
-X-Gm-Message-State: AOJu0YzkTbtyYc1Qe6xGAg7hc5w0+DJ4H45hcNXY52YQASBOCxpb9Igg
-	vuhdVfiSZocoOMHI4dcPdvtrNgn8pnJfAc7Y3jxlUmVBB7Qjd2TI
-X-Google-Smtp-Source: AGHT+IHwY+g0l6OBkTZ/znpmFhm6zjeMvBV15GsnsAHatlQUq8ac60IGd6BvGeEMX5W3lkEExT16JQ==
-X-Received: by 2002:a17:906:f150:b0:a3e:8f38:8d76 with SMTP id gw16-20020a170906f15000b00a3e8f388d76mr2234550ejb.59.1708360277472;
-        Mon, 19 Feb 2024 08:31:17 -0800 (PST)
+        bh=U2fCNWiM3gBWDcPsaPzkwgi85IdpiVc9Yy8EhbZ+rUg=;
+        b=uPiG45WeOj5Nj3atzTbHq+Rbj+nRP8EydOTz+VsocHAflplt+BmT7SH8Yu18HGrkPy
+         0J/xnG8jffTxn78GOq1uDeFbuMvLrvlCgE7mXdYg2C0arJB5UBX1ZpVgWFV0wJlnDS8+
+         9aFOTB1cN6gQnttCb1ES3azWaeTJoRY/3riB7GhUcQZ6pshXguT0p4pNZgWaBXjyOPoY
+         TnpDZtZoItzPMbH+Qqhx9Qsi08ZN+61AF1f2NpFDTTP2LJTcu3jqGys8JT4Db8RAMUrh
+         6Ru8MHaMHgaaWBJpp1hLHA5nOiyn8YYGyT50WpOjOmxdMB2gh7PYd5p0vgbCBBe3YFXC
+         ay0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU48zfFP2Fky347pONQXTuO/d9vnJZoS9Mm5xPjTtdqde2Brg/5sen+q3p+pPqa5UVvhTaq2foICP9FES4I0rQTBaiEQGwIOE1xNheBRmFz3Y+wobeUJqlAJYwHY0AOHsdnjiuUSbAU3/boEZHu5qe/1uXRGgdQ5wyRMR2onmK9GFY=
+X-Gm-Message-State: AOJu0YwgJpAIkagCCz5QM4jhTO/MzLah9fGOPjFzuWWvzfoeZVMq0ofi
+	fYHZ6DTrgiVj/1CRzMHnIKHP8orCDpM1a+7WyT9Cz7FG/tfflcwD
+X-Google-Smtp-Source: AGHT+IHUtbT6N+I5vRkwIChFpp4DaVBQvNMYjkjPPeteBQ6/TCncEmVXPd5Dkwq3bRCdT1mITTsyYw==
+X-Received: by 2002:a17:906:a38d:b0:a3e:5c65:9e27 with SMTP id k13-20020a170906a38d00b00a3e5c659e27mr3267359ejz.56.1708361169407;
+        Mon, 19 Feb 2024 08:46:09 -0800 (PST)
 Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id bn9-20020a170907268900b00a3db46018a4sm3088388ejc.71.2024.02.19.08.31.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Feb 2024 08:31:17 -0800 (PST)
-Content-Type: multipart/signed;
- boundary=63829e55cfba98703e2f61921804ec1df7a9f29322c3de52c6af38343b10;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+        by smtp.gmail.com with ESMTPSA id hw12-20020a170907a0cc00b00a3d11908bbcsm3051711ejc.203.2024.02.19.08.46.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Feb 2024 08:46:09 -0800 (PST)
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH net-next v3 0/3] net: stmmac: Allow driver-specific AXI
+ configuration
+Date: Mon, 19 Feb 2024 17:46:03 +0100
+Message-Id: <20240219-stmmac-axi-config-v3-0-fca7f046e6ee@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Mon, 19 Feb 2024 17:31:16 +0100
-Message-Id: <CZ976COWNF9P.9CWFVDV5ZKAY@gmail.com>
-To: "Mikko Perttunen" <cyndis@kapsi.fi>
-Cc: "Mikko Perttunen" <mperttunen@nvidia.com>,
- <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] gpu: host1x: Skip reset assert on Tegra186
-From: "Thierry Reding" <thierry.reding@gmail.com>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240214114049.1421463-1-cyndis@kapsi.fi>
- <CZ6F0Y2S635X.1X4B2G0KT43NX@gmail.com>
- <cea93e4c-f6f0-4017-89b5-30e3d7b482dc@kapsi.fi>
-In-Reply-To: <cea93e4c-f6f0-4017-89b5-30e3d7b482dc@kapsi.fi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMuF02UC/33NQQ7CIBQE0Ks0rMXAtxbrynsYF0A/7V+UGiCkp
+ undJaw0MS4nk3mzsYiBMLJrs7GAmSItvoTToWF20n5ETkPJDAS0AoTkMc2ztlyvxO3iHY1cKdT
+ ijLpH51jZPQM6Wqt5Zx4T97gm9ijNRDEt4VXPsqz9HzdLLvgFAHtlYIAObz7TQPpol7lyGT4J+
+ EVAIboWtQGjjVTmi9j3/Q153SoGAAEAAA==
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Serge Semit <fancer.lancer@gmail.com>, netdev@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2649; i=treding@nvidia.com;
+ h=from:subject:message-id; bh=EEl2gY8IYqh43eRkVKCnR+nEv7c8AQM0pRrgpPbjuZI=;
+ b=owEBbQKS/ZANAwAIAd0jrNd/PrOhAcsmYgBl04XQRSUGlGVcdjCZYTd7+y7ZABIFgrEjyjNzO
+ nn98yszDTuJAjMEAAEIAB0WIQSI6sMIAUnM98CNyJ/dI6zXfz6zoQUCZdOF0AAKCRDdI6zXfz6z
+ ofnBD/9Ra+1UJr4OR3HBMkNheXmxAo23nS23hxgCplfnMgUUIRMTtOoArxbF4SraBlnDFiO1ol2
+ S4lq/d6pxJpwMk8NzXUw4mhkZbMC0ZdIkMNQ6swUuD9b+4HLRSlF2blAFkT6j8TuQTkZKH3OiEv
+ 1OwuMbV2J3DsPYH/R50vrflCaY2qVFdj+QEqLuMLerbknCp8OEO7Rv+QyUeTKLZ1dFHS5QqXkaZ
+ ioIPmP9wbhSvTgaoID29Gl4qAjbYm3a2JvgaYjfnOn9BAXnpxv6BB+JGnvO/JOD2ktb5fB2PStl
+ plEqcQ3Uyw7S84N+zyti2MMgXegk4bn6KeSP24adJDCdlqCtrQbl1YpIjhfUcLGTa/TIGTs+OwX
+ mxdlSaoniOrG9n0JDa7d3ODZiA50G2yQiP9wYscsMZyznTAGauVXZRXljSkp6O8TZz/+Ghldd6v
+ iN5HeaBcaBSQLh/JBY2VfukMyRisCMymBIFcY4UhNzeH/o+rr9q9ERKUv4FgnCOFF3KEC7nB5cx
+ 9yihcWoS56PhiIHW4lRXrDJI++JTUdDLDOVS5Wo1jSn00FergKG9lqTLhJgwciVM+G/16phJ8eK
+ 8aAqmecwHSMNTvGrlUGoSXiJvcVOBxx3k4y9biWpjRWJ8qT9J7v8y/hvUNY9XI5bYAnFyyQVcCb
+ ax0mcUrb5nlU11w==
+X-Developer-Key: i=treding@nvidia.com; a=openpgp;
+ fpr=88EAC3080149CCF7C08DC89FDD23ACD77F3EB3A1
 
---63829e55cfba98703e2f61921804ec1df7a9f29322c3de52c6af38343b10
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+AXI bus configuration can, in most cases, be derived from the compatible
+string, so instead of relying exclusively on device tree for the AXI bus
+configuration, create a method for device drivers to pass along a known-
+good configuration.
 
-On Mon Feb 19, 2024 at 3:18 AM CET, Mikko Perttunen wrote:
-> On 2/16/24 19:02, Thierry Reding wrote:
-> > On Wed Feb 14, 2024 at 12:40 PM CET, Mikko Perttunen wrote:
-> >> From: Mikko Perttunen <mperttunen@nvidia.com>
-> >>
-> >> On Tegra186, other software components may rely on the kernel to
-> >> keep Host1x operational even during suspend. As such, as a quirk,
-> >> skip asserting Host1x's reset on Tegra186.
-> >=20
-> > This all sounds a bit vague. What other software components rely on the
-> > kernel to keep host1x operational during suspend? And why do they do so=
-?
-> > Why is this not a problem elsewhere?
->
-> My assumption is that it's due to a secure world application accessing=20
-> NVDEC or display engines during suspend or resume. This happening=20
-> without kernel knowledge is a bad thing, but it's hard to change at this=
-=20
-> point.
->
-> The reset line (CAR vs BPMP vs non-accessible reset line), and the=20
-> secure application code programming this stuff is slightly different in=
-=20
-> every chip generation, which is where I think the differences happen.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+Changes in v3:
+- add comments to help explain override logic
+- add missing kerneldoc for new parameter
+- Link to v2: https://lore.kernel.org/r/20240202-stmmac-axi-config-v2-0-64eab2bab17b@nvidia.com
 
-*sigh*
+Changes in v2:
+- fix bisectability issue between patches 1 and 2
+- Link to v1: https://lore.kernel.org/r/20240201-stmmac-axi-config-v1-0-822e97b2d26e@nvidia.com
 
-I guess it is what it is. Please add a bit more background information
-to the commit message and also a comment for the skip_reset field so
-that people (including myself) will remember down the road why this
-exists.
+---
+Thierry Reding (3):
+      net: stmmac: Pass resources to DT parsing code
+      net: stmmac: Allow drivers to provide a default AXI configuration
+      net: stmmac: Configure AXI on Tegra234 MGBE
 
-Thierry
+ .../net/ethernet/stmicro/stmmac/dwmac-anarion.c    |  2 +-
+ .../ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c    |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-generic.c    |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c    |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-ingenic.c    |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-intel-plat.c |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-ipq806x.c    |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-loongson1.c  |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c    |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-mediatek.c   |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c  |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-meson8b.c    |  2 +-
+ .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c     |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    |  2 +-
+ .../net/ethernet/stmicro/stmmac/dwmac-starfive.c   |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sti.c    |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c  |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c  |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c  | 11 ++-
+ .../net/ethernet/stmicro/stmmac/dwmac-visconti.c   |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  2 +
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.c  | 78 ++++++++++++++--------
+ .../net/ethernet/stmicro/stmmac/stmmac_platform.h  |  3 +-
+ 25 files changed, 87 insertions(+), 49 deletions(-)
+---
+base-commit: 35a4fdde2466b9d90af297f249436a270ef9d30e
+change-id: 20240201-stmmac-axi-config-77ea05ea9eff
 
---63829e55cfba98703e2f61921804ec1df7a9f29322c3de52c6af38343b10
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXTglUACgkQ3SOs138+
-s6FSNA/+JKS6P4nREJMSGDNusAkqIp/UTtXTLulM5h+O3EKLTT8JAomrUY7oWjYg
-GvMz4BqpbShqgj/LbVbHMxPgCRhTizhINzsAyL6HmgdGAapk3xZ4G5uwW1xzbs7C
-X8KaT8alBagFLs52hcpq0DX4kVdyqwzV4Sffvp03dtc1lYr2fHgR8l4Ram+QH9GH
-SzMNaCk9DqF0mdHQeTy34/JhWfUfB83cv969iGqKkuPsJuk+Ji4YZACOvKAzgKTP
-Y5vkggjWoYAzg3I8JaYApw2YVXcaZ1DVIBK9ApNAwMtk/L3ldeWeEIFFq+MFyyEs
-hvrsBM4NTx4CSR6LhtBncWYy6a5mvWahHYMjrqY8I5IosgUUZF3quyKxwGcJVz1o
-Y1pPOxAuj9n9B2+wn2uZIraOR64IH6CKKi9acLgRUfoZo5+E+r0HdhJB0z1zySsj
-l2qjFIYoCuS87FvUGJyfZAoLdK7MUMSIRqjtPFCpRqTu+gUSEpR69a4zlwOM74GN
-sN1+IU5saWx+IbDGCQ6FoKRq5tYclsgQ9Mj/Ljkpmv5yK6msysKZM9Io7oJXW3Qs
-+N3f95EWR48dNpPBo/tdaR7X/HVmczq16Tb8e5O2Sj0pHml/US7OLDRc+ISN24SJ
-R6qHw15H/+s1cxebsyI2LHvSiZWRsD+gs0u38JRy6toYiDJCFX4=
-=R2gT
------END PGP SIGNATURE-----
-
---63829e55cfba98703e2f61921804ec1df7a9f29322c3de52c6af38343b10--
