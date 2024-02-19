@@ -1,57 +1,58 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970D53C09F;
-	Mon, 19 Feb 2024 15:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BCA3308A;
+	Mon, 19 Feb 2024 16:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708358310; cv=none; b=s/zWtNYzFXhLJm8+4jTsIfJzfJKgAU+jiARm7aQn+07+ZdHJabP/E99+gARGgjwk27dAhKUxcwKjiT91G3vgJr8gBFdkfHyNTHk/0Qc29K5vg324bYwnUvHJR5crYIbwOihZ9NP01weYuJcmEaK6gFNUBROG26NFHSkC2qXg0rk=
+	t=1708358813; cv=none; b=qjOF2N1pqy6YRhi6orxF86PCL3KLd9HjpGyQMHfXb80x0NlcXKLWyIFjFuTW3KykSN6fo5SxG3hGJhMyrZLHscNVnBfySkZUbKrLyH5FgFsBOhHuTxFSfxHxQSOE9BOHsj3PjU2kjInrx5i0yQjVc+birxRmSKVe3o8sP8FXT3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708358310; c=relaxed/simple;
-	bh=icU/jxR0DFDHz5XD9AAV7lcBtUbJa4K2a1BPr/lVQOg=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Subject:From:To:
-	 References:In-Reply-To; b=rVuECbyUJPwIztrlHLTCB0q5GC56rVmqe2zx8r6Hjv2Q/LA5k/610EitvQYb2fyXo2t0QNiW0hUCyvTQHPDws5DQn4p1apiAgsoNerFd8NEcIUsBxBJanwRPPs0jH5XMM0oQTVcojqzOjDKb+bq32pRHJJDVrIHIZQP88OnzHgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bRZiDo9P; arc=none smtp.client-ip=209.85.218.51
+	s=arc-20240116; t=1708358813; c=relaxed/simple;
+	bh=o/Tt/aNgskIIpJbtYfiY1C/VVmJ60rm2VifCiLV87cc=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=YYDg777YoRxhxpsfOLhLBiVbXuHlxc8wmXZP07Ogud9ZSkUUUyujvXdi4iIAUk4z8jl5Dhscwkr2XK6wtoLNCeRKwbGTZaaYFwUdl2X6gr+gUTdHVG4P96dQoCcoIYpUbPSKhB4qyPCdFRDwU1vH1nDFefCj+p6ZpDKxPdyYG1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+mGaHHQ; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRZiDo9P"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3eafbcb1c5so103413366b.0;
-        Mon, 19 Feb 2024 07:58:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+mGaHHQ"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4126ada76bcso3223365e9.1;
+        Mon, 19 Feb 2024 08:06:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708358307; x=1708963107; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:message-id:date:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tiqLc5KdCmtjYQt/eIFsjHHh0iB3V/zgzPhPHivKtAs=;
-        b=bRZiDo9PXa9+VKDjKADljVQkf4cPFN6ym9XX5wiIKCHgX6kg/EpiHWUYiwTYKijb54
-         LItev2WCuyWWY18OKeyqcjybUqNjU+yp4W4ABb/hfC37Y84i8q4OeLb5lZLi5sU9MSH4
-         7cg+ZWqH2dN9ThbqN2+/VD05cUjnzHrHPu3o82Dg/HhVsjG0gsdFrlJJvFr2ctq6/RuL
-         lPlDBrypYSRIURvSXHpTjt1er6X0q1HUM+HuC0hljfphEkYOHkn3QU4aPd9SGJgEHKBd
-         +XXE3tWBMpTHN9zC2NQKpCzwn8kQRBeUD5SwEJhs0kCPjd7Jj+G3H76L56dK580YF30c
-         9bKg==
+        d=gmail.com; s=20230601; t=1708358810; x=1708963610; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O6+K3p98rrkbJ5Yw3zsXbXs6AtGDMV+vIo5vbrjJJSM=;
+        b=Q+mGaHHQoXC4I4wCHmVfJ0sWcEMMJp6uREVNXyBSuva7ymn5ssCJdrYzyi3DTZKzW5
+         CIGgtRFsyM6zsRDTEWNEUh41QSkItTDbchfJWEm3BQDHVcdMIsGJZZxu8T+/4r6v/4e6
+         IhRgDWJzLP1Nak2ScocNh9Tgx6rCj9EdqbO7jhx3Tw2mnhLngUr2ST/Dfmgq38kzUjto
+         eQetmyuWXIJjO+w05WU8CY/quwyqKumSFVj3Yp2ha3SdsbGniX5xmDwa6wB34Vaf+drZ
+         R/bbcTcNp7ZtDv86PKfQ8tnxTtINgCn/ppca1yBuWwuAV1yO82BK3Rr+SP3EhInQCp7u
+         Quuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708358307; x=1708963107;
-        h=in-reply-to:references:to:from:subject:message-id:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tiqLc5KdCmtjYQt/eIFsjHHh0iB3V/zgzPhPHivKtAs=;
-        b=Z4EIHk1j/DhSfCAsOqRm95EX1S0ZkZSfWKSsdSHj+fPMFdqvNyjy+W2tkv7tr18iGK
-         1mr2DIFPasJAQJ4SUxR8vGUW33R+5oYhHLV0zoHULZqlypGr1NZ3/n26yTRJtaRnm+ce
-         u5d5uJKTiRBDS6rPUbZ84YYGxv0a85dt7d2K8BNGGX4evNVgArNRUoVsCJjb0LFglKx/
-         T11WgcTEgD1dva9YTXoT5HttctKcG3hL0+MvpnLtiEoOj9l0V5DXUE6vTB3VtpFzC/oA
-         hPM7lW+7XtEJDacgVG7JPN11tpqMNcYJY2Qlb2xmR4jqbI+6bFOLv0vXE1HU484DzjJK
-         X77g==
-X-Forwarded-Encrypted: i=1; AJvYcCX38WLLdJbhz3FOzPkjqIAFVVLKXvIY0TMpNDu1f8Ias4ldEMla6J5WOYXAko8WoaLeBiFD523ZEpEaJMNTNThrJGNC3QWA6xr+OzTRbOF42UFt2WlIQRFez3DpJENx3AzLJQgAU8T2zdinTIYGqgk9pp/JQX8VmCjVTL20Zhv24IjhEC8bc+PnXQ+g8dIGCY/2Xz+GImJpbMcqUwJWlNW5ERQFITaQV5V+ChjcF+hp+nA8suA+q58rLhifmhysVn5ifiIYCuieZ69CexbGWMMGUdtsaY41XXIPDhdCODXZJjBnenrN3MkXyWY6b1RAC4F/L7GlOlexPJEUUGyiNAoMNlc=
-X-Gm-Message-State: AOJu0Yz3zkXOK1pYz0UfPEWI69hknu4v9ioIbxNtTaqSR/rxlW6U5E0c
-	EYRYtTZPkCnvYap9jB7BB4ZZIYL5IKNGxZ+rH2mSY2aQyHeJO6N3
-X-Google-Smtp-Source: AGHT+IFtwqfaW9gJsxLy3j5F49CYy1xFjRlT0RRadI4Z0IOCUNhh1itGGGOPl5tKEJMCv67TBumOMw==
-X-Received: by 2002:a17:906:851:b0:a3d:80d7:d1e3 with SMTP id f17-20020a170906085100b00a3d80d7d1e3mr7428154ejd.77.1708358306585;
-        Mon, 19 Feb 2024 07:58:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708358810; x=1708963610;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O6+K3p98rrkbJ5Yw3zsXbXs6AtGDMV+vIo5vbrjJJSM=;
+        b=aBjNVj7nKj8W4SraRekE6I/K+IXffvmUB+t97aAcdJltN0JkrDEXEcX2RMzA9F6Y5a
+         wDWUmzTWuoMB4DrQdzcW/hNRSUWa6d6Xw/dTjaGoyNiApfijWv6cWeD7uysls/cqjMCt
+         PII7Kce8PINsrOnDkd3XmuUpN3wQo4szQeCRQmdlNNjs4aII1W5qkE2Af6wWuubQWqoJ
+         +u/FOAOkkrPC2xrqfby5xexHdae4bB52N/iDzjXp9zEnzjTBFX6F4bUYQE4x9LtXapz4
+         6ktm7l1EdBbZOOFJ+MUbvCvyGFA0ANe5EcLMuM3QenOn/3nS9XpZpzAt+LRLv0pKk7QN
+         ntAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkjF3ttnMRjhj79sV7/kYrJ0G939lPFGdKH5w9cGVc7HUoIvfmIaMCdxmNsGe1eyDcTnAECpg8W9kUuazKUldYC4UI7FAFZYyvqJju/m/eKmL8FHzxf847Qnt4+szkZJUFjGLZqR2EWoc=
+X-Gm-Message-State: AOJu0YzMRPLbuNKUH2Rc8VxR8pZapk4zEgiYMP7HUPf1ovD141QER/lh
+	0mrHri89UWf0kuF9pE2AqhcOx+9mSglF+2AXvZo9xY5y4s8w6GnG
+X-Google-Smtp-Source: AGHT+IEQJSKKhZ9J1YWzcwu5vi6aRAzszLFKpFo670hirt/u2Fe2srKZeCZpFa4niPALbX0nE0ZRGw==
+X-Received: by 2002:a05:600c:45ce:b0:412:69c6:6be9 with SMTP id s14-20020a05600c45ce00b0041269c66be9mr974948wmo.4.1708358809505;
+        Mon, 19 Feb 2024 08:06:49 -0800 (PST)
 Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id rf23-20020a1709076a1700b00a3da5bf6aa5sm3076542ejc.211.2024.02.19.07.58.25
+        by smtp.gmail.com with ESMTPSA id t22-20020a7bc3d6000000b0040d5ae2906esm11691050wmj.30.2024.02.19.08.06.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Feb 2024 07:58:26 -0800 (PST)
+        Mon, 19 Feb 2024 08:06:49 -0800 (PST)
 Content-Type: multipart/signed;
- boundary=f0caf17c841197981a0b66a2ac604de0b745306e0ba899959bfe0165d31f;
+ boundary=b0da0a27ceabff049215f580b6f79f3cc323727d60ffb73d4a209fb6824b;
  micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -59,110 +60,174 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Date: Mon, 19 Feb 2024 16:58:25 +0100
-Message-Id: <CZ96H72GI4Z0.SZJBZXA1VXJZ@gmail.com>
-Subject: Re: [PATCH] phy: constify of_phandle_args in xlate
+Date: Mon, 19 Feb 2024 17:06:48 +0100
+Message-Id: <CZ96NM6U8O59.3TXG2WKAL7L8F@gmail.com>
+Cc: <sumitg@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] clocksource/drivers/timer-tegra186: add
+ WDIOC_GETTIMELEFT support
 From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Vinod Koul"
- <vkoul@kernel.org>, "Kishon Vijay Abraham I" <kishon@kernel.org>,
- "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Philipp Zabel"
- <p.zabel@pengutronix.de>, "Jonathan Hunter" <jonathanh@nvidia.com>,
- "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>, "Linus Walleij"
- <linus.walleij@linaro.org>, <linux-phy@lists.infradead.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
- <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
- <netdev@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <linux-mediatek@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
- <linux-samsung-soc@vger.kernel.org>,
- <linux-stm32@st-md-mailman.stormreply.com>, <linux-tegra@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>
+To: "Pohsun Su" <pohsuns@nvidia.com>, <daniel.lezcano@linaro.org>,
+ <tglx@linutronix.de>, <jonathanh@nvidia.com>
 X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240217093937.58234-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240217093937.58234-1-krzysztof.kozlowski@linaro.org>
+References: <20240216210258.24855-1-pohsuns@nvidia.com>
+ <20240216210258.24855-2-pohsuns@nvidia.com>
+In-Reply-To: <20240216210258.24855-2-pohsuns@nvidia.com>
 
---f0caf17c841197981a0b66a2ac604de0b745306e0ba899959bfe0165d31f
+--b0da0a27ceabff049215f580b6f79f3cc323727d60ffb73d4a209fb6824b
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 
-On Sat Feb 17, 2024 at 10:39 AM CET, Krzysztof Kozlowski wrote:
-> The xlate callbacks are supposed to translate of_phandle_args to proper
-> provider without modifying the of_phandle_args.  Make the argument
-> pointer to const for code safety and readability.
+On Fri Feb 16, 2024 at 10:02 PM CET, Pohsun Su wrote:
+> This change adds support for WDIOC_GETTIMELEFT so userspace
+> programs can get the number of seconds before system reset by
+> the watchdog timer via ioctl.
 >
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
 > ---
->  drivers/phy/allwinner/phy-sun4i-usb.c              |  2 +-
->  drivers/phy/amlogic/phy-meson-g12a-usb3-pcie.c     |  2 +-
->  drivers/phy/broadcom/phy-bcm-sr-pcie.c             |  2 +-
->  drivers/phy/broadcom/phy-bcm-sr-usb.c              |  2 +-
->  drivers/phy/broadcom/phy-bcm63xx-usbh.c            |  2 +-
->  drivers/phy/broadcom/phy-brcm-usb.c                |  2 +-
->  drivers/phy/freescale/phy-fsl-imx8qm-lvds-phy.c    |  2 +-
->  drivers/phy/freescale/phy-fsl-lynx-28g.c           |  2 +-
->  drivers/phy/hisilicon/phy-histb-combphy.c          |  2 +-
->  drivers/phy/intel/phy-intel-lgm-combo.c            |  2 +-
->  drivers/phy/lantiq/phy-lantiq-vrx200-pcie.c        |  2 +-
->  drivers/phy/marvell/phy-armada375-usb2.c           |  2 +-
->  drivers/phy/marvell/phy-armada38x-comphy.c         |  2 +-
->  drivers/phy/marvell/phy-berlin-sata.c              |  2 +-
->  drivers/phy/marvell/phy-mvebu-a3700-comphy.c       |  2 +-
->  drivers/phy/marvell/phy-mvebu-cp110-comphy.c       |  2 +-
->  drivers/phy/mediatek/phy-mtk-mipi-csi-0-5.c        |  2 +-
->  drivers/phy/mediatek/phy-mtk-tphy.c                |  2 +-
->  drivers/phy/mediatek/phy-mtk-xsphy.c               |  2 +-
->  drivers/phy/microchip/lan966x_serdes.c             |  2 +-
->  drivers/phy/microchip/sparx5_serdes.c              |  2 +-
->  drivers/phy/mscc/phy-ocelot-serdes.c               |  2 +-
->  drivers/phy/phy-core.c                             |  8 ++++----
->  drivers/phy/phy-xgene.c                            |  2 +-
->  drivers/phy/qualcomm/phy-qcom-qmp-combo.c          |  2 +-
->  drivers/phy/ralink/phy-mt7621-pci.c                |  2 +-
->  drivers/phy/renesas/phy-rcar-gen2.c                |  2 +-
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c           |  2 +-
->  drivers/phy/renesas/r8a779f0-ether-serdes.c        |  2 +-
->  drivers/phy/rockchip/phy-rockchip-naneng-combphy.c |  2 +-
->  drivers/phy/rockchip/phy-rockchip-pcie.c           |  2 +-
->  drivers/phy/samsung/phy-exynos-mipi-video.c        |  2 +-
->  drivers/phy/samsung/phy-exynos5-usbdrd.c           |  2 +-
->  drivers/phy/samsung/phy-samsung-usb2.c             |  2 +-
->  drivers/phy/socionext/phy-uniphier-usb2.c          |  2 +-
->  drivers/phy/st/phy-miphy28lp.c                     |  2 +-
->  drivers/phy/st/phy-spear1310-miphy.c               |  2 +-
->  drivers/phy/st/phy-spear1340-miphy.c               |  2 +-
->  drivers/phy/st/phy-stm32-usbphyc.c                 |  2 +-
->  drivers/phy/tegra/xusb.c                           |  2 +-
->  drivers/phy/ti/phy-am654-serdes.c                  |  2 +-
->  drivers/phy/ti/phy-da8xx-usb.c                     |  2 +-
->  drivers/phy/ti/phy-gmii-sel.c                      |  2 +-
->  drivers/phy/xilinx/phy-zynqmp.c                    |  2 +-
->  drivers/pinctrl/tegra/pinctrl-tegra-xusb.c         |  2 +-
->  include/linux/phy/phy.h                            | 14 +++++++-------
->  46 files changed, 55 insertions(+), 55 deletions(-)
+>  drivers/clocksource/timer-tegra186.c | 44 +++++++++++++++++++++++++++-
+>  1 file changed, 43 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/t=
+imer-tegra186.c
+> index 304537dadf2c..8f516366da86 100644
+> --- a/drivers/clocksource/timer-tegra186.c
+> +++ b/drivers/clocksource/timer-tegra186.c
+> @@ -1,8 +1,9 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+>  /*
+> - * Copyright (c) 2019-2020 NVIDIA Corporation. All rights reserved.
+> + * Copyright (c) 2019-2024 NVIDIA Corporation. All rights reserved.
+>   */
+> =20
+> +#include <linux/bitfield.h>
+>  #include <linux/clocksource.h>
+>  #include <linux/module.h>
+>  #include <linux/interrupt.h>
+> @@ -29,6 +30,7 @@
+> =20
+>  #define TMRSR 0x004
+>  #define  TMRSR_INTR_CLR BIT(30)
+> +#define  TMRSR_PCV GENMASK(28, 0)
+> =20
+>  #define TMRCSSR 0x008
+>  #define  TMRCSSR_SRC_USEC (0 << 0)
+> @@ -45,6 +47,9 @@
+>  #define  WDTCR_TIMER_SOURCE_MASK 0xf
+>  #define  WDTCR_TIMER_SOURCE(x) ((x) & 0xf)
+> =20
+> +#define WDTSR 0x004
+> +#define  WDTSR_CURRENT_EXPIRATION_COUNT GENMASK(14, 12)
+> +
+>  #define WDTCMDR 0x008
+>  #define  WDTCMDR_DISABLE_COUNTER BIT(1)
+>  #define  WDTCMDR_START_COUNTER BIT(0)
+> @@ -234,12 +239,49 @@ static int tegra186_wdt_set_timeout(struct watchdog=
+_device *wdd,
+>  	return 0;
+>  }
+> =20
+> +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wd=
+d)
+> +{
+> +	struct tegra186_wdt *wdt =3D to_tegra186_wdt(wdd);
+> +	u32 timeleft;
+> +	u32 expiration;
+> +
+> +	if (!watchdog_active(&wdt->base)) {
+> +		/* return zero if the watchdog timer is not activated. */
+> +		return 0;
+> +	}
+> +
+> +	/*
+> +	 * System power-on reset occurs on the fifth expiration of the watchdog=
+ timer and so
 
-Makes sense:
+Is "system power-on reset" really what this is called? Power-on reset
+sounds like something that only happens after you power the device on,
+not something that can be triggered by the watchdog.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+> +	 * when the watchdog timer is configured, the actual value programmed i=
+nto the counter
+> +	 * is 1/5 of the timeout value. Once the counter reaches 0, expiration =
+count will be
+> +	 * increased by 1 and the down counter restarts.
+> +	 * Hence to get the time left before system reset we must combine 2 par=
+ts:
+> +	 * 1. value of the current down counter
+> +	 * 2. (number of counter expirations remaining) * (timeout/5)
+> +	 */
 
---f0caf17c841197981a0b66a2ac604de0b745306e0ba899959bfe0165d31f
+Can you wrap this comment so that it fits within 80 columns? It's fine
+to occasionally go beyond that limit if there's a good reason for it,
+but this comment doesn't seem to fall into that category.
+
+> +
+> +	/* Get the current number of counter expirations. Should be a value bet=
+ween 0 and 4. */
+> +	expiration =3D FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, readl_relaxed(=
+wdt->regs + WDTSR));
+> +
+> +	/* Convert the current counter value to seconds, rounding up to the nea=
+rest second. */
+> +	timeleft =3D FIELD_GET(TMRSR_PCV, readl_relaxed(wdt->tmr->regs + TMRSR)=
+);
+> +	timeleft =3D (timeleft + USEC_PER_SEC / 2) / USEC_PER_SEC;
+
+Same for these. Maybe make an extra variable to store the register value
+in to get rid of some of that extra horizontal space.
+
+> +
+> +	/*
+> +	 * Calculate the time remaining by adding the time for the counter valu=
+e
+> +	 * to the time of the counter expirations that remain.
+> +	 */
+> +	timeleft +=3D wdt->base.timeout * (4 - expiration) / 5;
+
+This doesn't quite match what the comment above says. Shouldn't this be:
+
+	timeleft +=3D (wdt->base.timeout / 5) * (4 - expiration);
+
+instead?
+
+Thierry
+
+> +	return timeleft;
+> +}
+> +
+>  static const struct watchdog_ops tegra186_wdt_ops =3D {
+>  	.owner =3D THIS_MODULE,
+>  	.start =3D tegra186_wdt_start,
+>  	.stop =3D tegra186_wdt_stop,
+>  	.ping =3D tegra186_wdt_ping,
+>  	.set_timeout =3D tegra186_wdt_set_timeout,
+> +	.get_timeleft =3D tegra186_wdt_get_timeleft,
+>  };
+> =20
+>  static struct tegra186_wdt *tegra186_wdt_create(struct tegra186_timer *t=
+egra,
+
+
+--b0da0a27ceabff049215f580b6f79f3cc323727d60ffb73d4a209fb6824b
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXTeqIACgkQ3SOs138+
-s6GdEBAAsZtqIRL7k6ZV5nu5N0juG6RO7Sm34o9+isHlbNUAhmDQeIXxdlWIF3qc
-ap2W/H4jLtQnrDaCtdFWa5oPx8Ud41AKoeOQRlZq6goHZemt2JbUyB5IzsMIL0KN
-FUGwvVEZdDnJbhe2+8YX0fN8WG4qpAYo7vrb1XsgP4RzGwgkwH64LbCOtoAoYtYl
-rOc7hn6eNJrIYlW1LaU37BApWV0KgdMiI1YSILAT5YJK24fYst7j//8UxyEQP4aO
-S+3uPr8/1K1JifAihpgqu7w5kyDcMW1ncoAamilKe2xDzz7wJ8wxtYcdypnwBSpd
-/+rhMybnEj2kgbDrSbY+LVlczSU6Wf/SEtZzB+DOCE4+CZrtFyMVsSgAeVXFT1n0
-L5vTh0182skHEAm97GXHwoQOmLND8wJJVZR+Sw1OApxEYI1Y8hTx33NrbA+5hiVq
-15m0Jq8NXvpd237p5obNfFNuDmK/BlMhlq3x+3/aWGqT+pRlavF1i0HP/wEV9YoC
-6zleWWkx9BAonksD76uhrk/LBnYnc3wb9O5B4KS6dp+tYE3ekIWauHxzhg4tpOcg
-FqcY6ObCs+Jjtplo4vtrTBR6A4jdvunJQcp4WqSO/5RkZd/ySVdSbpvCdK1yy/JM
-j7SSnUWV03IbkbGoBduin/a8YT84GAn3seVzxO0ik5dpZHGbAPM=
-=Z186
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXTfJgACgkQ3SOs138+
+s6GORA//ZiipCoOSu/wox8hsJdL/TpRaNXjRNKNMz0NErbEYulBe30SnI7eT5XTW
+lbTiLsc5jF+1u0PwmpYpOCpxH3iTWFbTR5GvSWE2DSjtVRkve+Laz6uYGetcip9w
+MdN4t53myl86ehPL9eWMJesi20aqyfRbKkLP/rG424LItSgjnAqdRNSMlnBGozBY
+2CFa3GGepna7+3VSFGhHcuvslCFc9xIyg4kGcdsiAStPRtnVrx0XEW8KSUFT+u+b
+IjZi3w4EU3rYLCxvrrCQ8EcV0XMSQ7lmhcxFohsXK1cHx4hVtrTQ9RtXZcNQ3IZC
+DxfwqBDa4eeCWmek+8Y4a8jLvE32gAzPyuVrfLwCckVkmvGDicMNrt91Dtu3UABU
+aEsuKfM6DQJ0DXQeEqhwF3tfWSqbxIu9n0P20cBY65E/Pvu2yd+0VDW1VGUdGQba
+64RHPWq/jvgQTOG+xX7S2gOjk/E/8Bnr2thKQ+eWsadU9ZMffOWFv+hyd+CfUnYk
+IQ6V0ZIWGf6zmvjubb1XK+UVigr8bD1CETRUF7QOkXppdlbm2+P7pACgaewdaMyY
+2nDFrpCCi8jextNbkKCsMk5tI/0kAsLJBhYg48Ki2gFl4s9L4FO8927CjxaBIJXd
+oWJZDv766LuFtbYtvYCEXfBoqJvRWzq5v+dq5YVbl3Gp5qfJiM8=
+=dCoG
 -----END PGP SIGNATURE-----
 
---f0caf17c841197981a0b66a2ac604de0b745306e0ba899959bfe0165d31f--
+--b0da0a27ceabff049215f580b6f79f3cc323727d60ffb73d4a209fb6824b--
