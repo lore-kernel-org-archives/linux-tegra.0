@@ -1,58 +1,58 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1EE37704;
-	Mon, 19 Feb 2024 16:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4D13B1B2;
+	Mon, 19 Feb 2024 16:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708359452; cv=none; b=TRVVyBWNLHHvEnlaEasE4BBoXs96JgHzPed6eqfiDDc8qHovGLaYcSTXR1ctLL2NQqHBVOMUs4gIjHnkQEDHCv0yOIN2KH+GC7aEWGRd8ZxDPFCVr5FGH+Qs3kglZTO3qNYPxYk7Hp3q/e1M6qWKtKavBBBQ+J9kr6u4PyeWGjE=
+	t=1708359530; cv=none; b=p66c90+yfzlRxfHZCTBlNctkRAqJnR3g9uD/8Z/g9M+8A9e6mYpjUHa7eIw8dgyhtKEEEB3JYERnxGIWN44F5ZWqbafjrgJnzwpi3sFFV5ciArDppYZr5bWH/KBu3mqMFJ9wx8qdtKVLexFrmfBlr/SQHXJPM9PDTajFdkKmsfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708359452; c=relaxed/simple;
-	bh=7FpHqGM9NSQ9oJ8wCMEWcQwBYs8k2HS8Pk/KO1rddLg=;
-	h=Content-Type:Mime-Version:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=me8mWxzfu6HYr3GnkcuzMe/XA7IeUATEVdDIudtFTPMvDUHPbVbFNgeJlVaCRKCBE4Hwicl4xxng8hsP7nE4vifdQXZLXnxIYUpCYBtzFcWf2Fr4GP57L2VX279ZMeDkcGYySfgRSiXE8++kaVopIsm+6usVMsvc0sBV3uu4K98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MtsFcuHH; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1708359530; c=relaxed/simple;
+	bh=5LP7ITI8IxR8FihyrEfCPsDi/hGVUhuwAapc8ojBuww=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=evDUyZ+0fly5MFBsmFn9VaPoh7NALfvntcHu6ChdFOQM9dIBDU2jwWhErEKx6Fn/HdSE8E3eQs9ZVLpOUcDaRbP4bh7ccw4c7DXuG0QxnkcP9qMfrjNF1jENUMRBpAg84Z5f2VJDQru9qCap0Vqk1kXX75WKdfTGWYt+Se/zNnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kRt2ZEVE; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtsFcuHH"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a3e4765c86eso217710366b.0;
-        Mon, 19 Feb 2024 08:17:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kRt2ZEVE"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a3e82664d53so164766366b.3;
+        Mon, 19 Feb 2024 08:18:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708359447; x=1708964247; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
+        d=gmail.com; s=20230601; t=1708359527; x=1708964327; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LQx0b5ToM23dL9e3ut59o6I7ORybJM20K6cqxVU6TEY=;
-        b=MtsFcuHHWNabD1DlsDqdsA9GaOXlMRas5/qqxjnzTVbadpD7HWVeq4C3NyGgZ6oWk6
-         D36uMiQPnX0Lqm7K1+W2prJB1CujJC1Tp2t5yPOPZ5TmwS0cZHCOGxOiFEfiem0b9tcx
-         hqMpPXgCqY3bbJo0YopJseXsS1ojtN5mApG9fs8UVHWfgXiQDm/pzmKpHOC4qesPhEiv
-         D6kz55xjruvCNbPLkD6xk2vUbNnrCtL4z3JbUav3j02nuWyL8PVs9pI4B1Alrq0DNmQF
-         v4yjEHFYrPRMdiuOlHNrGkSfA71WMSmZ4NXEY8bBm4qiD/pQwXjF0EO3lP/b+CYCy43k
-         puTQ==
+        bh=XnGkOpf2CVhPz/zljsYVnaZe/git0nem6as96fuozFY=;
+        b=kRt2ZEVELTC8206hPrKBxwHd0K7EEonen9W+xLVkxzYcedVhxpaUXoP3FH5iD7wnoJ
+         RVoBpnJfThUlUm+tv0ttDU2JI6zi/CwTfpNjabQuGg7sGr1Jb8ytOaIOaCqdk7RJk0KE
+         M+6+MFipJMczJ0lID/MfgiXjovWjPO0W+yPn/zEP/ZqZ1w9uinzJmHEPYL01ds7BYUTn
+         w5ky8UepE1f+9REx40hivXM2X316W/FjclBd66LFHdp9Mah2Pz/FjTORpuOIZ5OkWxnS
+         zhyzogl/sr3sZpVKtD4qOehl7ghQjDjaZtpuq6lZR/QrrW/cmg3oAFVI5RUQBZQtWtiu
+         pm3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708359447; x=1708964247;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
+        d=1e100.net; s=20230601; t=1708359527; x=1708964327;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LQx0b5ToM23dL9e3ut59o6I7ORybJM20K6cqxVU6TEY=;
-        b=gGUTx5O0CY/bQbMqB+tV+5p3PXWy6F0up1AcU+DSADN2UuwTY+uJaYiXcat+kZ4E8m
-         E6xpmYBog79CHEBLuOapETaLWT6nQKnyGsMxoDQZsAMBnLsV+ifg8dQOFjx8e5amUCRe
-         I6AaTOhALoWad2aW6JWI+tZSO4YM8SjwCN+Sx/AY5O8JfJa9GFyrT2DvFS4uoGxW9nK+
-         pngk4qSU9D28S+0AAlRr3mnm3TWX9uO0Q58IBME8LT67QxEnphXftwIe5Bar5TPEk1hi
-         U9TBjgYW0KHumeUxeIde3hiKrW0b0cKh3kTYrRG2VsYN5p0+xA4Dl88T6Cmfk67C7H+V
-         mXWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVysxteD5x52+h3NAmY1lMIjR66bHG1CFc3Np32+5JHKG7OOYmmAUf4wgHbeDnWNOdKUeNHOL3avbuPAa27mZlHlfCyu94jN4/C23CAgwL3gUtkfI3BuoFI7unblr2YHTE11hGOj/EVb6w=
-X-Gm-Message-State: AOJu0YzRT1FRpp9DqgA6hHjaGUxakSq6Lk55rITGEvyp8kGw22b9EWN1
-	g5ymTRZZPMDa7XR9UokZlJdyLa3YrBDmwsselChQ8wevH1awKUsd
-X-Google-Smtp-Source: AGHT+IHz30EtXbUsDHHybZPNs80s80ImweIjNew1u/fXIGZ82mBpPBeMfLVVk7cu9MbgmkwQgY+KIQ==
-X-Received: by 2002:a17:906:a19a:b0:a3d:2a52:380f with SMTP id s26-20020a170906a19a00b00a3d2a52380fmr8275021ejy.72.1708359446972;
-        Mon, 19 Feb 2024 08:17:26 -0800 (PST)
+        bh=XnGkOpf2CVhPz/zljsYVnaZe/git0nem6as96fuozFY=;
+        b=AL63P20PQMOaCq1qnhE7FsHjEMEeRzOED63Ur3I8AWWYpHyP8tAYYVjDNe7xVEhV4w
+         I35Ox+KUYwtTNP93vpeKvNojtqlygThbbph2z42ZGKA3IexCYumxxWhzaBoUnyKlkDwe
+         PXdMiWiXyKFdd5j3JBIGLBcUJHzAQWgbcPi/V6uN3bBWh+d7tcx1KMgJ349lEhZ+rjTS
+         0FCCMIYK1nOAaWQ0SGBjf3uWkwvRyhTeoqJPiNhDOIApwnGhOzt2dhr3IAVilWKHyLo4
+         /i/moI8Xf5vuRVEM0q19WK0OwrGx1ZWAIIlx7gEF30FvJrg1CK4JbRQe5YW77pBSrPnn
+         J6iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVANScUt2sXLnupRb0x8aW6ITlNvIoSsMi+W+68EKeCE6rys5hIk5s32XusOWscyRFYhU0QKAzn5bKWKA/Uu+VpY9Lpl4YNea67tAvM5LmhB/kc5ctLEFWu5vleMElfDM/NrZ6eS407XWE=
+X-Gm-Message-State: AOJu0YyzIXVWS5pjLjqPkGUtIDeQpmDftdqrY8YbKEYcKvEcE1gDyoLY
+	PkfyeXoVYBf+rgs3Z+lbxAOfhYI4aG2AedTPUGmy5is9qzhwl8x1
+X-Google-Smtp-Source: AGHT+IGUUJV/eeBIPCMl91Llf2j9jWuLG81QcvUsRhfs2AAcLV0xDw8mFgA+LpOP6YpcRwzhpcHTFg==
+X-Received: by 2002:a17:906:1cc5:b0:a3e:98ee:765d with SMTP id i5-20020a1709061cc500b00a3e98ee765dmr1790223ejh.60.1708359527215;
+        Mon, 19 Feb 2024 08:18:47 -0800 (PST)
 Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id lu16-20020a170906fad000b00a3d5efc65e0sm1770838ejb.91.2024.02.19.08.17.26
+        by smtp.gmail.com with ESMTPSA id tj1-20020a170907c24100b00a3d35bccdf0sm3099051ejc.139.2024.02.19.08.18.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Feb 2024 08:17:26 -0800 (PST)
+        Mon, 19 Feb 2024 08:18:46 -0800 (PST)
 Content-Type: multipart/signed;
- boundary=e43bc9b7547ba2fb2d75f0caf653f23939e188d8e14bbe063075b337bdb3;
+ boundary=5c88819ce2d668f2ae4936a9cee5d50b46dfdf026a77d46f159ba4c5cd91;
  micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -60,85 +60,65 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Date: Mon, 19 Feb 2024 17:17:26 +0100
-Message-Id: <CZ96VR54894Z.TIAQI1OXCH2Z@gmail.com>
+Date: Mon, 19 Feb 2024 17:18:46 +0100
+Message-Id: <CZ96WS1F2H67.CCTTAWAZX7PF@gmail.com>
+Subject: Re: [PATCH v2 1/2] clocksource/drivers/timer-tegra186: add
+ WDIOC_GETTIMELEFT support
 From: "Thierry Reding" <thierry.reding@gmail.com>
 To: "Pohsun Su" <pohsuns@nvidia.com>, <daniel.lezcano@linaro.org>,
  <tglx@linutronix.de>, <jonathanh@nvidia.com>
 Cc: <sumitg@nvidia.com>, <linux-kernel@vger.kernel.org>,
  <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] clocksource/drivers/timer-tegra186: fix watchdog
- self-pinging.
 X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
 References: <20240216210258.24855-1-pohsuns@nvidia.com>
- <20240216210258.24855-3-pohsuns@nvidia.com>
-In-Reply-To: <20240216210258.24855-3-pohsuns@nvidia.com>
+ <20240216210258.24855-2-pohsuns@nvidia.com>
+In-Reply-To: <20240216210258.24855-2-pohsuns@nvidia.com>
 
---e43bc9b7547ba2fb2d75f0caf653f23939e188d8e14bbe063075b337bdb3
+--5c88819ce2d668f2ae4936a9cee5d50b46dfdf026a77d46f159ba4c5cd91
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 
 On Fri Feb 16, 2024 at 10:02 PM CET, Pohsun Su wrote:
-> This change removes watchdog self-pinging behavior.
->
-> The timer irq handler is triggered due to the 1st expiration,
-> the handler disables and enables watchdog but also implicitly
-> clears the expiration count so the count can only be 0 or 1.
->
-> Since this watchdog supports opened, configured, or pinged by
-> systemd, We remove this behavior or the watchdog may not bark
-> when systemd crashes since the 5th expiration never comes.
->
-> Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
-> ---
->  drivers/clocksource/timer-tegra186.c | 27 ++-------------------------
->  1 file changed, 2 insertions(+), 25 deletions(-)
->
+[...]
 > diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/t=
 imer-tegra186.c
-> index 8f516366da86..acff97da138a 100644
-> --- a/drivers/clocksource/timer-tegra186.c
-> +++ b/drivers/clocksource/timer-tegra186.c
-> @@ -175,7 +175,8 @@ static void tegra186_wdt_enable(struct tegra186_wdt *=
-wdt)
->  		value |=3D WDTCR_PERIOD(1);
+[...]
+> @@ -234,12 +239,49 @@ static int tegra186_wdt_set_timeout(struct watchdog=
+_device *wdd,
+>  	return 0;
+>  }
 > =20
->  		/* enable local interrupt for WDT petting */
-> -		value |=3D WDTCR_LOCAL_INT_ENABLE;
-> +		if (0)
-> +			value |=3D WDTCR_LOCAL_INT_ENABLE;
+> +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wd=
+d)
+> +{
+> +	struct tegra186_wdt *wdt =3D to_tegra186_wdt(wdd);
+> +	u32 timeleft;
+> +	u32 expiration;
 
-We probably shouldn't proliferate this scheme. In retrospect I should've
-removed the two other similar blocks back when I submitted the driver at
-the time since they don't really serve a purpose. The intention at the
-time was to keep them there and eventually replace the condition with
-something that could actually be toggled, but it's been almost four
-years and this hasn't happened, so I suspect that we just don't need it
-at all. So perhaps you could remove this line along with the comment in
-this patch and then add another patch that removes the other unused bits
-so that we don't carry around stuff that we just never use.
+One more thing I noticed: you could put both of these declarations on a
+single line to make this a bit more compact.
 
 Thierry
 
---e43bc9b7547ba2fb2d75f0caf653f23939e188d8e14bbe063075b337bdb3
+--5c88819ce2d668f2ae4936a9cee5d50b46dfdf026a77d46f159ba4c5cd91
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXTfxYACgkQ3SOs138+
-s6FFEg/7BXMzLKa4WV2MSGtBdio1idtwClBrHumI9gexB9N8RX7Cfcjq/SS7KAge
-X9q5BpU9wfis60LnMFmfYZGXa2ml5CsjzNY0qf8t8z++eTfvFcfICMpL0ObW0kIA
-ZXDpyFCGlOXEA/KD+OJT2p9HokwwfJYm1yTfvQYvDom3S45RYYP+E1nF8ouH6DCm
-V08ynrpLmm3dnI5YTBP+M4PvwsRFKCNyV3dgio6t0SaVj60vGnMNISq/kn/2T5bi
-01+H/usbwsWNkOM3BnXjlPqMkjugN/LfktB8a/YCeR6bLrQAi1bgBojmEOwbkueJ
-FKxVmwpPZ9ZUboa1+3xMPuGJ+uH45yCCHj4F8PrL8VMhhIrOcjIIsSwhjT54PVED
-k0Ge1PhY22oAFWXuMytB/CM9sXIhvp5ZBwaH4KeFll8rIJmdB/15HrPVaowYojT5
-hehtorUpcYwF315sTzZ9pxaGEsMGaDWkO06YGxp5/DskgUAyhdi8wI1XwV1jCcHO
-Q0VJbKooCrrzCPOa41k8BBOH9YRv3QTw9JpfCL09/fFtejJAeEm+EJWwPw05NVjr
-9Vac+0EQ/FeNVo8d8/QSMoAaEYwES4PN/U2Ye92qB6/4zzny7Ao6JLutSJfx6bwD
-S7/VWP11vM4eCheAy4vBhrbxBsFFSMJpKfA+FA3RpK4VfGXj4Mk=
-=18jf
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXTf2YACgkQ3SOs138+
+s6E30w//RlBSnLCPyQUCIOSqMYVuZUurdNauTPP7qqPY/IIOiqNIekmR+XRVjEDZ
+A7pk4k1xqy8W9hfDYptB+F+3FpAgwT6Zk0kuIlD8lQgBhuHdfLXEmLyv+ZIBJJ1/
+MNPXk89CIL3MDz5LDveTIVFG9jr8PO9WpPXjKFY+bN0tV/XAqAH7GKpW/ViUzE+w
+dCIiN0GsH1/K8MxhOyl/juWZCAF7FpCxkWJ/CCJM5D6tQlP5qpw2bAwoFmlRD8PB
+h92WRSlXCs2oiS58curADylcOvGFS8K26EJoP7vaAjGx//UiYBPrC0q1MfReROyx
+Nd424Uv1jMPWbWpS4rRLwLsLTg3hlxGVHkkeXBvHtd5PF1JCvu9HXwzpIbP9X+nP
+XWW0ksjeb+kQFoeXNTnYSHI8VsJXy3bnhM76U6TQZGXAOkQdF+uoP0VH1Nj9JGwo
+SHSXfYWrXvVscWo1rQNDMZ6S2OmzRLpzLAr0cPQ6EEJ+cHZyFMShWMN5HwuaI4KA
+Rvj24XY5z00kZFDPD7m590pqyWfbxakj9Q43oOSLMcs1B27REH1efAtiaQMIRe40
+CxiFK7ayjesBpNz22hN4L9iCm0QtNcDZiiAW/f1+jq419fUkIQPox6S1h8v4C3iJ
+IZ+NiKstX7lczpyFv2t3AuCfmQyHfrAt475aCitHZJGCWTvLMkA=
+=ZlBV
 -----END PGP SIGNATURE-----
 
---e43bc9b7547ba2fb2d75f0caf653f23939e188d8e14bbe063075b337bdb3--
+--5c88819ce2d668f2ae4936a9cee5d50b46dfdf026a77d46f159ba4c5cd91--
