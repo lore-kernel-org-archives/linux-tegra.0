@@ -1,57 +1,57 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525D43B1B2
-	for <linux-tegra@vger.kernel.org>; Mon, 19 Feb 2024 16:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088393D960;
+	Mon, 19 Feb 2024 16:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708359935; cv=none; b=OinKy+6stIlSuJIoKcxIpaPEkFhOAk4LGX0Rn8i3rD4zdDpuu3XTHIrsr+DqAJ88SjgdAKDyWqh9HwN5DejbEbs1yS1hwo8ir6X5XKqluanUCcxfGQofJRBOLgQ0iOwC9OwgU5TRuJ9phK0ml6gdDp2cY5srVxQI1BKm9a8D2jA=
+	t=1708360052; cv=none; b=DXTJWkVOUoY2kb9Wj74d6F6PMjzPd+rtT12pDH2vediLwovep5VLsKFGt9Qa/eWrHwr1y7dBgtMH5qIXnmTLrtLmc1NBD1h6lNFlei1F5MglQ3oUFZaLmHVb+NjtDvUK7L1PwI1Candlk0NtPOOwCKOxbVO6c3HUakw2YH813Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708359935; c=relaxed/simple;
-	bh=XX0K5ow9Xwg80Jgi5HERRkwc4tMAHot+8R2xPIrKfh4=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=RG6OAx84GJAGrYqMYfgDPeSaySS0q3XDr0f0ZlEWqw33V6+0vx6Uk9VexV7UEXPYp5VIYAuybyde3nDjtRu0MhYNmdRtZkbZBwA1CxtbpxTjYkeNU10TMmCSjKVrbQDbiJo+J11k4h6gjdhcjp8nxhF6sYWCheo+6yvSnzCsaPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nKd7CTWj; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1708360052; c=relaxed/simple;
+	bh=m0Y9IWo40ZguGHVR9h3/beKx9ZPd8eWe4tEwbDI447s=;
+	h=Content-Type:Mime-Version:Date:Message-Id:From:To:Subject:
+	 References:In-Reply-To; b=ECiNQu5chBNWq4sgnUI3ws7HoQAWqJh89dpjD54RWO9lO/1uieJojntlbTqta+8f8cFv03goQZSqNs0LwUl18jDjbycNZmoX/9IMVemPrZifsOGcis6loWSmzxYxXENpb5KttdLdIG2DBalN65egpRxjAsv/7Njwt2KiVfYNvqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M3pdxN8+; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nKd7CTWj"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a3e891b5e4eso132887166b.0
-        for <linux-tegra@vger.kernel.org>; Mon, 19 Feb 2024 08:25:33 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M3pdxN8+"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a2a17f3217aso596895166b.2;
+        Mon, 19 Feb 2024 08:27:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708359931; x=1708964731; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zfJ3w5lno94QDCIEXuft8o82+FFpvWxcBkCnxRsCsG4=;
-        b=nKd7CTWjF37wUc7wEBx2VfRqSMgkEXywewPZczQpNgNRg8dimTfwon9cYLFPW3C46M
-         x149PHIr4756LWKC8JSgrh0uRNQtxJp/rWKvXbeQ5xy6JBUiWu+AEaM9nY3/MOGQcR7d
-         AqMgYvvkIztWfF99zyj4B3pNQJT1LW5qDJAT+w69bUV82rNTemXADPgdRxOmUdO8Oz8I
-         B8Zxy7somyBcv9WbJjNW9Hs+snanfJ4KvfeBqTNDdaz3II21YU/GmIUhuiGhHo9fgbke
-         eUI0yYh/HhAvHh2IF632TXvOyxOIKpWNJ23FWYAmoR+0UMHo6jz8xXBo+TmrKf2xlaO3
-         Is2Q==
+        d=gmail.com; s=20230601; t=1708360049; x=1708964849; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:to:from:message-id:date:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=91WL7FiSImDHDuKuSCO+fyt/4DVdcTgCakRipl1l59w=;
+        b=M3pdxN8+XRwmYygrI2hGSQ767SJ0ji7dZIIaBaWqIRJdk1cI+xnRH9uBNeXl0E0wCY
+         bl7ghHPQL6fvxNP/CNJZEKlBQVvu29BYAHyVes5GzJhWy+NMc1vjIVtfFLzvLPhQ1smy
+         tEMBVrUL+GgHNc5mkPd2jvQHZYdvgHrX7hAqYLyiwhgAnn13fcUMZxUH0uJea3HgiVGC
+         mUZuVW+Ze+CITxDWdr3cj3hv/c+5ncx35kC+n2g4OG2XyQCDDerFZ+xzknItGigD+Z2l
+         30BNwIraMjiFK0mlr6UfYEJKPeCyEfgjx2Qzl60VZ7dE7RUeljeWWY6Qt5XPyjDYtTdx
+         3Mfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708359931; x=1708964731;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zfJ3w5lno94QDCIEXuft8o82+FFpvWxcBkCnxRsCsG4=;
-        b=hITNaDwzD9/DpYOtuiPd3nGQlQsHeOxmfQsok/ojqQbY2urAHpduw0StUsQOb9cy5o
-         bMbSLOFwHd34MjSuREmuaKpVm9CsStglpAu/eh1THfmURX/OkN8onq7+3lhO1SFvvpRK
-         X0ghKmX3LMBJQRoNea64WAg1nLYoT6VddOpqdAsCEq0dXr5CREcsdYReSXBYYfrTkVUJ
-         h06yhJ558ysknHs+0m5oGj4+lIJwsCaLnKtZjs4lkaJRwiF1WR70hcxmSQYL37PXVLhC
-         dAHE2WA9cKBuPCYTfDZQf0U7z4/C8RrOfIi5JEx64Zzj1XuWdev3lJYZmQWCsDguKBed
-         ApCA==
-X-Gm-Message-State: AOJu0YwVctRJZyoHeDakuazjYUsl55RQt5q+nnZXiGw1STKsLgd4TVSj
-	NPvCX6RhuwMMnQggUqvHvf+S+i1gBHF4OYWAwDJ+q26bcUk3NdcyG8Dx2Gty
-X-Google-Smtp-Source: AGHT+IHUUeHCmXfHu/7QL+254eU6QTCfCHolBu+55PVNCdpW4h5PrtPSEEpewwoPbmy2ALKDCkh0Nw==
-X-Received: by 2002:a17:906:8807:b0:a3e:6aff:5e74 with SMTP id zh7-20020a170906880700b00a3e6aff5e74mr2335241ejb.22.1708359931409;
-        Mon, 19 Feb 2024 08:25:31 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708360049; x=1708964849;
+        h=in-reply-to:references:subject:to:from:message-id:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=91WL7FiSImDHDuKuSCO+fyt/4DVdcTgCakRipl1l59w=;
+        b=CW10NazsBV++25gDG0ffyg+u2MqOAKG21bW1U+HdlO6xExU/+SRu2ZekHrhcwMOPKx
+         L4NLmAh8dkF8hNFmRfmU/csRxuY9UUZbS6+zu1TzAfSTXm54hhTcLESWU8LVuCNduxKp
+         geBmGljqOFM4EifU3HmllkHUKXN2djrLAqTmJY0EuxAWIMx6vpIb12swGxwZMgvKwGLk
+         RTjJU8+OBH890FXN7LYNR3UTfZ0reZwFJZADpSBaZS/e0XQwHFautmXn1q/QyiWO3s3p
+         xNEOXkCyoTmrfaf7/e24bwnsAPLHAvleRBMydSss93ex/LWo8jl9F/AXwOO0zeDDX+Zw
+         ogyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBlei1d5sk0wXQfNPBdmWSgSl1eKpH062dT9mhYPJpcg4LeqoBlK0afAYAjK685T8l5JLxWP5NY2wy79ioQSdkVJ03qrI+obBdF6vOoR1p9q5INIQcULzGPcmxI5/K2JQXalXQtLGHpatu2zCsGEmjwUJOSBTBTSaGArZVHB0bTiqeA48ivLJrs4eV2yWrYolkpfnDGdPtInX5zBuz5B4swRv5SKzuVLSRKjhHCehKrx4lGsqkfL8g66RVVK3NmrJzxdpvS7zszQfaT8CU70R+Di/PY8OK5J+SsjybZ98kG1A=
+X-Gm-Message-State: AOJu0Yy1lzpJ6z3A8ca/DoKm6nHI0gSESj8rrISwaz1TqqSotGUeXp7l
+	bWNnH/fZ4HBte6no+0OWra9AzOSYr0rmdXfdTpHBU1q3CA+vR3sk
+X-Google-Smtp-Source: AGHT+IGKa5nchI+GN6B9ini/YAp6Taa1moJg+OmuwLJhmWeu/OV9hbw1/o/hH0qN9jO671ILvnvbMQ==
+X-Received: by 2002:a17:906:e246:b0:a3e:69eb:4492 with SMTP id gq6-20020a170906e24600b00a3e69eb4492mr2549838ejb.20.1708360049084;
+        Mon, 19 Feb 2024 08:27:29 -0800 (PST)
 Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id j2-20020a17090643c200b00a3da0717620sm3098433ejn.180.2024.02.19.08.25.30
+        by smtp.gmail.com with ESMTPSA id y14-20020a170906448e00b00a379ef08ecbsm3095648ejo.74.2024.02.19.08.27.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Feb 2024 08:25:31 -0800 (PST)
+        Mon, 19 Feb 2024 08:27:28 -0800 (PST)
 Content-Type: multipart/signed;
- boundary=bacebf7d168109f5417563fc7b385a5a1a0e0ddba919e7b2d0aa45178fce;
+ boundary=b92dee8dca8ec0ea944d06a19142b74f01bffadbe68328557b23cbc6a168;
  micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -59,89 +59,89 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Date: Mon, 19 Feb 2024 17:25:30 +0100
-Message-Id: <CZ971XOHA968.3OVG90NP5YYJP@gmail.com>
-Cc: <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 1/2] staging/nvec: update comment regarding udelay in
- the isr
+Date: Mon, 19 Feb 2024 17:27:28 +0100
+Message-Id: <CZ973FMYMJAO.PQ0Z5YLXZPPM@gmail.com>
 From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Marc Dietrich" <marvin24@gmx.de>, <linux-staging@lists.linux.dev>
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Konrad Dybcio"
+ <konrad.dybcio@linaro.org>, "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>, "Georgi Djakov" <djakov@kernel.org>,
+ "Bjorn Andersson" <andersson@kernel.org>, "Sylwester Nawrocki"
+ <s.nawrocki@samsung.com>, =?utf-8?q?Artur_=C5=9Awigo=C5=84?=
+ <a.swigon@samsung.com>, "Alim Akhtar" <alim.akhtar@samsung.com>, "Jonathan
+ Hunter" <jonathanh@nvidia.com>, <linux-gpio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] interconnect: constify of_phandle_args in xlate
 X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240218212557.22836-1-marvin24@gmx.de>
-In-Reply-To: <20240218212557.22836-1-marvin24@gmx.de>
+References: <20240216135236.129878-1-krzysztof.kozlowski@linaro.org>
+ <488cc7dc-f45a-4c9e-b572-e4a6b3202e3e@linaro.org>
+ <41e371f1-96f4-45c0-9f65-81ed6924b325@linaro.org>
+In-Reply-To: <41e371f1-96f4-45c0-9f65-81ed6924b325@linaro.org>
 
---bacebf7d168109f5417563fc7b385a5a1a0e0ddba919e7b2d0aa45178fce
+--b92dee8dca8ec0ea944d06a19142b74f01bffadbe68328557b23cbc6a168
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 
-On Sun Feb 18, 2024 at 10:25 PM CET, Marc Dietrich wrote:
-> Update the comment before the udelay on how to replace it.
+On Fri Feb 16, 2024 at 2:59 PM CET, Krzysztof Kozlowski wrote:
+> On 16/02/2024 14:55, Konrad Dybcio wrote:
+> > On 16.02.2024 14:52, Krzysztof Kozlowski wrote:
+> >> The xlate callbacks are supposed to translate of_phandle_args to prope=
+r
+> >> provider without modifying the of_phandle_args.  Make the argument
+> >> pointer to const for code safety and readability.
+> >>
+> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >> ---
+> >>  drivers/gpio/gpiolib-of.c              |  2 +-
+> >>  drivers/interconnect/core.c            |  4 ++--
+> >>  drivers/interconnect/qcom/icc-common.c |  3 ++-
+> >>  drivers/interconnect/qcom/icc-common.h |  3 ++-
+> >>  drivers/interconnect/samsung/exynos.c  |  2 +-
+> >>  drivers/memory/tegra/mc.c              |  2 +-
+> >>  drivers/memory/tegra/tegra124-emc.c    |  2 +-
+> >>  drivers/memory/tegra/tegra124.c        |  2 +-
+> >>  drivers/memory/tegra/tegra186-emc.c    |  2 +-
+> >>  drivers/memory/tegra/tegra20-emc.c     |  2 +-
+> >>  drivers/memory/tegra/tegra20.c         |  2 +-
+> >>  drivers/memory/tegra/tegra30-emc.c     |  2 +-
+> >>  drivers/memory/tegra/tegra30.c         |  2 +-
+> >>  include/linux/interconnect-provider.h  | 11 ++++++-----
+> >>  include/soc/tegra/mc.h                 |  7 ++++---
+> >=20
+> > Ended up being a bit wider than just icc..
+> >=20
+> > Looks sane apart from that
 >
-> Signed-off-by: Marc Dietrich <marvin24@gmx.de>
-> ---
->  drivers/staging/nvec/nvec.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> Tegra memory controllers are also interconnect providers, so two subsyste=
+ms.
 >
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index b3f114cb00dc..ec081d81a308 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -709,10 +709,11 @@ static irqreturn_t nvec_interrupt(int irq, void *de=
-v)
->  		status & RNW ? " RNW" : "");
->
->  	/*
-> -	 * TODO: A correct fix needs to be found for this.
-> +	 * TODO: replace the udelay with a read back after each writel above
-> +	 * in order to work around a hardware issue, see i2c-tegra.c
+> This patch should go via interconnect tree.
 
-i2c-tegra.c is almost 2000 lines, so it'd be good to be a little more
-specific. Are you referring to the work-around in i2c_writel()? If so,
-perhaps mention that function so that people can find it.
+I think Konrad might have been referring to the GPIO hunk, which seems
+out of place. For the Tegra parts, though:
 
->  	 *
-> -	 * We experience less incomplete messages with this delay than without
-> -	 * it, but we don't know why. Help is appreciated.
-> +	 * Unfortunately, this change causes an intialisation issue with the
-> +	 * touchpad, which needs to be fixed first.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Perhaps something like: "... this change would cause an initialisation
-issue... " to make it a little more clear what you are referencing. Is
-there any information about the touchpad issue? Any idea what's going
-wrong during the initialization?
-
-Seems like this issue has been around a very long time already, and the
-further we kick this can down the road the less likely it will be that
-we'll ever fix it.
-
-Thierry
-
->  	 */
->  	udelay(100);
->
-> --
-> 2.40.1
-
-
---bacebf7d168109f5417563fc7b385a5a1a0e0ddba919e7b2d0aa45178fce
+--b92dee8dca8ec0ea944d06a19142b74f01bffadbe68328557b23cbc6a168
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXTgPoACgkQ3SOs138+
-s6Eg4xAAq4xaS7v2eK78oOMD/yrIkpFXNY/jCAOvicE0HxDSEtL3lbQK5njbnmxa
-APAPLW3Aczh6DDtlaTYSH+4cU0639YF+HtvHFqeUMixojE2gfncVMArNBOBcM6BH
-ryDSlsdBDagvC8Qvn2n94Hm02aOqXGyiEUd7AbAGyQ/p8KiWLSvDPbXAJfxOsaIA
-YKyQYjyJK6ig3PE3wgtqbOC+HpBc+BxiqF5vTJiqROIrYU/4hEvOO57gHMqIS5Nz
-GQIXb4EGgFVAUAe8IaKtxYpzVO1B76iB4u06Ucv0Y35HW7s3VBq4sv2BTzqsztw4
-2v5tlp4QgR3ycEBFXWDAOH5ayHge0hp8o96r0ojDzTn2bllLGu9XYexLQ2xanh17
-7GPRxHXTfFDcDCF8hI5vOV+WEjL96KkjbAdNujC6ATZIXNgS2qv8GFpcYUrjWXlO
-MIfNKt5JWqEf9bd2lwr2eXT4WOzOODrWO++TAlkoGWOkpWTEIgjaSfZA4CXBA2ZX
-VI8QfXDUcj0isNjqHKTC62ucQW21W89xWiOyaY2JBOzX66ll2iY+FiHuTEID7URx
-wRpnpt9A26xJ314KDEVpZ+i/QYaK14Ite4B3At1pXdOLypUk7suy1KIgDZujJEc0
-NnsqWDjbvtUQHp6xj6v3lrcCTlZYpBHnK1RJHEOBagp+tzhQ+gc=
-=9Od0
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXTgXAACgkQ3SOs138+
+s6GIJw//RvytUrxe/nGMKPNdA9bteZUmB2JfZ66rT/aIzbWsUTYEkOeW5vUWjVmW
+MPR/6YDXkpdL0Q/wiThQ9W3Cjs93mvIMCJF538QY3LkxdEsaUIUk1rYPjKixE958
+gA8KAsThqwdocqOWK1ewZw32VgbzLYNIPaKDq9waWrwpNkWf1bfD3fF/ASa8GSlu
+e31R3iip5rYK3qrml3XZ6+h9oOFsB4u5+wp/azEeCP+o/I9/Fq9zj0I3sIxhgSlK
+zh4DjKyp480uELj+1FcRmfnS7mJbpyoUibdWkmjet5M6RBveI9SX1DttREXlWJ1m
+C6+UaVW6FAwh5qfin7Wt7hBxMKI50W/26+NnR/oJIMxnRe4ZRvYsdClPUAbsbIcZ
+ixTJMFckKgu31r2vhHq+f8mvKoodvGo6+Rt/UAaBnpv4aBGQlXHqQXA0Me0v0paj
+BAAlZU5dDmKahjg0dFllXswJ6fuRnGyFwLO5q3Uxu4IBYlUoLLHOt23/6vGGdGsm
+hdOLCVxBqM5T1usBopfL/9SDxNGLFl2LzwI9XRdj+ngB6oGJDRCatPZV2UC0w+Ut
+97TULJaYn3ovR/YllkVngF4U883Qy63N3pxbYtZCWbAJ1GC1bZbaK5HZwu862RfK
+6DDoAy+GT5NuJwKGswC2m4wgu2pOzDRPHQehU+Ya5B+UdbWOLuY=
+=8sMu
 -----END PGP SIGNATURE-----
 
---bacebf7d168109f5417563fc7b385a5a1a0e0ddba919e7b2d0aa45178fce--
+--b92dee8dca8ec0ea944d06a19142b74f01bffadbe68328557b23cbc6a168--
