@@ -1,75 +1,76 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2045.outbound.protection.outlook.com [40.107.243.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325B05A781
-	for <linux-tegra@vger.kernel.org>; Tue, 20 Feb 2024 07:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708413742; cv=none; b=dVtxgX8mOUoH99cgXUAcRCIYob2Jw3Hb+HXmH/vx+cwrIXMH0dDcFNRUaEGB5vaKM/tB+EqT+HSeylWuFqkZOvsXx2duk7jqosdi76gYAB6Hio7Zd2fZ2BqtWIoC5ZepV5L7uxj6mVefweXsEiqL82/pFLUOuMhH/RDBPCSF2TI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708413742; c=relaxed/simple;
-	bh=LGEekiMz1MuQlgMUTzt2/pfYsfBxAob5BHRAMdbsDgI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zy3wxNPU/YAuh6lp2QUEpmG5Rd3Iqv8KjXfAC2wI4VMdomzgMJhDkKa9B6eV+QYGI43ew799Cr+bTZF1EHqmf86u7EcnDn9e1rLD/0kEPFP8XI1xYc0/UCzgr2HnqY4CDOjNyEQeXz3TuSV9+IhL82YPjO39cL1G1yDK4ZiDOPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=shXeenAW; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF1367C6A;
+	Tue, 20 Feb 2024 12:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708431483; cv=fail; b=mhDl7vEeorzDEeUsDVnuc2r+v626tcJEFW0W5Qs8SNOq5iMA6kGf/HSTql5hAX5dSO6BpKmSADBoAQJXfc2KlWYOpgIU0AiUZ/9dY7/CNa2ab3EyhCfVXglsukUCh4Xp046jhTkjFl8u5lMZneB1KXoibglR7ij66TzfHO53ZBc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708431483; c=relaxed/simple;
+	bh=SV/4gckev+COimu3hZTD6X2kuUigAVkBUbi8Pd960Co=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=riNH2vVvlacqjmBDxJvqMKvF9Eq3feCAil0+e3oMJiWZSBtgKzFwO6hzsJbKUuEpBgOrDcATouP6PCYgl0czLoPi/RrHfQm1jdzUe1mClY/oH1X2p+yi1l21BOhAseGw4icTTM2KGBggREsgc/k+pJKfl36KjrU0OqweJ/CWIWs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jgV8DADc; arc=fail smtp.client-ip=40.107.243.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="shXeenAW"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-41269c801eeso9162145e9.2
-        for <linux-tegra@vger.kernel.org>; Mon, 19 Feb 2024 23:22:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708413738; x=1709018538; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BIo3+G26RYj97IhyrbqNGg5wn0wlq5Qdvj0YBvaCoZM=;
-        b=shXeenAWqhQ0Dm97VY8EHi/2doq9IkSZWL8UYDkXF97mD4VeJDSMMgg3KR4DX9S8jB
-         5omLtcfQTuFsYrrlU9ST5w6Hi9BENZ0sXd4I4mT5UTjf4MjCltQvhlOaQvIHC/wrY2Ab
-         0LfI/HSu6eoGh3A30AzpKbNqiWqf472PrgsqUSvrul9HgcK61z15dXtk6pAy5CGFb81c
-         l1OHOtBdfQ0DrrXec0sjBGg5OsPzBbWt3R3YNuvc2HznVRFyt5qeSYzOslVCUsDT3o9S
-         LAQc7G3sCtyVWAalfqclB8iedqufD/4ZG67Y3XNYuVgQSdFi4BXPfrVBA8sYrBJ+PflH
-         7HMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708413738; x=1709018538;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BIo3+G26RYj97IhyrbqNGg5wn0wlq5Qdvj0YBvaCoZM=;
-        b=OfJ+39oRvFtgPi6c5bonsq9NV/fW+L0F+4L94WJP8Gq3iIjKi3AuPee2uoApeqXv/f
-         INg0mdx5xRbzJEynf4mgDeGgaZRFVjC/IofI1l7NsYs6xvsKkOyPr8338ag6GNuOSTJ2
-         mCMdouvkQbKcY93FqBdXUUFxwScmRCn5i+3RwexwLzIrUAlpoSxN+Kfmqx9VrRAS6s49
-         Bmct/O8JmXzhwWYtWcUdAteWhZPHdownlle9JHROGcine+64ef1r6qm7CC20ScyxopBR
-         xBkDl3/entSIM0/gdX/W9lA0QjykdKgdjgBLePaAd8zfQyQqe9ADbkq9h9MjlwnbgaY9
-         GWlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVu1Sae21N+peuvjSeYxZ3oM0iW7jFCJL7DnunO70VUnrtG8mwGF2s+kcD+YhTOxNAJ/0SbVel7m1+uPYr6AGO53Vhcsk2pp5rES54=
-X-Gm-Message-State: AOJu0YxnsGDtYvcyYRlu3YLrVYg/e+e7mcFBzP9PBubqMxvH8p9FBvif
-	IsCvSkk4mJ6F5H+unSwlS5+4EhGq84DIMtvNJS6VhP4uEbLVgwU6uhLvkneUqyA=
-X-Google-Smtp-Source: AGHT+IFsiqErb4YdGF8aE7+74ruUZ+0bGR7/Jcn7dJsjwREy1wAfV5T5SYZ5Qe7idjSIi0rak2+F+g==
-X-Received: by 2002:a5d:62cc:0:b0:33d:3ad2:67ae with SMTP id o12-20020a5d62cc000000b0033d3ad267aemr5015404wrv.57.1708413738557;
-        Mon, 19 Feb 2024 23:22:18 -0800 (PST)
-Received: from krzk-bin.. ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id m17-20020a5d4a11000000b0033cf4e47496sm12424045wrq.51.2024.02.19.23.22.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Feb 2024 23:22:18 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Georgi Djakov <djakov@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	=?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@samsung.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org
-Cc: Thierry Reding <treding@nvidia.com>
-Subject: [PATCH v2] interconnect: constify of_phandle_args in xlate
-Date: Tue, 20 Feb 2024 08:22:13 +0100
-Message-Id: <20240220072213.35779-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jgV8DADc"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DauXkAltWdMAuI+0Dsw/fD1NkjXUPcu0A67eKxFVlDNgQZAduXBVBQoLaj27dxbnfxi+TJHDCYsFX7CPEbMOAFSA1SgseoX5uQObPGen/sK8etZyunN7hKcSO/fBmcTBAZkb2HDhFKswBheXnbE6EW2NSwxB0HOWf7P+UZQGO7x6+U3u14jJ+AlwnE5YberhBSmC08XTe+BYj5R4hKKGzsGDhsHgYMEs3tCFFBxEtIp1qVB9bk4RQ2hqJZkqKyd7VEJiRcnH4w1rnqQALJ40KSmM0qzbFUX1UumOkfV7XQp0AikDMmKXYL+3zXg3Z8fBfzuv6dyYc+jcrCoJnDM3iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G8njTMgGFnggQiD47IoVDGp3yvSZYGAifUgu9OUDIQA=;
+ b=LZT3wqABdyLeRZMok0su3hX4iJbWFz0i1yUa4J46sZL3XTmkl21CBw/SLFR/WgQhfc0wibyzD5hxo1bLqcPQqbVVuufwjeTecdxrLv3dOyKXENAe2JSWzTk8w1wC/UPXh9OOUe5Ylruv7O0GQuDo4MK1J2T22V7/HoNVZs3RcOVJjRAbZ7RUZ3LPx2lLvh1Yu+zfKZ1NQ4y4t6mknwp9WxVIzWOL/Fgy6J+Tg7MUcOoXfz1MBP7ygRB0eOxylcqi03AnNZCYI+vzWpmKHVufDuh8OUFpjH5mDUx/wX51FfxzXw7A3KxytC17eDIl9gO9zTw2Mu2bdLY0Xaf7zgzgrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8njTMgGFnggQiD47IoVDGp3yvSZYGAifUgu9OUDIQA=;
+ b=jgV8DADcnUrB60iOiXaAi9cEgj0bLImSQ11S2lMLkZ2mnyqNdTHvkWeTMDsfqqCNgZTBu4m3vekWAWYkIHt55jM9SswtbmxZs9ks3koPi9/r5FeMwTAlGWP2wknpaRounZLVlRlWGBX4rpjybHZrSH1A4NDgZzQX+MohwCRXFG/CczaR2+gREPVDfbmQWFSDYaNiux92JKoI2EX+HIFlRmk9w9ToQUvcYbFkcUydKxrVm40cOOst0EnW7QTeaxQaWziovBmgBV+sy1SGrylMIEklCTyx7E08S8gzlvu5tiQZ4ZYGTCs4DGG30Q0VXlV56kqjNICfoEz0DvvUoB7Azw==
+Received: from BN0PR08CA0016.namprd08.prod.outlook.com (2603:10b6:408:142::35)
+ by CY5PR12MB6345.namprd12.prod.outlook.com (2603:10b6:930:22::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.12; Tue, 20 Feb
+ 2024 12:17:57 +0000
+Received: from BN3PEPF0000B076.namprd04.prod.outlook.com
+ (2603:10b6:408:142:cafe::a2) by BN0PR08CA0016.outlook.office365.com
+ (2603:10b6:408:142::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.39 via Frontend
+ Transport; Tue, 20 Feb 2024 12:17:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN3PEPF0000B076.mail.protection.outlook.com (10.167.243.121) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7292.25 via Frontend Transport; Tue, 20 Feb 2024 12:17:56 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 20 Feb
+ 2024 04:17:37 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Tue, 20 Feb
+ 2024 04:17:37 -0800
+Received: from moonraker.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Tue, 20 Feb 2024 04:17:35 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Jon Hunter
+	<jonathanh@nvidia.com>
+Subject: [PATCH V2 0/3] arm64: tegra: Tegra194 device-tree updates
+Date: Tue, 20 Feb 2024 12:17:11 +0000
+Message-ID: <20240220121714.16543-1-jonathanh@nvidia.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -77,269 +78,49 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B076:EE_|CY5PR12MB6345:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6a150da0-0129-433d-e7a4-08dc320df8ed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	1WZIdzX4+isl4JrFUUctWsxaC1NJlc+SBBrdOkJeXy4A4fWX3EdE89L13Jm8cizLs8rCJoS2oeOm2b1S/GSHstk4jftbZ6Fm3xpr1iJ3MkNgX3Hwz31kptXSI+r+oe1h92JrvoIShn7o66R8dxiGtt+51iM6o3+4UKuL8rlHo725Qa4e4D2AAW+eZ56HPLuiAJPKGDsbuDzB4jHsabOVNXcF7qhknI1YagLDlREGiY64aPoET2+CjvKOJosHxMQEUsi6jrL1hI/Qz/D21ihaS6xqkgZLjCVynUwZwTFp+wixzRPoYQGaSzTYGvbaJE3hDG4GzwtxtlKjD9ajrTnKwY0fKHX+5vkqO1bGSCKzI9C4bUczG+KPBpiQJMcG46ATpORxsoFBeCJSGbL8L6L81EXXJog+NNWd7Ju6BRHHu6WFUMRYYO1sL4Anw6sd7Y57KqE7oT3tANaWM782zJm9yk6XTRbTtGoEW2dZHt8lvv0jfsm1uXEUAomBG/g3jdD97jycgpP5nenDogzLxhi+UWYdhjyktOpznyA3YOF8CeR32cVVJ/Asx2tXLT8uuUrzspb4klJ7ygiNXGd71chrosm8YhJpIoaz2pyRdEE4VG30QGjmVi3pTSXUamVTZHJIgJIq0Z+30bNREFZAlG8Otfgif4f5i24TWwfEBgE1qrw=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(40470700004)(46966006);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2024 12:17:56.8634
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6a150da0-0129-433d-e7a4-08dc320df8ed
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B076.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6345
 
-The xlate callbacks are supposed to translate of_phandle_args to proper
-provider without modifying the of_phandle_args.  Make the argument
-pointer to const for code safety and readability.
+Add the current monitors for Jetson Xavier based devices and enable USB
+device support for Jetson AGX Xavier.
 
-Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Acked-by: Thierry Reding <treding@nvidia.com> # Tegra
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Changes since V1:
+- Used generic name 'power-sensor' for current monitors
 
----
+Jon Hunter (3):
+  arm64: tegra: Add current monitors for Jetson Xavier
+  arm64: tegra: Add USB device support for Jetson AGX Xavier
+  arm64: tegra: Add USB Type-C controller for Jetson AGX Xavier
 
-Changes in v2:
-1. Drop unrelated gpiolib changes (Konrad, Thierry).
-2. Add tags.
----
- drivers/interconnect/core.c            |  4 ++--
- drivers/interconnect/qcom/icc-common.c |  3 ++-
- drivers/interconnect/qcom/icc-common.h |  3 ++-
- drivers/interconnect/samsung/exynos.c  |  2 +-
- drivers/memory/tegra/mc.c              |  2 +-
- drivers/memory/tegra/tegra124-emc.c    |  2 +-
- drivers/memory/tegra/tegra124.c        |  2 +-
- drivers/memory/tegra/tegra186-emc.c    |  2 +-
- drivers/memory/tegra/tegra20-emc.c     |  2 +-
- drivers/memory/tegra/tegra20.c         |  2 +-
- drivers/memory/tegra/tegra30-emc.c     |  2 +-
- drivers/memory/tegra/tegra30.c         |  2 +-
- include/linux/interconnect-provider.h  | 11 ++++++-----
- include/soc/tegra/mc.h                 |  7 ++++---
- 14 files changed, 25 insertions(+), 21 deletions(-)
+ .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 50 ++++++++++++++++++
+ .../boot/dts/nvidia/tegra194-p2972-0000.dts   | 51 ++++++++++++++++++-
+ .../arm64/boot/dts/nvidia/tegra194-p3668.dtsi | 27 ++++++++++
+ 3 files changed, 127 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/interconnect/core.c b/drivers/interconnect/core.c
-index 50bac2d79d9b..5d1010cafed8 100644
---- a/drivers/interconnect/core.c
-+++ b/drivers/interconnect/core.c
-@@ -343,7 +343,7 @@ EXPORT_SYMBOL_GPL(icc_std_aggregate);
-  * an array of icc nodes specified in the icc_onecell_data struct when
-  * registering the provider.
-  */
--struct icc_node *of_icc_xlate_onecell(struct of_phandle_args *spec,
-+struct icc_node *of_icc_xlate_onecell(const struct of_phandle_args *spec,
- 				      void *data)
- {
- 	struct icc_onecell_data *icc_data = data;
-@@ -368,7 +368,7 @@ EXPORT_SYMBOL_GPL(of_icc_xlate_onecell);
-  * Returns a valid pointer to struct icc_node_data on success or ERR_PTR()
-  * on failure.
-  */
--struct icc_node_data *of_icc_get_from_provider(struct of_phandle_args *spec)
-+struct icc_node_data *of_icc_get_from_provider(const struct of_phandle_args *spec)
- {
- 	struct icc_node *node = ERR_PTR(-EPROBE_DEFER);
- 	struct icc_node_data *data = NULL;
-diff --git a/drivers/interconnect/qcom/icc-common.c b/drivers/interconnect/qcom/icc-common.c
-index f27f4fdc4531..9b9ee113f172 100644
---- a/drivers/interconnect/qcom/icc-common.c
-+++ b/drivers/interconnect/qcom/icc-common.c
-@@ -9,7 +9,8 @@
- 
- #include "icc-common.h"
- 
--struct icc_node_data *qcom_icc_xlate_extended(struct of_phandle_args *spec, void *data)
-+struct icc_node_data *qcom_icc_xlate_extended(const struct of_phandle_args *spec,
-+					      void *data)
- {
- 	struct icc_node_data *ndata;
- 	struct icc_node *node;
-diff --git a/drivers/interconnect/qcom/icc-common.h b/drivers/interconnect/qcom/icc-common.h
-index 33bb2c38dff3..21c39b163948 100644
---- a/drivers/interconnect/qcom/icc-common.h
-+++ b/drivers/interconnect/qcom/icc-common.h
-@@ -8,6 +8,7 @@
- 
- #include <linux/interconnect-provider.h>
- 
--struct icc_node_data *qcom_icc_xlate_extended(struct of_phandle_args *spec, void *data);
-+struct icc_node_data *qcom_icc_xlate_extended(const struct of_phandle_args *spec,
-+					      void *data);
- 
- #endif
-diff --git a/drivers/interconnect/samsung/exynos.c b/drivers/interconnect/samsung/exynos.c
-index 1ba14cb45d5a..c9e5361e17c5 100644
---- a/drivers/interconnect/samsung/exynos.c
-+++ b/drivers/interconnect/samsung/exynos.c
-@@ -82,7 +82,7 @@ static int exynos_generic_icc_set(struct icc_node *src, struct icc_node *dst)
- 	return 0;
- }
- 
--static struct icc_node *exynos_generic_icc_xlate(struct of_phandle_args *spec,
-+static struct icc_node *exynos_generic_icc_xlate(const struct of_phandle_args *spec,
- 						 void *data)
- {
- 	struct exynos_icc_priv *priv = data;
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index a083921a8968..224b488794e5 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -755,7 +755,7 @@ const char *const tegra_mc_error_names[8] = {
- 	[6] = "SMMU translation error",
- };
- 
--struct icc_node *tegra_mc_icc_xlate(struct of_phandle_args *spec, void *data)
-+struct icc_node *tegra_mc_icc_xlate(const struct of_phandle_args *spec, void *data)
- {
- 	struct tegra_mc *mc = icc_provider_to_tegra_mc(data);
- 	struct icc_node *node;
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 00ed2b6a0d1b..47c0c19e13fd 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -1285,7 +1285,7 @@ to_tegra_emc_provider(struct icc_provider *provider)
- }
- 
- static struct icc_node_data *
--emc_of_icc_xlate_extended(struct of_phandle_args *spec, void *data)
-+emc_of_icc_xlate_extended(const struct of_phandle_args *spec, void *data)
- {
- 	struct icc_provider *provider = data;
- 	struct icc_node_data *ndata;
-diff --git a/drivers/memory/tegra/tegra124.c b/drivers/memory/tegra/tegra124.c
-index 470b7dbab2c2..9d7393e19f12 100644
---- a/drivers/memory/tegra/tegra124.c
-+++ b/drivers/memory/tegra/tegra124.c
-@@ -1170,7 +1170,7 @@ static int tegra124_mc_icc_aggreate(struct icc_node *node, u32 tag, u32 avg_bw,
- }
- 
- static struct icc_node_data *
--tegra124_mc_of_icc_xlate_extended(struct of_phandle_args *spec, void *data)
-+tegra124_mc_of_icc_xlate_extended(const struct of_phandle_args *spec, void *data)
- {
- 	struct tegra_mc *mc = icc_provider_to_tegra_mc(data);
- 	const struct tegra_mc_client *client;
-diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
-index fcd4aea48bda..57d9ae12fcfe 100644
---- a/drivers/memory/tegra/tegra186-emc.c
-+++ b/drivers/memory/tegra/tegra186-emc.c
-@@ -236,7 +236,7 @@ static int tegra_emc_icc_set_bw(struct icc_node *src, struct icc_node *dst)
- }
- 
- static struct icc_node *
--tegra_emc_of_icc_xlate(struct of_phandle_args *spec, void *data)
-+tegra_emc_of_icc_xlate(const struct of_phandle_args *spec, void *data)
- {
- 	struct icc_provider *provider = data;
- 	struct icc_node *node;
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index fd595c851a27..97cf59523b0b 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -950,7 +950,7 @@ to_tegra_emc_provider(struct icc_provider *provider)
- }
- 
- static struct icc_node_data *
--emc_of_icc_xlate_extended(struct of_phandle_args *spec, void *data)
-+emc_of_icc_xlate_extended(const struct of_phandle_args *spec, void *data)
- {
- 	struct icc_provider *provider = data;
- 	struct icc_node_data *ndata;
-diff --git a/drivers/memory/tegra/tegra20.c b/drivers/memory/tegra/tegra20.c
-index aa4b97d5e732..a3022e715dee 100644
---- a/drivers/memory/tegra/tegra20.c
-+++ b/drivers/memory/tegra/tegra20.c
-@@ -390,7 +390,7 @@ static int tegra20_mc_icc_aggreate(struct icc_node *node, u32 tag, u32 avg_bw,
- }
- 
- static struct icc_node_data *
--tegra20_mc_of_icc_xlate_extended(struct of_phandle_args *spec, void *data)
-+tegra20_mc_of_icc_xlate_extended(const struct of_phandle_args *spec, void *data)
- {
- 	struct tegra_mc *mc = icc_provider_to_tegra_mc(data);
- 	unsigned int i, idx = spec->args[0];
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index 9eae25c57ec6..d7b0a23c2d7d 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -1468,7 +1468,7 @@ to_tegra_emc_provider(struct icc_provider *provider)
- }
- 
- static struct icc_node_data *
--emc_of_icc_xlate_extended(struct of_phandle_args *spec, void *data)
-+emc_of_icc_xlate_extended(const struct of_phandle_args *spec, void *data)
- {
- 	struct icc_provider *provider = data;
- 	struct icc_node_data *ndata;
-diff --git a/drivers/memory/tegra/tegra30.c b/drivers/memory/tegra/tegra30.c
-index 06f8b35e0a14..d3e685c8431f 100644
---- a/drivers/memory/tegra/tegra30.c
-+++ b/drivers/memory/tegra/tegra30.c
-@@ -1332,7 +1332,7 @@ static int tegra30_mc_icc_aggreate(struct icc_node *node, u32 tag, u32 avg_bw,
- }
- 
- static struct icc_node_data *
--tegra30_mc_of_icc_xlate_extended(struct of_phandle_args *spec, void *data)
-+tegra30_mc_of_icc_xlate_extended(const struct of_phandle_args *spec, void *data)
- {
- 	struct tegra_mc *mc = icc_provider_to_tegra_mc(data);
- 	const struct tegra_mc_client *client;
-diff --git a/include/linux/interconnect-provider.h b/include/linux/interconnect-provider.h
-index 7ba183f221f1..f5aef8784692 100644
---- a/include/linux/interconnect-provider.h
-+++ b/include/linux/interconnect-provider.h
-@@ -36,7 +36,7 @@ struct icc_onecell_data {
- 	struct icc_node *nodes[] __counted_by(num_nodes);
- };
- 
--struct icc_node *of_icc_xlate_onecell(struct of_phandle_args *spec,
-+struct icc_node *of_icc_xlate_onecell(const struct of_phandle_args *spec,
- 				      void *data);
- 
- /**
-@@ -65,8 +65,9 @@ struct icc_provider {
- 			 u32 peak_bw, u32 *agg_avg, u32 *agg_peak);
- 	void (*pre_aggregate)(struct icc_node *node);
- 	int (*get_bw)(struct icc_node *node, u32 *avg, u32 *peak);
--	struct icc_node* (*xlate)(struct of_phandle_args *spec, void *data);
--	struct icc_node_data* (*xlate_extended)(struct of_phandle_args *spec, void *data);
-+	struct icc_node* (*xlate)(const struct of_phandle_args *spec, void *data);
-+	struct icc_node_data* (*xlate_extended)(const struct of_phandle_args *spec,
-+						void *data);
- 	struct device		*dev;
- 	int			users;
- 	bool			inter_set;
-@@ -124,7 +125,7 @@ int icc_nodes_remove(struct icc_provider *provider);
- void icc_provider_init(struct icc_provider *provider);
- int icc_provider_register(struct icc_provider *provider);
- void icc_provider_deregister(struct icc_provider *provider);
--struct icc_node_data *of_icc_get_from_provider(struct of_phandle_args *spec);
-+struct icc_node_data *of_icc_get_from_provider(const struct of_phandle_args *spec);
- void icc_sync_state(struct device *dev);
- 
- #else
-@@ -171,7 +172,7 @@ static inline int icc_provider_register(struct icc_provider *provider)
- 
- static inline void icc_provider_deregister(struct icc_provider *provider) { }
- 
--static inline struct icc_node_data *of_icc_get_from_provider(struct of_phandle_args *spec)
-+static inline struct icc_node_data *of_icc_get_from_provider(const struct of_phandle_args *spec)
- {
- 	return ERR_PTR(-ENOTSUPP);
- }
-diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
-index af1d73a7f0cd..6ee4c59db620 100644
---- a/include/soc/tegra/mc.h
-+++ b/include/soc/tegra/mc.h
-@@ -146,13 +146,14 @@ struct tegra_mc_icc_ops {
- 	int (*set)(struct icc_node *src, struct icc_node *dst);
- 	int (*aggregate)(struct icc_node *node, u32 tag, u32 avg_bw,
- 			 u32 peak_bw, u32 *agg_avg, u32 *agg_peak);
--	struct icc_node* (*xlate)(struct of_phandle_args *spec, void *data);
--	struct icc_node_data *(*xlate_extended)(struct of_phandle_args *spec,
-+	struct icc_node* (*xlate)(const struct of_phandle_args *spec, void *data);
-+	struct icc_node_data *(*xlate_extended)(const struct of_phandle_args *spec,
- 						void *data);
- 	int (*get_bw)(struct icc_node *node, u32 *avg, u32 *peak);
- };
- 
--struct icc_node *tegra_mc_icc_xlate(struct of_phandle_args *spec, void *data);
-+struct icc_node *tegra_mc_icc_xlate(const struct of_phandle_args *spec,
-+				    void *data);
- extern const struct tegra_mc_icc_ops tegra_mc_icc_ops;
- 
- struct tegra_mc_ops {
 -- 
 2.34.1
 
