@@ -1,245 +1,191 @@
 Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327276DCE4;
-	Tue, 20 Feb 2024 14:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090243A27B
+	for <linux-tegra@vger.kernel.org>; Wed, 21 Feb 2024 07:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708439325; cv=none; b=aPAVWis+Ad3W6ZFKzHiB33B/5rTTW3kLgBwXhV5N/bcW+vfSi2jXitZGW9gQVK/NJtUWovJe7+tzK4JMmzWpJol2cvj9RXG/L/NnCskTbIibUJW1vmzrbK3zV2zgfM1druaY1Dy7txjsf2Tm3m6Pukka3jOGdQf6cC4wfHRE30I=
+	t=1708499633; cv=none; b=PiVEeEs4UbJfELAiqh6/3ZhDgStF7p8jwjtlv2iLN8bnM8pk0Km1OjTpz9BNp/XydA+wEXENA5wFMCajaSrU2IcK2tfaJumaHT3LekSwdGdtWvuoiaN7bVEee/yRQUdcumf7fy2UpKtlC9M4auNhx8CAHbayIn4cGLakjXkxp+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708439325; c=relaxed/simple;
-	bh=FL3M7xKJ14hnC6urx1eoKV1vZUT3l8eiXsraM73jfXA=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=bQ2oQ0Vy8UzEIuP14j/3M3MsGxhgJcnj2GlZa9Mqg3Qiz7B8SBvA99oud5N+3QSuKqnf4CjUx3D06ecI4s91JOOplzd/one86bx2Xn9ClXC/dsqvVxYnTV6VRUE2KR6UJ02TEuoYeclJtE8hFQzrosU0GGIiR5wfn/0BAnHuUiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jJgEeFBh; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708499633; c=relaxed/simple;
+	bh=sm7aYXSJG8Hcgc7YVjS0YUnjzNl03wLN6NHSIs+5RfU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qp6jkE7EO9kskoDcCBZOBhpjaX1GQ+mxwGsank/x0BeMyIdEgZKqx5PISPnWjdI3O8MXxmUdRmVy3jXAeBc7j8Gj4oab3kkmMoCMhjM6kftAbeY43xqK3aNuRsTGVF+u0izoN27gDm4jZ0YRsM+kRKIkIj2Q/bgenyezo8U4kwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LKLBM+pF; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jJgEeFBh"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3e706f50beso312150566b.0;
-        Tue, 20 Feb 2024 06:28:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LKLBM+pF"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3f4464c48dso20701966b.3
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Feb 2024 23:13:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708439321; x=1709044121; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vz5RzTNhpTPMTVMz3nxEsmiIaAzAhCmMLP53qUjHq3g=;
-        b=jJgEeFBhxVfMx46rd78x/YQUO+MtlbFzkg1HZUIq19ko/BiQAcQVyYTJ+z5PlksNc1
-         5+z+9it+iesgjksJ0RGALBycLkj/LbYeJNDZ2ZYa0xXAsddeBXueG0XqAgmO3Ta5lnck
-         Fc7A/ou4t7R5zu8nT+H851UA0mSGISjFxjFdpx23ZTEPyhP8tjGJGHGvaDmzH9LdnTRy
-         v5Vh3K/m5FHo//JokUTRGWGMcUYwYXnGY3mKJewgiuCVJjy0fUprLJUKPhMQZlxAVmrC
-         HPliNBrmXis0oMCNNFjkcszQKyXW0opwsWWwcSWKkIY8/iIB2PsbVfLlt8RTrg3eb3+x
-         /yHw==
+        d=linaro.org; s=google; t=1708499629; x=1709104429; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lj6G8JZlNb0ydBBYXexPWzfMBPbLnVkovsLWtWCOKI8=;
+        b=LKLBM+pFNxwep6TEu6aufC1mQdsP4V1Lu9aIgqbIpb47ne5TNfD9t8SPj/3PkJ+886
+         /uW2pi1hrc4yuIq2vEgBq1qleSU+s7XRujjYq0PsKPeMv9qQ4pIKXC0DYOW3zz4Pzl8e
+         FIYL9xHUAQOKgR7LaLOscrQ0ITwVUtiwyTIRamX+bHfjGzwE1DCusTEHN33r0B/0Ai45
+         cwe3ERjdQBBLrJTTxRn9DdWu9v+umS4R4M8EYIIZjTBTmZYf2NwSvoxQE9pckZDkxOeN
+         uGXkGLAI0DchQLLpnmowMPNLRxRNdCSQLy/aYhjGnYua1OcMFc29ygKkzvPLm1Gj4XD9
+         uF2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708439321; x=1709044121;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vz5RzTNhpTPMTVMz3nxEsmiIaAzAhCmMLP53qUjHq3g=;
-        b=V2eORr3AmKHBQU3XA/oCt61bovkOXx7IDMk6Pjm71L679UfPgtKSvvl6O+/VnFK9sp
-         79RWXtduSztAFeT5bNcWm/ZEV2i4oldbB39Tg06U2RubP9ifvKUhprZKhdZjxy9Rj9ul
-         hm+Uk9ie4zrhhjZKqsT7QWKkUGrpFYrMsV5LpduVB451eSsKPNLj7fQjA7F3e9M56JWf
-         38T70DS9Nd0j2S59ZgVZUk+7bNoMJv2vW5Yg0REvPrTCWeJKyhSE1oFoTLan59Pd0ZBe
-         0GA877Sbsmlr1CMJ7nz6eiSLgG79sOpvxQRdEBhQGWU1KUL4VIGzB8IXk6jXg2CDHx1S
-         Yp8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWlCu88GLelYDd8dNpAkS+9Zz9bc/NjsbzcikyKzsFBnJQBKnyvUbk5GW5RcTiJe6M/mNP8HuRMRCSesOjHiuIjiP15kLx0GT+l73yYA4hfGIQ1RvpbqeCvwrB/Op3Fuh3QuRtRfgVlp5s0WTyr09XPaphZKX0dmiwAUxHQlIvsMrU=
-X-Gm-Message-State: AOJu0YzbKOG+1OSbU+v0XGJAeEPm8i5ohH/Ft2pmMzYuFDcVIW1VAMvE
-	Sr42f7IV9WquYbFgqpfhoQCRtu95CJK2N2053ZEDOdPWX3qr3Viz
-X-Google-Smtp-Source: AGHT+IFqSZIGLTjK5nMNqJ0mC/A+H31d6ZqUqt7xA4Zv5XlbR7MTAcjYaOiWvzrP3SvxWDabVUin/A==
-X-Received: by 2002:a17:906:b0c:b0:a3e:5b7f:6d31 with SMTP id u12-20020a1709060b0c00b00a3e5b7f6d31mr4677754ejg.5.1708439320970;
-        Tue, 20 Feb 2024 06:28:40 -0800 (PST)
-Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id vi10-20020a170907d40a00b00a3e7713dcbesm2523386ejc.39.2024.02.20.06.28.39
+        d=1e100.net; s=20230601; t=1708499629; x=1709104429;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lj6G8JZlNb0ydBBYXexPWzfMBPbLnVkovsLWtWCOKI8=;
+        b=vf6Y+Fu9QOz/urPVjv8XY9HeVvpSTltWKJLEhfL5Sx5L9WuqMhJtVCAfGnw3PxgIJ4
+         r9HoRCCpqP9Kr2frt76onS1K+Sx7z9Nr69Z12tbiycpvl4/hDLkGK16Iqpl5d5/y9oVb
+         mL0T9s5U++hA2s3xsgQdIVBdPcU2IOhwvqO1gNVNjH1W9IR7KTJNMbqhQMwyCAijA7t1
+         9Cl68RbCArQPP80zw3AwLMw+QXLhz5CJ6LLJTfzM8rJpfrHZJYZdQVhKFClZ49XuWXj5
+         inLDlx7ouCenotPjKgC0P2BJez9JzbkFQCcyN4NpSkWbtVXlLRuWloecQUncq/YF7unA
+         sUQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLZvHV2Jt6foOzHcUHVxBRRQH8+2XLHO7JKNlbzV59JTy/PNcyQIJdAjf9Qcnk13unaiNV+eG381lUoqsL3fl6ZV+oaatMKJob17E=
+X-Gm-Message-State: AOJu0YwvWvB+dWOL0wyzhyfUlh/GnCLmO5ItCu0wulbme0XqcY0v//+P
+	0aQpMhwue5NY3Jspn+JfFt/OBseCtOoA8NVWnGfdGPntQHQvt9TQ4HFR8cV5u/M=
+X-Google-Smtp-Source: AGHT+IGMgyZUNqmxcjMbb7mMKrPL7LtX9airZjvk8iggZudIU2hMGM0jsJm7YuVneGwLQlAFnz1fKw==
+X-Received: by 2002:a17:906:bc86:b0:a3e:389b:caa3 with SMTP id lv6-20020a170906bc8600b00a3e389bcaa3mr9013178ejb.53.1708499629371;
+        Tue, 20 Feb 2024 23:13:49 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.222.116])
+        by smtp.gmail.com with ESMTPSA id g16-20020a170906c19000b00a3cee88ddc7sm4742557ejz.147.2024.02.20.23.13.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Feb 2024 06:28:40 -0800 (PST)
-Content-Type: multipart/signed;
- boundary=54d881cc30ca662a73cfdacbec92cecca394f1f83ef4012a7b29e0247a47;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+        Tue, 20 Feb 2024 23:13:48 -0800 (PST)
+Message-ID: <6c4bdd9f-6b1f-43a0-9baa-7c1eedd46f76@linaro.org>
+Date: Wed, 21 Feb 2024 08:13:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Tue, 20 Feb 2024 15:28:39 +0100
-Message-Id: <CZ9Z70HO2C7J.398BRNM8NBIG1@gmail.com>
-Cc: "Alexandre Torgue" <alexandre.torgue@foss.st.com>, "Jose Abreu"
- <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo
- Abeni" <pabeni@redhat.com>, <netdev@vger.kernel.org>,
- <linux-stm32@st-md-mailman.stormreply.com>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-tegra@vger.kernel.org>, "Thierry Reding" <treding@nvidia.com>
-Subject: Re: [PATCH net-next v3 3/3] net: stmmac: Configure AXI on Tegra234
- MGBE
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Serge Semin" <fancer.lancer@gmail.com>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240219-stmmac-axi-config-v3-0-fca7f046e6ee@nvidia.com>
- <20240219-stmmac-axi-config-v3-3-fca7f046e6ee@nvidia.com>
- <xne2i6jwqaptsrd2hjdahxbscysgtj7iabqendyjb75fnrjc5z@js7n7qngtzym>
-In-Reply-To: <xne2i6jwqaptsrd2hjdahxbscysgtj7iabqendyjb75fnrjc5z@js7n7qngtzym>
-
---54d881cc30ca662a73cfdacbec92cecca394f1f83ef4012a7b29e0247a47
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] interconnect: constify of_phandle_args in xlate
+To: Alim Akhtar <alim.akhtar@samsung.com>, 'Georgi Djakov'
+ <djakov@kernel.org>, 'Bjorn Andersson' <andersson@kernel.org>,
+ 'Konrad Dybcio' <konrad.dybcio@linaro.org>,
+ 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ =?UTF-8?B?J0FydHVyIMWad2lnb8WEJw==?= <a.swigon@samsung.com>,
+ 'Thierry Reding' <thierry.reding@gmail.com>,
+ 'Jonathan Hunter' <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org
+Cc: 'Thierry Reding' <treding@nvidia.com>
+References: <CGME20240220072224epcas5p4ff60556b0b5632abfc44d2b8ad932b8f@epcas5p4.samsung.com>
+ <20240220072213.35779-1-krzysztof.kozlowski@linaro.org>
+ <1d9b01da63f6$daeb0170$90c10450$@samsung.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <1d9b01da63f6$daeb0170$90c10450$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon Feb 19, 2024 at 7:32 PM CET, Serge Semin wrote:
-> On Mon, Feb 19, 2024 at 05:46:06PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > Allow the device to use bursts and increase the maximum number of
-> > outstanding requests to improve performance. Measurements show an
-> > increase in throughput of around 5x on a 1 Gbps link.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >=20
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c b/driver=
-s/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-> > index bab57d1675df..b6bfa48f279d 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c
-> > @@ -199,6 +199,12 @@ static void mgbe_uphy_lane_bringup_serdes_down(str=
-uct net_device *ndev, void *mg
-> >  	writel(value, mgbe->xpcs + XPCS_WRAP_UPHY_RX_CONTROL);
-> >  }
-> > =20
-> > +static const struct stmmac_axi tegra234_mgbe_axi =3D {
-> > +	.axi_wr_osr_lmt =3D 63,
-> > +	.axi_rd_osr_lmt =3D 63,
-> > +	.axi_blen =3D { 256, },
-> > +};
-> > +
-> >  static int tegra_mgbe_probe(struct platform_device *pdev)
-> >  {
-> >  	struct plat_stmmacenet_data *plat;
-> > @@ -284,6 +290,9 @@ static int tegra_mgbe_probe(struct platform_device =
-*pdev)
-> >  	if (err < 0)
-> >  		goto disable_clks;
-> > =20
-> > +	/* setup default AXI configuration */
-> > +	res.axi =3D &tegra234_mgbe_axi;
-> > +
-> >  	plat =3D devm_stmmac_probe_config_dt(pdev, &res);
-> >  	if (IS_ERR(plat)) {
-> >  		err =3D PTR_ERR(plat);
->
-> Let's get back to the v2 discussion:
->
-> On Mon Feb 5, 2024 at 1:44 AM CET, Serge Semin wrote:
-> > The entire series can be converted to just a few lines of change:
-> >     plat =3D devm_stmmac_probe_config_dt(pdev, res.mac);
-> >     if (IS_ERR(plat)) {
-> >             err =3D PTR_ERR(plat);
-> >             goto disable_clks;
-> >     }
-> > +
-> > +   if (IS_ERR_OR_NULL(plat->axi)) {
-> > +           plat->axi =3D devm_kzalloc(&pdev->dev, sizeof(*axi), GFP_KE=
-RNEL);
-> > +           if (!plat->axi) {
-> > +                   ret =3D -ENOMEM;
-> > +                   goto disable_clks;
-> > +           }
-> > +   } /* else memset plat->axi with zeros if you wish */
-> > +
-> > +   plat->axi->axi_wr_osr_lmt =3D 63;
-> > +   plat->axi->axi_rd_osr_lmt =3D 63;
-> > +   plat->axi->axi_blen[0] =3D 256;
-> > =20
-> >     plat->has_xgmac =3D 1;
-> >     plat->flags |=3D STMMAC_FLAG_TSO_EN;
-> >     plat->pmt =3D 1;
-> >
-> > Please don't overcomplicate the already overcomplicated driver with a
-> > functionality which can be reached by the default one. In this case
-> > the easiest way is to let the generic code work and then
-> > override/replace/fix/etc the retrieved values. Thus there won't be
-> > need in adding the redundant functionality and keep the generic
-> > DT-platform code a bit simpler to read.
->
-> You responded with:
->
-> On Tue, Feb 13, 2024 at 04:51:34PM +0100, Thierry Reding wrote:
-> > I'm not sure I understand how this is overcomplicating things. The code
-> > is pretty much unchanged, except that the AXI configuration can now hav=
-e
-> > driver-specified defaults before the DT is parsed. Perhaps I need to ad=
-d
-> > comments to make that a bit clearer?
-> >=20
-> > While your version is certainly simpler it has the drawback that it no
-> > longer allows the platform defaults to be overridden in device tree. I
-> > would prefer if the defaults can be derived from the compatible string
-> > but if need be for those defaults to still be overridable from device
-> > tree.
->
-> Currently available functionality is easier to read and understand: by
-> default the data is retrieved from the DT, if no AXI DT-node found you
-> can allocate/create your own AXI-configs, if there is AXI DT-node you
-> can fix it up in whatever way your wish. Thus the default behavior is
-> straightforward. You on the contrary suggest to add an additional
-> field to the resources structure which would need to be merged in with
-> the data retrieved from DT. It makes the stmmac_axi_setup() method and
-> the entire logic more complex and thus harder to comprehend.
+On 20/02/2024 13:18, Alim Akhtar wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Sent: Tuesday, February 20, 2024 12:52 PM
+>> To: Georgi Djakov <djakov@kernel.org>; Bjorn Andersson
+>> <andersson@kernel.org>; Konrad Dybcio <konrad.dybcio@linaro.org>;
+>> Sylwester Nawrocki <s.nawrocki@samsung.com>; Artur Świgoń
+>> <a.swigon@samsung.com>; Krzysztof Kozlowski
+>> <krzysztof.kozlowski@linaro.org>; Alim Akhtar
+>> <alim.akhtar@samsung.com>; Thierry Reding <thierry.reding@gmail.com>;
+>> Jonathan Hunter <jonathanh@nvidia.com>; linux-pm@vger.kernel.org;
+>> linux-kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
+>> samsung-soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+>> tegra@vger.kernel.org
+>> Cc: Thierry Reding <treding@nvidia.com>
+>> Subject: [PATCH v2] interconnect: constify of_phandle_args in xlate
+>>
+>> The xlate callbacks are supposed to translate of_phandle_args to proper
+>> provider without modifying the of_phandle_args.  Make the argument
+>> pointer to const for code safety and readability.
+>>
+>> Acked-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> Acked-by: Thierry Reding <treding@nvidia.com> # Tegra
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>>
+>> ---
+>>
+>> Changes in v2:
+>> 1. Drop unrelated gpiolib changes (Konrad, Thierry).
+>> 2. Add tags.
+>> ---
+>>  drivers/interconnect/core.c            |  4 ++--
+>>  drivers/interconnect/qcom/icc-common.c |  3 ++-
+>> drivers/interconnect/qcom/icc-common.h |  3 ++-
+>> drivers/interconnect/samsung/exynos.c  |  2 +-
+>>  drivers/memory/tegra/mc.c              |  2 +-
+>>  drivers/memory/tegra/tegra124-emc.c    |  2 +-
+>>  drivers/memory/tegra/tegra124.c        |  2 +-
+>>  drivers/memory/tegra/tegra186-emc.c    |  2 +-
+>>  drivers/memory/tegra/tegra20-emc.c     |  2 +-
+>>  drivers/memory/tegra/tegra20.c         |  2 +-
+>>  drivers/memory/tegra/tegra30-emc.c     |  2 +-
+>>  drivers/memory/tegra/tegra30.c         |  2 +-
+>>  include/linux/interconnect-provider.h  | 11 ++++++-----
+>>  include/soc/tegra/mc.h                 |  7 ++++---
+>>  14 files changed, 25 insertions(+), 21 deletions(-)
+>>
+> 
+> For Samsung/Exynos
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-I suppose that's subjective. Being able to let the driver provide
-defaults that can then be overridden by values from DT doesn't seem like
-a very exotic (or complicated) feature to me. We do that elsewhere all
-the time. Do the comments that I added in this version not sufficiently
-explain what's going on?
+Review tags are per patch. You probably meant Acked-by.
+https://elixir.bootlin.com/linux/v6.8-rc5/source/Documentation/process/submitting-patches.rst#L544
 
-> The driver is already overwhelmed with flags and private/platform data
-> fixing the code here and there (see plat_stmmacenet_data, it's a
-> madness). So please justify in more details why do you need one more
-> complexity added instead of:
-> 1. overriding the AXI-configs retrieved from DT,
+What is there anyway to review in Samsung? Adding one const in one driver?
 
-Again, overriding the AXI configs read from DT doesn't keep the current
-default behaviour of DT being the final authority. That's a policy that
-should remain intact. This patch (series) is about allowing the driver
-to override the AXI defaults with something that's sensible based on
-the compatible string. The current defaults, for example, cause the GBE
-on Tegra devices to run at around 100 Mbps even on a 1 Gbps link.
 
-> 2. updating DT on your platform
+Best regards,
+Krzysztof
 
-That's one possibility and was in fact the first variant I used, but it
-has a few drawbacks. For example, it means that I need to create the AXI
-node just to make the device functional, but if possible it's better to
-derive all necessary information from the compatible string. Having this
-in a separate AXI configuration node is duplicating information that's
-already implied by the compatible string.
-
-Also, on Tegra we have a few instances of this device that are all
-configured the same way. Since the AXI configuration node is supposed to
-be a child of the Ethernet controller node, we end up having to
-duplicate even more information.
-
-Thierry
-
---54d881cc30ca662a73cfdacbec92cecca394f1f83ef4012a7b29e0247a47
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXUtxgACgkQ3SOs138+
-s6FwXw/+NI5f4NQaxXMdNTZw4i9JMgVZR8IurQ/Weei3I0HDz7t17hwB+g3eRjuk
-6XhD92hL3YpUuV6Ii96Wfb0JrtL5j651COCXyaRxaGU/vRvtYJvwEmpRLKEds35H
-6oARkoy40FoDUKKbnsrVT81ERAKSZgVNyAIFWM3byS4ez3R6Kp+Lf9BiRjkVlvbo
-KWdb1KfGC+EOCv2WIVFZA2R4OH1H4AmOp2cJa/PWha3+FW66aj9Xdgena7wu4KiJ
-R/Q+gmFK3uPG6pBO3O2+HF1SkI8ECAW73rX90qzw/3Ie0i5yPaqPo8yxmLI29AhM
-mPY7vq8hGnCTKiYwvy4je86ajKD/zrjiaxCNlgl155dk3Q+2iYNgDXcFlIb0au9Q
-AK6Mu8AAxrVkp14t94gpkZvb5EnUKYQO1OtZKiv+jmKXYyoaESSlmw9kvmySifJY
-T6aNUw91fFA5eiRu59oHnjbz2WIt+/yLTgJyVZURT+4E8Ajvs6v4kLVvv5hGp5d7
-E5gU8XQGnWcCFlDT0ojxQXV55arCHXuP85ijD+sqFJhjBAcysNBRgEHLH0lHs6/W
-NmO8VFLECjL0932LLbhiZV4XrP9ou4wSP4Hz576nGLMlJRmNAlOepaOO8XYFyOuc
-J/afiFERL2IogN5FYu075zt3Tg2/4jXPJMOJE1BQMPNwPAirrbo=
-=1yTl
------END PGP SIGNATURE-----
-
---54d881cc30ca662a73cfdacbec92cecca394f1f83ef4012a7b29e0247a47--
