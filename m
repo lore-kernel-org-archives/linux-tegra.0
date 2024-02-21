@@ -1,74 +1,71 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5507F7CF0F;
-	Wed, 21 Feb 2024 16:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44AC8002B;
+	Wed, 21 Feb 2024 16:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708532498; cv=none; b=RBpgYPyvPGJFoxxjMj/klHdV7OD0YMoLcdRc1qYhLbJYelbEu/RzdC/9boHm3ziZ9Qp3ylQk7QVF7w8oDRcTfyfMRMWILGQZX5vRWlJgjs6z5i1KkWIcjHmNWC/3OHazzy4RhgqLL794gnye0RjfpgvGNjHvm/ejzADJ49m+0do=
+	t=1708532514; cv=none; b=Nxl0IqU0JniAEBiyYPf7XP+hRIZ3f0/wVl5E1hyELIPKrGRbH2WoLSVE3PGuJIiAM4a4hg8dodQeiWAK7QLQ8V+rQecNyH15zpxr2g1zHbEDCo7uJiKGNfICdnL9ECPhalcAu6BnnfFJNdzB+YEnGzqcfeS18yBEeteh0CLr1zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708532498; c=relaxed/simple;
-	bh=H2g8Sjo94t+3EppcGyPtOMSH1Arg7D4YsENxoJOz+Jw=;
+	s=arc-20240116; t=1708532514; c=relaxed/simple;
+	bh=c6IAI0d4rf33B/TEyMTET/0mJewT6I/BgtcPF5uREU0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NkzCTB5s/cTeHNOkcdaOP8e3cPFBOJgEqtprxoOatZEGLbn+9JmI8TCfCHRdZa6mL55VJCAG/ja3rJd2RsD/oGF6dJy4+G4T12jKP+ZrtWGnD615BOik+s7VNufcbMlyN4pfWDHw/uKwp4XhHXd8clpnAf3Gs3oY68RS1IcmzVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aRYMvhGC; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version:Content-Type; b=uZ8zL3HrSCZlpIBI/3N/Dq3XminvHs/eRSexrhaE0sRIiENb4NDx14M+pOEndRcsJ7iqbacDxyOOqtIEX9CIiTpNlm52epShnbJo3XRTlo+ykJVV9zg7zTe3PvmOFMCuNLmFl2J6vNj/jHXXeBUlhMoCTX//2MYfv5qytqNksrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVm/x4Ve; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aRYMvhGC"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4127855308bso4547355e9.3;
-        Wed, 21 Feb 2024 08:21:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVm/x4Ve"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a3e4765c86eso529216066b.0;
+        Wed, 21 Feb 2024 08:21:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708532495; x=1709137295; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708532511; x=1709137311; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ivfF/a/CySd30i46ylvdeLae84HmE51Wg4xzC2rxlvM=;
-        b=aRYMvhGCUVweqcRl0444QHdvni90+KkdvtFwtCp3Z3ov3zXYit2FkP9KLEPkUCZtEt
-         1CPm33u76HuoTKiF60WHthRLdUrJjgc6fgbgs+mACw5hgo2l7/Sm6vIqki1odXjFT1oo
-         LwKJadL6h1p6U5s3uak2c7LIlMquc6FaLODFToyM0fpGs3i8TPavIuqc2LOLySerDQU6
-         i1Zq5CMHdSmCFbIzn4HZEUtxsGVApVEfMcFcTTO/U5hZ9G8T4+YVTZ8UMEMwvlvR4j7l
-         9gr2IRw45Z3q/IXATDrcAtf2GyRqjmRdhwAPP73/O+FmYTKroOyKZyjToOJ0OdKP27+4
-         8ubw==
+        bh=7prFhpjayFvXIvvHtpQ8JCGfeAR1nSUHLtg8UyqzWwQ=;
+        b=GVm/x4VeG2+1ZZ1zwBBNcqDmzjKu31dONy8hLXaIOyb6tjUYgPUfozLmbgSVN4krqG
+         9Zp1AuJLb/50mQ7w0ce8W8n2DtNRcgMHVjUyR1FB1Pg0H9v8SPp37Xw4ZYHWMv1aSMxD
+         a67qBbgyrOCUsMGeNLzjg6UzMw6k9BEX01LHTL305wvnItb2uKSBsPtY3NsqpvmKCAcp
+         EVQYeqj1Rn1BQCugCm/KKKhJo1KqaUKwQEgreKnPC7of1FLEllcctdd0O4t2M5Bqwee3
+         QLBoy7I+OOfOAiFQts98VbZAxsqjsMTOCkpZRzuwHo4yK3PeDQRUYdNh70mGI6Se4DsQ
+         Ciaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708532495; x=1709137295;
+        d=1e100.net; s=20230601; t=1708532511; x=1709137311;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ivfF/a/CySd30i46ylvdeLae84HmE51Wg4xzC2rxlvM=;
-        b=mM6hIIyLPPtzD07v7xoTGgL49mQrCfDtgZ29Haw3g62tbVMnH61hKDUWfWGvUQ1jZl
-         8bmyCd0AgYt2PtHqnOotQzQcY38pO9+e6UnPRU29hmOjgpK/8JtSHh2IR9EvKCKGmexB
-         Tq1IwluCjD684doWClK3poe6XldRzlQt/hXbS3moR4+aB56fILl9pL6bQU1k/1uolaVS
-         GQPAtIhZqFw+HC3jTDvI+pXiGRizGgGAkyG+jDbyLNIp8U451buC1CoJuVYpsIIqK6i9
-         jjexvh13cfACFCHxd0zyALgnSKoPLkZbeni9E5P/43Iiud3ybHLFU3AuSTEkFyoQkwYK
-         5FGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmbog7+HBI2EMdh7YoQQglclYvcT9RK/O6xkf4TQE6uFERERsT1z5It+pcTNFHsAS0A3OLy36tZASLC40DkeuOZ+LYfZk+nm3MRRddUMPP
-X-Gm-Message-State: AOJu0YyZn8L76ra7/UKrICDFvejaUxa7L6Bk2liFsOvMHgoDqhpOCyNm
-	glTFr9vyKTk9w87cw3oQ0hnD92jj3XLCwjKUMBc5rpZ5BZBeWWG9Z0qWzle9
-X-Google-Smtp-Source: AGHT+IFvY7wqvsJ/4n9al8DqWBF6uK7wwLrllp9V0/muawX0kRzi14WlMK3v7ybYcLbPGQfdWnUumQ==
-X-Received: by 2002:a05:600c:4749:b0:412:6de9:ebad with SMTP id w9-20020a05600c474900b004126de9ebadmr3921518wmo.8.1708532495149;
-        Wed, 21 Feb 2024 08:21:35 -0800 (PST)
+        bh=7prFhpjayFvXIvvHtpQ8JCGfeAR1nSUHLtg8UyqzWwQ=;
+        b=o8JQB4u3BWuUCg75+FNrwfD/VP6XcBVti3SE4WJoCnMPiWdKbbGHFioJtkwmyG2CTZ
+         2aetP2nMb77/2ZPKOPMMCClvWdelSWaxsXOn5oYk/X1/owDjIs2Kpyjfr0zwev9GgIzE
+         q6NFj8hxbfQxgrqBk3+lVxUX4RFo5A1FLTnZuJtpooWzQHNlEpewK9elmu8apPFInjyV
+         vCAJJOgpv57y76gQwPBx2tcIt9p4DrQbAeESl1LXShASwWf1QGSmWLvswEpAuWQMYVAB
+         zmjOzF0DbfG1Y5IOSSI3aejvOir/7gcIte2LqOWxiOyCU1kOB4m6jb7CL+lfTe6gp81r
+         GkOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbx8ec860q53QNHGfUvow31DPlDooI3+6nL5+NxnXuA986cksBcp6mshoLYw9YGyFuNN9IPp3SiT8cYB4wcYORTPPIYx5YSjpPoYY=
+X-Gm-Message-State: AOJu0Yweqq6rR3yEZPsy6dti+Do5RcFKW0EIs6PcGO03I0sL/1u18fdM
+	BeJXEFH8FQzqZ4j/rg8Jfv8x/wY2xJlXQGklf03heCio3l8ZgElG
+X-Google-Smtp-Source: AGHT+IHCECbBMXwb0Not1oP2H9Xc3C2VtC2/3FkrWYsCgUDg1LFIfFCF6FCXKrFrnR9g5XfiTK2cQw==
+X-Received: by 2002:a17:906:b0d1:b0:a3d:4ed8:f5bf with SMTP id bk17-20020a170906b0d100b00a3d4ed8f5bfmr14147049ejb.2.1708532511087;
+        Wed, 21 Feb 2024 08:21:51 -0800 (PST)
 Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id t4-20020a05600c450400b004127057d6b9sm3059371wmo.35.2024.02.21.08.21.34
+        by smtp.gmail.com with ESMTPSA id st12-20020a170907c08c00b00a3e544f5d62sm4016116ejc.201.2024.02.21.08.21.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Feb 2024 08:21:34 -0800 (PST)
+        Wed, 21 Feb 2024 08:21:50 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: linux-tegra@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Kees Cook <keescook@chromium.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	cocci@inria.fr
-Subject: Re: [PATCH] firmware: tegra: bpmp: Return directly after a failed kzalloc() in get_filename()
-Date: Wed, 21 Feb 2024 17:21:27 +0100
-Message-ID: <170853189530.559171.12608569719019318541.b4-ty@nvidia.com>
+	Jon Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V2 0/3] arm64: tegra: Tegra194 device-tree updates
+Date: Wed, 21 Feb 2024 17:21:49 +0100
+Message-ID: <170853250064.670293.12783848800491071416.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.43.2
-In-Reply-To: <07ca2474-560f-4cbb-9740-db987227416a@web.de>
-References: <07ca2474-560f-4cbb-9740-db987227416a@web.de>
+In-Reply-To: <20240220121714.16543-1-jonathanh@nvidia.com>
+References: <20240220121714.16543-1-jonathanh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -81,21 +78,28 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Mon, 25 Dec 2023 20:18:44 +0100, Markus Elfring wrote:
-> The kfree() function was called in one case by
-> the get_filename() function during error handling
-> even if the passed variable contained a null pointer.
-> This issue was detected by using the Coccinelle software.
+On Tue, 20 Feb 2024 12:17:11 +0000, Jon Hunter wrote:
+> Add the current monitors for Jetson Xavier based devices and enable USB
+> device support for Jetson AGX Xavier.
 > 
-> Thus return directly after a call of the function “kzalloc” failed
-> at the beginning.
+> Changes since V1:
+> - Used generic name 'power-sensor' for current monitors
+> 
+> Jon Hunter (3):
+>   arm64: tegra: Add current monitors for Jetson Xavier
+>   arm64: tegra: Add USB device support for Jetson AGX Xavier
+>   arm64: tegra: Add USB Type-C controller for Jetson AGX Xavier
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] firmware: tegra: bpmp: Return directly after a failed kzalloc() in get_filename()
-      commit: 1315848f1f8a0100cb6f8a7187bc320c5d98947f
+[1/3] arm64: tegra: Add current monitors for Jetson Xavier
+      commit: 525684a0b8ae14389ce440f843ade4023cc64834
+[2/3] arm64: tegra: Add USB device support for Jetson AGX Xavier
+      commit: 4772ac35937a3d91d8695670e11dd5b06692b2f4
+[3/3] arm64: tegra: Add USB Type-C controller for Jetson AGX Xavier
+      commit: c707794bc3f31d9c56efe9967b1631ce7d44ab26
 
 Best regards,
 -- 
