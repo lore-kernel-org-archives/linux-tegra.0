@@ -1,120 +1,122 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B49A8286F;
-	Wed, 21 Feb 2024 16:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3671097B;
+	Wed, 21 Feb 2024 18:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708532731; cv=none; b=OAtO/ksPY3ipSkoETcfp+87N1GWg1zi+lCIeYV8pATPfkGIQ4r4vH9e4uMQwmmXSDLE406sARlFRZNnpNvf+E3I7hyI5AzYuGA8+LRD/8R9Q69rP29qhmaCia7EtAdDtyl5QwdzFBS3TE/911+hyKSuVe81WLClCiVJrHnsI5to=
+	t=1708540497; cv=none; b=bpxMIzJAnsRzdkz9w/ItRz15lybubQQvRmajyP3TmyLc7WHBkf1c5eI0fR9gqnBaNsjXgO0NZx6xjEjLBTpy0kO4eyhXmzZEF+S13A+VYuaK+sDIM12rhvb4aDt6Pgv0uKm/UKqLpLcEJHo573jErp7ZDA3HEgbPrUtcAJOxgiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708532731; c=relaxed/simple;
-	bh=2GH++iFg55PT7lGJbftPrDc2UDnZ0fiNhGV7I1SaPOs=;
-	h=Content-Type:Mime-Version:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=JICTDL1R0fEmjxOPtos5PxvitTFzbR993JmWoLbi1dUxCXmlrLaiV4p0OYyZpGC9VBI545Q3nRL+W72Rzhp3w5fzCNpkoAWGJjZSGxBC5hDRsHZBsHZnWk9cV5DNidgr2ast8DbcQFloIBxtjDfgkfc5vD2txvK7GGpgpbsZ/10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7TSNY4l; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708540497; c=relaxed/simple;
+	bh=SXh9o6lcdXir6m04bi7g64vXsMqCpE0OVYelVUUwvJE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C7jDY3Oj9gF54nsxZiBCoaacZnhy/bBVqDZWWfa0bD1M89uDrVp81jQctZqYksyyfddRcj/y4o1xFMUwXz59atYLtd5Iu9rQynmVOwoO2g2HKhQjafGOwTa/HKIgkf0auBYZ/NcAg4BnL4JNBTtIt+d7KUq7Sm9184N/xBcYxjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Hm8Ta5Av; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7TSNY4l"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41279203064so3449745e9.1;
-        Wed, 21 Feb 2024 08:25:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708532728; x=1709137528; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x5+vR2ekzu20AFjxsL5xv5k3p1BsOZITFMLwlxeVU4o=;
-        b=h7TSNY4lxn6xXCnkaw8a5zJU0mWtf9a6hKofFp8hng2gnaWi9MeruU3feN/GpgARUe
-         PZ51RcW/tw0x6Ruwy/EHYxgR6WdP9PshmI9ExyCuK/NiPM/x9IGbmffVae6RHc//T9wd
-         O+MS8eaIEidb6N16JeIeBATjSqqyrIlanYmcoAnxh5+/0KDu0iG4AZ49WnTKayF5RGmn
-         W/gMWB5L+LjhMNVjW9riPmp7XhOGL1H8UaX08RtTKqg+ebk2Mvhf3cua5V0ipbpvc5vo
-         WaTNNT1eQOHReo7luzT++ELOKGMdWSYvhLvJM94jZiiX6wphwMWr03Ag+kSDjJRIl1l8
-         6fAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708532728; x=1709137528;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x5+vR2ekzu20AFjxsL5xv5k3p1BsOZITFMLwlxeVU4o=;
-        b=OEnTa22KT3KE0YFfAGWXprcp3RSWWxIb09Xfcqh8wmuaumKLseM1u9sKAOlslEjrQg
-         gvDZVjVzOTjjQH4W+TV5TkNJIlz8IPjxM+jmeXe64IOWPXSVyj+/Q0DaC7k+st1gyVE6
-         1D4ROQrfUmCaaceEsCl7XN3S8vMtrhl3Pd2sXvedZT9NO9jJcR5w2H40e07uvfWvTg2z
-         Gd2aomh5mJRPmPKwllKjqUVYd1gviWGd2o3Ecr6gbqXKn7YOipmuFfQgSzH+fafqrP3J
-         h1ly/dB+/igs2wnKfG5x2gaFN3WeYGNxsDJzP1KJFLu//kuPm1KCTx3cASSRiUrSZPEd
-         sA8w==
-X-Forwarded-Encrypted: i=1; AJvYcCX1pCSdTrg4CJJ2z0ALsRfeiICMiWSTB+Na2EXe34PnE7czCcka3MFyZixWr8/2UZIPiy8Lb+vgnTFZOOeNtmDG5mh9OCXM+GKXLro=
-X-Gm-Message-State: AOJu0Yxy1jsWYSS1nA6m7OX0RyMbQG251cSvAcLjIVsw9o5OVzSfDwJ/
-	h88rTedANpLf1Ae7mrOEZ/Qib9mq8oFON9PPc9IsNib/RsIGWbYx
-X-Google-Smtp-Source: AGHT+IFDXbSkqEpgc8NgjACYWWUHK71w9yeeDYalcn2NJj91xzfBx0a/F6JnB5DCCMuKTR4+yksLrg==
-X-Received: by 2002:adf:cb05:0:b0:33d:3896:be5f with SMTP id u5-20020adfcb05000000b0033d3896be5fmr7366739wrh.54.1708532728219;
-        Wed, 21 Feb 2024 08:25:28 -0800 (PST)
-Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id v4-20020a5d6784000000b0033d39626c27sm12959326wru.76.2024.02.21.08.25.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Feb 2024 08:25:27 -0800 (PST)
-Content-Type: multipart/signed;
- boundary=9b431b1840d6d62518f3f7dfaa394198e3d0eff296828a15bb82876af41f;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Hm8Ta5Av"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708540496; x=1740076496;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=SXh9o6lcdXir6m04bi7g64vXsMqCpE0OVYelVUUwvJE=;
+  b=Hm8Ta5AvbyPfws3ExSEsD4tx48RydUqtvKZ0z7Qgojt0Rk0bF7Xv869o
+   6X2ALCdlnJWaBt6n4vP2i4dYlPm20sdlaJjEvkO79RfAscYjJLVxrQxca
+   B868aFyJ7cklN2lo1sAxSJjuDCcj527uZ2t2u1261AVxQMWqDX0IF40jZ
+   EimihVwygUSRteB6f62iUkE0H6n1YDLZodpx2UI/j/2bu7RELfSvBuq0w
+   qa8s3YOdTOLaEfRwnafxEaGpbRW2FBRiRoSv3wKZzZi8MyRxPN4eIbZtc
+   bKAK/Mto/BswmibRUDplkE5W6oV25UA7hCB5mQLQnJS3CJSqnSlIOvgf3
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10991"; a="28164672"
+X-IronPort-AV: E=Sophos;i="6.06,176,1705392000"; 
+   d="scan'208";a="28164672"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2024 10:34:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10991"; a="936684737"
+X-IronPort-AV: E=Sophos;i="6.06,176,1705392000"; 
+   d="scan'208";a="936684737"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Feb 2024 10:34:47 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id A7CB11FD; Wed, 21 Feb 2024 20:34:46 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [rft, PATCH v1 00/14]  serial: Add a helper to parse device properties and more
+Date: Wed, 21 Feb 2024 20:31:16 +0200
+Message-ID: <20240221183442.4124354-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Wed, 21 Feb 2024 17:25:27 +0100
-Message-Id: <CZAWAZDE4BVU.2UICKBDWVQKGX@gmail.com>
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Jon Hunter" <jonathanh@nvidia.com>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley"
- <conor+dt@kernel.org>
-Cc: <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] arm64: tegra: Fix Tegra234 MGBE power-domains
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240216115748.24845-1-jonathanh@nvidia.com>
-In-Reply-To: <20240216115748.24845-1-jonathanh@nvidia.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
---9b431b1840d6d62518f3f7dfaa394198e3d0eff296828a15bb82876af41f
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+I have noticed that many drivers are using the subset of the common
+properties and IRQ retrieval code. With the moving it to one place
+we have got a common parser one for many.
 
-On Fri Feb 16, 2024 at 12:57 PM CET, Jon Hunter wrote:
-> The MGBE power-domains on Tegra234 are mapped to the MGBE controllers as
-> follows:
->
->  MGBE0 (0x68000000) --> Power-Domain MGBEB
->  MGBE1 (0x69000000) --> Power-Domain MGBEC
->  MGBE2 (0x6a000000) --> Power-Domain MGBED
->
-> Update the device-tree nodes for Tegra234 to correct this.
->
-> Fixes: 610cdf3186bc ("arm64: tegra: Add MGBE nodes on Tegra234")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+Tested on Intel Apollo Lake with DesingWare 8250 UARTs.
+The rest has been compile tested on x86_64 with clang.
 
-Applied, thanks.
+Andy Shevchenko (14):
+  serial: core: Move struct uart_port::quirks closer to possible values
+  serial: core: Add UPIO_UNSET constant for unset port type
+  serial: port: Introduce a common helper to read properties
+  serial: 8250_aspeed_vuart: Switch to use uart_read_port_properties()
+  serial: 8250_bcm2835aux: Switch to use uart_read_port_properties()
+  serial: 8250_bcm7271: Switch to use uart_read_port_properties()
+  serial: 8250_dw: Switch to use uart_read_port_properties()
+  serial: 8250_ingenic: Switch to use uart_read_port_properties()
+  serial: 8250_lpc18xx: Switch to use uart_read_port_properties()
+  serial: 8250_of: Switch to use uart_read_port_properties()
+  serial: 8250_omap: Switch to use uart_read_port_properties()
+  serial: 8250_pxa: Switch to use uart_read_port_properties()
+  serial: 8250_tegra: Switch to use uart_read_port_properties()
+  serial: 8250_uniphier: Switch to use uart_read_port_properties()
 
-Thierry
+ drivers/tty/serial/8250/8250_aspeed_vuart.c |  50 +++-----
+ drivers/tty/serial/8250/8250_bcm2835aux.c   |  92 ++++++-------
+ drivers/tty/serial/8250/8250_bcm7271.c      |  53 +++-----
+ drivers/tty/serial/8250/8250_dw.c           |  67 ++++------
+ drivers/tty/serial/8250/8250_ingenic.c      |  20 +--
+ drivers/tty/serial/8250/8250_lpc18xx.c      |  20 ++-
+ drivers/tty/serial/8250/8250_of.c           | 105 ++++-----------
+ drivers/tty/serial/8250/8250_omap.c         |  29 ++---
+ drivers/tty/serial/8250/8250_pxa.c          |  22 ++--
+ drivers/tty/serial/8250/8250_tegra.c        |  26 ++--
+ drivers/tty/serial/8250/8250_uniphier.c     |  17 +--
+ drivers/tty/serial/serial_port.c            | 135 ++++++++++++++++++++
+ include/linux/serial_core.h                 |  10 +-
+ 13 files changed, 313 insertions(+), 333 deletions(-)
 
---9b431b1840d6d62518f3f7dfaa394198e3d0eff296828a15bb82876af41f
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.43.0.rc1.1.gbec44491f096
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXWI/cACgkQ3SOs138+
-s6FoLw/+Ixrt0iqmTN0PpMVTsQCcMzGXFu8VIEb24TGfCo38vYlDI3XAntdBArSX
-kZP0nYSpF5sWKrDYlgOlWr7kxxv1pcf35T4hDrwP2wmp8eV6SQzofmS0f836JVh1
-PTcuiCjYFMgZN3Gz7MRjp8XkySy4iQjtfym/itH7J+1tCqYC5ZK/uL9aMGZy0ikT
-5m3SX/XpTB/bzUU6FHz4qbpo3r0BiVQDED7y5wuFHBlSQiiR3HW4sCCs7i+15b4o
-Udp4Wj2FowtX1vIlFTUPWaf/KR8DWvWOynYESmY1BWfsZZMIg4vgpDTOZj6vSQlI
-MJfw6HNTpS+oWYfTRCuAuiPQ3pPSNEmHp6EvaqH6nLJLsruWRbLJWMdfAHmlGo29
-UDlWgE89A+UYuPk4BFzHOX/zM93p3Dm+WwbRrqIbUY0cXWbbIyAynMkc7MjOk6nL
-zBXaZ/uEXF42vhJpe9EkTPLCBfbFG60H3uw56bvJF5mepMcSvajh+1n0D2VW/qpS
-da0EP16QqOwR2q9N93ZXOVUwptydCsbj67aRC+zB+NUkNoV36Wmtf0G18gnAU5dx
-xqjdgNdKRQ1oBPq5HbRvVdi2aZac8ZVkDpfdY/mhsIOENAUOG3okcNFEgvdaG69A
-0elnnyzKGBuRKKesIQ59ps5DZc3OIv/F2Pl3FVrhd8URZwX/Qmk=
-=kNll
------END PGP SIGNATURE-----
-
---9b431b1840d6d62518f3f7dfaa394198e3d0eff296828a15bb82876af41f--
