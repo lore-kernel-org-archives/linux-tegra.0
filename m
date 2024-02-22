@@ -1,153 +1,100 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAA3101C2;
-	Thu, 22 Feb 2024 06:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05562C6B3
+	for <linux-tegra@vger.kernel.org>; Thu, 22 Feb 2024 08:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708585118; cv=none; b=T7TILLORkVgVD1Rz3HxNJA1vkGZ93J1Q158ucR/RFr49m11LTGtPvCgXQpad4z2qzctjQw//KIMd1+XBImnq+CXo82dDrNXFPPflQrGb3eqYuSfy3Uh3bnOK0Fg6tMLndVRmQ5Smyzz1F1UPuGOYKrzNiDFECvMmZ/LgK5dWWMc=
+	t=1708592150; cv=none; b=GsmYbHa/GWQJjrPRxMpmrZTMnFo0Jb7VHNIeug7WvEG7mzQEOuJAlqp/bAhWfjFbCnLcvUzLKu9dMR255O/VNwri5g4LctbcF/FyVBwriQCJBKtsK8eAtCmzj8jRTEYzF0IN1RIuC4OTptTQ+sXWJf5Z/6Oa3x9nco8X3EfxOsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708585118; c=relaxed/simple;
-	bh=8jNUR1QUpSx19cQNGXxmdSHKqS3IlVyUM8XQh6VBHWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R9rgrKiGu3f2q5j2pGyeb3fHtfNrBFAODrpI4zFuIc4vtKAR/MI309bu/NlzVbK/ofOnBBNmxJwqjWcfwvcz50x2yYnHIdoR3oVF9nJXRB+qqo8EhyYYyvCGTKAzBLQHpsRAg09fSiBwRtbflHHtU3cI1yUB/j+1aWZGBDezQdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-33d2b354c72so3577552f8f.1;
-        Wed, 21 Feb 2024 22:58:36 -0800 (PST)
+	s=arc-20240116; t=1708592150; c=relaxed/simple;
+	bh=Dwj+8J/R3sGP30CAKNlbBpnBrE4ULHBSoY3LYa0Cyrc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=dD77Xh1ele7Xvi68kCPtStwpTfyR0oy1XFlwkloeqHBL9WtY3EchCm+lTaoywu6kfG28RhMenDUOcWaZmopIHQ+Sdx1Kd7V9cO9tQcMbLcNF84ZM+gPo6W6EqontWorpNBZ1w+ZsmV/RgvY75QAVGspMyqtcaOSuNlTvHtaB2ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PbAJ8Rok; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PbAJ8Rok"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5648d92919dso2313476a12.1
+        for <linux-tegra@vger.kernel.org>; Thu, 22 Feb 2024 00:55:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1708592145; x=1709196945; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vptKAuVJcNoqlTfbOGtNnUalp3TlZ+METKiePtclfZM=;
+        b=PbAJ8RokoNRV8saT1Ze14aPO5hGQmYV2k7+/JDY9GCr7Uc+ehcI78/B22Jvt96fLs5
+         ug7QnrGr/kRlTX/cdO8D0K8KSr/9f4HKrPK/DSq91CMEU3fInTX9BDAS1NWQGeJCW1dy
+         zxSUmxJ6pJ8l4kDkX7HcRbQerYe+XGvwgbch97aC5cFyHZM5CbZAcx2QQImsyvPPzW5E
+         3QS6AEodaNeJKBPSeQYP0a6zHShH0kzNrwIm1C4jLdvT/j1p/QXBy9GSFrCooSWBUiuC
+         8IMTLu3cIvsoXhHfusC7cR26IA5vh94z9GLKxFm02QD3KIhz18Ydg3LeZA0YffdiH3Mc
+         uIiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708585115; x=1709189915;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:cc
-         :to:content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ZncrEUsUC9sjkZ2Qw0MyfZjlW0xqX3HQAFV3fa9mKE=;
-        b=URP23pg35BhTFTY6LLWarqZzqmObH0jmVmIXfqs1IENusdpYVvcWxDKDl+jCgMP1jz
-         tKlVMN6lrDxCWcCDPjwL3Rg+QeLSV2O4UF0/5BxVmu0ixdf9PAyzVlW4soOpEgRD1Rjv
-         G8Ozxn61NiAnJ8xT9Neuud92k0ITn3eDZV0+kkgQOvslJ9M3WWBt/m0xVAv+8wuBz9HL
-         j6hVx9d7TRV9ZpNJcE1Ovo15bB3ZN9Pmi3bqw0OFZReVp8oo/olWJE6JxX1bKBedT/JX
-         BV4TFIp0HjoaUIS8hUrBxscxJJ71IuTfe7mil/qfY8QE0rAGZykO/Gz6/Z9RaOW4s5RI
-         ujlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8ruGmRAUSLhCyL4PG7naRzcTvA8igPz7XNdBj1SNkWOZlyZkDekX7Xqm68mxEF6ehGAksQd+iHunmm5ar+En2EPZe9bibMGhrsGJRxKrKRMFvdz2OIsyUlbgn7mMkC4WR9aBBi+CMJcqh36q6uDgByvGfgTIdW4TfYBUJelWjSEpBC6whT3yAhj6Wfgbl3qtarMSc+wnFp9gVGeQeVKCuJDvu
-X-Gm-Message-State: AOJu0Yza0VoVqrc3Ywe2eR0YcJmsx47OSpNi1foYdjYaP+39S1FS9XNT
-	CWo2aa5CdSDbEzYj2GjyEC8+Fd/dfejk4kEhbSVgvDC+ea+neGMN
-X-Google-Smtp-Source: AGHT+IElwd1EMDO5q3nyarlzMgj0iaTDvX/TQ9BRCGYwPuplfypb6Dkh109SxeNySGYBP+MKoYNmJw==
-X-Received: by 2002:a5d:68cc:0:b0:33d:209a:ecf3 with SMTP id p12-20020a5d68cc000000b0033d209aecf3mr11854918wrw.20.1708585115176;
-        Wed, 21 Feb 2024 22:58:35 -0800 (PST)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:59? ([2a0b:e7c0:0:107::aaaa:59])
-        by smtp.gmail.com with ESMTPSA id ay3-20020a5d6f03000000b0033d1b760125sm19954711wrb.92.2024.02.21.22.58.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Feb 2024 22:58:34 -0800 (PST)
-Message-ID: <5aeee02f-45a6-48e5-a6f4-e55b76d4b959@kernel.org>
-Date: Thu, 22 Feb 2024 07:58:32 +0100
+        d=1e100.net; s=20230601; t=1708592145; x=1709196945;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vptKAuVJcNoqlTfbOGtNnUalp3TlZ+METKiePtclfZM=;
+        b=AytWLPSn2ECBViGj+MWd4D6N5gYawvXrSfHpNLPpzrbZNBbZyLSfWotNo7e8StxaK8
+         j4uAa1AKiXM9yvMSCGeMLgtbXvaOhkSIhGTpKx1Yax8YjKZFuEUcHXYnGk0SPQVe7g4H
+         PJYDQvAULwqmHI/r6BGNz0sbSGIUzRsCMbex08GX/Ea/LCKHP4iPebIUEJGivC9sGyoL
+         kibbqaIfnA47TPc797WOx/P5wAT8O3evt2pH0sHWdjAlhYrlFkzBYLQL9oDWV98/Bcs3
+         7DUVxeykV3n5HHGoMaHrdTpc1A/9sXKWriv9tKuzP+hfzuEomLg6VYEEoYpLKrzEtZ/I
+         YAFA==
+X-Gm-Message-State: AOJu0YzxUwouifD6hokqrlgQD7zfvrEuzjhD7ZtDZka7jOrYqQJEoDId
+	F5sp6TLXcThne1SpcrMAz7XA8XOtGrIMFHYYcqjYBqnHZ3869YoNMQRAP/A6aoNNzW5XYlhwxjo
+	bEgE=
+X-Google-Smtp-Source: AGHT+IG587MKZ815QUtlqsQ5DaQcBsZaRTcfVv5WCGjyp0Jru51WhQP/fVE1RK3+9zYajFHcHV824A==
+X-Received: by 2002:aa7:cfd2:0:b0:564:5297:4fbc with SMTP id r18-20020aa7cfd2000000b0056452974fbcmr8594447edy.16.1708592145000;
+        Thu, 22 Feb 2024 00:55:45 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.222.116])
+        by smtp.gmail.com with ESMTPSA id w22-20020aa7dcd6000000b00563918a48cfsm5325808edu.40.2024.02.22.00.55.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Feb 2024 00:55:44 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
+In-Reply-To: <20240220124430.19072-1-jonathanh@nvidia.com>
+References: <20240220124430.19072-1-jonathanh@nvidia.com>
+Subject: Re: [PATCH V2 1/3] memory: tegra: Correct DLA client names
+Message-Id: <170859214396.12531.12574758730919602397.b4-ty@linaro.org>
+Date: Thu, 22 Feb 2024 09:55:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 02/14] serial: core: Add UPIO_UNSET constant for unset
- port type
-Content-Language: en-US
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
- linux-mips@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Paul Cercueil <paul@crapouillou.net>, Vladimir Zapolskiy <vz@mleia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Masami Hiramatsu <mhiramat@kernel.org>
-References: <20240221183442.4124354-1-andriy.shevchenko@linux.intel.com>
- <20240221183442.4124354-3-andriy.shevchenko@linux.intel.com>
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20240221183442.4124354-3-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.4
 
-On 21. 02. 24, 19:31, Andy Shevchenko wrote:
-> In some APIs we would like to assign the special value to iotype
-> and compare against it in another places. Introduce UPIO_UNSET
-> for this purpose.
+
+On Tue, 20 Feb 2024 12:44:28 +0000, Jon Hunter wrote:
+> Some of the names for the Tegra234 DLA clients are not unique and do not
+> align with the name of the client ID definitions. Therefore, it is not
+> possible to determine the exact DLA client from messages that print the
+> client name. Fix this by correcting the DLA memory client names for
+> Tegra234 to align with the name of the corresponding memory client ID.
 > 
-> Note, we can't use 0, because it's a valid value for IO port access.
+> Note that although the client names are also used by the interconnect
+> framework, interconnect support for the DLA clients has not been added
+> and so this issue does not impact the interconnect support.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->   include/linux/serial_core.h | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-> index 2d2ec99eca93..2b0526ae1fac 100644
-> --- a/include/linux/serial_core.h
-> +++ b/include/linux/serial_core.h
-> @@ -470,6 +470,7 @@ struct uart_port {
->   
->   	unsigned char		iotype;			/* io access style */
->   
-> +#define UPIO_UNSET		((unsigned char)~0U)	/* UCHAR_MAX */
+> [...]
 
-Perhaps making the var u8 and this U8_MAX then? It would make more sense 
-to me.
+Applied, thanks!
 
->   #define UPIO_PORT		(SERIAL_IO_PORT)	/* 8b I/O port access */
->   #define UPIO_HUB6		(SERIAL_IO_HUB6)	/* Hub6 ISA card */
->   #define UPIO_MEM		(SERIAL_IO_MEM)		/* driver-specific */
+[1/3] memory: tegra: Correct DLA client names
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/51d915cbeef4c7a154f5d810b1e10d8125f2b0cc
+[2/3] memory: tegra: Add BPMP and ICC info for DLA clients
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/6a598c6c08dc6f34235ee6ee246962ccb14a47c3
+[3/3] memory: tegra: Fix indentation
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/ae1e06fb62c3a0fbcc7c58f45cf1a19641272799
 
-thanks,
+Best regards,
 -- 
-js
-suse labs
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
