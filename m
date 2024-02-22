@@ -1,58 +1,58 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9036A154BE3;
-	Thu, 22 Feb 2024 17:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25ED1552E9;
+	Thu, 22 Feb 2024 17:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708622393; cv=none; b=o0vfJyOu9tHFjPWXkye0peXK3pdz+XTSYHSv/3l/8APHbkc0J15uj1HGjwVaVY+9a4NyQC5jjDO7LcyoKipBvexSJIAN0UY4QNfieumR2+AS/lKg9x/H45mHOdLHfWfbPJpX0ECKQSe6FtmajnUq1irDldatdDWs3OFpcS1ibs4=
+	t=1708622668; cv=none; b=UKWVVuwWxNO+ZA/9uT5M2TcMmgUqqRGORX+DY7KCDjVIyOdP+bLQARSxaGycLE8yvZYzamQLYG1MKsTgyxFlyypImrfkE/lv2eJ/+N9XKQWbpE1U0kndT48GD5Rgp+G70wPr6niM+1f24rFyX4T3EHZz2qyrbj8Ba7/kRcznU6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708622393; c=relaxed/simple;
-	bh=8CEg/RKdoDPInzI7juj6Pe6d6f/MCz9OOa+Abxcwaq0=;
+	s=arc-20240116; t=1708622668; c=relaxed/simple;
+	bh=mB5HR1t4CGsfz9a1IloGkIBehJL9LhPECgUcPMzntPA=;
 	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=P9G7ZbXVSuMG37vKx4ZUhpVhJa900VAIdq/pEzeaa9Ad1WmBe0AQNzkwWX6/NQMZ52n4iQCANTH1PWtXae67kVXlyPtOmhnVjCgo4yw6LCH+axC78OyO/zyILSw+KME+0Bok3z4ZvpEo/6+anzFLJGRAmV3+2CLGJgAEp+iGXiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=InY9sYoE; arc=none smtp.client-ip=209.85.218.47
+	 References:In-Reply-To; b=fGoXGndhACzrq1xw3/vICtwI6s3ZzSssk9frHaL65PntU2XrWa67I/PlsdY8g5dzo4lMiP6cHEwDBFyvs6XbMRh/0As/DKh4e4ubMhnG1VgmWcNXN6B56zE3BT4rEV+ZSogHn3/hmu6bDjtaK1wjE4ZO0+AA2HkBAezNDm7IsTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T5T27oL3; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InY9sYoE"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a3f5808b0dfso265033266b.1;
-        Thu, 22 Feb 2024 09:19:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5T27oL3"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-512c2e8c6cfso17130e87.1;
+        Thu, 22 Feb 2024 09:24:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708622390; x=1709227190; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708622665; x=1709227465; darn=vger.kernel.org;
         h=in-reply-to:references:to:from:subject:cc:message-id:date
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CQMhMz89ycmZ70Ia4sIX+P56KQVZUaP0RVmqAd/9EXs=;
-        b=InY9sYoEUxm9LCJTB9VHQXmzpqr5KVHNSohIL7LDhjDCgy4oYsys0xKoO6rNfqgHZ2
-         ExIpdnhnc7WFSb1GpicPRmq3YB1Sf/ROfutzuNj0/ozgpkwtVHbyOv3/AdjLAwyPZ9O6
-         MzxDDDQTiVKFXfAElVQdQkN9kXG5qvDp3KPwnFg6hSv7DT5Lk3Bs7rR9lJ6x4DSbxkr6
-         98q9Yu/AliKUWwp6C3HecFLzvVY4Gsh1xGeljUuWzlbMAIuwW8OuZBKg+7eHrQeWzchA
-         QRRdMNC5j6qa++mmwuu2YQlSZU1TMDipmcSDHlliU25n0riXl54pw5S1miOFBOfwhXxH
-         TFpA==
+        bh=UGSSSHzcuD2w3h77m+4FErM+O8zZreX4G+SB+HfFeNU=;
+        b=T5T27oL34Gp0buDBbybB4a2MIU+a8ymZBT5XBMyyD0ET+s0htUXn7AZ/ZlC3p2GmGe
+         fBKv7tLzQ6uW36NnHBgfGhTUD8oslX+QISGDGu2FN2UKTaG6uCa55If92l6bQvIPLVsr
+         5ytsBvC3zgJ00m4Vpo9oghfMyhdwXDiwWTHF3329HNWGvPYk39b38fpwkpR2nTrrTRjI
+         eMCJlW0u2A1r1lxqws76DexIdFYYJpCw/dAnno47vqdOYP+RwG+0mXiQUCZkftkngIPO
+         fHuksO5tLAGiylvyKQuVY1YIvE/O3Q3SXaVNBwOiqOtycORLpZn5RTGaU2r3qKDpEouS
+         vF+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708622390; x=1709227190;
+        d=1e100.net; s=20230601; t=1708622665; x=1709227465;
         h=in-reply-to:references:to:from:subject:cc:message-id:date
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CQMhMz89ycmZ70Ia4sIX+P56KQVZUaP0RVmqAd/9EXs=;
-        b=uIalnx8i3uf9yhMxTLMyGm9jDdW0SgsrTMqse6D4GJHXrQBX5SrDAK1/lNvUGO4tTJ
-         bFEsYVXetDf/6Cc5wBDoMDVSvuAIx1ULJlXd5/j+Be70ib9sSzzQ18b+oonFw4TUn6+2
-         /qjoQn2UB96XlzagiZ7ggTc/w4vKBUDxQZnF2WX/dvsMgBGPAwx6RzBlxcm+k5vs6esf
-         MvGpsHIdRAD62EacJdg+gqnuKcmw3N5NbHGMdy9GKzURS1fpwCAy5KARtviFk7EDEMZd
-         2fBfm97YReOYemo7jEkWNtcVIp1qcbxjhOD/cx9sMtWu0jS1X++q0NQcqkUSor+oJSDj
-         /H2g==
-X-Forwarded-Encrypted: i=1; AJvYcCW9DyWEhdzBEwBFC0qqJdM/odKO5D24einiQ0KbV7ek2jB9ePGqz9RON5yl2xwgvhrplQkoI8wuU3BoeG8DndXwRDlA4ZeOSOgbx4ZROh26Fx8ykfLClmi3rwY0dzPv7kxpwWOvfrCB7EMuhPryMY7pL7FGEbnwwCnuQu3W63/KVUq+s3W0TFum5WQ=
-X-Gm-Message-State: AOJu0Yzo4xPpbisiQunqMwF1WG7/CIudEF39MDp5WGvb3avuKj1wVH7r
-	WGEa8PfuE0I45jyxvnDprD/MfC1B2GH6dp6qpErIOk8uvSRcuX7ibtg8nndN
-X-Google-Smtp-Source: AGHT+IG/A2Zz+TNmcwZ83Ix3GENVBoY4VDLiLrmD1Q4+RDnMLOBCPfXOIHB3Cs54Y2XtVODY2oQdSA==
-X-Received: by 2002:a17:906:5fd7:b0:a3e:4f8b:bcc5 with SMTP id k23-20020a1709065fd700b00a3e4f8bbcc5mr9505053ejv.34.1708622389841;
-        Thu, 22 Feb 2024 09:19:49 -0800 (PST)
+        bh=UGSSSHzcuD2w3h77m+4FErM+O8zZreX4G+SB+HfFeNU=;
+        b=k6R555RlojNGVp1xUdsLC5IjMBRLXpcVVdJ6hH0FLeBGM/V1kYD8H3+sbHWxY65ulO
+         Eu+UPzUammmVQCZKTWghchvAAmNlLPGB3cHPxUlNQERK4KqdOexbELmiuG5l0PoXIkwi
+         GMg+6KI6O5nwqwcUzO0Y5j4gJVSsI9RdhkmagakecexvPOVa/suROluL3Tt9yDnkKo63
+         ICkiSj442xFlKlUKyK/NGXwx1zV2vAiA3mjqIS/2CxeYEoZX2GpLjCre4aTBYTzTHdVS
+         OyYrV2YSHZcysst2NnHMi8vTwT44kH+E/TdYfikX3PgmNF9cYTlLJQgyrSU6+GM145D2
+         hACA==
+X-Forwarded-Encrypted: i=1; AJvYcCVN3zL8yUkPwGpSOEzI/crtcetSlWHH+rhOQL7zij/YD3OFoOFvVq/+yHArAbI8pwoTU34fRCdXaT4nhumFy+uymBFMIvFGD/PBr5xo+J2V4qStg7TyonOvJejryau+w4czDNCdrqtHRw==
+X-Gm-Message-State: AOJu0YxAWToZn/tXWxvuVM7SOQBH8sFrVFicbkOx2mfvC6pt+sTCUNu0
+	SdvgWqm1OC4sP6tK6VGWAEdFejDpfGgWlxuakjIUTGaoSiYaHmqS
+X-Google-Smtp-Source: AGHT+IHEx1yQZNxT66iUU709fp+1Swa2uVvbnPwCNC8o0jN87XPdqODh6XUDx8mtyDk9PlDUEyIj9w==
+X-Received: by 2002:a05:6512:3487:b0:512:be87:9348 with SMTP id v7-20020a056512348700b00512be879348mr5349109lfr.36.1708622664875;
+        Thu, 22 Feb 2024 09:24:24 -0800 (PST)
 Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id vw3-20020a170907a70300b00a3fb4d11809sm25842ejc.204.2024.02.22.09.19.49
+        by smtp.gmail.com with ESMTPSA id a7-20020adfeec7000000b0033b483d1abcsm20777394wrp.53.2024.02.22.09.24.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Feb 2024 09:19:49 -0800 (PST)
+        Thu, 22 Feb 2024 09:24:24 -0800 (PST)
 Content-Type: multipart/signed;
- boundary=0688b8b99b58602d6dc6058d279e832db2b7d6c583f7afba1028c2f475c1;
+ boundary=94ba30e1270fd17fe8994149d6c9ed1fc8edc1bf8a49979d11e9a4d7ff5f;
  micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -60,82 +60,74 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Date: Thu, 22 Feb 2024 18:19:48 +0100
-Message-Id: <CZBS35EFPNLY.3UV6B9TKIU1@gmail.com>
-Cc: <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] Tegra30: add support for LG tegra based phones
+Date: Thu, 22 Feb 2024 18:24:23 +0100
+Message-Id: <CZBS6NOQ26HE.2SNQBM5FIB9GG@gmail.com>
+Cc: <linux-tegra@vger.kernel.org>, <spujar@nvidia.com>,
+ <jonathanh@nvidia.com>, <mkumard@nvidia.com>
+Subject: Re: [PATCH 0/4] Add audio support for Jetson Orin NX and Jetson
 From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Svyatoslav Ryhel" <clamor95@gmail.com>, "Rob Herring"
- <robh+dt@kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Jonathan Hunter" <jonathanh@nvidia.com>, "Kees Cook"
- <keescook@chromium.org>, "Maxim Schwalm" <maxim.schwalm@gmail.com>
+To: "Sheetal ." <sheetal@nvidia.com>, <robh+dt@kernel.org>,
+ <krzysztof.kozlowski+dt@linaro.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
 X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240214091201.17636-1-clamor95@gmail.com>
-In-Reply-To: <20240214091201.17636-1-clamor95@gmail.com>
+References: <20240207120518.697926-1-sheetal@nvidia.com>
+In-Reply-To: <20240207120518.697926-1-sheetal@nvidia.com>
 
---0688b8b99b58602d6dc6058d279e832db2b7d6c583f7afba1028c2f475c1
+--94ba30e1270fd17fe8994149d6c9ed1fc8edc1bf8a49979d11e9a4d7ff5f
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 
-On Wed Feb 14, 2024 at 10:11 AM CET, Svyatoslav Ryhel wrote:
-> Bring up Tegra 3 based LG phones Optimus 4X HD and Optimus Vu based
-> on LG X3 board.
+On Wed Feb 7, 2024 at 1:05 PM CET, Sheetal . wrote:
+> From: sheetal <sheetal@nvidia.com>
 >
-> ---
-> Changes from v3:
-> - set max77663 ldo0 to be always on since it is required by the SOC
-> - adjusted bluetooth module comment
-> - added enable gpio to dw9714 focuser
+> - Move ports from platform DTS to SoC DTSI.
+> - Define missing IO ports in SoC DTSI.
+> - Add audio support for Jetson Orin NX (p3767 SKU0) module and Jetson
+>   Orin Nano (p3767 SKU5) module with p3768 carrier board.
+> - Remove the module specific DTSI files as it is already taken
+>   care in base DTS file.
 >
-> Changes from v2:
-> - switched from _ to - in node names
+> sheetal (4):
+>   arm64: tegra: Move AHUB ports to SoC DTSI
+>   arm64: tegra: Define missing IO ports
+>   arm64: tegra: Add audio support for Jetson Orin NX and Jetson Orin
+>     Nano
+>   arm64: tegra: Remove Jetson Orin NX and Jetson Orin Nano DTSI
 >
-> Changes from v1:
-> - switched from prefix lge to lg
-> ---
->
-> Maxim Schwalm (1):
->   dt-bindings: arm: tegra: Add LG Optimus Vu P895 and Optimus 4X P880
->
-> Svyatoslav Ryhel (2):
->   ARM: tegra: Add device-tree for LG Optimus Vu (P895)
->   ARM: tegra: Add device-tree for LG Optimus 4X HD (P880)
->
->  .../devicetree/bindings/arm/tegra.yaml        |    8 +
->  arch/arm/boot/dts/nvidia/Makefile             |    2 +
->  arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts  |  489 +++++
->  arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts  |  496 +++++
->  arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi   | 1812 +++++++++++++++++
->  5 files changed, 2807 insertions(+)
->  create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
->  create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
->  create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+>  .../arm64/boot/dts/nvidia/tegra234-p3701.dtsi | 1948 ---------------
+>  .../boot/dts/nvidia/tegra234-p3767-0000.dtsi  |   14 -
+>  .../boot/dts/nvidia/tegra234-p3767-0005.dtsi  |   14 -
+>  .../arm64/boot/dts/nvidia/tegra234-p3767.dtsi |   82 +
+>  .../nvidia/tegra234-p3768-0000+p3767-0000.dts |    7 +-
+>  .../nvidia/tegra234-p3768-0000+p3767-0005.dts |   12 +-
+>  arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 2122 ++++++++++++++++-
+>  7 files changed, 2198 insertions(+), 2001 deletions(-)
+>  delete mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3767-0000.dtsi
+>  delete mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3767-0005.dtsi
 
 Applied, thanks.
 
 Thierry
 
---0688b8b99b58602d6dc6058d279e832db2b7d6c583f7afba1028c2f475c1
+--94ba30e1270fd17fe8994149d6c9ed1fc8edc1bf8a49979d11e9a4d7ff5f
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXXgjUACgkQ3SOs138+
-s6EQnw//T3TGiscSn6UwTQWA/k7/K4loL3jUeWw3q5tn04EP5N6dqJBuKEg3WF48
-DYu1z6Z5P6lUS/axfxPnszFqEJu99g+O8OgJgqlcv7dOaoL3RXLBCiWHzqCV6fsP
-i7gfak36LTv8fTY88JG3xl1T27VL7rNjQ8qMFh1iqXQrRvKFtEEpkIFGAF/liMQT
-EmqTBSIO7HJE+ER1nscITCU3rUuZ4I17ZMQo+MZVYp1otdHnqI8qzWNL/cGb9k6a
-SchIHrOXO/jCXjh4j1tWh0pVrPQtN89c66MM8qllGw+0ef1dl9tqzSsPUDT9OvkK
-R7SWbYrYAwBGhTSMwrKmtMSl2fI5VHRyr1RSewvmflfpup6P+wgfDJENT1/9B/pl
-FkX3UzZiLY4tKc8SQ38rXL6MoYYaHTpaL6Nz210tPm96lJvPrx/dM2Ge+MCt3Bv0
-47hUWslfhPe9UhggaTDz3Nrm81PCCMH9s7ucV9BQSbwwHYRNzJLI0aHmuABzLFu6
-vJ0IXW+9N9wG6usjbzujq/LHCEDhm6eNHI4yXIASoz6BzuH9nfQHv91oHg5WhkNM
-8356TcPyz+Q6vsRI6QPsnKGcEIaDxen9GW6/VjxqkbPUfRO1274lCczrHsWpJP73
-8yYfQ25yz4OyfTkBUiKwfC38JDXbEFwPElTUDQcWzJ9NbBqs0E0=
-=tZ71
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXXg0gACgkQ3SOs138+
+s6EwJBAAne4sHozpEIYhpT9nY+aLU9qDvfoHXsSxEmvwyPfDfFGOmwWuua970it/
+gIhakKDq2tvKjJuRU9CDFsE1mAlPFOV0UzAdXJD+uzAXQUI3UzUtkfphMraKwTci
+MfkvP1TCaJX/yX6pVGNwCYCDN23rbkcX1EpcVVjoOzQo97ITS64sa97q7Sc1lhBT
+DcMZUdvAxekT3vVTMXI928POgaff5Y80rE2L2sXX79E9EUsdLaHpkqQnCMFfEcel
+vHZgc3jhQGAHVpiSbMQCrRtIbtQPqe+oMyZkw2katy88nG3bEXkJ1wsTHgpAVWHl
+AdvDLXBnwOVIyYpESNyoTgt04BsDnFrkw8305qvvysvgelQpBKhxwJis7DmlUPeN
+JurmN/tLZpvuUSBhxcqp3nkf2h8or7V4p+tPzRIoRO7s0Ch+rLVoVLHHLA1heKJB
+bJXdfF5QUUxmiWIG5o86jUwSZ7/z8+xPNm+XJe5AfHTrnr1VbTFrGHuMcJKyhZcz
+BLQXoccg13+Oq+VvTwR/JyfbBuYu8SvcUKNCWQ9Nzg4KxN9E2l28uwYz02M/1cC3
+rb+Kts1uqyoEPFBWCVfoS76N/jhMDEysTOenu22VKX6vBc6lVYhDbD9FxF3haAiz
+Wm7/QjGsGG8i+rA7AtO488lxNT8S2KMovGj7qkO+z9Tr6cwjCIs=
+=QBRH
 -----END PGP SIGNATURE-----
 
---0688b8b99b58602d6dc6058d279e832db2b7d6c583f7afba1028c2f475c1--
+--94ba30e1270fd17fe8994149d6c9ed1fc8edc1bf8a49979d11e9a4d7ff5f--
