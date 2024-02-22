@@ -1,110 +1,54 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6F3158D7E
-	for <linux-tegra@vger.kernel.org>; Thu, 22 Feb 2024 17:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C7191534F8;
+	Thu, 22 Feb 2024 17:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708623607; cv=none; b=Dl9olK6Ckf0VX0MiOkPp3Ie72PY4LkNEK3BsiDe6OUbr2rt52OMAJ8LkJ8NnHSVP4q52+8LXGjzMDmn6sx82CCQKlK1W+LwItklIjg5eFvh+bPuEyqVsxgascolFaTkcL0b0eufrCGsCz1//yIvgqRPtZrON4dNQE1IaUf7GWTQ=
+	t=1708623897; cv=none; b=I76gDHnLL5M3s6aK76RsQPCSpfN8bfrcdBdO1W5tkd5pDZb+HJ9hhcKsVOZSBWnA/BJXZ2gselq4iMHZJJBYsmV5oriJmQHPjww5nBg2/Z6loDf4+E0QzNp6ljzEKh86UvyP6TnprdYLNsf8i6Bv9346X/OWobWx/Px/QYce+9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708623607; c=relaxed/simple;
-	bh=s2nvM2JSjpFzXc4jGY+I9yEyb0A/qzUAKQj+oJecsuI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j7x6PIX1WVey5h5lKZIGNRUIaHZR0iIpP5bYZKGFfUENcBaDJtClXBFpXtuQkGPyo7qj80F1bwc2Bo7SMda31mMCzOOmtlYRTzqCIXVBlQ8m2faoe5Wmh89RApyz24U9yd3wDrqoJK+OIQrEiiMVQyVRKaJFYOW1ghpbrxgfQVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=yewvBuHl; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+	s=arc-20240116; t=1708623897; c=relaxed/simple;
+	bh=7BNl0V7JZ8ZTvufEz+lXYL9lojiWbKA/DEhMbabZlLo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DuG5EwkAp/lR7+rVt1wmw9GghqMjFWYR/jiDrmY9D5bIo4TFhjv06r1OjyW/pXko2a3e/bilZhl2QFJ5i1/OOF3huE2zqdQ1ZNN5ZT/4zgTI1YaJnhFnEpnudZAi0401Cs0zsLYV6CHAnV8jgAN+v8ViXcVYqSlMvocpdOfYoMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhPuhD8h; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="yewvBuHl"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-607c5679842so20926167b3.2
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Feb 2024 09:39:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708623596; x=1709228396; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SZ2pQJ9+dxF//EaiCt/uq+OdRpwnCyd+9hrUk8R734o=;
-        b=yewvBuHle/gJwA+itjyFD/ybSsLiCIVR4xaJxgr0GB+wC2676n9F9XZ+/oMyjm1icz
-         1TJwrAZI1jAv43V4OtZbsV3mJCAbh2urs3n+gUB42mgT5Gc/tD2jJ2+RCoRoq1l3Ct2x
-         jobWQ8AtkC5O7anBaEvifFHAdNfbh9MnCZpm40s46wqiMmIx7g1Hda4hl7D2LBzmRy/g
-         Yar7fao1ojokoqySRKMvg1Z71ZRvzD5rNQwcb0tAiPxwVN0UI9R8vPotL1pwzcetufwB
-         2Hp9Atw50NLLmq3mMlpQ7KIDbC7Xnth5tKXg6G4uZnBPyB7t+/Wm0rqL46Se2cGZ61oI
-         /+pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708623596; x=1709228396;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SZ2pQJ9+dxF//EaiCt/uq+OdRpwnCyd+9hrUk8R734o=;
-        b=AY7YR9CrZ0ZLVXgWYqbhdoW4es98ket2V4sGjlhO0mSTdUu2NMTbr8jWfzR0MfHNmo
-         +46fIVifZHJyRHPJG4Sg1yFfKnJpXovKUB0O8eOQEpuLpEM1Vt0BtOZBwD7Ai0/TNtsT
-         Y0LrUApAGNO+rd3uEpwjCdElAUpb6sA7anYf1izIlno1gdbddQ3jjm7B0J6GTJZZN3oT
-         bPifzo8bD8JseDZNRwBl1+LbBKjzxDi47k7rUXdDSoCOVvwPqy4YFE0TIkQLujt8jRbe
-         /gWXzHWFfkyDgerGgx4yWD5YMFbyIzky4P8fdBmwQ0TaJeEpNwOoyz4CAw5H76cYCpDr
-         Uk1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUTt89Hi9dELAtxyGU91N6TFvgzTnrsvIK7pp7qfwKFvEUNh0DD7l3JyzrLwFNpCyNV6aRJNPeQNMlT9W+gouWK6yqYEQROrmz39+Q=
-X-Gm-Message-State: AOJu0YxBOIIFSYq4CF6aUpluVmc+dSqHDl3gyar4+vQ9hKQOFjCTdHH0
-	j1j7094Kkp3qElZVwx1OB1wywLzuRBZPiHQQVYpbJhRed4OQvquGsSWQoouHW+M=
-X-Google-Smtp-Source: AGHT+IEtAUUqy5uqw2b6AFNUjnG1318TVskHRq83YxSHDfvItzdqlBQeiT8forYQaEVyJnoFBVJVWg==
-X-Received: by 2002:a81:431a:0:b0:607:ef06:eb8 with SMTP id q26-20020a81431a000000b00607ef060eb8mr20801514ywa.40.1708623595945;
-        Thu, 22 Feb 2024 09:39:55 -0800 (PST)
-Received: from soleen.c.googlers.com.com (249.240.85.34.bc.googleusercontent.com. [34.85.240.249])
-        by smtp.gmail.com with ESMTPSA id f17-20020ac86ed1000000b0042e5ab6f24fsm259682qtv.7.2024.02.22.09.39.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Feb 2024 09:39:55 -0800 (PST)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: akpm@linux-foundation.org,
-	alim.akhtar@samsung.com,
-	alyssa@rosenzweig.io,
-	asahi@lists.linux.dev,
-	baolu.lu@linux.intel.com,
-	bhelgaas@google.com,
-	cgroups@vger.kernel.org,
-	corbet@lwn.net,
-	david@redhat.com,
-	dwmw2@infradead.org,
-	hannes@cmpxchg.org,
-	heiko@sntech.de,
-	iommu@lists.linux.dev,
-	jernej.skrabec@gmail.com,
-	jonathanh@nvidia.com,
-	joro@8bytes.org,
-	krzysztof.kozlowski@linaro.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhPuhD8h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98844C433C7;
+	Thu, 22 Feb 2024 17:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708623897;
+	bh=7BNl0V7JZ8ZTvufEz+lXYL9lojiWbKA/DEhMbabZlLo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RhPuhD8hNzl4pDDmJJaR9Z7BJhNWOlZjOsKhFiA64srC8v6z8YYIfy7R4+vzXS1Sz
+	 Ph4pAm1bTtt3yhZKNBh5ZqfmI5Zjh1UsoXhQPgIsrgvRQSkvh34EDsSNRbfzosV13q
+	 Im3QGBJXoPyGWTg2MQ/u5jERtY3+aMzNdvKajsfqal9EDskAZbVOHBpbwsDaPxUedy
+	 BJqNm/uO8MSmHEC7JL8tQ02rRJCOktX/XPDvQsApcSoJ6jvvVmKXwZ+hXcBKyt3wAW
+	 +adsFhYtBAA2Y8HAbsTVnebSqS/tL7QCf4VneCErtuNwuSHI8f44bJB9ImnjfpQn+b
+	 10SJr0PvNMPeA==
+From: Rob Herring <robh@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
+	linux-i2c@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	lizefan.x@bytedance.com,
-	marcan@marcan.st,
-	mhiramat@kernel.org,
-	m.szyprowski@samsung.com,
-	pasha.tatashin@soleen.com,
-	paulmck@kernel.org,
-	rdunlap@infradead.org,
-	robin.murphy@arm.com,
-	samuel@sholland.org,
-	suravee.suthikulpanit@amd.com,
-	sven@svenpeter.dev,
-	thierry.reding@gmail.com,
-	tj@kernel.org,
-	tomas.mudrunka@gmail.com,
-	vdumpa@nvidia.com,
-	wens@csie.org,
-	will@kernel.org,
-	yu-cheng.yu@intel.com,
-	rientjes@google.com,
-	bagasdotme@gmail.com,
-	mkoutny@suse.com
-Subject: [PATCH v5 11/11] iommu: account IOMMU allocated memory
-Date: Thu, 22 Feb 2024 17:39:37 +0000
-Message-ID: <20240222173942.1481394-12-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.44.0.rc0.258.g7320e95886-goog
-In-Reply-To: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
-References: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
+	linux-i3c@lists.infradead.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH] dt-bindings: i2c: Remove obsolete i2c.txt
+Date: Thu, 22 Feb 2024 10:43:42 -0700
+Message-ID: <20240222174343.3482354-2-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -113,91 +57,244 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In order to be able to limit the amount of memory that is allocated
-by IOMMU subsystem, the memory must be accounted.
+Everything in i2c.txt is covered by schemas/i2c/i2c-controller.yaml in
+dtschema project, so remove i2c.txt and update links to it in the tree.
 
-Account IOMMU as part of the secondary pagetables as it was discussed
-at LPC.
-
-The value of SecPageTables now contains mmeory allocation by IOMMU
-and KVM.
-
-There is a difference between GFP_ACCOUNT and what NR_IOMMU_PAGES shows.
-GFP_ACCOUNT is set only where it makes sense to charge to user
-processes, i.e. IOMMU Page Tables, but there more IOMMU shared data
-that should not really be charged to a specific process.
-
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 2 +-
- Documentation/filesystems/proc.rst      | 4 ++--
- drivers/iommu/iommu-pages.h             | 2 ++
- include/linux/mmzone.h                  | 2 +-
- 4 files changed, 6 insertions(+), 4 deletions(-)
+Wolfram, you can take it or I can.
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 17e6e9565156..15f80fea8df7 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1432,7 +1432,7 @@ PAGE_SIZE multiple when read back.
- 	  sec_pagetables
- 		Amount of memory allocated for secondary page tables,
- 		this currently includes KVM mmu allocations on x86
--		and arm64.
-+		and arm64 and IOMMU page tables.
+ .../bindings/gpio/gateworks,pld-gpio.txt      |   3 +-
+ Documentation/devicetree/bindings/i2c/i2c.txt | 151 ------------------
+ .../i2c/nvidia,tegra186-bpmp-i2c.yaml         |   3 +-
+ .../devicetree/bindings/i3c/i3c.yaml          |   2 +-
+ .../devicetree/bindings/sound/cs4341.txt      |   2 +-
+ MAINTAINERS                                   |   1 -
+ 6 files changed, 4 insertions(+), 158 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c.txt
+
+diff --git a/Documentation/devicetree/bindings/gpio/gateworks,pld-gpio.txt b/Documentation/devicetree/bindings/gpio/gateworks,pld-gpio.txt
+index 6e81f8b755c5..d543fd1b8b23 100644
+--- a/Documentation/devicetree/bindings/gpio/gateworks,pld-gpio.txt
++++ b/Documentation/devicetree/bindings/gpio/gateworks,pld-gpio.txt
+@@ -1,7 +1,6 @@
+ Gateworks PLD GPIO controller bindings
  
- 	  percpu (npn)
- 		Amount of memory used for storing per-cpu kernel
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 104c6d047d9b..604b2dccdc5a 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -1110,8 +1110,8 @@ KernelStack
- PageTables
-               Memory consumed by userspace page tables
- SecPageTables
--              Memory consumed by secondary page tables, this currently
--              currently includes KVM mmu allocations on x86 and arm64.
-+              Memory consumed by secondary page tables, this currently includes
-+              KVM mmu and IOMMU allocations on x86 and arm64.
- NFS_Unstable
-               Always zero. Previous counted pages which had been written to
-               the server, but has not been committed to stable storage.
-diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
-index daac2da00e40..6df286931907 100644
---- a/drivers/iommu/iommu-pages.h
-+++ b/drivers/iommu/iommu-pages.h
-@@ -30,6 +30,7 @@ static inline void __iommu_alloc_account(struct page *page, int order)
- 	const long pgcnt = 1l << order;
+-The GPIO controller should be a child node on an I2C bus,
+-see: i2c/i2c.txt for details.
++The GPIO controller should be a child node on an I2C bus.
  
- 	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, pgcnt);
-+	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, pgcnt);
- }
+ Required properties:
+ - compatible: Should be "gateworks,pld-gpio"
+diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
+deleted file mode 100644
+index fc3dd7ec0445..000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c.txt
++++ /dev/null
+@@ -1,151 +0,0 @@
+-Generic device tree bindings for I2C busses
+-===========================================
+-
+-This document describes generic bindings which can be used to describe I2C
+-busses and their child devices in a device tree.
+-
+-Required properties (per bus)
+------------------------------
+-
+-- #address-cells  - should be <1>. Read more about addresses below.
+-- #size-cells     - should be <0>.
+-- compatible      - name of I2C bus controller
+-
+-For other required properties e.g. to describe register sets,
+-clocks, etc. check the binding documentation of the specific driver.
+-
+-The cells properties above define that an address of children of an I2C bus
+-are described by a single value.
+-
+-Optional properties (per bus)
+------------------------------
+-
+-These properties may not be supported by all drivers. However, if a driver
+-wants to support one of the below features, it should adapt these bindings.
+-
+-- clock-frequency
+-	frequency of bus clock in Hz.
+-
+-- i2c-bus
+-	For I2C adapters that have child nodes that are a mixture of both I2C
+-	devices and non-I2C devices, the 'i2c-bus' subnode can be used for
+-	populating I2C devices. If the 'i2c-bus' subnode is present, only
+-	subnodes of this will be considered as I2C slaves. The properties,
+-	'#address-cells' and '#size-cells' must be defined under this subnode
+-	if present.
+-
+-- i2c-scl-falling-time-ns
+-	Number of nanoseconds the SCL signal takes to fall; t(f) in the I2C
+-	specification.
+-
+-- i2c-scl-internal-delay-ns
+-	Number of nanoseconds the IP core additionally needs to setup SCL.
+-
+-- i2c-scl-rising-time-ns
+-	Number of nanoseconds the SCL signal takes to rise; t(r) in the I2C
+-	specification.
+-
+-- i2c-sda-falling-time-ns
+-	Number of nanoseconds the SDA signal takes to fall; t(f) in the I2C
+-	specification.
+-
+-- i2c-analog-filter
+-	Enable analog filter for i2c lines.
+-
+-- i2c-digital-filter
+-	Enable digital filter for i2c lines.
+-
+-- i2c-digital-filter-width-ns
+-	Width of spikes which can be filtered by digital filter
+-	(i2c-digital-filter). This width is specified in nanoseconds.
+-
+-- i2c-analog-filter-cutoff-frequency
+-	Frequency that the analog filter (i2c-analog-filter) uses to distinguish
+-	which signal to filter. Signal with higher frequency than specified will
+-	be filtered out. Only lower frequency will pass (this is applicable to
+-	a low-pass analog filter). Typical value should be above the normal
+-	i2c bus clock frequency (clock-frequency).
+-	Specified in Hz.
+-
+-- multi-master
+-	states that there is another master active on this bus. The OS can use
+-	this information to adapt power management to keep the arbitration awake
+-	all the time, for example. Can not be combined with 'single-master'.
+-
+-- pinctrl
+-	add extra pinctrl to configure SCL/SDA pins to GPIO function for bus
+-	recovery, call it "gpio" or "recovery" (deprecated) state
+-
+-- scl-gpios
+-	specify the gpio related to SCL pin. Used for GPIO bus recovery.
+-
+-- sda-gpios
+-	specify the gpio related to SDA pin. Optional for GPIO bus recovery.
+-
+-- single-master
+-	states that there is no other master active on this bus. The OS can use
+-	this information to detect a stalled bus more reliably, for example.
+-	Can not be combined with 'multi-master'.
+-
+-- smbus
+-	states that additional SMBus restrictions and features apply to this bus.
+-	An example of feature is SMBusHostNotify. Examples of restrictions are
+-	more reserved addresses and timeout definitions.
+-
+-- smbus-alert
+-	states that the optional SMBus-Alert feature apply to this bus.
+-
+-- mctp-controller
+-	indicates that the system is accessible via this bus as an endpoint for
+-	MCTP over I2C transport.
+-
+-Required properties (per child device)
+---------------------------------------
+-
+-- compatible
+-	name of I2C slave device
+-
+-- reg
+-	One or many I2C slave addresses. These are usually a 7 bit addresses.
+-	However, flags can be attached to an address. I2C_TEN_BIT_ADDRESS is
+-	used to mark a 10 bit address. It is needed to avoid the ambiguity
+-	between e.g. a 7 bit address of 0x50 and a 10 bit address of 0x050
+-	which, in theory, can be on the same bus.
+-	Another flag is I2C_OWN_SLAVE_ADDRESS to mark addresses on which we
+-	listen to be devices ourselves.
+-
+-Optional properties (per child device)
+---------------------------------------
+-
+-These properties may not be supported by all drivers. However, if a driver
+-wants to support one of the below features, it should adapt these bindings.
+-
+-- host-notify
+-	device uses SMBus host notify protocol instead of interrupt line.
+-
+-- interrupts
+-	interrupts used by the device.
+-
+-- interrupt-names
+-	"irq", "wakeup" and "smbus_alert" names are recognized by I2C core,
+-	other names are	left to individual drivers.
+-
+-- reg-names
+-	Names of map programmable addresses.
+-	It can contain any map needing another address than default one.
+-
+-- wakeup-source
+-	device can be used as a wakeup source.
+-
+-Binding may contain optional "interrupts" property, describing interrupts
+-used by the device. I2C core will assign "irq" interrupt (or the very first
+-interrupt if not using interrupt names) as primary interrupt for the slave.
+-
+-Alternatively, devices supporting SMBus Host Notify, and connected to
+-adapters that support this feature, may use "host-notify" property. I2C
+-core will create a virtual interrupt for Host Notify and assign it as
+-primary interrupt for the slave.
+-
+-Also, if device is marked as a wakeup source, I2C core will set up "wakeup"
+-interrupt for the device. If "wakeup" interrupt name is not present in the
+-binding, then primary interrupt will be used as wakeup interrupt.
+diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.yaml b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.yaml
+index b8319dcf3d8a..8676335e9e94 100644
+--- a/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.yaml
++++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.yaml
+@@ -21,8 +21,7 @@ description: |
+   See ../firmware/nvidia,tegra186-bpmp.yaml for details of the BPMP
+   binding.
  
- /**
-@@ -42,6 +43,7 @@ static inline void __iommu_free_account(struct page *page, int order)
- 	const long pgcnt = 1l << order;
+-  This node represents an I2C controller. See ../i2c/i2c.txt for details
+-  of the core I2C binding.
++  This node represents an I2C controller.
  
- 	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, -pgcnt);
-+	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, -pgcnt);
- }
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/i3c/i3c.yaml b/Documentation/devicetree/bindings/i3c/i3c.yaml
+index c816e295d565..87cadbcdc61c 100644
+--- a/Documentation/devicetree/bindings/i3c/i3c.yaml
++++ b/Documentation/devicetree/bindings/i3c/i3c.yaml
+@@ -71,7 +71,7 @@ patternProperties:
+     description: |
+       I2C child, should be named: <device-type>@<i2c-address>
  
- /**
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index bb6bc504915a..a18edcf12d53 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -202,7 +202,7 @@ enum node_stat_item {
- 	NR_KERNEL_SCS_KB,	/* measured in KiB */
- #endif
- 	NR_PAGETABLE,		/* used for pagetables */
--	NR_SECONDARY_PAGETABLE, /* secondary pagetables, e.g. KVM pagetables */
-+	NR_SECONDARY_PAGETABLE, /* secondary pagetables, KVM & IOMMU */
- #ifdef CONFIG_IOMMU_SUPPORT
- 	NR_IOMMU_PAGES,		/* # of pages allocated by IOMMU */
- #endif
+-      All properties described in Documentation/devicetree/bindings/i2c/i2c.txt
++      All properties described in dtschema schemas/i2c/i2c-controller.yaml
+       are valid here, except the reg property whose content is changed.
+ 
+     properties:
+diff --git a/Documentation/devicetree/bindings/sound/cs4341.txt b/Documentation/devicetree/bindings/sound/cs4341.txt
+index 12b4aa8ef0db..c1d5c8ad1a36 100644
+--- a/Documentation/devicetree/bindings/sound/cs4341.txt
++++ b/Documentation/devicetree/bindings/sound/cs4341.txt
+@@ -9,7 +9,7 @@ Required properties:
+           number for SPI.
+ 
+ For required properties on I2C-bus, please consult
+-Documentation/devicetree/bindings/i2c/i2c.txt
++dtschema schemas/i2c/i2c-controller.yaml
+ For required properties on SPI-bus, please consult
+ Documentation/devicetree/bindings/spi/spi-bus.txt
+ 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 45c6c13b4edf..50a906eb8dfd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10074,7 +10074,6 @@ S:	Maintained
+ W:	https://i2c.wiki.kernel.org/
+ Q:	https://patchwork.ozlabs.org/project/linux-i2c/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git
+-F:	Documentation/devicetree/bindings/i2c/i2c.txt
+ F:	Documentation/i2c/
+ F:	drivers/i2c/*
+ F:	include/dt-bindings/i2c/i2c.h
 -- 
-2.44.0.rc0.258.g7320e95886-goog
+2.43.0
 
