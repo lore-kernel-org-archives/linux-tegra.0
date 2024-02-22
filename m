@@ -1,100 +1,102 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05562C6B3
-	for <linux-tegra@vger.kernel.org>; Thu, 22 Feb 2024 08:55:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A29133983;
+	Thu, 22 Feb 2024 13:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708592150; cv=none; b=GsmYbHa/GWQJjrPRxMpmrZTMnFo0Jb7VHNIeug7WvEG7mzQEOuJAlqp/bAhWfjFbCnLcvUzLKu9dMR255O/VNwri5g4LctbcF/FyVBwriQCJBKtsK8eAtCmzj8jRTEYzF0IN1RIuC4OTptTQ+sXWJf5Z/6Oa3x9nco8X3EfxOsE=
+	t=1708608117; cv=none; b=mcn8sDrs/1Da2iVwVqp7HwWpImpt55E9b8wKq9VjufuL/9/VI5An4F/NgyscHyNcWPwTFl3eElJKyJ7IXBvs+afwqEF2dUn1pwLXKLUU2c+GEUOzyHZXvz9BV07jD/tQZQbjREOUdas7AUcPLLtPYsBtcMoAFcg4Kr91pA33Ujs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708592150; c=relaxed/simple;
-	bh=Dwj+8J/R3sGP30CAKNlbBpnBrE4ULHBSoY3LYa0Cyrc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dD77Xh1ele7Xvi68kCPtStwpTfyR0oy1XFlwkloeqHBL9WtY3EchCm+lTaoywu6kfG28RhMenDUOcWaZmopIHQ+Sdx1Kd7V9cO9tQcMbLcNF84ZM+gPo6W6EqontWorpNBZ1w+ZsmV/RgvY75QAVGspMyqtcaOSuNlTvHtaB2ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PbAJ8Rok; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1708608117; c=relaxed/simple;
+	bh=LUP/1Bq8oCXj+CsYBpJOUqAEbKSgM+4ilo2mGVOjFxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHzSsy3SsND5p7rPsvHhypkz0HsOhLvp2DKKutnqngCM5++Qo0rhJ3NHzUCXoBW1aDONj+kM3qopGYauduQz6M6St4bOzDXTUaPW+mKu57oRJlq6XaTefH/vCeduppe3aBTYJkzRDz5//wlp5F74B/PlFPrF6FSpaS2Qw2jWLkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VRmSJ3m1; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PbAJ8Rok"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5648d92919dso2313476a12.1
-        for <linux-tegra@vger.kernel.org>; Thu, 22 Feb 2024 00:55:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1708592145; x=1709196945; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vptKAuVJcNoqlTfbOGtNnUalp3TlZ+METKiePtclfZM=;
-        b=PbAJ8RokoNRV8saT1Ze14aPO5hGQmYV2k7+/JDY9GCr7Uc+ehcI78/B22Jvt96fLs5
-         ug7QnrGr/kRlTX/cdO8D0K8KSr/9f4HKrPK/DSq91CMEU3fInTX9BDAS1NWQGeJCW1dy
-         zxSUmxJ6pJ8l4kDkX7HcRbQerYe+XGvwgbch97aC5cFyHZM5CbZAcx2QQImsyvPPzW5E
-         3QS6AEodaNeJKBPSeQYP0a6zHShH0kzNrwIm1C4jLdvT/j1p/QXBy9GSFrCooSWBUiuC
-         8IMTLu3cIvsoXhHfusC7cR26IA5vh94z9GLKxFm02QD3KIhz18Ydg3LeZA0YffdiH3Mc
-         uIiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708592145; x=1709196945;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vptKAuVJcNoqlTfbOGtNnUalp3TlZ+METKiePtclfZM=;
-        b=AytWLPSn2ECBViGj+MWd4D6N5gYawvXrSfHpNLPpzrbZNBbZyLSfWotNo7e8StxaK8
-         j4uAa1AKiXM9yvMSCGeMLgtbXvaOhkSIhGTpKx1Yax8YjKZFuEUcHXYnGk0SPQVe7g4H
-         PJYDQvAULwqmHI/r6BGNz0sbSGIUzRsCMbex08GX/Ea/LCKHP4iPebIUEJGivC9sGyoL
-         kibbqaIfnA47TPc797WOx/P5wAT8O3evt2pH0sHWdjAlhYrlFkzBYLQL9oDWV98/Bcs3
-         7DUVxeykV3n5HHGoMaHrdTpc1A/9sXKWriv9tKuzP+hfzuEomLg6VYEEoYpLKrzEtZ/I
-         YAFA==
-X-Gm-Message-State: AOJu0YzxUwouifD6hokqrlgQD7zfvrEuzjhD7ZtDZka7jOrYqQJEoDId
-	F5sp6TLXcThne1SpcrMAz7XA8XOtGrIMFHYYcqjYBqnHZ3869YoNMQRAP/A6aoNNzW5XYlhwxjo
-	bEgE=
-X-Google-Smtp-Source: AGHT+IG587MKZ815QUtlqsQ5DaQcBsZaRTcfVv5WCGjyp0Jru51WhQP/fVE1RK3+9zYajFHcHV824A==
-X-Received: by 2002:aa7:cfd2:0:b0:564:5297:4fbc with SMTP id r18-20020aa7cfd2000000b0056452974fbcmr8594447edy.16.1708592145000;
-        Thu, 22 Feb 2024 00:55:45 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.222.116])
-        by smtp.gmail.com with ESMTPSA id w22-20020aa7dcd6000000b00563918a48cfsm5325808edu.40.2024.02.22.00.55.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Feb 2024 00:55:44 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
-In-Reply-To: <20240220124430.19072-1-jonathanh@nvidia.com>
-References: <20240220124430.19072-1-jonathanh@nvidia.com>
-Subject: Re: [PATCH V2 1/3] memory: tegra: Correct DLA client names
-Message-Id: <170859214396.12531.12574758730919602397.b4-ty@linaro.org>
-Date: Thu, 22 Feb 2024 09:55:43 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VRmSJ3m1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708608115; x=1740144115;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LUP/1Bq8oCXj+CsYBpJOUqAEbKSgM+4ilo2mGVOjFxQ=;
+  b=VRmSJ3m1CPbF8brZL8s+uSfURQSgB4g3OBwSSCIAFElJPfz5SnuOA6gM
+   XDexW3TAnmdyeX4KcVccD4uTKcMJqp0p5LoXM+axxHC5+D7Wvz0OLXWzQ
+   rg/ad0g9ECRoONwuD/D3p1r3nczFOHmYIzJvs40G039Bxumi91dqVDFha
+   2Lo0mjOW0yn+/uHXnqd9XIzkdh2uOk+hGBCFjIVO8gJG/pRMC4yKoEJ/f
+   RUMXJo6CktXKzRO8NmhNp8hsaktk7i60kwDFa0rNovYo4/+KGNGxH6XJO
+   7BvKNt8bfH7onOb0+t+BKt8ZQEOgYGufujGQdVarW72F+yshUyDL8v/FG
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10991"; a="25291944"
+X-IronPort-AV: E=Sophos;i="6.06,177,1705392000"; 
+   d="scan'208";a="25291944"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2024 05:21:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10991"; a="913523354"
+X-IronPort-AV: E=Sophos;i="6.06,177,1705392000"; 
+   d="scan'208";a="913523354"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2024 05:21:49 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1rd91F-00000006dVC-3OPd;
+	Thu, 22 Feb 2024 15:21:45 +0200
+Date: Thu, 22 Feb 2024 15:21:45 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v1 02/14] serial: core: Add UPIO_UNSET constant for unset
+ port type
+Message-ID: <ZddKaaB7HO0CyldD@smile.fi.intel.com>
+References: <20240221183442.4124354-1-andriy.shevchenko@linux.intel.com>
+ <20240221183442.4124354-3-andriy.shevchenko@linux.intel.com>
+ <5aeee02f-45a6-48e5-a6f4-e55b76d4b959@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5aeee02f-45a6-48e5-a6f4-e55b76d4b959@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Feb 22, 2024 at 07:58:32AM +0100, Jiri Slaby wrote:
+> On 21. 02. 24, 19:31, Andy Shevchenko wrote:
 
-On Tue, 20 Feb 2024 12:44:28 +0000, Jon Hunter wrote:
-> Some of the names for the Tegra234 DLA clients are not unique and do not
-> align with the name of the client ID definitions. Therefore, it is not
-> possible to determine the exact DLA client from messages that print the
-> client name. Fix this by correcting the DLA memory client names for
-> Tegra234 to align with the name of the corresponding memory client ID.
+...
+
+> >   	unsigned char		iotype;			/* io access style */
+> > +#define UPIO_UNSET		((unsigned char)~0U)	/* UCHAR_MAX */
 > 
-> Note that although the client names are also used by the interconnect
-> framework, interconnect support for the DLA clients has not been added
-> and so this issue does not impact the interconnect support.
-> 
-> [...]
+> Perhaps making the var u8 and this U8_MAX then? It would make more sense to
+> me.
 
-Applied, thanks!
+WFM, should it be a separate change? Btw, how can I justify it?
 
-[1/3] memory: tegra: Correct DLA client names
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/51d915cbeef4c7a154f5d810b1e10d8125f2b0cc
-[2/3] memory: tegra: Add BPMP and ICC info for DLA clients
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/6a598c6c08dc6f34235ee6ee246962ccb14a47c3
-[3/3] memory: tegra: Fix indentation
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/ae1e06fb62c3a0fbcc7c58f45cf1a19641272799
-
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+With Best Regards,
+Andy Shevchenko
+
 
