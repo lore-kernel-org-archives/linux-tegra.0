@@ -1,55 +1,57 @@
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC3B13B79D
-	for <linux-tegra@vger.kernel.org>; Fri, 23 Feb 2024 17:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057A012DD85
+	for <linux-tegra@vger.kernel.org>; Fri, 23 Feb 2024 17:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708710511; cv=none; b=BV660EYAxkV8bBs6kOGA8g9yak9CnJL9hTLdW/fsj3zZEkxOOYhHOLS2EBuXcNM3Cj0P+L8h1/prCJzw2pWIPGI5nEEpZ/Wj/rQcHE8NEmksIX61ycgsmUd4+jBVzy8pn8vxwcO0EoMa/quqVjCUp3laCdO/soC2lqX1yX8Eb7k=
+	t=1708710535; cv=none; b=b4ZKx9+3UAuQqZd+uD8XOlgh8dWUA2Hv7Nb+UH52iNHqF6FrX6r6owhI+lIbi5SdNPUecFvGCIbl5AncoeKcybBDUvOK/qGaI0IAg85/LtkRwTvHbQlEyXJPcqE4R2EFeJBBFMitc7TZQlCGt80kOWgkTnb3Q99w8KqWyfZ2HkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708710511; c=relaxed/simple;
-	bh=HD8XGrlJmuwdvJhYVwjsu5cGNDMPExUwVKY9McgHRlI=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=MC0zVjSk4Bx8bKpZD700hXo9SjF2PNFXbunQzxfWVDm4UuQcvIceam9EF+Dh0Xlgj04xJvTR+sM2zc8U6/+LM62brZfougTSd7GlsjDdAiBPIriv1UTJ2d34T258Q4V4LOwUMqZlqWjsL7unjXvFxGgx0LY6qH6baG1nVBDxTy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZpK107zC; arc=none smtp.client-ip=209.85.208.51
+	s=arc-20240116; t=1708710535; c=relaxed/simple;
+	bh=lk7TvxdhGkhRDDp0cWK7GS4VvM4s4eCWbCwuRpZg0tU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=axDEa3BG/xm++NC5lCHFBu751uc4tCxJ5pBvpJrrRK835foy4oMzBrT5kw+Wt83x0/jO1CuvXaixjD0zNSuH7brtel6V63kpNpjkqStxtRN1/GfRj7O14r+QmeEY4Twet7GzG9dBD/ojaVvNiMbsKNeEle9dxi8pay9CoqPgNBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hwgBij8y; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZpK107zC"
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5645efb2942so992620a12.1
-        for <linux-tegra@vger.kernel.org>; Fri, 23 Feb 2024 09:48:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hwgBij8y"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a2a17f3217aso82969166b.2
+        for <linux-tegra@vger.kernel.org>; Fri, 23 Feb 2024 09:48:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708710508; x=1709315308; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qDTQWYCy+QQi/TLHMND383JBwS5i6yYWGE60AiFcEzA=;
-        b=ZpK107zCts9WTJ0qGhDxlDMu5ocEuHgqc/dD/hmFfP4n3i7/cZXAHVo0OT9M9J2irE
-         UsCKD4kG2HJV0njg5vFo0jyVvofJ+o4SefE54ACL3rbZGzYDLbltsUNkGl81Cd0urXXv
-         x/Fv0lssBlMJ4UGlWJF7bJ+IgHDqZYmAWu/snLKTsh+wekCrrNWoqxvFG8b80n/AQJj1
-         ZQUQH1j13xGb+Vr6BfGNGUGFmqZRIp1JDiUD43s5GqU+Wi9yx77faWx3f/fu7frqMOMe
-         IAQVxtLnogi3jHnFQtK/j007c+D8U9LvgP3sJN28ftYOiaYuFVjdjVggpkLG5MqWIV8y
-         Qk/A==
+        d=gmail.com; s=20230601; t=1708710532; x=1709315332; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+RrYVnNaRmD/8rrhice/zUEoVqJn7gxBFdzuygNeRdc=;
+        b=hwgBij8yZdSDsRSxRgWqlQeA09SSVA9mLVZBdGmcUCpSmYthpJ65jPVaAa8m+2t+TA
+         i9iYobnbExn0e6AMBhcakki2B8mBoY9Zscd8VolM1hmqyPACcUM99ETrxfsUZhH9Crbn
+         0yg0B/8ZfTnT0zc/pYtQ1YgRsrtW5IvivGesPgDJLi/eVy+hMZKCo6KcTvEaNADphA0t
+         WowR9oiEGTDBHeGNGWnGuf1rbxvzFi5QPDqRaMLLhPtFBde2md4OpgWOOMXUeoZb+TmB
+         QLWF5kPROSPm54PZqx9xAur2JpewqwVX0wuJh0hY7oUfUNF1gfohBSAjBufHi+JByK5U
+         ljpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708710508; x=1709315308;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qDTQWYCy+QQi/TLHMND383JBwS5i6yYWGE60AiFcEzA=;
-        b=tIdQxNfe7qDlu2+1mP4G4ih7NuFgHNesGqTOewhES+Vdpw6F+7BlJ/bsdMcffE59kV
-         pjqInIFucGlk2D6tSbRqZ6Wvfj61l6I4eUZMXSavpSgoIqI7/Fgy13GTGKp/aDX8u0RZ
-         HqsQ6hQ9Q43b5xcnM63TBIqUB5lJkaALgry++VoU6+5j0/NLGk4c7HICh3AzFEbCtpxi
-         G1JzAgw9ka+KRXEsc+Qm+3eWlOdHWnFWa2g9ARKd9Zg/IecZtZhFqL/MV8sWeQFb4GHn
-         swFYh5jYkKnyjcr8wNJVcwo+GwNUOjSueOWihQYyBkvOEeQZV3McnlVW8Xxvp61AevSV
-         TnTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlBhq+dh2jK2aF5xrNXFBcOpYJyZjXYm0IVcLQIF1fDByFNb2gxcfdI2vSzpNeWZHKrXcZoifbZE3MhAQGI/pME8NeXHe1H67GjQA=
-X-Gm-Message-State: AOJu0Yyo+c9SxOKyiiPYyUd+uOQd5gfLbhilNaUw5kxJcNdryGsyEMMm
-	pZToKo7VAmorAHaPxsowE3igyHBaZI1vTBVN4pkisKqj/QXy1qar
-X-Google-Smtp-Source: AGHT+IEugaLiKRMQmBJYUFOTsMd4m2NAYjFiDgtEfzsH1fP2f4xeHnWtIwXaTRahNk43oqrA6gEkOQ==
-X-Received: by 2002:a05:6402:5389:b0:563:c2e5:5289 with SMTP id ew9-20020a056402538900b00563c2e55289mr399605edb.13.1708710507945;
-        Fri, 23 Feb 2024 09:48:27 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708710532; x=1709315332;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+RrYVnNaRmD/8rrhice/zUEoVqJn7gxBFdzuygNeRdc=;
+        b=dnvUj77rWH/uhWjTrjR4Nl85ooyy90vVuJ4GsnVCg8vnDJfc8o0ebFnGeAg3y5uC4W
+         1Tq6J4/Mb6nTrX06ChdMvqB3XAGUbLiv3f9lbIaWnVg+qzdkxus6+V/X6RJgVK1B5Nfa
+         O2RPl1pvjxqxutUYZYPi4e7aIzRPD3efbZUn9plNCehiHhkgF2Y+5/sD8Dp0aL3df886
+         EA504DMlFExwbTlHtm3vSBmxXA+6flICYK7L+j9HBWyHnnus/zPDee2bJiZR7DOour4E
+         fXL+zCt62vwrzpSlTKNcQlD7TOTP6Jl1pt9+uaOdZ8nNXw3yki2hUV2AeBPC7BdZeBt/
+         rPnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNzAiYbNkmevOnnBCGoBH/Nq7o9XKkkTroACwkzZB6XuXy++dqg2wZMv1FnTqZReCBq9nhxV0Nu9P8odMFR7AsYjulZUQWi1ndkx0=
+X-Gm-Message-State: AOJu0YwOVIcNgMBfHvY38n9CJ2KNAVYTNAFNHxDixtUe6SfVMhy908UB
+	RpPDai8AhQWoUXd39WHqla5kN1n0eqkhkmnNbZ7vDgcZRQ0ApdS3
+X-Google-Smtp-Source: AGHT+IF57rhhVdRqu6RONusoD/RkywTGvxiNFKHjj3MCHgDdawt6/78fxqbN2NNErg1F6RYnU3+Zfg==
+X-Received: by 2002:a17:906:8d6:b0:a3e:91fd:c0f0 with SMTP id o22-20020a17090608d600b00a3e91fdc0f0mr252167eje.49.1708710532209;
+        Fri, 23 Feb 2024 09:48:52 -0800 (PST)
 Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id el14-20020a056402360e00b0055fba4996d9sm6605375edb.71.2024.02.23.09.48.27
+        by smtp.gmail.com with ESMTPSA id zh11-20020a170906880b00b00a3ec216ec6csm4607097ejb.45.2024.02.23.09.48.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 09:48:27 -0800 (PST)
+        Fri, 23 Feb 2024 09:48:50 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -57,10 +59,12 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] arm64: tegra: Device tree fixes for v6.8
-Date: Fri, 23 Feb 2024 18:48:26 +0100
-Message-ID: <20240223174827.1509403-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/5] firmware: tegra: Changes for v6.9-rc1
+Date: Fri, 23 Feb 2024 18:48:45 +0100
+Message-ID: <20240223174849.1509465-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20240223174849.1509465-1-thierry.reding@gmail.com>
+References: <20240223174849.1509465-1-thierry.reding@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -72,34 +76,29 @@ Content-Transfer-Encoding: 8bit
 
 Hi ARM SoC maintainers,
 
-The following changes since commit 841c35169323cd833294798e58b9bf63fa4fa1de:
+The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
-  Linux 6.8-rc4 (2024-02-11 12:18:13 -0800)
+  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.8-arm64-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.9-firmware
 
-for you to fetch changes up to ff6bd76f4d997642ef390bffe42e93d6f7be87d3:
+for you to fetch changes up to 1315848f1f8a0100cb6f8a7187bc320c5d98947f:
 
-  arm64: tegra: Fix Tegra234 MGBE power-domains (2024-02-22 17:58:59 +0100)
+  firmware: tegra: bpmp: Return directly after a failed kzalloc() in get_filename() (2024-02-21 17:10:32 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-arm64: tegra: Device tree fixes for v6.8
+firmware: tegra: Changes for v6.9-rc1
 
-This contains two fixes to make the MGBE Ethernet devices found on
-Tegra234 work properly.
+Contains a fix that makes sure we don't unnecessarily call kfree().
 
 ----------------------------------------------------------------
-Jon Hunter (1):
-      arm64: tegra: Fix Tegra234 MGBE power-domains
+Markus Elfring (1):
+      firmware: tegra: bpmp: Return directly after a failed kzalloc() in get_filename()
 
-Thierry Reding (1):
-      arm64: tegra: Set the correct PHY mode for MGBE
-
- arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts | 2 +-
- arch/arm64/boot/dts/nvidia/tegra234.dtsi                      | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/firmware/tegra/bpmp-debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
