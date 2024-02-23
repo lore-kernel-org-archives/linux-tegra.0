@@ -1,151 +1,151 @@
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048B724211
-	for <linux-tegra@vger.kernel.org>; Fri, 23 Feb 2024 22:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708727672; cv=none; b=DL2tw6ouplwNusZNmkRV5cHDhc3vZm9sSLL9T2y/Tt6CVlpzl/ksHoeqlHJ+JScKtyiRJWOR5Q9lxq00ZgTMelky0utg1SjSuwsgc45guHOn8PNOC7NuV22+CmzAKGBmNF2qdOO1TgAZ6sgTvNUBiC1cl10p9AfdiB5UqKG46ls=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708727672; c=relaxed/simple;
-	bh=OjImI9nqJ8TO8TDyZt96kFcK0C88oOP70tesV0S+yBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j6/7yBvM9Y5hS/vUO6OH5pg7MlmTkoWl4k0ML46YR8z9zzMb3KzdaxfZGAw65U61EFq4XqjqUHMHoSPXDN+IVVNgoKOq+9EqLOL3DZ2CesLzV8+yuauysbSrjFrJV4CnrrxO58q8gVBR3DUm5i5ON9xknfcgqSzgrh/RunjEVCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WNubgYoW; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1D014E2E4;
+	Fri, 23 Feb 2024 23:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708731864; cv=fail; b=KBaeUUdPeVH6qKXgA+rGolr9lHT2Ym4ZGGCPwn9iPUjBdmOdeEFn4h569n9Fc4ctMAiCSsvMe9Yleb8uvKnZDplCZEGBnMaM7FYF+lR8NP4R+Rb01eBS+3536jAj/x8V+LW6beS3NBNYrHCncJ+LuV0o6C7/wEakU6iY8ck8UM0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708731864; c=relaxed/simple;
+	bh=JzmVzH9/eHZZcpxHE4lvM8Ja0oCO0dVjoFdugW+Vh8g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=qO0+X40m5EojXYNgWphn9PeJoZSo3UkxErRD/XlMEraonXjDZC3SsuiBzSbazVnyjhOJ3MAcPZaA6LOFAT036KlRugz4ik2XmRTqTxUS2XTCWgkpUiAZSwhCaDiuXCQtS8gv2c8CKt/uj7zjxiwcoYcwofUUc+kHyvtPM+EoSb4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ho0Jk7Bq; arc=fail smtp.client-ip=40.107.220.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WNubgYoW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=2Wfh
-	FQ80HGIyU4EysZndPKnOpYN/Nd/vyMAbdv2H1oE=; b=WNubgYoWQFi11xP0oDRe
-	z/4cvJH7rLAtEdS7XwEDVqmGY3B/gf0rxuPUCi8SUmKE5NbqOBWwE3iLQxBm9z/Y
-	GEhlSWf36eGtjPd7KjFexqs64aymQbsRPCwOZcBC/7+QRUd4K/1mIjQ6nEUMx9JP
-	AeZM/fNoXKdT96q0u3GhKaPjI1i7SzrnuBKBsjMY7PuqTkzMIFucYW2sTxJNgjBh
-	kSBN6dzu658AL9eQEIOvM/8tXMt79XIyRdZtZrZXHw1xf+F5Z9tYhCEkfE1IKoFx
-	RAyhlfXSm1iJv2YG1wkKEE87gA9pf/lj9V9PaSZ4GoezXe+222K7unYyAizoWy0i
-	lg==
-Received: (qmail 380856 invoked from network); 23 Feb 2024 23:34:20 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Feb 2024 23:34:20 +0100
-X-UD-Smtp-Session: l3s3148p1@CUgsKRQS0JEujnsZ
-Date: Fri, 23 Feb 2024 23:34:19 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-i3c@lists.infradead.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: i2c: Remove obsolete i2c.txt
-Message-ID: <Zdkda5jf072mENvK@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Rob Herring <robh@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-i3c@lists.infradead.org,
-	linux-sound@vger.kernel.org
-References: <20240222174343.3482354-2-robh@kernel.org>
- <ZdemsdGQE0RtilCd@shikoro>
- <CAL_JsqKpn6jqktRLQUx7HMrJG0PZeiOZ=hQnHpZK6AHcM22CLQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ho0Jk7Bq"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=OxYwPzY+3Xek47RxaDMEIZLAaOrOlA4tFcNRxw0wxfwFk+rILcPGgAuz9/9ii3BsUNgPHWu+01tDCRUoRu9PoWeV8QIa9ekoXqVBzNdAfQOUd8kV6ExoS0A2Xvm7OXuE1jndro3pSMzj85B0fToO6AoD8nv4z+q6qjJ95QBS5Swqq7hAEg16/rodbQy26y0Tr7uYiEdrM7UX32wUV2z7eDi0UMN996XyxtPBtQ0gJ/p/fJHFBatO06WuWIqiy/BH7NMMjeE+xuvhmiLeCIkydvXA1wq8YAQifQo5C+5nC78gbNot+1+J1gR82Yz1+mm4SPDn7VNZPWHX9cqDTk4RBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nIXtxpfnsq/h02wkERp7yYj3whkmvcqio/Q7xnKXanQ=;
+ b=HLI0FpToXNgYJfm+C8fiUeFsvV3BoPgczAP8V7nfE/UqVkNxv1YMTEC+Rc4Fxz1SOO2joludp/KWmzlVPagEPdWRVmJ/wgfSbRxT9q1pg5h3c+OrstkrWKedg1Tx2yji5xrhmGDH+WfTZbQf4YmXKFVYuCvUGwaxghnYyzwA3k9dSDAMKs7nkpzfnQh3NjvmNeIM/9QL6msUoGCtfujqm5nZr6gyuHC1byV6fZAWMFaKMhgMKt/KOR4JZUBKcto9Xs0lJmi7Qo7Pg7ECrI9WGleqBTt9azHfEDhnJcBHhRNrmDixjYn4xJAxpoe/g1dTWmgRzixTG5cXlBQBFXKyQA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nIXtxpfnsq/h02wkERp7yYj3whkmvcqio/Q7xnKXanQ=;
+ b=Ho0Jk7BqiQbodPc8aIly4YkL474mDSIdxIT4cfeYhjieFlsUuUiDaECF2DI6hfEnhrmWd1nBfWDI9Zn7bus60Z0Dqw8ird4PGoDZyZozfRfjrBnK1mytBR9oAh2DMb5VGixl9nTmpEtoh7ljDXoclnin/YSyWoxMLRA4tGKKXJMMeOd3zTgWioLJKYyEZoTvG20ak56JKZjZ95M2lxdV7SqoV8qWP+hMLd6xaL5YZmtbHwjR1axb6SqqHpW8uQ6p77zV6hS8AGa2tV1FJQYBdNlCCXIJtcyO0gmvidsRdmoeln/UZrwJmSa62ZZfrQCrEqXkskkf298UuDuQdK05rw==
+Received: from CH2PR18CA0026.namprd18.prod.outlook.com (2603:10b6:610:4f::36)
+ by MW3PR12MB4363.namprd12.prod.outlook.com (2603:10b6:303:56::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.27; Fri, 23 Feb
+ 2024 23:44:18 +0000
+Received: from CH2PEPF0000009C.namprd02.prod.outlook.com
+ (2603:10b6:610:4f:cafe::29) by CH2PR18CA0026.outlook.office365.com
+ (2603:10b6:610:4f::36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.45 via Frontend
+ Transport; Fri, 23 Feb 2024 23:44:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH2PEPF0000009C.mail.protection.outlook.com (10.167.244.24) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7292.25 via Frontend Transport; Fri, 23 Feb 2024 23:44:17 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 23 Feb
+ 2024 15:44:01 -0800
+Received: from pohsuns-pegasus.nvidia.com (10.126.230.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.12; Fri, 23 Feb 2024 15:43:59 -0800
+From: Pohsun Su <pohsuns@nvidia.com>
+To: <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
+	<tglx@linutronix.de>, <jonathanh@nvidia.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<sumitg@nvidia.com>, Pohsun Su <pohsuns@nvidia.com>
+Subject: Re: [PATCH v2 2/2] clocksource/drivers/timer-tegra186: fix watchdog self-pinging.
+Date: Sat, 24 Feb 2024 07:42:55 +0800
+Message-ID: <20240223234255.30235-1-pohsuns@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+References: <CZ96VR54894Z.TIAQI1OXCH2Z@gmail.com>
+In-Reply-To: <CZ96VR54894Z.TIAQI1OXCH2Z@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fF2R2D/X283ptnYJ"
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKpn6jqktRLQUx7HMrJG0PZeiOZ=hQnHpZK6AHcM22CLQ@mail.gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF0000009C:EE_|MW3PR12MB4363:EE_
+X-MS-Office365-Filtering-Correlation-Id: 10dd65a0-491f-48b4-ebb5-08dc34c959a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	3SXBkh/ivxuIfL1qhn+gaMuZBEBZAgDAIuW7q9KdWdq32TDUpivksKrc59Pp0ofpKr+xCzCUT0GT6GgYvkps+BEAEoyxR1dLQl9Q30BYKioDCFfv+GJoyMBw9tHoxuOfjmwlWSJftfHmEuYBLsQNq7B4e4YPWi/6Ou/M8MWOgKTH1IDlV7XPqM8YIrLpZe2vqlrvPJBOxgZ5oSPHcJ1UmEY7m76qdYUbw2GY+X6SHWv6l1/7IS7ux1fMo4zcjkSPjChLtYpuSaUJ5a4Ct06eeMj86nxYCFgAUOtB4p288YxbyMKptXi2HMIL21wHSUiYotiPWtLraFh4GbJ6VSPPnERxFLxuczC+YnYTYM9eWCe/v1Swkvh/+3zc+4mIFNqPb31BF0WUbC1J4sdsMXYb4nS/6LocVaBf21iOQDnWSWXa30fuqIhwbS7mq15UuwlxYH0ALoHuK4LxuLPHikywhoGg9a3uSpzXpk/MLQEQO/q/C8WEofc9gVdNZHPy3vyXO5zrmnzQecKfq2mdf4azDeGJ2oeXR1DBI9X/EeRlT5WXJk2Zxmw8h4Ry39ycgEsQvUcXI0PwudbMlyO0utq+27S5/kfW/7bE5j9DcbMgt302IK+6Nt3qBSrXiW7L6rqTn+vBGf5GtqILX7QZNJrtG9dgEa731phwhN3O0vC0Rbs=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(40470700004)(46966006);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2024 23:44:17.5009
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10dd65a0-491f-48b4-ebb5-08dc34c959a5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF0000009C.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4363
 
+> On Fri Feb 16, 2024 at 10:02 PM CET, Pohsun Su wrote:
+>> This change removes watchdog self-pinging behavior.
+>>
+>> The timer irq handler is triggered due to the 1st expiration,
+>> the handler disables and enables watchdog but also implicitly
+>> clears the expiration count so the count can only be 0 or 1.
+>>
+>> Since this watchdog supports opened, configured, or pinged by
+>> systemd, We remove this behavior or the watchdog may not bark
+>> when systemd crashes since the 5th expiration never comes.
+>>
+>> Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
+>> ---
+>>  drivers/clocksource/timer-tegra186.c | 27 ++-------------------------
+>>  1 file changed, 2 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
+>> index 8f516366da86..acff97da138a 100644
+>> --- a/drivers/clocksource/timer-tegra186.c
+>> +++ b/drivers/clocksource/timer-tegra186.c
+>> @@ -175,7 +175,8 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
+>>                value |= WDTCR_PERIOD(1);
+>> 
+>>                /* enable local interrupt for WDT petting */
+>> -             value |= WDTCR_LOCAL_INT_ENABLE;
+>> +             if (0)
+>> +                     value |= WDTCR_LOCAL_INT_ENABLE;
+>
+> We probably shouldn't proliferate this scheme. In retrospect I should've
+> removed the two other similar blocks back when I submitted the driver at
+> the time since they don't really serve a purpose. The intention at the
+> time was to keep them there and eventually replace the condition with
+> something that could actually be toggled, but it's been almost four
+> years and this hasn't happened, so I suspect that we just don't need it
+> at all. So perhaps you could remove this line along with the comment in
+> this patch and then add another patch that removes the other unused bits
+> so that we don't carry around stuff that we just never use.
+> 
+> Thierry
 
---fF2R2D/X283ptnYJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure, removing both lines and the comment above.
+will add another patch to clean unused bits.
 
-Hi Rob,
-
-> > * In the schema, "clock-frequency" has a minimum of 1kHz and a maximum
-> >   of 3MHz. Why? The specs do not say anything about a minimum freq and
-> >   fastest speed mentioned in the docs is 5Mhz (Ultra fast mode).
->=20
-> IIRC, the high speed mode originally topped out at 3MHz. I guess
-> that's been revised.
-
-Hs-mode has a max of 3.4MHz...
-
->=20
-> We can drop the minimum.
-
-=2E.. but I see you changed min/max now to 1/5000000. That's what I would
-have suggested as well.
-
-
-> > * new binding "i2c-scl-clk-low-timeout-us" has a description which I do
-> >   not understand. What is a waiting state?
->=20
-> Shrug. May have to look at the MPC h/w that uses the property.
-
-I will also have another look. My gut feeling is that the binding is
-okay, only the description might need an update.
-
-> >
-> > * new binding "no-detect" is broken. At the least, it should be named
-> >   something like "bus-fully-described" and then the OS can decide to
-> >   leave out auto-detection mechanisms. If you are interested in the
-> >   latter, you can simply disable class based instantiation on the host
-> >   controller. No need to describe this in DT.
->=20
-> I've reverted the property now.
-
-Cool, thanks!
-
-Kind regards,
-
-   Wolfram
-
-
---fF2R2D/X283ptnYJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmXZHWcACgkQFA3kzBSg
-KbYzig//S6LN1IJcbov4tQYqc0ld204PZ2cFEc0wE9p1z2ACiq71IoYiaESHLfjF
-8BndHnuZnCc4LsHNTnDVquUsM54mxypBiXdnBvmmKCrJUlnpDrwlVmRi1yQ0VuFP
-V2/zW4mOesb56puXSfua8Hsyp9M2qEGyjwJSdMMEozyQcBkLausobHQKbphvFhc6
-OAjp1HJvGb9kjrYRGpH6dbDPrk6efXcwKy3n63//ILBcmSloVfFbWgn8n3j7nk1I
-0EDdgRx4MDdz0leMRTlROjl7VtF+EdWeZ0OqIuZPGNxTuk5xXa3XII0bT9+tOBCA
-/c4eLMLua8keQnLJanHxIpcVYv982KNjJMfOaIOI6u0F7UsV6ZRLEQbmzuYE9QpG
-2mK37DgB4b8V85n6HwpXzZaiqOnzEFIJ70ZEDPkVhtEfcNjz5etDvwWomgiotfKO
-QajwbDm9F3R4FcO3EA8WgDR/dDv8cqCXjOfgFyUV9jjbbeDO5rVUMBGLoLSlv1+D
-ysOnVR1JSK6d4wtN6gbCMnzK6aAQPmgdZWq09P5sarNEfGJ3tv6ztUdcfDkoKsiJ
-xfRUrch+VMkrIMbshoICqlRyjtOPMSNpme1eClzMQgd6CDi0mBXJC6fWPmLYV6kS
-Spc1IA87hY7oYQH5LXdd0PwZs/2ulfzTdJ/m90bdPzfIifiVxn4=
-=ITPf
------END PGP SIGNATURE-----
-
---fF2R2D/X283ptnYJ--
+Thanks!
+--
+Pohsun
