@@ -1,76 +1,76 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2082.outbound.protection.outlook.com [40.107.100.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1D014E2E4;
-	Fri, 23 Feb 2024 23:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4E614DFC6;
+	Fri, 23 Feb 2024 23:52:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.82
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708731864; cv=fail; b=KBaeUUdPeVH6qKXgA+rGolr9lHT2Ym4ZGGCPwn9iPUjBdmOdeEFn4h569n9Fc4ctMAiCSsvMe9Yleb8uvKnZDplCZEGBnMaM7FYF+lR8NP4R+Rb01eBS+3536jAj/x8V+LW6beS3NBNYrHCncJ+LuV0o6C7/wEakU6iY8ck8UM0=
+	t=1708732322; cv=fail; b=rTNcbaGiXtWIA40VTszAAyony5K5hJoLIltnUOWFgscA+erFy3U1ubYUvcTos1VNs3AmRj0KRvRkb6NfZoM2IngQu9A/e94STGeyjAsWP4wzZ3PbU0naeAEjg1ZH9vQoHBLca5F2Rs1RiH6vKxCFawHwazDNNI89uZRAvfxes/g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708731864; c=relaxed/simple;
-	bh=JzmVzH9/eHZZcpxHE4lvM8Ja0oCO0dVjoFdugW+Vh8g=;
+	s=arc-20240116; t=1708732322; c=relaxed/simple;
+	bh=aNvVl0AkA9bOzjQFkhsXnTTDNkRwqtQ4x9MOOMV8zeU=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=qO0+X40m5EojXYNgWphn9PeJoZSo3UkxErRD/XlMEraonXjDZC3SsuiBzSbazVnyjhOJ3MAcPZaA6LOFAT036KlRugz4ik2XmRTqTxUS2XTCWgkpUiAZSwhCaDiuXCQtS8gv2c8CKt/uj7zjxiwcoYcwofUUc+kHyvtPM+EoSb4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ho0Jk7Bq; arc=fail smtp.client-ip=40.107.220.77
+	 MIME-Version:Content-Type; b=eOGU3kIn0Z3T6kPW8dCjoE71VtE/cJF60RtzrRD0dMg2/VEQwQOEdTXwLRYNtpUAge70qhjbAvxSoZF4iB0p2czSqT4yWk0GEcaMBu5oVU+W341O7eF1TP52vPxR9G8uAd5dyur025YOALjqKsGu2ib8YW2AXCiIJhZtVUZbCPI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dW6V8r1W; arc=fail smtp.client-ip=40.107.100.82
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ho0Jk7Bq"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dW6V8r1W"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OxYwPzY+3Xek47RxaDMEIZLAaOrOlA4tFcNRxw0wxfwFk+rILcPGgAuz9/9ii3BsUNgPHWu+01tDCRUoRu9PoWeV8QIa9ekoXqVBzNdAfQOUd8kV6ExoS0A2Xvm7OXuE1jndro3pSMzj85B0fToO6AoD8nv4z+q6qjJ95QBS5Swqq7hAEg16/rodbQy26y0Tr7uYiEdrM7UX32wUV2z7eDi0UMN996XyxtPBtQ0gJ/p/fJHFBatO06WuWIqiy/BH7NMMjeE+xuvhmiLeCIkydvXA1wq8YAQifQo5C+5nC78gbNot+1+J1gR82Yz1+mm4SPDn7VNZPWHX9cqDTk4RBw==
+ b=Lq00l8yO+QDIK0sMGQcvp/J2XNLgK1fT5GwJAm8MUeN8QmEz1zp05eMUGLCUVmwL0742w4cHwAeQqFxPOq5trleLVffnITdBTt6viNSuLJyUV6wk7jWMnDmmBlttjIdCMk4RF9Ah1aX8e1xkR7eSexMCmAxdABsvYAKPIr5DLRit3Q7cw2tdineigsmf2aQx0K7YUH4uGU47+EMwvW/pjCbN0SW643bqdB0VZaViFdElAArD8Mvr778ndWkBzYnNSJldN8Wo3k/CWfHzPMYi3t7JBJPjjWKpiUgXeyazE+KOOLpenDaF3KwAM40+DBT5Cn4tLvAY8Yu1D2iWpV0FqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nIXtxpfnsq/h02wkERp7yYj3whkmvcqio/Q7xnKXanQ=;
- b=HLI0FpToXNgYJfm+C8fiUeFsvV3BoPgczAP8V7nfE/UqVkNxv1YMTEC+Rc4Fxz1SOO2joludp/KWmzlVPagEPdWRVmJ/wgfSbRxT9q1pg5h3c+OrstkrWKedg1Tx2yji5xrhmGDH+WfTZbQf4YmXKFVYuCvUGwaxghnYyzwA3k9dSDAMKs7nkpzfnQh3NjvmNeIM/9QL6msUoGCtfujqm5nZr6gyuHC1byV6fZAWMFaKMhgMKt/KOR4JZUBKcto9Xs0lJmi7Qo7Pg7ECrI9WGleqBTt9azHfEDhnJcBHhRNrmDixjYn4xJAxpoe/g1dTWmgRzixTG5cXlBQBFXKyQA==
+ bh=wXu2zT5MslkdEF9lplRU59+7rwhrNFDNRvsvxPmuWJg=;
+ b=PKvqJP1CvEZ7L+rTeURekZah6fdxMXMVX3kVi9xbiaJY44rTwBOUAR1yQ92/idWAUDKj8GqMwaTThBRYcM4whCThimusxJSxAYzhxiSccqvDuYqSAVH6IR1CHMbeqaHy3SFHvZb2baB0iWRVja8BpjpGMKXcb2wnVemAZZMbGYhwmULcy0AmX8lYkxIsXDQ8O7XocrPSBCYIdON7qT2h0IydXDj0VAbhH1b0o+K7eUBTG9nURQaHWkB93ekibaFe1WdeJ3qfxXHMgtdB41uv4TSU+sPy/2jAPYX44sGjKqmG56WnOBmz2s5v1ECImg+FFcv8Y7hfCZs1pG03BGlIOA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nIXtxpfnsq/h02wkERp7yYj3whkmvcqio/Q7xnKXanQ=;
- b=Ho0Jk7BqiQbodPc8aIly4YkL474mDSIdxIT4cfeYhjieFlsUuUiDaECF2DI6hfEnhrmWd1nBfWDI9Zn7bus60Z0Dqw8ird4PGoDZyZozfRfjrBnK1mytBR9oAh2DMb5VGixl9nTmpEtoh7ljDXoclnin/YSyWoxMLRA4tGKKXJMMeOd3zTgWioLJKYyEZoTvG20ak56JKZjZ95M2lxdV7SqoV8qWP+hMLd6xaL5YZmtbHwjR1axb6SqqHpW8uQ6p77zV6hS8AGa2tV1FJQYBdNlCCXIJtcyO0gmvidsRdmoeln/UZrwJmSa62ZZfrQCrEqXkskkf298UuDuQdK05rw==
-Received: from CH2PR18CA0026.namprd18.prod.outlook.com (2603:10b6:610:4f::36)
- by MW3PR12MB4363.namprd12.prod.outlook.com (2603:10b6:303:56::14) with
+ bh=wXu2zT5MslkdEF9lplRU59+7rwhrNFDNRvsvxPmuWJg=;
+ b=dW6V8r1W9QF6cmid4+/6/fq9jWyag4+d2Bn1pMrGxkR8h9xBtyJ1RIT272g14f+jHemWgKXVZt2QB3rp1jeALtozzlCTyXuX5USAG8TJr+HwCBy5ZZLBauJ4W6UDreiAtaQKyhlUoFNh5eBtatb9CC0anjWWy0hf8UJCwexqp6gorAIDX2QypkxC0Qx/dRjj8a40EQDqbGKjsG8aHtALkeGei/+gfBkf+4tzm4fXQI7xmq3hICnZaMbYPLg9Q4agbQWWNI2Gsr61yYP48yRD+E8o3+gZEesNjtuWFZsJNHREkYao6K1sY3DjjRtXGdQoJcWg1IV3Cqo1/kf1dd1H1A==
+Received: from BN8PR03CA0019.namprd03.prod.outlook.com (2603:10b6:408:94::32)
+ by SJ2PR12MB7918.namprd12.prod.outlook.com (2603:10b6:a03:4cc::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.27; Fri, 23 Feb
- 2024 23:44:18 +0000
-Received: from CH2PEPF0000009C.namprd02.prod.outlook.com
- (2603:10b6:610:4f:cafe::29) by CH2PR18CA0026.outlook.office365.com
- (2603:10b6:610:4f::36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.45 via Frontend
- Transport; Fri, 23 Feb 2024 23:44:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.21; Fri, 23 Feb
+ 2024 23:51:57 +0000
+Received: from BN3PEPF0000B06F.namprd21.prod.outlook.com
+ (2603:10b6:408:94:cafe::46) by BN8PR03CA0019.outlook.office365.com
+ (2603:10b6:408:94::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.43 via Frontend
+ Transport; Fri, 23 Feb 2024 23:51:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH2PEPF0000009C.mail.protection.outlook.com (10.167.244.24) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN3PEPF0000B06F.mail.protection.outlook.com (10.167.243.74) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7292.25 via Frontend Transport; Fri, 23 Feb 2024 23:44:17 +0000
+ 15.20.7339.0 via Frontend Transport; Fri, 23 Feb 2024 23:51:57 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 23 Feb
- 2024 15:44:01 -0800
-Received: from pohsuns-pegasus.nvidia.com (10.126.230.35) by
+ 2024 15:51:37 -0800
+Received: from pohsuns-pegasus.nvidia.com (10.126.231.35) by
  rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.12; Fri, 23 Feb 2024 15:43:59 -0800
+ 15.2.1258.12; Fri, 23 Feb 2024 15:51:35 -0800
 From: Pohsun Su <pohsuns@nvidia.com>
 To: <thierry.reding@gmail.com>, <daniel.lezcano@linaro.org>,
 	<tglx@linutronix.de>, <jonathanh@nvidia.com>
 CC: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
 	<sumitg@nvidia.com>, Pohsun Su <pohsuns@nvidia.com>
-Subject: Re: [PATCH v2 2/2] clocksource/drivers/timer-tegra186: fix watchdog self-pinging.
-Date: Sat, 24 Feb 2024 07:42:55 +0800
-Message-ID: <20240223234255.30235-1-pohsuns@nvidia.com>
+Subject: Re: [PATCH v2 1/2] clocksource/drivers/timer-tegra186: add WDIOC_GETTIMELEFT support
+Date: Sat, 24 Feb 2024 07:51:26 +0800
+Message-ID: <20240223235126.31004-1-pohsuns@nvidia.com>
 X-Mailer: git-send-email 2.17.1
-References: <CZ96VR54894Z.TIAQI1OXCH2Z@gmail.com>
-In-Reply-To: <CZ96VR54894Z.TIAQI1OXCH2Z@gmail.com>
+References: <CZ96NM6U8O59.3TXG2WKAL7L8F@gmail.com>
+In-Reply-To: <CZ96NM6U8O59.3TXG2WKAL7L8F@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -82,70 +82,104 @@ X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000009C:EE_|MW3PR12MB4363:EE_
-X-MS-Office365-Filtering-Correlation-Id: 10dd65a0-491f-48b4-ebb5-08dc34c959a5
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06F:EE_|SJ2PR12MB7918:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cec64d3-7780-400f-b749-08dc34ca6ba1
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	3SXBkh/ivxuIfL1qhn+gaMuZBEBZAgDAIuW7q9KdWdq32TDUpivksKrc59Pp0ofpKr+xCzCUT0GT6GgYvkps+BEAEoyxR1dLQl9Q30BYKioDCFfv+GJoyMBw9tHoxuOfjmwlWSJftfHmEuYBLsQNq7B4e4YPWi/6Ou/M8MWOgKTH1IDlV7XPqM8YIrLpZe2vqlrvPJBOxgZ5oSPHcJ1UmEY7m76qdYUbw2GY+X6SHWv6l1/7IS7ux1fMo4zcjkSPjChLtYpuSaUJ5a4Ct06eeMj86nxYCFgAUOtB4p288YxbyMKptXi2HMIL21wHSUiYotiPWtLraFh4GbJ6VSPPnERxFLxuczC+YnYTYM9eWCe/v1Swkvh/+3zc+4mIFNqPb31BF0WUbC1J4sdsMXYb4nS/6LocVaBf21iOQDnWSWXa30fuqIhwbS7mq15UuwlxYH0ALoHuK4LxuLPHikywhoGg9a3uSpzXpk/MLQEQO/q/C8WEofc9gVdNZHPy3vyXO5zrmnzQecKfq2mdf4azDeGJ2oeXR1DBI9X/EeRlT5WXJk2Zxmw8h4Ry39ycgEsQvUcXI0PwudbMlyO0utq+27S5/kfW/7bE5j9DcbMgt302IK+6Nt3qBSrXiW7L6rqTn+vBGf5GtqILX7QZNJrtG9dgEa731phwhN3O0vC0Rbs=
+	vsaYMUg8vcJsAibptvGLFUqizSCXjVnSsrzT7rhpoMHWMeqRKgyaqm0IeR/qv3qivh02FjEqkr+Qed/aPfO3BnhmO+rLvDbLpYRnSd/ifBD+c5XL5JfOqK7LaWRZqLILnPpL1UIh2mpgtKF+cXhwJv1qKCvSQ9cQS8oim44kPoKLayXe6ZLukuiOkvJnvsHmsJnzxlY7xHk818LiFwq0o0yZIoKnvb7fbPyKcQ76dKYw0jpbsLKnV7ggPhcklr7U7F4+wfmSIHHQ5aNNd5hNIM5i0yb5CWceJTnMOniyAwBU6+TFU6HxkjkgZSJPA2snq6Rj4hFwwXpqkhFaMIlIljWWXum8WyDRomjTdoT9qoRozLeP6mTc5pxZRc9heVo7zHQq8nXHRJNXH2iWyF+LhHHlck3OC5GEDbtWVRUfRK8MMdSEPymp7caqDW+sJT912MelL2eSQ0hInOHK/dWmpXYkIjbkIB7ZT3yA1xF5HGS1qLQ2BBeIsN0nOhFgxjowKKvlJr8142TnXxiTrv+SrHuGH943JyhJ84q1P2T28YDrXt9maWjHujLayLNxf+KzTPSnBOHSERsFBcLi4pVBUJyWWzwsmCtTBrl1W7OteICu2GejMC/YP0KV9w8sOhsi/JNIiGMudX5m5WC6Kjul/Q==
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(40470700004)(46966006);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(40470700004)(46966006);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2024 23:44:17.5009
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2024 23:51:57.1066
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10dd65a0-491f-48b4-ebb5-08dc34c959a5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cec64d3-7780-400f-b749-08dc34ca6ba1
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000009C.namprd02.prod.outlook.com
+	BN3PEPF0000B06F.namprd21.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4363
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7918
 
-> On Fri Feb 16, 2024 at 10:02 PM CET, Pohsun Su wrote:
->> This change removes watchdog self-pinging behavior.
->>
->> The timer irq handler is triggered due to the 1st expiration,
->> the handler disables and enables watchdog but also implicitly
->> clears the expiration count so the count can only be 0 or 1.
->>
->> Since this watchdog supports opened, configured, or pinged by
->> systemd, We remove this behavior or the watchdog may not bark
->> when systemd crashes since the 5th expiration never comes.
->>
->> Signed-off-by: Pohsun Su <pohsuns@nvidia.com>
->> ---
->>  drivers/clocksource/timer-tegra186.c | 27 ++-------------------------
->>  1 file changed, 2 insertions(+), 25 deletions(-)
->>
->> diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
->> index 8f516366da86..acff97da138a 100644
->> --- a/drivers/clocksource/timer-tegra186.c
->> +++ b/drivers/clocksource/timer-tegra186.c
->> @@ -175,7 +175,8 @@ static void tegra186_wdt_enable(struct tegra186_wdt *wdt)
->>                value |= WDTCR_PERIOD(1);
->> 
->>                /* enable local interrupt for WDT petting */
->> -             value |= WDTCR_LOCAL_INT_ENABLE;
->> +             if (0)
->> +                     value |= WDTCR_LOCAL_INT_ENABLE;
+Hi Thierry,
+
+>> +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device *wdd)
+>> +{
+>> +     struct tegra186_wdt *wdt = to_tegra186_wdt(wdd);
+>> +     u32 timeleft;
+>> +     u32 expiration;
+>> +
+>> +     if (!watchdog_active(&wdt->base)) {
+>> +             /* return zero if the watchdog timer is not activated. */
+>> +             return 0;
+>> +     }
+>> +
+>> +     /*
+>> +      * System power-on reset occurs on the fifth expiration of the watchdog timer and so
 >
-> We probably shouldn't proliferate this scheme. In retrospect I should've
-> removed the two other similar blocks back when I submitted the driver at
-> the time since they don't really serve a purpose. The intention at the
-> time was to keep them there and eventually replace the condition with
-> something that could actually be toggled, but it's been almost four
-> years and this hasn't happened, so I suspect that we just don't need it
-> at all. So perhaps you could remove this line along with the comment in
-> this patch and then add another patch that removes the other unused bits
-> so that we don't carry around stuff that we just never use.
-> 
-> Thierry
+>Is "system power-on reset" really what this is called? Power-on reset
+>sounds like something that only happens after you power the device on,
+>not something that can be triggered by the watchdog.
 
-Sure, removing both lines and the comment above.
-will add another patch to clean unused bits.
+I will change it from "system power-on reset" to "System POR(Power On Reset)" in next patch.
+AFAIK Power On Reset is used for decribing resetting circuits and initialing whatever it needs
+when received a POR signal after powered up. This term should also be applicable for
+hardware watchdog reset since the system is already powered up at that moment and 
 
-Thanks!
+>> +      * when the watchdog timer is configured, the actual value programmed into the counter
+>> +      * is 1/5 of the timeout value. Once the counter reaches 0, expiration count will be
+>> +      * increased by 1 and the down counter restarts.
+>> +      * Hence to get the time left before system reset we must combine 2 parts:
+>> +      * 1. value of the current down counter
+>> +      * 2. (number of counter expirations remaining) * (timeout/5)
+>> +      */
+>
+>Can you wrap this comment so that it fits within 80 columns? It's fine
+>to occasionally go beyond that limit if there's a good reason for it,
+>but this comment doesn't seem to fall into that category.
+
+Sorry, I missed to check the line length before submit,
+will wrap comments in next patch.
+
+>> +
+>> +     /* Get the current number of counter expirations. Should be a value between 0 and 4. */
+>> +     expiration = FIELD_GET(WDTSR_CURRENT_EXPIRATION_COUNT, readl_relaxed(wdt->regs + WDTSR));
+>> +
+>> +     /* Convert the current counter value to seconds, rounding up to the nearest second. */
+>> +     timeleft = FIELD_GET(TMRSR_PCV, readl_relaxed(wdt->tmr->regs + TMRSR));
+>> +     timeleft = (timeleft + USEC_PER_SEC / 2) / USEC_PER_SEC;
+>
+>Same for these. Maybe make an extra variable to store the register value
+>in to get rid of some of that extra horizontal space.
+
+Thanks for the suggestion, will do.
+
+>> +
+>> +     /*
+>> +      * Calculate the time remaining by adding the time for the counter value
+>> +      * to the time of the counter expirations that remain.
+>> +      */
+>> +     timeleft += wdt->base.timeout * (4 - expiration) / 5;
+>
+>This doesn't quite match what the comment above says. Shouldn't this be:
+>
+>        timeleft += (wdt->base.timeout / 5) * (4 - expiration);
+>
+>instead?
+
+Here I made a transposition on purpose just for keeping the precision due to the integer division.
+e.g. If 'divided by 5' goes first, the equation goes to 0 when wdt->base.timeout is less than 5
+ no matter which timer expiration it is.
+
+But the number will be still inaccurate because I made a mistake that
+the number should be calculated in microseconds all the time 
+and be converted to a nearest second only in the last step.
+
+A new patch has been made and I will submit it after verifications.
+Thank you for your time on reviewing this!
+
+Best,
 --
 Pohsun
