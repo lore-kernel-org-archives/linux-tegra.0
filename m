@@ -1,57 +1,57 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7869C142653
-	for <linux-tegra@vger.kernel.org>; Fri, 23 Feb 2024 17:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5889912DD81
+	for <linux-tegra@vger.kernel.org>; Fri, 23 Feb 2024 17:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708710538; cv=none; b=aUmiGuqje2PEwxzxXNop0YIc4wfjI7I8p+J/cdZkCnYK0SE2TITC+qnOO/JRO818ZI0LzyBl6JMrM5Any0FKRTamEB2FLdr54LeADEZEtvifD4S0xCT88eDXj4QBoU5Visya8iBzKNNQNlkFMPdPCnFAVifH5u+A30kCJfh+eXg=
+	t=1708710540; cv=none; b=NFw2heoc3D+ofK3HldKKXgm/w1rJW57w+IOuAUo8UpjrxaQAyCnuBS9Z70GejYToZTRhwvIomlJnh/JmoPfyegOvF/6qmkCGqOtHxWsmvekmEAkYd6H+6Fn2HOEy+GkhUDi5mkhiOfx6O6eCxw+idD1gCvKdEp6lmJcmdojVxAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708710538; c=relaxed/simple;
-	bh=rTonWvjQAcJNaeKv4vth0eoJSWViUSqWd8JjoyxQVkA=;
+	s=arc-20240116; t=1708710540; c=relaxed/simple;
+	bh=wJwT9h8AokNQb2o22Z4/Kowd6WdzkRkM7kqVn8suBwE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ujTko+bVdN/rt1qmO3lDbrDmcMvG5byfoTksafL7J5kIhv/HIGjBe2u9+w6+nWORyGE9Pxm2WmGLIAah621e1OyHRXZfi8gEVeQJ+26NJ2XGvEh0fR0JrqOKrgXnT3ZI+pcT1LQqJuefsdkHNje1gqlD93OkhtL9BnTw5QeQRJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhoIeVF0; arc=none smtp.client-ip=209.85.208.53
+	 Content-Type:MIME-Version; b=Q/KzdcRWcWswXqKp/Mb2HCuqx4ibLhhvwtXPTs5FMKyDvSIGs3yb7rPnUD6iElp+bDSz20M4b3SRtvMPkIyYLW5mPcSzaO5c7UXhtheZ20Fm/gTD0S/1vTVVL4i895DrH/DGUiCTiJBgbeftsTIkEmHZE0lsFtn5MZdk4BKVeG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ds5yq3WH; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhoIeVF0"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-55a179f5fa1so899213a12.0
-        for <linux-tegra@vger.kernel.org>; Fri, 23 Feb 2024 09:48:56 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ds5yq3WH"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5648d92919dso1278245a12.1
+        for <linux-tegra@vger.kernel.org>; Fri, 23 Feb 2024 09:48:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708710535; x=1709315335; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1708710536; x=1709315336; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KQCCxPjVwc9J88j7D/qvdajFk19hWL/B2Jwz7nQJAz4=;
-        b=AhoIeVF0j7WcgMV6b2kZjzPFMpgkMa8b/HTe9pH8KeCm/ppx3IedQYe0r+CoxKMAS3
-         Awni9Ssyt0s5LMF+YVgR21ykzT2xY7sjiD7QPjDmXL4SSw2iB92l2TXkK+Bgiq+oj8R3
-         A5OOVF/2PnfYh1aiYBaitaP9MZkt3zWj7JQpl4iG7iGrBCQi1ktv7AZouEtq0jV8V1ry
-         cpARXH6fDckMQ79jtG3RaGraS9oGQFF+W6kSWJMJIUWy4XXdxrMGwa6IEVzUjT+SJxil
-         y5HCnOihbVdwoWPkx84CJZzJ+Hw59BQQZI6c3f0FOfGRgLSQp4BMWb8xTQ+r0UahiLe9
-         sUjg==
+        bh=V5gnokApRZBLpCTRCXRQsO1BqHcf2N+yhxb11K1iRr0=;
+        b=Ds5yq3WHW00fbfI9RCTtN7ty1o0or0per/dI5gozQh3OukQOLb3u8YV0gkoTs5HsYu
+         ugpTYIdZBVZE0njkt4ATn7t1jRUmVR6zhjyPGoRa+O9ARtE+T9PGOpQyaGosyv207C4j
+         FIxU9r5RFQHYsFyCt+zcSmwH7+K4NycmhFUIHjf0W47OaFgWP3NyLCxgVQpi6PiTeLtP
+         vX+aibTHuPWjR83ydSgauUS1ew/03lYFU2rxCTXGP90pvr/oEx5+jfZ9WtmUDrfeLg/W
+         RLuHk390dlwmeB1btxoY9ZLI/putZ4MFnRNQp2F93Babos1VvcKpxyIoWKTOrQdiiTz/
+         30jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708710535; x=1709315335;
+        d=1e100.net; s=20230601; t=1708710536; x=1709315336;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KQCCxPjVwc9J88j7D/qvdajFk19hWL/B2Jwz7nQJAz4=;
-        b=gjERXyKa2CSp6EiwZF9hFE4wqpk7AK/yOQVx/qgu1epvhx/op8D+EawehWDyJoyh5a
-         tQ2nbeRIPYdrpQHjyH6EO0bsiqnzaOvSl3hQsmpwAzzGH3EpTKbHv5DEDfuEilYnnJMj
-         6WkzHv9JO4Sa1vHuHKgtvHtQ6s0v1mJdItAIu5nTWBg240IjmC0oht9abccJKagI3SIf
-         BqkJzX/Rq2ZcPAklPBha1FpMMA1418yuTBRYKsh/LDLZBKT6juHLnzcrU2DKvqCWOhEo
-         IbOsHZMqDBFG2p3hjQ6ucvLDQV2YEx0OeYSAPTqXsKh6UBBqUqD3WCMHgMo2eKVAhswj
-         NiZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBFXT58tXB/ZlmiQAfqYsipO75Rqqy2TTFb5WfVk7irv8qAlnOLL5MdJ7VWfk2u0E0EexuflgpjCPB6KwTa/GdXfoeV6MNw1rZFaM=
-X-Gm-Message-State: AOJu0YxA7MI9fkwfh+90FzCVzCqLqVihR3bbUReiqwwkWDL3l0O5UVDf
-	xDIWmclptL8iHtcwRTfvMbJVepfEHRdTMJzN0yRapwUp3ctv27+X
-X-Google-Smtp-Source: AGHT+IHnCj9S63ZRVSecjO3NdFK2lOFoKvDAvMbcxc++eU+HueUQ3s8wWxrBN+TXpzj1GehR+Y6czQ==
-X-Received: by 2002:a17:906:6d8b:b0:a3f:dae9:1e88 with SMTP id h11-20020a1709066d8b00b00a3fdae91e88mr315648ejt.37.1708710534525;
-        Fri, 23 Feb 2024 09:48:54 -0800 (PST)
+        bh=V5gnokApRZBLpCTRCXRQsO1BqHcf2N+yhxb11K1iRr0=;
+        b=OASUyYqi7I5DYk1wCYsYK+1lSOCzHhd1b4sH5ROykMr/dXvh7cG7iOUONDFC9f1CEr
+         bZvegseHKXhSex+0MtIqVzaNokckLJyV1uCsHUSk/sxPS/RAL3w8+nKuzZ1Q2zk9GtSo
+         wuEoAJLQn1IgnQI1EcQddhHAYsGxw/BM2ZmMc2CZ+zSKh4rKhxK5OPVdV6SQsunwaZT/
+         1BOi9cWnG/jQl0vGStG125LpdHOUMUMABIDdOiug4H2c+htGdizw9wOXCeEcYsfMRz86
+         fHZTm4P/YAVUH6G/NgRDdNxscPYSaEogs/WACFBYf7AY2JSyboy5VH7CBh5/sgHpj4a+
+         Tcnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKlH7j7QDl/ZkLlft8GCBdejPa6LaJSQH7AqsX8Dtq8ZetUkATLoZm93UMm9U1rRN87spfv61uW2EhkBrRBLResDkTX3nH2nyZQ7E=
+X-Gm-Message-State: AOJu0Yzqe/Q9nr4sWkkMF/G7ZSfJM4d2H0KESd4mPHU2JZvdCdZqoQ1H
+	kWXzGUoDvA6G8O3Q2d0ZFdSOZDueYY7hPI0cu/E3TMEHnO12HjQ6
+X-Google-Smtp-Source: AGHT+IFcQ5Y9+WAUxM022fZ14XREgi8VhEN58GAxsKKt4sup6AUre9XBREThXiY/cBj8Z83jz4593A==
+X-Received: by 2002:a05:6402:148d:b0:564:5764:a5d8 with SMTP id e13-20020a056402148d00b005645764a5d8mr350882edv.25.1708710536577;
+        Fri, 23 Feb 2024 09:48:56 -0800 (PST)
 Received: from localhost (p200300e41f2d4600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f2d:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id i24-20020a170906251800b00a3d9a94b13fsm7113688ejb.136.2024.02.23.09.48.53
+        by smtp.gmail.com with ESMTPSA id j21-20020aa7c355000000b00562156c563esm6576396edr.33.2024.02.23.09.48.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 09:48:53 -0800 (PST)
+        Fri, 23 Feb 2024 09:48:55 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -59,9 +59,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 4/5] ARM: tegra: Device tree changes for v6.9-rc1
-Date: Fri, 23 Feb 2024 18:48:47 +0100
-Message-ID: <20240223174849.1509465-4-thierry.reding@gmail.com>
+Subject: [GIT PULL 5/5] arm64: tegra: Device tree changes for v6.9-rc1
+Date: Fri, 23 Feb 2024 18:48:48 +0100
+Message-ID: <20240223174849.1509465-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.43.2
 In-Reply-To: <20240223174849.1509465-1-thierry.reding@gmail.com>
 References: <20240223174849.1509465-1-thierry.reding@gmail.com>
@@ -82,40 +82,56 @@ The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.9-arm-dt
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.9-arm64-dt
 
-for you to fetch changes up to ea5e97e9ce0466b421bf0350fdb05409f5369162:
+for you to fetch changes up to cc36acb8a67ddfe4bc7bc722748f6c1b72eed5ed:
 
-  ARM: tegra: Add device-tree for LG Optimus 4X HD (P880) (2024-02-22 18:20:45 +0100)
+  arm64: tegra: Remove Jetson Orin NX and Jetson Orin Nano DTSI (2024-02-23 18:20:02 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Device tree changes for v6.9-rc1
+arm64: tegra: Device tree changes for v6.9-rc1
 
-Add support for the LG Optimus 4X HD and LG Optimus VU devices and clean
-up some minor issues.
+This set of changes refactors the audio-related device tree nodes on
+Tegra234 and improves USB support for Jetson AGX Xavier. Furthermore
+this consolidates SD/MMC aliases on Tegra234 and provides correct
+configuration data for the MGBE Ethernet devices found on Tegra234
+so that they can operate at full speed.
 
 ----------------------------------------------------------------
+Jon Hunter (3):
+      arm64: tegra: Add current monitors for Jetson Xavier
+      arm64: tegra: Add USB device support for Jetson AGX Xavier
+      arm64: tegra: Add USB Type-C controller for Jetson AGX Xavier
+
 Mark Hasemeyer (1):
-      ARM: tegra: Enable cros-ec-spi as wake source
+      arm64: tegra: Enable cros-ec-spi as wake source
 
-Robert Eckelmann (1):
-      ARM: tegra: nexus7: Add missing clock binding into sound node
+Thierry Reding (2):
+      arm64: tegra: Use consistent SD/MMC aliases on Tegra234
+      arm64: tegra: Add AXI configuration for Tegra234 MGBE
 
-Svyatoslav Ryhel (2):
-      ARM: tegra: Add device-tree for LG Optimus Vu (P895)
-      ARM: tegra: Add device-tree for LG Optimus 4X HD (P880)
+sheetal (4):
+      arm64: tegra: Move AHUB ports to SoC DTSI
+      arm64: tegra: Define missing IO ports
+      arm64: tegra: Add audio support for Jetson Orin NX and Jetson Orin Nano
+      arm64: tegra: Remove Jetson Orin NX and Jetson Orin Nano DTSI
 
- arch/arm/boot/dts/nvidia/Makefile                  |    2 +
- arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi        |    1 +
- arch/arm/boot/dts/nvidia/tegra124-venice2.dts      |    1 +
- .../nvidia/tegra30-asus-nexus7-grouper-common.dtsi |    3 +
- arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts       |  489 ++++++
- arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts       |  496 ++++++
- arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi        | 1812 ++++++++++++++++++++
- 7 files changed, 2804 insertions(+)
- create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-p880.dts
- create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-p895.dts
- create mode 100644 arch/arm/boot/dts/nvidia/tegra30-lg-x3.dtsi
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts     |    1 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi     |   50 +
+ arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts |   51 +-
+ arch/arm64/boot/dts/nvidia/tegra194-p3668.dtsi     |   27 +
+ arch/arm64/boot/dts/nvidia/tegra234-p3701.dtsi     | 1953 +-----------------
+ .../dts/nvidia/tegra234-p3737-0000+p3701-0000.dts  |    1 -
+ .../arm64/boot/dts/nvidia/tegra234-p3767-0000.dtsi |   14 -
+ .../arm64/boot/dts/nvidia/tegra234-p3767-0005.dtsi |   14 -
+ arch/arm64/boot/dts/nvidia/tegra234-p3767.dtsi     |   86 +
+ .../dts/nvidia/tegra234-p3768-0000+p3767-0000.dts  |    7 +-
+ .../dts/nvidia/tegra234-p3768-0000+p3767-0005.dts  |   12 +-
+ arch/arm64/boot/dts/nvidia/tegra234-sim-vdk.dts    |    1 -
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi           | 2138 +++++++++++++++++++-
+ 13 files changed, 2355 insertions(+), 2000 deletions(-)
+ delete mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3767-0000.dtsi
+ delete mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3767-0005.dtsi
