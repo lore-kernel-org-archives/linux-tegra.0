@@ -1,77 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694D75C90C;
-	Fri, 23 Feb 2024 12:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9E737C;
+	Fri, 23 Feb 2024 14:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708690564; cv=none; b=FVE5LOxGkozSS8G1bjL1zpWdyLLMpu4teT7RGtw+U4m549lJVnCJt740e/JMyiEV+CuzldpvV2+JGYn15JMvrntuCCc6mS1CEm352HopHiTNNJiR7lo0e/Nxi0/40MCsmmgVG9q6pfmzkQ1XqwtzeaoeH6uxdD/CrCXkxaDgWys=
+	t=1708700376; cv=none; b=CGoBQSrju1USvGfEzxn8haGhCp10DZu8KyytDaecd2ebpRkqklpHdXKhPER/lU4MwOXX/CZwe/2vXG0Io4q2lnMst6prrSkd3A5qkId3BkVuE13B2zV4Qsudxne9kvnXjHoA0w3nhjIen1/tNOj0E6gJ4zD3wHlcMcXeAk9+aQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708690564; c=relaxed/simple;
-	bh=JCFDC8egWyXQb7HABdNFJAfvo0AUNIyjCWnepDQI21c=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=CKtNHIMj9xNxddcNQ4oHyJlR3Q4GVE5xdoaLOsfUnJGAEyc8T6ohTBNwqj5p2DnhODOyxCFz0ymCb5T12+qMDE/Y+hN93lSB4XUwkRCDjCV7KPT8DBEgn7r+vr94bwDkbH5+q7FWRHvYJbPQAzXmVuB5XhKoJVWQ2bRl74RthWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwAAV5G0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1708700376; c=relaxed/simple;
+	bh=tKzaZ4SrfW3NZnt7/A7BvgRIDvidSwzO3kkc6CIop9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g9nTGCK3I2LgkBcZS6JT0oM2ZOofgZDnrhFjNmviCceDjrAX2JsPM0C+GXiODoVlhpyD0nLsVnqZWD8pMjHiPEYQurzNF1WIQhnRkp/NqqPpAmYePXGWRS52kYbhyA4KupcuCF1zrWizTbPkAbG1iTq1ySumbwW9T62kznoFF5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GDchqFob; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwAAV5G0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02934C433C7;
-	Fri, 23 Feb 2024 12:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708690563;
-	bh=JCFDC8egWyXQb7HABdNFJAfvo0AUNIyjCWnepDQI21c=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=iwAAV5G0xRLinAtkNwS/UDub21NcNA/YD1kSoIhSJS+aJCIHz/rumU3D1Lenn5wnk
-	 HkGxD26tSsFekC+CXQG5DAxyM5Nzw7ypVnkoX0qMWTFo45T7vyZh1ulJdmcw6I6vSI
-	 UJ6q6aPRVM14waxuS1UmjG5fRjGbU95J8syQO6PWLp28QwLU5RigoqYeGbzTnehotR
-	 OZnD6ewlC3ECto1MNL2V+wyAZ3smxhQ8ivngTmijPejLtLKy0AU+B7T3E2jt7ju1IV
-	 UjCjpAXG60xgL49D4fBUMAYJ90iueYRNijtk1m0BQrN7+M/KilrjgPT1EIM/oblm0X
-	 /pGqEA5bFmyQw==
-From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Linus Walleij <linus.walleij@linaro.org>, linux-phy@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- netdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240217093937.58234-1-krzysztof.kozlowski@linaro.org>
-References: <20240217093937.58234-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] phy: constify of_phandle_args in xlate
-Message-Id: <170869055762.530534.10335046810476136989.b4-ty@kernel.org>
-Date: Fri, 23 Feb 2024 17:45:57 +0530
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GDchqFob"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708700375; x=1740236375;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tKzaZ4SrfW3NZnt7/A7BvgRIDvidSwzO3kkc6CIop9s=;
+  b=GDchqFobBfQnhm7ZOUv5uXX1pNcff42gdVnbD8hMTZQu/M3PloU0sAen
+   PpBXVV/trFzapLTpCV8X8ZBFz8zeobXijsSSUfD9kOPFpBHZmQe0Be8Ib
+   Wq1hyduuptoHTcpriSrMWhZ/cuwqJf3FXA90Tx9gh4htG+r2wGl/CCXbF
+   ExpTzLrRlFjhCzgVa6hTKIwxTeIOxanofEhbWshUbxVbUL+g4ypfrYXu3
+   /34Ulqb9UNs+KeS0xTNj5ijT0AecXqlMuTiW5nFlgbT8sl72i/jDGEr/+
+   VSAjNw5cn99+ShEdb3y5jXke31z5Fzg5rxYejuYFxIAHtzBZuCDsO5W3g
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10993"; a="6832450"
+X-IronPort-AV: E=Sophos;i="6.06,180,1705392000"; 
+   d="scan'208";a="6832450"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2024 06:59:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10993"; a="913748299"
+X-IronPort-AV: E=Sophos;i="6.06,180,1705392000"; 
+   d="scan'208";a="913748299"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2024 06:59:28 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1rdX1I-00000006ve5-4BqP;
+	Fri, 23 Feb 2024 16:59:25 +0200
+Date: Fri, 23 Feb 2024 16:59:24 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v1 02/14] serial: core: Add UPIO_UNSET constant for unset
+ port type
+Message-ID: <ZdiyzKMZPlkN462G@smile.fi.intel.com>
+References: <20240221183442.4124354-1-andriy.shevchenko@linux.intel.com>
+ <20240221183442.4124354-3-andriy.shevchenko@linux.intel.com>
+ <5aeee02f-45a6-48e5-a6f4-e55b76d4b959@kernel.org>
+ <ZddKaaB7HO0CyldD@smile.fi.intel.com>
+ <fa46f220-a1c4-43f4-91e1-5929ff335be0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa46f220-a1c4-43f4-91e1-5929ff335be0@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Fri, Feb 23, 2024 at 06:42:15AM +0100, Jiri Slaby wrote:
+> On 22. 02. 24, 14:21, Andy Shevchenko wrote:
+> > On Thu, Feb 22, 2024 at 07:58:32AM +0100, Jiri Slaby wrote:
+> > > On 21. 02. 24, 19:31, Andy Shevchenko wrote:
 
-On Sat, 17 Feb 2024 10:39:37 +0100, Krzysztof Kozlowski wrote:
-> The xlate callbacks are supposed to translate of_phandle_args to proper
-> provider without modifying the of_phandle_args.  Make the argument
-> pointer to const for code safety and readability.
+...
+
+> > > >    	unsigned char		iotype;			/* io access style */
+> > > > +#define UPIO_UNSET		((unsigned char)~0U)	/* UCHAR_MAX */
+> > > 
+> > > Perhaps making the var u8 and this U8_MAX then? It would make more sense to
+> > > me.
+> > 
+> > WFM, should it be a separate change?
 > 
+> Likely.
+
+Then I need a commit message, because I'm unable to justify this change myself.
+
+> > Btw, how can I justify it?
 > 
+> Hmm, thinking about it, why is it not an enum?
 
-Applied, thanks!
+Maybe, but it is a replica of UAPI definitions, do we want to see it as a enum?
+To me it will be a bit ugly looking.
 
-[1/1] phy: constify of_phandle_args in xlate
-      commit: 00ca8a15dafa990d391abc37f2b8256ddf909b35
+> But it could be also an u8 because you want it be exactly 8 bits as you want
+> to be sure values up to 255 fit.
 
-Best regards,
+Depends on what we assume UAPI does with those flags. It maybe even less than
+8 bits, or great than, currently 8 bits is enough...
+
+TL;DR: I would rather take a patch from you and incorporate into the series
+than trying hard to invent a justification and proper type.
+
 -- 
-~Vinod
+With Best Regards,
+Andy Shevchenko
 
 
