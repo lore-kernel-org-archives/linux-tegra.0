@@ -1,344 +1,217 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2074.outbound.protection.outlook.com [40.107.22.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19561292FF;
-	Mon, 26 Feb 2024 17:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708968136; cv=fail; b=dzTu1/BbErEZeMY4YvdCpgCzxxJ6Pkq+f5xS1VFTURUpzkC42NX20cHPU7CclC0UaILlDLSWDMUVlmZSo5z9Q7TDm/LTsrDtsBhTMoQnSG+gOFeyU2GrJLlah1qlnaZdpywui7DWOZHMmz0EX66L2akOmC80/P+8Viw+/OyyYkw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708968136; c=relaxed/simple;
-	bh=LNo5ExOn0XNIaZxjo7usizM2cW7CKeutsVZLq+sxZ1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Dnp3iJBZJCz6zYDXHFpNPnbeZ2JYsLvrtD7kCVHftvGm6BVPH112Zce5onFG1PjizWbLsWJ2pOi/uBBF90VeAx0t+oB+cdNfQOks1DN9I/xfZjou5gUf1GULESibFOtsQz2uImBxV2nuBi2DWXy8fEhBBt9H110Zg+hAN6n50/8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=ju41FPsq; arc=fail smtp.client-ip=40.107.22.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4DF12F362
+	for <linux-tegra@vger.kernel.org>; Mon, 26 Feb 2024 18:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708971824; cv=none; b=emum9RSGv9sK803pK31BfJ1fi417+4kYNHw05Dgm8ctL23qyUYzetiSLWp0h8GjsVeGlL5fQImFZO9V+ApjPS2lQ1sYZBmq09XYnwQWJXh7m6Z3kTLKzql0m0JcH4WK2Ye916MVEXJaphrP4JGquPlPKpxAoyAoWzZEr/HJNNzA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708971824; c=relaxed/simple;
+	bh=/dVGj5xx+f1PdxYOaWnJtuybfRxwkWj0KloeHEcPC+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ihbihj7hLDLlAA9lBfeV+gXQI8/X0a8mLmTlRE/J+VN/J7+GoVJlTtBmNQqWaT51/rlBNAKnGX69brv7B+6JY9355dsq+v9ljVkYzBGRANpSGZLiNGi3Hel+RP/rhqaUrTz4vPapJTwXT5sMF/HEOq02G7NGp4x1XuPxxnh81HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=UfhVMpUC; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ju41FPsq"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YmN1PzcyKxjmVqoSagKGby86YmYheDPVLAqYo+YOyKwUDwkrmQL3qsgbp7IMgBnNrpogTwg92JY4FV8xMCiBcv01mfz62gc7h0gjFMuTjrrNRiL/U2mP123kwfzSQdrlnF/HaqKqDjBm7HxtliC8+sA/JrY/t1vAO7pdkhzJ8fNa9z2gG8CrOi8n3y/EvtqaRNolp58vaikO2ptJETENdhJvPSTq4c+CkZXAYFBMf9+mhj3tByQMnxShf8L97PC3sSwZKX4sLWdRJTNYKrZb6A12qhV5gzECzwcIVESvK5KvOElHW7jPutwMvqz1HxJZCsUoCrReu2prE0sXkxPxGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YfDX1Cbt8721jRgx5yD3L/XZ3IW87b0Rj5sOby8pE1A=;
- b=mZTy8CumcQu/2MyG79kKaiGlIUWiNaszF8eTofuwTDtvkLbbVNRiPvF5rsnTiBZsCcWqK23Cgi6dCMRxjipyf4jIDj5NWdPRPS7ns7wGw5eGzYzFOvcIygTHXG2hCIJAfPp8PcT4xGgiZPv70bzwC1IK+QoSiBoJyO6mJDEmkNvXru/rohFdyuJlVRcgxFMatcBYWy/jO66OQNCOshZMD3MhSf8NJw/vJpNJYUp0F5UAycirx+HOAGPsZbT+nMsbauiJvSghiqvrz8iA/X2OL1wHQwN0UgeRT0FiQZFGt14+B1t8wHwg1oWbz3iEFBtG5EG6Wq8RKuYM7GuBGfi25A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YfDX1Cbt8721jRgx5yD3L/XZ3IW87b0Rj5sOby8pE1A=;
- b=ju41FPsqxiq9MrbjXLjaa+Lab4ggn72AbaL7VPhAV1nw6UxOz1UIptE/Z3Ul0i7/8rR1z3krfFb88x4zgQh1tL9dqf1HmznMco5/VyXrTiIYNMbGObtmV8rwLRC1hIQOu0LcIxZQAGqDQNAJyglLDZue5Q3nToS4sxVv2lJxUq8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA4PR04MB8032.eurprd04.prod.outlook.com (2603:10a6:102:ba::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.34; Mon, 26 Feb
- 2024 17:22:11 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9af4:87e:d74:94aa]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9af4:87e:d74:94aa%7]) with mapi id 15.20.7316.032; Mon, 26 Feb 2024
- 17:22:11 +0000
-Date: Mon, 26 Feb 2024 12:21:59 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Vidya Sagar <vidyas@nvidia.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	Niklas Cassel <cassel@kernel.org>
-Subject: Re: [PATCH v8 10/10] PCI: dwc: ep: Add Kernel-doc comments for APIs
-Message-ID: <ZdzIt8aqogaoW22Y@lizhi-Precision-Tower-5810>
-References: <20240224-pci-dbi-rework-v8-0-64c7fd0cfe64@linaro.org>
- <20240224-pci-dbi-rework-v8-10-64c7fd0cfe64@linaro.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240224-pci-dbi-rework-v8-10-64c7fd0cfe64@linaro.org>
-X-ClientProxiedBy: BYAPR21CA0004.namprd21.prod.outlook.com
- (2603:10b6:a03:114::14) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="UfhVMpUC"
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-690105304b4so2985606d6.3
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Feb 2024 10:23:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1708971821; x=1709576621; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r1YWkBfDp/fRftcIetoQ1MOhGE0/iCZNSTzatacYSbs=;
+        b=UfhVMpUCv6b2j8jy89baua+QkJPrJUBG5ATqvHxim7cHLFIaQWzqIc+dzx93VHV7l6
+         eDG0MO6VekZmam+UuU8Q3+DPHMEfDn5aEcw9STtAibwyofbtuZ3vJTNz9xtWlqNT1gIu
+         Z60JRod0hixVyJIb8hr/sycP9NyPVEmYuJ3I8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708971821; x=1709576621;
+        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=r1YWkBfDp/fRftcIetoQ1MOhGE0/iCZNSTzatacYSbs=;
+        b=G8rae2SiXeLkp3QJqRKHBsWXjq9pgrprBWjQ+q5cfhq81ardnV5z4xbC83OogUqMv+
+         nVCJF7e0WHFYVIkMl1xocRbbNe6I0irGLK6GfMP6sIntA5W0+pfun4u7QtYfqMPljZSC
+         tFadIBlyKPTVzaQQzocx73v6iHxb2ZA1gLKrIIMOFTHBVAJi0Eub4t3n99dFgW5D/J7e
+         0QWMivr4WfiH4bK7Y9oSLznqSU+bvovhhqQHFwRODlDVQ3eqoUMM4SthlDRa4kIegMba
+         fEk70QgsceMXIeQ640YlwoNFf3n/CtMALBVDiqlPEwxIs7hv9J4q0XPnx6nlWJaGXjOt
+         wiMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZFxzlW4KrGoP7KAZft1Ln61RHgOeRCoNViu+NOYN1XMXahxRs2OTp+Wlx0JhxAtjFHmTY5/DgMaJPmc7naJvlxnmxf2QxKm2A9Do=
+X-Gm-Message-State: AOJu0YxZfiaTPDuqM3xaJpSzuvWzxSLuAKJ+jn/EVl5MvGIxFMYo1hWw
+	KRCwR8oXoGN8MMcEU2SgrMFRx0OQjiB7GTdPzya3ZT//RCbjOnIKgTSvHVS1DA==
+X-Google-Smtp-Source: AGHT+IHE2Ity3gHuZFLlvbVlzWZC4oAla/6yP0LkwdZcFRzn9vHbya4bbz/hlLhpr4bcbPJcZP1Xlg==
+X-Received: by 2002:a0c:970a:0:b0:68f:8bff:f0bc with SMTP id k10-20020a0c970a000000b0068f8bfff0bcmr8112294qvd.63.1708971821270;
+        Mon, 26 Feb 2024 10:23:41 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id nw3-20020a0562143a0300b0068f54ed22b2sm3218681qvb.0.2024.02.26.10.23.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Feb 2024 10:23:40 -0800 (PST)
+Message-ID: <b4773e16-6f06-4c62-bd6f-1f2cae7d5e98@broadcom.com>
+Date: Mon, 26 Feb 2024 10:23:33 -0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB8032:EE_
-X-MS-Office365-Filtering-Correlation-Id: afb1a931-4667-40e2-d5fc-08dc36ef77de
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	r1B56Cm/QPCi/CAMl4C3WTfEJIbcnE9szgjFw1iCgXR+CPBNMcj6h83GEaLrtIy5dbD4poJdikOBkF4AqpqWOfptpUpgc2TZNiRAvP6N5HsNM1qzECvElL/05vlGP+IHSqayZuMj7LHEUcMgURO/82DdnwzFkoJ8o6+9w+kmPJFzPFZryih+Sd9p7pWBWMLFjFRkXNal0EgTea3gzN8zXvjONprotVQJ3McSqLi4VjpMDVnOX1/9PM+hUG9Jf+eM9BiuWgOmPfumI1oSLA7cM5UTJ3rZOPLv0VbL3FsCtt1sptZ4qoeUAOtY4v23ih4sn+qda6AreCMG/PJG4+Oo9nw2ugcG+4hnsVSitSLiuF/pk9BjGqa+yNocRXGiSDaQHvNbtGg2jazFgzUxiSF12NAkPsga8qI7cNlATgFh1TwbQb+2QDchJXrdkyl9SQ1pkvtuec9GJYMFZM/mq8tPNATuyasrvvUaOh1/XSnbSYfdV569P4lSwULup1HldzrOxEftinU5ZwOFdl8cK+04ptVx6f7f24NiGn51xszBrk+0RxA4QnluRNDqV9dCIxxEcvKm1Z1p2fRIDvNqxOw59O14eAxVqqY2yfRUQBUHrWcRdRJokRnnqhTj+Zu441yAj1KXlM+kegFbkkFj5Kmirfyu32NlnwkfhihZUFDxVy2vArAy0OPwGrYx2GNdE9LnXUXbnpEOGTlnRWGVAoBxjA==
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4EkRx0h2QDVyJW0jk5xLsgvFnKdqQp1FW8bxoskEIAlSPCBRQJ9mH7V+BQ87?=
- =?us-ascii?Q?e9i+j5Pnm910PbmxI4390yOzQOMRI9Ochj6x5Bn/PsSeyhLPDut83JolMHEg?=
- =?us-ascii?Q?lj3EHHrp7zK7UWuqvZn2MecBqSwGUaIqA7p9FeeNuHQ0qNdAMMStiF6G40zr?=
- =?us-ascii?Q?E3mJfJ4t89lJoWLAFNYLhDLROYwC6RItjnBN9kfX598TTpVDZWiTBTI/OObb?=
- =?us-ascii?Q?PofLYXRTSP623n8WZvt/Ne9FB410c4DpgmxoeOGafQI/0mEdHJGCCkrS9uWI?=
- =?us-ascii?Q?y+LCIH8q8Kx8T+tuozZ1kfWjoBnvdb9dLkJrhWyNxSXqEiBTFJX1jcufRsEI?=
- =?us-ascii?Q?hvERSLfD0eZK/Es3saVkvyGJwhw0JNL9j/oLy/rbvGc4gc8mSAqu9MoP0tkh?=
- =?us-ascii?Q?JC9Sla+tLIBV8n9wUqC7j+UF8jqxzYelHc2GPr5YNDX8oYJHtnvwfohopW4z?=
- =?us-ascii?Q?EZKM8Ba+DEln/AOrPSGac4QeQazg/06KNuK0GN1YbNdMRlck2tGjLoybEOe5?=
- =?us-ascii?Q?2wd1v2gvktgJ9vQuxgOoAYN+1gl3hTiKhv6KjD9nyZnYu0wpL8aDrLKaqh81?=
- =?us-ascii?Q?aF1p7t8fv0tQfr5pmmvFBFAZ1NangO7MJ0jqlzhfYL4yIG/g4kD+wg4EsjNX?=
- =?us-ascii?Q?A4zx8/lttovgHvDF2Uhj3LSJNwEW3MNUWfeUItb2dF/owVwfYrIKKcfQUhWJ?=
- =?us-ascii?Q?lbayPb3+ThAChQmHgDXk6eSApDxnJsizb8QB1oVe3jSZx1nigFz95r02/dQB?=
- =?us-ascii?Q?S4nQcnvLHix+5DKfM2GsjhOZEkH451N2M8qiqKuXq8PL6Fpy8MIBzAoyQXX7?=
- =?us-ascii?Q?K5DONb49hVz3NZMe86WFxYFt5S6D0gmB1mZrM6YPM0kSHj5JK5a+NNUErqQ5?=
- =?us-ascii?Q?loZFdPEqyBJNt3VkhdsFV1X5wQostZnTA9kjq5cwVR0+yeL5wVf4r3V4xn7n?=
- =?us-ascii?Q?NXVZ0PT+ombUg9L81Xs/RabLQHsGqXbN1x+P3VKQ/AlX5YIulA/jaXmR83Gk?=
- =?us-ascii?Q?o+yOw4bYU2hWpnyvbX/iHHWHTRbsdnsIlVxe3L9KrSiKNAGvZAMVE9VlvilA?=
- =?us-ascii?Q?O+fVkdsQCTX7kyfNLZVn0TRYaBxqxn4jApeMf9zYLJN39xgD7GwMu1SoYRQp?=
- =?us-ascii?Q?NnL9dbhjL5H3Br+OfNN63V1phv5s4zg9FKUjyXF66C9DnFY4u5geg50R3gDw?=
- =?us-ascii?Q?St5vOJTq/ZaJ/YiyS7sKCCdtzR9b4TxOBVsD9lIL3ldh0KgMGchNTwCeFw4v?=
- =?us-ascii?Q?gVO0H8drMMp8+ps06ESjoy5nPX69QRn4DAa6NYBbN4lX6zcJED6aUkt3pipQ?=
- =?us-ascii?Q?vn5KdUG9sPZqekw+hXVN0Y+CP+PYKEqnVJTWmhBnd3u9MMO2DtRux02ywubo?=
- =?us-ascii?Q?pIKp1JrlYPNYgDU/Vm3vmkV1hUPOAuq7h5Ujn898x/X3mjKFN/mOUAT39Soq?=
- =?us-ascii?Q?y8LceudKH4pklf1BO+hNw4hBLrYdNPP2saxPYDhVngOscQsLKWLcM9+sk4rQ?=
- =?us-ascii?Q?1sMsjEULxssBX0YvwABdNmEGDF2XucCtH9g/uepuNTRgfx4jZGDX1qtCkkGW?=
- =?us-ascii?Q?qO/hOTbl1UyWGygbMi+a2ZLDlL2ZkV/pwxbvQ8Ej?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: afb1a931-4667-40e2-d5fc-08dc36ef77de
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2024 17:22:11.8313
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Uq6Y0kGoQtT0O+mgwXrnShRwO1YvxbFtD9DA/mx7+gxpARnHIfpr7gZvwfzUGXAlgqs6WpTroVEbrfZvT5GgZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB8032
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/14] serial: 8250_bcm7271: Switch to use
+ uart_read_port_properties()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
+ linux-mips@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Jiri Slaby <jirislaby@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+ Scott Branden <sbranden@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Paul Cercueil <paul@crapouillou.net>, Vladimir Zapolskiy <vz@mleia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>
+References: <20240226142514.1485246-1-andriy.shevchenko@linux.intel.com>
+ <20240226142514.1485246-7-andriy.shevchenko@linux.intel.com>
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ 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
+In-Reply-To: <20240226142514.1485246-7-andriy.shevchenko@linux.intel.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000005bc52d06124d02e7"
 
-On Sat, Feb 24, 2024 at 12:24:16PM +0530, Manivannan Sadhasivam wrote:
-> All of the APIs are missing the Kernel-doc comments. Hence, add them.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+--0000000000005bc52d06124d02e7
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+On 2/26/24 06:19, Andy Shevchenko wrote:
+> Since we have now a common helper to read port properties
+> use it instead of sparse home grown solution.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> ---
->  drivers/pci/controller/dwc/pcie-designware-ep.c | 92 +++++++++++++++++++++++++
->  1 file changed, 92 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index fed4c2936c78..cdcb33a279db 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -14,6 +14,11 @@
->  #include <linux/pci-epc.h>
->  #include <linux/pci-epf.h>
->  
-> +/**
-> + * dw_pcie_ep_init_notify - Notify EPF drivers about EPC initialization
-> + *			    complete
-> + * @ep: DWC EP device
-> + */
->  void dw_pcie_ep_init_notify(struct dw_pcie_ep *ep)
->  {
->  	struct pci_epc *epc = ep->epc;
-> @@ -22,6 +27,14 @@ void dw_pcie_ep_init_notify(struct dw_pcie_ep *ep)
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_init_notify);
->  
-> +/**
-> + * dw_pcie_ep_get_func_from_ep - Get the struct dw_pcie_ep_func corresponding to
-> + *				 the endpoint function
-> + * @ep: DWC EP device
-> + * @func_no: Function number of the endpoint device
-> + *
-> + * Return: struct dw_pcie_ep_func if success, NULL otherwise.
-> + */
->  struct dw_pcie_ep_func *
->  dw_pcie_ep_get_func_from_ep(struct dw_pcie_ep *ep, u8 func_no)
->  {
-> @@ -52,6 +65,11 @@ static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, u8 func_no,
->  	dw_pcie_dbi_ro_wr_dis(pci);
->  }
->  
-> +/**
-> + * dw_pcie_ep_reset_bar - Reset endpoint BAR
-> + * @pci: DWC PCI device
-> + * @bar: BAR number of the endpoint
-> + */
->  void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
->  {
->  	u8 func_no, funcs;
-> @@ -431,6 +449,13 @@ static const struct pci_epc_ops epc_ops = {
->  	.get_features		= dw_pcie_ep_get_features,
->  };
->  
-> +/**
-> + * dw_pcie_ep_raise_intx_irq - Raise INTx IRQ to the host
-> + * @ep: DWC EP device
-> + * @func_no: Function number of the endpoint
-> + *
-> + * Return: 0 if success, errono otherwise.
-> + */
->  int dw_pcie_ep_raise_intx_irq(struct dw_pcie_ep *ep, u8 func_no)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> @@ -442,6 +467,14 @@ int dw_pcie_ep_raise_intx_irq(struct dw_pcie_ep *ep, u8 func_no)
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_raise_intx_irq);
->  
-> +/**
-> + * dw_pcie_ep_raise_msi_irq - Raise MSI IRQ to the host
-> + * @ep: DWC EP device
-> + * @func_no: Function number of the endpoint
-> + * @interrupt_num: Interrupt number to be raised
-> + *
-> + * Return: 0 if success, errono otherwise.
-> + */
->  int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->  			     u8 interrupt_num)
->  {
-> @@ -490,6 +523,15 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_raise_msi_irq);
->  
-> +/**
-> + * dw_pcie_ep_raise_msix_irq_doorbell - Raise MSIX to the host using Doorbell
-> + *					method
-> + * @ep: DWC EP device
-> + * @func_no: Function number of the endpoint device
-> + * @interrupt_num: Interrupt number to be raised
-> + *
-> + * Return: 0 if success, errno otherwise.
-> + */
->  int dw_pcie_ep_raise_msix_irq_doorbell(struct dw_pcie_ep *ep, u8 func_no,
->  				       u16 interrupt_num)
->  {
-> @@ -509,6 +551,14 @@ int dw_pcie_ep_raise_msix_irq_doorbell(struct dw_pcie_ep *ep, u8 func_no,
->  	return 0;
->  }
->  
-> +/**
-> + * dw_pcie_ep_raise_msix_irq - Raise MSIX to the host
-> + * @ep: DWC EP device
-> + * @func_no: Function number of the endpoint device
-> + * @interrupt_num: Interrupt number to be raised
-> + *
-> + * Return: 0 if success, errno otherwise.
-> + */
->  int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
->  			      u16 interrupt_num)
->  {
-> @@ -556,6 +606,12 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
->  	return 0;
->  }
->  
-> +/**
-> + * dw_pcie_ep_cleanup - Cleanup DWC EP resources
-> + * @ep: DWC EP device
-> + *
-> + * Cleans up the DWC EP specific resources like eDMA etc...
-> + */
->  void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> @@ -564,6 +620,13 @@ void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep)
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_cleanup);
->  
-> +/**
-> + * dw_pcie_ep_deinit - Deinitialize the endpoint device
-> + * @ep: DWC EP device
-> + *
-> + * Deinitialize the endpoint device. EPC device is not destroyed since that will
-> + * taken care by Devres.
-> + */
->  void dw_pcie_ep_deinit(struct dw_pcie_ep *ep)
->  {
->  	struct pci_epc *epc = ep->epc;
-> @@ -635,6 +698,14 @@ static void dw_pcie_ep_init_non_sticky_registers(struct dw_pcie *pci)
->  	dw_pcie_dbi_ro_wr_dis(pci);
->  }
->  
-> +/**
-> + * dw_pcie_ep_init_registers - Initialize DWC EP specific registers
-> + * @ep: DWC EP device
-> + *
-> + * Initialize the registers (CSRs) specific to DWC EP. This API should be called
-> + * only when the endpoint receives an active refclk (either from host or
-> + * generated locally).
-> + */
->  int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> @@ -718,6 +789,10 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_init_registers);
->  
-> +/**
-> + * dw_pcie_ep_linkup - Notify EPF drivers about link up event
-> + * @ep: DWC EP device
-> + */
->  void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
->  {
->  	struct pci_epc *epc = ep->epc;
-> @@ -726,6 +801,14 @@ void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_linkup);
->  
-> +/**
-> + * dw_pcie_ep_linkdown - Notify EPF drivers about link down event
-> + * @ep: DWC EP device
-> + *
-> + * Non-sticky registers are also initialized before sending the notification to
-> + * the EPF drivers. This is needed since the registers need to be initialized
-> + * before the link comes back again.
-> + */
->  void dw_pcie_ep_linkdown(struct dw_pcie_ep *ep)
->  {
->  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> @@ -743,6 +826,15 @@ void dw_pcie_ep_linkdown(struct dw_pcie_ep *ep)
->  }
->  EXPORT_SYMBOL_GPL(dw_pcie_ep_linkdown);
->  
-> +/**
-> + * dw_pcie_ep_init - Initialize the endpoint device
-> + * @ep: DWC EP device
-> + *
-> + * Initialize the endpoint device. Allocate resources and create the EPC
-> + * device with the endpoint framework.
-> + *
-> + * Return: 0 if success, errno otherwise.
-> + */
->  int dw_pcie_ep_init(struct dw_pcie_ep *ep)
->  {
->  	int ret;
-> 
-> -- 
-> 2.25.1
-> 
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
+
+
+--0000000000005bc52d06124d02e7
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
+9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
+UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
+KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
+nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
+Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
+VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
+ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
+CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
+MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
+d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
+hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
+bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
+BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
+KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
+kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
+2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
+3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
+NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
+AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
+LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
+/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIO1W0w+dP8eEezr8
+d4ifucp+CGaCPXQF3OPZMUeU6MPoMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
+AQkFMQ8XDTI0MDIyNjE4MjM0MVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
+AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
+MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQDXiAWqPa14Guf6IUTF0meA+Q9sZsWJAKz7
+x1ITSjB+0H4JRDw/oys9oPE8jgN4X7uJR2EOI/4ULDmjz/2RNpEVWSUArBlJBeCTkeKDmBVX56Ss
+3+nz4skfCy8NVKMLqVGN1o7QttYfgXXpgk5ToAM5oSk9Re6lEqACRgEojniMmoNsoSJNUAZGHk3e
+Yul8xw6D9O8CNiVPOv4w3w1LonwY+srZG8dPgrzKnCxVSlLylAH8xweAY5LBfgF6GfI0GntuMgxs
+l78diHucYMoRtsxJcGNQUiZIrUmTrtYpML1sjq9gjILoE1Xc4qKlALEB0YKuExNjV7EzrTPlDckv
+1zc0
+--0000000000005bc52d06124d02e7--
