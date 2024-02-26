@@ -1,143 +1,131 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FE0129A74
-	for <linux-tegra@vger.kernel.org>; Mon, 26 Feb 2024 14:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E217129A75;
+	Mon, 26 Feb 2024 14:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708956276; cv=none; b=GYE0KI/vy51SYyJZ6vCBsYozgZcpRHfWIbKheJ8ugi3XE8k/sYAT7zzkGzZq/hLNy1LkNKK2nwu9+LmaBxBYUiMzXPRdazjibVslwWsLLreC7TBLVgCZ12eiX2KSmXdrk3MufpSdHHGwmCPeMLpLTkJPnkkxdLhpHQFIn+L677E=
+	t=1708957035; cv=none; b=H2/igorI3HUWG9PE3CtrHo6RVhfusoOMmm4RFiIAMQjZb+Wz+TsBvib9iqYURvjwJ9PhBJohu9Lz+xrmHoF7JvJ+yddszElaSZc21lfr+VqfT37qHnS4hEkFCbGc+M7pNFTfQTmdMZ9jGc6VpB85PAOujkmqfpqhA08bj8iGZLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708956276; c=relaxed/simple;
-	bh=MV88xQYTBP/DgwbU2EV4eVXGMtITc5XggDZp2Alcw0s=;
-	h=Content-Type:Mime-Version:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=IlhhlLRanxwjW3soWGjlbtBzM2a987E5c7eSwTqDpaZ+GECHFvuL3xxhaKo6/w9vv9qC+At0LsTkPfXtHP+4CeFZ86v6hXKbq5YeIWKBJ5qfr55t8EQyG4eXQ/cDHBgLyYsdiZXWt3WgUFpuxTwMdy8ne3dMpqOm4GG4vd9lwqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ml+neA7X; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1708957035; c=relaxed/simple;
+	bh=HZlXZGpEZ0auGfIkoqRiKy72XZYfKXmXVmc4SJZWGJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AAl0fRMvnnTyhadnN5JzNlLyfk4ha6ANIgn2pWRxd7XTwtoYc2C5BlLuJiQstRX6FQdpTImG6WC9j0ISpJGJErLJXH6Rl8Mp/E5UnBD1f6oGqv4WSb/Ql73GlsznL+JGw8HoFxjpAKGxQJA1TsPk+gfQtMSRavv+1hQ3bAPkKHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XLDWD9hK; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ml+neA7X"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-563c0f13cabso3984927a12.3
-        for <linux-tegra@vger.kernel.org>; Mon, 26 Feb 2024 06:04:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708956273; x=1709561073; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tAiN0detzWZ3hHmBt5uFja5IC1NM7+otJ/WL2NRqHYo=;
-        b=ml+neA7X9OjcYVswt98siN4VzD83McOnLKtecDM2cLKaZ1i9RUMSjUv2LTqLX8kPx0
-         FqE3bieLt7DubonUIo+kuGF6dXLg3D0xpO+H06Mt1uheTIDKSUMu9482Z1Q24L5t2+Zj
-         VITFsE4pOFfhXWcVXOKFpw9wIQKj94NlXgpAAte/tg+GScrYVbt8OA6DcmZJg8z/wywM
-         ditGJ62tA+PfmMY5vFf3PZ5sqIaXaD2YPRkNUCgRcMqvegNTF8Y9XZ6fCJuBQ2uvgql3
-         0h+zL/pMKt2P5e3oEsZOCZ+O1DqjZ+MLgwouphpSeOM19/tBg1KW7rpfsrTYQ3w3KAFA
-         lb1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708956273; x=1709561073;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tAiN0detzWZ3hHmBt5uFja5IC1NM7+otJ/WL2NRqHYo=;
-        b=kbIFht2i9Rl7B3f/DkRFGVjoOgzT0FU6DzDTYMx+o3aqiSU4fhYhdM/7833g+yu4Qp
-         /X1uSsbqJUv2308HXRGD6rxUgHxqCXoFP3aLms8uN/iL0DolOAAJQ/bhpUGNOz7zHU3b
-         cFrJTLbdJORAJRAID43iPwRD/Ui5yG2qJhnGdHQjFzF9luxfRQEe4PWJZ9hEr5FLqlbb
-         KySUuY3YNePpeEdDn+5FOVrNTZXSs5c6OwrlqOW9r27hqgJzGY35vwQhlktAbxnfs0+t
-         55OWulHyRIExXfyRg3wowLecCnQ4ylLX/edVpyh/8iFxMU+K3BhavVBOggvMz0io6EGw
-         /6yA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsK8+P42P/sYFp2WUPbCIRyGp+CSIpgCkinLW7jadqbkIyBTRN6wgf+ANSwGX0rq/ixrtkEfA2RnGk6wR7jk+19mdSUVPv9MQZs24=
-X-Gm-Message-State: AOJu0YwhcNPcLXq8rxvG0mqlICdnlvmERPUhi7Qwua3e5u3OhVZ2ch6Y
-	5wx47Co3I9Zc9PPrs+aTfbzivWLANgSOAbDY717EO5We1gZ1WxIl
-X-Google-Smtp-Source: AGHT+IEI/VOZwZG+uUCEpb3XjAbwgzrT73wyba5zBMiTXClBxtfyLvOkEpHrmbHUOL6NxHjkY0ooLA==
-X-Received: by 2002:a17:906:3609:b0:a3e:f00c:ee25 with SMTP id q9-20020a170906360900b00a3ef00cee25mr4143311ejb.25.1708956272948;
-        Mon, 26 Feb 2024 06:04:32 -0800 (PST)
-Received: from localhost (p200300e41f222300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f22:2300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id vx10-20020a170907a78a00b00a42eb84c7c2sm2433810ejc.142.2024.02.26.06.04.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Feb 2024 06:04:32 -0800 (PST)
-Content-Type: multipart/signed;
- boundary=21fd96626809da916ba0f390cabfbc1b4443582b04b01fefba0f3fde58c9;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XLDWD9hK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708957035; x=1740493035;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HZlXZGpEZ0auGfIkoqRiKy72XZYfKXmXVmc4SJZWGJo=;
+  b=XLDWD9hKWSYS93+37BvlTXBZ6JM6TPO2yMqN8070OaF1NRVheRzy7aNh
+   C8+aBkPAeDa3JRuo//3OTkghATG1dNXAZjETuIcXLR3TP+cQdrocS38f7
+   J6xBn9Ls3gxQCKn92fLTM6foUg26500JT1tcbjMfzCKQ9giYPa99uRXL7
+   /JUOcfxPai348/cfF/y84SSZNT30zEuRGFfM8UlfdLpNHoAzBPFmvWY1R
+   ALlskxrfP3+PR4xvYS4oGQDxViRLcDoAGnyLGtx/4BaXHB4cz1KU7JNZh
+   l+25I4qtB65xEIzy+8e3uXlZ/++WDLpJuzg9TItX+fBVLotxpDDKIJfk5
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10995"; a="7047436"
+X-IronPort-AV: E=Sophos;i="6.06,185,1705392000"; 
+   d="scan'208";a="7047436"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2024 06:17:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10995"; a="913872291"
+X-IronPort-AV: E=Sophos;i="6.06,185,1705392000"; 
+   d="scan'208";a="913872291"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmsmga002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2024 06:17:07 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1rebmx-00000007hRa-3oE3;
+	Mon, 26 Feb 2024 16:17:03 +0200
+Date: Mon, 26 Feb 2024 16:17:03 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v1 02/14] serial: core: Add UPIO_UNSET constant for unset
+ port type
+Message-ID: <ZdydX79GBaedFqku@smile.fi.intel.com>
+References: <20240221183442.4124354-1-andriy.shevchenko@linux.intel.com>
+ <20240221183442.4124354-3-andriy.shevchenko@linux.intel.com>
+ <5aeee02f-45a6-48e5-a6f4-e55b76d4b959@kernel.org>
+ <ZddKaaB7HO0CyldD@smile.fi.intel.com>
+ <fa46f220-a1c4-43f4-91e1-5929ff335be0@kernel.org>
+ <ZdiyzKMZPlkN462G@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Mon, 26 Feb 2024 15:04:31 +0100
-Message-Id: <CZF2FT4A3ZT8.1DMY9VF0YQVKU@gmail.com>
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Robert Foss" <rfoss@kernel.org>, "Javier Martinez Canillas"
- <javierm@redhat.com>
-Cc: "Thomas Zimmermann" <tzimmermann@suse.de>, "Jon Hunter"
- <jonathanh@nvidia.com>, "Daniel Vetter" <daniel@ffwll.ch>,
- <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2] drm/tegra: Remove existing framebuffer only if we
- support display
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240223150333.1401582-1-thierry.reding@gmail.com>
- <a6e73f3f-9bd6-40c4-abfa-84a22de07c23@suse.de>
- <877cirpidw.fsf@minerva.mail-host-address-is-not-set>
- <CAN6tsi4b+77udoHNhKjo8PFo9hdgrPYPz62D3f+rBqqw4Oymzg@mail.gmail.com>
-In-Reply-To: <CAN6tsi4b+77udoHNhKjo8PFo9hdgrPYPz62D3f+rBqqw4Oymzg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZdiyzKMZPlkN462G@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
---21fd96626809da916ba0f390cabfbc1b4443582b04b01fefba0f3fde58c9
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Fri, Feb 23, 2024 at 04:59:25PM +0200, Andy Shevchenko wrote:
+> On Fri, Feb 23, 2024 at 06:42:15AM +0100, Jiri Slaby wrote:
+> > On 22. 02. 24, 14:21, Andy Shevchenko wrote:
+> > > On Thu, Feb 22, 2024 at 07:58:32AM +0100, Jiri Slaby wrote:
+> > > > On 21. 02. 24, 19:31, Andy Shevchenko wrote:
 
-On Mon Feb 26, 2024 at 1:08 PM CET, Robert Foss wrote:
-> On Mon, Feb 26, 2024 at 12:36=E2=80=AFPM Javier Martinez Canillas
-> <javierm@redhat.com> wrote:
-> >
-> > Thomas Zimmermann <tzimmermann@suse.de> writes:
-> >
-> > > Hi
-> > >
-> > > Am 23.02.24 um 16:03 schrieb Thierry Reding:
-> > >> From: Thierry Reding <treding@nvidia.com>
-> > >>
-> > >> Tegra DRM doesn't support display on Tegra234 and later, so make sur=
-e
-> > >> not to remove any existing framebuffers in that case.
-> > >>
-> > >> v2: - add comments explaining how this situation can come about
-> > >>      - clear DRIVER_MODESET and DRIVER_ATOMIC feature bits
-> > >>
->
-> Fixes: 6848c291a54f ("drm/aperture: Convert drivers to aperture interface=
-s")
->
-> Maybe this is more of a philosophical question, but either the
-> introduction of this hardware generation is where this regression was
-> introduced or this possibly this commit.
->
-> Either way, I'd like to get this into the drm-misc-fixes branch.
+...
 
-That commit looks about right. Technically Tegra234 support was
-introduced in Linux 5.10 but the first platform where you we would've
-seen this wasn't added until 5.17. The above commit is from 5.14, which
-puts it about right in between there, so I think that's fine.
+> > > > >    	unsigned char		iotype;			/* io access style */
+> > > > > +#define UPIO_UNSET		((unsigned char)~0U)	/* UCHAR_MAX */
+> > > > 
+> > > > Perhaps making the var u8 and this U8_MAX then? It would make more sense to
+> > > > me.
+> > > 
+> > > WFM, should it be a separate change?
+> > 
+> > Likely.
+> 
+> Then I need a commit message, because I'm unable to justify this change myself.
+> 
+> > > Btw, how can I justify it?
+> > 
+> > Hmm, thinking about it, why is it not an enum?
+> 
+> Maybe, but it is a replica of UAPI definitions, do we want to see it as a enum?
+> To me it will be a bit ugly looking.
+> 
+> > But it could be also an u8 because you want it be exactly 8 bits as you want
+> > to be sure values up to 255 fit.
+> 
+> Depends on what we assume UAPI does with those flags. It maybe even less than
+> 8 bits, or great than, currently 8 bits is enough...
+> 
+> TL;DR: I would rather take a patch from you and incorporate into the series
+> than trying hard to invent a justification and proper type.
 
-Backporting to anything before 5.14 would need to be manual and isn't
-worth it.
+Okay, I want to send a new version, for now I leave the type change for
+the next time. It looks that quirks as well will benefit from type clarifying.
 
-Thierry
+-- 
+With Best Regards,
+Andy Shevchenko
 
---21fd96626809da916ba0f390cabfbc1b4443582b04b01fefba0f3fde58c9
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXcmnAACgkQ3SOs138+
-s6G7GxAAoGo5C81PAEchitwz+i2g1btUbe/YFjwV0DcgY7hFm9S7f91RcPzKP3wE
-G0BcpmT4hYwEOxJzoz6awk4O6P5riWUXGzwuiSSY0FYbKU3WGJfVsQJ5gRsI2Y9U
-n2+xwCn8XBQwfoWk9yGWA0ngOGxEDlehhWZpfJ/cUGu+6c7FHrNF0MSNJy2BKseZ
-05/pzfZLkR4zOw/5yQg+RPGOwUqyuOeyeD2KHHCE99Pzm8XdnMs7rkfjY6/W6FGr
-EY9vkkG/9yK1Vh+3/3Fn7DEnVi5ToOzby/ckRL3SYs+LHRyIjks3NjqX3eP7fOsp
-eYxv6RmZ8xlQ+EBoZP49i/ICyVinkjsFu9YLjwYFZSC7x9oCkQNaGmI0uPxr96ab
-kAS5fSDJZKNtBSLZiFyxRiBKFBMCu+AnERYK9dfqfEott+txmKyWQ2smAXQBtYNp
-q9CY310+/RJH9bNQf8Xr08c41x1rCm8usKrN8BAJ9kMryCUmYz4RDYa8vFPeXs8w
-87mc3LhJ2FYkTs5WhkG1thYUQ8gWm3yKmVj+2ahr2QVCYIZFPT0WxtrCfR6eeNrE
-/tMIy0jzVCGzrcjumWGJlshpOzHn6wVPOFkzvhu8WxIk324U9Y8iVfwzBu5Zuq02
-j9aMrfk9JZQq8ONiHVWjCPBWFhuASQitLnr60JIubLCTQ4DNhTc=
-=QwiT
------END PGP SIGNATURE-----
-
---21fd96626809da916ba0f390cabfbc1b4443582b04b01fefba0f3fde58c9--
