@@ -1,73 +1,224 @@
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F081B5AD;
-	Mon, 26 Feb 2024 04:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC3E1C6A3
+	for <linux-tegra@vger.kernel.org>; Mon, 26 Feb 2024 08:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708920799; cv=none; b=U2KiD2QlLDHF77RGVB1/fbA9RN9CQ7i833BlkmPUpUaKx6xmyy3C7USgLzjOSPMvmbGQCNwMvFDyNNQ7bLD5n1anpyib8muxsEJq3wxmdPk7zF1lOeNFn8SVh7I3pOUu2tl4WLurxf0Hx4WYuue0oB1G2m+MQrdT3wW2dtCEK7E=
+	t=1708935896; cv=none; b=SQLRATu5drxVOyRPLIfOD1fpXyEgRhbjUH8YnxmEOfFbI5uLjFbKM+oVKcdlUEcWNtP5GnofHnIHs8WXphtf80LL67FoLDEdX+4QrjdXC5/jZdg3QRmCCi3bWAj7FytQxhO4n0KFpm9ftLCJynqEVb53z1vK+qVEcKPk7mIt++M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708920799; c=relaxed/simple;
-	bh=/q24CJLITfPyErU1UK/fAAmBnBCJ3GQy7PcDHM76kEw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KqEbuhSBYU+xGIusMxybpmy2aL4uGSRU9hwaar1VF+mfN3zUEQ+QOEAdnfpAb8a3RgtwWA1Agbil8Bq33Dljrvh23CokLkLDKfYrHc3jdASD7FUjNhBwsBMUmXFtecRdo7+8tzu2J/M1rwxIErhvD4B9V4UhBToP010t+z8yEKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=KMZ2d/Wu; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1708935896; c=relaxed/simple;
+	bh=hO7YUUT567xWz5g/XtsoV7GKP1W4wgIsZwfHRWeYdPE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bOOGJv4NuzUNB9mE4Rig6ckpHE2L0DcdWg/2e7+Fwqxxpl4jHi5TeasLQieTWGYECulRfxfRaTDrXAiZn3WEEMoLcoVH8hWwLYfJLgn9CyAyRvtV/QTGzLjF6tuDNqnnv5ERTtAQof3Ll3+Kn9NxcE7k9uTD5sDciF62aLR5ooI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZD5/dibS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8d1vJ7Xi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZD5/dibS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8d1vJ7Xi; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="KMZ2d/Wu"
-Received: from [192.168.68.112] (ppp118-210-168-240.adl-adc-lon-bras34.tpg.internode.on.net [118.210.168.240])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 151DB2014E;
-	Mon, 26 Feb 2024 12:13:14 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1708920795;
-	bh=/q24CJLITfPyErU1UK/fAAmBnBCJ3GQy7PcDHM76kEw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=KMZ2d/WueqRPEt0x3pmeKLAQzK5soiMd5fgmGcOBAm1UYlsonQs/Uu/6NzlqB/WK/
-	 dwrA/YA8nsmxhwjMXYtC49fyF8wH09ORmR3cQJYWLThxNX4qC8jnvaA3oSZ3eGy1E4
-	 w2Nmx0FX/nhtpiQQs7GZeWUc5n9S5mA6skQxrAOmC8ZhcU25SnagEi9Qlp4YPMS8AE
-	 ekgbjuUYU2UXyC0pgRXXfWv6Ie+0VDrplCN9nvY/uMHt7NsH/ScqBfkNtM+wLEXQmh
-	 0TX/8e6jpqq4rogsCTZK16wgSCMOVRPo45toJq2I10pWK8OduJZ/XJ/bkvFYq2xyuj
-	 heu6tTyQyTYcA==
-Message-ID: <00b5f735bd9c151812445d40348d70f4b4bd474d.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v1 04/14] serial: 8250_aspeed_vuart: Switch to use
- uart_read_port_properties()
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Greg Kroah-Hartman
-	 <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Cc: Jiri Slaby <jirislaby@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,  Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Al
- Cooper <alcooperx@gmail.com>,  Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Paul Cercueil <paul@crapouillou.net>, 
- Vladimir Zapolskiy <vz@mleia.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,  Masami Hiramatsu
- <mhiramat@kernel.org>, Andi Shyti <andi.shyti@linux.intel.com>
-Date: Mon, 26 Feb 2024 14:43:13 +1030
-In-Reply-To: <20240221183442.4124354-5-andriy.shevchenko@linux.intel.com>
-References: <20240221183442.4124354-1-andriy.shevchenko@linux.intel.com>
-	 <20240221183442.4124354-5-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZD5/dibS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8d1vJ7Xi";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZD5/dibS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8d1vJ7Xi"
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 48A001FB3C;
+	Mon, 26 Feb 2024 08:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1708935893; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gpzUCvEV4d4ejX0DHYYBoP281xYHhb/6CI72uYZVMSY=;
+	b=ZD5/dibSSmoNmF+twA7JVDu6LAp9oYOaeh6TjSikcUHR3UP6eyhY6T7aqhcgHHhYCmSAF7
+	mA4LB1da6HXFddZtPwHc/ctDMgTl8QkEXtQ++3KVbLERgOX9grfANZtw04psfmdSQPe7cy
+	oEqCABnREZopsAu3bHjeOJn3E3eBTn8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1708935893;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gpzUCvEV4d4ejX0DHYYBoP281xYHhb/6CI72uYZVMSY=;
+	b=8d1vJ7Xirg0I4ormgA4vEMjwztxoDsBtQwCj8gOafq43swoh1lwXmw2PqSIAJEpOWk1KAa
+	mQtXjwIuHWYHdFBg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1708935893; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gpzUCvEV4d4ejX0DHYYBoP281xYHhb/6CI72uYZVMSY=;
+	b=ZD5/dibSSmoNmF+twA7JVDu6LAp9oYOaeh6TjSikcUHR3UP6eyhY6T7aqhcgHHhYCmSAF7
+	mA4LB1da6HXFddZtPwHc/ctDMgTl8QkEXtQ++3KVbLERgOX9grfANZtw04psfmdSQPe7cy
+	oEqCABnREZopsAu3bHjeOJn3E3eBTn8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1708935893;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gpzUCvEV4d4ejX0DHYYBoP281xYHhb/6CI72uYZVMSY=;
+	b=8d1vJ7Xirg0I4ormgA4vEMjwztxoDsBtQwCj8gOafq43swoh1lwXmw2PqSIAJEpOWk1KAa
+	mQtXjwIuHWYHdFBg==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 143E01329E;
+	Mon, 26 Feb 2024 08:24:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id tp9NA9VK3GWwBgAAn2gu4w
+	(envelope-from <tzimmermann@suse.de>); Mon, 26 Feb 2024 08:24:53 +0000
+Message-ID: <a6e73f3f-9bd6-40c4-abfa-84a22de07c23@suse.de>
+Date: Mon, 26 Feb 2024 09:24:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/tegra: Remove existing framebuffer only if we
+ support display
+Content-Language: en-US
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org
+References: <20240223150333.1401582-1-thierry.reding@gmail.com>
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20240223150333.1401582-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="ZD5/dibS";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=8d1vJ7Xi
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.00 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 XM_UA_NO_VERSION(0.01)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
+	 TO_DN_SOME(0.00)[];
+	 RCPT_COUNT_FIVE(0.00)[6];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-3.00)[100.00%];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Score: -3.00
+X-Rspamd-Queue-Id: 48A001FB3C
+X-Spam-Flag: NO
 
-On Wed, 2024-02-21 at 20:31 +0200, Andy Shevchenko wrote:
-> Since we have now a common helper to read port properties
-> use it instead of sparse home grown solution.
->=20
-> Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hi
 
-Reviewed-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+Am 23.02.24 um 16:03 schrieb Thierry Reding:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Tegra DRM doesn't support display on Tegra234 and later, so make sure
+> not to remove any existing framebuffers in that case.
+>
+> v2: - add comments explaining how this situation can come about
+>      - clear DRIVER_MODESET and DRIVER_ATOMIC feature bits
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+Makes sense as far as the aperture helpers are concerned.
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Best regards
+Thomas
+
+> ---
+>   drivers/gpu/drm/tegra/drm.c | 23 ++++++++++++++++++++---
+>   1 file changed, 20 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index b1e1a78e30c6..2e1cfe6f6d74 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -1220,9 +1220,26 @@ static int host1x_drm_probe(struct host1x_device *dev)
+>   
+>   	drm_mode_config_reset(drm);
+>   
+> -	err = drm_aperture_remove_framebuffers(&tegra_drm_driver);
+> -	if (err < 0)
+> -		goto hub;
+> +	/*
+> +	 * Only take over from a potential firmware framebuffer if any CRTCs
+> +	 * have been registered. This must not be a fatal error because there
+> +	 * are other accelerators that are exposed via this driver.
+> +	 *
+> +	 * Another case where this happens is on Tegra234 where the display
+> +	 * hardware is no longer part of the host1x complex, so this driver
+> +	 * will not expose any modesetting features.
+> +	 */
+> +	if (drm->mode_config.num_crtc > 0) {
+> +		err = drm_aperture_remove_framebuffers(&tegra_drm_driver);
+> +		if (err < 0)
+> +			goto hub;
+> +	} else {
+> +		/*
+> +		 * Indicate to userspace that this doesn't expose any display
+> +		 * capabilities.
+> +		 */
+> +		drm->driver_features &= ~(DRIVER_MODESET | DRIVER_ATOMIC);
+> +	}
+>   
+>   	err = drm_dev_register(drm, 0);
+>   	if (err < 0)
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
