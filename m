@@ -1,78 +1,115 @@
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE3B4D110;
-	Mon, 26 Feb 2024 10:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE6A339BF
+	for <linux-tegra@vger.kernel.org>; Mon, 26 Feb 2024 11:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708944216; cv=none; b=AyWGX/Kx8tU+X55b/A03suq7zx9KhOBzzBqLgsGu9sVO9bHB3akO0sXQZGclvgBwq3l30EgipWDjyI0iIAiW441AStYNbN8ilRV5Nqwlu4dsJDmX5QmBAxT9uHndDqfmOZAe3gDKuobrID1/kbXUWK3O1kpiHdyDWeOSWUB+tFQ=
+	t=1708947377; cv=none; b=m/JB3J/uqccOKYFg7Tal8Pf7X1/WRDFkKVM+mH06cJOfYqlkau5y0lu21OGJs6ndfQVJcZjQrF1Ne+URPMSQyj8nXYD4QMzAZTtxUt+4cSnjtYXkvpeM5cyv1KZS5F4pywIonl8qA4GuFl7ED+DXloSuzhCeDqUbDvUe+nJqudE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708944216; c=relaxed/simple;
-	bh=xZZaRwo+VE+JdIuDLOxMgKt7d4lhYqHZZw3SmZSBi1E=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ieQZ2t23LvyiqxrUxRxS0G7qyxusRHN6O7qdVJ3bhOAVY2fk8VfsX9F2RIh//T8i9XtJy6jicWdyOTeJfNePzV29T2x6T96BCyrH4AqPMddgyiL6z5u22wPi3KziWzO8vh29BUNVHPaq32lhHfPAnIaNjNR2ITHnLGXTxzIfb/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S8PzLHDW; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1708947377; c=relaxed/simple;
+	bh=tlBeQiGzC3BFt5HQaT8KjY4Pr7SkT6+n9dnzsf46Skk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZsjkScFFAa3xBBApwiy3KOYhi8bGI9+K5htSf/jo4XmHj0eZ/yRKr7oNKQBnb72EImNASMcVnLiY5Z+5+CXfOHjFEmdhHHsLvM41vOVZtd4Uq2fp4BjtWn2epHJc7xJbRLQym9lOkANPElZhl4svmR1htklH31DdyELuhstJtS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=agq/r/qk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S8PzLHDW"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 366601BF209;
-	Mon, 26 Feb 2024 10:43:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1708944212;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="agq/r/qk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1708947375;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Im0dd+xV/6aatIfuvAgE4yr1Ev4gmz/X+TFs9Fz1xS0=;
-	b=S8PzLHDWRECMzBtDc2peHSLxHlwYDZ1H8GfPZYWaujpl4a6nSbjTDS/WmOKC+xJTVC6RKU
-	yn4s1Gh5EKOzzoxSuxaI6RjjbuXbF0Imh7Tg1V3pm7b9Oq7O0krAlEPFyEtTW5oZ/+JMfo
-	aB/M7/cbw1WkCjXyyc6SPOhACpWV0bQvIrxcZKerJb75XZhKmeo1N0PDrcy8bSGiD1/aH7
-	gmWAAzRvCTDDcjGWNjrqGY45VKu9lmmp8UQoX9mfs5pNwmGmoirOGZpG/l/Cm5aZnL5wbu
-	epHBBqapYoQ6r5OgTo0umgITEkK1GEe0lK3Uf78RFjEEEVC3dCr4uasJWLwrZA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Nayab Sayed <nayabbasha.sayed@microchip.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stefan Agner <stefan@agner.ch>,
-	Lucas Stach <dev@lynxeye.de>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Han Xu <han.xu@nxp.com>
-Cc: linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mtd: update references from partition.txt to mtd.yaml
-Date: Mon, 26 Feb 2024 11:43:29 +0100
-Message-Id: <20240226104329.489122-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240208-partition-txt-v1-1-4398af3b7bb2@microchip.com>
-References: 
+	bh=FiM5Ab3c2YEsIuh7FkITwyub7eTq27XaCaUZGe1oNzY=;
+	b=agq/r/qkrXQe415xCLlATdnh/ZXkSWgB7aWgPMZTK0vvQX4x5oBMwQitQIOkuaSIBzqq+f
+	dWSYOEAgK4648faqQjb6kVgzyflw/lQAcEfo4NCUr1/DQ11Qn9kgJL1Hg1BQZ0oZWo11tC
+	g5me/rqPuIL4M+w8/CVobZ0gywaJj4o=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-212-BMSNpBv6NIynYOYRpzGyhw-1; Mon, 26 Feb 2024 06:36:14 -0500
+X-MC-Unique: BMSNpBv6NIynYOYRpzGyhw-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-412a51d4cf2so4228775e9.0
+        for <linux-tegra@vger.kernel.org>; Mon, 26 Feb 2024 03:36:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708947373; x=1709552173;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FiM5Ab3c2YEsIuh7FkITwyub7eTq27XaCaUZGe1oNzY=;
+        b=v2NkIBzFIdkGu1P0Cumx3wwm1sOQvxvFlnC/jm8eItH5tx02OC6Qab6VME+U9sBuGY
+         BFLHTmgAzO4C1A1ApeDb/J9JnyZ/BKmWdqlmX3xKRPfj6DKv0XSpKq7tFH0r4QYYoEXz
+         Y6cLh5BczXOPqCKP8iPBFT3pidfbgLbKOpgpMEDpwylCCuYroeawL1ExDWbgU0Xskdm8
+         xqQM6M31WNGZdEtYD1ZyiYauOiNq+u1W1/0qRU2VuE7FWIn6bDEAXCmbvbAHkPZ2ynRa
+         swUTS8W1d/Uz5i3KRvSxGAhfrKY6OH0+OI0YtsptdewoWHb07Z8V9ZQKduxbAytlyXiw
+         g5Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWGe0pGHIF1vl5aiLTPHHmGyP261XC606zdQZA0eYCHK2fanCNNVv2qtxe9ZmysCWML5t3SYsmR8AiCuK7hxMjTKpEljVAuxuVoLJw=
+X-Gm-Message-State: AOJu0YzY23nH29IOt8EAhVclS61FeQD1AqBvUimpuacySOoBDpcqgrDy
+	EdoAUGK6KbtSzCZsYlrj3I7eZC/wBHNHly5EoFf8uIMQiC4A2fZot89oEl7prd+/gjWP+Nmw4bv
+	19PPafAFWzehuQgPQEXbqyq2k7aFE3vKJZt3xbJl+fX+CZd+9ZVgrTm/mCYeF
+X-Received: by 2002:a05:600c:3596:b0:412:a6ee:f02c with SMTP id p22-20020a05600c359600b00412a6eef02cmr1298472wmq.41.1708947372999;
+        Mon, 26 Feb 2024 03:36:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGR/9WiyuxbOSRTdu3HNLiiES+3vcXjXufzWFFoCAwoJviZIRa7spdFpP/3r+pUPyCBAYYA8A==
+X-Received: by 2002:a05:600c:3596:b0:412:a6ee:f02c with SMTP id p22-20020a05600c359600b00412a6eef02cmr1298455wmq.41.1708947372688;
+        Mon, 26 Feb 2024 03:36:12 -0800 (PST)
+Received: from localhost (205.pool92-176-231.dynamic.orange.es. [92.176.231.205])
+        by smtp.gmail.com with ESMTPSA id z18-20020a1c4c12000000b004120537210esm11694435wmf.46.2024.02.26.03.36.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Feb 2024 03:36:12 -0800 (PST)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, Thierry Reding
+ <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2] drm/tegra: Remove existing framebuffer only if we
+ support display
+In-Reply-To: <a6e73f3f-9bd6-40c4-abfa-84a22de07c23@suse.de>
+References: <20240223150333.1401582-1-thierry.reding@gmail.com>
+ <a6e73f3f-9bd6-40c4-abfa-84a22de07c23@suse.de>
+Date: Mon, 26 Feb 2024 12:36:11 +0100
+Message-ID: <877cirpidw.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: b'8709aa3e9d7ed8aadf0ba193821c8a2b692092a1'
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain
 
-On Thu, 2024-02-08 at 11:42:12 UTC, Nayab Sayed wrote:
-> Commit f902baa917b6 ("dt-bindings: mtd: Remove useless file about
-> partitions") removed the file partition.txt. Hence, in this commit, the
-> lines mentioning this file are updated to reference mtd.yaml, which now
-> includes partition{,s}.yaml.
-> 
-> Signed-off-by: Nayab Sayed <nayabbasha.sayed@microchip.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-Applied to https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git mtd/next, thanks.
+> Hi
+>
+> Am 23.02.24 um 16:03 schrieb Thierry Reding:
+>> From: Thierry Reding <treding@nvidia.com>
+>>
+>> Tegra DRM doesn't support display on Tegra234 and later, so make sure
+>> not to remove any existing framebuffers in that case.
+>>
+>> v2: - add comments explaining how this situation can come about
+>>      - clear DRIVER_MODESET and DRIVER_ATOMIC feature bits
+>>
+>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>
+> Makes sense as far as the aperture helpers are concerned.
+>
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+>
 
-Miquel
+I believe this is drm-misc-fixes material. Since the tegra DRM will remove
+simple{fb,drm} for Tegra234, even when the driver does not support display
+on that platform, leaving the system with no display output at all.
+
+Are you going to push this patch or is going to be done by Thierry?
+
+> Best regards
+> Thomas
+>
+
+-- 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
