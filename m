@@ -1,138 +1,105 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7C71B946;
-	Sun, 25 Feb 2024 19:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59C717BC5;
+	Mon, 26 Feb 2024 04:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708890794; cv=none; b=jiQwN0jYlRhcca+GvvQvGKkCrwtBn/Oho9e1uOCZfMRlmG7e1moowf2S/JuEJCrkri0GgyfFrV/ZRBOKyw0lHIEdSHVClrwH9BOfIXdS63ihmlsklBO7B9Nar/eAXIT4iWL1yDD79fxxRlRPjU4xcbG1hN0RFPtTwhCgA4IQrCY=
+	t=1708920756; cv=none; b=D1r3MGu+OnPipM47h/ivV0CGN0oY3qAEPAixZAJA9RsowZNLwI/IbSlvWO0Kc9erETtIaYUSwWr6C4NNyeyz6ZulBo93vsBMEEKZSVPLV7LQlp0qdOcCNleP/X3TXdo7rXih+NLlcL0mJhQ3rRN7QVG956bhum5t7wdpqCVMhAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708890794; c=relaxed/simple;
-	bh=jD97tToUqKAgstVC7PqdchtOp4i3N+IGMoy1uLtAi5I=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=AwHD7h2K7t4FTCuwQS8IMIPU5Y3qVQIiyW2HD6RGgxWQbvdlpoIa28pZSrheW4fQad6rTuptSXuojioTjgkTKZx9iv9GGtzQvKRN112xQvLfIAceL5DC8xreOdaK5/PnQfvIjzlDnAKje4V5PoZxO93HXcOa5qRlGvAmOsV2BNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=G8CEbXei; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	s=arc-20240116; t=1708920756; c=relaxed/simple;
+	bh=Pe94gA4uf1vHFYSF+mnEFT0ytZjmWjUodzwCgag62eU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=S+i0L0I9hMvsN1bu1CFPxvS5LcrTF2t/7GjByAvxVDAGZJRTgBD5hsVCNzw6x73e13d7uMHjeFvjAFdYcX/Kc1RZChEYlOpaDKhu+y5yGBysRt32D7umRsNC3X0Lvl/9rrNjcdYgNWRe0wGbjL3HrzxLKqTYI+R9QlRc3yKifYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=mrK4AxRc; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="G8CEbXei"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
-	t=1708890788; x=1709495588; i=marvin24@gmx.de;
-	bh=jD97tToUqKAgstVC7PqdchtOp4i3N+IGMoy1uLtAi5I=;
-	h=X-UI-Sender-Class:Date:From:To:cc:Subject:In-Reply-To:
-	 References;
-	b=G8CEbXeiv89F1s1ABQ+PDxniBW9ra8PjUoZ34MAnxfSeTCsukTqoK2oq1R7xPfIc
-	 qcWjhuW8It6ojI1nym3CFSkO9FbcludHt02EP19PLiE77Z12iJiquP6Mcp8ooad0D
-	 DR72nEkB8t0aq1ixZip6oSdRnh0UWLpCG36VjMpXyTJoL/jzEs0HM4daQkf3qsmTT
-	 6AFvomTwnVFN1DWZEsAkDT+LCncHWg45JNj2bmv+7TSwA23AJ2RKhCpoyJxsCzxm7
-	 SNVYzMWVHTuGPkxuwLwbogt1gwJVeTjREZgIxJSXUnSxBy1p1bVbHr5TZZwVoowGI
-	 zpXQeDSzZ7wM2XocZg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from n5219w05.fritz.box ([109.250.32.230]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mnpru-1r6eQo2uSY-00pK9u; Sun, 25
- Feb 2024 20:53:08 +0100
-Date: Sun, 25 Feb 2024 20:53:07 +0100 (CET)
-From: Marc Dietrich <marvin24@gmx.de>
-To: Thierry Reding <thierry.reding@gmail.com>
-cc: Marc Dietrich <marvin24@gmx.de>, linux-staging@lists.linux.dev, 
-    linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/2] staging/nvec: update comment regarding udelay in
- the isr
-In-Reply-To: <CZ971XOHA968.3OVG90NP5YYJP@gmail.com>
-Message-ID: <a397f4e9-03e1-2f26-97cc-e1141d143b5c@gmx.de>
-References: <20240218212557.22836-1-marvin24@gmx.de> <CZ971XOHA968.3OVG90NP5YYJP@gmail.com>
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="mrK4AxRc"
+Received: from [192.168.68.112] (ppp118-210-168-240.adl-adc-lon-bras34.tpg.internode.on.net [118.210.168.240])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 85F5A2014E;
+	Mon, 26 Feb 2024 12:12:28 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1708920752;
+	bh=XXRWq9LzaWJldDlLUORe5CRUYm2s2hhDXWkS7OTa4Lg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=mrK4AxRcBQAiIKCOPTCJmIVgne/8nIuXIhpXuCDvYKC2xvr/0qonrkIXrDVMHnkfV
+	 SJpQ4glDbG8r8ZjSpRe+DY6Ey7JhHXhfcfOaTTqNev7gE4fsswYgJPcRwqQuMxQUhh
+	 BRsglrzdRY+rIyDxyE3sHLuSt/KMh5558ntUPdudvw3DoZIN56Eblru48iBTPsNITc
+	 /m0B0b/q1uA3uO0RcplIh/4kxIWbI6pxJ4/lCg3g7iwcqHbLU8D7m5H3O8ChcCltuz
+	 o55K+LzKWT+TD7MkYpfONNShG2JzgYB31QHJBUSVedDncb82YdRV5cKQoSRMIq7zBB
+	 //zPm9ZLM1GHg==
+Message-ID: <ab237d0e08b6919d29f25d89ec34d149341f4c57.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v1 10/14] serial: 8250_of: Switch to use
+ uart_read_port_properties()
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner
+ <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+ linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org, 
+ linux-mips@vger.kernel.org, linux-tegra@vger.kernel.org, Jiri Slaby
+ <jirislaby@kernel.org>, Joel Stanley <joel@jms.id.au>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden
+ <sbranden@broadcom.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Al Cooper <alcooperx@gmail.com>, 
+ Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Paul
+ Cercueil <paul@crapouillou.net>,  Vladimir Zapolskiy <vz@mleia.com>,
+ Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+ <jonathanh@nvidia.com>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Andi Shyti
+ <andi.shyti@linux.intel.com>
+Date: Mon, 26 Feb 2024 14:42:27 +1030
+In-Reply-To: <Zdd6lnXwvpPPUhRR@smile.fi.intel.com>
+References: <20240221183442.4124354-1-andriy.shevchenko@linux.intel.com>
+	 <20240221183442.4124354-11-andriy.shevchenko@linux.intel.com>
+	 <0a828f2c50de712940fb9a881702ac1678a35b7c.camel@codeconstruct.com.au>
+	 <ZddKzHplwOX7naLv@smile.fi.intel.com> <Zdd5m2xIPlGI0_Qv@smile.fi.intel.com>
+	 <Zdd6lnXwvpPPUhRR@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
-X-Provags-ID: V03:K1:325/EaBcvmQLY0s6hOGyRZVfCSb8t4h/XGuQtv1i7JCmQz73hqc
- M3skKtFGIpuz9oRBgYpwO9B1wv6aRJCux+1Cj5i1eu1R8NSRXFCuDdy7INDt3alNKTBQMYS
- 42UAW3SXVTguj+tmZ2QQHI4soAV4dBs+uMCnJtZrlqbIsS1wDP1xkzoNW8GrRPTFvyOrPk0
- aIoHwc1ny5zzL7qfpHYDQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eavW0JuL9Zs=;v5JI+wb1HKqGki/MNTxJaTdwsV9
- Efh2uatVd9esVtJDJit0QtsYApFqX9psoKatxjaloSv5CACKpNQyyuk58YItqjJrfaxtQiCNK
- x4Vi/+pNQba7wWLTC5L41qfuw3rUOTG4sCJvzrEEiO5pPuSaaitxo2WJJm065WW0QvWP/oRWq
- BdNbpDRhBNgHYow1l6kKqbA4trjmnVXpXSnGDAldXajnXqctaSgR3A48xgbWeoJ89StB4/3TV
- LV9WP+SmOq6hzrm1BXnpYYuk6QORk5J7PVBNdDwpz0giMvnN3JXzYLtty6/CIQExT0E/VJ4/a
- NB7FkdTc1h5nueZ4zGV4iDiuA3jvpW/SH3oWrgzbs1WHSQ7Z/ERBGLL4XzouHIrIveeYdnB5E
- mNzU/3jhAEVeb0V+T8DrSil9eiWwExhIh/LIzSbpgN6+8qWvqsO8ExR2IwERReRsesa1FDdhk
- VRWQd39OZUJNBaO2d+Doo62y9X5gVWIwzEAWu/UiaKLje3r46x8K16IFgGjsfxRhFbDzfbHfC
- bBAS8NaosmJqFbLDLGBv9tHDraUUY7K9Lbo/msmIXycsopZU7vrXoIzp5ZQtuqJlKtc9u82Pu
- 6NbQ2FYVSR5M2VUO8HnjeMgY9krNbC/3+59dX6KDQSB+SMIh7Ogi1XhDfFVM5tYa/pCf9/ScH
- W5epNw78kc1taQLtB/R30aD7kRP9h30djUfZqTVNq3kItMJ6/SidUPLQOJ+WwZlQkuFhG+feS
- wonKpX2/amCrXmpHI80ybQliwkGhTEtbCsDhkMFxc88YLY+CKNUI/4z2x2uAvbLL8DcA89gR4
- 4k/L+093JW4cZVQsy6OQKoqSmwU8tVT2svnQc8R2hVJW0=
-Content-Transfer-Encoding: quoted-printable
 
-Hi Thierry,
+On Thu, 2024-02-22 at 18:47 +0200, Andy Shevchenko wrote:
+> On Thu, Feb 22, 2024 at 06:43:08PM +0200, Andy Shevchenko wrote:
+> > On Thu, Feb 22, 2024 at 03:23:24PM +0200, Andy Shevchenko wrote:
+> > > On Thu, Feb 22, 2024 at 11:07:05AM +1030, Andrew Jeffery wrote:
+> > > > On Wed, 2024-02-21 at 20:31 +0200, Andy Shevchenko wrote:
+> > > > > Since we have now a common helper to read port properties
+> > > > > use it instead of sparse home grown solution.
+> > > >=20
+> > > > I did some brief testing of the series for the Aspeed machines unde=
+r
+> > > > qemu, building them on top of v6.8-rc5:
+> > > >=20
+> > > > export ARCH=3Darm
+> > > > export CROSS_COMPILE=3Darm-linux-gnueabihf-
+> > > > make aspeed_g5_defconfig
+> > > > make -j$(nproc)
+> > > > qemu-system-arm -M rainier-bmc -nographic -no-reboot -kernel arch/a=
+rm/boot/zImage -dtb arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-rainier.dtb -in=
+itrd ...
+> > > >=20
+> > > > I got an oops during boot, which bisected to this change:
+> > >=20
+> > > Thank you for prompt testing! I will look at it.
+> >=20
+> > I found the issue, will be fixed in next version.
+>=20
+> Whoever is going to test this series, the
+>=20
+> -		port->iotype =3D use_defaults ? UPIO_MEM : port->iotype;
+> +		port->iotype =3D UPIO_MEM;
+>=20
+> should be applied to uart_read_port_properties() implementation.
+>=20
 
-sorry to reply late, but I somehow missed your mail.
+Thanks, with that fix applied it works fine for me also.
 
-On Mon, 19 Feb 2024, Thierry Reding wrote:
-
-> On Sun Feb 18, 2024 at 10:25 PM CET, Marc Dietrich wrote:
->> Update the comment before the udelay on how to replace it.
->>
->> Signed-off-by: Marc Dietrich <marvin24@gmx.de>
->> ---
->>  drivers/staging/nvec/nvec.c | 7 ++++---
->>  1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
->> index b3f114cb00dc..ec081d81a308 100644
->> --- a/drivers/staging/nvec/nvec.c
->> +++ b/drivers/staging/nvec/nvec.c
->> @@ -709,10 +709,11 @@ static irqreturn_t nvec_interrupt(int irq, void *=
-dev)
->>  		status & RNW ? " RNW" : "");
->>
->>  	/*
->> -	 * TODO: A correct fix needs to be found for this.
->> +	 * TODO: replace the udelay with a read back after each writel above
->> +	 * in order to work around a hardware issue, see i2c-tegra.c
->
-> i2c-tegra.c is almost 2000 lines, so it'd be good to be a little more
-> specific. Are you referring to the work-around in i2c_writel()? If so,
-> perhaps mention that function so that people can find it.
-
-yes, I thought this should have been clear as there is (nearly) no write
-without a readback in that driver.
-
->>  	 *
->> -	 * We experience less incomplete messages with this delay than withou=
-t
->> -	 * it, but we don't know why. Help is appreciated.
->> +	 * Unfortunately, this change causes an intialisation issue with the
->> +	 * touchpad, which needs to be fixed first.
->
-> Perhaps something like: "... this change would cause an initialisation
-> issue... " to make it a little more clear what you are referencing. Is
-> there any information about the touchpad issue? Any idea what's going
-> wrong during the initialization?
->
-> Seems like this issue has been around a very long time already, and the
-> further we kick this can down the road the less likely it will be that
-> we'll ever fix it.
-
-I must confess that I wasn't motivated to fix it, because it works most
-of the time. The driver needs more love than just fixing this issue, e.g.
-implementing a reliable sync write which may be one of the underlying
-problems.
-
-On the other hand, there is a downstream i2c client implementation [1],
-which uses the kernel i2c infrastructure and may lay a better foundation
-for the current driver.
-
-I'm also not happy with the current situation, but the only alternative
-is to remove the driver completly. I'll try to find some time to improve
-the keyboard / touchpad initialisation in the next weeks.
-
-Marc
-
-[1]
-https://nv-tegra.nvidia.com/r/plugins/gitiles/linux-4.9/+/refs/heads/l4t/l=
-4t-r31.0.1/drivers/i2c/busses/i2c-tegra-slave.c
+Andrew
