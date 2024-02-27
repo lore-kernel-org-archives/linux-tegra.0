@@ -1,144 +1,113 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF1C13B28B
-	for <linux-tegra@vger.kernel.org>; Tue, 27 Feb 2024 13:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222A913A25D;
+	Tue, 27 Feb 2024 13:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709039974; cv=none; b=OvQhlXVCAFl6VmDjczS+JrHPF/ZE7SywpWdTN3can51yv7x3WY54wjlndp1cbdMPea0RLT80JU0SU7/xOFmkqt3yp+xJXKSIz0vjIgVNtLvRye40bLWriFOjslzJUMu2DEl41/cFN2X42wsJ1KM1Bj1KW2sM0Z3lc2UrT3I5+Ng=
+	t=1709040428; cv=none; b=Nh5FtIS1vq3Mjx2AEPAhaW7qUEByV9pMMQBDxjjEhMFX8j/Cb6fFAWSpM8msDCnCwaCoG6ZYz6wNcPsRGMhqVUq8R8gCw0hUQnHexIEssnFBYfvKkQX6rzGkE/zPx3ZjNHdSrbIwsXATycX47DtkwbzvYWrCkyaRHXFGtYWZ3k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709039974; c=relaxed/simple;
-	bh=Hi7nlCHNz3RxAz29xfwgOX7uHlYIPKBl6xTpl5nROnc=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=lqeF3d8ZKF8U5IGxvhaKw9nmIrkdkInvPNpXTguZXMF/va5fUemP5BtN0mTGPj/xS5Ozebv2ZvJouAR/CF0EIVN4ij3Dut9r1FagrvZ68Mx9XJg/NAhWkvApKSIRK7HSH0+8n0jPW+fsg5slBkty19BuCTv3FcHaweCK4dSh41E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwqHLARH; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709040428; c=relaxed/simple;
+	bh=mQuoPMjiuf8ynXjuDbiiuc6MSut0kX4NXC2fBVQm6FQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RqYVIs7BLwIEROh3UN3Cc+DJlndYlC8P3k2XFlYhsaPW8MP1+yQFTT9/kD1xPhrQqqAeCum2SLDK5z7VoTrOW3XfeQ1hGDEpkMlHku8HuUAqmxPtQCLko9cp6WwIU5FYzHwUgtXoB/lzjxDY97uuRLBqRxqQM6FC59g1OXS5F7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YiYsfqrN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwqHLARH"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-565a3910f86so4544153a12.3
-        for <linux-tegra@vger.kernel.org>; Tue, 27 Feb 2024 05:19:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709039971; x=1709644771; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+sVEWnHCtjfx1pduFCApW3G/u4C393hL6iFNK9oD5AM=;
-        b=TwqHLARHcEWbavhmsYGItVHuKR1G5XgImQFh9X93bHlc+CZ/a0QalHJiE6fzXKoQye
-         PkkAw5dJcTLmJHUb08Hs7DWzAtLpgJsb2+fleqdJLGEYfAVCSESrfOAhU+VxebPbKYnS
-         U2HTMYi73BklvF4dv6Wqe9PLUGAm/bJXkNifWBKqUxUa2DnKZ79AdaFDPev5La8rJqHh
-         Aa4bt55lXP9dyDRifLI4wXA36ySmTm/o052g+0ie2VEWRK9LVn1eo7JRMW92BiL7TMti
-         XZxjLPt+uY2teGxBPDnWTGie6ScaLus613wl/5CQcsq/+fFyZ5/WetRF5eQDOXfLbNKm
-         XN2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709039971; x=1709644771;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+sVEWnHCtjfx1pduFCApW3G/u4C393hL6iFNK9oD5AM=;
-        b=rcOy4EHm00tU8Xhv8fEQPn4CnPOP1libXdscQTp4j2hhbjPkzOgde3rqpP+UfkxR++
-         m3FEPIIwbULJOmFm2eXWGWoPPWmZwJmU9EpPJeR5ASK8uyIWxNpGQTpNLTrhyE3R9Pzn
-         sc29RbZL2LRihKQlWfgPsr1Eowz0BkRDMhk6eKEiqXc9JtmipGl+Rt2iqCjqZC5YhKOv
-         bhCpdcBtIfsipI5fBc1ZPmTQpCW+MFtZhscmXrCJxmKaK+Vx4YftVhG4fzXJqEkz8GGG
-         c4yHkB3n/tTNoJKYVzAmB30e9qO1ywNtUT+v5vcYjDb9Fys4glzwgBrO/dXbyIXguYHQ
-         4xQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9MFob+FJVIv487sbpWMmmI9nORAEMVCj3t/zFj6QkDs/oJI5PidJDIf4b5tM8oZ/UCaetwrkpnbn++go8F4k0+IEzzwmFVeFYJYs=
-X-Gm-Message-State: AOJu0YyLYvpOMv9pqJycCkiz9bnk884OMKt7d9xvTq63n5ZnRVAMpjj1
-	lgs1iqi8yoTiDuKbfeyN/XS3H/uZdNL8WeptmSReHwuI0wq/QhnS
-X-Google-Smtp-Source: AGHT+IG2KIGf2F5Kr6AZj3iQCE3Cyo78/KJKKN6Yl8bLrEHIRGCG9zdhpJ4y5EtqjSwGhVBc6CmUFw==
-X-Received: by 2002:a05:6402:1646:b0:566:2ee3:4993 with SMTP id s6-20020a056402164600b005662ee34993mr1499869edx.26.1709039970865;
-        Tue, 27 Feb 2024 05:19:30 -0800 (PST)
-Received: from localhost (p200300e41f222300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f22:2300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id n4-20020a509344000000b00565a9c11987sm791962eda.76.2024.02.27.05.19.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Feb 2024 05:19:30 -0800 (PST)
-Content-Type: multipart/signed;
- boundary=4204c71fdc6aae8d369f5c112ca50bae35e50ea7afdce5785f0b598d6323;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YiYsfqrN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C53CC43390;
+	Tue, 27 Feb 2024 13:27:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709040427;
+	bh=mQuoPMjiuf8ynXjuDbiiuc6MSut0kX4NXC2fBVQm6FQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YiYsfqrNmxelw6OLCadO4d24dF73YVqv4GXCnzuNjZu47FB3rTy1hLVSKKAefEn1s
+	 ZMDN8gvO4BI8MI5h5oSI9qx85Gz8zdwEdyk5aGSjNSqYu1swE/C6/dcwxG2Ssf/V6p
+	 XH2rJg1Gc/o2ziShAi0h6jOS0LMybeZg5kh1ao5XhYDLQh3aICvvUNI7NjFpGLeW7u
+	 X5l5k1SHu5oQ2RzsIRiRv47fR/9KGDtu3DeKi7G+RXf8Dg2gnwpuJv/NZCdkH1BCD0
+	 85J66xJ7KqCX83NhABKxeyFSWFJHqZObxs8XA1oRVABAdLOzaeGmnowo8GwAvfctE+
+	 IU+Mjg83pNh8A==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-512fe342841so1770883e87.0;
+        Tue, 27 Feb 2024 05:27:07 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVysh9KTj7+CwVyW2d8AJbZqez+bRdfLq2PvE4eI6DJBrEhoOr4Dj/PXISrpyOMtJLOdrLOaBStyo6ODZ/i1Xw0e6a6mpYeLIbp22PdwJcpjARlF4/XDQnLocx7rrErruJqqIkZHzB/r8djJu2A2iKgzrKX6P4dVompyJpIH6xQ1XkJ11gVOkwAIUcRTJfLjxOrIiPWwlRqTxBbRz4BlYvB1HW3cKe10qF2AtIwozTWhwrCU8zo+OaYLcm1iDy21Ji992M/U2JB2gIujvWb9IQEHe5VMDgmQbOn
+X-Gm-Message-State: AOJu0YxmAxNKZNPuYfZvSQ5Vjveg/uKVOFtFjdsIJRBle3omyhOESyQm
+	T5G1SBqZhgS7r9JYZ5YJb1wW+jlWUw3p7dfUC227j0BzNDTzOb2SYH1EbWX3ZPWLj3yy4gNWofR
+	oYO0/sJreaY/i6fhgmZjkJPPBtg==
+X-Google-Smtp-Source: AGHT+IGSECgtfha3Slu/bp01d2++70z6Ndl3JBsL88LZ7J9E4A1ZYVnx89bJzdpkH8hy8sv4XeL5Ccsb8VUnBLV0130=
+X-Received: by 2002:ac2:5611:0:b0:513:7b1:848c with SMTP id
+ v17-20020ac25611000000b0051307b1848cmr545044lfd.18.1709040425849; Tue, 27 Feb
+ 2024 05:27:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Tue, 27 Feb 2024 14:19:29 +0100
-Message-Id: <CZFW3VGPIM2S.17UDYEGTTEXBL@gmail.com>
-Cc: "Jon Hunter" <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [GIT PULL] arm64: tegra: Device tree fixes for v6.8
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Thierry Reding" <thierry.reding@gmail.com>, <arm@kernel.org>,
- <soc@kernel.org>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240226144536.1525704-1-thierry.reding@gmail.com>
-In-Reply-To: <20240226144536.1525704-1-thierry.reding@gmail.com>
-
---4204c71fdc6aae8d369f5c112ca50bae35e50ea7afdce5785f0b598d6323
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240222174343.3482354-2-robh@kernel.org> <ZdemsdGQE0RtilCd@shikoro>
+ <CAL_JsqKpn6jqktRLQUx7HMrJG0PZeiOZ=hQnHpZK6AHcM22CLQ@mail.gmail.com> <Zdkda5jf072mENvK@shikoro>
+In-Reply-To: <Zdkda5jf072mENvK@shikoro>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 27 Feb 2024 07:26:52 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+Wus0CFpD3+b1Ewfv0e7iCE35gzsAwahBxErex6tY5Ww@mail.gmail.com>
+Message-ID: <CAL_Jsq+Wus0CFpD3+b1Ewfv0e7iCE35gzsAwahBxErex6tY5Ww@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: i2c: Remove obsolete i2c.txt
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Andi Shyti <andi.shyti@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-i3c@lists.infradead.org, linux-sound@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Mon Feb 26, 2024 at 3:45 PM CET, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
+On Fri, Feb 23, 2024 at 4:34=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 >
-> The following changes since commit 841c35169323cd833294798e58b9bf63fa4fa1=
-de:
+> Hi Rob,
 >
->   Linux 6.8-rc4 (2024-02-11 12:18:13 -0800)
+> > > * In the schema, "clock-frequency" has a minimum of 1kHz and a maximu=
+m
+> > >   of 3MHz. Why? The specs do not say anything about a minimum freq an=
+d
+> > >   fastest speed mentioned in the docs is 5Mhz (Ultra fast mode).
+> >
+> > IIRC, the high speed mode originally topped out at 3MHz. I guess
+> > that's been revised.
 >
-> are available in the Git repository at:
+> Hs-mode has a max of 3.4MHz...
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
-a-for-6.8-arm64-dt
+> >
+> > We can drop the minimum.
 >
-> for you to fetch changes up to ff6bd76f4d997642ef390bffe42e93d6f7be87d3:
+> ... but I see you changed min/max now to 1/5000000. That's what I would
+> have suggested as well.
 >
->   arm64: tegra: Fix Tegra234 MGBE power-domains (2024-02-22 17:58:59 +010=
-0)
 >
-> Thanks,
-> Thierry
+> > > * new binding "i2c-scl-clk-low-timeout-us" has a description which I =
+do
+> > >   not understand. What is a waiting state?
+> >
+> > Shrug. May have to look at the MPC h/w that uses the property.
 >
-> ----------------------------------------------------------------
-> arm64: tegra: Device tree fixes for v6.8
+> I will also have another look. My gut feeling is that the binding is
+> okay, only the description might need an update.
 >
-> This contains two fixes to make the MGBE Ethernet devices found on
-> Tegra234 work properly.
+> > >
+> > > * new binding "no-detect" is broken. At the least, it should be named
+> > >   something like "bus-fully-described" and then the OS can decide to
+> > >   leave out auto-detection mechanisms. If you are interested in the
+> > >   latter, you can simply disable class based instantiation on the hos=
+t
+> > >   controller. No need to describe this in DT.
+> >
+> > I've reverted the property now.
 >
-> ----------------------------------------------------------------
-> Jon Hunter (1):
->       arm64: tegra: Fix Tegra234 MGBE power-domains
->
-> Thierry Reding (1):
->       arm64: tegra: Set the correct PHY mode for MGBE
->
->  arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts | 2 +-
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi                      | 6 +++---
->  2 files changed, 4 insertions(+), 4 deletions(-)
+> Cool, thanks!
 
-Sorry guys, I didn't spot this on the list and thought I hadn't sent
-this out so I sent it a second time. Please ignore this, it's the exact
-same PR as the one from last week.
+I don't think there's anything else to discuss on this patch, can I
+get your ack?
 
-Thierry
-
---4204c71fdc6aae8d369f5c112ca50bae35e50ea7afdce5785f0b598d6323
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXd4WIACgkQ3SOs138+
-s6FqkQ/7BSvxk6B7SGLvYEO4J19S+kyW0VABxRDERWP8QXQ+8ep9F9G9qGlSBprG
-itDRAfo3kn1ALOCBATDF2C786D2at6HWYg25LJn9uxaZS4avW3xQlEiux6AVFbiT
-13IOEh+OwKm8ooXZgnqnDgNeTdgdJYL1VPr589qQvYb1WBHU745IQeieeT17wYz7
-TE3QWBNu8yjiBOCDBXFNrQvR3nFgAQqqImb46R7rVfjL1YYDiZxlTxol2nGZQZiZ
-PJZM4ifCet5kv1ZqkWhsYi7Ga2R5qQX+W60imfIK0sobLeD1cpVEQmhmwZrFf/D0
-x11d/Dn2+5leMzdsKtIvR3P/5vLAFwQNc3NGxMulpBnVyHW2BUwYaX7X1elesztY
-FHZdLgRFPN8MQvWvbOsn9twtrr/jsmrtCgXBGkUMLx1Eun6bugVivCIzT6tJ9100
-Xn5oMQC3H6bisrews0xx3RFnkCCcCGxb/hwFfm3uiikwBO7AnoHlFnNyvNFf+jBi
-wMky2btSWGA2DAjAgQ2IMIHQLSrpI7IL6ilyTdw8nWvJWh5XtNEA8KOaHaxoyRCT
-lnQ5wZT+PwaCEyPHaa7v1bkgkVVU+dYycziXZBEKjRNPQW0xa/m83wGkFEeIvZBG
-wJXeJAEk5JyQlU55ip7dJ2jkLavJRYzoilD0vOfumgzm8qs5SdU=
-=XMA/
------END PGP SIGNATURE-----
-
---4204c71fdc6aae8d369f5c112ca50bae35e50ea7afdce5785f0b598d6323--
+Rob
