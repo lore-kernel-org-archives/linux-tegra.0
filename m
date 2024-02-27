@@ -1,78 +1,143 @@
-Received: from mx.socionext.com (mx.socionext.com [202.248.49.38])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF48D1332AA;
-	Tue, 27 Feb 2024 09:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.248.49.38
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E7855E63;
+	Tue, 27 Feb 2024 11:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709027106; cv=none; b=azR8yi6mhQF/NOwL1PQp0qzN8XW6w1811Njbc5W+XpgR9KHzPs/RmGsOgtEcgBw9ERpicIPHdiz3GtULjIwBB6e3Z/+xuqYu+MDiwAqWIHLQsyJCyE5pc6S1LpNPBdL8MDOITg4C2s4Nb/4A5yjhouUcH4mjm7UOfspzplcekME=
+	t=1709035100; cv=none; b=cHTNReN+BRM7CXmdPaXBjUK3LLncRgvCKb6AtCb16GQr8Q+LXg702GPl0k79ZdJ4/R7l0F8mnqijKIhD1Jzm0L2aN4vDgtmC0S8H3/zOknP9cC4ne9gdY3OVShR7/0+sNuZbGjdxVZHrWRxkQQPYQbSHMo21WZVyDWl8i/J1Fxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709027106; c=relaxed/simple;
-	bh=WxG9ZhSh/THW/M5a72xK7O/httANrB9iPIhwfUKRXsM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LTxj8RPQ0gncXcNfikyyUT/MkyqcU07CGVl3B7WdFn+7Yi926uPtdTV2aFV+mcxubjmUk/cbO93bED7zVfdsgUlU/ZrQHv10/fKN4POBGIttecD1gNNSMJ0hEFlj2RORW/LceLBcmPd/ixAFeuIOtzKlI8zi3dc+oFylf7Wi91o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com; spf=pass smtp.mailfrom=socionext.com; arc=none smtp.client-ip=202.248.49.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=socionext.com
-Received: from unknown (HELO iyokan2-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 27 Feb 2024 18:43:53 +0900
-Received: from mail.mfilter.local (mail-arc01.css.socionext.com [10.213.46.36])
-	by iyokan2-ex.css.socionext.com (Postfix) with ESMTP id ED58620584CE;
-	Tue, 27 Feb 2024 18:43:52 +0900 (JST)
-Received: from kinkan2.css.socionext.com ([172.31.9.51]) by m-FILTER with ESMTP; Tue, 27 Feb 2024 18:43:52 +0900
-Received: from [10.212.157.38] (unknown [10.212.157.38])
-	by kinkan2.css.socionext.com (Postfix) with ESMTP id F1918B62A2;
-	Tue, 27 Feb 2024 18:43:51 +0900 (JST)
-Message-ID: <2cb457a6-0039-e4fe-3668-690e6355771d@socionext.com>
-Date: Tue, 27 Feb 2024 18:43:51 +0900
+	s=arc-20240116; t=1709035100; c=relaxed/simple;
+	bh=xxZhRagdqpYdE/yRV4Xi7zuH3R59yc8vsZ//HgmIGwQ=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=P+POIhNxPg/DAPb7vYVLnuH7NCQAXOIDbzoGWtlvMsMlOyvA6vIw0Ru4gYmwJRYlqi+HY6ygHl9u13hTg6Co3/vem5UO2LtmENdLjKEXqZDs6sorHoluClWV7kIL9Hl6IYJ5X5hjeblkbnHlWVcV4H7sB3yF6oxA3Ltnsigraw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fb73xaMR; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fb73xaMR"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a293f2280c7so622978766b.1;
+        Tue, 27 Feb 2024 03:58:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709035097; x=1709639897; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iD5yEQo/k0yP9hJDkvshK/ceYjlmawpvxOVwpMDKXyw=;
+        b=fb73xaMRkVybWz9l8k/6j6NgAvCtgdlbLDncNQav7N9teKrN2bKugkIcZul6RC57Ii
+         9XWdF3+eee5jxGZfnXKLDjhuKMr7QYoxE9mDo7IuWHWYHNFKeUlxyFc/pTxacrtFZ79g
+         Fxod7xuTO866g6LMCke33R05d83rg4O5WZ2TCD1c9Z0knP5hQtXpAJweUiiORybQks6+
+         wCTd8algPxApGshuLan7rNx7GB157sUdwyx5fDjUnYC/10L2lZaAVz/OZwuNvg/n4IRJ
+         smieXh6mcmonD0KAXJx+EZ9LrYoDVabBCeDAlUhyKa950KLb84w+2xnRnuHD7jTYUJhh
+         xzZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709035097; x=1709639897;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iD5yEQo/k0yP9hJDkvshK/ceYjlmawpvxOVwpMDKXyw=;
+        b=rjKton5MMVHofpQZDaLHulqmzBcwws9q0E32kyO3jgwLafjJ/g/FYm6J60bsacFHFx
+         0owKo+8V4mnJr4IsPTlrJiHiG9Vuot+rDJjFADtjntCy79bDVbVho1+hzUUhoIy+Ekzq
+         PZ0DjfILQaoUwRVCqUOPU4wdKuF7qNdRCfXGHuqezPSQ8XZ6OR95ItbJowbjpNwUD4RW
+         JqjFXVKPNEjp+etZ8PnfwCCJYuSlEEbTGNhrPfv39BN3kDoTKYAWZXmqPyEyfCZbLjyv
+         u+lzkuEL7gg1X/J4ZKNzgu7no4TVBKvErHUjsQ1BHFTm0DsnbQ8ZK88J2tjfCg6rak1r
+         hkDA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8M3cISEPOTHG94R3KwcKSUpkSsAR1avn8SDEcYsuO9AdSBgtY2KHgR6PhINrFrMxxcaR+w8wTVBbOlOEKbZZYt4U0Z2Yv7p/Il98=
+X-Gm-Message-State: AOJu0YxG6qbNyQr9GOsCors2czGYjAHlrba9+NVkWiZ+U7pa1bEICzOH
+	VFlb6Q6rnOF+Dg4pkTbZk+kyp8uMRuh9SaV+SIpFIMUoIIcV2GO5
+X-Google-Smtp-Source: AGHT+IG/8hrkAmo6firC3P6TvxZ11thXM16Y0Y8yJs4jxFxuCNQ+wTIMavaQOihRto6GArH6Vl7kEQ==
+X-Received: by 2002:aa7:db5a:0:b0:566:2be1:5276 with SMTP id n26-20020aa7db5a000000b005662be15276mr1839910edt.23.1709035096555;
+        Tue, 27 Feb 2024 03:58:16 -0800 (PST)
+Received: from localhost (p200300e41f222300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f22:2300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id z95-20020a509e68000000b00565671fd23asm722478ede.22.2024.02.27.03.58.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Feb 2024 03:58:16 -0800 (PST)
+Content-Type: multipart/signed;
+ boundary=0b310bada9a22be6bb3934105c69e6dfccfb4490b3887f73dfc6b62fff06;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v2 14/14] serial: 8250_uniphier: Switch to use
- uart_read_port_properties()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
- linux-mips@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: Jiri Slaby <jirislaby@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
- =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Paul Cercueil <paul@crapouillou.net>, Vladimir Zapolskiy <vz@mleia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Masami Hiramatsu <mhiramat@kernel.org>
-References: <20240226142514.1485246-1-andriy.shevchenko@linux.intel.com>
- <20240226142514.1485246-15-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-In-Reply-To: <20240226142514.1485246-15-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Date: Tue, 27 Feb 2024 12:58:15 +0100
+Message-Id: <CZFUDO8U8WAE.1YDN70AI3JWNQ@gmail.com>
+Cc: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+ <sumitg@nvidia.com>
+Subject: Re: [PATCH v2 1/2] clocksource/drivers/timer-tegra186: add
+ WDIOC_GETTIMELEFT support
+From: "Thierry Reding" <thierry.reding@gmail.com>
+To: "Pohsun Su" <pohsuns@nvidia.com>, <daniel.lezcano@linaro.org>,
+ <tglx@linutronix.de>, <jonathanh@nvidia.com>
+X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
+References: <CZ96NM6U8O59.3TXG2WKAL7L8F@gmail.com>
+ <20240223235126.31004-1-pohsuns@nvidia.com>
+In-Reply-To: <20240223235126.31004-1-pohsuns@nvidia.com>
 
-Hi,
+--0b310bada9a22be6bb3934105c69e6dfccfb4490b3887f73dfc6b62fff06
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On 2024/02/26 23:19, Andy Shevchenko wrote:
-> Since we have now a common helper to read port properties
-> use it instead of sparse home grown solution.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+On Sat Feb 24, 2024 at 12:51 AM CET, Pohsun Su wrote:
+> Hi Thierry,
+>
+> >> +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device =
+*wdd)
+> >> +{
+> >> +     struct tegra186_wdt *wdt =3D to_tegra186_wdt(wdd);
+> >> +     u32 timeleft;
+> >> +     u32 expiration;
+> >> +
+> >> +     if (!watchdog_active(&wdt->base)) {
+> >> +             /* return zero if the watchdog timer is not activated. *=
+/
+> >> +             return 0;
+> >> +     }
+> >> +
+> >> +     /*
+> >> +      * System power-on reset occurs on the fifth expiration of the w=
+atchdog timer and so
+> >
+> >Is "system power-on reset" really what this is called? Power-on reset
+> >sounds like something that only happens after you power the device on,
+> >not something that can be triggered by the watchdog.
+>
+> I will change it from "system power-on reset" to "System POR(Power On Res=
+et)" in next patch.
+> AFAIK Power On Reset is used for decribing resetting circuits and initial=
+ing whatever it needs
+> when received a POR signal after powered up. This term should also be app=
+licable for
+> hardware watchdog reset since the system is already powered up at that mo=
+ment and=20
 
-I confirmed that it works properly.
+"System POR" isn't an improvement over "system power-on reset". I'm
+mainly concerned that somebody might mistake this to somehow mean that
+there's an actual power cycle, which, as I understand, there isn't. So
+maybe just explain that this type of reset will put the system into the
+same state that it would be after a power cycle?
 
-Reviewed-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Tested-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Thierry
 
-Thank you,
+--0b310bada9a22be6bb3934105c69e6dfccfb4490b3887f73dfc6b62fff06
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
-Best Regards
-Kunihiko Hayashi
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXdzlgACgkQ3SOs138+
+s6FV3A/9E2xaa7fY4Podpe3Oql8JIzZCPAtCtKzCaCy4/GnYEDfspkT44/i1X31D
+hbrbmTFeeZi44771obeHv/0A/ookODruAV2ylduv5T1gYdMpjWRvaCsfnasmL0ZU
+wunFkLvilQI20ncq/COM30KfLZA6eljfvD9laAS2AHS8GZj2HwRFVvxSsBH/7v1L
+GUd3R2TIoChY1pBDVEZPF0ZYl9Dq0O8NoPNfw/g8yhsZOEt8eRQ4IrxC+EKWk/4r
+Ju9gLAAXxlnkdpH3P4AhkTzN/fgbJykiSrbxH5rdcpUHheTu373L6V1eaSbe6ZyG
+51ngM7OXqBAnXI6d6mXCPfP37InT0xZ9BBjwsboFZ7eYtHA6I7fGpzgTA1+zdjOa
+0F4ede8RYEEf3Em46eOAPH3XMv9F1HrsGcaS0vnZRO9LcY5MTGOCpAqTiio92sP0
+CQ7QKL0mUeeXi3kjZSHfvbv7M0ZdggNvi3mjgA94aHHauVve793d2xRCwoulbIb5
+QZwzVHtBgMAPXwkyj7wWmbzTCAsevPEuu0HWkA7GfW0yKqwhygKInJED/Ql3RXKo
+45t8jMGOCdv2yjbu9jNP/zOfl+VN6yGr8XOXQteVaeZvjvC2rCsQ3NE6EWJkVN16
+B2BoXjZ1SThXPmInfwO1+KEkkuf7+ZG5vxaJ9j5s2f4vnAdG7Lk=
+=Ed17
+-----END PGP SIGNATURE-----
+
+--0b310bada9a22be6bb3934105c69e6dfccfb4490b3887f73dfc6b62fff06--
