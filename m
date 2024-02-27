@@ -1,143 +1,168 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E7855E63;
-	Tue, 27 Feb 2024 11:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4371419A7
+	for <linux-tegra@vger.kernel.org>; Tue, 27 Feb 2024 12:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709035100; cv=none; b=cHTNReN+BRM7CXmdPaXBjUK3LLncRgvCKb6AtCb16GQr8Q+LXg702GPl0k79ZdJ4/R7l0F8mnqijKIhD1Jzm0L2aN4vDgtmC0S8H3/zOknP9cC4ne9gdY3OVShR7/0+sNuZbGjdxVZHrWRxkQQPYQbSHMo21WZVyDWl8i/J1Fxw=
+	t=1709036518; cv=none; b=gnE15F1Nhf6TJnGMp+ss5iAeuRL9VLc3CRN27kYCLM9J+hU80WFmWEQ+1nWPz5hnLICwzU3ezbrwwRAkHWko+SHxLr+996A7yT7rOImrYH8qqUS83cvEdIsLwLDswX8r3GEh3NGTTMM6+qonAo+KSeo3PZaJEFw0oHHDLhaCjGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709035100; c=relaxed/simple;
-	bh=xxZhRagdqpYdE/yRV4Xi7zuH3R59yc8vsZ//HgmIGwQ=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=P+POIhNxPg/DAPb7vYVLnuH7NCQAXOIDbzoGWtlvMsMlOyvA6vIw0Ru4gYmwJRYlqi+HY6ygHl9u13hTg6Co3/vem5UO2LtmENdLjKEXqZDs6sorHoluClWV7kIL9Hl6IYJ5X5hjeblkbnHlWVcV4H7sB3yF6oxA3Ltnsigraw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fb73xaMR; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1709036518; c=relaxed/simple;
+	bh=OS7E+/QQezCuwcjLO9iExKTfqPQ2LbBPhoHoghWs9UE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cD6PXEzcux1d65sWEB5yv2tki6wUr4RPtcZ4N8oP9ZHNvByLe5gKEg2lZiLauSNNB8sb+LFTzQFfx7sWklr9iM/SQ7XxrtznsRu5R9CxdJxQ+l4BF3z5Gyh50y8ncHveMHo3V6RLovKcC5zTjp6UIOJgYEmE+RilQCUSktipUZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GewXukva; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fb73xaMR"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a293f2280c7so622978766b.1;
-        Tue, 27 Feb 2024 03:58:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GewXukva"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1dcad814986so13795185ad.0
+        for <linux-tegra@vger.kernel.org>; Tue, 27 Feb 2024 04:21:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709035097; x=1709639897; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iD5yEQo/k0yP9hJDkvshK/ceYjlmawpvxOVwpMDKXyw=;
-        b=fb73xaMRkVybWz9l8k/6j6NgAvCtgdlbLDncNQav7N9teKrN2bKugkIcZul6RC57Ii
-         9XWdF3+eee5jxGZfnXKLDjhuKMr7QYoxE9mDo7IuWHWYHNFKeUlxyFc/pTxacrtFZ79g
-         Fxod7xuTO866g6LMCke33R05d83rg4O5WZ2TCD1c9Z0knP5hQtXpAJweUiiORybQks6+
-         wCTd8algPxApGshuLan7rNx7GB157sUdwyx5fDjUnYC/10L2lZaAVz/OZwuNvg/n4IRJ
-         smieXh6mcmonD0KAXJx+EZ9LrYoDVabBCeDAlUhyKa950KLb84w+2xnRnuHD7jTYUJhh
-         xzZg==
+        d=linaro.org; s=google; t=1709036515; x=1709641315; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Fox2FOTrnn7H7ARtUpilsDQjBFro1sbb1UtQfPOSFHk=;
+        b=GewXukvadPyjq8mmPdVrgdexPxxyZVm5taQLw4UE8uzO1qUZywn25e1hJOamHZRCwn
+         yY+fYRQ8cx2oj0K3Cn0m0LlooL1bgs+2XFfZJwLd2QmFcpgqANpbYHXxKYXJRTtr/IY5
+         54ykV2o0Lwwn2FjqEAhg5xUQj9vmNHZ24yruwhr6w7w6Nw/fz8WwRIg/HvWqz6JmzNTK
+         NGvIyAFIELJm2LZ539C/VM+BNa1k9PKPHXKVhOxVPtyXRJBTFys9lI3XaxtMM3MXeo/N
+         as6NuVHKMzRAOzFJ9NXZBZFLeLvQptX86wJ0CeHmULxbgBk9ACo8WuXLMj05/Bnsad29
+         hBMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709035097; x=1709639897;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iD5yEQo/k0yP9hJDkvshK/ceYjlmawpvxOVwpMDKXyw=;
-        b=rjKton5MMVHofpQZDaLHulqmzBcwws9q0E32kyO3jgwLafjJ/g/FYm6J60bsacFHFx
-         0owKo+8V4mnJr4IsPTlrJiHiG9Vuot+rDJjFADtjntCy79bDVbVho1+hzUUhoIy+Ekzq
-         PZ0DjfILQaoUwRVCqUOPU4wdKuF7qNdRCfXGHuqezPSQ8XZ6OR95ItbJowbjpNwUD4RW
-         JqjFXVKPNEjp+etZ8PnfwCCJYuSlEEbTGNhrPfv39BN3kDoTKYAWZXmqPyEyfCZbLjyv
-         u+lzkuEL7gg1X/J4ZKNzgu7no4TVBKvErHUjsQ1BHFTm0DsnbQ8ZK88J2tjfCg6rak1r
-         hkDA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8M3cISEPOTHG94R3KwcKSUpkSsAR1avn8SDEcYsuO9AdSBgtY2KHgR6PhINrFrMxxcaR+w8wTVBbOlOEKbZZYt4U0Z2Yv7p/Il98=
-X-Gm-Message-State: AOJu0YxG6qbNyQr9GOsCors2czGYjAHlrba9+NVkWiZ+U7pa1bEICzOH
-	VFlb6Q6rnOF+Dg4pkTbZk+kyp8uMRuh9SaV+SIpFIMUoIIcV2GO5
-X-Google-Smtp-Source: AGHT+IG/8hrkAmo6firC3P6TvxZ11thXM16Y0Y8yJs4jxFxuCNQ+wTIMavaQOihRto6GArH6Vl7kEQ==
-X-Received: by 2002:aa7:db5a:0:b0:566:2be1:5276 with SMTP id n26-20020aa7db5a000000b005662be15276mr1839910edt.23.1709035096555;
-        Tue, 27 Feb 2024 03:58:16 -0800 (PST)
-Received: from localhost (p200300e41f222300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f22:2300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id z95-20020a509e68000000b00565671fd23asm722478ede.22.2024.02.27.03.58.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Feb 2024 03:58:16 -0800 (PST)
-Content-Type: multipart/signed;
- boundary=0b310bada9a22be6bb3934105c69e6dfccfb4490b3887f73dfc6b62fff06;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+        d=1e100.net; s=20230601; t=1709036515; x=1709641315;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fox2FOTrnn7H7ARtUpilsDQjBFro1sbb1UtQfPOSFHk=;
+        b=ORaDPDU3Q8bS1BELr03MKuDVXpuQJnI+0mXvdx6X+mpVtNTO2lAvqzG6A38yDDmPC3
+         ehUpIbBQlF/4BGb0es+L1pBM9UU2U94FYtTgh2uo7cXS4tlHYdwNIdV2YpLowEhDoQZW
+         j55IjDI+lERw45VT5gh3LoTqbXPPMoU/NE4XXrGmu1cAx5lEyTuWuRIsLYDGcX+Car7m
+         yunE+TqlcewT8eWR8zrniSxHM9AYC19cThkc845jKqp5eRftKMXsB6LhVH9CowHVceUy
+         7kOQi5G/3okpmug0OF2XgZh10DLUT14kYGYjPzAcxfVi39p9hNFrEBg5tkW+vcp8alub
+         F0Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3XtIjvfR5e8H0g0p962taLqlhwt3WmhsDS0vC4cJjBjqtGp93xGjXuHO62t0T1ZBnF5d20LQECnPBcGazbpxkuQXoOyEcRmok6t4=
+X-Gm-Message-State: AOJu0YwjUkoNOU4jJ9iRj0SqJ+8orC2R1g+UNfVh1BFZQz8k8Fq0jQDI
+	OyT8j1Y8NRFmrORcBFr4rUu18MwFtEZHlT9gtUsvADLBmAk+7CUbIIkaovqKaQ==
+X-Google-Smtp-Source: AGHT+IHOZyIvtu9udPjddxeRBkjckef05G60ZrgUBTNS/Hn/UgLmDOmQzD5ShaYiOTnnINlgtxpJEw==
+X-Received: by 2002:a17:903:181:b0:1dc:b173:f27b with SMTP id z1-20020a170903018100b001dcb173f27bmr4528891plg.32.1709036515334;
+        Tue, 27 Feb 2024 04:21:55 -0800 (PST)
+Received: from thinkpad ([117.213.97.177])
+        by smtp.gmail.com with ESMTPSA id h8-20020a170902b94800b001dba356b96esm1406270pls.306.2024.02.27.04.21.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Feb 2024 04:21:54 -0800 (PST)
+Date: Tue, 27 Feb 2024 17:51:41 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Vidya Sagar <vidyas@nvidia.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH v8 06/10] PCI: dwc: ep: Call dw_pcie_ep_init_registers()
+ API directly from all glue drivers
+Message-ID: <20240227122141.GN2587@thinkpad>
+References: <20240224-pci-dbi-rework-v8-0-64c7fd0cfe64@linaro.org>
+ <20240224-pci-dbi-rework-v8-6-64c7fd0cfe64@linaro.org>
+ <ZdzEoXwU42rFCF/W@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Tue, 27 Feb 2024 12:58:15 +0100
-Message-Id: <CZFUDO8U8WAE.1YDN70AI3JWNQ@gmail.com>
-Cc: <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
- <sumitg@nvidia.com>
-Subject: Re: [PATCH v2 1/2] clocksource/drivers/timer-tegra186: add
- WDIOC_GETTIMELEFT support
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Pohsun Su" <pohsuns@nvidia.com>, <daniel.lezcano@linaro.org>,
- <tglx@linutronix.de>, <jonathanh@nvidia.com>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <CZ96NM6U8O59.3TXG2WKAL7L8F@gmail.com>
- <20240223235126.31004-1-pohsuns@nvidia.com>
-In-Reply-To: <20240223235126.31004-1-pohsuns@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZdzEoXwU42rFCF/W@lizhi-Precision-Tower-5810>
 
---0b310bada9a22be6bb3934105c69e6dfccfb4490b3887f73dfc6b62fff06
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On Mon, Feb 26, 2024 at 12:04:33PM -0500, Frank Li wrote:
+> On Sat, Feb 24, 2024 at 12:24:12PM +0530, Manivannan Sadhasivam wrote:
+> > Currently, dw_pcie_ep_init_registers() API is directly called by the glue
+> > drivers requiring active refclk from host. But for the other drivers, it is
+> > getting called implicitly by dw_pcie_ep_init(). This is due to the fact
+> > that this API initializes DWC EP specific registers and that requires an
+> > active refclk (either from host or generated locally by endpoint itsef).
+> > 
+> > But, this causes a discrepancy among the glue drivers. So to avoid this
+> > confusion, let's call this API directly from all glue drivers irrespective
+> > of refclk dependency. Only difference here is that the drivers requiring
+> > refclk from host will call this API only after the refclk is received and
+> > other drivers without refclk dependency will call this API right after
+> > dw_pcie_ep_init().
+> > 
+> > This change will also allow us to remove the "core_init_notifier" flag in
+> > the later commits.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/pci/controller/dwc/pci-dra7xx.c           |  7 +++++++
+> >  drivers/pci/controller/dwc/pci-imx6.c             |  8 ++++++++
+> >  drivers/pci/controller/dwc/pci-keystone.c         |  9 +++++++++
+> >  drivers/pci/controller/dwc/pci-layerscape-ep.c    |  7 +++++++
+> >  drivers/pci/controller/dwc/pcie-designware-ep.c   | 22 ----------------------
+> >  drivers/pci/controller/dwc/pcie-designware-plat.c |  9 +++++++++
+> >  drivers/pci/controller/dwc/pcie-rcar-gen4.c       | 12 +++++++++++-
+> >  drivers/pci/controller/dwc/pcie-uniphier-ep.c     | 13 ++++++++++++-
+> >  8 files changed, 63 insertions(+), 24 deletions(-)
 
-On Sat Feb 24, 2024 at 12:51 AM CET, Pohsun Su wrote:
-> Hi Thierry,
->
-> >> +static unsigned int tegra186_wdt_get_timeleft(struct watchdog_device =
-*wdd)
-> >> +{
-> >> +     struct tegra186_wdt *wdt =3D to_tegra186_wdt(wdd);
-> >> +     u32 timeleft;
-> >> +     u32 expiration;
-> >> +
-> >> +     if (!watchdog_active(&wdt->base)) {
-> >> +             /* return zero if the watchdog timer is not activated. *=
-/
-> >> +             return 0;
-> >> +     }
-> >> +
-> >> +     /*
-> >> +      * System power-on reset occurs on the fifth expiration of the w=
-atchdog timer and so
-> >
-> >Is "system power-on reset" really what this is called? Power-on reset
-> >sounds like something that only happens after you power the device on,
-> >not something that can be triggered by the watchdog.
->
-> I will change it from "system power-on reset" to "System POR(Power On Res=
-et)" in next patch.
-> AFAIK Power On Reset is used for decribing resetting circuits and initial=
-ing whatever it needs
-> when received a POR signal after powered up. This term should also be app=
-licable for
-> hardware watchdog reset since the system is already powered up at that mo=
-ment and=20
+[...]
 
-"System POR" isn't an improvement over "system power-on reset". I'm
-mainly concerned that somebody might mistake this to somehow mean that
-there's an actual power cycle, which, as I understand, there isn't. So
-maybe just explain that this type of reset will put the system into the
-same state that it would be after a power cycle?
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > index ed1f2afd830a..278bdc9b2269 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > @@ -729,7 +729,6 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+> >  	struct device *dev = pci->dev;
+> >  	struct platform_device *pdev = to_platform_device(dev);
+> >  	struct device_node *np = dev->of_node;
+> > -	const struct pci_epc_features *epc_features;
+> >  
+> >  	INIT_LIST_HEAD(&ep->func_list);
+> >  
+> > @@ -775,29 +774,8 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+> >  		goto err_exit_epc_mem;
+> >  	}
+> >  
+> > -	if (ep->ops->get_features) {
+> > -		epc_features = ep->ops->get_features(ep);
+> > -		if (epc_features->core_init_notifier)
+> > -			return 0;
+> > -	}
+> 
+> why remove this check?
+> 
 
-Thierry
+There is no point in keeping this check since we are removing the call to
+dw_pcie_ep_init_registers() below. But I should've described this change in the
+commit message.
 
---0b310bada9a22be6bb3934105c69e6dfccfb4490b3887f73dfc6b62fff06
-Content-Type: application/pgp-signature; name="signature.asc"
+- Mani
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXdzlgACgkQ3SOs138+
-s6FV3A/9E2xaa7fY4Podpe3Oql8JIzZCPAtCtKzCaCy4/GnYEDfspkT44/i1X31D
-hbrbmTFeeZi44771obeHv/0A/ookODruAV2ylduv5T1gYdMpjWRvaCsfnasmL0ZU
-wunFkLvilQI20ncq/COM30KfLZA6eljfvD9laAS2AHS8GZj2HwRFVvxSsBH/7v1L
-GUd3R2TIoChY1pBDVEZPF0ZYl9Dq0O8NoPNfw/g8yhsZOEt8eRQ4IrxC+EKWk/4r
-Ju9gLAAXxlnkdpH3P4AhkTzN/fgbJykiSrbxH5rdcpUHheTu373L6V1eaSbe6ZyG
-51ngM7OXqBAnXI6d6mXCPfP37InT0xZ9BBjwsboFZ7eYtHA6I7fGpzgTA1+zdjOa
-0F4ede8RYEEf3Em46eOAPH3XMv9F1HrsGcaS0vnZRO9LcY5MTGOCpAqTiio92sP0
-CQ7QKL0mUeeXi3kjZSHfvbv7M0ZdggNvi3mjgA94aHHauVve793d2xRCwoulbIb5
-QZwzVHtBgMAPXwkyj7wWmbzTCAsevPEuu0HWkA7GfW0yKqwhygKInJED/Ql3RXKo
-45t8jMGOCdv2yjbu9jNP/zOfl+VN6yGr8XOXQteVaeZvjvC2rCsQ3NE6EWJkVN16
-B2BoXjZ1SThXPmInfwO1+KEkkuf7+ZG5vxaJ9j5s2f4vnAdG7Lk=
-=Ed17
------END PGP SIGNATURE-----
-
---0b310bada9a22be6bb3934105c69e6dfccfb4490b3887f73dfc6b62fff06--
+-- 
+மணிவண்ணன் சதாசிவம்
