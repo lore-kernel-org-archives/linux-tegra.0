@@ -1,141 +1,196 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2081.outbound.protection.outlook.com [40.107.92.81])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26B659B6A;
-	Thu, 29 Feb 2024 11:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709207111; cv=fail; b=e6Y89vQTNhKcPK33ZHYjIAmlI3lnnZJAqGk87yPzXEih2294F+OPGcLR7Cgae+AEmjdhWlVGi/4Yi91EN1/Yojlv9ZuJlK8yqcluQul8zbTxp+y35TQVUIO4+tmPJORhoFqZP3JNCOanls7FiLxDZpHiwHaeKhxvGWTawxTtSRo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709207111; c=relaxed/simple;
-	bh=2AvODDP7c14q+zYQcAXV9HzRG0nVwf8u9lSlwKyZxHc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=baGBKZq9bVu0Sko9ooGVjj/Q2IVF2ubaD7L+nmo8ClOAR/imD2xhpaQ2HKVXqrkmziYjinQhw7RV6F5t7FxG/aohZjyalYunUHN6mIPQEcTHQ5e0PEi2JMbTTBdYMCtTwN1Dt8qKhpo4Fq9nxhHgN6rwzkmFknhqhBjMewYnXQw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k4mxdAHA; arc=fail smtp.client-ip=40.107.92.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6807D06E;
+	Thu, 29 Feb 2024 12:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709210441; cv=none; b=IHz/uqXJqNZFu9ac2ZJmh4QZTjBxBjbTPBiOqaXXZVDqiFPdPtp4W9TaklVvf4RAyA/a8HCj2CfDKh4hVI36yc1ruIZmbdzM2dV0CEG7VtVy35zs4AR6YbCeHE3FdorCmp/HUvVy+bLqr+7wAUQETuMiKtHexRCaDVzGw9TgQ78=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709210441; c=relaxed/simple;
+	bh=C74fudEZIJp8y6o4pvj1vAj1a7GmlDzym5p5G0Bm6Hg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HVmhGjMymoQJC2MWFbnM/tA18dFjAaon/JVSB75Wir+cmVCWyNYRg4X08MIRboPhcc9OQkbCU7zvZo5zdXbJ1Dju8A8Cfjg/G0hiOLP2fATpis+1eHyOGDe8HWEW+vDayORoJGuDobfOpbr8qZRbXRySR6rHIhsoxW3Sp45kyP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=igRhD60z; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k4mxdAHA"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JIt6RlqFhUW8taASyqiPyIlZIQiKb/Ud3vn2xNdBSM0D2rj/xxxNxs1285CUbV1qkXuzhFMkgNyvIxqlgrGf+60zVdk8B+737CJmIm++HYfabSPOBy583P8cs2ojhBrcUJSuam9WA52bYb5wCzhQDe2i2Z9k3wo0HX+Re2uFclU9mKNV+Zvle/D3UgJIL+3GTGpypkvU3VxNqQ3UGsWpm1L3yTyHISSheVnudh82RiiSLvSBFpwQ8AgqMhK1pDiUCcddVEv2qXxDo7yN3iXh+GPhq13uxwRLf3bw3Amqjja5UJm+cdxuuiaYgoq6pRBw8vuW6bj0OaGbTPiQMett8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TeZlVl8zDiAyryXi7c4BZnR4xI7fGP+mqPXR0kQrMho=;
- b=aSgaeWZntCZN+hisTvtmHghAFudmxGFre7Ip+L1E0ju5s8qNoK7bwgkc/6nZteRrOtoKScCAub138ZRVo2//E0xA/+R0cUn128DazCkfLODEWAS+Rs/+JHEhqUlbeZ10a/bcUvUkyX9FrGY+PGiXguA3ZXS5/AQ/lXrKtf8dC9Nb7CQX2noIABHxS2ybL4p5rQ6KGlO3G3DTNtgQd7/9WwKP7lxK4rY223gYBrbW4t9sTH1/OxKjsaDByNw94u4nSQPYUCFhVlWutyPKoPnEEbo6diUxhuBNqq3JBFDf0hf0vkC2TB4O4J33x088DpH2Uur7X7HYESdjlyDIUzs1Vg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TeZlVl8zDiAyryXi7c4BZnR4xI7fGP+mqPXR0kQrMho=;
- b=k4mxdAHA/KJPXuoJUZ3XSR7VUccmINTrjVRXBkJKuDRt6Om9pwWhnjoXKnAC/5qvvEXrESurR7bCaDvIHXlZ9C9qWMstLVBOovo2nj7g0PQokuOgdss2wqZK5PfroI0i1HOdBeoynh1wBaC9hMZ6+oo1YJcKvzrtY1cM6fEdOXTZBBvClT4qOUaAOiCGw+4CJDZa0bBAwipL2SsUZlQR7vV1XlhxLHRRGHvpOxQ1RW72AoNuO9oQ+CY9wEEaN+DNjAOHEXI3MyBwsaBfAvCsA8OP44izOeftcTrfmw3N8IGI3pSW67paZt1ESv6CPqTfsc4NeyLghr6di90nk3o37Q==
-Received: from BYAPR06CA0063.namprd06.prod.outlook.com (2603:10b6:a03:14b::40)
- by PH0PR12MB7471.namprd12.prod.outlook.com (2603:10b6:510:1e9::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.41; Thu, 29 Feb
- 2024 11:45:06 +0000
-Received: from SJ5PEPF000001CD.namprd05.prod.outlook.com
- (2603:10b6:a03:14b:cafe::cf) by BYAPR06CA0063.outlook.office365.com
- (2603:10b6:a03:14b::40) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7339.32 via Frontend
- Transport; Thu, 29 Feb 2024 11:45:06 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ5PEPF000001CD.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7292.25 via Frontend Transport; Thu, 29 Feb 2024 11:45:06 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 29 Feb
- 2024 03:44:51 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Thu, 29 Feb
- 2024 03:44:50 -0800
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Thu, 29 Feb 2024 03:44:48 -0800
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <ldewangan@nvidia.com>, <jonathanh@nvidia.com>, <vkoul@kernel.org>,
-	<thierry.reding@gmail.com>, <digetx@gmail.com>, <dmaengine@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH v2] dmaengine: tegra186: Fix residual calculation
-Date: Thu, 29 Feb 2024 17:14:39 +0530
-Message-ID: <20240229114439.21246-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.43.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="igRhD60z"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8281AC433F1;
+	Thu, 29 Feb 2024 12:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709210440;
+	bh=C74fudEZIJp8y6o4pvj1vAj1a7GmlDzym5p5G0Bm6Hg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=igRhD60zQhE2flMc7jhx2MrzTM3u1/VMNwCv20yuLsBTePswSGs0X1xa0IEwh6qxp
+	 nGmGx20s2y/z2Y/7/x5KxqT2Pad88xVz6DFGlL2yA4QXSg/ZMY7abQgztMXgoYV+l6
+	 NUeKaPE8KreSQ/V4CePVSvOLMtPDBTGxjtGmtRtg70dR30dtLNk9SlFHIpCOi96TLy
+	 oqxYya9Bx84enGhB/y1vWh0l5jqH8u4QcGjHP+nlkbvDdQ/xdhjUqF6ABw7RDRbbtn
+	 MSrAAgCkrsqv6kkUQSN4WgHTdjz4fPUOQaf27+8z1dJpR+VSCd/y8Caw0vQ+G025fI
+	 zmTsCRQmtCINg==
+Date: Thu, 29 Feb 2024 13:40:29 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Vidya Sagar <vidyas@nvidia.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v8 03/10] PCI: dwc: ep: Introduce dw_pcie_ep_cleanup()
+ API for drivers supporting PERST#
+Message-ID: <ZeB7PQtkDSoCzE1Z@fedora>
+References: <20240224-pci-dbi-rework-v8-0-64c7fd0cfe64@linaro.org>
+ <20240224-pci-dbi-rework-v8-3-64c7fd0cfe64@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CD:EE_|PH0PR12MB7471:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5634d516-7a61-4bfc-418e-08dc391be024
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	zkjLTpxIIcXt9dnTZLCee+v5a6G5D2reQ4TwVd1/iRaTmmGtCcVFM5sn9sc5CvQu5O1uVtUjBB71tdR4OaQscUMDoK18uSyyVerSAKTc3+mUWf3F5rFKqbjHLu5z4d8xMU1W30SwB+afJB3iLA+feT5v1rOTgGSd8jBlHIZt+zM/5RycxKUOMoBawSynoBEpacN0NK+gqBLP3q+gOajrpFah3Btq77JJ3zA5qFGMqM5q9ljw5RFGbNiYQXHZLQztR9oWGnjYaAJLfTfQhXq9NW0Zsd+gv+WI95RVScEzTzmzlhlI8yhDozA6b2IxBwOCkyj7jQue6clMpTtuIdtFRb+YVUJdTq6YagqrnorqWqG34mzCWkDprDAAZ5oQ4YR4k1SWpTJuRcWnrEzkVCTlqTZzB5V6fvKtocfqZQrfm9e86EgxYV6WaM/oBLToM6+ODaHDIek6qnZDY0GVIuomg7qmQuZXfwcX2eZ9fTaz7p0Dwl3eL0SqtkYHcuXBqg/TreTLBu3Fw7VW8zzvoKTsPFfmb/zpgR5z2uJKd+mx1L7vFkY6/xB2+sTbyqp+e4erknsEvECBJiI7Yziu4ub9akhR8lzWa1lvKBDM2JVuzxnUq6b0cqglbnf6Mb9j0NHYEiu6mGLc0PN5uGnZaaeljh6tlHQftz9O9TtlvyRS90ARu7YrceMeDZ5xjfiy1afr7Pa98uQjZs4hYyuZ3NdaWOdUlNuIsn7QkAsQPKtkgf/cPMTpmliltnI8kpcn7i7v
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(82310400014)(36860700004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Feb 2024 11:45:06.6984
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5634d516-7a61-4bfc-418e-08dc391be024
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001CD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7471
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240224-pci-dbi-rework-v8-3-64c7fd0cfe64@linaro.org>
 
-The existing residual calculation returns an incorrect value when
-bytes_xfer == bytes_req. This scenario occurs particularly with drivers
-like UART where DMA is scheduled for maximum number of bytes and is
-terminated when the bytes inflow stops. At higher baud rates, it could
-request the tx_status while there is no bytes left to transfer. This will
-lead to incorrect residual being set. Hence return residual as '0' when
-bytes transferred equals to the bytes requested.
+On Sat, Feb 24, 2024 at 12:24:09PM +0530, Manivannan Sadhasivam wrote:
+> For DWC glue drivers supporting PERST# (currently Qcom and Tegra194), some
+> of the DWC resources like eDMA should be cleaned up during the PERST#
+> assert time.
+> 
+> So let's introduce a dw_pcie_ep_cleanup() API that could be called by these
+> drivers to cleanup the DWC specific resources. Currently, it just removes
+> eDMA.
+> 
+> Reported-by: Niklas Cassel <cassel@kernel.org>
+> Closes: https://lore.kernel.org/linux-pci/ZWYmX8Y%2F7Q9WMxES@x1-carbon
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-designware-ep.c | 11 +++++++++--
+>  drivers/pci/controller/dwc/pcie-designware.h    |  5 +++++
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c       |  1 +
+>  drivers/pci/controller/dwc/pcie-tegra194.c      |  2 ++
+>  4 files changed, 17 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 2b11290aab4c..1205bfba8310 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -564,12 +564,19 @@ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  	return 0;
+>  }
+>  
+> -void dw_pcie_ep_deinit(struct dw_pcie_ep *ep)
+> +void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> -	struct pci_epc *epc = ep->epc;
+>  
+>  	dw_pcie_edma_remove(pci);
 
-Fixes: ee17028009d4 ("dmaengine: tegra: Add tegra gpcdma driver")
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
----
-v1->v2:
-* corrected typo - s/exisiting/existing/
+Hello Mani,
 
- drivers/dma/tegra186-gpc-dma.c | 3 +++
- 1 file changed, 3 insertions(+)
+In this message:
+https://lore.kernel.org/linux-pci/20240130062938.GB32821@thinkpad/
 
-diff --git a/drivers/dma/tegra186-gpc-dma.c b/drivers/dma/tegra186-gpc-dma.c
-index 88547a23825b..3642508e88bb 100644
---- a/drivers/dma/tegra186-gpc-dma.c
-+++ b/drivers/dma/tegra186-gpc-dma.c
-@@ -746,6 +746,9 @@ static int tegra_dma_get_residual(struct tegra_dma_channel *tdc)
- 	bytes_xfer = dma_desc->bytes_xfer +
- 		     sg_req[dma_desc->sg_idx].len - (wcount * 4);
- 
-+	if (dma_desc->bytes_req == bytes_xfer)
-+		return 0;
-+
- 	residual = dma_desc->bytes_req - (bytes_xfer % dma_desc->bytes_req);
- 
- 	return residual;
--- 
-2.43.2
+You mentioned that you were going to clean up the BARs.
+(Like I wrote in that thread, I really think that we should merge a fix for
+the broken "do we have a saved value from find_first_zero_bit() in the array",
+by using a "if (!saved_value[bar])", when find_first_zero_bit() returns zero.)
 
+However, regardless of that, I do not see that this series (neither
+dw_pcie_ep_cleanup(), nor dw_pcie_ep_linkdown()), calls any function which
+will clean up the BARs.
+
+Since e.g. qcom-ep.c does a reset_control_assert() during perst
+assert/deassert, which should clear sticky registers, I think that
+you should let dw_pcie_ep_cleanup() clean up the BARs using
+dw_pcie_ep_clear_bar().
+
+
+Kind regards,
+Niklas
+
+
+> +}
+> +EXPORT_SYMBOL_GPL(dw_pcie_ep_cleanup);
+> +
+> +void dw_pcie_ep_deinit(struct dw_pcie_ep *ep)
+> +{
+> +	struct pci_epc *epc = ep->epc;
+> +
+> +	dw_pcie_ep_cleanup(ep);
+>  
+>  	pci_epc_mem_free_addr(epc, ep->msi_mem_phys, ep->msi_mem,
+>  			      epc->mem->window.page_size);
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 61465203bb60..351d2fe3ea4d 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -672,6 +672,7 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep);
+>  int dw_pcie_ep_init_complete(struct dw_pcie_ep *ep);
+>  void dw_pcie_ep_init_notify(struct dw_pcie_ep *ep);
+>  void dw_pcie_ep_deinit(struct dw_pcie_ep *ep);
+> +void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep);
+>  int dw_pcie_ep_raise_intx_irq(struct dw_pcie_ep *ep, u8 func_no);
+>  int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  			     u8 interrupt_num);
+> @@ -705,6 +706,10 @@ static inline void dw_pcie_ep_deinit(struct dw_pcie_ep *ep)
+>  {
+>  }
+>  
+> +static inline void dw_pcie_ep_cleanup(struct dw_pcie_ep *ep)
+> +{
+> +}
+> +
+>  static inline int dw_pcie_ep_raise_intx_irq(struct dw_pcie_ep *ep, u8 func_no)
+>  {
+>  	return 0;
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> index 36e5e80cd22f..59b1c0110288 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> @@ -507,6 +507,7 @@ static void qcom_pcie_perst_assert(struct dw_pcie *pci)
+>  		return;
+>  	}
+>  
+> +	dw_pcie_ep_cleanup(&pci->ep);
+>  	qcom_pcie_disable_resources(pcie_ep);
+>  	pcie_ep->link_status = QCOM_PCIE_EP_LINK_DISABLED;
+>  }
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 7afa9e9aabe2..68bfeed3429b 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1715,6 +1715,8 @@ static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
+>  	if (ret)
+>  		dev_err(pcie->dev, "Failed to go Detect state: %d\n", ret);
+>  
+> +	dw_pcie_ep_cleanup(&pcie->pci.ep);
+> +
+>  	reset_control_assert(pcie->core_rst);
+>  
+>  	tegra_pcie_disable_phy(pcie);
+> 
+> -- 
+> 2.25.1
+> 
