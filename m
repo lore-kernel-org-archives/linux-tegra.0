@@ -1,77 +1,77 @@
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED15742AB5;
-	Fri,  1 Mar 2024 12:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709297249; cv=none; b=H4qK/FX09nyWMjwFWQnJ0AqaETI2yHeNEnowxlIdDsh5OKfcy6RRyAL9zV+95wro069XxbDvHo42dOKnsHC8FnrSHRVJh8wf8VxBJjcQG2WmOqiwuoF5+oe2LpLATawIKOvRQkFPwDweIWF11cfgqrj8JX5BCyY6JkGuvICUp1Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709297249; c=relaxed/simple;
-	bh=hA0oxwD27gd74f5RciQ0gAwJyLc3AOc6ENazGRzlsA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cfoZjahUq3l+yScVLWlGSno08DbXOeYGdDERBlcJ3z1pJEVixW6p3YbuDYKQLy9YWBMucRCacQyQUAJUy/jRI8W/SQVQl5yOWe1FIflkZRiPXKhsQCvqz89JFuI7XYxV4XXKP505uG4YnQ42v57/v1yTVSG9pjOwPVvgyV/iy5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=17zvLga4; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="17zvLga4"
-Received: from 8bytes.org (p4ffe0c3c.dip0.t-ipconnect.de [79.254.12.60])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id B32031C2C89;
-	Fri,  1 Mar 2024 13:47:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1709297243;
-	bh=hA0oxwD27gd74f5RciQ0gAwJyLc3AOc6ENazGRzlsA8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=17zvLga4k0NTgX7vMeySb0BST/85bdOAY7Tbmc6qXLWdcX5iiVdGYAFNMGHwTHhaD
-	 283fe6n+XYrQ/bHfCjsAfEvCK0QPphrx/G0/uJLueU+GPWo0u0fURkWHAClQ45C9uI
-	 uIvO1RmSja0KtwTEwIzL5JJM9GJ/LcAvmkyaz6Qi9DbfkNzr9uSWNtRbOriy+5pRPV
-	 2gQtzJ+O2Br8Ta3rRxwqFFTiug2NvFzLQFRpROnF95KN8tzg5yj5MpDAvgx2Dm/psw
-	 sDfN2jQw/qIHXKrhff0JF5WdLh5syukwy7nwIhemdPGPS4RXoyorYt7ID45BQAFQpD
-	 VrRA+CYGCvnTg==
-Date: Fri, 1 Mar 2024 13:47:21 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Heiko Stuebner <heiko@sntech.de>, Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jean-Philippe Brucker <jean-philippe@linaro.org>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev
-Subject: Re: [PATCH 1/4] iommu: constify pointer to bus_type
-Message-ID: <ZeHOWXuNLhQlSrxM@8bytes.org>
-References: <20240216144027.185959-1-krzysztof.kozlowski@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF828BED;
+	Fri,  1 Mar 2024 17:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709314786; cv=none; b=d91UVd5syLU1lUC5Tcy9Imf3sGatNGnp/q6bKpzrHqvlisheEEqyasjC+Bz0INPAPdUqXujud6pjbW4HpvU99qYJve++7/+X7TDIJcuKKIRFjKY3eVORprKkMhWA0uR5YU16mW/nE0+fLytwXFqS1lmJUiTy0IfZ8P2qTLHb5N4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709314786; c=relaxed/simple;
+	bh=VE2uSRmbnrUTIwI0MsFFp9dkOgavVaKfIAsVt33kwLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QViCiqY10P9rHlKvTxmM1eecHO1+jVUYQ3LCxE2QW4KHDW2xaNYktllspb73CYazu9tk45kAUujq1mdKd7L99PbeCuOpECBAtMAM52D8ZfE4yNwS6+7CKA8zInn//CHXpK8ZzFf6GavqX3oh9Kj43gtamZdkV5FchD9Y0qu+XqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GWR6kZ6s; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GWR6kZ6s"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1B7F1240003;
+	Fri,  1 Mar 2024 17:39:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1709314782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HPOP82Swf39Z+Oml/HNNIoo3JMbE10x1ALBHxRiVIp4=;
+	b=GWR6kZ6sqnLHbD99ZA24rS7vAWtep94ya9NrWpvjdjoRU666FY23absUBejh5k+F1ZnjqS
+	vmTZ6iMMzqD49O7v2Yh+QIbMT1KE1zy+Tdi98zGRiKtU26wJSIs9TWcWZA+VQsfiRxYzwE
+	BAFH32DSCmJkBOMpqeHx96/SKusM3TlsbbTs3zo5dlNrr2aMoCdNhllZoYe3+wc2zFuogv
+	4QpwqK264eg2jGDAYH5JEdEo+ONGAJVGkwb72LSQ13MtxNVWRAupfGJIZytBJ0s+FVm0a0
+	MJYwRN0pi6J13FmpW2SUSbbHvHTLw+BO6oOD9USIHJPS9bsMOgtBWHmj+ml05Q==
+Date: Fri, 1 Mar 2024 18:39:36 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter
+ <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding
+ <thierry.reding@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] staging: media: tegra-video: Use common error handling
+ code in tegra_vi_graph_parse_one()
+Message-ID: <20240301183936.505fcc72@booty>
+In-Reply-To: <dbebaea7-289c-47d9-ba06-cd58a10ea662@web.de>
+References: <dbebaea7-289c-47d9-ba06-cd58a10ea662@web.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240216144027.185959-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-On Fri, Feb 16, 2024 at 03:40:24PM +0100, Krzysztof Kozlowski wrote:
+Hello Markus,
 
-Applied all, thanks.
+On Thu, 29 Feb 2024 19:55:46 +0100
+Markus Elfring <Markus.Elfring@web.de> wrote:
+
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 29 Feb 2024 19:44:36 +0100
+> 
+> Add a jump target so that a bit of exception handling can be better reused
+> at the end of this function implementation.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
