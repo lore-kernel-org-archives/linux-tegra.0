@@ -1,108 +1,243 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA5F79F0;
-	Sat,  2 Mar 2024 10:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5BD21100;
+	Sat,  2 Mar 2024 20:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709376052; cv=none; b=LX/W4fEKNzs7pMJLKBpQaI5QzlzrWuu0NwMfHdtw/N7qVWJknVefHNRVtTKZcuVZJ6SjrM2gFnecGnBtYkyP9g+UCT3H6phqkeU6RDV+sc/LaJ7QtIVMPDLPsjA7g/GTBAnbJYKo4+ay4RdJuhnOcF1cRZ94ucv0JAAc5UFEENQ=
+	t=1709413136; cv=none; b=RL1W7TPOlvVdeq/i/17WErlKCUGdjYrqa7P5sYJAijEmhJH9+TOmh/pTseTTF/giw3AhOhcJ0py9e9CX17TpioPQNRImyyIG5EMRcZp8nBjXFA4yxmv6jvE97SpOe3cP6+uFGW3dLCRseH3QE/b/pQJkjIMChrGW+oluT3arx3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709376052; c=relaxed/simple;
-	bh=5KEwfwfpBtHKd/mMoh+MO4I0djnrDy1f2e5WKqE/N+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XXxFDl0+gNpS+uMw6iyKkfizHwKzXMdPRhF26+kaCJ4bdPe/izlCWEnrtap8Pxpckn0Djb8D6gXPOlEimhLAAyCgi40RJ5vX/T5toyN6aRUITyaOHDml5k181MmZR+AhdLW5XwmPMhIO+gXb/ogPbD4I6pqME9DGlGQEE6pmr0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=w4QQ4ma1; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1709413136; c=relaxed/simple;
+	bh=o+tr4CCbud8uzLtDh5MolTBCwG3kPTB0Bhx8jY/shKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbE6KLWzmiHcXOSerGOSKsJQHzyrjoW3R6CPXiEKodUUvA/lxDYe9Gw/I+j9+vGtSDe3PFNmQX0O+k7kFI3JZ68hz8/s8VQaxKBtPzF9vh3/KCpmmzaSfq266QlwWeD1TnMhM/vj6GJQpXNvwJ3S/4UOkeXs5/fP21XjQ21tHQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UgMqkU+n; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="w4QQ4ma1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de; s=s29768273;
-	t=1709376027; x=1709980827; i=markus.elfring@web.de;
-	bh=5KEwfwfpBtHKd/mMoh+MO4I0djnrDy1f2e5WKqE/N+Y=;
-	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
-	 In-Reply-To;
-	b=w4QQ4ma1DcUJNf1607MwmUiWq1VEwhfUtnHjOxpuJ57dgm104lqxEk3tuLs+ASHV
-	 9yU5+PCLDPII4m3KlfLFhUy/NmlbbNat23dHJDPRsFBXm1KiXD64gugniF1qTqnXW
-	 p9bl0BVIVm1/xW7RvepilXKQ8GpEItCCbkUVhyvhEfUCbEKkjcHxrbNX7ugq6xtkK
-	 wEc+udSFuzhCUDa17vl1PU9EwT647Z9Aj2nMzL7sxo7vINMC7ExYm6lllP4UW3jUO
-	 i2GXQmCxBcNhcna/RIeF1GEl9G4H9wK5LJFrPVOqzKIKei0VrtS2PKD9ZVig8aCef
-	 oeJzFtzmJxhdT6OwGA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.86.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MgibY-1rF2Ji44NQ-00h3sN; Sat, 02
- Mar 2024 11:40:27 +0100
-Message-ID: <f451ffba-db26-4a3b-a4b3-186c31f2ad64@web.de>
-Date: Sat, 2 Mar 2024 11:40:26 +0100
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UgMqkU+n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 485ABC433C7;
+	Sat,  2 Mar 2024 20:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1709413135;
+	bh=o+tr4CCbud8uzLtDh5MolTBCwG3kPTB0Bhx8jY/shKs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UgMqkU+niNfrrsJKR325G2D+2tAy9twT34HdNKjDPPnzNigNMvu3vA2hb62A57nq0
+	 PEMsKrj7r3EL2UOTajmaknqRQV/d2JCtFJ9pWYRVcF/57lRl/p8lzob7OmHi5mEfNC
+	 4qrR2eTAghx7wO456Nvia8+/Eo8/UCKAhz4WW+Ok=
+Date: Sat, 2 Mar 2024 21:58:53 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-rpi-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Al Cooper <alcooperx@gmail.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 03/14] serial: port: Introduce a common helper to read
+ properties
+Message-ID: <2024030259-playback-starlit-a472@gregkh>
+References: <20240226142514.1485246-1-andriy.shevchenko@linux.intel.com>
+ <20240226142514.1485246-4-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: staging: media: tegra-video: Use common error handling code in
- tegra_vi_graph_parse_one()
-Content-Language: en-GB
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-staging@lists.linux.dev,
- linux-tegra@vger.kernel.org, linux-media@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- LKML <linux-kernel@vger.kernel.org>
-References: <dbebaea7-289c-47d9-ba06-cd58a10ea662@web.de>
- <20240301183936.505fcc72@booty>
- <9f1b617f-06cb-4b22-a050-325424720c57@moroto.mountain>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <9f1b617f-06cb-4b22-a050-325424720c57@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8EIFhDOXNVZRFR7rb6IKMJFkCMFDb06oUAxZG70fjR9PxT9vVDb
- ygwmriYITR6G3+mDegwySoLWOaFOrKIdvdfLLtx7Npk3lEV/2yhpzaPrHsOg54hr9fLjXQk
- AzjYhdKxoeGucPy0nUXqkKVuDA3LPFMYyENkuKlBs2M1tOv2hAqXwKOkUXsa7C1+5NUialp
- +CSqHePTqHSMCthsLr/LA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:KfSN83dN8vM=;ZZe12Cqx8Lnelg3dRbEv//XtPa+
- Ov5CSeXzzv6A+QTt5mCYp1fCKAAagNqF5ynAnwrPI4m1jOoE2ypRSpp4/NG2d2XDKQQBiuBv2
- eEc09zFfUiqqUAVJQkQD7Ft+7us/UUJXYYGbArKJFJ3z7nry/qPmgmLmLWbhAYHQbYwAoLE9L
- EKxS5/RONLgDwqzQNt1MFXDptC+PGHk8VMVGkSShxKAmKfuWupdMgKXR/Nk2EoJJ9Gwotc5EL
- aPP+Pe/YU0Sn79UFH2OjecwDHmILfSwP+DUQj+StufPEwPOwI7CcV5HZ1J941hs8uW6MoLDYR
- rZtwx/vPeWJLoQlLTv46aHJNZziFOCtx1EBP3zUNX59nHJ0MYh40KZFiiPqlHShjGoSM+JU7W
- qyltlenXBPC17tldyORFY+2FdWH0M4uobbLeL1JlrScsD8A3b+ph63jnju8CMdu9qedNzQkbk
- QmiKxOb7FJqTGwycqUC3EMnoMUBbiZXFlXLkfqDiUlKzSK2V9JFmsf+BFzXah6ADjVPdfJ7Ui
- MFy/Y80NR/NZMnop2mleoGV06F67SDirHovQC+LUMNSnt19WomGwHZJjm2mb24gcNp8edIXEA
- imvcusWfDabNucAvhU6MCv5cEo1SLoHzR0S9pGPt8rpsB6Bf4iEsAj5CBsGL/LQ8N0pZ4Hfj2
- u/3kEbrMY6tZMQrL7ggvg8W0OO7QegEIt2fWcP77IcwIBXplzVBPrjxO8CFYzYygw0jWnWcKR
- 7qCkT181QQ2ZCz/4Mz/bdK44hJYyJVcJsW+L3MrHJ4+pKpfAZWo6tNyq3KSHQ4pd+N6Nk5HR/
- piduLI8jjzlFyEsJW6Tdnzf608wMZhps3Qnp2fMTqo9QM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240226142514.1485246-4-andriy.shevchenko@linux.intel.com>
 
->>> Add a jump target so that a bit of exception handling can be better re=
-used
->>> at the end of this function implementation.
-=E2=80=A6
->> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
->
-> These patches make the code worse.  If we're in the middle of a loop,
-> then we should clean up the partial loop before doing the goto.
-> Otherwise it creates a mess when we add a new allocation function after
-> the end of the loop.
+On Mon, Feb 26, 2024 at 04:19:19PM +0200, Andy Shevchenko wrote:
+> Several serial drivers want to read the same or similar set of
+> the port properties. Make a common helper for them.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/tty/serial/serial_port.c | 134 +++++++++++++++++++++++++++++++
+>  include/linux/serial_core.h      |   1 +
+>  2 files changed, 135 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/serial_port.c b/drivers/tty/serial/serial_port.c
+> index 88975a4df306..ecc980e9dba6 100644
+> --- a/drivers/tty/serial/serial_port.c
+> +++ b/drivers/tty/serial/serial_port.c
+> @@ -8,7 +8,10 @@
+>  
+>  #include <linux/device.h>
+>  #include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/property.h>
+>  #include <linux/serial_core.h>
+>  #include <linux/spinlock.h>
+>  
+> @@ -82,6 +85,137 @@ void uart_remove_one_port(struct uart_driver *drv, struct uart_port *port)
+>  }
+>  EXPORT_SYMBOL(uart_remove_one_port);
+>  
+> +/**
+> + * uart_read_port_properties - read firmware properties of the given UART port
 
-How does such a feedback fit to another known information source?
+I like, but:
 
-Section =E2=80=9C7) Centralized exiting of functions=E2=80=9D
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.8-rc6#n526
+> + * @port: corresponding port
+> + * @use_defaults: apply defaults (when %true) or validate the values (when %false)
+
+Using random booleans in a function is horrid.  Every time you see the
+function call, or want to call it, you need to go and look up what the
+boolean is and means.
+
+Make 2 public functions here, one that does it with use_defaults=true
+and one =false and then have them both call this one static function,
+that way the function names themselves are easy to read and understand
+and maintain over time.
+
+thanks,
+
+greg k-h
 
 
-> Someone is going to add a _scoped() loop which uses cleanup.h magic to
-> call _put automatically.  This is a good option.
+> + *
+> + * The following device properties are supported:
+> + *   - clock-frequency (optional)
+> + *   - fifo-size (optional)
+> + *   - no-loopback-test (optional)
+> + *   - reg-shift (defaults may apply)
+> + *   - reg-offset (value may be validated)
+> + *   - reg-io-width (defaults may apply or value may be validated)
+> + *   - interrupts (OF only)
+> + *   - serial [alias ID] (OF only)
+> + *
+> + * If the port->dev is of struct platform_device type the interrupt line
+> + * will be retrieved via platform_get_irq() call against that device.
+> + * Otherwise it will be assigned by fwnode_irq_get() call. In both cases
+> + * the index 0 of the resource is used.
+> + *
+> + * The caller is responsible to initialize the following fields of the @port
+> + *   ->dev (must be valid)
+> + *   ->flags
+> + *   ->mapbase
+> + *   ->mapsize
+> + *   ->regshift (if @use_defaults is false)
+> + * before calling this function. Alternatively the above mentioned fields
+> + * may be zeroed, in such case the only ones, that have associated properties
+> + * found, will be set to the respective values.
+> + *
+> + * If no error happened, the ->irq, ->mapbase, ->mapsize will be altered.
+> + * The ->iotype is always altered.
+> + *
+> + * When @use_defaults is true and the respective property is not found
+> + * the following values will be applied:
+> + *   ->regshift = 0
+> + * In this case IRQ must be provided, otherwise an error will be returned.
+> + *
+> + * When @use_defaults is false and the respective property is found
+> + * the following values will be validated:
+> + *   - reg-io-width (->iotype)
+> + *   - reg-offset (->mapsize against ->mapbase)
+> + *
+> + * Returns: 0 on success or negative errno on failure
+> + */
+> +int uart_read_port_properties(struct uart_port *port, bool use_defaults)
+> +{
+> +	struct device *dev = port->dev;
+> +	u32 value;
+> +	int ret;
+> +
+> +	/* Read optional UART functional clock frequency */
+> +	device_property_read_u32(dev, "clock-frequency", &port->uartclk);
+> +
+> +	/* Read the registers alignment (default: 8-bit) */
+> +	ret = device_property_read_u32(dev, "reg-shift", &value);
+> +	if (ret)
+> +		port->regshift = use_defaults ? 0 : port->regshift;
+> +	else
+> +		port->regshift = value;
+> +
+> +	/* Read the registers I/O access type (default: MMIO 8-bit) */
+> +	ret = device_property_read_u32(dev, "reg-io-width", &value);
+> +	if (ret) {
+> +		port->iotype = UPIO_MEM;
+> +	} else {
+> +		switch (value) {
+> +		case 1:
+> +			port->iotype = UPIO_MEM;
+> +			break;
+> +		case 2:
+> +			port->iotype = UPIO_MEM16;
+> +			break;
+> +		case 4:
+> +			port->iotype = device_is_big_endian(dev) ? UPIO_MEM32BE : UPIO_MEM32;
+> +			break;
+> +		default:
+> +			if (!use_defaults) {
+> +				dev_err(dev, "Unsupported reg-io-width (%u)\n", value);
+> +				return -EINVAL;
+> +			}
+> +			port->iotype = UPIO_UNKNOWN;
+> +			break;
+> +		}
+> +	}
+> +
+> +	/* Read the address mapping base offset (default: no offset) */
+> +	ret = device_property_read_u32(dev, "reg-offset", &value);
+> +	if (ret)
+> +		value = 0;
+> +
+> +	/* Check for shifted address mapping overflow */
+> +	if (!use_defaults && port->mapsize < value) {
+> +		dev_err(dev, "reg-offset %u exceeds region size %pa\n", value, &port->mapsize);
+> +		return -EINVAL;
+> +	}
+> +
+> +	port->mapbase += value;
+> +	port->mapsize -= value;
+> +
+> +	/* Read optional FIFO size */
+> +	device_property_read_u32(dev, "fifo-size", &port->fifosize);
+> +
+> +	if (device_property_read_bool(dev, "no-loopback-test"))
+> +		port->flags |= UPF_SKIP_TEST;
+> +
+> +	/* Get index of serial line, if found in DT aliases */
+> +	ret = of_alias_get_id(dev_of_node(dev), "serial");
+> +	if (ret >= 0)
+> +		port->line = ret;
+> +
+> +	if (dev_is_platform(dev))
+> +		ret = platform_get_irq(to_platform_device(dev), 0);
+> +	else
+> +		ret = fwnode_irq_get(dev_fwnode(dev), 0);
+> +	if (ret == -EPROBE_DEFER)
+> +		return ret;
+> +	if (ret > 0)
+> +		port->irq = ret;
+> +	else if (use_defaults)
+> +		/* By default IRQ support is mandatory */
+> +		return ret;
+> +	else
+> +		port->irq = 0;
+> +
+> +	port->flags |= UPF_SHARE_IRQ;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(uart_read_port_properties);
 
-I became also curious how scope-based resource management will influence
-Linux coding styles further.
-Will various collateral evolution become more interesting?
+EXPORT_SYMBOL_GPL()?  I have to ask :)
 
-Regards,
-Markus
+thanks,
+
+greg k-h
