@@ -1,77 +1,148 @@
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2044.outbound.protection.outlook.com [40.107.94.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF828BED;
-	Fri,  1 Mar 2024 17:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709314786; cv=none; b=d91UVd5syLU1lUC5Tcy9Imf3sGatNGnp/q6bKpzrHqvlisheEEqyasjC+Bz0INPAPdUqXujud6pjbW4HpvU99qYJve++7/+X7TDIJcuKKIRFjKY3eVORprKkMhWA0uR5YU16mW/nE0+fLytwXFqS1lmJUiTy0IfZ8P2qTLHb5N4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709314786; c=relaxed/simple;
-	bh=VE2uSRmbnrUTIwI0MsFFp9dkOgavVaKfIAsVt33kwLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QViCiqY10P9rHlKvTxmM1eecHO1+jVUYQ3LCxE2QW4KHDW2xaNYktllspb73CYazu9tk45kAUujq1mdKd7L99PbeCuOpECBAtMAM52D8ZfE4yNwS6+7CKA8zInn//CHXpK8ZzFf6GavqX3oh9Kj43gtamZdkV5FchD9Y0qu+XqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GWR6kZ6s; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A607489;
+	Sat,  2 Mar 2024 02:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709347456; cv=fail; b=GCTERmXjHwbeQ7ju8jW0njTlyOw8mpSFi/ox6jOfIb+c1y2l5OvKw+FhxuDyizcW/BkHFLWJzKzD1E+s27CqDtcu4P/bOcAs2QLo6NyQeJf0+zOM2RgqqyATYlmORkOA7oG5Iv3gOb5ZBHmNI5LS+XBe2StbZR+VXFFgvkXF0d8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709347456; c=relaxed/simple;
+	bh=e+Mhn8+65s+E2W6B47W6sFCuClcftgTT2vdhQwG+86g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rN23CogyKf0SrbFM0+wpv4H5NyCC+gNpsI2wwTiB1NPyRoJcMyN0+7XCLrVKcm2un8leYnBdOEHleGnzmubbta8s92qTI0ak8RM70BHNqO2ASYF2Wn5veKeUMej0hESkjtmpFyTsDDmkNdVyfAc6SGY61Shp1t05PRnpjEML80U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=mgqrISUd; arc=fail smtp.client-ip=40.107.94.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GWR6kZ6s"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1B7F1240003;
-	Fri,  1 Mar 2024 17:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1709314782;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HPOP82Swf39Z+Oml/HNNIoo3JMbE10x1ALBHxRiVIp4=;
-	b=GWR6kZ6sqnLHbD99ZA24rS7vAWtep94ya9NrWpvjdjoRU666FY23absUBejh5k+F1ZnjqS
-	vmTZ6iMMzqD49O7v2Yh+QIbMT1KE1zy+Tdi98zGRiKtU26wJSIs9TWcWZA+VQsfiRxYzwE
-	BAFH32DSCmJkBOMpqeHx96/SKusM3TlsbbTs3zo5dlNrr2aMoCdNhllZoYe3+wc2zFuogv
-	4QpwqK264eg2jGDAYH5JEdEo+ONGAJVGkwb72LSQ13MtxNVWRAupfGJIZytBJ0s+FVm0a0
-	MJYwRN0pi6J13FmpW2SUSbbHvHTLw+BO6oOD9USIHJPS9bsMOgtBWHmj+ml05Q==
-Date: Fri, 1 Mar 2024 18:39:36 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
- linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter
- <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding
- <thierry.reding@gmail.com>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] staging: media: tegra-video: Use common error handling
- code in tegra_vi_graph_parse_one()
-Message-ID: <20240301183936.505fcc72@booty>
-In-Reply-To: <dbebaea7-289c-47d9-ba06-cd58a10ea662@web.de>
-References: <dbebaea7-289c-47d9-ba06-cd58a10ea662@web.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="mgqrISUd"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EQHOlsn1d/bwLh83S0p3854qV1VP+gXugN+syrSyPYqstha65C00Y3wtnI/4EwWJEmVpmE6N93kXsNz33KybbGMaaoae2TW1nsNbuRW2Q5aQP22twKUlqJroid0+PzmgMV3dh4aADOX3P8xBUBDlsmDffHUFf2CxdZo7qAg32q1w18aM0vJRd7b4VZSHhp0Pn0LKfCgWZpYpyVZkPvnR/K1Ixqwdtvk1zhAumtxTSdKEVeevKq1a0Bw2AiBHDuFHSwlxM61vKtU/djxqt4fm1As9L2teVAMZCIiqsbIPffvtQ1NaRu505OnASgzIBKVliOojn1IJaMl/kCkwzB5cDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RG/i2zQXQTxQLSDqG1RiGcj8jgijg4dCpiJMsqguz2A=;
+ b=XLPQLHktl/JfVapap/95io/Pk3KxS+UjBfOiM2YJSjSucqq1bIpBob3KIEMWkIwwoMiAshxGnKEkNeFOc30bFMXbYRnz1wHyFEGFvwGvGSabAydQWQOscajGP6KgTMjCKzKfTVoZ1BnZPT37SP00UBlOivnhyLEsKMmR+dbW51eplE0I1//+LCkfhD6t5u59LhqcM/Z6uUIpGPBNXyvIOlBedeFX2xFexOrrcJ0umPDnYB/JXnbCIZKWujYA7HKJSgH0fgJqNJkElzBzE3y/XE+z2eZLo5RUS77d1Rlu0F8cXwn1xRu0i7mg3yKpgqw/S+8k9c1HU6NdC4/aqdMzsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RG/i2zQXQTxQLSDqG1RiGcj8jgijg4dCpiJMsqguz2A=;
+ b=mgqrISUdkOM0WLVFBesHpDIAmP9Nu7f8po1YUVarQF0aFhIX+9rq6WSogThLZGIqBQrphZ6AjjVf1aMm/bJdczXjGPXJqbufrQjgl9NcMp48FigV9dvoy9z43DVpi4xEpFyMrAimnt6ha7G1dgl+Wor/tO29UjaIIgoc+zgdqtSIxfB4P6R1iv1O1jmpimFxTtqSogv6V8QrSPgX096ObQ2B/Hgr51x2PZGf9V4Msllta5El2VJpeqMFvcwtcPDzbcbfp5OWiZG9oYKWeVdMejSBVbERVaE8GdnnYVaZe5dq7y8Noo/2UWm+JNvBh+Iq2UjuQYCNc+Q/mfpTkcyo0A==
+Received: from SJ1PR12MB6339.namprd12.prod.outlook.com (2603:10b6:a03:454::10)
+ by SN7PR12MB8604.namprd12.prod.outlook.com (2603:10b6:806:273::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7316.39; Sat, 2 Mar
+ 2024 02:44:11 +0000
+Received: from SJ1PR12MB6339.namprd12.prod.outlook.com
+ ([fe80::ae74:c645:b13d:3d8c]) by SJ1PR12MB6339.namprd12.prod.outlook.com
+ ([fe80::ae74:c645:b13d:3d8c%7]) with mapi id 15.20.7316.012; Sat, 2 Mar 2024
+ 02:44:11 +0000
+From: Akhil R <akhilrajeev@nvidia.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "davem@davemloft.net" <davem@davemloft.net>, "robh+dt@kernel.org"
+	<robh+dt@kernel.org>, "krzysztof.kozlowski+dt@linaro.org"
+	<krzysztof.kozlowski+dt@linaro.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>, Mikko
+ Perttunen <mperttunen@nvidia.com>, "linux-crypto@vger.kernel.org"
+	<linux-crypto@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "krzk@kernel.org" <krzk@kernel.org>
+Subject: RE: [PATCH v5 3/5] crypto: tegra: Add Tegra Security Engine driver
+Thread-Topic: [PATCH v5 3/5] crypto: tegra: Add Tegra Security Engine driver
+Thread-Index: AQHaY1jZwFltH5yLb0OQSiEEFOMbgrEhGKTAgAAIigCAAq5Q8A==
+Date: Sat, 2 Mar 2024 02:44:11 +0000
+Message-ID:
+ <SJ1PR12MB63398B52A8FB2978636FAF8DC05D2@SJ1PR12MB6339.namprd12.prod.outlook.com>
+References: <20240219172530.20517-1-akhilrajeev@nvidia.com>
+ <20240219172530.20517-4-akhilrajeev@nvidia.com>
+ <SJ1PR12MB63392983F30CA57CBCB69B93C05F2@SJ1PR12MB6339.namprd12.prod.outlook.com>
+ <ZeBSEviAw/JVpICl@gondor.apana.org.au>
+In-Reply-To: <ZeBSEviAw/JVpICl@gondor.apana.org.au>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR12MB6339:EE_|SN7PR12MB8604:EE_
+x-ms-office365-filtering-correlation-id: c880b022-389b-41a3-7f7c-08dc3a62a435
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ YDHy9uoNNg2sOpfQ5xFy6GhdlBrw5a1NMOyayv4W1lRbsOOv/JBkWfCpDVsDdxx4veZ8cpYaMuYbMk52HofxS6IIVOodKkUwXMO4iP95tnFGVpsucfeu1iYUyl1X0p/gvC0emfecTnPkxlXzXenWp/8piBmgcsSQrztOdzXn3DS8Lx56umzt510ii8U2IxHf6n1o8TnfDV5zahqyt+G834BSYS5rHUevmJwbsuLvLiwjCIwxy+V49Q5kEgj6qOZXXzykdktstiOyHtj7ZIDo7gGQWKWDa03yYvf/PfEDBe5tvcZSrmOJUwZQhoYpBOLO55agDUNLHIi8+ZT3ECDwJu+o5qFOT7xLVU1BBctsqg65xapERYZeqRqA6bmcz4aJN+jINsQ19xHIAuhNluGv1/+uXCMfIsOpsi7O4YNQneYwX3WoNk0lFO/HqdRV6ox6Dk71Ka7L7snKtArf0j/BhwVaDrG5kxpoCl6kQOJAAMVgXtfzISipt7kWZ44jzGYK13sSrxdqLF5CNhA/9qfsYrUiQjEDEAbAitZCDnDgFkUHlgNm/iTxJnxWYQO4f71TZOYxecw+meqekSN4YDJRBjK96ORftn5+3gKETkp7Mc/Xusvoc4DX5bQF5oLckA2k3lxuSz6wFH2e1R8xd1aObBytlAsgrEJCKkv0pqq9+8oTeZFT9uZb2blrIfKmLPTgscJBJZ3sxVPXPjlBPHQQzQ==
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6339.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?gOhxFziD+xt1gEs//TYsFdzQbnbfjG952L5/H+Nb1kPxrOrch3tuse49Ujww?=
+ =?us-ascii?Q?qHmgk2phjj54UZJr7cVDW74bcsdH7PTfh5GIh2+HI7EYhZMv4i0U3OnNgeqi?=
+ =?us-ascii?Q?b2DjS+rllU5XK9MHQ11XUTvVEURAgVR3HLmFYQ9FS0bV871eb5zSeD1qWY5/?=
+ =?us-ascii?Q?mMdSKjToueAExVZKnol0iX9l5qh4nvGF9Lcs+6Ny9xvI8xpCjVrT1DF0Mh6F?=
+ =?us-ascii?Q?mObONGvaV1QY3mWNASvn+A2VQIL1klS0ODjBR85Tixfvy0LC5OSF4O6M4SZd?=
+ =?us-ascii?Q?S7duroShPH9DRb161o3/trVN4kYw6Q8J6ioS281VaRkXn7+eRJa2tt1cWR7w?=
+ =?us-ascii?Q?2jDB7wc6v5afmq4TpWdjvUyehgJXHiOXghC6KO/eTuYaEScOW+oSqYNj3Zsb?=
+ =?us-ascii?Q?YdlxawM+49v7u5bvPOcqogrxMSalODZHiYftj64Z6yzs/Sl3WN36Psfs4Lw+?=
+ =?us-ascii?Q?cblxJag5jnVZp9lYxYODPzoIJUspy1MU9R7SwTZdbPz09vhcDqr9FMNGrjrb?=
+ =?us-ascii?Q?xKnHWxxPz6f+aKuBphbRNgWJ85nax9WGdRu+KBVJIopdz1zymv7s9h9IfvOT?=
+ =?us-ascii?Q?26CONm9kHS/wE/SBnqRG42KC5PxX3ethq8UANrFSR3HxVP1ykd7bqhP3hZqD?=
+ =?us-ascii?Q?ouY7clv0WNYfEcBF3/Rr61KgHCQ4eEZ/+FH2b3iqhthJvQudCwcJPfT1o5vl?=
+ =?us-ascii?Q?RnJgzruiqlwuWT2WbeaF5YDEJpRKsxnPIez8L53Pi678DBhzEr4GZTAU15vY?=
+ =?us-ascii?Q?To9+VSD/tLlVYxUQGjlkfr/idh+qgDNNOjXZZf9ihZQOlZIw0y+d3uGPCIIb?=
+ =?us-ascii?Q?UrUvGiQed7CRquDRfXStrtjyg9jREA/YpsGvFEZgK53ve/1nYHapPf4QCemw?=
+ =?us-ascii?Q?Dj3z5A8V1pJcJTBaIthLpO2YZ1jxYQCaq6+LLqqkT2v7LnftdOmboxua3nYu?=
+ =?us-ascii?Q?bhc7N6BHycKdbdPLNkqqgElo0EIxZAMkf7DPwK6A2y1RWWFOFLi9Ewy7QGDV?=
+ =?us-ascii?Q?jkuhH/yWjMl6Ev0PuZE4QPKzet6xvYyex1Pgv0Al7s8HyFJ3YddJHjcToKd5?=
+ =?us-ascii?Q?bFWWuQSFxTMo1yRJKkYLU2pHiEpEo16ftgiIpXJxQJOEzosaE96sioQnuDNu?=
+ =?us-ascii?Q?xD+SK7EM4IGBypyszELzrTNZ0ASNnJbkAco7Vmvfgkpcj7ZtpJgus1QAJUXl?=
+ =?us-ascii?Q?vEEtX1McCUtXw1LzakuteY3J2vayijsDZigfZyZBTetCpq0wpwbGZbXkqVfJ?=
+ =?us-ascii?Q?nNdqO+0rSJ9eGB94LDKHa1LLee8UQ7ndWZGWDOo+8cmyJIty6zKZNI5rMV/l?=
+ =?us-ascii?Q?tiLCciEADt+LOn2awoG6cMtfdsUif254pPsH64LlqTbTuwb10BZL/yFajVun?=
+ =?us-ascii?Q?2GYfGdKso4D1yqLSurXfEKwkiHZFsQ7EnPx7GUDnF+93OPoW83cl1g25LZ/m?=
+ =?us-ascii?Q?9sXpaHj2+bTwEQ6zwhx5GyXATUx7ulHb7JzsYlKxzbUWEavxTl3DWaKSTAD8?=
+ =?us-ascii?Q?P0OfUCjOUPq3/YFlMH6okgn2sgIk7UEnk8V2uOkqc9Zk2QdPCXT0oCHQVMmt?=
+ =?us-ascii?Q?AQRAkYxWATgwM9XVIW7p+6GvguxBA0GbMiWvEXXRRHkQi/Rqw65TOL3wYhe6?=
+ =?us-ascii?Q?uV8wzMsh66AnUg3hTluRPTawf3Plj+R6fM9EbvXMpmgb?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6339.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c880b022-389b-41a3-7f7c-08dc3a62a435
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Mar 2024 02:44:11.5748
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ODaZFAU826DqgmyMdh5ZyX5k1C8WfDVQfijaufh+r6MOLbmwRxCDHHIMTekN0FynZhvHpsg3p9QHXLJo4LRRFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8604
 
-Hello Markus,
+> >
+> > Do we have any other concerns with the driver currently, which I can
+> > address in the next revision?
+>=20
+> The sha export/import code looks good now.  Does it pass all the self-tes=
+ts,
+> including extra fuzzing?
+>=20
+> The same export/import issue still exists with cmac so please fix that.
+>=20
+I do see some warnings for some AES algorithms with extra fuzzing.
+Will send a new version with the CMAC import/export update and the
+extra fuzzing warning fixes.
 
-On Thu, 29 Feb 2024 19:55:46 +0100
-Markus Elfring <Markus.Elfring@web.de> wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 29 Feb 2024 19:44:36 +0100
-> 
-> Add a jump target so that a bit of exception handling can be better reused
-> at the end of this function implementation.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+Akhil
