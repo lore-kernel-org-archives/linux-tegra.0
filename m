@@ -1,166 +1,174 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B134D1DFD6;
-	Mon,  4 Mar 2024 12:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EF345945;
+	Mon,  4 Mar 2024 15:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709555458; cv=none; b=LknKZl/w9JmrTm3TJEAM9vsg4rNym1NZFeEC6FWIyByrCcajq4lNHamVh4pvrhFB9W7AhXpaKLeYzBii4kPiQ63kWjp5x4tmdJbl/eYRiqrMI2PZfj5G1u7uPYwbT7Tq+0NlxHx1+EjpfaMjcZay7L6X63jPBJy0taYJaxMgVdQ=
+	t=1709564674; cv=none; b=MyarseT0/NJWJ8Es/f4QhcWN2W3sptd667CvDPvHRXq7IruECMXRP3PMwBnssMFwlpilQ+wzaqQPg4Jts185f5SucGkgytyIVqt1ii62g/CmFdN5HG7JEM5dywpx0qA9/+/vYfzfJKmaIW3sEBapWM3k2lGxVmFARpC6514VQrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709555458; c=relaxed/simple;
-	bh=Ug0+1cJK1qABFIX1u2vFwuq1+scRl5b911mXi0OiA6E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h1Q8dKir6+je1iSxv815rMCxrshct+Pna4xj0o2TnAmYfh/URnJyw0adVvUQVwJUjKJMhB7Xjlz5iUEGWtoejKczZiT2hVaSkDzUmpcBLaLjWIvZwqZkgYKH8UJVjCNawE1mn7GkVMS/E5ZXrhExE4iTXq6txn0EFPeWdMFriGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=btgO66SW; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1709564674; c=relaxed/simple;
+	bh=JQ0+zqW2caSPP+fUJhGdRNpSWxMzAFd26SsP97GqJ5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mR1moOY0oYBeeXjlCVW+u9KRBSycn/7+bQijEVwIhHWLa+IUE5JlTSFIrgDS+1dIrxcdorg9hzfeS91qWVWusT++M+T1dhAlmO8KJ6SXBTjj5DNMY8Miagx25mE91Asv3/uW444ZYMSAiB5WV7YLku6uBA1lI6IbVoZSdx++HBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxfxPZyT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="btgO66SW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1709555457; x=1741091457;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ug0+1cJK1qABFIX1u2vFwuq1+scRl5b911mXi0OiA6E=;
-  b=btgO66SWU7R75f1NA6Np7PWHbaWPwPj4LHe6t4MSURWSRWVWbX2bvS+5
-   8LBqpsBTIRZW2PY1PZqsOV4Gvyky6BIVbVlXykOeGFY/9IjtV+XsPdBcc
-   jOVAxuQLHOxn4nTbtHGdxNW2QQ2IXZsFX+7XnMnvO/qllvCz+NuL+hXz3
-   R0QqWRgTm8nqx/wc36VttavsdSna+M1PFHkerd7m+9lfDzJaIqQTVd9t5
-   x4jw21dtzanKluXWnxuC60ezPBUWarM20bjYM8sQYZVhFYVNIwpsKsVyU
-   eFdP1ZY4si+ti4LPk1/2aNZS2HvdT6gXvg+BOHHxCTyMl1XfuFIMYRF6Y
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11002"; a="7815203"
-X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
-   d="scan'208";a="7815203"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2024 04:30:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,11002"; a="937040433"
-X-IronPort-AV: E=Sophos;i="6.06,203,1705392000"; 
-   d="scan'208";a="937040433"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 04 Mar 2024 04:30:45 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id BF01A8F6; Mon,  4 Mar 2024 14:30:37 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-mips@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Al Cooper <alcooperx@gmail.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Vladimir Zapolskiy <vz@mleia.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxfxPZyT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC42C433F1;
+	Mon,  4 Mar 2024 15:04:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709564673;
+	bh=JQ0+zqW2caSPP+fUJhGdRNpSWxMzAFd26SsP97GqJ5M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KxfxPZyTJCmJ5mZxVgiJqCzXofUHAoQs7mRC4KDObSN4wZYzCp+or22QBaGGe5t9d
+	 pLbvJc3JLMFgeoU1w44VMTP8tAduMKv6D3daCt6OZvQd6ZtM5E/Z97noo5A7eDc0s2
+	 W+ig+U1dUuuB06z3B0xWfblUl4Qt+mYQ4jEyGRB7YwL+af8wnuI87t37LKaJhjrGoW
+	 ub8JQUD6sglgIwv+HwJS9neFZqPR7gHY6wjCaYatMgn1yMmWuoNgu/qGBQDEDJSnwJ
+	 1Wcb5mT3qEHKZKholtNHLHRLkFh6GvNDPtCqpZMBtwoYo84wi/8B185vMWK2kovBNR
+	 BuM6Fu1YvISvg==
+Date: Mon, 4 Mar 2024 20:34:17 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Vidya Sagar <vidyas@nvidia.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
 	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v3 11/14] serial: 8250_omap: Switch to use uart_read_port_properties()
-Date: Mon,  4 Mar 2024 14:27:12 +0200
-Message-ID: <20240304123035.758700-12-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1.gbec44491f096
-In-Reply-To: <20240304123035.758700-1-andriy.shevchenko@linux.intel.com>
-References: <20240304123035.758700-1-andriy.shevchenko@linux.intel.com>
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v8 03/10] PCI: dwc: ep: Introduce dw_pcie_ep_cleanup()
+ API for drivers supporting PERST#
+Message-ID: <20240304150417.GK2647@thinkpad>
+References: <20240224-pci-dbi-rework-v8-0-64c7fd0cfe64@linaro.org>
+ <20240224-pci-dbi-rework-v8-3-64c7fd0cfe64@linaro.org>
+ <ZeB7PQtkDSoCzE1Z@fedora>
+ <20240304081713.GH2647@thinkpad>
+ <ZeWnmLjS0O8CYQYg@fedora>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZeWnmLjS0O8CYQYg@fedora>
 
-Since we have now a common helper to read port properties
-use it instead of sparse home grown solution.
+On Mon, Mar 04, 2024 at 11:51:04AM +0100, Niklas Cassel wrote:
+> On Mon, Mar 04, 2024 at 01:47:13PM +0530, Manivannan Sadhasivam wrote:
+> > On Thu, Feb 29, 2024 at 01:40:29PM +0100, Niklas Cassel wrote:
+> > > On Sat, Feb 24, 2024 at 12:24:09PM +0530, Manivannan Sadhasivam wrote:
+> > > 
+> > > Since e.g. qcom-ep.c does a reset_control_assert() during perst
+> > > assert/deassert, which should clear sticky registers, I think that
+> > > you should let dw_pcie_ep_cleanup() clean up the BARs using
+> > > dw_pcie_ep_clear_bar().
+> > > 
+> > 
+> > As I mentioned earlier, it is the job of the EPF drivers to clear the BARs since
+> > they allocate them. I'm trying to reduce the implicit resetting wherever we
+> > could.
+> > 
+> > The proper fix is to add the LINK_DOWN callback to EPF drivers and do cleanup.
+> > I'm planning to submit a series for that after this one.
+> 
+> Currently, pci-epf-test allocates memory for the BARs in .bind().
+> Likewise it frees the memory for the BARs in .unbind().
+> 
+> AFAICT, most iATU registers, and most BAR registers are sticky registers,
+> so they will not get reset on link down.
+> (The currently selected BAR size, in case of Resizable BAR is an exception.)
+> 
+> That means that even on link down, we do not need to free the memory,
+> or change the iATU settings. (This applies to all drivers.)
+> 
+> 
+> 
+> However, on PERST (for the drivers call dw_pcie_ep_cleanup()), they call
+> reset_control_assert(), so they will clear sticky registers, which means
+> that they need to at least re-write the iATU and BAR registers.
+> (I guess they could free + allocate the memory for the BARs again,
+> but I don't think that is strictly necessary.)
+> That is why I suggested that you call dw_pcie_ep_clear_bar() from
+> dw_pcie_ep_cleanup().
+> 
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/tty/serial/8250/8250_omap.c | 29 ++++++++++-------------------
- 1 file changed, 10 insertions(+), 19 deletions(-)
+Sorry, I keep assuming the flow w.r.t PERST# supported platforms :/
 
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index 6942990a333c..66901d93089a 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -1394,11 +1394,7 @@ static int omap8250_probe(struct platform_device *pdev)
- 	struct uart_8250_port up;
- 	struct resource *regs;
- 	void __iomem *membase;
--	int irq, ret;
--
--	irq = platform_get_irq(pdev, 0);
--	if (irq < 0)
--		return irq;
-+	int ret;
- 
- 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!regs) {
-@@ -1419,7 +1415,6 @@ static int omap8250_probe(struct platform_device *pdev)
- 	up.port.dev = &pdev->dev;
- 	up.port.mapbase = regs->start;
- 	up.port.membase = membase;
--	up.port.irq = irq;
- 	/*
- 	 * It claims to be 16C750 compatible however it is a little different.
- 	 * It has EFR and has no FCR7_64byte bit. The AFE (which it claims to
-@@ -1429,13 +1424,9 @@ static int omap8250_probe(struct platform_device *pdev)
- 	 * or pm callback.
- 	 */
- 	up.port.type = PORT_8250;
--	up.port.iotype = UPIO_MEM;
--	up.port.flags = UPF_FIXED_PORT | UPF_FIXED_TYPE | UPF_SOFT_FLOW |
--		UPF_HARD_FLOW;
-+	up.port.flags = UPF_FIXED_PORT | UPF_FIXED_TYPE | UPF_SOFT_FLOW | UPF_HARD_FLOW;
- 	up.port.private_data = priv;
- 
--	up.port.regshift = OMAP_UART_REGSHIFT;
--	up.port.fifosize = 64;
- 	up.tx_loadsz = 64;
- 	up.capabilities = UART_CAP_FIFO;
- #ifdef CONFIG_PM
-@@ -1461,14 +1452,14 @@ static int omap8250_probe(struct platform_device *pdev)
- 	up.rs485_stop_tx = serial8250_em485_stop_tx;
- 	up.port.has_sysrq = IS_ENABLED(CONFIG_SERIAL_8250_CONSOLE);
- 
--	ret = of_alias_get_id(np, "serial");
--	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to get alias\n");
-+	ret = uart_read_port_properties(&up.port);
-+	if (ret)
- 		return ret;
--	}
--	up.port.line = ret;
- 
--	if (of_property_read_u32(np, "clock-frequency", &up.port.uartclk)) {
-+	up.port.regshift = OMAP_UART_REGSHIFT;
-+	up.port.fifosize = 64;
-+
-+	if (!up.port.uartclk) {
- 		struct clk *clk;
- 
- 		clk = devm_clk_get(&pdev->dev, NULL);
-@@ -1560,8 +1551,8 @@ static int omap8250_probe(struct platform_device *pdev)
- 	}
- #endif
- 
--	irq_set_status_flags(irq, IRQ_NOAUTOEN);
--	ret = devm_request_irq(&pdev->dev, irq, omap8250_irq, 0,
-+	irq_set_status_flags(up.port.irq, IRQ_NOAUTOEN);
-+	ret = devm_request_irq(&pdev->dev, up.port.irq, omap8250_irq, 0,
- 			       dev_name(&pdev->dev), priv);
- 	if (ret < 0)
- 		return ret;
+My bad!
+
+> 
+> 
+> If you free the memory for the BARs in link_down() (this callback exists
+> for many drivers, even drivers without a PERST handler), where are you
+> supposted to alloc the memory for the BARs again?
+> 
+> Allocating them at link_up() is too late (because as soon as the link is
+> up, the host is allowed to enumerate the EP BARs.) The proper place is to
+> allocate them when receiving PERST, but not all drivers have a PERST handler.
+> 
+> (My understanding is that 1) PERST assert 2) PERST deassert 3) link is up.)
+> 
+> 
+> 
+> unbind() undos what was done in bind(), so shouldn't link_down() undo what was
+> done in link_up()? With that logic, if you move the alloc to .core_init(),
+> should we perhaps have a .core_deinit() callback for EPF drivers?
+> (I guess only drivers which perform a reset during PERST would call this.)
+> 
+> But considering that free+alloc is not strictly needed, why not just keep
+> the allocation + free in .bind()/.unbind() ?
+> (To avoid the need to create a .core_deinit()), and let dw_pcie_ep_cleanup()
+> call dw_pcie_ep_clear_bar() ?
+> 
+> I guess my point is that it seems a bit pointless for drivers that do not
+> clear sticky registers to free+alloc memory on link down, for no good
+> reason. (Memory might get fragmented over time, so it might not be possible
+> to perform a big allocation after the device has been running for a really
+> long time.)
+> 
+> 
+> 
+> So I'm thinking that we either
+> 1) Keep the alloc/free in bind/unbind, and let dw_pcie_ep_cleanup() call
+> dw_pcie_ep_clear_bar(),
+> or
+> 2) Introduce a .deinit_core() callback which will free the BARs.
+> (Because I don't see how you will (re-)allocate memory for all drivers
+> if you free the memory in link_down().)
+> 
+
+I think option 2 is the better solution. In my view, calling
+dw_pcie_ep_clear_bar() from EPC drivers is a layering violation since the
+allocation happens from EPF drivers.
+
+So clearing the BARs during the deinit() callback that gets called when PERST#
+assert happens is the way to go.
+
+- Mani
+
 -- 
-2.43.0.rc1.1.gbec44491f096
-
+மணிவண்ணன் சதாசிவம்
