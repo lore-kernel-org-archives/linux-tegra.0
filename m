@@ -1,174 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2053.outbound.protection.outlook.com [40.107.96.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16EF345945;
-	Mon,  4 Mar 2024 15:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709564674; cv=none; b=MyarseT0/NJWJ8Es/f4QhcWN2W3sptd667CvDPvHRXq7IruECMXRP3PMwBnssMFwlpilQ+wzaqQPg4Jts185f5SucGkgytyIVqt1ii62g/CmFdN5HG7JEM5dywpx0qA9/+/vYfzfJKmaIW3sEBapWM3k2lGxVmFARpC6514VQrw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709564674; c=relaxed/simple;
-	bh=JQ0+zqW2caSPP+fUJhGdRNpSWxMzAFd26SsP97GqJ5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mR1moOY0oYBeeXjlCVW+u9KRBSycn/7+bQijEVwIhHWLa+IUE5JlTSFIrgDS+1dIrxcdorg9hzfeS91qWVWusT++M+T1dhAlmO8KJ6SXBTjj5DNMY8Miagx25mE91Asv3/uW444ZYMSAiB5WV7YLku6uBA1lI6IbVoZSdx++HBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxfxPZyT; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EFE55761;
+	Tue,  5 Mar 2024 10:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1709636304; cv=fail; b=MHvuvh81brRY337Dujr/u9dFNZsJZkz1RwxS4W+PjB/pv7oLJzuC9SPyyACrNKrxxeSDn5CfGnvyP/D1FF/WlCUOjY+sJfwbMAb4QiH4HaZQqReat10SiUOW95ljI73tsa/3gbQDq/CGHlpqUm/ClJFdotma9drcENdImnrDzks=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1709636304; c=relaxed/simple;
+	bh=/y3Naec5aS86TKAh8HKel2Mpuu4gG9MTFJFwAcNd8mg=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=XnlhiZekv8c5OMPfK8454bYCdGUzoH9131Z4F8yDJ0ig5nfjMEwjQStRY9kYzANy7aXhs+efn2BqCQ3CNnUefk0wRxPyEIRNL0FdTp7CcV/lFSJjRtXWxpH9yhdpk98txcq7O2JZEsmgyeuyO+dGlWe+2TiQ/MDEQXgVkT2J41c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YKg5Db/i; arc=fail smtp.client-ip=40.107.96.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxfxPZyT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DC42C433F1;
-	Mon,  4 Mar 2024 15:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709564673;
-	bh=JQ0+zqW2caSPP+fUJhGdRNpSWxMzAFd26SsP97GqJ5M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KxfxPZyTJCmJ5mZxVgiJqCzXofUHAoQs7mRC4KDObSN4wZYzCp+or22QBaGGe5t9d
-	 pLbvJc3JLMFgeoU1w44VMTP8tAduMKv6D3daCt6OZvQd6ZtM5E/Z97noo5A7eDc0s2
-	 W+ig+U1dUuuB06z3B0xWfblUl4Qt+mYQ4jEyGRB7YwL+af8wnuI87t37LKaJhjrGoW
-	 ub8JQUD6sglgIwv+HwJS9neFZqPR7gHY6wjCaYatMgn1yMmWuoNgu/qGBQDEDJSnwJ
-	 1Wcb5mT3qEHKZKholtNHLHRLkFh6GvNDPtCqpZMBtwoYo84wi/8B185vMWK2kovBNR
-	 BuM6Fu1YvISvg==
-Date: Mon, 4 Mar 2024 20:34:17 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Vidya Sagar <vidyas@nvidia.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v8 03/10] PCI: dwc: ep: Introduce dw_pcie_ep_cleanup()
- API for drivers supporting PERST#
-Message-ID: <20240304150417.GK2647@thinkpad>
-References: <20240224-pci-dbi-rework-v8-0-64c7fd0cfe64@linaro.org>
- <20240224-pci-dbi-rework-v8-3-64c7fd0cfe64@linaro.org>
- <ZeB7PQtkDSoCzE1Z@fedora>
- <20240304081713.GH2647@thinkpad>
- <ZeWnmLjS0O8CYQYg@fedora>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YKg5Db/i"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cTZXi7XGnu6Bzu90BLhffX3KmIreB7Y0FoON3yTiXz7RbwviwVwKVL90CL0LwAChpYtW6EC4qh179CwP8AvA2ByH1DXFtl1xsGqa+10o91B+p83NNRL3Mq3/DuO6+7oG6rnnv2c9t2UNq8BkzHt8DxLqelIsVRjLCxALxTQvQOR+R0beUkcuiWMwVlFZB7QaWX3eHakyUC0oYa0aDAZkl7yPw5/9nmK3AjBvgp0QuZTIbR8NDdXDgz8zs7+cmYuwOmN6t7JCzc2lQhfc8Dw8lVsTDBn8UWGZwjL9iiwhngHzcSGrCdxAkgMOHqOZfkANGZdb+s3Q1KCCDfGZtinAyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CxmFWXRUn0Xe7EWmKY/VRVjHzXb5sF16ZPJ5ML/GpkA=;
+ b=Z8S/F6VRJiMefNJcPp7CGL0pDifBUJK2Yyvr3qIRV3JSewsd56s1dpnPwcWe7yvgYgmAo9aaIP7pFcHPZsBS1AtZVjJowW1/rzBzyT8FZsPWaoEv01K9VDVAYKSbq+qHed2dMyLrrNLEXacCbb+f7BNAl5Azb26iPFoTAEvtUg4pSRgTjrjCQCO4vGMXJUA1r6pazMYqItQuylPxjrlckXaiysdinkOExJcc7EYwzzLP+H6yJSrv9RmoIg5h2wB74mtECcOYD7UMXgyGEFtAzGoQHMLR6PzJnDjSouJdzvgXRrFedseFcb/mSQyCGBTmV734NSy6YmNeE9V607W7PQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CxmFWXRUn0Xe7EWmKY/VRVjHzXb5sF16ZPJ5ML/GpkA=;
+ b=YKg5Db/il47RcNy4UG3PXWjv1jh2i9Vj2AouVcojv+ATz4md4s/+hQ267d7rp30ga2RKwferAr4YoFhw8mOswhLZ8tUX8vbjT3qRRiAl8exGBtGcimdlpE5bSB6jvBGHzpDWVhUzxOSfTIZx6bXeEcNrGWLrbvJUd4lxq6aj+Ud8U0LW3YvQbGR8Cm1dQTLSUAhLfNonbakWcPWGp1bS8CFDNo0L7asCpZnz/GfAOV8ivMdBHtrf0BnPNiuojWqth300eER1mpEt7vj4WKCiB3ArOh4y98Kyz4AR3IzzLes13KQUFKF8srkRLIYqwM51EQ4nsShMAz0CcBp2DZFyUg==
+Received: from DS7PR05CA0071.namprd05.prod.outlook.com (2603:10b6:8:57::14) by
+ CY8PR12MB8313.namprd12.prod.outlook.com (2603:10b6:930:7d::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7339.38; Tue, 5 Mar 2024 10:58:18 +0000
+Received: from DS2PEPF00003440.namprd02.prod.outlook.com
+ (2603:10b6:8:57:cafe::72) by DS7PR05CA0071.outlook.office365.com
+ (2603:10b6:8:57::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7362.24 via Frontend
+ Transport; Tue, 5 Mar 2024 10:58:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ DS2PEPF00003440.mail.protection.outlook.com (10.167.18.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7362.11 via Frontend Transport; Tue, 5 Mar 2024 10:58:18 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 5 Mar 2024
+ 02:58:12 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.12; Tue, 5 Mar 2024 02:58:11 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12 via Frontend
+ Transport; Tue, 5 Mar 2024 02:58:11 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/42] 5.10.212-rc1 review
+In-Reply-To: <20240304211537.631764077@linuxfoundation.org>
+References: <20240304211537.631764077@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZeWnmLjS0O8CYQYg@fedora>
+Message-ID: <b28ed699-2018-4f58-a947-7898df22b31b@drhqmail202.nvidia.com>
+Date: Tue, 5 Mar 2024 02:58:11 -0800
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003440:EE_|CY8PR12MB8313:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a48ae87-1723-435e-32de-08dc3d032a70
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	7MWNoH9XscsL7fUupv0I2L6gP4Ck7ewP4dOyUUtWz1PMGYA9fKPAq5CFPSeLwNHip++M8LkGEqqI50zms1qfK9G2LbwP+rrdvpjGbHzL/B5SSnDCfcvt8TlAQbjKASFB88p8ejNKytnACYPMV5lajhYyDZKK4DxQTk3g1uc6q/7OLTUOe0H9sPw71dZGd5YeEpozVUfYUCuw5unR3PpY2qLmXs3tiMCRcNnmoLYZdLRSW6WuDv8JHnmo/2fQu5EVSfLGeRd6GLYjy1ufd/NHOzgkGWxvGLZo7e2qHyZm7hRfhJPBmYeAxF4+bCEeKWSqvfQiWKykLgDzw3vJ9D5yOUVBVqUSFkntaNU/NxYPnw9JKGuxO30Z93crUMYIUZpBuAzARPmnspDUe53dTPWCDsY7yQwFV2uNws54wIIHtW1gSF/6Y7DR/QCjYsRy/zy1AoGsK5pimB0VZRpl2cfGX5/DSFQoN7/Ctokl9VDQvhruf/D+dgzKZ9a8X8g7g+UMyaFxV+KSFzEa/9Z8Lv17WaNACxbUV5EUaRXrm6c6k3ckgUwIfQ2RatWjki2Wm7CG+nrUxcFo2R/OjYGYXMiLAGGnKtN26tjYKnEIchBZiwCl/qjoQr7VB5ZBT63EF3p/JG3oFDc+WYqiquzayR1NWSL/Tiwx9MfDns1i/NS7L6pW1F6GePAtaytJKEa7JHe++5LY0Y8mt0/D/CKiVRg7UgSU15oGC9aq/UFtLKqvsT7LLG482cu1uNDi8x/uAz3I
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(376005)(82310400014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2024 10:58:18.2366
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a48ae87-1723-435e-32de-08dc3d032a70
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003440.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8313
 
-On Mon, Mar 04, 2024 at 11:51:04AM +0100, Niklas Cassel wrote:
-> On Mon, Mar 04, 2024 at 01:47:13PM +0530, Manivannan Sadhasivam wrote:
-> > On Thu, Feb 29, 2024 at 01:40:29PM +0100, Niklas Cassel wrote:
-> > > On Sat, Feb 24, 2024 at 12:24:09PM +0530, Manivannan Sadhasivam wrote:
-> > > 
-> > > Since e.g. qcom-ep.c does a reset_control_assert() during perst
-> > > assert/deassert, which should clear sticky registers, I think that
-> > > you should let dw_pcie_ep_cleanup() clean up the BARs using
-> > > dw_pcie_ep_clear_bar().
-> > > 
-> > 
-> > As I mentioned earlier, it is the job of the EPF drivers to clear the BARs since
-> > they allocate them. I'm trying to reduce the implicit resetting wherever we
-> > could.
-> > 
-> > The proper fix is to add the LINK_DOWN callback to EPF drivers and do cleanup.
-> > I'm planning to submit a series for that after this one.
+On Mon, 04 Mar 2024 21:23:27 +0000, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.212 release.
+> There are 42 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Currently, pci-epf-test allocates memory for the BARs in .bind().
-> Likewise it frees the memory for the BARs in .unbind().
+> Responses should be made by Wed, 06 Mar 2024 21:15:26 +0000.
+> Anything received after that time might be too late.
 > 
-> AFAICT, most iATU registers, and most BAR registers are sticky registers,
-> so they will not get reset on link down.
-> (The currently selected BAR size, in case of Resizable BAR is an exception.)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.212-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 > 
-> That means that even on link down, we do not need to free the memory,
-> or change the iATU settings. (This applies to all drivers.)
+> thanks,
 > 
-> 
-> 
-> However, on PERST (for the drivers call dw_pcie_ep_cleanup()), they call
-> reset_control_assert(), so they will clear sticky registers, which means
-> that they need to at least re-write the iATU and BAR registers.
-> (I guess they could free + allocate the memory for the BARs again,
-> but I don't think that is strictly necessary.)
-> That is why I suggested that you call dw_pcie_ep_clear_bar() from
-> dw_pcie_ep_cleanup().
-> 
+> greg k-h
 
-Sorry, I keep assuming the flow w.r.t PERST# supported platforms :/
+All tests passing for Tegra ...
 
-My bad!
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    68 tests:	68 pass, 0 fail
 
-> 
-> 
-> If you free the memory for the BARs in link_down() (this callback exists
-> for many drivers, even drivers without a PERST handler), where are you
-> supposted to alloc the memory for the BARs again?
-> 
-> Allocating them at link_up() is too late (because as soon as the link is
-> up, the host is allowed to enumerate the EP BARs.) The proper place is to
-> allocate them when receiving PERST, but not all drivers have a PERST handler.
-> 
-> (My understanding is that 1) PERST assert 2) PERST deassert 3) link is up.)
-> 
-> 
-> 
-> unbind() undos what was done in bind(), so shouldn't link_down() undo what was
-> done in link_up()? With that logic, if you move the alloc to .core_init(),
-> should we perhaps have a .core_deinit() callback for EPF drivers?
-> (I guess only drivers which perform a reset during PERST would call this.)
-> 
-> But considering that free+alloc is not strictly needed, why not just keep
-> the allocation + free in .bind()/.unbind() ?
-> (To avoid the need to create a .core_deinit()), and let dw_pcie_ep_cleanup()
-> call dw_pcie_ep_clear_bar() ?
-> 
-> I guess my point is that it seems a bit pointless for drivers that do not
-> clear sticky registers to free+alloc memory on link down, for no good
-> reason. (Memory might get fragmented over time, so it might not be possible
-> to perform a big allocation after the device has been running for a really
-> long time.)
-> 
-> 
-> 
-> So I'm thinking that we either
-> 1) Keep the alloc/free in bind/unbind, and let dw_pcie_ep_cleanup() call
-> dw_pcie_ep_clear_bar(),
-> or
-> 2) Introduce a .deinit_core() callback which will free the BARs.
-> (Because I don't see how you will (re-)allocate memory for all drivers
-> if you free the memory in link_down().)
-> 
+Linux version:	5.10.212-rc1-g4b0abedc88b0
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-I think option 2 is the better solution. In my view, calling
-dw_pcie_ep_clear_bar() from EPC drivers is a layering violation since the
-allocation happens from EPF drivers.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-So clearing the BARs during the deinit() callback that gets called when PERST#
-assert happens is the way to go.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Jon
