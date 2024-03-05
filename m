@@ -1,75 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922D01272A2;
-	Tue,  5 Mar 2024 15:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6A2126F36;
+	Tue,  5 Mar 2024 15:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709652106; cv=none; b=Japy7pDEgaFsYIDv56HhPSOH0srbsee2j0L/DThO7wAGlv1567/Pob+lfkNZ6v/ZN1rLRdkcp6I+A2KXO+kIgwyswh5vOqhUJWkGBw44ItyaHaeSQ/1pC6feLLEvM4ZX6ilA+pVH4d7dJnNTXRzkfsUscqfCEX4l3SSLen2/b+M=
+	t=1709652274; cv=none; b=VWXJLIk/h+VQ1Heg8jODhSx3y6a1ISSPd8fngctjtXhsVhbq2Oezmb3IudNvs7U+JTFyp6ND59+EL0nfhXioXxYNIQoaj1SLV3t0soHHaBBA3IJypjRIZAsteYcRYNV4cvDZvUqSyd00+XTvUKdZYqfKW7bknroB2n+QA0QxufI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709652106; c=relaxed/simple;
-	bh=H5a6Zjeh7JVn3ZqUuQlhd5EvWGSBzuJ+rvKeiaAiIpI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V53XEZ6DX3c/7+JFSOFZbqeMuZGTJ2vX62cjMcF6Rsy0iCOGC08v7qiaKmZsFPKtmonosBPLR1fW83NBf4YH3IHWE/mN5ME6bFxov0s+QyJOqOsvQFOhCBskIZ6fNvF/eOXPbaZpM7VuB27bzeKCl2sEtrkQEfQn/vvjcBdMUZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ut2PNkBk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1709652274; c=relaxed/simple;
+	bh=qjlIRQeJBKz2vz5aisxD5IOrlTqfFDk0KcO4WDSaG8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qfal3SQi2DORiOgDSH4FQM8DsTcrpkoPAkTai9h0sIDr9LDW76I2H2FLc4mziCdiz2Ca53W7L9sVbRcUuP6PXRfvze0U9qndIkGrCs0LQ8PDi6LkZ3yKsaGPVeNAX9WkW4KnJ3uhm1DbAlKgRjR7pfQaOTsEtd15w14RRGSVe+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UhfaeAnI; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ut2PNkBk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D501DC433F1;
-	Tue,  5 Mar 2024 15:21:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709652106;
-	bh=H5a6Zjeh7JVn3ZqUuQlhd5EvWGSBzuJ+rvKeiaAiIpI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ut2PNkBkdWERAv+dE4+39HeeJ/DJWbkGASbz6s5E1C3NxIdhVOppjdwDbocccD1wG
-	 N3lb0NVWTchEUqKT7zkdd3K4+4+Rhfy9ONZ0tvVzkoYDhD7cmLaM/mdNlW6aui4sz2
-	 mRWAYcSS24E4sETlcEupwqbpVhJ5BL+HzQCZfcSFy5rY8Fm1SKxvUiCINT4eMtkg6d
-	 9HWdAagR3UcWoxZSe6zuU8trB1xm+Re57w3b031wJNDdUNDL4tXHZtLBGV6/mpVp2I
-	 HS9dRs+kHRWTxs7HySQxHohVoLsbKRiFTfQ3dujM+cEByxql5oyMp5x0hzfialr/c7
-	 9Znx5Euowlnog==
-From: Rob Herring <robh@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: dt-bindings: nvidia: Fix 'lge' vendor prefix
-Date: Tue,  5 Mar 2024 09:21:31 -0600
-Message-ID: <20240305152131.3424326-1-robh@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UhfaeAnI"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AFA0EE0002;
+	Tue,  5 Mar 2024 15:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1709652269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TC7BcVWBBaci9HUeR/cYeDY12xKiEfNlPcIEH+Cc0Io=;
+	b=UhfaeAnIOQbUnNE6KTFMqs54WVSJT5qGaJYgQ3zmXxYfnYO/oq/KMKfa97O0DFuS4gxDae
+	U84iL5lDUbL8yKfUP6E326+8tw0r6fEKbuaJbuPTQ8VK8KLkZiMkDMuDlTgkXgG3yZY6ZU
+	d3AcO6UMdix9Eh1Gu/9sf616R6xVZRRVZrwuTV20ubPxWpEwYkf5YirxAh+uVBtmSqPcbj
+	Q6z8Z8He8c6kwrH/kBGfsp/Gsl1LV9gDPzt6tJLnK6cd1OmAkKE5V5sgfjjcdXVpuiM+cb
+	+lNq8D9Tj0eBdFA500K4B1GPk64bCDQfOeJf79r465gWkJX4g3oVHcDNWx6t6Q==
+Date: Tue, 5 Mar 2024 16:24:27 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Markus Elfring <Markus.Elfring@web.de>, Dan Carpenter
+ <dan.carpenter@linaro.org>
+Cc: linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jonathan Hunter
+ <jonathanh@nvidia.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>, Thierry Reding
+ <thierry.reding@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: staging: media: tegra-video: Use common error handling code in
+ tegra_vi_graph_parse_one()
+Message-ID: <20240305162427.49a9f013@booty>
+In-Reply-To: <f451ffba-db26-4a3b-a4b3-186c31f2ad64@web.de>
+References: <dbebaea7-289c-47d9-ba06-cd58a10ea662@web.de>
+	<20240301183936.505fcc72@booty>
+	<9f1b617f-06cb-4b22-a050-325424720c57@moroto.mountain>
+	<f451ffba-db26-4a3b-a4b3-186c31f2ad64@web.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-The documented vendor prefix for LG Electronics is 'lg' not 'lge'. Just
-change the example to 'lg' as there doesn't appear to be any dependency
-on the existing compatible string.
+Hello Dan, Markus,
 
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml  | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sat, 2 Mar 2024 11:40:26 +0100
+Markus Elfring <Markus.Elfring@web.de> wrote:
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
-index c29d7942915c..241d20f3aad0 100644
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max9808x.yaml
-@@ -64,7 +64,7 @@ examples:
-     #include <dt-bindings/clock/tegra30-car.h>
-     #include <dt-bindings/soc/tegra-pmc.h>
-     sound {
--        compatible = "lge,tegra-audio-max98089-p895",
-+        compatible = "lg,tegra-audio-max98089-p895",
-                      "nvidia,tegra-audio-max98089";
-         nvidia,model = "LG Optimus Vu MAX98089";
- 
--- 
-2.43.0
+> >>> Add a jump target so that a bit of exception handling can be better r=
+eused
+> >>> at the end of this function implementation. =20
+> =E2=80=A6
+> >> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com> =20
+> >
+> > These patches make the code worse. =20
 
+This is of course a legitimate opinion. However Markus' patch
+implements what is recommended by the documentation and is in common
+use in the kernel code. A quick search found 73 occurrences in v6.8-rc7:
+
+$ expr $(pcregrep -r -M ':\n\tfwnode_handle_put'  drivers | wc -l) / 2
+73
+$
+
+300+ are found for of_node_put().
+
+> > If we're in the middle of a loop,
+> > then we should clean up the partial loop before doing the goto.
+> > Otherwise it creates a mess when we add a new allocation function after
+> > the end of the loop. =20
+>=20
+> How does such a feedback fit to another known information source?
+>=20
+> Section =E2=80=9C7) Centralized exiting of functions=E2=80=9D
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/process/coding-style.rst?h=3Dv6.8-rc6#n526
+>
+> > Someone is going to add a _scoped() loop which uses cleanup.h magic to
+> > call _put automatically.  This is a good option. =20
+>=20
+> I became also curious how scope-based resource management will influence
+> Linux coding styles further.
+> Will various collateral evolution become more interesting?
+
+After some research I think I found what Dan means:
+
+https://lore.kernel.org/all/20240225142714.286440-3-jic23@kernel.org/
+
+After reading the above thread, I agree using *_scoped() macros will
+be a good improvement. It is not yet in mainline as of v6.8-rc7, but
+it is in linux-next. So I think despite being valid this patch might
+still be discarded because a better solution should be available in a
+few weeks.
+
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
