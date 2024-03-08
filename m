@@ -1,138 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276941CA9A;
-	Fri,  8 Mar 2024 08:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86C52D056
+	for <linux-tegra@vger.kernel.org>; Fri,  8 Mar 2024 08:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709887699; cv=none; b=ARHgPKiciQ6bX2lb+QeHfHiaaHCtntYHsfcEYBvqLTnwc2lQyUr+AS1CXpRWXUmIl4gk2wjgTWsLX6aB3cSetpSNfVf3uk7Iw5UVoSimOFZE/gMWiatYSBVdbxp1L3CEjgspgTxGFbN3MTowklKJWZ8peR01FeiQRgPZ6Hz9RMY=
+	t=1709887916; cv=none; b=L71q6eSBBDGMquNZ6VraGFLNN9yZK6ZWeTdUj7ujUzy1OUXGzP3jhPpLEYnDFO0oBvp8xqQuvPQGytAFabpJm2VUriltasFErqB6lxEKzxO3WxCOcMlWfFs96L3bgxnT9piXA+VR0/VsN5zgJIGhqrpXWnbHy/NjKCTH224aY08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709887699; c=relaxed/simple;
-	bh=Os46CKddDWTirtB0sWeRcEab98vw5dx34ifSSInDtrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rEFKzwgbMkc//7WGlb5mBWWAnACs6kNvmh75CIv7itvOgNPk0F4sZfwbIE/rrXxU6Jy3UJ/T6S4HhmnD55jAi2k6AGfOzg3B/U8bqDFywZXkwZWbDpkHxaYzKcLtJG4HN9JXJjsekPSrPGAScWzmDhQQbp2fulUtpqjHAlYC5WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=acgWSAny; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="acgWSAny"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED92CC433C7;
-	Fri,  8 Mar 2024 08:48:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709887698;
-	bh=Os46CKddDWTirtB0sWeRcEab98vw5dx34ifSSInDtrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=acgWSAnyntQI7YWkNBHe6teZXBzI+ut6mvemDrUzDs+pe3VOXto4DGWOz0dJDP3nh
-	 B7lKYknLYn1z0fr85u+hCeBSHgq3TG7m8UwP77ZSlBu3bdlmkCUnnAlPGE45GjZ1A/
-	 NqOlGZuJjarMerfBcmzyaGjCs/uZVvG1Uutrd7OjM/LgxcZIWlJ3PJRk/Uu4sCTTpV
-	 IC3myDAxuOvPxCMsQItoG6hQETn3bK2mvnxHhylRJ32inW3B3NPoEycGeFn6bi7v+m
-	 17e1XVd06boVRH7eL5z5lL0F1wAq5XsPqFzxlJi5wXVe/WDpZ97W8GgU4DCIzZs69N
-	 A/tDo9imbZViQ==
-Date: Fri, 8 Mar 2024 09:48:07 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
+	s=arc-20240116; t=1709887916; c=relaxed/simple;
+	bh=bpBoKQxkhhcUtk1eVpmAwtJYGHzt5lvHcl+mpGFv34Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GEMDTzJRcOMAIelhz9FhXs9F/ebPb5j9f8UWaXVGqzaegU+ovdTsLHMMU7f1e3fWsdeDXoj3eCbVdd0xMd8AQrgWx3ps8c54Lp/F1Vdx2UflodEwGO8ziyBbVPbHol3mn+jak7JUzn/Mm/2keSNsbzkpw+XI7K0gGBcx/f1anqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1riVxF-0006vX-Ls; Fri, 08 Mar 2024 09:51:49 +0100
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1riVxF-0056N6-6t; Fri, 08 Mar 2024 09:51:49 +0100
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1riVxF-00245U-0P;
+	Fri, 08 Mar 2024 09:51:49 +0100
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Dipen Patel <dipenp@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Vidya Sagar <vidyas@nvidia.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@axis.com, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v9 07/10] PCI: dwc: ep: Remove "core_init_notifier" flag
-Message-ID: <ZerQxxfUvFm2MjqV@ryzen>
-References: <20240304-pci-dbi-rework-v9-0-29d433d99cda@linaro.org>
- <20240304-pci-dbi-rework-v9-7-29d433d99cda@linaro.org>
- <Zeos8kVxgchH9veF@ryzen>
- <20240308053829.GC3789@thinkpad>
+	timestamp@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: [PATCH] hte: tegra-194: Convert to platform remove callback returning void
+Date: Fri,  8 Mar 2024 09:51:07 +0100
+Message-ID:  <0b0a5d3816973ee88d4be9fe9f2349065a42cbff.1709886922.git.u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240308053829.GC3789@thinkpad>
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1830; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=bpBoKQxkhhcUtk1eVpmAwtJYGHzt5lvHcl+mpGFv34Y=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBl6tF9loxXme5Y3qwJPajmNWAgaJ1pdGq5vIuAA 88wYvqqSmeJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZerRfQAKCRCPgPtYfRL+ TuVXB/42XSB7OGYbpBihN9q6ey2xFSC7cCInsqwJwMy1VcOzC5T1kgv72DPW8/LHJvqLX/kxyf3 esi9QFjTELCt8iJNpALTzzdvek329axuaMlfhIv4zsmECVCRWAr0xm/rcqhsiehOOBfbvqPjXUu m9ugldRSIQAypvzJIhRETjiaXj6HdYGugxe2xGewxMK4SAiYz78s2Q4TWw39w0jGGF2S/N38OQC ynovLKiB5P3QAj7YERQ6P9vxcfFqHxv0TBFoB0926/v2XpDTb0V4B8V5GGQmruiiZLxAtEw216F WnIqq5w/YceeMKVIFyIRib8yF9r04qMEPi6Rf4a0ZUGwtcFr
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
-On Fri, Mar 08, 2024 at 11:08:29AM +0530, Manivannan Sadhasivam wrote:
-> On Thu, Mar 07, 2024 at 10:09:06PM +0100, Niklas Cassel wrote:
-> > On Mon, Mar 04, 2024 at 02:52:19PM +0530, Manivannan Sadhasivam wrote:
-> > > "core_init_notifier" flag is set by the glue drivers requiring refclk from
-> > > the host to complete the DWC core initialization. Also, those drivers will
-> > > send a notification to the EPF drivers once the initialization is fully
-> > > completed using the pci_epc_init_notify() API. Only then, the EPF drivers
-> > > will start functioning.
-> > > 
-> > > For the rest of the drivers generating refclk locally, EPF drivers will
-> > > start functioning post binding with them. EPF drivers rely on the
-> > > 'core_init_notifier' flag to differentiate between the drivers.
-> > > Unfortunately, this creates two different flows for the EPF drivers.
-> > > 
-> > > So to avoid that, let's get rid of the "core_init_notifier" flag and follow
-> > > a single initialization flow for the EPF drivers. This is done by calling
-> > > the dw_pcie_ep_init_notify() from all glue drivers after the completion of
-> > > dw_pcie_ep_init_registers() API. This will allow all the glue drivers to
-> > > send the notification to the EPF drivers once the initialization is fully
-> > > completed.
-> > > 
-> > > Only difference here is that, the drivers requiring refclk from host will
-> > > send the notification once refclk is received, while others will send it
-> > > during probe time itself.
-> > > 
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > ---
-> > 
-> > You have removed the .core_init_notifier from EPC drivers,
-> > but the callback in EPF drivers is still called .core_init.
-> > 
-> > Yes, this was a confusing name even before this patch, but
-> > after this patch, it is probably even worse :)
-> > 
-> > The callback should be named from the perspective of EPF drivers IMO.
-> > .core_init sounds like a EPF driver should initialize the core.
-> > (But that is of course done by the EPC driver.)
-> > 
-> > The .link_up() callback name is better, the EPF driver is informed
-> > that the link is up.
-> > 
-> > Perhaps we could rename .core_init to .core_up ?
-> > 
-> > It tells the EPF drivers that the core is now up.
-> > (And the EPF driver can configure the BARs.)
-> > 
-> 
-> I don't disagree :) I thought about it but then decided to not extend the scope
-> of this series further. So saved that for next series.
-> 
-> But yeah, it is good to clean it up here itself.
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
 
-If you intend to create a .core_deinit or .core_down (or whatever name
-you decide on), perhaps it is better to leave this cleanup to be part
-of that same series?
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
 
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
-Kind regards,
-Niklas
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/hte/hte-tegra194-test.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/hte/hte-tegra194-test.c b/drivers/hte/hte-tegra194-test.c
+index ab2edff018eb..8ee038ccf601 100644
+--- a/drivers/hte/hte-tegra194-test.c
++++ b/drivers/hte/hte-tegra194-test.c
+@@ -214,7 +214,7 @@ static int tegra_hte_test_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int tegra_hte_test_remove(struct platform_device *pdev)
++static void tegra_hte_test_remove(struct platform_device *pdev)
+ {
+ 	(void)pdev;
+ 
+@@ -222,13 +222,11 @@ static int tegra_hte_test_remove(struct platform_device *pdev)
+ 	gpiod_put(hte.gpio_in);
+ 	gpiod_put(hte.gpio_out);
+ 	del_timer_sync(&hte.timer);
+-
+-	return 0;
+ }
+ 
+ static struct platform_driver tegra_hte_test_driver = {
+ 	.probe = tegra_hte_test_probe,
+-	.remove = tegra_hte_test_remove,
++	.remove_new = tegra_hte_test_remove,
+ 	.driver = {
+ 		.name = "tegra_hte_test",
+ 		.of_match_table = tegra_hte_test_of_match,
+
+base-commit: 8ffc8b1bbd505e27e2c8439d326b6059c906c9dd
+-- 
+2.43.0
+
