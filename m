@@ -1,106 +1,180 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86C52D056
-	for <linux-tegra@vger.kernel.org>; Fri,  8 Mar 2024 08:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE1952F8F;
+	Fri,  8 Mar 2024 08:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709887916; cv=none; b=L71q6eSBBDGMquNZ6VraGFLNN9yZK6ZWeTdUj7ujUzy1OUXGzP3jhPpLEYnDFO0oBvp8xqQuvPQGytAFabpJm2VUriltasFErqB6lxEKzxO3WxCOcMlWfFs96L3bgxnT9piXA+VR0/VsN5zgJIGhqrpXWnbHy/NjKCTH224aY08=
+	t=1709888204; cv=none; b=lU+2X2InWneGYzKsWCO9E4lHLH7RRcVdOUen6wMujmui+NGQ8nooUbcbi04LYSXU/ni9skWMbjhrbW3qLpXpQ5poNVQAdKyoOxSG6Ct31wPJgZjw0GEthncvrxt00i/l6siGkceRRrGwUnB0u4zJfat+nVGpoJnda83uDzlrSWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709887916; c=relaxed/simple;
-	bh=bpBoKQxkhhcUtk1eVpmAwtJYGHzt5lvHcl+mpGFv34Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GEMDTzJRcOMAIelhz9FhXs9F/ebPb5j9f8UWaXVGqzaegU+ovdTsLHMMU7f1e3fWsdeDXoj3eCbVdd0xMd8AQrgWx3ps8c54Lp/F1Vdx2UflodEwGO8ziyBbVPbHol3mn+jak7JUzn/Mm/2keSNsbzkpw+XI7K0gGBcx/f1anqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1riVxF-0006vX-Ls; Fri, 08 Mar 2024 09:51:49 +0100
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1riVxF-0056N6-6t; Fri, 08 Mar 2024 09:51:49 +0100
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ukl@pengutronix.de>)
-	id 1riVxF-00245U-0P;
-	Fri, 08 Mar 2024 09:51:49 +0100
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Dipen Patel <dipenp@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
+	s=arc-20240116; t=1709888204; c=relaxed/simple;
+	bh=J4bX5OiJi6RfDlV1yRXpVjfgTtrgKXI42Kvd2JlHSRU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jjg3L1rJ41QaSeMOukU87W3j9kAD+dz8/yZLzEhna38qj7zETEzKqFD2zSS0pm48pS8qcwjPFoJbw8VqnD4KBJlUeFEbpLXxtAV7tiG/IWLvgUQcV38qhBvhyCwz3G2auFTl1Ew1YdcLRDotUCj2+r5muPKWA6uAn1f6CLiYHU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkUnjNkP; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkUnjNkP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ECFDC433C7;
+	Fri,  8 Mar 2024 08:56:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709888203;
+	bh=J4bX5OiJi6RfDlV1yRXpVjfgTtrgKXI42Kvd2JlHSRU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nkUnjNkPxbAeCR9BEcZdVU5y2Y2jG5YUv4q2H1r7SjG3mghGjn+XC9AN7gH6FqaA7
+	 TIAOCsfx1ycqbxcnRTnfsSFxLWsXqAq3Mh2UWACRb9SmQujBgQM2XjEYLLIM7uzUUu
+	 NA8AsN5qkpkjhRG4JAJqADVEkImK0SGtiNgc6ymi8oV9FMfWltBvpVlEhm+O+tp3ys
+	 ZmyrIghXMDm8hYekfaLefzniEYfpgD/P1hj/8pRZCNrJA0GIUpI9EkgQVDl6Bkfe/s
+	 9h+0jBN8Jr0tx2Hk2jMbBMZWvENSJaqH8f6E2psy1h3zw84eC14i08yXHyJt4BysAL
+	 /2bp3BQQ30dEw==
+Date: Fri, 8 Mar 2024 09:56:33 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	timestamp@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: [PATCH] hte: tegra-194: Convert to platform remove callback returning void
-Date: Fri,  8 Mar 2024 09:51:07 +0100
-Message-ID:  <0b0a5d3816973ee88d4be9fe9f2349065a42cbff.1709886922.git.u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.43.0
+	Kishon Vijay Abraham I <kishon@ti.com>,
+	Vidya Sagar <vidyas@nvidia.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@axis.com
+Subject: Re: [PATCH v9 08/10] PCI: dwc: ep: Add a generic
+ dw_pcie_ep_linkdown() API to handle LINK_DOWN event
+Message-ID: <ZerSwdxAnN2mUxf0@ryzen>
+References: <20240304-pci-dbi-rework-v9-0-29d433d99cda@linaro.org>
+ <20240304-pci-dbi-rework-v9-8-29d433d99cda@linaro.org>
+ <Zeo0996FscpDSnjL@ryzen>
+ <20240308054152.GD3789@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1830; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=bpBoKQxkhhcUtk1eVpmAwtJYGHzt5lvHcl+mpGFv34Y=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBl6tF9loxXme5Y3qwJPajmNWAgaJ1pdGq5vIuAA 88wYvqqSmeJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZerRfQAKCRCPgPtYfRL+ TuVXB/42XSB7OGYbpBihN9q6ey2xFSC7cCInsqwJwMy1VcOzC5T1kgv72DPW8/LHJvqLX/kxyf3 esi9QFjTELCt8iJNpALTzzdvek329axuaMlfhIv4zsmECVCRWAr0xm/rcqhsiehOOBfbvqPjXUu m9ugldRSIQAypvzJIhRETjiaXj6HdYGugxe2xGewxMK4SAiYz78s2Q4TWw39w0jGGF2S/N38OQC ynovLKiB5P3QAj7YERQ6P9vxcfFqHxv0TBFoB0926/v2XpDTb0V4B8V5GGQmruiiZLxAtEw216F WnIqq5w/YceeMKVIFyIRib8yF9r04qMEPi6Rf4a0ZUGwtcFr
-X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240308054152.GD3789@thinkpad>
 
-The .remove() callback for a platform driver returns an int which makes
-many driver authors wrongly assume it's possible to do error handling by
-returning an error code. However the value returned is ignored (apart
-from emitting a warning) and this typically results in resource leaks.
+On Fri, Mar 08, 2024 at 11:11:52AM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Mar 07, 2024 at 10:43:19PM +0100, Niklas Cassel wrote:
+> > On Mon, Mar 04, 2024 at 02:52:20PM +0530, Manivannan Sadhasivam wrote:
+> > > The PCIe link can go to LINK_DOWN state in one of the following scenarios:
+> > > 
+> > > 1. Fundamental (PERST#)/hot/warm reset
+> > > 2. Link transition from L2/L3 to L0
+> > > 
+> > > In those cases, LINK_DOWN causes some non-sticky DWC registers to loose the
+> > > state (like REBAR, PTM_CAP etc...). So the drivers need to reinitialize
+> > > them to function properly once the link comes back again.
+> > > 
+> > > This is not a problem for drivers supporting PERST# IRQ, since they can
+> > > reinitialize the registers in the PERST# IRQ callback. But for the drivers
+> > > not supporting PERST#, there is no way they can reinitialize the registers
+> > > other than relying on LINK_DOWN IRQ received when the link goes down. So
+> > > let's add a DWC generic API dw_pcie_ep_linkdown() that reinitializes the
+> > > non-sticky registers and also notifies the EPF drivers about link going
+> > > down.
+> > > 
+> > > This API can also be used by the drivers supporting PERST# to handle the
+> > > scenario (2) mentioned above.
+> > > 
+> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > ---
+> > >  drivers/pci/controller/dwc/pcie-designware-ep.c | 111 ++++++++++++++----------
+> > >  drivers/pci/controller/dwc/pcie-designware.h    |   5 ++
+> > >  2 files changed, 72 insertions(+), 44 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > > index 278bdc9b2269..fed4c2936c78 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> > > @@ -14,14 +14,6 @@
+> > >  #include <linux/pci-epc.h>
+> > >  #include <linux/pci-epf.h>
+> > >  
+> > > -void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
+> > > -{
+> > > -	struct pci_epc *epc = ep->epc;
+> > > -
+> > > -	pci_epc_linkup(epc);
+> > > -}
+> > > -EXPORT_SYMBOL_GPL(dw_pcie_ep_linkup);
+> > > -
+> > >  void dw_pcie_ep_init_notify(struct dw_pcie_ep *ep)
+> > >  {
+> > >  	struct pci_epc *epc = ep->epc;
+> > > @@ -603,19 +595,56 @@ static unsigned int dw_pcie_ep_find_ext_capability(struct dw_pcie *pci, int cap)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static void dw_pcie_ep_init_non_sticky_registers(struct dw_pcie *pci)
+> > > +{
+> > > +	unsigned int offset, ptm_cap_base;
+> > > +	unsigned int nbars;
+> > > +	u32 reg, i;
+> > > +
+> > > +	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
+> > > +	ptm_cap_base = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_PTM);
+> > > +
+> > > +	dw_pcie_dbi_ro_wr_en(pci);
+> > > +
+> > > +	if (offset) {
+> > > +		reg = dw_pcie_readl_dbi(pci, offset + PCI_REBAR_CTRL);
+> > > +		nbars = (reg & PCI_REBAR_CTRL_NBAR_MASK) >>
+> > > +			PCI_REBAR_CTRL_NBAR_SHIFT;
+> > > +
+> > > +		for (i = 0; i < nbars; i++, offset += PCI_REBAR_CTRL)
+> > > +			dw_pcie_writel_dbi(pci, offset + PCI_REBAR_CAP, 0x0);
+> > 
+> > If you look at PCI_REBAR_CAP, you will see that it is sticky,
+> > but you have to actually read the databook to see that:
+> > 
+> > "The RESBAR_CTRL_REG_BAR_SIZE field is automatically updated
+> > when you write to RESBAR_CAP_REG_0_REG through the DBI."
+> > 
+> > So the reason why we need to write this register, even though
+> > it is sticky, is to update the RESBAR_CTRL_REG_BAR_SIZE register,
+> > which is not sticky :)
+> > 
+> > (Perhaps we should add that as a comment?)
+> > 
+> 
+> Yeah, makes sense.
 
-To improve here there is a quest to make the remove callback return
-void. In the first step of this quest all drivers are converted to
-.remove_new(), which already returns void. Eventually after all drivers
-are converted, .remove_new() will be renamed to .remove().
+Note that I add a (unrelated) comment related to REBAR_CAP in this patch:
+https://lore.kernel.org/linux-pci/20240307111520.3303774-1-cassel@kernel.org/T/#u
 
-Trivially convert this driver from always returning zero in the remove
-callback to the void returning variant.
+But once we move/add code to dw_pcie_ep_init_non_sticky_registers(), I think
+that it might be a good "rule" to have a small comment for each write in
+dw_pcie_ep_init_non_sticky_registers() which explains why the code should be
+in dw_pcie_ep_init_non_sticky_registers() instead of dw_pcie_ep_init_registers(),
+even if it just a small:
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
- drivers/hte/hte-tegra194-test.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+/* Field PCI_XXX_YYY.ZZZ is non-sticky */
+writel_dbi(pci, offset + PCI_XXX_YYY, 0);
 
-diff --git a/drivers/hte/hte-tegra194-test.c b/drivers/hte/hte-tegra194-test.c
-index ab2edff018eb..8ee038ccf601 100644
---- a/drivers/hte/hte-tegra194-test.c
-+++ b/drivers/hte/hte-tegra194-test.c
-@@ -214,7 +214,7 @@ static int tegra_hte_test_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
--static int tegra_hte_test_remove(struct platform_device *pdev)
-+static void tegra_hte_test_remove(struct platform_device *pdev)
- {
- 	(void)pdev;
- 
-@@ -222,13 +222,11 @@ static int tegra_hte_test_remove(struct platform_device *pdev)
- 	gpiod_put(hte.gpio_in);
- 	gpiod_put(hte.gpio_out);
- 	del_timer_sync(&hte.timer);
--
--	return 0;
- }
- 
- static struct platform_driver tegra_hte_test_driver = {
- 	.probe = tegra_hte_test_probe,
--	.remove = tegra_hte_test_remove,
-+	.remove_new = tegra_hte_test_remove,
- 	.driver = {
- 		.name = "tegra_hte_test",
- 		.of_match_table = tegra_hte_test_of_match,
 
-base-commit: 8ffc8b1bbd505e27e2c8439d326b6059c906c9dd
--- 
-2.43.0
-
+Kind regards,
+Niklas
