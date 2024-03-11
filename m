@@ -1,30 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322D15D737;
-	Mon, 11 Mar 2024 18:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A37154FBE;
+	Mon, 11 Mar 2024 18:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710182258; cv=none; b=sZRg1tvwHUjKB3FSLD5IJZ1UKcmVN5pNoYMPNWOggHxFPCOzKOgYGAUX6BoCXHRtpFNhvfnC1mv/IoKmkk7+Z/kEcEIW9k7zftta9nayEwGReZUFGxtyEMC/wSY/dSgEniRXo9CnzcJ5Jk05GyoefXaTKAhjbJXN+7/7YNZnd7c=
+	t=1710182314; cv=none; b=E8rIklwST9naV9XQoyUme4KOfDdDJoTluCnTV9cC1RFBiEF/Jve/yLsnxRfQci5Dj0Y04aAsIvOydbYoJI7he6+bLVqNkUjWmZDB7VbEdb6PseTPE5YzT8j1p0r6YviA4R5BaOH0PjUOseCuK0SuGbdrFZttSg7DydX6hpYc0xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710182258; c=relaxed/simple;
-	bh=JWZSCtt1oiChp96aTaaowdnbk4pXnRycjc/puS98gYc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y+B+IQPKfdp9qPkVJNew8JKEBmxGOVnT4qgx7D/z0ZLFNKw1WS44UdLRWIGSlf8wUxjznlzFZTEPTKdDrlFZi/7CoBgCaNIUbrQoxxn69TSa329j6FLGq9iv/wb3EH9cKRoD8QZ/dEW6UKhfW+cHXSm1RHTeLWPT6wdoCKjoqtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GNdpZjFM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1710182314; c=relaxed/simple;
+	bh=r4GFyKH0h6Apl50/sMqhWNcLGuTweQQToqAfKdoAC6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VCn+SadXtpaGG2n7knQRhc72KiGnvXmfcaJ0ZM8kwYdimb8zRbzxgiVsQWxQ6XeA/VFtx6L/DiVFqDkANmFY+Jps+EhKkE3EntVcqIMz1LD4g+l7JyRDhQM7nZNCC/Q1TLkiJKVBeBJCX1K2lqiuUlypAm5iwPMLGIiCGxvsmiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aYwYmvcX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GNdpZjFM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28ABC433F1;
-	Mon, 11 Mar 2024 18:37:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aYwYmvcX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12770C433C7;
+	Mon, 11 Mar 2024 18:38:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710182258;
-	bh=JWZSCtt1oiChp96aTaaowdnbk4pXnRycjc/puS98gYc=;
+	s=k20201202; t=1710182314;
+	bh=r4GFyKH0h6Apl50/sMqhWNcLGuTweQQToqAfKdoAC6o=;
 	h=From:To:Cc:Subject:Date:From;
-	b=GNdpZjFMHjqA6RRZDBFgzc6sDfgiJwonFToGcsj5A1JQIWPPNc+m3bhxYBA9CS5lt
-	 U5OlUnbSK4HzMyEcJRRgIHGJ7CAZaffYy2LR87cM+sdNKt4Ko6xsttkjYmwd5Xp1r4
-	 5EL3EB/kELBcsSp0uaOF1/xV0DtTCux6ZWyvlKON5ZERSIjro7dqDNH9FfqVVznkZp
-	 0v8+6S3FnUhmAo/90UYjNQj137ly33lJ57Ki8bGMgktkOrgJvoPqcGpk8Kie4Nk8Ur
-	 nOmVTjBMsRyy6qopmHtahh3XfCAsBx2HS8yn2kW+tNVSzJKZgcGjg5wQN/gnMMlyba
-	 O/lJVruSjlf9A==
+	b=aYwYmvcXzikhhfv+cmQAJenXdLDpKStTCwqTrjUeUx14+8jZ0cN1RZGvv9Ur00ffe
+	 g7NEuytFiFGNIKVVOSrF/sfnGn4dlZ+2Yq8HztZ9O7jtMWRr8d/kOVKodFXxv09kLe
+	 ynt4sEzBPMS0ROpsviuYFm6Kf3tMqTmVnT0kcK9WVAX9fc4vkmIWcgQaQWbi5eX/LP
+	 0PAJ9VE0MD8S3K8alFw/4YzBBd0flK86N8gptAG/iKSxHqA5zYOoRX4wpCr6RXFZvM
+	 lPSLs6eW+0WR+A2oBqNjoWUgxRA0QJiVL8CDzx/gnJIm2BDKIrvLLn3oFkbU4doZoR
+	 +J5CUWNee0OSA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -36,9 +36,9 @@ Cc: Thierry Reding <treding@nvidia.com>,
 	thierry.reding@gmail.com,
 	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 01/12] arm64: tegra: Set the correct PHY mode for MGBE
-Date: Mon, 11 Mar 2024 14:37:15 -0400
-Message-ID: <20240311183727.328187-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 1/7] arm64: tegra: Set the correct PHY mode for MGBE
+Date: Mon, 11 Mar 2024 14:38:19 -0400
+Message-ID: <20240311183826.328535-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -48,7 +48,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.21
+X-stable-base: Linux 6.1.81
 Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
@@ -66,10 +66,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-index 4413a9b6da87a..bf2ccc8ff93c4 100644
+index f094011be9ed9..8099dc04ed2e1 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
 +++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
-@@ -174,7 +174,7 @@
+@@ -2024,7 +2024,7 @@
  			status = "okay";
  
  			phy-handle = <&mgbe0_phy>;
