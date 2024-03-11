@@ -1,194 +1,122 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336994120B
-	for <linux-tegra@vger.kernel.org>; Mon, 11 Mar 2024 14:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A414D9EF
+	for <linux-tegra@vger.kernel.org>; Mon, 11 Mar 2024 16:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710168374; cv=none; b=ixUioV8h1R84wW+uXdgBeqLneiKOk1c/JzNq19YQdMhtNFcFnowmySstJVwR2I88HzC5HkotBwfH+Y2uyNfsMRTyJPiL1KVcKHop57sRmkaWDbmyK9JAaHvbF+g1gkocnM9hiDYvgpYI4DfSNZyxmlIqJR+Do7dKf6mTXwh/TG0=
+	t=1710173050; cv=none; b=AvsWiFpN7SYOa9JWNk8/Stw8mifSa3+dzGUX29v04885Ko9/iwbJLGnnLxIz5LL5lamacqhzWWlTXc3FPUUt7u3941OCypOTxkd4Ghth39UxrvBGdKAjmpkDTSVOKckv97dwSGtEi+Lbnqv6YIHRa/XVmVonRLT8e7oj/vPFmPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710168374; c=relaxed/simple;
-	bh=aTwrh90GUA0KuD1dJsmiDHSRUsUSaTCyVUrQIX6iNAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ct55Ys+VZU9AmWaLOVuA4mIYf8Dk5rtd/0LpsEfuWFH7UBkRIGRZdUgXTapLgX9kjmseWNGTvajrqmceb1rEhWAEu6X7NsBFBWaUKfsq/sTY5lwG8uenmh5ywNacjqhq51XdS5MnYvYNqZvXUswcUBWL3r8ckXqI8VQJ/8m6i4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rHyJ3FtD; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1710173050; c=relaxed/simple;
+	bh=eAF47USsvl6GvU6CcbuiuNsY6BM5J/F4iddiICFuahI=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=CLqfxQlZbtHgAupXE7R+q2LHqBZX1FsOaXBYqn7I5VUlQ6HUkC6SKTndkltYmytOJYGbhhAvl3IiModJuJtgHaHsPf3zUKgoAJWesmzL3JSlV5NHhGXAF3ic9KtYv4cIe9t2YjTIm3OBMepdbru3wMusxjlxtwE2pD1CG2DnrVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mbk9aOpJ; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rHyJ3FtD"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6e4d48a5823so2255650b3a.1
-        for <linux-tegra@vger.kernel.org>; Mon, 11 Mar 2024 07:46:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mbk9aOpJ"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-56847d9b002so2354909a12.1
+        for <linux-tegra@vger.kernel.org>; Mon, 11 Mar 2024 09:04:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710168372; x=1710773172; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7WZeoUY9lDhr7yJPXp/YwXiCG8hTtAt9+Pvs1llVqw0=;
-        b=rHyJ3FtDcw8P3wUOnNulEZuwPV4VP0ulj4JM28BomYQAawePdstskecFXjin3dHATR
-         x4aqmmZMPM+ZUs8tKM2d4QnxSPCoOXKQnLrrV7t2e6d4tHcXzmK253JWCT592tlQR6mk
-         uXo0+GIF3C45JyvikWWPq6dVH8ihWBmpYg/KvifT9ETHjIvWCdFgHXRMMME4GkY9Y5Eo
-         eDjrkmsf8BUw0A+oY4NjDDbAv709DQ3L8IeZokl5MY8ZsWQe4doWKQ2aKUEunK7rbGMh
-         65pphfZ8I9Qz8hXH3hXRJ437HKXNAw0AyzJ7eXbGGKR0plvTtsUHzro/JLE79v+GlYyN
-         ZclA==
+        d=gmail.com; s=20230601; t=1710173047; x=1710777847; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cvFf2k0hLdwTCSIUw1b2M4KOaEGLFXLzuaUdA5ebJIk=;
+        b=mbk9aOpJKRRn3pfqZkfWGlJmItVBUjzDDJu9OBRqAqlRcYy3SbOOm/cqOuovIqe9Pd
+         rR+yk0T9wEMVqNWrM3rNKqX5XO/9uEjq8UblN2EaugKRuupE3w+sbnigSLeQasnJ1gch
+         3upquIdXzerGtqaJk3MwjFFrLER1AQXpbQ7Dn0eXIJbEQZflP9Qqz3QJBVaekL5gs/rm
+         wZrjEGbo1/N7MR0yrEySneIIDuszD+7Tnws8YOZ7flBOEDL9l2MqvmJAnJLld/JOk3gY
+         4O+xafqPrpkSnp9e7Y2TizX5vQPQ+Pq+JF8ZCgLc8CD7Gc3Q0QmmEsCunm0taJVPDKR6
+         5pUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710168372; x=1710773172;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7WZeoUY9lDhr7yJPXp/YwXiCG8hTtAt9+Pvs1llVqw0=;
-        b=fCImey/XuzwXd0ggyVZ6R+4gF93XzPB3DyXY5FnQqkxH9YiJd87QI2/zQICERKXR9I
-         scuKxF35R5tzwWYe7JlmjoT6WVfHeAQWh+JDMy/X/VnexGpAfgjTjui7uoBirYiwRLsG
-         iijvHT71CQUN7l2wvDYKv3VTh44bE6O8ctnvEWIM4eIZHa57D67pqmQ4ym5DoL1GBt4f
-         C9uPBPj09c0ALTLQenb0kact3fy/jtr7PSrPpZ9imcgJs63Heajgau94qX3dOnOBkPnu
-         PM7Mh6NAk8/PI1mUnfwDHMVOaxbNeJkEWaEis4U1VWYnOBeeBd1qBEMI88XKd2oCYKvr
-         CQPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMJ55G1hkLvkYSXM2m90NoPDmWzVWt/vhsueUdMULAfGaTY6gHHy0rjyUiQJKK+LULs4cUn5TTeBrQsDm0cfqOU29PYLaxrzCgr/0=
-X-Gm-Message-State: AOJu0Yw6B+r8NRC1tbqBkoH+IAozyvelidy8KSbCzBlFF4LYK6xQXLrr
-	Lr3xh7L3HVXb8P+Kzurlk8GeujxzJQMsYgrs9qzAPFNrIe8PrnHOvCiYWk2SMQ==
-X-Google-Smtp-Source: AGHT+IEkyoSv3cUPd2YD+Ord9GisLbDuQ3mTJgXZUAwKm1FrFZN401VY7NABhiAj7Fw9fR+qh9jZVw==
-X-Received: by 2002:a05:6a00:2d20:b0:6e5:5a24:818c with SMTP id fa32-20020a056a002d2000b006e55a24818cmr7159193pfb.7.1710168372299;
-        Mon, 11 Mar 2024 07:46:12 -0700 (PDT)
-Received: from thinkpad ([117.217.184.48])
-        by smtp.gmail.com with ESMTPSA id o12-20020a62f90c000000b006e053e98e1csm4427472pfh.136.2024.03.11.07.46.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Mar 2024 07:46:11 -0700 (PDT)
-Date: Mon, 11 Mar 2024 20:15:59 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Kishon Vijay Abraham I <kishon@ti.com>,
-	Vidya Sagar <vidyas@nvidia.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@axis.com, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v9 07/10] PCI: dwc: ep: Remove "core_init_notifier" flag
-Message-ID: <20240311144559.GA2504@thinkpad>
-References: <20240304-pci-dbi-rework-v9-0-29d433d99cda@linaro.org>
- <20240304-pci-dbi-rework-v9-7-29d433d99cda@linaro.org>
- <ZesRk5Dg4KEASD3U@ryzen>
+        d=1e100.net; s=20230601; t=1710173047; x=1710777847;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cvFf2k0hLdwTCSIUw1b2M4KOaEGLFXLzuaUdA5ebJIk=;
+        b=lcegLeWZKFfsrOYzdtn625vEYUCdr1FwXrc2t5CSstZ/vuSXfSJl3vPNcO9o68mAFg
+         qTnCGwYJrK/YRLlR+21kbDzjP3kb4pCENY2Hw8IoOD+tvKwEszoe4Ila3WSGG9PjwPco
+         bpbym4en/PBpUyGThBWhAXYNMStsqJahVtu0IZO9xApWp8UBjacewoTuHqdMIwY+b4f1
+         xgELzQvfEbMAKk4VXQJNq3aEZBnA4oSnfpkMLXjZVVo/CV2lHZxQiAlSCd3ovJldi5x4
+         qmmjtanhIUk/3VIIui8rg+R7R3EfPGsbRxCsHQ4PX29J7anpyvJ38bY2GFuU1dRFXIna
+         RODQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7c27ipfPeiYDjI+Dqs07fG7fF1rereutL6ER2T9X7x/yzHm2DndaQlsDSmDS3Lo/qd5UFo5xM4zsUkorHcuq+821zelURdUOrPaw=
+X-Gm-Message-State: AOJu0Yw7pWk5QNFwy5hfOYHDadbdKu9H5cy4BCkfP00a9RGAFFtFAOv0
+	0yq6sr6k00EPKr1gaXA64+IX14K3ngmpZouw0OBHt1Fv1SiyaIiRIdqKtcos
+X-Google-Smtp-Source: AGHT+IF3/wqnxno1PQ5O/Un7JaS4AMZcCQLtv0MunU2CN2KzLO75PZEjJhGMu4csFW2tBl37PcI+jA==
+X-Received: by 2002:a50:cd15:0:b0:566:16e4:b6b3 with SMTP id z21-20020a50cd15000000b0056616e4b6b3mr4253238edi.36.1710173046751;
+        Mon, 11 Mar 2024 09:04:06 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id s20-20020a05640217d400b00566ea8e9f38sm3033913edy.40.2024.03.11.09.04.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Mar 2024 09:04:06 -0700 (PDT)
+Content-Type: multipart/signed;
+ boundary=a67836c0427bcb0ce7e2976400776a51e382e07418ed8532f736485bec42;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZesRk5Dg4KEASD3U@ryzen>
+Mime-Version: 1.0
+Date: Mon, 11 Mar 2024 17:04:05 +0100
+Message-Id: <CZR1QZ6F6QA4.2YFL58PNYHE0P@gmail.com>
+Cc: "Jonathan Hunter" <jonathanh@nvidia.com>, <timestamp@lists.linux.dev>,
+ <linux-tegra@vger.kernel.org>, <kernel@pengutronix.de>
+Subject: Re: [PATCH] hte: tegra-194: Convert to platform remove callback
+ returning void
+From: "Thierry Reding" <thierry.reding@gmail.com>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ "Dipen Patel" <dipenp@nvidia.com>
+X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
+References: <0b0a5d3816973ee88d4be9fe9f2349065a42cbff.1709886922.git.u.kleine-koenig@pengutronix.de>
+In-Reply-To: <0b0a5d3816973ee88d4be9fe9f2349065a42cbff.1709886922.git.u.kleine-koenig@pengutronix.de>
 
-On Fri, Mar 08, 2024 at 02:24:35PM +0100, Niklas Cassel wrote:
-> On Mon, Mar 04, 2024 at 02:52:19PM +0530, Manivannan Sadhasivam wrote:
-> > "core_init_notifier" flag is set by the glue drivers requiring refclk from
-> > the host to complete the DWC core initialization. Also, those drivers will
-> > send a notification to the EPF drivers once the initialization is fully
-> > completed using the pci_epc_init_notify() API. Only then, the EPF drivers
-> > will start functioning.
-> > 
-> > For the rest of the drivers generating refclk locally, EPF drivers will
-> > start functioning post binding with them. EPF drivers rely on the
-> > 'core_init_notifier' flag to differentiate between the drivers.
-> > Unfortunately, this creates two different flows for the EPF drivers.
-> > 
-> > So to avoid that, let's get rid of the "core_init_notifier" flag and follow
-> > a single initialization flow for the EPF drivers. This is done by calling
-> > the dw_pcie_ep_init_notify() from all glue drivers after the completion of
-> > dw_pcie_ep_init_registers() API. This will allow all the glue drivers to
-> > send the notification to the EPF drivers once the initialization is fully
-> > completed.
-> > 
-> > Only difference here is that, the drivers requiring refclk from host will
-> > send the notification once refclk is received, while others will send it
-> > during probe time itself.
-> > 
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > index 18c80002d3bd..fc0282b0d626 100644
-> > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > @@ -927,21 +928,12 @@ static int pci_epf_test_bind(struct pci_epf *epf)
-> >  	if (ret)
-> >  		return ret;
-> >
-> 
-> Hello Mani,
-> 
-> Since you asked for testing, I gave your series a spin
-> (with a driver without .core_init_notifier).
-> 
-> 
-> There seems to be a problem that pci_epc_write_header() is never called.
-> 
-> Debugging this, it seems that .core_init in pci-epf-test is never called.
-> 
-> If I add debug prints in pci_epc_init_notify(), I see that it does not
-> notify a single EPF driver.
-> 
-> It appears that the patch in $subject will call pci_epc_init_notify()
-> at EPC driver .probe() time, and at that point in time, there are no
-> EPF drivers registered.
-> 
-> They get registered later, when doing the configfs write.
-> 
-> 
-> I would say that it is the following change that breaks things:
-> 
-> > -	if (!core_init_notifier) {
-> > -		ret = pci_epf_test_core_init(epf);
-> > -		if (ret)
-> > -			return ret;
-> > -	}
-> > -
-> 
-> Since without this code, pci_epf_test_core_init() will no longer be called,
-> as there is currently no one that calls epf->core_init() for a EPF driver
-> after it has been bound. (For drivers that call dw_pcie_ep_init_notify() in
-> .probe())
-> 
+--a67836c0427bcb0ce7e2976400776a51e382e07418ed8532f736485bec42
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Thanks a lot for testing, Niklas!
+On Fri Mar 8, 2024 at 9:51 AM CET, Uwe Kleine-K=C3=B6nig wrote:
+> The .remove() callback for a platform driver returns an int which makes
+> many driver authors wrongly assume it's possible to do error handling by
+> returning an error code. However the value returned is ignored (apart
+> from emitting a warning) and this typically results in resource leaks.
+>
+> To improve here there is a quest to make the remove callback return
+> void. In the first step of this quest all drivers are converted to
+> .remove_new(), which already returns void. Eventually after all drivers
+> are converted, .remove_new() will be renamed to .remove().
+>
+> Trivially convert this driver from always returning zero in the remove
+> callback to the void returning variant.
+>
+> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> ---
+>  drivers/hte/hte-tegra194-test.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 
-> I guess one way to solve this would be for the EPC core to keep track of
-> the current EPC "core state" (up/down). If the core is "up" at EPF .bind()
-> time, notify the EPF driver directly after .bind()?
-> 
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Yeah, that's a good solution. But I think it would be better if the EPC caches
-all events if the EPF drivers are not available and dispatch them once the bind
-happens for each EPF driver. Even though INIT_COMPLETE is the only event that is
-getting generated before bind() now, IMO it is better to add provision to catch
-other events also.
+--a67836c0427bcb0ce7e2976400776a51e382e07418ed8532f736485bec42
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Wdyt?
+-----BEGIN PGP SIGNATURE-----
 
-- Mani
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmXvK3YACgkQ3SOs138+
+s6HfcRAAo1TclDTpQAvLx8p+fqtLLph42rATzcRewTFPKzcvFVtSqgrJApanWri2
+a+7Wx2QHOxA+Xrq/7z07ILjxbobztUFlQ4HN0/vhz1iUmhPcwJc7gyQhO7i80D/z
+5Jb1uLd4jtSvEl8BJ5x3+vdDKcQDY33kwC0IMeniBrEBkw/G8vONNFyjHqU4xjh9
+H5VvStZd/yxwd4ZlNGFI1PFBmtOtdZ8x6WPVQDuoHAj+AdwtTgA1t35NHlET+RtZ
+OHflL4fl6xlDm94/CpbM0Lxp7ynpGROMitbvx0AVh5V+sQFl4WXWlDDWuOSkiZd7
+fgP6ysDO+7CdbRLw3QYtSW4DbRLFoIw3SdLIT379sziWN6vlEAjDt2JuvCuMNrj0
+8pcOQhShvJO4B+rz/OO6fHuUrdcqEcIAsWxCfzJDyiJv1IrjSuQc+WB/m6fN/P2N
+bsPaxZkk3PBpcfniVUMw4x9IuKgtaD8SBgzH2/UWkfOqQ4xPZ1isV3y92jAbTOsH
+cSwGra5i6z997nvCpe2uCXOy5j+ZHSUdkbj9SLOUz9QxsRDJ9+2wrC0alQKcB0Uj
+a99szkJNlCUoLvWNeP/Sk5v8UaqsLoc8YNWiriu446Bee4lA6+IAhPntWsRuJtnt
+PXwBbOFS35c+zdA9Gh8OMb8iQiBrIiDs88willhGP4mQd1ull1M=
+=c35F
+-----END PGP SIGNATURE-----
 
--- 
-மணிவண்ணன் சதாசிவம்
+--a67836c0427bcb0ce7e2976400776a51e382e07418ed8532f736485bec42--
