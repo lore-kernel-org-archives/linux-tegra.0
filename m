@@ -1,34 +1,60 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D041057315;
-	Mon, 11 Mar 2024 21:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9FAB13D312
+	for <linux-tegra@vger.kernel.org>; Wed, 13 Mar 2024 17:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710194080; cv=none; b=G8p1Ocv66i7eHkkYs5+7N4MJ2kZAW9g7j82s0dhVlbhmxKyWQVVWvJcV4xoLmqmhUslJrqjssp+YFlbYQg4zgkV0Qp+EzbqJPZ7r3xBbHY2J/FOJ6fpK2owClAypTXMG/ghsoofL1Y943qChWU23u1y3iJRbsDrwGzK0fg57gQU=
+	t=1710352431; cv=none; b=dMx2jY1nmJT5qT0jsW8fBsv1ej1Aq9a41uKaD/kOonWEAAifhNzBzwvjdbWTEe0Vp2A6pn7PyBLbACscT2DXHxymRftNmzvDkQs0mq1FO1Nt2G7pPeJ0FUlp//Vq6kKY00R1tvYpNqHMC/CITO52aWz6DT5t1b4WCfY8CzcPtIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710194080; c=relaxed/simple;
-	bh=RWD53XQN8UsgouYUBF/rTClQBGz527mrHnHW07+LEvk=;
+	s=arc-20240116; t=1710352431; c=relaxed/simple;
+	bh=ikP1SQZvK81WwtXopq3dHhyUueLGCn0F9tCceqEbyeU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rT/Ols7KRl1QUjpP3IxUjd+K8KwB8BEvoNQJoLttUKWFGVf880ZVfjSqfM6iB1cHF1CdjvDgDthQ8KfRZaAornNLZnHwT9ZLQDQawEhjUHEaqbn+q2aHKlHM+a6Ne/JntKSj4rwTcAk9p1g4ICxvNM8ZWlsBLEdJUh62GbzBFHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eome4s09; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ryF9tGxDcwfh5wdIe6n/dPmuRwMBEEGQKsH2Y6C0qs35938UPHICLdlXZDWitGGK2q+FtegIbUAl60GWv46CucFis5A6yx3ZE2MA8WMezMpfXCnFy1GCTfK1W81yQ0Uxrgodu2jfaHKO8UCMJnpcKn6ZFqAvYcTeAybWsy3SOEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D8zvQJOD; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eome4s09"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC4BBC433C7;
-	Mon, 11 Mar 2024 21:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1710194079;
-	bh=RWD53XQN8UsgouYUBF/rTClQBGz527mrHnHW07+LEvk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Eome4s09U0yv2YUiX7PkctOicSMRH/yZOh6gnNHwqz8AI3Od+MdGJEeamS0f7e/Rg
-	 EKv3GFwpTGiOOLiVWTZpMtwJHx1nzexz6euFNxlYZWJ+mz5wMTgZY+s7k5ZCuLXjlU
-	 Q+epQAXw6XXRuSGu4tO+RzCdoobL9znOdQ45I3dz+B6EpKd4zxdEjk7P6Oh4eNWsAc
-	 Lp4NPa4szCmQyVI2rLifPe+RyPkuYYJ5VxV5Y+UMqeicTFacCyxISQMAHTlc0bDHNG
-	 GFLAPM9kqVH055Ixhp4hp6Z+B+3XyEurelGgsFQYR8csLnIKr6fF0qQTyfN2WKjaGL
-	 QI56/3wgaZNXA==
-Date: Mon, 11 Mar 2024 22:54:28 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D8zvQJOD"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6e6b6a1b940so186201b3a.0
+        for <linux-tegra@vger.kernel.org>; Wed, 13 Mar 2024 10:53:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1710352429; x=1710957229; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=P42L0V1byhnm9xVh8nwf+gtaXnbnBXKB7y3o50DEnDg=;
+        b=D8zvQJODpgv7AIuJtS6cE34ZEwNLkubA98YOSqTLCzC69KQKzO2f3zGeK+Z5DUDzxi
+         o+MhH1fXsTzC5+MTFYVzZwM9TKWdDIfSl1AGH4LSzvVuBGbMD9jG+UhqXrHUxeFvsP3d
+         9TbKrEZk62XKsAq5v22pZCQ97JzVgSroarKzmG+MUpGNK6RQn37mVHRtnV5W2hzV27QY
+         PmCrm+BjGNdDurv7SBFLacgCV6vRcD2ofQILGoRLKueVEbpbDvkB323zb0PN2kMXj9gt
+         xqGrrJBdBocY31UygcoLPWUorr0DO9CcXcsP4/rt5f53tS9eMDhWoE2TfEfjPvuLDUo/
+         vIjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710352429; x=1710957229;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P42L0V1byhnm9xVh8nwf+gtaXnbnBXKB7y3o50DEnDg=;
+        b=m29sccL4N10/5Q1mcq0Ekkin2GDzVskW3hu+VUWdXDt2Dk07+Srgrk4qivXKMQt88g
+         C7qgdWkvbO58jg3LTSt+Uix7tFeeGi7S0cDyRvx+0X8W1quYmL2qcgqWs7OCL1DEO0oV
+         ra6quZNYvRXK9txAR1QDNR8FjTzevTP0o2RWAY393qwBU5qro9nA40OMjvKQlTNnYd93
+         uGLACx1wDdpAr+tC5WA89Xfb1yuvMaFfZlfbVf9NBAoMRXbnA8R5N3adVUl/2nzw0hPl
+         Ga7plX2ID3cZ+M3VhmQ2t7dhS2cBgC3eG5kdoVeEwhoY6suoQQVaMdMC9PpaIQozBB+7
+         kgyA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiujs3DKlseYir49bBVphCH9H9jbnUlcISXELtvttQtqSTKKv7s3Wvsqqyelatb3zYEpKYsE/+182LomzbtUalHLQmX6Gi/MqfmJw=
+X-Gm-Message-State: AOJu0YzVZRJZ4JmAQ+/NBdg/veLD1gPUarkL1+mwlTLVw3ThsXcaiucV
+	saCCORMe+bG+diWhDPPfi1CDVhv7oPJdPqb+6JF5J7tMsCGZZUiCHcDz7GVVrw==
+X-Google-Smtp-Source: AGHT+IFcf5q7ruVnxD8hAPCs04EkAgFwMtLJq7WsD337HPZnA1JczKQ1xXu4AYtawACMGMb2l439Qw==
+X-Received: by 2002:a05:6a20:12c9:b0:1a3:113a:bbd5 with SMTP id v9-20020a056a2012c900b001a3113abbd5mr5892663pzg.40.1710352428857;
+        Wed, 13 Mar 2024 10:53:48 -0700 (PDT)
+Received: from thinkpad ([117.213.99.94])
+        by smtp.gmail.com with ESMTPSA id r6-20020a63e506000000b005dbd0facb4dsm7803062pgh.61.2024.03.13.10.53.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Mar 2024 10:53:48 -0700 (PDT)
+Date: Wed, 13 Mar 2024 23:23:33 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Niklas Cassel <cassel@kernel.org>
 Cc: Jingoo Han <jingoohan1@gmail.com>,
 	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
 	Lorenzo Pieralisi <lpieralisi@kernel.org>,
@@ -61,80 +87,95 @@ Cc: Jingoo Han <jingoohan1@gmail.com>,
 	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
 	linux-arm-kernel@axis.com, Frank Li <Frank.Li@nxp.com>
 Subject: Re: [PATCH v9 07/10] PCI: dwc: ep: Remove "core_init_notifier" flag
-Message-ID: <Ze99lLhe2GqIqMgl@ryzen>
+Message-ID: <20240313175333.GA126027@thinkpad>
 References: <20240304-pci-dbi-rework-v9-0-29d433d99cda@linaro.org>
  <20240304-pci-dbi-rework-v9-7-29d433d99cda@linaro.org>
  <ZesRk5Dg4KEASD3U@ryzen>
  <20240311144559.GA2504@thinkpad>
+ <Ze99lLhe2GqIqMgl@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240311144559.GA2504@thinkpad>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Ze99lLhe2GqIqMgl@ryzen>
 
-On Mon, Mar 11, 2024 at 08:15:59PM +0530, Manivannan Sadhasivam wrote:
+On Mon, Mar 11, 2024 at 10:54:28PM +0100, Niklas Cassel wrote:
+> On Mon, Mar 11, 2024 at 08:15:59PM +0530, Manivannan Sadhasivam wrote:
+> > > 
+> > > I would say that it is the following change that breaks things:
+> > > 
+> > > > -	if (!core_init_notifier) {
+> > > > -		ret = pci_epf_test_core_init(epf);
+> > > > -		if (ret)
+> > > > -			return ret;
+> > > > -	}
+> > > > -
+> > > 
+> > > Since without this code, pci_epf_test_core_init() will no longer be called,
+> > > as there is currently no one that calls epf->core_init() for a EPF driver
+> > > after it has been bound. (For drivers that call dw_pcie_ep_init_notify() in
+> > > .probe())
+> > > 
 > > 
-> > I would say that it is the following change that breaks things:
+> > Thanks a lot for testing, Niklas!
 > > 
-> > > -	if (!core_init_notifier) {
-> > > -		ret = pci_epf_test_core_init(epf);
-> > > -		if (ret)
-> > > -			return ret;
-> > > -	}
-> > > -
+> > > I guess one way to solve this would be for the EPC core to keep track of
+> > > the current EPC "core state" (up/down). If the core is "up" at EPF .bind()
+> > > time, notify the EPF driver directly after .bind()?
+> > > 
 > > 
-> > Since without this code, pci_epf_test_core_init() will no longer be called,
-> > as there is currently no one that calls epf->core_init() for a EPF driver
-> > after it has been bound. (For drivers that call dw_pcie_ep_init_notify() in
-> > .probe())
+> > Yeah, that's a good solution. But I think it would be better if the EPC caches
+> > all events if the EPF drivers are not available and dispatch them once the bind
+> > happens for each EPF driver. Even though INIT_COMPLETE is the only event that is
+> > getting generated before bind() now, IMO it is better to add provision to catch
+> > other events also.
 > > 
+> > Wdyt?
 > 
-> Thanks a lot for testing, Niklas!
+> I'm not sure.
+> What if the EPF goes up/down/up, it seems a bit silly to send all those
+> events to the EPF driver that will alloc+free+alloc.
 > 
-> > I guess one way to solve this would be for the EPC core to keep track of
-> > the current EPC "core state" (up/down). If the core is "up" at EPF .bind()
-> > time, notify the EPF driver directly after .bind()?
-> > 
+> Do we know for sure that we will want to store + replay events other than
+> INIT_COMPLETE?
 > 
-> Yeah, that's a good solution. But I think it would be better if the EPC caches
-> all events if the EPF drivers are not available and dispatch them once the bind
-> happens for each EPF driver. Even though INIT_COMPLETE is the only event that is
-> getting generated before bind() now, IMO it is better to add provision to catch
-> other events also.
+> And how many events should we store?
 > 
-> Wdyt?
+> 
+> Until we can think of a good reason which events other than UP/DOWN we
+> can to store, I think that just storing the state as an integer in
+> struct pci_epc seems simpler.
+> 
 
-I'm not sure.
-What if the EPF goes up/down/up, it seems a bit silly to send all those
-events to the EPF driver that will alloc+free+alloc.
+Hmm, makes sense.
 
-Do we know for sure that we will want to store + replay events other than
-INIT_COMPLETE?
+> 
+> Or I guess we could continue with a flag in struct pci_epc_features,
+> like has_perst_notifier, which would then require the EPC driver to
+> call both epc_notify_core_up() and epc_notify_core_down() when receiving
+> the PERST deassert/assert.
+> For a driver without the flag set, the EPC core would call
+> .epc_notify_core_up() after bind. (And .epc_notify_core_down() would never
+> be called, or it could call it before unbind().)
+> That way an EPF driver itself would not need any different handling
+> (all callbacks would always come, either triggered by an EPC driver that
+> has PERST GPIO irq, or triggered by the EPC core for a driver that lacks
+> a PERST GPIO).
+> 
 
-And how many events should we store?
+For simplicity, I've just used a flag in 'struct pci_epc' to track the core_init
+and call the callback during bind().
 
+But the series has grown big, so I decided to split it into two. One to address
+the DBI access issue and also remove the 'core_init_notifier' flag and another
+one to make EPF drivers more robust to handle the host reboot scenario.
 
-Until we can think of a good reason which events other than UP/DOWN we
-can to store, I think that just storing the state as an integer in
-struct pci_epc seems simpler.
+- Mani
 
-
-Or I guess we could continue with a flag in struct pci_epc_features,
-like has_perst_notifier, which would then require the EPC driver to
-call both epc_notify_core_up() and epc_notify_core_down() when receiving
-the PERST deassert/assert.
-For a driver without the flag set, the EPC core would call
-.epc_notify_core_up() after bind. (And .epc_notify_core_down() would never
-be called, or it could call it before unbind().)
-That way an EPF driver itself would not need any different handling
-(all callbacks would always come, either triggered by an EPC driver that
-has PERST GPIO irq, or triggered by the EPC core for a driver that lacks
-a PERST GPIO).
-
-
-Kind regards,
-Niklas
+-- 
+மணிவண்ணன் சதாசிவம்
