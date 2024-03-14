@@ -1,120 +1,202 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7933A18E20
-	for <linux-tegra@vger.kernel.org>; Thu, 14 Mar 2024 15:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6584D1EB34;
+	Thu, 14 Mar 2024 16:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710431392; cv=none; b=H1qSF974oKoSSGpP/zRPnjtW7B5Cmk4EO1icvyQjkRDXVPGU7Fqj60JoyiHspc8OpIB8oQXsOZAA11o8oyRuUWwjqOSUgfB9HtjT5O3uy7zHuBy4FdeyjAekNSYM2rHO6OmJQe+Egq5z5SfJxFVvv0pB0pIVzRR1bAyIGaim6V0=
+	t=1710435486; cv=none; b=Vcs77zsqIn9OruxtzeUdAOrJhUYLw+iYoFLIzWGw/W1n/H2zKqN5I1yG9u5alCNlf3pNPTfHuREtZOlBEzJS0fzW7a9v20Ko9xJfnrzJbAb1Is7iRYCAwb5GtlzMLZLZdG1Fn3cHee7QZ7COTyOrYZxE6RDu4X1820poWEiZfbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710431392; c=relaxed/simple;
-	bh=zamrk6J5GT1Ml4Fbdj+B0COd9gJVvvPiofy2pcwbYvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aBZPRdKLVKCxVFYCU/NweLB3gEMfHQ1AR82lNdrmJquMnaaZNbt5x6NgItCwn4unEgfBWyQ1Z7VTfHfA7W8CURdl648vdnQx+RuQxv51YFyDjhhLuxheu5RH+r27Pae+/IxhGTmDjI3nz/6c9L4v/eIPD/JIfDuRlBFEkHPUWTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lpWgznzV; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1710435486; c=relaxed/simple;
+	bh=fcf8GvnNI2NlxwWa/BLBUBs674hhRLyrkoAa66D2RKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nE9Dvb4jlx6h5vXrX4A9HOeg58e+rGh2c7tkkgerxTH4oqbOienOHOVPcy/KYUA6XDZf6V+m6gCBjqy5QTyf7NcGJc9/rDTvrPmiASibu9GsfnMNXtwivmFvh9LqXtIIbs5WA4+yEvd/cAiOkfmsi8qZbL7NfrNIwdhyRUBBxTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Upxp6VnM; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lpWgznzV"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a461d0c90c1so134744366b.2
-        for <linux-tegra@vger.kernel.org>; Thu, 14 Mar 2024 08:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710431389; x=1711036189; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UoYqTJjbAWbKASaNyW64iARhPN3viTnTzys+DL4s3qM=;
-        b=lpWgznzVzxPYwOOWdWWRcKOP3wkG36H73/3+TAz22AOFHrkWi7lwSfxmKshnRD5h42
-         OnyDDNvycchF5S6soJa7ly9eP8MPeTQAXqsvWblgmsI1AIwXoFcQb//8j/LoUAy0yYHK
-         rwEQXw5vdO1wzTLpBxMGOjQWc7bgAUREyPlgDED/j5QHApTWhn9l3cklFT5VEvPuLz8o
-         ySgXneRhvkC/uM4PTffMlu7b2Q2KIC+GqLeO6hWVlcE4MNzavk00cUQKSamAyqE/Iv5a
-         Na6/tNahJcIH9zbsm83n4q9DOjmx+LNcu5xXsYiqofRM9ti6psRe9pd1eJggbA09T1hP
-         BAww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710431389; x=1711036189;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UoYqTJjbAWbKASaNyW64iARhPN3viTnTzys+DL4s3qM=;
-        b=tbAJsxOpNdG9Pxbl9HyjnXS/2ql5Bq/i+1vwntJUCjIVx0e29iBxwNXRfMdxqi0SjY
-         ugGHGd3qPFqGkM+9U1p2D4za8vnCuSIM/KM/dprt3sa3jVDwMauKsOEXVHl3QXazzMq7
-         EXlFr85JpFBOk7DRF30QQbwr9XeoNRoQPDOGO7ZvCQ+zm0UHHUrsFVAXZeyGMAlvv9PK
-         b4a8b/SZIylnSVGl5oG6jnJn0lcyOz4w8aC0q6jDF4I2iR05GPtmzhIzoBiu6I/VmGP8
-         5hY0F6KsxmcPckxzWNm1H6X3zXwBe9Ibsx7G28ilkEQ0QD+qMjJ2e/WUcyzfylensb0+
-         SpVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtE1h6fNZCyd1tVELRuyQ/c7HTMho99tjBXhI2CWRJAgLRFQQ43D65xoLu6kYdn4WlgUdp2hpUtCv/NG9blqEBsSave+R3wRqykHY=
-X-Gm-Message-State: AOJu0YwpR8GKO9H4RRgxHgChKkICkVptfVVdmLd0zGSsisH/uf/jJOLR
-	WIAfBbBXRb9fEjARrOGABKya/VQqbSD02IXw5FGQVY13KTlqbtGo
-X-Google-Smtp-Source: AGHT+IHJuEtl91TfCZ4KZZ4Sz6nunyNoL7j5bIkGvOI3TniyhZhZk6mX5MDqEb9xOuiYmazGIBgYEQ==
-X-Received: by 2002:a17:907:c205:b0:a46:5eea:aece with SMTP id ti5-20020a170907c20500b00a465eeaaecemr1592117ejc.3.1710431388601;
-        Thu, 14 Mar 2024 08:49:48 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id f23-20020a1709067f9700b00a45a62e0ed0sm824296ejr.98.2024.03.14.08.49.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Mar 2024 08:49:48 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	"Jason Gunthorpe" <jgg@nvidia.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] gpu: host1x: Do not setup DMA for virtual devices
-Date: Thu, 14 Mar 2024 16:49:43 +0100
-Message-ID: <20240314154943.2487549-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.44.0
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Upxp6VnM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1710435484; x=1741971484;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fcf8GvnNI2NlxwWa/BLBUBs674hhRLyrkoAa66D2RKo=;
+  b=Upxp6VnMtVVIh5OrjLy1m4x53O33vUT82Px9mA1yIg4XVcMfwTQJFixh
+   7LgJMYtNRqx/gFI4UZaFZANBwyUZ2125tyWFO/h/8aNJY3Ssz6Q5mTtSq
+   z2Rj4kEpS4nJkn25okzKvdQv4rbbJF9HCHjqQ9B/Jb64bwio9XG/KBlJp
+   J699SnKSz1nj/E2RkWAJaF9YVeUpsaCsOXlpHs5uHkESF9K3aOaQpXess
+   FCsbM8DPR2tGCmMJCjBmNp+30GvOQOM0FuzvdY/0Dl1c7H5pm+EbBsxtB
+   SWZno7PLV95EK9E7rTZWvtAMKbMAY13rhlzTtvMhwYJfdAqn3LBycbVbu
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,11013"; a="22731667"
+X-IronPort-AV: E=Sophos;i="6.07,126,1708416000"; 
+   d="scan'208";a="22731667"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2024 09:58:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.07,126,1708416000"; 
+   d="scan'208";a="16952403"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.72.214])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Mar 2024 09:57:59 -0700
+Date: Thu, 14 Mar 2024 09:57:57 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org, virtualization@lists.linux.dev,
+	linux-rdma@vger.kernel.org, linux-pm@vger.kernel.org,
+	iommu@lists.linux.dev, linux-tegra@vger.kernel.org,
+	netdev@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+	ath11k@lists.infradead.org, ath12k@lists.infradead.org,
+	brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+	linux-usb@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+	linux-cifs@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-edac@vger.kernel.org, selinux@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+	linux-f2fs-devel@lists.sourceforge.net, linux-hwmon@vger.kernel.org,
+	io-uring@vger.kernel.org, linux-sound@vger.kernel.org,
+	bpf@vger.kernel.org, linux-wpan@vger.kernel.org,
+	dev@openvswitch.org, linux-s390@vger.kernel.org,
+	tipc-discussion@lists.sourceforge.net,
+	Julia Lawall <Julia.Lawall@inria.fr>
+Subject: Re: [FYI][PATCH] tracing/treewide: Remove second parameter of
+ __assign_str()
+Message-ID: <ZfMslbCmCtyEaEWN@aschofie-mobl2>
+References: <20240223125634.2888c973@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240223125634.2888c973@gandalf.local.home>
 
-From: Thierry Reding <treding@nvidia.com>
+On Fri, Feb 23, 2024 at 12:56:34PM -0500, Steven Rostedt wrote:
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+> 
+> [
+>    This is a treewide change. I will likely re-create this patch again in
+>    the second week of the merge window of v6.9 and submit it then. Hoping
+>    to keep the conflicts that it will cause to a minimum.
+> ]
+> 
+> With the rework of how the __string() handles dynamic strings where it
+> saves off the source string in field in the helper structure[1], the
+> assignment of that value to the trace event field is stored in the helper
+> value and does not need to be passed in again.
+> 
+> This means that with:
+> 
+>   __string(field, mystring)
+> 
+> Which use to be assigned with __assign_str(field, mystring), no longer
+> needs the second parameter and it is unused. With this, __assign_str()
+> will now only get a single parameter.
+> 
+> There's over 700 users of __assign_str() and because coccinelle does not
+> handle the TRACE_EVENT() macro I ended up using the following sed script:
+> 
+>   git grep -l __assign_str | while read a ; do
+>       sed -e 's/\(__assign_str([^,]*[^ ,]\) *,[^;]*/\1)/' $a > /tmp/test-file;
+>       mv /tmp/test-file $a;
+>   done
+> 
+> I then searched for __assign_str() that did not end with ';' as those
+> were multi line assignments that the sed script above would fail to catch.
+> 
+> Note, the same updates will need to be done for:
+> 
+>   __assign_str_len()
+>   __assign_rel_str()
+>   __assign_rel_str_len()
+>   __assign_bitmask()
+>   __assign_rel_bitmask()
+>   __assign_cpumask()
+>   __assign_rel_cpumask()
+> 
+> [1] https://lore.kernel.org/linux-trace-kernel/20240222211442.634192653@goodmis.org/
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  arch/arm64/kernel/trace-events-emulation.h    |   2 +-
+>  arch/powerpc/include/asm/trace.h              |   4 +-
+>  arch/x86/kvm/trace.h                          |   2 +-
+>  drivers/base/regmap/trace.h                   |  18 +--
+>  drivers/base/trace.h                          |   2 +-
+>  drivers/block/rnbd/rnbd-srv-trace.h           |  12 +-
+>  drivers/cxl/core/trace.h                      |  24 ++--
 
-The host1x devices are virtual compound devices and do not perform DMA
-accesses themselves, so they do not need to be set up for DMA.
+snip to CXL
 
-Ideally we would also not need to set up DMA masks for the virtual
-devices, but we currently still need those for legacy support on old
-hardware.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpu/host1x/bus.c | 8 --------
- 1 file changed, 8 deletions(-)
+> diff --git a/drivers/cxl/core/trace.h b/drivers/cxl/core/trace.h
+> index bdf117a33744..07ba4e033347 100644
+> --- a/drivers/cxl/core/trace.h
+> +++ b/drivers/cxl/core/trace.h
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 783975d1384f..7c52757a89db 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -351,11 +351,6 @@ static int host1x_device_uevent(const struct device *dev,
- 	return 0;
- }
- 
--static int host1x_dma_configure(struct device *dev)
--{
--	return of_dma_configure(dev, dev->of_node, true);
--}
--
- static const struct dev_pm_ops host1x_device_pm_ops = {
- 	.suspend = pm_generic_suspend,
- 	.resume = pm_generic_resume,
-@@ -369,7 +364,6 @@ const struct bus_type host1x_bus_type = {
- 	.name = "host1x",
- 	.match = host1x_device_match,
- 	.uevent = host1x_device_uevent,
--	.dma_configure = host1x_dma_configure,
- 	.pm = &host1x_device_pm_ops,
- };
- 
-@@ -458,8 +452,6 @@ static int host1x_device_add(struct host1x *host1x,
- 	device->dev.bus = &host1x_bus_type;
- 	device->dev.parent = host1x->dev;
- 
--	of_dma_configure(&device->dev, host1x->dev->of_node, true);
--
- 	device->dev.dma_parms = &device->dma_parms;
- 	dma_set_max_seg_size(&device->dev, UINT_MAX);
- 
--- 
-2.44.0
+snip to poison
+
+> @@ -668,8 +668,8 @@ TRACE_EVENT(cxl_poison,
+>  	    ),
+>  
+>  	TP_fast_assign(
+> -		__assign_str(memdev, dev_name(&cxlmd->dev));
+> -		__assign_str(host, dev_name(cxlmd->dev.parent));
+> +		__assign_str(memdev);
+> +		__assign_str(host);
+
+I think I get that the above changes work because the TP_STRUCT__entry for
+these did:
+	__string(memdev, dev_name(&cxlmd->dev))
+	__string(host, dev_name(cxlmd->dev.parent))
+
+>  		__entry->serial = cxlmd->cxlds->serial;
+>  		__entry->overflow_ts = cxl_poison_overflow(flags, overflow_ts);
+>  		__entry->dpa = cxl_poison_record_dpa(record);
+> @@ -678,12 +678,12 @@ TRACE_EVENT(cxl_poison,
+>  		__entry->trace_type = trace_type;
+>  		__entry->flags = flags;
+>  		if (region) {
+> -			__assign_str(region, dev_name(&region->dev));
+> +			__assign_str(region);
+>  			memcpy(__entry->uuid, &region->params.uuid, 16);
+>  			__entry->hpa = cxl_trace_hpa(region, cxlmd,
+>  						     __entry->dpa);
+>  		} else {
+> -			__assign_str(region, "");
+> +			__assign_str(region);
+>  			memset(__entry->uuid, 0, 16);
+>  			__entry->hpa = ULLONG_MAX;
+
+For the above 2, there was no helper in TP_STRUCT__entry. A recently
+posted patch is fixing that up to be __string(region, NULL) See [1],
+with the actual assignment still happening in TP_fast_assign.
+
+Does that assign logic need to move to the TP_STRUCT__entry definition
+when you merge these changes? I'm not clear how much logic is able to be
+included, ie like 'C' style code in the TP_STRUCT__entry.
+
+[1]
+https://lore.kernel.org/linux-cxl/20240314044301.2108650-1-alison.schofield@intel.com/
+
+Thanks for helping,
+Alison
+
+
+>  		}
+
+
 
