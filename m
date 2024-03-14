@@ -1,181 +1,120 @@
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC2B757E3
-	for <linux-tegra@vger.kernel.org>; Thu, 14 Mar 2024 15:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7933A18E20
+	for <linux-tegra@vger.kernel.org>; Thu, 14 Mar 2024 15:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710429897; cv=none; b=EW6LXJgRoq0+dbVjA09dcK0cWUYPHwABulx0p+R5m5E9Dx9Cmy9hkogecs1RPTCMR7JgeJ5YbnZzzfE0vhfE1eFuXfbdqcaJ7uubdNGjFr/72LA8iCZJoMvgtOq+ExRXMSOaYOQ9UH4BZqQcgqldrrsI2OnuGosJkKl6bNwGcPw=
+	t=1710431392; cv=none; b=H1qSF974oKoSSGpP/zRPnjtW7B5Cmk4EO1icvyQjkRDXVPGU7Fqj60JoyiHspc8OpIB8oQXsOZAA11o8oyRuUWwjqOSUgfB9HtjT5O3uy7zHuBy4FdeyjAekNSYM2rHO6OmJQe+Egq5z5SfJxFVvv0pB0pIVzRR1bAyIGaim6V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710429897; c=relaxed/simple;
-	bh=vvIRN7ZBKQkTFnoIHX/YU42aYhGdx8c3NJ1/9vK0fxY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hmWoaH2oC/YJxUhVyPjozV/DFfZxkLUw/BLiI7VWRsVR6EBUpYrcT6OMNgnnrMPNoYteRelgllLRGhHpo1K23lUdlsk7z6Te37fiXAOYX82GQW1Yeg4iPSlDNtbcDIboMS4mDu/oKhQsPQRSIEfVyi8VvRJ8VGhaeFvekJkvjDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ne+eCzQ7; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1710431392; c=relaxed/simple;
+	bh=zamrk6J5GT1Ml4Fbdj+B0COd9gJVvvPiofy2pcwbYvI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aBZPRdKLVKCxVFYCU/NweLB3gEMfHQ1AR82lNdrmJquMnaaZNbt5x6NgItCwn4unEgfBWyQ1Z7VTfHfA7W8CURdl648vdnQx+RuQxv51YFyDjhhLuxheu5RH+r27Pae+/IxhGTmDjI3nz/6c9L4v/eIPD/JIfDuRlBFEkHPUWTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lpWgznzV; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ne+eCzQ7"
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6e62c65865cso930842b3a.2
-        for <linux-tegra@vger.kernel.org>; Thu, 14 Mar 2024 08:24:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lpWgznzV"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a461d0c90c1so134744366b.2
+        for <linux-tegra@vger.kernel.org>; Thu, 14 Mar 2024 08:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1710429896; x=1711034696; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MmIxA+VBny71iA9Jy1KHGto+GTLx5DDrGCoZw8mb/UA=;
-        b=ne+eCzQ7vkkF5J50mCBp4N13U7QvYi7TuwxCXkVqJbMJEcX1Wgw+Id+qHeDPEh470S
-         nqAbOFCX84aL/sWK/xqSb942NHYzhIUAPi0AvGSl5MGWwWj80HWbGeCzDxwCNFKEVB31
-         bttgf8ArbmTzFWHF2Zr6GOIuXkUCnltDTFOjuz5u+wUsc9iT4Cx0nC9c0/HcNRglFXYk
-         SbJbnlxG0I7othxM50ueFayf6eQss5qQ6e3nnIjxF15RDLdHzFlWfashF+rjNrksEM5g
-         oJuyE6xpBTDvtVeF5G5U7jvFlyEsYirsPOdZRMAZFTkoJijlauAPL9p+097DuHsyPqwu
-         KgNA==
+        d=gmail.com; s=20230601; t=1710431389; x=1711036189; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UoYqTJjbAWbKASaNyW64iARhPN3viTnTzys+DL4s3qM=;
+        b=lpWgznzVzxPYwOOWdWWRcKOP3wkG36H73/3+TAz22AOFHrkWi7lwSfxmKshnRD5h42
+         OnyDDNvycchF5S6soJa7ly9eP8MPeTQAXqsvWblgmsI1AIwXoFcQb//8j/LoUAy0yYHK
+         rwEQXw5vdO1wzTLpBxMGOjQWc7bgAUREyPlgDED/j5QHApTWhn9l3cklFT5VEvPuLz8o
+         ySgXneRhvkC/uM4PTffMlu7b2Q2KIC+GqLeO6hWVlcE4MNzavk00cUQKSamAyqE/Iv5a
+         Na6/tNahJcIH9zbsm83n4q9DOjmx+LNcu5xXsYiqofRM9ti6psRe9pd1eJggbA09T1hP
+         BAww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710429896; x=1711034696;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MmIxA+VBny71iA9Jy1KHGto+GTLx5DDrGCoZw8mb/UA=;
-        b=ufm4K13JG4palQrMRbm+EA7xgqB6y6xvXkf3QFIwPP73A4o64VDCJ3ypgp1DKCtozs
-         QuZQqqKS7I2Nwo+OMaJIY2+c0EdH8nYMXu2Vx0b28MtQO4o96oxYz0dne/DShYBKREPQ
-         /hZeuLk0nCTJ2Pnb3l5qjc/7I8OGYEX6aHxKl8fmRczME+vLWfAmCogg+ga+GaEmnezr
-         bUE/sQ56qw6J2zv2A2MW/jOQPpO20PleYPcuMs5nCbdGFCBs3+Yig9le5Z7Ot+gQlXKy
-         yTphKkDJ4CKqiHqBrKXZoVFmYhRLQew99I8ZRbeeqKLQzJhC+ypuYrdlKN9wuf6u2wvZ
-         KnLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGccJHeRCKVpAGMqKkHAp84FTjJ9rJjHWCx8KZx6wd6S74AON/JhxgaVKo9GIHa3CVnLbHpXlEUscvqMngExv11YCPnWtfYCH0Ii4=
-X-Gm-Message-State: AOJu0YwgyxEdiWWzlmCfM0xg6iP/ZOSZfpTO2gZQk9c+rXP72QdDN2Ua
-	AyRG1C3xjhfL90zbYJEM5UcLoB2OpcUL//uauNi0GAOD/05FCn2TbFaSkh/Y+Q==
-X-Google-Smtp-Source: AGHT+IG2peiit6xwcjpcw9vql2fJguzg+I2xNUy/9EetKehF958tqEIaolzuG1KSOVbZPjbZAJd13g==
-X-Received: by 2002:a05:6a20:2d2b:b0:1a3:3ab7:d736 with SMTP id g43-20020a056a202d2b00b001a33ab7d736mr2249535pzl.43.1710429895604;
-        Thu, 14 Mar 2024 08:24:55 -0700 (PDT)
-Received: from [127.0.1.1] ([117.207.30.211])
-        by smtp.gmail.com with ESMTPSA id m4-20020a63ed44000000b005e438ea2a5asm824021pgk.53.2024.03.14.08.24.51
+        d=1e100.net; s=20230601; t=1710431389; x=1711036189;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UoYqTJjbAWbKASaNyW64iARhPN3viTnTzys+DL4s3qM=;
+        b=tbAJsxOpNdG9Pxbl9HyjnXS/2ql5Bq/i+1vwntJUCjIVx0e29iBxwNXRfMdxqi0SjY
+         ugGHGd3qPFqGkM+9U1p2D4za8vnCuSIM/KM/dprt3sa3jVDwMauKsOEXVHl3QXazzMq7
+         EXlFr85JpFBOk7DRF30QQbwr9XeoNRoQPDOGO7ZvCQ+zm0UHHUrsFVAXZeyGMAlvv9PK
+         b4a8b/SZIylnSVGl5oG6jnJn0lcyOz4w8aC0q6jDF4I2iR05GPtmzhIzoBiu6I/VmGP8
+         5hY0F6KsxmcPckxzWNm1H6X3zXwBe9Ibsx7G28ilkEQ0QD+qMjJ2e/WUcyzfylensb0+
+         SpVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWtE1h6fNZCyd1tVELRuyQ/c7HTMho99tjBXhI2CWRJAgLRFQQ43D65xoLu6kYdn4WlgUdp2hpUtCv/NG9blqEBsSave+R3wRqykHY=
+X-Gm-Message-State: AOJu0YwpR8GKO9H4RRgxHgChKkICkVptfVVdmLd0zGSsisH/uf/jJOLR
+	WIAfBbBXRb9fEjARrOGABKya/VQqbSD02IXw5FGQVY13KTlqbtGo
+X-Google-Smtp-Source: AGHT+IHJuEtl91TfCZ4KZZ4Sz6nunyNoL7j5bIkGvOI3TniyhZhZk6mX5MDqEb9xOuiYmazGIBgYEQ==
+X-Received: by 2002:a17:907:c205:b0:a46:5eea:aece with SMTP id ti5-20020a170907c20500b00a465eeaaecemr1592117ejc.3.1710431388601;
+        Thu, 14 Mar 2024 08:49:48 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id f23-20020a1709067f9700b00a45a62e0ed0sm824296ejr.98.2024.03.14.08.49.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Mar 2024 08:24:55 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Thu, 14 Mar 2024 20:53:50 +0530
-Subject: [PATCH 11/11] PCI: tegra194: Rework {start/stop}_link() callbacks
- implementation
+        Thu, 14 Mar 2024 08:49:48 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	"Jason Gunthorpe" <jgg@nvidia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] gpu: host1x: Do not setup DMA for virtual devices
+Date: Thu, 14 Mar 2024 16:49:43 +0100
+Message-ID: <20240314154943.2487549-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240314-pci-epf-rework-v1-11-6134e6c1d491@linaro.org>
-References: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
-In-Reply-To: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Jingoo Han <jingoohan1@gmail.com>, 
- Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, mhi@lists.linux.dev, 
- linux-tegra@vger.kernel.org, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Vidya Sagar <vidyas@nvidia.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2999;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=vvIRN7ZBKQkTFnoIHX/YU42aYhGdx8c3NJ1/9vK0fxY=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBl8xaQGEjDj7V9nOkxQFG9KkzYhi7NMZ5fNY+WX
- /IyNnSDeqKJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZfMWkAAKCRBVnxHm/pHO
- 9SzzB/0arBeoE0MTmN+C/QkksG5pbqe/k/wuAGkk2EO/pFuNZ20j163lecjuj4DJmfj5tmd3nQ1
- sAaCxZ9VlIvHRrPnsmX/3tFhHtVqyxOKzTOuhfn5I81q5drJ/txgjtjvFbhRwQINFlCTKg/5/wU
- HyMA4ky1/DL4Qm9TiHqzEXMp5dgKj0vDTJ/mu1zOoZKcyyQl7eXfFxkLrS6tc1RzIk/k+bFJBdl
- S9R94h+EwTv/Ug+F3LeXIqmMfV2zi0wTgZiGX6RfxVWHy9E5V+uiRUk87DcZwAfnti60B6mP36m
- LGER5WQ8R6URgGjyDvuAN+Txnfrra4uwGHRL0AKboqnPQ40S
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
+Content-Transfer-Encoding: 8bit
 
-DWC specific start_link() and stop_link() callbacks are supposed to start
-and stop the link training of the PCIe bus. But the current endpoint
-implementation of this driver enables/disables the PERST# IRQ.
+From: Thierry Reding <treding@nvidia.com>
 
-Even though this is not causing any issues, this creates inconsistency
-among the EP controller drivers. So for the sake of consistency, let's just
-start/stop the link training in these callbacks.
+The host1x devices are virtual compound devices and do not perform DMA
+accesses themselves, so they do not need to be set up for DMA.
 
-Also, PERST# IRQ is now enabled from the start itself, thus allowing the
-controller driver to initialize the registers when PERST# gets deasserted
-without waiting for the user intervention though configfs.
+Ideally we would also not need to set up DMA masks for the virtual
+devices, but we currently still need those for legacy support on old
+hardware.
 
-Cc: Vidya Sagar <vidyas@nvidia.com>
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/pci/controller/dwc/pcie-tegra194.c | 24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+ drivers/gpu/host1x/bus.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 3e6e08b321fb..03d6f248bc6f 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -964,7 +964,11 @@ static int tegra_pcie_dw_start_link(struct dw_pcie *pci)
- 	bool retry = true;
- 
- 	if (pcie->of_data->mode == DW_PCIE_EP_TYPE) {
--		enable_irq(pcie->pex_rst_irq);
-+		/* Enable LTSSM */
-+		val = appl_readl(pcie, APPL_CTRL);
-+		val |= APPL_CTRL_LTSSM_EN;
-+		appl_writel(pcie, val, APPL_CTRL);
-+
- 		return 0;
- 	}
- 
-@@ -1049,8 +1053,12 @@ static int tegra_pcie_dw_link_up(struct dw_pcie *pci)
- static void tegra_pcie_dw_stop_link(struct dw_pcie *pci)
- {
- 	struct tegra_pcie_dw *pcie = to_tegra_pcie(pci);
-+	u32 val;
- 
--	disable_irq(pcie->pex_rst_irq);
-+	/* Disable LTSSM */
-+	val = appl_readl(pcie, APPL_CTRL);
-+	val &= ~APPL_CTRL_LTSSM_EN;
-+	appl_writel(pcie, val, APPL_CTRL);
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 783975d1384f..7c52757a89db 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -351,11 +351,6 @@ static int host1x_device_uevent(const struct device *dev,
+ 	return 0;
  }
  
- static const struct dw_pcie_ops tegra_dw_pcie_ops = {
-@@ -1702,11 +1710,6 @@ static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
- 	if (pcie->ep_state == EP_STATE_DISABLED)
- 		return;
- 
--	/* Disable LTSSM */
--	val = appl_readl(pcie, APPL_CTRL);
--	val &= ~APPL_CTRL_LTSSM_EN;
--	appl_writel(pcie, val, APPL_CTRL);
+-static int host1x_dma_configure(struct device *dev)
+-{
+-	return of_dma_configure(dev, dev->of_node, true);
+-}
 -
- 	ret = readl_poll_timeout(pcie->appl_base + APPL_DEBUG, val,
- 				 ((val & APPL_DEBUG_LTSSM_STATE_MASK) >>
- 				 APPL_DEBUG_LTSSM_STATE_SHIFT) ==
-@@ -1913,11 +1916,6 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
- 		appl_writel(pcie, val, APPL_LTR_MSG_2);
- 	}
+ static const struct dev_pm_ops host1x_device_pm_ops = {
+ 	.suspend = pm_generic_suspend,
+ 	.resume = pm_generic_resume,
+@@ -369,7 +364,6 @@ const struct bus_type host1x_bus_type = {
+ 	.name = "host1x",
+ 	.match = host1x_device_match,
+ 	.uevent = host1x_device_uevent,
+-	.dma_configure = host1x_dma_configure,
+ 	.pm = &host1x_device_pm_ops,
+ };
  
--	/* Enable LTSSM */
--	val = appl_readl(pcie, APPL_CTRL);
--	val |= APPL_CTRL_LTSSM_EN;
--	appl_writel(pcie, val, APPL_CTRL);
+@@ -458,8 +452,6 @@ static int host1x_device_add(struct host1x *host1x,
+ 	device->dev.bus = &host1x_bus_type;
+ 	device->dev.parent = host1x->dev;
+ 
+-	of_dma_configure(&device->dev, host1x->dev->of_node, true);
 -
- 	pcie->ep_state = EP_STATE_ENABLED;
- 	dev_dbg(dev, "Initialization of endpoint is completed\n");
+ 	device->dev.dma_parms = &device->dma_parms;
+ 	dma_set_max_seg_size(&device->dev, UINT_MAX);
  
-@@ -2060,8 +2058,6 @@ static int tegra_pcie_config_ep(struct tegra_pcie_dw *pcie,
- 		return -ENOMEM;
- 	}
- 
--	irq_set_status_flags(pcie->pex_rst_irq, IRQ_NOAUTOEN);
--
- 	pcie->ep_state = EP_STATE_DISABLED;
- 
- 	ret = devm_request_threaded_irq(dev, pcie->pex_rst_irq, NULL,
-
 -- 
-2.25.1
+2.44.0
 
