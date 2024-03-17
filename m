@@ -1,183 +1,118 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141111CD3D;
-	Sun, 17 Mar 2024 18:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAD51CF80
+	for <linux-tegra@vger.kernel.org>; Sun, 17 Mar 2024 18:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710698534; cv=none; b=hT0Nw2MgnBUFkioXuTzQDnHXsmAHLo18YnDUnP/NjEGqoMcHbmyLLqh4LQxAXjr117RLI3Ds8qYLP/QXSgvE44ErrEwA7QKDthR7szL63yYv/Iq89x5Jlje0B52IAR2ZH6BZXRDul1Sr2P5tukYolXkzOYEtYNQdNaQqq2M7jYg=
+	t=1710699197; cv=none; b=qOJ614WhRWIDkBBy4mCfgw1PwswkBSRBc1rEpahcqe9dsBzGMkebkV/5CjlBgQpdEgkE33X/cnl0zHEP040/zMChYa2dlUJ8wTWblp7txwaGweNx0lk+eLWv4Zg1oaU0WwbB9cfjBzhq8Pxlms+QpAAIZNiKgdRZMejXHwuV4iQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710698534; c=relaxed/simple;
-	bh=ZzKswZcQKX2b6O/p8Hpk2aTFlZRCVGrgKVnNZ2758gc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VUBoTyTQgc5zKr5Gv44QpuB4Y7+M7DyApqvEpqYRLN/UKUkgBtvcdyauLj8ye+6SVFdMbJsnif4cgp7p1Akr0Y2CeS+I3tc1RKAoSXkGrqsjKlBwXNffYXCRCUJ0C0q3ucVNc1oRfLx6ET8E33zpLbc9fWW24yF7tpeCGVXLAE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fSwKOwES; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1710699197; c=relaxed/simple;
+	bh=A5k9HKZLDIVbVRS4LsFDHYe7oPgi6GnFw/uSmD+g00M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=b6CiZMUBcrFiuG4WJHyKYLGVdzbW9dSsX4eW6ZetnPUrz7X8eyHm5we5hAjvX5w6KOJ4mbFM+HWzzIeV+bFonwE12U4KKCMDU0xtcoxE70f7xTRhBLpShlB85kHDCs4ipaMHa0HbQLGNdd7p5KWaqFONfHbwn0OPpWV3IwYW0R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dD4wCZfp; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fSwKOwES"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-513e14b2bd9so1313041e87.2;
-        Sun, 17 Mar 2024 11:02:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dD4wCZfp"
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2d228a132acso52548271fa.0
+        for <linux-tegra@vger.kernel.org>; Sun, 17 Mar 2024 11:13:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710698531; x=1711303331; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MzKqTULejlRdhOCK57EtCsKlcFoP0JMCOwXzk5JnzwA=;
-        b=fSwKOwESMOgVLeHzDPAMnzhTPnPn29BlvxP9/AMhV00hyysEziN5C6MVPShnCMhmk/
-         0RZMIy02rUiI+/3QS+2Use8SLsz99QUYH7Q3CL0F6jBJzPTpTyTQ1FCEx0aj2aZlXWmJ
-         Baesaf5DHHWI2MXyBDWafGSFzyhSk8a8Zhq9reC/OVx4tdI+yiZP1DRgRd5Vi3FzIW0C
-         RLSlT9F3GT/sx/zgdOQLXFelUHJCuoUXuNps/NKuv2fOKSmV22kTGi67MMXNYJW1xLFQ
-         2e/T1igHzjqFjQ6tppG1j/6YbpTVaIKpMK6NeO/Zyh7AldzZ/cOznabwuP/8sB534Q8y
-         cDUg==
+        d=gmail.com; s=20230601; t=1710699194; x=1711303994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GLIvWfQxZs3QTY3A1QUq5O384ZLcnnVHBqmih9QBi4c=;
+        b=dD4wCZfpfzie9vjUuquVElSmKREnkzUsEPd/T5JTaBW9THZ60q34ngJyTHs3OBQtK3
+         sTn9zf6cjDuOsbZlvxh1WEsY4JF05jjC8XUYNOQoa4vlLuXU59+zOK+joFzbrQ3ZG+5V
+         NdZ4ECp6CDsHVOmL8K8qyUi2ziFpinyklwSDqpuubcriaZv115nNB4lOETtd6dNhAnL7
+         8clHMc70FO17ccvcee3Ubd6apXjxFJaxRE7IVhtQOuacOUY5yDt5JKPJDYViHYszNA6O
+         zSkGTPh4ghtiXFyR5nMslhtDU6jiNlqlZmsVdsT7M5RWBkeEOpn/WbVDr/4WzBE4wLyu
+         owdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710698531; x=1711303331;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MzKqTULejlRdhOCK57EtCsKlcFoP0JMCOwXzk5JnzwA=;
-        b=iFBpdmSoGYu43x/zYx2xl/QtFw2nibY1Ie0dvrHC/2DlQZJvQNRSl9mjlXzZaso/Qc
-         U2tU3MSrEoOyu3Ul43ulhTX1KZ0X0FuLLy92jP/SJBtlNbDF1Ra3N9wF3cUljjB5q5T5
-         TDnkhgqQRuMO81/6nrV/biOqHQ0rw1s/KHBPS1ZPkz5WxnOfd8k2ZKZbBONojJHkjOqO
-         LVyl7dNWAFK20j/oIzdVcwq2UF8UReLETfBavQB+jHw5Zt3B/eR7BCPjjOgyF4r8+/gn
-         HT3jMa8gJoEaBP3KdhkhokQckrNKdFOmm2n0hFYN2+X+Ia9WmY1bEoKBvQPygxk70PXT
-         PgCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgQDmpvgipljXIm/+zeTIJKRFEN2wSQ9cK/2ZLXlLwgXCZRTDhzalValcc/LtxeQC6vRinqDt6IV3MNdVw1aeELHlmIeXOr1SIC4IzlRtOa+qxWhKs/LWdF4zRNfOuIoYv1yYF5eEvyBn6ezcyl1vrQoJk/iCCslQHWc14OuYx1WS0IkJpfmB4iwI7tF9e9koY7cgwS5gPthbrWeTxZ/TxZWGIucw=
-X-Gm-Message-State: AOJu0Yxpq7aWKfuXFRGLGnA06AYGX4jL7wUzxfo91JIuDLWPDtqM9+w0
-	bWyXxi4BreXU5rOV700Oxwmm9tNy8QotWOTtvpQj1+XP8B3KdFtj
-X-Google-Smtp-Source: AGHT+IFCus1zUTDDRuMKlHSuX7mZxcmUN2oBoDJZChg/lN8tzdLoS7uVD3wjUYqAFNQG1yYzEapq8A==
-X-Received: by 2002:a05:6512:3294:b0:513:c95c:4dc4 with SMTP id p20-20020a056512329400b00513c95c4dc4mr7747510lfe.7.1710698530912;
-        Sun, 17 Mar 2024 11:02:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1710699194; x=1711303994;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GLIvWfQxZs3QTY3A1QUq5O384ZLcnnVHBqmih9QBi4c=;
+        b=sT+8PlqLRocJAWSC1kV5Yebki/xNf7uzkw58owQaYHhH/Z+dQLJm/36gtuCs2Xsw9V
+         LyHGaU9T4tfGrbhw3iqqgKcsDiPIVZM9vknHavsdjDx/UZinZdrfExPEwFcmphX/Iy61
+         a/fp6+V4j0Drc8lTVtZkXIuvk6yAFsy4Ljb7M5tCJoZ0RBnQn5ydm1bIPKKo4yR0bTwo
+         vL3DFkz2wcM0Y55yW5/qvEDuYyE+pBU48bAJsHgx1OLlBGgPHLMqb1Zt876r3bt66PQG
+         GkTlUJ/fYLrmQhpdomev6mJx4sNLPPH57h8yIqvlul0CKuRT+jjI8vr97wxoXtPAGdCY
+         J6sg==
+X-Forwarded-Encrypted: i=1; AJvYcCUVhwAHHobpYBRF01w84skCUfgZo6W7DmYwZMV5PWkaiZJ08TuCZpf3CIcvEzSsD9nMpKdonWFKi/UL7c5OtW5yfLg2ShPYUo5yJ8Q=
+X-Gm-Message-State: AOJu0Yw43A73X/GPxj35sa8syCOy5ce3SvTeCBJDgZCU5d4v2DdOSlJk
+	leH0SlY9zJtKcoAWXV2aeIQ/2DK+EUB0CpFO4vmREP6odKHyvODa
+X-Google-Smtp-Source: AGHT+IEbGQkw1XDjMbeU/1kBANGQY/J9bKqomI2iZbYnfeHipSKJP+571GQ+9wHVnWaPWyR4ah59XQ==
+X-Received: by 2002:a19:8c47:0:b0:513:ca96:dbdf with SMTP id i7-20020a198c47000000b00513ca96dbdfmr6486551lfj.12.1710699194183;
+        Sun, 17 Mar 2024 11:13:14 -0700 (PDT)
 Received: from betty.fdsoft.se (213-67-237-183-no99.tbcn.telia.com. [213.67.237.183])
-        by smtp.gmail.com with ESMTPSA id g21-20020ac24d95000000b00513cdde18efsm1318346lfe.75.2024.03.17.11.02.10
+        by smtp.gmail.com with ESMTPSA id g12-20020a19e04c000000b005131cefefd8sm1351431lfj.240.2024.03.17.11.13.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Mar 2024 11:02:10 -0700 (PDT)
+        Sun, 17 Mar 2024 11:13:13 -0700 (PDT)
 Received: from ester.fdsoft.se ([192.168.1.2])
 	by betty.fdsoft.se with esmtp (Exim 4.97.1)
 	(envelope-from <frej.drejhammar@gmail.com>)
-	id 1rlupl-000000005e0-3xex;
-	Sun, 17 Mar 2024 19:02:10 +0100
+	id 1rluq6-000000005e0-375u;
+	Sun, 17 Mar 2024 19:02:30 +0100
 From: Frej Drejhammar <frej.drejhammar@gmail.com>
 To: dri-devel@lists.freedesktop.org
 Cc: Frej Drejhammar <frej.drejhammar@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	amd-gfx@lists.freedesktop.org,
-	Daniel Vetter <daniel@ffwll.ch>,
 	David Airlie <airlied@gmail.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	freedreno@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Sean Paul <sean@poorly.run>,
-	stable@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>
-Subject: [PATCH 00/11] drm: Only try to set formats supported by the hardware
-Date: Sun, 17 Mar 2024 19:01:25 +0100
-Message-ID: <cover.1710698386.git.frej.drejhammar@gmail.com>
+	Daniel Vetter <daniel@ffwll.ch>,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 10/11] drm/tegra: Use drm_driver_legacy_fb_format() for fbdev
+Date: Sun, 17 Mar 2024 19:01:35 +0100
+Message-ID: <a40857fd77807f00b5c62c0fbe3f951e8bcb1099.1710698387.git.frej.drejhammar@gmail.com>
 X-Mailer: git-send-email 2.44.0
+In-Reply-To: <cover.1710698386.git.frej.drejhammar@gmail.com>
+References: <cover.1710698386.git.frej.drejhammar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-When userland uses DRM_IOCTL_MODE_ADDFB to add a framebuffer, the DRM
-subsystem tries to find a pixel format from the supplied depth and
-bpp-values. It does this by calling drm_driver_legacy_fb_format().
-Unfortunately drm_driver_legacy_fb_format() can return formats not
-supported by the underlying hardware. This series of patches remedies
-this problem in patch 1.
+Switch to using drm_driver_legacy_fb_format() instead of
+drm_mode_legacy_fb_format() to use the same logic as for the
+DRM_IOCTL_MODE_ADDFB ioctl when selecting a framebuffer format.
 
-In order to use the same logic for determining the pixel format, when
-a fbdev adds a framebuffer as userland does, patches 2 to 11 migrates
-fbdev users of drm_mode_legacy_fb_format() to
-drm_driver_legacy_fb_format().
+Signed-off-by: Frej Drejhammar <frej.drejhammar@gmail.com>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-tegra@vger.kernel.org
 
-This series has been tested with the nouveau and modesetting drivers
-on a NVIDIA NV96, the modesetting driver on Beagleboard Black, and
-with the Intel and modesetting drivers on an Intel HD Graphics 4000
-chipset.
+---
 
 This is an evolved version of the changes proposed in "drm: Don't
 return unsupported formats in drm_mode_legacy_fb_format" [1] following
 the suggestions of Thomas Zimmermann.
 
-Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: amd-gfx@lists.freedesktop.org
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org
-Cc: intel-gfx@lists.freedesktop.org
-Cc: intel-xe@lists.freedesktop.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: "Maíra Canal" <mcanal@igalia.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Sean Paul <sean@poorly.run>
-Cc: stable@vger.kernel.org
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: "Ville Syrjälä" <ville.syrjala@linux.intel.com>
-
 [1] https://lore.kernel.org/all/20240310152803.3315-1-frej.drejhammar@gmail.com/
+---
+ drivers/gpu/drm/tegra/fbdev.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Frej Drejhammar (11):
-  drm: Only return supported formats from drm_driver_legacy_fb_format
-  drm/fbdev_generic: Use drm_driver_legacy_fb_format() for fbdev
-  drm/armada: Use drm_driver_legacy_fb_format() for fbdev
-  drm/exynos: Use drm_driver_legacy_fb_format() for fbdev
-  drm/gma500: Use drm_driver_legacy_fb_format() for fbdev
-  drm/i915: Use drm_driver_legacy_fb_format() for fbdev
-  drm/msm: Use drm_driver_legacy_fb_format() for fbdev
-  drm/omapdrm: Use drm_driver_legacy_fb_format() for fbdev
-  drm/radeon: Use drm_driver_legacy_fb_format() for fbdev
-  drm/tegra: Use drm_driver_legacy_fb_format() for fbdev
-  drm/xe: Use drm_driver_legacy_fb_format() for fbdev
-
- drivers/gpu/drm/armada/armada_fbdev.c         |  5 +-
- drivers/gpu/drm/drm_fb_helper.c               |  2 +-
- drivers/gpu/drm/drm_fbdev_dma.c               |  4 +-
- drivers/gpu/drm/drm_fbdev_generic.c           |  4 +-
- drivers/gpu/drm/drm_fourcc.c                  | 83 +++++++++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c     |  6 +-
- drivers/gpu/drm/gma500/fbdev.c                |  2 +-
- drivers/gpu/drm/i915/display/intel_fbdev_fb.c |  6 +-
- drivers/gpu/drm/msm/msm_fbdev.c               |  4 +-
- drivers/gpu/drm/omapdrm/omap_fbdev.c          |  6 +-
- drivers/gpu/drm/radeon/radeon_fbdev.c         |  6 +-
- drivers/gpu/drm/tegra/fbdev.c                 |  5 +-
- drivers/gpu/drm/xe/display/intel_fbdev_fb.c   |  5 +-
- 13 files changed, 119 insertions(+), 19 deletions(-)
-
-
-base-commit: 119b225f01e4d3ce974cd3b4d982c76a380c796d
+diff --git a/drivers/gpu/drm/tegra/fbdev.c b/drivers/gpu/drm/tegra/fbdev.c
+index db6eaac3d30e..700ab02235f5 100644
+--- a/drivers/gpu/drm/tegra/fbdev.c
++++ b/drivers/gpu/drm/tegra/fbdev.c
+@@ -87,8 +87,9 @@ static int tegra_fbdev_probe(struct drm_fb_helper *helper,
+ 	cmd.pitches[0] = round_up(sizes->surface_width * bytes_per_pixel,
+ 				  tegra->pitch_align);
+ 
+-	cmd.pixel_format = drm_mode_legacy_fb_format(sizes->surface_bpp,
+-						     sizes->surface_depth);
++	cmd.pixel_format = drm_driver_legacy_fb_format(drm,
++						       sizes->surface_bpp,
++						       sizes->surface_depth);
+ 
+ 	size = cmd.pitches[0] * cmd.height;
+ 
 -- 
 2.44.0
 
