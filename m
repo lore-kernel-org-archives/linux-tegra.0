@@ -1,151 +1,136 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2077.outbound.protection.outlook.com [40.107.220.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4606954665;
-	Tue, 19 Mar 2024 08:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710836771; cv=fail; b=LXVfWfhW9xLCBF4w/FvdANv59mR4Ye+AMJk15OQxngsczw+EmEmEqk9eEpvEyDMeyUBPhD4xFrKifDNMUn8cy7FdIft0sX3Fy1Prv63tjIcsk2L6DpbcsVmIqrkka6JMFB0S0hWmPri1K1nrqKNgdTqfP+wj553xmoaw68RCmK4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710836771; c=relaxed/simple;
-	bh=2ea7PFlPtsjVnKhciQqch9qj4zaom+swrZD7gMp1WWY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CuOdgjoGNxiipN3uuWmSJXu3/P6SioECNSOx2ff1rRUgYYS7eF2nGsUfIFs7CLjXGeGBvumvrNE0sZpA3Jbs3wXaKxesMKJ7PAnqp0vhgDjq2mcvv1RpcRcRbgj3w01d98NZmhTCX/1XirJL/kLxmYu97X5Z2yHePpgHCBY5eTs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nxW7vnoV; arc=fail smtp.client-ip=40.107.220.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E23282E1
+	for <linux-tegra@vger.kernel.org>; Tue, 19 Mar 2024 18:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1710872107; cv=none; b=DfpZzCUilLH5PAbswaTsV9WkJOOVR9KZBPoURcdIFTDArWSfY2MZIRDzpDhUYHp+TbDzkwWM+w+5kuceuPqZxHtMKE8QKUy+ERHbS/vCUfx/uu6XlCFHe5CJnCES4GUVrm4WQfFSv3X6VarWHOfeXwrw4DBMq340nftrcE3ObfY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1710872107; c=relaxed/simple;
+	bh=RZ6lEH7cyONfShml37mNV7nkIh1YCuPRnlSy8js1sI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ITrIpFEmWxiC4H6pF1NIJoiY0cBuqltIojuCx9AZHWIiGo81qR6ZoZXxhyo07oRq1eZga9y/SThDoDxjag0Mpq45FPMmemanN5sxYblb9tYJ7UIzys+R1YHGp5f3wKJhBk2jT/m/h4tc4VZHtz7OZTXXGAgUckUljMQluRbExmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lwvabqTY; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nxW7vnoV"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Jtlx1XEKazELo0CTzgfpD0IizoDBHzwfZdcy2ec6bp5gZYPMB8BshaVCV4D8XsiGaQVOslnOUP9G+jh1qgUXdpfHRwsDfrcWK4sY0cYl44Xy6Snn9Xy7GNuoQWJesIeIp5Q7Ftz48AIHuh8qXodKw5bz2P2b3OTGhujQewv7Py4rlKcNedFQ/Aga9gWVTNmP/71p0Ko5RlDLARLz9r6cMq9XAdoWX/U7CQLl7jeGJnWN9lPMYSO1cbymX9rjwH0tAqHJXaogszwfUxR2ZXdbGpk4TAgVzxUJQVV0pMLilZw0Xno9zOgxo30pqlvGOLeOoFWkR6tRfyOpByrIguve+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9u7gXRvUv+gVV93rB1g9dDr3bPDesAfv6yvoR32J1Cs=;
- b=nYx2g13BQZFNwM1Q3XqYF/+I78wYTMUrLpVGXV9QEpqoAHjkEtkH2Pl8qi5IBjFRKN8H5UXH+1Ze3lOSyIoEXTxcb3scb8v+ywdHJgVGmHItjQfSY9ckV2KvVMjvxipHW584BCI3BFqou40WmrZqkpRZuEsP8mspduvKv8s2IicIXwMSWE3eTK/I6C/K52j4qEJknABhN8IJFlQlvOV/askiVvimAF5deMisP3euD91bNJMA3z191M4yWAygygNG0NIkMe7vdJm5Dm7K7EZCFQ7LWsRAnuk3F0U7azRKRUKYsPL6SqINoCFnGYtUduXOgrngDiOh1kWQYYjwmJcD+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gondor.apana.org.au
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9u7gXRvUv+gVV93rB1g9dDr3bPDesAfv6yvoR32J1Cs=;
- b=nxW7vnoVnw0IYXPI3hxvWcF9qLYgOtme2BC0XuwE5E8EZGdr2/pdtgmWd5G2fafe6iyzUsvDqpojGyiU1XA5/8UcT8M72PtMwqJSFgqC1MYH9WcXYX/5elH9qD/QY0HwPS4mb3p/F4P58qDUFk/tjt9VQVUFOkF2smEo5CSoxunW1f4sz3UKHse4EDV3yyIevP5EoqBg9JfXvJ9qAzwtrL7j31mO0e0OZiuM8rAXzMY0BTZUPaudz1frvbq1em1wzv4Dlyn1+/We1Y3VmpWR+K09FuV3RJIaAlcq8cYuJ2Re0OYNcCu23nQoNSIhKqoxwCq8HnA5CwTOGMnf/Vmk5w==
-Received: from PR0P264CA0178.FRAP264.PROD.OUTLOOK.COM (2603:10a6:100:1c::22)
- by LV2PR12MB6013.namprd12.prod.outlook.com (2603:10b6:408:171::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.26; Tue, 19 Mar
- 2024 08:26:06 +0000
-Received: from SA2PEPF00001504.namprd04.prod.outlook.com
- (2603:10a6:100:1c:cafe::90) by PR0P264CA0178.outlook.office365.com
- (2603:10a6:100:1c::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7386.26 via Frontend
- Transport; Tue, 19 Mar 2024 08:26:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SA2PEPF00001504.mail.protection.outlook.com (10.167.242.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7409.10 via Frontend Transport; Tue, 19 Mar 2024 08:26:04 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 19 Mar
- 2024 01:25:44 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Tue, 19 Mar
- 2024 01:25:44 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Tue, 19 Mar 2024 01:25:39 -0700
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>, <robh@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <mperttunen@nvidia.com>,
-	<airlied@gmail.com>, <daniel@ffwll.ch>, <linux-crypto@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<dri-devel@lists.freedesktop.org>
-CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH v6 5/5] arm64: tegra: Add Tegra Security Engine DT nodes
-Date: Tue, 19 Mar 2024 13:53:06 +0530
-Message-ID: <20240319082306.34716-6-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240319082306.34716-1-akhilrajeev@nvidia.com>
-References: <20240319082306.34716-1-akhilrajeev@nvidia.com>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lwvabqTY"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6e6ade6a66aso5172706b3a.3
+        for <linux-tegra@vger.kernel.org>; Tue, 19 Mar 2024 11:15:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1710872105; x=1711476905; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KcaIci4ngfZq5XN/VP6t9YI7Rpj+hyL5AivE9QQ6SzY=;
+        b=lwvabqTYB2uGZDeXat4J1UARbEGbLbcCygKCe1JN4eJSYR9c3EDQzySbscjs8pcQp7
+         k3Yzf0FzsSZ7DZfMS59Siy+IglMN/nua7OnC6WC3rj+RIATSKYNSMlnaHtonD6gORBi/
+         sKmU5zDFtM0rqku4yEUhxDgjd2l3e98l1dNk4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710872105; x=1711476905;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KcaIci4ngfZq5XN/VP6t9YI7Rpj+hyL5AivE9QQ6SzY=;
+        b=rRsAhzMxBzFt3BGERNDCoF6u+zGxvAJe2chSZRMUDCCuCDtnes0sSCZqA0E1s0ZflA
+         BTh/XnaTtAgJYz/4Rdmle1CX6eU/g+IolBwCgfp/PBpsvvCSGR+cgbC3ORlTE+hKNphC
+         q3C5kr00LAshzfD619NMluAZcKntDDTSHkIrPsOy9GW0EKCF0KBeRQ/LuRgnCyEVm7D3
+         Te/lO7SOG8SUDZraDGBdSZifcdTKam8kJ+B5wntIzuG2IkCCz2fC58ATzMasDq/NjwMO
+         i1RFtV+qTt/yYV8YS+OhmObYWg0qO7Lxff72Y9opKoCSoFNa+588dG0V1Tn85Uk1HHZ2
+         ozlA==
+X-Gm-Message-State: AOJu0YzwsySc8U4ooXzEIirPYR177ZFEeG2J/TEXYVySM6MQ6/4pOxes
+	SfMPRhhSKbdw+P8+3zn8PuSBWK5CC+omATEy13C9OR/fgvdhvICU0AMJScXuvQ==
+X-Google-Smtp-Source: AGHT+IEs6V5enK1CZTIHXPiZ4R0PlFu96HG0HOwGdMnSOtSkC4CyugyccnZjk5x2k8W9wrz8gR8SPg==
+X-Received: by 2002:a05:6a20:1594:b0:1a3:6817:1b02 with SMTP id h20-20020a056a20159400b001a368171b02mr5885140pzj.55.1710872105015;
+        Tue, 19 Mar 2024 11:15:05 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:f4b6:c22b:c130:6c79])
+        by smtp.gmail.com with ESMTPSA id by24-20020a056a02059800b005e49bf50ff9sm8176006pgb.0.2024.03.19.11.15.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Mar 2024 11:15:04 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: dri-devel@lists.freedesktop.org,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-tegra@vger.kernel.org,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	David Airlie <airlied@gmail.com>,
+	Imre Deak <imre.deak@intel.com>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/dp: Clarify that wait_hpd_asserted() is not optional for panels
+Date: Tue, 19 Mar 2024 11:14:35 -0700
+Message-ID: <20240319111432.1.I521dad0693cc24fe4dd14cba0c7048d94f5b6b41@changeid>
+X-Mailer: git-send-email 2.44.0.291.gc1ea87d7ee-goog
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001504:EE_|LV2PR12MB6013:EE_
-X-MS-Office365-Filtering-Correlation-Id: 74dc497e-b727-4b0d-cbda-08dc47ee3806
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	oHKVZmiGoS9RYNWqa8WQBd2diwLfoS40WvEFnrrOCTRRCX4zp/z95z4iVaN36LCz8uyF6sXE3L2BU81ghM5dN3g9/f446gwejvQpprrfugphZ/CtNTn0mz7alpOvnXomuRBeMOFDCAUBoFN4KERIHT1luFV9AWg6qDnl8MRL1jJaGzwIRwaIGNkfI3WbjC/hijuWPKjNGyljKd0Q0ee89/QeL/5e43utIgaG91hihHk1NKflksUDcwmwyLoLXts5Exjj3ljZjwsqOFRneXDoXHNcHvqbwOqk5x1zB64BbH1Rsvb1QRqkmYu6tPA+r/NB2F7uLqPXsiBthO700TceCobtRqJialrZucpS3RlcnNBwvZvjNQjzoiU1/5G6lrqo+CmCHPHYLDjCWMFDIOZMqot9k9VBYrk/fTCUBnpH4+/DsqiyCyOWlK8Dg2f+Uiefk/xMAzBkig+ZOvCUkIq3U2PLW37YCAcJmJuBwLYsA7wwn1qDaIUj0BpKV2zEXRiBvMoi+9Y1vnc7jNMshOVy2XhfkRUMdBeCq2CFF6rPNPaufpnDEzxAk+g/6KiMNe6V/r0Yh0hrC4Io/6OHyIONlNpYyG30yG565Gpw0M+1WIFb4OUbSAlSiWwSmPESC9bcZrW/Krf6tJt5qbJMynvlt5y0qSO7xDQekeYTCd0LrIVKz76Vy3+42NVTmNOSMYxRQO4dhjspIPwR+NiHUPPCrPT4YRRS/4SjGUZ7u3o++VIEG+BgV1qGpGhEc+4NlkNeXE5FZx8OfLKCNzLzbUyHXw==
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(82310400014)(376005)(36860700004)(921011);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2024 08:26:04.6119
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74dc497e-b727-4b0d-cbda-08dc47ee3806
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001504.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB6013
 
-Add device tree nodes for Tegra AES and HASH engines.
+In response to my patch removing the "wait for HPD" logic at the
+beginning of the MSM DP transfer() callback [1], we had some debate
+about what the "This is an optional function" meant in the
+documentation of the wait_hpd_asserted() callback. Let's clarify.
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+As talked about in the MSM DP patch [1], before wait_hpd_asserted()
+was introduced there was no great way for panel drivers to wait for
+HPD in the case that the "built-in" HPD signal was used. Panel drivers
+could only wait for HPD if a GPIO was used. At the time, we ended up
+just saying that if we were using the "built-in" HPD signal that DP
+AUX controllers needed to wait for HPD themselves at the beginning of
+their transfer() callback. The fact that the wait for HPD at the
+beginning of transfer() was awkward/problematic was the whole reason
+wait_hpd_asserted() was added.
+
+Let's make it obvious that if a DP AUX controller implements
+wait_hpd_asserted() that they don't need a loop waiting for HPD at the
+start of their transfer() function. We'll still allow DP controllers
+to work the old way but mark it as deprecated.
+
+[1] https://lore.kernel.org/r/20240315143621.v2.3.I535606f6d4f7e3e5588bb75c55996f61980183cd@changeid
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+I would consider changing the docs to say that implementing
+wait_hpd_asserted() is actually _required_ for any DP controllers that
+want to support eDP panels parented on the DP AUX bus. The issue is
+that one DP controller (tegra/dpaux.c, found by looking for those that
+include display/drm_dp_aux_bus.h) does populate the DP AUX bus but
+doesn't implement wait_hpd_asserted(). I'm actually not sure how/if
+this work on tegra since I also don't see any delay loop for HPD in
+tegra's transfer() callback. For now, I've left wait_hpd_asserted() as
+optional and described the old/deprecated way things used to work
+before wait_hpd_asserted().
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 78cbfdd98dd1..f2e2d8d6845b 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -4406,6 +4406,22 @@ nvdec@15480000 {
- 				 */
- 				status = "disabled";
- 			};
-+
-+			crypto@15820000 {
-+				compatible = "nvidia,tegra234-se-aes";
-+				reg = <0x00 0x15820000 0x00 0x10000>;
-+				clocks = <&bpmp TEGRA234_CLK_SE>;
-+				iommus = <&smmu_niso1 TEGRA234_SID_SES_SE1>;
-+				dma-coherent;
-+			};
-+
-+			crypto@15840000 {
-+				compatible = "nvidia,tegra234-se-hash";
-+				reg = <0x00 0x15840000 0x00 0x10000>;
-+				clocks = <&bpmp TEGRA234_CLK_SE>;
-+				iommus = <&smmu_niso1 TEGRA234_SID_SES_SE2>;
-+				dma-coherent;
-+			};
- 		};
- 
- 		pcie@140a0000 {
+ include/drm/display/drm_dp_helper.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
+index a62fcd051d4d..b170efa1f5d2 100644
+--- a/include/drm/display/drm_dp_helper.h
++++ b/include/drm/display/drm_dp_helper.h
+@@ -422,7 +422,13 @@ struct drm_dp_aux {
+ 	 * @wait_hpd_asserted: wait for HPD to be asserted
+ 	 *
+ 	 * This is mainly useful for eDP panels drivers to wait for an eDP
+-	 * panel to finish powering on. This is an optional function.
++	 * panel to finish powering on. It is optional for DP AUX controllers
++	 * to implement this function but required for DP AUX endpoints (panel
++	 * drivers) to call it after powering up but before doing AUX transfers.
++	 * If a DP AUX controller does not implement this function then it
++	 * may still support eDP panels that use the AUX controller's built-in
++	 * HPD signal by implementing a long wait for HPD in the transfer()
++	 * callback, though this is deprecated.
+ 	 *
+ 	 * This function will efficiently wait for the HPD signal to be
+ 	 * asserted. The `wait_us` parameter that is passed in says that we
 -- 
-2.43.2
+2.44.0.291.gc1ea87d7ee-goog
 
