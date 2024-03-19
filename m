@@ -1,101 +1,83 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C222639AFD;
-	Tue, 19 Mar 2024 18:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2677B39FCF
+	for <linux-tegra@vger.kernel.org>; Tue, 19 Mar 2024 18:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710872800; cv=none; b=MOxEu8RBYK3XoSAfBlJLCs19Cn4Wk0RuOHI1yZV8e0Gns7/xJ3FgdcHNVQIaGGowQFEk3qHhaLpGhzmGkF7UV7icIAQQmZt2yVRuYkBYVeU22lAOUlTpBsdXfpG01Zs+FkfDtVUW2ISHPmNqJPuxUm5GLKjEC6kS+j1PzUuT64Y=
+	t=1710873349; cv=none; b=Z4ar651n3Xmmcl7NRaEdN+u0PJpo/i/dQTyv/OtaXqTncepcQnJ3Zl9wKzdZpzXeMzdGWWP3+AzSP1gsPxjV1nY333WKa+HYEs+9nta9zh2Ch1+t4uEz9Z4w/s/QimkyKL8BdcTag7k4/40cMZ8tXqwwvLxkfv9Sosjn5WXnGzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710872800; c=relaxed/simple;
-	bh=THGl4he4CJRP+FcRWXnW/XC6j02qDWC1XS56mYKz6Eo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IOSB9oGgu4U4kzutg67gQwrzCId6PcZv48S32pkm3P21cxFGkxDJdLxkVNzxXtn9NC4r9uyjOx8Fox0v3kWK2xMu1Ps1AvX3f6N7qpyL73Xto/a5ZjL8tfaGZLsmbPtgUkwAV+5ZJKFXV4/7Ti5wpMul8x4oSxtMwaNr6rnqygQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AMcAT6xn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1710873349; c=relaxed/simple;
+	bh=5Otyfm6zp0UVqj3jZp6Te5CgJP3KPff+6b1od85AMT0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h8lgntUCAuo1HGnp7HDK5QwutOIzaf5ZBTAZpMy2WuM4ZoUkmdlt42PDgMksbpNyW1aWAGwnBBbJ56dpoE+Zs6PLSULeAOS0DeE/TZlvla+yoH4RvDbsGV7OEkqVRVMkoSeSEoyjAR4zANZ1RLqJunJIt8prEf/n8noDT+q0taQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R5+YTTjR; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AMcAT6xn"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 42JHGW9j022546;
-	Tue, 19 Mar 2024 18:26:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=alFmAYsZPbw5JddF5k6AkS4utotPRXvAreu9oVdJA68=; b=AM
-	cAT6xnIj1d3A7tcfptxf5jLcAEkS9UDhUC++rdcYEbO0ROH/FHVTwx9ZpVhAvSih
-	o3VTmwlFRmUVHCR8kbe0iE18LCuIntUQTeXde1bRVn6yz8kDcC8zBWo2BKOsgY2X
-	MSXd8vwsaHhxcxThhrmIXUVuBH4L2Bt3HeazwFgiydfuchXR1uSpEInciZBV1WEq
-	54jq2gZqjWc/RkW4yRzMIZJuAzB1Axhfcs4d/hQQe6GXiMix7iw70q1mK89d2yq4
-	iUW7G8/jhZYwB+UPFOP5xRQBj5bVku+ldlpTsa9jUuQGRvmqJrn+mE+Qy7FrlgmL
-	uEJ/DGrhvzgRkWCH4LHQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wye5n8bjn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Mar 2024 18:26:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 42JIQPTA032329
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Mar 2024 18:26:25 GMT
-Received: from [10.110.10.159] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 19 Mar
- 2024 11:26:21 -0700
-Message-ID: <b9e1a57d-0bdd-45f4-f589-792f8ea82835@quicinc.com>
-Date: Tue, 19 Mar 2024 11:26:19 -0700
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R5+YTTjR"
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-60a5a11b59dso65251597b3.0
+        for <linux-tegra@vger.kernel.org>; Tue, 19 Mar 2024 11:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1710873347; x=1711478147; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rl/lQ7Cc4c2hO/fqExBYwIoyN+wDkSHsXx0gNDbMeuA=;
+        b=R5+YTTjR/iiArRhp+1D4TUqY0C05eK9wvJ52oy6KhOD9S9FNQqY/XcuFpjoAUZakkJ
+         vvjReVIA5yKhLGuVyOI7WpMB9eCO0LUyGWqrgC7hs58bgWnBPD9Wv0GyIqdjLZmHMoQn
+         O/lgcqQScwyul+VTt8zmpebF9pqfDmBcuJ9Mw25c+3Zhug54k+D+BKxxyr5mK6gCGUOy
+         JeYp0K44N6fXfFYrk47jPHTie5LYCEOVUZ31p04fwXE1Q5xFWSrHAjtc3odzvysRA+kE
+         YM2H1n36D8RnIZeOaEGob3VQW+F5SHf6TaaoBH1sM/6c+B7YK68RjxZWnKBTFL6KBznI
+         LAXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710873347; x=1711478147;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rl/lQ7Cc4c2hO/fqExBYwIoyN+wDkSHsXx0gNDbMeuA=;
+        b=RbJGM1Thvn+JKGjLmD424ffcvk528DmKSVPZrpEXCT0QdThC8w/43C37k0XACD/xQd
+         SdWmgPZ3M63yMi70GUfUTU+cxrzgU3hy1zlDFYH/VDLfkk9nU+K1tcYeE8qGcshQKeC7
+         9O2VJ7/QTPa7seCpqPnDRamwL3UTA0/nGofXDGT1wjM9+g3O1WkcDV08Vqno1w5fLJ1/
+         +S7ZG+eIp60xBN6lR1+xORr2YJlta9QlCZwy+1LlRccZDW32MM2frmBSNxeIHJOp6sL4
+         sraTQgoION29gjJtAWthepFc4ZxLxbVCvmTEB9lsqL5FaYPeBZI9EuIJTRDtslcpkpQe
+         zKSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVifW+RwA4xQRoPx7mDT/Q1ZPNigrzqu4xS1dRwSuPtGQ3uSs9rpWiuLSC2xe7QkvS4np6p9jHoG2nK6WoPQrRTFxdCqyS8Pj8A+zY=
+X-Gm-Message-State: AOJu0YwVUmc0x2ow/lROJ00REupeVlgQLju+XCZBKnst3g01KmaFZcax
+	gKxdHy1f2IiNzltNvC+IXsufD+v6H46jlnZzz/WsVrxTsdr4cCusrT04+crPOfrZg+wN3kA999o
+	x2niTyezBEOKJE6Q70ZmufS+uxjUmnjWKOorTow==
+X-Google-Smtp-Source: AGHT+IHepHkMu9ldn57yrc+Ity8F4+LF2O/kh+sFvEN/Qqu/19Kr2md5XAj4OM7RQRke7LidV/dc8JD+dKGi+/3Ipfo=
+X-Received: by 2002:a25:870a:0:b0:dcc:6d85:586a with SMTP id
+ a10-20020a25870a000000b00dcc6d85586amr11027642ybl.49.1710873347086; Tue, 19
+ Mar 2024 11:35:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
+References: <20240319111432.1.I521dad0693cc24fe4dd14cba0c7048d94f5b6b41@changeid>
+In-Reply-To: <20240319111432.1.I521dad0693cc24fe4dd14cba0c7048d94f5b6b41@changeid>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 19 Mar 2024 20:35:35 +0200
+Message-ID: <CAA8EJpq-NjmYkWHAVsuP5jA_Z7Xx0jCiqEDgU-0ni9BCg7Opuw@mail.gmail.com>
 Subject: Re: [PATCH] drm/dp: Clarify that wait_hpd_asserted() is not optional
  for panels
-Content-Language: en-US
-To: Douglas Anderson <dianders@chromium.org>,
-        <dri-devel@lists.freedesktop.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: <linux-tegra@vger.kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Thierry Reding
-	<thierry.reding@gmail.com>,
-        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
-        Imre Deak
-	<imre.deak@intel.com>, Jani Nikula <jani.nikula@intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240319111432.1.I521dad0693cc24fe4dd14cba0c7048d94f5b6b41@changeid>
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20240319111432.1.I521dad0693cc24fe4dd14cba0c7048d94f5b6b41@changeid>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: l2PEpOBPlSb-BRXUAn949UeppIZTCmv2
-X-Proofpoint-ORIG-GUID: l2PEpOBPlSb-BRXUAn949UeppIZTCmv2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-03-19_08,2024-03-18_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- spamscore=0 priorityscore=1501 bulkscore=0 lowpriorityscore=0
- malwarescore=0 clxscore=1011 mlxlogscore=999 mlxscore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2403140001 definitions=main-2403190140
+To: Douglas Anderson <dianders@chromium.org>
+Cc: dri-devel@lists.freedesktop.org, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Ankit Nautiyal <ankit.k.nautiyal@intel.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	David Airlie <airlied@gmail.com>, Imre Deak <imre.deak@intel.com>, 
+	Jani Nikula <jani.nikula@intel.com>, Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-
-On 3/19/2024 11:14 AM, Douglas Anderson wrote:
+On Tue, 19 Mar 2024 at 20:15, Douglas Anderson <dianders@chromium.org> wrote:
+>
 > In response to my patch removing the "wait for HPD" logic at the
 > beginning of the MSM DP transfer() callback [1], we had some debate
 > about what the "This is an optional function" meant in the
 > documentation of the wait_hpd_asserted() callback. Let's clarify.
-> 
+>
 > As talked about in the MSM DP patch [1], before wait_hpd_asserted()
 > was introduced there was no great way for panel drivers to wait for
 > HPD in the case that the "built-in" HPD signal was used. Panel drivers
@@ -105,14 +87,14 @@ On 3/19/2024 11:14 AM, Douglas Anderson wrote:
 > their transfer() callback. The fact that the wait for HPD at the
 > beginning of transfer() was awkward/problematic was the whole reason
 > wait_hpd_asserted() was added.
-> 
+>
 > Let's make it obvious that if a DP AUX controller implements
 > wait_hpd_asserted() that they don't need a loop waiting for HPD at the
 > start of their transfer() function. We'll still allow DP controllers
 > to work the old way but mark it as deprecated.
-> 
+>
 > [1] https://lore.kernel.org/r/20240315143621.v2.3.I535606f6d4f7e3e5588bb75c55996f61980183cd@changeid
-> 
+>
 > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
 > I would consider changing the docs to say that implementing
@@ -125,11 +107,38 @@ On 3/19/2024 11:14 AM, Douglas Anderson wrote:
 > tegra's transfer() callback. For now, I've left wait_hpd_asserted() as
 > optional and described the old/deprecated way things used to work
 > before wait_hpd_asserted().
-> 
->   include/drm/display/drm_dp_helper.h | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
+>
+>  include/drm/display/drm_dp_helper.h | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/drm/display/drm_dp_helper.h b/include/drm/display/drm_dp_helper.h
+> index a62fcd051d4d..b170efa1f5d2 100644
+> --- a/include/drm/display/drm_dp_helper.h
+> +++ b/include/drm/display/drm_dp_helper.h
+> @@ -422,7 +422,13 @@ struct drm_dp_aux {
+>          * @wait_hpd_asserted: wait for HPD to be asserted
+>          *
+>          * This is mainly useful for eDP panels drivers to wait for an eDP
+> -        * panel to finish powering on. This is an optional function.
+> +        * panel to finish powering on. It is optional for DP AUX controllers
+> +        * to implement this function but required for DP AUX endpoints (panel
+> +        * drivers) to call it after powering up but before doing AUX transfers.
+> +        * If a DP AUX controller does not implement this function then it
+> +        * may still support eDP panels that use the AUX controller's built-in
+> +        * HPD signal by implementing a long wait for HPD in the transfer()
+> +        * callback, though this is deprecated.
 
-Thanks for the change,
+It doesn't cover a valid case when the panel driver handles HPD signal
+on its own.
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+>          *
+>          * This function will efficiently wait for the HPD signal to be
+>          * asserted. The `wait_us` parameter that is passed in says that we
+> --
+> 2.44.0.291.gc1ea87d7ee-goog
+>
+
+
+-- 
+With best wishes
+Dmitry
