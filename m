@@ -1,251 +1,108 @@
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FBE5F84F
-	for <linux-tegra@vger.kernel.org>; Fri, 22 Mar 2024 17:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFED7DDC5;
+	Sat, 23 Mar 2024 09:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711127397; cv=none; b=XPsE2PgjNSi5MQf6L1g9O0BDbm2F+IRfcDypn9hCg3Ul9oTrLqk33SDP02Zq5pFcY1BqAUm18jxMgXBbM01znE3wVs1zu3Q713U97bK03yQwvyM32hmeiegHp34oFjMmdXXD8oZKTFKG11aFO4WfbthliVPEAJUGS7SD/C5lqwE=
+	t=1711185637; cv=none; b=ncOmAjFw4nEPoF0J2y/49n7YILGtVM/GZBxJPRBw7iGx8Q3CF1vxx75esN0JU+6OiKH8slJCUM7G2sYETfMhHBbpRJ7CpCBwHVf9u+7Oyej1He8OBtFzL0YYOMFdz/B17Y3BzBgzDeYdlmG37+laJae/kelDEGxseod/p95RRAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711127397; c=relaxed/simple;
-	bh=WFSROxQZOVxFu47A+8VqRSUCe8TRaljA8PS0t5b553Y=;
+	s=arc-20240116; t=1711185637; c=relaxed/simple;
+	bh=aGTQuZy7vZpxuhlc2uWM1FWO2cNVLUpXYHPr+30NYM4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwgNJVm/UhPXlCn0U/2S7V3a5YTO6mVgCRnEyOjkuV4bTOpbD328f+eL+1Owg2ONLj84PJ3AzOecI3rLsOKKWrlkzBdworD+M+eGnSVkPdfrT58RrBo79JzEMI84XP++8vcwdEpMTu0+39wgbChvrfY9sq+BDrzDsTbp9xbesoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cNmYtKwO; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rh0DSAdSQVNBS1adbiZGMY4peRzHf0OTI1CLdrkJl+mE1QbOUeJ4y6uzhifAP3lPqxAJ+LIqYAI9lNkveAzkyTTykksIouPaF+eEm+Dp1DBn5jBle6zAmfSWwrlcPoHoim7asJCNSjOC4eFVZF68Wj1uh+JRYU+LavkF/Ophhpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmGkF125; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cNmYtKwO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=WFSR
-	OxQZOVxFu47A+8VqRSUCe8TRaljA8PS0t5b553Y=; b=cNmYtKwO5Cu5IWiuRD5o
-	Rra1wfWzl7faA6KT3pVfA9ipAZ93fnWCDyioXrFmupshiecN38ZhuEn20Lv197ck
-	wliUCprkQUA+jo49CTtVw9txv7lkqS3TK7Sph3u8PGimL8isWCSjBtDUOvzRJC0c
-	HV4nrVroNyYOMldN5AgE4PNKHFpmVyKgXYoBCwPSXbXBzaxGbeNIbPfQZpKPIkJj
-	OW/7uewh3zH5HPeHcYM/IfiHiY62bvPzBSsPOmiOjbDOgKSwOamu6D/qtV+wk6R+
-	BNT0hTYDcakbO1754UvcuMCQVFvDQRT4cCISEjn5KLHZbq2psaT5U9oxZ+uoJ87t
-	pw==
-Received: (qmail 3929014 invoked from network); 22 Mar 2024 18:09:43 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Mar 2024 18:09:43 +0100
-X-UD-Smtp-Session: l3s3148p1@P2He40IU0sJehhtF
-Date: Fri, 22 Mar 2024 18:09:42 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Guenter Roeck <groeck@google.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, linux-i2c@vger.kernel.org,
-	Elie Morisse <syniurge@gmail.com>,
-	Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jean-Marie Verdun <verdun@hpe.com>,
-	Nick Hawkins <nick.hawkins@hpe.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Khalil Blaiech <kblaiech@nvidia.com>,
-	Asmaa Mnebhi <asmaa@nvidia.com>, Qii Wang <qii.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Ajay Gupta <ajayg@nvidia.com>,
-	Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>,
-	Robert Richter <rric@kernel.org>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Conghui Chen <conghui.chen@intel.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-	imx@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-	linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
-	Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: Re: [PATCH 64/64] i2c: reword i2c_algorithm in drivers according to
- newest specification
-Message-ID: <Zf27VpOHPXAtHCLr@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Guenter Roeck <groeck@google.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	linux-i2c@vger.kernel.org, Elie Morisse <syniurge@gmail.com>,
-	Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jean-Marie Verdun <verdun@hpe.com>,
-	Nick Hawkins <nick.hawkins@hpe.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Khalil Blaiech <kblaiech@nvidia.com>,
-	Asmaa Mnebhi <asmaa@nvidia.com>, Qii Wang <qii.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Avi Fishman <avifishman70@gmail.com>,
-	Tomer Maimon <tmaimon77@gmail.com>,
-	Tali Perry <tali.perry1@gmail.com>,
-	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
-	Benjamin Fair <benjaminfair@google.com>,
-	Ajay Gupta <ajayg@nvidia.com>,
-	Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>,
-	Robert Richter <rric@kernel.org>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Conghui Chen <conghui.chen@intel.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
-	imx@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org,
-	linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev,
-	Ryan Wanner <Ryan.Wanner@microchip.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmGkF125"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D51C0C433F1;
+	Sat, 23 Mar 2024 09:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711185636;
+	bh=aGTQuZy7vZpxuhlc2uWM1FWO2cNVLUpXYHPr+30NYM4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AmGkF125xegySFWAiHvPntmZ+07s8hZQPC/0IVIftdkxYeMJTqDHDoBaq087Sl4Ry
+	 qKx2QcAVw6S410SG7j4biAqt4/h5dTjc1vKUs5R8LJBjxtJSQyMNE1PxZTAhzLwpa+
+	 ZvDOHlqhfPGo+3K1JP9tq5K11rxRL31gNRIYe4fcfJjyAcpNQmozM0AzDwGqt7aAAm
+	 vL1bo7yWAyyXHWJXICav98Il7syCI5t9aEO0HLvfyTQ7cJVQX5WfpHiaD8JmvRG1Zm
+	 VmI4taBLphr2uo/nVmCk1uj3x3TE6/IYqaCXMkAcTk/3yvQe9KoaZIneVeSaGY4Thk
+	 hCCXd6I1k2Bcg==
+Date: Sat, 23 Mar 2024 10:20:32 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, asahi@lists.linux.dev, 
+	chrome-platform@lists.linux.dev, imx@lists.linux.dev, linux-actions@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH 00/64] i2c: reword i2c_algorithm according to newest
+ specification
+Message-ID: <ug266trshvhhbsln3eoh53fmsuj3l63ziz6gavcl7rv2jhjr5t@3av5givh5n7m>
 References: <20240322132619.6389-1-wsa+renesas@sang-engineering.com>
- <20240322132619.6389-65-wsa+renesas@sang-engineering.com>
- <e8dff9d4-ed15-44e9-ae9a-2e77845ec40b@microchip.com>
- <Zf22G4jC2gIlzhi_@shikoro>
- <CABXOdTc14kfPpkF96KG-oeLRTLvjxAD_gtOO2TQFLnHMLNoU_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="un7BlYMtStBuO9gz"
-Content-Disposition: inline
-In-Reply-To: <CABXOdTc14kfPpkF96KG-oeLRTLvjxAD_gtOO2TQFLnHMLNoU_Q@mail.gmail.com>
-
-
---un7BlYMtStBuO9gz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240322132619.6389-1-wsa+renesas@sang-engineering.com>
 
+Hi Wolfram,
 
-> Kind of odd though to change function names but not parameter names of
-> those very same functions.
+On Fri, Mar 22, 2024 at 02:24:53PM +0100, Wolfram Sang wrote:
+> Okay, we need to begin somewhere...
+> 
+> Start changing the wording of the I2C main header wrt. the newest I2C
+> v7, SMBus 3.2, I3C specifications and replace "master/slave" with more
+> appropriate terms. This first step renames the members of struct
+> i2c_algorithm. Once all in-tree users are converted, the anonymous union
+> will go away again. All this work will also pave the way for finally
+> seperating the monolithic header into more fine-grained headers like
+> "i2c/clients.h" etc. So, this is not a simple renaming-excercise but
+> also a chance to update the I2C core to recent Linux standards.
 
-Ouch, this is definitely a valid point. Seems like this series will need
-a respin after all. Will wait for further comments, though.
+yes, very good! It's clearly stated in all three documentations
+that Target replaces Slave and Controller replaces Master (i3c is
+at the 1.1.1 version).
 
-Thanks!
+> My motivation is to improve the I2C core API, in general. My motivation
+> is not to clean each and every driver. I think this is impossible
+> because register names based on official documentation will need to stay
+> as they are. But the Linux-internal names should be updated IMO.
 
+Also because some drivers have been written based on previous
+specifications where master/slave was used.
 
---un7BlYMtStBuO9gz
-Content-Type: application/pgp-signature; name="signature.asc"
+> That being said, I worked on 62 drivers in this series beyond plain
+> renames inside 'struct i2c_algorithm' because the fruits were so
+> low-hanging. Before this series, 112 files in the 'busses/' directory
+> contained 'master' and/or 'slave'. After the series, only 57. Why not?
+> 
+> Next step is updating the drivers outside the 'i2c'-folder regarding
+> 'struct i2c_algorithm' so we can remove the anonymous union ASAP. To be
+> able to work on this with minimal dependencies, I'd like to apply this
+> series between -rc1 and -rc2.
+> 
+> I hope this will work for you guys. The changes are really minimal. If
+> you are not comfortable with changes to your driver or need more time to
+> review, please NACK the patch and I will drop the patch and/or address
+> the issues separeately.
+> 
+> @Andi: are you okay with this approach? It means you'd need to merge
+> -rc2 into your for-next branch. Or rebase if all fails.
 
------BEGIN PGP SIGNATURE-----
+I think it's a good plan, I'll try to support you with it.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmX9u1YACgkQFA3kzBSg
-KbZSKA//Q8484MbfzpPKmvUS0QA73oCgcHXOiIKbRKOfwXWkquKc1vuGV6LbxWG+
-oPc84UQGrv+MjAhAMX/ZpO2VdGp+ej/a1j1kNYihlqVTkY/rRWPMa5y1oNB2H5Xq
-tFjFmqgwbqm/K/OND3KcJw8zAmXCTgCvgQDyQx76B6KMydRGzKel/sM29TwW6mTm
-HCQ9klGLK273LaNEAwn4vkLQ6BtVmjI1CpnjIp3hSRWdW9IytTQlM2weh0gQ+D2p
-OerYgE9JUZp4dgPgLIR60J3AER1DaZtHMVH5NwMLT8xMLa/L3RgkSaTbxa/D2tvm
-K2XQbEWvx8HsxtEIUEcIy936gmSyZ7Nta1mJv+5yN+DLHdGoo9KNl6vcMxzXLgpM
-02/ySV8tMq+Q4cX/fIVZxaeudi69toWj1QcjLg11KaJDo4ndbPqBwYRkSYJ+o2Nh
-aJNDu7J+5ud051bq05bFRaCitl7kyEdv5WEjwk5RTLDD1xvwR84SZ3ElcQ6Jnb/I
-VaA1JNnKw/et4KmEF4A65wphnC8pC/gmH5c9SrPs6w7dUw44dla+p+jPrgtvUOnY
-sqhCnFNLZ5MGuyhTemuWVdGNNvwwuTYFf/VYKi7mdRVsCRdLQIoHklH7FUfmwhpM
-G5oEk4nI7j9MbLPl4WOjrZ9k5wZQnd5zRSWHj/aw5xmVCbNVKsQ=
-=dqSs
------END PGP SIGNATURE-----
+> Speaking of Andi, thanks a lot to him taking care of the controller
+> drivers these days. His work really gives me the freedom to work on I2C
+> core issues again.
 
---un7BlYMtStBuO9gz--
+Thank you, Wolfram!
+
+Andi
