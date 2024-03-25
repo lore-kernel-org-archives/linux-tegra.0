@@ -1,223 +1,142 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2089.outbound.protection.outlook.com [40.107.220.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F0C13B7A2;
-	Mon, 25 Mar 2024 07:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711353249; cv=none; b=CI/ySSwZp1NGEe0B6KGrUPi/1qd2DpukSFy4GJQVooCBNhg0QVM8AbW+8j32LSyvwFQpBf7PkTDRs3sMYcZpIJK0T4SYyaLVju5ACpbOcu6JZ3pXruG4PsLLf8xSpUR44LKXz3Ay+TVg0fETc2bTlQymZjVPxMHiK6CTYQxNesg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711353249; c=relaxed/simple;
-	bh=G9pVMPBkGeSCKm7GL4349gPmBncBHLw8Di6BWoQcag0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z00wCssCiL3CXGVeYUn/rDXjqAI8cTU490+KtIKY8v+TElyrI4M2j0jYx2flfVJ2MVA6W3TbDzL6XokV6YoaqcjS5TZNLWXo0stoGvvUKv+cyA0ZmIuwrDUaTzYGeOr8+izCEY8h2TTqfwrHS3jb9uYgyOycVreAvep5n0jr7f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fkXBLBgH; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A9218D888;
+	Mon, 25 Mar 2024 10:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711363813; cv=fail; b=DWyrbB6JPo7ZTTIAPR84jAjTCKWcaxq2OvC9N116qIBRG2GN76+vWrxN3JuOSkLDeKP5sQtWZKKG4LJiqFqLh+loExGOC2Hd5dRY8vN53KdsFtMjSs6JHMxqmvWTzxmyEQUi8+YF53gZ/UXQSfo/c3ppuYpOcrdgQmFbekqJJYM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711363813; c=relaxed/simple;
+	bh=xkVlhB9dWH2RjGD7bqe+gvccushq7HsPjcrgQFZ13D4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mpRvQGXZ3o3LPaACNVlxShQKc9nTEFVXmSU1xBxQD3z66QA01MZe3OyaZPD2lvvvB9dlZL3bBXNSrTTE5vGWjzekIES6PXCPmN4hnhNR+7Y/vDOYEB87WV/g7K9T9yqZoZwPLVQ3GKJd2sWCcVqSV7qgwdac4rvLvpJMo7LwaHQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JhqaJrzX; arc=fail smtp.client-ip=40.107.220.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fkXBLBgH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1711353246; x=1742889246;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=G9pVMPBkGeSCKm7GL4349gPmBncBHLw8Di6BWoQcag0=;
-  b=fkXBLBgH37ph5Q0oYqWWbQJliLEsV/7J0cRb9rnT+QtQitFB1LufvUhR
-   6RbAy21oMDg0XwBl2NbcQeU1Th3VwscKlE20dvZ5f7JIhKFElboWiyf9v
-   AoMfPWHhEa189te3dE2STHMcSX1XKpuZC/9kgI4CzPJ9m6PRNtlvqDuaL
-   nN6V2ei/lTfqgAXmfQoLN8yhfvu93Vj4NIIYgfA1T9W0hCDNpKb9uxXQX
-   Dhv3JxCOHVocNU6iEtQTMeJHdCB5MGLVPKCuloulscTuDe93TllMdzTgy
-   OXt8/kHxgpiBw8R+45tukcx9r+bXhkr1PvtE/TQn9JXL8uBNH5WKpQr2p
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,11023"; a="6199169"
-X-IronPort-AV: E=Sophos;i="6.07,152,1708416000"; 
-   d="scan'208";a="6199169"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2024 00:54:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,152,1708416000"; 
-   d="scan'208";a="16197266"
-Received: from marquiz-s-2.fi.intel.com (HELO [10.237.72.58]) ([10.237.72.58])
-  by orviesa008.jf.intel.com with ESMTP; 25 Mar 2024 00:53:46 -0700
-Message-ID: <1f1e59a4-359e-4679-8ea9-3d915a930e91@linux.intel.com>
-Date: Mon, 25 Mar 2024 09:53:42 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JhqaJrzX"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TdbFfsOjmzS7cUY/zgqnGRkAhQuBuwkl2x+DxWtkXXzdegd9ruT+XwOPJuUqJAYVhxh08/7D3NaqDs3nY28dgrXSptScHuAAbv/no+c9w+GFRPyHSMncMXXnRDlmxkw0b48tjkQQiZPRMGx7u7P/wqdNiErsjz0CNriD8SKlA9YlRJAhQS89lE6DA6njxXS2Yxvhi5NvaWlDTNC0OvvWZJ1SZ+KxUuXFlYf69IzL0gP7qaKnLPh7pIwTv+8xUHhZWDS7BsPAY1uRzaOupzZfxfJ/PKXRfIikPQRZzHbZa9VyoyK318TM4MI2D9VxcOVvGEt0YnahAlLizimrnHORoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mEHEcWNqsfvjIf8UK9p7wyrQkHxJgyf9XLWuKhf7Lys=;
+ b=Kvkx0I5LscfRke8jC3zvDDYbOZSx9VCamwnuPJTQd7xWyy0NrSBValBImWPbsutq9pwyhqUgRUjNggKhrbrMMc5lwxKPoW0xb9EVjV5PkyS8lHTbdiRbML9fQrx0KatM9yze+18Th7qRBGh8prJ1Tq9PjdMywVU+LQitMGaE13muTEjN1kwWg//PDsNena/xykB4BsC1Fq3xAE6t6kyk6FYADMF1MXYmaYpWez6f3U70kEmX001JFap6l3LMz0YjlHIgyWMgW0jXStjRBmlQ2XP/+cYfGmrZ8+ZAWTFt3sUVtb86YfE2LqXVc+dOL5cdfHzcY9xH4rn4wSj3jMbuSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mEHEcWNqsfvjIf8UK9p7wyrQkHxJgyf9XLWuKhf7Lys=;
+ b=JhqaJrzX4F1urPe8B6gAafvVkrfeaMHTp/kNqy/BG2QKLWiIacSHmuoayN90f73FSt9W04y3vbOQJkqOuBiM9pvVXabdOOOl/ad/d83TsyktotZTz5HKvaqJ6w7z0OLboXjk7wIDOa2HBqNWcCF0cQlfbn/S1xtjek7Sy6wASHrufvGvGaINrap4eVoHK/fYGepdsHWxkZ7ksEXGR3GWR4pCJvnUoIrZX+oPbYhVoWWe8M2tNzZC7fzUJ8o/xINTfJ3/bCGS7qGqW82h+RnSS4i6wcZljjc+cLWjVSdS49iXdKfnPJ6pskczt5wQBdzz+ysqLZgBSSSTz7CP7zERYQ==
+Received: from BYAPR21CA0016.namprd21.prod.outlook.com (2603:10b6:a03:114::26)
+ by BL3PR12MB6379.namprd12.prod.outlook.com (2603:10b6:208:3b2::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.31; Mon, 25 Mar
+ 2024 10:50:06 +0000
+Received: from CO1PEPF000042AB.namprd03.prod.outlook.com
+ (2603:10b6:a03:114:cafe::a1) by BYAPR21CA0016.outlook.office365.com
+ (2603:10b6:a03:114::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.11 via Frontend
+ Transport; Mon, 25 Mar 2024 10:50:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CO1PEPF000042AB.mail.protection.outlook.com (10.167.243.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7409.10 via Frontend Transport; Mon, 25 Mar 2024 10:50:05 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 25 Mar
+ 2024 03:49:53 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.12; Mon, 25 Mar 2024 03:49:53 -0700
+Received: from build-spujar-20230918T214410352.internal (10.127.8.9) by
+ mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.1258.12
+ via Frontend Transport; Mon, 25 Mar 2024 03:49:53 -0700
+From: Sameer Pujar <spujar@nvidia.com>
+To: <broonie@kernel.org>, <linux-sound@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lgirdwood@gmail.com>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<mkumard@nvidia.com>, Sameer Pujar <spujar@nvidia.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH] ASoC: tegra: Fix DSPK 16-bit playback
+Date: Mon, 25 Mar 2024 10:49:28 +0000
+Message-ID: <20240325104928.2796868-1-spujar@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 64/64] i2c: reword i2c_algorithm in drivers according to
- newest specification
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, linux-i2c@vger.kernel.org
-Cc: Elie Morisse <syniurge@gmail.com>,
- Shyam Sundar S K <shyam-sundar.s-k@amd.com>,
- Andi Shyti <andi.shyti@kernel.org>,
- Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Krzysztof Adamski <krzysztof.adamski@nokia.com>,
- Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Jean-Marie Verdun <verdun@hpe.com>,
- Nick Hawkins <nick.hawkins@hpe.com>, Yicong Yang <yangyicong@hisilicon.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Khalil Blaiech <kblaiech@nvidia.com>, Asmaa Mnebhi <asmaa@nvidia.com>,
- Qii Wang <qii.wang@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
- Ajay Gupta <ajayg@nvidia.com>, Peter Korsgaard <peter@korsgaard.com>,
- Andrew Lunn <andrew@lunn.ch>, Robert Richter <rric@kernel.org>,
- Aaro Koskinen <aaro.koskinen@iki.fi>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>,
- Vignesh R <vigneshr@ti.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Vladimir Zapolskiy <vz@mleia.com>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>,
- Conghui Chen <conghui.chen@intel.com>, Viresh Kumar
- <viresh.kumar@linaro.org>, Michal Simek <michal.simek@amd.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- chrome-platform@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- imx@lists.linux.dev, linux-mips@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org,
- openbmc@lists.ozlabs.org, linux-omap@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, asahi@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org,
- virtualization@lists.linux.dev
-References: <20240322132619.6389-1-wsa+renesas@sang-engineering.com>
- <20240322132619.6389-65-wsa+renesas@sang-engineering.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20240322132619.6389-65-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042AB:EE_|BL3PR12MB6379:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2e856167-544a-4df8-ffeb-08dc4cb9551d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	HQZ1+BARq0jYbOwgB4zo0mCZOPbEUl69XmNC5XpNze7L0dH6pae9JmnF1m6F2GBhTp5nHwnyB5+9U6xWgdcyTSSkfEXEM7ogFtJbZR4mrA8Tip4pUITQPe961mhIn3CyL/dh/pPTt9xznBBXFFmysxi5s0BAiZ4LWEcrB/vcGpdEMtHphKNv7GzmI4SITcFL16xocNdzSWoDlZ+mThyY7UnI/jqi2Yu6aJqw6Sr08Q7S2AbNN9bNFsFEhab1T1R8p5uuqCfTD2XgqCP0u/douE97IXx1e8WsmNctNE0EPSaTgGVVTh2/vxNu+GSh8jPnrpL2DfqxvUdGzZJ8YuqkbX1IINbsTyfmhcbAdd1GJfCopHcfmPgjTZOR9hvr7K+yq40rUGoYZZxiJq35i1SInjdILeWZC3M6NRGuchttKNt2XmGn3myozs5GiqLb+uuFRwOmhBdInZMLJ2c7NtNbAFNpLrWbiG6RtR9KXF+hMda8PaZaptQ4c1EjvPTFER3HhaVShXS9TQ0+HoKCaIMJTLVTd5SIF+Hu+G6UPJrkHRYyMD/D3z4zn7WMf7S+A3LdSbklDjFxP9wpkvO/xJbgxKUNJNiCKAKnY4sfQwfGtJWsFSm5lBSewvC8sYYJuOTFfe8tD+7lCY7gqCfWCgXwldrJDzvC2t4aeU6WpL0ZOnKoTCpId7BXE6SIT4Zr/EHy0DVDwDWkzCdzSU9K3Cj1jv+XlJ0lrvCxiTf0nwbUDiaN8ZjZ5r9RuE/0XPSYZMMO
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(36860700004)(1800799015)(82310400014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2024 10:50:05.9520
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e856167-544a-4df8-ffeb-08dc4cb9551d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000042AB.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6379
 
-On 3/22/24 3:25 PM, Wolfram Sang wrote:
-> Match the wording in i2c_algorithm in I2C drivers wrt. the newest I2C
-> v7, SMBus 3.2, I3C specifications and replace "master/slave" with more
-> appropriate terms. For some drivers, this means no more conversions are
-> needed. For the others more work needs to be done but this will be
-> performed incrementally along with API changes/improvements. All these
-> changes here are simple search/replace results.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->   drivers/i2c/busses/i2c-amd-mp2-plat.c      |  2 +-
->   drivers/i2c/busses/i2c-at91-master.c       |  2 +-
->   drivers/i2c/busses/i2c-at91-slave.c        |  8 ++++----
->   drivers/i2c/busses/i2c-axxia.c             | 10 +++++-----
->   drivers/i2c/busses/i2c-cros-ec-tunnel.c    |  2 +-
->   drivers/i2c/busses/i2c-designware-master.c |  2 +-
->   drivers/i2c/busses/i2c-designware-slave.c  |  8 ++++----
->   drivers/i2c/busses/i2c-diolan-u2c.c        |  2 +-
->   drivers/i2c/busses/i2c-exynos5.c           |  4 ++--
->   drivers/i2c/busses/i2c-gxp.c               | 12 ++++++------
->   drivers/i2c/busses/i2c-hisi.c              |  4 ++--
->   drivers/i2c/busses/i2c-img-scb.c           |  2 +-
->   drivers/i2c/busses/i2c-imx.c               | 12 ++++++------
->   drivers/i2c/busses/i2c-jz4780.c            |  2 +-
->   drivers/i2c/busses/i2c-kempld.c            |  2 +-
->   drivers/i2c/busses/i2c-meson.c             |  4 ++--
->   drivers/i2c/busses/i2c-mlxbf.c             |  8 ++++----
->   drivers/i2c/busses/i2c-mt65xx.c            |  2 +-
->   drivers/i2c/busses/i2c-mxs.c               |  2 +-
->   drivers/i2c/busses/i2c-nomadik.c           |  2 +-
->   drivers/i2c/busses/i2c-npcm7xx.c           | 12 ++++++------
->   drivers/i2c/busses/i2c-nvidia-gpu.c        |  4 ++--
->   drivers/i2c/busses/i2c-ocores.c            |  8 ++++----
->   drivers/i2c/busses/i2c-octeon-platdrv.c    |  2 +-
->   drivers/i2c/busses/i2c-omap.c              |  4 ++--
->   drivers/i2c/busses/i2c-opal.c              |  4 ++--
->   drivers/i2c/busses/i2c-pasemi-core.c       |  2 +-
->   drivers/i2c/busses/i2c-pnx.c               |  2 +-
->   drivers/i2c/busses/i2c-pxa.c               | 12 ++++++------
->   drivers/i2c/busses/i2c-qcom-cci.c          |  2 +-
->   drivers/i2c/busses/i2c-qcom-geni.c         |  2 +-
->   drivers/i2c/busses/i2c-robotfuzz-osif.c    |  2 +-
->   drivers/i2c/busses/i2c-rzv2m.c             |  8 ++++----
->   drivers/i2c/busses/i2c-s3c2410.c           |  4 ++--
->   drivers/i2c/busses/i2c-stm32f7.c           | 14 +++++++-------
->   drivers/i2c/busses/i2c-tegra-bpmp.c        |  4 ++--
->   drivers/i2c/busses/i2c-tegra.c             |  4 ++--
->   drivers/i2c/busses/i2c-thunderx-pcidrv.c   |  2 +-
->   drivers/i2c/busses/i2c-virtio.c            |  2 +-
->   drivers/i2c/busses/i2c-wmt.c               |  2 +-
->   drivers/i2c/busses/i2c-xiic.c              |  2 +-
->   41 files changed, 95 insertions(+), 95 deletions(-)
-> 
+DSPK configuration is wrong for 16-bit playback and this happens because
+the client config is always fixed at 24-bit in hw_params(). Fix this by
+updating the client config to 16-bit for the respective playback.
 
-> diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
-> index c7e56002809a..14c61b31f877 100644
-> --- a/drivers/i2c/busses/i2c-designware-master.c
-> +++ b/drivers/i2c/busses/i2c-designware-master.c
-> @@ -832,7 +832,7 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
->   }
->   
->   static const struct i2c_algorithm i2c_dw_algo = {
-> -	.master_xfer = i2c_dw_xfer,
-> +	.xfer = i2c_dw_xfer,
->   	.functionality = i2c_dw_func,
->   };
->   
-> diff --git a/drivers/i2c/busses/i2c-designware-slave.c b/drivers/i2c/busses/i2c-designware-slave.c
-> index 2e079cf20bb5..b47ad6b16814 100644
-> --- a/drivers/i2c/busses/i2c-designware-slave.c
-> +++ b/drivers/i2c/busses/i2c-designware-slave.c
-> @@ -58,7 +58,7 @@ static int i2c_dw_init_slave(struct dw_i2c_dev *dev)
->   	return 0;
->   }
->   
-> -static int i2c_dw_reg_slave(struct i2c_client *slave)
-> +static int i2c_dw_reg_target(struct i2c_client *slave)
->   {
->   	struct dw_i2c_dev *dev = i2c_get_adapdata(slave->adapter);
->   
-> @@ -83,7 +83,7 @@ static int i2c_dw_reg_slave(struct i2c_client *slave)
->   	return 0;
->   }
->   
-> -static int i2c_dw_unreg_slave(struct i2c_client *slave)
-> +static int i2c_dw_unreg_target(struct i2c_client *slave)
->   {
->   	struct dw_i2c_dev *dev = i2c_get_adapdata(slave->adapter);
->   
-> @@ -214,8 +214,8 @@ static irqreturn_t i2c_dw_isr_slave(int this_irq, void *dev_id)
->   
->   static const struct i2c_algorithm i2c_dw_algo = {
->   	.functionality = i2c_dw_func,
-> -	.reg_slave = i2c_dw_reg_slave,
-> -	.unreg_slave = i2c_dw_unreg_slave,
-> +	.reg_target = i2c_dw_reg_target,
-> +	.unreg_target = i2c_dw_unreg_target,
->   };
+Fixes: 327ef6470266 ("ASoC: tegra: Add Tegra186 based DSPK driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ sound/soc/tegra/tegra186_dspk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+diff --git a/sound/soc/tegra/tegra186_dspk.c b/sound/soc/tegra/tegra186_dspk.c
+index aa37c4ab0adb..3a152e76122b 100644
+--- a/sound/soc/tegra/tegra186_dspk.c
++++ b/sound/soc/tegra/tegra186_dspk.c
+@@ -1,8 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ //
+ // tegra186_dspk.c - Tegra186 DSPK driver
+-//
+-// Copyright (c) 2020 NVIDIA CORPORATION. All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -246,6 +245,7 @@ static int tegra186_dspk_hw_params(struct snd_pcm_substream *substream,
+ 	switch (params_format(params)) {
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_16;
++		cif_conf.client_bits = TEGRA_ACIF_BITS_16;
+ 		break;
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_32;
+-- 
+2.25.1
+
