@@ -1,107 +1,120 @@
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C128F199A1
-	for <linux-tegra@vger.kernel.org>; Sat, 23 Mar 2024 10:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7F1149C7D;
+	Mon, 25 Mar 2024 01:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711190515; cv=none; b=UbES+bU2Wl7QNEaO8uyS4pyLEZagQzuwZuIFghsxkaBqxvNgBIxtGS88eFMlOohDlxXS3rXIwwtqqH+yOVtdwvbJF9SLYPz7fxw0n/cuIBxgPSyaZVAoo7FiQUCApjRwWO3BNUOQ65OZUTM5PtaiP+xX1v/233PFyKoBiONLoZU=
+	t=1711331662; cv=none; b=Gk9MkEKfQh/D1sbgyIJcS2VT44gcR3xdWwM4FEIckwNLvv7lLKUfsZL6pX33r+4ssJpNmxOXlNTGCSwEzqx295gTe/MgmmUU85qEaDJ9kfQYElfB2ZdgUb72cMd+hNq3t16ami7TgpWt6edLJaKM9znWnFndfLfcDZWKWhKqulE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711190515; c=relaxed/simple;
-	bh=GEI/ooPR1uxzhyNgwywp7m8zeQWCBAmFv9ShGuGC3WM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Vh7UMoLvCFLoLVgQpX/CkIe/SFwZN/7nEonA7ONFVgxBK/oqOQSQjoxUw9TZ/pUtvwPBMK20kvNhorv/yZrK3fEDVffe1WhO2i1S95budhT3MrNTOVyUB15Y/tuPrtxl6NFLL8h9R6Kda3GINT1CJipN9TZ7rXSWhpjuShXfgfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Tv2f5+uB; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1711331662; c=relaxed/simple;
+	bh=x6gbNWDUC3393woiAhRGtrXvkbgxFEKnVO43IWMARsU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=jo4eRyXnHT6pJlze8xtEpd1EeBpqCzs5cNTT6ZJHa8EUHj40hkpdHUwApSEPYljxRFVAPnX0dye4BDIjBhOZuJDCzLFydOpPlDJOiMZB4G7KpGIWtVFbD8Ec9x0bye3cy2qJDr7S0LwJ2Sd7sTThMgJVZwKf91MQmw2WiWm3+TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrPZZfZ0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tv2f5+uB"
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6964b1c529cso28114526d6.0
-        for <linux-tegra@vger.kernel.org>; Sat, 23 Mar 2024 03:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1711190512; x=1711795312; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MqD8wzexo6xit6zjT25NUCdriPsphWfFfa0tlNyYYks=;
-        b=Tv2f5+uBv93MVvRfoVm2O8kRG3mojEdZIlp7HnN6hdomSBgI5qeTE6TyG4kC/jfqBU
-         2Sw7By4TEqxXtjDSv1l3JagA9pvPfZw2BZkEyT1AqkwPtYojstR/N63qiDXbCm7SsPSr
-         SD3r57QbWIjksbhZEnhEW4sL3nziVVZ41ZPVk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711190512; x=1711795312;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MqD8wzexo6xit6zjT25NUCdriPsphWfFfa0tlNyYYks=;
-        b=BSfygYc8sHyp2KSVK7IaZFe3Wh5s9Q9C+q9zS+f1bTQ0kzFADn2hCftrnlprCAr0MB
-         NM1w/YA5lA9JTUilTQaWqJ3yVsuVsimgwJGa/46Toz7N7IWSBjlV3sh3gdx8HDkX0Tlf
-         Vom9Xp2o9G2CnmuQevURsaAA1stCNlDqeIAdHECmUKY0EspK4Nu71Aofre+9ZVSC9WGX
-         ygoMiWA2oln4qeAJFq9hHvkZ/+sQPpM7RE/6DqesXQmsAxF5huBRA5o3lQfzjCgwxoHX
-         BlacSJC1J9PoyW1dpWFpIKavfpJAXssl9kYt+9pW9Tf20AhGFGEwwD99amk+Pk3E0sA5
-         SkTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEdAvcHzoC5rU2sZsEKhp/w1fPPzJZLuQtTWM24R306ComRs+IcP34K+KlXZmAi3nrXbeDI+igkofxu/ZwErKJjfBIKyx3fCcycUc=
-X-Gm-Message-State: AOJu0YwI6ARYJST0J+Y1kXh2TPe+8DBbwnaAdeidmgG7mbr+7T3i1tuJ
-	8+25N5yZ1MyLO4iLU0ICYJ0WxTjTWu01tK4FSU7BamJ5h3ouFQRtqTgM9RkEIV9QJCs5lqXrFA8
-	=
-X-Google-Smtp-Source: AGHT+IFqiP6PxKrx0iNYkypU5fRxQ2Tg1JQsARpN7FhxoFv5VhxvCeHLgOCqbXVBG5RX/NkfTi463g==
-X-Received: by 2002:a05:6214:2249:b0:690:c093:d833 with SMTP id c9-20020a056214224900b00690c093d833mr2314782qvc.0.1711190511851;
-        Sat, 23 Mar 2024 03:41:51 -0700 (PDT)
-Received: from denia.c.googlers.com (188.173.86.34.bc.googleusercontent.com. [34.86.173.188])
-        by smtp.gmail.com with ESMTPSA id 6-20020a0562140d4600b0068f75622543sm1998523qvr.1.2024.03.23.03.41.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 23 Mar 2024 03:41:51 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Sat, 23 Mar 2024 10:41:47 +0000
-Subject: [PATCH 3/3] media: dvbdev: Initialize sbuf
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrPZZfZ0"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7D974C43399;
+	Mon, 25 Mar 2024 01:54:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711331662;
+	bh=x6gbNWDUC3393woiAhRGtrXvkbgxFEKnVO43IWMARsU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jrPZZfZ03PsaQD3fMGm9nq2UPpPmNCR2UhRG5lEG5sj1PDjplq8FZ75Zbzq4M++fX
+	 Q6TVSgOVQbUvhZzKhKOQNbQwhQhy2BZ8MRkhAIEF+3w0ilwV/nWxm1rjxE/qfP/Mr+
+	 E3yc5dSuBNp0Bm1L/KI5QDwiA8kFCuNjxzWIU7cCRVNPOgSNBZV+qUtQOY4O/YoTDT
+	 PFwCgNm3HEFcmI1zG6v/j47VLsywRsjUKgaIEweM6/K8U5bK1qRIu9RKHx/KjIcwnX
+	 cAPddvxMuoVuFBd1hKdjXjkxNm2QAvn+OmyKHTZvNymrjm/TZ8YaQVQ3vy0XdpqBcO
+	 88LTlEfD/nBQw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 59B24D2D0E0;
+	Mon, 25 Mar 2024 01:54:22 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240323-gcc-arm-warnings-v1-3-0b45cc52f39e@chromium.org>
-References: <20240323-gcc-arm-warnings-v1-0-0b45cc52f39e@chromium.org>
-In-Reply-To: <20240323-gcc-arm-warnings-v1-0-0b45cc52f39e@chromium.org>
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Sowjanya Komatineni <skomatineni@nvidia.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.12.4
+Subject: Re: [PATCH v6 000/164] pwm: Improve lifetime tracking for pwm_chips
+From: patchwork-bot+chrome-platform@kernel.org
+Message-Id: 
+ <171133166235.9916.5159550524752322105.git-patchwork-notify@kernel.org>
+Date: Mon, 25 Mar 2024 01:54:22 +0000
+References: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
+In-Reply-To: <cover.1707900770.git.u.kleine-koenig@pengutronix.de>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig_=3Cu=2Ekleine-koenig=40pengutronix=2Ede=3E?=@ci.codeaurora.org
+Cc: linux-pwm@vger.kernel.org, corbet@lwn.net, Jonathan.Cameron@huawei.com,
+ james.clark@arm.com, andriy.shevchenko@linux.intel.com, broonie@kernel.org,
+ marcan@marcan.st, sven@svenpeter.dev, claudiu.beznea@tuxon.dev,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+ florian.fainelli@broadcom.com, rjui@broadcom.com, sbranden@broadcom.com,
+ shc_work@mail.ru, bleung@chromium.org, p.zabel@pengutronix.de,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, paul@crapouillou.net,
+ vz@mleia.com, mika.westerberg@linux.intel.com, andy@kernel.org,
+ linus.walleij@linaro.org, hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ neil.armstrong@linaro.org, khilman@baylibre.com, conor.dooley@microchip.com,
+ daire.mcnamara@microchip.com, j.neuschaefer@gmx.net, heiko@sntech.de,
+ krzysztof.kozlowski@linaro.org, palmer@dabbelt.com, paul.walmsley@sifive.com,
+ mwalle@kernel.org, orsonzhai@gmail.com, baolin.wang@linux.alibaba.com,
+ zhang.lyra@gmail.com, fabrice.gasnier@foss.st.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, wens@csie.org, jernej.skrabec@gmail.com,
+ samuel@sholland.org, hammerh0314@gmail.com, thierry.reding@gmail.com,
+ jonathanh@nvidia.com, nobuhiro1.iwamatsu@toshiba.co.jp,
+ sean.anderson@seco.com, michal.simek@amd.com, brgl@bgdev.pl,
+ andrzej.hajda@intel.com, rfoss@kernel.org, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+ pavel@ucw.cz, lee@kernel.org, quic_amelende@quicinc.com,
+ quic_bjorande@quicinc.com, keescook@chromium.org, robh@kernel.org,
+ johan@kernel.org, elder@kernel.org, gregkh@linuxfoundation.org,
+ kernel@pengutronix.de, linux-doc@vger.kernel.org, alyssa@rosenzweig.io,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ bcm-kernel-feedback-list@broadcom.com, linux-rpi-kernel@lists.infradead.org,
+ groeck@chromium.org, chrome-platform@lists.linux.dev, festevam@gmail.com,
+ linux-imx@nxp.com, linux-mips@vger.kernel.org, linux-gpio@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ jbrunet@baylibre.com, martin.blumenstingl@googlemail.com,
+ linux-amlogic@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, alim.akhtar@samsung.com,
+ linux-samsung-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ dianders@chromium.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+ greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
+ gustavoars@kernel.org, linux-hardening@vger.kernel.org
 
-Because the size passed to copy_from_user() cannot be known beforehand,
-it needs to be checked during runtime with check_object_size. That makes
-gcc believe that the content of sbuf can be used before init.
+Hello:
 
-Fix:
-./include/linux/thread_info.h:215:17: warning: ‘sbuf’ may be used uninitialized [-Wmaybe-uninitialized]
+This series was applied to chrome-platform/linux.git (for-kernelci)
+by Uwe Kleine-König <u.kleine-koenig@pengutronix.de>:
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/dvb-core/dvbdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 14 Feb 2024 10:30:47 +0100 you wrote:
+> Hello,
+> 
+> this is v6 of the series introducing better lifetime tracking for
+> pwmchips that addresses (for now theoretic) lifetime issues of pwm
+> chips. Addressing these is a necessary precondition to introduce chardev
+> support for PWMs.
+> 
+> [...]
 
-diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
-index 733d0bc4b4cc3..b43695bc51e75 100644
---- a/drivers/media/dvb-core/dvbdev.c
-+++ b/drivers/media/dvb-core/dvbdev.c
-@@ -956,7 +956,7 @@ int dvb_usercopy(struct file *file,
- 		 int (*func)(struct file *file,
- 			     unsigned int cmd, void *arg))
- {
--	char    sbuf[128];
-+	char    sbuf[128] = {};
- 	void    *mbuf = NULL;
- 	void    *parg = NULL;
- 	int     err  = -EINVAL;
+Here is the summary with links:
+  - [v6,001/164] pwm: Provide an inline function to get the parent device of a given chip
+    https://git.kernel.org/chrome-platform/c/4e59267c7a20
+  - [v6,003/164] pwm: Provide pwmchip_alloc() function and a devm variant of it
+    https://git.kernel.org/chrome-platform/c/024913dbf99f
+  - [v6,029/164] pwm: cros-ec: Change prototype of helpers to prepare further changes
+    https://git.kernel.org/chrome-platform/c/7256c2e79b8e
+  - [v6,030/164] pwm: cros-ec: Make use of pwmchip_parent() accessor
+    https://git.kernel.org/chrome-platform/c/19a568a8d3c4
+  - [v6,031/164] pwm: cros-ec: Make use of devm_pwmchip_alloc() function
+    https://git.kernel.org/chrome-platform/c/452be9421eda
 
+You are awesome, thank you!
 -- 
-2.44.0.396.g6e790dbe36-goog
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
