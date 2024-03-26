@@ -1,77 +1,70 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F68126F03;
-	Mon, 25 Mar 2024 16:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E256B1804F;
+	Tue, 26 Mar 2024 00:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711384949; cv=none; b=tTYPnIz5r56mI/FbjEWuAKCXbnwanc1j9LSZhQ/lD7Fc+M75iqQBJrWkzMY7nBJ8gkk7C578NJlJ/zZx+bKFaSlcEhM5qsllccRGtTiONgpFvSQEzgWddaZx1mCO57vULLqGocUr2MHavG/htyjsTn+wKGv1feuF9mYdeQUKBKM=
+	t=1711413406; cv=none; b=s/wPuTkwcAZC/mztNgv2M9V/PhIGPAcx6w6BAsDWtQQGkl73MEWj569zN8pFjg74lXLCyU6P9lBTOatNDmpg9fgJ1E8UY8o4YBK8xE2/fqWCI5/w29HDPvH4V3FdgZIU2c95Rf7jXvPdtyhwRXvVjl4h5HVvJaR+/WeXjidT1bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711384949; c=relaxed/simple;
-	bh=pyynAfuSU0pbJ2BuuKMAJJLX8fingppnNPWi/H/GmI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MRdIVSs86FASfrlEnJjzQZ65Q7iDjslMfObSe2r27Bq4kYn2WxFHQ9yN+S0lmm6HPUsq83K1il1d2CD5HPY4FOxPb6moaJqUj8fkTK3GVQaAk/oF311Mhl7x+j1RlxovpbDrolI4E+n4DNEUYPz0ptIOkEQulkhvzMSHjiW/re8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VXjFVbgc; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1711413406; c=relaxed/simple;
+	bh=r6ja1S3WkmxWys+sE3KabUy5bKAQKHZGyKXel35g+zY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dpc+FvOx18fHm1OGndsMDgpoQyDIMSjFGHKmGbshxy45Ao/sgRnwfvIaTWlts0nhnzwQS945Vc2ZXiv3G3xafTrYj66NuWfvwY14zz2rJ0arutkxDAPH3AAKEy1W4IQjXsK0GJeQkcJbU2848eYoUajcE0okRAQwhJFB19z6Pok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFOy9Sck; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VXjFVbgc"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5CAEBE0006;
-	Mon, 25 Mar 2024 16:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1711384944;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pyynAfuSU0pbJ2BuuKMAJJLX8fingppnNPWi/H/GmI8=;
-	b=VXjFVbgcQmKO6hoK9y000CeGRATkQ5zkUux1/WB2KOXe3zb5PW6P6MdK3U/ZahxN8Neo9k
-	qX78zltWuTeI0YR46mJJVmwjEDwfUtq8Qr/fUNi9BmvLnfvd2NT05/JkTa1s4x7pCuhqah
-	zn8a4pWPlahTXYSB3MBFy1nWmZLCmjZ2zMjU1D4Mm1K0Gm2M+v+LxcxdRBsXoZooqIw19j
-	sr8vi+XdCrsyZbcY0iTIZCuIM2GUCxjJnuHRs3uxVWYHYAlpyAIfj5GZa/cSkRGI//xUPW
-	6AZcK1qZ4Vc5L1OKoYdcatqVieTDxVbu4M8GZPHR4gm434yk88b/xozsyP/pPw==
-Date: Mon, 25 Mar 2024 17:42:22 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
- <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] staging: media: tegra-video: Fix
- -Wmaybe-unitialized warn in gcc
-Message-ID: <20240325174222.2d692879@booty>
-In-Reply-To: <20240325-gcc-arm-warnings-v3-1-81b8c10dc18a@chromium.org>
-References: <20240325-gcc-arm-warnings-v3-0-81b8c10dc18a@chromium.org>
-	<20240325-gcc-arm-warnings-v3-1-81b8c10dc18a@chromium.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFOy9Sck"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84803C433C7;
+	Tue, 26 Mar 2024 00:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711413405;
+	bh=r6ja1S3WkmxWys+sE3KabUy5bKAQKHZGyKXel35g+zY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RFOy9SckrUmOjcVY80p+Bpxbe+5dpDJq+JeaQvIywXepTed1YRXnEepoqUkHhDLDv
+	 KZQ8orGHJmcfhxU4yqXzvKwkkh03GuDsm5VknrzWZxwAeC8moegodFxeAFmHcguP3V
+	 MvMXRlBgmBX55pjBPgOUTWQbK7zrjPHUR7Ivk7miBmPv+gpyP5Ja8S02vD6UZnj61n
+	 CqfQ4NXy/CKPT7KniveufUJdSfosIbl7mM5+gISfC65C9eTYs21OyRMfhMeYTy9MAj
+	 ov2d24lOwn4Oj/ZJVUPrXNuEHsLe2pES4uVY1T8XSrKZegQunB7Zn3qmkn816MOaQo
+	 yZPbuVAYSRHAg==
+Date: Tue, 26 Mar 2024 01:36:41 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, asahi@lists.linux.dev, 
+	chrome-platform@lists.linux.dev, imx@lists.linux.dev, linux-actions@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-mips@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-renesas-soc@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	openbmc@lists.ozlabs.org, virtualization@lists.linux.dev
+Subject: Re: [PATCH 00/64] i2c: reword i2c_algorithm according to newest
+ specification
+Message-ID: <j2l7tu24itjelylrgwe6gdsy3mfrw3dnve4rdofmri3z7xdroc@se56t5ylmdak>
+References: <20240322132619.6389-1-wsa+renesas@sang-engineering.com>
+ <ug266trshvhhbsln3eoh53fmsuj3l63ziz6gavcl7rv2jhjr5t@3av5givh5n7m>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ug266trshvhhbsln3eoh53fmsuj3l63ziz6gavcl7rv2jhjr5t@3av5givh5n7m>
 
-On Mon, 25 Mar 2024 14:50:23 +0000
-Ricardo Ribalda <ribalda@chromium.org> wrote:
+Hi Wolfram,
 
-> Make sure that tegra20_vi_get_input_formats always assign a value for
-> yuv_input_format.
->=20
-> Fix:
-> drivers/staging/media/tegra-video/tegra20.c:624:72: warning: =E2=80=98yuv=
-_input_format=E2=80=99 may be used uninitialized [-Wmaybe-uninitialized]
->=20
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > @Andi: are you okay with this approach? It means you'd need to merge
+> > -rc2 into your for-next branch. Or rebase if all fails.
+> 
+> I think it's a good plan, I'll try to support you with it.
 
-Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Do you feel more comfortable if I take the patches as soon as
+they are reviewd?
 
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+So far I have tagged patch 1-4 and I can already merge 2,3,4 as
+long as you merge patch 1.
+
+Andi
