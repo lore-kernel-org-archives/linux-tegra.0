@@ -1,154 +1,142 @@
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2052.outbound.protection.outlook.com [40.107.237.52])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718B51BC46;
-	Tue, 26 Mar 2024 10:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711450074; cv=fail; b=adu7bZ7xzH3UO05RLp2hMSlKnTPXhPv2zVJ0aa09chpCFy0J8q8wW7wScm3chnp9aWiqLZNmgx0Mgq7ypyj1AfKwJRDgiiRP5E+bCsu4lvo/gJQHVwi71qAvisa35CtCjddaRZqEmK7c/T3fZaeihlBUYDCB4/RFiWUqfXaBO5c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711450074; c=relaxed/simple;
-	bh=U1wk8y+BhqOMDJzZajcRiFQ8pqMlkSxIlj0bEdBrBmU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qvKpAdgxkJvan2Jm5UaCkGMQvudu3zZQ9pk8msfkD2oBjFoHyWvp0TGwJS1/kPNUTvXCkauNWpcF/v9DD3inQN76qZdFyy+sRD847jIHavvLqGQn5tAJyhhJsiy1deNEpfAw+rJaHyF5AyhFecSwD4iSRYEQIF4bqmJUOM9qI2I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AbI+vVcJ; arc=fail smtp.client-ip=40.107.237.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596C633CFC;
+	Tue, 26 Mar 2024 11:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711451149; cv=none; b=diqcK17GSlKNM12Oj11POKXR/9Eory53rpBqJFP7/qGHmLrncA7p1kDV/fTixIkM87Q7j2lb4w3suyGNox0oDfTmTJWeW4Qa7TNd/MBqYqMeaB65FKM+lyYp0pPHpeO0GrbJp8NFeSnUhAsLmDfgY6732loDLpGmPdfezy0qhJM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711451149; c=relaxed/simple;
+	bh=XvsRXWgO0Ym3Ts7FVT+ufI52BcgH2v55+ZYGE1iG9h0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NwA/GbKe3EnFEp9VmhvcV+wRahYLfokcyb9YcHTLYD303O6P4C7LiYHY6C3J0/Vezp8+RxOWPdCmONQNePxzFf+7dh9QjhuZpn3MilfkjiH8Ao0bpIBH77ItDJOt+fjUpWI8iWrW4dGlvYLYZsbe56emiwZLXF4i2xt+4Vv+ceU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=plKB2hIh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AbI+vVcJ"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SXPDbGraChxYgSbYYJO6h4Ggdfp1k/MI2G93rrCpTpAZF38k+1Ztu37mcPh6Vn6eLM7S6Fx6qtmwcB2QV1LIE9gQ0TWwa0U5xNdzzm0NyUmzBvAXk1vHvLjcYw4T0AqyhFlSmIJz3SGoP5KLptrj6QdKzEVQYw1B5Wr7Y8Ld61V//5gk7UFUvCxWuje4jXy5SwON50OqutkxCloPQB18y2l2tDZQw26BbBG5owLzXk78bgCN5y0Nmu/kds2NgkNgrPCIA97M4OCl7pU2+XWkf//CX7N/XGthB8wzHk5hQtqDL0628fJJNbIPlv6ViBXxXiRAtQiwLRRLmKCF87jRlA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e8/hV0CjDxFc6wzjF4+MNtX/I/fU+FjyLUL0JhUakV8=;
- b=m5Hppgg6Wbm1CAr0icU8XdVHH7tLm2AUOGNZdlv3r5e4xU2j43RTzS5hm6m31FAQkrA5TYjqddA+x7kCjEy8asKxWKN8q2/xG4X8VbcUbDomrMJXzMtLd2u51a7MRMsHJwwz0lVsKbHNwUKxMKPAKQrmR2aJjqIio3qZJdYeDhETr6XlZhtP6SRWDbSA6UC+Utze0vCEUQ390jgO6E9leOo56CaYbOkOWnb0StD4V6LubPN1f3+uWGECCRXpjV/ls80PgqVbdsRjVf8PDzB7/cGzpG78hBLPqsaJOhdHJXJbnJPShS4p4+2zr9zMmXHMWi+Ed8Paeml/m/EEO69AfQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e8/hV0CjDxFc6wzjF4+MNtX/I/fU+FjyLUL0JhUakV8=;
- b=AbI+vVcJVUUv699Auk2ZLvW04I0wXAKWpX0vnQ2gbVKPixeHwA6jQlHvHJUI4KbQPN+p2yU4g+UTjoQXv0GyQxSYseJqD4esrulNxuBjg/g6n5jlzO9lKAY2THYM07BYtN96Y/ANytQ5UpmQ2pfpfz7fmDrBeTgiRfPkHqUzLJ75mh59NcNnVyL4HiF4YcTpuhbIpCsBYlonAMvbY5F9csscCeIwl1uobHT5qtDARU7CiwPTiS5Jqdw8yaaeqZC5bwUXk6Ha3rypHEjxVOl8+qCB8L/K6KDDX9i5bqSwh1hllJ8gkyQ6myuOV7MGjFNuQ1SCqU51TheyTM8EL/vU/Q==
-Received: from MW4PR03CA0130.namprd03.prod.outlook.com (2603:10b6:303:8c::15)
- by PH0PR12MB7839.namprd12.prod.outlook.com (2603:10b6:510:286::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.33; Tue, 26 Mar
- 2024 10:47:49 +0000
-Received: from MWH0EPF000A672E.namprd04.prod.outlook.com
- (2603:10b6:303:8c:cafe::9) by MW4PR03CA0130.outlook.office365.com
- (2603:10b6:303:8c::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.13 via Frontend
- Transport; Tue, 26 Mar 2024 10:47:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- MWH0EPF000A672E.mail.protection.outlook.com (10.167.249.20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7409.10 via Frontend Transport; Tue, 26 Mar 2024 10:47:46 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 26 Mar
- 2024 03:47:31 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Tue, 26 Mar
- 2024 03:47:31 -0700
-Received: from build-spujar-20230918T214410352.internal (10.127.8.9) by
- mail.nvidia.com (10.129.68.10) with Microsoft SMTP Server id 15.2.1258.12 via
- Frontend Transport; Tue, 26 Mar 2024 03:47:31 -0700
-From: Sameer Pujar <spujar@nvidia.com>
-To: <broonie@kernel.org>, <linux-sound@vger.kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lgirdwood@gmail.com>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<mkumard@nvidia.com>, Sameer Pujar <spujar@nvidia.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH v2] ASoC: tegra: Fix DSPK 16-bit playback
-Date: Tue, 26 Mar 2024 10:47:25 +0000
-Message-ID: <20240326104725.2895151-1-spujar@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="plKB2hIh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85715C433C7;
+	Tue, 26 Mar 2024 11:05:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711451148;
+	bh=XvsRXWgO0Ym3Ts7FVT+ufI52BcgH2v55+ZYGE1iG9h0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=plKB2hIhIQRqZvUcjXKFeuPzUZHCeAsGOAFw+gKgzU7SO7iNphQpzVA1w6QfLsomH
+	 XOGyxSx/1QolIhecUu06CuICRBn83liCLuDkzqFzgPaHB/ET/T+o/mBb4DocChFTwH
+	 Hzo7ihyu/3Pjpk0iJI5SJoXZKHEfFy977rGX3FM4w0rC53vSiLg1+C3Jk1eVK1RIjV
+	 XVGB8DyNeOefvZu8BigXtpVktvDUUC6+eaOs6NNz5tO9sHYCda219oNXaJVVPwURWh
+	 yyQ88Zb/ugmv34IYMeupVpcsPM1vfgqCD7vjIzVgCUym+y9Nx/e0E/wBOMkpwoiLZ9
+	 I1w0k6hfnba3A==
+Date: Tue, 26 Mar 2024 12:05:42 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 05/11] PCI: epf-{mhi/test}: Move DMA initialization to
+ EPC init callback
+Message-ID: <ZgKsBoTvPWWhPO9e@ryzen>
+References: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
+ <20240314-pci-epf-rework-v1-5-6134e6c1d491@linaro.org>
+ <Zf2tXgKo-gc3qy1D@ryzen>
+ <20240326082636.GG9565@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A672E:EE_|PH0PR12MB7839:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51ce102b-f4ab-48a3-3c72-08dc4d822cac
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	k+Q9eZBfTW6v8VOvehv0P1h1geurrjA4BqNWY1OjfsQizjYeMX2WrEt5XzKkcyGvF4UrvLQ1Q8LNm0XiXTonex/emP+iMyUht8Tq3AlFtgPPyv1r9Hy/FTA2X+V+RvBi/1r4u5NabuBDz8XaBhCSQFyrNIwdXWaSFqW4gpRTlWhlER70fHTV/exy/v4vn9D29A4FVXrZ54rFyIcOH0CXz4E5rxbLIcyDcfwWFEyuXn/xfSXJvaw9gSdFZz1oBihno19LE5tBI2CHl42jh6sE2Yu2Lom+8s2snIUmkroTvU/ep8RDcye3cG+Q5Fh6RX9vxqhx2qbKJSsxJlVeBeM7nbrhZyuPSzC48UvmYR8Vnt3hTdaFQ2LTyFmNjw6nV3sNtYZ4ViLFpRVjp9KacV/1XrkchKjJfWAxns44kTkOUXhS6puSWGAGLGqvODEYdjTJQnuNzfVTUVR1CObh11P3kpGhXOAO4gnV4xJW/3ekmjetsD8E7dWJZTWKarj5mhxq7Di75Jw97elc2yE7WnNUrYEzZB97EuxrovqcxgECfVxLafqhwXjFT1Q4wKDg0jBpgGFQSFgwiXKRKTQS0UcP4acpkMNg6vi0N1v4qBQIGqM1W6NFTBEw0toIKBhPKz0Vb0+GVZ8BHm3RFIeqgXaMPZHOLbDDiYLd7HHxSWlvIqugOoqoKNTdWDMVM7RK/dpd5Vxk7SHNXQ8zyKEX+6fWUjqwOdit0B2vGNuldctzPtQldgMSFf+lBIlzc+ajApPJ
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(36860700004)(82310400014)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Mar 2024 10:47:46.9402
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51ce102b-f4ab-48a3-3c72-08dc4d822cac
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A672E.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7839
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240326082636.GG9565@thinkpad>
 
-DSPK configuration is wrong for 16-bit playback and this happens because
-the client config is always fixed at 24-bit in hw_params(). Fix this by
-updating the client config to 16-bit for the respective playback.
+On Tue, Mar 26, 2024 at 01:56:36PM +0530, Manivannan Sadhasivam wrote:
+> On Fri, Mar 22, 2024 at 05:10:06PM +0100, Niklas Cassel wrote:
+> > On Thu, Mar 14, 2024 at 08:53:44PM +0530, Manivannan Sadhasivam wrote:
+> > > To maintain uniformity across EPF drivers, let's move the DMA
+> > > initialization to EPC init callback. This will also allow us to deinit DMA
+> > > during PERST# assert in the further commits.
+> > > 
+> > > For EPC drivers without PERST#, DMA deinit will only happen during driver
+> > > unbind.
+> > > 
+> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > ---
+> > 
+> > Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> > 
+> > 
+> > For the record, I was debugging a problem related to EPF DMA recently
+> > and was dumping the DMA mask for the struct device of the epf driver.
+> > I was a bit confused to see it as 32-bits, even though the EPC driver
+> > has it set to 64-bits.
+> > 
+> > The current code works, because e.g., pci_epf_test_write(), etc,
+> > does:
+> > struct device *dma_dev = epf->epc->dev.parent;
+> > dma_map_single(dma_dev, ...);
+> > 
+> > but it also means that all EPF drivers will do this uglyness.
+> > 
+> 
+> This ugliness is required as long as the dmaengine is associated only with the
+> EPC.
+> 
+> > 
+> > 
+> > However, if a EPF driver does e.g.
+> > dma_alloc_coherent(), and sends in the struct *device for the EPF,
+> > which is the most logical thing to do IMO, it will use the wrong DMA
+> > mask.
+> > 
+> > Perhaps EPF or EPC code should make sure that the struct *device
+> > for the EPF will get the same DMA mask as epf->epc->dev.parent,
+> > so that EPF driver developer can use the struct *epf when calling
+> > e.g. dma_alloc_coherent().
+> > 
+> 
+> Makes sense. I think it can be done during bind() in the EPC core. Feel free to
+> submit a patch if you like, otherwise I'll keep it in my todo list.
 
-Fixes: 327ef6470266 ("ASoC: tegra: Add Tegra186 based DSPK driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
----
- changes in v2:
-   * moved common setting to S32_LE switch case.
+So we still want to test:
+-DMA API using the eDMA
+-DMA API using the "dummy" memcpy dma-channel.
 
- sound/soc/tegra/tegra186_dspk.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+However, it seems like both pci-epf-mhi.c and pci-epf-test.c
+do either:
+-Use DMA API
+or
+-Use memcpy_fromio()/memcpy_toio() instead of DMA API
 
-diff --git a/sound/soc/tegra/tegra186_dspk.c b/sound/soc/tegra/tegra186_dspk.c
-index aa37c4ab0adb..21cd41fec7a9 100644
---- a/sound/soc/tegra/tegra186_dspk.c
-+++ b/sound/soc/tegra/tegra186_dspk.c
-@@ -1,8 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
-+// SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- //
- // tegra186_dspk.c - Tegra186 DSPK driver
--//
--// Copyright (c) 2020 NVIDIA CORPORATION. All rights reserved.
- 
- #include <linux/clk.h>
- #include <linux/device.h>
-@@ -241,14 +240,14 @@ static int tegra186_dspk_hw_params(struct snd_pcm_substream *substream,
- 		return -EINVAL;
- 	}
- 
--	cif_conf.client_bits = TEGRA_ACIF_BITS_24;
--
- 	switch (params_format(params)) {
- 	case SNDRV_PCM_FORMAT_S16_LE:
- 		cif_conf.audio_bits = TEGRA_ACIF_BITS_16;
-+		cif_conf.client_bits = TEGRA_ACIF_BITS_16;
- 		break;
- 	case SNDRV_PCM_FORMAT_S32_LE:
- 		cif_conf.audio_bits = TEGRA_ACIF_BITS_32;
-+		cif_conf.client_bits = TEGRA_ACIF_BITS_24;
- 		break;
- 	default:
- 		dev_err(dev, "unsupported format!\n");
--- 
-2.25.1
 
+To me, it seems like we should always be able to use
+DMA API (using either a eDMA or "dummy" memcpy).
+
+I don't really see the need to have the path that does:
+memcpy_fromio()/memcpy_toio().
+
+I know that for DWC, when using memcpy (and this also
+memcpy via DMA API), we need to map the address using
+iATU first.
+
+But that could probably be done using another flag,
+perhaps rename that flag FLAG_USE_DMA to NEEDS_MAP or
+something.
+(Such that we can change these drivers to only have a
+code path that uses DMA API.)
+(...and making sure that inheriting the DMA mask does
+not affect the DMA mask for DMA_MEMCPY.)
+
+But perhaps I am missing something... and DMA_MEMCPY is
+not always available?
+
+
+Kind regards,
+Niklas
