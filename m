@@ -1,58 +1,58 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E6E1350C9
-	for <linux-tegra@vger.kernel.org>; Tue, 26 Mar 2024 07:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE9618C38
+	for <linux-tegra@vger.kernel.org>; Tue, 26 Mar 2024 07:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711439792; cv=none; b=Kn2n+ew1xqgO43waBqYDyMToMGbUuSglcns3tY8ZDmrqqZPtiC325fhorxxIcWEi5xN97FXiXJQMrTW9DYrBuvQv+SxGF/qYsYF3sKpk8ylOG6yrr/QxWDV6RnQ6cI1/B4VyKdNTOAQZpuCzbuTcqMKCFfZ3kHHYccGEtW2ZjSU=
+	t=1711439924; cv=none; b=c9FKtcTmYCfB8ca1hDw09IApKK/N6wxSjnt6cXBCxGg5utAMDMbnpsftrhg94FmqcenaFweSggQA/Ia8RAXmBBGwm2I0qc8OGkwFRnPmGrFl1SK9MHmRI34N6rxDzmqOVyCR0kn1QxZ/bUWaTISyDMHECbl2+qSwzF7q/8EkpMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711439792; c=relaxed/simple;
-	bh=63vX4jpafQjPqEVR/t5tqsl4TA+CR/G2jQNsq7L6wBk=;
+	s=arc-20240116; t=1711439924; c=relaxed/simple;
+	bh=U3xCdkOz3Y6db80cb2T+j82R67/2org97QFbp/aelS8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IefTtGS/lpqM2XfOhJmuexX8p+nusfuIqwlyyVcDZde5hCwG/u0lHV4OvLGjqNNHA+JJ1KKF9nbIz2sq++T2lmVKyRnFJx0EnbfTzyuxL5gft9xV7VCWqSJiQsyyTzlwgTN4tCAAp8IgXyD368BRV1zi8YtaaToXchyKqWKR2Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QEzirItq; arc=none smtp.client-ip=209.85.215.181
+	 Content-Type:Content-Disposition:In-Reply-To; b=tAa59m1tQxapq4wUOurJFLWjosUeID98nS8u1jchCr0Q8B/pbIzhIjDMhRRe2nalqSfayC0yKNjbN6KBqpm2TIsl4pLSzZKBGxteZ0VbqEFozqO+bFoGhfHEqyNqyXaS+l3TDYbNWBcUQZWLNI1KAdSc5bH9eN1l29Bw3mWgOV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iQT2vt1v; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QEzirItq"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-5d42e7ab8a9so2373470a12.3
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Mar 2024 00:56:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iQT2vt1v"
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6e704078860so3674002b3a.0
+        for <linux-tegra@vger.kernel.org>; Tue, 26 Mar 2024 00:58:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1711439790; x=1712044590; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1711439922; x=1712044722; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=jKhopOw7fOrbkL/7HBWWGU431gOPI8AulqVWyi8Mf+A=;
-        b=QEzirItqhmQTQwqAsjTw00s2et6I7I2D7hawp5jHONr8QLq7DM+wGcJkuLLGomd4EB
-         1W7fh9uTplU/a6oz5ZyRbiGtN+of73qdtw3F2z5XwGAAoG0ss+J8ELe7wyDB6oNYlhf3
-         m9U+fimwLvO5/bYtC4MIjNXpqHjueQ86NjR+uDCfcogHQket7SCkYbMCfYi7TxLzLrFu
-         X4I3ilb0Kvr+VmuRj89AJ/N0saa18EEAQdns1Do6z6TaOilfcqKGMkWfd09gw2Sr2ghc
-         R0pjv+eyPZhcsTpZzrnZPt2tDKC5AMHl71Fiy66Q7aMmLYkZjeohR6yy3ZQaBdS5DNZx
-         9/9w==
+        bh=0ei96n8N9QJh0d9X1yKZBGiIbUh+v5D+5m1+0jv93vk=;
+        b=iQT2vt1v94gSjh7pqRMx7PT/panzVAw8nHQMABDHdK1vsNvZ+x9CugU55icmytu974
+         Oq1GDgjNgwy4ZIU7HSerm4ulLIzU7M2YQwphuCuIYjcdzJPu2ZBCGGo9gkeYCeGUZBmc
+         MQ5MsXZoPE00QWHRNzCe+G9gVkeFGg/azZ9wpwjnHL8t3yOGEnz5A2WjKtPQmlYin5Qr
+         f6wtXrVmzzo8pXiOsU7QJp9vOuVZ9a3oKzGEQXzEHYCDIFpjzYOzdxwbCRNfGM0ZZJwP
+         VDPAHz/biKqEpK7Uv/8MsO1eR8qk9+XVUtnk+mCPDyps7tdutRX7MMCvV1rzl0N5idPU
+         n1Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711439790; x=1712044590;
+        d=1e100.net; s=20230601; t=1711439922; x=1712044722;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jKhopOw7fOrbkL/7HBWWGU431gOPI8AulqVWyi8Mf+A=;
-        b=un5ruXf87Ylr9lBMAzZ0LmCUe9WJ3Zp8cw7rZhatWN2xI9cz6js1xOzVE1QYeDe9SJ
-         C1huXlFlBElhu6lpIr1mMQ8DHXAioSrDFsYSI+GkTV8QPY7lbd1pos0gw/se8A9JwVqc
-         CsaYFN73v+s83TDdvYAbo2LoRC2v+pmUwZs1vJKuDo6sIAc7ZZlFSBuQcAL2F9XDEd6O
-         EnCD0EUqgKNNhH+WM2dEJ8gKO5tv7kalgU6TyC4maf/oqJZ7KI1dq4bpW2V+o9y4zl8T
-         kXTjFEn05OOUoFkmH8yhLkfQ3FuVQnFHfL38Q3g/9W+wpHMSDxNhkGd57LULyiKGGpW9
-         a2Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCWDV/iiELEZXviXMALdA5hRhIEv+5YKEUV/594P1aZHgtFN7YJ4aAKdlebegrHl4n5b/MsRE5nEtogFUBQrwLC0XZxjaSJmlikaEDA=
-X-Gm-Message-State: AOJu0YxqP5XAPWc9NLB6qtTOnBkFhCi7uTX7JS/kOAkSEFMKPAwWpW9q
-	n99xcEhqCVPzx0qq5dcVdtG3BNlencL/SmC/bHgPi4ACO2lj8wJj2uBnbgkIsA==
-X-Google-Smtp-Source: AGHT+IGQ7WhZEVFO29WnqrklLDrhQum07Jd12D1I7yMg/ubf+zTylUXcP0KkwS2QJv/QTuUJTf14qg==
-X-Received: by 2002:a17:902:c115:b0:1df:16b:9cb8 with SMTP id 21-20020a170902c11500b001df016b9cb8mr8516819pli.2.1711439789975;
-        Tue, 26 Mar 2024 00:56:29 -0700 (PDT)
+        bh=0ei96n8N9QJh0d9X1yKZBGiIbUh+v5D+5m1+0jv93vk=;
+        b=frVAQdMm/9LRPqgab+dRrwrwfSE/R5MKNADplf13rXXVyzOmHOXkvdVB2J/cte54YP
+         gEq3Xk5n7elwfwsQv9WwEenxvdgYMy1XiwhBbVrDODm5GbulWou44EJxFpk9bJRLPPi5
+         tap1rOAFQ2yk2lhbQsjWlRdsTiOKOQ3Hzw+MtaGcM/VorI8zjWDl66OvpnR5Tab/Oqzq
+         mcZXmwdPHFsCxLdos4fRRCumNaY9PQYzl0bt9zvXZ0U9+ZSo5poljk6+1N3BgXgNc2vd
+         MKw3K1s/94G5Loe1HDgRJFTZwtMvlnE0BBjJrZONfesK+yvpOAfoP+giginv//JBlP2w
+         TmjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWqITkYGBddo/+RZK03DOA6ZzEtkTJclf+WFT6eWpbZpRC1y/pe+s5xePwOV/wX3eRIAjvi1F2jTCR27ZIRASjacigyDfiC+0jY64=
+X-Gm-Message-State: AOJu0YwBBWwhxmGTb6g/AIuR5ukis8cVlu8DOND/cslbJy3taQ96R/4V
+	6N6qUd5rKHVgr0abKBctqV/3zCcPGG/nlFohLTHJgHsdUL2aua+INDf1/IjUjQ==
+X-Google-Smtp-Source: AGHT+IFz/oPx9WopcTjERuotcpV7GtWEpMwMOVPLqcsvgxQg6MYrAOsudE1j4AmrmZhsiVdq3PIv2A==
+X-Received: by 2002:a05:6a00:391b:b0:6e6:b68a:86f8 with SMTP id fh27-20020a056a00391b00b006e6b68a86f8mr435524pfb.14.1711439921739;
+        Tue, 26 Mar 2024 00:58:41 -0700 (PDT)
 Received: from thinkpad ([117.207.28.168])
-        by smtp.gmail.com with ESMTPSA id y16-20020a17090264d000b001db5bdd5e3asm6242831pli.84.2024.03.26.00.56.25
+        by smtp.gmail.com with ESMTPSA id fb16-20020a056a002d9000b006e5c464c0a9sm5339740pfb.23.2024.03.26.00.58.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Mar 2024 00:56:29 -0700 (PDT)
-Date: Tue, 26 Mar 2024 13:26:22 +0530
+        Tue, 26 Mar 2024 00:58:41 -0700 (PDT)
+Date: Tue, 26 Mar 2024 13:28:34 +0530
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: Niklas Cassel <cassel@kernel.org>
 Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
@@ -66,12 +66,12 @@ Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
 	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 03/11] PCI: endpoint: Rename core_init() callback in
- 'struct pci_epc_event_ops' to init()
-Message-ID: <20240326075622.GE9565@thinkpad>
+Subject: Re: [PATCH 04/11] PCI: epf-test: Refactor pci_epf_test_unbind()
+ function
+Message-ID: <20240326075834.GF9565@thinkpad>
 References: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
- <20240314-pci-epf-rework-v1-3-6134e6c1d491@linaro.org>
- <Zf2tEM1ueugQyJfK@ryzen>
+ <20240314-pci-epf-rework-v1-4-6134e6c1d491@linaro.org>
+ <Zf2tH67WRvOGK7-O@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -81,74 +81,111 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zf2tEM1ueugQyJfK@ryzen>
+In-Reply-To: <Zf2tH67WRvOGK7-O@ryzen>
 
-On Fri, Mar 22, 2024 at 05:08:48PM +0100, Niklas Cassel wrote:
-> On Thu, Mar 14, 2024 at 08:53:42PM +0530, Manivannan Sadhasivam wrote:
-> > core_init() callback is used to notify the EPC initialization event to the
-> > EPF drivers. The 'core' prefix was used indicate that the controller IP
-> > core has completed initialization. But it serves no purpose as the EPF
-> > driver will only care about the EPC initialization as a whole and there is
-> > no real benefit to distinguish the IP core part.
+On Fri, Mar 22, 2024 at 05:09:03PM +0100, Niklas Cassel wrote:
+> On Thu, Mar 14, 2024 at 08:53:43PM +0530, Manivannan Sadhasivam wrote:
+> > Move the pci_epc_clear_bar() and pci_epf_free_space() code to respective
+> > helper functions. This allows reusing the helpers in future commits.
 > > 
-> > So let's rename the core_init() callback in 'struct pci_epc_event_ops' to
-> > just init() to make it more clear.
+> > This also requires moving the pci_epf_test_unbind() definition below
+> > pci_epf_test_bind() to avoid forward declaration of the above helpers.
+> > 
+> > No functional change.
 > > 
 > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > > ---
-> >  drivers/pci/endpoint/functions/pci-epf-mhi.c  |  4 ++--
-> >  drivers/pci/endpoint/functions/pci-epf-test.c |  4 ++--
-> >  drivers/pci/endpoint/pci-epc-core.c           | 16 ++++++++--------
-> >  include/linux/pci-epf.h                       |  4 ++--
-> >  4 files changed, 14 insertions(+), 14 deletions(-)
+> >  drivers/pci/endpoint/functions/pci-epf-test.c | 63 ++++++++++++++++++---------
+> >  1 file changed, 42 insertions(+), 21 deletions(-)
 > > 
-> > diff --git a/drivers/pci/endpoint/functions/pci-epf-mhi.c b/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> > index e5d67aec7574..da894a9a447e 100644
-> > --- a/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> > +++ b/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> > @@ -700,7 +700,7 @@ static void pci_epf_mhi_dma_deinit(struct pci_epf_mhi *epf_mhi)
-> >  	epf_mhi->dma_chan_rx = NULL;
-> >  }
-> >  
-> > -static int pci_epf_mhi_core_init(struct pci_epf *epf)
-> > +static int pci_epf_mhi_epc_init(struct pci_epf *epf)
-> >  {
-> >  	struct pci_epf_mhi *epf_mhi = epf_get_drvdata(epf);
-> >  	const struct pci_epf_mhi_ep_info *info = epf_mhi->info;
-> > @@ -881,7 +881,7 @@ static void pci_epf_mhi_unbind(struct pci_epf *epf)
-> >  }
-> >  
-> >  static const struct pci_epc_event_ops pci_epf_mhi_epc_event_ops = {
-> > -	.core_init = pci_epf_mhi_core_init,
-> > +	.init = pci_epf_mhi_epc_init,
-> >  };
-> >  
-> >  static const struct pci_epc_bus_event_ops pci_epf_mhi_bus_event_ops = {
 > > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > index 751dab5799d5..1dae0fce8fc4 100644
+> > index 1dae0fce8fc4..2fac36553633 100644
 > > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
 > > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > @@ -746,7 +746,7 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+> > @@ -686,27 +686,6 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
+> >  			   msecs_to_jiffies(1));
+> >  }
+> >  
+> > -static void pci_epf_test_unbind(struct pci_epf *epf)
+> > -{
+> > -	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
+> > -	struct pci_epc *epc = epf->epc;
+> > -	struct pci_epf_bar *epf_bar;
+> > -	int bar;
+> > -
+> > -	cancel_delayed_work(&epf_test->cmd_handler);
+> > -	pci_epf_test_clean_dma_chan(epf_test);
+> > -	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
+> > -		epf_bar = &epf->bar[bar];
+> > -
+> > -		if (epf_test->reg[bar]) {
+> > -			pci_epc_clear_bar(epc, epf->func_no, epf->vfunc_no,
+> > -					  epf_bar);
+> > -			pci_epf_free_space(epf, epf_test->reg[bar], bar,
+> > -					   PRIMARY_INTERFACE);
+> > -		}
+> > -	}
+> > -}
+> > -
+> >  static int pci_epf_test_set_bar(struct pci_epf *epf)
+> >  {
+> >  	int bar, add;
+> > @@ -746,6 +725,22 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
 > >  	return 0;
 > >  }
 > >  
-> > -static int pci_epf_test_core_init(struct pci_epf *epf)
-> > +static int pci_epf_test_epc_init(struct pci_epf *epf)
+> > +static void pci_epf_test_clear_bar(struct pci_epf *epf)
+> > +{
+> > +	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
+> > +	struct pci_epc *epc = epf->epc;
+> > +	struct pci_epf_bar *epf_bar;
+> > +	int bar;
+> > +
+> > +	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
+> > +		epf_bar = &epf->bar[bar];
+> > +
+> > +		if (epf_test->reg[bar])
+> > +			pci_epc_clear_bar(epc, epf->func_no, epf->vfunc_no,
+> > +					  epf_bar);
+> > +	}
+> > +}
+> > +
+> >  static int pci_epf_test_epc_init(struct pci_epf *epf)
+> >  {
+> >  	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
+> > @@ -885,6 +880,22 @@ static int pci_epf_test_alloc_space(struct pci_epf *epf)
+> >  	return 0;
+> >  }
+> >  
+> > +static void pci_epf_test_free_space(struct pci_epf *epf)
+> > +{
+> > +	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
+> > +	struct pci_epf_bar *epf_bar;
+> > +	int bar;
+> > +
+> > +	for (bar = 0; bar < PCI_STD_NUM_BARS; bar++) {
+> > +		epf_bar = &epf->bar[bar];
+> > +
+> > +		if (epf_test->reg[bar]) {
+> > +			pci_epf_free_space(epf, epf_test->reg[bar], bar,
+> > +					   PRIMARY_INTERFACE);
+> > +		}
 > 
-> Why have _epc_ init in the name at all?
+> Nit: No need for braces here. (Just like you don't have braces in
+> pci_epf_test_clear_bar()).
 > 
-> Isn't
-> static int pci_epf_test_init(struct pci_epf *epf)
-> 
-> Enough?
-> 
-> From my perspective, it is the EPF that is initializing
-> (by configuring the BARS according to it's liking),
-> not the EPC initializing.
+> Like you said in the other thread, this commit clashes with changes done
+> in my series.
 > 
 
-Hmm, you are right. It makes sense to remove 'epc' from the naming.
+I think I should just rebase this series on top of yours.
 
+> However, except for the small nit, the commit looks good:
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+>
+
+Thanks!
+ 
 - Mani
 
 -- 
