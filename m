@@ -1,30 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9E8171E63;
-	Wed, 27 Mar 2024 12:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E888F187869;
+	Wed, 27 Mar 2024 12:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711542114; cv=none; b=kBKK0DfqBe7ozu7qnoG0LToaIrGNiEL48EetZ8dARJ1atM+LC50xMmLIdkMtYYG3Li9trI1ROpw7ILtMrVdNFNi+ePrwsGP7vq8NoQhZn0gJHhIrH0X7peexrKzabOen2yTwWVw2DveWeI6sKCK2OJdpaQVDIyUTByZETx70i0o=
+	t=1711542350; cv=none; b=umL/smUQ1ewQZ/1lIa4CE6+3QLxfvq4aEwFrvvw7sypEK23EMyPhh1li13KvTmgonO66glGiPBvrZaaMB5yAvRt8D8IglHA0f6XfvTW8e/tdNGyEB52Tlwc14PQPY9yiLkJF1X7+eBdvtkS2HtX2PUgB/0j6OcQFTj4+pffa1dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711542114; c=relaxed/simple;
-	bh=jBv5ziu7G1EKG3yyoWDjuh6Cqon7VND+2PutxfHY9ng=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UGauYswtQdDaHZXoBw3PntzQGM6BmW6bgpi79RzuslHzHLv5+dZQnWI0BPCX6k57F4KyKqB8qt4Xuq8enfRWJAu2WuwCQAsO6JfPLWfMUbPPCqNn3rLQwM9oCF/I925fPZWtdWSvb7D3JS+/RkJ7fiiNVbhkg6b172IgW18bJ/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FxKzOdoC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711542350; c=relaxed/simple;
+	bh=MT4vR3hNJ7n3FM3oLVR/swhbI/4PaOX2ngnGVtr8j/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A4ygS9O1dTpdXwL8rtsffoDY8Io+BWdtjsJeB6R4y3SzRTejH1hYoVpBHb9++j276cYJ6o74MDRuJzHPkPXW0dJY9W5sjedd0wVBNPNHV9nL1bjUWmuuXQyQ26RUtVBQYNIoLwV7VY+GO6B7uZAu4z6aXrOfUx0Pu5A457XI8ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJElV26U; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxKzOdoC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62613C43390;
-	Wed, 27 Mar 2024 12:21:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJElV26U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00893C433C7;
+	Wed, 27 Mar 2024 12:25:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711542114;
-	bh=jBv5ziu7G1EKG3yyoWDjuh6Cqon7VND+2PutxfHY9ng=;
+	s=k20201202; t=1711542349;
+	bh=MT4vR3hNJ7n3FM3oLVR/swhbI/4PaOX2ngnGVtr8j/U=;
 	h=From:To:Cc:Subject:Date:From;
-	b=FxKzOdoCFULlq3Ejr1L7k9iza0XHOD4fdPolx3El9AcEbL3Oy4Sp5ivwzkXDSSpF0
-	 5a39jhpOgQYpLkUB0kEnkhgOCMOqKQC7rr9+tQ5fWlYDSOKgZ8sL5twF+xPRVnLll0
-	 6s0w9X2lfWhoAE6fiBorPJjwU/DAB9499cKAqsehLIfnVfTvicu+gYdSHR414r78lK
-	 sr6CEmFKLmpshmYmRolu3hsObO5UBXkM5GPalGCWuwWPJhxEKimPzg0LUONTp8qFv3
-	 /1QtH3z22vSwkQKt+vTmNdnUPEdY99Kyixcv5APjbeJ2TUQD209S5ORahw37+QF6eH
-	 tyiqx7pQpYJRQ==
+	b=cJElV26U1cC5DFBOJ3EeWCtWh5kXCiPGJWANxZGVnjbiIMvZsYUxmPoac8oXkCBWK
+	 sJMy3ntP0SKjm9y4MoufIRJiwZWp4FV+ZkhnxyomHRoF7d8E5GyM065z5AguI5VTSo
+	 DERiKhon/8I4QQqYgG/SZqmup89Q3UfqGMZft5c6FhWCHAS6/iQLE4PoaTMYhYpPul
+	 1HStn4j5mao4h7tpZxO1wV6TpiYTADIe4Ywj+pQCioy4erZEIWr5/yQVAMTwB8kHgO
+	 tcPLTiIdjEi6PyzK5SdlaizH50QkIXf7HJNjeZQWPNSDUVNxQ+cHSFW21/4iRL2X1Z
+	 +i4WucH2Fef7g==
 From: Sasha Levin <sashal@kernel.org>
 To: stable@vger.kernel.org,
 	waynec@nvidia.com
@@ -33,9 +33,9 @@ Cc: Jon Hunter <jonathanh@nvidia.com>,
 	linux-phy@lists.infradead.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: FAILED: Patch "phy: tegra: xusb: Add API to retrieve the port number of phy" failed to apply to 5.4-stable tree
-Date: Wed, 27 Mar 2024 08:21:52 -0400
-Message-ID: <20240327122152.2837220-1-sashal@kernel.org>
+Subject: FAILED: Patch "phy: tegra: xusb: Add API to retrieve the port number of phy" failed to apply to 4.19-stable tree
+Date: Wed, 27 Mar 2024 08:25:47 -0400
+Message-ID: <20240327122548.2840551-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -47,7 +47,7 @@ X-Patchwork-Hint: ignore
 X-stable: review
 Content-Transfer-Encoding: 8bit
 
-The patch below does not apply to the 5.4-stable tree.
+The patch below does not apply to the 4.19-stable tree.
 If someone wants it applied there, or to any other stable or longterm
 tree, then please email the backport, including the original git commit
 id to <stable@vger.kernel.org>.
