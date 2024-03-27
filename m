@@ -1,34 +1,60 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EFF23D7;
-	Wed, 27 Mar 2024 08:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112FC36B1D
+	for <linux-tegra@vger.kernel.org>; Wed, 27 Mar 2024 08:41:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711527857; cv=none; b=m+JWvhog5MEVNwYp9IzZ6yaoDtN0FdmGo37iX6l6Nn/QJPhOrL3Eqc6Igjj7b+4uVg9T0ITn2F6WJcIS1bmrWhOFrS3Shi7IuB5E2VRszkqSSVnToNG17jj8RGfNnIRbHLQX3m8NRS87Q476MT91f5dEG7FNNu3aKf/5IBU7bv8=
+	t=1711528873; cv=none; b=YLopLeHmteupNTXoUOlWdhTkshc8vHpWL0EZt6CONnvR0wT+kJTA8EhtCkNv/svy8VpN2m2oOnK4mKzONyXEZX+6xk9skUTvMwp4ipKTCD5BSE0B+b0oUT/tCCrvXlpsI2sRJztEUU/fTO5TDC71J2+/TMdcBInGSrek8I51B4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711527857; c=relaxed/simple;
-	bh=3O9nZkHhgz3EfvIBaPtrSnSZtIgGhJoXhwNgfGO7CX4=;
+	s=arc-20240116; t=1711528873; c=relaxed/simple;
+	bh=Vxz59oGSPPXtkvKXl3CH0Bedz+fRY4D6DbBmcqa4Z5g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TuM8BlSrv0Vi3Mc34CER48MKyLtAyVBCRYjuvLH2/tNq5ynzGELanQ9MJbrlL5olT74GOTe3FuHf86PrLJQNvvzSETqj1hPRNVWoMJPxKKROZcHmkvPOMb7zJmBFiw2ET5sryYibWGmSyDgyhS/8O0Q8shFEZEpM/ZQOMNYqp2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9P2tUw6; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=cbusjYFL3WHxSnPxyD+7Rc5KjA929tpLIDVc2InqT32jhF0zJCod9vIIYr0MMNiBlO5pmDiWjzV2B+biha9M0B+H831CPnDDpsXai2uC+rIrZHdPAK4TJvjIkp9Ta5Uf8IkdaGqdiyIa09QN/fbRvWgj300SXViMbGMu0Ws60wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zBUvIzC+; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9P2tUw6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45900C433C7;
-	Wed, 27 Mar 2024 08:24:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711527856;
-	bh=3O9nZkHhgz3EfvIBaPtrSnSZtIgGhJoXhwNgfGO7CX4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j9P2tUw6edMJRhnwzoQrRs+XIKbS+xEweeBhXY3zZJ/RTj1R7mEa72z4U16yo2TFn
-	 TTKFt09jLYgi53FcEGhDm66V9WckqMs2OYk5+vXbuIujHZJf73/C+nKdb+iA1xKIY6
-	 rHkR+o+nsulOr5cG12CVo9mBfpkH1/g1HQ+1dAdY+m/PXy2bbfYTOUlHganupZ5qLh
-	 pLD11oUCAnIfexzwab73/UDv/S5Rhf454RM6Xx784Fz2Pd4QsiNYieUTq33RxtDsm4
-	 3Bbha4ZBIbxb7aP1ggVF9M/Fy+raS/QVk+WadLk70POHbqsgb7Flx63WH6p3JgFWs7
-	 kPtY29Xau5cEw==
-Date: Wed, 27 Mar 2024 09:24:05 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zBUvIzC+"
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6dc8b280155so3785212a34.0
+        for <linux-tegra@vger.kernel.org>; Wed, 27 Mar 2024 01:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1711528870; x=1712133670; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3kBGo9rBQDVD8B/37mPPc4bOK2wXan+HIEhCfIghQeQ=;
+        b=zBUvIzC+K0KhmWy6Tsxhve5/iQWSHh2Kmd1UybWCM24AAqwL0s6Ysxhdw9NxjCC21n
+         LJgon4QclJceB0+HftwRUtV7i2zDBe/CWKf6kdbXbkwm4j3LTQQ1QiU/MU8/aCWHkFfo
+         1lXucySU+MGX812f59+1YVnaQ9ZXsqwWF6sdpJIABxJSfkmCJjhpu6ardsxBL1tk47hl
+         zF5pWuGH5oh1rFhZtR6xB7hzoGO3olLfN8HU+oMqdIX5Xv0asZMAPZLhobyzt0b5Cezv
+         G6Q+n+Qr9JWefxvwmRg0uVSm/mw2sG935G4Gm7ZnwadZqHzxQJfLfbAYunxOCrYwbKFE
+         77rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711528870; x=1712133670;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3kBGo9rBQDVD8B/37mPPc4bOK2wXan+HIEhCfIghQeQ=;
+        b=WY6puyWmRi6oXB+yCFMZbn5xtOjUI+faWAgXckUEEuNY1ZYUns9X1oEln85dV/TcDb
+         OuoAEWw4xGBCkRPIGsqawDSvoo84/yjhybjWppKm/Vq1FafT5RiNLyoDWHVSXEtbq9xc
+         Wt451GB6vBtBKLpnK4ioZqikkRy/ivgrCgnrapeBGGWfx4aba7PmXBYe3e0Kf+UARDeu
+         bTRhqCv9X0yxGr6WfhEjOQ4CulkMXObtT9GvHLN/mWI89q25lptAM923sr8Zr0V4FXxF
+         A/r09BGKfNw/Bc+Tjds7rATbJLE7bcrzZ6GUnNgcoj7G2NZOVtyBhNgGySENdUKUqEfR
+         fsQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmvcp655SUU7/SgTPUPph0z/K46hv5IgnCKVN2ao8X9GhiModxEyM4UJaD6cLqBjUfgYNx8jjOajH/LzdsBdHWND2VRuduIEuY3Zk=
+X-Gm-Message-State: AOJu0YxMoR4/Eoizncq6Y7rwDy1sLJZq2OHEQuIaLmFTyda+9P1tnVeK
+	gMNwYToCM02GVX/7fw73lb7aX85DIDEoPZ9IpSRKM5Dxnw88uNS9Bv9C6Kytqg==
+X-Google-Smtp-Source: AGHT+IH7Hg0Sm990ZknW0ZrRwtuXnVXRB36mHywm9jAemkPYppo81oiTIBfmm8SNo3JZTiDkMTN0Pg==
+X-Received: by 2002:a05:6870:239d:b0:221:bd93:2940 with SMTP id e29-20020a056870239d00b00221bd932940mr2005103oap.27.1711528869823;
+        Wed, 27 Mar 2024 01:41:09 -0700 (PDT)
+Received: from thinkpad ([120.60.52.77])
+        by smtp.gmail.com with ESMTPSA id m9-20020a62f209000000b006e6bf165a3asm7434651pfh.91.2024.03.27.01.40.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Mar 2024 01:41:09 -0700 (PDT)
+Date: Wed, 27 Mar 2024 14:10:56 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Niklas Cassel <cassel@kernel.org>
 Cc: Jingoo Han <jingoohan1@gmail.com>,
 	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
 	Lorenzo Pieralisi <lpieralisi@kernel.org>,
@@ -63,97 +89,110 @@ Cc: Jingoo Han <jingoohan1@gmail.com>,
 	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@axis.com,
 	linux-rockchip@lists.infradead.org
 Subject: Re: [PATCH v11 8/8] PCI: endpoint: Remove "core_init_notifier" flag
-Message-ID: <ZgPXpZgoMqVn8QHt@ryzen>
+Message-ID: <20240327084056.GC2742@thinkpad>
 References: <20240327-pci-dbi-rework-v11-0-6f5259f90673@linaro.org>
  <20240327-pci-dbi-rework-v11-8-6f5259f90673@linaro.org>
+ <ZgPXpZgoMqVn8QHt@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240327-pci-dbi-rework-v11-8-6f5259f90673@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZgPXpZgoMqVn8QHt@ryzen>
 
-Hello Mani,
-
-On Wed, Mar 27, 2024 at 12:05:54PM +0530, Manivannan Sadhasivam wrote:
-> "core_init_notifier" flag is set by the glue drivers requiring refclk from
-> the host to complete the DWC core initialization. Also, those drivers will
-> send a notification to the EPF drivers once the initialization is fully
-> completed using the pci_epc_init_notify() API. Only then, the EPF drivers
-> will start functioning.
+On Wed, Mar 27, 2024 at 09:24:05AM +0100, Niklas Cassel wrote:
+> Hello Mani,
 > 
-> For the rest of the drivers generating refclk locally, EPF drivers will
-> start functioning post binding with them. EPF drivers rely on the
-> 'core_init_notifier' flag to differentiate between the drivers.
-> Unfortunately, this creates two different flows for the EPF drivers.
+> On Wed, Mar 27, 2024 at 12:05:54PM +0530, Manivannan Sadhasivam wrote:
+> > "core_init_notifier" flag is set by the glue drivers requiring refclk from
+> > the host to complete the DWC core initialization. Also, those drivers will
+> > send a notification to the EPF drivers once the initialization is fully
+> > completed using the pci_epc_init_notify() API. Only then, the EPF drivers
+> > will start functioning.
+> > 
+> > For the rest of the drivers generating refclk locally, EPF drivers will
+> > start functioning post binding with them. EPF drivers rely on the
+> > 'core_init_notifier' flag to differentiate between the drivers.
+> > Unfortunately, this creates two different flows for the EPF drivers.
+> > 
+> > So to avoid that, let's get rid of the "core_init_notifier" flag and follow
+> > a single initialization flow for the EPF drivers. This is done by calling
+> > the dw_pcie_ep_init_notify() from all glue drivers after the completion of
+> > dw_pcie_ep_init_registers() API. This will allow all the glue drivers to
+> > send the notification to the EPF drivers once the initialization is fully
+> > completed.
+> > 
+> > Only difference here is that, the drivers requiring refclk from host will
+> > send the notification once refclk is received, while others will send it
+> > during probe time itself.
+> > 
+> > But this also requires the EPC core driver to deliver the notification
+> > after EPF driver bind. Because, the glue driver can send the notification
+> > before the EPF drivers bind() and in those cases the EPF drivers will miss
+> > the event. To accommodate this, EPC core is now caching the state of the
+> > EPC initialization in 'init_complete' flag and pci-ep-cfs driver sends the
+> > notification to EPF drivers based on that after each EPF driver bind.
+> > 
+> > Tested-by: Niklas Cassel <cassel@kernel.org>
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/pci/controller/cadence/pcie-cadence-ep.c  |  2 ++
+> >  drivers/pci/controller/dwc/pci-dra7xx.c           |  2 ++
+> >  drivers/pci/controller/dwc/pci-imx6.c             |  2 ++
+> >  drivers/pci/controller/dwc/pci-keystone.c         |  2 ++
+> >  drivers/pci/controller/dwc/pci-layerscape-ep.c    |  2 ++
+> >  drivers/pci/controller/dwc/pcie-artpec6.c         |  2 ++
+> >  drivers/pci/controller/dwc/pcie-designware-ep.c   |  1 +
+> >  drivers/pci/controller/dwc/pcie-designware-plat.c |  2 ++
+> >  drivers/pci/controller/dwc/pcie-keembay.c         |  2 ++
+> >  drivers/pci/controller/dwc/pcie-qcom-ep.c         |  1 -
+> >  drivers/pci/controller/dwc/pcie-rcar-gen4.c       |  2 ++
+> >  drivers/pci/controller/dwc/pcie-tegra194.c        |  1 -
+> >  drivers/pci/controller/dwc/pcie-uniphier-ep.c     |  2 ++
+> >  drivers/pci/controller/pcie-rcar-ep.c             |  2 ++
+> >  drivers/pci/controller/pcie-rockchip-ep.c         |  2 ++
+> >  drivers/pci/endpoint/functions/pci-epf-test.c     | 18 +++++-------------
+> >  drivers/pci/endpoint/pci-ep-cfs.c                 |  9 +++++++++
+> >  drivers/pci/endpoint/pci-epc-core.c               | 22 ++++++++++++++++++++++
+> >  include/linux/pci-epc.h                           |  7 ++++---
+> >  19 files changed, 65 insertions(+), 18 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> > index 2d0a8d78bffb..da67a06ee790 100644
+> > --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> > +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> > @@ -734,6 +734,8 @@ int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep)
+> >  
+> >  	spin_lock_init(&ep->lock);
+> >  
+> > +	dw_pcie_ep_init_notify(&pci->ep);
 > 
-> So to avoid that, let's get rid of the "core_init_notifier" flag and follow
-> a single initialization flow for the EPF drivers. This is done by calling
-> the dw_pcie_ep_init_notify() from all glue drivers after the completion of
-> dw_pcie_ep_init_registers() API. This will allow all the glue drivers to
-> send the notification to the EPF drivers once the initialization is fully
-> completed.
+> This looks wrong (and I think that you have not build tested this).
 > 
-> Only difference here is that, the drivers requiring refclk from host will
-> send the notification once refclk is received, while others will send it
-> during probe time itself.
+
+Ah, this is silly. Sorry, added the change in a rush :(
+
+> dw_* prefix indicates DWC, so it is a DWC specific function.
 > 
-> But this also requires the EPC core driver to deliver the notification
-> after EPF driver bind. Because, the glue driver can send the notification
-> before the EPF drivers bind() and in those cases the EPF drivers will miss
-> the event. To accommodate this, EPC core is now caching the state of the
-> EPC initialization in 'init_complete' flag and pci-ep-cfs driver sends the
-> notification to EPF drivers based on that after each EPF driver bind.
+> I don't think that you can use this function for the 3 non-DWC EPC drivers.
+> I think that you need to use call pci_epc_init_notify() directly.
 > 
-> Tested-by: Niklas Cassel <cassel@kernel.org>
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/pci/controller/cadence/pcie-cadence-ep.c  |  2 ++
->  drivers/pci/controller/dwc/pci-dra7xx.c           |  2 ++
->  drivers/pci/controller/dwc/pci-imx6.c             |  2 ++
->  drivers/pci/controller/dwc/pci-keystone.c         |  2 ++
->  drivers/pci/controller/dwc/pci-layerscape-ep.c    |  2 ++
->  drivers/pci/controller/dwc/pcie-artpec6.c         |  2 ++
->  drivers/pci/controller/dwc/pcie-designware-ep.c   |  1 +
->  drivers/pci/controller/dwc/pcie-designware-plat.c |  2 ++
->  drivers/pci/controller/dwc/pcie-keembay.c         |  2 ++
->  drivers/pci/controller/dwc/pcie-qcom-ep.c         |  1 -
->  drivers/pci/controller/dwc/pcie-rcar-gen4.c       |  2 ++
->  drivers/pci/controller/dwc/pcie-tegra194.c        |  1 -
->  drivers/pci/controller/dwc/pcie-uniphier-ep.c     |  2 ++
->  drivers/pci/controller/pcie-rcar-ep.c             |  2 ++
->  drivers/pci/controller/pcie-rockchip-ep.c         |  2 ++
->  drivers/pci/endpoint/functions/pci-epf-test.c     | 18 +++++-------------
->  drivers/pci/endpoint/pci-ep-cfs.c                 |  9 +++++++++
->  drivers/pci/endpoint/pci-epc-core.c               | 22 ++++++++++++++++++++++
->  include/linux/pci-epc.h                           |  7 ++++---
->  19 files changed, 65 insertions(+), 18 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> index 2d0a8d78bffb..da67a06ee790 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
-> @@ -734,6 +734,8 @@ int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep)
->  
->  	spin_lock_init(&ep->lock);
->  
-> +	dw_pcie_ep_init_notify(&pci->ep);
+> (Also perhaps rebase your series on v6.9-rc1, I got conflicts when trying
+> to apply it to v6.9-rc1, because it looks like the series is still based
+> on v6.8-rc1.)
+> 
 
-This looks wrong (and I think that you have not build tested this).
+I rebased the epf rework series and didn't get any conflict. But will rebase
+this one also and send next version.
 
-dw_* prefix indicates DWC, so it is a DWC specific function.
+Thanks for noticing my idiocy.
 
-I don't think that you can use this function for the 3 non-DWC EPC drivers.
-I think that you need to use call pci_epc_init_notify() directly.
+- Mani
 
-
-(Also perhaps rebase your series on v6.9-rc1, I got conflicts when trying
-to apply it to v6.9-rc1, because it looks like the series is still based
-on v6.8-rc1.)
-
-
-Kind regards,
-Niklas
+-- 
+மணிவண்ணன் சதாசிவம்
