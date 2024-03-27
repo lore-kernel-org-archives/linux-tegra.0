@@ -1,212 +1,125 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15785227;
-	Wed, 27 Mar 2024 18:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C47D380;
+	Wed, 27 Mar 2024 19:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711562797; cv=none; b=Gh5/oAkHJzjFLiXXJYU0nDRzkhfxJiueaayFYfjMdtBSER87twIbKr4g/z4efGwAfMTL4BqNtgDRBd+fNGrhLI2qeFlrLQdLfwkg2/DWwN88RQ0MeNuaGwUCETNbdy/ua+rNq7vS3w+NazxHTSYhlcmJo7gWIF4TPXOJjoJBwOA=
+	t=1711568162; cv=none; b=IqaR9I7OSVj2cn5pb2amOwEtxcvVrBX0EAMfJwD3p6Ob27Zzb/SuI1Su3Y6wltd4qJ1yDWFc4Ng818HcZ+H4ri68r0fA9/VLXzsqR2OPt/3WA8/xsqJ11/k82+d51DDgjZrzRot0tVOyCL0OWGdktpraTBXuaQ+f+Jh+QK+o/6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711562797; c=relaxed/simple;
-	bh=ELmyXwcV+FV9/p8zH/5M6gKnn4Kq8bGt1DVRV4LDDKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AtG4u3LJXZJrB1Z9BZFShmUwnRWY6TQnHuy6oizg2Ji7P7NgHVM3sHtvIA/RjOzwS0JyPmDhxGuaa2YzOLlRbN/ENbIco1PeFZKaxCJNWtQDhihM/5y+mtMULljNfNRbgtre5CZ09E2Q3QyLW/IhGjDzp/cK9wgc4Vg5U3Zrqoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQmy7JUC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711568162; c=relaxed/simple;
+	bh=T0Gc63+M14jsX7PKFtiIXFMl0tWSi9oDRmgoUZTW/2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kvWLzCHlXrCLVHGZq9tEGrVrmqm7KSNrNZfM/VNeF3qr9oqwDMT0waNjexrtBYb6MyvcNR0aKcPavrM9Qx1+KwvLDE+6XbMRo3wdksFd9xC7errlqfut1uYd0vGohu9fJUvwGRXMbKgpwpdS/w4jSdfFLTpMMjUYEKK1dPlfb0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XoaXAMOJ; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQmy7JUC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB0FC433C7;
-	Wed, 27 Mar 2024 18:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711562796;
-	bh=ELmyXwcV+FV9/p8zH/5M6gKnn4Kq8bGt1DVRV4LDDKQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NQmy7JUCEZ0RxIGKKgDxesVr/zBZBlOhbpw6BuiwYqInjUm2QolaDyoi93Z/1ZIDT
-	 fXfeILsnH6JFGEkhARAkWC6/HiE8+5o5m9o69ef2b1DjI4qtlbtnt2G+4LIovO2GXr
-	 g8N9dGuVaSpcBXK61RpiAK3G9bs75gKErf40XvBIqRcumFGtD5EzKfM+JNIORC1NhX
-	 st47971wfU0D30xAqoe5lON13N9ktrWVS7ajto4z++ZpfmvSVkP6wOKqsLplbObd2/
-	 JOpORRStz3LnZXXYI+T59a1Haaiihp6vUslg8pJvBAmv3w5p1XyLystGyO8RAqQvpU
-	 XNZcGuAQYU0Pg==
-Date: Wed, 27 Mar 2024 19:06:30 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 07/11] PCI: dwc: ep: Add a generic dw_pcie_ep_linkdown()
- API to handle Link Down event
-Message-ID: <ZgRgJsOT_bzXM1wK@ryzen>
-References: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
- <20240314-pci-epf-rework-v1-7-6134e6c1d491@linaro.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XoaXAMOJ"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a4a393b699fso38648266b.0;
+        Wed, 27 Mar 2024 12:36:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711568159; x=1712172959; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aojaArSnA0JfedDto4elyer8YODIKcUTNNFpLzMMgW8=;
+        b=XoaXAMOJ4Ojmd7idhXiyfKsYBXO1nlVNNBH2lrYeTP5tUZYgJcfSMkvYDdSECwJe3O
+         2WPWBYmKXHC3NZWnWbzWbnrHUyovIC/aoenU0HNzQCX/wvlCFvq+1zEn21HC3sezb8Jz
+         SPURbZsQS6fgh2YVN3sqFKrAbjZhNNG29y5z+ZwHL1BZB0eyGa0r1WlwajFoU7kWaoqZ
+         185ZvXwubU7cpqnWYSzx0ODOXGVS3Mu2DrliJPjTMaV7TwMtsw25xfnbYF5dA8TRfuQ7
+         d8HeMsqPzustoXEui2Uc+vAQDibV6fBvr6di3ODvecj0COgUZeNJQykOCy7aPcLPeDfo
+         WMIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711568159; x=1712172959;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aojaArSnA0JfedDto4elyer8YODIKcUTNNFpLzMMgW8=;
+        b=n8H1GZxWGCDyZS5GqC4sE0iRZ6/9XuV3nlKHKJkja+AZPJKXTt3r1bhBFrxuwpoXLP
+         /AuIC8w+HXy958J1FQf+Iy8P//jBuByUSsJs7ZDJyzOxYeJqyARMljJnc3A2G5ovAQVV
+         yMucFt5nfs8w5c0R/CmBVsN29G8RYl0rdhnkTA4x68Pr6Tc+sVfTGJwKvGsADzkk0z7r
+         ZuacuYt2GO1+otB+99QWCJ431XrYBpUJo2gJUJx+m70N4HppIHuJ0tJcAoyw1Os/6lNk
+         A7IPnFSrw34Qoq2FEpCdpDNEt2tlRguwX14hgVUljq3KsTPBv+nxZOfx3wZjSjKQheEp
+         eLAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCYs+LogtakcWjQysrzX6wzvIepjw4NCiF8HoEvdnW+fcNZb6q0ncljdi6I5FBFilRdUn5iZ+bKJKGewBdPfMSzBsWPfsv/XqgvyGupEJypYlJ8aUH+Smswfxo10UetclKXgE97Rq//Icad6T7MUFCuayMEwItobDtws+wo/edI1IwriKnb8wNXfmtCeGm1MhBk9yD4Nb6NeeIE2CJi3siS9XkvdLH2QMXSc9ZKCTqjMnArQ2s2S+y+7efnQKwKB7Sh+JQHr9Oali08QD7nkd9+mTNPPesNdBoy5hJdtpUyesJaRFG3rX27s82zYLOQka3WSwt0L3bww8acX1hFWejjOxv/XPiYIHXlO7Qp7cSCgMumKXmmGj/BBqgbPv+hmcJCoJzk0Vg6rREXD4G2sYYooVDZTkzg1NL6i8W/n3poH6AkiaMGuZvsFSjyjfoKCe5k+uOpdSspnFHnd38kzfXebGQ3IHl5+lOODTNJYDDZ5sfGo533LxVP86Tb/wgi5OoYubNq8S7haZuCCbHvffDGirQVz9dYy5SXNsE+g1zIzM=
+X-Gm-Message-State: AOJu0Yyipuc5TsIErMTNm9jkKX/fFMTmqPVE3UYPTd1po8U8p1sC9R2o
+	ZrFIl5QEdHBNhCaYvqj2qCmN3xq+VhVckML3IqGQ17mgDI+OKPapdtBwuK+1qU0=
+X-Google-Smtp-Source: AGHT+IHWYCsKCZfCKe9WJ0A8h2jBWKCzprPvh9Stt4hH84aJN1DmeskwZihR1IueuTRTWs9wYxpP6Q==
+X-Received: by 2002:a17:906:119a:b0:a47:3766:cfec with SMTP id n26-20020a170906119a00b00a473766cfecmr235001eja.9.1711568159337;
+        Wed, 27 Mar 2024 12:35:59 -0700 (PDT)
+Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
+        by smtp.gmail.com with ESMTPSA id j24-20020a17090643d800b00a4672fb2a03sm5858783ejn.10.2024.03.27.12.35.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Mar 2024 12:35:58 -0700 (PDT)
+From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: linux-kernel@vger.kernel.org, Allen Pais <apais@linux.microsoft.com>
+Cc: tj@kernel.org, keescook@chromium.org, vkoul@kernel.org, marcan@marcan.st,
+ sven@svenpeter.dev, florian.fainelli@broadcom.com, rjui@broadcom.com,
+ sbranden@broadcom.com, paul@crapouillou.net, Eugeniy.Paltsev@synopsys.com,
+ manivannan.sadhasivam@linaro.org, vireshk@kernel.org, Frank.Li@nxp.com,
+ leoyang.li@nxp.com, zw@zh-kernel.org, wangzhou1@hisilicon.com,
+ haijie1@huawei.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ sean.wang@mediatek.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, afaerber@suse.de,
+ logang@deltatee.com, daniel@zonque.org, haojian.zhuang@gmail.com,
+ robert.jarzmik@free.fr, andersson@kernel.org, konrad.dybcio@linaro.org,
+ orsonzhai@gmail.com, baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
+ patrice.chotard@foss.st.com, linus.walleij@linaro.org, wens@csie.org,
+ peter.ujfalusi@gmail.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, jassisinghbrar@gmail.com,
+ mchehab@kernel.org, maintainers@bluecherrydvr.com,
+ aubin.constans@microchip.com, ulf.hansson@linaro.org, manuel.lauss@gmail.com,
+ mirq-linux@rere.qmqm.pl, jh80.chung@samsung.com, oakad@yahoo.com,
+ hayashi.kunihiko@socionext.com, mhiramat@kernel.org, brucechang@via.com.tw,
+ HaraldWelte@viatech.com, pierre@ossman.eu, duncan.sands@free.fr,
+ stern@rowland.harvard.edu, oneukum@suse.com,
+ openipmi-developer@lists.sourceforge.net, dmaengine@vger.kernel.org,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+ imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+ linux-mediatek@lists.infradead.org, linux-actions@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-s390@vger.kernel.org, netdev@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 9/9] mmc: Convert from tasklet to BH workqueue
+Date: Wed, 27 Mar 2024 20:35:54 +0100
+Message-ID: <9252961.CDJkKcVGEf@jernej-laptop>
+In-Reply-To: <20240327160314.9982-10-apais@linux.microsoft.com>
+References:
+ <20240327160314.9982-1-apais@linux.microsoft.com>
+ <20240327160314.9982-10-apais@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240314-pci-epf-rework-v1-7-6134e6c1d491@linaro.org>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Hello Mani,
-
-On Thu, Mar 14, 2024 at 08:53:46PM +0530, Manivannan Sadhasivam wrote:
-> As per the PCIe base spec r5.0, section 5.2, Link Down event can happen
-> under any of the following circumstances:
+Dne sreda, 27. marec 2024 ob 17:03:14 CET je Allen Pais napisal(a):
+> The only generic interface to execute asynchronously in the BH context is
+> tasklet; however, it's marked deprecated and has some design flaws. To
+> replace tasklets, BH workqueue support was recently added. A BH workqueue
+> behaves similarly to regular workqueues except that the queued work items
+> are executed in the BH context.
 > 
-> 1. Fundamental/Hot reset
-> 2. Link disable transmission by upstream component
-> 3. Moving from L2/L3 to L0
+> This patch converts drivers/infiniband/* from tasklet to BH workqueue.
+
+infiniband -> mmc
+
+Best regards,
+Jernej
+
 > 
-> In those cases, Link Down causes some non-sticky DWC registers to loose the
-> state (like REBAR, etc...). So the drivers need to reinitialize them to
-> function properly once the link comes back again.
+> Based on the work done by Tejun Heo <tj@kernel.org>
+> Branch: https://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-6.10
 > 
-> This is not a problem for drivers supporting PERST# IRQ, since they can
-> reinitialize the registers in the PERST# IRQ callback. But for the drivers
-> not supporting PERST#, there is no way they can reinitialize the registers
-> other than relying on Link Down IRQ received when the link goes down. So
-> let's add a DWC generic API dw_pcie_ep_linkdown() that reinitializes the
-> non-sticky registers and also notifies the EPF drivers about link going
-> down.
-> 
-> This API can also be used by the drivers supporting PERST# to handle the
-> scenario (2) mentioned above.
-> 
-> NOTE: For the sake of code organization, move the dw_pcie_ep_linkup()
-> definition just above dw_pcie_ep_linkdown().
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/pci/controller/dwc/pcie-designware-ep.c | 93 ++++++++++++++++---------
->  drivers/pci/controller/dwc/pcie-designware.h    |  5 ++
->  2 files changed, 67 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index 3893a8c1a11c..5451057ca74b 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -14,18 +14,6 @@
->  #include <linux/pci-epc.h>
->  #include <linux/pci-epf.h>
->  
-> -/**
-> - * dw_pcie_ep_linkup - Notify EPF drivers about link up event
-> - * @ep: DWC EP device
-> - */
-> -void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
-> -{
-> -	struct pci_epc *epc = ep->epc;
-> -
-> -	pci_epc_linkup(epc);
-> -}
-> -EXPORT_SYMBOL_GPL(dw_pcie_ep_linkup);
-> -
->  /**
->   * dw_pcie_ep_init_notify - Notify EPF drivers about EPC initialization
->   *			    complete
-> @@ -672,6 +660,29 @@ static unsigned int dw_pcie_ep_find_ext_capability(struct dw_pcie *pci, int cap)
->  	return 0;
->  }
->  
-> +static void dw_pcie_ep_init_non_sticky_registers(struct dw_pcie *pci)
-> +{
-> +	unsigned int offset;
-> +	unsigned int nbars;
-> +	u32 reg, i;
-> +
-> +	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
-> +
-> +	dw_pcie_dbi_ro_wr_en(pci);
-> +
-> +	if (offset) {
-> +		reg = dw_pcie_readl_dbi(pci, offset + PCI_REBAR_CTRL);
-> +		nbars = (reg & PCI_REBAR_CTRL_NBAR_MASK) >>
-> +			PCI_REBAR_CTRL_NBAR_SHIFT;
-> +
-> +		for (i = 0; i < nbars; i++, offset += PCI_REBAR_CTRL)
-> +			dw_pcie_writel_dbi(pci, offset + PCI_REBAR_CAP, 0x0);
-> +	}
-> +
-> +	dw_pcie_setup(pci);
-> +	dw_pcie_dbi_ro_wr_dis(pci);
-> +}
-> +
->  /**
->   * dw_pcie_ep_init_registers - Initialize DWC EP specific registers
->   * @ep: DWC EP device
-> @@ -686,13 +697,11 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
->  	struct dw_pcie_ep_func *ep_func;
->  	struct device *dev = pci->dev;
->  	struct pci_epc *epc = ep->epc;
-> -	unsigned int offset, ptm_cap_base;
-> -	unsigned int nbars;
-> +	u32 ptm_cap_base, reg;
->  	u8 hdr_type;
->  	u8 func_no;
-> -	int i, ret;
->  	void *addr;
-> -	u32 reg;
-> +	int ret;
->  
->  	hdr_type = dw_pcie_readb_dbi(pci, PCI_HEADER_TYPE) &
->  		   PCI_HEADER_TYPE_MASK;
-> @@ -755,20 +764,8 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
->  	if (ep->ops->init)
->  		ep->ops->init(ep);
->  
-> -	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
->  	ptm_cap_base = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_PTM);
->  
-> -	dw_pcie_dbi_ro_wr_en(pci);
-> -
-> -	if (offset) {
-> -		reg = dw_pcie_readl_dbi(pci, offset + PCI_REBAR_CTRL);
-> -		nbars = (reg & PCI_REBAR_CTRL_NBAR_MASK) >>
-> -			PCI_REBAR_CTRL_NBAR_SHIFT;
-> -
-> -		for (i = 0; i < nbars; i++, offset += PCI_REBAR_CTRL)
-> -			dw_pcie_writel_dbi(pci, offset + PCI_REBAR_CAP, 0x0);
-> -	}
-> -
->  	/*
->  	 * PTM responder capability can be disabled only after disabling
->  	 * PTM root capability.
-> @@ -785,9 +782,6 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
->  		dw_pcie_dbi_ro_wr_dis(pci);
->  	}
->  
-> -	dw_pcie_setup(pci);
-> -	dw_pcie_dbi_ro_wr_dis(pci);
-> -
-
-Your previous series had:
-
--       dw_pcie_setup(pci);
--       dw_pcie_dbi_ro_wr_dis(pci);
-+       dw_pcie_ep_init_non_sticky_registers(pci);
-
-Here.
-I tested this series, but it did not work for me (the Resizable BARs did
-not get resized) since you removed the call to
-dw_pcie_ep_init_non_sticky_registers().
-
-By readding the call to dw_pcie_ep_init_non_sticky_registers(),
-the BARs get Resized again.
+> Signed-off-by: Allen Pais <allen.lkml@gmail.com>
 
 
-BTW do you have a git branch with both your series somewhere?
-(Possibly even rebased on
-https://lore.kernel.org/linux-pci/20240320113157.322695-1-cassel@kernel.org/T/#t
-like you suggested in your other mail.)
 
-
-Kind regards,
-Niklas
