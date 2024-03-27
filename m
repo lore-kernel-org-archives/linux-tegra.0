@@ -1,284 +1,125 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9283E86637;
-	Wed, 27 Mar 2024 11:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9E8171E63;
+	Wed, 27 Mar 2024 12:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711539556; cv=none; b=jLUuWqwF00nZ7+xmWNua4VsnmLDCv+51Vhkbw6ecR/QGgjoyeJ3ZXe9ips3j01ECZWftOstGWlTp9r/4kKhkXHMOEvV5CaLNegykfSoQsEb80STPFxmutzgropcvdBjCd9bpnFwS9Ci8VRuU4aATOG40RKxyPG4R2MO3oFzSVoo=
+	t=1711542114; cv=none; b=kBKK0DfqBe7ozu7qnoG0LToaIrGNiEL48EetZ8dARJ1atM+LC50xMmLIdkMtYYG3Li9trI1ROpw7ILtMrVdNFNi+ePrwsGP7vq8NoQhZn0gJHhIrH0X7peexrKzabOen2yTwWVw2DveWeI6sKCK2OJdpaQVDIyUTByZETx70i0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711539556; c=relaxed/simple;
-	bh=0aSLD8v9FhdgjLmAm4FFNYvpmf51+GglcayqfEF6akk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g7RSQL8XAaQH3Y/25amUOzpfC9PkCMps5QW58P6H+itaqyU1i8auYm95f9XKQ9+YzoWhP8ZyNlQeHtXti6QCqmfqZc9z+FuHb49bxuP0qbVYiElIHRS0qFkqdKr0/hMEfWVYEtBEn/WI237WFxqxpyM2DwA6kJWVeHjqi7Ux28g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IthzmOWE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1711542114; c=relaxed/simple;
+	bh=jBv5ziu7G1EKG3yyoWDjuh6Cqon7VND+2PutxfHY9ng=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UGauYswtQdDaHZXoBw3PntzQGM6BmW6bgpi79RzuslHzHLv5+dZQnWI0BPCX6k57F4KyKqB8qt4Xuq8enfRWJAu2WuwCQAsO6JfPLWfMUbPPCqNn3rLQwM9oCF/I925fPZWtdWSvb7D3JS+/RkJ7fiiNVbhkg6b172IgW18bJ/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FxKzOdoC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IthzmOWE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182F0C433F1;
-	Wed, 27 Mar 2024 11:39:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxKzOdoC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62613C43390;
+	Wed, 27 Mar 2024 12:21:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711539556;
-	bh=0aSLD8v9FhdgjLmAm4FFNYvpmf51+GglcayqfEF6akk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IthzmOWEN3mIomGFkzEB7rdFo+sVY9NJoykWW/JaltxLd6FaeS7t/4TOEz67p3nBA
-	 I2PXY+Edpozu3HFBTHNyT4zD/Azr4mbYlQRfgb6n9+XFE5/gwjk+qBrtCirGC2MBXy
-	 40Vm1apsToyMQazDpvK1j/JQECLhCY+uKKtTb8Rk+zmaVwPutLbZMgVN7Ay9795nig
-	 7CxFS0O+CM3rImV6sFyLghl93bs/Xd++nzFgCZ+/2Lml/PgqNJdLN32kTDTUuCh8+z
-	 hY7WnKKpYAPsim7YtilIQtXPf0BXRhDH01VvkLB+AVUADNreC4+pK58Czcd49svPpX
-	 lt8nvzqZXMZuA==
-Date: Wed, 27 Mar 2024 12:39:10 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Vinod Koul <vkoul@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 05/11] PCI: epf-{mhi/test}: Move DMA initialization to
- EPC init callback
-Message-ID: <ZgQFXsgqpeLbXMTb@ryzen>
-References: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
- <20240314-pci-epf-rework-v1-5-6134e6c1d491@linaro.org>
- <Zf2tXgKo-gc3qy1D@ryzen>
- <20240326082636.GG9565@thinkpad>
- <ZgKsBoTvPWWhPO9e@ryzen>
- <20240327055457.GA2742@thinkpad>
+	s=k20201202; t=1711542114;
+	bh=jBv5ziu7G1EKG3yyoWDjuh6Cqon7VND+2PutxfHY9ng=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FxKzOdoCFULlq3Ejr1L7k9iza0XHOD4fdPolx3El9AcEbL3Oy4Sp5ivwzkXDSSpF0
+	 5a39jhpOgQYpLkUB0kEnkhgOCMOqKQC7rr9+tQ5fWlYDSOKgZ8sL5twF+xPRVnLll0
+	 6s0w9X2lfWhoAE6fiBorPJjwU/DAB9499cKAqsehLIfnVfTvicu+gYdSHR414r78lK
+	 sr6CEmFKLmpshmYmRolu3hsObO5UBXkM5GPalGCWuwWPJhxEKimPzg0LUONTp8qFv3
+	 /1QtH3z22vSwkQKt+vTmNdnUPEdY99Kyixcv5APjbeJ2TUQD209S5ORahw37+QF6eH
+	 tyiqx7pQpYJRQ==
+From: Sasha Levin <sashal@kernel.org>
+To: stable@vger.kernel.org,
+	waynec@nvidia.com
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-phy@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: FAILED: Patch "phy: tegra: xusb: Add API to retrieve the port number of phy" failed to apply to 5.4-stable tree
+Date: Wed, 27 Mar 2024 08:21:52 -0400
+Message-ID: <20240327122152.2837220-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240327055457.GA2742@thinkpad>
+X-Patchwork-Hint: ignore
+X-stable: review
+Content-Transfer-Encoding: 8bit
 
-+CC Vinod
+The patch below does not apply to the 5.4-stable tree.
+If someone wants it applied there, or to any other stable or longterm
+tree, then please email the backport, including the original git commit
+id to <stable@vger.kernel.org>.
 
-Hello Vinod,
+Thanks,
+Sasha
 
-I didn't know the answer, so I chose the "call a friend option" ;)
-I hope that you can help me out :)
+------------------ original commit in Linus's tree ------------------
 
+From d843f031d9e90462253015bc0bd9e3852d206bf2 Mon Sep 17 00:00:00 2001
+From: Wayne Chang <waynec@nvidia.com>
+Date: Thu, 7 Mar 2024 11:03:27 +0800
+Subject: [PATCH] phy: tegra: xusb: Add API to retrieve the port number of phy
 
-If you take a look at drivers/pci/endpoint/functions/pci-epf-test.c
-https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/endpoint/functions/pci-epf-test.c#L448-L471
+This patch introduces a new API, tegra_xusb_padctl_get_port_number,
+to the Tegra XUSB Pad Controller driver. This API is used to identify
+the USB port that is associated with a given PHY.
 
-You can see that the driver always does pci_epc_map_addr(),
-then it will either use:
-DMA API, e.g. dma_map_single() etc.
-or
-memcpy_fromio()/memcpy_toio()
+The function takes a PHY pointer for either a USB2 PHY or USB3 PHY as input
+and returns the corresponding port number. If the PHY pointer is invalid,
+it returns -ENODEV.
 
-based on flag FLAG_USE_DMA.
+Cc: stable@vger.kernel.org
+Signed-off-by: Wayne Chang <waynec@nvidia.com>
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Link: https://lore.kernel.org/r/20240307030328.1487748-2-waynec@nvidia.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/phy/tegra/xusb.c       | 13 +++++++++++++
+ include/linux/phy/tegra/xusb.h |  1 +
+ 2 files changed, 14 insertions(+)
 
-This flag is set via ioctl, so if we run:
-/usr/bin/pcitest -d
-the flag will be set, without the -d parameter the flag won't be set.
-
-
-If you look at how the DMA channel is requested:
-https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/endpoint/functions/pci-epf-test.c#L224-L258
-
-If will try to get a private DMA channel, if that fails,
-it will use the "dummy memcpy" DMA channel.
-
-If the FLAG_USE_DMA is set, the transfers itself will use:
-https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/endpoint/functions/pci-epf-test.c#L139-L155
-either dmaengine_prep_slave_single() or dmaengine_prep_dma_memcpy(),
-depending on if we are using "dummy memcpy" or not.
-
-
-
-If you take e.g. the DWC PCIe EP controller, it can have an embedded DMA
-controller on the PCIe controller, and we will try to detect it when
-initializing the PCIe EP controller using dw_pcie_edma_detect():
-https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/controller/dwc/pcie-designware-ep.c#L759
-
-For the PCIe EP controller that I am using, which have eDMA built-in,
-I noticed that if I do not enable the eDMA driver (# CONFIG_DW_EDMA is not
-set), I noticed that I can still run:
-/usr/bin/pcitest -d
-
-Which will use the "dummy memcpy" DMA channel.
-Yes, the performance is poor, but it still works, so it appears that the
-fallback code is working properly.
-
-
-If I enable the eDMA driver (CONFIG_DW_EDMA=y),
-I can run:
-/usr/bin/pcitest -d
-
-And the performance is good.
-
-
-So my question is:
-Is the "dummy memcpy" DMA channel always available?
-
-Because if it is, I think we could drop the path in the pci-epf-test.c
-driver which uses memcpy_fromio()/memcpy_toio() instead of DMA API.
-(Since just having a single path to do I/O in the driver would simplify
-the driver IMO.)
-
-I assume that the "dummy memcpy" DMA channel just uses memcpy_fromio() and
-memcpy_toio() under the hood, so I assume that using the memcpy_fromio()/
-memcpy_toio/() is equivalent to using DMA API + dmaengine_prep_dma_memcpy().
-
-Although it would be nice if we didn't need to have the two separate paths
-in pci_epf_test_data_transfer() (dmaengine_prep_slave_single() vs
-dmaengine_prep_dma_memcpy()) to support the "dummy memcpy" channel.
-But I guess that is not possible...
-
-
-I hope that you can bring some clarity Vinod.
-(Please read my replies to Mani below before you compose your email,
-as it does provide more insight to this mess.)
-
-Mani, I tried to reply to you inline below, with my limited understanding
-of how dmaengine works.
-
-
-On Wed, Mar 27, 2024 at 11:48:19AM +0530, Manivannan Sadhasivam wrote:
-> > So we still want to test:
-> > -DMA API using the eDMA
-> > -DMA API using the "dummy" memcpy dma-channel.
-> > 
-> 
-> IMO, the test driver should just test one form of data transfer. Either CPU
-> memcpy (using iATU or something similar) or DMA. But I think the motive behind
-> using DMA memcpy is that to support platforms that do not pass DMA slave
-> channels in devicetree.
-> 
-> It is applicable to test driver but not to MHI driver since all DMA supported
-> MHI platforms will pass the DMA slave channels in devicetree.
-
-I don't understand how device tree is relevant here, e.g. qcom-ep.c
-specifies pcie_ep->pci.edma.nr_irqs = 1;
-https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/controller/dwc/pcie-qcom-ep.c#L818
-which is sufficient for you to be able to probe/detect eDMA successfully,
-no need for anything in device tree at all.
-
-
-> 
-> > However, it seems like both pci-epf-mhi.c and pci-epf-test.c
-> > do either:
-> > -Use DMA API
-> > or
-> > -Use memcpy_fromio()/memcpy_toio() instead of DMA API
-> > 
-> > 
-> > To me, it seems like we should always be able to use
-> > DMA API (using either a eDMA or "dummy" memcpy).
-> > 
-> 
-> No, there are platforms that don't support DMA at all. Like Qcom SDX55, so we
-> still need to do CPU memcpy.
-
-I assume that you mean the the PCIe controller used in SDX55 does not
-have the eDMA on the PCIe controller, so dw_pcie_edma_detect() will
-fail to detect any eDMA. That is fine no?
-
-I assume that this SoC will still able to use the "dummy" memcpy dma-channel?
-
-
-> 
-> > I don't really see the need to have the path that does:
-> > memcpy_fromio()/memcpy_toio().
-> > 
-> > I know that for DWC, when using memcpy (and this also
-> > memcpy via DMA API), we need to map the address using
-> > iATU first.
-> > 
-> > But that could probably be done using another flag,
-> > perhaps rename that flag FLAG_USE_DMA to NEEDS_MAP or
-> > something.
-> > (Such that we can change these drivers to only have a
-> > code path that uses DMA API.)
-> > (...and making sure that inheriting the DMA mask does
-> > not affect the DMA mask for DMA_MEMCPY.)
-
-I was wrong here, pci-epf-test always calls pci_epc_map_addr()
-regardless if FLAG_USE_DMA is set or not.
-
-(Even though this should be unnecessary when using the eDMA.)
-
-However, if we look at pci-epf-mhi.c we can see that it does
-NOT call pci_epc_map_addr() when using DMA API + dmaengine.
-
-Is it really safe to avoid pci_epc_map_addr() in all EPC controllers?
-I assume that it should be safe for all "real" DMA channels.
-We can see that it is not safe when using DMA API + "dummy" memcpy
-dma-channel. (That is why I was asking if we need a NEEDS_MAP, or
-MAP_NOT_NEEDED flag.)
-
-
-> > 
-> > But perhaps I am missing something... and DMA_MEMCPY is
-> > not always available?
-
-Right now pci-epf-test driver has three ways:
--DMA API + dmaengine dmaengine_prep_slave_single()
--DMA API + dmaengine dmaengine_prep_dma_memcpy()
--memcpy_toio()/memcpy_fromio().
-
-pci-epf-mhi.c driver has two ways:
--DMA API + dmaengine dmaengine_prep_slave_single()
--memcpy_toio()/memcpy_fromio().
-
-
-pci-epf-test.c:
--Always calls pci_epc_map_addr() when using DMA API.
-
-pci-epf-mhi.c:
--Never calls pci_epc_map_addr() when using DMA API.
-
-
-I honestly don't see any point of having three paths
-for pci-epf-test. Ideally I would want one, max two.
-
-If you think that:
--DMA API + dmaengine dmaengine_prep_slave_single()
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 142ebe0247cc0..983a6e6173bd2 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -1531,6 +1531,19 @@ int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
+ }
+ EXPORT_SYMBOL_GPL(tegra_xusb_padctl_get_usb3_companion);
+ 
++int tegra_xusb_padctl_get_port_number(struct phy *phy)
++{
++	struct tegra_xusb_lane *lane;
 +
--memcpy_toio()/memcpy_fromio().
-
-is more logical than:
--DMA API + dmaengine dmaengine_prep_slave_single()
++	if (!phy)
++		return -ENODEV;
 +
--DMA API + dmaengine dmaengine_prep_dma_memcpy()
-
-Then I think we should rip out the:
--DMA API + dmaengine dmaengine_prep_dma_memcpy()
-it serves no purpose... if you don't have a "real" DMA channel,
-just run without the -d flag.
-
-Or, if you argue that the dmaengine_prep_dma_memcpy() is there
-to test the DMA API code (which I can't say that it does, since
-it doesn't use the exact same code path as a "real" DMA channel, see:
-https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/endpoint/functions/pci-epf-test.c#L139-L155
-so this argument is questionable).
-
-Put it under a --use_dummy_dma, and return failure by default
-if no "real" DMA channel is found.
-
-
-But even so, that would not address the pci-epf-test and
-pci-mhi-test inconsistency WRT pci_epc_map_addr().
-
-I think if we rip out:
--DMA API + dmaengine dmaengine_prep_dma_memcpy()
-we could also move the pci_epc_map_addr() so that it is
-only used for the memcpy_toio()/memcpy_fromio() path.
-
-(Or if we add a --use_dummy_dma, we can move the pci_epc_map_addr() to
-that path, and remove it from the dmaengine_prep_slave_single() path.)
++	lane = phy_get_drvdata(phy);
++
++	return lane->index;
++}
++EXPORT_SYMBOL_GPL(tegra_xusb_padctl_get_port_number);
++
+ MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+ MODULE_DESCRIPTION("Tegra XUSB Pad Controller driver");
+ MODULE_LICENSE("GPL v2");
+diff --git a/include/linux/phy/tegra/xusb.h b/include/linux/phy/tegra/xusb.h
+index 70998e6dd6fdc..6ca51e0080ec0 100644
+--- a/include/linux/phy/tegra/xusb.h
++++ b/include/linux/phy/tegra/xusb.h
+@@ -26,6 +26,7 @@ void tegra_phy_xusb_utmi_pad_power_down(struct phy *phy);
+ int tegra_phy_xusb_utmi_port_reset(struct phy *phy);
+ int tegra_xusb_padctl_get_usb3_companion(struct tegra_xusb_padctl *padctl,
+ 					 unsigned int port);
++int tegra_xusb_padctl_get_port_number(struct phy *phy);
+ int tegra_xusb_padctl_enable_phy_sleepwalk(struct tegra_xusb_padctl *padctl, struct phy *phy,
+ 					   enum usb_device_speed speed);
+ int tegra_xusb_padctl_disable_phy_sleepwalk(struct tegra_xusb_padctl *padctl, struct phy *phy);
+-- 
+2.43.0
 
 
-Kind regards,
-Niklas
+
+
