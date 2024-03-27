@@ -1,147 +1,188 @@
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B509613C66F
-	for <linux-tegra@vger.kernel.org>; Tue, 26 Mar 2024 16:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE631CA87
+	for <linux-tegra@vger.kernel.org>; Wed, 27 Mar 2024 06:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711469010; cv=none; b=QgU3L/MoNnGoswzrjVbiPElwk2UMfDsbTXJm8sEnrXHaXW8MMl/pGaoBr7PVrQAE/pXAG/rV+yfsQM8hc2A2X037lD4K8bzsTel4FbrcRmjLH81JvSdWh/XQZSS6mAv5guhKAmonynlN2vW3oDrKairAqNa5hyObxvL94PXfmHk=
+	t=1711520315; cv=none; b=Ir94bqRkmdT3PieRGLnVB0wpKHziH2mVu5FBqffM3KN9g68ynZ7nKambiYUZRB1efsCePI4BG1QxNyA5phco44DVfZOWNVlZb7Er/zyvXgEjnuiYBatH2HMbb1+aAO9CGzuzJi2ySnCrv68dHmFv2Ct14QMZqRQjAa+CmG+jqu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711469010; c=relaxed/simple;
-	bh=F78xu2buOwEKxHIquyItfHRMF3G7JqzjmbMXkVCfm5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dxi9knWfniHYqrB9cd5uljm7yaXCxYmjZzhBztiUD31rZg9Eugr8JqWTZSBf7N14rqiq07e/zVUWHuIlYHJS3TFvyocBcSdnOQ24QTIu2PYrbi6a+ZhCP9aUZR4z8tGX4yuohEx09/xJ8R4QbWYSqjB4Fve+pwivXEZ8Im17JYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MBmzMMGs; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1711520315; c=relaxed/simple;
+	bh=QSWOd5QSD/Mwb0i+vtxbpmvy9IlXp1/N645iLIzqlgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kxp4H+l9zYAuchNwiIAtsu7x6GKytHa5GGVzNjKQ8QCvRYY69y6erfGDONduT1VIWqmSK5XjB9oZF4TdHVi82EoEygWO68WcksB1RagA653zsK04NVfwa5zQu1j4zHeHO7qMRm4QMUAUZTzpqglxJCGHa4xKhZyNW/KJLLsZVhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BpAs1eki; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MBmzMMGs"
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-430bf84977dso38950381cf.1
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Mar 2024 09:03:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BpAs1eki"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1e0025ef1efso41777365ad.1
+        for <linux-tegra@vger.kernel.org>; Tue, 26 Mar 2024 23:18:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1711469007; x=1712073807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/W6aqq99DQNeE6Hy7b4PvjAgdtFfco4Dhwzml8Tueag=;
-        b=MBmzMMGsFySRkkZabpLNY9UptSwIMQ/wOWop/70sPok6sldBeMVUYzrtpdrZaJAqQX
-         9pH8GTjkYsqoXdnVla1eH/JzaDWe7MSRwjkzeFBaDJqEfvfkGof7No2EuPGKNSsTuFQf
-         FGzVMtIxkhVL/Yl/hUpFBAexoBzhjKmauwv8Y=
+        d=linaro.org; s=google; t=1711520312; x=1712125112; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=o0gjg83GHJ5iMw1grXSKgZDAg4bzhxIcgbatUtZtL1w=;
+        b=BpAs1eki9UcYrHbYskq6BTJRGnVazUjcNoYWEcquZ4go4y217O2heUBhTAbAlfzi63
+         hcoyCJ3Oby3LR2S9jIX3VYjp5dAS678VcM5fHkGB+lnQkCjXBAA4eXyMvNcXfxq7LuXc
+         NnfTzf31USr8FlizdgP65bvOVRkRpAgZinQHTC245Q3qTKcrikksDiSPvK045vWwjxK4
+         92JGmLIRGiN+D0dmWpeJe/hiBereYxVFb2Yu3Y3Xt+uETckXSMGCpGxeLRdjX9K1tuKY
+         jx8Fn6wx9TckYgbZJN3GtHIh+siE8ohRialiOjTJCSZuvdXDKMvuRKWEJz/vsVmHqAUu
+         0oPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711469007; x=1712073807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/W6aqq99DQNeE6Hy7b4PvjAgdtFfco4Dhwzml8Tueag=;
-        b=PRgrYQMTbIdDp/nPaiRHcLpEq84n7SnqDq4tLt+Z/myNS681IYzv+b89419esZw8W3
-         CO8ScoMcmLWE7Wu72LsFeKTPk2wyWWzsSpgGKsiv+AI5R66lyIegGIKqz4UOV2Q1LIXf
-         WV+gc7ZCNYmLjlrtG5PEKNUhjrn/uPWXc0H8L21xLxEyNkXD8WmrYtv3PSDjAlN0g1gp
-         pe53IMI4f1joP/V8JPfOeMxl7TguMpwXWipswvZhx0mk7z6qe2Pf8MN2Ej/7JVcLJO4s
-         DnN/ZSdt6fwgCCTpKPSnPv0Ojnceu72KIG7d9b/d2WzKVdSyfSp+hjWy7PLL5/IqVVnc
-         QLzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEQLGCt/Vvma923+66WICPEi9G58pfGr7OX6fnCrmGpCiv4PG0O8TkPdN/CG7LlFFpkh/2tagEvnBO8B6ZQSetNClMIeJIysx1JGA=
-X-Gm-Message-State: AOJu0YxBGBw1TAwIUEB7nmFjPqspDwplZS40dCE41yyUJ3Nk00o40Ry3
-	jpj8e9PzVtIIiO7l2UAKQfILpOsEAwHBMXzg2Yki4TmJPr14D3LvySw26XGOrVN8aGmjNsr+uTQ
-	=
-X-Google-Smtp-Source: AGHT+IEaAytIk1ckgL+RmYMn2rhl0upq4/V7NL81n/PmC9fOuxEIiK4KOdfn6XwLU2Wdt5zPra+4/Q==
-X-Received: by 2002:a05:622a:407:b0:431:2a27:47f5 with SMTP id n7-20020a05622a040700b004312a2747f5mr1796289qtx.16.1711469006689;
-        Tue, 26 Mar 2024 09:03:26 -0700 (PDT)
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com. [209.85.160.177])
-        by smtp.gmail.com with ESMTPSA id r26-20020ac867da000000b00430cc9ca5ffsm3780180qtp.81.2024.03.26.09.03.25
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Mar 2024 09:03:25 -0700 (PDT)
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-42ee0c326e8so241411cf.0
-        for <linux-tegra@vger.kernel.org>; Tue, 26 Mar 2024 09:03:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWzlOJn6o0II+drfnpFzotTsRPizBvSHJN4IipgUXdOl9dPE1AGa3QV0VarkIMTsT4NRU8VYbcKX0NGfXLBJn+TA6lN3L2BJy4u/y8=
-X-Received: by 2002:a05:622a:4c89:b0:431:6352:80fb with SMTP id
- ez9-20020a05622a4c8900b00431635280fbmr253080qtb.16.1711469005170; Tue, 26 Mar
- 2024 09:03:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711520312; x=1712125112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o0gjg83GHJ5iMw1grXSKgZDAg4bzhxIcgbatUtZtL1w=;
+        b=rKKm9a1q1M82WMIhAoDwI4i0GBOCj3zwBFsTjHtnaslI3xvak/PLZ0ZCiG3UN1wzK7
+         oXsclbbP2DgGPFuIGbiZjmfkSIu2m5Np/FJ73nzKCpdxw5mMlLohFtr8lsGJ5D/YAzfU
+         cUnjA+VbRMyN8prYDuNyX5jM4gmqXHr5SyH0JkLq5A0N7v5Yole83cua8iDfyOWWL1yq
+         w4nKhWUUTqT6crhwNsh+ACEzxPZ63uQy9ZXAuum7nC6lF3/57iQWekskxyLCfLWinPhH
+         KmllF9Z6Qpof95RRfxcVq03Lpxnhl6Bo9n2y3eMzGFThx7AFuV/oZQfBMJytb56fTKUZ
+         DfLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyPndFKT4M/R/9wy+BvyqL/8Bg9eqN4qpGed+IJmTwWIcBLoClZ5/ztrTdRP+gybtvjqUJfEzdnkxpq9JZ0ylBmew5vVEYPlQ5sNw=
+X-Gm-Message-State: AOJu0YyeLwK+tgmpmg7o7o7YT+1SUjBYf6Nld/H6hn6NapAoKzcQffZe
+	ENrhQRexzNhaSWe7eepq13u2GvKMpUxIl4uwRT5kayFQSV22fdVR4uF/8CRfZQ==
+X-Google-Smtp-Source: AGHT+IHji7g8cihtAriwVgPqznOHJahJLJB2a+jqLM2ts6GNSuhe4SxcmmyVioUmpWFcQTqU1N0vyg==
+X-Received: by 2002:a17:902:ecc5:b0:1e0:342b:af6f with SMTP id a5-20020a170902ecc500b001e0342baf6fmr3668522plh.16.1711520311993;
+        Tue, 26 Mar 2024 23:18:31 -0700 (PDT)
+Received: from thinkpad ([117.207.28.168])
+        by smtp.gmail.com with ESMTPSA id h10-20020a170902f54a00b001e02875930asm8003160plf.25.2024.03.26.23.18.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Mar 2024 23:18:31 -0700 (PDT)
+Date: Wed, 27 Mar 2024 11:48:19 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 05/11] PCI: epf-{mhi/test}: Move DMA initialization to
+ EPC init callback
+Message-ID: <20240327055457.GA2742@thinkpad>
+References: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
+ <20240314-pci-epf-rework-v1-5-6134e6c1d491@linaro.org>
+ <Zf2tXgKo-gc3qy1D@ryzen>
+ <20240326082636.GG9565@thinkpad>
+ <ZgKsBoTvPWWhPO9e@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240319135836.v2.1.I521dad0693cc24fe4dd14cba0c7048d94f5b6b41@changeid>
- <CAA8EJpoCu5+KPJEeCSRLCgSQmTNxNsVCfP=9e4mtFaqADuuKBg@mail.gmail.com>
-In-Reply-To: <CAA8EJpoCu5+KPJEeCSRLCgSQmTNxNsVCfP=9e4mtFaqADuuKBg@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 26 Mar 2024 09:03:13 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=V4YGNUBRs2yTuEHKswsZs8TQdF8huRhCvtuvqc0R=P+Q@mail.gmail.com>
-Message-ID: <CAD=FV=V4YGNUBRs2yTuEHKswsZs8TQdF8huRhCvtuvqc0R=P+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] drm/dp: Clarify that wait_hpd_asserted() is not
- optional for panels
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Ankit Nautiyal <ankit.k.nautiyal@intel.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Imre Deak <imre.deak@intel.com>, 
-	Jani Nikula <jani.nikula@intel.com>, Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZgKsBoTvPWWhPO9e@ryzen>
 
-Hi,
+On Tue, Mar 26, 2024 at 12:05:42PM +0100, Niklas Cassel wrote:
+> On Tue, Mar 26, 2024 at 01:56:36PM +0530, Manivannan Sadhasivam wrote:
+> > On Fri, Mar 22, 2024 at 05:10:06PM +0100, Niklas Cassel wrote:
+> > > On Thu, Mar 14, 2024 at 08:53:44PM +0530, Manivannan Sadhasivam wrote:
+> > > > To maintain uniformity across EPF drivers, let's move the DMA
+> > > > initialization to EPC init callback. This will also allow us to deinit DMA
+> > > > during PERST# assert in the further commits.
+> > > > 
+> > > > For EPC drivers without PERST#, DMA deinit will only happen during driver
+> > > > unbind.
+> > > > 
+> > > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > > ---
+> > > 
+> > > Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> > > 
+> > > 
+> > > For the record, I was debugging a problem related to EPF DMA recently
+> > > and was dumping the DMA mask for the struct device of the epf driver.
+> > > I was a bit confused to see it as 32-bits, even though the EPC driver
+> > > has it set to 64-bits.
+> > > 
+> > > The current code works, because e.g., pci_epf_test_write(), etc,
+> > > does:
+> > > struct device *dma_dev = epf->epc->dev.parent;
+> > > dma_map_single(dma_dev, ...);
+> > > 
+> > > but it also means that all EPF drivers will do this uglyness.
+> > > 
+> > 
+> > This ugliness is required as long as the dmaengine is associated only with the
+> > EPC.
+> > 
+> > > 
+> > > 
+> > > However, if a EPF driver does e.g.
+> > > dma_alloc_coherent(), and sends in the struct *device for the EPF,
+> > > which is the most logical thing to do IMO, it will use the wrong DMA
+> > > mask.
+> > > 
+> > > Perhaps EPF or EPC code should make sure that the struct *device
+> > > for the EPF will get the same DMA mask as epf->epc->dev.parent,
+> > > so that EPF driver developer can use the struct *epf when calling
+> > > e.g. dma_alloc_coherent().
+> > > 
+> > 
+> > Makes sense. I think it can be done during bind() in the EPC core. Feel free to
+> > submit a patch if you like, otherwise I'll keep it in my todo list.
+> 
+> So we still want to test:
+> -DMA API using the eDMA
+> -DMA API using the "dummy" memcpy dma-channel.
+> 
 
-On Tue, Mar 19, 2024 at 3:45=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Tue, 19 Mar 2024 at 22:58, Douglas Anderson <dianders@chromium.org> wr=
-ote:
-> >
-> > In response to my patch removing the "wait for HPD" logic at the
-> > beginning of the MSM DP transfer() callback [1], we had some debate
-> > about what the "This is an optional function" meant in the
-> > documentation of the wait_hpd_asserted() callback. Let's clarify.
-> >
-> > As talked about in the MSM DP patch [1], before wait_hpd_asserted()
-> > was introduced there was no great way for panel drivers to wait for
-> > HPD in the case that the "built-in" HPD signal was used. Panel drivers
-> > could only wait for HPD if a GPIO was used. At the time, we ended up
-> > just saying that if we were using the "built-in" HPD signal that DP
-> > AUX controllers needed to wait for HPD themselves at the beginning of
-> > their transfer() callback. The fact that the wait for HPD at the
-> > beginning of transfer() was awkward/problematic was the whole reason
-> > wait_hpd_asserted() was added.
-> >
-> > Let's make it obvious that if a DP AUX controller implements
-> > wait_hpd_asserted() that they don't need a loop waiting for HPD at the
-> > start of their transfer() function. We'll still allow DP controllers
-> > to work the old way but mark it as deprecated.
-> >
-> > [1] https://lore.kernel.org/r/20240315143621.v2.3.I535606f6d4f7e3e5588b=
-b75c55996f61980183cd@changeid
-> >
-> > Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> > I would consider changing the docs to say that implementing
-> > wait_hpd_asserted() is actually _required_ for any DP controllers that
-> > want to support eDP panels parented on the DP AUX bus. The issue is
-> > that one DP controller (tegra/dpaux.c, found by looking for those that
-> > include display/drm_dp_aux_bus.h) does populate the DP AUX bus but
-> > doesn't implement wait_hpd_asserted(). I'm actually not sure how/if
-> > this work on tegra since I also don't see any delay loop for HPD in
-> > tegra's transfer() callback. For now, I've left wait_hpd_asserted() as
-> > optional and described the old/deprecated way things used to work
-> > before wait_hpd_asserted().
-> >
-> > Changes in v2:
-> > - Make it clear that panels don't need to call if HPD is a GPIO.
-> >
-> >  include/drm/display/drm_dp_helper.h | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
->
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+IMO, the test driver should just test one form of data transfer. Either CPU
+memcpy (using iATU or something similar) or DMA. But I think the motive behind
+using DMA memcpy is that to support platforms that do not pass DMA slave
+channels in devicetree.
 
-I don't think this is controversial and I've been involved / written
-most of the code for eDP panel interactions, so I think I can land
-this myself with Dmitry and Abhinav's review (thanks!). If someone
-later comes back with additional thoughts I'm happy to update things
-more.
+It is applicable to test driver but not to MHI driver since all DMA supported
+MHI platforms will pass the DMA slave channels in devicetree.
 
-Pushed to drm-misc-next:
+> However, it seems like both pci-epf-mhi.c and pci-epf-test.c
+> do either:
+> -Use DMA API
+> or
+> -Use memcpy_fromio()/memcpy_toio() instead of DMA API
+> 
+> 
+> To me, it seems like we should always be able to use
+> DMA API (using either a eDMA or "dummy" memcpy).
+> 
 
-6376eb8b9115 drm/dp: Clarify that wait_hpd_asserted() is not optional for p=
-anels
+No, there are platforms that don't support DMA at all. Like Qcom SDX55, so we
+still need to do CPU memcpy.
+
+> I don't really see the need to have the path that does:
+> memcpy_fromio()/memcpy_toio().
+> 
+> I know that for DWC, when using memcpy (and this also
+> memcpy via DMA API), we need to map the address using
+> iATU first.
+> 
+> But that could probably be done using another flag,
+> perhaps rename that flag FLAG_USE_DMA to NEEDS_MAP or
+> something.
+> (Such that we can change these drivers to only have a
+> code path that uses DMA API.)
+> (...and making sure that inheriting the DMA mask does
+> not affect the DMA mask for DMA_MEMCPY.)
+> 
+> But perhaps I am missing something... and DMA_MEMCPY is
+> not always available?
+> 
+
+Yes.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
