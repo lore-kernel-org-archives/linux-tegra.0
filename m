@@ -1,104 +1,50 @@
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDE012FF74;
-	Wed, 27 Mar 2024 17:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15785227;
+	Wed, 27 Mar 2024 18:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711562309; cv=none; b=QvNv6WEUDVfxRRD5o6H6jsUlogP/n8jK9NVQK2lHU2GdBUpY1qR+PCR5uhQmEt2UUAx0umAyEXn0PGTjlGTWrf/pEMXEyVkpu8Weje0fuNFRdVKV34FHpMt3VNTnescBJy6oyG24RLykWTmy4Ueu3StFz2IVglZtK1gKsg0sAcA=
+	t=1711562797; cv=none; b=Gh5/oAkHJzjFLiXXJYU0nDRzkhfxJiueaayFYfjMdtBSER87twIbKr4g/z4efGwAfMTL4BqNtgDRBd+fNGrhLI2qeFlrLQdLfwkg2/DWwN88RQ0MeNuaGwUCETNbdy/ua+rNq7vS3w+NazxHTSYhlcmJo7gWIF4TPXOJjoJBwOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711562309; c=relaxed/simple;
-	bh=/LAfZ8Nb5/IISyxpsj9ues9JEim1UydvELJxBBntuTw=;
+	s=arc-20240116; t=1711562797; c=relaxed/simple;
+	bh=ELmyXwcV+FV9/p8zH/5M6gKnn4Kq8bGt1DVRV4LDDKQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gyGMfLASXFa+bBBHqJudNMYrwVHkV9reJT4pkRODxKyQnjkj/Eh6LuaRy+5xr1dNFNTbDohz5jNBuymEbyIr4lKym/IFsrVH9IwwuID2xLgKoN4UnKkJtyCaywc7DukvpyeMPScD+alJN0bDt6tGJLZqNC1U83kvM0dBBz33Lfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CjH7+A2i; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=AtG4u3LJXZJrB1Z9BZFShmUwnRWY6TQnHuy6oizg2Ji7P7NgHVM3sHtvIA/RjOzwS0JyPmDhxGuaa2YzOLlRbN/ENbIco1PeFZKaxCJNWtQDhihM/5y+mtMULljNfNRbgtre5CZ09E2Q3QyLW/IhGjDzp/cK9wgc4Vg5U3Zrqoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NQmy7JUC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CjH7+A2i"
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5a4a14c52fcso35112eaf.1;
-        Wed, 27 Mar 2024 10:58:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1711562307; x=1712167107; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yWR/88ZuStiYrDMS5UWD0VLDt0J6Sqyii5LmdWwCGKc=;
-        b=CjH7+A2iUHNFpc5Ub0yrU/SBj9I1zaJOkzlsM7zo5J9GOmk0X/MDLo+r2ntG0DWp0a
-         4Wm2laCBzMUg+y1PInO9Dhr+OKefCMUQfslxCkJYXzLsoPRP/ZIuZl7ZCPP+jJtrcR3s
-         fyfPsugyYYQIlC5ObV0K9PzEyah0W/JZPY02Ep7Q2ikupHkII2Lew2ojUxGb4NdJiXym
-         wl9T7ckfXW2O7iEubiZWsD9gjzd/RsCTcOxvDxC0eaFjWWuTjcHDaS1qoif9pShg9igE
-         Db6me9cJP+AvLodHAqsPuwpd3Ve6aVfzSKJplXUThl8HqETmkOTJSC3BlBnMhpIkZYf7
-         +1Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711562307; x=1712167107;
-        h=in-reply-to:content-disposition:mime-version:references:reply-to
-         :message-id:subject:cc:to:from:date:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=yWR/88ZuStiYrDMS5UWD0VLDt0J6Sqyii5LmdWwCGKc=;
-        b=dYFdkB2fXDsBFJx8MP3U2dJx3gWSiXioVgT2H1RkhzkCkEFDzlnIYAmq08IH5zteL5
-         0141jAAjdB3FDK2jBd8DVLfsbWF2IcyGufM5I7WHD3IgdbWmeNw7BpQjLwb3a1OJPf/2
-         FS3HVuzNrtIwI1NobV/RTfcDH2NQzEkp4ohY6PSZfiXe9KFgKdXjFgtCyXHWp6jlAkdi
-         sVCejt/myduj9MzdLtp6qdF0qgK0CBPns7EI+++/0sINvuSl0FIvkwZno17nGt1w1qbG
-         NWNNJoHDeJbdavT6x2SY/5cPIxJIMz5INCj6gp19yFWFY14kbaQjeOMneZezuvgsPZGn
-         Fe+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWSaqYZ+9RmvN6WiP+kGGFyBzvHOWEBUiXySwsh4OAIGIvN+stMJvu93Ze+5FMCwvc+5pvy95LRfTtjmigHzhjtwl7N/nKkXCRkX/BFeGorSoQs3M/My4TrOcvqkIfrrsg5C3PMSizOgAzV2gT3cr/rTW2a8huqE7lW6yluyJ8RL3NW0fiwl2uOKzyzn0hpNGRtdLc+uGMkPOB0QsP1gEZHEKACK814e/iAaGZ6/dPWYLrzQXAfHia/+2+wKCHX35Ebwh6jfbNFLcr/1WeU7udkU4jDxbXXqRgh52NpuRGCmKgfKPDKlIpEXuxYQA+3V9RRl1ts+hmEr75mrxS2R+WGc1t1oEGotGgiQ7IyHbHNfnz45NFd620BqwbeJc/OMgxaCHDUj3sDjXh6R2X4FdZGmpADV5P1MJ39zg8atpFC6vE8ARjuYJObJjOTrXVSgoSAu25gqjkTXDfDnnGyc3+8LJ9xUHE/j0EfSu1eZFRPoTCLxuwUTTuVL2ge9KRVtCehybT9AiDeZS2hRx1A35B06wRSD4Zy6aPUjXR9NW8efFk=
-X-Gm-Message-State: AOJu0YyoTSR7/t3dMCxkTCSMA7VBosr7rFLL1MuzpBdsB16Qtrn+ZEcu
-	/k1Ht/Qi1zshsCobgzpCbB/KZb8u4beaNDx6A5bGz928tKY9JFo=
-X-Google-Smtp-Source: AGHT+IHGFL5Y4vBO4pyfj4PH1IfUYef9kiur/wYx9MERAj7ZhpX+bQrG7CGeqTsmrIqsWvwI+SjvGQ==
-X-Received: by 2002:a05:6820:260f:b0:5a4:ae86:118f with SMTP id cy15-20020a056820260f00b005a4ae86118fmr856230oob.8.1711562306422;
-        Wed, 27 Mar 2024 10:58:26 -0700 (PDT)
-Received: from serve.minyard.net (serve.minyard.net. [2001:470:b8f6:1b::1])
-        by smtp.gmail.com with ESMTPSA id cs2-20020a056820258200b005a1f748f3edsm2445897oob.30.2024.03.27.10.58.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Mar 2024 10:58:26 -0700 (PDT)
-Sender: Corey Minyard <tcminyard@gmail.com>
-Received: from mail.minyard.net (unknown [IPv6:2001:470:b8f6:1b:ac74:4d5d:21e4:a88a])
-	by serve.minyard.net (Postfix) with ESMTPSA id 6CA7D1800B9;
-	Wed, 27 Mar 2024 17:58:24 +0000 (UTC)
-Date: Wed, 27 Mar 2024 12:58:23 -0500
-From: Corey Minyard <minyard@acm.org>
-To: Allen Pais <apais@linux.microsoft.com>
-Cc: linux-kernel@vger.kernel.org, tj@kernel.org, keescook@chromium.org,
-	vkoul@kernel.org, marcan@marcan.st, sven@svenpeter.dev,
-	florian.fainelli@broadcom.com, rjui@broadcom.com,
-	sbranden@broadcom.com, paul@crapouillou.net,
-	Eugeniy.Paltsev@synopsys.com, manivannan.sadhasivam@linaro.org,
-	vireshk@kernel.org, Frank.Li@nxp.com, leoyang.li@nxp.com,
-	zw@zh-kernel.org, wangzhou1@hisilicon.com, haijie1@huawei.com,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, sean.wang@mediatek.com,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	afaerber@suse.de, logang@deltatee.com, daniel@zonque.org,
-	haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-	andersson@kernel.org, konrad.dybcio@linaro.org, orsonzhai@gmail.com,
-	baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
-	patrice.chotard@foss.st.com, linus.walleij@linaro.org,
-	wens@csie.org, jernej.skrabec@gmail.com, peter.ujfalusi@gmail.com,
-	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, jassisinghbrar@gmail.com, mchehab@kernel.org,
-	maintainers@bluecherrydvr.com, aubin.constans@microchip.com,
-	ulf.hansson@linaro.org, manuel.lauss@gmail.com,
-	mirq-linux@rere.qmqm.pl, jh80.chung@samsung.com, oakad@yahoo.com,
-	hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
-	brucechang@via.com.tw, HaraldWelte@viatech.com, pierre@ossman.eu,
-	duncan.sands@free.fr, stern@rowland.harvard.edu, oneukum@suse.com,
-	openipmi-developer@lists.sourceforge.net, dmaengine@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-mediatek@lists.infradead.org,
-	linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 6/9] ipmi: Convert from tasklet to BH workqueue
-Message-ID: <ZgRePyo2zC4A1Fp4@mail.minyard.net>
-Reply-To: minyard@acm.org
-References: <20240327160314.9982-1-apais@linux.microsoft.com>
- <20240327160314.9982-7-apais@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NQmy7JUC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB0FC433C7;
+	Wed, 27 Mar 2024 18:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711562796;
+	bh=ELmyXwcV+FV9/p8zH/5M6gKnn4Kq8bGt1DVRV4LDDKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NQmy7JUCEZ0RxIGKKgDxesVr/zBZBlOhbpw6BuiwYqInjUm2QolaDyoi93Z/1ZIDT
+	 fXfeILsnH6JFGEkhARAkWC6/HiE8+5o5m9o69ef2b1DjI4qtlbtnt2G+4LIovO2GXr
+	 g8N9dGuVaSpcBXK61RpiAK3G9bs75gKErf40XvBIqRcumFGtD5EzKfM+JNIORC1NhX
+	 st47971wfU0D30xAqoe5lON13N9ktrWVS7ajto4z++ZpfmvSVkP6wOKqsLplbObd2/
+	 JOpORRStz3LnZXXYI+T59a1Haaiihp6vUslg8pJvBAmv3w5p1XyLystGyO8RAqQvpU
+	 XNZcGuAQYU0Pg==
+Date: Wed, 27 Mar 2024 19:06:30 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 07/11] PCI: dwc: ep: Add a generic dw_pcie_ep_linkdown()
+ API to handle Link Down event
+Message-ID: <ZgRgJsOT_bzXM1wK@ryzen>
+References: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
+ <20240314-pci-epf-rework-v1-7-6134e6c1d491@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -107,160 +53,160 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240327160314.9982-7-apais@linux.microsoft.com>
+In-Reply-To: <20240314-pci-epf-rework-v1-7-6134e6c1d491@linaro.org>
 
-On Wed, Mar 27, 2024 at 04:03:11PM +0000, Allen Pais wrote:
-> The only generic interface to execute asynchronously in the BH context is
-> tasklet; however, it's marked deprecated and has some design flaws. To
-> replace tasklets, BH workqueue support was recently added. A BH workqueue
-> behaves similarly to regular workqueues except that the queued work items
-> are executed in the BH context.
+Hello Mani,
+
+On Thu, Mar 14, 2024 at 08:53:46PM +0530, Manivannan Sadhasivam wrote:
+> As per the PCIe base spec r5.0, section 5.2, Link Down event can happen
+> under any of the following circumstances:
 > 
-> This patch converts drivers/infiniband/* from tasklet to BH workqueue.
-
-I think you mean drivers/char/ipmi/* here.
-
-I believe that work queues items are execute single-threaded for a work
-queue, so this should be good.  I need to test this, though.  It may be
-that an IPMI device can have its own work queue; it may not be important
-to run it in bh context.
-
--corey
-
+> 1. Fundamental/Hot reset
+> 2. Link disable transmission by upstream component
+> 3. Moving from L2/L3 to L0
 > 
-> Based on the work done by Tejun Heo <tj@kernel.org>
-> Branch: https://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-6.10
+> In those cases, Link Down causes some non-sticky DWC registers to loose the
+> state (like REBAR, etc...). So the drivers need to reinitialize them to
+> function properly once the link comes back again.
 > 
-> Signed-off-by: Allen Pais <allen.lkml@gmail.com>
+> This is not a problem for drivers supporting PERST# IRQ, since they can
+> reinitialize the registers in the PERST# IRQ callback. But for the drivers
+> not supporting PERST#, there is no way they can reinitialize the registers
+> other than relying on Link Down IRQ received when the link goes down. So
+> let's add a DWC generic API dw_pcie_ep_linkdown() that reinitializes the
+> non-sticky registers and also notifies the EPF drivers about link going
+> down.
+> 
+> This API can also be used by the drivers supporting PERST# to handle the
+> scenario (2) mentioned above.
+> 
+> NOTE: For the sake of code organization, move the dw_pcie_ep_linkup()
+> definition just above dw_pcie_ep_linkdown().
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->  drivers/char/ipmi/ipmi_msghandler.c | 30 ++++++++++++++---------------
->  1 file changed, 15 insertions(+), 15 deletions(-)
+>  drivers/pci/controller/dwc/pcie-designware-ep.c | 93 ++++++++++++++++---------
+>  drivers/pci/controller/dwc/pcie-designware.h    |  5 ++
+>  2 files changed, 67 insertions(+), 31 deletions(-)
 > 
-> diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-> index b0eedc4595b3..fce2a2dbdc82 100644
-> --- a/drivers/char/ipmi/ipmi_msghandler.c
-> +++ b/drivers/char/ipmi/ipmi_msghandler.c
-> @@ -36,12 +36,13 @@
->  #include <linux/nospec.h>
->  #include <linux/vmalloc.h>
->  #include <linux/delay.h>
-> +#include <linux/workqueue.h>
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 3893a8c1a11c..5451057ca74b 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -14,18 +14,6 @@
+>  #include <linux/pci-epc.h>
+>  #include <linux/pci-epf.h>
 >  
->  #define IPMI_DRIVER_VERSION "39.2"
+> -/**
+> - * dw_pcie_ep_linkup - Notify EPF drivers about link up event
+> - * @ep: DWC EP device
+> - */
+> -void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
+> -{
+> -	struct pci_epc *epc = ep->epc;
+> -
+> -	pci_epc_linkup(epc);
+> -}
+> -EXPORT_SYMBOL_GPL(dw_pcie_ep_linkup);
+> -
+>  /**
+>   * dw_pcie_ep_init_notify - Notify EPF drivers about EPC initialization
+>   *			    complete
+> @@ -672,6 +660,29 @@ static unsigned int dw_pcie_ep_find_ext_capability(struct dw_pcie *pci, int cap)
+>  	return 0;
+>  }
 >  
->  static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void);
->  static int ipmi_init_msghandler(void);
-> -static void smi_recv_tasklet(struct tasklet_struct *t);
-> +static void smi_recv_work(struct work_struct *t);
->  static void handle_new_recv_msgs(struct ipmi_smi *intf);
->  static void need_waiter(struct ipmi_smi *intf);
->  static int handle_one_recv_msg(struct ipmi_smi *intf,
-> @@ -498,13 +499,13 @@ struct ipmi_smi {
+> +static void dw_pcie_ep_init_non_sticky_registers(struct dw_pcie *pci)
+> +{
+> +	unsigned int offset;
+> +	unsigned int nbars;
+> +	u32 reg, i;
+> +
+> +	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
+> +
+> +	dw_pcie_dbi_ro_wr_en(pci);
+> +
+> +	if (offset) {
+> +		reg = dw_pcie_readl_dbi(pci, offset + PCI_REBAR_CTRL);
+> +		nbars = (reg & PCI_REBAR_CTRL_NBAR_MASK) >>
+> +			PCI_REBAR_CTRL_NBAR_SHIFT;
+> +
+> +		for (i = 0; i < nbars; i++, offset += PCI_REBAR_CTRL)
+> +			dw_pcie_writel_dbi(pci, offset + PCI_REBAR_CAP, 0x0);
+> +	}
+> +
+> +	dw_pcie_setup(pci);
+> +	dw_pcie_dbi_ro_wr_dis(pci);
+> +}
+> +
+>  /**
+>   * dw_pcie_ep_init_registers - Initialize DWC EP specific registers
+>   * @ep: DWC EP device
+> @@ -686,13 +697,11 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
+>  	struct dw_pcie_ep_func *ep_func;
+>  	struct device *dev = pci->dev;
+>  	struct pci_epc *epc = ep->epc;
+> -	unsigned int offset, ptm_cap_base;
+> -	unsigned int nbars;
+> +	u32 ptm_cap_base, reg;
+>  	u8 hdr_type;
+>  	u8 func_no;
+> -	int i, ret;
+>  	void *addr;
+> -	u32 reg;
+> +	int ret;
+>  
+>  	hdr_type = dw_pcie_readb_dbi(pci, PCI_HEADER_TYPE) &
+>  		   PCI_HEADER_TYPE_MASK;
+> @@ -755,20 +764,8 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
+>  	if (ep->ops->init)
+>  		ep->ops->init(ep);
+>  
+> -	offset = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_REBAR);
+>  	ptm_cap_base = dw_pcie_ep_find_ext_capability(pci, PCI_EXT_CAP_ID_PTM);
+>  
+> -	dw_pcie_dbi_ro_wr_en(pci);
+> -
+> -	if (offset) {
+> -		reg = dw_pcie_readl_dbi(pci, offset + PCI_REBAR_CTRL);
+> -		nbars = (reg & PCI_REBAR_CTRL_NBAR_MASK) >>
+> -			PCI_REBAR_CTRL_NBAR_SHIFT;
+> -
+> -		for (i = 0; i < nbars; i++, offset += PCI_REBAR_CTRL)
+> -			dw_pcie_writel_dbi(pci, offset + PCI_REBAR_CAP, 0x0);
+> -	}
+> -
 >  	/*
->  	 * Messages queued for delivery.  If delivery fails (out of memory
->  	 * for instance), They will stay in here to be processed later in a
-> -	 * periodic timer interrupt.  The tasklet is for handling received
-> +	 * periodic timer interrupt.  The work is for handling received
->  	 * messages directly from the handler.
->  	 */
->  	spinlock_t       waiting_rcv_msgs_lock;
->  	struct list_head waiting_rcv_msgs;
->  	atomic_t	 watchdog_pretimeouts_to_deliver;
-> -	struct tasklet_struct recv_tasklet;
-> +	struct work_struct recv_work;
->  
->  	spinlock_t             xmit_msgs_lock;
->  	struct list_head       xmit_msgs;
-> @@ -704,7 +705,7 @@ static void clean_up_interface_data(struct ipmi_smi *intf)
->  	struct cmd_rcvr  *rcvr, *rcvr2;
->  	struct list_head list;
->  
-> -	tasklet_kill(&intf->recv_tasklet);
-> +	cancel_work_sync(&intf->recv_work);
->  
->  	free_smi_msg_list(&intf->waiting_rcv_msgs);
->  	free_recv_msg_list(&intf->waiting_events);
-> @@ -1319,7 +1320,7 @@ static void free_user(struct kref *ref)
->  {
->  	struct ipmi_user *user = container_of(ref, struct ipmi_user, refcount);
->  
-> -	/* SRCU cleanup must happen in task context. */
-> +	/* SRCU cleanup must happen in work context. */
->  	queue_work(remove_work_wq, &user->remove_work);
->  }
->  
-> @@ -3605,8 +3606,7 @@ int ipmi_add_smi(struct module         *owner,
->  	intf->curr_seq = 0;
->  	spin_lock_init(&intf->waiting_rcv_msgs_lock);
->  	INIT_LIST_HEAD(&intf->waiting_rcv_msgs);
-> -	tasklet_setup(&intf->recv_tasklet,
-> -		     smi_recv_tasklet);
-> +	INIT_WORK(&intf->recv_work, smi_recv_work);
->  	atomic_set(&intf->watchdog_pretimeouts_to_deliver, 0);
->  	spin_lock_init(&intf->xmit_msgs_lock);
->  	INIT_LIST_HEAD(&intf->xmit_msgs);
-> @@ -4779,7 +4779,7 @@ static void handle_new_recv_msgs(struct ipmi_smi *intf)
->  			 * To preserve message order, quit if we
->  			 * can't handle a message.  Add the message
->  			 * back at the head, this is safe because this
-> -			 * tasklet is the only thing that pulls the
-> +			 * work is the only thing that pulls the
->  			 * messages.
->  			 */
->  			list_add(&smi_msg->link, &intf->waiting_rcv_msgs);
-> @@ -4812,10 +4812,10 @@ static void handle_new_recv_msgs(struct ipmi_smi *intf)
->  	}
->  }
->  
-> -static void smi_recv_tasklet(struct tasklet_struct *t)
-> +static void smi_recv_work(struct work_struct *t)
->  {
->  	unsigned long flags = 0; /* keep us warning-free. */
-> -	struct ipmi_smi *intf = from_tasklet(intf, t, recv_tasklet);
-> +	struct ipmi_smi *intf = from_work(intf, t, recv_work);
->  	int run_to_completion = intf->run_to_completion;
->  	struct ipmi_smi_msg *newmsg = NULL;
->  
-> @@ -4866,7 +4866,7 @@ void ipmi_smi_msg_received(struct ipmi_smi *intf,
->  
->  	/*
->  	 * To preserve message order, we keep a queue and deliver from
-> -	 * a tasklet.
-> +	 * a work.
->  	 */
->  	if (!run_to_completion)
->  		spin_lock_irqsave(&intf->waiting_rcv_msgs_lock, flags);
-> @@ -4887,9 +4887,9 @@ void ipmi_smi_msg_received(struct ipmi_smi *intf,
->  		spin_unlock_irqrestore(&intf->xmit_msgs_lock, flags);
->  
->  	if (run_to_completion)
-> -		smi_recv_tasklet(&intf->recv_tasklet);
-> +		smi_recv_work(&intf->recv_work);
->  	else
-> -		tasklet_schedule(&intf->recv_tasklet);
-> +		queue_work(system_bh_wq, &intf->recv_work);
->  }
->  EXPORT_SYMBOL(ipmi_smi_msg_received);
->  
-> @@ -4899,7 +4899,7 @@ void ipmi_smi_watchdog_pretimeout(struct ipmi_smi *intf)
->  		return;
->  
->  	atomic_set(&intf->watchdog_pretimeouts_to_deliver, 1);
-> -	tasklet_schedule(&intf->recv_tasklet);
-> +	queue_work(system_bh_wq, &intf->recv_work);
->  }
->  EXPORT_SYMBOL(ipmi_smi_watchdog_pretimeout);
->  
-> @@ -5068,7 +5068,7 @@ static bool ipmi_timeout_handler(struct ipmi_smi *intf,
->  				       flags);
+>  	 * PTM responder capability can be disabled only after disabling
+>  	 * PTM root capability.
+> @@ -785,9 +782,6 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
+>  		dw_pcie_dbi_ro_wr_dis(pci);
 >  	}
 >  
-> -	tasklet_schedule(&intf->recv_tasklet);
-> +	queue_work(system_bh_wq, &intf->recv_work);
->  
->  	return need_timer;
->  }
-> -- 
-> 2.17.1
-> 
-> 
+> -	dw_pcie_setup(pci);
+> -	dw_pcie_dbi_ro_wr_dis(pci);
+> -
+
+Your previous series had:
+
+-       dw_pcie_setup(pci);
+-       dw_pcie_dbi_ro_wr_dis(pci);
++       dw_pcie_ep_init_non_sticky_registers(pci);
+
+Here.
+I tested this series, but it did not work for me (the Resizable BARs did
+not get resized) since you removed the call to
+dw_pcie_ep_init_non_sticky_registers().
+
+By readding the call to dw_pcie_ep_init_non_sticky_registers(),
+the BARs get Resized again.
+
+
+BTW do you have a git branch with both your series somewhere?
+(Possibly even rebased on
+https://lore.kernel.org/linux-pci/20240320113157.322695-1-cassel@kernel.org/T/#t
+like you suggested in your other mail.)
+
+
+Kind regards,
+Niklas
