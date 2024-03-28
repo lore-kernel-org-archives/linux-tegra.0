@@ -1,70 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB0B537F5;
-	Thu, 28 Mar 2024 07:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FC553804;
+	Thu, 28 Mar 2024 10:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711611584; cv=none; b=sfXLrdO4JiExPLUehUP5LA1mTTi7KbNEit1cZr8t8RqYZsMyabH5IEfDYuPiIqbypyqdAhSpmbZAF08oRXHnRpKwhUfXxdAe8bqcjSLMqo/Sn1Tk+CcjjyTARk3Omx8W6XOTE0ms33EDImJk5120cvxHJ3qx3QxqHUqT56z3D3E=
+	t=1711620375; cv=none; b=AXRlhScg0CmOJDlgTzOBpXq2Upjo6eWb+Z5kRQHyTtRxzecgm6Gpc996VQGb+MmDRJiDOAt21giVsk/APB1haEiN/YRIA4KRHDVvssGiIXw9KjZJd7DMKAQsmsAisDzGwytsv7/ESIhkI2aqcUmmTIGZtU1LT/5GKdgtwgELNNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711611584; c=relaxed/simple;
-	bh=2vs+I5zolHQk2E65dIw1dzi8eAJzKw/knO9AxisL02M=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jIQGLOgNcw7B7PPq5P5im9qO3SZ8lOiTpQX91uvmaVRNF/iwHZ49Bw97paSfrwLJDcVXERWd+uSyMq9qTGZI6M3wNAWnQBLbWvbMSwtKic3FB4QU/TteiOwFe/xel1RnM6DCucFxLXg2GOob4vojV/XvUwp5C21BCJja1ncxlqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uf55Rnm8; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uf55Rnm8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A03F3C43394;
-	Thu, 28 Mar 2024 07:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711611584;
-	bh=2vs+I5zolHQk2E65dIw1dzi8eAJzKw/knO9AxisL02M=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=uf55Rnm8wGPtceZfWeWPCB+WbsTZt7q6UNBtTfnDTT4UFHHms3dpCQCr4ZG1hAlJk
-	 WZYhT669LivtVWNVLbqXT2Zt7dfPrfOieZKiTtDLhxYFXJ3wgvcBFGbLvyVcZj5jTw
-	 bAsFzlkY56al1n1qwZz3bFefAXwbqOIgaZ1YgY4umbOQXROhZIWgVas2HXtoxchwwc
-	 PXD/Nry7Tysbo1DSr8SHwk+R5P9jqqeyVmFCmrG57DGBN5rMjUj/yWY9fSlKl4cI+d
-	 h/R+HI+Y050Z3BrphRRxdKb+rHyTHVaF5na48FjC1ALD1rNTcWdUPrq/m00mI8ZewQ
-	 aijVEpOzHy6yQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: ldewangan@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com, 
- dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Akhil R <akhilrajeev@nvidia.com>
-In-Reply-To: <20240315124411.17582-1-akhilrajeev@nvidia.com>
-References: <20240315124411.17582-1-akhilrajeev@nvidia.com>
-Subject: Re: [PATCH v2 RESEND] dmaengine: tegra186: Fix residual
- calculation
-Message-Id: <171161158127.113367.3353184486729352623.b4-ty@kernel.org>
-Date: Thu, 28 Mar 2024 13:09:41 +0530
+	s=arc-20240116; t=1711620375; c=relaxed/simple;
+	bh=4dG8UhkcaQYzhOF03nvm3E5xZ94yc0It4+G2sZOnS6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+p2kILkvV0JE9Lupxm5tPhsAr1midKPe2tWaEWehzXlhnoa8wKB4BRjtplaQQzH2lVIohF/C/SfiJ+IxoKSqemhyJJwYskkakLup5gJGbbXn0eDVMa+a7jqiGauRxEiZYRTC9rAXVkYd/ee1Uyd3S07OEWmkVoWwoPhhjhrEbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+	id 1rpmdb-00C7Dr-R3; Thu, 28 Mar 2024 18:05:36 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 28 Mar 2024 18:05:52 +0800
+Date: Thu, 28 Mar 2024 18:05:52 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: davem@davemloft.net, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+	catalin.marinas@arm.com, will@kernel.org, mperttunen@nvidia.com,
+	airlied@gmail.com, daniel@ffwll.ch, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v6 3/5] crypto: tegra: Add Tegra Security Engine driver
+Message-ID: <ZgVBAFmfK7GKgmYi@gondor.apana.org.au>
+References: <20240319082306.34716-1-akhilrajeev@nvidia.com>
+ <20240319082306.34716-4-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240319082306.34716-4-akhilrajeev@nvidia.com>
 
+On Tue, Mar 19, 2024 at 01:53:04PM +0530, Akhil R wrote:
+>
+> +		.alg.skcipher.op.do_one_request	= tegra_aes_do_one_req,
+> +		.alg.skcipher.base = {
+> +			.init = tegra_aes_cra_init,
+> +			.exit = tegra_aes_cra_exit,
+> +			.setkey = tegra_aes_setkey,
+> +			.encrypt = tegra_aes_encrypt,
+> +			.decrypt = tegra_aes_decrypt,
+> +			.min_keysize = AES_MIN_KEY_SIZE,
+> +			.max_keysize = AES_MAX_KEY_SIZE,
+> +			.ivsize	= AES_BLOCK_SIZE,
+> +			.base = {
+> +				.cra_name = "ofb(aes)",
+> +				.cra_driver_name = "ofb-aes-tegra",
+> +				.cra_priority = 500,
+> +				.cra_flags = CRYPTO_ALG_TYPE_SKCIPHER | CRYPTO_ALG_ASYNC,
+> +				.cra_blocksize = AES_BLOCK_SIZE,
+> +				.cra_ctxsize = sizeof(struct tegra_aes_ctx),
+> +				.cra_alignmask = 0xf,
+> +				.cra_module = THIS_MODULE,
+> +			},
+> +		}
+> +	}, {
 
-On Fri, 15 Mar 2024 18:14:11 +0530, Akhil R wrote:
-> The existing residual calculation returns an incorrect value when
-> bytes_xfer == bytes_req. This scenario occurs particularly with drivers
-> like UART where DMA is scheduled for maximum number of bytes and is
-> terminated when the bytes inflow stops. At higher baud rates, it could
-> request the tx_status while there is no bytes left to transfer. This will
-> lead to incorrect residual being set. Hence return residual as '0' when
-> bytes transferred equals to the bytes requested.
-> 
-> [...]
+OFB no longer exists in the kernel.  Please remove all traces of it
+from your driver.
 
-Applied, thanks!
+Also please ensure that yuor driver passes the extra fuzz tests.
 
-[1/1] dmaengine: tegra186: Fix residual calculation
-      commit: 30f0ced9971b2d8c8c24ae75786f9079489a012d
-
-Best regards,
+Thanks,
 -- 
-~Vinod
-
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
