@@ -1,309 +1,291 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7DE52F62;
-	Thu, 28 Mar 2024 18:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3410E41757;
+	Thu, 28 Mar 2024 19:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711651374; cv=none; b=Vt+58OhyXP3oytGuVOdnP5YLYU/5hCYSQ9+htSn/JFmRhzfXOwG2ckbUKbp8Gae5wIMthKNbMmjIy2Lg3FIEJH8c4Dgj68fXGsdEU2dk28FWWRK5Y3vBP9GahrlrmIRD8MMSoxIwXcnuzzJhS/RC+dDHUIdslHiG23CipuU5DMU=
+	t=1711653794; cv=none; b=bu//DYiCGmuj2alEfr45xIJM6tF7LAYMaUM7tXZ/5oljd0miADsZ8aDaEXxJSt/BFT8T7im4qF2kiriOI3Y81rbEGHpI78J7nfEHFWRouT8OLz9FoZ07JiB7wkuzOuv1TzeInj7IudhBmizlqfNr7Sv6Kj71zZfLN5kvgOzStcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711651374; c=relaxed/simple;
-	bh=Lhjd64SIjhVMv9/lv3bYSJaei3jnDSVww9duNzoywLo=;
+	s=arc-20240116; t=1711653794; c=relaxed/simple;
+	bh=Qkh+5aM9AgMrPiE9S446jPnPgfztZdsPallUAN8x3Xc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uN3Vf/0rrSayHFzLVUtAK70ABYHdsy0hUnWeQyVE584tAvdzBhPNK+pXH4YPM0Rdshq+yDHVjAYuIjHUmFehpm/y8kWKY5wnVHigetGL5CmCCPXBGmrakJzT5tpTSot00+1eZIbsmkuufgttol12XBwQqLozqDbhe4A57cM1Kh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhL3q+An; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=SZGaWBu54moYyOZ7U1PWnh9z9YLyAHoYL105+GzRNOFXm6w1P00r86E5tJCMDdyb6VMMPp0ECHWkEEM4H0/vbuwaVxSi7cZTv0dD9/Ljre1sw+x2khR4N/g6OmrY8lFeiYUJGx5guFDRvrETepl1sOwB2MTAkwcoak8dtklnyfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBGRgtAY; arc=none smtp.client-ip=209.85.167.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhL3q+An"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0799C433F1;
-	Thu, 28 Mar 2024 18:42:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711651374;
-	bh=Lhjd64SIjhVMv9/lv3bYSJaei3jnDSVww9duNzoywLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lhL3q+AnF8cBpxy+HC9aPsEt1sU2kR4MRCwq7reUIMtl4htRmWXBN5RNsRamazXfX
-	 BKs1Y0+rbXdrmCjse1Gec3NVTdpSHojDNW9d+wJ7hRBcEBQP8bMrNqxtKJTSFMdxGL
-	 eeXqgGpkKH+3zQ/YRRwz+FzbLXAS7j2P0TqX+5xEZjMjkSO2mz8+vlihgmbILoEf1E
-	 3xYUNJDoJ5OfB/dA7T+J4pOH+I3KWuiO3Cjz9FmePGunVpD3HgOKjxNxN8auRJ51Zt
-	 TK8vWajVfoyao4L5vMhE/6RmfzSxVUyebh3oDdlyGDJt2PSPB7Xy/M3OdTepO9LwDA
-	 3k0nLAaKmIRug==
-Date: Fri, 29 Mar 2024 00:12:48 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 05/11] PCI: epf-{mhi/test}: Move DMA initialization to
- EPC init callback
-Message-ID: <ZgW6KB73Wh1X6911@matsya>
-References: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
- <20240314-pci-epf-rework-v1-5-6134e6c1d491@linaro.org>
- <Zf2tXgKo-gc3qy1D@ryzen>
- <20240326082636.GG9565@thinkpad>
- <ZgKsBoTvPWWhPO9e@ryzen>
- <20240327055457.GA2742@thinkpad>
- <ZgQFXsgqpeLbXMTb@ryzen>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBGRgtAY"
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3c3ab85050cso901644b6e.1;
+        Thu, 28 Mar 2024 12:23:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1711653790; x=1712258590; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=GyFGSwdDS+8X5fWOjo2s+K1AMkRQoOt7S254R+rI76g=;
+        b=WBGRgtAYY1ul09qAQP15jHMyDDv17c6U7/Ep4/YYWw35GKpQHLjwAwuQSHdloWIIeA
+         gW9Jt7Q5sV2fVwkj9HapX68tvUyfaQsiZnWp8m7SLVErSzrowhkaNAlk56e0IN/GzyjG
+         PC5mhNeEoemZdnaWUg9v14+ihNarMnOAdJG8DWJ+lQd6jK3un4VImm3KnUV/XwYRoc1h
+         IXDBTINXMKmckjTOs1lJalMm1jPYjpvd+AF1IYu3DfwmClF9h8wEt8bSwWWZQIJFiwLK
+         EVRzw/49hHDKOsXMYFnH4v7sh2FKwO2xspmYv3kvxsgIKKiGB6r5O6PiupWfNXLWMtaM
+         7FfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711653790; x=1712258590;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:reply-to:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GyFGSwdDS+8X5fWOjo2s+K1AMkRQoOt7S254R+rI76g=;
+        b=mk1wel8mvvt4cwLLAIyFMeaKgtXNLdN1CKLxowQ2Sr6xBw4BftjDunmovdCaQm/ZaW
+         Lk5O33PepRMxRqznla05KIoAdJ+GwwwtIlHiGOgfM+MFers74i0vLRCt6gvWktpXf9kr
+         SAFafc/BRl+l1kaP4Ph7LXChkLjCE7OAwoi6bjZ25vqkXDSyXbrUXBs6kf6mGULB81Py
+         aofehRa2i2ajWT4Q9hol6O/GAuZuRDGAlAogHOfxyvEhMBi0HLFNO+/XOKNN/kl9zVt7
+         cIE/NKkCjy/SGzIr0lf6fnXxkH1g8QFCO4nvFki13sLdmk12bi+OYwD14a1P/8IWne/S
+         VeuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFEBTGVkl2TFh0G/95wWsR/AauuxWXhM/EiMOjvDLCnn7LMV7IW1jBQTQoqvyAZ4EbfPEIIU8Ob7mA4nT2YU5cKMUuCDvVL2T3YCW0URz6UN6RkNCLnWGSwQ2KTJI0pQGFfIQ2tDUGcNvJf9EaHo/t7yaQvvsSNgkg4H0BnPXwzpMCv5XVFaNHSsPya6gJ011OUvYnpO1SsKRSfBtNFFaWz9Ma1wIl2B7n0MryyUZ4RDVgNjtknKIAEHqJYOvpXU0ZOeakzs6Z0RV/lHpl+CmXYjeZDsmyXXhIDDVi8CxH7S6pWw4X5ChOr37S49gQ2WWTTH1ol67tCl892485svaYBlW3cZnG/BpgE3IAfPPHc+1Op3ymevp98T/L/uwkhVknQXIRSvtv2Br8qM0S0ROBtPSGK6Ute9aRR+/M6IuQPQr37TpOZOYE3ErxUrp+PFgr0i2x8x0dQN/ANrCJYeD++EcyF/vOCoRWn7z1o2FtTX8dK/p/ji3FjMtAh/KVRQjZzIZ/ZE5cS6e+b9L+p81EyHRpN9XUWlZd6kB+kIW60ze4K/lPyWJljypNFRvLmNYt6BVDgzctVjEpQgDouFc=
+X-Gm-Message-State: AOJu0YwN+MOo5THiv+pYxZuUCeqtwbCA32SxJJXdQy4hFBY7Y+y3c/uE
+	dQaAQyJCe/fdxMwlVGGubf3TyiWWF0e46C0rwXfda2mlAyT2D0E=
+X-Google-Smtp-Source: AGHT+IFK1zqNOwufMazqscK9oHIt3Gnza7CUH20lAptPqfXk7u6zVWm/s/9LmWvz7C9QCTeD+gjnYA==
+X-Received: by 2002:a05:6808:3087:b0:3c3:d324:33e5 with SMTP id bl7-20020a056808308700b003c3d32433e5mr320267oib.15.1711653790263;
+        Thu, 28 Mar 2024 12:23:10 -0700 (PDT)
+Received: from serve.minyard.net ([47.184.181.2])
+        by smtp.gmail.com with ESMTPSA id v12-20020a9d7d0c000000b006e67ac8b8a2sm346096otn.78.2024.03.28.12.23.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Mar 2024 12:23:09 -0700 (PDT)
+Sender: Corey Minyard <tcminyard@gmail.com>
+Received: from mail.minyard.net (unknown [IPv6:2001:470:b8f6:1b:b987:69e:202a:697a])
+	by serve.minyard.net (Postfix) with ESMTPSA id A60B1180011;
+	Thu, 28 Mar 2024 19:23:08 +0000 (UTC)
+Date: Thu, 28 Mar 2024 14:23:07 -0500
+From: Corey Minyard <minyard@acm.org>
+To: Allen <allen.lkml@gmail.com>
+Cc: Allen Pais <apais@linux.microsoft.com>, linux-kernel@vger.kernel.org,
+	tj@kernel.org, keescook@chromium.org, vkoul@kernel.org,
+	marcan@marcan.st, sven@svenpeter.dev, florian.fainelli@broadcom.com,
+	rjui@broadcom.com, sbranden@broadcom.com, paul@crapouillou.net,
+	Eugeniy.Paltsev@synopsys.com, manivannan.sadhasivam@linaro.org,
+	vireshk@kernel.org, Frank.Li@nxp.com, leoyang.li@nxp.com,
+	zw@zh-kernel.org, wangzhou1@hisilicon.com, haijie1@huawei.com,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, sean.wang@mediatek.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	afaerber@suse.de, logang@deltatee.com, daniel@zonque.org,
+	haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
+	andersson@kernel.org, konrad.dybcio@linaro.org, orsonzhai@gmail.com,
+	baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
+	patrice.chotard@foss.st.com, linus.walleij@linaro.org,
+	wens@csie.org, jernej.skrabec@gmail.com, peter.ujfalusi@gmail.com,
+	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, jassisinghbrar@gmail.com, mchehab@kernel.org,
+	maintainers@bluecherrydvr.com, aubin.constans@microchip.com,
+	ulf.hansson@linaro.org, manuel.lauss@gmail.com,
+	mirq-linux@rere.qmqm.pl, jh80.chung@samsung.com, oakad@yahoo.com,
+	hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
+	brucechang@via.com.tw, HaraldWelte@viatech.com, pierre@ossman.eu,
+	duncan.sands@free.fr, stern@rowland.harvard.edu, oneukum@suse.com,
+	openipmi-developer@lists.sourceforge.net, dmaengine@vger.kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-mediatek@lists.infradead.org,
+	linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH 6/9] ipmi: Convert from tasklet to BH workqueue
+Message-ID: <ZgXDmx1HvujsMYAR@mail.minyard.net>
+Reply-To: minyard@acm.org
+References: <20240327160314.9982-1-apais@linux.microsoft.com>
+ <20240327160314.9982-7-apais@linux.microsoft.com>
+ <ZgRePyo2zC4A1Fp4@mail.minyard.net>
+ <CAOMdWS+1AFxEqmACiBYzPHc+q0Ut6hp15tdV50JHvfVeUNCGQw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZgQFXsgqpeLbXMTb@ryzen>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOMdWS+1AFxEqmACiBYzPHc+q0Ut6hp15tdV50JHvfVeUNCGQw@mail.gmail.com>
 
-On 27-03-24, 12:39, Niklas Cassel wrote:
-> +CC Vinod
+On Thu, Mar 28, 2024 at 10:52:16AM -0700, Allen wrote:
+> On Wed, Mar 27, 2024 at 11:05 AM Corey Minyard <minyard@acm.org> wrote:
+> >
+> > I believe that work queues items are execute single-threaded for a work
+> > queue, so this should be good.  I need to test this, though.  It may be
+> > that an IPMI device can have its own work queue; it may not be important
+> > to run it in bh context.
 > 
-> Hello Vinod,
+>   Fair point. Could you please let me know once you have had a chance to test
+> these changes. Meanwhile, I will work on RFC wherein IPMI will have its own
+> workqueue.
 > 
-> I didn't know the answer, so I chose the "call a friend option" ;)
-> I hope that you can help me out :)
+>  Thanks for taking time out to review.
 
-Anytime :-)
+After looking and thinking about it a bit, a BH context is still
+probably the best for this.
 
-> 
-> 
-> If you take a look at drivers/pci/endpoint/functions/pci-epf-test.c
-> https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/endpoint/functions/pci-epf-test.c#L448-L471
-> 
-> You can see that the driver always does pci_epc_map_addr(),
-> then it will either use:
-> DMA API, e.g. dma_map_single() etc.
-> or
-> memcpy_fromio()/memcpy_toio()
-> 
-> based on flag FLAG_USE_DMA.
-> 
-> This flag is set via ioctl, so if we run:
-> /usr/bin/pcitest -d
-> the flag will be set, without the -d parameter the flag won't be set.
-> 
-> 
-> If you look at how the DMA channel is requested:
-> https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/endpoint/functions/pci-epf-test.c#L224-L258
-> 
-> If will try to get a private DMA channel, if that fails,
-> it will use the "dummy memcpy" DMA channel.
-> 
-> If the FLAG_USE_DMA is set, the transfers itself will use:
-> https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/endpoint/functions/pci-epf-test.c#L139-L155
-> either dmaengine_prep_slave_single() or dmaengine_prep_dma_memcpy(),
-> depending on if we are using "dummy memcpy" or not.
-> 
-> 
-> 
-> If you take e.g. the DWC PCIe EP controller, it can have an embedded DMA
-> controller on the PCIe controller, and we will try to detect it when
-> initializing the PCIe EP controller using dw_pcie_edma_detect():
-> https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/controller/dwc/pcie-designware-ep.c#L759
-> 
-> For the PCIe EP controller that I am using, which have eDMA built-in,
-> I noticed that if I do not enable the eDMA driver (# CONFIG_DW_EDMA is not
-> set), I noticed that I can still run:
-> /usr/bin/pcitest -d
-> 
-> Which will use the "dummy memcpy" DMA channel.
-> Yes, the performance is poor, but it still works, so it appears that the
-> fallback code is working properly.
-> 
-> 
-> If I enable the eDMA driver (CONFIG_DW_EDMA=y),
-> I can run:
-> /usr/bin/pcitest -d
-> 
-> And the performance is good.
-> 
-> 
-> So my question is:
-> Is the "dummy memcpy" DMA channel always available?
+I have tested this patch under load and various scenarios and it seems
+to work ok.  So:
 
-That depends on the system, you may or maynot have such a system where
-you have a generic memcpy dma controller which can provide you with
-these channels
+Tested-by: Corey Minyard <cminyard@mvista.com>
+Acked-by: Corey Minyard <cminyard@mvista.com>
+
+Or I can take this into my tree.
+
+-corey
 
 > 
-> Because if it is, I think we could drop the path in the pci-epf-test.c
-> driver which uses memcpy_fromio()/memcpy_toio() instead of DMA API.
-> (Since just having a single path to do I/O in the driver would simplify
-> the driver IMO.)
+> - Allen
 > 
-> I assume that the "dummy memcpy" DMA channel just uses memcpy_fromio() and
-> memcpy_toio() under the hood, so I assume that using the memcpy_fromio()/
-> memcpy_toio/() is equivalent to using DMA API + dmaengine_prep_dma_memcpy().
-> 
-> Although it would be nice if we didn't need to have the two separate paths
-> in pci_epf_test_data_transfer() (dmaengine_prep_slave_single() vs
-> dmaengine_prep_dma_memcpy()) to support the "dummy memcpy" channel.
-> But I guess that is not possible...
-
-Based on my reading you might have this mechanism:
-- eDMA provides dmaengine_prep_slave_single() which transfers data from
-  mem to pci ep device, so fasted
-- dmaengine_prep_dma_memcpy: This will copy the data but treat it as
-  memory. I dont pci internals to figure out how both can work... So
-  cant really make out why it is slowed
-- memcpy_xxx that is IO mem functions, so ofc they will be slowest
-
-I think the code is decent from fallback pov... chooses fastest path if
-available on a system
-
-> 
-> 
-> I hope that you can bring some clarity Vinod.
-> (Please read my replies to Mani below before you compose your email,
-> as it does provide more insight to this mess.)
-> 
-> Mani, I tried to reply to you inline below, with my limited understanding
-> of how dmaengine works.
-> 
-> 
-> On Wed, Mar 27, 2024 at 11:48:19AM +0530, Manivannan Sadhasivam wrote:
-> > > So we still want to test:
-> > > -DMA API using the eDMA
-> > > -DMA API using the "dummy" memcpy dma-channel.
-> > > 
-> > 
-> > IMO, the test driver should just test one form of data transfer. Either CPU
-> > memcpy (using iATU or something similar) or DMA. But I think the motive behind
-> > using DMA memcpy is that to support platforms that do not pass DMA slave
-> > channels in devicetree.
-> > 
-> > It is applicable to test driver but not to MHI driver since all DMA supported
-> > MHI platforms will pass the DMA slave channels in devicetree.
-> 
-> I don't understand how device tree is relevant here, e.g. qcom-ep.c
-> specifies pcie_ep->pci.edma.nr_irqs = 1;
-> https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/controller/dwc/pcie-qcom-ep.c#L818
-> which is sufficient for you to be able to probe/detect eDMA successfully,
-> no need for anything in device tree at all.
-> 
-> 
-> > 
-> > > However, it seems like both pci-epf-mhi.c and pci-epf-test.c
-> > > do either:
-> > > -Use DMA API
-> > > or
-> > > -Use memcpy_fromio()/memcpy_toio() instead of DMA API
-> > > 
-> > > 
-> > > To me, it seems like we should always be able to use
-> > > DMA API (using either a eDMA or "dummy" memcpy).
-> > > 
-> > 
-> > No, there are platforms that don't support DMA at all. Like Qcom SDX55, so we
-> > still need to do CPU memcpy.
-> 
-> I assume that you mean the the PCIe controller used in SDX55 does not
-> have the eDMA on the PCIe controller, so dw_pcie_edma_detect() will
-> fail to detect any eDMA. That is fine no?
-> 
-> I assume that this SoC will still able to use the "dummy" memcpy dma-channel?
-> 
-> 
-> > 
-> > > I don't really see the need to have the path that does:
-> > > memcpy_fromio()/memcpy_toio().
-> > > 
-> > > I know that for DWC, when using memcpy (and this also
-> > > memcpy via DMA API), we need to map the address using
-> > > iATU first.
-> > > 
-> > > But that could probably be done using another flag,
-> > > perhaps rename that flag FLAG_USE_DMA to NEEDS_MAP or
-> > > something.
-> > > (Such that we can change these drivers to only have a
-> > > code path that uses DMA API.)
-> > > (...and making sure that inheriting the DMA mask does
-> > > not affect the DMA mask for DMA_MEMCPY.)
-> 
-> I was wrong here, pci-epf-test always calls pci_epc_map_addr()
-> regardless if FLAG_USE_DMA is set or not.
-> 
-> (Even though this should be unnecessary when using the eDMA.)
-> 
-> However, if we look at pci-epf-mhi.c we can see that it does
-> NOT call pci_epc_map_addr() when using DMA API + dmaengine.
-> 
-> Is it really safe to avoid pci_epc_map_addr() in all EPC controllers?
-> I assume that it should be safe for all "real" DMA channels.
-> We can see that it is not safe when using DMA API + "dummy" memcpy
-> dma-channel. (That is why I was asking if we need a NEEDS_MAP, or
-> MAP_NOT_NEEDED flag.)
-> 
-> 
-> > > 
-> > > But perhaps I am missing something... and DMA_MEMCPY is
-> > > not always available?
-> 
-> Right now pci-epf-test driver has three ways:
-> -DMA API + dmaengine dmaengine_prep_slave_single()
-> -DMA API + dmaengine dmaengine_prep_dma_memcpy()
-> -memcpy_toio()/memcpy_fromio().
-> 
-> pci-epf-mhi.c driver has two ways:
-> -DMA API + dmaengine dmaengine_prep_slave_single()
-> -memcpy_toio()/memcpy_fromio().
-> 
-> 
-> pci-epf-test.c:
-> -Always calls pci_epc_map_addr() when using DMA API.
-> 
-> pci-epf-mhi.c:
-> -Never calls pci_epc_map_addr() when using DMA API.
-> 
-> 
-> I honestly don't see any point of having three paths
-> for pci-epf-test. Ideally I would want one, max two.
-> 
-> If you think that:
-> -DMA API + dmaengine dmaengine_prep_slave_single()
-> +
-> -memcpy_toio()/memcpy_fromio().
-> 
-> is more logical than:
-> -DMA API + dmaengine dmaengine_prep_slave_single()
-> +
-> -DMA API + dmaengine dmaengine_prep_dma_memcpy()
-> 
-> Then I think we should rip out the:
-> -DMA API + dmaengine dmaengine_prep_dma_memcpy()
-> it serves no purpose... if you don't have a "real" DMA channel,
-> just run without the -d flag.
-> 
-> Or, if you argue that the dmaengine_prep_dma_memcpy() is there
-> to test the DMA API code (which I can't say that it does, since
-> it doesn't use the exact same code path as a "real" DMA channel, see:
-> https://github.com/torvalds/linux/blob/v6.9-rc1/drivers/pci/endpoint/functions/pci-epf-test.c#L139-L155
-> so this argument is questionable).
-> 
-> Put it under a --use_dummy_dma, and return failure by default
-> if no "real" DMA channel is found.
+> >
+> > -corey
+> >
+> > >
+> > > Based on the work done by Tejun Heo <tj@kernel.org>
+> > > Branch: https://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-610
+> > >
+> > > Signed-off-by: Allen Pais <allen.lkml@gmail.com>
+> > > ---
+> > >  drivers/char/ipmi/ipmi_msghandler.c | 30 ++++++++++++++---------------
+> > >  1 file changed, 15 insertions(+), 15 deletions(-)
+> > >
+> > > diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+> > > index b0eedc4595b3..fce2a2dbdc82 100644
+> > > --- a/drivers/char/ipmi/ipmi_msghandler.c
+> > > +++ b/drivers/char/ipmi/ipmi_msghandler.c
+> > > @@ -36,12 +36,13 @@
+> > >  #include <linux/nospec.h>
+> > >  #include <linux/vmalloc.h>
+> > >  #include <linux/delay.h>
+> > > +#include <linux/workqueue.h>
+> > >
+> > >  #define IPMI_DRIVER_VERSION "39.2"
+> > >
+> > >  static struct ipmi_recv_msg *ipmi_alloc_recv_msg(void);
+> > >  static int ipmi_init_msghandler(void);
+> > > -static void smi_recv_tasklet(struct tasklet_struct *t);
+> > > +static void smi_recv_work(struct work_struct *t);
+> > >  static void handle_new_recv_msgs(struct ipmi_smi *intf);
+> > >  static void need_waiter(struct ipmi_smi *intf);
+> > >  static int handle_one_recv_msg(struct ipmi_smi *intf,
+> > > @@ -498,13 +499,13 @@ struct ipmi_smi {
+> > >       /*
+> > >        * Messages queued for delivery.  If delivery fails (out of memory
+> > >        * for instance), They will stay in here to be processed later in a
+> > > -      * periodic timer interrupt.  The tasklet is for handling received
+> > > +      * periodic timer interrupt.  The work is for handling received
+> > >        * messages directly from the handler.
+> > >        */
+> > >       spinlock_t       waiting_rcv_msgs_lock;
+> > >       struct list_head waiting_rcv_msgs;
+> > >       atomic_t         watchdog_pretimeouts_to_deliver;
+> > > -     struct tasklet_struct recv_tasklet;
+> > > +     struct work_struct recv_work;
+> > >
+> > >       spinlock_t             xmit_msgs_lock;
+> > >       struct list_head       xmit_msgs;
+> > > @@ -704,7 +705,7 @@ static void clean_up_interface_data(struct ipmi_smi *intf)
+> > >       struct cmd_rcvr  *rcvr, *rcvr2;
+> > >       struct list_head list;
+> > >
+> > > -     tasklet_kill(&intf->recv_tasklet);
+> > > +     cancel_work_sync(&intf->recv_work);
+> > >
+> > >       free_smi_msg_list(&intf->waiting_rcv_msgs);
+> > >       free_recv_msg_list(&intf->waiting_events);
+> > > @@ -1319,7 +1320,7 @@ static void free_user(struct kref *ref)
+> > >  {
+> > >       struct ipmi_user *user = container_of(ref, struct ipmi_user, refcount);
+> > >
+> > > -     /* SRCU cleanup must happen in task context. */
+> > > +     /* SRCU cleanup must happen in work context. */
+> > >       queue_work(remove_work_wq, &user->remove_work);
+> > >  }
+> > >
+> > > @@ -3605,8 +3606,7 @@ int ipmi_add_smi(struct module         *owner,
+> > >       intf->curr_seq = 0;
+> > >       spin_lock_init(&intf->waiting_rcv_msgs_lock);
+> > >       INIT_LIST_HEAD(&intf->waiting_rcv_msgs);
+> > > -     tasklet_setup(&intf->recv_tasklet,
+> > > -                  smi_recv_tasklet);
+> > > +     INIT_WORK(&intf->recv_work, smi_recv_work);
+> > >       atomic_set(&intf->watchdog_pretimeouts_to_deliver, 0);
+> > >       spin_lock_init(&intf->xmit_msgs_lock);
+> > >       INIT_LIST_HEAD(&intf->xmit_msgs);
+> > > @@ -4779,7 +4779,7 @@ static void handle_new_recv_msgs(struct ipmi_smi *intf)
+> > >                        * To preserve message order, quit if we
+> > >                        * can't handle a message.  Add the message
+> > >                        * back at the head, this is safe because this
+> > > -                      * tasklet is the only thing that pulls the
+> > > +                      * work is the only thing that pulls the
+> > >                        * messages.
+> > >                        */
+> > >                       list_add(&smi_msg->link, &intf->waiting_rcv_msgs);
+> > > @@ -4812,10 +4812,10 @@ static void handle_new_recv_msgs(struct ipmi_smi *intf)
+> > >       }
+> > >  }
+> > >
+> > > -static void smi_recv_tasklet(struct tasklet_struct *t)
+> > > +static void smi_recv_work(struct work_struct *t)
+> > >  {
+> > >       unsigned long flags = 0; /* keep us warning-free. */
+> > > -     struct ipmi_smi *intf = from_tasklet(intf, t, recv_tasklet);
+> > > +     struct ipmi_smi *intf = from_work(intf, t, recv_work);
+> > >       int run_to_completion = intf->run_to_completion;
+> > >       struct ipmi_smi_msg *newmsg = NULL;
+> > >
+> > > @@ -4866,7 +4866,7 @@ void ipmi_smi_msg_received(struct ipmi_smi *intf,
+> > >
+> > >       /*
+> > >        * To preserve message order, we keep a queue and deliver from
+> > > -      * a tasklet.
+> > > +      * a work.
+> > >        */
+> > >       if (!run_to_completion)
+> > >               spin_lock_irqsave(&intf->waiting_rcv_msgs_lock, flags);
+> > > @@ -4887,9 +4887,9 @@ void ipmi_smi_msg_received(struct ipmi_smi *intf,
+> > >               spin_unlock_irqrestore(&intf->xmit_msgs_lock, flags);
+> > >
+> > >       if (run_to_completion)
+> > > -             smi_recv_tasklet(&intf->recv_tasklet);
+> > > +             smi_recv_work(&intf->recv_work);
+> > >       else
+> > > -             tasklet_schedule(&intf->recv_tasklet);
+> > > +             queue_work(system_bh_wq, &intf->recv_work);
+> > >  }
+> > >  EXPORT_SYMBOL(ipmi_smi_msg_received);
+> > >
+> > > @@ -4899,7 +4899,7 @@ void ipmi_smi_watchdog_pretimeout(struct ipmi_smi *intf)
+> > >               return;
+> > >
+> > >       atomic_set(&intf->watchdog_pretimeouts_to_deliver, 1);
+> > > -     tasklet_schedule(&intf->recv_tasklet);
+> > > +     queue_work(system_bh_wq, &intf->recv_work);
+> > >  }
+> > >  EXPORT_SYMBOL(ipmi_smi_watchdog_pretimeout);
+> > >
+> > > @@ -5068,7 +5068,7 @@ static bool ipmi_timeout_handler(struct ipmi_smi *intf,
+> > >                                      flags);
+> > >       }
+> > >
+> > > -     tasklet_schedule(&intf->recv_tasklet);
+> > > +     queue_work(system_bh_wq, &intf->recv_work);
+> > >
+> > >       return need_timer;
+> > >  }
+> > > --
+> > > 2.17.1
+> > >
+> > >
+> >
 > 
 > 
-> But even so, that would not address the pci-epf-test and
-> pci-mhi-test inconsistency WRT pci_epc_map_addr().
+> -- 
+>        - Allen
 > 
-> I think if we rip out:
-> -DMA API + dmaengine dmaengine_prep_dma_memcpy()
-> we could also move the pci_epc_map_addr() so that it is
-> only used for the memcpy_toio()/memcpy_fromio() path.
-> 
-> (Or if we add a --use_dummy_dma, we can move the pci_epc_map_addr() to
-> that path, and remove it from the dmaengine_prep_slave_single() path.)
-> 
-> 
-> Kind regards,
-> Niklas
-
--- 
-~Vinod
