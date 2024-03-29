@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2855115B55E;
-	Fri, 29 Mar 2024 12:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC61E17F36D;
+	Fri, 29 Mar 2024 12:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711715558; cv=none; b=Ws6+gLU0sbPP0pSjerw8BONpa5lxfWnP0DCWAknvHcawz4idHVoBymCyTtKJXmtgfMVpVdlzbLhUHSgfAWnPsvjHWTrGz6ZrlweM5KcVVdKkGH+LZNyxEAE0BdP6bJ2SCRft5eozMk6axc+0VLTGN5jHV5i9UurWDy5nN3J5/3w=
+	t=1711716091; cv=none; b=MXPKUUQ/p/xTUm5tPrWoEacnMBMVh2AFDmlnVZD8QiI7lpjdy9/I8KxVCqHi+qs6rfj3ERy7gIS9bY7Y6mZqla2lbbynMpvLBMp6FDjIqjvXx4tUJiZGy81XcNGx5vEJtj573gNdxCW6g/xpUas+yEXIIxsnftr5eD3OqJo2thk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711715558; c=relaxed/simple;
-	bh=I2r9KSq9DUfKSFPDuayqPWnKFhzeb2NZosBa3x5Xb1c=;
+	s=arc-20240116; t=1711716091; c=relaxed/simple;
+	bh=LgRgmxT9jx54hTmFgAykHaUQdMdqQrNb7S4KQJeQEsE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bt/ARcRw9y04pgNWLAi7O5B+dF8YbCfuEjyF04k1bRaoUKW7rLI7Ciw8bqUE6L16iOxe9TuxXSz7EHFKxSwUgK2pzlXST4JAkVEYDBlVCqqfrvOkDKUlCC2UMkJbgnB0hMqED14swBpTcg0QLD/q4RLbzByMPtZHE9ihYTpmYEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hZEqzsRE; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=Db2+ufhMF4vdR0YbvogCxN3Sk1r4nS6sKUCUbrGiSdg1Z4NWUAYxBlr0pOXGBrh7Dx+WPSJKzh3kXyQJ0CW/jEdv4Dco1z2ZX/6Xsb4+lDFppmBW9DEB5Suu2DKAwmSc4Au6axOEmJOLIZxuHdjywQncaNyAh4L4KrJe7WL9HnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJG7t/4w; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hZEqzsRE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1EE8C433F1;
-	Fri, 29 Mar 2024 12:32:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJG7t/4w"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 947FCC43394;
+	Fri, 29 Mar 2024 12:41:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711715558;
-	bh=I2r9KSq9DUfKSFPDuayqPWnKFhzeb2NZosBa3x5Xb1c=;
+	s=k20201202; t=1711716090;
+	bh=LgRgmxT9jx54hTmFgAykHaUQdMdqQrNb7S4KQJeQEsE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hZEqzsREsAcMmSQ9unLO9GEvZ+kz0hgHlWcpii4VNE83khNutMnMrIMk3fB33jlv1
-	 YiPXRAvK4K8CN7GbbMexNife1ja6nL6FhR+kOIv+NGDh1OooiZps4lCTTelEtMIWGE
-	 ijo+knIWpuxdPoLH6mN37l7o1HWEhbhuYpKUCaRX9Ce6C86wSn1qTSnI7FtM3GTexN
-	 P3t+tTIqwNl+Vh/pI2AbwEv5Pny7ij7bm8QQ8Icmc2LLmJAjQcq8TcQLOQtAaHXzTS
-	 mk18eVoZZnZetvXCrnMWtbfpeRIwKTWtCx2L2DabyYQho5s05G3IV1uTzEpaw6crcV
-	 Hsud1Qr9tn5zQ==
+	b=vJG7t/4w6ZyBDor+vihQfV8lTsQ1ZwnB2qOWqPnE8A7cTC61ek+tk3k7YTNYL0nvL
+	 Bz96hKPWgL/aWwr3lNAPP2I7lC9D170w7tle2Lz3IJ/jkxpycFtVNQQ6+8GRRbnqTn
+	 6kKXjXhkvHSYiz7VzUcoCKnFKkb6uM967JC7Gy1pxYEmW3smxv+rdW2VP4VxSz7Rjt
+	 UFbYrL4u7aqh3qQYay24FLbg1U2w79vWvaCTFTkgkhbbWzLdgYTmrRW5DJ4aYoCtxn
+	 L/wBMLpjLNTxHp1tYC071YH4zaokX+Xkt4ZB8hE1HpKPKzRmNkvca1+P8rvXOj/XO5
+	 Aa1AyMMMRYiXw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -38,12 +38,12 @@ Cc: Markus Elfring <elfring@users.sourceforge.net>,
 	mperttunen@nvidia.com,
 	justinstitt@google.com,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 14/31] firmware: tegra: bpmp: Return directly after a failed kzalloc() in get_filename()
-Date: Fri, 29 Mar 2024 08:31:33 -0400
-Message-ID: <20240329123207.3085013-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.8 49/98] firmware: tegra: bpmp: Return directly after a failed kzalloc() in get_filename()
+Date: Fri, 29 Mar 2024 08:37:20 -0400
+Message-ID: <20240329123919.3087149-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240329123207.3085013-1-sashal@kernel.org>
-References: <20240329123207.3085013-1-sashal@kernel.org>
+In-Reply-To: <20240329123919.3087149-1-sashal@kernel.org>
+References: <20240329123919.3087149-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -53,7 +53,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.83
+X-stable-base: Linux 6.8.2
 Content-Transfer-Encoding: 8bit
 
 From: Markus Elfring <elfring@users.sourceforge.net>
@@ -76,10 +76,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/firmware/tegra/bpmp-debugfs.c b/drivers/firmware/tegra/bpmp-debugfs.c
-index 9d3874cdaaeef..34e4152477f3b 100644
+index bbcdd9fed3fb6..4221fed70ad48 100644
 --- a/drivers/firmware/tegra/bpmp-debugfs.c
 +++ b/drivers/firmware/tegra/bpmp-debugfs.c
-@@ -81,7 +81,7 @@ static const char *get_filename(struct tegra_bpmp *bpmp,
+@@ -77,7 +77,7 @@ static const char *get_filename(struct tegra_bpmp *bpmp,
  
  	root_path_buf = kzalloc(root_path_buf_len, GFP_KERNEL);
  	if (!root_path_buf)
