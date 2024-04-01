@@ -1,95 +1,139 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2067.outbound.protection.outlook.com [40.107.220.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119043FE5F;
-	Mon,  1 Apr 2024 14:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711980544; cv=none; b=YIm7A8ZtY+USGyWnIQozHMmO6pKNgTj2np/oOejJt5OsgjtuQSeFpJwRXIHhx3p9+1hyYKgVb+HptSAZk6ukZlHyzGh99wm6rn8NteJTAbwBJEw0jjLTBa1qH9xv2f73ntvQbh8Rpg9TgVf8DiLcfP+WwDS+ow5lb4Pkw4CQa5w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711980544; c=relaxed/simple;
-	bh=ONagSjBbuAOK22vxfdcxGOHSR0JO6sqZwUIbRiywK60=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZVDJGttIzuYh7bBIZc3ppyo/K4QaV3UArPA3pEmW9qNw2yrlT3LrqleEv6NdSyP+R8XO/2wzmRbAnaZLjg9t6RyenyhdjdIqryvUOs9qlfwJMdAXIiVf6vE9aSH0F7KwktZ6FtvBOoFZIadOy2mo7iopVo19NmkOf9+0ARodtBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Joh6FUHs; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8C0446A1;
+	Mon,  1 Apr 2024 15:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1711983749; cv=fail; b=UU3vGFC/W7yz2MmreAvlM53JXIo+yY791rrCcrsKJLpBdTmXLZ0WnU6gxdc/c4DfPanfUm+X96Kp4dXQR39nJk/WbIgcueG9DYbp5wzmx0HanLjmugDpAipo5/RxTlohq6K7Skowjr1fHB/vnZWgsLFVqOtVWXFQ9RT5rAqcXdI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1711983749; c=relaxed/simple;
+	bh=EZpogD/eoxUMLJyn5WFz78yyy+XeY1RWiHMP2Mkxd2g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SQmiFrcnstm4i/5mMMcst+QJzCLi1TfHiqFpeTjBj1XOgknsYSQTo317qvRH6vW471B3/Jw78t1+yY3GB/Ext7EhNJXpMWFHhTS8T8RmtOSjfJGn1OsEOBv5OoZjkuqbK8pMhB424Wvv9K99dFCHnYpIxp5qCr72+rByag3OKQE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kAXEwxg9; arc=fail smtp.client-ip=40.107.220.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Joh6FUHs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF416C433C7;
-	Mon,  1 Apr 2024 14:08:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711980543;
-	bh=ONagSjBbuAOK22vxfdcxGOHSR0JO6sqZwUIbRiywK60=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Joh6FUHs2IqizXp0hxaAbcEiT8AERojlhQqMv+kVbjux9wLShK/vXUpIiDFxbygvg
-	 fcP4iasnpuVm7LGbNA5V4VehmtOrVX/5BrvNz+bKjrzZKN5Jp0BmYTXj/Algu7+L7N
-	 qw9Mu955GQz3teRGLcAge50vx8XFMw+ayzK+UFquW0o/heMrBRH+uu8U+TCj7g6QZM
-	 MvyjYhaUA0fEDlGQxS00Fja9sMGJwIoWbK/Ioz+r9RYmf8uF9bDtYQfuKqwKrHIzZi
-	 2k3bD61EqxP/TdJw4MfFCZTqdRDsYa0yPKTHtKx4CgDTtqyc7/NAo8EAAvaSw51LoR
-	 qCZx0i8Pw98Zg==
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH] arm64: tegra: correct Tegra132 I2C alias
-Date: Mon,  1 Apr 2024 16:08:54 +0200
-Message-Id: <20240401140854.97107-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kAXEwxg9"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ADfnp2JZqI52Y7/bnAgGyj7deb+u2Dh/TVFz390dGafdQAzCzzz9YS/pFByeux9APcN21WdRNtrEEdeI7ROdqzmi1Xj/qajx/YwvrZedy9z8uBJjAL806I9ArtHvp7IcnryR7DfY35tq8txnoUD52NKrT3Kb1dwktlT4rKH3Cx3W7iCcI4Bi8hoHNT6Y+1X4OWHetvJbWJQ7CqHeyeNhEHvQS8wypIhKHOIEDwFkCHTNHSM7W3rH9Fi8iDs+umYbw8h7MTJov/doGkFxtKcDwVWnpsleMe7qMfwNDoWIfuYwcWd+so+1piJZNbvG2HDsnUDe3jEW0xoT/SMEB52xAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lDvYaaUMBBjACilIuCAz9pXoEFE+UkUyz3Pi+d3wmww=;
+ b=EUn8JQ2J+6ZeGsT0I6JQFxnxs2fHOT9QmzK/8p8U+Sg9H0MkJ1T9TqIAHZRNHpHXRtKuZs7gSDgKBBlQJ9RlX3ZV6le50mBqr4JQ8JIS19BeQgZTeHud8m75RU5GRhl6NK72UJPqZdyrep3QQk4AHpFdMwTjg9foaW5umBUDTwHibF9Fub47tSlG2ERxMvAHFFZNhbmJtRyJoP1KUVD6gF9XbgGOya6s4Za8yqmf0DMVl1dPm0yrMntTwYXTgXEm03PLBTIKxc0Gy6CnFNWQA03+gMnrT8j7nHKWqLNotzMola2nJWKd+1Qg0VOFS0/C9YQp1YUaKuIV4yohhXxwAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lDvYaaUMBBjACilIuCAz9pXoEFE+UkUyz3Pi+d3wmww=;
+ b=kAXEwxg9BgHBcc+QW12Zl2+7CSTgPAjoNwI/tfTc9qs0bzbFJr/5f8mrexhB5vrqpQfvjZx7uV+atkhABW56A8UorU6RsbgtR7Qqj6w24axzw5aQEZu5dSf/yJ063OuI0qPY6Z405uQ6zeR3xsEnkgXuZjaRoS3UmrgD8ajc5lW7h5i2B6WFWlwq99uvH1ueH8/+tHl6XyeJ9CH3N0Z9T5l/XKEP0WBs/pabXC0jusmnJ2SQKfg2hua/qOvBmcPpZFWFXnDLFGPh3gg9Bi8KF+ZPsTFVrcMqkQ+Od4lRFNZK9EvV+tfYXSqz0JzFXxj/uiDe5KRARkHgtic0RImRIA==
+Received: from MW4PR04CA0328.namprd04.prod.outlook.com (2603:10b6:303:82::33)
+ by SA1PR12MB8599.namprd12.prod.outlook.com (2603:10b6:806:254::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Mon, 1 Apr
+ 2024 15:02:21 +0000
+Received: from CO1PEPF000044F0.namprd05.prod.outlook.com
+ (2603:10b6:303:82:cafe::70) by MW4PR04CA0328.outlook.office365.com
+ (2603:10b6:303:82::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46 via Frontend
+ Transport; Mon, 1 Apr 2024 15:02:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1PEPF000044F0.mail.protection.outlook.com (10.167.241.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7452.22 via Frontend Transport; Mon, 1 Apr 2024 15:02:19 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Mon, 1 Apr 2024
+ 08:01:23 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Mon, 1 Apr
+ 2024 08:01:23 -0700
+Received: from vidyas-desktop.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Mon, 1 Apr 2024 08:01:19 -0700
+From: Vidya Sagar <vidyas@nvidia.com>
+To: <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+	<bhelgaas@google.com>
+CC: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<linux-pci@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
+	<mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
+Subject: [PATCH V1] PCI: tegra194: Fix probe path for Endpoint mode
+Date: Mon, 1 Apr 2024 20:31:16 +0530
+Message-ID: <20240401150116.298069-1-vidyas@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F0:EE_|SA1PR12MB8599:EE_
+X-MS-Office365-Filtering-Correlation-Id: 875855e6-253a-4452-fa3a-08dc525cba34
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	GC0di54ZIqPnpU6D/+b0qSjsp+YiTAY/cEWbmmcubKUyweWFr+dduR9f6NwK3v9asDjlQEA3tDKlA9N2IyaKcZisM40L/+wyBRZR0/auLJYn4NqymizEGB/+xJ4IpCSIor4ZJMftG17wVR0owlvma+Cd8xLglfYuLAMc9ldm0RwqBdSg7OcBd3sGIrdzZi6E28B+zIrZ3xWIDF3/1LzSpWH7fDEJMGO2TcffehtkDdsiYmb3jO3vOIsfCqBkmNJoMH0WANkv7iZiFnfR3tuj+TRR+nGV2S0ahRzoobvTqrh6a37kO+p0tKVFKAj5y/XvXcuFFtN0L2ixPLFdoTgpaSvQQKICx7u9q+dTVgdGRinzPd4fUOuT2y9TrYM6ONDXaUjz4VyeNhTEC8nycE/kaKxEFctgAszYiu4EToucBazEH/2OyluTSpsdfTkjVM/OtxDBxfCMqV7CQ0dZFPOHFrEw1tXIwFmm4abR1xHO9+14Q80B8tF3JXe8Ab53vNpUrSrHPln4DkI5DHpx2CanyBh+LHZJvdnY21KUWpvD4VHTyMeh2czmexRa93+KH3K525LkW9PL2AFR2hYimzscgDMRTLTGmnq4p9YdueWg50tXVIu/I0P0hR2EuwqiBQlN0O09WNPu811N4ptvDZrs7R80CtMRZsvM7ZL54Ry05edf5U38dFxNKsCyYXkN3pSYKzEw1FF9bvi+/vJ2AQLG5J5u/utQtkucrDaYhyESnGvJfAI860hNcmqtwou/AUFG
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(36860700004)(82310400014)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2024 15:02:19.3333
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 875855e6-253a-4452-fa3a-08dc525cba34
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8599
 
-There is no such device as "as3722@40", because its name is "pmic".  Use
-phandles for aliases to fix relying on full node path.  This corrects
-aliases for RTC devices and also fixes dtc W=1 warning:
+Tegra194 PCIe probe path is taking failure path in success case for
+Endpoint mode. Return success from the switch case instead of going
+into the failure path.
 
-  tegra132-norrin.dts:12.3-36: Warning (alias_paths): /aliases:rtc0: aliases property is not a valid node (/i2c@7000d000/as3722@40)
-
-Fixes: 0f279ebdf3ce ("arm64: tegra: Add NVIDIA Tegra132 Norrin support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 4 ++--
- arch/arm64/boot/dts/nvidia/tegra132.dtsi       | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/pci/controller/dwc/pcie-tegra194.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-index 14d58859bb55..683ac124523b 100644
---- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-@@ -9,8 +9,8 @@ / {
- 	compatible = "nvidia,norrin", "nvidia,tegra132", "nvidia,tegra124";
+diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+index 4bba31502ce1..1a8178dc899a 100644
+--- a/drivers/pci/controller/dwc/pcie-tegra194.c
++++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+@@ -2273,11 +2273,14 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+ 		ret = tegra_pcie_config_ep(pcie, pdev);
+ 		if (ret < 0)
+ 			goto fail;
++		else
++			return 0;
+ 		break;
  
- 	aliases {
--		rtc0 = "/i2c@7000d000/as3722@40";
--		rtc1 = "/rtc@7000e000";
-+		rtc0 = &as3722;
-+		rtc1 = &tegra_rtc;
- 		serial0 = &uarta;
- 	};
+ 	default:
+ 		dev_err(dev, "Invalid PCIe device type %d\n",
+ 			pcie->of_data->mode);
++		ret = -EINVAL;
+ 	}
  
-diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-index 7e24a212c7e4..5bcccfef3f7f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-@@ -572,7 +572,7 @@ spi@7000de00 {
- 		status = "disabled";
- 	};
- 
--	rtc@7000e000 {
-+	tegra_rtc: rtc@7000e000 {
- 		compatible = "nvidia,tegra124-rtc", "nvidia,tegra20-rtc";
- 		reg = <0x0 0x7000e000 0x0 0x100>;
- 		interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+ fail:
 -- 
-2.34.1
+2.25.1
 
