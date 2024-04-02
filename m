@@ -1,136 +1,113 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F4A5B683
-	for <linux-tegra@vger.kernel.org>; Tue,  2 Apr 2024 10:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51D85F84F;
+	Tue,  2 Apr 2024 10:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712052985; cv=none; b=gPbhPCdzzt64IjiEgG/9hVXS/x09XezpE6j+WcEg6iqJ0umjF4/8NSvm7e8eGKNvO7FEF3Q+VxkaLITnz6xMA/9Qi6psMn1+OTH/9iutJq1ZKK7qsDQr1x7SRW3aCxlRkHezWWnGLpvpSZfOoEZ/ZxcwN4NzZ8aqVAfSaivYSvo=
+	t=1712055136; cv=none; b=mggMM/45j59a/Awn8SOuPtkKKzfjanUpmrkFZ510xP0IpLmA52CLuVPdKyetyiY7AnWCoPXP0/i9YBjCt/gVBwgKa7mrtFEE7KiX1bzBhc46DAvnWRGOT9okL2vcNlWf/lWlILiMZKMCsLyQuyHWVshN+AjRwRBusurQ1ndbIi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712052985; c=relaxed/simple;
-	bh=uzac7wtIrnnrBvtOLPs8xaD+ikoHcCxqEerEJoMcBFs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=enKEthlKOwcNauN8MDr+6X7d9b9mD9umVC4GrGEzifQRfuB/JkhR5HqqB8JJoJQ0wYz1JUy8W4YzGTCjAJH6psfUTnew5/3h0TXcYYF+CTcflRDsrWSuaVkjOvCvDxhq0NLmI/gfEa98F3mSWCdKu7K/5+9xLDXGmYsCOhGP1zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P/19zu7H; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1712055136; c=relaxed/simple;
+	bh=8SEISNTjMjd6fQgKPbae4xl+U7OguugiIa4T9Rb5u+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4NGGUgiw7ZfkW2Rtoa3kGu3u+i6NwBp0QLB2x6srCwQquSniUR7eictF99zcPRat32qm6yhxrUvPRD9X/h90/izEGD9u0hvV18YXcUYQrQXfbNPLR9f43xBQYi9Y2dgnyf+zOkjmb/cUAsKktT0ZjiifCkiFir7EmCEXey2c/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4MPsNrE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P/19zu7H"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dc74435c428so4760668276.2
-        for <linux-tegra@vger.kernel.org>; Tue, 02 Apr 2024 03:16:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712052982; x=1712657782; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uzac7wtIrnnrBvtOLPs8xaD+ikoHcCxqEerEJoMcBFs=;
-        b=P/19zu7HhxbqaSZ6tddIYer72gYo22iX74gtm9EbTCsCnmBPVJH56wwx8ina7pHQt+
-         p316gGtpPFNSmMfwYWkooiGf4ik567MMKWJ1fJRb+NnesXmt8S3KOmo1hW/O3yH2uIjf
-         F3SkY7DH8iAQRrcIIOMQyR6tAgVMpinRoEFcTiHyz/45wguXP951zWOOFOEZRV1uWbyn
-         hNrtfhYos8BjukR2a9x7YTIu1mvVMtxWlxNTeXM3ZTuCTXqrHvRkpW0RunoXYl2P2zer
-         H5n509H2Aw3xqdmsadb2X73YaIOldxZWd5/O5TrVs5Wt5fl9C6M1vCFRqYXRh0oRA0v7
-         HRhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712052982; x=1712657782;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uzac7wtIrnnrBvtOLPs8xaD+ikoHcCxqEerEJoMcBFs=;
-        b=OQVDmXbdb1yQjHo2RhQ+A1kFtgxObOzIROsqYHEJSpIV5rPqHvzZGmobmrdXumacB4
-         WNeGaurzOMfa71ovJ5jaCff5i8Bx8c6ezDoZ/uiQwx3DfDYOoCOE+spqCl3snc/wJeWF
-         C35rwp1Q5Z2SYcGuNVv6Kp5kGIt6tfw6mCPM8ERIlwJGlM0ptUv5kN3+ck11nO6EHUvG
-         wCtqRobCjmHhmF9r67exVBC2UkWAvscq4arFpGCxY7cA/YsIL3fwwcizbgV/we2Jmhfa
-         IJXOZzJjpCO75V6VgtnMFy7KNt5DE/KRZR4rRwqu+5oJ1NjN2/t1UdEBiRQU1HOSCqmm
-         ko6A==
-X-Forwarded-Encrypted: i=1; AJvYcCV4gTtJXLJO+1Ofpp2XFlohMrCFS0C1ugL+uIzpavLM3d7u740Hsa4DoqVQLnTC12EgrJXSb99uKz2elPRVPMDbdnh1CemLA45JyTc=
-X-Gm-Message-State: AOJu0YwBEwqPK27DqY71PxIO92KBH/T0SbQ+QVrhrfnEXR6+Js269Nh3
-	WZAiZRDGRnBrjqXSYREdM6M/W1GgaN1bGBqhSQHiz3AN6WoMXbMP5/jxoIWa+j9sLyL9pVhI3ZQ
-	grWpuqLArcMtDZunbzeSCJ/e4L2kCV7E7NwQv2g==
-X-Google-Smtp-Source: AGHT+IHzjYx5u+Am4EzQhN6aMsFTdxF/7ehGqP9AXe12JTbN0HclFOy9oE6Q1Tva+ZRKMaaQSSepEoCeBcfLH2AuW+A=
-X-Received: by 2002:a25:b191:0:b0:dcd:b034:b504 with SMTP id
- h17-20020a25b191000000b00dcdb034b504mr9487652ybj.27.1712052982018; Tue, 02
- Apr 2024 03:16:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4MPsNrE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 680E6C43390;
+	Tue,  2 Apr 2024 10:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712055136;
+	bh=8SEISNTjMjd6fQgKPbae4xl+U7OguugiIa4T9Rb5u+k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n4MPsNrE5cmbGK3k1jBmWUG04hQzuCE81mF2+4cRHKWApITQdHRfaZZkH+5ZaYL3I
+	 bpgZdFe9kyxMuSY3xTS2joBUZAwPhGareRD9eTIlfYy7Zp+2kJjK3SZhDiioGG0qb2
+	 WPKrIa/Hv//QJu7JPaIuP4knMhIpJQXNABg+G3B2Gw6zcSU5OgouIkux49LuCCghfq
+	 UKZZYA0JP7FTYeY++6H8GCzbdrFQ5QscjabQPb85kNJ8IafyjcdE2BdFzXnl7i1Wpv
+	 2K7ra/QO/nqfSQ9Hul2/wHBA7vGjhK+hX7L+oa7ssB3gngNSqCf2ivruu7waKNfmbc
+	 OxLdJaJ2WzRqw==
+Date: Tue, 2 Apr 2024 12:52:10 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mhi@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] PCI: endpoint: Rename core_init() callback in
+ 'struct pci_epc_event_ops' to init()
+Message-ID: <ZgvjWtC0f1CY6DJs@ryzen>
+References: <20240401-pci-epf-rework-v2-0-970dbe90b99d@linaro.org>
+ <20240401-pci-epf-rework-v2-3-970dbe90b99d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240327160314.9982-1-apais@linux.microsoft.com>
- <20240327160314.9982-10-apais@linux.microsoft.com> <CAPDyKFpuKadPQv6+61C2pE4x4FE-DUC5W6WCCPu9Nb2DnDB56g@mail.gmail.com>
- <ZgWZDtNU4tCwqyeu@slm.duckdns.org>
-In-Reply-To: <ZgWZDtNU4tCwqyeu@slm.duckdns.org>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 2 Apr 2024 12:15:45 +0200
-Message-ID: <CAPDyKFp5KET0HR+8MwO4cf0O6W2kyFqHoKcVf5jbgBuLuQUcFA@mail.gmail.com>
-Subject: Re: [PATCH 9/9] mmc: Convert from tasklet to BH workqueue
-To: Tejun Heo <tj@kernel.org>
-Cc: Allen Pais <apais@linux.microsoft.com>, linux-kernel@vger.kernel.org, 
-	keescook@chromium.org, vkoul@kernel.org, marcan@marcan.st, sven@svenpeter.dev, 
-	florian.fainelli@broadcom.com, rjui@broadcom.com, sbranden@broadcom.com, 
-	paul@crapouillou.net, Eugeniy.Paltsev@synopsys.com, 
-	manivannan.sadhasivam@linaro.org, vireshk@kernel.org, Frank.Li@nxp.com, 
-	leoyang.li@nxp.com, zw@zh-kernel.org, wangzhou1@hisilicon.com, 
-	haijie1@huawei.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	sean.wang@mediatek.com, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, afaerber@suse.de, 
-	logang@deltatee.com, daniel@zonque.org, haojian.zhuang@gmail.com, 
-	robert.jarzmik@free.fr, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	orsonzhai@gmail.com, baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com, 
-	patrice.chotard@foss.st.com, linus.walleij@linaro.org, wens@csie.org, 
-	jernej.skrabec@gmail.com, peter.ujfalusi@gmail.com, kys@microsoft.com, 
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com, 
-	jassisinghbrar@gmail.com, mchehab@kernel.org, maintainers@bluecherrydvr.com, 
-	aubin.constans@microchip.com, manuel.lauss@gmail.com, mirq-linux@rere.qmqm.pl, 
-	jh80.chung@samsung.com, oakad@yahoo.com, hayashi.kunihiko@socionext.com, 
-	mhiramat@kernel.org, brucechang@via.com.tw, HaraldWelte@viatech.com, 
-	pierre@ossman.eu, duncan.sands@free.fr, stern@rowland.harvard.edu, 
-	oneukum@suse.com, openipmi-developer@lists.sourceforge.net, 
-	dmaengine@vger.kernel.org, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-mips@vger.kernel.org, imx@lists.linux.dev, 
-	linuxppc-dev@lists.ozlabs.org, linux-mediatek@lists.infradead.org, 
-	linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-rdma@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-s390@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240401-pci-epf-rework-v2-3-970dbe90b99d@linaro.org>
 
-On Thu, 28 Mar 2024 at 17:21, Tejun Heo <tj@kernel.org> wrote:
->
-> Hello,
->
-> On Thu, Mar 28, 2024 at 01:53:25PM +0100, Ulf Hansson wrote:
-> > At this point we have suggested to drivers to switch to use threaded
-> > irq handlers (and regular work queues if needed too). That said,
-> > what's the benefit of using the BH work queue?
->
-> BH workqueues should behave about the same as tasklets which have more
-> limited interface and is subtly broken in an expensive-to-fix way (around
-> freeing in-flight work item), so the plan is to replace tasklets with BH
-> workqueues and remove tasklets from the kernel.
+On Mon, Apr 01, 2024 at 09:20:29PM +0530, Manivannan Sadhasivam wrote:
+> core_init() callback is used to notify the EPC initialization event to the
+> EPF drivers. The 'core' prefix was used indicate that the controller IP
+> core has completed initialization. But it serves no purpose as the EPF
+> driver will only care about the EPC initialization as a whole and there is
+> no real benefit to distinguish the IP core part.
+> 
+> So let's rename the core_init() callback in 'struct pci_epc_event_ops' to
+> just init() to make it more clear.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-mhi.c  |  4 ++--
+>  drivers/pci/endpoint/functions/pci-epf-test.c |  4 ++--
+>  drivers/pci/endpoint/pci-epc-core.c           | 16 ++++++++--------
+>  include/linux/pci-epf.h                       |  4 ++--
+>  4 files changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-mhi.c b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+> index 280863c0eeb9..b3c26ffd29a5 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-mhi.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-mhi.c
+> @@ -716,7 +716,7 @@ static void pci_epf_mhi_dma_deinit(struct pci_epf_mhi *epf_mhi)
+>  	epf_mhi->dma_chan_rx = NULL;
+>  }
+>  
+> -static int pci_epf_mhi_core_init(struct pci_epf *epf)
+> +static int pci_epf_mhi_epc_init(struct pci_epf *epf)
+>  {
+>  	struct pci_epf_mhi *epf_mhi = epf_get_drvdata(epf);
+>  	const struct pci_epf_mhi_ep_info *info = epf_mhi->info;
+> @@ -897,7 +897,7 @@ static void pci_epf_mhi_unbind(struct pci_epf *epf)
+>  }
+>  
+>  static const struct pci_epc_event_ops pci_epf_mhi_epc_event_ops = {
+> -	.core_init = pci_epf_mhi_core_init,
+> +	.init = pci_epf_mhi_epc_init,
+>  };
+>  
+>  static const struct pci_epc_bus_event_ops pci_epf_mhi_bus_event_ops = {
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index 973db0b1bde2..abcb6ca61c4e 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -731,7 +731,7 @@ static int pci_epf_test_set_bar(struct pci_epf *epf)
+>  	return 0;
+>  }
+>  
+> -static int pci_epf_test_core_init(struct pci_epf *epf)
+> +static int pci_epf_test_epc_init(struct pci_epf *epf)
 
-Seems like a good approach!
+On V1 you agreed that it is better to remove 'epc' from the naming.
+(For both pci-epf-test and pci-epf-mhi).
+You seem to have forgotten to address this for V2.
 
->
-> The [dis]advantages of BH workqueues over threaded IRQs or regular threaded
-> workqueues are the same as when you compare them to tasklets. No thread
-> switching overhead, so latencies will be a bit tighter. Wheteher that
-> actually matters really depends on the use case. Here, the biggest advantage
-> is that it's mostly interchangeable with tasklets and can thus be swapped
-> easily.
 
-Right, thanks for clarifying!
-
-However, the main question is then - if/when it makes sense to use the
-BH workqueue for an mmc host driver. Unless there are some HW
-limitations, a threaded irq handler should be sufficient, I think.
-
-That said, moving to threaded irq handlers is a different topic and
-doesn't prevent us from moving to BH workqueues as it seems like a
-step in the right direction.
-
-Kind regards
-Uffe
+Kind regards,
+Niklas
