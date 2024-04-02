@@ -1,33 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2066.outbound.protection.outlook.com [40.107.223.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DD812DDBE;
-	Tue,  2 Apr 2024 14:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712068831; cv=none; b=hKCcGCq2hIYnfvhVldgGljnAuVxFSv2QE2kwZshRVX3GBj0+YFdcaQGu1vRSzzmfVKbiqNXyMOqTmiKIQoo0mtQ4PwlPj4V5HAfPwnVPSQcD+h/a0JzphYx0uYRjicruLFG25b+3vORHTaNDiZnXMdpOeYVtH9fc8qDDHKqemqk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712068831; c=relaxed/simple;
-	bh=vCH3i6mpaPGNwndRqyWdjIKXgICEvYSzWBiAFVwd6zU=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=ja2NVetr7IUcB0XvdWamdia0kbPkNMqg4enyZpnaiBu3qxfL2N+re79ahhQw220ZZQJhln+cyQZiAgi/yemFF8371Q4nUtGhZe57Q2Mt1z3QZj8xqfZ8eZsf6odCylIyOS3XMyG/A9MBA673ULHIowE3v0l41YcyurNStyk7Vpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h6rdKNN6; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D1D15B55A;
+	Tue,  2 Apr 2024 19:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712085226; cv=fail; b=hCkvbS0BvfqS7xBpNBnC3J1f1ei1iWh6E76q8WEbiJtPUkDYq3kVal3kgH8dMlCtS9T1xe2EJh+AkZqyLePa4wOe7Ej+HcVuUgB/3dYng+7G9U8m3Rusr9qPE13YBtvXNHUzPjzlx3WWH2hXvIJAcjUvJkO1hvwJ1l+lcqDp2FA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712085226; c=relaxed/simple;
+	bh=Xlc86Y1DdCPXdA/r5RjdmdeOIsODgLTQ1kKZG2eyVxI=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=Dn0WI1Q4KDCYdg2NEjDa7mwWwAT6thXfSntLoL3N3ROf8e4hO/S3NyGDo7JvH0AwhGyMY8PGxB8jeV5nRQMwswemM/P95mDckDlQ4tCQFt0V6tcf0XTqA02Z/ZO3Rivr91935DqjXiOzkPEQLU37C1UT5LSyeW03vq5tRkZalMM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SGfwAwm1; arc=fail smtp.client-ip=40.107.223.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6rdKNN6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22375C433F1;
-	Tue,  2 Apr 2024 14:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712068830;
-	bh=vCH3i6mpaPGNwndRqyWdjIKXgICEvYSzWBiAFVwd6zU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=h6rdKNN6Tc5buZum4JFj6Iq2RAGvfHrv5w8GkvVuCpPADghr3FCQwnBkSFeTZ7Mu+
-	 V2F33GAKn8JIN4IeHEZM65xIQID96K1s2VB03llLVtgW0N1byK4HXdR8y2SSWw4daT
-	 ufJbQ4r/zdVQPASRpWTpff4d1dRAdJz2SpEWeh61eXh/rdt+8LREHYCrLeuchqXjAo
-	 X03miHt258ILApTVTU4hxyD5tpVq7A1svnNt1L0J1sdcD0wm2QLsmb5n0fRbxBiwOL
-	 kqJq+VyuyZxCt7LjK+XOjUOFXrrKQDkfVvNzhxWk3/B+3HCQoQlNVF533QuqIpSZdF
-	 eTapOfVJFh6/Q==
-Date: Tue, 02 Apr 2024 09:40:29 -0500
-Content-Type: text/plain; charset="us-ascii"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SGfwAwm1"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jyI4z+9fZG/zBPh5vdWmO8cWCj8r4USVvHaKz77d1qG56twdBHs6Ezqs8eiBN8zQ4HK1Eg8cjPJxk/r/kYtCWBtrV9rOSeOA7mdAIzD4rL4NiM60CZseTNhFHxYkZtqR5N8bPHfRBHflEBpF3IIgcYvOAfZ58IHN0JaKfQ18PDXVSQUISrkQ9k7I9LfvCSU+uuArrgT032qsKcVReosVJLgPx2GudUMlPJOSqIE1/E5HMZkowSeAPSGNqFgEaJzD43Ahm/pkcdUPytO4sUsy6d9IZhRIALUkCHadW17n4eCAbrQZd4AKudhcoNPN1UnTcV2IXQio1vFgDEzeIefftg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9IWnozPjIVIkbSnTVElCYG5HRHFJZCO2moGoutiDRMc=;
+ b=ANe8iB+MeW8lMllnaRl6VdX1gDZ2cXEjF8PhG4+rVXbwDSOEbyGbagC2HkmkUN5jxAUomQhFX977Uq5uo9CocKgaa4GPGu60p+kMwI1ptMsHWpftkVsXI81vR/pEE2B6aRrYE/q2FAW8A9woukIs5RAu7H0SZQceefypf7EgV2DMT8xBB6L1TK6tnoff5uJ2Mx8yZri4Bsu3AgauCOMduhJFsvE5ehNfo00j9dOZnND8LM4Eo7pLi9NVxu0G/9VjB0Kl3F+fzvD2P+ouF7GES4ewu63aMj2a85lkpFRtgcf5/CLwe2qY6piiSBtf682x8HcmEzXxIXlvoPTNya3PDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9IWnozPjIVIkbSnTVElCYG5HRHFJZCO2moGoutiDRMc=;
+ b=SGfwAwm1nydgJeNySsfXvTS/iYWbrhYcXPE8TVQTGhb3Hpe+bOkNxGzC/e1A1ICljk9k9eS+R+ur8bfRB+7KxBN/IHF+OboM6F+bsy2JNDksA4I7ZeEMdg4b2hzH1Uz578N6eS4umx5DIg/l1Z1WLIS0X9NXbmsymkaYjw9WycZ7nt0OtZf5RG2JVSBQ1mYz5917BUR+xTQneelQ+5g81FzztNy677Yj1iFeFaK6dBlIlLp4vpRFbxbHf7LyE8fKP34UR/NrVPuhjb155dCea5n+UXBDr3hzorudBqYCDEohZdhOGM9dGsF4MzfQpkZgpEmBsmI404OljSKLCacHhQ==
+Received: from BY5PR20CA0018.namprd20.prod.outlook.com (2603:10b6:a03:1f4::31)
+ by IA0PR12MB8207.namprd12.prod.outlook.com (2603:10b6:208:401::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Tue, 2 Apr
+ 2024 19:13:40 +0000
+Received: from SJ5PEPF000001CC.namprd05.prod.outlook.com
+ (2603:10b6:a03:1f4:cafe::57) by BY5PR20CA0018.outlook.office365.com
+ (2603:10b6:a03:1f4::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46 via Frontend
+ Transport; Tue, 2 Apr 2024 19:13:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ5PEPF000001CC.mail.protection.outlook.com (10.167.242.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7452.22 via Frontend Transport; Tue, 2 Apr 2024 19:13:40 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 2 Apr 2024
+ 12:13:27 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.12; Tue, 2 Apr 2024 12:13:26 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12 via Frontend
+ Transport; Tue, 2 Apr 2024 12:13:26 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 000/272] 6.1.84-rc1 review
+In-Reply-To: <20240401152530.237785232@linuxfoundation.org>
+References: <20240401152530.237785232@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -35,68 +86,64 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Herring <robh@kernel.org>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: amhetre@nvidia.com, conor+dt@kernel.org, maz@kernel.org, 
- mark.rutland@arm.com, treding@nvidia.com, devicetree@vger.kernel.org, 
- bbasu@nvidia.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org, 
- linux-tegra@vger.kernel.org, krzysztof.kozlowski@linaro.org
-In-Reply-To: <20240402132626.24693-2-sumitg@nvidia.com>
-References: <20240402132626.24693-1-sumitg@nvidia.com>
- <20240402132626.24693-2-sumitg@nvidia.com>
-Message-Id: <171206882815.21282.13196636028288566805.robh@kernel.org>
-Subject: Re: [Patch v2 1/2] dt-bindings: make sid and broadcast reg
- optional
+Message-ID: <46af83f1-9a3c-4456-8366-821d75a194b6@drhqmail202.nvidia.com>
+Date: Tue, 2 Apr 2024 12:13:26 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CC:EE_|IA0PR12MB8207:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4afe9358-d25b-479b-981c-08dc534901c0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	TRsu6iM5Yk3nS+yfB/SkdQ+4YLM5z8f/ZpGtBqxm0+2MGjE0YhX9o7JJLLn9aE6w0UQlYxMi1RNywTLLj+hvvjTEXLWLwmSjBozl64cqeOIr3N4W/h65d5d/1cemZA0vWX9vXDYy6pMg2gXnWOERIang7wl8TU/fI/GzbmSY5cSebHx0N0TCOLtrYRV1OAwBD0oQA7EaqTcIQPDnqojmIjJJcncyp9XREjAPrpwNUsuGWQsAfi89QvreL//f/ocHWubtZoNpogsyX9+bu2PsVqNI1verEoBC9SnQmvnPZ2YvFzjtUHsTpAdWeGyJaVbHoBezHzHwVsyi1bFhb/ybGDU8Kf941M0fe68yS7KLK7DpBSWd63D25jCWiaCE8nk/0j8JdDVyp1JadL96TbKHwTqhjGI+iBBksXJ+TNaQ0yUsI1A4GM7ey1Wy8hn36vck/WdMdjVZ3LYaYsKBgkZyg88tfFnBiijLe28At3VfL57TFWvbDw4c09F//h72DfoJv3iQuM/1rzRzqY77tVE0yQJct5e9g7ZghWVyINn6qqRqZ1eW9ssTn9KqCAN0lSg0qncW34TsrD3KAQdB/ovkc5mZkQq/bNQByVblaR1qAkaeRPtmKenU1s5hTuQIX5fDPkEG9jh+yJcOMcTvQiY+xzr/mahi6LJ/jy5kwdnT8kZaqSlKaKtFAkgGIUTzM7HtzMLJ6J1zcX08ODuPQctDnyH3fCqTi2W1BkaRn0S0xuk6n1nBby+KPk7dBm9ONWfn
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(82310400014)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Apr 2024 19:13:40.6572
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4afe9358-d25b-479b-981c-08dc534901c0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8207
 
-
-On Tue, 02 Apr 2024 18:56:25 +0530, Sumit Gupta wrote:
-> MC SID and Broadbast channel register access is restricted for Guest VM.
-> Make both the regions as optional for SoC's from Tegra186 onwards.
-> Tegra MC driver will skip access to the restricted registers from Guest
-> if the respective regions are not present in the memory-controller node
-> of Guest DT.
+On Mon, 01 Apr 2024 17:43:10 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.84 release.
+> There are 272 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> ---
->  .../memory-controllers/nvidia,tegra186-mc.yaml | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+> Responses should be made by Wed, 03 Apr 2024 15:24:46 +0000.
+> Anything received after that time might be too late.
 > 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.84-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+All tests passing for Tegra ...
 
-yamllint warnings/errors:
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dtb: memory-controller@2c00000: reg: [[0, 46137344, 0, 65536], [0, 46202880, 0, 65536], [0, 46268416, 0, 65536], [0, 46333952, 0, 65536], [0, 46399488, 0, 65536], [0, 46465024, 0, 65536]] is too long
-	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra186-mc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dtb: memory-controller@2c00000: reg-names:0: 'ch0' was expected
-	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra186-mc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dtb: memory-controller@2c00000: reg-names:1: 'ch1' was expected
-	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra186-mc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dtb: memory-controller@2c00000: reg-names:2: 'ch2' was expected
-	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra186-mc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dtb: memory-controller@2c00000: reg-names:3: 'ch3' was expected
-	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra186-mc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dtb: memory-controller@2c00000: reg-names:4: 'sid' was expected
-	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra186-mc.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.example.dtb: memory-controller@2c00000: reg-names:5: 'broadcast' was expected
-	from schema $id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra186-mc.yaml#
+Linux version:	6.1.84-rc1-gaa2042702765
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-doc reference errors (make refcheckdocs):
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240402132626.24693-2-sumitg@nvidia.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Jon
