@@ -1,132 +1,152 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2120.outbound.protection.outlook.com [40.107.95.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFD479DDB
-	for <linux-tegra@vger.kernel.org>; Tue,  2 Apr 2024 12:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712061332; cv=none; b=hgwQ8J4Z3WUlnfa8meglfStZCtjxUnhX1VK9RTtB+rIn0aZfMtVs2KCq9Uf0EqYZ30aCwnnMb+Av5MBuSeTFLkGdWYNiVoE5FlFvU3bVdN51LqArdkL1mtBYIj/Me6wxiUdF9D6lJZWwDxn5wD+IRlB7g5megINeV8xlqzsTiMM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712061332; c=relaxed/simple;
-	bh=ZhodAsfbqQph/6Oss9KdocUA4jNT8v1VGBe4Vmslbbg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KJtwfRmV2XPwxHIz50QbIN5lK/896VNjQH8aJWCEpYRYcfYG1Ca9ArJEGNYhTJXJmDf4UiykOaaZXh3cQhpzHVOPOwjVSFoIoLLECqR4NIxFqtCwzxFHaY/LNhaxIZxUrssU1gyKAbjnruWu2Cb4XqeayeWHQc5vJ8swhThkHFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uqLL0PKI; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBEE84A57;
+	Tue,  2 Apr 2024 12:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.120
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712061408; cv=fail; b=ACCWtHatZ+74PlstZt8ZHSUf2WKT70oayFauJ0hz5gv/+hbSn/6QI1woMpyEjf/TOdZfQAu2bWGtCCfm3YYaKQ8rKxcccde2kZ+YMGPhiCiXnENkvfa1dPzqza3C69Pe21Fr+6GV/P8TT5sHT1viac2LfpiJAfATY/oBMpp4YAQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712061408; c=relaxed/simple;
+	bh=vnQbvcGUoDy4lPj9aQezsvA0rbPNEMBvG8rRt0OgMy8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ht9EkiYH9DshdXboXIFXgVl3q+5E/kWoMPTVaJouLG8ouT3h3J+YlmIkUpGiZsDuAlLSHRakbYcfgZcw45/jC+Ob0DBsjbetk+2rC0/Ahosucdzbg80fIx/wNuxfjw6LKRdLqFDEZ41XhaAe8G/K2Wc9IAOU1w169JUWQ0geCCQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Gnry5jzF; arc=fail smtp.client-ip=40.107.95.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uqLL0PKI"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dc6d8bd612dso5102262276.1
-        for <linux-tegra@vger.kernel.org>; Tue, 02 Apr 2024 05:35:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712061329; x=1712666129; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZhodAsfbqQph/6Oss9KdocUA4jNT8v1VGBe4Vmslbbg=;
-        b=uqLL0PKItSDctSUqxZsS/uT7vhnfgQzNItY7LTWQwGtERIAfDHkmi9vTKM/KWSOnZG
-         5cWY4VnZ/zB0EU9JaX8HcKrzWY6Bfiyn9ZjC8emWdaKirfIk5c6cfhLRmfgpLLUReKr9
-         yRjumjg65uKbF7b/xAwkcwPx7RQ3tjsiJ3eg7KVDrDx5qEpqbRUaH0ee2bQTWeK8yRDw
-         IZeIcTsL4ZN8lmj5lCAuHZlu//3WUHVTZLeAUR178ssgzwE8qeahHVjiEj3sK9F9hh1f
-         udU2TW8C/q7xEaGt7K/yviWJwTmaKvKoOb960rlGVp9GAq3tJB90z8axILGKqiHa0Kpd
-         L6yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712061329; x=1712666129;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZhodAsfbqQph/6Oss9KdocUA4jNT8v1VGBe4Vmslbbg=;
-        b=IoQHWz+xc67GfztD0+s15KTxP01u7PB4aPfDMnRszcYUyg+xi9znZUcBPdY6w6Fnyo
-         E9Wi68qrJmn2ZEFfArV+sPxiLBzWEeUO50pyGqzyqI41ysfdIc2cJwLmXD9pcws1aMfQ
-         IS2dQalg5uIB5gZOgyUHO4uNT6GRjGVNlFVT9A2dkRYVeSU7+0fN7cy6gsqx9tc9lfJH
-         Wjru/xKhLauoQXoiZOvhVCprYofyACftyClWMu5vvIqIiPwcLyRaTxMGITmvjX4G/faj
-         zbx1agT30CjQ2H6LFatAoQGjGLjloOxjxn4ecwmEXoNknx+I3gVF2Y0Om8aNtoT6FBaq
-         GbTw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5xh9mGRpJ9qGDPOzUbtQygy/xpYj1Bzc8GfoVdEEsIYGCxwGZvpmRO0CZc4ckK6ZTsj0Um7+MEa6O5Z3Y2UERqYpBss1JF4LqQgY=
-X-Gm-Message-State: AOJu0YxD5RNw/ae1H8Y5qyGhFJ71C/vq++Ui6yzmPE7H7TFd4neyFsts
-	b7tt85c3Apj+fb6sPd1rErkKpCw6ctxz4RKNcg9jNfzJsry0uzGqEYAFh1iaStDNpzJQejj5M6X
-	0mQz385VU1b0tPQiTFQFNwfFKWrN2JycGAD2Tbg==
-X-Google-Smtp-Source: AGHT+IG5hxT/EMYnHoU6u7S6MkbvLw5l9U/Ss0P2rks8Fb0m+zQTGqjqkjSlSz0lY1KsLwpjx1moujtIXAN3uBffPV8=
-X-Received: by 2002:a25:6d86:0:b0:dc2:2d75:5fde with SMTP id
- i128-20020a256d86000000b00dc22d755fdemr10687728ybc.29.1712061328813; Tue, 02
- Apr 2024 05:35:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Gnry5jzF"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fqOI8to5S4HZ6AL8k3P5qHTGRxlJCVae+KXng+NpzZWd3M6z4TQU/utZBBtK8WunsvqXZlKrooR43gB0DZAYN3Kbc0D4XQkI0Ix112tWDxiYt9zQ+m7ULY0mtwQmvHQJyHXklIKVPyLohzR2YYkqQggNq8a4CxD1HOQgZa9X1vLSEsdhOo7I99GbQj+rmem1dXSr6mFk383HLT+E6xfrko2GCZPTwmB4iGOtcxtJdYohY0HEhdui1D7aTxyft5pY2H1h4PrzDnlqKSnnsIcAaoyhFk/tqXNA2GBMnE7wAyazUnJMsv/L24+/xwPmUayxF+hcJWUecaHEYbmninRzUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UYbdJj/pBPw/uVhhjJC7/rLhnpYa4y3txEoj82lxIHE=;
+ b=QbzkjiZcnZ+Je+8tKyVniLVilhj8UeWzQKAvmcCLHAdvFobkvb11CtMJjx7n363Af62XXwqNH27D7eC/nacLSaNNgAHFxt9gTHNT01qK6K4JVtWB9AfzOY5xvmmHKCQJMkE5fj2XZQoesXsQ/bzKsfNYxare9wUX+0gPRSsXd7ggR+hRERFJECuLqPiSj7E0zgc78iAca+YnFyX8QYFyPgJwGw1eQlpzmmj6K0jxP4eOaK3hLTNCV3wvBkwVHrlLgTcycmXwD8JO+BhPA/l2eJz1Fhif2oQm2n5+tPo3mFN/AdpzzXkUV2Cq8tkuIdPGLAiPbv/SaHpyNLxM52peZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UYbdJj/pBPw/uVhhjJC7/rLhnpYa4y3txEoj82lxIHE=;
+ b=Gnry5jzFrssIYpn6a/PZVj+5cFMq4Z6txnBImQhY+i413Hrp0xtmg9fEGYjWqnpX98JTsd/OquxOpEL5s6vIAtGCeI57xgXGuK7WfDQyrJPzJF0jciM/ILH9zuKJUBgtYzN7TbsNYkgTPQr2F/TCSdz/XWtkCUDmwA1Om/iUOT7H/0Jr2OIr5S+95piK0q2Jbz0rrlZ/FFwDMrQlKMZm/kTIl+N/cgKIwAE4gvYwkzC4QYxK1FdTSVn45Y+802TceUrJYyPSCViAAlDhbd+GmjCtydJeOZ9YFiNrFwi2VB0ZbhSd02p5sijaERzt3XLoK0Ms2YGvsxEH89peS6PcLw==
+Received: from SJ1PR12MB6339.namprd12.prod.outlook.com (2603:10b6:a03:454::10)
+ by SA1PR12MB6824.namprd12.prod.outlook.com (2603:10b6:806:25f::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Tue, 2 Apr
+ 2024 12:36:42 +0000
+Received: from SJ1PR12MB6339.namprd12.prod.outlook.com
+ ([fe80::ae74:c645:b13d:3d8c]) by SJ1PR12MB6339.namprd12.prod.outlook.com
+ ([fe80::ae74:c645:b13d:3d8c%7]) with mapi id 15.20.7409.042; Tue, 2 Apr 2024
+ 12:36:42 +0000
+From: Akhil R <akhilrajeev@nvidia.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "davem@davemloft.net" <davem@davemloft.net>, "robh@kernel.org"
+	<robh@kernel.org>, "krzysztof.kozlowski+dt@linaro.org"
+	<krzysztof.kozlowski+dt@linaro.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>, Mikko
+ Perttunen <mperttunen@nvidia.com>, "airlied@gmail.com" <airlied@gmail.com>,
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "linux-crypto@vger.kernel.org"
+	<linux-crypto@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+Subject: RE: [PATCH v6 3/5] crypto: tegra: Add Tegra Security Engine driver
+Thread-Topic: [PATCH v6 3/5] crypto: tegra: Add Tegra Security Engine driver
+Thread-Index: AQHaedbyTqDDO44+YUOWKfWU3w8p3rFM/XcAgAgBdCA=
+Date: Tue, 2 Apr 2024 12:36:41 +0000
+Message-ID:
+ <SJ1PR12MB63394D2C8C5329DE4B9B937FC03E2@SJ1PR12MB6339.namprd12.prod.outlook.com>
+References: <20240319082306.34716-1-akhilrajeev@nvidia.com>
+ <20240319082306.34716-4-akhilrajeev@nvidia.com>
+ <ZgVCxnI0sZcE04io@gondor.apana.org.au>
+In-Reply-To: <ZgVCxnI0sZcE04io@gondor.apana.org.au>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR12MB6339:EE_|SA1PR12MB6824:EE_
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ DNfHKKo2+Yd/jP5vB9+nH6MNz6T1sL4WSPn1+wzzthHnhOfgyfT7fyB6v77bipI9hQZupKJvDlZo5OcJ5bmhivQ2VH9zTwQsTXBgdxJygYFALRdsep3Yv+j54Z03jZ5HDZM4RBBdiybf+anrJ2k0h8mFLPQksN4WjOrKW1SIwuJrJG8280lErJRn57eEWADRYnDVdiEV4Q4Z8hW05omdHcokKJaziREUUN1MEhXe+9n/k5LThTmr5hBMOtW3J4s1SZaXmJt5dGZMwLAob8oQtpNOInODeXEGS9gUyq2y2b5RuqkBhkVSxdx8I+HOAVuPFg5LeWX4obppZeL0ft6fL3cr2tknIb2Wj3nGaZyLRmCgdRcFSJgNMAW2H4wob++D5lfu0YbXGTdxbSw1DNnnnNAPZdZNgU51YJ2AM4DnHbKEp78CqpLCeojhRHV0xLCZ/IbF30BBH5JtCTP7jITQ1Zch1ZbpbHQ5yMJ72Y0jUElp7UpKP4tH2RhoLTn66zjLjPDqWr6/0js17+srdO2XdX+iTAJLNFDfDI5rpiDfocRzEZLj7vCpjNy8L0qcEDtFcpfAl9NXu1R+4qAHCGCFxcRMJplJA80H8zJORwUfUWSO1Cf3PP/a4hSkO0ChKxOMkrKoMigB1EdKxdRl9JhxPFmEeGt6hNYXcBfe72WfJlw=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR12MB6339.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(376005)(1800799015);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?3jC8nFDWBKiERIYVE/NeAuDSbXfdW0s1o7rjbrY38kj5+B8ZxLOQhCXX90ve?=
+ =?us-ascii?Q?GgZZE00bsxaMXXWuARzUF8GcVzxm76rblhtKZx6oi+ywc+RkT54iRO+tegYx?=
+ =?us-ascii?Q?OKDDTgEHKST9RhqKSzwkAXt4WCdfgPCT4rwjPDnppf5t7aYazEU85fVShOSa?=
+ =?us-ascii?Q?jCeK3ZlYD6Hu9v72gSsH0n2QU6FIJEV6FtvobzA77bJlRWL0iKiNOT1EWpog?=
+ =?us-ascii?Q?AxLAOp7aBCMRwKE6e9oNfUeCkBO8td+Y8isuKL299Htz4Fl6OSoeT97VCM3l?=
+ =?us-ascii?Q?vhP+yMH3/bdNKrs+JBftFOqskEycuxlZA6ar0dYkxkAtSCgoIABb8Rl82e8d?=
+ =?us-ascii?Q?yGtEynmDA2ZWca9r11GWnZ3JPK0Ze8JCxtNFI6pWnSrElTbbgDuuTWG+hh9X?=
+ =?us-ascii?Q?/hxbqfPtFp+UlIgKqy9UwvbSmA0rSRAth9TBU7/1J/FGdKG/+vHoFLOSDAIO?=
+ =?us-ascii?Q?xsgFSf76MTpT0VQXWo5sGCsa7hACY7A/Q8r379TlbFacaVfxRyONHe9ESnVC?=
+ =?us-ascii?Q?wfHzho0g4G2x/xEj/plpV8tZepqDKKDWYyg6J+6KvIJjspUytax6KvuYFh8t?=
+ =?us-ascii?Q?TeP2on30xWgbwpgfXDvCVJUCQCDEcbwv5nesq+ylkeb4tcMVakIxV75QwxIS?=
+ =?us-ascii?Q?bSkg2cOm5D0XcWbWj8ShII3isEDUwYr2dKpnSLO0txZpGuehWEKYIiKXlg1f?=
+ =?us-ascii?Q?nGsaTYOHrJ1mNFeZJmsJyaAjsYycWn7x+Dy4qSFEvug5HZSJZkMsPIvoT90g?=
+ =?us-ascii?Q?ec2AAP53quTcapYeFwS5wuzgRXqm7Tsjo1V0cIW92N1S8loMr04NNLgsMZA6?=
+ =?us-ascii?Q?2MIa2AYSf1a/YZVGSdgKytEqmjx7Q5xRYNF0dHskUj3mw1/BC70LCHnQSbpK?=
+ =?us-ascii?Q?ftil+RrgypeRvhYhhY+mWkGOJY8Z74mt89cbm1a0nvra1VmmgaPL/7n40vV3?=
+ =?us-ascii?Q?0iLXikDOko8AGzWfRJXN0nncjf5e2IctzvsMgFw2kjQFmJhKUKgyf8TInpa2?=
+ =?us-ascii?Q?gS62Y8wyV7F6KGw4BKumQ2tkiQ6fRDcg7pRx26aVM3OM///MFlEt4leGmG7y?=
+ =?us-ascii?Q?NNkov3BpTGlFd4Gni/4k0Sp+MG/Y4Qb7bACAGfh1J2uKQF6epmK8v3wyganH?=
+ =?us-ascii?Q?so5bgFqRsC1I82m66wFsBL+U59gdtV8QBrCzeyHn0GMYKVgaiInJzxo6Ww1H?=
+ =?us-ascii?Q?tmGmu0u5FO1D6BpUArZRm0dd1Q504Nu2sPM9SA5C4u3IW2pGxHPK39A+k9oV?=
+ =?us-ascii?Q?YGQz0lZYCEVdqMHH+IWyNw2p3Cr9d/lrZeg3CEz3of1Gueq7IrI84ADrTesy?=
+ =?us-ascii?Q?ybnNAgnq6LHGJ5W7xpco0hYEFxX8GEVBuFzWmVe/OQdtGhrZm+xB3uUApol8?=
+ =?us-ascii?Q?fS42jT8uDmeWccXpzjoV4OvTXSesbub91T/NSwtsZoBVHqhO0N7bKHi5U1ro?=
+ =?us-ascii?Q?NnITW+DD/1us3mwU4SpTtTNe3IDYUGCSfxTmb4bdXkPlQYsCS40jwOCW7ZWz?=
+ =?us-ascii?Q?8658uvHqk3ou53hrz49aRsBYJppVAv8NmRZsBaSmu8nM9sB7KACNxSL63WSa?=
+ =?us-ascii?Q?HOGSdVNA/2S1ce3WfUXWur92ghxfHYF49mSsm+iU?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240322132619.6389-1-wsa+renesas@sang-engineering.com> <20240322132619.6389-65-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20240322132619.6389-65-wsa+renesas@sang-engineering.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 2 Apr 2024 14:35:17 +0200
-Message-ID: <CACRpkdbtRoDtWN4mnyZY_yEfWQFPCQaVudjBki8N1sOXxXWupQ@mail.gmail.com>
-Subject: Re: [PATCH 64/64] i2c: reword i2c_algorithm in drivers according to
- newest specification
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Elie Morisse <syniurge@gmail.com>, 
-	Shyam Sundar S K <shyam-sundar.s-k@amd.com>, Andi Shyti <andi.shyti@kernel.org>, 
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Krzysztof Adamski <krzysztof.adamski@nokia.com>, Benson Leung <bleung@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Jean-Marie Verdun <verdun@hpe.com>, Nick Hawkins <nick.hawkins@hpe.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Oleksij Rempel <o.rempel@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Khalil Blaiech <kblaiech@nvidia.com>, 
-	Asmaa Mnebhi <asmaa@nvidia.com>, Qii Wang <qii.wang@mediatek.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
-	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
-	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
-	Ajay Gupta <ajayg@nvidia.com>, Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Robert Richter <rric@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, 
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Hector Martin <marcan@marcan.st>, 
-	Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Laxman Dewangan <ldewangan@nvidia.com>, Dmitry Osipenko <digetx@gmail.com>, 
-	Conghui Chen <conghui.chen@intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev, 
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, openbmc@lists.ozlabs.org, 
-	linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	asahi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6339.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f855cb73-98f0-401e-a3bb-08dc53118cb9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Apr 2024 12:36:41.9949
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XEtx3b4EPU+NhxQPQvKhs/j/b4pD5kJhcnbWDAF2FebJaDNJqMCPlf0RKOIvB7qxLFbeZr6mD3NaHh9huSksbg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6824
 
-On Fri, Mar 22, 2024 at 2:27=E2=80=AFPM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
+> On Tue, Mar 19, 2024 at 01:53:04PM +0530, Akhil R wrote:
+> >
+> > +struct tegra_sha_reqctx {
+> > +     struct ahash_request fallback_req;
+>=20
+> This doesn't work because ahash_request is dynamically sized.
+> So you'll end up clobbering the rest of the struct if a fallback ends up =
+being used.
+>=20
+> You should place the fallback_req at the end of the reqctx and set the re=
+qsize
+> based on the fallback reqsize.
+>=20
+Should I set the reqsize as below in sha_cra_init()? Seeing this in other c=
+rypto drivers.
 
-> Match the wording in i2c_algorithm in I2C drivers wrt. the newest I2C
-> v7, SMBus 3.2, I3C specifications and replace "master/slave" with more
-> appropriate terms. For some drivers, this means no more conversions are
-> needed. For the others more work needs to be done but this will be
-> performed incrementally along with API changes/improvements. All these
-> changes here are simple search/replace results.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+        crypto_ahash_set_reqsize(ahash_tfm,
+                        sizeof(struct tegra_sha_reqctx) +
+                        crypto_ahash_reqsize(ctx->fallback_tfm));
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+Regards,
+Akhil
