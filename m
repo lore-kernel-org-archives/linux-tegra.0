@@ -1,136 +1,116 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2063.outbound.protection.outlook.com [40.107.244.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66BC01411FD
-	for <linux-tegra@vger.kernel.org>; Wed,  3 Apr 2024 11:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712144552; cv=fail; b=XF8FcKzhe2VrX2wqFSQvvx3qq1xEcP6+936Up0f2/8XSBl+URUrP2gTaEEwHd6aK7pWHIjTOc8Lk9o0I4sweMWFnhvCcgiw5EmOS6WB9287fRhon9bbu/KufAoAdqFyjXke1y3/JIp1nPXEE1bmlVC1AhzyNfJTl8W7z0ADb/pI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712144552; c=relaxed/simple;
-	bh=cvgBJlk61pxrrBu3/ir9ZmfwsJiRJ+WOmAEN6HjgvhQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V3HJF98NTVbJMQzf1l5BZUg1vtdBkAeQtC+V2i2bNfxMWOgj9GeXBHozjDnFMTITh8PS2tsmlyiEdYSDB8ib+XHwGhpOvA5In7wpeGSy630nzqWz3c8pCyOZrrHeATJIj6sJorELdlntR8EY3NJBKcPllmRvc9IEhZfA9ueq+Mw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tU0La9wA; arc=fail smtp.client-ip=40.107.244.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3EB147C8F
+	for <linux-tegra@vger.kernel.org>; Wed,  3 Apr 2024 13:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712150354; cv=none; b=utZfsS2eK6OGzl17KGefo6xV3pwR0lTSq55KB5LGW97Mmpa2AIV16A0nplJqks4UopIodAyJUi/CofrCk+ee5kBh+gPcfaQBeSOCgtjbC1X0oyHAzhSloU0AP1+0/9jOqHZVGRmF6roP6bGs996MD3SdRooYa6nKr2d+aJ0Stdg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712150354; c=relaxed/simple;
+	bh=cWyJ3cJLCpRglG8Yk4xFCKIFWdrd8x6dZaV75Jxrvbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AhRwK3EOc5r2dmL0zgS3PaPHpQwVbw812NdMORONbehyY5Qkog/WoMxC/Yr99J3q8ydZkv4JYcoykkfUmTamsyug9e1qJpcvsL6YTYnnnwLfc2EJLhqDHxZcwaZ1Ne2aJqWDHQ9oolpjDQRFzSP069Me3BFYgRZ42dGSB4l91Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=OzTfZbDA; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tU0La9wA"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ieCpxtSHaiShf0ewNH6cfi38Ij1u9U85712Ec4DyS1PpOiKqY9FuBvnLHX4H2ZYA3hASemwuhHoUUkBaSCnGaghlptGIdtq7NMqb5e40AXkQOOTZPUQwiB1MJHhu+5qzKMxIbXj6LvgjBjSukFd+/H3zzm21cmcsbrHpse74I2AitHF0fwI1yW8eGXr3a1iRHt9fAga0WqGeG7a0u9ossJydYyAXS74nF6gDcQPGP9liklK3g5yf0hEYyi16tRa4GB9UtkBlxXyGUEw72jKi8PagfdzCpl9IIEFy149fXbu174jZpZaiStDkhdn8iF4ycsbsN5Yi6oYDhz+E3qi/xA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MvDBsjI3lT/JUgQ/mgTm1l+tCb3IBf9lu9D9vyhYZXU=;
- b=jDBU0mBXv+YrhAyhOaAsH/KS/2lJDJoEfNYGUHxtLkMzBpIny7S1VM8aU1Pev2N2vUk88ZQ0ebfZuixhhLSOq2zhvPPgq0C1MZtngyma9J1v4S1krj9YaTv+5duYw4qMaF+zYWWuXrOjPX1p7+jmekJacYZVH8zUk3Ua3GhCtOGinMs4BjABBPneaJJ5F4m7efa261EnffUDbaNq/KzMQyRtigPXgpZnSezGJ4FwTBMZ4l+6F9DtKk2aiapACPN6vsZA2AQkgkwDXgwibuM91PxD6aMOnfIOHYiimzeI5vfqKv+d3MJlrmkGtCrqWZtaFAuujTExgbaVgbhf7VWSZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MvDBsjI3lT/JUgQ/mgTm1l+tCb3IBf9lu9D9vyhYZXU=;
- b=tU0La9wAdHdZghOUI4jRLbWyw35Wwi1V2yYsPmPsaZjaT7HGxCYSF62QXZaA+fWzQFs8ZynkpgCq9yN0hmmT4Vzncc0ROtjjfhx5t4pzpuPToOx15Wag9anG9MpPyPBMMs/UxC4pN36VCcBpNYb4ZrWcodp7WPR0J3djgGW50ujNwQFrGBGiGNsXDQgv9ggetzF3zzrn59XKhChjA4VBD+8HHfMAh76gTlMjN1OcpAOYPNW3usNchjBP7JR3fpjz7xKEsVa2ecC3sWhkqZ+eW5Wv2p0SUB5EtumRloeO6mngkfglSZjykp1gAz9hcrhj8wBFyBxHM5HgziANP33gDw==
-Received: from SA0PR13CA0003.namprd13.prod.outlook.com (2603:10b6:806:130::8)
- by MN0PR12MB5740.namprd12.prod.outlook.com (2603:10b6:208:373::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Wed, 3 Apr
- 2024 11:42:27 +0000
-Received: from SN1PEPF00026368.namprd02.prod.outlook.com
- (2603:10b6:806:130:cafe::be) by SA0PR13CA0003.outlook.office365.com
- (2603:10b6:806:130::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.26 via Frontend
- Transport; Wed, 3 Apr 2024 11:42:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SN1PEPF00026368.mail.protection.outlook.com (10.167.241.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7452.22 via Frontend Transport; Wed, 3 Apr 2024 11:42:27 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 3 Apr 2024
- 04:42:13 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Wed, 3 Apr
- 2024 04:42:13 -0700
-Received: from moonraker.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Wed, 3 Apr 2024 04:42:12 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] soc/tegra: pmc: Add EQOS wake event for Tegra194 and Tegra234
-Date: Wed, 3 Apr 2024 12:42:08 +0100
-Message-ID: <20240403114208.35147-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="OzTfZbDA"
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-432ff72d745so7666351cf.1
+        for <linux-tegra@vger.kernel.org>; Wed, 03 Apr 2024 06:19:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1712150350; x=1712755150; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cWyJ3cJLCpRglG8Yk4xFCKIFWdrd8x6dZaV75Jxrvbw=;
+        b=OzTfZbDAK169DHvtiGLE1p56hWxrPJIvztF4HCEG28uzI7eK2DDmyoFnlpMcVff0Ju
+         c7HfnRJdMT3cqqxjH5ta+XDwFfzxP7nhChJPfdXbCh/IYQgFfXapvkwDzhtcQKIMJDU6
+         /AYta6lJ4gWauzOHkhmOzIjsNFqlePdHHn3xy9JT6hKwAeKaW0n7cYID5zC35uJ+E1J9
+         MjmpsOIduTxUPwoUx60yV5mxx/3qr0JADBO7+Rf5akc1FV1XnIFH8emGKZpFjW7KCbm0
+         cWNz6heaYM6CJ35L/MFmo5LBGu6IXNRGey0GQtZdKGb0oNwjKGxhdSPQYm+tHTmRafwM
+         UqNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712150350; x=1712755150;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cWyJ3cJLCpRglG8Yk4xFCKIFWdrd8x6dZaV75Jxrvbw=;
+        b=TdDWW/mb0tbye03JHW8v+sL3wZp2LgqqoJ4LuADPspHc5wXOVGNHsQkatO198LnoxT
+         wfq4JiJVx334KBWl+31vtU6TZjUPT5F8dsrC+kPORah7ylsaUm3w4bOmZiatgEYtaTiv
+         yKCI8KjR/EJy1HMwcfHeWcsuoCiSSxBwlnU/a4Uvl9ukZupGcne9ypIkHdhi6EtFeQDR
+         7emjgsLS2WxF8lAV8cqNOkAEapdhZowd3tZ7ukYwNHQgbmq30sYqmrRZB5OAERCXJAPE
+         SsglKfME6W3YOjK2usOY3vE/8Tm6BWgg8e9M9baAx11sAhW6N7zDIIaRrjugkZXMWcQz
+         4ymg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0zwx4tI78wzwz3/evHCSgEoZi1Imme2BdL5TRJRUrDSA6CoYF+l8Xxq1xsBxeVqTw/C8Kf99ueBPfrE2Lw6nRqhWZl9meeHE98J8=
+X-Gm-Message-State: AOJu0YxVL5pDVIY8cQPjNwdy6UYorNmeniKNFT0m2+xHirohnOGjNF9T
+	/zysUyljhU3kcNmWZB6LmvpXwSuO6iPj4nWoUcBWXj8xyTHDw3/wvxAiK40JqXI2j09Olmz47nK
+	OU4zyeZLogzYAEnTZIh4vBlG9VhcA2fVEjyvszQ==
+X-Google-Smtp-Source: AGHT+IEGVCWVaM3OZyGBYvZk7eIME6rUXSm4/CdsRsbb+oN0keiU95giarhKtyBsTd58XnIkGQv2TzNnxS90eOdz7ws=
+X-Received: by 2002:a05:622a:104c:b0:434:338c:31ac with SMTP id
+ f12-20020a05622a104c00b00434338c31acmr3549454qte.14.1712150349909; Wed, 03
+ Apr 2024 06:19:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00026368:EE_|MN0PR12MB5740:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d65be12-b785-47da-63e2-08dc53d32330
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	GvdTPwenvmMCyPHecH1Pu8Gj2jw78ygb1Fgu3U9Eh/J+URhPS14B2qzv5GCtV1InMO5P+orOV29CvqxHwfJHlbHK5FHpWG1KgO/k8yfyK8AUfMf3lhzKvcBAXsrfAvqc6BRB4CO7e3sho1VLaJwJ6EyXLWkAwvKQbwagQMX1P65lOU6Pf7tkanDtmvkJolq860hfHu25r3XIkxC6zyrm4+a5iLCoFPOc/XWUUaTFEeQoIsfKKSX9aOzEuN2pUIhnU8MnYjDD62490ofjTrNm401PbNXNZySY2xwW1oVhdCtpEq7KT7DpbVKSN99+L7R09bMfTxYXdLaDDSNM4WdnCKw4zWDQofOzkY2/l6TNmW05UbkPDZlteUm0VnEyiNjf7Uah+zIyy+662wCU+RstqVG2PnaY0PrVXUag/s3Gv4rajEOiRati9rZ33a3up09F3b2kHpc6La+mEAM+fo0oyBVe4ZOmUO2LUDauO2Dv6X5byUP2sZvPpg7caD/UkLaIpFxSd4SI9kxiLwE/UdB26WzV7nt2r0zCQ92sPLcQFVj4qS6EwQ8g02FCGWMKru2n2FkuKRj2v5miQb1IE9jEeCtRtHZCTje9kBl2cutPAKcPvCfMuHcYOx+C3wH05a3/oUGGWTKWCBlihjpcdKQZ5+iNB8svUeVjdpb2Uq9O5x8y5ofbp+t65+13T0uMTtxW8Xgbt8BqW+G87+UFhNe7tufZXUsbOgV3XWacqFVc0KIA5YYiUmtV9OabTPp2mXeg
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(82310400014)(376005)(36860700004)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2024 11:42:27.1940
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d65be12-b785-47da-63e2-08dc53d32330
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00026368.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5740
+References: <20240222173942.1481394-1-pasha.tatashin@soleen.com>
+ <00555af4-8786-b772-7897-aef1e912b368@google.com> <ZfTDUGSshZUbs13-@8bytes.org>
+In-Reply-To: <ZfTDUGSshZUbs13-@8bytes.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 3 Apr 2024 09:18:33 -0400
+Message-ID: <CA+CK2bC7jd65=eZoN7szWJKSO2TLsxxKFH8D6WjHS3_2U7=McA@mail.gmail.com>
+Subject: Re: [PATCH v5 00/11] IOMMU memory observability
+To: Joerg Roedel <joro@8bytes.org>
+Cc: David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev, 
+	baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org, 
+	corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org, 
+	heiko@sntech.de, iommu@lists.linux.dev, jernej.skrabec@gmail.com, 
+	jonathanh@nvidia.com, krzysztof.kozlowski@linaro.org, 
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	lizefan.x@bytedance.com, marcan@marcan.st, mhiramat@kernel.org, 
+	m.szyprowski@samsung.com, paulmck@kernel.org, rdunlap@infradead.org, 
+	robin.murphy@arm.com, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
+	yu-cheng.yu@intel.com, bagasdotme@gmail.com, mkoutny@suse.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the wake event for the EQOS ethernet controller on Tegra194 and
-Tegra234 devices, so that system can be woken up by an event from this
-ethernet controller.
+On Fri, Mar 15, 2024 at 5:53=E2=80=AFPM Joerg Roedel <joro@8bytes.org> wrot=
+e:
+>
+> Hi David,
+>
+> On Fri, Mar 15, 2024 at 02:33:53PM -0700, David Rientjes wrote:
+> > Joerg, is this series anticipated to be queued up in the core branch of
+> > git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git so it gets into
+> > linux-next?
+> >
+> > This observability seems particularly useful so that we can monitor and
+> > alert on any unexpected increases (unbounded memory growth from this
+> > subsystem has in the past caused us issues before the memory is otherwi=
+se
+> > not observable by host software).
+> >
+> > Or are we still waiting on code reviews from some folks that we should
+> > ping?
+>
+> A few more reviews would certainly help, but I will also do a review on
+> my own. If things are looking good I can merge it into the iommu tree
+> when 6.9-rc3 is released (which is the usual time I start merging new
+> stuff).
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/soc/tegra/pmc.c | 2 ++
- 1 file changed, 2 insertions(+)
+Hi Joerg,
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index d6bfcea5ee65..91d0ad6ddefc 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -4074,6 +4074,7 @@ static const char * const tegra194_reset_sources[] = {
- };
- 
- static const struct tegra_wake_event tegra194_wake_events[] = {
-+	TEGRA_WAKE_GPIO("eqos", 20, 0, TEGRA194_MAIN_GPIO(G, 4)),
- 	TEGRA_WAKE_IRQ("pmu", 24, 209),
- 	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA194_AON_GPIO(EE, 4)),
- 	TEGRA_WAKE_IRQ("rtc", 73, 10),
-@@ -4210,6 +4211,7 @@ static const char * const tegra234_reset_sources[] = {
- 
- static const struct tegra_wake_event tegra234_wake_events[] = {
- 	TEGRA_WAKE_GPIO("sd-wake", 8, 0, TEGRA234_MAIN_GPIO(G, 7)),
-+	TEGRA_WAKE_GPIO("eqos", 20, 0, TEGRA234_MAIN_GPIO(G, 4)),
- 	TEGRA_WAKE_IRQ("pmu", 24, 209),
- 	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA234_AON_GPIO(EE, 4)),
- 	TEGRA_WAKE_GPIO("mgbe", 56, 0, TEGRA234_MAIN_GPIO(Y, 3)),
--- 
-2.34.1
+Would it make sense to stage this series in an unstable branch to get
+more test coverage from the 0-day robots?
 
+Thank you,
+Pasha
