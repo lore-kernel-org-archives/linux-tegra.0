@@ -1,302 +1,156 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2069.outbound.protection.outlook.com [40.107.102.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C2714900E
-	for <linux-tegra@vger.kernel.org>; Wed,  3 Apr 2024 14:26:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712154419; cv=none; b=ouvz9hyhsUEjcjhR/jo9ykOmCzCXveZr2vvQqJIFMlSPPLi4FNlp4m92T99NilYPdHxh77PoyEN7ubtvdlG0IHOml7Y+vuF9VKBH8VrC1FkKweoWP1maJlFtqc360f7l/jJBk8zS3IvEfop84ZuLzTVp94Ib1zScoj2PUwzpUe4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712154419; c=relaxed/simple;
-	bh=A0OBSuVgDt/J2xUutO6+JvqHERv/I/K2G5EsyXT9MgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZNdImDO83KQP8NCjKVFWK2/IIamYxfUDvdmv92G2vwizYFzvg2ScwQcu87cmNrwSuj9Mw5mucSZcoJGHqCrN8SOtXQfFkeF2IF4izT1qVsG6ZaKo5UWlw2YgdMnMZ2B2oXCobwFc4eNDiCf6SB7qk2nGXV9y+1qQao0L8lPUVSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wGiw9mTI; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C7913AA52;
+	Wed,  3 Apr 2024 14:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712155181; cv=fail; b=Z16KaIgQzsw8Izm9Xcu8BZr/k//MKMeeqCuGTZinZayGUgraXoxFdnYWZzLBXrZ06faQT4EEfJyoHOe1kqHoAnGAFtTUumBH3Km7K5j46OIqW+XAjORTMWeb7zRGia9usu2qtVlZw6yVE0669MHgV30ikWJiz3CV1CeUkLPUHt8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712155181; c=relaxed/simple;
+	bh=SeHFsi/jE9Sli2ABs52FxobNHyEarVSWqCyUWnUT4fQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gll56TsnnaprqxPkXuVGFFKWixViGJCACs06yygnoL44cVe2dK8Z6KlaWN/126D3EjQx1kV7XpP5E4x9KEWxyD50B5PYZyiS4aoyULQ8dtoz/YlJOanvLBhy5UUSTTWbBEauRLZI0rZNi55YxJBZBZbD4s+WQRFTLv6pyJPgu5c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LBAgTOnl; arc=fail smtp.client-ip=40.107.102.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wGiw9mTI"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1e0f0398553so57609305ad.3
-        for <linux-tegra@vger.kernel.org>; Wed, 03 Apr 2024 07:26:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712154417; x=1712759217; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=itlOmnEuPReodbeFIXg0Q+nLMyOtH/Tv3WRy/9hE3rM=;
-        b=wGiw9mTIeqXyTzwEsHSDyKzeuXcVxYgq9Ly1yqiuvUm+trfcG5PQPLf44krQvMFGPJ
-         nJKBXcLjl942EE1iPjZhX19qmHOgsztFRayRXr1CJqcwMif25yuyKjIxFzQbDJLtAlMr
-         KZaBWhWjecPscnEDaWg4ulMt1xo8wzBeUdVrH4nxXs7QvieIyWFLt6mdWlcATusnP5cR
-         0E1kMkZU1A93NVoMFyQu1MKm9tBRFwf+uHufm+mJOI0mTUbqRb8oS6lvPO3cWQ76Q+HO
-         VA+FToxDdQDRLuSIP/vYSMdDI0RaEnCBfEOurotS9NIW77a5xL2dAYdODpmEg9oM+CvZ
-         M0gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712154417; x=1712759217;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=itlOmnEuPReodbeFIXg0Q+nLMyOtH/Tv3WRy/9hE3rM=;
-        b=kK+Oo0sml7q1Z8SH057iEOhFlCYpUPcom7nxyV2fzCasHE8Mi8AiaT++O/dSz1r7I/
-         cXIVs2V6WPq15QITV9Y/t1qFP8/hh14AxyZcnFEk8Mts/6Tnn1XJKR14xNtLp27jvk/G
-         N+BT8R+nMIi0hAuH1GTZajiTP/NvVwL6QPfvxoIbSKw+vhZ+mTMpSkp7YfROvpyft3fh
-         laMkKr3HWRbo/oIlBGJTxJ6b8UAav4APPj189wkIEOfpmhvMm2wMmwy5WCUSbR2ArALo
-         nnNnxRt9D9mKRdlAWSMp8z5hsymzmWTUgYiPF7O05pvgwxpvJ+tvvT3TFrQPkvc1GFnJ
-         +6WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5PC5TkNcCZtqDPwDhlM3FvqqKyQktoIqa5j+CANShMP3LQH0hMD3v/RJtczLmIYNGHMjNtJCoPMtXL0wW77WB2GaY5bQ7Mvg9ykY=
-X-Gm-Message-State: AOJu0Yw1UhH+Tj5QD+wnOphjWZnF/bEL8rZ3Jxds08ZFxq2vuytPwVcF
-	Rx6FdvZ3qFDW2QqRHzP4Sf4VxCYzggw5ai0pEVBbWeubRlI65qhNaxyWAquR2w==
-X-Google-Smtp-Source: AGHT+IEha+Q/6vakGDqGjU0ND2M37sfFKFFSdBt5vgbo+vLYkuo7MuB+eCFLaHlH3A+uF1Yf4hVGOA==
-X-Received: by 2002:a17:903:210c:b0:1e2:a414:fe94 with SMTP id o12-20020a170903210c00b001e2a414fe94mr52411ple.15.1712154416796;
-        Wed, 03 Apr 2024 07:26:56 -0700 (PDT)
-Received: from thinkpad ([103.28.246.48])
-        by smtp.gmail.com with ESMTPSA id j10-20020a170902f24a00b001e2a0d33fbbsm376458plc.219.2024.04.03.07.26.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Apr 2024 07:26:56 -0700 (PDT)
-Date: Wed, 3 Apr 2024 19:56:50 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mhi@lists.linux.dev, linux-tegra@vger.kernel.org,
-	Niklas Cassel <cassel@kernel.org>
-Subject: Re: [PATCH v2 02/10] PCI: endpoint: Decouple EPC and PCIe bus
- specific events
-Message-ID: <20240403142650.GA72531@thinkpad>
-References: <20240401-pci-epf-rework-v2-0-970dbe90b99d@linaro.org>
- <20240401-pci-epf-rework-v2-2-970dbe90b99d@linaro.org>
- <45b2db99-2d03-469b-aa37-bc6c63cef141@kernel.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LBAgTOnl"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=R2ma9uTN2Lq14xIjDMfpxJ/Nb32rbWaZ2FHIuEEkKnGimVo/8OjoXfAS84nWeakb6dr47u7k4iDp4PNfSbhir4FIKpwGgrrqULZud0BRQthCItfRgor4VT1eYeLQjPALgcqki3a2J92U/EdZTUOrtFteq94gKDEwfALdQ5Lf+dIsdDfFlXqO+AA488IRo6pypii5M0JSOfVzOMnsXCJizhyKBai7HAuFtHOXLXJl4jIw0sU+BI/MQrRA3tJrulkTwl+RSpVA4UPLr+FJz+5+XPeOKRH2GSjOiUra+OAMxedg2j6we9Aw6M2NcvnxvNC507UVWv4D4Mkx4m4lPVdi/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5n5ovgyBLWFpDC63S7gdyQw8luP9t99OKImKzGoEgYU=;
+ b=Zh+KcHPhH3+7ar7ns+GPmcktb4T66gnYV7M3+aIhBuvw2pRZgJgSOc9XMiIXHWRagC3FKUrliQknCTwrB3b33jJP1zgjZJvJVbulXwGa0pOTqxm51Lz7vVpj2F1eHWeWz9q05omIc/fk1ICLCrVNiNg+vQ2coeNgWfvOxFA3GYyczpoyY1SuDmfD1dqqcJ5SpRP/gjQ0p39zRFHtyR3gS7J3ms6XGfk1b05FYUkQAdsw01neASL2cMDSmxCOuw5y5DShcilP/fe2kjlW2UaAZklTgyfRzmStDD6T5UxqE4rWf3OK509DKxsRb47bRSqBfyOG81eknkmBJLqMtsWVZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5n5ovgyBLWFpDC63S7gdyQw8luP9t99OKImKzGoEgYU=;
+ b=LBAgTOnlT00Ry0B35yALepJggrraUOFsS/Gy9T1l1YVV6nh0RU8jYu1URIB0yiRoqE2wSjp4VtEbwU1ybp1nzpLjH+m0If7XFO54VXBBymdy2XDxnxIJk/idnTTrUSfvbdBLzCGGFlHlEPnEtCo1dpeEmWPoO+uTFaxiSttMuKDICQf3YybfM1JondPYbcKU3nYB0LM2gFNVHr3428WS1pkgK1hv/jMDV+tA2VOiu7WOm3NJYCvUS4X/pExvVqQiBofBnN8c+fl570zUseyqlwJcDg6B61Oz+T2emh2QDUsowmzUHsG7RnqOvJVwAlkSZX6Mpfbcl4Eq1pcmn9iKgQ==
+Received: from PH7PR10CA0020.namprd10.prod.outlook.com (2603:10b6:510:23d::18)
+ by CH3PR12MB8306.namprd12.prod.outlook.com (2603:10b6:610:12c::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Wed, 3 Apr
+ 2024 14:39:33 +0000
+Received: from CY4PEPF0000EE3C.namprd03.prod.outlook.com
+ (2603:10b6:510:23d:cafe::67) by PH7PR10CA0020.outlook.office365.com
+ (2603:10b6:510:23d::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46 via Frontend
+ Transport; Wed, 3 Apr 2024 14:39:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000EE3C.mail.protection.outlook.com (10.167.242.16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7452.22 via Frontend Transport; Wed, 3 Apr 2024 14:39:32 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 3 Apr 2024
+ 07:39:20 -0700
+Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Wed, 3 Apr
+ 2024 07:39:16 -0700
+Message-ID: <b1ef6c21-075c-13bc-89cc-078e8b94ed3d@nvidia.com>
+Date: Wed, 3 Apr 2024 20:09:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <45b2db99-2d03-469b-aa37-bc6c63cef141@kernel.org>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [Patch v2 1/2] dt-bindings: make sid and broadcast reg optional
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Jon Hunter
+	<jonathanh@nvidia.com>, <robh@kernel.org>, <conor+dt@kernel.org>,
+	<maz@kernel.org>, <mark.rutland@arm.com>, <treding@nvidia.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <amhetre@nvidia.com>, <bbasu@nvidia.com>,
+	Sumit Gupta <sumitg@nvidia.com>
+References: <20240402132626.24693-1-sumitg@nvidia.com>
+ <20240402132626.24693-2-sumitg@nvidia.com>
+ <025ed42a-c6f2-48e6-a8d1-b6de79d6957b@nvidia.com>
+ <c51653d1-1a76-45de-93e0-ee5d341649e9@linaro.org>
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <c51653d1-1a76-45de-93e0-ee5d341649e9@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3C:EE_|CH3PR12MB8306:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9b048d9-9749-444e-4f37-08dc53ebe082
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	fvSbNzKjr1pAZzGWydwN7GkzXcooPgnXrAYILsrMBiownRjTo/tgs7qoayhcSXZ1r9jvotKM6TvlojMt7ZI0xzigr+7Gik8BB2eL3wjOonLDVH+sJM9BO+pItQ0arGzwmoRymKeQWmXH7BzE5aXTuFXldEdEq3HJHtdb2bF5lLDldLu0la91YcpV3wSmHbb1RklttgfIWVTGlnzVN9gwv2W1SMcipo9CHsWht7d+S2Eu/MNagLpmWwOOzwSW21W2WoTEP1PAg3cNsyV/hwSyaxAu3AXadHu2jFFpkKSaVfAbvgkcyea7myUeo0aj1iH4U+HuQMloU+q9Of2bww4TDiEXm5F7SWWkFCnlEg6vWihXTayxfQTUeqTXUoNGAWCavFFC3oEhIKMwXC2jmToiln5A61lJLvsUkoC8gwJCtARqQrqGCt9Z/z5tdc19hhOEJaJ1ATLnlrgOLC22DmEPKgGtCyKlc2PEhEQMMy0iyKQRyD02Dfm8axLPOABKwjBC3OCn74kh8wsK1929qEcthM8pFQ+by0uuxPC8idxPC1AfoONt4CTJk4UJSopDR5felquwic9Bn+cTjTeJX1wk3v1s85ajkKvfpH8olEciM6qHD628MznFvsHEy962Fj7ozc5OklP1XfpGVEZHCq1yd40SwHONkHB0Hdr34SyV6h1cI7hF/JMVYv+Z4Ig03KiYZzUyft9GLxf/FTIAZS0CYkuSHYkjkYMpT0EgTOYJ7uuYcupfiIskUqtS9vWy1dPp
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(36860700004)(82310400014)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2024 14:39:32.7730
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9b048d9-9749-444e-4f37-08dc53ebe082
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE3C.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8306
 
-On Tue, Apr 02, 2024 at 09:14:20AM +0900, Damien Le Moal wrote:
-> On 4/2/24 00:50, Manivannan Sadhasivam wrote:
-> > Currently, 'struct pci_epc_event_ops' has a bunch of events that are sent
-> > from the EPC driver to EPF driver. But those events are a mix of EPC
-> > specific events like core_init and PCIe bus specific events like LINK_UP,
-> > LINK_DOWN, BME etc...
-> > 
-> > Let's decouple them to respective structs (pci_epc_event_ops,
-> > pci_epc_bus_event_ops) to make the separation clear.
+
+>>
+>> On 02/04/2024 14:26, Sumit Gupta wrote:
+>>> MC SID and Broadbast channel register access is restricted for Guest VM.
+>>> Make both the regions as optional for SoC's from Tegra186 onwards.
+>>> Tegra MC driver will skip access to the restricted registers from Guest
+>>> if the respective regions are not present in the memory-controller node
+>>> of Guest DT.
+>>>
+>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>>> ---
+>>>    .../memory-controllers/nvidia,tegra186-mc.yaml | 18 +++++++++---------
+>>>    1 file changed, 9 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>> index 935d63d181d9..c52c259f7ec5 100644
+>>> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>> @@ -146,17 +146,17 @@ allOf:
+>>>        then:
+>>>          properties:
+>>>            reg:
+>>> -          maxItems: 6
+>>> +          maxItems: 4
+>>
+>> minItems?
+>>
 > 
-> I fail to see the benefits here. The event operation names are quite clear and,
-> in my opinion, it is clear if an event op applies to the controller or to the
-> bus/link. If anything, "core_init" could a little more clear, so renaming that
-> "ep_controller_init" or something like that (clearly spelling out what is being
-> initialized) seems enough to me. Similarly, the "bme" op name is very criptic.
-> Renaming that to "bus_master_enable" would go a long way clarifying the code.
-> For link events, "link_up", "link_down" are clear. So I think there is no need
-> to split the event op struct like this. Renaming the ops is better.
+> If the intention was to make it variable, then yes, missing minItems.
+> But more important: why patch was sent without any testing?
 > 
-> Note that I am not opposed to this patch, but I think it is just code churn
-> that does not really bring any fundamental improvement. Regardless, renaming
-> "core_init" and "bme" ops is I think desired.
-> 
-
-Niklas shared the same view during v1, but I hate to see the events being mixed
-in a single ops. Especially that it will confuse the developers who are not
-familiar with the EP subsystem.
-
-But since the argument is coming twice, I've decided to drop this for now and
-just rename the 'core_init' callback to 'epc_init' and name the deinit callback
-as 'epc_deinit'.
-
-Let's see how long the callback list goes...
-
-- Mani
-
-> > 
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  drivers/pci/endpoint/functions/pci-epf-mhi.c  |  8 ++++++--
-> >  drivers/pci/endpoint/functions/pci-epf-test.c |  8 ++++++--
-> >  drivers/pci/endpoint/pci-epc-core.c           | 20 ++++++++++----------
-> >  include/linux/pci-epf.h                       | 23 ++++++++++++++++-------
-> >  4 files changed, 38 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/drivers/pci/endpoint/functions/pci-epf-mhi.c b/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> > index 2c54d80107cf..280863c0eeb9 100644
-> > --- a/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> > +++ b/drivers/pci/endpoint/functions/pci-epf-mhi.c
-> > @@ -896,8 +896,11 @@ static void pci_epf_mhi_unbind(struct pci_epf *epf)
-> >  	pci_epc_clear_bar(epc, epf->func_no, epf->vfunc_no, epf_bar);
-> >  }
-> >  
-> > -static const struct pci_epc_event_ops pci_epf_mhi_event_ops = {
-> > +static const struct pci_epc_event_ops pci_epf_mhi_epc_event_ops = {
-> >  	.core_init = pci_epf_mhi_core_init,
-> > +};
-> > +
-> > +static const struct pci_epc_bus_event_ops pci_epf_mhi_bus_event_ops = {
-> >  	.link_up = pci_epf_mhi_link_up,
-> >  	.link_down = pci_epf_mhi_link_down,
-> >  	.bme = pci_epf_mhi_bme,
-> > @@ -919,7 +922,8 @@ static int pci_epf_mhi_probe(struct pci_epf *epf,
-> >  	epf_mhi->info = info;
-> >  	epf_mhi->epf = epf;
-> >  
-> > -	epf->event_ops = &pci_epf_mhi_event_ops;
-> > +	epf->epc_event_ops = &pci_epf_mhi_epc_event_ops;
-> > +	epf->bus_event_ops = &pci_epf_mhi_bus_event_ops;
-> >  
-> >  	mutex_init(&epf_mhi->lock);
-> >  
-> > diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > index 977fb79c1567..973db0b1bde2 100644
-> > --- a/drivers/pci/endpoint/functions/pci-epf-test.c
-> > +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-> > @@ -798,8 +798,11 @@ static int pci_epf_test_link_up(struct pci_epf *epf)
-> >  	return 0;
-> >  }
-> >  
-> > -static const struct pci_epc_event_ops pci_epf_test_event_ops = {
-> > +static const struct pci_epc_event_ops pci_epf_test_epc_event_ops = {
-> >  	.core_init = pci_epf_test_core_init,
-> > +};
-> > +
-> > +static const struct pci_epc_bus_event_ops pci_epf_test_bus_event_ops = {
-> >  	.link_up = pci_epf_test_link_up,
-> >  };
-> >  
-> > @@ -916,7 +919,8 @@ static int pci_epf_test_probe(struct pci_epf *epf,
-> >  
-> >  	INIT_DELAYED_WORK(&epf_test->cmd_handler, pci_epf_test_cmd_handler);
-> >  
-> > -	epf->event_ops = &pci_epf_test_event_ops;
-> > +	epf->epc_event_ops = &pci_epf_test_epc_event_ops;
-> > +	epf->bus_event_ops = &pci_epf_test_bus_event_ops;
-> >  
-> >  	epf_set_drvdata(epf, epf_test);
-> >  	return 0;
-> > diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-> > index 47d27ec7439d..f202ae07ffa9 100644
-> > --- a/drivers/pci/endpoint/pci-epc-core.c
-> > +++ b/drivers/pci/endpoint/pci-epc-core.c
-> > @@ -692,8 +692,8 @@ void pci_epc_linkup(struct pci_epc *epc)
-> >  	mutex_lock(&epc->list_lock);
-> >  	list_for_each_entry(epf, &epc->pci_epf, list) {
-> >  		mutex_lock(&epf->lock);
-> > -		if (epf->event_ops && epf->event_ops->link_up)
-> > -			epf->event_ops->link_up(epf);
-> > +		if (epf->bus_event_ops && epf->bus_event_ops->link_up)
-> > +			epf->bus_event_ops->link_up(epf);
-> >  		mutex_unlock(&epf->lock);
-> >  	}
-> >  	mutex_unlock(&epc->list_lock);
-> > @@ -718,8 +718,8 @@ void pci_epc_linkdown(struct pci_epc *epc)
-> >  	mutex_lock(&epc->list_lock);
-> >  	list_for_each_entry(epf, &epc->pci_epf, list) {
-> >  		mutex_lock(&epf->lock);
-> > -		if (epf->event_ops && epf->event_ops->link_down)
-> > -			epf->event_ops->link_down(epf);
-> > +		if (epf->bus_event_ops && epf->bus_event_ops->link_down)
-> > +			epf->bus_event_ops->link_down(epf);
-> >  		mutex_unlock(&epf->lock);
-> >  	}
-> >  	mutex_unlock(&epc->list_lock);
-> > @@ -744,8 +744,8 @@ void pci_epc_init_notify(struct pci_epc *epc)
-> >  	mutex_lock(&epc->list_lock);
-> >  	list_for_each_entry(epf, &epc->pci_epf, list) {
-> >  		mutex_lock(&epf->lock);
-> > -		if (epf->event_ops && epf->event_ops->core_init)
-> > -			epf->event_ops->core_init(epf);
-> > +		if (epf->epc_event_ops && epf->epc_event_ops->core_init)
-> > +			epf->epc_event_ops->core_init(epf);
-> >  		mutex_unlock(&epf->lock);
-> >  	}
-> >  	epc->init_complete = true;
-> > @@ -767,8 +767,8 @@ void pci_epc_notify_pending_init(struct pci_epc *epc, struct pci_epf *epf)
-> >  {
-> >  	if (epc->init_complete) {
-> >  		mutex_lock(&epf->lock);
-> > -		if (epf->event_ops && epf->event_ops->core_init)
-> > -			epf->event_ops->core_init(epf);
-> > +		if (epf->epc_event_ops && epf->epc_event_ops->core_init)
-> > +			epf->epc_event_ops->core_init(epf);
-> >  		mutex_unlock(&epf->lock);
-> >  	}
-> >  }
-> > @@ -792,8 +792,8 @@ void pci_epc_bme_notify(struct pci_epc *epc)
-> >  	mutex_lock(&epc->list_lock);
-> >  	list_for_each_entry(epf, &epc->pci_epf, list) {
-> >  		mutex_lock(&epf->lock);
-> > -		if (epf->event_ops && epf->event_ops->bme)
-> > -			epf->event_ops->bme(epf);
-> > +		if (epf->bus_event_ops && epf->bus_event_ops->bme)
-> > +			epf->bus_event_ops->bme(epf);
-> >  		mutex_unlock(&epf->lock);
-> >  	}
-> >  	mutex_unlock(&epc->list_lock);
-> > diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
-> > index adee6a1b35db..77399fecaeb5 100644
-> > --- a/include/linux/pci-epf.h
-> > +++ b/include/linux/pci-epf.h
-> > @@ -69,14 +69,21 @@ struct pci_epf_ops {
-> >  };
-> >  
-> >  /**
-> > - * struct pci_epc_event_ops - Callbacks for capturing the EPC events
-> > - * @core_init: Callback for the EPC initialization complete event
-> > - * @link_up: Callback for the EPC link up event
-> > - * @link_down: Callback for the EPC link down event
-> > - * @bme: Callback for the EPC BME (Bus Master Enable) event
-> > + * struct pci_epc_event_ops - Callbacks for capturing the EPC specific events
-> > + * @core_init: Callback for the EPC initialization event
-> >   */
-> >  struct pci_epc_event_ops {
-> >  	int (*core_init)(struct pci_epf *epf);
-> > +};
-> > +
-> > +/**
-> > + * struct pci_epc_bus_event_ops - Callbacks for capturing the PCIe bus specific
-> > + *                               events
-> > + * @link_up: Callback for the PCIe bus link up event
-> > + * @link_down: Callback for the PCIe bus link down event
-> > + * @bme: Callback for the PCIe bus BME (Bus Master Enable) event
-> > + */
-> > +struct pci_epc_bus_event_ops {
-> >  	int (*link_up)(struct pci_epf *epf);
-> >  	int (*link_down)(struct pci_epf *epf);
-> >  	int (*bme)(struct pci_epf *epf);
-> > @@ -150,7 +157,8 @@ struct pci_epf_bar {
-> >   * @is_vf: true - virtual function, false - physical function
-> >   * @vfunction_num_map: bitmap to manage virtual function number
-> >   * @pci_vepf: list of virtual endpoint functions associated with this function
-> > - * @event_ops: Callbacks for capturing the EPC events
-> > + * @epc_event_ops: Callbacks for capturing the EPC events
-> > + * @bus_event_ops: Callbacks for capturing the PCIe bus events
-> >   */
-> >  struct pci_epf {
-> >  	struct device		dev;
-> > @@ -180,7 +188,8 @@ struct pci_epf {
-> >  	unsigned int		is_vf;
-> >  	unsigned long		vfunction_num_map;
-> >  	struct list_head	pci_vepf;
-> > -	const struct pci_epc_event_ops *event_ops;
-> > +	const struct pci_epc_event_ops *epc_event_ops;
-> > +	const struct pci_epc_bus_event_ops *bus_event_ops;
-> >  };
-> >  
-> >  /**
-> > 
-> 
-> -- 
-> Damien Le Moal
-> Western Digital Research
+> Best regards,
+> Krzysztof
 > 
 
--- 
-மணிவண்ணன் சதாசிவம்
+I tested yaml file after doing the change for Tegra194 and Tegra234.
+Changed the Tegra186 entry later and didn't verify that. My bad as
+missed the obvious. Will correct the yaml file and send v3.
+
+Will wait if any comments on 'Patch 2' before sending v3.
+
+Best Regards,
+Sumit Gupta
