@@ -1,209 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2045.outbound.protection.outlook.com [40.107.92.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D2359B61;
-	Thu,  4 Apr 2024 08:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712220288; cv=none; b=gF/5uG4qA4gB9Zm688AZfmug93JN4zJiXijm2rQo1cOWiyuv7iE4BWK68iMVy2LDXU+q9PFFvtUEB+Ql7u8WOwVVdS8z52/S1dVw4zT3Iz5RAt8mfvl/CUXcPE9LjPOLRvHL27AOwMamOU1rRtD4bgYWJWY5foHfSxQQlFLoYK4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712220288; c=relaxed/simple;
-	bh=9D5gn2lk/QVStWbWFD9aEUrA60ETwIJ6u2rH2INzuts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZndSoj0q8pGZ38UpYZWsIqwvfCNG+4klnGTnv+sO1ebWql+bfle7rWpsWGp6AFG1xB4VsmlJJTiFv8y+wgTR68x+Xn/KIg9fr5hsucCKl7g3gJexPaHSEAakBddJXRrOgZk3pEFkBA77lFvPqcic43UfgLqD1jsC2vTBvXTTKpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIYXHpaf; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D1B1B7F4;
+	Thu,  4 Apr 2024 09:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712224614; cv=fail; b=HbmAbYeFrBl21MyVOKT9lmrpOzg0tpg5n35KDsTmg6cdrYn1ykwrowN7dQEgDisf1kXFOPAorz8m8Z9frqSkDfECYr5t7Njx88W9YRvnMqXO7f5rn+uNUp2tkRFYuG1hd6xJFdi5xbnZfJoFqD7X+K4NO6aLDjjhYrG4HIsqlKo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712224614; c=relaxed/simple;
+	bh=Uc90YfFfCeOoTeWHkrNSZDNwg3M3fUtK/OlYEb8EPHo=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=gUGUPzGwvjxED1AXa+Xn9NgZFl8ihif2iuDWvYdP53GCPaxtY3YJ5qkfhSOEL7h1Z5RuMS1bIQjSRUxAHyEeHLWILxAzgTovoMPprtwdt5qYeZkfVE5jOJMTa5ONFIFMaWu+2Zgt2gU29mUB+kv2gadkL7wiZYQWfRKqAoQTWms=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=e98l/qNX; arc=fail smtp.client-ip=40.107.92.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIYXHpaf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2A78C433C7;
-	Thu,  4 Apr 2024 08:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712220287;
-	bh=9D5gn2lk/QVStWbWFD9aEUrA60ETwIJ6u2rH2INzuts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NIYXHpafLZH6KcJZnlAzlIjUXkgHbhS7H4WiQqA5B751qndGYod5lThl7gmT//Vq+
-	 4vZdzFQ7kKv0vxlO9ZojdCLzIHvYV6l1+gDhUBkpJdSYftYdbzts20ImMv01+BfP0n
-	 agzjEVIqRnOTjc1lC1XiCiMxswG+EyMraTNRS5Fk4JXKo7Us/BWCEL/dDvZjxsR3j6
-	 rGPmx1sjJQ8u4jT3DA/iMwiEswgdRMX+GBuZC45YA67RPTDzJIlSUVk9emFzK1eUdH
-	 n7YRyo6TLT8yiatAbG68BNo3fkorjladuvQDPjqUZVRqnGUyOpDgPeu8ZrnWc9TphF
-	 8wP1Suw4Pjxig==
-Date: Thu, 4 Apr 2024 10:44:40 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Vinod Koul <vkoul@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 05/11] PCI: epf-{mhi/test}: Move DMA initialization to
- EPC init callback
-Message-ID: <Zg5oeDzq5u3jmKIu@ryzen>
-References: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
- <20240314-pci-epf-rework-v1-5-6134e6c1d491@linaro.org>
- <Zf2tXgKo-gc3qy1D@ryzen>
- <20240326082636.GG9565@thinkpad>
- <ZgKsBoTvPWWhPO9e@ryzen>
- <20240327055457.GA2742@thinkpad>
- <ZgQFXsgqpeLbXMTb@ryzen>
- <ZgW6KB73Wh1X6911@matsya>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="e98l/qNX"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NwCYCy/1l4k/Xh0qKCW4cmO0LeYjQeVxlABUnp/+2yAjvUvq87/0L0YOVyS8wWnANpHa//vWgCgDZjQjYL8Xyuk/DaAoqHG1zpLAofsK93Bgsf9faedPL08NBTXm4ojKpMBRicpSZvmQGYLk2gyTvg6MIz8tcOsjDRtTB5itfwy/1fb6thN1y8D8y1QUnYCpza43lOxkn/cIrtM37aX5/nAmPnLvw0KnZ4Gl8vqEplwyUquwROuLAl2xOZZgoPpkyh9W2sxgybRAPX0wb1Seq8aEu5idVnmgszG2cS6t5o4YLE3/VUZiDkxJAc6TTfzVVxlNUuw+bjBa65O1nrr5Iw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1v4LF8N5+WtMoKS4ESiZyZyGbd5+vuu6VhcB4OLgp1Q=;
+ b=LgHCqDFP+ysbDyO0o3ExTsWfxNaCheLGc/RxfTYRuvVAJB8mutZMZxaIvJdGN5cg037r0fA1s1f6LDzRqw99lI3F/F8Mse7b4M9UO+Cbpfjfrp/SO5pVub6GZnxRzAZanlsI1j1bBoOc2g23IS0Q4f8eIp9TgtSWmTvSgcEvuVEwJ0CHNJlMrPYoovD/MC/3H7T+95s0hOkLhJEMZZB/C/uxTj9BK7WQVfYvaJBlujwhu49Dj9cql89ayhXpxps7tl5pVQhTQxYnI9Gq7RgRc5MCjQA9wAaOT3R3VKNzwdsh4LrU9obQjvRpqLNOBkXDiyEnVynSDdANuaFJD1F1QA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1v4LF8N5+WtMoKS4ESiZyZyGbd5+vuu6VhcB4OLgp1Q=;
+ b=e98l/qNXM4RGqiNvsgFSInRosxrIoeIn++vjvQS68PcybbKUaamE4rvnnYa+s0gwxHlfO//XYZszR84BjjGCB38d+d+sxW4cu8o+tpouhPCyDn79Sf39A41Gd+9fVlYwfx4CTsKdzdQnUtV/LK10X/B+AAd+ofivPzyicdOcuTprA8rTw09tWFO7Y08MgsjI/0FuvGH06Fl+k/8XCaOyyns3nH7TqhkRwL5kp6gkUm6qbrJrjvlP8o91+l6RSR4M8Z0x8ZcnRGob0CBuIVoNAAVzRuKtj/sVkReeUqQg08mbUNPWhDS52Rm3buA1QNbLDGd67uENMGmKwnVPeIp9fg==
+Received: from SA9PR13CA0166.namprd13.prod.outlook.com (2603:10b6:806:28::21)
+ by SA0PR12MB7090.namprd12.prod.outlook.com (2603:10b6:806:2d5::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Thu, 4 Apr
+ 2024 09:56:49 +0000
+Received: from SA2PEPF00001506.namprd04.prod.outlook.com
+ (2603:10b6:806:28:cafe::fe) by SA9PR13CA0166.outlook.office365.com
+ (2603:10b6:806:28::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.26 via Frontend
+ Transport; Thu, 4 Apr 2024 09:56:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SA2PEPF00001506.mail.protection.outlook.com (10.167.242.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7452.22 via Frontend Transport; Thu, 4 Apr 2024 09:56:49 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Thu, 4 Apr 2024
+ 02:56:35 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.12; Thu, 4 Apr 2024 02:56:35 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12 via Frontend
+ Transport; Thu, 4 Apr 2024 02:56:35 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.6 00/11] 6.6.25-rc1 review
+In-Reply-To: <20240403175126.839589571@linuxfoundation.org>
+References: <20240403175126.839589571@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZgW6KB73Wh1X6911@matsya>
+Message-ID: <8f67c236-b035-4c35-ae14-28dbfd4375d3@drhqmail203.nvidia.com>
+Date: Thu, 4 Apr 2024 02:56:35 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001506:EE_|SA0PR12MB7090:EE_
+X-MS-Office365-Filtering-Correlation-Id: 351e9ac1-808e-4f10-15a6-08dc548d8c1d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	XJ3HwV2FJH5Yni8Bgid0ekSMqieJBWdA2wAzkKQM+vPyxFklT6HRUC0x9yb/GihBlZeoi11O20nNErRjB7r21aQAlM6uaGMb5HVWstKN0/3pWWzmRPQFvEGuYAG+k432jrVopYMvoNMTZBUfb2k+aH/4XoIzj04Rc+25aY2K5WrtdjdN6VpuNRTVM7K/UPYTrOFZoqVar+Tv/tK7fLHbCVfKbgtUPMtxFGXbEKvfQmFRgH5xOFKVs6BKDly5FOud7HWQlzZDciNFAKPFnWKBje/dVYBs+bImbEdCngfkZhpda4fUVuhTJaG0OAvxq2Ri7+XspgABi/dW2u/csCGt8mniSz4muZNxLyLFFyMCCWSiXJNUe1Hs1Zy2DAyd5t1/qHQ7cvtmHcBiJzlz/QALfqmoNyKwt0SN50xYMIrlp6D98Gjnsbv6nbIk2zqjBi0PLUGFa99vWUVasdjniA7nL0iLKxjzRwo31GH7a1DUjyyD6/EN6CVKLIPo4GJGbBSOU/92n2JFr4yYEqzMv2PhlzyhI7IyqvXPiKcRP72r6P81Dzt1cN4FJePVz5nrwZmtA+p3HjRSDHZUrfxUA7Sx/wEp1uzOyMV0bv8NzTHK4i3JYFlWE+mCHUwnB2+e592ARVrPEDM8cSJc1ciwfKfRD/flitDFk87R6kXDcRJ7cXSC9OzMNVK6XvznvTgrohNMS1iaKpmZuHfL4T36DpMMk9920PGF2trkpJWe242vyE4HH/MRLEZ13hHbJNvCCOLN
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(82310400014)(376005)(7416005)(36860700004)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Apr 2024 09:56:49.6355
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 351e9ac1-808e-4f10-15a6-08dc548d8c1d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00001506.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7090
 
-On Fri, Mar 29, 2024 at 12:12:48AM +0530, Vinod Koul wrote:
-> On 27-03-24, 12:39, Niklas Cassel wrote:
-> > 
-> > So my question is:
-> > Is the "dummy memcpy" DMA channel always available?
+On Wed, 03 Apr 2024 19:55:49 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.25 release.
+> There are 11 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> That depends on the system, you may or maynot have such a system where
-> you have a generic memcpy dma controller which can provide you with
-> these channels
-
-I misunderstood DMA_MEMCPY then, I assumed that it was a "software emulated"
-DMA channel, which allowed the a driver to always use dmaengine + DMA API.
-
-It actually uses a real DMA controller. I don't have any DMA controller in
-the PCIe EP device tree node, but perhaps it can use any DMA controller that
-has been registered with dmaengine?
-
-
-> Based on my reading you might have this mechanism:
-> - eDMA provides dmaengine_prep_slave_single() which transfers data from
->   mem to pci ep device, so fasted
-> - dmaengine_prep_dma_memcpy: This will copy the data but treat it as
->   memory. I dont pci internals to figure out how both can work... So
->   cant really make out why it is slowed
-> - memcpy_xxx that is IO mem functions, so ofc they will be slowest
+> Responses should be made by Fri, 05 Apr 2024 17:51:13 +0000.
+> Anything received after that time might be too late.
 > 
-> I think the code is decent from fallback pov... chooses fastest path if
-> available on a system
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.25-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Indeed, it makes more sense to me now, thank you Vinod.
+All tests passing for Tegra ...
 
+Test results for stable-v6.6:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
-> > I was wrong here, pci-epf-test always calls pci_epc_map_addr()
-> > regardless if FLAG_USE_DMA is set or not.
-> > 
-> > (Even though this should be unnecessary when using the eDMA.)
-> > 
-> > However, if we look at pci-epf-mhi.c we can see that it does
-> > NOT call pci_epc_map_addr() when using DMA API + dmaengine.
-> > 
-> > Is it really safe to avoid pci_epc_map_addr() in all EPC controllers?
-> > I assume that it should be safe for all "real" DMA channels.
-> > We can see that it is not safe when using DMA API + "dummy" memcpy
-> > dma-channel. (That is why I was asking if we need a NEEDS_MAP, or
-> > MAP_NOT_NEEDED flag.)
+Linux version:	6.6.25-rc1-ge253a5c1b7de
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-> > pci-epf-test.c:
-> > -Always calls pci_epc_map_addr() when using DMA API.
-> > 
-> > pci-epf-mhi.c:
-> > -Never calls pci_epc_map_addr() when using DMA API.
-
-Mani, I still think that this part is inconsistent between PCI EPF drivers.
-
-Looking more at commit:
-8353813c88ef ("PCI: endpoint: Enable DMA tests for endpoints with DMA capabilities")
-
-Adding Frank on CC, since he is the author of that commit.
-
-When the commit added support for eDMA to pci-epf-test, it added an extra
-parameter to pci_epf_test_data_transfer(), to pass the PCI/DMA address of
-the remote buffer, in addition to the already provided local physical address
-that pci_epc_map_addr() has mapped the PCI/DMA address to.
-
-So in the case of eDMA transfer, the pci_epc_map_addr() operation is still
-being performed, even though pci-epf-test never uses the result of the
-the mapping operation... This is just confusing and a waste of CPU cycles.
-
-What I would like is more consistency between the EPF drivers.
-
-I guess an if-statement that skips the pci_epc_map_addr() in pci-epf-test
-if using eDMA would make pci-epf-mhi and pci-epf-test most consistent.
-
-
-However, when reading the DWC databook:
--The eDMA and HDMA always goes via the iATU table.
-If you do not want this, then you need to set the the appropriate bypass bit.
-
-
-For eDMA:
-""
-When you do not want the iATU to translate outbound requests that are generated by the
-internal DMA module, then you must implement one of the following approaches:
-- Ensure that the combination of DMA channel programming and iATU control register
-programming, causes no translation of DMA traffic to be done in the iATU.
-or
-- Activate the DMA bypass mode to allow request TLPs which are initiated by the DMA
-controller to pass through the iATU untranslated. You can activate DMA bypass mode by
-setting the DMA Bypass field of the iATU Control 2 Register (IATU_REGION_C-
-TRL_OFF_2_OUTBOUND_0).
-""
-
-For HDMA:
-""
-When you do not want the iATU to translate outbound requests that are generated by the
-internal HDMA module, then you must implement one of the following approaches:
-- Ensure that the combination of HDMA channel programming and iATU control register
-programming, causes no translation of DMA traffic to be done in the iATU.
-or
-- Activate the HDMA bypass mode to allow request TLPs which are initiated by the HDMA
-controller to pass through the iATU untranslated. You can activate HDMA bypass mode by
-setting the HDMA Bypass field of the iATU Control 2 Register (IATU_REGION_C-
-TRL_OFF_2_OUTBOUND_0).
-""
-
-We also know that, if there is no match in the iATU table:
-""
-The default behavior of the ATU when there is no address match in the outbound direction or no
-TLP attribute match in the inbound direction, is to pass the transaction through.
-""
-
-So even if we do not call pci_epc_map_addr(), the eDMA and HDMA will go via
-the iATU table, it will most likely not find a match, so it will go through
-untranslated.
-
-So I think we need to answer these questions:
-1) Do we want to rely on the fact that hopefully none of the iATUs in the DWC
-controller has configured a mapping that might mess things up for us?
-I don't see why the PCI/DMA address of the remote buffer, supplied to
-pci-epf-test via test_reg BAR, might not fall within the physical iATU window
-on the local EP system. (As long as the PCI EPF driver has mapped any address
-using pci_epc_map_addr().)
-
-This is a big argument that EPF drivers running on a DWC-based EPC should
-definitely NOT call pci_epc_map_addr() needlessly when using eDMA, as it
-can be catastrophic. (pci-epf-test needs to be patched.)
-
-
-2) Can we really assume that both pci-epf-test and pci-epf-mhi does not need
-to call pci_epc_map_addr() when using a DMA_SLAVE DMA controller?
-This seems to be designed only with DWC in mind. Other PCIe endpoint
-controllers might require this.
-(Yes, for DWC-based controllers, this definitely should be skipped, but EPF
-drivers are supposed to be independent from a specific EPC.)
-
-I'm fine with just avoiding the pci_epc_map_addr() call when using DMA_SLAVE
-DMA in pci-epf-test for now, as that is the only DMA controller that I'm
-familiar with. This second question was more a question for how EPF drivers
-are should be designed now and in the future.
-
-
-Kind regards,
-Niklas
+Jon
