@@ -1,121 +1,118 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E50F16D9D1;
-	Fri,  5 Apr 2024 14:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C84E16D32D;
+	Fri,  5 Apr 2024 14:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712326187; cv=none; b=usbeYmtL2MKiRGgu9VPMDYF2DYU/Gaok60TX5pSRmLsOBwg/goNaCIxekl7/mplWKDSAlP4UOtn1fgqwCjaGd2eFU+vwzVlr29z/QyLr2hqaNxMZ925P0MRW9blhp3UCh+4GzQ4YMwDCD8UoVVy9wX1W5j/YTg0u/i9q1v2nxuw=
+	t=1712327283; cv=none; b=s2oC6FEtk/kkzfHwhcTxcXnfRBUFq6v2hAfCFfxl9ihEzOeNqzBWBHD6n5UunBsiGRANJJy76vEwEHzuEnsnEF+ZBT2bh+dUq/9H85gbtkgpWomfie8f89431kiGRTRr4J0XeRUZLxSpWaXgenRUFjY9B3tnR/BJXvFcRAPF8xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712326187; c=relaxed/simple;
-	bh=VRYsTaSzJChTvdMBNpXcGLR73AaOKx0qLNeaHSg+mxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rw5Ji43BmMWJPrV5U0/HIyOuuKtdvwNlO/lYWoJZBBCpw/C3qhCc+41r+7D8i6cVv+wHKYWQV1Gt36tBG+PMDLGhN6eAAk3//ttvgum3hEnplKHk0Lr6osV0DqwXeOPqq+uEUej3uz1QpPuuHWr+9Z8ezwp6KuPbOfzqy32Bt7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=MyXdVvjf; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	s=arc-20240116; t=1712327283; c=relaxed/simple;
+	bh=edtWDz0F9ERyIwkradda1dEIoOdPdwzXb2qVkEfqBV0=;
+	h=Content-Type:Mime-Version:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=lGaVtozIKtUSKp0J0xMug7Htbtd4OI5mF1kIX8tcpwlbNKz8eTaz966PrPM+ZI/jM6MjSoIu/GExIRa9Tt8TeesbUUFYVzCxbjyGVa53udrcgV8CFLf9+d7jGMKz8s3ENPEB7dz0r2E7i7MQ1Heud5JlNSnNE/Tql61dcUhno/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RIpag5M7; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="MyXdVvjf"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1712326182; x=1712930982; i=marvin24@gmx.de;
-	bh=hjlqTsZmGUCzSPKxKJ/o/kdzxmSXMa6TAMz3dageSyI=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:
-	 References;
-	b=MyXdVvjf8bVmB13wVJ9uk6Mdu/JMkwHe3Dl+1uElwxdU7Z8hOWiZBt2acXP05aAG
-	 2KJ2DxHIc8+MIU8F2zqe2wD5jvPPa9RKOvrkHW7gHKz+Na77z8Di+xxXG76ZXFblN
-	 4GJfXyHZItE7qs+MBLG1PEnFs2o0svcCXIyUbmw1DLsRmI6bskdqSw50t5sUrBZ0d
-	 XvU1Et/ESkon51Xy+g6VNEo0sPBV+nc6+akbsF0SaoQoJIiAWakwL8vuDFKH0Fk+5
-	 w79bqQsDLk2OsJFJg9thPSGTEPE0PwmUrvYV19j3p28o7aEJmG0aA9gykqXI1TYAC
-	 CVOFm1X3ShBffpc99w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from n5219w05.fritz.box ([109.250.53.83]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MIdiZ-1ryZHM3k6X-00EhZ9; Fri, 05
- Apr 2024 16:09:41 +0200
-From: Marc Dietrich <marvin24@gmx.de>
-To: linux-staging@lists.linux.dev
-Cc: linux-tegra@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Marc Dietrich <marvin24@gmx.de>
-Subject: [PATCH 1/4] staging: nvec: make keyboard init synchronous
-Date: Fri,  5 Apr 2024 16:09:03 +0200
-Message-ID: <20240405140906.77831-2-marvin24@gmx.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240405140906.77831-1-marvin24@gmx.de>
-References: <20240405140906.77831-1-marvin24@gmx.de>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RIpag5M7"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4162ec14805so7510085e9.1;
+        Fri, 05 Apr 2024 07:28:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712327280; x=1712932080; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O7LERPVCSW+Wfgv7Cf7Coboc+jfMXyoBnYaZV6ymz4A=;
+        b=RIpag5M78SHwP4RvqAZaWdnkoNPkr2eZb/5eFr103wlw3dNgXWAzesltU1F4er5EEl
+         0nswVIqpEcwDniyI9Xzii3tXzADjaYJaEE2Zfh9fbBSGXwuVsJLBondgZqBFbOG7pWbW
+         pLjAjiA+l6ErcJFXIpFIbmj2DaUpQvrYhs1sHodFarUndI3N8i3JxJXtFE0cczBl2hoU
+         qCBJN6lyIAyw1RrtDq2wgDgQqd4aWxEkE5lELHP82x9/64NT2BxoBlbv0WdvVSlzCE2+
+         lLlSDKoiLM4z3rfINIwJt42+ecK1l4H9FPkD/0mFRneo8LFG7XEJtachzsuUeD1FHGWp
+         +frg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712327280; x=1712932080;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O7LERPVCSW+Wfgv7Cf7Coboc+jfMXyoBnYaZV6ymz4A=;
+        b=QDPcJDN+Pp0oT//u4sF8zjQzRu9Joh8sweB8L5DXoCY8OWtM2LM0tA6NtjsGn23jsA
+         FsBY7D/OKfcFamCdAJ4+WlNYz4k5xzOhWCSj9g6Lu06ff3igoMs21FKXc/oj4+WAXuv7
+         mgswZn2LI4GmdoyEmrU1QcqzSw4nyCLnbL9bZgeCfZfxsAcE/hygeHoNZZs5+s+dR1/T
+         pqsUzILOv3UIjwf5WDGJpExE9aAxoKcGkGEZIOynraxoS5zu1unyk09c8uaor0NDARh1
+         bCeCBuJhxCd5MHWy3pk4UGJk6KZBZxXOQOzc8iWGUoimAScbIx05wTbml/7h+g5mDzNZ
+         IgMw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpJi7gIpM8kan83r/qAPg2QRPWlrWpjoXpG487mQ9Qk08S/COYrtn7yvXSg97At30O3s7GAh/AFoA+vhkhuacjwzQlGhIGY9yJNLXF8lPxOg48e9MLnLzbRuylpkJk7g2i/jd06vjgOjAPM1ncnB4CnxKi6rnm+sa0IbzL3nddrz4=
+X-Gm-Message-State: AOJu0YzGVDts9PinOnfJYGRQyjgMb6f0RIwbDj9vaSS1t/6TPD7zUy3U
+	LgNRlAa0kdIWb+I6ktJZvAGhRqCu6BamYSxg1RHRgGfcOP2Znm+59mVZbJus
+X-Google-Smtp-Source: AGHT+IGmhovB4WvvEoGfhcQ7/7+9sQMUwNRkZ/ya0lVDZIypZ5bRpVOnEtbrPOgNbrIt2UzRbbBa6g==
+X-Received: by 2002:a05:6000:188a:b0:343:39f4:3f2e with SMTP id a10-20020a056000188a00b0034339f43f2emr2164436wri.5.1712327279625;
+        Fri, 05 Apr 2024 07:27:59 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id i6-20020a05600c354600b0041488691eb1sm6662907wmq.17.2024.04.05.07.27.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Apr 2024 07:27:59 -0700 (PDT)
+Content-Type: multipart/signed;
+ boundary=2bced5962d6df3645374ca32f7e19dc7b5f911531a5e3e0d1afd7115069e;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Date: Fri, 05 Apr 2024 16:27:58 +0200
+Message-Id: <D0C9D05HXLMP.PNF08QRPH8O2@gmail.com>
+To: "Sameer Pujar" <spujar@nvidia.com>, <broonie@kernel.org>,
+ <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>
+Cc: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <lgirdwood@gmail.com>, <jonathanh@nvidia.com>, <mkumard@nvidia.com>,
+ <stable@vger.kernel.org>
+Subject: Re: [RESEND PATCH v2] ASoC: tegra: Fix DSPK 16-bit playback
+From: "Thierry Reding" <thierry.reding@gmail.com>
+X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
+References: <20240405104306.551036-1-spujar@nvidia.com>
+In-Reply-To: <20240405104306.551036-1-spujar@nvidia.com>
+
+--2bced5962d6df3645374ca32f7e19dc7b5f911531a5e3e0d1afd7115069e
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:cCeOwXOX154Syss1YXnyDnj5YnYIncCvp1uO4m8R7U2XmFFB/CR
- L/Tznw1vnd32h7+VmuLOgJ02zW+zkVzNqaxi3JIvIYRJnFZLU64ejfr55nc6Fied/9iTers
- qKIp2A+Qv7nt3IyFxIZ+2VYeWfrGcz3Tb6TT3pPNbtvK9Ogbn+zL2JqhKT98nITY37yfhqr
- rhjqjbF9Hn1A05mGKb00A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:a6hALRB5wm4=;fcbwLOwG5bMKnR/Q9f8HS0YnlOe
- 5O3RHRAVaf40TFFmalR4tXKbCbP2ZAjp9RfwJ3jLkUD5kpvrxdmC9q8A+X/FNklfT3byooDDu
- kat0NAQNMZbqCWZhfUr8UJZmX+3vXzDLjllLq5OpbUiGmeTPu6nHPcdrt0zZjMGycIQ5HSeu/
- sRS7If6PTxt/GnbQ/OIJryNcqAGfRJZOCebH/dUAPJ4nTHJ5pdqZ4gLuWTpwxLvQOgx2cpekT
- 3GeonRDbAn6PJhXihJ2uBoHojDwxtZueqgj5bQVru3f8Ae0/NkPPBfgWbEnR/fGCntC/2r9b8
- y36JsbB9oOrtn5H+6KWAwnG4gfi/Q2sSzJgVMT/u7SpNB7AgMggJYVB/9ju6ImGomy+M8iu9j
- r4QkWxPVfy2sqzFp09ogU4Ccp516kGu8+Y2MqUXMFrOfKHZY8levB96xce8HhugYiNtTBdBiD
- CQb243DEsJcMot+qsroNIxAAoaYwHQ3NmoVMb39plZ2UTPfsm+/HBl6sjieHRp6P3maHfl6vM
- r6iPyQd7viLzSDLzqGGzY5KUqkrPddh4RkCyhPibfCT+wgv/9Vp5mMgitk5LsltTPBzv1KeTP
- 4ltF3UW7S+7Wb060A5g77xdGute8mWphUGDfr1snDtgZ8SONuGnS6yWdMc+mtFft23wnQR3f4
- a9iNFbMjHqqAiIO0E02l88VW/lyfhCxDCOgHLsBMMHiQ4QsOAMQ2gd+9RSUXbfXaKR4mlndA0
- 1cjQ4kMbZjQJWeOT6easLv7M0qfVDh5zYZo37z4LiDiYcY+XcPpsNSnZaeZ2beat5Ad1fyi/A
- GfZQIm12tf78ZOemWBuR9cNZqpcn3NrC2HH6N/7hRNsTU=
+Content-Type: text/plain; charset=UTF-8
 
-Improve initialization stability by waiting for command completion before
-sending the next one.
+On Fri Apr 5, 2024 at 12:43 PM CEST, Sameer Pujar wrote:
+> DSPK configuration is wrong for 16-bit playback and this happens because
+> the client config is always fixed at 24-bit in hw_params(). Fix this by
+> updating the client config to 16-bit for the respective playback.
+>
+> Fixes: 327ef6470266 ("ASoC: tegra: Add Tegra186 based DSPK driver")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> ---
+>  changes in v2:
+>   * moved common setting to S32_LE switch case.
+>
+>  sound/soc/tegra/tegra186_dspk.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 
-Signed-off-by: Marc Dietrich <marvin24@gmx.de>
-=2D--
- drivers/staging/nvec/nvec_kbd.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-diff --git a/drivers/staging/nvec/nvec_kbd.c b/drivers/staging/nvec/nvec_k=
-bd.c
-index f9a1da952c0a..6b203d28b8a9 100644
-=2D-- a/drivers/staging/nvec/nvec_kbd.c
-+++ b/drivers/staging/nvec/nvec_kbd.c
-@@ -113,6 +113,7 @@ static int nvec_kbd_probe(struct platform_device *pdev=
-)
- 		cnfg_wake[] =3D { NVEC_KBD, CNFG_WAKE, true, true },
- 		cnfg_wake_key_reporting[] =3D { NVEC_KBD, CNFG_WAKE_KEY_REPORTING,
- 						true };
-+	struct nvec_msg *msg;
+--2bced5962d6df3645374ca32f7e19dc7b5f911531a5e3e0d1afd7115069e
+Content-Type: application/pgp-signature; name="signature.asc"
 
- 	j =3D 0;
+-----BEGIN PGP SIGNATURE-----
 
-@@ -148,15 +149,20 @@ static int nvec_kbd_probe(struct platform_device *pd=
-ev)
- 	nvec_register_notifier(nvec, &keys_dev.notifier, 0);
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmYQCm8ACgkQ3SOs138+
+s6HsnRAAnbvXUuFwGeAoUlndo/z+e8xofUaZP2R83hBnA3JyUK5SdmWuf44y6VoJ
+x0/RyQOZ20Wm0MGqRnalCMND9z5yNtfH0prJMBJlvhjKJFtMUI1+zpcfvqzMCxLJ
+4qtwzO324JwLnPMMV64aWfiHY5unR6wvwf2Angf60yWrD61RjJ0LPUfY/9a/zAGO
+ZKuGqslx+x7Xx3OZayaf/9sg+a1DcQEbCRsAzsWp22PGi52wp4PPgfDNUcTHGkhK
+bWFTkm46ZWV7DdUTCnJ50xc2lcz/9hDRou6sEbaZZYtWHjZTj5V4omVyteP0xIsL
+7dVC8lCT2Mf99iBcKlLRPy58NdWPnun5PCKMJ8s1GmFA+BYuGsUVxYko8Lnq5LDh
+GV9uzOIYwzs6LWJ2cMEKnR6uNXJEtLoq8YFoBvSHxaBnvAi0jO20Ak5UlO4YTwEo
+aUx8dpyjjCv6N+4U+9Y+rj0D7MsIvVbeBx8T8Ln6/0sw4mQ8qJe094/AzdU/UJEc
+8jnJFmkf1ae6CkTBpOrOR/KUQO6jcdENhqzUV4NAQPKJOm5mQ/0Zxd7hK8fYHWOB
+6ptE6q+mrMQJfsMdjl4X+MExHSX2LC8rCxawk0E4zoBQ7LBGDVLt5DtngAAVFBVP
+DpZMRBOvlDBSWQtdg3Gwlgq9Tw8VfyBihA0izA/HBugbXG9VrYg=
+=+hkQ
+-----END PGP SIGNATURE-----
 
- 	/* Enable keyboard */
--	nvec_write_async(nvec, enable_kbd, 2);
-+	nvec_write_sync(nvec, enable_kbd, 2, &msg);
-+	nvec_msg_free(nvec, msg);
-
- 	/* configures wake on special keys */
--	nvec_write_async(nvec, cnfg_wake, 4);
-+	nvec_write_sync(nvec, cnfg_wake, 4, &msg);
-+	nvec_msg_free(nvec, msg);
-+
- 	/* enable wake key reporting */
--	nvec_write_async(nvec, cnfg_wake_key_reporting, 3);
-+	nvec_write_sync(nvec, cnfg_wake_key_reporting, 3, &msg);
-+	nvec_msg_free(nvec, msg);
-
- 	/* Disable caps lock LED */
--	nvec_write_async(nvec, clear_leds, sizeof(clear_leds));
-+	nvec_write_sync(nvec, clear_leds, sizeof(clear_leds), &msg);
-+	nvec_msg_free(nvec, msg);
-
- 	return 0;
- }
-=2D-
-2.43.0
-
+--2bced5962d6df3645374ca32f7e19dc7b5f911531a5e3e0d1afd7115069e--
