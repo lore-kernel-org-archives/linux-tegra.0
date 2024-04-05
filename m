@@ -1,105 +1,155 @@
-Received: from rere.qmqm.pl (rere.qmqm.pl [91.227.64.183])
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2078.outbound.protection.outlook.com [40.107.102.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CAC15FA9C;
-	Fri,  5 Apr 2024 09:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.227.64.183
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712309901; cv=none; b=AkwXRnRMetJ0L9IbHlnUlbm/I0PKkqbVheFMD6/h7gGzzCCEy3N0M6MCj5zef/kgVgDLuYdVbDKvVZa2ntxLYmVOH9+UNCMoJUCM5lDHULesMw/QG1A4N4mKQkWQ1JBmToVuVKemW8967bjjTRSDQiUl8coDx2ZJP5dEQov/leg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712309901; c=relaxed/simple;
-	bh=gui0f6MViE5zSAEEOcDKHdPoDszSctiaYWprNP7GSNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TYx9XDMOKHsxsxgpErRPS/ygvPDzCeAlZTHPD8jU6Un/vl7oitKkIppyqtOYrexLuq9vY46aMb/YVGm7xn8ldd+hst08TGbqT5Eu4ZsNBxcPdZveBtSAApHlqy+wE0mswPrfmKn1k9Vlu1n6YEW+MMhGa8Dopk6yoUAbjF5ae08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rere.qmqm.pl; spf=pass smtp.mailfrom=rere.qmqm.pl; dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b=ZcrcoLqs; arc=none smtp.client-ip=91.227.64.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rere.qmqm.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rere.qmqm.pl
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8200515FA6F;
+	Fri,  5 Apr 2024 10:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712313807; cv=fail; b=uuVDyuN5qafm4rASgfwARhyHIyXm2697fBhxHtAV4TCtiFZML0gzjh4LJpDMnLw8N23FWm6pWhFqbUF9nRmsADGswwey3TO7i9gQY10y56qmS2fHyZU7sIN2EnRAuew+thMBbj2l1MwU7j1VQG4rYIK2BJ61EIxrdb2KTNl6Hu4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712313807; c=relaxed/simple;
+	bh=1Bk7C76y/IMNMtP+wiu8AtrbSmwK+52e56gN9xmzSc4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KaNLvyooXqI+wGmEcOjKMk1Nt3DUbuhblKBvHRAZuMxlV5ADQd7qsFAFErJANe08PJbw6+8bZGUnQe/qn9ukMfKr9h3GqT91rVdVw0JLrCuag7s51555NPlIeRqwH2JAVkHmAWjnhowKvrjROAHTrcWSn6GYI32f9A5Oz6b8Yig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DH6QKe6r; arc=fail smtp.client-ip=40.107.102.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="ZcrcoLqs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-	t=1712309337; bh=gui0f6MViE5zSAEEOcDKHdPoDszSctiaYWprNP7GSNc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZcrcoLqsz/zzlMruWf44PYk75DueBejOUyr1Eh31EyaZcoY7ODel3t0vFK51sQutC
-	 YY7dBqw6x5FiEghmAZFtz/zTJMGq5GtkEocuVfbQcN9BDPuRIei5HZ4DdjLpHxZ7+6
-	 E7lgHaOaQ5/+P2XOh5i4UPTyYivuDu5pF+wIovDfOhmC0jyS7Po0jdQpgN6Tw+kWcU
-	 BR21bYeWeQT2EX7dHW/mtmIf4RbdkqX5exTxh2367mA4o2zBmZSc7BFV4XrNkiEptZ
-	 Q5SBD2Ru9xBFkYUfXpcQGRwkKRKwaEBGta6Gar0WuqKpV+3lBKaNoDOSXQIouXFRPP
-	 Bq/roRR1X1cQQ==
-Received: from remote.user (localhost [127.0.0.1])
-	by rere.qmqm.pl (Postfix) with ESMTPSA id 4V9tTX48kvz8B;
-	Fri,  5 Apr 2024 11:28:48 +0200 (CEST)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 1.0.3 at mail
-Date: Fri, 5 Apr 2024 11:28:47 +0200
-From: =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To: Allen Pais <apais@linux.microsoft.com>
-Cc: linux-kernel@vger.kernel.org, tj@kernel.org, keescook@chromium.org,
-	vkoul@kernel.org, marcan@marcan.st, sven@svenpeter.dev,
-	florian.fainelli@broadcom.com, rjui@broadcom.com,
-	sbranden@broadcom.com, paul@crapouillou.net,
-	Eugeniy.Paltsev@synopsys.com, manivannan.sadhasivam@linaro.org,
-	vireshk@kernel.org, Frank.Li@nxp.com, leoyang.li@nxp.com,
-	zw@zh-kernel.org, wangzhou1@hisilicon.com, haijie1@huawei.com,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, sean.wang@mediatek.com,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	afaerber@suse.de, logang@deltatee.com, daniel@zonque.org,
-	haojian.zhuang@gmail.com, robert.jarzmik@free.fr,
-	andersson@kernel.org, konrad.dybcio@linaro.org, orsonzhai@gmail.com,
-	baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
-	patrice.chotard@foss.st.com, linus.walleij@linaro.org,
-	wens@csie.org, jernej.skrabec@gmail.com, peter.ujfalusi@gmail.com,
-	kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, jassisinghbrar@gmail.com, mchehab@kernel.org,
-	maintainers@bluecherrydvr.com, aubin.constans@microchip.com,
-	ulf.hansson@linaro.org, manuel.lauss@gmail.com,
-	jh80.chung@samsung.com, oakad@yahoo.com,
-	hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
-	brucechang@via.com.tw, HaraldWelte@viatech.com, pierre@ossman.eu,
-	duncan.sands@free.fr, stern@rowland.harvard.edu, oneukum@suse.com,
-	openipmi-developer@lists.sourceforge.net, dmaengine@vger.kernel.org,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-mediatek@lists.infradead.org,
-	linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: Re: [PATCH 9/9] mmc: Convert from tasklet to BH workqueue
-Message-ID: <Zg_ET2XmZM_Id_Ad@qmqm.qmqm.pl>
-References: <20240327160314.9982-1-apais@linux.microsoft.com>
- <20240327160314.9982-10-apais@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DH6QKe6r"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SD55jBPF0NSbQlGbQxd1ZexsY9pif18zbX2v5ynYcEdCUnhRESzoDJdinn6KWqOZzqldRzQQATn0aXIJxiJgjBN02CQuyM8Zc+/cJ0rJ2d5OjT1Yr1j3pEbv6K0WyqpZLnH2bDqwd34ii2Syizx8CzDCMOlFTJec7VYEqDAy8F91Yd8barvP7w2eOF7P9NCrICxuZex6n8WWOFu/7aE5oWkKQP1AeB9vQTOSxYx7M7XgTEor53fWDvw7QzrsUMYAUhYVN0rpngiVPNwXlQu1ei7E5taxApjgBgwCshLHaZlSiIPss5LGzf7YQ4EUZolkOxHgp8FKb48EevtW9bEMFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e8/hV0CjDxFc6wzjF4+MNtX/I/fU+FjyLUL0JhUakV8=;
+ b=IQoz5Hl3P6AaeprCyFQnliBhKdlBL0tMGy/PX/M9SJO+yoRkjZPDZTSZCnRO229OAytZibKGMDtpdKjLac/kK8nBI55tJCZB0I49OI0qn7tF49/jYtn+Qk5pGH9/PJWI4049UvFqOZ0F64fBTktYPa5ItH1u9s3MxG/1636SLA2u+Lo5/zVOL5SXjgY6jaOBjnbg6NxhqD22XzlpfjN+9py4yAbvfd2xSKdyCaxqmGtj5QMQl12h3oFxJFJf69OX/56mRKwFBJuD+il9Q7t3I/pgjCA/3VtXvir9+8rh04e0p6EKBVWBgJRwCs8WAF+2LCYxOyILMeF7CuoOaIlesQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e8/hV0CjDxFc6wzjF4+MNtX/I/fU+FjyLUL0JhUakV8=;
+ b=DH6QKe6rONcufA+uFx/OmAm0WfR+/j/OwgOkzyl2+XzaRZ6BRttj6iJ0VF0TpQ2lG/mDgdYrh+SJp3x3ThUkVAgCsG7tnv5ziDCa6+6bWPr/T0/zvTz8xvKQSRknPFNeleEfR9gSdOWUGbiqQvxHcCdmBYOkwCm8JPMLPhyVHREw49Md3pqdzplEXJ2BaOfh3FJG7gY6Omk+foHA4FqASPreq6MjngXkLHe7/o661sWVWUoVnrx21fLz0IKJ+h4n5NhfdtRnlTvd46bmb84ZUjz2MIf4APwpTHD2f/uZpxxmwUHH9EFXsF6vAS1f3r/L3GnKPVfU/kU+TXTSYw48SA==
+Received: from BN9PR03CA0052.namprd03.prod.outlook.com (2603:10b6:408:fb::27)
+ by DS0PR12MB8198.namprd12.prod.outlook.com (2603:10b6:8:f2::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Fri, 5 Apr
+ 2024 10:43:20 +0000
+Received: from BN3PEPF0000B370.namprd21.prod.outlook.com
+ (2603:10b6:408:fb:cafe::3e) by BN9PR03CA0052.outlook.office365.com
+ (2603:10b6:408:fb::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.26 via Frontend
+ Transport; Fri, 5 Apr 2024 10:43:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN3PEPF0000B370.mail.protection.outlook.com (10.167.243.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7472.0 via Frontend Transport; Fri, 5 Apr 2024 10:43:19 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Fri, 5 Apr 2024
+ 03:43:12 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 5 Apr
+ 2024 03:43:11 -0700
+Received: from build-spujar-20230918T214410352.internal (10.127.8.9) by
+ mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.1258.12 via
+ Frontend Transport; Fri, 5 Apr 2024 03:43:11 -0700
+From: Sameer Pujar <spujar@nvidia.com>
+To: <broonie@kernel.org>, <linux-sound@vger.kernel.org>,
+	<alsa-devel@alsa-project.org>
+CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lgirdwood@gmail.com>, <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<mkumard@nvidia.com>, Sameer Pujar <spujar@nvidia.com>,
+	<stable@vger.kernel.org>
+Subject: [RESEND PATCH v2] ASoC: tegra: Fix DSPK 16-bit playback
+Date: Fri, 5 Apr 2024 10:43:06 +0000
+Message-ID: <20240405104306.551036-1-spujar@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240327160314.9982-10-apais@linux.microsoft.com>
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B370:EE_|DS0PR12MB8198:EE_
+X-MS-Office365-Filtering-Correlation-Id: feccb9b3-a9e6-499c-424f-08dc555d35a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	L8AhV+yoiS6+Z+/+Zm65eJLdN+aM7+Hxc++f90ga3Mx9VqgfOakxSM7vTqJj2k2u/nl/n5ZHW+/Hd8SkChn6oNAfdMKiNeSUgEu12vWTTBD7zqCx+eT4GWtY37wF+LMLBvsLt75qQ5wjkbzsNpZRZYOdn/qLtD80JOVAydzKhWQBd/3QNM76WeCdnVjwPE/lmtmvOBYoivrwWfyK8L1Dz3O8FeJXrmOMVszoVzKi3rousJVmLEA9R09nda6ZA0RWjTGgQj86npfKFdDKWCF/mGPF40Yw+g3gi3P1ZyIOIlAwJHv+j5G24uHoD3hsM0k/6jtJGe4xlEPIEcaaOVrDcHnZUj93Kws2VK/NKeBVlHCvAjgWMKHLk8WdTQihiFMviVgylv/ZM8zDv5KiRqrBK411sulmkugTV64V6dfJFQjESk8fJEoFRpbAHvDb7Ex5rev1yS5P6+p6omVlfeW3ZjLuSsO7RjHXBGZPd5Aw1Nx9sfdBI4oiZn9tqp8mMWs4fyqm5xc4vZonyC1SmD79KEcCgiP8i80igi0KmRAEQ8OclXopy1GEJUqF4VTTJ+5c4i3fjrB8nmDY0Dol3T316R48bO6FhNXX6zatj3aYC+eQgVH/qBHu5nyHJW5yYBBNXsOyZp/SdulUWvmps8+LAFsKMCwSGVZ2RGTUzNXf4hJPObxO0d0T/8450eB6BPNZ1qjqBizfNTSmBK2565xv9XreDNfp+XW0rPv09Y/GSJSftbQuxGg/wabjE/VMFmPz
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(82310400014)(36860700004)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Apr 2024 10:43:19.8275
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: feccb9b3-a9e6-499c-424f-08dc555d35a8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B370.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8198
 
-On Wed, Mar 27, 2024 at 04:03:14PM +0000, Allen Pais wrote:
-> The only generic interface to execute asynchronously in the BH context is
-> tasklet; however, it's marked deprecated and has some design flaws. To
-> replace tasklets, BH workqueue support was recently added. A BH workqueue
-> behaves similarly to regular workqueues except that the queued work items
-> are executed in the BH context.
-> 
-> This patch converts drivers/infiniband/* from tasklet to BH workqueue.
-> 
-> Based on the work done by Tejun Heo <tj@kernel.org>
-> Branch: https://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-6.10
-> 
-> Signed-off-by: Allen Pais <allen.lkml@gmail.com>
-> ---
-[...]
->  drivers/mmc/host/cb710-mmc.c                  | 15 ++--
->  drivers/mmc/host/cb710-mmc.h                  |  3 +-
-[...]
+DSPK configuration is wrong for 16-bit playback and this happens because
+the client config is always fixed at 24-bit in hw_params(). Fix this by
+updating the client config to 16-bit for the respective playback.
 
-Acked-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
+Fixes: 327ef6470266 ("ASoC: tegra: Add Tegra186 based DSPK driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+---
+ changes in v2:
+  * moved common setting to S32_LE switch case.
+
+ sound/soc/tegra/tegra186_dspk.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/tegra/tegra186_dspk.c b/sound/soc/tegra/tegra186_dspk.c
+index aa37c4ab0adb..21cd41fec7a9 100644
+--- a/sound/soc/tegra/tegra186_dspk.c
++++ b/sound/soc/tegra/tegra186_dspk.c
+@@ -1,8 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ //
+ // tegra186_dspk.c - Tegra186 DSPK driver
+-//
+-// Copyright (c) 2020 NVIDIA CORPORATION. All rights reserved.
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
+@@ -241,14 +240,14 @@ static int tegra186_dspk_hw_params(struct snd_pcm_substream *substream,
+ 		return -EINVAL;
+ 	}
+ 
+-	cif_conf.client_bits = TEGRA_ACIF_BITS_24;
+-
+ 	switch (params_format(params)) {
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_16;
++		cif_conf.client_bits = TEGRA_ACIF_BITS_16;
+ 		break;
+ 	case SNDRV_PCM_FORMAT_S32_LE:
+ 		cif_conf.audio_bits = TEGRA_ACIF_BITS_32;
++		cif_conf.client_bits = TEGRA_ACIF_BITS_24;
+ 		break;
+ 	default:
+ 		dev_err(dev, "unsupported format!\n");
+-- 
+2.25.1
+
