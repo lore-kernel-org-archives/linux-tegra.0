@@ -1,36 +1,36 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54F09445;
-	Sat,  6 Apr 2024 12:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635F3652;
+	Sat,  6 Apr 2024 12:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712406699; cv=none; b=rgIhGrDujmoO2xfxazV6bpsbgB7j27mABycUOYawbpfG/dwzRYIwyxBSrrD873q9ymmIZGp0lKshnA6/YJ+rh6NZKzqlCpoIGrCWnxEsifcRSmzivNSG5wOG2S3lry4KDLmXngOxhRLLZEvc2v1m8VbQjKNjzWaYq6jPX2/Tq/k=
+	t=1712406700; cv=none; b=ppF3NahQGhauGBwCn7UgYQeCCLywcTeLf5K6SYjRzHMHGXVNg38lFAJO6aAgNCQXOIE8UQhvZlksPcW8LOx3kytHfaLory2pp8XlvacqhG8p2APZRWYJwq6V6xbaHDSDcIGxeFrcfxxMjYUj6TkC3i8tq59WfOJdk1K6zepSH04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712406699; c=relaxed/simple;
-	bh=e109PeeQY7ZkK9ns8M7H81yb1RyzVLkWxLAiSRGQzCA=;
+	s=arc-20240116; t=1712406700; c=relaxed/simple;
+	bh=z/2B8L75ElAdlZu9/d5OQo4+Ma+flVQgNOWf1kdi3TU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aCCk6LaoNfWJjA/jnu728V4eJXytBaea0xjY6ui5KRlH6wsUyYMjTy8Bo5s9ecoKC+Cb3e65b89rXkkq0byGKAjqnazaebq0fTszEctmqjnHyujfY6P37AITpalhQX/3hF/KCOlIdO8EUAHrsxUaoIi3peHU3dOW0bcF7f/ljq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=eYTwZLMI; arc=none smtp.client-ip=212.227.15.18
+	 MIME-Version:Content-Type; b=TyjoGBvndsHSK1jRGqpQShiqMwm23iOHIdAGfMSnPy44kLLpUIiAqnG+SGn2MilClT9C0LVjZeeL8QCuuTkMLWC8QiDhUFg6RostNpIBeGFxXiDauGlMW9oFsmQK79bWeBh4ClCTGoaXJ+J194UV3RstHaKqgall32G2aGFBHzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=nq0YVb8u; arc=none smtp.client-ip=212.227.15.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="eYTwZLMI"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="nq0YVb8u"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
 	s=s31663417; t=1712406692; x=1713011492; i=marvin24@gmx.de;
-	bh=YOMRQLk+64/GEb58pUDoVWXe+lIe5RngdF3c37ZYiRk=;
+	bh=ySJVgxfVsG9tqUI9Cc53ih2r48axjGHjrzWApTXISgg=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:
 	 References;
-	b=eYTwZLMIHI46A6pFuFlgDCEQvjL45Y/xXY79fpx5nNJupDpUfbUqgTWQjJ5E54IJ
-	 /4HYdSM9aEr7DWqhU9+pcGo7bDA3eZy4tafF2tC6FvZ5MDoh8inaInp6evUZadWT8
-	 BSY/fUyTSOLjm3ExFC1HLljgluLC97LG7rSmZZEaUCscgWZdkN+D4B/JZ7SHI4eTt
-	 mtO0h8TLroXCzklwqRaSXf03k/VrFW1SZ6aoz4c3zXmewPrtv43Qzw8aWEc5OfKqz
-	 7WtXmfSnvFz7IL2M8U6GGI9+tXMLmj8Z0FZr/2Js0H72stM1olqyAHxUJLPencEFT
-	 T7DdVOomD3E8paHExw==
+	b=nq0YVb8uxoYTO/bnFH4rgPi79Tq4rDI6ZVCnY0bjJlABSmquls4ou8x6C0E4ns1f
+	 JFVE88akYSckKG5QA0MPO0z2Y5Oazvk62QEoHyRINnravFYNg1smrV49tRQULj8zz
+	 byr9eb9BRCd3oBb/B53SKvvuptQwZGSVKAGWEyABIoe2E/8GcCXea//ASVRJZOjp0
+	 zwbFOkssS4rt46oKrcFtRQK33UlQZLMIcsQTOfMccQl9okqf+qwLEHaqIivlV2h8Y
+	 F0GMsFU7nDQKUjpivBaLGPo1DSW8ninoXTzFuRQfvCsrOdbdi15+pKtvlaQEwwGSR
+	 D/qQ6lpTvHQH+Zg2kA==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from n5219w05.fritz.box ([109.250.53.83]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MHG8g-1rxXBD3c6y-00DJwQ; Sat, 06
- Apr 2024 14:31:31 +0200
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MXp5a-1sINS40Ojs-00YAD8; Sat, 06
+ Apr 2024 14:31:32 +0200
 From: Marc Dietrich <marvin24@gmx.de>
 To: linux-staging@lists.linux.dev
 Cc: linux-tegra@vger.kernel.org,
@@ -38,9 +38,9 @@ Cc: linux-tegra@vger.kernel.org,
 	thierry.reding@gmail.com,
 	dan.carpenter@linaro.org,
 	Marc Dietrich <marvin24@gmx.de>
-Subject: [PATCH 2/5] staging: nvec: make keyboard init synchronous
-Date: Sat,  6 Apr 2024 14:31:20 +0200
-Message-ID: <20240406123123.37148-3-marvin24@gmx.de>
+Subject: [PATCH 3/5] staging: nvec: make touchpad init synchronous
+Date: Sat,  6 Apr 2024 14:31:21 +0200
+Message-ID: <20240406123123.37148-4-marvin24@gmx.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240406123123.37148-1-marvin24@gmx.de>
 References: <20240406123123.37148-1-marvin24@gmx.de>
@@ -50,66 +50,93 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SjKeThz53C/GTxuuiUNzkvMaJfiPuLspShHGtg8GNJWImL+nGWi
- dVHJJEz99khIKuykvKWu5Be+bdTQi6TNKd6Pk7Ps5N6135V/RCGGs7XZpTN6gHC7KerHnEj
- 8AQ5eUKvWoK1ffdMhA+Uoz/2o/tmNcUEZw1T9B4b71Fz+Am7qJb9kMuSJgF1lkqRSch6Wg3
- lAKoTkuO2PP2BUGOFKyzA==
+X-Provags-ID: V03:K1:A48dcqQpIxD+tNmxEf6Ktc+3AdevQkFGzMugU0qYIRf2jTbSXAB
+ ADrdeQQZO/26raQfyi8VRU9x6Vjv+Q/vaLamctxewuLnvwEx5k7rCrG/ljTVsuMA8YX69sV
+ kmJu4IDEPAsSCIvyMaymDQ7e6VMKeIff1snISYu22E/2iClBygDBFcx1p/6leOgIWeCVKxz
+ h4nE+myyack8+ecijOK8A==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:lhhkze1z5x8=;6p0Fb2gIpjKO6eLK+4UMzvu1Led
- lNarYsz0jZlavCuQklzJGEhgP393YDiUNJb+hPeMckI4wGeJ4YVz5s710ZkSuoNwmwMhGz3JH
- gAH7VibmJy6Yi8u4Bi9ISlgQQS3oSN5ZfyzL8AgayG6ZkcPh7bz/pzBoIfcSOY1zKgBvgtS8b
- m8J9kfgEi2g5Swkq9O684djTO4bMr2BUvPP8kE3XOLTHi1uAMYHmX7ZyJk/EGiREv+09ZvdQC
- spFwx/i3J8KgmGryCWLlYeJ3pmNJjOvUo0asUqJmYHD4sgc9lXGesd4TXbSAjMS1o+arr7qVz
- H0gnNH+lE7ebmxoVLKv5H21vjjA5yDvk4bMElMjMuLteD+BzOSdKqjdb2KcyIAjP1LlK7ArxZ
- N8oa4L9GFX+HRbjgo1DG/3knQJ+0QpDZlVvAOLa5foWGaFPQGPUkws+K/jcj4BDdwPwFEDh7m
- +SRQd20Wf4KelAucqMAMpfDFzCanxp1xoUZwXXzkJawFc6Zsop5nKxtuZflWCQt1mq+g2KnY0
- 11e1WSzrcfmVvx/emWcLap87KivanZpEeJCr7PabbNWbZHlRsvYE2qxDKI+dh5mgbIpC1/qTA
- V1ZAZ0n+JTduHFsxokhPE4FgTbYPQ6Sc4G/Sk95HiJ0MDmg1e5y9QuQckBdK1vEkt5n7wKi6Q
- 6qwYCR+oapj5UmSxnrCj2fZTktlrdTFsqZfOA6zFNOKLwCDiT4m2xoeuoc/Z1I9uaWl6Mrmg4
- FRCGbM7beAaqEVnxcZdNMJXpNyhFVnLS/ZSYhovBdBYlj8+MpyfAiPCIM7G2fbOhDGJuDFQrX
- /a9ppDSH3GR4Z5ezGXCnXkdj+y7Rvf1fyGhP3Y3qT7u6k=
+UI-OutboundReport: notjunk:1;M01:P0:IOUV+YS+9ig=;+avWqWeBCzXjhGfi9lEu+jZZy13
+ RRvAu5K9qNiMLrjMVJSMFksB8CDuFgPB52lI6N1HDgVVm+ynlRmIbnwQz0DzT1nidUgoIHVUx
+ lQy1tGgCn1677BQPpOWk1+L6pbxt9YL6cwuhs9FmaMveAct9eY2RsvE1IhkO5WVsBi5sG0Tdn
+ YoBEvIqHcJh63TT0AlC5+rDUlDfdfUqQ4mMKvgZRi+ioFnxJY+SVz2BFupyodFkWUhA0SkIfk
+ 530SfMAsb4rGOgCbDJETQcqgsX/qmjqqilaX4whsqoccmgaVLc/sowutYl1gkOGZjct5s6c8+
+ mIZzfl7DzLHdlsbP3oepYFL2fPEc/UcTIDWozkxQGi8wwHTdj49VU1GUhr5gx16Jam815bRsY
+ H2LB8tOaaUWskn1+QdURLemoktBq/Iuv2SEw2YWVKzV4YZJ126GDZUCjO5GqEAPkQ5RpFb+8X
+ ndYxlzqzYE6kAZyi9uyZ2elehiRuG6zzNN+9Ab+q5PAfYbooCgu3vs5/QMtvcDe+A8LYBjkMR
+ as5f5239aiy0k6krCy94B7sbgGusfBo0uK5clklw+rYj/8vP/DlOogH5mQUP2rJgiNf7r9Zbi
+ ETzbdjjdlCKl8DZBE0EopYiNXYHh68XJJpmXxpMrdpJARXhPR+rMypOJ03+Aa3chv0AzcdL4y
+ G+W13ifsg+XpPqqn0bHvRxTEAwve/4a15vRMDES61BVfLZfZZD1PYA15Utj+o9PPKj5EhDuVU
+ k86X1AuO32uiIaqjNKzsCu2mjfti/x04fv3kQYz0a6C/HO4qmD2jaXMeRwJiRpbxyeaPXK7g1
+ vmYklPMVTBYnW1kQe1tN4UREvevwrY0RmNNMCvvTBHQAg=
 
 Currently, we are constantly sending commands to the EC without waiting fo=
 r them to be
-executed. This can lead to confusion, especially if we initialize several =
-different devices
-one after the other.
-To avoid this, we are switching from asynchronous to synchronous command t=
-ransmission.
+executed. For the touchpad initialization this only worked because we were=
+ waiting 200 =C2=B5s
+between each submitted command byte, so the EC had enough time to execute.=
+ In the furture
+we like to avoid this delay, so we need to wait for each command to be exe=
+cuted first.
+Do this by switching from asynchronous to synchronous command transmission=
+.
 
 Signed-off-by: Marc Dietrich <marvin24@gmx.de>
 =2D--
- drivers/staging/nvec/nvec_kbd.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/staging/nvec/nvec_ps2.c | 31 +++++++++++++++++++++----------
+ 1 file changed, 21 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/staging/nvec/nvec_kbd.c b/drivers/staging/nvec/nvec_k=
-bd.c
-index f9a1da952c0a..d0259c80f810 100644
-=2D-- a/drivers/staging/nvec/nvec_kbd.c
-+++ b/drivers/staging/nvec/nvec_kbd.c
-@@ -148,15 +148,16 @@ static int nvec_kbd_probe(struct platform_device *pd=
-ev)
- 	nvec_register_notifier(nvec, &keys_dev.notifier, 0);
-
- 	/* Enable keyboard */
--	nvec_write_async(nvec, enable_kbd, 2);
-+	nvec_write_sync(nvec, enable_kbd, 2, NULL);
-
- 	/* configures wake on special keys */
--	nvec_write_async(nvec, cnfg_wake, 4);
-+	nvec_write_sync(nvec, cnfg_wake, 4, NULL);
-+
- 	/* enable wake key reporting */
--	nvec_write_async(nvec, cnfg_wake_key_reporting, 3);
-+	nvec_write_sync(nvec, cnfg_wake_key_reporting, 3, NULL);
-
- 	/* Disable caps lock LED */
--	nvec_write_async(nvec, clear_leds, sizeof(clear_leds));
-+	nvec_write_sync(nvec, clear_leds, sizeof(clear_leds), NULL);
-
- 	return 0;
+diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_p=
+s2.c
+index cb6d71b8dc83..f34016c4a26b 100644
+=2D-- a/drivers/staging/nvec/nvec_ps2.c
++++ b/drivers/staging/nvec/nvec_ps2.c
+@@ -60,16 +60,6 @@ static void ps2_stopstreaming(struct serio *ser_dev)
+ 	nvec_write_async(ps2_dev.nvec, buf, sizeof(buf));
  }
+
+-static int ps2_sendcommand(struct serio *ser_dev, unsigned char cmd)
+-{
+-	unsigned char buf[] =3D { NVEC_PS2, SEND_COMMAND, ENABLE_MOUSE, 1 };
+-
+-	buf[2] =3D cmd & 0xff;
+-
+-	dev_dbg(&ser_dev->dev, "Sending ps2 cmd %02x\n", cmd);
+-	return nvec_write_async(ps2_dev.nvec, buf, sizeof(buf));
+-}
+-
+ static int nvec_ps2_notifier(struct notifier_block *nb,
+ 			     unsigned long event_type, void *data)
+ {
+@@ -98,6 +88,27 @@ static int nvec_ps2_notifier(struct notifier_block *nb,
+ 	return NOTIFY_DONE;
+ }
+
++static int ps2_sendcommand(struct serio *ser_dev, unsigned char cmd)
++{
++	unsigned char buf[] =3D { NVEC_PS2, SEND_COMMAND, ENABLE_MOUSE, 1 };
++	struct nvec_msg *msg;
++	int ret;
++
++	buf[2] =3D cmd & 0xff;
++
++	dev_dbg(&ser_dev->dev, "Sending ps2 cmd %02x\n", cmd);
++
++	ret =3D nvec_write_sync(ps2_dev.nvec, buf, sizeof(buf), &msg);
++	if (ret < 0)
++		return ret;
++
++	nvec_ps2_notifier(NULL, NVEC_PS2, msg->data);
++
++	nvec_msg_free(ps2_dev.nvec, msg);
++
++	return 0;
++}
++
+ static int nvec_mouse_probe(struct platform_device *pdev)
+ {
+ 	struct nvec_chip *nvec =3D dev_get_drvdata(pdev->dev.parent);
 =2D-
 2.43.0
 
