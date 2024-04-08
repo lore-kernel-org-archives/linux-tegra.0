@@ -1,58 +1,57 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1B813F428
-	for <linux-tegra@vger.kernel.org>; Mon,  8 Apr 2024 15:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4791411C9
+	for <linux-tegra@vger.kernel.org>; Mon,  8 Apr 2024 16:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712588503; cv=none; b=lyOH338ncqI1dWGZ5rl5crm325SuLuXqtoeUO0A+B+vajJKie5cVSPxke7Bri0e8T0PC3nSOU5/5WRVg9qDC5g5IX9p2GAkjTqQ0V2DwORr8i/Au7XOoBDkuM1AboE62+SCfkpVzaioizlVjrdsuUlli4ooMfl0EGGFtZWMX+Bg=
+	t=1712592019; cv=none; b=RWCBRRmgvpkktk+xJO9AHvOlBoOmoxDElleTfg5w2wOHvHzhgOC+0XggIqDkejplzf386EdokCdEkvQSPQjV2Bvp7Lo0vYlcl0dtzRfAT4OYifXNe1I7m9KX1jbz5H8zWXO3SYdc2XMSJjOlmXu2DHrA/Gkey+LY7EclXzOfLV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712588503; c=relaxed/simple;
-	bh=PRN1sELqu0ogiTDUrC+ULOZosF4sbROYULaypNrLxRE=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=pQGXT+Q5jsQyOU5MN0I3BwqvMPfMDW0Crx0KzHCnfyjiek5V85QeDD8ql3r1MWjmqg+hOeuzbjlsRivMl8xOMIkgPpotXXrf2l3MrNhiNZs3kDUR+sJE1V1ZO+Iqe2Ku1hb7pQNCO80bElDT+JyYuV9d+KSzWU+F/dP+/IwQTLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k5Ffjnnb; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1712592019; c=relaxed/simple;
+	bh=q4A0q4CY0dlGjUrm9hGGFb0Y1td45JeLu+vneFz5POQ=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=lwvykGWdYgiNcr+3g091npgVL2eqvxduB5xwCWDTSyAigtlOmnr5RB5/Xx0NRjeLEbAFT8pvOGXOK+bsOcU2OkRsOBRygqfPeEIESfqtSsGTaToUrptmGj8vA6Bq0PwdH4NxvUBoNjQAKZNMAUs2DiVh7Xi3N3aGVDkwRcWTVSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VSxdCzHd; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5Ffjnnb"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-56e6acb39d4so771746a12.1
-        for <linux-tegra@vger.kernel.org>; Mon, 08 Apr 2024 08:01:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VSxdCzHd"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41691fb4c8fso3512395e9.1
+        for <linux-tegra@vger.kernel.org>; Mon, 08 Apr 2024 09:00:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1712588499; x=1713193299; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
+        d=gmail.com; s=20230601; t=1712592016; x=1713196816; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PRN1sELqu0ogiTDUrC+ULOZosF4sbROYULaypNrLxRE=;
-        b=k5FfjnnbXhcD1od/7e3PbFkGTajAZwpFQP3bExqfyso51RWZ8mh2oCO428hJfa+ePV
-         RVSUkOw+p0DRsnQmcIvcnhYqz9NRP3zOVticzkBPuJfrxB3UjiTn0VGI3AeJs3sZlbxE
-         07E1WXXN/Aol/mKKmZt2Z5m+MlGVObs7frU3MR5g34UIbBizu9aJhOX3MK6K9cJod51Z
-         Aj3gT2DII4tOykOWPnAsrSbha/zKcf11IwhkzQC/hOllZ+++LFCK1VtkORtIIGDC5A2g
-         Pbq1qmcbjbuM8R+/SkTPEojI3Ifyybobzhe2xZ9YdPgH+/O/fAqGxlT5/IXdTOlfDW5D
-         750Q==
+        bh=KretQ/XJthMfpetGqVPtsA/B99c5VeYkxe5u1D2zWxw=;
+        b=VSxdCzHdU4k62RRYV52BnV76ZS8OSg1EG6NH134HxXcSDO+aWiuWrmVUQyeeIoIth8
+         uYZ0UgQqfBcCTv8yCNcDITpCBPB99FgYbIkvt7y2hPgzC2F/x+t8+pT/qxcsVqEFhZJg
+         PDRpXKCSC/o9zmQUxfnaWAT6Tmn24q3FTGcdF8CYUgbxIYwBYn5FMXPUv7r872guEe3V
+         8HZXK7sFaqDO1VDYTUQ5Eb+Lf+eokblExhiZc3dH2YWlzDCY1KzfZzjadbQYtRRulpNG
+         qBsYutD47qXH1PCCEiRAszjqnLslDfRGfd/ougYtNB4of2aWzHuwZesOTzsZ9osAQ7y8
+         TRLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712588499; x=1713193299;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
+        d=1e100.net; s=20230601; t=1712592016; x=1713196816;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PRN1sELqu0ogiTDUrC+ULOZosF4sbROYULaypNrLxRE=;
-        b=nwZVZiwS46fCNMnKsXfBIxv82+s9QNIILxmoJa3GmxAYPrk+YN9UPC/gfU0z2x0qVu
-         iuQVrs/N3Sz8FokPazBE5HyhWSk/bg8/ibwYgNuS3K5SKNRhD8XpE+S7+lk6bwOllcRN
-         iM0QY63BwPBrPC4xn+LI3lRDVeVIWj0PZbusZa4m0RuYpaWryqoU822vnb86odvyl3Zf
-         psv97vhp0iViNALD7OUf1rlK+h5qj7PFSWnwHHf3l/30txp8fcZ12d0r6ttG+VW/inwm
-         kdUZN5KBCOAIR//XaUWmdtSWXj7HS1NO6Ys0OdGTGY3kd0mmKZLxF8Dm27nlBHSyWpGt
-         VzOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWt+CPTGPK1lP+oRu5hXAUq4BGKhu3zZ22G45r+yAhc2ZVSjo07PguKZT0F1hJKnveJKE88HIFcBVotEVUxxf3D+5GpTMp5vnMko8A=
-X-Gm-Message-State: AOJu0YzUU7RpIwwSEPA0z3tlKjc2LQ93rdHzYLKvlkgcgfkU/ZX7A3gc
-	HNIOw1XEKZJ/2DeXFDQuoobfXLa2xl4n59WIlVRqsU2oFQpxozve
-X-Google-Smtp-Source: AGHT+IFwYnWXgAf/PUSsxKAWo8N9fb0i5uBvSP+a6/cyOg6oSHtufOrwyScmxnUsaq5JkB2TN3vnaQ==
-X-Received: by 2002:a17:906:4550:b0:a51:c52d:e530 with SMTP id s16-20020a170906455000b00a51c52de530mr3121905ejq.34.1712588481286;
-        Mon, 08 Apr 2024 08:01:21 -0700 (PDT)
+        bh=KretQ/XJthMfpetGqVPtsA/B99c5VeYkxe5u1D2zWxw=;
+        b=eZlZA6cX60bsRv5ypopVrkGAOub66lT1gYWnFmdBQ8TMbe1gcqz/30bnkB+v2gt5S2
+         LyM3wyGfoPatTzlPS/drVWbT83CrqiIUu6l7ad1rcpVG+1+CW3rZMpn8if2tQPgVyllZ
+         Obyu7nvJw+h2fqQLMolmwhmwfkFFQeFRPVUnRXaEqvsr4I2N9g9kjZQ1v0LmAuQcHd1M
+         m9zJTGImgr8HoT2+X0qtsm5qVCwg9+xFgs5vKRoDlBHZn3xMNXo+Ny0mcU85lX7UG07/
+         ZyfGmk5XBI0r3pAeJULGaQEVbLdl39Xfqyk7lL7XfTmO1acwvWvQ2KMViQoiMgM0G86t
+         iSmA==
+X-Gm-Message-State: AOJu0YyhUpl/qg3eaKwuTOmNRGJWC5A4PIbJZgzfWmoBb0/cvm/n2t1l
+	k+8FXxSRKgI6RkU8KhPOA6W4BXqTrHJDMyXAlUsa7GzJPjBhKSMzattmYR63
+X-Google-Smtp-Source: AGHT+IF8YX2xAwt++T3H3IRvgCwCICC1zaadZnJE+9lQz7DBFM24xag476lWdYkXf6ter6tEl5IvOw==
+X-Received: by 2002:a05:600c:3b8d:b0:416:6b95:c63a with SMTP id n13-20020a05600c3b8d00b004166b95c63amr2189354wms.8.1712592016050;
+        Mon, 08 Apr 2024 09:00:16 -0700 (PDT)
 Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id dr20-20020a170907721400b00a518c69c4e3sm4513886ejc.23.2024.04.08.08.01.20
+        by smtp.gmail.com with ESMTPSA id m6-20020a05600c3b0600b0041668162b45sm4926247wms.26.2024.04.08.09.00.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 08 Apr 2024 08:01:20 -0700 (PDT)
+        Mon, 08 Apr 2024 09:00:15 -0700 (PDT)
 Content-Type: multipart/signed;
- boundary=294776b9314327320f85989c6005bd27d0d25a1d1c78b1c49faf1f06c12f;
+ boundary=b22096a8a7b5cc5c8f3d4d91d1d45c715f103bcff9dec75c350963c40108;
  micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -60,120 +59,84 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Date: Mon, 08 Apr 2024 17:01:20 +0200
-Message-Id: <D0ETY6KYVYO6.1L2QGS0QIE77O@gmail.com>
-Subject: Re: [PATCH] gpu: host1x: Do not setup DMA for virtual devices
+Date: Mon, 08 Apr 2024 18:00:15 +0200
+Message-Id: <D0EV7AKFJ1G4.1EED57H68IKH@gmail.com>
+Cc: <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] soc/tegra: pmc: Add EQOS wake event for Tegra194 and
+ Tegra234
 From: "Thierry Reding" <thierry.reding@gmail.com>
 To: "Jon Hunter" <jonathanh@nvidia.com>
-Cc: "Jason Gunthorpe" <jgg@nvidia.com>, <dri-devel@lists.freedesktop.org>,
- <linux-tegra@vger.kernel.org>
 X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240314154943.2487549-1-thierry.reding@gmail.com>
- <4ffa428a-e6cf-4716-ad7b-02c126d66772@nvidia.com>
- <73a71381-7c8c-4d0f-9fa4-3d9511c9bfbe@nvidia.com>
-In-Reply-To: <73a71381-7c8c-4d0f-9fa4-3d9511c9bfbe@nvidia.com>
+References: <20240403114208.35147-1-jonathanh@nvidia.com>
+In-Reply-To: <20240403114208.35147-1-jonathanh@nvidia.com>
 
---294776b9314327320f85989c6005bd27d0d25a1d1c78b1c49faf1f06c12f
+--b22096a8a7b5cc5c8f3d4d91d1d45c715f103bcff9dec75c350963c40108
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 
-On Wed Apr 3, 2024 at 12:07 PM CEST, Jon Hunter wrote:
-> Hi Thierry,
+On Wed Apr 3, 2024 at 1:42 PM CEST, Jon Hunter wrote:
+> Add the wake event for the EQOS ethernet controller on Tegra194 and
+> Tegra234 devices, so that system can be woken up by an event from this
+> ethernet controller.
 >
-> On 15/03/2024 11:25, Jon Hunter wrote:
-> >=20
-> > On 14/03/2024 15:49, Thierry Reding wrote:
-> >> From: Thierry Reding <treding@nvidia.com>
-> >>
-> >> The host1x devices are virtual compound devices and do not perform DMA
-> >> accesses themselves, so they do not need to be set up for DMA.
-> >>
-> >> Ideally we would also not need to set up DMA masks for the virtual
-> >> devices, but we currently still need those for legacy support on old
-> >> hardware.
-> >>
-> >> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> >> ---
-> >> =C2=A0 drivers/gpu/host1x/bus.c | 8 --------
-> >> =C2=A0 1 file changed, 8 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-> >> index 783975d1384f..7c52757a89db 100644
-> >> --- a/drivers/gpu/host1x/bus.c
-> >> +++ b/drivers/gpu/host1x/bus.c
-> >> @@ -351,11 +351,6 @@ static int host1x_device_uevent(const struct=20
-> >> device *dev,
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> >> =C2=A0 }
-> >> -static int host1x_dma_configure(struct device *dev)
-> >> -{
-> >> -=C2=A0=C2=A0=C2=A0 return of_dma_configure(dev, dev->of_node, true);
-> >> -}
-> >> -
-> >> =C2=A0 static const struct dev_pm_ops host1x_device_pm_ops =3D {
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .suspend =3D pm_generic_suspend,
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .resume =3D pm_generic_resume,
-> >> @@ -369,7 +364,6 @@ const struct bus_type host1x_bus_type =3D {
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "host1x",
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .match =3D host1x_device_match,
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .uevent =3D host1x_device_uevent,
-> >> -=C2=A0=C2=A0=C2=A0 .dma_configure =3D host1x_dma_configure,
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .pm =3D &host1x_device_pm_ops,
-> >> =C2=A0 };
-> >> @@ -458,8 +452,6 @@ static int host1x_device_add(struct host1x *host1x=
-,
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device->dev.bus =3D &host1x_bus_type;
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device->dev.parent =3D host1x->dev;
-> >> -=C2=A0=C2=A0=C2=A0 of_dma_configure(&device->dev, host1x->dev->of_nod=
-e, true);
-> >> -
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device->dev.dma_parms =3D &device->dma_=
-parms;
-> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dma_set_max_seg_size(&device->dev, UINT=
-_MAX);
-> >=20
-> >=20
-> > Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> > Acked-by: Jon Hunter <jonathanh@nvidia.com>
->
->
-> I don't see this in -next yet?
->
-> Ideally, if we don't see any issues with this we should pull this into=20
-> v6.8.y stable branch because I am now seeing the warning there. Should=20
-> we apply a fixes tag to this?
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-I was finally able to run some finally tests on this and pushed it to
-drm-misc-fixes, so it should go into linux-next and then Linus' tree
-sometime soon.
+I don't think we've ever tested the EQOS on Tegra234 because all of the
+upstream-supported platforms only make use of the MGBE. Do we have any
+platforms where we need this on Tegra234? Also, do we perhaps want to
+add an wake event for MGBE?
 
-I decided against adding a Fixes tag because it's difficult to backport
-this all the way to the release which contains the commit that added
-the issue. Adding a Fixes tag to the commit that ended up exposing the
-issue didn't seem right either, so let's get this into mainline first
-and then manually ask stable maintainers to pick this up.
+That's not to say that I reject this, just that it doesn't currently
+seem to make sense for Tegra234.
 
 Thierry
 
---294776b9314327320f85989c6005bd27d0d25a1d1c78b1c49faf1f06c12f
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index d6bfcea5ee65..91d0ad6ddefc 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -4074,6 +4074,7 @@ static const char * const tegra194_reset_sources[] =
+=3D {
+>  };
+> =20
+>  static const struct tegra_wake_event tegra194_wake_events[] =3D {
+> +	TEGRA_WAKE_GPIO("eqos", 20, 0, TEGRA194_MAIN_GPIO(G, 4)),
+>  	TEGRA_WAKE_IRQ("pmu", 24, 209),
+>  	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA194_AON_GPIO(EE, 4)),
+>  	TEGRA_WAKE_IRQ("rtc", 73, 10),
+> @@ -4210,6 +4211,7 @@ static const char * const tegra234_reset_sources[] =
+=3D {
+> =20
+>  static const struct tegra_wake_event tegra234_wake_events[] =3D {
+>  	TEGRA_WAKE_GPIO("sd-wake", 8, 0, TEGRA234_MAIN_GPIO(G, 7)),
+> +	TEGRA_WAKE_GPIO("eqos", 20, 0, TEGRA234_MAIN_GPIO(G, 4)),
+>  	TEGRA_WAKE_IRQ("pmu", 24, 209),
+>  	TEGRA_WAKE_GPIO("power", 29, 1, TEGRA234_AON_GPIO(EE, 4)),
+>  	TEGRA_WAKE_GPIO("mgbe", 56, 0, TEGRA234_MAIN_GPIO(Y, 3)),
+
+
+--b22096a8a7b5cc5c8f3d4d91d1d45c715f103bcff9dec75c350963c40108
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmYUBsAACgkQ3SOs138+
-s6EmGQ//bjoMCxMd0pYChsgWJe8dvuK0jJFOJPxd7omZmt+XvFXkgFUgylUy9ZF7
-S9kIppfWCKHNeKSS915ZRHYwiQh6H+8DuG7ow9DDfBa2Zrkx3AQxTPz4Q5qOaaw0
-htNwKzKRWlEb2hvRhRDg2mbQVkKT/mTys64pGNieTXSsiGmN2SB9JpwAFDlKvc3i
-38GShsmFLC1whXD40bOb5GAILWh9ZoJyUqDPOFwJ4vQHY4AhFkHJF9PijMNHbxIX
-SExSbiuVIzvdLrIjIm3QDTn1bz+wMScGxBbYrTdEqelu3SwYJsxO3ZrxU1SkXWwD
-7gg8UWuzWhn8bFyaP6WwpIkSmX/0EmWPyGspAzGZej2eJn+ifgaNKS4ENxH/Hb6l
-Ta5X6KSiGjBeEzpsgAvKELat2NVrz00srK2WCGlVa86SWh4pUUVGSpjQMugDWfLT
-UXwxxCySDHex8CQR3gjgAEN1CPnJyrT5UpSqIt3nTWQzLJNcPvzHdrAqxB2iZR1M
-1K1DA6/FTr9L9yNTIW35L5jS9DKv0/WIZKpoONjHmWwsYxcFuADF2JxK2FpbKBKs
-NLVFPn1KbppY4DNYDai/OCuJyOGb2tLvYDds2OdrkJiOGI4UddCkvZ4Hgg4xr7yk
-XNrgILTMkyYT4NiSs8tKPp524RssiCLqzZb7acaO8a5FNk6qixk=
-=Msdd
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmYUFI8ACgkQ3SOs138+
+s6EIUw//V8xd3GakiuroXA3G4m460IO4Zb/TKFHGYl+EettFDfibH3M6Cdc12zj+
+cFxw92SeuTtgUvvYgtMok75YinGTnYi+GpsKKaeXhtsIUIc5Gv0YxNOD3lbEWut4
+2VWJ6oU2H00fP8CBLWDHcO8Ri9A/aTb7RrE15z9xjpSdNMYSlAriiIzunGAciCLL
+Hq9EQbVdq3QAQ90Iv4348jyTTAUD0H06qX9QpqThqZF5jxFKoEARQj3h5StGKI78
+JWdiaYlUmBSSkYCUeol1hUhQW+UqbVDFhqvd30/KJ22PiqegYAr3gbGn7Eg+TrBY
+BeZQkCyLLihlJAldoL5pVh5x/HpGEOANMTGWehap4AYPyEjAnMHYEVQU3EjJB6Xm
+Qts+ebWKu/eZQiUzJcObJpxaKVpRNpiuHhrDltFl3xkoh2gzA7hZoHE7Y8QZ14fL
+z634oXiMzbx2gNTSnZyPxlrClZ3vabvqnfSSP/ZbxIYh0cRpNJQHWDK3dLjoMPqT
+hcytk8xp7luniMzUziC7Tcf52nGyNbwyft3rEiUsNUSR7upji9dT5eJlH2F3FnXb
+pE+E0EApDZt7np3WrJjV7Ek5+NyI6eybkKIksMBOBcOCNfMISi6yNCe1hleBrzy4
+avSsdDwfMGv+VFOs1bJYSnID9VJxnxCDYI1JZdQlqc6+M2c6Oa0=
+=jSXJ
 -----END PGP SIGNATURE-----
 
---294776b9314327320f85989c6005bd27d0d25a1d1c78b1c49faf1f06c12f--
+--b22096a8a7b5cc5c8f3d4d91d1d45c715f103bcff9dec75c350963c40108--
