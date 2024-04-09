@@ -1,84 +1,82 @@
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED75E12F592;
-	Tue,  9 Apr 2024 13:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD8112F381;
+	Tue,  9 Apr 2024 13:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712668966; cv=none; b=AgBG+WTx5CqigB4VkQcwm06XCeLRCFS/6ofxppqFHll72kAL2Pzcpp4cJC8YNszgt4ArzL+y/k4HuxqAmJLne16emH5JZUkXrsVgu7GDhMcQAbtiXhKTdORNMm67mSqfk8VHMnsuHlXI7dUTPX7nS1wJUgLl1OYS/4M+aAalKNU=
+	t=1712669517; cv=none; b=syU2B+WP9wZKw66eIkPMgKInnv2VFWjYdkL6zO4J1ktWHLOB9XWRn1gqKoWl/PyrpLDXz6tyVQB4V1pkWCGyxHKwGW8kBsCtayWvpSE1O8OyQB3K+fD+byRLQmXOVo/qQmOUr0M1Bj0zTIz37rSBgU3UpWGL4FlfJl7Soz1viGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712668966; c=relaxed/simple;
-	bh=n8lMrvoOAZr4zQFT/jywmQXSwhUzFGLvlnoZwlXr8Y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nYZnwan+rfTdGfltaBMVm9/YsEY6Iu6Ww/V3KqOI0S8aSP9IphtehEQccZT4v1Bq73uLivTG3FnhhFKgos36sMXL06z5BPxroApTxWPFeRoj8o5af5X0e90swSqxc5DZt5enpfTCT4UWznp6iAzdwFDUHjjTd3lc3UrDiBKF5r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pJqQuZNF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/ndUaydY; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+	s=arc-20240116; t=1712669517; c=relaxed/simple;
+	bh=t+Ksp7FCYvmyEVKHHeraJyf8M135WOhzLeRnkqqR5u8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=eRI7LAul0eLnEeUuMWxVyzzwkY2gyrSyMJdIEszn8kAZ2wx9df885YuBb+H3MH3pugVEZLXzCZwYXl4AiTy2jY/HkTd27i0u2Pl7hIiKgpIcbwJaA+L99bzr2FSELwvjcWMik8GJ8fFbIitwEchFsf8Yxq5HUmFb+643OSOV3bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZTMfB0U; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pJqQuZNF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/ndUaydY"
-Date: Tue, 9 Apr 2024 15:22:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1712668962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2m0Auujs2P8xmXDlDR/Z+F4/NBU8yQjw72yULiEyoFg=;
-	b=pJqQuZNFMXmg3nAL8VwURA0FNzNMzYzlodq1a8wDtMal/m4mI0sNLc7uujYISaXeTRYoL0
-	XdIdONL+qE3cjpVMCrDn2HuNh0Ik0c7Dig9eYLt91XgYMvFD2V4AXwIJNMuiLoVDsims9x
-	OC+MFADulGFst/qqw7jogSHsv6x0ycrgnr2x+Pnt3Q3wpdMzhv6k7QYueFA/eShxOVoBkT
-	C6uZJHwuOav4vH+6lfoqNRpuvbe5cSTcvGh0K3LNGq8QAM+TvEhEui8jRr9vui0RrnatdV
-	E2b3WnFiPakukYOvPTSa3QtKfJ2uwIcmdziYnEtTFeIJF9ByVBHK8PbPnQzU8A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1712668962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2m0Auujs2P8xmXDlDR/Z+F4/NBU8yQjw72yULiEyoFg=;
-	b=/ndUaydYh8prkaW7KAhCQbQdM4GWF00KJgFSnOtVLCEMxbvHQjM32ljYlPEmPmCR3WvKYo
-	w15ydUBdG7owi/Dg==
-From: Nam Cao <namcao@linutronix.de>
-To: topcat <bfonseca@ime.usp.br>
-Cc: Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, topcat <bfonseca@ipt.br>,
- ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fixed spelling mistake
-Message-ID: <20240409152238.31820642@namcao>
-In-Reply-To: <20240409114045.13872-1-bfonseca@ipt.br>
-References: <20240409114045.13872-1-bfonseca@ipt.br>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZTMfB0U"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC0FC433F1;
+	Tue,  9 Apr 2024 13:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712669517;
+	bh=t+Ksp7FCYvmyEVKHHeraJyf8M135WOhzLeRnkqqR5u8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=kZTMfB0UAUPUs0ocDCsQO13zU2bvvSgpasC59IiSmHHyq5XquOjWZLfQicAj8A8aB
+	 o+pn4rDwBAewqokcx0PMk+RHmw49d08jFLRV+DGu9hOEzj56AnR0SEHQQGIetF/ffd
+	 qNj5FIjO4PUo7n+e/5FBfQ5t00rnGIIMGEv5ZhEDAdpCYn0flo9t7ZdzOJhNOUKRkb
+	 NauVif830INUuV/PA1lNcIU/6Zg6yI7E8WyW9L34teJKhQESmDt7oyO8lkSLL0eVIt
+	 L/hZgbmZr/uk9pA6PPv5p1Ot9xoHKqB/T6gWZV8SyYBrW1sQZfnAlRexOi37//klF4
+	 V1i8PIrLfEFtg==
+Date: Tue, 9 Apr 2024 08:31:55 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mhi@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 10/10] PCI: qcom: Implement shutdown() callback to
+ properly reset the endpoint devices
+Message-ID: <20240409133155.GA2072077@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zg22Dhi2c7U5oqoz@ryzen>
 
-On 09/Apr/2024 topcat wrote:
-> ---
->  drivers/staging/nvec/nvec.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index 282a664c9176..b4485b10beb8 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -712,7 +712,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
->  	 * TODO: replace the udelay with a read back after each writel above
->  	 * in order to work around a hardware issue, see i2c-tegra.c
->  	 *
-> -	 * Unfortunately, this change causes an intialisation issue with the
-> +	 * Unfortunately, this change causes an initialisation issue with the
->  	 * touchpad, which needs to be fixed first.
->  	 */
->  	udelay(100);
+On Wed, Apr 03, 2024 at 10:03:26PM +0200, Niklas Cassel wrote:
+> On Wed, Apr 03, 2024 at 07:02:17PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Apr 02, 2024 at 01:18:54PM +0200, Niklas Cassel wrote:
+> > > On Mon, Apr 01, 2024 at 09:20:36PM +0530, Manivannan Sadhasivam wrote:
+> > > > PCIe host controller drivers are supposed to properly reset the endpoint
+> > > > devices during host shutdown/reboot. Currently, Qcom driver doesn't do
+> > > > anything during host shutdown/reboot, resulting in both PERST# and refclk
+> > > > getting disabled at the same time. This prevents the endpoint device
+> > > > firmware to properly reset the state machine. Because, if the refclk is
+> > > > cutoff immediately along with PERST#, access to device specific registers
+> > > > within the endpoint will result in a firmware crash.
+> > > > 
+> > > > To address this issue, let's call qcom_pcie_host_deinit() inside the
+> > > > shutdown callback, that asserts PERST# and then cuts off the refclk with a
+> > > > delay of 1ms, thus allowing the endpoint device firmware to properly
+> > > > cleanup the state machine.
+> ...
 
-A patch has already been sent to fix the exact same problem:
-https://lore.kernel.org/linux-staging/20240331170548.81409-1-dorine.a.tipo@gmail.com/T/#u
+> For a real PCIe card, if you assert + msleep(100) + deassert PERST, surely
+> the endpoint is supposed to be in a good/well defined state, regardless if
+> he REFCLK was cutoff at the exact time as PERST was asserted or not?
 
-Best regards,
-Nam
+I think this is the key point.  This PERST#/REFCLK timing requirement
+seems like a defect in the endpoint.  I know there's firmware involved
+and whatnot, but IMO it's the endpoint's problem to handle these issues
+internally.
+
+Bjorn
