@@ -1,15 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E6F6FCB
-	for <linux-tegra@vger.kernel.org>; Tue,  9 Apr 2024 16:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6740D153824
+	for <linux-tegra@vger.kernel.org>; Tue,  9 Apr 2024 17:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712681453; cv=none; b=kwWvuOrkreM/lr0Owl0Gq4JC1W/DpgPY+3R12IRAkcDMRy4R6afXZppi70FdjHKGkffI5Mw8QSAXuNk8oHnCAPgleE3H7dr478KpcFjWvyrfT+hK5oR3SCt4aRYC8u9qokNtt7q2vV5IUUA9mpar64xxWfDAw/rVaVkzQk3Xl+8=
+	t=1712682192; cv=none; b=UhTrIxkboRE0fZLWcSyWiJVkjUhxYhhugmZ0nJqG2jkgow3wSaGGQF/0RSvp7eHZZW9VpoRqGoNkrws7Xku37d3lGpMXpLFdF6+yogd1LoCgpzohgfrwDSnhEg54t55Q1PaoO5i5FT8vnvw9XZpsfV/oHKwO0j5t8EMV1ztKHZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712681453; c=relaxed/simple;
-	bh=/YHfO/08ZaKI8GNbh6zOvQnl/lLUDiS75hdRnhQTS1M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mEfOLeVlgzOea4Cz/Atb8rjerUex7i3w+H5ldHD9VVe40CcRbP6xb2vnCVYml5h4v6h7A7wHZYyYi8s+dwGtJgZh1kB4d/hwf2Mn7mZHHJakFiVH2dPjAFheY6C/5Fqfbocqf8QZI6Nm4D6pxfv5L8pThzR+duPCOPgkKCxVIYQ=
+	s=arc-20240116; t=1712682192; c=relaxed/simple;
+	bh=d+JCLobLbz8LzeA9bj7f36+VkqHhhgoup2ObWHc4L6g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LXWgv4f37gkMcNr2h//2Wwpt039EX5X36cTZ1oQxZ8y/bfQjDVN94OGpWp8zER1zHHq2v8nqXsIV8bKAb+eKN6IpldKTv31MkghfZixNJshKDeHB3RG0+DIp+DHzs4o6ThlrjbeScD0cpypG7S0FRNRyfVhRfiROlHu1fhan90w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -17,28 +18,30 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1ruEgJ-0005dI-4e; Tue, 09 Apr 2024 18:50:47 +0200
+	id 1ruEsD-0003vX-IE; Tue, 09 Apr 2024 19:03:05 +0200
 Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1ruEgI-00BKxU-8A; Tue, 09 Apr 2024 18:50:46 +0200
+	id 1ruEsC-00BKyG-UX; Tue, 09 Apr 2024 19:03:04 +0200
 Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ukl@pengutronix.de>)
-	id 1ruEgI-00H4Qx-0W;
-	Tue, 09 Apr 2024 18:50:46 +0200
+	id 1ruEsC-00H4tc-2m;
+	Tue, 09 Apr 2024 19:03:04 +0200
 From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
+To: David Airlie <airlied@gmail.com>,
 	Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org,
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: [PATCH] gpu: host1x: mipi: Benefit from devm_clk_get_prepared()
-Date: Tue,  9 Apr 2024 18:50:43 +0200
-Message-ID: <20240409165043.105137-2-u.kleine-koenig@pengutronix.de>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 3/4] gpu: host1x: Convert to platform remove callback returning void
+Date: Tue,  9 Apr 2024 19:02:50 +0200
+Message-ID:  <7e31909b1e536f0ddbb060b1aaa0a9e943687c8a.1712681770.git.u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1712681770.git.u.kleine-koenig@pengutronix.de>
+References: <cover.1712681770.git.u.kleine-koenig@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -46,7 +49,7 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2095; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=/YHfO/08ZaKI8GNbh6zOvQnl/lLUDiS75hdRnhQTS1M=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmFXHkrfIBoRCWyZ/uiIHtF/8ynvJylfBk153+H cOU9jOCKvOJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZhVx5AAKCRCPgPtYfRL+ TiO4CAC74RxiU+wDornc+8rGg0vrWkQo5oUX1OmGngy1YWOb9kreuY9WfUYXcvfsZK9OqrA0tAm mdBEuiX26gIo7UIQYHzXE19S2oCalqX7m8f3zKd5o0RdNrls4lN8dHeeSH1jQ/9eL4wdmb7tof1 9R/xfkR6ovMdCjwRoUqEhFHrSikTOrn2nuw1p/A2FxW+/QB9yxrB4RGyRu2YZV0C6NCMNd4d5so w/Xv1OVrn7av1rckoZuYA3sLwBcO0Z0RgTUPHXZY7w7+63MujxwOwxGPuzIYkX2MS7VT+DSZZ2U b+JQ3+NtXB+IJVk+GSlXnT4eF4N/JPpd1btjQGzOZ6qfac3T
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1842; i=u.kleine-koenig@pengutronix.de; h=from:subject:message-id; bh=d+JCLobLbz8LzeA9bj7f36+VkqHhhgoup2ObWHc4L6g=; b=owGbwMvMwMXY3/A7olbonx/jabUkhjTRkt2NYWf5039772M/ZNqaeVP0RWnEVhNvPR29iH9HE /81lh7qZDRmYWDkYpAVU2Sxb1yTaVUlF9m59t9lmEGsTCBTGLg4BWAioY/Z/0rsjL2WOcPZt1C4 rNzs6k3F9LQEw/Sp5xSPHWj7x8Vk87vK5T/LiWfFnyvEVR89mCaeF1upJRa5RsI0wu2lH2O36UJ ppad23H9DLktceFZ7VUX7z9+MqikGa7buTNzwwfLjKc4jqemiT7k1erN4jFojjya2vr8Yrr5YPZ rTRjyi63S7/YvXtpcrnX5GWlU6VUddy/DL9FTN5749c9OKLTyX40PYMqwk2s5PDfneW6494VhVb aHVtNum707bHA534klYMvPRtQNbBIICnbYpPXr62uFxedEC/6p1e1qd3rv4m05zELNY5MW3Zipb Qtnb3bo+nzoyl011PDLz8fkGN7UfkXXKlhvPvys/cPwyAA==
 X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -54,78 +57,55 @@ X-SA-Exim-Mail-From: ukl@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
-When using devm_clk_get_prepared() instead of devm_clk_get() the clock
-is already returned prepared. So probe doesn't need to call
-clk_prepare() and at remove time the call to clk_unprepare() can be
-dropped. The latter makes the remove callback empty, so it can be
-dropped, too.
+The .remove() callback for a platform driver returns an int which makes
+many driver authors wrongly assume it's possible to do error handling by
+returning an error code. However the value returned is ignored (apart
+from emitting a warning) and this typically results in resource leaks.
+
+To improve here there is a quest to make the remove callback return
+void. In the first step of this quest all drivers are converted to
+.remove_new(), which already returns void. Eventually after all drivers
+are converted, .remove_new() will be renamed to .remove().
+
+Trivially convert this driver from always returning zero in the remove
+callback to the void returning variant.
 
 Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 ---
-Hello,
+ drivers/gpu/host1x/dev.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-the motivation for this patch is that the driver uses struct
-platform_driver::remove() which I plan to change the prototype of. Instead
-of converting the driver to the temporal .remove_new() and then back to
-the new .remove(), drop the remove callback completely.
-
-Best regards
-Uwe
-
- drivers/gpu/host1x/mipi.c | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
-
-diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
-index 4dcec535ec21..e51b43dd15a3 100644
---- a/drivers/gpu/host1x/mipi.c
-+++ b/drivers/gpu/host1x/mipi.c
-@@ -501,7 +501,6 @@ static int tegra_mipi_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 	struct tegra_mipi *mipi;
--	int err;
- 
- 	match = of_match_node(tegra_mipi_of_match, pdev->dev.of_node);
- 	if (!match)
-@@ -520,35 +519,21 @@ static int tegra_mipi_probe(struct platform_device *pdev)
- 
- 	mutex_init(&mipi->lock);
- 
--	mipi->clk = devm_clk_get(&pdev->dev, NULL);
-+	mipi->clk = devm_clk_get_prepared(&pdev->dev, NULL);
- 	if (IS_ERR(mipi->clk)) {
- 		dev_err(&pdev->dev, "failed to get clock\n");
- 		return PTR_ERR(mipi->clk);
- 	}
- 
--	err = clk_prepare(mipi->clk);
--	if (err < 0)
--		return err;
--
- 	platform_set_drvdata(pdev, mipi);
- 
- 	return 0;
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 89983d7d73ca..bc02aa28458b 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -653,7 +653,7 @@ static int host1x_probe(struct platform_device *pdev)
+ 	return err;
  }
  
--static int tegra_mipi_remove(struct platform_device *pdev)
--{
--	struct tegra_mipi *mipi = platform_get_drvdata(pdev);
--
--	clk_unprepare(mipi->clk);
+-static int host1x_remove(struct platform_device *pdev)
++static void host1x_remove(struct platform_device *pdev)
+ {
+ 	struct host1x *host = platform_get_drvdata(pdev);
+ 
+@@ -668,8 +668,6 @@ static int host1x_remove(struct platform_device *pdev)
+ 	host1x_channel_list_free(&host->channel_list);
+ 	host1x_iommu_exit(host);
+ 	host1x_bo_cache_destroy(&host->cache);
 -
 -	return 0;
--}
--
- struct platform_driver tegra_mipi_driver = {
- 	.driver = {
- 		.name = "tegra-mipi",
- 		.of_match_table = tegra_mipi_of_match,
+ }
+ 
+ static int __maybe_unused host1x_runtime_suspend(struct device *dev)
+@@ -754,7 +752,7 @@ static struct platform_driver tegra_host1x_driver = {
+ 		.pm = &host1x_pm_ops,
  	},
- 	.probe = tegra_mipi_probe,
--	.remove = tegra_mipi_remove,
+ 	.probe = host1x_probe,
+-	.remove = host1x_remove,
++	.remove_new = host1x_remove,
  };
-
-base-commit: a053fd3ca5d1b927a8655f239c84b0d790218fda
+ 
+ static struct platform_driver * const drivers[] = {
 -- 
 2.43.0
 
