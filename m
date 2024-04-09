@@ -1,150 +1,242 @@
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2041.outbound.protection.outlook.com [40.107.223.41])
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1487E575;
-	Tue,  9 Apr 2024 08:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712651026; cv=fail; b=jAIpFk3mM5KEeuQW4pZcl93LGByKVSDxxpOrNnwEZpVFphyrrPXB7mIszZVTFffwNRZXklAx1s+j6KnPke+eTu/9xRi0i1tWzHJM/j3pn3k4F8hWZOQ0lVse/M9qaVy05loz8XV+7+n7rbwuR9Vk3fYmcqisu+5Xwo4CEynhY+Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712651026; c=relaxed/simple;
-	bh=wAXTVyEk2PLZ+PW/qBChbyADGdtvU/uNK+UBlktd71s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YX0QWaH2smvbONpD3xts9j8MtWiCLREpUm3ZqMEnE2DjMX7TRAySbXWbG4n/Ua6Pjl8llpSUWbMG950tiisETxStbfkrF2hAwMJozpGdlm/zMb1k4l5lz48xTTXWhGyGa2WM4O8Q1JDq26dUjcmzYauok01ivVYieAcF/0Ln9Bg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=p6NGHk55; arc=fail smtp.client-ip=40.107.223.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8AD7FBBC
+	for <linux-tegra@vger.kernel.org>; Tue,  9 Apr 2024 09:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712656020; cv=none; b=dwmmKlXebYrjegPLKFCNSXLMcid68PRHZwt9YYi0AHkydmySgUANUSsNKzvimmHL/B4baVW347DaNyK81TA/kFddDdcoVQYlFh2/COxK0u/Yh2lUBnLA927naPthSfeq9Z6e58YdSjhXIzL5WAhXzq8VVxOja4RSM4O3/hUbWd4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712656020; c=relaxed/simple;
+	bh=K7vEYFpI6UBBggsgXQUgyYcA6qspofnmNPNo0H1AcD8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qHpsG3cMBFoAWViJ89/l622uOpXx5f4lOSMVfHtDhDYf7YbkHjVJyBbkLdwjnHybg0uo47ZxmzGZOinjM6Had9MoxjgeS08wYNvBtdSbiKHUPXUkCp4NP/FM2Li5e8Zj99qhTZP7sk2yoEDjv9mFh2YuyoENq2FSQoRk2L+sH7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=lb/eQvDn; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="p6NGHk55"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jrZubIsFeqyUYj7M/ur58ynSOmvmnD490ImRsM4x2hK/2qsWQ2ZH1t0nesOKYKXXU+Eu55LL8Ebyantg1Tbka6ypyX2aQ6H2nuLRYcPwoOhtuNu3d81RKtCrhYpu2QooBNGw47CrYp97Wv0w/M1XUP2iddIIv8m7ENR2xxLyaoFgCTSntB/Ygixbf/etISG4QF1+uArEOG4f0IMafQvkhgSh6Jbu6tyOl0eDFr2sZZcmVj4uhh862uEOVCESDxlhuUZHxrwul2AFKAmuRxyzF40KKIqBMzuARPmHGaYlX83iay8XaTYi96ExEPjE1kTYeCEXrXNIuukM8T/fKYxBzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=57S8jhWfL3Y2v8G6sXLftG9XHZhgLiTjeV8SFSWotfA=;
- b=FN4QNSBl7PJ3sqFH/J0zSTuh1qntluMn0Xsqe/b4idhY1dMq8DYRQykxHODO/wzpMBO9zMCwX42sWBlGoxdEB2HYf96j1xmdfD3ZyYakvIy95F3Bv1y7h4lYw0qaPnrRgjjl366ouKdT1l3Gpsn8u31Q2UkRd45o9CjGzfNl/A5yjaNB2ZUrwF1wbRrGUskEQ9MFHdCMhuIVYC53U5O2PVnRjjJfcY2ZyqstxzCTOO4E6fWdCsjn5cx0LSGs9bycW5E+wRGOnzHDpYeIJTqJXDKlzVjCAp8RJOhNRj3h5q+lT6zrJt/inm0WJc7TRluQvD6cBkhmP8RdZOVjl3ZIjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=57S8jhWfL3Y2v8G6sXLftG9XHZhgLiTjeV8SFSWotfA=;
- b=p6NGHk55M0dpV35JU/bbfpR05T+FMwOVRKFUt6Aj3Y3c1fSNrjW6CsfVgGWmO0lIdC49pZf6s5hT61ZNf7HN2nRge6KvDoMpF4lUQaej1kEK0za6QXNPGAKi8jpAa+BHUIhmrFqum1la6M8jo7v6ZITtKo7vd0WuCc7/OMU8cUsoFBDC4MUXwYxXjGhfDsrbW+IjltZBhrm0+3r67pI5SIZ2Ai8Oc1trq9T8XRtwMWOacbN5S/xwGEedDM33lCxUFrHKQHl4FYWQBsJxhBES8daOBUwvX3rQaHg+rw/rwQm5UJNBxfENApT5otLJDCrOhah5c72uVMvxR8HV8Fdh0g==
-Received: from MW4PR04CA0249.namprd04.prod.outlook.com (2603:10b6:303:88::14)
- by PH0PR12MB8174.namprd12.prod.outlook.com (2603:10b6:510:298::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Tue, 9 Apr
- 2024 08:23:41 +0000
-Received: from MWH0EPF000989E7.namprd02.prod.outlook.com
- (2603:10b6:303:88:cafe::73) by MW4PR04CA0249.outlook.office365.com
- (2603:10b6:303:88::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.13 via Frontend
- Transport; Tue, 9 Apr 2024 08:23:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- MWH0EPF000989E7.mail.protection.outlook.com (10.167.241.134) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7452.22 via Frontend Transport; Tue, 9 Apr 2024 08:23:41 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 9 Apr 2024
- 01:23:31 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Tue, 9 Apr
- 2024 01:23:31 -0700
-Received: from moonraker.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Tue, 9 Apr 2024 01:23:29 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen
-	<mperttunen@nvidia.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <devicetree@vger.kernel.org>, Jon Hunter
-	<jonathanh@nvidia.com>
-Subject: [PATCH] dt-bindings: host1x: Add missing 'dma-coherent'
-Date: Tue, 9 Apr 2024 09:23:24 +0100
-Message-ID: <20240409082324.9928-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="lb/eQvDn"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 6E0B360022E1;
+	Tue,  9 Apr 2024 10:46:52 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id Yuy0Kz57yZAF; Tue,  9 Apr 2024 10:46:50 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 2949F60022E0;
+	Tue,  9 Apr 2024 10:46:50 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1712656010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OX4n/8d/Mwq9mu+rJ9bMxzvAYFs9eWH4VbzUE4pdjOM=;
+	b=lb/eQvDnCBgCHO61SxrC57j//Kll13ShMqfSTJRHo7ZMq+X92czPpDbm3RD6gCFylQb3YN
+	TP7PAMDkQtyM1EQovESAYSBbmAmCLhczsIldPsywRqoekpkB3h2mTjY02cnC/515prhT5x
+	g53CCweag4GXGiwTOZT9M7BajrG5nl4=
+Received: from diogo-gram.home (unknown [IPv6:2a01:14:8070:dc60:f4e6:62fe:d7f8:e109])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 0A3EB360030;
+	Tue,  9 Apr 2024 10:46:50 +0100 (WEST)
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+To: krzysztof.kozlowski@linaro.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	linux-tegra@vger.kernel.org
+Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Subject: [PATCH 6/7] memory: tegra: Move compare/update current delay values to a function
+Date: Tue,  9 Apr 2024 10:46:29 +0100
+Message-ID: <20240409094632.62916-7-diogo.ivo@tecnico.ulisboa.pt>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240409094632.62916-1-diogo.ivo@tecnico.ulisboa.pt>
+References: <20240409094632.62916-1-diogo.ivo@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E7:EE_|PH0PR12MB8174:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83764c89-95e2-4d95-91cb-08dc586e5d64
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	CyKWgdDzA8iKCgKr6OY63vg/w0oB509qMW0n5ZSTHUYbn06saHVCTNecvptGRWX+hH80AItC92NrqJ+WpbfWu7/en7x/C15bjY7yoTM3ReKRNHqSFMDOtQP9IeMs9YxcUlaoEx1+1/2nTP/cl34VDCuxBcHiDywQkawiu0QuQJ4KPfX2fhKr/Egk5mwYYvWZuAX/yBlpS3Mk6PhBbuNskQxSPhOy7m0uDbyg5TueHj9b5AgQt4FgDo+s59ZRyVy63zExLFmC+kV3PxZOo/GlP2QEnVCByJaTlYgdx2vyBZOqCn4ki3GVel2+SVOo17/OgBBHvLBLSoruruYKDjSTVO4fpN8AYlGHSL6EjauCeGXO763J6MyCarcRZDWYcpLWV2ifa/M09y19TqOHFAHBEXRtv/Zy1vBQs9TryyINyUh+VBS7ikpnnUkW1sPzo9TNmalomEXpphx8pLwbde1geMdMn5RIk9rXOwEXb6vAp4z3VDGsRyfOfVarTLRY1/BGclWJwjPYH/mQtAb1QTvPJuxn4XlCmMtzEeTJR/ykpUfyrrpdUXC6Q0LX+0SLCTWcVU0Gepgz8GTnLFOtX2txVRRmO6np/EoSZWc8BhcWTbapH1CK7WQRwdGgB+r8ZzSuP/bDLchqAr7E+4rQYN2UKsnguY9QC4lAPA9ARvqZ7JryhiE2DfM7Lp8jmjrJsqV1M73ibK7S58KJgBf7MSby/IpsQ9qnm+I8XfPfvlPM3Buysaa5BG5ekyW0vJ99I/gs
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(82310400014)(376005)(36860700004);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2024 08:23:41.5505
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83764c89-95e2-4d95-91cb-08dc586e5d64
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E7.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8174
 
-The dtbs_check reports that the 'dma-coherent' property is "unevaluated
-and invalid" for the host1x@13e00000 device on Tegra194 and Tegra234
-platforms. Fix this by updating the dt-binding document for host1x to
-add the 'dma-coherent' property for these devices.
+Separate the comparison/updating of the measured delay values with the
+values currently programmed into a separate function to simplify the
+code.
 
-Fixes: 361238cdc525 ("arm64: tegra: Mark host1x as dma-coherent on Tegra194/234")
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 ---
- .../bindings/display/tegra/nvidia,tegra20-host1x.yaml | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/memory/tegra/tegra210-emc-cc-r21021.c | 84 +++++++++----------
+ 1 file changed, 38 insertions(+), 46 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-index 94c5242c03b2..3563378a01af 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-@@ -177,6 +177,15 @@ allOf:
+diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
+index 566e5c65c854..ec2f84758d55 100644
+--- a/drivers/memory/tegra/tegra210-emc-cc-r21021.c
++++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
+@@ -113,19 +113,35 @@ enum {
+ #define __MOVAVG(timing, dev)                      \
+ 	((timing)->ptfv_list[dev])
  
-       required:
-         - reg-names
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - nvidia,tegra194-host1x
-+    then:
-+      properties:
-+        dma-coherent: true
-   - if:
-       properties:
-         compatible:
-@@ -226,6 +235,8 @@ allOf:
-             use. Should be a mapping of IDs 0..n to IOMMU entries corresponding to
-             usable stream IDs.
- 
-+        dma-coherent: true
++static bool tegra210_emc_compare_update_delay(struct tegra210_emc_timing *timing,
++					      u32 measured, u32 idx)
++{
++	u32 *curr = &timing->current_dram_clktree[idx];
++	u32 rate_mhz = timing->rate / 1000;
++	u32 tmdel;
 +
-       required:
-         - reg-names
++	tmdel = abs(*curr - measured);
++
++	if (tmdel * 128 * rate_mhz / 1000000 > timing->tree_margin) {
++		*curr = measured;
++		return true;
++	}
++
++	return false;
++}
++
+ static u32 update_clock_tree_delay(struct tegra210_emc *emc, int type)
+ {
+ 	bool periodic_training_update = type == PERIODIC_TRAINING_UPDATE;
+ 	struct tegra210_emc_timing *last = emc->last;
+ 	struct tegra210_emc_timing *next = emc->next;
+ 	u32 last_timing_rate_mhz = last->rate / 1000;
+-	u32 next_timing_rate_mhz = next->rate / 1000;
+ 	bool dvfs_update = type == DVFS_UPDATE;
+-	s32 tdel = 0, tmdel = 0, adel = 0;
+ 	bool dvfs_pt1 = type == DVFS_PT1;
+ 	u32 temp[2][2], value, udelay;
+ 	unsigned long cval = 0;
+ 	unsigned int c, d, idx;
++	bool over = false;
+ 
+ 	if (dvfs_pt1 || periodic_training_update) {
+ 		udelay = tegra210_emc_actual_osc_clocks(last->run_clocks);
+@@ -174,17 +190,9 @@ static u32 update_clock_tree_delay(struct tegra210_emc *emc, int type)
+ 			else if (periodic_training_update)
+ 				__WEIGHTED_UPDATE_PTFV(idx, cval);
+ 
+-			if (dvfs_update || periodic_training_update) {
+-				tdel = next->current_dram_clktree[idx] -
+-						__MOVAVG_AC(next, idx);
+-				tmdel = (tdel < 0) ? -1 * tdel : tdel;
+-				adel = tmdel;
+-
+-				if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
+-				    next->tree_margin)
+-					next->current_dram_clktree[idx] =
+-						__MOVAVG_AC(next, idx);
+-			}
++			if (dvfs_update || periodic_training_update)
++				over |= tegra210_emc_compare_update_delay(next,
++							__MOVAVG_AC(next, idx), idx);
+ 
+ 			/* C[c]D[d]U[1] */
+ 			idx++;
+@@ -202,35 +210,26 @@ static u32 update_clock_tree_delay(struct tegra210_emc *emc, int type)
+ 			else if (periodic_training_update)
+ 				__WEIGHTED_UPDATE_PTFV(idx, cval);
+ 
+-			if (dvfs_update || periodic_training_update) {
+-				tdel = next->current_dram_clktree[idx] -
+-						__MOVAVG_AC(next, idx);
+-				tmdel = (tdel < 0) ? -1 * tdel : tdel;
+-
+-				if (tmdel > adel)
+-					adel = tmdel;
+-
+-				if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
+-				    next->tree_margin)
+-					next->current_dram_clktree[idx] =
+-						__MOVAVG_AC(next, idx);
+-			}
++			if (dvfs_update || periodic_training_update)
++				over |= tegra210_emc_compare_update_delay(next,
++							__MOVAVG_AC(next, idx), idx);
+ 		}
+ 	}
+ 
+-	return adel;
++	return over;
+ }
+ 
+-static u32 periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
+-					 struct tegra210_emc_timing *last,
+-					 struct tegra210_emc_timing *next)
++static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
++					  struct tegra210_emc_timing *last,
++					  struct tegra210_emc_timing *next)
+ {
+ #define __COPY_EMA(nt, lt, dev)						\
+ 	({ __MOVAVG(nt, dev) = __MOVAVG(lt, dev) *			\
+ 	   (nt)->ptfv_list[PTFV_DVFS_SAMPLES_INDEX]; })
+ 
+-	u32 i, adel = 0, samples = next->ptfv_list[PTFV_DVFS_SAMPLES_INDEX];
++	u32 i, samples = next->ptfv_list[PTFV_DVFS_SAMPLES_INDEX];
+ 	u32 idx;
++	bool over = false;
+ 
+ 	if (!next->periodic_training)
+ 		return 0;
+@@ -253,23 +252,23 @@ static u32 periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
+ 
+ 			for (i = 0; i < samples; i++) {
+ 				/* Generate next sample of data. */
+-				adel = update_clock_tree_delay(emc, DVFS_PT1);
++				update_clock_tree_delay(emc, DVFS_PT1);
+ 			}
+ 		}
+ 
+ 		/* Do the division part of the moving average */
+-		adel = update_clock_tree_delay(emc, DVFS_UPDATE);
++		over = update_clock_tree_delay(emc, DVFS_UPDATE);
+ 	}
+ 
+ 	if (type == PERIODIC_TRAINING_SEQUENCE)
+-		adel = update_clock_tree_delay(emc, PERIODIC_TRAINING_UPDATE);
++		over = update_clock_tree_delay(emc, PERIODIC_TRAINING_UPDATE);
+ 
+-	return adel;
++	return over;
+ }
+ 
+ static u32 tegra210_emc_r21021_periodic_compensation(struct tegra210_emc *emc)
+ {
+-	u32 emc_cfg, emc_cfg_o, emc_cfg_update, del, value;
++	u32 emc_cfg, emc_cfg_o, emc_cfg_update, value;
+ 	static const u32 list[] = {
+ 		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0,
+ 		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1,
+@@ -327,15 +326,12 @@ static u32 tegra210_emc_r21021_periodic_compensation(struct tegra210_emc *emc)
+ 		 * 4. Check delta wrt previous values (save value if margin
+ 		 *    exceeds what is set in table).
+ 		 */
+-		del = periodic_compensation_handler(emc,
+-						    PERIODIC_TRAINING_SEQUENCE,
+-						    last, last);
+-
++		if (periodic_compensation_handler(emc, PERIODIC_TRAINING_SEQUENCE,
++						  last, last)) {
+ 		/*
+ 		 * 5. Apply compensation w.r.t. trained values (if clock tree
+ 		 *    has drifted more than the set margin).
+ 		 */
+-		if (last->tree_margin < ((del * 128 * (last->rate / 1000)) / 1000000)) {
+ 			for (i = 0; i < items; i++) {
+ 				value = tegra210_emc_compensate(last, list[i]);
+ 				emc_dbg(emc, EMA_WRITES, "0x%08x <= 0x%08x\n",
+@@ -516,11 +512,7 @@ static void tegra210_emc_r21021_set_clock(struct tegra210_emc *emc, u32 clksrc)
+ 						     EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_MASK,
+ 						     0);
+ 
+-		value = periodic_compensation_handler(emc, DVFS_SEQUENCE, fake,
+-						      next);
+-		value = (value * 128 * next->rate / 1000) / 1000000;
+-
+-		if (next->periodic_training && value > next->tree_margin)
++		if (periodic_compensation_handler(emc, DVFS_SEQUENCE, fake, next))
+ 			compensate_trimmer_applicable = true;
+ 	}
  
 -- 
-2.34.1
+2.44.0
 
