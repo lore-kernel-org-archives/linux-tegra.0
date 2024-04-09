@@ -1,57 +1,68 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8D684A3F
-	for <linux-tegra@vger.kernel.org>; Tue,  9 Apr 2024 09:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385E812B14A
+	for <linux-tegra@vger.kernel.org>; Tue,  9 Apr 2024 11:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712656620; cv=none; b=rvhPNzPxNuifRjZ32zsdN6dceVKGreZ7aW/mXF/APPkO7KYvvhpelSDbLpiyAhS++OL8l8tX9QUKkl39cMdbV7P3+N9xCsSqC+GZNGCWQ2sogQb5HtsL3emKXTE/jAn3JkN7A95kdM8W0F5PO6CmQWj2nbYO8yqEDe2QvqN6nkE=
+	t=1712662861; cv=none; b=rbVr7RWCQpGR7II8cnQucAGBf9M/mpng8IxcOGLVGN1KKwFwX/Ic/411Au//c88izXPU2BBM/CRYT/mvjgSqFIpu4sITBpQ7P56ctJ6ZHSKxcwBgMGxX3ETsWFhPZnVsMW7wwRd6cDSwnVOs121cemsmeqCUxwdLMYmuqPAm/WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712656620; c=relaxed/simple;
-	bh=t174l/JpglhdMqyxF2apqNtKKKLEEIMQBAahDOBGZys=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nH+034dVYrvr57IbSJIYAoAYKFeNznuZ+v4cbmE+0BGVcX8gkYkU9od6VuyvY6FB+fICiPhdrQn1YZwtToxgc4rVhrStKCaKoEA+ne/PzTi+TF/slDJ3hbqsJDvWAXdKgYAJwvmxKAbr6GiLIQ6zwjYmeWv/ekmxarskY5gqf9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=cd5EAfkK; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1712662861; c=relaxed/simple;
+	bh=rkgQpPAjwBulfGsgEC7S06810blh43cxTegTVfjicmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=knri40lku+tBZyEO909bJu/ODp5vIjXOf+VMTDOAfHf5LXg/5cSwUwH1IIq3GAoD8qJs2Q1k0Bl6w8XB9xHrdVpctiNbdpLttTYzXeg+t9tjgYAHgQ+UVuXTED2bpjwNuFFglLkaeTUf1ATguYfrMamky/0OoaF8JxFSWPX52eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ime.usp.br; spf=pass smtp.mailfrom=ime.usp.br; dkim=pass (2048-bit key) header.d=usp.br header.i=@usp.br header.b=v3+SeUt0; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ime.usp.br
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ime.usp.br
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="cd5EAfkK"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id BB1B26002308;
-	Tue,  9 Apr 2024 10:46:50 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id RkQJ_zzZb95P; Tue,  9 Apr 2024 10:46:48 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 7CAAA60022F1;
-	Tue,  9 Apr 2024 10:46:48 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1712656008;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TJ5O89eTRxRXpUWL9Uwb+NLYgnko83YKIOLFy2ST9vU=;
-	b=cd5EAfkKiJR5GtJizYMTRBNZbGjMSD7E4L/11ORiPGFmTTxh5wqnJcoT1sfE7nxQd1olMn
-	BZe5gbAXmdNdAjk7kydsROQCntOmCvw3ATf2tiPMIucQqJmfHWPgmrn4boHLWEoEq2DR75
-	n3jepbc8XLUVBCzX56pxs18vlNDYLNU=
-Received: from diogo-gram.home (unknown [IPv6:2a01:14:8070:dc60:f4e6:62fe:d7f8:e109])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 5E1C7360030;
-	Tue,  9 Apr 2024 10:46:48 +0100 (WEST)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: krzysztof.kozlowski@linaro.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	linux-tegra@vger.kernel.org
-Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Subject: [PATCH 2/7] memory: tegra: Move DQSOSC measurement to common place
-Date: Tue,  9 Apr 2024 10:46:25 +0100
-Message-ID: <20240409094632.62916-3-diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240409094632.62916-1-diogo.ivo@tecnico.ulisboa.pt>
-References: <20240409094632.62916-1-diogo.ivo@tecnico.ulisboa.pt>
+	dkim=pass (2048-bit key) header.d=usp.br header.i=@usp.br header.b="v3+SeUt0"
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1e0bec01232so44412165ad.3
+        for <linux-tegra@vger.kernel.org>; Tue, 09 Apr 2024 04:40:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=usp.br; s=usp-google; t=1712662858; x=1713267658; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nj69Gf9AC1113GLKMXeajOz51G86hh4wvGeZBblnNV0=;
+        b=v3+SeUt0tthzwOK2BfAl2qYleI0rlyIz9JEziQKb9bZIJINjVqJ90cbu5770NrwoGz
+         CkwDibUtqHp1s7W/HVIo9Aicd6IR0ejQOIqns1HDAq/9aXee7ve03ugofwvyUdfcbKYD
+         ZZnT//QzMJRwzMDgRilW+3SOgOQEjC3Qc8rfWZmETQz8PmZ/yGH+Zy4tX/w4XmWHPEJS
+         N3KTTNqIAJ/bdALZnj0XBA+KZ+TNCeyGD6SeFvjB+zuRt6Z5r4nbC0g3itm0oRNfK924
+         J6hYDqGLCYd7eEYsjSO4hDmJSabvY6RayFwS0JO9NppYnw8NSC4JuXIl/RZ4S7Nc+Yar
+         hwFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712662858; x=1713267658;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nj69Gf9AC1113GLKMXeajOz51G86hh4wvGeZBblnNV0=;
+        b=SoYwzRWYDAS/TB9bmdGMHRYkFlfvxcstD5vt0rOAa8lxpW1BJvHzYqLK2QSdQ0kRBa
+         NoE4RYZXUCbPjoEzjI3/jAF2adXHlWrhZTlZw+qdLjs0DTYd8w7kHW48jXjnxuNYIOTD
+         CK2DiDPlsBkoDKDKN+k9jDW7c4h6KeakGw17WTcP3F6Oy6FHJdmME2stFm3B8u2wyqix
+         bid9S+djJRuN6bRE2ENzoGtcaX++IwqYm3MlxB5jloxUHnqQQA+9b9UTGqEW8OjaCjt7
+         Dx/2UFM6QbBGtyqYbzoJ1kYl6PvE7v11i3ZtQl0Fo7DepDUSwJSAkWvKH/T7hkFpqDD5
+         tP9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVr+MdGyStJe2PVAgI44/31W54JpJd6m3hI4WGITDFNaVNtcB/BP5XOaziYInt1PuPpNFJ3x//CQYG2f+huh/N81ybB9nxQzASlJLA=
+X-Gm-Message-State: AOJu0YxKubt3uwfAmIdkQ1eWgbfLnw4lPobzc1lOMd0wIDl1bDV5duyC
+	/igazGV7GUPYUXbqhTaxdUv3AKe4cvdm6M28IQgqHGsKunEpjm1RUx2psaib1pg=
+X-Google-Smtp-Source: AGHT+IEuUOF47jKaqXVe/uBd6Zq5NWnJYAKUjbTQwvwDQJ2Yh5Jgk6dEzXqV81OERcXTuKz1rxopmA==
+X-Received: by 2002:a17:902:d386:b0:1dd:6ce3:7442 with SMTP id e6-20020a170902d38600b001dd6ce37442mr9487167pld.39.1712662858534;
+        Tue, 09 Apr 2024 04:40:58 -0700 (PDT)
+Received: from localhost.localdomain ([2804:18:18bf:c025:fe8e:1e4e:c180:47a])
+        by smtp.gmail.com with ESMTPSA id kp4-20020a170903280400b001dddbb58d5esm8617530plb.109.2024.04.09.04.40.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Apr 2024 04:40:57 -0700 (PDT)
+From: topcat <bfonseca@ime.usp.br>
+X-Google-Original-From: topcat <bfonseca@ipt.br>
+To: Marc Dietrich <marvin24@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: topcat <bfonseca@ipt.br>,
+	ac100@lists.launchpad.net,
+	linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Fixed spelling mistake
+Date: Tue,  9 Apr 2024 08:40:45 -0300
+Message-ID: <20240409114045.13872-1-bfonseca@ipt.br>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -60,75 +71,23 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move the calls that instruct the RAM to capture its clock tree delays
-to update_clock_tree_delay() in order to avoid code duplication.
-
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 ---
- drivers/memory/tegra/tegra210-emc-cc-r21021.c | 25 ++++++++-----------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+ drivers/staging/nvec/nvec.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-index 9ec49ced8f91..15048f542367 100644
---- a/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-+++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-@@ -123,10 +123,19 @@ static u32 update_clock_tree_delay(struct tegra210_emc *emc, int type)
- 	bool dvfs_update = type == DVFS_UPDATE;
- 	s32 tdel = 0, tmdel = 0, adel = 0;
- 	bool dvfs_pt1 = type == DVFS_PT1;
-+	u32 temp[2][2], value, udelay;
- 	unsigned long cval = 0;
--	u32 temp[2][2], value;
- 	unsigned int i;
- 
-+	if (dvfs_pt1 || periodic_training_update) {
-+		udelay = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+		udelay *= 1000;
-+		udelay = 2 + (udelay / last->rate);
-+
-+		tegra210_emc_start_periodic_compensation(emc);
-+		udelay(udelay);
-+	}
-+
- 	/*
- 	 * Dev0 MSB.
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 282a664c9176..b4485b10beb8 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -712,7 +712,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 	 * TODO: replace the udelay with a read back after each writel above
+ 	 * in order to work around a hardware issue, see i2c-tegra.c
+ 	 *
+-	 * Unfortunately, this change causes an intialisation issue with the
++	 * Unfortunately, this change causes an initialisation issue with the
+ 	 * touchpad, which needs to be fixed first.
  	 */
-@@ -409,11 +418,6 @@ static u32 periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 	   (nt)->ptfv_list[PTFV_DVFS_SAMPLES_INDEX]; })
- 
- 	u32 i, adel = 0, samples = next->ptfv_list[PTFV_DVFS_SAMPLES_INDEX];
--	u32 delay;
--
--	delay = tegra210_emc_actual_osc_clocks(last->run_clocks);
--	delay *= 1000;
--	delay = 2 + (delay / last->rate);
- 
- 	if (!next->periodic_training)
- 		return 0;
-@@ -447,9 +451,6 @@ static u32 periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 			__MOVAVG(next, C1D1U1) = 0;
- 
- 			for (i = 0; i < samples; i++) {
--				tegra210_emc_start_periodic_compensation(emc);
--				udelay(delay);
--
- 				/*
- 				 * Generate next sample of data.
- 				 */
-@@ -465,12 +466,8 @@ static u32 periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 		adel = update_clock_tree_delay(emc, DVFS_UPDATE);
- 	}
- 
--	if (type == PERIODIC_TRAINING_SEQUENCE) {
--		tegra210_emc_start_periodic_compensation(emc);
--		udelay(delay);
--
-+	if (type == PERIODIC_TRAINING_SEQUENCE)
- 		adel = update_clock_tree_delay(emc, PERIODIC_TRAINING_UPDATE);
--	}
- 
- 	return adel;
- }
+ 	udelay(100);
 -- 
-2.44.0
+2.43.0
 
