@@ -1,84 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A7F12E1F0;
-	Tue,  9 Apr 2024 13:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED75E12F592;
+	Tue,  9 Apr 2024 13:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712668073; cv=none; b=t35JGuB4g17+QzGq0i4A4F+H+pa/j3DORaACAYBaPNm0ytzsxrxUHmpyzKKq9oVfIf7z1L2EtIOfnLb7yLw9/M4soBjS7yhl46LvFmfH6SrQ7Z3lFTo3jASlCSbMHNO4tZdG2gQyO0kLOGpkXIG2HkLBSE3V0dG/v8tarOqwjL4=
+	t=1712668966; cv=none; b=AgBG+WTx5CqigB4VkQcwm06XCeLRCFS/6ofxppqFHll72kAL2Pzcpp4cJC8YNszgt4ArzL+y/k4HuxqAmJLne16emH5JZUkXrsVgu7GDhMcQAbtiXhKTdORNMm67mSqfk8VHMnsuHlXI7dUTPX7nS1wJUgLl1OYS/4M+aAalKNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712668073; c=relaxed/simple;
-	bh=ouy2Y6x2V5/uoESyJnNA235PE5cU8gwdY/QEcC9jK9Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EE/X0h0p5ji8I2AzMRveXJmNfE0yJmrqn3Vvki3iop1wUPq2Yve4v0lWgBpxBqhz7rp34eJTKhOctiTcLshynXfMFStPL08h84Y/iDzT5F9oCIJCdVYROVTQoB2I+V/5s4f0ln9N8eG0y5O0QmVvNiZ7Pf8FJNqLut4Jc8KgM6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEUwV5u/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712668966; c=relaxed/simple;
+	bh=n8lMrvoOAZr4zQFT/jywmQXSwhUzFGLvlnoZwlXr8Y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nYZnwan+rfTdGfltaBMVm9/YsEY6Iu6Ww/V3KqOI0S8aSP9IphtehEQccZT4v1Bq73uLivTG3FnhhFKgos36sMXL06z5BPxroApTxWPFeRoj8o5af5X0e90swSqxc5DZt5enpfTCT4UWznp6iAzdwFDUHjjTd3lc3UrDiBKF5r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pJqQuZNF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/ndUaydY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEUwV5u/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E36BC433F1;
-	Tue,  9 Apr 2024 13:07:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712668073;
-	bh=ouy2Y6x2V5/uoESyJnNA235PE5cU8gwdY/QEcC9jK9Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jEUwV5u/RKtUi7ai+UUBmn1fKwYn+9jGR2SXBlyansUuEsQgR8HXXtm31IPJtost4
-	 QfA5GafyjBNcPOXqu+NrYi77jpsDrC+ZuPMcgFZjTNJ+6ARc7lsuGc+VDs3KHokycl
-	 sjHX+BV6Xn0IZ6E58P/whNgejKdwbqyK/FHtL0JhYcEYQJ/ZPhUYN/Mag1ER44pINz
-	 iYhCsEWtBBeCdWMpB+Ps65LDRILWcvdXg+bv4ZuENQJ92eGqXeL8GqUGSixfQTnUGJ
-	 oERhOfzi6CyWML3nUoZ3EoWjnwuaFCYcfFNquEqpZiDWcaCVocaTD01T/liOD92UYh
-	 ejo3unZrpJgIg==
-From: Mark Brown <broonie@kernel.org>
-To: linux-sound@vger.kernel.org, alsa-devel@alsa-project.org, 
- Sameer Pujar <spujar@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- lgirdwood@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, 
- mkumard@nvidia.com, stable@vger.kernel.org
-In-Reply-To: <20240405104306.551036-1-spujar@nvidia.com>
-References: <20240405104306.551036-1-spujar@nvidia.com>
-Subject: Re: [RESEND PATCH v2] ASoC: tegra: Fix DSPK 16-bit playback
-Message-Id: <171266807089.28088.2212378797581391571.b4-ty@kernel.org>
-Date: Tue, 09 Apr 2024 14:07:50 +0100
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pJqQuZNF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/ndUaydY"
+Date: Tue, 9 Apr 2024 15:22:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1712668962;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2m0Auujs2P8xmXDlDR/Z+F4/NBU8yQjw72yULiEyoFg=;
+	b=pJqQuZNFMXmg3nAL8VwURA0FNzNMzYzlodq1a8wDtMal/m4mI0sNLc7uujYISaXeTRYoL0
+	XdIdONL+qE3cjpVMCrDn2HuNh0Ik0c7Dig9eYLt91XgYMvFD2V4AXwIJNMuiLoVDsims9x
+	OC+MFADulGFst/qqw7jogSHsv6x0ycrgnr2x+Pnt3Q3wpdMzhv6k7QYueFA/eShxOVoBkT
+	C6uZJHwuOav4vH+6lfoqNRpuvbe5cSTcvGh0K3LNGq8QAM+TvEhEui8jRr9vui0RrnatdV
+	E2b3WnFiPakukYOvPTSa3QtKfJ2uwIcmdziYnEtTFeIJF9ByVBHK8PbPnQzU8A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1712668962;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2m0Auujs2P8xmXDlDR/Z+F4/NBU8yQjw72yULiEyoFg=;
+	b=/ndUaydYh8prkaW7KAhCQbQdM4GWF00KJgFSnOtVLCEMxbvHQjM32ljYlPEmPmCR3WvKYo
+	w15ydUBdG7owi/Dg==
+From: Nam Cao <namcao@linutronix.de>
+To: topcat <bfonseca@ime.usp.br>
+Cc: Marc Dietrich <marvin24@gmx.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, topcat <bfonseca@ipt.br>,
+ ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fixed spelling mistake
+Message-ID: <20240409152238.31820642@namcao>
+In-Reply-To: <20240409114045.13872-1-bfonseca@ipt.br>
+References: <20240409114045.13872-1-bfonseca@ipt.br>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev
 
-On Fri, 05 Apr 2024 10:43:06 +0000, Sameer Pujar wrote:
-> DSPK configuration is wrong for 16-bit playback and this happens because
-> the client config is always fixed at 24-bit in hw_params(). Fix this by
-> updating the client config to 16-bit for the respective playback.
+On 09/Apr/2024 topcat wrote:
+> ---
+>  drivers/staging/nvec/nvec.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> 
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index 282a664c9176..b4485b10beb8 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -712,7 +712,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+>  	 * TODO: replace the udelay with a read back after each writel above
+>  	 * in order to work around a hardware issue, see i2c-tegra.c
+>  	 *
+> -	 * Unfortunately, this change causes an intialisation issue with the
+> +	 * Unfortunately, this change causes an initialisation issue with the
+>  	 * touchpad, which needs to be fixed first.
+>  	 */
+>  	udelay(100);
 
-Applied to
+A patch has already been sent to fix the exact same problem:
+https://lore.kernel.org/linux-staging/20240331170548.81409-1-dorine.a.tipo@gmail.com/T/#u
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: tegra: Fix DSPK 16-bit playback
-      commit: 2e93a29b48a017c777d4fcbfcc51aba4e6a90d38
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Best regards,
+Nam
