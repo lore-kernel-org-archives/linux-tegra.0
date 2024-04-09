@@ -1,68 +1,43 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AE012B14F
-	for <linux-tegra@vger.kernel.org>; Tue,  9 Apr 2024 12:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5D7129A7B;
+	Tue,  9 Apr 2024 12:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712664959; cv=none; b=kUzCwtMaoaH33GyCKrDJcgi7PK7M0Vvn/ITUtOEzQlep0YgbgQb5nbmJb1nay2ol+IPlSZ4/q7roaRWF7y0hCXWOvY54MKaFfI44A2Kwh8cWVZ58p1Jhur2frutmJXpzRovYu7PmsprBUB5bpfbVH06CIp3grdDKj1y+6vMBwEs=
+	t=1712665401; cv=none; b=OqPOggGGEeXUffdn2e/h4E5wS/0uZNA0tdSPB7817aeHjxp1qNdu6Xz0K6vJ2vHn792hB41vNL2IgtMmdRbSSWaNw+gNxpezLS3GpVLDmGvcaDichDwyAeqOU4wr4vTI2z2sfJotgKOTsbFSVs8/5t2/5ay6QPBvALWVxVhKers=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712664959; c=relaxed/simple;
-	bh=yPd81M+1NfZphw3W4cYk6nOj1ArNbzmhlNz4HC9gqq0=;
+	s=arc-20240116; t=1712665401; c=relaxed/simple;
+	bh=NycTO7793+mfVmUiuwrixveuDF/iXTzH2p2ZKDi6sAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGoX31msrbAtJv2HOO4JezJjmSEYAe8T5wt3zi5D4NIdfFdwnmL2jon38D4SQIkL7GEh6RKMlHpLuYool1hy9DcHSw0d6e+NOwwcGPQsKVnVuA+uPSTghWiXIP902nNX9ibcQ3hdZawWi6yh4AkiBqVbZZLqxjzeuz8b6zvFBGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Cy4v+7po; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=UhkB/pSPtBbYqtpU86Hm/fFSAvXunpIaxRKV9qJZYY5qhhxzxorff0WEfuZIud2Qdn43GgnisKUa/ECNkPBYj7gTJqioFRiHmU4xTS0hlJYqvQ07x0nnPKZhhxlpqpMcpahw2Lyu7QutSaZpF9bcSBqs1mQJ1RbPqhIf32KUexo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mBDTJIn2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cy4v+7po"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a450bedffdfso779490366b.3
-        for <linux-tegra@vger.kernel.org>; Tue, 09 Apr 2024 05:15:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712664956; x=1713269756; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N2a7zpSCWKKDFCFWBoP14IB+FQzIYEADjjepMzBJTyI=;
-        b=Cy4v+7poBRkXZpyAW9PmUxqoOSdRXm5+TD5wylJrAdZAVEtJaZPTt7YzxvRP5TNSKN
-         Kv1AoiO1Z1Iw/acNKRUXQAuRJY++yd9HX6iDT5xFuQ7mKv1kX9y7zpqn3yKMRACBKj4q
-         vOfeMUjVXRaemIWM8Bz8K4rLOWVgi0xYhH/oaKegZlGTgyWPd+fF2zws3eNhRRub5m4K
-         EJUf7mEXlt5wpPP+fx8S3NeZpCOvrghXUCi/7HZPoEPuDHU91Xu/Nx/YLQ81VI45fwOR
-         0o1xvkFVM/tgRkrjZm0OV7L9X77RBYd69Mhp391muPnVyqirwntkBXKOHue6WznuST1J
-         PmrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712664956; x=1713269756;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N2a7zpSCWKKDFCFWBoP14IB+FQzIYEADjjepMzBJTyI=;
-        b=a4uLq06Vglv19hMS/1aVZ5RrIdqJKj0zxrsYdUU5yUKc3VLFK7+sKa2X9/a+yLjWDR
-         coN55hy9TVlPalsGmyMVZmZESaLQwfxaJdtA6RjCMPjb7t+5LG31WU15OB2GzehqTti0
-         Qp5FEA/4JKIfUpKUXHF1PZPbP914bGMlVQwSI8ROkiwSwdEcXopmxGsOFyhUQNFIiZ9E
-         hofCKlAo6NsNhQ00MhCmYK4XXAIaSyxXsOpn4aGsI/Pd86hEs8hny2WKPEqeR3rfkkH5
-         LTysgRdHOBCopnjZrArSxHkANGOXFBtAnzAvlAJNPOwFUkh6KBVSVGKbVmwjn+WDTP+e
-         D+9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXPcOYLmRxGnOLtXB5d14NT7slx0AjbHmuIH3IJqEvqz7+34Jf4+rBD3l5m8Mu57mdI7kUONVKDXjP6fDffYBy2ElgMr9R1q8sXAMM=
-X-Gm-Message-State: AOJu0YxmEHqeeSfuKRvnMjldteCGu4WAwpl2ByIm+hKbIyqVl1vvCi2e
-	wB/k+ESv4YcgPvRMrWQyfP9q0nY8EvGYsqWCBDFnsOJjAttR/FwDR1eOZAdygprwY0+Szj/o7pN
-	8
-X-Google-Smtp-Source: AGHT+IFE/zCvPySd/Jt/cqVeIJgBn1agejVAFKR8x0SZSzXrJnJAe+FV3CiGMlIqGDswtrhwFrIX8A==
-X-Received: by 2002:a17:907:96a8:b0:a51:904a:e3ca with SMTP id hd40-20020a17090796a800b00a51904ae3camr9982209ejc.30.1712664955960;
-        Tue, 09 Apr 2024 05:15:55 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id gv18-20020a170906f11200b00a4e1a9e1ab4sm5632229ejb.157.2024.04.09.05.15.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Apr 2024 05:15:55 -0700 (PDT)
-Date: Tue, 9 Apr 2024 15:15:48 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: topcat <bfonseca@ime.usp.br>
-Cc: Marc Dietrich <marvin24@gmx.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	topcat <bfonseca@ipt.br>, ac100@lists.launchpad.net,
-	linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fixed spelling mistake
-Message-ID: <1204e94a-d061-41eb-984a-86a29991637f@moroto.mountain>
-References: <20240409114045.13872-1-bfonseca@ipt.br>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mBDTJIn2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6503AC433F1;
+	Tue,  9 Apr 2024 12:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1712665401;
+	bh=NycTO7793+mfVmUiuwrixveuDF/iXTzH2p2ZKDi6sAQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mBDTJIn2guxxOb42ddF31Oq2kE55NEuY/9V60CA49z/+O5gBZv67yiKLkQ79YyR9O
+	 AdX1eMhyhsEQXS0RbqtTTQyTognxO/i4ASDA20yS3fcstV5VNeRPbg+z/jwLbshR2h
+	 7tU0Su+ms1z0nXKmc9bYuqKlK+d+Qoe92YYcXlQc=
+Date: Tue, 9 Apr 2024 14:23:17 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.15 000/690] 5.15.154-rc1 review
+Message-ID: <2024040953-eclipse-recount-dda9@gregkh>
+References: <20240408125359.506372836@linuxfoundation.org>
+ <04151fac-3bf6-4199-a822-2fbaaef8b77b@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -71,17 +46,59 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240409114045.13872-1-bfonseca@ipt.br>
+In-Reply-To: <04151fac-3bf6-4199-a822-2fbaaef8b77b@nvidia.com>
 
-1) Fix your From header.  Use your real name like signing a legal
-   document.
-2) Use the subsystem prefix in the subject
-3) Add a commit message
-4) Add a Signed-off-by-line
-5) Run scripts/checkpatch.pl on your patch
+On Tue, Apr 09, 2024 at 07:53:14AM +0100, Jon Hunter wrote:
+> Hi Greg,
+> 
+> On 08/04/2024 13:47, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.15.154 release.
+> > There are 690 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed, 10 Apr 2024 12:52:23 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.154-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> 
+> I am seeing a suspend regression on Tegra186 and Tegra194 ...
+> 
+> Test results for stable-v5.15:
+>     10 builds:	10 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     102 tests:	100 pass, 2 fail
+> 
+> Linux version:	5.15.154-rc1-gbfeab055fa43
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+>                 tegra20-ventana, tegra210-p2371-2180,
+>                 tegra210-p3450-0000, tegra30-cardhu-a04
+> 
+> Test failures:	tegra186-p2771-0000: pm-system-suspend.sh
+>                 tegra194-p2972-0000: pm-system-suspend.sh
+> 
+> 
+> Bisect is pointing to the following commit and reverting this fixes it ...
+> 
+> > NeilBrown <neilb@suse.de>
+> >      nfsd: don't allow nfsd threads to be signalled.
+> 
+> 
+> When suspend fails, I see the following error message ...
+> 
+>  Freezing of tasks failed after 20.006 seconds (1 tasks refusing to
+>  freeze, wq_busy=0):
 
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+Odd.  I'll go drop this commit now, thanks for testing and bisecting!
 
-regards,
-dan carpenter
-
+greg k-h
