@@ -1,104 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5D7129A7B;
-	Tue,  9 Apr 2024 12:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A7F12E1F0;
+	Tue,  9 Apr 2024 13:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712665401; cv=none; b=OqPOggGGEeXUffdn2e/h4E5wS/0uZNA0tdSPB7817aeHjxp1qNdu6Xz0K6vJ2vHn792hB41vNL2IgtMmdRbSSWaNw+gNxpezLS3GpVLDmGvcaDichDwyAeqOU4wr4vTI2z2sfJotgKOTsbFSVs8/5t2/5ay6QPBvALWVxVhKers=
+	t=1712668073; cv=none; b=t35JGuB4g17+QzGq0i4A4F+H+pa/j3DORaACAYBaPNm0ytzsxrxUHmpyzKKq9oVfIf7z1L2EtIOfnLb7yLw9/M4soBjS7yhl46LvFmfH6SrQ7Z3lFTo3jASlCSbMHNO4tZdG2gQyO0kLOGpkXIG2HkLBSE3V0dG/v8tarOqwjL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712665401; c=relaxed/simple;
-	bh=NycTO7793+mfVmUiuwrixveuDF/iXTzH2p2ZKDi6sAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UhkB/pSPtBbYqtpU86Hm/fFSAvXunpIaxRKV9qJZYY5qhhxzxorff0WEfuZIud2Qdn43GgnisKUa/ECNkPBYj7gTJqioFRiHmU4xTS0hlJYqvQ07x0nnPKZhhxlpqpMcpahw2Lyu7QutSaZpF9bcSBqs1mQJ1RbPqhIf32KUexo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mBDTJIn2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712668073; c=relaxed/simple;
+	bh=ouy2Y6x2V5/uoESyJnNA235PE5cU8gwdY/QEcC9jK9Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=EE/X0h0p5ji8I2AzMRveXJmNfE0yJmrqn3Vvki3iop1wUPq2Yve4v0lWgBpxBqhz7rp34eJTKhOctiTcLshynXfMFStPL08h84Y/iDzT5F9oCIJCdVYROVTQoB2I+V/5s4f0ln9N8eG0y5O0QmVvNiZ7Pf8FJNqLut4Jc8KgM6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEUwV5u/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mBDTJIn2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6503AC433F1;
-	Tue,  9 Apr 2024 12:23:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1712665401;
-	bh=NycTO7793+mfVmUiuwrixveuDF/iXTzH2p2ZKDi6sAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mBDTJIn2guxxOb42ddF31Oq2kE55NEuY/9V60CA49z/+O5gBZv67yiKLkQ79YyR9O
-	 AdX1eMhyhsEQXS0RbqtTTQyTognxO/i4ASDA20yS3fcstV5VNeRPbg+z/jwLbshR2h
-	 7tU0Su+ms1z0nXKmc9bYuqKlK+d+Qoe92YYcXlQc=
-Date: Tue, 9 Apr 2024 14:23:17 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.15 000/690] 5.15.154-rc1 review
-Message-ID: <2024040953-eclipse-recount-dda9@gregkh>
-References: <20240408125359.506372836@linuxfoundation.org>
- <04151fac-3bf6-4199-a822-2fbaaef8b77b@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEUwV5u/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E36BC433F1;
+	Tue,  9 Apr 2024 13:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712668073;
+	bh=ouy2Y6x2V5/uoESyJnNA235PE5cU8gwdY/QEcC9jK9Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=jEUwV5u/RKtUi7ai+UUBmn1fKwYn+9jGR2SXBlyansUuEsQgR8HXXtm31IPJtost4
+	 QfA5GafyjBNcPOXqu+NrYi77jpsDrC+ZuPMcgFZjTNJ+6ARc7lsuGc+VDs3KHokycl
+	 sjHX+BV6Xn0IZ6E58P/whNgejKdwbqyK/FHtL0JhYcEYQJ/ZPhUYN/Mag1ER44pINz
+	 iYhCsEWtBBeCdWMpB+Ps65LDRILWcvdXg+bv4ZuENQJ92eGqXeL8GqUGSixfQTnUGJ
+	 oERhOfzi6CyWML3nUoZ3EoWjnwuaFCYcfFNquEqpZiDWcaCVocaTD01T/liOD92UYh
+	 ejo3unZrpJgIg==
+From: Mark Brown <broonie@kernel.org>
+To: linux-sound@vger.kernel.org, alsa-devel@alsa-project.org, 
+ Sameer Pujar <spujar@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ lgirdwood@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com, 
+ mkumard@nvidia.com, stable@vger.kernel.org
+In-Reply-To: <20240405104306.551036-1-spujar@nvidia.com>
+References: <20240405104306.551036-1-spujar@nvidia.com>
+Subject: Re: [RESEND PATCH v2] ASoC: tegra: Fix DSPK 16-bit playback
+Message-Id: <171266807089.28088.2212378797581391571.b4-ty@kernel.org>
+Date: Tue, 09 Apr 2024 14:07:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <04151fac-3bf6-4199-a822-2fbaaef8b77b@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev
 
-On Tue, Apr 09, 2024 at 07:53:14AM +0100, Jon Hunter wrote:
-> Hi Greg,
-> 
-> On 08/04/2024 13:47, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.15.154 release.
-> > There are 690 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 10 Apr 2024 12:52:23 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.154-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+On Fri, 05 Apr 2024 10:43:06 +0000, Sameer Pujar wrote:
+> DSPK configuration is wrong for 16-bit playback and this happens because
+> the client config is always fixed at 24-bit in hw_params(). Fix this by
+> updating the client config to 16-bit for the respective playback.
 > 
 > 
-> I am seeing a suspend regression on Tegra186 and Tegra194 ...
-> 
-> Test results for stable-v5.15:
->     10 builds:	10 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     102 tests:	100 pass, 2 fail
-> 
-> Linux version:	5.15.154-rc1-gbfeab055fa43
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
->                 tegra20-ventana, tegra210-p2371-2180,
->                 tegra210-p3450-0000, tegra30-cardhu-a04
-> 
-> Test failures:	tegra186-p2771-0000: pm-system-suspend.sh
->                 tegra194-p2972-0000: pm-system-suspend.sh
-> 
-> 
-> Bisect is pointing to the following commit and reverting this fixes it ...
-> 
-> > NeilBrown <neilb@suse.de>
-> >      nfsd: don't allow nfsd threads to be signalled.
-> 
-> 
-> When suspend fails, I see the following error message ...
-> 
->  Freezing of tasks failed after 20.006 seconds (1 tasks refusing to
->  freeze, wq_busy=0):
 
-Odd.  I'll go drop this commit now, thanks for testing and bisecting!
+Applied to
 
-greg k-h
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: tegra: Fix DSPK 16-bit playback
+      commit: 2e93a29b48a017c777d4fcbfcc51aba4e6a90d38
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
