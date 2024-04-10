@@ -1,181 +1,149 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2065.outbound.protection.outlook.com [40.107.244.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B939B1591E1;
-	Wed, 10 Apr 2024 14:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712760744; cv=none; b=movAJwJrP82ouT0yfuJ2ysOT21JucN8idnnJKGujkAghSY26SCS3V4VjMO0wWzfcf5aHnnKtmAWRL9EpjI5/CZatefMXvzOzyMb0STdH7ZLgbKJ0NeEoknIAEQ2xliltHUvey0OLBEcEjbQnhV7ZA/J65zXe9ArgDoR9Z7FGm3M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712760744; c=relaxed/simple;
-	bh=pHb6JorI0DA1E9/KxEhk+TcTp1ctv1kMIlPonkHp88A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9aN4SoqTSo+VRLyiHZGeaya1/DAFCg8Rgksn6ZNfW1ppGXFWi3ocF1ct4RJPuFBh9HPtZ43S5URawg8HpYsYX0seX0fvqOakeeTNdzohigvmbnTgLfgoeP/b3jum4VcA1J286nsZlu1mTcyRY92u8w0Wl1gkzzkL3pNDkeojbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KG4YXjQ+; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A7A17BB18;
+	Wed, 10 Apr 2024 17:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712768707; cv=fail; b=uNtZpgT4CbKF3utZGBm/APsQ+lxvRC9GPPL6y3F9Xdhl99RiJBQcRj0tR6pPTbWAC3VWYD/lK8+uqDb1r5lV8eYIMXx8dwj57+lj4a8cipsDPnw+ETqO33zAgfIAh5EYa4Uvx7V6QRzw+OrXCJy2Zx40qOTO5Ef1U4wTaARqIeU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712768707; c=relaxed/simple;
+	bh=SMHcywZWbLa0QWRNPrP+5b4KsIcXgV7l57iARk/OlLU=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=MZ6y1qk3cKp4ptL048JdVb2eXCkyIootFZJEao8xCYW6WytW0GUc6Yweo5Y8elXQ7zWMQEyISaIsqSzy16X42lCvq27tGpoCq+caZeB6uOFUYTHsHA8EviZsyc5N3nPOObDLEyYA8HusGdHgcR2QgOE8wOuBwoZxuTZgTKQnunA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=H6eTMy1j; arc=fail smtp.client-ip=40.107.244.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KG4YXjQ+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AE85C433B1;
-	Wed, 10 Apr 2024 14:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712760744;
-	bh=pHb6JorI0DA1E9/KxEhk+TcTp1ctv1kMIlPonkHp88A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KG4YXjQ+NS5vFj41o9mKwCum3LunWyYZBmYGkhyjynAgWYI4/rsBAtUik8xXtUBaf
-	 /ZM4pZSRsn4aFsS6KYZj8zHmjpCNJHPh1O/Rvv/Ii8jeRh4G45vZGvYYYenvSPnb7z
-	 0j4DiTE9tp/n5psLqSBe0W+ZyH72HpnCPJWRpTgJrxCQYZF7AIE3aV4cFkfQ580lOO
-	 AcSjFh2Q0thU0PZsDzyQp00RBVlkjavi7dfHRRL0KojvUJHfIcaZ+sh5M8LYIj3kJT
-	 j9zF4LJjGu3t4UIvbfUOCbka6vKWWj08J4UPWUBH5BYDDDUGbBZwYl3rOD+gQQ26ug
-	 3jd6iL8j7RiqA==
-Date: Wed, 10 Apr 2024 16:52:18 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mhi@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] PCI: qcom: Implement shutdown() callback to
- properly reset the endpoint devices
-Message-ID: <Zhanol2xi_E2Ypv3@ryzen>
-References: <20240401-pci-epf-rework-v2-0-970dbe90b99d@linaro.org>
- <20240401-pci-epf-rework-v2-10-970dbe90b99d@linaro.org>
- <ZgvpnqdjQ39JMRiV@ryzen>
- <20240403133217.GK25309@thinkpad>
- <Zg22Dhi2c7U5oqoz@ryzen>
- <20240410105410.GC2903@thinkpad>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="H6eTMy1j"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nNA/JdwdlF6aWbeaUjCSprginaxn9vucYRi7lypOG8aODJLL4SVw5AzIjvoyaZB0GiGhp7h+L84cGYVtNRAhqbb6BJDsjxRGXGtDz32/+vkpfpTbT1iZUlv+NBx59SFcqdk7DdqcH2eMkNFGW9zqMsroQ0icfbw6XRL2nUE185DqS+kh4CJc9KbaGY7jgUEVKgyK5POVtnD9f39wy9DjK9pDZRxfoJgmkh2XB+ehd0yUQuC+VlCWeTn0JL3RIP3MuLEQEAgQb1iA+c29fI1vIHBtxPNAVYUAKjKU3A8P/MyGIoUXiAZ7tNKtjOQNYBFd1MjYaEMvenHXVVrvwTQmSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yoanp4RSQUoaBB3VpoOa/QKTE/Kof9N8pAL8rysPGTo=;
+ b=FIAK4rYF9Z/3BvBzjIjZe7a3/t/IpKNhfK2b6nWnd9TvDa30WKG1mrj/bYGE3VTQXBoVjtSqfuNXypHr/3/FCtPwYpokv8DWwox4XpP7oMASmdf/nBw+yNkPlL4/GPWlp5MWdoTRC5LjedapwcsEXj6JK8p2FsSRZLTjaxMzq/MhvCa9u+37rA8Hv+CwVkUJORuJSZ4CgmVnkyZ6pmuxSKIEe+HBPKPW/nm08rg+V/FP8QUlyYJokRGsNbrr3mBJiTZaSVNHloJdQiAhOV9UY1iHi5+3G1q/5eysLFK9ZGmkreB0ZGzaztqx9Zqalgw/xKW+40EwmEPLBbogRHYRDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yoanp4RSQUoaBB3VpoOa/QKTE/Kof9N8pAL8rysPGTo=;
+ b=H6eTMy1jQH0CC8CCG+njkxiJFSJ4bwDaeb0CRRiOnUWemd+9jSRPzACc1oIwsAdbspY+PZBdoTuem5GEvwP6syKIRRVt1M7X+xCoXlLm+3JcWpyur64Xwmv9d5ClUvfz01/zJqQVzm9LV8J9xw+y/5SoqghU0gMMJdM1zhiFUCKrrMpZipTMIj9Mo6NmheWEVJnORQo/JlJJYwgNNQm96DHcPHt6PxUU0rriW714bcQvyQLx1dHnFrFlNz41qJ3A8r3CEtcb7Z99+w40FydXGcsXa0RkVpjQK2Eo5+cyRMP2Oo7LkIIubXXmDzszzLdU2oOFG3tBydD7BpWtN+jrAA==
+Received: from BN7PR06CA0038.namprd06.prod.outlook.com (2603:10b6:408:34::15)
+ by MW6PR12MB8836.namprd12.prod.outlook.com (2603:10b6:303:241::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Wed, 10 Apr
+ 2024 17:05:02 +0000
+Received: from BN2PEPF000044A0.namprd02.prod.outlook.com
+ (2603:10b6:408:34:cafe::58) by BN7PR06CA0038.outlook.office365.com
+ (2603:10b6:408:34::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.19 via Frontend
+ Transport; Wed, 10 Apr 2024 17:05:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN2PEPF000044A0.mail.protection.outlook.com (10.167.243.151) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7452.22 via Frontend Transport; Wed, 10 Apr 2024 17:05:01 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 10 Apr
+ 2024 10:04:34 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Wed, 10 Apr
+ 2024 10:04:34 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12 via Frontend
+ Transport; Wed, 10 Apr 2024 10:04:34 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.15 000/697] 5.15.154-rc3 review
+In-Reply-To: <20240409173628.028890390@linuxfoundation.org>
+References: <20240409173628.028890390@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240410105410.GC2903@thinkpad>
+Message-ID: <e3706e81-2201-4321-82c2-97a6d5bc6b30@rnnvmail204.nvidia.com>
+Date: Wed, 10 Apr 2024 10:04:34 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A0:EE_|MW6PR12MB8836:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22a7a266-6c10-42f7-13fc-08dc59805c65
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	3VSrlrZWCIx6tsLd2SW06U2tYZvuh0Ou9UG40acnQFWB5FNm7bZIW9KI+2/K+mwWuFejsYGKR3AC5329bWkgYTq0SXkiXYFpmqtIITDIraLbKZkOGWpehoDgr46gy800GapjNOOpVDQgvVXnFnUqHPlSC9HzT3THkcUJOWfiFO8s58arRRzFOF5GZdY8uaKYo/8KbX/j7SzEVhPoF1t/SHQkGjsH4hCaK82bavMbvG3kWhPThbQfjGW0Wb54cxBC//warVcEJg00kUlHOztts3ts8JFpAhE2Z5XxQD2CXDfbZXSZsWkTs7nTi8G3NzOVs0F3bfEmpD9KF4bd9MZROdtl5lJUcCd3RXVSNnDgI/alhTtcyQhdrQwkmqn1IVP8xPlZg1mLg4IDHdouR+iiI/r4ABcpyshGJO2Hf6y8ADeqFD4y+KUCy4mAhGhJAatySAUQOCU7vCVtwbuoUX1Masir271zL0hcufivht01Epg1PL+VgPQfPJn5h9HF36/oP+1lsNrHTMl4x+jDvhUWUjV/zKQelMeuMUlYy1KBlLO8cnsaQx1USoFe3zVWBgRVizldFe152eetN5VOl+enSS1ZlW88RQkFzhJe4pf/uUEufuBafzbx7qRCuKiuhYrs3tgKEyRMipRNLp1sYUVxp36nf4T7W9I9IVlTsWvH9W+sKDGnpbllX4Xvis4f191e8Y3PNybxh79qhjiiZjTlMHf+jzhu7DScS5XwOtJhmi4p6v86H3PC+QWLtqUgLRH8
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(82310400014)(36860700004)(7416005)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2024 17:05:01.8550
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22a7a266-6c10-42f7-13fc-08dc59805c65
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044A0.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8836
 
-On Wed, Apr 10, 2024 at 04:24:10PM +0530, Manivannan Sadhasivam wrote:
-> On Wed, Apr 03, 2024 at 10:03:26PM +0200, Niklas Cassel wrote:
-> > On Wed, Apr 03, 2024 at 07:02:17PM +0530, Manivannan Sadhasivam wrote:
-> > > On Tue, Apr 02, 2024 at 01:18:54PM +0200, Niklas Cassel wrote:
-> > > > On Mon, Apr 01, 2024 at 09:20:36PM +0530, Manivannan Sadhasivam wrote:
-> > > > > PCIe host controller drivers are supposed to properly reset the endpoint
-> > > > > devices during host shutdown/reboot. Currently, Qcom driver doesn't do
-> > > > > anything during host shutdown/reboot, resulting in both PERST# and refclk
-> > > > > getting disabled at the same time. This prevents the endpoint device
-> > > > > firmware to properly reset the state machine. Because, if the refclk is
-> > > > > cutoff immediately along with PERST#, access to device specific registers
-> > > > > within the endpoint will result in a firmware crash.
-> > > > > 
-> > > > > To address this issue, let's call qcom_pcie_host_deinit() inside the
-> > > > > shutdown callback, that asserts PERST# and then cuts off the refclk with a
-> > > > > delay of 1ms, thus allowing the endpoint device firmware to properly
-> > > > > cleanup the state machine.
-> > > > 
-> > > > Hm... a QCOM EP device could be attached to any of the PCIe RC drivers that
-> > > > we have in the kernel, so it seems a bit weird to fix this problem by
-> > > > patching the QCOM RC driver only.
-> > > > 
-> > > > Which DBI call is it that causes this problem during perst assert on EP side?
-> > > > 
-> > > > I assume that it is pci-epf-test:deinit() callback that calls
-> > > > pci_epc_clear_bar(), which calls dw_pcie_ep_clear_bar(), which will both:
-> > > > -clear local data structures, e.g.
-> > > > ep->epf_bar[bar] = NULL;
-> > > > ep->bar_to_atu[bar] = 0;
-> > > > 
-> > > > but also call:
-> > > > __dw_pcie_ep_reset_bar()
-> > > > dw_pcie_disable_atu()
-> > > > 
-> > > > 
-> > > > Do we perhaps need to redesign the .deinit EPF callback?
-> > > > 
-> > > > Considering that we know that .deinit() will only be called on platforms
-> > > > where there will be a fundamental core reset, I guess we could do something
-> > > > like introduce a __dw_pcie_ep_clear_bar() which will only clear the local
-> > > > data structures. (It might not need to do any DBI writes, since the
-> > > > fundamental core reset should have reset all values.)
-> > > > 
-> > > > Or perhaps instead of letting pci_epf_test_epc_deinit() call
-> > > > pci_epf_test_clear_bar()/__pci_epf_test_clear_bar() directly, perhaps let
-> > > > pci_epf_test_epc_deinit() call add a .deinit()/.cleanup() defined in the
-> > > > EPC driver.
-> > > > 
-> > > > This EPC .deinit()/.cleanup() callback would then only clear the
-> > > > local data structures (no DBI writes...).
-> > > > 
-> > > > Something like that?
-> > > > 
-> > > 
-> > > It is not just about the EPF test driver. A function driver may need to do many
-> > > things to properly reset the state machine. Like in the case of MHI driver, it
-> > > needs to reset channel state, mask interrupts etc... and all requires writing to
-> > > some registers. So certainly there should be some time before cutting off the
-> > > refclk.
-> > 
-> > I was more thinking that perhaps we should think of .deinit() as in how
-> > dw_pcie_ep_init() used to be. It was not allowed to have any DBI writes.
-> > (The DBI writes were all in dw_pcie_ep_init_complete()).
-> > So perhaps we could define that a EPF .deinit() callback is not allowed
-> > to have any DBI writes.
-> > 
-> > If we take qcom-ep as an example, as soon as you get a PERST assertion
-> > the qcom-ep driver calls notify_deinit(), then asserts the reset control,
-> > disables clocks and regulators.
-> > 
-> > Since the PCIe core is held in reset, the hardware is in a well defined
-> > state, no? Sure, the data structures e.g. bar_to_iatu[], etc., might be
-> > out of sync, but these could be memset():ed no? Since this is a fundamental
-> > reset, all registers should be reset to their default state (once reset
-> > is deasserted).
-> > 
+On Tue, 09 Apr 2024 19:45:07 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.154 release.
+> There are 697 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Well, we could prevent the register access during PERST# assert time in the
-> endpoint, but my worry is that we will end up with 2 version of the cleanup
-> APIs. Lets take an example of dw_pcie_edma_remove() API which gets called
-> during deinit and it touches some eDMA registers.
+> Responses should be made by Thu, 11 Apr 2024 17:35:00 +0000.
+> Anything received after that time might be too late.
 > 
-> So should we introduce another API which just clears the sw data structure and
-> not touching the registers? And this may be needed for other generic APIs as
-> well.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.154-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-I agree that it will be hard to come up with an elegant solution to this
-problem.
+All tests passing for Tegra ...
 
-These endpoint controllers that cannot do register accesses to their own
-controllers' DBI/register space without the RC providing a refclock are
-really becoming a pain... and the design and complexity of the PCI endpoint
-APIs is what suffers as a result.
+Test results for stable-v5.15:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    82 tests:	82 pass, 0 fail
 
-PERST could be asserted at any time.
-So for your system to not crash/hang by accessing registers in the controller,
-an EPF driver must be designed with great care to never do any register access
-when it is not safe...
+Linux version:	5.15.154-rc3-g8bdd6a2f1b3b
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-Perhaps the the EPF core should set the state (i.e. init_complete = false,
-even before calling the deinit callback in EPF driver, and perhaps even add
-safe-guards against init_complete in some APIs, so that e.g. a set_bar() call
-cannot trigger a crash because PERST# is asserted.. but even then, it could
-still be asserted in the middle of set_bar()'s execution.)
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-
-Looking at the databook, it looks like core_clk is derived from pipe_clk
-output of the PHY. The PHY will either use external clock or internal clock.
-
-4.6.2 DBI Protocol Transactions
-it looks like core_clk must be active to read/write the DBI.
-
-I really wish those controllers could e.g. change the clock temporarily
-using a mux, so that it could still perform DBI read/writes when there is
-not external refclk... Something like pm_sel_aux_clk selecting to use the
-aux clk instead of core_clk when in low power states.
-But I don't know the hardware well enough to know if that is possible for
-the DBI, so that might just be wishful thinking...
-
-
-Kind regards,
-Niklas
+Jon
