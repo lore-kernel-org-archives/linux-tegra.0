@@ -1,133 +1,188 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544D720E3;
-	Wed, 10 Apr 2024 06:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F29159218
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Apr 2024 10:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712729906; cv=none; b=YlT30qnIMWbwG+JbhCcFoKfMjGnIHKaQHcPwf5J3Ti/xlLAO2/HK7yMgvftWSZA/NrzZ2Jh5YTSP0z/9V2jwS+6lq5iGc0NXSZdcpDq/FhKTUd5QQVBcrWHPpYHwCbkfrSP7dcS3whAnTxlzG8oFpJACUm2Qv0V1OBGyCaR8c1U=
+	t=1712746461; cv=none; b=FnN4+t1qbFuFBwjrjTfmoYlU60xrZY6zb3mICCNqzTuDWJVxgqAAykhKTqNOh36kH8lQIhL9GvtPytZp18Jyec/2IlmfO2OyV4cO4dTi2d6tSn2OB6ZMka+Dv2HMt/WYp6JXEiwAEKF3qiXVzIgLXgc7qqXoulRshCIqa5Zpiac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712729906; c=relaxed/simple;
-	bh=ZQ64qwPf6Di8vF2RdPh7RxkPgBZXfSpbbGA0ASv1dUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GRPbMsQP4A2ODVDaaL1RqHAt+jBQPUMxDwVo9a3NJVpzn7c3EkjxYw0WvzFa3+sdub8WWrpGIXuB2W607GQGME9vlpXr9oeYcPIAK4Ii3qVr7tFdKIBpDqvF/hexVyqVUH3UfNNHePWCWF6b85piYYgdsBjuZ6s8ekm6wx18DXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cv05Vhzd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712746461; c=relaxed/simple;
+	bh=jUaUcsBz0kBYNiDTFGfgViL2znCd2+ewac233R5G5FI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a4n8+TdS0Kz3dgNViXotIy95byywu1qN+jkJug/Nfom/IFnzr/VIZdkeKpe0CC4A1VpFy3LhPZEcKIsxJWNptuCx9ypRGW7N5tV4fAbpvQ1AaSmVcmIeHNk44MKIHsjw/s7IQMp7bBvybnlKXX7EPLfokXnBGS1HdsZQdtCXAbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v+RKu5xk; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cv05Vhzd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CC8FC433C7;
-	Wed, 10 Apr 2024 06:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712729905;
-	bh=ZQ64qwPf6Di8vF2RdPh7RxkPgBZXfSpbbGA0ASv1dUY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cv05VhzdPby0jgRBixv3hcdBlNomY+DwZPiZSH8aaIMyApqH5uK/CRDC2UntPg2Cn
-	 5eIlCDAkiBFtxy115phJaapQBI8k+vtl3Hek272/1HDp3DFyCMRIoHxNm5Zi2cHLLQ
-	 xHNIiGjY/zVaTA7QcsZWSYXQV0P2wBxSYy23PtUGWG1OvUbsdlMgWO9S5azFKYudbQ
-	 6ttIPWX8MmCsw/UqK8qcS6ogAlgpsZSUrBWO2j2ckxPB04iAINveh1QG8xqz5gHO1+
-	 YfyU+mtdbhmEHvKsHaviWdXu84cks+36wP1Vhibr9QPodAg0gKrnjBODoYsZAyq7Lp
-	 eS3gCFS3l6K4w==
-Message-ID: <ea3be8f7-0ee6-4940-828d-2fc15b9239dc@kernel.org>
-Date: Wed, 10 Apr 2024 08:18:21 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v+RKu5xk"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6edc61d0ff6so369945b3a.2
+        for <linux-tegra@vger.kernel.org>; Wed, 10 Apr 2024 03:54:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1712746459; x=1713351259; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=G7XlcG8nz/Uid5WPQaw8m1uFQJJAhe5HyrWzemE3ePs=;
+        b=v+RKu5xk+HJBHb8XbUfmgazxyWPJmBDiMns33+475BbmhajRD4xhDmbqEfMakuL/zf
+         C7x/9XgZ886TS+5Oc31ErzIDjz9Ojvq7/+m2lr3bPH/N4OGpL/PefSIl0rcqijW9cK2r
+         I3rebyPKRq9q1vinAp0G5eiaXPzH4OCwI/WTAJEgpw7yZxZhuPGDqUR2+A6uFquF0WxP
+         ZCMSz63A0QGJQPAq+SoEuBtyBFrqNS9YeaN70P6AVLMH/B4eSQIaE0xGiT/8pw+2mleE
+         GwgcvpLtmUVwItSM2zGmq9UnOAUqoewLF7nKzWGkm3WkVLqa+7wh6ih2Y8ZG2vdJX6Iu
+         xm5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712746459; x=1713351259;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G7XlcG8nz/Uid5WPQaw8m1uFQJJAhe5HyrWzemE3ePs=;
+        b=YNU8MFAunCCBLwEyXvzuQa9G5m4t5y6Zl3hiraQhUo3gz+GQSqibxvu4wnAY7MqsSJ
+         zcDwP3+9F2claleCD5eAf/wwNW3t+q1z+e+O+UNGS5F4D+8o3XIGEiq8OVCAdCXVG9H8
+         AHAh2svC3lXmePk/1a8IbABdL/1sjPMArAoKm6wtdjiPI/1A1ZSlgDnYUnK9dEXtVtWh
+         S+U1dBDyptFX3ZXDDAaYzyYry9A2UZ6F1P9hoNxZYBMkcUSSYYmH6TSRZh1ImPGVB01Z
+         Y5sH37iPyf8jr2yZKfSOaym++hpZKTgLoMMQpC7FxZA2n+9rqVOR97NBsA0vCA33gRS3
+         0vMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRNbVGAl7qmY2SS1wjOLh7Y5GikYZhMmceFGs1LPbSme1SN9SsdvSKGPAW7VwLuTlLknubazSXi1WN5wurY4i9bZKey/ZKmdZCVCU=
+X-Gm-Message-State: AOJu0Ywgfyx4YECNY9m80VTmYoXRviJK1h+k5oBayiItQj20UQUHkVOp
+	UkQkDDUgZpcgkd84o6HPiE//uSaLMDgPm2QJcqTtxGo/19FzHBbbQoiJ+P6Gbw==
+X-Google-Smtp-Source: AGHT+IFCd4CUvr9tZEjG41EcHBSw0CUviyNK0Ht6d9nhGK7kPeU0ZuGtcybllY9zEnYiE3s44RmCWQ==
+X-Received: by 2002:a05:6a00:2d93:b0:6ea:d114:5ea1 with SMTP id fb19-20020a056a002d9300b006ead1145ea1mr2497785pfb.17.1712746458832;
+        Wed, 10 Apr 2024 03:54:18 -0700 (PDT)
+Received: from thinkpad ([120.60.76.50])
+        by smtp.gmail.com with ESMTPSA id i4-20020aa787c4000000b006e64c9bc2b3sm10137231pfo.11.2024.04.10.03.54.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Apr 2024 03:54:18 -0700 (PDT)
+Date: Wed, 10 Apr 2024 16:24:10 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mhi@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 10/10] PCI: qcom: Implement shutdown() callback to
+ properly reset the endpoint devices
+Message-ID: <20240410105410.GC2903@thinkpad>
+References: <20240401-pci-epf-rework-v2-0-970dbe90b99d@linaro.org>
+ <20240401-pci-epf-rework-v2-10-970dbe90b99d@linaro.org>
+ <ZgvpnqdjQ39JMRiV@ryzen>
+ <20240403133217.GK25309@thinkpad>
+ <Zg22Dhi2c7U5oqoz@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: host1x: Add missing 'dma-coherent'
-To: Jon Hunter <jonathanh@nvidia.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240409082324.9928-1-jonathanh@nvidia.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240409082324.9928-1-jonathanh@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zg22Dhi2c7U5oqoz@ryzen>
 
-On 09/04/2024 10:23, Jon Hunter wrote:
-> The dtbs_check reports that the 'dma-coherent' property is "unevaluated
-> and invalid" for the host1x@13e00000 device on Tegra194 and Tegra234
-> platforms. Fix this by updating the dt-binding document for host1x to
-> add the 'dma-coherent' property for these devices.
-
-That's not really proper reason. What if DTS is wrong? The reason could
-be if device is actually DMA coherent...
-
+On Wed, Apr 03, 2024 at 10:03:26PM +0200, Niklas Cassel wrote:
+> On Wed, Apr 03, 2024 at 07:02:17PM +0530, Manivannan Sadhasivam wrote:
+> > On Tue, Apr 02, 2024 at 01:18:54PM +0200, Niklas Cassel wrote:
+> > > On Mon, Apr 01, 2024 at 09:20:36PM +0530, Manivannan Sadhasivam wrote:
+> > > > PCIe host controller drivers are supposed to properly reset the endpoint
+> > > > devices during host shutdown/reboot. Currently, Qcom driver doesn't do
+> > > > anything during host shutdown/reboot, resulting in both PERST# and refclk
+> > > > getting disabled at the same time. This prevents the endpoint device
+> > > > firmware to properly reset the state machine. Because, if the refclk is
+> > > > cutoff immediately along with PERST#, access to device specific registers
+> > > > within the endpoint will result in a firmware crash.
+> > > > 
+> > > > To address this issue, let's call qcom_pcie_host_deinit() inside the
+> > > > shutdown callback, that asserts PERST# and then cuts off the refclk with a
+> > > > delay of 1ms, thus allowing the endpoint device firmware to properly
+> > > > cleanup the state machine.
+> > > 
+> > > Hm... a QCOM EP device could be attached to any of the PCIe RC drivers that
+> > > we have in the kernel, so it seems a bit weird to fix this problem by
+> > > patching the QCOM RC driver only.
+> > > 
+> > > Which DBI call is it that causes this problem during perst assert on EP side?
+> > > 
+> > > I assume that it is pci-epf-test:deinit() callback that calls
+> > > pci_epc_clear_bar(), which calls dw_pcie_ep_clear_bar(), which will both:
+> > > -clear local data structures, e.g.
+> > > ep->epf_bar[bar] = NULL;
+> > > ep->bar_to_atu[bar] = 0;
+> > > 
+> > > but also call:
+> > > __dw_pcie_ep_reset_bar()
+> > > dw_pcie_disable_atu()
+> > > 
+> > > 
+> > > Do we perhaps need to redesign the .deinit EPF callback?
+> > > 
+> > > Considering that we know that .deinit() will only be called on platforms
+> > > where there will be a fundamental core reset, I guess we could do something
+> > > like introduce a __dw_pcie_ep_clear_bar() which will only clear the local
+> > > data structures. (It might not need to do any DBI writes, since the
+> > > fundamental core reset should have reset all values.)
+> > > 
+> > > Or perhaps instead of letting pci_epf_test_epc_deinit() call
+> > > pci_epf_test_clear_bar()/__pci_epf_test_clear_bar() directly, perhaps let
+> > > pci_epf_test_epc_deinit() call add a .deinit()/.cleanup() defined in the
+> > > EPC driver.
+> > > 
+> > > This EPC .deinit()/.cleanup() callback would then only clear the
+> > > local data structures (no DBI writes...).
+> > > 
+> > > Something like that?
+> > > 
+> > 
+> > It is not just about the EPF test driver. A function driver may need to do many
+> > things to properly reset the state machine. Like in the case of MHI driver, it
+> > needs to reset channel state, mask interrupts etc... and all requires writing to
+> > some registers. So certainly there should be some time before cutting off the
+> > refclk.
 > 
-> Fixes: 361238cdc525 ("arm64: tegra: Mark host1x as dma-coherent on Tegra194/234")
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  .../bindings/display/tegra/nvidia,tegra20-host1x.yaml | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> I was more thinking that perhaps we should think of .deinit() as in how
+> dw_pcie_ep_init() used to be. It was not allowed to have any DBI writes.
+> (The DBI writes were all in dw_pcie_ep_init_complete()).
+> So perhaps we could define that a EPF .deinit() callback is not allowed
+> to have any DBI writes.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-> index 94c5242c03b2..3563378a01af 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-> @@ -177,6 +177,15 @@ allOf:
->  
->        required:
->          - reg-names
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - nvidia,tegra194-host1x
-> +    then:
-> +      properties:
-> +        dma-coherent: true
+> If we take qcom-ep as an example, as soon as you get a PERST assertion
+> the qcom-ep driver calls notify_deinit(), then asserts the reset control,
+> disables clocks and regulators.
+> 
+> Since the PCIe core is held in reset, the hardware is in a well defined
+> state, no? Sure, the data structures e.g. bar_to_iatu[], etc., might be
+> out of sync, but these could be memset():ed no? Since this is a fundamental
+> reset, all registers should be reset to their default state (once reset
+> is deasserted).
+> 
 
-Do not define properties in allOf. Put it in top-level. If not all
-devices are DMA coherent, you can disallow it for certain variants (:false).
+Well, we could prevent the register access during PERST# assert time in the
+endpoint, but my worry is that we will end up with 2 version of the cleanup
+APIs. Lets take an example of dw_pcie_edma_remove() API which gets called
+during deinit and it touches some eDMA registers.
 
-Best regards,
-Krzysztof
+So should we introduce another API which just clears the sw data structure and
+not touching the registers? And this may be needed for other generic APIs as
+well.
 
+Ideally, if there is a Link Down event before PERST# assert, then this could've
+been solved, but that is also not a spec defined behavior.
+
+- Mani
+
+> For a real PCIe card, if you assert + msleep(100) + deassert PERST, surely
+> the endpoint is supposed to be in a good/well defined state, regardless if
+> he REFCLK was cutoff at the exact time as PERST was asserted or not?
+> 
+> I would assume that we would want a PCI EPF driver to behave the same way,
+> if possible.
+> 
+> 
+> Kind regards,
+> Niklas
+
+-- 
+மணிவண்ணன் சதாசிவம்
