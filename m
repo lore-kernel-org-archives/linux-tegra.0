@@ -1,203 +1,131 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2074.outbound.protection.outlook.com [40.107.244.74])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB57175A4;
-	Wed, 10 Apr 2024 18:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712775449; cv=fail; b=rcISu966Crs8kiM28oRRNpFAoIXjseCLAbEA+aj2Z1ljbDMdbVeFFM0cexitASBEuWm4hwvXj/ObVRtpvYe+VvOUKp+s/ALp7cS1OUOhugP6Ei4SkUpooBSdCIWcv7z4W/I+O2GcpsXKN/ti4lckx1vJWRpo3pnB2RzNy3Uyaz4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712775449; c=relaxed/simple;
-	bh=SSndwC5hDqxJpdBvENnzdv6zQgeEKAwvbSI1ut6/nIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Kt01AcIKWXxE7ZMmGROiYdqonctw96wT3ITkzA9v7VD20x0tLo4CW1Snnl+HVy37OYs1vdB7V513KSheZ7ndwYOzvJKXBK/Qn5BmyOmh7TDOA5kkEZNGPacsSSfZsMxWBUqcLRFY+QL4XUcs5eSvv1qNaVanpNzQZpR9ZT7v284=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gZ7NI8Uy; arc=fail smtp.client-ip=40.107.244.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6350D15AAD6;
+	Wed, 10 Apr 2024 21:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1712783407; cv=none; b=gAgOmrBUaMDifRh1wcZiA9f1ToqWr9kOIfxP/CC/aAsHbgMFvF23JFclFYle+wlG93nBcv3+bXWf+D2M02RJiAjFBzNdwoJbdmh8E1ZYcDKpG6RrKyFiR74jO6rJjN62KticPnMWZ8tMJSToWskt+0g7Ue6R4lg4ApPtGA7y/Tk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1712783407; c=relaxed/simple;
+	bh=epqxiRJJT06ouxXsQ6dNk3Sxe1Z+04pN0RBFaN6a68g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a1vV/cKp86XsE+TJGaMGhCAhQEcaj59JFa4Xp33aNtWmwrT0D0zsvVuq9e/vU9ZKE0YutSYyoyCyf1E+uCY4kaMxM2CDVXZnfcxckqDtGgb1NJDPQx/7htFFX9l7UO8ynEQPxnHJxZgXcKOZzCtFxbhKjz/BQtICUcVY4YCTNB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kq7zG0h5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gZ7NI8Uy"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R5V/MXPXkldn4YZPHZIwiV3fi4pzZElEBcREpwmlMhMLTfXZS4750R0V63zjTSE/WDory52aO48BqQe3YCkzxpxrgBWFCIJOuYb7dtQjMOkEl1dTVV/AhfYS7gZEtOOMiif5Nwn4m3zUMXYtxHHQKutb44mHHztcyAhB2RHEZt6KZuEIFGMOwaDD7Zi3QJWzdH5IQB+9hV6yCpOH3LVLO90h+qgPt000gTrcPSgqKUbJT2OtDi3ckjlhyVuyJEdJgFXqNctj0RO0arZiNkZbZQOBOBZmR0vTYzXU2hWziRLe+lALMcAslCTxD0eRpoD1nDfmRWJm+DMHtNXe9Dxk2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=daS+ZqUE/ZDq0OlbyEe1b0k4YlqNWZg87UCOC660bsQ=;
- b=mZPh6Ra8hLuXIALxPgpB40FHeTclPwGKxdUZsMepiS305mnb/vUrsCfq1j4ogxkivKSLsRDVI0Db6pUc/yrBK0T84DTKa/5TBw1fnY/eUKTtwZWq+JEvwel+yVqZFEnTBRtc1KYMbYJLlNtcP6WV5kU0Cr3/JtJnUT1hFewHIQL554/hZnq467NA9Eplomzt4eJtCr3vJKN5iJg57EnUP5jQwSO5CtcDidRXL/vdaw20/u1Ieb3wE7mYIbjRKPo4YBqDPG1bzAoBYQU844QHCz9dqXi+PL5e80iH2rf2xHiSkba0DVN0+RrExLkQEAgEQGlb8l5TIUFu9dB81HGzdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=daS+ZqUE/ZDq0OlbyEe1b0k4YlqNWZg87UCOC660bsQ=;
- b=gZ7NI8UyZb+xnAczHLemxr5e7AHTeznL05Gjs7OGiqgqbwP1sURVxd4f44eMsTiGTH1/wMkqntVv1ht6D+k/aoiRh4dK5+5IdqS0cz5guSsfn+78cYpoUydetEVo6WNq5uZfWz5NvCJM/LrC5LBBcRSuDpDGVWZdAHK+UwC4UtTLkE3+ju0BpM/hexchHKXwS/1oEk9Tjz0VJ/82broYgu8htm2ol1bxRcrVRQtqW2/R497ksdOAn/CK0L3UhfWmt5ecSGvimpwWaJC0dgrjIDVbtHQXmzDlNgMPtC47wlVo4cCEsf26s1KU4qmHLJp04FZoDEFP1DwhzS3hIsjwFw==
-Received: from DM6PR18CA0026.namprd18.prod.outlook.com (2603:10b6:5:15b::39)
- by SN7PR12MB6929.namprd12.prod.outlook.com (2603:10b6:806:263::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7409.46; Wed, 10 Apr
- 2024 18:57:23 +0000
-Received: from DS1PEPF00017090.namprd03.prod.outlook.com
- (2603:10b6:5:15b:cafe::e0) by DM6PR18CA0026.outlook.office365.com
- (2603:10b6:5:15b::39) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.21 via Frontend
- Transport; Wed, 10 Apr 2024 18:57:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS1PEPF00017090.mail.protection.outlook.com (10.167.17.132) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7452.22 via Frontend Transport; Wed, 10 Apr 2024 18:57:23 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Wed, 10 Apr
- 2024 11:57:06 -0700
-Received: from [10.41.21.79] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Wed, 10 Apr
- 2024 11:57:02 -0700
-Message-ID: <3ab3cbc1-234f-e0b6-4521-298018547aad@nvidia.com>
-Date: Thu, 11 Apr 2024 00:27:00 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kq7zG0h5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26899C433F1;
+	Wed, 10 Apr 2024 21:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712783407;
+	bh=epqxiRJJT06ouxXsQ6dNk3Sxe1Z+04pN0RBFaN6a68g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kq7zG0h5SrekrSqAIw+NC6D2j3BaZVhgpOgUGupokoJKCz/HQPs1FjTM9YwwSddb5
+	 3Lf/9jM6lYOXCaDYAEJKz6nOJaRNxrLdgjXk4KLULbnOkSbYPPAgmFjuc/+ubF3/Wt
+	 2tkB62Sfl43fSMYh1TsFufYeJE8pF8RFLEfCInX/FkEzajdkwrXY/4ocd9fdIynrbk
+	 ERYPKG7lYMb402h1QoFDUrswFeo3Z1NZ+1Vx4Nef3xRjot+Id3mXxPe/IS4xOwTQvg
+	 typpy3hFMCPinD6ZUiNAkUkjkqyk6LRQhGLDHnoIEUoX0Hlql4VWpK6cDJz0FMfBeo
+	 xkVxny7zNWdeQ==
+Date: Wed, 10 Apr 2024 23:10:01 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jingoo Han <jingoohan1@gmail.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mhi@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 10/10] PCI: qcom: Implement shutdown() callback to
+ properly reset the endpoint devices
+Message-ID: <ZhcAKSJCQag6AX09@ryzen>
+References: <20240401-pci-epf-rework-v2-0-970dbe90b99d@linaro.org>
+ <20240401-pci-epf-rework-v2-10-970dbe90b99d@linaro.org>
+ <ZgvpnqdjQ39JMRiV@ryzen>
+ <20240403133217.GK25309@thinkpad>
+ <Zg22Dhi2c7U5oqoz@ryzen>
+ <20240410105410.GC2903@thinkpad>
+ <Zhanol2xi_E2Ypv3@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v4 3/4] arm64: Update AMU-based frequency scale factor on
- entering idle
-Content-Language: en-US
-To: Beata Michalska <beata.michalska@arm.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <ionela.voinescu@arm.com>,
-	<vanshikonda@os.amperecomputing.com>
-CC: <sudeep.holla@arm.com>, <will@kernel.org>, <catalin.marinas@arm.com>,
-	<vincent.guittot@linaro.org>, <yang@os.amperecomputing.com>,
-	<lihuisong@huawei.com>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20240405133319.859813-1-beata.michalska@arm.com>
- <20240405133319.859813-4-beata.michalska@arm.com>
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <20240405133319.859813-4-beata.michalska@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017090:EE_|SN7PR12MB6929:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d46c5f5-7f24-4f69-5e6b-08dc59900e7b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	yxQ8Tf7ldDtw1hdemE6STb7Xv5NkQGy+LETlB0lzXlPXXl6WX9wbEhzh0gFan41qJKY6xJYlUOgAgFKI1IiskdMkhrB8t0QWqLeQhjUB5t7FNxdLCmNp7eVHhfQTU+x4hvPWqMCTCOyX+LjnUTyLdJEUt6as7XnkyxOF9KCBs5bEwRaN6FwKKAONLkgeD093MnRGXtw8BNyqam26ZemFk3V7JTsVqYx25PCczOsjC4Gyrvqca13EJafOgfnb/xBB1NUAbPxQDfEHL6w49KUht4PHpKAmJvUrPxY4acemMkyIEWgf1Idix1wiqr/1P+FrmY4h0XSiRyynz0UuCuEkzaoopGatkxV3OGTVv22LFuoOWowL0aH7Zho8iT4wCtpvC4G49IzGQYAopOC01Qg3JMdR2cHieuh0S6HoBhhhcdxqdn4asroiheShk57nrK/SPoDmOj3Tjr1WePR+S5/gc/jcAVUIwMAhq7SsxL5NsYFfnDdw/ix3yYJuln8DfTZTbAk7WwCVWKjFHbPlkMMuDlyQOboMGo14uibnfFC5zHAV/w5uJXyKVwuvXA2BGRw2y0Sp9RADVzOu0wZDR2sP0BRUupcL2WviYpFccZLtGbRmRJG/65I/Ynhfjl6WUhmQDxIpzCELiNndazKuliGfZpTxs1emRyMRZzXjSYsCk2szdSj5i4L5Tss0WCRKhCLaDc5F2lkvhmiPzie3TIvEbwbhG4h5nENzqGb9SLnSMGXHWgz8kgmgxP15PPw2Q5/S
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(7416005)(36860700004)(82310400014)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Apr 2024 18:57:23.1334
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d46c5f5-7f24-4f69-5e6b-08dc59900e7b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017090.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6929
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zhanol2xi_E2Ypv3@ryzen>
 
-Hi Beata,
-
-This patch is giving abort due to 'amu_fie_cpus' mask which gets 
-allocated later in 'init_amu_fie()'.
-
-  ] smp: Bringing up secondary CPUs ...
-  ] Unable to handle kernel read from unreadable memory at virtual
-    address 0000000000000000
-    .......
-  ] Call trace:
-  ]  arch_cpu_idle_enter+0x30/0xe0
-  ]  do_idle+0xb8/0x2e0
-  ]  cpu_startup_entry+0x3c/0x50
-  ]  rest_init+0x108/0x128
-  ]  start_kernel+0x7a4/0xa50
-  ]  __primary_switched+0x80/0x90
-  ] Code: d53cd042 b8626800 f943c821 53067c02 (f8627821)
-  ] ---[ end trace 0000000000000000 ]---
-  ] Kernel panic - not syncing: Oops: Fatal exception
-
-Added cpumask_available() check before access to fix.
-
-  +++ b/arch/arm64/kernel/topology.c
-  @@ -211,9 +211,13 @@ void arch_cpu_idle_enter(void)
-   {
-          unsigned int cpu = smp_processor_id();
-
-  -       if (!cpumask_test_cpu(cpu, amu_fie_cpus))
-  +       if (cpumask_available(amu_fie_cpus) &&
-  +           !cpumask_test_cpu(cpu, amu_fie_cpus))
-                  return;
-
-Thank you,
-Sumit Gupta
-
-On 05/04/24 19:03, Beata Michalska wrote:
-> External email: Use caution opening links or attachments
+On Wed, Apr 10, 2024 at 04:52:18PM +0200, Niklas Cassel wrote:
+> On Wed, Apr 10, 2024 at 04:24:10PM +0530, Manivannan Sadhasivam wrote:
+> > 
+> > Well, we could prevent the register access during PERST# assert time in the
+> > endpoint, but my worry is that we will end up with 2 version of the cleanup
+> > APIs. Lets take an example of dw_pcie_edma_remove() API which gets called
+> > during deinit and it touches some eDMA registers.
+> > 
+> > So should we introduce another API which just clears the sw data structure and
+> > not touching the registers? And this may be needed for other generic APIs as
+> > well.
+> 
+> I agree that it will be hard to come up with an elegant solution to this
+> problem.
+> 
+> These endpoint controllers that cannot do register accesses to their own
+> controllers' DBI/register space without the RC providing a refclock are
+> really becoming a pain... and the design and complexity of the PCI endpoint
+> APIs is what suffers as a result.
+> 
+> PERST could be asserted at any time.
+> So for your system to not crash/hang by accessing registers in the controller,
+> an EPF driver must be designed with great care to never do any register access
+> when it is not safe...
+> 
+> Perhaps the the EPF core should set the state (i.e. init_complete = false,
+> even before calling the deinit callback in EPF driver, and perhaps even add
+> safe-guards against init_complete in some APIs, so that e.g. a set_bar() call
+> cannot trigger a crash because PERST# is asserted.. but even then, it could
+> still be asserted in the middle of set_bar()'s execution.)
 > 
 > 
-> Now that the frequency scale factor has been activated for retrieving
-> current frequency on a given CPU, trigger its update upon entering
-> idle. This will, to an extent, allow querying last known frequency
-> in a non-invasive way. It will also improve the frequency scale factor
-> accuracy when a CPU entering idle did not receive a tick for a while.
-> As a consequence, for idle cores, the reported frequency will be the
-> last one observed before entering the idle state.
+> Looking at the databook, it looks like core_clk is derived from pipe_clk
+> output of the PHY. The PHY will either use external clock or internal clock.
 > 
-> Suggested-by: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>
-> Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> ---
->   arch/arm64/kernel/topology.c | 17 +++++++++++++++--
->   1 file changed, 15 insertions(+), 2 deletions(-)
+> 4.6.2 DBI Protocol Transactions
+> it looks like core_clk must be active to read/write the DBI.
 > 
-> diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> index b03fe8617721..f204f6489f98 100644
-> --- a/arch/arm64/kernel/topology.c
-> +++ b/arch/arm64/kernel/topology.c
-> @@ -207,6 +207,19 @@ static struct scale_freq_data amu_sfd = {
->          .set_freq_scale = amu_scale_freq_tick,
->   };
-> 
-> +void arch_cpu_idle_enter(void)
-> +{
-> +       unsigned int cpu = smp_processor_id();
-> +
-> +       if (!cpumask_test_cpu(cpu, amu_fie_cpus))
-> +               return;
-> +
-> +       /* Kick in AMU update but only if one has not happened already */
-> +       if (housekeeping_cpu(cpu, HK_TYPE_TICK) &&
-> +           time_is_before_jiffies(per_cpu(cpu_amu_samples.last_update, cpu)))
-> +               amu_scale_freq_tick();
-> +}
-> +
->   #define AMU_SAMPLE_EXP_MS      20
-> 
->   unsigned int arch_freq_get_on_cpu(int cpu)
-> @@ -232,8 +245,8 @@ unsigned int arch_freq_get_on_cpu(int cpu)
->           * this boils down to identifying an active cpu within the same freq
->           * domain, if any.
->           */
-> -       if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
-> -           time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
-> +       if (!housekeeping_cpu(cpu, HK_TYPE_TICK) || (!idle_cpu(cpu) &&
-> +           time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS)))) {
->                  struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
->                  int ref_cpu = cpu;
-> 
-> --
-> 2.25.1
-> 
+> I really wish those controllers could e.g. change the clock temporarily
+> using a mux, so that it could still perform DBI read/writes when there is
+> not external refclk... Something like pm_sel_aux_clk selecting to use the
+> aux clk instead of core_clk when in low power states.
+> But I don't know the hardware well enough to know if that is possible for
+> the DBI, so that might just be wishful thinking...
+
+
+Looking at the rock5b SBC (rockchip rk3588), the PHY refclk can either
+be taken from
+-a PLL internally from the SoC.
+or
+-an external clock on the SBC.
+
+There does not seem to be an option to get the refclk as an input from
+the PCIe slot. (The refclk can only be output to the PCIe slot.)
+
+So when running two rock5b SBC, you cannot use a common clock for the RC
+and the EP side, you have to use a separate reference clock scheme,
+either SRNS or SRIS.
+
+Since I assume that you use two qcom platforms of the same model
+(I remember that you wrote that you usually test with
+qcom,sdx55-pcie-ep somewhere.)
+Surely this board must be able to supply a reference clock?
+(How else does it send this clock to the EP side?)
+
+So... why can't you run in SRNS or SRIS mode, where the EP provides
+it's own clock?
+
+
+Kind regards,
+Niklas
