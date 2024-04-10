@@ -1,81 +1,33 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D69156F50;
-	Tue,  9 Apr 2024 19:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544D720E3;
+	Wed, 10 Apr 2024 06:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712689203; cv=none; b=UTvAJqgf6nkSfZ4Wr6V7MDnTNedNLAqQWx0aCCgPkvW9bTj8Rrb1AArLiidRH6upEeGTStu8CVecYvlF99jlWun/G3Olh2NzeRYUEfyWE1QlJKwQ3Uid52/ht5iaFfxBzWG5iR1/Gm6q8MfeeLvCYBIpGJZXAUm7zZLYVve6wCI=
+	t=1712729906; cv=none; b=YlT30qnIMWbwG+JbhCcFoKfMjGnIHKaQHcPwf5J3Ti/xlLAO2/HK7yMgvftWSZA/NrzZ2Jh5YTSP0z/9V2jwS+6lq5iGc0NXSZdcpDq/FhKTUd5QQVBcrWHPpYHwCbkfrSP7dcS3whAnTxlzG8oFpJACUm2Qv0V1OBGyCaR8c1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712689203; c=relaxed/simple;
-	bh=Iqi+a6fXe1rvsRNOhwYIja57gypdYtqay7e3LvG/UoA=;
+	s=arc-20240116; t=1712729906; c=relaxed/simple;
+	bh=ZQ64qwPf6Di8vF2RdPh7RxkPgBZXfSpbbGA0ASv1dUY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uFDi8j+hEW2KpG5fhXtbJrWcXQY2rcnORYgKl1gmINGNp5Be0FQ6xJ6aJEOXRHDPSz7GoYYNl6nmhBD2BpCVaFfkbmNM4F5sje3l7eEjEhKW664UZl6/Yp9nxybY8FZ+DxzimRKVT/dalbt/TQPODt2LpKutXVuEySydZM+Gfr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y3RJDAhV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r35GZW2d; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y3RJDAhV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r35GZW2d; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	 In-Reply-To:Content-Type; b=GRPbMsQP4A2ODVDaaL1RqHAt+jBQPUMxDwVo9a3NJVpzn7c3EkjxYw0WvzFa3+sdub8WWrpGIXuB2W607GQGME9vlpXr9oeYcPIAK4Ii3qVr7tFdKIBpDqvF/hexVyqVUH3UfNNHePWCWF6b85piYYgdsBjuZ6s8ekm6wx18DXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cv05Vhzd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y3RJDAhV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r35GZW2d";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y3RJDAhV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r35GZW2d"
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 03A4520D3A;
-	Tue,  9 Apr 2024 18:59:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1712689199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xhFtGNnltOeesrcoKpDXqbaEbnklvawtps3ymVyqemg=;
-	b=y3RJDAhVyfVjqUuUrOVvF2r8QzsKd2AZPeXr8eOxzH4sSqrGMRSblm1Rl7MXroJy2SMgxK
-	UxHujiOfS0bCzcPfXsutlx5yk0uQHOEyJwNScN4YmZvSP5IqugdX9IMKjlcGklcPkHGje7
-	FDGoRsx59XP5itJD8Kl3RWix0poqAHk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1712689199;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xhFtGNnltOeesrcoKpDXqbaEbnklvawtps3ymVyqemg=;
-	b=r35GZW2dId3mapF2b2+NJ5kulWYjhWUZHzBcV6u5Zbwp0sVWZmt1TG0E1V63t00/2b2DbQ
-	X8WGPCVaQt1W2zAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=y3RJDAhV;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=r35GZW2d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1712689199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xhFtGNnltOeesrcoKpDXqbaEbnklvawtps3ymVyqemg=;
-	b=y3RJDAhVyfVjqUuUrOVvF2r8QzsKd2AZPeXr8eOxzH4sSqrGMRSblm1Rl7MXroJy2SMgxK
-	UxHujiOfS0bCzcPfXsutlx5yk0uQHOEyJwNScN4YmZvSP5IqugdX9IMKjlcGklcPkHGje7
-	FDGoRsx59XP5itJD8Kl3RWix0poqAHk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1712689199;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xhFtGNnltOeesrcoKpDXqbaEbnklvawtps3ymVyqemg=;
-	b=r35GZW2dId3mapF2b2+NJ5kulWYjhWUZHzBcV6u5Zbwp0sVWZmt1TG0E1V63t00/2b2DbQ
-	X8WGPCVaQt1W2zAQ==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 84DD013253;
-	Tue,  9 Apr 2024 18:59:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id Kbp1Hi6QFWZzQwAAn2gu4w
-	(envelope-from <tzimmermann@suse.de>); Tue, 09 Apr 2024 18:59:58 +0000
-Message-ID: <e204768e-8dbe-427b-83e5-a3f066bc7b3a@suse.de>
-Date: Tue, 9 Apr 2024 20:59:57 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cv05Vhzd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CC8FC433C7;
+	Wed, 10 Apr 2024 06:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712729905;
+	bh=ZQ64qwPf6Di8vF2RdPh7RxkPgBZXfSpbbGA0ASv1dUY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Cv05VhzdPby0jgRBixv3hcdBlNomY+DwZPiZSH8aaIMyApqH5uK/CRDC2UntPg2Cn
+	 5eIlCDAkiBFtxy115phJaapQBI8k+vtl3Hek272/1HDp3DFyCMRIoHxNm5Zi2cHLLQ
+	 xHNIiGjY/zVaTA7QcsZWSYXQV0P2wBxSYy23PtUGWG1OvUbsdlMgWO9S5azFKYudbQ
+	 6ttIPWX8MmCsw/UqK8qcS6ogAlgpsZSUrBWO2j2ckxPB04iAINveh1QG8xqz5gHO1+
+	 YfyU+mtdbhmEHvKsHaviWdXu84cks+36wP1Vhibr9QPodAg0gKrnjBODoYsZAyq7Lp
+	 eS3gCFS3l6K4w==
+Message-ID: <ea3be8f7-0ee6-4940-828d-2fc15b9239dc@kernel.org>
+Date: Wed, 10 Apr 2024 08:18:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -83,139 +35,99 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] gpu: Convert to platform remove callback returning
- void
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Frank Binns <frank.binns@imgtec.com>, Matt Coster
- <matt.coster@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+Subject: Re: [PATCH] dt-bindings: host1x: Add missing 'dma-coherent'
+To: Jon Hunter <jonathanh@nvidia.com>,
  Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org
-References: <cover.1712681770.git.u.kleine-koenig@pengutronix.de>
+ Mikko Perttunen <mperttunen@nvidia.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240409082324.9928-1-jonathanh@nvidia.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <cover.1712681770.git.u.kleine-koenig@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 03A4520D3A
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[pengutronix.de,gmail.com,ffwll.ch];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[imgtec.com,linux.intel.com,kernel.org,lists.freedesktop.org,vger.kernel.org,pengutronix.de,gmail.com,collabora.com,lists.infradead.org,nvidia.com];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email]
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240409082324.9928-1-jonathanh@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi
+On 09/04/2024 10:23, Jon Hunter wrote:
+> The dtbs_check reports that the 'dma-coherent' property is "unevaluated
+> and invalid" for the host1x@13e00000 device on Tegra194 and Tegra234
+> platforms. Fix this by updating the dt-binding document for host1x to
+> add the 'dma-coherent' property for these devices.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+That's not really proper reason. What if DTS is wrong? The reason could
+be if device is actually DMA coherent...
 
-for the series.
+> 
+> Fixes: 361238cdc525 ("arm64: tegra: Mark host1x as dma-coherent on Tegra194/234")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  .../bindings/display/tegra/nvidia,tegra20-host1x.yaml | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+> index 94c5242c03b2..3563378a01af 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+> @@ -177,6 +177,15 @@ allOf:
+>  
+>        required:
+>          - reg-names
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - nvidia,tegra194-host1x
+> +    then:
+> +      properties:
+> +        dma-coherent: true
 
-Best regards
-Thomas
+Do not define properties in allOf. Put it in top-level. If not all
+devices are DMA coherent, you can disallow it for certain variants (:false).
 
-Am 09.04.24 um 19:02 schrieb Uwe Kleine-König:
-> Hello,
->
-> with some patches sent earlier[1], this series converts all platform
-> drivers below drivers/gpu to not use struct platform_device::remove()
-> any more.
->
-> See commit 5c5a7680e67b ("platform: Provide a remove callback that
-> returns no value") for an extended explanation and the eventual goal.
->
-> All conversations are trivial, because the driver's .remove() callbacks
-> returned zero unconditionally.
->
-> There are no interdependencies between these patches. This is merge
-> window material.
->
-> Best regards
-> Uwe
->
-> Uwe Kleine-König (4):
->    drm/imagination: Convert to platform remove callback returning void
->    drm/mediatek: Convert to platform remove callback returning void
->    gpu: host1x: Convert to platform remove callback returning void
->    gpu: ipu-v3: Convert to platform remove callback returning void
->
->   drivers/gpu/drm/imagination/pvr_drv.c  | 7 ++-----
->   drivers/gpu/drm/mediatek/mtk_padding.c | 5 ++---
->   drivers/gpu/host1x/dev.c               | 6 ++----
->   drivers/gpu/ipu-v3/ipu-common.c        | 6 ++----
->   drivers/gpu/ipu-v3/ipu-pre.c           | 5 ++---
->   drivers/gpu/ipu-v3/ipu-prg.c           | 6 ++----
->   6 files changed, 12 insertions(+), 23 deletions(-)
->
-> base-commit: a053fd3ca5d1b927a8655f239c84b0d790218fda
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Best regards,
+Krzysztof
 
