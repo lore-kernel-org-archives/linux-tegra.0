@@ -1,168 +1,234 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2F317C7F;
-	Thu, 11 Apr 2024 14:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D902DF42;
+	Thu, 11 Apr 2024 15:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712846605; cv=none; b=QFwjE7wKlv//Ij4A+DM2GGgRp7eRPx0o6m4gSKv0VlwlKlVEXHsOLbiL+Aj6xNvmO63JlAFo+vDYGMDdGqHdnA7FsEuVpSAgCCad5gTUy5InFsSLe3XwFXnXCsNVBUk8ykGSsIa0LweSg3j4yhioyCU6F9cLbAWqb2sZGubF1xY=
+	t=1712848008; cv=none; b=P9CW+jlFaUWnYHODc/lfxEQZE+lllLA5sEMJN2WBBZxlmosFBjlXHkLgs/V4b4qNevCStZpF1n36NO2D9nwyTvlpaWBJthKTSctyQhJRrB8IVqYJ+cuE0RxjdA78zvNepf8Emr/CBXezxy+lttWg7nLKvbFAIU+G/ML4J+hAIRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712846605; c=relaxed/simple;
-	bh=5KlfnLklpi72F6aiosgVKrwtBblRp4nhvDuxgNau2e8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BcOtsAlsGbTwY6QA5fRyaTIuAdl0XJdBkqRoZsXvf5BwpzN9fII3ZRj1+D6d21RUA5CLNa01fTk3PTk3jdRrFz8fyJvEoRjW/5vW6FtDQB3157F/E0cUS56v7BbUhbAg8MJQKfnTyjcZWgKQhYt+a8k34Qf8dbQ2VDQmxTdh45M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sBwQwkXU; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1712848008; c=relaxed/simple;
+	bh=C6vXPh7Ldx4KhgbuYgRJZPLELakzOPaiKKdVUBf4PSU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e9Q3udg4d6DtVhjJT4bTYpqAMRc1+dgtL6n3e1n/qmHTcfJwCNHcYPaK2L48Jse6iCvfSBZ7HIve26GrAd6ouQfiMpXeQexyROTjeti5MD5MMCIGWQ6lE17Tv+W3C2VFDLHZoZK7OwnWnVpkf+Vt1FxSUKH0o7ZULIIrpLub3F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=qY5VnNkm; arc=none smtp.client-ip=45.254.50.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBwQwkXU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D540AC2BD10;
-	Thu, 11 Apr 2024 14:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1712846604;
-	bh=5KlfnLklpi72F6aiosgVKrwtBblRp4nhvDuxgNau2e8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sBwQwkXULJhQAFh/14CgNxZUZ/uQcvKwL4bvpD4+cipaxJlSrNwVSS7bPOuUdVIzy
-	 5uCbDnHELfcteq0QXq3aS1DyNygRFIyegD4UprXYV+ZInuY8iXxBogBpDMA+Fo106P
-	 swDY7aU0AoJKTtQV5tJf2SNu5qFB3HMbsugu2s7P8n1W6vptBHs6cSdL9KKZCcJz7F
-	 48j9kj4x4t6kOM6uESAVRJtxt+FrTjLq7cn3kOOdmRUmz+aZUG6mY2Iuo/KS375NL4
-	 h8Sn9Y+QFuZVMtZ3Zp2hGN4FE2hw5a0uAgNuFZMyn7Qx+04TO7rUUO6Oy2BqScPdJZ
-	 qq/UZbtzvnIBg==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-516cbf3fd3dso9132939e87.2;
-        Thu, 11 Apr 2024 07:43:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6HCY0Zl2oFUdy2Ia02wIapZkY4IaBF6HfnSp1IKaUG+dFv4TBt/sz4u/4lp5WYgZR67TvTwnkZ/ZGPYHVmW/rQtIIahwZUfelXNto6ELap7IupqOqkcXUWjnG+PsWVd+/9uY4E6cL
-X-Gm-Message-State: AOJu0YzSzBXv/SWwUT99Q93/24hl68bjl9llE/H67jGE5CsdBVk/S1Qi
-	oc01qHSWCL7T4jrKtQd2BB+OE1oXzaBuHBdYJGOxAgatyXjIJXGh38ZC8768iHjzX3mmjepb08S
-	WofsCAz1r3bDs88bIzzRr6nV8XQ==
-X-Google-Smtp-Source: AGHT+IHqfwEXidpe56eHHTf6+wKKEKnyPfSu9qLBxjfq1qgbwFbrlIn4jfh4fnlvX9HBSF7DFI1pY1lJUHSTQXH9aVE=
-X-Received: by 2002:ac2:4951:0:b0:515:d4c8:942f with SMTP id
- o17-20020ac24951000000b00515d4c8942fmr4304308lfi.58.1712846603218; Thu, 11
- Apr 2024 07:43:23 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="qY5VnNkm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=LzweM
+	wJIknLqf15S3nYrZOUI8TDHp5K5t8mMB7psTts=; b=qY5VnNkmyXZMIEILoNSzc
+	ZDxQEegYk2q4oVFr2wRbgZPHhlC0zTDO9brzt9uoMDH+GC6ZIdWVO5EGMo/RrqRw
+	I1Ofnrq9upHfRHoav/SkLds6w5yIYMoano4idFatkbVj7COMkPbmXUIuHT2Ymgiu
+	1RW0Wc9nQci9nrfrFYczz4=
+Received: from localhost.localdomain (unknown [101.86.127.38])
+	by gzga-smtp-mta-g0-5 (Coremail) with SMTP id _____wDHT4dB_BdmjsBKAw--.39632S4;
+	Thu, 11 Apr 2024 23:05:59 +0800 (CST)
+From: Lizhe <sensor1010@163.com>
+To: ray.huang@amd.com,
+	rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	srinivas.pandruvada@linux.intel.com,
+	lenb@kernel.org,
+	andersson@kernel.org,
+	konrad.dybcio@linaro.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: linux-pm@vger.kernel.org,
+	inux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Lizhe <sensor1010@163.com>
+Subject: [PATCH] cpufreq: Covert to offline callback returning void
+Date: Thu, 11 Apr 2024 08:05:27 -0700
+Message-Id: <20240411150527.19201-1-sensor1010@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240409082324.9928-1-jonathanh@nvidia.com> <ea3be8f7-0ee6-4940-828d-2fc15b9239dc@kernel.org>
- <b726b5a0-45f4-457c-afad-6235c1adb640@nvidia.com> <87909fc5-e4de-4b74-bdac-61a92777f32c@kernel.org>
-In-Reply-To: <87909fc5-e4de-4b74-bdac-61a92777f32c@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 11 Apr 2024 09:43:08 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLarN3-aSJ+UkRR4FxaiNbcApycJoTLyST9f048t_7-6g@mail.gmail.com>
-Message-ID: <CAL_JsqLarN3-aSJ+UkRR4FxaiNbcApycJoTLyST9f048t_7-6g@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: host1x: Add missing 'dma-coherent'
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-tegra@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHT4dB_BdmjsBKAw--.39632S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxKFyUKw13JF1UXw4xXF1kKrg_yoWxGr4fpF
+	4UWrWvkr10qFWDt3y7Ca1Dua4a9Fs7A3yUG34xCasYvanrJ3WYg3WDGryUZFWFkrykWF43
+	Ar1rtayxGa18JFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pimhF7UUUUU=
+X-CM-SenderInfo: 5vhq20jurqiii6rwjhhfrp/1tbiKBq9q2XAk2EhBAABsX
 
-On Thu, Apr 11, 2024 at 5:43=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 11/04/2024 12:09, Jon Hunter wrote:
-> >
-> > On 10/04/2024 07:18, Krzysztof Kozlowski wrote:
-> >> On 09/04/2024 10:23, Jon Hunter wrote:
-> >>> The dtbs_check reports that the 'dma-coherent' property is "unevaluat=
-ed
-> >>> and invalid" for the host1x@13e00000 device on Tegra194 and Tegra234
-> >>> platforms. Fix this by updating the dt-binding document for host1x to
-> >>> add the 'dma-coherent' property for these devices.
-> >>
-> >> That's not really proper reason. What if DTS is wrong? The reason coul=
-d
-> >> be if device is actually DMA coherent...
-> >
-> > In this case the DTS is correct. I guess I should have been more
-> > explicit about that.
-> >
-> >>> Fixes: 361238cdc525 ("arm64: tegra: Mark host1x as dma-coherent on Te=
-gra194/234")
-> >>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> >>> ---
-> >>>   .../bindings/display/tegra/nvidia,tegra20-host1x.yaml | 11 ++++++++=
-+++
-> >>>   1 file changed, 11 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,t=
-egra20-host1x.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia=
-,tegra20-host1x.yaml
-> >>> index 94c5242c03b2..3563378a01af 100644
-> >>> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-=
-host1x.yaml
-> >>> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-=
-host1x.yaml
-> >>> @@ -177,6 +177,15 @@ allOf:
-> >>>
-> >>>         required:
-> >>>           - reg-names
-> >>> +  - if:
-> >>> +      properties:
-> >>> +        compatible:
-> >>> +          contains:
-> >>> +            enum:
-> >>> +              - nvidia,tegra194-host1x
-> >>> +    then:
-> >>> +      properties:
-> >>> +        dma-coherent: true
-> >>
-> >> Do not define properties in allOf. Put it in top-level. If not all
-> >> devices are DMA coherent, you can disallow it for certain variants (:f=
-alse).
-> >
-> >
-> > So for host1x we currently have the following devices supported ...
-> >
-> > properties:
-> >    compatible:
-> >      oneOf:
-> >        - enum:
-> >            - nvidia,tegra20-host1x
-> >            - nvidia,tegra30-host1x
-> >            - nvidia,tegra114-host1x
-> >            - nvidia,tegra124-host1x
-> >            - nvidia,tegra210-host1x
-> >            - nvidia,tegra186-host1x
-> >            - nvidia,tegra194-host1x
-> >            - nvidia,tegra234-host1x
-> >
-> >        - items:
-> >            - const: nvidia,tegra132-host1x
-> >            - const: nvidia,tegra124-host1x
-> >
-> >
-> > Now only the Tegra194 and Tegra234 are coherent (which are the latest
-> > devices). So rather than add this to the top and then filter out all
-> > those that are not supported, I opted for the above because there is
-> > only 2 devices that need this. Admittedly, as much as I like the yaml
-> > bindings, for things like this, it is not really clear which is the bes=
-t
-> > way to handle, so appreciate the guidance.
->
-> The way to handle is that you must define properties top-level.
->
-> For simplification you could keep the if which duplicates the
-> dma-coherent:true but add else: which forbids it
->
-> if:
->  ...
->   then:
->     properties:
->       dma-coherent: true
+For the offline() callback function returning an int type value,
+this leads many driver authors mistakenly believing that error
+handling can be performed by returning an error code, However
+the returned value is ignored, and to improve this situation,
+it is proposed to modify the return type of the offline() callback
+function to void.
 
-I think just 'then: true' will work here.
+Signed-off-by: Lizhe <sensor1010@163.com>
+---
+ drivers/cpufreq/amd-pstate.c       |  4 +---
+ drivers/cpufreq/cpufreq.c          |  3 +--
+ drivers/cpufreq/intel_pstate.c     | 10 ++++------
+ drivers/cpufreq/qcom-cpufreq-hw.c  |  6 ++----
+ drivers/cpufreq/tegra194-cpufreq.c | 11 -----------
+ include/linux/cpufreq.h            |  2 +-
+ 6 files changed, 9 insertions(+), 27 deletions(-)
 
-Technically, json-schema allows:
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 2015c9fcc3c9..036608935aaa 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -1530,7 +1530,7 @@ static void amd_pstate_epp_offline(struct cpufreq_policy *policy)
+ 	mutex_unlock(&amd_pstate_limits_lock);
+ }
+ 
+-static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
++static void amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
+ {
+ 	struct amd_cpudata *cpudata = policy->driver_data;
+ 
+@@ -1541,8 +1541,6 @@ static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
+ 
+ 	if (cppc_state == AMD_PSTATE_ACTIVE)
+ 		amd_pstate_epp_offline(policy);
+-
+-	return 0;
+ }
+ 
+ static int amd_pstate_epp_verify_policy(struct cpufreq_policy_data *policy)
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 66e10a19d76a..04d349372de3 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1685,7 +1685,7 @@ static void __cpufreq_offline(unsigned int cpu, struct cpufreq_policy *policy)
+ 	}
+ }
+ 
+-static int cpufreq_offline(unsigned int cpu)
++static void cpufreq_offline(unsigned int cpu)
+ {
+ 	struct cpufreq_policy *policy;
+ 
+@@ -1702,7 +1702,6 @@ static int cpufreq_offline(unsigned int cpu)
+ 	__cpufreq_offline(cpu, policy);
+ 
+ 	up_write(&policy->rwsem);
+-	return 0;
+ }
+ 
+ /*
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index dbbf299f4219..80dfe1c20210 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -2679,14 +2679,14 @@ static int intel_pstate_verify_policy(struct cpufreq_policy_data *policy)
+ 	return 0;
+ }
+ 
+-static int intel_cpufreq_cpu_offline(struct cpufreq_policy *policy)
++static void intel_cpufreq_cpu_offline(struct cpufreq_policy *policy)
+ {
+ 	struct cpudata *cpu = all_cpu_data[policy->cpu];
+ 
+ 	pr_debug("CPU %d going offline\n", cpu->cpu);
+ 
+ 	if (cpu->suspended)
+-		return 0;
++		return;
+ 
+ 	/*
+ 	 * If the CPU is an SMT thread and it goes offline with the performance
+@@ -2700,8 +2700,6 @@ static int intel_cpufreq_cpu_offline(struct cpufreq_policy *policy)
+ 		intel_pstate_set_min_pstate(cpu);
+ 
+ 	intel_pstate_exit_perf_limits(policy);
+-
+-	return 0;
+ }
+ 
+ static int intel_pstate_cpu_online(struct cpufreq_policy *policy)
+@@ -2724,11 +2722,11 @@ static int intel_pstate_cpu_online(struct cpufreq_policy *policy)
+ 	return 0;
+ }
+ 
+-static int intel_pstate_cpu_offline(struct cpufreq_policy *policy)
++static void intel_pstate_cpu_offline(struct cpufreq_policy *policy)
+ {
+ 	intel_pstate_clear_update_util_hook(policy->cpu);
+ 
+-	return intel_cpufreq_cpu_offline(policy);
++	intel_cpufreq_cpu_offline(policy);
+ }
+ 
+ static int intel_pstate_cpu_exit(struct cpufreq_policy *policy)
+diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+index 70b0f21968a0..dc35fa3cc3ce 100644
+--- a/drivers/cpufreq/qcom-cpufreq-hw.c
++++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+@@ -482,12 +482,12 @@ static int qcom_cpufreq_hw_cpu_online(struct cpufreq_policy *policy)
+ 	return ret;
+ }
+ 
+-static int qcom_cpufreq_hw_cpu_offline(struct cpufreq_policy *policy)
++static void qcom_cpufreq_hw_cpu_offline(struct cpufreq_policy *policy)
+ {
+ 	struct qcom_cpufreq_data *data = policy->driver_data;
+ 
+ 	if (data->throttle_irq <= 0)
+-		return 0;
++		return;
+ 
+ 	mutex_lock(&data->throttle_lock);
+ 	data->cancel_throttle = true;
+@@ -496,8 +496,6 @@ static int qcom_cpufreq_hw_cpu_offline(struct cpufreq_policy *policy)
+ 	cancel_delayed_work_sync(&data->throttle_work);
+ 	irq_set_affinity_and_hint(data->throttle_irq, NULL);
+ 	disable_irq_nosync(data->throttle_irq);
+-
+-	return 0;
+ }
+ 
+ static void qcom_cpufreq_hw_lmh_exit(struct qcom_cpufreq_data *data)
+diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
+index 59865ea455a8..8b57dcd43d54 100644
+--- a/drivers/cpufreq/tegra194-cpufreq.c
++++ b/drivers/cpufreq/tegra194-cpufreq.c
+@@ -541,16 +541,6 @@ static int tegra194_cpufreq_online(struct cpufreq_policy *policy)
+ 	return 0;
+ }
+ 
+-static int tegra194_cpufreq_offline(struct cpufreq_policy *policy)
+-{
+-	/*
+-	 * Preserve policy->driver_data and don't free resources on light-weight
+-	 * tear down.
+-	 */
+-
+-	return 0;
+-}
+-
+ static int tegra194_cpufreq_exit(struct cpufreq_policy *policy)
+ {
+ 	struct device *cpu_dev = get_cpu_device(policy->cpu);
+@@ -590,7 +580,6 @@ static struct cpufreq_driver tegra194_cpufreq_driver = {
+ 	.init = tegra194_cpufreq_init,
+ 	.exit = tegra194_cpufreq_exit,
+ 	.online = tegra194_cpufreq_online,
+-	.offline = tegra194_cpufreq_offline,
+ 	.attr = cpufreq_generic_attr,
+ };
+ 
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 9956afb9acc2..2472e9fd2df9 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -385,7 +385,7 @@ struct cpufreq_driver {
+ 	int		(*bios_limit)(int cpu, unsigned int *limit);
+ 
+ 	int		(*online)(struct cpufreq_policy *policy);
+-	int		(*offline)(struct cpufreq_policy *policy);
++	void		(*offline)(struct cpufreq_policy *policy);
+ 	int		(*exit)(struct cpufreq_policy *policy);
+ 	int		(*suspend)(struct cpufreq_policy *policy);
+ 	int		(*resume)(struct cpufreq_policy *policy);
+-- 
+2.25.1
 
-if:
-  ...
-else:
-  ...
-
-Actually any combination of the 3 keywords present is valid, but we've
-disallowed the above and other nonsense ones in the meta-schema. We
-can always relax things if there's a need.
-
-Rob
