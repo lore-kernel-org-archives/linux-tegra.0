@@ -1,234 +1,147 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC6FDF42;
-	Thu, 11 Apr 2024 15:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B190A134D1;
+	Thu, 11 Apr 2024 19:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712848049; cv=none; b=qqvZuA+lhe7uL5tpoHjVqLPCAofuicV9zsgzg5GAPDNSqks1kT2kfZozsMoOh21NQiqk1iYg4KRh+ZhhaLtLeHxTsK7PnG+f0vvcVgRkFO+o1Fspi1NMd3QVjDN66dMxPK/g7dO7Ka2gyADyFRtFrBS7Dw3u2GEPU/UdnPQuPSo=
+	t=1712863830; cv=none; b=ikP1+ANNIoGt3IeoScSYoAYoVjUF+YQG+kEL9F/iU9guovU4uOQInrMQF+1Fwk31fwV8Mg/8Ddj+agl7JQ0ujJskpXNyI81hGc2kF/y3cIYjXk9awWvxWMwIKEciCjr7ZPTjxnnc6CFKKCaQqX2hnprfRBeJ5I1hgmNhsqWlo/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712848049; c=relaxed/simple;
-	bh=C6vXPh7Ldx4KhgbuYgRJZPLELakzOPaiKKdVUBf4PSU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ai8UyNtUg3uOBWaeP99ULr1hI/HqYI6UDVFcWWhj8SV5ktUDnHAjoYcs2ymm1x6aFJFGw4M81eho8xdsT1eYTGnh76c9hD/4JNpQ0i1oCr2WnigiahY44B5KzK9WDky+guI/RjeZjK9RrK0UaoHGTPXH2+uOHJkFcTEu0p/nld4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Ein9fSy2; arc=none smtp.client-ip=117.135.210.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Ein9fSy2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=LzweM
-	wJIknLqf15S3nYrZOUI8TDHp5K5t8mMB7psTts=; b=Ein9fSy28qkrLlfpbxsOM
-	4K5EtgHw9JVFy0jXaJLhWh2lIEOP7qNh7kL07gIq/IenKBYnvPwCKbOFDBlh1HkI
-	vZsg45rCzGIzWnY72fgh2lN7/fHmdZBQk29+ChJ/keaCJ7yQjiE64QqOQ5IKNHi6
-	jM2FR73kyEH5lA2VcpAHUg=
-Received: from localhost.localdomain (unknown [101.86.127.38])
-	by gzga-smtp-mta-g3-0 (Coremail) with SMTP id _____wDnr4R3_Bdm+utEAw--.36662S4;
-	Thu, 11 Apr 2024 23:06:46 +0800 (CST)
-From: Lizhe <sensor1010@163.com>
-To: ray.huang@amd.com,
-	rafael@kernel.org,
-	viresh.kumar@linaro.org,
-	srinivas.pandruvada@linux.intel.com,
-	lenb@kernel.org,
-	andersson@kernel.org,
-	konrad.dybcio@linaro.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: linux-pm@vger.kernel.org,
-	inux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	Lizhe <sensor1010@163.com>
-Subject: [PATCH] cpufreq: Covert to offline callback returning void
-Date: Thu, 11 Apr 2024 08:06:20 -0700
-Message-Id: <20240411150620.19262-1-sensor1010@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1712863830; c=relaxed/simple;
+	bh=nh2Upng/Ji4PI8OKXrJFPEst72tzht4Q2xUmho5cW2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KzPof5QXJf+PM0G1mIJbkEsTSQdNXYhexe7ORfusob8Omoc+aKuIFMIuStIVgMmotu5vyiXYuc36QssNIlLrga5z+TLtI4AmGl+oVvNdhRphQ0+bmLkWrVtgkAlepw5oXnOSc4qJzUIP0/cP/DRhiBlM/9A9ACHJBNkcS4FNYFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1843E113E;
+	Thu, 11 Apr 2024 12:30:56 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E20F3F64C;
+	Thu, 11 Apr 2024 12:30:23 -0700 (PDT)
+Date: Thu, 11 Apr 2024 21:30:16 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	ionela.voinescu@arm.com, vanshikonda@os.amperecomputing.com,
+	sudeep.holla@arm.com, will@kernel.org, catalin.marinas@arm.com,
+	vincent.guittot@linaro.org, yang@os.amperecomputing.com,
+	lihuisong@huawei.com, linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v4 3/4] arm64: Update AMU-based frequency scale factor on
+ entering idle
+Message-ID: <Zhg6SLfqrRUf0vmp@arm.com>
+References: <20240405133319.859813-1-beata.michalska@arm.com>
+ <20240405133319.859813-4-beata.michalska@arm.com>
+ <3ab3cbc1-234f-e0b6-4521-298018547aad@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDnr4R3_Bdm+utEAw--.36662S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxKFyUKw13JF1UXw4xXF1kKrg_yoWxGr4fpF
-	4UWrWvkr10qFWDt3y7Ca1Dua4a9Fs7A3yUG34xCasYvanrJ3WYg3WDGryUZFWFkrykWF43
-	Ar1rtayxGa18JFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piL0ePUUUUU=
-X-CM-SenderInfo: 5vhq20jurqiii6rwjhhfrp/1tbiWBq9q2VOCWZoKwABsS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3ab3cbc1-234f-e0b6-4521-298018547aad@nvidia.com>
 
-For the offline() callback function returning an int type value,
-this leads many driver authors mistakenly believing that error
-handling can be performed by returning an error code, However
-the returned value is ignored, and to improve this situation,
-it is proposed to modify the return type of the offline() callback
-function to void.
+On Thu, Apr 11, 2024 at 12:27:00AM +0530, Sumit Gupta wrote:
 
-Signed-off-by: Lizhe <sensor1010@163.com>
+Hi Sumit,
+> Hi Beata,
+> 
+> This patch is giving abort due to 'amu_fie_cpus' mask which gets allocated
+> later in 'init_amu_fie()'.
+> 
+>  ] smp: Bringing up secondary CPUs ...
+>  ] Unable to handle kernel read from unreadable memory at virtual
+>    address 0000000000000000
+>    .......
+>  ] Call trace:
+>  ]  arch_cpu_idle_enter+0x30/0xe0
+>  ]  do_idle+0xb8/0x2e0
+>  ]  cpu_startup_entry+0x3c/0x50
+>  ]  rest_init+0x108/0x128
+>  ]  start_kernel+0x7a4/0xa50
+>  ]  __primary_switched+0x80/0x90
+>  ] Code: d53cd042 b8626800 f943c821 53067c02 (f8627821)
+>  ] ---[ end trace 0000000000000000 ]---
+>  ] Kernel panic - not syncing: Oops: Fatal exception
+> 
+> Added cpumask_available() check before access to fix.
+> 
+>  +++ b/arch/arm64/kernel/topology.c
+>  @@ -211,9 +211,13 @@ void arch_cpu_idle_enter(void)
+>   {
+>          unsigned int cpu = smp_processor_id();
+> 
+>  -       if (!cpumask_test_cpu(cpu, amu_fie_cpus))
+>  +       if (cpumask_available(amu_fie_cpus) &&
+>  +           !cpumask_test_cpu(cpu, amu_fie_cpus))
+>                  return;
+> 
+That's actually a gruesome mistake on my side. Thanks for catching that one.
+On that note: arch_freq_get_on_cpu should be also protected case amu fie init
+fails for some reason. Will be sending an update.
+
+Thanks again.
+
 ---
- drivers/cpufreq/amd-pstate.c       |  4 +---
- drivers/cpufreq/cpufreq.c          |  3 +--
- drivers/cpufreq/intel_pstate.c     | 10 ++++------
- drivers/cpufreq/qcom-cpufreq-hw.c  |  6 ++----
- drivers/cpufreq/tegra194-cpufreq.c | 11 -----------
- include/linux/cpufreq.h            |  2 +-
- 6 files changed, 9 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 2015c9fcc3c9..036608935aaa 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -1530,7 +1530,7 @@ static void amd_pstate_epp_offline(struct cpufreq_policy *policy)
- 	mutex_unlock(&amd_pstate_limits_lock);
- }
- 
--static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
-+static void amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
- {
- 	struct amd_cpudata *cpudata = policy->driver_data;
- 
-@@ -1541,8 +1541,6 @@ static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
- 
- 	if (cppc_state == AMD_PSTATE_ACTIVE)
- 		amd_pstate_epp_offline(policy);
--
--	return 0;
- }
- 
- static int amd_pstate_epp_verify_policy(struct cpufreq_policy_data *policy)
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 66e10a19d76a..04d349372de3 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1685,7 +1685,7 @@ static void __cpufreq_offline(unsigned int cpu, struct cpufreq_policy *policy)
- 	}
- }
- 
--static int cpufreq_offline(unsigned int cpu)
-+static void cpufreq_offline(unsigned int cpu)
- {
- 	struct cpufreq_policy *policy;
- 
-@@ -1702,7 +1702,6 @@ static int cpufreq_offline(unsigned int cpu)
- 	__cpufreq_offline(cpu, policy);
- 
- 	up_write(&policy->rwsem);
--	return 0;
- }
- 
- /*
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index dbbf299f4219..80dfe1c20210 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -2679,14 +2679,14 @@ static int intel_pstate_verify_policy(struct cpufreq_policy_data *policy)
- 	return 0;
- }
- 
--static int intel_cpufreq_cpu_offline(struct cpufreq_policy *policy)
-+static void intel_cpufreq_cpu_offline(struct cpufreq_policy *policy)
- {
- 	struct cpudata *cpu = all_cpu_data[policy->cpu];
- 
- 	pr_debug("CPU %d going offline\n", cpu->cpu);
- 
- 	if (cpu->suspended)
--		return 0;
-+		return;
- 
- 	/*
- 	 * If the CPU is an SMT thread and it goes offline with the performance
-@@ -2700,8 +2700,6 @@ static int intel_cpufreq_cpu_offline(struct cpufreq_policy *policy)
- 		intel_pstate_set_min_pstate(cpu);
- 
- 	intel_pstate_exit_perf_limits(policy);
--
--	return 0;
- }
- 
- static int intel_pstate_cpu_online(struct cpufreq_policy *policy)
-@@ -2724,11 +2722,11 @@ static int intel_pstate_cpu_online(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int intel_pstate_cpu_offline(struct cpufreq_policy *policy)
-+static void intel_pstate_cpu_offline(struct cpufreq_policy *policy)
- {
- 	intel_pstate_clear_update_util_hook(policy->cpu);
- 
--	return intel_cpufreq_cpu_offline(policy);
-+	intel_cpufreq_cpu_offline(policy);
- }
- 
- static int intel_pstate_cpu_exit(struct cpufreq_policy *policy)
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-index 70b0f21968a0..dc35fa3cc3ce 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -482,12 +482,12 @@ static int qcom_cpufreq_hw_cpu_online(struct cpufreq_policy *policy)
- 	return ret;
- }
- 
--static int qcom_cpufreq_hw_cpu_offline(struct cpufreq_policy *policy)
-+static void qcom_cpufreq_hw_cpu_offline(struct cpufreq_policy *policy)
- {
- 	struct qcom_cpufreq_data *data = policy->driver_data;
- 
- 	if (data->throttle_irq <= 0)
--		return 0;
-+		return;
- 
- 	mutex_lock(&data->throttle_lock);
- 	data->cancel_throttle = true;
-@@ -496,8 +496,6 @@ static int qcom_cpufreq_hw_cpu_offline(struct cpufreq_policy *policy)
- 	cancel_delayed_work_sync(&data->throttle_work);
- 	irq_set_affinity_and_hint(data->throttle_irq, NULL);
- 	disable_irq_nosync(data->throttle_irq);
--
--	return 0;
- }
- 
- static void qcom_cpufreq_hw_lmh_exit(struct qcom_cpufreq_data *data)
-diff --git a/drivers/cpufreq/tegra194-cpufreq.c b/drivers/cpufreq/tegra194-cpufreq.c
-index 59865ea455a8..8b57dcd43d54 100644
---- a/drivers/cpufreq/tegra194-cpufreq.c
-+++ b/drivers/cpufreq/tegra194-cpufreq.c
-@@ -541,16 +541,6 @@ static int tegra194_cpufreq_online(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static int tegra194_cpufreq_offline(struct cpufreq_policy *policy)
--{
--	/*
--	 * Preserve policy->driver_data and don't free resources on light-weight
--	 * tear down.
--	 */
--
--	return 0;
--}
--
- static int tegra194_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct device *cpu_dev = get_cpu_device(policy->cpu);
-@@ -590,7 +580,6 @@ static struct cpufreq_driver tegra194_cpufreq_driver = {
- 	.init = tegra194_cpufreq_init,
- 	.exit = tegra194_cpufreq_exit,
- 	.online = tegra194_cpufreq_online,
--	.offline = tegra194_cpufreq_offline,
- 	.attr = cpufreq_generic_attr,
- };
- 
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 9956afb9acc2..2472e9fd2df9 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -385,7 +385,7 @@ struct cpufreq_driver {
- 	int		(*bios_limit)(int cpu, unsigned int *limit);
- 
- 	int		(*online)(struct cpufreq_policy *policy);
--	int		(*offline)(struct cpufreq_policy *policy);
-+	void		(*offline)(struct cpufreq_policy *policy);
- 	int		(*exit)(struct cpufreq_policy *policy);
- 	int		(*suspend)(struct cpufreq_policy *policy);
- 	int		(*resume)(struct cpufreq_policy *policy);
--- 
-2.25.1
-
+BR
+Beata
+> Thank you,
+> Sumit Gupta
+> 
+> On 05/04/24 19:03, Beata Michalska wrote:
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > Now that the frequency scale factor has been activated for retrieving
+> > current frequency on a given CPU, trigger its update upon entering
+> > idle. This will, to an extent, allow querying last known frequency
+> > in a non-invasive way. It will also improve the frequency scale factor
+> > accuracy when a CPU entering idle did not receive a tick for a while.
+> > As a consequence, for idle cores, the reported frequency will be the
+> > last one observed before entering the idle state.
+> > 
+> > Suggested-by: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>
+> > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> > ---
+> >   arch/arm64/kernel/topology.c | 17 +++++++++++++++--
+> >   1 file changed, 15 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
+> > index b03fe8617721..f204f6489f98 100644
+> > --- a/arch/arm64/kernel/topology.c
+> > +++ b/arch/arm64/kernel/topology.c
+> > @@ -207,6 +207,19 @@ static struct scale_freq_data amu_sfd = {
+> >          .set_freq_scale = amu_scale_freq_tick,
+> >   };
+> > 
+> > +void arch_cpu_idle_enter(void)
+> > +{
+> > +       unsigned int cpu = smp_processor_id();
+> > +
+> > +       if (!cpumask_test_cpu(cpu, amu_fie_cpus))
+> > +               return;
+> > +
+> > +       /* Kick in AMU update but only if one has not happened already */
+> > +       if (housekeeping_cpu(cpu, HK_TYPE_TICK) &&
+> > +           time_is_before_jiffies(per_cpu(cpu_amu_samples.last_update, cpu)))
+> > +               amu_scale_freq_tick();
+> > +}
+> > +
+> >   #define AMU_SAMPLE_EXP_MS      20
+> > 
+> >   unsigned int arch_freq_get_on_cpu(int cpu)
+> > @@ -232,8 +245,8 @@ unsigned int arch_freq_get_on_cpu(int cpu)
+> >           * this boils down to identifying an active cpu within the same freq
+> >           * domain, if any.
+> >           */
+> > -       if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
+> > -           time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
+> > +       if (!housekeeping_cpu(cpu, HK_TYPE_TICK) || (!idle_cpu(cpu) &&
+> > +           time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS)))) {
+> >                  struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
+> >                  int ref_cpu = cpu;
+> > 
+> > --
+> > 2.25.1
+> > 
