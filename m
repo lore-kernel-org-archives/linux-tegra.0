@@ -1,147 +1,111 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B190A134D1;
-	Thu, 11 Apr 2024 19:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BD18C13;
+	Fri, 12 Apr 2024 05:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712863830; cv=none; b=ikP1+ANNIoGt3IeoScSYoAYoVjUF+YQG+kEL9F/iU9guovU4uOQInrMQF+1Fwk31fwV8Mg/8Ddj+agl7JQ0ujJskpXNyI81hGc2kF/y3cIYjXk9awWvxWMwIKEciCjr7ZPTjxnnc6CFKKCaQqX2hnprfRBeJ5I1hgmNhsqWlo/Y=
+	t=1712899563; cv=none; b=eZ6JYSbYJ7zYO/JcYufA3mUiZjTVkzGZDvmxYbcouVp+f+nKda0i3M8b9S6bCZwp+uevtpVGcQcYmbuzYNu0UUm8S8EwvLQm8eFgT7ocax/E5iR/IC7FBoBFt283NGRy4yfvfwQbLqFhU8onWOs8473KVGb84BECEy0ETZwbEDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712863830; c=relaxed/simple;
-	bh=nh2Upng/Ji4PI8OKXrJFPEst72tzht4Q2xUmho5cW2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KzPof5QXJf+PM0G1mIJbkEsTSQdNXYhexe7ORfusob8Omoc+aKuIFMIuStIVgMmotu5vyiXYuc36QssNIlLrga5z+TLtI4AmGl+oVvNdhRphQ0+bmLkWrVtgkAlepw5oXnOSc4qJzUIP0/cP/DRhiBlM/9A9ACHJBNkcS4FNYFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1843E113E;
-	Thu, 11 Apr 2024 12:30:56 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E20F3F64C;
-	Thu, 11 Apr 2024 12:30:23 -0700 (PDT)
-Date: Thu, 11 Apr 2024 21:30:16 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	ionela.voinescu@arm.com, vanshikonda@os.amperecomputing.com,
-	sudeep.holla@arm.com, will@kernel.org, catalin.marinas@arm.com,
-	vincent.guittot@linaro.org, yang@os.amperecomputing.com,
-	lihuisong@huawei.com, linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v4 3/4] arm64: Update AMU-based frequency scale factor on
- entering idle
-Message-ID: <Zhg6SLfqrRUf0vmp@arm.com>
-References: <20240405133319.859813-1-beata.michalska@arm.com>
- <20240405133319.859813-4-beata.michalska@arm.com>
- <3ab3cbc1-234f-e0b6-4521-298018547aad@nvidia.com>
+	s=arc-20240116; t=1712899563; c=relaxed/simple;
+	bh=jpqJhTY47pAvsZcvGp52FxqplLyvpgZ6IIxGmctWvNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VEqLH9vtQNB8qTxFe2LwQ1nAn3Qa8OZmaTU53QzbVpCifJ9YyMgFotrQBM5N1PMaKfHOBElCdgxY3wVL3xjZltA9GKtgMIxI2ae9LZ7d9TfYqmLI9zqX21zjF0Bmz6w3cZJ6vhNf7UXHWaOaHVfqQfjBozDo5k1W4JDSkIDOGA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6bWn+gL; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6bWn+gL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B804FC2BBFC;
+	Fri, 12 Apr 2024 05:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712899562;
+	bh=jpqJhTY47pAvsZcvGp52FxqplLyvpgZ6IIxGmctWvNo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R6bWn+gLd/jROclyuyoZWPvcS6lVwEtivIy5gmTB2YZljPkgXYySf7oLSW+Wl7cOj
+	 VIDQPOIt4T4W/5CkOc38BKWJHQmnxkGK1PdF9Y6r3vW5K+5iL3hCj9bJm0SjfU1xIr
+	 a7NsrKld/1iMzpGokvYA3YRNkZlIlx+QTIRAg72r5ABNodwUMz8eAU1l85UUqyXTsf
+	 xT9sPbpc8V+H0z6n/tfYk4G9TZNOidaIcbF/uHWzAWfd0AIxfgQO+cD58mYF64GZT+
+	 V8hR/5OS5zcnacX9Kayvb/OJ1xKGQSGmwY4H+ZmjXkKtCTWX1ng9XihUyblBgqplww
+	 xPG8cyon/LYzA==
+Message-ID: <862d37e1-ab3e-42b6-9591-131751be808e@kernel.org>
+Date: Fri, 12 Apr 2024 07:25:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3ab3cbc1-234f-e0b6-4521-298018547aad@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: host1x: Add missing 'dma-coherent'
+To: Jon Hunter <jonathanh@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240409082324.9928-1-jonathanh@nvidia.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240409082324.9928-1-jonathanh@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 11, 2024 at 12:27:00AM +0530, Sumit Gupta wrote:
+On 09/04/2024 10:23, Jon Hunter wrote:
+> The dtbs_check reports that the 'dma-coherent' property is "unevaluated
+> and invalid" for the host1x@13e00000 device on Tegra194 and Tegra234
+> platforms. Fix this by updating the dt-binding document for host1x to
+> add the 'dma-coherent' property for these devices.
+> 
+> Fixes: 361238cdc525 ("arm64: tegra: Mark host1x as dma-coherent on Tegra194/234")
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
 
-Hi Sumit,
-> Hi Beata,
-> 
-> This patch is giving abort due to 'amu_fie_cpus' mask which gets allocated
-> later in 'init_amu_fie()'.
-> 
->  ] smp: Bringing up secondary CPUs ...
->  ] Unable to handle kernel read from unreadable memory at virtual
->    address 0000000000000000
->    .......
->  ] Call trace:
->  ]  arch_cpu_idle_enter+0x30/0xe0
->  ]  do_idle+0xb8/0x2e0
->  ]  cpu_startup_entry+0x3c/0x50
->  ]  rest_init+0x108/0x128
->  ]  start_kernel+0x7a4/0xa50
->  ]  __primary_switched+0x80/0x90
->  ] Code: d53cd042 b8626800 f943c821 53067c02 (f8627821)
->  ] ---[ end trace 0000000000000000 ]---
->  ] Kernel panic - not syncing: Oops: Fatal exception
-> 
-> Added cpumask_available() check before access to fix.
-> 
->  +++ b/arch/arm64/kernel/topology.c
->  @@ -211,9 +211,13 @@ void arch_cpu_idle_enter(void)
->   {
->          unsigned int cpu = smp_processor_id();
-> 
->  -       if (!cpumask_test_cpu(cpu, amu_fie_cpus))
->  +       if (cpumask_available(amu_fie_cpus) &&
->  +           !cpumask_test_cpu(cpu, amu_fie_cpus))
->                  return;
-> 
-That's actually a gruesome mistake on my side. Thanks for catching that one.
-On that note: arch_freq_get_on_cpu should be also protected case amu fie init
-fails for some reason. Will be sending an update.
+With mentioning in commit msg that these devices are actually
+dma-coherent (and after Rob's explanation):
 
-Thanks again.
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
----
-BR
-Beata
-> Thank you,
-> Sumit Gupta
-> 
-> On 05/04/24 19:03, Beata Michalska wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > Now that the frequency scale factor has been activated for retrieving
-> > current frequency on a given CPU, trigger its update upon entering
-> > idle. This will, to an extent, allow querying last known frequency
-> > in a non-invasive way. It will also improve the frequency scale factor
-> > accuracy when a CPU entering idle did not receive a tick for a while.
-> > As a consequence, for idle cores, the reported frequency will be the
-> > last one observed before entering the idle state.
-> > 
-> > Suggested-by: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>
-> > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> > ---
-> >   arch/arm64/kernel/topology.c | 17 +++++++++++++++--
-> >   1 file changed, 15 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kernel/topology.c b/arch/arm64/kernel/topology.c
-> > index b03fe8617721..f204f6489f98 100644
-> > --- a/arch/arm64/kernel/topology.c
-> > +++ b/arch/arm64/kernel/topology.c
-> > @@ -207,6 +207,19 @@ static struct scale_freq_data amu_sfd = {
-> >          .set_freq_scale = amu_scale_freq_tick,
-> >   };
-> > 
-> > +void arch_cpu_idle_enter(void)
-> > +{
-> > +       unsigned int cpu = smp_processor_id();
-> > +
-> > +       if (!cpumask_test_cpu(cpu, amu_fie_cpus))
-> > +               return;
-> > +
-> > +       /* Kick in AMU update but only if one has not happened already */
-> > +       if (housekeeping_cpu(cpu, HK_TYPE_TICK) &&
-> > +           time_is_before_jiffies(per_cpu(cpu_amu_samples.last_update, cpu)))
-> > +               amu_scale_freq_tick();
-> > +}
-> > +
-> >   #define AMU_SAMPLE_EXP_MS      20
-> > 
-> >   unsigned int arch_freq_get_on_cpu(int cpu)
-> > @@ -232,8 +245,8 @@ unsigned int arch_freq_get_on_cpu(int cpu)
-> >           * this boils down to identifying an active cpu within the same freq
-> >           * domain, if any.
-> >           */
-> > -       if (!housekeeping_cpu(cpu, HK_TYPE_TICK) ||
-> > -           time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS))) {
-> > +       if (!housekeeping_cpu(cpu, HK_TYPE_TICK) || (!idle_cpu(cpu) &&
-> > +           time_is_before_jiffies(last_update + msecs_to_jiffies(AMU_SAMPLE_EXP_MS)))) {
-> >                  struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-> >                  int ref_cpu = cpu;
-> > 
-> > --
-> > 2.25.1
-> > 
+Best regards,
+Krzysztof
+
