@@ -1,61 +1,60 @@
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAF48C15
-	for <linux-tegra@vger.kernel.org>; Sat, 13 Apr 2024 08:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDAA2C695
+	for <linux-tegra@vger.kernel.org>; Sat, 13 Apr 2024 08:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712995335; cv=none; b=QjTOdKlIb3xwO6H7K1YdSUCIZA7oIpgHWR531KDCzk6+c8NVm/cvX3RJbmUteCxWSV10B12UtgX5jor6jSRVVDJ9hUQGgsg5o3USPMRTZ/fXii6nr4EgOxyN/IxPLLb1n6vmZoImfO8WkJUb6BR93y9TixL0Rr1W+DQggPTuByw=
+	t=1712995670; cv=none; b=bjtovMwvsubTnIFJiDVhSunEl02GKdawMAvr6xX9YzJnb3a31x+6Xr1pkmyh2U5FU4rO6AuVkyp7hBLqec5eGtoa5aIsV8thMZuj3iZNMHa2yOnR3MTkgajzwRtMU8IvLNji1nbC5mAvsikq4g5OxEP2TmgZ/DvjfiqR8W2dnHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712995335; c=relaxed/simple;
-	bh=/FMnDrFvn/ac2eyTEfDwVJY8dGEebOCkmn/hrxXKmtA=;
+	s=arc-20240116; t=1712995670; c=relaxed/simple;
+	bh=tt6zkK7YmMeD45G+qXK0Va/Vf/vWlRbMlO+3n/fMV6k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uZdTzPkulRzRzUBIg1dY6VXwqA+xaU7jAMs42HfNXYMeEXfYlVCo449y0MCKjgcb7FzBMqP8uoOzGzMsBF9X8rfuqmdlRc2fD5scuvLF2RweLviNTBMW0/VGZYkI8xdeDkcE/2CyTeKwoyj+zFjjSQLBoya6ufcVF2Pj/mg4Z4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hTzGfmkA; arc=none smtp.client-ip=209.85.208.43
+	 In-Reply-To:Content-Type; b=MUfZGYYNu+owM1ISGXFr373nkGWpyLEMTzJk08TWoj2+OHLfvMwQqGMmfh9yNVvwGaM3AvdIzjwQzCA2n/YKfResbY9QIxN5iFGZHlNtShmAbuaCu9wdguFz4ev/90gUqWtQ601SRosXf1D0Y8nCWVxFfqU06ELLHv80ebeIx7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eNLbJ2YN; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hTzGfmkA"
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-56fffb1d14bso2074557a12.1
-        for <linux-tegra@vger.kernel.org>; Sat, 13 Apr 2024 01:02:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eNLbJ2YN"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41802e8db57so7542575e9.0
+        for <linux-tegra@vger.kernel.org>; Sat, 13 Apr 2024 01:07:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1712995330; x=1713600130; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1712995667; x=1713600467; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=MYxSvTZV0QhP2VxfrLbu9TxcgwYSjB8O5eiX7G7c2QM=;
-        b=hTzGfmkAxF10t6ki19eIZwEy5zzcvSIlxp0bhFjhPicS16s/JWliXqFGaykLeVqo2V
-         AQP155znpbdSKWdK86QvvPy5REOwT8pNanBvAUn5r4M+xcPhghjP+vKAK5V4UTDo3b4M
-         VLFV+USa1uGF3xL8d7kcWrHZgFM9Z+/0bEzVEP3nvnTYjwNRyZ0HxBnRL7rJUnJhddrW
-         XKldi/qeDm87K8dwKe27hhNK2zgLkajoBlGfzVk338kUJ39OLifNzlK2OU5hB/HZP1Mt
-         q0pM3tCHoxjjs2uuS1fTw8Hn8xCpKiWJ1n+uJJ3w45SV/9EYAGBdsy23uTgYC4+omBvY
-         f7uQ==
+        bh=q/3tng0VjAStnB/hD45/MS4h2HTxtyck/GpuJ8Rkf1A=;
+        b=eNLbJ2YNT5/s58RjDJez+iiX7uMeIzaeh3RTIK5/nOlSJU6ES3J/Wxm+kbWO/l7Wfe
+         pOvqbKInwR6mW4sElfMl3K89sF3vYQ3biHrdyKG7tWIfkPcH1k9QXv0b052J3p8Xa0bY
+         EXzrZmPBn4V0YwCBQCVZgj3wrZDgbE+T1asDuqMNrvCH2Lm6UXFfXJZM1y9ce5FAnatG
+         2f1nP71cbAI49rsi9WQTTsm7T0C4FIuNZKLKU39rhAQHQ/TXXPWiRiLE95vaxOAYdtmp
+         XwtO6yPRVMLmNQaM6sjpGCWQlsaxBEg3YkkQkCuun8rXE3inP0HtiQVW595d/qdjXdiV
+         3JuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1712995330; x=1713600130;
+        d=1e100.net; s=20230601; t=1712995667; x=1713600467;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MYxSvTZV0QhP2VxfrLbu9TxcgwYSjB8O5eiX7G7c2QM=;
-        b=BTuGxw13EF/W1Fgu2cAURAKxu+9ZmJgkbzWuQ3UvFhwKXsrz7uSiUjbY8nSThiALej
-         x5PghN6Y6iiSSjtRUezTN3F+YdIHLHhL8fvdF+puloTbs+N+84wF018NchUQeqL93wQy
-         LB+P4eDv1kY5LNl2CMEXS+vbrRwuJjyKIFdhQvjscTzLd7HgJWhZJ7f1O7N99z1Sxc6y
-         K/VEe/7OVkXATB/MLxOBgbB6NJfO2deG8W9IMcN2VYq0WvMQseu2GQFi8psYOe9QvOVS
-         FnQUTEXnE8GaOAaKhB+spGfpMlNbt3XkUrF7aqw3eVotkYWjIOZfi8Nva9vd0mnSOfOy
-         QrQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXI4xcTyY84Owv0sZ8M/QdSiBxVCNSaVTANtKVWDiUQ+IGNwW9L6LCmsVKka3IijEigNqfBG2Kd+mSfG96j5PTS44iKmz4AzpVwDB8=
-X-Gm-Message-State: AOJu0Yzi5GJ4s9Ze43KsL0oaRqvXPNQlhJkDroWNmJUuMPosPKnJzDjT
-	RrbhOstQhgC6z4LG+8C63du49/+vZBdzfI4kzim6dKSmlY0i9UE8CDgFCtB4s4EJ6yKsJS4M6SD
-	0
-X-Google-Smtp-Source: AGHT+IEvTltNWU0YG0KOLJQ+VpwSXqbR1ybfLaEfGE2MNaSt2/d/6QK4vt+6sdKeFI6bv7udR4MnUA==
-X-Received: by 2002:a05:6402:5295:b0:56b:f2d8:1552 with SMTP id en21-20020a056402529500b0056bf2d81552mr6516689edb.13.1712995329640;
-        Sat, 13 Apr 2024 01:02:09 -0700 (PDT)
+        bh=q/3tng0VjAStnB/hD45/MS4h2HTxtyck/GpuJ8Rkf1A=;
+        b=U6Ym/1SXv1f9/iyJ362/IonMSpK4sxwiDQqdt8A8Vm1IFftIKsM5Xk/XsdsAjTys/O
+         uPIey5w3Asq+/1//V7MH+BW9tx01ZcxZLToZP8z8eHS4O6mZkmNfPTkrqwoIIJk++KHD
+         qM9C+nlNVr3YCMq6YHykH3d3/9HUKrd5sty0DGfcMr/ZG87/dZkRtzvrdqIFGL1ASMOB
+         STXULlca9RVhRn326Jfk7kwzq8WtdrcBQHsDpAo52EU56u6Gi8OSbpQ2kzFJsM4dkI1a
+         EHn+EoLv0P9DkLD4oYyx1w8Esu4LeQYYG3kCxYwLy6tzQ6YUz5qe8Q0AMSQ5hwXJoVBZ
+         JBEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOgOCJe96jS9MaaoF51XnBpTflLIo3jYGBXamMUP5EcvriknxVJxTlQjSyfrZBfK23mTjz4UxkFzt+vOOadaq2fCqevnxwZ0MbDyI=
+X-Gm-Message-State: AOJu0YzHMBrW9D0NZooHrms1/SHC43w6ebl1rKrHYmd96tpBtK1WRDN1
+	uOxxEEbaP3EVfypu1uMcpx6RpWAkGYdjrhTsf+y9DCQulp7AEJE0B7qz5m2GESc=
+X-Google-Smtp-Source: AGHT+IF17hmVezuOq22/4Svs/+rDoPu/fNBz3ys1LkqoW36Lg9iW3mkGbR4gVRUibRQ9BA3PFxdfIg==
+X-Received: by 2002:a05:600c:5493:b0:417:ca54:e9de with SMTP id iv19-20020a05600c549300b00417ca54e9demr4666651wmb.41.1712995666692;
+        Sat, 13 Apr 2024 01:07:46 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id cb12-20020a0564020b6c00b0056e67aa7118sm2469168edb.52.2024.04.13.01.02.08
+        by smtp.gmail.com with ESMTPSA id t8-20020a05600c198800b004180c7a06f8sm3360342wmq.16.2024.04.13.01.07.45
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Apr 2024 01:02:09 -0700 (PDT)
-Message-ID: <b80aa6b2-2c55-4e6b-8882-e57634dfde15@linaro.org>
-Date: Sat, 13 Apr 2024 10:02:07 +0200
+        Sat, 13 Apr 2024 01:07:46 -0700 (PDT)
+Message-ID: <54d2d6f5-4628-42d0-aea5-6c1790cf356d@linaro.org>
+Date: Sat, 13 Apr 2024 10:07:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -63,12 +62,12 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] memory: tegra: Change macros to interpret parameter
- as integer
+Subject: Re: [PATCH 6/7] memory: tegra: Move compare/update current delay
+ values to a function
 To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, thierry.reding@gmail.com,
  jonathanh@nvidia.com, linux-tegra@vger.kernel.org
 References: <20240409094632.62916-1-diogo.ivo@tecnico.ulisboa.pt>
- <20240409094632.62916-5-diogo.ivo@tecnico.ulisboa.pt>
+ <20240409094632.62916-7-diogo.ivo@tecnico.ulisboa.pt>
 Content-Language: en-US
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -115,35 +114,115 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240409094632.62916-5-diogo.ivo@tecnico.ulisboa.pt>
+In-Reply-To: <20240409094632.62916-7-diogo.ivo@tecnico.ulisboa.pt>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/04/2024 11:46, Diogo Ivo wrote:
-> Convert the macros that manipulate the delay values to interpret their
-> index parameter as an integer to allow the introduction of loops.
+> Separate the comparison/updating of the measured delay values with the
+> values currently programmed into a separate function to simplify the
+> code.
 > 
 > Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
 > ---
->  drivers/memory/tegra/tegra210-emc-cc-r21021.c | 33 +++++++------------
->  1 file changed, 11 insertions(+), 22 deletions(-)
+>  drivers/memory/tegra/tegra210-emc-cc-r21021.c | 84 +++++++++----------
+>  1 file changed, 38 insertions(+), 46 deletions(-)
 > 
 > diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-> index a80c3b575612..65157bd5dc24 100644
+> index 566e5c65c854..ec2f84758d55 100644
 > --- a/drivers/memory/tegra/tegra210-emc-cc-r21021.c
 > +++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-> @@ -75,29 +75,29 @@ enum {
->   * The division portion of the average operation.
->   */
->  #define __AVERAGE_PTFV(dev)						\
-> -	({ next->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX] =	\
-> -	   next->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX] /	\
-> +	({ next->ptfv_list[dev] =					\
-> +	   next->ptfv_list[dev] /					\
+> @@ -113,19 +113,35 @@ enum {
+>  #define __MOVAVG(timing, dev)                      \
+>  	((timing)->ptfv_list[dev])
+>  
+> +static bool tegra210_emc_compare_update_delay(struct tegra210_emc_timing *timing,
+> +					      u32 measured, u32 idx)
+> +{
+> +	u32 *curr = &timing->current_dram_clktree[idx];
+> +	u32 rate_mhz = timing->rate / 1000;
+> +	u32 tmdel;
+> +
+> +	tmdel = abs(*curr - measured);
+> +
+> +	if (tmdel * 128 * rate_mhz / 1000000 > timing->tree_margin) {
+> +		*curr = measured;
+> +		return true;
+> +	}
+> +
+> +	return false;
+> +}
+> +
+>  static u32 update_clock_tree_delay(struct tegra210_emc *emc, int type)
+>  {
+>  	bool periodic_training_update = type == PERIODIC_TRAINING_UPDATE;
+>  	struct tegra210_emc_timing *last = emc->last;
+>  	struct tegra210_emc_timing *next = emc->next;
+>  	u32 last_timing_rate_mhz = last->rate / 1000;
+> -	u32 next_timing_rate_mhz = next->rate / 1000;
+>  	bool dvfs_update = type == DVFS_UPDATE;
+> -	s32 tdel = 0, tmdel = 0, adel = 0;
+>  	bool dvfs_pt1 = type == DVFS_PT1;
+>  	u32 temp[2][2], value, udelay;
+>  	unsigned long cval = 0;
+>  	unsigned int c, d, idx;
+> +	bool over = false;
+>  
+>  	if (dvfs_pt1 || periodic_training_update) {
+>  		udelay = tegra210_emc_actual_osc_clocks(last->run_clocks);
+> @@ -174,17 +190,9 @@ static u32 update_clock_tree_delay(struct tegra210_emc *emc, int type)
+>  			else if (periodic_training_update)
+>  				__WEIGHTED_UPDATE_PTFV(idx, cval);
+>  
+> -			if (dvfs_update || periodic_training_update) {
+> -				tdel = next->current_dram_clktree[idx] -
+> -						__MOVAVG_AC(next, idx);
+> -				tmdel = (tdel < 0) ? -1 * tdel : tdel;
+> -				adel = tmdel;
+> -
+> -				if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
+> -				    next->tree_margin)
+> -					next->current_dram_clktree[idx] =
+> -						__MOVAVG_AC(next, idx);
+> -			}
+> +			if (dvfs_update || periodic_training_update)
+> +				over |= tegra210_emc_compare_update_delay(next,
+> +							__MOVAVG_AC(next, idx), idx);
+>  
+>  			/* C[c]D[d]U[1] */
+>  			idx++;
+> @@ -202,35 +210,26 @@ static u32 update_clock_tree_delay(struct tegra210_emc *emc, int type)
+>  			else if (periodic_training_update)
+>  				__WEIGHTED_UPDATE_PTFV(idx, cval);
+>  
+> -			if (dvfs_update || periodic_training_update) {
+> -				tdel = next->current_dram_clktree[idx] -
+> -						__MOVAVG_AC(next, idx);
+> -				tmdel = (tdel < 0) ? -1 * tdel : tdel;
+> -
+> -				if (tmdel > adel)
+> -					adel = tmdel;
+> -
+> -				if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
+> -				    next->tree_margin)
+> -					next->current_dram_clktree[idx] =
+> -						__MOVAVG_AC(next, idx);
+> -			}
+> +			if (dvfs_update || periodic_training_update)
+> +				over |= tegra210_emc_compare_update_delay(next,
+> +							__MOVAVG_AC(next, idx), idx);
+>  		}
+>  	}
+>  
+> -	return adel;
+> +	return over;
 
-Aren't you missing now () over dev?
+You are now returning always 0 or 1, while previously it was tmdel,
+which I suppose is not 0/1.
 
-Are you sure this passes checkpatch --strict?
+This looks odd, especially that function prototype did not change.
+
+
 
 Best regards,
 Krzysztof
