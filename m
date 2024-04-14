@@ -1,177 +1,177 @@
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20922E644
-	for <linux-tegra@vger.kernel.org>; Sun, 14 Apr 2024 10:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FECB53E3B;
+	Sun, 14 Apr 2024 15:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713091922; cv=none; b=Z8U7A41v1sgdJijV4/KhzKSRFxkbjAXp1hbSD/N9Lwsr8ndZ/Afdm1E/Ep7WKPcj57GdRYN6xfzMeIy6uoi6ZchlT/rrjCNocDR/ZB0HWSIwho+WdrjQ7ry8L+NE6bswsUQ1dCjh8u6CWQa/HjD3T2JAVX+xWTFCUj+lbUUoWoY=
+	t=1713107399; cv=none; b=LPLcSW1VsJj0Mt72D/S+BJx3+QU+CSg4trvp+VhDatkrv6DuY9GOPdEtk/2CNr3SXi9BJ05Dv5Z+FtC8g5xcnv48uZ0Rjo7Nqg1IqVW/eNbOgdnSKv40QWXxJw0ZeQdLhEwNr7zPH36Yr8p7L2QYRrrX18gh+8luZpUDHB6KjZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713091922; c=relaxed/simple;
-	bh=Fskwbnc4cdeRPyqLU32Z5qy2jXRijiOAUXtekazEu2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UpvKcHkIcKo8QfrT5nuaKHPllJhqjWXeQFJcOHO1J04Nv9ydOHM+XQ8rwi7zvAZnVeGhY8rV34tkAC6cxVUXOGjHZpkzzO7ZZvjY4aOLY1dv1L6HahRYjYLuSKY46OhVg2ZatEfVPOORxc0wS7hA1iNWZf7o8KUmSdMLE6vj1mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CWaP99Nr; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713107399; c=relaxed/simple;
+	bh=RUUUUU/+MRaqLUQ6S2Lt6OlxPXhSdGhtCyfL9ss746A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=F3bAf8I+TVIiR1lpQwROss5ZE0Af85162hWEYMKVAZszgO1UF0LAkvh3/SwTHghrRIzDN3dktVqo2ygnHSJi8HW8ZRmYvdW7UWh2ksZH3+HLj4oMheTD1l1gZQ8vOpYmeOLQv8ViEGwoV/Ptw+rRQbe0VIY7CBkYkR4NzvgdEPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=DdqFIUYA; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CWaP99Nr"
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5aa241232faso2079436eaf.0
-        for <linux-tegra@vger.kernel.org>; Sun, 14 Apr 2024 03:52:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713091920; x=1713696720; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=z86tADjA34jPDvp0sH69LSJjWH6CGCLDMrpq88/Jt4c=;
-        b=CWaP99NrQRXk3iFK/wgoPbgyUyGNFKCr4YFHVgLI5kt74TfD3aPIvUhRxQY35Y72gr
-         8US1fOCunZipK17hTN/LOMXEdlxau01EEf07VFTwJvlw3ts18vKMRyQ8LpQOU19oQYhD
-         lOQcO/ev3XiUEttz4LZOXi8DicZ9/bpTUpAO3tM5HiY3kYzQLnhKkZGlTKPb3+axyWtb
-         L7BbkVoyNfRPHCY+51XaJ4kWSuK5GRTPbpDr2N3drgzT7KO0mJ1PnbDSKJrQx04ySfmL
-         hcuq/+Ncj6C+V+qaDlmdU1nfDW3po9kZiKu3LAl4VWu1iSZY+uiCsB8KPQgDFlMt0MT1
-         1NZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713091920; x=1713696720;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z86tADjA34jPDvp0sH69LSJjWH6CGCLDMrpq88/Jt4c=;
-        b=FyjhnNeF5C2L374tNBkg0b46p4/V3elzDsfp3fD0EsYTGe6cFGj/eBKo612mcS0n/M
-         jLWQAXOhHpM2OpBHzkqjajPXKlslI2WmfZUR+hZrTibKcIbWC90zAqKnZES7Uw7C9XoA
-         Oc56ywlawB6C9soz8h/JULlKXisIFxYS7DGOkS62rRBlt8mbSUJGCMTTRG4G6UK1HHCj
-         E/knsbP70gEAy+eBpgR1DpEYtyLBq8GKWw8CbpOQ1avESc3kcLlf1kuWkgqasZFLZsD9
-         hUAw36dyRckSgxk9DDk4UXop0A9FisV6kPrBYU/ABym/1dLnzt8lbIAniJUt1dkx1Xlx
-         M5ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWI3lgcBG4N+ly3DftbBCewwqRLSmmJGFmu+T7zeIP1wi3FXfgN6YtS4i6xwcpfAuQIittwn9Uq6jpjIwuNe/tFfzS9JRufLAHwzrw=
-X-Gm-Message-State: AOJu0YyxLv8qUFlA5ZCy0wEZCnn7kyL+vqWX2H38MMqDgd/SB5UZnUtP
-	kqGWPM8Bo/kdBIeAmzZvyR+t5BNx7w8dEFbOiu7crGwFAyoqF/fu4Hey6/nszA==
-X-Google-Smtp-Source: AGHT+IHG73jN0JyTXE5YMG9IYvVbYRtG5PEk5LWJ00N9WZxttyYSYCMKrPxspcM2aGpT1bTva1r7xA==
-X-Received: by 2002:a05:6808:218c:b0:3c5:eddb:47c1 with SMTP id be12-20020a056808218c00b003c5eddb47c1mr9182957oib.5.1713091919486;
-        Sun, 14 Apr 2024 03:51:59 -0700 (PDT)
-Received: from thinkpad ([120.60.136.171])
-        by smtp.gmail.com with ESMTPSA id im22-20020a170902bb1600b001dcfaf4db22sm5944167plb.2.2024.04.14.03.51.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Apr 2024 03:51:59 -0700 (PDT)
-Date: Sun, 14 Apr 2024 16:21:48 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Vidya Sagar <vidyas@nvidia.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Minghuan Lian <minghuan.Lian@nxp.com>,
-	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Srikanth Thokala <srikanth.thokala@intel.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, Niklas Cassel <cassel@kernel.org>,
-	linux-arm-kernel@axis.com, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v12 8/8] PCI: endpoint: Remove "core_init_notifier" flag
-Message-ID: <20240414105148.GC2294@thinkpad>
-References: <20240327-pci-dbi-rework-v12-8-082625472414@linaro.org>
- <20240412202216.GA14590@bhelgaas>
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="DdqFIUYA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1713107393; x=1713712193; i=marvin24@gmx.de;
+	bh=ntElP8UDVq6xXia05JurblK5tesZnH1qmkBN4MkVbYY=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:
+	 References;
+	b=DdqFIUYA9NUpTQxT+Jg4xUUZNKqdHlnnmj7DHFMUNInzyFmzlh0KajRHlP2LYuu/
+	 i2sKJwBOIafCesP5VMUt97Fkjzkm/jICIEB03D/lt1kst8WUabTtT/+1Xsz8cFoCM
+	 aWr9tw/7axj3BlvZgT7ocoDF7FRblPdODoRBDzV+O2iRaVAwammuoysGFeHGfdseE
+	 rtBYtbUEP0agfalHmwLyDgajGpEYtt40++xYoF9NdBTLkPRz+uDrSYEUEmuSTnQJa
+	 1j78ZxUVcRz4TSYP7q1oucCFnwMAu8TdcXQZMr2HEPvn7SfMavfxW37LCsT58h9XE
+	 qh9lvu6qQQ/7zZFT4A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from n5219w05.fritz.box ([109.250.32.91]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MTzfG-1sLlop1t2I-00R2p9; Sun, 14
+ Apr 2024 17:09:53 +0200
+From: Marc Dietrich <marvin24@gmx.de>
+To: linux-staging@lists.linux.dev
+Cc: linux-tegra@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	Marc Dietrich <marvin24@gmx.de>
+Subject: [PATCH V2 4/5] staging: nvec: make i2c controller register writes robust
+Date: Sun, 14 Apr 2024 17:09:37 +0200
+Message-ID: <20240414150937.22621-1-marvin24@gmx.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <2024041156-renderer-shrunk-6da7@gregkh>
+References: <2024041156-renderer-shrunk-6da7@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240412202216.GA14590@bhelgaas>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7Jpo07An8cN1gA5xybhRGtBNc+u3X8qRhKQSvsYTaFkAIU8w0Up
+ LC9DXivBjiphxXF/Yxb7eRs/sK10NyO2HXaxbXgR6B7rfYIjwCbz5jSWwojIagMU6gkwCGL
+ VkuMmnN90LKfzFsz0NQdv8TUgHwtVIYPgGWoXJtGq9ipyPBZDVdjqI6PK1h431u5Pn9hyXb
+ FAI6Tnk8TOWUztdEvDgkw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XcgkCco9oVo=;6nqHHAEBT3kun2Raos3pUvmHXoa
+ 79kyxb/Mzw+yIXc6A9vXantw98I9DYJzj3HNpdT8AHmFtwjPMBAZRY3ZqlqL1NlrZevmiy9PX
+ Er2Nix2ZW3KTxTRu6ggwAQY6wPOpsEAdPKbQP292HFTZ8BkPyjW3rJffa2E0dJ+5S+MuR2r8Y
+ 3nMPuuTCnqYSsqWwOpUQt+W2xSE7+hRCNBk9ojmKXDrFsA+uwKpTiC45oTkwzvoQzWHEBmlTX
+ 0Bdb2cJLXoB/XozXj7Srqf+MNHoAOZn0LQypvk3Pp5+hksHSWz7US/11v6eqv8VVGjTUe7RD5
+ +Lw9tGDK4Qe+tOHdKu30Cq8j5r7hJAeyr04/JTt2Vqnsy0DbGMC1Ugxem57Omqfz2wcNa64UV
+ NB3HGtPlQ/IgmUj8K0ByTwGs6Glh44xMiEaYWkxK2uVIV2dcl8a+WQKbSfuuTamvF5DEDfbCj
+ Ch9L/MiytJWMTaanJZRqRMkh023BKjvjmDwLpFOHNjlFSzZoaLf/fHj0f5v5awgfwKsTvlCSq
+ ATbYuPJiVCiC9PJz6j4LN0+vT5s1Qrso/mPVMRL/0HMxcXJiO7RDnMMBHfE/n0cDndEbzQ2O6
+ JyCX1DGyA03EZeZiqEkAuwmcm7aE9m/QdSuT0Ghh7KgKr5BUF/JYRrZN6DCnyC1ipqFY4/D+5
+ QEqDMXiXzYb+LTTN6KD2EexIDsZBAgSQg0v4nY0vRwwBiEYgZRY8HKl5u3Mq8je9uEH/38+jq
+ 2ASJPXyvGj0oaPGVUuf7sN+QX0ZZn+70eaRJFPu/MNxBemtue0fn8mBuu7cXboDmvPDkYcYo4
+ 7HxDTfMaKZOjHmgJWWvW2phEK1vr66Tcm9dccOcKt8lGs=
 
-On Fri, Apr 12, 2024 at 03:22:16PM -0500, Bjorn Helgaas wrote:
-> On Wed, Mar 27, 2024 at 02:43:37PM +0530, Manivannan Sadhasivam wrote:
-> > "core_init_notifier" flag is set by the glue drivers requiring refclk from
-> > the host to complete the DWC core initialization. Also, those drivers will
-> > send a notification to the EPF drivers once the initialization is fully
-> > completed using the pci_epc_init_notify() API. Only then, the EPF drivers
-> > will start functioning.
-> > 
-> > For the rest of the drivers generating refclk locally, EPF drivers will
-> > start functioning post binding with them. EPF drivers rely on the
-> > 'core_init_notifier' flag to differentiate between the drivers.
-> > Unfortunately, this creates two different flows for the EPF drivers.
-> > 
-> > So to avoid that, let's get rid of the "core_init_notifier" flag and follow
-> > a single initialization flow for the EPF drivers. This is done by calling
-> > the dw_pcie_ep_init_notify() from all glue drivers after the completion of
-> > dw_pcie_ep_init_registers() API. This will allow all the glue drivers to
-> > send the notification to the EPF drivers once the initialization is fully
-> > completed.
-> 
-> Thanks for doing this!  I think this is a significantly nicer
-> solution than core_init_notifier was.
-> 
-> One question: both qcom and tegra194 call dw_pcie_ep_init_registers()
-> from an interrupt handler, but they register that handler in a
-> different order with respect to dw_pcie_ep_init().
-> 
-> I don't know what actually starts the process that leads to the
-> interrupt, but if it's dw_pcie_ep_init(), then one of these (qcom, I
-> think) must be racy:
-> 
+The i2c controller needs to read back the data written to its registers.
+This way we can avoid the long delay in the interrupt handler.
 
-Your analysis is correct. But there is no race observed as of now since the IRQ
-will only be enabled by configuring the endpoint using configfs interface and
-right now I use an init script to do that. By that time, the driver would've
-already probed completely.
+V2: rebase against staging-next
 
-But there is a slight chance that if the driver gets loaded as a module and the
-userspace script starts configuring the endpoint interface using inotify watch
-or something similar, then race could occur since the IRQ handler may not be
-registered at that point.
+Signed-off-by: Marc Dietrich <marvin24@gmx.de>
+=2D--
+ drivers/staging/nvec/nvec.c | 41 ++++++++++++++++++++++---------------
+ 1 file changed, 24 insertions(+), 17 deletions(-)
 
->   qcom_pcie_ep_probe
->     dw_pcie_ep_init                                             <- A
->     qcom_pcie_ep_enable_irq_resources
->       devm_request_threaded_irq(qcom_pcie_ep_perst_irq_thread)  <- B
-> 
->   qcom_pcie_ep_perst_irq_thread
->     qcom_pcie_perst_deassert
->       dw_pcie_ep_init_registers
-> 
->   tegra_pcie_dw_probe
->     tegra_pcie_config_ep
->       devm_request_threaded_irq(tegra_pcie_ep_pex_rst_irq)      <- B
->       dw_pcie_ep_init                                           <- A
-> 
->   tegra_pcie_ep_pex_rst_irq
->     pex_ep_event_pex_rst_deassert
->       dw_pcie_ep_init_registers
-> 
-> Whatever the right answer is, I think qcom and tegra194 should both
-> order dw_pcie_ep_init() and the devm_request_threaded_irq() the same
-> way.
-> 
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 45df190c2f94..214839f51048 100644
+=2D-- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -570,6 +570,22 @@ static void nvec_tx_set(struct nvec_chip *nvec)
+ 		(uint)nvec->tx->size, nvec->tx->data[1]);
+ }
 
-Agree. The right way is to register the IRQ handler first and then do
-dw_pcie_ep_init(). I will fix it in the qcom driver.
++/**
++ * i2c_writel - safely write to an I2C client controller register
++ * @val: value to be written
++ * @reg: register to write to
++ *
++ * A write to an I2C controller register needs to be read back to make su=
+re
++ * that the value has arrived.
++ */
++static void i2c_writel(u32 val, void *reg)
++{
++	writel_relaxed(val, reg);
++
++	/* read back register to make sure that register writes completed */
++	readl_relaxed(reg);
++}
++
+ /**
+  * nvec_interrupt - Interrupt handler
+  * @irq: The IRQ
+@@ -604,7 +620,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 	if ((status & RNW) =3D=3D 0) {
+ 		received =3D readl(nvec->base + I2C_SL_RCVD);
+ 		if (status & RCVD)
+-			writel(0, nvec->base + I2C_SL_RCVD);
++			i2c_writel(0, nvec->base + I2C_SL_RCVD);
+ 	}
 
-Thanks for spotting!
+ 	if (status =3D=3D (I2C_SL_IRQ | RCVD))
+@@ -696,7 +712,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
 
-- Mani
+ 	/* Send data if requested, but not on end of transmission */
+ 	if ((status & (RNW | END_TRANS)) =3D=3D RNW)
+-		writel(to_send, nvec->base + I2C_SL_RCVD);
++		i2c_writel(to_send, nvec->base + I2C_SL_RCVD);
 
--- 
-மணிவண்ணன் சதாசிவம்
+ 	/* If we have send the first byte */
+ 	if (status =3D=3D (I2C_SL_IRQ | RNW | RCVD))
+@@ -713,15 +729,6 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 		status & RCVD ? " RCVD" : "",
+ 		status & RNW ? " RNW" : "");
+
+-	/*
+-	 * TODO: replace the udelay with a read back after each writel above
+-	 * in order to work around a hardware issue, see i2c-tegra.c
+-	 *
+-	 * Unfortunately, this change causes an initialisation issue with the
+-	 * touchpad, which needs to be fixed first.
+-	 */
+-	udelay(100);
+-
+ 	return IRQ_HANDLED;
+ }
+
+@@ -737,15 +744,15 @@ static void tegra_init_i2c_slave(struct nvec_chip *n=
+vec)
+
+ 	val =3D I2C_CNFG_NEW_MASTER_SFM | I2C_CNFG_PACKET_MODE_EN |
+ 	    (0x2 << I2C_CNFG_DEBOUNCE_CNT_SHIFT);
+-	writel(val, nvec->base + I2C_CNFG);
++	i2c_writel(val, nvec->base + I2C_CNFG);
+
+ 	clk_set_rate(nvec->i2c_clk, 8 * 80000);
+
+-	writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
+-	writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
++	i2c_writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
++	i2c_writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
+
+-	writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
+-	writel(0, nvec->base + I2C_SL_ADDR2);
++	i2c_writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
++	i2c_writel(0, nvec->base + I2C_SL_ADDR2);
+
+ 	enable_irq(nvec->irq);
+ }
+@@ -754,7 +761,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nve=
+c)
+ static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
+ {
+ 	disable_irq(nvec->irq);
+-	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
++	i2c_writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+ 	clk_disable_unprepare(nvec->i2c_clk);
+ }
+ #endif
+=2D-
+2.43.0
+
