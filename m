@@ -1,57 +1,57 @@
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396A4158D93
-	for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 19:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E1D1598E0
+	for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 19:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713209673; cv=none; b=fuWytFDTF5EMTOpZImQO1n4Ge0QAwEPt2yeMS4DyHOP+aGCX8XvQpQ991mjQAY/PHX1RxXMPzNhsKVABXDyvF3eZG0RnG03TecWGC/ZtJJYaRRANqF870QzaRAOR8VPYGfa6c9VSlHCR5TIPIQinxtfPatgqffXXAYlma0hvWLA=
+	t=1713209675; cv=none; b=RQLn6dHgowDJoKrrRuq0QrfiTjVGzyuRCdcyNOY4Nck+l7AE6cPvP7qrXO0O1Dr9joyKz2CLX5vL3qQ/TSimlX7IYTr9uhAikXq8jC1buJJtb6frj39xjmuopoBPxgB0H8m8g1eE5PyUZZJSGJbPEh8Z+cbl5qbHHakLyBpyVhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713209673; c=relaxed/simple;
-	bh=pkDHUvzM/3se4qU8yUrUNq79FeC7MKupjn4wDvpoFwE=;
+	s=arc-20240116; t=1713209675; c=relaxed/simple;
+	bh=MbsdVQbCUWEGseggQJElQClzRok+A7X+zU8VpB5HgWY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Goca4Htpp4HpZR84dTL3/sKRviX4+0SSz8UxmHSh6KNQjGf0tJCg2ruceiBZ/RaVX1p1hhES2RjOMtEaIrO5t5le/Co4mbYtoezXN/7JwBDYSX7N3NlT/+aJ8BrkbM2eSLfWAxy0QSyXacsoE37KNrdqdSg15S8oqwwgorbgim4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QYMJSCyQ; arc=none smtp.client-ip=209.85.160.45
+	 In-Reply-To:To:Cc; b=UZJGZuYwjjLmq9alUPrmWAfg578kSWRZbTdhH/oGrtoNo9iv9730LPNalQ/P97SvaWYPsfHeSo/1zr3isxBOyViiTjtjSRiq0FlLG7yVQ48E4Okelb5vhus7qjoZsAyGqBACqc69bKpMFllaqReGfZihkvohhRe3AI+fvd7w8qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KAGuS3tW; arc=none smtp.client-ip=209.85.210.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QYMJSCyQ"
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-22f01274622so2465031fac.1
-        for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 12:34:31 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KAGuS3tW"
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6eb797e10ceso1201259a34.1
+        for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 12:34:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1713209670; x=1713814470; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1713209672; x=1713814472; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vq+7mr1szAOvpscJpegvOEKeeaK/lFJAotzxeoFP90w=;
-        b=QYMJSCyQu2pYKBMrqNgWiQMA1aCst9SYKIqikmRxzmY52VuUPd47LQSHB4A8FAOoNe
-         GoRnjaDRfZtd4YOqjawhovTXVtgjpUb2DcL7wuwLMUKLzVpuak6Macw9bONnoK0mGYFs
-         DHrrqPs4QTJykLWjzpi3FrcxPl4AUXNIhzyr0=
+        bh=30a1609TFHVDYvbsiCwVx5jyS7S7qnpRfAGqZPi3zic=;
+        b=KAGuS3tWCioKwaL4Veddi+f+nmt9O+ydZxCzOVHCtWE680n4ncHcBVba6K2jJWC+8i
+         c420YEitDUOvtoJyOfc+PMWsYShnlihUavtt020b8oZeST+9yHpPnKQqCORD44KhhaG8
+         QOlB/BvNEV82iE7HgvghN8LqjQtVnipAwmIlg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713209670; x=1713814470;
+        d=1e100.net; s=20230601; t=1713209672; x=1713814472;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vq+7mr1szAOvpscJpegvOEKeeaK/lFJAotzxeoFP90w=;
-        b=OKn+NUQYmUfAiFgWKnoJwsdUU/topzEmlU6oEN0dU/SaQQli6spth1C2Ujr1u2aAUd
-         o2t7KIPJ/TdYth4Fj2NDhCDN4sB4Z+bcxb5QXYnw6MkfzMpjO48avuWODs8PFtt7MIkr
-         7dadhyucwpQFYuOAnv/Ehb9Ounk1RGzi3yLNWBOYsWtcrRir7AyqpB0ISbBybOCjLmby
-         fPnlPqkrRRxYxBWSks0SCU4Ksmh2/StpG/fx2LfeMAPMqLHGrZTgoT41ZkF7mtJC9H7Z
-         K2wwptiocjHRkqUUnJ4z9aJDxt/gO7+f3hGW0Jba2zxbX7ajIYpAn1zb7QrKVlOI8uig
-         Gp9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWp9MzMlmbqBCqq/W6Oczrkm5S1ZVXDEeTVUX8V5FqMaeWJSiVfQ2ct1Vc2iN5Xhul4CYnRKDE/t5d0zEgJeLM+GG0NEzuQZ26Ui6M=
-X-Gm-Message-State: AOJu0Yzhyv6YOPLu01LuBfgzQxqRTakdPRIkGqmRptEsVAFDsYSDruy1
-	MoGdMt2oA084Q66uusgYXdIuUNO4802vZXYFZetx9J6sLSckrxQ7JcAN8AQQNw==
-X-Google-Smtp-Source: AGHT+IFDs72yHh14dMP/v3LcOXYq1AzGZaPkrHXx/btoSixg8uGduMLiI7a2hIPG7rGea4VcIV3D3Q==
-X-Received: by 2002:a05:6870:9a97:b0:22a:2e6:b82e with SMTP id hp23-20020a0568709a9700b0022a02e6b82emr13491647oab.38.1713209670403;
-        Mon, 15 Apr 2024 12:34:30 -0700 (PDT)
+        bh=30a1609TFHVDYvbsiCwVx5jyS7S7qnpRfAGqZPi3zic=;
+        b=OCJDy/KdB8HMkkrszTBlwUX5nm2HaEM10/qcHoDysRTYxmP4b4ZNaOnGTtvznWe/tG
+         qQwLWgOv5AQlTrwG9OSoq0b/6xrvk6TJkF8GpcIIb6H7us/1k3QEbhm9+yhdEC4bsqAm
+         8Od21ptronZvrbAhiLaJB8zbZV+E44KYKObJUp8/FSb1wVEbGSfHq7IjnOP93tm9DWCf
+         9xCAtrOnxDwoQEKwc7DDf1r1mjiSRNMzW3f7P6+4TqQTKby76jdmWdWauy7Fbrd8ZFa3
+         2m9yLWLk9xDyh9wj7gT5Oqa0YV/xpIkZKCeN77/QEXUeNzZCr8/QJ8UHXRjHFf8Bwtyb
+         Ok2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV/B0v60FLW51UiMiXfmpXCLHknpefbG4vFVhHLz7AoxbAB6laZQl8Us+oOXHwCIDUhlPnuMIpLrSg7TIFDCZMb20UA/pwzAQrTdkE=
+X-Gm-Message-State: AOJu0Yx1/MFIsDC81U8UvZJjAiFDWAKnvJFTV+C+X10+lLB1RY+CCZyk
+	XP+SbZmMGYGjt2+CNpCR+U0EfAvUVA5EyHBCfsfALMJGc7uroO+3eVu/TRsTpQ==
+X-Google-Smtp-Source: AGHT+IFajy4caV38o9egD00xBm8+r7fFdvax0FnbVE1biamOQ+jag9WqCsqV4RWMv5Us6Un2NRlLiw==
+X-Received: by 2002:a05:6830:14cf:b0:6eb:7a07:8746 with SMTP id t15-20020a05683014cf00b006eb7a078746mr5458830otq.31.1713209672276;
+        Mon, 15 Apr 2024 12:34:32 -0700 (PDT)
 Received: from denia.c.googlers.com (114.152.245.35.bc.googleusercontent.com. [35.245.152.114])
-        by smtp.gmail.com with ESMTPSA id s26-20020ae9f71a000000b0078d3b54eb76sm6718055qkg.78.2024.04.15.12.34.29
+        by smtp.gmail.com with ESMTPSA id s26-20020ae9f71a000000b0078d3b54eb76sm6718055qkg.78.2024.04.15.12.34.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Apr 2024 12:34:29 -0700 (PDT)
+        Mon, 15 Apr 2024 12:34:31 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 15 Apr 2024 19:34:20 +0000
-Subject: [PATCH 03/35] media: uvcvideo: Refactor iterators
+Date: Mon, 15 Apr 2024 19:34:22 +0000
+Subject: [PATCH 05/35] media: go7007: Use min and max macros
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -60,7 +60,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240415-fix-cocci-v1-3-477afb23728b@chromium.org>
+Message-Id: <20240415-fix-cocci-v1-5-477afb23728b@chromium.org>
 References: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
 In-Reply-To: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
 To: Martin Tuma <martin.tuma@digiteqautomotive.com>, 
@@ -106,76 +106,31 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.12.4
 
-Avoid using the iterators after the list_for_each() constructs.
-This patch should be a NOP, but makes cocci, happier:
+It makes the code simpler and cocci happier:
 
-drivers/media/usb/uvc/uvc_ctrl.c:1861:44-50: ERROR: invalid reference to the index variable of the iterator on line 1850
-drivers/media/usb/uvc/uvc_ctrl.c:2195:17-23: ERROR: invalid reference to the index variable of the iterator on line 2179
+drivers/media/usb/go7007/go7007-fw.c:1292:14-15: WARNING opportunity for max()
+drivers/media/usb/go7007/go7007-fw.c:1293:14-15: WARNING opportunity for min()
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/uvc/uvc_ctrl.c | 24 +++++++++++++-----------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+ drivers/media/usb/go7007/go7007-fw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index e59a463c2761..a4a987913430 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -1850,16 +1850,18 @@ int __uvc_ctrl_commit(struct uvc_fh *handle, int rollback,
- 	list_for_each_entry(entity, &chain->entities, chain) {
- 		ret = uvc_ctrl_commit_entity(chain->dev, entity, rollback,
- 					     &err_ctrl);
--		if (ret < 0)
-+		if (ret < 0) {
-+			if (ctrls)
-+				ctrls->error_idx =
-+					uvc_ctrl_find_ctrl_idx(entity, ctrls,
-+							       err_ctrl);
- 			goto done;
-+		}
- 	}
- 
- 	if (!rollback)
- 		uvc_ctrl_send_events(handle, ctrls->controls, ctrls->count);
- done:
--	if (ret < 0 && ctrls)
--		ctrls->error_idx = uvc_ctrl_find_ctrl_idx(entity, ctrls,
--							  err_ctrl);
- 	mutex_unlock(&chain->ctrl_mutex);
- 	return ret;
- }
-@@ -2165,7 +2167,7 @@ static int uvc_ctrl_init_xu_ctrl(struct uvc_device *dev,
- int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
- 	struct uvc_xu_control_query *xqry)
- {
--	struct uvc_entity *entity;
-+	struct uvc_entity *entity, *iter;
- 	struct uvc_control *ctrl;
- 	unsigned int i;
- 	bool found;
-@@ -2175,16 +2177,16 @@ int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
- 	int ret;
- 
- 	/* Find the extension unit. */
--	found = false;
--	list_for_each_entry(entity, &chain->entities, chain) {
--		if (UVC_ENTITY_TYPE(entity) == UVC_VC_EXTENSION_UNIT &&
--		    entity->id == xqry->unit) {
--			found = true;
-+	entity = NULL;
-+	list_for_each_entry(iter, &chain->entities, chain) {
-+		if (UVC_ENTITY_TYPE(iter) == UVC_VC_EXTENSION_UNIT &&
-+		    iter->id == xqry->unit) {
-+			entity = iter;
- 			break;
- 		}
- 	}
- 
--	if (!found) {
-+	if (!entity) {
- 		uvc_dbg(chain->dev, CONTROL, "Extension unit %u not found\n",
- 			xqry->unit);
- 		return -ENOENT;
+diff --git a/drivers/media/usb/go7007/go7007-fw.c b/drivers/media/usb/go7007/go7007-fw.c
+index 018019ba47d4..86ce593e0c54 100644
+--- a/drivers/media/usb/go7007/go7007-fw.c
++++ b/drivers/media/usb/go7007/go7007-fw.c
+@@ -1289,8 +1289,8 @@ static int avsync_to_package(struct go7007 *go, __le16 *code, int space)
+ 		0xbf99,		(u16)((-adjratio) >> 16),
+ 		0xbf92,		0,
+ 		0xbf93,		0,
+-		0xbff4,		f1 > f2 ? f1 : f2,
+-		0xbff5,		f1 < f2 ? f1 : f2,
++		0xbff4,		max(f1, f2),
++		0xbff5,		min(f1, f2),
+ 		0xbff6,		f1 < f2 ? ratio : ratio + 1,
+ 		0xbff7,		f1 > f2 ? ratio : ratio + 1,
+ 		0xbff8,		0,
 
 -- 
 2.44.0.683.g7961c838ac-goog
