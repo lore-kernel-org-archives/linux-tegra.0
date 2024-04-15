@@ -1,57 +1,57 @@
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B3A15E21C
-	for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 19:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6096C15E5CA
+	for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 19:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713209688; cv=none; b=a4DiCe/4ikpTcRrBc1HIXcU3CzDKLCw5uLh93wPxVUKM60aOyZ/ENSGzocwWE7rN3fC6ALwnHO2QZM1nNvxxbqY0yQSgxeOfADQ+NaEsDgODd8Zs73Fu8WEMa1orSgZ4ozdVDp+C/bCZHvZH0nyAACxe+uRpkUzZC1wNbGSIHDU=
+	t=1713209690; cv=none; b=NbaACECEUXOOqlrkk1aw4xqPK2RN3eCGpHybGADKHtQuqxKv2YPdTXgNcp68FE8o2sLm+eje417T31CPpmYURS+hhY4f6WHvOXIPAyLcSS7UbMkToYSqRZ5LKxIttlbHFQyJgRH3A1u3dHPMqt8s5sVEb/uIIypgLzcPV6tHmvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713209688; c=relaxed/simple;
-	bh=MUqVtQZnq5YrPZr6pNTFJQr9fKe11JNLTSYR8M7S0M0=;
+	s=arc-20240116; t=1713209690; c=relaxed/simple;
+	bh=QMsjv+wettsGw23pqby6M5jpWOg9Tw4lhss0lX66IJI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fff5P8vUB0GH3rAcJ1WJZehvdy7Tdaes5hHyIwaaU4ttyIABwAB+i8yKOIr0hbwu21d/nor+0Ow+w5epTHrMkZw1UjpsB6PjuwP1aPvVFD980aDVZWHpnBQ0kNM39newyT2NRxWjFvDp5P9UWHaKGSRmLybT9j/XvHzjqh8Hryo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gtAXBN29; arc=none smtp.client-ip=209.85.210.48
+	 In-Reply-To:To:Cc; b=jrxRFGboC0bpV1sa93a/hZAjVP+2JQhzpTLYFBg9auAAF2NkHLM2qyT1YLxvYoj9M2zBtJlJney/eWuFKIGrFCGRCPd8lAJF1+4YfbJfyL7Wo7Iq74bwogTIguh23ExNc7ibce7CX2Z1CefDO4tE+eKxY2+JyyQe2TaV8g9Cn0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Aw8PVAeS; arc=none smtp.client-ip=209.85.222.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gtAXBN29"
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6eb7500abe3so894815a34.2
-        for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 12:34:45 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Aw8PVAeS"
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-78ebc7e1586so472921885a.1
+        for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 12:34:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1713209685; x=1713814485; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1713209687; x=1713814487; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=9DQ62C5vkEz8a1t/8x1ghE+E9JYa6TkiF3DSBiMd/dY=;
-        b=gtAXBN299AOxQv4Ao9JEm1WX/KzKvP0EdCg041KDQu4xJxItcdHCWtt4XPPhaSR0iq
-         wNe8Xzz12jv01p/IiJxzzmbECfk2rPK1Ds+QEotxLbT0rPe6OXxb2b9aN6zokvxG4dtP
-         NEwAiBraf9xeCFASUHI6VjTxM9k1z8OHceBqo=
+        bh=VH1TTY2R78PVfXYnT8sQaYwvCkEpO00JMLA8gBHoObU=;
+        b=Aw8PVAeShZ4GKhUDYCsi2PsqSye237i9HPTPm5MU6c/HPaFPfsyJtQd89eZHNpm34a
+         383SVnae4OoILq4kG05YEdXY9ArcAK+nX+5Ku2mIY+EiO3aJDpQuTbjmNjkWlMwyTPQJ
+         6JDOEM/aiAPq5mgjy4d/Q3LEkvJKRx0KgKrMY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713209685; x=1713814485;
+        d=1e100.net; s=20230601; t=1713209687; x=1713814487;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9DQ62C5vkEz8a1t/8x1ghE+E9JYa6TkiF3DSBiMd/dY=;
-        b=qliZrSOXOtnItlwqthruW/ywG3FS0/Uz7oQ3KkY9J3hAGqEo4S+9l/H69uX9IdI68C
-         +nn8W/cH102pZk8ylstqkCqT+JW3gEZJMQI2vHptWJimhX1MkT3JSJNTmyrWwux6arHR
-         fVuSfys+AntPh0oY72Fa3MSkiXhMNmqNDhp4wc3/0C+4+NE55njfrEy3fYmnBmYPQ/ow
-         cccFMjUztHmfvaCfCW/dSzbrJ7oiwWnics1SSUwWHhL29nmWg5f56R8QnquvHVIUyonG
-         Xfd+4fI6bXUw098kD/YboJzuXF1wbfcSA49LGvXt13bBEwwPr75q+29bd0lEIcjVqK1c
-         tIOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVU7r2bHVGioo5pJZ6IGPl46RU/bVa0ME/E0WQREqC3/oc4JUF7haoh3JYxWDs3MONmQxZIUNGiPRsVb2bN+Cuv32x78s7qY4pVIlk=
-X-Gm-Message-State: AOJu0Yw7EOEovrhwtHKDp1uUnGtS3dGGx2snHoRP/aNPg3M2MoFy3Uwf
-	QnMUvWJb/khMcSxD1zuYmCOQ/oeREURUGdINfjG11vvXKoXnwxtomdiTo3/9yQ==
-X-Google-Smtp-Source: AGHT+IEAF9806y97qmHJ2SnDYiOLkOnVwPWcqFC1NWaJsEOh0gdLwpHuhOdGRcF5Wy59Aixlf/05/w==
-X-Received: by 2002:a05:6830:100f:b0:6ea:ab3:5c1e with SMTP id a15-20020a056830100f00b006ea0ab35c1emr12447905otp.29.1713209685165;
-        Mon, 15 Apr 2024 12:34:45 -0700 (PDT)
+        bh=VH1TTY2R78PVfXYnT8sQaYwvCkEpO00JMLA8gBHoObU=;
+        b=h6QodI7kOKhGp5XjtYJgHQZi142nyRas5bHuRsBCFqsAoDszKdoUpU7nBq9FpQhH9t
+         vC3MllIX70ZhwYYzBb5HyYbVvRHKnxxrLi9vdWSRvW2b+dnsxyRo1+GkUFENPgCLQCTN
+         C8TSYXjAKfvE18dySzE/y3TY/KpM22g2i9qcuXQt2jBPCRXJw0ALiFXOc5mX05ucI1GT
+         WDx9Hy2/mhHMG7oZ4XzLKzBILVcwy15iMWSDxlzniH7nnevImZJoxREBakPiFGUJgby7
+         OGq3JohZfGP4hDnBqr3+KjWs5lfabBHcWO54oqCo4I4r9Hrxm8PKu9IL259uXG6spu0U
+         eFPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpBdQ70NURXZ7aelgB7RkpP+G1rR12XAUjeV6W+9At+gufO4OpupvhSRFWn+Br+2EVNZbmTvcWWzOTKx6KZewTcvOrxpLm9z7yTrc=
+X-Gm-Message-State: AOJu0YwcOICHFC1sE9zDK42RA5r78LzAA9yLh1grbIqsePSeZwOgDMXP
+	WmGrKsrFTJFY8xmWcV2WAQjFhEW1uJgcISp76i2HKjTuRDF9Gc00SY3YrRhWpQ==
+X-Google-Smtp-Source: AGHT+IFZZwBtLZMDNfJayMBU/PaT+EdKNrIoBaFoYxfd58lYWJrbZu6cOvIxZ8QNIWMRuOhipLdFVA==
+X-Received: by 2002:a05:620a:2953:b0:78d:61fe:77c6 with SMTP id n19-20020a05620a295300b0078d61fe77c6mr1118634qkp.2.1713209687511;
+        Mon, 15 Apr 2024 12:34:47 -0700 (PDT)
 Received: from denia.c.googlers.com (114.152.245.35.bc.googleusercontent.com. [35.245.152.114])
-        by smtp.gmail.com with ESMTPSA id s26-20020ae9f71a000000b0078d3b54eb76sm6718055qkg.78.2024.04.15.12.34.44
+        by smtp.gmail.com with ESMTPSA id s26-20020ae9f71a000000b0078d3b54eb76sm6718055qkg.78.2024.04.15.12.34.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Apr 2024 12:34:44 -0700 (PDT)
+        Mon, 15 Apr 2024 12:34:47 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 15 Apr 2024 19:34:32 +0000
-Subject: [PATCH 15/35] media: netup_unidvb: Use min macro
+Date: Mon, 15 Apr 2024 19:34:34 +0000
+Subject: [PATCH 17/35] media: flexcop-usb: Use min macro
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -60,7 +60,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240415-fix-cocci-v1-15-477afb23728b@chromium.org>
+Message-Id: <20240415-fix-cocci-v1-17-477afb23728b@chromium.org>
 References: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
 In-Reply-To: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
 To: Martin Tuma <martin.tuma@digiteqautomotive.com>, 
@@ -106,29 +106,32 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.12.4
 
-Simplify the code.
+Simplifies the code.
 
 Found by cocci:
-drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c:138:26-27: WARNING opportunity for min()
+drivers/media/usb/b2c2/flexcop-usb.c:201:8-9: WARNING opportunity for min()
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/b2c2/flexcop-usb.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c b/drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c
-index 46676f2c89c7..1c885d620b75 100644
---- a/drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c
-+++ b/drivers/media/pci/netup_unidvb/netup_unidvb_i2c.c
-@@ -135,7 +135,7 @@ static void netup_i2c_fifo_tx(struct netup_i2c *i2c)
- 		(readw(&i2c->regs->tx_fifo.stat_ctrl) & 0x3f);
- 	u32 msg_length = i2c->msg->len - i2c->xmit_size;
- 
--	msg_length = (msg_length < fifo_space ? msg_length : fifo_space);
-+	msg_length = min(msg_length, fifo_space);
- 	while (msg_length--) {
- 		data = i2c->msg->buf[i2c->xmit_size++];
- 		writeb(data, &i2c->regs->tx_fifo.data8);
+diff --git a/drivers/media/usb/b2c2/flexcop-usb.c b/drivers/media/usb/b2c2/flexcop-usb.c
+index 790787f0eba8..3ba6a5ed7167 100644
+--- a/drivers/media/usb/b2c2/flexcop-usb.c
++++ b/drivers/media/usb/b2c2/flexcop-usb.c
+@@ -197,10 +197,7 @@ static int flexcop_usb_memory_req(struct flexcop_usb *fc_usb,
+ 		return -EINVAL;
+ 	}
+ 	for (i = 0; i < len;) {
+-		pagechunk =
+-			wMax < bytes_left_to_read_on_page(addr, len) ?
+-				wMax :
+-				bytes_left_to_read_on_page(addr, len);
++		pagechunk = min(wMax, bytes_left_to_read_on_page(addr, len));
+ 		deb_info("%x\n",
+ 			(addr & V8_MEMORY_PAGE_MASK) |
+ 				(V8_MEMORY_EXTENDED*extended));
 
 -- 
 2.44.0.683.g7961c838ac-goog
