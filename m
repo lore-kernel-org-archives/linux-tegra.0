@@ -1,57 +1,57 @@
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C45165FA6
-	for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 19:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15B5161308
+	for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 19:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713209709; cv=none; b=MlT6ciIrXQymR/JHqo0eKpRcqucxQwLFXSW05j2B+nzN6ffLTPb4hpUfBVeKUFKBo1ELQHoXwjUS3bpE+tO9V9cv77qvBpUXmTjKNJ18EHMPL8X7TxK1UmwG6pFDTbk10N/I6cmvl4uSLSyIKdQszlz1BDm2ac6+XiFox4EiVSE=
+	t=1713209709; cv=none; b=PvWm/EhCNB8pIDIL0Sg9s9HHlPEXSh5mr5LiNy76OWLWDs4/xaNxdpUjLpHzIaUJCImQN0Fjts3QGldwZqwiiG/I0iP9ZFgGO7PleRdy8AATLWV17BS0Ak/6jp9mcaWo0EbECG8V0SkhKHxQ/EcFqtAlsvaSAij0Y0ktGkTmQ+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1713209709; c=relaxed/simple;
-	bh=qwJnKU3Adz8cA71PPhU/Bxyy2mqr5yPU03Dfu92Wqso=;
+	bh=sbLzegDZJboKAA9/je+6QpJ4kVwKzeKe1sqk5xJ4+pg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ky+cG7p7UWkdi6xwPmge3EdH14hygbaPE5xq6VZi9PP1LidxWWpWICH1lKtVV6GTQzI3Kc1O1+tObTa7pxamD2A1d2IihVkgK+EpzaytBFVN/EUpfuOR2fKwntRPRyPKzLH61dW6e4hM4XLyU3NqeQXZs37x2n3hWHdhugUs+t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=izsYgQ3C; arc=none smtp.client-ip=209.85.210.50
+	 In-Reply-To:To:Cc; b=aC85k5SoDMA8KtYMsBknRGuLcF8v0sJvfsATz/iBpRJaBaGHmrQ3y6fyAKiyvx49AQPi3Znt4cuqDNok1GQC9tFjZmdjZCOuCJfm2qEPvr9nR6G5P/9I+tZJVed0GQD25J17hwwAb/OwEVmMmY5ntWa+qumDBAmcElNwIvcw93Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RXSntWiL; arc=none smtp.client-ip=209.85.210.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="izsYgQ3C"
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-6eb658ca1ceso2343622a34.2
-        for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 12:35:03 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RXSntWiL"
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-6eb7d1a5d39so1008071a34.2
+        for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 12:35:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1713209702; x=1713814502; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1713209704; x=1713814504; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HU2Q8r5u9tJlP6QMXdfGI/fLu0DCpsTU5mW0ctKluKw=;
-        b=izsYgQ3CFljk3LL8vR/moStVqPeTNK3vXgul6siNJHAZlZ+rXZt/pWby8RR93x25UA
-         Us0H0crIu2ZmJ9COJR12a6L+1bvwLMj8shIm6f7cx8iTP+p6XzeXjobfYBLJ5Hh3NEZy
-         V2pIqr8Bm6I7642EH7W9GlUUctvow0XE8Yn/I=
+        bh=hZ69zvEi+2hVMHqGREi0s+o1FDmo1qxeLo8vD8Yn8BA=;
+        b=RXSntWiLyE71kiYiA81ZnAMAJVFNDDjTsj2344Bh++m7oSZB6zkq28jsVCwAdLhoT5
+         CFBB8TIzvhOpRXt3uRq7wtFjH/xY6SH6NjMpWKmK64oiUxSK4cz/1NSf2X5CKEt217ON
+         TkMAeyFxlnnOuSssWf0HdQLyikhjSSceC2xQA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713209702; x=1713814502;
+        d=1e100.net; s=20230601; t=1713209704; x=1713814504;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HU2Q8r5u9tJlP6QMXdfGI/fLu0DCpsTU5mW0ctKluKw=;
-        b=jSK4mQIvcMR0kzCEY8NKlZW96ih7fJM3nVvmsJBHKHj9Fo8L8r8js2XYQhuS+FBdGa
-         TMblANj6XyFWACVJVAOba4QuGdbMmBqxr1DoA1IpT48FTOZCpm/7xwRhVf9dp5ZeDzC6
-         BxcnbgTWFXam75jodyL84t1CBnUuVHvMh1bS9YQM+gCYv0BDnMB78g7WgC6FmW6Bp1qG
-         MZ9IG7hCYWiWImkrNiUlbVNFKrHTYp8Yw//smF468Qdx0QsY139VZpV8ArzoaMKgZUR7
-         XXxbg/RswhaI/uy3sAD+MT1uZ9qa0tXJeEycExZS5jG8SICLDt60jJlqeK1UM3dwC+7J
-         tkPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzQngBVA1dvpuasNMtzDvXfNgSidevsDrNBfNo+DUeLcyEb5TpxmMKSaeXk9e13w8/dv4qNm8KrRDB5OWhaCT85u15ggk6nRDbNqc=
-X-Gm-Message-State: AOJu0YyHwWU/5AqV/pe2tfi1Ji8yj5bCZbN8372vcRB/SChW86DQTCHH
-	/mkPGyOeVGkof8aJKD39OBbbTMWvr6hvvH0e6Y9JgyeICm/mzsatJpvPpJiuUQ==
-X-Google-Smtp-Source: AGHT+IFpNLbWkYy4T2kNtWWO3Krrkln4WZhxhxOvSx17rkc4ihK9bZ3DdjfUrMbHC9Tqsq3KJ+SA1g==
-X-Received: by 2002:a9d:6a15:0:b0:6eb:7c52:ed04 with SMTP id g21-20020a9d6a15000000b006eb7c52ed04mr5573331otn.5.1713209702690;
-        Mon, 15 Apr 2024 12:35:02 -0700 (PDT)
+        bh=hZ69zvEi+2hVMHqGREi0s+o1FDmo1qxeLo8vD8Yn8BA=;
+        b=Z8nNolEujj8N0m9rEzQyGPzyr6JBYRDw373EHkGo0pVQhCDbI2tHo6aqjnOdGTYX76
+         738oj7i9VITK3JHIHoUyHdSRGcR/vkkdPVErQ2/0IeS9sZ/8DlzrzahPSwKOShXSCx+4
+         262rHEchRgpei42/Ecumxu3eME4WhI46GcIbL2H/wjz0olCURGD8IkXeXISOxG9jyOZt
+         5Q8Q2HO7xryi3YBFbExyhf1YNxa1fSi35mUiRdYNA54lLOpg7XLwadq2zRse/3w1rQWK
+         73EcuvAJ3JREpTYKXoUBVRw2hsa83ocwH6SWvgjEvEeFFUeNRZmM/adY0Esxj2W6PfOT
+         PIpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzm3idqEz+/2cnL0squsjM2VA3kYlWnT7Su4OUxZguRcmJmjzAoP/OxgcShgY40nQdOIc+vHpdpyg4tqFbP9ZTiXhLzqKjK5y/Z8M=
+X-Gm-Message-State: AOJu0YzGsGJvfWk26+qn+JQjGAcsqj1pf+YsZX9sSdsQlRgU1GzdtBXW
+	WSrp0cRoD1qQ7dTgU0jZKaZutZfnFTH+v97hoxfF4D8+ituGI2XdUfKALjLRTA==
+X-Google-Smtp-Source: AGHT+IGR6r574HxBWsbrxXxGaHrf3NXllaDQAZexGaElZz4TGdMFy5/7Wsa4Z+FqqK7nCIYg/Ya87w==
+X-Received: by 2002:a9d:77cf:0:b0:6eb:68b7:581f with SMTP id w15-20020a9d77cf000000b006eb68b7581fmr7839393otl.22.1713209703885;
+        Mon, 15 Apr 2024 12:35:03 -0700 (PDT)
 Received: from denia.c.googlers.com (114.152.245.35.bc.googleusercontent.com. [35.245.152.114])
-        by smtp.gmail.com with ESMTPSA id s26-20020ae9f71a000000b0078d3b54eb76sm6718055qkg.78.2024.04.15.12.35.01
+        by smtp.gmail.com with ESMTPSA id s26-20020ae9f71a000000b0078d3b54eb76sm6718055qkg.78.2024.04.15.12.35.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Apr 2024 12:35:02 -0700 (PDT)
+        Mon, 15 Apr 2024 12:35:03 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 15 Apr 2024 19:34:48 +0000
-Subject: [PATCH 31/35] media: cx231xx: Refator return path
+Date: Mon, 15 Apr 2024 19:34:49 +0000
+Subject: [PATCH 32/35] media: si4713: Refator return path
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -60,7 +60,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240415-fix-cocci-v1-31-477afb23728b@chromium.org>
+Message-Id: <20240415-fix-cocci-v1-32-477afb23728b@chromium.org>
 References: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
 In-Reply-To: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
 To: Martin Tuma <martin.tuma@digiteqautomotive.com>, 
@@ -109,64 +109,40 @@ X-Mailer: b4 0.12.4
 This is a nop, but let cocci now that this is not a good candidate for
 min()
 
-drivers/media/usb/cx231xx/cx231xx-i2c.c:353:15-16: WARNING opportunity for min()
-drivers/media/usb/cx231xx/cx231xx-i2c.c:262:15-16: WARNING opportunity for min()
-drivers/media/usb/cx231xx/cx231xx-i2c.c:326:15-16: WARNING opportunity for min()
-drivers/media/usb/cx231xx/cx231xx-i2c.c:176:15-16: WARNING opportunity for min()
+drivers/media/radio/si4713/radio-usb-si4713.c:309:15-16: WARNING opportunity for min()
+drivers/media/radio/si4713/radio-usb-si4713.c:360:15-16: WARNING opportunity for min()
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/cx231xx/cx231xx-i2c.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/media/radio/si4713/radio-usb-si4713.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/usb/cx231xx/cx231xx-i2c.c b/drivers/media/usb/cx231xx/cx231xx-i2c.c
-index c6659253c6fb..28de72856c90 100644
---- a/drivers/media/usb/cx231xx/cx231xx-i2c.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-i2c.c
-@@ -173,7 +173,9 @@ static int cx231xx_i2c_send_bytes(struct i2c_adapter *i2c_adap,
- 		status = dev->cx231xx_send_usb_command(bus, &req_data);
+diff --git a/drivers/media/radio/si4713/radio-usb-si4713.c b/drivers/media/radio/si4713/radio-usb-si4713.c
+index 2cf36c8abdde..0ad1bfe09004 100644
+--- a/drivers/media/radio/si4713/radio-usb-si4713.c
++++ b/drivers/media/radio/si4713/radio-usb-si4713.c
+@@ -306,7 +306,9 @@ static int send_command(struct si4713_usb_device *radio, u8 *payload, char *data
+ 					0x09, 0x21, 0x033f, 0, radio->buffer,
+ 					BUFFER_LENGTH, USB_TIMEOUT);
+ 
+-	return retval < 0 ? retval : 0;
++	if (retval < 0)
++		return retval;
++	return 0;
+ }
+ 
+ static int si4713_i2c_read(struct si4713_usb_device *radio, char *data, int len)
+@@ -357,7 +359,9 @@ static int si4713_i2c_write(struct si4713_usb_device *radio, char *data, int len
+ 						data, len);
  	}
  
--	return status < 0 ? status : 0;
-+	if (status < 0)
-+		return status;
+-	return retval < 0 ? retval : 0;
++	if (retval < 0)
++		return retval;
 +	return 0;
  }
  
- /*
-@@ -259,7 +261,9 @@ static int cx231xx_i2c_recv_bytes(struct i2c_adapter *i2c_adap,
- 		status = dev->cx231xx_send_usb_command(bus, &req_data);
- 	}
- 
--	return status < 0 ? status : 0;
-+	if (status < 0)
-+		return status;
-+	return 0;
- }
- 
- /*
-@@ -323,7 +327,9 @@ static int cx231xx_i2c_recv_bytes_with_saddr(struct i2c_adapter *i2c_adap,
- 	/* usb send command */
- 	status = dev->cx231xx_send_usb_command(bus, &req_data);
- 
--	return status < 0 ? status : 0;
-+	if (status < 0)
-+		return status;
-+	return 0;
- }
- 
- /*
-@@ -350,7 +356,9 @@ static int cx231xx_i2c_check_for_device(struct i2c_adapter *i2c_adap,
- 	/* usb send command */
- 	status = dev->cx231xx_send_usb_command(bus, &req_data);
- 
--	return status < 0 ? status : 0;
-+	if (status < 0)
-+		return status;
-+	return 0;
- }
- 
- /*
+ static int si4713_transfer(struct i2c_adapter *i2c_adapter,
 
 -- 
 2.44.0.683.g7961c838ac-goog
