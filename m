@@ -1,184 +1,207 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2052.outbound.protection.outlook.com [40.107.93.52])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2341E896;
-	Mon, 15 Apr 2024 11:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713180157; cv=fail; b=ly0QcPepnL3pXQxhFv13EaUwxZ2E8bfY2rtCaig0s7FIt7tBdygaDWb7TTbdCQyMUXvcvKDSjd+XBn1uX2kGLMdcmBy/O9/Oqoq8sxnNAelCzLCEWyj2bMkFc2hSSYcctcZ8+ZMbtrGephXyYOsX9WKnQQAi7S+DtRA/jggKhUc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713180157; c=relaxed/simple;
-	bh=pQNEcgMeP5VHOMEhtli0Kx4MXsigE9saJoMi0VOE1Dk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=klfsN86quWp2nSdk9PrSc2p3vbSizTpUW9SImndsJeB2Iq/8cg2S+fZIuJ6e1GDppadi3NHNlChLXbSI4Dj37tARud5p6kUL3RQnkwyW7W1TVmQ4kJV5cZFSuFrKbCdxuJSKJGMSEHxmz+jCZhjvTDwSCKBDLa+/iG7KQbdmVMk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WTl381cz; arc=fail smtp.client-ip=40.107.93.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB34E5FDA5;
+	Mon, 15 Apr 2024 11:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713181756; cv=none; b=K4+5uw1HazGFyBSi+KjGXBIKwEWw1yepBdYgYMrx+ViAKtMdPfjcDAj8H42uhZPHmFlyJ9qHmLj1TQt0MdZV26Gx6GFwdj6rMSO8GiWMpSBEORArhQvwzgNW9MZSJVr6C5B46IZoEIzdiBbkAGcJT2q9TECVRS6/mQ2eUXN6OMc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713181756; c=relaxed/simple;
+	bh=G8fWXo3iYomK/Zb8qEDLPhPh/MgtbTcPcQX5b29Ifzk=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Cm3wx9DAkrZUBKvdYdSeToDT9DnQjK2BAgQibht9ZP0n9RISMHZbHeGjtnWpxriZmtxyY4wy46/e9r4c33MoDHef8FvhT5rkLy8oAxDYxK0BfDf2T/xK93hNjssSEGY/HRwg4ZHgNI1A/m4k17OEW3a4qL+ToJazJGhuRJU+Zjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mVNncCu/; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WTl381cz"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K8jUcx2ZkSovekq9Zt40pKHxVOlDGdJkkJ+6WG5L70hWMnvLLjWwotEAFdE4prnluUZeEcCJKZSmJd5LA+bhcZmaCsN9Pq2werjf/VFGCFOSUmNoNBtJMZT/GpjRXK99jsnXLRD3OmSzaSYxNY35vjqGSICaNf1L4B0OqVYyz9PMv4rXd0HE295qq56msXtraJR9Zzf04AuXxdj49QCrdm5rthoQZCbJwnISxVz4lvt3ensrYOSbGIEhHC8KYIP3IaZXdC4xbuKwRzhGHBsxEHBv5WWQu8hEqwwct4ad4IOz3vBQMaOFPZ+9QukDo2GM9Eea9yjOgIAb3IMXkq5wJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZW0/tjjy1Ubg7/v8Q/h05Cbrn5Kh+CxkEitp9J56oE4=;
- b=Fs1ZRPV3fg74D6hA2mk8/8kvHJ6YGLtgiJpyiW0y6U0z/RB5N1OPAO233CGotVuC4jEqRFL3IRtRe57muGwkpjyIo34p4+/7+C8DVTlL15R5c/w2CIWdVgBNq3l3kKVEDCrwaOGEgahQazZNm9M8d1OcYkBVw4F9O++LhibwFsMoKChKmZXlfw47MRfRLrOPtiqDwP30OMqMvVla9JUC0/dmN+LORw40gSJyhKwudIQy/Mo+5Gx0NKk5oO9LS0MY0dLihykBGhAz40yrQ4HfGSFpvE/AQ9ioiTdJyqJ+OHV2ISV3B3KEYd1eTukeNCKhlQITSy3v2vWwAIGVp6COUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZW0/tjjy1Ubg7/v8Q/h05Cbrn5Kh+CxkEitp9J56oE4=;
- b=WTl381cz5HHAX37HJfkZYCqBuG+LMhDMZLV+zXRnDLnOvv2zjMchrSbkX149bx0cC2b/1cSkDxl0oKQmpePJn7/gBdhuGWGeMi9LrhxVV9gUiLRjjRXEVqSj9hsI9lLslZvV2KO31zkz7B05LU1iwCt6Sha9zu6tuoSmH8J9I5tCaGHsuKL7fB68S6n4GjH9qcp41ZCSM13VonNjvsxIlo1tlM3nDwvZAHIUobtBltlK/qeE1hhnmp4QoE6n5yAnJlax9WEk1qd3sBi0W+uS/KHlkq1Pr1EJQvf8VgEe2oikJUFxjNpIo29Qku7HxHjtG7pThgRziqzB/ORVuPDJQA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB6674.namprd12.prod.outlook.com (2603:10b6:510:1c1::18)
- by PH7PR12MB5805.namprd12.prod.outlook.com (2603:10b6:510:1d1::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.50; Mon, 15 Apr
- 2024 11:22:31 +0000
-Received: from PH8PR12MB6674.namprd12.prod.outlook.com
- ([fe80::780:77f6:e0af:5b5c]) by PH8PR12MB6674.namprd12.prod.outlook.com
- ([fe80::780:77f6:e0af:5b5c%4]) with mapi id 15.20.7452.046; Mon, 15 Apr 2024
- 11:22:29 +0000
-Message-ID: <86039c78-d05f-4bae-b2cb-55bbfca8f798@nvidia.com>
-Date: Mon, 15 Apr 2024 16:52:08 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] PCI: tegra194: Fix probe path for Endpoint mode
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
- bhelgaas@google.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
- linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, kthota@nvidia.com, mmaddireddy@nvidia.com,
- sagar.tv@gmail.com
-References: <20240412191402.GA10938@bhelgaas>
-Content-Language: en-US
-From: Vidya Sagar <vidyas@nvidia.com>
-In-Reply-To: <20240412191402.GA10938@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA0PR01CA0081.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:ae::8) To PH8PR12MB6674.namprd12.prod.outlook.com
- (2603:10b6:510:1c1::18)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mVNncCu/"
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240415114905epoutp047ec76ae33f35546306f3645b8a63e6d3~GcbiXPQqs2027520275epoutp04F;
+	Mon, 15 Apr 2024 11:49:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240415114905epoutp047ec76ae33f35546306f3645b8a63e6d3~GcbiXPQqs2027520275epoutp04F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1713181745;
+	bh=xiCoQ88Z4aGkr+U0s3cjc/8zyNw/xshgaY2fZquL++8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=mVNncCu/4q324nre0zv4OS2gPOdqkPVfQgxQVb0C8k9GPKF30WlBMBu8+LVObanpl
+	 ZtaDf7es8zp8wDqChl6ATSV8N5a0br+8bdEhggjd+z5puL/NAe2NNZ4aReN17AIx6L
+	 3Dnl8gALewtz09KtOzW2dFOTuL5ILBztMYs0doIE=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240415114905epcas5p4eacaaad84bb05b4fd2bf1ff9eca4400f~Gcbhyt3Pj1794217942epcas5p4M;
+	Mon, 15 Apr 2024 11:49:05 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4VJ56l4Ylwz4x9Pw; Mon, 15 Apr
+	2024 11:49:03 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A2.EE.09666.F241D166; Mon, 15 Apr 2024 20:49:03 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240415114903epcas5p47c4eeb90c7407377878f6a6bd2bc1458~Gcbfxdu7t1794217942epcas5p4K;
+	Mon, 15 Apr 2024 11:49:03 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240415114903epsmtrp190d3f7c835c3802c90fd5f7e320072df~GcbfvzlT40122301223epsmtrp1R;
+	Mon, 15 Apr 2024 11:49:03 +0000 (GMT)
+X-AuditID: b6c32a49-cefff700000025c2-6f-661d142f157f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	65.57.08390.E241D166; Mon, 15 Apr 2024 20:49:02 +0900 (KST)
+Received: from INBRO000447 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240415114855epsmtip20375f57d0f3c7972dd46af099f38f3dd~GcbYxrnY92898028980epsmtip2b;
+	Mon, 15 Apr 2024 11:48:55 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Rob Herring'" <robh@kernel.org>, <soc@kernel.org>, "'Krzysztof
+ Kozlowski'" <krzysztof.kozlowski+dt@linaro.org>, "'Conor Dooley'"
+	<conor+dt@kernel.org>, "'Florian Fainelli'" <florian.fainelli@broadcom.com>,
+	"'Broadcom internal kernel review list'"
+	<bcm-kernel-feedback-list@broadcom.com>, "'Dinh Nguyen'"
+	<dinguyen@kernel.org>, "'Tsahee Zidenberg'" <tsahee@annapurnalabs.com>,
+	"'Antoine Tenart'" <atenart@kernel.org>, "'Khuong Dinh'"
+	<khuong@os.amperecomputing.com>, "'Liviu	Dudau'" <liviu.dudau@arm.com>,
+	"'Sudeep Holla'" <sudeep.holla@arm.com>, "'Lorenzo	Pieralisi'"
+	<lpieralisi@kernel.org>, "'Ray Jui'" <rjui@broadcom.com>, "'Scott	Branden'"
+	<sbranden@broadcom.com>, "'Robert Richter'" <rric@kernel.org>, "'Shawn Guo'"
+	<shawnguo@kernel.org>, "'Li Yang'" <leoyang.li@nxp.com>, "'Sascha Hauer'"
+	<s.hauer@pengutronix.de>, "'Pengutronix Kernel Team'"
+	<kernel@pengutronix.de>, "'Fabio Estevam'" <festevam@gmail.com>, "'Paul J.
+ Murphy'" <paul.j.murphy@intel.com>, "'Daniele Alessandrelli'"
+	<daniele.alessandrelli@intel.com>, "'Andrew Lunn'" <andrew@lunn.ch>,
+	"'Gregory	Clement'" <gregory.clement@bootlin.com>, "'Sebastian Hesselbarth'"
+	<sebastian.hesselbarth@gmail.com>, "'Matthias Brugger'"
+	<matthias.bgg@gmail.com>, "'AngeloGioacchino Del Regno'"
+	<angelogioacchino.delregno@collabora.com>, "'Thierry Reding'"
+	<thierry.reding@gmail.com>, "'Jonathan Hunter'" <jonathanh@nvidia.com>,
+	"'Bjorn	Andersson'" <andersson@kernel.org>, "'Konrad Dybcio'"
+	<konrad.dybcio@linaro.org>, =?utf-8?Q?'Andreas_F=C3=A4rber'?=
+	<afaerber@suse.de>, "'Heiko Stuebner'" <heiko@sntech.de>, "'Orson Zhai'"
+	<orsonzhai@gmail.com>, "'Baolin Wang'" <baolin.wang@linux.alibaba.com>,
+	"'Chunyan Zhang'" <zhang.lyra@gmail.com>, "'Jisheng Zhang'"
+	<jszhang@kernel.org>, <linux-fsd@tesla.com>, "'Michal Simek'"
+	<michal.simek@amd.com>
+Cc: <devicetree@vger.kernel.org>, <linux-rpi-kernel@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<imx@lists.linux.dev>, <linux-mediatek@lists.infradead.org>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-realtek-soc@lists.infradead.org>,
+	<linux-rockchip@lists.infradead.org>, <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <20240412222857.3873079-1-robh@kernel.org>
+Subject: RE: [PATCH] arm/arm64: dts: Drop "arm,armv8-pmuv3" compatible usage
+Date: Mon, 15 Apr 2024 17:18:54 +0530
+Message-ID: <0b3b01da8f2a$e9560ca0$bc0225e0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB6674:EE_|PH7PR12MB5805:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9bc8dd16-27e8-4c80-6cb0-08dc5d3e5622
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	NuzLvFOx7JdgQfFmuZOvhdFEBLZkkptwpkjUq2RyVeNu24NLkMVKgai/Kaudh2eOSUWIt1/U2jGMuJ0eJNGf/jETeuPn9Rtmeq3cFLr0fxMM0sCqAW5wkapWEJvQkpGm6cGkhTB5LCnAsbDD6x3VcKPwP6g1oIcrNjAGfM+QGeYzMDOw2WJVA3RD7035Y/QHJXrKatgV8eAx8ldbhE1xn2s+CGYY8XhsNvZsIkBFYgWnutO6onm6b8YNG7dG6bj2UZgoTFZpk4nutYwsffyKRplIdonDAsz7c4geFI7UnAbqgMFavynF6+S9jl0V5ZYXcP1tNy8FyaA8A/TrXJ+n9/RklvXdHOXfRba6r8TOAFsaeFyjteJR7pug1jb+BtIincw8r5DkBO2c+RsHO4YSJ5k4mKq1Dcwenf2K4eUwciD9tmVMJfQlLvV1OtBkalN98MEGO3O40U0DE2dgwuIMdhet4Semp3XVYAFpJxRQeYqV9SbXcwVEG3GjJfxHP30vV4NgbvV7olP7BDGeL9dARVveGsodaF7NoVub2OKy5zVdsvugU9MKJueNVJkCiwvhvyI/WsTGLjbb/iqg2xUn1BhOqKjaiDavK8CdvU74wjQYkvXf56zfS0JYCFodve2LDecRqKN7L8gUGa40M4GN5ujNpBJVN47dW0vX7yHuXXY=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB6674.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N3ZmMlJnMjM4Z0VsTE5mR1NMNEg1TkhUcXcrQkZCbkRZVXdDb0pFQlkyLzNu?=
- =?utf-8?B?dFVlanJ1ekFUSFplMEVkRUkwVEdFeGVUVEt6Tlh3dnRRaGRtTE9iZTk4WElx?=
- =?utf-8?B?ZXJhdG1waU5qVGhieVoySTQ3SmtKaUF1N1luZ1dkeFFmT2ZMVnppUXVITFkz?=
- =?utf-8?B?YWZVdEw5RitBbngvNndCNXo5MzN4d3FXVjNXMjk4U1BYNUZQR1ErbVRhc3g0?=
- =?utf-8?B?YXQ3cmIxZ29xbEt4RFBXdnErMzliRFF3OFNUMFF4SEtjOUQ0Y2xzSFFTTHpO?=
- =?utf-8?B?aC8vTjJlTlR3SWcyZzlyZm5qeE13SDJkanFaeXVVRDVTN0haVzZWM25WK3JH?=
- =?utf-8?B?YmFWNTcwbkdNUlpBdUF5c1d4RDVraVpkY2dheEhFajFGVEgvaVZNa3hQMEND?=
- =?utf-8?B?UjhrS0ZkWGtnM0FYczFXODlmdlJ4TGg2dDc2NUFLQmw4bDlnRWdESmFleE1F?=
- =?utf-8?B?cGxOTjQyRnVneXdDeGI5ZnA0cm9CT3U1aU1LTEYxWTNZQkkwRmM0OEM3bURI?=
- =?utf-8?B?RjRJMkREdXppaUdjVmFpaU9BVW1CS2NQMExqd1dmMFhDOWpkOVY5MUhvWlRD?=
- =?utf-8?B?V1ltWjg5NWE4Z3FyWSthSGczSXViZUtwVUE4Y3JxaGhhMk9idmVXNzlaa0E4?=
- =?utf-8?B?dTExSnErNTNsVUlnOFJlTis2eTNVNHhZM0RBWlZnV0ovaEhDck9jV3dqWWZr?=
- =?utf-8?B?RHpGQTEvMWtrNVVVa1NEOHMzYUxEUm0vZWtUZ0IvVmFjSmd4cHV4VjhqdWFV?=
- =?utf-8?B?ZUZQRFdXZEdsRzRST25GTnczaC9qYzZzbWlWbHQ4eUI4VUd4dDMwSWljVTJ1?=
- =?utf-8?B?V1IzMXk1eWxZUXZlZkl1WDJSemk3VzZrc0JZUFpWNkZoZHYxUDE4RVpqUUpG?=
- =?utf-8?B?bDJkUEt4NEZ6aHRscTNXSks3MllwTWlNQlR4REJiTXpvUC8xcCtsQzN5OWZW?=
- =?utf-8?B?OVRtbE0yenhOajF6V0dtSWhDSjNxdDhkbFNIRm9LWU5DcEN2VjhnOS9QRlM1?=
- =?utf-8?B?K3gzMmNQUFFxdGRGTEs3REhBWFBXMFpKZ2FlVHVhd1V0eEhoRDdvVEhYMnlS?=
- =?utf-8?B?ckdGZVd1NEM0L0dLcHRaTk1zSXJMR2pCWVN2TEdkUGZRS09GNzF3K0I3UUI2?=
- =?utf-8?B?RUtuSmFYVEtMT0JJYk1WN3ZidzJSbjhDQWNjSjE1ZlRFVGJkRmxwS0RFMGc0?=
- =?utf-8?B?aXpHR3RtTjUvRmNTTVdrSVlvSVgyRW4wdnpMalZpNHlhc3RxaUs5NXpGQ0NV?=
- =?utf-8?B?azI0WkJVUXRTNmZvdE5PUFVuUzlzVmlWaTE3M2U0Ui9TZm1xVFNENU1tNldv?=
- =?utf-8?B?Y2ZaVndDenJ5K1ZKNVluV3c0ZFpnUkNRWnNVMEs1L2tBQ1JUdUpvVVQvd0Rt?=
- =?utf-8?B?dW0zTlF5Nlg4eTdRc0I4MWdWL1Y1QkhwUEl1RDdQcjFUTWlzRFhjSFlTbjQ5?=
- =?utf-8?B?cFdzTVRScmU3Q2R5MmZyaXh6bzAyeE9mSmV5UVo0Z2xUbU12MGJMTGp5cS9W?=
- =?utf-8?B?d3pLMDF6YVFRSUhaUURQU0ZOUGRoTEl0TzJtT2pUWkE5ajZvd0dBN0xUMy9P?=
- =?utf-8?B?RDZDS2tzV3VuQmRVeG9zRzFaTGdidno5Y0FBL2x0dFdKM2xOZnI5U0dhVVdi?=
- =?utf-8?B?QVRqY2ZlcVdJaTZwZDJqczNUZlNMUTNrWWtINnZZb3U0Z3ozek4yV2hWd3Va?=
- =?utf-8?B?eHFpa3luUi9XRThybnhlZzZ1UFpPUlU5UTNqRkRvay9IVW9rZFQ2SXM3eFVo?=
- =?utf-8?B?VmZ6YkFnTFMyN3pzanFYV0VUV0dWbUxEeG1TRFlUSmorb1dQNmpBWGJYMk5B?=
- =?utf-8?B?L2lLYjl1SmdxaDlkSWF4U2IwRGkzeFRJMTRpTlNxTnc3TUM4L0IrQUZXNHQ2?=
- =?utf-8?B?di9ROVM5U1RjRkQ0WHdVaGN6aUFXcUxPNjMvUnFMbHVnYnA4M1V3cjdkTjZ1?=
- =?utf-8?B?RVhwRzFJc0pkU0dEUWhXdG13UG9ycWlIVCtpSFBpTnBuSGNzQUc5N3I2M25S?=
- =?utf-8?B?UU01OEtyZHpiZGN1QTcyN1FMYXp0NkZSSFBVb25tbWZNL1pPV3ljcHkxSXl4?=
- =?utf-8?B?N2tURVcwWUl1V1F6dGhPaVVHMmp6QmRqMENrOExKODV1SWFXemMvbC9IRmN5?=
- =?utf-8?Q?Jjq0rzBZvcOCcNxpG6oRa+FXy?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9bc8dd16-27e8-4c80-6cb0-08dc5d3e5622
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB6674.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Apr 2024 11:22:29.8325
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Iz7EOLLIKL37kO5owjT8H7NJMz/gNZRwNvixgFLiijEVurg0me6ZKIB1UOgvt20WnnV0s35H/F2GHk+IVBjlug==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5805
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQLY8iYk/Bpt/dsaN0W9BEDsUNhRuQIeG7qZr1t/T6A=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta1CUZRT2/a67MujHxXijtHUdLTUuK7eDeUkj/FRUZpp0pqlwg2+BAXbX
+	3cXSsNBdEUSwrUBYAeWSFBKriwMLQuqKGk1KeEFHxEDAARFSbCoEpYVPy3/POed53uec98yR
+	kO4lEm9JvNog6NTKRDkzlao5O3++j5/nTJV/VuqrYLTpoSZ9CbR0OEi4/AOGh4VHEYw3nkfw
+	Y9Y5CiobLxFw6+4ZBIeaLtFwruUkAV3XNkBVzW0SCr7fBuN3BmjIv72bAZOlhALjeSsDFTl1
+	FBR/XUND+je1FGT3dZHgMJ4mwNbdRoP51EUWuu5tgiv1BQxcMbYisOZeZWC4c5wEc/sxFvJa
+	fiIg408LA6e/20OBacxEwS5TADReaKXhwIODCEYdwzT05lczMN5gZ+FMxXECntTaKBg62oPg
+	j5EV0HfCC7qvjzFQ/oudgpH6IgqqSvNZKO+sZ98O4HdffsLwTwetLF9ZVIn4osrPecvvFxne
+	3lGG+DpLB8uXNvQTvK0ig+FvtTUwfF1XKF9d9iXfV53vJNgfEXyWcYjhjw/ZiciXPkhYEico
+	YwSdTFBHa2Li1bFL5Wvfi3onKijYX+GjCIUQuUytTBKWysMiIn3C4xOd65DLtioTk52pSKVe
+	L/dbtkSnSTYIsjiN3rBULmhjErWBWl+9MkmfrI71VQuGxQp//0VBTuLmhLjiMzZa+9jjs/Z9
+	D9lUlD59L5JKMBeIK27lob1oqsSdO4lwRkfrs2AY4YM3TLQY/IXw/cdt9HPJ5dxsViw0Ipzr
+	MJNi0IfwaPd9ZoLFcD7YXpo2iT25hmn4dlHSBInkMkmcZ901WZByIbi5+ubksx5cBC7sy3Zi
+	iYTi5uL92asm0q5cKK5qbEAidsPN+T3UBCa513DtYAEpdiTDI71HaNFrMS4prSJEjhfuP9c0
+	2SnmTC54fMDIiIIwfDTb+GwcD3zvwglWxN64f38aO9ED5nhcMuYtpuPwYLkViXg5Pn21gJqg
+	kNx8bK33E62m4azRHkJUuuL0NHeRPRcbh65RIn4FmzMzn5nyuKf+EfkVmm15YTDLC4NZXhjA
+	8r/ZYURVoJcFrT4pVtAHaRVq4dP/9h2tSbKhyWNdsNqOOjof+DoQIUEOhCWk3NPV5DFT5e4a
+	o9y2XdBponTJiYLegYKcn20mvWdEa5zXrjZEKQJD/QODg4MDQwOCFXIv14HdhTHuXKzSICQI
+	glbQPdcREql3KhFgyFPVDB9zq2sqkW1+PWDGRunH0dJThd0kzTbNaouY58txUZHW1avLFh2S
+	jm3esH6Dm2rtlLwpNR5JZetD3l/Xdac3U4h7mLZmTur1NS3Fs2Yc/luzx7Di7saIdpXL8mvL
+	MsprvVaMyqokWp0uxXhz589FK2fteGo3bwrp8FzYnhO+5UBnqNFkowJUZ0cevKXS0Tc08WMU
+	77OwLTV6zuzh7i0qs094wkDKu6kVndMPTAtbmZAT/m1znefesSPSugs72eaCN1q+aNru6VJU
+	qe4VloX4058UZ6zre7N/lV6m/XD/jhEXWc5gYXFwWPJ2P0dI6zyHmyl5/Ld/AlO2rmk++9Gv
+	uyLklD5OqVhA6vTKfwGghwx2NQUAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTdxTH97u9vfeCYdbCyg8IU7sHA6TiVDwom2Oa7C5bxJgZE9wyyygv
+	KZAWx8oeENoiqCDVQG3lDcqoCKMQKNhu0EkXNnmIz03rqFKFIQyZYWOoTChL+O+b8/meT84f
+	h+Hwj1G+TGJKukSWIk4WUu5k24/C1SEiL/+40KKcraA0yqEtLwIG7FYODNVjeFR2DsG8xYbg
+	fEEPCQ2WfgJu3+9GUHGxnws9AxcIcFyLgsa2Oxwo/VYB83fHuaC7o6ZApa8mQWlrosBQ3EFC
+	1Yk2LuSdbCehcNTBAauyiwDjvetc0PzQR4Pjj31wpbOUgivKywiaSq5SMD08zwHNre9oODXw
+	PQH5j/UUdJ05TILqiYqEHNVGsPx0mQvaqdMI5qzTXHDqWiiYN5to6DY0E/C03UjC5LkRBH/O
+	RsJoqzfcu/GEgrqfTSTMdpaT0Fijo6FuuJN+ZyOrHnpKsc8mmmi2obwBseUNX7L63/so1mSv
+	RWyH3k6zNeYxgjUa8in29nUzxXY4wtmW2ix2tEX3vGD6i2ALlJMU2zxpInYLot0jYiXJiZ9L
+	ZOvfPuCeUNVt5Kb96/nFrWOP6GyUt/IIcmMwbxMeKimkjyB3hs+7gLBGOUa7gB++0Vy0lD1x
+	/bMHS6X7COeevoQWAMULwaaaXGoBePGuvohbLEruAuDwijm4cmKnayMP4f65CWoBuPG24N6W
+	3xZLnrwPcdlo4fPMMCTvNXy88L2FsQcvHDdazMiVV+Fe3QjpcgZj56/Opbwat0+UclzXrcGz
+	zrOLSi/eVlxd00i4Ot54rOciXYQ89ctU+mUq/TKVftlKJSINyEeSJpfGS+Ub0t5MkWSI5GKp
+	/FBKvOizVKkRLT5sUJAJmQ1TIisiGGRFmOEIvTxUnv5xfI9YsSJTIkv9VHYoWSK3Ij+GFHp7
+	zIwXxPJ58eJ0yUGJJE0i+58SjJtvNlEXOJ9QOWywz6y69m7YgbW0qlZg6RisEEhTE6tPVO4p
+	2TWnLiZPapPf2h2y+WyIIylAvR32p6tTAmzBigeZr7w6BLHSCCbjkjDpqzUPNzd/sG58TKP9
+	2jlyvnrl66Lsvds7Fdu8oxIc4/z346YeZ4mQ+e+d8tCsaajRBAfm9gZzTYXRD1eE2bZp1QG/
+	vJBxtzeZ2KdsVZxJDA/00UaumOEOygYqBfGN/HrnJy9rhTGWikhvwQ7fw5tiQtfGrEMvdflH
+	55wK6oY02/oOza4o9ug3HyWV7b95VKr4J8LuI2jt24Jse4fsNwdbParyD+pwSBmaKN3hV5Xz
+	cWaBfY8g7A0hKU8QbwjiyOTi/wBJ6xsTHwQAAA==
+X-CMS-MailID: 20240415114903epcas5p47c4eeb90c7407377878f6a6bd2bc1458
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240412222916epcas5p4eaf4b2eeb34e8fad4634d8fca9196e98
+References: <CGME20240412222916epcas5p4eaf4b2eeb34e8fad4634d8fca9196e98@epcas5p4.samsung.com>
+	<20240412222857.3873079-1-robh@kernel.org>
 
-It was Jon Hunter (jonathanh@nvidia.com), who identified the issue.
-Credits to him.
-I'm merely upstreaming the fix.
 
-Thanks,
-Vidya Sagar
 
-On 13-04-2024 00:44, Bjorn Helgaas wrote:
-> External email: Use caution opening links or attachments
->
->
-> On Mon, Apr 08, 2024 at 03:00:53PM +0530, Vidya Sagar wrote:
->> Tegra194 PCIe probe path is taking failure path in success case for
->> Endpoint mode. Return success from the switch case instead of going
->> into the failure path.
->>
->> Fixes: c57247f940e8 ("PCI: tegra: Add support for PCIe endpoint mode in Tegra194")
->> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
->> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->> v2:
->> * Added 'Fixes' and 'Reviewed-by' from Jon Hunter
->>
->>   drivers/pci/controller/dwc/pcie-tegra194.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
->> index 4bba31502ce1..1a8178dc899a 100644
->> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
->> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
->> @@ -2273,11 +2273,14 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
->>                ret = tegra_pcie_config_ep(pcie, pdev);
->>                if (ret < 0)
->>                        goto fail;
->> +             else
->> +                     return 0;
-> Wow, how did you ever notice this?  It looks like this path would
-> previously have returned "ret" (which was most likely 0 for success)
-> but with an extra tegra_bpmp_put() that we shouldn't have done.
->
-> Eagle eyes!
->
->>                break;
->>
->>        default:
->>                dev_err(dev, "Invalid PCIe device type %d\n",
->>                        pcie->of_data->mode);
->> +             ret = -EINVAL;
->>        }
->>
->>   fail:
->> --
->> 2.25.1
->>
+> -----Original Message-----
+> 
+> The "arm,armv8-pmuv3" compatible is intended only for s/w models.
+> Primarily, it doesn't provide any detail on uarch specific events.
+> 
+> There's still remaining cases for CPUs without any corresponding PMU
+> definition and for big.LITTLE systems which only have a single PMU node
+> (there should be one per core type).
+> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> SoC Maintainers, Can you please apply this directly.
+> ---
+>  arch/arm/boot/dts/broadcom/bcm2711.dtsi              | 4 ++--
+>  arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi    | 2 +-
+>  arch/arm64/boot/dts/amazon/alpine-v2.dtsi            | 2 +-
+>  arch/arm64/boot/dts/apm/apm-storm.dtsi               | 2 +-
+>  arch/arm64/boot/dts/arm/vexpress-v2f-1xv7-ca53x2.dts | 2 +-
+>  arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi     | 2 +-
+>  arch/arm64/boot/dts/broadcom/stingray/stingray.dtsi  | 2 +-
+>  arch/arm64/boot/dts/cavium/thunder-88xx.dtsi         | 2 +-
+>  arch/arm64/boot/dts/cavium/thunder2-99xx.dtsi        | 2 +-
+>  arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi       | 2 +-
+>  arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi       | 2 +-
+>  arch/arm64/boot/dts/freescale/fsl-ls2080a.dtsi       | 7 +++++++
+>  arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi       | 7 +++++++
+>  arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi       | 5 -----
+>  arch/arm64/boot/dts/freescale/imx8dxl.dtsi           | 2 +-
+>  arch/arm64/boot/dts/intel/keembay-soc.dtsi           | 2 +-
+>  arch/arm64/boot/dts/intel/socfpga_agilex.dtsi        | 2 +-
+>  arch/arm64/boot/dts/marvell/ac5-98dx25xx.dtsi        | 2 +-
+>  arch/arm64/boot/dts/marvell/armada-37xx.dtsi         | 2 +-
+>  arch/arm64/boot/dts/mediatek/mt8516.dtsi             | 2 +-
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi             | 2 +-
+>  arch/arm64/boot/dts/qcom/qcm2290.dtsi                | 2 +-
+>  arch/arm64/boot/dts/qcom/qdu1000.dtsi                | 2 +-
+>  arch/arm64/boot/dts/qcom/sdm630.dtsi                 | 2 +-
+>  arch/arm64/boot/dts/qcom/sdx75.dtsi                  | 2 +-
+>  arch/arm64/boot/dts/realtek/rtd16xx.dtsi             | 2 +-
+>  arch/arm64/boot/dts/rockchip/rk3368.dtsi             | 2 +-
+>  arch/arm64/boot/dts/sprd/sc9860.dtsi                 | 2 +-
+>  arch/arm64/boot/dts/sprd/sc9863a.dtsi                | 2 +-
+>  arch/arm64/boot/dts/synaptics/berlin4ct.dtsi         | 2 +-
+>  arch/arm64/boot/dts/tesla/fsd.dtsi                   | 2 +-
+
+For FSD SoC,
+
+Acked-by: Alim Akhtar <alim.akhtar@samsung.com>
 
