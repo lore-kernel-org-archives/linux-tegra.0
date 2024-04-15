@@ -1,57 +1,57 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2117215E804
-	for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 19:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4351C15F319
+	for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 19:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713209692; cv=none; b=A2WfCS6KgW21EJbHI5VNTW0xwNhKoCvSoaXZnNtK1zwW/sKYFRZGpyS2Ndw9Pyhx+UUkoBJNLe2hnVJxu9cucyNX/STl2nOMl3Q70KoBpLtDXSvVmUw/C2RkhBKcg8p7D7R2MRdYz5zraohq2QLZE4Cbd1G/7IOzvcmi/iBuVUs=
+	t=1713209693; cv=none; b=lPz86i13fV8B208AcAP/OfZodc6bR35+yZE01okc8jQ/6lV3Pdkz0cVKytHbsuWfO10VOkc6HJHndlPVRtVHBRXUx0rAL5K9frTi4HpcTaw7oF0nkuwB7ZLKEw2v81Y3tNdQEcusQiGWnw1i1RcCGqE+1yH4JAqzydr+sOE3970=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713209692; c=relaxed/simple;
-	bh=CPsjhfr0ipRuyWvLekJtBUPBvfW5sC455CD/yQi18EY=;
+	s=arc-20240116; t=1713209693; c=relaxed/simple;
+	bh=uneKQTx7g7YpgV1qfns0GCADDeBeNkX9SjOTc7QrTqo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jb3AdLK9EMLNx3TMTx6vA16Vg4gpaVn6cPIdbB2cNykHq11UOyVbfzhLhFhHMgJa9kiLRPjgccX1w50f1Mk+QnX2UXfUceGSi3FS8EujWEyewSEVNOrLN1LhK2uewvVY1pa+LEj4IyJCzq/biB/74Bb/eHXFMp79jteA1zizkjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YKYOL459; arc=none smtp.client-ip=209.85.128.175
+	 In-Reply-To:To:Cc; b=Gmla+xL+qhNhZ7rjHWo/sTt4RTNhLwg87xqM/bhtK9sErHGWHrP2FhbK1zsKfgJ889+Cr765iUlcPCUOC9u9ouKwmKb/bWlUPiUf8PTLvQTQQ+pkzwlMC51w3MTO6pYzfqg9kZ/sDXG3VSL+CDtfMeBQtpvg302vHLdYHNctPTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Bm+x/cvY; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YKYOL459"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-61ae4743d36so7754387b3.2
-        for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 12:34:48 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bm+x/cvY"
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-78d543db3a4so272579585a.0
+        for <linux-tegra@vger.kernel.org>; Mon, 15 Apr 2024 12:34:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1713209688; x=1713814488; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1713209690; x=1713814490; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VYb6g5i4FA16yMs6Dul0lviXONeB+8pR0V9zyRVb51o=;
-        b=YKYOL459xPZhH4tkkQ7nCmxndqC2eNMd7Xk9q21LWkDq6nsrYiHPN1zik0CqpeEEsI
-         pqlmtl6EueL36+N47JvXqAIhYaNM8evVxHhcSE6m6rQE9M/e9784zeouG/C1/Rlqr5LS
-         9nbuIa+oZkVT/qEJiUDrSI5XxG8wOpUGZT0/g=
+        bh=cKMvbnJBvce6w6rhgAtTaziLR0gQM5TDA935faRghdc=;
+        b=Bm+x/cvYDDS35S+SV5eBbryfuSZp1I06tJ0xORnrS0HU7AASYib40HiF0xymOtavtD
+         mJsqVTdjeYfTb0YncAMLOHRE9APXiCNeZl60oECKbgCjFouzYNB4e39qb0ryFG2VZx1v
+         MLMlscL8vIsHRblFexsICkstJd0UkJkp5Bj08=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713209688; x=1713814488;
+        d=1e100.net; s=20230601; t=1713209690; x=1713814490;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VYb6g5i4FA16yMs6Dul0lviXONeB+8pR0V9zyRVb51o=;
-        b=EtsVY1Y6OqGkhugPihbMwsZeO9VguRJAO9NJexw1v0G4qZlH7Yf3JwDrNw1/OIgRpm
-         oxtk8mVcNmqCzU+/h6P63FyDSyM25JwzWg0X4GJTw/V2tURuOaCD4PTl4FWZnfymzmIF
-         JlYekCMabb3Wd/oa9F2/qA7tLt24M0TOFk9rTRIz+iI0O1kN/RBZDJX+qp/kmzZDTG35
-         q0DXUaTNT6WxDEI2hW1kNTTXwERzgRHS7eOfh+ZtQrsMIH8Ig+tqjRYw36NmV4WYgoQP
-         d8ZEawDN9KzO7o3RbVoG1QirKlTHbFCE0aIjGv4ZTzoUk0zZTF2CJ2ievxjYiQCSnz14
-         MiqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7JXZKqPWmq7KVqSL8pQpXnz/4pXA5HnX8gI2+RWCpMntvajZ5LqIErJ1LgCi3ktWoUIuJC/cnxf/LvZmLaPqepMVJQ30+ECzzEVw=
-X-Gm-Message-State: AOJu0YyRIIMO6iai7LVqySDFGbEnou+h62YQAP7zgmXDYFz4BlrhBJqx
-	AzRDCHAbMyoibnv7o0/+QBJ7ipdLYLo2J+5VDTrtU7wh0fG2Iuh2AvRGnhNFoQ==
-X-Google-Smtp-Source: AGHT+IHXF7TrtarHgpunekvNDs6nvd1JJs+Lc0bh8dwb/yJrFpFk4KNuzD4FvIVwGteAAQA7ZBlIRw==
-X-Received: by 2002:a0d:cd01:0:b0:618:875e:2bc1 with SMTP id p1-20020a0dcd01000000b00618875e2bc1mr8806798ywd.21.1713209686523;
-        Mon, 15 Apr 2024 12:34:46 -0700 (PDT)
+        bh=cKMvbnJBvce6w6rhgAtTaziLR0gQM5TDA935faRghdc=;
+        b=eiTys7KV2A75DvkBxhRK2zRL505ZZybLA1WdQyqDizY/bcZgr5oP8Y9UjSAF2W2pY2
+         a78Lw2m5o6w9wdgwLIYtGO46fwcM1yQc9Nu5aRszAjzdeObx5cc+HV2IgcBqRhzORMRh
+         5N8M/hDpJTVtFVHW72vhdd67EO4FoCHcBNE1I5X1LzCxwa/NwCQOt3zn+Mlr5umwZDz5
+         S4f9VlcvmSHI3kkv2VfAW0yiv4n0nFPhqSqeA5KZKn9ol0W2we0qwH6ujRgcw5ARhe6S
+         /XLatgQ5mBZ3Ay9LQk7VyHrkfZq2UTQsCecJN530iDLf1J465dvTc1wNDgqx5bAE2smd
+         qu0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXP0jqK3SwUE0ta6Xnz5pDWi6jgjl4kSAvji5HMrGqs/bbsAoLUatacuEKU1OyWAWdN65IkCRo0o1o7Om4xUBLdzrxIKw+BT4vMFT0=
+X-Gm-Message-State: AOJu0YxBcOPjSPC3YIEV7CvaxUZIkQuSBy+YtEs/Uln7oX7bgqeQwKha
+	2Yf1Xc+wdwk2VpnziCEdqQxi6JRD2ppT/ph+QIC75XL1kd5MZw0tsnUl/AsHuw==
+X-Google-Smtp-Source: AGHT+IEuVGO99fF8WY6cFUn2TeptksBJEwdpaYOr7CSPDLRmva6Ltt+et0Zcs6jy4zj82KXO8YnR2A==
+X-Received: by 2002:a05:620a:4486:b0:78d:65e0:3100 with SMTP id x6-20020a05620a448600b0078d65e03100mr15166755qkp.60.1713209690125;
+        Mon, 15 Apr 2024 12:34:50 -0700 (PDT)
 Received: from denia.c.googlers.com (114.152.245.35.bc.googleusercontent.com. [35.245.152.114])
-        by smtp.gmail.com with ESMTPSA id s26-20020ae9f71a000000b0078d3b54eb76sm6718055qkg.78.2024.04.15.12.34.45
+        by smtp.gmail.com with ESMTPSA id s26-20020ae9f71a000000b0078d3b54eb76sm6718055qkg.78.2024.04.15.12.34.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Apr 2024 12:34:46 -0700 (PDT)
+        Mon, 15 Apr 2024 12:34:49 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 15 Apr 2024 19:34:33 +0000
-Subject: [PATCH 16/35] media: au0828: Use min macro
+Date: Mon, 15 Apr 2024 19:34:36 +0000
+Subject: [PATCH 19/35] media: stk1160: Use min macro
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -60,7 +60,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240415-fix-cocci-v1-16-477afb23728b@chromium.org>
+Message-Id: <20240415-fix-cocci-v1-19-477afb23728b@chromium.org>
 References: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
 In-Reply-To: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
 To: Martin Tuma <martin.tuma@digiteqautomotive.com>, 
@@ -109,29 +109,42 @@ X-Mailer: b4 0.12.4
 Simplifies the code.
 
 Found by cocci:
-drivers/media/usb/au0828/au0828-video.c:605:11-12: WARNING opportunity for min()
+drivers/media/usb/stk1160/stk1160-video.c:133:12-13: WARNING opportunity for min()
+drivers/media/usb/stk1160/stk1160-video.c:176:13-14: WARNING opportunity for min()
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/au0828/au0828-video.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/media/usb/stk1160/stk1160-video.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/usb/au0828/au0828-video.c b/drivers/media/usb/au0828/au0828-video.c
-index fd9fc43d47e0..2ec49ea479d5 100644
---- a/drivers/media/usb/au0828/au0828-video.c
-+++ b/drivers/media/usb/au0828/au0828-video.c
-@@ -602,10 +602,7 @@ static inline int au0828_isoc_copy(struct au0828_dev *dev, struct urb *urb)
- 		vbi_field_size = dev->vbi_width * dev->vbi_height * 2;
- 		if (dev->vbi_read < vbi_field_size) {
- 			remain  = vbi_field_size - dev->vbi_read;
--			if (len < remain)
--				lencopy = len;
--			else
--				lencopy = remain;
-+			lencopy = umin(len, remain);
+diff --git a/drivers/media/usb/stk1160/stk1160-video.c b/drivers/media/usb/stk1160/stk1160-video.c
+index 366f0e4a5dc0..0ba0f41fe3f4 100644
+--- a/drivers/media/usb/stk1160/stk1160-video.c
++++ b/drivers/media/usb/stk1160/stk1160-video.c
+@@ -130,10 +130,7 @@ void stk1160_copy_video(struct stk1160 *dev, u8 *src, int len)
+ 	dst += linesdone * bytesperline * 2 + lineoff;
  
- 			if (vbi_buf != NULL)
- 				au0828_copy_vbi(dev, vbi_dma_q, vbi_buf, p,
+ 	/* Copy the remaining of current line */
+-	if (remain < (bytesperline - lineoff))
+-		lencopy = remain;
+-	else
+-		lencopy = bytesperline - lineoff;
++	lencopy = min(remain, bytesperline - lineoff);
+ 
+ 	/*
+ 	 * Check if we have enough space left in the buffer.
+@@ -173,10 +170,7 @@ void stk1160_copy_video(struct stk1160 *dev, u8 *src, int len)
+ 		src += lencopy;
+ 
+ 		/* Copy one line at a time */
+-		if (remain < bytesperline)
+-			lencopy = remain;
+-		else
+-			lencopy = bytesperline;
++		lencopy = min(remain, bytesperline);
+ 
+ 		/*
+ 		 * Check if we have enough space left in the buffer.
 
 -- 
 2.44.0.683.g7961c838ac-goog
