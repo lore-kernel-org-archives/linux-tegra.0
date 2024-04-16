@@ -1,180 +1,176 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2061.outbound.protection.outlook.com [40.107.244.61])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F2812AAD1;
-	Tue, 16 Apr 2024 12:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1766012B143;
+	Tue, 16 Apr 2024 12:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.81
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713269045; cv=fail; b=I5EbtoBVOUW3hpmji2nEu0zbSicbnDWZS8hoirEdDoa7IVn67tQoXfK5THQEqsv2KneOKYsZjp5uoZ1jhgixXFOpVp2SXnRJ1pkY0sw+dihBR84yDlCPBjKZ7nJLp4GgKd1u76gqIT1u2ehf8BwPuskFs81rnjlngmUd/pgEMJQ=
+	t=1713270918; cv=fail; b=Uv9d/mgsDoz9iH++LPw98nFSmKIv+OazQb0HQn6Gu6QeY7sCVuO39KvbU6d97O97HkDscJrhY0mYqy7EwNWRtjYXxmiaOeF0logfZIrcAWiTJQq6WkkJyJUl9sZ9GLBZfC0l7VZRHHhxlX2Pug+u4RDNIbOwubow9kUWiOcU9Ps=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713269045; c=relaxed/simple;
-	bh=yL8RZ9UscTuWVgj0irSVb18wLcUKmPVe+EJjeY1OdmU=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=AoZvsDOsfp/07Y2hKRtxcZ1awnFCUZf3TSN+MwSgdZPcrd8ClUJGMGBZkhWE9J/galC7HtPZHQG0FKAZ1Sb5EnKCzuAgUg+KVv91yb7zE+kiqHwS34r6b+i1YGK6cboLfazKxblCsUzfDR+P8QSyKpXaL4oxJmeCjUdAyXTuoas=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PLjpz6id; arc=fail smtp.client-ip=40.107.244.61
+	s=arc-20240116; t=1713270918; c=relaxed/simple;
+	bh=m2+yzipPU9KP4I3SoL2sYcO1b1xel6Gg8BCeBXLPTOg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SDzCWRyaATjAzovudk2+KaooNn+oib7vg69TLFDI0V/W9kotdMN1Iz47HhwcFIYTR9/p41hj+Qm/wxfoVDxxM7PA/SSRsU9aWyZr4yS0Mwk1QXCrLYvp7d+L13Y0eaHwPGKmNYu3LjBTbSxfp2rO4Dpk6z2yI5JEH6pQjYuH8xg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GNa3eqSQ; arc=fail smtp.client-ip=40.107.93.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PLjpz6id"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GNa3eqSQ"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ng1iUh/C8uZHdbesc3lR+9XX6sYr1niP2+WTvLhHnAIj4VIfnRER2geNNxWxlL6Giq7rWK7SlV9zHOIlcRv/1bi52W5pNXYk5pTXTWUqiinVoE69g+FRQ1R6PDsvkBJ1spx1jFCEi6fv2eFwNp9Nf0OCIUnNQpK+NNHJE9HDGsygmolFKvxJroNYcJaF8piXQE1PONGRx1nR7CS6WK57jJyagp69SQNDNqQJ/jmToWqA1lQm81+WlBAADhm6IjbdHHIVDHgALbZH6SXbJXhEJLiSF2/an6KeO7xCYuCXIF7iM9xapBjeI/RkIuYsA1v5r5Dt7YZh/a34l6vL5K9ttg==
+ b=OhiF1lJUWZK/nBeNdxiabY+5Id9iiKYTer5p6r/WYSkt6MKL3lcOjRhS4uWIdtmYvcWV5m1Xu1WMlXpdQPUIy1gGtM3OZb3CJKEV6pl4pBL4Gh2HpmlBcIsyeV7u9DqSgnl5ZuremHegIpCbj0joQUXUuxjNvxBWx1bU762wk3vh7PYjY49pI4WJLsfjiXg/KWenUKqUIdExX+Ao6yfXv3PfjMDFt8+BN+0UyDAwILHpQurRAW1wTMh8WWx/KPL6fKhipNOFXeGviXH0WpFp0yAq8ZXqBvkqbG7pnmrKcaJ2jy8mNZHapP14zcDPITjyKBldfSUEhPRGXNxANFvpaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YcqjYueOorQFe/UI/65+gC8EfL7IjCpZVojvb7TLPKw=;
- b=O26FwMEq1r2TgaHPSG/8397JiFEyHwQSl0y76E0XXimR+zS/x05mSIW2qEAljbDMTKih5yJnS7N35Pgqf3uD2fup1A9uFWH5hG78nq6SNyn0wgXnWzKCa7oauCwEbcwdmEUf2VPpydcU2PV4pY5c38XcUqnv7D+GXY1P2RT6ELcFuZm2PngBj68XmYlv10UkEkYNozK5S6beBdg3s66QCNGbQ67SO6fQb51RbjsYBQjSTwlcnxDDs9i8W8SPICkgYDWHrCsaHHnxz5WwG7/md/z2UQUL/IX7ag5aSHdKnhp/iSO0vDZIqNp9DXOAoYRiZu8Ja6DleEStlJJRryx25Q==
+ bh=Pm3xgn12Qi5o3UoGAzoVPsIM1fz6m8EDo+t5i6775v0=;
+ b=K3eN2rC7DfLm2VoQhrwHm+3mXA+PdhkQcux7sDKQU64QbCXvl+H4Z7mJ/RS0CSjnlMQ5DSG7OMB9tDd2z/b7sDjeIGSWDrGBBlX5niUyfi15eL0u/7s4KiTb/cn3IR8rZYmEY9oIY941I66G1GcUii54l4NHSS4UkYbOQTfwrYKiLnnW6+IDo/hSDJ4bL/CisJIpuewlgj1mkTxUub9TI9yMVLprs+rZhqErIy+eSS9sy+3sfDeOqtcovcNU+I15Z/fsnwdACiR5pdmBVTGdvml3HrYW29ceHvWzDhfmO7U6KEuVBNhy0U5Ol3Y6/tKdoahPevyAyJgSTb9yEOxukw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+ 216.228.118.233) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YcqjYueOorQFe/UI/65+gC8EfL7IjCpZVojvb7TLPKw=;
- b=PLjpz6idMX5k24EN1BqNbXW9L41TFBrI0yaq2kLH7D4mbUhbLV9XFoKwPCVxVDv2H2gXTTgk5qveI8Ko051j20Bg6Js7iACKwhsHyKpNdnJgDchPoDA5KBqF32Z4inJBomyCWXjmVgBEJ5SIK5IpPRo4xgM+L0EL49nsmN8c7AkJ6HiYLeVymKNlB8n8FVlS1HVcmHgM2YeYNuyuXewzleIl1aFRVLnLTEsFaqb+cG3kmFCntvW2zcpfvW8HwCSbynA/x7GyYic6wpp6Lp2+JBCD0rBL620nY+/2cO7dL2ua50XIuMdlMXT/RmKQYJEbj36DuZ0Uhglot/isVQ18Lg==
-Received: from CH0PR07CA0007.namprd07.prod.outlook.com (2603:10b6:610:32::12)
- by IA1PR12MB6116.namprd12.prod.outlook.com (2603:10b6:208:3e8::12) with
+ bh=Pm3xgn12Qi5o3UoGAzoVPsIM1fz6m8EDo+t5i6775v0=;
+ b=GNa3eqSQr5WB6f6vRal3qWW5862R5lLO1La4/ybHu2Xz2Z0cFWc+N3V2CNIYwgdUT3dpTg6znLLxXF/AHDomy38qpexpzJ2BQQt/sQJ7RXlYcJb986Fu7xEmbjdxAi9uWMWMLN3ehrObsst5R5HWMQE/YQiZ+wTbndtV0JDKSEXbcn1Ir8N8OjT1v2XWLcNANZVwdyPitsU4fXiOf0p6piHU6cZ2DrPxmHcxEwIJV290bS4z6g/T9lioQA8yBNJDdtYC0UnjGZSAt8rOfc8ta9egzEpH1jWTHNmOSxSYTs5ZNppHsIcr1gF6OrONhBMWGAOnIy8ilf4Mb9oJtUu70Q==
+Received: from BYAPR03CA0036.namprd03.prod.outlook.com (2603:10b6:a02:a8::49)
+ by CH2PR12MB4053.namprd12.prod.outlook.com (2603:10b6:610:7c::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7452.50; Tue, 16 Apr
- 2024 12:03:53 +0000
-Received: from CH1PEPF0000AD81.namprd04.prod.outlook.com
- (2603:10b6:610:32:cafe::10) by CH0PR07CA0007.outlook.office365.com
- (2603:10b6:610:32::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7495.20 via Frontend
- Transport; Tue, 16 Apr 2024 12:03:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ 2024 12:35:12 +0000
+Received: from SJ1PEPF00001CE3.namprd05.prod.outlook.com
+ (2603:10b6:a02:a8:cafe::d) by BYAPR03CA0036.outlook.office365.com
+ (2603:10b6:a02:a8::49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.33 via Frontend
+ Transport; Tue, 16 Apr 2024 12:35:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH1PEPF0000AD81.mail.protection.outlook.com (10.167.244.89) with Microsoft
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ1PEPF00001CE3.mail.protection.outlook.com (10.167.242.11) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7452.22 via Frontend Transport; Tue, 16 Apr 2024 12:03:53 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.41; Tue, 16 Apr
- 2024 05:03:34 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Tue, 16 Apr
- 2024 05:03:34 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12 via Frontend
- Transport; Tue, 16 Apr 2024 05:03:33 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.1 00/69] 6.1.87-rc1 review
-In-Reply-To: <20240415141946.165870434@linuxfoundation.org>
-References: <20240415141946.165870434@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+ 15.20.7452.22 via Frontend Transport; Tue, 16 Apr 2024 12:35:12 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 16 Apr
+ 2024 05:35:07 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 16 Apr 2024 05:35:06 -0700
+Received: from pshete-ubuntu.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 16 Apr 2024 05:35:03 -0700
+From: Prathamesh Shete <pshete@nvidia.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <jonathanh@nvidia.com>,
+	<treding@nvidia.com>, <linux-gpio@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <mochs@nvidia.com>, <csoto@nvidia.com>, <pshete@nvidia.com>,
+	<jamien@nvidia.com>, <smangipudi@nvidia.com>
+Subject: [PATCH] gpio: tegra186: Fix tegra186_gpio_is_accessible() check
+Date: Tue, 16 Apr 2024 18:05:01 +0530
+Message-ID: <20240416123501.12916-1-pshete@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <c4e3f69d-5c16-410b-b511-dad537d5d6ee@rnnvmail204.nvidia.com>
-Date: Tue, 16 Apr 2024 05:03:33 -0700
+Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD81:EE_|IA1PR12MB6116:EE_
-X-MS-Office365-Filtering-Correlation-Id: aaa5bf47-8b7d-455a-b54b-08dc5e0d4906
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE3:EE_|CH2PR12MB4053:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2f5e69d-8940-4bb2-3480-08dc5e11a95c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WUZWMU5aMENiVmZ2L3QrMGUvbVdKdS9EQzdTbXlja1dkaWwrcW51VEsvUVpV?=
- =?utf-8?B?azV0MzBBSUxGd1BVQnFORDNWbEVzcWU3N01BVmtycXJxT2pQTXB0c1FBWmZW?=
- =?utf-8?B?ZVV6UjVMa3hZSVNzNUNVS3Z4Y3QxZlJGZjM0OXVlRGo0L0xCajd3WmhTVUJi?=
- =?utf-8?B?K3pkN1NFWUFwdnZxZFdYWnFrSmNQMmZqYnVvR3p6UDh0dFpqZFJGUkkydHJP?=
- =?utf-8?B?M25zTGNNY2tISS9Ec1RWbm9uOTJUSzd3anFSQzU5SXUzK09WL3pJV2pZNU9i?=
- =?utf-8?B?YlBmQVFpVWVWQTFKeUMwL3M3QXdiaTRwdFFaNldkMEpicmp2OVNVKy9UWTFY?=
- =?utf-8?B?YWtEODFZWW5kdGcvL1BnakZyU0VkQUVicjc2NHhadHZIaThNdWdlcjkzOWNN?=
- =?utf-8?B?Uko3Q29QOXZDSHBkMlJSWFZ3a0hkTVhtQ1RoYlZaTXc5UnlyY1JNSDZNQU41?=
- =?utf-8?B?Y09rT3NsZFA0dXJZQzZQN0RicUZUUnN0TlJaeGRPL0V2RFBXZ1gvcHorK1M1?=
- =?utf-8?B?YWRVRWsyMS82QnkrcC80a09vNm1ic093WjNtZUR0R2VWNE4xMnBPa1ZIWDdR?=
- =?utf-8?B?dFc2RlN3VTBJaXZQWjZCbE9LOHc0N3hKUlFrU3cxV1RIMlpQWU5DTjN4TDNX?=
- =?utf-8?B?NmM1ZTlOL0kzczRmdmFFY0RBRkI4WTFKV3RxbkRnVnFITU5KRUQzQnBZZld5?=
- =?utf-8?B?TmVpYy9ZTTJBMXUyUnJ3TWc2UkZ3QmZYMEo0aE1sUm5OZTM3a0tmTmJPQkRu?=
- =?utf-8?B?NjlHRHJzMUpKT1c0RmZ0VS9pcmpraWkxa25kSFdCdFZKNmlnWEVNT2MvUDRI?=
- =?utf-8?B?V1hVc3NxOEpzcm01eklNUURaVHIvSUh1cDNOa3I4enlrRU8wM1JWcVRQZVhz?=
- =?utf-8?B?QlRHQWtOREo2VmpVRUZUYk14MTBuMmxhd2NVdXdrd0pKSjVjNXJHdTdPZzNu?=
- =?utf-8?B?U2pxVGtKcE1uOWlJNWdXTndnbkxkaHJZMGFsaU1HYk45ckR3TUozVUg5UHhO?=
- =?utf-8?B?OHo4d3lmZnBFMnJRZWJ6MzlieStsNGVOR24rUkpJMmp5Wnp3Vi9ReTd1R0M3?=
- =?utf-8?B?YTRtaU5PcTROVDlYOEFhd2lpSWhkOXpaOVlWRmtyWFhGODl2Qm8xeUREOHBN?=
- =?utf-8?B?V1pENzhPamdjZ3pCbU05UTdveEIvYWYvLzZrakNDTFRKbUVQVEtRZlJKSCts?=
- =?utf-8?B?V1hsOTA3R1VGcStXVWRYS3hhK3lCZTlFQ2pnYklKQ0ZYRStBQ0Y4NkZ6bTRk?=
- =?utf-8?B?Z1NWeXR6T1RrSW5IMkdBdnBDSWt5dFBTMm14UHVNdy9XRUVoNDBQS2dvNmhL?=
- =?utf-8?B?bnlEQTNhMFhtZXNCTm90eUNMcTg2ekhoeU8xdi8ya3VtbXloY2s0ajdVcVZ1?=
- =?utf-8?B?azMvaGFuaXBkNEo4SVh2VUJhc0FSR055UkJwZ3BhOEFoQUxBNWRtU2lKeWRV?=
- =?utf-8?B?SE1ibjNCWVJTZ29Ud1JGNk5DejJpdENjVDlPdGxqNU9rRk9MYTc5ck9nTXBP?=
- =?utf-8?B?T1dSZ2xvdmtsckpVZVpXZWxxWmVuRkpHb0szSG1JbjlNa2NtaUhqNHBaZ1Qy?=
- =?utf-8?B?eXlGZytDWXVDeTN5VUlPeW9rcktQWU0zRkxtK0s3VFNHTERrOFpJUEdqYWlu?=
- =?utf-8?B?UDNTVTFZUjhzSUgySnhKTDFWRlRiTDZoZHQ4RmpQdy90VzIxcHk3NndFWkVH?=
- =?utf-8?B?bGUxczhwc1BNemRUUW5yK3NEbm8vK0lYOUJDNWJxdDJSK1R3Y3pqUERJQUw5?=
- =?utf-8?B?VThMcllhU3NMZkNqNmVlZHNYTFpWTmhublRSRWxteDlBODY3Unc4aTd6ZFk4?=
- =?utf-8?B?a2JSMnZObnBVc3ZMVWRJVVJUMlQxUEM3MW9JaFJOSnZ6VHpFcC94RE5EV01J?=
- =?utf-8?Q?mge0c7W6g2qS8?=
+	Yasai6qY6TqUFE9fmNU3P/JdEH7RXHt3SJ2nXX1WftuIhsVRJvcPxTTjzfrqgBBEHp0h7OKPIytWu5nkqB5tNBDHlCmEc/lMNrBHvx+Yras5Xk/IgzodCJCEvoF4zsVNi/SPYMaFrkdcGys7d3DC1rzSq04DgV8PzO62jc4//K+arlJIYPkSl0vLwMs9ISOd8QiDc0Wqtx1PBDy+e2ilKNYdDZG0i28OVwrt7nhULPZRmHf3C82ZURDPvU7rfNfydEPOkT5GxaqDxjK6PB5pvFc1OhQQnMWUg8l6r8/ptaLo1nc09kkS4ggGy7upo+DwkbEN/BZsu+t+NAnzvBs+0u0NmjV06Y2ugKYJCC+jkrXs4/GmlRmcDR6tR7ZnNWNglH66erPC9DFI/B7+TnppTYacK/Uwp9D1wBS1ktn7u/NBY7lVGgXYQ9aXekuIAtBC7HzTm8BuyrS6Nzx286Abl9hkLS/LhqEuBTQeTQV9inGySquvY42DETqVXsPHwn0fBliSGk03ZifUf0cjfflrwgo29PxWX8d0zHeXF89yuc+jgDtyK1rPht2KmfIwTs5nw+oiHrkYdQSHw9ZqjXhZBYtT+HrXXFmZ0vfmEP5gSxs+EC42c0IyxALOeBJN2sM/pfiyQxnZgX3e0gt8nsuh0rjZwb1UwL31FEOkN91QlIcWveHqyD/lO4FSf8DBuPUg6Ril3wfz0gW4FK4qPw2YHvnsBgeyYEvdvMS58Emev42IGI5KyhctVAB/IaVC0FBb
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(1800799015)(82310400014)(376005)(7416005);DIR:OUT;SFP:1101;
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(376005)(1800799015)(82310400014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2024 12:03:53.0654
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2024 12:35:12.8458
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: aaa5bf47-8b7d-455a-b54b-08dc5e0d4906
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2f5e69d-8940-4bb2-3480-08dc5e11a95c
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD81.namprd04.prod.outlook.com
+	SJ1PEPF00001CE3.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6116
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4053
 
-On Mon, 15 Apr 2024 16:20:31 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.87 release.
-> There are 69 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 17 Apr 2024 14:19:30 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.87-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+The controller has several register bits describing access control
+information for a given GPIO pin. When SCR_SEC_[R|W]EN is unset, it
+means we have full read/write access to all the registers for given GPIO
+pin. When SCR_SEC[R|W]EN is set, it means we need to further check the
+accompanying SCR_SEC_G1[R|W] bit to determine read/write access to all
+the registers for given GPIO pin.
 
-All tests passing for Tegra ...
+This check was previously declaring that a GPIO pin was accessible
+only if either of the following conditions were met:
 
-Test results for stable-v6.1:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+  - SCR_SEC_REN + SCR_SEC_WEN both set
 
-Linux version:	6.1.87-rc1-g6745a5f2c806
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+    or
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+  - SCR_SEC_REN + SCR_SEC_WEN both set and
+    SCR_SEC_G1R + SCR_SEC_G1W both set
 
-Jon
+Update the check to properly handle cases where only one of
+SCR_SEC_REN or SCR_SEC_WEN is set.
+
+Fixes: b2b56a163230 ("gpio: tegra186: Check GPIO pin permission before access.")
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+---
+ drivers/gpio/gpio-tegra186.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index d87dd06db40d..54c8b02eec22 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -36,12 +36,10 @@
+ #define  TEGRA186_GPIO_SCR_SEC_REN		BIT(27)
+ #define  TEGRA186_GPIO_SCR_SEC_G1W		BIT(9)
+ #define  TEGRA186_GPIO_SCR_SEC_G1R		BIT(1)
+-#define  TEGRA186_GPIO_FULL_ACCESS		(TEGRA186_GPIO_SCR_SEC_WEN | \
+-						 TEGRA186_GPIO_SCR_SEC_REN | \
+-						 TEGRA186_GPIO_SCR_SEC_G1R | \
++#define  TEGRA186_GPIO_READ_ACCESS		(TEGRA186_GPIO_SCR_SEC_REN | \
++						 TEGRA186_GPIO_SCR_SEC_G1R)
++#define  TEGRA186_GPIO_WRITE_ACCESS		(TEGRA186_GPIO_SCR_SEC_WEN | \
+ 						 TEGRA186_GPIO_SCR_SEC_G1W)
+-#define  TEGRA186_GPIO_SCR_SEC_ENABLE		(TEGRA186_GPIO_SCR_SEC_WEN | \
+-						 TEGRA186_GPIO_SCR_SEC_REN)
+ 
+ /* control registers */
+ #define TEGRA186_GPIO_ENABLE_CONFIG 0x00
+@@ -177,10 +175,18 @@ static inline bool tegra186_gpio_is_accessible(struct tegra_gpio *gpio, unsigned
+ 
+ 	value = __raw_readl(secure + TEGRA186_GPIO_SCR);
+ 
+-	if ((value & TEGRA186_GPIO_SCR_SEC_ENABLE) == 0)
+-		return true;
++	/*
++	 * When SCR_SEC_[R|W]EN is unset, then we have full read/write access to all the
++	 * registers for given GPIO pin.
++	 * When SCR_SEC[R|W]EN is set, then there is need to further check the accompanying
++	 * SCR_SEC_G1[R|W] bit to determine read/write access to all the registers for given
++	 * GPIO pin.
++	 */
+ 
+-	if ((value & TEGRA186_GPIO_FULL_ACCESS) == TEGRA186_GPIO_FULL_ACCESS)
++	if (((value & TEGRA186_GPIO_SCR_SEC_REN) == 0 ||
++	     (value & TEGRA186_GPIO_READ_ACCESS)) &&
++	    ((value & TEGRA186_GPIO_SCR_SEC_WEN) == 0 ||
++	     (value & TEGRA186_GPIO_WRITE_ACCESS)))
+ 		return true;
+ 
+ 	return false;
+-- 
+2.17.1
+
