@@ -1,167 +1,267 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8C984DF6;
-	Wed, 17 Apr 2024 12:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EE31422DF;
+	Wed, 17 Apr 2024 15:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713358735; cv=none; b=C1ePYHnJ/HhR9rAgYBXgC4xwgEJxFUYgu2k1sCTmgoKUwd/rJOJISRrnJxEmipR93QmHxups9+zDHZouUVoPgSkGWhClINqeZErq0qX3y/wnXhjFOvLk8UvEKiq6jU2I33VbpAbH3/agJu5Tghm3Uxp+C6I5/Ecmcod7DDOT+kQ=
+	t=1713366782; cv=none; b=ixd8hU7/YLOuz9m9nHXTn/o3SwaOYRQDGurq2CEXeaK8dWdaFdz7j1/f29vwAjlFVWjVStoRJRxAg+i5txIp8ZibKCj67XsXJRQdHz99NLAmi3a0StEZEGWm0ktHwyTzFsKTCfNZLmUFJRoPE0oBx5hXVJkxR85h4Nb4YtLpNPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713358735; c=relaxed/simple;
-	bh=mRlRkorupNuv+TJWx/y+uXXu1O9+ZgMbFD+YQNFOBqM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tjb6XkGhsZox86JdBLtyE3D7d2DLcuBYGv+EdyNw5aw3bFmhGsSrV+VvdBIsAtG+PqbpPJWd+R6Q5uNepbYDJZlh0PZvBWN8v9BrapSg7DKGYTSO1dw20m9MyBDDS9wf0TqfcMsCEyyfVCSb4qNnR0zov+6WSBvAVFcls+NoUMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ortz7J2e; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ortz7J2e"
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 43HClsCK003624;
-	Wed, 17 Apr 2024 14:57:28 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=Oy6ydHY6pQ8DYm8xK8PeLsM+pd6WltoQh0mGRUSj86E=; b=or
-	tz7J2eIpRjwTS6nxsow94Im5O+PJ8pyQKEzgQC9x+TEQyuiVxirXsxSqUmOFi5z6
-	j9JuaMCVAueB7+ptBoHkZGcb+q5wgjo9DutZh3e/xcZNv9ir2WSLw5Tx3J4ORSCe
-	EA73ib1bb2NSzUytaI+3EJVy3k1Q1gI0fSP3IQEsjwu2YJe3ZCZaDZ9kzaEBLiHp
-	IczYev9vu0LgIHwFgY0toURY1M4EinAS1+idFQEUfhYnNuSSXU5+tp4rEI3eP1EF
-	QiCs84WlUXA+URlFhvVZDuDiVG8dZypP1QlE91pV8tkChGQWA45K8voZ9I1+fYd5
-	RRPfPDBlEjqpZ5kxlIMg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3xgecyea3g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Apr 2024 14:57:28 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E01244002D;
-	Wed, 17 Apr 2024 14:57:10 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E51CB214D29;
-	Wed, 17 Apr 2024 14:55:47 +0200 (CEST)
-Received: from [10.130.72.241] (10.130.72.241) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Wed, 17 Apr
- 2024 14:55:46 +0200
-Message-ID: <ea60a9e8-6240-4a0a-a224-e132b67160b1@foss.st.com>
-Date: Wed, 17 Apr 2024 14:55:45 +0200
+	s=arc-20240116; t=1713366782; c=relaxed/simple;
+	bh=BeDNJBDbd5gDvNAksWz9QTioMUv2ML9Z12n2HjGKv1Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=gxDwHucQVpHouhQYbHHLzrt99/KuqR8NRNN5McgAM7U2Cd30LkDNbT3/JoKwy714Cijya1E6zKxl8G21yEpaU2fEfAlXoXGqqNCN3VRHnAQ4RXtdf7u3Yl0Zpf00RXDkYGqCcHMtq41qx4l1Xqd4RRym6KO0jyrHGFB4QoY2QYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VKPVn2X6Wz6H6tJ;
+	Wed, 17 Apr 2024 23:10:57 +0800 (CST)
+Received: from lhrpeml100004.china.huawei.com (unknown [7.191.162.219])
+	by mail.maildlp.com (Postfix) with ESMTPS id A17CF140B54;
+	Wed, 17 Apr 2024 23:12:57 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
+ lhrpeml100004.china.huawei.com (7.191.162.219) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 17 Apr 2024 16:12:57 +0100
+Received: from lhrpeml500005.china.huawei.com ([7.191.163.240]) by
+ lhrpeml500005.china.huawei.com ([7.191.163.240]) with mapi id 15.01.2507.035;
+ Wed, 17 Apr 2024 16:12:57 +0100
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>
+CC: "joro@8bytes.org" <joro@8bytes.org>, "jgg@nvidia.com" <jgg@nvidia.com>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, "vdumpa@nvidia.com"
+	<vdumpa@nvidia.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>
+Subject: RE: [PATCH v5 6/6] iommu/tegra241-cmdqv: Limit CMDs for guest owned
+ VINTF
+Thread-Topic: [PATCH v5 6/6] iommu/tegra241-cmdqv: Limit CMDs for guest owned
+ VINTF
+Thread-Index: AQHajVULCff80FKHW06RtKfJgVx61rFsllJQ
+Date: Wed, 17 Apr 2024 15:12:57 +0000
+Message-ID: <1d68c21591fa4f8497aea0e6a0afda8b@huawei.com>
+References: <cover.1712977210.git.nicolinc@nvidia.com>
+ <ee70b82c8268e9a6746486ddcb3e8e7f32f0629f.1712977210.git.nicolinc@nvidia.com>
+In-Reply-To: <ee70b82c8268e9a6746486ddcb3e8e7f32f0629f.1712977210.git.nicolinc@nvidia.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 22/35] media: i2c: st-mipid02: Use the correct div
- function
-To: Ricardo Ribalda <ribalda@chromium.org>,
-        Martin Tuma
-	<martin.tuma@digiteqautomotive.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Hugues Fruchet
-	<hugues.fruchet@foss.st.com>,
-        Alain Volmat <alain.volmat@foss.st.com>,
-        Maxime
- Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Paul Kocialkowski
-	<paul.kocialkowski@bootlin.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec
-	<jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Sakari
- Ailus <sakari.ailus@linux.intel.com>,
-        Thierry Reding
-	<thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya
- Komatineni <skomatineni@nvidia.com>,
-        Luca Ceresoli
-	<luca.ceresoli@bootlin.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-        Hans
- Verkuil <hverkuil@xs4all.nl>, Sergey Kozlov <serjk@netup.ru>,
-        Abylay Ospan
-	<aospan@netup.ru>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Dmitry
- Osipenko <digetx@gmail.com>,
-        Stanimir Varbanov
-	<stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Sylvain
- Petinot <sylvain.petinot@foss.st.com>,
-        Jacopo Mondi
-	<jacopo+renesas@jmondi.org>,
-        Kieran Bingham
-	<kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart
-	<laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-        Pavel Machek <pavel@ucw.cz>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-staging@lists.linux.dev>, <linux-sunxi@lists.linux.dev>,
-        <linux-tegra@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>
-References: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
- <20240415-fix-cocci-v1-22-477afb23728b@chromium.org>
-Content-Language: en-US
-From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-In-Reply-To: <20240415-fix-cocci-v1-22-477afb23728b@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-04-17_10,2024-04-16_01,2023-05-22_02
 
-Hi Ricardo,
 
-Thanks a lot.
-Reviewed-by: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
 
-On 4/15/24 21:34, Ricardo Ribalda wrote:
-> link_freq does not fit in 32 bits.
-> 
-> Found by cocci:
-> drivers/media/i2c/st-mipid02.c:329:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_s64 instead.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> -----Original Message-----
+> From: Nicolin Chen <nicolinc@nvidia.com>
+> Sent: Saturday, April 13, 2024 4:44 AM
+> To: will@kernel.org; robin.murphy@arm.com
+> Cc: joro@8bytes.org; jgg@nvidia.com; thierry.reding@gmail.com;
+> vdumpa@nvidia.com; jonathanh@nvidia.com; linux-kernel@vger.kernel.org;
+> iommu@lists.linux.dev; linux-arm-kernel@lists.infradead.org; linux-
+> tegra@vger.kernel.org
+> Subject: [PATCH v5 6/6] iommu/tegra241-cmdqv: Limit CMDs for guest owned
+> VINTF
+>=20
+> When VCMDQs are assigned to a VINTF owned by a guest (HYP_OWN bit unset),
+> only TLB and ATC invalidation commands are supported by the VCMDQ HW. So,
+> add a new helper to scan the input cmds to make sure every single command
+> is supported when selecting a queue.
+>=20
+> Note that the guest VM shouldn't have HYP_OWN bit being set regardless of
+> guest kernel driver writing it or not, i.e. the hypervisor running in the
+> host OS should wire this bit to zero when trapping a write access to this
+> VINTF_CONFIG register from a guest kernel.
+
+Just curious, suppose there is a malicious guest with a compromised kernel=
+=20
+which bypasses the HYP_OWN bit check and issues other commands, does
+the hardware has the capability to detect it and not make the host unstable
+in any way?
+
+Thanks,
+Shameer
+
+>=20
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 > ---
->  drivers/media/i2c/st-mipid02.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/i2c/st-mipid02.c b/drivers/media/i2c/st-mipid02.c
-> index f250640729ca..93a40bfda1af 100644
-> --- a/drivers/media/i2c/st-mipid02.c
-> +++ b/drivers/media/i2c/st-mipid02.c
-> @@ -326,7 +326,7 @@ static int mipid02_configure_from_rx_speed(struct mipid02_dev *bridge,
->  	}
->  
->  	dev_dbg(&client->dev, "detect link_freq = %lld Hz", link_freq);
-> -	do_div(ui_4, link_freq);
-> +	ui_4 = div64_s64(ui_4, link_freq);
->  	bridge->r.clk_lane_reg1 |= ui_4 << 2;
->  
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   |  7 +--
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  5 ++-
+>  .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 43 ++++++++++++++++++-
+>  3 files changed, 49 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> index ba7a933c1efb..9af6659ea488 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> @@ -352,10 +352,11 @@ static int arm_smmu_cmdq_build_cmd(u64 *cmd,
+> struct arm_smmu_cmdq_ent *ent)
 >  	return 0;
-> 
+>  }
+>=20
+> -static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct
+> arm_smmu_device *smmu)
+> +static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct
+> arm_smmu_device *smmu,
+> +					       u64 *cmds, int n)
+>  {
+>  	if (smmu->tegra241_cmdqv)
+> -		return tegra241_cmdqv_get_cmdq(smmu);
+> +		return tegra241_cmdqv_get_cmdq(smmu, cmds, n);
+>=20
+>  	return &smmu->cmdq;
+>  }
+> @@ -765,7 +766,7 @@ static int arm_smmu_cmdq_issue_cmdlist(struct
+> arm_smmu_device *smmu,
+>  	u32 prod;
+>  	unsigned long flags;
+>  	bool owner;
+> -	struct arm_smmu_cmdq *cmdq =3D arm_smmu_get_cmdq(smmu);
+> +	struct arm_smmu_cmdq *cmdq =3D arm_smmu_get_cmdq(smmu, cmds,
+> n);
+>  	struct arm_smmu_ll_queue llq, head;
+>  	int ret =3D 0;
+>=20
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> index 5b8e463c28eb..fdc3d570cf43 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> @@ -836,7 +836,8 @@ static inline void
+> arm_smmu_sva_remove_dev_pasid(struct iommu_domain *domain,
+>  struct tegra241_cmdqv *
+>  tegra241_cmdqv_acpi_probe(struct arm_smmu_device *smmu, int id);
+>  int tegra241_cmdqv_device_reset(struct arm_smmu_device *smmu);
+> -struct arm_smmu_cmdq *tegra241_cmdqv_get_cmdq(struct
+> arm_smmu_device *smmu);
+> +struct arm_smmu_cmdq *tegra241_cmdqv_get_cmdq(struct
+> arm_smmu_device *smmu,
+> +					      u64 *cmds, int n);
+>  #else /* CONFIG_TEGRA241_CMDQV */
+>  static inline struct tegra241_cmdqv *
+>  tegra241_cmdqv_acpi_probe(struct arm_smmu_device *smmu, int id)
+> @@ -850,7 +851,7 @@ static inline int tegra241_cmdqv_device_reset(struct
+> arm_smmu_device *smmu)
+>  }
+>=20
+>  static inline struct arm_smmu_cmdq *
+> -tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
+> +tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu, u64 *cmds, int
+> n)
+>  {
+>  	return NULL;
+>  }
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> index 15683123a4ce..7aeaf810980c 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+> @@ -262,6 +262,7 @@ struct tegra241_vcmdq {
+>   * struct tegra241_vintf - Virtual Interface
+>   * @idx: Global index in the CMDQV HW
+>   * @enabled: Enabled or not
+> + * @hyp_own: Owned by hypervisor (in-kernel)
+>   * @error: Status error or not
+>   * @cmdqv: CMDQV HW pointer
+>   * @vcmdqs: List of VCMDQ pointers
+> @@ -271,6 +272,7 @@ struct tegra241_vintf {
+>  	u16 idx;
+>=20
+>  	bool enabled;
+> +	bool hyp_own;
+>  	atomic_t error;	/* Race between interrupts and get_cmdq() */
+>=20
+>  	struct tegra241_cmdqv *cmdqv;
+> @@ -369,7 +371,32 @@ static irqreturn_t tegra241_cmdqv_isr(int irq, void
+> *devid)
+>  	return IRQ_HANDLED;
+>  }
+>=20
+> -struct arm_smmu_cmdq *tegra241_cmdqv_get_cmdq(struct
+> arm_smmu_device *smmu)
+> +static bool tegra241_vintf_support_cmds(struct tegra241_vintf *vintf,
+> +					u64 *cmds, int n)
+> +{
+> +	int i;
+> +
+> +	/* VINTF owned by hypervisor can execute any command */
+> +	if (vintf->hyp_own)
+> +		return true;
+> +
+> +	/* Guest-owned VINTF must Check against the list of supported CMDs
+> */
+> +	for (i =3D 0; i < n; i++) {
+> +		switch (FIELD_GET(CMDQ_0_OP, cmds[i *
+> CMDQ_ENT_DWORDS])) {
+> +		case CMDQ_OP_TLBI_NH_ASID:
+> +		case CMDQ_OP_TLBI_NH_VA:
+> +		case CMDQ_OP_ATC_INV:
+> +			continue;
+> +		default:
+> +			return false;
+> +		}
+> +	}
+> +
+> +	return true;
+> +}
+> +
+> +struct arm_smmu_cmdq *tegra241_cmdqv_get_cmdq(struct
+> arm_smmu_device *smmu,
+> +					      u64 *cmds, int n)
+>  {
+>  	struct tegra241_cmdqv *cmdqv =3D smmu->tegra241_cmdqv;
+>  	struct tegra241_vintf *vintf =3D cmdqv->vintfs[0];
+> @@ -386,6 +413,10 @@ struct arm_smmu_cmdq
+> *tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu)
+>  	if (atomic_read(&vintf->error))
+>  		return &smmu->cmdq;
+>=20
+> +	/* Unsupported CMDs go for smmu->cmdq pathway */
+> +	if (!tegra241_vintf_support_cmds(vintf, cmds, n))
+> +		return &smmu->cmdq;
+> +
+>  	/*
+>  	 * Select a vcmdq to use. Here we use a temporal solution to
+>  	 * balance out traffic on cmdq issuing: each cmdq has its own
+> @@ -575,6 +606,11 @@ int tegra241_cmdqv_device_reset(struct
+> arm_smmu_device *smmu)
+>  	if (ret)
+>  		return ret;
+>=20
+> +	/*
+> +	 * Note that HYP_OWN bit is wired to zero when running in guest kernel
+> +	 * regardless of enabling it here, as !HYP_OWN cmdqs have a restricted
+> +	 * set of supported commands, by following the HW design.
+> +	 */
+>  	regval =3D FIELD_PREP(VINTF_HYP_OWN, 1);
+>  	vintf_writel(regval, CONFIG);
+>=20
+> @@ -582,6 +618,11 @@ int tegra241_cmdqv_device_reset(struct
+> arm_smmu_device *smmu)
+>  	if (ret)
+>  		return ret;
+>=20
+> +	/*
+> +	 * As being mentioned above, HYP_OWN bit is wired to zero for a guest
+> +	 * kernel, so read it back from HW to ensure that reflects in hyp_own
+> +	 */
+> +	vintf->hyp_own =3D !!(VINTF_HYP_OWN & vintf_readl(CONFIG));
+>  	vintf->enabled =3D !!(VINTF_ENABLED & vintf_readl(STATUS));
+>  	atomic_set(&vintf->error,
+>  		   !!FIELD_GET(VINTF_STATUS, vintf_readl(STATUS)));
+> --
+> 2.43.0
+>=20
 
--- 
-Regards,
-
-Benjamin
