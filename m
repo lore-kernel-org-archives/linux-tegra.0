@@ -1,115 +1,125 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F42A146D56;
-	Wed, 17 Apr 2024 15:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D1A1474A1;
+	Wed, 17 Apr 2024 15:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713366837; cv=none; b=YIQ4xguanxxX068B0bd4bJnMdeZ3UrzkEcuz9tEV9wgNAtCk4OD77V2sCDffMvl3akRABbQ7tZlGT79axQjebR22heKD55NEBhcNaSJyT1q12rPfmMPR3zy/xANJ64sv6uQ7QKZgP+HuV03qN7Y+yMV5r1OGkyZYvg/Fw1kxHSA=
+	t=1713369087; cv=none; b=bT1t7FseD3UZcVd+MvGnjrLp48d2Xv1wW31YcZ8v87bkHnWlUvHDItxreephrgVsbVLoNNibsYIYTxqbdYl75Edw6N08PTM2tOuiRr9Que7F7KiJr3/0MnCYtUR/Quok8nh/avYuZsBx3O3F/Na9rr4dirCNszjm6Oc+9fZm2XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713366837; c=relaxed/simple;
-	bh=nJjGtUnwDKua1iw4lX8BX7gh9RSzpuswBQi+p9c105c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mtf3zhyPWtOSybdy6G44wSEAIdPwbWv3sjCwhYuAzS8iRZXrbp2Nr7J4V89F1+D26Wcs4il5LYbnRSWF3JisW2+afHFHla9xWjtHz6XlgnHK7WPGK3LEPJO+Oa+ZF0Ek+NVwuC45jL2V6eFpGQgFZfcgVYnEU85iaDk8zEp9o00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VKPWr6YZKz6H6yd;
-	Wed, 17 Apr 2024 23:11:52 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3D59E1406AC;
-	Wed, 17 Apr 2024 23:13:53 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
- lhrpeml500005.china.huawei.com (7.191.163.240) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 17 Apr 2024 16:13:52 +0100
-Received: from lhrpeml500005.china.huawei.com ([7.191.163.240]) by
- lhrpeml500005.china.huawei.com ([7.191.163.240]) with mapi id 15.01.2507.035;
- Wed, 17 Apr 2024 16:13:52 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Nicolin Chen <nicolinc@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "joro@8bytes.org"
-	<joro@8bytes.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-	"vdumpa@nvidia.com" <vdumpa@nvidia.com>, "jonathanh@nvidia.com"
-	<jonathanh@nvidia.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: RE: [PATCH v5 0/6] Add Tegra241 (Grace) CMDQV Support (part 1/2)
-Thread-Topic: [PATCH v5 0/6] Add Tegra241 (Grace) CMDQV Support (part 1/2)
-Thread-Index: AQHajVTpda5PtrGZ80+YonTPgO6cRrFphU4AgAKXr6CAADwLgIAAP9dA
-Date: Wed, 17 Apr 2024 15:13:52 +0000
-Message-ID: <85e7752fed7444ea8611dbc5be288044@huawei.com>
-References: <cover.1712977210.git.nicolinc@nvidia.com>
- <20240415171426.GF3637727@nvidia.com>
- <f92efdb774cc4cd48a59495e7cb69c27@huawei.com>
- <20240417122445.GO3637727@nvidia.com>
-In-Reply-To: <20240417122445.GO3637727@nvidia.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1713369087; c=relaxed/simple;
+	bh=edMEOEGuTlM3PAdEmFEfjl2jYJNl85TN3kgL+Uyi5vI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pne6b7UcdYWSaHG/QQ2XUqA2QQ03VAkcEASablsp7iZr7xr+qotKVydP1O4V6+2JTZCIxZnhjXdI5qzR7PbGa505lARbEQ38S6EWI29U55UtrCL7Hw5O4tAq4PlosL5baJD8CEKUAVV9q+gJ/Dt/k3DlgeCcGGTk4uzkVkTsDcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JZgtL9Xg; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JZgtL9Xg"
+Received: from pendragon.ideasonboard.com (85-76-15-230-nat.elisa-mobile.fi [85.76.15.230])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DA4CB1815;
+	Wed, 17 Apr 2024 17:50:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1713369034;
+	bh=edMEOEGuTlM3PAdEmFEfjl2jYJNl85TN3kgL+Uyi5vI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JZgtL9XgcBbTfPXnFAZgCDPtfvA9dKRTMOKsCQP54tvG+vgRvyoUVmKyvHqZUW8+9
+	 LNXSsOnYHGLTgFNjFxrIi0HOt16nKFhbM2X/j3JnMIJzK5z7DcFFop4CUa4dg8LTzE
+	 vNZ8xAy3r+pQq+qAKQ6gJZoeSd1hXqjf9ytYbmBY=
+Date: Wed, 17 Apr 2024 18:51:12 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Martin Tuma <martin.tuma@digiteqautomotive.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Hugues Fruchet <hugues.fruchet@foss.st.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Sergey Kozlov <serjk@netup.ru>,
+	Abylay Ospan <aospan@netup.ru>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Pavel Machek <pavel@ucw.cz>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	Oleg Drokin <green@linuxhacker.ru>
+Subject: Re: [PATCH 00/35] media: Fix coccinelle warning/errors
+Message-ID: <20240417155112.GQ12561@pendragon.ideasonboard.com>
+References: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
+ <a003494c-a1a9-4fcd-83d8-766a75d6bbb2@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a003494c-a1a9-4fcd-83d8-766a75d6bbb2@moroto.mountain>
 
+On Tue, Apr 16, 2024 at 11:47:17AM +0300, Dan Carpenter wrote:
+> In my opinion, it's better to just ignore old warnings.
 
+I agree. Whatever checkers we enable, whatever code we test, there will
+always be false positives. A CI system needs to be able to ignore those
+false positives and only warn about new issues.
 
-> -----Original Message-----
-> From: Jason Gunthorpe <jgg@nvidia.com>
-> Sent: Wednesday, April 17, 2024 1:25 PM
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-> Cc: Nicolin Chen <nicolinc@nvidia.com>; will@kernel.org;
-> robin.murphy@arm.com; joro@8bytes.org; thierry.reding@gmail.com;
-> vdumpa@nvidia.com; jonathanh@nvidia.com; linux-kernel@vger.kernel.org;
-> iommu@lists.linux.dev; linux-arm-kernel@lists.infradead.org; linux-
-> tegra@vger.kernel.org; Jerry Snitselaar <jsnitsel@redhat.com>
-> Subject: Re: [PATCH v5 0/6] Add Tegra241 (Grace) CMDQV Support (part 1/2)
->=20
-> On Wed, Apr 17, 2024 at 08:01:10AM +0000, Shameerali Kolothum Thodi wrote=
-:
-> > We do have plans to revive the SMMUv3 ECMDQ series posted a while back[=
-0]
-> > and looking at this series, I am just wondering whether it makes sense =
-to have
-> > a similar one with ECMDQ as well?  I see that the NVIDIA VCMDQ has a sp=
-ecial
-> bit
-> > to restrict the commands that can be issued from user space. If we end =
-up
-> assigning
-> > a ECMDQ to user space, is there any potential risk in doing so?
->=20
-> I think there is some risk/trouble, ECMDQ needs some enhancement
-> before it can be really safe to use from less privileged software, and
-> it wasn't designed to have an isolated doorbell page either.
->=20
-> > Not clear to me what are the major concerns here and maybe we can come =
-up
-> with
-> > something to address that in kernel.
->=20
-> I haven't looked deeply but my impression has been the ECMDQ is not
-> workable to support virtualization. At a minimum it has no way to
-> constrain the command flow to a VMID and to do VSID -> PSID
-> translation.
+> When code is new the warnings are going to be mostly correct.  The
+> original author is there and knows what the code does.  Someone has
+> the hardware ready to test any changes.  High value, low burden.
+> 
+> When the code is old only the false positives are left.  No one is
+> testing the code.  It's low value, high burden.
+> 
+> Plus it puts static checker authors in a difficult place because now
+> people have to work around our mistakes.  It creates animosity.
+> 
+> Now we have to hold ourselves to a much higher standard for false
+> positives.  It sounds like I'm complaining and lazy, right?  But Oleg
+> Drokin has told me previously that I spend too much time trying to
+> silence false positives instead of working on new code.  He's has a
+> point which is that actually we have limited amount of time and we have
+> to make choices about what's the most useful thing we can do.
+> 
+> So what I do and what the zero day bot does is we look at warnings one
+> time and we re-review old warnings whenever a file is changed.
+> 
+> Kernel developers are very good at addressing static checker warnings
+> and fixing the real issues...  People sometimes ask me to create a
+> database of warnings which I have reviewed but the answer is that
+> anything old can be ignored.  As I write this, I've had a thought that
+> instead of a database of false positives maybe we should record a
+> database of real bugs to ensure that the fixes for anything real is
+> applied.
 
-Ok. That makes sense.
+-- 
+Regards,
 
->=20
-> I suggest you talk directly to ARM on this if you are interested in
-> this.
->=20
-
-Sure. Will check.
-
-Thanks,
-Shameer
+Laurent Pinchart
