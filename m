@@ -1,252 +1,153 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829C57F7D0
-	for <linux-tegra@vger.kernel.org>; Fri, 19 Apr 2024 10:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB4480029;
+	Fri, 19 Apr 2024 11:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713523543; cv=none; b=MGsNq7dpAyt1xracWLgtCiGTxZqCpybwA4t2M3vzP0flHmE+cw+RK97Znw3sgfam5hYCZohwH3uo3+WuUUSJS97c/Rd6aAZxRZ9TQ49gmqL13EgilDo2IjK8ECpSpWswq+cfLXYoPXrdN/kydqVdjQdZ4Jzpygfbvf+A1ao/8oE=
+	t=1713526123; cv=none; b=oNxtvsPiLj8LZ+JQ7k+tloY52KsyHpIJl5CSHfubvOistEyOx4tJkVmMRNNo7DIFsnPYE0+3FG6J8zOJhIHBLVGBzJBXIHX1WXlCenz863DYl3p8sk9FaovGSnvVeWVFw+2kwH1HrU31gTYobrqQg8pgMUYlgC5f0IgRoXcmcYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713523543; c=relaxed/simple;
-	bh=fQJHKsxzEnvyHYVoLy469Ew8WlOfjH2KxbM5Zu4a5E0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jZbDkXu1u4Xaf3isUtO/3ulkNm+zJVQxf1tWXNUZRU43/YNUT36BqsLA9jeblG6Yon4rl3dk+G3pt6XxE2UOurYlcI+laIxth4buCu8lb3FzcRXV46WkDB4EyaOUW+TR6YFXnftVUAD9Tx9UKL/ydXOcQY1JqdTBwoGucghpaJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=BJ/CzqJg; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1713526123; c=relaxed/simple;
+	bh=ePv7bJHuUzanw17+IrGOqLfUWC2Y6dNzrMMM+ekyZPo=;
+	h=Content-Type:Mime-Version:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=JbGGc8D8lE0FxV0Mo0Hz1oSQmeepeBgfYaFGD/AUOMDsgJNFq0Jwv2YLVpWBCyGaNN8Mn03f8lS8iHdlYHD3FqISUlIwUimBExO3xzRCSOu4lzvQQA8oCBBgBcIGolYKNVLb9b9LGjSdOkAiaq4aukUKRX7gkxHdQD2rTxn99G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5brtCcG; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="BJ/CzqJg"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 8EE866005408;
-	Fri, 19 Apr 2024 11:45:32 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id roXFRWZFcsy7; Fri, 19 Apr 2024 11:45:30 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 53B156005415;
-	Fri, 19 Apr 2024 11:45:27 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1713523527;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kux4E0YyOMHhNcXQz9XJeKNHT7wCdDkvtSAS2WBV4Ig=;
-	b=BJ/CzqJgKy/u9rTCHN6NdRzJLQSj7bOO8RB82RoJ2EQ8NHKtfK9UdK//LR0ByLYv/l01Q8
-	fgHrDe1LG9djhAjhikeyL1ePLD0kAWmCj8eQmGhy5lCB4gM12+g65Hw0QL1ffdWVlds19Z
-	9/KJNTLsyoGYJJgRsg8a2IiMbxmLMsQ=
-Received: from diogo-gram.home (unknown [IPv6:2a01:14:8070:dc60:4589:2164:1bc5:2670])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 320323600AC;
-	Fri, 19 Apr 2024 11:45:27 +0100 (WEST)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: krzysztof.kozlowski@linaro.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	linux-tegra@vger.kernel.org
-Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Subject: [PATCH v2 7/7] memory: tegra: Rework update_clock_tree_delay()
-Date: Fri, 19 Apr 2024 11:45:15 +0100
-Message-ID: <20240419104516.308975-8-diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240419104516.308975-1-diogo.ivo@tecnico.ulisboa.pt>
-References: <20240419104516.308975-1-diogo.ivo@tecnico.ulisboa.pt>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5brtCcG"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-571d6d1943fso464060a12.2;
+        Fri, 19 Apr 2024 04:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713526120; x=1714130920; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3vJkoh0Y88E8xelvHUeCB5ZFGBjLcpHSC6lZET6ARl0=;
+        b=g5brtCcGGvMPDiQqTuhSoa7bwm9ZxZ+ISQmmPhNa3d/328ddI8CmPgeKiy63qpuu54
+         p1iIS4UBOfDkw20TqChHaiC1Ho+mxHDTV2kgnJOetYbLGhrhJotRgSgsdXworpIqFof4
+         o38uA0repjSImpcC4RP/UW7uN57zPDiBaD0o3L+M9zJnLJjg+MkBcWFl3UK72+GYj706
+         E+6d6u1NQmn92F150rtVPpumQHjODbc/1abA4hcKg6fmllKQ/ruTsOWwY+HauL+Inay3
+         mc3kQ96WAiaRYu3X2oQSrXQtQlczLNm1EUqOTaP+bpwz8vzJAQRLt3sk+k1PQo2HneSx
+         MY2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713526120; x=1714130920;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3vJkoh0Y88E8xelvHUeCB5ZFGBjLcpHSC6lZET6ARl0=;
+        b=quUuxDlJbwvEwNOUkbBAou36qQMaUZuvFcxHMXdcpdzJftiiREpm1Bux2dzyYC+Peb
+         7fZC8fsTmasjIgO9HiqL/Gpnd8QBhWEF/atXSUZiAt0T4NjaKCz9ZuW4WA4lfkjjrYYK
+         gRjkuxjmNbOugRghCcUEb7Yz4lMZY5pIVQBvwSh7my7DJKD69+1oyIyHkfnyirRmaKOm
+         4jb9k63swQ10syynd9yDfMP+/DZeINonhzMyuPXd1RGKzWGhJYhINQKoDiJg2hLAZeiu
+         XoORigy+GmQSoSzq3lMgx+nua0SWkh9qg0jjhUCczI2YkSa7Yvv5yawu67BZENuKcnIs
+         80sw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1To+zQNqEqYlXLkVkxR/zEs+uZhWdTsHfc0ee6fPX7NNN8ILR2Yuzdf5iEw41e07BLPNgMpzYpK+vQzPWM9cgCj88Q4p9aO88JXDxUlQhkjDuMnB83qjOMNXcNGJGt8NIHoHxgrjRt5M=
+X-Gm-Message-State: AOJu0Yw1JA97c9XXSi3Jg3tLG2iA9HipOjzwLmyy0S89k5CFS2xuR81W
+	FTGBdXg22R61IEIrWIkqNqtoNdW9xraVc6rqpifpFd/iXff1A2IW
+X-Google-Smtp-Source: AGHT+IFKiwmp4FLKAWcTXgidfN19IfMXqqvkx3T/mYwog55rvnWpsnKvb8Yadb5rRXuT3dRv4qU4Xg==
+X-Received: by 2002:a17:906:2a4b:b0:a52:1770:965 with SMTP id k11-20020a1709062a4b00b00a5217700965mr1248210eje.42.1713526119786;
+        Fri, 19 Apr 2024 04:28:39 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id bi14-20020a170907368e00b00a5588ed8fa2sm552797ejc.113.2024.04.19.04.28.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 19 Apr 2024 04:28:39 -0700 (PDT)
+Content-Type: multipart/signed;
+ boundary=cd669ce6bdd8f9700a6a46cb06d3d090071a64c757641859cb60bdf1475c;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Date: Fri, 19 Apr 2024 13:28:38 +0200
+Message-Id: <D0O2BBOL89ME.QEWHYL0GV4MY@gmail.com>
+From: "Thierry Reding" <thierry.reding@gmail.com>
+To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ "David Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>
+Cc: "Frank Binns" <frank.binns@imgtec.com>, "Matt Coster"
+ <matt.coster@imgtec.com>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Philipp Zabel"
+ <p.zabel@pengutronix.de>, "Matthias Brugger" <matthias.bgg@gmail.com>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ <linux-mediatek@lists.infradead.org>,
+ <linux-arm-kernel@lists.infradead.org>, "Mikko Perttunen"
+ <mperttunen@nvidia.com>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 0/4] gpu: Convert to platform remove callback returning
+ void
+X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
+References: <cover.1712681770.git.u.kleine-koenig@pengutronix.de>
+ <xqwcrxfrg3ogplh35c5etl6nbzw6zueilm4h6euh7bnpszyir4@6dtn5qdvijv3>
+In-Reply-To: <xqwcrxfrg3ogplh35c5etl6nbzw6zueilm4h6euh7bnpszyir4@6dtn5qdvijv3>
 
-Further streamline this function by moving the delay post-processing
-to the callers, leaving it only with the task of returing the measured
-delay values.
+--cd669ce6bdd8f9700a6a46cb06d3d090071a64c757641859cb60bdf1475c
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
----
- drivers/memory/tegra/tegra210-emc-cc-r21021.c | 120 +++++++-----------
- 1 file changed, 46 insertions(+), 74 deletions(-)
+On Fri Apr 19, 2024 at 9:20 AM CEST, Uwe Kleine-K=C3=B6nig wrote:
+> Hello,
+>
+> On Tue, Apr 09, 2024 at 07:02:47PM +0200, Uwe Kleine-K=C3=B6nig wrote:
+> > with some patches sent earlier[1], this series converts all platform
+> > drivers below drivers/gpu to not use struct platform_device::remove()
+> > any more.
+> >=20
+> > See commit 5c5a7680e67b ("platform: Provide a remove callback that
+> > returns no value") for an extended explanation and the eventual goal.
+> >=20
+> > All conversations are trivial, because the driver's .remove() callbacks
+> > returned zero unconditionally.
+> >=20
+> > There are no interdependencies between these patches. This is merge
+> > window material.
+>
+> I wonder how this series will make it in. While I would prefer these
+> patches to go in together (that I can consider this thread completed in
+> one go), I think with how drm maintenace works, it's best if the patches
+> are picked up by their individual maintainers. I guess that's:
+>
+>  - Frank Binns + Matt Coster for imagination
+>
+>  - Chun-Kuang Hu + Philipp Zabel for mediatek
+>
+>  - Thierry Reding + Mikko Perttunen for the host1x driver
+>    (Note there is another patch for this driver set at
+>     20240409165043.105137-2-u.kleine-koenig@pengutronix.de that is
+>     relevant for the same quest.)
+>
+>  - Philipp Zabel for ipu-v3
+>
+> I plan to send a patch changing struct platform_driver::remove after the
+> end of the merge window leading to 6.10-rc1 for inclusion in next via
+> Greg's driver core. So please either care the patches land in 6.10-rc1
+> or ack that I include them in the submission to Greg.
 
-diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-index 338c9f3b1a66..1b1141e4b4d3 100644
---- a/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-+++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-@@ -105,7 +105,7 @@ enum {
- 			  next->ptfv_list[w])) /			\
- 			(next->ptfv_list[w] + 1);			\
- 									\
--		emc_dbg(emc, EMA_UPDATES, "%s: (s=%lu) EMA: %u\n",	\
-+		emc_dbg(emc, EMA_UPDATES, "%s: (s=%u) EMA: %u\n",	\
- 			__stringify(dev), nval, next->ptfv_list[dqs]);	\
- 	} while (0)
- 
-@@ -130,93 +130,51 @@ static bool tegra210_emc_compare_update_delay(struct tegra210_emc_timing *timing
- 	return false;
- }
- 
--static bool update_clock_tree_delay(struct tegra210_emc *emc, int type)
-+static void tegra210_emc_get_clktree_delay(struct tegra210_emc *emc,
-+					   u32 delay[DRAM_CLKTREE_NUM])
- {
--	bool periodic_training_update = type == PERIODIC_TRAINING_UPDATE;
--	struct tegra210_emc_timing *last = emc->last;
--	struct tegra210_emc_timing *next = emc->next;
--	u32 last_timing_rate_mhz = last->rate / 1000;
--	bool dvfs_update = type == DVFS_UPDATE;
--	bool dvfs_pt1 = type == DVFS_PT1;
--	u32 temp[2][2], value, udelay;
--	unsigned long cval = 0;
-+	struct tegra210_emc_timing *curr = emc->last;
-+	u32 rate_mhz = curr->rate / 1000;
-+	u32 msb, lsb, dqsosc, udelay;
-+	unsigned long clocks = 0;
- 	unsigned int c, d, idx;
--	bool over = false;
- 
--	if (dvfs_pt1 || periodic_training_update) {
--		udelay = tegra210_emc_actual_osc_clocks(last->run_clocks);
--		udelay *= 1000;
--		udelay = 2 + (udelay / last->rate);
-+	clocks = tegra210_emc_actual_osc_clocks(curr->run_clocks);
-+	udelay = 2 + (clocks / rate_mhz);
- 
--		tegra210_emc_start_periodic_compensation(emc);
--		udelay(udelay);
--	}
-+	tegra210_emc_start_periodic_compensation(emc);
-+	udelay(udelay);
- 
- 	for (d = 0; d < emc->num_devices; d++) {
--		if (dvfs_pt1 || periodic_training_update) {
--			/* Dev[d] MSB */
--			value = tegra210_emc_mrr_read(emc, 2 - d, 19);
--
--			for (c = 0; c < emc->num_channels; c++) {
--				temp[c][0] = (value & 0x00ff) << 8;
--				temp[c][1] = (value & 0xff00) << 0;
--				value >>= 16;
--			}
--
--			/* Dev[d] LSB */
--			value = tegra210_emc_mrr_read(emc, 2 - d, 18);
--
--			for (c = 0; c < emc->num_channels; c++) {
--				temp[c][0] |= (value & 0x00ff) >> 0;
--				temp[c][1] |= (value & 0xff00) >> 8;
--				value >>= 16;
--			}
--		}
-+		/* Read DQSOSC from MRR18/19 */
-+		msb = tegra210_emc_mrr_read(emc, 2 - d, 19);
-+		lsb = tegra210_emc_mrr_read(emc, 2 - d, 18);
- 
- 		for (c = 0; c < emc->num_channels; c++) {
- 			/* C[c]D[d]U[0] */
- 			idx = c * 4 + d * 2;
- 
--			if (dvfs_pt1 || periodic_training_update) {
--				cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
--				cval *= 1000000;
--				cval /= last_timing_rate_mhz * 2 * temp[c][0];
--			}
--
--			if (dvfs_pt1)
--				__INCREMENT_PTFV(idx, cval);
--			else if (dvfs_update)
--				__AVERAGE_PTFV(idx);
--			else if (periodic_training_update)
--				__WEIGHTED_UPDATE_PTFV(idx, cval);
-+			dqsosc = (msb & 0x00ff) << 8;
-+			dqsosc |= (lsb & 0x00ff) >> 0;
- 
--			if (dvfs_update || periodic_training_update)
--				over |= tegra210_emc_compare_update_delay(next,
--							__MOVAVG_AC(next, idx), idx);
-+			/* Check for unpopulated channels */
-+			if (dqsosc)
-+				delay[idx] = clocks * 1000000 / rate_mhz * 2 * dqsosc;
- 
- 			/* C[c]D[d]U[1] */
- 			idx++;
- 
--			if (dvfs_pt1 || periodic_training_update) {
--				cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
--				cval *= 1000000;
--				cval /= last_timing_rate_mhz * 2 * temp[c][1];
--			}
-+			dqsosc = (msb & 0xff00) << 0;
-+			dqsosc |= (lsb & 0xff00) >> 8;
- 
--			if (dvfs_pt1)
--				__INCREMENT_PTFV(idx, cval);
--			else if (dvfs_update)
--				__AVERAGE_PTFV(idx);
--			else if (periodic_training_update)
--				__WEIGHTED_UPDATE_PTFV(idx, cval);
-+			/* Check for unpopulated channels */
-+			if (dqsosc)
-+				delay[idx] = clocks * 1000000 / rate_mhz * 2 * dqsosc;
- 
--			if (dvfs_update || periodic_training_update)
--				over |= tegra210_emc_compare_update_delay(next,
--							__MOVAVG_AC(next, idx), idx);
-+			msb >>= 16;
-+			lsb >>= 16;
- 		}
- 	}
--
--	return over;
- }
- 
- static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
-@@ -228,8 +186,8 @@ static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 	   (nt)->ptfv_list[PTFV_DVFS_SAMPLES_INDEX]; })
- 
- 	u32 i, samples = next->ptfv_list[PTFV_DVFS_SAMPLES_INDEX];
-+	u32 delay[DRAM_CLKTREE_NUM], idx;
- 	bool over = false;
--	u32 idx;
- 
- 	if (!next->periodic_training)
- 		return 0;
-@@ -252,16 +210,30 @@ static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 
- 			for (i = 0; i < samples; i++) {
- 				/* Generate next sample of data. */
--				update_clock_tree_delay(emc, DVFS_PT1);
-+				tegra210_emc_get_clktree_delay(emc, delay);
-+
-+				for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++)
-+					__INCREMENT_PTFV(idx, delay[idx]);
- 			}
- 		}
- 
--		/* Do the division part of the moving average */
--		over = update_clock_tree_delay(emc, DVFS_UPDATE);
-+		for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++) {
-+			/* Do the division part of the moving average */
-+			__AVERAGE_PTFV(idx);
-+			over |= tegra210_emc_compare_update_delay(next,
-+						__MOVAVG_AC(next, idx), idx);
-+		}
- 	}
- 
--	if (type == PERIODIC_TRAINING_SEQUENCE)
--		over = update_clock_tree_delay(emc, PERIODIC_TRAINING_UPDATE);
-+	if (type == PERIODIC_TRAINING_SEQUENCE) {
-+		tegra210_emc_get_clktree_delay(emc, delay);
-+
-+		for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++) {
-+			__WEIGHTED_UPDATE_PTFV(idx, delay[idx]);
-+			over |= tegra210_emc_compare_update_delay(next,
-+						__MOVAVG_AC(next, idx), idx);
-+		}
-+	}
- 
- 	return over;
- }
--- 
-2.44.0
+I think the latter would make more sense. I'll go ack those patches.
 
+Thierry
+
+--cd669ce6bdd8f9700a6a46cb06d3d090071a64c757641859cb60bdf1475c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmYiVWcACgkQ3SOs138+
+s6EMWxAAuBhTV9ovczgI1JfXW9dVlwEMXj4ZN4Wo303HNjKbzE/U9v17jp2EZP+t
+s35e09Yav10cM7qTAnoTkHG/O7TbJ1j1eFN0dYuog+C28+u3a7FKYFzjxrDdohFD
+nWXufe9EklSmTeDiA9LVY/hQgiebLT6zHLh4QxIPwhE2HpnZcT9JOq5Q95w9HYY+
+wMSiJ0eQCGLCWgtDGZoWtCPNkp39ViRF59soniQuEHhm5pXc5eFfYbUOP940CJ44
+8UWu69np3LlX7Gx0TMaqIuzlBWaG+MfU7vBI7hnyA5VgSjcuT0iEJwFW6lZAeBgm
+I4h1xdDIMbrHoVIXqj81dZWFTCO6FILwyb7X1sEKAWqN/axoa6C/PPt4UrURzPfD
+mMiWc006q+mYajFqk2S31q/WBfssrmC4F4boDphofmJHmsKT0z9Oj8jCpPM8+RHP
+lpATu13Rq+zzNIGeqpodAvPEQrX8QGpE9xxncQwWPiXJ7PnG1UdZoiERW5hdE8zN
+XcaZB7crWn1A0NbseWFFAb09WoPQmvR2JIO8gzsQ1a9CKs0UK4O8UNlfwnJp7suo
+TkG+kqH5kUunGRVpvJbF9sS7raVtB0HRN28xWCY/jFpd0nmfi1tcfxcLBJhDBLRS
+KtLx+oMwRhWxpalupIX1hLGY+QmcLxEi4tjYfCd/vHRoAShnV0Y=
+=abck
+-----END PGP SIGNATURE-----
+
+--cd669ce6bdd8f9700a6a46cb06d3d090071a64c757641859cb60bdf1475c--
