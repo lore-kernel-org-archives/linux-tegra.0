@@ -1,124 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABF7174ECD;
-	Thu, 18 Apr 2024 17:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC72E883D
+	for <linux-tegra@vger.kernel.org>; Fri, 19 Apr 2024 06:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713461811; cv=none; b=XeLJcZe+GuksJwWFOUfZXtJWjpZfYPGIZgEK6aoYMwjO4qmriaBNHpr0etrzADd9YvlTTpCyPg9VDmoHbBBP2g/97DabTtUES0mh+jr/iRfWsH3fXpjU/QyBdH0hO107O/PldssCFx1evlsIskc2BT1tAOirVVDmlqGh1bFMGug=
+	t=1713508130; cv=none; b=FuiV3cYb9bMODAXdvSt3oqlbyoNyEZBNim3LTf2mCK2ldEjFcpc+h1deM4ACD1VEoHRl88ifD8+EGX9xn/uqI4UCoCOWll2/gKasggkRPZWp7hr4+N2hp7OY3hL8BBOCv9qaqZWtdaR3SXW6080OEllGDHarE/lq7SBXtWrK/ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713461811; c=relaxed/simple;
-	bh=7Fg4qmfyav8W8DJA7fUVWkxlTH5YJKwrM/ZlOrI7cKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DfcWXss/uU1r4I1huQNr03GvS5DoBhhm2XvsF+190ceONPb3CQE9z72VKy4+3FlKqNUu3cH/rUUuNHxVPnykOEsYOdwzipVAdThwD1qJDztGCaMgvJJRoCTljkht2ZjTDTAVeZaGa5smJ+os3m6LPFVl0fnUCG7XDqzOM7TcQ3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9e6EOjQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713508130; c=relaxed/simple;
+	bh=WKkdIjjJd5AwfMBglOssEINqseYjTUuL5UgymD4croI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IQv5ASC8o9ZPTgS4MbDGmTq23CVLw2c57NBRi/uf9QcbJw20+ROu997LPT3aEJMxB6PgiklKrbIjK1phez5d/beZ988NwB6U1+ZncB4sVJT4TMgSavxefPeEYtwp5xVLo9VPqIerD+az+e4vXnwUsclF6+ugtzkejlxrrFU/ouA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fYVVByH6; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9e6EOjQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3CFEC113CC;
-	Thu, 18 Apr 2024 17:36:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713461810;
-	bh=7Fg4qmfyav8W8DJA7fUVWkxlTH5YJKwrM/ZlOrI7cKQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g9e6EOjQEl9d81+ImxD5y4to60yBX99x2cq0BJkyLMP4yKrAToif9oDEO8oIeKbdI
-	 9vN0ZjWRwpMqZyFLkMZtwRxmZnlUzFTCAlDQsbGOUjZrXyPeDfj2kMN4sNwJdQ1ylk
-	 89eIsuskFUPawrjTdtfmUgd3Ailah2ukj1xRCyHtOFO7EZDPKOGST36tBaF62Yj3+C
-	 h9k+tekrMTi77VVUW4W4gW4mUwNONT/eygnwFyXor+XAuk6dZN8oWXmtDgl8j+Pzeo
-	 hzUpg0qyiyTZ9Nrn5gDaS9kYmF+Ge1w+VJ1cUHTJ9Zv0UhflUrxhwBj48Y0at9Blw8
-	 /1dKokqpHXSFA==
-Message-ID: <5dd56713-74fa-46bd-a76f-1839c1800e88@kernel.org>
-Date: Thu, 18 Apr 2024 19:36:46 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fYVVByH6"
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6ed20fb620fso1395555b3a.2
+        for <linux-tegra@vger.kernel.org>; Thu, 18 Apr 2024 23:28:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1713508127; x=1714112927; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XvSTBBH3v6roeXx5/W42r/UqmZ0hAwtViWz/IKSvWRU=;
+        b=fYVVByH6WPCV8/K85Z/NBuiOiwbCMeRHof50sACsEuzo5wyrq/tTlILw4hvHo7UTjM
+         SRspFUWkzjs7uELrTcvOZSDm6T9GYELqmkq7dWT5tvFhHkhMGXAc3tL0Z8MmMfcX+2P3
+         74L7kBRecYZVmfRwzwYL9or+Yhwz5V51cX/RmKV9b6gLF4reG+tO0xlXGxoyUXK+mPxo
+         Fld4SuCa0nv7mZ3csbf80YW/WYI/UGqk9I4B4sSvWaZnU2YcVFXY2dJtXroauS0dCvJd
+         L1rWK8nhlrJGaZro8kRjCu0dlmhcDZS6HroXfcPx/u1xodnDwjB6OakQxASExrAvbJXe
+         XDqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713508127; x=1714112927;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XvSTBBH3v6roeXx5/W42r/UqmZ0hAwtViWz/IKSvWRU=;
+        b=xCqiUuFmTgNnfakgDXxU64VeGajRoCV+qIswhDBN87ONs5sTNen1/ySpVQYf08N90c
+         nOcKkI/KHoZAKTP0nKODkEHA7nwV95ibvd1MD0rFl7MCgXVtFXtZwPRC76ICXB1aDRcP
+         uypt2Q4bsO+NwMoK9hyQNQwpW0a4XUxeoIBIHaoY9S01X5ru0arKPhv/i48XGFWQRH13
+         Ih3P7sazXyCi04sMfN6XNlAoBXWE3aeEIK8F+KdS2G0JLBx+sBWBkWDfc9XpNQc5PUdR
+         a32yDYW5ZKcXAfs+GSd0gmQFZfNZPAvyEeU63TW8gPvjmgWMFtZdrr2qY+X5bf4WUIaZ
+         LCww==
+X-Forwarded-Encrypted: i=1; AJvYcCXkcmEarJeGbaxxmx9GMJTAR1s1K8xophvED5J5CotCMtsYNVVxGpB1NNM03xTBBtAUb6AcNuwVFtJyJis1TOxKfJ4hF66fOhtZpqw=
+X-Gm-Message-State: AOJu0YzTxIbPgJbx5zzRsigDtVFADgJi/UiZizfBwpok1oORobjGIflr
+	0CZglasZPtE/HM8L4meSaiHliNY+YF7qerN3zb4R5CtGPQq0x52i4iVefggULhc=
+X-Google-Smtp-Source: AGHT+IHy6niLl/88ecXlZ1L49JJ5pPAijtlXeB8NEQg0SKtgaVRWocf5WffnSjz653PBAgOikR70LA==
+X-Received: by 2002:a05:6a20:c70e:b0:1a9:c214:b7d with SMTP id hi14-20020a056a20c70e00b001a9c2140b7dmr1440687pzb.2.1713508126697;
+        Thu, 18 Apr 2024 23:28:46 -0700 (PDT)
+Received: from localhost ([122.172.87.52])
+        by smtp.gmail.com with ESMTPSA id m20-20020a170902c45400b001e197cee600sm2595636plm.3.2024.04.18.23.28.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Apr 2024 23:28:45 -0700 (PDT)
+Date: Fri, 19 Apr 2024 11:58:42 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Julia Lawall <julia.lawall@inria.fr>, linux-pm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH next] cpupfreq: tegra124: eliminate uses of of_node_put()
+Message-ID: <20240419062842.dc6tzssbcqdtdfi5@vireshk-i7>
+References: <20240407-cpufreq_of_node_put-v1-1-2c8889d4935d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: tegra20-das: Convert to schema
-To: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240418163326.58365-1-sheharyaar48@gmail.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240418163326.58365-1-sheharyaar48@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240407-cpufreq_of_node_put-v1-1-2c8889d4935d@gmail.com>
 
-On 18/04/2024 18:33, Mohammad Shehar Yaar Tausif wrote:
-> Convert NVIDIA Tegra20 DAS (Digital Audio Switch) binding to schema.
+On 07-04-24, 22:15, Javier Carrasco wrote:
+> Make use of the __free() cleanup handler to automatically free nodes
+> when they get out of scope. Only the probe function is affected by this
+> modification.
 > 
-> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+> Given that this mechanism requires the node to be initialized, its
+> initialization and the value check have been moved to the top of the
+> function.
+> 
+> After removing uses of of_node_put(), the jump to out_put_np is no
+> longer necessary.
+> 
+> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+> This patch is a proof of concept to remove uses of of_node_put() in
+> cpufreq, which can be replaced with the clenaup handler introduced with
+> 54da6a092431 ("locking: Introduce __cleanup() based infrastructure").
+> 
+> This change provides a scope-based cleanup mechanism to avoid potential
+> memory leaks that can appear if of_node_put() is not used correctly.
+> 
+> The patch is based on the latest linux-next tag (next-20240405).
+> ---
+>  drivers/cpufreq/tegra124-cpufreq.c | 19 ++++++-------------
+>  1 file changed, 6 insertions(+), 13 deletions(-)
 
+Applied. Thanks.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-
-
----
-
-This is an automated instruction, just in case, because many review tags
-are being ignored. If you know the process, you can skip it (please do
-not feel offended by me posting it here - no bad intentions intended).
-If you do not know the process, here is a short explanation:
-
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-Best regards,
-Krzysztof
-
+-- 
+viresh
