@@ -1,58 +1,58 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4654681AC3
-	for <linux-tegra@vger.kernel.org>; Fri, 19 Apr 2024 11:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0453F8F6;
+	Fri, 19 Apr 2024 11:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713526245; cv=none; b=behJbMVPOSHf4yn2QX/62crXvnrogiNPWmc5Wf6YGqzmyHDP3T6Edg8wY35wYxGdG+8xzAj+RvZiAyBHuKlboLkFqvciK37ZT6J+9+QJK1qw28r4tDwOStwnGPNZY6sR0lQXJqYwRj7QG7lruPgSwP0XTHX/MTQIpGeL1WxaggE=
+	t=1713526838; cv=none; b=Nx9Yk1CHn1iiOnbbm11vGVmJOk1zcYN6XZIZ16t/8sVwazlj9wx5ZcyjGhmxQunoWktclaMWziJYbOGNHU3CIeWlEFa5zDzpMZ9IrwnbFfI4lRiBCC9RY050Nvr1Dqt3CkAkuhyTZRqcigxD08A/0IyCk8d2GfNT4RBJfsc+vpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713526245; c=relaxed/simple;
-	bh=kwfvpZbsmfQ/Z0kbLRCQuJ7dA55NUh7QIk/bQeHZcl4=;
+	s=arc-20240116; t=1713526838; c=relaxed/simple;
+	bh=67tAD9dPGFnocIYPgAQfazAvvpd43UU0V/pMhoUAdYo=;
 	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Bi5AodHTDhZTWlHPdZSTOWWxCxrg2vEuwXYZpi+1dlzg634ykgzu4DA/jKaNmWu7Igr+ys/OFqTF++w2mJFjmZIG9avjvn8JX96+qXX2GbfNrCwsqsYWJzRivdQBKrikVmh1g/BryD4Cp3GJb2F+qqn56/I+g6y9/omgb/D3Js0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jw5z99BF; arc=none smtp.client-ip=209.85.218.43
+	 References:In-Reply-To; b=pyQAY9msep0S5MyiCLDFlbrZ+znCl6GXY0w9waEeJ+TDfTuMK3HbGN6xI9KrmtyhfhWuXcseD+QZVzAlnzBCYC1jW3kohw3jaiD4P1ZToanUnZXMiIUEb9JAT48eYz0EcH5eHSggeJTRxSaoApvNMGp+4gMB/zghdKAeHvgQFPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TxTc2htZ; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jw5z99BF"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a55602507a9so226177166b.3
-        for <linux-tegra@vger.kernel.org>; Fri, 19 Apr 2024 04:30:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TxTc2htZ"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51acb95b892so399542e87.2;
+        Fri, 19 Apr 2024 04:40:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713526242; x=1714131042; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1713526835; x=1714131635; darn=vger.kernel.org;
         h=in-reply-to:references:to:from:subject:cc:message-id:date
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=F/Af4iWVQkyplM950J09LUOzYoGi6+0INPm0Eq8Mzsk=;
-        b=jw5z99BFpUM482dJ0bxQPsOl8KZT/4VqLUU7TrGFmALOBgO/0qDZa0Qkf9WKVuzaZc
-         gIAUZBB4v6Vx5LvkVABA7ZrykrHzmK3r0QPrg7LYmpwcort9DdCXux4JfYshjgy08pCD
-         8CPXNRwiAdzftU6Hku+2vV8G1r6/RjpQKdsEyjjtNbnwme09w0/PEArS94VUVz/m1iOg
-         qM6EIz4vGddAu3BmKC2CQ3RP2tj77ZOqVmUGio+SO8lbPH8hfjcedEktup/PyulaxWEa
-         SQr80SZe/2/7lxntIsecZ+iq9mMfgPNSWZYO+IxYS9JLOledcosDoDlz4xbhGh0ovy6W
-         E48A==
+        bh=KCpSylsBBU0U0ink6MW+pyy6ZLptHlf0p+v10lZOwHU=;
+        b=TxTc2htZ7OfSWDf22sQUBYZEtZI0nV4YPpi0dkJe+kSGBUZ7gXGe4vGD/dPY4oouvy
+         8lQvv38MkQy6mzpN4t12Oi5VlrCJ383icUDgurtcI7SSg3GgPG0xSCDJ1nB8/pRJ78uE
+         9GPN/c5rYzhCS52t4eJMD9/lV3vIx/XUfMgY5380UVYYiZw+4vf82eexncEK28yU4raZ
+         L8Rx3Y/S5IWbigRuHiIrC046Ox1LLKU+IPvkGzEwaVsO300NttCTJkUzaf+1VHdXs/0S
+         fSYUVD3iPZ/vXNAqHkq3qMY2W3Ynq65VZ4gOBnEYbk/qjlE49xA/g8t3UtnpCkrjK1t9
+         tL9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713526242; x=1714131042;
+        d=1e100.net; s=20230601; t=1713526835; x=1714131635;
         h=in-reply-to:references:to:from:subject:cc:message-id:date
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=F/Af4iWVQkyplM950J09LUOzYoGi6+0INPm0Eq8Mzsk=;
-        b=dlUEGWT5jRgbkeXEbrqKDEZ6b4bSdD+AZHVTGShTDZkL41aI1Eqp8JpKCwk6vWxo/i
-         fYbMyTHTBNH/F+OsVcjB+7cnR+y2i+mRhWfmkUFllBcGCdqvqySC2Woix/aQyFehiSU2
-         YZ0Ow+l+JoEnW90oTwa43duL0p3aB+64bzOiwnJFP7mEwvSsWuomMdwGdH/1jgyfH8VI
-         mBsncrvPMt865SzvlaUlrX/Pg1G1OSqEIUh6P7Rvw+rHexbzUgaCIGvT7Jljthzg8Aut
-         mUvAYyxJJ9nutdqLBaVETj7grkdqlvBLOaMbIA/lpb0owXbFMru9z0bNDLEO+Ew1dk5R
-         s88w==
-X-Forwarded-Encrypted: i=1; AJvYcCVVGAOaynS8lvzDWObQYZLJwIgu4EMCgDbEjGMrPH5fH0saIIz6nujhDnxj/egfy/wUM1WKM2IfMOIuQhMqN8l5GHAobz/vuUzV/vs=
-X-Gm-Message-State: AOJu0YzVy4JUBLs2oMx70HYNIZ8EBPBUZt7ne+JajHWD4yRuNY1XK7s4
-	bB78f1d19RTcB06ASaK1IMhI3+gYmWT/PwDSZIemV2EsZYquZox8
-X-Google-Smtp-Source: AGHT+IGxIy+XoPWxY4/ipzxGIzuoyUFKimANifXZ+IrQzWpLKbsps2b8VE4siVRoEo3QO8uLztxs9Q==
-X-Received: by 2002:a17:906:52ce:b0:a52:5613:67f8 with SMTP id w14-20020a17090652ce00b00a52561367f8mr1206770ejn.10.1713526242317;
-        Fri, 19 Apr 2024 04:30:42 -0700 (PDT)
+        bh=KCpSylsBBU0U0ink6MW+pyy6ZLptHlf0p+v10lZOwHU=;
+        b=LBK21c8MEXiM6oB4EFHlGx+bV2MA8Icyqi8JulmY1miU1Dd/ykV2l3uqF0d9BYBdcO
+         //+ue9Y6bV1Tg48b/0PmpBmtNpLHS3Q1MqsH/naJUw3VKl2qztBOOdYwkNqKmAt6/kvt
+         fNvUCPc1E0XlwiHxKJbq9MgZeDK4NDn5xjxzkK3KqpIXCj1b/TfReLe0DsoK69Fc3Z4J
+         qt3VlrfjbqBKveQZ1MLJjQfe8uIR2knU+C+486wVbdxtfqlEj0iATE0GdnqItR8M8mIX
+         EbCjAhTFRqNP0dKRNp9OSbCb2JZoZESnBhzyHNiVckU5pwNRMnuFgSKJ3SyUPl23kPWh
+         3BZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBLFOKJGPfANrCouQdhWLVoFKI+sLvM5W5mG4MviLCi+/HyFAfC6Jt3jwGqsu+6YFcwPXmk4x2OWvj++DJkB1OV+nr8kfJqR0dIOhA8nKhTA3obNWLXKK2dEsJmknjJwb3Wh2Jv2aiWVZm95fR3MCNyRUUFOBXMeywMrIyPfUneEIXU40T
+X-Gm-Message-State: AOJu0Yz9keriRx2JVkzGaCu8SoALqQRAdznx3CtdiH/7sACvi6fW0aRI
+	bZrT1O7uP3/6ugms/lajtUgKfzojf6Oezv526DKvKBXCIUSwoQen
+X-Google-Smtp-Source: AGHT+IGXx10cQyWuXmKeXjxTiJxMX6EMsrsI/7/4aIqi/FyvDkB5maihBkBnT5nDmKZVmAC6L4MjNw==
+X-Received: by 2002:ac2:5618:0:b0:51a:ca2d:eeb7 with SMTP id v24-20020ac25618000000b0051aca2deeb7mr738796lfd.14.1713526834339;
+        Fri, 19 Apr 2024 04:40:34 -0700 (PDT)
 Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id qq22-20020a17090720d600b00a554f6fbb25sm2073529ejb.138.2024.04.19.04.30.41
+        by smtp.gmail.com with ESMTPSA id v22-20020a1709064e9600b00a55865b2760sm702466eju.30.2024.04.19.04.40.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 19 Apr 2024 04:30:41 -0700 (PDT)
+        Fri, 19 Apr 2024 04:40:33 -0700 (PDT)
 Content-Type: multipart/signed;
- boundary=34e3a7076dcafeede771bd0830bc78b0060c8dd6859fa85166058ee68cc4;
+ boundary=83f6e9dfc46da42c4afe7fb111a4258e10f079b07429dbcb59380d138491;
  micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -60,70 +60,73 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Date: Fri, 19 Apr 2024 13:30:41 +0200
-Message-Id: <D0O2CVZTE5EX.3QZ30B9A58W32@gmail.com>
-Cc: <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>,
- <kernel@pengutronix.de>
-Subject: Re: [PATCH] gpu: host1x: mipi: Benefit from devm_clk_get_prepared()
+Date: Fri, 19 Apr 2024 13:40:33 +0200
+Message-Id: <D0O2KG09X87O.1UR0G6BXCEJ5E@gmail.com>
+Cc: <mochs@nvidia.com>, <csoto@nvidia.com>, <jamien@nvidia.com>,
+ <smangipudi@nvidia.com>
+Subject: Re: [PATCH] gpio: tegra186: Fix tegra186_gpio_is_accessible() check
 From: "Thierry Reding" <thierry.reding@gmail.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- "Mikko Perttunen" <mperttunen@nvidia.com>, "David Airlie"
- <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>
+To: "Prathamesh Shete" <pshete@nvidia.com>, <linus.walleij@linaro.org>,
+ <brgl@bgdev.pl>, <jonathanh@nvidia.com>, <treding@nvidia.com>,
+ <linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
 X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240409165043.105137-2-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20240409165043.105137-2-u.kleine-koenig@pengutronix.de>
+References: <20240416123501.12916-1-pshete@nvidia.com>
+In-Reply-To: <20240416123501.12916-1-pshete@nvidia.com>
 
---34e3a7076dcafeede771bd0830bc78b0060c8dd6859fa85166058ee68cc4
+--83f6e9dfc46da42c4afe7fb111a4258e10f079b07429dbcb59380d138491
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 
-On Tue Apr 9, 2024 at 6:50 PM CEST, Uwe Kleine-K=C3=B6nig wrote:
-> When using devm_clk_get_prepared() instead of devm_clk_get() the clock
-> is already returned prepared. So probe doesn't need to call
-> clk_prepare() and at remove time the call to clk_unprepare() can be
-> dropped. The latter makes the remove callback empty, so it can be
-> dropped, too.
+On Tue Apr 16, 2024 at 2:35 PM CEST, Prathamesh Shete wrote:
+> The controller has several register bits describing access control
+> information for a given GPIO pin. When SCR_SEC_[R|W]EN is unset, it
+> means we have full read/write access to all the registers for given GPIO
+> pin. When SCR_SEC[R|W]EN is set, it means we need to further check the
+> accompanying SCR_SEC_G1[R|W] bit to determine read/write access to all
+> the registers for given GPIO pin.
 >
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> This check was previously declaring that a GPIO pin was accessible
+> only if either of the following conditions were met:
+>
+>   - SCR_SEC_REN + SCR_SEC_WEN both set
+>
+>     or
+>
+>   - SCR_SEC_REN + SCR_SEC_WEN both set and
+>     SCR_SEC_G1R + SCR_SEC_G1W both set
+>
+> Update the check to properly handle cases where only one of
+> SCR_SEC_REN or SCR_SEC_WEN is set.
+>
+> Fixes: b2b56a163230 ("gpio: tegra186: Check GPIO pin permission before ac=
+cess.")
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 > ---
-> Hello,
->
-> the motivation for this patch is that the driver uses struct
-> platform_driver::remove() which I plan to change the prototype of. Instea=
-d
-> of converting the driver to the temporal .remove_new() and then back to
-> the new .remove(), drop the remove callback completely.
->
-> Best regards
-> Uwe
->
->  drivers/gpu/host1x/mipi.c | 17 +----------------
->  1 file changed, 1 insertion(+), 16 deletions(-)
-
-Feel free to take this in through whatever tree is most appropriate for
-this ongoing work:
+>  drivers/gpio/gpio-tegra186.c | 22 ++++++++++++++--------
+>  1 file changed, 14 insertions(+), 8 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---34e3a7076dcafeede771bd0830bc78b0060c8dd6859fa85166058ee68cc4
+--83f6e9dfc46da42c4afe7fb111a4258e10f079b07429dbcb59380d138491
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmYiVeEACgkQ3SOs138+
-s6G++Q/9H5Xt14Nf00X6R+jSrEl3odBJibivkMsacrj2MFV078JaOoHZZE/72UKT
-/ZmGGK8O/HkLkQ/RAn3YueH29ZXhYe2c5YwCOGpQVv6F9P77ivdtG+6D7LfI5Lqm
-mJ0jel/t4zacqv2TuBmt5zzQPoRUakgGsbdIgItKjtLrDRw3aQBj7Ra+h5/ere5q
-i5JfCrWuxfI+qh1aFXIUMho9FM4QRcxcWiIwbWQehgxLHzbwDVhoheM6cIUpiAQ8
-eZd99+fTZFGgey9iuMHemmPMkXXDcbBx8dG/wmUWLDoqsIzfb7Ua7qJwkLWJ5TXz
-pb4nZ4GWA0JTIIcvHCzxnOreVh8OG/HTes0EB803nyDO8sud+GfY8g1mGFUwYW67
-tHzHjrch1dFpp31JdWoGD1PTFEdmSYVdvs2+Gh33Lt1Git2xnpezk5vLjOeKFUG2
-FzZoXfEsDK1qOCqPavtmhGUSwy/1k5T4nGO3FxbISMzhvweUIwMrAU4i7+yFGGhr
-z1jT3pFAZVQVGOL9DPzmWLn66kf/V+1rXhsa/+i3VBV6x9q8FUff48pI3+OgVaqS
-EqNe8whO3QA+DJ6n9uUr5NdHyyjmfsN/SyotAwDS1d2Leetda/+U+KCuIjz/T6lE
-i307WM/k0jeDh/V4jkalyuNkFZ1xJKFElsDaQtcL7wENaWTtafo=
-=bepR
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmYiWDEACgkQ3SOs138+
+s6FEphAAmS5L755Tb0YYFIl6RB74eVji3nmDr+ejsQxu0Oaj3NW+Ms1lzxjIuuCy
+eVTsEAaoaIS6eZA1mX0MMqXJ7cEao3IqG5jGXPer8DxYD8JxW523Pu2N7lG1+FoH
+Xr+jozaaTqR6pAJu0/E2eYa38xNkUDZmydTPTQJSz35wrBDBP+nGZ9llaCsYIf2B
+yoF0DAd/ByUig48bnROxBKE6Wqay7oEJmUFY0/Vb/Ef20qqOnTc2TADVcsWkzIsQ
+2e6f5hffAxQ+bMYVgfUZ77z8Tv2Ib0SQFIoB97w+IyLR//5o/c00d1Lii1L3lyBf
+Cu0K0I3tyRa4lh2k7BIXaFyUreJE9Z/KJdRC+OQbeBWWn0B9AXgGAsuyAqMGblsj
+OVg7K8jsjTW5EYEE/D8QxlU+U9QU7KKH/viXvAN4z8yiXV5Iq/EmygrMyy+xRyrR
+o4TOpe8mCHaPHb7EJWDxG6+JaAF14MGyNlBkYG4cwolByaTH8neJixlUQqywwWAj
+eHmymvJa+4r3Brrnnjj9340V+3OnB26GB1HFOohqO4gdUXciYfEhyBeRx9y0Y7pG
+SSje8X/HymrXzJcOJOr/mfBzsnL7TGYbXH9qsU+pNWm4C03ZGK7o+ITYj0fwJxuZ
+DlqqXG9jjTaiIdLYwpetbFTH3d5nEnQmCh5MOD/6C/Dchs+vtjw=
+=XyTt
 -----END PGP SIGNATURE-----
 
---34e3a7076dcafeede771bd0830bc78b0060c8dd6859fa85166058ee68cc4--
+--83f6e9dfc46da42c4afe7fb111a4258e10f079b07429dbcb59380d138491--
