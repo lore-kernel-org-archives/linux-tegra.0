@@ -1,59 +1,59 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EB64E1CE
-	for <linux-tegra@vger.kernel.org>; Sat, 20 Apr 2024 22:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561913E478
+	for <linux-tegra@vger.kernel.org>; Sat, 20 Apr 2024 23:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713653260; cv=none; b=Mj+PMrVGaY/p+Y7I4I3gv1JOskfN+mheoQIaEFzWwZUkHrxmo2oko5EqTARlJq5hZXGdE2zrqsvs6SZNmDEsEjKYxsrGhgBFV56FKX1cMxmiVw7g2/9jflQrNSALEWioPiKq4zborwzXrVk420uuZCwvywamrcPT0kGjjWSbCJI=
+	t=1713654034; cv=none; b=R8oYNSiZoe68Xddeb09cFQf2dPpcez7Ao5i3CcyvEL0XSru3ShasdlOmWnVtg5gOulIu8J7ZnzYY5KiHCbEBArTXavhmRJaHwClkpOMfzxeNvwRQRTTdT+Zq9ZDn5h9WmvVfcwkddy10uOoXfQkj/RrHBlJkWiM7Z1L5CngdLWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713653260; c=relaxed/simple;
-	bh=7BKUeJX9aV7FK0wwM/ed4hU8pUFUg4zU4KPvLHQ6pXU=;
+	s=arc-20240116; t=1713654034; c=relaxed/simple;
+	bh=4W4kNBK/xrEcrUApwzCM7sLtC45HuF/KUzFjcCmXLt4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=btJoSJQtoOFa263am9myYReqx2l3X3CdyrROuGw8NmY2tJnDndzP/bGhN1qRqeJFDkk1wmleFJaKvQeQ/+8NbCR4pf+p+P15FTRS7EEEwEW7tsysFrjtJuOJ2DnvYiAx4+1ymSeDmg07Bzk1aE5DDmlGWDPy8kc0ELCq/zGAtT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zn0DsYbE; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:Content-Type; b=EQyl6bT5+lcjnktFTpRqqoM94d+5KlTzz1spM1VYYSXiaM33sr+VIsZOIPoHLFOuHo0zbu+BTzSTmtIGUMlMnufYrCbMyS5u5eno1vgNBTasuIUUQ2FzkLw7cYrM6pDVzLwpyzMfWI8vaoofiaXzxm9r6Vb1JaH7E74W1m7A8Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yr5uPDGS; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zn0DsYbE"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4199332c1dcso10464555e9.3
-        for <linux-tegra@vger.kernel.org>; Sat, 20 Apr 2024 15:47:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yr5uPDGS"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-56e69a51a33so3115628a12.1
+        for <linux-tegra@vger.kernel.org>; Sat, 20 Apr 2024 16:00:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713653255; x=1714258055; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1713654030; x=1714258830; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yYrt2gNTxAC2edJd/oDyZK1JqsoIcnAtCqFK2cT4K3E=;
-        b=Zn0DsYbEnTIwwESOgoO8bNl+kRk7ZIHTdFnQcbcfA9pC3SCAl9hSeCxZbKt7V1tpaS
-         Fbw2Mq5+oPCuAkB4OYpcbQY0WFzQzenqO7M59554jHeY4cRFNojtogX94EvL1cOYAa3J
-         Pc8ARaggrXzWsp6CK2fZLFQ5hdr+s72oCSL+Bo6R51Gmqrkh84BdS59hvxvS5uffj/XL
-         DkOZyMNQj1pBCog+e3xt3D0ZvXPjFqp6lX+87sC6Bbe4HF5YVZWAKPiHBXE3kOzjaxxS
-         vjhcNS5SszgYyNp87pSYWnI94Xt0JVWcFDmaegY7T6j8ekQ/WtPDEQ2/QtHzc8KCLhJt
-         VaXA==
+        bh=gS/avcdT3uZE+/g4l+u7eNrKfkVrRBnHoxOYygE+RDE=;
+        b=yr5uPDGSisSRWg2BdtLz4v/8WoQaybLA7Pyun9XdF+c2IjnCoJEE+28J0xFgKDDFUA
+         jLy+1Ozibv+WHlOotmMQIzz7Z9UDCUBXKnvHmD+40IFh6LhkgWnkb1sUyD07WI/dK5eI
+         74ZZo9DP3bxK1rUBP+g3y+19ehWxbKCnYUZQnB/EwNq5QPEXaiRutWzZOdPjzStM7pvA
+         +x15lAWyTKucfjzbirdYgmDwy4ZLQ9i8De9vBC77mdCD3xJYXzOGrj4JhacqcTQJOBPB
+         uXsFxQ8ML2FJwIgERF7kFGec4d6/ZxJHi/FPJa0cwiwotn1wXqNSdkVOuJKN1Q5ZonZJ
+         9GOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713653255; x=1714258055;
+        d=1e100.net; s=20230601; t=1713654030; x=1714258830;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yYrt2gNTxAC2edJd/oDyZK1JqsoIcnAtCqFK2cT4K3E=;
-        b=MIrnRRyrejLmDusVQhHvpD4ih6cOzAuuwXSkchHUpRRGqoJzmqmQVlDtxMfCA0g0Ez
-         YbhmjrhktN7tWOmRt8n0fL93ImFtlND1Uu08yY0Ks25bAZ7zMNCTdYfXDH2tFsCUEBgq
-         CZD3ND0jQBAgWzFvDO3INHJYycWS00HMX8g8BBWoJMvlFjiVOs9jaD/xpdIBtDJKcXDg
-         DsPJPvZTo6hdXL7ApmMdNHLElOjrKhy6M8UDXAy6JX/4KJtARcNq85iAU4DZGYR0vApp
-         iwGn9bKvUvH5tMPixXQw/s/+FGpOONwBnF6Poxv+0LGlXiyqVEvgQEJrjK6I/xDtvYFP
-         21pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXs75fyADK6tHS6QPHbNgHhWbhgMbPdXDD4ZuEoAJhO7lmuhxAjx87RAwkJX1nmoEb6dZQt+Gnk++zFiPAwCpHZqNooGEclUdaARik=
-X-Gm-Message-State: AOJu0YwKeLl1Roo76EmZ3xBx1T81JIxbE1UP7HQbjiYBTVmzM7yuNz4n
-	yBu8Toi4hkmswd6iLU1leCP/xMOawgHLnmx7eNTZFJrgWAS2TK43VtBpZO2V4DA=
-X-Google-Smtp-Source: AGHT+IFbaKQ0tPQEJ9I/RpZX+4qvxduHp5ktCxUofqd2WifblrkCYfYKIpU2lWpeintNmr/h6rZQlQ==
-X-Received: by 2002:a05:600c:4e88:b0:419:87ab:f6da with SMTP id f8-20020a05600c4e8800b0041987abf6damr3268421wmq.3.1713653255313;
-        Sat, 20 Apr 2024 15:47:35 -0700 (PDT)
+        bh=gS/avcdT3uZE+/g4l+u7eNrKfkVrRBnHoxOYygE+RDE=;
+        b=smUC3l4Li9ri1fur1dJpk8kJBto9FVKDSIMLMGieOHiKrIhvT8E5K+Pv4Nt1zvoCB8
+         YfhtD1iJ/wGsSZtEBTv5bSzw3zufD8WkuEiA7UvswTDJLNmVEc3X16GL0puP0notzkmJ
+         v0ttnZr4TewuxVV8+dhp7Mv1aBOzcLwmVUoABHywVNXoglHHKnnKj3rUNtaq0PKpJhcG
+         vKCYtcEV/bytu+bkktQIHm2cjiQ7H0mReYqTacSd2F37MqpyoIdfpenLN3piuIYsbKID
+         lh04t6lDTgAyPfKMM7WnXRbkYDYfOpEqh7vXV0OiOcDgk8/tJ1VmNAkSSCJJn0dO/NSY
+         bm+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU3YhBMjMiEt1j00/Re4j3EhoUq6SPg+p9F4JnAQLQp4s7rtqOxO3X6ui9Za82b4IkC6q0enIuhuTa3RerC4fYAOOOSjQtJbhFqtxA=
+X-Gm-Message-State: AOJu0Yy1Bygjj1voQaGcxn6J4E6k1Y73M7uc9oAmDtrUeWb5I8oc5pTe
+	MYOtw0FywZ42pgpdSFEJohy+pQyJe3Kn6YcU9ZChpMtummI1UrS/5VNUt647w9c=
+X-Google-Smtp-Source: AGHT+IH4lwqPioLpoIzW6dLhOLlXPP3zMShUOxH0TJXNnW3DIij9PpcqOmEnmKfQrSavTUI2UaMo9Q==
+X-Received: by 2002:a50:9ece:0:b0:570:cd6:8ef with SMTP id a72-20020a509ece000000b005700cd608efmr4297896edf.29.1713654029517;
+        Sat, 20 Apr 2024 16:00:29 -0700 (PDT)
 Received: from [192.168.0.102] ([176.61.106.68])
-        by smtp.gmail.com with ESMTPSA id r13-20020a05600c458d00b00417f65f148esm15283322wmo.31.2024.04.20.15.47.33
+        by smtp.gmail.com with ESMTPSA id eo9-20020a056402530900b00571ef2c1308sm913940edb.12.2024.04.20.16.00.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Apr 2024 15:47:35 -0700 (PDT)
-Message-ID: <6b1627ff-5135-4685-be35-adf74a456469@linaro.org>
-Date: Sat, 20 Apr 2024 23:47:33 +0100
+        Sat, 20 Apr 2024 16:00:29 -0700 (PDT)
+Message-ID: <9f44c386-4be9-4904-bf67-f0e664773baa@linaro.org>
+Date: Sun, 21 Apr 2024 00:00:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -61,8 +61,7 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 24/26] media: venus: venc: Make explicit the range of
- us_per_frame
+Subject: Re: [PATCH v2 01/26] media: pci: mgb4: Refactor struct resources
 To: Ricardo Ribalda <ribalda@chromium.org>,
  Martin Tuma <martin.tuma@digiteqautomotive.com>,
  Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -98,51 +97,38 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
  linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
 References: <20240419-fix-cocci-v2-0-2119e692309c@chromium.org>
- <20240419-fix-cocci-v2-24-2119e692309c@chromium.org>
+ <20240419-fix-cocci-v2-1-2119e692309c@chromium.org>
 Content-Language: en-US
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240419-fix-cocci-v2-24-2119e692309c@chromium.org>
+In-Reply-To: <20240419-fix-cocci-v2-1-2119e692309c@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 19/04/2024 10:48, Ricardo Ribalda wrote:
-> Unless the fps is smaller than 0.000232829 fps, this fits in a 32 bit
-> number. Make that explicit.
-> 
-> Found with cocci:
-> drivers/media/platform/qcom/venus/venc.c:418:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->   drivers/media/platform/qcom/venus/venc.c | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-> index 3ec2fb8d9fab..f87e33a34610 100644
-> --- a/drivers/media/platform/qcom/venus/venc.c
-> +++ b/drivers/media/platform/qcom/venus/venc.c
-> @@ -393,7 +393,7 @@ static int venc_s_parm(struct file *file, void *fh, struct v4l2_streamparm *a)
->   	struct venus_inst *inst = to_inst(file);
->   	struct v4l2_outputparm *out = &a->parm.output;
->   	struct v4l2_fract *timeperframe = &out->timeperframe;
-> -	u64 us_per_frame, fps;
-> +	u64 us_per_frame;
->   
->   	if (a->type != V4L2_BUF_TYPE_VIDEO_OUTPUT &&
->   	    a->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-> @@ -414,11 +414,8 @@ static int venc_s_parm(struct file *file, void *fh, struct v4l2_streamparm *a)
->   	if (!us_per_frame)
->   		return -EINVAL;
->   
-> -	fps = (u64)USEC_PER_SEC;
-> -	do_div(fps, us_per_frame);
-> -
-> +	inst->fps = USEC_PER_SEC / (u32)us_per_frame;
->   	inst->timeperframe = *timeperframe;
-> -	inst->fps = fps;
->   
->   	return 0;
->   }
-> 
+On 19/04/2024 10:47, Ricardo Ribalda wrote:
+> The struct resource end field is inclusive not exclusive, this is, the
+> size is (end - start) +1.
+
+", this is," doesn't parse on my end
+
+"i.e" => that is, would be more appropriate I think.
+
+"The struct resource end field is inclusive not exclusive of the size" 
+which I still think is a confusing statement.
+
+Perhaps something much easier to understand is called for
+
+"The struct resource end field signifies the end address not the 
+relative offset from the start field i.e size == (end - start) + 1.
+
+Amend the .end field to specify the end address not the relative size 
+from the offset as is currently given."
+
+Other than that, I think its reasonable to assume the mapping != 0 - 
+0x100 inclusive.
+
+Please consider updating your commit log and if you do add my
 
 Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
+---
+bod
