@@ -1,221 +1,91 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91EAD29B;
-	Sun, 21 Apr 2024 18:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A6818637
+	for <linux-tegra@vger.kernel.org>; Sun, 21 Apr 2024 18:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713723911; cv=none; b=DytJxTt73j9HrKBye5nX5RZ1fx51sP/nN5EdqaugrUPFKF65pIk76iT2Y5jvotir0QUXGnahddQVb6Ypmt3V381W5AElDT+AVDqvyGDDIEKj5f0Iok81ut5Yk4j+cMfPtjiuWtUaR5UOuxfU/3wqeoAg4BrzaxgBOe1QyVD1csc=
+	t=1713725068; cv=none; b=GgI62A95CaBXkzQ0YLH43iTXdqhyBK22GJvl415b0rkSSuqsxhXSi2SVtdBaBA/z3Dxmymp2pQkTK3C4WjmYlnepkldYMZyFrtVWBxdfLvWyAdOHy8vytNFeAnOw/k/l14JWJQkRNVH3Od/dwz87iUQJAvQyZWJ2oz9mn4RWNCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713723911; c=relaxed/simple;
-	bh=CU4y/tEi/dfSogv5NvsyF9x+2KxTRNPBD+gEADHy+yw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C2FWp2hn/B2foodPAC/pL5N6hoTsmEn2j1+D7qhD7H9+w2/p2bNW/gDuHzGRF8iygGHeA4yMAfpK12kjhxnZMSGtKHOJO+X0SW+6I/3FufickfaS/49BLEf/R1HEWr7iJUvgS7RGmUwuY0vHUrxjKJDtHxLOUJVgb/2O0pDJK/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0lijnD6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713725068; c=relaxed/simple;
+	bh=oNhP/xj4oPiwJOXjOOXAUqqAKb20EGQzG5PGlewfRtA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=O8Rou/thTtN5SCZCwxHWF5+SuwCCHe79taqJTJAMpMa8luJCpieAMyFJJxo+avhzIEIUEZtSGIiT79Y0gDnsDSfWYz7i6eQnGlKFmKOKcHuQdHdQfZ1+buBVY2z7d7PsQlHThPsY4sVZ1mTT7DjxT9Rh+UO8bZKMJX2VOKrTBAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=BiM3wxa5; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0lijnD6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B36EEC113CE;
-	Sun, 21 Apr 2024 18:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713723910;
-	bh=CU4y/tEi/dfSogv5NvsyF9x+2KxTRNPBD+gEADHy+yw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=g0lijnD67li+xsHW8VvqM7/Krq3AGarKKDtlKvO9UDHsXDmZZ+dbCsexftXqXfPq5
-	 O1FkaW7EfZjqrxGpzYn/cTyEdUFmuu25nykGP8YohJYOLjQidSJ87Jo72AW9A3vFpZ
-	 zqWdNgXv+af1haffW873LKEKjypciMzVF/AeIHF4eHDllkO5yu6W/fr3r1PJkl3WiX
-	 cvOgQNOhzk6PK1u2JlFedZKz+z1LpguNSPo6k/CUNy6d21sh74OJ8KEZXuEdUB2iK/
-	 gKASysWwdB0503ltnWlq6HRG8dhFBtSDuQLvfYhhw0IWOqb/T20zacN4orjOj+BRYZ
-	 AOVzn7IthZLyg==
-Message-ID: <7ab1861d-ea57-43f2-81f5-ed06076702f3@kernel.org>
-Date: Sun, 21 Apr 2024 20:25:03 +0200
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="BiM3wxa5"
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 104BC240029
+	for <linux-tegra@vger.kernel.org>; Sun, 21 Apr 2024 20:44:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+	t=1713725059; bh=oNhP/xj4oPiwJOXjOOXAUqqAKb20EGQzG5PGlewfRtA=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=BiM3wxa54MKBBgVzTONc0ijllO84sCdI0tuqzkeD9ipcYMDd7xoFxKJvjBXgl8GD2
+	 DE165v4TK+x5aOZn+bqPE/DC+pkXYgGYWRfVYMkFnosZtAdpcMWs733hN9kkVyIuvv
+	 /PikqCaWrASNQlh1FG3aHyPYQBbXYfpXyjxPojPh0CYVHW69dJi87YPxx7AfhqzMwW
+	 vqFsxkKUkKsTPhDBooKDWkvb2mq9b8G00hDdFHpk1xvpOYY0+uUMcZsbwAFLFHg+3R
+	 fQ5JyxuTX/YhpfvXa3fPAwMcI/KcEzCt/r6Tc14JE6iaYqWlx3ZTPCikruYvXQhbmP
+	 IGkWCyNM1lzbg==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4VMy36123dz6tx7;
+	Sun, 21 Apr 2024 20:44:18 +0200 (CEST)
+Date: Sun, 21 Apr 2024 18:44:18 +0000 (UTC)
+From: Marc Dietrich <marvin24@posteo.de>
+To: Greg KH <gregkh@linuxfoundation.org>
+cc: Marc Dietrich <marvin24@gmx.de>, linux-staging@lists.linux.dev, 
+    linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] staging: nvec: make i2c controller register writes
+ robust
+In-Reply-To: <2024042118-errant-causing-8bc5@gregkh>
+Message-ID: <0292c723-0cf4-3a4f-733a-4b1e8e6b3efb@posteo.de>
+References: <20240421104642.25417-1-marvin24@gmx.de> <2024042118-errant-causing-8bc5@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dt-bindings: tegra20-ac97: convert to dt schema
-To: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240421110929.139191-1-sheharyaar48@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240421110929.139191-1-sheharyaar48@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On 21/04/2024 13:09, Mohammad Shehar Yaar Tausif wrote:
-> Convert NVIDIA Tegra20 AC97 binding to DT schema.
-> 
-> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+Hi Greg,
 
-Thank you for your patch. There is something to discuss/improve.
+On Sun, 21 Apr 2024, Greg KH wrote:
 
-> -};
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
-> new file mode 100644
-> index 000000000000..e7ffa93eec30
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
-> @@ -0,0 +1,80 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/nvidia,tegra20-ac97.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> On Sun, Apr 21, 2024 at 12:46:42PM +0200, Marc Dietrich wrote:
+>> The i2c controller needs to read back the data written to its registers.
+>> This way we can avoid the long delay in the interrupt handler.
+>>
+>> Signed-off-by: Marc Dietrich <marvin24@gmx.de>
+>> ---
+>> ...
+>> + * A write to an I2C controller register needs to be read back to make sure
+>> + * that the value has arrived.
+>> + */
+>> +static void i2c_writel(u32 val, void *reg)
+>> +{
+>> +	writel_relaxed(val, reg);
+>> +
+>> +	/* read back register to make sure that register writes completed */
+>> +	readl_relaxed(reg);
+>
+> Do you need to compare the value to make sure it happened properly?
+>
+> And how is this an i2c write?  Normally that implies this is using the
+> i2c core functions, this name is going to get confusing very quickly...
 
-All my other comments apply. Please confirm that you tested DTS.
-
-> +
-> +title: NVIDIA Tegra20 AC97 controller
-> +
-> +maintainers:
-> +  - Thierry Reding <treding@nvidia.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: nvidia,tegra20-ac97
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: ac97
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-
-Nope, this must be maxItems instead.
-
-> +
-> +  dmas:
-> +    minItems: 2
-
-No, maxItems instead.
-
-
-> +
-> +  dma-names:
-> +    items:
-> +      - const: rx
-> +      - const: tx
-> +
-> +  nvidia,codec-reset-gpio:
-
-
--gpios instead and mention this in commit msg.
-
-> +    description: |
-
-Do not need '|' unless you need to preserve formatting.
-
-> +      The Tegra GPIO controller's phandle and the number
-> +      of the GPIO used to reset the external AC97 codec
-> +    maxItems: 1
-> +
-> +  nvidia,codec-sync-gpio:
-> +    description: |
-
-Ditto
-
-> +      The Tegra GPIO controller's phandle and the number
-> +      of the GPIO corresponding with the AC97 DAP _FS line
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - resets
-> +  - reset-names
-> +  - interrupts
-> +  - clocks
-> +  - dmas
-> +  - dma-names
-> +  - nvidia,codec-reset-gpio
-> +  - nvidia,codec-sync-gpio
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    ac97@70002000 {
-> +            compatible = "nvidia,tegra20-ac97";
-> +            reg = <0x70002000 0x200>;
-> +            resets = <&tegra_car 3>;
-
-All previous comments apply...
-
-> +            reset-names = "ac97";
-> +            interrupts = <0 81 0x04>;
-
-Use proper defines.
-
-> +            clocks = <&tegra_car 3>;
-> +            dmas = <&apbdma 12>, <&apbdma 12>;
-> +            dma-names = "rx", "tx";
-> +            nvidia,codec-reset-gpio = <&gpio 170 0>;
-
-Include gpio header and use proper defines.
-
-
+I just used the same name as in i2c-tegra, which may be helpful when the 
+drivers will be merged in the future.
+The reason why a readback is needed is descibed in commit ec7aaca2f6. As 
+far as I understand (it is not mentioned in the TRM AFAIK), writes are 
+somehow buffered and a readback guaranties that the write really reached 
+the controller. The alternative was just to wait some time...
+From the commit message it seems that this only applies to the interrupt 
+status register, but it does not harm the do this also for the data 
+registers just like the host driver does.
 
 Best regards,
-Krzysztof
 
+Marc
