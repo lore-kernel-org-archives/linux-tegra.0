@@ -1,202 +1,115 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E605B134BD;
-	Sun, 21 Apr 2024 12:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4D879FD;
+	Sun, 21 Apr 2024 13:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713703299; cv=none; b=aBHTEoU7A16IT1D7tVei00Y6cEDR7+wSUXDzQvOlQl782TCvcu0McYX+iA803OuRhkfXVcCj+Nn3cof5zXN6LLqSop8bRhl9NI/9qveOnpKucp1byu0Jd7OVLMBRu619lQLtMazUXiFGqAETqDd793CkF823Z7x+7WmXjFbx52o=
+	t=1713705709; cv=none; b=hj2yp4KDtJChJpd9OG72NX0bbu/a7YFS5mFdVxCI1z5ksIaDKdD5tK4LWQqSL5Wmh4hM6pOtPFtnWzzYZz9DBdXerAdVl2fnPDosvfn3N+1ZdEqO+2WX3eRsPoDEgzrov6KQkVaIZ2XlnOwT4jbwYqHc/2wPgPjHo6AuZpm26jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713703299; c=relaxed/simple;
-	bh=5nn5ZTbRNI17WXZk1uoDXhmQGmBLj4O06b+FRBZ6lbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Le+hHgoY2KB6giTErVX5XC3ShN7oiSMwdH1RYU9GQ94nrARPlAV9ptSCYllAARCoVI2C3Rx7ZCPRy0AWRzXKddBr3+pUx7NqSKcaJ328nAjiyggS7mRdnU9ZdxvvcZX4DtIYj9335mqiLo/56XOBJTa1B5TB0q6xOPALM0GVvXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eMjiKE98; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713705709; c=relaxed/simple;
+	bh=evdFeQD/L6zQL0Vd61pp1Z/7nDj1MNxAxQVGWpoT+5Q=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=FfoVVud94txZxnyYXpRei18+n7ev2DIUrFd7VS5iwVH+E0GL0ZECNkUOpUBrLERnyrmODMBwTjPS0bf2UNMMDeoP7Ny6CAPyCMPEc0kDddxhqvZ7AXcG3uhhkWh5vICfd16P4gwhEgvlcucGsVGSTgpjS9x8BVtQoAr5Jj/QBrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wSbQqbr1; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMjiKE98"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1e8b03fa5e5so22912765ad.1;
-        Sun, 21 Apr 2024 05:41:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713703297; x=1714308097; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F6Ps2aN6MCZCIs2EOfKowy6au+rDDkfSq1Sb07wmGTE=;
-        b=eMjiKE98UeO/7NVK/dlQMY33jYAliYeGrfpIyc1kY4/mXiGMF/2VylynXk2gicCS9K
-         gKigoJRSSC70ryWIHvfUU2mjfQ0/h21y80RKID7D6cdR/c+gcuCPhepxzRwYXI5qp2wq
-         Ttk2ASbYmSG+DdOsxUAC1u4o6MvuuOg7ADi0ITVXPGNX0BFyRWtC/vkYsZpahBhSOL3V
-         lJYdNETaA0BjaURY2KHTb8IyvQl3ZCBX4MGVtE0GOlQcjyy3JRhQDVfGQ4iejTti03KD
-         HRJkO7RcdnY3YmvxQP6pY7Jmv1fcR4+Vux/v9wTtojSTbplJJzOdnJ9Um0TnRR8xkzYQ
-         Hl1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713703297; x=1714308097;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F6Ps2aN6MCZCIs2EOfKowy6au+rDDkfSq1Sb07wmGTE=;
-        b=f5q+6ccd+kF2PIbFG4n9LxevncUi13bttHAEHCSA2gyZgYgjPdUsIofmTo3lxfObCj
-         TwzfH1jKjaJq/HTJECvRRHEGTYPKxWVaEjMv6ncR5B45Iikw0ouf4SeRv40zCw7MbUHd
-         eBab/RFLuMdAYNiB4HeeaCmmX4S10WZfV4Hun+O8eOzdBCEEmpGJB0I4ZAQZIYOZXyY0
-         Mxbom0qGrZV+v+hYrwKBWOaWFKHCshoQMCYwMQFnoknPm7sp3SdfJFMOsqkG1fLSIFU0
-         ppaUYmOl3oSEeZr2HuBzlEumsn+ktqoD0hkCUFBypU9nXkD/qFMrmrGShji6B9ro4SJq
-         UvFw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9tOHy8ySJFCFo5I1cMHaKEG225690G2Wsy3Da6Ib22Kv4sklSxdHWeJxebLsEeirYxpn0X5lk68rF1xtpe4jZ54XJcxUPOKcfSTPg7S5PUPK7kie/D34X5t2GORnxMnOECercVUo54b3knTQbahL4vk5BvknSoBVAZrV/XYDfw+bpOjRfdeL/l+he6lLVZFp6aFbyGXkBEKKOXTgIX0I1RUY=
-X-Gm-Message-State: AOJu0YyoJXmhiuGux4U0Ym1IFoIRsBt4M1F7TkyDqaPXUGa8oixbkhnw
-	xz7PMAlg38XxbQ+AkGZEmM44ENfL0QXNm0QSAmzHm4MLOskAkimX
-X-Google-Smtp-Source: AGHT+IG7HZMh1J7lM1Rs1GW1Qd7h6wDjUcDqMV/1KWhlbtkcxmI/8blJXFnTkatcRPMkoBQPLFeOdQ==
-X-Received: by 2002:a17:903:2441:b0:1e4:fd4:48db with SMTP id l1-20020a170903244100b001e40fd448dbmr11061791pls.43.1713703297232;
-        Sun, 21 Apr 2024 05:41:37 -0700 (PDT)
-Received: from [10.66.66.2] (ec2-3-111-32-5.ap-south-1.compute.amazonaws.com. [3.111.32.5])
-        by smtp.gmail.com with ESMTPSA id u7-20020a17090341c700b001e2a7fb6e01sm6275894ple.44.2024.04.21.05.41.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Apr 2024 05:41:34 -0700 (PDT)
-Message-ID: <0fa7ef43-29c2-439b-b82f-5c287001f850@gmail.com>
-Date: Sun, 21 Apr 2024 18:11:27 +0530
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wSbQqbr1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1713705647; x=1714310447; i=markus.elfring@web.de;
+	bh=evdFeQD/L6zQL0Vd61pp1Z/7nDj1MNxAxQVGWpoT+5Q=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wSbQqbr1RYsm3tjLf190P21u4mfqY5aRfGWHBCzP1Tz+qjJbOZNzusg383orT8WI
+	 tSzdWXRHMEiwSiFpRqoAZlK2q3ooF06CVAShhoh9FDKzJ7lO8AVijWqJrghP3TqjE
+	 0CBARr3a/umf8F79eZvsTVGkG9sjPSZGc7nJIhLmlAHuZm0PT9F8+NAZhZBc/8JHc
+	 2UNOy1XBc2dA1dXwhRMgAh9OMOoW2TbZX8ry3KKlJ6o37U61JfoXnLc5thhP6xQ7O
+	 LurcAQzJ57IXNComwOPeRrOpYUYPpfUMzVV8kVAuyMwp6oXEM+g+072xqnSzrm7XA
+	 KIgAy+B5QXtJEpR4xA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MG994-1rvGOR2UaS-00Gm0I; Sun, 21
+ Apr 2024 15:20:47 +0200
+Message-ID: <de7d846a-01d9-4fdf-bc9c-86de86daf4a5@web.de>
+Date: Sun, 21 Apr 2024 15:20:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-Subject: Re: [PATCH] ASoC: dt-bindings: tegra30-i2s: convert to dt schema
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240420175008.140391-1-sheharyaar48@gmail.com>
-Content-Language: en-US
-From: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-In-Reply-To: <20240420175008.140391-1-sheharyaar48@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+To: Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Abylay Ospan <aospan@netup.ru>, Alain Volmat <alain.volmat@foss.st.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
+ Dmitry Osipenko <digetx@gmail.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>,
+ Hugues Fruchet <hugues.fruchet@foss.st.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Martin Tuma <martin.tuma@digiteqautomotive.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Samuel Holland <samuel@sholland.org>, Sergey Kozlov <serjk@netup.ru>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240419-fix-cocci-v2-23-2119e692309c@chromium.org>
+Subject: Re: [PATCH v2 23/26] media: venus: vdec: Make explicit the range of
+ us_per_frame
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240419-fix-cocci-v2-23-2119e692309c@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:MbmB4lbr0en+rNEVuMVQKHm+9+SobHtxinkTBmRYl4i4b+31EqI
+ eDwjrXrIaKZp+/JDMGyO9mK7R38liq/GAdwkTbVh4sU1ZIHKBPZL6Gz352kCK8X+Ott1p0I
+ Zv1ZyMxrJePW9LRPcsVaIQBR5rTY4R57i5DKnUO1EgZCWx2pdd7i/yiO++WyTX9PkWwOwgX
+ MxKtk9/Gp6Qa/8l3U6jHQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dATBYSaFibE=;Jyz5Mi9ajE9LhE5N43qTaPY70xl
+ gVnbMBqQ5QAVpzMNHzeG1wkunna8DaKO0ymMAIZrSDfx0FleIE5fYhcVDypdKp8lR0v4WHcJj
+ bF1xILN9gvohbueA/zfLRvRWF/gnoBdL1aWPZIPYB6kW2aEMGTFMghdmtL5DzlX7WZWxY85WW
+ 7/rtRlA3gxcuo0iB5+M6gRylehhBreCGYF7EHnbs8rT3Qcx1II3k2Dyqm8RBDtSXvU7dv1N6U
+ wajFglzV/nmJbI63wkecxwZpApsrBBwyGVnTzWSBdoBfU3C4RujxPe3Y17PUEOT3Qfcr+lWft
+ Spgzxaaq6PmSulrGutImZxLGx6OdJEuFSUMxgD+J+EvG6t/pjkHn+vOgN3GI/ReQMP3/AaEI3
+ DPD60h7q/Pfljd4BWJDamWuEcR+oILfmcG5AxOGnq3FQjtZH0ODtrTt96/lbKRZ81vYH+CXDU
+ 8hAuZwDshKlLcPUF2fWSJ9ntrW3rHm2W1nJQqIqZYiPZ8TEAYD2X0816c/Ntrsq+7FzTN/6tE
+ juSDURgQk1ei57P0vsoouKErDTufZMRKnfag2p9ne6EeSN9khMGduG/U+G+v+uFKk8ERONGSO
+ +6CgcGekJA/w17fJKphVwZPdG45Dp1ebt2C8pS6Nexw+Jhi+ko/DkvucwTGBphBPr8jlq4zHw
+ RAOu1GUx/DwMa53tKCYa9ud2jOpt5G23ikqn34bwaNYhEBmgXqWZYY0SUcrMjJssH12bp8Mnm
+ KyOHm0Qd0TkYbjXImY8P4Mo7M0Itn4iAxgjNzq5zbjtPyhRSe+ycsO/K8UZEm1x8LUST+Tq7H
+ N6Tf56yDUtKLeIYD1zeJEW4KcLnGLGsBFNG6+hHWAgeA4=
 
-On 4/20/24 11:20 PM, Mohammad Shehar Yaar Tausif wrote:
-> Convert NVIDIA Tegra30 I2S binding to DT schema.
->
-> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-> ---
->   .../bindings/sound/nvidia,tegra30-i2s.txt     | 27 --------
->   .../bindings/sound/nvidia,tegra30-i2s.yaml    | 68 +++++++++++++++++++
->   2 files changed, 68 insertions(+), 27 deletions(-)
->   delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
->   create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
->
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
-> deleted file mode 100644
-> index 38caa936f6f8..000000000000
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
-> +++ /dev/null
-> @@ -1,27 +0,0 @@
-> -NVIDIA Tegra30 I2S controller
-> -
-> -Required properties:
-> -- compatible : For Tegra30, must contain "nvidia,tegra30-i2s".  For Tegra124,
-> -  must contain "nvidia,tegra124-i2s".  Otherwise, must contain
-> -  "nvidia,<chip>-i2s" plus at least one of the above, where <chip> is
-> -  tegra114 or tegra132.
-> -- reg : Should contain I2S registers location and length
-> -- clocks : Must contain one entry, for the module clock.
-> -  See ../clocks/clock-bindings.txt for details.
-> -- resets : Must contain an entry for each entry in reset-names.
-> -  See ../reset/reset.txt for details.
-> -- reset-names : Must include the following entries:
-> -  - i2s
-> -- nvidia,ahub-cif-ids : The list of AHUB CIF IDs for this port, rx (playback)
-> -  first, tx (capture) second. See nvidia,tegra30-ahub.txt for values.
-> -
-> -Example:
-> -
-> -i2s@70080300 {
-> -	compatible = "nvidia,tegra30-i2s";
-> -	reg = <0x70080300 0x100>;
-> -	nvidia,ahub-cif-ids = <4 4>;
-> -	clocks = <&tegra_car 11>;
-> -	resets = <&tegra_car 11>;
-> -	reset-names = "i2s";
-> -};
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
-> new file mode 100644
-> index 000000000000..3809e4049fe1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
-> @@ -0,0 +1,68 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/nvidia,tegra30-i2s.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra30 I2S controller
-> +
-> +maintainers:
-> +  - Thierry Reding <treding@nvidia.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra124-i2s
-> +          - nvidia,tegra30-i2s
-> +      - items:
-> +          - enum:
-> +              - nvidia,tegra114-i2s
-> +              - nvidia,tegra132-i2s
-> +          - const: nvidia,tegra124-i2s
-> +          - const: nvidia,tegra30-i2s
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: i2s
-> +
-> +  nvidia,ahub-cif-ids:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description: |
-> +      The list of AHUB CIF IDs for this port, rx (playback)
-> +      first, tx (capture) second. See nvidia,tegra30-ahub.txt for values.
-> +    minItems: 2
-> +    maxItems: 2
-> +    items:
-> +      $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - resets
-> +  - reset-names
-> +  - nvidia,ahub-cif-ids
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2s@70080300 {
-> +            compatible = "nvidia,tegra30-i2s";
-> +            reg = <0x70080300 0x100>;
-> +            nvidia,ahub-cif-ids = <4 4>;
-> +            clocks = <&tegra_car 11>;
-> +            resets = <&tegra_car 11>;
-> +            reset-names = "i2s";
-> +    };
-> +...
+> Unless the fps is smaller than 0.000232829 fps, this fits in a 32 bit nu=
+mber.
+> Make that explicit.
 
-There was a mistake in setting items type under 'nvidia, ahub-cif-ids'. 
-It has been fixed in v2 patch. Sorry for the mistake.
-v2 : 
-https://lore.kernel.org/all/20240421123037.75680-1-sheharyaar48@gmail.com
+Would it be more appropriate to move the word =E2=80=9Cexplicit=E2=80=9D t=
+o the end
+of the summary phrase?
 
+Regards,
+Markus
