@@ -1,152 +1,174 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60EC4C62A
-	for <linux-tegra@vger.kernel.org>; Sat, 20 Apr 2024 23:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BD6C132;
+	Sun, 21 Apr 2024 10:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713655394; cv=none; b=NzDY0ucXcVn8gHCjGASYg1RXoZ8bUIWqOa97UNc/TqzJCzp4YNkZ397iESPPvcUydCijTbCjafOPj/0SFbm7n5HAUumpIWNl0TVHLWDqO88xjNNCnKj1f34QPri3340Lt7h0U+j1vFHkDbwSXjkyFQ3ATb4Nj0UkFaob0YUmWSg=
+	t=1713696414; cv=none; b=Og3n4DNWG3DnEgj2pm/qz5uoABhH7HQKbk4KKYfO0G6Q1xA0Pn8kTHzkFNP88fhD9PV1PIYfsA1OWAe9gFBQNg36myQ7qFlY4f22tGEPHGb0DCy7hKyRR/zhV88iN9SuMsDW/8fqUvSl75nWNuH9L//M9z1s96mOoJDnWwa1Umw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713655394; c=relaxed/simple;
-	bh=bBNbxTaDfIJVcjkaQmgCFXE6pXweSy07pk6tkP8ChP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uo5/jCuzTshnxO4OUVPbVaA92Q78sJSdxPLtqPlaTpFtzNoFLB8oUqa5vq8NjE95HbKPZFn830br3+LIJDsAwy7gSQnu9KZdoMG1TR+84NV3j7CKdxqjl2KQqTvUS6a2svZhXoPZmwcI/5g+XEB0Tw+ZktVO0I9q5GO8jypJBQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UMNw0TfY; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1713696414; c=relaxed/simple;
+	bh=+6jkqo7bx2eBWdWkuUQDSRe+EEbStjxJwp7fYyxYc7Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Liijw09NiwanwORC0dbufrbxvvPY/b83sbzBy6ek8bAtTpeMHFmwvu2NpEpFYvUj4BhabRE5hP8GqvrRWEUXpar7mVLM4qHyS68CwvKtOlChX7W1CEKTx9ka8C1lcnTbRFDvWjNqKZf44lcyBmKUaV5H9RCXunboGxHencCJIKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=DEyq/t60; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UMNw0TfY"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a55ab922260so9397866b.3
-        for <linux-tegra@vger.kernel.org>; Sat, 20 Apr 2024 16:23:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713655391; x=1714260191; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G7j9WmKVfIxCtxmA5+g+ivZQajcRB8Ss1Yyb3DxCAfA=;
-        b=UMNw0TfYERYCM73Fq3Dfxfa5Nka7eEdWP9KeNxkaioU40XArRH47xzepKqoU2hhwCX
-         b+dG1RBOcQs45R3gAJUzXUzZvZub3wnRBgTjWhpaPxZIptbWaphPb5nVDFAuUvJq4jI8
-         UPZYhuWMAJSVqenLIVmJ4xR9TGXvnI1Iv92AdQHTkrW/3cOShxU+zzVaRt5aPHrMhMKi
-         RCtHNsxaOmGUuc3q8TqcuMLa3mSmTJIxlnBkb0B5AQAM+scdAVilZ9EIuvJCLh4sdCeR
-         cN3cnCp5Qks5PxR3rc7JWD825iRdublNaQcBKGnLfo+lcDRtKkH/12CqHAPTrnPJ2MjC
-         Z7Mg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713655391; x=1714260191;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G7j9WmKVfIxCtxmA5+g+ivZQajcRB8Ss1Yyb3DxCAfA=;
-        b=m7bKPhavB6HPMG04gMHxL7vCh8dCncTAOnIsrNHMl5iGufrDrZUEoCckAu60Idv5Uw
-         jzHZT3MLkcmYKMN+9UgVYPEtPVWj4PWzAtks5Utd01oBXSIhjpelQQw4+474ERhmgN9k
-         Wl3UneVDO+N7FI+1YBi+HMigi7P6O70pMWB+eiXrguAmQ6AaFPDbPbB/i09fOwltCp/Y
-         wtQtELWA+qzQIDHX2w/wj741rY9HbirdQ0sxEGe2icdWG8bIMo44Vh+G9LPfwPajuiTD
-         HvtueeJegXa2oo854gk2TqN0zuRTGfZtlN5p+NNAko4cY7Vud0jnZdRJgmglYheyKBG3
-         F6QA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+8/COzHBQCTKq5+tvcabZ2J3rIisppp2NLgwqskRUqCEBJ+7QMQoPKTQUWqo93BgIccVPvljl2iid+z4OqWA9Td3++PJT5aQjrU4=
-X-Gm-Message-State: AOJu0Ywaw3aUk8hTUhHpGS8qZthWlfFH6Enwc3Ai0ZVAr/LQ7/EEaWvp
-	UbZv2/57RLVXO+Qk3AQQ3tQk9DrGvU94vwb4fcKIz6UFy9Aw6dYcTVW05Suachk=
-X-Google-Smtp-Source: AGHT+IHIgAHqaBHAo2tv0s9P7hAH/P161Q1ck8771gq2FLpa0nizkFWxKtOsbHWkZLUsCdT//bfy9g==
-X-Received: by 2002:a17:906:c24d:b0:a4e:5137:9969 with SMTP id bl13-20020a170906c24d00b00a4e51379969mr4156927ejb.32.1713655391076;
-        Sat, 20 Apr 2024 16:23:11 -0700 (PDT)
-Received: from [192.168.0.102] ([176.61.106.68])
-        by smtp.gmail.com with ESMTPSA id v24-20020a170906339800b00a521904b548sm3889268eja.166.2024.04.20.16.23.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 20 Apr 2024 16:23:10 -0700 (PDT)
-Message-ID: <27513574-3131-4704-9c3d-f699cc9edb9b@linaro.org>
-Date: Sun, 21 Apr 2024 00:23:08 +0100
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="DEyq/t60"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1713696408; x=1714301208; i=marvin24@gmx.de;
+	bh=JHDf34r4g8ewz9UWOAYwffoU2McK+j3XP7wrY3n2V3A=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=DEyq/t60UuF0SHlWJFDtpwM0IzPIrUj/wH17cVxAA1TDuvlBsmTwEB5qT6y/eLPo
+	 J55p6X6FTa4zGpslb4AQr2io0irAdzp83gN6Z9bZEbJ6qzN99s/tQ7vB+6uRF9Y+3
+	 WV5ftOiq+ujuI/ISgnzPLUxcf3RPNsXP0WC74yhT1AH3KCshFPwlDNUTQRC4WOdJg
+	 2T/hKjkXosJSoXo2ChnN5KFTz76cjhrmEFTS0zO7kYrZj1mqklVbFogwmOwpF4Uae
+	 eH9sKCQNhS/ZkHlXgBj6WYnlfqcOzcue2M0T7tkky9yBESUv1FrjfmX8SICrU0zWt
+	 sJg+rjhWFM2+W3hN1A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from n5219w05.fritz.box ([109.250.33.78]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mf0BG-1sei5S10m2-00gXDP; Sun, 21
+ Apr 2024 12:46:48 +0200
+From: Marc Dietrich <marvin24@gmx.de>
+To: linux-staging@lists.linux.dev
+Cc: linux-tegra@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	Marc Dietrich <marvin24@gmx.de>
+Subject: [PATCH] staging: nvec: make i2c controller register writes robust
+Date: Sun, 21 Apr 2024 12:46:42 +0200
+Message-ID: <20240421104642.25417-1-marvin24@gmx.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/26] media: v4l: async: refactor
- v4l2_async_create_ancillary_links
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Martin Tuma <martin.tuma@digiteqautomotive.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Hans Verkuil <hverkuil@xs4all.nl>, Sergey Kozlov <serjk@netup.ru>,
- Abylay Ospan <aospan@netup.ru>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Dmitry Osipenko <digetx@gmail.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
-References: <20240419-fix-cocci-v2-0-2119e692309c@chromium.org>
- <20240419-fix-cocci-v2-9-2119e692309c@chromium.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240419-fix-cocci-v2-9-2119e692309c@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:4wTVb6vFwfayWz76vpc1Gg8r0jWhiKUYUvdIc2mV06P7g5Tfxli
+ JtsdBy8316TbhWoUMO5MBXdpjtdAzzYKtW67njEUVwP+T+pJ066sB0LDoER4rvcIa2UaOty
+ U4Td3OjQeya9T6zNY933v1tyRvfDdQC1BZ0qDB2UYcHXu8QeeERzxRGYMyCg27+nNjO6wbB
+ Qr1L0UrR/bEpKDD9WyLkA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:O6Twng5TBDg=;78KbT2eX3/Y+Y42olTobeR1Ea/M
+ 4JiIANC8ioqu7oHIhCTMKFnq/Vj1qDIgc5f0oo//Pn2F0eD4fdHt6g25pJvQRlYuGB6F6RUEB
+ kAvyeqtglxwZvCT6B6g3/4wJK0Gz7T996Tul8V9jb757knZa5gVntAniH7KOgXA+NSbZoHI6/
+ wR90Fwdwk+OeL9Thgdzu/cypIbhWbiNCiX7GiL8JRc2ppjAmHN4y2EZw+Bmdj0U8TlbJIVHKV
+ Q8xCKvDakTmPUjTzJowTpaWcg1qCQzrA3MYr72vfI1fjMbvnDXilVJTk1d8JKjj0CyxUnLhbL
+ UEzckJBOJ8WrPi2Rq5JTsitoj6C7XK0lKRsGau3pfbDoQ5kfNb+3ORBpJEbfeRX9nRj+cVPFE
+ pd1zTf036tArt/aYSV0nWAMjFV6tDGPRcW9ZJ7cXAwErah5DYs6uNkozMCLW2ZKtF+Q66Mp6P
+ uvZeiXW40dYA8YqwSzNuHbiwvGpvte/99CEt1lY2mK2iij27qOhykTQpMyc5BGODA4Yk3k3QY
+ wDs9kAWsB6OkBIDDikS1ZEa/pFdqD77lejrW+SyPpAJuoPksW4tXaab46tEsx8H7bpUwB5zDC
+ 0fAeeKFKxVqP4nch/Kpj5KdXkvJqlz+NFtuJAbhRaJXQCOVWNnZLTJWPUrIrLn0jjYHaTNSZ9
+ PzFylSZTuSsX6ssaYk3RwwalUO2LLta3n5/Oio7qax40TegpA3AcaILgrTXauqtjExdNKpVYd
+ 7snN0G9DqodVfApOwUNjkKuYsfmW2Sfce/1wTPM7CguPPyIEaIYvTZXxsNAYv8dh+E2Y3zA+c
+ W0qrAPki0R3ex89oRbu7GVLqPlRwoDmhCvN1SslUxMHng=
 
-On 19/04/2024 10:47, Ricardo Ribalda wrote:
-> Return 0 without checking IS_ERR or PTR_ERR if CONFIG_MEDIA_CONTROLLER
-> is not enabled.
-> 
-> This makes cocci happier:
-> 
-> drivers/media/v4l2-core/v4l2-async.c:331:23-30: ERROR: PTR_ERR applied after initialization to constant on line 319
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->   drivers/media/v4l2-core/v4l2-async.c | 7 +++----
->   1 file changed, 3 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-> index 4bb073587817..915a9f3ea93c 100644
-> --- a/drivers/media/v4l2-core/v4l2-async.c
-> +++ b/drivers/media/v4l2-core/v4l2-async.c
-> @@ -316,9 +316,10 @@ v4l2_async_nf_try_all_subdevs(struct v4l2_async_notifier *notifier);
->   static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
->   					     struct v4l2_subdev *sd)
->   {
-> -	struct media_link *link = NULL;
-> +	struct media_link *link;
->   
-> -#if IS_ENABLED(CONFIG_MEDIA_CONTROLLER)
-> +	if (!IS_ENABLED(CONFIG_MEDIA_CONTROLLER))
-> +		return 0;
->   
->   	if (sd->entity.function != MEDIA_ENT_F_LENS &&
->   	    sd->entity.function != MEDIA_ENT_F_FLASH)
-> @@ -326,8 +327,6 @@ static int v4l2_async_create_ancillary_links(struct v4l2_async_notifier *n,
->   
->   	link = media_create_ancillary_link(&n->sd->entity, &sd->entity);
->   
-> -#endif
-> -
->   	return IS_ERR(link) ? PTR_ERR(link) : 0;
->   }
->   
-> 
+The i2c controller needs to read back the data written to its registers.
+This way we can avoid the long delay in the interrupt handler.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Signed-off-by: Marc Dietrich <marvin24@gmx.de>
+=2D--
+ drivers/staging/nvec/nvec.c | 41 ++++++++++++++++++++++---------------
+ 1 file changed, 24 insertions(+), 17 deletions(-)
 
----
-bod
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 45df190c2f94..214839f51048 100644
+=2D-- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -570,6 +570,22 @@ static void nvec_tx_set(struct nvec_chip *nvec)
+ 		(uint)nvec->tx->size, nvec->tx->data[1]);
+ }
+
++/**
++ * i2c_writel - safely write to an I2C client controller register
++ * @val: value to be written
++ * @reg: register to write to
++ *
++ * A write to an I2C controller register needs to be read back to make su=
+re
++ * that the value has arrived.
++ */
++static void i2c_writel(u32 val, void *reg)
++{
++	writel_relaxed(val, reg);
++
++	/* read back register to make sure that register writes completed */
++	readl_relaxed(reg);
++}
++
+ /**
+  * nvec_interrupt - Interrupt handler
+  * @irq: The IRQ
+@@ -604,7 +620,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 	if ((status & RNW) =3D=3D 0) {
+ 		received =3D readl(nvec->base + I2C_SL_RCVD);
+ 		if (status & RCVD)
+-			writel(0, nvec->base + I2C_SL_RCVD);
++			i2c_writel(0, nvec->base + I2C_SL_RCVD);
+ 	}
+
+ 	if (status =3D=3D (I2C_SL_IRQ | RCVD))
+@@ -696,7 +712,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+
+ 	/* Send data if requested, but not on end of transmission */
+ 	if ((status & (RNW | END_TRANS)) =3D=3D RNW)
+-		writel(to_send, nvec->base + I2C_SL_RCVD);
++		i2c_writel(to_send, nvec->base + I2C_SL_RCVD);
+
+ 	/* If we have send the first byte */
+ 	if (status =3D=3D (I2C_SL_IRQ | RNW | RCVD))
+@@ -713,15 +729,6 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+ 		status & RCVD ? " RCVD" : "",
+ 		status & RNW ? " RNW" : "");
+
+-	/*
+-	 * TODO: replace the udelay with a read back after each writel above
+-	 * in order to work around a hardware issue, see i2c-tegra.c
+-	 *
+-	 * Unfortunately, this change causes an initialisation issue with the
+-	 * touchpad, which needs to be fixed first.
+-	 */
+-	udelay(100);
+-
+ 	return IRQ_HANDLED;
+ }
+
+@@ -737,15 +744,15 @@ static void tegra_init_i2c_slave(struct nvec_chip *n=
+vec)
+
+ 	val =3D I2C_CNFG_NEW_MASTER_SFM | I2C_CNFG_PACKET_MODE_EN |
+ 	    (0x2 << I2C_CNFG_DEBOUNCE_CNT_SHIFT);
+-	writel(val, nvec->base + I2C_CNFG);
++	i2c_writel(val, nvec->base + I2C_CNFG);
+
+ 	clk_set_rate(nvec->i2c_clk, 8 * 80000);
+
+-	writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
+-	writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
++	i2c_writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
++	i2c_writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
+
+-	writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
+-	writel(0, nvec->base + I2C_SL_ADDR2);
++	i2c_writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
++	i2c_writel(0, nvec->base + I2C_SL_ADDR2);
+
+ 	enable_irq(nvec->irq);
+ }
+@@ -754,7 +761,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nve=
+c)
+ static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
+ {
+ 	disable_irq(nvec->irq);
+-	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
++	i2c_writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+ 	clk_disable_unprepare(nvec->i2c_clk);
+ }
+ #endif
+=2D-
+2.43.0
+
