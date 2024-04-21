@@ -1,40 +1,33 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9640FD29B;
-	Sun, 21 Apr 2024 14:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B29C10A35;
+	Sun, 21 Apr 2024 18:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713708487; cv=none; b=P4FroR9vj9Gfg2/lqHBzJg+62Srp3xDHgqi0pmqOz8HEHYvUZPrQ0K3EfGv+HQsdJmCYPsXK8QyYnYeBjSGFbQdLWz+vrZ6c+JH7MgL2KGUoJPGnR1QG7nu6/Q+pCBICxvRGS3tIBKgzmXWoZoqqSnUNE7Xj0EG9vyF+Xm9a1Jg=
+	t=1713723809; cv=none; b=C07Ys1AKPngwh/ddl3oscqsCcHH/dLKkcjO8u0vuY5iP0k7oFyfdM+9+iXW30jQNB8eJXd45OO+U1wM6wiWjm11dTMTM/UcR5u4RdNFPEegCa1e1/MgJLTJ1q7ry0nhrALCa+NJwi2wdAj1abIUmtJ8uZFKPpZH2s59pXP+SarY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713708487; c=relaxed/simple;
-	bh=rGFEHaSAYJNx3UiIUNYR80pXYXBmvUUDb2g2ErCYGyU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qPUIhyLIMEZvXOupfYjDN4x3gi1t9rIWpJ5Vb3iFeJmd17TwF/kTnpFf2PQvWkyl50++9vNRRj28r0x4IODYpipCauX2DVuTcs5DI0lSCU9M1HS44mmcPjJP83TYZCg2fkKGerIOTjiF0tn8+APa+zh5PZ3cqwJRYtpe1nIXLcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tQYCgFiD; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1713723809; c=relaxed/simple;
+	bh=BV+7ZhZojp/eFlhUHpQbc4Yl9vwGklRIUscYmJ+Lehg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XE4PLaFCNoBVUU+yIRuSmuIrVwjnrN8UxPiP2xjIiUl8r/aQxlTf6nqY6GswtvoVyfPGu2IBuCZWudUStbPU8psb0P9sMQ6uwhDwtEEZGL2sQAdg2FXXUh3Lw1djLjIkVj/KjKYHEk/u/IbB52kvHJCyEYpTEbgTk2lkGHlcqN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FihFIFls; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tQYCgFiD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1713708433; x=1714313233; i=markus.elfring@web.de;
-	bh=rGFEHaSAYJNx3UiIUNYR80pXYXBmvUUDb2g2ErCYGyU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tQYCgFiDBtzuJtaPSJ86VUUlnx3bXoxnIn1J0YHGl7VF+oYJVzcRSwD+G2zZBzgc
-	 uTB8dvnwWkDivQsAUzxLsiwv5flkheBVFHvsQiOfznxtj7fLZB3M8RFbR5o6aFner
-	 Sj1t1PzkywvlBvwKXs4Lr6JhavodozKnL0Svdq+lChYVhVirwNbPz6tS+gVYWlXqa
-	 95mVIMsrQSmRFKT9TUNwZGTilthpjTn79LrHyCd7LFaP6wfUdMG/3T6vJ4rOdi4dH
-	 iwGmCcl6aPaM0eI/pxYxleUmRrN9tSkK8x+A6S2Z4uZFiufNUmPWXhufwg8tihQys
-	 I2EGKqoXEcArn2eUPQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MIL0Q-1rt3fo3mEe-00EaEg; Sun, 21
- Apr 2024 16:07:13 +0200
-Message-ID: <8da94316-239a-4870-a29d-02a685ac9ae5@web.de>
-Date: Sun, 21 Apr 2024 16:07:06 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FihFIFls"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2964CC113CE;
+	Sun, 21 Apr 2024 18:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713723809;
+	bh=BV+7ZhZojp/eFlhUHpQbc4Yl9vwGklRIUscYmJ+Lehg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FihFIFlsG/5RA5cmqQF1sjN9ATQO2E8Er2pZ2dIig5Msx4Qc3Ob/EkzVmuyBLiAi1
+	 PW12c/ws/Ovc9PjZZ6JYNq7wRs2fR/Bs2tpBsC4x9jz0RXGYwZTxwYCJf9QmW/HurH
+	 qLe+JJGehu7xVyDb6wv3DoEIezygPrfVd2Nn6ioM1iYbED9+x2OyV1qOohTpo+IWKx
+	 CvP1oFCDHk+inV1iyy5RzPT5PUFYszSLFA0HaHevk0tF8ZRgR/Lc3Lr7FXkZ3JCGNc
+	 +7PuaeGa1HvJsia06vufo37BZVxVVqaFWxIU8Cj99migq0diFEcGgAiRZRZ2ClEaUU
+	 nmn/4iKN+oErA==
+Message-ID: <f1c27992-5014-440b-a1e2-835744d51062@kernel.org>
+Date: Sun, 21 Apr 2024 20:23:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,71 +35,206 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Ricardo Ribalda <ribalda@chromium.org>, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Abylay Ospan <aospan@netup.ru>, Alain Volmat <alain.volmat@foss.st.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Chen-Yu Tsai <wens@csie.org>,
- Dmitry Osipenko <digetx@gmail.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans Verkuil <hverkuil@xs4all.nl>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Martin Tuma <martin.tuma@digiteqautomotive.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Samuel Holland <samuel@sholland.org>, Sergey Kozlov <serjk@netup.ru>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240419-fix-cocci-v2-26-2119e692309c@chromium.org>
-Subject: Re: [PATCH v2 26/26] media: dvb-frontends: tda10048: Make explicit
- the range of z.
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240419-fix-cocci-v2-26-2119e692309c@chromium.org>
+Subject: Re: [PATCH v2] ASoC: dt-bindings: tegra30-i2s: convert to dt schema
+To: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240421123037.75680-1-sheharyaar48@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240421123037.75680-1-sheharyaar48@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ITKldMmeWvicPfSwk1lGM7Lql2Cm3DyJ9It4EIHpN6gg859l9MR
- aVD74QMk+LR7UI7fCic1Ij6uvX8fwvnr7wmvQM8i2QbG3+d/JBqLNeRM3I4bZa4E34XPC0i
- SYsbUCsj7/cRMEyPRu6MKnSrI42n3gk8CvyH//Tym6kHgNuHGbXy4egSum6bjeRch61q+dN
- e/VFoFn+HOp3S2jycBj4g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:aX93InMPE+A=;h+M1UNdgZoIAePk/gLkMPUcnWFE
- 5gaoXXP6v2pwlnxGO6K7et1oLiL8TIAKeJnHv51y9QwquJqybP572QDhkhzEsuPTkoIRzUN/7
- mShPYDLUIN00VsLwJwEmnundkTslk9hH7wxBTGzqOXKZ5TY5ODDTJuvlXRSs6Qt0j6Z/P7XXu
- 15PpEI3BzQ9oSDuGd4BeLDWBmnFddw2ZuXCPSrm3HnBRmIp4rcHTseicBP7mUCsPTUTDT+3Y+
- vWHqY5jFyqwmk7ss25eqM/46T0rHpKxI0nKyahCwXvP7DUiZ1GPEITM3E7kQt4ALfzBy8uKQ3
- /QbGwtOhCqs5WJIPQAZqJR6XUwVGf7oZKojimwo3AaT5UA3U1JOPBrIBsYOKM154eq6cLRhb7
- iq3PcpnWcp3XY2aFQX8MCVRIVXgd8lxxQdtn8YCerRLUuZvtUlbR4R5j/YvI2UKy7FgzUXB1x
- 3Bhlx0CwbqmbGIefOVLAyR4cfc+nIFs51pRtQ8+ewYveJRDBdeXtJMHFEz0n4phTP8RtZsl/0
- gBuiCYpYSSRcLDJIy3sB4G28Z9bjW/ocQDIUzqRvU2jwtnKM/PbNp1oZAjsy9Ua/wqTwFL3Yy
- D08zYttD1lPwxETSj/WDnXQ3ihq22+OycigTle4pH0Fu9sjflBCpMtE0wevQzd9/RPzz87VXO
- 1UKjbmrDXvCF8Uxa9dvN/3c2y+mOW1EZ9w+T50Rgk7lXX021VRrmvb28kFBahImqiPOj/VuzQ
- kgKYpxl/BMOIFE87FcD1inozha/zbBUBsau+PpHyJL+sc7SUX97HhHV18g4SNex2a01C1nw4y
- muG/WBbFF6tZ2iO9s0OozwYOGKNkAjvz3gnxDEJWMz9DY=
+Content-Transfer-Encoding: 7bit
 
-> We do not expect the sample_freq to be over 613MHz.
+On 21/04/2024 14:30, Mohammad Shehar Yaar Tausif wrote:
+> Convert NVIDIA Tegra30 I2S binding to DT schema.
+> 
+> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+> ---
+> v1->v2:
+> - Removed incorrect item ref definition
+> 
+> Previous versions:
+> v1:
+> https://lore.kernel.org/all/20240420175008.140391-1-sheharyaar48@gmail.com/
+> ---
+>  .../bindings/sound/nvidia,tegra30-i2s.txt     | 27 --------
+>  .../bindings/sound/nvidia,tegra30-i2s.yaml    | 66 +++++++++++++++++++
+>  2 files changed, 66 insertions(+), 27 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
+> deleted file mode 100644
+> index 38caa936f6f8..000000000000
+> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
+> +++ /dev/null
+> @@ -1,27 +0,0 @@
+> -NVIDIA Tegra30 I2S controller
+> -
+> -Required properties:
+> -- compatible : For Tegra30, must contain "nvidia,tegra30-i2s".  For Tegra124,
+> -  must contain "nvidia,tegra124-i2s".  Otherwise, must contain
+> -  "nvidia,<chip>-i2s" plus at least one of the above, where <chip> is
+> -  tegra114 or tegra132.
+> -- reg : Should contain I2S registers location and length
+> -- clocks : Must contain one entry, for the module clock.
+> -  See ../clocks/clock-bindings.txt for details.
+> -- resets : Must contain an entry for each entry in reset-names.
+> -  See ../reset/reset.txt for details.
+> -- reset-names : Must include the following entries:
+> -  - i2s
+> -- nvidia,ahub-cif-ids : The list of AHUB CIF IDs for this port, rx (playback)
+> -  first, tx (capture) second. See nvidia,tegra30-ahub.txt for values.
+> -
+> -Example:
+> -
+> -i2s@70080300 {
+> -	compatible = "nvidia,tegra30-i2s";
+> -	reg = <0x70080300 0x100>;
+> -	nvidia,ahub-cif-ids = <4 4>;
+> -	clocks = <&tegra_car 11>;
+> -	resets = <&tegra_car 11>;
+> -	reset-names = "i2s";
+> -};
+> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
+> new file mode 100644
+> index 000000000000..b4cc0b0abfb8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
+> @@ -0,0 +1,66 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/nvidia,tegra30-i2s.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra30 I2S controller
+> +
+> +maintainers:
+> +  - Thierry Reding <treding@nvidia.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - enum:
+> +          - nvidia,tegra124-i2s
+> +          - nvidia,tegra30-i2s
+> +      - items:
+> +          - enum:
+> +              - nvidia,tegra114-i2s
+> +              - nvidia,tegra132-i2s
+> +          - const: nvidia,tegra124-i2s
+> +          - const: nvidia,tegra30-i2s
 
-Would the summary phrase =E2=80=9CMake the range of z explicit=E2=80=9D be=
- more appropriate?
+That's not what the binding said and not what DTS is saying.
 
-Regards,
-Markus
+This points to the fact you did not really test this binding on real DTS.
+
+When you convert the binding to DT schema, you *must* test all existing
+DTS. Especially that trivial one, like this case armv7 multiplatform boards.
+
+That's a requirement in DT conversion work.
+
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  reset-names:
+> +    const: i2s
+> +
+> +  nvidia,ahub-cif-ids:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description: |
+> +      The list of AHUB CIF IDs for this port, rx (playback)
+> +      first, tx (capture) second. See nvidia,tegra30-ahub.txt for values.
+> +    minItems: 2
+> +    maxItems: 2
+
+Better list items with description
+items:
+ - description:
+ - description:
+
+Also provide proper constraints. Looks like RX and TX are max 5.
+
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - resets
+> +  - reset-names
+> +  - nvidia,ahub-cif-ids
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2s@70080300 {
+> +            compatible = "nvidia,tegra30-i2s";
+
+Use 4 spaces for example indentation.
+
+
+
+Best regards,
+Krzysztof
+
