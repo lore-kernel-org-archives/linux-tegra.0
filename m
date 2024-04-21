@@ -1,174 +1,219 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BD6C132;
-	Sun, 21 Apr 2024 10:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB12205E18;
+	Sun, 21 Apr 2024 11:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713696414; cv=none; b=Og3n4DNWG3DnEgj2pm/qz5uoABhH7HQKbk4KKYfO0G6Q1xA0Pn8kTHzkFNP88fhD9PV1PIYfsA1OWAe9gFBQNg36myQ7qFlY4f22tGEPHGb0DCy7hKyRR/zhV88iN9SuMsDW/8fqUvSl75nWNuH9L//M9z1s96mOoJDnWwa1Umw=
+	t=1713697785; cv=none; b=b8P4uzLd0ec8cyP4uAJGADeycf01B3T+gRs99JiiCIpfU8RpC+/LCb31BV60O56En7bIVEODDrTCELJlxC270XPx4YEtHvtgZvKtF4tik5tF6rXt8Gf0FHOIPL+vPnBD20ZpjEIz/YIauUxjTD9k52OiwVPRloMiGUN3CmY5XK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713696414; c=relaxed/simple;
-	bh=+6jkqo7bx2eBWdWkuUQDSRe+EEbStjxJwp7fYyxYc7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Liijw09NiwanwORC0dbufrbxvvPY/b83sbzBy6ek8bAtTpeMHFmwvu2NpEpFYvUj4BhabRE5hP8GqvrRWEUXpar7mVLM4qHyS68CwvKtOlChX7W1CEKTx9ka8C1lcnTbRFDvWjNqKZf44lcyBmKUaV5H9RCXunboGxHencCJIKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=DEyq/t60; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+	s=arc-20240116; t=1713697785; c=relaxed/simple;
+	bh=4LIluELKsAg0RvjnTm13p6oqqf2Kl3p8f3JSIQo4YVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cYCJEBKqlm5ktepZCDXKJus8nhjomAudpQLuN8RhAfRrIl9WC35LY/xeUm8k0GZoYosE5rQX1faW3PMeueV7iEETXlb7oTWFB6JYPHFlceBsEDYlp+ofjX+vVVI7HV8PsJpppckWVW881UpLZFr3XBBvukRZwdsYW3ox9Q0fgUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ba4BUY3O; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="DEyq/t60"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1713696408; x=1714301208; i=marvin24@gmx.de;
-	bh=JHDf34r4g8ewz9UWOAYwffoU2McK+j3XP7wrY3n2V3A=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=DEyq/t60UuF0SHlWJFDtpwM0IzPIrUj/wH17cVxAA1TDuvlBsmTwEB5qT6y/eLPo
-	 J55p6X6FTa4zGpslb4AQr2io0irAdzp83gN6Z9bZEbJ6qzN99s/tQ7vB+6uRF9Y+3
-	 WV5ftOiq+ujuI/ISgnzPLUxcf3RPNsXP0WC74yhT1AH3KCshFPwlDNUTQRC4WOdJg
-	 2T/hKjkXosJSoXo2ChnN5KFTz76cjhrmEFTS0zO7kYrZj1mqklVbFogwmOwpF4Uae
-	 eH9sKCQNhS/ZkHlXgBj6WYnlfqcOzcue2M0T7tkky9yBESUv1FrjfmX8SICrU0zWt
-	 sJg+rjhWFM2+W3hN1A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from n5219w05.fritz.box ([109.250.33.78]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mf0BG-1sei5S10m2-00gXDP; Sun, 21
- Apr 2024 12:46:48 +0200
-From: Marc Dietrich <marvin24@gmx.de>
-To: linux-staging@lists.linux.dev
-Cc: linux-tegra@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	Marc Dietrich <marvin24@gmx.de>
-Subject: [PATCH] staging: nvec: make i2c controller register writes robust
-Date: Sun, 21 Apr 2024 12:46:42 +0200
-Message-ID: <20240421104642.25417-1-marvin24@gmx.de>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ba4BUY3O"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1e4266673bbso31106995ad.2;
+        Sun, 21 Apr 2024 04:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713697783; x=1714302583; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gCeM9ne1R4TNu8Re+QZrgQf9jfqwpZtPiiKgFbyNlW4=;
+        b=ba4BUY3OLh2KrmlZqfTyasfhw4rBut5lVD1GhG6CHRKLLSK+yjMq2MSfEKl0HEQxCY
+         2cIfEy5GUgjEjWrtnDNsCaZ0mPwXJctCKeADHjwFa5vaqj7V9jRR2MBLHP2mh8jIsQs0
+         qJjZXObVPtTa6oBGPdi8B0QF/PVFjeO+lAb99UU1noypIePw5jXFv74Tc+D3WPnsGtRE
+         WMmYGutNsuJELyhciKjQB1PC5y2xZcC8mgc6hyT4jND3jKtDCM/tYzQgYV5Fn7CH50mn
+         gf1OQyKwnW+Qzdu0vYySDb6wkvT9wU9HhA/EGdLBiXNMVQZ3kQ4Yilr1hkr5WZpn3MHt
+         /PJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713697783; x=1714302583;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gCeM9ne1R4TNu8Re+QZrgQf9jfqwpZtPiiKgFbyNlW4=;
+        b=NfgHeBj4wAvh3RYtqmZmfxaOTEK1vRcHvTYa+xVlaHeHoqoSEF3Tgimi5zNGCP/B5i
+         2FBaDacrmbUiQrphJtiAmSTM9CQtUCAUALzfdGKTbrI2xSFmDJTTrwQDBjxZBPh41wsO
+         ynzQhNC3Elgb8YhpaUtriHjnCMSavlmYg/803zOV7zOTthiZLHBffR3AwDxVzT/uG2mA
+         WxkdOOSHOLAuesFfpS/iSxnZGX9kSIWyHqsGB2kgJICuIeCjqEzhToSDzQHDQE1Uorgo
+         uC1yZO0Oi0rMsja04b8hO8dj+KqmuqaVyajmELgJvnfoJbE+pV38Zqs/YG6+lSeqIHni
+         susg==
+X-Forwarded-Encrypted: i=1; AJvYcCXoUuk+uOTpIDbRU0hy2IE1uTocvBF9LTVXbF0m4oe4HdJrQGCqg64HlHDjHg7JpRsrxHQgmkel2UzOFhcGsJ2YHYxUbI4KUUiVuIvAaqUOf0ItGpt3VIbl1DAW3qVQ5PopEn1NNYX94bjNYxu2gHYJOV1jFW5kgdo6Sh2gTGAfAAiwHkmDaUd3KhT8eWrt3uQMC2sZHMqVyxOT6hCrountQM0=
+X-Gm-Message-State: AOJu0YyiAof1dqpH8ep4SSp/HbR7Vxf4KVwTzehYZ+XtM3V/6udV/g7D
+	qP1IkQj+PgXWy6xZyD9OapOcBo80a8MXFGy8khF/aM9yMo2Xa62Ks7UOU8hUmq4=
+X-Google-Smtp-Source: AGHT+IHyxcxKCNoIbIl6jQA5poxccSFgss/1TDc5IEDT+158XYAb96YfGxSAkztcPYCUhraYU1wpKA==
+X-Received: by 2002:a17:902:d2d0:b0:1e8:32ed:6f6d with SMTP id n16-20020a170902d2d000b001e832ed6f6dmr7851014plc.39.1713697782482;
+        Sun, 21 Apr 2024 04:09:42 -0700 (PDT)
+Received: from localhost (ec2-3-111-32-5.ap-south-1.compute.amazonaws.com. [3.111.32.5])
+        by smtp.gmail.com with UTF8SMTPSA id r11-20020a170902c60b00b001e54f250ca9sm6154435plr.212.2024.04.21.04.09.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Apr 2024 04:09:40 -0700 (PDT)
+From: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: dt-bindings: tegra20-ac97: convert to dt schema
+Date: Sun, 21 Apr 2024 16:39:25 +0530
+Message-ID: <20240421110929.139191-1-sheharyaar48@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4wTVb6vFwfayWz76vpc1Gg8r0jWhiKUYUvdIc2mV06P7g5Tfxli
- JtsdBy8316TbhWoUMO5MBXdpjtdAzzYKtW67njEUVwP+T+pJ066sB0LDoER4rvcIa2UaOty
- U4Td3OjQeya9T6zNY933v1tyRvfDdQC1BZ0qDB2UYcHXu8QeeERzxRGYMyCg27+nNjO6wbB
- Qr1L0UrR/bEpKDD9WyLkA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:O6Twng5TBDg=;78KbT2eX3/Y+Y42olTobeR1Ea/M
- 4JiIANC8ioqu7oHIhCTMKFnq/Vj1qDIgc5f0oo//Pn2F0eD4fdHt6g25pJvQRlYuGB6F6RUEB
- kAvyeqtglxwZvCT6B6g3/4wJK0Gz7T996Tul8V9jb757knZa5gVntAniH7KOgXA+NSbZoHI6/
- wR90Fwdwk+OeL9Thgdzu/cypIbhWbiNCiX7GiL8JRc2ppjAmHN4y2EZw+Bmdj0U8TlbJIVHKV
- Q8xCKvDakTmPUjTzJowTpaWcg1qCQzrA3MYr72vfI1fjMbvnDXilVJTk1d8JKjj0CyxUnLhbL
- UEzckJBOJ8WrPi2Rq5JTsitoj6C7XK0lKRsGau3pfbDoQ5kfNb+3ORBpJEbfeRX9nRj+cVPFE
- pd1zTf036tArt/aYSV0nWAMjFV6tDGPRcW9ZJ7cXAwErah5DYs6uNkozMCLW2ZKtF+Q66Mp6P
- uvZeiXW40dYA8YqwSzNuHbiwvGpvte/99CEt1lY2mK2iij27qOhykTQpMyc5BGODA4Yk3k3QY
- wDs9kAWsB6OkBIDDikS1ZEa/pFdqD77lejrW+SyPpAJuoPksW4tXaab46tEsx8H7bpUwB5zDC
- 0fAeeKFKxVqP4nch/Kpj5KdXkvJqlz+NFtuJAbhRaJXQCOVWNnZLTJWPUrIrLn0jjYHaTNSZ9
- PzFylSZTuSsX6ssaYk3RwwalUO2LLta3n5/Oio7qax40TegpA3AcaILgrTXauqtjExdNKpVYd
- 7snN0G9DqodVfApOwUNjkKuYsfmW2Sfce/1wTPM7CguPPyIEaIYvTZXxsNAYv8dh+E2Y3zA+c
- W0qrAPki0R3ex89oRbu7GVLqPlRwoDmhCvN1SslUxMHng=
+Content-Transfer-Encoding: 8bit
 
-The i2c controller needs to read back the data written to its registers.
-This way we can avoid the long delay in the interrupt handler.
+Convert NVIDIA Tegra20 AC97 binding to DT schema.
 
-Signed-off-by: Marc Dietrich <marvin24@gmx.de>
-=2D--
- drivers/staging/nvec/nvec.c | 41 ++++++++++++++++++++++---------------
- 1 file changed, 24 insertions(+), 17 deletions(-)
+Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+---
+ .../bindings/sound/nvidia,tegra20-ac97.txt    | 36 ---------
+ .../bindings/sound/nvidia,tegra20-ac97.yaml   | 80 +++++++++++++++++++
+ 2 files changed, 80 insertions(+), 36 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index 45df190c2f94..214839f51048 100644
-=2D-- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -570,6 +570,22 @@ static void nvec_tx_set(struct nvec_chip *nvec)
- 		(uint)nvec->tx->size, nvec->tx->data[1]);
- }
-
-+/**
-+ * i2c_writel - safely write to an I2C client controller register
-+ * @val: value to be written
-+ * @reg: register to write to
-+ *
-+ * A write to an I2C controller register needs to be read back to make su=
-re
-+ * that the value has arrived.
-+ */
-+static void i2c_writel(u32 val, void *reg)
-+{
-+	writel_relaxed(val, reg);
-+
-+	/* read back register to make sure that register writes completed */
-+	readl_relaxed(reg);
-+}
-+
- /**
-  * nvec_interrupt - Interrupt handler
-  * @irq: The IRQ
-@@ -604,7 +620,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
- 	if ((status & RNW) =3D=3D 0) {
- 		received =3D readl(nvec->base + I2C_SL_RCVD);
- 		if (status & RCVD)
--			writel(0, nvec->base + I2C_SL_RCVD);
-+			i2c_writel(0, nvec->base + I2C_SL_RCVD);
- 	}
-
- 	if (status =3D=3D (I2C_SL_IRQ | RCVD))
-@@ -696,7 +712,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
-
- 	/* Send data if requested, but not on end of transmission */
- 	if ((status & (RNW | END_TRANS)) =3D=3D RNW)
--		writel(to_send, nvec->base + I2C_SL_RCVD);
-+		i2c_writel(to_send, nvec->base + I2C_SL_RCVD);
-
- 	/* If we have send the first byte */
- 	if (status =3D=3D (I2C_SL_IRQ | RNW | RCVD))
-@@ -713,15 +729,6 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
- 		status & RCVD ? " RCVD" : "",
- 		status & RNW ? " RNW" : "");
-
--	/*
--	 * TODO: replace the udelay with a read back after each writel above
--	 * in order to work around a hardware issue, see i2c-tegra.c
--	 *
--	 * Unfortunately, this change causes an initialisation issue with the
--	 * touchpad, which needs to be fixed first.
--	 */
--	udelay(100);
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
+deleted file mode 100644
+index eaf00102d92c..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-NVIDIA Tegra 20 AC97 controller
 -
- 	return IRQ_HANDLED;
- }
-
-@@ -737,15 +744,15 @@ static void tegra_init_i2c_slave(struct nvec_chip *n=
-vec)
-
- 	val =3D I2C_CNFG_NEW_MASTER_SFM | I2C_CNFG_PACKET_MODE_EN |
- 	    (0x2 << I2C_CNFG_DEBOUNCE_CNT_SHIFT);
--	writel(val, nvec->base + I2C_CNFG);
-+	i2c_writel(val, nvec->base + I2C_CNFG);
-
- 	clk_set_rate(nvec->i2c_clk, 8 * 80000);
-
--	writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
--	writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
-+	i2c_writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
-+	i2c_writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
-
--	writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
--	writel(0, nvec->base + I2C_SL_ADDR2);
-+	i2c_writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
-+	i2c_writel(0, nvec->base + I2C_SL_ADDR2);
-
- 	enable_irq(nvec->irq);
- }
-@@ -754,7 +761,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nve=
-c)
- static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
- {
- 	disable_irq(nvec->irq);
--	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
-+	i2c_writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
- 	clk_disable_unprepare(nvec->i2c_clk);
- }
- #endif
-=2D-
-2.43.0
+-Required properties:
+-- compatible : "nvidia,tegra20-ac97"
+-- reg : Should contain AC97 controller registers location and length
+-- interrupts : Should contain AC97 interrupt
+-- resets : Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+-- reset-names : Must include the following entries:
+-  - ac97
+-- dmas : Must contain an entry for each entry in clock-names.
+-  See ../dma/dma.txt for details.
+-- dma-names : Must include the following entries:
+-  - rx
+-  - tx
+-- clocks : Must contain one entry, for the module clock.
+-  See ../clocks/clock-bindings.txt for details.
+-- nvidia,codec-reset-gpio : The Tegra GPIO controller's phandle and the number
+-  of the GPIO used to reset the external AC97 codec
+-- nvidia,codec-sync-gpio : The Tegra GPIO controller's phandle and the number
+-  of the GPIO corresponding with the AC97 DAP _FS line
+-
+-Example:
+-
+-ac97@70002000 {
+-	compatible = "nvidia,tegra20-ac97";
+-	reg = <0x70002000 0x200>;
+-	interrupts = <0 81 0x04>;
+-	nvidia,codec-reset-gpio = <&gpio 170 0>;
+-	nvidia,codec-sync-gpio = <&gpio 120 0>;
+-	clocks = <&tegra_car 3>;
+-	resets = <&tegra_car 3>;
+-	reset-names = "ac97";
+-	dmas = <&apbdma 12>, <&apbdma 12>;
+-	dma-names = "rx", "tx";
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
+new file mode 100644
+index 000000000000..e7ffa93eec30
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
+@@ -0,0 +1,80 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/nvidia,tegra20-ac97.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra20 AC97 controller
++
++maintainers:
++  - Thierry Reding <treding@nvidia.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++properties:
++  compatible:
++    const: nvidia,tegra20-ac97
++
++  reg:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    const: ac97
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++
++  dmas:
++    minItems: 2
++
++  dma-names:
++    items:
++      - const: rx
++      - const: tx
++
++  nvidia,codec-reset-gpio:
++    description: |
++      The Tegra GPIO controller's phandle and the number
++      of the GPIO used to reset the external AC97 codec
++    maxItems: 1
++
++  nvidia,codec-sync-gpio:
++    description: |
++      The Tegra GPIO controller's phandle and the number
++      of the GPIO corresponding with the AC97 DAP _FS line
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - resets
++  - reset-names
++  - interrupts
++  - clocks
++  - dmas
++  - dma-names
++  - nvidia,codec-reset-gpio
++  - nvidia,codec-sync-gpio
++
++additionalProperties: false
++
++examples:
++  - |
++    ac97@70002000 {
++            compatible = "nvidia,tegra20-ac97";
++            reg = <0x70002000 0x200>;
++            resets = <&tegra_car 3>;
++            reset-names = "ac97";
++            interrupts = <0 81 0x04>;
++            clocks = <&tegra_car 3>;
++            dmas = <&apbdma 12>, <&apbdma 12>;
++            dma-names = "rx", "tx";
++            nvidia,codec-reset-gpio = <&gpio 170 0>;
++            nvidia,codec-sync-gpio = <&gpio 120 0>;
++    };
++...
+-- 
+2.44.0
 
