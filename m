@@ -1,248 +1,201 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2073.outbound.protection.outlook.com [40.107.220.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2B43D3B3;
-	Mon, 22 Apr 2024 12:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713789524; cv=none; b=XDR6ejUJ80i0wvl9wvZ15o6zVMotlw3kE7lCL5vQd0v3XenjbH+lodZKu19Kysf9UvywIqQbe6l76CAGCtiElrcX8WZnikYmvJugPV2uh3ev0wZxTxMdMIVZWu5JoYx3PHqFafWC5Uu2Qc7kNGwdi0LXFR/rhY6TbKgYuKcLXxk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713789524; c=relaxed/simple;
-	bh=pxRWRkI6R4pqlO69Ln9+iTq4dBMcUUKju/X9sDhmjyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oyimlKRBIKBhDrAsg3V8i12gsMAMiZCE4Y4nZ8zhaBfrN83mADEEMn4ygLtDSEZoby+fKAL6OYmVR3e9IvNHGkL4vR8sX9rGF7VLIW5iJBMJuYQLqCHw1EHea3BvzSzn8xsAemmpUhPdHJSMCbr8a+KilW7kkaIdcGSyqWniaxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OrOhPnVg; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2F031A60;
+	Mon, 22 Apr 2024 14:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713796596; cv=fail; b=EZtiCRsQcN48ScLJBoGbO5gBpIxaahMf0+dEMcVKDyofRfzWe1Ynb/jNtocSwBkcPs6dZtl1MlrHN61F53Bm8meLWVKCmqOXhYnP+0kEp+RbZylRFuoUQtCWE0qb3h28dyEVyb6eLc4STRM4tlX795hxqrp5DogWG8QvfZmZ/d4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713796596; c=relaxed/simple;
+	bh=bXuvOWjNTOrgOCmc+joNwXiITXc3ekl6WO8yAMeePUs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kANMyKQtOfNUEiQ48py1+ANw8TjUXbCXRIymA2UQ605OYfM+2Q2I3py5DItk0Hci8DoVXTNZrTAIt/4aKPNhfGu+pqNfEEd3i49ff3j5vpuDxWSLRQh77EljNY7pMolRv/vFBxntbOYuncm3Zo1h89I9Xkk6MhqHyMFQg3XFs6I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aTS3F3Wn; arc=fail smtp.client-ip=40.107.220.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OrOhPnVg"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1e9bcff8a8cso5062515ad.3;
-        Mon, 22 Apr 2024 05:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713789522; x=1714394322; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vbuaZWGTBIowVRErwzSunyvXAmc6nmwLHaqK1i/4KhE=;
-        b=OrOhPnVgwLkVvqyflfcABWQZHz7EDpJ3pbz2Lbnrx9Lsb8x8LdrJVKnHWZL38+7i8v
-         oJwHlVgE/o2sRXfLtPxrE0dWqL+y7K2cGL7kXlzsM+XIkF28dcIrViLnVI8KrJI6tO1B
-         OM3Mk3HcggEQk5TSvu3UgIYXruiP9Uj2vxPiGHpm3Yx++my11umW1PQVhSBoO+Rzhsbr
-         kMsXdMesCFF+IMs9X1idAvkXs+98YlV6DgrRCWuGadkeLFqNkMZIuGtbMvr+AFORNZ3N
-         qDODcCldLKhdDO5UyqNjU+UnRNiAUyvqzzxxTiRJ69pcg1IT+spfmRrrk1HBwE2aP0zO
-         hMpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713789522; x=1714394322;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vbuaZWGTBIowVRErwzSunyvXAmc6nmwLHaqK1i/4KhE=;
-        b=RQO6j69IcWTb2UqEBxYOKYO01dI28OOiYHaNEUplGc8bK4/6lJLDYGyqEBPvo8H50x
-         J0Wz6aosxlaZsNXH1WabbKMH07JEu1q/N+6OTSNxx35EeWSSbI2NnlTXu0ouP9FRudCU
-         2B0QSZYwNXa6I3lw9V3uM3WyzAZv3BUS/5oQsGwXpHeLpiMuGbLV8EG6bvY7OZH8Fj8c
-         LHeKNgXSoOfDzB0Qc6jD3IgL4T6GaKopM7K16mbINoaW/mTpOV9aJAMKx8C8joFcTgWU
-         rxchPn6+cEvg4ZJEV5uey1FTKthwWazVDY9viblnn9uQWgKrBa6MtrhUB4ZusdgJt4TS
-         0G8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWUx2BJ7Wry10zrsJ73SU3AAjmL9J0KKiHha/FvTxh8nN1RrgRXlq6b9/iOnJIOa5VM22k4TFjHPPYMl0VNZsu8IAqIgV/NZViM1qfHZwCCebqr/cuMETPCiH/3k0KTb7B7UhfuvOVcz9ptbNgM9pmkhA88xqdeu6/1GD/cVbsE0WXm0T7XVlHoWpzFyUbQ5QXPh5AFwhsA/V0nunCb4dSDpo0=
-X-Gm-Message-State: AOJu0Ywd8D+rY5/JrmBkUEERUy9OyU5WaUUEcqDDA10sxhv5Z+TRpyDx
-	/yYyETcYRFbb+yixsC9k4AH8C/W7WB7NKuVmV11hILt/uWrCn8fI9U/LuQkhEjw=
-X-Google-Smtp-Source: AGHT+IGxNNoba5r7CKT54oO8Zfvg3wqYM94cHQ3+cfc2Yn9G6PIlvRbfPJsphpqtISJ4py9IgWTwZA==
-X-Received: by 2002:a17:903:124c:b0:1e1:a54:1fe8 with SMTP id u12-20020a170903124c00b001e10a541fe8mr10807848plh.53.1713789521962;
-        Mon, 22 Apr 2024 05:38:41 -0700 (PDT)
-Received: from localhost (ec2-3-111-32-5.ap-south-1.compute.amazonaws.com. [3.111.32.5])
-        by smtp.gmail.com with UTF8SMTPSA id x18-20020a170902b41200b001e446fe6843sm7988915plr.79.2024.04.22.05.38.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Apr 2024 05:38:41 -0700 (PDT)
-From: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ASoC: dt-bindings: tegra20-ac97: convert to dt schema
-Date: Mon, 22 Apr 2024 18:08:28 +0530
-Message-ID: <20240422123830.472109-1-sheharyaar48@gmail.com>
-X-Mailer: git-send-email 2.44.0
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aTS3F3Wn"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=in3XO+tBNsZCxBsFFLXjEeDKb7BZHHSwQ9HNZdYw1RxKVSPDb3hArtUoNfXlsNFPfu6KL0oVk9Xo+9Ms2jPcujfgk0zAktAbc0SLRKnZJCZO/RyNdaW0x2RMAILx8ylAVj8/5Fjmia/+R5vSzUUR9Hf435kJ8+9iNfHQNtRrPnP5aQw6ib1OomMsUz/6AomN/1GPzl6w2QQFAeiyi5S1KcZUPXdmdOyXi/G1MzH4LMcll3uyf2dx5+p4MyTLsViCoDCPjEHgTZMzKkXs8ZTZHw2C/YTylqZ/KxdyCbGT1ds1Kzkc2o1E2IuYOwR+e66vsp/LyDX2/9GQzPtMrbpC0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4pS/+wgs1eswq9a2+n5cPP6i0YG6wmmBCb0n9s4n/nc=;
+ b=PnzPSXkCxsEoj8S/R3HOktxO+QFaxSgumJg/Bq0IINhjyIPwvSxrgtsuCUx4+cGdsl4YqRurnPIj2wI3jGZOS/u6f3w0EKqezyhysGRCD0WSSpVBxVy0AzGhisTeQXZ2krKCuPija1MiogIhCHbWTb8wa0zZU3M6fZakbb4BV1ihfgoxCoBArtxvluWrIdnDNnSMXj/rOMuWTs8ge8mNEQABsRdHsHyjlPhW7O5hoe67lvsfxMGexcYDoQ4wTaPPj1aZqQBOmC+LpwyDtxcAR3QkGm2m3w3bKsuZp2a44S9VN8F5pXBXfb5Co3Lw7YntLcEeSM5jxVS0VCEUPMBLkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4pS/+wgs1eswq9a2+n5cPP6i0YG6wmmBCb0n9s4n/nc=;
+ b=aTS3F3WnIXFsYkJoSSzHKHH9mdi4BAw4uo+KPojl2DztKvSRqev4EZGZI/yr8SOCdV0zKaRYmgZ/BoTN1xGWS5LILvbH35tHgt4r33O6eL2aGjWxfEX491XLkOkJdOykTdhPu0sKC9ItIuxU2tePM3Ygic4BCsELKty83Lh8bvcShXzUv5/dxBuFeE2yyLr8gg0ZPiFxHHqDzoYFHOeRs5GAFU17EffSfBFeBjw7d9iDp5UExXa/SAxDQjFnEY2v4y29UIETee2wNSsAPAAmdHKPlvCN0Q4ej5IJXyhLr1n+HL8Pl886hRs969WV1QMWcbNzl9dxu4Mfa73nGY5i3Q==
+Received: from SJ0P220CA0006.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::29)
+ by SJ2PR12MB7992.namprd12.prod.outlook.com (2603:10b6:a03:4c3::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Mon, 22 Apr
+ 2024 14:36:31 +0000
+Received: from CO1PEPF000044EE.namprd05.prod.outlook.com
+ (2603:10b6:a03:41b:cafe::a) by SJ0P220CA0006.outlook.office365.com
+ (2603:10b6:a03:41b::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7495.33 via Frontend
+ Transport; Mon, 22 Apr 2024 14:36:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ CO1PEPF000044EE.mail.protection.outlook.com (10.167.241.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7519.19 via Frontend Transport; Mon, 22 Apr 2024 14:36:31 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 22 Apr
+ 2024 07:36:13 -0700
+Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 22 Apr
+ 2024 07:36:10 -0700
+Message-ID: <1aab0272-85ea-e3a1-7d68-27ab4f1e1993@nvidia.com>
+Date: Mon, 22 Apr 2024 20:06:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [Patch v3 2/2] memory: tegra: make sid and broadcast regions
+ optional
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, <robh@kernel.org>,
+	<conor+dt@kernel.org>, <maz@kernel.org>, <mark.rutland@arm.com>,
+	<treding@nvidia.com>, <jonathanh@nvidia.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <amhetre@nvidia.com>, <bbasu@nvidia.com>,
+	Sumit Gupta <sumitg@nvidia.com>
+References: <20240412130540.28447-1-sumitg@nvidia.com>
+ <20240412130540.28447-3-sumitg@nvidia.com>
+ <06849796-f896-4cff-842c-118d86e94a6b@linaro.org>
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <06849796-f896-4cff-842c-118d86e94a6b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044EE:EE_|SJ2PR12MB7992:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0d97059a-800a-4a28-f906-08dc62d99a32
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q0MweE9IYzhrUi9vMzkvRGdwUlZrbmxDeXJKNnZWK2NtZy9kMjFlSXhrR0wr?=
+ =?utf-8?B?QXNJb3JKQ3dKL0orMlBkNVFCY0RsazRHcktUTzJMbzNEVTUwZDZSR2VsejZS?=
+ =?utf-8?B?WDJvVDRTcGQxNlRzblpEVVQ0VVgxaVFySSsxdjdqUFdwTFVGZWx3cmlWNHEx?=
+ =?utf-8?B?OHR4OVRwaC90YWYvenJ6Qm05cm1UbUMrK1VNVmRzL0lSSGdhYzdEU0xFNU1u?=
+ =?utf-8?B?dzVGdWhmZnBmRFBpSFBndUxQdTA2T21HeWRZeXZoa3piRi9US0dJSSsrdU9l?=
+ =?utf-8?B?bGQ5UWsvZ00zR2V3cVVPUmkwbDZWaHcvYzliYmtabkZXaWU0MDR1UlZoak5k?=
+ =?utf-8?B?VHNoSDhCUnAzczFrdThDenZJS0JDRVplZk1xWjlWWmV5R2JjRDMvdUM2UjBK?=
+ =?utf-8?B?WlpaSTNXUGt6MnNDTXJ2aFpYaktwcjJKWVllemliU0U0RjFRVTNhcUVQK3Fm?=
+ =?utf-8?B?bHd3azZQMXkrRS9ObG1kZnNRUHdWeWdOMFd4WUtaWTJMVmVHbmNSTmNYZGJE?=
+ =?utf-8?B?a3NUb1JJcXBxZjEySkRUMWROWGZPeFh1ZDdvdjJTMHNxMk5JU1VFYk5lNXBR?=
+ =?utf-8?B?U2szRXQ4K3VWQVpqNmllWWRHeGgvbHR3Zis4Z1FxKzNBUnRPZHQwbjhza3d5?=
+ =?utf-8?B?T01wdXlFdnV3TStzVDVxbDhyZEFhbzlhNmxHUkNTakxHenpqczc2Z29yWCsw?=
+ =?utf-8?B?UHJRd1F6dWRQUkRSY3orL0s3b09qQll5Tm1XaGJUQ1c4aDNYUEJEZVVTWkY3?=
+ =?utf-8?B?SlNuUnc1S3F3cXZOUy9UVHJiMU9LUXNtUElZalpqZmpTeW1lRWxnUmMra3JJ?=
+ =?utf-8?B?U2lHYVJLM2JCUFhQdDdBaVVuVk9ObzVlZkxkYnpZVzJEMU9TL2hiZDRHeWxv?=
+ =?utf-8?B?NTM5NHJNdkcrN0ZLRWRxa002WEZRQkl5dUNZb3o1eWJSR1o5NzRqQi9nN28v?=
+ =?utf-8?B?dk9tSmRtL2x4TjYwMFFGbWNzV2RRcXFiM3F5NWhSNzBTbEpIZUQrUDd5ZytS?=
+ =?utf-8?B?NHJabkUwMTlLd1RpWmJINmd6aE1IZUl2UVUwa2R2eVZ5UXNzZXovRnhGT3Y2?=
+ =?utf-8?B?WnVEODBlWW9PZldFRmFNSWRGbGNwdzNtcmZNazBNRDFZaXFGVkNhNFl6QjNF?=
+ =?utf-8?B?cWM4aW13dk1RNUlWK2EzSktUaHRYV2J3ZlhUeXVwYkJWYVlJMmpGSUkraDZv?=
+ =?utf-8?B?aFB3dUtRdE96OGlUcXFXRUs0a2o3SEZGWGdyam9EM0l3QjdES2JiSjJyU3hR?=
+ =?utf-8?B?eVRlSG80d2QrRjFjVHJWVG1RaVR2TjRrWTB1cE9MMWlDYWdTTTh0eVdWOCsz?=
+ =?utf-8?B?VkZYNDlUQjB6UUNiOUxLZ1cyVnpsS3loR3gzK3hxbVduNzM0QjJaaTduT0hM?=
+ =?utf-8?B?dzk2M290VTR3allIeUxGNHBhSElVMU1UUmY4c1BPTUc3RnJvYUMveXUxekkz?=
+ =?utf-8?B?UjRzcVhLR3hwbTJIUzBsbDhuRzVsVXZYdDNjMG1GU0l3OWpNYmZjZ1VOWERF?=
+ =?utf-8?B?RWZ1YlJhMDBTVStWWUVkbExTNVB4TGN5VVNiOUpCdDd6QUkrdjEraXA4bkRu?=
+ =?utf-8?B?K1FOSHJjeFFsU2hITzZOZzdsV1lzYVM3dng3c0o4UEI1d0NxaVdjRGU2K25s?=
+ =?utf-8?B?OWxLR3QreVcwdS9WVmtnbjB6NFhoN3hDdHAvOU9KdCttaDBXaWNhRkJscmsw?=
+ =?utf-8?B?Y2t5Z0RPakNaSW5LdXhOb01DUi8zUTdUOWlDWGZYN2dTZXFEa2k0c0pyMzVG?=
+ =?utf-8?B?amgvWVJ0SFYvWHNMUngzZlVQdlVCb2duVHhobjRtU1ExN3krQ1ptNEhFMm03?=
+ =?utf-8?B?dnVpelZFRFV2WkYvUkJPM3VzZGErSnUrWCtvczFOV0c3ZGlaWXl6SkF1bktK?=
+ =?utf-8?Q?R8ZEhvA2yPiBt?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(82310400014)(36860700004)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2024 14:36:31.3287
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d97059a-800a-4a28-f906-08dc62d99a32
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044EE.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7992
 
-Convert NVIDIA Tegra20 AC97 binding to DT schema.
-Change -gpio to -gpios in both schema and nvidia/tegra20-colibri.dtsi
 
-Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
----
-Changes v1->v2:
-- change -gpio to -gpios in both schema and dtsi
-- tested against dts
-- add header files and defines
----
- .../bindings/sound/nvidia,tegra20-ac97.txt    | 36 --------
- .../bindings/sound/nvidia,tegra20-ac97.yaml   | 86 +++++++++++++++++++
- arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi |  4 +-
- 3 files changed, 88 insertions(+), 38 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
+> On 12/04/2024 15:05, Sumit Gupta wrote:
+>> MC SID and Broadbast channel register access is restricted for Guest VM.
+> 
+> Same typo
+> 
+Thank you for catching. Will correct in v4.
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
-deleted file mode 100644
-index eaf00102d92c..000000000000
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
-+++ /dev/null
-@@ -1,36 +0,0 @@
--NVIDIA Tegra 20 AC97 controller
--
--Required properties:
--- compatible : "nvidia,tegra20-ac97"
--- reg : Should contain AC97 controller registers location and length
--- interrupts : Should contain AC97 interrupt
--- resets : Must contain an entry for each entry in reset-names.
--  See ../reset/reset.txt for details.
--- reset-names : Must include the following entries:
--  - ac97
--- dmas : Must contain an entry for each entry in clock-names.
--  See ../dma/dma.txt for details.
--- dma-names : Must include the following entries:
--  - rx
--  - tx
--- clocks : Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
--- nvidia,codec-reset-gpio : The Tegra GPIO controller's phandle and the number
--  of the GPIO used to reset the external AC97 codec
--- nvidia,codec-sync-gpio : The Tegra GPIO controller's phandle and the number
--  of the GPIO corresponding with the AC97 DAP _FS line
--
--Example:
--
--ac97@70002000 {
--	compatible = "nvidia,tegra20-ac97";
--	reg = <0x70002000 0x200>;
--	interrupts = <0 81 0x04>;
--	nvidia,codec-reset-gpio = <&gpio 170 0>;
--	nvidia,codec-sync-gpio = <&gpio 120 0>;
--	clocks = <&tegra_car 3>;
--	resets = <&tegra_car 3>;
--	reset-names = "ac97";
--	dmas = <&apbdma 12>, <&apbdma 12>;
--	dma-names = "rx", "tx";
--};
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
-new file mode 100644
-index 000000000000..9a68578f6fc3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
-@@ -0,0 +1,86 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/nvidia,tegra20-ac97.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra20 AC97 controller
-+
-+maintainers:
-+  - Thierry Reding <treding@nvidia.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+
-+properties:
-+  compatible:
-+    const: nvidia,tegra20-ac97
-+
-+  reg:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    const: ac97
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  dmas:
-+    maxItems: 2
-+
-+  dma-names:
-+    items:
-+      - const: rx
-+      - const: tx
-+
-+  nvidia,codec-reset-gpios:
-+    description:
-+      The Tegra GPIO controller's phandle and the number
-+      of the GPIO used to reset the external AC97 codec
-+    maxItems: 1
-+
-+  nvidia,codec-sync-gpios:
-+    description:
-+      The Tegra GPIO controller's phandle and the number
-+      of the GPIO corresponding with the AC97 DAP _FS line
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - resets
-+  - reset-names
-+  - interrupts
-+  - clocks
-+  - dmas
-+  - dma-names
-+  - nvidia,codec-reset-gpios
-+  - nvidia,codec-sync-gpios
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra20-car.h>
-+    #include <dt-bindings/gpio/tegra-gpio.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    ac97@70002000 {
-+        compatible = "nvidia,tegra20-ac97";
-+        reg = <0x70002000 0x200>;
-+        resets = <&tegra_car 3>;
-+        reset-names = "ac97";
-+        interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&tegra_car 3>;
-+        dmas = <&apbdma 12>, <&apbdma 12>;
-+        dma-names = "rx", "tx";
-+        nvidia,codec-reset-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
-+        nvidia,codec-sync-gpios = <&gpio TEGRA_GPIO(P, 0) GPIO_ACTIVE_HIGH>;
-+    };
-+...
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi b/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi
-index 8c1d5c9fa483..2ff7be8f1382 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi
-@@ -445,9 +445,9 @@ lvp0 {
- 
- 	tegra_ac97: ac97@70002000 {
- 		status = "okay";
--		nvidia,codec-reset-gpio =
-+		nvidia,codec-reset-gpios =
- 			<&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_LOW>;
--		nvidia,codec-sync-gpio =
-+		nvidia,codec-sync-gpios =
- 			<&gpio TEGRA_GPIO(P, 0) GPIO_ACTIVE_HIGH>;
- 	};
- 
--- 
-2.44.0
+>> In Tegra MC driver, consider both the regions as optional and skip
+>> access to restricted registers from Guest if a region is not present
+>> in Guest DT.
+>>
+> 
+> ...
+> 
+>>
+>>   static inline u32 mc_readl(const struct tegra_mc *mc, unsigned long offset)
+>> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+>> index 1b3183951bfe..716582255eeb 100644
+>> --- a/drivers/memory/tegra/tegra186.c
+>> +++ b/drivers/memory/tegra/tegra186.c
+>> @@ -26,20 +26,16 @@
+>>   static int tegra186_mc_probe(struct tegra_mc *mc)
+>>   {
+>>        struct platform_device *pdev = to_platform_device(mc->dev);
+>> +     struct resource *res;
+>>        unsigned int i;
+>> -     char name[8];
+>> +     char name[14];
+> 
+> How is it relevant? I don't see this being used in your diff.
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
 
+Did this change for below warning coming with 'W=1'.
+
+../drivers/memory/tegra/tegra186.c: In function tegra186_mc_probe:
+../drivers/memory/tegra/tegra186.c:51:49: warning: %u directive output 
+may be truncated writing between 1 and 10 bytes into a region of size 6 
+[8;;https://gc
+c.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wformat-truncation=-Wformat-truncation=8;;]
+    51 |                 snprintf(name, sizeof(name), "ch%u", i);
+       |                                                 ^~
+../drivers/memory/tegra/tegra186.c:51:46: note: directive argument in 
+the range [0, 4294967294]
+    51 |                 snprintf(name, sizeof(name), "ch%u", i);
+       |                                              ^~~~~~
+../drivers/memory/tegra/tegra186.c:51:17: note: snprintf output between 
+4 and 13 bytes into a destination of size 8
+    51 |                 snprintf(name, sizeof(name), "ch%u", i);
+       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Thank you,
+Sumit Gupta
