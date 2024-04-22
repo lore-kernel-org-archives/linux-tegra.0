@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2706817F38B;
-	Mon, 22 Apr 2024 23:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B251184103;
+	Mon, 22 Apr 2024 23:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713830265; cv=none; b=AXvYtyA/LmYzx3dCUG8+hnQjxHE4bGBWyjNQ8mmUROj4ybIrV0ej92DKNABC8jXgfX/2oxFNoA6WFhjzMcHbULjN2gj0+IvilAFxrV6cTh+5oxjO2NK16WKj5CMy5vBpERnamAJX0dZLtfLHIlrV6XYUcnC60LVhnhQt+uoBNA8=
+	t=1713830301; cv=none; b=TzgihDPx+K/gBgXg2X6ArQmivZX1SDNlFie+q11V0PI6Jjlflw15YCsrUrPVr80OLX9Lh4sHi/wLQRJNhlzuprX+MH6qnu12dJ1jD8HZdrRFYBeheiCGAGl3q4oFXrTKzp9HpLJXrsCrS9ehuDTKSAlSXMgdMtzrEJdwXZrsUYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713830265; c=relaxed/simple;
-	bh=PYllO4P0w1bEO6gQFn/31ZkUIJ2oyI8dlVzxp96YQDA=;
+	s=arc-20240116; t=1713830301; c=relaxed/simple;
+	bh=dAATtIO+PHk+nCVuy1FR/y8lxxhRnQCB9SvS8GX/v3o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JuDyahwr42jvg6hI35EVY+2mSQezvIaS/7aUziFyWq3UEW2wpz8LpbQi9cPDlg2HR2YqOL/JL4w9M5n589/FLfxEqAb+zcff9T7WMLBojm5vu+l16CBosPyf4dpqZ5BP65ePjPGFD+kOpP04QL0FWlp+rLDruQNyUbiDGtx3TnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kI8ZsfEZ; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=hOa2SKpyXl6rCATjTDzIknsmrSGMONTWiGrhMbRCr1GDthuD2e+FgTifU7M9K36UhcptaNoYCRIhXIzH+ygsCrGyex1jn+SZOzzuZihEFKxKIjpvDpReJB2CwMMiwGT9MskA5ckMD7j/pxzdtmwu/lGuI0h5wVN86ktYl8pUOsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/pwF3kU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kI8ZsfEZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCB3BC113CC;
-	Mon, 22 Apr 2024 23:57:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/pwF3kU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C227BC2BD11;
+	Mon, 22 Apr 2024 23:58:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713830265;
-	bh=PYllO4P0w1bEO6gQFn/31ZkUIJ2oyI8dlVzxp96YQDA=;
+	s=k20201202; t=1713830301;
+	bh=dAATtIO+PHk+nCVuy1FR/y8lxxhRnQCB9SvS8GX/v3o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kI8ZsfEZE0fg7doLG+t1Ex1eCrNEs5E4Ec2X+ZZLoavUygj3N/OjCFbplfflYLE87
-	 L/CVE3F/UQlEDhuprpnrEhMqf3l1ucJByDcpQSE4qr+zzFltfSKFI3FyTy/mtZre7j
-	 QVEomNY2v2iy/6MhV96KsF4lqJFdxqt8Ju6no+hRie4k8HuIF3ZPE76CavM0TSiwWy
-	 QqTtU1xJpWwAjZ2lWQZ/iofghh4auXWljT6bfjTcXga2APNruQImKXyu8ssiuA5i/V
-	 C6o2y5vcQNuTMDNxNn2EtPjXFhx8g16frvmGsVPOiAAXg9yV03QC9ZJQqpSD+JALGY
-	 1tugQqpG1WD9A==
+	b=t/pwF3kUBgLGaRE6clVEPwwZhmC3JaIUseVFBD+LIpINSGnMmktYvARCJBxmQ48FD
+	 XVkQqNaL7TP+t2ffFwBYp+bInPmiEYrINPorvhM2pz++ViLplMosbZEt0KpXnWFkjf
+	 BH2NyyO9N7f4El5eVirXgFX/Tz0hs5pbSurKWaGMjko9T3xns/WVraganHQlm8+6H1
+	 eFw0cY0oZA/KzQZiv3W1mE19BKB0IPf9n7f9zpTCRKCw9xy7MZ51zVNpT7yQxJX4pJ
+	 7mZoKHodUX+mXvttbLY3Dl19GmbsvG8JSAoLEo7uj1+YBLzwfM5eKmAHjc6wknJByA
+	 GZzMFSzf0lEkw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -38,12 +38,12 @@ Cc: Thierry Reding <treding@nvidia.com>,
 	daniel@ffwll.ch,
 	dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 11/19] gpu: host1x: Do not setup DMA for virtual devices
-Date: Mon, 22 Apr 2024 19:18:25 -0400
-Message-ID: <20240422231845.1607921-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 07/10] gpu: host1x: Do not setup DMA for virtual devices
+Date: Mon, 22 Apr 2024 19:19:20 -0400
+Message-ID: <20240422231929.1611680-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240422231845.1607921-1-sashal@kernel.org>
-References: <20240422231845.1607921-1-sashal@kernel.org>
+In-Reply-To: <20240422231929.1611680-1-sashal@kernel.org>
+References: <20240422231929.1611680-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.87
+X-stable-base: Linux 5.15.156
 Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
@@ -76,10 +76,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 8 deletions(-)
 
 diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index bdee16a0bb8e2..ba622fb5e4822 100644
+index 218e3718fd68c..96737ddc81209 100644
 --- a/drivers/gpu/host1x/bus.c
 +++ b/drivers/gpu/host1x/bus.c
-@@ -368,11 +368,6 @@ static int host1x_device_uevent(struct device *dev,
+@@ -367,11 +367,6 @@ static int host1x_device_uevent(struct device *dev,
  	return 0;
  }
  
@@ -91,7 +91,7 @@ index bdee16a0bb8e2..ba622fb5e4822 100644
  static const struct dev_pm_ops host1x_device_pm_ops = {
  	.suspend = pm_generic_suspend,
  	.resume = pm_generic_resume,
-@@ -386,7 +381,6 @@ struct bus_type host1x_bus_type = {
+@@ -385,7 +380,6 @@ struct bus_type host1x_bus_type = {
  	.name = "host1x",
  	.match = host1x_device_match,
  	.uevent = host1x_device_uevent,
@@ -99,7 +99,7 @@ index bdee16a0bb8e2..ba622fb5e4822 100644
  	.pm = &host1x_device_pm_ops,
  };
  
-@@ -475,8 +469,6 @@ static int host1x_device_add(struct host1x *host1x,
+@@ -474,8 +468,6 @@ static int host1x_device_add(struct host1x *host1x,
  	device->dev.bus = &host1x_bus_type;
  	device->dev.parent = host1x->dev;
  
