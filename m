@@ -1,104 +1,248 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD355146A77
-	for <linux-tegra@vger.kernel.org>; Mon, 22 Apr 2024 12:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2B43D3B3;
+	Mon, 22 Apr 2024 12:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713787222; cv=none; b=IX2I1JXQnbh4IdyfJzxbLAvJf+9IgoIrLlIolZ4t6AynZy8coGdL2z6xJHMwcI2Uzx/5PSvAHJ4wKUilFu/qe91EIATimYp48qmAl22mOFOSm7dgFVD58wOLxt/zZURQH/ivOZUTNr/8x+GVeNGUS2GJjRyXoyUs/kMJ3clJjjQ=
+	t=1713789524; cv=none; b=XDR6ejUJ80i0wvl9wvZ15o6zVMotlw3kE7lCL5vQd0v3XenjbH+lodZKu19Kysf9UvywIqQbe6l76CAGCtiElrcX8WZnikYmvJugPV2uh3ev0wZxTxMdMIVZWu5JoYx3PHqFafWC5Uu2Qc7kNGwdi0LXFR/rhY6TbKgYuKcLXxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713787222; c=relaxed/simple;
-	bh=aUeq+9HkfsVjUgeuRNmXM/3pB1Vpk83CSga7MypB6ao=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uc3QW0R+YfGAY5CRH1PDvTI0yIFyF9i5qWiepdznjZIR2pIvJ+V3VTxffS94Pg3ErT6TguRyr+tI4Z9Rq0LIYOwwm90BkeXEs4iCHGCv5J8kpwpQHa/nT9nW2+yzvbrlhkmSJnsN7ctACxcLJr9AFV+AkyDc6K381bgLX0VpDIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hs/ADaL5; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1713789524; c=relaxed/simple;
+	bh=pxRWRkI6R4pqlO69Ln9+iTq4dBMcUUKju/X9sDhmjyg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oyimlKRBIKBhDrAsg3V8i12gsMAMiZCE4Y4nZ8zhaBfrN83mADEEMn4ygLtDSEZoby+fKAL6OYmVR3e9IvNHGkL4vR8sX9rGF7VLIW5iJBMJuYQLqCHw1EHea3BvzSzn8xsAemmpUhPdHJSMCbr8a+KilW7kkaIdcGSyqWniaxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OrOhPnVg; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hs/ADaL5"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-346f4266e59so3160641f8f.3
-        for <linux-tegra@vger.kernel.org>; Mon, 22 Apr 2024 05:00:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OrOhPnVg"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1e9bcff8a8cso5062515ad.3;
+        Mon, 22 Apr 2024 05:38:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1713787219; x=1714392019; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=urxXw+V78rgcW1lZLXZyUF//DNEOBPjNxOQ6gmq3Soo=;
-        b=hs/ADaL5XQflub4PnfAXm6i4tO46XfgwfaROOopWEOB5nLsMmGD9OKSJDlCNN2y55X
-         6iRNJ3iij7neS5y30wVQ01jHjBhUOsAycORfm72NKkCqjCBg3NkuqmICdhwDBlRCOlg1
-         CG1P749vKjBYHVTK9De3mlgzZ7q+XRTTNT4xdjefCFRfor1KNAa7Fw8kuPVRouimG9C8
-         wNfcNCNtMDvYJ8rXYBnsu9MMRek02zv20Q7vGcbANhhjSgxoIWaXOlMJfH7jjSkA5ebZ
-         lNWoLykxt7jfZrHXNSZ7yVWsPdTDHDJUB505Kwm40Es+uQ9syRQ/QHwDXtR9Jo7AIPW1
-         0ciA==
+        d=gmail.com; s=20230601; t=1713789522; x=1714394322; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vbuaZWGTBIowVRErwzSunyvXAmc6nmwLHaqK1i/4KhE=;
+        b=OrOhPnVgwLkVvqyflfcABWQZHz7EDpJ3pbz2Lbnrx9Lsb8x8LdrJVKnHWZL38+7i8v
+         oJwHlVgE/o2sRXfLtPxrE0dWqL+y7K2cGL7kXlzsM+XIkF28dcIrViLnVI8KrJI6tO1B
+         OM3Mk3HcggEQk5TSvu3UgIYXruiP9Uj2vxPiGHpm3Yx++my11umW1PQVhSBoO+Rzhsbr
+         kMsXdMesCFF+IMs9X1idAvkXs+98YlV6DgrRCWuGadkeLFqNkMZIuGtbMvr+AFORNZ3N
+         qDODcCldLKhdDO5UyqNjU+UnRNiAUyvqzzxxTiRJ69pcg1IT+spfmRrrk1HBwE2aP0zO
+         hMpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713787219; x=1714392019;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=urxXw+V78rgcW1lZLXZyUF//DNEOBPjNxOQ6gmq3Soo=;
-        b=sbRb6gzQ7ByBoCXglwLM5Ncz3rEUVwvUmcY/74uepQ8+tJNCyyLdiEBy2A2gfwIamV
-         ztKqqDxJel2ssc9aSF/9iFt5YACkSEmPbeumS9awEDNJIwr3jXsKbMGKcXOeG9e01N7J
-         Rbnb2dkTyizKTv0rupHxmc4HeHCq6mRoiLAavKRGqnxGWiB+jmqlHU7bhxe5trIQS0Hm
-         i9nh73zEombsrZMcE7ub4x/40rnvjLbtciNU82x0UZ6NOkEB8oYfv/qnQfaevdt5VPA1
-         W2q4MNgqlV+OtYoaZaN9zxfxgjjnt23ZID56HFgIrrGtyxfpzHVPrVgVyzglBDjYAMUT
-         a+tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVY0aP7QahxLN4m/mcej8jysSTUb7l6UkRa95KoZhph+On+yYAsJbGSlbnxZm5Qj5/nKtvKIdXRB/uhhK+Dse7mG/TICXfh4YO4ZPc=
-X-Gm-Message-State: AOJu0YyCx6w9TYNLSst4dz7fIpXxagdDzNn08cQ8Xh4lT+ss+DJ+g3ct
-	jsSaCPdeDfbodyTmfyTObGQcBzS419EmoZmFi/iA5XXGZNSX5WZTvO/Ofa9hkZQ=
-X-Google-Smtp-Source: AGHT+IFPgf3HiKn+4jFSXKN3g9758WhcGHBHRQ0cOG5FAatrz+fIXj1Wgb8/4aM1NSTD8APlUfaM4A==
-X-Received: by 2002:adf:eed0:0:b0:33e:c410:a1cd with SMTP id a16-20020adfeed0000000b0033ec410a1cdmr5903847wrp.69.1713787218679;
-        Mon, 22 Apr 2024 05:00:18 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:6981:a121:4529:6e42])
-        by smtp.gmail.com with ESMTPSA id p3-20020a5d6383000000b00341b451a31asm11831720wru.36.2024.04.22.05.00.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Apr 2024 05:00:18 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	jonathanh@nvidia.com,
-	treding@nvidia.com,
-	linux-gpio@vger.kernel.org,
+        d=1e100.net; s=20230601; t=1713789522; x=1714394322;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vbuaZWGTBIowVRErwzSunyvXAmc6nmwLHaqK1i/4KhE=;
+        b=RQO6j69IcWTb2UqEBxYOKYO01dI28OOiYHaNEUplGc8bK4/6lJLDYGyqEBPvo8H50x
+         J0Wz6aosxlaZsNXH1WabbKMH07JEu1q/N+6OTSNxx35EeWSSbI2NnlTXu0ouP9FRudCU
+         2B0QSZYwNXa6I3lw9V3uM3WyzAZv3BUS/5oQsGwXpHeLpiMuGbLV8EG6bvY7OZH8Fj8c
+         LHeKNgXSoOfDzB0Qc6jD3IgL4T6GaKopM7K16mbINoaW/mTpOV9aJAMKx8C8joFcTgWU
+         rxchPn6+cEvg4ZJEV5uey1FTKthwWazVDY9viblnn9uQWgKrBa6MtrhUB4ZusdgJt4TS
+         0G8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWUx2BJ7Wry10zrsJ73SU3AAjmL9J0KKiHha/FvTxh8nN1RrgRXlq6b9/iOnJIOa5VM22k4TFjHPPYMl0VNZsu8IAqIgV/NZViM1qfHZwCCebqr/cuMETPCiH/3k0KTb7B7UhfuvOVcz9ptbNgM9pmkhA88xqdeu6/1GD/cVbsE0WXm0T7XVlHoWpzFyUbQ5QXPh5AFwhsA/V0nunCb4dSDpo0=
+X-Gm-Message-State: AOJu0Ywd8D+rY5/JrmBkUEERUy9OyU5WaUUEcqDDA10sxhv5Z+TRpyDx
+	/yYyETcYRFbb+yixsC9k4AH8C/W7WB7NKuVmV11hILt/uWrCn8fI9U/LuQkhEjw=
+X-Google-Smtp-Source: AGHT+IGxNNoba5r7CKT54oO8Zfvg3wqYM94cHQ3+cfc2Yn9G6PIlvRbfPJsphpqtISJ4py9IgWTwZA==
+X-Received: by 2002:a17:903:124c:b0:1e1:a54:1fe8 with SMTP id u12-20020a170903124c00b001e10a541fe8mr10807848plh.53.1713789521962;
+        Mon, 22 Apr 2024 05:38:41 -0700 (PDT)
+Received: from localhost (ec2-3-111-32-5.ap-south-1.compute.amazonaws.com. [3.111.32.5])
+        by smtp.gmail.com with UTF8SMTPSA id x18-20020a170902b41200b001e446fe6843sm7988915plr.79.2024.04.22.05.38.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Apr 2024 05:38:41 -0700 (PDT)
+From: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>,
+	Thierry Reding <treding@nvidia.com>,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prathamesh Shete <pshete@nvidia.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	mochs@nvidia.com,
-	csoto@nvidia.com,
-	jamien@nvidia.com,
-	smangipudi@nvidia.com
-Subject: Re: [PATCH] gpio: tegra186: Fix tegra186_gpio_is_accessible() check
-Date: Mon, 22 Apr 2024 14:00:06 +0200
-Message-Id: <171378189683.23616.223081945525265669.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240416123501.12916-1-pshete@nvidia.com>
-References: <20240416123501.12916-1-pshete@nvidia.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ASoC: dt-bindings: tegra20-ac97: convert to dt schema
+Date: Mon, 22 Apr 2024 18:08:28 +0530
+Message-ID: <20240422123830.472109-1-sheharyaar48@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Convert NVIDIA Tegra20 AC97 binding to DT schema.
+Change -gpio to -gpios in both schema and nvidia/tegra20-colibri.dtsi
 
+Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+---
+Changes v1->v2:
+- change -gpio to -gpios in both schema and dtsi
+- tested against dts
+- add header files and defines
+---
+ .../bindings/sound/nvidia,tegra20-ac97.txt    | 36 --------
+ .../bindings/sound/nvidia,tegra20-ac97.yaml   | 86 +++++++++++++++++++
+ arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi |  4 +-
+ 3 files changed, 88 insertions(+), 38 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
 
-On Tue, 16 Apr 2024 18:05:01 +0530, Prathamesh Shete wrote:
-> The controller has several register bits describing access control
-> information for a given GPIO pin. When SCR_SEC_[R|W]EN is unset, it
-> means we have full read/write access to all the registers for given GPIO
-> pin. When SCR_SEC[R|W]EN is set, it means we need to further check the
-> accompanying SCR_SEC_G1[R|W] bit to determine read/write access to all
-> the registers for given GPIO pin.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] gpio: tegra186: Fix tegra186_gpio_is_accessible() check
-      commit: 62326f7cefc21b4a7e8a1b413bf1e8bc07df1115
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
+deleted file mode 100644
+index eaf00102d92c..000000000000
+--- a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.txt
++++ /dev/null
+@@ -1,36 +0,0 @@
+-NVIDIA Tegra 20 AC97 controller
+-
+-Required properties:
+-- compatible : "nvidia,tegra20-ac97"
+-- reg : Should contain AC97 controller registers location and length
+-- interrupts : Should contain AC97 interrupt
+-- resets : Must contain an entry for each entry in reset-names.
+-  See ../reset/reset.txt for details.
+-- reset-names : Must include the following entries:
+-  - ac97
+-- dmas : Must contain an entry for each entry in clock-names.
+-  See ../dma/dma.txt for details.
+-- dma-names : Must include the following entries:
+-  - rx
+-  - tx
+-- clocks : Must contain one entry, for the module clock.
+-  See ../clocks/clock-bindings.txt for details.
+-- nvidia,codec-reset-gpio : The Tegra GPIO controller's phandle and the number
+-  of the GPIO used to reset the external AC97 codec
+-- nvidia,codec-sync-gpio : The Tegra GPIO controller's phandle and the number
+-  of the GPIO corresponding with the AC97 DAP _FS line
+-
+-Example:
+-
+-ac97@70002000 {
+-	compatible = "nvidia,tegra20-ac97";
+-	reg = <0x70002000 0x200>;
+-	interrupts = <0 81 0x04>;
+-	nvidia,codec-reset-gpio = <&gpio 170 0>;
+-	nvidia,codec-sync-gpio = <&gpio 120 0>;
+-	clocks = <&tegra_car 3>;
+-	resets = <&tegra_car 3>;
+-	reset-names = "ac97";
+-	dmas = <&apbdma 12>, <&apbdma 12>;
+-	dma-names = "rx", "tx";
+-};
+diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
+new file mode 100644
+index 000000000000..9a68578f6fc3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/nvidia,tegra20-ac97.yaml
+@@ -0,0 +1,86 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/nvidia,tegra20-ac97.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NVIDIA Tegra20 AC97 controller
++
++maintainers:
++  - Thierry Reding <treding@nvidia.com>
++  - Jon Hunter <jonathanh@nvidia.com>
++
++properties:
++  compatible:
++    const: nvidia,tegra20-ac97
++
++  reg:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  reset-names:
++    const: ac97
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  dmas:
++    maxItems: 2
++
++  dma-names:
++    items:
++      - const: rx
++      - const: tx
++
++  nvidia,codec-reset-gpios:
++    description:
++      The Tegra GPIO controller's phandle and the number
++      of the GPIO used to reset the external AC97 codec
++    maxItems: 1
++
++  nvidia,codec-sync-gpios:
++    description:
++      The Tegra GPIO controller's phandle and the number
++      of the GPIO corresponding with the AC97 DAP _FS line
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - resets
++  - reset-names
++  - interrupts
++  - clocks
++  - dmas
++  - dma-names
++  - nvidia,codec-reset-gpios
++  - nvidia,codec-sync-gpios
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/tegra20-car.h>
++    #include <dt-bindings/gpio/tegra-gpio.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/gpio/gpio.h>
++
++    ac97@70002000 {
++        compatible = "nvidia,tegra20-ac97";
++        reg = <0x70002000 0x200>;
++        resets = <&tegra_car 3>;
++        reset-names = "ac97";
++        interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&tegra_car 3>;
++        dmas = <&apbdma 12>, <&apbdma 12>;
++        dma-names = "rx", "tx";
++        nvidia,codec-reset-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_HIGH>;
++        nvidia,codec-sync-gpios = <&gpio TEGRA_GPIO(P, 0) GPIO_ACTIVE_HIGH>;
++    };
++...
+diff --git a/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi b/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi
+index 8c1d5c9fa483..2ff7be8f1382 100644
+--- a/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi
++++ b/arch/arm/boot/dts/nvidia/tegra20-colibri.dtsi
+@@ -445,9 +445,9 @@ lvp0 {
+ 
+ 	tegra_ac97: ac97@70002000 {
+ 		status = "okay";
+-		nvidia,codec-reset-gpio =
++		nvidia,codec-reset-gpios =
+ 			<&gpio TEGRA_GPIO(V, 0) GPIO_ACTIVE_LOW>;
+-		nvidia,codec-sync-gpio =
++		nvidia,codec-sync-gpios =
+ 			<&gpio TEGRA_GPIO(P, 0) GPIO_ACTIVE_HIGH>;
+ 	};
+ 
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.44.0
+
