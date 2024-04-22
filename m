@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8122F158D76;
-	Mon, 22 Apr 2024 23:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761D616D4C5;
+	Mon, 22 Apr 2024 23:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713830082; cv=none; b=q682eFPDbKvOP0cuIHHBc8LjhaGAmfO19J3dahu+OHUqmbCWyX6CEE5B9RV+sqSPUobVGFcp/Ht1MqGbsXR3CTrxsZBgAAKWwPOP+761aiEz8isZpd2G/I/4p2N4eMKQuxhq+p/YcMLCqyRJDYP8Ub60pOiqMA1+7qejNVh8f3Y=
+	t=1713830194; cv=none; b=uSHzKtcfpV/T8GW2vv7W2n7e6fDV4/+GhAJKtjv5ENYDXTNGZDRtukt2Z0u/DYibYQzmer355QTofLIyrkyWLihajNhSkaCE3njzRBdLc7ta5zymmJ4AAu8OYfQtzxwe/HL7vI2qko4VgCJhkQCfk0UkMMlhuHvyWed/V/YWJ/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713830082; c=relaxed/simple;
+	s=arc-20240116; t=1713830194; c=relaxed/simple;
 	bh=GEpnhiSTG1TbEnLT97kCT5VbQj9dur5yP9sjIze/XLU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LxEyubvh9wpABIl/mCNk1/E9r2/rQWwsgsQvYROee87wh07aTGmXKqKJBSIZSdIDTlNqMucPjOyD/ztBefxFU3a8Fdwvu2QC2Qz8yW0fATCRByAbmK3SUsjoshoXiMrtm9WheOxJoDdoTOdqTs2L1jcW8qW2GZRx8Zvhg85ZLMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIC0kYq8; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=TkO3Fe3NoTmxVk6KWH3lydPHoqT8z8MRS9UFnasOVBUBOF1n8BMZLDKN+8BO7ScjIChUGlBYgbp+q7EhZB3lKez42Tkmo0qiLr2WiGeyLwt0w7SmZltcoU8F75oB5QJaVXpyDD/RvItcWK/LrycEHIoja5/yuUnuOqTsyOFsquo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7mDDBcP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIC0kYq8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7861C113CC;
-	Mon, 22 Apr 2024 23:54:40 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7mDDBcP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D329C113CC;
+	Mon, 22 Apr 2024 23:56:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713830082;
+	s=k20201202; t=1713830194;
 	bh=GEpnhiSTG1TbEnLT97kCT5VbQj9dur5yP9sjIze/XLU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gIC0kYq8VfIdk7oXV+VB+pvqt9XPP8u+rUOfM5A74gp5RWcKw+7kOSWhqF59W0sse
-	 I9K0dgntbrzXTPRBmaee6yBsf/j4e2G4KiXFbOeuW0d7HQjr+S7kUwOuhkwidKdcKy
-	 x5+46PqKFBKlnSAVxc6tnPznPEM2ZGHl+LPYtu/pjF96p8xMXhqXc/jaUdtfYeJEvn
-	 2kk7YSPz3I+geZ/aM/FyhFoDdv7fC2UYKuSpaG6S46nQ8WvolK+vKDBiAzPi7l+Lgp
-	 0V3MQGirdgkar/Oe7g7WAh3OKcx6su3lUel7y3JomlCSz+x9M00o2Va+JepIj9FtH/
-	 v2VCAfR8o2YoQ==
+	b=N7mDDBcPgCrZw+vB2Gm0H7cXzvXIjDpGazSB3YgNek7efWdn3gIUUnYDbivPG6zd2
+	 6fVio7GDYYTcI9ZKMcrNCoBGUnT7OOUROu1htr3lhP3JT/Y4d6vdZL+vFW/iATrIuJ
+	 aVEG3vUr00rhFGq9HQV3u0MWVfuzQ63+Q8qrqFjh7yJ23vtQsuWYRGYbHcwcqBeDOb
+	 Ww3cexKpczJd8cm3QwHnxS3sLCB2RcgC04VImXi57VsnNhJ8fdS8HyahPIvoqSCDjU
+	 LjFZXc6YnczsqyN5NR/OKzjY2lvxsZPjiGJpnt7z1LQ1p6eYLTOulQMPdFVYdzIsMn
+	 Usz6VNFHwH1Ow==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -38,12 +38,12 @@ Cc: Thierry Reding <treding@nvidia.com>,
 	daniel@ffwll.ch,
 	dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.8 21/43] gpu: host1x: Do not setup DMA for virtual devices
-Date: Mon, 22 Apr 2024 19:14:07 -0400
-Message-ID: <20240422231521.1592991-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 14/29] gpu: host1x: Do not setup DMA for virtual devices
+Date: Mon, 22 Apr 2024 19:16:55 -0400
+Message-ID: <20240422231730.1601976-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240422231521.1592991-1-sashal@kernel.org>
-References: <20240422231521.1592991-1-sashal@kernel.org>
+In-Reply-To: <20240422231730.1601976-1-sashal@kernel.org>
+References: <20240422231730.1601976-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.8.7
+X-stable-base: Linux 6.6.28
 Content-Transfer-Encoding: 8bit
 
 From: Thierry Reding <treding@nvidia.com>
