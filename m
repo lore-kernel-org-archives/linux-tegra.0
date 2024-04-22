@@ -1,91 +1,128 @@
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A6818637
-	for <linux-tegra@vger.kernel.org>; Sun, 21 Apr 2024 18:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CED83FB09
+	for <linux-tegra@vger.kernel.org>; Mon, 22 Apr 2024 06:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713725068; cv=none; b=GgI62A95CaBXkzQ0YLH43iTXdqhyBK22GJvl415b0rkSSuqsxhXSi2SVtdBaBA/z3Dxmymp2pQkTK3C4WjmYlnepkldYMZyFrtVWBxdfLvWyAdOHy8vytNFeAnOw/k/l14JWJQkRNVH3Od/dwz87iUQJAvQyZWJ2oz9mn4RWNCs=
+	t=1713768802; cv=none; b=fwhNdXHdlV/exKhyi0t83GYts1fbhdpRCod+qjw+ElMGdwr0f+t0azIOtMTLVtFe1RBN/cRDnyV0Z+UzqU9KkYpcVoyaHemN+soaOVbQy+AIbJfKo2osd30JKQlDRKrgCs7rqPbULjc9fqAcjIA34M/HBJWR5L+X0iLNMt6JQbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713725068; c=relaxed/simple;
-	bh=oNhP/xj4oPiwJOXjOOXAUqqAKb20EGQzG5PGlewfRtA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=O8Rou/thTtN5SCZCwxHWF5+SuwCCHe79taqJTJAMpMa8luJCpieAMyFJJxo+avhzIEIUEZtSGIiT79Y0gDnsDSfWYz7i6eQnGlKFmKOKcHuQdHdQfZ1+buBVY2z7d7PsQlHThPsY4sVZ1mTT7DjxT9Rh+UO8bZKMJX2VOKrTBAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=BiM3wxa5; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+	s=arc-20240116; t=1713768802; c=relaxed/simple;
+	bh=WyWHeoU/Ff7umbOe8XQrl/qZdNdvHSjb9SSotewTso8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j2Y2UgJSeQCMlk8B9SNYzaL+tLGLQXBYgTaM1VB3vsH0l2FYtRFqHTDFCaK1tA/h6FhQxMNjtB/X4gsDI6w8NI2Afg2I/VEfkIwYGIzHnlf1XhLT6DiMpDkvIcyvoaurV82hn5GsxXcOa+ky2J/KPCWL4nqFkvBsRysWns1J/I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=A0zHsmmk; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="BiM3wxa5"
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 104BC240029
-	for <linux-tegra@vger.kernel.org>; Sun, 21 Apr 2024 20:44:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-	t=1713725059; bh=oNhP/xj4oPiwJOXjOOXAUqqAKb20EGQzG5PGlewfRtA=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 From;
-	b=BiM3wxa54MKBBgVzTONc0ijllO84sCdI0tuqzkeD9ipcYMDd7xoFxKJvjBXgl8GD2
-	 DE165v4TK+x5aOZn+bqPE/DC+pkXYgGYWRfVYMkFnosZtAdpcMWs733hN9kkVyIuvv
-	 /PikqCaWrASNQlh1FG3aHyPYQBbXYfpXyjxPojPh0CYVHW69dJi87YPxx7AfhqzMwW
-	 vqFsxkKUkKsTPhDBooKDWkvb2mq9b8G00hDdFHpk1xvpOYY0+uUMcZsbwAFLFHg+3R
-	 fQ5JyxuTX/YhpfvXa3fPAwMcI/KcEzCt/r6Tc14JE6iaYqWlx3ZTPCikruYvXQhbmP
-	 IGkWCyNM1lzbg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4VMy36123dz6tx7;
-	Sun, 21 Apr 2024 20:44:18 +0200 (CEST)
-Date: Sun, 21 Apr 2024 18:44:18 +0000 (UTC)
-From: Marc Dietrich <marvin24@posteo.de>
-To: Greg KH <gregkh@linuxfoundation.org>
-cc: Marc Dietrich <marvin24@gmx.de>, linux-staging@lists.linux.dev, 
-    linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] staging: nvec: make i2c controller register writes
- robust
-In-Reply-To: <2024042118-errant-causing-8bc5@gregkh>
-Message-ID: <0292c723-0cf4-3a4f-733a-4b1e8e6b3efb@posteo.de>
-References: <20240421104642.25417-1-marvin24@gmx.de> <2024042118-errant-causing-8bc5@gregkh>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A0zHsmmk"
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5ad28c0b85eso983296eaf.2
+        for <linux-tegra@vger.kernel.org>; Sun, 21 Apr 2024 23:53:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1713768800; x=1714373600; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dg+W9++cTuSKiuuJU3BmFvsGHmcNsDKvQ8sCokwEeZM=;
+        b=A0zHsmmkwq6pFHhxRR6ftxllj/fU0ka+pY3sDXM3QytCtw08Sk4ZbxHCptcqlIJJj0
+         azG6CI3A74av7OBfFp9DpXDAttzhnZWCrKDk8CZodxGMDVyg0gtm+8T0S2s91oMzDRo2
+         GrdQ2tlx78HK9RmBJtaAH4khTUwVZCYw3mu+U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713768800; x=1714373600;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dg+W9++cTuSKiuuJU3BmFvsGHmcNsDKvQ8sCokwEeZM=;
+        b=s2OhiYCkCbdzB8f/2woTJkg4fUjPl7RSsLU7NZpCnbkLg8UyZmqJIy9/DggGSP5Ude
+         DfhZA3hZyVEM5dn1DBBkA4H9/ykLsgjIBtxTN3GGkEHzfhG065j3DHHzXL5omfG7RiwG
+         /bj4ydCU/N8mWsqxmfZvmO/cs0aihSOXw54kipSq13f3lYpXrsM7nnI+Sen0CgMmXj6l
+         FIiS9OIk/QDsm737GpRCAm6DEYG5U7AftZoy2NQI+B1Lbai0/M6EZb6ZxEQCtxJ5SL92
+         0lTUnNJWFQpBYJbzyphL1s1jEbHRFnogoAI8L3gO9n0vcyJ2cT6o0MxLPgRUjo+2m0DN
+         3NeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWY8/bZ/NNwwtV5Y15Qj2n3fBDd20qdkp/76kl3RpZMN7b2g9uDPSWEpabfrcl2XPvFMHMNB8JWH2e/U3+LC0lG+2uEsYWhR5aUb9U=
+X-Gm-Message-State: AOJu0YyxBYNQ3sECKUWduou+CDr/ExYBFBGcRA8kdx2pNzZO91kkdjNm
+	o2vqqS191cpU5L1r/x5DyXkCvMsKqDI0ccWyXdF47EU6alIhYUx7+tt9Ue0Hi21W8lDwdYSZ7PK
+	31w==
+X-Google-Smtp-Source: AGHT+IGHl6Dpt4kP7QKyngey0ydpkMlC/zfi9DQfg/HYtffzY4mJyz7IDNCaex2O5Oel8lkVwIx+zg==
+X-Received: by 2002:a05:6358:5bc1:b0:183:d2fa:ff5c with SMTP id i1-20020a0563585bc100b00183d2faff5cmr14367806rwf.12.1713768800328;
+        Sun, 21 Apr 2024 23:53:20 -0700 (PDT)
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com. [209.85.166.52])
+        by smtp.gmail.com with ESMTPSA id ix12-20020a056638878c00b004830f1a5aeesm2815909jab.29.2024.04.21.23.53.19
+        for <linux-tegra@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Apr 2024 23:53:20 -0700 (PDT)
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7da37436e36so156918139f.0
+        for <linux-tegra@vger.kernel.org>; Sun, 21 Apr 2024 23:53:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX1gykTqP5LNKVTwddnL2ox7+MRS2/WqjtaoFAc9ukpdHlvoz4Mf1h/F8MIBo+v+MnXxa6Guczhe6vW0mr6QkHa8gU1gy2EvT8XnM0=
+X-Received: by 2002:a0c:ec88:0:b0:69b:1aec:88fb with SMTP id
+ u8-20020a0cec88000000b0069b1aec88fbmr9872064qvo.23.1713768779447; Sun, 21 Apr
+ 2024 23:52:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+References: <20240419-fix-cocci-v2-0-2119e692309c@chromium.org>
+ <20240419-fix-cocci-v2-6-2119e692309c@chromium.org> <124e35b3-5b0d-4bd7-848a-5c848b339157@linaro.org>
+In-Reply-To: <124e35b3-5b0d-4bd7-848a-5c848b339157@linaro.org>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 22 Apr 2024 14:52:43 +0800
+X-Gmail-Original-Message-ID: <CANiDSCt34D8-Ys+DbEQM0SyFdBF4WoV5_+xuuCjVbf22kT0xfw@mail.gmail.com>
+Message-ID: <CANiDSCt34D8-Ys+DbEQM0SyFdBF4WoV5_+xuuCjVbf22kT0xfw@mail.gmail.com>
+Subject: Re: [PATCH v2 06/26] media: stm32-dcmipp: Remove redundant printk
+To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Cc: Martin Tuma <martin.tuma@digiteqautomotive.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Hugues Fruchet <hugues.fruchet@foss.st.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>, 
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Dmitry Osipenko <digetx@gmail.com>, 
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+	Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Greg,
+Hi Bryan
 
-On Sun, 21 Apr 2024, Greg KH wrote:
+Thanks for your review
 
-> On Sun, Apr 21, 2024 at 12:46:42PM +0200, Marc Dietrich wrote:
->> The i2c controller needs to read back the data written to its registers.
->> This way we can avoid the long delay in the interrupt handler.
->>
->> Signed-off-by: Marc Dietrich <marvin24@gmx.de>
->> ---
->> ...
->> + * A write to an I2C controller register needs to be read back to make sure
->> + * that the value has arrived.
->> + */
->> +static void i2c_writel(u32 val, void *reg)
->> +{
->> +	writel_relaxed(val, reg);
->> +
->> +	/* read back register to make sure that register writes completed */
->> +	readl_relaxed(reg);
+On Sun, 21 Apr 2024 at 07:15, Bryan O'Donoghue
+<bryan.odonoghue@linaro.org> wrote:
 >
-> Do you need to compare the value to make sure it happened properly?
+> On 19/04/2024 10:47, Ricardo Ribalda wrote:
+> > -     if (irq <= 0) {
+> <snip>
+> > -             return irq ? irq : -ENXIO;
+> > -     }
 >
-> And how is this an i2c write?  Normally that implies this is using the
-> i2c core functions, this name is going to get confusing very quickly...
+> You're dropping the original intent of the driver author there no ? when
+> irq == 0 they want to return -ENXIO.
 
-I just used the same name as in i2c-tegra, which may be helpful when the 
-drivers will be merged in the future.
-The reason why a readback is needed is descibed in commit ec7aaca2f6. As 
-far as I understand (it is not mentioned in the TRM AFAIK), writes are 
-somehow buffered and a readback guaranties that the write really reached 
-the controller. The alternative was just to wait some time...
-From the commit message it seems that this only applies to the interrupt 
-status register, but it does not harm the do this also for the data 
-registers just like the host driver does.
+platform_get_irq() can never return 0.
+https://lore.kernel.org/linux-media/cd4aac19-c4cf-4db0-a18c-42f1bf1441a8@moroto.mountain/
 
-Best regards,
+Let me add that to the commit message.
 
-Marc
+Thanks!
+
+>
+> ---
+> bod
+
+
+
+-- 
+Ricardo Ribalda
