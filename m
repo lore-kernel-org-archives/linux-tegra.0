@@ -1,104 +1,113 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E361F43AB6;
-	Mon, 22 Apr 2024 22:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8122F158D76;
+	Mon, 22 Apr 2024 23:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713826258; cv=none; b=dB6hpxCgOVaqrVtqDJGzPgeQlJ9SyxiK5ccfyNKCDPWUMN+vOd4VF0Ni8XBmuOzJL6Ek7EQWMeeSw2Twq8I73L4QEvoWw+262A1um66uTCSTb+ie6KUKwUh8Y1rvnk8PvX6K/iHUniW8ZMxxcdZkForLhwzbEECbE4MXqfUuLB0=
+	t=1713830082; cv=none; b=q682eFPDbKvOP0cuIHHBc8LjhaGAmfO19J3dahu+OHUqmbCWyX6CEE5B9RV+sqSPUobVGFcp/Ht1MqGbsXR3CTrxsZBgAAKWwPOP+761aiEz8isZpd2G/I/4p2N4eMKQuxhq+p/YcMLCqyRJDYP8Ub60pOiqMA1+7qejNVh8f3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713826258; c=relaxed/simple;
-	bh=jKtuLpcmCSteOW9hC0hYxP5slIdPuPj5+s2We5UpC3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k8KSsdazWM/SEgeWImV+8s6pM5Jd+LqDpj0pf8O6n47q9qo8sO9xQ2gDHkiXgDRNUTD5e5kilkzsZLiLSQm6XpdlyfFRcyqw8lHvVDN5fikEZgLR1ZPcWdDgZyG7dzBAYaiEV003Uqonn4wEcjbqxPEAXzYbhxewiVIawoHQmJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCF+NLMw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713830082; c=relaxed/simple;
+	bh=GEpnhiSTG1TbEnLT97kCT5VbQj9dur5yP9sjIze/XLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LxEyubvh9wpABIl/mCNk1/E9r2/rQWwsgsQvYROee87wh07aTGmXKqKJBSIZSdIDTlNqMucPjOyD/ztBefxFU3a8Fdwvu2QC2Qz8yW0fATCRByAbmK3SUsjoshoXiMrtm9WheOxJoDdoTOdqTs2L1jcW8qW2GZRx8Zvhg85ZLMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIC0kYq8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCF+NLMw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB710C113CC;
-	Mon, 22 Apr 2024 22:50:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIC0kYq8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7861C113CC;
+	Mon, 22 Apr 2024 23:54:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713826257;
-	bh=jKtuLpcmCSteOW9hC0hYxP5slIdPuPj5+s2We5UpC3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vCF+NLMwZE0DEUXq5CB6o75k/6Y41ZWq9YGcVm/jZ/leIl5/YxWDQJ6ARz6hpMeuO
-	 JHRXYrw04QC6/JVId2G6QpkMS2LDZAuX3hhfCqMdnKf6PQcfAoTTtXCXCjMp8rkYwH
-	 maVxoErtDVjKNEteAfM60Txj3mOBVybQzoirR5wqOPPnUJJauENH120UUPj1OmH6FB
-	 TN7XKHb8CecQYCJ7T+raxCxakM53ZKjbt3thyz9WanoFK1Qvc5fZrv8/ga5nXPC90m
-	 PVFEGS2u04tVkrZrbCVo2ndjHEJYO6uKpqz53ECZLwzf1unEhYWGwikLmkcHEUK1es
-	 htT3PxdNwz7fw==
-Date: Tue, 23 Apr 2024 00:50:53 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 00/18] i2c: remove printout on handled timeouts
-Message-ID: <3ptifixggno4as73pqwldh6cjkqwbygfz6hnr2zhfehi6e4fjo@g3x2nghl5esa>
-References: <20240410112418.6400-20-wsa+renesas@sang-engineering.com>
+	s=k20201202; t=1713830082;
+	bh=GEpnhiSTG1TbEnLT97kCT5VbQj9dur5yP9sjIze/XLU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gIC0kYq8VfIdk7oXV+VB+pvqt9XPP8u+rUOfM5A74gp5RWcKw+7kOSWhqF59W0sse
+	 I9K0dgntbrzXTPRBmaee6yBsf/j4e2G4KiXFbOeuW0d7HQjr+S7kUwOuhkwidKdcKy
+	 x5+46PqKFBKlnSAVxc6tnPznPEM2ZGHl+LPYtu/pjF96p8xMXhqXc/jaUdtfYeJEvn
+	 2kk7YSPz3I+geZ/aM/FyhFoDdv7fC2UYKuSpaG6S46nQ8WvolK+vKDBiAzPi7l+Lgp
+	 0V3MQGirdgkar/Oe7g7WAh3OKcx6su3lUel7y3JomlCSz+x9M00o2Va+JepIj9FtH/
+	 v2VCAfR8o2YoQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Thierry Reding <treding@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Sasha Levin <sashal@kernel.org>,
+	thierry.reding@gmail.com,
+	mperttunen@nvidia.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.8 21/43] gpu: host1x: Do not setup DMA for virtual devices
+Date: Mon, 22 Apr 2024 19:14:07 -0400
+Message-ID: <20240422231521.1592991-21-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240422231521.1592991-1-sashal@kernel.org>
+References: <20240422231521.1592991-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240410112418.6400-20-wsa+renesas@sang-engineering.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.8.7
+Content-Transfer-Encoding: 8bit
 
-Hi Wolfram,
+From: Thierry Reding <treding@nvidia.com>
 
-On Wed, Apr 10, 2024 at 01:24:14PM +0200, Wolfram Sang wrote:
-> While working on another cleanup series, I stumbled over the fact that
-> some drivers print an error on I2C or SMBus related timeouts. This is
-> wrong because it may be an expected state. The client driver on top
-> knows this, so let's keep error handling on this level and remove the
-> prinouts from controller drivers.
-> 
-> Looking forward to comments,
-> 
->    Wolfram
+[ Upstream commit 8ab58f6841b19423231c5db3378691ec80c778f8 ]
 
-Applyed everything but patch 6 in i2c/i2c-host on
+The host1x devices are virtual compound devices and do not perform DMA
+accesses themselves, so they do not need to be set up for DMA.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git
+Ideally we would also not need to set up DMA masks for the virtual
+devices, but we currently still need those for legacy support on old
+hardware.
 
-Thank you,
-Andi
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20240314154943.2487549-1-thierry.reding@gmail.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/host1x/bus.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-Patches applied
-===============
-[01/18] i2c: at91-master: remove printout on handled timeouts
-        commit: 74cce8ed33aeac91f397d642901c94520e574f8b
-[02/18] i2c: bcm-iproc: remove printout on handled timeouts
-        commit: 9f98914320f3e332487042aa73bbbfacc1dc9896
-[03/18] i2c: bcm2835: remove printout on handled timeouts
-        commit: ab17612ffb60bf07e4268448e022576d42833bf7
-[04/18] i2c: cadence: remove printout on handled timeouts
-        commit: 7aaff22d3e939c5187512188d7e27eb5e93ae41e
-[05/18] i2c: davinci: remove printout on handled timeouts
-        commit: dc72daa5cdf1c6ffebaef0c6df1f4cdeb15cadd6
-[07/18] i2c: img-scb: remove printout on handled timeouts
-        commit: 3e720ba5e30d6dd1b22e0f8a23f1697d438092b8
-[08/18] i2c: ismt: remove printout on handled timeouts
-        commit: 800a297370161bda70a34cb00eb0fa2f0345b75f
-[09/18] i2c: nomadik: remove printout on handled timeouts
-        commit: 26fbd3025cbce49cb3dd71f3a10239f69546b3c2
-[10/18] i2c: omap: remove printout on handled timeouts
-        commit: d3f24197d8125b2bf75162ec5cc270fd68f894f4
-[11/18] i2c: qcom-geni: remove printout on handled timeouts
-        commit: 4677d9f5c98f1c2825de142de5df08621ea340b3
-[12/18] i2c: qup: remove printout on handled timeouts
-        commit: e28ec7512496848e8a340889c512a0167949dc8f
-[13/18] i2c: rk3x: remove printout on handled timeouts
-        commit: 1cf7a7b3c944f727f34453a132b8899685e32f81
-[14/18] i2c: sh_mobile: remove printout on handled timeouts
-        commit: 31fb960bf8a424c47a5bf4568685e058c9d6f24d
-[15/18] i2c: st: remove printout on handled timeouts
-        commit: bff862e67260f779b2188e4b39c1a9f9989532ee
-[16/18] i2c: tegra: remove printout on handled timeouts
-        commit: 5ea641d9ea5ee1b3536f8b75e658e3bf2c2a548e
-[17/18] i2c: uniphier-f: remove printout on handled timeouts
-        commit: c31bc8e162890cda38d045e73ff0004119ab28e7
-[18/18] i2c: uniphier: remove printout on handled timeouts
-        commit: 507a2da9539cdb839a1a2e57bfcca644bcfe0f03
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 84d042796d2e6..3937889fa912d 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -351,11 +351,6 @@ static int host1x_device_uevent(const struct device *dev,
+ 	return 0;
+ }
+ 
+-static int host1x_dma_configure(struct device *dev)
+-{
+-	return of_dma_configure(dev, dev->of_node, true);
+-}
+-
+ static const struct dev_pm_ops host1x_device_pm_ops = {
+ 	.suspend = pm_generic_suspend,
+ 	.resume = pm_generic_resume,
+@@ -369,7 +364,6 @@ struct bus_type host1x_bus_type = {
+ 	.name = "host1x",
+ 	.match = host1x_device_match,
+ 	.uevent = host1x_device_uevent,
+-	.dma_configure = host1x_dma_configure,
+ 	.pm = &host1x_device_pm_ops,
+ };
+ 
+@@ -458,8 +452,6 @@ static int host1x_device_add(struct host1x *host1x,
+ 	device->dev.bus = &host1x_bus_type;
+ 	device->dev.parent = host1x->dev;
+ 
+-	of_dma_configure(&device->dev, host1x->dev->of_node, true);
+-
+ 	device->dev.dma_parms = &device->dma_parms;
+ 	dma_set_max_seg_size(&device->dev, UINT_MAX);
+ 
+-- 
+2.43.0
+
