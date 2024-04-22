@@ -1,171 +1,104 @@
-Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EFA1448E5;
-	Mon, 22 Apr 2024 11:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD355146A77
+	for <linux-tegra@vger.kernel.org>; Mon, 22 Apr 2024 12:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713787042; cv=none; b=ZNe6nd85vvCGivkIxtUctOfr2rU+rZ/agVG2i9EwtOvWJEEfUOM/TWtGBHy809tJ1v4XJRm96hHJCBDQmsTBkvnCJkODU6nU+7j9K2ikAJmWzB6z0BYfaj3cnIbWWw0SNFt43zZ1CFCbKEedQf5t808BtKzdiRvWCSUOqriYATs=
+	t=1713787222; cv=none; b=IX2I1JXQnbh4IdyfJzxbLAvJf+9IgoIrLlIolZ4t6AynZy8coGdL2z6xJHMwcI2Uzx/5PSvAHJ4wKUilFu/qe91EIATimYp48qmAl22mOFOSm7dgFVD58wOLxt/zZURQH/ivOZUTNr/8x+GVeNGUS2GJjRyXoyUs/kMJ3clJjjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713787042; c=relaxed/simple;
-	bh=iXdnGV0GNbWvOOMay2HuTzIgDnAqwDf0+4xcJRVN9IU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UGBXeKsQ8wk8J5G87dR3ao0NnHx6ksX7oH93QIc2F99X/9pQmiOQ+sP7B17rX1lZxIU98dDp8bae/ts3W+dejZxP11bR1My0B+rSUCsK8pkpNjH6aMLyzDRgUYiW89IdwC03nMuTjkG6KJS8IDKiP38rE4ehC+mZ1ruhgH9rQx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=oBsn/oRs; arc=none smtp.client-ip=188.40.203.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+	s=arc-20240116; t=1713787222; c=relaxed/simple;
+	bh=aUeq+9HkfsVjUgeuRNmXM/3pB1Vpk83CSga7MypB6ao=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uc3QW0R+YfGAY5CRH1PDvTI0yIFyF9i5qWiepdznjZIR2pIvJ+V3VTxffS94Pg3ErT6TguRyr+tI4Z9Rq0LIYOwwm90BkeXEs4iCHGCv5J8kpwpQHa/nT9nW2+yzvbrlhkmSJnsN7ctACxcLJr9AFV+AkyDc6K381bgLX0VpDIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hs/ADaL5; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="oBsn/oRs"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yitCqMx2a0fEw609oprUCvQiXhu4oVn7HyKwI2mxpJI=; b=oBsn/oRsEAPpByPdsGDnh0cK9o
-	jDYNwe2mOX7XCP9EJ6XNf3c8NiVxXKgnIuCm3MSfnbYcOHL+Y9LGk7HQocExZnQUYauNEDRTSTwFz
-	4Ezbq3y+YjrehaosF8fGOJrj0lQIup88dcX+YtTTvc0rMhOkGJsBvAyWJBGfewy+jsvn9z+4Zd6Dx
-	rg10Mg4Dc2QXjGYHGvtF4yo5Cc4x7ERufiLIf0ER2XbHrNaNC3rXTe4k6eZy8rIRQJRSwbrGqZ7Mu
-	FsARF8pXMtEXgm39At5IkRSpX/oNKjY/38RApM+NziulHCuRohdBr0NvK8Gf2M35UXJhYqhVqD4VH
-	HareYbmA==;
-Received: from [167.98.27.226] (helo=[10.35.6.244])
-	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1ryrrD-00C7xA-Ef; Mon, 22 Apr 2024 12:29:11 +0100
-Message-ID: <2338e58b-1ec2-4500-9675-2d8a3aaa107f@codethink.co.uk>
-Date: Mon, 22 Apr 2024 12:29:10 +0100
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hs/ADaL5"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-346f4266e59so3160641f8f.3
+        for <linux-tegra@vger.kernel.org>; Mon, 22 Apr 2024 05:00:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1713787219; x=1714392019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=urxXw+V78rgcW1lZLXZyUF//DNEOBPjNxOQ6gmq3Soo=;
+        b=hs/ADaL5XQflub4PnfAXm6i4tO46XfgwfaROOopWEOB5nLsMmGD9OKSJDlCNN2y55X
+         6iRNJ3iij7neS5y30wVQ01jHjBhUOsAycORfm72NKkCqjCBg3NkuqmICdhwDBlRCOlg1
+         CG1P749vKjBYHVTK9De3mlgzZ7q+XRTTNT4xdjefCFRfor1KNAa7Fw8kuPVRouimG9C8
+         wNfcNCNtMDvYJ8rXYBnsu9MMRek02zv20Q7vGcbANhhjSgxoIWaXOlMJfH7jjSkA5ebZ
+         lNWoLykxt7jfZrHXNSZ7yVWsPdTDHDJUB505Kwm40Es+uQ9syRQ/QHwDXtR9Jo7AIPW1
+         0ciA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713787219; x=1714392019;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=urxXw+V78rgcW1lZLXZyUF//DNEOBPjNxOQ6gmq3Soo=;
+        b=sbRb6gzQ7ByBoCXglwLM5Ncz3rEUVwvUmcY/74uepQ8+tJNCyyLdiEBy2A2gfwIamV
+         ztKqqDxJel2ssc9aSF/9iFt5YACkSEmPbeumS9awEDNJIwr3jXsKbMGKcXOeG9e01N7J
+         Rbnb2dkTyizKTv0rupHxmc4HeHCq6mRoiLAavKRGqnxGWiB+jmqlHU7bhxe5trIQS0Hm
+         i9nh73zEombsrZMcE7ub4x/40rnvjLbtciNU82x0UZ6NOkEB8oYfv/qnQfaevdt5VPA1
+         W2q4MNgqlV+OtYoaZaN9zxfxgjjnt23ZID56HFgIrrGtyxfpzHVPrVgVyzglBDjYAMUT
+         a+tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY0aP7QahxLN4m/mcej8jysSTUb7l6UkRa95KoZhph+On+yYAsJbGSlbnxZm5Qj5/nKtvKIdXRB/uhhK+Dse7mG/TICXfh4YO4ZPc=
+X-Gm-Message-State: AOJu0YyCx6w9TYNLSst4dz7fIpXxagdDzNn08cQ8Xh4lT+ss+DJ+g3ct
+	jsSaCPdeDfbodyTmfyTObGQcBzS419EmoZmFi/iA5XXGZNSX5WZTvO/Ofa9hkZQ=
+X-Google-Smtp-Source: AGHT+IFPgf3HiKn+4jFSXKN3g9758WhcGHBHRQ0cOG5FAatrz+fIXj1Wgb8/4aM1NSTD8APlUfaM4A==
+X-Received: by 2002:adf:eed0:0:b0:33e:c410:a1cd with SMTP id a16-20020adfeed0000000b0033ec410a1cdmr5903847wrp.69.1713787218679;
+        Mon, 22 Apr 2024 05:00:18 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:6981:a121:4529:6e42])
+        by smtp.gmail.com with ESMTPSA id p3-20020a5d6383000000b00341b451a31asm11831720wru.36.2024.04.22.05.00.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Apr 2024 05:00:18 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	jonathanh@nvidia.com,
+	treding@nvidia.com,
+	linux-gpio@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prathamesh Shete <pshete@nvidia.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	mochs@nvidia.com,
+	csoto@nvidia.com,
+	jamien@nvidia.com,
+	smangipudi@nvidia.com
+Subject: Re: [PATCH] gpio: tegra186: Fix tegra186_gpio_is_accessible() check
+Date: Mon, 22 Apr 2024 14:00:06 +0200
+Message-Id: <171378189683.23616.223081945525265669.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240416123501.12916-1-pshete@nvidia.com>
+References: <20240416123501.12916-1-pshete@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: nvec: make i2c controller register writes robust
-Content-Language: en-GB
-To: Marc Dietrich <marvin24@gmx.de>, linux-staging@lists.linux.dev
-Cc: linux-tegra@vger.kernel.org, gregkh@linuxfoundation.org
-References: <20240421104642.25417-1-marvin24@gmx.de>
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-In-Reply-To: <20240421104642.25417-1-marvin24@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Sender: ben.dooks@codethink.co.uk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 21/04/2024 11:46, Marc Dietrich wrote:
-> The i2c controller needs to read back the data written to its registers.
-> This way we can avoid the long delay in the interrupt handler.
-> 
-> Signed-off-by: Marc Dietrich <marvin24@gmx.de>
-> ---
->   drivers/staging/nvec/nvec.c | 41 ++++++++++++++++++++++---------------
->   1 file changed, 24 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index 45df190c2f94..214839f51048 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -570,6 +570,22 @@ static void nvec_tx_set(struct nvec_chip *nvec)
->   		(uint)nvec->tx->size, nvec->tx->data[1]);
->   }
-> 
-> +/**
-> + * i2c_writel - safely write to an I2C client controller register
-> + * @val: value to be written
-> + * @reg: register to write to
-> + *
-> + * A write to an I2C controller register needs to be read back to make sure
-> + * that the value has arrived.
-> + */
-> +static void i2c_writel(u32 val, void *reg)
-> +{
-> +	writel_relaxed(val, reg);
-> +
-> +	/* read back register to make sure that register writes completed */
-> +	readl_relaxed(reg);
-> +}
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I thought the default behaviour of writel() should be to force writes
-out of any CPU buffers. Are there any bus isuses here causing the code
-to be necessary (and if so, why is there another buffer breaking the
-writel behaviour?)
 
->   /**
->    * nvec_interrupt - Interrupt handler
->    * @irq: The IRQ
-> @@ -604,7 +620,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
->   	if ((status & RNW) == 0) {
->   		received = readl(nvec->base + I2C_SL_RCVD);
->   		if (status & RCVD)
-> -			writel(0, nvec->base + I2C_SL_RCVD);
-> +			i2c_writel(0, nvec->base + I2C_SL_RCVD);
->   	}
+On Tue, 16 Apr 2024 18:05:01 +0530, Prathamesh Shete wrote:
+> The controller has several register bits describing access control
+> information for a given GPIO pin. When SCR_SEC_[R|W]EN is unset, it
+> means we have full read/write access to all the registers for given GPIO
+> pin. When SCR_SEC[R|W]EN is set, it means we need to further check the
+> accompanying SCR_SEC_G1[R|W] bit to determine read/write access to all
+> the registers for given GPIO pin.
 > 
->   	if (status == (I2C_SL_IRQ | RCVD))
-> @@ -696,7 +712,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
-> 
->   	/* Send data if requested, but not on end of transmission */
->   	if ((status & (RNW | END_TRANS)) == RNW)
-> -		writel(to_send, nvec->base + I2C_SL_RCVD);
-> +		i2c_writel(to_send, nvec->base + I2C_SL_RCVD);
-> 
->   	/* If we have send the first byte */
->   	if (status == (I2C_SL_IRQ | RNW | RCVD))
-> @@ -713,15 +729,6 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
->   		status & RCVD ? " RCVD" : "",
->   		status & RNW ? " RNW" : "");
-> 
-> -	/*
-> -	 * TODO: replace the udelay with a read back after each writel above
-> -	 * in order to work around a hardware issue, see i2c-tegra.c
-> -	 *
-> -	 * Unfortunately, this change causes an initialisation issue with the
-> -	 * touchpad, which needs to be fixed first.
-> -	 */
-> -	udelay(100);
-> -
->   	return IRQ_HANDLED;
->   }
-> 
-> @@ -737,15 +744,15 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
-> 
->   	val = I2C_CNFG_NEW_MASTER_SFM | I2C_CNFG_PACKET_MODE_EN |
->   	    (0x2 << I2C_CNFG_DEBOUNCE_CNT_SHIFT);
-> -	writel(val, nvec->base + I2C_CNFG);
-> +	i2c_writel(val, nvec->base + I2C_CNFG);
-> 
->   	clk_set_rate(nvec->i2c_clk, 8 * 80000);
-> 
-> -	writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
-> -	writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
-> +	i2c_writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
-> +	i2c_writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
-> 
-> -	writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
-> -	writel(0, nvec->base + I2C_SL_ADDR2);
-> +	i2c_writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
-> +	i2c_writel(0, nvec->base + I2C_SL_ADDR2);
-> 
->   	enable_irq(nvec->irq);
->   }
-> @@ -754,7 +761,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
->   static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
->   {
->   	disable_irq(nvec->irq);
-> -	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
-> +	i2c_writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
->   	clk_disable_unprepare(nvec->i2c_clk);
->   }
->   #endif
-> --
-> 2.43.0
-> 
-> 
-> 
+> [...]
 
+Applied, thanks!
+
+[1/1] gpio: tegra186: Fix tegra186_gpio_is_accessible() check
+      commit: 62326f7cefc21b4a7e8a1b413bf1e8bc07df1115
+
+Best regards,
 -- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
-
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
