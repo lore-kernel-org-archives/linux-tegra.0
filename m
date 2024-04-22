@@ -1,130 +1,171 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from imap4.hz.codethink.co.uk (imap4.hz.codethink.co.uk [188.40.203.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49B35029A;
-	Mon, 22 Apr 2024 09:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EFA1448E5;
+	Mon, 22 Apr 2024 11:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.203.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713778217; cv=none; b=mr+PARSRvO02FRc4iE+3rzVBRMf2iO5QnETFRouGeXnQhmhOT+TL/TYq6Y6ZpfcDEOO8arjCXrlGwR60v5UU2x7YhREbT7Aknf+rk4o56k67bvl2Su0quGuDN4h1eXwqjyodQK0jDgIuVlxlFEuituKIwZ4Gt+JwXWzwchfTfHw=
+	t=1713787042; cv=none; b=ZNe6nd85vvCGivkIxtUctOfr2rU+rZ/agVG2i9EwtOvWJEEfUOM/TWtGBHy809tJ1v4XJRm96hHJCBDQmsTBkvnCJkODU6nU+7j9K2ikAJmWzB6z0BYfaj3cnIbWWw0SNFt43zZ1CFCbKEedQf5t808BtKzdiRvWCSUOqriYATs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713778217; c=relaxed/simple;
-	bh=EESYxXe371fcWRXjGI9bPSFEjgmbWU9a8XVa2tbzFQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCzuRWycpLn+yDlxfZ8UeXiyTPtKEHutfqIIlLNXR3FLcMEUpDgfNgCMIsSZ/kNZVe16gAGUIfjEq1GkvN3E7Bg65idbfSfkxE0hTp2lSFZ2uCRvX4OQUhCOfH8v8UNIcCRndIhCXoGGM/GL/xQNHuc82FxEIEsi1x2SKFMJGCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJzhJEIE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1713787042; c=relaxed/simple;
+	bh=iXdnGV0GNbWvOOMay2HuTzIgDnAqwDf0+4xcJRVN9IU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UGBXeKsQ8wk8J5G87dR3ao0NnHx6ksX7oH93QIc2F99X/9pQmiOQ+sP7B17rX1lZxIU98dDp8bae/ts3W+dejZxP11bR1My0B+rSUCsK8pkpNjH6aMLyzDRgUYiW89IdwC03nMuTjkG6KJS8IDKiP38rE4ehC+mZ1ruhgH9rQx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=oBsn/oRs; arc=none smtp.client-ip=188.40.203.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJzhJEIE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F17BC113CC;
-	Mon, 22 Apr 2024 09:30:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1713778216;
-	bh=EESYxXe371fcWRXjGI9bPSFEjgmbWU9a8XVa2tbzFQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GJzhJEIEdrVn3UR5wDwmgtXyJ3D1hYmqDK9ZCaV5oHq0LHAWy77vYsB5zGSsc24Ti
-	 BUEtAfqwYUlUffVIrbiGfyCWudcRomRqBKmg5sSoIL4lCpPH9a/1WVLDSZUzi2oCoo
-	 CcZjP+LCBcwW2t7PhVhXRj7ote5xbSuEN9JyQggWdxgB0LWQnggJ7tlIbQ9rvg5LPc
-	 M8lULz/DFG+nHfCzuBHecDLJ5AWL9mZ29tmDG8rE/oUOzRIy/jyime52EqZjgetPBf
-	 0iSDy5zZmctguF+py2v5ixATr2R404SpElNFrls7KAaGaoLc+Pmaix5wOHQMbYNXIJ
-	 xxZ6gFl/6iVbw==
-Date: Mon, 22 Apr 2024 11:30:09 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
-	Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 05/11] PCI: epf-{mhi/test}: Move DMA initialization to
- EPC init callback
-Message-ID: <ZiYuIaX7ZV0exKMt@ryzen>
-References: <20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org>
- <20240314-pci-epf-rework-v1-5-6134e6c1d491@linaro.org>
- <Zf2tXgKo-gc3qy1D@ryzen>
- <20240326082636.GG9565@thinkpad>
- <ZgKsBoTvPWWhPO9e@ryzen>
- <20240327055457.GA2742@thinkpad>
- <ZgQFXsgqpeLbXMTb@ryzen>
- <ZgW6KB73Wh1X6911@matsya>
- <Zg5oeDzq5u3jmKIu@ryzen>
- <20240422075521.GB9775@thinkpad>
+	dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="oBsn/oRs"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap4-20230908; h=Sender:Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yitCqMx2a0fEw609oprUCvQiXhu4oVn7HyKwI2mxpJI=; b=oBsn/oRsEAPpByPdsGDnh0cK9o
+	jDYNwe2mOX7XCP9EJ6XNf3c8NiVxXKgnIuCm3MSfnbYcOHL+Y9LGk7HQocExZnQUYauNEDRTSTwFz
+	4Ezbq3y+YjrehaosF8fGOJrj0lQIup88dcX+YtTTvc0rMhOkGJsBvAyWJBGfewy+jsvn9z+4Zd6Dx
+	rg10Mg4Dc2QXjGYHGvtF4yo5Cc4x7ERufiLIf0ER2XbHrNaNC3rXTe4k6eZy8rIRQJRSwbrGqZ7Mu
+	FsARF8pXMtEXgm39At5IkRSpX/oNKjY/38RApM+NziulHCuRohdBr0NvK8Gf2M35UXJhYqhVqD4VH
+	HareYbmA==;
+Received: from [167.98.27.226] (helo=[10.35.6.244])
+	by imap4.hz.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1ryrrD-00C7xA-Ef; Mon, 22 Apr 2024 12:29:11 +0100
+Message-ID: <2338e58b-1ec2-4500-9675-2d8a3aaa107f@codethink.co.uk>
+Date: Mon, 22 Apr 2024 12:29:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240422075521.GB9775@thinkpad>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: nvec: make i2c controller register writes robust
+Content-Language: en-GB
+To: Marc Dietrich <marvin24@gmx.de>, linux-staging@lists.linux.dev
+Cc: linux-tegra@vger.kernel.org, gregkh@linuxfoundation.org
+References: <20240421104642.25417-1-marvin24@gmx.de>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Organization: Codethink Limited.
+In-Reply-To: <20240421104642.25417-1-marvin24@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: ben.dooks@codethink.co.uk
 
-On Mon, Apr 22, 2024 at 01:25:21PM +0530, Manivannan Sadhasivam wrote:
-> > 
-> > What I would like is more consistency between the EPF drivers.
-> > 
-> > I guess an if-statement that skips the pci_epc_map_addr() in pci-epf-test
-> > if using eDMA would make pci-epf-mhi and pci-epf-test most consistent.
-> > 
+On 21/04/2024 11:46, Marc Dietrich wrote:
+> The i2c controller needs to read back the data written to its registers.
+> This way we can avoid the long delay in the interrupt handler.
 > 
-> Agree.
-
-
-> > 1) Do we want to rely on the fact that hopefully none of the iATUs in the DWC
-> > controller has configured a mapping that might mess things up for us?
-> > I don't see why the PCI/DMA address of the remote buffer, supplied to
-> > pci-epf-test via test_reg BAR, might not fall within the physical iATU window
-> > on the local EP system. (As long as the PCI EPF driver has mapped any address
-> > using pci_epc_map_addr().)
-> > 
-> > This is a big argument that EPF drivers running on a DWC-based EPC should
-> > definitely NOT call pci_epc_map_addr() needlessly when using eDMA, as it
-> > can be catastrophic. (pci-epf-test needs to be patched.)
-> > 
+> Signed-off-by: Marc Dietrich <marvin24@gmx.de>
+> ---
+>   drivers/staging/nvec/nvec.c | 41 ++++++++++++++++++++++---------------
+>   1 file changed, 24 insertions(+), 17 deletions(-)
 > 
-> Right. There is no need to do iATU translation for DMA. I avoid that in MHI
-> driver.
-
-There is no need for pci_epc_map_addr() when using DMA_SLAVE *for DWC-based
-controllers*.
-
-Are we certain that this will not break pci-epf-test for non DWC-based
-controllers?
-
-
-> > 2) Can we really assume that both pci-epf-test and pci-epf-mhi does not need
-> > to call pci_epc_map_addr() when using a DMA_SLAVE DMA controller?
-> > This seems to be designed only with DWC in mind. Other PCIe endpoint
-> > controllers might require this.
-> > (Yes, for DWC-based controllers, this definitely should be skipped, but EPF
-> > drivers are supposed to be independent from a specific EPC.)
-> > 
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index 45df190c2f94..214839f51048 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -570,6 +570,22 @@ static void nvec_tx_set(struct nvec_chip *nvec)
+>   		(uint)nvec->tx->size, nvec->tx->data[1]);
+>   }
 > 
-> For TEST yes, but for MHI, no. In MHI, I kind of mix both iATU and DMA to ripe
-> most of the performance (small vs big transactions). But for the TEST driver, it
-> is fair to not call pci_epc_map_addr() when DMA_SLAVE is supported.
+> +/**
+> + * i2c_writel - safely write to an I2C client controller register
+> + * @val: value to be written
+> + * @reg: register to write to
+> + *
+> + * A write to an I2C controller register needs to be read back to make sure
+> + * that the value has arrived.
+> + */
+> +static void i2c_writel(u32 val, void *reg)
+> +{
+> +	writel_relaxed(val, reg);
+> +
+> +	/* read back register to make sure that register writes completed */
+> +	readl_relaxed(reg);
+> +}
 
-I agree that we should definitely skip pci_epc_map_addr() in pci-epf-test when
-using DMA_SLAVE on DWC-based controllers, but I don't feel comfortable in
-submitting a patch that does this unconditionally for pci-epf-test.c,
-as I don't know how the DMA hardware in:
-drivers/pci/controller/cadence/pcie-cadence-ep.c
-drivers/pci/controller/pcie-rcar-ep.c
-drivers/pci/controller/pcie-rockchip-ep.c
+I thought the default behaviour of writel() should be to force writes
+out of any CPU buffers. Are there any bus isuses here causing the code
+to be necessary (and if so, why is there another buffer breaking the
+writel behaviour?)
 
-works, and I do not want to regress them.
+>   /**
+>    * nvec_interrupt - Interrupt handler
+>    * @irq: The IRQ
+> @@ -604,7 +620,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+>   	if ((status & RNW) == 0) {
+>   		received = readl(nvec->base + I2C_SL_RCVD);
+>   		if (status & RCVD)
+> -			writel(0, nvec->base + I2C_SL_RCVD);
+> +			i2c_writel(0, nvec->base + I2C_SL_RCVD);
+>   	}
+> 
+>   	if (status == (I2C_SL_IRQ | RCVD))
+> @@ -696,7 +712,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+> 
+>   	/* Send data if requested, but not on end of transmission */
+>   	if ((status & (RNW | END_TRANS)) == RNW)
+> -		writel(to_send, nvec->base + I2C_SL_RCVD);
+> +		i2c_writel(to_send, nvec->base + I2C_SL_RCVD);
+> 
+>   	/* If we have send the first byte */
+>   	if (status == (I2C_SL_IRQ | RNW | RCVD))
+> @@ -713,15 +729,6 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
+>   		status & RCVD ? " RCVD" : "",
+>   		status & RNW ? " RNW" : "");
+> 
+> -	/*
+> -	 * TODO: replace the udelay with a read back after each writel above
+> -	 * in order to work around a hardware issue, see i2c-tegra.c
+> -	 *
+> -	 * Unfortunately, this change causes an initialisation issue with the
+> -	 * touchpad, which needs to be fixed first.
+> -	 */
+> -	udelay(100);
+> -
+>   	return IRQ_HANDLED;
+>   }
+> 
+> @@ -737,15 +744,15 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
+> 
+>   	val = I2C_CNFG_NEW_MASTER_SFM | I2C_CNFG_PACKET_MODE_EN |
+>   	    (0x2 << I2C_CNFG_DEBOUNCE_CNT_SHIFT);
+> -	writel(val, nvec->base + I2C_CNFG);
+> +	i2c_writel(val, nvec->base + I2C_CNFG);
+> 
+>   	clk_set_rate(nvec->i2c_clk, 8 * 80000);
+> 
+> -	writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
+> -	writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
+> +	i2c_writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
+> +	i2c_writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
+> 
+> -	writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
+> -	writel(0, nvec->base + I2C_SL_ADDR2);
+> +	i2c_writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
+> +	i2c_writel(0, nvec->base + I2C_SL_ADDR2);
+> 
+>   	enable_irq(nvec->irq);
+>   }
+> @@ -754,7 +761,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *nvec)
+>   static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
+>   {
+>   	disable_irq(nvec->irq);
+> -	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+> +	i2c_writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+>   	clk_disable_unprepare(nvec->i2c_clk);
+>   }
+>   #endif
+> --
+> 2.43.0
+> 
+> 
+> 
 
-I did suggest that DWC-based drivers could set a DMA_SLAVE_SKIP_MEM_MAP flag
-or similar when registering the eDMA, which pci-epf-test then could check,
-but I got no response if anoyone else thought that this was a good idea.
+-- 
+Ben Dooks				http://www.codethink.co.uk/
+Senior Engineer				Codethink - Providing Genius
 
+https://www.codethink.co.uk/privacy.html
 
-Kind regards,
-Niklas
