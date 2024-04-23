@@ -1,59 +1,59 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACDD13D2BE
-	for <linux-tegra@vger.kernel.org>; Tue, 23 Apr 2024 16:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CF313D254
+	for <linux-tegra@vger.kernel.org>; Tue, 23 Apr 2024 16:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713890412; cv=none; b=MFUQBNCdweUpHxIruae2Fz2WyYdkwK0Ohw/YrYyPHGgSPY7vANU8+o/Y44bxvGUdSyuvqWIiOlnUVZgEmfmO1C75qZHI63dbW/lnNqSIzoAgYbS5klA6W3PNUieTynR9GMcI6YUaskOTmQKj0LtHg4s0da0VFeDSVen+BU7RIJU=
+	t=1713890579; cv=none; b=dnZ4v2UHRiSP0J7G6eLSw+wGbGTHJChzHX5CHvdJCveTvXuHqaf/fmiNS8ZsEwRVsNkNbWF+pg3wkNEM2Q8v3Nvb4yO8AUfFBC717angvXn1uA/yh3RB5kKtavgkd652FknZN2B5WOPHXPzExt2A1HJWJF2xZIW44fBHnNRqFvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713890412; c=relaxed/simple;
-	bh=BOJw2vRsPZHwOmrOygNkShk96qoSCUb9rWqqoRjUYVk=;
+	s=arc-20240116; t=1713890579; c=relaxed/simple;
+	bh=GpHmjh1oP5OnIlmRru0FaAZCq+BYGXsln5CRJl5tfWA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ui01LQ0C+fb5ub39Q81QX/QBIMo4Ro1HKPhNvEKiC06tKBprz3IUOwGAx80/gJjnuuZWTducCEddtx7DIX9C1vUcbnmevw9PVPFbaTw5IKKQXsimfjt0GCzNp5ydzsw1iEP+xvc0tI8fiPsC8yJJUKXY+9kq2L0uF26SDbEdU4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RNSD4r7V; arc=none smtp.client-ip=209.85.221.41
+	 In-Reply-To:Content-Type; b=DkWjxmcE3qu6lDqg9uf/m/SI6UqJvw1voARpsk3WNqowEcNvYC4SO9LWiMMDqnXoLBSvPPjFbdj7kVNsSNVwSRFhFPGIvnSSuoflLlfQ5k1ms8b4tGFBl0b4IKehbwXfugPEF4lxrvo/f0fis308T8E/HGBfM5vtcRX1B7JxOkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JwUhLz8l; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RNSD4r7V"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-34b029296f5so2604810f8f.2
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Apr 2024 09:40:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JwUhLz8l"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-41a5b68eceeso17865905e9.3
+        for <linux-tegra@vger.kernel.org>; Tue, 23 Apr 2024 09:42:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713890409; x=1714495209; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1713890575; x=1714495375; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=PnokyArXxcyIbQ437WBi+fXlNam0sB9x6yTE3BbNzdE=;
-        b=RNSD4r7VuLRyOqnAVo8FDasZJdi0r4QbZlOO9ic3gffI0SVua7s+uV6T51O8LLcmJb
-         v5HZU06DqVvaLv5/XWoDMXk+fpgljPkLNa1ugExgEGASSkv7ddvZZpyaMXvlnMGx2g/T
-         Hj3/yYPe4D5y00A9l6RdhAs3l4mipbBEljHEzJRTsGzIeE2tBQuzASV22mjSKvizyZWW
-         xKqiKJWzJkt/7LOIhK8vPpFwmM54yNbk5yIss1M32JS0XDeF3CLZmFoWaqOFD6jZwW/Y
-         y9eQSO9pD5CSlgqn2AhCMBNJqDJDUuV8FHZxw++oZrbEexUW3VUGoAoctZsXuD3dqaqF
-         mKpQ==
+        bh=AAjd9LkEDNuVK7j7GhyFYBnO65hiE7cXAXMhivu0jgk=;
+        b=JwUhLz8lVoFZQUFCRcq8K8NccepSm/rRQ8Sgt+/v9El0ePkAaju0n1zNRy0Xx0vgNd
+         xT3d58K1jS5TniX6TujKFu93xPGrVqjZmQsnmh6lgEZS1GhV1LYZQvVzCZIctfi8NrQr
+         qMVxzL6GHPpamW++IUFXWkH+NI954J4jcql8w+09KKlV4lAISbNDz24PrxFvdEHrMyF1
+         /Rb0AKUiYWJA4WyfYDGQ6SIOiTCclM0er3uJuQzkp8+Mile9ozYQ4iLGVCFwQBBu7Jwy
+         x6v50NysGyS0oiL7cI30FEaCDA3TDrraCuqbKAdgqPhYcYbbeYU3ZUO9cK5YPx1fIcNn
+         lnPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713890409; x=1714495209;
+        d=1e100.net; s=20230601; t=1713890575; x=1714495375;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PnokyArXxcyIbQ437WBi+fXlNam0sB9x6yTE3BbNzdE=;
-        b=p1RGTQ6PSxIgCNSq140jg1967IG56sD9V+nT1EgxnGMsI8rydSW372fjuO9w8V7ROE
-         KWXnbPQydESW7l6Xf7oqzaARBQlanZmMOxyv70u8U0BY4yEySvVjIHsowPoCH0Z9UUrX
-         AvcpFOGgoO0s5av9orONQ41PyUGQ5gs83GSsA2ewC4kYnOqNfLrGvdSdwPHGSFsSPf0r
-         s24y0NXW2CTlPq44S9RO9P/z0dHvEWyASOEtEQ9OXzcAgl5JGsVWpd8UbeBsHQF6ETPv
-         rNbHteU6YHtU9p66hzh8QpdYceWSWVG0L5q4irwtjbY3IisyZx2+s9SEOlzUN+wUMhF0
-         4jXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXMTkkMeSk1xUvm4dwCPOujxnj4gfpgvpRY5/WE3K7DHNN0CZ+ZHv7wK8QuvhfZjhxB4SuqzK9gKQPyvaB1hP3Ww74acpyfetL8r+Q=
-X-Gm-Message-State: AOJu0Yw7RBIAIYb+62iCdXQ6s4WKAtEtyFza6HbIzkZRSD5TYN8UqEDL
-	ipsQgdJ5rgJ0+7a6p35IkWRWNwotBjKehtaCDe6WqnXwOTyB1UIBqHjxNlu0bao=
-X-Google-Smtp-Source: AGHT+IEt0kyNa/ubkeo1mtCZlcqjs3AUlplSYGY2vYsnPCR+hlV65yLYcKKdjfNDUj8XC7Fvmk6LWw==
-X-Received: by 2002:adf:fa88:0:b0:34a:d130:611b with SMTP id h8-20020adffa88000000b0034ad130611bmr7073198wrr.17.1713890408973;
-        Tue, 23 Apr 2024 09:40:08 -0700 (PDT)
+        bh=AAjd9LkEDNuVK7j7GhyFYBnO65hiE7cXAXMhivu0jgk=;
+        b=VALd33HLC7fMQ4uHckKBH1I11KKrqivJfjrb0JTRtKceUHKYM/qRYKCuUGw8HTD81F
+         jcI/qaareeuvbDkIR07Y9NWowbjqZg9i7ROVEo0id/EJsvXoYZOVPWs+9Sht81FrCefU
+         n/ny6mexZsvrNgK3xa1Vu32YQb0sin9RMN8tdhu/8LXcxUsgAyQYutye44pfIf82fu0L
+         1bt7qjex1v8rFmkxlTevwhKXA+plqnv4ScuBzS4pZGphI5+zcTW1trzgv0AniA16AHxX
+         /1aUxSBxln3C9jWYosVdwxDGlxgqJJPwSVnVNqR3EUMj8I6WyRt0cejZ4Y5Nyzsd/8O+
+         NXdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGoM1tJCU8N3V9v0tDzyH1Xfypd8F1/rsUy8VJzfVZzD/gQ9ayD8L7DJtwiM/FKn2rhTK0THaRL+5dRzBvBkpQcaI5TndQUaJpRts=
+X-Gm-Message-State: AOJu0YyaCFMWhSc/nolhFPAf5dHaa5caPRPQ/c1j1NqGvxorIRps4XW0
+	Aw6H/3rywZeBW17ltbEtYjU+TWkhgKDtmjvpBXqhWIGoldguSZ58P/eeiXz4FoE=
+X-Google-Smtp-Source: AGHT+IFrxYPbNd0JIn8yeAWouLUX4KO2HR4fWg0b0VJjkA0zy4qA+fxtUoj+497CZ/NN5m4uB+meNA==
+X-Received: by 2002:a05:600c:1c9e:b0:418:a5fc:5a5b with SMTP id k30-20020a05600c1c9e00b00418a5fc5a5bmr10146720wms.36.1713890575406;
+        Tue, 23 Apr 2024 09:42:55 -0700 (PDT)
 Received: from [192.168.0.102] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id bb6-20020a1709070a0600b00a55b020a821sm3270479ejc.13.2024.04.23.09.40.05
+        by smtp.gmail.com with ESMTPSA id jg1-20020a05600ca00100b004183e983d97sm20619705wmb.39.2024.04.23.09.42.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Apr 2024 09:40:08 -0700 (PDT)
-Message-ID: <90569329-62e1-472d-88ab-c93b44abb60c@linaro.org>
-Date: Tue, 23 Apr 2024 17:40:04 +0100
+        Tue, 23 Apr 2024 09:42:54 -0700 (PDT)
+Message-ID: <3f5c46bc-6fe8-45a4-8929-7b93b276478f@linaro.org>
+Date: Tue, 23 Apr 2024 17:42:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -61,7 +61,7 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/35] media: dvb-frontends: drx39xyj: Use min macro
+Subject: Re: [PATCH 19/35] media: stk1160: Use min macro
 To: Ricardo Ribalda <ribalda@chromium.org>,
  Martin Tuma <martin.tuma@digiteqautomotive.com>,
  Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -103,10 +103,10 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
  linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
 References: <20240415-fix-cocci-v1-0-477afb23728b@chromium.org>
- <20240415-fix-cocci-v1-14-477afb23728b@chromium.org>
+ <20240415-fix-cocci-v1-19-477afb23728b@chromium.org>
 Content-Language: en-US
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20240415-fix-cocci-v1-14-477afb23728b@chromium.org>
+In-Reply-To: <20240415-fix-cocci-v1-19-477afb23728b@chromium.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -114,19 +114,17 @@ On 15/04/2024 20:34, Ricardo Ribalda wrote:
 > Simplifies the code.
 > 
 > Found by cocci:
-> 
-> drivers/media/dvb-frontends/drx39xyj/drxj.c:1447:23-24: WARNING opportunity for min()
-> drivers/media/dvb-frontends/drx39xyj/drxj.c:1662:21-22: WARNING opportunity for min()
-> drivers/media/dvb-frontends/drx39xyj/drxj.c:1685:24-25: WARNING opportunity for min()
+> drivers/media/usb/stk1160/stk1160-video.c:133:12-13: WARNING opportunity for min()
+> drivers/media/usb/stk1160/stk1160-video.c:176:13-14: WARNING opportunity for min()
 > 
 > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Code is fine but, I think your commit log could use some love.
-
-"Replace ternary assignments with min() to simplify and make the code 
-more readable."
-
-Not super-important.
+Show the commit log some love, then add
 
 Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+
+For patches 16 through 19.
+
+---
+bod
 
