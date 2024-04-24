@@ -1,62 +1,111 @@
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0159DBE4F
-	for <linux-tegra@vger.kernel.org>; Wed, 24 Apr 2024 00:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E824101F2;
+	Wed, 24 Apr 2024 01:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713917302; cv=none; b=Iud5gnFuD7PK8NkDPrgvN24/T1Taj2fgQpWUQWOUthuQXWjmtIIZkVkgpLkmrENWl9TBxT20VSr8frDzzLSm5LUtm9Xkbx2CBVLMTk3z5pUSDy6X+AC3dhgppY4+OY4D/l/fTBZbQ9SBhg6n3org77OoHVpfeLRR6Ouv6yTwoOo=
+	t=1713923589; cv=none; b=qjRSpMdaRiaRPv3xfsOg6MBJQiaOS9j1jwvztf0KcSba7SPVfERZEDoFLtshl/MgkYmOBGlUxPosN8/e/naCJ5OhkDP5s37acwNk9KAPsSN8y1CcHYOfQhtscxL0re0JsHCZr/gFH0+bx03Eneo01AI8Edp1Qa+B1uL+gLHDaAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713917302; c=relaxed/simple;
-	bh=2lT28vERDCRi5gr20Y4YZMGGpwzIyZ7BWvJ2WY+Nd7k=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cObpiuSb1qVxvLNbRSYvg9MIZBLIBpXaR2ekrs1kNd8UJyRNcxF/8kRycj+P/c10ehd0jO+H96svMY6IM6MWVIBRXo5esDtSnArzO4U+uYvhCSDHTzzShfr50qfEhLTtOm4WjpkIi5CBK9aqSNDGqasa26QJf2K4qfrt47Ea0mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id bedb557c-01ce-11ef-abf4-005056bdd08f;
-	Wed, 24 Apr 2024 03:08:15 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 24 Apr 2024 03:08:14 +0300
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 00/18] i2c: remove printout on handled timeouts
-Message-ID: <ZihNbtiVDkxgUDGk@surfacebook.localdomain>
-References: <20240410112418.6400-20-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1713923589; c=relaxed/simple;
+	bh=PThITv7YBA7tYPbMYW9Vhx8MShzInnPREyhu+swHDo0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G7fWWd+OwZzp7sC9xbc18a8CBy86SFUocYcM2v0uE2TwZQHclUKh82BEMbmn9VOZf8mcG6Tj3x17MrP7c885FhtTK3wOoDNbKZgzjt5HGjAj/ddUs4i7lgqmBHJ5pMGwN0aHzKu9vqSbGK1LZJTGUdZE2XcMLJ/N9zYoCAFZwNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aAU/aA/F; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aAU/aA/F"
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-22ed075a629so2542290fac.3;
+        Tue, 23 Apr 2024 18:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713923587; x=1714528387; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+boyDLjblvWwLLkrJLcGOfn00OcpsPMnSVwVZAPX45M=;
+        b=aAU/aA/FtBvxN0uzuNAsnvB6YKxqPX5fAegN/QOVsPR4QahTndQ0NK0YZVadDorV3C
+         bv2Gx2buUf9UYB7IwSfoh3HoI97EaQ0mM7SE4wdSCFL7Zp/jmW7XU92wxMQv6J/4Biiu
+         XYnF4eE0Exs3ikxfwTU8kaLTLIZ7IqyyMifbNvxbyYe5hp8bKxulsupPgSCHXwWBlrSO
+         3qcty1NpyoshGk/q7Xt3nUpOz2GJMCy0eBS2ndvIfP0PqqVFno7j1tXkOC8DSGA/Tu2B
+         KR9NZ565ePP8zgOAnDxFyMI6ahidILAyNqlQmHGYM+mOcQ7YPL9qbNmBkK+tgeUk4PH5
+         fQ7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713923587; x=1714528387;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+boyDLjblvWwLLkrJLcGOfn00OcpsPMnSVwVZAPX45M=;
+        b=hU9hO5synsMavBMa13HDo5kq4501TwthYwMZXrg8Oo4cGjSCBj4CgTnBASGgEJE1Jz
+         f+SAsY+VoVwRFghBIZFhI0neTvgj/zSeKMNPxPN/grM/3ikz48kHwU1hBT6FXS1hUeC3
+         ZKDQwjgV0FMS/JsdQi6jd5f2XQevzz3I/z0p/7slyAuFIgpLN9HEBCLmtmZv/J4Q3GCA
+         nFgePy0tZJHIrXXlXfr1xTC6MdPDLwqS0v6nachfrKgLn6Y+xJxFQzzO0FWBwQtboe7Q
+         Igg8UJcPaTg+onOzutmP47rEoMFEmqg5jvo9Zu2yxXG1oU6oHKDMjktQWutPPt34JL7n
+         b3ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEdW9MGYfpRcQElhYVmzXnKljfSWSip02ug0jkXVnqgRO6uzjR99YYfStyiRJ7wwG64FKBN0DPE8kXFtM47a92hZ6AD2A4TZrljTcHukXAwPIAiktr1FwkB0VY553wCnMZP61rWtyOzHM=
+X-Gm-Message-State: AOJu0YwvWMnyyT0WawmPFK8oy2nXB73457KeH0n+VFfngguxNxu/WlEC
+	4cA83wfLiODh8f8dEnquR4OJ1E1qgh+sFBZNf5RJ/h3K9DnUQcfp
+X-Google-Smtp-Source: AGHT+IFWYc9hWRZOugTElp/4rhqr5aMbNkJE8+hQKtCwCpTLGfdCSwOigY0tmnjVvWdPGFRZsVa2Gg==
+X-Received: by 2002:a05:6870:a345:b0:238:b140:1ab with SMTP id y5-20020a056870a34500b00238b14001abmr1132265oak.48.1713923586779;
+        Tue, 23 Apr 2024 18:53:06 -0700 (PDT)
+Received: from localhost ([2806:103e:22:49d9:6aef:e478:d2bd:bbe])
+        by smtp.gmail.com with ESMTPSA id bm43-20020a0568081aab00b003c4f39fb9e7sm1899925oib.36.2024.04.23.18.53.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Apr 2024 18:53:06 -0700 (PDT)
+From: Miguel Miranda <mmikernel@gmail.com>
+To: thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	julia.lawall@inria.fr
+Subject: [PATCH] drivers/soc/tegra: Replace dev_node refcount management
+Date: Tue, 23 Apr 2024 19:53:06 -0600
+Message-Id: <20240424015306.1796838-1-mmikernel@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240410112418.6400-20-wsa+renesas@sang-engineering.com>
 
-Wed, Apr 10, 2024 at 01:24:14PM +0200, Wolfram Sang kirjoitti:
-> While working on another cleanup series, I stumbled over the fact that
-> some drivers print an error on I2C or SMBus related timeouts. This is
-> wrong because it may be an expected state. The client driver on top
-> knows this, so let's keep error handling on this level and remove the
-> prinouts from controller drivers.
-> 
-> Looking forward to comments,
+Remove the manual refcount management of device_node
+and instead, use scope-based resource management.
 
-I do not see an equivalent change in I²C core.
+While the pointer never gets out of scope it reduces
+somehow the risk of missing the of_node_put() call.
 
-IIRC in our case (DW or i801 or iSMT) we often have this message as the only
-one that points to the issues (on non-debug level), it will be much harder to
-debug for our customers with this going away.
+Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+Signed-off-by: Miguel Miranda <mmikernel@gmail.com>
+---
+I only have a deprecated jetson nano dev-kit, but need
+to test this on hardware. I am exploring options to
+build a rootfs to test this using qemu-system-aarch64.
+---
+ drivers/soc/tegra/common.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+index dff6d5ef4e46..94d11102d90f 100644
+--- a/drivers/soc/tegra/common.c
++++ b/drivers/soc/tegra/common.c
+@@ -28,14 +28,12 @@ static const struct of_device_id tegra_machine_match[] = {
+ bool soc_is_tegra(void)
+ {
+ 	const struct of_device_id *match;
+-	struct device_node *root;
++	struct device_node *root __free(device_node) = of_find_node_by_path("/");
+ 
+-	root = of_find_node_by_path("/");
+ 	if (!root)
+ 		return false;
+ 
+ 	match = of_match_node(tegra_machine_match, root);
+-	of_node_put(root);
+ 
+ 	return match != NULL;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
