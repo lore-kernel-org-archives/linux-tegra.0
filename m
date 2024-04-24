@@ -1,346 +1,106 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AB413C672;
-	Wed, 24 Apr 2024 17:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C21616D9CD
+	for <linux-tegra@vger.kernel.org>; Wed, 24 Apr 2024 18:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713978287; cv=none; b=NBF3zqG0gAKhM443YM70evpRC1+IDj71ifr8wbUWYQu304bAJQMBZPZjY7IRo8+mTkV5bF09lhsEX8MkL4qDZbKmTa50VZdVU1Vb/MkZgIPGiDiw6k+jrUKwSFbMjJwJqATgxyUGCKQlkKsVxOuuipS0wF+oO+daAgwoHv7LDX8=
+	t=1713982587; cv=none; b=WcI9Uf96vmdX6w7kXCI+iSSJRyTW+obqm5WLROwXdvXlb3g8dkY10jNzkRJ6ixkC8KNiijeDHz8kASOywTK1ot5r5kLSuv710Td1R/pgly/K1MmmtkOwZ8Xu4urDFwceiEaIZIvmpWdJMCxcqqLcj2ZbjtoIaI1mt7fcUOTBsqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713978287; c=relaxed/simple;
-	bh=Id8sT4db2LqP80zZLECjY6g1FF24I7tMOws9iH4AJmI=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=lJTyj+Gc1rKKsBuML19KWTGIEYxx0F2DbxYG/W0c9lF+xW0X8w5nPNpNCQ2RaaPFh3H/tVEqXxBpk7m8xgilZbgHXArDP5icGZjI/cRrm4gcAEdV2OfR5Neh9Bs1vQJ40jUBHZ306gZkdjyj2L+HnWXMmqWWOx3ExTU4isjbBxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MuNHbrpv; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1713982587; c=relaxed/simple;
+	bh=y7jejx2vfONKyEiaLswEcfOcgjCAOmhrmGJDNF6DVVw=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=p/S9LxPbTAVXa/X5JNkdBq/Q4lzi6urTQg29aQQI1sRaEAkC1rmUPNL4za9PMKEEK95yphhGDgH4aKu9susiZVpDPc0ZgGhlXRmnGolOKBaqGIwKBV6rBvpa+xt1ItP5TJt6e5ymDmR0X7/xrZYFr6rGMf5k/dR053lXZ6UVGQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uZdCV4+g; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MuNHbrpv"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-516ef30b16eso11443e87.3;
-        Wed, 24 Apr 2024 10:04:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uZdCV4+g"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4155819f710so1040045e9.2
+        for <linux-tegra@vger.kernel.org>; Wed, 24 Apr 2024 11:16:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713978284; x=1714583084; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VF41tUPHy2HmLxlT+/t3X6Tlvi3X0iCS/E9nneLNb3w=;
-        b=MuNHbrpvlAKfUTas4odfIoiAaImfvK3K8lvxVf4jgrcsPBlwjgendaZuEVcTH/YXTn
-         Fkc0CwxgmS1z8gNwKmtLd7wDXyWb+kBADboilslCUwpAPJRSSLUzJ/qkVQkk8K3Zy4Pc
-         MWNypB9jcAgBa3eyN+0UODUqD27olkEr+a7rRw3y/r33ARTvGZD0JtoGjSlpjNSxEdlf
-         WUXDlkY396qqFEGMAsBtpkKK3nMpbvJvNnaBajUDsEi+sI/aExPm1hpw6PruBPGXqTwH
-         sjkMvMFFIeg3FBMDwd4zyOpjCMDfTS/MMjb9POoX8xkAHmkGWnua5oyv48e4sRlagO5L
-         5LKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713978284; x=1714583084;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1713982583; x=1714587383; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VF41tUPHy2HmLxlT+/t3X6Tlvi3X0iCS/E9nneLNb3w=;
-        b=LWrtXeOpghXsC5X7LE3xphewyzM6Cz0Ka7KDU6AbnUYet1E9VosRWzJlho7o12pgmQ
-         rcSMqY6Fsu5mXglzIro3AjZuHzCckqKwvwkaW9HSfjr/ITP9/ELG3PA6Vd/eyUvg72J8
-         DCPrijcCiKf3Lbg4c0PhjaAXU2JesWW/y+y4CVF3eN7l/qP7WJ7IUTxo5ApaXfiUzx7a
-         uhv0PlkMMfVl99mRxYoGvMwiia8HxHo87fsXKbrfuICzjIKRgy7cgMJsXjLTdOZsykB2
-         r6FLq2b8kYXllWc7dlncAfJix0bm88PIxryrqSkS/uXlpAm6ib8zJp0c8RLEqEHNhGAN
-         L9+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUfcjl7F9bXgZS50ymvudYxcKRqnk0WmHezdKfj8fEeVgfY4HDRWWQYq/oML+JWcL+X/1JsKg1enlDIfKLirGY0BnNcpUWPPhwrNK7fD0DHGowJBwnnc+6LNRdY9nhNU2FgtikeQ7RiW/0=
-X-Gm-Message-State: AOJu0Yxh3e3SjzdZQ5WJNeJ8KgD6ngdi7M+wCQG640bfFMsbbLh0zkW7
-	hpmZZOEP9ezKNxr5W3uygrOzxAxtJPxlTHqqHHwDhOLH4z9nYisi8PhWwg==
-X-Google-Smtp-Source: AGHT+IEGFIQrJ0m7gp08VPzJVQ5ztjQE07sLPmXRGlTwAupJUsL6jTbDawnXZ4bWJnbrnXUpLvK+0w==
-X-Received: by 2002:a19:f614:0:b0:51b:812:3c87 with SMTP id x20-20020a19f614000000b0051b08123c87mr2042515lfe.39.1713978283800;
-        Wed, 24 Apr 2024 10:04:43 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id bl20-20020a170906c25400b00a55358244ffsm8560064ejb.204.2024.04.24.10.04.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Apr 2024 10:04:43 -0700 (PDT)
-Content-Type: multipart/signed;
- boundary=27a536f2ded1841e1102a6eb72a0909ec5f63895e697412a751d7f830ae9;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+        bh=e8OZkXZf11b2lPI1V6Z/6sbpWahJnB31qscNrW/lvNY=;
+        b=uZdCV4+ghAgxkIXfWCIuN5SDf6Ch/NIM9IsEDm3W/jBi453g86Kl1XY7sxxYon2vot
+         CR0XJce5PL+kewmj43aRciw14VjofZx+UpLptD9zqULn8YCQdTzie2hYmxxB+TNmyKAZ
+         ulNN6dU2TiHzT/LaGRijXstqRAiq/vpIGjpc71ayfqKjrGOLiUs3RjPssVR4XIKA831Y
+         stIGYdNMg0qBRzWaB7kOnOGE53UUf3Qg5tYqqpaMJy8aE1/zt0nvzbmPNE/lMWYISPts
+         ezfqclsrWPepkHrkGkXCa0Qw1dsviOXpZFkGGHe6GPtNmFZd0QAqruOcLMPj7neNpSmO
+         G/fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713982583; x=1714587383;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e8OZkXZf11b2lPI1V6Z/6sbpWahJnB31qscNrW/lvNY=;
+        b=TGWt1kFxxGmSZJj367FaVlSEOiZpnGnmNxtEV3Ub1qmxVImOlPUgYILAYY4vNXp6fh
+         NAPdtUvctQO+XT99dJFEXQ7baBxNtLOPlBkZscI05AsUJNrDC7I7xZMVT2FaTNRKt56k
+         mwJjtaPCXNgnLK1h7/UH77oS32bMyJOde4WimSVvtiu5/W8L7pbK2ii8S2eGMH8+hhEt
+         /k95jmz6NrP6g3GnIYgvCKFhJZ9v3AQbwDMMc2s6+qxOTQZSYkP3/+0Es/ACK7u6GUQ2
+         LAdycNh/Hb+6ogaiYQy0xFc7Z1tykwl4ekifP2NlcJAjkF+ENCvZHoMG930jahzifKEG
+         gWVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAxPN6WVMsDBzL33sqabQlYTPGrXF7IvtEI2PC4GY8N1ObMKZP16hMmboXWZLD8R1oA0bLN7UtDcI+z6sQ4QT5ShMzN9jXdZIRqs8=
+X-Gm-Message-State: AOJu0Yz7l5RDa0c5PhL2RAJ5CD/owzQ9WLxonwhdvY28OIofR0MGjmuA
+	G3NuChMNudiBXl7DrODMPKiFZFaonOGaEVJK75HYD4gZYy0/XqRThe4dc8rCRJo+gYzR6VnHppW
+	Y+dA=
+X-Google-Smtp-Source: AGHT+IGBGjujdojebpWqm+ec+7xBLpVVvqQk99UBZyDZJI5qXttdUk66c5bDURxCLoaUDChENYTTgA==
+X-Received: by 2002:a05:600c:154a:b0:41a:9fc2:a6b1 with SMTP id f10-20020a05600c154a00b0041a9fc2a6b1mr2350501wmg.22.1713982583236;
+        Wed, 24 Apr 2024 11:16:23 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id k29-20020a05600c1c9d00b00418948a5eb0sm28590899wms.32.2024.04.24.11.16.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Apr 2024 11:16:22 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: thierry.reding@gmail.com, jonathanh@nvidia.com, 
+ linux-tegra@vger.kernel.org, Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+In-Reply-To: <20240419104516.308975-1-diogo.ivo@tecnico.ulisboa.pt>
+References: <20240419104516.308975-1-diogo.ivo@tecnico.ulisboa.pt>
+Subject: Re: [PATCH v2 0/7] Cleanup Tegra210 EMC frequency scaling
+Message-Id: <171398258237.275534.7331223388966262711.b4-ty@linaro.org>
+Date: Wed, 24 Apr 2024 20:16:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Wed, 24 Apr 2024 19:04:42 +0200
-Message-Id: <D0SILCYU98EV.1XW7NZFC9013K@gmail.com>
-Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-tegra@vger.kernel.org>, <amhetre@nvidia.com>, <bbasu@nvidia.com>
-Subject: Re: [Patch v3 1/2] dt-bindings: make sid and broadcast reg optional
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Thierry Reding" <thierry.reding@gmail.com>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski@linaro.org>, "Sumit Gupta" <sumitg@nvidia.com>,
- <robh@kernel.org>, <conor+dt@kernel.org>, <maz@kernel.org>,
- <mark.rutland@arm.com>, <treding@nvidia.com>, <jonathanh@nvidia.com>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240412130540.28447-1-sumitg@nvidia.com>
- <20240412130540.28447-2-sumitg@nvidia.com>
- <d26f9661-3e50-4a72-9097-fe63a27503f1@linaro.org>
- <D0SHRQVCGJBY.2DPLX9K6VXEYM@gmail.com>
-In-Reply-To: <D0SHRQVCGJBY.2DPLX9K6VXEYM@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
---27a536f2ded1841e1102a6eb72a0909ec5f63895e697412a751d7f830ae9
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Wed Apr 24, 2024 at 6:26 PM CEST, Thierry Reding wrote:
-> On Mon Apr 22, 2024 at 9:02 AM CEST, Krzysztof Kozlowski wrote:
-> > On 12/04/2024 15:05, Sumit Gupta wrote:
-> > > MC SID and Broadbast channel register access is restricted for Guest =
-VM.
-> >
-> > Broadcast
-> >
-> > > Make both the regions as optional for SoC's from Tegra186 onwards.
-> >
-> > onward?
-> >
-> > > Tegra MC driver will skip access to the restricted registers from Gue=
-st
-> > > if the respective regions are not present in the memory-controller no=
-de
-> > > of Guest DT.
-> > >=20
-> > > Suggested-by: Thierry Reding <treding@nvidia.com>
-> > > Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> > > ---
-> > >  .../nvidia,tegra186-mc.yaml                   | 95 ++++++++++-------=
---
-> > >  1 file changed, 49 insertions(+), 46 deletions(-)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/memory-controllers/nvi=
-dia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers=
-/nvidia,tegra186-mc.yaml
-> > > index 935d63d181d9..e0bd013ecca3 100644
-> > > --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,teg=
-ra186-mc.yaml
-> > > +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,teg=
-ra186-mc.yaml
-> > > @@ -34,11 +34,11 @@ properties:
-> > >            - nvidia,tegra234-mc
-> > > =20
-> > >    reg:
-> > > -    minItems: 6
-> > > +    minItems: 4
-> > >      maxItems: 18
-> > > =20
-> > >    reg-names:
-> > > -    minItems: 6
-> > > +    minItems: 4
-> > >      maxItems: 18
-> > > =20
-> > >    interrupts:
-> > > @@ -151,12 +151,13 @@ allOf:
-> > > =20
-> > >          reg-names:
-> > >            items:
-> > > -            - const: sid
-> > > -            - const: broadcast
-> > > -            - const: ch0
-> > > -            - const: ch1
-> > > -            - const: ch2
-> > > -            - const: ch3
-> > > +            enum:
-> > > +              - sid
-> > > +              - broadcast
-> > > +              - ch0
-> > > +              - ch1
-> > > +              - ch2
-> > > +              - ch3
-> >
-> > I understand why sid and broadcast are becoming optional, but why order
-> > of the rest is now fully flexible?
->
-> The reason why the order of the rest doesn't matter is because we have
-> both reg and reg-names properties and so the order in which they appear
-> in the list doesn't matter. The only thing that matters is that the
-> entries of the reg and reg-names properties match.
->
-> > This does not even make sid/broadcast optional, but ch0!
->
-> Yeah, this ends up making all entries optional, which isn't what we
-> want. I don't know of a way to accurately express this in json-schema,
-> though. Do you?
->
-> If not, then maybe we need to resort to something like this and also
-> mention explicitly in some comment that it is sid and broadcast that are
-> optional.
+On Fri, 19 Apr 2024 11:45:08 +0100, Diogo Ivo wrote:
+> This patch series consists of a general cleanup of the Tegra210 EMC
+> frequency scaling code for revision 7.
+> 
+> Currently the code is relying heavily on a function, update_clock_tree_delay(),
+> that is responsible for too many things, making it long and confusing.
+> The general idea with these patches is to simplify this function and its
+> surrounding code, making it more modular.
+> 
+> [...]
 
-Actually, here's another variant that is a bit closer to what we want:
+Applied, thanks!
 
---- >8 ---
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,te=
-gra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidi=
-a,tegra186-mc.yaml
-index 935d63d181d9..86f1475926e4 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-=
-mc.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-=
-mc.yaml
-@@ -34,11 +34,11 @@ properties:
-           - nvidia,tegra234-mc
-=20
-   reg:
--    minItems: 6
-+    minItems: 4
-     maxItems: 18
-=20
-   reg-names:
--    minItems: 6
-+    minItems: 4
-     maxItems: 18
-=20
-   interrupts:
-@@ -146,17 +146,21 @@ allOf:
-     then:
-       properties:
-         reg:
-+          minItems: 4
-           maxItems: 6
-           description: 5 memory controller channels and 1 for stream-id re=
-gisters
-=20
-         reg-names:
--          items:
--            - const: sid
--            - const: broadcast
--            - const: ch0
--            - const: ch1
--            - const: ch2
--            - const: ch3
-+          anyOf:
-+            - items:
-+                enum: [ sid, broadcast, ch0, ch1, ch2, ch3 ]
-+              uniqueItems: true
-+              minItems: 6
-+
-+            - items:
-+                enum: [ ch0, ch1, ch2, ch3 ]
-+              uniqueItems: true
-+              minItems: 4
-=20
-   - if:
-       properties:
-@@ -165,29 +169,22 @@ allOf:
-     then:
-       properties:
-         reg:
--          minItems: 18
-+          minItems: 16
-           description: 17 memory controller channels and 1 for stream-id r=
-egisters
-=20
-         reg-names:
--          items:
--            - const: sid
--            - const: broadcast
--            - const: ch0
--            - const: ch1
--            - const: ch2
--            - const: ch3
--            - const: ch4
--            - const: ch5
--            - const: ch6
--            - const: ch7
--            - const: ch8
--            - const: ch9
--            - const: ch10
--            - const: ch11
--            - const: ch12
--            - const: ch13
--            - const: ch14
--            - const: ch15
-+          anyOf:
-+            - items:
-+                enum: [ sid, broadcast, ch0, ch1, ch2, ch3, ch4, ch5, ch6,=
- ch7,
-+                        ch8, ch9, ch10, ch11, ch12, ch13, ch14, ch15 ]
-+              minItems: 18
-+              uniqueItems: true
-+
-+            - items:
-+                enum: [ ch0, ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, =
-ch10,
-+                        ch11, ch12, ch13, ch14, ch15 ]
-+              minItems: 16
-+              uniqueItems: true
-=20
-   - if:
-       properties:
-@@ -196,29 +193,22 @@ allOf:
-     then:
-       properties:
-         reg:
--          minItems: 18
-+          minItems: 16
-           description: 17 memory controller channels and 1 for stream-id r=
-egisters
-=20
-         reg-names:
--          items:
--            - const: sid
--            - const: broadcast
--            - const: ch0
--            - const: ch1
--            - const: ch2
--            - const: ch3
--            - const: ch4
--            - const: ch5
--            - const: ch6
--            - const: ch7
--            - const: ch8
--            - const: ch9
--            - const: ch10
--            - const: ch11
--            - const: ch12
--            - const: ch13
--            - const: ch14
--            - const: ch15
-+          anyOf:
-+            - items:
-+                enum: [ sid, broadcast, ch0, ch1, ch2, ch3, ch4, ch5, ch6,=
- ch7,
-+                        ch8, ch9, ch10, ch11, ch12, ch13, ch14, ch15 ]
-+              minItems: 18
-+              uniqueItems: true
-+
-+            - items:
-+                enum: [ ch0, ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, =
-ch10,
-+                        ch11, ch12, ch13, ch14, ch15 ]
-+              minItems: 16
-+              uniqueItems: true
-=20
- additionalProperties: false
-=20
---- >8 ---
+[1/7] memory: tegra: Remove periodic compensation duplicate calls
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/f8037b3d9a75f4963c1fd3eaf39b968f206d37df
+[2/7] memory: tegra: Move DQSOSC measurement to common place
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/09dd3744d7c02a3844e8a6c96ab2fb3c1e94de52
+[3/7] memory: tegra: Reword and correct comments
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/d48076e5bb9be787b769efb3e6439902dc8e99f7
+[4/7] memory: tegra: Change macros to interpret parameter as integer
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/56c95667042ba12a66157477282ca73605a25481
+[5/7] memory: tegra: Loop update_clock_tree_delay()
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/0d647b9031fe4f6b20d2f18b3d087dea740eecf1
+[6/7] memory: tegra: Move compare/update current delay values to a function
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/c1a70060c654327be4aed6e617f53bae5af8625f
+[7/7] memory: tegra: Rework update_clock_tree_delay()
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/edbf2db5ae95c4d8f189d05e827d9dd3ea75cfbc
 
-The one restriction that it has is that "sid" and "broadcast" must be
-optional together. So you can't have just "sid" or "broadcast", but they
-either must both be there, or they must both not be there.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-I suppose we could technically make that work by adding more
-alternatives, but perhaps it can be avoided for sanity?
-
-Thierry
-
---27a536f2ded1841e1102a6eb72a0909ec5f63895e697412a751d7f830ae9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmYpO6sACgkQ3SOs138+
-s6E9cRAAjCRwwdVpQJHJctBbfyUouIMgwaXBsvwGWIRhimQ/Fv2+aXm/Q7ZLTVB3
-iomc+xyJtSaeb/NlUEkdnBqZh7VKbVTvyz96p1qRdBTg/JjsugulaLu/XK3tmkZ9
-F30XWq2pgeDle33fH5SmE835RR4rQHT+C3+yrIUlk+psq8haNv7b7FT+eOI+O33z
-p3Fmb2BluyHBW6I4AiuD06CbWjyX26X2N/OLKDNRJvpJQo0yt3Io9S5E6c+/kfcN
-xyhsMma4s3f4VzRG3kLAWrm4keOitLRllN6IlILfWYI49fIusPYlIRR4O9OwUGxF
-aGn+w2Nr7e795wCYPZkDI02brGoTS8kRaDw+x/bGRuWMAzglERF6yfuHsbvnveR6
-mi8LNAWBzldS4//SetaICYbdvkVMCoqi86a1Zm2dKIQa5+tmDfvxzj6Ca9LFuiCm
-Ehz3RmplCaMXp2Du77Plrhs2/GALnAUshXJFa6H/e5CpgASjC9eI6ca5iVlVkY0+
-V3zCO/bVlFP1ulBEUpFz07ZtCbni6RPQLzMisCIYiNjD8lGv8iq8pWYY2gNzmSfJ
-8MPqJ2EN9Kf1LKWqe5YGEG1jFOtjZ1GfsLfxyAlNe3SJN7FVIbJs73EpkdVBYJ21
-TBcTyrjPsuQBi/wje26yYa7p9+uXDKtWO/571hRTCtmq4bRETD0=
-=FoYA
------END PGP SIGNATURE-----
-
---27a536f2ded1841e1102a6eb72a0909ec5f63895e697412a751d7f830ae9--
