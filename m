@@ -1,78 +1,47 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917FC15D5BB
-	for <linux-tegra@vger.kernel.org>; Wed, 24 Apr 2024 13:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3601315D5D8;
+	Wed, 24 Apr 2024 14:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713965557; cv=none; b=usTKoz/i9kiHwmubncHjsKjfCNiNXg7kyswdd1gGwytdc65krssby05RjhzOM6JGtUEOIFKXLtgPjyNfWW+gE5i6/kKPq/C/rW4qO53K5kcu1Le7+JDGv7GZeM2xsUCQPiMc0waUyrpBNBU+nsZ1phJrcXJeqxu8oyLjYqOyaFc=
+	t=1713967343; cv=none; b=m1sMDPxN9qYqy4cyhj/rx5qxTzjtm2TiEdu6b/9IpFsld5Wou4iNU+0oWxQtm4St6WJXrsLOd82BSdPd4EZI9uwfy9DJlHLr2wavIhlHZpBvJZdy9CCd4j1W5+bfOc7nOBn2uvxyEv6DdrBN/V5Wm8tUsGNbiZEVOIO6DskT5L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713965557; c=relaxed/simple;
-	bh=sqIFK4Ke/iibSqSzQ2BwQLyPnh2uu6n9SbHcTFTF+/I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YphXOo4mMrVoJnofSmVrC4L10GgtEo/zWMqG6/dUy4fVb4KJlblOF4O131EUmz9qCgQGHfA2mb8ttkb/dEt/NttAwKX4TIqW9Y/whpsxEyCzO5Hbn4AeXCl+Txm6NxKpZpXWqT2oOS7Y7L5XmKISxYVOqOTvj4YNKdHDKLmwbQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=crWrIenO; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1713967343; c=relaxed/simple;
+	bh=Fh5MCAn/CD6jBI814D1jnEu75NoL8cNXPO4vwBfUu/A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZLuYbiBFEV7TBRCG9af+ZSANDdZuVvA9mZsKK+XJiPJya6ymYufQx1Lw2wVr/74HPzCYC4+00gRDwQiI1kWQJCzhZBJz/P6CmI1Oon/puW3X+qx/hx3s8U/6WDNn1ednxq32JMtxExZ9tJpzXKAw6yQbf0+f66Zvv3+1GYrhZkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ix6QGTVr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="crWrIenO"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-41b21ed1985so1787385e9.3
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Apr 2024 06:32:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1713965554; x=1714570354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ON7DRK4o1QQEG6zMRrSA5yFg2l3FUOQ+KbU0jTc3aC0=;
-        b=crWrIenOl8wTB724qL6vZoQtJs2o57vqHDpgA8aQeWzcftmmw9mEh/jXiT6RtyMYzD
-         I1lFgBAchRxDl4+a1PLWGotEisXG/Oc4CDVXlkWiEbpIK9AB1lCT/LG+at2OiQZZFDTO
-         9ysiYW5gthum06Cjs1Ov43iF6lLyWo3Nb/rSTlrnln8UcSMMZjpl8ODyuMXld8kwS1mK
-         2chWUnUAIeSaXp94jRzZDMn6Vht3bO5l3IY/65dH664NJLWMbwHkbx0zDBCDbu47mtwp
-         zm9+VgcOvqxAnpSLoqNIHNpRcfH8zF+7u79D+JnWv8b/s48xCBb1BRwvCJ55x+i76Bxl
-         32/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713965554; x=1714570354;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ON7DRK4o1QQEG6zMRrSA5yFg2l3FUOQ+KbU0jTc3aC0=;
-        b=oF9uT8gReeDc89tu9iqC7rOYhaGm/kARLPvyVk/KQrKCezl/Lql7qbB94SZbo8D9Bg
-         Ox4FUJsltNzjqfsvQiC/SA7rp3FFHmflBGeJz6iriJ831+FhRbqIhdiR3ruduMC5UPVK
-         wbymunWjWlQb72E68JmdVDINFfB3e0vNtEMLcuAytU7pVspXz6TKdqYRT+5r2RKlvjxS
-         B9h8MLcI78JZ37Dm0tL7SQDFk6Pqn6kemtcCMnShNb3TLr4IoinvNBTvQztIgwtbKLkB
-         f/9DGC3nXfD8oHdl96rCONu4jyeXvlqAK2Kz8dcyIHRKH/nxWSuuEjshSBxnD83+uoRC
-         DEgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoufT3a+y0l4L+9wCQToVdOFu8QSIS2H7PeZ0X4HXnw8rMKcHRC2BGlLLJWzJGH5wsotzMcueeHnDu9KkvOvgIdV/7Ny155Q3OC1Y=
-X-Gm-Message-State: AOJu0Yx4/r7A5emmqrPzqKaUT2kfhc6KEqSkxFF3EoaN6Ra8I8Zusy8e
-	Y61y0569FC3wl9nLWvaVWEAFZugdVBNA2OwZu8dQvmLraSNzKyuphbwYBunvUNI=
-X-Google-Smtp-Source: AGHT+IFt5k+u0qlhoBUYdAEe0Bqa4xVeIXq/GvItIj5LfRSsXjv3ukTNbIY3sE/Ec8osEpb2ZDqjGw==
-X-Received: by 2002:a05:600c:1da7:b0:41b:24c0:aec5 with SMTP id p39-20020a05600c1da700b0041b24c0aec5mr297122wms.13.1713965553846;
-        Wed, 24 Apr 2024 06:32:33 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:da66:dc78:acc5:bb9c])
-        by smtp.gmail.com with ESMTPSA id d11-20020a05600c3acb00b0041aea85be32sm3343941wms.22.2024.04.24.06.32.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Apr 2024 06:32:33 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	jonathanh@nvidia.com,
-	treding@nvidia.com,
-	sfr@canb.auug.org.au,
-	linux-gpio@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prathamesh Shete <pshete@nvidia.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	mochs@nvidia.com,
-	csoto@nvidia.com,
-	jamien@nvidia.com,
-	smangipudi@nvidia.com
-Subject: Re: [PATCH v3] gpio: tegra186: Fix tegra186_gpio_is_accessible() check
-Date: Wed, 24 Apr 2024 15:32:32 +0200
-Message-Id: <171396554137.82284.11131075774933207943.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240424095514.24397-1-pshete@nvidia.com>
-References: <CAMRc=MfJokORpEOMkOmQdzTuZxcUAcnmpdEyJWKqvT0gCpuzbg@mail.gmail.com> <20240424095514.24397-1-pshete@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ix6QGTVr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D00FC2BBFC;
+	Wed, 24 Apr 2024 14:02:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1713967342;
+	bh=Fh5MCAn/CD6jBI814D1jnEu75NoL8cNXPO4vwBfUu/A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ix6QGTVrgjY824PwxrRwDye4DpweBSEsMd+APji9fFffzBQ6SvWkbub4lb4tHZvow
+	 aaq+F2YkHFz8roTKYMwo74WP/8DLWLDN7NCXVIcfg8l7BlB3iNSLNeFxwrUj7HtdUW
+	 kzS61XMTnckY8oorjbMd/GrgvRYDASjpA8F433a+iSyDSAQirsRjF2t0XmlrfoKLa1
+	 O7igBzDcbljb6yfFkzB3tu9Ig99ZRbelYFFaHnm0qgdjsj3bro4rPhDoizPfYDkgV0
+	 fo6/TiMUSc5AYJ9Gq0lzx2a3dmuJ2IunCVFSRRuRlTh3goYAkwaNqphMDSxDahDMGs
+	 6D2C+hpyuYwkw==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+Cc: Thierry Reding <treding@nvidia.com>, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240423115749.15786-1-sheharyaar48@gmail.com>
+References: <20240423115749.15786-1-sheharyaar48@gmail.com>
+Subject: Re: [PATCH v3] ASoC: dt-bindings: tegra20-ac97: convert to dt
+ schema
+Message-Id: <171396733863.1799261.10850188731294136998.b4-ty@kernel.org>
+Date: Wed, 24 Apr 2024 23:02:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -80,26 +49,40 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14-dev
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Wed, 24 Apr 2024 15:25:14 +0530, Prathamesh Shete wrote:
-> The controller has several register bits describing access control
-> information for a given GPIO pin. When SCR_SEC_[R|W]EN is unset, it
-> means we have full read/write access to all the registers for given GPIO
-> pin. When SCR_SEC[R|W]EN is set, it means we need to further check the
-> accompanying SCR_SEC_G1[R|W] bit to determine read/write access to all
-> the registers for given GPIO pin.
+On Tue, 23 Apr 2024 17:27:47 +0530, Mohammad Shehar Yaar Tausif wrote:
+> Convert NVIDIA Tegra20 AC97 binding to DT schema.
+> Change -gpio to -gpios in schema as "gpio" suffix is deprecated.
 > 
-> [...]
+> 
 
-Applied, thanks!
+Applied to
 
-[1/1] gpio: tegra186: Fix tegra186_gpio_is_accessible() check
-      commit: d806f474a9a7993648a2c70642ee129316d8deff
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Thanks!
+
+[1/1] ASoC: dt-bindings: tegra20-ac97: convert to dt schema
+      commit: 701a22fd9ffaa409bbd45c2936870341b3ad9fdb
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
