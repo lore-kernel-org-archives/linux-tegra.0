@@ -1,199 +1,230 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A311E898
-	for <linux-tegra@vger.kernel.org>; Wed, 24 Apr 2024 04:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713931761; cv=none; b=alajJaznPNoiRkr43PS0ODuzpkO+m3eogjblIixE7ZUcL6IozS/pCSc/ldA+VlfGjKqvwBTCHjkhW0UjNoHKpxuL4fpah0wDX8Zr6tJxCf8xWPod4c9MxGxlsOWC8qC0u+1zUj1//5CT9nuAAC6+kc4wOtQpbzgyZFWUrqZvD50=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713931761; c=relaxed/simple;
-	bh=B0+9n9kfklJUp+Bq+2QRcRU36hSKiR+7AwwJ7Ov4Pq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p0MZmznr8QgCSaDZL5uH1zU1JShUIAUYYhmAj4o2bC5BjZwht0PIZKhf3sAR2/svZ/4yuz/SKphzvzWQhCADV08JhlwL7ZiGUbK2KIYeTSN03xaHK8EZUBwyzVb5YqHlve1wTMWLNj4m8cwuE00SBO0C5b4apyJEhNeic9fyRSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qtn1KNlS; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C4943AB4;
+	Wed, 24 Apr 2024 05:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1713936478; cv=fail; b=VZW53gB/gUrh/XM80PaBU8e008cUrSt3vJ1L20tKZYvg4YzI3q0YIVcnHEkRFr2MejW07rfp1HatXv4/I26tmGBk6wk2ce5eI1xatNr0w9LyQqusyNTkkeEXPzWYEUKPb9G2b5PvwQmg+T+SlvhAKck1lovb+nIbVBLVbp2lnns=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1713936478; c=relaxed/simple;
+	bh=QChjuquDjGxkwS0HdmyHm6YyDPRlKq+LgaPKD/tVMng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=B8GQXT/dbAwxa16X29aACDPb2PPxI3U2GiXvT59K+oPINe/jJHyVZvTLzOM7ZhWrtFDmLRUrZqG7zEVFPi6OBpGdM6pzBrHQiG8+4ByOcxNd+mjsZBKI5FVBTNWywRBoONPw8ognQdcspWHJ5MrdOyVV3LkcskXwt0CKV4w41PA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Z0SDcJJq; arc=fail smtp.client-ip=40.107.244.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qtn1KNlS"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a587831809eso182582966b.1
-        for <linux-tegra@vger.kernel.org>; Tue, 23 Apr 2024 21:09:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1713931758; x=1714536558; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VAq7kfJ8ARrYaoLEN91dMsAK0rawJWTCpFCeBUWPSWE=;
-        b=Qtn1KNlSM74SJAMf5kVmJj58vNWaPgP02+iRLaIuBsr9J9bMZVzxI9T8RZI3SVt4+O
-         6ChIWxjRBqO0xUDle1saws7S5sqjG7HGX6MnO8Co+DKeL4/hxvW/jELovMrlwGPkqJVQ
-         VC7+6IqvkQrrVZu0+I9cFV11KbX33+lP26zppeYNPXuLnTCjn7C2OaueDNwghf7eibmG
-         F/4XzdF0ht7hUQEn6olAS/uKHFYz2C15mU74AqPQJWPkzF0lA45GRM8I5UVJl2GNKzZJ
-         2P1lHTPslU9sinA8bs7uOUZVVZ/Giz2D+kalE2qQpABGzonDd9+XZXXgww7XwDcamE83
-         YuKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713931758; x=1714536558;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VAq7kfJ8ARrYaoLEN91dMsAK0rawJWTCpFCeBUWPSWE=;
-        b=CA3Uf8rFSYU/prURvaviaClohwUbBfwoNArqqgOITclMoEnfABr4T+QPsa+5EgyA1Q
-         tdhN/b+0rZEOvwUXn4IE40kEERB9ZXL9joww3vUL5AreoAUWPk8aH2z6JE3KQePMgjrq
-         i7NNcElO7c496R3oMMOdM6JWQ/kiCL7wlbA6Lnb7NpZgL9ZuHzz3Fn3h2G0BYFOFM1OX
-         KXldF2FPpCERiglyAZ1olccHqP0i4oy6ZP0dGMaX+ej0M0g0o1oP3egx5fqPXtfjBtuE
-         Ncalhgs/HKAVmS5S7LdDLJPINItygE8JFyZtNwvP2ctyakYMso5laVFIinABp/8eL6CI
-         2WUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4ezEME6WElNGZKI1TRZOdGC0H62asSalqi7M4+sTDgcMnG5erWf3s7ZvYggclXRxGhbFezMXhsoZJ1ihqLeDPX/7NCaTPMC7l0N4=
-X-Gm-Message-State: AOJu0Yx20H9DSrrZdFLyXfIQUqtOylX0k5+3PbEqgrzFSG1KBCETbfRO
-	ScDUEJc6vby1GnJaIgMZSQUEM1SUxFFIXEYNDnh2mRwVfOIHZavazhzMVSbOTd8=
-X-Google-Smtp-Source: AGHT+IHNCj4Lvc3KFejcaoQebvHzc4mJJUP6meYTGMDFVi3IoyOy+PPwXWJWFGhSjhvZRbUsMjtIgg==
-X-Received: by 2002:a17:906:2604:b0:a58:7554:b641 with SMTP id h4-20020a170906260400b00a587554b641mr746717ejc.73.1713931757838;
-        Tue, 23 Apr 2024 21:09:17 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id re27-20020a170906d8db00b00a521327b019sm7769663ejb.197.2024.04.23.21.09.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Apr 2024 21:09:17 -0700 (PDT)
-Message-ID: <d27d0784-7f88-4351-943e-5c464a7d95df@linaro.org>
-Date: Wed, 24 Apr 2024 06:09:16 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Z0SDcJJq"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BOfVqf/Xwz0XgMEW6wVfEG7D2CQeqRLf/S3Iv+lmr5l3+K7xnt1blsw/0ZLkPomtDbP4FgjjR6kWrMnrUuaA2b8bB9Rd1XnJeS4YO00lH44VUUZfhx221ZcZ9DlqQ4roIwSCY1KvhMDvPGHnehbh3p6/FJiYra4EX/20yIXEs4kDBs99Fl7yAHmq/M+Aelxo4ijnI4KPI370JQpdngCNdWyjGlt+rN6V0jmmHuIB3yA+2X7HuFreDr+lwd+tQZ+DBVKaPYvXxUlna7E6okFmvlx/jj9PHIkNdmOc/lMrsiztEh96T/bHlx7+hbAwT3Yv3T8+UwCor0G+FL7RSEiriQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VvHxSp6TCf+seJ2MtTBKJNmfG/BaDvWCgrud7t4O29I=;
+ b=cBKyPnST5B5xkz1QmEGaUX61QFBJPdBOu4Rb15FEdyd4DZcENZBbvXt1Yg6/gmJKMBsxXy0R2ydvUzXFQbY12WpuHth33wJf62ZXa0eNHsH9BXv7ifLFMlHQPZHWvtgjqjYYKXx4gRtAt8PhyRSmZQJBEppNX+kNU3ELnTrpjIflVOjYBO6oxWaOGQTbDzsl5Xm/z3gUFUNM7aBzODAGQPfNfnXG8RwegZh9QvqapVeMAqDbvMhbIEE+iDAEIMFwHph/pm36gWT1W2ikqFDsYFYuzHuIcSWfzKtDG3TvlJg5vXC3mA8vT412VrT1gYvu1gtb7OFnsmg94XovteA1GA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VvHxSp6TCf+seJ2MtTBKJNmfG/BaDvWCgrud7t4O29I=;
+ b=Z0SDcJJqVwp3w23RPp4RFCu5Yde1XFOJhhKjJncCZCSFaatgKgNYYuMrl4mt8rgkZ+ip/TEXW7+qFEuWgwLJ/IMcCZ22kuYeYcNhr6opQOjeWfFWfNW3qkTyZVwzLQCIiwqmMLTCTFow4YJ9+FaOJ3EbSYmoUacvHtKQQTnHeUIeBLaQq8f36U4+kdZueYzo4sh9Y2x6BkmYKehIoolgmkSV3q8DM+qXnXKj4tbiEAwP5AsMmHTDZkTzmwBBkQfzrJkxtR0E84FBtIx0f3xLE/kKGEn4Q4qbMOgN5TsFjUPYN/OwgLS3okdI80mSgHtzI8aniuJ/txFTjyRdc7KrNQ==
+Received: from BY3PR04CA0010.namprd04.prod.outlook.com (2603:10b6:a03:217::15)
+ by BY5PR12MB4049.namprd12.prod.outlook.com (2603:10b6:a03:201::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.22; Wed, 24 Apr
+ 2024 05:27:53 +0000
+Received: from SJ5PEPF000001D0.namprd05.prod.outlook.com
+ (2603:10b6:a03:217:cafe::7c) by BY3PR04CA0010.outlook.office365.com
+ (2603:10b6:a03:217::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.22 via Frontend
+ Transport; Wed, 24 Apr 2024 05:27:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ5PEPF000001D0.mail.protection.outlook.com (10.167.242.52) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7519.19 via Frontend Transport; Wed, 24 Apr 2024 05:27:53 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 23 Apr
+ 2024 22:27:42 -0700
+Received: from [10.41.21.79] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 23 Apr
+ 2024 22:27:38 -0700
+Message-ID: <95f8e4b5-23af-90cb-4dae-2922e8e71920@nvidia.com>
+Date: Wed, 24 Apr 2024 10:57:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
 Subject: Re: [Patch v3 2/2] memory: tegra: make sid and broadcast regions
  optional
-To: Sumit Gupta <sumitg@nvidia.com>, robh@kernel.org, conor+dt@kernel.org,
- maz@kernel.org, mark.rutland@arm.com, treding@nvidia.com,
- jonathanh@nvidia.com
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, amhetre@nvidia.com, bbasu@nvidia.com
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, "robh@kernel.org"
+	<robh@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"maz@kernel.org" <maz@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, Thierry Reding <treding@nvidia.com>, Jon Hunter
+	<jonathanh@nvidia.com>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Ashish Mhetre
+	<amhetre@nvidia.com>, Bibek Basu <bbasu@nvidia.com>, Sumit Gupta
+	<sumitg@nvidia.com>
 References: <20240412130540.28447-1-sumitg@nvidia.com>
  <20240412130540.28447-3-sumitg@nvidia.com>
  <06849796-f896-4cff-842c-118d86e94a6b@linaro.org>
  <1aab0272-85ea-e3a1-7d68-27ab4f1e1993@nvidia.com>
  <6506b2e8-c7f2-460d-b17d-55b731fac1ac@linaro.org>
  <e1d4e915-08c9-c2e0-f882-6d7cd9500c96@nvidia.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <e1d4e915-08c9-c2e0-f882-6d7cd9500c96@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+ <d27d0784-7f88-4351-943e-5c464a7d95df@linaro.org>
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <d27d0784-7f88-4351-943e-5c464a7d95df@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D0:EE_|BY5PR12MB4049:EE_
+X-MS-Office365-Filtering-Correlation-Id: 994752bb-66f6-44ec-2e11-08dc641f4a82
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|376005|82310400014|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y0wrRkJDanRieUgzTHpnN2RPQmh5cTFqSnlUSVk1bEozajdZeUFqOXdkYmF5?=
+ =?utf-8?B?c0E3UFI1NnhwN2pKVkM3c2c0czlIWmc4YnRTWVNWSkplN0ZHZVFDdlh3QUtI?=
+ =?utf-8?B?M0pZT2pxZ3B2bjRiQTBMTVREM1Z6aWVUSThWN29lb1pmN2piRWJoa3FiRnQ4?=
+ =?utf-8?B?VURhbnJHZUQ2VjRRRzh3MnJFTklWQlpzUnk2NVcrZjdjL3RmK24wRGNQRWZP?=
+ =?utf-8?B?T0pvMERidENZWnUwMEozRGp3bU9rQVBlQmM2YTZnRU1Gd0tBaDVwUnF5bkVu?=
+ =?utf-8?B?eWNCYjhTVjNLaDVVcU93N09ZUHZiTUd0UTA3cjVDWVZOMHErcGxLeXJBNE52?=
+ =?utf-8?B?aVNrZmxRMm9hcUVDTDQzUFN0elp3cTZMa3lNREp2bG9ub2RyZ1NtN3N1UGlB?=
+ =?utf-8?B?aEpZaU1JZkJQRjR6RjJoNTJKUTJjaEtQK2huYWVJbDArZkVXNmlvK3BveDcv?=
+ =?utf-8?B?eDNHV0ErVmFJRitWL1NPN0NJZUtWekJheGd1ck5FY2gzSDgzeUZNTHRtelB4?=
+ =?utf-8?B?U1NYRUt2b1R4NzBpSVgva3A4RWE4SjZWcXVEZXlaQlh3QXJ6YVk0VnIwYTRB?=
+ =?utf-8?B?VHgrRGNrcXlCMTVnZXcxWWE1QzdJM3BjYVVmcDdsYlhmQm1HS0grYTROVEVC?=
+ =?utf-8?B?bUp0SzMzSGxMbU51VVR0STBIeUJKWFV5YnNOQ0wwakczdWxDSVAwSVhsUXAw?=
+ =?utf-8?B?VkV0T2ZKcWtIR2VvTFRvRllreG9aQ1BwWngrblRnSW5HTGhwbFNVcmRhYVNv?=
+ =?utf-8?B?WGJ4cFdUcVBLYmpsYkVxNWFxUmtnY1VWTGJVTkppUEVXOUtvTVJoT0hmTXlt?=
+ =?utf-8?B?RFlRcnpZc1RCZkg4V0N2S3VlMjBkbXhuRzV6WDltQVA3c3Mza0xyTWNMZEdU?=
+ =?utf-8?B?c2FFdUFYWXdlQklVbzIyMm9Qb0VhZXNYNzUzWGYxQW1jeTVWaDhnekVLSXNJ?=
+ =?utf-8?B?R1lLZVNWMmZoaGxRK091K1puWlZKY3BWaHFDVk9rRlNBSnptYXVuSEZHb0I2?=
+ =?utf-8?B?bmYxMERHRndaeWFldmZXOVlFVmQ4MGF6MFJiaXFlUExtdXdjTEs4Zm82R2RJ?=
+ =?utf-8?B?VTBCTGdGdWFWL0ZWa2Y3bWtTK1EyZ3AvZVhUM0lnR1NVNmdoMG1wTGxYbjBl?=
+ =?utf-8?B?NGIrRDBPY0dEV1dKMmlyNXFUK1d4MEIzQSswa0JlZEtQTzBoTWpwQkVPZUND?=
+ =?utf-8?B?TXZSZWdzL0tYeDJ0MExvU0t1WUFUNzRhS2FEMmk5cFVnN1plMFhQSThxODlT?=
+ =?utf-8?B?aXd1dlhBSncrWWNyT3lZSTJGMVcxNkUrd1ppVmFBUm5ZSW9uM24yaDgzZGVN?=
+ =?utf-8?B?UGRuOW9rVEFMREZmaThGSi9HLzZWUVp4TEJaY1NQNnN6eVpxd0FCeitUVklm?=
+ =?utf-8?B?dzAzeU1zclZHZ0RFMnZ0SS8zR0oxNmJadnpNeEcxM1pkcXhtdU1sYmVIMUVV?=
+ =?utf-8?B?OFZqSklaUDNFTHhqOTVISWVHYzlTVnpPaGVYNXFnTjF4L2JoVVdUTlF0NFVt?=
+ =?utf-8?B?QWN4SHlKVmJ1QVBZSGRkTEJoTkVmT2NjVm44SkloSm5tSWZ1cUlROFJGam1u?=
+ =?utf-8?B?Vy9sbzM1WmdIenF2elZPUFpDZFBXMDZoRGd6aGROV2Z6dzZ4MWRpM3lNZGRu?=
+ =?utf-8?B?eElzeWs5ak0wT3pldFhKZlNGakQwOGlzVkNlbUp1RUJ0MFZaVzVaNXhaL3A1?=
+ =?utf-8?B?KzhYM3EycldqZEZ3cWtkSE5Nc0pscnRza2k0NmQrNGJqdDJLVWl0c05NczRk?=
+ =?utf-8?B?Zm5CL0czbHUrdDMvRTBBak9nYTU2VzdRby9vVmRxeE1pT2N0b0FVNmpsMDc2?=
+ =?utf-8?B?aVNFeXkzWEdQWWR6cVlTRm93LzZDZVFGVzFTWkpnTG5FMXYrVG85dnJrZjV0?=
+ =?utf-8?Q?QaTClvCTrfdBv?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(376005)(82310400014)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2024 05:27:53.6264
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 994752bb-66f6-44ec-2e11-08dc641f4a82
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001D0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4049
 
-On 23/04/2024 21:46, Sumit Gupta wrote:
-> 
-> 
-> 
+
+
+>>
+>>>>>>
+>>>>>>     static inline u32 mc_readl(const struct tegra_mc *mc, unsigned long offset)
+>>>>>> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
+>>>>>> index 1b3183951bfe..716582255eeb 100644
+>>>>>> --- a/drivers/memory/tegra/tegra186.c
+>>>>>> +++ b/drivers/memory/tegra/tegra186.c
+>>>>>> @@ -26,20 +26,16 @@
+>>>>>>     static int tegra186_mc_probe(struct tegra_mc *mc)
+>>>>>>     {
+>>>>>>          struct platform_device *pdev = to_platform_device(mc->dev);
+>>>>>> +     struct resource *res;
+>>>>>>          unsigned int i;
+>>>>>> -     char name[8];
+>>>>>> +     char name[14];
 >>>>>
->>>>>    static inline u32 mc_readl(const struct tegra_mc *mc, unsigned long offset)
->>>>> diff --git a/drivers/memory/tegra/tegra186.c b/drivers/memory/tegra/tegra186.c
->>>>> index 1b3183951bfe..716582255eeb 100644
->>>>> --- a/drivers/memory/tegra/tegra186.c
->>>>> +++ b/drivers/memory/tegra/tegra186.c
->>>>> @@ -26,20 +26,16 @@
->>>>>    static int tegra186_mc_probe(struct tegra_mc *mc)
->>>>>    {
->>>>>         struct platform_device *pdev = to_platform_device(mc->dev);
->>>>> +     struct resource *res;
->>>>>         unsigned int i;
->>>>> -     char name[8];
->>>>> +     char name[14];
+>>>>> How is it relevant? I don't see this being used in your diff.
+>>>>>
+>>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>>>
 >>>>
->>>> How is it relevant? I don't see this being used in your diff.
+>>>> Did this change for below warning coming with 'W=1'.
 >>>>
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
+>>>> ../drivers/memory/tegra/tegra186.c: In function tegra186_mc_probe:
+>>>> ../drivers/memory/tegra/tegra186.c:51:49: warning: %u directive output
+>>>> may be truncated writing between 1 and 10 bytes into a region of size 6
+>>>> [8;;https://gc
+>>>> c.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wformat-truncation=-Wformat-truncation=8;;]
+>>>>       51 |                 snprintf(name, sizeof(name), "ch%u", i);
+>>>>          |                                                 ^~
+>>>> ../drivers/memory/tegra/tegra186.c:51:46: note: directive argument in
+>>>> the range [0, 4294967294]
+>>>>       51 |                 snprintf(name, sizeof(name), "ch%u", i);
+>>>>          |                                              ^~~~~~
+>>>> ../drivers/memory/tegra/tegra186.c:51:17: note: snprintf output between
+>>>> 4 and 13 bytes into a destination of size 8
+>>>>       51 |                 snprintf(name, sizeof(name), "ch%u", i);
+>>>>          |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 >>>
->>> Did this change for below warning coming with 'W=1'.
+>>> I asked how this is relevant to this change and you answer there is a
+>>> warning. If the warning was there, your answer is really just deflecting
+>>> the topic, so obviously this is new warning. Which part of code uses
+>>> longer name?
 >>>
->>> ../drivers/memory/tegra/tegra186.c: In function tegra186_mc_probe:
->>> ../drivers/memory/tegra/tegra186.c:51:49: warning: %u directive output
->>> may be truncated writing between 1 and 10 bytes into a region of size 6
->>> [8;;https://gc
->>> c.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wformat-truncation=-Wformat-truncation=8;;]
->>>      51 |                 snprintf(name, sizeof(name), "ch%u", i);
->>>         |                                                 ^~
->>> ../drivers/memory/tegra/tegra186.c:51:46: note: directive argument in
->>> the range [0, 4294967294]
->>>      51 |                 snprintf(name, sizeof(name), "ch%u", i);
->>>         |                                              ^~~~~~
->>> ../drivers/memory/tegra/tegra186.c:51:17: note: snprintf output between
->>> 4 and 13 bytes into a destination of size 8
->>>      51 |                 snprintf(name, sizeof(name), "ch%u", i);
->>>         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>> BTW, really, such answers do not make review of your code smoother.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
 >>
->> I asked how this is relevant to this change and you answer there is a
->> warning. If the warning was there, your answer is really just deflecting
->> the topic, so obviously this is new warning. Which part of code uses
->> longer name?
+>> Apologies for not explaining it earlier.
 >>
->> BTW, really, such answers do not make review of your code smoother.
+>> I increased the buffer size to suppress a static check warning in the
+>> existing code due to big range of 'unsigned int i', if copied to small
+>> name buffer.
 >>
->> Best regards,
->> Krzysztof
+>> Seems like the warning is harmless as the maximum value of num_channels
+>> is 16. I will remove it and keep the buffer size as 8 in the next
+>> version.
 >>
 > 
-> Apologies for not explaining it earlier.
-> 
-> I increased the buffer size to suppress a static check warning in the
-> existing code due to big range of 'unsigned int i', if copied to small
-> name buffer.
-> 
-> Seems like the warning is harmless as the maximum value of num_channels
-> is 16. I will remove it and keep the buffer size as 8 in the next
-> version.
+> That's not the point. For the third time: how is it relevant to this
+> change here? Was or was not the warning before?
 > 
 
-That's not the point. For the third time: how is it relevant to this
-change here? Was or was not the warning before?
+This is not relevant to the change here. The warning was before as well.
 
-Best regards,
-Krzysztof
+Thank you,
+Sumit Gupta
 
+> Best regards,
+> Krzysztof
+> 
