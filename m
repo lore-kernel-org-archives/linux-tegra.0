@@ -1,104 +1,130 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC4E13E3F8
-	for <linux-tegra@vger.kernel.org>; Wed, 24 Apr 2024 08:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71619158A21
+	for <linux-tegra@vger.kernel.org>; Wed, 24 Apr 2024 09:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713947485; cv=none; b=lKCW9n8DgbERyVk8UUxxABt/fZo5exgjahPZM1TZcdcWrdt0a3OonUrKotsabEcfaaqRAiMG61x88pZF7WeH7qRByXSZaEQ5du6QDVfQU+SkWclacAu+sk55kkruukH4TfeuOCkPJ3gPcgrc9hKe0msO2Iue8EBWMKYj/UhA7i4=
+	t=1713949260; cv=none; b=n6xGNU+tt9KwlqY5zT/Xe40FiS3JMcc/MI74jZat96UsanJmoDiBZLW/ft1Gn6NpFNPamPOYdlHPxZn3+HgR8buLsRtns/QJUXmdyBGZH15O7vkMzGd8LoBJpcUpa1IpZ/7QNJHG8W6wh3oLRqMXv5sY2F1LQOBazdNVOdTT6ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713947485; c=relaxed/simple;
-	bh=IjjbvorUSg6P4VFZn7dSqLjzf30JrNYIj5heKyHMN6E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F/5RzTH2mOizia+0/C+Xh5fcn2Sz3bIVEj+KgIEftIYfD111sGiW69uLiDpf7JhqU1c0HPJvxjSFK094jeMoLtg6OMPTYO2eElhFLTh3PyC8GN8qh0BhJ19X8r8UQl5rr+6vY8nAAn+8RTJn3rv2UAFe0gCmOFBR7zt6yMCmTPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=w+Id9W/P; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	s=arc-20240116; t=1713949260; c=relaxed/simple;
+	bh=rlodAndDMyPA39Cl9zBq3gC2CE9mIUDdBUkS7hl2nGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9k26SASMiQBEik9EZhICfSZcS3F4HH2lJwATXLa2w1i0WpbXUcL40GF27JqSPwd9n7p468iqNPS9emtrLWIT6aeFI+BUSPQpZC1zc8I1wTslsLd3hYHZmsB4YVcS86dzr2SsfiuMk7/CRP92IyTu2Kl7zgbwkjTNXSHXynrW/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=WHhiHQrP; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="w+Id9W/P"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-516d1ecaf25so8543640e87.2
-        for <linux-tegra@vger.kernel.org>; Wed, 24 Apr 2024 01:31:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1713947482; x=1714552282; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GJGoWBDSb5fGAuDy7m4mg3bWQD/UzHjf/v/1vmc9dmM=;
-        b=w+Id9W/PgBlMXw4lM5uq+21DzoXXQW08FZFhJP9jHxL88u2/Ab1eAMg/6OHzzEx70/
-         x77k/1eX6MBEw+D7mZN/Q2JCYxkOs1QeC2uWiuZ68mFaZS7qoOU1LdxEAHlSTzQzzJ+M
-         fPg0ObSmd2fgkIUj7zHryuQenW78nnCUyrS4ZCB3R3XT6BICbxPkhAiRtX+jPeJemIu9
-         s2B/CfZMtrxdjQxJKsboz4XDpJkSCqXmeatxkM67ok8vDWqX+3yR+8McSjcemUocHi1v
-         3YkNmcm/NFEzPzwV5aLEaObkNz15z6v1hZN6iVSoCusgtaEFZXMVwqv3J4jz1JCz5wy+
-         622w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713947482; x=1714552282;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GJGoWBDSb5fGAuDy7m4mg3bWQD/UzHjf/v/1vmc9dmM=;
-        b=NKM5SlfOkGtHhIWQbf7p4GdfQzvPphd+JdbrGRlAVxJYcYc8uh6sCxMnXg1TtamQS7
-         g2dj1DFEObaNOnjGlll4YdoOKqGuB22dcCZ3rEiGlnL4O6xE6Gpg9n+0H1wMTuxsT65w
-         wOp/XUwUGvOitk/IH/wcgn9Dut4BOl6/0m0AiScP5hZEx2me8rNkFgHnFfHWLAwEQo06
-         pxyQs9Z8idnC1B048DSuW3oeFpAzeKBvArgspcavhfGKJwB5ZTsa9+lLgjqWufXyZ8gT
-         aCyi9e9vgWkkqjpWyjHjf4psSOJkPGd1Fbk7kqQB7ouxE975UnFl4LzduUXFiutvZlHO
-         5+IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbZ59Mu+uaa4VBnw+aJQ29Gow0fKVbLHYOTRj9Tod5B+1Dkw9yiexr6OHFcIolTH45GWBOcC58B5JmH/nxWF6k77ymOWjcPdOV40w=
-X-Gm-Message-State: AOJu0Yx35+xuUu8m6dH6gJ+ZjvD4pIsFP4ideJDTkVlD+K+8TslySFuS
-	GmORTK86Eip+zCiVfXwsozdx20oHARkis3yHFMbEJCt5gbnaP0y4zqdx3LC2rIgvTD4ANM8nFUn
-	ixkECKa3kgVt2tFzEUJ/AjW6t5/WZBVzpprfoOg==
-X-Google-Smtp-Source: AGHT+IHeUW2RFaYOi3EycgzRf3cpJgpILPKKGH3hJf5GGNnk7Y0P6bC+UwOLzxXOL/FIEabzxw0/mhkkL0RbdpCF7HA=
-X-Received: by 2002:ac2:5492:0:b0:516:cd83:71ce with SMTP id
- t18-20020ac25492000000b00516cd8371cemr1176615lfk.31.1713947481572; Wed, 24
- Apr 2024 01:31:21 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="WHhiHQrP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=F/rZ
+	bYMw94pfUTMXvodaO2dpVGh5mtleHLV+nawJR/g=; b=WHhiHQrPoBK5rpd5VA86
+	giFZK/WK5QrP+Scmd3x1x3hLwHAF5BGRil3N9lSCG/OkS7EjhlOb3KHy5j81KxIJ
+	XaXBUVIuMGaM18HHTUgJRkx01WQ3RabIM3Zz5b5JakCGhRZrb6kOTPWQedekx4RO
+	R/H8oUjWLc1AF8CuHTrkFFdjh3jDINTYXczzFDoJQUKxUfdADEEN+AIaDHbZTkHW
+	svfje4hrAL8SZZycmdvgqYPnU2K6Cm4h1DkYBcpDF9Erlb7TJw1UvXCdUwuDhFWg
+	KO3RQsxqrhiqKIfhkyCrfRinbr1jsOR+GIFjr58RNV1q4R9FpRfaOVQoxeJtDkMu
+	uw==
+Received: (qmail 501040 invoked from network); 24 Apr 2024 11:00:53 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Apr 2024 11:00:53 +0200
+X-UD-Smtp-Session: l3s3148p1@L6tq6NMWFsgujntt
+Date: Wed, 24 Apr 2024 11:00:53 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 00/18] i2c: remove printout on handled timeouts
+Message-ID: <sbkymvjmrufouqqscpmrui5kcd466gj6yn2bqwf3lhfk55mjos@n4ydx6wzyq4k>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+References: <20240410112418.6400-20-wsa+renesas@sang-engineering.com>
+ <ZihNbtiVDkxgUDGk@surfacebook.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACMJSeu+fUdYoxue-q=DxFdvtopgshQY+i2kpZMP-RGOTqMu_g@mail.gmail.com>
- <20240423120011.21554-1-pshete@nvidia.com>
-In-Reply-To: <20240423120011.21554-1-pshete@nvidia.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 24 Apr 2024 10:31:10 +0200
-Message-ID: <CAMRc=MfJokORpEOMkOmQdzTuZxcUAcnmpdEyJWKqvT0gCpuzbg@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: tegra186: Fix tegra186_gpio_is_accessible() check
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: linus.walleij@linaro.org, jonathanh@nvidia.com, treding@nvidia.com, 
-	sfr@canb.auug.org.au, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mochs@nvidia.com, csoto@nvidia.com, 
-	jamien@nvidia.com, smangipudi@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tk743gnx4tnmnqhg"
+Content-Disposition: inline
+In-Reply-To: <ZihNbtiVDkxgUDGk@surfacebook.localdomain>
+
+
+--tk743gnx4tnmnqhg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 23, 2024 at 2:00=E2=80=AFPM Prathamesh Shete <pshete@nvidia.com=
-> wrote:
->
-> The controller has several register bits describing access control
-> information for a given GPIO pin. When SCR_SEC_[R|W]EN is unset, it
-> means we have full read/write access to all the registers for given GPIO
-> pin. When SCR_SEC[R|W]EN is set, it means we need to further check the
-> accompanying SCR_SEC_G1[R|W] bit to determine read/write access to all
-> the registers for given GPIO pin.
->
-> This check was previously declaring that a GPIO pin was accessible
-> only if either of the following conditions were met:
->
->   - SCR_SEC_REN + SCR_SEC_WEN both set
->
->     or
->
->   - SCR_SEC_REN + SCR_SEC_WEN both set and
->     SCR_SEC_G1R + SCR_SEC_G1W both set
->
-> Update the check to properly handle cases where only one of
-> SCR_SEC_REN or SCR_SEC_WEN is set.
->
-> Fixes: b2b56a163230 ("gpio: tegra186: Check GPIO pin permission before ac=
-cess.")
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
+Hi Andy,
 
-No changelog since v1. No Thierry's tag. Please resend.
+On Wed, Apr 24, 2024 at 03:08:14AM +0300, Andy Shevchenko wrote:
+> Wed, Apr 10, 2024 at 01:24:14PM +0200, Wolfram Sang kirjoitti:
+> > While working on another cleanup series, I stumbled over the fact that
+> > some drivers print an error on I2C or SMBus related timeouts. This is
+> > wrong because it may be an expected state. The client driver on top
+> > knows this, so let's keep error handling on this level and remove the
+> > prinouts from controller drivers.
+> >=20
+> > Looking forward to comments,
+>=20
+> I do not see an equivalent change in I=C2=B2C core.
 
-Bart
+There shouldn't be. The core neither knows if it is okay or not. The
+client driver knows.
+
+> IIRC in our case (DW or i801 or iSMT) we often have this message as the o=
+nly
+
+Often? How often?
+
+> one that points to the issues (on non-debug level), it will be much harde=
+r to
+> debug for our customers with this going away.
+
+The proper fix is to print the error in the client driver. Maybe this
+needs a helper for client drivers which they can use like:
+
+	i2c_report_error(client, retval, flags);
+
+The other thing which is also more helpful IMO is that we have
+trace_events for __i2c_transfer. There, you can see what was happening
+on the bus before the timeout. It can easily be that, if device X
+times out, it was because of the transfer before to device Y which locks
+up the bus. A simple "Bus timed out" message will not help you a lot
+there.
+
+And, keep in mind the false positives I mentioned in the coverletter.
+
+All the best,
+
+   Wolfram
+
+
+--tk743gnx4tnmnqhg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmYoykAACgkQFA3kzBSg
+KbbLuBAAjzqZT2iFY7Av9H0s+wlzFx3PbOQR9XN1fKqU/9jvT5vumaPsTH+2fUZY
+sOMPYFZUeYiZIcZqbWOUYa5Gkg5oZyrnNIbFOpV97VM9nHq5tMBrn80hdTccNBcn
+dga0E8zizsjSv80+pRwrfrfzzAALZnRZ8pPCPf6NjfnhVuhVbM3nfTJ1cDKPzYLw
+d0+t0YJKs0J2Ez92HZh4sxYyhELQ2hNFKLFcJqLBQI194Y6AQ/SP376ZTWRzaRCr
+KTLHH/wpuWERvzrQBBm+MOpZ14LKy+oKzOYKUndYCFw1dZOART808i/5Zcaqzop7
+FRZpqfJzwLh/JtT9GiunHLkHbLIRI59otzBHejzX/oCkIRylcxrn5DEkTFsKsdZ+
+Ay1VMdtxGSVMkha8uFlq51uW06MqpDdiEqbtjkOsNBepk8hbt0trJOkGuezlNOGp
+wmZeJ62f5JVrHxHHpjQwSkIy8Cm+vMtEKmJZ6exv7LRyAx2FhXFDzqwOAkNBZzNx
+H2P24MVMK31rQMLcQGBQavb7O4d3Jsq1glbLHShaHkQeZYBu4aFj/zQfe+meCak/
+HIpzWTFHiM2a8pAM/AnFy/Na/pUKFyE6Pwsk5cQg95VqC6sJzywwVI9AH1WaZ+cL
+tED/pttmbdvulRljvoIXXsYWtCy+ENKqygemMVgNK26O1aANdr4=
+=g/wq
+-----END PGP SIGNATURE-----
+
+--tk743gnx4tnmnqhg--
