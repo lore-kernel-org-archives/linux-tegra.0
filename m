@@ -1,60 +1,60 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586CC6DCE8
-	for <linux-tegra@vger.kernel.org>; Thu, 25 Apr 2024 07:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D276E2AE
+	for <linux-tegra@vger.kernel.org>; Thu, 25 Apr 2024 07:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714031527; cv=none; b=HDVD/8khOd837mUAcE4DjsW96+fe1E5q7FLS3TpZA8DAYVo7xz3k0TvSU768F2mDzlP5jBJAK3oR6cZhGNRHHTyc+ht6fM16FaoLErQhuVTO/kXFoCQMDLxGPvN+JSyIygdoto7VOtv5hgJuY724u0abx2uSOfk9I0yQXYDj1x4=
+	t=1714031578; cv=none; b=togtXEW8dBffDDZmuG2g5B7k6KvBm5KNY2CIehfyOwyd5g7chEx1KSBfR2TsHK6gKij7/QNXa87T27Nd6+CC1LTZpcYZvSoo7Pprae5hqfiq6crfC1twgWut8wlw8MQeM9vf7Nml5++n3ySuudigP6LQiggRRRLM2z8aA5No9+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714031527; c=relaxed/simple;
-	bh=AYGEdksdgZTPaNgb9KeBmV5lH33P9gN5GGdxU+tVkhM=;
+	s=arc-20240116; t=1714031578; c=relaxed/simple;
+	bh=iqcU0wl8XLsCrSPqSSxHQIoKIH4GwM1u2GuiqgLi3XE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KC8EJFd55EmxRvrI5wLD/DANvVLMEUEDOVvvV9C5cV9qSh2khUY2cUG+at/jdNfigWmmH3WwWcqJZas6cuXJM6FDqCxEKlzcM0PHI+SwN9xZEyVVDffonk0bMO2875yqemjTbkMSiQIGYH82hn/oKpuRj3S8Yq81ZHJ7oH64I4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qhtCT6ji; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:Content-Type; b=EqE5NnLNnjUBGckFWdZW8fEvWlAaGB57pNM0vWPufcB44d2ER1PTsZnKZf146ZcLocjM2wLbw59V7dvau5X/U5QRGcJaO+RyGkTzpg01ztBX3ZlLtkxxadNu3r70pQlyC8pHRFKCMZ+JjSTM5SVRoVHKUzcqhE3mG01cSSGoWaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gTFLni9e; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qhtCT6ji"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-34b66f0500aso552730f8f.3
-        for <linux-tegra@vger.kernel.org>; Thu, 25 Apr 2024 00:52:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gTFLni9e"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3476dcd9c46so495510f8f.0
+        for <linux-tegra@vger.kernel.org>; Thu, 25 Apr 2024 00:52:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714031524; x=1714636324; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1714031576; x=1714636376; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=sUvBWyospVY+IsmeOi4LJBQ9n4JoXBhWPrCYxCtjp6o=;
-        b=qhtCT6jiCI3Vr2Bxg5RQzh2dEwslVd1H1bA87pQK8+2Fi7pONIMZXoIgKjY2WZ/s8z
-         MeNPo0dRhSb06qSvnswVDMRWpp/kDpBpw8w7H+8cMJoQcUjrUMuNKB1x9i4j51iFiMKQ
-         k99Q9iv4j9KQW4s8e50LP+Q5zk77CSEcqWj4rzCWudRizPLmVcWmnQJU/eF7lFMhX2DX
-         nAV2pj68NYoOwU5lDd1YeAk57RfMeTWq88YytryPdqMCPx2tg4pibZ2tStXFeJTlLZsY
-         RQykWPsv3qumPWiNw7qoILcWZpx7PJk32O6K3NriMPehUiXowXmgw1Fmv5ysKkfDW/W9
-         2ZNQ==
+        bh=wQ6dakPzF37vXQVxSVDUoInS9Z2Cueqb/qk7m8i8nrg=;
+        b=gTFLni9evbdoxZ0Ebv9yZB0IOndbs8RlUCP709oRcDU5CMyS/84A1yIm2boqQVYePL
+         XSRaIgwR9AKuyNg+eugQVDNMxjQuNRXt0p0/XeyYDsXCh/2n8VCkHYauDOAlfxuMuqQt
+         2gfMV2SYmSxCCOwfTLE5TneLSrkUzxtAC0szzvVFr9VevJftvzevjr7CX9THOIFq/q6j
+         kx0BgTphjJiuFbWPdcfVvwtZcLa+VdziBnjEMl6jdBTMCWE8VPEGFCpwN/PGQQGG71zc
+         thTXMFXkY77otvozvasgdpR1+TKMR/CKhMpL+I6C0F3sPmwXLiHaavaXyTYW0p/qK47e
+         +wnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714031524; x=1714636324;
+        d=1e100.net; s=20230601; t=1714031576; x=1714636376;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sUvBWyospVY+IsmeOi4LJBQ9n4JoXBhWPrCYxCtjp6o=;
-        b=vN3X6jn/hFfRd47hkWJhBJnxclBtmQhzOs9MXtFD4GTm7yufJVOMEY1Iicq4PBMxVN
-         QsI4dHEr1SDle6m0U+b9NAI97joI9veAuXBvXtLub+jydlefF5EOX+PaScwGcCbRLE1r
-         71Z+GNG/qinCIguWqJcXKWUTcr2tJ8M5oU1EJN2TAXxWNTUQHcat9ut/qE4lpUg9JhWr
-         Yx8d0Qighnc1ElZubydMNrVeMhXFBR9G/tlz5lpqLlLgFdbuRHImHpZD0pgeQu/7d3lz
-         c1H5pZ2KQIjBTSxkyd/XNwVeesIpT0+BGSNrudB0T9C1W5scxhOUsZrJYJCDKq0elk20
-         pAXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnhry6/J4VUEZXvWfEsffSNYHgHarLoWIoWPdiz5CwZ2GnJ1U63VEEMRa+EB7Vwt4zR9z2oEUKAREq4u4FXwhtqkSQtrzsd1JpsUU=
-X-Gm-Message-State: AOJu0YzXASXWK1z6RQpB4zAFf6Xk01bTmRL+nJ+Z3deMxU3b5+egybkh
-	JGcLQkLR8vc8V5xu6nv5tK/CKGrAqswJ9q8SgjLMJdXraGq6dPVlBGoz2tvlL7M=
-X-Google-Smtp-Source: AGHT+IHyoZhjNoj63wE0D45cVjzpNIFdSEt4bYyfdvQBc8OBb2O8sj6RFtvuQj6ecEb8Gkf2LUNUpg==
-X-Received: by 2002:a5d:4990:0:b0:343:70bc:4578 with SMTP id r16-20020a5d4990000000b0034370bc4578mr3626021wrq.70.1714031523733;
-        Thu, 25 Apr 2024 00:52:03 -0700 (PDT)
+        bh=wQ6dakPzF37vXQVxSVDUoInS9Z2Cueqb/qk7m8i8nrg=;
+        b=kcs2spsSa5SCcqY47P6FDY/UvDilj4farQLIEfyimHqYMt6excrN4AqaPwlV7gtrye
+         N3IUmugYtQbozQktlTZeiF2rV+PmG8xOUsLGAsr2DKbBBpQB28SgiDv/Kl4o8YQty4/d
+         snp/GlM4tO2PdpGWnGARmoJQ/t0TQHkwBcsQXVU9w9oowEc64IpuCbPdMP/j4jblE4Bd
+         FqjlwbE0vc+DlYUfk9qxdMT4vrZh2hzMRIGgEDwhb1OPdpZyaEoE5HNZ4U8uhb6J/+7S
+         FoJPyPW737Thlzr/w4lwxsKchUovww77kShDthmEOUj08zj46Q/u6tiliG9L1leQxxS2
+         1PvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhJ/RJOt7IPAK0ciKnbmz1bPsJGLS8fx2sIzUV9bpmHXdXH7YRvGS0oZDKafkmsHnNHBKqeeBDxHy0kkaPRnU8e24ZogGsY+TekmY=
+X-Gm-Message-State: AOJu0YzHSptZEXrgr+39+VLqlxHpYO+fKMP6hAuJkAxCgRT1FPtAdKjh
+	On/NbSAdVdxbkt+lFAEpCkec3RJJS6hO58TEpPh+cy66mFK/J8+BE0simmVdTS0=
+X-Google-Smtp-Source: AGHT+IHAWA8qIs+1LRJE6OkOV05b7ubwls3wd0MdT0C/MOGq56MiQqQuSAmDQ+1W+Ib212aGpGRI0Q==
+X-Received: by 2002:adf:e505:0:b0:347:d352:d5c0 with SMTP id j5-20020adfe505000000b00347d352d5c0mr3862703wrm.54.1714031575644;
+        Thu, 25 Apr 2024 00:52:55 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id v11-20020a5d4b0b000000b00349a6af3da5sm19062239wrq.51.2024.04.25.00.52.02
+        by smtp.gmail.com with ESMTPSA id m18-20020adff392000000b00345920fcb45sm19228877wro.13.2024.04.25.00.52.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Apr 2024 00:52:03 -0700 (PDT)
-Message-ID: <9561dede-37d0-4183-8742-448058803f8e@linaro.org>
-Date: Thu, 25 Apr 2024 09:52:01 +0200
+        Thu, 25 Apr 2024 00:52:55 -0700 (PDT)
+Message-ID: <951cdadb-263e-47ac-8521-f9aaab7b1be2@linaro.org>
+Date: Thu, 25 Apr 2024 09:52:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -63,15 +63,13 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [Patch v3 1/2] dt-bindings: make sid and broadcast reg optional
-To: Thierry Reding <thierry.reding@gmail.com>, Sumit Gupta
- <sumitg@nvidia.com>, robh@kernel.org, conor+dt@kernel.org, maz@kernel.org,
- mark.rutland@arm.com, treding@nvidia.com, jonathanh@nvidia.com
+To: Sumit Gupta <sumitg@nvidia.com>, robh@kernel.org, conor+dt@kernel.org,
+ maz@kernel.org, mark.rutland@arm.com, treding@nvidia.com,
+ jonathanh@nvidia.com
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-tegra@vger.kernel.org, amhetre@nvidia.com, bbasu@nvidia.com
 References: <20240412130540.28447-1-sumitg@nvidia.com>
  <20240412130540.28447-2-sumitg@nvidia.com>
- <d26f9661-3e50-4a72-9097-fe63a27503f1@linaro.org>
- <D0SHRQVCGJBY.2DPLX9K6VXEYM@gmail.com> <D0SILCYU98EV.1XW7NZFC9013K@gmail.com>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -118,188 +116,29 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <D0SILCYU98EV.1XW7NZFC9013K@gmail.com>
+In-Reply-To: <20240412130540.28447-2-sumitg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/04/2024 19:04, Thierry Reding wrote:
-> On Wed Apr 24, 2024 at 6:26 PM CEST, Thierry Reding wrote:
->> On Mon Apr 22, 2024 at 9:02 AM CEST, Krzysztof Kozlowski wrote:
->>> On 12/04/2024 15:05, Sumit Gupta wrote:
->>>> MC SID and Broadbast channel register access is restricted for Guest VM.
->>>
->>> Broadcast
->>>
->>>> Make both the regions as optional for SoC's from Tegra186 onwards.
->>>
->>> onward?
->>>
->>>> Tegra MC driver will skip access to the restricted registers from Guest
->>>> if the respective regions are not present in the memory-controller node
->>>> of Guest DT.
->>>>
->>>> Suggested-by: Thierry Reding <treding@nvidia.com>
->>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
->>>> ---
->>>>  .../nvidia,tegra186-mc.yaml                   | 95 ++++++++++---------
->>>>  1 file changed, 49 insertions(+), 46 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->>>> index 935d63d181d9..e0bd013ecca3 100644
->>>> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->>>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
->>>> @@ -34,11 +34,11 @@ properties:
->>>>            - nvidia,tegra234-mc
->>>>  
->>>>    reg:
->>>> -    minItems: 6
->>>> +    minItems: 4
->>>>      maxItems: 18
->>>>  
->>>>    reg-names:
->>>> -    minItems: 6
->>>> +    minItems: 4
->>>>      maxItems: 18
->>>>  
->>>>    interrupts:
->>>> @@ -151,12 +151,13 @@ allOf:
->>>>  
->>>>          reg-names:
->>>>            items:
->>>> -            - const: sid
->>>> -            - const: broadcast
->>>> -            - const: ch0
->>>> -            - const: ch1
->>>> -            - const: ch2
->>>> -            - const: ch3
->>>> +            enum:
->>>> +              - sid
->>>> +              - broadcast
->>>> +              - ch0
->>>> +              - ch1
->>>> +              - ch2
->>>> +              - ch3
->>>
->>> I understand why sid and broadcast are becoming optional, but why order
->>> of the rest is now fully flexible?
->>
->> The reason why the order of the rest doesn't matter is because we have
->> both reg and reg-names properties and so the order in which they appear
->> in the list doesn't matter. The only thing that matters is that the
->> entries of the reg and reg-names properties match.
->>
->>> This does not even make sid/broadcast optional, but ch0!
->>
->> Yeah, this ends up making all entries optional, which isn't what we
->> want. I don't know of a way to accurately express this in json-schema,
->> though. Do you?
->>
->> If not, then maybe we need to resort to something like this and also
->> mention explicitly in some comment that it is sid and broadcast that are
->> optional.
+On 12/04/2024 15:05, Sumit Gupta wrote:
+> MC SID and Broadbast channel register access is restricted for Guest VM.
+> Make both the regions as optional for SoC's from Tegra186 onwards.
+> Tegra MC driver will skip access to the restricted registers from Guest
+> if the respective regions are not present in the memory-controller node
+> of Guest DT.
 > 
-> Actually, here's another variant that is a bit closer to what we want:
-> 
-> --- >8 ---
-> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-> index 935d63d181d9..86f1475926e4 100644
-> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
-> @@ -34,11 +34,11 @@ properties:
->            - nvidia,tegra234-mc
->  
->    reg:
-> -    minItems: 6
-> +    minItems: 4
->      maxItems: 18
->  
->    reg-names:
-> -    minItems: 6
-> +    minItems: 4
->      maxItems: 18
->  
->    interrupts:
-> @@ -146,17 +146,21 @@ allOf:
->      then:
->        properties:
->          reg:
-> +          minItems: 4
->            maxItems: 6
->            description: 5 memory controller channels and 1 for stream-id registers
->  
->          reg-names:
-> -          items:
-> -            - const: sid
-> -            - const: broadcast
-> -            - const: ch0
-> -            - const: ch1
-> -            - const: ch2
-> -            - const: ch3
-> +          anyOf:
-> +            - items:
-> +                enum: [ sid, broadcast, ch0, ch1, ch2, ch3 ]
-> +              uniqueItems: true
-> +              minItems: 6
-> +
-> +            - items:
-> +                enum: [ ch0, ch1, ch2, ch3 ]
-> +              uniqueItems: true
-> +              minItems: 4
->  
->    - if:
->        properties:
-> @@ -165,29 +169,22 @@ allOf:
->      then:
->        properties:
->          reg:
-> -          minItems: 18
-> +          minItems: 16
->            description: 17 memory controller channels and 1 for stream-id registers
->  
->          reg-names:
-> -          items:
-> -            - const: sid
-> -            - const: broadcast
-> -            - const: ch0
-> -            - const: ch1
-> -            - const: ch2
-> -            - const: ch3
-> -            - const: ch4
-> -            - const: ch5
-> -            - const: ch6
-> -            - const: ch7
-> -            - const: ch8
-> -            - const: ch9
-> -            - const: ch10
-> -            - const: ch11
-> -            - const: ch12
-> -            - const: ch13
-> -            - const: ch14
-> -            - const: ch15
-> +          anyOf:
-> +            - items:
-> +                enum: [ sid, broadcast, ch0, ch1, ch2, ch3, ch4, ch5, ch6, ch7,
-> +                        ch8, ch9, ch10, ch11, ch12, ch13, ch14, ch15 ]
-> +              minItems: 18
-> +              uniqueItems: true
-> +
-> +            - items:
-> +                enum: [ ch0, ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, ch10,
-> +                        ch11, ch12, ch13, ch14, ch15 ]
-> +              minItems: 16
-> +              uniqueItems: true
+> Suggested-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
 
-No, because order is strict.
+One more thing:
 
-...
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching.
 
-> 
-> The one restriction that it has is that "sid" and "broadcast" must be
-> optional together. So you can't have just "sid" or "broadcast", but they
-> either must both be there, or they must both not be there.
-> 
-
-This must be explained in commit msg.
+The current prefix is just terrible... are you changing all bindings in
+entire kernel repository?
 
 Best regards,
 Krzysztof
