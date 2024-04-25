@@ -1,33 +1,60 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E8414A0B2;
-	Thu, 25 Apr 2024 15:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B720037152
+	for <linux-tegra@vger.kernel.org>; Thu, 25 Apr 2024 15:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714057565; cv=none; b=oubXkQCUOmvtUmAcy9036JhTYi3XfJ2WBZ2nyNVlr8+nSWbZMu2M1TEsDfz7sy1vDBWRjnGrCqn9pnwPO6tpAMAWv5BFjFN7ChEQCB3NECEZBtGEbeOl1MZMzImHRK1nigpf/NR8evuBOX8xAbxF8hmySz82NB77rrKqhTMtQ3w=
+	t=1714058183; cv=none; b=NY5Wf46JUp0Wu2ghyQJgsYXcakDeWzALWMHMBhRrWHBbHEuVDUNEWnGiwnw6lvGuoJpsi/FugsHWe8NfDRXvWBVVsOHYXSNtRki0WwIJiOaD2eW2lF8PGKlMKYP3spVxWQZsJAt6enCDyZ8+qutI3INOKsuBCbqxg21ueQeZTLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714057565; c=relaxed/simple;
-	bh=YYdxZ2iuMpRX8Qcm7I+r/grTTBlmJZFnrlNrHolBd3Y=;
+	s=arc-20240116; t=1714058183; c=relaxed/simple;
+	bh=5yxhYykwugKSH3LzzWOU0n0bbIEo1Q8ay/PBp5JY8Pc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k191MoWucWaXItsrBJYJcbnaSkapsZmQG0XfcCYaLq4zY9srieDMD3vJI16x89ECotRJkv5W0lZnStOeW57EKayBOn5YARG4x+mqDD6uhVkwXSTXEdrdnUOAEFWLJ+Au0GR+os+PgjOVYji3QZ7v5EcqelAXVTjGVUxoeV9Ts8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7i9G3QY; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=R/2AwiDLNXTF0Exj+ib8GrfXhyiLp0AXm3Xh91uuaxKt25vOQCcjLGiLNqFPWLByvyixgHLncQ1i97lQCqkAiZ6siu3NR/qHhPYUZgjAHtMOcpSvzlnK3IoGgPWKqgLcFSeigPi2353fSCNmr/+Erk9Kk8HwvvAhBRusVRzowNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t9e4rQt1; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7i9G3QY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30898C113CC;
-	Thu, 25 Apr 2024 15:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714057564;
-	bh=YYdxZ2iuMpRX8Qcm7I+r/grTTBlmJZFnrlNrHolBd3Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B7i9G3QYg21wVQA4UDNw6wU20FEXjdhjArslg6RRONMfNG7/qqa7U/ciz43VogdJi
-	 bfZ9ryICzcgdH2vlgNDXEC+cIP/loWz1Ga4l4a+imLg8jouXTMr6RjueSeAj+vBvaX
-	 19/c6Q1l80auk65ZA3Myrm9EEOqSdTeLW64PQXC5t0lw6iRIeuRrOgBes4WVhtdt5L
-	 V6KcsLxSVaeN5oxoh+CoxEaHq+USuPysDbjznybdhiLKYQa3lJjvdgzJu8hDblKVwg
-	 3+kxTG8dHv0jA6jUIYcakg5E6GeGw4uWfGtvyuXX4YTWonNW2LuVdpsrlQjk/Oei9Z
-	 Mpjg85OAKrlsw==
-Message-ID: <99496fb5-50d3-4e91-a519-881cae58b47a@kernel.org>
-Date: Thu, 25 Apr 2024 17:05:58 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t9e4rQt1"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a52223e004dso131224366b.2
+        for <linux-tegra@vger.kernel.org>; Thu, 25 Apr 2024 08:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714058178; x=1714662978; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CyrXcSnM/MfOVZ3XMl41JkXc30kPx3wxBN2F1+zdXXg=;
+        b=t9e4rQt1aRIur5CMQojLglcZ+ldhcztsQ5PiRYx5uHM7DZRfCe0aiefrtq5ZudedKm
+         A5dsXCjsN7USbugtY8TumURKGJwB9EttkXinXHD5VIrfMr1bREvPp46J2RKPJ19jRecG
+         +Cjnxvqr/R0MUmFx/vEY1feh1wrAXGzxTkJD3wcUGj1jOxzhFv49p/DrllhNOe+aBzlO
+         EpJarK4EOoM85YVgBwcw5O+MANMKCfky0fKW9kt7DeVI7UsFUigThM5cPwfpNdcs/40k
+         csAj1DpiimT+UHKJ8RBMKUEn7mG/6yUf8p8QFx5O5A/FXNf2o7Cc78GaIhbo0QEqgz8w
+         TlOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714058178; x=1714662978;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CyrXcSnM/MfOVZ3XMl41JkXc30kPx3wxBN2F1+zdXXg=;
+        b=dYolW8qM0WCw+ZoxCj1kYaPBpZ/+//4opcZRW/lMSQviMYIwZ0ww5/cgaqY009srNF
+         dAVvhCgbVwWkp9sLoBfZpOC96wK3U4toLEdNfZk9GFbpUYnL/M7FdJdwYnfaLOSh/WSp
+         cQGGtRqncejuHLtD+f6qfPfPcU1TFCMj6vWVmbs5aIAevHQ+WMQsJQ7rXkRstBckL87+
+         VFhDUHCQKDEvU7s83bZ6D10RshARBTrQijvWsZd4E7yu9flcqMHgG1I6HDuDZYDPYw0f
+         nJgSlyKwq/yl4T2Ax87Dx7tTB5Y4xTIWuPAS24rMI4Efnw03Muw343L+UpAZxcu8KjCm
+         Cv4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXA52KWlLUavCIr/Z6g7Zfo/dA3Vnhpj4yHYrAsaDtyiHKhar+7N1L790m+ovcCjYLoNkAftlLiVi+wrlEtQqNSFUvdVE7y5MS8578=
+X-Gm-Message-State: AOJu0YyXwIrINjHSgethnEnAUDweGmKgN2KeZNO7YSGjah4koy7HbDdQ
+	auKIFierkSHAYin3EqO+pLUucPMiSvGuktVmsP/O+7mP2FrNWkLwKIdh/mxNgXQ=
+X-Google-Smtp-Source: AGHT+IGqu80UeP2zZXNY3+qIMygrtn8SShEVi35k8vcUYyHt6Hg47hFykQyDe9+iZi2t5jjCeMYQQw==
+X-Received: by 2002:a17:906:c202:b0:a52:5493:a0b9 with SMTP id d2-20020a170906c20200b00a525493a0b9mr27837ejz.39.1714058177950;
+        Thu, 25 Apr 2024 08:16:17 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id i21-20020a170906a29500b00a526a992d82sm9663042ejz.4.2024.04.25.08.16.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Apr 2024 08:16:17 -0700 (PDT)
+Message-ID: <524f0bd3-1912-4a06-8c68-fea7ca563d68@linaro.org>
+Date: Thu, 25 Apr 2024 17:16:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,19 +62,23 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ASoC: dt-bindings: tegra30-i2s: convert to dt schema
-To: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240425090716.176818-1-sheharyaar48@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [Patch v3 1/2] dt-bindings: make sid and broadcast reg optional
+To: Thierry Reding <thierry.reding@gmail.com>, Sumit Gupta
+ <sumitg@nvidia.com>, robh@kernel.org, conor+dt@kernel.org, maz@kernel.org,
+ mark.rutland@arm.com, treding@nvidia.com, jonathanh@nvidia.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org, amhetre@nvidia.com, bbasu@nvidia.com
+References: <20240412130540.28447-1-sumitg@nvidia.com>
+ <20240412130540.28447-2-sumitg@nvidia.com>
+ <d26f9661-3e50-4a72-9097-fe63a27503f1@linaro.org>
+ <D0SHRQVCGJBY.2DPLX9K6VXEYM@gmail.com> <D0SILCYU98EV.1XW7NZFC9013K@gmail.com>
+ <9561dede-37d0-4183-8742-448058803f8e@linaro.org>
+ <D0T3R7UPFO07.2VR2436TG4N8B@gmail.com>
+ <d8eb6652-18b5-4ed6-9a44-7c2a0f3bc3bb@linaro.org>
+ <D0TANBDMJHH2.5XTXRZ09K4OU@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
  JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
@@ -57,184 +88,266 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  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
- 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 fv0=
-In-Reply-To: <20240425090716.176818-1-sheharyaar48@gmail.com>
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <D0TANBDMJHH2.5XTXRZ09K4OU@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/04/2024 11:07, Mohammad Shehar Yaar Tausif wrote:
-> Convert NVIDIA Tegra30 I2S binding to DT schema and
-> add new examples.
+On 25/04/2024 17:03, Thierry Reding wrote:
+> On Thu Apr 25, 2024 at 11:45 AM CEST, Krzysztof Kozlowski wrote:
+>> On 25/04/2024 11:39, Thierry Reding wrote:
+>>> On Thu Apr 25, 2024 at 9:52 AM CEST, Krzysztof Kozlowski wrote:
+>>>> On 24/04/2024 19:04, Thierry Reding wrote:
+>>>>> On Wed Apr 24, 2024 at 6:26 PM CEST, Thierry Reding wrote:
+>>>>>> On Mon Apr 22, 2024 at 9:02 AM CEST, Krzysztof Kozlowski wrote:
+>>>>>>> On 12/04/2024 15:05, Sumit Gupta wrote:
+>>>>>>>> MC SID and Broadbast channel register access is restricted for Guest VM.
+>>>>>>>
+>>>>>>> Broadcast
+>>>>>>>
+>>>>>>>> Make both the regions as optional for SoC's from Tegra186 onwards.
+>>>>>>>
+>>>>>>> onward?
+>>>>>>>
+>>>>>>>> Tegra MC driver will skip access to the restricted registers from Guest
+>>>>>>>> if the respective regions are not present in the memory-controller node
+>>>>>>>> of Guest DT.
+>>>>>>>>
+>>>>>>>> Suggested-by: Thierry Reding <treding@nvidia.com>
+>>>>>>>> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+>>>>>>>> ---
+>>>>>>>>  .../nvidia,tegra186-mc.yaml                   | 95 ++++++++++---------
+>>>>>>>>  1 file changed, 49 insertions(+), 46 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>>>>> index 935d63d181d9..e0bd013ecca3 100644
+>>>>>>>> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>>>>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>>>>> @@ -34,11 +34,11 @@ properties:
+>>>>>>>>            - nvidia,tegra234-mc
+>>>>>>>>  
+>>>>>>>>    reg:
+>>>>>>>> -    minItems: 6
+>>>>>>>> +    minItems: 4
+>>>>>>>>      maxItems: 18
+>>>>>>>>  
+>>>>>>>>    reg-names:
+>>>>>>>> -    minItems: 6
+>>>>>>>> +    minItems: 4
+>>>>>>>>      maxItems: 18
+>>>>>>>>  
+>>>>>>>>    interrupts:
+>>>>>>>> @@ -151,12 +151,13 @@ allOf:
+>>>>>>>>  
+>>>>>>>>          reg-names:
+>>>>>>>>            items:
+>>>>>>>> -            - const: sid
+>>>>>>>> -            - const: broadcast
+>>>>>>>> -            - const: ch0
+>>>>>>>> -            - const: ch1
+>>>>>>>> -            - const: ch2
+>>>>>>>> -            - const: ch3
+>>>>>>>> +            enum:
+>>>>>>>> +              - sid
+>>>>>>>> +              - broadcast
+>>>>>>>> +              - ch0
+>>>>>>>> +              - ch1
+>>>>>>>> +              - ch2
+>>>>>>>> +              - ch3
+>>>>>>>
+>>>>>>> I understand why sid and broadcast are becoming optional, but why order
+>>>>>>> of the rest is now fully flexible?
+>>>>>>
+>>>>>> The reason why the order of the rest doesn't matter is because we have
+>>>>>> both reg and reg-names properties and so the order in which they appear
+>>>>>> in the list doesn't matter. The only thing that matters is that the
+>>>>>> entries of the reg and reg-names properties match.
+>>>>>>
+>>>>>>> This does not even make sid/broadcast optional, but ch0!
+>>>>>>
+>>>>>> Yeah, this ends up making all entries optional, which isn't what we
+>>>>>> want. I don't know of a way to accurately express this in json-schema,
+>>>>>> though. Do you?
+>>>>>>
+>>>>>> If not, then maybe we need to resort to something like this and also
+>>>>>> mention explicitly in some comment that it is sid and broadcast that are
+>>>>>> optional.
+>>>>>
+>>>>> Actually, here's another variant that is a bit closer to what we want:
+>>>>>
+>>>>> --- >8 ---
+>>>>> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>> index 935d63d181d9..86f1475926e4 100644
+>>>>> --- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra186-mc.yaml
+>>>>> @@ -34,11 +34,11 @@ properties:
+>>>>>            - nvidia,tegra234-mc
+>>>>>  
+>>>>>    reg:
+>>>>> -    minItems: 6
+>>>>> +    minItems: 4
+>>>>>      maxItems: 18
+>>>>>  
+>>>>>    reg-names:
+>>>>> -    minItems: 6
+>>>>> +    minItems: 4
+>>>>>      maxItems: 18
+>>>>>  
+>>>>>    interrupts:
+>>>>> @@ -146,17 +146,21 @@ allOf:
+>>>>>      then:
+>>>>>        properties:
+>>>>>          reg:
+>>>>> +          minItems: 4
+>>>>>            maxItems: 6
+>>>>>            description: 5 memory controller channels and 1 for stream-id registers
+>>>>>  
+>>>>>          reg-names:
+>>>>> -          items:
+>>>>> -            - const: sid
+>>>>> -            - const: broadcast
+>>>>> -            - const: ch0
+>>>>> -            - const: ch1
+>>>>> -            - const: ch2
+>>>>> -            - const: ch3
+>>>>> +          anyOf:
+>>>>> +            - items:
+>>>>> +                enum: [ sid, broadcast, ch0, ch1, ch2, ch3 ]
+>>>>> +              uniqueItems: true
+>>>>> +              minItems: 6
+>>>>> +
+>>>>> +            - items:
+>>>>> +                enum: [ ch0, ch1, ch2, ch3 ]
+>>>>> +              uniqueItems: true
+>>>>> +              minItems: 4
+>>>>>  
+>>>>>    - if:
+>>>>>        properties:
+>>>>> @@ -165,29 +169,22 @@ allOf:
+>>>>>      then:
+>>>>>        properties:
+>>>>>          reg:
+>>>>> -          minItems: 18
+>>>>> +          minItems: 16
+>>>>>            description: 17 memory controller channels and 1 for stream-id registers
+>>>>>  
+>>>>>          reg-names:
+>>>>> -          items:
+>>>>> -            - const: sid
+>>>>> -            - const: broadcast
+>>>>> -            - const: ch0
+>>>>> -            - const: ch1
+>>>>> -            - const: ch2
+>>>>> -            - const: ch3
+>>>>> -            - const: ch4
+>>>>> -            - const: ch5
+>>>>> -            - const: ch6
+>>>>> -            - const: ch7
+>>>>> -            - const: ch8
+>>>>> -            - const: ch9
+>>>>> -            - const: ch10
+>>>>> -            - const: ch11
+>>>>> -            - const: ch12
+>>>>> -            - const: ch13
+>>>>> -            - const: ch14
+>>>>> -            - const: ch15
+>>>>> +          anyOf:
+>>>>> +            - items:
+>>>>> +                enum: [ sid, broadcast, ch0, ch1, ch2, ch3, ch4, ch5, ch6, ch7,
+>>>>> +                        ch8, ch9, ch10, ch11, ch12, ch13, ch14, ch15 ]
+>>>>> +              minItems: 18
+>>>>> +              uniqueItems: true
+>>>>> +
+>>>>> +            - items:
+>>>>> +                enum: [ ch0, ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9, ch10,
+>>>>> +                        ch11, ch12, ch13, ch14, ch15 ]
+>>>>> +              minItems: 16
+>>>>> +              uniqueItems: true
+>>>>
+>>>> No, because order is strict.
+>>>
+>>> Why? I realize that prior to this the order was indeed strict and it's
+>>
+>> That's the policy for entire Devicetree. I said why in other email:
+>> because any bindings consumer can take it via indices.
+>>
+>>> common to have these listed in strict order in the DTS files. However,
+>>> this is an arbitrary restriction that was introduced in the patch that
+>>> added reg-names. However, */*-names properties have always assumed the
+>>> ordering to be non-strict because each entry from the * property gets
+>>> matched up with the corresponding entry in the *-names property, so the
+>>> ordering is completely irrelevant.
+>>
+>> This was raised so many times... reg-names is just a helper. It does not
+>> change the fact that order should be strict and if binding defined the
+>> order, it is an ABI.
 > 
-> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-> ---
-> Changes v2->v3:
-> - Fixed example indentation
-> - Fix compatible logic
-> - Add new examples from existing dts
+> Sorry, but that's not how we've dealt with this in the past. Even though
+> this was now ten or more years ago, I distinctly recall that when we
+> started adding these *-names properties and at the time it was very much
+> implied that the order didn't matter.
 
-Why? One different property does not justify new example. I don't think
-I asked for such change.
+Then you added it wrong and Rob was expressing the purpose of names
+multiple times. The names were for cases when you could not determine
+the order.
 
-> - Add clock-names in properties
+The strict order was repeated so many times in the mailing list, I lost
+track.
+
+> The only use-case that I know of where order was always meant to matter
+> is backwards-compatibility for devices that used to have a single entry
+> (hence drivers couldn't rely on *-names to resolve the index) and then
+> had additional entries added. The *-names entry for that previously
+> single entry would now obviously have to always be first in the list to
+> preserve backwards-compatibility.
 > 
-> v2:
-> https://lore.kernel.org/all/20240421123037.75680-1-sheharyaar48@gmail.com/
-> ---
->  .../bindings/sound/nvidia,tegra30-i2s.txt     | 27 ------
->  .../bindings/sound/nvidia,tegra30-i2s.yaml    | 94 +++++++++++++++++++
->  2 files changed, 94 insertions(+), 27 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
-> deleted file mode 100644
-> index 38caa936f6f8..000000000000
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
-> +++ /dev/null
-> @@ -1,27 +0,0 @@
-> -NVIDIA Tegra30 I2S controller
-> -
-> -Required properties:
-> -- compatible : For Tegra30, must contain "nvidia,tegra30-i2s".  For Tegra124,
-> -  must contain "nvidia,tegra124-i2s".  Otherwise, must contain
-> -  "nvidia,<chip>-i2s" plus at least one of the above, where <chip> is
-> -  tegra114 or tegra132.
-> -- reg : Should contain I2S registers location and length
-> -- clocks : Must contain one entry, for the module clock.
-> -  See ../clocks/clock-bindings.txt for details.
-> -- resets : Must contain an entry for each entry in reset-names.
-> -  See ../reset/reset.txt for details.
-> -- reset-names : Must include the following entries:
-> -  - i2s
-> -- nvidia,ahub-cif-ids : The list of AHUB CIF IDs for this port, rx (playback)
-> -  first, tx (capture) second. See nvidia,tegra30-ahub.txt for values.
-> -
-> -Example:
-> -
-> -i2s@70080300 {
-> -	compatible = "nvidia,tegra30-i2s";
-> -	reg = <0x70080300 0x100>;
-> -	nvidia,ahub-cif-ids = <4 4>;
-> -	clocks = <&tegra_car 11>;
-> -	resets = <&tegra_car 11>;
-> -	reset-names = "i2s";
-> -};
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
-> new file mode 100644
-> index 000000000000..3d8d56c666d7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
-> @@ -0,0 +1,94 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/nvidia,tegra30-i2s.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra30 I2S controller
-> +
-> +maintainers:
-> +  - Thierry Reding <treding@nvidia.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra124-i2s
-> +          - nvidia,tegra30-i2s
-> +      - items:
-> +          - enum:
-> +              - nvidia,tegra114-i2s
-> +              - nvidia,tegra132-i2s
-> +          - enum:
-> +              - nvidia,tegra124-i2s
-> +              - nvidia,tegra30-i2s
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    maxItems: 1
+> Besides, if reg-names was really only a helper, then it would also be
+> completely redundant. Many device tree bindings have *-names properties
+> marked as "required" precisely because of the role that they serve.
 
-This was not in the previous binding and is not explained in commit msg.
+For most of the cases, so ones which do not have flexible order, it is
+redundant and for that reason Qualcomm has been switching away from
+xxx-names in several drivers.
 
-Also, this needs to be specific.
+However it is not entirely redundant, because it allows bindings
+consumers to choose either index or name. Both are ABI, when documented
+in the binding with strict order.
 
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: i2s
-> +
-> +  nvidia,ahub-cif-ids:
-> +    description: list of AHUB CIF IDs
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    items:
-> +      - description: rx (playback)
-> +      - description: tx (capture)
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - resets
-> +  - reset-names
-> +  - nvidia,ahub-cif-ids
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra30-car.h>
-> +
-> +    i2s@70080300 {
-> +        compatible = "nvidia,tegra30-i2s";
-> +        reg = <0x70080300 0x100>;
-> +        nvidia,ahub-cif-ids = <4 4>;
-> +        clocks = <&tegra_car TEGRA30_CLK_I2S0>;
-> +        resets = <&tegra_car 30>;
-> +        reset-names = "i2s";
-> +    };
+https://lore.kernel.org/all/CAL_JsqJSYAsotjzvOUy_f7ZRfsSrfZyuEzq7eRwwKk12FBgxYg@mail.gmail.com/
 
-Just keep one or two examples.
 
 Best regards,
 Krzysztof
