@@ -1,223 +1,152 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D910149E0A;
-	Thu, 25 Apr 2024 15:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6DF114B089;
+	Thu, 25 Apr 2024 15:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714059082; cv=none; b=sucFJyRnqszt37jUZw8tCBlNCG1WSgNRF3VMsIdjSyR8H1miErAN42iv8hly5FrmS7p3bHqyhnLuXevJGVxoAQWBI5YOJVE8f0N+eNMCkhmdLhKjryMxTBMEA+lUzStEiHOm5CTecZK8AV/s25mQ272Ld72W1HXTRpXY2i78VKw=
+	t=1714059351; cv=none; b=nKbo0/SGrY7xLQceMkvH+w7DWyxS0PD9rHTCKuPQyMrOOQ8QkVIFpta8wyToVN1vL2OSTQzTPTZS3PFIRPbkg/FSJ9LtXJ161ZJsx0EgSkcl+2x3lNXLLch3CwU3B+kU3EWclFsJr0T8AkLaDMRxOwMVIU0mIiuZY+OfANvrTKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714059082; c=relaxed/simple;
-	bh=kx5+gE45WMQP6pGFUjecoShicQtKbjBVqw5ZcMyBzA4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KSESe+52VEjC7lzCpcWqT7Q5t9jRtOpsGM+8kEt61K0Gxluj6tNKIrUiEd4g+LDCS5H+4l+NKnum2BA1NIwyeVmnZHlGFPpxEFrxT6bvshx55hc3Q47kJHkul/FJHSD0QX4nfksAaC5M4ffPdIFVmgmm9hZYOgBgAd/50FWmWQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fy8KimcW; arc=none smtp.client-ip=209.85.210.179
+	s=arc-20240116; t=1714059351; c=relaxed/simple;
+	bh=07GVtflPLexEXhrkAckXUsbUizZLt8azEHrY6p7cuuY=;
+	h=Content-Type:Mime-Version:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=iESU9lt2HBfH/Cq1n04TL6giMKGGcQYKnTT+15GFmsnn0y/R6xaHUPcI+h5bzKCQd0IK1nfJ7HvDinStqlRSP3ayjtJZ7jCS8JpdRJiGtHhyjvPrnCjGQekUoOTtsXoHtgZ0ztqCQxAeGViRIgpFXHjAG9rR3LzkQpWXf7tH8iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=diKqYFuM; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fy8KimcW"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f26588dd5eso1004899b3a.0;
-        Thu, 25 Apr 2024 08:31:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="diKqYFuM"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5194cebd6caso1288685e87.0;
+        Thu, 25 Apr 2024 08:35:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714059080; x=1714663880; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rBERq5/uHp8GRTEc93jIGVH7PZTLRmKPZLsYuH5mF3k=;
-        b=fy8KimcWyBO1+ZNq+di8d2eFfPi3nH3sPaJ5TVKMquEKJqRzIxmb0z8xySwbY/ndma
-         gfllyCyn6yEzGYsW4l6wmG7ftVELXVQgtAdwptMgSJqEY10ZgCOdLN4MmNIBOnvqaDXN
-         3GPPH1NFY6WMyKl3rpQ9ktUm37Yl/+7+EjhfjmQbxBQcMEB3XY4t1+6u+71n1eJrJiLO
-         J7Ye6mdw/AaJF0BqoF1LM04fwJGR66xxEIhja+xscMyQ8F+kFhHmlRMO17td8DbL8bij
-         B0Ep1dIgZFed86fY4Z4bI5OQGCIebN67n4GnSZ9gpYWWbLxXQWVBYA7QCmtg17aMy3cd
-         JHPg==
+        d=gmail.com; s=20230601; t=1714059348; x=1714664148; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NZnqzL7HjOluCQJ9FxDBIu8w6EzJgvkkZbKbDc0WHmA=;
+        b=diKqYFuMPtu6uDjiIn3hw7ZcgzutAJWqNniXz+OTZ0/nWgVjHs0owB8GuOBsk4jCpI
+         PTD26pbNCPUVup4z0R2uK5yPuGYvGF8+k1+4KqEKMXfknjkUurbThP3g9a7k8RZ6sy29
+         tgeJdnVrxQbXA8WxD7cVqc39Fcp4WZzzj34w8ZTadn0fn+6Zw6yG31l4GwM4lDvpcREc
+         mSkZUidM6/xuPWE8kZPaCFwB3uKVpkE85+j/ddQKDhY3CdVxsrohWtsfQN5HOleQPGpL
+         Hpr6KKmnRIXHjLd3Rzh9K8boC2Y7Ve6qO+gVrosnPK0vEWS4ZxTIhPOcImP6H3Qx2baL
+         fKhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714059080; x=1714663880;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1714059348; x=1714664148;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rBERq5/uHp8GRTEc93jIGVH7PZTLRmKPZLsYuH5mF3k=;
-        b=i9NY1WiRmqhHiH2lLwG5vuVBjOQtkaQ6VBvyr+nxnV5Sxy321de9D31Rv+h0QZobqH
-         UbXPYufvV0NVcQtbjSSzxRpfEBs3TszF+7f5WDWsW0VfBDALSa3LP9PvMsourwlfjwdH
-         W+yGgFZYJZxXsjFMJUWG4RBAvefhFq+8lqtJW+WwogiC4hITYTPiHfAL2YrGEXCGxg0+
-         z6NA0xSkwAXfXB/6nK5l84teWspJCjjdsnRS9T1q/nRWXtxdEVGjsgrafrHh3fN6typX
-         z+NBL3QQvulGLejByi6OdKvTqPndL3U9w4UvRhjMBbtAOGTqRDvCXbK4X5upc2CZcB2K
-         r6VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5TkWKrn9LpDMBEBS1eTwnkKKTRxOQH2dKWGgdMHm0K7wvHQ9/clMG0oZ+Hz5JY/Kmpev/1lYwlgkF1iQ51iYYz11lwIvSNv3WbUNIqJjjqC20l8mfpFFfSl3JFfgkzgz07VaJevEKSdb7RRxIYrgH5TplWi1sDHXVaaa1/hgnNGNfiAYU2b6PMGid0LXKC7ugk6ljymWf6W+VzEAROq5fNAQ=
-X-Gm-Message-State: AOJu0Yz4exfomqlB+dOEbhxdkLFNwvPc2Bvok3IRxZ0++ZiAnhkw8K66
-	m5GAmz0n0SAaIQHXrCt7snexOrLO2lO7HWyhb1gRwJVYKpkT8EXe
-X-Google-Smtp-Source: AGHT+IHlGWIXHIsV6x+Fn8uMP/x32pOhS4eia4ZjTF6cFW3rXTkhjaEK7imtaLKQ6B9z0Fwsf3z4Bw==
-X-Received: by 2002:a05:6a20:de93:b0:1ad:47c1:7a53 with SMTP id la19-20020a056a20de9300b001ad47c17a53mr4870353pzb.54.1714059079631;
-        Thu, 25 Apr 2024 08:31:19 -0700 (PDT)
-Received: from localhost (ec2-3-111-32-5.ap-south-1.compute.amazonaws.com. [3.111.32.5])
-        by smtp.gmail.com with UTF8SMTPSA id b19-20020a056a000a9300b006eae3aac040sm13269777pfl.31.2024.04.25.08.31.14
+        bh=NZnqzL7HjOluCQJ9FxDBIu8w6EzJgvkkZbKbDc0WHmA=;
+        b=kmlWbz51/FZ7HkBwT42jiK7MUn1NzmuN8NJvcvhDZXOM3m3S34P6g+5f5R4iAMX6sw
+         Mo0sFaWYMxX0+b2X1jxoIcqdcPHARm4ohlrtwiN+qeYADN0wK5/sMhdKMJ3WwFdyDxrN
+         8t7lcAQsgfUIz0hqUb2dgL+iWLj6VtJbE2fSHkb1Wi2SEGqNvduNd3zi5CSaJHFPN/Lk
+         0xX+eUJv6NQfQCz85lGlDCQLZw2JLm+L3I99uMrsGqcEjvj3qa5b5Dl03zPjn2VbmAXU
+         qSboenw/BOXiR4xPi3Jf/21oL+CkiLf5krrdB15EYVQptvCrhYJsOCGu19wVPMpg9xxg
+         OfzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSRVpAy94x6RTlna7HH/KphQ/nvdzKRx/AeUvI8rJY5RwZEW2ijNJBUBHTGFWelgKuSKFmA41bsvPncbhMt9VqDPoUMVaHAU+RfbxAN/+O4dR611x13+xDmIzLqBLIzpQRJV2IAIhLMls=
+X-Gm-Message-State: AOJu0Yx498caictK4SyGElCJzUgwKlfLkPy/K+mf/mY4/y/LEX2Y4baf
+	aa0gGdo+lHJ5Mzay+nTSPs37EakTwNEcw+/Ymyz89rfqW+kdzqwR
+X-Google-Smtp-Source: AGHT+IFuCEsHzQvzbD8XVPvlH6IqpOoftCmj0Vr0zcapZZToJyz7ddZlrzfNFYWacqsjZ6NrgxbFAQ==
+X-Received: by 2002:a19:ac08:0:b0:515:a6dd:9657 with SMTP id g8-20020a19ac08000000b00515a6dd9657mr4075058lfc.16.1714059347473;
+        Thu, 25 Apr 2024 08:35:47 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id d15-20020adffbcf000000b0034b1bd76d30sm10361271wrs.28.2024.04.25.08.35.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Apr 2024 08:31:19 -0700 (PDT)
-From: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>,
-	Thierry Reding <treding@nvidia.com>,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] ASoC: dt-bindings: tegra30-i2s: convert to dt schema
-Date: Thu, 25 Apr 2024 21:00:43 +0530
-Message-ID: <20240425153045.49939-1-sheharyaar48@gmail.com>
-X-Mailer: git-send-email 2.44.0
+        Thu, 25 Apr 2024 08:35:47 -0700 (PDT)
+Content-Type: multipart/signed;
+ boundary=914da399af0607f643709bc2fc1a510fd796868e26554216cfbbe1ea8aa2;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Date: Thu, 25 Apr 2024 17:35:46 +0200
+Message-Id: <D0TBBT7FZ3E0.14ZFOT5S4QZPR@gmail.com>
+To: "Miguel Miranda" <mmikernel@gmail.com>, <jonathanh@nvidia.com>,
+ <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Cc: <skhan@linuxfoundation.org>, <javier.carrasco.cruz@gmail.com>,
+ <julia.lawall@inria.fr>
+Subject: Re: [PATCH] drivers/soc/tegra: Replace dev_node refcount management
+From: "Thierry Reding" <thierry.reding@gmail.com>
+X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
+References: <20240424015306.1796838-1-mmikernel@gmail.com>
+In-Reply-To: <20240424015306.1796838-1-mmikernel@gmail.com>
 
-Convert NVIDIA Tegra30 I2S binding to DT schema and
-add "clock-names" property used by multiple tegra i2s blocks
-in arch/arm64/boot/dts/nvidia/tegra132.dtsi. This is not a
-required property by the binding.
+--914da399af0607f643709bc2fc1a510fd796868e26554216cfbbe1ea8aa2
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
----
-Changes v3->v4:
-- removed redundant example
-- defined clock-names property
+On Wed Apr 24, 2024 at 3:53 AM CEST, Miguel Miranda wrote:
+> Remove the manual refcount management of device_node
+> and instead, use scope-based resource management.
+>
+> While the pointer never gets out of scope it reduces
+> somehow the risk of missing the of_node_put() call.
 
-v3:
-https://lore.kernel.org/all/20240425090716.176818-1-sheharyaar48@gmail.com/
----
- .../bindings/sound/nvidia,tegra30-i2s.txt     | 27 ------
- .../bindings/sound/nvidia,tegra30-i2s.yaml    | 83 +++++++++++++++++++
- 2 files changed, 83 insertions(+), 27 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
- create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
+I don't understand what you're trying to say here.
 
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
-deleted file mode 100644
-index 38caa936f6f8..000000000000
---- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
-+++ /dev/null
-@@ -1,27 +0,0 @@
--NVIDIA Tegra30 I2S controller
--
--Required properties:
--- compatible : For Tegra30, must contain "nvidia,tegra30-i2s".  For Tegra124,
--  must contain "nvidia,tegra124-i2s".  Otherwise, must contain
--  "nvidia,<chip>-i2s" plus at least one of the above, where <chip> is
--  tegra114 or tegra132.
--- reg : Should contain I2S registers location and length
--- clocks : Must contain one entry, for the module clock.
--  See ../clocks/clock-bindings.txt for details.
--- resets : Must contain an entry for each entry in reset-names.
--  See ../reset/reset.txt for details.
--- reset-names : Must include the following entries:
--  - i2s
--- nvidia,ahub-cif-ids : The list of AHUB CIF IDs for this port, rx (playback)
--  first, tx (capture) second. See nvidia,tegra30-ahub.txt for values.
--
--Example:
--
--i2s@70080300 {
--	compatible = "nvidia,tegra30-i2s";
--	reg = <0x70080300 0x100>;
--	nvidia,ahub-cif-ids = <4 4>;
--	clocks = <&tegra_car 11>;
--	resets = <&tegra_car 11>;
--	reset-names = "i2s";
--};
-diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
-new file mode 100644
-index 000000000000..13cee366f5b3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
-@@ -0,0 +1,83 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/nvidia,tegra30-i2s.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NVIDIA Tegra30 I2S controller
-+
-+maintainers:
-+  - Thierry Reding <treding@nvidia.com>
-+  - Jon Hunter <jonathanh@nvidia.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - nvidia,tegra124-i2s
-+          - nvidia,tegra30-i2s
-+      - items:
-+          - enum:
-+              - nvidia,tegra114-i2s
-+              - nvidia,tegra132-i2s
-+          - enum:
-+              - nvidia,tegra124-i2s
-+              - nvidia,tegra30-i2s
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: i2s
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    const: i2s
-+
-+  nvidia,ahub-cif-ids:
-+    description: list of AHUB CIF IDs
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    items:
-+      - description: rx (playback)
-+      - description: tx (capture)
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - resets
-+  - reset-names
-+  - nvidia,ahub-cif-ids
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/tegra30-car.h>
-+
-+    i2s@70080300 {
-+        compatible = "nvidia,tegra30-i2s";
-+        reg = <0x70080300 0x100>;
-+        nvidia,ahub-cif-ids = <4 4>;
-+        clocks = <&tegra_car TEGRA30_CLK_I2S0>;
-+        resets = <&tegra_car 30>;
-+        reset-names = "i2s";
-+    };
-+  - |
-+    #include <dt-bindings/clock/tegra124-car.h>
-+
-+    i2s@70301100 {
-+        compatible = "nvidia,tegra124-i2s";
-+        reg = <0x70301100 0x100>;
-+        nvidia,ahub-cif-ids = <5 5>;
-+        clocks = <&tegra_car TEGRA124_CLK_I2S1>;
-+        clock-names = "i2s";
-+        resets = <&tegra_car 11>;
-+        reset-names = "i2s";
-+    };
-+...
--- 
-2.44.0
+> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+> Signed-off-by: Miguel Miranda <mmikernel@gmail.com>
+> ---
+> I only have a deprecated jetson nano dev-kit, but need
+> to test this on hardware. I am exploring options to
+> build a rootfs to test this using qemu-system-aarch64.
 
+It doesn't look like it'll be necessary to extensively test this. Just
+by inspecting this we can see that it doesn't change behaviour. There
+isn't really a big advantage to employ the __free() mechanism here since
+we have exactly one of_node_put() to clean up, but I guess why not. So
+maybe reword that commit message to be less confusing.
+
+Thierry
+
+> ---
+>  drivers/soc/tegra/common.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+> index dff6d5ef4e46..94d11102d90f 100644
+> --- a/drivers/soc/tegra/common.c
+> +++ b/drivers/soc/tegra/common.c
+> @@ -28,14 +28,12 @@ static const struct of_device_id tegra_machine_match[=
+] =3D {
+>  bool soc_is_tegra(void)
+>  {
+>  	const struct of_device_id *match;
+> -	struct device_node *root;
+> +	struct device_node *root __free(device_node) =3D of_find_node_by_path("=
+/");
+> =20
+> -	root =3D of_find_node_by_path("/");
+>  	if (!root)
+>  		return false;
+> =20
+>  	match =3D of_match_node(tegra_machine_match, root);
+> -	of_node_put(root);
+> =20
+>  	return match !=3D NULL;
+>  }
+
+
+--914da399af0607f643709bc2fc1a510fd796868e26554216cfbbe1ea8aa2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmYqeFIACgkQ3SOs138+
+s6H5zQ/9EMK+VQev1WAylRx3Sw+siqhIpJzdjWxcth+ARRVneIbGasJY05wGnXK/
+DcQAbz5jtlTxh55f5VfwqpmU1KCmnnhmI8k1M5pgFUVgBzXhotHuGtSOs7efo0H/
+2NmQirCL+fYZhhEhwWGbXVQ24zTISAeWPKIk6W9nOihc/3nyz1/MMLwMNL8XWbSX
+tavXXFvNx4u86RF7RBDmFO0uK1AOutz21TfOzpCieTliS/O67O3Utgko3/Lgr6ze
+2HuCQN6ex+wHguYlYWYccFGhyb94O/w8krQWrU6q9KlLkf5vtRQtJDaFHlHy8/vM
+fzD+JCNWg2eyuIZl7PdxcDkBZCC9k6hjGucJ96VzCo+Y4Rhi+NLo1lQodGAuwc/P
+xh9H9cs8vC3wk09i9zzecRIeIUZTJbFO+H96R4HWbLnwL/IFxfWA3Y2y42ma5RtU
+9x3A6TO6NEVZsWs6VPF0qSaEydWbk+PRxMXYEmvCEAghbLh3F7zGIASkNJm8vfv+
+5b3eW+G9SaQAJzEZ56jRDiBF6ckEYq0aSuLGaPOhPizS2uH04bFpxbJnaYb3Qe4U
+MPjoqA8f3FVIn5fxsVMTRgdSL5zF87KaRZDpAipumrlVjnHzyqiryVrlr35XZ3vt
+F6mYy5jTrUqJHNr+ymUx9R+V4VI+U8cithp4pEwK1QulCm9m/co=
+=Qpbs
+-----END PGP SIGNATURE-----
+
+--914da399af0607f643709bc2fc1a510fd796868e26554216cfbbe1ea8aa2--
