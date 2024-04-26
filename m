@@ -1,71 +1,60 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8437716C84C
-	for <linux-tegra@vger.kernel.org>; Fri, 26 Apr 2024 18:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB542562E;
+	Fri, 26 Apr 2024 20:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714154732; cv=none; b=IAtJsUUGncOyi/pA4Hg6tMBgeO7VZsFUZjBZpw1D2mNVkP0dhHkC017m1TuJ/Enb5zM2pg2BN/alOQnqqd+HOjX4FaTaMOVOUy2xhdmSLPDsxzBOL+tJZ899XUOu03YQiZMXFbiQlpC8vuW+mjduVcheNfsv0xAuAaJwpcvIPg8=
+	t=1714162981; cv=none; b=VneV8+tDepOzUPiTOV9Dh35ldG0QJtlAW5vdutevNRf3OOT8z+B2W0cZ6JGz9t3sNNrbuBiHer3Kar7Q+WMZhCPaKvqt+CCCSRQhGipyKRBqccnVbNs2ErW2v3PfR9pH3DPcKzTvmSWhD+u1K/MqHLmKBxG8PwLr/pC7N1wQELI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714154732; c=relaxed/simple;
-	bh=T6KrFxVXm2aj4f6k2U2yY8qoXm0O232h2Ue3QmgnFuA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OrRMGMfGENn19ElNomBxx2y6qywYVVfm3bnhEFOGEKgoUT+EiXQYWNgVcDpN3IO9AZ2GeoeuiCq/upuYetaSlQ074mw8Z6481+wDX0Hs/k7yK2QDno0fBi0bGSM+L2HS20HfOoHJaZDYzjCRDzwqrcP3gkyfc8nQkbyKei9TUi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsrYxMpE; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1714162981; c=relaxed/simple;
+	bh=GbaTYwdZ8id3LPa579gAi+LysdGAYbNVBDYDNoM7P+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YxrmpfOEDSE46hUS2NRU6RnvK/2qwzfg6MKm94FDv7SMHW3bG2SjVrsJCRrbJjZfol0fhcxlor+fR7YXpb1CcF0Wz4nSI/MvdPSMVAS5PsuApcVzUYTjYyjkryW3v64eopUdOyuDG3N0XG2ZhnzMsnTgxwKSkMoMn69fceAS5ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BDt7XFC5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsrYxMpE"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-41b2119da94so19934025e9.0
-        for <linux-tegra@vger.kernel.org>; Fri, 26 Apr 2024 11:05:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714154730; x=1714759530; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9fizBVqhC4Ce5f9/iqh/ic074DoEbG4uaUF9d5i7O8Q=;
-        b=XsrYxMpEUJ3uehB6zwXmDB4T12QeGDr8ysknFSvcgfWtqLgwJDnlJ+0W0I7NkUTBxp
-         4hczT9tLhHKfrBfhRktVuSPcrBzEE46IFV9tyRr/7IL+tNsGKUDsExYJy8BlPvgGT3Ip
-         cudDOyMTHcUxHeK+nNrIzWbJzInw76w2kDzM9UQGwXkshEd9Ahbr1oUyscOR2zJxY1yv
-         dpycxehhOCEk4SK2JmBK8RTdYf2Bxba28WfnqMvMoM4/3G1MrclXaV1EGYza+P9AVm3y
-         T9X7Be+68ok+dMEp81nvmBTD7E3BlcnZ0djhCEGhnu2s1SE16enydXgdLse9IdnCYkwz
-         XjQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714154730; x=1714759530;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9fizBVqhC4Ce5f9/iqh/ic074DoEbG4uaUF9d5i7O8Q=;
-        b=t8x1H7X9cPv52I+x77y8RbC3YgaZ5uNIuDRf6N4KkZiHoojKO4ad4hVokiON2ceC3Q
-         wpRryRS4cTwntseSFTG6Vkb7OLp6H/FCoCrYDtV3l+vYV/npbWrjp/FMBR5oqMaJYIRQ
-         2suGXZZD5NJXIjE6efIFRJe5a8fe+WBc4XqMZVEDa4kNnfsHz0ZDzdgtvb2QIxM1+Z9r
-         RhyV+eGuv+n1lkZ4KIbmej/5zgzFE7mLrwHDEnjlnZIJvWIWfp5Sw31l1BJQTv/hmSKz
-         +x+bas8yQhRp7cZTXdBxC9Gv8N4wx+YoXgI36Pdbaqa3ZP5HsBPWYxBwZ/bmxgmNQNnv
-         sWww==
-X-Forwarded-Encrypted: i=1; AJvYcCX+TBYIKZXPTFb12mVkTHlaz2ALDWxn98rRe+1zqgilIxi73PxXCU28ozWm9rE5Yfme3wEuME9SkMdbr2xpeVD3CJ4sX4F+Z5mFWL0=
-X-Gm-Message-State: AOJu0YzofTF5jAS8F4Q6yszXkJ77RhiJZrSHP7oc/Ug5hN9ONWvx+579
-	IJAWE+cj7KH52CaYZ1HMZ1Q/9bH0fB0HMMRx2lQxd85/hU51lbpg
-X-Google-Smtp-Source: AGHT+IHumkVmwQ7zaIGDxs0JxQDFvR35S22xPS02xIpIwayE1JWqdPVB8NTTCdsIT+99zZdMNxXS1A==
-X-Received: by 2002:a05:600c:a01:b0:419:d5cd:5ba with SMTP id z1-20020a05600c0a0100b00419d5cd05bamr2622446wmp.7.1714154729942;
-        Fri, 26 Apr 2024 11:05:29 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id r7-20020a05600c35c700b0041638a085d3sm35248233wmq.15.2024.04.26.11.05.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Apr 2024 11:05:28 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: arm@kernel.org,
-	soc@kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 5/5] arm64: tegra: Default configuration updates for v6.10-rc1
-Date: Fri, 26 Apr 2024 20:05:18 +0200
-Message-ID: <20240426180519.3972626-5-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240426180519.3972626-1-thierry.reding@gmail.com>
-References: <20240426180519.3972626-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BDt7XFC5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA3D1C113CD;
+	Fri, 26 Apr 2024 20:23:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714162981;
+	bh=GbaTYwdZ8id3LPa579gAi+LysdGAYbNVBDYDNoM7P+o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BDt7XFC5+ZlqbRPkXwezHFzXgsKBQ233OU/DL9YQ4CO8IvTo1gw/IpfQXQ2kyd6g7
+	 9Ms/jBsIMGaVM2n7UsxElrXKY+ChUQsNPLXBWXN1suiLlr0KQYBdPYBweG6fVFUja+
+	 zyKACwTXpGSZTjSOkd8B0ob4kTLQBV3TK+vaAXHgB1vZXo4WldQmBM7I4GVTFiZRQH
+	 y/uRsqc2XcZ7OjqpGyV8U9RA+7CRi1E3hlLwXucNJmX4njy26oSR0YpHauNSMcdoEW
+	 aVy3/SoitHOWufMcdRUft+hv6eYaTzPvWyOOKw1/8GBN9Q002HWo5k71l41zLqm8xd
+	 HT2AgHiysMayQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] dt-bindings: Drop unnecessary quotes on keys
+Date: Fri, 26 Apr 2024 15:22:37 -0500
+Message-ID: <20240426202239.2837516-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -74,32 +63,198 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi ARM SoC maintainers,
+The yamllint quoted-strings check wasn't checking keys for quotes, but
+support for checking keys was added in 1.34 release. Fix all the errors
+found when enabling the check.
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+Clean-up the xilinx-versal-cpm formatting while we're here.
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/net/sff,sfp.yaml   | 12 ++++++------
+ .../devicetree/bindings/pci/xilinx-versal-cpm.yaml   |  7 +++++--
+ .../devicetree/bindings/pci/xlnx,nwl-pcie.yaml       |  2 +-
+ .../devicetree/bindings/phy/brcm,sata-phy.yaml       |  8 ++++----
+ .../devicetree/bindings/regulator/ti,tps62864.yaml   |  2 +-
+ .../bindings/soc/tegra/nvidia,tegra20-pmc.yaml       |  6 +++---
+ Documentation/devicetree/bindings/tpm/ibm,vtpm.yaml  |  4 ++--
+ 7 files changed, 22 insertions(+), 19 deletions(-)
 
-are available in the Git repository at:
+diff --git a/Documentation/devicetree/bindings/net/sff,sfp.yaml b/Documentation/devicetree/bindings/net/sff,sfp.yaml
+index bf6cbc7c2ba3..90611b598d2b 100644
+--- a/Documentation/devicetree/bindings/net/sff,sfp.yaml
++++ b/Documentation/devicetree/bindings/net/sff,sfp.yaml
+@@ -29,39 +29,39 @@ properties:
+       allowable by a module in the slot, in milli-Watts. Presently, modules can
+       be up to 1W, 1.5W or 2W.
+ 
+-  "mod-def0-gpios":
++  mod-def0-gpios:
+     maxItems: 1
+     description:
+       GPIO phandle and a specifier of the MOD-DEF0 (AKA Mod_ABS) module
+       presence input gpio signal, active (module absent) high. Must not be
+       present for SFF modules
+ 
+-  "los-gpios":
++  los-gpios:
+     maxItems: 1
+     description:
+       GPIO phandle and a specifier of the Receiver Loss of Signal Indication
+       input gpio signal, active (signal lost) high
+ 
+-  "tx-fault-gpios":
++  tx-fault-gpios:
+     maxItems: 1
+     description:
+       GPIO phandle and a specifier of the Module Transmitter Fault input gpio
+       signal, active (fault condition) high
+ 
+-  "tx-disable-gpios":
++  tx-disable-gpios:
+     maxItems: 1
+     description:
+       GPIO phandle and a specifier of the Transmitter Disable output gpio
+       signal, active (Tx disable) high
+ 
+-  "rate-select0-gpios":
++  rate-select0-gpios:
+     maxItems: 1
+     description:
+       GPIO phandle and a specifier of the Rx Signaling Rate Select (AKA RS0)
+       output gpio signal, low - low Rx rate, high - high Rx rate Must not be
+       present for SFF modules
+ 
+-  "rate-select1-gpios":
++  rate-select1-gpios:
+     maxItems: 1
+     description:
+       GPIO phandle and a specifier of the Tx Signaling Rate Select (AKA RS1)
+diff --git a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+index 4734be456bde..c41344f8a242 100644
+--- a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
++++ b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+@@ -48,13 +48,16 @@ properties:
+   interrupt-controller:
+     description: Interrupt controller node for handling legacy PCI interrupts.
+     type: object
++    additionalProperties: false
++
+     properties:
+       "#address-cells":
+         const: 0
++
+       "#interrupt-cells":
+         const: 1
+-      "interrupt-controller": true
+-    additionalProperties: false
++
++      interrupt-controller: true
+ 
+ required:
+   - reg
+diff --git a/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml b/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
+index 426f90a47f35..cbe832c23dae 100644
+--- a/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/xlnx,nwl-pcie.yaml
+@@ -84,7 +84,7 @@ properties:
+       "#interrupt-cells":
+         const: 1
+ 
+-      "interrupt-controller": true
++      interrupt-controller: true
+ 
+     required:
+       - "#address-cells"
+diff --git a/Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml b/Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml
+index 8467c8e6368c..439bda142764 100644
+--- a/Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/brcm,sata-phy.yaml
+@@ -59,14 +59,14 @@ patternProperties:
+       "#phy-cells":
+         const: 0
+ 
+-      "brcm,enable-ssc":
++      brcm,enable-ssc:
+         $ref: /schemas/types.yaml#/definitions/flag
+         description: |
+           Use spread spectrum clocking (SSC) on this port
+           This property is not applicable for "brcm,iproc-ns2-sata-phy",
+           "brcm,iproc-nsp-sata-phy" and "brcm,iproc-sr-sata-phy".
+ 
+-      "brcm,rxaeq-mode":
++      brcm,rxaeq-mode:
+         $ref: /schemas/types.yaml#/definitions/string
+         description:
+           String that indicates the desired RX equalizer mode.
+@@ -75,7 +75,7 @@ patternProperties:
+           - auto
+           - manual
+ 
+-      "brcm,rxaeq-value":
++      brcm,rxaeq-value:
+         $ref: /schemas/types.yaml#/definitions/uint32
+         description: |
+             When 'brcm,rxaeq-mode' is set to "manual", provides the RX
+@@ -83,7 +83,7 @@ patternProperties:
+         minimum: 0
+         maximum: 63
+ 
+-      "brcm,tx-amplitude-millivolt":
++      brcm,tx-amplitude-millivolt:
+         description: |
+             Transmit amplitude voltage in millivolt.
+         $ref: /schemas/types.yaml#/definitions/uint32
+diff --git a/Documentation/devicetree/bindings/regulator/ti,tps62864.yaml b/Documentation/devicetree/bindings/regulator/ti,tps62864.yaml
+index 0f29c75f42ea..dddea27596e9 100644
+--- a/Documentation/devicetree/bindings/regulator/ti,tps62864.yaml
++++ b/Documentation/devicetree/bindings/regulator/ti,tps62864.yaml
+@@ -24,7 +24,7 @@ properties:
+     type: object
+ 
+     properties:
+-      "SW":
++      SW:
+         type: object
+         $ref: regulator.yaml#
+         unevaluatedProperties: false
+diff --git a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
+index b86f6f53ca95..7140c312d898 100644
+--- a/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
++++ b/Documentation/devicetree/bindings/soc/tegra/nvidia,tegra20-pmc.yaml
+@@ -365,9 +365,9 @@ allOf:
+ additionalProperties: false
+ 
+ dependencies:
+-  "nvidia,suspend-mode": ["nvidia,core-pwr-off-time", "nvidia,cpu-pwr-off-time"]
+-  "nvidia,core-pwr-off-time": ["nvidia,core-pwr-good-time"]
+-  "nvidia,cpu-pwr-off-time": ["nvidia,cpu-pwr-good-time"]
++  nvidia,suspend-mode: ["nvidia,core-pwr-off-time", "nvidia,cpu-pwr-off-time"]
++  nvidia,core-pwr-off-time: ["nvidia,core-pwr-good-time"]
++  nvidia,cpu-pwr-off-time: ["nvidia,cpu-pwr-good-time"]
+ 
+ examples:
+   - |
+diff --git a/Documentation/devicetree/bindings/tpm/ibm,vtpm.yaml b/Documentation/devicetree/bindings/tpm/ibm,vtpm.yaml
+index 50a3fd31241c..8b0d3d4be5d8 100644
+--- a/Documentation/devicetree/bindings/tpm/ibm,vtpm.yaml
++++ b/Documentation/devicetree/bindings/tpm/ibm,vtpm.yaml
+@@ -33,13 +33,13 @@ properties:
+   reg:
+     maxItems: 1
+ 
+-  'ibm,#dma-address-cells':
++  ibm,#dma-address-cells:
+     description:
+       number of cells that are used to encode the physical address field of
+       dma-window properties
+     $ref: /schemas/types.yaml#/definitions/uint32-array
+ 
+-  'ibm,#dma-size-cells':
++  ibm,#dma-size-cells:
+     description:
+       number of cells that are used to encode the size field of
+       dma-window properties
+-- 
+2.43.0
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.10-arm64-defconfig
-
-for you to fetch changes up to 4d4d3fe6b3cc2a0b2a334a08bb9c64ba1dcbbea4:
-
-  arm64: defconfig: Enable Tegra Security Engine (2024-04-26 17:31:44 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-arm64: tegra: Default configuration updates for v6.10-rc1
-
-Enables the Security Engine driver for the corresponding devices found
-on Tegra234.
-
-----------------------------------------------------------------
-Akhil R (1):
-      arm64: defconfig: Enable Tegra Security Engine
-
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
