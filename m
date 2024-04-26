@@ -1,202 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECA7148FE5;
-	Fri, 26 Apr 2024 15:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB783146D4B;
+	Fri, 26 Apr 2024 15:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714146302; cv=none; b=Cyp4noI2gpt4oLIowWtXufGDVBNoLrU3werm4UwwwC6z9NrO1Aowqe+zvgkLcsrnRC7uvaROR0yEhkER/YFNvq8mk7cfnRC68u9ExiXG4xN18enXa0gixJrUdIxsPyf74J/BTHVBZkIJ3dCHMnm0155RMTh9khQkYjrRKtCS0AQ=
+	t=1714146395; cv=none; b=jNNKki/UsFt+8cWfj8gkRppgDnUOPVwiXun+naGKD1yxVmf4a7/YVqcrsWGHpXSmMpHEc5txwRi6+UkrTXpozyg+kEaQGdXw9NeJUNDt+dVgY/K+/YerridKFi+/Ix6CFcgJUH2qAd3EkSq8KvUa18AwprHbUZMn7BzG3LOwxx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714146302; c=relaxed/simple;
-	bh=eOP2/U4Vd5DzPmdW0xejV5wEgvRGsN/4+Hk2GtsLxhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJGJp7ilVWMaQyS9/tfVs8MnVgdy8vSoKwgvMKiZG0LA9hunBCnaDA4jreoErmJZiGepB4UqngMVqzvWPFe+ZbXGouq+IDPmVaQaFl5MIOsA1Z1tchHm6KHeUDPGr2KSztlSEkg4uipPiMy63NeGMgrbGv8u7gpe8IsmLJu9oXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/gwIiX3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1714146395; c=relaxed/simple;
+	bh=2UtRjw7d/gSUbQgwTtdM8Mdk81nwUGAZVscFer9sTJ8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T2+wzP+QcwMYeRJrlbImC/HU9PK7gJ/yfGmG9+T3fMfos56cy8BnNEtDdKzzSK7Pq8BIzoK8dZj7+2mK7eqrzHN0e3xJAgyvNkVu4rdwE1XzXPdlYg6InWm4po52tnlkaF9fxhD52CEf+zD5VbfbYEGGQ9om6+YJXyhYoXEBT3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jkGIqNYL; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/gwIiX3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86CB2C113CD;
-	Fri, 26 Apr 2024 15:45:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1714146301;
-	bh=eOP2/U4Vd5DzPmdW0xejV5wEgvRGsN/4+Hk2GtsLxhE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m/gwIiX36LDs2I9/Z1NuMFucOvQCei1MAXd+b28yCja93zW8rs3K36b2ifWD+p/sh
-	 YdrablzWIkEWpsiAry8zadTIEddCuvv7yQ/nbH8YPvuCsDQ94Qk/kOeebuV9q6dftB
-	 +5VpqNDteiE6rs4saJM3xoHCaRSOtwrUMC5LgaQ7+j5l2z38oGa7diu7lN+0xvOcu+
-	 4L7x+6SWLJ1PMiP462dzHqxy1woJVywKaa9Uig8xbDl1pI8vIrnWhrUo+6M4wKxQ7T
-	 GoRh0sUP3ne4TeZu3fJNZLK/NrgtxhxZNMpEdNlDLT5PkVifWoBC1KMRHN/igePNyF
-	 M0yn5bBNfR16Q==
-Date: Fri, 26 Apr 2024 10:44:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jkGIqNYL"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a4702457ccbso312725066b.3;
+        Fri, 26 Apr 2024 08:46:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1714146392; x=1714751192; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gXbTa+KajuTLrUP4WiAbVHIOdIZw5ZWXUZLSW6mrWPw=;
+        b=jkGIqNYLVQ4tu9hw5pl9eUDcglQhprzdCwXUDFIkOVSDAWgR6A6Iu0xlADsS0XDutV
+         NBB+emdKR8oTejV1pYtoqpwHfP3DxPpO4KYJfyFVq0g4Dlu2kvRsHJSHofvmmHI2L/mH
+         xh0OqLw+jbWbSrSvDw340wQFkqqRZ5vMGQQEpF+qJh8b3jhQRbXUbXL3fPn/yeh4AMrP
+         0wzndGi+KpBP9yNcipAAPdhVChTHOFNdBYqgHf1FqRWfLAvCcBv1S/2ewCXY62/wNUjI
+         FgeY4+BS3CPsMKsghmh5uNczPL69wVga3Sdvlty/1qlz5A+0HZAEEdaaMSXPvBCeaWDF
+         t4zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714146392; x=1714751192;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gXbTa+KajuTLrUP4WiAbVHIOdIZw5ZWXUZLSW6mrWPw=;
+        b=OFEJzRWWviyM40YzU24URzLKFTkRrs32Uf8eXblbVr9tDdcO2rmkkgNp/2mv4ez6+s
+         70Pd5/f2ey1eRHUKmQvHl3H1f4TSvg07tsiAMVdMXrWDbtIAzwbHycQUb5wDRy3nSQAS
+         n9+oi2HujeBmBYLZdPHcg1roygrclWNKiDTO/GQgEs6q2qCOw77F/lTjLOJNDARfP+xB
+         V6T6RKU6YE1nWNTQ6OQrbIxGtyIsqZy4fgQ8/TweU7lM8aj3wbjNd2cSXnVDdQ4ajH+B
+         gexlWuBHB/c6glxM705N+pvRUrwljA4wIEox66bN/cLDEh2aWUv4oQPUkMzzKLg0mvjJ
+         821g==
+X-Forwarded-Encrypted: i=1; AJvYcCXsy0AVmZdnvIfcVeII8/Rtmh4o7ZVFaTtKWFwW+V8ugara56uIeU2zkhocK6aGDWOei8PCyK2MGAD16Qmn+0FowAIKbZQKhMs5tbFjBhfD//DziN2D0jwyTFgGuUVGMW43pWU/6YkggE0=
+X-Gm-Message-State: AOJu0Yyty04BVMYZIwt1cYfx7InSY46/qSkUPjPWtgPubl86OfaxWPdY
+	45I4NXObvGWB0DXzw2wup5Tp9rZN9G1EEPNIfXAAiYdG8T5A/TIxHhpwUg==
+X-Google-Smtp-Source: AGHT+IHxfreGP7FO7+xHHu3l4Dz/DEVwOBePXHKsqR2tdwPTL8o49Zw2EMAh/HhvuAgnryGPnU5yEQ==
+X-Received: by 2002:a17:906:138d:b0:a58:b5b8:5805 with SMTP id f13-20020a170906138d00b00a58b5b85805mr2297574ejc.39.1714146392001;
+        Fri, 26 Apr 2024 08:46:32 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id l18-20020a1709065a9200b00a58a4ccf970sm2378527ejq.103.2024.04.26.08.46.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Apr 2024 08:46:31 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] ASoC: dt-bindings: tegra30-i2s: convert to dt schema
-Message-ID: <20240426154458.GA1964057-robh@kernel.org>
-References: <20240425153045.49939-1-sheharyaar48@gmail.com>
+Subject: Re: [PATCH] ARM: dts: tegra20-ac97: replace deprecated gpio suffix
+Date: Fri, 26 Apr 2024 17:46:29 +0200
+Message-ID: <171414637918.2300234.4054459462425570866.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240423120630.16974-1-sheharyaar48@gmail.com>
+References: <20240423120630.16974-1-sheharyaar48@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240425153045.49939-1-sheharyaar48@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 25, 2024 at 09:00:43PM +0530, Mohammad Shehar Yaar Tausif wrote:
-> Convert NVIDIA Tegra30 I2S binding to DT schema and
-> add "clock-names" property used by multiple tegra i2s blocks
-> in arch/arm64/boot/dts/nvidia/tegra132.dtsi. This is not a
-> required property by the binding.
+From: Thierry Reding <treding@nvidia.com>
+
+
+On Tue, 23 Apr 2024 17:36:29 +0530, Mohammad Shehar Yaar Tausif wrote:
+> Replace "gpio" suffix with "gpios" for tegra20-ac97 dts as gpio
+> suffix is deprecated.
 > 
-> Signed-off-by: Mohammad Shehar Yaar Tausif <sheharyaar48@gmail.com>
-> ---
-> Changes v3->v4:
-> - removed redundant example
-> - defined clock-names property
 > 
-> v3:
-> https://lore.kernel.org/all/20240425090716.176818-1-sheharyaar48@gmail.com/
-> ---
->  .../bindings/sound/nvidia,tegra30-i2s.txt     | 27 ------
->  .../bindings/sound/nvidia,tegra30-i2s.yaml    | 83 +++++++++++++++++++
->  2 files changed, 83 insertions(+), 27 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
-> deleted file mode 100644
-> index 38caa936f6f8..000000000000
-> --- a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
-> +++ /dev/null
-> @@ -1,27 +0,0 @@
-> -NVIDIA Tegra30 I2S controller
-> -
-> -Required properties:
-> -- compatible : For Tegra30, must contain "nvidia,tegra30-i2s".  For Tegra124,
-> -  must contain "nvidia,tegra124-i2s".  Otherwise, must contain
-> -  "nvidia,<chip>-i2s" plus at least one of the above, where <chip> is
-> -  tegra114 or tegra132.
-> -- reg : Should contain I2S registers location and length
-> -- clocks : Must contain one entry, for the module clock.
-> -  See ../clocks/clock-bindings.txt for details.
-> -- resets : Must contain an entry for each entry in reset-names.
-> -  See ../reset/reset.txt for details.
-> -- reset-names : Must include the following entries:
-> -  - i2s
-> -- nvidia,ahub-cif-ids : The list of AHUB CIF IDs for this port, rx (playback)
-> -  first, tx (capture) second. See nvidia,tegra30-ahub.txt for values.
-> -
-> -Example:
-> -
-> -i2s@70080300 {
-> -	compatible = "nvidia,tegra30-i2s";
-> -	reg = <0x70080300 0x100>;
-> -	nvidia,ahub-cif-ids = <4 4>;
-> -	clocks = <&tegra_car 11>;
-> -	resets = <&tegra_car 11>;
-> -	reset-names = "i2s";
-> -};
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
-> new file mode 100644
-> index 000000000000..13cee366f5b3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.yaml
-> @@ -0,0 +1,83 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/nvidia,tegra30-i2s.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra30 I2S controller
-> +
-> +maintainers:
-> +  - Thierry Reding <treding@nvidia.com>
-> +  - Jon Hunter <jonathanh@nvidia.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - nvidia,tegra124-i2s
-> +          - nvidia,tegra30-i2s
 
-> +      - items:
-> +          - enum:
-> +              - nvidia,tegra114-i2s
-> +              - nvidia,tegra132-i2s
-> +          - enum:
-> +              - nvidia,tegra124-i2s
-> +              - nvidia,tegra30-i2s
+Applied, thanks!
 
-This allows 4 possible combinations for 2 SoCs. That may be how the old 
-binding was worded, but that's not valid.
+[1/1] ARM: dts: tegra20-ac97: replace deprecated gpio suffix
+      (no commit info)
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    const: i2s
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: i2s
-> +
-> +  nvidia,ahub-cif-ids:
-> +    description: list of AHUB CIF IDs
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    items:
-> +      - description: rx (playback)
-> +      - description: tx (capture)
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - resets
-> +  - reset-names
-> +  - nvidia,ahub-cif-ids
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra30-car.h>
-> +
-> +    i2s@70080300 {
-> +        compatible = "nvidia,tegra30-i2s";
-> +        reg = <0x70080300 0x100>;
-> +        nvidia,ahub-cif-ids = <4 4>;
-> +        clocks = <&tegra_car TEGRA30_CLK_I2S0>;
-> +        resets = <&tegra_car 30>;
-> +        reset-names = "i2s";
-> +    };
-> +  - |
-> +    #include <dt-bindings/clock/tegra124-car.h>
-> +
-> +    i2s@70301100 {
-> +        compatible = "nvidia,tegra124-i2s";
-> +        reg = <0x70301100 0x100>;
-> +        nvidia,ahub-cif-ids = <5 5>;
-> +        clocks = <&tegra_car TEGRA124_CLK_I2S1>;
-> +        clock-names = "i2s";
-> +        resets = <&tegra_car 11>;
-> +        reset-names = "i2s";
-> +    };
-
-I didn't check what you removed, but this is still 1 example too many. 
-They are almost the same.
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
