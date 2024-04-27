@@ -1,106 +1,94 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BF4182DA
-	for <linux-tegra@vger.kernel.org>; Sat, 27 Apr 2024 17:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE9D142E97
+	for <linux-tegra@vger.kernel.org>; Sat, 27 Apr 2024 18:03:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714237542; cv=none; b=rsvEYYkdJryZn3yuqupLC3qOB1ReVR/lpw20sHYaNbWXyePqIYlg/SflV1eLlzo71EgIKJo2YTePOK1kfTvOAw5OJsxZdTpdKQcEjU2+vcL549UGzMen1Vj03zF9w6uPu62qedUA5QP59W63lTx0n8xSy/sGm7enGwoz33YRVA4=
+	t=1714241027; cv=none; b=pY7th0gVd7HE+zCE3ZPVmreBz0wB93rYcloEprCdm/Sk4XvjOmKsROgQmp6WnFdJ9Z5vIpPS9C3aKakRzjXSfrJVFdNMYblnWHNXbcvkwdK3gAKb1wZFwEwrzwxDEJoB4Ul7+uefOo/cjDaRPhkrzIEbuKW/GzcHu2/JxP0vwek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714237542; c=relaxed/simple;
-	bh=krI2tDtQB5p8Ps97rZppr0v4kKEPY578OTR+toY5xUs=;
+	s=arc-20240116; t=1714241027; c=relaxed/simple;
+	bh=8iVei5xGXrW0hT05cj2YRsXH6i/FR3dHY8M9IRQFA5k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gem3S+gErkwyDttrrWDeYQxIapToOd/qzo9C8FeJbuySWAYTV9RIBOIlZ+H8KyJguQy6YewoJM/ZW1B/s5eeUNoZjOKg/eV3aAd1RkDsdjRtTbvoUzSKQRQB2kLSlYTFhlTD2RSBwuyPYYdg4FtYH5CwV7ETplpNepYOUh/iht0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=UyfMW/xX; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xska1bxLN8NEGeaigYJuBxu730jQUFgBiFsR4fIZb1WSl+dxv12gXEJzfORACitE5K3JUzMX75rTcu7hbUBsS5xf8UBOUzSYSBkz2hU5+paBCqeHWfr7EgrRrFo9UOqwEodORvdwbW4/7fgTxrjWs2zJN9Yd+ORluKo0sLgoskE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=bzq+JO3y; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="UyfMW/xX"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 9502E600087E;
-	Sat, 27 Apr 2024 18:05:28 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id wsl_PovW5_Wz; Sat, 27 Apr 2024 18:05:26 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id E842F6000842;
-	Sat, 27 Apr 2024 18:05:25 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1714237526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kpPOFCgLV4CEx+6PY8DCwcNRre2Cx911jmkqtv90558=;
-	b=UyfMW/xXf9fCWJCeQ3JG+gznQoNybGibe1GxB3pZPoSeVPjxyimiZMj1ssUtlUgM1DC6T5
-	81rmu1UzjvjUTFdcXGpoWeHGLskS8xfR3feYvE57YjEVwumuMwcm5/0g9Gv+O9eMOXz1Kl
-	07k3stM28XdS+yCwO/+V17TjE2eE8EU=
-Received: from diogo-gram.home (unknown [IPv6:2a01:14:8070:dc60:4589:2164:1bc5:2670])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 8DAE0360071;
-	Sat, 27 Apr 2024 18:05:25 +0100 (WEST)
-Date: Sat, 27 Apr 2024 18:05:17 +0100
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] Cleanup Tegra210 EMC frequency scaling
-Message-ID: <z4irucvflgj4mtvy5qwnbze24tku5zw4xvq5b22x22hw7yb4pf@ihjm4wwecotj>
-References: <20240419104516.308975-1-diogo.ivo@tecnico.ulisboa.pt>
- <171398258237.275534.7331223388966262711.b4-ty@linaro.org>
- <a84e606e-ac7d-4f93-9be4-144acbfe10b1@linaro.org>
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="bzq+JO3y"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=8iVe
+	i5xGXrW0hT05cj2YRsXH6i/FR3dHY8M9IRQFA5k=; b=bzq+JO3yD1dPLPi+NSMn
+	wjBeeB9a4vObiSjdv8wTBBq1Oronttl+/1OiymDH7cSgKu3V24uyOxSELEuIdFb7
+	j1gmM6MYI1Z91i4h+6Z3sPg9KOgII60hFQt9G7hC9dW56UE7Ht5Iaxqsx0HTE8ER
+	yzSkrdMknbSd+EuEGj4GgrFkcEltadfP5xXn2EocSaZsOmMRFHW266/fBuNVpDga
+	t60yWRzXkIhZpSUoUkwnkgvJQBdDeC228q1+8ClvgHUbr+/NLqplRJSRYzm+Q4gs
+	VQxx7rPe5VE6pnb+2SSR/z7tkLrhTPtyNnSrZhHIjMKdELfGbYoyKj7keuXhZpLz
+	Hg==
+Received: (qmail 1744437 invoked from network); 27 Apr 2024 20:03:37 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Apr 2024 20:03:37 +0200
+X-UD-Smtp-Session: l3s3148p1@HHbi1hcX9Jxehh9l
+Date: Sat, 27 Apr 2024 20:03:36 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 00/18] i2c: remove printout on handled timeouts
+Message-ID: <dizevhnog7moz5qajkdkghwurza6ewobo5htavlbizqxlgnqwx@7f53mbpwu7o6>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Andy Shevchenko <andy.shevchenko@gmail.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+References: <20240410112418.6400-20-wsa+renesas@sang-engineering.com>
+ <ZihNbtiVDkxgUDGk@surfacebook.localdomain>
+ <sbkymvjmrufouqqscpmrui5kcd466gj6yn2bqwf3lhfk55mjos@n4ydx6wzyq4k>
+ <CAHp75VfEvifLjPRQ+xsKipjwXA-APR7m_au6OJjafeXp6Wiyxg@mail.gmail.com>
+ <CAHp75VdqcYn9RDVf63N7HL=nQLvFRt8cSO3EfbzAxLKNkwF-Kg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ur2627yprz3xmq7n"
+Content-Disposition: inline
+In-Reply-To: <CAHp75VdqcYn9RDVf63N7HL=nQLvFRt8cSO3EfbzAxLKNkwF-Kg@mail.gmail.com>
+
+
+--ur2627yprz3xmq7n
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a84e606e-ac7d-4f93-9be4-144acbfe10b1@linaro.org>
 
-On Thu, Apr 25, 2024 at 08:11:20AM GMT, Krzysztof Kozlowski wrote:
-> On 24/04/2024 20:16, Krzysztof Kozlowski wrote:
-> > 
-> > On Fri, 19 Apr 2024 11:45:08 +0100, Diogo Ivo wrote:
-> >> This patch series consists of a general cleanup of the Tegra210 EMC
-> >> frequency scaling code for revision 7.
-> >>
-> >> Currently the code is relying heavily on a function, update_clock_tree_delay(),
-> >> that is responsible for too many things, making it long and confusing.
-> >> The general idea with these patches is to simplify this function and its
-> >> surrounding code, making it more modular.
-> >>
-> >> [...]
-> > 
-> > Applied, thanks!
-> > 
-> > [1/7] memory: tegra: Remove periodic compensation duplicate calls
-> >       https://git.kernel.org/krzk/linux-mem-ctrl/c/f8037b3d9a75f4963c1fd3eaf39b968f206d37df
-> > [2/7] memory: tegra: Move DQSOSC measurement to common place
-> >       https://git.kernel.org/krzk/linux-mem-ctrl/c/09dd3744d7c02a3844e8a6c96ab2fb3c1e94de52
-> > [3/7] memory: tegra: Reword and correct comments
-> >       https://git.kernel.org/krzk/linux-mem-ctrl/c/d48076e5bb9be787b769efb3e6439902dc8e99f7
-> > [4/7] memory: tegra: Change macros to interpret parameter as integer
-> >       https://git.kernel.org/krzk/linux-mem-ctrl/c/56c95667042ba12a66157477282ca73605a25481
-> > [5/7] memory: tegra: Loop update_clock_tree_delay()
-> >       https://git.kernel.org/krzk/linux-mem-ctrl/c/0d647b9031fe4f6b20d2f18b3d087dea740eecf1
-> > [6/7] memory: tegra: Move compare/update current delay values to a function
-> >       https://git.kernel.org/krzk/linux-mem-ctrl/c/c1a70060c654327be4aed6e617f53bae5af8625f
-> > [7/7] memory: tegra: Rework update_clock_tree_delay()
-> >       https://git.kernel.org/krzk/linux-mem-ctrl/c/edbf2db5ae95c4d8f189d05e827d9dd3ea75cfbc
-> 
-> And entire patchset dropped because it fails to compile on several
-> architectures.
-> 
-> Don't send code which does not compile.
-> 
-> Best regards,
-> Krzysztof
 
-Sorry for that! I was testing this on an ARM64 platform where the code
-does compile, so I did not catch this error. Thanks for pointing it out,
-I will send a fixed version.
+> about a problem without expecting it to happen. Is that -ETIMEDOUT
+> being converted to some message somewhere?
 
-Best regards,
-Diogo
+As said initially, the place for that is the client driver, I'd say.
+
+
+--ur2627yprz3xmq7n
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmYtPfQACgkQFA3kzBSg
+KbZazxAAlDDyQT8XTqNFoRYUjr2e6FAw93vAgrmRIjaq7YDf1MjoVF5i9k4F1+7S
+zQXcXT9O65VNBaxvzkhNJVODcSUxdTuuGGRtABpkHHE9e0u5LezU2GbbJA/NE+im
+sQP1Sr13FAcNQxc/Fj7Nkr+9NmzFQh6UruPTqITcV/tx0tukhGJlr1WT9HhJQOH8
+z3vFdrZBZ+gRJ0luT8NWI+o8gYV4wY1q+nMvtOthOHyjHh68fvk83oXSTKEES6ip
+8XKSzBfV6ZhPLNF8kaQIcZzzvhlMpEiiRVxmJV8qrYDN/+NeOLImVWxF0+oBwZSi
+FnD+W5ueMM7hsVE+vVy2UkpsY3JQOHaTYHAIGGk6RVnrjjl7VysK7qFV2KO9Edb2
+guyjzypfaL9IWTogLaznXxJt5oSvLfBNqv7ev400HhCRxKLrmm2OOihe5G76fZOn
+v5/cEk4SmoA61+sW7PuaEkIahQLNpDlr/VzzBg/HqEZ5maGPYxedZ2E+afDF3TNT
+hQvH4ycoe4+PLB256GmrNh5PZWZmYYdNvcwjW6nUTr/8ZjKfzsuIzqthQJqxztcA
+e8EUYo4Gby5hW+V2A8xBXOmFHrcW88+5nXTfv9XNoFCIfZ1hKLuwoG1d4td0dZ1Y
+IIj3nxl0MdHqFhXdoLvHWjBbErwzl0blkA/5zPNW3QanuolJstE=
+=fHd8
+-----END PGP SIGNATURE-----
+
+--ur2627yprz3xmq7n--
