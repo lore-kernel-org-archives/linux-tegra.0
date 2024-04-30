@@ -1,61 +1,56 @@
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E901A0B15
-	for <linux-tegra@vger.kernel.org>; Tue, 30 Apr 2024 20:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26C7199E9B;
+	Tue, 30 Apr 2024 20:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714508822; cv=none; b=BThHRwV4uaLLxnlIxD+wMYEge1AkLWDQmo3BOGLK9sL4PbRuU3VFTgphWEZK/CrRul3tK+JKcsJpIzE3nQY42AP0R7J2zPzhioV3J1GrMYCXEtPYTTYptuuJIo+TWtf/+OortLyN3Zz8bQ/ZGBvPpw8CeRmKRU1rUDJzu8h/qEU=
+	t=1714509375; cv=none; b=EEGh1wMqq0hR9+LSfD7hlRkZ2DrYjTaoFPkHwGAyXnS57LmJ/0ONM3McAOh2aWaykO87mInIvQQgnqeDP+M99ZcV2aeG640YLYrRWs4s3KPUrUs5nZJQiN/4kiGaGLzeSITLudMZ9wdYyAbm8LGIujAL+MpFSfERDfFyJULJWno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714508822; c=relaxed/simple;
-	bh=O0dijEzBvtORi6qxxVsNfbPFj60dzy82Go7ZwEcpV80=;
+	s=arc-20240116; t=1714509375; c=relaxed/simple;
+	bh=Hkj282ZLhfbSUGTDTtv67ovkyS9SO/gWC6U/Vkj6ntE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CEehPE4j6FTXvYe/wdudQnLWxGz04aXk5q/UzT8ZMfXkwbBy2t4yGGWGhPmBK3bCQDTDuRYd1qaajkY/e6+JInC5fCtGpz5OPN++UT7nwEz1IUF0JBNItX6ZerNg0WELDl5ANcvRDXfa8HxxD5NUKo80yumbvzn1BYyyV+ne4kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uY7WAUIW; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	 Content-Type:Content-Disposition:In-Reply-To; b=aGtfs7c5SgCzh7By2yX6e8tFARBTPOGhLMLBPIgtNU5DjtZhS5AUr6RZSRtekbJbSJIcX/EcoTZw9FCF/OhL3ImZMynIb/EYqBmEaB1ps25coUfcbaqLcRgj2XTNrJ0db8qtZpPhKf9GyA+aetzqyTQmlfv2BaCbBE3raxiqyaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OetM1xSZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uY7WAUIW"
-Date: Wed, 1 May 2024 04:26:55 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1714508818;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IBs0/PKerC5E91/aTpLb+GbSC+0huj5ORJCxMwxzVLs=;
-	b=uY7WAUIWDf0+MAwCB2nxSOUXfZ1mt399RKX5YKsZlnTraZMsSNsV51693TtBg3H+3K+dnY
-	J3O6mzN+XesTUUjlJo8Fs5h8wu8WDE0PrQsM1PIiGBUMnJDT5OP0XtsZaABwyx2B+Z3W9z
-	Xvx3OUhz7U8D7ZqP03uCN35G4TiIwr4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Leo Yan <leo.yan@linux.dev>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Besar Wicaksono <bwicaksono@nvidia.com>
-Cc: "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"john.g.garry@oracle.com" <john.g.garry@oracle.com>,
-	"james.clark@arm.com" <james.clark@arm.com>,
-	"mike.leach@linaro.org" <mike.leach@linaro.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"namhyung@kernel.org" <namhyung@kernel.org>,
-	"irogers@google.com" <irogers@google.com>,
-	"alisaidi@amazon.com" <alisaidi@amazon.com>,
-	Vikram Sethi <vsethi@nvidia.com>, Rich Wiley <rwiley@nvidia.com>,
-	Yifei Wan <YWan@nvidia.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Jon Hunter <jonathanh@nvidia.com>, Sean Kelley <skelley@nvidia.com>
-Subject: Re: [PATCH v1 0/3] arm64: Support Neoverse-V2 for Perf Arm SPE
-Message-ID: <20240430202655.GF125@debian-dev>
-References: <20240109192310.16234-1-bwicaksono@nvidia.com>
- <SJ0PR12MB5676F0DC2CFBBC96534CDD65A0092@SJ0PR12MB5676.namprd12.prod.outlook.com>
- <SJ0PR12MB56767ECAF499949C4689E91BA01A2@SJ0PR12MB5676.namprd12.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OetM1xSZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65FE6C2BBFC;
+	Tue, 30 Apr 2024 20:36:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1714509375;
+	bh=Hkj282ZLhfbSUGTDTtv67ovkyS9SO/gWC6U/Vkj6ntE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OetM1xSZk1J0d3YpjnwC9bXo2yKgdoivZ1Z2sUGNB56z1UgB9XmC+L6fSQBlWbQI/
+	 qKFuZWpF+P3kxNZoRXRfqPW6cU6T2XJW/G1Ux4af34+Tp7umnXcllQyUj+UjP06+p1
+	 a8VxltRmcsXGj1X7eQi9/gFo9y8jKV4xsGQy0EYHtFR8sWygzcmIb1Fd2WNYomut6L
+	 3qatP8rGrvwURD97AJZD99iqXpbk1DUASWyPQBNibwd+HI4tSiLzVkOWoEaMwko+9O
+	 e5ag0rcBDxffjSolV52iuRTxMkxf+ZNKtRV7ltVDUlTtkO8w7m+zvq40Im9rf7Wm1z
+	 Hu7AibVsyDe0Q==
+Date: Tue, 30 Apr 2024 15:36:14 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	Vinod Koul <vkoul@kernel.org>, Eric Dumazet <edumazet@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+	Bharat Kumar Gogada <bharat.kumar.gogada@amd.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Michal Simek <michal.simek@amd.com>, linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] dt-bindings: Drop unnecessary quotes on keys
+Message-ID: <171450935610.1153506.3784386455405156371.robh@kernel.org>
+References: <20240426202239.2837516-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -64,20 +59,27 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SJ0PR12MB56767ECAF499949C4689E91BA01A2@SJ0PR12MB5676.namprd12.prod.outlook.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240426202239.2837516-1-robh@kernel.org>
 
-On Tue, Apr 30, 2024 at 05:50:40PM +0000, Besar Wicaksono wrote:
-> Hi Arnaldo,
+
+On Fri, 26 Apr 2024 15:22:37 -0500, Rob Herring (Arm) wrote:
+> The yamllint quoted-strings check wasn't checking keys for quotes, but
+> support for checking keys was added in 1.34 release. Fix all the errors
+> found when enabling the check.
 > 
-> Could you take these changes for perf?
->   [2/3] tools headers arm64: Add Neoverse-V2 part
->   [3/3] perf arm-spe: Add Neoverse-V2 to neoverse list
+> Clean-up the xilinx-versal-cpm formatting while we're here.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/net/sff,sfp.yaml   | 12 ++++++------
+>  .../devicetree/bindings/pci/xilinx-versal-cpm.yaml   |  7 +++++--
+>  .../devicetree/bindings/pci/xlnx,nwl-pcie.yaml       |  2 +-
+>  .../devicetree/bindings/phy/brcm,sata-phy.yaml       |  8 ++++----
+>  .../devicetree/bindings/regulator/ti,tps62864.yaml   |  2 +-
+>  .../bindings/soc/tegra/nvidia,tegra20-pmc.yaml       |  6 +++---
+>  Documentation/devicetree/bindings/tpm/ibm,vtpm.yaml  |  4 ++--
+>  7 files changed, 22 insertions(+), 19 deletions(-)
+> 
 
-Thanks for bringing up this.
+Applied, thanks!
 
-I confirmed this patch series can be cleanly applied on the mainline
-kernel, so the above two patches look good to me.
-
-Thanks,
-Leo
