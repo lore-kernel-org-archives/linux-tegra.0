@@ -1,131 +1,174 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161C417584
-	for <linux-tegra@vger.kernel.org>; Tue, 30 Apr 2024 05:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE2B6FB1
+	for <linux-tegra@vger.kernel.org>; Tue, 30 Apr 2024 06:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714454225; cv=none; b=iUWs/9YQHbG1m3t62SgLVggeS1LW1lJLRF2AI6pTG4yObsxUIjPmA8uXCt0d9kTFcaULEjGTYolYlC20hfu8LVtZqKO6xKl3cfbABkV0/EocU/gRKYm80bxXNDpvPUwjWk/rQZ0L3nk53U0IH1Of/NMDm9tnlnshLmM4UNlZlTw=
+	t=1714457636; cv=none; b=XVCs5aIc9A3viBp0V7t7IEXAiZALnHAQLPrUbnYhIsIzYWqgIk23GTkF46dFoSO8p9M9qn8ODaWj8MiBB7GPWMJSf2Jo1ubVhIdTDsCsd77AwSBGPXNZDR2Ajfad+Ix3iHNu/ktvXOIT+pdaThjZ1+U2L+JCcAVPtS2Zr1zXBIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714454225; c=relaxed/simple;
-	bh=X1vBe8uy2scxUJixEbvfFTMb+bweVxUZtX/Ylg3mEfs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwhXRM5O/ctwUGcUKNAtE5UR4ID5c2DUbjLYZL5bfWGTTFj5OZfI4jwjzm1mN2ypUYfD3kBAWItbLXpUaHT9g6veQB10i8NY7GQOn/Gdo9iMSWd9guKHWiTiz1jZVbbIR7ASBZeGp26S5d/uFjEnLCdeK2bgpulyhEE3Y+1mF8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UkwCPcx2; arc=none smtp.client-ip=209.85.210.172
+	s=arc-20240116; t=1714457636; c=relaxed/simple;
+	bh=CGUrm1vDZYlEmiR1ifXVGyQ3SZsQMUvdsEPtlsZS1l8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qyIEC9F92Nh1ttR5OrKHHzaakZvookxbqlLUYkU8MsAq4OFejZ6gfG259ZlIagJtPGrKhXNRvr3QGdarv6mngduCcUOxkajw9I/1OPQUXZblAKeJ4moIVDKLjIYlWQLX+YsQKBGsvR6WrNozNTpwfbp3Z9a+EhzbhTSqOTR0k2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VSvyBCYF; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UkwCPcx2"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6ed32341906so4845395b3a.1
-        for <linux-tegra@vger.kernel.org>; Mon, 29 Apr 2024 22:17:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VSvyBCYF"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1e3e84a302eso39717915ad.0
+        for <linux-tegra@vger.kernel.org>; Mon, 29 Apr 2024 23:13:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714454223; x=1715059023; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=V0avMUsDc59rYN7coX7sm9Yp5eSnR9Q04mgQzckQ9lw=;
-        b=UkwCPcx21AW7wq0fo62AYWe9kY7I+Y/Sm2yXQdFYzdRVl5a1cDwqgo0MBpuBFmY7T2
-         m0oiCKzu/AJFo9RVdE52gBqpW/YvjBrE73H047CkHbafqXbXqZT4Ma73IQJpPI8djLl2
-         nCUB4rcJ/eNdecPqpRHXDvXJ84S0AzgUVYNN3JGobnDbPm3V3baz+0wLswYL1pA5+wuM
-         d+Fsq18e9Yi5kuA8DIdOezZ/3AxOIJ1QlsEXIKJsgGt5xn85LczsimC3BgutR7HLve1P
-         LpWznJv7iSZD3gcT2Sv3L25YfXLmDUMZqyRMUltodhJLiai1k8a9+jaUPYjJ1hkPfBy/
-         H+wA==
+        d=linaro.org; s=google; t=1714457634; x=1715062434; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9c0gOO/h5yOIgS2nJawt/26LeQyQw+uGFdthgcrbcG0=;
+        b=VSvyBCYFXqiiYMR9xROKxB92WRjr39X71j4pkM4gn6kyuvOHOa/8+rPqBN1jl6uzzg
+         8q6kVw1vd+QfTbsqIiPahQ/M0rhhL+YggOeZwKg7U752/a8WzfjCQC1CYgCsliRVClVa
+         dwUlVR17akHPEvGrDP1bqi5x+x0lc9PCn8TCkAAMldCyOTBg+oeP+GR9bp4yJJjN5YDX
+         tvpCu/3MPM/YTviVt+9zDPGDSQ4t/7C2426C2tib6r1Z037oyqR0myH7usW32n7vwCBp
+         3wPok+q+sTu/LnDqWSdjk+2k0ymF3GVkmaRBEjvY6f+K1TgJN0GhTvmgGSuqWJHZtRc7
+         2R2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714454223; x=1715059023;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V0avMUsDc59rYN7coX7sm9Yp5eSnR9Q04mgQzckQ9lw=;
-        b=XjDycLYblm2VYnAurAMaX0rQn1xjzoti2xu+aXaPumAJNzJz7rNLTuwJ1xhIJc9UHv
-         8ku/Hq1KfLrc3U2+oh9F4x64c6eYwPA1uiR2Tj3+dubchNb2+heAN2rpIcz2HpiWoI8D
-         0lUz16LGrNQ2qWIDusjdk7Q2pqgVjcCiJtz9Y4wJXVsJ+X1Yg9U3Or975zeaEG0enIKC
-         OaOmJnzfLXB8hFcglBIhdBMoW+sjCFYyRHn2e8vBs1nd/7C3klhc0IliXydWpl1slVuC
-         73IBPkVCcBJ7w75encn0dd4NoAfaSIglo+Fi9JVItN73O28HjekIEtJAgJ6uHxg48NLT
-         /oXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCiLxItrQNY/EWp7MHvB4GC94j5FEMnsACAXP1AwcGEbXWbMI+1BoguP+OiVG+LUEHaIteed5+zdXUyS2LMhSY52AFzEjs/nO7OnI=
-X-Gm-Message-State: AOJu0YwLAAj1B7adV815ncumzV1hftTUYT1/3qWo07x3/U6GoQfBk1Rl
-	/wKxN7a/cfTjyUA40xUeA6JsIMRdNlIz8zKeXqm5Ft0KXKPvLtPO6Uf8GcfsuA==
-X-Google-Smtp-Source: AGHT+IFWRZGQxckWXPNLxXAG7MGt/iJLdvfO4+V6xpas6sXD4xSC0z15Fh9sptvi1twg0sW4mfipRw==
-X-Received: by 2002:a05:6a20:72a0:b0:1aa:59ff:5d31 with SMTP id o32-20020a056a2072a000b001aa59ff5d31mr14465799pzk.0.1714454223164;
-        Mon, 29 Apr 2024 22:17:03 -0700 (PDT)
-Received: from thinkpad ([220.158.156.15])
-        by smtp.gmail.com with ESMTPSA id su11-20020a17090b534b00b002b27eb61901sm602961pjb.21.2024.04.29.22.16.55
+        d=1e100.net; s=20230601; t=1714457634; x=1715062434;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9c0gOO/h5yOIgS2nJawt/26LeQyQw+uGFdthgcrbcG0=;
+        b=X3kpZGCFbmgfai8agac2/hHpjdg5PmZXD+Hv8FG6fEnzeLTQTk4THZnFZGGQb5htZT
+         vKU5VE1syNJs4gJ+Kgk9rwdIqfx79Nb6kG/AYgDoAj/E7WzVUAd5VB+bIOpAOw6HCWsK
+         y/X5gHXPbIKE9+MKtM7eeiks3JX1FQxq9uJ9ryVRXiRRfDrNZqpglr+bIFcFcHOejnpj
+         pCa9YwydIJyKwURljY8xb24hVnpRxK3We7N5+3+KtkJvsZ99SeWo0s/vI/r9/qOPVRGw
+         UUSkdL0p8JNlz0TtPoF1hjRmaO8weOoPU5cIuv9WilSYoGn9vey4V4FgJtmW6L1pXsiV
+         8I0w==
+X-Forwarded-Encrypted: i=1; AJvYcCV+Mdyxye5skvjXaRNdQmkwqQd3AbKupi9lnjphLZzlK/lHEa/UJbUC2vtWj+xviNtPG5zJaIO8Z89iIUYX4jGolOgl4g72naJ1720=
+X-Gm-Message-State: AOJu0YxMa+Z1UbCZc+2cvFH/AN+4X/0as1s6qpc8i3u3KUZMUdGAXLXj
+	vAnWX0mumL9VNZYIe8I0DuMQ8/jTVzLqCtM9bc29XmirIuCqrP0GHWoESB4whw==
+X-Google-Smtp-Source: AGHT+IGsARJlgHvDgvWmcjNwPLv+5uq/YQgAXjNfbVxLivFGGrUWgxqVUbJhiAqfSDLDKk6CEVMb3Q==
+X-Received: by 2002:a17:902:7204:b0:1e0:11a4:30e0 with SMTP id ba4-20020a170902720400b001e011a430e0mr13693003plb.19.1714457633953;
+        Mon, 29 Apr 2024 23:13:53 -0700 (PDT)
+Received: from [127.0.1.1] ([220.158.156.15])
+        by smtp.gmail.com with ESMTPSA id bi2-20020a170902bf0200b001e27ad5199csm21393298plb.281.2024.04.29.23.13.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Apr 2024 22:17:02 -0700 (PDT)
-Date: Tue, 30 Apr 2024 10:46:53 +0530
+        Mon, 29 Apr 2024 23:13:53 -0700 (PDT)
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Frank Li <Frank.Li@nxp.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-amlogic@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Siddharth Vadapalli <s-vadapalli@ti.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@Amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Xiaowei Song <songxiaowei@hisilicon.com>,
-	Binghui Wang <wangbinghui@hisilicon.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Subject: Re: [PATCH v3 1/5] PCI: dra7xx: Add missing header inclusion
-Message-ID: <20240430051653.GB3301@thinkpad>
-References: <20240429102510.2665280-1-andriy.shevchenko@linux.intel.com>
- <20240429102510.2665280-2-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v4 00/10] PCI: endpoint: Make host reboot handling more
+ robust
+Date: Tue, 30 Apr 2024 11:43:41 +0530
+Message-Id: <20240430-pci-epf-rework-v4-0-22832d0d456f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240429102510.2665280-2-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABWMMGYC/3XMQQrCMBCF4auUrI1k0pgSV95DXLTNtB2UpkwkK
+ qV3N+1GRFy+B98/i4hMGMWxmAVjokhhzMPsCtEO9dijJJ+30EobVYKRU0sSp04yPgJfZW3RHhp
+ QZV05kdHE2NFzC54veQ8U74FfWz/B+v5NJZBKWigN2ha8cXC60Vhz2AfuxdpK+uONgh+vs3eV8
+ g061Tjnv/yyLG/9c8ER7QAAAA==
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, mhi@lists.linux.dev, 
+ linux-tegra@vger.kernel.org, Niklas Cassel <cassel@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Damien Le Moal <dlemoal@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3403;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=CGUrm1vDZYlEmiR1ifXVGyQ3SZsQMUvdsEPtlsZS1l8=;
+ b=owGbwMvMwMUYOl/w2b+J574ynlZLYkgz6JFSqy7Q1Lt6/6XMf74m34r5t54fYXkVojbbqGWpq
+ qesdaRrJ6MxCwMjF4OsmCJL+lJnrUaP0zeWRKhPhxnEygQyhYGLUwAmwm7C/k/P68wCDj4/s39f
+ FkgmblgmV87KcPKI7wJf4ZaTWnHbck8rn2s0KvWTf/fGW2PeLt5dCVIhKgUMPQYLa7wkKviWhL9
+ inlL9d3ah5RfBnICKVcu+xysYq9qs/7Nx3k/zI7/F1X9YG07xj2a+4vIqa7n7r/9S58WC3GLuxU
+ d2Tvy1s8FE6a11jYdn84GCNc/Kj+1ceonTcY9/1bVL2pETPU4/3b9A71JyiMuzgjZPD5G5/rtV2
+ W9M8ryXetKpM/ThMUadc175yqdY8h7a865c0Sro2P31XO96d13hGyfmMW4ufsTmGWHnUilimzZp
+ 8XHeC3c3BTf+WuKxuDSIM+ZTUYq2j5eNgK+2y+XZk2oMAQ==
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On Mon, Apr 29, 2024 at 01:23:18PM +0300, Andy Shevchenko wrote:
-> Driver is using chained_irq_*() APIs, add the respective inclusion.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hello,
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+This is the follow up series of [1], to improve the handling of host reboot in
+the endpoint subsystem. This involves refining the PERST# and Link Down event
+handling in both the controller and function drivers.
+
+Testing
+=======
+
+This series is tested on Qcom SM8450 based development board with both MHI_EPF
+and EPF_TEST function drivers. And also by Niklas on Rockchip platform.
+
+Dependency
+==========
+
+This series depends on [1] and [2] which are currently in pci/next.
 
 - Mani
 
-> ---
->  drivers/pci/controller/dwc/pci-dra7xx.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-> index d2d17d37d3e0..b67071a63f8a 100644
-> --- a/drivers/pci/controller/dwc/pci-dra7xx.c
-> +++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-> @@ -13,6 +13,7 @@
->  #include <linux/err.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
-> +#include <linux/irqchip/chained_irq.h>
->  #include <linux/irqdomain.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> -- 
-> 2.43.0.rc1.1336.g36b5255a03ac
-> 
+[1] https://lore.kernel.org/linux-pci/20240314-pci-dbi-rework-v10-0-14a45c5a938e@linaro.org/
+[2] https://lore.kernel.org/linux-pci/20240320113157.322695-1-cassel@kernel.org/
 
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+
+Changes in v4:
+- Reworded the pci_epc_bme_notify() Kdoc (Bjorn)
+- Added a patch to drop 'Link is enabled' for BME event (Bjorn)
+- Collected tags from Niklas
+- Rebased on top of pci/next
+
+Changes in v3:
+- Dropped the patch that split epc_events into two
+- Added a patch to rename BME to Bus Master Enable
+- Added back the comment for REBAR
+- Switched to cancel_delayed_work_sync() for Link Down event
+- Rebased on top of pci/next
+- Dropped the tested-by tag from Niklas as I'd like to get this series tested
+  one more time due to changes
+- Link to v2: https://lore.kernel.org/r/20240401-pci-epf-rework-v2-0-970dbe90b99d@linaro.org
+
+Changes in v2:
+- Dropped the {start/stop}_link rework patches
+- Incorporated comments from Niklas
+- Collected review tags
+- Rebased on top of v6.9-rc1 and https://lore.kernel.org/linux-pci/20240320113157.322695-1-cassel@kernel.org/
+- Link to v1: https://lore.kernel.org/r/20240314-pci-epf-rework-v1-0-6134e6c1d491@linaro.org
+
+---
+Manivannan Sadhasivam (10):
+      PCI: qcom-ep: Disable resources unconditionally during PERST# assert
+      PCI: endpoint: Rename core_init() callback in 'struct pci_epc_event_ops' to epc_init()
+      PCI: endpoint: Rename BME to Bus Master Enable
+      PCI: qcom-ep: Drop 'Link is enabled' from the debug message for BME event
+      PCI: endpoint: pci-epf-test: Refactor pci_epf_test_unbind() function
+      PCI: endpoint: pci-epf-{mhi/test}: Move DMA initialization to EPC init callback
+      PCI: endpoint: Introduce 'epc_deinit' event and notify the EPF drivers
+      PCI: dwc: ep: Add a generic dw_pcie_ep_linkdown() API to handle Link Down event
+      PCI: qcom-ep: Use the generic dw_pcie_ep_linkdown() API to handle Link Down event
+      PCI: endpoint: pci-epf-test: Handle Link Down event
+
+ drivers/pci/controller/dwc/pcie-designware-ep.c | 104 ++++++++++++++++--------
+ drivers/pci/controller/dwc/pcie-designware.h    |   5 ++
+ drivers/pci/controller/dwc/pcie-qcom-ep.c       |  13 +--
+ drivers/pci/controller/dwc/pcie-tegra194.c      |   1 +
+ drivers/pci/endpoint/functions/pci-epf-mhi.c    |  47 +++++++----
+ drivers/pci/endpoint/functions/pci-epf-test.c   |  95 ++++++++++++++++------
+ drivers/pci/endpoint/pci-epc-core.c             |  60 ++++++++++----
+ include/linux/pci-epc.h                         |   3 +-
+ include/linux/pci-epf.h                         |  10 ++-
+ 9 files changed, 231 insertions(+), 107 deletions(-)
+---
+base-commit: b4d6d92902f50a577021f2cc08ac680b10658aca
+change-id: 20240314-pci-epf-rework-a6e65b103a79
+
+Best regards,
 -- 
-மணிவண்ணன் சதாசிவம்
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
