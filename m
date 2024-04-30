@@ -1,136 +1,83 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BC3199E9E;
-	Tue, 30 Apr 2024 19:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E901A0B15
+	for <linux-tegra@vger.kernel.org>; Tue, 30 Apr 2024 20:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714506836; cv=none; b=f0FqWIOWRBP9FXC7N22U7/YnzJaY4X/R3ORnrpejmilFlsUF4YvF0qx6ewOFf+y9fJ8UjimycKyCRP8HjUm7zJJkX/dOzx6Z4JQtbxp+gYLXjvPPdIS7262R3VFf7GWBkhTB/KzCzELEZ0KmQWUDTfew9gupXiv5n2UU0dhn9/g=
+	t=1714508822; cv=none; b=BThHRwV4uaLLxnlIxD+wMYEge1AkLWDQmo3BOGLK9sL4PbRuU3VFTgphWEZK/CrRul3tK+JKcsJpIzE3nQY42AP0R7J2zPzhioV3J1GrMYCXEtPYTTYptuuJIo+TWtf/+OortLyN3Zz8bQ/ZGBvPpw8CeRmKRU1rUDJzu8h/qEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714506836; c=relaxed/simple;
-	bh=/57uI0NnDO2LrGAjhLyCD8a8uhYqBrJbnu0u7FZxjEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HuBmo5BXh9QIHrA1iI0rK3Gm7vUqFEaz4pKblHXeOFbnvmQFmbNxiSGjg6gad4NdY3rM4ZfN/vinzfX5fKBdBoFe09eOtqozhqd8l8vq3cKEEIiW97G/jwykHdmu2awCyK7+54obOM/QaOBcXquIAzuWz8nHr1bAi8a42eIMGT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rr319o1M; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1714508822; c=relaxed/simple;
+	bh=O0dijEzBvtORi6qxxVsNfbPFj60dzy82Go7ZwEcpV80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CEehPE4j6FTXvYe/wdudQnLWxGz04aXk5q/UzT8ZMfXkwbBy2t4yGGWGhPmBK3bCQDTDuRYd1qaajkY/e6+JInC5fCtGpz5OPN++UT7nwEz1IUF0JBNItX6ZerNg0WELDl5ANcvRDXfa8HxxD5NUKo80yumbvzn1BYyyV+ne4kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uY7WAUIW; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rr319o1M"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a5872b74c44so693152966b.3;
-        Tue, 30 Apr 2024 12:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714506833; x=1715111633; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HQq1oWqrCF0TfrogSNrGXKQjYOwjvsMuDYhQTiGCeqo=;
-        b=Rr319o1MdPtfRjoocsjULxV0wIXGOBwQ9QefvKHZIlSEJ7tkqgc/G3HdeHmVCCNQnx
-         y7kp+4czTCkdpp1+2zM3qxppbK9SFK9p9uwPQDqNsrgKChInNFRys52HAfj4choZNWDN
-         TlvgQeE98HE1aFjfcq/D4Zdr3EdAdMlyWoBvDdaaXy5FJh6vnEt07qZ8VS09mZXaZmYM
-         YxT34l5eR6nerhNit7mEvfCkMxNNswuixRv1suIWa1VZP9KFutl/+PbQG1DD26kAm79E
-         UVlw3GJUhlJ6EpxkULZHm3yWjPlC+i+IyHzkX3KHNeH11gRwAVWgbyldUgSh/5liZ4wr
-         xW5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714506833; x=1715111633;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HQq1oWqrCF0TfrogSNrGXKQjYOwjvsMuDYhQTiGCeqo=;
-        b=iCj2io3BR5o2b5A7AkL0DyeCx9MQbcVMoio53MFpT7+BUgVQzWPAGNobLDAZT2JDHg
-         O5DZbfGd6h5xZ/5VUG03kj5Rhc/ZyjHMDsI6TLIqFPv+97ov2ocCHCY/obtkFIO7XWLT
-         E6u8ffbiOIr+JMZPnagyv7eYBT7KZsUkJ8qKOgy6vZGhFMZEir7AFVF9LVAvUeEj3zEx
-         lqgI4VPhYUDxN6M5bh557gUTths0jdYhW5uLphyGE0duHHuXCsdGFb/CgZWJ6EGfk5ko
-         hS2ayMWfWUr5SUfPa0qgXmHTCfhyzhDfbBJV1Y9hJT6XIp3nENVNK+1948TmnnZ00h4R
-         1DKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjC/RVHiTazn7kBsYXl0vmMpM35p395+vwy30oKLZek5DwsOjg0piLM3wfrsuGaLpuUZgLIzaMXS5G/7ErV06XuZJJtsCE7sXV5ALGJDl02mMUEAl8XTu4Z/DpP3dE1etR30/xj2sOJxyAmpqv/X1TfXmQz4DEdK0un+fE3CxCU1wFQ4wjvsz5o+TPR0M9ZuB4UPs/pIJXGgxRbokbXoQ5iAw=
-X-Gm-Message-State: AOJu0YyyrxhjlQDixv8IjzX/6YMwDiytsXrL+uhehdmNXeESngG8HItk
-	WXncpZmmu1bFY7JA8pdm+uxxSfC1c0gHIw9eH+HF1Tbgt6kMmPMx
-X-Google-Smtp-Source: AGHT+IHcHyFMebv11hNczXbfOSBPzOfPEK56ZS5IQDWu8DzPrwNQuSSocR8UcDfVrVvZhY8lrKqE1g==
-X-Received: by 2002:a17:906:a084:b0:a55:387b:eef9 with SMTP id q4-20020a170906a08400b00a55387beef9mr455005ejy.10.1714506832645;
-        Tue, 30 Apr 2024 12:53:52 -0700 (PDT)
-Received: from jernej-laptop.localnet ([188.159.248.16])
-        by smtp.gmail.com with ESMTPSA id 13-20020a170906058d00b00a522d34fee8sm15418045ejn.114.2024.04.30.12.53.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Apr 2024 12:53:52 -0700 (PDT)
-From: Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Peter Ujfalusi <peter.ujfalusi@gmail.com>,
- Jarkko Nikula <jarkko.nikula@bitmer.com>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>,
- Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Ban Tao <fengzheng923@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, imx@lists.linux.dev,
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-sunxi@lists.linux.dev,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject:
- Re: [PATCH 13/13] ASoC: sunxi: Use snd_soc_substream_to_rtd() for accessing
- private_data
-Date: Tue, 30 Apr 2024 21:53:49 +0200
-Message-ID: <3292058.44csPzL39Z@jernej-laptop>
-In-Reply-To: <20240430-asoc-snd-substream-clean-v1-13-6f8a8902b479@linaro.org>
-References:
- <20240430-asoc-snd-substream-clean-v1-0-6f8a8902b479@linaro.org>
- <20240430-asoc-snd-substream-clean-v1-13-6f8a8902b479@linaro.org>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uY7WAUIW"
+Date: Wed, 1 May 2024 04:26:55 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1714508818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IBs0/PKerC5E91/aTpLb+GbSC+0huj5ORJCxMwxzVLs=;
+	b=uY7WAUIWDf0+MAwCB2nxSOUXfZ1mt399RKX5YKsZlnTraZMsSNsV51693TtBg3H+3K+dnY
+	J3O6mzN+XesTUUjlJo8Fs5h8wu8WDE0PrQsM1PIiGBUMnJDT5OP0XtsZaABwyx2B+Z3W9z
+	Xvx3OUhz7U8D7ZqP03uCN35G4TiIwr4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Leo Yan <leo.yan@linux.dev>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Besar Wicaksono <bwicaksono@nvidia.com>
+Cc: "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"john.g.garry@oracle.com" <john.g.garry@oracle.com>,
+	"james.clark@arm.com" <james.clark@arm.com>,
+	"mike.leach@linaro.org" <mike.leach@linaro.org>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"namhyung@kernel.org" <namhyung@kernel.org>,
+	"irogers@google.com" <irogers@google.com>,
+	"alisaidi@amazon.com" <alisaidi@amazon.com>,
+	Vikram Sethi <vsethi@nvidia.com>, Rich Wiley <rwiley@nvidia.com>,
+	Yifei Wan <YWan@nvidia.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>, Sean Kelley <skelley@nvidia.com>
+Subject: Re: [PATCH v1 0/3] arm64: Support Neoverse-V2 for Perf Arm SPE
+Message-ID: <20240430202655.GF125@debian-dev>
+References: <20240109192310.16234-1-bwicaksono@nvidia.com>
+ <SJ0PR12MB5676F0DC2CFBBC96534CDD65A0092@SJ0PR12MB5676.namprd12.prod.outlook.com>
+ <SJ0PR12MB56767ECAF499949C4689E91BA01A2@SJ0PR12MB5676.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ0PR12MB56767ECAF499949C4689E91BA01A2@SJ0PR12MB5676.namprd12.prod.outlook.com>
+X-Migadu-Flow: FLOW_OUT
 
-Dne torek, 30. april 2024 ob 16:02:22 GMT +2 je Krzysztof Kozlowski napisal(a):
-> Do not open-code snd_soc_substream_to_rtd().
+On Tue, Apr 30, 2024 at 05:50:40PM +0000, Besar Wicaksono wrote:
+> Hi Arnaldo,
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Could you take these changes for perf?
+>   [2/3] tools headers arm64: Add Neoverse-V2 part
+>   [3/3] perf arm-spe: Add Neoverse-V2 to neoverse list
 
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Thanks for bringing up this.
 
-Best regards,
-Jernej
+I confirmed this patch series can be cleanly applied on the mainline
+kernel, so the above two patches look good to me.
 
-> ---
->  sound/soc/sunxi/sun50i-dmic.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/sunxi/sun50i-dmic.c b/sound/soc/sunxi/sun50i-dmic.c
-> index c76628bc86c6..fedfa4fc95fb 100644
-> --- a/sound/soc/sunxi/sun50i-dmic.c
-> +++ b/sound/soc/sunxi/sun50i-dmic.c
-> @@ -74,7 +74,7 @@ static const struct dmic_rate dmic_rate_s[] = {
->  static int sun50i_dmic_startup(struct snd_pcm_substream *substream,
->  			       struct snd_soc_dai *cpu_dai)
->  {
-> -	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
->  	struct sun50i_dmic_dev *host = snd_soc_dai_get_drvdata(snd_soc_rtd_to_cpu(rtd, 0));
->  
->  	/* only support capture */
-> 
-> 
-
-
-
-
+Thanks,
+Leo
