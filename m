@@ -1,242 +1,346 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2073.outbound.protection.outlook.com [40.107.22.73])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2069.outbound.protection.outlook.com [40.107.243.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A132612BEA0;
-	Wed,  1 May 2024 12:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F19F56754;
+	Wed,  1 May 2024 13:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714568046; cv=fail; b=E8JswDB0VRuSKY3Zsn8+2EA1J+qrmx/KdoIUx5YOIkTDAW6AFnTjR6DT7y5E3O0n8/dJAgxWqU7UNbmUaG90PIIea4jt1fCo31/7FEOgnXL5n8uoEyplwhkQ6TvPSFbEBLTEKL/bShjPC2D5mMP1/v//JwM9iMsM2MZ/iMFAFNQ=
+	t=1714568449; cv=fail; b=afiT+ETEFYQ4MelmmQRE/f/9AviHIIwXHaIY6EDjVCGEPltozEhDKmYeqZ5fMKnMJgbgdBp0IYpl2cIWxvXvBzAAGA8gcVC1AvTt186VbG4+7u8O93IddUNLG1F05al3YiP/rLhxU4A60LfVts6aFNcB/DRsHQ7OuIiD0LpVW6c=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714568046; c=relaxed/simple;
-	bh=Hg4Xy0vEppWnC63RFatzWPhpn/VvXfklWFuoj2CIg+Y=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=fzaDGuXu3gx21rc8RIV1SPUvAM7AebfW+SYKeC4VkQIy8nENyI2g3OpX1GU2DHbCdmvFrqfjEZVRBp4wJlWS9odRlNqDXCLbLXU9TR6UOAu7CAp6udnhUdZtDRpH1qHk96t/WqGvd3vdXdJ7TmDCk79MR7zPphLxplQeWb9WJdg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=JDJ3tJKS; arc=fail smtp.client-ip=40.107.22.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	s=arc-20240116; t=1714568449; c=relaxed/simple;
+	bh=TMZRoVt3EAoZsd6GVOJnNRQ530WlOqmFsUhnVfWKw+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=kp1Du1rJQYsyjPmKInLKfQi0PsYDV/yXULLKvKghnZXeUw9h+tzlswgkstavnmc/aArP0//+4GB8YL19ng+KZenTsT2SAYWcHSHpbgDtbJeozbSgftraLhd9TEVw/qc7bjclKRbPzBjac3KDcLZCsEFapBVsL0IrFhkL/xepNpA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PiYDmMeT; arc=fail smtp.client-ip=40.107.243.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="JDJ3tJKS"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PiYDmMeT"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aalf/pOql47GT5ltrEi1+Eny9g+kb6hmT4tgQ3lLG1eBdZTBkY2/+o+z5AmkllwxQZkAkAM4QzrIfg4oWz1ZvJWbdJMUNb5x0EkWXaIof5GJv1y1f+TYeshPXd6qE1rvSj/wY9BxqL+Korsvn1eQTMSC3LAdpIUtt/RRZzD5IfoYhTuK+T3VX7u7onYrp8OtLGHgQefcxQf2i/nzDu2ifabuTssTAGBBOT8jkOwaDW9ZiPQvsz+eJeu7PeS8pgXlyzMP/dXNQsNMCUtPxfq4n2f/AZIG5Yi7U10T7izh1ufjQb2Nc9/IxpsfVNKd4Jnl1yUST9hdvi9y2iSf4VSHOA==
+ b=Q6FJdR5fee354DN3nYQJVUT3xNUjzyrTMTe6sUz4woQFX4LNY8GZ14opOIbJI20bSsM9xNbu9fhx7OQQNgSl4G81bj/2IFJnmdQkFJFfcJVRIc46Jw8dUArSxn4BsFJCMyXuoWZeJ7ypKlVb5pV7PU8X6h7TSltLKHfofqD0yc9VlwnnbH8As/NA0R/MhXwIHfdJkHDy9MxGfJchcvsb1Ptyzq305A0J6Hj9Mg92lEjqNSxdDe1WZmTNL7nH9vGpbJ1Vx/8K5SHnn6uDL4W24NKBUURTOySnBy2CphcdSuVEZYLLPmCYVbLwpgpRQl9FucTejucITP268OQcmahVjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OzFmWqqgAaHNbNJ4y5r21eHdO5OywXD/utfmPqrXP8Q=;
- b=oTYVIYaIEia1c6xCx3wSRZ/wvLbfzd1nWwUxdeqcuLBx+Si17fPfRyuLz+t64RXW8czpyAhdDHXACBie25R+cnJwBaCj/sf4f1gETDuNOg1sE9ppmTtTXAeqpIDsPIjOlQZjkM5o/ehbNJCUjhhMx/EgpOby5mNi7bk5l+kzaHxIF6RoC2vRZ6xWzDglw07z4JL1or/NK8ZbWOHuge2Zefg+jMsYQYyCH6sPSaWNKx/SSInjhUx+anoEFomB/nRGcYvm1FmmhG5c9Ks85NOmCfBlPPKjdu3eJVMd4HLPDh6BTAOqd9I+kHp/Pubc3hONpw/85JM4Yd8Be9VK0LObrw==
+ bh=fbFwVWbDiNM5d2OdQt1vYophJYlCG5R8loKabQ+9GeE=;
+ b=FWb6gFaz0Qzpmt0GKpbJf7MZJZdg3FLSGX4q7yc8fP0bR7SfpauXhJSeZs2l2Gw6aCS22EP8me99A31EJD4bryHUlWFqC+luyYvkuSsDSBn4J9bpe3yGGbrFXH+Yxs7LDW5USmBGZ+PEbdF6DYA5cQRSwlRYtiZcnQO8RisN5tc/7rM7IwjrmBZo/o9xk7f7KkqEBn5TJ1+ywGk8fOBfQoLGSR/66FeugQ4vEAW8cTeewue7fhgbYOp8eEWTNWU5hPoovDXjJRMqAxcVkgBhAKNuUyAiBJ383gPkiCPd59gzL++MPqVmbuYhx28ybdfxC3I3nna/x9KafWe5c3GrKQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OzFmWqqgAaHNbNJ4y5r21eHdO5OywXD/utfmPqrXP8Q=;
- b=JDJ3tJKSv7ITKll9IdzYp8RkMp2A4rMq5J2SRZQVUMx5todwNBrKZOGjRm34HacIKopamUcIppjn9B8DkzdS6OQ4K7mRk8xaS3kLlEdvNlfawGVRviSIqa6hgzA6AnmLFPpTqWJElR1EQWnSv2HJ+MbR9Qh0O6cWbaEWFnX689k=
+ bh=fbFwVWbDiNM5d2OdQt1vYophJYlCG5R8loKabQ+9GeE=;
+ b=PiYDmMeTLGzsEnUNjZ64c3U4vUUfZHfpG61yeSWjyDX/rzlp08x9ly7C+VJUqmbPDDibKzJUiwXMpXmdUsGh+KgUK1VGj+3WNDt8zbuZHUMKomPHDuscB92fDshr59sKP5idWSr3REc5jdYoKFDuUq2m7pSVq4ogcntcmBDcmrvru0oywQ8KwPc6Q+0z/GDKwkBstuJEWoVOwbQGulH8dDwgSonDeglmN3cYDJJxy/wZXwVJw0IPC3mDhGNO1NGjefsBAU+mwzNvO+2lpCsJr2QwK9Vk9HddfOQFAkdjXwUtP8NJkazpv3lThiuw3mmT6lFlZgYrAvXu4FcyppCm2A==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by DBAPR04MB7432.eurprd04.prod.outlook.com (2603:10a6:10:1a9::21) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by SA1PR12MB8697.namprd12.prod.outlook.com (2603:10b6:806:385::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.28; Wed, 1 May
- 2024 12:54:01 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::d30b:44e7:e78e:662d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::d30b:44e7:e78e:662d%4]) with mapi id 15.20.7519.031; Wed, 1 May 2024
- 12:54:01 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Date: Wed, 01 May 2024 20:56:19 +0800
-Subject: [PATCH 21/21] pinctrl: pinconf-generic: Use scope based
- of_node_put() cleanups
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240501-pinctrl-cleanup-v1-21-797ceca46e5c@nxp.com>
-References: <20240501-pinctrl-cleanup-v1-0-797ceca46e5c@nxp.com>
-In-Reply-To: <20240501-pinctrl-cleanup-v1-0-797ceca46e5c@nxp.com>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, 
- Wells Lu <wellslutw@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Emil Renner Berthing <kernel@esmil.dk>, 
- Jianlong Huang <jianlong.huang@starfivetech.com>, 
- Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, Viresh Kumar <vireshk@kernel.org>, 
- Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Patrice Chotard <patrice.chotard@foss.st.com>, 
- Heiko Stuebner <heiko@sntech.de>, Damien Le Moal <dlemoal@kernel.org>, 
- Ludovic Desroches <ludovic.desroches@microchip.com>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
- Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
- Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
- linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, 
- openbmc@lists.ozlabs.org, Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1714568179; l=1107;
- i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=2wM6S75hkeICu8KMVBGWw7nINzfNCEUbOtGveeJZglQ=;
- b=Fst3hl45iGHgFaoTiJF+h16Ucdgm/tZpALLXVlVt5L+nhkjqsyRRvNK9ZdG7OKgMxyr0zBvOm
- dFZohN5Zm5QAMChdlPzaw9SqDpw6GAaAdpZSobM0eKkl3aXOvSnJAOJ
-X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
- pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
-X-ClientProxiedBy: SG2PR02CA0064.apcprd02.prod.outlook.com
- (2603:1096:4:54::28) To DU0PR04MB9417.eurprd04.prod.outlook.com
- (2603:10a6:10:358::11)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7519.34; Wed, 1 May
+ 2024 13:00:44 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%3]) with mapi id 15.20.7544.029; Wed, 1 May 2024
+ 13:00:44 +0000
+Date: Wed, 1 May 2024 10:00:42 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v6 5/6] iommu/arm-smmu-v3: Add in-kernel support for
+ NVIDIA Tegra241 (Grace) CMDQV
+Message-ID: <20240501130042.GC941030@nvidia.com>
+References: <cover.1714451595.git.nicolinc@nvidia.com>
+ <63414546b1eafdf8032ac1b95ea514da6d206d63.1714451595.git.nicolinc@nvidia.com>
+ <20240430163545.GS941030@nvidia.com>
+ <ZjEztwhd5AN1FTCk@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjEztwhd5AN1FTCk@Asurada-Nvidia>
+X-ClientProxiedBy: BL0PR05CA0004.namprd05.prod.outlook.com
+ (2603:10b6:208:91::14) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|DBAPR04MB7432:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa011eb6-b045-4e93-0830-08dc69ddc61b
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|SA1PR12MB8697:EE_
+X-MS-Office365-Filtering-Correlation-Id: 948927d9-63ed-45d6-97f1-08dc69deb5fd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|52116005|7416005|376005|366007|1800799015|921011|38350700005;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VFpqNGRmTWRtU3lGeEppNk1EOWwzSW1MckY5NCtQcDRMaEJhVTM5NSsvL2Qx?=
- =?utf-8?B?emE5TEdKbDl5Q2JrZDVFZUtsYjZ3NU1kVFhhdUVUUEJxaG1rSXM5L0xWUFpO?=
- =?utf-8?B?eE1OUWFRMjNpdXgwbkMwZjhENXBPV0ZieCttWldCbWlvUkN0bUVKeDVWMFNq?=
- =?utf-8?B?aXBrRGgwQ1RWTzBJZlEyZW9ZeWJydmxhSURpczBhakJyMHkweUJKK1hQcjds?=
- =?utf-8?B?ZFF5Unh2QmlWK3hMT2Njd29YSTExQThVdGppUGtFWDZtRE1kZ3hrR0xJRlNz?=
- =?utf-8?B?ejNkL01tUlo5MDNkRGQ2ZTFtQlllaVFHc2VIejVWdDU4R0srdFJCWGFXSkpy?=
- =?utf-8?B?b2M4RjhXS0xuVTNoSEk2T3NZVTRsZnhiQzBrQXlDNU1veVpKQ2hsNHZQRkZt?=
- =?utf-8?B?R0gzbE9UMUhlQzJVTlprcDdrY1dOMEk1bDVFa2wwbjcvRDhBY00wYUNpNjBC?=
- =?utf-8?B?bWswNUFrNUMxRWtjNkg5REVwZWZ1UVFkQ1BEUXA1NlZFYUUwdXRjNWJxNkxJ?=
- =?utf-8?B?ZFo3QkZkNmF2d2hrb3NNK1Z4N3R3MFNXN3FqMUdHNE91SEFLN2M3aTY0RVdV?=
- =?utf-8?B?Y2gwOXk3M01rZ3lpb2I1NS9kWU9Cam1GZWVPSW1xQ3FpdHZQcEoxNkk3dHhF?=
- =?utf-8?B?aDczY1l1dHJHQmJYWkdTQkxObGl0dEkwTUp6RjVkQUcrcHZzem9IUFhWa0pG?=
- =?utf-8?B?KzhLa1NKZ1BDTmsxTmNVZ3lHWGhUdDZTWHIya0s0U2dPclB4ZUdUbTV0V3lZ?=
- =?utf-8?B?R1VqS3BxenRBWldVREgxOVFXSVkzSjRmWmg2NEc3QldkMGJCbG5RNUhyczJD?=
- =?utf-8?B?amxMaXlLTjIwaG9BeVZCS2hCaGlzTTlPSFRGd3M1R1NpM0lPeW5tUmttNVJU?=
- =?utf-8?B?Q0tuUGZRV3BFOWI0N3BvRzNjaWZObEhCMlJSZWtiZllyTXR1UVlkTnhZd2ZT?=
- =?utf-8?B?ajBSSVV5ZjgwK1FiOVpyeStrcFhxTnZSeCtlNnRpMUxwZ0JVSVJ4OFRJaWQw?=
- =?utf-8?B?b2VrdjhDMDRaeFNOVmRYVDFIMExyMHhxSzJDSDVsclRySDdUdGVNLzdrVUtP?=
- =?utf-8?B?aGtGTFVzMlVQQWcyWHdTc1hIL2VUaGw1YzFOU1oySlR6QlBOaktMU3MxSWFr?=
- =?utf-8?B?M1NDZ2Zma2FScGZTMGY0QmtQc053QXVwQXdpRmFwK3Q0bFU5bjh5dUlFNkk5?=
- =?utf-8?B?cENHaTYrVXlUMWlybFZpUTMxeFk1Zm1FWERyNE1rVHVPOXdacWZuUHQ5ZVRh?=
- =?utf-8?B?a3laamdZa3NnMGY5Vlp5TzU3elBFMDROTmlvaVI3VTFFUk12cFNLb3BoSVM2?=
- =?utf-8?B?Y3ZDNGFzUHdyMzgzYSthZ2hJckRKcUxRakJIUmp2K1d1RC83cTRXYnZrOEUw?=
- =?utf-8?B?R1dEcWRjWktMaUlTeGVmRTd1TEtLZDVnd2FaS2xVSFh1U1k2QW9vTzBINmt0?=
- =?utf-8?B?ZFNYZ296TVJ2c0RzNVFTSm5NeFE2MHZOOEdRVEY0UFhiVUkrNGlUMXZ0WGFj?=
- =?utf-8?B?MmtBVVVVNHluRy9vdC9JcG1lb0YxckpMT3c4eWUzcnRQK3ZMUGw0ckp0Q3No?=
- =?utf-8?B?T2ZXWnhUdkY0SmRzbXJBMTZIUytUZEVBS1VGMjhzZmN6UE5GaVQrTjNpQVA5?=
- =?utf-8?B?UkpacklSU2RVbWRrTEs5NysyRGhSV1djUnQvM28zMDB3Q2pTcnhJYXhEWVBQ?=
- =?utf-8?B?QUZMOHpZSjZJR29taXMyZkowR3N0aHJKNGhjdURrQWJiYUJTSjRwcU0wTzZV?=
- =?utf-8?B?cU1veTA3ejg0Z01jSlEwUTk1SWJGZTcvVWYvUjVwRUZ6TmRpT2VHK1ByeTZ3?=
- =?utf-8?Q?DFh7R+aqHLm34ueiBA+hALoXYKGBdcR2huZDU=3D?=
+	=?us-ascii?Q?E5SP/ZUsl9KoTJyaM1D7L6Ph9FetoSOmrFyj/BDYl9ImgWGLaLmxGnBNlIM6?=
+ =?us-ascii?Q?XglLDu07m5Zf3Su6wkt7xYACSc2wQfVEOlgaB6TRfsES/RjJIKvybalKC9mQ?=
+ =?us-ascii?Q?yBGfdQSXQq/rpYAhtCKcCsd3L/lDtXltmOUdzb6I6rA/3dIyqQMjg6h7pNR5?=
+ =?us-ascii?Q?y/HVa4eCSHQhrmcUnpnAllEXTZs0gbpSYQ3xe7EnjdNbn3icOGetiPzbMlP1?=
+ =?us-ascii?Q?0O0JXLJjvkuk4JYX0T4GZM3S3uwnMhJBQtgiy0AtzT5zdMFZKlcRycXfThzO?=
+ =?us-ascii?Q?QVVbtYA6YHA0V9GYD2fUJRIkNFktooSmrdYS2pnD35j0WvSNjwRU+1yvLKlQ?=
+ =?us-ascii?Q?ABvQeM4++cJCoUcJrTzmPq8ZNaPDzGg0WlTRnaTZGCbJjHgCU6fVnUBfQZNP?=
+ =?us-ascii?Q?pZr2T5E+ruV6ZAK4c0lTCIg6ZQboSpvNeAIAbhDtxXhlG2J2Nu2800ETvkOJ?=
+ =?us-ascii?Q?qWJ+iceSdms/+ol2i3Uwfnzjwk2ffFAPGz0g/J+f6xx6EgsG3yc5cNUCBzlL?=
+ =?us-ascii?Q?qTnsXGRou7OFLP4kDyy/Wi4vX9QF7hF24v8OoM1WlYyLGoXQyjWGAFr+sU9C?=
+ =?us-ascii?Q?MXqi6lYsHW1p5GL1NIPXMg7bdpqDWLqn53doRzoc72W1PTCahSovXXWBG+i0?=
+ =?us-ascii?Q?3c6ZCuPcdHEHC7J6U82suKURQo1fjwBwTDhSd4zzEc3ZkMacIlH6CFw6QyEx?=
+ =?us-ascii?Q?wOLweIUly+gFoCuKVGPfKThfFIfrMr80eeOW6amm4MBmmfW1o9A7UG6hoHrL?=
+ =?us-ascii?Q?5/UGVK3ELEvrtKfhMYwM4nCEwiucdSLRnYfp6p0qYuuN/1/CSupuDJRBx9xH?=
+ =?us-ascii?Q?qIxjNY8MMJ9zpgZuoYdPFmaJ2sx2kI/2jSpwDYzxTivA37gXFhqZihE4WHl6?=
+ =?us-ascii?Q?hS6CFZXmbaGK8LpTQNc6IqCL/EfrkBZKxHrgAVggDbZxwGLBQotu4K5muOer?=
+ =?us-ascii?Q?KU7madcWqQ/spzaBpVVlInKqmA2iBl2rBG6wQUbFSX+CXLbRmcUWSHyNoDLg?=
+ =?us-ascii?Q?4z4l6yS9X49YRsS8x/JDVffj6uwSRxVCSRXaK46+35zp8kegbVnCgZJPnJwt?=
+ =?us-ascii?Q?6MwvlPUmPab9xPViQoYejSiYCDjQQ5zbMSk+Jt3G6b8JdzxSABxLoNnk6SpP?=
+ =?us-ascii?Q?+s8FCZ9tUG/DY5rxxEr7gXUNANg5iOrOuV4FO2VUdf8f5IpC50lZs2ucxbXF?=
+ =?us-ascii?Q?nWfxuevGThtQu1HKU0FRffeTr3uPAbwSsa/XMKsNgGlXyA1eZ43Di3CLSOTT?=
+ =?us-ascii?Q?lVTRQ+1pU7OLNtEqLbLp90mRa7X3RrUEIoSznb3Sig=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(7416005)(376005)(366007)(1800799015)(921011)(38350700005);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S3lCMmtxNllJQ3l3VHZkcExKRElZUGdEd0k3cTFEWHk3eFNRUmlnSGwzNFk1?=
- =?utf-8?B?b0FWWld3aUY0c25ucjdaMGh5RGhJOWV4dFBIZ0JoUVdiaitGemRjQzh3NE9z?=
- =?utf-8?B?LzBXRXZKL1psbnRpMUFkNzJNWXZWcktXVmNRNEtaNUhDZ3J6Wm8yalVrUVVU?=
- =?utf-8?B?WVkyekpMeU5DQ3J4M1dYM0hoQ05BWkZ6Z05zeFdSVFVQUkR2WUZ0V0xoSVZX?=
- =?utf-8?B?ZTJndGhDV2dvVnN6Ym9QSE9lWEFoUmFUdkhvYVlmbzI5LzdoWnIwQnhZY2cw?=
- =?utf-8?B?dGRRQjZLZjFGYU91VWxVbGVTTk5RSllGKzhNRUVkYmNpK3JESzdzNVNpSy9O?=
- =?utf-8?B?TXRXcGxUeXoySk1uVlNKQ2pPQTZnaTVNR01ZbFUvSEFVdkdiMmFZeGNRUktQ?=
- =?utf-8?B?VjdxTDlvMXE5c0VCSUJwb3h3MDJlVlg4anJ1Ym9zQjVxT0VHNXFSaFZaS0gz?=
- =?utf-8?B?WG9zVS9kWUJ3NjRYaG1Hek1DcDJBYkhoMUI5eVFSZmpUN3pYSkJHWit4YlVO?=
- =?utf-8?B?dkxQUWZiRHNxeUJHYTN6ZG5QcjlZRmJNelBJbmtkcDZuUVRqVFZDVEdkQ2N5?=
- =?utf-8?B?NEIzcjRobFk3aUxvanYrZ2lmSGk5ZjBWSExwK0E0TlkwK1YrTTVPNFJ1WDY4?=
- =?utf-8?B?bTd1VzVSejBOSUxnYk5XVFJXQ3FlZ001MEVZVU5TMVhNZFh3akxnOHlZYTFn?=
- =?utf-8?B?RllnVUtRMjNLL1lkc2MvVmg3Y2x1akF6S1JGeFNpcFdYV3lkMHZBaHN6bmx5?=
- =?utf-8?B?VGswTmtNOHRSYUJHZDZTQkxJTmVTbU1PZHlpeitiNGVTOUpoVGJtRVdFa1Zy?=
- =?utf-8?B?S2VIUnc4NnZ6Y2E1WnM5UTEwcWR4VlVFbFgxekxOZTZRVk1MOUdHd0o1L1oz?=
- =?utf-8?B?WW1ibW5yWnZPOTJnWGNVdUZSTW1XYU4xQkc3TzBoeFNhalFXZjZOWHJPaHlR?=
- =?utf-8?B?VlpWVTlxSjJSTFVEOFJiU2prZE5UN2tCQ2FRd1ZMK1JMU0JoTmZwRUJWMDcy?=
- =?utf-8?B?NU8zZm1wT05IT2dPU2xqZytpOHA2ak5IV1FrQ1paYTJWMnVVdEgwTlZ5TDhk?=
- =?utf-8?B?TGx6VW4vdEhrQVdaMmVsK3JBLzFCaG96b0Rxcmx6c2dVdXgyU093S1F4RXl5?=
- =?utf-8?B?WTRHNTlXeXYyVUVmK0RMV3FMNHp6M3JYall3RUpOOStVNnFJTHlHUi9NMm9p?=
- =?utf-8?B?cHZMVFRCR2ZBOVlXeEZHN0VWNUNlT1ZYRmttSHN6M3NRWmdLcUZaUWhMYU1y?=
- =?utf-8?B?a3VrNkFPbEZYUk1vZHhZMnBLY2hJS3BrNTdqY3k1VzRFNGtMQXN3MGN6b2w1?=
- =?utf-8?B?ci9pS082UDJ2VFNKZG5aZUd0TGVleTVQTlhiSTdBQVh1RTRzcC9ZUFlGMUpW?=
- =?utf-8?B?eDQrMzZuY1d4YndrbFR2TlVpTlB2eHZ6MlZ5M2dObWg0Zmhrc3dtQ25hS2g5?=
- =?utf-8?B?YVBkaXN3RXJOYzd4U0QzNHEyaDVDM201OFJSdmdGdWhNelVSeS96UTFKcGN4?=
- =?utf-8?B?QS9Kd3JWU1FjMENpWmlXZlRlRnNWc0tIbWtBS0tjcGs4U2NJR0E4NWpORDA2?=
- =?utf-8?B?ajlENXgrTG5yNzg0NTZYb3RMQzVqcnZSYzhsTlNoSVFRMklvbjRhem5LQ3FN?=
- =?utf-8?B?aitHQUg3L3U5ZEVtaE1ONkNONGx4V296NHdtWkllK1M2d3ZJTDBnZDBmVSta?=
- =?utf-8?B?YVVJRE45M3lRVExhVWxEWVNmU0s2YWFiWEJOcHZGUVcvRExYdHZKQmFqSjlE?=
- =?utf-8?B?d0lTTVlJbXdKVFR4TlZ3Zm9jK3lXU0VFK2c2S0ltRkZrbnpaOVJVNFdzOWxP?=
- =?utf-8?B?bzdkTnp5MmV6bkJYRmxkalNkd240N09LdEo2UTh0TUgyVU00YWZlL2puTUp3?=
- =?utf-8?B?YlFRZS9UaS9ldTZPTmJyUFloQ3BvN3RoakhlZVBlK3VWSTBidWtvS2F1YTh2?=
- =?utf-8?B?ZDh0SzhWemMrbHU2U2JwUjRFUlI2N2hobm5ZbnBwb2hSdlVYNzhZNWdRcDNl?=
- =?utf-8?B?b1RodUF4OHBpMzJaME5kaDR2UDhxQkVuc2o3NUdXLzZNWk9DZVo1Z09yYnJ5?=
- =?utf-8?B?cEo4QmxUOTBFZCsrS0tuVTJSMW1CQXlWMG1zMFF5Vlp2MlhNZUgrV0R5blNZ?=
- =?utf-8?Q?ROEgMVxQL9XNCr4Ol96pd4sJ2?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa011eb6-b045-4e93-0830-08dc69ddc61b
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+	=?us-ascii?Q?tXOOtAQVsN1dSTOQqIYZuu5rNlq6FsoS2D2NiROE+byD23Ivk2TwlsDUQzwy?=
+ =?us-ascii?Q?FZrjQ/osKpArBECWmGCmJmqEm2YPFLpF92whzWcj3k2EJ0tcDvyZwh+ROORE?=
+ =?us-ascii?Q?IVapbv5FGeL4TnSxUA1JxYsNHBbqqnBjgMl14Ex/lXGQSGAyXAZ2FKJes5xx?=
+ =?us-ascii?Q?ieDMmSJHtFsAVmcYySBNNKWeRmaeZny1i6Sipmk0heZ0J0dlCaXb3a5xtXt7?=
+ =?us-ascii?Q?DDjuB8Bl+x1xqEKxtHoY0lCgB3lwZvzn70jM70ldRwVvpFlUIJtXrvbQJVUp?=
+ =?us-ascii?Q?LGYpzPZye7eSpNo4LESvZxt3IztDbvgIPSSKv6c9csGSgEoqSVRUXW1Cvk/1?=
+ =?us-ascii?Q?WpbV44gnnv6aEeASNdEXFRTZNG9BVE6EOnqmCgTRxfisgN+yPADyxVgvT6J4?=
+ =?us-ascii?Q?M3wIdGmwjfedy0Ymww4xevCEDnL6M34FF+fkXvvz6Mm82d1Fyu11MfSh+R/+?=
+ =?us-ascii?Q?sm/JK8SkX5jvPjaXpPg2JYHE9Y80A0d6nYRJSGEwlSTzCQTfTlldxolVXUs7?=
+ =?us-ascii?Q?gnh39VC0SCzF+AgPZL6JNpx/ev9shKtpabb3s0OguFzCcGa+DFeOxbvFx5Vu?=
+ =?us-ascii?Q?wxV6BpCiA23LzwQSWLz2ZBPHqP975olDY0OhKRaKwT32ooHqwGyYiKntotFd?=
+ =?us-ascii?Q?iC+4UYxn3GWNE+alV3cilvbaz5Bx5Jdy5LA2qwIHy+V1WIVQHs2CaZ1Gi3Lv?=
+ =?us-ascii?Q?69iNQXfCMDehqddJis0AC4TWi2qsh32KA3cHGkl/ZC77JNvfdbwMlWRi1oRQ?=
+ =?us-ascii?Q?rSB8hskr84LrihUBV0T6uBSxQR1sNbUPjmT14dfTFFG9Ctp10do0drCYI4Ls?=
+ =?us-ascii?Q?89FAmjLF/TyNTZEaY9z4CNY7gJ6ahEm3fb+hatGtRfflsC4DrFL6CASdkSVQ?=
+ =?us-ascii?Q?CFKtge+dIO68yCwlJsfCPBpeI0vNdpVoTqU9PhlnbuQ58zZmz/1MCNrN66Sc?=
+ =?us-ascii?Q?A+LnVJvws8p8XpZztZPTAXQjkSB542a2pnEiq7nzIQIJhOyd3TIYmjywr04T?=
+ =?us-ascii?Q?o9WE5E2e4UNGmXgapaFQGWPH6hJrji1/tWN/790Bv2775iNxO1H69Q8gwNJ5?=
+ =?us-ascii?Q?tnuf7eU7lnm2LmKv2m5Lb97sj6zQ3O9n3bZmV+MTNQvkF/hWLAFkOlPT+Vuq?=
+ =?us-ascii?Q?u/3HpFN7j+MGL0FQduh77TLz9zX0cPIJ4DL7gyfNYHflrwIjSj9v0zOeqYy4?=
+ =?us-ascii?Q?f6Lsrso/bOrc8/T28Nnj+wMRpHL7uzy6NS5uLykTIxUJgah1IfUHI/hnmMvy?=
+ =?us-ascii?Q?ZXgGJlBQWfp1I2c6qnj2+JBMoL/AhYyAwYmrocgDFF9+Es0NLdvDIwXQSpqv?=
+ =?us-ascii?Q?VolA/AA/To+g2c7nXGaTJZFiKPZ+xSSGmcXO/c2dnRzak7foZJc0i1BNlVBq?=
+ =?us-ascii?Q?DInjkhNwsMDl/uA9wi+IY/8B92nxR9SPDXSy66wsMiDG1HG0CjT0yCqK1IuP?=
+ =?us-ascii?Q?DptrOM5pElIh1hEvwI2Nfp4gQvJduDz87Ttzv+Zk4CkhAT6eshq4ZHiemOF4?=
+ =?us-ascii?Q?lgPgZT2ebDUnaXcTckegfm1bgZr677jT5whnEYyF/W40lm3sd8C6vltORMKZ?=
+ =?us-ascii?Q?CPzD40MukKJSYZBIfvxmtHJbb0xwh2hVInm0Yhfu?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 948927d9-63ed-45d6-97f1-08dc69deb5fd
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2024 12:54:01.3195
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2024 13:00:43.9155
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IIlETgYicOXhlsUoUZ/2k7SDvKOTmE/R5jtZBOI7DzknFcGm9/UrdoPMVjPu0KuJaiNr1Qn21skLWVl6yPQcCg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7432
+X-MS-Exchange-CrossTenant-UserPrincipalName: dzfyM0hwlhReCMrRfI56emw49mmRIfgSkRtXd/iWfWu/GfAyZRcqVDIWgK/8i8dD
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8697
 
-From: Peng Fan <peng.fan@nxp.com>
+On Tue, Apr 30, 2024 at 11:08:55AM -0700, Nicolin Chen wrote:
+> (Removing chunks that I simply ack)
+> 
+> On Tue, Apr 30, 2024 at 01:35:45PM -0300, Jason Gunthorpe wrote:
+> > On Mon, Apr 29, 2024 at 09:43:48PM -0700, Nicolin Chen wrote:
+> 
+> > > +/* MMIO helpers */
+> > > +#define cmdqv_readl(reg) \
+> > > +	readl(cmdqv->base + TEGRA241_CMDQV_##reg)
+> > > +#define cmdqv_readl_relaxed(reg) \
+> > > +	readl_relaxed(cmdqv->base + TEGRA241_CMDQV_##reg)
+> > > +#define cmdqv_writel(val, reg) \
+> > > +	writel((val), cmdqv->base + TEGRA241_CMDQV_##reg)
+> > > +#define cmdqv_writel_relaxed(val, reg) \
+> > > +	writel_relaxed((val), cmdqv->base + TEGRA241_CMDQV_##reg)
+> > 
+> > Please don't hide access to a stack variable in a macro, and I'm not
+> > keen on the ##reg scheme either - it makes it much harder to search
+> > for things.
+> 
+> I can pass in cmdqv/vintf/vcmdq pointers, if it would be better.
+> 
+> > Really this all seems like alot of overkill to make a little bit of
+> > shorthand. It is not so wordy just to type it out:
+> > 
+> >   readl(vintf->base + TEGRA241_VINTF_CONFIG) 
+> 
+> vintf_readl(vintf, CONFIG) is much shorter. Doing so reduced the
+> line breaks at quite a lot places, so overall the driver looks a
+> lot cleaner to me.
 
-Use scope based of_node_put() cleanup to simplify code.
+We don't have the strict 80 column limit now, it would be fine to go a
+few extra to avoid the breaks.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/pinctrl/pinconf-generic.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Certainly preferred to these readability damaging macros.
 
-diff --git a/drivers/pinctrl/pinconf-generic.c b/drivers/pinctrl/pinconf-generic.c
-index 80de389199bd..a499b8af5c1f 100644
---- a/drivers/pinctrl/pinconf-generic.c
-+++ b/drivers/pinctrl/pinconf-generic.c
-@@ -382,7 +382,6 @@ int pinconf_generic_dt_node_to_map(struct pinctrl_dev *pctldev,
- 		unsigned int *num_maps, enum pinctrl_map_type type)
- {
- 	unsigned int reserved_maps;
--	struct device_node *np;
- 	int ret;
- 
- 	reserved_maps = 0;
-@@ -394,13 +393,11 @@ int pinconf_generic_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	if (ret < 0)
- 		goto exit;
- 
--	for_each_available_child_of_node(np_config, np) {
-+	for_each_available_child_of_node_scoped(np_config, np) {
- 		ret = pinconf_generic_dt_subnode_to_map(pctldev, np, map,
- 					&reserved_maps, num_maps, type);
--		if (ret < 0) {
--			of_node_put(np);
-+		if (ret < 0)
- 			goto exit;
--		}
- 	}
- 	return 0;
- 
+> I can probably change these logging helpers to inline functions.
 
--- 
-2.37.1
+Just call the normal logging functions directly.
 
+> > > +#define vintf_warn(fmt, ...) \
+> > > +	dev_warn(vintf->cmdqv->dev, "VINTF%u: " fmt, vintf->idx, ##__VA_ARGS__)
+> > > +#define vintf_err(fmt, ...) \
+> > > +	dev_err(vintf->cmdqv->dev, "VINTF%u: " fmt, vintf->idx, ##__VA_ARGS__)
+> > > +#define vintf_info(fmt, ...) \
+> > > +	dev_info(vintf->cmdqv->dev, "VINTF%u: " fmt, vintf->idx, ##__VA_ARGS__)
+> > > +#define vintf_dbg(fmt, ...) \
+> > > +	dev_dbg(vintf->cmdqv->dev, "VINTF%u: " fmt, vintf->idx, ##__VA_ARGS__)
+> > > +
+> > > +#define vcmdq_warn(fmt, ...)                                                   \
+> > > +	({                                                                     \
+> > > +		struct tegra241_vintf *vintf = vcmdq->vintf;                   \
+> > > +		if (vintf)                                                     \
+> > > +			vintf_warn("VCMDQ%u/LVCMDQ%u: " fmt,                   \
+> > > +				   vcmdq->idx, vcmdq->lidx,                    \
+> > > +				   ##__VA_ARGS__);                             \
+> > > +		else                                                           \
+> > > +			dev_warn(vcmdq->cmdqv->dev, "VCMDQ%u: " fmt,           \
+> > > +				 vcmdq->idx, ##__VA_ARGS__);                   \
+> > > +	})
+> 
+> > Some of these are barely used, is it worth all these macros??
+> 
+> Only vcmdq_warn isn't called. But I think it would be useful.
+> I could also find a place to call it, if that's a must.
+
+Just call the normal logging functions, there are so few callers
+typing out the VCMDQ%u is not going to be so bad
+
+
+
+> > > +
+> > > +/* Configuring and polling helpers */
+> > > +#define tegra241_cmdqv_write_config(_owner, _OWNER, _regval)                   \
+> > > +	({                                                                     \
+> > > +		bool _en = (_regval) & _OWNER##_EN;                            \
+> > > +		u32 _status;                                                   \
+> > > +		int _ret;                                                      \
+> > > +		writel((_regval), _owner->base + TEGRA241_##_OWNER##_CONFIG);  \
+> > > +		_ret = readl_poll_timeout(                                     \
+> > > +			_owner->base + TEGRA241_##_OWNER##_STATUS, _status,    \
+> > > +			_en ? (_regval) & _OWNER##_ENABLED :                   \
+> > > +			      !((_regval) & _OWNER##_ENABLED),                 \
+> > > +			1, ARM_SMMU_POLL_TIMEOUT_US);                          \
+> > > +		if (_ret)                                                      \
+> > > +			_owner##_err("failed to %sable, STATUS = 0x%08X\n",    \
+> > > +				     _en ? "en" : "dis", _status);             \
+> > > +		atomic_set(&_owner->status, _status);                          \
+> > > +		_ret;                                                          \
+> > > +	})
+> > 
+> > I feel like this could be an actual inline function without the macro
+> > wrapper with a little fiddling.
+> 
+> It would be unrolled to three mostly identical inline functions:
+> 	tegra241_cmdqv_write_config(cmdqv, regval)
+> 	tegra241_vintf_write_config(vintf, regval)
+> 	tegra241_vcmdq_write_config(vcmdq, regval)
+
+Expand the parameters in the caller:
+
+__do_write_config(owner->base, &owner->status, _CMDQV_EN, TEGRA241_CMDQ_CONFIG,
+                  TEGRA241_CMDQ_STATUS, _CMDQ_ENABLED)
+
+> > > +#define cmdqv_write_config(_regval) \
+> > > +	tegra241_cmdqv_write_config(cmdqv, CMDQV, _regval)
+> > > +#define vintf_write_config(_regval) \
+> > > +	tegra241_cmdqv_write_config(vintf, VINTF, _regval)
+> > > +#define vcmdq_write_config(_regval) \
+> > > +	tegra241_cmdqv_write_config(vcmdq, VCMDQ, _regval)
+> > 
+> > More hidden access to stack values
+> 
+> Btw, any reason for forbidding this practice? It will break the
+> build if something goes wrong, which seems to be pretty easy to
+> catch.
+
+It is the kernel consensus not to do that. function-like-macros should
+act like functions and not reach into some other stack frame. It makes
+it very hard to follow the calling function if you can't follow where
+the references are.
+
+> > > +	/* Use SMMU CMDQ if vintfs[0] is uninitialized */
+> > > +	if (!FIELD_GET(VINTF_ENABLED, atomic_read(&vintf->status)))
+> > > +		return &smmu->cmdq;
+> > > +
+> > > +	/* Use SMMU CMDQ if vintfs[0] has error status */
+> > > +	if (FIELD_GET(VINTF_STATUS, atomic_read(&vintf->status)))
+> > > +		return &smmu->cmdq;
+> > 
+> > Why atomic_read? The unlocked interaction with
+> > tegra241_cmdqv_handle_vintf0_error() doesn't seem especially sane IMHO
+> 
+> Race between this get_cmdq() and the isr. Any alternative practice?
+
+It doesn't fix any real race, I'm not sure what this is supposed to be
+doing. The cmdq becomes broken and you get an ISR, so before the ISR
+it will still post but get stuck, during the ISR it will avoid
+posting, and after it will go back to posting?
+
+Why? Just always post to the Q and let the ISR fix it?
+
+> > > +static void tegra241_vcmdq_hw_deinit(struct tegra241_vcmdq *vcmdq)
+> > > +{
+> > > +	u32 gerrorn, gerror;
+> > > +
+> > > +	if (vcmdq_write_config(0)) {
+> > > +		vcmdq_err("GERRORN=0x%X\n", vcmdq_page0_readl_relaxed(GERRORN));
+> > > +		vcmdq_err("GERROR=0x%X\n", vcmdq_page0_readl_relaxed(GERROR));
+> > > +		vcmdq_err("CONS=0x%X\n", vcmdq_page0_readl_relaxed(CONS));
+> > 
+> > Less prints, include a unique message about why this is being
+> > printed..
+> 
+> Something must be wrong if disabling VCMDQ fails, so the prints of
+> error register values would be helpful. And "failed to disable" is
+> already printed by the vcmdq_write_config() call. I can merge them
+> into one vcmdq_err call though.
+
+Print on one line
+> > > +static void tegra241_vcmdq_free_smmu_cmdq(struct tegra241_vcmdq *vcmdq)
+> > > +{
+> > > +	struct tegra241_cmdqv *cmdqv = vcmdq->cmdqv;
+> > > +	struct arm_smmu_queue *q = &vcmdq->cmdq.q;
+> > > +	size_t nents = 1 << q->llq.max_n_shift;
+> > > +
+> > > +	dmam_free_coherent(cmdqv->smmu->dev, (nents * CMDQ_ENT_DWORDS) << 3,
+> > > +			   q->base, q->base_dma);
+> > 
+> > If we are calling dmam_free, do we really need devm at all?
+> 
+> Hmm. This is a part of SMMU's probe/device_reset().
+
+But that is a proper device driver, this isn't.
+
+> > > +	struct tegra241_cmdqv *cmdqv;
+> > > +
+> > > +	cmdqv = tegra241_cmdqv_find_resource(smmu, id);
+> > > +	if (!cmdqv)
+> > > +		return NULL;
+> > > +
+> > > +	if (tegra241_cmdqv_probe(cmdqv)) {
+> > > +		if (cmdqv->irq > 0)
+> > > +			devm_free_irq(smmu->dev, cmdqv->irq, cmdqv);
+> > > +		devm_iounmap(smmu->dev, cmdqv->base);
+> > > +		devm_kfree(smmu->dev, cmdqv);
+> > > +		return NULL;
+> > 
+> > Oh. Please don't use devm at all in this code then, it is not attached
+> > to a probed driver with the proper scope, devm isn't going to work in
+> > sensible way.
+> 
+> Mind elaborating "it is not"? This function is called by
+> arm_smmu_device_acpi_probe and arm_smmu_device_probe.
+
+Normal devm usage will unwind the devm allocations when probe fails.
+
+That doesn't happen here, you open coded the unwind above, and then
+you have open coded freeing in another place anyhow.
+
+So just don't use it. There is no value if the places where it should
+work automatically are not functioning.
+
+Jason
