@@ -1,170 +1,168 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2068.outbound.protection.outlook.com [40.107.244.68])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C2062171;
-	Thu,  2 May 2024 12:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714653672; cv=fail; b=jFel/pllcufEgILi8VpThXKUmfeb8fU/zxMOZwmztp1vyeAbzwC4LJjd3wfb6/Ar9a35bKcjJxVdnIwk2y0WaVshq3jZ+gI+0QLALGgwf+MQNRNOluqoaNXfc0gDy/haPBRoCiQA1Xfw1LdHik9qTgy6nJTWhxHXtYu9pq5o3KM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714653672; c=relaxed/simple;
-	bh=VtY19T6MiaeMlVqXhFhraqN2XKdXspB6Jl0fpVG7HOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=D4xd03hiRfg2LOuJiQnFUyibSUjsx843Luijc4yXWGJTLBRP4TCCg7F2/DAlfVbykCBVQtF2A+qlWDy4Vx/PvOAbRmUBcjtXsQtQx43EiSItvWuaDZvSGqOMuJ1HZGIbWU4p0dCeJDOrW3jsg2Uh6167ykzOQoAfT728harSvX8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XnNXNUHA; arc=fail smtp.client-ip=40.107.244.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 645421552EE;
+	Thu,  2 May 2024 15:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714663445; cv=none; b=TAjJSmdPw8CQxtEOQFkHxWfCljDSoSiq/ph5JY5F8AO/Wh3AgFSBjGfigDhCKatFA4n6YpVh3bPw6lbsEolRIOhYWuzcKxO54wRCpT+0LGIwu7faMYZwwEMX3bqzXCax8TLqu+jDTOemdmMZx32l8d4HQEixyA5poFWufdBvYbE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714663445; c=relaxed/simple;
+	bh=FMM3UnDTD2ByyP54LzZrE/Xw0svJa2P8ocjjbGkC5tQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IOpN2BkL6SXumnvR5VIs4qZBFmC87F/jPelrJtXpU0mz4QVVVxb0MLyeG3F7FnaOc2Gr+oUipX1LpEMngjdgFTf0efswlF5faqOUaXJHQ20+8L8MxxAr1JQAZJGyQmyzLzBzKxU1vfZ9zoOyNOUr1Mj+iiWvwPOa8HD89lZAZpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=1F3t/Ktg; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XnNXNUHA"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LXmXDiflWZ37cTgdybzGlsDHA3Q2TuQdLDKRuFbjkWUpdOyvfsxDeB/Ke86VcsLEBcMyzUFVp2Jm/mNOyAHNnAK9DWTt3FBTxEsxv+9AOtc2h+qbZqkmxPfq+8KEh8Ysx9jmtH06KeYRbUKBnVUOM7SAS+VqOS5SrndpZpscK2TmGvOl7BbDM6zWO87H2hhvy/y5G51VZH3zZAcBcre7fLRgNBqFndJ7DR3xCzF8mkxDthPYbNNqN6wmsmvIEGNnXSIcpkEks2vFmgD7QoHP/Z6KqWeSsaXk75WW9hbS3OYjhgrL7wYLGNbZu3xV47N2AGxZ8UlKTXALRq79lnqG8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bGBW06E1bK66d7SVTEMDUBfUy5xHLPWst8EsMNKip4I=;
- b=Y5Ai5reTIK4x+IG8fXCct+YG3IvMhXKpRKBSrfWU555d85+bm0aT5KcwZpNc4b6ZVZdiv+IeVqGHYk9PZEGhA/BCrfbWuJ4b1eykwJ9q0BA2BfI8G+xcdTY+dsuIMD6l2xbOKAnVGFFCHqaCXvFRJ/rF4O7VfINGYKkq70U/DUDsgNaxU3+nVKRArGodqwBrwgKozcuj4fNmVoH9ieXJdJTuyKTN3jF8XIv6xF2UdVf3i6kx+6DnzANdIYvPi3zBR2OS3b+2X6c1ArW7BjXMaSNeAsXsqSIp+Uz72i7VZVSTFYzsmehdkXo2vxrT8u0mpdH2y+Eey9fV3xQUXed4Eg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bGBW06E1bK66d7SVTEMDUBfUy5xHLPWst8EsMNKip4I=;
- b=XnNXNUHAOn/25QcNz2eOW8oBzmQTIx0oZFzPEb1Mr6/iBjQFm5klj841F5wPyHT61oAxpu8gzBLu3oHrXxuvQHSn1vxHwqbzQizXYqbUxEwLCnVCf+jCfK9/3ZRPnpA1G9eyjgGNUUjHgiWCl5NjYZVNmhfSAotGjPMaAoaE8NXxjKtZZHJZbkx+PnJ2pESfC8NWaTib1ZcozqlZiGnLQ4GgTeN2oE063TY4mL1dQWNJUJs+ubFhyqxqKBhqalv62tWqj+qf0ZQGONY0zZnZH1Fyqy5AwuD9CQfIoJcnUJ8r3QzESdKcNGHWY2GBOhKPyoGfw40iyElomuZvzanT9A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by MN2PR12MB4485.namprd12.prod.outlook.com (2603:10b6:208:269::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.28; Thu, 2 May
- 2024 12:41:06 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%3]) with mapi id 15.20.7544.029; Thu, 2 May 2024
- 12:41:05 +0000
-Date: Thu, 2 May 2024 09:41:03 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v6 5/6] iommu/arm-smmu-v3: Add in-kernel support for
- NVIDIA Tegra241 (Grace) CMDQV
-Message-ID: <20240502124103.GA3341011@nvidia.com>
-References: <cover.1714451595.git.nicolinc@nvidia.com>
- <63414546b1eafdf8032ac1b95ea514da6d206d63.1714451595.git.nicolinc@nvidia.com>
- <20240430163545.GS941030@nvidia.com>
- <ZjEztwhd5AN1FTCk@Asurada-Nvidia>
- <20240501130042.GC941030@nvidia.com>
- <ZjJ/S1bawYkfs1I4@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjJ/S1bawYkfs1I4@Asurada-Nvidia>
-X-ClientProxiedBy: BYAPR04CA0012.namprd04.prod.outlook.com
- (2603:10b6:a03:40::25) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="1F3t/Ktg"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1714663441;
+	bh=FMM3UnDTD2ByyP54LzZrE/Xw0svJa2P8ocjjbGkC5tQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=1F3t/KtgV/3O9jHY4rDBPoqhFXyGhrx/P+SuFnKtrChJD4vL3dDMJuR9lGl3WDNZ+
+	 3EMc1sBEJhIkXVe0NDhNOYtShppc+aC2Lnv2fg/bDa5nJL8KVwMIud9UsFfT3/G9tA
+	 rmzgWBRetUvyukCLhc4fk1SWdRhHGyFAqjnrlygrrJucGimBH/dPh8O3rSWIRDicGS
+	 ndFwKOAjAAAF0SMjaI8n1d/p28PnRRiDrUneRZA/T9MFeunvmh5PYJQbNLA2CKnHht
+	 sstAzJ1ImRhhWHbHHkBYNTDGVtf8SCs61U6zgASibtszi697ta4syUIwqniy/LC/Ph
+	 O3CNWTGM3qOdQ==
+Received: from apertis.home (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DA9A4378148F;
+	Thu,  2 May 2024 15:23:57 +0000 (UTC)
+From: Julien Massot <julien.massot@collabora.com>
+Subject: [PATCH 0/2] Introduce v4l2_async_nf_unregister_cleanup
+Date: Thu, 02 May 2024 17:22:20 +0200
+Message-Id: <20240502-master-v1-0-8bd109c6a3ba@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|MN2PR12MB4485:EE_
-X-MS-Office365-Filtering-Correlation-Id: b45d34d5-e3ed-4c78-3708-08dc6aa52250
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?L+7USZU7Hye6SWmTNB84ga/tJX4Kc5M9UBk6OwAZ2SnuV2tgjdWWzIoBa7DW?=
- =?us-ascii?Q?Yn32JahkH+7VNJG811OoyqiCceS2pZghOGTZjQUKn8jcuxxFUTQoh61CP+UR?=
- =?us-ascii?Q?8iOoxkJqVFowcjOtf5YlM6OjKqGjqlc6a0EVF2wjogDHkH9jA8Zz7x4s4PP9?=
- =?us-ascii?Q?eVOsnYYmItKScFyJQAe08N7UxwO44Ov3Yxec8KXEaw9LcPi947zMafhBGJxx?=
- =?us-ascii?Q?6B1FNGYJaIFpfmz9LymkU/uYxvIqHK6B8e6oE52OuIYO85W/hIpmW6hqksMj?=
- =?us-ascii?Q?mlNSyew7mURq1MeLiAovjJEEDXRBrYwPk7vJdrkByQ9KlwUtCC+CklhUMtXY?=
- =?us-ascii?Q?yvw5I6ft3FYXUTAu3/regLWJwpJiJodcOZ6JB63lIdGuZWA4wbj9akXkjTI/?=
- =?us-ascii?Q?gRcuK0j1nY3dl4WRyuvZKn52yRWbuaIa9RlRFqreRE5iGl32KxYUuJfLgatj?=
- =?us-ascii?Q?wrFspW6NY0KGLz+wM0Bg3f/ZNpPGYqoKifBKh2T76GfRuo0Hf7unEi4wX9SK?=
- =?us-ascii?Q?iLIgOKVb1IX+ztyu6FYTARJ+C03VcvePrIrrEarMf8d9DtXbiw12RUZvxPDm?=
- =?us-ascii?Q?ii+D5oOkhpV6C1j1kgUPR7D2zNsl8dDk9zVoYAznmKc+C7Q0PeyyXMYSFaZy?=
- =?us-ascii?Q?yTKRntNm3i4k7eaLDIEzVLdBySprooTxURYzxisbDrIKNRObbijcRpqNh+eg?=
- =?us-ascii?Q?wOM1zQMSdFRzuxZDsIa2xPtyoASGR6g2XU6tNthFcjog2xiSR8MR1bSBiOpP?=
- =?us-ascii?Q?DW8UAM3hJH2qQYvTg0y33QVoVGJ1GPWCBBwMpYHdoREqUoPi/yXFJhq+LFiO?=
- =?us-ascii?Q?wM2YKCgEeeo3ycDRdzXg492a+RqgqsD03QS0jRhqKuZVuCWDvbavxSFb1vmE?=
- =?us-ascii?Q?8bHQe6W/Q4LdhrE4V/RpKFgovAm/pKyB7yijVnpwiKC2q/LSYY9ib3E+T4Ef?=
- =?us-ascii?Q?t7gSl0jYghsc7vQN3OiauBctVnptws82p0KGxCm9aYeNRkRfrw36uSo32PBE?=
- =?us-ascii?Q?2Jf+l/wtcAN9O26oL+Ge2ENIGNndHe2DlMRoPWWFPkIZJXuiZ4hgUqR162TP?=
- =?us-ascii?Q?x4xughiC6WT8AOA0RiFq1zytugBulD9bpxpFo2pK8sLPBL94ZSSKkStWSCFM?=
- =?us-ascii?Q?y9j7jft3wE6gJ/FWIku4CSgBXiVwg/gGssAeozTYofIaHffdTBcyDGP7/T6H?=
- =?us-ascii?Q?WsTzFAP6tFsnTd2SwwNbrsbSmID3mfZKMQmYPCpQgCfltjKE2DX0GlhyG8jo?=
- =?us-ascii?Q?tqkDan5zy6yApALf9nF56PAsf/v+Wq5v1XLAN9KFcw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?LlqlVI9emcXs+wZivqymU4KrLicfyR43lnMuv79Vud0gO+DJbW7TUxLP1NoR?=
- =?us-ascii?Q?prTfwq7a+o5BO1iJA5jKB5klDpM9NrPECJKh7pvkDG4bhFMrtZx5XlnlfJC2?=
- =?us-ascii?Q?U1fz6ZgdzevfCdYdfCvuQV+YG2eJVJswGBLpd1+mepxDpoV2sLeGXxAByxYA?=
- =?us-ascii?Q?68kS5HKmCgCQfv7BFEZfhQllNyS21osb3h4B9Bn8kIqfeAXTKQ2ixe+6xDN9?=
- =?us-ascii?Q?KTh6ABVIAhPI5VgvJMsMseQfpypEtAVpl2cji9nsaCI1Xf7Sr11v823+no+F?=
- =?us-ascii?Q?lfHH/ppt2+NrwpGfzyFzH9JqeX79iRCVyj92rekC7hY69F8ChX48ZU3OIo9l?=
- =?us-ascii?Q?wKr8ej89jtglzDnmzZn32Z6KfxfEHl/J3Z+sL6KDg/icKNkeEOCNELLiPBlZ?=
- =?us-ascii?Q?3SPDtRncL7JGBy+H2vHxmDCtittI24e5XLrH4wGwEnpDTc0hdv5juAY/sNAf?=
- =?us-ascii?Q?Up9YUQ5y2PPzQAW3jdXquA3/IVV4GRwn3Z4o74BifUEapd1YNba9056UZC7j?=
- =?us-ascii?Q?ZddeQ96oIhhVfb9n9BeqzYGBnXqVzOHkcL9rEPXXBMnumShlOd1fRPFfnT++?=
- =?us-ascii?Q?w73t6IFBeONSgTGTYFz7vMVXLztGbdXw7i+vu95ZnM4Ts6VF0QI8m9skgmJd?=
- =?us-ascii?Q?5A+rERmVjrMOB5dpZRV55vVWFfECZYLXZE3totxi8h6HxrlzSsarXklJCM/L?=
- =?us-ascii?Q?nUMLTZ9xGATGmi1nxuixJ2CASDlqGWbgpZIwAd3HBPSGWyHqy0QgUV+DxCVZ?=
- =?us-ascii?Q?M2J2KS6PliBwZHQHFEFkyPA/Z54S5prayBct4zhmt4urj4C4mvnopdh+ptH2?=
- =?us-ascii?Q?OOwjLJZ3flyAxilzBvkBDzX1BPLLkomy55pM7RaFBwF7XqzWVrcJnpSJWZCA?=
- =?us-ascii?Q?bPPKDfSTIco6WxxbiTvHjJRkF1t57yjrEZjJ9g1/hgknEJtobsKSogLzGzMm?=
- =?us-ascii?Q?0faU4eBLlp4iHYXqvKMIQaVvFoiW7N6lTWOf6cN1yGyGBI0qrImzRlnOddkv?=
- =?us-ascii?Q?9jIPrURJ2n3QWSGBHwHondI3fFOJuGQ4LQqPKbor93p3vmrYDfvW4ZXfw/EN?=
- =?us-ascii?Q?lJjO1Rv8GLcwcPjOSWfwIXS2Kdu83Bhz6xhdDenQBff9bmL8m4uH4qdEp2dU?=
- =?us-ascii?Q?fcu7OUwMifBdUEVoIDhN6yJfb8jQVlO6BJRhZggyHZl8Zm5tx4WeOQlrNWwP?=
- =?us-ascii?Q?uU6XBePSwzMcPQzJyU26iw/KyZ2wNHfvdsYNWQEQ2/oBnhFRuhWlpQcPX6vq?=
- =?us-ascii?Q?QmcWlllcHwWmQRWRUphIqEnX/6/FYDw3QJDkYsEc/YCp3fTG0FEMinS8Z/Ip?=
- =?us-ascii?Q?i3ctb0QV5CrWchKmLufDEI9VHcXLSgfPizJJXQbnqY0BNuxpUv+c3S019DRi?=
- =?us-ascii?Q?/26hDb1Fl9YaYyxBnW1kq+rqH8jGaULtuwZI6OcWoQitzqypNQuLCS709AsT?=
- =?us-ascii?Q?WIuwDFPZOXVoiPKgSRYyomAWKu5yPl/5X1/fCb0I6d0YSu/wHISfKeJrECaU?=
- =?us-ascii?Q?+U+dm+f+yX38nElnvIIzEmtXkEtcanpaZe+KZ3rkj1oSoJzjyibrXjkmdSoa?=
- =?us-ascii?Q?KebM20sbZmb2E8CScZQXDzyka3tF9IhCNufMvdHC?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b45d34d5-e3ed-4c78-3708-08dc6aa52250
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2024 12:41:05.9108
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rjxqldUZ3yhYAttK4WE8WRXb7yxC2kJvjZFJ6aQqMHFHbKaQw7rboEJ6DtF+B+yN
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4485
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKyvM2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUwMj3dzE4pLUIl3TlNTUVENj4ySTNFMloOKCotS0zAqwQdGxtbUARbQ
+ EZVgAAAA=
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Jacopo Mondi <jacopo+renesas@jmondi.org>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+ Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+ Yong Zhi <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>, 
+ Dan Scally <djrscally@gmail.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+ Eugen Hristev <eugen.hristev@collabora.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Maxime Ripard <mripard@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>, 
+ Martin Kepplinger <martink@posteo.de>, Purism Kernel Team <kernel@puri.sm>, 
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Robert Foss <rfoss@kernel.org>, 
+ Todor Tomov <todor.too@gmail.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+ Dafna Hirschfeld <dafna@fastmail.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Hugues Fruchet <hugues.fruchet@foss.st.com>, 
+ Alain Volmat <alain.volmat@foss.st.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Yong Deng <yong.deng@magewell.com>, 
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>, 
+ Benoit Parrot <bparrot@ti.com>, Jai Luthra <j-luthra@ti.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Michal Simek <michal.simek@amd.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Sowjanya Komatineni <skomatineni@nvidia.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+ linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+ linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org, 
+ Julien Massot <julien.massot@collabora.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+X-Mailer: b4 0.13.0
 
-On Wed, May 01, 2024 at 10:43:39AM -0700, Nicolin Chen wrote:
-> > It doesn't fix any real race, I'm not sure what this is supposed to be
-> > doing. The cmdq becomes broken and you get an ISR, so before the ISR
-> > it will still post but get stuck, during the ISR it will avoid
-> > posting, and after it will go back to posting?
-> > 
-> > Why? Just always post to the Q and let the ISR fix it?
-> 
-> Yes, we could do so. I was thinking of the worst case by giving
-> the guest OS a chance to continue (though in a slower mode), if
-> something unrecoverable happens to the VINTF/VCMDQ part.
+Many drivers has
+  v4l2_async_nf_unregister(&notifier);
+  v4l2_async_nf_cleanup(&notifier);
 
-Does that happn? The stuck vcmdq will have stuck entries on it no
-matter what, can we actually fully recover from that? Ie re-issue the
-commands on another queue?
+Introduce a helper function to call both functions in one line.
 
-> > So just don't use it. There is no value if the places where it should
-> > work automatically are not functioning.
-> 
-> I thought devm could work when rmmod too, not only when the probe
-> fails..
+---
+Julien Massot (2):
+      media: v4l: async: Add v4l2_async_nf_unregister_cleanup
+      media: convert all drivers to use v4l2_async_nf_unregister_cleanup
 
-It is limited to cases when the probing driver of the passed struct
-device unbinds, including probe failure.
+ drivers/media/i2c/ds90ub913.c                           | 10 ++--------
+ drivers/media/i2c/ds90ub953.c                           | 10 ++--------
+ drivers/media/i2c/ds90ub960.c                           | 10 ++--------
+ drivers/media/i2c/max9286.c                             |  3 +--
+ drivers/media/i2c/st-mipid02.c                          |  6 ++----
+ drivers/media/i2c/tc358746.c                            |  3 +--
+ drivers/media/pci/intel/ipu3/ipu3-cio2.c                |  6 ++----
+ drivers/media/pci/intel/ipu6/ipu6-isys.c                |  8 +-------
+ drivers/media/pci/intel/ivsc/mei_csi.c                  |  6 ++----
+ drivers/media/platform/atmel/atmel-isi.c                |  3 +--
+ drivers/media/platform/cadence/cdns-csi2rx.c            |  6 ++----
+ drivers/media/platform/intel/pxa_camera.c               |  3 +--
+ drivers/media/platform/marvell/mcam-core.c              |  6 ++----
+ drivers/media/platform/microchip/microchip-csi2dc.c     |  3 +--
+ drivers/media/platform/microchip/microchip-isc-base.c   |  6 ++----
+ drivers/media/platform/nxp/imx-mipi-csis.c              |  6 ++----
+ drivers/media/platform/nxp/imx7-media-csi.c             |  3 +--
+ drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c     |  3 +--
+ drivers/media/platform/nxp/imx8mq-mipi-csi2.c           |  6 ++----
+ drivers/media/platform/qcom/camss/camss.c               |  3 +--
+ drivers/media/platform/renesas/rcar-csi2.c              |  6 ++----
+ drivers/media/platform/renesas/rcar-isp.c               |  6 ++----
+ drivers/media/platform/renesas/rcar-vin/rcar-core.c     |  9 +++------
+ drivers/media/platform/renesas/rcar_drif.c              |  3 +--
+ drivers/media/platform/renesas/renesas-ceu.c            |  4 +---
+ drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c   |  3 +--
+ drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c   |  6 ++----
+ drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c     |  3 +--
+ drivers/media/platform/samsung/exynos4-is/media-dev.c   |  3 +--
+ drivers/media/platform/st/stm32/stm32-dcmi.c            |  3 +--
+ .../media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c  |  3 +--
+ drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c      |  3 +--
+ .../media/platform/sunxi/sun6i-csi/sun6i_csi_bridge.c   |  3 +--
+ .../platform/sunxi/sun6i-mipi-csi2/sun6i_mipi_csi2.c    |  3 +--
+ .../sunxi/sun8i-a83t-mipi-csi2/sun8i_a83t_mipi_csi2.c   |  3 +--
+ drivers/media/platform/ti/am437x/am437x-vpfe.c          |  3 +--
+ drivers/media/platform/ti/cal/cal.c                     |  8 +-------
+ drivers/media/platform/ti/davinci/vpif_capture.c        |  3 +--
+ drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 10 ++--------
+ drivers/media/platform/ti/omap3isp/isp.c                |  3 +--
+ drivers/media/platform/video-mux.c                      |  3 +--
+ drivers/media/platform/xilinx/xilinx-vipp.c             |  3 +--
+ drivers/staging/media/deprecated/atmel/atmel-isc-base.c |  6 ++----
+ drivers/staging/media/sunxi/sun6i-isp/sun6i_isp_proc.c  |  3 +--
+ drivers/staging/media/tegra-video/vi.c                  |  3 +--
+ include/media/v4l2-async.h                              | 17 +++++++++++++++++
+ 46 files changed, 80 insertions(+), 153 deletions(-)
+---
+base-commit: 843a9f4a7a85988f2f3af98adf21797c2fd05ab1
+change-id: 20240502-master-5deee133b4f5
 
-Jason
+Best regards,
+-- 
+Julien Massot <julien.massot@collabora.com>
+
