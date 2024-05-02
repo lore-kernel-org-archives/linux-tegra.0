@@ -1,184 +1,178 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADFC286BD;
-	Thu,  2 May 2024 16:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714667053; cv=none; b=WM3ZuFArbuJfP5NHdxj80nLWrRUxLFpwr6MktZ2ZCnL/E3JywKPcXMcxZ/RCo/ucXof6KYIZN2Wtyj88l0zO30cXXVCW+5gx8zzKH17oJk8Cq3DEcTPQ9Q2baq2wDFfV2WlH8HxCgtBfSdSB/UzIfIAeaGF7PuYeCoPa19AMr4E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714667053; c=relaxed/simple;
-	bh=8bnm0Mp6aA159OPgwtTWCVCezNkfmBxywIMR3Q9y61E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTHwmjXElx7r/GLNaUyH0aye27vmjzKsY31Jo3u6zVfcBsSawHH/HK3k/cr9rdvTU7lL3hxnDkY6Oe342RBzlvxE+g4WaRTWbjUmRvFMTPxu0ix9XugTj1FuKcK8/8wKSP0iygvBiKigdu9W2Up7YQWVxsjLZ1hLtcYtYcZn+Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GKKa37gI; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3DFF15FA74;
+	Thu,  2 May 2024 19:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714678015; cv=fail; b=Bx+GtFh2k14cpuU83we2TCfU53Or5BkLuXrk6ceilILzlmyBsyox0OrNpAp5jhyCRvhU9DqdEont4RpRHj8cWiAtyMPi07+X8TxGCdbzEWrpkCI9qf2UKO1gjTq6RHPOx9UNgjVzPlSjxmQlVsWmVlm7cnGHj1wngnzU355sL6w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714678015; c=relaxed/simple;
+	bh=d7iLaENmq7K5u2WNyJc9MDYPUK7gbjcAvWDcr57raGo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IscOoiZi8+std+TXNZ6cKNLLg83efqFEbvA3Z4iDlNxLKsVq68nTD/Eq2el8JioN6ZatnFzYf89UrN7FEapI3JPsviRj/cWmIR0eGYTtF5onNqmneJ1XaVuRRrfWRoVfzI4McdWwP8ZPEVTIGr8VJUcfgCmc4E/qur7D5dyNxPE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=l3WESkyi; arc=fail smtp.client-ip=40.107.94.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GKKa37gI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1714667051; x=1746203051;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8bnm0Mp6aA159OPgwtTWCVCezNkfmBxywIMR3Q9y61E=;
-  b=GKKa37gIIqWAHAiSatkA6xRV62Z9ho76bEiVxAGHZAx9M2cP69HPjoeu
-   TqqNKxA5F0p6kEk2Ah6Bi9ytVzuUFfL0Js7fqKVjVfmgjG1t40KpZVqot
-   B8+E6XdSOq1m4YO+VraMcbQABr4nKIXSfNDW38DBH6LXo/ru4Kq0vmzlM
-   ISOCeUvH65/fM96jUMNQmIvcnjxXtDpWU1ZtZCuZuLUs3aMijqia6bNMQ
-   4kbfECwvGQOye77QaUMHs0ssHQU0vWq4KO4cwNjIbXZyeX95TPOfQxaAa
-   ru4EO9lxBYAYzhSCLh5qcyXyI3RHZ2OD7lxtZ4i6vVgqC/yFuKqbzZG/T
-   g==;
-X-CSE-ConnectionGUID: CJqBmeXIR+m8P55T7I1EBA==
-X-CSE-MsgGUID: zMIcjpw9Tha5uYbS0pnuHQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11062"; a="10378778"
-X-IronPort-AV: E=Sophos;i="6.07,247,1708416000"; 
-   d="scan'208";a="10378778"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2024 09:24:11 -0700
-X-CSE-ConnectionGUID: gyKOMwuERVWbe1SWC/Pk/g==
-X-CSE-MsgGUID: 2BvGVijpR2OhXI8q1CaqkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.07,247,1708416000"; 
-   d="scan'208";a="31662271"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2024 09:24:07 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 8C03A11FA94;
-	Thu,  2 May 2024 19:24:04 +0300 (EEST)
-Date: Thu, 2 May 2024 16:24:04 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Julien Massot <julien.massot@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jacopo Mondi <jacopo+renesas@jmondi.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Yong Zhi <yong.zhi@intel.com>, Bingbu Cao <bingbu.cao@intel.com>,
-	Dan Scally <djrscally@gmail.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Eugen Hristev <eugen.hristev@collabora.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Maxime Ripard <mripard@kernel.org>,
-	Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Dafna Hirschfeld <dafna@fastmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Yong Deng <yong.deng@magewell.com>,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-	Benoit Parrot <bparrot@ti.com>, Jai Luthra <j-luthra@ti.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Michal Simek <michal.simek@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-sunxi@lists.linux.dev, linux-staging@lists.linux.dev,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 0/2] Introduce v4l2_async_nf_unregister_cleanup
-Message-ID: <ZjO-JDBdHXVLbz5H@kekkonen.localdomain>
-References: <20240502-master-v1-0-8bd109c6a3ba@collabora.com>
- <20240502155626.GD15807@pendragon.ideasonboard.com>
- <ZjO46Uo_tVcRTdA0@kekkonen.localdomain>
- <20240502160830.GB11443@pendragon.ideasonboard.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="l3WESkyi"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YW/g/m+/4mceI5tsmTBEYprJTgH3ednwFN/nXbI93ypCFnCiVy5EV2gQegTyCsmAO5KEBHK/HmZn0X3orQxLupRl/CK6qXrtDEz+YC5s+gqQnNRkQPdXONqLP04DSQk4TfedunapmJE655kYmG+R5Q6qwriW0lUlCFj25u2mrhT78SPXuCqk7UtUXIa6mWImkKylOjfgZBOkS2tKh95l0g1PtTCCjcwwSOgmohITskxHXQv8S7Su6hHuN42+5TMXswyMVD4HyG4Bg9Ah6JXV/Oxb/elQ63dR45HMJgqqeopqRVdWwDW2cdK/lRMjqdu5ALU3zut3eROO8cRUvJgBow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pZlAZQJW4ViXUV7ZL4h5lYMjH4eipfjBIhhWPYQ/Vc0=;
+ b=lu1cAldMaGCbjJ3xMbZTnIhnti4BH51soE3eA+f8DRdnGPbcIOIyFCvdzRhAOkZc2FDVaKbiI2UyreyCDFp5MYD+5q8nhg7qY1NpW2BucjaHEWfNw1aMoJDxTRKnAzPtfOm9qRV/D5uCa0fOzDzSp9zKptTfGWMbKDrq0YuXW2wfUTo21IHzYSAwNtvMU0XJmms8U8xkKkwIaeWVtZWmBW81qteS0wx7JGwm+eKuUzmwUDUdpmk9uqe4wQTmhGsAA5Hec8OB+lD2h09TdrQQlK+y1KP1cjM8cMHaWecbiBsL/mqBUp+lVEeiqolAWSmVKN+qOC4nn1LJHT7IHCCsUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pZlAZQJW4ViXUV7ZL4h5lYMjH4eipfjBIhhWPYQ/Vc0=;
+ b=l3WESkyiHe5AadCdumE2jolmidg1x0JsychYjoXisbYcAlbj4cXmx/G26DiHdR2qb7hB0GRaI52HxxQY02RfXnPZrddI6EtKTStKf8WnZ+mtn+pjpr9DCjTTT0RpUAmdlmADyL+ZRxlClrpFrqqAEvFVhb3Opijo9LKxUJNwt6NktKX37Uj5rddKbcsbV0uwkUvawBufLDEEEwTaVD2MMr8d8PNhtFUB3hNo5ECXX6j8fKHCgLY2NRZYqzjJSbiulplLqXRcG+13jAaKSxLr4J30hGQ3AiEPGgdKRPl77oYh2axp+HOgBCJse7Q2whQ/7PiyI/NUSAyBKUdusWwJLw==
+Received: from CH0P221CA0030.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:11d::18)
+ by SJ0PR12MB7007.namprd12.prod.outlook.com (2603:10b6:a03:486::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.28; Thu, 2 May
+ 2024 19:26:48 +0000
+Received: from DS3PEPF000099D7.namprd04.prod.outlook.com
+ (2603:10b6:610:11d:cafe::90) by CH0P221CA0030.outlook.office365.com
+ (2603:10b6:610:11d::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.30 via Frontend
+ Transport; Thu, 2 May 2024 19:26:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS3PEPF000099D7.mail.protection.outlook.com (10.167.17.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.18 via Frontend Transport; Thu, 2 May 2024 19:26:47 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 2 May 2024
+ 12:26:28 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 2 May 2024
+ 12:26:28 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 2 May 2024 12:26:27 -0700
+Date: Thu, 2 May 2024 12:26:26 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v6 5/6] iommu/arm-smmu-v3: Add in-kernel support for
+ NVIDIA Tegra241 (Grace) CMDQV
+Message-ID: <ZjPo4qUXOZzLsHW8@Asurada-Nvidia>
+References: <cover.1714451595.git.nicolinc@nvidia.com>
+ <63414546b1eafdf8032ac1b95ea514da6d206d63.1714451595.git.nicolinc@nvidia.com>
+ <20240430163545.GS941030@nvidia.com>
+ <ZjEztwhd5AN1FTCk@Asurada-Nvidia>
+ <20240501130042.GC941030@nvidia.com>
+ <ZjJ/S1bawYkfs1I4@Asurada-Nvidia>
+ <20240502124103.GA3341011@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240502160830.GB11443@pendragon.ideasonboard.com>
+In-Reply-To: <20240502124103.GA3341011@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D7:EE_|SJ0PR12MB7007:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd8995e8-eebc-4bbb-c106-08dc6addcf14
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|36860700004|1800799015|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4fOi2EdwrINQiVhBTg4XIjV5q1rsOR53MwDX6oNv5sG/9GKvPj9kEEJNb0f9?=
+ =?us-ascii?Q?Ri0PpTpvKPaC0nJ6gzN8vDzdbX9Z0gzK77rQycl5U74a5qto4qUv9yTakX4H?=
+ =?us-ascii?Q?fjwDTEnyYdLR5DAiWBXmG1YRkFYr/EUPwiJZE2EH68/vo2ezUoeCDIUY9F0z?=
+ =?us-ascii?Q?DtzzGrRr6UZZVeMh5s8bRMT+B+ACyDvQqMSN2DqrZgKaMqV/opBsl155Ncay?=
+ =?us-ascii?Q?uvv65mPzi5jnyUlQYUHqbulXCEkp8pZsXitkZj+kX/Jy78dLzHPdWJEtxb2S?=
+ =?us-ascii?Q?aOWZPm6mj4E9CxcRO1CylWzDp0EAZKuANiaKK94fsZuVX7Yqb3pDn45Omt7j?=
+ =?us-ascii?Q?VA9KYpK2TxK0pLCtcxXsMEz2x87gDrPdFp/IqeSrfpAGawFMSF7PXNEcPkYk?=
+ =?us-ascii?Q?A1ikEdlR7uVx9vf/an0n/5PrSPjR6GEoN61dd2qpMxuvP/sTyG87sXFdCvUw?=
+ =?us-ascii?Q?HD+YkKCY8Q5ummLXxP3NtjuuSml4BBb+vrvvNtN/VOBEDx0IzTA9A7rok1Fy?=
+ =?us-ascii?Q?VtNLp7KfkBUbXWQe1zcK17IbqlFCdQ/mrcY3njdzAE+hbXpr6EhCVF7t298X?=
+ =?us-ascii?Q?82abIP5IU+fVFzLhOpwnb6u/46g0qpzLuU4ORxF2UK6yL/dOQhjs/ujLAEG/?=
+ =?us-ascii?Q?/iN6eqbickN7eukntAgHJItzPDpEhsJeR/JuH1R3n/RLacjTlDW9ymt+fk1a?=
+ =?us-ascii?Q?MYpZJUkDJPNVQuTl69s5I8un74pbZY2C63oDTbLQUu8Skq9tY0qZEa/8dxGi?=
+ =?us-ascii?Q?tBM+OPj6N1TlHzxgff1jjeuuV9ELXe8sGPh/iiGTh7OcdhUf8V6yDqla0LfP?=
+ =?us-ascii?Q?sn9qW7SL/ii68lPdK5u3kt4M8Wlu9QbJFdZKThNCkTYGFnS2HMUO5PSeANt4?=
+ =?us-ascii?Q?Ej3/LzQ7zBFr0iOFo3TsRtOggs61pVWud7mrjEUF1+hnLJTspQih28sIf/uU?=
+ =?us-ascii?Q?W9dAbiejSlmWv/J/BdKlIUkYE/6h8eDDUk8MuHv8XdXA/R3pHPCv8BZiQf16?=
+ =?us-ascii?Q?xEHZbou87gtYyYaNMJCH5ov7+BHKWIjY6RL8GzZj1IE9uIi4a09hVnXreaU6?=
+ =?us-ascii?Q?QkFRuQI0XUvlnZ7yUB7Zan9mwNxVkoPaRx6GjnqaJtaHe6O31qx4sOzLXHHB?=
+ =?us-ascii?Q?gF1CGuHzvU27gweXyLQFj1eym0/HsXi0f3Lht+JuSqzG/k5e9PcytOHSNtQU?=
+ =?us-ascii?Q?2ji5Jz0crMcvqSFFhGo14Dz8+T/g0jBIY4sY86TNAAmMWHtmSa6VW/fk1eHT?=
+ =?us-ascii?Q?d1sAYsfRx4QFmV7ar4H+Lyvq6Hbgr7597ZFg0hrzDQyw5BLsYJDYgnFtJ0sj?=
+ =?us-ascii?Q?v/oFAC3JGcJZhMltNL/mLizYM3ZgCc0ealsnZAWfr/8px1i7eCwqJhaMXhfr?=
+ =?us-ascii?Q?+ISXYs0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2024 19:26:47.2453
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd8995e8-eebc-4bbb-c106-08dc6addcf14
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D7.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB7007
 
-Hi Laurent,
-
-On Thu, May 02, 2024 at 07:08:30PM +0300, Laurent Pinchart wrote:
-> On Thu, May 02, 2024 at 04:01:45PM +0000, Sakari Ailus wrote:
-> > On Thu, May 02, 2024 at 06:56:26PM +0300, Laurent Pinchart wrote:
-> > > On Thu, May 02, 2024 at 05:22:20PM +0200, Julien Massot wrote:
-> > > > Many drivers has
-> > > >   v4l2_async_nf_unregister(&notifier);
-> > > >   v4l2_async_nf_cleanup(&notifier);
-> > > > 
-> > > > Introduce a helper function to call both functions in one line.
+On Thu, May 02, 2024 at 09:41:03AM -0300, Jason Gunthorpe wrote:
+> On Wed, May 01, 2024 at 10:43:39AM -0700, Nicolin Chen wrote:
+> > > It doesn't fix any real race, I'm not sure what this is supposed to be
+> > > doing. The cmdq becomes broken and you get an ISR, so before the ISR
+> > > it will still post but get stuck, during the ISR it will avoid
+> > > posting, and after it will go back to posting?
 > > > 
-> > > Does this really go in the right direction ? For other objects (video
-> > > devices, media devices, ...), the unregistration should be done at
-> > > .remove() time, and the cleanup at .release() time (the operation called
-> > > when the last reference to the object is released). This is needed to
-> > > ensure proper lifetime management of the objects, and avoid a
-> > > use-after-free for objects that can be reached from userspace.
-> > > 
-> > > It could be argued that the notifier isn't exposed to userspace, but can
-> > > we guarantee that no driver will have a need to access the notifier in a
-> > > code path triggered by a userspace operation ? I think it would be safer
-> > > to adopt the same split for the nofifier unregistration and cleanup. In
-> > > my opinion using the same rule across different APIs also make it easier
-> > > for driver authors and for reviewers to get it right.
-> > > 
-> > > As shown by your series, lots of drivers call v4l2_async_nf_cleanup()
-> > > and .remove() time instead of .release(). That's because most drivers
-> > > get lifetime management wrong and don't even implement .release().
-> > > That's something Sakari is addressing with ongoing work. This patch
-> > > series seems to go in the opposite direction.
+> > > Why? Just always post to the Q and let the ISR fix it?
 > > 
-> > This still avoids the driver authors feeling they need to implement wrapper
-> > functions for v4l2_async_nf_{unregister,cleanup}. I'd be in favour merging
-> > this.
-> > 
-> > I don't see this getting in the way of adding use counts as the code will
-> > need to be changed in any case.
+> > Yes, we could do so. I was thinking of the worst case by giving
+> > the guest OS a chance to continue (though in a slower mode), if
+> > something unrecoverable happens to the VINTF/VCMDQ part.
 > 
-> Fixing the lifetime issues would essentially revert 2/2 and move the
-> v4l2_async_nf_cleanup() call to .remove(). I don't think providing a
-> helper that forces the cleanup at .remove() time is a good idea, it
-> gives a false sense of doing things right to drivers. This is the same
-> reason why devm_kzalloc() is so harmful, it gave the wrong message, and
-> created (or participated in) all those lifetime issues.
+> Does that happn? The stuck vcmdq will have stuck entries on it no
+> matter what, can we actually fully recover from that? Ie re-issue the
+> commands on another queue?
 
-I still prefer having devm_*alloc() functions than having the drivers open
-coding the same -- with the same result. The frameworks won't enable doing
-this right at the moment and I don't think drivers (or us!) should be
-penalised for that. The driver authors will only change what they do, with
-these patches or without, when told so. But we don't really have an
-alternative today.
+Well, the handle_vintf0_error() should fix that and recover. And
+rethinking about this, if this happens it's likely a SW bug that
+we shouldn't ignore.
 
-A similar situation exists with clk_unprepare() and clk_disable().
+With that being said, the viommu infrastructure still needs an irq
+forwarding that is currently missing. I'd need to draft something
+likely on top of Baolu's work.
 
--- 
-Kind regards,
+> > > So just don't use it. There is no value if the places where it should
+> > > work automatically are not functioning.
+> > 
+> > I thought devm could work when rmmod too, not only when the probe
+> > fails..
+> 
+> It is limited to cases when the probing driver of the passed struct
+> device unbinds, including probe failure.
 
-Sakari Ailus
+OK. I'll drop all devm_ and add tegra241_cmdqv_device_remove()
+instead.
+
+Thanks
+Nicolin
