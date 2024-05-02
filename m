@@ -1,28 +1,70 @@
-Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E4E1C2AF
-	for <linux-tegra@vger.kernel.org>; Thu,  2 May 2024 05:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.23.51
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929CF1527AD
+	for <linux-tegra@vger.kernel.org>; Thu,  2 May 2024 06:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714627853; cv=none; b=Xjr4Dfbnks/gMusSBEOdMMbOPDFgI/9ZH/vITEj/zZR2Pv7ZhW1/4ysx91fAPCCXFhGJMYyFj5IeLfEBml7KIvm/ELDldnEe6nHug//N8tZBp0YoqZ6mRijCwjZ0LMObkVzy/PPSjcZVTKCy7vNkg8uE6I6lNZLE3VWcrvQyKR4=
+	t=1714631682; cv=none; b=kYuPn2pSmhk+EgQj8vJlP6gdixa19ZYIrh69NwPLKmcA8ufXUIkZOlG62Veft0K80BoLgEN43dPwVSFiygIwTDNgde/uqa6Pm3WTtuP72rfdYvQmjO4HnMfD+9GyuCfMZrxyhM/vfXIlE/Bgz3qiqz2FgMEKucsS5Peri0At6XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714627853; c=relaxed/simple;
-	bh=LI0KyEmBHwNHgJxUJ1W0VYNHp5VBTABTODCgOQ9VHow=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oHBn9UbE6CRxG8aNVVfVvYr/a6J1AsBIuokDiRJqsoDThZRhD4WbankD0JgG7CMp65dyIPUYs6+qRYoNw+9Ac644OZ3iUvRx3mwEpeadEcicX2L2FVF8rVAT9SPtY/dYqmyyNREkctHwP4AJuxnKE0Uw1CaeVejQ43ISpL3jhuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.23.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-	by 156.147.23.51 with ESMTP; 2 May 2024 14:00:48 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: chanho.min@lge.com
-Received: from unknown (HELO ?10.178.36.63?) (10.178.36.63)
-	by 156.147.1.126 with ESMTP; 2 May 2024 14:00:48 +0900
-X-Original-SENDERIP: 10.178.36.63
-X-Original-MAILFROM: chanho.min@lge.com
+	s=arc-20240116; t=1714631682; c=relaxed/simple;
+	bh=r766gijTfzKORP0fGYzJOcc+6YkKNgMITMmiaY/8hHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aqpsJKAc70nuC3iF/u7n9U4Lp4ChvQ7WPc65LdxakOE/CpU365zlAQzw9hnckIxEEkxvVhpNxdpcPqEZbrlJRTXW1IviyBzDN+faNhy1W2KGWwIpcVHGiLrs4wj7OdEgxA2D3uDrZ3CJJ8lQiLTzlSafTrrJ8c9ggAVc3ALGdL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GCqJZCke; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GCqJZCke"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e9so44775445e9.3
+        for <linux-tegra@vger.kernel.org>; Wed, 01 May 2024 23:34:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714631678; x=1715236478; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=OwBEpKOxiDmHz555+eMw68PeiQOB/aRAXLhEW/merXc=;
+        b=GCqJZCkemN5QA4DikQVogWWswbcXb6gl2km/3YRrswtWcq22OLO+p2wftpM3H7RBJn
+         WjpP7SEFieDiGmMr3apnhHcFI2r5ra1G5LDcRsFP1/UjIUDmYzhnZfyC02qQWpAd8qtT
+         x79cDVwlYiBkCb2WpAB1c0VRdTU0ykakHFCOCsEKvMgOqUGBbjJqawxOC7x6okIuQT7Q
+         mhjSjRglINsKQqVKIojYuQQCu4mBf8MdhqhgPvnF8Qd2btE+OlMr/Ea6HREiLo1Nprbo
+         Lv6IehBQvzhCFgz+rRzAk2kT3wGnQlKSooAcPwzujGMEJjbuxImJzpHpzDAt+FBHkIkW
+         oCEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714631678; x=1715236478;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OwBEpKOxiDmHz555+eMw68PeiQOB/aRAXLhEW/merXc=;
+        b=RuGpwum03EnvsXIha9qGhA3NTzhVH5fxdKuzh0iNKErzVfilkQ/Qtzp3BPpnQty2En
+         3Qgzaj9FfWGwFb55DaNGejGo02hLDh+WtFN61QAQIr9XEH+lTM6Rpjh0cIzidbC6esEW
+         DfkzIRfxnyg5KyKsbww7e+vjqu/D1yH5Ij30m8bBT1ttr+QtHcmwojdNO8/sIcBg2hmg
+         EfRPI2tlxtNjN7WUTr9+MxaZsWdOH77F3pkepp3Lm53ryUpwAovJMHnDNwLueyyxGevy
+         TWx6rS6Jf1YqyaXBfPaqrRxzOScCJNJvVR/6GNNMoAPF42PlkpeOnL4kyX3rM8zFMh21
+         ALgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLCgZT0s6mNuCrlE5ugv8C7YMm8pcUURuzxgZoCIx5p4DHLENSIHsPUMdofsiqQbqprsN0r8ZAYTb1sDW64BCjoW1vA3v4i4pNo4g=
+X-Gm-Message-State: AOJu0YxBhH6niT4Bka1MJsmXfN9pr2HNZx0puhQJ7CLM+zbXjDaLf3lX
+	5j8pg5yS5HPnmgrYhZ1vpSk+kRwNpIeaP5eoZLbH68niY6DDMB07KeggPNkRpNg=
+X-Google-Smtp-Source: AGHT+IGh2cZAcBu9wU1R4xgr22ePON7wM5cJdwEJ5IfChdLf6AFLnPNO1ZSm534399SoH50vIm/hBQ==
+X-Received: by 2002:a5d:474e:0:b0:34a:cc2:1a34 with SMTP id o14-20020a5d474e000000b0034a0cc21a34mr2510665wrs.42.1714631677911;
+        Wed, 01 May 2024 23:34:37 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.223.16])
+        by smtp.gmail.com with ESMTPSA id g21-20020adfa495000000b003437a76565asm429416wrb.25.2024.05.01.23.34.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 May 2024 23:34:37 -0700 (PDT)
+Message-ID: <2aa5cb1c-295f-4900-a794-daa36bc192aa@linaro.org>
+Date: Thu, 2 May 2024 08:34:34 +0200
+Precedence: bulk
+X-Mailing-List: linux-tegra@vger.kernel.org
+List-Id: <linux-tegra.vger.kernel.org>
+List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] arm64: dts: Add/fix /memory node unit-addresses
 To: "Rob Herring (Arm)" <robh@kernel.org>, soc@kernel.org,
- =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
+ =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
  Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
  Conor Dooley <conor+dt@kernel.org>,
@@ -30,9 +72,10 @@ To: "Rob Herring (Arm)" <robh@kernel.org>, soc@kernel.org,
  Scott Branden <sbranden@broadcom.com>,
  Broadcom internal kernel review list
  <bcm-kernel-feedback-list@broadcom.com>, Robert Richter <rric@kernel.org>,
- Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>,
- Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>,
- Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>,
+ Chanho Min <chanho.min@lge.com>, Avi Fishman <avifishman70@gmail.com>,
+ Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>,
+ Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+ Benjamin Fair <benjaminfair@google.com>,
  Thierry Reding <thierry.reding@gmail.com>,
  Jonathan Hunter <jonathanh@nvidia.com>,
  Bjorn Andersson <andersson@kernel.org>,
@@ -44,23 +87,57 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org,
  openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
  linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org
 References: <20240430191856.874600-2-robh@kernel.org>
-From: Chanho Min <chanho.min@lge.com>
-Message-ID: <a5a4063c-9ae9-9d3d-de28-51e4220ef139@lge.com>
-Date: Thu, 2 May 2024 14:00:47 +0900
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-Precedence: bulk
-X-Mailing-List: linux-tegra@vger.kernel.org
-List-Id: <linux-tegra.vger.kernel.org>
-List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20240430191856.874600-2-robh@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240430191856.874600-2-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/1/24 4:18, Rob Herring (Arm) wrote:
+On 30/04/2024 21:18, Rob Herring (Arm) wrote:
 > '/memory' nodes always have a 'reg' property, and therefore should have
 > a unit-address with just plain hex (i.e. no commas). Fix all the arm64
 > '/memory' nodes.
@@ -68,9 +145,13 @@ On 5/1/24 4:18, Rob Herring (Arm) wrote:
 > It's possible that some bootloader depends on /memory (arm32 ATAG to DT
 > code does for example). If so, the memory node should be commented with
 > that requirement.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> SoC maintainers, please take this directly.
 
->   arch/arm64/boot/dts/lg/lg1312-ref.dts                  | 2 +-
->   arch/arm64/boot/dts/lg/lg1313-ref.dts                  | 2 +-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: Chanho Min <chanho.min@lge.com>
+Best regards,
+Krzysztof
 
