@@ -1,157 +1,175 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929CF1527AD
-	for <linux-tegra@vger.kernel.org>; Thu,  2 May 2024 06:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8701024B5B
+	for <linux-tegra@vger.kernel.org>; Thu,  2 May 2024 07:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714631682; cv=none; b=kYuPn2pSmhk+EgQj8vJlP6gdixa19ZYIrh69NwPLKmcA8ufXUIkZOlG62Veft0K80BoLgEN43dPwVSFiygIwTDNgde/uqa6Pm3WTtuP72rfdYvQmjO4HnMfD+9GyuCfMZrxyhM/vfXIlE/Bgz3qiqz2FgMEKucsS5Peri0At6XI=
+	t=1714633544; cv=none; b=ge8G8Defg1Q6BNYcaEKeHe1duEudRgCvw9blR8ZK8MvWBvGKYQ7uDvKrz05dTTkp8rxFGkQoOkH2/A5RfnflY7vA1rtfwg6OmnLTd51ijgq2BI+y+Om7laY22sgG3JUpotmdoEk4mWn0jr9vR1q1yM3mRrl29ff5LwEZ+GV7Teo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714631682; c=relaxed/simple;
-	bh=r766gijTfzKORP0fGYzJOcc+6YkKNgMITMmiaY/8hHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aqpsJKAc70nuC3iF/u7n9U4Lp4ChvQ7WPc65LdxakOE/CpU365zlAQzw9hnckIxEEkxvVhpNxdpcPqEZbrlJRTXW1IviyBzDN+faNhy1W2KGWwIpcVHGiLrs4wj7OdEgxA2D3uDrZ3CJJ8lQiLTzlSafTrrJ8c9ggAVc3ALGdL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GCqJZCke; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1714633544; c=relaxed/simple;
+	bh=jmCz2bzZzN6llSSfnEw77N01jtx9utNXMW5o87pvL2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OmHQpnjbY+lAbUxXt17S/dhM4SwjPm21rGAEbYOrZn4qBXVr4Jdek1v5HKg6W46BbcJFZACMnKnx0ZPxHox04tbGs9G3D0kVotMhhUDXwEEOYgYH/SYQp18xvN6N9oj/xPnwkUBfLdDDl5H2CUhPjg0EXtmfIuBqBTOQR/ObvB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W6Sn+8cO; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GCqJZCke"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41ba1ba55e9so44775445e9.3
-        for <linux-tegra@vger.kernel.org>; Wed, 01 May 2024 23:34:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W6Sn+8cO"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2dd6c160eaaso92300501fa.1
+        for <linux-tegra@vger.kernel.org>; Thu, 02 May 2024 00:05:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714631678; x=1715236478; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=OwBEpKOxiDmHz555+eMw68PeiQOB/aRAXLhEW/merXc=;
-        b=GCqJZCkemN5QA4DikQVogWWswbcXb6gl2km/3YRrswtWcq22OLO+p2wftpM3H7RBJn
-         WjpP7SEFieDiGmMr3apnhHcFI2r5ra1G5LDcRsFP1/UjIUDmYzhnZfyC02qQWpAd8qtT
-         x79cDVwlYiBkCb2WpAB1c0VRdTU0ykakHFCOCsEKvMgOqUGBbjJqawxOC7x6okIuQT7Q
-         mhjSjRglINsKQqVKIojYuQQCu4mBf8MdhqhgPvnF8Qd2btE+OlMr/Ea6HREiLo1Nprbo
-         Lv6IehBQvzhCFgz+rRzAk2kT3wGnQlKSooAcPwzujGMEJjbuxImJzpHpzDAt+FBHkIkW
-         oCEw==
+        d=linaro.org; s=google; t=1714633541; x=1715238341; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V3T3S0/ACanJIeY4czsTT+RTZ1YRol9ljsewIaXQads=;
+        b=W6Sn+8cO0TVgnS4jBCR0iUTTQwG9M3gKj3+uZXl47T31C/oPGFJjiVy9WPOAskyKnw
+         vzU7NHHpVqhXOEcoliJK4PZNyldYrNrRuvwe7BFdWyLR+xMafENoVHMzrOH28vavKH80
+         CoaYdCxuIPJZtKMVX6Eq7Ls3KxAP4rklwsDeCdc4I+rv2LkKaTZp47vnwQCf/2zfZ3Il
+         YglnfxSCf2C2IFAfEDw4skCo2Cs5z4fbQwTDJ5DWW00LaODxOKYhU/tELVIxicy/4Iwo
+         utLoALa4GgmQZIdAjbGp2KFE8MnYVNdCH9mMhu+dypoopUSP9aHgfaaFwATUb4LZCvIq
+         b9Gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714631678; x=1715236478;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OwBEpKOxiDmHz555+eMw68PeiQOB/aRAXLhEW/merXc=;
-        b=RuGpwum03EnvsXIha9qGhA3NTzhVH5fxdKuzh0iNKErzVfilkQ/Qtzp3BPpnQty2En
-         3Qgzaj9FfWGwFb55DaNGejGo02hLDh+WtFN61QAQIr9XEH+lTM6Rpjh0cIzidbC6esEW
-         DfkzIRfxnyg5KyKsbww7e+vjqu/D1yH5Ij30m8bBT1ttr+QtHcmwojdNO8/sIcBg2hmg
-         EfRPI2tlxtNjN7WUTr9+MxaZsWdOH77F3pkepp3Lm53ryUpwAovJMHnDNwLueyyxGevy
-         TWx6rS6Jf1YqyaXBfPaqrRxzOScCJNJvVR/6GNNMoAPF42PlkpeOnL4kyX3rM8zFMh21
-         ALgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLCgZT0s6mNuCrlE5ugv8C7YMm8pcUURuzxgZoCIx5p4DHLENSIHsPUMdofsiqQbqprsN0r8ZAYTb1sDW64BCjoW1vA3v4i4pNo4g=
-X-Gm-Message-State: AOJu0YxBhH6niT4Bka1MJsmXfN9pr2HNZx0puhQJ7CLM+zbXjDaLf3lX
-	5j8pg5yS5HPnmgrYhZ1vpSk+kRwNpIeaP5eoZLbH68niY6DDMB07KeggPNkRpNg=
-X-Google-Smtp-Source: AGHT+IGh2cZAcBu9wU1R4xgr22ePON7wM5cJdwEJ5IfChdLf6AFLnPNO1ZSm534399SoH50vIm/hBQ==
-X-Received: by 2002:a5d:474e:0:b0:34a:cc2:1a34 with SMTP id o14-20020a5d474e000000b0034a0cc21a34mr2510665wrs.42.1714631677911;
-        Wed, 01 May 2024 23:34:37 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id g21-20020adfa495000000b003437a76565asm429416wrb.25.2024.05.01.23.34.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 May 2024 23:34:37 -0700 (PDT)
-Message-ID: <2aa5cb1c-295f-4900-a794-daa36bc192aa@linaro.org>
-Date: Thu, 2 May 2024 08:34:34 +0200
+        d=1e100.net; s=20230601; t=1714633541; x=1715238341;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V3T3S0/ACanJIeY4czsTT+RTZ1YRol9ljsewIaXQads=;
+        b=KAsBmNywV4x+niJ2IMDM1t6i29b+8I0/oOQH/9SFDoVYdRh8WrNyGoQcs6aDwBGjJJ
+         A/zhkMO0Xk2dcBUn7RaDoew1NoJ496ongse44Tm+wD9fy9r5vCAiRDR8Rgw6GB+5z8Y9
+         IV/NvfPwNHZUvTSi+dcPr95fSpojAXqItKgDbmukjgurvy08dIKp6nsSz6JfWWvePk56
+         fZesLyx+JKmOKD1DwSe3H/VaY7fOX+v4Zac57s8lAyJms0lBZ5xiurY6mOPQl/tKr8xw
+         MJAWL1YoeHGUHvViONaHmQOB3IDrEWr2jzzKrb0DoIRuAbxrVN8Ilnpp6MXQP6A82acn
+         cb6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCITxk68FjaQn1hwx0el9uyfkInvuBtNlZO03MepjDOmzuv7dG75WeSrQb8DgfG5HrDTzbmh7hJF1l6/+mUCrqkXSCKaV9K+EqHQo=
+X-Gm-Message-State: AOJu0Yx6fpwlEx1KAuGrTrocP3SFEMRfw17yOSrTNctKi7ZToHD2Wr1y
+	sPj+P2Dm0UCT8pZEVO6bc+ei4smK3Q9+Ba2jXZ9+PwI3aoyXtaYk26LhLF2Zuvc=
+X-Google-Smtp-Source: AGHT+IGHVWuyebZDGCsij4vuuCGXUnlNacdJhnGzP0jhAixWhDpzQ1nmi4t3DPfRBlZrMwTir+WhcA==
+X-Received: by 2002:a2e:a58e:0:b0:2d9:fb60:9afa with SMTP id m14-20020a2ea58e000000b002d9fb609afamr1096872ljp.40.1714633540084;
+        Thu, 02 May 2024 00:05:40 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id q26-20020a2e969a000000b002d860a40f9dsm69420lji.136.2024.05.02.00.05.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 May 2024 00:05:39 -0700 (PDT)
+Date: Thu, 2 May 2024 10:05:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+	"soc@kernel.org" <soc@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Aisheng Dong <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	"Ghennadi Procopciuc (OSS)" <ghennadi.procopciuc@oss.nxp.com>,
+	Sean Wang <sean.wang@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Joel Stanley <joel@jms.id.au>,
+	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>
+Subject: Re: [PATCH 01/21] pinctrl: ti: iodelay: Use scope based
+ of_node_put() cleanups
+Message-ID: <26aab31b-8085-49e0-862d-24c26ff4d02c@moroto.mountain>
+References: <20240501-pinctrl-cleanup-v1-0-797ceca46e5c@nxp.com>
+ <20240501-pinctrl-cleanup-v1-1-797ceca46e5c@nxp.com>
+ <ee5c8637-b8b2-491b-b011-e399942691dc@moroto.mountain>
+ <DU0PR04MB9417AD5892A1A45E6AE18D8688182@DU0PR04MB9417.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: Add/fix /memory node unit-addresses
-To: "Rob Herring (Arm)" <robh@kernel.org>, soc@kernel.org,
- =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Khuong Dinh <khuong@os.amperecomputing.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Robert Richter <rric@kernel.org>,
- Chanho Min <chanho.min@lge.com>, Avi Fishman <avifishman70@gmail.com>,
- Tomer Maimon <tmaimon77@gmail.com>, Tali Perry <tali.perry1@gmail.com>,
- Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
- Benjamin Fair <benjaminfair@google.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-actions@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- openbmc@lists.ozlabs.org, linux-tegra@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20240430191856.874600-2-robh@kernel.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240430191856.874600-2-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DU0PR04MB9417AD5892A1A45E6AE18D8688182@DU0PR04MB9417.eurprd04.prod.outlook.com>
 
-On 30/04/2024 21:18, Rob Herring (Arm) wrote:
-> '/memory' nodes always have a 'reg' property, and therefore should have
-> a unit-address with just plain hex (i.e. no commas). Fix all the arm64
-> '/memory' nodes.
+On Thu, May 02, 2024 at 12:28:42AM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH 01/21] pinctrl: ti: iodelay: Use scope based of_node_put()
+> > cleanups
+> > 
+> > On Wed, May 01, 2024 at 08:55:59PM +0800, Peng Fan (OSS) wrote:
+> > > @@ -879,16 +874,12 @@ static int ti_iodelay_probe(struct
+> > platform_device *pdev)
+> > >  	ret = pinctrl_register_and_init(&iod->desc, dev, iod, &iod->pctl);
+> > >  	if (ret) {
+> > >  		dev_err(dev, "Failed to register pinctrl\n");
+> > > -		goto exit_out;
+> > > +		return ret;
+> > >  	}
+> > >
+> > >  	platform_set_drvdata(pdev, iod);
+> > >
+> > >  	return pinctrl_enable(iod->pctl);
+> > > -
+> > > -exit_out:
+> > > -	of_node_put(np);
+> > > -	return ret;
+> > >  }
+> > 
+> > This will call of_node_put() on the success path so it's a behavior change.  The
+> > original code is buggy, it's supposed to call of_node_put() on the success path
+> > here or in ti_iodelay_remove().
+> > 
+> > If it's supposed to call of_node_put() here, then fine, this is bugfix but if it's
+> > supposed to call it in ti_iodelay_remove() then we need to save the pointer
+> > somewhere using no_free_ptr().  Probably saving ->np is the safest choice?
+> > 
+> > The original code is already a little bit buggy because it doesn't check for
+> > pinctrl_enable() errors and cleanup.
 > 
-> It's possible that some bootloader depends on /memory (arm32 ATAG to DT
-> code does for example). If so, the memory node should be commented with
-> that requirement.
+> It was introduced by 
+> commit 6118714275f0a313ecc296a87ed1af32d9691bed (tag: pinctrl-v4.11-4)
+> Author: Tony Lindgren <tony@atomide.com>
+> Date:   Thu Mar 30 09:16:39 2017 -0700
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> SoC maintainers, please take this directly.
+>     pinctrl: core: Fix pinctrl_register_and_init() with pinctrl_enable()
+> 
+> of_node_put is expected in probe, not in remove.
+> 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Ah, right.  You'll add that for the Fixes tag obviously...
 
-Best regards,
-Krzysztof
+regards,
+dan carpenter
 
