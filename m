@@ -1,272 +1,159 @@
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2083.outbound.protection.outlook.com [40.107.223.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD86139587;
-	Fri,  3 May 2024 11:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714735330; cv=fail; b=FWkzKZqiezLzg9ck6+TUKhHWdTcVaIwDVXX36bt47t7RitYJZF2NNHWLhQ0H/O045v+I/q13o8wJRwe+sNuN9IHpk3uQYroQJhgw/TfmtRm6Ng0ZxnO45B47ULyGGTmQQbXm1boaUnvJcDRXd9PwLSZOEYz99+QbqIuskFTntHM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714735330; c=relaxed/simple;
-	bh=fW9iny2zAZuIfmt8PXOvE4nNb37wdQv5V4MZNPExokI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pdCrxjOQw2/VqawYBwjL9PMj5cPC8kWpQmJ3nVVFSWk6+fBB3rzrfyDOHDMbSh+KratXSQHohBuKh8h0XO/okd2obW2L6vES+wsc2esmhudnEzexTTd0TvNNuguzK5jJ/2J/FcRyFzQK1AOBkgOy+5jHgBLqGsr3Uj+4P2pr/+s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jHk+/Bbg; arc=fail smtp.client-ip=40.107.223.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FFC152DF0
+	for <linux-tegra@vger.kernel.org>; Fri,  3 May 2024 11:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714737316; cv=none; b=RRlkVhAWV7/rkTR0XJSdfrfvipDA5fB3CN2Q3hzffZX+CJG3/aP7doX5rnC5snLy/qB3aYaCBQQPehrjrXnfthvhpbFHk5KJxw0E8GraBP6YDpqA7L43tHRLqzZ9sMZmIoloNjOClUGPNtJTmdhxGfzH5YHpRffnYyqJHsKjh+A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714737316; c=relaxed/simple;
+	bh=3oofEKzoY8Dgctp4SevRDAbz9giFPEyX/mlb/8O3MRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njHWEWZtEh/ToadchJb8b4T9Q5YbZXmnw9HtP0B8vKptraXcAFQO/nPYy3o5QF4VLHj1wej95+RcjUHbsPzYcVOGk9sctgH2rgBQJb2SHy7JgjkTcEYTEc0FQlShweF1/rstk/8FOXo+AhMYBHn0XhUMCCms+0n0TvpbWPmoUnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XHgmvXeX; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jHk+/Bbg"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZHE80wvsP7cCjxIfkUxg/ZMEurgkdg4vvQ7hV+tvF9/5OK7HYQANPoWXUzBb8x9fpDcru9xMpr7Q8W/JYyWSTdGJeFQx7pNe1UUydEFDuDY27kEjvSLasec820wbukJlUn+ictna5AtnSe9qnkt/oKaOk28R+Q83zY8pANsHtvdp+6jcAlsZo6Jan/uvEWggCzH6WBvJ3wmmZa9eZbIJzdkDPX3LUEnlmeVVVomobOLw2d1U2E6QeotYd1YAKGPz15UPpS00nz9TP3LO44ZM0swqkwYMWIYb7fJQlMx+Q0el8pCvaONYZNlfnMTlROzGYnjqR2Y2o7K6mJIYB7XBag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aPrYvl/MiNRc2zDLlOxwfOni+KleHEb/Q2o1QgOfdQM=;
- b=WA0PHbrbN20SMMZUEqTcy3dD2eI6ODnzhzzY5jFAgT2S+118rc5qJaLrDPyBphT+/7AmzLkPVI2gGdX4g0lQSXKBQi40g1aaqsP1tEUBnwNDvcKwCz92GfS1YSSvJImIQvqPMP7Z+EGTQqBzTv8NAyq/gmogdCoNbGTdQ81TJFdXcXknx7M69Yi4jxo3DBKws3U4dnAdm0cfQFZ4UiXPrhfQp7v4a0bQFaE4wn3vBYPqlJcS/DHnSG3Lq65DumWXpRSDhYfc5FuIgcBghA/nTw7yhNf6gROHpoPWvCfjrbu0lMsfKT7DCPjTF/nuMqwZ3wA8D/hSRIeoCS9U6hqu+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aPrYvl/MiNRc2zDLlOxwfOni+KleHEb/Q2o1QgOfdQM=;
- b=jHk+/Bbg3RHblUop7MuxNVRjEwUmaEB3nSW/rC6WGPcjq5p8+ZuwF/N78eqI55g/JxM6EwKL2zi+zNCSKl1MkHPksAMTC9cDNZUrTA35bFB9M9zUVuFzhehectEMxUthQV6+wcQ+RP0V9Kvs6hoanaTk19i0uIvk0UFJdseouQvsdb702ujQjyXAd6XWgrnJH3kxGlFKq3quD4/q2WDotKgFMHHXypOhRVuJMOr5PsVdsKt4Lt0iqi+2cSEjWNTbCVOs98+5HiFdCeUG1Pt6fn4eLCcco2SpHomMcWWWONHNQ4h31aIHALbNO5KfmfFJJHwHREJeiewzJLhEVKnQUQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA0PR12MB8374.namprd12.prod.outlook.com (2603:10b6:208:40e::7)
- by MN2PR12MB4405.namprd12.prod.outlook.com (2603:10b6:208:26d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.28; Fri, 3 May
- 2024 11:22:05 +0000
-Received: from IA0PR12MB8374.namprd12.prod.outlook.com
- ([fe80::bbac:e733:5c7e:19c6]) by IA0PR12MB8374.namprd12.prod.outlook.com
- ([fe80::bbac:e733:5c7e:19c6%5]) with mapi id 15.20.7544.029; Fri, 3 May 2024
- 11:22:05 +0000
-Message-ID: <a8f36d5a-a109-4683-abf1-47f8e7f8a7f0@nvidia.com>
-Date: Fri, 3 May 2024 19:21:58 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] selftest: rtc: Add support rtc alarm content check
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: shuah@kernel.org, avagin@google.com, amir73il@gmail.com,
- brauner@kernel.org, mochs@nvidia.com, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-kselftest@vger.kernel.org,
- sdonthineni@nvidia.com, treding@nvidia.com, linux-tegra@vger.kernel.org
-References: <20240503014102.3568130-1-jjang@nvidia.com>
- <20240503014102.3568130-2-jjang@nvidia.com>
- <202405030649157e9de2ac@mail.local>
-Content-Language: en-US
-From: Joseph Jang <jjang@nvidia.com>
-In-Reply-To: <202405030649157e9de2ac@mail.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYAPR01CA0037.jpnprd01.prod.outlook.com
- (2603:1096:404:28::25) To IA0PR12MB8374.namprd12.prod.outlook.com
- (2603:10b6:208:40e::7)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XHgmvXeX"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41b9dff6be8so49777375e9.3
+        for <linux-tegra@vger.kernel.org>; Fri, 03 May 2024 04:55:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1714737313; x=1715342113; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ejcxvyIN9Gt9hs/CP6yU9CZUBAq0kOYwH6s0PyoHfGQ=;
+        b=XHgmvXeXwiSoy6dUrZUbjEdH9lXmk11bwgfnRKpclCzfkWJwsQPhYzf7J2GLJ+ypeS
+         Qv98OY/3JtSFc6jptDLFSMXVLvPf42T1AdIwagSdplf77mauE6r58bWmuV6obHD5ze3i
+         KAvrHChJ9zosVdRPVtEBcrtfRoDnRO42USU7+6BU5LfbX/PQiJ91Hi1Z7puquWKmDFF4
+         IpjX1HhbQHpjXr6p86/C1HK7H329B26YtjgZICMp6MdVjYHGPMyDCFU92R6OeLGPhGzO
+         RaD6FVX3QqVP18BfB92tLuf6oJuHUeuQxFdigzbWdkwQ/scOVAl5UNFZ0TlygC0hA7gB
+         UIeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714737313; x=1715342113;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ejcxvyIN9Gt9hs/CP6yU9CZUBAq0kOYwH6s0PyoHfGQ=;
+        b=BIgFfSSaR0qDcF5WlmQ7lY21Lr/TlZspNSijTCfyR9/nVjfcqOKhFiexTkJbI9o/Yk
+         2l4lXvwfdwaSy6+zIqKjGLhrJE638zIIFHh+v8MHkhel/j9wB3PKmGNmB0vN0PGnB+dU
+         yQd07nmmx63ft5mf/funTYl8XvNPpRpkEfbNE41jcqmUnm2f/6PPytQvv93Ii49OxU/d
+         KjETar4uEBcbXepvEIzdHZtxqJidZGxPR536A/6xw7ZxKyVG+xPsttSm61X2y4MCv0P+
+         y0nyZ4xoyOYuH3pNwufMlu4/fOfGUBaowt0i+/DvNh2K5xMz/HuNZJOyKeMp85AIAqDm
+         IY0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUyBCgf9ATesRghEnx7/IPKOrDoghMn+TnLzucnxAbTx0yGvQS617b2NgcuzqD+k42yp8xMfCUT/PwNCzEnOYvWgMKNAU83zExcizU=
+X-Gm-Message-State: AOJu0YxgFMQcDXE3QaJbdzCed3Gy2xcFf/jOKIS28N1VkmIFUhEKjEBi
+	2RnB7F9QEDDKtuPOwSlfJfv+toSiPjA7HZEQKLjoh7b0u/rdjnAB2R9NVuyf2ys=
+X-Google-Smtp-Source: AGHT+IHjyMa7ooctRLN/1tdS/gx79TA23M2UYYTNE+3A8Wfu/afPHupfSN+yShlxrDD3Ur4rmUCBww==
+X-Received: by 2002:a05:600c:5118:b0:41a:34c3:2297 with SMTP id o24-20020a05600c511800b0041a34c32297mr1821832wms.5.1714737313152;
+        Fri, 03 May 2024 04:55:13 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id k8-20020a05600c1c8800b00418a6d62ad0sm9213606wms.34.2024.05.03.04.55.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 May 2024 04:55:12 -0700 (PDT)
+Date: Fri, 3 May 2024 14:55:09 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+	Martin Tuma <martin.tuma@digiteqautomotive.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hugues Fruchet <hugues.fruchet@foss.st.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Sergey Kozlov <serjk@netup.ru>,
+	Abylay Ospan <aospan@netup.ru>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v3 26/26] media: dvb-frontends: tda10048: Make the range
+ of z explicit.
+Message-ID: <c4287024-8012-458d-9829-15ffbceb25cf@moroto.mountain>
+References: <20240429-fix-cocci-v3-0-3c4865f5a4b0@chromium.org>
+ <20240429-fix-cocci-v3-26-3c4865f5a4b0@chromium.org>
+ <20240503112758.763d8d31@sal.lan>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PR12MB8374:EE_|MN2PR12MB4405:EE_
-X-MS-Office365-Filtering-Correlation-Id: e6f132c0-4a42-4e8a-14da-08dc6b634355
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R0Z2bFBDNm5naEFhNVNKVHZBbC9GUEtQVFhSWDJtSGMxY202QWVUWXRDc3lT?=
- =?utf-8?B?Qk44ZGlBQ1B0QTF3K1RHZVBDTXBibHRtSFlXKzVYYWpNRFB4WXhadG5uK2hO?=
- =?utf-8?B?WktaTHN5VHJ4WGxFKzRJenZXMStab29WRFRiOEdQU3JlbmdoTG45R3lWMDNZ?=
- =?utf-8?B?ZmhtSURzam5kN002aU00M2RjVVRSYWRlZlBqTzZCNGx2dFFUckVOQmpDN2sx?=
- =?utf-8?B?aFVRNmNDTzdXU1l0cDJMT2ZzKzhNWWwyTndrM2dMUFZhaGtHN2lWSG0xZlJC?=
- =?utf-8?B?S2xsVDQrZXBITWhSZDRXTVo4US9PN0ZVUWJtTHJtQ0hnbng4NmdrNzFaL3o1?=
- =?utf-8?B?bzNFVjdSZGcyS1Z4OVhXNWhSQTNMeDFmVGZ0dlpKVy9wU2Q2YXVjNUdqWFhp?=
- =?utf-8?B?K0gxcFVkbmw1a2RkdGxndXc2Ujk1N1dDZFR3Sm9KQm9XZE9pYVFwNHQ0MVBq?=
- =?utf-8?B?aTZlTUtvaHZSM1dXQjFSbTFzNy9pcFlZcXY3TnMxZExZdWZQVzZjUStZcFR0?=
- =?utf-8?B?TW5rdktORTJvNHFwMVNBMWhDQTN1YVBHZVJ6bUVZRjgzS2FyUXVyVWo0NEFo?=
- =?utf-8?B?eXhJdUVSTFdqK2diQ0VRS1hnS2dkS0dDeENybjRkYkVGQThhM0pBTDZCWWtp?=
- =?utf-8?B?NmNZN0c0Z2lkRVJKb0tTUGdoeHROaGY4TWthSHlFZ1dWQWxQMGlRS25sVmJT?=
- =?utf-8?B?SlpmTFVrdTcwbW5iY1luZ216U1VaMVYzS3ByRnhqaUNZd3V0WHJDMU1pSkxs?=
- =?utf-8?B?SzM5Y1RraFc4TjQ1WjVrVUV6K3NpbTZScUprbkxEQ21BTVRDSHFkZWR4UGZZ?=
- =?utf-8?B?Ri8wUTZXZjg1VXZqOHZYNE1lR0RXZm5hZmhBaGZHRVIreEZ0Z05XLzMyelRV?=
- =?utf-8?B?OC9XQ1J3VTFocXgvbEtvSzI5N0pqaE15T08zWWlVcndYNWcvT0JOWW85ejFR?=
- =?utf-8?B?aENNS0ozTnAwdW0yMnBna09QYkY0WHFCcVZIcXI4TkhTS2o1UzhRU1lrWEN2?=
- =?utf-8?B?d2w5U3lFdndGWjkrbWdHcEVhc2lrRThDallVQnNaTTVNeWNOb0pncWVSUHhx?=
- =?utf-8?B?RUNERytZcnEwNDBoOThiS1FLOEYrbVRzNVhNdkliUEF2WVFjdjVQOUQvVENj?=
- =?utf-8?B?d01zakZ3R2NrcjV6TTNCMjlVckE5R3BvYlVkYjRRYXg0RUtaelNMK2hXUUNP?=
- =?utf-8?B?SjJheWtrdW40eEM0dzQxd1A0Y3BrSnpUZ2JIUVBBQjVUdWNrK2R6VW5BazhD?=
- =?utf-8?B?SHJsaU1JV3Z0bUFIL29TZ1d1aUZiVDQzdTI0MWxFQ3l1MU5LTkNhbEhzRTNM?=
- =?utf-8?B?dHFVREpIZS9NQTJvODNzSWtOeHh0Q1B2T3FXcGRWS2FObDJTM0cwd0dkVjE2?=
- =?utf-8?B?dUN2UkNGbTBobVVqT1hNdmVjaHJBOWQ3TG9kR1pBc1FNcW1ESGR1MVhXUm5x?=
- =?utf-8?B?ZFliN1dlUnczblNJRS9kWnZiWlRGVHhmVzhtcit5eHdxYmdXOUIyWEE5ZUNQ?=
- =?utf-8?B?dlExOWlKakNHN3NxOGZUdEM1Z3FYRUxGVHhaWi9haFViQWViZStIcG5SUmZJ?=
- =?utf-8?B?dWhWNlVXZlJIMW9Bd0dRb2s2OWYwMHZ1Y2kzemV3aCttZ2dLWWNuV05RVzZH?=
- =?utf-8?B?Z3dmMWRwdFZsMmR1THVOVVgzd2Q3SWE3OHF1Q0l4ZWJWUG5MRlU1ZHJxb3lt?=
- =?utf-8?B?eGI0ZkJuZXJSV2JtRlR4QmlNaWh6Q2p0RitpOW4zS2hhbURqSG5ud2ZBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8374.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UUhUVlJhQ253cUU4eTFYZ3pEY1o0eWVDY3BYZC9jMm1OVWJZYW14V0t2alBV?=
- =?utf-8?B?dFBwenpXVnpoS0kvMjIxVDhyVTh5a00vbzB3TVdTK3hjTG54bEpnTEpZLzJa?=
- =?utf-8?B?OFg2R1BVelU1cXFvbittNFdKWC9uSFJsL2hTSWUzalE3UEJ2MVFjcFR1TjRB?=
- =?utf-8?B?Y0ZWSVpETFBPTXlleVJsUVpMSzBNK1kvYmZXMXcwSFF4Q0JWYVhmUXBzbUd0?=
- =?utf-8?B?LysxK0gwN0orRW5pNjBKQ0I5Sm9XTnpaaml0WU5pR09EeGQ4dWFvV3lXNi8y?=
- =?utf-8?B?NE1nSWlDMkxLK21aYTdhMjJCOS9XalRqTWZvTFpUQkd4RkNQNnFiaC9FUTJW?=
- =?utf-8?B?ZzJreVNSc1RnTDRiYzhaRWVWdlVhVVFHNmFqanVxdmIzVDQrelNOTkhFY1FJ?=
- =?utf-8?B?bUVkZE93SmpGT2VlY2pOamp1UFhoNGxkSE1udEVLK3l3Y1dxNDhleUZod1ho?=
- =?utf-8?B?L2cvdno3S0pjOTFCTktITnpZRTJ1RENHVUhpWUVvaEgwcGs4bGxCNVY5Z0hl?=
- =?utf-8?B?SU5rR1BwODJoc1dFQ1lZY2hjbEtWeGF4bVpkTFFxajhtVmY4ZU52ai9zZ2xV?=
- =?utf-8?B?RmRsckJUOFlpSDA2MGlDMlk2Q3EvM1djZWY5ZGRmR0xncGdkdWhBek5EOEs5?=
- =?utf-8?B?cUlua1FlSDl5SzQxaytKc0hZRjQ2ZWF4ekorSFZXdnFBN3pOU1BFaE1rRWhM?=
- =?utf-8?B?SDU2aUVOOURsRVl6R1c3R21YTEMzT3RMTVcwdUhxZmpLK0hlRGJJNG1LYWdS?=
- =?utf-8?B?TUpuM1NuRXZpR25DUlhYczVZUldxVHpBTkRxbmlRYkRjRHdIb0ExLzNLN0hR?=
- =?utf-8?B?QnFWb0tmMWliaE1vYXpVdVg3SjFuTklMZ1NPbUQwOXVzSExwdEdzYzROUHdj?=
- =?utf-8?B?UnV5UFJxeGRZNFZQZ0tLNlQwQzVFQ0QybU9BK0FiM0pFUzRJcENOcnZITXAy?=
- =?utf-8?B?OHMxUWpwZUFYS2FSMkxFSWtMS2ZDbDJ6YUxuWi9DdWZNcG1hUEJ5ZWp5M0RX?=
- =?utf-8?B?V0tMZ1BHdURxcm1rb1o5N3lHcTZGdzlTWENCOEYxQlhQZmVBbTg0U0szRmJZ?=
- =?utf-8?B?UExnUzRwWXl5L1U3TWtKcjJYcEgwdStKN1NEZVRkRStEcHYwSi9CT1kreVZm?=
- =?utf-8?B?SmN4TnkzbUNPckFtSHZuNU9keVBtcjhoeHRtS2ovTmkvQXZoaTZZbkNnMG9Y?=
- =?utf-8?B?ZUlUbHl6MUNGeTg2c2JOV09jQVdiOVdhVEpaM2VpN084OGQwRDN1aTV0Y0Rp?=
- =?utf-8?B?VUwrblNkRE5td1prVkd3Z0l0UnltM1R4bmN1eFkvTXZ1U2ZjQS9MMGJIMFBV?=
- =?utf-8?B?Nk40Q3lRSlVId2liejhEK1doY0hTMk1rSk5iOXJ1TDVwVkNRTmtNMjlIbmJY?=
- =?utf-8?B?R3I0N3psMzE0OW1PRVhlL2ZWdUp4UXgvdC9jMUJIb1N0MGM0S3R4Vlhabm9M?=
- =?utf-8?B?UWRQU2ZyblJUTCswUE1ja1JTbTZ2Wnl6dDRDZ1dnaHFQWFlIU2NLUUhxOU9l?=
- =?utf-8?B?bC9mQUFCbGhsWFBCYWVnTkFPSWJmbnZiL1UvZk1IN2ZQM0FvUFpVdld5NXZK?=
- =?utf-8?B?cEFpQS8yc2t5empibVNQZWpoemgyZE9aaVlDUm80OWEzS3BDK1pNclEvRDA0?=
- =?utf-8?B?SmM1K25wY21ucm0yeGMwSXN1eUJ6cFl2WDZGekQ0SlZ0dU4zR05ZaVZNZ3Bq?=
- =?utf-8?B?U0tIT2ltQUkxQ3FTVnh5dWxDSEYreWJ5d2E0V2dNc2pxT21IMU44U0txVE9a?=
- =?utf-8?B?SGFHTkc1d1orMFdsZGs0UWl1Q0Q2VXRmK0xFS09sV0VTcmhSSkpzYWtsRjNw?=
- =?utf-8?B?Sy93eVhKeEFkeHlPS1Q4RUswQmpKRFQ2Q2dTU2ZxeHk3MDlpb1c0SWhweVEx?=
- =?utf-8?B?U3I5UHpQRkdSVUpSTWNaZzlBWFhhRHhXRmlaLzBiTWpUUDhxVXNPeFlZd2xn?=
- =?utf-8?B?MG9DekdPbGRmY3BNZWppaXA1TjlhU0JnaUdqM3BPTkNuODFFNytPZVAxaDVr?=
- =?utf-8?B?U0ZvYWhwVmNnRURETjBSNHY1ZlppVEV1djJiWFQ2aHNQK0lwRlV0ZXlBcTZr?=
- =?utf-8?B?NTZDWi9nMFlpOXhJaGgxV01jckc0aEdzb04zYzhGaUkzRTlpOVI3V2ZESFFm?=
- =?utf-8?Q?bxlYCIK51pQ3nbcoRGSiD79Wu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6f132c0-4a42-4e8a-14da-08dc6b634355
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8374.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2024 11:22:05.6137
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TbbXcWjmnsooduCLFxKIImQ12a/VUhy4rWB9U1YwI5JEtqSrBq9+DLnntwdy+mWWwgn6m5vLDNqI/vxyRyL/bA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4405
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240503112758.763d8d31@sal.lan>
 
-Hi Alexandre,
-
-Thanks for your promptly response, I try to re-send the email again and 
-avoid the security scanner to disrupt the external link.
-
-
- > procfs for the RTC has been deprecated for a while, don't use it.
- >
- > Instead, you can use the RTC_PARAM_GET ioctl to get RTC_PARAM_FEATURES
- > and then look at RTC_FEATURE_ALARM.
-
-I found old version kernel doesn't support RTC_PARAM_GET ioctl. In order
-support old version kernel testing, is it possible to use rtc procfs to
-validate wakealarm function for old version kernel ?
-
-Can I move this rtc alarm validation to
-<linux_root>/tools/testing/selftests/rtc/rtctest.c ? So we could try to
-use RTC_PARAM_GET ioctl first and then roll back to use rtc procfs if 
-RTC_PARAM_GET ioctl was not supported.
-
-Thank you,
-Joseph.
-
-
-
-On 2024/5/3 2:49 PM, Alexandre Belloni wrote:
-> On 02/05/2024 18:41:02-0700, Joseph Jang wrote:
->> Some platforms do not support WAKEUP service by default, we use a shell
->> script to check the absence of alarm content in /proc/driver/rtc.
+On Fri, May 03, 2024 at 11:27:58AM +0100, Mauro Carvalho Chehab wrote:
+> Em Mon, 29 Apr 2024 15:05:05 +0000
+> Ricardo Ribalda <ribalda@chromium.org> escreveu:
 > 
-> procfs for the RTC has been deprecated for a while, don't use it.
+> > We do not expect the sample_freq to be over 613MHz.
+> > 
+> > Found by cocci:
+> > drivers/media/dvb-frontends/tda10048.c:345:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
+> > 
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  drivers/media/dvb-frontends/tda10048.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/media/dvb-frontends/tda10048.c b/drivers/media/dvb-frontends/tda10048.c
+> > index 3e725cdcc66b..1886f733dbbf 100644
+> > --- a/drivers/media/dvb-frontends/tda10048.c
+> > +++ b/drivers/media/dvb-frontends/tda10048.c
+> > @@ -328,7 +328,8 @@ static int tda10048_set_wref(struct dvb_frontend *fe, u32 sample_freq_hz,
+> >  			     u32 bw)
+> >  {
+> >  	struct tda10048_state *state = fe->demodulator_priv;
+> > -	u64 t, z;
+> > +	u32 z;
+> > +	u64 t;
+> >  
+> >  	dprintk(1, "%s()\n", __func__);
+> >  
+> > @@ -341,6 +342,7 @@ static int tda10048_set_wref(struct dvb_frontend *fe, u32 sample_freq_hz,
+> >  	/* t *= 2147483648 on 32bit platforms */
+> >  	t *= (2048 * 1024);
+> >  	t *= 1024;
+> > +	/* Sample frequency is under 613MHz */
 > 
-> Instead, you can use the RTC_PARAM_GET ioctl to get RTC_PARAM_FEATURES
-> and then look at RTC_FEATURE_ALARM.
-> See https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/rtc-tools.git/tree/rtc.c
+> Are you sure about that? Some DVB devices have very high frequency 
+> clocks, specially if they're also used for satellite, so I can't
+> be sure by just looking at the driver's code.
 > 
->>
->> The script will validate /proc/driver/rtc when it is not empty and then
->> check if could find alarm content in it according to the rtc wakealarm
->> is supported or not.
->>
->> Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
->> as optional")
->>
->> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
->> Signed-off-by: Joseph Jang <jjang@nvidia.com>
->> ---
->>   tools/testing/selftests/Makefile              |  1 +
->>   tools/testing/selftests/rtc/property/Makefile |  5 ++++
->>   .../selftests/rtc/property/rtc-alarm-test.sh  | 27 +++++++++++++++++++
->>   3 files changed, 33 insertions(+)
->>   create mode 100644 tools/testing/selftests/rtc/property/Makefile
->>   create mode 100755 tools/testing/selftests/rtc/property/rtc-alarm-test.sh
->>
->> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
->> index e1504833654d..f5d43e2132e8 100644
->> --- a/tools/testing/selftests/Makefile
->> +++ b/tools/testing/selftests/Makefile
->> @@ -80,6 +80,7 @@ TARGETS += riscv
->>   TARGETS += rlimits
->>   TARGETS += rseq
->>   TARGETS += rtc
->> +TARGETS += rtc/property
->>   TARGETS += rust
->>   TARGETS += seccomp
->>   TARGETS += sgx
->> diff --git a/tools/testing/selftests/rtc/property/Makefile b/tools/testing/selftests/rtc/property/Makefile
->> new file mode 100644
->> index 000000000000..c6f7aa4f0e29
->> --- /dev/null
->> +++ b/tools/testing/selftests/rtc/property/Makefile
->> @@ -0,0 +1,5 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +TEST_PROGS := rtc-alarm-test.sh
->> +
->> +include ../../lib.mk
->> +
->> diff --git a/tools/testing/selftests/rtc/property/rtc-alarm-test.sh b/tools/testing/selftests/rtc/property/rtc-alarm-test.sh
->> new file mode 100755
->> index 000000000000..3bee1dd5fbd0
->> --- /dev/null
->> +++ b/tools/testing/selftests/rtc/property/rtc-alarm-test.sh
->> @@ -0,0 +1,27 @@
->> +#!/bin/bash
->> +# SPDX-License-Identifier: GPL-2.0
->> +
->> +if [ ! -f /proc/driver/rtc ]; then
->> +	echo "SKIP: the /proc/driver/rtc is empty."
->> +	exit 4
->> +fi
->> +
->> +# Check if could find alarm content in /proc/driver/rtc according to
->> +# the rtc wakealarm is supported or not.
->> +if [ -n "$(ls /sys/class/rtc/rtc* | grep -i wakealarm)" ]; then
->> +	if [ -n "$(grep -i alarm /proc/driver/rtc)" ]; then
->> +		exit 0
->> +	else
->> +		echo "ERROR: The alarm content is not found."
->> +		cat /proc/driver/rtc
->> +		exit 1
->> +	fi
->> +else
->> +	if [ -n "$(grep -i alarm /proc/driver/rtc)" ]; then
->> +		echo "ERROR: The alarm content is found."
->> +		cat /proc/driver/rtc
->> +		exit 1
->> +	else
->> +		exit 0
->> +	fi
->> +fi
->> -- 
->> 2.34.1
->>
-> 
+> Also, we had already a bunch of regressions with "fixes" like this
+> that actually broke frontend drivers.
+
+This patch preserves the existing behavior. The sample_freq_hz variable
+is a u32 so, in the original code, z couldn't have been more than
+U32_MAX even though it was declared as a u64.
+
+It's possible that the original code was wrong.  We have seen that in
+other places in this patchset.  Adding a note about the datasheet is
+also a good idea.
+
+regards,
+dan carpenter
+
