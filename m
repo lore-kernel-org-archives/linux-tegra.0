@@ -1,155 +1,289 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2079.outbound.protection.outlook.com [40.107.249.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2C920DC4
-	for <linux-tegra@vger.kernel.org>; Sat,  4 May 2024 12:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714825213; cv=none; b=Jx6Y23tZ1rvXBqKy4LOWGYc2V9qeGf5jnIfLXWJ9BQzCVwg5jStljuT3C5/g/Tjbos0JJILSXkFKQzsmRzSPFhRnbcl6jX7vBPojzlxQ0QxDly/szCtcEHbyU9IPhMR+cQFz2RaPW0gpYDt4Xd5rzA3kom7IQWZQ3YnEdkeZ04M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714825213; c=relaxed/simple;
-	bh=FX7V+9wVvkr48XR4v3xJoIGUmCB4DyZG677snsG+CBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=o1GU1xHn2GB7wgD5qw5WyWlhrFKAVG1eurL1hmt1NQL+9twgbFeGz2XfSsogLiIq3FWXW2AXIi7G9y/k+83RFhoZ20yS3Tvu85lvQMnsp1VzuengkEcULM4K6cWSnhF4QIF6uZO7boEGUxXDk9lL8XxyLbEugP2ZlozL/49yvY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JsUgWoHi; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45944A1C;
+	Sat,  4 May 2024 13:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1714828345; cv=fail; b=RZn/6nKDtgsvZCVftpGWqfML4gtjo5wOmFgvUIauAu/st5GycmR7kYx/X59DBnuvIoqWmIL0cv5TPkDDi7BeTRrI306egXJ9zcbFEH283xsWl2KxhaxIhL8KUKHAi+Dw06d1udBH76wvzJWCMt29TZ7MbIsWkxwXasi39Lxx/6Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1714828345; c=relaxed/simple;
+	bh=Psxl1oJ+xJ34kYUX8I+QBV4aSroRJk4mWf2+If3BgkQ=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=RbrEPwOGQ7KEHZ9HE0zYD4ENJhoRRdy2bD2SYRi8ThPq1n1ItnPX3n0Wo70+6k3brGr0w7+T661lmzO3ZQu64vw92bW1xzAJK2DvdJGYuBVIPTKKbQbgx/CeIHmMcDYouE2ZcJWRJrrPE4YrnjJRQImA8qHbWUj35OnWCMiYKcs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=mVbjghYD; arc=fail smtp.client-ip=40.107.249.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JsUgWoHi"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-41adf155cffso3748325e9.2
-        for <linux-tegra@vger.kernel.org>; Sat, 04 May 2024 05:20:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1714825210; x=1715430010; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aPF/Hn0p/4Gbl6AJFa71x8oXhaS7YL65AcNMD2/YSKs=;
-        b=JsUgWoHi7l57JGFEWSbt6gUI0RobOoJxDM/PMJergSJdsRA11R2G7zvWT4kMGoeP7B
-         C/bZdTpWN014RqkosIMIFQUnl7r7OLL0R0l42lUtrgzDyOhYR0oa50SItk72SvmEl1Mo
-         Aa9jjpsSfVwvOq4tjU3NqnrNjm1Poh/QttD4Ae6HqsiUqQG+qiTXNcgfytYRDHsUAOZS
-         HWJt3Lat+q3rjepWaeFtn2CF4FwhyWsgK3Y7IfkumsmgqIvhXlib9RxFUQAJyF33iLwZ
-         RGtgdfi6B47BqeoBN+N+ZOJeupNluCOi2325UkLPuBFcrHiDHx5dxLCL1S2csjKDWX1E
-         BBkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714825210; x=1715430010;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aPF/Hn0p/4Gbl6AJFa71x8oXhaS7YL65AcNMD2/YSKs=;
-        b=TxJ4OB9Qt4FP0f+U0oSwMYnL/JLx3bW1LrGx9956Oui9sVeGO2okq2MB3E79NgShuL
-         GlYOqtRpx7HH+f1cgfhRbmYMWRMUrxAn21HMYwfbeeS7QyX6Vld/7bp39p9v2qnNv7pl
-         ZcQtMZPFfspHE/XwtS6aqTvcdPQCd+NMBiOEdP5cU0P17BSWMEpGmk3A9aYbjy8HB8m/
-         GR3+SEDhoH9Ple1JbAZMVQu29jPDZOxIQZyu2R4K5g+39zqWOrjcHrEjkhCTKibgchAo
-         xereAA/7L5Ow1+qD6c50cj3wfEiQpZZzAnd92Kl7BEBlYuozfOGdVDvyFG0cVskgf3+5
-         YrSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOcO9cCnj0i2NvZZS+DBpMKjFQyOYTvZZjUmfdudZIC55FJZv1zg34pjdDcHthXVxHqJarPfqHrT27bSAr79hMLTkH7QVajoM6hXg=
-X-Gm-Message-State: AOJu0YyoZdJcpN4DuYJmv9WIj9l2T/nzIEfJBGsIiMUShcphzL4kY3ab
-	on4usvsLRDROF1mv8tgvOiHoDB0wQDo5wREC86uRmMCVLpXbQjiDu0ySeAQJWJQ=
-X-Google-Smtp-Source: AGHT+IG/g4CmsO0FXQ2Ul7yp+WBoNYFdbyexFhbSNg66ETHKOWZJL2qx+irCMP6zvS2L+QtX4qx45A==
-X-Received: by 2002:a05:600c:1911:b0:41a:aa6:b68c with SMTP id j17-20020a05600c191100b0041a0aa6b68cmr4114943wmq.6.1714825209815;
-        Sat, 04 May 2024 05:20:09 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.223.16])
-        by smtp.gmail.com with ESMTPSA id v14-20020a05600c470e00b00417e8be070csm9025520wmo.9.2024.05.04.05.20.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 04 May 2024 05:20:09 -0700 (PDT)
-Message-ID: <0aa33c8b-5167-402d-83f4-c65b22d1c257@linaro.org>
-Date: Sat, 4 May 2024 14:20:07 +0200
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="mVbjghYD"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FXUDUbcDRVGIanueProxcTpJH0z2Aet1R0xqHltasXBJKywe1Gt/0WpMBQlLdGAhe5rXLowiRRY8pLc6+U5XWjbXyw4Q01SvtkWqBLzJtWk99Kbc841UFvIpZjqz0jYXtmgAPcLBjdt2Rekc1RXfnY6XUPuqXZu63XozTvfMH5ccS+1T/teMp+YGYBo0U8d9MS12xbBxRqtP/CBtHEIe3LoozsQqN201D2ywg1iC2i+95eZFIujwRzjxOlzfzo+6Ot/mjKVZ2m2i+xGFiVb9wRF6E46CwXugoF11Qsdl5jhstgyLgRoPCoX2OK/Uh3dtyxRK1S1cyOMkLQr5dSNCPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jR9dIeiHtuSRGz7ubbTGx1Y1d/RRRbeURdFmCd/Ctyc=;
+ b=Ef4uXNCE0QiSoozdrN9vFmt2DCIufVrSGLI6/eSnmFbM6d9axJzCjmhXNZ7cBc4d+zRXmb+/fdWDx12hw/BhPGkpLmDo1fgdOafhnh6leAwi6PzN4QpoIIzunh101LRcvddnIGX05IQ2Rtk8TRaGuoJxrfWHVUU/8F4SV5RmxWfC7BM5nUvCz0OphjBSeNOMObmLQZ3adyDhPQH9+GgekPx0HM5gur7lPW1pdcapk293INvcJxUl7sRYjlR1Mfk3kyznV/rg3FE572FJBYsJw+U0igQ28J1+1FsfT5lrzO0JlpUOC1fqJVVg/xVZh4hcvyt2/HOXuncNt7fcxbIqtw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jR9dIeiHtuSRGz7ubbTGx1Y1d/RRRbeURdFmCd/Ctyc=;
+ b=mVbjghYDDiCssjCRhW0dUaabYtTf9luaTxJv+wmY7X4WVRdrnCTVVU5ajvZhFyHGJGiOODnybsedpAfpWnh2WQvjnk7NLWnxmfk9vGDy8YMEWWgd09ihvvGS0GZr/z3YwerYgSJ1HZFaiuT4/ja5FaH+fz30RiAzE9W96wq3IGk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by PAXPR04MB8174.eurprd04.prod.outlook.com (2603:10a6:102:1c4::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.39; Sat, 4 May
+ 2024 13:12:19 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d30b:44e7:e78e:662d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d30b:44e7:e78e:662d%4]) with mapi id 15.20.7544.036; Sat, 4 May 2024
+ 13:12:19 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH v2 00/20] pinctrl: Use scope based of_node_put() cleanups
+Date: Sat, 04 May 2024 21:19:58 +0800
+Message-Id: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP81NmYC/2WNQQ6CMBBFr0JmbU1bSxFX3sOwIMMok2DbtEgwp
+ He34tLle8l/f4NEkSnBpdog0sKJvSugDxXg2LsHCR4Kg5baSKNbEdjhHCeBE/XuFQSZwViFJ23
+ NGcoqRLrzuhdvXeGR0+zjez9Y1Nf+WrVUf61FCSmatkHC3liq8erWcET/hC7n/AFe3iR8rAAAA
+ A==
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, 
+ Wells Lu <wellslutw@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Emil Renner Berthing <kernel@esmil.dk>, 
+ Jianlong Huang <jianlong.huang@starfivetech.com>, 
+ Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, Viresh Kumar <vireshk@kernel.org>, 
+ Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Patrice Chotard <patrice.chotard@foss.st.com>, 
+ Heiko Stuebner <heiko@sntech.de>, Damien Le Moal <dlemoal@kernel.org>, 
+ Ludovic Desroches <ludovic.desroches@microchip.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+ Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
+ Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Joel Stanley <joel@jms.id.au>, 
+ Dan Carpenter <dan.carpenter@linaro.org>, Tony Lindgren <tony@atomide.com>, 
+ Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, 
+ openbmc@lists.ozlabs.org, Peng Fan <peng.fan@nxp.com>, 
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1714828815; l=4658;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=Psxl1oJ+xJ34kYUX8I+QBV4aSroRJk4mWf2+If3BgkQ=;
+ b=cjF+2rF7bQJj6MhGLe4rUUqhOggP0pnLi0klFDpMx8UZ0YJRw0vQ6D+zPeUCVYVlNO4REBwFX
+ BBDaJVRXvQqDfPs8bJGItpx3NL+32ktRC7IYCxCnVBxC7GqD2V3NB12
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SG2PR06CA0230.apcprd06.prod.outlook.com
+ (2603:1096:4:ac::14) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/7] Cleanup Tegra210 EMC frequency scaling
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, thierry.reding@gmail.com,
- jonathanh@nvidia.com, linux-tegra@vger.kernel.org
-References: <20240429101933.11500-1-diogo.ivo@tecnico.ulisboa.pt>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240429101933.11500-1-diogo.ivo@tecnico.ulisboa.pt>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|PAXPR04MB8174:EE_
+X-MS-Office365-Filtering-Correlation-Id: 251d355e-e9bb-4ef6-8900-08dc6c3bd3a0
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|7416005|52116005|1800799015|366007|921011|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TTdzSUFWOHlRc3QzZEhiQmZiYmxXOEM2RzhXaUs2MTBraEFQWWlEOEd4V1FM?=
+ =?utf-8?B?Y3ArNEh4UldQN2U5WCtGZHNocXpuVUUzcERJS2lVR292Y291c2NoNXRKdG9r?=
+ =?utf-8?B?TnhwQWZuR2tmeEhxNjIvcHRJY0NpblQzQXNhYndBTFNaYkovSmVzbHNHYWEw?=
+ =?utf-8?B?MEk2RVpoN05DT0d4cWkwZmhEb0JRUk5YMW45S1gzN2paQWZNMzhmWjhmejk3?=
+ =?utf-8?B?RG94WVpISnVraGYvbEt1MGk2cjBDL2p1bkt4ZUEzbjdLT0Q1WFV5OUcwWVVr?=
+ =?utf-8?B?OEFtY1BibjRTMlcwM3hRb2diRHlyeWVhckcydW1HSlRDdFdEdzNuNnQ5aTFq?=
+ =?utf-8?B?eWFCL25XL1orOTdhVi94QmhHb2ZkdE5wT2ZKNkNGS2gvZWVFV213YldCaWcz?=
+ =?utf-8?B?UzZpcDFLaDdUT2F6QnhKTEI5bG9MVE1Cb0RpakNlL2pleC82U0poc3NWZVlC?=
+ =?utf-8?B?MUNYR2FoVWhiTnVDUUxQYWRmUmV4VENwcmdTUjRGQ3RleTA2ZjFQWWpuYzE0?=
+ =?utf-8?B?VXlpTVRsT3VPTzMweVBlc042ZmwyOVNVS1dMcnUvSHZKaVRXRi8zZGJGRXd5?=
+ =?utf-8?B?aDY5R0dmRWJIVWR0UzFYTDlWN2xRRk9ZRStqVEQwN3RrWDdXUElsdkpkSXBP?=
+ =?utf-8?B?c1JyV3RLMHRLT3U3YWpiZ3QreGt3Q1lOREtYSVN5RWRLaG9aS0JjVE1jMnZT?=
+ =?utf-8?B?MHA0a3R3TDlDY1BMTlA4cU9jdVdXTm1aaFd4ejVsSUE3NFRmU3JtOEJSWnJQ?=
+ =?utf-8?B?a1JoVlJ2YnpqVzhJaWR3S0lhNXFUbFJqNlV1bGxpT0Z4K3BDTE11bWlNZGdr?=
+ =?utf-8?B?TTkxWmhHWVBrKzNoT0Vlc2tDQXowM29lY3AzZ3dSZTZTUTA1QVdCQllCVXNE?=
+ =?utf-8?B?RlZkQWVuSFZsLzhCaDF4MytLdVpFbFBrTGlFcXRzelhiNjlUV2dYSUpMM0Vh?=
+ =?utf-8?B?YjY1VDFZeGVaM1ZnN0wrYUN6Tnc5cnMwb2FNMkN6UGtlV2M4a25JbnMxb1kx?=
+ =?utf-8?B?cmpzN0psazZPbE9oZkZVeWkwK2ttWUswbzlSMnhhdnowNHovaTIwMWNnQy9M?=
+ =?utf-8?B?ODc5VVAvK29SOWNrQ01rR2tEZTlQNm1OdGFKQTFqWnNJNHV3TW5icHh3OTNm?=
+ =?utf-8?B?dE96M0NXazJ4NnYxZ25LYkVKaHdTZTRlVGRNZzNwVDdqRUsreGFqOVZHRVJM?=
+ =?utf-8?B?OGdtcmlxSHcwT2ZTUU1rN2syejF1MFQyMUxUUVErQVE0MWR2eGthUmNVMEFh?=
+ =?utf-8?B?NytqZHhkUnA5aWtiTDRxazk1VFAyOEhiblcrLzc2b0ZNbnpRVmdzVHVkdTRs?=
+ =?utf-8?B?ZUlNM0xNRHRheXEyekh6ZHBWTjhJNERDOTZPVUFsbStxV2tsNjkrbzJLNDk4?=
+ =?utf-8?B?MVNhcW0xMnhpSkdscDY3N2JuOVBEcnNneTBJMGJwWk1JWWpaUksrM1U1MVBD?=
+ =?utf-8?B?SDJNeTRKUmU1ei9LNnJFaHA4QSt2TmcrSWtGOUZoSHZSUTdkVS94eVJxZ1Rj?=
+ =?utf-8?B?dGN6RWE5Tmg4ZTJxR0lKSnFUSHZ4c1RGNk1qS0xvTWMvSXo0bXhMQmFnejd1?=
+ =?utf-8?B?OVFBeGZ5UVNaa1ZnU1d3aGtwUHFGd2NQUWFLYXJ5aHFYQ0MyNS9tOGMvVjk5?=
+ =?utf-8?B?ejlsUWp6SzVUajJiNlFlVElhZktKajQ3WTZVcHZveG94anM3R0NHWmZNS1li?=
+ =?utf-8?B?N21jSDMxdzNoMlhNZ3psOXNEM0NWK0hLVUIrOThCeTQrVGdjL2pmNVlTY0Vn?=
+ =?utf-8?Q?qjYilr7TE0hFKLTrJE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(52116005)(1800799015)(366007)(921011)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UHdDN3p1Y29uYUUrZkRsZ2dqOFZVZHBoWE1JajNtU21Fc3hwUElnZyt2RGhO?=
+ =?utf-8?B?TnE1SFdMTEJscDNaUHZMQWFFaUlwYVk0ZnJZZ1pWY0Nuait5cUlkb1FnVW5M?=
+ =?utf-8?B?cGFUdGFnQ1JQUTVINFROZGgrWG85V3dFcmJ6cFcyUDZlVFMzZVg5RVJMY0dz?=
+ =?utf-8?B?a2srVytsYjh2cThIeHNkSmRqTzZyQUwwMGVwMis1azVCWWVkdngrS1BxNW1R?=
+ =?utf-8?B?N3ZQN3JMbDVFZVREVjMzbzJSYW8vU0hBZmxWbGgzRnhkMWJiV0lDNkJIZnU2?=
+ =?utf-8?B?UWpFT0svaE5LQ3V0SVhMZDRORjNRZzNBNXBESlFNQytySWc3K3F5SmtyTWRh?=
+ =?utf-8?B?UWFxV3R2S2hHeEllajc0Mks2akhIdkFvQjZ0YmNJOUlzbWFxTXhuZWZuUWxR?=
+ =?utf-8?B?SC9IYkFiQTBaVlFmaTA2L2VzQWV4bTROaGdodUM1UFFnelQ4SGZSOFRHZ3Rl?=
+ =?utf-8?B?UlZBWHhodWlQQTJKTUVxV2U3c01qem5tV3ZSdEZGUEdZWEFFbUZ3cmIzVlIz?=
+ =?utf-8?B?MGplTnByejRVL282aGZKbXMyYWU5V1ZZMW11UTE5OFFnMmxlUVlJUm5QV2xu?=
+ =?utf-8?B?SjJReDBOYVZMdTBLanVuSHc3S2VlUi82SlBBUXV5L0hwSnFxdEtxSEdwSU5J?=
+ =?utf-8?B?cXZ6NXZpS3Y4Zzc1WklEaE1SVGZMZXdkZjFDaGIxd000bWI0dVNQeEQzSkVP?=
+ =?utf-8?B?d0RnUjVlblh2NXovUGVXL1NGUHErSmQ0SDZMSER0SVlITEp6d242Yzc2Q01l?=
+ =?utf-8?B?ZFdBdjhjWWZFdmtxQWpTQ1hVQ3o0NEhTRlZ2VTRZYmxPK3FWdGFzUEhKUURR?=
+ =?utf-8?B?RTlGT1lOaXpybW1lSnoyKzZ2cjQ2YU9CYlFzZWFWdU8yQmIyd0ZnZmxqZFl4?=
+ =?utf-8?B?K1JFUCtmYUpEUCtQbjU0VVpsYVUwSlJuV1pnajZtSGZLcklxWCttZDRpUW93?=
+ =?utf-8?B?MitWR3VYWU4wZnR1Mmw1eXZSemdET3UwQzVXZEhjc0Z6WGg1ZzBnRWtsaGp0?=
+ =?utf-8?B?T0RwbzJ6NHY1d0gxS3pjTnVDbWs5YmZZR0RHU25tVjgrTUVacjVYVTRKN3g5?=
+ =?utf-8?B?b1FTYXJXWU44cTJOV1hHc3N6dUJJbjVyV00vcFkxTG93bW1aeWMxQUNUbFpE?=
+ =?utf-8?B?QTlDOTRKUTliV1dsa2RoV2kveXZpa1ErT2hZN1AzMzZUOWI0OVdTYVZOZGpm?=
+ =?utf-8?B?bUlocHRhQ2lFdUFTV2RadVcxSG0zWnBHR1ZlVHVUZjZFMG4wcXNrRlN4Tk1J?=
+ =?utf-8?B?MDJKa3FOZExKSWFEbGpGaG12M2lhdVkwUGRVbmE0Y1JORVZNVlF2aGVnb29q?=
+ =?utf-8?B?K3dHREozNE9pdzFRME5taVQwZkkrOFIzLzBmemRaYUh1WWFuenp6YVZuWS9i?=
+ =?utf-8?B?VzdjK0hzU1RqTGVuTjlRTlE0b0luNWNlQlJyODFnZjI2ZFkvZy84bVFrcWR3?=
+ =?utf-8?B?NnBTMnBkUzFNbzJhOWRGVm1UajRIK1JPT1U5MlFpM3NmK3RrV0J5YWM5dTg1?=
+ =?utf-8?B?WjFIaEdLL3djN1lvV1oyTU04TFhHdjFDZlFFS05qenBtZ2pPQnRJNnlFdDhB?=
+ =?utf-8?B?bjRMZ3JkSGR3Z3JMOStLaDhpcFNBT3EwYzNUVFdGS09pZ1pkaG5TM1d1K3Q2?=
+ =?utf-8?B?dE5RWGVuUGpXVFM2ZzQ0V1lhY0lyWm9XK3dQQmJkV2NhVnRPMzF5YVNoVmJF?=
+ =?utf-8?B?Ylg2TTNLdHdNMUpNZnByR3VRTFBNUUU3UlR1Y1F1RklIUlMzdUp5VnVnWXhC?=
+ =?utf-8?B?SzNrOU9LV3pPcjl2UWtGNTEwSVpxdE8zUHY4S1ZHdGh2YnllRmpDUFoyZld6?=
+ =?utf-8?B?OTBXMmxlVHV4WFFQUExLQ3VVRkkrZ3A1UENvYWNGRkc3cWtNdjlCK0RkTUpO?=
+ =?utf-8?B?Ukx2Tk52OTg5THloMTIwM0haRjFiajU5NWM0UlFOOVQzVnZQYzBEdHRhWTdX?=
+ =?utf-8?B?S3NZS24wc1lib2FlbEY1TzFNTlNrS2EzRSsxSlJVSE9vVVJUWjNzaFhkaUFR?=
+ =?utf-8?B?YVZNOHhqYUxKZHNwbXpZMjJnenphV3V0bUNreGpobWp4MEtTdWxDVlhNTlA3?=
+ =?utf-8?B?SHFobit3RUQ1OXh3aUtzY3FBVXYyL0JMOWRKYkQrdy90YUFINXg5VW9zMm9u?=
+ =?utf-8?Q?7P5QEXVo8iRqJuhlM3OxqsbIk?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 251d355e-e9bb-4ef6-8900-08dc6c3bd3a0
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2024 13:12:19.1441
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2FQMhTUfAZfQJS70hq3OAoIeeGhMmkBwaNi1toUM7P1Km+cABdoa91gEp06PMj/RP7svmWkPK1/CTg6KKaXHfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8174
 
-On 29/04/2024 12:19, Diogo Ivo wrote:
-> Hello,
-> 
-> This patch series consists of a general cleanup of the Tegra210 EMC
-> frequency scaling code for revision 7.
-> 
-> Currently the code is relying heavily on a function, update_clock_tree_delay(),
-> that is responsible for too many things, making it long and confusing.
-> The general idea with these patches is to simplify this function and its
-> surrounding code, making it more modular.
-> 
-> The motivation behind these changes (besides improving readability and
-> maintainability) is to make it simpler to add support in the future for
-> frequency change revisions other than 7, where we can reuse a large
-> portion of the modularized code rather than essentially repeating 2k
-> lines of code with minimal changes.
-> 
-> There are no functional changes with this patch set, as it is only meant
-> as preparation for following patches where revision 6 support is added.
-> 
-> The second version of the series can be found in [1]. v3 contains
-> changes only in patch 02/07 where a variable is renamed in order to fix
-> a build error on some architectures.
-> 
-> [1]: https://lore.kernel.org/linux-tegra/20240419104516.308975-1-diogo.ivo@tecnico.ulisboa.pt/
-> 
-> Diogo Ivo (7):
->   memory: tegra: Remove periodic compensation duplicate calls
->   memory: tegra: Move DQSOSC measurement to common place
+Use scope based of_node_put() to simplify code. It reduces the chance
+of forgetting of_node_put(), and also simplifies error handling path.
+I not able to test the changes on all the hardwares, so driver owners,
+please help review when you have time.
 
-Thanks for the updates. I was hoping for some reviews and tests before I
-try to apply the next version, thus I want to give it few more days.
-This also means this won't fit to coming merge window. I plan to apply
-the set after the v6.10 merge window.
+This patchset was inspired from Dan's comments on pinctrl-scmi-imx.c,
+thanks.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Changes in v2:
+- Drop aspeed changes per Andrew Jeffery
+- Drop changes to code pattern that of_node_get(or other refcount
+increasing) followed by of_node_put. That said, but I still have a
+change for samsung pinctrl that drops several of_node_put places. If
+this is not welcomed, patch 20/20 could be dropped.
+- Add Fix tag for patch 1
+- Add A-b for patch 4
+- Drop unneeded {} in patch 8 Per Dan Carpenter
+- Add a new patch 18.
+- Moved patch [19,20]/20, in case people are not happy with the changes,
+the two patch could be dropped when apply if no v3 patchset.
+- Link to v1: https://lore.kernel.org/r/20240501-pinctrl-cleanup-v1-0-797ceca46e5c@nxp.com
+
+---
+Peng Fan (20):
+      pinctrl: ti: iodelay: Use scope based of_node_put() cleanups
+      pinctrl: tegra: Use scope based of_node_put() cleanups
+      pinctrl: stm32: Use scope based of_node_put() cleanups
+      pinctrl: starfive: Use scope based of_node_put() cleanups
+      pinctrl: sprd: Use scope based of_node_put() cleanups
+      pinctrl: spear: Use scope based of_node_put() cleanups
+      pinctrl: renesas: Use scope based of_node_put() cleanups
+      pinctrl: st: Use scope based of_node_put() cleanups
+      pinctrl: rockchip: Use scope based of_node_put() cleanups
+      pinctrl: equilibrium: Use scope based of_node_put() cleanups
+      pinctrl: at91: Use scope based of_node_put() cleanups
+      pinctrl: s32cc: Use scope based of_node_put() cleanups
+      pinctrl: nomadik: Use scope based of_node_put() cleanups
+      pinctrl: mediatek: Use scope based of_node_put() cleanups
+      pinctrl: freescale: Use scope based of_node_put() cleanups
+      pinctrl: bcm: bcm63xx: Use scope based of_node_put() cleanups
+      pinctrl: pinconf-generic: Use scope based of_node_put() cleanups
+      pinctrl: freescale: mxs: Fix refcount of child
+      pinctrl: k210: Use scope based of_node_put() cleanups
+      pinctrl: samsung: Use scope based of_node_put() cleanups
+
+ drivers/pinctrl/bcm/pinctrl-bcm63xx.c              |  4 +--
+ drivers/pinctrl/freescale/pinctrl-imx.c            | 25 ++++-----------
+ drivers/pinctrl/freescale/pinctrl-imx1-core.c      | 16 +++-------
+ drivers/pinctrl/freescale/pinctrl-mxs.c            | 18 ++++-------
+ drivers/pinctrl/mediatek/pinctrl-mtk-common.c      |  4 +--
+ drivers/pinctrl/mediatek/pinctrl-paris.c           |  4 +--
+ drivers/pinctrl/nomadik/pinctrl-abx500.c           |  4 +--
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c          |  4 +--
+ drivers/pinctrl/nxp/pinctrl-s32cc.c                | 31 ++++++------------
+ drivers/pinctrl/pinconf-generic.c                  |  7 ++--
+ drivers/pinctrl/pinctrl-at91-pio4.c                |  7 ++--
+ drivers/pinctrl/pinctrl-at91.c                     | 14 +++-----
+ drivers/pinctrl/pinctrl-equilibrium.c              | 21 +++---------
+ drivers/pinctrl/pinctrl-k210.c                     |  7 ++--
+ drivers/pinctrl/pinctrl-rockchip.c                 | 11 ++-----
+ drivers/pinctrl/pinctrl-st.c                       | 37 +++++++---------------
+ drivers/pinctrl/renesas/pinctrl-rza1.c             | 14 +++-----
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c            |  7 ++--
+ drivers/pinctrl/renesas/pinctrl-rzn1.c             | 23 ++++----------
+ drivers/pinctrl/renesas/pinctrl-rzv2m.c            |  7 ++--
+ drivers/pinctrl/renesas/pinctrl.c                  |  7 ++--
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 16 +++-------
+ drivers/pinctrl/samsung/pinctrl-samsung.c          | 19 +++--------
+ drivers/pinctrl/spear/pinctrl-spear.c              | 13 +++-----
+ drivers/pinctrl/sprd/pinctrl-sprd.c                | 14 +++-----
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7100.c | 27 +++++++---------
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c | 18 +++++------
+ drivers/pinctrl/stm32/pinctrl-stm32.c              |  4 +--
+ drivers/pinctrl/tegra/pinctrl-tegra-xusb.c         |  7 ++--
+ drivers/pinctrl/tegra/pinctrl-tegra.c              |  4 +--
+ drivers/pinctrl/ti/pinctrl-ti-iodelay.c            | 37 ++++++++--------------
+ 31 files changed, 133 insertions(+), 298 deletions(-)
+---
+base-commit: bb7a2467e6beef44a80a17d45ebf2931e7631083
+change-id: 20240429-pinctrl-cleanup-e4d461c32648
 
 Best regards,
-Krzysztof
+-- 
+Peng Fan <peng.fan@nxp.com>
 
