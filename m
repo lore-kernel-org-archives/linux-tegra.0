@@ -1,87 +1,121 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5154E156F42;
-	Tue,  7 May 2024 12:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2585915DBDD;
+	Tue,  7 May 2024 13:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715085350; cv=none; b=ug0tRw72oVs/orFH0toepE9RsGdVTZ3RwAy8LMGgRppfLvv+ncRQCTEOOZamqzsRA9UcMQq4XTMTwfC12q2P/9Snasa/w3CRfsvI/T1sQiKgyQdbk5l732jZJ+QR+2TFoSb26fWLfmRRtw2Av3O9HXSwkbrcV1CZxesi8SZDwtI=
+	t=1715087572; cv=none; b=YBdvhw7uimx6WbttXgr2I4/pwkE/07OpdQK6jjv44VTPIy1DX55xGF5HPXHxpYKzIx13ubuOkTgqFND5hWQAN8jlTMK2vpXZ6MfMPcmrltqJnjRPlY6v5sc43L+hBYtFUQBVfZY79tlhU2T9Tc4C4rUKfFWjdRO19X3YvkrY9r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715085350; c=relaxed/simple;
-	bh=LsmGeq70zt60QfE3cj3pndGAIZKzOL2F4FtFs2fO80w=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=RBs4vtd4JqtcOASeF5lcYVcNt28xE/VlEsBlagmq99YLUmJIoSUA0H8VEQh9ENvfuhYlXQhvKE823yKHwksjxfG/N17dsNI1/JaX1ZTFIAZqFW2CE/2tG2+YhCdHCzJ8IlPigV4iZyuD4wnVL+4CgZNQ4bBSZSqdXijcv/FM8KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIw1G/oQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715087572; c=relaxed/simple;
+	bh=a6gSLSNzkB7vq5lvXJKxfEYqY5Zj8C4OuyJc6Y6NlXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KrpkVfnJky6YgXfsTJwoURDCiQCAOKKQ5+HR5O1/GC8BXFef2iW8YnUe0MZYmLKaB6HaRBVLfgiyINHe43g14VWAGJkQs4HInOXUB+v22r18Vak5VNv/jsoVUmYHkJvImL4cty2Ij6nmMK/CgHX19n0nXNdc3Tl32LwZiSwCfTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZbChpJAr; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIw1G/oQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91096C2BBFC;
-	Tue,  7 May 2024 12:35:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715085349;
-	bh=LsmGeq70zt60QfE3cj3pndGAIZKzOL2F4FtFs2fO80w=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=oIw1G/oQaH6QJ7LUBCSWj2KIl4GGSz9PdHcdmLDbLIVmyIBCOlP/LM0KIjUkBAaXR
-	 WNGUP4Zj/i4K14ZyqrwS7jBYybSsb3hHUX+YGW60mzwz/loSKX62oZxxKx5NkW4V3I
-	 /wwjC6gz4ucOsRsk1ywLrddJoN2mp6hQ01XRHuLIpjkDqxEBkkBjaq8lj8XJ8kxMRh
-	 HADHOf7YKDFDCeNFyL00HFblI96OwWOM1T3423QELHpZKdyEYEDKEWULNtLRTI203C
-	 mIi2XMGwN7rNGsw4AOv+eaa6HCL8eHbyXLcsa+DlHQ6//HCugWFP4pMT5OPCU80xD6
-	 tb90QlIe0AYcg==
-Date: Tue, 07 May 2024 07:35:46 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZbChpJAr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715087571; x=1746623571;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=a6gSLSNzkB7vq5lvXJKxfEYqY5Zj8C4OuyJc6Y6NlXY=;
+  b=ZbChpJArKKyAZtijh9SZK5lQT+/9D+Z3PF2ie8fJU9RldW+A5gjAGaQe
+   /Y+C2Y+6ve62ddd4yC0eZJOQjvOjXwF5i4qwK3vCx7x8foz8Rnhp5egCK
+   /5FkFpJ6rxTvYntGyU7WETqNyNY7rO4wVQ7TPwZ3JTl7fGFp8b22R9/3g
+   kFpUZGJbH7F8BvnxZpOENEwjtc2zkemH7ibSS/wywW+aNHZqIE/iOapMq
+   0lucxkxRsRzh4SzG8ej5lt6syH+EmYdNTGnSE9X7uC2WeyiYyi0j30li3
+   P2RYwZQPka8IIMNSKXKjmDxVfxxBWT4NF72DsSSsA1X14Hw2NSU6zDSfy
+   w==;
+X-CSE-ConnectionGUID: N9U1l4zQQm2ybNIbe0Jzvw==
+X-CSE-MsgGUID: kerm2+NSRcmgoLVbalMd8Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11065"; a="21483943"
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="21483943"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 06:12:50 -0700
+X-CSE-ConnectionGUID: Fu6nYwQcTgeZWSY044wYqQ==
+X-CSE-MsgGUID: MsXTeSYhRgedCqb9bG/apQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="28920705"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2024 06:12:42 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s4KcY-000000052fm-0iB8;
+	Tue, 07 May 2024 16:12:38 +0300
+Date: Tue, 7 May 2024 16:12:37 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-amlogic@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Subject: Re: [PATCH v4 0/5] PCI: controller: Move to agnostic GPIO API
+Message-ID: <ZjooxTO3wb2ItvGv@smile.fi.intel.com>
+References: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
+ <CACRpkda=a3X=jyZKQoOFrfgzpE2C+rZ9UC1VDnCvGL7QP4x4BA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
- krzk+dt@kernel.org, devicetree@vger.kernel.org, jonathanh@nvidia.com, 
- conor+dt@kernel.org, adrian.hunter@intel.com, mkumard@nvidia.com, 
- thierry.reding@gmail.com, linux-mmc@vger.kernel.org, andi.shyti@kernel.org, 
- ulf.hansson@linaro.org, digetx@gmail.com, ldewangan@nvidia.com, 
- wsa+renesas@sang-engineering.com, corbet@lwn.net, linux-doc@vger.kernel.org, 
- linux-i2c@vger.kernel.org
-In-Reply-To: <20240506225139.57647-5-kyarlagadda@nvidia.com>
-References: <20240506225139.57647-1-kyarlagadda@nvidia.com>
- <20240506225139.57647-5-kyarlagadda@nvidia.com>
-Message-Id: <171508534676.3540.5341170642240109274.robh@kernel.org>
-Subject: Re: [RFC PATCH 04/11] i2c: dt-bindings: configuration settings
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkda=a3X=jyZKQoOFrfgzpE2C+rZ9UC1VDnCvGL7QP4x4BA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-
-On Tue, 07 May 2024 04:21:32 +0530, Krishna Yarlagadda wrote:
-> I2C interface timing registers are configured using config setting
-> framework. Document available properties for Tegra I2C controllers.
+On Tue, May 07, 2024 at 12:03:50PM +0200, Linus Walleij wrote:
+> On Mon, May 6, 2024 at 4:22 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
 > 
-> Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> ---
->  .../bindings/i2c/nvidia,tegra20-i2c.yaml      | 104 ++++++++++++++++++
->  1 file changed, 104 insertions(+)
+> > In v4:
+> > - added tag (Mani)
+> > - fixed a polarity bug in iMX.6 driver (Linus)
 > 
+> Looks good now. The series:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Thank you!
 
-yamllint warnings/errors:
+> Perhaps the use of  _raw accessors could be avoided in 5/5 by some
+> elaborart polarity quirk but I'm no perfectionist and it can be fixed later.
 
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/i2c/nvidia,tegra20-i2c.example.dts:37.20-50.15: Warning (i2c_bus_reg): /example-0/i2c@7000c000/config: missing or empty reg property
+After your comment I was thinking the same, and came to the similar conclusion,
+we might fix this later as in comparison to iMX.6 case this requires an
+additional code to be added to gpiolib-of.c.
 
-doc reference errors (make refcheckdocs):
+-- 
+With Best Regards,
+Andy Shevchenko
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240506225139.57647-5-kyarlagadda@nvidia.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
 
