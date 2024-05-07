@@ -1,253 +1,139 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC3714D71E;
-	Tue,  7 May 2024 09:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1522214E2F1
+	for <linux-tegra@vger.kernel.org>; Tue,  7 May 2024 10:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074325; cv=none; b=PpXihCUsjslchNXM70kW9LXeIpFG2HolwIRYYe3YZ7RT8ZXQfU1H3VNrQ+z+8V1MpZIdk0tasQSh6UZsb5rpEnzOtPveaKQfjPuh3p3OzUNpgKKMIUvXgRDOGxSxLgh1unK1TD8n8zmGxHq0hV1q6gd2ervWu06k6SAZyUP0CJc=
+	t=1715076027; cv=none; b=mip5HRz8pQXiAZLF2jbebBsJZ5Lf50F6+1tZ9rRlSgKLNs/6oVYC0c6MZ/8QGtRLPZsR4fhIs/om//Vn8XNPRxDK2CGq1ZFh7AvUTY49M93Rtia5eSM0OExPxJGcZgHwVyD/DI3p2hkjdpxmH8tQFYVwNzQql1vtxK5csJ8WVd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074325; c=relaxed/simple;
-	bh=gBT0/GHP92n03Txi9j723w1y05utrjiv0+U12KD3wps=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hnmfzQqefz0hqMxWRMw+AIFHUK+hC9d1mn1ibHw3Wbip+vwcUffUT0Zb3yodJUosIhA0PAll3XtFXvwG2uM5umMUoRipFOTw7JZZO/3755d8B7rbN3cqFU3HlOtt+2RLBtgITGfV2E2r3SJaQkjeINHVM5k8rCKad04lDCUNUFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=H0rgAmkI; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1715076027; c=relaxed/simple;
+	bh=WctqNRdAkvs4yyN1XxR8U/bCnTGIZkl93cp13I5DYbs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pDOPWzRiFFZzmMMIKv6WnpXPC4XV/qxkHYnGCLYVArxv0THrGddQ+K+eQhAFZQoXApccmzanl3iDxJBoGc3GYUp3bqq4YSgHif/DUUZ1vsTZXTyrtP9/sgiCztLYA4t8YY+3JkZ+wd3muBg6DeIf/ghhAM6/HJvmWRXk1ecpbNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sbZ0Oglq; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="H0rgAmkI"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id AA8FB60022EE;
-	Tue,  7 May 2024 10:32:01 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id ay96DduZCP8G; Tue,  7 May 2024 10:31:59 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 5D94A60022F5;
-	Tue,  7 May 2024 10:31:59 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1715074319;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6L+o2xBlnX13VJHQyX2QgkyA28VGIf6z49wDsY/otFc=;
-	b=H0rgAmkIEd4gJ8YqWmT1Cq9CkmwJxZXXUa4fC48MImTP4uGi0KuCGWrYodjpy1ZuSe+c0K
-	m858ZGoy0szr/G98Bju0iflCPdzKGm9UlYVe/NnXqHvRlp9ytDJcNgaLW5ZL3XUfG8FzUi
-	MAucv5hLxEr+qmGHe3GR/EUtrEg7VQU=
-Received: from diogo-gram.home (unknown [IPv6:2a01:14:8070:dc60:4589:2164:1bc5:2670])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 39FF636006F;
-	Tue,  7 May 2024 10:31:59 +0100 (WEST)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: krzysztof.kozlowski@linaro.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Subject: [PATCH RESEND v3 7/7] memory: tegra: Rework update_clock_tree_delay()
-Date: Tue,  7 May 2024 10:30:50 +0100
-Message-ID: <20240507093056.3921-8-diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt>
-References: <20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sbZ0Oglq"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-61be4b9869dso30676617b3.1
+        for <linux-tegra@vger.kernel.org>; Tue, 07 May 2024 03:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715076023; x=1715680823; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bFSMri8IOp5B1+IxovMpqNQnX2FTTBoMbN3fnBfN5fs=;
+        b=sbZ0OglqdXpICj1NKcy/XdY7XiHVUSdwtcpxM9C92Y6s8Hxxmk4bhSbns6wr8BcCN0
+         XsDdAUhotCEd+KiPH0M4Q2QbKaNCXKIXtmUNKiQik8zLMotSc79fxXsn83N5xGwZCJIG
+         vJBGV09EU9LrRRw2xliknZjfJxQAs+/HrZ++szNhvZUSRoEdnFXEQDZtbFm91zoGRfmc
+         f1DjJNu41fFtNKU3mweVdPGuKrAQEdnkkOUX9B5hjr15Ccspqhq7uznOYI2xVCTX3neU
+         TrQZ/NTqR5aZxctPUHfOn50fZnX+84eKHCVkQ4rMBR3KE/syY8pqqCYzTZLIVNfdDg6X
+         zJxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715076023; x=1715680823;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bFSMri8IOp5B1+IxovMpqNQnX2FTTBoMbN3fnBfN5fs=;
+        b=FL7WSzUy4YxhXWWzxVGYLaLc5S2aSJ0EKAonPKANfyRBMQPTwWLunzXj20gJ5AI7tu
+         8LsHEkNQDs6asIJt9of/vEXJUmDEdlS2oNMNwjwIcoiHexJzh4EGVhBRcGobG9YR35Oo
+         tMbqNIrRP2W4he7/iMH13wr2hANt8gVXs3Oj5UGY0M1cmhABbpN5Ou2aAulBFOsDIhuB
+         8WGVWINGa4u3076caro/GT4mPIRG/oROPPqKMM6UFTdz4vlhMjtMzjgR6q6AhI46HC3P
+         RSlXq5wS7Vr2CaT1G5nZVRMn1rsQUwzHDejy0AG49CYdZjL00GWtyMjmCtNfCbp4sWOT
+         k8mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzK0abZof7GZADf/6ja1Ud6k632uv0BwlLMgrHk5SRNrPLR8IYpOfNwOnUQDAl6zVb1grSEZjyxPA8C/kdr1odjOuKy4cbT8+Fmj8=
+X-Gm-Message-State: AOJu0Yx9w61mKfLtY6wFvD1253EffEyc3VPAhFS0P9Vx/yrunhpxGheR
+	2KFiUjp6Ep39mVSdr/6kLGGzeXDNxB/1BTNhVz+d1Sxd6Pui6TkfP10oo99o6I+T1qTeIi6mO2n
+	kIhlALOwMhrATLHBzOKIXNh9ecCPgxCpQ0w4DWw==
+X-Google-Smtp-Source: AGHT+IFwCUGgYvRH4J64zcFI4z7cn36AwbaF/MAmzgEqtWvJFvM8pD+cROZ0JOlTC9klXAeFg/VLQQiya7Dx8lrV/5s=
+X-Received: by 2002:a25:8e04:0:b0:de8:9348:b219 with SMTP id
+ p4-20020a258e04000000b00de89348b219mr12156380ybl.6.1715076023009; Tue, 07 May
+ 2024 03:00:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240429102510.2665280-1-andriy.shevchenko@linux.intel.com>
+ <20240429102510.2665280-5-andriy.shevchenko@linux.intel.com>
+ <CACRpkdZUsA034L5GjF_-XELX9369PwNjONfsDV-_EC564R0QWg@mail.gmail.com>
+ <20240507081441.GA6025@thinkpad> <20240507082822.GA6659@thinkpad>
+In-Reply-To: <20240507082822.GA6659@thinkpad>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 7 May 2024 12:00:10 +0200
+Message-ID: <CACRpkdbHKPBT087WZ8PN4Mb6pLLAuFLufFw69vn5cimWJmwchA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] PCI: imx6: Convert to agnostic GPIO API
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Frank Li <Frank.Li@nxp.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev, linux-amlogic@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Siddharth Vadapalli <s-vadapalli@ti.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Yue Wang <yue.wang@amlogic.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Xiaowei Song <songxiaowei@hisilicon.com>, Binghui Wang <wangbinghui@hisilicon.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Further streamline this function by moving the delay post-processing
-to the callers, leaving it only with the task of returning the measured
-delay values.
+On Tue, May 7, 2024 at 10:28=E2=80=AFAM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+> On Tue, May 07, 2024 at 01:44:56PM +0530, Manivannan Sadhasivam wrote:
+> > On Mon, May 06, 2024 at 02:10:24PM +0200, Linus Walleij wrote:
+> > > On Mon, Apr 29, 2024 at 12:25=E2=80=AFPM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > > The of_gpio.h is going to be removed. In preparation of that conver=
+t
+> > > > the driver to the agnostic API.
+> > > >
+> > > > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.or=
+g>
+> > > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > >
+> > > I think there is a bug here, the code is respecting the OF property
+> > > "reset-gpio-active-high"
+> > > but the code in drivers/gpio/gpiolib-of.h actually has a quirk for
+> > > this so you can just
+> > > delete all the active high handling and rely on 1 =3D asserted and 0 =
+=3D
+> > > deasserted when
+> > > using GPIO descriptors.
+> > >
+> >
+> > Wow...
+> >
+> > So this bug is present even before this series, right?
+> >
+> > > Just delete this thing:
+> > > imx6_pcie->gpio_active_high =3D of_property_read_bool(node,
+> > >                                            "reset-gpio-active-high");
+> >
+> > But this is just a bandaid IMO. The flag for the PERST# GPIO should be =
+properly
+> > set in the board dts as per the board design.
+> >
+>
+> Hmm, no. I was confused by the property. But this quirk in gpiolib-of.c i=
+s going
+> to be applied while changing the GPIO state also or just during request t=
+ime?
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
----
- drivers/memory/tegra/tegra210-emc-cc-r21021.c | 120 +++++++-----------
- 1 file changed, 46 insertions(+), 74 deletions(-)
+It's applied permanentlt at request and then the descriptors maintain their
+polarity state over the course of their lifetime.
 
-diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-index a8a217502f0c..277fca62f57e 100644
---- a/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-+++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-@@ -105,7 +105,7 @@ enum {
- 			  next->ptfv_list[w])) /			\
- 			(next->ptfv_list[w] + 1);			\
- 									\
--		emc_dbg(emc, EMA_UPDATES, "%s: (s=%lu) EMA: %u\n",	\
-+		emc_dbg(emc, EMA_UPDATES, "%s: (s=%u) EMA: %u\n",	\
- 			__stringify(dev), nval, next->ptfv_list[dqs]);	\
- 	} while (0)
- 
-@@ -130,93 +130,51 @@ static bool tegra210_emc_compare_update_delay(struct tegra210_emc_timing *timing
- 	return false;
- }
- 
--static bool update_clock_tree_delay(struct tegra210_emc *emc, int type)
-+static void tegra210_emc_get_clktree_delay(struct tegra210_emc *emc,
-+					   u32 delay[DRAM_CLKTREE_NUM])
- {
--	bool periodic_training_update = type == PERIODIC_TRAINING_UPDATE;
--	struct tegra210_emc_timing *last = emc->last;
--	struct tegra210_emc_timing *next = emc->next;
--	u32 last_timing_rate_mhz = last->rate / 1000;
--	bool dvfs_update = type == DVFS_UPDATE;
--	bool dvfs_pt1 = type == DVFS_PT1;
--	u32 temp[2][2], value, delay_us;
--	unsigned long cval = 0;
-+	struct tegra210_emc_timing *curr = emc->last;
-+	u32 rate_mhz = curr->rate / 1000;
-+	u32 msb, lsb, dqsosc, delay_us;
- 	unsigned int c, d, idx;
--	bool over = false;
-+	unsigned long clocks;
- 
--	if (dvfs_pt1 || periodic_training_update) {
--		delay_us = tegra210_emc_actual_osc_clocks(last->run_clocks);
--		delay_us *= 1000;
--		delay_us = 2 + (delay_us / last->rate);
-+	clocks = tegra210_emc_actual_osc_clocks(curr->run_clocks);
-+	delay_us = 2 + (clocks / rate_mhz);
- 
--		tegra210_emc_start_periodic_compensation(emc);
--		udelay(delay_us);
--	}
-+	tegra210_emc_start_periodic_compensation(emc);
-+	udelay(delay_us);
- 
- 	for (d = 0; d < emc->num_devices; d++) {
--		if (dvfs_pt1 || periodic_training_update) {
--			/* Dev[d] MSB */
--			value = tegra210_emc_mrr_read(emc, 2 - d, 19);
--
--			for (c = 0; c < emc->num_channels; c++) {
--				temp[c][0] = (value & 0x00ff) << 8;
--				temp[c][1] = (value & 0xff00) << 0;
--				value >>= 16;
--			}
--
--			/* Dev[d] LSB */
--			value = tegra210_emc_mrr_read(emc, 2 - d, 18);
--
--			for (c = 0; c < emc->num_channels; c++) {
--				temp[c][0] |= (value & 0x00ff) >> 0;
--				temp[c][1] |= (value & 0xff00) >> 8;
--				value >>= 16;
--			}
--		}
-+		/* Read DQSOSC from MRR18/19 */
-+		msb = tegra210_emc_mrr_read(emc, 2 - d, 19);
-+		lsb = tegra210_emc_mrr_read(emc, 2 - d, 18);
- 
- 		for (c = 0; c < emc->num_channels; c++) {
- 			/* C[c]D[d]U[0] */
- 			idx = c * 4 + d * 2;
- 
--			if (dvfs_pt1 || periodic_training_update) {
--				cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
--				cval *= 1000000;
--				cval /= last_timing_rate_mhz * 2 * temp[c][0];
--			}
--
--			if (dvfs_pt1)
--				__INCREMENT_PTFV(idx, cval);
--			else if (dvfs_update)
--				__AVERAGE_PTFV(idx);
--			else if (periodic_training_update)
--				__WEIGHTED_UPDATE_PTFV(idx, cval);
-+			dqsosc = (msb & 0x00ff) << 8;
-+			dqsosc |= (lsb & 0x00ff) >> 0;
- 
--			if (dvfs_update || periodic_training_update)
--				over |= tegra210_emc_compare_update_delay(next,
--							__MOVAVG_AC(next, idx), idx);
-+			/* Check for unpopulated channels */
-+			if (dqsosc)
-+				delay[idx] = clocks * 1000000 / rate_mhz * 2 * dqsosc;
- 
- 			/* C[c]D[d]U[1] */
- 			idx++;
- 
--			if (dvfs_pt1 || periodic_training_update) {
--				cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
--				cval *= 1000000;
--				cval /= last_timing_rate_mhz * 2 * temp[c][1];
--			}
-+			dqsosc = (msb & 0xff00) << 0;
-+			dqsosc |= (lsb & 0xff00) >> 8;
- 
--			if (dvfs_pt1)
--				__INCREMENT_PTFV(idx, cval);
--			else if (dvfs_update)
--				__AVERAGE_PTFV(idx);
--			else if (periodic_training_update)
--				__WEIGHTED_UPDATE_PTFV(idx, cval);
-+			/* Check for unpopulated channels */
-+			if (dqsosc)
-+				delay[idx] = clocks * 1000000 / rate_mhz * 2 * dqsosc;
- 
--			if (dvfs_update || periodic_training_update)
--				over |= tegra210_emc_compare_update_delay(next,
--							__MOVAVG_AC(next, idx), idx);
-+			msb >>= 16;
-+			lsb >>= 16;
- 		}
- 	}
--
--	return over;
- }
- 
- static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
-@@ -228,8 +186,8 @@ static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 	   (nt)->ptfv_list[PTFV_DVFS_SAMPLES_INDEX]; })
- 
- 	u32 i, samples = next->ptfv_list[PTFV_DVFS_SAMPLES_INDEX];
-+	u32 delay[DRAM_CLKTREE_NUM], idx;
- 	bool over = false;
--	u32 idx;
- 
- 	if (!next->periodic_training)
- 		return 0;
-@@ -252,16 +210,30 @@ static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 
- 			for (i = 0; i < samples; i++) {
- 				/* Generate next sample of data. */
--				update_clock_tree_delay(emc, DVFS_PT1);
-+				tegra210_emc_get_clktree_delay(emc, delay);
-+
-+				for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++)
-+					__INCREMENT_PTFV(idx, delay[idx]);
- 			}
- 		}
- 
--		/* Do the division part of the moving average */
--		over = update_clock_tree_delay(emc, DVFS_UPDATE);
-+		for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++) {
-+			/* Do the division part of the moving average */
-+			__AVERAGE_PTFV(idx);
-+			over |= tegra210_emc_compare_update_delay(next,
-+						__MOVAVG_AC(next, idx), idx);
-+		}
- 	}
- 
--	if (type == PERIODIC_TRAINING_SEQUENCE)
--		over = update_clock_tree_delay(emc, PERIODIC_TRAINING_UPDATE);
-+	if (type == PERIODIC_TRAINING_SEQUENCE) {
-+		tegra210_emc_get_clktree_delay(emc, delay);
-+
-+		for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++) {
-+			__WEIGHTED_UPDATE_PTFV(idx, delay[idx]);
-+			over |= tegra210_emc_compare_update_delay(next,
-+						__MOVAVG_AC(next, idx), idx);
-+		}
-+	}
- 
- 	return over;
- }
--- 
-2.44.0
-
+Yours,
+Linus Walleij
