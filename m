@@ -1,58 +1,58 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5067613B78A
-	for <linux-tegra@vger.kernel.org>; Tue,  7 May 2024 08:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D0413C90C
+	for <linux-tegra@vger.kernel.org>; Tue,  7 May 2024 08:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715069700; cv=none; b=XwbiGOnWMcDdSb+K09wEA0cCx442dh4HnTKpahEXGizyZSjchAn46YpUo5LnqRjKmnC4WW1zfalHMuDoxYxteNgmJrMQogoxc6XLGhoi67bBSJWvPSNpA9du0nUumKFvaz4OFPAQ532ZaJmzK7Gc9n8uotaQS1978lyl56+V0yk=
+	t=1715070520; cv=none; b=bancJo/qWf1ds8hwMY4fdDcwTu2CWJ6AYBFMoXcyyC4Qd0aie1/QTr8LnNBjT3YYpDrrD2sYHmte0cxzCOPKWSNT6mSQUUZl6cjgT6jLRnuLCUQEMXn6hQfHmO8jyNhVFRwx2907rpv3260Ro0P37p/inKXeURYYvEXbFSgVNFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715069700; c=relaxed/simple;
-	bh=aFQgo/ziy0W2y9xqCxx31ymI6sX+uIn9KFqYXFLiQWE=;
+	s=arc-20240116; t=1715070520; c=relaxed/simple;
+	bh=WAA10rA6qRqoYCr9XeTblOpVslB6CTUD6a/rB8ts6T8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h3TbpQ2KUb1WWWh4cGGHpkBylUuMBfP3hm2aJ2edp/45fRIs+SOyKmsJYKAam6q7Qy5GjMblNJM2Ix1ZE0ZAAlDkLfFiL82k+dDbeI1UpJbY6pskGz8gVCI1qfG6SpDzEuKS0exDZ0Yba73JJcBcFHWmR3bmDfMInaf8I3/+yAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WiaqiOs4; arc=none smtp.client-ip=209.85.210.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=H1Aa+4ObkG+3j4gk7Fsl+Sx/56dnMhVqMScdFnYjKGDhxr7ohhB3yhdC3O1O3iCZCIHOtr+ZN6WIKWx4vPOixKUn0MpQoZUPeKUR7kyHjQfvmY7qDjWXsnvwqodnJpFjPmjuQ3/K26xZDxHzBKhododcduotp0khkTfI5gM+33w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WvMWLB7E; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WiaqiOs4"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6f457853950so1812123b3a.0
-        for <linux-tegra@vger.kernel.org>; Tue, 07 May 2024 01:14:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WvMWLB7E"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1e83a2a4f2cso13294105ad.1
+        for <linux-tegra@vger.kernel.org>; Tue, 07 May 2024 01:28:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715069697; x=1715674497; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715070518; x=1715675318; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=GqO/eiCLhjMrDJZ/oHlF6w3tQ/HJRwHOeX5fd3lD2/4=;
-        b=WiaqiOs4w0dmyeF0WX0eWphYt4SUnUU4pIl3C2onmoAY8S/2+tHY18nBKQraXLzcIE
-         E50OFNdm6XtlUTOrXANbh770kdECAPyJowHDoS4NDH+qyVd8YTwLr/pZoLYe7oTZSe2w
-         lGPQ+lxGX+ZrCmk1Rr8mRdBP3lFTYSk3uvXJ9JUQT6VbmXkRLJC70PU3TuwLgZ0drLsJ
-         z+uPjIPOtshmkx2yFNu95N8EoiYmdob3eBSQnMED7OXVEAsi8TJ70T41y6GyRcdqNlZ7
-         SJmLkGO4BcTi//xa6c/QEhS35bdgK3Fl0h15EM1kKTXXQPXT/8xIfFt9+KSxsyw+MjwT
-         jSgA==
+        bh=GVgauUSBhCFoJsX8lOkvxxApBqvEtasgyEBvsQiV6aQ=;
+        b=WvMWLB7E7Vioc78gLbcP+uIOdjLgNFyZB9fYMLjyHdQ0K/0s8XVqxUsxSNp0SwnhBV
+         Po0ygzSSPvuKNYBuIEZ2qLhJWTMtXEQbsEe73BhDSODBIRXflIFkEtO0SBpCi0mv0Uzx
+         6BvDm5B7Ahhp0Py7XxqJ0UTrhB7dH4Z6H5nK9unsRMCxZoM/zOBWuQQUJBApbXYghm3l
+         0sKXt9B/QNEQJ7espVI/0Kyw2HJLvOPCDBb7R0Ldawusan1I9QmafSd2GQKsXYKrt+Yt
+         p27GqajK0LK4LsoicOAz1oiQrze7N8KJ37oTXJpIMXS3iXAi7+I5fme9w4cEPYqsL/FU
+         rqnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715069697; x=1715674497;
+        d=1e100.net; s=20230601; t=1715070518; x=1715675318;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GqO/eiCLhjMrDJZ/oHlF6w3tQ/HJRwHOeX5fd3lD2/4=;
-        b=unXRot/W2lyCa6coC2WdIps14oUx59UXMuHmdZZgoZ6kfEs+5Bg3RdLoSaKnO/2p/E
-         ZscaheuBIXIy+HWeZRCojTcZ79kAPVCOIgxqpTO0ecxow/BnmRTr3dLDODHJN8OGsSdb
-         HXhncEvQVYIPEVjSZR9Im3xB/+ZaEkgwFKZ9MXcy5/WwDMRGkKyDGWdcejax6AWsD1qp
-         BW05BzEq3yBlDl225Q26/63qJKgDxSkZu+SdxWIIfXoMQUVj7uhk9+dVP83OqSsuPSMT
-         nbQ6pu9v0wevAKBdocJpeFbbEj+YHX0dohOeXKv/I3RswiUs8sSs6kbfzPCy6AYa4xlG
-         akyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsh/adNlfQnw/24EudK21SXE70jryOBMix3PAx7rnDPuYn8rAg3n26YJaQCwxauEJahDaDkrL1uhzCV4Un2dP50zo4bsle8YFkcpg=
-X-Gm-Message-State: AOJu0YwGcW0pdJrfLWYyb/HMKL+oA+mlltgowIy2W+zGDxUuxuUc6zbC
-	tTWf2ljEtyUnhKaPA674S3D7Sw87woVtTZKS99trwuiJq+t2ydiaQUB42S5BtA==
-X-Google-Smtp-Source: AGHT+IHnAZTFdWiXFQwCMQRZCYd4TYAmRcm6JIyFZLn9J3uME67W+T2rImADb2DRfd7XSqJSBOyHVA==
-X-Received: by 2002:a05:6a20:3251:b0:1ac:3d3c:c1e7 with SMTP id adf61e73a8af0-1afbdca8a39mr2746431637.12.1715069696505;
-        Tue, 07 May 2024 01:14:56 -0700 (PDT)
+        bh=GVgauUSBhCFoJsX8lOkvxxApBqvEtasgyEBvsQiV6aQ=;
+        b=B6t5mWbvX3lteCM5Z4uk936PcMGOtsJrDOEhsXQfn9E1W8Nmd8uIzRfUqVEyRN29JI
+         /fcWfeQ9ONGLiXTtNlKg1tQ5TGna65bZXYzEGt41x9Ev6VZMua3C1tUL/jadjrxayaCh
+         8Yex38yVaFAPgh6sp1o/nqXXDtaxorRtxVRRcaqrjiN2z4dnTvwKcAG8O6d1xpUm3Vf1
+         5/MSLpauTo2tGNRATBgqlnG2F3ZWXI/h5LpAbZBXG33xhQt3eHrG7MrEYtbh5o9UDL/Y
+         U12kIsjHdUHi3hB6Xc2NMru/gPfCO1wdU9oRqXYIdR2LoHIthNIeW7N7I2XWn3mmfvew
+         TOkg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4SUu1BwEg/gc/uVi1wOWffrPnNjZptT1fC0iez2Sr4Q0CAeSCUau3Xa27cTWWiD7PKyP1D1o/s0L3p61V27cMKAtoMNmFKvv4QW4=
+X-Gm-Message-State: AOJu0Yw6H9MLNCCDKTF6eHZc3mVtuQFXnxxp6zMM6va55G5H8emN4Snu
+	KUXtKffRcrxIfwFxjeFxAGWztfveVk18eYpU5EC2O89miFCxHEoi/vSxxOR2tA==
+X-Google-Smtp-Source: AGHT+IFkZxsg9zZ8uGCj6F9b96ztkp16VI7pxyk7k4qDQRuZ3fJBvMiqX1TfN7jL1VUt3SzWbyr1LA==
+X-Received: by 2002:a17:902:ce8a:b0:1e4:9ad5:a666 with SMTP id f10-20020a170902ce8a00b001e49ad5a666mr15845336plg.25.1715070517573;
+        Tue, 07 May 2024 01:28:37 -0700 (PDT)
 Received: from thinkpad ([117.213.100.197])
-        by smtp.gmail.com with ESMTPSA id u34-20020a631422000000b00600d20da76esm9156572pgl.60.2024.05.07.01.14.45
+        by smtp.gmail.com with ESMTPSA id jb13-20020a170903258d00b001ec4ed47ddesm9603688plb.86.2024.05.07.01.28.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 May 2024 01:14:56 -0700 (PDT)
-Date: Tue, 7 May 2024 13:44:41 +0530
+        Tue, 07 May 2024 01:28:37 -0700 (PDT)
+Date: Tue, 7 May 2024 13:58:22 +0530
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -85,10 +85,11 @@ Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
 Subject: Re: [PATCH v3 4/5] PCI: imx6: Convert to agnostic GPIO API
-Message-ID: <20240507081441.GA6025@thinkpad>
+Message-ID: <20240507082822.GA6659@thinkpad>
 References: <20240429102510.2665280-1-andriy.shevchenko@linux.intel.com>
  <20240429102510.2665280-5-andriy.shevchenko@linux.intel.com>
  <CACRpkdZUsA034L5GjF_-XELX9369PwNjONfsDV-_EC564R0QWg@mail.gmail.com>
+ <20240507081441.GA6025@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -98,38 +99,43 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdZUsA034L5GjF_-XELX9369PwNjONfsDV-_EC564R0QWg@mail.gmail.com>
+In-Reply-To: <20240507081441.GA6025@thinkpad>
 
-On Mon, May 06, 2024 at 02:10:24PM +0200, Linus Walleij wrote:
-> On Mon, Apr 29, 2024 at 12:25 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
+On Tue, May 07, 2024 at 01:44:56PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, May 06, 2024 at 02:10:24PM +0200, Linus Walleij wrote:
+> > On Mon, Apr 29, 2024 at 12:25 PM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > 
+> > > The of_gpio.h is going to be removed. In preparation of that convert
+> > > the driver to the agnostic API.
+> > >
+> > > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > 
+> > I think there is a bug here, the code is respecting the OF property
+> > "reset-gpio-active-high"
+> > but the code in drivers/gpio/gpiolib-of.h actually has a quirk for
+> > this so you can just
+> > delete all the active high handling and rely on 1 = asserted and 0 =
+> > deasserted when
+> > using GPIO descriptors.
+> > 
 > 
-> > The of_gpio.h is going to be removed. In preparation of that convert
-> > the driver to the agnostic API.
-> >
-> > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Wow...
 > 
-> I think there is a bug here, the code is respecting the OF property
-> "reset-gpio-active-high"
-> but the code in drivers/gpio/gpiolib-of.h actually has a quirk for
-> this so you can just
-> delete all the active high handling and rely on 1 = asserted and 0 =
-> deasserted when
-> using GPIO descriptors.
+> So this bug is present even before this series, right?
+> 
+> > Just delete this thing:
+> > imx6_pcie->gpio_active_high = of_property_read_bool(node,
+> >                                            "reset-gpio-active-high");
+> 
+> But this is just a bandaid IMO. The flag for the PERST# GPIO should be properly
+> set in the board dts as per the board design.
 > 
 
-Wow...
-
-So this bug is present even before this series, right?
-
-> Just delete this thing:
-> imx6_pcie->gpio_active_high = of_property_read_bool(node,
->                                            "reset-gpio-active-high");
-
-But this is just a bandaid IMO. The flag for the PERST# GPIO should be properly
-set in the board dts as per the board design.
+Hmm, no. I was confused by the property. But this quirk in gpiolib-of.c is going
+to be applied while changing the GPIO state also or just during request time?
 
 - Mani
 
