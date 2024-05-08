@@ -1,96 +1,122 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064178120A;
-	Wed,  8 May 2024 11:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0391A2C2D;
+	Wed,  8 May 2024 16:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715168297; cv=none; b=SXXZ+aemNTkzNugrLC+8PtqAD7CJMZO9zvyMsd0/J43nePWid/PYZHb8oLeTgeDfEscNnYof26yixprVtP1CRKrP0m7RHSGv9/tDOVeX/TM0edXyBL3C/RKZ2XTr0oWKGOw+ITsSCiBrfoOStQ4j5j1xm3ruY7YWaJ19w65/Oi8=
+	t=1715186774; cv=none; b=CrSt0cmfXleaXLOqm1q9QfqXoiXrOq2kmsdrexqrRhLrLNCPjQV9Ku+ZX7SABZX91h9yKX2CSlvCtfFBSyrz6JaFfHEJu8hWlDottreCkd5Ze25JcgZ12Rar/qHmEEzkFFZmu3dKqv3MX+4QVGtxafDuvLKA34zAvX/NaJzrOs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715168297; c=relaxed/simple;
-	bh=iweWDyYezogrtHMPwakIJOi3mF2YKlhm4kZbXzx5dEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L0y2Sdez1th6PjCW59a24zJyWBTXNW/03j8GM5fuTESwiajibD9gnqEdUbLNcfYvT3Vr/Y8sRbpUOMriAY/Aik0iFUkGDxLRzhuAnkqS8nlvus/b1UnL3TxLPtLpIpB0vju19mt5Ocx2Exeq5CC3m0EXFgcHvwYpcGxUv4WMnJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kci4b9x0; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1715186774; c=relaxed/simple;
+	bh=xHDbuERo1kV+X43uuYC8JW1TLQMNAeIkdXxhDeNrWts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tYx4tosQ97Fb/I95OT6qOaMDLplOuA4ar5DhgP3cSYtqjLfqocEXq+sgXVAXd38tOThypHAl3sT8NMSA0xo3PFC21Snu3lnkqyDqNoBPeNfrEIgYTxBoPljz+dCkN8y6vdLvlk5JFKBaj7vngMUqABL2KNvgyYEW/rVEH0UvYdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D3y5bDv/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kci4b9x0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715168296; x=1746704296;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=iweWDyYezogrtHMPwakIJOi3mF2YKlhm4kZbXzx5dEM=;
-  b=Kci4b9x0IEIUk5fGHt4RZWBF26Kqg+mi6dSj7YOKBhsEYy+dFC3pi8Wx
-   BjmqR9K6ib+KQueNvI2Vml3iuPnZQi46WAUs3JyvNtHLesrY4tRin2tYM
-   OHTM1S4HpxBLzTS6tddgKkxvTALuP0LNddRCl+6SrjocjOLM8pjVZMHAU
-   hn5fxG/+ofgWIPV0nLOmXyaEGgqLHMWFz3ho9qGIW6ed6P1asBlCn2dvq
-   8YvdHEFVTprsr7HC+HayfNDoMOuLht2ajtf6TMauPbfxiXtQwcO8SQUXo
-   NMLWKId6xWKfMJVhNbdGOQNYTSXtZn9znBQAyT6mZNNTk+psjCGZt+8Li
-   w==;
-X-CSE-ConnectionGUID: OVRgsgomQaSJFGf6BDGb3A==
-X-CSE-MsgGUID: CNNuUfs9RjaprAyMJZHBQw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11066"; a="11233689"
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="11233689"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2024 04:38:15 -0700
-X-CSE-ConnectionGUID: zisdnwuuRFOLYoml0UjQIw==
-X-CSE-MsgGUID: nwWIU/lPSi2pMCs/8TgTyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,145,1712646000"; 
-   d="scan'208";a="33695727"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa004.jf.intel.com with ESMTP; 08 May 2024 04:38:13 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 2286911F; Wed, 08 May 2024 14:38:12 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-usb@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v1 1/1] usb: phy: tegra: Replace of_gpio.h by proper one
-Date: Wed,  8 May 2024 14:38:09 +0300
-Message-ID: <20240508113809.926155-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D3y5bDv/"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 448Cr692003477;
+	Wed, 8 May 2024 16:46:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=QQcRbdP1TrvOiwGcWZc8A7ebL2foBKGMw4vYbB1n7bk=; b=D3
+	y5bDv/ww6Gsn4leQKJRvhzlrQuNVlWUB+efWhxZurCy2SNgVYm09D6+5gd8+FAjl
+	leD3WGRZR8RtWk5SIZ+fQMink1+U4JJfnsMDy+WKmvah9fClpo2UTwV6Xg1h43zO
+	b8O1jIXTCxsQyxmaO8E1QfFGzJkh1sxWQIcoaN0YHD9NerxBtVKqLNrUqMDnH1kQ
+	ZU3lFrFgfQhGnnz0U1XhkEV3YxvoXRR/qIKw16CWJtJDlX9Z72ynmlkAOZPLnjTX
+	Uh7Hg06Z/GMr1iOzhAVID8lwNGsMmbpNdkdJJ4NxTPNUym80PqozuSaQNvx+HV9I
+	gCej8JgLlS547Xiv1nRg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y0930rpt7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 May 2024 16:46:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 448Gk4MM008246
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 8 May 2024 16:46:04 GMT
+Received: from [10.71.109.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 8 May 2024
+ 09:46:04 -0700
+Message-ID: <83b6e1aa-c8ec-0bd7-2c98-20705741b76a@quicinc.com>
+Date: Wed, 8 May 2024 09:46:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] drm/msm: Fix gen_header.py for python earlier than v3.9
+Content-Language: en-US
+To: Jon Hunter <jonathanh@nvidia.com>, Rob Clark <robdclark@gmail.com>,
+        Dmitry
+ Baryshkov <dmitry.baryshkov@linaro.org>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>
+References: <20240508091751.336654-1-jonathanh@nvidia.com>
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20240508091751.336654-1-jonathanh@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fr03b_TBEt47KehI53EoPrrGLuPf96TJ
+X-Proofpoint-ORIG-GUID: fr03b_TBEt47KehI53EoPrrGLuPf96TJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-08_09,2024-05-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 malwarescore=0 bulkscore=0 spamscore=0
+ lowpriorityscore=0 adultscore=0 phishscore=0 mlxlogscore=999 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405080121
 
-of_gpio.h is deprecated and subject to remove.
-The driver doesn't use it directly, replace it
-with what is really being used.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/usb/tegra_usb_phy.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/usb/tegra_usb_phy.h b/include/linux/usb/tegra_usb_phy.h
-index 46e73584b6e6..e6c14f2b1f9b 100644
---- a/include/linux/usb/tegra_usb_phy.h
-+++ b/include/linux/usb/tegra_usb_phy.h
-@@ -7,11 +7,12 @@
- #define __TEGRA_USB_PHY_H
- 
- #include <linux/clk.h>
--#include <linux/gpio.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
- #include <linux/usb/otg.h>
- 
-+struct gpio_desc;
-+
- /*
-  * utmi_pll_config_in_car_module: true if the UTMI PLL configuration registers
-  *     should be set up by clk-tegra, false if by the PHY code
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+On 5/8/2024 2:17 AM, Jon Hunter wrote:
+> Building the kernel with python3 versions earlier than v3.9 fails with ...
+> 
+>   Traceback (most recent call last):
+>     File "drivers/gpu/drm/msm/registers/gen_header.py", line 970, in <module>
+>       main()
+>     File "drivers/gpu/drm/msm/registers/gen_header.py", line 951, in main
+>       parser.add_argument('--validate', action=argparse.BooleanOptionalAction)
+>   AttributeError: module 'argparse' has no attribute 'BooleanOptionalAction'
+> 
+> The argparse attribute 'BooleanOptionalAction' is only supported for
+> python v3.9 and later. Fix support for earlier python3 versions by
+> explicitly defining '--validate' and '--no-validate' arguments.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>   drivers/gpu/drm/msm/registers/gen_header.py | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
 
+Thanks for your patch, I had sent something similar y'day.
+
+If you are alright with https://patchwork.freedesktop.org/patch/593057/, 
+we can use that one.
+
+> diff --git a/drivers/gpu/drm/msm/registers/gen_header.py b/drivers/gpu/drm/msm/registers/gen_header.py
+> index fc3bfdc991d2..64f67d2e3f1c 100644
+> --- a/drivers/gpu/drm/msm/registers/gen_header.py
+> +++ b/drivers/gpu/drm/msm/registers/gen_header.py
+> @@ -948,7 +948,8 @@ def main():
+>   	parser = argparse.ArgumentParser()
+>   	parser.add_argument('--rnn', type=str, required=True)
+>   	parser.add_argument('--xml', type=str, required=True)
+> -	parser.add_argument('--validate', action=argparse.BooleanOptionalAction)
+> +	parser.add_argument('--validate', dest='validate', action='store_true')
+> +	parser.add_argument('--no-validate', dest='validate', action='store_false')
+>   
+>   	subparsers = parser.add_subparsers()
+>   	subparsers.required = True
