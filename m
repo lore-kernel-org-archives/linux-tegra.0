@@ -1,211 +1,152 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2051.outbound.protection.outlook.com [40.107.243.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25B4578B4E
-	for <linux-tegra@vger.kernel.org>; Thu,  9 May 2024 19:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715283049; cv=none; b=ScGvSD6KLb9M2r9SWzcUfNT4jeiqUM5mU3ljLtlOsrFqMWQnABgZa8AnN9XhY9OnpszIQP/Z1R1uI/AyNIEEXWePKAMQWETEBMe8fOgLO+RWLeGMlvWPyoODkQPJPg2UhfqM9+Fpf5JZydcarVJ94Ndda6S7p8HO9WcIN2Bq8VQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715283049; c=relaxed/simple;
-	bh=3BOVOEfnKNHqljyyiF8FQcGMN8rbd1UYB2BOrZsP5Zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lRCJQBbMKnBmidzK3C7/t8oEXtgWBEbqL4EfHCD6LccdxdDiW0+RJQ+qlqVKb8J+/EU4cfzm+5x5k0M0UKkPIBEAbI3Nt6FHxoba9v3sGKo5bPYlI+1G9xR2OirBEThDnp28QdM+vqOuDs3/8rVBvrFpslpxNOyQIFgRT7uVWDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TYvSsOOH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD867FBBD;
+	Thu,  9 May 2024 21:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715291928; cv=fail; b=p36DSmxznQTYPTgqQ4si+LHFOuZh27To3yUQFGR6omRuR4O5ihyzcFGXDrLOxUx5/pudt8Indz9t2wKpHDRKtuJ0fbDXt30CYANxaksREc8ut7YXIJ5wgx6ofQLTJNxa8sKcdtrMtwuYQ022zQ6MPhx4jWiqUOMSDwcZiH4FqcA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715291928; c=relaxed/simple;
+	bh=HWw8EMf2EjW1rPQGjaop/i/GB/3v1gbUTTvBITUw32U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N6Kz9jiXGm2PQCL1uxGtdSeHEn8ssyJ/Pd40Q7iEr58t072wvJPKHWlXs57wV0DsJ14bfpA59UJ3CfMivkCTaj8SffLB5Ybj0czryxF2tFFeDaY2zk6DkeqV6F0gKvkXdVWiGOpQqcAFrti9tzodj+rmBQ9LJcVAEXhhunxFGHY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=odUVopuH; arc=fail smtp.client-ip=40.107.243.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TYvSsOOH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715283047;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jZ77OMppMBsu928qRfvEttoPGVG58lty6ejOFQq/CXw=;
-	b=TYvSsOOHCDQvhOIOLeZAj0bm/vrPxkRiELcCWWK0UDQyAzAaELiUQaehCIUGkNNAglGv4L
-	736ADo+5As9N3ovih2GQ2pyY/A4l2h8NnVH/Khb8rXKBGe9rcJ7eIokri10rELwxo9Zi2w
-	8DGca8RQX+q96FEJO5SZrOAr5zRHQNc=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-279-Tf9OfiPINiODADpkAHqgUg-1; Thu, 09 May 2024 15:30:45 -0400
-X-MC-Unique: Tf9OfiPINiODADpkAHqgUg-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6f49fc7b5e6so1316145b3a.3
-        for <linux-tegra@vger.kernel.org>; Thu, 09 May 2024 12:30:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715283044; x=1715887844;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jZ77OMppMBsu928qRfvEttoPGVG58lty6ejOFQq/CXw=;
-        b=sAcrIpb6nrri9h6gD/J6x2twYqZZocMFw5QuYH4nvuei3xzn6Kavtr5gIqgSTYI1Ve
-         Tg9NvMPnP4Rt93ZVX8jXWF6HAa3nilerHrT1anoGXDPaYWR/mPxVqL5Q0W0wylwxtJhu
-         nx36DX/xeDRPneensGimZlY7cp1rkyGhqffWwdInuxpCKyzqK56ILy/hIE2a1unltaH/
-         AnoosoK7Zo5xeEILLtvKH7T8yhEpcQPefP9jOIX3s+BFkkB6XoqRBm9XEUSsqqW8WBHT
-         Mbe8Dp/OWj2ajBZqxdIceF8vz2CtFK2faChI7nXI8zQ6vf6dsZkuUFqFQ5ti0ZQ2wnlV
-         PfGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWDVyNakaWa9TqWpglS1C/USmtdusRct8LKF/HQJQalPt3QEnSZvNNTjWwZGLRAFf0kcS5nUSqsE7U5D26zkjTP9XJa5Qs0di2+xA=
-X-Gm-Message-State: AOJu0YxTxVNfLpWdTqlQZxr8cv9IgezPoaYf1LbEukW0/K6mjh3DlVG4
-	8Mf19jbyXgerQq6GnZhsNd0NM5lYHPBxtx21AGLEIuM85YjCTTs4DZgPEQWAx/IcBZKpxyTgPvY
-	f5Qn/ybwaCBpVDNSfIMCkYCgAFNrPuc5al9cNvSNtE4iXJCcSpUUh3L3+JcNZ
-X-Received: by 2002:a05:6a00:ccc:b0:6ea:f351:1df9 with SMTP id d2e1a72fcca58-6f4e03485a5mr488248b3a.23.1715283044543;
-        Thu, 09 May 2024 12:30:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4dbELWlZwAJIYYcfFMH+ATASFCTvJhKu6Tpk3vKTrRjueglva7Arg+O02Yv/akngT8hoyJQ==
-X-Received: by 2002:a05:6a00:ccc:b0:6ea:f351:1df9 with SMTP id d2e1a72fcca58-6f4e03485a5mr488220b3a.23.1715283044110;
-        Thu, 09 May 2024 12:30:44 -0700 (PDT)
-Received: from localhost (ip98-179-76-110.ph.ph.cox.net. [98.179.76.110])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a827f2sm1655047b3a.75.2024.05.09.12.30.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 12:30:43 -0700 (PDT)
-Date: Thu, 9 May 2024 12:30:42 -0700
-From: Jerry Snitselaar <jsnitsel@redhat.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: iommu@lists.linux.dev, Joerg Roedel <joro@8bytes.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Krishna Reddy <vdumpa@nvidia.com>, patches@lists.linux.dev, 
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH rc] iommu/arm-smmu: Use the correct type in
- nvidia_smmu_context_fault()
-Message-ID: <pjrej3zdefuc4s6bd554cltx46zjbmvjd7zfzk56e775omsy2p@7qt5njnw7ujy>
-References: <0-v1-24ce064de41f+4ac-nvidia_smmu_fault_jgg@nvidia.com>
- <xn6ghekaim52yotb6zikv7af3l225vlvt2m5wtho4powlpaelb@diu3pshryraw>
- <pv3rl4cvvfgwv73c4mxosxbkghkz5py6cbqap2vkbs3rphk3od@d22igwn4gn7v>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="odUVopuH"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=E5soOqM8Pf2hfA3dROy2Uzh7QjJfLVgTsl2mDiF9T07ToR+DfKaAA0hvGETBaxlMtQBODKnzv9K4FOQE91ww5AMhprFbGof2AbmkBzH7x6mIkCygeBskD9kBSsF816c3150pULs3YXmW/FZlS3KG3fN8tYvIF1RKQ/qwSJaGQfrTQgwyR3+OiF1Qw7GUjhgezHk6LpKgctc+3lluBES/VDD10e7DejnmWvgMrkfP41WwDvcxrN/91ce/gYu2F3i9bFCfxJQtxwgwzpxbw6vum3+w+3LCUGMP2qeXz0WiPm5q7CZ2sMvUO3pSu5vCk4OFw5QTTLEcBP/M3LN24IuB/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VHgpLtW4TBrunHeSHgUhxytO9Q2Un5KqhI3MTOCgTuY=;
+ b=K9NBOjbjTCySSnulD5H7265N3dPwlcKoLvvV0NOkBh5pzsyKtzYU2NvXSsgV0Xxm5oP1faVnVQ6WPi0efrN6/OEOJ/hCOU4j2Gw68hnmY/dTT0CikxDT+bu9P3JRjPDuKmnBJ+9l06qNw5pi75GPYpCRDjIsWDN6FfKz/sNUAPNLyKzVk2UeQwO2uYxsEN7WWqukf/w4PcL2I9q7RkOfpYkjInkQO/CC2hXW808rFVshkUFbzkElAPoqW9Z5is/mmKUK1CeX90nW+BNp/IDBXM56qYfnln3WFxzNi/Au503tWbjHS9lEbDKamcTLeMxxc8xNt7UkVYsfMUVs6/ClHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VHgpLtW4TBrunHeSHgUhxytO9Q2Un5KqhI3MTOCgTuY=;
+ b=odUVopuH11sm5eV6kUCuykcP8jCC3V25cpRGTvn19ruxwaDqMJDu8x9JK6ZgrTpmg462L4XBYuOg/2lAu0Hi6ZdckjpaqnyDfEGnaxfA53+YKziXZpyM8AV7kgCfr0hU9Y+NSBOasuPhq2UIZm0v8g7nq6DOtkiF9o5QeyJNzwCh0nRAFMRiJNgG+wTvZbhLuZOBRgCEhTO9Ze+iFcaEJp0o/bdJ/B2i4qlTEJ6u2wkrA19ED5g/fgH0PvR42HuwEH3N9DIVLL4J46JBb7jzNPBjK3ML2RZWzh0Y7VxLMJNUqDCm/+rbM/LexXKX+ml+t7L28ayh4PisNW8VzRKwOg==
+Received: from SN1PR12CA0086.namprd12.prod.outlook.com (2603:10b6:802:21::21)
+ by MW4PR12MB6778.namprd12.prod.outlook.com (2603:10b6:303:1e8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.47; Thu, 9 May
+ 2024 21:58:41 +0000
+Received: from SA2PEPF00001508.namprd04.prod.outlook.com
+ (2603:10b6:802:21:cafe::44) by SN1PR12CA0086.outlook.office365.com
+ (2603:10b6:802:21::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.48 via Frontend
+ Transport; Thu, 9 May 2024 21:58:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SA2PEPF00001508.mail.protection.outlook.com (10.167.242.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.18 via Frontend Transport; Thu, 9 May 2024 21:58:38 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 9 May 2024
+ 14:58:23 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 9 May 2024
+ 14:58:23 -0700
+Received: from build-bwicaksono-20240418T183603007.internal (10.127.8.10) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via
+ Frontend Transport; Thu, 9 May 2024 14:58:22 -0700
+From: Besar Wicaksono <bwicaksono@nvidia.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+	<vsethi@nvidia.com>, <suzuki.poulose@arm.com>, Besar Wicaksono
+	<bwicaksono@nvidia.com>
+Subject: [PATCH] arm64: defconfig: enable NVIDIA CoreSight PMU driver
+Date: Thu, 9 May 2024 21:58:08 +0000
+Message-ID: <20240509215808.126217-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <pv3rl4cvvfgwv73c4mxosxbkghkz5py6cbqap2vkbs3rphk3od@d22igwn4gn7v>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001508:EE_|MW4PR12MB6778:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7d55c377-fd2c-4ab3-19e6-08dc70732ec8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|82310400017|376005|36860700004;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?aiD4s8XIBV/qA1fF1Qtu8hcol2stpqnDAkABOe1nUb0yCVNh5hfXAWBs+Je3?=
+ =?us-ascii?Q?p7E/7Vl6bA4Y/a6Hoxksa8QcJ0CoAUFu0DxUa97xzt4sDiSIGfw+I4rJLDPh?=
+ =?us-ascii?Q?pt6TjQHBUX8AXiBwOdE6O3siO1Ooxksu/5/Ix8UHnnEcEB3o1ywWbaolDrb2?=
+ =?us-ascii?Q?RqDKpuUf7BhgV0PBOPkFmkZZYUbkPyQy/IaOmKVNltd1Z3yANwJ47sNGLoES?=
+ =?us-ascii?Q?AJrfE95QRtzpfIEBEHdUpRS8+czXAKcfwRExq8FlFRLd513KE4MCac5kJfTE?=
+ =?us-ascii?Q?Ed+OmqV7w8IYxh3xrHUOuBMzVRmzvXZwJqVSbLlMqIXSHN5y0blQbP2ll1NV?=
+ =?us-ascii?Q?AHNXkiyqGd77puO1IHw7xcOD/8iYl7SSaRGvyRKSJrhfjEXThFlsxWo2hGtX?=
+ =?us-ascii?Q?XLP5NBxzfqQdc8BU8D7AYqYna+KUe2A+aeoiTaI5D2N6I/2XPVP5oS6PnZ/m?=
+ =?us-ascii?Q?6u8DxOrJWpofA6N2PNwFlek2KSjoNG/hm5za62mG6URdBIxuM3WYuFVfij6c?=
+ =?us-ascii?Q?uez4DZUODJqwGsu4FxihCKMctSt7YC4lnR0K1zEip8BL6GiejfP8v3gpvSvv?=
+ =?us-ascii?Q?DpZS8+WHeiGkJpftbQdWcLgndYLTKw5jGRMcFrBEoBlBh8rPESyFGAQOfXBY?=
+ =?us-ascii?Q?RHUVf9Wb5f6SEPxX3rRWY5zL9uLkUMd8geJS6EmVlKlQkEIUwqIU76IKzFRz?=
+ =?us-ascii?Q?7cuTCZ7WTzn47fOW5t4OgEl53iDGjZpSJoCRPmn5iNN1ujxHmykWgOT0IL9n?=
+ =?us-ascii?Q?vrMjTB4cnRGfApQyIJz3X4iVEhL3jmj3k4LCJCJvB9RJbRsOaTjB62f58BqT?=
+ =?us-ascii?Q?Ti0kuNj3rK/aicGUlyPtq82FOPIcMqYuUeDuAv6HFAjKYKpulSPjz0CF3HAm?=
+ =?us-ascii?Q?VroqEBZeB/NrNL3zXLHar7iZk20zj6SprK5aTQ5L6jDzL08OizORZRxPVnSP?=
+ =?us-ascii?Q?VNDYMgHOZTW/iNqLKp7fRoT2ISF1ebVmzflXRPNcjVlx8T/IKZkTpAzmxSVQ?=
+ =?us-ascii?Q?Q2T6in4Q2QYRhraQLNV6hPAiE5pI9EE3Ld0BwIkMU5d/TXg4iSMfiVTe0MLk?=
+ =?us-ascii?Q?CVHXb3CY3UU3ECkTKCUep8S2h7ex1XHP63rEEe9FymZAvAyk9ZG+RBMz9x3n?=
+ =?us-ascii?Q?XebbuFOObzZQLwdQvEfkixupU3zmeTsq9ekzL2+/ZQX3ABBLBzvnQm/fjVXv?=
+ =?us-ascii?Q?Qmb5cyz0JbdGLyqJYZao6VpjWl/sInXaWxFDcUGFXVU3XVh/WnEZ/xP+qZkL?=
+ =?us-ascii?Q?XPcHT/lJZdUhXr9zdcy/o04yzd9TjhkjCBoHv4esp2psBqKSthSJS8H00SoC?=
+ =?us-ascii?Q?waHXYToT8bfi+uUf8uqIFOn6UgFXubdwQVWL9VdZBODfeHYsdxB8Gx65Sv6s?=
+ =?us-ascii?Q?2TBTT0UUiq8Bp3Q0QOJ8Ly2TVWuW?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(1800799015)(82310400017)(376005)(36860700004);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2024 21:58:38.6152
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d55c377-fd2c-4ab3-19e6-08dc70732ec8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00001508.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6778
 
-On Thu, May 09, 2024 at 12:26:36PM GMT, Jerry Snitselaar wrote:
-> On Thu, May 09, 2024 at 11:51:55AM GMT, Jerry Snitselaar wrote:
-> > On Thu, May 09, 2024 at 02:45:51PM GMT, Jason Gunthorpe wrote:
-> > > This was missed because of the function pointer indirection.
-> > > 
-> > > nvidia_smmu_context_fault() is also installed as a irq function, and the
-> > > 'void *' was changed to a struct arm_smmu_domain. Since the iommu_domain
-> > > is embedded at a non-zero offset this causes nvidia_smmu_context_fault()
-> > > to miscompute the offset. Fixup the types.
-> > > 
-> > >   Unable to handle kernel NULL pointer dereference at virtual address 0000000000000120
-> > >   Mem abort info:
-> > >     ESR = 0x0000000096000004
-> > >     EC = 0x25: DABT (current EL), IL = 32 bits
-> > >     SET = 0, FnV = 0
-> > >     EA = 0, S1PTW = 0
-> > >     FSC = 0x04: level 0 translation fault
-> > >   Data abort info:
-> > >     ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> > >     CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> > >     GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> > >   user pgtable: 4k pages, 48-bit VAs, pgdp=0000000107c9f000
-> > >   [0000000000000120] pgd=0000000000000000, p4d=0000000000000000
-> > >   Internal error: Oops: 0000000096000004 [#1] SMP
-> > >   Modules linked in:
-> > >   CPU: 1 PID: 47 Comm: kworker/u25:0 Not tainted 6.9.0-0.rc7.58.eln136.aarch64 #1
-> > >   Hardware name: Unknown NVIDIA Jetson Orin NX/NVIDIA Jetson Orin NX, BIOS 3.1-32827747 03/19/2023
-> > >   Workqueue: events_unbound deferred_probe_work_func
-> > >   pstate: 604000c9 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > >   pc : nvidia_smmu_context_fault+0x1c/0x158
-> > >   lr : __free_irq+0x1d4/0x2e8
-> > >   sp : ffff80008044b6f0
-> > >   x29: ffff80008044b6f0 x28: ffff000080a60b18 x27: ffffd32b5172e970
-> > >   x26: 0000000000000000 x25: ffff0000802f5aac x24: ffff0000802f5a30
-> > >   x23: ffff0000802f5b60 x22: 0000000000000057 x21: 0000000000000000
-> > >   x20: ffff0000802f5a00 x19: ffff000087d4cd80 x18: ffffffffffffffff
-> > >   x17: 6234362066666666 x16: 6630303078302d30 x15: ffff00008156d888
-> > >   x14: 0000000000000000 x13: ffff0000801db910 x12: ffff00008156d6d0
-> > >   x11: 0000000000000003 x10: ffff0000801db918 x9 : ffffd32b50f94d9c
-> > >   x8 : 1fffe0001032fda1 x7 : ffff00008197ed00 x6 : 000000000000000f
-> > >   x5 : 000000000000010e x4 : 000000000000010e x3 : 0000000000000000
-> > >   x2 : ffffd32b51720cd8 x1 : ffff000087e6f700 x0 : 0000000000000057
-> > >   Call trace:
-> > >    nvidia_smmu_context_fault+0x1c/0x158
-> > >    __free_irq+0x1d4/0x2e8
-> > >    free_irq+0x3c/0x80
-> > >    devm_free_irq+0x64/0xa8
-> > >    arm_smmu_domain_free+0xc4/0x158
-> > >    iommu_domain_free+0x44/0xa0
-> > >    iommu_deinit_device+0xd0/0xf8
-> > >    __iommu_group_remove_device+0xcc/0xe0
-> > >    iommu_bus_notifier+0x64/0xa8
-> > >    notifier_call_chain+0x78/0x148
-> > >    blocking_notifier_call_chain+0x4c/0x90
-> > >    bus_notify+0x44/0x70
-> > >    device_del+0x264/0x3e8
-> > >    pci_remove_bus_device+0x84/0x120
-> > >    pci_remove_root_bus+0x5c/0xc0
-> > >    dw_pcie_host_deinit+0x38/0xe0
-> > >    tegra_pcie_config_rp+0xc0/0x1f0
-> > >    tegra_pcie_dw_probe+0x34c/0x700
-> > >    platform_probe+0x70/0xe8
-> > >    really_probe+0xc8/0x3a0
-> > >    __driver_probe_device+0x84/0x160
-> > >    driver_probe_device+0x44/0x130
-> > >    __device_attach_driver+0xc4/0x170
-> > >    bus_for_each_drv+0x90/0x100
-> > >    __device_attach+0xa8/0x1c8
-> > >    device_initial_probe+0x1c/0x30
-> > >    bus_probe_device+0xb0/0xc0
-> > >    deferred_probe_work_func+0xbc/0x120
-> > >    process_one_work+0x194/0x490
-> > >    worker_thread+0x284/0x3b0
-> > >    kthread+0xf4/0x108
-> > >    ret_from_fork+0x10/0x20
-> > >   Code: a9b97bfd 910003fd a9025bf5 f85a0035 (b94122a1)
-> > > 
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: e0976331ad11 ("iommu/arm-smmu: Pass arm_smmu_domain to internal functions")
-> > > Reported-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > > Closes: https://lore.kernel.org/all/jto5e3ili4auk6sbzpnojdvhppgwuegir7mpd755anfhwcbkfz@2u5gh7bxb4iv
-> > > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> > 
-> > Tested-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > Acked-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> 
-> Actually looking at it again, does arm_smmu_context_fault need to be
-> updated as well? The devm_request_irq call is getting passed the
-> smmu_domain whether context_fault is arm_smmu_context_fault or
-> nvidia_smmu_context_fault.
-> 
+Enable NVIDIA driver for Coresight PMU arch device.
 
-Never mind. I can't read today.
+Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > 
-> > > ---
-> > >  drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 4 +---
-> > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > > 
-> > > Joerg, once Jerry ack's this you should grab it for this cycle.
-> > > 
-> > > Thanks,
-> > > Jason
-> > > 
-> > > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-> > > index 87bf522b9d2eec..957d988b6d832f 100644
-> > > --- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-> > > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-> > > @@ -221,11 +221,9 @@ static irqreturn_t nvidia_smmu_context_fault(int irq, void *dev)
-> > >  	unsigned int inst;
-> > >  	irqreturn_t ret = IRQ_NONE;
-> > >  	struct arm_smmu_device *smmu;
-> > > -	struct iommu_domain *domain = dev;
-> > > -	struct arm_smmu_domain *smmu_domain;
-> > > +	struct arm_smmu_domain *smmu_domain = dev;
-> > >  	struct nvidia_smmu *nvidia;
-> > >  
-> > > -	smmu_domain = container_of(domain, struct arm_smmu_domain, domain);
-> > >  	smmu = smmu_domain->smmu;
-> > >  	nvidia = to_nvidia_smmu(smmu);
-> > >  
-> > > 
-> > > base-commit: dff9180946cc45d90a77e1c8645989cdcfd31437
-> > > -- 
-> > > 2.43.2
-> > > 
-> > 
-> 
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 8e003466f929..36383115ed2a 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1555,6 +1555,7 @@ CONFIG_ARM_SPE_PMU=m
+ CONFIG_ARM_DMC620_PMU=m
+ CONFIG_HISI_PMU=y
+ CONFIG_ARM_CORESIGHT_PMU_ARCH_SYSTEM_PMU=m
++CONFIG_NVIDIA_CORESIGHT_PMU_ARCH_SYSTEM_PMU=m
+ CONFIG_MESON_DDR_PMU=m
+ CONFIG_NVMEM_LAYOUT_SL28_VPD=m
+ CONFIG_NVMEM_IMX_OCOTP=y
+-- 
+2.25.1
 
