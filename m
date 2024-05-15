@@ -1,180 +1,88 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E537155723;
-	Wed, 15 May 2024 14:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA27155A57;
+	Wed, 15 May 2024 21:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715785164; cv=none; b=Ln2sMhUECeV1ui4ApOtRyNHhL6PNdeZiKk4bLxvp5g/KIogsN3SHUofDHTeA/+F16zdRP3sa1gvy9cV1RedgavZ53jbtTGhI1Jnn3iWt1Ak9bR8bgjtVUtc8KM0Z5TJIRxrs+ReztUsSHYhtJl+smRFrdZ7Uro75ypVk31lpc9Q=
+	t=1715808084; cv=none; b=BX87LWRaSKnA9k/A7pM9wdvD5WgWvktq1TkrxXmbI9zQxxxZm6irmfHHtjgg+hFsAI+T7zPLOOY3rt7iw7K6WBlWTADTPwXbmiMkl52igA5kOi2RDPi1eN3KBCnawg2Wh34JnO3EaZDDiRgo/JyOm9pKNwvTTV7JODEyrEszDsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715785164; c=relaxed/simple;
-	bh=dne70KVe5rvpkC5ZaTrqZsZ4NhyJhBOKmob9vFvZ0F0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gEvUk8NxZALy0UWb/zGxmkKEDhLSmjK5Swrm7wk40eY7tbO8QyexpzAaqzatSUNA5dzQdgWNvvj1MOBmftULIx1xtVuBRVBzjcY9OnLZYbDZuFJ1U1rRtdBou6dAAl/s9gh4JA8D4UytDIJZkAfVAiis7VNBmUmJ4w5Ae7lUu+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA8A81042;
-	Wed, 15 May 2024 07:59:44 -0700 (PDT)
-Received: from [10.57.5.6] (unknown [10.57.5.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA1753F7A6;
-	Wed, 15 May 2024 07:59:13 -0700 (PDT)
-Message-ID: <48c39306-c226-4e7f-a013-d679ca80157e@arm.com>
-Date: Wed, 15 May 2024 15:59:13 +0100
+	s=arc-20240116; t=1715808084; c=relaxed/simple;
+	bh=b6wgjbekzvDHVf0wUf2osyNkUYGGqJyKP5fQkIeZQv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=oXlJ3QZAPHqbL1k7NcNET4VZXL7DuPFn9e9akR4o+3HvLnfgR0vxmMIADV6aEje7lLL/cJHT3b7kctcf0Q/Dny736Xno71fiX1vf8dsDWvtc8utcfZ9B47+XuIRTvI4M9kaj4m4/ViCKUsPft2FlBNa2jzrj45XtZiVKa1O09Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOFYVpIw; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOFYVpIw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDA9DC116B1;
+	Wed, 15 May 2024 21:21:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715808084;
+	bh=b6wgjbekzvDHVf0wUf2osyNkUYGGqJyKP5fQkIeZQv0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=KOFYVpIw0J24StddEEc8pTucfvanCv8oYjOE/ZeTxDwV61ADspea16Rpxdt8NspgF
+	 kOdKcynPdJc5f6s8CWlMnhx66wHQTksTsD0q7U7BC+46nm5gJNIwS87N8HNB/Mz8Um
+	 qQXDLY4clXx0InfBcfIqQ5w/5qmzSOSDGcqqjxBnUxRn7Q/Kf3h70NPwuvw/21NaPX
+	 3Ki9IYFXisyMqhzXr62C/FmuuLnlEtYNkE5CdMir0pj3gCx78Mf0AdrqXOEfwNy48/
+	 xhmwW1kvv44+SHX//Pdu7f2SjCvy9Dk0MobzN+ZmpinGBYOquR/Wghm+r9lkXK0wCL
+	 i3MZ4g5O8Idbg==
+Date: Wed, 15 May 2024 16:21:22 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Vidya Sagar <vidyas@nvidia.com>, linux-pci@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Manikanta Maddireddy <mmaddireddy@nvidia.com>
+Subject: Re: [PATCH V2] PCI: tegra194: Set EP alignment restriction for
+ inbound ATU
+Message-ID: <20240515212122.GA2139389@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/7] iommu/dma: Make limit checks self-contained
-To: Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Christoph Hellwig <hch@lst.de>
-Cc: Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
- Niklas Schnelle <schnelle@linux.ibm.com>,
- Matthew Rosato <mjrosato@linux.ibm.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-acpi@vger.kernel.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <cover.1713523152.git.robin.murphy@arm.com>
- <e28a114243d1e79eb3609aded034f8529521333f.1713523152.git.robin.murphy@arm.com>
- <243d441d-dda8-442a-a495-83bf9725a14c@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <243d441d-dda8-442a-a495-83bf9725a14c@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjtFg83RjyKQA82S@ryzen.lan>
 
-Hi Jon,
+On Wed, May 08, 2024 at 11:27:31AM +0200, Niklas Cassel wrote:
+> On Wed, May 08, 2024 at 10:22:07AM +0100, Jon Hunter wrote:
+> > Tegra194 and Tegra234 PCIe EP controllers have 64K alignment
+> > restriction for the inbound ATU. Set the endpoint inbound ATU alignment to
+> > 64kB in the Tegra194 PCIe driver.
+> > 
+> > Fixes: c57247f940e8 ("PCI: tegra: Add support for PCIe endpoint mode in Tegra194")
+> > Suggested-by: Manikanta Maddireddy <mmaddireddy@nvidia.com>
+> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-On 2024-05-14 2:27 pm, Jon Hunter wrote:
-> Hi Robin,
+Applied by Krzysztof to pci/controller/tegra194, but his outgoing mail
+queue was stuck.  Trying to squeeze into v6.10.
+
+> > ---
+> > Changes since V1: Updated commit message.
+> > 
+> >  drivers/pci/controller/dwc/pcie-tegra194.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> > index 93f5433c5c55..4537313ef37a 100644
+> > --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> > +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> > @@ -2015,6 +2015,7 @@ static const struct pci_epc_features tegra_pcie_epc_features = {
+> >  	.bar[BAR_3] = { .type = BAR_RESERVED, },
+> >  	.bar[BAR_4] = { .type = BAR_RESERVED, },
+> >  	.bar[BAR_5] = { .type = BAR_RESERVED, },
+> > +	.align = SZ_64K,
+> >  };
+> >  
+> >  static const struct pci_epc_features*
+> > -- 
+> > 2.34.1
+> > 
 > 
-> On 19/04/2024 17:54, Robin Murphy wrote:
->> It's now easy to retrieve the device's DMA limits if we want to check
->> them against the domain aperture, so do that ourselves instead of
->> relying on them being passed through the callchain.
->>
->> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
->> Tested-by: Hanjun Guo <guohanjun@huawei.com>
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->> ---
->>   drivers/iommu/dma-iommu.c | 21 +++++++++------------
->>   1 file changed, 9 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
->> index a3039005b696..f542eabaefa4 100644
->> --- a/drivers/iommu/dma-iommu.c
->> +++ b/drivers/iommu/dma-iommu.c
->> @@ -660,19 +660,16 @@ static void iommu_dma_init_options(struct 
->> iommu_dma_options *options,
->>   /**
->>    * iommu_dma_init_domain - Initialise a DMA mapping domain
->>    * @domain: IOMMU domain previously prepared by iommu_get_dma_cookie()
->> - * @base: IOVA at which the mappable address space starts
->> - * @limit: Last address of the IOVA space
->>    * @dev: Device the domain is being initialised for
->>    *
->> - * @base and @limit + 1 should be exact multiples of IOMMU page 
->> granularity to
->> - * avoid rounding surprises. If necessary, we reserve the page at 
->> address 0
->> + * If the geometry and dma_range_map include address 0, we reserve 
->> that page
->>    * to ensure it is an invalid IOVA. It is safe to reinitialise a 
->> domain, but
->>    * any change which could make prior IOVAs invalid will fail.
->>    */
->> -static int iommu_dma_init_domain(struct iommu_domain *domain, 
->> dma_addr_t base,
->> -                 dma_addr_t limit, struct device *dev)
->> +static int iommu_dma_init_domain(struct iommu_domain *domain, struct 
->> device *dev)
->>   {
->>       struct iommu_dma_cookie *cookie = domain->iova_cookie;
->> +    const struct bus_dma_region *map = dev->dma_range_map;
->>       unsigned long order, base_pfn;
->>       struct iova_domain *iovad;
->>       int ret;
->> @@ -684,18 +681,18 @@ static int iommu_dma_init_domain(struct 
->> iommu_domain *domain, dma_addr_t base,
->>       /* Use the smallest supported page size for IOVA granularity */
->>       order = __ffs(domain->pgsize_bitmap);
->> -    base_pfn = max_t(unsigned long, 1, base >> order);
->> +    base_pfn = 1;
->>       /* Check the domain allows at least some access to the device... */
->> -    if (domain->geometry.force_aperture) {
->> +    if (map) {
->> +        dma_addr_t base = dma_range_map_min(map);
->>           if (base > domain->geometry.aperture_end ||
->> -            limit < domain->geometry.aperture_start) {
->> +            dma_range_map_max(map) < domain->geometry.aperture_start) {
->>               pr_warn("specified DMA range outside IOMMU capability\n");
->>               return -EFAULT;
->>           }
->>           /* ...then finally give it a kicking to make sure it fits */
->> -        base_pfn = max_t(unsigned long, base_pfn,
->> -                domain->geometry.aperture_start >> order);
->> +        base_pfn = max(base, domain->geometry.aperture_start) >> order;
->>       }
->>       /* start_pfn is always nonzero for an already-initialised domain */
->> @@ -1760,7 +1757,7 @@ void iommu_setup_dma_ops(struct device *dev, u64 
->> dma_base, u64 dma_limit)
->>        * underlying IOMMU driver needs to support via the dma-iommu 
->> layer.
->>        */
->>       if (iommu_is_dma_domain(domain)) {
->> -        if (iommu_dma_init_domain(domain, dma_base, dma_limit, dev))
->> +        if (iommu_dma_init_domain(domain, dev))
->>               goto out_err;
->>           dev->dma_ops = &iommu_dma_ops;
->>       }
-> 
-> 
-> I have noticed some random test failures on Tegra186 and Tegra194 and 
-> bisect is pointing to this commit. Reverting this along with the various 
-> dependencies does fix the problem. On Tegra186 CPU hotplug is failing 
-> and on Tegra194 suspend is failing. Unfortunately, on neither platform 
-> do I see any particular crash but the boards hang somewhere.
-
-That is... thoroughly bemusing :/ Not only is there supposed to be no 
-real functional change here - we should merely be recalculating the same 
-information from dev->dma_range_map that the callers were already doing 
-to generate the base/limit arguments - but the act of initially setting 
-up a default domain for a device behind an IOMMU should have no 
-connection whatsoever to suspend and especially not to CPU hotplug.
-
-> If you have any ideas on things we can try let me know.
-
-Since the symptom seems inexplicable, I'd throw the usual memory 
-debugging stuff like KASAN at it first. I'd also try 
-"no_console_suspend" to check whether any late output is being missed in 
-the suspend case (and if it's already broken, then any additional issues 
-that may be caused by the console itself hopefully shouldn't matter).
-
-For more base-covering, do you have the "arm64: Properly clean up 
-iommu-dma remnants" fix in there already as well? That bug has bisected 
-to patch #6 each time though, so I do still suspect that what you're 
-seeing is likely something else. It does seem potentially significant 
-that those Tegra platforms are making fairly wide use of dma-ranges, but 
-there's no clear idea forming out of that observation just yet...
-
-Thanks,
-Robin.
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
