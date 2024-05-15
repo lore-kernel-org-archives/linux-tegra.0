@@ -1,222 +1,180 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2047.outbound.protection.outlook.com [40.107.94.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172E9EEBF;
-	Wed, 15 May 2024 01:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715738379; cv=fail; b=ZtPs70MLj5pSPG2LWfpPs+EpSlnLSSE/De8JROquJ9u7PNdJz/p2k29lYCcGQsmXU9LUBXSlx9qdFuWzE5Rc2vzA4k29ySMX+7o8bjm6HPoS/fUhMFmTqZSmaIdRM6jdKA05acpfGwcw8eDcGpBJzDEui5oylM6q5Nw9Q1gBnQ8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715738379; c=relaxed/simple;
-	bh=WOtOdT5lQjlDdzTp1alvzVrLjE2VYbLDxJ0y/ILj+04=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kenG6QkmndvlRpT9ooFifCBqHOOOxT613utvzPUiNJ6Y8vteNAFmitr3Dm2RTRLArDLWmggkw8LYFR3p70+Rws1oGfF8zhSK5OHynW2ym3wnhRrXnpqyGhxLurP1yVUX6fWjAAB6lQQLw0ool1OmrSsH0tLFhxmm9veDnMaQ12A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lXl1QgRk; arc=fail smtp.client-ip=40.107.94.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lXl1QgRk"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=juWVHN1jorI6eFg+xJQOBYBD2weXLFjGQ2fJL9rdUdl0iAiCn+9A7ISVkqjSQPKlkfzgB4IqZWB3qTaeXB5OdVoVZVLr+PTvtrzyd9WabHpxaLSHP825zSErDwp7WoJ3w/eE8xuV8id8ZFgNpukd/1K3WGugtB9Ec+ImK10k9dUt9AMUGhZpcPx3z9LKqQJ78oi6lU1VT2iyjD1GkDHNbaYf/DnAxQcf9fW3ku6YEulXMDPweHsnmeWBrKI1v9hBz5an2lf3jo+4IwoTD3GV432iJXT78RVNH4T6u9+8PvkU3Xbl4xT3nCWyirOgkyU6Uz+TdDUEyK7BZA61nPhv/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kxQnuTX1r6FZ4hWZNU0BfYJxdHJ4BMvqoYZE+y2hMOI=;
- b=cCTqdFFgKBlP0btaUpPfoyQCt522wRUnj6uVbDy7rQjfcLHN/AyAEBqiZ7DLBrTwomqkgeVFHjOX39ie0gU0Z0UwzVJdHRgUiiKKmOEQMgQmPh490cYR7C3pfteD45E6qTW6VVsAmDhHiJa90xAsKQ+srniTCEKrXb3Q94r+rgpghiOSkibFDZzB9qEV1XO0199kMnrxc54W8C7Y8WvtgOHsRvyYWdXKD6U8HzGsgJ9N75nv9frucddFUkayylJyWVAh7fY4fyrjYhKd4s2hNKR4w92xJLmgs018SzlhW5ZuRJEklm5XHRoA604KvvD6TsDtBfYVTuuC5aGAPmlixw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kxQnuTX1r6FZ4hWZNU0BfYJxdHJ4BMvqoYZE+y2hMOI=;
- b=lXl1QgRkiYPF/sgZxOKhxHV7JvW3iAKuzFk8vU8so19+I6PqGQjsAFeY/85ZPCl+zw7h0YBeS6sXkVTGcQnh0v+sLoMExz4LSK57clevA4Qsf2GDBD0bbMQbZok0XgfksoCVq4EG8zNeumMOC0TjdDdHECYnI0nxjvosqRGWQwd7VjLlQ1SexcLTk6IniWmsEXZiED74W+LxaNR+u5KyfDyLCGE5Rx7kLUxlMnKvKzgNO6MgM/+TSCGDQNef2uDU84CUXL/YQ8z7f898jkhm1cp2lhs+kozXAbwKhq/fO84bFpjapePrzsX1Fg8+0JeziHLY7CvxR82k8ytMuKlx4w==
-Received: from CH0PR03CA0231.namprd03.prod.outlook.com (2603:10b6:610:e7::26)
- by DS7PR12MB6142.namprd12.prod.outlook.com (2603:10b6:8:9a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Wed, 15 May
- 2024 01:59:32 +0000
-Received: from CH3PEPF00000011.namprd21.prod.outlook.com
- (2603:10b6:610:e7:cafe::4d) by CH0PR03CA0231.outlook.office365.com
- (2603:10b6:610:e7::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.26 via Frontend
- Transport; Wed, 15 May 2024 01:59:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CH3PEPF00000011.mail.protection.outlook.com (10.167.244.116) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7587.0 via Frontend Transport; Wed, 15 May 2024 01:59:32 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 14 May
- 2024 18:59:13 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 14 May 2024 18:59:12 -0700
-Received: from nvidia.com (10.127.8.11) by mail.nvidia.com (10.126.190.181)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 14 May 2024 18:59:08 -0700
-Date: Tue, 14 May 2024 18:59:07 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <kevin.tian@intel.com>,
-	<suravee.suthikulpanit@amd.com>, <joro@8bytes.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<yi.l.liu@intel.com>, <eric.auger@redhat.com>, <vasant.hegde@amd.com>,
-	<jon.grimm@amd.com>, <santosh.shukla@amd.com>, <Dhaval.Giani@amd.com>,
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 07/14] iommufd: Add viommu set/unset_dev_id ops
-Message-ID: <ZkQW6/OAQ8MzN6Go@nvidia.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <6e57d7b5aa1705bdd547b1cd2aca93d3bf70dfa4.1712978212.git.nicolinc@nvidia.com>
- <ZkDWXnPW7CaX5TtA@nvidia.com>
- <ZkGZc5dvLigXcWib@nvidia.com>
- <ZkOI8ztR1mUMJ8oe@nvidia.com>
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E537155723;
+	Wed, 15 May 2024 14:59:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715785164; cv=none; b=Ln2sMhUECeV1ui4ApOtRyNHhL6PNdeZiKk4bLxvp5g/KIogsN3SHUofDHTeA/+F16zdRP3sa1gvy9cV1RedgavZ53jbtTGhI1Jnn3iWt1Ak9bR8bgjtVUtc8KM0Z5TJIRxrs+ReztUsSHYhtJl+smRFrdZ7Uro75ypVk31lpc9Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715785164; c=relaxed/simple;
+	bh=dne70KVe5rvpkC5ZaTrqZsZ4NhyJhBOKmob9vFvZ0F0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gEvUk8NxZALy0UWb/zGxmkKEDhLSmjK5Swrm7wk40eY7tbO8QyexpzAaqzatSUNA5dzQdgWNvvj1MOBmftULIx1xtVuBRVBzjcY9OnLZYbDZuFJ1U1rRtdBou6dAAl/s9gh4JA8D4UytDIJZkAfVAiis7VNBmUmJ4w5Ae7lUu+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA8A81042;
+	Wed, 15 May 2024 07:59:44 -0700 (PDT)
+Received: from [10.57.5.6] (unknown [10.57.5.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA1753F7A6;
+	Wed, 15 May 2024 07:59:13 -0700 (PDT)
+Message-ID: <48c39306-c226-4e7f-a013-d679ca80157e@arm.com>
+Date: Wed, 15 May 2024 15:59:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZkOI8ztR1mUMJ8oe@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000011:EE_|DS7PR12MB6142:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77849d73-cabe-43f1-8288-08dc7482aa0e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|36860700004|1800799015|7416005|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?G801vzGU2UDpwazA3AScfNJ/2kIbiqGAIYiAyoOFEv/N/J7Ck8R1Me0/UJCu?=
- =?us-ascii?Q?OrwhXslVjBW3WUKOojPo2BNiysbQDb2t5oZhTfg43M5uRhPLTbnGFgg5lonh?=
- =?us-ascii?Q?WEuw1I4YZG4eb5VCmkhtpOSdPfqB7LKfjp1SzRqjjoHyhWAaT3cLALxJYt3Q?=
- =?us-ascii?Q?5B6ZigE3mQlD6CJxUt0XTrOTIy/L1O+uqe43MaeIDAHwpvyYzbS/ekTmMmJC?=
- =?us-ascii?Q?OqqmZOBuQpvFXAyA3BHrkabxZJrakLlsH3WfMu4EouiLSfPDzAhneiwzBZyb?=
- =?us-ascii?Q?kcnHGPJIPwlNBZAY2p7E6YWnqpxxFtDmJhgyTQlHK+AdG6bPOn+WhqlUiNSF?=
- =?us-ascii?Q?p97/4+4qvoNxQGhq588/lztio/DODfq2iwSFw/ExGrwfpo4FPtKEJEPpIpTS?=
- =?us-ascii?Q?vrdOrbpm8LQirol6i6IPHlsSzQzEDEyQdSAZKpMS/zQ0p18U8zH1aVaN+f66?=
- =?us-ascii?Q?CgbEYVhcU87PZWsn3mgDMF9wqWjmYdBEzoubFH1bXrqssvEl6xSYwAw9CKot?=
- =?us-ascii?Q?ZN0/hO6oSHKUqmDZdB8gF+i4Qi95wjTQ2FFKgcsFzZB32n9dOXWsR/ptK178?=
- =?us-ascii?Q?Ty11ujnufIrqTKosBNnJvEQegUiYPZWM78rrA1KuZzU2JHG8CWWOn4UA0T9w?=
- =?us-ascii?Q?HF0qJy7gjukebqd2vNczVPjQElLIRIFEhHWDIGfqwGWNdHqnfoXUfPGcjps9?=
- =?us-ascii?Q?9BHY5G6yCrgyG9KgoXeBFp44u9YLXvsHq5A+tSUdgQ1ve137bJD8Njak+2d1?=
- =?us-ascii?Q?PSaIkk3qwdKcdIEN9cg1DSFbS1BhcijHbampBpj4UdFVZuQ5GxXN7pLXIDM7?=
- =?us-ascii?Q?qYNwSR33rw+l95LEJbAFn9IH/Evb0IcRPDPSb4AgGUjbseNSMEguCuCO0AYE?=
- =?us-ascii?Q?X4Jm8yx9ZGpEX1nsyywpQDmHOXlmo39DfGpa41Ahg85+RH5TYGvwFzsfSpRC?=
- =?us-ascii?Q?d/fiHbLE3Y55Am0hBoFKgfckhyIRB9n2F15ICm6eWiTNBdwzjSvEwBiVtnSd?=
- =?us-ascii?Q?g71ZwsD8yanD6lthofwx7H+TqApbuQqrrTkwYWCxPE7u8VqUQxZYE2RUtgo8?=
- =?us-ascii?Q?+XUliAiQfiegSz7HJyINdxqcAWdeL2iSp2ghr4DhGlU6TVBLZCXHcxJ86ef8?=
- =?us-ascii?Q?eJgzVlVKOjsBqyESjLzPZbfddnIOoWAlmBV9GUnu3AeD206taArOOLG1Bbm6?=
- =?us-ascii?Q?FswQS0STSv4INgJlRsztsr+tpl17FCs0aNydMKoySO9jcBOhyt2s5tXOmBED?=
- =?us-ascii?Q?rlNkd7FZdrbl1gHdaF8hrKjUOa4aiNNZvj0LucKZrKoeUAqUZecBfDyZ9Jmj?=
- =?us-ascii?Q?syoFPdm3lDRNSG/S7XaMOM/qObYeMO5oqLOcqV/SfSTYJPERiUxEY9KcTShN?=
- =?us-ascii?Q?CVNxWWAzS0jy3IEZQzLDpigr8Y/F?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(36860700004)(1800799015)(7416005)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2024 01:59:32.5853
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77849d73-cabe-43f1-8288-08dc7482aa0e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000011.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6142
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/7] iommu/dma: Make limit checks self-contained
+To: Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Christoph Hellwig <hch@lst.de>
+Cc: Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ David Woodhouse <dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>,
+ Niklas Schnelle <schnelle@linux.ibm.com>,
+ Matthew Rosato <mjrosato@linux.ibm.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>, Frank Rowand <frowand.list@gmail.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-acpi@vger.kernel.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <cover.1713523152.git.robin.murphy@arm.com>
+ <e28a114243d1e79eb3609aded034f8529521333f.1713523152.git.robin.murphy@arm.com>
+ <243d441d-dda8-442a-a495-83bf9725a14c@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <243d441d-dda8-442a-a495-83bf9725a14c@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 14, 2024 at 12:53:23PM -0300, Jason Gunthorpe wrote:
-> On Sun, May 12, 2024 at 09:39:15PM -0700, Nicolin Chen wrote:
-> > On Sun, May 12, 2024 at 11:46:54AM -0300, Jason Gunthorpe wrote:
-> > > On Fri, Apr 12, 2024 at 08:47:04PM -0700, Nicolin Chen wrote:
-> > > > Add a pair of ops to set and unet device's virtual ID that belongs to
-> > > > a viommu object. They will be used, in the following patch, by iommufd
-> > > > to support some HW-acceleration feature from the host level.
-> > > > 
-> > > > For instance, every device behind an ARM SMMU has a Stream ID. The ID
-> > > > is used by ATC invalidation commands so SMMU HW can direct invalidation
-> > > > requests to the corresponding PCI device where the ID belongs to. In a
-> > > > virtualization use case, a passthroughed device in the VM will have a
-> > > > virtuail Stream ID, used by the ATC invalidation commands in the guest
-> > > > system. NVIDIA's CMDQV extension for SMMUv3 provides a v-interface to
-> > > > execute the guest-level ATC invalidation commands directly, yet needs
-> > > > the HW to be aware of its virtual Stream ID so it can replace with its
-> > > > physical Stream ID.
-> > > 
-> > > I imagine using this as well for the ATC invalidation commands. It
-> > > would be very easy and simplifying if the command fixup just extracted
-> > > the vSID from the ATC invalidation and used an xarray to turn it into
-> > > a pSID and then pushed the resulting command.
-> > 
-> > You mean the nested SMMU series right? Actually the set_dev_id
-> > ioctl was a part of that until we wanted to try DEV_INVALIDATE.
+Hi Jon,
+
+On 2024-05-14 2:27 pm, Jon Hunter wrote:
+> Hi Robin,
 > 
-> Yes, there is nothing inherently wrong with DEV_INVALIDATE, we could
-> continue to use that as the API and automatically pick up the VIOMMU
-> instance from the nesting domain to process the ATS.
+> On 19/04/2024 17:54, Robin Murphy wrote:
+>> It's now easy to retrieve the device's DMA limits if we want to check
+>> them against the domain aperture, so do that ourselves instead of
+>> relying on them being passed through the callchain.
+>>
+>> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>> Tested-by: Hanjun Guo <guohanjun@huawei.com>
+>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+>> ---
+>>   drivers/iommu/dma-iommu.c | 21 +++++++++------------
+>>   1 file changed, 9 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+>> index a3039005b696..f542eabaefa4 100644
+>> --- a/drivers/iommu/dma-iommu.c
+>> +++ b/drivers/iommu/dma-iommu.c
+>> @@ -660,19 +660,16 @@ static void iommu_dma_init_options(struct 
+>> iommu_dma_options *options,
+>>   /**
+>>    * iommu_dma_init_domain - Initialise a DMA mapping domain
+>>    * @domain: IOMMU domain previously prepared by iommu_get_dma_cookie()
+>> - * @base: IOVA at which the mappable address space starts
+>> - * @limit: Last address of the IOVA space
+>>    * @dev: Device the domain is being initialised for
+>>    *
+>> - * @base and @limit + 1 should be exact multiples of IOMMU page 
+>> granularity to
+>> - * avoid rounding surprises. If necessary, we reserve the page at 
+>> address 0
+>> + * If the geometry and dma_range_map include address 0, we reserve 
+>> that page
+>>    * to ensure it is an invalid IOVA. It is safe to reinitialise a 
+>> domain, but
+>>    * any change which could make prior IOVAs invalid will fail.
+>>    */
+>> -static int iommu_dma_init_domain(struct iommu_domain *domain, 
+>> dma_addr_t base,
+>> -                 dma_addr_t limit, struct device *dev)
+>> +static int iommu_dma_init_domain(struct iommu_domain *domain, struct 
+>> device *dev)
+>>   {
+>>       struct iommu_dma_cookie *cookie = domain->iova_cookie;
+>> +    const struct bus_dma_region *map = dev->dma_range_map;
+>>       unsigned long order, base_pfn;
+>>       struct iova_domain *iovad;
+>>       int ret;
+>> @@ -684,18 +681,18 @@ static int iommu_dma_init_domain(struct 
+>> iommu_domain *domain, dma_addr_t base,
+>>       /* Use the smallest supported page size for IOVA granularity */
+>>       order = __ffs(domain->pgsize_bitmap);
+>> -    base_pfn = max_t(unsigned long, 1, base >> order);
+>> +    base_pfn = 1;
+>>       /* Check the domain allows at least some access to the device... */
+>> -    if (domain->geometry.force_aperture) {
+>> +    if (map) {
+>> +        dma_addr_t base = dma_range_map_min(map);
+>>           if (base > domain->geometry.aperture_end ||
+>> -            limit < domain->geometry.aperture_start) {
+>> +            dma_range_map_max(map) < domain->geometry.aperture_start) {
+>>               pr_warn("specified DMA range outside IOMMU capability\n");
+>>               return -EFAULT;
+>>           }
+>>           /* ...then finally give it a kicking to make sure it fits */
+>> -        base_pfn = max_t(unsigned long, base_pfn,
+>> -                domain->geometry.aperture_start >> order);
+>> +        base_pfn = max(base, domain->geometry.aperture_start) >> order;
+>>       }
+>>       /* start_pfn is always nonzero for an already-initialised domain */
+>> @@ -1760,7 +1757,7 @@ void iommu_setup_dma_ops(struct device *dev, u64 
+>> dma_base, u64 dma_limit)
+>>        * underlying IOMMU driver needs to support via the dma-iommu 
+>> layer.
+>>        */
+>>       if (iommu_is_dma_domain(domain)) {
+>> -        if (iommu_dma_init_domain(domain, dma_base, dma_limit, dev))
+>> +        if (iommu_dma_init_domain(domain, dev))
+>>               goto out_err;
+>>           dev->dma_ops = &iommu_dma_ops;
+>>       }
 > 
-> The VMM needs a reliable place to send the CMDQ data, on ARM/AMD this
-> needs to be an always available global-to-the-viommu thing. Intel
-> needs to associate the virtual invalidation with the correct nesting
-> domain as well.
 > 
-> So I original thought it would nice and simple to have a
-> VIOMMU_INVALIDATE as well.
-> 
-> But.. If we need a nesting domain that is indentity (ie the S2) then
-> when the VIOMMU is created then we'd also create an identity nesting
-> domain as well.
+> I have noticed some random test failures on Tegra186 and Tegra194 and 
+> bisect is pointing to this commit. Reverting this along with the various 
+> dependencies does fix the problem. On Tegra186 CPU hotplug is failing 
+> and on Tegra194 suspend is failing. Unfortunately, on neither platform 
+> do I see any particular crash but the boards hang somewhere.
 
-So, you want a proxy S1 domain for a device to attach, in case
-of a stage-2 only setup, because an S2 domain will no longer has
-a VMID, since it's shared among viommus. In the SMMU driver case,
-an arm_smmu_domain won't have an smmu pointer, so a device can't
-attach to an S2 domain but always an nested S1 domain, right?
+That is... thoroughly bemusing :/ Not only is there supposed to be no 
+real functional change here - we should merely be recalculating the same 
+information from dev->dma_range_map that the callers were already doing 
+to generate the base/limit arguments - but the act of initially setting 
+up a default domain for a device behind an IOMMU should have no 
+connection whatsoever to suspend and especially not to CPU hotplug.
 
-> Functionally we could use that global nesting domain
-> to deliver the DEV_INVALIDATE too.
+> If you have any ideas on things we can try let me know.
 
-If my narrative above is correct, the device is actually still
-attached to S2 domain via a proxy nested S1 domain. What cache
-do we need to invalidate except S2 mappings in this case?
+Since the symptom seems inexplicable, I'd throw the usual memory 
+debugging stuff like KASAN at it first. I'd also try 
+"no_console_suspend" to check whether any late output is being missed in 
+the suspend case (and if it's already broken, then any additional issues 
+that may be caused by the console itself hopefully shouldn't matter).
 
-> > So again, yes, it makes sense to me that we move viommu and the
-> > set_dev_id to the nested series, and then drop DEV_INVALIDATE.
-> 
-> I would like to do this bit by bit. viommu is a big series on its own.
-> 
-> DEV_INVALIDATE is fine, it just can't do ATS invalidation.
+For more base-covering, do you have the "arm64: Properly clean up 
+iommu-dma remnants" fix in there already as well? That bug has bisected 
+to patch #6 each time though, so I do still suspect that what you're 
+seeing is likely something else. It does seem potentially significant 
+that those Tegra platforms are making fairly wide use of dma-ranges, but 
+there's no clear idea forming out of that observation just yet...
 
-I am not very sure about AMD. Intel doesn't need DEV_INVALIDATE
-at this moment. SMMU only uses DEV_INVALIDATE for ATC and CD
-invalidations, which can be both shifted to VIOMMU_INVALIDATE.
-
-Same question: any other case can we use the DEV_INVALIDATE for?
-
-> We can add ATS invalidation after either as an enhancement as part of
-> adding the VIOMMU either as DEV_INVALIDATE or VIOMMU_INVALIDATE (or
-> both)
-
-Yea, maybe step by step like this:
-
-Part-1 VIOMMU_ALLOC and VIOMMU_ATTACH
-Part-2 VIOMMU_SET/UNSET_VDEV_ID
-Part-3 VIOMMU_INVALIDATE
-Part-4 VQUEUE_ALLOC
-...
-
-Thanks
-Nicolin
+Thanks,
+Robin.
