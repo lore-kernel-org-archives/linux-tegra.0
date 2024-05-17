@@ -1,75 +1,108 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249F72BCFD;
-	Fri, 17 May 2024 11:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DC6548F1;
+	Fri, 17 May 2024 13:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715945469; cv=none; b=WBdQVcK4oBjISmRjavO4L0ll4fbIoq8q5+nsWidCxtu2t9YQulSKUP+LIKreBnh6T1VMeAfWQ26qAQWpocGNBhvbq0Y83ZauRno5q+QE9wgzSDthVu+OGRcx6eAP+zVeXzR1p1un3ENiOz8/htlm1g6w+WHGpKCxL2zOcXA8iL4=
+	t=1715952988; cv=none; b=NxNVtsDM95ZaoPtfDfW0OKN+549X3/33Dn6vKDYlkABE7k2FAutXZQQE+08hyvC4ffHSUnvPjT87dvvOqqWsyloGso+iu95qS++ZiI0YzMb9HL4bt4AsKl1B0FJ8ZpuhSVArApCQTuQM43xpa6DNHdl8+4XrCUwCy6eLcw5AIdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715945469; c=relaxed/simple;
-	bh=BA4d3vLBGZjjGwDfxYueaIuKlKe7mr5LJxlHM2kZzOE=;
+	s=arc-20240116; t=1715952988; c=relaxed/simple;
+	bh=Jn7zwgtw8zPXbp3XlrdrrybXQAtHJe4Qo6Tf/v8KOUU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cc3OQqtadIYYinvHZmN1Ta7tPrKL4bqextazPNGiFD8zhzqI83jKVy3oORTNhXe1jESjtY85LB7tE76veG4kfqOZh7aZLiUrBBQ35PJP8bcpatAXwkTH+dilCr6f0PpJ45T+x2/YlI7TP6ObMRmBnEUjaaMrNpW/B1Lx27Xu42Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ee42b97b32so5745385ad.2;
-        Fri, 17 May 2024 04:31:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715945467; x=1716550267;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GXuBWNkKD3n4KlzVx4D4Nc70Xdl9SdaqCdx/0kE74uk=;
-        b=uKl+kCd/9dBreBMTCsPFydgjuK5dE+mdgOADCVt7wgmO94vn3jok0NQcv9N7l+aNyF
-         7DdtiddrGYWwUcnKJpzfy1sb9wEhxeVbqyZgtwsSa3q1D7Jxi1AK3gx20rvIUoRvS45y
-         0elwjQ/9BacdZ4X9dIg8a0bEdwvJ3VRmJ3cNv9hGXGoSIxOCC5MavXxklTJLjmfk8H1Q
-         A/YHhhy3Fge43h8TYLs5r0UGrKMUrvhpQfqSmZu53H1L9UCi6Hce9Ybghv7ffXQbaQF9
-         PVT9c/avv30jQGZl1Z4bez2Vjkxea/J/w+bTu5xKswK2/UnpxoNn8OK3J5Ko5wTcVhsj
-         k3PA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/3v65htk7zBacO3p60xO1iK3Y0E2z4sA01g9QZvky9gW0iTucoGTe3iaz/JtXzxSXHC/G9Q4G+HmVzK45BVvrgbiqemcKKL5uo9BBERJAbQWp5CULNq19sT8RIT7Ba8b6eWjmO2g=
-X-Gm-Message-State: AOJu0Yz5NPxlD4oYWfM+joOL8cIypZj6r9EyRBf5ohrp8PdGM/FO/b9B
-	yO2lHBn8Ewv5L1nu8gWGw47gTxOLtAhapUQWkzEZwQQc/QSaaEgZ
-X-Google-Smtp-Source: AGHT+IHZ3auz3dAuLK7Ymf1E7i7sIchp1TB8ZrektImFg2tJnd785Qsxq3AXVYhD7clXRKKa+LmzAA==
-X-Received: by 2002:a17:902:f64e:b0:1f0:8e0a:a74 with SMTP id d9443c01a7336-1f08e0a0b69mr109082445ad.67.1715945467445;
-        Fri, 17 May 2024 04:31:07 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d16dasm155384455ad.15.2024.05.17.04.31.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 May 2024 04:31:06 -0700 (PDT)
-Date: Fri, 17 May 2024 20:31:05 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=gBYIeYeM/H10MQUUVydQVJrfavqczaAU56q91fexMu+oObPYZe3USwrlbmvhatFvP19vNai3D3G04dmwbIXEALNky3GGKqa7+QDXCqdW/JXtwSc7KJIy8f2dNpTyJA99hwjNa5mmcTYMc14XGxqhFh81zu3u9ozKU01x4d+Nx1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GLVE1+TD; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GLVE1+TD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715952987; x=1747488987;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Jn7zwgtw8zPXbp3XlrdrrybXQAtHJe4Qo6Tf/v8KOUU=;
+  b=GLVE1+TDn1+B+Yvz1TDYsrnHwHKuwnEaOHON1aDguXhPcSKWapzQLrCP
+   Zmm3BPBcaZWWLB8tof7gthuCMyKUFnH+GP+BEsNKSz6FMQeEevVLyJAdD
+   UHGs6MTuFP9+dARRoni9Bmz4N3hMR5j4y/mt6n5sV9h8ZJqm1NXqrHWVZ
+   jPp01eiWt3JeJ/3kkkIza+YMCjVKAFbbQvyIqvhJiGMabQR2d9nWijfO+
+   iQo90bw7saGxZOZCwRvQ74lemjNcdVoi0NBb5fXiplIeBJRJZCmDs2UaD
+   jnnEZUqE4zExEzIi81yKZ4JNhaPkZmOTpxPrWJC2PeMSYSU4F8dhwzDKM
+   A==;
+X-CSE-ConnectionGUID: kPiR+F8/Rqmslq0Yx1dcVg==
+X-CSE-MsgGUID: ePwl3apbSpquXl+4wUveJg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11074"; a="15956634"
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="15956634"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:36:26 -0700
+X-CSE-ConnectionGUID: hv+jf/nYRMKp252TDzhWlA==
+X-CSE-MsgGUID: rHPZ9NOjRN2blqqMK8l1iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,167,1712646000"; 
+   d="scan'208";a="55005642"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 May 2024 06:36:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s7xks-00000008Lkv-21yz;
+	Fri, 17 May 2024 16:36:14 +0300
+Date: Fri, 17 May 2024 16:36:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>, linux-omap@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Yue Wang <yue.wang@amlogic.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Xiaowei Song <songxiaowei@hisilicon.com>,
+	Binghui Wang <wangbinghui@hisilicon.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>, Vidya Sagar <vidyas@nvidia.com>,
-	linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Manikanta Maddireddy <mmaddireddy@nvidia.com>
-Subject: Re: [PATCH V2] PCI: tegra194: Set EP alignment restriction for
- inbound ATU
-Message-ID: <20240517113105.GB202520@rocinante>
-References: <20240508092207.337063-1-jonathanh@nvidia.com>
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 0/5] PCI: controller: Move to agnostic GPIO API
+Message-ID: <ZkddTpyC177ZGoMH@smile.fi.intel.com>
+References: <20240506142142.4042810-1-andriy.shevchenko@linux.intel.com>
+ <20240517102234.GA333779@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240508092207.337063-1-jonathanh@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240517102234.GA333779@rocinante>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Fri, May 17, 2024 at 07:22:34PM +0900, Krzysztof Wilczyński wrote:
+> Hello,
+> 
+> > While at it, remove of_gpio.h leftover from some of the drivers.
+> 
+> Applied to gpio, thank you!
 
-> Tegra194 and Tegra234 PCIe EP controllers have 64K alignment
-> restriction for the inbound ATU. Set the endpoint inbound ATU alignment to
-> 64kB in the Tegra194 PCIe driver.
+Thank you!
 
-Applied to controller/tegra194, thank you!
+-- 
+With Best Regards,
+Andy Shevchenko
 
-[1/1] PCI: tegra194: Set EP alignment restriction for inbound ATU
-      https://git.kernel.org/pci/pci/c/ff58a429d70c
 
-	Krzysztof
