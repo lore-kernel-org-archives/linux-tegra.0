@@ -1,253 +1,183 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2081.outbound.protection.outlook.com [40.107.236.81])
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565C610A09;
-	Fri, 17 May 2024 05:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715922903; cv=fail; b=MBalqNobaph4gQMU0wDQFz3NyzGm0fJ4ppIJiV1NpKBAWSw619I0lIcWBBQqm+1S9IZDWWNyOzv5RsoO8f/nYqes2cieAChaJT4ZOmzO14/+1hPVLCHstwo0PQ6/plhITpgtKHELGlIMaGpW/k+cpRHD72NbmBS9yzqQwvJ+cZA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715922903; c=relaxed/simple;
-	bh=ldxTONU4El/1EASf7TNF+JrnLel1jpNlwf5dfPdqLZM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cAHWJr5gw8ZdkvGu2PUCxHmuWfXln5lqoBc2gArJiSVkEo96R+H7disgMD5SZ/t1AK4zqS0IfxLObmZEAKkrhQuF7ek5EI6GxFAkJjIthi91Wh1EwukVJv5lIWKTfK+YzGp0C4I9LlradqotcGo6Q1JhfLKtqN1An6CGTZ6nrIU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C5tz4tuw; arc=fail smtp.client-ip=40.107.236.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3D41119F;
+	Fri, 17 May 2024 06:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715926363; cv=none; b=YeTfJUvW3h0Z4oYWvC0rcEHbmJlljHRErSwrpoMcoziaoA2eZ9h+9QwmEgokAZWVRCqEc04jsRm2oUnKzlfJ2NOX7kfsaatwp0Lh+wFpEtjVY63LAdP3AEl4MOdwEu5m9lGnKp0MtbpR1xU8hMdqQ6omAozBWk2N0Cvd/h0oKGc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715926363; c=relaxed/simple;
+	bh=psIpr9H4AfdZmEK4TRkcE6r9j2iu0e5B7Eq6k2V6VQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c8SKT+Rxa8BMgdprv1E72sMxw7k1DhbcOj3ZGkg2oDhLSyJjuWgD9Dh0T0cYpwNq4+Zs4tiv3/af5+0fuvEok1noMkm42h3iXREWaBZ29MrEJiHbRBa2gxmdrpL8Hv8wGSUL4V2OxZ9vHKhuSDxaDo4yF81dTKJtTvhP43nW1x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=CVxSZy93; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C5tz4tuw"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R5Je+9IdkN+avD9vy7v8/eQm1O9mL/+E0nI2kcCu+w5izH5+GjRe2Ca6y9X6RYEXeIX4L+uIGqxs4iRUHGM/vATebG74TmHair1BcdYCBUXOFGvH8gU0je9TDqIHcSaGaAFTSIOliwL2I8e72FlrS39yI+cLZJEuM9u7Hno0cqoFVfZkQw2HXbBBK/4l3VMsRmjy1SwMMDaX6aWhb1DipfVpzRqbZq8PLDT77x8d2fHfJurIjxTgRocxVb9+8lgrUuvkqr7cNjKVu0Y1uwLWtpS0cQlWn6NXBItyeEQuYkHcnld9xDevCg/jH37cektieCgIe+b8zOTP4Zvxc28uog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x4hQjCfDFnWylIRCYG0IpdRMZcpotQGXbiOiz6XNbms=;
- b=CnGKWNestCFMe/gl/8oJO7Af0FxahRQoM0DqrBQT1uTJ6ljUAb7t3Ngtq2eTjdz8do8+ULwW38ynaAUOGnZXrswkR5k3kUjU/YUgQ+nnK4RIHCmGbvE78nVW0rOCa50y7/i3Ebpy+rXlPvdO5Wf45fwGgei2EwRom+/gVbI4w9O5hI0U7CFJMO3JgRRfLv/0GXTwMUn3SyQdQCyrlKg4PEDaBMQK8gWt30tkLqUcHLQo5yHim0QLKRTdRfxhqihwy++jBX8ZiCtEahcXlp0maa+XP1MJjC324diyiVYQoBeMgINy+jwWR7/bu+OjB9Fr6duQgeKi52aA29k4fm+DAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x4hQjCfDFnWylIRCYG0IpdRMZcpotQGXbiOiz6XNbms=;
- b=C5tz4tuwm7MW7eVKDy6hzRRXQNw9L3lPU8yph4JI6lK2JfQW1VFegMxLjQsFHevr5pN/oJ+wY8lP1735e6DJvydr8Xqzav/QYTwnM+HK6ksIA3sWyq92Q3HY7aC14RxyQJHli2fr/l/cQ6ABNthbZUYkxfQpQAINgg0W1vosQwa9yypu1xFpEzDQBP+rAVx4kTl2zlToyqnLXAZk3j7DWL4RnUnjXYafsWxsnNp6BLLfwXtvqOkGXi+3CDwVhx23MG/d5E3QibTqCUB/nbYGBdy2WhSOyQMJ9jJOYf11OTOLXhsxflHIt7VGyx94tRJN7Z6JOwAAalw/kTIgBZp4jw==
-Received: from BN9P220CA0027.NAMP220.PROD.OUTLOOK.COM (2603:10b6:408:13e::32)
- by SN7PR12MB7228.namprd12.prod.outlook.com (2603:10b6:806:2ab::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.27; Fri, 17 May
- 2024 05:14:58 +0000
-Received: from BN1PEPF00004688.namprd05.prod.outlook.com
- (2603:10b6:408:13e:cafe::33) by BN9P220CA0027.outlook.office365.com
- (2603:10b6:408:13e::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.30 via Frontend
- Transport; Fri, 17 May 2024 05:14:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BN1PEPF00004688.mail.protection.outlook.com (10.167.243.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7587.21 via Frontend Transport; Fri, 17 May 2024 05:14:57 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 16 May
- 2024 22:14:46 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 16 May 2024 22:14:45 -0700
-Received: from nvidia.com (10.127.8.12) by mail.nvidia.com (10.126.190.182)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 16 May 2024 22:14:42 -0700
-Date: Thu, 16 May 2024 22:14:38 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <kevin.tian@intel.com>,
-	<suravee.suthikulpanit@amd.com>, <joro@8bytes.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<yi.l.liu@intel.com>, <eric.auger@redhat.com>, <vasant.hegde@amd.com>,
-	<jon.grimm@amd.com>, <santosh.shukla@amd.com>, <Dhaval.Giani@amd.com>,
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Message-ID: <ZkbnvnaiV9nCHQOb@nvidia.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <c97a98a72ee3498c587e5898d6b899553ccd9b27.1712978212.git.nicolinc@nvidia.com>
- <ZkDZE32JFyKprmpi@nvidia.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="CVxSZy93"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GN0gAM020042;
+	Fri, 17 May 2024 08:12:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=J3o804ncxF/enh0kdjgc+0YUwQx2VM+mClNeplniKwc=; b=CV
+	xSZy930UTX7kDamAv2gi390UDjIU+WfLGT6+qTNZa8Hkd+yJK75cIjojTcNGENLI
+	BZXukHl1cbO+xx0BClOTjP4+RS637PPEZfSGyM5gcLPtlikd9R82kz62BFQCUdjg
+	hg7KKyl1iltJ7WLlSnl73hlsyoLrSH4JScIhCCz5Atn5dnoL4Qog2D57Ukm5e4ei
+	7lGcFyD2wB2a/S/nX+IftdXds93oxlEx06x7ejgzCNxb1dAlqpVZ9aDQL7DgoNF3
+	6W7MH/CNQYmJRAhI6UKq5f2XqI/btsPocfwEo0I/o9aUe09mZKEAIhrOAYKJFBSG
+	bWg2Tl1y24/bmqSNujYQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y4sxvr9ue-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 17 May 2024 08:12:35 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 982E74002D;
+	Fri, 17 May 2024 08:12:25 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 79F8F20F54A;
+	Fri, 17 May 2024 08:11:54 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 17 May
+ 2024 08:11:51 +0200
+Message-ID: <124b75a6-d8da-4e29-8dce-79d18c355ba2@foss.st.com>
+Date: Fri, 17 May 2024 08:11:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZkDZE32JFyKprmpi@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004688:EE_|SN7PR12MB7228:EE_
-X-MS-Office365-Filtering-Correlation-Id: 98c0d1e6-4cf7-4b48-70d1-08dc76304b8c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|7416005|36860700004|1800799015|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GoqtFSew9y69LNnEp1O4RUyyOOsBzV34maJWAWERFCco64/NrkQyFT3CGGfI?=
- =?us-ascii?Q?Z4mSoH8KAu8qKyv63gusxIM+cpuHRY67QT3qrM+jVE0lNF1geXu5JTejJqtU?=
- =?us-ascii?Q?HsImyMBo7I75eR7rXHsSaR58SDAB46/cifhgTAABHHZiaeEhE/Bg1dgsKMOW?=
- =?us-ascii?Q?5SWndh97O2WIzc7afyt9MWniQkihSgfCD+K3UNRHfg+F5kwRZ33aApaoawQ+?=
- =?us-ascii?Q?EZSCpeOrzCIYkGW2VEhBstbgbrJhUVyCZvJWz2j9T6/+pe5M4IKIc9SzZDCh?=
- =?us-ascii?Q?2kUyquS5UD/4yTj1Yh7VRwXHJcClzdUNh5Gd+CBbo9n490BhxDYrBwF8tNuK?=
- =?us-ascii?Q?18LvU8d2yLnPiqHOq2ouD0zputYxEkbB9IWbgECXuENTkmOxSL3Blp85XWCi?=
- =?us-ascii?Q?6h+z1x75sV0B3eutMoI5L00aN0ti+KAg/zDuaV1YFBLsuhz0UFfEcAdWv5k6?=
- =?us-ascii?Q?uSJafm2yqU7AauYMMTVWI3+hrPmW/kCzVtxT6FAgEoveoic/pgSqSL764i/x?=
- =?us-ascii?Q?2lvAXtl1/L0a5j2WSA73DaOGctKVsOwbGe4miWqc6epTutIOBCfEG7gSzArF?=
- =?us-ascii?Q?Eu7aOx65WNChRQhzcFxq1qVfSOJDvNv7EaACV7nK3D1OZDRpGhJS6oAzUZIe?=
- =?us-ascii?Q?+RX9FR2RWgeQcvGFvHGLntmZcwM8zfuk5pjOqsCmJburhoZdfZxNUosL7WoR?=
- =?us-ascii?Q?cqWyCs4foLSD6AsVyk8qfiGqsEwh3hyxfCLJUMnktS3qdT/gsjcLeakFouTD?=
- =?us-ascii?Q?H0ldS5uJyyhdAVmn1XzqLoe7Cc57tcoSjwVQgtfmz/W+pAyzsrAsPO5pVp8K?=
- =?us-ascii?Q?jERMFNXa0jfWhed8CkkkupkoGtxLZsPPD9z3bt0eTuumLlkeGG5+mL3dyHvj?=
- =?us-ascii?Q?QSkMflXzlYF3lO8DzjeGKRMxNtMDnTIpOOYaObgDVSisaBgN06VnyTg8HshW?=
- =?us-ascii?Q?ulimUn1JuyuZH6y0W2sUV075ouE2h71LY7xBck1reJQL0UIkeoQ0YJwzT+6D?=
- =?us-ascii?Q?+YWUfcNu0V5td5ZFWegThCYwG6jx4YWqBafjfZGOLgBiILGk6WeykXfKcAef?=
- =?us-ascii?Q?5Bt4F9cSxI/S5nuGkI+rAYn9bCIqDB6QI0KXD8d9Xwlbpm7JF3ivu9idA2+o?=
- =?us-ascii?Q?aDjmEDiy8mDH35S4EFUWL1O3bC0FwuNJchSzyV31nEDBpu4ogP0Fxvm7Ea2j?=
- =?us-ascii?Q?h+oO2435nJRH2DRezH77GZ66h8b0Nt3n46q3Kwxi4fQYTeIEJuwXm85G/xp9?=
- =?us-ascii?Q?CCgmsIIusGo6hKZanIl5f/vqC/a3WlB6FBfGr5gHp/rixAFGaOuiudwuxYCp?=
- =?us-ascii?Q?jzm5riCf5QvT3ZRu3I+K4nfnslTGVgujAXmTmfJgurJbttieGRoikXi6z30y?=
- =?us-ascii?Q?GrTy3K+LbtuTXQgnKiod0F+gKYo2?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(7416005)(36860700004)(1800799015)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2024 05:14:57.5895
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 98c0d1e6-4cf7-4b48-70d1-08dc76304b8c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004688.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7228
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/20] pinctrl: stm32: Use scope based of_node_put()
+ cleanups
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Emil Renner Berthing
+	<kernel@esmil.dk>,
+        Jianlong Huang <jianlong.huang@starfivetech.com>,
+        Hal Feng
+	<hal.feng@starfivetech.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang
+	<baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Viresh
+ Kumar <vireshk@kernel.org>,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, <soc@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Sylwester Nawrocki
+	<s.nawrocki@samsung.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Geert
+ Uytterhoeven <geert+renesas@glider.be>,
+        Heiko Stuebner <heiko@sntech.de>, Damien Le Moal <dlemoal@kernel.org>,
+        Ludovic Desroches
+	<ludovic.desroches@microchip.com>,
+        Nicolas Ferre
+	<nicolas.ferre@microchip.com>,
+        Alexandre Belloni
+	<alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Pengutronix
+ Kernel Team <kernel@pengutronix.de>,
+        Chester Lin <chester62515@gmail.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Ghennadi Procopciuc
+	<ghennadi.procopciuc@oss.nxp.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Matthias
+ Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+        Sascha Hauer
+	<s.hauer@pengutronix.de>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Joel
+ Stanley <joel@jms.id.au>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Tony
+ Lindgren <tony@atomide.com>,
+        Stephen Warren <swarren@wwwdotorg.org>
+CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-riscv@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <imx@lists.linux.dev>,
+        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
+        Peng Fan
+	<peng.fan@nxp.com>
+References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
+ <20240504-pinctrl-cleanup-v2-3-26c5f2dc1181@nxp.com>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20240504-pinctrl-cleanup-v2-3-26c5f2dc1181@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
 
-On Sun, May 12, 2024 at 11:58:27AM -0300, Jason Gunthorpe wrote:
-> On Fri, Apr 12, 2024 at 08:47:05PM -0700, Nicolin Chen wrote:
-> > Introduce a new ioctl to set a per-viommu device virtual id that should be
-> > linked to the physical device id (or just a struct device pointer).
-> > 
-> > Since a viommu (user space IOMMU instance) can have multiple devices while
-> > it's not ideal to confine a device to one single user space IOMMU instance
-> > either, these two shouldn't just do a 1:1 mapping. Add two xarrays in their
-> > structures to bind them bidirectionally.
+
+
+On 5/4/24 15:20, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Since I would like to retain the dev_id, I think this is probably
-> better done with an allocated struct per dev-id:
+> Use scope based of_node_put() cleanup to simplify code.
 > 
-> struct dev_id {
->     struct iommufd_device *idev;
->     struct iommufd_viommu *viommu;
->     u64 vdev_id;
->     u64 driver_private; // Ie the driver can store the pSID here
->     struct list_head idev_entry;
-> };
-
-I implemented it with a small tweak, to align with viommu_alloc
-and vqueue_alloc:
-
-	// core
-	struct iommufd_vdev_id {
-		struct iommufd_viommu *viommu;
-		struct device *dev;
-		u64 vdev_id;
-		struct list_head idev_item;
-	};
-
-	// driver
-	struct my_driver_vdev_id {
-	    struct iommufd_vdev_id core;
-	    unsigned int private_attrs;
-	};
-
-	static struct iommufd_vdev_id *
-	my_driver_set_vdev_id(struct iommufd_viommu *viommu,
-			      struct device *dev, u64 id)
-	{
-	    struct my_driver_vdev_id *my_vdev_id;
-
-	    my_vdev_id = kzalloc(sizeof(*my_vdev_id), GFP_KERNEL);
-	    .... /* set private_attrs */
-	    return &my_driver_vdev_id->core;
-	}
-
-	static void my_driver_unset_vdev_id(struct iommufd_vdev_id *vdev_id)
-	{
-	    struct my_driver_vdev_id *my_vdev_id =
-		    container_of(vdev_id, struct my_driver_vdev_id, core);
-	    .... /* unset private_attrs */
-	}
-
-Please let me know if you like it inverted as you wrote above.
-
-> > @@ -135,7 +135,16 @@ void iommufd_device_destroy(struct iommufd_object *obj)
-> >  {
-> >  	struct iommufd_device *idev =
-> >  		container_of(obj, struct iommufd_device, obj);
-> > +	struct iommufd_viommu *viommu;
-> > +	unsigned long index;
-> >  
-> > +	xa_for_each(&idev->viommus, index, viommu) {
-> > +		if (viommu->ops->unset_dev_id)
-> > +			viommu->ops->unset_dev_id(viommu, idev->dev);
-> > +		xa_erase(&viommu->idevs, idev->obj.id);
-> > +		xa_erase(&idev->viommus, index);
-> > +	}
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/pinctrl/stm32/pinctrl-stm32.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> Then this turns into list_for_each(idev->viommu_vdevid_list)
-
-Done.
-
-> > +int iommufd_viommu_set_device_id(struct iommufd_ucmd *ucmd)
-> > +{
-...
-> > +	rc = xa_alloc(&idev->viommus, &viommu_id, viommu,
-> > +		      XA_LIMIT(viommu->obj.id, viommu->obj.id),
-> > +		      GFP_KERNEL_ACCOUNT);
-> > +	if (rc)
-> > +		goto out_put_viommu;
-> > +
-> > +	rc = xa_alloc(&viommu->idevs, &dev_id, idev,
-> > +		      XA_LIMIT(dev_id, dev_id), GFP_KERNEL_ACCOUNT);
-> > +	if (rc)
-> > +		goto out_xa_erase_viommu;
+> diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> index 978ccdbaf3d3..a8673739871d 100644
+> --- a/drivers/pinctrl/stm32/pinctrl-stm32.c
+> +++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
+> @@ -670,7 +670,6 @@ static int stm32_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  				 struct device_node *np_config,
+>  				 struct pinctrl_map **map, unsigned *num_maps)
+>  {
+> -	struct device_node *np;
+>  	unsigned reserved_maps;
+>  	int ret;
+>  
+> @@ -678,12 +677,11 @@ static int stm32_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+>  	*num_maps = 0;
+>  	reserved_maps = 0;
+>  
+> -	for_each_child_of_node(np_config, np) {
+> +	for_each_child_of_node_scoped(np_config, np) {
+>  		ret = stm32_pctrl_dt_subnode_to_map(pctldev, np, map,
+>  				&reserved_maps, num_maps);
+>  		if (ret < 0) {
+>  			pinctrl_utils_free_map(pctldev, *map, *num_maps);
+> -			of_node_put(np);
+>  			return ret;
+>  		}
+>  	}
 > 
-> Both of these are API mis-uses, you don't want an allocating xarray
-> you just want to use xa_cmpxchg
-> 
-> Put an xarray in the viommu object and fill it with pointers to the
-> struct dev_id thing above
-> 
-> The driver can piggyback on this xarray too if it wants, so we only
-> need one.
 
-I also moved xa_cmpxchg to the driver, as I feel that the vdev_id
-here is very driver/iommu specific. There can be some complication
-if iommufd core handles this u64 vdev_id: most likely we will use
-this u64 vdev_id to index the xarray that takes an unsigned-long
-xa_index for a fast vdev_id-to-pdev_id lookup, while only a driver
-knows whether u64 vdev_id is compatible with unsigned long or not.
+Hi
 
-And, we have a list_head in the structure idev, so a device unbind
-will for-each the list and unset all the vdev_ids in it, meanwhile
-the viommu stays. I wonder if we need to add another list_head in
-the structure viommu, so a viommu tear down will for-each its list
-and unset all the vdev_ids on its side while a device (idev) stays.
-I don't see a use case of that though..any thought?
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
 Thanks
-Nicolin
+Patrice
