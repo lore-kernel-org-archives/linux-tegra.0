@@ -1,277 +1,269 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D86134A6;
-	Fri, 17 May 2024 06:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491AF16415;
+	Fri, 17 May 2024 07:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715928313; cv=none; b=QxeDOVLQUvmebinNSVCBDr4L7vYNjG2WseJRCPo9d2FDHgk9fsceqn4w+A19oGPzq5GeMxbBUCA3WRw0TXkC5YHoxoUwJpdxOh55h1Nn+e+2KxvMAB1b5kcfK3Q4zY/QIBoOFbLkuyvkZf9GhCdfh472J1Ly2NSzt7qrgKPbT0w=
+	t=1715930402; cv=none; b=HC5oDAKnFtzt8ERdH8lSw3BrWiTFqVNqB/b1zsZBPxhHe4DzIKHtDhERnzvMTYbYThRyZY4ypww29f4aF988nYAXw+j4tnA2DYLsOl4mxLPrmUGjBLE63Wsoco4s3+DWMZvALxCEz8jLpmxH2riz3AUOUfDt1700UshquWTADmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715928313; c=relaxed/simple;
-	bh=2d8ySRlSXwbmMwAUg60FXtHZ9wSpOywMHJPzjAcqCyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qwfcRLoQHYOUXCm14h/Snun7+MoY2JYDbzxmeU86B//PjV0tNYa0LNdV9Y546rpObpLl8Rw/PEQ3sCCR39QvODscVt7d3qXP+0hK5GZTdk3L1hDJrpPWPqnJ3COBRcHmQoMB1fgT1eBXxQheMGKxTgHYylxebxjHko23GmI9y0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=tMmyJ/dM; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1715930402; c=relaxed/simple;
+	bh=BGck91VU9beP2abZzw/rtJxU09+f8W3SkIsxCeaIzKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ex2gnrfPvbHrekEovTpKRUoZ24v7+HZ9xlioaWmZIVI3FAxsgRmHTqxGPpInMPrjqLyr1tQ07o/alwLakgE9OLbX1eOpKVuex06KA+ccAfN4puqQmeEqdMiUYlFf0Ljauo1BmjBC9sygK1G/CxuMp9yMozQIsj1ZHj7LpibAfYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=B1E5jVNP; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="tMmyJ/dM"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44H0KKJs005405;
-	Fri, 17 May 2024 08:45:07 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=z/uK7yf6eIe+jSuaXNY0ImTzPYAvaGtkUIkCxsmH9qM=; b=tM
-	myJ/dMGKQ2x/4Ia33JfzZHcbgnx7LWrzROgMgfHhzPWq0PRz9OjTTociU4rQ6I5R
-	IYFzIFLY0ReOsUeTwx91iz945oEF7HmCnXypJxQbRi3+yIQ+10AwkrblW/lieGiG
-	65WmOoAnpKxBY/y2iy7RqLElDrZOTGjUwgSsM2gVxnZyEqUNzyno7y/GRQZZjFEV
-	OSxYVDjB6Y2pyBD6b+pV2aLeUDSz9GEULXeSjZOMbAB/C/K1yx0SCrI3zfofnHJ6
-	AZOrbjQ26YwAEE/E5uByqagJzdtxukCnzwMGt6xODMYg2i6T+bOOvR/RP2gycvfH
-	b3ijlVxPrqbcbkxrKm6w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y4symgb72-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 08:45:06 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B49C64002D;
-	Fri, 17 May 2024 08:44:56 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 871E621058D;
-	Fri, 17 May 2024 08:44:26 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 17 May
- 2024 08:44:23 +0200
-Message-ID: <e2b89d34-0222-42a1-98ae-c417220f9b39@foss.st.com>
-Date: Fri, 17 May 2024 08:44:23 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="B1E5jVNP"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0F1411C000C;
+	Fri, 17 May 2024 07:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715930397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vtNkh6lct/Bn//Hd3X1lliFFmrekYtlN0ngpcECGIUU=;
+	b=B1E5jVNP6+dsEJDwkBKDWpecNxgeRnRXcNfwDW5Q2qETDxSRVCgB82AwM+bpnqb2oXwV+c
+	ocAq5qyOYOggpTa+SY3n35xbcYwndztV8ync4V6t652cnDQXLe1z19pZPK0aI4pS4cep7n
+	dBMXEybf9YMuBPpE/9HQO3pYlmeuo4uOzLODEKbgM37y8ZlQqVDYO0T2zztZ58xGoMM9dd
+	JFbea6F5/xhiJRogH/I31z675gY5qyPuawBF58E5JoWkLI87Ip4IuA6I+48/CnykID7GAG
+	YkTXFmUrIECiNf6dLsKtoGseEsF8Uno7sm4JTofzJUfetBkGqMe9J/N7aWUGFg==
+Date: Fri, 17 May 2024 09:19:51 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Joseph Jang <jjang@nvidia.com>
+Cc: shuah@kernel.org, avagin@google.com, amir73il@gmail.com,
+	brauner@kernel.org, mochs@nvidia.com, jszu@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] selftest: rtc: Add to check rtc alarm status for alarm
+ related test
+Message-ID: <202405170719515a9c6d2f@mail.local>
+References: <20240517022847.4094731-1-jjang@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/20] pinctrl: st: Use scope based of_node_put()
- cleanups
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        Linus Walleij
-	<linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Emil Renner Berthing
-	<kernel@esmil.dk>,
-        Jianlong Huang <jianlong.huang@starfivetech.com>,
-        Hal Feng
-	<hal.feng@starfivetech.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang
-	<baolin.wang@linux.alibaba.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Viresh
- Kumar <vireshk@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>, <soc@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki
-	<s.nawrocki@samsung.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Geert
- Uytterhoeven <geert+renesas@glider.be>,
-        Heiko Stuebner <heiko@sntech.de>, Damien Le Moal <dlemoal@kernel.org>,
-        Ludovic Desroches
-	<ludovic.desroches@microchip.com>,
-        Nicolas Ferre
-	<nicolas.ferre@microchip.com>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawnguo@kernel.org>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Pengutronix
- Kernel Team <kernel@pengutronix.de>,
-        Chester Lin <chester62515@gmail.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Ghennadi Procopciuc
-	<ghennadi.procopciuc@oss.nxp.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias
- Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        Sascha Hauer
-	<s.hauer@pengutronix.de>,
-        Andrew Jeffery <andrew@codeconstruct.com.au>,
-        Joel
- Stanley <joel@jms.id.au>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Tony
- Lindgren <tony@atomide.com>,
-        Stephen Warren <swarren@wwwdotorg.org>
-CC: <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-samsung-soc@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-riscv@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <imx@lists.linux.dev>,
-        <linux-aspeed@lists.ozlabs.org>, <openbmc@lists.ozlabs.org>,
-        Peng Fan
-	<peng.fan@nxp.com>
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
- <20240504-pinctrl-cleanup-v2-8-26c5f2dc1181@nxp.com>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20240504-pinctrl-cleanup-v2-8-26c5f2dc1181@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517022847.4094731-1-jjang@nvidia.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-
-
-On 5/4/24 15:20, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 16/05/2024 19:28:47-0700, Joseph Jang wrote:
+> In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
+> ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
+> skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
+> code. This design may miss detecting real problems when the
+> efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
+> ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
 > 
-> Use scope based of_node_put() cleanup to simplify code.
+> In order to make rtctest more explicit and robust, we propose to use
+> RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
+> running alarm related tests. If the kernel does not support RTC_PARAM_GET
+> ioctl interface, we will fallback to check the presence of "alarm" in
+> /proc/driver/rtc.
 > 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> The rtctest requires the read permission on /dev/rtc0. The rtctest will
+> be skipped if the /dev/rtc0 is not readable.
+> 
+
+This change as to be separated. Also, I'm not sure what happened with
+https://lore.kernel.org/all/20230717175251.54390-1-atulpant.linux@gmail.com/
+
+> Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
+> as optional")
+> 
+> Reviewed-by: Jeremy Szu <jszu@nvidia.com>
+> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+> Signed-off-by: Joseph Jang <jjang@nvidia.com>
 > ---
->  drivers/pinctrl/pinctrl-st.c | 37 +++++++++++--------------------------
->  1 file changed, 11 insertions(+), 26 deletions(-)
+>  tools/testing/selftests/rtc/Makefile  |  2 +-
+>  tools/testing/selftests/rtc/rtctest.c | 72 +++++++++++++++++++--------
+>  2 files changed, 53 insertions(+), 21 deletions(-)
 > 
-> diff --git a/drivers/pinctrl/pinctrl-st.c b/drivers/pinctrl/pinctrl-st.c
-> index 5d9abd6547d0..fe2d52e434db 100644
-> --- a/drivers/pinctrl/pinctrl-st.c
-> +++ b/drivers/pinctrl/pinctrl-st.c
-> @@ -1195,10 +1195,10 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
->  	struct property *pp;
->  	struct device *dev = info->dev;
->  	struct st_pinconf *conf;
-> -	struct device_node *pins;
-> +	struct device_node *pins __free(device_node) = NULL;
->  	phandle bank;
->  	unsigned int offset;
-> -	int i = 0, npins = 0, nr_props, ret = 0;
-> +	int i = 0, npins = 0, nr_props;
+> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
+> index 55198ecc04db..6e3a98fb24ba 100644
+> --- a/tools/testing/selftests/rtc/Makefile
+> +++ b/tools/testing/selftests/rtc/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
+> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/
+>  LDLIBS += -lrt -lpthread -lm
 >  
->  	pins = of_get_child_by_name(np, "st,pins");
->  	if (!pins)
-> @@ -1213,8 +1213,7 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
->  			npins++;
->  		} else {
->  			pr_warn("Invalid st,pins in %pOFn node\n", np);
-> -			ret = -EINVAL;
-> -			goto out_put_node;
-> +			return -EINVAL;
->  		}
->  	}
+>  TEST_GEN_PROGS = rtctest
+> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
+> index 63ce02d1d5cc..aa47b17fbd1a 100644
+> --- a/tools/testing/selftests/rtc/rtctest.c
+> +++ b/tools/testing/selftests/rtc/rtctest.c
+> @@ -8,6 +8,7 @@
+>  #include <errno.h>
+>  #include <fcntl.h>
+>  #include <linux/rtc.h>
+> +#include <stdbool.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <sys/ioctl.h>
+> @@ -24,12 +25,17 @@
+>  #define READ_LOOP_SLEEP_MS 11
 >  
-> @@ -1223,10 +1222,8 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
->  	grp->pins = devm_kcalloc(dev, npins, sizeof(*grp->pins), GFP_KERNEL);
->  	grp->pin_conf = devm_kcalloc(dev, npins, sizeof(*grp->pin_conf), GFP_KERNEL);
+>  static char *rtc_file = "/dev/rtc0";
+> +static char *rtc_procfs = "/proc/driver/rtc";
 >  
-> -	if (!grp->pins || !grp->pin_conf) {
-> -		ret = -ENOMEM;
-> -		goto out_put_node;
-> -	}
-> +	if (!grp->pins || !grp->pin_conf)
-> +		return -ENOMEM;
+>  FIXTURE(rtc) {
+>  	int fd;
+>  };
 >  
->  	/* <bank offset mux direction rt_type rt_delay rt_clk> */
->  	for_each_property_of_node(pins, pp) {
-> @@ -1260,17 +1257,13 @@ static int st_pctl_dt_parse_groups(struct device_node *np,
->  		i++;
->  	}
->  
-> -out_put_node:
-> -	of_node_put(pins);
-> -
-> -	return ret;
-> +	return 0;
+>  FIXTURE_SETUP(rtc) {
+> +	if (access(rtc_file, R_OK) != 0)
+> +		SKIP(return, "Skipping test since cannot access %s, perhaps miss sudo",
+> +			 rtc_file);
+
+> +
+>  	self->fd = open(rtc_file, O_RDONLY);
 >  }
 >  
->  static int st_pctl_parse_functions(struct device_node *np,
->  			struct st_pinctrl *info, u32 index, int *grp_index)
->  {
->  	struct device *dev = info->dev;
-> -	struct device_node *child;
->  	struct st_pmx_func *func;
->  	struct st_pctl_group *grp;
->  	int ret, i;
-> @@ -1285,15 +1278,13 @@ static int st_pctl_parse_functions(struct device_node *np,
->  		return -ENOMEM;
->  
->  	i = 0;
-> -	for_each_child_of_node(np, child) {
-> +	for_each_child_of_node_scoped(np, child) {
->  		func->groups[i] = child->name;
->  		grp = &info->groups[*grp_index];
->  		*grp_index += 1;
->  		ret = st_pctl_dt_parse_groups(child, grp, info, i++);
-> -		if (ret) {
-> -			of_node_put(child);
-> +		if (ret)
->  			return ret;
-> -		}
+> @@ -82,6 +88,36 @@ static void nanosleep_with_retries(long ns)
 >  	}
->  	dev_info(dev, "Function[%d\t name:%s,\tgroups:%d]\n", index, func->name, func->ngroups);
+>  }
 >  
-> @@ -1601,7 +1592,6 @@ static int st_pctl_probe_dt(struct platform_device *pdev,
->  	int i = 0, j = 0, k = 0, bank;
->  	struct pinctrl_pin_desc *pdesc;
->  	struct device_node *np = dev->of_node;
-> -	struct device_node *child;
->  	int grp_index = 0;
->  	int irq = 0;
+> +static bool is_rtc_alarm_supported(int fd)
+> +{
+> +	struct rtc_param param = { 0 };
+> +	int rc;
+> +	char buf[1024] = { 0 };
+> +
+> +	/* Validate kernel reflects unsupported RTC alarm state */
+> +	param.param = RTC_PARAM_FEATURES;
+> +	param.index = 0;
+> +	rc = ioctl(fd, RTC_PARAM_GET, &param);
+> +	if (rc < 0) {
+> +		/* Fallback to read rtc procfs */
+> +		fd = open(rtc_procfs, O_RDONLY);
+
+I think I was clear on the previous thread, no new users of the procfs
+interface. You can carry this n your own tree but that can't be
+upstream.
+
+> +		if (fd != -1) {
+> +			rc = read(fd, buf, sizeof(buf));
+> +			close(fd);
+> +
+> +			/* Check for the presence of "alarm" in the buf */
+> +			if (strstr(buf, "alarm") == NULL)
+> +				return false;
+> +		} else
+> +			return false;
+> +	} else {
+> +		if ((param.uvalue & _BITUL(RTC_FEATURE_ALARM)) == 0)
+> +			return false;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>  TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
+>  	int rc;
+>  	long iter_count = 0;
+> @@ -202,6 +238,9 @@ TEST_F(rtc, alarm_alm_set) {
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
 >  
-> @@ -1646,25 +1636,21 @@ static int st_pctl_probe_dt(struct platform_device *pdev,
->  	pctl_desc->pins = pdesc;
+> +	if (!is_rtc_alarm_supported(self->fd))
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+>  	ASSERT_NE(-1, rc);
 >  
->  	bank = 0;
-> -	for_each_child_of_node(np, child) {
-> +	for_each_child_of_node_scoped(np, child) {
->  		if (of_property_read_bool(child, "gpio-controller")) {
->  			const char *bank_name = NULL;
->  			char **pin_names;
+> @@ -209,11 +248,7 @@ TEST_F(rtc, alarm_alm_set) {
+>  	gmtime_r(&secs, (struct tm *)&tm);
 >  
->  			ret = st_gpiolib_register_bank(info, bank, child);
-> -			if (ret) {
-> -				of_node_put(child);
-> +			if (ret)
->  				return ret;
-> -			}
+>  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
+> -	if (rc == -1) {
+> -		ASSERT_EQ(EINVAL, errno);
+> -		TH_LOG("skip alarms are not supported.");
+> -		return;
+> -	}
+> +	ASSERT_NE(-1, rc);
 >  
->  			k = info->banks[bank].range.pin_base;
->  			bank_name = info->banks[bank].range.name;
+>  	rc = ioctl(self->fd, RTC_ALM_READ, &tm);
+>  	ASSERT_NE(-1, rc);
+> @@ -260,6 +295,9 @@ TEST_F(rtc, alarm_wkalm_set) {
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
 >  
->  			pin_names = devm_kasprintf_strarray(dev, bank_name, ST_GPIO_PINS_PER_BANK);
-> -			if (IS_ERR(pin_names)) {
-> -				of_node_put(child);
-> +			if (IS_ERR(pin_names))
->  				return PTR_ERR(pin_names);
-> -			}
+> +	if (!is_rtc_alarm_supported(self->fd))
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+>  	ASSERT_NE(-1, rc);
 >  
->  			for (j = 0; j < ST_GPIO_PINS_PER_BANK; j++, k++) {
->  				pdesc->number = k;
-> @@ -1678,7 +1664,6 @@ static int st_pctl_probe_dt(struct platform_device *pdev,
->  							i++, &grp_index);
->  			if (ret) {
->  				dev_err(dev, "No functions found.\n");
-> -				of_node_put(child);
->  				return ret;
->  			}
->  		}
+> @@ -269,11 +307,7 @@ TEST_F(rtc, alarm_wkalm_set) {
+>  	alarm.enabled = 1;
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
+> -	if (rc == -1) {
+> -		ASSERT_EQ(EINVAL, errno);
+> -		TH_LOG("skip alarms are not supported.");
+> -		return;
+> -	}
+> +	ASSERT_NE(-1, rc);
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_RD, &alarm);
+>  	ASSERT_NE(-1, rc);
+> @@ -312,6 +346,9 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	if (!is_rtc_alarm_supported(self->fd))
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -319,11 +356,7 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+>  	gmtime_r(&secs, (struct tm *)&tm);
+>  
+>  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
+> -	if (rc == -1) {
+> -		ASSERT_EQ(EINVAL, errno);
+> -		TH_LOG("skip alarms are not supported.");
+> -		return;
+> -	}
+> +	ASSERT_NE(-1, rc);
+>  
+>  	rc = ioctl(self->fd, RTC_ALM_READ, &tm);
+>  	ASSERT_NE(-1, rc);
+> @@ -370,6 +403,9 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	if (!is_rtc_alarm_supported(self->fd))
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -379,11 +415,7 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+>  	alarm.enabled = 1;
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
+> -	if (rc == -1) {
+> -		ASSERT_EQ(EINVAL, errno);
+> -		TH_LOG("skip alarms are not supported.");
+> -		return;
+> -	}
+> +	ASSERT_NE(-1, rc);
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_RD, &alarm);
+>  	ASSERT_NE(-1, rc);
+> -- 
+> 2.34.1
 > 
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
-
-Thanks
-Patrice
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
