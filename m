@@ -1,34 +1,34 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ADFA2D;
-	Mon, 20 May 2024 08:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC5F8BEA;
+	Mon, 20 May 2024 09:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716195173; cv=none; b=qZumnMpNXwWxzv7Mkv+2tgAqEK+MENFYPrD8/DKobAUwekmIkiawtz+A405HtZggCnCwS+3FT8FpMbfHwUA/gkYfvyeWPkIEMT9qi1oQaCudjFtTomM5Uxnff4uzp3dSwiMqP2CLOaW3O4fOwzBtDCpS2Vdt5abGNWJhDZze388=
+	t=1716195811; cv=none; b=mFnt8Bd2H/9ekJABp8D8tiv4MCcerGX/wPr4YiO6ww/DIWjfZRv09oF7Qdl5yB+CRayXVVM7UbLDnsR4m6IKF/APeHihqPczF+wBRaMiVcjtsgYtvmBaTYfc9dcdf2I6xAsg0iesXGhbSLKTpcTpOKwJjZaRifPEBevzvncDdP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716195173; c=relaxed/simple;
-	bh=kB21gXzDUVU1T60RrVglQWhc3cVdGIqTogbho9uTI8E=;
+	s=arc-20240116; t=1716195811; c=relaxed/simple;
+	bh=vNIDBF9X86I3eNH3ACbqdxubrgXLfR93QrgLlvkHabM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fLCxQd0VpYcUFNjqTrGn6wXwS/b4mxp4aVnDDuxhEby37niRTCplOTKi2Th+mGyhE3RXQwsHenmcwugVOmfUcRzhvlN0fs3C2plcijLz7LFIHRbhYQzbjOaKIh3peO1pvFxY4IH7qOmqRxVXhBVTKSdCGv49qLesd+VUxr5NzuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qwXyibGQ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ho5AhLgeqrETieKO+wP4TSRuWr9XdBBjlXk0FKPcqa9kpVKpbDPjpsC+rhRZMVsIgqhbMm+qWc18Zx3uzPODnqt3sFG2sD559tMv9Wo2atnANvT6F9oFGDGPoo3UHj1HmoaAuQVWb/OIhI4E9rhUQyDrbsrwB6zKtwvNSkG9RP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=t+Eld+Qe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qwXyibGQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 424AAC2BD10;
-	Mon, 20 May 2024 08:52:52 +0000 (UTC)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="t+Eld+Qe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE033C2BD10;
+	Mon, 20 May 2024 09:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716195172;
-	bh=kB21gXzDUVU1T60RrVglQWhc3cVdGIqTogbho9uTI8E=;
+	s=korg; t=1716195810;
+	bh=vNIDBF9X86I3eNH3ACbqdxubrgXLfR93QrgLlvkHabM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qwXyibGQM5g7lNX4OkG1tLxO+ebJ6UktqOQ9R96pkM4bE4oj17z3VRRGxMCA14Mur
-	 SMdjXog4oVaPyLMJKaXW72IGSI41yIH52zi1x0EqftiLUXWtjA6ynXFd4PIrLLN6kx
-	 M3ZZfaklVX4+6drlPmw/TVTOSP1+LRA/CBbtC1bY=
-Date: Mon, 20 May 2024 10:52:49 +0200
+	b=t+Eld+QeRuyMzXsiBDA6bKkJBWz4UxGITjqpjVyhJ43ySTPuwleWWyZTJm4L8uWgS
+	 jU43YQH2gTFxPUcDfTaHyNz+7cY5F7blavYCX7bGF2D22nuv59D32isDwBBm/L8ucq
+	 PtnTSJePjop2UjQTf5qdDRqbrNojFNhFRivSsFFo=
+Date: Mon, 20 May 2024 11:03:27 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Marc Dietrich <marvin24@gmx.de>
 Cc: linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org
 Subject: Re: [PATCH] staging: nvec: make i2c controller register writes robust
-Message-ID: <2024052033-decibel-clapping-aa9a@gregkh>
+Message-ID: <2024052009-impotent-open-1621@gregkh>
 References: <20240421104642.25417-1-marvin24@gmx.de>
  <334d0a42-9dda-a21b-2650-d33187525eb9@gmx.de>
 Precedence: bulk
@@ -57,7 +57,44 @@ On Mon, May 20, 2024 at 10:11:20AM +0200, Marc Dietrich wrote:
 > I think I answered all remaining comments. Are there any other
 > objections?
 
-It's the middle of the merge window, sorry, will look into this after
-that closes.
+Sorry, just went back and looked, and no, as-is I don't want to take
+this:
+
+> > diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> > index 45df190c2f94..214839f51048 100644
+> > --- a/drivers/staging/nvec/nvec.c
+> > +++ b/drivers/staging/nvec/nvec.c
+> > @@ -570,6 +570,22 @@ static void nvec_tx_set(struct nvec_chip *nvec)
+> > 		(uint)nvec->tx->size, nvec->tx->data[1]);
+> > }
+> > 
+> > +/**
+> > + * i2c_writel - safely write to an I2C client controller register
+> > + * @val: value to be written
+> > + * @reg: register to write to
+> > + *
+> > + * A write to an I2C controller register needs to be read back to make sure
+> > + * that the value has arrived.
+> > + */
+> > +static void i2c_writel(u32 val, void *reg)
+> > +{
+> > +	writel_relaxed(val, reg);
+> > +
+> > +	/* read back register to make sure that register writes completed */
+> > +	readl_relaxed(reg);
+> > +}
+
+This is not an i2c write function, please don't call it that and give it
+kernel doc formatting implying that it is an i2c write.
+
+Name it after this odd device that requires the read to happen, that's
+unique to it, nothing else.
+
+And don't worry about "potential drivers in the future", we worry about
+what we have here today.  You can rename/modify/whatever in the future
+if anything else ever happens.  We can only go off of what we have in
+front of us now.
+
+thanks,
 
 greg k-h
