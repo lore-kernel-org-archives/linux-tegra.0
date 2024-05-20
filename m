@@ -1,304 +1,192 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D014A45026
-	for <linux-tegra@vger.kernel.org>; Sat, 18 May 2024 18:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB6AFC1D;
+	Mon, 20 May 2024 08:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716057075; cv=none; b=M0KsVZ1zk2rGDc60Q140Z+z6wLXLPrdEHb2Eq6030Er2DGq7AMaHJMbEaoc32ZTsWgFHIIbAWmdQr1L6AvBuT1PggSm+1/t3BltauXX/tBPFWsgtohlzmMwLcVw2CKsGlf2Ni45kRLBF6uINqDdtMz9TIPvvt8qrOVVhvRrAOHU=
+	t=1716192687; cv=none; b=GOe0BL8mfTExQbHU6fiPgAMYCogjTur1hqZ4yo6MAGhvCHZue0RQ++WZzN6yTupiCoINImpY+6DrirsNwLkgaJh3IfuUbyxFajMCW+s1/6TQ+OBN7baIgMKfHJciUM6rVh4pFUuKjEZBJfwTjpAR/wnVTRklaHNLdtELUc/aw3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716057075; c=relaxed/simple;
-	bh=UovyayoFkCBfhvPBJdjyyN06YHmJ3IK6iJ5x6At2WNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xk03EqistgO8i5YvduWN0SmlAx0mO9K3QoSj8E6UirBfyM2qynteohwJcgwXcbd5KHN2P/eUD06U+hNbKM7FuL4SKS9yQ0sfB6uif76+8FoWn+ghTuEa5XHpj1lV8ROkV952QMVI/Xr64ku6lk7c/JLKZ9/GrcecU0K9364FYiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dw8oQv1X; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1716192687; c=relaxed/simple;
+	bh=4lednIxVtYVy8GpGMJIcuPPeV6vQOUz9OhOInB64kV0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Y6IOwA3tNRy11+CvUC31GB59kbmiAeKytaCc+00CyxwRZSlaOCu/UuRI1GZ3d+F20cunBU1la3SECnzK3PJfTmv7yhmF+PRg5AXo666zV8FX2LuTW9IwNiAz8OUQLOMW/wTnTP3CgEPvebv8GQJzzrNUEma2Pl46jhlwp+UGabs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b=TvZ8Nx1r; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dw8oQv1X"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1716057072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HUslDr8lu/3XPoveZQzIdjiiCPoNdpQE2z7ygJnsRGk=;
-	b=Dw8oQv1XS9mYQikVw4SaR7TfFqIHlezgWDc+xG1j72i9zgMBJV/t51G+bhgDnIxpxxflCF
-	ukzLv6WAZ0cHi86WX2Wul1b8hoebsaA5Vk53EGVIBRlZE7mUqS3rmrBMR+dP/GNFZRYgPC
-	H4daAwVKJumsr9nsdeWGg+ltC85jeiU=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-689-DuaSambSNHazKL3XNVD8tQ-1; Sat, 18 May 2024 14:31:11 -0400
-X-MC-Unique: DuaSambSNHazKL3XNVD8tQ-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1ec5efb0a33so112911575ad.3
-        for <linux-tegra@vger.kernel.org>; Sat, 18 May 2024 11:31:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716057070; x=1716661870;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HUslDr8lu/3XPoveZQzIdjiiCPoNdpQE2z7ygJnsRGk=;
-        b=OzLo/mVMzzxeJ+jJg/AqaPhA0OkdNZ7GOG8EU5rtcGYSv/nFufIHwLij1BD7z96NeX
-         nrE7pyQY6tb4AfkgCEjUmgO7a4wH88mUCdZmqY9LglWMgVp2ra4LTPY26okMlt0kNV0Y
-         +mt8gkFzxP8j1TgpYEiHSO6hvnt6eF6nu9Tvdu26shIjqBbQBiMLI2kUDnrRW4i6716y
-         nVyWm5S00papyLjAi0YvY/PFh/yDbCgeGfL7a/aJEpUvZ7tngRhY3rkJleHET+beihKO
-         qKxMQhXdVFACeZQPFKbnDbinWjQEjsRUMaOsj3X4F3Qul+VNG76tFx4BMC5o9x+S/3kn
-         aZfg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8r8X4ojMhz0kVm3R8kAntYGZgP1zWlDh+9Jy82YPIQDod2AN+mN1tgYJcyp3LZV0mhORsREMxIw9tE+p5zmd2oirDPXl50alFahw=
-X-Gm-Message-State: AOJu0YweX1y6dAoB70CbYDMixv6Ps5qXh1p9rqca3h5WSiFesXNQyWSC
-	zdG/Dlq/+nzMfBrYsKoPcX01Hn3f9ChQ2RR5hf2tQJeDAMOpidSBrNS+CwPjKQxrDGagwcuq1yA
-	2oawk5IqpaE5AN4sXa84a8/H+xqzGNyfY6yyVE13izDEJQ8POi23P4HwDYlEs
-X-Received: by 2002:a17:903:11c6:b0:1f0:4611:7ee1 with SMTP id d9443c01a7336-1f046117fcdmr334349545ad.57.1716057070276;
-        Sat, 18 May 2024 11:31:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENJgnUhFfuZ9m0f6jtk1LEFx5Lpk8BL4wYT9V+jVDylXhKHomdZjn5zK5BSm3/Spy8KNzESA==
-X-Received: by 2002:a17:903:11c6:b0:1f0:4611:7ee1 with SMTP id d9443c01a7336-1f046117fcdmr334348795ad.57.1716057069534;
-        Sat, 18 May 2024 11:31:09 -0700 (PDT)
-Received: from localhost (ip98-179-76-110.ph.ph.cox.net. [98.179.76.110])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f0f192db3dsm53685585ad.233.2024.05.18.11.31.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 18 May 2024 11:31:08 -0700 (PDT)
-Date: Sat, 18 May 2024 11:31:07 -0700
-From: Jerry Snitselaar <jsnitsel@redhat.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>, 
-	Christoph Hellwig <hch@lst.de>, Vineet Gupta <vgupta@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Niklas Schnelle <schnelle@linux.ibm.com>, 
-	Matthew Rosato <mjrosato@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Jean-Philippe Brucker <jean-philippe@linaro.org>, Rob Herring <robh+dt@kernel.org>, 
-	Frank Rowand <frowand.list@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, iommu@lists.linux.dev, 
-	devicetree@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v4 5/7] iommu/dma: Make limit checks self-contained
-Message-ID: <o7hp34of3rg2fhbzpnbakaxnr24cfdfdrwf6d3hhxdeq4qqisk@6fqlszyvclhs>
-References: <cover.1713523152.git.robin.murphy@arm.com>
- <e28a114243d1e79eb3609aded034f8529521333f.1713523152.git.robin.murphy@arm.com>
- <243d441d-dda8-442a-a495-83bf9725a14c@nvidia.com>
- <48c39306-c226-4e7f-a013-d679ca80157e@arm.com>
- <46fc1b7f-7d10-4233-b089-aa173ad3bbeb@nvidia.com>
- <981c85f3-6d43-4c2b-a440-88bf81a18e55@arm.com>
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=marvin24@gmx.de header.b="TvZ8Nx1r"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1716192681; x=1716797481; i=marvin24@gmx.de;
+	bh=3NfhAAlGGL5bnfia+lgDMGYdaP1U8gjKIdNADZAsnp4=;
+	h=X-UI-Sender-Class:Date:From:To:cc:Subject:In-Reply-To:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=TvZ8Nx1raB223W3VkmSooF7Lj+VMnu57THR8dZUxnLEbgjdYTlZNDNPpH4KcUYy+
+	 I1qJScklcAXwZWHL5x9HCmxbcHPmvX4Uvb7EwfOP0YthIRSqoDJ5wJB+tVUK7alYX
+	 fZRVTGOEc9luDg9BrdSfQ8Mh3Fwavki1v8E2j2VMyJYlWl5IW+kJ2WU7wVH8J3IhD
+	 N/wEsJ40JMjdHdG4GF0Cfj/Py53CKTsKfwspfpbbem0vMy1V9rTLpi35k9sIVA93G
+	 AnB2W/DOb4K7h0zPmMtd1OCGMa1sGI0/Rpx/Dv8rPRIl9ofL8Xp3v7Cs63WlidRWu
+	 fryw3w567bxi1tyQMg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from n5219w05.fritz.box ([109.250.53.23]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N2mFi-1sYVlt2XlM-0139dW; Mon, 20
+ May 2024 10:11:21 +0200
+Date: Mon, 20 May 2024 10:11:20 +0200 (CEST)
+From: Marc Dietrich <marvin24@gmx.de>
+To: gregkh@linuxfoundation.org
+cc: linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] staging: nvec: make i2c controller register writes
+ robust
+In-Reply-To: <20240421104642.25417-1-marvin24@gmx.de>
+Message-ID: <334d0a42-9dda-a21b-2650-d33187525eb9@gmx.de>
+References: <20240421104642.25417-1-marvin24@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <981c85f3-6d43-4c2b-a440-88bf81a18e55@arm.com>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-Provags-ID: V03:K1:iFcfqAbBPLUMeXedLDJRczc7mjr8fzHnZaR0DJZ4W5nxJyW8hC+
+ v/S7MC/XA/ilWcPlUwng63H8ICncdk4wz79nos4aptjiV2R6j+Biv9EqrM1azxd4IPUiqlq
+ 02c5JU29F5bvqgEUEnO6/gR+ILv02a6AFJ/6ISDCYbSnmFDf8yTsOLpJtUcy899drsJcrc6
+ K0AHg/H7VjP4ck9UH3lpw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:QQbpeC2A+l8=;oXBLK8/+lZxfZ/N38Ip3EnfEynl
+ 9yHXJ1fbSpj7iy6VsGXpBOj/NFnZf3KmXllxrs3pXI79rPRA7LxdphpTNNNEcGrjv/aHBzN1M
+ assSNfQ8XWfGuMbqvCg2D0vk2LlVXHk3vq+jJtvsNqL2MYRWjNnBpuhzoOWqrvteydpFvXrKP
+ 0MRHI1t6WIBhz9WXC4DUINchJKILU1jvx1FnAxITX4o+q+m2keizScLDCfYrHlwBS4czcqXDm
+ xaapP3a4AZcAhh+O1O42RE0Ffvtt3IIDDNmZZKPkDcaA1sNR5W5XgnRjjKjjARV5wiSWn1GzB
+ kw0mpBpleH7UxwjgCTL3ZcNqmI2uUv7l6bQ1x4Iw/ysljJEd0wI7KsR6ZGFFrp7/xcs4cBou1
+ wQAkK8CGvVzKWzAKinrnVYXhf0q4ybAzp46OptEVeh0O73xxcIp221Kukm4F8YdcCNwACwqiR
+ bvAm3g+LccR+TrzxqQiS8Wjtv/BIUcy99NAq+NOM4Q6Wht/I9ELD6PAd17Iaf4C6HgV6JSkNN
+ V1qhqdx4S92B1mSucUJxe5T0yCqGbPBt5APmoTVJ47IzH7dlxfkjr2awHDCd6BEFVgwjgXKY8
+ /MumGWdFBsykVUtYGsGZj1WEIPeF/SCxQYPwhy2gLLCE+RR1a5hqMe/itORvwRKi1UC72AeCn
+ f6zkD015Cr6AqGs9F4047Ah9j76hI43iQQgf1k+Y6dsI6Ux/Sq0PIyub7udffpo8T38CoRK+q
+ c+qfP0nW5e7+wmkiVeQfF2fXTKzCWP4pHuv8VoY+bOO1k6sMUbY/+WjsQtvRjnRQk9Hqma75U
+ NV1ix7/jfhdGTFbJKyWR35KkG+c+GO3jCv+IjI+i8a8bI=
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 17, 2024 at 04:03:57PM GMT, Robin Murphy wrote:
-> On 17/05/2024 3:21 pm, Jon Hunter wrote:
-> > 
-> > On 15/05/2024 15:59, Robin Murphy wrote:
-> > > Hi Jon,
-> > > 
-> > > On 2024-05-14 2:27 pm, Jon Hunter wrote:
-> > > > Hi Robin,
-> > > > 
-> > > > On 19/04/2024 17:54, Robin Murphy wrote:
-> > > > > It's now easy to retrieve the device's DMA limits if we want to check
-> > > > > them against the domain aperture, so do that ourselves instead of
-> > > > > relying on them being passed through the callchain.
-> > > > > 
-> > > > > Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> > > > > Tested-by: Hanjun Guo <guohanjun@huawei.com>
-> > > > > Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> > > > > ---
-> > > > >   drivers/iommu/dma-iommu.c | 21 +++++++++------------
-> > > > >   1 file changed, 9 insertions(+), 12 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> > > > > index a3039005b696..f542eabaefa4 100644
-> > > > > --- a/drivers/iommu/dma-iommu.c
-> > > > > +++ b/drivers/iommu/dma-iommu.c
-> > > > > @@ -660,19 +660,16 @@ static void
-> > > > > iommu_dma_init_options(struct iommu_dma_options *options,
-> > > > >   /**
-> > > > >    * iommu_dma_init_domain - Initialise a DMA mapping domain
-> > > > >    * @domain: IOMMU domain previously prepared by
-> > > > > iommu_get_dma_cookie()
-> > > > > - * @base: IOVA at which the mappable address space starts
-> > > > > - * @limit: Last address of the IOVA space
-> > > > >    * @dev: Device the domain is being initialised for
-> > > > >    *
-> > > > > - * @base and @limit + 1 should be exact multiples of IOMMU
-> > > > > page granularity to
-> > > > > - * avoid rounding surprises. If necessary, we reserve the
-> > > > > page at address 0
-> > > > > + * If the geometry and dma_range_map include address 0, we
-> > > > > reserve that page
-> > > > >    * to ensure it is an invalid IOVA. It is safe to
-> > > > > reinitialise a domain, but
-> > > > >    * any change which could make prior IOVAs invalid will fail.
-> > > > >    */
-> > > > > -static int iommu_dma_init_domain(struct iommu_domain
-> > > > > *domain, dma_addr_t base,
-> > > > > -                 dma_addr_t limit, struct device *dev)
-> > > > > +static int iommu_dma_init_domain(struct iommu_domain
-> > > > > *domain, struct device *dev)
-> > > > >   {
-> > > > >       struct iommu_dma_cookie *cookie = domain->iova_cookie;
-> > > > > +    const struct bus_dma_region *map = dev->dma_range_map;
-> > > > >       unsigned long order, base_pfn;
-> > > > >       struct iova_domain *iovad;
-> > > > >       int ret;
-> > > > > @@ -684,18 +681,18 @@ static int
-> > > > > iommu_dma_init_domain(struct iommu_domain *domain,
-> > > > > dma_addr_t base,
-> > > > >       /* Use the smallest supported page size for IOVA granularity */
-> > > > >       order = __ffs(domain->pgsize_bitmap);
-> > > > > -    base_pfn = max_t(unsigned long, 1, base >> order);
-> > > > > +    base_pfn = 1;
-> > > > >       /* Check the domain allows at least some access to the
-> > > > > device... */
-> > > > > -    if (domain->geometry.force_aperture) {
-> > > > > +    if (map) {
-> > > > > +        dma_addr_t base = dma_range_map_min(map);
-> > > > >           if (base > domain->geometry.aperture_end ||
-> > > > > -            limit < domain->geometry.aperture_start) {
-> > > > > +            dma_range_map_max(map) <
-> > > > > domain->geometry.aperture_start) {
-> > > > >               pr_warn("specified DMA range outside IOMMU
-> > > > > capability\n");
-> > > > >               return -EFAULT;
-> > > > >           }
-> > > > >           /* ...then finally give it a kicking to make sure it fits */
-> > > > > -        base_pfn = max_t(unsigned long, base_pfn,
-> > > > > -                domain->geometry.aperture_start >> order);
-> > > > > +        base_pfn = max(base,
-> > > > > domain->geometry.aperture_start) >> order;
-> > > > >       }
-> > > > >       /* start_pfn is always nonzero for an
-> > > > > already-initialised domain */
-> > > > > @@ -1760,7 +1757,7 @@ void iommu_setup_dma_ops(struct device
-> > > > > *dev, u64 dma_base, u64 dma_limit)
-> > > > >        * underlying IOMMU driver needs to support via the
-> > > > > dma-iommu layer.
-> > > > >        */
-> > > > >       if (iommu_is_dma_domain(domain)) {
-> > > > > -        if (iommu_dma_init_domain(domain, dma_base, dma_limit, dev))
-> > > > > +        if (iommu_dma_init_domain(domain, dev))
-> > > > >               goto out_err;
-> > > > >           dev->dma_ops = &iommu_dma_ops;
-> > > > >       }
-> > > > 
-> > > > 
-> > > > I have noticed some random test failures on Tegra186 and
-> > > > Tegra194 and bisect is pointing to this commit. Reverting this
-> > > > along with the various dependencies does fix the problem. On
-> > > > Tegra186 CPU hotplug is failing and on Tegra194 suspend is
-> > > > failing. Unfortunately, on neither platform do I see any
-> > > > particular crash but the boards hang somewhere.
-> > > 
-> > > That is... thoroughly bemusing :/ Not only is there supposed to be
-> > > no real functional change here - we should merely be recalculating
-> > > the same information from dev->dma_range_map that the callers were
-> > > already doing to generate the base/limit arguments - but the act of
-> > > initially setting up a default domain for a device behind an IOMMU
-> > > should have no connection whatsoever to suspend and especially not
-> > > to CPU hotplug.
-> > 
-> > 
-> > Yes it does look odd, but this is what bisect reported ...
-> > 
-> > git bisect start
-> > # good: [a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6] Linux 6.9
-> > git bisect good a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-> > # bad: [6ba6c795dc73c22ce2c86006f17c4aa802db2a60] Add linux-next
-> > specific files for 20240513
-> > git bisect bad 6ba6c795dc73c22ce2c86006f17c4aa802db2a60
-> > # good: [29e7f949865a023a21ecdfbd82d68ac697569f34] Merge branch 'main'
-> > of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-> > git bisect good 29e7f949865a023a21ecdfbd82d68ac697569f34
-> > # skip: [150e6cc14e51f2a07034106a4529cdaafd812c46] Merge branch 'next'
-> > of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git
-> > git bisect skip 150e6cc14e51f2a07034106a4529cdaafd812c46
-> > # good: [f5d75327d30af49acf2e4b55f35ce2e6c45d1287] drm/amd/display: Fix
-> > invalid Copyright notice
-> > git bisect good f5d75327d30af49acf2e4b55f35ce2e6c45d1287
-> > # skip: [f1ec9a9ffc526df7c9523006c2abbb8ea554cdd8] Merge branch
-> > 'for-next' of
-> > git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git
-> > git bisect skip f1ec9a9ffc526df7c9523006c2abbb8ea554cdd8
-> > # bad: [f091e93306e0429ebb7589b9874590b6a9705e64] dma-mapping: Simplify
-> > arch_setup_dma_ops()
-> > git bisect bad f091e93306e0429ebb7589b9874590b6a9705e64
-> > # good: [91cfd679f9e8b9a7bf2f26adf66eff99dbe2026b] ACPI/IORT: Handle
-> > memory address size limits as limits
-> > git bisect good 91cfd679f9e8b9a7bf2f26adf66eff99dbe2026b
-> > # bad: [ad4750b07d3462ce29a0c9b1e88b2a1f9795290e] iommu/dma: Make limit
-> > checks self-contained
-> > git bisect bad ad4750b07d3462ce29a0c9b1e88b2a1f9795290e
-> > # good: [fece6530bf4b59b01a476a12851e07751e73d69f] dma-mapping: Add
-> > helpers for dma_range_map bounds
-> > git bisect good fece6530bf4b59b01a476a12851e07751e73d69f
-> > # first bad commit: [ad4750b07d3462ce29a0c9b1e88b2a1f9795290e]
-> > iommu/dma: Make limit checks self-contained
-> > 
-> > There is a couple skips in there and so I will try this again.
-> > 
-> > > > If you have any ideas on things we can try let me know.
-> > > 
-> > > Since the symptom seems inexplicable, I'd throw the usual memory
-> > > debugging stuff like KASAN at it first. I'd also try
-> > > "no_console_suspend" to check whether any late output is being
-> > > missed in the suspend case (and if it's already broken, then any
-> > > additional issues that may be caused by the console itself hopefully
-> > > shouldn't matter).
-> > > 
-> > > For more base-covering, do you have the "arm64: Properly clean up
-> > > iommu-dma remnants" fix in there already as well? That bug has
-> > > bisected to patch #6 each time though, so I do still suspect that
-> > > what you're seeing is likely something else. It does seem
-> > > potentially significant that those Tegra platforms are making fairly
-> > > wide use of dma-ranges, but there's no clear idea forming out of
-> > > that observation just yet...
-> > 
-> > I was hoping it was the same issue other people had reported,
-> > but the fix provided did not help. I have also tried today's
-> > -next and I am still seeing the issue.
-> > 
-> > I should have more time next week to look at this further. Let
-> > me confirm which change is causing this and add more debug.
-> 
-> Thanks. From staring at the code I think I've spotted one subtlety which
-> may not be quite as intended - can you see if the diff below helps? It
-> occurs to me that suspend and CPU hotplug may not *cause* the symptom,
-> but they could certainly stall if one or more relevant CPUs is *already*
-> stuck in a loop somewhere...
-> 
-> Thanks,
-> Robin.
-> 
-> ----->8-----
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index 89a53c2f2cf9..85eb1846c637 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -686,6 +686,7 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, struct device *dev
->  	/* Check the domain allows at least some access to the device... */
->  	if (map) {
->  		dma_addr_t base = dma_range_map_min(map);
-> +		base = max(base, (dma_addr_t)1 << order);
->  		if (base > domain->geometry.aperture_end ||
->  		    dma_range_map_max(map) < domain->geometry.aperture_start) {
->  			pr_warn("specified DMA range outside IOMMU capability\n");
+Hello Greg,
 
-With this in place I no longer see the mapping fail on the nvidia system.
+On Sun, 21 Apr 2024, Marc Dietrich wrote:
 
-Regards,
-Jerry
+> The i2c controller needs to read back the data written to its registers.
+> This way we can avoid the long delay in the interrupt handler.
+>
+> Signed-off-by: Marc Dietrich <marvin24@gmx.de>
+> ---
+> drivers/staging/nvec/nvec.c | 41 ++++++++++++++++++++++---------------
+> 1 file changed, 24 insertions(+), 17 deletions(-)
 
+I think I answered all remaining comments. Are there any other
+objections?
+
+Best wishes,
+
+Marc
+
+
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index 45df190c2f94..214839f51048 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -570,6 +570,22 @@ static void nvec_tx_set(struct nvec_chip *nvec)
+> 		(uint)nvec->tx->size, nvec->tx->data[1]);
+> }
+>
+> +/**
+> + * i2c_writel - safely write to an I2C client controller register
+> + * @val: value to be written
+> + * @reg: register to write to
+> + *
+> + * A write to an I2C controller register needs to be read back to make =
+sure
+> + * that the value has arrived.
+> + */
+> +static void i2c_writel(u32 val, void *reg)
+> +{
+> +	writel_relaxed(val, reg);
+> +
+> +	/* read back register to make sure that register writes completed */
+> +	readl_relaxed(reg);
+> +}
+> +
+> /**
+>  * nvec_interrupt - Interrupt handler
+>  * @irq: The IRQ
+> @@ -604,7 +620,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev=
+)
+> 	if ((status & RNW) =3D=3D 0) {
+> 		received =3D readl(nvec->base + I2C_SL_RCVD);
+> 		if (status & RCVD)
+> -			writel(0, nvec->base + I2C_SL_RCVD);
+> +			i2c_writel(0, nvec->base + I2C_SL_RCVD);
+> 	}
+>
+> 	if (status =3D=3D (I2C_SL_IRQ | RCVD))
+> @@ -696,7 +712,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev=
+)
+>
+> 	/* Send data if requested, but not on end of transmission */
+> 	if ((status & (RNW | END_TRANS)) =3D=3D RNW)
+> -		writel(to_send, nvec->base + I2C_SL_RCVD);
+> +		i2c_writel(to_send, nvec->base + I2C_SL_RCVD);
+>
+> 	/* If we have send the first byte */
+> 	if (status =3D=3D (I2C_SL_IRQ | RNW | RCVD))
+> @@ -713,15 +729,6 @@ static irqreturn_t nvec_interrupt(int irq, void *de=
+v)
+> 		status & RCVD ? " RCVD" : "",
+> 		status & RNW ? " RNW" : "");
+>
+> -	/*
+> -	 * TODO: replace the udelay with a read back after each writel above
+> -	 * in order to work around a hardware issue, see i2c-tegra.c
+> -	 *
+> -	 * Unfortunately, this change causes an initialisation issue with the
+> -	 * touchpad, which needs to be fixed first.
+> -	 */
+> -	udelay(100);
+> -
+> 	return IRQ_HANDLED;
+> }
+>
+> @@ -737,15 +744,15 @@ static void tegra_init_i2c_slave(struct nvec_chip =
+*nvec)
+>
+> 	val =3D I2C_CNFG_NEW_MASTER_SFM | I2C_CNFG_PACKET_MODE_EN |
+> 	    (0x2 << I2C_CNFG_DEBOUNCE_CNT_SHIFT);
+> -	writel(val, nvec->base + I2C_CNFG);
+> +	i2c_writel(val, nvec->base + I2C_CNFG);
+>
+> 	clk_set_rate(nvec->i2c_clk, 8 * 80000);
+>
+> -	writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
+> -	writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
+> +	i2c_writel(I2C_SL_NEWSL, nvec->base + I2C_SL_CNFG);
+> +	i2c_writel(0x1E, nvec->base + I2C_SL_DELAY_COUNT);
+>
+> -	writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
+> -	writel(0, nvec->base + I2C_SL_ADDR2);
+> +	i2c_writel(nvec->i2c_addr >> 1, nvec->base + I2C_SL_ADDR1);
+> +	i2c_writel(0, nvec->base + I2C_SL_ADDR2);
+>
+> 	enable_irq(nvec->irq);
+> }
+> @@ -754,7 +761,7 @@ static void tegra_init_i2c_slave(struct nvec_chip *n=
+vec)
+> static void nvec_disable_i2c_slave(struct nvec_chip *nvec)
+> {
+> 	disable_irq(nvec->irq);
+> -	writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+> +	i2c_writel(I2C_SL_NEWSL | I2C_SL_NACK, nvec->base + I2C_SL_CNFG);
+> 	clk_disable_unprepare(nvec->i2c_clk);
+> }
+> #endif
+> --
+> 2.43.0
+>
+>
