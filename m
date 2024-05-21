@@ -1,156 +1,131 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E718941C63;
-	Tue, 21 May 2024 06:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFD360279;
+	Tue, 21 May 2024 09:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716273843; cv=none; b=hByU3+wNTgnJJxYBykBjO7OJM/OcsiThj1fd7HKyiWDDQjvvrh6Z/l1W5dfAPfOy7jTpuh61pXQe9yQgxVe4vbND4L3fllKVGeBpkzgk47rbEGnfU8/V/eWYp2mJ3VW9s2Pg5aLc8JxsewXktdFElm6qRI3l5d7kNgDgfIvkm+A=
+	t=1716283484; cv=none; b=NSpiOsJoB60THvO4kBxj/ADKvYFMYOWPCPXLZ6HvvVcXEy4kSdWWpaEiHY98eujWOESyYtqNPU5tn+gJDrc4GQq7YlnKY+Rnrinp0dCXidiWce8SRY1Lb2e+BFIAlpPkMqinEXjXAclsZnmG1RHeCz8Iose65WgNQNyFt5YJjLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716273843; c=relaxed/simple;
-	bh=eck8LkiBmFIk3D6cjAJWmIkNyfD/MCEdYcx9mI2Wz8U=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cKDve+HkMDHCR1OoFAkwilNEbNfxuKZsxzmqXl4T+BTpQ04CfxFVcTyT1j4O1lfPtI2gyobv61pp3hTDYjLdwJWtyiSlF7kuiG0+D1yz5KOIaHJfuZV9yuSIeJHiGJU2UU2yWd8IIURliE6y422Ngly8gd0fKVogzKttW/79Kdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NAJbt7a5; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1716283484; c=relaxed/simple;
+	bh=jOR72qLIFTZ/1R7L4DUIJmbfyfVXT4jDz+9hdqwOnQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SSHZiZcuuDXsize4h68MVgyBHJ0rjbGM7x6TrHLZwh/+Or2UyTZUguVp1ECF4Pve3G4JekksS9L2cag928mYppCTSoDfuPyEDMoZPC/3FMMdb1WCo7973kLMYhZ2VNUS/JNkOUat99Hpa1/2b7oL80wuRfiQF5PVN/O/WEF6Qc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G16UvPy1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NAJbt7a5"
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44L6gmm0011241;
-	Tue, 21 May 2024 01:42:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1716273768;
-	bh=+ZfOONRU6juW9FS/6TxFdABLBWxqz7rqnKx7hWQStMk=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=NAJbt7a5DoTR+zca5xHgtqfKuYpVEVUoncFcDAa9rnhd0cNDBfAjwlhHiy9tha2Vb
-	 g+Gb2EgkITFo0mgOhhaULzAGqx7RAEEAtxvOqpq8731MIkkNr26sB2h4ivC48fprL6
-	 wDMkTrcTcJlygDX4vsPSR2HaVHGcYvfXEn8aKLKI=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44L6gmJG015907
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 21 May 2024 01:42:48 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 21
- May 2024 01:42:48 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 21 May 2024 01:42:48 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44L6gldU029813;
-	Tue, 21 May 2024 01:42:48 -0500
-Date: Tue, 21 May 2024 12:12:46 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Onkarnarth <onkarnath.1@samsung.com>
-CC: <bhelgaas@google.com>, <helgaas@kernel.org>, <vigneshr@ti.com>,
-        <s-vadapalli@ti.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <robh@kernel.org>, <yue.wang@Amlogic.com>, <neil.armstrong@linaro.org>,
-        <khilman@baylibre.com>, <jbrunet@baylibre.com>,
-        <martin.blumenstingl@googlemail.com>, <thomas.petazzoni@bootlin.com>,
-        <shawn.guo@linaro.org>, <lchuanhua@maxlinear.com>,
-        <srikanth.thokala@intel.com>, <songxiaowei@hisilicon.com>,
-        <wangbinghui@hisilicon.com>, <manivannan.sadhasivam@linaro.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <hayashi.kunihiko@socionext.com>, <mhiramat@kernel.org>,
-        <pali@kernel.org>, <toan@os.amperecomputing.com>,
-        <daire.mcnamara@microchip.com>, <conor.dooley@microchip.com>,
-        <marek.vasut+renesas@gmail.com>, <shawn.lin@rock-chips.com>,
-        <heiko@sntech.de>, <nirmal.patel@linux.intel.com>,
-        <jonathan.derrick@linux.dev>, <kishon@kernel.org>, <jdmason@kudzu.us>,
-        <dave.jiang@intel.com>, <rafael@kernel.org>, <lenb@kernel.org>,
-        <mahesh@linux.ibm.com>, <oohall@gmail.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <r.thapliyal@samsung.com>,
-        Maninder Singh <maninder1.s@samsung.com>
-Subject: Re: [PATCH v2 1/1] PCI : Refactoring error log prints for better
- readability
-Message-ID: <2227b0ed-a57f-4bca-8f3e-721bc2e2055a@ti.com>
-References: <CGME20240521061553epcas5p1c7db70b37a70f599face675bc4dedda9@epcas5p1.samsung.com>
- <20240521061528.3559751-1-onkarnath.1@samsung.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G16UvPy1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F726C4AF07;
+	Tue, 21 May 2024 09:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716283483;
+	bh=jOR72qLIFTZ/1R7L4DUIJmbfyfVXT4jDz+9hdqwOnQo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G16UvPy1o/OSTi65gBTrTm2ySmNTyueORZGvpDL2GmZb0Rj1iszQm8ty63EUwfEgf
+	 ISHeAsq+V3ccTU3oir4H3Pl2muXc/xOjjO14FaeyJ+o7Elq3KZs4EpkwmpfPVdwXCJ
+	 AoEX/6qbu/Iw8q8LyeKDMh5ab6XuORwtVFMz+7e/3GfIJgFUf1+2j81+EsEyRUaVBq
+	 2CLvsEyiB1DQ/lxUNzKoba673j1X6VQFiV0+mJyQQde7XaF+ZnakRQy7EGZ8TqySzh
+	 YMmikC7fLkWPbaZ6CP1vU4ubBR7DsgBfhDc0/jJ/7NRBtryB6B8LrMMc5Sq491D6Hi
+	 6U29iQIwoCuiQ==
+Message-ID: <918ca28c-2498-4c98-a257-33e828134087@kernel.org>
+Date: Tue, 21 May 2024 11:24:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240521061528.3559751-1-onkarnath.1@samsung.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: dma: Add reg-names to
+ nvidia,tegra210-adma
+To: Sameer Pujar <spujar@nvidia.com>, vkoul@kernel.org,
+ thierry.reding@gmail.com, dmaengine@vger.kernel.org
+Cc: jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mkumard@nvidia.com, ldewangan@nvidia.com
+References: <20240520122351.1691058-1-spujar@nvidia.com>
+ <20240520122351.1691058-2-spujar@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240520122351.1691058-2-spujar@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 21, 2024 at 11:45:28AM +0530, Onkarnarth wrote:
-> From: Onkarnath <onkarnath.1@samsung.com>
-
-nitpick: In $subject:
-s/Refactoring/Refactor
-to follow the convention of using imperative mood.
-
+On 20/05/2024 14:23, Sameer Pujar wrote:
+> From: Mohan Kumar <mkumard@nvidia.com>
 > 
-> As %pe is already introduced, it's better to use it in place of (%ld) or
-> (%d) for printing error in logs. It will enhance readability of logs.
+> For Non-Hypervisor mode, Tegra ADMA driver requires the register
+> resource range to include both global and channel page in the reg
+> entry. For Hypervisor more, Tegra ADMA driver requires only the
+> channel page and global page range is not allowed for access.
 > 
-> Error print style is more consistent now.
+> Add reg-names DT binding for Hypervisor mode to help driver to
+> differentiate the config between Hypervisor and Non-Hypervisor
+> mode of execution.
 > 
-> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-> Co-developed-by: Maninder Singh <maninder1.s@samsung.com>
-> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
-> Signed-off-by: Onkarnath <onkarnath.1@samsung.com>
+> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
 
-Thank you for the patch. LGTM.
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline), work on fork of kernel
+(don't, instead use mainline) or you ignore some maintainers (really
+don't). Just use b4 and everything should be fine, although remember
+about `b4 prep --auto-to-cc` if you added new patches to the patchset.
 
-> ---
-> Suggested by Bjorn Helgaas in below discussion
-> https://patchwork.kernel.org/comment/25712288/
-> 
-> v1 -> v2: Added suggested by tag
-> 
->  drivers/pci/bus.c                             |   2 +-
->  drivers/pci/controller/dwc/pci-dra7xx.c       |   2 +-
->  drivers/pci/controller/dwc/pci-meson.c        |  16 +--
->  drivers/pci/controller/dwc/pcie-armada8k.c    |   4 +-
->  drivers/pci/controller/dwc/pcie-histb.c       |   6 +-
->  drivers/pci/controller/dwc/pcie-intel-gw.c    |  10 +-
->  drivers/pci/controller/dwc/pcie-keembay.c     |   2 +-
->  drivers/pci/controller/dwc/pcie-kirin.c       |   6 +-
->  drivers/pci/controller/dwc/pcie-qcom-ep.c     |  18 +--
->  drivers/pci/controller/dwc/pcie-qcom.c        |  18 +--
->  drivers/pci/controller/dwc/pcie-tegra194.c    | 132 +++++++++---------
->  drivers/pci/controller/dwc/pcie-uniphier-ep.c |   2 +-
->  drivers/pci/controller/pci-aardvark.c         |   6 +-
->  drivers/pci/controller/pci-ftpci100.c         |   2 +-
->  drivers/pci/controller/pci-tegra.c            |  86 ++++++------
->  drivers/pci/controller/pci-xgene.c            |   4 +-
->  drivers/pci/controller/pcie-microchip-host.c  |   2 +-
->  drivers/pci/controller/pcie-rcar-host.c       |  14 +-
->  drivers/pci/controller/pcie-rockchip.c        |  34 ++---
->  drivers/pci/controller/vmd.c                  |   2 +-
->  drivers/pci/doe.c                             |   4 +-
->  drivers/pci/endpoint/functions/pci-epf-mhi.c  |   8 +-
->  drivers/pci/endpoint/functions/pci-epf-ntb.c  |   2 +-
->  drivers/pci/endpoint/functions/pci-epf-test.c |   4 +-
->  drivers/pci/endpoint/functions/pci-epf-vntb.c |   2 +-
->  drivers/pci/endpoint/pci-ep-cfs.c             |  12 +-
->  drivers/pci/endpoint/pci-epf-core.c           |  16 +--
->  drivers/pci/hotplug/acpiphp_core.c            |   2 +-
->  drivers/pci/hotplug/pciehp_core.c             |   8 +-
->  drivers/pci/hotplug/shpchp_core.c             |   4 +-
->  drivers/pci/of.c                              |   6 +-
->  drivers/pci/pci-driver.c                      |   4 +-
->  drivers/pci/pcie/dpc.c                        |   4 +-
->  drivers/pci/quirks.c                          |   2 +-
->  drivers/pci/setup-bus.c                       |   2 +-
->  drivers/pci/slot.c                            |   4 +-
->  drivers/pci/vgaarb.c                          |   2 +-
->  37 files changed, 227 insertions(+), 227 deletions(-)
-> 
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time, thus I will skip this patch entirely till you follow
+the process allowing the patch to be tested.
 
-[...]
+Please kindly resend and include all necessary To/Cc entries.
 
-Regards,
-Siddharth.
+Best regards,
+Krzysztof
+
