@@ -1,193 +1,316 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2081.outbound.protection.outlook.com [40.107.220.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B06C17578;
-	Fri, 24 May 2024 08:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716537708; cv=none; b=lEug3JvuIRaxbHiam6rT8wc8DXjOS1inmTHYGkHbGbrTBri45CC74TPW8Xu561lFnjXoJJ0iIcwAfgRg1i1vfa39SexiXUP+UXIV23fpz+jS7DHlkknKt2hg3d5RSJtCP2wNMJh79XCCRBM0ktL/Ol9uTEEIcgB96btlA4Npx9g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716537708; c=relaxed/simple;
-	bh=SKY3VRl+bMcbZGIWvSO5VX4gbnQYaFgj0+jNolM/xz4=;
-	h=Content-Type:Mime-Version:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=lAmFresUPdK1CzO02ehHgsB3jzhJzrP4VAMFOGinG1KzurqyRz0Eenu5w2IrqF3LagzPv4Idwepwp8oBH97I1fa2qQ2JsGMnrpu801j0yspe6GJyPOMvxjKetr0nB98fbKzVVT18rKv/MIC8sj/09lUlt1vQi/E93ON0j9FRq7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZjwPQTzk; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167E11E49E;
+	Fri, 24 May 2024 12:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716554387; cv=fail; b=ElC8AjUc0ZAR23Js4Ra47epdVoSqVqbZ2gVJCJIE8HeJgiUBwEMaEpttQrya+TsVdsVZhuESuD0945sRyLtbq5/ogmbAE1BBHJCyv/FEshU5x6n92TQ0KxbNFDTaB4Asr54a9M6C+OGjsYjH8/+XP72dNX0sqluYyAF+crPoFFw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716554387; c=relaxed/simple;
+	bh=ALqXJJLX4KnEQHj/Vp3yMdHCo/QbEpLyISjLsGOx0Zk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Uu69K3d0J3ntVoGL+MB6X2R8+ZHJvztdKJO59BOQrdoLdHg6UZoxuihWV0L9YOH4IETPukBOmKhl5EboxKsWKu7uCSlFgu0tvJ/Tymtz2sG6r+UuBB7Wd3ZQd89Rtn++c8wdW84e9ymPIU3agvwSUc+brdy1xzaU04hSLKHYOl8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nw4lbf8c; arc=fail smtp.client-ip=40.107.220.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZjwPQTzk"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4202ca70318so59662715e9.1;
-        Fri, 24 May 2024 01:01:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716537705; x=1717142505; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xUZEtBZTSSESf71yCpejIBGUuWcjhkuyzTnO6DQP9Lc=;
-        b=ZjwPQTzkWpnq0PA+seElYZ2wNPS9WAqpF4G7Rw1kIBHy1IL7xjn1HYScZ6xeo38y09
-         j8UCsjHEaqIWDn0FNJ4l1Ac2q8D7Xvyw5uhWKzrawB9OyDQxJcidOQ7Xo+EF9UtODnWr
-         KUV/bAlmFSrxEsWN4hvbXM+nAExrTgZ3ibIV0Rw14lhzvJlcxVJ7/CY3JcGcR6eqymZr
-         TNU00LPrLRdvtHL/AVKExwL3vWVv6NmxFCsJ5/wCrdHBNU6D/56VLV2MyXji8VzrPOLX
-         nvmZp8orUhYuivmRmzXXf7PDujzA4jTHEYKY6M9f0HphYRlVsl6xpYuzaQRJTYw/wCmD
-         +JJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716537705; x=1717142505;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xUZEtBZTSSESf71yCpejIBGUuWcjhkuyzTnO6DQP9Lc=;
-        b=HXXGG/6WZ5MINKCosZQkOyA+dKgsTYv5n/HuDvWtPa2RRoZUwpFLIvRKhOVs780wtl
-         HbxCoqgLY+5Wzinw1nknaInZw89MjtXjMeIh5V+fy10Qd/RPuOSoV3qtLl3dcXz/wYK2
-         +KfPqjdRFCZIosrSXEzMnoI30cG0AFI7AusVOEqcCKX4KoNdEpva1+Lk4HF3YD7gBqYo
-         G2Eu0Yi4DBt5lAWXYBwSxt9olTT/Mf9StCYR2YNRHh1ZYciHSelot92y3/4niOkFAJML
-         QiSOmke20QbDh5DYPsx/CoaCfDDLUgw4/jSdt4q7UcC6IxBGkZqWqtMa1MwBZTd65ih1
-         19Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4O6YtWs6DHLugok5R7MhCIy2FbIMWs2yeL6HJ22/Sd+Lmuv9LnxCcGiNCjZoxyhs1SUGGnnwYUFYFmftJtEino9/m5biH4m63f2SMKH5o57WLvPbjPWyjmjqsn3F6pk5uhj3j0ASUkmcglGGJzm9QUbdQrbqIpm9jSd4NwBxYFf9et9vvLexz0NUBdPwiqkUiIvKc/MeP1461uzKNZzzKd6kBbeDp+7gZrhNf/Fspaw2oBgfStQMEHttukKkUbRSEemgJIfzxoWpYxNBZpOPUIABOrP3X
-X-Gm-Message-State: AOJu0Yx3ck75w3reM/KmshBx2pmQoGBG8TFCt1stf+6u5u5U3R/QKCwp
-	++/eC6SnKrkSCn0eCALPHHBVrWOLV8pTmT5K51hIwgtT8RAK4fTd
-X-Google-Smtp-Source: AGHT+IEez6MoiosPjUNo30HprrvAuJWApsgOJu0yXmAphaccvJr1e0LN+Dvwto5+6abdUbvgubrc5g==
-X-Received: by 2002:a7b:cd94:0:b0:41a:f76f:3362 with SMTP id 5b1f17b1804b1-421089d3927mr10443355e9.21.1716537704679;
-        Fri, 24 May 2024 01:01:44 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42100fadcabsm45671125e9.35.2024.05.24.01.01.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 May 2024 01:01:43 -0700 (PDT)
-Content-Type: multipart/signed;
- boundary=fb8b70f1c41e009f374399bb3450b2fa3c696c750a469b66dabbee56955e;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nw4lbf8c"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IlE3kbUCkWkvKZBFIWUTMglk55TAgD3t5gZNoUwMcMMe0HpDtg4BUzEa6/c2viyx/Z/NQ7UWqnGnkRCVBrtfw6mzRWMrhoug0WM+EE1BLcZBzQk+QtxfWm6cdXW/lP0Ip5iwegvX/eGNL+2BDSRFnNFYKdTEsUhw9GEWMoX3/2GpIVm8cNKXCoR1GK83R+gKaQCkluEN9fMaNpOureaai3rESk7jMDG65FXlyJhrahKEvJecx+AuPrcdpBasGtMzTNz5yOcns5R3dMid6jigOMdwgHPGWpKuNDTP002C7D/6HVpgZWXGT5NADWDkYONpxlWsb5XbZU04LfUG0pSzbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qHRD1soQQ0eUi1Lo2jj/c7D3bPfXgbWqs0zCGU0SCxU=;
+ b=Gr30JILAN4JEU4ynMqenvhFbevzf9Eoo6mVRX/Y2PjPZmtZr4mUESSgmR/H9ZrGpWc9HwfWB2m0CWPUMqOAaBLr5a+71xGEinejfJQ05aDK0SD6hhS5WL6AR7t/Y7KdLMJeA/UAMcuVreSPBRotSU9rjGjTA9vVJyrO4CoGzB3Ew/l99e8dwtrojrt+yT4Ya/msk0ft47iSIaAz9Y9vSY5lPo1qMztBG9VK6HaI+zTEoWGCJNUJEDR+sx4A9vu52sjuULbG0u6XnEcSyhQ9BxdPttAAQk9DPp/qW37/45jJzGF5dEz0avf9CplG8aZWupahBfnN6kIeJj6zEKFK54w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qHRD1soQQ0eUi1Lo2jj/c7D3bPfXgbWqs0zCGU0SCxU=;
+ b=nw4lbf8c03fBt5PMRjFXwFZvbci1PZl7rqzkAUuG9jLv4ayddDRB3zojBgBP6mnuLVh89xiECk4NlDJNresfCjbAdq4ofAji2HeVAYEvCfAf4J89H+0B76o+J9789G+uDWYGZ7bER+Hv9UxPxAcv+U/FWpCOjlhMZ/fXsQCD3B9Chib4NdGVojI4mf/kT+exwlsvBMkg9bW4xMK21V43QIIEuz+WFfFMXO7lAkPc1lghJQRmtyiow2yww5KIe6MohKaljhsDX3Rmj+YYWtItVa16To8TNHe5fDt3bj2hQPq0vyNXRd/2UkkMhA8+GKF2yVINZHwoiB/LObawa5rHyQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB7426.namprd12.prod.outlook.com (2603:10b6:510:201::18)
+ by SN7PR12MB7417.namprd12.prod.outlook.com (2603:10b6:806:2a4::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.19; Fri, 24 May
+ 2024 12:39:42 +0000
+Received: from PH7PR12MB7426.namprd12.prod.outlook.com
+ ([fe80::6fdd:1491:4d83:ac33]) by PH7PR12MB7426.namprd12.prod.outlook.com
+ ([fe80::6fdd:1491:4d83:ac33%4]) with mapi id 15.20.7611.016; Fri, 24 May 2024
+ 12:39:41 +0000
+Message-ID: <2a349725-72cf-45e2-9ca2-5a8b153a6fae@nvidia.com>
+Date: Fri, 24 May 2024 18:09:30 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] iommu: Optimize IOMMU UnMap
+To: Robin Murphy <robin.murphy@arm.com>, will@kernel.org, joro@8bytes.org,
+ linux-arm-kernel@lists.infradead.org, Rob Clark <robdclark@gmail.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>
+Cc: vdumpa@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com,
+ jonathanh@nvidia.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240523031935.90856-1-amhetre@nvidia.com>
+ <6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
+Content-Language: en-US
+From: Ashish Mhetre <amhetre@nvidia.com>
+In-Reply-To: <6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN3PR01CA0036.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:97::15) To PH7PR12MB7426.namprd12.prod.outlook.com
+ (2603:10b6:510:201::18)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Fri, 24 May 2024 10:01:42 +0200
-Message-Id: <D1HPTY9MKVCF.WZDYWSJUWFYM@gmail.com>
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Krishna Yarlagadda"
- <kyarlagadda@nvidia.com>, <linux-tegra@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-i2c@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Cc: <jonathanh@nvidia.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <corbet@lwn.net>, <andi.shyti@kernel.org>,
- <wsa+renesas@sang-engineering.com>, <ulf.hansson@linaro.org>,
- <adrian.hunter@intel.com>, <digetx@gmail.com>, <ldewangan@nvidia.com>,
- <mkumard@nvidia.com>
-Subject: Re: [RFC PATCH 03/11] soc: tegra: config settings binding document
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240506225139.57647-1-kyarlagadda@nvidia.com>
- <20240506225139.57647-4-kyarlagadda@nvidia.com>
- <29e26d22-04b3-47ee-ba70-9f4eb77326f7@kernel.org>
-In-Reply-To: <29e26d22-04b3-47ee-ba70-9f4eb77326f7@kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB7426:EE_|SN7PR12MB7417:EE_
+X-MS-Office365-Filtering-Correlation-Id: b229d7d8-207d-4f63-3ace-08dc7bee9517
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WHNsVlFZRlZRZHZlVWp1cWw2WHVLd1VDelpmMk9vQk14a0F1MFF3TkF4VzBB?=
+ =?utf-8?B?bCsyOCswRGQyQVlhR3MrcUVwVm9uS1dLMUhWQ1lNYUcwYi80eVNHN3plMXgx?=
+ =?utf-8?B?UEh0aWxid1FlRFREOUZRV2hWUGxyWWt6Mzh5bzZDeVp6TG8rSGtEZVZTLzhR?=
+ =?utf-8?B?Zm9XZy9yU0RHS0ZHYUthQmdCKzZEZmJuOEs1RGtuUXgxNHRpRWxpRzg3VXNk?=
+ =?utf-8?B?SDE1WVUvSGdFODY3Unk4dVltNlBpSjlaREdISWZaZTYrYlpnUEY0bDR3L3h1?=
+ =?utf-8?B?UWVlZVJsZ3k4ejBhSlp5ZXQ5SXpHa2xYM3lXYWJxLzRWV2RneFcxMlBnaHYy?=
+ =?utf-8?B?NXVnQmE0RUgrZnlMTUNYZ0NhMW9LWG9OWjFwbzVNaTNhSllTZ1dvQXdIOEZz?=
+ =?utf-8?B?QkxYN1N2NDdTQXBwbGVYclRiZ3ZoUEFBY05FNW5OZDhFOXQyekpzb0NCc0tV?=
+ =?utf-8?B?bEZ1ZVd3RElqT1RxdEc1bm5ENXBtTEswTTg4T243cHQvTFh2UlJyWFFteTNw?=
+ =?utf-8?B?cHNsSEhvYzBjV2FYM0owMGpvMFZZWS9iSlhocEhWVmUxcFZpbGRFQzVUTGNu?=
+ =?utf-8?B?UzFGSzd4Sy9MUGlXZ0hSYmRjVmhCbHA2MUdjOG5xRFU2a0ZvZktnVFk5ZC9C?=
+ =?utf-8?B?NHpUbEFpL3FoeFFudWduUWM5Z2U4OUlkbmwwVlNqUTZBUVFaZmk4OVBOWTg4?=
+ =?utf-8?B?WTlWOXdTQlo5bkFwTXBtUGFkeHR5amFTOHhwS0FJQmxEQjN2Q292Q0d6Kzln?=
+ =?utf-8?B?KzVsaW03V2krVTRqR1FxSEtNSFlEUUJOanJBZGF4SHVRNzlhM1F1ckxFL3Rk?=
+ =?utf-8?B?YlpNUm1UWWhjVXdLZlFtY0F3RDJncWNuVjJRL0RIajJjL0pLSkNNWlNqSk1W?=
+ =?utf-8?B?QVo1VjZJejFWSitOOGFVTjVWa293MmFORnBpSXBZTWJldG02K1FTRHMwdzI0?=
+ =?utf-8?B?d05DOUpqdmdNaXM3RzN6MnJ0eEZ5MDh6VFVuaUNReHlrQ2lQYWFEMlJwWnBp?=
+ =?utf-8?B?a20xbjY4MGVHZ0creWVXT2ZrUlhrYzM3L25OZVRSelIwaWVNV210NmNiU2ZP?=
+ =?utf-8?B?NHkyR1hoa1M0aHFIVlJQNXRUanNoZm92VWxmeFRuckhlSEhLQ1pRMGFhNnA3?=
+ =?utf-8?B?R0pvRGFFV09nN3IyKzExU0JYeTFvSGZ1bTBqSVVLOHk0UEpRaFRjUjdvbElh?=
+ =?utf-8?B?K0pjVkx3VCtxeUdGd2VtUTY1ZXZhekNpaGQ5ZVZtT0c5TmtsMFl3c1BVZlcv?=
+ =?utf-8?B?MWRvekZYT0Z4ZmhHVTV1T253QVY3TWJyWDI2TlBxdjEvNXFUV2V0b0puU2lr?=
+ =?utf-8?B?ZHl4RVNwWlBkTGgzeWc5d292OE1haG1NVmJUZ1R4ZFBta0JrUVNzUU1pSmxz?=
+ =?utf-8?B?MDJIZGtUd0tEU0R6d2FLeExKUm9NenZvcUgvVytReUxURmlSVWl6ZHIrMTFI?=
+ =?utf-8?B?SlNpYlhvN2lMVW5GZk1CMWQ4ak0wK09tQUR2a0NmTnNXZEdWSDRQbFM1RkJG?=
+ =?utf-8?B?RVJycnprRnlDR1pzQlRiVjhBMWdaZkZRUnoxdlBjaXIwUGVFK0xycDV5Y3VY?=
+ =?utf-8?B?eGFaeHExZTBSc2o2Z0swOTFpMUhIOGloUStiZGFsb3huVmxkajdPMVc1K0th?=
+ =?utf-8?B?elJ0d1ZZZzc3Mk1reVBFZ05CaGJMOXlTSTAwVUx1NDhlYytmbnF6TXd2bEtK?=
+ =?utf-8?B?YWN2cHhUSXRNWENSbVo0czBSNmIwSjZKcGlLTkExQ0tDWnZ6cm9kY21nPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7426.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YU1ad1NrUWIwU2dHOFhTZU92TGc5ZFVtVmREZmpIaG5JeXpWRml0bEZsbHMw?=
+ =?utf-8?B?R2JuaHl1NUdBcDRhVzNISGc2OWdrUnlzMTBPRmhsbVlmMnp5NktCdjY4Y0t5?=
+ =?utf-8?B?ZUlnVGV1V0JoVEFNYUp5a2hTUnpsSzF4SEx4NkhzeFBFOCtXYkpEc2QyNlFU?=
+ =?utf-8?B?R1QvQTQvY0ZGZExndmxuNVUzUmRjMGJ6SzhuUzBFaU8zVmRpWDEyUXE3UUQ5?=
+ =?utf-8?B?RGhhaUVDUXpnN3hYUXlwWGxaK3llcUdTaG5qLzBVMEs5VFZkTUUzNDF4UDd2?=
+ =?utf-8?B?eEZjYjZGV2pRbXlaSmJtc0ZaNDc5NGltNFpBV1VtYjhvUURTRzk5b1dXbWty?=
+ =?utf-8?B?ZGRIMnNkRUlhSG9xM3VRMmdvTjdUalB0dW1ZSUhFTXNJUFUybzY3cTNYbUdR?=
+ =?utf-8?B?VFlCZEZ0Q2xLaDVza3J1Z2ErTERJZkpBMy9MZlZQOEVMUEY0czU4bEtFTnIy?=
+ =?utf-8?B?cGF6VU0zQndUUUEyQ1pBRkJRYWl5akwwVUQ1RGVITWV2ZnBIQS9QemZkMUQv?=
+ =?utf-8?B?TktMY2tOVGZkNWRwZXhGYjF4NlBHVnhuS2NJTG1IdWwxb2VjRUpiYXN2WEFR?=
+ =?utf-8?B?N3VnWXIxdzVFNnpLWXZhaDU1dUJTL2JxRHRndmtDN0xEZDl6a3QyZ1dqaU9T?=
+ =?utf-8?B?eWRYc2QxYlF5SkxvNm4zQVdYK1Z5dUxBeGxoaGYwVU5QY3l0VzNTaVc0NTJn?=
+ =?utf-8?B?OUdKQlNGc3B5NW9EYVZxQUdFdEgrZ3AzeVEreXdPWnhVa0NNN1Z3NDRqaVdM?=
+ =?utf-8?B?empRa0ZpZUNYMjM4OFJLcGUrY0RxNElGcFNuaUF4cngxeENMU0dveEpZVUdN?=
+ =?utf-8?B?bWdMVkxRRlpEOEpLU2dkQVJVa0prQnc0LzloaWdaYkFmdFo0U29CRHpobnRJ?=
+ =?utf-8?B?S2ptaWpVekpwYmhna2dqNmtPVGhjR1FIczByemp5Yml6VmtYYlcrV2FNZmoy?=
+ =?utf-8?B?TnY2Z2VZOEFIeXFoVjlKeHhMR2s3MWM1UzZHYTZWQ0ZVM1JBb28rREd5b1RU?=
+ =?utf-8?B?cWN2OVJ4V1dmVDY2MzNXY0FINjNMYmVKWExKQ3k2Ymc3cmhHc0ZMN1RuSkxh?=
+ =?utf-8?B?eEV0b2hTWjM5RDdzMlNxd0EzaUNNUEdDZi96cXRkS1plL2VlZExSN2ZWVzMr?=
+ =?utf-8?B?MTczeVVUS0JUZ3MvVUpHem9WSEdqbmVHanJBNHRDU1dTUzhhRitpLzJhUHJK?=
+ =?utf-8?B?UkFvR0Z3Q0tjdEhCN3ZCK3lBTW0wYXRzK2dTejdwQ1lCb3grSDVyb3k5d2Z2?=
+ =?utf-8?B?bkF5cTg1clR4WEJIeTQrV1J4NDRBeWNMQVYyNVZHeEpCZ3JmUWtlN0p0Z3FR?=
+ =?utf-8?B?dDl6NzZ0bXdxc016N0Q1NWJnaFhVdEh0QWhqcUJscFM1dWpjSng2REdjRVFP?=
+ =?utf-8?B?NTNTWUZ6d0N3OHVGS3NEb1E4b3l1NktUd2FEaVUwQTlQa0ZtdW5XM0N6WXR3?=
+ =?utf-8?B?aEhiUGhkSW5heHBESFJDTU9GSGlucDhaTCszTWphWjViTkRXa28xcHc4bGZU?=
+ =?utf-8?B?bEhGSUNXdnNodzdNU3N1V0R5bjZ1Vi9KVVh5bzhYcnRQdlZVNGZWczUvVmcy?=
+ =?utf-8?B?ejRhSXRmYjBGWTE4cExqV0c1UWxneDNjY0RuOXhBYmpZL0JwbXg5eEVxei9p?=
+ =?utf-8?B?YXM4Mlc5enkrckdtcUpPYy9LMG9IakRJTjU1bUZBM1BLR245czNDRkxSU3Ey?=
+ =?utf-8?B?dyt4UzliNXJ2UXdONk9nQUZibU5QeHZhYXpuUnB6ZDBpSlQxSFlxQXpxVWtx?=
+ =?utf-8?B?U0FMbUVnMHltSythTzJnMDFJMGNHODNaUXlzem1acUUxRmhxdGZhc0hob0NB?=
+ =?utf-8?B?ZXRsOUNrV2s4bFFOUFJ1cnBmM3c5S05MNXJOSmxZQnRrNWFBZ1ZQV1Q5Zk9r?=
+ =?utf-8?B?ak4wM0dIY2lqQzRwRmhwaW05dDdxVFJJTE5FTzEvdWNFRXl6VCtqTVFhcFFN?=
+ =?utf-8?B?ZGRtdnh6T3pFZWF2NWVPSjNmaUFZLzJKMmwxK3pXUEhkUkJacWRUZ1hZMzFp?=
+ =?utf-8?B?bnZrTkFwWjRTUC9kRTNoa1RkUVdqKzlhbGZYdFQreTNZRkJuWldrQXY5QjVj?=
+ =?utf-8?B?bXR5TG5ScHRkTXU1SXpNMEttaUF0OWlKR1pPU2NMS2dQTkgvdFpBRlhNU0lw?=
+ =?utf-8?Q?c5BfyJZubkTfTpBnTghzgOYjT?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b229d7d8-207d-4f63-3ace-08dc7bee9517
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7426.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 May 2024 12:39:41.7061
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q+b3XVCG8t2uHxm7aBJ9SCBxDVxrbAySDVd4OTnZYuWsa4yl4GrKcmNLfQdzqScbXOw0vb5El1u8IEGGEQsTpw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7417
 
---fb8b70f1c41e009f374399bb3450b2fa3c696c750a469b66dabbee56955e
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Tue May 7, 2024 at 8:32 AM CEST, Krzysztof Kozlowski wrote:
-> On 07/05/2024 00:51, Krishna Yarlagadda wrote:
-> > Config framework parses device tree and provides a list of register
-> > settings with mask per mode to be applied by the controller.
-> >=20
-> > Add binding document for config settings framework. Config settings
-> > are defined as a property per field and have different modes per device=
-.
+On 5/23/2024 7:11 PM, Robin Murphy wrote:
+> External email: Use caution opening links or attachments
 >
-> Please use subject prefixes matching the subsystem. You can get them for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching. For bindings, the preferred subjects are
-> explained here:
-> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-pat=
-ches.html#i-for-patch-submitters
 >
-> >=20
-> > Signed-off-by: Krishna Yarlagadda <kyarlagadda@nvidia.com>
-> > ---
-> >  .../misc/nvidia,tegra-config-settings.yaml    | 50 +++++++++++++++++++
-> >  MAINTAINERS                                   |  1 +
-> >  2 files changed, 51 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/misc/nvidia,tegra=
--config-settings.yaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/misc/nvidia,tegra-config=
--settings.yaml b/Documentation/devicetree/bindings/misc/nvidia,tegra-config=
--settings.yaml
-> > new file mode 100644
-> > index 000000000000..e379cbd5b597
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/misc/nvidia,tegra-config-settin=
-gs.yaml
-> > @@ -0,0 +1,50 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/misc/nvidia,tegra-config-settings.y=
-aml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Config properties for a device.
+> On 23/05/2024 4:19 am, Ashish Mhetre wrote:
+>> The current __arm_lpae_unmap() function calls dma_sync() on individual
+>> PTEs after clearing them. By updating the __arm_lpae_unmap() to call
+>> dma_sync() once for all cleared PTEs, the overall performance can be
+>> improved 25% for large buffer sizes.
+>> Below is detailed analysis of average unmap latency(in us) with and
+>> without this optimization obtained by running dma_map_benchmark for
+>> different buffer sizes.
+>>
+>> Size  Time W/O        Time With       % Improvement
+>>       Optimization    Optimization
+>>       (us)            (us)
+>>
+>> 4KB   3.0             3.1             -3.33
+>> 1MB   250.3           187.9           24.93
 >
-> No full stop, that's a title.
+> This seems highly suspect - the smallest possible block size is 2MB so a
+> 1MB unmap should not be affected by this path at all.
 >
-> > +
-> > +description:
-> > +  Config setting is the configuration based on chip/board/system
-> > +  characterization on interface/controller settings. This is needed fo=
-r
-> > +  - making the controller internal configuration to better perform
-> > +  - making the interface to work proper by setting drive strength, sle=
-w
-> > +    rates etc
-> > +  - making the low power leakage.
-> > +  There are two types of recommended configuration settings
-> > +  - Controller register specific for internal operation of controller.
-> > +  - Pad control/Pinmux/pincontrol registers for interfacing.
-> > +  These configurations can further be categorized as static and dynami=
-c.
-> > +  - Static config does not change until a controller is reset.
-> > +  - Dynamic config changes based on mode or condition, controller is
-> > +    operating in.
-> > +
-> > +maintainers:
-> > +  - Thierry Reding <thierry.reding@gmail.com>
-> > +
-> > +patternProperties:
-> > +  "^[a-z0-9_]*$":
-> > +    description:
-> > +      Config name to be applied on controller.
-> > +    type: object
+It will be unmapped at 4KB block size, right? The 'size' passed to
+__arm_lpae_unmap will be 4KB and 'pgcount' will be 256 for 1MB
+buffer from iommu_pgsize() unless the IOVA and phys address met
+conditions for next bigger size i.e., 2MB.
+>> 2MB   493.7           368.7 25.32
+>> 4MB   974.7           723.4           25.78
 >
-> Nope, this means nothing. Sorry, describe hardware, do not create some
-> fake nodes.
+> I'm guessing this is on Tegra with the workaround to force everything to
+> PAGE_SIZE? In the normal case a 2MB unmap should be nominally *faster*
+> than 4KB, since it would also be a single PTE, but with one fewer level
+> of table to walk to reach it. The 25% figure is rather misleading if
+> it's only a mitigation of an existing erratum workaround, and the actual
+> impact on the majority of non-broken systems is unmeasured.
+>
+Yes, I forgot about the workaround we have and agree that without the
+workaround, 2MB unmap will be faster without this optimization. But
+for any size between 4KB and 2MB, this optimization would help in
+improving the unmap latencies. To verify that, I reverted the workaround
+and again got unmap latencies using dma_map_benchmark which are as
+mentioned below. We can see an improvement around 20% to 25%:
 
-We're trying to solve a real problem here, though. In order for the
-hardware to operate properly we need certain parameters to be programmed
-into the hardware.
+Size          Time WO Opt(us)     Time With Opt(us)       % improvement
+4KB          3                                  3.1                   -3.33
+64KB        18.6                            15                19.36
+128KB      35.2                            27.7            21.31
+256KB      67.6                            52.6            22.19
+512KB      128.4                          97.7           23.91
+1MB         249.9                          188.1           24.72
+2MB         67.4                             67.5             -0.15
+4MB         121.3                          121.2           0.08
 
-If this is not acceptable, do you have a suggestion on where else to put
-this information?
-
-Thierry
-
---fb8b70f1c41e009f374399bb3450b2fa3c696c750a469b66dabbee56955e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZQSWcACgkQ3SOs138+
-s6FkbQ//TcU3nWtL50zZ6CO7YiGnMZvV0R3SIBQaxEZaD/C4mMNwfyJoHH5vQ87E
-CnYewOH/nzdwzIUQsG3iY0mCQamHuJgC/N5JDvlDg/Y9TmFYq59F8DC584Ueh4DN
-l2k/0HcAB89IU2+C1rZ/RwcTMgLNpMcGXYf2ZbgI0UtkHAPsW5X5HlKWivupg21B
-9tU73AKBHd9kbS5u3WxtzwbPDgFlSY26et+HgNuDpTQpbLsEKMMFcAz2S4+/36L8
-IB4eJk8DLtTFnQ5dzYiNbOWk/T8L7GNkPAyiuD2yYVJC7ISbzVsFlXrwR1OGbGTz
-rVwQOB4W727+pfj+oneHHF2y5H+wcSZs15yqPARC6TAb3PuwwUGzEcNqim7Upzpf
-DwC7OWP78ieFgfRX/6CfOVtNtXUEPFwVVBvnaWGwveecpXrW+4V28WQItY7iPgZ2
-kff+q54lIbEoNIJagO7qaomRbjL2jQ2WH8wkTzs/8ItFYxIh8LADLrzgnrByV9ik
-b23yGaLv+qWDIwzIr2rFggiBqeMl/PITM9aN2FQvrcsNoNtsRMttljYEFKu9FP4D
-YMa5rJh3sHCYCwsroLMZTo3jLLVmZKgp5+vPZgfdiUYglWphC7LrQKN4WjUeOwsH
-6RQDaOFra+X0ri/GnNRb+xfrHJC5QCpYlmoLySobHrv6MuiP7Vc=
-=2nUy
------END PGP SIGNATURE-----
-
---fb8b70f1c41e009f374399bb3450b2fa3c696c750a469b66dabbee56955e--
+> (As an aside, I think that workaround itself is a bit broken, since at
+> least on Tegra234 with Cortex-A78, PAGE_SIZE could be 16KB which MMU-500
+> doesn't support.)
+>
+Yes, that's true. For 16KB PAGE_SIZE, we need to fall back to 4KB 
+pgsize_bitmap.
+>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>> ---
+>>   drivers/iommu/io-pgtable-arm.c | 34 +++++++++++++++++++++++++---------
+>>   1 file changed, 25 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/iommu/io-pgtable-arm.c 
+>> b/drivers/iommu/io-pgtable-arm.c
+>> index 3d23b924cec1..94094b711cba 100644
+>> --- a/drivers/iommu/io-pgtable-arm.c
+>> +++ b/drivers/iommu/io-pgtable-arm.c
+>> @@ -256,13 +256,15 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte 
+>> *ptep, int num_entries,
+>>                                  sizeof(*ptep) * num_entries, 
+>> DMA_TO_DEVICE);
+>>   }
+>>
+>> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct 
+>> io_pgtable_cfg *cfg)
+>> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct 
+>> io_pgtable_cfg *cfg, int num_entries)
+>>   {
+>> +     int i;
+>>
+>> -     *ptep = 0;
+>> +     for (i = 0; i < num_entries; i++)
+>> +             ptep[i] = 0;
+>>
+>>       if (!cfg->coherent_walk)
+>> -             __arm_lpae_sync_pte(ptep, 1, cfg);
+>> +             __arm_lpae_sync_pte(ptep, num_entries, cfg);
+>>   }
+>>
+>>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>> @@ -633,13 +635,25 @@ static size_t __arm_lpae_unmap(struct 
+>> arm_lpae_io_pgtable *data,
+>>       if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
+>>               max_entries = ARM_LPAE_PTES_PER_TABLE(data) - 
+>> unmap_idx_start;
+>>               num_entries = min_t(int, pgcount, max_entries);
+>> -
+>> -             while (i < num_entries) {
+>> -                     pte = READ_ONCE(*ptep);
+>> +             arm_lpae_iopte *pte_flush;
+>> +             int j = 0;
+>> +
+>> +             pte_flush = kvcalloc(num_entries, sizeof(*pte_flush), 
+>> GFP_ATOMIC);
+>
+> kvmalloc() with GFP_ATOMIC isn't valid. However, I'm not sure if there
+> isn't a more fundamental problem here - Rob, Boris; was it just the map
+> path, or would any allocation on unmap risk the GPU reclaim deadlock
+> thing as well?
+>
+I am using kvmalloc() here to create an array which is used to store PTEs
+that are going to be flushed after clearing. If we don't store them then
+those will be lost once cleared and we won't be able to flush them.
+I tried using GFP_KERNEL instead of GFP_ATOMIC but then I am getting
+warning from might_sleep().
+Is there any other alternative way we can use here to store the PTEs?
+> Thanks,
+> Robin.
+>
+>> +             if (pte_flush) {
+>> +                     for (j = 0; j < num_entries; j++) {
+>> +                             pte_flush[j] = READ_ONCE(ptep[j]);
+>> +                             if (WARN_ON(!pte_flush[j]))
+>> +                                     break;
+>> +                     }
+>> +                     __arm_lpae_clear_pte(ptep, &iop->cfg, j);
+>> +             }
+>> +             while (i < (pte_flush ? j : num_entries)) {
+>> +                     pte = pte_flush ? pte_flush[i] : READ_ONCE(*ptep);
+>>                       if (WARN_ON(!pte))
+>>                               break;
+>>
+>> -                     __arm_lpae_clear_pte(ptep, &iop->cfg);
+>> +                     if (!pte_flush)
+>> +                             __arm_lpae_clear_pte(ptep, &iop->cfg, 1);
+>>
+>>                       if (!iopte_leaf(pte, lvl, iop->fmt)) {
+>>                               /* Also flush any partial walks */
+>> @@ -649,10 +663,12 @@ static size_t __arm_lpae_unmap(struct 
+>> arm_lpae_io_pgtable *data,
+>>                       } else if (!iommu_iotlb_gather_queued(gather)) {
+>>                               io_pgtable_tlb_add_page(iop, gather, 
+>> iova + i * size, size);
+>>                       }
+>> -
+>> -                     ptep++;
+>> +                     if (!pte_flush)
+>> +                             ptep++;
+>>                       i++;
+>>               }
+>> +             if (pte_flush)
+>> +                     kvfree(pte_flush);
+>>
+>>               return i * size;
+>>       } else if (iopte_leaf(pte, lvl, iop->fmt)) {
