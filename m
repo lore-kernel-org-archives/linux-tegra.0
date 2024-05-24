@@ -1,216 +1,775 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604A98828;
-	Mon, 27 May 2024 01:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716772127; cv=fail; b=k/7/zNZXekWG/Ts5yeCHlrGTZrZe+J0oxwefEL5nrwwfEe+AK+UKoh3ZeiCqV+RbhX2dWQXi9SddX7WDDzFjOtMYzj4OLk2IUTl66mr9JB0PGQSUYhRzn0OcX6NF/UKi9qrhcIvC5LFKjyc01OYVrH6l1SVvXVzyQP/d+ZAfmO4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716772127; c=relaxed/simple;
-	bh=kPgGsQVHsfsaYrC2nKi9IwfYY6raJOZiTK+/5oO8Q8M=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FMW4xUe1G5+ZE093SyX9oa106HROqbtuMC4Uz2BWhPxnguABUhEei6UDzCa/zCg322CN82yTAyGfFvPo8kf7s2tLWCP0gsJTIsMwgkHRWWUf6HaNrmTBHnAqIHHGFIIofz/3TEDYjfcatkpRbX7jKoXY4FYySMk2EQ91tJfyns0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ebDHfQL4; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A446DDA5;
+	Mon, 27 May 2024 04:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716784003; cv=none; b=FxNO35VatXRUhFz3vzbnYGuL5+nP51cm55X3/uvg7qOkndjMtgNmhBoGLEfB05ya0ar/7FzVQtRRPme6tEmNIah5Re+D3EiX4GTazs8K9LQ9YxeL5XSYXtEv7F+HSUX8utJuXBvV0faaHXdi/mV2tGpPzpmMaCeyvT+PZ2IGwVg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716784003; c=relaxed/simple;
+	bh=OCKRCTuGheokwgx9RerQLxxvrlg3RVUbngNYuSYgnw8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=MNhkVmJQO7OnMdUM5vTlXN4XeFBTEuOjfyFsPjs0u1AVpZTb5aY4LRNpCePAlhkf+nGkWDWSoFHtDt/18y2Wk8nwQb8s2n1cHA1jpB57kzKAzFT5EVw1EE5gMyB9CelmEKcXy18c0xdnnVa/FMAaJwv6RrJQ0HvJ/7ON/eQiX8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eQUr3EA2; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ebDHfQL4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716772127; x=1748308127;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=kPgGsQVHsfsaYrC2nKi9IwfYY6raJOZiTK+/5oO8Q8M=;
-  b=ebDHfQL4tI/+Se3BdxcgcfPIwjKqW37Ceq9WkqXu6L2lE0G7Ab3VJFdi
-   bm//W6Zma/LExgsC0g4opxcrpjti3aZKOUoAHnGzVodsvHgSJHgo3bMv5
-   poZWddTa6fzzzkam3UL0xZTe2gkdId6m8FtAfeuUajG7ag27sExGV4iEH
-   1aXBS3PoxJ/sWwVsDwkvqcGOGxVJKTnTeLfqAzK6npCaEkBxgJwTaJLjb
-   gopSe+ZOSwzx7eKPfIz7xfkyvo3f43WOzPRPucppC/up2TpCwNXPnuSXF
-   HCsJlD8af1VNWIZbU2EPxkAhuao/I3K45NQ+yaQzyILWN9LekSFtoqdz9
-   w==;
-X-CSE-ConnectionGUID: jrAOPFcATwicppusa6QENA==
-X-CSE-MsgGUID: czHxLUGhQDyFSeqEFHyudg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11084"; a="30582608"
-X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
-   d="scan'208";a="30582608"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2024 18:08:46 -0700
-X-CSE-ConnectionGUID: mrwM64xyTAKQ7haV3ZHrFg==
-X-CSE-MsgGUID: ElZXpbjjST2D5E0a42eSdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,191,1712646000"; 
-   d="scan'208";a="34574885"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 May 2024 18:08:45 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 26 May 2024 18:08:44 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 26 May 2024 18:08:44 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 26 May 2024 18:08:44 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Sy/WvNyMfAyVLyhOtElSWRymha7/T9iYI17apWAL6VxVJryvwiXpesvnllvY5z2cgLh8IDgqgcGs/co+x1pk7GU6DdU5vKoRlz+En52ApwRlVduRiU/PYG93FNsIywuMcM9oRzkHAw2wBSUnyJfcfw1iY5njKsPzn/7omMaM3nEerAD1afh6nkHT60vtHq2E2hv3B2ADz+zQ4vSzSrj91ulMuvWqXW21/8IrDUFwmQCtF9Etyb5RoElPCKLfN/d5oe8uoTZeF5q7eryL09Rxltl/tz0auWRt5RakFzpX7G5PvnF+kKltHDsJfW2trcCSpYXGYdL+Pcr4O6+KyIUC1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kPgGsQVHsfsaYrC2nKi9IwfYY6raJOZiTK+/5oO8Q8M=;
- b=iXjpsuBPPBk7/qDRArSGpLAmXtU//DPvNcIU3fG5GmSPQwe0zDf3+QIrs+mEbW5fpjQxx6E1vDNbrpl70Cz9TAfY0S4V8yRpCm7+WQ6nm3Qse1cD37eC1IaYaKi+5Z3I92C/2nhyU/SwDzc4oZXDKywFfv78GuT1gqGXVNr84EomTtE/otCUHQYGOSUw9kCkzB/h2LbmW0QT52w0OQg4vaFg+d7Veo86tBMKwr3E+AZuRvvkRhaC7d1pdfiI9eCffRUIRI+v6bguLI+S6dJD1aXZAg64qO1Vmz16t/TN4Wi5NKCBCI26ixDNYlzRM8GzKvubaaKjxMmfwvXUfVwk0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by BL1PR11MB5255.namprd11.prod.outlook.com (2603:10b6:208:31a::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.29; Mon, 27 May
- 2024 01:08:43 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7611.025; Mon, 27 May 2024
- 01:08:43 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: Nicolin Chen <nicolinc@nvidia.com>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
-	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: RE: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Thread-Topic: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Thread-Index: AQHajVVl26WkVBqVE0qDV+tml8yTY7Gkmr6AgAGEQoCAABbGEIAAaX4AgAPpupA=
-Date: Mon, 27 May 2024 01:08:43 +0000
-Message-ID: <BN9PR11MB5276BBD592021507C3A0EBB38CF02@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <c97a98a72ee3498c587e5898d6b899553ccd9b27.1712978212.git.nicolinc@nvidia.com>
- <BN9PR11MB5276A897A5386DFAC9A35F9D8CF42@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlAoN3s96HL7ROth@nvidia.com>
- <BN9PR11MB52762A0BC67B64D4171480C78CF52@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240524131912.GT20229@nvidia.com>
-In-Reply-To: <20240524131912.GT20229@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|BL1PR11MB5255:EE_
-x-ms-office365-filtering-correlation-id: 97060423-90b7-4c16-af88-08dc7de98d43
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|1800799015|7416005|376005|38070700009;
-x-microsoft-antispam-message-info: =?us-ascii?Q?tsshlSvA9C4g4yRd1a1qaKJT6hFXB6bPsonEI2AhftHtWvJdfXgwnSYmRy30?=
- =?us-ascii?Q?ozt5H7iwZ0gxTalTVMQZT6lbIm3oNd7QGpTh2yGmgoDvnppdfzFXxG1AB2T/?=
- =?us-ascii?Q?dR7U2zleGQZpyg6sOpGnSrEaaV+WdBwaWgJt4nqHYtYAdxevmvY5m6OKbhWs?=
- =?us-ascii?Q?SiBV80A3E9DNNnwOratNXKg6gcuO2RGN0HqoU3mwtTpUcGOAuZwuWXyqUuzX?=
- =?us-ascii?Q?thPfKIFQVrpWFJlleVkbqCcYJ50X11X9FHMlavM9lagWCls6YX3mvpbZwC3B?=
- =?us-ascii?Q?6EnHMgIPdtQG1ummdKZlmMNZTn9Wcof9VJBJP7gmyEoKZW9TdTwgO974/SDq?=
- =?us-ascii?Q?dF/ON4ycZlYUUzDJwWnAN9ZhAVz9nSw77UfqkgKwRvYR5pYbWZf7S3RWLUA+?=
- =?us-ascii?Q?qR0jF3tjnspOdbWnYXRINXC2DZZqz03/OO2MfXZmdpQEFRP8lZ5yC559sxab?=
- =?us-ascii?Q?Juj30D+rKfp5R3TtOw2qUxB6KP1326rqy/Xr4mk2c9EYUIVrCu5b/rsNb1Re?=
- =?us-ascii?Q?njPxpsaIbQe7sFTlaZzg6WG8cCwkgq2vYmkiaF1kQ3WIg06qGPC9ANKFACHT?=
- =?us-ascii?Q?Ww7ks0t1/26uaQUVY8SWwdr2FOxHeflLHYxDRiiHOS2+q1p2QHBLCPScDheZ?=
- =?us-ascii?Q?yGpnmwGX50vNA3CqQboAglkC4HCULxumPAFDOX88RdKMSG7UkjjLrLsoX8qq?=
- =?us-ascii?Q?p7o7uk/Wc1z5cqYJ1nDOSn1ohud3vywruVMtbtctB3Q9m8LNjeTQfbsyy/W6?=
- =?us-ascii?Q?gPyNM7o+d55rj3xZWw+t+AT7TXifYT3oB2EU05IuECckswpH0WmEXI3tHlv9?=
- =?us-ascii?Q?OzOTsRGxHRXmkbu5Sv03PvGsyxrFVu9piyWx36v27ADegyNkdqDPPvbdJ9L3?=
- =?us-ascii?Q?74SitvQP4HQ+Al6rRpVk7McSxtl7tYduf7FUxj+AmXMOKf+2bNi1qIMkCveY?=
- =?us-ascii?Q?ewhwdVRz3esgp+gdueJe8ybdVMpwpkOA37HkxOSi4WM/oBfEqoa+Fkcl3ril?=
- =?us-ascii?Q?N473cBbJRd+rjWeItSRvskGIUF/eHWNMMUwM9bza/QdOwf03ajuUAPpO/1k2?=
- =?us-ascii?Q?TCD8h+sPuzV70zWP93jSO4B6kWoz2elWvbx13QzAPbIBmYq7ejhCKNuov1pK?=
- =?us-ascii?Q?KMugl47J6fA47pse+BRfKe2qxzVeq1Qn0QQyJ9kZV0tWtFKLReNkPKw4gQfB?=
- =?us-ascii?Q?ThbeNHEOOxqyQrbJOaoAcL8PNEw33aOuE13O7JsffSxMHhAm3O16Zfmd6Q0c?=
- =?us-ascii?Q?fKePSR32ErGO8bVF59y26OmSoEQLd4OCHs3O9A113MhpopDFF4uwMRbiWNk+?=
- =?us-ascii?Q?X2OWV1UeG/sCPnRsziIodw/dHS3qARFCfWJuVNa6Z8tSEQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?gNC0wMOdjkQGNUyIrJsmYwQZFOyVO0JYjqqbHbxxp+224dfNU6xM0f2u1Srf?=
- =?us-ascii?Q?5GAP3Foy3AtL34KLzR5gWLyuzunDl2sPUGWjhALqs0/KR8aagzmxpxv8PbAU?=
- =?us-ascii?Q?T1lR+H2w1vPA+4FZwcz6Z1GoL1MccuRfkUk3askrpbIco+EtpMmg+0Ku0f0H?=
- =?us-ascii?Q?YsqbW0zCqKZ48lHdz50jTMfIv6llDWhAOASpdNfFAErR6cO58GRoKwQ2BMmB?=
- =?us-ascii?Q?ZNYXoDoo3uxc6rYkuSY3P8sLN7U1UN6ZiCrZRRBZazvInym/fvrJfQtOvYvK?=
- =?us-ascii?Q?s4Qfy7OF9CCrfrzFPr5P2sZejyi/io/r2bC9jp31mHWSJ913ZjmcRwnIEakC?=
- =?us-ascii?Q?0QfXkRu8ayNe6Qfxpou6fzaTKbGLJLE3maIMaZJ5FU6AiKSEpuMJjH62eH1K?=
- =?us-ascii?Q?1Vxv78QVZoK0ZAmR/lmXNyn38TgN6BgDId0zqNtuhfPU3jDuyZOBZsZgrZxw?=
- =?us-ascii?Q?TLKQ9Ua/1Z/BO4OAfoL/X5vpWDx/hilgWe9c9e7oRC5uVPmruNinVP5CpIx3?=
- =?us-ascii?Q?U2Bd7O6QiREzdZ0n8o9o13jA9sdMUW1B3/yPVeGC1TXcgKHKD5FvafIQN2jk?=
- =?us-ascii?Q?zqjYNlnPGb11U7G90a3zi8U+/hjFfFdn6Dwq2ACRS7eCq8PCi7DbepCWWswy?=
- =?us-ascii?Q?D5nB+HWbEj7rPUKW3ZJNRhM4H/CpaZsZmEZCQUp2o6MIdwq906+XZJO5ijV0?=
- =?us-ascii?Q?NkGqh8MtJicJQbMHGMuAZ97Ahzprt6KOt1lN1YZLfmr7GWop3SO556aMXUM+?=
- =?us-ascii?Q?QK/Z1syMPQ+0ppR6/V01pSNyzxHQZ/ztANhiaPhgNJMFePnw1GsF839Lp/V2?=
- =?us-ascii?Q?8PmODYHw5Ay27qxeW59k2yaIsNTyYE4Bp+Ya5BViACMNhheoyUW+45+WimIV?=
- =?us-ascii?Q?2pLc4mwU27jQFlNCT6TfRz8Ivft411jtIzlFB7sA54u7Icm+UW2BG/rldu96?=
- =?us-ascii?Q?eBIIL3sNtWjDIMUftH3goLuzjRd3eIqQT7VlrWB301NegEjEO2MW8y5k5W9L?=
- =?us-ascii?Q?kNgzdUVNyktVGv0YIKwHOwDBiU1G+bpuIYh+uXEOcfDOA8IZmF1HdcsQiyCV?=
- =?us-ascii?Q?pWj6oXYYohuP2q1V01+KTmfRS/wrqWgPXJZ3XNADiokb77Ef5IdHSZYF/k6e?=
- =?us-ascii?Q?yVcjF1Ds534Y6HpZC2KP83x5QVuY0Rj1KCkP5i6rrckv4pB1MaYHAy0bEFh5?=
- =?us-ascii?Q?jLfYEB6x7QtM+dhIMMO1s5xs+nRd6LMv8Q/0HHjLqtKZz6rZavbYIaUgLLPQ?=
- =?us-ascii?Q?F+1ElmeVliD7dJMsVjKLS0aDktdbCTHbYjkHLwPtT68qg+FqLt3XsSEK84xo?=
- =?us-ascii?Q?D8LQqUDPP4z92iyf27WuLx5yBT/F1nA6UuEQ6EYEYTulVjeasYdW7qgzIPnx?=
- =?us-ascii?Q?hWzcV8w+e+2Q0vjhHQXCgg7gbFPJx2Cyp0wezRkVLlNaPWicZUAdwI+6gcJH?=
- =?us-ascii?Q?5vQC9mD7uUhwJdxsIxvwX6vWUzTR8OZ4yT++ZX8cTahOIFNiqmYGB24l7qME?=
- =?us-ascii?Q?kgxrNAeIbFb+Lh/EeASyYuLDZRIkzYf7f9xcywvq1c0pZeT8ZgR+RLiOSBjS?=
- =?us-ascii?Q?XdgssO0IezxSAMODB2/R1Rna6N1IlawX811MUgid?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eQUr3EA2"
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240527042638epoutp0435f4af8368192d95df8b921085f941de~TPfNMkCoH1096710967epoutp04r;
+	Mon, 27 May 2024 04:26:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240527042638epoutp0435f4af8368192d95df8b921085f941de~TPfNMkCoH1096710967epoutp04r
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1716783998;
+	bh=IXPOW0hbt9QdEYLHLn0tJTlqyKZ43Ofrzjw6xoAX5fo=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=eQUr3EA2JOzNam/TM6BpEaUa7Ul9+x2xPnfFzVyxcjA0HAQGJyunc/0vE9GTPLyBb
+	 Uo9QrfEjET5daOzxo+KnMoH2Iu4YzdJDcoMwmSBUIAgeldQgko9eKhXPxaaES+1/oJ
+	 f45eH6B52sjP9YQvYr7BrdW/dsngLLYliXAIm20s=
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.42.80]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240527042637epcas5p35715effe3387b65ac1c3dea75555e1b4~TPfMsJfG22824428244epcas5p3n;
+	Mon, 27 May 2024 04:26:37 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	99.39.19174.D7B04566; Mon, 27 May 2024 13:26:37 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240524135817epcas5p47d24bc69e88b3c44bee0153daa16f148~ScWdu2p6E0195001950epcas5p4L;
+	Fri, 24 May 2024 13:58:17 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240524135817epsmtrp2c629f6a28db1b574821e5df8acdf3e67~ScWdtWhi52934929349epsmtrp2V;
+	Fri, 24 May 2024 13:58:17 +0000 (GMT)
+X-AuditID: b6c32a50-87fff70000004ae6-ad-66540b7da378
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F5.22.19234.8FC90566; Fri, 24 May 2024 22:58:16 +0900 (KST)
+Received: from localhost.localdomain (unknown [107.109.224.44]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240524135809epsmtip1ee62e6c4210d0d521323e2fd292632b1~ScWWnCpDK3100831008epsmtip15;
+	Fri, 24 May 2024 13:58:09 +0000 (GMT)
+From: Onkarnarth <onkarnath.1@samsung.com>
+To: mark.rutland@arm.com, maz@kernel.org, daniel.lezcano@linaro.org,
+	tglx@linutronix.de, patrice.chotard@foss.st.com, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, kys@microsoft.com, haiyangz@microsoft.com,
+	wei.liu@kernel.org, decui@microsoft.com, tsbogend@alpha.franken.de,
+	fancer.lancer@gmail.com, liviu.dudau@arm.com, sudeep.holla@arm.com,
+	lpieralisi@kernel.org, baruch@tkos.co.il, verdun@hpe.com,
+	nick.hawkins@hpe.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, vz@mleia.com, afaerber@suse.de,
+	manivannan.sadhasivam@linaro.org, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com, linux-hyperv@vger.kernel.org,
+	linux-mips@vger.kernel.org, imx@lists.linux.dev,
+	linux-actions@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-tegra@vger.kernel.org, r.thapliyal@samsung.com, Onkarnath
+	<onkarnath.1@samsung.com>, Maninder Singh <maninder1.s@samsung.com>
+Subject: [PATCH 1/1] clocksource: use symbolic error names (%pe) to print
+ logs
+Date: Fri, 24 May 2024 19:27:59 +0530
+Message-Id: <20240524135759.375328-1-onkarnath.1@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97060423-90b7-4c16-af88-08dc7de98d43
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 May 2024 01:08:43.0298
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OjfRpUfv0o3hGu2bMj6nRJft+EWdsWClWZVnzk2yhZI72ELopuCX/jMaPs6eg7+dXBNVATwDWgAfaiYs/1jNOQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5255
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTVxjP6X0VSN214DwpOheEP8DwMIg5mbKxZNGbGAdmzhg3xxq4gOG5
+	VgQXVJDioJQBG2WjQFmZzA4fgwvl0eHUNnOB+YglRUGKk9WsOB5upbIChVEuRv/7Pb7v+33f
+	SY4QE0+REuGxrOOsLEuaEUT64l3m0NDwU34HU6K+Kd2Eijk5ck/UAmRY0FBIPzSJI61zM/pF
+	wQHUVtpAoMfWeDTUzaC6sRISKTTNOGpV9+LIftFAoVr7WRxxfw4RSF39jESDxgYSlXEGgLqc
+	ChIph+wEKpvVkOh6yxc4UiwqcGRuOocjm6KMQC337wlQb0M/gbSeywTqmr5FIL3qGYEmBlUY
+	cvfPUOic5jXUPpaOPN0cjhydG9GFgR4cdXDqFd+oXRl29gaGbqv0GFqeL8aQmRsRxG1jSiwX
+	cOaS9hJgJicmcMZcOksxTyoNFNOrsVGM0VhEMVxrGcmMDvWRzPSdOxTTcf4M4+ioA0xJj4di
+	lnQ1OFNRPE0ylZ6ohNeP+O5OZjOOnWBlkW9/6ptm4RqxnM5rIN800koUAlsDUAKhENI7YNXM
+	OiXwFYrpPgC1Lh3Gk38BVDap8JfkOUcqgc9qx9OHi2tGL4C28e8JnswCOOZawr1VJB0Gvx29
+	LvAaAfQgAWse3CS9BKO/wmDHIzfhTfenE2BRaZAX4nQI/L060dsromPh8yk9xadtgXWWOYrX
+	18P+OvvqfGxFLzbUr+4K6S994ahyam2996DOOgl47A+f/ta5NkgCndNX12qyoaJeg/EPUACt
+	T0J4+R1ov6db3QyjQ+FPxkhe3gzVA1cEfOw6WLFgF/C6CPZoX+AQOF+jxnkcCB8tNK4lMbBw
+	yUJ4sZg+Codd81QV2KJ55RrNK9doXiZ/B7BWIGFz5JmpbFJMzvbwLDYvQi7NlOdmpUYkZWdy
+	YPVHhCX0gIttnggTEAiBCUAhFhQgCtAeSBGLkqUnP2dl2Ymy3AxWbgKBQjxoo+jvksZkMZ0q
+	Pc6ms2wOK3vhCoQ+kkLBZ/a0qE8s63948wOHuOVUfUisjksg+vKDVeNFPmEJg7sc4ea+97si
+	9pyWnK9atv7XXPEwLfNX05nl3OED+0+qbhh9ytPdbZEV17amzf01Z2X3Hl4Y2Zujc1GhpVvj
+	PfKS6p15ba6klG01+8yxTbtOS9669ePs5UPWnTOOnsYCW//h+D1udVyS04cWEcFUbc1Hsfvn
+	SSQ7eNPl2CCL1/vpdtuufHy/+fEGR0r3gHPxQyIp7PbCu4cCN/mP/Lxj+EiisSgjLvpE+1HM
+	FDwVI9tXqcirb3C80SwhSNndgqrRu8350RFYV3l79Hh0izXGEmvoKOf8rlJ/PBhwqgqy/vF8
+	nRmEy9Ok28MwmVz6P7/QCWqABAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTdxTG8+99K12KXQV7heCyKsvCwptxyfmwF6MGbpbMKtEswSXa0Gsx
+	tBRv1YnTqNAySiBQsM6WWp2xaym6jYsttBpf6JKJTjJKrLybZV0mDhijpMKkMCpb4rfnPL/n
+	nOfLEWJSM5EmPFR+hOXKlRo5KcJ9QfmG7Hn7roN5X1/Nh2peDwsT5xF4X9oocIcncXBEM+C2
+	gUfwQ62dgF8fKyDcxYB13EiCwXYFB4/Fj0Ok3UvB+UgVDvxvYQIs5hkSBgJ2Eky8F4EvaiCh
+	LhwhwDRnI+Gu8yscDIsGHIKXanAYM5gIcD7pF4Df3kuAI36dAN/0zwS462cImBiox2Ch9y8K
+	amxroGO8DOJdPA7PbsjA9aAbh07essIDjpVjVfcweFTvxmD5n2oMgvywYOt7jDHkwplrjmuI
+	mZyYwJlg7RzF/N7opRi/bYxiAoGzFMN7TCQzGr5FMtN9fRTTefU086zTihhjd5xilr45hzMN
+	1dMk0xjP27WuWPSBitUcOsZyuR8dEJWG+ItYxY076HjPsIc4g8bsqA4lCWnJFvr5yCJeh0RC
+	qaQL0UvzPsEqSKdnB+zUql5Lty39Qa2GZhEd9S+/2iYlWfSF0buCBEiRvCTolqYolhgwiQOj
+	ff2tWCK1VrKTPrsUJOqQUIhLMumH5v0JWyz5kI5Nuf9reIu2hl5Qq/6bdK81gic0tuJXe1ux
+	JpRsew3ZXkOXkcCDUtkKvVatLanIz9Ertfqj5eqcEp2WR6++JquoG337fTynBwmEqAfRQkye
+	It7X9ulBqVilrDzBcrr93FENq+9B6UJcLhNv1JhUUolaeYQtY9kKlvufCoRJaWcELtxZPNO0
+	M/fkdt+eUKF90xuBHQXcNrJgyrVHtsN5XVP0eaxsqGEuLdL1/oNTblHS4L7ObRkFheso3WbD
+	ucyw7PknatGgv/1KLEOtyL405d7Uqpi6pVr2uYaOJ11c+LtxOS/2cW2HILR7aHC45cXmn2b7
+	7st8lt3tZexp5/q26Lhua430nlEeKyh+8mfKhsM/5k5WanXJaQ8/S8VPhor6ApOpyUP9LfPG
+	NcO/NL9bmxm9wNoDsbfTuW71F1A6sn6v4Z2bjhOWjZXap6jeU1jbXOVoaDcrjpmb79w8QItG
+	Ytk1ihLi1N6nHc3bv3tsfSRWHb4fVsx4PLe/5MKLW0Y5Oa4vVeZnYZxe+S9xx7UNpAMAAA==
+X-CMS-MailID: 20240524135817epcas5p47d24bc69e88b3c44bee0153daa16f148
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20240524135817epcas5p47d24bc69e88b3c44bee0153daa16f148
+References: <CGME20240524135817epcas5p47d24bc69e88b3c44bee0153daa16f148@epcas5p4.samsung.com>
 
-> From: Jason Gunthorpe <jgg@nvidia.com>
-> Sent: Friday, May 24, 2024 9:19 PM
->=20
-> On Fri, May 24, 2024 at 07:13:23AM +0000, Tian, Kevin wrote:
-> > I'm curious to learn the real reason of that design. Is it because you
-> > want to do certain load-balance between viommu's or due to other
-> > reasons in the kernel smmuv3 driver which e.g. cannot support a
-> > viommu spanning multiple pSMMU?
->=20
-> Yeah, there is no concept of support for a SMMUv3 instance where it's
-> command Q's can only work on a subset of devices.
->=20
-> My expectation was that VIOMMU would be 1:1 with physical iommu
-> instances, I think AMD needs this too??
->=20
+From: Onkarnath <onkarnath.1@samsung.com>
 
-Yes this part is clear now regarding to VCMDQ.
+It is better to use %pe instead of %d or such to print logs
+for enhanced error logs readbility.
 
-But Nicoline said:
+Error print logs format is more style consistent now.
 
-"
-One step back, even without VCMDQ feature, a multi-pSMMU setup
-will have multiple viommus (with our latest design) being added
-to a viommu list of a single vSMMU's. Yet, vSMMU in this case
-always traps regular SMMU CMDQ, so it can do viommu selection
-or even broadcast (if it has to).
-"
+Co-developed-by: Maninder Singh <maninder1.s@samsung.com>
+Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
+Signed-off-by: Onkarnath <onkarnath.1@samsung.com>
+---
+ drivers/clocksource/arm_arch_timer.c   |  2 +-
+ drivers/clocksource/arm_global_timer.c |  4 ++--
+ drivers/clocksource/armv7m_systick.c   |  4 ++--
+ drivers/clocksource/hyperv_timer.c     |  6 +++---
+ drivers/clocksource/jcore-pit.c        |  4 ++--
+ drivers/clocksource/mips-gic-timer.c   |  2 +-
+ drivers/clocksource/mps2-timer.c       | 18 +++++++++---------
+ drivers/clocksource/timer-clint.c      |  6 +++---
+ drivers/clocksource/timer-digicolor.c  |  2 +-
+ drivers/clocksource/timer-fsl-ftm.c    | 16 ++++++++--------
+ drivers/clocksource/timer-gxp.c        |  8 ++++----
+ drivers/clocksource/timer-imx-tpm.c    |  2 +-
+ drivers/clocksource/timer-lpc32xx.c    | 10 +++++-----
+ drivers/clocksource/timer-owl.c        |  4 ++--
+ drivers/clocksource/timer-pistachio.c  |  8 ++++----
+ drivers/clocksource/timer-probe.c      |  4 ++--
+ drivers/clocksource/timer-riscv.c      |  8 ++++----
+ drivers/clocksource/timer-sp804.c      |  4 ++--
+ drivers/clocksource/timer-tegra.c      |  8 ++++----
+ drivers/clocksource/timer-tegra186.c   | 14 +++++++-------
+ drivers/clocksource/timer-zevio.c      |  2 +-
+ 21 files changed, 68 insertions(+), 68 deletions(-)
 
-I don't think there is an arch limitation mandating that?
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index 5bb43cc1a8df..e36cc8e544cf 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -1273,7 +1273,7 @@ static int __init arch_timer_register(void)
+ 	}
+ 
+ 	if (err) {
+-		pr_err("can't register interrupt %d (%d)\n", ppi, err);
++		pr_err("can't register interrupt %d: %pe\n", ppi, ERR_PTR(err));
+ 		goto out_free;
+ 	}
+ 
+diff --git a/drivers/clocksource/arm_global_timer.c b/drivers/clocksource/arm_global_timer.c
+index ab1c8c2b66b8..9ed1e9564227 100644
+--- a/drivers/clocksource/arm_global_timer.c
++++ b/drivers/clocksource/arm_global_timer.c
+@@ -399,8 +399,8 @@ static int __init global_timer_of_register(struct device_node *np)
+ 	err = request_percpu_irq(gt_ppi, gt_clockevent_interrupt,
+ 				 "gt", gt_evt);
+ 	if (err) {
+-		pr_warn("global-timer: can't register interrupt %d (%d)\n",
+-			gt_ppi, err);
++		pr_warn("global-timer: can't register interrupt %d: %pe\n",
++			gt_ppi, ERR_PTR(err));
+ 		goto out_free;
+ 	}
+ 
+diff --git a/drivers/clocksource/armv7m_systick.c b/drivers/clocksource/armv7m_systick.c
+index 7e78074480e4..15f5dd2ffdae 100644
+--- a/drivers/clocksource/armv7m_systick.c
++++ b/drivers/clocksource/armv7m_systick.c
+@@ -60,7 +60,7 @@ static int __init system_timer_of_register(struct device_node *np)
+ 	ret = clocksource_mmio_init(base + SYST_CVR, "arm_system_timer", rate,
+ 			200, 24, clocksource_mmio_readl_down);
+ 	if (ret) {
+-		pr_err("failed to init clocksource (%d)\n", ret);
++		pr_err("failed to init clocksource: %pe\n", ERR_PTR(ret));
+ 		if (clk)
+ 			goto out_clk_disable;
+ 		else
+@@ -77,7 +77,7 @@ static int __init system_timer_of_register(struct device_node *np)
+ 	clk_put(clk);
+ out_unmap:
+ 	iounmap(base);
+-	pr_warn("ARM System timer register failed (%d)\n", ret);
++	pr_warn("ARM System timer register failed: %pe\n", ERR_PTR(ret));
+ 
+ 	return ret;
+ }
+diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
+index b2a080647e41..7d6bb26b2b3c 100644
+--- a/drivers/clocksource/hyperv_timer.c
++++ b/drivers/clocksource/hyperv_timer.c
+@@ -205,7 +205,7 @@ static int hv_setup_stimer0_irq(void)
+ 	ret = acpi_register_gsi(NULL, HYPERV_STIMER0_VECTOR,
+ 			ACPI_EDGE_SENSITIVE, ACPI_ACTIVE_HIGH);
+ 	if (ret < 0) {
+-		pr_err("Can't register Hyper-V stimer0 GSI. Error %d", ret);
++		pr_err("Can't register Hyper-V stimer0 GSI. Error: %pe", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 	stimer0_irq = ret;
+@@ -213,8 +213,8 @@ static int hv_setup_stimer0_irq(void)
+ 	ret = request_percpu_irq(stimer0_irq, hv_stimer0_percpu_isr,
+ 		"Hyper-V stimer0", &stimer0_evt);
+ 	if (ret) {
+-		pr_err("Can't request Hyper-V stimer0 IRQ %d. Error %d",
+-			stimer0_irq, ret);
++		pr_err("Can't request Hyper-V stimer0 IRQ %d. Error: %pe",
++			stimer0_irq, ERR_PTR(ret));
+ 		acpi_unregister_gsi(stimer0_irq);
+ 		stimer0_irq = -1;
+ 	}
+diff --git a/drivers/clocksource/jcore-pit.c b/drivers/clocksource/jcore-pit.c
+index a4a991101fa3..dfd1e77377ee 100644
+--- a/drivers/clocksource/jcore-pit.c
++++ b/drivers/clocksource/jcore-pit.c
+@@ -156,7 +156,7 @@ static int __init jcore_pit_init(struct device_node *node)
+ 				    NSEC_PER_SEC, 400, 32,
+ 				    jcore_clocksource_read);
+ 	if (err) {
+-		pr_err("Error registering clocksource device: %d\n", err);
++		pr_err("Error registering clocksource device: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+@@ -172,7 +172,7 @@ static int __init jcore_pit_init(struct device_node *node)
+ 			  IRQF_TIMER | IRQF_PERCPU,
+ 			  "jcore_pit", jcore_pit_percpu);
+ 	if (err) {
+-		pr_err("pit irq request failed: %d\n", err);
++		pr_err("pit irq request failed: %pe\n", ERR_PTR(err));
+ 		free_percpu(jcore_pit_percpu);
+ 		return err;
+ 	}
+diff --git a/drivers/clocksource/mips-gic-timer.c b/drivers/clocksource/mips-gic-timer.c
+index b3ae38f36720..628b3aec2b45 100644
+--- a/drivers/clocksource/mips-gic-timer.c
++++ b/drivers/clocksource/mips-gic-timer.c
+@@ -150,7 +150,7 @@ static int gic_clockevent_init(void)
+ 
+ 	ret = setup_percpu_irq(gic_timer_irq, &gic_compare_irqaction);
+ 	if (ret < 0) {
+-		pr_err("IRQ %d setup failed (%d)\n", gic_timer_irq, ret);
++		pr_err("IRQ %d setup failed: %pe\n", gic_timer_irq, ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/clocksource/mps2-timer.c b/drivers/clocksource/mps2-timer.c
+index efe8cad8f2a5..5e2dcb792741 100644
+--- a/drivers/clocksource/mps2-timer.c
++++ b/drivers/clocksource/mps2-timer.c
+@@ -109,13 +109,13 @@ static int __init mps2_clockevent_init(struct device_node *np)
+ 		clk = of_clk_get(np, 0);
+ 		if (IS_ERR(clk)) {
+ 			ret = PTR_ERR(clk);
+-			pr_err("failed to get clock for clockevent: %d\n", ret);
++			pr_err("failed to get clock for clockevent: %pe\n", clk);
+ 			goto out;
+ 		}
+ 
+ 		ret = clk_prepare_enable(clk);
+ 		if (ret) {
+-			pr_err("failed to enable clock for clockevent: %d\n", ret);
++			pr_err("failed to enable clock for clockevent: %pe\n", ERR_PTR(ret));
+ 			goto out_clk_put;
+ 		}
+ 
+@@ -125,14 +125,14 @@ static int __init mps2_clockevent_init(struct device_node *np)
+ 	base = of_iomap(np, 0);
+ 	if (!base) {
+ 		ret = -EADDRNOTAVAIL;
+-		pr_err("failed to map register for clockevent: %d\n", ret);
++		pr_err("failed to map register for clockevent: %pe\n", ERR_PTR(ret));
+ 		goto out_clk_disable;
+ 	}
+ 
+ 	irq = irq_of_parse_and_map(np, 0);
+ 	if (!irq) {
+ 		ret = -ENOENT;
+-		pr_err("failed to get irq for clockevent: %d\n", ret);
++		pr_err("failed to get irq for clockevent: %pe\n", ERR_PTR(ret));
+ 		goto out_iounmap;
+ 	}
+ 
+@@ -159,7 +159,7 @@ static int __init mps2_clockevent_init(struct device_node *np)
+ 
+ 	ret = request_irq(irq, mps2_timer_interrupt, IRQF_TIMER, name, ce);
+ 	if (ret) {
+-		pr_err("failed to request irq for clockevent: %d\n", ret);
++		pr_err("failed to request irq for clockevent: %pe\n", ERR_PTR(ret));
+ 		goto out_kfree;
+ 	}
+ 
+@@ -193,13 +193,13 @@ static int __init mps2_clocksource_init(struct device_node *np)
+ 		clk = of_clk_get(np, 0);
+ 		if (IS_ERR(clk)) {
+ 			ret = PTR_ERR(clk);
+-			pr_err("failed to get clock for clocksource: %d\n", ret);
++			pr_err("failed to get clock for clocksource: %pe\n", clk);
+ 			goto out;
+ 		}
+ 
+ 		ret = clk_prepare_enable(clk);
+ 		if (ret) {
+-			pr_err("failed to enable clock for clocksource: %d\n", ret);
++			pr_err("failed to enable clock for clocksource: %pe\n", ERR_PTR(ret));
+ 			goto out_clk_put;
+ 		}
+ 
+@@ -209,7 +209,7 @@ static int __init mps2_clocksource_init(struct device_node *np)
+ 	base = of_iomap(np, 0);
+ 	if (!base) {
+ 		ret = -EADDRNOTAVAIL;
+-		pr_err("failed to map register for clocksource: %d\n", ret);
++		pr_err("failed to map register for clocksource: %pe\n", ERR_PTR(ret));
+ 		goto out_clk_disable;
+ 	}
+ 
+@@ -226,7 +226,7 @@ static int __init mps2_clocksource_init(struct device_node *np)
+ 				    rate, 200, 32,
+ 				    clocksource_mmio_readl_down);
+ 	if (ret) {
+-		pr_err("failed to init clocksource: %d\n", ret);
++		pr_err("failed to init clocksource: %pe\n", ERR_PTR(ret));
+ 		goto out_iounmap;
+ 	}
+ 
+diff --git a/drivers/clocksource/timer-clint.c b/drivers/clocksource/timer-clint.c
+index 0bdd9d7ec545..03ce468bf15e 100644
+--- a/drivers/clocksource/timer-clint.c
++++ b/drivers/clocksource/timer-clint.c
+@@ -229,7 +229,7 @@ static int __init clint_timer_init_dt(struct device_node *np)
+ 
+ 	rc = clocksource_register_hz(&clint_clocksource, clint_timer_freq);
+ 	if (rc) {
+-		pr_err("%pOFP: clocksource register failed [%d]\n", np, rc);
++		pr_err("%pOFP: clocksource register failed: %pe\n", np, ERR_PTR(rc));
+ 		goto fail_iounmap;
+ 	}
+ 
+@@ -238,7 +238,7 @@ static int __init clint_timer_init_dt(struct device_node *np)
+ 	rc = request_percpu_irq(clint_timer_irq, clint_timer_interrupt,
+ 				 "clint-timer", &clint_clock_event);
+ 	if (rc) {
+-		pr_err("registering percpu irq failed [%d]\n", rc);
++		pr_err("registering percpu irq failed: %pe\n", ERR_PTR(rc));
+ 		goto fail_iounmap;
+ 	}
+ 
+@@ -260,7 +260,7 @@ static int __init clint_timer_init_dt(struct device_node *np)
+ 				clint_timer_starting_cpu,
+ 				clint_timer_dying_cpu);
+ 	if (rc) {
+-		pr_err("%pOFP: cpuhp setup state failed [%d]\n", np, rc);
++		pr_err("%pOFP: cpuhp setup state failed: %pe\n", np, ERR_PTR(rc));
+ 		goto fail_free_irq;
+ 	}
+ 
+diff --git a/drivers/clocksource/timer-digicolor.c b/drivers/clocksource/timer-digicolor.c
+index 559aa96089c3..7b4991081bb7 100644
+--- a/drivers/clocksource/timer-digicolor.c
++++ b/drivers/clocksource/timer-digicolor.c
+@@ -189,7 +189,7 @@ static int __init digicolor_timer_init(struct device_node *node)
+ 			  IRQF_TIMER | IRQF_IRQPOLL, "digicolor_timerC",
+ 			  &dc_timer_dev.ce);
+ 	if (ret) {
+-		pr_warn("request of timer irq %d failed (%d)\n", irq, ret);
++		pr_warn("request of timer irq %d failed: %pe\n", irq, ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/clocksource/timer-fsl-ftm.c b/drivers/clocksource/timer-fsl-ftm.c
+index 93f336ec875a..dd709827a823 100644
+--- a/drivers/clocksource/timer-fsl-ftm.c
++++ b/drivers/clocksource/timer-fsl-ftm.c
+@@ -188,7 +188,7 @@ static int __init ftm_clockevent_init(unsigned long freq, int irq)
+ 	err = request_irq(irq, ftm_evt_interrupt, IRQF_TIMER | IRQF_IRQPOLL,
+ 			  "Freescale ftm timer", &ftm_clockevent);
+ 	if (err) {
+-		pr_err("ftm: setup irq failed: %d\n", err);
++		pr_err("ftm: setup irq failed: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+@@ -218,7 +218,7 @@ static int __init ftm_clocksource_init(unsigned long freq)
+ 				    freq / (1 << priv->ps), 300, 16,
+ 				    clocksource_mmio_readl_up);
+ 	if (err) {
+-		pr_err("ftm: init clock source mmio failed: %d\n", err);
++		pr_err("ftm: init clock source mmio failed: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+@@ -235,25 +235,25 @@ static int __init __ftm_clk_init(struct device_node *np, char *cnt_name,
+ 
+ 	clk = of_clk_get_by_name(np, cnt_name);
+ 	if (IS_ERR(clk)) {
+-		pr_err("ftm: Cannot get \"%s\": %ld\n", cnt_name, PTR_ERR(clk));
++		pr_err("ftm: Cannot get \"%s\": %pe\n", cnt_name, clk);
+ 		return PTR_ERR(clk);
+ 	}
+ 	err = clk_prepare_enable(clk);
+ 	if (err) {
+-		pr_err("ftm: clock failed to prepare+enable \"%s\": %d\n",
+-			cnt_name, err);
++		pr_err("ftm: clock failed to prepare+enable \"%s\": %pe\n",
++			cnt_name, ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+ 	clk = of_clk_get_by_name(np, ftm_name);
+ 	if (IS_ERR(clk)) {
+-		pr_err("ftm: Cannot get \"%s\": %ld\n", ftm_name, PTR_ERR(clk));
++		pr_err("ftm: Cannot get \"%s\": %pe\n", ftm_name, clk);
+ 		return PTR_ERR(clk);
+ 	}
+ 	err = clk_prepare_enable(clk);
+ 	if (err)
+-		pr_err("ftm: clock failed to prepare+enable \"%s\": %d\n",
+-			ftm_name, err);
++		pr_err("ftm: clock failed to prepare+enable \"%s\": %pe\n",
++			ftm_name, ERR_PTR(err));
+ 
+ 	return clk_get_rate(clk);
+ }
+diff --git a/drivers/clocksource/timer-gxp.c b/drivers/clocksource/timer-gxp.c
+index 57aa2e2cce53..d016fb324d54 100644
+--- a/drivers/clocksource/timer-gxp.c
++++ b/drivers/clocksource/timer-gxp.c
+@@ -86,13 +86,13 @@ static int __init gxp_timer_init(struct device_node *node)
+ 	clk = of_clk_get(node, 0);
+ 	if (IS_ERR(clk)) {
+ 		ret = (int)PTR_ERR(clk);
+-		pr_err("%pOFn clock not found: %d\n", node, ret);
++		pr_err("%pOFn clock not found: %pe\n", node, clk);
+ 		goto err_free;
+ 	}
+ 
+ 	ret = clk_prepare_enable(clk);
+ 	if (ret) {
+-		pr_err("%pOFn clock enable failed: %d\n", node, ret);
++		pr_err("%pOFn clock enable failed: %pe\n", node, ERR_PTR(ret));
+ 		goto err_clk_enable;
+ 	}
+ 
+@@ -126,7 +126,7 @@ static int __init gxp_timer_init(struct device_node *node)
+ 	ret = clocksource_mmio_init(system_clock, node->name, freq,
+ 				    300, 32, clocksource_mmio_readl_up);
+ 	if (ret) {
+-		pr_err("%pOFn init clocksource failed: %d", node, ret);
++		pr_err("%pOFn init clocksource failed: %pe", node, ERR_PTR(ret));
+ 		goto err_exit;
+ 	}
+ 
+@@ -145,7 +145,7 @@ static int __init gxp_timer_init(struct device_node *node)
+ 	ret = request_irq(irq, gxp_timer_interrupt, IRQF_TIMER | IRQF_SHARED,
+ 			  node->name, gxp_timer);
+ 	if (ret) {
+-		pr_err("%pOFn request_irq() failed: %d", node, ret);
++		pr_err("%pOFn request_irq() failed: %pe", node, ERR_PTR(ret));
+ 		goto err_exit;
+ 	}
+ 
+diff --git a/drivers/clocksource/timer-imx-tpm.c b/drivers/clocksource/timer-imx-tpm.c
+index bd64a8a8427f..308bcc4e8960 100644
+--- a/drivers/clocksource/timer-imx-tpm.c
++++ b/drivers/clocksource/timer-imx-tpm.c
+@@ -185,7 +185,7 @@ static int __init tpm_timer_init(struct device_node *np)
+ 	/* enable clk before accessing registers */
+ 	ret = clk_prepare_enable(ipg);
+ 	if (ret) {
+-		pr_err("tpm: ipg clock enable failed (%d)\n", ret);
++		pr_err("tpm: ipg clock enable failed: %pe\n", ERR_PTR(ret));
+ 		clk_put(ipg);
+ 		return ret;
+ 	}
+diff --git a/drivers/clocksource/timer-lpc32xx.c b/drivers/clocksource/timer-lpc32xx.c
+index 68eae6378bf3..1e08e2090fee 100644
+--- a/drivers/clocksource/timer-lpc32xx.c
++++ b/drivers/clocksource/timer-lpc32xx.c
+@@ -161,13 +161,13 @@ static int __init lpc32xx_clocksource_init(struct device_node *np)
+ 
+ 	clk = of_clk_get_by_name(np, "timerclk");
+ 	if (IS_ERR(clk)) {
+-		pr_err("clock get failed (%ld)\n", PTR_ERR(clk));
++		pr_err("clock get failed: %pe\n", clk);
+ 		return PTR_ERR(clk);
+ 	}
+ 
+ 	ret = clk_prepare_enable(clk);
+ 	if (ret) {
+-		pr_err("clock enable failed (%d)\n", ret);
++		pr_err("clock enable failed: %pe\n", ERR_PTR(ret));
+ 		goto err_clk_enable;
+ 	}
+ 
+@@ -193,7 +193,7 @@ static int __init lpc32xx_clocksource_init(struct device_node *np)
+ 	ret = clocksource_mmio_init(base + LPC32XX_TIMER_TC, "lpc3220 timer",
+ 				    rate, 300, 32, clocksource_mmio_readl_up);
+ 	if (ret) {
+-		pr_err("failed to init clocksource (%d)\n", ret);
++		pr_err("failed to init clocksource: %pe\n", ERR_PTR(ret));
+ 		goto err_clocksource_init;
+ 	}
+ 
+@@ -222,13 +222,13 @@ static int __init lpc32xx_clockevent_init(struct device_node *np)
+ 
+ 	clk = of_clk_get_by_name(np, "timerclk");
+ 	if (IS_ERR(clk)) {
+-		pr_err("clock get failed (%ld)\n", PTR_ERR(clk));
++		pr_err("clock get failed: %pe\n", clk);
+ 		return PTR_ERR(clk);
+ 	}
+ 
+ 	ret = clk_prepare_enable(clk);
+ 	if (ret) {
+-		pr_err("clock enable failed (%d)\n", ret);
++		pr_err("clock enable failed: %pe\n", ERR_PTR(ret));
+ 		goto err_clk_enable;
+ 	}
+ 
+diff --git a/drivers/clocksource/timer-owl.c b/drivers/clocksource/timer-owl.c
+index ac97420bfa7c..3319d3acb635 100644
+--- a/drivers/clocksource/timer-owl.c
++++ b/drivers/clocksource/timer-owl.c
+@@ -137,7 +137,7 @@ static int __init owl_timer_init(struct device_node *node)
+ 	clk = of_clk_get(node, 0);
+ 	if (IS_ERR(clk)) {
+ 		ret = PTR_ERR(clk);
+-		pr_err("Failed to get clock for clocksource (%d)\n", ret);
++		pr_err("Failed to get clock for clocksource: %pe\n", clk);
+ 		return ret;
+ 	}
+ 
+@@ -150,7 +150,7 @@ static int __init owl_timer_init(struct device_node *node)
+ 	ret = clocksource_mmio_init(owl_clksrc_base + OWL_Tx_VAL, node->name,
+ 				    rate, 200, 32, clocksource_mmio_readl_up);
+ 	if (ret) {
+-		pr_err("Failed to register clocksource (%d)\n", ret);
++		pr_err("Failed to register clocksource: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/clocksource/timer-pistachio.c b/drivers/clocksource/timer-pistachio.c
+index 57b2197a0b67..6b956c3b2f20 100644
+--- a/drivers/clocksource/timer-pistachio.c
++++ b/drivers/clocksource/timer-pistachio.c
+@@ -174,25 +174,25 @@ static int __init pistachio_clksrc_of_init(struct device_node *node)
+ 
+ 	sys_clk = of_clk_get_by_name(node, "sys");
+ 	if (IS_ERR(sys_clk)) {
+-		pr_err("clock get failed (%ld)\n", PTR_ERR(sys_clk));
++		pr_err("clock get failed: %pe\n", sys_clk);
+ 		return PTR_ERR(sys_clk);
+ 	}
+ 
+ 	fast_clk = of_clk_get_by_name(node, "fast");
+ 	if (IS_ERR(fast_clk)) {
+-		pr_err("clock get failed (%lu)\n", PTR_ERR(fast_clk));
++		pr_err("clock get failed: %pe\n", fast_clk);
+ 		return PTR_ERR(fast_clk);
+ 	}
+ 
+ 	ret = clk_prepare_enable(sys_clk);
+ 	if (ret < 0) {
+-		pr_err("failed to enable clock (%d)\n", ret);
++		pr_err("failed to enable clock: %pe\n", ERR_PTR(ret));
+ 		return ret;
+ 	}
+ 
+ 	ret = clk_prepare_enable(fast_clk);
+ 	if (ret < 0) {
+-		pr_err("failed to enable clock (%d)\n", ret);
++		pr_err("failed to enable clock: %pe\n", ERR_PTR(ret));
+ 		clk_disable_unprepare(sys_clk);
+ 		return ret;
+ 	}
+diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
+index b7860bc0db4b..913473950191 100644
+--- a/drivers/clocksource/timer-probe.c
++++ b/drivers/clocksource/timer-probe.c
+@@ -30,8 +30,8 @@ void __init timer_probe(void)
+ 		ret = init_func_ret(np);
+ 		if (ret) {
+ 			if (ret != -EPROBE_DEFER)
+-				pr_err("Failed to initialize '%pOF': %d\n", np,
+-				       ret);
++				pr_err("Failed to initialize '%pOF': %pe\n", np,
++				       ERR_PTR(ret));
+ 			continue;
+ 		}
+ 
+diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/timer-riscv.c
+index 48ce50c5f5e6..05d2294d5444 100644
+--- a/drivers/clocksource/timer-riscv.c
++++ b/drivers/clocksource/timer-riscv.c
+@@ -169,7 +169,7 @@ static int __init riscv_timer_init_common(void)
+ 
+ 	error = clocksource_register_hz(&riscv_clocksource, riscv_timebase);
+ 	if (error) {
+-		pr_err("RISCV timer registration failed [%d]\n", error);
++		pr_err("RISCV timer registration failed: %pe\n", ERR_PTR(error));
+ 		return error;
+ 	}
+ 
+@@ -179,7 +179,7 @@ static int __init riscv_timer_init_common(void)
+ 				    riscv_timer_interrupt,
+ 				    "riscv-timer", &riscv_clock_event);
+ 	if (error) {
+-		pr_err("registering percpu irq failed [%d]\n", error);
++		pr_err("registering percpu irq failed: %pe\n", ERR_PTR(error));
+ 		return error;
+ 	}
+ 
+@@ -192,8 +192,8 @@ static int __init riscv_timer_init_common(void)
+ 			 "clockevents/riscv/timer:starting",
+ 			 riscv_timer_starting_cpu, riscv_timer_dying_cpu);
+ 	if (error)
+-		pr_err("cpu hp setup state failed for RISCV timer [%d]\n",
+-		       error);
++		pr_err("cpu hp setup state failed for RISCV timer: %pe\n",
++		       ERR_PTR(error));
+ 
+ 	return error;
+ }
+diff --git a/drivers/clocksource/timer-sp804.c b/drivers/clocksource/timer-sp804.c
+index cd1916c05325..cbb3bc1eac0d 100644
+--- a/drivers/clocksource/timer-sp804.c
++++ b/drivers/clocksource/timer-sp804.c
+@@ -66,13 +66,13 @@ static long __init sp804_get_clock_rate(struct clk *clk, const char *name)
+ 	if (!clk)
+ 		clk = clk_get_sys("sp804", name);
+ 	if (IS_ERR(clk)) {
+-		pr_err("%s clock not found: %ld\n", name, PTR_ERR(clk));
++		pr_err("%s clock not found: %pe\n", name, clk);
+ 		return PTR_ERR(clk);
+ 	}
+ 
+ 	err = clk_prepare_enable(clk);
+ 	if (err) {
+-		pr_err("clock failed to enable: %d\n", err);
++		pr_err("clock failed to enable: %pe\n", ERR_PTR(err));
+ 		clk_put(clk);
+ 		return err;
+ 	}
+diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+index e9635c25eef4..2fe79042fbf9 100644
+--- a/drivers/clocksource/timer-tegra.c
++++ b/drivers/clocksource/timer-tegra.c
+@@ -324,8 +324,8 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 		ret = request_irq(cpu_to->clkevt.irq, tegra_timer_isr, flags,
+ 				  cpu_to->clkevt.name, &cpu_to->clkevt);
+ 		if (ret) {
+-			pr_err("failed to set up irq for cpu%d: %d\n",
+-			       cpu, ret);
++			pr_err("failed to set up irq for cpu%d: %pe\n",
++			       cpu, ERR_PTR(ret));
+ 			irq_dispose_mapping(cpu_to->clkevt.irq);
+ 			cpu_to->clkevt.irq = 0;
+ 			goto out_irq;
+@@ -338,7 +338,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 				    "timer_us", TIMER_1MHz, 300, 32,
+ 				    clocksource_mmio_readl_up);
+ 	if (ret)
+-		pr_err("failed to register clocksource: %d\n", ret);
++		pr_err("failed to register clocksource: %pe\n", ERR_PTR(ret));
+ 
+ #ifdef CONFIG_ARM
+ 	register_current_timer_delay(&tegra_delay_timer);
+@@ -348,7 +348,7 @@ static int __init tegra_init_timer(struct device_node *np, bool tegra20,
+ 				"AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
+ 				tegra_timer_stop);
+ 	if (ret)
+-		pr_err("failed to set up cpu hp state: %d\n", ret);
++		pr_err("failed to set up cpu hp state: %pe\n", ERR_PTR(ret));
+ 
+ 	return ret;
+ 
+diff --git a/drivers/clocksource/timer-tegra186.c b/drivers/clocksource/timer-tegra186.c
+index 304537dadf2c..927533d98ef7 100644
+--- a/drivers/clocksource/timer-tegra186.c
++++ b/drivers/clocksource/timer-tegra186.c
+@@ -279,13 +279,13 @@ static struct tegra186_wdt *tegra186_wdt_create(struct tegra186_timer *tegra,
+ 
+ 	err = watchdog_init_timeout(&wdt->base, 5, tegra->dev);
+ 	if (err < 0) {
+-		dev_err(tegra->dev, "failed to initialize timeout: %d\n", err);
++		dev_err(tegra->dev, "failed to initialize timeout: %pe\n", ERR_PTR(err));
+ 		return ERR_PTR(err);
+ 	}
+ 
+ 	err = devm_watchdog_register_device(tegra->dev, &wdt->base);
+ 	if (err < 0) {
+-		dev_err(tegra->dev, "failed to register WDT: %d\n", err);
++		dev_err(tegra->dev, "failed to register WDT: %pe\n", ERR_PTR(err));
+ 		return ERR_PTR(err);
+ 	}
+ 
+@@ -406,32 +406,32 @@ static int tegra186_timer_probe(struct platform_device *pdev)
+ 	tegra->wdt = tegra186_wdt_create(tegra, 0);
+ 	if (IS_ERR(tegra->wdt)) {
+ 		err = PTR_ERR(tegra->wdt);
+-		dev_err(dev, "failed to create WDT: %d\n", err);
++		dev_err(dev, "failed to create WDT: %pe\n", tegra->wdt);
+ 		return err;
+ 	}
+ 
+ 	err = tegra186_timer_tsc_init(tegra);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to register TSC counter: %d\n", err);
++		dev_err(dev, "failed to register TSC counter: %pe\n", ERR_PTR(err));
+ 		return err;
+ 	}
+ 
+ 	err = tegra186_timer_osc_init(tegra);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to register OSC counter: %d\n", err);
++		dev_err(dev, "failed to register OSC counter: %pe\n", ERR_PTR(err));
+ 		goto unregister_tsc;
+ 	}
+ 
+ 	err = tegra186_timer_usec_init(tegra);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to register USEC counter: %d\n", err);
++		dev_err(dev, "failed to register USEC counter: %pe\n", ERR_PTR(err));
+ 		goto unregister_osc;
+ 	}
+ 
+ 	err = devm_request_irq(dev, irq, tegra186_timer_irq, 0,
+ 			       "tegra186-timer", tegra);
+ 	if (err < 0) {
+-		dev_err(dev, "failed to request IRQ#%u: %d\n", irq, err);
++		dev_err(dev, "failed to request IRQ#%u: %pe\n", irq, ERR_PTR(err));
+ 		goto unregister_usec;
+ 	}
+ 
+diff --git a/drivers/clocksource/timer-zevio.c b/drivers/clocksource/timer-zevio.c
+index ecaa3568841c..b61973a66dc6 100644
+--- a/drivers/clocksource/timer-zevio.c
++++ b/drivers/clocksource/timer-zevio.c
+@@ -134,7 +134,7 @@ static int __init zevio_timer_add(struct device_node *node)
+ 	timer->clk = of_clk_get(node, 0);
+ 	if (IS_ERR(timer->clk)) {
+ 		ret = PTR_ERR(timer->clk);
+-		pr_err("Timer clock not found! (error %d)\n", ret);
++		pr_err("Timer clock not found! error: %pe\n", timer->clk);
+ 		goto error_unmap;
+ 	}
+ 
+-- 
+2.25.1
+
