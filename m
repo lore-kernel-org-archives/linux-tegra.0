@@ -1,90 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C572A1D3;
-	Sat, 25 May 2024 14:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9B81429E;
+	Sat, 25 May 2024 15:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716646809; cv=none; b=sJo7TtRsJqkfui0v/DjA/Amug5vnIZdI8I3dKzeYNmu92nl+9pIDGwQM21tR+hhx54+tOYicwXeVEl9px0Ua10qBiO3FlSp6I/2+siwJ3nRgzPlg7Nm7eeJoIZwel/7rMNINuB1auvDczZ3U6Cisg/xTpNrXMeMXyCA8Qf8yEoE=
+	t=1716650639; cv=none; b=fvX+Gru6iNxO8+vPJHArqET6HcMv1/affvEkJYmuhjQitpLomM7LpsrAgiqeiste8F1Tgb4LxKWGKhdNkoJIulSMo2FycT5rBpobxVfp5geWA60BdylKbzf3g5xJ43dbG9rsj/z8ELf7WUjFF7jGSwXJvSCaidNbRLieQmHKzyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716646809; c=relaxed/simple;
-	bh=LELYlH2TsI85qd++YmKvIhQ9XuKF1OIKFsdx17FkjiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=phoDsoAliUYOVZ7Blec92rQVeOqIPu8VZCVFldmQpm5s9RShprg8xHSOiCoChuf1PGT5fL2H4o92lWjBoj8zGevGbgq8df6fhpx6hsEwEN1O66P/vs8PVbiwingTpW/ob6vKlLgKoU7hVIEgj9rK2XrCJK2cEinJSs1vdz1Ajgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2kh15BzI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716650639; c=relaxed/simple;
+	bh=Y1QbV1fVDvWYwh1mRKjVim+xdyrWT0f/WnYH38ND510=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NOU2QGAbtu/+ghiQ8HW4bVOGUoJKwMP4WqhmAYUQ3rAij8KNZViMPDEHj1nHTAGYCEsHn6MA9kVCWjXl5/vFXqgw64wJQokr7ZQp+Jw87PExKZk7Dg89Amsnnu+iGe5Kx3ITc8HYLF70F1hQNIUYNMfr6+yr5idw1N6ZjmK1a7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UcNiW7vq; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2kh15BzI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B84B7C2BD11;
-	Sat, 25 May 2024 14:20:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1716646808;
-	bh=LELYlH2TsI85qd++YmKvIhQ9XuKF1OIKFsdx17FkjiI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2kh15BzIPBuLlRPBXaHB4Dy1/gmVoFQXxljXDgarBPk0lKUElf75IWsdAOOodu69m
-	 qX2BNqodLPpQPN5gaKo/H6lZIWHvXkn/G5ur7kq1a8PXqtbNpH9ZFOp1kCcVlX8YS2
-	 vJBcqs0o1KvfMmSHGOkBlqz3ZxMPWU+xTtDX2/uo=
-Date: Sat, 25 May 2024 16:20:05 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
-Message-ID: <2024052541-likeness-banjo-e147@gregkh>
-References: <20240523130327.956341021@linuxfoundation.org>
- <8e60522f-22db-4308-bb7d-3c71a0c7d447@nvidia.com>
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UcNiW7vq"
+Received: from fedora.home ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id At6asqDFCOBGCAt6asbEpr; Sat, 25 May 2024 17:14:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1716650087;
+	bh=SsSnU22BLOw2sFJbi0JknTXepGNVkme9LGYumcyMsq0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=UcNiW7vqBL6W/uiJKJok9ctWJIJmgX2JZMruZnW+I5yvkB6lsgwEVFIa07qypLFq1
+	 HWc7s94sRHNc7PwjCcHclfEeCFFuE0HZ+FRG1BZCZNZESKn2Jrda875XMEAESMpY6w
+	 5+Ysr+/16CU3fUE2TEoz5OHshQGHoLZLYbTmszZuxpd9OPZ3Nvsowe+VuMoIkPBI7D
+	 eOoWxtp/ePwL+D//ijSf/y+eFEDdSfKDVbWREi6NCihYDfaIVeLDjItTUibKkRibM/
+	 qVSegiqnjva1HfXNG+dUC+TMg3xNO8iAv9fvqgENWbk4flNtwAOWa5MLW3NQ2SCaee
+	 jXRW6ExbhnTtg==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 25 May 2024 17:14:47 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Akhil R <akhilrajeev@nvidia.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-crypto@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] crypto: tegra - Remove an incorrect iommu_fwspec_free() call in tegra_se_remove()
+Date: Sat, 25 May 2024 17:14:35 +0200
+Message-ID: <ea775b351a3dbe4cef4056ea89da25084f73df22.1716650050.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e60522f-22db-4308-bb7d-3c71a0c7d447@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, May 25, 2024 at 12:13:28AM +0100, Jon Hunter wrote:
-> Hi Greg,
-> 
-> On 23/05/2024 14:12, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.15.160 release.
-> > There are 23 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Sat, 25 May 2024 13:03:15 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.160-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > -------------
-> > Pseudo-Shortlog of commits:
-> 
-> ...
-> 
-> > NeilBrown <neilb@suse.de>
-> >      nfsd: don't allow nfsd threads to be signalled.
-> 
-> 
-> I am seeing a suspend regression on a couple boards and bisect is pointing
-> to the above commit. Reverting this commit does fix the issue.
+The only iommu function call in this driver is a
+tegra_dev_iommu_get_stream_id() which does not allocate anything and does
+not take any reference.
 
-Ugh, that fixes the report from others.  Can you cc: everyone on that
-and figure out what is going on, as this keeps going back and forth...
+More-over, what is freed is "se->dev" which has been devm_kzalloc()'ed in
+the probe.
 
-thanks,
+So there is no point in calling iommu_fwspec_free() in the remove function.
 
-greg k-h
+Remove this incorrect function call.
+
+Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only
+
+This patch is completely speculative. *Review with care*.
+---
+ drivers/crypto/tegra/tegra-se-main.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/crypto/tegra/tegra-se-main.c b/drivers/crypto/tegra/tegra-se-main.c
+index 9955874b3dc3..f94c0331b148 100644
+--- a/drivers/crypto/tegra/tegra-se-main.c
++++ b/drivers/crypto/tegra/tegra-se-main.c
+@@ -326,7 +326,6 @@ static void tegra_se_remove(struct platform_device *pdev)
+ 
+ 	crypto_engine_stop(se->engine);
+ 	crypto_engine_exit(se->engine);
+-	iommu_fwspec_free(se->dev);
+ 	host1x_client_unregister(&se->client);
+ }
+ 
+-- 
+2.45.1
+
