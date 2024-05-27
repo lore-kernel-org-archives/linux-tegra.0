@@ -1,80 +1,77 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C7C155C8D;
-	Mon, 27 May 2024 16:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAFD60269;
+	Mon, 27 May 2024 23:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716825684; cv=none; b=bZMq1utBtVKRD/RdlYUqg9szHSm8r0Lk5zh8H0yPXzwludSM4yx9higoAYP02lf12mw4L/7EPpb36SmpB+cN8+cRDGHYG1TxFQ1zEmd9htqxIf5pYuhxLua4GVJ5Y8tW5FwvbwBX+J4P4Q1x3jty1X5TJ9dej/xYM/NPLF6zmco=
+	t=1716853396; cv=none; b=VnZA3J0KJirXpZkACglEUi4QXLeLq7rlvJsWRUqEw+V5+YvM3txettAD+Ytg5vpExPSu88gTVnDsyZAyVIpNicg700pwyvnFBiZwmlU2+0E4gb7BN1f/MOm9b/hFtJPztUJoSJzKIfaRyIN8jfmtSvKwtU5unM8fVgX4eUo9uDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716825684; c=relaxed/simple;
-	bh=Sruv/YZzitcj90qjhIXuqnC3K/lFTcB08gnVoO8Fw4g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=st/TgUmLP4/Y6MhXfX2R4Dhgg1xsO3Z0fpMVH2KRTB9KKtaIpUsFoe6AKsZcaFAWgLwZRKug2gp4T1Em0WiMW5MtgKi8GxCRCs5r0ZeAHgz9mbFLmYPv9q4lMdVTZt6pRkzFU5UnDS5jUyhV8TNSXYfbCoBN7ENUbJvp/8SFGzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=DBXdpju4; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1716853396; c=relaxed/simple;
+	bh=/kwHgdZsrLu1TzQQqZA1wtyN5OKuelHdCXg3eDURRtA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YvMysNlZoddCJKDmQTkP5jvFno7FA8QxZwzWFutHXa27invpjwxUqHRK6ZivjpxdDcXMHDNw1hqL0w+thvHDEHxbEj+QAAZyHklAYAd1paKR7P3U2dJ9FNBG0rN5OS6TM83sx9trJ1D4ZzenmyRtbtcbEWckoHFtG07NKreQ2dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=aJD0OzG8; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="DBXdpju4"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=EE/8qcrliFALaEnFXnUHoU1iKIRNcEvm7lqw9z40qcA=; b=DBXdpju4st9B9+Cc
-	W6gFQZ4eLH4oO1AqKct7nLtPJ8HeA2egQ0H2RQTcj12j7U/f0BWWTEFyuCy+F25l2HUGWCumLkMhO
-	LDQXmmSflhFpw4k5826B3xai+aPottcakuhoxQBZ1I1YNQapEb+QtY1tre0AKpUjsMkUpUjK3Sw+B
-	n9UI+iFZHd1DBI/6HZK2eGvTyS9zBUIqF6FiapOsR7dLvx5K9fKa0zCpDPVxs6YH0iW6cta/Swlay
-	vJR96ciWcgIIWswK4bCMb7Iy2PKRXUbWiuoX/5U5OWa+Vuu+VR7J16WTm1TBbJUAQxKIvVuYr4qNi
-	BiEp6JmWksse6z8IRw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sBcmk-002m9X-2V;
-	Mon, 27 May 2024 16:01:19 +0000
-From: linux@treblig.org
-To: lpieralisi@kernel.org,
-	robh@kernel.org,
-	thierry.reding@gmail.com
-Cc: linux-pci@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] PCI: tegra: remove unused struct 'tegra_pcie_soc'
-Date: Mon, 27 May 2024 17:01:18 +0100
-Message-ID: <20240527160118.37069-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.1
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="aJD0OzG8"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id B02036000237;
+	Tue, 28 May 2024 00:43:08 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id PlSEfCxSXQvE; Tue, 28 May 2024 00:43:06 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 69F436000229;
+	Tue, 28 May 2024 00:43:06 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1716853386;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IJ76wpO5fGaP7PdSuHoaCzNs99SFOGdb5V/WNX+FTQQ=;
+	b=aJD0OzG83nVfOFnV+d1bHp6O0g5QCeh+bsEFbG/0ma4n56QDXg22s99FsT+vI/fm7JoYr6
+	fHpbBxUT9H8jurmxI+MD5eu9t/RH7ExTyzzgft0XY1unDuUdbmIeNr/CLbYwievhi2Z00A
+	kAre3tPTcTTDs8r6+dLr+FYIFMBDtjA=
+Received: from diogo-gram.home (unknown [IPv6:2a01:14:8070:dc60:5881:46cb:b422:a117])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 0DC95360090;
+	Tue, 28 May 2024 00:43:05 +0100 (WEST)
+Date: Tue, 28 May 2024 00:42:59 +0100
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v3 0/7] Cleanup Tegra210 EMC frequency scaling
+Message-ID: <xnyynaogpmauup2p3rksmpeidvhyglocaiy7rhmn6jnatv6laa@ezw2ifilfyfs>
+References: <20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt>
+ <scjwzfj3jiyqh2hgomlfpdxjpyurkhiyy5bks3damficnn3bc3@vogn5wp5exoc>
+ <56345d8d-ec1c-4ff3-b278-f66f2a1f9f84@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <56345d8d-ec1c-4ff3-b278-f66f2a1f9f84@linaro.org>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, May 27, 2024 at 12:20:07PM GMT, Krzysztof Kozlowski wrote:
+> On 27/05/2024 12:15, Diogo Ivo wrote:
+> > Gentle ping on this patch series. I think this version addressed all of
+> > the review comments, is there anything missing?
+> 
+> I think I explained you the process. Merge window finished yesterday
+> (today for this timezone), so why pinging the same day? Give some time...
 
-'tegra_pcie_soc' has been unused since the initial
-commit 56e15a238d92 ("PCI: tegra: Add Tegra194 PCIe support").
+Sorry, I didn't mean to spam you. In fact it's actually good that you
+didn't merge this yet as I just noticed that there should be parenthesis
+in patch 7 around (rate_mhz * 2 * dqsosc) so that we get the proper result
+for the delay. I apologize for missing this and I will send a v4 once I
+re-check the series for mistakes like this.
 
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/pci/controller/dwc/pcie-tegra194.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 93f5433c5c55..076f040ccc34 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -308,10 +308,6 @@ static inline u32 appl_readl(struct tegra_pcie_dw *pcie, const u32 reg)
- 	return readl_relaxed(pcie->appl_base + reg);
- }
- 
--struct tegra_pcie_soc {
--	enum dw_pcie_device_mode mode;
--};
--
- static void tegra_pcie_icc_set(struct tegra_pcie_dw *pcie)
- {
- 	struct dw_pcie *pci = &pcie->pci;
--- 
-2.45.1
-
+Best regards,
+Diogo
