@@ -1,67 +1,67 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DD416C848
-	for <linux-tegra@vger.kernel.org>; Mon, 27 May 2024 12:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F24F15ECE3
+	for <linux-tegra@vger.kernel.org>; Mon, 27 May 2024 12:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814626; cv=none; b=TqBtYGNSaBvQSMh9yw4v4p80rUMBTdr0QWgkZohSACMd/hktmSoh4Yy3WrQ0g3ZrxakzjOpmMRoQtbWMcaitvfgVbMBHgsOXFlNEoXehPWlbpxBZqc5GMVmREt5DU33Oq1lLEd2wIdbFpvZAUA2wgzwkk7nGou3PXAJG6hhjPWA=
+	t=1716814670; cv=none; b=MDUvMqTc3vPogw+AIKZdFZk7mE8rFuRZ49SS7F8Ml0abGUUdovp4trJPmTXYkAfMsNPPf0iK1LXVPQh6CLOnsFPTGMi9Pp4ic0wYe8WP2Pd5jZImI/4ylZOSDcJ00EfuZsJLX7G/7wJbMGmflFZ0Nlixhiz9mmIj9qeoC9fFgys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814626; c=relaxed/simple;
-	bh=pJJyP+9frURhdd/ZV2qsiiwzKPVnn0nUZRG4Ztdu5Ds=;
+	s=arc-20240116; t=1716814670; c=relaxed/simple;
+	bh=rNZ98tycbIm8gHCECF6fFAUqvVWA7Py4cjGRVlBtUzM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y7ZNvf+wi6ercnuYOmTveS4qhlWGF9YsBvGby1DrKxmQqb/YDMOPEy2m0zjP+loMwqCL8o48dRnTPBquc4jQ7ZoPWvfaKo9/zUtCAR38mPhgpAuxH3Lakt4r1+Los2DV+ENmUuKkuZj++s2thMoGklBDKxNbUWqPCqD63uYRcg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jXCrQXK4; arc=none smtp.client-ip=209.85.219.171
+	 To:Cc:Content-Type; b=jwXgV7MsiJOlMWIoa573uZmHCWpSDCnlw+z8izouoEDpwJ+0Lb3r/UUeZDXRMbABsqTIqNcNYTidqIfZQuPamWb1lmZtJdvgfC/bHBbu0nxHVshddvUU/KnzZhRrzJh2YcfgzU9rQmHEbQBAq76PhMxxTfa0w2rObLhWeMinR84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xZjSW3Kv; arc=none smtp.client-ip=209.85.219.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jXCrQXK4"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-df4e40a3cb6so5608491276.0
-        for <linux-tegra@vger.kernel.org>; Mon, 27 May 2024 05:57:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xZjSW3Kv"
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-df4e1366da6so5316656276.1
+        for <linux-tegra@vger.kernel.org>; Mon, 27 May 2024 05:57:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716814624; x=1717419424; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716814666; x=1717419466; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pJJyP+9frURhdd/ZV2qsiiwzKPVnn0nUZRG4Ztdu5Ds=;
-        b=jXCrQXK4vKKG3HNR2A3yrhA0N89JXaALNJNJZFifU5IcPmNHSV9/2cOI458EcoPwSp
-         MS8tiPvxGlUeIzWn77Wc+B97UCTfQyJpY3/Wq7Y+34n5758vEvKc5NsGlqkOD4UM3jY2
-         j3++z8nTL32t1NMfJR77W9ZbGD6s8Ho9b8sXjoTkCTBfwJ/X7deVNRLnfC7v8N2lDZfK
-         R5D27pTTRyLCkRYZGQvBaVoczAp5THTkjy6iFgn2g3IuWau9JlRxwsw7wsJ3kdoSqueg
-         WkEa+oKqAPIYXL2aQkmLYoo9zelMDkvpzcwN3Rf4Wgs1p32CJpmnoUP+Ahrw8+LQJdR0
-         nDcg==
+        bh=rNZ98tycbIm8gHCECF6fFAUqvVWA7Py4cjGRVlBtUzM=;
+        b=xZjSW3Kvib9bA2fuiZguOMj/iBQcVxTBNd4+MePuDiOWiLp/1cjpsIk0SX/FqpWHiM
+         Pbsw80Fp0uSo2+qs0Yz8u65ZOUCrczWDUMpRUTZkANI60DYInk+z/cQbjU0hcxXZ3HnG
+         Ut1+gUns56/8o4E4S4kw2dlqfZJo3Bvd/7XXJItZCy+w3B/9BftGY+pjKpyv0OhyJHWP
+         uPbMOPzMK1ZC1pE9Vcg8T5Ptzh1qbAeBSOFxjjzXr+MlGnEGDeMOuOI5uiPZDzbYYnmR
+         4eaImTMk0JpJdOZpRYlS1qILympE3IqjPRj5LuELPRgkR62y8uanQIw3P15V7bSJ/MVE
+         U6Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716814624; x=1717419424;
+        d=1e100.net; s=20230601; t=1716814666; x=1717419466;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pJJyP+9frURhdd/ZV2qsiiwzKPVnn0nUZRG4Ztdu5Ds=;
-        b=tp40sZ89qW+cDqSysSwDMvjdmR1bwnu9MQv3pjT8gRymMoEGMG9qf9MY6MvKAQEd0S
-         zLUvES3puzrA6/hTQSvYFcQ5V0MBDTSEnYlE+eXgtPSE6FOX/eQ6DT3NIj76WLJacVDW
-         RTZQJ3EDer8Mh1NvNoRQSG2tMU/E9CB/3WFj3mjYcOJ17JyPqD8Z9jyvjTwQmXpT3siF
-         uHd2q8U21poTXvORwV0xIREeraO82UVoirmkWoQFUQkZHWmXnSOQseCRUvc954cOixMh
-         mgeBNpGaI4a6TGKdngtxANsEXF+x5QuGF++s7kWigR1G1N7PHK6pDzUKlMZIj4IwqDeZ
-         FaVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvw3g/tjNbMsi559te6Hd6Ws8W27tqEov25AfmlfxrjNg6jOAK9aVuWxnVeDVFrvqmBtbGZFZPzo66Mob6zE/lEXEECsOy4CxGF9E=
-X-Gm-Message-State: AOJu0YzL3Wq7A4w5cdfyiSE65+6wMYKY3VLry2FDRlzL1q17H8j69WIi
-	nifLQjHsFqxseKPXDg5m7paSqESLmEqdg5E0SoL0BrdCnCVV9RWcg4xJe983uZJdloHSzwnVSiG
-	6qghPmqlFF+j7nAjWHB8dRA51Ntz3bPPLNuXQxw==
-X-Google-Smtp-Source: AGHT+IHtuitKU1in514NtpJEfJGREAKzOXikcv6xhBvHaqSAyXXF4vYDUv/B437jXNYfH7CNGKFQFe5YOvThvoGTSqk=
-X-Received: by 2002:a25:7486:0:b0:dc2:3f75:1f79 with SMTP id
- 3f1490d57ef6-df772184c54mr8792593276.23.1716814624064; Mon, 27 May 2024
- 05:57:04 -0700 (PDT)
+        bh=rNZ98tycbIm8gHCECF6fFAUqvVWA7Py4cjGRVlBtUzM=;
+        b=tsrjdgq3tfy8eqx/b31tq95TRRlD5uxvwQqsB3c/3NHO749KkT+71G3VArS6aFT5E9
+         q8uJAh77HP4rU06TsvKwS20RwlvfhQ+yKSadS+53lq8xTxlr23C/hdKhJSeTmOHmr8QJ
+         Qaj971OPOMnhGNtsng542J+uHGI+KiY6uYkoQ/IGcIAVXdFiTKBfRHdLEnKu3HxWVLzM
+         lp8gcPAPQe3kuHwgXFz38avqOcqR9mzg3OVB4WCE7mBHS4FQ3KDZw5YKmIRM9zdW4arr
+         ByIOozVmF1JC3GKGV/pb0U2MwWi5OfgaK57oAC2L8mrqqPXNxj70MBoUCmfId7vbDCqV
+         ui4w==
+X-Forwarded-Encrypted: i=1; AJvYcCU2IKsIiAbr69xc5cQdPyq9ZMJCVeE6YFnYqrzPz58qecJxQRRgksZX/d7+DKN7EUlxU+mST3RgARfsZfkGSyN/MBKK7h1LruNFUTg=
+X-Gm-Message-State: AOJu0Yw9B5T5vAFeJJdymthaDvuGp6f61qKZiT1Ws5T1EDxxJTj2FhXd
+	ZPq3wrC2xMOUQ9oZnHtB4Bl8CzgtuYGePZgQWg1MgQDEeFwjF4lQO6V4tBaX3cNtoGNDIcyDjro
+	Bb18rPxMiZEIxHBsMTqIf1lIoak+g2HPrTeTJcQ==
+X-Google-Smtp-Source: AGHT+IGPHGbdeDgQwNEq4mWXFwTqV0k8iDBOK2TyTZ4utk5viKokv4dr91DnLp+C01zzJZrl1Jzg3NthvUqaC/NhrDk=
+X-Received: by 2002:a05:6902:70a:b0:df7:9946:b32c with SMTP id
+ 3f1490d57ef6-df79946bc95mr6983978276.29.1716814666366; Mon, 27 May 2024
+ 05:57:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com> <20240504-pinctrl-cleanup-v2-3-26c5f2dc1181@nxp.com>
-In-Reply-To: <20240504-pinctrl-cleanup-v2-3-26c5f2dc1181@nxp.com>
+References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com> <20240504-pinctrl-cleanup-v2-8-26c5f2dc1181@nxp.com>
+In-Reply-To: <20240504-pinctrl-cleanup-v2-8-26c5f2dc1181@nxp.com>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 27 May 2024 14:56:53 +0200
-Message-ID: <CACRpkdZ+YPAXTNU-kaA8ywBLW0RpGJBpXJqPD7aJ+B1V=axPrg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/20] pinctrl: stm32: Use scope based of_node_put() cleanups
+Date: Mon, 27 May 2024 14:57:35 +0200
+Message-ID: <CACRpkdbt0kE6VP3O+63U1rmJ_JKRvWENCnETT4f+mvNMMphLeA@mail.gmail.com>
+Subject: Re: [PATCH v2 08/20] pinctrl: st: Use scope based of_node_put() cleanups
 To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
 Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
 	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
@@ -95,7 +95,7 @@ Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, May 4, 2024 at 3:13=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.com=
+On Sat, May 4, 2024 at 3:14=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.com=
 > wrote:
 
 > From: Peng Fan <peng.fan@nxp.com>
