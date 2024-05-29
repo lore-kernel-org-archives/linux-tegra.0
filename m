@@ -1,236 +1,305 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2088.outbound.protection.outlook.com [40.107.220.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7EC169AC1;
-	Wed, 29 May 2024 08:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716973190; cv=fail; b=fbJEejflfu+xBZ536xTkDQBaStl5v1nOd6p7tJSF06ySRBDztYgIzmC9EaMSgVHb+uyNoUyxek7OgMOyxLciOcMkjt7firPU0uLsovhc0FsHtSgsmc7Oq2ECHTV2LKtHiXJUYf9b3olA0PoTDcy5H39JuyiDtVoCdIXk8TH0ZCg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716973190; c=relaxed/simple;
-	bh=m933WuFvot2rizLIc8GNS/E0ASCQDO468lNvnzMmqfc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LvHtI0NpL6ygANfmrPaJxZTVu9wRYWOi89Dw3eVBdPr1BMGTbIVxet7kcVqc6PhhaKg3qHNQ8Pkp4Fjx9JlF+zN0BnS7NldSZBvUzsED1KFymmudrheaUOna4nwUwtkvRSY4qglMvWhFZDP9leXj2P6RhEVdecBLlVjS07qsQ4Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jt7oy3UW; arc=fail smtp.client-ip=40.107.220.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEA71C9EBC;
+	Wed, 29 May 2024 21:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717016412; cv=none; b=Ey6f0W8q9YX2ZcPY6ZzRZeLrdT4bJGrjN/JZX6+Bz+fT4pqBqfuuXEZEKip9XcPfUK3aYSY3XW7BSnHg/DOcyP8PcO1QJGwKBPxu5hemw0HTLCJvMFQifTorN3HGH1qekfuWXdwxo/Xo3VddqcWmeMfPYHPODh9agD/E3Osgyf8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717016412; c=relaxed/simple;
+	bh=08YKRjQ33IINdo85t6RsE0fDXfAJ6W7Tx6K/Trq2BPc=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=CWh0WDzV7zTEU3HXPnnLJIxFe0zOLYHfqblgwqWRHMBjURAm6Y0/eq9TVkPaV5vpYwMNSkDm7BYlwG6xV3rYxmF2H+bhXB8ZZOj7fdgMO/6RWyVj0A/jg7tmhAahhbVA33/ie05C0nTmwb2CheoRoBjCKFasSJWETeRI70dWyzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UMTU5Bqu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=y2BiA/43; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UMTU5Bqu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=y2BiA/43; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jt7oy3UW"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K7dx16jmiCbTB9csQYsc/VsJLzOQxwHM9AdCgvTtxRtte2U7HalwB57IxiD4l0muy9tXrNL/KEPNdvIUyjq0fI+G6ZShm2jj10FqFS4/vhwYVoV7fta2TnzLHdEJEvBgVJITbDFu7VryF1bRf6FakG9qeHZDhHt/7HH2uN5A7TBs4LFb0/0OwW1FgOC745G0LNXe0ER1HBF10zbGAkbPgDAuVkcWY7GCVEl1vwZ6kAq7VknZ4TMwGaZ7qVBIIdp/ImRb9rW+bKJEOH5ssdtKTcTbhaV90aSeYL1z0EJ8OFlFCR/ojKxCqlbNR/pBqSowiL1zXLuPj67HC9MrOfIpzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iLM2ML56ZPkZS0JIkv9IvZiO8UljuL+GHQQ4S4Pn5bk=;
- b=hxv2A+beLJbe1Y6fu4ShK3KRPUm8qEy19zwJmk5ps1DKxbrSzg8XVZOVppoahQN+fsiZToYNtv1yzj/JuWKXgSf66cpLryj94YNiec4F6FBjCC8yA0tb03m3nndedcBhjFKQB1JLdUDObTzLYdgRPEz24ZmlGXukevxEe+nxBG+QzMlVnnSKMSmlW6kmA4zF6bk5ZFxnbMYFJsypyWIEeYxQrQ3nW+h29aNYbdmVdAsnlcO0zLVmnzDnwAcZ9qsj3hmIu3K/OfhQXSXKCuyukheqoXttTqGujQcR1M9oYUDYQ0kMIci/naDMx3xD59c6s61OMb4XKDNNHtKjx2aKhg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iLM2ML56ZPkZS0JIkv9IvZiO8UljuL+GHQQ4S4Pn5bk=;
- b=jt7oy3UWiFPV8IxIkohPoxKpnKb3izIKymp2tgeV2jkVtFECG8sbID+ZhyKgQ/Tvx+krRRp3Rsjkz3Jf2JsfDX9VYV1PigBlof1Vjc2mZ0tXgQ4GWJb9N/dFfBcVU/wvInsg8+OJdVAgK6AykewJ5POpdh2KzEWUQnrz7VchrrZcSJNTWYaGDtED8XuTJqd2CmnROnzCv0fTu+K87ln3iy7DTZ18qIbIyKe2YBXsJY9WjSNJPnBuqGcfXYg9XjlK7xyS1EDY4k3o0r9UiERSqtC8PNx17lLDwyFbk1ioZWj5cfXUMHZxec147qHTTP2puefPRViEFr6Q2F8BIXT/0Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- SN7PR12MB8769.namprd12.prod.outlook.com (2603:10b6:806:34b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.36; Wed, 29 May
- 2024 08:59:43 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::ae68:3461:c09b:e6e3]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::ae68:3461:c09b:e6e3%5]) with mapi id 15.20.7587.035; Wed, 29 May 2024
- 08:59:43 +0000
-Message-ID: <58fa929b-1713-472e-953f-7944be428049@nvidia.com>
-Date: Wed, 29 May 2024 09:59:34 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
-To: NeilBrown <neilb@suse.de>, Chuck Lever III <chuck.lever@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
- linux-stable <stable@vger.kernel.org>,
- "patches@lists.linux.dev" <patches@lists.linux.dev>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck
- <linux@roeck-us.net>, "shuah@kernel.org" <shuah@kernel.org>,
- "patches@kernelci.org" <patches@kernelci.org>,
- "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
- "pavel@denx.de" <pavel@denx.de>, "f.fainelli@gmail.com"
- <f.fainelli@gmail.com>,
- "sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
- "srw@sladewatkins.net" <srw@sladewatkins.net>,
- "rwarsow@gmx.de" <rwarsow@gmx.de>, "conor@kernel.org" <conor@kernel.org>,
- "allen.lkml@gmail.com" <allen.lkml@gmail.com>,
- "broonie@kernel.org" <broonie@kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <> <0377C58A-6E28-4007-9C90-273DE234BC44@oracle.com>
- <171693366194.27191.14418409153038406865@noble.neil.brown.name>
- <171693973585.27191.10038342787850677423@noble.neil.brown.name>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <171693973585.27191.10038342787850677423@noble.neil.brown.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0533.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:2c5::18) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UMTU5Bqu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="y2BiA/43";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UMTU5Bqu";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="y2BiA/43"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F347333738;
+	Wed, 29 May 2024 21:00:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717016408; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ykWx3Ul8pkvWcDFuarkaXgyNPMb+o29sy5ktHqd813U=;
+	b=UMTU5BquxKsxN2CQgMEKXqP6l36yuWo5of0lRTrGZkQvMHAWEOHsNlDA4eSjQuDwLUUiqk
+	uqIwlTYeGSWPmmdC2gs8M16ZW8hzixZNkYKiSwNcCuiWv1Ga7NuFd+qEnHx7hutUfmjld9
+	GTTFvw/coUKOzJtXkvomnjpl1ILfe8A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717016408;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ykWx3Ul8pkvWcDFuarkaXgyNPMb+o29sy5ktHqd813U=;
+	b=y2BiA/43KKHXetE3GL/8A2aNc4XSRZAjgr0eG0WXMdYdq1GUBEcrdobo0OrtNf8ZnycqGO
+	QAvNJCCjNdo3r0CA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=UMTU5Bqu;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="y2BiA/43"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1717016408; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ykWx3Ul8pkvWcDFuarkaXgyNPMb+o29sy5ktHqd813U=;
+	b=UMTU5BquxKsxN2CQgMEKXqP6l36yuWo5of0lRTrGZkQvMHAWEOHsNlDA4eSjQuDwLUUiqk
+	uqIwlTYeGSWPmmdC2gs8M16ZW8hzixZNkYKiSwNcCuiWv1Ga7NuFd+qEnHx7hutUfmjld9
+	GTTFvw/coUKOzJtXkvomnjpl1ILfe8A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1717016408;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ykWx3Ul8pkvWcDFuarkaXgyNPMb+o29sy5ktHqd813U=;
+	b=y2BiA/43KKHXetE3GL/8A2aNc4XSRZAjgr0eG0WXMdYdq1GUBEcrdobo0OrtNf8ZnycqGO
+	QAvNJCCjNdo3r0CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7634D13A6B;
+	Wed, 29 May 2024 20:59:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 22jbBk+XV2YaUwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 29 May 2024 20:59:59 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|SN7PR12MB8769:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5c2728e-688b-4820-b37b-08dc7fbdae35
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|7416005|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?elA1UURyd0d4V0c0alA5NStraGNjeGFGMnhqd1h3RDl4Y25qWHh1aG5MS3Z0?=
- =?utf-8?B?b3Bmdjd2anZIWmpUcldZeDBOQThTbnZYOHQ1RmFiNlM4L09yeWtsQ0VyZGl5?=
- =?utf-8?B?R2xzSkJUWXp0dzVaY0xMVzFMVy9GODRKYXQyUmpJaHc0RW4zYUpuUWpPMjlu?=
- =?utf-8?B?enlGNVdUNE1QcWcyTU5KaFh3eHlVSmRoYnZEek5nTzFVdHhGTi9rNWVJN29O?=
- =?utf-8?B?Nm5hZEFmREJqMnc3cms2b1lwSlMwNVZlQy85YmJEWktjMVcreXg2OTBtc3Zp?=
- =?utf-8?B?dlFZeGw4Ky9Venl4NnJRYVJJSGphZmNIbE5KYzdtNEoyeURUKzJ2NW1TZnpJ?=
- =?utf-8?B?TUNFYWRmWEU5NnB6ZVE1OXQreTNPOCtDZE9aMG5tZVQ5Sko5Y0xPdnJvTGVS?=
- =?utf-8?B?dXRVQ2ZiekVkNEVsMG9kQ3QwaEVXOCs3MjFRZWxPajZIL29nKzJhZHFLUWZW?=
- =?utf-8?B?Rk8vek0xMUFXcVI4cGFuaC93YnU2aW5oTkROaXo4SEZmTU82UjZoVnhFUWdB?=
- =?utf-8?B?WlM2c1NvVmhnc0NQeTR5TjB4d1J3QTFIeEhpUW9SNVpBNFVVTk1wWXZERHNw?=
- =?utf-8?B?M1NiSjI1TW83a09iNndCVm5lamtRbXo3SnBGRmJPazRVNHI4UHowL3BkZWk1?=
- =?utf-8?B?cE8weDQzNWhObW5NMjI3SGpqTGIvRXNxTVJSWWNQNHIvdng1blBBQzZhbmpT?=
- =?utf-8?B?aTF1Q1ZsUDNzZzhyQ2NZY2tTSnR4UEtPRGRzbGE5Nk1VTEQ5bkFtTHNDMnJL?=
- =?utf-8?B?YVV2N0t2OXRyZElEOFp2bVo5Z1dRVWhJd1B4WlIycThadTBzNlBmNWF5UXI2?=
- =?utf-8?B?aEkxR3E3SURUTEsvbHN3SnpreHc5T3NNNmtpSk95aGYyV0ViMGRiSEZ6eFVT?=
- =?utf-8?B?RVlxV3AzVkJJZHVqdGVoSXNISkRPR2twWkI4cEtkWXA2M3JIMiswaDZMaUh5?=
- =?utf-8?B?TWtOZ0dUaWVnblpHK0hGRlZXa1h6TkwybllrNis2dVBOU0ZEZWpQMXRMQnMr?=
- =?utf-8?B?QXhrRHl6TmdFWEhKSHA0MFM2RzJiNTZnS1MyZ2xQZ3NrRmIvOVk3Y3J1bzBJ?=
- =?utf-8?B?ajQzMXRhTTh3NXczS242Z1REQ1NqZXR4U3lHUW82alE3MmZ5L3BBdEJuTWp1?=
- =?utf-8?B?Q1grUTkvTGM3dHpVdDEybDlaN0xMeGdSeUhhdlVoZVlheFFhWlowOVlSMGVZ?=
- =?utf-8?B?bW1pT25vMGRUZ2pKK2tTRW9ISmVhV0NYUXBGdit4NzZrT085bkdxNWRoTjAv?=
- =?utf-8?B?M01hV3FISTlxTTZncDF5bHZCQVRTNjFHRFBmeWhWaWFhVXViRGhSek1UU05W?=
- =?utf-8?B?MjVXQWgyb1FCSW9qbmhybGppWk5OS2NHczFNdlpKR2lueEhmZHBaSW9tYlp4?=
- =?utf-8?B?RGhQNFg1K3hualA3SFhya1R0MnBPUWpWN3UzVHlsem1kdGFoTlpGKzVTNEtS?=
- =?utf-8?B?V0FtdjNYbGY0Yk10cUIzOW81YzZEUG01L3dKWTM0Mmk2SnVrM3FXRVRyQTBU?=
- =?utf-8?B?NXpJMmZkMFZFU2xNdXpQZ1piQmQzN1c4L1VEWU1BWXZpS0ZsL2xTZ0VwWGFM?=
- =?utf-8?B?Um5PRlJQMmc5ckZiWG1EQXFVdG1QZ0dUMUlCVVpRRXMzQlVMaUs5dDRMUmJm?=
- =?utf-8?B?Z3Bsam9XMGluUmsxd3ZJSXZ5SGdzTFpRUFM0TDZsb0NQdUVDZlJTb0dZc0xy?=
- =?utf-8?B?d1NhOHVXdkVNcVgzbUxpNFJiN1ZLcmxBRXNrVWcyZEJKc3pBQVprdnB3PT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(7416005)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YUN3ZFRWRDlNMWRzK1YyMG5KbWk4ektnRjRKZVloVXpyN1o0VW84TEdJQXpH?=
- =?utf-8?B?RDhEY0YwNHMvWDNUMmpiakNCKzlwcFJWZFdxbzhMdmtJWW1zOHR2SWZ3eGNm?=
- =?utf-8?B?N2FGWnBzT1pkQTl4ell5d2dZVDlnenY0dnJrZFBHdStJUm55b29KS0tkclBO?=
- =?utf-8?B?L3F2TVVBS2ZBZ2RTbno3MHg2WkhtcXVIeUQyaVY5ZGh1Sm52ckdmVXNCQ1Bl?=
- =?utf-8?B?c0JValNuVGMyL0VOcm1TRStKcGxwbHVVeE0rRDFVTVZybFZEOFJGYmF1MVoy?=
- =?utf-8?B?ZkZmQVNmTiszbXRCV0M2K2ticlZLVlVIQWxOWFJlTXZYRXlqQnVKckc1M1hs?=
- =?utf-8?B?OUlSYkozQVdtMUR6N2tKODFPdkphNjlEaGthL0hkSkNRL050VU1kSHdHZnk0?=
- =?utf-8?B?clM3b0pCTXFrdW4zeTBjSmcvQ0k3dlpENjNiQXo4WEVGN0l0MkRiQkUybG9Y?=
- =?utf-8?B?eFhyL2ZFU1pYdlI5RG9RL0g5eTZTeFRRRE94MWNQVGc3SVMwYWRsT1BZdXBY?=
- =?utf-8?B?ZkRBTTB6dS9CcWpiYk9uQ3l3QVo3TW54VmZWbVk2RWlsVTYvZXJ6SjRvVEhP?=
- =?utf-8?B?MDBlNDVkcS9EMnhSdVRYWUZ5KzZZd3lzdVVUTWRUaVN6Z3BEU3UrdGFsODNU?=
- =?utf-8?B?SElUSEhoaHVabGtDbDA0L0pFb1hyVk5wTEk2bHZRZ0lNOGlubzFualp6LzM3?=
- =?utf-8?B?WGYvT0ZsRnVHS3YvWmx5K01wQ1AwSEpCbjZ4cFNENmVKNkYvZkFOamdjTUhm?=
- =?utf-8?B?MkJvbElNRUxOR0RXM1V1cS9lT20xampvVmNEdnhvUm54bUZkbnhESHFsaHg4?=
- =?utf-8?B?bnF6a21xNC9uN1pkSUgwRWRxSm80MTlkUmR1VXJxbUN6eHB1SnRnZFZUbnRj?=
- =?utf-8?B?T2NDT1lIL1FFZVQ2ZFhMR1V1QnRjLzNFb29PM0E2RVMyVUVkOHNDSmx0ZEJa?=
- =?utf-8?B?UTF2Zzc5MUtaSGR6OWNOOXdDTGUwMzFOaXRHQzZPM3E3dUFObDYxczB5WnRK?=
- =?utf-8?B?NlNLcG41ZnBvRGpPY2ltb0xDbXVwS0lWR0o2RG1ZYjFPRFZvR1ZPMlRLdWw2?=
- =?utf-8?B?QjB6SEl3K2xRUUEwTWhVQU1aNkVmL3RTNDJkU1hhMUhqTXJnSnNhdStBVjVy?=
- =?utf-8?B?Y3luK1lwOGpJa3piNTY1ajRVekUreUUzZnVKcWlaN0xiWWhaMTlUQnRIcEk3?=
- =?utf-8?B?UTU4NFBkZU4zVEdLMWhWMHorMmlob1pWZFY5RUgwdmtWQ204Wkx1Qm5GQzVm?=
- =?utf-8?B?QjZhNk9wVVViNk0wOTZlQU4wazYvYXpaYUx2RTl6SnFYaXVJZGRFdjRackNW?=
- =?utf-8?B?UnkrUlpWeVEzbEdraFhXSDVkZk1kVmovQ3o1UzJUUVJDZG4vUEN1V1dFYkJI?=
- =?utf-8?B?MngwNTZYWjFOUXJTL3UvNjRtSENFMUYyQ0tFN2IxbGxVQnhHQTV0MGlRWk9S?=
- =?utf-8?B?ZDVnS2NDaDczWTMxb2ExZDIyMjhWUVVEYlFiVWZsMTBFaVE5NXErVFBmSkFK?=
- =?utf-8?B?bDFQOFp6aG5UOUMwUmlpTmE4UmZQbWNvN29xWXUwOFhXcXBvREJRRE52ZU9W?=
- =?utf-8?B?bzhLZ3VrSmFtTXJ0WVk3YjFNMk56Qmo0VUc2V3ROQzJTVEIxMTdPeHRFQ1Na?=
- =?utf-8?B?amdlY0x3RnQ5aHNSS1RseHVrdS9NM2hwamtlLzIyZWd3bllRKzBiV1NTenlK?=
- =?utf-8?B?NFhCb1Qrd1pRSEkrcnVXUWRSb0JhN00vSHY4QWRkUDYva1Bnd09sV01POGd1?=
- =?utf-8?B?MW9CclJaU0xiSmtyRHpybHhqZlNCMFNuQ0J0UVY2bFpPcHE1MWNJNDFySG5i?=
- =?utf-8?B?WE80Q1J1NjZ6MlJmTGJ3TXFXcmU4b2N1Y0xOKzBxdTV0R2JkOTB4dnNrZ3A0?=
- =?utf-8?B?ak5ybi9jYXRQTnJuSEVLclBmZnVta1ZVQ3NxaU1tSktHU2ExZjBUcXBqdEVZ?=
- =?utf-8?B?NXhLWEdIUFBOaVp4VFhmREJJY1d2VGJFUWpSV0pJMVI0aWZFZENLWXNITjYz?=
- =?utf-8?B?c2NaL05Sb3I3ZlVYbHhWYjlqZGdQMWQxM1l3MHplTWlndzhobmpMQ294OGdh?=
- =?utf-8?B?bDZFZVhuS2lKTWRSaTVBYmNZNTMvcXgxV2FaVzhMNitNckZyRDM2VlZ0T2ox?=
- =?utf-8?B?Y2t2SzNJWHptbXVYNW91cWtNYkVCNnVLbjFLSTh2V1gxWDZJQXJEbmZvQW8r?=
- =?utf-8?B?VmdUdURFM2Jtb3czem5yWjlWMUl5elIrR2EwVXZiZk9YdW40dHdYQ2lyQmhj?=
- =?utf-8?B?SllxdEw2ejBCVlEzdEpWMGltNzNnPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5c2728e-688b-4820-b37b-08dc7fbdae35
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2024 08:59:43.0603
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: t/KiCuF70CkCZz/BS8MbxgJECqdcMxrZZkuRCNEWMXY5y7gPgEol2BpBqZnGDr/sJiH1iJAvBfttodA3rkY+KQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8769
+From: "NeilBrown" <neilb@suse.de>
+To: "Jon Hunter" <jonathanh@nvidia.com>
+Cc: "Chuck Lever III" <chuck.lever@oracle.com>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Chris Packham" <Chris.Packham@alliedtelesis.co.nz>,
+ "linux-stable" <stable@vger.kernel.org>,
+ "patches@lists.linux.dev" <patches@lists.linux.dev>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Guenter Roeck" <linux@roeck-us.net>, "shuah@kernel.org" <shuah@kernel.org>,
+ "patches@kernelci.org" <patches@kernelci.org>,
+ "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
+ "pavel@denx.de" <pavel@denx.de>,
+ "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+ "sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
+ "srw@sladewatkins.net" <srw@sladewatkins.net>,
+ "rwarsow@gmx.de" <rwarsow@gmx.de>, "conor@kernel.org" <conor@kernel.org>,
+ "allen.lkml@gmail.com" <allen.lkml@gmail.com>,
+ "broonie@kernel.org" <broonie@kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 5.15 00/23] 5.15.160-rc1 review
+In-reply-to: <58fa929b-1713-472e-953f-7944be428049@nvidia.com>
+References: <>, <58fa929b-1713-472e-953f-7944be428049@nvidia.com>
+Date: Thu, 30 May 2024 06:59:47 +1000
+Message-id: <171701638769.14261.14189708664797323773@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	FREEMAIL_CC(0.00)[oracle.com,linuxfoundation.org,alliedtelesis.co.nz,vger.kernel.org,lists.linux.dev,linux-foundation.org,roeck-us.net,kernel.org,kernelci.org,lists.linaro.org,denx.de,gmail.com,sladewatkins.net,gmx.de];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	TAGGED_RCPT(0.00)[];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: F347333738
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -5.01
 
+On Wed, 29 May 2024, Jon Hunter wrote:
+> On 29/05/2024 00:42, NeilBrown wrote:
+> > On Wed, 29 May 2024, NeilBrown wrote:
+> >>
+> >> We probably just need to add "| TASK_FREEZABLE" in one or two places.
+> >> I'll post a patch for testing in a little while.
+> >=20
+> > There is no TASK_FREEZABLE before v6.1.
+> > This isn't due to a missed backport. It is simply because of differences
+> > in the freezer in older kernels.
+> >=20
+> > Please test this patch.
+> >=20
+> > Thanks,
+> > NeilBrown
+> >=20
+> >  From 416bd6ae9a598e64931d34b76aa58f39b11841cd Mon Sep 17 00:00:00 2001
+> > From: NeilBrown <neilb@suse.de>
+> > Date: Wed, 29 May 2024 09:38:22 +1000
+> > Subject: [PATCH] sunrpc: exclude from freezer when waiting for requests:
+> >=20
+> > Prior to v6.1, the freezer will only wake a kernel thread from an
+> > uninterruptible sleep.  Since we changed svc_get_next_xprt() to use and
+> > IDLE sleep the freezer cannot wake it.  we need to tell the freezer to
+> > ignore it instead.
+> >=20
+> > Fixes: 9b8a8e5e8129 ("nfsd: don't allow nfsd threads to be signalled.")
+> > Signed-off-by: NeilBrown <neilb@suse.de>
+> > ---
+> >   net/sunrpc/svc_xprt.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> >=20
+> > diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+> > index b19592673eef..12e9293bd12b 100644
+> > --- a/net/sunrpc/svc_xprt.c
+> > +++ b/net/sunrpc/svc_xprt.c
+> > @@ -764,10 +764,12 @@ static struct svc_xprt *svc_get_next_xprt(struct sv=
+c_rqst *rqstp, long timeout)
+> >   	clear_bit(RQ_BUSY, &rqstp->rq_flags);
+> >   	smp_mb__after_atomic();
+> >  =20
+> > +	freezer_do_not_count();
+> >   	if (likely(rqst_should_sleep(rqstp)))
+> >   		time_left =3D schedule_timeout(timeout);
+> >   	else
+> >   		__set_current_state(TASK_RUNNING);
+> > +	freezer_count();
+> >  =20
+> >   	try_to_freeze();
+> >  =20
+>=20
+>=20
+> Thanks. I gave this a try on top of v5.15.160-rc1, but I am still seeing
+> the following and the board hangs ...
+>=20
+> Freezing of tasks failed after 20.004 seconds (1 tasks refusing to freeze, =
+wq_busy=3D0):
+>=20
+> So unfortunately this does not fix it :-(
 
-On 29/05/2024 00:42, NeilBrown wrote:
-> On Wed, 29 May 2024, NeilBrown wrote:
->>
->> We probably just need to add "| TASK_FREEZABLE" in one or two places.
->> I'll post a patch for testing in a little while.
-> 
-> There is no TASK_FREEZABLE before v6.1.
-> This isn't due to a missed backport. It is simply because of differences
-> in the freezer in older kernels.
-> 
-> Please test this patch.
-> 
-> Thanks,
-> NeilBrown
-> 
->  From 416bd6ae9a598e64931d34b76aa58f39b11841cd Mon Sep 17 00:00:00 2001
-> From: NeilBrown <neilb@suse.de>
-> Date: Wed, 29 May 2024 09:38:22 +1000
-> Subject: [PATCH] sunrpc: exclude from freezer when waiting for requests:
-> 
-> Prior to v6.1, the freezer will only wake a kernel thread from an
-> uninterruptible sleep.  Since we changed svc_get_next_xprt() to use and
-> IDLE sleep the freezer cannot wake it.  we need to tell the freezer to
-> ignore it instead.
-> 
-> Fixes: 9b8a8e5e8129 ("nfsd: don't allow nfsd threads to be signalled.")
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->   net/sunrpc/svc_xprt.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
-> index b19592673eef..12e9293bd12b 100644
-> --- a/net/sunrpc/svc_xprt.c
-> +++ b/net/sunrpc/svc_xprt.c
-> @@ -764,10 +764,12 @@ static struct svc_xprt *svc_get_next_xprt(struct svc_rqst *rqstp, long timeout)
->   	clear_bit(RQ_BUSY, &rqstp->rq_flags);
->   	smp_mb__after_atomic();
->   
-> +	freezer_do_not_count();
->   	if (likely(rqst_should_sleep(rqstp)))
->   		time_left = schedule_timeout(timeout);
->   	else
->   		__set_current_state(TASK_RUNNING);
-> +	freezer_count();
->   
->   	try_to_freeze();
->   
+Thanks for testing.
+I can only guess that you had an active NFSv4.1 mount and that the
+callback thread was causing problems.  Please try this.  I also changed
+to use freezable_schedule* which seems like a better interface to do the
+same thing.
 
+If this doesn't fix it, we'll probably need to ask someone who remembers
+the old freezer code.
 
-Thanks. I gave this a try on top of v5.15.160-rc1, but I am still seeing
-the following and the board hangs ...
+Thanks,
+NeilBrown
 
-Freezing of tasks failed after 20.004 seconds (1 tasks refusing to freeze, wq_busy=0):
+From 518f0c1150f988b3fe8e5e0d053a25c3aa6c7d44 Mon Sep 17 00:00:00 2001
+From: NeilBrown <neilb@suse.de>
+Date: Wed, 29 May 2024 09:38:22 +1000
+Subject: [PATCH] sunrpc: exclude from freezer when waiting for requests:
 
-So unfortunately this does not fix it :-(
+Prior to v6.1, the freezer will only wake a kernel thread from an
+uninterruptible sleep.  Since we changed svc_get_next_xprt() to use and
+IDLE sleep the freezer cannot wake it.  we need to tell the freezer to
+ignore it instead.
 
-Jon
+To make this work with only upstream requests we would need
+  Commit f5d39b020809 ("freezer,sched: Rewrite core freezer logic")
+which allows non-interruptible sleeps to be woken by the freezer.
 
--- 
-nvpublic
+Fixes: 9b8a8e5e8129 ("nfsd: don't allow nfsd threads to be signalled.")
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ fs/nfs/callback.c     | 2 +-
+ fs/nfsd/nfs4proc.c    | 3 ++-
+ net/sunrpc/svc_xprt.c | 4 ++--
+ 3 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/fs/nfs/callback.c b/fs/nfs/callback.c
+index 46a0a2d6962e..8fe143cad4a2 100644
+--- a/fs/nfs/callback.c
++++ b/fs/nfs/callback.c
+@@ -124,7 +124,7 @@ nfs41_callback_svc(void *vrqstp)
+ 		} else {
+ 			spin_unlock_bh(&serv->sv_cb_lock);
+ 			if (!kthread_should_stop())
+-				schedule();
++				freezable_schedule();
+ 			finish_wait(&serv->sv_cb_waitq, &wq);
+ 		}
+ 	}
+diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+index 6779291efca9..e0ff2212866a 100644
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -38,6 +38,7 @@
+ #include <linux/slab.h>
+ #include <linux/kthread.h>
+ #include <linux/namei.h>
++#include <linux/freezer.h>
+=20
+ #include <linux/sunrpc/addr.h>
+ #include <linux/nfs_ssc.h>
+@@ -1322,7 +1323,7 @@ static __be32 nfsd4_ssc_setup_dul(struct nfsd_net *nn, =
+char *ipaddr,
+=20
+ 			/* allow 20secs for mount/unmount for now - revisit */
+ 			if (kthread_should_stop() ||
+-					(schedule_timeout(20*HZ) =3D=3D 0)) {
++					(freezable_schedule_timeout(20*HZ) =3D=3D 0)) {
+ 				finish_wait(&nn->nfsd_ssc_waitq, &wait);
+ 				kfree(work);
+ 				return nfserr_eagain;
+diff --git a/net/sunrpc/svc_xprt.c b/net/sunrpc/svc_xprt.c
+index b19592673eef..3cf53e3140a5 100644
+--- a/net/sunrpc/svc_xprt.c
++++ b/net/sunrpc/svc_xprt.c
+@@ -705,7 +705,7 @@ static int svc_alloc_arg(struct svc_rqst *rqstp)
+ 			set_current_state(TASK_RUNNING);
+ 			return -EINTR;
+ 		}
+-		schedule_timeout(msecs_to_jiffies(500));
++		freezable_schedule_timeout(msecs_to_jiffies(500));
+ 	}
+ 	rqstp->rq_page_end =3D &rqstp->rq_pages[pages];
+ 	rqstp->rq_pages[pages] =3D NULL; /* this might be seen in nfsd_splice_actor=
+() */
+@@ -765,7 +765,7 @@ static struct svc_xprt *svc_get_next_xprt(struct svc_rqst=
+ *rqstp, long timeout)
+ 	smp_mb__after_atomic();
+=20
+ 	if (likely(rqst_should_sleep(rqstp)))
+-		time_left =3D schedule_timeout(timeout);
++		time_left =3D freezable_schedule_timeout(timeout);
+ 	else
+ 		__set_current_state(TASK_RUNNING);
+=20
+--=20
+2.44.0
+
