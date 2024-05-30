@@ -1,58 +1,57 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B720717D367;
-	Thu, 30 May 2024 14:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D201117D881
+	for <linux-tegra@vger.kernel.org>; Thu, 30 May 2024 15:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717081177; cv=none; b=TsLxCMBrPe287GdmobGt0nvr1QPTHo+2Oq4u9b/XqbDdoKSYjhl4fjmgMt1prKbz0rQShtwlkeSABMNz8SWCdvKZhWRHwOnLPu+Ibu7NcC0sML7yZoYsvd08JQMNijeK4VoNpF4mZeKNW+5FlMV0jDYachWqzEmnMUH9/zc/0qA=
+	t=1717081758; cv=none; b=JCUfLLofko3CXBppOi7TGyUIwhfyq1AgwUQEPsaELO04qVkn4HSkmPVhfYaFGMlWOwRDbQIts9Gb5IM+Ew0uIEz50IkbjQLtcN1LkL+OSe1BqFqwQDovfEdmw90TXCZfNHDu2EWiB6a0lwGa52fSCmUuD+J7zBSgwkKWkK/cvCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717081177; c=relaxed/simple;
-	bh=2M/bX3DMlKaFRx7PMmizFrsTFakadvUyhcsjdcaFL/8=;
+	s=arc-20240116; t=1717081758; c=relaxed/simple;
+	bh=hVxQut6/A+6owEMFeAwVBYjXFUxWPg2fGrJyuI3OD9w=;
 	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=NBzhqVyK7RMK4z9CFNzANJj2yXkVd5na4pwZ0INHbS/GBMN9rzmBZ1XjioE6GP2gpmiJB9s7zNPUj7STUenj2c+WD2HNKP4fTDK8uUDdlwAaUPGWn3cUi87nUBHJQxMo6yvsakQsJ/4ytq+pkbzMjt9WUgg6THvVWFQrvyIj9TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OxyE+Pvg; arc=none smtp.client-ip=209.85.128.43
+	 References:In-Reply-To; b=er69h/7yKdG3akcxxqmvYQwaGUl38RO0CIj5G9J8o/37qdET1fG8VJn3uR1n8BSgaDALtWeSIMANYxgyr+ZhJzRpG7vSmV67Hg6B3HOftC35RNlOpklP3qnSb6PHJqcVl4liiMg9lFbDPA715CxidnaO42HDzo+lDuA9wBoBIUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NUzyYa7C; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OxyE+Pvg"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-420180b59b7so10982785e9.0;
-        Thu, 30 May 2024 07:59:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NUzyYa7C"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4211249fdf4so10887625e9.3
+        for <linux-tegra@vger.kernel.org>; Thu, 30 May 2024 08:09:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717081174; x=1717685974; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717081754; x=1717686554; darn=vger.kernel.org;
         h=in-reply-to:references:to:from:subject:cc:message-id:date
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fN+il09Q5hozBUgCD24l9ZhdhxZZcfUa526Q3onSzJs=;
-        b=OxyE+PvgSIghbN0jXvVQk7eGGqVH5V0zaUPyt6nr4F4PktuSdDPLRIWMjXh3VYgu4Y
-         CSVLY4mBM5UvvyIePPVxtkjFrultaUDvX5OIKl67rjdgzZY00VHjDOM694l3yyT/1Pf+
-         lJTIwVj0VpudkWV8o2o4zjdXK8JauFaoo+iDeMNFYhaenUiPwBmOnxpQ/Uh23/Rngryf
-         bX6nswTmCmGqBSOgmS+B/777XBqghaJsDJi28QzOKmv7iOONBSVudGjuTT9/vugcaKqu
-         uqdIpzen4U7mjvchFdh96US5WTv+lvCOwy2wuQYHlNCAc6kb0njJdUzHKtq4bMU0wCzu
-         4NWw==
+        bh=af9Av8jLWGpWFgvSSPobt4rUTFuNu/kg5mD6y39r6OI=;
+        b=NUzyYa7CDJl6YsMzM+kxOfkOpJ47tS3nCMEcJtVQiJNaLBr9xsXwaIC6t/ZUZLhjq0
+         R8662lH+coFt+gRHjSc+4l6SSi0EdMMI39f3XiBjhMgclHGGd1ASQFdit2+LkiW3quWs
+         fpuqPqu05d6WmVUPKsgwse13HeE6+AMY5uwl74bIjDVCqhRjnWEI/bbMs9Ul+X11bHRd
+         ucTlSSIqQ3r76c8ftqvKNgL9BchnYVsIDgDBGD7roRykIfymtDvSpOBxSAMK/V2u0tj/
+         as/mid+Rr+eRiE/1m1ZGII37vDy5sQz8wdI05uNmAaYvcGIO8/OWNaUoQAf4sjLrDtmR
+         60VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717081174; x=1717685974;
+        d=1e100.net; s=20230601; t=1717081754; x=1717686554;
         h=in-reply-to:references:to:from:subject:cc:message-id:date
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fN+il09Q5hozBUgCD24l9ZhdhxZZcfUa526Q3onSzJs=;
-        b=e8oNVWS5PatTZEFYaxd5uQb3dDQuvutKmx59jCbWoFK+OwfRGKwG5NZ27zKZz68gI0
-         IUOIXqoKd1AhyvUXaJOlZyF4A6Y4K7dj+t1Z410YG2MBXJH8BP6vPXI3klFzBj+lO7Ns
-         12MJKu7DJnaJmZyMdmlUe/OMtwTkw+gTMY8pcs/xEyJH4EKSEksryFY9N3tGTR3+nC4s
-         L3WVUJ/s6aX+AYCX91QQ3VUyOppvFr1OIG5BQJgMFokWAu2Fdct7nOM0UZi2uGrcRA+7
-         sEINBH3P9pz/vXwHnKgBLkeejZ7LwuDK7au2hG357lT8QWuqgU3ecVRIMWrQCD+qniRN
-         KKFg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7HnoCCrtKRXhTbPp4pX7cWFNM7naaaR9KXH0F0tIljaJgnQ/psKkn12Xgpmwtml1zsItc8HxpnnRPxXAQX0B7nwajJWGwTDNS+cX2d38JJu6EOW/K5Frza2MEIk+cUEvLEBI4ghqpLfo=
-X-Gm-Message-State: AOJu0Ywxg7ZGEkRmgGAYN3Yux/KoW4TKm2HH3hJxOiXCTS6UK12+O465
-	tgJAIqzDxd/i9/OyP+5CAPyoabQUF1isKt6MAemHaiQAYp0/ISg5
-X-Google-Smtp-Source: AGHT+IGJHKXKr76/XYhPXeghTC0NwiijcdXEGnge9Z9ZE6srx5obl7LG3w++K3AY/0CPWvteT6YExQ==
-X-Received: by 2002:a5d:4807:0:b0:34d:963a:12cc with SMTP id ffacd0b85a97d-35dc00be0b3mr1801067f8f.53.1717081173704;
-        Thu, 30 May 2024 07:59:33 -0700 (PDT)
+        bh=af9Av8jLWGpWFgvSSPobt4rUTFuNu/kg5mD6y39r6OI=;
+        b=h/j2Jd6CH1aCUYxwxrbekbU4niGXiPBUSprkDU+0yOPfJaMhTuZC/I763fU1N+HEsg
+         yKij62sLjwyXOk2m7jAWftYP/9xbiuaQW0UiSzQBn0mLIny8EZFUoMmFsJq6bnQlJ6pT
+         m0g6YJohAeyhxe3wiV8QlxaLZ2IHVrkCh8s6dLGyEM9s6F4vAECvXe5ncaXUDj8EMCw/
+         vH8yUaLxFbhbtjOPe3pFrsrCepLWM0kXqTcM8HOLjEdLSpW3jWf+dANxPranV8/Gni/H
+         s2467M1Jr7r8c40KjxiNbf1eGTDz48qP8n8GBgao5yydGRQDlrDIxdAu1oIi04EqreZS
+         +QKA==
+X-Gm-Message-State: AOJu0YwYA3wIOdTrqnqCeWhk+MNTgM5u8R7XGklamVPuaekLbjtnQhH+
+	TGyf1gY+ne7mZwb9G88Mo15eEuG0IiPwZ4NhHZDEya6GCrx0iyu/6pMaww==
+X-Google-Smtp-Source: AGHT+IElmR12MCMgFUZ8NrehuyZ8veF+ENpuEqBQDDHLFwR6qh8S7fDOqHaR0V3Dj0psvUv111wlAw==
+X-Received: by 2002:a05:600c:b8a:b0:421:20ac:1251 with SMTP id 5b1f17b1804b1-42127931776mr23352095e9.40.1717081753811;
+        Thu, 30 May 2024 08:09:13 -0700 (PDT)
 Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dcb2e09b9sm1481373f8f.48.2024.05.30.07.59.32
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42126feda3esm28248245e9.0.2024.05.30.08.09.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 07:59:33 -0700 (PDT)
+        Thu, 30 May 2024 08:09:12 -0700 (PDT)
 Content-Type: multipart/signed;
- boundary=b7e88a8a5532f45237502da7f24ff5e22f5dda01e74efa121a1811c4117a;
+ boundary=db3bb40bdf187994879074422ba456ae4c2a295b4c12557b6d0e0dc5aff8;
  micalg=pgp-sha256; protocol="application/pgp-signature"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -60,62 +59,95 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Date: Thu, 30 May 2024 16:59:32 +0200
-Message-Id: <D1N2H4X8ZL1D.18140DCI2SH8X@gmail.com>
-Cc: <linux-tegra@vger.kernel.org>, <linux-media@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] media: tegra-vde: remove unused struct
- 'tegra_vde_h264_frame'
+Date: Thu, 30 May 2024 17:09:11 +0200
+Message-Id: <D1N2OIXAF6QQ.3TCYLBU42CJ3U@gmail.com>
+Cc: <linux-tegra@vger.kernel.org>, <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH V2] staging: nvec: make i2c controller register writes
+ robust
 From: "Thierry Reding" <thierry.reding@gmail.com>
-To: <linux@treblig.org>, <mchehab@kernel.org>, <ming.qian@nxp.com>,
- <eagle.zhou@nxp.com>, <digetx@gmail.com>, <jonathanh@nvidia.com>
+To: "Thierry Reding" <thierry.reding@gmail.com>, "Marc Dietrich"
+ <marvin24@gmx.de>, <linux-staging@lists.linux.dev>
 X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240530132619.71103-1-linux@treblig.org>
- <20240530132619.71103-4-linux@treblig.org>
-In-Reply-To: <20240530132619.71103-4-linux@treblig.org>
+References: <20240526193932.57277-1-marvin24@gmx.de>
+ <D1N0BV7W6LDW.19UTZTRSJJD8S@gmail.com>
+In-Reply-To: <D1N0BV7W6LDW.19UTZTRSJJD8S@gmail.com>
 
---b7e88a8a5532f45237502da7f24ff5e22f5dda01e74efa121a1811c4117a
+--db3bb40bdf187994879074422ba456ae4c2a295b4c12557b6d0e0dc5aff8
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 
-On Thu May 30, 2024 at 3:26 PM CEST,  wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Thu May 30, 2024 at 3:18 PM CEST, Thierry Reding wrote:
+> On Sun May 26, 2024 at 9:39 PM CEST, Marc Dietrich wrote:
+> > The i2c controller needs to read back the data written to its registers=
+.
+> > This way we can avoid the long delay in the interrupt handler.
+> >
+> > Signed-off-by: Marc Dietrich <marvin24@gmx.de>
+> > ---
+> > V2: rename i2c_writel to tegra_i2c_writel
+> >  drivers/staging/nvec/nvec.c | 41 ++++++++++++++++++++++---------------
+> >  1 file changed, 24 insertions(+), 17 deletions(-)
 >
-> 'tegra_vde_h264_frame' has been unused since
-> commit 313db7d235a0 ("media: staging: tegra-vde: Remove legacy UAPI
-> support").
+> Hi Marc,
 >
-> Remove it.
+> I've been trying to find out why we need to do these register read backs
+> and so far I haven't found anything tangible. The only thing I was able
+> to find that sounds like it could be remotely related to this is a
+> mention of the interface clock being fixed at 72 MHz. So I'm wondering
+> if you could perhaps verify in your setup what the I2C module clock is
+> for the NVEC controller (any dump of the clk_summary debugfs file after
+> boot would do).
 >
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  drivers/media/platform/nvidia/tegra-vde/h264.c | 5 -----
->  drivers/media/platform/nvidia/tegra-vde/vde.h  | 1 -
->  2 files changed, 6 deletions(-)
+> Since I'm not sure we'll get to the bottom of this, this looks clean and
+> is certainly an improvement over the udelay(100), so:
+>
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-Not that you really need it, but since I'm here:
+So, after digging through some more old archives I think I now have a
+better understanding of this. Looking through the Tegra I2C driver git
+log I see that the read-back was added in commit ec7aaca2f64f ("i2c:
+tegra: make sure register writes completes"), which mentions the
+PortalPlayer System Bus (PPSB). That's a custom bus (similar to APB)
+that can be found in Tegra devices from Tegra20 to Tegra210. The first
+chip where this no longer seems to be present is Tegra186.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Now, as Laxman said in the description of the above commit, this bus
+seems to queue writes, and the read-backs are needed to flush the write
+queue. Based on that it should be possible to narrow down the scope of
+this patch and only do the read-back in a couple of strategic places.
 
---b7e88a8a5532f45237502da7f24ff5e22f5dda01e74efa121a1811c4117a
+Again, not sure if it's really worth it because it could be quite tricky
+to understand where exactly they are needed and people may miss this
+when shuffling code around or adding new code, so doing it for all
+writes seems like the safer option.
+
+Anyway, scratch that idea about the clock domain. It might be worth
+adding some of the above background information to the commit message to
+clarify why this is needed.
+
+My earlier Reviewed-by stands regardless.
+
+Thierry
+
+--db3bb40bdf187994879074422ba456ae4c2a295b4c12557b6d0e0dc5aff8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZYlFUACgkQ3SOs138+
-s6F2RA//RFa62PzaTHSpU90ZCnNs5bjRTOvdjV3rRmpKqxeeVNvrZ1A8dkFKD44t
-KN8QbRH035zYs6pfwDN/j0Aj0zKN0icsgN8VxYVVo9I0kyqa6CfuguUdZwS8GA71
-TL8bkyuIlKuY06KJZEZ3V+lmNKIRB6pz7/d2BfmaeTppbJRUMvbUv/+mu00v09Ds
-MqTqw1gRrcVBToZKeHipT/zTW4PcH5Njwi97acXxAAnkUxcaHH3un8z6lBagqsT7
-v0x8SVVhpEaYVzKNzQntRoANALZxk6wYqpI+6Q8OZsJu1WEe4lGWSirRcQZHLiHh
-LcmLNNzWWVZBjqJIzb502U5N4tV7vyUR/8q4u9mj9pSf43uLVvIUQexSiMNEFa3M
-V5juc2Ir93VTBJMQA+wrPZ0V8cRkhOZ2QOYKCEVUIFIYdeXgU1Xxi6RTISG4CQTN
-wowNofBYkYcPMFdDe/CzW7Doe0vgMvd+8nvK8mIndO36iTQnD642/d25CX98HdNA
-ew1GKHzJTChwUJY8n0eY0ApEhzg9ZKU8si0PzpZRy/1hl6R1jB1yUX/gITFV3l7n
-ymqnXc/1j5ubBbMtnkIyk3f7b7U2U10CG+sU678/iIkMUeecTRKGacNEPqffbzyP
-MoVzjB0IzkGsT1O3nlTBc2t76KNUIN70Gb86BFWzqj1+NFi+CzM=
-=Dfi8
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZYlpgACgkQ3SOs138+
+s6H6VA//QWZQnRRBmCvq1HLYApg1V7yPrLH8stvjw7uRw36Q2Wk5IJLbNLg4YfRQ
+jPOV5CHuAvBjB8qYnvyMn8SJZ8FiNkbQw3H5LoLePzXDlDMbxSePxg3eOMy+U4Bl
+I3gCRxAZcWiOdBqi7sNlfPlLAwixkxAuYmlsASQjapbi74YFQI52sTqmcDkHcW/x
+EmsgId8ewt3bsFZodXGm4ALb0RCRhtxDwHr0Hc94sgKuwUh7pPdc/fB5aaiIqNr1
+mR1XHqs5whMX7ufiijRaWo99i8VyBWIo1Fuo9xSNfJfJyy1YFxez6HOH0ZJbqXqa
+MsMSjj4mC7LRQT0q7/L1+D5sA6ThQEu+2sU0vBQNMYXD/mG81T2K97tYf3N1oOms
+mHS10d/3E7MvmijXpquFs7N0E6iFREEJ4X2Rheth+0WF8gZiHcV7rb9F5lmMsoHM
+Kvvbt82lvB6p1BOTL2zhtakhcrKM3QH8CBAHU8KF32GI7ejl6loM7sEFIK6UDV2O
+Dp5FN07CCjzjihmbgnCLdDmDzzxRuEwAfRswrD+T8D4jHvLiEHItGTiBmqQCJit7
+KQQOh8h+/q8ee4k1INcfjIVEvfykIrgZRav/1TICtX9k2qSLtw7isxMSx0GaAIF8
+QPwEEczLYHpeozFGXDmKobY4LTghc6yLT/BfOOG6vGFllGiGWJE=
+=k1Nm
 -----END PGP SIGNATURE-----
 
---b7e88a8a5532f45237502da7f24ff5e22f5dda01e74efa121a1811c4117a--
+--db3bb40bdf187994879074422ba456ae4c2a295b4c12557b6d0e0dc5aff8--
