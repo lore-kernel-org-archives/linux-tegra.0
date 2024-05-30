@@ -1,326 +1,130 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E61517E463;
-	Thu, 30 May 2024 11:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71CF17D364;
+	Thu, 30 May 2024 11:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717070091; cv=none; b=M46Bd8+jD+s4Q2rRc9lRQwcwTl5ZwBt6ie4JSUinALQ/+eVKAxjlfUoES6YAA4NUJfn79N7rVSZ86fY+2vpw+GaI/ZHljf9rHlLwI3KBgC0YMDb4Mubjbx7ud0bBDyYSEoniUoq1l7Yvzd46vt0uo8XLUyvNia4/LOrLiZtC9Ig=
+	t=1717070250; cv=none; b=Yehkx8tQezj/5Rt49byjvMaSV8LiGSfosZaOEeIQry9CUSm7GDHvLG3RCrP9lG8b7dUGzSepAq27hZ5uYoiIzqSWQPQS/usOxp75i/vC+NxQPgCd/BWjKMgWFsz/cYitW53fRURuqgGyqiWYoeRxjs0PmJ3KnupbN0SwIJePpaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717070091; c=relaxed/simple;
-	bh=X18EbHHf01kjlc7qyYc/AnhLH3W6o/0twwLLtCjgCeE=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=GdVRVhVKBY9odQxh5Ql3yCsNYKY6xo1Sq1+MMXAJ3HIaqA6AHOztzddAJnUZJKRXmRuNPPmFbdF7rnwPHpIjaYJav3gH2Pk/RJPTQHEZ4XHssx8zjNfSbeOHA7eFNL8uir0XK/UVAzRBqxAyDzFnw0Ya3DPNntO8jpJaunB9MfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JEUabcCe; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1717070250; c=relaxed/simple;
+	bh=ox6f2Bib795DIR4D9OYeOchPTQ0ajdXcI1Ql4e0zKA8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ha3295g3aQZqCw929znedUyYS3H2HvEWGJVjx62Qym/MxJwBf10ohpNB3g3chU2lQt2cXrJ1gkUnChqQM7iqFqI7Ds6SlV0hyU5R0+VVrq2T+eOfCXygH1z70708n+g/F/ZSzwXoigmw5xqkx9zO9YCX8r1RTsOxm3kEJWwSFSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JEUabcCe"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a5dcb5a0db4so73200366b.2;
-        Thu, 30 May 2024 04:54:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717070088; x=1717674888; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wOSm7v/LmRipwiItJ5QpPAXjkVuAMgnSrFrvzC6A97U=;
-        b=JEUabcCev1G3BoheJq6XWSJ9JbQESavLQ1kUER2qh+4PF0hm+XaqN+ctvlUEEfeeUX
-         QVotGJ+VMt7gHg9yhthXKpMkyaVsF59XjSH7pkXRUb7qrSKgIlOiknKkw5lVCOb0ykDX
-         8C+GZr4C0OUJdGs6gxkZlqB95CEqU8xZcJoLhSe6NnhTmQengdTlzJO9xYjhOXJXzhdp
-         3cL6Am98CFHJKp72qgPgsIcsV/dNUXz8HgcWqEofWiF/NzcOmRlbILGM6RPmGNB63zpQ
-         Shmv0ktyUFQAEuvNbkTTKvGkU2bA+jFlVNuEQaGDIIA/IFOfGZShERBJq0aPq49+IuWt
-         WMuw==
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa5b9274feso861935276.2;
+        Thu, 30 May 2024 04:57:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717070088; x=1717674888;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wOSm7v/LmRipwiItJ5QpPAXjkVuAMgnSrFrvzC6A97U=;
-        b=YNfIWKcbFvW9NueJv/6TU5fueiKCnn4E9UgWngsAEYv4AmoTBaVGJ7HrVtJHV49hBu
-         ALSh89YEvpSxM+ouyNjPPlPg0Qu3cVS2iLGrKQmIXbM7iQvWc8Jw8i3/SLMy4ghuZXKR
-         gtOsw+vB5yKvLvp12/Y08PSWkcV/V3Eosqf74hhxfpz1ase6wb1A+VnlIEAK4GDC0A1G
-         fzLjGaZC8NWNmJtpVw23I2wqxq3w/igRhclrNxIpCIlTCktIiKdMdi/FCyeGwBZjFgUG
-         8HPO1zF01xhidGlYLX2G9ONEmQ6QHsKRsR+AlYESoXAmA0pqlGnfEGiSAG9f/kQFL3JQ
-         xrHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkSWKpv337JOBsMnWF9KbKgb5kPLeOsr531hC/LbDbiPG2kmA0fMDP4xNR62fGzwBIhTtvCMV62fQXau2LutdHEV9y0+fjr7qnjPCwkK65jplZIqZB9DRdvF38TvlxO0eThY5c40mpsQE=
-X-Gm-Message-State: AOJu0YyJOTtcLhqQgBAbMT/pqD7K+7fo306df5R4MThOUqjYis3Y7rsM
-	yunP+eM8gBppESUnutu/5i7e8I04+37K23dPDSUVdOZlGfcn0s4K
-X-Google-Smtp-Source: AGHT+IEbtpn+V9rpWu/ZtIFAxLT/8ryUslfmVBQGHX473y0Ey2SRaClvHeiz+zNE53rxTl+D29q8AQ==
-X-Received: by 2002:a17:906:a00e:b0:a5c:d67a:e8ef with SMTP id a640c23a62f3a-a65e8e5110cmr110199966b.31.1717070087430;
-        Thu, 30 May 2024 04:54:47 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a626cc4f465sm807799366b.120.2024.05.30.04.54.46
+        d=1e100.net; s=20230601; t=1717070247; x=1717675047;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UjHdVTNPfpZSE5mw/0S4dwLQIRvAN8JureryKLiLrHw=;
+        b=iMUN4Qe/rDHT03ecx2Xmccze4e2c/8jZS8jFbvzbrvoDRAPe7S2t0c64qX+VGnTB+W
+         falddhJ81cmMFfZj6wVWAGX2s8o8zy+JpuX9hRq6DsIQ4UnYqvHnGTj+2d3vF2po9+CT
+         xLS/zVLNawExEiI3295iDb8YzfN61qTGHle0h95meUIsqzsJKD8c4OorlD7fXMfSL3+9
+         NlRRBr5UU6ittCEN3u+bAUfk97HYYhhQnsacNw4LLmTFOQdPcDRtTqP/gBazHfAU9cyL
+         liAgyEJCLGenHuAZKegMHpnsQz9bxpc5K9gDJTbsGUVNmZCZ0FFfsg4QVOZOrOC04mFv
+         sWwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtbyrB/luAXkeQmssT9gsYKsdlDa37lTOz5Jm3KnBvGN/qs9LCgCNawGwW1sm/Dj4qeTvMl5Ltw+fbswZt0KTJSpqQYQcUnlgXTdTJ24zA4tRInp1jKM2ST9FlZx5VdA4n8T46CDAZXPFG85+Kp0Ivy++oqRp64UfA2/8jbjN259FIXPm5LLhaWY0pZjO5Tv9Bg4lI3giVxHIOJtZ8wOSQAElXxI9SvnGKfbZEKsNBeURfil/Z1zPaKswvTeuyiyx6jvqEa9U97xMKtg==
+X-Gm-Message-State: AOJu0Ywy0LE9Hyz74HWgiRjAfSoYGJ0Oig4xqgJVUhzN517NJV9ixVOw
+	/c0r7J588VrhdiHlRuIttGIrmTvybo6K+oe6mGf5uuaUo4QvT+WsbrrXJj1G
+X-Google-Smtp-Source: AGHT+IHbMZqQOUAX0wpSZOpCsDEy5+/wimXfVioRFqT5E5NDFtRjHUfODqZjvcGeUY7FprwKgPyYmw==
+X-Received: by 2002:a25:fb05:0:b0:dfa:5a2f:9e56 with SMTP id 3f1490d57ef6-dfa5a5c1b26mr2125913276.6.1717070246747;
+        Thu, 30 May 2024 04:57:26 -0700 (PDT)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com. [209.85.222.172])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-794abd32207sm548900685a.112.2024.05.30.04.57.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 04:54:46 -0700 (PDT)
-Content-Type: multipart/signed;
- boundary=c36ba65ae5685a90b9c402ee13e51faac5cd8adb9819317905f87ee770dc;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+        Thu, 30 May 2024 04:57:26 -0700 (PDT)
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7930504b2e2so40784185a.3;
+        Thu, 30 May 2024 04:57:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKbTCd8R8RrhMKXYN32KfpzxK053W8HG11pdTwWUGBnKSoYIbLqLqJrSxQ4k19agMx4n7oKWoHgqY+35mW4gLKl6O1Y+54i6W68MPIfPcugNu1bZ5d2z00Wp+MnXJAtbwxqvCUnZCxuKQ/HaI1dqZQ9VmLDXa5L5H+GlnxiPx9gnU+/wvmLIP6jJoOKisncj1SB/Wsw1zBEAHUaVaQxDY+adJ+iJvDPJWsiKZbpXRwZ7DPLMv+ZAEL6m77xz7zRK5TkNaFFoChs1C3GA==
+X-Received: by 2002:a25:6842:0:b0:dfa:48f3:2253 with SMTP id
+ 3f1490d57ef6-dfa5a619bd3mr2110161276.32.1717070226150; Thu, 30 May 2024
+ 04:57:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Thu, 30 May 2024 13:54:46 +0200
-Message-Id: <D1MYJNZF5IKE.38D65NZ0PJS4A@gmail.com>
-Cc: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <lgirdwood@gmail.com>, <jonathanh@nvidia.com>, <mkumard@nvidia.com>
-Subject: Re: [PATCH v2 2/2] ASoC: tegra: I2S client convert formats handling
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Sameer Pujar" <spujar@nvidia.com>, <broonie@kernel.org>,
- <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240527125608.2461300-1-spujar@nvidia.com>
- <20240527125608.2461300-3-spujar@nvidia.com>
-In-Reply-To: <20240527125608.2461300-3-spujar@nvidia.com>
-
---c36ba65ae5685a90b9c402ee13e51faac5cd8adb9819317905f87ee770dc
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
+In-Reply-To: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 May 2024 13:56:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVprgpjDP6PDn7appofJv8Tv30nRA4+7n4sR8n6n4qy+g@mail.gmail.com>
+Message-ID: <CAMuHMdVprgpjDP6PDn7appofJv8Tv30nRA4+7n4sR8n6n4qy+g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/20] pinctrl: Use scope based of_node_put() cleanups
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
+	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
+	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+	Peng Fan <peng.fan@nxp.com>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Mon May 27, 2024 at 2:56 PM CEST, Sameer Pujar wrote:
-> From: Mohan Kumar <mkumard@nvidia.com>
+Hi Peng,
+
+On Sat, May 4, 2024 at 3:12=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.com=
+> wrote:
+> Use scope based of_node_put() to simplify code. It reduces the chance
+> of forgetting of_node_put(), and also simplifies error handling path.
+> I not able to test the changes on all the hardwares, so driver owners,
+> please help review when you have time.
 >
-> The AHUB HW modules are interconnected with CIF which are capable of
-> supporting Channel and Sample bit format conversion. Due to this, the
-> I2S Client can have different Channel and Sample bit from the hw_params()
-> and this config is passed from CIF port of I2S DT node which can help to
-> perform this conversion.
+> This patchset was inspired from Dan's comments on pinctrl-scmi-imx.c,
+> thanks.
 >
-> For e.g. HFP usecase consists of BT SCO with 1ch and 8k audio data
-> which needs to be converted and mixed with external codec playback and
-> capture path which is of 2ch and 48k format.
->
-> For HFP Playback:
->   The path includes mono to stereo and 8k to 48k conversion
->     _ _ _ _       _ _ _          _ _ _        _ _ _ _ _       _ _ _ _ _ _
->    |       |1ch  |      | 1ch   |     |2ch   | SFC     | 2ch |           =
-|
->    |BT SCO |---->| I2Sx |------>| CIF |----->| 8k->48k |---->| Codec I2Sy=
-|
->    |_ _ _ _|     |_ _ __|client |_ _ _|audio |_ _ _ _ _|     |_ _ _ _ _ _=
-|
->
-> For HFP Capture:
->   The path includes stereo to mono and 48k to 8k conversion
->     _ _ _ _ _ _       _ _ _ _ _        _ _ _         _ _ _ _       _ _ _ =
-_
->    |           | 2ch | SFC     | 2ch  |     | 1ch   |       | 1ch |      =
- |
->    | codec I2Sy|---->| 48k->8k |----->| CIF |------>| I2Sx  |---->| BT SC=
-O|
->    |_ _ _ _ _ _|     |_ _ _ _ _| audio|_ _ _|client |_ _ _ _|     |_ _ _ =
-_|
->
-> For above two path, I2S client channel uses existing DT binding to pass
-> channels and format conversion in I2Sx CIF Port.
->
-> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
-> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> ---
->  sound/soc/tegra/tegra210_i2s.c | 71 ++++++++++++++++++++++++++++++++--
->  sound/soc/tegra/tegra210_i2s.h |  2 +
->  2 files changed, 69 insertions(+), 4 deletions(-)
->
-> diff --git a/sound/soc/tegra/tegra210_i2s.c b/sound/soc/tegra/tegra210_i2=
-s.c
-> index ba7fdd7405ac..fe4fde844d86 100644
-> --- a/sound/soc/tegra/tegra210_i2s.c
-> +++ b/sound/soc/tegra/tegra210_i2s.c
-> @@ -8,11 +8,13 @@
->  #include <linux/device.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
-> +#include <linux/of_graph.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regmap.h>
->  #include <sound/core.h>
->  #include <sound/pcm_params.h>
-> +#include <sound/simple_card_utils.h>
->  #include <sound/soc.h>
->  #include "tegra210_i2s.h"
->  #include "tegra_cif.h"
-> @@ -603,6 +605,7 @@ static int tegra210_i2s_hw_params(struct snd_pcm_subs=
-tream *substream,
->  	struct tegra210_i2s *i2s =3D snd_soc_dai_get_drvdata(dai);
->  	unsigned int sample_size, channels, srate, val, reg, path;
->  	struct tegra_cif_conf cif_conf;
-> +	snd_pcm_format_t sample_format;
-> =20
->  	memset(&cif_conf, 0, sizeof(struct tegra_cif_conf));
-> =20
-> @@ -615,28 +618,51 @@ static int tegra210_i2s_hw_params(struct snd_pcm_su=
-bstream *substream,
-> =20
->  	cif_conf.audio_ch =3D channels;
->  	cif_conf.client_ch =3D channels;
-> +	if (i2s->client_channels)
-> +		cif_conf.client_ch =3D i2s->client_channels;
-> =20
-> +	/* AHUB CIF Audio bits configs */
->  	switch (params_format(params)) {
-> +	case SNDRV_PCM_FORMAT_S8:
-> +		cif_conf.audio_bits =3D TEGRA_ACIF_BITS_8;
-> +		break;
-> +	case SNDRV_PCM_FORMAT_S16_LE:
-> +		cif_conf.audio_bits =3D TEGRA_ACIF_BITS_16;
-> +		break;
-> +	case SNDRV_PCM_FORMAT_S32_LE:
-> +		cif_conf.audio_bits =3D TEGRA_ACIF_BITS_32;
-> +		break;
-> +	default:
-> +		dev_err(dev, "unsupported params audio bit format!\n");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	sample_format =3D params_format(params);
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Maybe you can move this before the switch and then reuse sample_format
-in the switch?
+Andy's question about code generation on a related patch made me
+wonder, too.
 
-> +	if (i2s->client_sample_format >=3D 0)
-> +		sample_format =3D (snd_pcm_format_t)i2s->client_sample_format;
-> +
-> +	/*
-> +	 * Format of the I2S for sending/receiving the audio
-> +	 * to/from external device.
-> +	 */
-> +	switch (sample_format) {
->  	case SNDRV_PCM_FORMAT_S8:
->  		val =3D I2S_BITS_8;
->  		sample_size =3D 8;
-> -		cif_conf.audio_bits =3D TEGRA_ACIF_BITS_8;
->  		cif_conf.client_bits =3D TEGRA_ACIF_BITS_8;
->  		break;
->  	case SNDRV_PCM_FORMAT_S16_LE:
->  		val =3D I2S_BITS_16;
->  		sample_size =3D 16;
-> -		cif_conf.audio_bits =3D TEGRA_ACIF_BITS_16;
->  		cif_conf.client_bits =3D TEGRA_ACIF_BITS_16;
->  		break;
->  	case SNDRV_PCM_FORMAT_S32_LE:
->  		val =3D I2S_BITS_32;
->  		sample_size =3D 32;
-> -		cif_conf.audio_bits =3D TEGRA_ACIF_BITS_32;
->  		cif_conf.client_bits =3D TEGRA_ACIF_BITS_32;
->  		break;
->  	default:
-> -		dev_err(dev, "unsupported format!\n");
-> +		dev_err(dev, "unsupported client bit format!\n");
->  		return -EOPNOTSUPP;
->  	}
-> =20
-> @@ -872,6 +898,40 @@ static const struct regmap_config tegra210_i2s_regma=
-p_config =3D {
->  	.cache_type		=3D REGCACHE_FLAT,
->  };
-> =20
-> +/*
-> + * The AHUB HW modules are interconnected with CIF which are capable of
-> + * supporting Channel and Sample bit format conversion. This needs diffe=
-rent
-> + * CIF Audio and client configuration. As one of the config comes from
-> + * params_channels() or params_format(), the extra configuration is pass=
-ed from
-> + * CIF Port of DT I2S node which can help to perform this conversion.
-> + *
-> + *    4ch          audio =3D 4ch      client =3D 2ch       2ch
-> + *   -----> ADMAIF -----------> CIF -------------> I2S ---->
-> + */
-> +static void tegra210_parse_client_convert(struct device *dev)
-> +{
-> +	struct tegra210_i2s *i2s =3D dev_get_drvdata(dev);
-> +	struct device_node *ports, *ep;
-> +	struct simple_util_data data =3D {};
-> +	int cif_port =3D 0;
-> +
-> +	ports =3D of_get_child_by_name(dev->of_node, "ports");
-> +	if (ports) {
-> +		ep =3D of_graph_get_endpoint_by_regs(ports, cif_port, -1);
-> +		if (ep) {
-> +			simple_util_parse_convert(ep, NULL, &data);
-> +			of_node_put(ep);
-> +		}
-> +		of_node_put(ports);
+On arm32, a conversion to for_each_child_of_node_scoped() seems to
+cost ca. 48 bytes of additional code, regardless of whether there were
+explicit cleanups before or not.
 
-You could maybe try to use the "new" __free() anotation here to have
-this cleaned up automatically. It'd look something like this:
+I checked "pinctrl: renesas: Use scope based of_node_put() cleanups",
+and all but the conversions in *_dt_node_to_map() cost 48 bytes each.
 
-	struct device_node *ports __free(device_node), *ep __free(device_node);
+Gr{oetje,eeting}s,
 
-And then you should be able to omit both of those of_node_put() calls.
-It may not be worth doing in this case because the declaration becomes
-unwieldy and there aren't a lot of these calls.
+                        Geert
 
-> +	}
-> +
-> +	if (data.convert_channels)
-> +		i2s->client_channels =3D data.convert_channels;
-> +
-> +	if (data.convert_sample_format)
-> +		i2s->client_sample_format =3D simple_util_get_sample_fmt(&data);
-> +}
-> +
->  static int tegra210_i2s_probe(struct platform_device *pdev)
->  {
->  	struct device *dev =3D &pdev->dev;
-> @@ -887,6 +947,7 @@ static int tegra210_i2s_probe(struct platform_device =
-*pdev)
->  	i2s->tx_mask =3D DEFAULT_I2S_SLOT_MASK;
->  	i2s->rx_mask =3D DEFAULT_I2S_SLOT_MASK;
->  	i2s->loopback =3D false;
-> +	i2s->client_sample_format =3D -EINVAL;
-> =20
->  	dev_set_drvdata(dev, i2s);
-> =20
-> @@ -916,6 +977,8 @@ static int tegra210_i2s_probe(struct platform_device =
-*pdev)
->  		return PTR_ERR(i2s->regmap);
->  	}
-> =20
-> +	tegra210_parse_client_convert(dev);
-> +
->  	regcache_cache_only(i2s->regmap, true);
-> =20
->  	err =3D devm_snd_soc_register_component(dev, &tegra210_i2s_cmpnt,
-> diff --git a/sound/soc/tegra/tegra210_i2s.h b/sound/soc/tegra/tegra210_i2=
-s.h
-> index 030d70c45e18..fe478f3d8435 100644
-> --- a/sound/soc/tegra/tegra210_i2s.h
-> +++ b/sound/soc/tegra/tegra210_i2s.h
-> @@ -112,6 +112,8 @@ struct tegra210_i2s {
->  	struct clk *clk_i2s;
->  	struct clk *clk_sync_input;
->  	struct regmap *regmap;
-> +	int client_sample_format;
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Given that snd_pcm_format_t is defined to be int, can you store that in
-here directly? That way you only need to cast when getting the sample
-format.
-
-Anyway, very small nitpicks, so either way:
-
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-
---c36ba65ae5685a90b9c402ee13e51faac5cd8adb9819317905f87ee770dc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZYaQYACgkQ3SOs138+
-s6EaQQ/+OQJdi6IxMnw7oyVPO/wFKn2rjdft8JvcS5vN8NiB3mmBn1hSVSRzsZIo
-rh6hi3plMrExw7CUhOilBfynE/xqJ2cUm8Pa83pyOEXVpXuXEWha/dYnNS5xMleO
-qYxHkj+Qi7aTCu48OwhJ6usYpBs6DNYU/SFnQSdt3/rRng7DqgiJ0JTe+jKf2nz9
-rg7wD5UUGOnKSaG+Yga+xQNcfmtTxCXxnbzpUwLW01bmFPyPp8WgJCgsRs2AZP6v
-SgMnqrN9P+QfXLBNNpP1OMoKTgiy6ESqObW1T6hJkDOaRSu1xX4hjIsXyC4zUoeG
-ePgvbxYO0LTlf1E33SBJmD1JD0XtzHfd2pz2hmo+GbRHMMW5zCxyIqvIOjdULucS
-m1E4X2kdEq2KEpGZEq+Z71/bOcUOfixBce3w8+409fZhnZ46FzR3NHYQGs+StIoB
-e9gdippmKRjxoMt5ZkQdCwVRbbWbAb8J4sItjRG6fBWYGbxmmiosP+mGnxmNQkEF
-kvRp1Z6//7Ot+SKO1AcCyHIOAKZAZgc7xkuS+AiGCVHUZGttCL5sEnJfCxQN3Zo5
-QWioOTeda3jp14uFw75eoVai3cLN8Jd8phUIDE5LoWLigVIHKSOZPkoh0v28knXu
-RJEKkSgNEEo5U1yFFkstyWxqOqpL7eKIf+5DDFjBORQc3XwzRAE=
-=4R5E
------END PGP SIGNATURE-----
-
---c36ba65ae5685a90b9c402ee13e51faac5cd8adb9819317905f87ee770dc--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
