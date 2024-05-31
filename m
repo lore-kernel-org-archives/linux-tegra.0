@@ -1,326 +1,328 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2051.outbound.protection.outlook.com [40.107.244.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE19155CAF;
-	Fri, 31 May 2024 09:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717146394; cv=none; b=cXEUIWDRQEB7RIukq4/DLr6nBzwRpXjVL8fwsmEmLXmO26xF6ekNiNH9EZmxey2YaN0vCl4QnP/MQ823NHn9q/N4VcBQCfngrLLKFJrwb30s0S8tsr9Uh7SbxD+MosB3mChNRFbY4Pnr9L2TSIsnipzGnFOLae/S5FgY65S5GRI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717146394; c=relaxed/simple;
-	bh=Gj3TQ7n/cvAIqHTsVPgQF2pm5cUn5J8n7dtIOah86C4=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=OMo0fsWwF5rItY2w+/uWBnEqwdcyjYk9FE+97oSH/YI9inrly3eDikWHY1cnSHconIb8kEuk4T6JzpETNuRljnc0uHJH3DbDxS3h3Y2BJCbz6FaB//AXQZSTXey1uOGpFdOz06iC8YNikzt76afnXbuw9NvFFVqd56CYoBQct/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YCX1WFAH; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A6778C98;
+	Fri, 31 May 2024 09:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717147390; cv=fail; b=FMLstzp2ARqy6Zv9gbVjVza3kP9G3V/UKZBAbfwh9Do+o1vUna1vJ5vkujxnZS7iTXcFRNFh3gP66gBofG+P83KRRN7F20nUYpysCkvqaiVsmNPJrK+B3jCYlAyUsbNlYvQHMTwh23Y3ETMBLE0fbj4LzTgVu4kW+TbIsfgttTE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717147390; c=relaxed/simple;
+	bh=96mW1AFF9bd4uTRp+lFrIfp3OZq0XtYigHNnAVNt5Eg=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KwJ6z/q5TwnHz4zRMrwFozJR6qSzcp78AKo7JW5dvH/yFeAdwtZA1IlC9tXISA5l+oRx0TnvRKaoQUM9YFV299OHqQ64ALkgW/PaE37ZFedXEso8CSofSJJ0F/Gp+3cXpAwxO+CmvjpF7ewKBeqRHeGCkQK6A//Vimikke7ToKs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Lf6FdB0a; arc=fail smtp.client-ip=40.107.244.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YCX1WFAH"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-35dc0472b7eso1722376f8f.2;
-        Fri, 31 May 2024 02:06:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717146391; x=1717751191; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dEEG0kHvZPm3wCKBvQt9pPqiOkgbjohL3p/fSyC44bk=;
-        b=YCX1WFAH3Q2og7/ofs8rh0p2NuR43r7Upy3k1TQQp4MxlvQFDQPX9uoOLbfjq6ldWU
-         1kNPs8d1fiAmxygsoyyLJ/4VCVEoOL4/d2kjL92iqHS0VIViCztU8uOiSEJiH+/TYo5X
-         kNL6a8JM9w+oIKye9Ie5hVvqJCpCEoqDrqWZwiCHbtdfll8eU08qvK9MBVQlu0Bzl4y/
-         0LkJRqJoZ4ngB4UXg8Y28DtRddcDqyjQEVbwctpmgczjq642ngJoUJUR2iWQMqqfvOJN
-         KV8Tls/AUI5ui3a2HoubNr4HzWfvHQhLRNSY20bfamX2gcwVXL7ZsBMY7kQT7s93WH3N
-         bb5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717146391; x=1717751191;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dEEG0kHvZPm3wCKBvQt9pPqiOkgbjohL3p/fSyC44bk=;
-        b=DqND5HTHwipxsDUv9asm2Pq2El1hEb9tmO3vJq3ULYuVte1j3RR9edZpFAco3XYQdC
-         hIc70EX6UII2uUr5LzPuePmxiAcugrAIvkOY/1zFLFwYjVKn6hHKRfEgl/EziPvHLQlW
-         uzBDP1RLXuA/pqZnSDayQPAuwQHYTGBm99Nne4TzeL9wB8wcCsOlVqueurgAfrBDLHJw
-         Yd/GY+qHGnaoGzQVX6Qo0JiEZpaCZsR8cMnctcs+mmsYcdo6YWY4nT8d5vAnZnc6nv/y
-         U0ZJslSREO6SEAk84riQmZjWMkU9q/+2rrFUMoVwB0zfXj7eQrCv5e15f+GMZ/WxRZFY
-         JZCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUj0bp9OgJj0JXTtirmpBQUnciKojCjrmSIjr2eSZ6vo1JJtR7i4YD6gd12IWO4uVZPA09UsS6kKVYU7KG01Q0625mEQs7X6YisO4nhlF3yPU5gb3tTF1rGc3Tx4hAzEpLhgicRXfTs12uTl5s48nYlpVYaX5dQm/IQuEtc3QPEffKngw==
-X-Gm-Message-State: AOJu0Yz1wyR4SQcwNSHIhHJsCX3wW2FIldMmhe5doOces1AbHWfrB+aa
-	KQpWQ1t7iWJ8bNgY7P6uW3Ygv5r9VabV5QikkYpmMJVdKbSclXf6tZx1qg==
-X-Google-Smtp-Source: AGHT+IHHwPOJdlJH8BE2VfHsOd+HdUnmI82NkLvsu485EqNyNwO1IrCJ7YvRXISEME8ZUF3NMwqp9g==
-X-Received: by 2002:adf:a1c5:0:b0:345:5f6a:cbf7 with SMTP id ffacd0b85a97d-35e0f28881cmr845064f8f.29.1717146390634;
-        Fri, 31 May 2024 02:06:30 -0700 (PDT)
-Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04d96f6sm1394627f8f.61.2024.05.31.02.06.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 02:06:30 -0700 (PDT)
-Content-Type: multipart/signed;
- boundary=5756bc5e83a6bad3a9f5eb4a93427ad8fb0c0c23d1457925c7710f966752;
- micalg=pgp-sha256; protocol="application/pgp-signature"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Lf6FdB0a"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a5yzlG4fNayP6Tq6EKKs9DYY73vxQK3lfsDThqc2QdVfEqcMt11k5i9y2blrZySyAFAseCat32ExvFzYP6TN6tsZnc+IhEMyyUh0skRiPDd+1R6CiHqk/bOcVjG0Kqbcdewirn1nb+L0fBdrsmScM2z0a6RGULu9h7sZ12J0yC0xyM46aScRX2IUELcXYMXzBvP+SQ6Eb2ncf7qtgXDQ3FXrHa1AJkCOUYzrpJvBIazfPlkAL/HY83ublYYlB0xrQMnR3EvzJn6xeEwWl+ZJXUYcrru201s3ZyrwHqhwYuKePlf6N+mi+fn1fGF7tWdHq4q15nXR4NvQDMo/SJPxHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=336s1kqBzWVF1xuSOVUVNH1KsRPz3tDANBo0zZBHL3o=;
+ b=ddF5lTrNH+WGYjLs5ah8DeqBg6n4rOAfLtkU2x6YTMnIHce/naCfjajpnJSlvO8SnPybVqtqtGmgQc35muSvL64NoAykDsvMnqovJRB9LhFy4FsfjRJsC6MUGn1Z9rt6YWEj6BehEJHG6V8TSxKl8sda8TdLB7DV+RwOJ2/Ko3Kt4GeC+wCj0brK6+zfdBUPW4P/uxzmevhmVDlpema8hIoBfKGYC9JfVSXrtuv4RPuYp1cvXPXSBQv7sd8T113knUkSZMsW5wpjjV6ai8cNIRGDT0bZJtFpwHZJTlwtjasPk5mLqmxqPNe9023xADlNACYxaa/iKTispMEaPmvPcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=336s1kqBzWVF1xuSOVUVNH1KsRPz3tDANBo0zZBHL3o=;
+ b=Lf6FdB0aSMG1cC0SF7ef2cj2aDOITQsXG4cPZl4cMwQsmonxzVl+0rHaImthryZUJM2oX7wnBEF39wNfIH2XrtI7Vbw+RQUSSOhJROOX0n1G7cStigM/rbgLRrfECDXxhzch/jsiPPr5/DzIJm/bZZarAc1P4oYSMX5MSu8urQHjyQAwORWNUs1Ibe/6TJ8/0RPjfs2nJTLk24yQs/Tc73YChAGJLcMmuauthwAUiKGxYJkjDJhlxnxJFki+6X22fmTyGJBhkx6Lw56Gj65k4Pcxow/iykgBB5n238htBt8HEPFVtNzFW4jzB9UyN8sK9I3cUs9cdJ+HMQr92DLffw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB7426.namprd12.prod.outlook.com (2603:10b6:510:201::18)
+ by MW4PR12MB6849.namprd12.prod.outlook.com (2603:10b6:303:20d::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.28; Fri, 31 May
+ 2024 09:23:05 +0000
+Received: from PH7PR12MB7426.namprd12.prod.outlook.com
+ ([fe80::6fdd:1491:4d83:ac33]) by PH7PR12MB7426.namprd12.prod.outlook.com
+ ([fe80::6fdd:1491:4d83:ac33%4]) with mapi id 15.20.7633.018; Fri, 31 May 2024
+ 09:23:04 +0000
+Message-ID: <d854664c-ab56-46b6-81f9-9ef712c32b3a@nvidia.com>
+Date: Fri, 31 May 2024 14:52:55 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] iommu: Optimize IOMMU UnMap
+From: Ashish Mhetre <amhetre@nvidia.com>
+To: Robin Murphy <robin.murphy@arm.com>, will@kernel.org, joro@8bytes.org,
+ linux-arm-kernel@lists.infradead.org, Rob Clark <robdclark@gmail.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>
+Cc: vdumpa@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com,
+ jonathanh@nvidia.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240523031935.90856-1-amhetre@nvidia.com>
+ <6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
+ <2a349725-72cf-45e2-9ca2-5a8b153a6fae@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <2a349725-72cf-45e2-9ca2-5a8b153a6fae@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN3PR01CA0115.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:96::14) To PH7PR12MB7426.namprd12.prod.outlook.com
+ (2603:10b6:510:201::18)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Fri, 31 May 2024 11:06:29 +0200
-Message-Id: <D1NPLD5J2YE2.3H93K6QYATI49@gmail.com>
-Cc: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <ldewangan@nvidia.com>, <mkumard@nvidia.com>
-Subject: Re: [RESEND PATCH 1/2] dt-bindings: dma: Add reg-names to
- nvidia,tegra210-adma
-From: "Thierry Reding" <thierry.reding@gmail.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Sameer Pujar"
- <spujar@nvidia.com>, <vkoul@kernel.org>, <robh@kernel.org>,
- <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jonathanh@nvidia.com>,
- <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>
-X-Mailer: aerc 0.16.0-1-0-g560d6168f0ed-dirty
-References: <20240521110801.1692582-1-spujar@nvidia.com>
- <20240521110801.1692582-2-spujar@nvidia.com>
- <80b6e6e6-9805-4a85-97d5-38e1b2bf2dd0@kernel.org>
- <e6fab314-8d1e-4ed7-bb5a-025fd65e1494@nvidia.com>
- <56bf93ac-6c1e-48aa-89d0-7542ea707848@kernel.org>
- <f785f699-be50-4547-9411-d41a4e66a225@nvidia.com>
- <774df64c-56a1-461a-82fa-a0340732b779@kernel.org>
- <D1HPADDIQNIK.2F4AL70NLHQCY@gmail.com>
- <819d7180-db8c-438c-afed-463fe495bfc5@kernel.org>
- <D1MZOIQR9R4G.16O4LIDN6AN5Q@gmail.com>
- <18946269-8529-434e-bcef-85c74b7a81b7@kernel.org>
-In-Reply-To: <18946269-8529-434e-bcef-85c74b7a81b7@kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB7426:EE_|MW4PR12MB6849:EE_
+X-MS-Office365-Filtering-Correlation-Id: 82702143-86ec-4c46-cc3f-08dc8153467e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V3lhUlpDTU03NmVpQnRlM2FSaGVkVEkvejQ3azc2a0tyMEpCa3RaaUhLTzVa?=
+ =?utf-8?B?dEkwR0g5MEJWZkxhRUtld013TDJ6bHpuZndHc1k2cDdLRTJ5eUJjZ292NG1E?=
+ =?utf-8?B?UkJ2MVBKbEJrVXUraHFTcVh6OU9LQ0R6cUlRYVpyZi9OWGNaS2E5b29sT25u?=
+ =?utf-8?B?TzRzbHpBK20xTUdhL083T01YMjJ4bVNRQ0MxRkZpdGtsb0oxVTdOTkVDQUtU?=
+ =?utf-8?B?TjZ1dG54VlozMjJEbDhjaWUwM2Q2dVQ5bDVtWEY3MjhTRFMvMi9Uc1ZlUlMy?=
+ =?utf-8?B?MXR6OGJ1bmZpNVdzTzNjQXRlSklJM1JxcWtHbSsvSDBIMm82RGRBOFdFV29K?=
+ =?utf-8?B?ZWZoRzZTOFpHTFNYQWJPem1pZUc1RFBoMmQxSXRJTUwvQlNJRDJlMkNWZ3NZ?=
+ =?utf-8?B?VERDTVVpRDhXNEQydEhydG8rNTBRTFJKWmRVR1dKVzVndld4VzZ4aFI5Qk52?=
+ =?utf-8?B?Nml0dXh2V0kyKy83aC9sYjFKWU0yV2RkeUszckhpNnpjc29lYlVKek03c2tU?=
+ =?utf-8?B?dXFtUzRpbDYzSSszRmFzT1hBVzNyMXk5ZjBTSkFrVnpiVGxabkhIM2VpRUll?=
+ =?utf-8?B?U3oyZFFJZmVBYTRFRXY4NHo2V1huNG9WSnJ3ZU5Kc1B3U2lVdnNTOHZqa2dp?=
+ =?utf-8?B?RlA1VHVUcTBNTEVZbUxGZTRIQlArY1NEenNnTlMyekZ1SXRFdFRuZGFpYi9k?=
+ =?utf-8?B?T2pQYSs1cmpjWG0xdkVnb2VXblNVSG1JemlPWE4wbnROKzMyVHpKU3IwUzlZ?=
+ =?utf-8?B?dTFmckFJM3d2eDRqWUtpWXZWa0YreExQUGs1TzJ0bXR5ZVRMZHBzYjlkMVlh?=
+ =?utf-8?B?M254WXRPMGhDRnlzWENMeUJZRGhnd24xTTAwbUdzemhDYkFyTERTNEVBQ3VF?=
+ =?utf-8?B?bHdiSXlOQnVHOXl6RitFa3dWRDBwZDAzdXFqVGZKVkNYSFBsYzNkUjIyenp3?=
+ =?utf-8?B?M2xES0hkQzkzRkd2ZWszMk5BNXg2VnUwR3NoVHFzMjNSOG10cWk3eUVlMWhh?=
+ =?utf-8?B?RVFScUhsY3d0ZXBibEFVM1FKTTFQOS9tTFBLVm9mY3NvU1NML3NIdDExNUhO?=
+ =?utf-8?B?bVI4Y1ZsTGo3S2NPSXBlbFF6cnRNdGhXRUtlUkFQS25BZExmbzlnelN2RXUr?=
+ =?utf-8?B?Z0FKY1VBaER1T2I1YTBzVnozUGlOeUkyMlFsYnQrNlVlS2QzR1NNaE51aGhJ?=
+ =?utf-8?B?YTZwbHNScmRqY3pZVy9zRWpyR0gzeWJaQmg0YU5xaUFtVWdRTXlBaytRT1My?=
+ =?utf-8?B?aExHaW1WbDNXYzVGT3U2UlA0R1kzamJqaEdMMDQ2MXJGT2k5cXpnRzFuY2Jp?=
+ =?utf-8?B?bGFQaXJPMFJ3THNRVWVQeU9GcVhNVklGU2xuYXNFcjdaT2JWT2p0Y1dpQWpE?=
+ =?utf-8?B?THVXWDA0Vmk5Q1BiRFJVSGdCTUZUSEN3M2M5VU1rTXFRQWFieWE2dGJmQk9N?=
+ =?utf-8?B?eEV4Ti9vVVUwV0VjVjJzNGtJb1NsVFdpaTFGTDlpeXJDcEZvWE55aGRGcGd6?=
+ =?utf-8?B?TzZYeWhJRmZFNGpUQ0prMjhQdk9ST1FZS1p3LzRFd1AveDRnZE9Pby91K2Ro?=
+ =?utf-8?B?cE9XOGVEWGRSZE5uRlBHTzBPTFFHemkvT2djSVFKT3J3cEQyZU4zSFVFWlNY?=
+ =?utf-8?B?NGVhMWdnOEJ4dzJSQmZ4TUpieVBuVE9uaDE3VTZyc1BPVVFpYlJYQXZSUTJq?=
+ =?utf-8?B?UXBnemR1dnd6Yk9MSmdOcHVIUFRTbnNxaXB5dUxURXZMbVlXb29MNW5RPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7426.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z0RtRGJjZHFwcEZFcm9PS0R2YSsvaHpHZTVKaExkMC9odTF2MUFZeXlvUTg2?=
+ =?utf-8?B?SWdtaDdhWmlGTllraktZamFpWjc0bmJGQTQ2eTdWTnpnNzdOM1RiY2xBV3E1?=
+ =?utf-8?B?KzRuNFN5WjIyZ0lvcUxEWjRzbUdDWkVOMWFrL1NHZGZTeDJoSTVwZ3VDOU5n?=
+ =?utf-8?B?WkYxRWxFQ21lY0lLenBReUtqa2N2WkE1djB1OVNKaWZBRzV3eXRndjE5M2dR?=
+ =?utf-8?B?aGlZaFdzeWQxUW81MkxONnBuMEdzU2NrV3BqUmRxbEpoUmU1ZHFxcWRHODky?=
+ =?utf-8?B?WUlPVExDK0hQQVFweXc4RURXbE9DVzVtZUxwYTl5SHR3c2dnQXY4Vnd1Nk9s?=
+ =?utf-8?B?QWtwUVoyb0EzbHdiQWNVWCs1UGxnMEQ5U1hrUExZVWNxZ0ZzMlpMVGNQYWhK?=
+ =?utf-8?B?ODBoUlg2MzlYTWJJZFZmY3pyNFRablcybTNUdTlrT09LUnVneUN0azZVQXlU?=
+ =?utf-8?B?UDZ0NHcrNXF6eEMvYVZlRVFiS1g2c3ltaUszeW56OFlockc4Z0k2Zkplays3?=
+ =?utf-8?B?dnBXQ3puL3lBZ1pQVE5YZWlWSHNmM2E0NDNqS3FpSEJwYU9EdVAyTWgrS1hx?=
+ =?utf-8?B?UHBmU0puMHZLWUVRRFpzQ1lBajdUOTg0eDJBTW5LWkdYRmtpTENsUFczMXNJ?=
+ =?utf-8?B?RnJoNXNTdVNwQnFEVmhVKzcyTWczK0U2RUxrbWxGbHRmc0MvOWpNczRLb3I0?=
+ =?utf-8?B?R0dmbjNXSVVkYUszcmVZUHkrcWdsZ1hnemtDY2J0YlUwUUJGdU5WNE5LeWdn?=
+ =?utf-8?B?MFRYdnpRVFU4eDZON0xHODQvUFpOVnZ3QWsxa0VnMHVJaUo5MWJubndjS3dG?=
+ =?utf-8?B?YitFNTZ5VG9iWm5wVHZoS2srNU96N3dTQ0RtdXg1cXNpV0FvWHpRalFkc2th?=
+ =?utf-8?B?Yzd5UFB2T242T2VzNU1NYzhYZmZPM3VEbC9KcDlqS3FqbjlwdWtNb2Y3MGRt?=
+ =?utf-8?B?MW9vazRMNy9vNnBNbmJQQTMyWEVGUTdMUzkzRFNSYmtuUGlrVTltelVFSFhI?=
+ =?utf-8?B?S2gzWGpEaXU2S05LMjZZUHBOcmNEMjd3VTZJM0k5VjI2cXhIYUltV3ROV1E0?=
+ =?utf-8?B?MytPZUxQYUdzRVIwUnlEVU9COXVYRG1KckY5SlhpVlcydXpCR1AvVkhXSThU?=
+ =?utf-8?B?SXFoRjZrckp1amtVdWZRS3F5cEo3TGxVa1VMU1M0QlFqU0JEditrbHFrUlpj?=
+ =?utf-8?B?MFlXK0F2RlRPQXFqZU1CdU5rb2x0MWZFK3ViTEs5NWtxMUtRRGtFUFVic2lZ?=
+ =?utf-8?B?RisxUnFYWVFmUUJva2t1Qlo0NUJUZktERzdUYzBUOVBqQTduTmtoYjZlbkRG?=
+ =?utf-8?B?VTJVTnZZMTh6Z3ZjODcrWDFJN1FiNmxMdUJLbm1vV2JyRkZRWVBIYm5wRWdz?=
+ =?utf-8?B?UDNLak9SRnplbExObVZlREJrYnZPblpQZjlqSDNFNHhJVVE0bGhIQkQ2K1gx?=
+ =?utf-8?B?anBzZmE0RmNWM21FV3ZJUkcrY044VEVxUENITjdWcE5oSVB6ZWtnczJaT1hX?=
+ =?utf-8?B?VzFuNm0wSEdmWUlyN0NKTEJzbGl3OWkrYzF1ZnVPU1hib2FWRDBOMFlGK3hW?=
+ =?utf-8?B?MTFTcXFjQ3RWZWRxcHlCSXlWOFVVTTRPdzl0aTRmUnZHeDRQazVLRGFzclBz?=
+ =?utf-8?B?RTRUM0JBT2VldS9lcktxbERPUzBCS2V1aTFWQWxDUW02TzBKYlZ6UytORVJq?=
+ =?utf-8?B?dFRtU1VGcVpZVDI0cTllL096cjE0alFpaE5hL3krZXQvZGFKOVVGSE84WjdM?=
+ =?utf-8?B?Q0FxdURtaC81ZXRPNitrQkluOTBsdXMzMHVONmtFR29jUHNrMG1zMG41Ynl5?=
+ =?utf-8?B?Q3dhN1JmaEluUS9za1B6Um55eEdtd2RhUTZYTWFtL0lSSXo3RXVXVDY5Yzlt?=
+ =?utf-8?B?a3c1ZlJiNHE5dHd4TTNMdk55Wnk0bWVJZFVBZVQvd3RCbGpaUzcrR3BaNC90?=
+ =?utf-8?B?T1h5QzBnQ1pFY0VEL0IzVitMc2puK1NITi9CdWV0b1krNWY5QTEwUEFDRHRl?=
+ =?utf-8?B?Ym9rQ1kwejBPYjFuVlRFQm53cFF6SzIzdUF2b0xybzFZNzk2Vk9jTHB2QjAr?=
+ =?utf-8?B?Rkt5SVBDa0R4S1B3d1N6OHo0SHpDV0dXRFUvbXJKZ0orWVhMNm9WNzRTUjVn?=
+ =?utf-8?Q?I4NawtCGOklxrit0po2KvZo3T?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82702143-86ec-4c46-cc3f-08dc8153467e
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7426.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2024 09:23:04.8070
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /E0ivVhp55GGOtqUgG31eaoz96FwdENo9Q/nuZ39fQliQIudnOV7Yg5KaYyB969Vh5U/pj+IkJV7aVvJauQk7Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6849
 
---5756bc5e83a6bad3a9f5eb4a93427ad8fb0c0c23d1457925c7710f966752
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Fri May 31, 2024 at 9:43 AM CEST, Krzysztof Kozlowski wrote:
-> On 30/05/2024 14:48, Thierry Reding wrote:
-> > On Tue May 28, 2024 at 8:48 AM CEST, Krzysztof Kozlowski wrote:
-> >> On 24/05/2024 09:36, Thierry Reding wrote:
-> >>> On Wed May 22, 2024 at 1:29 PM CEST, Krzysztof Kozlowski wrote:
-> >>>> On 22/05/2024 09:43, Sameer Pujar wrote:
-> >>>>>
-> >>>>>
-> >>>>> On 22-05-2024 12:17, Krzysztof Kozlowski wrote:
-> >>>>>> On 22/05/2024 07:35, Sameer Pujar wrote:
-> >>>>>>> On 21-05-2024 17:23, Krzysztof Kozlowski wrote:
-> >>>>>>>> On 21/05/2024 13:08, Sameer Pujar wrote:
-> >>>>>>>>> From: Mohan Kumar <mkumard@nvidia.com>
-> >>>>>>>>>
-> >>>>>>>>> For Non-Hypervisor mode, Tegra ADMA driver requires the registe=
-r
-> >>>>>>>>> resource range to include both global and channel page in the r=
-eg
-> >>>>>>>>> entry. For Hypervisor more, Tegra ADMA driver requires only the
-> >>>>>>>>> channel page and global page range is not allowed for access.
-> >>>>>>>>>
-> >>>>>>>>> Add reg-names DT binding for Hypervisor mode to help driver to
-> >>>>>>>>> differentiate the config between Hypervisor and Non-Hypervisor
-> >>>>>>>>> mode of execution.
-> >>>>>>>>>
-> >>>>>>>>> Signed-off-by: Mohan Kumar <mkumard@nvidia.com>
-> >>>>>>>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-> >>>>>>>>> ---
-> >>>>>>>>>    .../devicetree/bindings/dma/nvidia,tegra210-adma.yaml  | 10 =
-++++++++++
-> >>>>>>>>>    1 file changed, 10 insertions(+)
-> >>>>>>>>>
-> >>>>>>>>> diff --git a/Documentation/devicetree/bindings/dma/nvidia,tegra=
-210-adma.yaml b/Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.=
-yaml
-> >>>>>>>>> index 877147e95ecc..ede47f4a3eec 100644
-> >>>>>>>>> --- a/Documentation/devicetree/bindings/dma/nvidia,tegra210-adm=
-a.yaml
-> >>>>>>>>> +++ b/Documentation/devicetree/bindings/dma/nvidia,tegra210-adm=
-a.yaml
-> >>>>>>>>> @@ -29,8 +29,18 @@ properties:
-> >>>>>>>>>              - const: nvidia,tegra186-adma
-> >>>>>>>>>
-> >>>>>>>>>      reg:
-> >>>>>>>>> +    description: |
-> >>>>>>>>> +      For hypervisor mode, the address range should include a
-> >>>>>>>>> +      ADMA channel page address range, for non-hypervisor mode
-> >>>>>>>>> +      it starts with ADMA base address covering Global and Cha=
-nnel
-> >>>>>>>>> +      page address range.
-> >>>>>>>>>        maxItems: 1
-> >>>>>>>>>
-> >>>>>>>>> +  reg-names:
-> >>>>>>>>> +    description: only required for Hypervisor mode.
-> >>>>>>>> This does not work like that. I provide vm entry for non-hypervi=
-sor mode
-> >>>>>>>> and what? You claim it is virtualized?
-> >>>>>>>>
-> >>>>>>>> Drop property.
-> >>>>>>> With 'vm' entry added for hypervisor mode, the 'reg' address rang=
-e needs
-> >>>>>>> to be updated to use channel specific region only. This is used t=
-o
-> >>>>>>> inform driver to skip global regions which is taken care by hyper=
-visor.
-> >>>>>>> This is expected to be used in the scenario where Linux acts as a
-> >>>>>>> virtual machine (VM). May be the hypervisor mode gives a differen=
-t
-> >>>>>>> impression here? Sorry, I did not understand what dropping the pr=
-operty
-> >>>>>>> exactly means here.
-> >>>>>> It was imperative. Drop it. Remove it. I provided explanation why.
-> >>>>>
-> >>>>> The driver doesn't know if it is operated in a native config or in =
-the=20
-> >>>>> hypervisor config based on the 'reg' address range alone. So 'vm' e=
-ntry=20
-> >>>>> with restricted 'reg' range is used to differentiate here for the=
-=20
-> >>>>> hypervisor config. Just adding 'vm' entry won't be enough, the 'reg=
-'=20
-> >>>>> region must be updated as well to have expected behavior. Not sure =
-how=20
-> >>>>> this dependency can be enforced in the schema.
-> >>>>
-> >>>> That's not a unusual problem, so please come with a solution for you=
-r
-> >>>> entire subarch. We've been discussing similar topic in terms of SCMI
-> >>>> controlled resources (see talk on Linaro Connect a week ago:
-> >>>> https://www.kitefor.events/events/linaro-connect-24/submissions/161 =
-I
-> >>>> don't know where is recording or slides, see also discussions on mai=
-ling
-> >>>> lists about it), which is not that far away from the problem here. O=
-ther
-> >>>> platforms and maybe nvidia had as well changes in IO space for
-> >>>> virtualized configuration.
-> >>>>
-> >>>> Come with unified approach FOR ALL your devices, not only this one
-> >>>> (that's kind of basic thing we keep repeating... don't solve only on=
-e
-> >>>> your problem), do not abuse the regular property, because as I said:
-> >>>> reg-names will be provided as well in non-vm case and then your enti=
-re
-> >>>> logic is wrong. The purpose of reg-names is not to tell whether you =
-have
-> >>>> or have not virtualized environment.
-> >>>
-> >>> This isn't strictly about telling whether this is a virtualized
-> >>> environment or not. Unfortunately the bindings don't make that very
-> >>> clear, so let me try to give a bit more background.
-> >>>
-> >>> On Tegra devices the register regions associated with a device are
-> >>> usually split up into 64 KiB chunks.
-> >>
-> >> So describing it as one IO region was incorrect from the start and you
-> >> want to fix it by adding one more incorrect description: making first
-> >> item meaning two different things. Sorry, that's not a correct way to
-> >> fix things.
-> >=20
-> > Yes, describing this as one I/O region was incorrect, and in hindsight
-> > it should have been done differently.
-> >=20
-> > However, I don't think it's correct to describe this as adding one more
-> > incorrect description. Instead, what this does is add reg-names to
-> > provide additional context so that the operating system can make the
-> > necessary decisions as to what is allowed and what isn't.
-> >=20
-> > In the absence of a reg-names property the current definition of the DT
-> > bindings applies, so it means the region represents the entirety of the
-> > device's I/O register space. That's one particular use-case for this
-> > device.
-> >=20
-> > For additional use-cases we can then use reg-names to differentiate
-> > between what separate regions are and use them accordingly.
-> >=20
-> >> Items are defined, thus first item is always expected to be what the
-> >> binding already said. Adding reg-names changes nothing, because (as
-> >> repeated many times) xxx-names is just a helper. Items are already def=
-ined.
-> >=20
-> > I don't understand what you're trying to say here. I suppose adding
-> > reg-names alone indeed doesn't change anything. But the point is that
-> > once added we can now use these properties, at which point of course
-> > things change.
-> >=20
-> >>> One of these chunks, usually the first one, is a global region that
-> >>> contains registers that configure the device as a whole. This is usua=
-lly
-> >>> privileged and accessible only to the hypervisor.
-> >>>
-> >>> Subsequent regions are meant to be assigned to individual VMs. Often =
-the
-> >>> regions take the form of "channels", so they are instances of the sam=
-e
-> >>> register block and control that separate slice of the hardware.
-> >>>
-> >>> What makes this a bit confusing is that for the sake of simplicity (a=
-nd,
-> >>> I guess, lack of foresight) the original bindings were written in a w=
-ay
-> >>> to encompass all registers without making that distinction. This work=
-ed
-> >>> fine because we've only ever run Linux as host OS where it has access=
- to
-> >>> all those registers.
-> >>>
-> >>> However, when we move to virtualized environments that no longer work=
-s.
-> >>>
-> >>> Given the above, we can't read any registers in order to probe whethe=
-r
-> >>> we run as a guest or not. Trying to access any of the global register=
-s
-> >>> from a VM simply won't work and may crash the system. None of the
-> >>> "channel" registers contain information indicating host vs. guest
-> >>> either.
-> >>
-> >> I don't understand how it differs from what I said - you want to
-> >> indicate that you run in virtualized environment and not all resources
-> >> are accessible.
-> >>
-> >> The device still has the first (global) address, just it is not
-> >> available due to hypervisor.
-> >=20
-> > Yes, and that's a bad thing because there's no way for the device to
-> > know that it can't access the registers. So it will just assume that it
-> > can and try to access them, which would then result in a crash/error.
+On 5/24/2024 6:09 PM, Ashish Mhetre wrote:
 >
-> Different compatible could note that or the global address would be
-> removed from IO space, although then you need to rely on names and order
-> is not fixed. I think Rob already proposed different compatible.
+> On 5/23/2024 7:11 PM, Robin Murphy wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 23/05/2024 4:19 am, Ashish Mhetre wrote:
+>>> The current __arm_lpae_unmap() function calls dma_sync() on individual
+>>> PTEs after clearing them. By updating the __arm_lpae_unmap() to call
+>>> dma_sync() once for all cleared PTEs, the overall performance can be
+>>> improved 25% for large buffer sizes.
+>>> Below is detailed analysis of average unmap latency(in us) with and
+>>> without this optimization obtained by running dma_map_benchmark for
+>>> different buffer sizes.
+>>>
+>>> Size  Time W/O        Time With       % Improvement
+>>>       Optimization    Optimization
+>>>       (us)            (us)
+>>>
+>>> 4KB   3.0             3.1             -3.33
+>>> 1MB   250.3           187.9           24.93
+>>
+>> This seems highly suspect - the smallest possible block size is 2MB so a
+>> 1MB unmap should not be affected by this path at all.
+>>
+> It will be unmapped at 4KB block size, right? The 'size' passed to
+> __arm_lpae_unmap will be 4KB and 'pgcount' will be 256 for 1MB
+> buffer from iommu_pgsize() unless the IOVA and phys address met
+> conditions for next bigger size i.e., 2MB.
+>>> 2MB   493.7           368.7 25.32
+>>> 4MB   974.7           723.4           25.78
+>>
+>> I'm guessing this is on Tegra with the workaround to force everything to
+>> PAGE_SIZE? In the normal case a 2MB unmap should be nominally *faster*
+>> than 4KB, since it would also be a single PTE, but with one fewer level
+>> of table to walk to reach it. The 25% figure is rather misleading if
+>> it's only a mitigation of an existing erratum workaround, and the actual
+>> impact on the majority of non-broken systems is unmeasured.
+>>
+> Yes, I forgot about the workaround we have and agree that without the
+> workaround, 2MB unmap will be faster without this optimization. But
+> for any size between 4KB and 2MB, this optimization would help in
+> improving the unmap latencies. To verify that, I reverted the workaround
+> and again got unmap latencies using dma_map_benchmark which are as
+> mentioned below. We can see an improvement around 20% to 25%:
 >
-> This is also the way new Qcom platforms are going (older were using
-> properties).
+> Size          Time WO Opt(us)     Time With Opt(us)       % improvement
+> 4KB          3                                  3.1                 -3.33
+> 64KB        18.6                            15 19.36
+> 128KB      35.2                            27.7            21.31
+> 256KB      67.6                            52.6            22.19
+> 512KB      128.4                          97.7           23.91
+> 1MB         249.9                          188.1           24.72
+> 2MB         67.4                             67.5 -0.15
+> 4MB         121.3                          121.2           0.08
 >
-> However my earlier comment stays on: you will have for sure more cases
-> like this, so please think upfront and pick unified approach for all
-> future devices.
+>> (As an aside, I think that workaround itself is a bit broken, since at
+>> least on Tegra234 with Cortex-A78, PAGE_SIZE could be 16KB which MMU-500
+>> doesn't support.)
+>>
+> Yes, that's true. For 16KB PAGE_SIZE, we need to fall back to 4KB 
+> pgsize_bitmap.
+>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>> ---
+>>>   drivers/iommu/io-pgtable-arm.c | 34 
+>>> +++++++++++++++++++++++++---------
+>>>   1 file changed, 25 insertions(+), 9 deletions(-)
+>>>
+>>> diff --git a/drivers/iommu/io-pgtable-arm.c 
+>>> b/drivers/iommu/io-pgtable-arm.c
+>>> index 3d23b924cec1..94094b711cba 100644
+>>> --- a/drivers/iommu/io-pgtable-arm.c
+>>> +++ b/drivers/iommu/io-pgtable-arm.c
+>>> @@ -256,13 +256,15 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte 
+>>> *ptep, int num_entries,
+>>>                                  sizeof(*ptep) * num_entries, 
+>>> DMA_TO_DEVICE);
+>>>   }
+>>>
+>>> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct 
+>>> io_pgtable_cfg *cfg)
+>>> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct 
+>>> io_pgtable_cfg *cfg, int num_entries)
+>>>   {
+>>> +     int i;
+>>>
+>>> -     *ptep = 0;
+>>> +     for (i = 0; i < num_entries; i++)
+>>> +             ptep[i] = 0;
+>>>
+>>>       if (!cfg->coherent_walk)
+>>> -             __arm_lpae_sync_pte(ptep, 1, cfg);
+>>> +             __arm_lpae_sync_pte(ptep, num_entries, cfg);
+>>>   }
+>>>
+>>>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>>> @@ -633,13 +635,25 @@ static size_t __arm_lpae_unmap(struct 
+>>> arm_lpae_io_pgtable *data,
+>>>       if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
+>>>               max_entries = ARM_LPAE_PTES_PER_TABLE(data) - 
+>>> unmap_idx_start;
+>>>               num_entries = min_t(int, pgcount, max_entries);
+>>> -
+>>> -             while (i < num_entries) {
+>>> -                     pte = READ_ONCE(*ptep);
+>>> +             arm_lpae_iopte *pte_flush;
+>>> +             int j = 0;
+>>> +
+>>> +             pte_flush = kvcalloc(num_entries, sizeof(*pte_flush), 
+>>> GFP_ATOMIC);
+>>
+>> kvmalloc() with GFP_ATOMIC isn't valid. However, I'm not sure if there
+>> isn't a more fundamental problem here - Rob, Boris; was it just the map
+>> path, or would any allocation on unmap risk the GPU reclaim deadlock
+>> thing as well?
+>>
+> I am using kvmalloc() here to create an array which is used to store PTEs
+> that are going to be flushed after clearing. If we don't store them then
+> those will be lost once cleared and we won't be able to flush them.
+> I tried using GFP_KERNEL instead of GFP_ATOMIC but then I am getting
+> warning from might_sleep().
+> Is there any other alternative way we can use here to store the PTEs?
+>> Thanks,
+>> Robin.
+>>
+>>> +             if (pte_flush) {
+>>> +                     for (j = 0; j < num_entries; j++) {
+>>> +                             pte_flush[j] = READ_ONCE(ptep[j]);
+>>> +                             if (WARN_ON(!pte_flush[j]))
+>>> +                                     break;
+>>> +                     }
+>>> +                     __arm_lpae_clear_pte(ptep, &iop->cfg, j);
+>>> +             }
+>>> +             while (i < (pte_flush ? j : num_entries)) {
+>>> +                     pte = pte_flush ? pte_flush[i] : 
+>>> READ_ONCE(*ptep);
+>>>                       if (WARN_ON(!pte))
+>>>                               break;
+>>>
+>>> -                     __arm_lpae_clear_pte(ptep, &iop->cfg);
+>>> +                     if (!pte_flush)
+>>> +                             __arm_lpae_clear_pte(ptep, &iop->cfg, 1);
+>>>
+>>>                       if (!iopte_leaf(pte, lvl, iop->fmt)) {
+>>>                               /* Also flush any partial walks */
+>>> @@ -649,10 +663,12 @@ static size_t __arm_lpae_unmap(struct 
+>>> arm_lpae_io_pgtable *data,
+>>>                       } else if (!iommu_iotlb_gather_queued(gather)) {
+>>>                               io_pgtable_tlb_add_page(iop, gather, 
+>>> iova + i * size, size);
+>>>                       }
+>>> -
+>>> -                     ptep++;
+>>> +                     if (!pte_flush)
+>>> +                             ptep++;
+>>>                       i++;
+>>>               }
+>>> +             if (pte_flush)
+>>> +                     kvfree(pte_flush);
+>>>
+>>>               return i * size;
+>>>       } else if (iopte_leaf(pte, lvl, iop->fmt)) {
+Hi all,
 
-We already have. In fact we already have a few devices (host1x[0] and
-MGBE[1]) where a similar path was chosen. Unification with those is why
-we're proposing this.
+Can you please provide feedback on this patch? Is this optimization
+worth pursuing?
 
-This also applies to the memory controller SID bindings update that we
-proposed a little while ago.
-
-Thierry
-
-[0]:
-Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
-[1]: Documentation/devicetree/bindings/net/nvidia,tegra234-mgbe.yaml
-
---5756bc5e83a6bad3a9f5eb4a93427ad8fb0c0c23d1457925c7710f966752
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZZkxYACgkQ3SOs138+
-s6Gxsg/9FpCyMeDV4FlwtV47MwNWpVc45/xh+Jlu8zR6fnOUsBIIkDuCE6mQDOVg
-O8bBg2SK2ja2ZgAYZ2++fuq78YI58aYFZdWZRaReVZmn9y+qs1lMhjomvkQh9M52
-zAtAAfs0qEQlJQSFPeA3p/ZibxjvxVxEqR9aQod9mBfm8+6ll1BPl2nTGfnXhDnY
-cgI/J/6rvmD/wq2Zf5M/JS2BedOcA1NZpmb8Kdxu/G4WPvBOiQccKpzUBfaDOCSV
-J/F2MIOjgNwpR0fnuZZxY3J5hxACfemnR2w9QIq1u3ykALgm4bKXD3vj85NXPCsM
-7RC9ehjzSBeolhcEiX7DwKMYgD19lYQQEicwyeHJ8WSm03B8wXQxqPP49KD0vOTC
-I0140x6cqmlEyD0eUVe6PEdtbURhZUrKfh9V3DO7sMt/BUkpt+NDtyWs2prclJsx
-efdNUl+IJ5bZrCU/TBTVdAQ6HlXTWtRot7jlPlgSbuooow1rfZWczA72WHg5DF4o
-RXVRM5bmiqwpd7f3lXyI+lQNVl8/TOhAeJlgV4IrDXYkIH53j/80rJrhptF4Z0Nv
-/ydOjcpOXMnXbTbdQYtw6BVs2Hfh9HHLE/5/coxMCOB+5L75ExisFAXuQB5I6I9B
-BfM6y8DW5jNXIt39g97TdSkSr/ORk1vfbKMBV8ZgiZIIu7pcGyE=
-=ViI5
------END PGP SIGNATURE-----
-
---5756bc5e83a6bad3a9f5eb4a93427ad8fb0c0c23d1457925c7710f966752--
+Thanks,
+Ashish Mhetre
