@@ -1,157 +1,229 @@
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.kapsi.fi (mail.kapsi.fi [91.232.154.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D27A18756E;
-	Fri, 31 May 2024 07:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E8474062
+	for <linux-tegra@vger.kernel.org>; Fri, 31 May 2024 07:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.232.154.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717139227; cv=none; b=mb4KrZfbwK5o8YGGdVx4+e4R3j6FarTcNFRZ1gPMAViKHNLhoUotfnJuMDSVAXknoXk6pbnxq/m2x0+uJxALIhqCcWbD+ZlvHSfYgr6pL7xutzqzf6Agyt+nyFdAmccb62wYktN8KKSO3OhHOiso6uGlu2gHSU4pi7WGWsRmd2Y=
+	t=1717141337; cv=none; b=G6hLrwUeOFhSAx7PP2PjA5Or5w1Qhc+WvMGZH58j2DdZ/7vJM8YyWK0w9BEOgHuHhLMlavOocDV6yG9S+5RsqVOhndi6X1BP7PyQpBPbcd+XfotAkt5TlZuTmJkD/DUWmvNA79GLrzU/G/JI+njcJ64SbqNZm15L1zW60PsXRbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717139227; c=relaxed/simple;
-	bh=GwpopD7I++CEt2GXRSjw+x35z0xYtVzunPiCuEMRxwU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p76JIb5FUdEObREHs3fETjRgjdA0z9CFLRNkUjCPb8iDlpBUIWyHY3Vadvj0gBaXLYMFmwpiIMr0k5dTMVvP9csTdI0fVK6hawWs3h0jECnv2JjXuFeKljKWNGID1MCBH51Ot7ugKPSXJD2HQ4oS1bY05tCnxTKr8Wm/e9s0Zs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-7e25bf84b58so68104939f.0;
-        Fri, 31 May 2024 00:07:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717139224; x=1717744024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ayp9OTJcx8xBTEOWGr76ffez+fesdX+4XqGBVIDxEaQ=;
-        b=PTgJ2WUYwotIbe7ewO0uKtKm39embI28Yli7rwZIku6v2tPFHbAzI8gkML9UHd5yCP
-         eYGYw9Pj4tDiGJw0DNPBN0boAPZIQkwSupHtu2mdbUpqxr4mjFFudrS228R/97A05NZx
-         iGL6HJfZNf6L2rxWZ/mRmcQgoAHUtxoRibYSPToqEd+yP7eAgUI9RWwNMK1Z4WVnFLwH
-         Y8i5VLXnOHvIUlZxAukjqn2p0mc4y3V6uP4wCb2VCkXZo1iuV3/Wr093DTx9Z3ZBxQmp
-         jUsAMLBiazolBOzr+IsPWrKShwIuKUyzRLGnZZIBcikPZ8yHsYTjh2ks+vmaoLrodiHx
-         Ta+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVtf4rxAtHNtJW8haKIfJ9rRvoUc+/LOU16ZHr79YDNicvvlRuU+zfk6k8z13MXPdETx23UgwQWfRssLTan80OKJo3SHfug45V4CdzgiFU6epW/iAjjoYzZtfcyOT9QzEDJPpMBp2CzRk6lvZCzmBb3a4eKm1QY/ZPTaKtugscf9UtIbprFvZ5qOUe/BjtQSfwSEzB+dmwKVxmrka5TSQOD+IOVnljFzn2/q5DUCP9+j6cZtQQA5jaP/QVL3QstGDJxsTyhsKlmYb2wLg==
-X-Gm-Message-State: AOJu0YysvB5Xr32d2jpNV00CYkUtUbCT2pMwrV9pZLv/qNZYjmN23ZCu
-	uhqfO4/oa1UPONyjlYQ5DylTnMbVJ3w2pfsAZ+HUTNyLvLDGxkXVz/EiSOor
-X-Google-Smtp-Source: AGHT+IGij+kYqVFs41UcqZH//8OOscUL4EID/HB5qa0s/CMrcPSab4QvqdFAaAQ/JQ/o9dKBUPpRKQ==
-X-Received: by 2002:a05:6602:2b89:b0:7ea:ffac:b7b7 with SMTP id ca18e2360f4ac-7eafff24acdmr151093439f.17.1717139223772;
-        Fri, 31 May 2024 00:07:03 -0700 (PDT)
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com. [209.85.166.46])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b48764e4c3sm339234173.20.2024.05.31.00.07.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 00:07:03 -0700 (PDT)
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7e9515b0ea9so72651239f.1;
-        Fri, 31 May 2024 00:07:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCViA+WKIEd/uOdLhHp5T4VvObySH0GYNjbL43LPxBJYBcYuzOwiQ7Uxlq+I6A3KUZe68H76zfsnzbRFbKC0y8zZMSLsFLHwg2PpR7zfEPyE/DQ1h1+AiB8GrVrIayHu3Ckop2nHsKVUTGEoqkaOOtQAK6cgW0DXYK3Jt05g/aNhLPV6WCZ95895gf4Vlibp/XxNEH2kGQrwQLBOVCoh0z2q0RqAHbKmWjNE94OTVGVpRL0CkFBfv0EC8VaNSiMZ4kZDTGpdBI27tOIwkg==
-X-Received: by 2002:a25:5f46:0:b0:df4:f149:1fc7 with SMTP id
- 3f1490d57ef6-dfa73dc4a2dmr974775276.58.1717139203004; Fri, 31 May 2024
- 00:06:43 -0700 (PDT)
+	s=arc-20240116; t=1717141337; c=relaxed/simple;
+	bh=YYnSjEDQVKVZ0TVHAY0MYL/SqYBviz4ghcuwNBX0wgw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VfmFipP3LSY7CqdFPDG2GJ4JT7JM2qsjfbHOaAOAAcgoJwNxJRlpUrtVhjxrHaL5rDKp8VaCWZB07U7wEI5Y6MpTVTtc1jN8sAS0PGxfZmCF5ekisvAP09pWt9dMVYtpMQrHhSLT8H4+1m4GESgU9jjP0bCulbUXMq3gbg54SNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi; spf=pass smtp.mailfrom=kapsi.fi; dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b=m3tXyA0Z; arc=none smtp.client-ip=91.232.154.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kapsi.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kapsi.fi
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="m3tXyA0Z"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+	s=20161220; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=lyQi3tNfXZ+8DiArvVFb2xgFFU/cMi3Dy95oTDO1f6A=; b=m3tXyA0Z32UVVIMGMJKirY5D6X
+	wOlEx7BAyD1GTNLauhxShOJBvTfVhj6lUONk2NhDBbBaQ90LjxudX2oxYtSphN6tvbeUyG/m/xu6o
+	36iSzhqHsHKN0uAAeCzCkIH1NFncuZ2wsU3z3LBbTxCuHEffNK4kxrD0bzp7xPFDVSlNx71pBIpO3
+	N2DiipsVgXu00FMuUvyeCBhNumf9Z4Hc8ySBUJapHmkVgPu+PR77NkvkStKc2gyKdy8h1QZgKKWd/
+	cBevESXfGbK2PItnCrY48yul5pVPY5LkFrU6cobu3AN+xMlLWkhRcvQFkNCX1GQ4iPPfV3qbCTmKU
+	Byr3pY/g==;
+Received: from 91-158-25-70.elisa-laajakaista.fi ([91.158.25.70] helo=toshino.localdomain)
+	by mail.kapsi.fi with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <cyndis@kapsi.fi>)
+	id 1sCwMM-0047Oa-26;
+	Fri, 31 May 2024 10:07:30 +0300
+From: Mikko Perttunen <cyndis@kapsi.fi>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] gpu: host1x: Request syncpoint IRQs only during probe
+Date: Fri, 31 May 2024 10:07:18 +0300
+Message-ID: <20240531070719.2138-1-cyndis@kapsi.fi>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
- <CAMuHMdVprgpjDP6PDn7appofJv8Tv30nRA4+7n4sR8n6n4qy+g@mail.gmail.com> <DU0PR04MB9417FF2632A278BF6605AE1F88FC2@DU0PR04MB9417.eurprd04.prod.outlook.com>
-In-Reply-To: <DU0PR04MB9417FF2632A278BF6605AE1F88FC2@DU0PR04MB9417.eurprd04.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 31 May 2024 09:06:30 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW01HtY7d+L=44czH_dqV6bresLeF=SRqyn9p=jk3MTAw@mail.gmail.com>
-Message-ID: <CAMuHMdW01HtY7d+L=44czH_dqV6bresLeF=SRqyn9p=jk3MTAw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/20] pinctrl: Use scope based of_node_put() cleanups
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, 
-	"soc@kernel.org" <soc@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Patrice Chotard <patrice.chotard@foss.st.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Damien Le Moal <dlemoal@kernel.org>, 
-	Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Aisheng Dong <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
-	Matthias Brugger <mbrugger@suse.com>, 
-	"Ghennadi Procopciuc (OSS)" <ghennadi.procopciuc@oss.nxp.com>, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>, 
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
-	"openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 91.158.25.70
+X-SA-Exim-Mail-From: cyndis@kapsi.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 
-Hi Peng,
+From: Mikko Perttunen <mperttunen@nvidia.com>
 
-On Fri, May 31, 2024 at 5:07=E2=80=AFAM Peng Fan <peng.fan@nxp.com> wrote:
-> > Subject: Re: [PATCH v2 00/20] pinctrl: Use scope based of_node_put()
-> > cleanups
-> > On Sat, May 4, 2024 at 3:12=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp=
-.com>
-> > wrote:
-> > > Use scope based of_node_put() to simplify code. It reduces the chance
-> > > of forgetting of_node_put(), and also simplifies error handling path.
-> > > I not able to test the changes on all the hardwares, so driver owners=
-,
-> > > please help review when you have time.
-> > >
-> > > This patchset was inspired from Dan's comments on pinctrl-scmi-imx.c,
-> > > thanks.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> >
-> > Andy's question about code generation on a related patch made me wonder=
-,
-> > too.
-> >
-> > On arm32, a conversion to for_each_child_of_node_scoped() seems to cost=
- ca.
-> > 48 bytes of additional code, regardless of whether there were explicit
-> > cleanups before or not.
-> >
-> > I checked "pinctrl: renesas: Use scope based of_node_put() cleanups", a=
-nd all
-> > but the conversions in *_dt_node_to_map() cost 48 bytes each.
->
-> I am not sure this is an issue or else. What would you suggest me to do?
-> If you think extra 48bytes consumption is not good here, feel free to dro=
-p the
-> patch.
+Syncpoint IRQs are currently requested in a code path that runs
+during resume. Due to this, we get multiple overlapping registered
+interrupt handlers as host1x is suspended and resumed.
 
-I suggest doing nothing about this.  I just wanted people to be aware
-of the impact.  I guess it's just part of the slow but steady increase
-of kernel size (ca. 20-30 KiB/release)... ;-)
+Rearrange interrupt code to only request IRQs during initialization.
 
-Gr{oetje,eeting}s,
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/gpu/host1x/dev.h        |  2 ++
+ drivers/gpu/host1x/hw/intr_hw.c | 37 +++------------------------------
+ drivers/gpu/host1x/intr.c       | 21 ++++++++++++++++++-
+ drivers/gpu/host1x/intr.h       |  5 +++++
+ 4 files changed, 30 insertions(+), 35 deletions(-)
 
-                        Geert
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index 53af0334c6e1..d3855a1c6b47 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -9,6 +9,7 @@
+ #include <linux/device.h>
+ #include <linux/iommu.h>
+ #include <linux/iova.h>
++#include <linux/irqreturn.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset.h>
+ 
+@@ -81,6 +82,7 @@ struct host1x_intr_ops {
+ 	void (*disable_syncpt_intr)(struct host1x *host, unsigned int id);
+ 	void (*disable_all_syncpt_intrs)(struct host1x *host);
+ 	int (*free_syncpt_irq)(struct host1x *host);
++	irqreturn_t (*isr)(int irq, void *dev_id);
+ };
+ 
+ struct host1x_sid_entry {
+diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
+index 9880e0c47235..415f8d7e4202 100644
+--- a/drivers/gpu/host1x/hw/intr_hw.c
++++ b/drivers/gpu/host1x/hw/intr_hw.c
+@@ -6,18 +6,11 @@
+  * Copyright (c) 2010-2013, NVIDIA Corporation.
+  */
+ 
+-#include <linux/interrupt.h>
+-#include <linux/irq.h>
+ #include <linux/io.h>
+ 
+ #include "../intr.h"
+ #include "../dev.h"
+ 
+-struct host1x_intr_irq_data {
+-	struct host1x *host;
+-	u32 offset;
+-};
+-
+ static irqreturn_t syncpt_thresh_isr(int irq, void *dev_id)
+ {
+ 	struct host1x_intr_irq_data *irq_data = dev_id;
+@@ -54,7 +47,8 @@ static void host1x_intr_disable_all_syncpt_intrs(struct host1x *host)
+ 	}
+ }
+ 
+-static void intr_hw_init(struct host1x *host, u32 cpm)
++static int
++host1x_intr_init_host_sync(struct host1x *host, u32 cpm)
+ {
+ #if HOST1X_HW < 6
+ 	/* disable the ip_busy_timeout. this prevents write drops */
+@@ -85,32 +79,6 @@ static void intr_hw_init(struct host1x *host, u32 cpm)
+ 		host1x_sync_writel(host, irq_index, HOST1X_SYNC_SYNCPT_INTR_DEST(id));
+ 	}
+ #endif
+-}
+-
+-static int
+-host1x_intr_init_host_sync(struct host1x *host, u32 cpm)
+-{
+-	int err, i;
+-	struct host1x_intr_irq_data *irq_data;
+-
+-	irq_data = devm_kcalloc(host->dev, host->num_syncpt_irqs, sizeof(irq_data[0]), GFP_KERNEL);
+-	if (!irq_data)
+-		return -ENOMEM;
+-
+-	host1x_hw_intr_disable_all_syncpt_intrs(host);
+-
+-	for (i = 0; i < host->num_syncpt_irqs; i++) {
+-		irq_data[i].host = host;
+-		irq_data[i].offset = i;
+-
+-		err = devm_request_irq(host->dev, host->syncpt_irqs[i],
+-				       syncpt_thresh_isr, IRQF_SHARED,
+-				       "host1x_syncpt", &irq_data[i]);
+-		if (err < 0)
+-			return err;
+-	}
+-
+-	intr_hw_init(host, cpm);
+ 
+ 	return 0;
+ }
+@@ -144,4 +112,5 @@ static const struct host1x_intr_ops host1x_intr_ops = {
+ 	.enable_syncpt_intr = host1x_intr_enable_syncpt_intr,
+ 	.disable_syncpt_intr = host1x_intr_disable_syncpt_intr,
+ 	.disable_all_syncpt_intrs = host1x_intr_disable_all_syncpt_intrs,
++	.isr = syncpt_thresh_isr,
+ };
+diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
+index 995bfa980837..b3285dd10180 100644
+--- a/drivers/gpu/host1x/intr.c
++++ b/drivers/gpu/host1x/intr.c
+@@ -6,7 +6,7 @@
+  */
+ 
+ #include <linux/clk.h>
+-
++#include <linux/interrupt.h>
+ #include "dev.h"
+ #include "fence.h"
+ #include "intr.h"
+@@ -100,7 +100,9 @@ void host1x_intr_handle_interrupt(struct host1x *host, unsigned int id)
+ 
+ int host1x_intr_init(struct host1x *host)
+ {
++	struct host1x_intr_irq_data *irq_data;
+ 	unsigned int id;
++	int i, err;
+ 
+ 	mutex_init(&host->intr_mutex);
+ 
+@@ -111,6 +113,23 @@ int host1x_intr_init(struct host1x *host)
+ 		INIT_LIST_HEAD(&syncpt->fences.list);
+ 	}
+ 
++	irq_data = devm_kcalloc(host->dev, host->num_syncpt_irqs, sizeof(irq_data[0]), GFP_KERNEL);
++	if (!irq_data)
++		return -ENOMEM;
++
++	host1x_hw_intr_disable_all_syncpt_intrs(host);
++
++	for (i = 0; i < host->num_syncpt_irqs; i++) {
++		irq_data[i].host = host;
++		irq_data[i].offset = i;
++
++		err = devm_request_irq(host->dev, host->syncpt_irqs[i],
++				       host->intr_op->isr, IRQF_SHARED,
++				       "host1x_syncpt", &irq_data[i]);
++		if (err < 0)
++			return err;
++	}
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/host1x/intr.h b/drivers/gpu/host1x/intr.h
+index 3b5610b525e5..11cdf13e32fe 100644
+--- a/drivers/gpu/host1x/intr.h
++++ b/drivers/gpu/host1x/intr.h
+@@ -11,6 +11,11 @@
+ struct host1x;
+ struct host1x_syncpt_fence;
+ 
++struct host1x_intr_irq_data {
++	struct host1x *host;
++	u32 offset;
++};
++
+ /* Initialize host1x sync point interrupt */
+ int host1x_intr_init(struct host1x *host);
+ 
+-- 
+2.42.0
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
