@@ -1,63 +1,66 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB771442FF
-	for <linux-tegra@vger.kernel.org>; Wed,  5 Jun 2024 18:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CE21494B0
+	for <linux-tegra@vger.kernel.org>; Wed,  5 Jun 2024 18:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610566; cv=none; b=lWiHoFZHYI0bz7A9f0IWMbEIsSGR8KoIOYwFytLbx0dMTZ/j0coIh8P0qN6TDvXlzhW16cmOdFTtDfnr1PHn1uLIlc1jB8Tlk0ltOJPs2uzSqfxObDdcWNLn9qLc8YJhrCn4ccgUVgxV9AtRHo3xzqSu15hN+0iTOWdoQKfIQfA=
+	t=1717610571; cv=none; b=JhlH6k/Y7rzgruOotba2FVccTQT74g8+fe5AqDTvJpeIaA2W870WWZnlr7muLQ2leeDE4QCdyIB9hIgZzqcFap1RCX05099ihFjbSsEALXbVkwAtS6R3XtAOtPoIt4rhK4YlY1eQDsToFby0Byi4qhm7oh1K3+2idcRvNQKcp0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610566; c=relaxed/simple;
-	bh=eF30gjQEDuHJ/IYGm6d82rKPYlogi0y1Le1+CTBv8es=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qhCs5vzand8k//vsUV316OCCgLE3lgHN3tC0d3PRIJFqjE0rYgrwY7tzUbtRSqm9mo3tBbfR5yC4Q9GLsIRDrbSqwjttdgmA64VYrvAPUy6P2Ajnthe0QgQfW8G0M9EMCYXpgHdOejoHs5ztxbAfKy8UQQaJMzvtlBda959Jcro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bosRmD0V; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1717610571; c=relaxed/simple;
+	bh=L6k+G2m+3j3md7/zl4VB2q4oF1PIwiQxOqm6LYJmtKc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gerZw+tV+pyDVUhP8FnahWSkndWs7h2ZL97XMSCoYTJ7w99MZ6ZPJXZRGneec6DsCSMchkJoDoy7mEGJMTx0sFnfsSqGusuBcWcoyjUzR3Fa3T9KmZbpOphKRhzHfC3S6cDPlE28lEGsfmt7WoM+7V8Gj1M6ShKjwcvokRp9OAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u2X6l/Cn; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bosRmD0V"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-627e7f0ca54so338727b3.3
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Jun 2024 11:02:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u2X6l/Cn"
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-629638f1cb0so235857b3.3
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Jun 2024 11:02:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717610564; x=1718215364; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=y5YxZkBMx7xM0lBc97o2/iv7RwAsHr+ZFIuj4hushzk=;
-        b=bosRmD0VAZb+uNeHi7HIWEvwXg4aQpu6UokJkBAlLIP/mwUBkraTcuWQxK3I7oKf92
-         IUqNEgKeAor+QlQfrxVSX46Wr8qSmnre7Lod1wkkTeP1WiYmtzlXHsm6O3NcweNaf3ya
-         Qandj21eqkSssUvIpP1j/ByVvuTqh/97jqaJeYq3PTsSsF6edkETmP9wm72ftlMYpBuP
-         miYX+L6h9T7WRJYqPenCfll5CtFtSZIBP1XQjvu5Eg6N2CYzUGIsxekAXrrCObtum9/3
-         0mZb0apPgAHlNJwLvOjE2WR6cA9sNf2aU7/wo0Eq6mAi9yMTDLfZS5nu4m+yBkRZ20EB
-         ZVAA==
+        d=google.com; s=20230601; t=1717610569; x=1718215369; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IUTCTG4PiwJpsjy0QKETkEiNDEwH04EYXsIQhajeZMg=;
+        b=u2X6l/CnJHRqsHZ+uqWAuBZR2EDxEE7VQOHBGEJWO82zvjwXqD7qJxXBn9P3wlYn/S
+         P4vKe/yG01XKq16yIxYARa/A+s6Mv7WqHlVYjACiA/gDL9Faq/QdOyj9IOzHvlkSJJ+o
+         503leGdALXnNTEdpjvOLYNt/GC44iG3fAc0ebZGxR12mgtPkH0ZXYmeFilrL6GAE64+0
+         8KFTsXahDn8y7qdHAv9bIAnBQMMV288ZcMOQh+ZTq5vbDThXjxT0KVce2mqe2CIc/nK4
+         BIUj+z4Ox71qKxUxvQTViK8c80aQX7iytCFYkqYku39TU847AsFpxldfDH73MxlqBpSi
+         gEng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717610564; x=1718215364;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y5YxZkBMx7xM0lBc97o2/iv7RwAsHr+ZFIuj4hushzk=;
-        b=PuyoIJu5WLOz1yT39NVQqu6LTCtOt0QmgeiYpua5lb4L7SMF6ymAGoAngMujkok80l
-         uA0gh07WnJ9KqACBGJuD6/fRtmjZI/ah0V+0nb8kV9VWAFThZqdF1IzQYCgBgNGEo3Fb
-         BcvHt8IREGZxPNxbxz0RFZrJUiMl8SFOewECwrIoAwVeRBeXSFhPrqqntzbOKOqUUHT5
-         V4bS9rsFpuVhoQv0QWslm00jl5AuftKLCS7RSkKGqkYQ1e+4/7b+yTOBQL1BlIgzACYl
-         CXOAmhHywPIRrwXyhM1JyebaeAY/RibKdBejXQsJv7eJn6fIjqxO8kMMEXc3c7LmpQ86
-         5MeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTDvxE0d2ihZ83aI13i0mpBWgx1mmbh/QNkUSCdjDQptIi4dbfRhN5WqCJT4nkM7sUyaSCCiapKzWdFe9MotvI6s0qWggOg+x5o+k=
-X-Gm-Message-State: AOJu0YxINBH2AQJJaBrmPey8DHc39aiyo29bKuJKgAHOjw8lGuOnVcrg
-	f7ulKw71sT+d9i1zCs2F5I2gGg7NPXQGrx+5tOIE4UfjExW+FGU8L5U/qlFHxNcKrwDpqzZpNOD
-	H2mGe8LVXuw==
-X-Google-Smtp-Source: AGHT+IGCU+GmK3Rf3XT5eiVn8GBJTqffr6kRhdYR5C7W1ubGEWJe6ysf+n1fV0SHLE+oXrcbvgWtj6KwbrbfFQ==
+        d=1e100.net; s=20230601; t=1717610569; x=1718215369;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IUTCTG4PiwJpsjy0QKETkEiNDEwH04EYXsIQhajeZMg=;
+        b=FoSPeMIdLgjZ29lsweyJevonI/NM5wBdAENIyRV0AO+HD/Qo47q6gEzb5oxVrNohU8
+         yNkNFR9De6EzlSIs19ShXs9SdbqjvJR9DPTVhtDh8XGEEKU1xAGVIHrTydvB24H7I/iu
+         Lr9V32URzd2xRUhVDhygo8EJmKH6aD3VKOaN9bRFcHVIy+1uuDL+c410WEyxpxqh5h8/
+         PF0yf1YLfaJ3ZOUFxtIGc0u6Zv0znLfKtrIyyCrCxD01zoYRpqZVRsNGzjAwj2RUUHq7
+         z9hHr1JtVhDD8PJS7PxkZftX1U0DCZcG4s8/cv0C/FP4M9E3ua456pw+jlbYNfnhl2V7
+         PJnw==
+X-Forwarded-Encrypted: i=1; AJvYcCUz7faN6S1RhQSxTbBWRI8rG5m+bjsy0tsvVzZZvOKjWamtzY3zR9Jp9eCUK2uGh0QJSUh26dH6V0Jm1aFWH2jlLCGaArXPeoM7Oi4=
+X-Gm-Message-State: AOJu0YxsFa0pAG1ubnOXDWLD/Ca9cTVtsT9YImyXKjS/FX7nayFvLEbV
+	/K8myxgIcmRzD71OcbTn1nTT/CVAGRwSmKeQWF2NQ1J00RRjLp7olm/SBA3OepXB4YzLb2V6wnh
+	zsFkDbZkq+A==
+X-Google-Smtp-Source: AGHT+IGRE1l9odt4GG6RaI8M/uHdLkQEjh5Taz0VKgQ269YOTeE9TiCNJPVhuqv1Ry405YEIQ6hIdx0yWPVe/Q==
 X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
- (user=joychakr job=sendgmr) by 2002:a05:690c:884:b0:61d:3304:c25e with SMTP
- id 00721157ae682-62cbb5b3bc3mr8573737b3.7.1717610564108; Wed, 05 Jun 2024
- 11:02:44 -0700 (PDT)
-Date: Wed,  5 Jun 2024 18:02:31 +0000
+ (user=joychakr job=sendgmr) by 2002:a81:4c07:0:b0:62a:415b:a137 with SMTP id
+ 00721157ae682-62cbb4a2295mr5047937b3.1.1717610568813; Wed, 05 Jun 2024
+ 11:02:48 -0700 (PDT)
+Date: Wed,  5 Jun 2024 18:02:32 +0000
+In-Reply-To: <20240605180238.2617808-1-joychakr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240605180238.2617808-1-joychakr@google.com>
 X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
-Message-ID: <20240605180238.2617808-1-joychakr@google.com>
-Subject: [PATCH v1 10/17] mtd: core: Change nvmem reg_read/write return type
+Message-ID: <20240605180238.2617808-2-joychakr@google.com>
+Subject: [PATCH v1 11/17] mtd: ubi: nvmem: Change nvmem reg_read/write return type
 From: Joy Chakraborty <joychakr@google.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -73,77 +76,40 @@ Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
 	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
 	linux-usb@vger.kernel.org, manugautam@google.com, 
-	Joy Chakraborty <joychakr@google.com>, kernel test robot <lkp@intel.com>
+	Joy Chakraborty <joychakr@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
 Change nvmem read/write function definition return type to ssize_t.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406050200.8BOdZUla-lkp@intel.com/
 Signed-off-by: Joy Chakraborty <joychakr@google.com>
 ---
- drivers/mtd/mtdcore.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/mtd/ubi/nvmem.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-index 724f917f91ba..b13752ec2f1c 100644
---- a/drivers/mtd/mtdcore.c
-+++ b/drivers/mtd/mtdcore.c
-@@ -530,8 +530,8 @@ int mtd_pairing_groups(struct mtd_info *mtd)
- }
- EXPORT_SYMBOL_GPL(mtd_pairing_groups);
+diff --git a/drivers/mtd/ubi/nvmem.c b/drivers/mtd/ubi/nvmem.c
+index 8aeb9c428e51..eab14821343d 100644
+--- a/drivers/mtd/ubi/nvmem.c
++++ b/drivers/mtd/ubi/nvmem.c
+@@ -20,8 +20,8 @@ struct ubi_nvmem {
+ 	struct list_head list;
+ };
  
--static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
+-static int ubi_nvmem_reg_read(void *priv, unsigned int from,
 -			      void *val, size_t bytes)
-+static ssize_t mtd_nvmem_reg_read(void *priv, unsigned int offset,
++static ssize_t ubi_nvmem_reg_read(void *priv, unsigned int from,
 +				  void *val, size_t bytes)
  {
- 	struct mtd_info *mtd = priv;
- 	size_t retlen;
-@@ -541,7 +541,7 @@ static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
- 	if (err && err != -EUCLEAN)
+ 	size_t to_read, bytes_left = bytes;
+ 	struct ubi_nvmem *unv = priv;
+@@ -55,7 +55,7 @@ static int ubi_nvmem_reg_read(void *priv, unsigned int from,
+ 	if (err)
  		return err;
  
--	return retlen == bytes ? 0 : -EIO;
-+	return retlen;
+-	return bytes_left == 0 ? 0 : -EIO;
++	return bytes - bytes_left;
  }
  
- static int mtd_nvmem_add(struct mtd_info *mtd)
-@@ -919,8 +919,8 @@ static struct nvmem_device *mtd_otp_nvmem_register(struct mtd_info *mtd,
- 	return nvmem;
- }
- 
--static int mtd_nvmem_user_otp_reg_read(void *priv, unsigned int offset,
--				       void *val, size_t bytes)
-+static ssize_t mtd_nvmem_user_otp_reg_read(void *priv, unsigned int offset,
-+					   void *val, size_t bytes)
- {
- 	struct mtd_info *mtd = priv;
- 	size_t retlen;
-@@ -930,11 +930,11 @@ static int mtd_nvmem_user_otp_reg_read(void *priv, unsigned int offset,
- 	if (ret)
- 		return ret;
- 
--	return retlen == bytes ? 0 : -EIO;
-+	return retlen;
- }
- 
--static int mtd_nvmem_fact_otp_reg_read(void *priv, unsigned int offset,
--				       void *val, size_t bytes)
-+static ssize_t mtd_nvmem_fact_otp_reg_read(void *priv, unsigned int offset,
-+					   void *val, size_t bytes)
- {
- 	struct mtd_info *mtd = priv;
- 	size_t retlen;
-@@ -944,7 +944,7 @@ static int mtd_nvmem_fact_otp_reg_read(void *priv, unsigned int offset,
- 	if (ret)
- 		return ret;
- 
--	return retlen == bytes ? 0 : -EIO;
-+	return retlen;
- }
- 
- static int mtd_otp_nvmem_add(struct mtd_info *mtd)
+ static int ubi_nvmem_add(struct ubi_volume_info *vi)
 -- 
 2.45.1.467.gbab1589fc0-goog
 
