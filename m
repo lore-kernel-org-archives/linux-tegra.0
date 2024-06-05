@@ -1,206 +1,161 @@
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2040.outbound.protection.outlook.com [40.107.243.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F21B19D899;
-	Wed,  5 Jun 2024 16:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717604356; cv=fail; b=uTEnYABSDVm9hSkoMRCJeuNU6XEUStQan55+3ZN0gABznz1xVEgmfB+9z8PGO02zMm1Q//h9YQbnXXnGoO4aPjExENP0jwVDTcSZ+DszWJaHlhX5+sUn52X+dCEJT6yimJ5ReQaILyvRaMaHCmDWIm2ZLnHjsUpuPHVpEZ12zHk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717604356; c=relaxed/simple;
-	bh=f5xdEFFnkyr3hifoudl5eWydbMbawiawy8LKIiBJqwA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IMWiemX3F0dHKpn/DR1DiG4cOFIPIJo1EEw1mqGhTtvYG8vH4fmZra3XXbo9wYpCWk7CPWIOlS+PV327VXxKC3lb0WRuG7RpuivrdLo3ZAfetIZ1PSkm6wFoPco4u5c5S+ZGhhAW2Nx1113ofABrONsJ+TTfCeacE+Tg1kEYY5U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NOnOFRxe; arc=fail smtp.client-ip=40.107.243.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA7CD195391
+	for <linux-tegra@vger.kernel.org>; Wed,  5 Jun 2024 18:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717610403; cv=none; b=EsYJmyijBuXO2+8wesz/6aW0AwjqDhzbGrExT4b0syvh6rPHt7CKb+Ji6INisAEEftyWQPWcLMO/zOUXthhHNu3CQ11mOL0bv8ZA95QOMFdCB4TQSxLdf3OhQW/aV2fGn0ipu+n5yrtQBAZ6eOV7eQSPNou3nU2qWBMLRCr0fWY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717610403; c=relaxed/simple;
+	bh=BxoABlKvJef+pUpKvjxVkdFoF53gAB3xVu8cHZaGBrk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cjqV0xlYzJz0shcHaG4wB/mj046CBbbO7Sei/RPk+xRvHoY91gXNkbz/Q5HRGyuk6d33102uiKL+lvHDhNOqKKE3nl/KIDnK6nR/SQKetggYl3k2JYrwF7XfOPGercNGfpwSIDI/sZmPVDM7LAp9+Fzeul0xoYVwTiThi1znrtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OyMmHgy1; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NOnOFRxe"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=P6Hm77xtV/LOkGBGr2L4pcgSVrdkbYqs2oPUMiBe0fLptyvlTpOMM4ggU5dJqpIsA48rC5xRmyu0+3YZx6/mwGiHHBP9haYCf4tpDDbBJ1Xbq3youIpviz+pKbb8glg9uYkjs8XmfHMjbHlnM97swQRsQjkJ210U1MQpr8qFWphqa579npcBhvPvkyEeq+85bIPsekTh/DVcMXb1ham592BiHLAV+kI+PpvsV/p50xszALTa4VvUaSYKyQWoyMKUqLGmekNXK+7jHeBf6ImJxoMn+lydQLGz5cuywmzK4JyOQFbc5gc60vF+Uufs7AnpZ9y1waxZSm4yZzF/7EFIPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DPrjzDNC7yPz0YAsw9DYDjKmV1R7B6N6Es2wJ9JrebI=;
- b=QP9eAS3Kbst57P42B4rThu9tQEBtIfvp3QNxhXFuBwC+bK3djS0j+5sddft3jYaCrThP1JuMmx+EYeOVJIjc1AEE+NuMICdVMELbLzxkR3YGZag0UIM5feWRnO2zHDCd0QvCO3XcEhXEEwXhnEooMjQqnNvGpt3myBPSWXaDLesm919JGF2zP+Mc/OL1SkaBn2CuQVMRn82ZpDPrE9TtdzXHh7yuDhLLagsIDmFMnFApawaXybhjWjuQlyWaHZ1m8/zafz3NWf+v/72aIIV9JIF2sSbMNCHmCwZ8z+uxjYZEzfZlpeHE3KUAKurnx0Emj47Zp5I2VP8e2uRVDE7SmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DPrjzDNC7yPz0YAsw9DYDjKmV1R7B6N6Es2wJ9JrebI=;
- b=NOnOFRxebjtbAiOoeGoiOovs1fEgIaOFdlkhoirokC6wVwJT2GwVStuslWha0YQBk3BW+4twVFYHE8SShdqjg7y858how5++FoK1Sy29RuaMtny2bKwNK3EqbKYjNVytz1BaP//3wr+GqBzT2DpN66h+aQiziKXfNXFrdz18pEWDI6wEUa+en2yAksf+cBsAmKeY4N3Ydu/tqlaMxPUoUvLSydPAh9o791c2oq98Km7oar/yz1zh+qDpYqc3BC6RWHtgnNhMEgQcEtrumzcZS+QMRY3mppM5qRvbdk2RYVwc+ppBky2Oxh1XrrgSieFq5g4LBNr+f2N0TqxnBXjAAQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- MW4PR12MB7311.namprd12.prod.outlook.com (2603:10b6:303:227::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.24; Wed, 5 Jun
- 2024 16:19:09 +0000
-Received: from CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::ae68:3461:c09b:e6e3]) by CO6PR12MB5444.namprd12.prod.outlook.com
- ([fe80::ae68:3461:c09b:e6e3%5]) with mapi id 15.20.7633.021; Wed, 5 Jun 2024
- 16:19:08 +0000
-Message-ID: <365d7243-812c-4d65-b91b-a9843f038319@nvidia.com>
-Date: Wed, 5 Jun 2024 17:14:42 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: kbuild: mksysmap: Build regression for next-20240604
-To: Masahiro Yamada <masahiroy@kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- linux-kbuild@vger.kernel.org
-References: <21cdf8ef-e2fe-4247-9390-4b3d975f80a3@nvidia.com>
- <2b6llsqhqvsc3qrtsqlv2b6353kvuldwrp3xs5v6jistuskzeh@hnlhxbzpvwzh>
- <CAK7LNAR5fYTzJLtRDSob2TuL0Lt0bxCayY8sx0_1+UEuu1Hz9A@mail.gmail.com>
-Content-Language: en-US
-From: Jon Hunter <jonathanh@nvidia.com>
-In-Reply-To: <CAK7LNAR5fYTzJLtRDSob2TuL0Lt0bxCayY8sx0_1+UEuu1Hz9A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR5P281CA0005.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f2::18) To CO6PR12MB5444.namprd12.prod.outlook.com
- (2603:10b6:5:35e::8)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OyMmHgy1"
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df7721f2e70so1661094276.0
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Jun 2024 11:00:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1717610401; x=1718215201; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=w5RPl7PD7LMs1k1njsQ/RXiUssQb7CTl+XBmOvI3R5A=;
+        b=OyMmHgy1OprhTZCk1PpY0KDM++WlQ1Edw2Mps1X0EgJF2iRBA3+tnZUd98ocPSXWN7
+         I5HJFrKZWoDLgPm7SDxl1bkWvzGz18zxNjGoXmNXX1/JRy6wFqUXPM4fg6njQ4saM2A8
+         yLMbKusUCgwnE0ITdDiMX3hsSX1dBE5GBbZOTqY8dwoA8iLHbnfmjPCwDmWjbzvPqRvX
+         jE0jfYNVECTVlFMrLnVd2AQ5Xmr6HOM3bKPb3xt0oUX/V9PhfG/3FV6uK6EMbBp8IkTk
+         9k2llsKW20VKa+QhtGVJt5Ip8/G/LiZr0xSkvjVn57gLonJE8lQKc2VUpPo0iQIWkuHq
+         QWrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717610401; x=1718215201;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w5RPl7PD7LMs1k1njsQ/RXiUssQb7CTl+XBmOvI3R5A=;
+        b=wpHsd4WGBwhGK2K/sSsG6K0ZcSVq6+q2warZRj3jclukOnPTUwKngGQlh0FhV9cBtB
+         EsJ7Edyx7gpvTSnTPLQ3gTGIMRpMFXyCWEP1V9Pg6ZJS5WrFrUriLPt+FdwhfGhtQucN
+         e7Hrl7+kyr2pp0+pSORw/snHya9KKaBHjbsH+FlNA228qUd42N55OJZKnycudFv9pkFe
+         doqndIuSjmleEyLV/FtHcUAVXx+wlO4KmSfXrYQTkdklWMu02Jx4zO7kva9nRq+4EdqB
+         bJYVRBQAoyBkjREAk4WSMy0FvCrMhfZG6s9HTiUFXIoazI0sY547ymrhYb5vHB9JJN8j
+         fLdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBgcifTlCLTZKy5qpHo1NPECqSWj8Y9kZp8/AahxP5qQhv3bEeq5Tx09DrD7uoitEgt7t3EeOFwHSIqbujCQYFMV0hCsXNtQx1/iA=
+X-Gm-Message-State: AOJu0Yyae9nkEJHZl+n3S1e8Q/J7UJtltPukZdUeYRJrH6Wx0jbNKat6
+	gycn0DBsCQ0yg+WS+Jy9cF1FAC761gO0xj/ZbL1jf+DfkKagxaNPYh+m+bZa3mCy2zw7fi3BaXx
+	R00fpKyrSiA==
+X-Google-Smtp-Source: AGHT+IE3beT3+LJiyuyeey70O4vTmt9cNoEU8h7bwGC3fodiNqs+98CXh8Kyq/MReppn/4vWIwzPR7Cf0wAFHw==
+X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
+ (user=joychakr job=sendgmr) by 2002:a05:6902:987:b0:dfa:7552:e09e with SMTP
+ id 3f1490d57ef6-dfade7e34cbmr71646276.0.1717610400689; Wed, 05 Jun 2024
+ 11:00:00 -0700 (PDT)
+Date: Wed,  5 Jun 2024 17:59:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|MW4PR12MB7311:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf9ab0dc-f02e-496c-eb8c-08dc857b3a0a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MHVOSXc5cThKUE9qNVFJaXNsWUZpRThyRDNYTzVkNlEvUWo1ZWQ4b0g0VGps?=
- =?utf-8?B?VTNVVktJekJnWlpwbmVIVWxCcGFSdnBXdmJzZ0VSaXFkQXBwZ3dXcjNOeXpJ?=
- =?utf-8?B?Q2cwaVpFSTRoQ0wwZmZQaFA3aHdWdFhDTWJYNnU2ZjNrK0pvZWlTVEsxR1pv?=
- =?utf-8?B?emRXNU5GRG85R3JabjhJZG9YU3MxVnVweEVXR241RWExb0N0eExOcFVhZS9J?=
- =?utf-8?B?YXVBa2thQ3hoYUtvVmNwMVRaVi85VGdxWkd3MHZQcnl4enRHeTdwQndtTTYw?=
- =?utf-8?B?NDhORE0zajZ1ek05blJNaHVyV1ZFdmhoczkvQU4rT2poV2tjVjFSNU5DTFJI?=
- =?utf-8?B?TDJqUG9mMTlKWWpzbTdZWWozVDFFU1VneWRHSHNIYjdYQ0I0U2xQZHhzdWQy?=
- =?utf-8?B?cDBTcHk0ODllc3lYcDl5bEFPeCtqbHRoWk1ib0tGc1ZIM1ZOR1JJeit0WXM1?=
- =?utf-8?B?cjNady84WjR2MlprYlhxMzRzUHozOVlIRWU5NHI1c0ZRK0FoS083Z0lydk1B?=
- =?utf-8?B?Nit0dTlwTEdCeWUrYUVhZ0lNSXdIN0JvbmxKUTJ0V2NvVlRDM1BIZEJXalVp?=
- =?utf-8?B?R29YVmRtN3JQNmlMTTBUUnd5MmZReGpVZklxRVpEWDQ3NjU5TytGbmtwNlIy?=
- =?utf-8?B?T0dYY3ZtQU9BZ0diMVRyR3JjdHkzWnNodHlDS2RjbFBkbWhvMDVLYUMraXBK?=
- =?utf-8?B?OHoxYTJZM2t4SXFDUVFDVHdhYW5uZnpUMjg1RGhqWDh5THoyWmtad2hKdVo2?=
- =?utf-8?B?cFBmL2drOEhJU0dCS2ZZL3NSb3dOTnBseU14eXBqdE1jQ2YwL2RVWkViVmll?=
- =?utf-8?B?SUM5TnF4UnJIWnNGdjJ0em1hTEhGNVBRaTdvbWZ4TEp3UWMzTkJNRWZIQ1hW?=
- =?utf-8?B?RUdQcTJSRUkyUnBzN2Q1ZW5oSnV0SmVucTlBSCs4SWE2TnpKaUJXeU0wZS9w?=
- =?utf-8?B?a0FzSHloTUljZGphSmhSdlJRTzRLaUtVSWxkanlGRzhEMDVDWk8rQ2I4Tm96?=
- =?utf-8?B?TXRsS2RNWkRldGdhSmdTV0Nna3lwUE9XbnhMU3QwY2hFMVIvTkNrZWNnMjJ3?=
- =?utf-8?B?dWFNa0dKWUZEQ01EUzlJUnRvK3NvYXlNaUtvNUJEb21TbVRtczdvYTU0cjd3?=
- =?utf-8?B?TzcvTTdIRkVNNEp5Mk5HQUg3a1dwUjIxNi9yckZicGJkSndIU1dFVmpxMFh3?=
- =?utf-8?B?YVQwbkFMY0V5RCtVQ1JlRURaeHVNRGgrRG9kbE1yVlh2SGFvMXFRS1RlbDll?=
- =?utf-8?B?eWpXMCtoR2VGTWZ4TzVlY0lJUUduZjBGcFF0TnpRaExUYitZU0U5MWJESDBG?=
- =?utf-8?B?U2w0Szc1RTl2WWFDNitFaHpYK29tSWZYS3FCcVB2S1ZpYUYrSDhVb0lmU2tn?=
- =?utf-8?B?WDFJMDNMV21kemp1bGRQNVJIV2dYRWlMT0pwTnVWczdsa3dlWW14d3BES2hw?=
- =?utf-8?B?Z3dwQ04zT0pCTmhlVkNHdDQ3NGhMcFJaUENPUE9WMmQranY0UUtmbWYzajJi?=
- =?utf-8?B?WWNXT3dDNVVDZDZQejlIcnBlcTJ5L0U0ZGEwa01TT1IrOHpqMlJoQ0h4RDl1?=
- =?utf-8?B?UW9mRGpQZmNPWmZNN2FWY3NuN0hIUEw5NXltb0k4MjZlQ1BzKzhoNTFITjRR?=
- =?utf-8?B?VGNDVFRnbklFajJWSlJsWHBpZk1UbEJMZnAwcUUxMVdsTUdaNU11M1RPK1U4?=
- =?utf-8?B?bWxkMzY4L3hWOW11V3RWdTl5YzZMOTF3a1JqdzZFTmpqTlNFdVUrK3JqWXRY?=
- =?utf-8?Q?9BJDufRlxnc1uBtre5xn6a9GIiDlckBf3HkbpNu?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OXpUaW5FdjA2VHJuaFExSEhrdE5VSzZqU3hNOUJLVlA5OTRSS1BYSjJ2Q3Av?=
- =?utf-8?B?RHlLMmxSdURzQUswbjI3RTZITGh3Z2RmRTNwOXpZK2FlNlNYMTBwWkpCSVdZ?=
- =?utf-8?B?NUtVSnpKa29NSVM3c21naVB3cHNmcUJiWjBYNUZQZldqQ2doWWgxRkNHMmxD?=
- =?utf-8?B?M3haZ2lTUjlNVWxvU2x5emJZbUJKZCtwK0QyRDVJZG04aHRzOCswbWNaYXAv?=
- =?utf-8?B?QkQ2T0ltaTh6VGZEdWRFQ25GYzJ5Tks5Q1QvL0x1MzZjcmpkYnVlNDk3aDFK?=
- =?utf-8?B?TlI3VDVUeHlsdWg3UENuZVNRL21OdVpONnd5R080Ykt3Sm9Bb2psaDVTNEdX?=
- =?utf-8?B?VzdnREtmOWp2QVFQaWZQUEswc0x0aHg0ekJ2WmNNeG13bkwzQkM0ZVd3alk5?=
- =?utf-8?B?MzgvZjVPaTd6K1RCZnR3cFAvUUhjQnVpbXAyWjJpOWlPYjdnak9EbUsxVy9W?=
- =?utf-8?B?NVhZaUdqQVZOblpSNVRWa0JVN28xdzB6RUY0cEdBaXhvMExSYkhwK1JVT2hz?=
- =?utf-8?B?ZktRcW5SdEpnWTcwVUxNVFV0NXZPSTlXZi9DYmxqRld3d25MQkhBb3hKLy9u?=
- =?utf-8?B?NFppRWVEQ1BDMEFPZjZqRTBtTSswR1Fpdm5KVE5aSXZmQ2pPdmdkRlFDZ2tH?=
- =?utf-8?B?S2lwMEErWmpvNTZSRXlSN1d5WHpTaXpWVFdqbEVERmJGUVZHS1hEUGRFeVpR?=
- =?utf-8?B?amlSYjY5Vk9EZHZ3RjNOdXlCUVZHeEdadmk1aGNRU2VmRVV5QXMzYnpyWUxP?=
- =?utf-8?B?RUMyYjFrcTBndHJjaTBsdi9zcDlSOTBCbUV5cDZzYVBpakcxQ3Rib0VmY1p6?=
- =?utf-8?B?NEJLK2M0MDVCTFIrOGFZNERGVHRFRmR0cGpwWmx2NDRZUTJlNmluQXh6WHdQ?=
- =?utf-8?B?T1pFdVRkeGNTL3g3WXBtaU01RFAxNjVKTVZPRTFGbjFsMEMyZHJTdHdybXNw?=
- =?utf-8?B?YXI2Mnpkcms2d2Fhd1dYNEFHWGt3QWpzWmpocVJsSUJCbVhuVHA2bExndXBr?=
- =?utf-8?B?U2VWZmhMcDJ6WHo3c3padUZReDF0cmtzdjdVWE84VGdWa3BVMHp2Wk0yYVBS?=
- =?utf-8?B?aTV5MklJSVRRQUY2Mmg3TFpqU1YrZVc0UjNjcEUyOWVMK1Vnd0k2OGJDQjNB?=
- =?utf-8?B?TjFFRkI0MndEbHU4UDJhM3lGNjlhNTM1V2R2ZFlsalVxK25PSkx1OWZLdmxy?=
- =?utf-8?B?RmJ0T0lkeCtGaWRia1ZmQzE2bmpFRGZaVnBUVE5HZHZPaGRidWxmZGZPUmxq?=
- =?utf-8?B?YnZGVlJPaE82RXVRZjFpOWpIdit2Vnk3OGlNZ1l6ek94WUhteEZaalRLY1NB?=
- =?utf-8?B?NFBWTEtPZVZVOUQxaUEveldidEp5MXMwcnJDRm0vZGR2djhRdnNCU1hYL0tv?=
- =?utf-8?B?TnNQR2t2UDhsSUdwYU40UTJ5d2pPK2VlNGsweWlrOVc3U3ZWaVVuN2t1Yi85?=
- =?utf-8?B?Vk54OXhURTdUZ2lQdnphekhFSHI3S3dacXM0YVlEYlllZHEwUUJDRFhqSURU?=
- =?utf-8?B?MkhzTnpKRmdza1ZZcVV4SnBlMWxxRG84ZnZjWmluNUczUVFGeWFEaDJxaTBO?=
- =?utf-8?B?RDZYVkVyYnU5UXN1V2wxRkxFVlp4UDR0TmwwMFMzM29yem04T0FWWTNydVNW?=
- =?utf-8?B?V1AwVDRRaDBvaGczd2FaRVNZL090OWlIa0hrM1ExWHgwOUJ3d2I3RE50bFVD?=
- =?utf-8?B?R2NaR25yenVZSFhNTGY5YlFuMm9vZlV2aHFmc0tiNnh4eVFLYVY5REI3cEZs?=
- =?utf-8?B?cWNCUVVReGJxYVczMy9POWhET1BPYTBJNGpKVE80UmZFQjNuOFpqSzZvR3BF?=
- =?utf-8?B?NzRPSDYxckgyYWg1YWt0TkszaTVzTW9KNmtDTTlKY2tSMWgreEtBNEhJMnR5?=
- =?utf-8?B?U0JkZVc3QlRXZ1QzMmt4dmgzOWkyODZLdXRmdUwwcFV3amlmblJuVFNyVHAw?=
- =?utf-8?B?aEFiZlFVaWgvNzg3T09oaHNBNy9ST2s4cWhUdTcwVCsyMGsrV2xVLzVTOElx?=
- =?utf-8?B?a0lRNHNJcDFINXpGdHQ3MWxYQzhoVzJFeThTZ2t3WlI5dTlsT2VJdEZyc3Jp?=
- =?utf-8?B?SFNZMlArQmtiSS93S0hUa0V3S2NtczJoaEVPa2NGc3VTRW9ETGUxcEJCbVAv?=
- =?utf-8?Q?E/qHsFmAsO7Uucj2KrSITtGFH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf9ab0dc-f02e-496c-eb8c-08dc857b3a0a
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2024 16:19:08.2932
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XnehJIA0t2ywYsmmVx1I96i1k5ApCEYQgh1WKCuttVLpu+cvokEhFfdPJniZ0/dfNNBONym5vd0Vx9V/0GggIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7311
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
+Message-ID: <20240605175953.2613260-1-joychakr@google.com>
+Subject: [PATCH v1 00/17] nvmem: Handle change of return type in
+ reg_read/write() definition
+From: Joy Chakraborty <joychakr@google.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Bingbu Cao <bingbu.cao@intel.com>, Zhihao Cheng <chengzhihao1@huawei.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org, 
+	linux-usb@vger.kernel.org, manugautam@google.com, 
+	Joy Chakraborty <joychakr@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+This patch series facilitates compilation post the change in definition
+of nvmem_reg_read_t and nvmem_reg_write_t callback in
+https://lore.kernel.org/all/171751721565.70889.16944298203785853489.b4-ty@linaro.org/
 
-On 05/06/2024 14:02, Masahiro Yamada wrote:
-> On Wed, Jun 5, 2024 at 9:56 PM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
->>
->> On Wed, Jun 05, 2024 at 09:14:23AM +0100, Jon Hunter wrote:
->>> Hi Kent,
->>>
->>> Since next-20240604 I noticed a build regression in our farm builders
->>> and I am seeing the following error ...
->>>
->>> /usr/bin/env: invalid option -- 'S'
->>> Try '/usr/bin/env --help' for more information.
->>>
->>> These builders have an older version of 'env' that do not support the
->>> '-S' argument and so your change [0] is breaking the for these
->>> machines. I did not see your patch on any list and found it on your
->>> bcachefs tree [1]. So not clear if this has been reviewed and if this
->>> is trying to fix some related to Masahiro change [2]?
->>>
->>> It is also not clear what the minimum version of 'env' is supported
->>> for building the linux kernel, but these builders have been building
->>> the kernel fine for years.
->>>
->>> Thanks
->>> Jon
->>>
->>> [0] https://evilpiepirate.org/git/bcachefs.git/commit/?h=for-next&id=973eca8db5570dd0c3f2b3190867138cc446eb3b
->>> [1] https://evilpiepirate.org/git/bcachefs.git/log/?h=for-next
->>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git/commit/?h=kbuild&id=b18b047002b7d3b19d9fb905c1bd2a214016c153
->>
->> I'll drop it, but we need a real fix then, my CI builders are broken
->> without it...
+Currently the nvmem core change is picked on
+https://git.kernel.org/pub/scm/linux/kernel/git/srini/nvmem.git/log/?h=for-next
 
-Proper fixes are always good so that everyone's CI builders work :-)
+---
+V1 Changes : Change read/write return type to ssize_t and handle
+relevant logic changes
+---
 
-> I will apply Richard's patch instead and send a pull request for -rc3.
-> 
-> https://lore.kernel.org/linux-kbuild/CAK7LNASx_iSWZ14W5dpTOM87kB8A-Paq8fM_3nKH5tdfJQ7+ZQ@mail.gmail.com/T/#mfa8b89c64a6a14a764338e9398d40be9bc48cdf1
+Joy Chakraborty (17):
+  hwmon: pmbus: adm1266: Change nvmem reg_read/write return type
+  media: i2c: ov2740: Change nvmem reg_read/write return type
+  media: i2c: video-i2c: Change nvmem reg_read/write return type
+  iio: pressure: bmp280: Change nvmem reg_read/write return type
+  misc: ds1682: Change nvmem reg_read/write return type
+  misc: eeprom: at24: Change nvmem reg_read/write return type
+  misc: eeprom: at25: Change nvmem reg_read/write return type
+  misc: eeprom: 93xx46: Change nvmem reg_read/write return type
+  misc: mchp_pci1xxxx: Change nvmem reg_read/write return type
+  mtd: core: Change nvmem reg_read/write return type
+  mtd: ubi: nvmem: Change nvmem reg_read/write return type
+  soc: atmel: sfr: Change nvmem reg_read/write return type
+  w1: slaves: w1_ds250x: Change nvmem reg_read/write return type
+  thunderbolt: switch: Change nvmem reg_read/write return type
+  thunderbolt: retimer: Change nvmem reg_read/write return type
+  soc: tegra: fuse: Change nvmem reg_read/write return type
+  rtc: Change nvmem reg_read/write return type
 
-Works for me!
-
-Thanks
-Jon
+ drivers/hwmon/pmbus/adm1266.c                 |  4 +-
+ drivers/iio/pressure/bmp280-core.c            | 14 ++++---
+ drivers/media/i2c/ov2740.c                    |  6 +--
+ drivers/media/i2c/video-i2c.c                 |  9 +++--
+ drivers/misc/ds1682.c                         | 16 +++-----
+ drivers/misc/eeprom/at24.c                    | 10 +++--
+ drivers/misc/eeprom/at25.c                    | 11 +++---
+ drivers/misc/eeprom/eeprom_93xx46.c           | 12 +++---
+ .../misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c | 16 ++++----
+ drivers/mtd/mtdcore.c                         | 18 ++++-----
+ drivers/mtd/ubi/nvmem.c                       |  6 +--
+ drivers/rtc/rtc-abx80x.c                      | 15 +++----
+ drivers/rtc/rtc-cmos.c                        |  8 ++--
+ drivers/rtc/rtc-ds1305.c                      | 18 ++++++---
+ drivers/rtc/rtc-ds1307.c                      | 22 +++++++----
+ drivers/rtc/rtc-ds1343.c                      | 18 ++++++---
+ drivers/rtc/rtc-ds1511.c                      | 12 +++---
+ drivers/rtc/rtc-ds1553.c                      | 14 ++++---
+ drivers/rtc/rtc-ds1685.c                      | 14 ++++---
+ drivers/rtc/rtc-ds1742.c                      | 14 ++++---
+ drivers/rtc/rtc-ds3232.c                      | 22 +++++++----
+ drivers/rtc/rtc-isl12026.c                    | 12 +++---
+ drivers/rtc/rtc-isl1208.c                     |  8 ++--
+ drivers/rtc/rtc-m48t59.c                      | 12 +++---
+ drivers/rtc/rtc-m48t86.c                      | 12 +++---
+ drivers/rtc/rtc-max31335.c                    | 18 ++++++---
+ drivers/rtc/rtc-meson.c                       | 18 ++++++---
+ drivers/rtc/rtc-omap.c                        | 12 +++---
+ drivers/rtc/rtc-pcf2127.c                     | 20 ++++++----
+ drivers/rtc/rtc-pcf85063.c                    | 20 +++++++---
+ drivers/rtc/rtc-pcf85363.c                    | 39 ++++++++++++-------
+ drivers/rtc/rtc-rp5c01.c                      | 14 ++++---
+ drivers/rtc/rtc-rv3028.c                      | 32 +++++++++------
+ drivers/rtc/rtc-rv3029c2.c                    | 20 +++++++---
+ drivers/rtc/rtc-rv3032.c                      | 24 ++++++++----
+ drivers/rtc/rtc-rv8803.c                      | 16 +++++---
+ drivers/rtc/rtc-rx8581.c                      | 39 ++++++++++++-------
+ drivers/rtc/rtc-stk17ta8.c                    | 14 ++++---
+ drivers/rtc/rtc-sun6i.c                       |  8 ++--
+ drivers/rtc/rtc-ti-k3.c                       | 16 +++++---
+ drivers/rtc/rtc-twl.c                         | 20 +++++++---
+ drivers/soc/atmel/sfr.c                       | 11 ++++--
+ drivers/soc/tegra/fuse/fuse-tegra.c           |  6 +--
+ drivers/thunderbolt/retimer.c                 |  8 ++--
+ drivers/thunderbolt/switch.c                  |  8 ++--
+ drivers/w1/slaves/w1_ds250x.c                 |  4 +-
+ 46 files changed, 408 insertions(+), 282 deletions(-)
 
 -- 
-nvpublic
+2.45.1.467.gbab1589fc0-goog
+
