@@ -1,55 +1,55 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1AD152164
-	for <linux-tegra@vger.kernel.org>; Wed,  5 Jun 2024 18:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD86815FA73
+	for <linux-tegra@vger.kernel.org>; Wed,  5 Jun 2024 18:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717610417; cv=none; b=RXCSqd60wL3UUlAJ/WPlt8/aGsqNyzKuRXJBkG68cpJVuIs1ZFiJU58NxNsR4lRNCQCymTsPt8Ih5CwTaUFTxLdk5Xa4z+QAyxFTzryAP7Za0S9rWKo3woDwCwRqerXspXFQywzXSNCx1ubwwRhH+0Qk59JWU4g8ytldO74OLDI=
+	t=1717610420; cv=none; b=jtISd9J5YZi1sRZaeYOu7CBAO0kAgyebSw7aW5xlfRxdqa6Y7PJGAY+GvGJGKl30+3RbCKN+lC78/uyJQQA6QsFLm9bwtJiI4gSt6pRVOn7vxuryOn29BUGzqzlDKj9tbdMDtJGRtcmOzr/qnIgpKDaxbtaqhYSI6uuhxTDQD0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717610417; c=relaxed/simple;
-	bh=fPdJt4Gydxsb6XLYSRdNJ8hD/W3THq9fKXubquLZs6s=;
+	s=arc-20240116; t=1717610420; c=relaxed/simple;
+	bh=DtpDZyHe3eugG9lKYAyC1ondYmKEiXhRbdfT84tszLE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jKGQfwuKstF6nOyfKc/OLGnbQTM3ndCxoQWi0svbr53AAo3DfL295eF9+ZzUWhm/feiONHwgA2CinJObGwHmF4hlQyZmji0swzxPta65hM6V5DmZ9Zug81WSgwxmpRAjzTHw/YXYeAWcKEcrzX1C/eOm0WK9igNz18lSSDnTKOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yNqgUmHy; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=C8RTv7ndPyW28AaxEoqDNSTPoLwojNzDvi6pGcyFewRJWyAuRdsBN9jEnOhCGDmYe4kYupEbIHt7Vh5Sx8DarGy0EzTGSaMyTkbbvYs1cmTQ6OmKrigSzbIMor2069HQk0boTWN9aWMRpRthYpwxXkgUaVCh6z6Y3nqqc3pGlDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U52V+hRs; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yNqgUmHy"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62c7a4f8cd6so669667b3.0
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Jun 2024 11:00:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U52V+hRs"
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-df7a6530373so128327276.0
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Jun 2024 11:00:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717610414; x=1718215214; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1717610418; x=1718215218; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qvmsbFq1f0xb8qTUeLHIrwaOpt4YNpx3HYdX4+QrPhA=;
-        b=yNqgUmHy2UkDE3heRRb8oMaXmLeLXyM1i27wFJS/QU6flgxbWEI6TZ7da1x1XjqPQO
-         VlQ19oRwmx0Yd/blYB/OvER0B5Y/49RGI6us/PAl60yjXA5+o8wOy5hEfj5ZadolRbK+
-         XWIHPanx9sQPLs2/5sl8VyvI7v9OkxWCYCvKJqd4BWY60BaRMym9Ck/ROACMI/JPScoo
-         WSekErhgKeJiiUPjrxf3KdbGf6pBiF0a1bGCPfBXHONpv8wSDHUMAThTTzKivKWkB3ub
-         bbsqHW9iPJwiorjZWv1Xw6UL52JrjCEQWpvC3xexXC3j6MNOu7OViZQDgdh4MDbEtTMU
-         WmCQ==
+        bh=AwIs39A3C8kh3vVRuRyRYkps3QbjGarBaeH82L3DU0g=;
+        b=U52V+hRsiJQjSRnjvYDtZ8nO3ttKXkTxiHrLjNmADwfjQ8plad8HEMYMkkxmvtoFIs
+         QEZHHMmsbHs8oE4DsgfG7xV73VdpniuxJWGD1uX+sexyHuIPqMEjjQbpiFRleB333mzK
+         cskQ8g8ioMRy6iE5yXCZP8fi72tXA3aLXSn2e//1mmOhKE3l2iZpjrsErUj6Nw8rXBT/
+         Ls5L9CJrzLx+rKGRzdTKorUXDwYGdNhd3A3/5vELUbwt6as3QITS3EdKaGbEVRNWJanK
+         trjloEE6aIqij88o+jESh2lYoT7HqoWLxLTSIiCFGrQSEuGXKrYAGwKb/WUU8YLm9SV8
+         ouoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717610414; x=1718215214;
+        d=1e100.net; s=20230601; t=1717610418; x=1718215218;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qvmsbFq1f0xb8qTUeLHIrwaOpt4YNpx3HYdX4+QrPhA=;
-        b=pbxA41Js+YtdwI0eACtNzWULkeHo2fBqgEwcJr5ZKqEOud9ZAekvDcfxAINt48wqIA
-         nxg+y9U1i45RYVBmifZJ0qeeDetSHzQdGK4wlKiKlwhigV99IBPDR/V7QpegFtcO1IsX
-         LfmDcU/AIQvc2N+M0aHHo6EXZcJKTVbefu3FfMPUZ/mXhX48ERCDQfhX+2v8+4h3L5GW
-         6qwPdsaMOkiLTzy1Sy0pkz3S4ANLhWe3uF+zCxVpjY9928AQs36qCYG7Viun2nFqtmNw
-         UzOc5JNq9iDkSOLSUmIN9qaenOpWJjOqGOXwT49uaLR7TtORfz7DZLiXbUULoi5J5F1M
-         MnLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXE0DhPCHVmeXZyDhutGimIHzShmLpyQQLzdypaMk65vZdBxQLzfTKwu/auDD4I/WMcuOzeWx4dRS0VIe6Vrr75NNix2YZ4tlIt/xw=
-X-Gm-Message-State: AOJu0Yxk+kM2TgTGJkcKfuamXp+Z2GWqs0AgQZtM+AkZhtoPTg0zHnmI
-	uM03Ok+Gd0/ZlJZCMI/JvAP0U8v1PSyCMuKuYwxrJdptvGVp6ncQJ+0dkwYlwc3Wkzbs92MmYOS
-	HosWe0I3d1A==
-X-Google-Smtp-Source: AGHT+IHixjuOYQ1InGCAjmo87JHH7BxdpNaY95UBwdRBHB8eZTSP6/tJXCeai8kdlzm5GsjEUY/q6O3hk54taA==
+        bh=AwIs39A3C8kh3vVRuRyRYkps3QbjGarBaeH82L3DU0g=;
+        b=cgORWUXFxFJj7wmZtoWo3/0ehF/lBF/L5Ur6TdBAs3EffYyrJtGwLgv2UoDy819Rbr
+         v+gM9hZ/iySZLyWXgdOgSWJQrTTNwneQgzc46xWzzkyNEljDBXAqRU6dHc2Xlg/mdGAh
+         QFSOVSDRmy5/DvJmPZctPpIyI2feJIOuxUOtBQ6AZhf8ULAKCMjafsZ87Jll+H8ur5Vd
+         rUZ/v8192uOdfuIivsdcA3Hh0oEqY+vLflH+FHcPonOBWm8rnQWeqePf/lBOxBmOKDhS
+         m8wx0cj2giwP97cboBgI85hdUpDEpW+yGESgYBsRsyqwGmgiQcCXvuRHI2A4fKS/zD0W
+         KG/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVx1d/zub+caifx8bcLrWgwCEbtrxp5XyvHZw5mqkJlJhQ1w8YHACgKZ29CxDffIf+H0azALvc5Vtiwvv3gw30oDjVz2uCb6ARSaTQ=
+X-Gm-Message-State: AOJu0YzMbAMlXTnCvv78WtL4hgLdanXHTI7ZErMC3cLeZSHabdwyZmMG
+	D7TOTT76xXNBremadNnEScm37IwVdRx0F3PfA4uLpuJ/BL2uX4LtivsQCDDUlJ8uCrQRHeJ2iES
+	CF9G9pI9Mtw==
+X-Google-Smtp-Source: AGHT+IF67RE9Tjmuj/kq/k/X6dA78e699FHOj3MI1LHmpXg9uh50LZwtSgAXRWUPUOYrgrIfYkhy+wDlS5BIsw==
 X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
- (user=joychakr job=sendgmr) by 2002:a05:690c:6688:b0:622:cd7d:fec4 with SMTP
- id 00721157ae682-62cbb5e6bc6mr8437267b3.9.1717610413829; Wed, 05 Jun 2024
- 11:00:13 -0700 (PDT)
-Date: Wed,  5 Jun 2024 17:59:47 +0000
+ (user=joychakr job=sendgmr) by 2002:a25:9004:0:b0:de5:a44c:25af with SMTP id
+ 3f1490d57ef6-dfadec0b255mr68711276.5.1717610418012; Wed, 05 Jun 2024 11:00:18
+ -0700 (PDT)
+Date: Wed,  5 Jun 2024 17:59:48 +0000
 In-Reply-To: <20240605175953.2613260-1-joychakr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -59,8 +59,8 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240605175953.2613260-1-joychakr@google.com>
 X-Mailer: git-send-email 2.45.1.467.gbab1589fc0-goog
-Message-ID: <20240605175953.2613260-4-joychakr@google.com>
-Subject: [PATCH v1 03/17] media: i2c: video-i2c: Change nvmem reg_read/write
+Message-ID: <20240605175953.2613260-5-joychakr@google.com>
+Subject: [PATCH v1 04/17] iio: pressure: bmp280: Change nvmem reg_read/write
  return type
 From: Joy Chakraborty <joychakr@google.com>
 To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
@@ -84,32 +84,54 @@ Change nvmem read/write function definition return type to ssize_t.
 
 Signed-off-by: Joy Chakraborty <joychakr@google.com>
 ---
- drivers/media/i2c/video-i2c.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/iio/pressure/bmp280-core.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/i2c/video-i2c.c b/drivers/media/i2c/video-i2c.c
-index 56dbe07a1c99..2bfc221b5104 100644
---- a/drivers/media/i2c/video-i2c.c
-+++ b/drivers/media/i2c/video-i2c.c
-@@ -151,12 +151,15 @@ struct video_i2c_chip {
- 	int (*hwmon_init)(struct video_i2c_data *data);
- };
+diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+index 09f53d987c7d..8d5aeabfa297 100644
+--- a/drivers/iio/pressure/bmp280-core.c
++++ b/drivers/iio/pressure/bmp280-core.c
+@@ -1465,10 +1465,11 @@ static const int bmp580_odr_table[][2] = {
  
--static int mlx90640_nvram_read(void *priv, unsigned int offset, void *val,
+ static const int bmp580_nvmem_addrs[] = { 0x20, 0x21, 0x22 };
+ 
+-static int bmp580_nvmem_read(void *priv, unsigned int offset, void *val,
 -			     size_t bytes)
-+static ssize_t mlx90640_nvram_read(void *priv, unsigned int offset, void *val,
-+				   size_t bytes)
++static ssize_t bmp580_nvmem_read(void *priv, unsigned int offset, void *val,
++				 size_t bytes)
  {
- 	struct video_i2c_data *data = priv;
-+	int ret;
-+
-+	ret = regmap_bulk_read(data->regmap, MLX90640_EEPROM_START_ADDR + offset, val, bytes);
+ 	struct bmp280_data *data = priv;
++	size_t bytes_read = bytes;
+ 	u16 *dst = val;
+ 	int ret, addr;
  
--	return regmap_bulk_read(data->regmap, MLX90640_EEPROM_START_ADDR + offset, val, bytes);
-+	return ret < 0 ? ret : bytes;
+@@ -1518,13 +1519,14 @@ static int bmp580_nvmem_read(void *priv, unsigned int offset, void *val,
+ 	mutex_unlock(&data->lock);
+ 	pm_runtime_mark_last_busy(data->dev);
+ 	pm_runtime_put_autosuspend(data->dev);
+-	return ret;
++	return ret < 0 ? ret : bytes_read;
  }
  
- static struct nvmem_config mlx90640_nvram_config = {
+-static int bmp580_nvmem_write(void *priv, unsigned int offset, void *val,
+-			      size_t bytes)
++static ssize_t bmp580_nvmem_write(void *priv, unsigned int offset, void *val,
++				  size_t bytes)
+ {
+ 	struct bmp280_data *data = priv;
++	size_t bytes_written = bytes;
+ 	u16 *buf = val;
+ 	int ret, addr;
+ 
+@@ -1582,7 +1584,7 @@ static int bmp580_nvmem_write(void *priv, unsigned int offset, void *val,
+ 	mutex_unlock(&data->lock);
+ 	pm_runtime_mark_last_busy(data->dev);
+ 	pm_runtime_put_autosuspend(data->dev);
+-	return ret;
++	return ret < 0 ? ret : bytes_written;
+ }
+ 
+ static int bmp580_preinit(struct bmp280_data *data)
 -- 
 2.45.1.467.gbab1589fc0-goog
 
