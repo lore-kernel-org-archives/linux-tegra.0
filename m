@@ -1,138 +1,125 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF0113CF9C
-	for <linux-tegra@vger.kernel.org>; Thu,  6 Jun 2024 07:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002C613AD15
+	for <linux-tegra@vger.kernel.org>; Thu,  6 Jun 2024 07:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717658882; cv=none; b=tvJkRpk2+P/QQIyssM4PkzRmpMdRzaT4SgPUdsEhXNbFy5jOIX0WQuV58F407lcoQ2ZSM+eDuwyAKwsSP5l3VuZKbamTPA2OcfLZ0SJeCysy7XPTmVPo4jcHkUTer1/gwLTivyhQe4NzCHMWDwuMppbF2ge4cJ83ZjEiZmWMHjM=
+	t=1717659763; cv=none; b=T38wKZcqzqXPuMMtnyWwtd6gBRHw/gFQVut1IRCL+bV+r/Xs0Z/JG2AoJ7b94VQXIgfPpzAueodKCeuRd+wzJ2QhYReb9ggyQ0rF7Ks1JQAIZgr3Ny3Gxfm/sv7Ce5pJtJBNi05W/GfA20adrjUu8ElqpukgeRNX24Tn7zFR2gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717658882; c=relaxed/simple;
-	bh=iTBLcuvewMpJ4faEaIFRB8NCV5eK2XvDog669bY6A04=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MpYXt6cv0ObIgB/l/EZ+0aweXBNCZUpBAeBdH/TAHplKbT67/Z0JtLfcIJ580kw6LJT0zo+lDlAl2js0CBrezkd9w4OMOvbWmqjD609keHzC3xjG1eTpTagBiksWJZbGRTIbqfJGsJE3V4mKH3KFx/0irEJMDiA9OacOFlEtJ70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JG299hie; arc=none smtp.client-ip=209.85.215.174
+	s=arc-20240116; t=1717659763; c=relaxed/simple;
+	bh=7OaWmqVFqUj8UiBMIFYvyTDVYpCRKRaVDuAaqAod2/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GpEA5ZgPwy3hyBjV+0L9ABM60CxbgSA/+V/pJiBSedfLZf9ukQjIQ9DMc+M3JzDbQY0q75lj+lbAHgoSZtwpVFOT0g22ytLJOyvzoNyH8aca7OYmnDgsBAGDM+mVEuPWLb41b6zAVdj8yhHSxGAXLP4KDz3DIwn8+fnqKqWOh5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NL++cvwa; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JG299hie"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-6ce533b643dso442136a12.3
-        for <linux-tegra@vger.kernel.org>; Thu, 06 Jun 2024 00:28:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NL++cvwa"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6c7ae658d0so72835266b.0
+        for <linux-tegra@vger.kernel.org>; Thu, 06 Jun 2024 00:42:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717658880; x=1718263680; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HPG+iYxST5I5DbJlxvzuCXfj8r8tlsuRAuVmKBt4I54=;
-        b=JG299hiersRJmlMIlWaBGTlVNIzV0EWX2O/tXePH7FUUT+pXdYT0jQYYL+rWUW1wYn
-         UfYawvH39ftOPgXSILc8y7MLfUmbJPYj1A2fcJsYNLjrkW90HTH6opOwqCqLOVQ6fFg9
-         5TgSfhQcthIlPAtrB1/GKIOrO73LXzkR9BJkpZNzfLBqpXdMfxgbztpq6/Mv2uh3KOH0
-         YcRwLDtWpnJx8cQYB0LwxuUdMsuKj0U6VYTl1gZs3J9tAKEFeTkiWfKpWKxwDA95gb9q
-         HCuMqJy5tT1GvafFZZ0Zxpe1mvV8nzx8RTRfoUrEQp9iAXtGTZQO1CTApeK5ZYlKYMMW
-         tTMQ==
+        d=linaro.org; s=google; t=1717659760; x=1718264560; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7hn7A2vtREo0E7HfSwjkC9hqptsOSWf7nUvmnuVDMQY=;
+        b=NL++cvwa1YzNLaO02KuHXfdUWI0iBeBifsmyZyDIb5uMpknUdYDOeT/BDI/fB1OqHk
+         +7gCI0acVsZJ9rqdfi0zaMODPSc2iNqRCIIzabLp1tuBymzYzAtsSw1iGNJhqh8NyJ/4
+         bfRhWy9o8GJlE3fdPgPV+MIOX2Zas3+n6dR2PFZyU7rJMR6cFy0R0pMq+kF7E/jGpRD5
+         dXGJ+GxjzoVPjGZ3tiwUrB4gUVnyjnHucGul9epeD37Bp6ZiZqmXwZ1hXIrXEdNVrXJF
+         ilEl3P0UI+XCbpU9AbkrYXIGfV5G0BBv+rrjrB1As9IXmF71GnivuRMlHZ8mIiUgEiHw
+         uAJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717658880; x=1718263680;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HPG+iYxST5I5DbJlxvzuCXfj8r8tlsuRAuVmKBt4I54=;
-        b=H2lIUhrjkMNv0m/bC06gAszixhKXEGdCTQn4JHcRBimf8Kvix6tYXFhpw8P5uQLpYH
-         21Wkx+egAmPJ+LVMzlojyU3DMQBd6+p4F77VaWpocQB325+zgqvBE24TAL9P3RwgiOnC
-         /WvxN/vLJsrttv799HjxcJqtBqOQNpMJi4tP6FM4IvBxa6cw9Txyij0X7bTqjoCxYKwG
-         Q/t7C0tCzKOZxIuvaw7UTrYAkk4u3+Yfd0hyZu7DQtBzQOhF54PNr1EOIhZgwk9Z6xtD
-         B1QbGNGECNVKAAsdCczeJfPGxkJ3K8iBBJ7rlaUtnSxfXPwo1xKwTqd2kEf4XcQch6dh
-         fRTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzfNQvILNT51HtYhC/4Tm/4FHcDc6O04GLh5xw3eVnDUpFev6yozK0DRLH0X6pAyxEiRULIzDMvRqXeNBN7yV56oX+l5f3YWtCL6o=
-X-Gm-Message-State: AOJu0YyFOyL3OHQ7voRI8Tc/ttpgLXtclonpXfuJ3Kv/YkGoUzWdO/Cf
-	3Dv1/ZqJFMcVSeUhd1W0ZSF2YpJJkngJYvciQ1xJkBzddN1fXqZfftzBI3mPLA==
-X-Google-Smtp-Source: AGHT+IFcf9cgtatPK4aegB5pOtXP/U3r7+aHmKSySRB4gcmnkYTJLzQC9N/nujSZyq7rntRegQ9fyQ==
-X-Received: by 2002:a05:6a21:9994:b0:1b2:2893:4c30 with SMTP id adf61e73a8af0-1b2b75a28b6mr5554701637.43.1717658880331;
-        Thu, 06 Jun 2024 00:28:00 -0700 (PDT)
-Received: from [127.0.1.1] ([120.60.142.92])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-703fd494feasm566621b3a.100.2024.06.06.00.27.49
+        d=1e100.net; s=20230601; t=1717659760; x=1718264560;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7hn7A2vtREo0E7HfSwjkC9hqptsOSWf7nUvmnuVDMQY=;
+        b=V9e35rdVXEWGXXzFIpv/MGJZj6DBzhajqfyTArGpQrQpfQW9gGnwZAe4qfD2pfWKA0
+         NrXdcOqsnmD+rUfEotVdxmv9gH+eawql+aPpV7Z6bs0WB6/wR4KA3yZEwreYIrlgD9Sk
+         6luhlrN91raK9dGMfmFQVsHS6qZGGN6AWfdmgNnP/mNo/0DheOu8PlaElPXrecTTUOqf
+         ftIMr6uWtd0ey28bP3YJISFXU7r0pd6exZH06WIXhP8cA5JyuRN/aKwiVyJbugxcXzrx
+         hJeXwb5XAErBBlDKzQFQA3XWwdme6ZfQxty/Nqiyn9VtYDVTR+csop9gDwEktykzW/W1
+         6mxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Jfcb6zhgc7lKWbRJdt356KEMWw9am7YPpYON+8ZbPNI9DuU2shRqKqgzhTyXChalC4/ItoP6vsyQBYeRVCTMWvXvNZtmrR2vqlY=
+X-Gm-Message-State: AOJu0Ywu6xb1CvjW23mNSnXLzsyNqpfhY2GDwKg6wlPGEj8AGXXxBT2Y
+	x67CqzT/pCR19ODjq8IwpZv7hiug1oQNWhBHVGnvss7tM1j/T8pf6VmNL4Xovxs=
+X-Google-Smtp-Source: AGHT+IG9fb84ekx6f8HaBtotI1FnubBAZuTJ3dgM/XdsdCeyuhCLEIFdUbolQkfIb3FKjJXzmIhddQ==
+X-Received: by 2002:a17:907:900e:b0:a68:fe79:9499 with SMTP id a640c23a62f3a-a699f88b67cmr343464966b.40.1717659760015;
+        Thu, 06 Jun 2024 00:42:40 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806ebc43sm57149266b.141.2024.06.06.00.42.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 00:27:59 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Date: Thu, 06 Jun 2024 12:56:38 +0530
-Subject: [PATCH 5/5] PCI: layerscape-ep: Use the generic
- dw_pcie_ep_linkdown() API to handle Link Down event
+        Thu, 06 Jun 2024 00:42:39 -0700 (PDT)
+Date: Thu, 6 Jun 2024 10:42:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Joy Chakraborty <joychakr@google.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
+	manugautam@google.com
+Subject: Re: [PATCH v1 01/17] hwmon: pmbus: adm1266: Change nvmem
+ reg_read/write return type
+Message-ID: <08ff07f4-034d-4342-89da-d83044871ab1@moroto.mountain>
+References: <20240605175953.2613260-1-joychakr@google.com>
+ <20240605175953.2613260-2-joychakr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240606-pci-deinit-v1-5-4395534520dc@linaro.org>
-References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
-In-Reply-To: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
-To: Vignesh Raghavendra <vigneshr@ti.com>, 
- Siddharth Vadapalli <s-vadapalli@ti.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Richard Zhu <hongxing.zhu@nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Minghuan Lian <minghuan.Lian@nxp.com>, 
- Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>, 
- Jesper Nilsson <jesper.nilsson@axis.com>, Jingoo Han <jingoohan1@gmail.com>, 
- Srikanth Thokala <srikanth.thokala@intel.com>, 
- Marek Vasut <marek.vasut+renesas@gmail.com>, 
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org, 
- linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org, 
- mhi@lists.linux.dev, Niklas Cassel <cassel@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Bjorn Helgaas <helgaas@kernel.org>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1130;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=iTBLcuvewMpJ4faEaIFRB8NCV5eK2XvDog669bY6A04=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBmYWTDAWlDlC+iP821vFRRCpXr79KN0oimjGpwM
- 9zYQuHhq6WJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZmFkwwAKCRBVnxHm/pHO
- 9dUvB/4geNbdfN8AuZaua5Q6crO4wiBZbDIZpTUEWbj5cD3+PQgZdP2fszAcOMysVUd2LhEzvbX
- kN7XJZcOGcc8d4i5IFEjwKG/dbhVt/tdxFru22kORqs05rEFn8+aFrQwhtSGaYkYgqYgRfP5Y6W
- b7v2+d152TaxfMTEdc5KIpJ3NjqVYBYvg2Gm5ndnVM2TIBPLBmyqzyiXOFEURUukShXcXr+j5P5
- wTPHtr9arU74ONCvNRavuhdpDxwvIoRgVqCiA2vDPG5DViOV2w7sRHoLC0PIvLJstIr0Gh5lZUc
- 0TbWhXew/SfM3kcXGjBTL99FKexWWdBkpH4rAOvlZ4HUiEBN
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240605175953.2613260-2-joychakr@google.com>
 
-Now that the API is available, let's make use of it. It also handles the
-reinitialization of DWC non-sticky registers in addition to sending the
-notification to EPF drivers.
+On Wed, Jun 05, 2024 at 05:59:45PM +0000, Joy Chakraborty wrote:
+> Change nvmem read/write function definition return type to ssize_t.
+> 
+> Signed-off-by: Joy Chakraborty <joychakr@google.com>
+> ---
+>  drivers/hwmon/pmbus/adm1266.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hwmon/pmbus/adm1266.c b/drivers/hwmon/pmbus/adm1266.c
+> index 2c4d94cc8729..7eaab5a7b04c 100644
+> --- a/drivers/hwmon/pmbus/adm1266.c
+> +++ b/drivers/hwmon/pmbus/adm1266.c
+> @@ -375,7 +375,7 @@ static int adm1266_nvmem_read_blackbox(struct adm1266_data *data, u8 *read_buff)
+>  	return 0;
+>  }
+>  
+> -static int adm1266_nvmem_read(void *priv, unsigned int offset, void *val, size_t bytes)
+> +static ssize_t adm1266_nvmem_read(void *priv, unsigned int offset, void *val, size_t bytes)
+>  {
+>  	struct adm1266_data *data = priv;
+>  	int ret;
+> @@ -395,7 +395,7 @@ static int adm1266_nvmem_read(void *priv, unsigned int offset, void *val, size_t
+>  
+>  	memcpy(val, data->dev_mem + offset, bytes);
+>  
+> -	return 0;
+> +	return bytes;
+>  }
 
-Reported-by: Bjorn Helgaas <helgaas@kernel.org>
-Closes: https://lore.kernel.org/linux-pci/20240528195539.GA458945@bhelgaas/
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/pci/controller/dwc/pci-layerscape-ep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This breaks the build so it's not allowed.  The way to do it is to:
+1) add a new pointer which takes a ssize_t
+2) convert everything to the new pointer
+3) Rename the new pointer to the old name
 
-diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-index 35bb481564c7..a4a800699f89 100644
---- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-+++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-@@ -104,7 +104,7 @@ static irqreturn_t ls_pcie_ep_event_handler(int irq, void *dev_id)
- 		dev_dbg(pci->dev, "Link up\n");
- 	} else if (val & PEX_PF0_PME_MES_DR_LDD) {
- 		dev_dbg(pci->dev, "Link down\n");
--		pci_epc_linkdown(pci->ep.epc);
-+		dw_pcie_ep_linkdown(&pci->ep);
- 	} else if (val & PEX_PF0_PME_MES_DR_HRD) {
- 		dev_dbg(pci->dev, "Hot reset\n");
- 	}
-
--- 
-2.25.1
+regards,
+dan carpenter
 
