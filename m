@@ -1,130 +1,119 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA3B19067D
-	for <linux-tegra@vger.kernel.org>; Thu,  6 Jun 2024 10:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13833BB59;
+	Thu,  6 Jun 2024 10:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717668774; cv=none; b=VFvHhxc+d5pe6J2mlovuV1Xz+txrIu+rihftkavxPjbB54bhpsG6xbOX5TUOwb8py92rQ8Ezhu5iUO+5IofPvjUILMXxXs8Tg5iwOC5Ti8sL/1YRcH4lsgKn9QwDDt3657R6E7UPUiIdYSHs6oGHuOb8fnZ5YozsJzwl7zsp480=
+	t=1717669857; cv=none; b=X5ZkQXGSlBu8lUVm6jnEzi1AM//SWqSe3hTLbxoISqDYRojm5tmIVRvl4eE9xtmddGDHrM7Q3T5vZy+fgYQx+5fS7jAsvo6I7HPuvfDa6hIoHZe+T11Tcw2WdUWt3hW8ASoCbyOJTzyG6oqyAY+1VUGE6jIwNYB68BHWajJ41yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717668774; c=relaxed/simple;
-	bh=FpruvuPD/Bh18bogFae9RpIep/NtvqwBxSmz4eQZHgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZjRrTowM6hyG144vsSLNJ55vAbAoZzMdqj28WNPLlhVUkYEdtH+5H5AN5atWgPpK4J7zF46mPVQNf8HwCzLMHItw4zUtpMKk4WkwS1lcDjiNBdukM+LkL7kwL6pKPG3EnIQ0Y/OJZlLPPkqG1WeitOId/ZB5kq34o3ufVG8XDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QwJZ635G; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1717669857; c=relaxed/simple;
+	bh=n8NQZKeOwsHVqFfy3xQydSiac6ZEqPtQOJSNPM1mQvk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oa1ouL90xkoeCYsm9eQozyz7BxgKFifNnA9VbLfdQPm8emD2SpizWdmAZJDP18Iqf8gfWCpSCxvxWlRzPGVbPjCGJzY3lEPURXi3oL1Dz6KKVw0OubMIqYU6TfN8kcIp9WYhi9OWZDa4Mdv4bQO4NEBYlrE/qSQ0ZPY6fnkJzrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fJKOa/ws; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QwJZ635G"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a68bf84d747so62645366b.3
-        for <linux-tegra@vger.kernel.org>; Thu, 06 Jun 2024 03:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717668771; x=1718273571; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NYT9tVkTJ0UAXf8TGzWVnjnavb5dtCMnGfW04T5qoh8=;
-        b=QwJZ635GQ9/JZnsucRnpXGmSllsRSat1CcuUKNpzGbWEpAmS++/+Ubf5dzu+Scrlry
-         cWw4QtPU5BEyMSWokwbk3R7srtoBk78YlCTtLKxS69g7Ou4r4sj4Sxf+NVu741I88OVw
-         CRtCl041XMZk4UzozeSgUyIbrf4ADb/gB45Aqe5GMwVS0QZRa3ixu3SpHwP+L99FGdGu
-         o9ZUuU6t1nz+60ihdQBej7j+UvSykK2ZdnOTNRFYZR0a2FwckmXjoCYBrO7J2o1LKFxK
-         43JKAB2Nji/OV5nM68oJkASDZEwQ8bzdTO0K/W3Fa8Gk1RJ84oC+OEgl/3b9Bk3hwYzu
-         gURA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717668771; x=1718273571;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NYT9tVkTJ0UAXf8TGzWVnjnavb5dtCMnGfW04T5qoh8=;
-        b=QDCEqmy9DcovPja5QMeVKTbqVq6NrrIm0JN8dsdlXfTlLd8h0VAC+51Q4ofKmfAZZT
-         cylB5k6E8rx0BFkTA5aWJSEwfPmuErR5o58jO2Fw1a+dWMUfZXQUnjsi5IrwOWxHZnKV
-         B/J1k4s3dt0N9B/bYROKwyldfxHMUtz7P1AWeNTzLUT+tdGutvEQFNQYK+5OuWmWSa+g
-         U6o/PHGiwX3xhPHHlfRb0CDj9g/vlkJEpXnSOD8G52oBU8ZzCInnKXEeEMEi0VDV3P8O
-         bpsyG6vBoEJaVTo1Gf35Rxh4UckSjKsCkqF82UKwHH6ZopLpxVuHAuban5Xo9pZX7lHx
-         ZCsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXt1zyYuPAxNHbSOSuK5QegfidL88g/YDmgjE8OrCv9QqjmWJp4u9zC0ruGdssG7nrSFhwUINdywHq77PJBKlw4nzLZD1+Xh/KCruI=
-X-Gm-Message-State: AOJu0YyosCEpz0a3Ru9aLazoMIXgl28vJQvlrBYopWQIobZW75k360l3
-	2DvotxDxnauqk636P/Tkh0ZHr6f0Z10Gstm/aH7wRvV/Fcp8ZfKN9LKC0yAwybQ=
-X-Google-Smtp-Source: AGHT+IGXEvwhigvaa2F7LH3u2SEZD2GotxH0tm3Qb9rzSgbG/zs824MHzxfnZBM0j8XV9T2jW92teA==
-X-Received: by 2002:a17:906:38d1:b0:a5a:1562:518c with SMTP id a640c23a62f3a-a69a02363f3mr311414866b.48.1717668770651;
-        Thu, 06 Jun 2024 03:12:50 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c8070e82esm74598366b.161.2024.06.06.03.12.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 03:12:50 -0700 (PDT)
-Date: Thu, 6 Jun 2024 13:12:46 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Joy Chakraborty <joychakr@google.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org,
-	manugautam@google.com
-Subject: Re: [PATCH v1 06/17] misc: eeprom: at24: Change nvmem reg_read/write
- return type
-Message-ID: <e5f3e798-0fb9-4dca-9449-cc1ab0677700@moroto.mountain>
-References: <20240605175953.2613260-1-joychakr@google.com>
- <20240605175953.2613260-7-joychakr@google.com>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fJKOa/ws"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 456ATv4r063258;
+	Thu, 6 Jun 2024 05:29:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717669797;
+	bh=9ZCEA6cP5eUu5u5Wy7c5Qa6XpiJ0SNZvrvxHy3jwf1w=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=fJKOa/wsX3EBlujkA6t8UrFIGrAbdCE7KR+XE/HH97gbjeGaHaXL8+1qU/H0jK2cx
+	 wC5KT1F0rQ2h8e/E6HwyoyY7Yb2Ndc6I6UApNJoGJiIawowiz3rWLsr43MMzL7YLve
+	 kn2shltk136jLtQaP9TWHjtZ3qM7fvv3uKDOccqs=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 456ATvxF027716
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 6 Jun 2024 05:29:57 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
+ Jun 2024 05:29:57 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 6 Jun 2024 05:29:57 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 456ATu3Y111689;
+	Thu, 6 Jun 2024 05:29:57 -0500
+Date: Thu, 6 Jun 2024 15:59:55 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof
+ =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha
+ Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team
+	<kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Minghuan Lian
+	<minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang
+	<roy.zang@nxp.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han
+	<jingoohan1@gmail.com>,
+        Srikanth Thokala <srikanth.thokala@intel.com>,
+        Marek
+ Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>,
+        Thierry Reding
+	<thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko
+ Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu
+	<mhiramat@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <imx@lists.linux.dev>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-arm-kernel@axis.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <mhi@lists.linux.dev>, Niklas Cassel <cassel@kernel.org>,
+        Bjorn Helgaas
+	<helgaas@kernel.org>
+Subject: Re: [PATCH 1/5] PCI: dwc: ep: Remove dw_pcie_ep_init_notify() wrapper
+Message-ID: <ef98f581-e2a3-419c-90a8-6cb64ca4e835@ti.com>
+References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+ <20240606-pci-deinit-v1-1-4395534520dc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240605175953.2613260-7-joychakr@google.com>
+In-Reply-To: <20240606-pci-deinit-v1-1-4395534520dc@linaro.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Jun 05, 2024 at 05:59:50PM +0000, Joy Chakraborty wrote:
-> Change nvmem read/write function definition return type to ssize_t.
+On Thu, Jun 06, 2024 at 12:56:34PM +0530, Manivannan Sadhasivam wrote:
+> Currently dw_pcie_ep_init_notify() wrapper just calls pci_epc_init_notify()
+> directly. So this wrapper provides no benefit to the glue drivers.
 > 
-> Signed-off-by: Joy Chakraborty <joychakr@google.com>
-> ---
->  drivers/misc/eeprom/at24.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+> So let's remove it and call pci_epc_init_notify() directly from glue
+> drivers.
 > 
-> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-> index 4bd4f32bcdab..0e8d92d6ab1e 100644
-> --- a/drivers/misc/eeprom/at24.c
-> +++ b/drivers/misc/eeprom/at24.c
-> @@ -424,8 +424,9 @@ static ssize_t at24_regmap_write(struct at24_data *at24, const char *buf,
->  	return -ETIMEDOUT;
->  }
->  
-> -static int at24_read(void *priv, unsigned int off, void *val, size_t count)
-> +static ssize_t at24_read(void *priv, unsigned int off, void *val, size_t count)
->  {
-> +	size_t bytes_read = count;
->  	struct at24_data *at24;
->  	struct device *dev;
->  	char *buf = val;
-> @@ -465,11 +466,12 @@ static int at24_read(void *priv, unsigned int off, void *val, size_t count)
->  	if (unlikely(at24->read_post))
->  		at24->read_post(off, buf, i);
->  
-> -	return 0;
-> +	return bytes_read;
->  }
+> Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-This is called like:
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-   574          ret = at24_read(at24, 2, &val, 1);
-   575          if (ret || val != 11)
-   576                  return;
+[...]
 
-So this breaks the driver.
-
-regards,
-dan carpenter
-
+Regards,
+Siddharth.
