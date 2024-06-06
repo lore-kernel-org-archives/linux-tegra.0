@@ -1,167 +1,133 @@
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0457C194ADB
-	for <linux-tegra@vger.kernel.org>; Thu,  6 Jun 2024 10:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3637013D28C;
+	Thu,  6 Jun 2024 10:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717669926; cv=none; b=eo+fvxDsOlkQsuDcrP4+yRvF9F6Oa2rSLguJO9f+84Hd7gz3q7FloNsOqWVTzqWH2FjcetXcfw1x3v24yrrYLfb68aPzq626e+egxl+GKkolH7hXAcge+VD3+ur4ZePWeEOJz9CxxE41WXqSEI5o1dTRac/BYq2DJp9pBO+dKP0=
+	t=1717670402; cv=none; b=Y69aSqapJa+/7G8hgqm+48XMEUqZUX8w1zqYd4oq5JoNsZGFIX1/QBbG6c0eMZO6tOgu2hX6wB/RHjScvd7X0qXA+Cdj2iPwCBRvC0uiRb72dPBEW5QwoTvrC0ti31AvLdg7f/Crm+NlK2iTfTg3PzPOh+9CWuJomjbpVzZkSMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717669926; c=relaxed/simple;
-	bh=n0hrzdYnBksW+DamHG6BupTO1J0YAJybs/VDL2sugrE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uov7lggP/0YGwIvBHiIfFjDEWi42ZJFL98ws2FeWrQZ3w3tfNv89+MeZOz3y9h2K5LMhzXe3UrgwGo9wiXVadHDl+1YmIbSMA8nRwc6R15o7kz8dzcLMPoMAPrsH1h/yDpT8p7tjgeou0RIeXelIBRWV/jnEf0iLIAfAbOSPVns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ij9/iU/U; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1717670402; c=relaxed/simple;
+	bh=0tpDrSbDB1WEN1VQ/gQejKZ3K7jqpkDNOQq66XzDTNU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OOpsTBKO/lXN4wfJ0NBPk0qDW4BHmbBP0m6JSTmryvwCa94hRK/xDNhWUrSVSZeV96XeSngYTxV+kyEJSfzcwADQdVsC9IaNvt/gDuAcqKzH+l8AU4HZUiEU/eUmHd/uC2Fvx2/9RcuDi72xALPN1OvTuI/wxf4dvgYwCXM3244=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XfgDWMe+; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ij9/iU/U"
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so14457161fa.0
-        for <linux-tegra@vger.kernel.org>; Thu, 06 Jun 2024 03:32:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1717669923; x=1718274723; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2yOK4FlQCW+JMOCwnWP72jJymCtr5dD6IgIpna60BCY=;
-        b=Ij9/iU/Uyo6fcf8LONJ7xC09lvYBG8qaaeEz4vBXq2BTPZbQ2/pF3yyQBM4fRbFGfh
-         G2YVI79pdecNzRewdbn8sACLDUSzd7rOjlh6zMMORYPcVD1QveoeZ2kHNSsE+9FRNNbv
-         STcLcfiwZHhGsSEvRFW5mX9h4B8YphLBoSkl78uJsHCRnl9eDwrE59GFqtGknBB9mMy1
-         OSPuYgWTVQS8j2w3KVuq+5S7UftcTUbs1qQVWVzbjEhqRqb3+fKICTURvn7oWD734yHM
-         ft1saZpU5WP1Di0/lkFYY358dTnV3FFIlPJYisX1EUMUoYuw+wFXKiytWhGLxoNHAlTO
-         IcBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717669923; x=1718274723;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2yOK4FlQCW+JMOCwnWP72jJymCtr5dD6IgIpna60BCY=;
-        b=J9P5T9Q1AiqF5yp3IIIx0TV8yFIYih+l8cMb0x5RM+qiROQyf22AZHpVoubwK9RPhJ
-         UiWps5r2qcJoMVbm0sJHl9V8gHPA09kbolMQrM8LvqPua8AZZaDhPq+YibFoXVoERSLe
-         5DhloqUGQ12sXiLFIBxnj6G67PGnzqfUxlcTcnqu7RCBmtXgvT1w82WyAF3tQ7nlEBry
-         HOC8XGX8XEFJ8q9Z1ntMTSJ1ikVQ53v+OZz9FSlldwffmaLxHHO+xS4vCMygbTgZhQWE
-         aLTwtpNRGNqlhq9e7f1ksuuCseknEqMK1izXCywKi1VRQoJaxmSBqMXyinmFRw0ragdd
-         A3Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWnPWuvp5ww0i8UW3tk/KiiV7g81G4uQvv+5XpsJXgRSJwoqA3pkcKgc3pc1yYeh4PwNWxs0DEzMYc7RiyYqcpol3loiz3BkoWPoNw=
-X-Gm-Message-State: AOJu0Yw3vxZjRz3m1iCUj+Nay4FoWcq6y1yEfCBLdtQBe+1F59LJn9Ne
-	dhSv4UaVX0g+HS8BPzkR1OJdSmNlFUlSpChgu4Xu5ot+yShzt+Plt1VJ3n5HmCO21pSIfdnJ9ik
-	vXnIYwpiEEiUubcbIqtSFj5NoEzvN9BA3lf/9
-X-Google-Smtp-Source: AGHT+IHb92CvWzY0UMLIO3bnYXJ9lrbqmbf5jFApgNniI36TJ0LubnwynaglXsT5ps/3HCuaPh8FvkYR0EYkfnbTRiI=
-X-Received: by 2002:a2e:9643:0:b0:2e1:9c57:195a with SMTP id
- 38308e7fff4ca-2eac7a5fd4dmr33302121fa.32.1717669922881; Thu, 06 Jun 2024
- 03:32:02 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XfgDWMe+"
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 456Ad1ok093099;
+	Thu, 6 Jun 2024 05:39:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1717670341;
+	bh=qzRU3NjJ1d8c/C2020uLuMVnu7LuuPICJYaQN3jl9Co=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=XfgDWMe+BQyCpPRKKo/C86Fku2TS+SS/V4UKkHuNgaVvXBlkwRzYWDLpdnOeoG1Df
+	 88wsCO4NciJyu+tAYaTqHLYvtP8etsj4rZYRrhX1eSRqFIhSL1TIEmraNT2M+q67P/
+	 CMmCxbafjX3Vh1d0veRVVX+mlr8XP4f11VWswtxw=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 456Ad14c006785
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 6 Jun 2024 05:39:01 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
+ Jun 2024 05:39:01 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 6 Jun 2024 05:39:01 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 456Ad0SS128334;
+	Thu, 6 Jun 2024 05:39:01 -0500
+Date: Thu, 6 Jun 2024 16:08:59 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Krzysztof
+ =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha
+ Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team
+	<kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Minghuan Lian
+	<minghuan.Lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang
+	<roy.zang@nxp.com>,
+        Jesper Nilsson <jesper.nilsson@axis.com>,
+        Jingoo Han
+	<jingoohan1@gmail.com>,
+        Srikanth Thokala <srikanth.thokala@intel.com>,
+        Marek
+ Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>,
+        Thierry Reding
+	<thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kunihiko
+ Hayashi <hayashi.kunihiko@socionext.com>,
+        Masami Hiramatsu
+	<mhiramat@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <imx@lists.linux.dev>, <linuxppc-dev@lists.ozlabs.org>,
+        <linux-arm-kernel@axis.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <mhi@lists.linux.dev>, Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH 2/5] PCI: endpoint: Introduce 'epc_deinit' event and
+ notify the EPF drivers
+Message-ID: <62430183-a413-454e-a485-a5347b80ce84@ti.com>
+References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+ <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605175953.2613260-1-joychakr@google.com> <20240605175953.2613260-8-joychakr@google.com>
- <f98a1d8f-e936-4798-8447-c642e8fe11d5@moroto.mountain> <CAOSNQF0Qj2CnRDWAGM8Y1wyEdgWP04RDJx1TKO-Ge4nUH=qxoQ@mail.gmail.com>
- <2b979aa4-3a63-4010-9670-294ce7624e18@moroto.mountain>
-In-Reply-To: <2b979aa4-3a63-4010-9670-294ce7624e18@moroto.mountain>
-From: Joy Chakraborty <joychakr@google.com>
-Date: Thu, 6 Jun 2024 16:01:42 +0530
-Message-ID: <CAOSNQF02nUPZ=8re=uyruhxReQSjPoc8L-9yTnWMe4EfJ0-huA@mail.gmail.com>
-Subject: Re: [PATCH v1 07/17] misc: eeprom: at25: Change nvmem reg_read/write
- return type
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Bingbu Cao <bingbu.cao@intel.com>, Zhihao Cheng <chengzhihao1@huawei.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-hwmon@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, manugautam@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Thu, Jun 6, 2024 at 3:41=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> On Thu, Jun 06, 2024 at 03:12:03PM +0530, Joy Chakraborty wrote:
-> > > These functions are used internally and exported to the user through
-> > > sysfs via bin_attr_nvmem_read/write().  For internal users partial re=
-ads
-> > > should be treated as failure.  What are we supposed to do with a part=
-ial
-> > > read?  I don't think anyone has asked for partial reads to be support=
-ed
-> > > from sysfs either except Greg was wondering about it while reading th=
-e
-> > > code.
-> > >
-> > > Currently, a lot of drivers return -EINVAL for partial read/writes bu=
-t
-> > > some return success.  It is a bit messy.  But this patchset doesn't
-> > > really improve anything.  In at24_read() we check if it's going to be=
- a
-> > > partial read and return -EINVAL.  Below we report a partial read as a
-> > > full read.  It's just a more complicated way of doing exactly what we
-> > > were doing before.
-> >
-> > Currently what drivers return is up to their interpretation of int
-> > return type, there are a few drivers which also return the number of
-> > bytes written/read already like
-> > drivers/misc/mchp_pci1xxxx/mchp_pci1xxxx_otpe2p.c .
->
-> Returning non-zero is a bug.  It won't break bin_attr_nvmem_read/write()
-> but it will break other places like nvmem_access_with_keepouts(),
-> __nvmem_cell_read() and nvmem_cell_prepare_write_buffer() where all
-> non-zero returns from nvmem_reg_read() are treated as an error.
->
+On Thu, Jun 06, 2024 at 12:56:35PM +0530, Manivannan Sadhasivam wrote:
+> As like the 'epc_init' event, that is used to signal the EPF drivers about
+> the EPC initialization, let's introduce 'epc_deinit' event that is used to
+> signal EPC deinitialization.
+> 
+> The EPC deinitialization applies only when any sort of fundamental reset
+> is supported by the endpoint controller as per the PCIe spec.
+> 
+> Reference: PCIe Base spec v5.0, sections 4.2.4.9.1 and 6.6.1.
+> 
+> Currently, some EPC drivers like pcie-qcom-ep and pcie-tegra194 support
+> PERST# as the fundamental reset. So the 'deinit' event will be notified to
+> the EPF drivers when PERST# assert happens in the above mentioned EPC
+> drivers.
+> 
+> The EPF drivers, on receiving the event through the epc_deinit() callback
+> should reset the EPF state machine and also cleanup any configuration that
+> got affected by the fundamental reset like BAR, DMA etc...
+> 
+> This change also warrants skipping the cleanups in unbind() if already done
+> in epc_deinit().
+> 
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Yes, I will resend the patch to fix that.
+Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-> > The objective of the patch was to handle partial reads and errors at
-> > the nvmem core and instead of leaving it up to each nvmem provider by
-> > providing a better return value to nvmem providers.
-> >
-> > Regarding drivers/misc/eeprom/at25.c which you pointed below, that is
-> > a problem in my code change. I missed that count was modified later on
-> > and should initialize bytes_written to the new value of count, will
-> > fix that when I come up with the new patch.
-> >
-> > I agree that it does not improve anything for a lot of nvmem providers
-> > for example the ones which call into other reg_map_read/write apis
-> > which do not return the number of bytes read/written but it does help
-> > us do better error handling at the nvmem core layer for nvmem
-> > providers who can return the valid number of bytes read/written.
->
-> If we're going to support partial writes, then it needs to be done all
-> the way.  We need to audit functions like at24_read() and remove the
-> -EINVAL lines.
->
->    440          if (off + count > at24->byte_len)
->    441                  return -EINVAL;
->
-> It should be:
->
->         if (off + count > at24->byte_len)
->                 count =3D at24->byte_len - off;
->
-> Some drivers handle writing zero bytes as -EINVAL and some return 0.
-> Those changes could be done before we change the API.
->
+[...]
 
-Sure, we can do it in a phased manner like you suggested in another
-reply by creating new pointers and slowly moving each driver to the
-new pointer and then deprecating the old one.
-
-> You updated nvmem_access_with_keepouts() to handle negative returns but
-> not zero returns so it could lead to a forever loop.
->
-
-Yes, that is a possible case. Will rework it.
-
-> regards,
-> dan carpenter
->
-Thanks
-Joy
+Regards,
+Siddharth.
