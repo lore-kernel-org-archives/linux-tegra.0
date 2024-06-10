@@ -1,212 +1,171 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2052.outbound.protection.outlook.com [40.107.93.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D947F15532A;
-	Fri,  7 Jun 2024 21:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717795185; cv=fail; b=bV0UtCXEV6o/4ll0cQvCITrl4ZGIpxrMV5ylGg0SP/FNBtVuNFu0H3u5aux0lsqMT9RM/sldbazJ7Mku+op9y/Vh3CGs1tvvdI99M+ZoeVPLM8543NN6n76fTSdTqY6bhXUtzZa45sUNlhwik2hDLm1JAeEN01PGt+7jLmHslJU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717795185; c=relaxed/simple;
-	bh=Y0jWRUz1YPbEebCxLTOhAThKGllKkh5yOrBz+ssad2Q=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=io0rawoV+s1AmWGcHM4XFDo1S0dDP4AVDA/Ju9OJVtR0mEgys+F3vBvJchlpBe2CEgDKqfAfTsuPmtTGln90rOnDKktv/lWWl2oRZbemqPpnEUXYkE0k91Sa+zx9rFbcHrsVNWF66cfdoGspNS/d+VbyMo/ZRMH96RG0UbdIZYo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KaMaNpG8; arc=fail smtp.client-ip=40.107.93.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCD518046
+	for <linux-tegra@vger.kernel.org>; Mon, 10 Jun 2024 06:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718002418; cv=none; b=KfUiMqHWyDYS57MReCgWiYL4gsiUVsIcJsOkbpjHj3/pE8Cco787tJ36FBraHybXe4E7ePuhDXfVeFJH2DYFuqeAG2DOD0yw7Z3zlB4dHSFgzyDxRHRAD9kr67r50aiO4Z8SwdihaEu6WcN5oDgPhjXuHW2VGEeGfo/4CMssBu4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718002418; c=relaxed/simple;
+	bh=mRZh5+OagwrYksdm05IvR/+1yNl8KYHz8Qj7URz+FVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YFkAv/EZhDaT5JxfoiN5SguqXO4gleiSkynwz7L2KqVakuajgjof2Sh245v6ivx0RM/YQTfRWgoFMtTifQeC8S3CI2zU3eVctE0GFl2N0tO2k5LfX9s28q1MVRp5G1FtsJYtfGfR2lVK1oq2ixHjziNjRnHgaYjIbSOV0ARapK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qPj5C8aw; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KaMaNpG8"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=M14hMtOQlZCqoaamXATejCR4DKggJFIWRKl5Qo2NObHe2ZBcI/UsotIRZwb4SG/aKaCP2f536F0pt+Kldv5CfVDAsgOh/uMuxm2rcwYgvaU4tw67POJBqdw70TIVn5lCn+i4bjr3yBuqC+7t89pdTXFBVynKIyAfDvDG/5bxnR/HHa8KyKp/r1HsiG12YDO//CToPaBUDEZ7Qu/RLnGrV2wOCjS6ZPVctBHfKBsjOVLr+culsOHyxFvAIRSNpdkZAL5CjMPhdb7izXphh65qmpZIodwak0W1qgGwZgvZS/k0ca/Bt5kWY1zljjD7xR4N56YV4E6ry+VoAkgYR22/XQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=akowE2/+w2kcNkGTSHheO3yjOOqvfdw87hQWnUmCny4=;
- b=Bu6B04Su57Fq0akEqVOZSK7FhTZnN9X2rL0kuprsnX4DgOm+trwgHjCf6NuylJ8BLHrij2Po7hcTmRhs70H7vNyouGsEoGP549Us7ZzpQD0fgHqaQfYVTQnghE9G6kSmdLhXt+DnWyH6LDKbBhnZDCc5GTP7AJLE+NJeryy8zXEeJi7/RrIvG5wHBsCuxXqV2SVKbXLxeOtZyNB6XWMEZuf5pV1cfA3LHYGv0A+N9SJSotPAw8qeagR9SoNS7QbNXLCPA68fyZi73gG4+QWa043ZnZh0tk7UBk4midDJfYHoV9+G8fNzhU1H+ChxsKPSDwbUKQ62aE/zrpIUQDfeQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=akowE2/+w2kcNkGTSHheO3yjOOqvfdw87hQWnUmCny4=;
- b=KaMaNpG8O3Uj4Dog+T+voScUp7WzSGzqyTppi5ZOMLnWAJ7huxS/+AOkSW9kLRyRtYj4k9UllB5HDw3D0OOY1VMnEkZuyyq4y+4wiWzmcMQQgTCJx3vVSe2Kw3rLG3OfcZ4OlAbPnwiHfJKTmmRD8DEGj5PvvRXQRrTJlDJ9vUg9lAy+CA7g8mAv3FsBzuH9fauICk8KYKwgTm6jKUa9A5mFVZoq6/1TsdXXtMKDxHJ7rSR92WgpdHH/8W4PsuuR8nKiYyOTG+9WPdYOtEoKU6vKN9VEo1kztqc1/7kgxNu/ilnqXCvFB756MGFQvkq/ZfcWQbX70IXZ10B+cIue7w==
-Received: from PH7PR03CA0026.namprd03.prod.outlook.com (2603:10b6:510:339::11)
- by BL1PR12MB5993.namprd12.prod.outlook.com (2603:10b6:208:399::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.31; Fri, 7 Jun
- 2024 21:19:40 +0000
-Received: from SA2PEPF000015CC.namprd03.prod.outlook.com
- (2603:10b6:510:339:cafe::c7) by PH7PR03CA0026.outlook.office365.com
- (2603:10b6:510:339::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7656.22 via Frontend
- Transport; Fri, 7 Jun 2024 21:19:40 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SA2PEPF000015CC.mail.protection.outlook.com (10.167.241.202) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7633.15 via Frontend Transport; Fri, 7 Jun 2024 21:19:39 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 7 Jun 2024
- 14:19:24 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 7 Jun 2024
- 14:19:24 -0700
-Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Fri, 7 Jun 2024 14:19:23 -0700
-Date: Fri, 7 Jun 2024 14:19:21 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: "Tian, Kevin" <kevin.tian@intel.com>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"suravee.suthikulpanit@amd.com" <suravee.suthikulpanit@amd.com>,
-	"joro@8bytes.org" <joro@8bytes.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>, "vasant.hegde@amd.com"
-	<vasant.hegde@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"santosh.shukla@amd.com" <santosh.shukla@amd.com>, "Dhaval.Giani@amd.com"
-	<Dhaval.Giani@amd.com>, "shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 08/14] iommufd: Add IOMMU_VIOMMU_SET_DEV_ID ioctl
-Message-ID: <ZmN5WZkvDeIS7RRH@Asurada-Nvidia>
-References: <ZlafEktUu5znDsNt@Asurada-Nvidia>
- <BN9PR11MB5276AC43120376A2502D3D148CF32@BN9PR11MB5276.namprd11.prod.outlook.com>
- <ZlfPPwsnY6P4SoGF@Asurada-Nvidia>
- <ZluWXYQjroz0fqqn@nvidia.com>
- <Zl03rsgZl/msa3I+@nvidia.com>
- <20240606182423.GF19897@nvidia.com>
- <ZmIDqgfINXfB0i3L@Asurada-Nvidia>
- <20240607002707.GJ19897@nvidia.com>
- <BN9PR11MB527604637EC37B3B03FBBE468CFB2@BN9PR11MB5276.namprd11.prod.outlook.com>
- <20240607144917.GK19897@nvidia.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qPj5C8aw"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c19bba897bso3234734a91.2
+        for <linux-tegra@vger.kernel.org>; Sun, 09 Jun 2024 23:53:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718002415; x=1718607215; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Q79+Rla3cX6Hmnq2eCF4cwSxfS8g2qeMA5niTT4AJrk=;
+        b=qPj5C8awILJqh3c/ngE7eXKXeYZ0SQOicLTFq5jZzuiL9aHGzEYvh25QB2h713dsMt
+         3c+MYas5fDMuGrH8mO4sx57ojueo6ftuPopnJa8wRmTz/AM8UYoXfiKFHSX5FXJbANil
+         FXb2sSUzmTcDjagabFJSpcd5Sf6WY1j3W5R9gjYUHCNy7BL30CnnEcV8NFyanyR2uSUr
+         s6qJy1tSl33o4XhZyubNBuquojl/ZVvDXJCp+1zIsYAwS8gjZi9sQv0ENu8wSMRglpwD
+         pPYl6Kd2rlSRWDZPNjBVzziIsusmJ9rwKqw4ylTnOAzRRRRUP7wdfPSva9Qt1AESroYZ
+         Mh4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718002415; x=1718607215;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q79+Rla3cX6Hmnq2eCF4cwSxfS8g2qeMA5niTT4AJrk=;
+        b=jDZ+IAIHp5aP7y9zr6vfXttWgl6MQ2eAD53hp3jZT+Tv7d5ngGLwAmLMkB9vJx6DWx
+         m0fTZt+nw/VDBcyMqfU1Ah72Ahjl4i/3JbqkCl1JfOtOCjgMb0kHcJdxwNHj9SVTobsY
+         abQ7mJT2J3/cviZ378USiiKQPg0KLLuES54Rc8/F/RlSrqWp6MQ6IJtGKn1Uk2HYaByy
+         jyvrC+oI3FS8kXzBTSJa1iF63x2+lpJ5fWIUQFCZAHYJlvj1MB3BhM9SasQwosT+SlP6
+         QpyAPPuo6Zyp84JfqT1jhn/8ktrfVvKk3TXbgEjqKrlDg7zqs3Azns/TSsNxgM547DNa
+         GlQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVm7ir2olHRFFmKB17RJDCHsWT8zYb2tJnSi6qGhZLHIq8bH4IoeejW9dMEVK8KZqwUQ04qdgyS24HUqOkXJI2iNUrM0geWNENVwcc=
+X-Gm-Message-State: AOJu0YzmXlwj1fBc7tzHJQ6fhqdJR+r9y3uTo/MlbJLVYgf03B2lRoL0
+	TRmjL1HXJQQ/0m6MQ0DtRdQVLp1b1RBUyr343yArHK/7hdGi2gBDwKwPsJS9pA==
+X-Google-Smtp-Source: AGHT+IGiQnfID/w2ovEqOtXmdaUmHolv4W8npj5rXP4hlu3K/zYS4n6pz5nKcO0YwT4Ao+fhHzZlGg==
+X-Received: by 2002:a17:90b:b12:b0:2c2:c3fb:b13c with SMTP id 98e67ed59e1d1-2c2c3fbb277mr5727406a91.44.1718002414578;
+        Sun, 09 Jun 2024 23:53:34 -0700 (PDT)
+Received: from thinkpad ([220.158.156.236])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c3094cfe3dsm1355898a91.15.2024.06.09.23.53.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 09 Jun 2024 23:53:34 -0700 (PDT)
+Date: Mon, 10 Jun 2024 12:23:24 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	mhi@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH 0/5] PCI: endpoint: Add EPC 'deinit' event and
+ dw_pcie_ep_linkdown() API
+Message-ID: <20240610065324.GA7660@thinkpad>
+References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240607144917.GK19897@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015CC:EE_|BL1PR12MB5993:EE_
-X-MS-Office365-Filtering-Correlation-Id: c25aa394-519e-4cbf-0bba-08dc87378aad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|82310400017|376005|36860700004|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?37y0ZkhrLvflV3+qqbU+0hORHeX5WETtPr9XqKtYnczJlbIqffDGVC881iWd?=
- =?us-ascii?Q?tduCOYnsWXiKo7RCoQrpwyyyBiXVOqm5fm/f23pQEd74TQWZK4cj3LUsk/rY?=
- =?us-ascii?Q?7IRM3XMtFCk+aOF0nxEA0vVDXtEeY5ivYuoD2Om63+jEY95paNkvYvdWMqzc?=
- =?us-ascii?Q?yJxdJCSViiuEuwyMAzATp5PjbQRQNCA6/22Kcj9TH9yo5oqnCtPopN+dqOJo?=
- =?us-ascii?Q?jrxQlooWKhM3oTulDRxb0Yo9fElcq5ZjhIOIfL3Eptec9xURCN+Dep8DMpmP?=
- =?us-ascii?Q?lVGjQtMKlGmsIMy/1mYvbAH2AKFPiPkNf6sPspZpD8b+CpfwH0WR1Q6uuGZE?=
- =?us-ascii?Q?3IhKFJ70PsoCcuywukAmgttX/MnAB7lK5O5IwEAdd3Chf8SKS3Wc33L1E021?=
- =?us-ascii?Q?16Jg+mmgIDF2WY7sar/BG5Y38b9phgUgW2SU/KCNGisve47IGku9GNjqH8c7?=
- =?us-ascii?Q?OT+pUBIe3/vpxyHwOXV6uymejxKL56Pf/P4+ZWF97BfKh1Xl44QrYyw/tc3F?=
- =?us-ascii?Q?23J1I+BeBt41gUwmZrvr3xy24IpyOd5iKVnn58KJCdHt8bqXC07z0Z56CrUB?=
- =?us-ascii?Q?u3LkaButkmrG/eI9sbQbdwVYbGUDTeBaZbNz5beHwlij1dKhpBxdpRdcKJVU?=
- =?us-ascii?Q?G1tTnyWrvC4mv13886nizF8JbuJ8dvwc4OOKBALjfvzak3ti3OfwhTCBdRZp?=
- =?us-ascii?Q?E8uJfSaMLwcnXrwYdTj//BLHz2TX4HVrRfubNKTieQEFkmkdd22l/smNGU13?=
- =?us-ascii?Q?u8AuH4ah+AT5sYRzcnf66Abs80svLtXVxz7kU7R5DtIj6KKQBczdA+1WsdZK?=
- =?us-ascii?Q?+Yu9ibTwEFmAM0TxtAPhgYeSfdkl9uGtxdaKM80aU2Czqqfo5M67YN/6z6jE?=
- =?us-ascii?Q?eQnHHRWLUVwZHjF3G/pAEHoMelmE+efafUcCpChEB65TEDYQjFrdCXs99Zxt?=
- =?us-ascii?Q?AxKuqcFmfVVoPgIbnWp5CoP2kSMGKONFJJ+P6sGs9gftUm00Har861dNglDl?=
- =?us-ascii?Q?qKJAzJEhXKDFU9Dun+kbYuHJmjYZOinwcNy6/ToxeJYC7L6785lak1erMRS3?=
- =?us-ascii?Q?Y7qw2YANh8bVROC8o+bH6sjAB4+A0Ew1Oj40T0DTvERs9kqVf2JT7pkNNRYR?=
- =?us-ascii?Q?//uQFKgl5DGJeHziBIqLyCfmg2gmnCAtqG5tuKVEYMWS4mz6NndSVDhQ4GZh?=
- =?us-ascii?Q?KkbLXLdxIn/FKuiXPUnW35bx/MRYsT7MvIFEit8RiVGrA2gL+HpM8D96hAcM?=
- =?us-ascii?Q?iR8iXgjCHArPy4OOSiNmtWLTuflsM/xTofcOwdvCVRZWTnpR0vFGykGM/se2?=
- =?us-ascii?Q?pzUw4scndJBqxrkRXy3ztoxxaPcLf4vcppFKkshfDuCAXXQ3q6pRemPrUNOf?=
- =?us-ascii?Q?JFykEXnCdP13TOzlOI7mMroF3B+SyDeY8/zilWDHSP3shY54wA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(7416005)(82310400017)(376005)(36860700004)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2024 21:19:39.7909
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c25aa394-519e-4cbf-0bba-08dc87378aad
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015CC.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5993
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
 
-On Fri, Jun 07, 2024 at 11:49:17AM -0300, Jason Gunthorpe wrote:
-> On Fri, Jun 07, 2024 at 12:36:46AM +0000, Tian, Kevin wrote:
-> > > From: Jason Gunthorpe <jgg@nvidia.com>
-> > > Sent: Friday, June 7, 2024 8:27 AM
-> > > 
-> > > On Thu, Jun 06, 2024 at 11:44:58AM -0700, Nicolin Chen wrote:
-> > > > On Thu, Jun 06, 2024 at 03:24:23PM -0300, Jason Gunthorpe wrote:
-> > > > > On Sun, Jun 02, 2024 at 08:25:34PM -0700, Nicolin Chen wrote:
-> > > > >
-> > > > > > > I understand the appeal of doing this has been to minimize qemu
-> > > > > > > changes in its ACPI parts if we tackle that instead maybe we should
-> > > > > > > just not implement viommu to multiple piommu. It is somewhat
-> > > > > > > complicated.
-> > > > > >
-> > > > > > Would you please clarify that suggestion "not implement viommu
-> > > > > > to multiple piommu"?
-> > > > > >
-> > > > > > For regular nesting (SMMU), we are still doing one vSMMU in the
-> > > > > > VMM, though VCMDQ case would be an exception....
-> > > > >
-> > > > > This is what I mean, always do multiple vSMMU if there are multiple
-> > > > > physical pSMMUs. Don't replicate any virtual commands across pSMMUs.
-> > > >
-> > > > Thanks for clarifying. That also means you'd prefer putting the
-> > > > command dispatcher in VMM, which is what we have at this moment.
-> > > 
-> > > Unless someone knows a reason why we should strive hard to have only a
-> > > single vSMMU and accept some invalidation inefficiency?
-> > > 
-> > 
-> > migration? a single vSMMU provides better compatibility between
-> > src/dest...
+On Thu, Jun 06, 2024 at 12:56:33PM +0530, Manivannan Sadhasivam wrote:
+> Hi,
 > 
-> Maybe, though I think we can safely split a single pSMMU into multiple
-> vSMMUs using the IOMMUFD vIOMMU interface. So if your machine model
-> has two vSMMUs and your physical HW has less we can still make that
-> work.
+> This series includes patches that were left over from previous series [1] for
+> making the host reboot handling robust in endpoint framework.
 > 
-> IOTLB efficiency will suffer though when splitting 1p -> 2v while
-> invalidation performance will suffer when joining 2p -> 1v.
+> When the above mentioned series got merged to pci/endpoint, we got a bug report
+> from LKP bot [2] and due to that the offending patches were dropped.
+> 
+> This series addressed the issue reported by the bot by adding the stub APIs in
+> include/pci/pci-epc.h and also removed the unused dwc wrapper as concluded in
+> [3].
+> 
+> Testing
+> =======
+> 
+> This series is tested on Qcom SM8450 based development board with 2 SM8450 SoCs
+> connected over PCIe.
+> 
+> - Mani
+> 
 
-I think the invalidation efficiency is actually solvable. So,
-basically viommu_invalidate would receive a whole batch of cmds
-and dispatch them to different pSMMUs (nested_domains/devices).
-We already have a vdev_id table for devices, yet we just need a
-new vasid table for nested_domains. Right?
+Applied patch 2/5 to pci/endpoint! Krzysztof, please apply patches 1/5 and 5/5
+to controller/dwc (patches 3/5 and 4/5 are already applied by you).
 
-The immediate benefit is that VMMs won't need to duplicate each
-other's dispatcher pieces, and likely helps migrations as Kevin
-pointed out.
+- Mani
 
-With that being said, it would make the kernel design a bit more
-complicated. And the VMM still has to separate the commands for
-passthrough devices (HW iotlb) from commands for emulated devices
-(emulated iotlb), unless we further split the topology at the VM
-level to have a dedicated vSMMU for all passthrough devices --
-then VMM could just forward its entire cmdq to the kernel without
-deciphering every command (likely?).
+> [1] https://lore.kernel.org/linux-pci/20240430-pci-epf-rework-v4-0-22832d0d456f@linaro.org/
+> [2] https://lore.kernel.org/linux-pci/202405130815.BwBrIepL-lkp@intel.com/
+> [3] https://lore.kernel.org/linux-pci/20240529141614.GA3293@thinkpad/
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+> Manivannan Sadhasivam (5):
+>       PCI: dwc: ep: Remove dw_pcie_ep_init_notify() wrapper
+>       PCI: endpoint: Introduce 'epc_deinit' event and notify the EPF drivers
+>       PCI: dwc: ep: Add a generic dw_pcie_ep_linkdown() API to handle Link Down event
+>       PCI: qcom-ep: Use the generic dw_pcie_ep_linkdown() API to handle Link Down event
+>       PCI: layerscape-ep: Use the generic dw_pcie_ep_linkdown() API to handle Link Down event
+> 
+>  drivers/pci/controller/dwc/pci-dra7xx.c           |   2 +-
+>  drivers/pci/controller/dwc/pci-imx6.c             |   2 +-
+>  drivers/pci/controller/dwc/pci-keystone.c         |   2 +-
+>  drivers/pci/controller/dwc/pci-layerscape-ep.c    |   4 +-
+>  drivers/pci/controller/dwc/pcie-artpec6.c         |   2 +-
+>  drivers/pci/controller/dwc/pcie-designware-ep.c   | 116 +++++++++++++---------
+>  drivers/pci/controller/dwc/pcie-designware-plat.c |   2 +-
+>  drivers/pci/controller/dwc/pcie-designware.h      |  10 +-
+>  drivers/pci/controller/dwc/pcie-keembay.c         |   2 +-
+>  drivers/pci/controller/dwc/pcie-qcom-ep.c         |   5 +-
+>  drivers/pci/controller/dwc/pcie-rcar-gen4.c       |   2 +-
+>  drivers/pci/controller/dwc/pcie-tegra194.c        |   3 +-
+>  drivers/pci/controller/dwc/pcie-uniphier-ep.c     |   2 +-
+>  drivers/pci/endpoint/functions/pci-epf-mhi.c      |  19 ++++
+>  drivers/pci/endpoint/functions/pci-epf-test.c     |  17 +++-
+>  drivers/pci/endpoint/pci-epc-core.c               |  25 +++++
+>  include/linux/pci-epc.h                           |  13 +++
+>  include/linux/pci-epf.h                           |   2 +
+>  18 files changed, 162 insertions(+), 68 deletions(-)
+> ---
+> base-commit: 7d96527bc16e46545739c6fe0ab6e4c915e9910e
+> change-id: 20240606-pci-deinit-2e6cdf1bd69f
+> 
+> Best regards,
+> -- 
+> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
 
-Thanks
-Nicolin
+-- 
+மணிவண்ணன் சதாசிவம்
