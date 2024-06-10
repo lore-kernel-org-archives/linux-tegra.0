@@ -1,203 +1,179 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2044.outbound.protection.outlook.com [40.107.101.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4A9626CB
-	for <linux-tegra@vger.kernel.org>; Mon, 10 Jun 2024 08:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718006898; cv=none; b=uyHPjowtbpOhhoB7BLdDbamkPjwcKqkzzBFpdpcOg8ah9YZIMdZhs81gHLo7djIG29d+FmueiBII8qawhY4i8ncmrdczev9kRxxZg2tX9pR2BZdLHiOdLCUPLD+WTQ2GWZhTOgJdMucZ9HUIPX06Rg05RyVcS7MnT2SzSo+j3X8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718006898; c=relaxed/simple;
-	bh=/L5y1Dv6ivY3eszYnYmdXRYc401x9YYY2yBAmmyUG/k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LyTuFz3CBiGsrT5NwYdALRUXHBFE96lWetesquNsV+JGZQVPKQykjab45FFPrW8S6EJZoV2DDiaGyeaA8f3LZGoxjeUDKXxWaRBiKDfs519PouZl2ddTNO/5NLKTdgORe4V476Mvsutf5WG9MJVD2iDEx9D7+WmOX8rviJC3yAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SSdm1Yf7; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B3E7440B;
+	Mon, 10 Jun 2024 09:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718013421; cv=fail; b=FpTxvXNUIssMgq4Ke5ZbZSeXsJQ70Vorab7S/Vw/5iQZtOplb/U8AeStZDc+TqOjIWvnmIPvXJ5QvMI5Qg/EeXAFIBMo7c1kF0RNFpvHWfQ00V7pJPsHA6vP1B0S+wxy/5zyxLo2etqCECpdhzO7IkwxCaJ81N5FiRzyJNodHHE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718013421; c=relaxed/simple;
+	bh=2+gM5B6OHxO88DWWN60o9FwTuKgwM8+lmwjCZUtM+4o=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=SpyzTs5qj2Mx6AqxjhMV0XEMwKWMuQtTXepH0wsBzgD7klnBxn7+PI4MckK0O9j75+Ccsxki9uvZc5evdFQATfODc74EyulXCFEvXg6jTHOyNYnJSA3pRl+aYpFCfOEzF0fXwUmRJzTAmQgpWt+6dO50m0AaUEeinUFYOhK0T9I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=VP6MXRfk; arc=fail smtp.client-ip=40.107.101.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SSdm1Yf7"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5295e488248so4550172e87.2
-        for <linux-tegra@vger.kernel.org>; Mon, 10 Jun 2024 01:08:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718006892; x=1718611692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/L5y1Dv6ivY3eszYnYmdXRYc401x9YYY2yBAmmyUG/k=;
-        b=SSdm1Yf7Ra0G4T+e1Uib9M+gpZrMF9N8k3TFc0cVz1F5pABZzdduYWAgb/AYK6aN5U
-         uGRb/9C4DKJ1MAyhzNdKqtcLtbbSe8pWQRtjbEXBTFYju2cMxL2Ljf60A9rhzibs/z9k
-         58QLu/Go6rD3ZcOU2IPsm9uBcLwH6W8ua/ujy6yuJ5oy7dAijMMVBbsXY4yd4XeI8BMF
-         tBO40weDDLMTfnvv7w8kEWecrxwMfi5uAXCD7QK5dcWAdVEgifdMXyQiRMcm7v1g27Rl
-         Fpd3yivenYWJYij2nMGl+Ls46Hekj1+LChnFu8YHVJOJbKSpUse8j4k2fpw4j2G2Sdq2
-         vB0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718006892; x=1718611692;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/L5y1Dv6ivY3eszYnYmdXRYc401x9YYY2yBAmmyUG/k=;
-        b=XoMQsPtvrXqlCKMNGHUqBMymn3QsIcGyCcDC6dHkYhAj2z+E3O2gEFBTq7HFMv6N4L
-         i+DUgH9nAgA9VVwtT5LLIRrhF6Wos5+TyJXZ5FhrAif0F0dpVS8ivOOtAUDIeLNTv2h6
-         8/Ru65Wfa4FNPPuMT0jY7g5YrqRfey72R6PeRz+vD0898KUTYJShOIlltjYURDIyPrR5
-         AW86PMJE1jTTeiPDv1SYZ8OCyXPhUMco9pIQoZjoUT5EWF2c2L3sBJ8BtIS2VpefwbPa
-         6H5g8WHCe0zXdLQuunOwOKyJ63Q8eejQcVodQwtjciR8GNEIoW1sI4uKi2vq1GzmSx8I
-         Q2lw==
-X-Forwarded-Encrypted: i=1; AJvYcCWisGA8wzY18e9UeLDDkXdztiGuLftuCML4HFV93I/FszQPFGQYeTH5cCcYN3hmhOEBe7XzfnmW40JFNGC55HjPSB8ADKmog+5qhus=
-X-Gm-Message-State: AOJu0YwbNeWcN6dYCbKn5YlFDZECH9jpkCLKog3MnZkp6HAjd6A1k7OJ
-	+obMPixeOh+s6bxlPSRNumcHClGKjyjuWbD5U/0yE6cTCrOxoUVDiGk1Alt/XS5A3xECR8X/IFU
-	vZotkiM5EWS6JcVCbf4tssgC6Vl8wqpW5x8+Nrg==
-X-Google-Smtp-Source: AGHT+IEoIIaopVbMhKiBzu+ZFeFG117iZrYhuaSy1PLsnicMvCE0nAaF1iUL9hhnUeVtUHqe9i20V059/u6XmSWe6yI=
-X-Received: by 2002:a05:6512:234d:b0:52b:be9b:cafe with SMTP id
- 2adb3069b0e04-52bbe9bcbadmr5940256e87.21.1718006892189; Mon, 10 Jun 2024
- 01:08:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="VP6MXRfk"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Rf6vm/n0DeqPk5c+nwgdr3JGpL0gltP8Nim0cD78+Vuk6SiX9bfN4AsthJAD1cef2W++dbJLjxoD0sFj7Nnt5blnzZXyQ0t9ddDACS+N/BuUdJ1UGxhm/Ssb3Pk1A7kC0JMLfO/R/YBEmj1/2AUPUU0QZDvXdrfm7JlcLsJY/cdRqHT5zd5ZJmqH57+jvcYaU1IBA9OYLwGSek02BJwolRfJgnSolQKyqqTMrzFC32BM8lrX1HMaraul8X6MyEmLRdN2u6+K5ScH6dgBHQrVUVV4IZNsEndruBD+v6qRcGhEV/DerkkjHQPnsqP6TvaoekVznjGBkYPWauF8e7GtnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hw0YV3l9VvSx+5+SqyWCGxFN52y7oV0Xif5sLIFFWBI=;
+ b=MHxGb7q3lxA73cREGHkoYiw9lIb38OsXKOCB6wDFLj5kmwluAAkzFfjsMLUlEfYPKH2epQ+dvlBUMBJMA4cJMvac2I4TNK+tp7VOfBk4gSDB9jNSRq9NKz0WkxlqSA4JfcCPAYUMeeFDTTfs3lxF85up5pk4sISeDdES6YkPBUgNG9DxeP27issp24rf2AIQq6auLwNptC2akoLVELQZn/2MsSyewOr6S3ufvqQYiu3dspLzWjKQ8XtOyyzzf0Vk2lMgQBd66QmxlKrBvasdxJxvxr8OFOSdzebnkKb2KnfHlhbcW7pK5yi34S8Ms4A1fgCrOrhkOoM+PpRUBCPDaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hw0YV3l9VvSx+5+SqyWCGxFN52y7oV0Xif5sLIFFWBI=;
+ b=VP6MXRfk3Avo3vGlJwTIStx1yrSoVGmtzMVAJu2nwTW2DeqFPyHX1fceG2nDIEM1e/rNLNO32VzgEYAJIJPBTk/jfBrjv9ih9RrcbZOdOukbAHD4RmhId30SikCjK+Lco9F/DA+toPIPoTxVubJWrQmCdJbBdQWmPr2w63yhLjhV8I+Svog6bjcyvxl1EGf9HX2NW7D7h2yfGD37jC4/QFl/iKvQm2k+FJLwwoBpu9TxeExERAyskJ64qus190D4/YdGglf9XEFPVIt0erbWlns7XJvKEFzfdI8X9y7kqCeW3ag4oLw4ClZP7jNcsRRZHC1Ss0WscupqS8+t+IsIDw==
+Received: from CH2PR05CA0021.namprd05.prod.outlook.com (2603:10b6:610::34) by
+ SJ1PR12MB6196.namprd12.prod.outlook.com (2603:10b6:a03:456::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7633.36; Mon, 10 Jun 2024 09:56:56 +0000
+Received: from CH3PEPF0000000F.namprd04.prod.outlook.com (2603:10b6:610::4) by
+ CH2PR05CA0021.outlook.office365.com (2603:10b6:610::34) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.17 via Frontend Transport; Mon, 10 Jun 2024 09:56:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CH3PEPF0000000F.mail.protection.outlook.com (10.167.244.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Mon, 10 Jun 2024 09:56:56 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 10 Jun
+ 2024 02:56:48 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 10 Jun 2024 02:56:48 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Mon, 10 Jun 2024 02:56:48 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.6 000/741] 6.6.33-rc2 review
+In-Reply-To: <20240609113903.732882729@linuxfoundation.org>
+References: <20240609113903.732882729@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603211538.289765-1-andriy.shevchenko@linux.intel.com> <87tti9cfry.fsf@intel.com>
-In-Reply-To: <87tti9cfry.fsf@intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 10 Jun 2024 10:08:00 +0200
-Message-ID: <CACRpkdZFPG_YLici-BmYfk9HZ36f4WavCN3JNotkk8cPgCODCg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] treewide: Align match_string() with sysfs_match_string()
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Corey Minyard <minyard@acm.org>, 
-	Allen Pais <apais@linux.microsoft.com>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Perry Yuan <perry.yuan@amd.com>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Nuno Sa <nuno.sa@analog.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Randy Dunlap <rdunlap@infradead.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Lee Jones <lee@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Elad Nachman <enachman@marvell.com>, 
-	Arseniy Krasnov <AVKrasnov@sberdevices.ru>, Johannes Berg <johannes.berg@intel.com>, 
-	Gregory Greenman <gregory.greenman@intel.com>, Benjamin Berg <benjamin.berg@intel.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Robert Richter <rrichter@amd.com>, Vinod Koul <vkoul@kernel.org>, 
-	Chunfeng Yun <chunfeng.yun@mediatek.com>, Hans de Goede <hdegoede@redhat.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Nikita Kravets <teackot@gmail.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Stanley Chang <stanley_chang@realtek.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Abdel Alkuor <abdelalkuor@geotab.com>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Eric Biggers <ebiggers@google.com>, 
-	Kees Cook <keescook@chromium.org>, Ingo Molnar <mingo@kernel.org>, 
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>, Daniel Bristot de Oliveira <bristot@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, 
-	Abel Wu <wuyun.abel@bytedance.com>, John Johansen <john.johansen@canonical.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Eric Snowberg <eric.snowberg@oracle.com>, 
-	Takashi Iwai <tiwai@suse.de>, Takashi Sakamoto <o-takashi@sakamocchi.jp>, 
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Mark Brown <broonie@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	linux-ide@vger.kernel.org, openipmi-developer@lists.sourceforge.net, 
-	linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, qat-linux@intel.com, 
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, netdev@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org, 
-	linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
-	linux-staging@lists.linux.dev, linux-usb@vger.kernel.org, 
-	linux-fbdev@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, alsa-devel@alsa-project.org, 
-	linux-sound@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, David Howells <dhowells@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Sergey Shtylyov <s.shtylyov@omp.ru>, Damien Le Moal <dlemoal@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, Daniel Scally <djrscally@gmail.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Huang Rui <ray.huang@amd.com>, "Gautham R. Shenoy" <gautham.shenoy@amd.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@redhat.com>, Jean Delvare <jdelvare@suse.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Tony Lindgren <tony@atomide.com>, Adrian Hunter <adrian.hunter@intel.com>, Hu Ziji <huziji@marvell.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Potnuri Bharat Teja <bharat@chelsio.com>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>, Kalle Valo <kvalo@kernel.org>, 
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>, "Oliver O'Halloran" <oohall@gmail.com>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, JC Kuo <jckuo@nvidia.com>, 
-	Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Sebastian Reichel <sre@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Helge Deller <deller@gmx.de>, Brian Foster <bfoster@redhat.com>, 
-	Zhihao Cheng <chengzhihao1@huawei.com>, Tejun Heo <tj@kernel.org>, 
-	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <116d80cb-7dce-41d6-b279-90201e253d7e@drhqmail201.nvidia.com>
+Date: Mon, 10 Jun 2024 02:56:48 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF0000000F:EE_|SJ1PR12MB6196:EE_
+X-MS-Office365-Filtering-Correlation-Id: 516b260e-407e-44e1-f09f-08dc8933a9c1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|7416005|376005|36860700004|1800799015|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a0xXUVdpbWdRelZMQVJzczFBZlE4WXlIYW96c3Yyd010SW05WWhaYytBb21j?=
+ =?utf-8?B?UzljTlF6YkszSE9sMDcwbnNpRXEvSVpFMkVlVmxxdTNXa0FGUTh0Z09CZTQ1?=
+ =?utf-8?B?VE9TbDNpc2srbDJ2YXVxNmRkRC9PU1A4ZmhmQ3d2Y2Q3MDdSVnNsT2dPNFVt?=
+ =?utf-8?B?eVEwbndRZXIwdEMyMlhpWmNDSDRtelVRTE02UDhmOThRYjJ0amxyNUkzbHd0?=
+ =?utf-8?B?aVlzOFNSanhISHBsRnhXY0FDVzI3VnNESit4RFYxL3l4U3JFOHVXU1prUHEx?=
+ =?utf-8?B?UlFGQ2c4aFJYN1liTnFDZ20yUnowTFRzT2E0MlZ5TWpOU1FmbndOUXFGMjNm?=
+ =?utf-8?B?UzB4UGFQZlhGWll0QzY2TjViYUs1WW1MMVhGV2V0cDFYenJUMEhkM2tPZ3ND?=
+ =?utf-8?B?TTk0d2ZQc3kyWmJkNUFWZjE3OGFwZnQ2WXlOcVJ3T2JLUzdyVXhWMzkremhB?=
+ =?utf-8?B?a3BYemxiMmE0eTUzV1kzck5VYUk5QlhiZGVwRkZnd2YrQTlIWVRnTEIzTWl1?=
+ =?utf-8?B?dDdta3pZckM4ZUIyTDU1b3NjL1ZzZGNQVmc1MG5wcVdwbVFxSWRIMVhBK3BR?=
+ =?utf-8?B?Qk5qUG1hQkRvcWUxVUxxOERmb1FNem1ZZTVZSlRoZUJHNGpjZGo4UnZDUVc1?=
+ =?utf-8?B?RkM1T0pBZGxaMUhianc5MHZFS0IyL0dzNmtkRVJwd2RTcTlFZWFkUDJZMXJM?=
+ =?utf-8?B?VWlTQTVQMDVjUE1XQi9zK3ZLSGRHQW51Q0F6dTNpUnRiYzg3d0EwcUN0Zitw?=
+ =?utf-8?B?aGJqQmx1VUdDcFRkMklVakJ0dzAvd2JiMFFIaTc5QTAwbXpxeDE0MUFHU0hh?=
+ =?utf-8?B?LzYzWWxQMkFzNXJ0OUtwejd0eVJWUFppY3Vkd3lPM3lhS0JBOE94QXVRak1y?=
+ =?utf-8?B?bDIxMFFzc0p2MitySWJLYzJZM0tnZnJpdnhSNG9ud1ZwV3hDRWc5YWdBL0hu?=
+ =?utf-8?B?QzlNSVJVeGJYVUdLcUFHOHpJZW9CekkxMHNsRkV5YXM3VmY2NXhCUFk5ek1l?=
+ =?utf-8?B?djlkK0wxVG5YaWMzUFl6T1ZmSG1tTzBrVTBwejVPaVNEbUdQM0REa3pPMFVF?=
+ =?utf-8?B?T2xNSmYwWWtaYnBoWGRhY3ZXaXc3QWRXZ1lrajQ5MDBjZ3gwVUpPOWJDcWdp?=
+ =?utf-8?B?RmJudjl3bjh1Wk9xYWdOUDlRajcwdmJuTnZwR0JnNFU2WDNTdzRSUFNPV3Qw?=
+ =?utf-8?B?N1JsQmNaMFRCUGxlZWFpaE9nbGtIejhCQ1pPV2c5RFUwK3dUZTFVQ2x4VDlN?=
+ =?utf-8?B?QlBaa0tRU2FBWjhVMG4zaVQvelYxRndCRVVFelNpTDFJclV6anEra2RFSGFV?=
+ =?utf-8?B?RGs0RENQelgrelpCT09WNFdUcEVCK0Q0UHNxdk0zRmM0ZmNNVXQ2a1h2cDZ2?=
+ =?utf-8?B?dXlMdFdmQmtvK0dQejhsUVFkUEF3b1VFTU8yODQ1MTdxTXMvR2wwMUJublhX?=
+ =?utf-8?B?Und0NTJJbENxckh1aHQrdUpPemg4VEk1aDFIcG1qTkRnb0VtWGRtZzM0ekw5?=
+ =?utf-8?B?V0QxNjhiQWpVRVhSemVVRGwxUk5wRURhWXZqMldmMXlCRnNMeVRCWU9hNjJZ?=
+ =?utf-8?B?Mkl5OEVBU0VRM3pUNEkvdVdEbkpTYy9LUGRGNFdnMUJWOWJ1WjB6WVcyY1JM?=
+ =?utf-8?B?TmxSUVV2cGhyK2FrR2pyRHVXSXRBMHBkbHZ6Q2NWS2xSRUl0QlJKWGhDUUtK?=
+ =?utf-8?B?Tzh3cGRYeGdVZmVBZFhzdForRStQVUVNL3U0VEJQK0YycUltb0owbmtNcTFF?=
+ =?utf-8?B?clJmQUw0ckQ3QWVUbGc1TzdEbU5FSkZHbTBOVnJKemw1RmE4S1FNZE5ONkZm?=
+ =?utf-8?B?S2dWYlczYk9wVUZaMVBRQ0Y4cDhpUWJENzhKSHJYMjlHamI5bTVoVm9mMHQr?=
+ =?utf-8?B?c1NiY1FYVDBNVS9yWWllWURUcjJBQ3VkQWJXQXNrV2xFQlE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(7416005)(376005)(36860700004)(1800799015)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jun 2024 09:56:56.2758
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 516b260e-407e-44e1-f09f-08dc8933a9c1
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF0000000F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6196
 
-On Tue, Jun 4, 2024 at 9:46=E2=80=AFAM Jani Nikula <jani.nikula@linux.intel=
-.com> wrote:
+On Sun, 09 Jun 2024 13:41:16 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.33 release.
+> There are 741 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 11 Jun 2024 11:36:08 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.33-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-[Maybe slightly off-topic, ranty]
+All tests passing for Tegra ...
 
-> Why do we think it's a good idea to increase and normalize the use of
-> double-underscore function names across the kernel, like
-> __match_string() in this case? It should mean "reserved for the
-> implementation, not to be called directly".
->
-> If it's to be used directly, it should be named accordingly, right?
+Test results for stable-v6.6:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
-It's a huge mess. "__" prefix is just so ambiguous I think it just
-shouldn't be used or prolifierated, and it usually breaks Rusty Russells
-API rules times over.
+Linux version:	6.6.33-rc2-g7fa271200aef
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-Consider __set_bit() from <linux/bitops.h>, used all over the place,
-in contrast with set_bit() for example, what does "__" represent in
-this context that makes __set_bit() different from set_bit()?
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-It means "non-atomic"...
-
-How does a random contributor know this?
-
-Yeah, you guess it. By the token of "everybody knows that".
-(Grep, google, repeat for the number of contributors to the kernel.)
-
-I was considering to send a script to Torvalds to just change all
-this to set_bit_nonatomic() (etc) but was hesitating because that
-makes the name unambiguous but long. I think I stayed off it
-because changing stuff like that all over the place creates churn
-and churn is bad.
-
-Yours,
-Linus Walleij
+Jon
