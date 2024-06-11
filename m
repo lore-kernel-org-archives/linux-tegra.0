@@ -1,168 +1,103 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2067.outbound.protection.outlook.com [40.107.93.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39172172794
-	for <linux-tegra@vger.kernel.org>; Tue, 11 Jun 2024 07:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718092591; cv=fail; b=nZk8cjhoR5kobCr6eSgWKlMMppmQ25yeGK83tFBsgXBDm6SCugwg5+ZocerNCOhcLYs8vUSNMymiyf8YnEjQc55xBvPemo4Jzwkmh29zDNmJNaIsXcZpFS/Lh+FA6YBDHa+690RvrvMVJcPJbC0zu9wSZOLIbvG1f9xkRq0Pvkk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718092591; c=relaxed/simple;
-	bh=HD22XPabmz5Ef0AJCCaWVaYNk5yMzOSnz8hNPpiu7Mo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jy2xsCSO7oko6k4Dr1+dm3xXnqmACzmoJ8xARB7mAzYKFkIMe0syPptf+QDq4ssaqrXqLZzyQCXLtnVRq0ECBSaw858LvH/rZlf8DmUlch96F6pRAuJ8T8x6HIah8OMjwTfpbGLzuthEl2GYXB8H05WX/8ccc3c+rT47sdHoWh8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZQuG/FI2; arc=fail smtp.client-ip=40.107.93.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZQuG/FI2"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KjFUZZnaHJhR6+VI7eYOMI2xbmMuJbGcGVBwONSIUyjdASqNxHydQaviM4xxBjyEgsSoansr5xfhupOBTK+6Ps5lqdsFGonk++APitbK2dElU5Wf6F6xbpZ1MVSBnzdDKsf48B/XB5waF1rBx4qTbHnXj5enRIZb1ne/7lM2HoHkIBwVduSrSsjpBGQe2xhuThmpl5TJYf96aJXfw5CASJZLndSfG0RXW6DiurtYOcKCylr9PSo+D4VYP5Pj1eVeRmgti0HZOObFuBob15z5ui18ushGEmhU4RDN+oeJNuTK9PhLf1dxmlZgvfDJ0f/rKBRxN+3s0zD7aFlCBX3TMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YpK5+xXnGPGopcg8XfwA9gIL+8BbiNPAgwMGOsEn9SA=;
- b=HtPMyyjWWz6ag3XXB5VYW+LUtFvP6844AId8/3d/bxY2LVy/CkpXI+AY181heFbdL/8Z/FJVML7ehPhv1NfQ0pL0JXitPZv/AnjtTbDZBo/n9GYYTHDC4Uj2+yyHTpYOViuDxqDjV6LdpadOShlIt/5pXxjnc5eZMrLc3cTR7NKI+V22SPvSlRuTG9eJ/CQyEspm4XtGYnNo9h9+CXfqByayWsfyEYEMKSZnENd35CFfPApITxg3tDnMFlE0dqfboMSki5RSGy10w/YPWFym6/Y8f74FgwskY1b+OQsSQBfDRj6jTPU9kp9Id7SXAIXqpGIqw2DE33LdG6lKd75giA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YpK5+xXnGPGopcg8XfwA9gIL+8BbiNPAgwMGOsEn9SA=;
- b=ZQuG/FI25P2QTn1f3qifSHHD2pseeM3d7wtHkJHblWtLZwTIK5cJC4OBYFwFJzEWpkPWCj2avpe/B2DGF5OrQINZzSoNpBuftA2B9eb2O7XXoah2PCds4lhSKqrQUWllTkDMucbQgQikfAoRMRQrv2FtFVgO40HGToDXoPdfrvCDziPJObm2gYNBbAPhXOl4qfhQplDBMSG+rBxQlZufMeY4WaupUqUhUEUy8y6Vsp9BsW2In4at+zOz6TaFmHvyfLBICHU8CO36hom63yS7fWk13pb+JvMcSM4+U3t8WMNkQFrjF7oSiif7svbLSrxg3yXavJDmvS2khUlAwgXtzA==
-Received: from PH7PR17CA0029.namprd17.prod.outlook.com (2603:10b6:510:323::23)
- by DS0PR12MB7970.namprd12.prod.outlook.com (2603:10b6:8:149::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.25; Tue, 11 Jun
- 2024 07:56:27 +0000
-Received: from SN1PEPF00036F42.namprd05.prod.outlook.com
- (2603:10b6:510:323:cafe::37) by PH7PR17CA0029.outlook.office365.com
- (2603:10b6:510:323::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.17 via Frontend
- Transport; Tue, 11 Jun 2024 07:56:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SN1PEPF00036F42.mail.protection.outlook.com (10.167.248.26) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.15 via Frontend Transport; Tue, 11 Jun 2024 07:56:27 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 11 Jun
- 2024 00:56:15 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 11 Jun
- 2024 00:56:14 -0700
-Received: from moonraker.home (10.127.8.9) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Tue, 11 Jun
- 2024 00:56:13 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>, Petlozu Pravareshwar
-	<petlozup@nvidia.com>
-CC: <linux-tegra@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2] soc/tegra: pmc: Simplify resource lookup
-Date: Tue, 11 Jun 2024 08:56:03 +0100
-Message-ID: <20240611075603.65118-1-jonathanh@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1FA174EEB;
+	Tue, 11 Jun 2024 08:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718095831; cv=none; b=hftt5o8OoXxG0wRv+b4a2GsF8RMjDSgffuOyscDRNOrUGtLBm30S80K26QiLZjxKcIFTcOCs5+tuRWvRFCmxpMfJlmcmteY0noWb82bpOg05qAMzhGe/VdV2tLS3IyS89CPmOUmsHeS0+yZWNbmevkns0tPIVXlSjYFrhW1osz0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718095831; c=relaxed/simple;
+	bh=Tz0c5VcTfHJlV2uX+Q+nERoAMIrZpPDtHjcTjqCCVNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NQRRWfFz6L6s0kLyXKc9BmOMdc47vbR+qybGa8fJTsQbdvLRzy7RxSXmVwswpODEt94iXHqHqRFdD2IOd+00usbny3R70LO5Gflv8ldR2vzTLN5QMj63v563YOSiO3dlfi8CdqENGjh0e5ir2xN/b8/j24WvDh7M6brRmsT2CLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sGxBT-0000Ne-00; Tue, 11 Jun 2024 10:48:51 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 023C9C0120; Tue, 11 Jun 2024 10:41:16 +0200 (CEST)
+Date: Tue, 11 Jun 2024 10:41:16 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Celeste Liu <coelacanthushex@gmail.com>
+Cc: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+	Anup Patel <anup@brainfault.org>, Guo Ren <guoren@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+	Sven Joachim <svenjoac@gmx.de>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Arnd Bergmann <arnd@arndb.de>, Mykola Lysenko <mykolal@fb.com>,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-tegra@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-sh@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lennart Poettering <lennart@poettering.net>,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: Re: [PATCH 3/6] mips: defconfig: drop RT_GROUP_SCHED=y from
+ generic/db1xxx/eyeq5
+Message-ID: <ZmgNrOr1nalSTeja@alpha.franken.de>
+References: <20240530111947.549474-8-CoelacanthusHex@gmail.com>
+ <20240530111947.549474-11-CoelacanthusHex@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00036F42:EE_|DS0PR12MB7970:EE_
-X-MS-Office365-Filtering-Correlation-Id: 065f9f29-ff2f-4792-802e-08dc89ebff41
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|376005|1800799015|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zrR7t87vhDQdmEaErp9BktdCfgYfY3TzEQbnZV/n11mcfJ0tKRV8E7q4NZny?=
- =?us-ascii?Q?lNS8b58xx1h5WNcfpd6kfDtyGlCGKrl8Ne2JPcpqHq5uyOyMxTqB6rhkKG4a?=
- =?us-ascii?Q?krN/yecrfz5ylvf05PLXDHCWYotX57HQih2irNkufTXS6Ax7gQQCXgWWEUOQ?=
- =?us-ascii?Q?eFskuc1ToMSqbdRhx4bDAchZiWRFAGNPpC4b4XDDmX9dNJB2yZkD/HQp61Cj?=
- =?us-ascii?Q?DwxT3E8aZre3qJpK/sY7L30ACvyorNVDtc1mL+04dx1IdmLc9ae351gtDugg?=
- =?us-ascii?Q?G2nsy/UWXRvuXneGtV7DQnsU4KSpC3BIB0CNqDC2STIHn9NZozLZH+LV/gLn?=
- =?us-ascii?Q?nNWFCc4hrInYD1YueLqaKPkd6Df0fGfs9w8W3/LN2voE7OBMDJxrcK9Uo5Jb?=
- =?us-ascii?Q?gkjw4cRNT171UoFzuskdpfc2wrL9zSYiM79NtZDiyHuAaD3b1bwKnIQ5cKvT?=
- =?us-ascii?Q?La/h9vS8OquerrxvMmU+e1yE6AnrvUoxiYeqdHCE+IF304S1mxRymps2Mtfw?=
- =?us-ascii?Q?ZpOfGPhS1d3AsXRTmaa24hAPsXSgIVEuqX6eUMP3EXfL3gbZS27+hvGycs4c?=
- =?us-ascii?Q?9UpRvhn6FK1UOtVsTejfNxnNHUbEmIfDzR4rlh5diyLPJMs4YEQheeng4jWr?=
- =?us-ascii?Q?QjK/s8anVQxS7DdCYLqHyybPsyBJVEhArlNrVd84ULKcShmFQlHjLn+qCXug?=
- =?us-ascii?Q?zTURiNzFOQ1chRaSmSqkUWOy/3jHD4VieeNoHjRHF0rZd5IwYXprI2RkfHR7?=
- =?us-ascii?Q?4PECCHaG47DtJrfDaHwsZ/px4G+BwV/GnPALt2eLMTIsGWA3yU0FhDpJYpbt?=
- =?us-ascii?Q?DOfK9xQzmC83idYgjpLQOUebSKQKaFNqlQyuEPqlOUwPBEqrDGoDw7PyNWJ1?=
- =?us-ascii?Q?PAor7rBpbpchAkBs/jlnPM6T2sst7piiKCapNnZGZOwtN2H3Sv9s2JWV7I8T?=
- =?us-ascii?Q?gxdxAVXGxtTPkS/bAZ4pv3ir+nQGC6k4EpTWvBFA8rU8sha1zSK87BEnpowQ?=
- =?us-ascii?Q?iFvaZit2iqGUdKs8SO1O/9/nlqzptJKFKFesAkR/4IvgfvyNxJAQ7OEUMeOO?=
- =?us-ascii?Q?Rvr8w52wSwkHpSZiuz8Fb72cDhZBd920DnK13rU7NNvfBRrD/y5vI6roLEv/?=
- =?us-ascii?Q?0/HvcISzEdcxkIqTt8yRGI4oSFnA12TQdqbnDJPFecQ4IhvwieQmwkqqMEF0?=
- =?us-ascii?Q?9xWUMrBtX5oIMin3Xoccr8rZ6DqwKPnLaOQqfcMMDgchCkEVgsruECTQLUR0?=
- =?us-ascii?Q?HodDmZOuSyJKpdOozMJVn7mJwnfcswJJsUKGUAZ54tsGKgcPJFHnyiv4vke7?=
- =?us-ascii?Q?WpFTNbMXusf2pKzD8qfSFztmkUko6LMWBKloRkg4F9PkN0VmWH0eefUFBt8v?=
- =?us-ascii?Q?3bhhC2xXJGuZ2hZVKhmjSQZhywYOUcxMYFQikbZsNy0f0tH9cw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(36860700004)(376005)(1800799015)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jun 2024 07:56:27.1007
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 065f9f29-ff2f-4792-802e-08dc89ebff41
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00036F42.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7970
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530111947.549474-11-CoelacanthusHex@gmail.com>
 
-Commit 6f4429e21a7f ("soc/tegra: pmc: Update address mapping sequence
-for PMC apertures") updated the resource lookup code in the PMC driver.
-Instead of calling platform_get_resource_byname() and
-devm_ioremap_resource() simplify the code by simply calling
-devm_platform_ioremap_resource_byname().
+On Thu, May 30, 2024 at 07:19:51PM +0800, Celeste Liu wrote:
+> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
+> needs an RT budget assigned, otherwise the processes in it will not be able to
+> get RT at all. The problem with RT group scheduling is that it requires the
+> budget assigned but there's no way we could assign a default budget, since the
+> values to assign are both upper and lower time limits, are absolute, and need to
+> be sum up to < 1 for each individal cgroup. That means we cannot really come up
+> with values that would work by default in the general case.[1]
+> 
+> For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
+> can only be enabled when all RT processes are in the root cgroup. But it will
+> lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
+> 
+> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
+> support it.[2]
+> 
+> [1]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
+> [2]: https://github.com/systemd/systemd/issues/13781#issuecomment-549164383
+> 
+> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+> ---
+>  arch/mips/configs/db1xxx_defconfig  | 1 -
+>  arch/mips/configs/eyeq5_defconfig   | 1 -
+>  arch/mips/configs/generic_defconfig | 1 -
+>  3 files changed, 3 deletions(-)
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
-Changes since V1:
-- Update commit subject and commit message.
+applied to mips-next.
 
- drivers/soc/tegra/pmc.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Thomas.
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 91d0ad6ddefc..6c37d6eb8b49 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -2891,15 +2891,11 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 		pmc->aotag = base;
- 		pmc->scratch = base;
- 	} else {
--		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
--						"wake");
--		pmc->wake = devm_ioremap_resource(&pdev->dev, res);
-+		pmc->wake = devm_platform_ioremap_resource_byname(pdev, "wake");
- 		if (IS_ERR(pmc->wake))
- 			return PTR_ERR(pmc->wake);
- 
--		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
--						"aotag");
--		pmc->aotag = devm_ioremap_resource(&pdev->dev, res);
-+		pmc->aotag = devm_platform_ioremap_resource_byname(pdev, "aotag");
- 		if (IS_ERR(pmc->aotag))
- 			return PTR_ERR(pmc->aotag);
- 
 -- 
-2.34.1
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
