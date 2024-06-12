@@ -1,186 +1,207 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2041.outbound.protection.outlook.com [40.107.93.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEC512C53D;
-	Wed, 12 Jun 2024 21:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718228767; cv=fail; b=QWCHemO0Uf8b00SLCeK4bAALt20CnC6q1ZiijsGFOt9gQh3lozK97UVLnRziGb6VSkHbZVAQ80SMrgNczadIO0WJQXYCRfTuzThaR/oA0qoWvP5GqOsjwR7XCGxBevywCGP6yXGeCbqBtrUV6eoHo1O7of13I/f0X35mM6a5Cgo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718228767; c=relaxed/simple;
-	bh=xH5s7JvwsiYQLh5gUauFhjPvNmck7XmBLAzXmVrg8tE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qazYSx4k+k591ELWdvd80/r3ou+IlGXPRSZUm390OUA8IqJ4bFXMcbtLLBSjFOR7zCs5ANTXfqucU6g9iepZKywJdF2ZzWtjBnazS8g1ZVZ7SyzJPrC3u5sI1IJKVRyD0IStKKf8RCo93fBY/NIjkgng9IR3I7HKn4ntgZDudXo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gC6nS954; arc=fail smtp.client-ip=40.107.93.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CB71DFF0
+	for <linux-tegra@vger.kernel.org>; Wed, 12 Jun 2024 22:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718231086; cv=none; b=NQbRc4iUi/S9lwlNdLWcVEgLvyscLhY79nDd/3rvYdxlGEngS9nN+heY2ErKhsCINAW5r4dBmXRUyzgbwkKgBUs4NQF99EM2OH5cbfJkj+KtAvCOQVu/2/pfwJUM6yHazHEV7F5C+yRGZmbiZCLkPLj046OyeXROEGF+ImMtZ2I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718231086; c=relaxed/simple;
+	bh=p/wmu+4wYl/wqNke/QhUcX7EKLyt1KgUpm4CzyEB4AE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I8ABZ+/lzKGOv5YZfPJ9FovTPau3HjZ1EYL42xE5QL6z8mOQpLUgZbFlYxwYKrutGY5BTpt+ryZOJjtqvqdNrlcyhihFb+Zunk4A7Vnbs5o2SozbpJuPvSRA7sNj/ApZb6gH1KdYtkhAhrszU4u1tcc5QR4m7M4ZR6xpGxLI1ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XXfhtB10; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gC6nS954"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MnPNpgoXzxWRtpBj/bVT0neSrRcYJpc4zy45TvTmrthD6Iuv6FaC+4OInGIfY+2vJ90opG0akeUNQgMLV5cAph9R1OzTWDBGDeGt/ZHnc1ss1fTVYq7GfLkox9VvV5T3CkcbxmV45dzst0WXvyZsIAvvMUU1bpED8CWQqspH3Yo532XOuy/FfudkobDYO1oDW0sIDKAz/uiH5nGSplmJH2kWNxL+EoI4Sxxdfq9H+8cytFnCinrNS0Bbe0m4kS+FhDMsI/PGmjlZtqr8tA44UyJraVak39Idn65Its/RAsekpDIOMJ4CG4MrE2CjdAe5oDDcPfe7avzyCfPVG9oQPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xMyP21saEB1xdQavsR2dcpHJX3F77VNVbvhPlP2ZKsA=;
- b=JI1PFOCo8PdhixoKdaALsdR/0DufMNqRPO8+J0IlfF3JIGu8Ap5q1auEAnYG9nPHexSJMAB93pcrtXQy0eDTzdz7X8fWP9fk2YgHDojf7B45+aNfO/LLrZfLuKu9pj1HGchWlexqUpiXVZ+xUm3s5KBFMIYouU+8YSXQy4WQm0Q7x/v5wzni635loFfbMRcyxTS1EfY6EIG8kwW7sl02pgOx5f8ettkpbB+s4V5GrLnlCYjQgS6NdeuFnFQ8vqTpvTf8bQLBilZfSDWI0TnzGnLxGjD741tnYKbnHWjQUmu15AaTs96CZe+Y1J/UnW4T2AG73ocAlewMGEmqQx0Fjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xMyP21saEB1xdQavsR2dcpHJX3F77VNVbvhPlP2ZKsA=;
- b=gC6nS954Qsgq2/gtzN7zheEvY7L7rx2rwPSqEEJ4QZUAYIvtQrnCjndoZaWNhb/PMSS18tE3XZTbbDo+UeMSmgI4m6SpH/l1rJcXKp6zFK61nDWyh41wn6v2gkbpuJN5T0fCdvRV0NZUklOvWINfZuIiNEemcZU8YPWdSvjTyhWHUauG+uTREvOZcrCdXqB7iUC1zXkC/+SvuRx+62lT12cIrVIACRsV2GU6WnPf/2dW9RRPzJXCHVqyoV3A0m3ussIjYv8b9mmrJVBaeASfZLXYyil7mjIHKX4kGd9ltMdymy/7qwr/jKItPEXL15uxeo5TF7etp3pP0Sir9saD5Q==
-Received: from SA1P222CA0015.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:22c::33)
- by MW4PR12MB7215.namprd12.prod.outlook.com (2603:10b6:303:228::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.36; Wed, 12 Jun
- 2024 21:45:57 +0000
-Received: from SA2PEPF00003AEB.namprd02.prod.outlook.com
- (2603:10b6:806:22c:cafe::a5) by SA1P222CA0015.outlook.office365.com
- (2603:10b6:806:22c::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.21 via Frontend
- Transport; Wed, 12 Jun 2024 21:45:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SA2PEPF00003AEB.mail.protection.outlook.com (10.167.248.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7677.15 via Frontend Transport; Wed, 12 Jun 2024 21:45:56 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 12 Jun
- 2024 14:45:44 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 12 Jun 2024 14:45:44 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 12 Jun 2024 14:45:43 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <will@kernel.org>, <robin.murphy@arm.com>
-CC: <joro@8bytes.org>, <jgg@nvidia.com>, <thierry.reding@gmail.com>,
-	<vdumpa@nvidia.com>, <jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
-	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-tegra@vger.kernel.org>
-Subject: [PATCH v9 4/6] iommu/arm-smmu-v3: Add CS_NONE quirk for CONFIG_TEGRA241_CMDQV
-Date: Wed, 12 Jun 2024 14:45:31 -0700
-Message-ID: <d20dc9939523fac490bc02e57d7836f680916a36.1718228494.git.nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <cover.1718228494.git.nicolinc@nvidia.com>
-References: <cover.1718228494.git.nicolinc@nvidia.com>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XXfhtB10"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f717608231so3121145ad.2
+        for <linux-tegra@vger.kernel.org>; Wed, 12 Jun 2024 15:24:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1718231083; x=1718835883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hvJdqdXbOsMsvfolWLIhz5jKfl0lZRFyGewDbo4ybFE=;
+        b=XXfhtB10ztNzpumwlwt2rnGNCPYoTiOj7Tws/arWbAR+ymXKP27s9nmRy8iMvm9SIG
+         79+6AXFi/l4jdaF1lF4nBhozQWSUhZlS/NAKeKP1pQK6KGl9io3EPEdBdYkrQUIFA3Qn
+         3Gx8QEtZ4osTugneQmGVpo3XaV1sBgysHGRG0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718231083; x=1718835883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hvJdqdXbOsMsvfolWLIhz5jKfl0lZRFyGewDbo4ybFE=;
+        b=Rxo8meZl2jiirEWSZz7XWopKB3eKOZjE29+XWQWfgV9vabmORLEOGIUDxhVbtCX8wX
+         b8e2ZChhPw0ZDZzsH+/47374dHKjyRlaxSZmLf0jTi+CS6W13EyKxKoM8aNkdUe0GjIH
+         QdQmu2cEllqbi8glht2OdB0S5ZVpBvDRTkMkP16DdlJSuue5UhTi4nqNzuvj+1pbMXGf
+         XIyAsLCjRECEOXJj2aHfL4xCOBv2fqleHMCSGZ3ciPtHkyI3Vx/F1QGPo7g4kBLbx93a
+         tiKvHD/es/eTn/AcqxYwWiS5MFuvNYXPuWgP34oSv+/EjDebnyQEYJVhEXTc2nRBTPzY
+         qCOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOubQPQXB3PYu5cgXYtwS0yy+HUexefQyAKKwOXU/yXfMXzNsf4YWEPicn0HGAay/wsgbbjDGjx8VXIUrCLflHACr0N/Q+fyO9O/g=
+X-Gm-Message-State: AOJu0YwFokjBIL2fD5SvLFW1jZMgF08MErtFxeISyYehyddChL8G2dX+
+	74LBMexPQ6+7+o3Eqm+YYzMiR4HqjuiHXedbpME1TAdxzk5AJx1UpiB+kA/Yvw==
+X-Google-Smtp-Source: AGHT+IFAyr/OLXB4J5n0QdHaEa3zXIRNItrD8acC+tRkbc51QXKJOk4EcFMZStf7hJ6gv4GGb6OcUA==
+X-Received: by 2002:a17:902:e851:b0:1f6:65d3:296 with SMTP id d9443c01a7336-1f83b637bdcmr34717685ad.29.1718231083000;
+        Wed, 12 Jun 2024 15:24:43 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:2816:6a42:9074:18cc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f30acda9sm87914105ad.198.2024.06.12.15.24.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 15:24:42 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: dri-devel@lists.freedesktop.org,
+	Maxime Ripard <mripard@kernel.org>
+Cc: Douglas Anderson <dianders@chromium.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Alexey Brodkin <abrodkin@synopsys.com>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Candice Li <candice.li@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>,
+	Edmund Dea <edmund.j.dea@intel.com>,
+	Hamza Mahfooz <hamza.mahfooz@amd.com>,
+	Hawking Zhang <Hawking.Zhang@amd.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Karol Herbst <kherbst@redhat.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Le Ma <le.ma@amd.com>,
+	Lijo Lazar <lijo.lazar@amd.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Ma Jun <Jun.Ma2@amd.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Shashank Sharma <shashank.sharma@amd.com>,
+	Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+	Steven Price <steven.price@arm.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Victor Lu <victorchengchi.lu@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	chenxuebing <chenxb_99091@126.com>,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	nouveau@lists.freedesktop.org
+Subject: [PATCH v2 0/8] drm: make leftover drivers call drm_atomic_helper_shutdown() at the right times
+Date: Wed, 12 Jun 2024 15:23:40 -0700
+Message-ID: <20240612222435.3188234-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AEB:EE_|MW4PR12MB7215:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25e9788e-575d-4828-06d6-08dc8b290a7f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230034|36860700007|376008|1800799018|82310400020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fV1M2gXZ5jpmDUn+JOkVD5JoHFIzjBIP+Tz4TIgZopJQ06bj4IQIAk85BSyE?=
- =?us-ascii?Q?EIqvd+55a2CUPe2iS0r8QdQKLu7VLywtP1+OuCwtkI0hpZEEcBBvVv4U6t65?=
- =?us-ascii?Q?T7L3as53xmoxiPDuInQt/V3ygiIqJDm0ZRMFH7Ps3wdetVkdn+BnQ+Zd8NrY?=
- =?us-ascii?Q?9Ulkk7YKYTmfSZtLNlS502WPYPvVTIJTsq/DUgGiuk1RHKvnZxYWMLdZG2xv?=
- =?us-ascii?Q?F5qWsb2Ba6neS56rx5o80UpmVzFuEJapMYFNvkN+rjrCb+DoO9Igz0P5G7us?=
- =?us-ascii?Q?v5FfKYW8NwaZNs9DSJvfbAsvvJRc48hnYmWOw/JkXSnez19YpyrK1k51L641?=
- =?us-ascii?Q?WK2Y2teFtm+sLoD6tpQGQxtshs5hFDQOr/uBs0qBqDw13g1NxY9w1HnHBSHs?=
- =?us-ascii?Q?lnqDMwN0TMpNq8SAu1H42hwWr9AA2aP/8lM9In+M4MCb5mg5gJF3JaXEJfk0?=
- =?us-ascii?Q?nNr7RoKZYEPvLee4hKuHqoucHKk2Nrs/28U+JC1njBWZ0XiThE0EiAuUY3CJ?=
- =?us-ascii?Q?24lph6dP/TXi6Dg314rv4uVf9iPgiYCQ+bl27CXqheGklV7lgNyeSyA2vvZE?=
- =?us-ascii?Q?zIVNwgVvmQk1KvsTmb/sMO8qI2cDgQHJoZ4sTjdwmQwHP6WvXcB6sDwWv5cC?=
- =?us-ascii?Q?HDsQFKZb6ySQzGCEcw/hpqZrU6Fao6LMUylVhQ+vwb4mrTZ5q6mEeHP/RJvy?=
- =?us-ascii?Q?4D0WkWrOMisiNGU4J1TG2syU5vl261+U3lobfeRKNGJn4H1an78h9o7yJhch?=
- =?us-ascii?Q?hZcHQ3xFEoXvPbIzcbZTP/xmVWXSR/S9LSeNKR3jDz8ojIE1jYJW3RRil7YG?=
- =?us-ascii?Q?n2LzDLP2KXAdY6db8/yk+EajZqPLdvDRF4sukZsvCZjZDugiOlfaCMoq9e6u?=
- =?us-ascii?Q?k7Eo48lxF70sX6u+99NwLxHrqN/4PC7sW/YcpO8nvwueLyEO+V34W+3CV+Vh?=
- =?us-ascii?Q?MN4EDYXfgupPEDhExISm8oKubadSFn0TBCQewjatijN+HJCbChPlPOwiux4A?=
- =?us-ascii?Q?KZxUOrtdcmEzS63946K3DfDo3OCA2OceA5anwwfQhA/fjquwEJ/Hmok7W32N?=
- =?us-ascii?Q?e05gBzQ8+KtHBMoTltZ6ay0BKZja64tZZcijsPLIPH3w9aB3akKvoTw8yYAh?=
- =?us-ascii?Q?FD4zTbUWdvR1Y2lFjytzpujMgh+R9681CQ5qULeo/dGDPMewfo1lT3zVnQ90?=
- =?us-ascii?Q?tl8naU09RNNA23UlJ8cU0m9/sQEdC/8X2kWdlTImJvtNoyn0ye2KxLRaYPQh?=
- =?us-ascii?Q?wKZfOKYk23WgoC3VVD7SDXrRT9yPo6WXFzHhaYEJPU3L6y/Polr5+5CAffQV?=
- =?us-ascii?Q?Y/QrKdAD3MLKNuNsnGZ6VFL9mpR8wZLL23ChHP2E2DT1lee+d0iHtuupi/G3?=
- =?us-ascii?Q?xbR3Vp9+hVQcp4snSDAdPBoHwbJFFSHtTH3nqTbPYxLdi42mGQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230034)(36860700007)(376008)(1800799018)(82310400020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jun 2024 21:45:56.4847
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25e9788e-575d-4828-06d6-08dc8b290a7f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AEB.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7215
 
-The CMDQV extension in NVIDIA Tegra241 SoC only supports CS_NONE in the
-CS field of CMD_SYNC. Add a quirk flag to accommodate that.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 8 +++++++-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 3 +++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+This patch series is the leftovers of a patch series sent in September
+2023 [1] in an attempt to get some of the patches landed finally.
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index c864c634cd23..ba0e24d5ffbf 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -345,6 +345,11 @@ static void arm_smmu_cmdq_build_sync_cmd(u64 *cmd, struct arm_smmu_device *smmu,
- 		 FIELD_PREP(CMDQ_SYNC_0_MSH, ARM_SMMU_SH_ISH) |
- 		 FIELD_PREP(CMDQ_SYNC_0_MSIATTR, ARM_SMMU_MEMATTR_OIWB);
- 
-+	if (q->quirks & CMDQ_QUIRK_SYNC_CS_NONE_ONLY) {
-+		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_NONE);
-+		return;
-+	}
-+
- 	if (!(smmu->options & ARM_SMMU_OPT_MSIPOLL)) {
- 		cmd[0] |= FIELD_PREP(CMDQ_SYNC_0_CS, CMDQ_SYNC_0_CS_SEV);
- 		return;
-@@ -690,7 +695,8 @@ static int arm_smmu_cmdq_poll_until_sync(struct arm_smmu_device *smmu,
- 					 struct arm_smmu_cmdq *cmdq,
- 					 struct arm_smmu_ll_queue *llq)
- {
--	if (smmu->options & ARM_SMMU_OPT_MSIPOLL)
-+	if (smmu->options & ARM_SMMU_OPT_MSIPOLL &&
-+	    !(cmdq->q.quirks & CMDQ_QUIRK_SYNC_CS_NONE_ONLY))
- 		return __arm_smmu_cmdq_poll_until_msi(smmu, cmdq, llq);
- 
- 	return __arm_smmu_cmdq_poll_until_consumed(smmu, cmdq, llq);
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index 180c0b1e0658..01227c0de290 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -543,6 +543,9 @@ struct arm_smmu_queue {
- 
- 	u32 __iomem			*prod_reg;
- 	u32 __iomem			*cons_reg;
-+
-+#define CMDQ_QUIRK_SYNC_CS_NONE_ONLY	BIT(0)	/* CMD_SYNC CS field supports CS_NONE only */
-+	u32				quirks;
- };
- 
- struct arm_smmu_queue_poll {
+This patch series originally came about after a _long_ discussion
+between me and Maxime Ripard in response to a different patch I sent
+out [2]. As part of that discussion, we realized that it would be good
+if DRM drivers consistently called drm_atomic_helper_shutdown()
+properly at shutdown and driver remove time as it's documented that
+they should do. The eventual goal of this would be to enable removing
+some hacky code from panel drivers where they had to hook into
+shutdown themselves because the DRM driver wasn't calling them.
+
+It turns out that quite a lot of drivers seemed to be missing
+drm_atomic_helper_shutdown() in one or both places that it was
+supposed to be. This patch series attempts to fix all the drivers that
+I was able to identify.
+
+NOTE: fixing this wasn't exactly cookie cutter. Each driver has its
+own unique way of setting itself up and tearing itself down. Some
+drivers also use the component model, which adds extra fun. I've made
+my best guess at solving this and I've run a bunch of compile tests
+(specifically, allmodconfig for amd64, arm64, and powerpc). That being
+said, these code changes are not totally trivial and I've done zero
+real testing on them. Making these patches was also a little mind
+numbing and I'm certain my eyes glazed over at several points when
+writing them. What I'm trying to say is to please double-check that I
+didn't do anything too silly, like cast your driver's drvdata to the
+wrong type. Even better, test these patches!
+
+Apparently most of these drivers now land through drm-misc [3], so
+hopefully they can land. The two that don't (amdgpu and radeon) are
+the ones I'm most ucertain about anyway so I've stuck them at the end.
+If I've totally buggered those up feel free to take my patch as a bug
+report and submit your own proper fix. ...or if there's some reason
+that we don't need to do anything for those drivers then let me know
+and we can drop them.
+
+I'd like to call out a few drivers that I _didn't_ fix in this series
+and why. If any of these drivers should be fixed then please yell.
+- DRM drivers backed by usb_driver (like gud, gm12u320, udl): I didn't
+  add the call to drm_atomic_helper_shutdown() at shutdown time
+  because there's no ".shutdown" callback for them USB drivers. Given
+  that USB is hotpluggable, I'm assuming that they are robust against
+  this and the special shutdown callback isn't needed.
+- ofdrm and simpledrm: These didn't have drm_atomic_helper_shutdown()
+  in either shutdown or remove, but I didn't add it. I think that's OK
+  since they're sorta special and not really directly controlling
+  hardware power sequencing.
+- virtio, vkms, vmwgfx, xen: I believe these are all virtual (thus
+  they wouldn't directly drive a panel) and adding the shutdown
+  didn't look straightforward, so I skipped them.
+
+I've let each patch in the series get CCed straight from
+get_maintainer. That means not everyone will have received every patch
+but everyone should be on the cover letter. I know some people dislike
+this but when touching this many drivers there's not much
+choice. dri-devel and lkml have been CCed and lore/lei exist, so
+hopefully that's enough for folks. I'm happy to add people to the
+whole series for future posts.
+
+[1] https://lore.kernel.org/r/20230901234202.566951-1-dianders@chromium.org
+[2] https://lore.kernel.org/r/20230804140605.RFC.4.I930069a32baab6faf46d6b234f89613b5cec0f14@changeid
+[3] https://lore.kernel.org/r/Zmm6_27GikpmT3HQ@phenom.ffwll.local
+
+Changes in v2:
+- Gathered whatever hadn't landed, rebased, and reposted.
+
+Douglas Anderson (8):
+  drm/kmb: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/nouveau: Call drm_atomic_helper_shutdown() or equiv at shutdown
+    time
+  drm/tegra: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/arcpgu: Call drm_atomic_helper_shutdown() at shutdown time
+  drm/sprd: Call drm_atomic_helper_shutdown() at remove time
+  drm/gma500: Call drm_helper_force_disable_all() at shutdown/remove
+    time
+  drm/radeon: Call drm_helper_force_disable_all() at shutdown/remove
+    time
+  drm/amdgpu: Call drm_atomic_helper_shutdown() at shutdown time
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h        |  1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 10 ++++++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c    |  2 ++
+ drivers/gpu/drm/gma500/psb_drv.c           |  8 ++++++++
+ drivers/gpu/drm/kmb/kmb_drv.c              |  6 ++++++
+ drivers/gpu/drm/nouveau/nouveau_display.c  |  9 +++++++++
+ drivers/gpu/drm/nouveau/nouveau_display.h  |  1 +
+ drivers/gpu/drm/nouveau/nouveau_drm.c      | 13 +++++++++++++
+ drivers/gpu/drm/nouveau/nouveau_drv.h      |  1 +
+ drivers/gpu/drm/nouveau/nouveau_platform.c |  6 ++++++
+ drivers/gpu/drm/radeon/radeon_drv.c        |  7 ++++++-
+ drivers/gpu/drm/sprd/sprd_drm.c            |  4 +++-
+ drivers/gpu/drm/tegra/drm.c                |  6 ++++++
+ drivers/gpu/drm/tiny/arcpgu.c              |  6 ++++++
+ 14 files changed, 78 insertions(+), 2 deletions(-)
+
 -- 
-2.43.0
+2.45.2.505.gda0bf45e8d-goog
 
