@@ -1,104 +1,99 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E4A16D4E9;
-	Wed, 12 Jun 2024 08:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649FE38F83;
+	Wed, 12 Jun 2024 12:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718182650; cv=none; b=bTe3EUoyvnxHsYxhtNRCHFoV9baqoVXVLl0KOHeSKCWn7Mbs6Nne8k5QvZsUv3nWyMzcOqd5XqSBzBwz2FwbxibvY1SP6on/XtyxyKatjZKh5hJYtHmzrGlwLFdFcYSUPUUcke0a9hIqEIcSRwJ3lIES0RcmMln5nKyc1YiqTfs=
+	t=1718194370; cv=none; b=Z1+Tp5M2gbN7NaRV56cMyIs/tEYNXSu1p0xVWSp2utp0KNarkpahIS6Hk32zMdzBR3RCktaKrvevy/YHo7I8mgtGSpNxh+JNQhrSMAbvE6r/3uTBpqlQzCyD65pfRA6Ipn6ZcO3uooyyiiyh4DKWrZrU3EqwpYPfd2TyyV1HbLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718182650; c=relaxed/simple;
-	bh=rSWAv76CS9DrIAWgkBXjqcWjEwCJ0bzwSYtZQcOfclA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fQV9TQyfKEvxwPylW6EW9hQqVBELc+LKGh/Q8X/6zRlbMvct1fKmFwK0JHRN581yCn4DALywSNIGwrkiYOU8bbq7DiMoAxAZRCMaLHwLjcJbE2dXw33Jqi7Z91zcmOxsjrvqsedysvG7YG4tCb1hkYzUbIB8uE75vaUOVk6iNBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RGvDZY9Q; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RGvDZY9Q"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718182648; x=1749718648;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=rSWAv76CS9DrIAWgkBXjqcWjEwCJ0bzwSYtZQcOfclA=;
-  b=RGvDZY9Q91QtwHhbe7JYK7AIl4J/EoQlswJZ0/gx3W0hWgi5qlUrl/V/
-   JhDbMVfrhiDwPv5KuGWyABi6Z4qAa7Pcn2SCDpp2D4RWO3yCIbuJxBc8o
-   77kx+7yzfe981kO0yIY0KVWnzqO8Mk6NQmZcgb288MhHalJypMAXvdrWS
-   uCgccEMMh0SwPCNHejRf4KtDqCznTwEjM4WsnZvJiJiCAIkX3QxyfQLl4
-   6G2w4moQ39EyFrLiStYrJzaQm3K4fv9Fkw0sNKYicrW4UF6HFM6qSQBwD
-   dyBCC9jt58R3SHTRvMOoAdFCR5Yd0KgkJ3zTWlyQJABk8nHMAiZpqZ3h7
-   w==;
-X-CSE-ConnectionGUID: UvLfX0hHQ56z3EQviJTPyA==
-X-CSE-MsgGUID: G9PRM/BRTIWaXs4fGLgu4Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11100"; a="18792158"
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="18792158"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 01:57:28 -0700
-X-CSE-ConnectionGUID: 4zlu8W8fQYeg647hM6IZDw==
-X-CSE-MsgGUID: hUjTRGRTQfiyGkT8Z6hV4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,232,1712646000"; 
-   d="scan'208";a="39582944"
-Received: from unknown (HELO localhost) ([10.245.247.204])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2024 01:57:23 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	Robert Richter <rric@kernel.org>,
+	s=arc-20240116; t=1718194370; c=relaxed/simple;
+	bh=VvWykEFj0IqDX/aWlkXc+2OJkJ4bnwO8Nif0QnQ/jdE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hsCw4lIE+DLcR8oke++gZMQiJvLD3dZRsP9wxq8QlYpBQLwXkgh6vY8k1HVhbX4QIkFXiQei7iLgi9q5OP2lsjkHBZPrzh0id5eZjFG1Gi1pKmF+i/PucpAj5iFqYVUHryUcenEJTTZwpzxL9Vhy7G6qm8jEvTvj9usZcFmaJsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f1dc06298so276667766b.1;
+        Wed, 12 Jun 2024 05:12:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718194367; x=1718799167;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kCzkCVOO/S6I7xxBKf3rQmzVC4qFCdmvbVAR9bBl8wg=;
+        b=LWhl2q7yCgz8FboLl+91EdsGpSRo858erh4R62l86sjyB9dB6aBgGTL74PtM8ARZoy
+         MUIrbGIXQvWA7KUEjPt1/cubMMSpTnbuxWoYUQGPNM3+1DaosSj/rHlGS3nciSceKy7G
+         lL3uNNigNcxmO2CDW2ilZL4wsZWKyUnNXU2UMm8UU0oy9uKGbWTo//qn2/DDbfxQlk9G
+         pR7e3Br64XtOnfWxsZt4rTsV/bJhbAnYzHy4O4QVD4H9aSuulk+v0vmrO7+2x2Q6PTfF
+         2wMHbvhzz6nhF5hw2vB/udtG8gv3rWHxLr7CiWd6iQPUO55x9L4a27OkLvzWCBGSFX8n
+         kDwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVcuXNBk84aOkE45axKIzdsf+9zF04h37hg4DnZSYFkc4O3FV/IyG86OBEEFrzRkcrrBNPWF9/dTm3b+TvRHQdeVdFTSqQQoiNNr0WOQvk2F6maIu2fxqKZ9yLPLElY6Pt3htoeQ2KGkxdSc0lJXFHUJJVFCmENU49I2V8kJ3HAMjGNKfU=
+X-Gm-Message-State: AOJu0Yxh0C8quRpjul4XbHf/kaepS0KNNyPLGxctXV1WfQpLmD8WSVE/
+	ESNxkWfzVAQf1bLOulpji+VV1AZo8VlNdFjw1qFAn/nJf5UKlFDI
+X-Google-Smtp-Source: AGHT+IGR7F62IHl+JO/8MkXnchbbyZFgrbfk/pEQMitawRZHEq1nsIju8Ip26+AE0FN9ZIgHuNsCLQ==
+X-Received: by 2002:a17:906:b1c4:b0:a6f:e01:742f with SMTP id a640c23a62f3a-a6f47c9f048mr94138666b.31.1718194366273;
+        Wed, 12 Jun 2024 05:12:46 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-000.fbsv.net. [2a03:2880:30ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f42166597sm125092766b.115.2024.06.12.05.12.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 05:12:45 -0700 (PDT)
+Date: Wed, 12 Jun 2024 05:12:43 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>, ldewangan@nvidia.com
+Cc: Laxman Dewangan <ldewangan@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 3/3] PCI: Use align and resource helpers, and SZ_* in quirk_s3_64M()
-Date: Wed, 12 Jun 2024 11:56:29 +0300
-Message-Id: <20240612085629.5015-4-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240612085629.5015-1-ilpo.jarvinen@linux.intel.com>
-References: <20240612085629.5015-1-ilpo.jarvinen@linux.intel.com>
+	Jonathan Hunter <jonathanh@nvidia.com>, paulmck@kernel.org,
+	apopple@nvidia.com, Michael van der Westhuizen <rmikey@meta.com>,
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] [i2c-tegra] Do not mark ACPI devices as irq safe
+Message-ID: <ZmmQu15Z2acgAjZQ@gmail.com>
+References: <20240606132708.1610308-1-leitao@debian.org>
+ <ZmhHvpHlkxe4kid7@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZmhHvpHlkxe4kid7@smile.fi.intel.com>
 
-Use IS_ALIGNED(), resource_size(), and SZ_* defines in quirk_s3_64M().
+Hello Andy,
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/quirks.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Tue, Jun 11, 2024 at 03:49:02PM +0300, Andy Shevchenko wrote:
+> On Thu, Jun 06, 2024 at 06:27:07AM -0700, Breno Leitao wrote:
 
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index bde0f5388d06..125fc1cbad95 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -12,6 +12,7 @@
-  * file, where their drivers can use them.
-  */
- 
-+#include <linux/align.h>
- #include <linux/bitfield.h>
- #include <linux/types.h>
- #include <linux/kernel.h>
-@@ -591,7 +592,7 @@ static void quirk_s3_64M(struct pci_dev *dev)
- {
- 	struct resource *r = &dev->resource[0];
- 
--	if ((r->start & 0x3ffffff) || r->end != r->start + 0x3ffffff) {
-+	if (!IS_ALIGNED(r->start, SZ_64M) || resource_size(r) != SZ_64M) {
- 		r->flags |= IORESOURCE_UNSET;
- 		resource_set_range(r, 0, SZ_64M);
- 	}
--- 
-2.39.2
+> > The problem arises because during __pm_runtime_resume(), the spinlock
+> > &dev->power.lock is acquired before rpm_resume() is called. Later,
+> > rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+> > mutexes, triggering the error.
+> > 
+> > To address this issue, devices on ACPI are now marked as not IRQ-safe,
+> > considering the dependency of acpi_subsys_runtime_resume() on mutexes.
+> 
+> ...
+> 
+> While it's a move in the right direction, the real fix is to get rid of
+> the IRQ safe PM hack completely.
+> Look at how OMAP code was modified for
+> the last few years and now it's pm_runtime_irq_safe()-free. The main
+> (ab)users are SH code followed by Tegra drivers.
 
+Thanks. 
+
+I think these are two different goals here. This near term goal is just
+fix the driver so it can use the pm_runtime_irq_safe() in a saner
+way, avoiding calling mutexes inside spinlocks.
+
+Getting rid of the IRQ safe PM seems to me to be more a long term
+desirable goal, and unfortunately I cannot afford doing it now.
+
+Laxman, what is your view on this topic?
+
+--breno
