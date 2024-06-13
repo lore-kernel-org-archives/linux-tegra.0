@@ -1,123 +1,140 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D16B12CDA8
-	for <linux-tegra@vger.kernel.org>; Wed, 12 Jun 2024 22:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6302FA94D;
+	Thu, 13 Jun 2024 13:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718231093; cv=none; b=UmEx4G7UiqVTJpdb2ujUuVdJxUswuMKDXHA+7Pb6JkI/aq7bT0vdYERE8XsVDdKAgi0yeaNQ3poqjDgMfiYz1qJ2ZP107omhWzpk6Uc+ab4jwJGjw8oDrtIDvVZHLWvFVCeMRjqxnJR6KukdlK1Sw7IbVcwosP+mdhZhLPtmvlM=
+	t=1718285309; cv=none; b=n4nkD/hEd3RN446Sp3jxZbf/qiLaRTrwDIkzLYoGAfDWRH9w8vzQj7qPJAdB+trvkPEv2Wh0bk8Ditkw42UWfyrm4OtzqUgDw2HQvOQDxDmq3EyzFEm0GkVfRujHUeirDk8S7zTGsmzczT10nm/gc45krZU9TvNwCAk1B/n5by0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718231093; c=relaxed/simple;
-	bh=t3yv9e1EzMXtPY6KnpScajrOJgyZidM/cqL/We5XO9Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UbO+PlNYm16TNvLOY/AV9COgMVeyEGLXDIJ0nFYcY+BUNzvnRqY+A1h6L4Xy/Bjg743Rn2Uibl0iBD+BrMENhfvYzUpdR+EXgFJ+8Q37V0HuqCAZsliKHLsrWVrxvEU8ButUyzXOxF9R/Vx/+tTA5T1iON9amjLjeSai/WxaXBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dP8qkp8L; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dP8qkp8L"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f44b594deeso3822025ad.2
-        for <linux-tegra@vger.kernel.org>; Wed, 12 Jun 2024 15:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718231092; x=1718835892; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zpmQn9g7cRN67S7SSaIwDQvRoODph3OOMStNp4IKliA=;
-        b=dP8qkp8Lg+k1/d/wQ+63ftRNYeBDI742xoAoNOkKSXgBoCNZwuqLk53ZeuwlGJZcC0
-         FQDIeJ9qBrZU80fkWx1sghO6+QYEkKyRe0ZJC3In/r/sp1hHKsocsqzF1jR2+I0aMsY1
-         SUq2rwVbxT5xYl18m99gcxyNbZDd1lgBRAq14=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718231092; x=1718835892;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zpmQn9g7cRN67S7SSaIwDQvRoODph3OOMStNp4IKliA=;
-        b=eIygrv8KzPamxW5PebGM0FI/ctJHaYqoxywNdMHQ6TDmYOrgLBr3zjeHHvzclzOzpo
-         fTmdIn3v9W6NVwUVjLbEZTk0jvnPWUHDJXxmvar/VmEH958eol5c4Odd19fJnR2heTK/
-         7bDW9tfRT5yyOQNxYVRuqYEnI50dCofVRoQGanmy3rDNeMovcyb+/sZBed/PCeRO2l33
-         hmduv1uTNj0HlZ0HagAtds02s8nnCX/eKJHQg0QjkmuAacAczpiZtpB9FLolSm+DrCnp
-         wzEmiftVlnSpE7Jdw/xPt694DPJ6Wnm4QAzSKkz0aJQ5h3540ZGtvvYB3ykQ/Ly6eBbr
-         LNLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUJkx9f9jBKuA85YeacelOhFPzU/3XvF/TRL5tx63gbq2185St81E6nbE+N5ZHqat4P2VHn/DMHR2bvJT1u8mfdwm8h2rvdcI3H/4=
-X-Gm-Message-State: AOJu0YzYLTLzpD5+hpVr5mH8WrQthsxw8xfDuUiKgxczYzuMfsN6tM/T
-	PqRYugh+/s8v0T06K+Pvhx/EVi0PWNb/UdJLrBILd/LV267KEBMLme07bfEetA==
-X-Google-Smtp-Source: AGHT+IEw5ujOqNAyOIoLP8KuspnMOnAtd7Hh5dDQKTX8TBm9/CzqJoj2TsY6aejmqFawCaR9pN4o7w==
-X-Received: by 2002:a17:902:e750:b0:1f7:2a95:f2f8 with SMTP id d9443c01a7336-1f83b55e32cmr41999395ad.14.1718231091823;
-        Wed, 12 Jun 2024 15:24:51 -0700 (PDT)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:2816:6a42:9074:18cc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6f30acda9sm87914105ad.198.2024.06.12.15.24.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Jun 2024 15:24:51 -0700 (PDT)
-From: Douglas Anderson <dianders@chromium.org>
-To: dri-devel@lists.freedesktop.org,
-	Maxime Ripard <mripard@kernel.org>
-Cc: Douglas Anderson <dianders@chromium.org>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>,
+	s=arc-20240116; t=1718285309; c=relaxed/simple;
+	bh=nubk0vDKJgXmfA6FYE1ih30ymCkvILrmzKak/wr6a/c=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mSZAphWaer0ypPhSa7LL/whayIodIMCcBvC3vpZ+4FmWfmlEf71Hj4K9h442gEo4k34WhV3Osf21Ls6OivB/fqz/f4pbDQ/CwJf4S7KgDMwCtwosU7WbeOjABahYNoPTDJcoOOx1a4rtVEw5F7mSuIR0eFe1I9pXc5RQPLKsXEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W0NX544XTz6K6CM;
+	Thu, 13 Jun 2024 21:28:21 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0ECCB140A70;
+	Thu, 13 Jun 2024 21:28:23 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 13 Jun
+ 2024 14:28:22 +0100
+Date: Thu, 13 Jun 2024 14:28:20 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>, "Lorenzo
+ Pieralisi" <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ =?UTF-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, <linux-kernel@vger.kernel.org>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 3/8] drm/tegra: Call drm_atomic_helper_shutdown() at shutdown time
-Date: Wed, 12 Jun 2024 15:23:43 -0700
-Message-ID: <20240612152336.v2.3.Ifb4450979b62976fd5a98847dade2e5b377d47c8@changeid>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
-In-Reply-To: <20240612222435.3188234-1-dianders@chromium.org>
-References: <20240612222435.3188234-1-dianders@chromium.org>
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	"Robert Richter" <rric@kernel.org>, Thierry Reding
+	<thierry.reding@gmail.com>, <linux-cxl@vger.kernel.org>
+Subject: Re: [PATCH 1/3] resource: Add resource set range and size helpers
+Message-ID: <20240613142820.00005c77@Huawei.com>
+In-Reply-To: <20240612085629.5015-2-ilpo.jarvinen@linux.intel.com>
+References: <20240612085629.5015-1-ilpo.jarvinen@linux.intel.com>
+	<20240612085629.5015-2-ilpo.jarvinen@linux.intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Based on grepping through the source code this driver appears to be
-missing a call to drm_atomic_helper_shutdown() at system shutdown
-time. Among other things, this means that if a panel is in use that it
-won't be cleanly powered off at system shutdown time.
+On Wed, 12 Jun 2024 11:56:27 +0300
+Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com> wrote:
 
-The fact that we should call drm_atomic_helper_shutdown() in the case
-of OS shutdown/restart comes straight out of the kernel doc "driver
-instance overview" in drm_drv.c.
+> Setting the end address for a resource with a given size lacks a helper
+> and is therefore open coded unlike the getter side which has a helper
+> for resource size calculation. Also, almost all callsites that
+> calculate end address for a resource also set the start address right
+> before it like this:
+>=20
+> 	res->start =3D start_addr;
+> 	res->end =3D res->start + size - 1;
+>=20
+> Thus, add resource_set_range(res, start_addr, size) that sets the start
+> address and calculates the end address to simplify this often repeated
+> fragment. In addition, introduce resource_set_size() for the cases
+> where setting the start address of the resource is not necessary but
+> note resource_set_range() is preferred.
+>=20
+> Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
-Suggested-by: Maxime Ripard <mripard@kernel.org>
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-This commit is only compile-time tested.
+We have a bunch of cases of this in CXL. Adding this helper seems like
+a good idea to me.
 
-(no changes since v1)
+I'm not sure the odd semantics of resource_set_size() are a good idea.
+Maybe it could by naming hint that it's relying internally on
+size already being set.
 
- drivers/gpu/drm/tegra/drm.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+resource_update_size() for instance might make people think or perhaps
+that's just more obscure.  Meh, I've argued myself around to there
+not being a better name.
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 03d1c76aec2d..d9f0728c3afd 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1330,6 +1330,11 @@ static int host1x_drm_remove(struct host1x_device *dev)
- 	return 0;
- }
- 
-+static void host1x_drm_shutdown(struct host1x_device *dev)
-+{
-+	drm_atomic_helper_shutdown(dev_get_drvdata(&dev->dev));
-+}
-+
- #ifdef CONFIG_PM_SLEEP
- static int host1x_drm_suspend(struct device *dev)
- {
-@@ -1398,6 +1403,7 @@ static struct host1x_driver host1x_drm_driver = {
- 	},
- 	.probe = host1x_drm_probe,
- 	.remove = host1x_drm_remove,
-+	.shutdown = host1x_drm_shutdown,
- 	.subdevs = host1x_drm_subdevs,
- };
- 
--- 
-2.45.2.505.gda0bf45e8d-goog
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>`
+
+
+> ---
+>  include/linux/ioport.h | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+>=20
+> diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+> index db7fe25f3370..2a1d33ad151c 100644
+> --- a/include/linux/ioport.h
+> +++ b/include/linux/ioport.h
+> @@ -216,6 +216,38 @@ struct resource *lookup_resource(struct resource *ro=
+ot, resource_size_t start);
+>  int adjust_resource(struct resource *res, resource_size_t start,
+>  		    resource_size_t size);
+>  resource_size_t resource_alignment(struct resource *res);
+> +
+> +/**
+> + * resource_set_size - Calculates resource end address from size and sta=
+rt address
+> + * @res: The resource descriptor
+> + * @size: The size of the resource
+> + *
+> + * Calculates the end address for @res based on @size.
+> + *
+> + * Note: The start address of @res must be set when calling this functio=
+n.
+> + * Use resource_set_range() if setting both the start address and @size.
+> + */
+> +static inline void resource_set_size(struct resource *res, resource_size=
+_t size)
+> +{
+> +	res->end =3D res->start + size - 1;
+> +}
+> +
+> +/**
+> + * resource_set_range - Sets resource start and end addresses
+> + * @res: The resource descriptor
+> + * @start: The start address for the resource
+> + * @size: The size of the resource
+> + *
+> + * Sets @res start address and calculates the end address based on @size.
+> + */
+> +static inline void resource_set_range(struct resource *res,
+> +				      resource_size_t start,
+> +				      resource_size_t size)
+> +{
+> +	res->start =3D start;
+> +	resource_set_size(res, size);
+> +}
+> +
+>  static inline resource_size_t resource_size(const struct resource *res)
+>  {
+>  	return res->end - res->start + 1;
 
