@@ -1,29 +1,45 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9B3146582;
-	Fri, 14 Jun 2024 10:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EA613B2AD;
+	Fri, 14 Jun 2024 11:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718361551; cv=none; b=YiTpxdkY7uWHaLh7pNuGs7k7awRLYHzLXRoEv6OnBPfICvExulPJX5NkO4BjluJQcUHckIjhnVYkSsIqLXx5+8tMdUEMIRrnpvF7qrWbojc9P4lQKF0TRELMcbByXFNo5JNqIq8VXPypMvZ8MTiqz6vxdYPdIwlgmEyWe5BLjmk=
+	t=1718364315; cv=none; b=XGDiL6BS6hGwktF6JTphOyqnEPHavp8Z3/QFko2FN/Ii0SA95mqooCtwXiMigp8178nxgpTB6QqRDF6kLWWppIQGoTwVZr5L5Ov81ji/hMTt21Y5gyxf/vqQRSVF5MMIZpNkdMg3qT3yipM3iwHdQDpAB1IuYtzYVsTnidhCRXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718361551; c=relaxed/simple;
-	bh=MzEWoe38FXzvY+La24fBRxcnr5ToM6ROB3BhzshL6mc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pr/C5gBnaFFXXmnJKk4YyZypVZi6Zdp7dYmsaBcpHoo60UaySH+quONDF7OH5yMrl8X6JqMHuvy+/di+UClklL6mJu96ffeOKA8Jk2WvK+9kDwjlUj7qbmGuL58J63st3kRfZjNO76rku+XdaM4IUT0WN46JGSKWpqevgGXfmmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b9c.versanet.de ([83.135.91.156] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sI4K2-00030e-NX; Fri, 14 Jun 2024 12:38:18 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
+	s=arc-20240116; t=1718364315; c=relaxed/simple;
+	bh=FfcqpBVds2UvXxczWh5DMlzHAA+FEwzBbmT5gv1mKE0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kgNlnbIXkwGtMJYT/sUHdGav8lvUHGbvS5CMqMeoFbYK3kdfOn1YqicMR7/WdD/FWJS7gShEfIY+4B85rJbRZBpzwA3ANC1WE9COV6SKFmik5UsS5iTdLRbcJIt/qRoIt2cYSxR2qb0+QXOPSyNvVUMyJRrYAQ52jqF+JTtFOTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=r8603sDw; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="r8603sDw"
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1718364310; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=u8iAIlbQi0tUJ3qu8xocmxzckhx265PFdpBlcy4mJCQ=;
+	b=r8603sDwbINXztjW836pPhPVJnatY87ChFFiRmOwMcxVc8fOWPKJA45fJo0TwC3/HwUfS4z/AQlPqSgxXx7Ti9U8nP+1LPTYjDHukj4GTHGC0rarwunzFJhr8cONLubCG1TLDfCS0/OWe9QlpunZFOSwJ08PiWR6lq7GIK5yf40=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=54;SR=0;TI=SMTPD_---0W8R3gfJ_1718364305;
+Received: from 192.168.0.106(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W8R3gfJ_1718364305)
+          by smtp.aliyun-inc.com;
+          Fri, 14 Jun 2024 19:25:07 +0800
+Message-ID: <f764133b-1aaf-4f4b-9a2e-d04ab35d660f@linux.alibaba.com>
+Date: Fri, 14 Jun 2024 19:25:04 +0800
+Precedence: bulk
+X-Mailing-List: linux-tegra@vger.kernel.org
+List-Id: <linux-tegra.vger.kernel.org>
+List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/22] dt-bindings: thermal: sprd: reference
+ thermal-sensor schema
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
  Guillaume La Roque <glaroque@baylibre.com>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
@@ -36,21 +52,20 @@ To: Daniel Lezcano <daniel.lezcano@linaro.org>,
  Jonathan Hunter <jonathanh@nvidia.com>,
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
  Amit Kucheria <amitk@kernel.org>,
- Niklas =?ISO-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
- Biju Das <biju.das.jz@bp.renesas.com>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+ Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
  Alexandre Torgue <alexandre.torgue@foss.st.com>,
  Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
  Florian Fainelli <florian.fainelli@broadcom.com>,
  Scott Branden <sbranden@broadcom.com>,
  zhanghongchen <zhanghongchen@loongson.cn>,
  Matthias Brugger <matthias.bgg@gmail.com>,
  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
  Bjorn Andersson <andersson@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
@@ -59,34 +74,54 @@ Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
  linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
  linux-stm32@st-md-mailman.stormreply.com,
  Florian Fainelli <f.fainelli@gmail.com>,
- linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject:
- Re: [PATCH 14/22] dt-bindings: thermal: rockchip: reference thermal-sensor
- schema
-Date: Fri, 14 Jun 2024 12:38:16 +0200
-Message-ID: <4870406.JsnAkG3lO3@diego>
-In-Reply-To:
- <20240614-dt-bindings-thermal-allof-v1-14-30b25a6ae24e@linaro.org>
-References:
- <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
- <20240614-dt-bindings-thermal-allof-v1-14-30b25a6ae24e@linaro.org>
-Precedence: bulk
-X-Mailing-List: linux-tegra@vger.kernel.org
-List-Id: <linux-tegra.vger.kernel.org>
-List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+ linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
+ <20240614-dt-bindings-thermal-allof-v1-17-30b25a6ae24e@linaro.org>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-17-30b25a6ae24e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Am Freitag, 14. Juni 2024, 11:46:13 CEST schrieb Krzysztof Kozlowski:
+
+
+On 2024/6/14 17:46, Krzysztof Kozlowski wrote:
 > Device is a thermal sensor and it requires '#thermal-sensor-cells', so
 > reference the thermal-sensor.yaml to simplify it and bring the
 > common definition of '#thermal-sensor-cells' property.
 > 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+LGTM. Thanks.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-
+> ---
+>   Documentation/devicetree/bindings/thermal/sprd-thermal.yaml | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> index 76aaa004c8ac..f65076fc68f9 100644
+> --- a/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/sprd-thermal.yaml
+> @@ -11,6 +11,8 @@ maintainers:
+>     - Baolin Wang <baolin.wang7@gmail.com>
+>     - Chunyan Zhang <zhang.lyra@gmail.com>
+>   
+> +$ref: thermal-sensor.yaml#
+> +
+>   properties:
+>     compatible:
+>       const: sprd,ums512-thermal
+> @@ -77,11 +79,10 @@ required:
+>     - clock-names
+>     - nvmem-cells
+>     - nvmem-cell-names
+> -  - "#thermal-sensor-cells"
+>     - "#address-cells"
+>     - "#size-cells"
+>   
+> -additionalProperties: false
+> +unevaluatedProperties: false
+>   
+>   examples:
+>     - |
+> 
