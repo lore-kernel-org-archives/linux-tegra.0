@@ -1,121 +1,197 @@
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B455912DDA5;
-	Thu, 13 Jun 2024 15:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B431C19412F
+	for <linux-tegra@vger.kernel.org>; Fri, 14 Jun 2024 09:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718293406; cv=none; b=I1kun8vfRtM1dN54STzywkmqJVTLBDXqr5fwL22p+lPYAfD6Nn6BcGkRQNE48FjLkoMSO+NufQ85Gl/M/r+C/cY0mzCWvBu3+LSP3GGR35E/8/U7JiZJhu6koXjPbkA0R77FKCNS2i++C6+3ir+BkPL5XYnr/P94Mvf/v5A76iA=
+	t=1718358394; cv=none; b=GaN+bqcEAhOxhxbQttALD4VTOR2osN+o8NRpjP+LV2Fd5YtJBwpZiRhAmCkKYXG/V/dnCHXmm4CyHdgy188XA3jnT0q2uRAB1+G2OlBLJbWS9pVb3zT1aQPESSwIi0j79idvNMJBr7kqaWDeOuT6Ml7GQ27Pjlv2geZKMyx9JrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718293406; c=relaxed/simple;
-	bh=wuuRkupuSyLIHDwx1qrL9wK/w/CgUGVdFcSsUcJNGkQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Lpet4EW6gdfIFQDk7vDydkS6wG6HfoviHnNEII1htcWrJsMVgytC1+E6eMN78Ha/6a90qglw6ReppMKV70iWRIYcsrxk7w1hKPKyng4ufP+vmYS+tdoi45/aeGhf4jHMlWI63dm4bZ5cC6+Q9VeOp6e4yizfko1yXNpFZ9zWmow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=LNJUEzSR; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1718358394; c=relaxed/simple;
+	bh=p3XfyX3kLTCraBOtA3bYk0nZWnKJv6DRa4Xv9JXFZPw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZlScIQj/7eG53p3FvmBtPAPojGZGRNG/lS34nCjUKVVTDUDp5JlDHH1VIJbRCvt7TvLPWcWc6/H9tY2JQit5h3CbCaqEPUYTe5pjAMh16o7co5VIF5y2HQj2N+NyDCrnRgRGgfGeXz3wVL3CixoECtz4ipf2ezF5zSEjaUrvt2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H/IDITRX; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="LNJUEzSR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718293354; x=1718898154; i=markus.elfring@web.de;
-	bh=7fcDu+jAjKTUeYUTcm6nT/VKOpL7/vLs7dIgrQeJffo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=LNJUEzSRtJ4s9iQHbH54cTGy1ouN6On874yZ2npBiEOFY80pZZFA5tks18EqHG01
-	 wpyeWVebam83eYtPIbbhzsqU4M0oxyPeFJgk3wHCrlejS+gA5I4d2Y1i7sfV5o10V
-	 XlYRG4zqLm9rdcnQK9P2axqomSmoMu+D/zj3o0yfGLp8ILJ+ZbAOdzdwK4C9ZGuL2
-	 AtqncLRaSFxzliD9iTwV3tyZw+nwz6jOO07W//sYkqmT45mSJ+ZMQMIo6a8u5zfrX
-	 GdMOYSuWxiB7YGYH1AFdkvXoTVJwk1dZFNHi3fpgV5CwxEf+O0E1Nvpz/00sChr6y
-	 KvUj8oSD0htlRKLcfQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlbHE-1shnjs0jC6-00gPUD; Thu, 13
- Jun 2024 17:42:34 +0200
-Message-ID: <531fdbbb-486d-4207-b9a9-3db23935d583@web.de>
-Date: Thu, 13 Jun 2024 17:42:19 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H/IDITRX"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6ef64b092cso243463566b.1
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Jun 2024 02:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718358391; x=1718963191; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=R3E6JlKgnDrJSPy23T3qrpFv918sUOaM5ecbbXYgrI4=;
+        b=H/IDITRXaQ+d+nMKUZhIahWqU7wFlPShChBnHyolqy/0A4DR6DKP8qGMKEa8z7xPFd
+         X4DNlSOhzlOhCZPKLcDTpMY7FRSGjT/S8PfYeA8DaxAQDx+OGvLQRfGnCpEuy0xzoaKC
+         PmU7d1V2G3++Xx9ZBvl2MF/bsgFFQ1xRl7sx5PlBc8aaRzN73R42efo2j1JtkuL/W02U
+         e96jLtvAqwR3CHgJV26N/4Vkxdx44+ArmUH3IOIa/0FL1yN2AJrQ4WIOJE016THppN44
+         +QTzw8ehECPICP1BpO49yDuBJ2sJtPHxrVwGHbIWpznQTiTsDI9QTym31DFxi0LENcO7
+         rYFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718358391; x=1718963191;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R3E6JlKgnDrJSPy23T3qrpFv918sUOaM5ecbbXYgrI4=;
+        b=OAK1FFA371piuHhYM4LTG0mJN9NpHDcPGmsQJFhnf2qoZeX60ZSOy2w5uj8Twi+ayJ
+         BpCp4RVzLYoqb+bAq9uaYRR8zBCD/ztHBKGi8hH6k6IYg1V+L0LIvaNaQh714UsJ8bGL
+         6n5u6GyPWU9yMkaRF6KCYuUTGQF8cwLIB5tklSxsSp2LvIVWaH+MGziWfxnYadggt0tH
+         FG54pz6PtpSapp2ovj9BCZHQP9nlDeKoFfP1D0uaXJaaSf7/dpEyNI3+lp1FykeMU72+
+         mOueRQpQqVEjk2AAwjsRZj7fQNVWtTZDhdbgR1p6e4rGefCkpaT4qY47hc8rTW7XLJ76
+         4dfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOBKTqQ5bpA5cKEB2GoccvvsMi3t9Y6vwJPilrKyYsfUPjKTDr/7dwVpBMfJzvU8J6lqz0d6Y+uIc/JLGDCApmyd72sIROrh+rPlQ=
+X-Gm-Message-State: AOJu0Yzwqi9BfRjA/kDeRbWSkn4xHpp6Iil9zAFLqXJd4b7jVk/E4GnJ
+	h6JIg33bwJ4twSqMB044lX11CCOolEi55T6Oa6PWhhcyseclttG96RInNALes8g=
+X-Google-Smtp-Source: AGHT+IGov8h4HWz1vwXrMuZx4d9Kl8tLftrHfY/R0lPxIE7iVJTda8tqaONdGVeUAi1qLy3sNijSsQ==
+X-Received: by 2002:a17:906:d8b2:b0:a6e:fc0a:efaf with SMTP id a640c23a62f3a-a6f60dc89edmr143181966b.49.1718358390766;
+        Fri, 14 Jun 2024 02:46:30 -0700 (PDT)
+Received: from [127.0.1.1] ([78.10.206.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f9c84csm164966366b.222.2024.06.14.02.46.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 02:46:30 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 00/22] dt-bindings: thermal: few cleanups
+Date: Fri, 14 Jun 2024 11:45:59 +0200
+Message-Id: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- linux-pci@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@axis.com, linux-arm-kernel@lists.infradead.org,
- imx@lists.linux.dev, mhi@lists.linux.dev, Bjorn Helgaas
- <bhelgaas@google.com>, Fabio Estevam <festevam@gmail.com>,
- Jesper Nilsson <jesper.nilsson@axis.com>, Jingoo Han <jingoohan1@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Kishon Vijay Abraham I <kishon@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Lucas Stach <l.stach@pengutronix.de>,
- Marek Vasut <marek.vasut+renesas@gmail.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Minghuan Lian
- <minghuan.Lian@nxp.com>, Mingkai Hu <mingkai.hu@nxp.com>,
- Niklas Cassel <cassel@kernel.org>, Richard Zhu <hongxing.zhu@nxp.com>,
- Rob Herring <robh@kernel.org>, Roy Zang <roy.zang@nxp.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Siddharth Vadapalli <s-vadapalli@ti.com>,
- Srikanth Thokala <srikanth.thokala@intel.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Vignesh Raghavendra <vigneshr@ti.com>,
- Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de
-References: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
-Subject: Re: [PATCH 2/5] PCI: endpoint: Introduce 'epc_deinit' event and
- notify the EPF drivers
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240606-pci-deinit-v1-2-4395534520dc@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jXSJJJkAI8hN72kU1CJg3ufojWOHI1sFKaf7Q+GXWoK5SHvixA/
- yrxpcO7iG26yVIJ6a+gDgi7IQ7X4UOlJm7doH6z6KQ09CoTZ4UXvjGVgP4qYQDw1TnsDnm+
- QVgctN2V24QtpAjdxg0dM1CAxHvdlatDjFFXPjenuaogsqXyOG9yQTvPPKq9AalAtAN4qQW
- hD6x4vYrIAaZEEVGxiS5w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PH53anvoYOY=;1/zV0cxQ7tZhIjrtlZ44ElZLM8Q
- i/dBiizYx2JrGEKiG8sYkKHnGA384j5aU9TmG7r2D/cFkSPs/yZ0hmPDsuuelZSGCyHWZiRN/
- oNO+wiyJAPxbMYILm8U3DhPAYJNZL7tChzi/zsp8B0Ib4ehYO2iwpmrdONugRbU5TIwAWBAtt
- O9Cd1boR1HzXoKsuicQTXIRq42M0q+eeFrw4gHvF7+yVAWOODfM1RkDrMF04xo8/hIKWasMLk
- GLOKEfJgm5NxvmR+h5J9rmAG2o7PdDilFFAtM4F5qG6niMNgdlmc8tMSNXWrTs5X7cNbolLND
- GdfeoqXQhgszfzzgCYEC62hZsCKBPBLGFLk9gcEhQVWbhP/v2X6XcVwAwDTXagzQG1eRcaHvn
- XWChBhxQIPWZJTDfcqUXc/ReGClUJqfuh9a3fj2HR3cYwKXHsMAM/0++GKDTGB3YK076k1DP0
- 016ihg2akVY+zAqRjQdKi3POQKULjiiULpUCYLnenqi1xkm9viAf2ME6hMmoNZdCrIW2eUD/L
- rEUUeKzuOB8gGXnQRywfc80Ounpdk42bjy4Spto3HpGg4b7ifudicAAzYTyfh+SXJQCUvKj2t
- a7wk5vPHw5S0wj9yOnCqxHesNBoirF69BTsUr66isiVPFDNjClzWomn1oCL303/nqyRZNFdnv
- UgbgIsRlXrUrB/UeMXpqN7c5K00XBixFRFBL5uLnpnFMlrZhtjCrFqooazZL0Of9zEvxbrkj3
- vDLGyltl4po3ybGUSKAFLDQ4jpbUG/r51SqZRAar3YCVovQArVWZ6ze02zV+bOiJXSkPd5VUW
- WMUlYtj68L5PQjuICaBMLKaGnwzPX9n/SgmiEdAohcyH0=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFcRbGYC/x3MQQqAIBBA0avErBtQsRZdJVqYjjpgFhoRRHdPW
+ r7F/w9UKkwVpu6BQhdX3nOD7Duw0eRAyK4ZlFBajFKjO3Hl7DiHimekspmEJqXdoxbSDoJGSV5
+ B649Cnu//PS/v+wHlGnZRawAAAA==
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Guillaume La Roque <glaroque@baylibre.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Anson Huang <Anson.Huang@nxp.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Amit Kucheria <amitk@kernel.org>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
+ Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Scott Branden <sbranden@broadcom.com>, 
+ zhanghongchen <zhanghongchen@loongson.cn>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, imx@lists.linux.dev, 
+ linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ Florian Fainelli <f.fainelli@gmail.com>, 
+ linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3782;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=p3XfyX3kLTCraBOtA3bYk0nZWnKJv6DRa4Xv9JXFZPw=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmbBFZ2k3GJoNNLFeKNDEm6wol3YrFjWScB/fEO
+ gMayn0IsTaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZmwRWQAKCRDBN2bmhouD
+ 1/1iD/0cmbLdy7BRDK+hdAHoMuk7AzFr49JqiJx9VLENFE1VKTi9ZqBN8aDoSCByUeWGR0qU+4q
+ KEogi56HJQfUf74TNd3+SnFy0Sn+vjwhHn/CGv+mMBvy+WBQcLFhAVq8OPFrC6ZaHnMw+twYqdZ
+ cJztoB4JHHpNSh4utMWjZ/1dCwew1GKPFztUKT8kK4OUhxotGA+oTqFklvuMza1LUOitasdXcWE
+ NO5DOwXa3khj+DvmylZwD9aItPM+9lEIrSe1ZI7Im3INY+QlThZu8/jXgvQShu4wMFo6ZiFcGSf
+ DZQw22RWE9MZfA5rprvMGcHRONNxt7Bj9+XsmFTvsgLNUMtn/4cgbR+H6XB53fYsCXd/U77WruG
+ 5FCXdX04NfpF63KybtlPqGyse++v9DRIjDqOl+YaajBVfY5AIWnNtWpkqo0pHDjr8imiQP7O9RM
+ uJCHWeyn0PwumkruVCJHJ6atM6UxO20yBQIoccFirseDL9dbds/B7ghSRppjIKrS9caS0Zu+XK/
+ i2UMwVJf+O4CyDzjLhIUmKwCDk2jNSqCbmUvcv3F5+o34uhViJYX6Lq22U/Nd7PS7LT1uFK5pNg
+ xGjQ4xLDpRUyKC0lPvWUtf8qn7rOAsuoc6ELE0cz7nJbX0rDs1XLZl4fdMI6cRnxhT0CibGBy7L
+ 6PdmGjRdB0YzBJQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-=E2=80=A6
-> +++ b/drivers/pci/endpoint/pci-epc-core.c
-=E2=80=A6
-> +void pci_epc_deinit_notify(struct pci_epc *epc)
-> +{
-=E2=80=A6
-> +	mutex_lock(&epc->list_lock);
-> +	list_for_each_entry(epf, &epc->pci_epf, list) {
-> +		mutex_lock(&epf->lock);
-> +		if (epf->event_ops && epf->event_ops->epc_deinit)
-> +			epf->event_ops->epc_deinit(epf);
-> +		mutex_unlock(&epf->lock);
-> +	}
-> +	epc->init_complete =3D false;
-> +	mutex_unlock(&epc->list_lock);
-> +}
-=E2=80=A6
+Hi,
 
-Would you become interested to apply lock guards?
-https://elixir.bootlin.com/linux/v6.10-rc3/source/include/linux/mutex.h#L1=
-96
+Few cleanups witout practical impact, except maybe the Amlogic schema
+(bringing required cells).
 
-Regards,
-Markus
+Best regards,
+Krzysztof
+
+---
+Krzysztof Kozlowski (22):
+      dt-bindings: thermal: samsung,exynos: specify cells
+      dt-bindings: thermal: amlogic: reference thermal-sensor schema
+      dt-bindings: thermal: allwinner,sun8i-a83t-ths: reference thermal-sensor schema
+      dt-bindings: thermal: brcm,avs-ro: reference thermal-sensor schema
+      dt-bindings: thermal: generic-adc: reference thermal-sensor schema
+      dt-bindings: thermal: imx8mm: reference thermal-sensor schema
+      dt-bindings: thermal: nvidia,tegra186-bpmp: reference thermal-sensor schema
+      dt-bindings: thermal: nvidia,tegra30-tsensor: reference thermal-sensor schema
+      dt-bindings: thermal: qcom-spmi-adc-tm-hc: reference thermal-sensor schema
+      dt-bindings: thermal: qcom-spmi-adc-tm5: reference thermal-sensor schema
+      dt-bindings: thermal: qcom-tsens: reference thermal-sensor schema
+      dt-bindings: thermal: qoriq: reference thermal-sensor schema
+      dt-bindings: thermal: rcar-gen3: reference thermal-sensor schema
+      dt-bindings: thermal: rockchip: reference thermal-sensor schema
+      dt-bindings: thermal: rzg2l: reference thermal-sensor schema
+      dt-bindings: thermal: socionext,uniphier: reference thermal-sensor schema
+      dt-bindings: thermal: sprd: reference thermal-sensor schema
+      dt-bindings: thermal: st,stm32: reference thermal-sensor schema
+      dt-bindings: thermal: ti,am654: reference thermal-sensor schema
+      dt-bindings: thermal: ti,j72xx: reference thermal-sensor schema
+      dt-bindings: thermal: simplify few bindings
+      dt-bindings: thermal: cleanup examples indentation
+
+ .../bindings/thermal/allwinner,sun8i-a83t-ths.yaml |  6 +-
+ .../bindings/thermal/amlogic,thermal.yaml          | 22 ++---
+ .../bindings/thermal/brcm,avs-ro-thermal.yaml      | 22 ++---
+ .../devicetree/bindings/thermal/brcm,avs-tmon.yaml | 17 ++--
+ .../bindings/thermal/brcm,bcm2835-thermal.yaml     |  1 -
+ .../bindings/thermal/fsl,scu-thermal.yaml          |  1 -
+ .../bindings/thermal/generic-adc-thermal.yaml      |  5 +-
+ .../bindings/thermal/imx8mm-thermal.yaml           |  5 +-
+ .../bindings/thermal/loongson,ls2k-thermal.yaml    |  1 -
+ .../bindings/thermal/mediatek,lvts-thermal.yaml    |  1 -
+ .../bindings/thermal/nvidia,tegra124-soctherm.yaml |  1 -
+ .../thermal/nvidia,tegra186-bpmp-thermal.yaml      | 12 +--
+ .../bindings/thermal/nvidia,tegra30-tsensor.yaml   |  9 +-
+ .../bindings/thermal/qcom,spmi-temp-alarm.yaml     |  1 -
+ .../bindings/thermal/qcom-spmi-adc-tm-hc.yaml      |  8 +-
+ .../bindings/thermal/qcom-spmi-adc-tm5.yaml        |  8 +-
+ .../devicetree/bindings/thermal/qcom-tsens.yaml    | 96 ++++++++++------------
+ .../devicetree/bindings/thermal/qoriq-thermal.yaml |  5 +-
+ .../bindings/thermal/rcar-gen3-thermal.yaml        | 69 ++++++++--------
+ .../devicetree/bindings/thermal/rcar-thermal.yaml  | 60 +++++++-------
+ .../bindings/thermal/rockchip-thermal.yaml         |  5 +-
+ .../devicetree/bindings/thermal/rzg2l-thermal.yaml | 41 ++++-----
+ .../bindings/thermal/samsung,exynos-thermal.yaml   |  3 +-
+ .../thermal/socionext,uniphier-thermal.yaml        |  5 +-
+ .../devicetree/bindings/thermal/sprd-thermal.yaml  | 47 +++++------
+ .../bindings/thermal/st,stm32-thermal.yaml         |  5 +-
+ .../bindings/thermal/ti,am654-thermal.yaml         | 15 ++--
+ .../bindings/thermal/ti,j72xx-thermal.yaml         |  5 +-
+ 28 files changed, 230 insertions(+), 246 deletions(-)
+---
+base-commit: 6906a84c482f098d31486df8dc98cead21cce2d0
+change-id: 20240614-dt-bindings-thermal-allof-401c50e61ef2
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
