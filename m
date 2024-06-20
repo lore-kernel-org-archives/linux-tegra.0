@@ -1,57 +1,134 @@
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EF61AC245;
-	Thu, 20 Jun 2024 12:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AAE1AF697;
+	Thu, 20 Jun 2024 16:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718887849; cv=none; b=OyB05LQM2VJnkhboAdnyD/DsL0qoy6OJX3rpLyKj0FINpj9MnfwMS+gCy/mQSgnF0ohVLgniGqro/sdxyuQHidLqHwvmfeam8ljgo3nXWg+4WoClBPw5D6SJxwbYKutrMpTHzbS2lBmzRrnuM1Wle8DokjGZOO0oQHXGnwM+njo=
+	t=1718899577; cv=none; b=PNertmLfAzZCfE+A85Nxo2KD2WnYXlAi6yN35hLj0LulhzPKwdbPg1i9eGdhqt7x5xE5emZaCg3UlMIQkty+7zvAObCL1NJ2vQjiKooKabt9oWz54C4mWgna10o1bRNnNli5jnSpmAw/PMC5smOHWwtiKzTVRNKM/GfVgbjDdDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718887849; c=relaxed/simple;
-	bh=BmOXLgEXDNK3XzYgemEnaUei+aYuQImVVsZC8ih6laM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eJtDsKlX27TxGpZRG7nOCaoho2A8QlhmKkMkBPPI3DFffBZzAqsBIaLs7MUQDk51eOfEj0QAwco8cgVbbOBDMY5llc+01oVZSSyINWCq2eHW/T5tbkVyqq49ngBNk8kED21t/+E7tphAng1VY2qb9+lokkeJmLN1dybwQrGBcRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W4gMM5BHnz4wcJ;
-	Thu, 20 Jun 2024 22:50:39 +1000 (AEST)
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, Anup Patel <anup@brainfault.org>, Guo Ren <guoren@kernel.org>, Palmer Dabbelt <palmer@rivosinc.com>, Paul Walmsley <paul.walmsley@sifive.com>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Théo Lebrun <theo.lebrun@bootlin.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, Sven Joachim <svenjoac@gmx.de>, Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Russell King <linux@armlinux.org.uk>, Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom internal kernel review list <b
- cm-kernel-feedback-list@broadcom.com>, Tony Lindgren <tony@atomide.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Mykola Lysenko <mykolal@fb.com>, linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org, Celeste Liu <coelacanthushex@gmail.com>
-Cc: linux-kselftest@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, Lennart Poettering <lennart@poettering.net>, Icenowy Zheng <uwu@icenowy.me>, Celeste Liu <CoelacanthusHex@gmail.com>
-In-Reply-To: <20240530111947.549474-8-CoelacanthusHex@gmail.com>
-References: <20240530111947.549474-8-CoelacanthusHex@gmail.com>
-Subject: Re: (subset) [PATCH 0/6] defconfig: drop RT_GROUP_SCHED=y
-Message-Id: <171888775124.806750.6633317613524015778.b4-ty@ellerman.id.au>
-Date: Thu, 20 Jun 2024 22:49:11 +1000
+	s=arc-20240116; t=1718899577; c=relaxed/simple;
+	bh=i2WiRp5EABtITG9AK2TqTOt26g3jSkXUUxnTNfCVMq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AMMihh1QZo2lRHG+MoYsdiYXQVSR/oEQCN985p2uUytjZIVBeZY9DUIIcX2FWINm7NdEM8UYrcuHKfdEOCgNFbOeBvrd+Noq/wfdDda1CjwkArlE30n2G6mvWo+PeoSiPZu/iqAtItR+u8nsI4MkqBimI3vLNlVDayBvR+mCwJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NKmk0EwT; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NKmk0EwT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40576C2BD10;
+	Thu, 20 Jun 2024 16:06:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718899577;
+	bh=i2WiRp5EABtITG9AK2TqTOt26g3jSkXUUxnTNfCVMq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NKmk0EwTNoxOWGlH2v07DF2unWqqSgPHL2w7MXJlzVc9I7chXRxKjQe/L2NGXZupG
+	 UNj4Vdtd58q5X7sr7M7bQwWpAATyud7JONka7ePDgfbmS4QS6aHv/1H6Jea/GI0wsr
+	 cS0oovA/BCovyaDtviZt7P0g0xC7oi/OBJURoHgtNJ41/tMbhmix7alKH5eaGDTlHU
+	 UwqsvgNkb/rDdwiBSIajxDLFHk4/sZT9zybz22d88QbqxxQuLNaoA+GhVKq8RnSMhr
+	 mC/1CYGO5Jsc3hEeYRYiCS6eTAAxYwlu4yaXaLbn7VzvQAhu5uu1p1Ksh0gjdKr41x
+	 MFzAKhEG/iZlA==
+Date: Thu, 20 Jun 2024 17:06:08 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Sergiu Moga <sergiu.moga@microchip.com>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Doug Anderson <dianders@chromium.org>,
+	Enric Balletbo i Serra <eballetbo@kernel.org>,
+	Ricardo =?iso-8859-1?Q?Ca=F1uelo?= <ricardo.canuelo@collabora.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Vignesh R <vigneshr@ti.com>,
+	Kamal Dasu <kamal.dasu@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Chris Brandt <chris.brandt@renesas.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Pierre-Yves MORDRET <pierre-yves.mordret@foss.st.com>,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-tegra@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-omap@vger.kernel.org,
+	Kamal Dasu <kdasu.kdev@gmail.com>,
+	linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com, stable@vger.kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: i2c: google,cros-ec-i2c-tunnel: correct
+ path to i2c-controller schema
+Message-ID: <20240620-reggae-caucasian-11dcb3244161@spud>
+References: <20240620-dt-bindings-i2c-clean-v1-0-3a1016a95f9d@linaro.org>
+ <20240620-dt-bindings-i2c-clean-v1-2-3a1016a95f9d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="K6ixJu9bGXFv18P9"
+Content-Disposition: inline
+In-Reply-To: <20240620-dt-bindings-i2c-clean-v1-2-3a1016a95f9d@linaro.org>
 
-On Thu, 30 May 2024 19:19:48 +0800, Celeste Liu wrote:
-> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
-> needs an RT budget assigned, otherwise the processes in it will not be able to
-> get RT at all. The problem with RT group scheduling is that it requires the
-> budget assigned but there's no way we could assign a default budget, since the
-> values to assign are both upper and lower time limits, are absolute, and need to
-> be sum up to < 1 for each individal cgroup. That means we cannot really come up
-> with values that would work by default in the general case.[1]
-> 
-> [...]
 
-Patch 4 applied to powerpc/next.
+--K6ixJu9bGXFv18P9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[4/6] powerpc: defconfig: drop RT_GROUP_SCHED=y from ppc6xx_defconfig
-      https://git.kernel.org/powerpc/c/2bac6caee94e25f59ee47e2d365d7e07465089ba
+On Thu, Jun 20, 2024 at 01:34:50PM +0200, Krzysztof Kozlowski wrote:
+> The referenced i2c-controller.yaml schema is provided by dtschema
+> package (outside of Linux kernel), so use full path to reference it.
+>=20
+> Cc: <stable@vger.kernel.org>
 
-cheers
+I'd question whether this needs to go to stable (given the validation
+seems to work anyway) but it'll get picked up automagically so why
+not...
+
+> Fixes: 1acd4577a66f ("dt-bindings: i2c: convert i2c-cros-ec-tunnel to jso=
+n-schema")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/i2c/google,cros-ec-i2c-tunnel.yaml | 2=
+ +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/i2c/google,cros-ec-i2c-tun=
+nel.yaml b/Documentation/devicetree/bindings/i2c/google,cros-ec-i2c-tunnel.=
+yaml
+> index ab151c9db219..580003cdfff5 100644
+> --- a/Documentation/devicetree/bindings/i2c/google,cros-ec-i2c-tunnel.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/google,cros-ec-i2c-tunnel.yaml
+> @@ -21,7 +21,7 @@ description: |
+>    google,cros-ec-spi or google,cros-ec-i2c.
+> =20
+>  allOf:
+> -  - $ref: i2c-controller.yaml#
+> +  - $ref: /schemas/i2c/i2c-controller.yaml#
+> =20
+>  properties:
+>    compatible:
+>=20
+> --=20
+> 2.43.0
+>=20
+
+--K6ixJu9bGXFv18P9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnRTcAAKCRB4tDGHoIJi
+0kXLAQCZRJ/FW5eVYlFgLQVwdTw60zRLbB5U2phtfe/39Y26eQD/aIyvkdWib7L7
+pxarPTgkzcG7Mkqn187N9Xy+9dcxJgc=
+=MMCH
+-----END PGP SIGNATURE-----
+
+--K6ixJu9bGXFv18P9--
