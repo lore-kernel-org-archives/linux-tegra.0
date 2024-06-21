@@ -1,103 +1,101 @@
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F7C2BAE3;
-	Fri, 21 Jun 2024 14:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6DA17C7D0;
+	Fri, 21 Jun 2024 19:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718981213; cv=none; b=sPUdIu60VeORkC4OryXB+yMZIQvLiz9p6QVkeG7mjEvLDdNu+rXyDktuEj5N/EgYOhC6fg716szF4TgdDw4Sy1XBMvMJYs+zHi5JtxhuJdzuOj7c1b+VBnHtu604v3eoWxvbxisB7F0TODV+sk3H7eVBr2uUnxoKC4otqtEBGSU=
+	t=1718998668; cv=none; b=uoLujswBTru3z/WNKt/6lqqZUuTIrCpQ3oazKzuqExTsT+3LwtxdLNotF9Nd0CFw0lMwOSLuuhKVwvD7NaOhZLMbfEP8Zor03awLQXSac4YoB+oHaPE7ZmlBSpcJW3QYycSu32IgPXUfkIPErZje5DB9LtbSQKvbJ1RxdvG+xWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718981213; c=relaxed/simple;
-	bh=yQVb2DeThksBLy1v6heanX+uAjJHYjLCnQz2w0NHRqc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YmEIBUhjXVsMMl8nmdRcV41bKoNF7nGirGRTCNZy9FsK4AkZI6CY3H7479Oq1StdgDN5y2fIJ3E2hv6yC90ejBeYsbOknPp9/1+wagUI1BPM3IFtbARkrWw1WGfMveaCs351gw0xl1P2XYkjPtbDlActwRFvNb2u/OsesOhB7Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	s=arc-20240116; t=1718998668; c=relaxed/simple;
+	bh=Z6XDvtd/xm4xSg8Kzfwtsmbr9qvvXnf1QYMN9sGi2k0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O3I8zIHqOtzkW3Zz1foPfRFHETafmXtVRcRH5thYVtFMqpG/0PA52+74eTQNAju/PrLWqjrml5AzYuFV/6Wp/5baTRnm5pne9zzG3IMIHakZPzWRtZlJwP0Q45bv4lnCSaklThFSyfAzxxxinBU67/ntGZuKP1xOiipJqHTY//I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52c89d6b4adso2023884e87.3;
-        Fri, 21 Jun 2024 07:46:51 -0700 (PDT)
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-37613975e20so8888245ab.2;
+        Fri, 21 Jun 2024 12:37:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718981208; x=1719586008;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yQVb2DeThksBLy1v6heanX+uAjJHYjLCnQz2w0NHRqc=;
-        b=tQ5sLXnzoPkaSkLZ5Wqt7NISILtrnAxq6fkaJY9T4b7PUG2ZjeIrFHeXKB9hfekJyc
-         P8918gYagsgFd/bYldXpPefhRcCO14fzT4Ka6wzXKyFRq7BI6UStt+Vcm6Krq4DIkUTK
-         660eiQR+CthCx/Al6x/QssiVC+BYIT8Q04cfcMHYg6WvfcRFWMCUAP5NwmvKhqZnw/+E
-         clfdo8gpwFJE+cOUtJ9iRBTkJxx9HU1ETKCFV/y5xqbTnCAfEoQgI9W3H/BVaJ56Fm09
-         ne4LQ1t2aEskLDg26V/anLBGwBPQIknxrO7DwF0eQwDroMKJanoIH8exx/vFtCyAF0r7
-         JAAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcU0xLQhgIl+Y+Uw9C3XH0a4RA9HEEqgMU2q5G0bSlg0tFkNJr/nHxohUuP31pGL/mwVHTkOwc1tLXK4IbYF+4UrPo4UlK0vJR+pMiNXsfxYTGAuvVmH6HdFLfzMJmLziqTpXuaLUfh8z4jMTmj2pX2DPGa19DksL0TfxVUJF+6e7T44tPlv0yBkOyxu5aQEVdD6M9IsQJN0HlXzlh8Jl2s+Q2LkYMnF6hos2m0m+caiPh1kCkIU26gvp36d8j9GTxWYrQz+HcCKhXy0d3BNX6I/Ka//1IMaZALXqXp/Di+o5h34HuqhBZUBecec1t36R6XyOA/7M7yyPqRQqzDPeE7rhthw==
-X-Gm-Message-State: AOJu0YwkNyvdXvfLGvyEDUYuc1kzW0LCCAmhe4/Z2qlhXIH9PMDh/NOc
-	3HLSthSXTx1qr1lRVAhCBqhjS/U8dfvLzCZXBmZiyVyOvdvzkJTHXuo22gM/DpM=
-X-Google-Smtp-Source: AGHT+IER7wT4R9FfGOzQ5BNfgll5zO8oVJ4SPQG+6xi9r8nDKeH7ziLtYU/BWHh5yJD3VLyT3Eb/yA==
-X-Received: by 2002:ac2:5e78:0:b0:52b:bdbd:2c43 with SMTP id 2adb3069b0e04-52ccaaa8d27mr4679346e87.61.1718981207807;
-        Fri, 21 Jun 2024 07:46:47 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdace206esm100345e87.286.2024.06.21.07.46.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 07:46:47 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cccd44570so2468895e87.2;
-        Fri, 21 Jun 2024 07:46:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVr3Wm/MY98z91lj2BJiaYsaP47maRZCyqyfvlJCH8OKjvpALfVSBALIZVvvXSr9Y3QRUut4A3mrmprnUkALNaXApBMiZkE35fsGixCdo0OcszqeWEUkGoCl4LiSPKidpmLgLyy4lzMFAkTvzjR1ANGi5JYPwQr7SMFoJh90SeJcC9TJlfyTjWDtBCTAEasPqcuHGmLxBUKrPTy2t9qA38/3+qLfup2AgRW4uESKsAT9RgrKYRGpTn5/n+10V1bOCMBkrhvxJIYgiiC4yFMQ2TynBfiBOhdltc35NL8opGh9D1j1tQ43eH46PXM01HzFxhDR5lAaXcclO4CXyIVfGVtYG8B7Q==
-X-Received: by 2002:a05:651c:104c:b0:2ec:5073:5816 with SMTP id
- 38308e7fff4ca-2ec507358edmr10687831fa.31.1718981186574; Fri, 21 Jun 2024
- 07:46:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718998666; x=1719603466;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sXQhvL9a6CYV2VK3wKh6O5gxH2nHkFbrE11g//vArPo=;
+        b=KPHaaBT1LMxQLIT4qrJNsjC+lg8V94zRvKp9SWweVsgJAc2bk1mqTe56NOpi+nBi8V
+         ASUVXmFspc1vbid9akyRDEkgw7nS3BW7XL6/FmVEXWgjVzqdkcNC/6nOcPd749CWAzZX
+         Zrv2F63MpyNCR4GQxu95fpGlJPGEssKBbnqQb7EpVHDdmjhIN5YmD8VSIaK7k1sCRBMf
+         +zqk/ZlzPd2bIPa120aZ+3FJ3rOHMcnCPhSxyFOLD1eJ79tAl7k9qDEc6hmx57hDHmWj
+         7g6LOEKwTuf3ExBdzpVOJbF2BUTQ5KQM94SmEC6zDUkMNQ2rtd8z9V/Ykr/5Spgt7Eib
+         Myyg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlQBCeRa+f/1GAeABhmRcCkdLoTk3InGb2ixDCRhf6qjVg5UX2LTQyl9nZAva7Dba0icKNZtmRvPB/1IoL6Vrp2bVm+qx4sTB841Wo25K1D9ryYIf7CPC6AFRazTFCLHA3boHa6bJxoGBec0VvTEobTCubDrxGY3MQK7SlzPjp++QGGeCLARs50ARsx7RyyslI5YKVJb0YvqqNf0V05//o7AKsYw2YXrFF3Yglutd558upLGkXiHXeqFTw5oGOp8pxE85ZWgjFD5liEMBWySfUGpLadxsEe0EXNuQVeMqV7fQ9
+X-Gm-Message-State: AOJu0Yy4m+4WgmgVHw3UiKJ/+/RFiKwqlB555k/jJG3S0Xs9OY5Es944
+	re6wSH8+1MsxZTXCUt9UoPGZCSu+YJkfoA1yCgEIN80Pd4JRr+va
+X-Google-Smtp-Source: AGHT+IGlUL9QwPxUHX7nV3tXeYRMDnq/je2PsJ3NCGAtSFvVXOze8EobQXpZtTE4zHujIy0ctpA41A==
+X-Received: by 2002:a05:6e02:1c85:b0:375:a185:f00f with SMTP id e9e14a558f8ab-3761d709758mr109157335ab.22.1718998666403;
+        Fri, 21 Jun 2024 12:37:46 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716b3ee8c95sm1492640a12.31.2024.06.21.12.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Jun 2024 12:37:45 -0700 (PDT)
+Date: Sat, 22 Jun 2024 04:37:44 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Minghuan Lian <minghuan.Lian@nxp.com>,
+	Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Srikanth Thokala <srikanth.thokala@intel.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@axis.com, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	mhi@lists.linux.dev, Niklas Cassel <cassel@kernel.org>,
+	Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH 0/5] PCI: endpoint: Add EPC 'deinit' event and
+ dw_pcie_ep_linkdown() API
+Message-ID: <20240621193744.GA3008482@rocinante>
+References: <20240606-pci-deinit-v1-0-4395534520dc@linaro.org>
+ <20240610065324.GA7660@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org> <20240614-dt-bindings-thermal-allof-v1-3-30b25a6ae24e@linaro.org>
-In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-3-30b25a6ae24e@linaro.org>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Fri, 21 Jun 2024 22:46:13 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65T80TH9HUpny8vK2KNrE6aYQHf4x0CAUrxKWih34TdTA@mail.gmail.com>
-Message-ID: <CAGb2v65T80TH9HUpny8vK2KNrE6aYQHf4x0CAUrxKWih34TdTA@mail.gmail.com>
-Subject: Re: [PATCH 03/22] dt-bindings: thermal: allwinner,sun8i-a83t-ths:
- reference thermal-sensor schema
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Guillaume La Roque <glaroque@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Vasily Khoruzhick <anarsoul@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Anson Huang <Anson.Huang@nxp.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Amit Kucheria <amitk@kernel.org>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>, 
-	Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	zhanghongchen <zhanghongchen@loongson.cn>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-amlogic@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	imx@lists.linux.dev, linux-tegra@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, 
-	Florian Fainelli <f.fainelli@gmail.com>, linux-rpi-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240610065324.GA7660@thinkpad>
 
-On Fri, Jun 14, 2024 at 5:46=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Device is a thermal sensor and it requires '#thermal-sensor-cells', so
-> reference the thermal-sensor.yaml to simplify it and bring the
-> common definition of '#thermal-sensor-cells' property.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hello,
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+> Applied patch 2/5 to pci/endpoint! Krzysztof, please apply patches 1/5 and 5/5
+> to controller/dwc (patches 3/5 and 4/5 are already applied by you).
+
+Applied to controller/dwc, thank you!
+
+[01/02] PCI: dwc: ep: Remove dw_pcie_ep_init_notify() wrapper
+        https://git.kernel.org/pci/pci/c/9eba2f70362f
+
+[02/02] PCI: layerscape-ep: Use the generic dw_pcie_ep_linkdown() API to handle Link Down event
+        https://git.kernel.org/pci/pci/c/14638af66309
+
+	Krzysztof
