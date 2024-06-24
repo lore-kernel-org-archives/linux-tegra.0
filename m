@@ -1,73 +1,70 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2040.outbound.protection.outlook.com [40.107.220.40])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2063.outbound.protection.outlook.com [40.107.94.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A9A2F24;
-	Mon, 24 Jun 2024 10:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1939913B2A5;
+	Mon, 24 Jun 2024 12:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.63
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719226437; cv=fail; b=HRbtRrPlyGqbJNXn3N3j3OR+YkAgHV4vSJsMSACg1y3sCMvaGkgHg7wS2H8kGmWea4GMsb49zdUFKEzXAR08ehRIfe7OJA5Vxvdy2W5w0Dt9eaQSBz0Q7e1SJSEFocYv1UW53gs2vv3GJqhfb/Ke9sDrKzV0uA5h06v2xqC1BXc=
+	t=1719233488; cv=fail; b=rfTVNPv4CcOlTWuL9RunfdaionaEDnfCARWFxO8g4QDuimYkHwND1ysyE2wV1JVN+ip+Fopq9u3kAG4N5A4b5SPYG4wv30uLqqZtXwSI1O3bocVwULfInIALL9jRKEPRIW/vaZtg14Gjkx2UDg+GqdvvH0xD/cnvx0PWKnPWq04=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719226437; c=relaxed/simple;
-	bh=wEAi9DlIeWUP8xCBjBFu3TnP0Ld2Evz3ARniFn9dbrQ=;
+	s=arc-20240116; t=1719233488; c=relaxed/simple;
+	bh=fvDaJHctH6KA8tbh42GP0ntr5jur6pXoxQw2LhWL+vQ=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NH41CyBjitQz4+NZI2nGRTyjv6VfrnIsYfDPT/rh9ad/OVObtS164d4cFBjouZ0n5vit9px3W4yH/tq83FfzaZ+iPYIQOc8VrRS/61ua5nRPLZQCsnBXWfxZFZSKFOdy5EXk/oaUXVy5VLvAl3cuTkfz+mMj6IDnFr361lcZp28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hl7V5aRj; arc=fail smtp.client-ip=40.107.220.40
+	 Content-Type:MIME-Version; b=EC+XztgC7jGbLkXC0P60ClHUJeLSVO21X5oo1h0EwlmQcB/YfruPBwV6EAmhraIPINd/4jOADjFTpLT4aoUeSYS+gpEF5I1/CT9o7d8p1m8NmWMh295MHDs0umGbRHo/ryAx6/trkKl5bPAmt8ajNp89F6Ewe43pHzSudexB+Vc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W4qEqNF/; arc=fail smtp.client-ip=40.107.94.63
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hl7V5aRj"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W4qEqNF/"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O0yIlVfbKjmeNQ2wwbbVyrNYrZTP7ItKc5f3Z8lZ8SUBYIrpypGUkke1VYO98ZyLbgy6KD26LMfJRwc6h/bzQql1iLaKVdhpv4L1hbSbO+L/N5ZxWdeBybb47vKd/BXpB48aUJN+nrbeza8Tzd25zps6XvsPoahE4tRmEpwOybJnS1YtJQZaz4GvyPSMvIiGuolIbRVGmn3e6y9a649ixwlzNNBboeFINcZk0pY33yyDSec8AjA/hmMkkcFKkrCeZO6GvzXVvIe/v3x01Rgn/yxFCRivx9tj7+hSaSBY5sbXJIdckI4XWoyFlg5uTrhCeBaPAb8sN6+C6DvhYgSxsw==
+ b=hdfQOrdUNQiYQpWKog83xQP2f4uvQ6TXcGkJzc8DygBdW4w2O+COhphuYN8UiAeVNTXY7M5Oq+LuIRxpkq9J7urAls2p5wgpDlKMVWf6WiwYYxzu6BpUBHi0N2wCRp6lXGJ4Ox9g3L2T083eAcRg2Zpfw+gDCOMNlFM9/+qSCJdR7CNG0ABNMIQV3kURe0zWcyRdmBVBLu4KPvYR2hGUMJqTc542PzS08SIqQsh+NUhXwbUPEOBmv1FjhZxIbBFl8jLsbET+TNk4HL1FzJ9j4Ht2IjXZsxszWM95fgx1yme/cWq9dnK5998O7ysFVW6tj1jO9l9iRI9/HtjVN4gjFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=paD137QzPFq1tWJCgr5jmdYXC7lF30qWrL8US8AWHfA=;
- b=J+IwEX/tDJMeQNa30lLLnno6/JcJ3mf32N6lhfIDVdOATkDiZ5mI/YUGw4IKZym2XMZP/85B6h+3zlq8JxAf6qGlVDo1WcwkQj5HHnT8IetsbblAtXDEBxvVnGQg8U4PvYcjG1UgF6IHAeDYBwWS3zs59FoLMPnxWYnvwJEM/VFs3AORvMMyEAxTF++oHnNUfuL+tl6KmRMXAQOhrhP7ieYhKLdpO5k3fvcdEM2PcSi83hCjknnNwekyCr67NyCrtdgffDYatiVR90wf2UwTqGi4BXC3VojLEizkuw1woHAa/4QK9BVbmTAGiauKp3ULBF22j4nMrYLui0ii8jZShQ==
+ bh=Alv0/4fayj8inzsvTFjuvjMG0WHzNPhge+Mr7OjfvSg=;
+ b=lh82rvO8fp8+HOIm6vrek8dL9azePVtUylwJVot/TkVxNAJVuGKoqe135trPq3Z1cYTsE/9Rna/nWraa/FeIMKNUUxkv49fPK6890QvquMpnRNI/pK1iqHsnQ0lvy8SXLx7nq8hpYUw/m5Ty2QNfvAc/2QfM6KlozRXnZPxPnyM1/9aYcaGp9CUK3o2274UzcbnNNtP46OSY4BgczKjrz4YzSoyQ5fxt3O8OswHMHIyZfOZoc0EYdjHUf3y33271al+haPAnMB7x168vYPSMWrcYPXCWugHxkDpg4IgTGo/Rv/S/ObhJ1B067EOOQGHJXVy2eoEt258kJk1s1vd1Jg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=paD137QzPFq1tWJCgr5jmdYXC7lF30qWrL8US8AWHfA=;
- b=hl7V5aRjpXezGa4npXHEC6Uvd9G403TD6QfBFR5NorBHCkh2w2NYbfm99RA4tlKKEBG4pDFZd8Pq+5PAhMh3I5JWkMNHWTmSbRpmMv0DP9P8OVYq5Scql+f4VpNy4AYhCVTKlJQkq1sZU/pTFX0BWPZF177t8mBiuqNGs29+yIaWOEb98R+gbicJ4OFvWhFptAgppO6yzKgxK/UPXFIA8VRAWO7fnv3LE7d2AtBEpCfuHhG4MaeitThaNl2fq8adK4uwfD82VD1JEYCP1RQhk+KsMxvjnpMGUSyt8i41DoCDTccan+P1LOQNZs/+0GrjXX6kmgdKD8lYCAGOr66PNg==
+ bh=Alv0/4fayj8inzsvTFjuvjMG0WHzNPhge+Mr7OjfvSg=;
+ b=W4qEqNF//sm0X/reANbCk33mKb5zSKS268Rueb4iUjgao0z5OqStb4A/b/B/As+JW/ITtdIA3S1WVZ4UqyEYDyWbaAllgP8TQAXqe/kRQhEzJja8mFrDA7B9iI5xx/Uz+HVHG+Ra4OLUqP5K/gmbF2ONBWGIZyOb7lGkOw+r59/miV9Umu4ZJB+xrmX2pUhbtJ/9ODlDhlYJHFW7CYoZ5BpJNFmh/9WgY2ThskMLqW5q+XyJzUZTwMBnX737wc5sjbm4J7kv/NGuvAF0C3UFf62jXkVANGN/wjRyT3QbPq/ghv74Ijtte/WpqlezfJPmxWlcQ2/0Lw+GqOiiWrR4vA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
- SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12) with
+ MN0PR12MB5980.namprd12.prod.outlook.com (2603:10b6:208:37f::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Mon, 24 Jun
- 2024 10:53:52 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Mon, 24 Jun
+ 2024 12:51:23 +0000
 Received: from CO6PR12MB5444.namprd12.prod.outlook.com
  ([fe80::ae68:3461:c09b:e6e3]) by CO6PR12MB5444.namprd12.prod.outlook.com
  ([fe80::ae68:3461:c09b:e6e3%6]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
- 10:53:52 +0000
-Message-ID: <ac065f1f-8754-4626-95db-2c9fcf02567b@nvidia.com>
-Date: Mon, 24 Jun 2024 11:53:41 +0100
+ 12:51:22 +0000
+Message-ID: <21d4a05a-3f64-447a-b8e3-772b60ef8423@nvidia.com>
+Date: Mon, 24 Jun 2024 13:51:15 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/30] sched_ext: Add scx_simple and scx_example_qmap
- example schedulers
-To: Tejun Heo <tj@kernel.org>, torvalds@linux-foundation.org,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
- vschneid@redhat.com, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@kernel.org, joshdon@google.com,
- brho@google.com, pjt@google.com, derkling@google.com, haoluo@google.com,
- dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
- riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
- andrea.righi@canonical.com, joel@joelfernandes.org
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com,
+Subject: Re: [PATCH v5 4/4] usb: typec: ucsi: Always set number of alternate
+ modes
+To: Jameson Thies <jthies@google.com>, heikki.krogerus@linux.intel.com,
+ linux-usb@vger.kernel.org
+Cc: pmalani@chromium.org, bleung@google.com, abhishekpandit@chromium.org,
+ andersson@kernel.org, dmitry.baryshkov@linaro.org,
+ fabrice.gasnier@foss.st.com, gregkh@linuxfoundation.org,
+ hdegoede@redhat.com, neil.armstrong@linaro.org, rajaram.regupathy@intel.com,
+ saranya.gopal@intel.com, linux-kernel@vger.kernel.org,
+ Benson Leung <bleung@chromium.org>,
  "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20240618212056.2833381-1-tj@kernel.org>
- <20240618212056.2833381-11-tj@kernel.org>
+References: <20240510201244.2968152-1-jthies@google.com>
+ <20240510201244.2968152-5-jthies@google.com>
 From: Jon Hunter <jonathanh@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <20240618212056.2833381-11-tj@kernel.org>
+In-Reply-To: <20240510201244.2968152-5-jthies@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0340.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18c::21) To CO6PR12MB5444.namprd12.prod.outlook.com
+X-ClientProxiedBy: LO2P123CA0015.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:a6::27) To CO6PR12MB5444.namprd12.prod.outlook.com
  (2603:10b6:5:35e::8)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -76,180 +73,216 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|SA3PR12MB7901:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f02ef56-0820-455f-9645-08dc943bef7c
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|MN0PR12MB5980:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7e92292f-1180-4261-495c-08dc944c59cd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|366013|376011|7416011|1800799021|921017;
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|7416011|376011|1800799021;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NHhrVmh3R2EyeFd0UUNhWE1MSkU5dmw0d0NIb1cwRGdkM0JqcDN0ZHM3Q1VB?=
- =?utf-8?B?RVNXUWsvTXNWSjU3a3g3RWtTL2c0VEhwSzg3RWJaUlM1aDJjY25MNGhGZ051?=
- =?utf-8?B?YWhYVkwxTmN0SWpOWS9LSjNlcXlZREloUXgrR1JHdUFaODFzUEM0alNaUlJZ?=
- =?utf-8?B?eTkySjU5dmpqYzQ2ODRLNGw4QkI2MFpUNXNXakwzelkwZHc3czF6aURub1pn?=
- =?utf-8?B?c3pqMWxhTllNVzkyTVlzYXd3YmxmYjJnWTNQQW8yRSt1WE00dStsZ0xYRlJ3?=
- =?utf-8?B?bVl3WjJlUHFEeG1zWW5ZRFg1dUswMmdLeDI5YkdvRE94S2JEL09CQUp1SG96?=
- =?utf-8?B?d0J3UzlMSDRaRTg4bjF4WWxYM1QyYmEzaVpRZUFaY1BBVURobllEaWkwQ09S?=
- =?utf-8?B?QU1QQkxERk10SERSRC9Gbyt2R2ZhMnI3Zy81NzJaUTlKdGhQM2tVeG9WT2xC?=
- =?utf-8?B?NEViRCswU3YvTkhueTd3bzg3aEZXQUpLVm9nMFZVbHVNbitFekhDcGJjNEg0?=
- =?utf-8?B?SGZhQy9JT3Y2ajNtK1EwbkVBb1R5dTFXV3NTemxWR3dKRnYwcUllYTF3dDlz?=
- =?utf-8?B?YjNjQTVvYVVteUd5VXhIbU9VNVgrUTExalQwNkcySm1pZnNDSkJiQkZKYjN0?=
- =?utf-8?B?YWJqQ3pmZTA2TWd4Zk0xU1ZiYTEwOU16YjZtek5aWEpWQzFBK1dpRXBGNlpB?=
- =?utf-8?B?N0ZpQkRiQnB2ZkRKOTBDMnBQcE9ENXlzWTMxTUt2ZzJtREtVT3k1cGxabmNG?=
- =?utf-8?B?MVZHdkhraXd6bGh1ZkpydlJoN2FGNzhvOCsyZEs0bDh1UnV1UXN4R2tWcXJR?=
- =?utf-8?B?RHdGN2Rqa0RlckM2U2lPM3cxWXdudzI4SnhiWlRHaGRJcXdHdm1DZStFT2FD?=
- =?utf-8?B?M0pzUFJYNjlPVWxLWlBBTmZOdjFwYThhSW1RaHZ4TXV4amNvR1pDMlNBdGFr?=
- =?utf-8?B?NFhmeDl5NVhMYitibTY0QlVqTGlvVUlVenNtRFdzRVpxcmZQc2Fsb1FidkNl?=
- =?utf-8?B?RHhDMEMvdUprZW8vMXFNcStDc3NuNnlYUkh3eW9zU05ra2hZVmR5TzU2T2hX?=
- =?utf-8?B?N3hHcFNPL0IxTTMvSjZ3WUJoWFVxMklHZ2kxTStQMWxrVERibU5TTU9aMHZn?=
- =?utf-8?B?N1I5SnBtOVdzbkVnMlpGYS90c2tvMlc1NVcvSWFxdkhyTTBDVnlCR0huSFB2?=
- =?utf-8?B?WnpOSGhGcXFwQTlkVFdScTdvcWFiZDVjb0lCMlNPK1lTaXNnenZ4OHdCK3J0?=
- =?utf-8?B?a1VrYVVnOU5INVRkdC8vcURENHdQejRFc1ptRjRwaHlNWlY3dFl2UFZCZDAy?=
- =?utf-8?B?Ukw0dSt1c2p0M0t1MllPZ3VDLzBVeHdzdzl4ekxVVDlhdmlMSWZXUlJLQkR4?=
- =?utf-8?B?TXhKMlc5L2xMdkFjcEVPbG0wdjZjVytGMWs4cjBFZGhIK1ZpWkFIQnluWHpV?=
- =?utf-8?B?SnZxR1lqNWhielEyU2h3cU1FTU8rb09jS1lLMm05NXdvK1hQM2pPYzNmTlpk?=
- =?utf-8?B?LzRpQ1NjR2hnNVQ3dW5SYVRPQVFLNWlSWnVoT3AvOGcvdWZWNjJSTEZSa0Z4?=
- =?utf-8?B?YjhxY1pjR2FwTThkVEh4NjZZRzlnVTgzVFRSNWI5ZUJhaUp5Tm41dXMzQUNP?=
- =?utf-8?B?VU5UR21nY2NiQmR5Vlo2UXZTSk5rVjFyTmNnWDMxNG12eCs2dU5LeHZRcHZS?=
- =?utf-8?B?a1g3T2czSkRpZ09UNC81L0orRkF0cXZ0NUUrY0ZLL0hxdDdLUXJMR0tYeVk3?=
- =?utf-8?B?b2N3WGpDdW9qeXduVnVUcXlEbDFmYjlDRDF3ZjdCWGRRMmp2WFJGdUN5Tnhs?=
- =?utf-8?Q?IqnxjchGvwKRdcqy5xVLgwdDEDhRPNw1ZNzvk=3D?=
+	=?utf-8?B?dnRscVoxekRmYnhqazFmR2d6OVpxK3lGUDV2Qys0U21EaTJRZnptR0NnRTdN?=
+ =?utf-8?B?ejdQRUVOZHBHODFPZmpOYStiU29Qc2pIR0ZqK3pyaDVLeG5XY0dJV0hvSmRC?=
+ =?utf-8?B?OTNiaHVubW1BQ252TVE2bDVKQU54aDBZMXdvWnUyalJRNHRSSWU0WWxBUE9U?=
+ =?utf-8?B?YUM0KzJjWThqa1gzSGVyRU1kN01QWHdnWFBCVFFpN0IwZlpmSk9sMjZhS0Jk?=
+ =?utf-8?B?R0dsUHlYdlB5MzJHZFozSEVJNkxPaHVDckNhckpaNEs1bmxWMyszQm00YWZ2?=
+ =?utf-8?B?UnVRVnBORGdzTVRjNzJMRG0zUVU2WDJhTWdkTGFJekFGQmhsNXFTcHp0NXhx?=
+ =?utf-8?B?cXdsWVlrZDdLMHUzOW1JT0xHZ3h1dS9UUmZieXUrY3BKL2E3VmwrUG5nUFgw?=
+ =?utf-8?B?a1VGeUxKdGNidW9ITHdLRWI4NW8vL1ljTUtoM2pYNzE2RWlWSlkrNC81THpT?=
+ =?utf-8?B?QmE2aFNoOXRGb0kycE8wWXVUWUh6OWViVW9WT3o4V1NTajl2SW1rTndhU3Z6?=
+ =?utf-8?B?dEVvbFpYb1ROYWZ3ZmtNeUc2eWFMMk14WG9WMWEvN3Jqb2s1enE4a0ZKM0cz?=
+ =?utf-8?B?d3ZRRWhMS00vdko2eEk0Q05ReHBRVXRINVV2TkNjSWh4RU83Qkh5VCtGYXVw?=
+ =?utf-8?B?bm5ZSTJCVGt0bmlNS1VHMm14azJUYkprZFVORWNUa2pNVldUUzFvcHBYS0hn?=
+ =?utf-8?B?STJacmhaT3VZVTlnZDBCNjRudlJJK2ErbzV1TW1vY1V2WmIrejhLejhWeE1N?=
+ =?utf-8?B?SWlOY1VudVEreTFZa0RVUlZpazNLY0oxWjdNZDA4NExlWTNlSzhBOW9qV29a?=
+ =?utf-8?B?SmE5bVVmTWVFaGhsNlAvTFM2S2hkNUdzWWxoU0xDbW5Ya0oyc3dnbG9sc2RE?=
+ =?utf-8?B?YnM0bkxqNkVuQXV6czRjZkhpbERqMGZ1RDdXQ1VVbmpMVjczNFo0UTZzTURU?=
+ =?utf-8?B?RGg3Y2pnYjQxeUpZWEtmUzdoMGcyanNQMlBhTktIaEdoMWVzUEo2cTN2MXJX?=
+ =?utf-8?B?bGdTNXV0UTd5ZE4zV3BGYTUwZzNIVGZjSklIbU05RHE1UzlZYmEvYnpmR3Vl?=
+ =?utf-8?B?R1J5SjNNRW5lbENrR3NINTVnSGhZSTFmYWQyMWJRU0lMdWZiVGlaMWdXSEp2?=
+ =?utf-8?B?UkdTY09MTncvend1N1hkUmdvak1BQXBuLzFpZzAyL1NDa3FsNFlQY3h2dklR?=
+ =?utf-8?B?NHltbTZmM0Q1NEpaRS9YT01uQTRvR0pwS3FaclFBYXNVTE5ZRUxnV2FCVXVY?=
+ =?utf-8?B?T2ZETWtxZ3pZRk0xNlVGc0UxWlJ4eHYvYktHc3BWWUY2emF0ajBtTWd0WitQ?=
+ =?utf-8?B?bE1KSThqcUVhclRLakgvcFN0UWhKRDI2Z2dqVU9oaFlneXVtTkNxb3oxQjRz?=
+ =?utf-8?B?OTJtekdaeDZnZ1ZYa2NXUEcxdlNNeUNwb1FkZFhBT25zcmxNSmJmcmJMZkda?=
+ =?utf-8?B?R093a0hlVmdlWlBPQ1lFMEJZbUd3REI0RTJiQy9QQmhqWWpqQkl6ZXp4MEp6?=
+ =?utf-8?B?bFFVbEU4d0xDN3BQaFZsSHFsSjNaNDdiS211Ykt6ZjN1NElXeFB5N1NCRG4x?=
+ =?utf-8?B?cHJ4ZDlkYUdTT09tT2V0cFhxckhiWEFOckJGdkRRZ3NEdDNZcVVudFY2YzNq?=
+ =?utf-8?B?UitKS0U4NkJ4SUxlaUVFcStzRURzL3RlOVRRK21JN21sTFdncXpjbjJBSkdL?=
+ =?utf-8?B?azdsVUZ4UkQzNEIrWUxJU2p1NzdGQmQ3dXFhdkx5TDBHcTBLZkRNWmZ3bC9k?=
+ =?utf-8?Q?y71/mkBrF4f3Lt6Y2hk9mbimMdumfmdA9vT+zAA?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(7416011)(1800799021)(921017);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WmQyamJBL0xHeXdrZlJFdmt0OWxKa090WDEwbFhiY0svMU1rTmJlV2p5VnQ3?=
- =?utf-8?B?VzFPSk4wY3REd3lDViswTUtuQmxGQmViK1VTOC96eEltMFFoQXdOdkFtcGhB?=
- =?utf-8?B?MDRUOGJBaVhBZEVYQTJDRU1VZVJTcFA4UVRWMit5TWNqeldQY1lEWVEyaXVu?=
- =?utf-8?B?bm9IU2RKTEo3TmkvNmE0ZUQ1VHpnRjhHVmxXSG14TExKSzd4UXh1RGxBaXk2?=
- =?utf-8?B?dE02Qkt5ZWcxZFpQNkY0NUdpU3dLWCtnb042MStuZG5CZ2hPajI3ekhXSkt2?=
- =?utf-8?B?aFNCVUdaenovRElCR0pndmh1SjZnbFIwNVRUK0F4QkVhUTZqVVVNeElsdE0x?=
- =?utf-8?B?eVVuSHFEOUUvTllJWExMcXhpend0bkVUd3orZnVjbnZGcjJnUG1QbFlmVDZr?=
- =?utf-8?B?UzVzNnhQdXBmN0ZjUThkRWZVdVpvTE04dGpNeHBvMlF4NUdiaklLV05HQnQ0?=
- =?utf-8?B?eDlzR0R6Z3E0UzYveVdyWmJENTMvenRJa1BGN0dEWGRVUDdJVWozcHNxM01C?=
- =?utf-8?B?b0xSaTl0UUNKMllON01NQkFWVTgzS3VyT0k2WS9vTEFyZDJsTUlZQVlMOGYw?=
- =?utf-8?B?ZGdKNnk4VGlIdGNWb1FMUjNVMGIwUEZEaVU4bjQvamR5bkIwRFQySU1oWWZR?=
- =?utf-8?B?eFVXNjZka1RFUUZzUmR2ZGtmMDlvaEdrZXdIaTE3Qm9PRlVFUXJudXBLaTY2?=
- =?utf-8?B?SENRbEVhZTdybmZSK2dOMm0vU1BnMmlydnNGelFMMm81QjlWRXNvS2hMT2Vp?=
- =?utf-8?B?bmVDZGJWNEpkZVp0TU1SeWZ6M0NIUEx1ZEVidzRoYVpnZ0FLeFlkaUtLNE5L?=
- =?utf-8?B?cWxEeXNURmhnS0ZFOHY4OUt3V1Z5T1RhU21TVmQ4VDVrQ3BtWFJvQm5oV0Uw?=
- =?utf-8?B?UEZKcmJBczZlQlFtSXkyZDNia2J3dW5qT1dWL3cyVEJOMkI3WFgzSU5QTGNQ?=
- =?utf-8?B?aTAxUHB0ZU9wT0dzOHFHOWcwemw0VWVHUUw1VVVxc2VxMHFaQTlKUHQva1Jv?=
- =?utf-8?B?SmJmbWVDVHd3N0Q4c2pZSy8vN1p1L2tSQnBRSk9YYkFwNjhadFYwdXczN3pR?=
- =?utf-8?B?VVJYUHFHOTJJWXpBV0ZGeWY1dEQvaUxtTC90cS9ZUmN4bXZ6WFBSQUpFbUJY?=
- =?utf-8?B?UVJGclZqdXY1OU9mVWx6VnZIK0VrcCtsakZpWjVCWGJURkRML2duMFc0dmg1?=
- =?utf-8?B?S3ZRK0NJTlhVWTdxeFJvMU9NU2liVXRFR2tFaVVVY0Jkd0lRa3k3cmxSVXl3?=
- =?utf-8?B?dysvc2VrbU0rU1hVdEFtN2lDaExRb0cva2VDUzFzOXBCOWNvRGNVN3dheGpM?=
- =?utf-8?B?MzlKaFVWN2JuWkFSSHRpS0wvMHZ0S1kzSHFsaTNCR09vTXFPWUcrZzJKVUJz?=
- =?utf-8?B?QjBrTlo3REdUZWlNeDZRTDNUNVhJTWw3VmduenRkTllHeERyYlVqY0NxMzZV?=
- =?utf-8?B?UGRRRERjUTcrRGNNaEx1YzU1b2J1elJUVXdhTGZLaCsvVi85SFNWUmg4VWlh?=
- =?utf-8?B?cFl5M3lUOTBPKzdqNEtaSVluMXZ2RWN0ZFFtVnJsaVVTeW1SQTNpekdoKzI2?=
- =?utf-8?B?OGt4bEZpM1c2c0Y4cVhsUnJYY2MrV2F0ZlNhZ3UzUTJVN01BMTBvNGJCSE9K?=
- =?utf-8?B?Y2RKTzRpZitQeDV6N3VkenE5TngrSm9DSGF1d2RHaUVZRHM0cGFnL0tjVVMy?=
- =?utf-8?B?L0ZvN2FZWEZRK3hNdU9BQTRWSTQvQWV2MEZLMUxtNHVpek4vK3doMFBUVUtm?=
- =?utf-8?B?RHM2c0xoMnVaMC93LzdGYzFab1J4UGIxaWVTNHk4bXhBNXg3ZXZ5VG9NOG9w?=
- =?utf-8?B?bGxoZ1VKOTVmMmloY01VZWh5STRyd0djaGJydWVTWmJ6UGdoem12RENHeUo4?=
- =?utf-8?B?QldZWHI2NDNyNjJ5SFZvZUxBa2ZmM0I5NWNaSFRxY2lwRGszMjE5bktuWkxG?=
- =?utf-8?B?Z2I2L3JpUjdwczg0dkFqekk3SERqdzM4T0hpNmdTMWIyekVzVmZGZ0xwaDA1?=
- =?utf-8?B?YnZuUWUwbnhvRXhXWGlKdDlxTDdrNUREQnA2UXptSmhSTCt3bnlxZFEyaHNC?=
- =?utf-8?B?ODA1TEUvMlNDMzRxZjU0aUI4YzduWGgzSWdaWXluVDF6REFZV1pxaTBhKzNj?=
- =?utf-8?B?ZHlHNWxZS1c0NXF6RHNNMDlJUmcwM05wQzU5OGZ3S2hWU2xSdFdiUzZVeG15?=
- =?utf-8?Q?KivB2n9q3FEnrGj26nUPXLk1q5YyUsI8Fp7dZPHHmgBP?=
+	=?utf-8?B?bkNzc1Nlb282YmhzME82RTR1TWF5b1ArMitMTnNxY2U5aWtISXRXeURIN2c2?=
+ =?utf-8?B?TEVLOStqdHRKeUZKbzlDeUZNUysyMzlEWlZRc3p1TnF0a2Z2bG9WZ1NYQzhy?=
+ =?utf-8?B?QWVIYXZQMGJlNGJ4MXhwbXN4Q3gwdkhNcVZ5MkNEaExaVGlJclRpelg0b29r?=
+ =?utf-8?B?RjRVd2JQdGY0MEtLaHIvUDNPNmdJd2s3TmhQUThwQ3VOeU5BMGp1ak9iSkU0?=
+ =?utf-8?B?RkhTUEM0TFdFQ0VVVmVoSTUwMC9oQWt6TEQwSDBGUk9QNDBneFN5bUM0aG5T?=
+ =?utf-8?B?Ymd3WmtwZTNBVURnQkxqWEU4UXZLTGxIaDVVR2JXZWQ4dXNqMmFOcEZHbUpi?=
+ =?utf-8?B?bG9uTEVacDk4YUE2TjJrNXFXdUhFOTZveDhNd1c3ZlZERGRnaW04NHZiVDFD?=
+ =?utf-8?B?ZWZ5N0J4SFdNcDNkOTB3cXJJaFJhYlBJWXRKcHBNYlN0Q3MxYnNkZko4eFd6?=
+ =?utf-8?B?Zk1qWGpKa1RyQmtsYU5qbncvbXI0QlpEYjRjNkZ3cUdheXFLQldQN1NwVTFJ?=
+ =?utf-8?B?M1RvVGloYkNpUmxEN1IwL0wrSCtPZnV0RWJ2RWE0RHJvSTBqQVpjY3lSV0tI?=
+ =?utf-8?B?WC8wSHU3dXVnOHZNdEJnOFMyNzQ4ZWVZeE1GTk0zQXlHZUhieHJLVnJFNjBJ?=
+ =?utf-8?B?dUNpSEdrc011WHBjVGs2NG0yZUo2Ymc0SUJGdjhLZDB3STlydlFuaUlKQVNz?=
+ =?utf-8?B?V2NBNEN2VjlDMFdrRGhmaGpONU9EdTZYR0xQNmF3UzZ4ZnFzUVhrMnFadG5s?=
+ =?utf-8?B?N2ZPUFpLdmRtRlIrWVlvKzNxM205Unc5Y3VoUDF2blFUVkhmSk9OanZGRVZj?=
+ =?utf-8?B?a2xyWG1wSk5ENjVNUmtVWmR6SUgxcTFXTU9wbC9xWmFkbllrMWdVS1pXSmZO?=
+ =?utf-8?B?aFBGS0dZQ3dsaVVlUm9ka2IrMjlQekE2MWU3VTFOcDg1VUhEY0JPQzdDOG1Y?=
+ =?utf-8?B?SHNldXp0VXIzTjBTMHhHT01Hc1Ivdnp5L2ZUdXdZUTVSWlJ4eHpKWDZCak12?=
+ =?utf-8?B?K0YrWTE5SGhVSC84dG1JOHpUYjBpYmZwZmIvaTVISUFtcytscTRVVG53Nis2?=
+ =?utf-8?B?TjVGRHFBQzRwZXpOSThmeDRjdWwyQmhBRDE0YWdRczloTmhMUzhJUExSSHJt?=
+ =?utf-8?B?MTBLVDZkMGh6Rnc1aU5Yem1Hd0pvdkNRWW9DY0VSZzJOVFFOakovK1hnOUZQ?=
+ =?utf-8?B?UW0xZmNhNm1nMUxPRlhhZlYxQjVHUklxSGJyV2UyQUlHeXI5WDRXVEgrYlFs?=
+ =?utf-8?B?TlA2S3d3RkpWZFB1UXdxS00vcytjV2l3eURTbldzdjVEZDF6OGNRbFNJNjNW?=
+ =?utf-8?B?c3dvRGxoTjlBTkhjV0ZuRzRDS2x3STQyYnZVLzVLU1JsTVNxWGsvM1ViRVRa?=
+ =?utf-8?B?ZUtmWWNzY0FjY3pKWWxIazc1elVTWE02UGp2RkJiUG83eWxWRTJsMWJUaHRn?=
+ =?utf-8?B?UTd1MXZ1MWd5KzRtaGxVdVBqTDNPV1dOMzlpUDVzRSsvbnpoRjBSZ1liVGVM?=
+ =?utf-8?B?dUpyeTh1MVZQek5KckhCMjRUMUlNRzZxWFcwcFVPa0FIbUMwanNFR0dWMkN3?=
+ =?utf-8?B?L3F5YUhrbjk3SnVxcmg5R05KS0k3Z1h0d1NXS1dnNWhaTFlvKzh2S2NaOVBr?=
+ =?utf-8?B?L1FnZUllcC9wY1pmZi96M2F6ZHlsU1pnc2R2SGxKZFJaMHU5ekJXUWNHeVA1?=
+ =?utf-8?B?VUhMMXpBSmxqcnpHakRGVy83UDdWektEeERYdnk2M01ITGx0UDg3Q3oxL2pD?=
+ =?utf-8?B?QXl4Q0FuWWc4OElHYUwzM2YwRjJodDF0cHpOanVvRnFOZndwQk1BeHFsdXRF?=
+ =?utf-8?B?SXczTUdKQWlWaFk0VDhpQWhKRE1vL2lsMmwwSHBSSkhSN1VCOGdUeVRmTmp0?=
+ =?utf-8?B?Z2lWWG9IYkluSHhiajFRRVFBbW5JM3NocHNTUnVHYlIvNHpKTXE3bSs2YmpZ?=
+ =?utf-8?B?OE1iK013QWdycms0eVdURWh6bkhaQWhHRndJekVGS3NSejRVQWZMVUF3eXEw?=
+ =?utf-8?B?UkVEQW5vSnR4dFZBRlpXZytmMWgzdksvdkc1K3I1MUkrTGNKdWhnWVVaR2c3?=
+ =?utf-8?B?RHd3OHpEV0VQeFRvRmJwWHN2WFpTOFptVEg5VjZUMEpMR2xaem9ldmRENGFR?=
+ =?utf-8?B?R1ZUTy9jcXB5MS9wcnJoVXdPcUNNRnZFNzYzN3FsSnNTL29OcFZDQW9pYTFQ?=
+ =?utf-8?Q?RoZ4ny2GEegsOTASqdzF2LK24k5zraCNg4um11lR9LP2?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f02ef56-0820-455f-9645-08dc943bef7c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e92292f-1180-4261-495c-08dc944c59cd
 X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 10:53:52.6182
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 12:51:22.8295
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7XJ6+ZBS0x0MRN85Nqij2gg3uugI+D59emVPQbeMqldxAyLSFkRdDldEYb8kY6sFysY6oJ3V/JUtRgf7LLilvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7901
+X-MS-Exchange-CrossTenant-UserPrincipalName: zTs+ddIccj4BHENOa1lKkADhNOA/zsTVobYWkr5i2/fWmtNJnR31av/VSZneY//BlWvGcgaAYAJYxFpH6cFhpg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5980
 
-Hi Tejun,
+Hi Jameson,
 
-On 18/06/2024 22:17, Tejun Heo wrote:
-> Add two simple example BPF schedulers - simple and qmap.
+On 10/05/2024 21:12, Jameson Thies wrote:
+> Providing the number of known alternate modes allows user space to
+> determine when device registration has completed. Always register a
+> number of known alternate modes for the partner and cable plug, even
+> when the number of supported alternate modes is 0.
 > 
-> * simple: In terms of scheduling, it behaves identical to not having any
->    operation implemented at all. The two operations it implements are only to
->    improve visibility and exit handling. On certain homogeneous
->    configurations, this actually can perform pretty well.
+> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Reviewed-by: Benson Leung <bleung@chromium.org>
+> Signed-off-by: Jameson Thies <jthies@google.com>
+> ---
+> Changes in V5:
+> - None.
 > 
-> * qmap: A fixed five level priority scheduler to demonstrate queueing PIDs
->    on BPF maps for scheduling. While not very practical, this is useful as a
->    simple example and will be used to demonstrate different features.
+> Changes in V4:
+> - None.
 > 
-> v7: - Compat helpers stripped out in prepartion of upstreaming as the
->        upstreamed patchset will be the baselinfe. Utility macros that can be
->        used to implement compat features are kept.
+> Changes in V3:
+> - None.
 > 
->      - Explicitly disable map autoattach on struct_ops to avoid trying to
->        attach twice while maintaining compatbility with older libbpf.
+> Changes in V2:
+> - None.
 > 
-> v6: - Common header files reorganized and cleaned up. Compat helpers are
->        added to demonstrate how schedulers can maintain backward
->        compatibility with older kernels while making use of newly added
->        features.
+>   drivers/usb/typec/ucsi/ucsi.c | 14 +++++++++++---
+>   1 file changed, 11 insertions(+), 3 deletions(-)
 > 
->      - simple_select_cpu() added to keep track of the number of local
->        dispatches. This is needed because the default ops.select_cpu()
->        implementation is updated to dispatch directly and won't call
->        ops.enqueue().
-> 
->      - Updated to reflect the sched_ext API changes. Switching all tasks is
->        the default behavior now and scx_qmap supports partial switching when
->        `-p` is specified.
-> 
->      - tools/sched_ext/Kconfig dropped. This will be included in the doc
->        instead.
-> 
-> v5: - Improve Makefile. Build artifects are now collected into a separate
->        dir which change be changed. Install and help targets are added and
->        clean actually cleans everything.
-> 
->      - MEMBER_VPTR() improved to improve access to structs. ARRAY_ELEM_PTR()
->        and RESIZEABLE_ARRAY() are added to support resizable arrays in .bss.
-> 
->      - Add scx_common.h which provides common utilities to user code such as
->        SCX_BUG[_ON]() and RESIZE_ARRAY().
-> 
->      - Use SCX_BUG[_ON]() to simplify error handling.
-> 
-> v4: - Dropped _example prefix from scheduler names.
-> 
-> v3: - Rename scx_example_dummy to scx_example_simple and restructure a bit
->        to ease later additions. Comment updates.
-> 
->      - Added declarations for BPF inline iterators. In the future, hopefully,
->        these will be consolidated into a generic BPF header so that they
->        don't need to be replicated here.
-> 
-> v2: - Updated with the generic BPF cpumask helpers.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: David Vernet <dvernet@meta.com>
-> Acked-by: Josh Don <joshdon@google.com>
-> Acked-by: Hao Luo <haoluo@google.com>
-> Acked-by: Barret Rhoden <brho@google.com>
+> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> index bb6e57064513d..52a14bfe4107e 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi.c
+> @@ -812,10 +812,11 @@ static int ucsi_check_altmodes(struct ucsi_connector *con)
+>   	/* Ignoring the errors in this case. */
+>   	if (con->partner_altmode[0]) {
+>   		num_partner_am = ucsi_get_num_altmode(con->partner_altmode);
+> -		if (num_partner_am > 0)
+> -			typec_partner_set_num_altmodes(con->partner, num_partner_am);
+> +		typec_partner_set_num_altmodes(con->partner, num_partner_am);
+>   		ucsi_altmode_update_active(con);
+>   		return 0;
+> +	} else {
+> +		typec_partner_set_num_altmodes(con->partner, 0);
+>   	}
+>   
+>   	return ret;
+> @@ -1138,7 +1139,7 @@ static int ucsi_check_connection(struct ucsi_connector *con)
+>   static int ucsi_check_cable(struct ucsi_connector *con)
+>   {
+>   	u64 command;
+> -	int ret;
+> +	int ret, num_plug_am;
+>   
+>   	if (con->cable)
+>   		return 0;
+> @@ -1172,6 +1173,13 @@ static int ucsi_check_cable(struct ucsi_connector *con)
+>   			return ret;
+>   	}
+>   
+> +	if (con->plug_altmode[0]) {
+> +		num_plug_am = ucsi_get_num_altmode(con->plug_altmode);
+> +		typec_plug_set_num_altmodes(con->plug, num_plug_am);
+> +	} else {
+> +		typec_plug_set_num_altmodes(con->plug, 0);
+> +	}
+> +
+>   	return 0;
+>   }
+>   
+
+I am seeing the following panic on linux-next and bisect is pointing to
+this commit.
+
+[   16.411135] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000310
+[   16.411716] Mem abort info:
+[   16.411806]   ESR = 0x0000000096000044
+[   16.412147]   EC = 0x25: DABT (current EL), IL = 32 bits
+[   16.412465]   SET = 0, FnV = 0
+[   16.412530]   EA = 0, S1PTW = 0
+[   16.412778]   FSC = 0x04: level 0 translation fault
+[   16.413084] Data abort info:
+[   16.413149]   ISV = 0, ISS = 0x00000044, ISS2 = 0x00000000
+[   16.413534]   CM = 0, WnR = 1, TnD = 0, TagAccess = 0
+[   16.414163]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[   16.414649] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000101b2b000
+[   16.414784] [0000000000000310] pgd=0000000000000000, p4d=0000000000000000
+[   16.414940] Internal error: Oops: 0000000096000044 [#1] PREEMPT SMP
+[   16.414946] Modules linked in: tegra210_adma(+) snd_soc_tegra210_ahub(+) drm backlight snd_soc_tegra_audio_graph_card snd_soc_audio_graph_card ucsi_ccg typec_ucsi crct10dif_ce snd_soc_simple_card_utils typec pwm_fan snd_soc_rt5659(+) snd_soc_rl6231 ina3221 pwm_tegra tegra_aconnect phy_tegra194_p2u snd_hda_codec_hdmi at24 snd_hda_tegra snd_hda_codec snd_hda_core lm90 tegra_xudc host1x pcie_tegra194 tegra_bpmp_thermal ip_tables x_tables ipv6
+[   16.415056] CPU: 0 PID: 290 Comm: kworker/0:4 Not tainted 6.10.0-rc4-next-20240617-g76db4c64526c #1
+[   16.415063] Hardware name: NVIDIA Jetson AGX Xavier Developer Kit (DT)
+[   16.415067] Workqueue: events_long ucsi_init_work [typec_ucsi]
+[   16.415082] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   16.415091] pc : typec_plug_set_num_altmodes+0x18/0x6c [typec]
+[   16.415112] lr : ucsi_check_cable.part.0+0x228/0x280 [typec_ucsi]
+[   16.415120] sp : ffff8000848bbca0
+[   16.415123] x29: ffff8000848bbca0 x28: ffff000080e66000 x27: ffff80007adc96e8
+[   16.415140] x26: ffff80007adc96f8 x25: ffff0000834510c0 x24: ffff000080e66010
+[   16.415150] x23: ffff000080e6638c x22: ffff000080e664c0 x21: ffff000089c95800
+[   16.415160] x20: 0000000000000000 x19: 0000000000000000 x18: ffffffffffffffff
+[   16.415170] x17: 1e00000001000000 x16: c203000000000000 x15: 00656c6261632d30
+[   16.415180] x14: ffff800082c922d8 x13: 0000000000000040 x12: 0000000000000228
+[   16.415191] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+[   16.415201] x8 : 3d45505954564544 x7 : 0063657079743d4d x6 : 0000000000000000
+[   16.415212] x5 : ffff0000835ee780 x4 : ffff000080e66288 x3 : 0000000000000000
+[   16.415223] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 0000000000000000
+[   16.415233] Call trace:
+[   16.415236]  typec_plug_set_num_altmodes+0x18/0x6c [typec]
+[   16.415255]  ucsi_check_cable.part.0+0x228/0x280 [typec_ucsi]
+[   16.415264]  ucsi_init_work+0x8b4/0x9b8 [typec_ucsi]
+[   16.415271]  process_one_work+0x150/0x294
+[   16.415282]  worker_thread+0x2f4/0x3fc
+[   16.415289]  kthread+0x118/0x11c
+[   16.415296]  ret_from_fork+0x10/0x20
+[   16.415310] Code: a9be7bfd 910003fd f9000bf3 aa0003f3 (b9031001)
+[   16.521018] ata1: SATA link down (SStatus 0 SControl 300)
+[   16.524401] ---[ end trace 0000000000000000 ]---
 
 
-Our farm builders are currently failing to build -next and I am seeing the following error ...
+I have not looked any further yet, but wanted to report this. If you have
+any thoughts let me know.
 
-f76698bd9a8c (HEAD -> refs/heads/buildbrain-branch, refs/remotes/m/master) Add linux-next specific files for 20240621
-build-linux.sh: kernel_build - make mrproper
-Makefile:83: *** Cannot find a vmlinux for VMLINUX_BTF at any of "  ../../vmlinux /sys/kernel/btf/vmlinux /boot/vmlinux-4.15.0-136-generic".  Stop.
-Makefile:192: recipe for target 'sched_ext_clean' failed
-make[2]: *** [sched_ext_clean] Error 2
-Makefile:1361: recipe for target 'sched_ext' failed
-make[1]: *** [sched_ext] Error 2
-Makefile:240: recipe for target '__sub-make' failed
-make: *** [__sub-make] Error 2
-
-Reverting this change fixes the build. Any thoughts on what is happening here?
-
-Thanks!
+Thanks
 Jon
 
 -- 
