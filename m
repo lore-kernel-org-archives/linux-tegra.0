@@ -1,82 +1,145 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFB81B964
-	for <linux-tegra@vger.kernel.org>; Mon, 24 Jun 2024 16:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C791CAB5;
+	Tue, 25 Jun 2024 01:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246780; cv=none; b=SAXrtffKofRNTQ19pgGRXGagWfwvjbR/qI2/bJVcqmK8bVoGtjb8WNL68DMkpJgTVYZ/4ExZsKE9RIi5NLrHBQS17nhYVynvQcmgd0PsJyutClzJRAd2CuEVH1Nf+o8H1TjnGPdOq3Dfi8s80k6CZTiSWZPe5ZhECm1uMNuHIuc=
+	t=1719280719; cv=none; b=rmbGrVhThdusYherz26rYipgrBDV4IcKpMS5uLU6cllS52HGV9fYozcGs/9/tuPLNXnPABqT8cL/Q/MydXpeJ9th+oMGnY9lUpmdSFs72OGIbWoCebXqVlSKyOoj31fUIgT+tYYQJSQQRwKExXnvJu6VjbarPP8FnGvwip7zUA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719246780; c=relaxed/simple;
-	bh=kmJtgTsgtZTlkCh8FeE1ujdxkosMVSUNwf8QsgGWP6A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WV+f40HTMxF5Q5qseOonB/k5tUAETFD7ursXya0l32nZE66KLO8vyV58pthWMHSvYNfy7Jacnvv42IctUInsd1Zjye3kwdCn46g9X8QblwjBeaYwlnumaNLk7j8lBthEAatc/gvZEwGqRJcZz2amr0AeVKoxi5Lm7FD++dac6xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fuoDHrW/; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1719280719; c=relaxed/simple;
+	bh=Cw6jC/8l4oTtnF3R6KeDYzXV281+HtqdirWYcEf//Ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5t7ekRMCNA/pgwie93Xz/z8sMIW1GPX+bmVKw2caPVJWtJde0CWIOcBOv8jkeUqau+pPTP30CzDQf1fHwcQ5ZWEWBJq4mmRpZalptssz5E6MbuSaJxVYT1iQCX6LtGd9kXZMFevFngBBJo3AcgHjLPvU8o43YW8lvKPYVd4p40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+dmLe87; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fuoDHrW/"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso44545a12.0
-        for <linux-tegra@vger.kernel.org>; Mon, 24 Jun 2024 09:32:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+dmLe87"
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-25980546baeso2426605fac.2;
+        Mon, 24 Jun 2024 18:58:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719246777; x=1719851577; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kmJtgTsgtZTlkCh8FeE1ujdxkosMVSUNwf8QsgGWP6A=;
-        b=fuoDHrW/oAW1ZdW7p9Ktc6/sfwx0yDcJ0RRjK1AeYEh8z+CHQuJVoqaULhZ6ya/kDb
-         POBZlPwzSkkFroQARJB7IyLpb9LUITWAWA/I4f/vZMJOnu+Zr9oyzRDUHCnsWUbn5Hnd
-         4hoTgJ7QpOO3GPaoFaTpBCLLiPIJIlpytq/Ebj57/kxSxTfKfEiW6HD5mJK4jsdelMWs
-         QGhNcrYeRg7AAWMpP8Ow0nX1wyTDkmfVMlnxD/UIQXQzB8IX2A6KJLo6SdfIZkkSbh7A
-         KQirw0rNK4vjVxNhvOEKYXw1hPu6izWBfBcjIHR6O36fVHrG3m6UH3l057yv/NbCsNzA
-         4vmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719246777; x=1719851577;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1719280717; x=1719885517; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kmJtgTsgtZTlkCh8FeE1ujdxkosMVSUNwf8QsgGWP6A=;
-        b=nAJ4MWmHaA5QPYTqMsLyttdHkFPc2d62uvOBWF2Mv6IqtFSq4a8HOkR52XPGhj4rgS
-         xYTR2yEiu91sKnd/yXbRhy8OpbHOk/dPZxbupiZclZ6U23i0NxDgnGYY42ISJnzVZQc1
-         VscxRGOy8rAY3JsxMftEBd36orMHucllkrsQGff5vSfgJ2L9BgB5lFzoaP22gOHhfd9S
-         lkAhnhLvVa+fDjjliX474jvf3TuI26ClUehHRNnq/PqV3qNFjZIzYfFpi1dkkaEEV+0i
-         dTtbs7476p7rNdILcQMfoj3x7be6LRIGeRZ8/C9+1oFQOp6iEgqU+qwsQv19gQOA10gD
-         B6lA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjqi6FQK1BEi+ouHb8P0gbuhqirduh51JCRRTryAN6YRe+bkbiobWKlpb/aVa+9zKrUNkiDWqMhZjHGhwnl3+ZZh8wLkf1YUDxRjY=
-X-Gm-Message-State: AOJu0Yw+chEcj1cSwhUuH+cgwsvK8YD3cmWAhhHkMNenEYL1LfdLXr3V
-	XVNI2RACCd44v36QHI3Oq4rZXk8cUv4Nl7cYnWE4kGcE26M16OzjnxuRwFO5aRS3oXmNXMD9Cqp
-	ZgEwGxMWge/JXOZtOzSXnHq7fcaUJsy63E6+n
-X-Google-Smtp-Source: AGHT+IEl5Ew5w+PWn74FGxxwXzaaD09WahDkImti/Go2baFYDXsiLn8hpTeaw26FMKmyFQ7L9WFL0AFDnp6HfsfXAqA=
-X-Received: by 2002:a05:6402:2788:b0:57c:c3a7:dab6 with SMTP id
- 4fb4d7f45d1cf-57d419eced6mr382420a12.3.1719246776229; Mon, 24 Jun 2024
- 09:32:56 -0700 (PDT)
+        bh=le+LxDSHAK5LAQ0qgkOF43ZZOCdiKF+sLVTcN/8iO4M=;
+        b=c+dmLe87FrYppUsklDgk1ZRHx9OghsSAfv3kO8tlKkUqSkouce5A06hfdQfM896p1d
+         DsdbOb7PgMCbaZUJpRB2l+5nMSGN1PPOv900W3eGxzTNvatWYWwLIyGs/WHmEX2tW3Y2
+         H8CyVz/xEPYC7cF+JxuKbM1Y8GqRe2xth+5Nex8H7+lKNI2KvCXI9U6ylzfsSLXW0nsF
+         5/fKnuJ+5u4oR+ZKvy0FACv6KcCVdU5zvguaCfqLoU7NaKeJgea28y+cdFDYg/T9QIKS
+         LKxYHPAJ+v0eq0ZjyS3JiNKCtlWfp1ALvdTewKVfIbie0cNYjDalGkOjyQW1C3urOGtw
+         hzRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719280717; x=1719885517;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=le+LxDSHAK5LAQ0qgkOF43ZZOCdiKF+sLVTcN/8iO4M=;
+        b=EBCaSLCO2SdS9lC0HDuiepi62sVHtlxxOis+DQJW/uoL/vHKSPQZWLNtfJiJXunx78
+         fZI0j1WLSv0DT5MsGir1lh3mhMfM9MGUT38tO8uYrhtO7W+wAq46s6ChyzvThh5bOHCk
+         zDd8XsQO0GZmOChfh0N60ej/SnvkEf+b5OK3ge80K9tQOqfsyuJKwPPnZFoL1jzYHegX
+         lRjvDrwn7BRLSkDzBPIQdwRPznaqWZjWAUX09tOcRqNR1ESq6VZoqSPw3lEXkFeR/1+w
+         vVYnqul0QcReg3nDzLu+8XjelKF6a5BnHnfZ00e+W847wy8l85MFzYJ1YsHKsGvQPgz7
+         ICGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE9U5QG0pawEJhdEnF30LsnyI7ssu2Ut+H837SjgMwXix4J7gxHzGQ5xUSWZL8LptNsMgyoN63DB2LKYdhWxkXZqESzJCzrBRFC69asmyB1fQOJYZdrWsn5asduPrn8HuaWk7AbpmgqEo671D5n3mTKsi/S23VNZuMPhJQOXE=
+X-Gm-Message-State: AOJu0YxQnIcBNYdkycaIMMwF0DKYleV0gmrkn0rHN4e8nPMuV3kgHv08
+	pgkOV4BQz3V+saVeXeiNjpfDpxL61na2UhB6UyI85PKVrlzf5oNJ
+X-Google-Smtp-Source: AGHT+IEVXCi7ANK+NoEJf+GJJcCLQ/eTBndCvkwq5tkvIUYaZlgpy9PkTqSWE0csUKpr0AN5AtA4kA==
+X-Received: by 2002:a05:6870:218c:b0:25c:bc3f:f924 with SMTP id 586e51a60fabf-25cfce319e0mr7843705fac.35.1719280717127;
+        Mon, 24 Jun 2024 18:58:37 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7067a63efafsm3313686b3a.109.2024.06.24.18.58.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 18:58:36 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 24 Jun 2024 15:58:35 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
+	pjt@google.com, derkling@google.com, haoluo@google.com,
+	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
+	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
+	memxor@gmail.com, andrea.righi@canonical.com,
+	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, kernel-team@meta.com,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: [PATCH sched_ext/for-6.11] sched_ext: Drop tools_clean target from
+ the top-level Makefile
+Message-ID: <ZnokS4YL71S61g71@slm.duckdns.org>
+References: <20240618212056.2833381-1-tj@kernel.org>
+ <20240618212056.2833381-11-tj@kernel.org>
+ <ac065f1f-8754-4626-95db-2c9fcf02567b@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510201244.2968152-1-jthies@google.com> <20240510201244.2968152-5-jthies@google.com>
- <21d4a05a-3f64-447a-b8e3-772b60ef8423@nvidia.com> <7b46779f-3f44-45f4-8884-2f9f625485ae@nvidia.com>
- <CAA8EJprxHq65mAU6a9iGD6Yus-VB2x3WP5Z8JWN1oUwn+zQDfg@mail.gmail.com> <bc9cd446-5e19-41c4-a316-9eb362f2d190@nvidia.com>
-In-Reply-To: <bc9cd446-5e19-41c4-a316-9eb362f2d190@nvidia.com>
-From: Jameson Thies <jthies@google.com>
-Date: Mon, 24 Jun 2024 09:32:44 -0700
-Message-ID: <CAMFSARerhgEVy4u2Guq5D_ygp5Fm4Ay6CtqjaL8iZHqJPYzD4g@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] usb: typec: ucsi: Always set number of alternate modes
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, heikki.krogerus@linux.intel.com, 
-	linux-usb@vger.kernel.org, pmalani@chromium.org, bleung@google.com, 
-	abhishekpandit@chromium.org, andersson@kernel.org, 
-	fabrice.gasnier@foss.st.com, gregkh@linuxfoundation.org, hdegoede@redhat.com, 
-	neil.armstrong@linaro.org, rajaram.regupathy@intel.com, 
-	saranya.gopal@intel.com, linux-kernel@vger.kernel.org, 
-	Benson Leung <bleung@chromium.org>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac065f1f-8754-4626-95db-2c9fcf02567b@nvidia.com>
 
-Hi Jon,
-thank you for catching this. I'll post a fix to address the null
-pointer dereferencing.
+2a52ca7c9896 ("sched_ext: Add scx_simple and scx_example_qmap example
+schedulers") added the tools_clean target which is triggered by mrproper.
+The tools_clean target triggers the sched_ext_clean target in tools/. This
+unfortunately makes mrproper fail when no BTF enabled kernel image is found:
 
-Thanks,
-Jameson
+  Makefile:83: *** Cannot find a vmlinux for VMLINUX_BTF at any of "  ../../vmlinux /sys/kernel/btf/vmlinux/boot/vmlinux-4.15.0-136-generic".  Stop.
+  Makefile:192: recipe for target 'sched_ext_clean' failed
+  make[2]: *** [sched_ext_clean] Error 2
+  Makefile:1361: recipe for target 'sched_ext' failed
+  make[1]: *** [sched_ext] Error 2
+  Makefile:240: recipe for target '__sub-make' failed
+  make: *** [__sub-make] Error 2
+
+Clean targets shouldn't fail like this but also it's really odd for mrproper
+to single out and trigger the sched_ext_clean target when no other clean
+targets under tools/ are triggered.
+
+Fix builds by dropping the tools_clean target from the top-level Makefile.
+The offending Makefile line is shared across BPF targets under tools/. Let's
+revisit them later.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Link: http://lkml.kernel.org/r/ac065f1f-8754-4626-95db-2c9fcf02567b@nvidia.com
+Fixes: 2a52ca7c9896 ("sched_ext: Add scx_simple and scx_example_qmap example schedulers")
+Cc: David Vernet <void@manifault.com>
+---
+Jon, this should fix it. I'll route this through sched_ext/for-6.11.
+
+Thanks.
+
+ Makefile |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+--- a/Makefile
++++ b/Makefile
+@@ -1355,12 +1355,6 @@ ifneq ($(wildcard $(resolve_btfids_O)),)
+ 	$(Q)$(MAKE) -sC $(srctree)/tools/bpf/resolve_btfids O=$(resolve_btfids_O) clean
+ endif
+ 
+-tools-clean-targets := sched_ext
+-PHONY += $(tools-clean-targets)
+-$(tools-clean-targets):
+-	$(Q)$(MAKE) -sC tools $@_clean
+-tools_clean: $(tools-clean-targets)
+-
+ # Clear a bunch of variables before executing the submake
+ ifeq ($(quiet),silent_)
+ tools_silent=s
+@@ -1533,7 +1527,7 @@ PHONY += $(mrproper-dirs) mrproper
+ $(mrproper-dirs):
+ 	$(Q)$(MAKE) $(clean)=$(patsubst _mrproper_%,%,$@)
+ 
+-mrproper: clean $(mrproper-dirs) tools_clean
++mrproper: clean $(mrproper-dirs)
+ 	$(call cmd,rmfiles)
+ 	@find . $(RCS_FIND_IGNORE) \
+ 		\( -name '*.rmeta' \) \
