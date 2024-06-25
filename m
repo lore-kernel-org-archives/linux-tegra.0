@@ -1,85 +1,103 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3880714AD2B
-	for <linux-tegra@vger.kernel.org>; Tue, 25 Jun 2024 12:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AE017DE0D;
+	Tue, 25 Jun 2024 20:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719319906; cv=none; b=dAZtiZjegbeSFNR1Q/zq2xoHZeWX3VfPQLAebehKmZqfnqpQVxc2Sxa17cttn3CvJPZolwGTPYV/ZajT/Y92+bex7XQOwdxDlVzkbOD1vak/8tA3nbz7lhf/pUdFnTv7R0wtTLvjD34IN0b2n1e+xkXTDWgVbMLt1UhyKMGLFfc=
+	t=1719348970; cv=none; b=SmrYd3EpLRYdEEHJ9wneF7uxGfIZSeGcltPlrbO1ACd1iGRYbVDVoaFdmbeAK9Sw6LHh9NabMbyKwHzQzafS4RBDVwOijgXN/PPOSXcwOKyjiQQSbbzX+TYRwzWTUlFE3ukc5+8btKv2YNekED40YYA6FaGZMIwfSNtqAohHTDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719319906; c=relaxed/simple;
-	bh=5wgmUWPtNHEugHE9/ecP9fIUWqYMmyFgWiaSpdA3veQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o51R3VVrGz0MaooNarfpHPscFfLHTmtHlsq531t4Ne+U0TUb4UK4gZScoQSmSXgVQ2FcCnmOeEYk2Vozl6CW57r+bsYEtQy1oXvkJs1Kr5t2giVDS293rmt0RkK3FDWaukobvznXsWW90ZCOz5PfQ4dUPa7L2Cy5xRao3Fu8S1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sM5e9-0006jk-Cm; Tue, 25 Jun 2024 14:51:41 +0200
-From: Philipp Zabel <p.zabel@pengutronix.de>
-Date: Tue, 25 Jun 2024 14:51:41 +0200
-Subject: [PATCH] reset: tegra-bpmp: allow building under COMPILE_TEST
+	s=arc-20240116; t=1719348970; c=relaxed/simple;
+	bh=4TZx/NfkObkpzkc/APTFna1AeS4OYt2PJPB+5fHGxJA=;
+	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type:
+	 Content-Disposition; b=O7IoVaJ9I+cGsGM1lzriK5DK7gF1q4dbTAllu7Jgi2OpMbc0fVTMsUGQuYnDvTn8Jqbm3IyQJY2Vhm4vqwGNRVa3bzGcHyy3QrXEVMUQu7VvsnDtl+xqN2qyqk0/6OM5c2WIqGNa2TLzY8IlGqDBrHURx3MXtFNkPqzg0OguT7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iU2nVr7U; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iU2nVr7U"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4248ff53f04so19081775e9.0;
+        Tue, 25 Jun 2024 13:56:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719348967; x=1719953767; darn=vger.kernel.org;
+        h=content-disposition:mime-version:subject:to:from:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1+Ls/mue/yKH5kT6gkdnCfSWbjbKMTHc7IBMS9nMVyE=;
+        b=iU2nVr7UwlhmVIdfU4ZOlgkctUcBcOKDgNJiL36KxgL6HWohZkGdCoHkKc18akxJtc
+         Q8i4Rk11TzUJMjKPjGqvXSp1YofZZ0rwk/qruF8pDzRn1XyBmjKzk2z/zpkXdANgfh6f
+         +UKl5m4+BW3JvYker9cmb8iVENkF/ICIWloJARw3pzUPd+EN9ajCKZG41lIq55/I45yq
+         41pBkJnp+IUlMPZYOlbpSU3RW0o2HEeTk1OYW+2T5c7Xxg9eIIyEXDcdGLbOZKOR4UMf
+         NSOeuCfzqRUQ0LBlvPuE2dJAeybkGqku0wWmFsZoF+TKHQPtsm6RGx4Q/EOLmrKQkpX8
+         HA2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719348967; x=1719953767;
+        h=content-disposition:mime-version:subject:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+Ls/mue/yKH5kT6gkdnCfSWbjbKMTHc7IBMS9nMVyE=;
+        b=XoTw7VedVBt7KGH/cAxrE4aSI00XUqY9oArhEWXOhlpVgdKDjIVi+Mf1cguoRKzX7J
+         qBbqCgpoEZwWEQkYQSy3WNAkmZ09m9AHblaxXLOvsUDNARXQ/uoPjpL6rha45mz2COwo
+         qtCcDv/J0ViFKbbOaWyUL2ODWF40vvpqAHjLXHGXi2JT+g0sHFJYmj6ak+E86kyrjqmZ
+         tvzlKecxauPmDuMuuFZyNUdoceuXRK2fKap1WfSuWFB/CcQ1Nguca/mBvYo4lj9c4Wqh
+         CONKRFwUC/A9JvPqX5Q3v5g25sb2hy4qCvbzAwDlqDM+7F4pfkkwT8w0iv3e3juR43Yv
+         KrEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdyUuIBL2Hv7vQHec5iLpPkPDu0Er5yOcvTGBEcRGFp76Yc1bLXTH5bfNhSh49soyCvFzwsHkCdIqGzlK2IHchxugfuhAJwFe+dfxSKIHkZxn8+bcdoW0JiJfpxeDeyP4a1o/7Gx7Qk7o=
+X-Gm-Message-State: AOJu0YzCDMCNHdcj/0KEyelwqCyoahjnr+O8mrdCkD5QZjsJkG4xVjnj
+	YXdB4FtsPIK6K2mZiR7sLXh/R3uo40/9nyQA+0FvIFgIhqwFPXn/lMX1dwtk
+X-Google-Smtp-Source: AGHT+IHw9TipA593kOXWiJMUeI5WtU1PYeHcpZuyczazsGbDyEnBHO3M4WOBMwEhgG/AgFK/9XRE6Q==
+X-Received: by 2002:a5d:5f48:0:b0:366:e90f:3758 with SMTP id ffacd0b85a97d-366e90f38b2mr7658299f8f.10.1719348967222;
+        Tue, 25 Jun 2024 13:56:07 -0700 (PDT)
+Received: from laptom (88-121-55-84.subs.proxad.net. [88.121.55.84])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366fa9f612fsm4334598f8f.106.2024.06.25.13.56.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 13:56:06 -0700 (PDT)
+Message-ID: <667b2ee6.050a0220.f9c1.5426@mx.google.com>
+X-Google-Original-Message-ID: <Znsu5ZeV539ZdT8x@laptom.>
+Date: Tue, 25 Jun 2024 22:56:05 +0200
+From: Tom Mounet <tommounet@gmail.com>
+To: Marc Dietrich <marvin24@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev
+Subject: [PATCH] staging: nvec: use x instead of x != NULL
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240625-reset-compile-bpmp-v1-1-647e846303d8@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIAFy9emYC/x3MTQqAIBBA4avErBsoM4WuEi3SxhroRzQiEO+et
- PwW7yWIFJgiDFWCQA9Hvs6Ctq7AbvO5EvJSDKIRslGix0CRbrTX4XknNP7waDonlZG6t1pACX0
- gx+8/HaecP6DiP3tkAAAA
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
- kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
-X-Mailer: b4 0.14-dev
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::54
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The Tegra BPMP reset driver can be compiled without TEGRA_BPMP being
-enabled. Allow it to be built under COMPILE_TEST.
+Comply with coding rules defined in checkpatch
 
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Tom Mounet <tommounet@gmail.com>
 ---
- drivers/reset/Makefile      | 2 +-
- drivers/reset/tegra/Kconfig | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/staging/nvec/nvec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 1b814f08fed7..27b0bbdfcc04 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -3,7 +3,7 @@ obj-y += core.o
- obj-y += hisilicon/
- obj-y += starfive/
- obj-y += sti/
--obj-$(CONFIG_ARCH_TEGRA) += tegra/
-+obj-y += tegra/
- obj-$(CONFIG_RESET_A10SR) += reset-a10sr.o
- obj-$(CONFIG_RESET_ATH79) += reset-ath79.o
- obj-$(CONFIG_RESET_AXS10X) += reset-axs10x.o
-diff --git a/drivers/reset/tegra/Kconfig b/drivers/reset/tegra/Kconfig
-index e4a9a389e98c..4a2d26d1210a 100644
---- a/drivers/reset/tegra/Kconfig
-+++ b/drivers/reset/tegra/Kconfig
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config RESET_TEGRA_BPMP
--	def_bool TEGRA_BPMP
-+	bool "Tegra BPMP Reset Driver" if COMPILE_TEST
-+	default TEGRA_BPMP
-
----
-base-commit: eb5d88b1538850c6d9ddfcd0b59dc7c84831b530
-change-id: 20240625-reset-compile-bpmp-b3f46b475c72
-
-Best regards,
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index e5ca78e57..814eb121c 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+ {
+ 	mutex_lock(&nvec->sync_write_mutex);
+ 
+-	if (msg != NULL)
++	if (msg)
+ 		*msg = NULL;
+ 
+ 	nvec->sync_write_pending = (data[1] << 8) + data[0];
+@@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+ 
+ 	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
+ 
+-	if (msg != NULL)
++	if (msg)
+ 		*msg = nvec->last_sync_msg;
+ 	else
+ 		nvec_msg_free(nvec, nvec->last_sync_msg);
 -- 
-Philipp Zabel <p.zabel@pengutronix.de>
+2.39.2
 
