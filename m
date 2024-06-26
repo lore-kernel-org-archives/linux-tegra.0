@@ -1,48 +1,59 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEEF148FF3;
-	Tue, 25 Jun 2024 22:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E6E13C909;
+	Wed, 26 Jun 2024 04:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719354622; cv=none; b=tddgwyxbB4a/G+b0NQ2g3mEm6hfyqj6soc291Y0YXfdYJ3Yf8jkDo1RTjyIcOsQUFm/UDxW4O9wa/QzspT/D4IsSGvmZ4FL+209Fx2sAP2PGUQn71XmKu2WRkTvyRfVrk7JCk5c4Z6bxt5iL53eTDjuDIQd6189VwJp0AvfoefY=
+	t=1719376916; cv=none; b=uI102cGxXofumG84ddKGk+lEYtS7/i657MCLYG+cH+QwvRvEk2/WZP8AKlWcDv1LLJ8hupyFOqBQzdXQ4x+B7q4b4HkRVhD0diyFO30zzb5cEC+nVeoZu9mm5cZLF+F1nAWOeIOwA/H/+dQXIoDBWF6LeL+yw79ud1EDu/aL5pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719354622; c=relaxed/simple;
-	bh=qS9TTmlDjgipvMH5tjZeBfWS5KHkS6WYJPS068gWSE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pvBeXI2EUoLSaka9wj5KFEkQihjuoBbOMLzg9b8xZISrLqPz4Xn/aozC8Gf3X/TDrsmjFGUoK4ody2/qAaben/YKmB37Gse9HFd1tTFKrp6XEwpeM50o5DgGUUxzWG82OSH7Rvj8DpRIbZcMWGTTpS1UcLPMRdiXdomHyY3DgJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZRgeRPF8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719376916; c=relaxed/simple;
+	bh=c3Yze73LZu3I/gljxsqZ2WmNEz/P/xYnIpox7TAo2FU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rgkztRL2IJf1r27eGy498lPtFPKB9GqU3yEI282w2kFbfmNUX4AHHool6aGMkFTVfcU4LOKX8da6or4SkbqJOmRrXMlIMa/FQXigHLTPCBJcQf+pbbXH1HnpF9i9d/pZmhO2usEW9c74uX9dXG2OPaTc+vacbz38rpDS1vpYzLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hK6iMFpF; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZRgeRPF8"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PI3gnA032231;
-	Tue, 25 Jun 2024 22:30:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vfUIF9UojzMOtwX6nE2K3rtBehrIGg9xx0Sst/8VS8A=; b=ZRgeRPF8kRUUlf0j
-	8g+XLMJZOYw8oEl7PaxrEIbk+nL2DurL8X1qvJ7qG5WIt6m5wyxHd46Bkz8WpI2f
-	1Wv9Nc/iUaPl8q41t+iX451ukQC68boJdH7GuBNjyHB8g+nu4xOg9RCssMizELYJ
-	1uoczBSHGmU19PpQ0fvhmAnIkTEJHrwlxKCUoULyQiVmVyTJBU6hjXQSaNHIFSsX
-	xcBmA1tVmpq2OP/NzwW+tDe7MCmbIK/Tml8QSHGdCNd9LGrvsiJi2T4GPQc8wGUS
-	+B+NQoeQLwx7y3uAPPTUqWDkGBLr/pPYgPHb6uj9XQxJc+UARNeQKy/XGflP8fGQ
-	5BZRUA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv7peu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 22:30:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PMUEKv032155
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 22:30:14 GMT
-Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
- 2024 15:30:13 -0700
-Message-ID: <38597076-e0f7-4266-bf85-3177ef249922@quicinc.com>
-Date: Tue, 25 Jun 2024 15:30:12 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hK6iMFpF"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-422948b9140so5537075e9.1;
+        Tue, 25 Jun 2024 21:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719376912; x=1719981712; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=OPu8o3NFntJwVaPbGld8pCdkv12AmcbKbLHyv6SdaIc=;
+        b=hK6iMFpFoJFJrEBJ2TwiWy9YXyScnmtKq0cFxEC4Jcb+nAw7GFMhdWJcoZ1QwZ9SlE
+         jawSqqjmsG0S2C0lNdcBYJFTvaUmvu1niM97pkd3ugOQBa45eLH3SLEedWHDBf0jEwi4
+         6kWV9K/k7BuO1T5oYri5JG+gppvuLA8NMjlNQ07eU2hiKA+p56a2doxWdkGvMzEOLdkn
+         ayszcaSIg7TW6GE7k1e67mZKFL5vSI4cXI9O7D4YuIQQVlUm9b59CxZKf5O0tGQmE/hA
+         flgKLyMRRTTkExlZ8+zXYbTwdRyMAtBL2Bmgcp96xBKeSPGXDVxfwH+M1JGVRWznZ+yp
+         GuTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719376912; x=1719981712;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OPu8o3NFntJwVaPbGld8pCdkv12AmcbKbLHyv6SdaIc=;
+        b=SbUB7pfzbRboxQbGiV+X5Wot/14eBI7v7Uqz+e7Saf0dEZGwSx/pGKDzsfBrx1/Ye/
+         /jGzwGRg/T0+ZIIr9FH6gUHzvLw+W4cAX+FuaUPMwFvbFVDF4Ig/lnhH+mjPzRbUY58H
+         Mvtr48HIDdg93293mXczfhaC7G5hxX9wOELczRdAo0tCWK8SSuEzjpGBwj/CynlqmcFR
+         xJmcciSHosR6MsbzxJmaVR4YT4Z9JCo/pNiFa8x+f9SE2nGrPDiPQN49XgI8AmjlE+rv
+         Ei/vQX1mJR7HkQ0WJ3Pkix+kJfYqnh3Mk17PkZA9E4HQQqzwmSqCPvsK6AJqdmCcBIoh
+         zH6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXUbXSyU+UsFeHM+LYaMP8ssLxgWdgg/1q9PuNJaxQVKdzmrWzB7ANQRkegQWn3sHkdeb4GfB0G3ztTjH2S8/WRChELaTtdMbqiPSam9/FqoKAv9VTR/hXdgddmiD8D2d/xLK63JbgTtb8=
+X-Gm-Message-State: AOJu0YxoQKaI6pdxkE8JBc/uvBHBIXMVR+8CDJTOrEatHipA7raqHgL6
+	IJUg+qmJQMHePvJSz+UGrJYFAdKiMXwN8Vh/u/YQNgwtzP4svG8E
+X-Google-Smtp-Source: AGHT+IGrG4cFrWFZFLHowsdYdllxDPlIUG7c3w0AxGdkSM0WlzloTYOFNV/Z1mztaxkugppxgJhufw==
+X-Received: by 2002:a05:600c:1c23:b0:424:8c26:a236 with SMTP id 5b1f17b1804b1-4248c26a402mr71896525e9.0.1719376912043;
+        Tue, 25 Jun 2024 21:41:52 -0700 (PDT)
+Received: from [192.168.0.103] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c824ef19sm10021125e9.15.2024.06.25.21.41.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 21:41:51 -0700 (PDT)
+Message-ID: <c2911f68-d1e2-4b45-af95-590926b7a6f1@gmail.com>
+Date: Wed, 26 Jun 2024 06:41:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -50,49 +61,66 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hte: tegra-194: add missing MODULE_DESCRIPTION() macro
+Subject: Re: [PATCH] staging: nvec: use x instead of x != NULL
+To: Tom Mounet <tommounet@gmail.com>, Marc Dietrich <marvin24@gmx.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net,
+ linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
+References: <667b2ee6.050a0220.f9c1.5426@mx.google.com>
 Content-Language: en-US
-To: Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding
-	<thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC: <timestamp@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240603-md-hte-tegra194-test-v1-1-83c959a0afdd@quicinc.com>
- <92059885-858c-4a07-9e2d-cda10c6c38bf@nvidia.com>
- <d3f5890b-db18-4e56-9768-db0382717baa@quicinc.com>
- <36113c8f-12de-4530-9727-67c75b0daf47@nvidia.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <36113c8f-12de-4530-9727-67c75b0daf47@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <667b2ee6.050a0220.f9c1.5426@mx.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jJ5REi_-kCJf-QGvegUVic0gTiUVH_Tq
-X-Proofpoint-ORIG-GUID: jJ5REi_-kCJf-QGvegUVic0gTiUVH_Tq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_17,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=973 mlxscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406250168
 
-On 6/25/2024 2:05 PM, Dipen Patel wrote:
-> On 6/23/24 10:53 AM, Jeff Johnson wrote:
->> Following up to see if anything else is needed from me.
->> Hoping to see this in linux-next :)
+On 6/25/24 22:56, Tom Mounet wrote:
+> Comply with coding rules defined in checkpatch
 > 
-> Its in linux-next[1].
+> Signed-off-by: Tom Mounet <tommounet@gmail.com>
+> ---
+>   drivers/staging/nvec/nvec.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> [1].
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/hte/hte-tegra194-test.c?h=next-20240625&id=9e4259716f60c96c069a38e826884ad783dc4eb4
+> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+> index e5ca78e57..814eb121c 100644
+> --- a/drivers/staging/nvec/nvec.c
+> +++ b/drivers/staging/nvec/nvec.c
+> @@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+>   {
+>   	mutex_lock(&nvec->sync_write_mutex);
+>   
+> -	if (msg != NULL)
+> +	if (msg)
+>   		*msg = NULL;
+>   
+>   	nvec->sync_write_pending = (data[1] << 8) + data[0];
+> @@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+>   
+>   	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
+>   
+> -	if (msg != NULL)
+> +	if (msg)
+>   		*msg = nvec->last_sync_msg;
+>   	else
+>   		nvec_msg_free(nvec, nvec->last_sync_msg);
 
-thanks,
-pulled it into my verification workflow :)
 
-/jeff
+Hi Tom,
 
+what you change in this patch is fine. But the Description is not so 
+lucky. Reason is that checkpatch is not defining the coding style. Not 
+at all. Sometimes checkpatch is even wrong. The description I like would be:
+
+Use x instead of x != NULL to shorten code.
+
+or
+
+Use x instead of x != NULL to improve readability.
+
+If you send in a second version of this patch please use a change 
+history. Description from Dan under:
+https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+
+Thanks
+
+Bye Philipp
