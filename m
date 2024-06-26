@@ -1,117 +1,104 @@
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D9117C7AE
-	for <linux-tegra@vger.kernel.org>; Wed, 26 Jun 2024 10:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1899191499;
+	Wed, 26 Jun 2024 21:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719398454; cv=none; b=ZrZpb8dv3I8MThZZlLdOGOO5DzH4FG9TnEkMF+hDyw6NRsAz7Xn91pH0kI+9Y15Z2F2DEgp4eLS0HjDSHnyPqjUW1hCuW95KtPgoJqx21XkuKw2S/yicFlH+bzBg7fupb0DnVxhrHZ4acYP0ZGD+dneKNl0cYkKKaGegF2fijv4=
+	t=1719437840; cv=none; b=DkLroYRW2qfWgPWMsvRy1JYsiiMmwHaeFWY2H+dBhKdzIsZvmE6BDOFb9fAyrpvfC8aTjYMS7PIz0EfhN3uydm3JhsBVKAb6WjhOKHsxe6ebq0d7ILPp446xsVRt3S2LSy5VwhV01jtRmgnIoD5GVyrBLBRRQrVTF67abuTSUrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719398454; c=relaxed/simple;
-	bh=gymnWB6LrLwrULHTehh82mpr4igpIxzIKKA4CDSINP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HjJpP0TM/buc0UNL+UUcCPj6MNe4LR3hrCZnziT1u1BbxOZp3qVUkqZHdspOSoDTbaeJkibhlD5E5VI4hImWVdxx2OMiJ6uWnCJL5FBxQfJSHbmXM7TNR4W5dLW9NjIe9i3prt9xKh5uqbouzflFuxAxzqwEZjcbyxx9tZ3sSHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HVSMr0Uo; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719437840; c=relaxed/simple;
+	bh=wm8IOjSy0IazMs+GqeoJgo5DdVy+HlV5n4Xf3NJQpYw=;
+	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type:
+	 Content-Disposition; b=UmaAlnm/tum0ocTwQ+zDrtpVGYSrYu9rRPO6s9qdy2JwJUsF5IohYc7rccf1LQgNkOEdpqEUwvJI+zUlLWojsNNjw5L0uzUBbqgT72e9ArKdFyLXTnIlIXnIZrO5qoNwj/SazqRl6ffIg48VSb9HhRUWxz3NvGRsoAPgsw89pQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpZVXy99; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HVSMr0Uo"
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfab5f7e749so5946319276.0
-        for <linux-tegra@vger.kernel.org>; Wed, 26 Jun 2024 03:40:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpZVXy99"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42564316479so1074745e9.2;
+        Wed, 26 Jun 2024 14:37:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719398451; x=1720003251; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KHbQKOiYe+Ibua4xAi15PJl+V4d0EJrIgF7ce4mlbFQ=;
-        b=HVSMr0UoGCYmYR0N0Fg463wNcKCH4inkwuQIzlPMr04EpEbVPUhsm4Ik5OLfzuH9RG
-         c3VsCEfZenWNv0JtATNvn30f/v2g/CgbPMujFgd4FPyWFRU5cGWnO2VtFn4w0uCgPOru
-         bufZgQmrkOe4uYoz90iLVOZXpmfR4ogvLel5NFztl0CjEtNFlTqhb9kWehQKzoSz33lF
-         ARk6g50c8HGFWwcJdwEPyYE59eAr6SemyQ6i4i3WjlkUqc2kj8wT7xXB0AuNU3j52zjn
-         kBVqTJ5Ra18G22meq/MyRq0HJ04fEjF6V+azMMtOwWp9IKJWTkwcU6norCZ8ZlXed9/F
-         uoVA==
+        d=gmail.com; s=20230601; t=1719437837; x=1720042637; darn=vger.kernel.org;
+        h=content-disposition:mime-version:subject:to:from:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UnGnPkXUd1aUtrN7P0KReA3W4+M4jw6ycApaJIjtT8M=;
+        b=bpZVXy994kOT863KBK7HdxMcL4gzAYG669fG5Zmy0ZXQTKvm2RW4JsxzHwctRY0Hpa
+         tYBXk7/4AuURIAwJO3Uv7BDZIR8L6Z4ZVB8BjMu2MVw20BFc5MsHnrw61h6VOQgIHUdS
+         0mzcUEOhoHbm54KI2OlPzPUFnFpUMBp/JCFDomrc/M441n99qGMQ3fxi9KdeNF/GyVbL
+         +P1CyzO999zsME/BUHANXKmPoIs++gotgqQ2L6ychGhKIWJS+9CmOdyxGfZeFHFu73Ey
+         aFzpwY8ewHBqjd3u64lBmHz4DuPaMe4RezVw6lA261D8NsUpU1nBZH0gn9mC/mHxJXN6
+         PdsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719398451; x=1720003251;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KHbQKOiYe+Ibua4xAi15PJl+V4d0EJrIgF7ce4mlbFQ=;
-        b=Y3i/byImSgfj4u7hVdnc4pG1OhofuMiPNaQLBwWSrN1qymgqrV1R2PZxMym4U3zZ/9
-         48yg7JunHZsNcufbsA0/wgc/6iaXPxNl2mAmPD1bIpNEnTk7tWbFL0N9CoQ2NZ3FE4Q5
-         zjfsgZ65d7lkg/aTwddnz/H/SGCqCuKFwGlsfEangTmDV++qEg+RLfmBgvWEgWRVi2q6
-         7v3ITb0tc5NoMLHuq7vOtbHe6bn6D0vSdSdeupg5txMkcan/Hll0XoSBAWyjY9m0UJnr
-         DOCett39VJhDJnGW1bEvXEB5AkTjUU048qHCOdZQ88veUvtFy1/FvzuSxAzIRbuI/1T3
-         01UA==
-X-Forwarded-Encrypted: i=1; AJvYcCXydMRfv1/hHvCwBRCksVJATuhhSNc362mzizfMNUOa7FveJ83PsGKb0mDVeW7iEEtoqvO8nS2CbiVTN6tBi6+YvwnuZoFDPukFuSc=
-X-Gm-Message-State: AOJu0YysWeIr6rYwYkt/x4Yi+qAnaM3pPaXSzDI56KrE/KZWLEqSwHwm
-	sca/39FW4zqNabjICcaX3PdMPQ75mVaKw8xFEiNxD9xu6OcS+OSTZeJd0tzkGetKG03ZDuLHQJx
-	SOqyHG5qWbqLUo4rzHJXvZoPXowxn2KW3V8owSw==
-X-Google-Smtp-Source: AGHT+IGAQdQECALwFQiRgkrKA/rZBEJOAnkCpPbedoTQq7/jt7W9vOb6wQcj2qKoWUKoPCAEcM15HUQq3HQFJjgWzyA=
-X-Received: by 2002:a25:c553:0:b0:dfa:6e39:95b0 with SMTP id
- 3f1490d57ef6-e030107f616mr10069878276.49.1719398450656; Wed, 26 Jun 2024
- 03:40:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719437837; x=1720042637;
+        h=content-disposition:mime-version:subject:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UnGnPkXUd1aUtrN7P0KReA3W4+M4jw6ycApaJIjtT8M=;
+        b=IqXh3+t3Ysh4frByEhVMNTeRW7JzPQqlkgYeOdLAdFPS+KWTn+YHO4YkwRJGMDh8/W
+         ZRiOTa7HGb6zZDPa/9V+1m6T5o4U8J08g1Zm4uUpXz4rdyeLZrYF2nKYu92ftGEp0b6i
+         ZtH97MVD84UqceIvulTgqV1mEEDivm71c5A6hqE7ptL0ykfk5FdwBZy/E091ocw6mJNi
+         Qum4PeApY2fOjByxAEgRIjcE3RGipTU5sQjOuTCjHBAwCikXEA8rfDr8upG0aSmSRHEJ
+         Y3oyTzZpVKde1O03EorC5TYI1bSLLqdIWW+GMAhz4YtWWshOWzpJhbBlUywp7HLaYZBR
+         Igdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXOX/PGNuOMCMw44icjqU2pk6A7/l1E4bvlHAzwps7JztBCN+4S1Yq9Cdp61HB4M9zMtnx/PEHp/BMIGRJI4+dMqNzfE7WNHKLT1en4FGjx6VzjY7hRm8AZNN99lnyb0Ks0NruoyP8GH8=
+X-Gm-Message-State: AOJu0YzCV022YHB0GBodGg7r2zx9crohwmz+kTwv9R1xYtUDVvQjNlu6
+	TkU2hFKwNcIVFUfQ6mcE8GHnmp4NfjvqILzuMuRIK+m0sRKMBwKABEa1auQg
+X-Google-Smtp-Source: AGHT+IF8ZxfDkoY7tQaMlIFw8ibDYc8+OnII82pa9zKj7EIAs2ieSt1GO9QKjuGhzrBLqEfni8Xosg==
+X-Received: by 2002:a05:600c:1ca2:b0:424:8e12:9ef3 with SMTP id 5b1f17b1804b1-4248e129f6fmr82029245e9.0.1719437836861;
+        Wed, 26 Jun 2024 14:37:16 -0700 (PDT)
+Received: from laptom (88-121-55-84.subs.proxad.net. [88.121.55.84])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424a2abc265sm44536785e9.1.2024.06.26.14.37.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 14:37:16 -0700 (PDT)
+Message-ID: <667c8a0c.050a0220.9e3d5.3b80@mx.google.com>
+X-Google-Original-Message-ID: <ZnyKCpE2tbvWD8Xm@laptom.>
+Date: Wed, 26 Jun 2024 23:37:14 +0200
+From: Tom Mounet <tommounet@gmail.com>
+To: Marc Dietrich <marvin24@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev
+Subject: [PATCH v2] staging: nvec: Use x instead of x != NULL to improve
+ readability.
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
- <20240504-pinctrl-cleanup-v2-20-26c5f2dc1181@nxp.com> <171939733731.25849.13373950874840419376.b4-ty@linaro.org>
-In-Reply-To: <171939733731.25849.13373950874840419376.b4-ty@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 26 Jun 2024 12:40:36 +0200
-Message-ID: <CACRpkdastCME_0BWjcaNc0Fw8qsLAGgoQUMi7g8sEP+xT=T_tQ@mail.gmail.com>
-Subject: Re: (subset) [PATCH v2 20/20] pinctrl: samsung: Use scope based
- of_node_put() cleanups
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
-	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, 
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed, Jun 26, 2024 at 12:22=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> On Sat, 04 May 2024 21:20:18 +0800, Peng Fan (OSS) wrote:
-> > Use scope based of_node_put() cleanup to simplify code.
-> >
-> >
->
-> Applied, thanks!
->
-> [20/20] pinctrl: samsung: Use scope based of_node_put() cleanups
->         https://git.kernel.org/pinctrl/samsung/c/707807f4c1128e39442519e8=
-49e4ce0b7c29b110
+Issue identified by checkpatch.
 
-OK I dropped it from my queue!
+Signed-off-by: Tom Mounet <tommounet@gmail.com>
+---
+ drivers/staging/nvec/nvec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index e5ca78e57..814eb121c 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+ {
+ 	mutex_lock(&nvec->sync_write_mutex);
+ 
+-	if (msg != NULL)
++	if (msg)
+ 		*msg = NULL;
+ 
+ 	nvec->sync_write_pending = (data[1] << 8) + data[0];
+@@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+ 
+ 	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
+ 
+-	if (msg != NULL)
++	if (msg)
+ 		*msg = nvec->last_sync_msg;
+ 	else
+ 		nvec_msg_free(nvec, nvec->last_sync_msg);
+-- 
+2.39.2
+
