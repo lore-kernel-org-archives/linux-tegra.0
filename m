@@ -1,120 +1,126 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DF417BB7;
-	Thu, 27 Jun 2024 05:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AF845016;
+	Thu, 27 Jun 2024 06:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719464518; cv=none; b=DSK9ujX4Bk/wWPFVOrThSPA5Th14uz30kBtySvjN8yGBkjanuIUXIv9yX39EZ3y8FamFfcnscxeDscm+SV4uQHQpqaCDoepNRleGrWuwKUFsQfJkXa7AhthwZ+4Yy9Jsa0EPFAxA5T+kvzPnBy9SPySX8FThAKSs4J1hUqNhI4M=
+	t=1719471502; cv=none; b=svl3X5ihbeoAZB0n8WiF3vgakidAGb+foMO6paHx7EH9D9UYOizk9CIczvTjSEoK1e1abZdOgMdHaHYS3bNO/33i5Ic80LZ9r79PS5QwebJE1/VrwIbBZl7KCQv/xFOVamrp0fiqTQzUdMs3QY78UAtm457DSsAlS211iNejHbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719464518; c=relaxed/simple;
-	bh=neSvzffn7aVOZHHBR80gHa/jIr/IAwkAvGDm0NDaxHM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JobiIUyrU+HleA50yw5CClA82/OHUVss98dil3sR5CSNQ91qRVkUf1E+OL3u4HMq+DBL0HEu1nu0HFSZ+0MB5kiQ4ZS41qVdaYS+J0ho7u7StOSLPreRtPNXBQbYpqxgwkxz4VmWVWKi7Y/p7dp9cTWm2AfkLEZIBAV7eV64rB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mrs/sFje; arc=none smtp.client-ip=209.85.208.176
+	s=arc-20240116; t=1719471502; c=relaxed/simple;
+	bh=3DkhIs3KmkLvGwvMSZCf0xN19lQ/NqHO2HipSv4we2E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=L8WJY4Sz4X14klbmp6ahIReD90ddFTkn4tuA8sn8Sba92DclbARhU13UDd1XVdDd893y4wOJuNK5ToJC13jM3rE6CfnO2HhEh08PZRjV3R5m6BkZ7KJYLItZO4zsv7rGzVyKHzKVAfnbUXw2T7lqI6hfrAvuS4Kc4ycoM+8+qbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KO7hV5bq; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mrs/sFje"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ee483284b4so825081fa.1;
-        Wed, 26 Jun 2024 22:01:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KO7hV5bq"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cd6784aa4so7073109e87.3;
+        Wed, 26 Jun 2024 23:58:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719464515; x=1720069315; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=UXx9V3mIBIPJ0R/DpHVeLVStS2HGhaz/07TcRzXhw+0=;
-        b=mrs/sFjeq8WnmWdNVyKgD+m3wiNOz3Ymtxdwv+n2KUONrq4250lxV/xaQmiEOxjPOH
-         hG9BWbpQ7JmVdy74ovvAO38x9iWc3R1VtIWoBPIXDxlfH7wE3qVtzvwv7lN12uSGFFFY
-         tW5/K4HfDowNPsdXHBZobHj76QWkDKr2hc6PNXOiGpDHIoWX1S7Wv52B1ucY4+FuhIDg
-         S9VzsNh7BwRZo03vn5rV4K2iq+v8r1xW93yxAzNOz8WrWvoGybpIesg55exNFm3Q7bPE
-         bvMFyxgoOX1Lc3BECuct/A/LQ7e49YnSFoFwoj+2Tg/gTTgvPaLwzj/u0pvXEEbUlFiz
-         d9ZA==
+        d=gmail.com; s=20230601; t=1719471499; x=1720076299; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YNIlrh0o3BmVa7KGn3BlNKQKQ/vsv7AGkjBlD87kKPc=;
+        b=KO7hV5bqzIgnzi4C8q00veLnH2Lb2MR2zlqqq0IvvXuk6Khx8QR2IfkYhRieDgIc4A
+         aLpFxDv2VH8O2lFoPLFCYBPF31fImAwoqwA6LHdqikJ11eB6+LoFlhgM51T2YzzveXO5
+         bK8l+/M1nAM+zAc83xJBahPUS4jnSGm60AzA0ijp7FoGBKb9zX2LAf3Xei38NKrI7rY8
+         pyZ3rizq1segI4lb6JDOG4A5GGsAKYFiuAYuJY8UBVx6BOEvIUCYJ8kyiEQLN8C1jMZn
+         iQZDPbrPyLmiHvGm6Y8I41pQlOjeubvV9NHGvkBe+fNrtOFce6nAGYp1OHrpy7WdThK/
+         4iPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719464515; x=1720069315;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UXx9V3mIBIPJ0R/DpHVeLVStS2HGhaz/07TcRzXhw+0=;
-        b=moam+J2J8R2Gm8DoaksBMz3gfkZgq0tprY7koGk22NCkh/vwUa79P5LJedxCXzX+EV
-         dfv81COxd1IcvURGUmsBv8fhrqfh5xxjTwcfrYEtxSbIGS9kF5lgY0os0cetAJEgFUKT
-         99tUEQ/Z2WTCvSBmTFgrEXB/AKJDMTojapMHtknx7hR2AHcQVeJe/hefca8zHdTVdsHf
-         fRJLWMGZF6lKV2YM0WmzxumisUMXAO3Rd5a9VSW43zj+StUiSldGr+/78DkSi5g6Hc7L
-         /cYE64SX4JFGSXkur3dTxWWmKqs6vzMxN40BI0auTMtD13E689Kipa/0x4ynS0vmqaJO
-         DGcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Os0BqjXHyRtfmPuvnKatLwxukTTjsWQtfJ9ta0HZ4+MXmDxXKHpT6Gya3zKmS29TOmdhZctVAywm6FrpsCCQUIit5fzPhL0UyYDbO/RmOgAiPrYMc84+QdGKsws40VC1rvZvE7t/V7M=
-X-Gm-Message-State: AOJu0YwY7cXSx7Trgnk1ED2p0A6spCKBHyF2xUircoRJqyReDOqs3VbY
-	bcrPN2ar36kGQ/jvErIbH5s/1d4orDOis5vglx6PMqahQ8TA07DE
-X-Google-Smtp-Source: AGHT+IGRWcJ+EBLHzrnk9cuOes9LkkVCvSwVRl6Ra+CZF/cW8kdVhXyyFt+q8ZeDUjuJjF4rRVvGyQ==
-X-Received: by 2002:a05:651c:1986:b0:2ec:5365:34d3 with SMTP id 38308e7fff4ca-2ec560e8d60mr110765591fa.1.1719464512392;
-        Wed, 26 Jun 2024 22:01:52 -0700 (PDT)
-Received: from [192.168.0.103] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8469016sm46971025e9.41.2024.06.26.22.01.51
+        d=1e100.net; s=20230601; t=1719471499; x=1720076299;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YNIlrh0o3BmVa7KGn3BlNKQKQ/vsv7AGkjBlD87kKPc=;
+        b=pLSc59ZWOqQ6Z/QZJQbAQsRknM39TT6iZtWWQs2FXgaayr47IE71jA0mjNrl27+hym
+         suJI8VCLjhDorTGUxAavEN5OVYMz7wMqg4WXLfOGmWC5fsdVsOukQWtjTW1vK7Km9vOU
+         VDzm4AzVOK9KmSNZ8OrquE41g/wZUwiWCzYk71PkfLWrI2moO4RkQM1fCaHkTOhNcoQQ
+         6m1mHp3SEqfu57nz7igx2g3ud2tdNZ/K4vohW0u1gIwvoJ7fN1Hmieu3FxMXWi4/b+51
+         VVyxJhexCRy/yyiH5UvLPz3smbaoyEBC23GqrGK12USsB3RJt/sUiDCEWarQFAT9Tori
+         B99A==
+X-Forwarded-Encrypted: i=1; AJvYcCWt2zboBnqW6k1HIpEnHAxnh+IHROqicBSBuNSBJ5rO/aVjv0/EVfIESkY/UO68lGV8LUgJz6o8agHhzAUrsnXxfZBmwfBveiyxWGw0U0I53gDtEQPNWoLBCsQfxugnmSrxPSP1HC+zyRc=
+X-Gm-Message-State: AOJu0YwCwvo+TbXsred6SXiNuRLrSTEKYstZR+O1vGaBr5ZtK7yK+MPD
+	lIz8MACOnn20gfRVXaVgm8zz0srIv51BHEL4u4WdtWOH3IKwDBeO
+X-Google-Smtp-Source: AGHT+IFC/bjGIL/8NWDtP1TJYmgVedL+vEsfhXN8+YyRJabS2/POCAHTTCF6DNNSr3v30AYUjOEA3w==
+X-Received: by 2002:a05:6512:158f:b0:52c:d76a:867f with SMTP id 2adb3069b0e04-52ce17fcb9dmr9938547e87.0.1719471494560;
+        Wed, 26 Jun 2024 23:58:14 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42564bc7b09sm11575715e9.47.2024.06.26.23.58.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 22:01:52 -0700 (PDT)
-Message-ID: <3d8b92c4-9562-473a-be47-26785d621cc3@gmail.com>
-Date: Thu, 27 Jun 2024 07:01:51 +0200
+        Wed, 26 Jun 2024 23:58:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] staging: nvec: Use x instead of x != NULL to improve
- readability.
-To: Tom Mounet <tommounet@gmail.com>, Marc Dietrich <marvin24@gmx.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net,
- linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
-References: <667c8a0c.050a0220.9e3d5.3b80@mx.google.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <667c8a0c.050a0220.9e3d5.3b80@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=7f8dcabb5dc255d60cebfa8d6c3433af39369a68ea1696444b485afea980;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Thu, 27 Jun 2024 08:58:13 +0200
+Message-Id: <D2ALRV4G5SZF.229WKTA9B95QN@gmail.com>
+Cc: "Daniel Vetter" <daniel@ffwll.ch>, "David Airlie" <airlied@gmail.com>,
+ "Jonathan Hunter" <jonathanh@nvidia.com>, "Mikko Perttunen"
+ <mperttunen@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/8] drm/tegra: Call drm_atomic_helper_shutdown() at
+ shutdown time
+From: "Thierry Reding" <thierry.reding@gmail.com>
+To: "Douglas Anderson" <dianders@chromium.org>,
+ <dri-devel@lists.freedesktop.org>, "Maxime Ripard" <mripard@kernel.org>
+X-Mailer: aerc 0.17.0-167-g7c5a1afbda60-dirty
+References: <20240612222435.3188234-1-dianders@chromium.org>
+ <20240612152336.v2.3.Ifb4450979b62976fd5a98847dade2e5b377d47c8@changeid>
+In-Reply-To: <20240612152336.v2.3.Ifb4450979b62976fd5a98847dade2e5b377d47c8@changeid>
 
-On 6/26/24 23:37, Tom Mounet wrote:
-> Issue identified by checkpatch.
-> 
-> Signed-off-by: Tom Mounet <tommounet@gmail.com>
+--7f8dcabb5dc255d60cebfa8d6c3433af39369a68ea1696444b485afea980
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+
+On Thu Jun 13, 2024 at 12:23 AM CEST, Douglas Anderson wrote:
+> Based on grepping through the source code this driver appears to be
+> missing a call to drm_atomic_helper_shutdown() at system shutdown
+> time. Among other things, this means that if a panel is in use that it
+> won't be cleanly powered off at system shutdown time.
+>
+> The fact that we should call drm_atomic_helper_shutdown() in the case
+> of OS shutdown/restart comes straight out of the kernel doc "driver
+> instance overview" in drm_drv.c.
+>
+> Suggested-by: Maxime Ripard <mripard@kernel.org>
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
->   drivers/staging/nvec/nvec.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index e5ca78e57..814eb121c 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
->   {
->   	mutex_lock(&nvec->sync_write_mutex);
->   
-> -	if (msg != NULL)
-> +	if (msg)
->   		*msg = NULL;
->   
->   	nvec->sync_write_pending = (data[1] << 8) + data[0];
-> @@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
->   
->   	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
->   
-> -	if (msg != NULL)
-> +	if (msg)
->   		*msg = nvec->last_sync_msg;
->   	else
->   		nvec_msg_free(nvec, nvec->last_sync_msg);
+> This commit is only compile-time tested.
+>
+> (no changes since v1)
+>
+>  drivers/gpu/drm/tegra/drm.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-Hi Tom,
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-please answer the why also in the description.
+--7f8dcabb5dc255d60cebfa8d6c3433af39369a68ea1696444b485afea980
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The change history is missing.
+-----BEGIN PGP SIGNATURE-----
 
-If you send in a third version of this patch please use a change 
-history. Description from Dan under:
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ9DYUACgkQ3SOs138+
+s6FERw//WlQjtIszEzDkWeZFUGfNYgXGaeeQUylwV9ndafXASfuHpgYc8tePAZfa
+yrchhtD+5LxEYKIKuUuIBkbWr50g/kQ+2+Xtf71w0NMefhYqiFNz1XnxMr5OKScU
+HHa4+6qF9EDxuuEtAIT+WqQde0cA4unqzGb6yaLoBFNCoWThcbf1YqquRq1omnlp
+mx3gtMnG6lS3Rv2CcnrdZQBhozGIj4sEebECSyZtKSsMI32J9l4fMP27qp8HKd7e
+OYOkAVoDsk8V+qZu+Z5liNSMUaQ8OdfDiOoEN7Yjz8HlqDSChbdrxZjleRkYreeT
+eA+vWUXKnDL3jpWouBkV6WyF08n1LgU6ExVNo/N7uaaZwri86mo/WrrE1DpIfVfl
+rpGLIfdmxhgUKevei02C0vZIKHQcJW4mQsnlMk3nI1jaZNUQE/Dq+I9e7RZu9I4D
+0fLJEWN53g5CQQCef5jkCQmig2GR3SD4+YVlHMwtaCRHGEnDV9uwaC6hQEVUjrlG
+6RiX+hPhPq1VPsNUsUwLoW9H7lWF4ec+clXpeQ1m01yF8KnWGkCn5LrKZjY66yor
+A5dqs6nVO1Ysbjiv5e21RZ6iX2eE+HlIjwihezDB66iNdPEKQS9BVI9gP0fO56eD
+eopW9b9ItT4dSRbVRlDcfAt3q8mzVOG/H0bbToLDJgDYVOohII8=
+=ykhp
+-----END PGP SIGNATURE-----
 
-Thanks for your support.
-
-Bye Philipp
+--7f8dcabb5dc255d60cebfa8d6c3433af39369a68ea1696444b485afea980--
