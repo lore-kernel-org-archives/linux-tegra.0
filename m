@@ -1,97 +1,95 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D574155CAE
-	for <linux-tegra@vger.kernel.org>; Fri, 28 Jun 2024 13:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C8041C0DE0;
+	Fri, 28 Jun 2024 14:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719582344; cv=none; b=NqqPzasj+Jp2DXrgN5phuBXN/HuRBZYSPTAyM+IoGFoNh/oYEHitBcO0uArYSkEuRh4057nADMgn6sveJ/Noke8hUB2POIjoKkUrhQ5ll73fHTxe4hEPROTIfNqR1WZSsPeTYl9N+EFODzut3XBcJKLccVTui21tgUoLMU8uuRs=
+	t=1719586443; cv=none; b=sW+KUh7THvqDQdXQb9u3bv/liFJJDYnMrdG5YLXhOmfl/SeFKJL9CxckW2h8bIRABN1qiIOA4WE+XwBsYvRVlNyAKfvEcBxRGIlyGoJZEbMCHyd1G1j1U2taVEwdBpPzU3IAcnb8eEH1ziFDuzIHa3Tjz4qP8CVO3NtKa93JTBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719582344; c=relaxed/simple;
-	bh=FG8dp0Vjz+TdKlt0qBPCJLHbU8Him2oyYAX9SDN0mkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YXdVLA2zJ2onwWSRFcAl84ejPDDFo40h5YdT8cEQ2B1q2KIRuzEz4ZU8ExqL/+oCTgMDAV0Z+I5mlAL4JyzfAx1Wi4jbal60wFGDpPykxZbl1DiNDHE/UgzgQeg1rFomPL2lWs6N9k60Mt4rV3aOqAPe6TAd+6PXiwVMn2k64Cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eIQlgmnc; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1719586443; c=relaxed/simple;
+	bh=7SLCOSdyoFmg7UU8Si2neqCswMU2V4UbTPgOBBYjaj8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hq0soxOkrYsmV3pd7B9JxcHTfQDFj+VYtzww+ylCTzdrUIgOZtiZyW8C4JtyqQOAI5HiUsCL6UjFh8kWTBXVlInFgxUfRpH9FmKWUWiF2tr/hgkKXqQbiCSovsrQgjdk7eI0H7fwHYEt4ENIZZIkQM3JKxJbzHRlPlRuklqvEVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WnISho3p; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eIQlgmnc"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719582342; x=1751118342;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=FG8dp0Vjz+TdKlt0qBPCJLHbU8Him2oyYAX9SDN0mkY=;
-  b=eIQlgmnccTMmqeJdO6rBkmzbJTosbgYYOp3NzPRgmAqoUdJHyHK1QfRL
-   ogAZt1mBuZYHc/BGf1a/xIBdRSAY4MINsafcJc3suxSN9QA0/pnoIIYz4
-   Of9/9JLf8LO/6rtxpS2cHHVAf5zI16syIxOmuKLze41nUGKklQ0TAoaG6
-   /nxlH+OrV2XRAvZIqgz2llzAymLGHfBfy1qll76GtepWpK1UV+V+/ErGO
-   vAq/VaiDvmkd3WGIYdRPW2WBz/J+P0J9E3Bcpc8bKHs+5LPKWUxpEcZpM
-   55B1lOSsn/MSt4KbNhCd6ak5dYfuhEiWWoJG4R5tLYiP9VFS9Gh7tR1R+
-   A==;
-X-CSE-ConnectionGUID: HW/EoPxHRcCFm6vXxN5LTg==
-X-CSE-MsgGUID: ncUe8nJ0QGqedJxzI8nGaA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11117"; a="34302911"
-X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="34302911"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 06:45:41 -0700
-X-CSE-ConnectionGUID: es64Nxd7RgSakUqWvLNTrA==
-X-CSE-MsgGUID: GfPnrnSTRBW5eseL7B4JFQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,169,1716274800"; 
-   d="scan'208";a="44854174"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.49.253])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jun 2024 06:45:39 -0700
-Message-ID: <617e143f-173b-4c74-a039-9a166efbf879@intel.com>
-Date: Fri, 28 Jun 2024 16:45:32 +0300
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WnISho3p"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-366edce6493so429845f8f.3;
+        Fri, 28 Jun 2024 07:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719586440; x=1720191240; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mJB4CLWH5EGH9lfwnNo1e6DHhdoYYus7j5hPs38e1/c=;
+        b=WnISho3pba3AMjbu4/NqwlHrQbR0d7frSupmjGoea8U2irdUkV63LW3mnsbZM5nguU
+         Pkc40AxcZdyxuGlnZTZMhogu7Mw4dkY18kWnMLTueKkn/QyuNlPuOi5CHlQt62RwLvZ1
+         aCj0+vabc4DzpRFjWApz27u9ANg+Q9i2UVMiq5Ul/HLSyQ65qxjFCgZFQo/WVlvIhnIf
+         iUvyRaB33mCHDfNFd3yYE8rutdLvxSEjhpIuRPZvuXfwDlTvVu9BpuM3eA8vHV9U1Yg8
+         tYlBDSq/z1/XynghYvZUNasmX3zLPddNkL/Wk6fMuzT3z9/WfRwhUnKOEoYJyNoXK3uN
+         4Blg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719586440; x=1720191240;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mJB4CLWH5EGH9lfwnNo1e6DHhdoYYus7j5hPs38e1/c=;
+        b=U+YY3qgjE1KDtkvZcirQ84+L52OV4gnIsFZveMzuC02hZkCyXb6h4hX/aQ8Egfxnr3
+         pTurAigRTMZwz7VtyzW9ptzOwdMT193xusAVyBhzDfp8fRTZhtPMZggFgW8q9JeGbZRm
+         FgKR0vZH5uvB2WuYO1f9O+FGVQcopFZOF6dt3W7NtLDE1NNbHHTt3+dhqSOiNXDAK9td
+         SJKdnGX1km1D91AkJVGewkcr3zTg1gko27+jYkgPyw2GDWVC10MNKJ1MARM1Y0OQ5Q0D
+         1eP5S75q53WUJpS9LNKQiHbygvzY8ejD06Rs+QSI8pd8GKdm+YPC4/bBxvRCwGx9BiwX
+         Ub2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUaqgAXT8t+I+lLtM0NNk6RKcACqUXzpShlatV95s0x4t+lVpBNmnUx3NOOAV8Do0kmDP9rskMPCZD9kp3z/Rr33Ik30dU6eDRGKuJzXQLPzTGSN4KtxTWC7BEX3cnOXqGTFWSHIOIOifg=
+X-Gm-Message-State: AOJu0Yx7wMvEU6u3eEWwbDB991f7pjaYia5T3qK6Wu/P9JSdvjJXNR49
+	gmTac9Z1k9j5MiDpM4elGcysM1pgCE5hdfZPCqZ0aK3NzryFmFoz
+X-Google-Smtp-Source: AGHT+IFXu6WFAyzE6T6EueeCszyjWkacZiRj/Z0pNn5w7L6AygL9Y+yafoFUv18VXYAUoFnNLkVehQ==
+X-Received: by 2002:a5d:65ce:0:b0:362:dbc2:9486 with SMTP id ffacd0b85a97d-366e963036cmr9357222f8f.68.1719586440001;
+        Fri, 28 Jun 2024 07:54:00 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d9b12sm2533031f8f.44.2024.06.28.07.53.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 07:53:59 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	Besar Wicaksono <bwicaksono@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	jonathanh@nvidia.com,
+	vsethi@nvidia.com,
+	suzuki.poulose@arm.com
+Subject: Re: [PATCH] arm64: defconfig: enable NVIDIA CoreSight PMU driver
+Date: Fri, 28 Jun 2024 16:53:53 +0200
+Message-ID: <171958642412.2431132.4521875314508984778.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <20240509215808.126217-1-bwicaksono@nvidia.com>
+References: <20240509215808.126217-1-bwicaksono@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 17/17] mmc: pass queue_limits to blk_mq_alloc_disk
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>
-References: <23aa9894-f913-409d-a385-8813711e2898@nvidia.com>
- <20240627111941.GA4523@lst.de>
- <9cb2b062-1b37-4d1d-8731-da69c2fe7a74@nvidia.com>
- <20240627124420.GA11113@lst.de>
- <0df2f214-0d0d-445b-96a5-03fd70da0dde@nvidia.com>
- <1a913d79-6a34-4b19-8ed2-6a8d5ecdbfde@intel.com>
- <20240627144738.GA20202@lst.de>
- <6a5431e1-fdd2-4595-9cbd-95f8d589cd94@intel.com>
- <20240628123214.GB17080@lst.de>
- <48066c53-e421-46a5-a3dd-ecb7a024dff9@intel.com>
- <20240628125129.GA19835@lst.de>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240628125129.GA19835@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 28/06/24 15:51, Christoph Hellwig wrote:
-> On Fri, Jun 28, 2024 at 03:37:35PM +0300, Adrian Hunter wrote:
->>> Hmm, I thought the conflusion was that it can be more, which is why
->>> you proposed to increase it if the PAGE_SIZE is >= 64k.  And based on
->>> Jon's report at least for his tegra setups it works with 64k.
->>
->> There is a workaround in that case to split to 32KiB chunks
+From: Thierry Reding <treding@nvidia.com>
+
+
+On Thu, 09 May 2024 21:58:08 +0000, Besar Wicaksono wrote:
+> Enable NVIDIA driver for Coresight PMU arch device.
 > 
-> Which I guess is less optimal than just using the block layer
-> splitting?  Maybe add a big fat comment explaining this?
+> 
 
-Improving it looks straight forward, but then there is testing and
-checking the code for anything that might be assuming an sg element
-is not more than 64KiB.
+Applied, thanks!
 
-However it doesn't seem to offer any benefit, so it is difficult to
-justify doing.
+[1/1] arm64: defconfig: enable NVIDIA CoreSight PMU driver
+      commit: 70870ff9015c61d4433482649138c98174f45582
 
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
