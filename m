@@ -1,123 +1,95 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796301C2324;
-	Fri, 28 Jun 2024 15:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3EC1DFFB;
+	Fri, 28 Jun 2024 15:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719588604; cv=none; b=lFJUpGkT+uRU8svkrg4EczWzjLrUtUCa4TLnCDTM4pZphLlrtiyXN3xnZrPaCaZd6igdSKcCpvoLa/hmoWez+remxzo2dYXPXR3U6MHv6roMLa7B8bCfu0akWYrn41XhVrbUFVb9fe/48zQSjPL4z65yiog1AYdVuYa2G6aOR2k=
+	t=1719588913; cv=none; b=NkABz9kc/LkSxbU0hIvz71swbNkV8Qlae4MszeAkrYo4vffh8lvAt3Vt59gV82zBuIFsXEjQhW5Pc3vCil/Gz8foNVex5vkG2LgxhS4Rm3Pz+u4kvbwuVqGeyYMDXa0dw2Kg66XBhnnrOFvHliydL0xqQV38Z2VtwgTZB5wsIHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719588604; c=relaxed/simple;
-	bh=XYOyyCuiVe+BrAGQ2wlV9uCkd1pp6KaUyL3Z6xvX3So=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tyi0+mXDHfcnkvltBDnq5ywuATRKBe5v6iL5mMLItVMJTCIKEEjoGLeOTKKfJt2brFcaUrZEoVdEmLsvbXblk0u904638NHsC+xxll94cpjiDUWEeLcL9kM5liKVtuGsolm51ImJi/5Emjj3bli9O5AqoNnI13b3r/nSpcVOP/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7HGFIER; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1719588913; c=relaxed/simple;
+	bh=FZ+8r2P/5G2qQt4U6r5a/MbEF59L5zQ/wke8iMFDRb8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J0te8gNw82lItvP+JVIsTd0/3Od+lNA9NjO1r5pQjdXY/5U/Slb0EvHkdGXrETPYWFwZ9fzi4idDaTgK7XahGW6wi7EUvFzTgb2BHWAnIkY3IzQxUIiJJpmj8j3idjpIRDlasXutzjaV4ooGiUGotc53b2eAbOt3gUVS/KdDW0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MrN6xmTk; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7HGFIER"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-425680b1d3aso5217135e9.2;
-        Fri, 28 Jun 2024 08:30:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MrN6xmTk"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52cdf4bc083so1020879e87.2;
+        Fri, 28 Jun 2024 08:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719588601; x=1720193401; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmpztoIUXI4UHbHgVIQQb9XtYlomCPjgZpbcA/BlK7w=;
-        b=R7HGFIERja4Qz3wpTOqd/0fbs7tDHgv1rqbnWT8PyARRN8Fwqfmub90SrrwVWPXcgS
-         52NOATEfhsxSQgWjOFi5BDLW5Xf1H8ZfgbYhBiVLuODx87bqUD2ObV8TDKXOMlSEyyXX
-         SM1fWD/kCfYOPK/lrg5FAt8x4xEhgeX3TfAVRJ4k5AN3I0uVoLdoutzH86y6+yZvj0vm
-         jRKALxic36unDMocg8IULa0ox08aVmp+qgjp4n1mTElKA2K9Sao0zgQSa9SonhVV+mf8
-         HKjRtLoQhhAit6hkYjffVEMrLB9+76yYDKHc/JNw1kRqXEBriOORP6oMSDphTODs+P4I
-         iSMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719588601; x=1720193401;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719588910; x=1720193710; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jmpztoIUXI4UHbHgVIQQb9XtYlomCPjgZpbcA/BlK7w=;
-        b=dnk2cdv4U0evO5G+crb6morNYJgkZ3p87ZMW7yBhiXSTu9NlDH/c1m4UzJ2RwHZjUv
-         aopRLPRZYmVPEddSZUajLAHisFZ8tsX+SZAtZYCOrVrO0B8Oz8h6MZj3vHDn72KUUDhD
-         /8NUEXT3POG55/N9oeIhROCSRjHCisXeJg2FoblgAeJc9TMfZxZ5VjWjmsGPJPuOrfbJ
-         ZuYtBXS8ANwgaENOtdk7oD1EM8P+y+5SPsHurQp6RM4Mw1wawg2Q/Qr7kp0n4CUT/ESL
-         fm8HlQ3oW5bGZI3Hhh5H4o9R+3hsFyNe1lhAdbjUTFEyDQnFuzb42sweWfihQBokloIS
-         xaPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWI9is2CEpEURpKuCFxIimgSmwU3EA6ga45ge8T7sHaHyLjTszZwzOVMDiVy2MC/EQ7n8MTP3u6SjOt3FxwBpdfjLSTkVnMph64wPCP
-X-Gm-Message-State: AOJu0YxVZ4xGHipATIieFypFpQDl/bQuZK6J0RAEY5MV/5jqoGk/4FX7
-	ptaO8NAhOgxBQmKetO1BXvD+8qgCjCsc6ExaQCH1vO3mvAqT7eBH
-X-Google-Smtp-Source: AGHT+IFlyBYAEs9YWht+I31yyrmHOVTJSGcgvzCcLqVTSUQei/1pxArTzN5ZiIsBY7Nd/2e6D2FtqQ==
-X-Received: by 2002:a05:600c:5105:b0:425:68b0:1228 with SMTP id 5b1f17b1804b1-42568b01722mr27125525e9.35.1719588600335;
-        Fri, 28 Jun 2024 08:30:00 -0700 (PDT)
-Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b097b82sm41502645e9.34.2024.06.28.08.29.59
+        bh=AII4rZKD49EyVvI7JejDsfFPdOzCOk1hSvPQFvvGxtA=;
+        b=MrN6xmTkFnBwAqEkdmtfoqmvxJcRm84rzSqr+9FED7xqnh6W72BT9zLico1hhAbM+G
+         Lc+drVZRWPUtF1vQg6M/J5WspBb7FS7tp3SB8kgJgMUkjI0kfD3NljLE+cxO5/UMzIpO
+         POz1eUT9z20X7JHXPpQSznBGgk+gX4M1MsnxqCGzJuVbQb9AMWzCcld3hIabQquEK6+t
+         RcIWm6UJPvUTgPVBsWbuVawPvqzwrOcyserYFHHnRFL9iozK17J4feQSol/jv3KTmVMo
+         qqzSFM+j9fCbr1wJ0oZjjEUM3eqPbnGZDyEI1aqcrLj7fgekTtS6TZNLs9Cny9yvg7PO
+         xBEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719588910; x=1720193710;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AII4rZKD49EyVvI7JejDsfFPdOzCOk1hSvPQFvvGxtA=;
+        b=dZk7ox5Er34LccpA05ScJ2Lp2ysw/bFNzszwZbeKpT3Ms4I4d2Nu1sM3VgbfynLisx
+         TMO1OS0qy2CdXtNcKL9zZSVkSYQfpmYyUNPwKIfUjO9m1wf0/Fu3xIl9GOxV3AWq3zwM
+         wy+XIYzRL+FSFJE8BWA8Su3ZJw6fToxaQGNftVI7jguFcwO1tERYpYW3zLXZRDAosS1V
+         t5RKuZ+uX9s/CDlcn0Fghd6JYsYzqR+LLBQajEyWtCkczfD/f724ssscTXcDpJMBAtXm
+         K1fwcCoprq/TgSIgbdyEtXjJCQj9R/cDbPfg8J34mInX36z/cQ7v38iZ/6lXgKppS59R
+         kCIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJrL9cJHFALrEEO5gch4nJMEUobqRxG+biMuHwhWj/mba9u3JJu5Mpxd/k6X9FvcEeQnbyUhTb6jxv4HHz4qdAf5aaZstpDALnlZku0P44VguJQA+BOmjxmDsQtn6CyCEh55sH1Q+oUr4=
+X-Gm-Message-State: AOJu0Yz4oyifvCYwPEsjUmAF4ym4v1kaAHBgawRvNA0gARiJ4mc6G9IF
+	cKIREG7N3ELu2ChqhsgFIALZo8+Mf6G1J/CgrFlbrGuDDHjiPplq
+X-Google-Smtp-Source: AGHT+IF8rz8A4hN6EnM0HFaEVSVUEauhBRAjE2f6UHiNmcKxfI0rKgvYP60zOvRdQTWP8/etWUeEAg==
+X-Received: by 2002:a05:6512:2389:b0:52c:d617:f4da with SMTP id 2adb3069b0e04-52ce0620276mr16352359e87.41.1719588909786;
+        Fri, 28 Jun 2024 08:35:09 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd712sm2670484f8f.20.2024.06.28.08.35.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 08:29:59 -0700 (PDT)
-Date: Fri, 28 Jun 2024 17:29:58 +0200
+        Fri, 28 Jun 2024 08:35:09 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: jonathanh@nvidia.com, kkartik@nvidia.com, rdunlap@infradead.org, 
-	frank.li@vivo.com, Jason Sikes <sikes@qlogo.org>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fix warning in tegra_fuse_add_lookups
-Message-ID: <xyxjlp6hb7jcwlhbm4tpmt5npx74qpuzybzakdkev6ta2nl6go@txh4ue7faenk>
-References: <20240616073721.5696-1-sikes@qlogo.org>
- <171958790864.2433364.265100419611870394.b4-ty@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: tegra: paz00: use software nodes to describe GPIOs for WiFi rfkill
+Date: Fri, 28 Jun 2024 17:35:08 +0200
+Message-ID: <171958889447.2435101.5942373221568313704.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.44.0
+In-Reply-To: <ZnzulZBukibZUXKM@google.com>
+References: <ZnzulZBukibZUXKM@google.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ibnhoa6hups3xhlf"
-Content-Disposition: inline
-In-Reply-To: <171958790864.2433364.265100419611870394.b4-ty@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From: Thierry Reding <treding@nvidia.com>
 
 
---ibnhoa6hups3xhlf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 26 Jun 2024 21:46:13 -0700, Dmitry Torokhov wrote:
+> Complete conversion of the WiFi rfkill device to use device
+> properties/software nodes by utilizing PROPERTY_ENTRY_GPIO() instead of
+> a lookup table.
+> 
+> 
 
-On Fri, Jun 28, 2024 at 05:18:48PM GMT, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
->=20
-> On Sun, 16 Jun 2024 00:36:57 -0700, Jason Sikes wrote:
-> > gcc 14.1.1 warns [-Wcalloc-transposed-args] when sizeof() is
-> > used in the first, but not the second, of two size_t arguments.
-> >=20
-> >=20
->=20
-> Applied, thanks!
->=20
-> [1/1] Fix warning in tegra_fuse_add_lookups
->       commit: f56da7f4048ff41cb029a715935394f5958a825f
->=20
-> Best regards,
+Applied, thanks!
 
-Scratch that. Looks like gcc isn't warning correctly here.
-kmemdup_array() does have "size_t element_size, size_t count", so the
-existing code is correct.
+[1/1] ARM: tegra: paz00: use software nodes to describe GPIOs for WiFi rfkill
+      commit: 47ac458bb229f8c4864081d173adbcfc55c34880
 
-Thierry
-
---ibnhoa6hups3xhlf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ+1vYACgkQ3SOs138+
-s6G/SxAAkGcaLvm4Wuz2jBQmCwsaiUnw38ByVMEAKJKZ7iGVnLqsr/R6/JUh7fGB
-bPv/LMmYlqSqIuCh3DwI0baF8OMQWT/prKcBPSfaLYEb4BD98W9WMUpPnaP5P65P
-WTAw4eTk0Wx4tB4VmDc7me45vZkRk130QbLI80ek/GVz635oRZI9OSCzR21Ql7Mh
-oEljtOAVh0bPf1mKb3c/rrPJ+jiSbjcHci7aOM1ERboqDOZPqRBVWxi6dbato7K7
-h8djOhu/zi2IPzqnakMWVhf7smZGjvVACPL3xBFKfJ3w2mExy3gDbtbourPLr7ZX
-rlYiomQoXWlHrnfteXiS9eifkWo8W0YinUdpW2BXjGe4HizBn1az0OVetCqc4EBJ
-tlofM0h+Hi4iRNE0efBYMWaqJH5psmdKvXWw4R16lw1yqd5iohRAzQuOI/CqxL30
-k+n6Jv+ncCZD3TTRECe8w6az7IjN3Y3a23iWgu9SVwpONKZPAavog/Hzt80YJQsn
-cC1tjwoNOOiroAftgSHU7V1K+6+OjRrgtoxg4xhuj+FPh1oCBT/Mg/3UiZfCDok3
-GT7X3JM+o0GeKPvWvRCY3FblaU1YMbklS9XsMA8cEqeiG5IBsBmtsD6j08r5dQRv
-M0rMXBjLNq+LYxMDvY0z5X8ZwygyUPx3wExdwfuys9IU6jCfOAU=
-=Y1Ux
------END PGP SIGNATURE-----
-
---ibnhoa6hups3xhlf--
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
