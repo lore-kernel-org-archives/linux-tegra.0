@@ -1,66 +1,64 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F54539FEB;
-	Fri, 28 Jun 2024 15:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FF11C2325;
+	Fri, 28 Jun 2024 15:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719587177; cv=none; b=mjYEo3Nqa9hKaJ+cZrO6orjjH1T4srC/GJzmkIKrvSUkkwo9fUTyCAs5QCgyB9Y0u9ApsUEU7hpRDkUG4C+PIwoUPCcSHoCuFRsn92DD1ktd+17Aku/40iGsINwqpjtq7U4KCANXjzNITv2s3uxIeyBaYKLTBHxx3x8L02UC1W0=
+	t=1719587511; cv=none; b=OwmgqS2HMdMGN/VVSbWUslb9dowsqd4sfnjyxfCZVBKDYJsl19dhMGrrxUCXTIlznWNxPRdMMylGJ8h/ShwCWKEGP0B4hpXnSibK4L4wfY5nmH+myVKs0dBGoZn5dQuK/02lbkSYbBV4Fa/3wFcRi8oYZCXOfLeYanw9dQBOaG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719587177; c=relaxed/simple;
-	bh=teoHZ68BbeP4g0FUcov5aAf3qrdoD1M0ZAbGmspqrO8=;
+	s=arc-20240116; t=1719587511; c=relaxed/simple;
+	bh=rQEfzzO0+5DLw75IH4g52W9FtnhmN3EFRLppSXhgdjY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F9OmXo/1lwKwFhYNggge9zH24uI0Lj15OOYb3iLrcX5jfeAwoJCUNtaywbbKxroqiyl+fRNx3EO3AiczqMbfAdfCERDVrIe0wVzJLiYeOp0wvRqRNa+JBJTSuZ+i22f06zEXlK8spEZjjtzy8JdSfC6R0+Ai0VHvVJg06Q03VO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpqbE3Yp; arc=none smtp.client-ip=209.85.208.170
+	 Content-Type:Content-Disposition:In-Reply-To; b=BXMW2zHNKgAyJsP+ybu8JVn9KsA1zUoTZdqlnKi8re8uSSe7Q/64mrab0BGXLLdVu3/w+gFbkgHj9zJSufgZtpQ+7+c3k1faii3kMd4OSUAVOIofjdT2w9ktVyBS2AvsapHmImLuuvV2XOu3IUUbJg8fI2zxYqfdmatOw82YPHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=drzmKZ4z; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpqbE3Yp"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so6800271fa.1;
-        Fri, 28 Jun 2024 08:06:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="drzmKZ4z"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-424acfff613so7472615e9.0;
+        Fri, 28 Jun 2024 08:11:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719587173; x=1720191973; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719587508; x=1720192308; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=byFX7b+g2YFL0Se4495noznBPNIYmBdRduirs65L2O0=;
-        b=hpqbE3YpCOW7IUuyIO1IazoGhgfQKLg8kNC01Ktdod26Y38q/WnEQ+cPa61WOAf7Ac
-         qLX/k7OAmjhqyBzTefBDAzZ5GMzRyWT5VnZncKQ5gHfstIhn2GAoZK0llStCBSbiK8f6
-         qvtF2rSDy2xZ2NBGMNID72gZVHwFrZVOxYVcCYcNMYMhbBrQ8vpyi7rAL1C1L5aHMNeb
-         XnUp6v23/WgPgEPcbJVO74HFUjN7toTcD1zI+RYINyIHRByZcnDxYJML8kmabdb6gxrI
-         bKbkUnHZ9U8nXHgTJVGsR0e+puoI+vXaqhjabtGs2oHGHl4MM6rIfOdsBIlW4l5rNnmh
-         BjDw==
+        bh=G+CX/J/whOmL5e2jZfXh+sXtbh8Qe8rzOa/IDtcigV8=;
+        b=drzmKZ4z2EJQMrL6cy4/1TWmTaNx1DHTpus4QGZutXs8TN72IMSYL098NO/1Ywsada
+         J5y+hxl8lS1IsHRyKXQKQXk0X4I/gC6oMjyuG4dXLzq90EqXZZ3gBzSlL5QX+S5X6ZBq
+         MrdLZbFy1zPrfSPniDc3/H6b3QpoCwpSo6Rcc5AAEpaMuzBpIrmy6sDXc5PR2meW7kF9
+         F0PFEziWj9vFPL+10RnPmhanQOf9RfpWWyy2d96GLcNwujkz9J60q89RhmQP5vfOy7v4
+         wC9UDZgZnrdel36b8t6XZ1AGqSfLj5k/FoqkasvdqvNNZ4W14T4l4J2RMb3sDomwiJ50
+         s7hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719587173; x=1720191973;
+        d=1e100.net; s=20230601; t=1719587508; x=1720192308;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=byFX7b+g2YFL0Se4495noznBPNIYmBdRduirs65L2O0=;
-        b=eZtx4EMD2OozOvw+IB5m5C/UVk8GbGS3D81gYdl4T3hDQrq2RZO5LzM1hawm7hzaDb
-         v8Ka7KVv/zV5kzL3yr4vifFdsemEbPZJO5xnbwev6QLY5TgH4lYHV8nyPxMrRu87AgKF
-         EfyZa3zIyrixgWm8LH7rVOrSYdNtiiuSiSpFFTxmse60rJT9YPdEuu2siajJJZWACLpj
-         wQYL3zzFfAMVgdY8SGWBmATDto919vXI38QeCuG3zhAO+Krqb8Dyh8Kkwf3LxaO5cAeI
-         VPEp/V1svk4wGBzR1kkp0RPu6xC+S4OEYgm4RLFVadNvx9ZqV6RmWEdgpZFzu+dcw3RW
-         BioQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8lUkaRzsmQwm2xsM3NPtRoq1ocLSOXNnJh7C7Y8U7x+e3Hhnkj7wBrRIWCpiEFSxl9lI2IfD6Guanll5EqfakH63ymlA6lBekT0kNtL/8ShdTNTWPvo0bYgQ+9gO5arVuz+aYZ3lAiv6Y/SPxC7WM9HfwD9TzqCf/gfGPdqMdWiQKbPnf
-X-Gm-Message-State: AOJu0YxzSx1m7Jszj5kh9EBt7r3J8eJvQTsN1Y+ZJS/LazZEBzscW9CO
-	ezezAl4NDruMj5Owwk9THDiEYO0edmddS17cQxsl8Mq9erk10Ekx
-X-Google-Smtp-Source: AGHT+IH+IBDKrbwb67wJZQY1PQz8Vr9gonBlqgAsSdkyvnNetOBliXJAAb1ffJe8fDb9NRUkMKWYDA==
-X-Received: by 2002:a2e:9087:0:b0:2ec:4d48:75f3 with SMTP id 38308e7fff4ca-2ec5b30765emr99738851fa.45.1719587172823;
-        Fri, 28 Jun 2024 08:06:12 -0700 (PDT)
+        bh=G+CX/J/whOmL5e2jZfXh+sXtbh8Qe8rzOa/IDtcigV8=;
+        b=XEdBehkv/QOUD8lklOp3yk8+HKko8aJLRWv3IP6XTAms+oGtAjkwM3Pvpoyc4Kc7RK
+         yEKfDz1yeY/ycGMSD7fSn0wtFRKoB/lYjl6M4q3kYoAPJ9tWBkJ2WEluOnuOLsJtAFAh
+         KMi9t9k646guXN/M0wmhkKUprJwwbwWpskFJyyB5M79GffdwZvjY/L61auu3vh44JEwP
+         dRCRKJaYpLnMC3Dxq2GDfygZ++e9F3Uathg4OvQEOpgCrAQ8SgdT5MoPsRU2eZEMwSR/
+         w6xLEaa/QRm8WYdrM6V3xuWWoXyePCZDAwI9F85DRVC1rWjPZYjrrZDjiHtnAfIWvAc6
+         G3Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDVPGtKnnjooTnt64/TE5gRtfc2f8jvZ+guFau7Uk0f+6Grp/h15k9uX4Lllj8gtNsFcxHN3FgzY2OktjpK2i7GreMG+g5nvQzcuT3DKsAa5qQdovWzPKhLrJKIi0YlEW27r3NFLdRjDs=
+X-Gm-Message-State: AOJu0Yw9oB4aLCP/YbZzhHuxiPU7mZdhvxv9tGTw0Wqe3j7n3TFqsmJ9
+	IN2LlzUjCP9cUsSCn7ccd30d3LZYEHc8VV41Je03R6rcAS62XNfQ
+X-Google-Smtp-Source: AGHT+IG6bIw9CRMaqOGhIIwzIzPx7Q9OiiKWcCVtvqQxFvYGv/s6oRMr6XdnyfWpJ0WiG+9UQHaLMw==
+X-Received: by 2002:a05:600c:3514:b0:421:e7ae:955b with SMTP id 5b1f17b1804b1-4248cc3415bmr141599475e9.21.1719587507970;
+        Fri, 28 Jun 2024 08:11:47 -0700 (PDT)
 Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0e0661sm2557180f8f.47.2024.06.28.08.06.12
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b063569sm40258315e9.21.2024.06.28.08.11.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 08:06:12 -0700 (PDT)
-Date: Fri, 28 Jun 2024 17:06:10 +0200
+        Fri, 28 Jun 2024 08:11:47 -0700 (PDT)
+Date: Fri, 28 Jun 2024 17:11:46 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: soc@kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: Add/fix /memory node unit-addresses
-Message-ID: <lbv5dlpvjfolp3tidna6ft7o3c3xswu6udp6savazegbfovygp@uzf2yyrocfuj>
-References: <20240430191856.874600-2-robh@kernel.org>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH] reset: tegra-bpmp: allow building under COMPILE_TEST
+Message-ID: <d4omnd626yqxpovjkpgztl74lp67qjxiu2vvqps7guuuwxzlo5@mvdxrejii5g6>
+References: <20240625-reset-compile-bpmp-v1-1-647e846303d8@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -68,67 +66,46 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pjs3gbaie5x227iz"
+	protocol="application/pgp-signature"; boundary="up57rqki3tzs6oce"
 Content-Disposition: inline
-In-Reply-To: <20240430191856.874600-2-robh@kernel.org>
+In-Reply-To: <20240625-reset-compile-bpmp-v1-1-647e846303d8@pengutronix.de>
 
 
---pjs3gbaie5x227iz
+--up57rqki3tzs6oce
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 30, 2024 at 02:18:54PM GMT, Rob Herring (Arm) wrote:
-[...]
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/b=
-oot/dts/nvidia/tegra210-smaug.dts
-> index 9ebb7369256e..2e5b6b2c1f56 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> @@ -25,7 +25,7 @@ chosen {
->  		stdout-path =3D "serial0:115200n8";
->  	};
-> =20
-> -	memory {
-> +	memory@80000000 {
->  		device_type =3D "memory";
->  		reg =3D <0x0 0x80000000 0x0 0xc0000000>;
->  	};
+On Tue, Jun 25, 2024 at 02:51:41PM GMT, Philipp Zabel wrote:
+> The Tegra BPMP reset driver can be compiled without TEGRA_BPMP being
+> enabled. Allow it to be built under COMPILE_TEST.
+>=20
+> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+> ---
+>  drivers/reset/Makefile      | 2 +-
+>  drivers/reset/tegra/Kconfig | 3 ++-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
 
-[trimming the recipient list and adding Diogo]
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Sorry I just noticed this as I was doing a cleanup path of patchwork.
-
-For tegra210-smaug, unfortunately we can't do this. The problem is that
-the firmware for this device looks for a hard-coded /memory device when
-updating with the proper memory size and this firmware can't always be
-updated.
-
-Diogo, you're one of the few remaining people that I know of that still
-use this device (with an upstream kernel). Do you have any more details
-about this? Is there any way the firmware can be safely updated on these
-devices?
-
-Thierry
-
---pjs3gbaie5x227iz
+--up57rqki3tzs6oce
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ+0WIACgkQ3SOs138+
-s6ETww//fKn/izh6941gGmnNr73X80O4LhJqg2ssrOGsboYQJ9Ca2/+LImPyEeIv
-Hp4JfswrF2kNORV268f24OZ9dZG/XehTCR5yJwi3MRmF7uawKIItDOsafq7yh1GG
-B+QatqpwOlvX9JFq+uK61TIF/NR7NP+ILo1H4OnnbHmOfNfnm6wG/8bcV2GWGyHg
-Xax2H47PW+TvFKAi5m4yM/qzEfj6rCOOsANoqfhoMyzVQ3+C4SY7JyeHX3ZPn5uD
-nt1MJNxktXZkP45t2s99mEW3yDD5Jia88jIVgBvIRq/VWiT3RRqXoBOCfNxy4ne1
-mE06ZfEGZZeqQsSfdgcs1ZRsG2//h2EjCgOc7+JaE+yvbGC0LsIqoirH8foU+74w
-vrgQd9kY5y3XpoOxQuGJpTsKmVrtJDm1ScLcr3zAcpqR0HMLTEXxInL6gOFv2Lfv
-CI9ACx1cJsmzNNHrgrSWk39HeeoegCtrm+7DKrgaD6zUMUYbug5p2E3BfIKRMdiu
-+yMZ9CMYUD7dylywUIgrQXnsbgWWygMJUEuaLYFZHThzJ2jdCY1vX8FvvWVbDxqn
-Pa09zlWUsN6+BABlb8kqjPhU9FBS6o2FJ1eLFS+lpCwah6KE1fPfPRHhZHtn0oO9
-FXNNCTagT0b8RJc2RPiMTytbtHwherbP+QyYlfpIoHp6qSavTo8=
-=qW8X
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmZ+0rIACgkQ3SOs138+
+s6Gtog//ZyHa5W7H1aY18Em0Pbp7cA+BnZ38GYzURxkFSqte4liUJsrfbSY9gNym
+GEz2CU/pKDhPLBrBOMqg2Qp6IDk0mtvZOx53Je/YFm+4Z1w7s2Cx+JOP798zNNmX
+oi9XEhU/6WK9SpDj81j/sfSZU5d+wtWjDrIl3k0aAZ+NS1bOapniarBwN3eH3FJj
+aJC9XEHNqISjcPxVwA7PJRNd7TxAL/mRlJBuPbZfkXY+mCxpar/Avx9C/j2Z9op8
+u0QomH2h6xwl4uzc6ltetbPQBhnp1hflEt6PQGorOJ3vLQcvaJWsBKJiJWT9D7Kq
+XHVIyzyCAl1y1Qu7Ovyjo66zkbqiam/K3jQfDSO3dVlfqtz385pKjxiNdXc5+oSB
+kvRTjscwxwz3C1COpejC38r7HNjR7BqRZUng7KT6RwUEdsntbHtVCZqbDXqn5iet
+o8xtj1oADJG0kMcRykqlTS7IQ80p3UVqk/EnmxF+V30ZURSqfZS9FATQQhNWfY5w
+/LTVZTHg7lXy0Crh/cKASewhNdESBu0DbGf8zwNm+vsXCpLb3PJA5wTX7vBww8Lr
+jTa1TgLT2tUAXTnRspkxkUsC3qvXR6SsA1BlJzjHcVa1aoZVu/drtpXx9rTPDa4B
+v/ickMzOJVvEy95G41iXaHug4o5AAyfY+gGKXw7+1M4YuT5nkto=
+=2US+
 -----END PGP SIGNATURE-----
 
---pjs3gbaie5x227iz--
+--up57rqki3tzs6oce--
