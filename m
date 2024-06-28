@@ -1,88 +1,101 @@
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AE71B94F;
-	Fri, 28 Jun 2024 19:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECCD76C76
+	for <linux-tegra@vger.kernel.org>; Fri, 28 Jun 2024 21:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719602785; cv=none; b=JrDaT6qF34a2o8bIg9wKsNa027RhUsUAtgDp7uGZRA2sORs+WSiUkBSdplpP+TOdn45pCVmt/sS/bddqZYmZm9wVpvFhGPS66iCpOn4B/Rmw2RoZ/i91gowLWUGRyHDRQBVHGBdbNWMYP0L1SRoFaVMjkrm8AlJV7GyQd2kUCQw=
+	t=1719608905; cv=none; b=dpOmf81QEtgztOud2nGNkqbKk76lKjW4iG3Bhx3cNJbRMYUbGvGp+Rs+loL4DpYGvN0N/KQ0S24PJATx/U/woP1MKWhMSpnGjHg7GZ+JZUB5G0FyQmRkD5w5RsQFn9Y133JrckJ1eqivwND0d8+k2ff7lgX6M2LaGxOL97wJBdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719602785; c=relaxed/simple;
-	bh=wfttQ4irodpYug+6tg6O3xKAbBz2IjoGgFPQFIjoayY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oxj6ncvd9uR1P9jCZ+MQIQ7ikONc/TTSM3TWWMMuPVK/vXIYQUgbRPDEtHPiRGz3UFEkoGbcB8kOPvbA5bXif3IGS393leh3PB/2kZHHZ8OlQli2agWcv4Inu4OXYT3bZah79OHdopsK9IWxf56xMeN8xlFQUB84seB0ea+v1PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=pIPvFia1; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+	s=arc-20240116; t=1719608905; c=relaxed/simple;
+	bh=CJ9gIYeYZHoE4596COL463+Gvok76+6+1PyClt4epLw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=IWbIoj6aCRFbGGwNUj8+Q2QpuB8cPAlHFm0VlBIJSUieNgucZCrXU+aofQ0DxEsF5gok6r6vaz2ese7fbc5uekx6ajKcPqp0xLtLdJ/WvK1VTl27iNLNkSTKdJZH6bMVkAP1E3gbsslokRzlBwL9zwZ34UDctzURu5RQaXhasG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vltx7efq; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="pIPvFia1"
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id C7E781C0098; Fri, 28 Jun 2024 21:26:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1719602773;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JtDEctZl5csME915JD1o7S/fADLLKRHQ6IHxoN8gnJM=;
-	b=pIPvFia1iyz9cQOK1ng10vPjzJaLxBMU2iXRgilHaRdZEmjI10MItvG+CCM2TPoXNjkQz+
-	jbhQvAg7z36xuk6TVOxWuBgxKTJsu8apuJ5Nwyr5v2aCMlDsosM02zznZGGbdgC+0bWgMr
-	wK7YOaW8M1Lvtaqt8VCnTaulTdPvSu0=
-Date: Fri, 28 Jun 2024 21:26:00 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v9 0/6] Add Tegra241 (Grace) CMDQV Support (part 1/2)
-Message-ID: <ZnXBrhcaiHqV9sn2@duo.ucw.cz>
-References: <cover.1718228494.git.nicolinc@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vltx7efq"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52caebc6137so1082582e87.0
+        for <linux-tegra@vger.kernel.org>; Fri, 28 Jun 2024 14:08:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719608903; x=1720213703; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dmhlTQVKP3bt0jrACs+g3oYCc5nmTL2fJ8oisMAUBwk=;
+        b=Vltx7efqHw/zATZz6VbN1qoQO2rArubsKUY0sVTRi6m+tVR3YiZlk/yh91b32eSPp0
+         RkNdwzijg2scObS2ZBirRoeM/slluU2EpsqZSTESQjg42aIHo2Ap7WMgqW9iIh4t/cx1
+         6Wz7RX5RxBjUxmLFIjFqAXbdZapeLS9lH+2WwSpj1Adxm+x0O7iwfyWfeKVSMd8bH8hw
+         yQiep4EnheIA2CzZLn+qcaVPOI5X6CdjQqkkc1zRSgMqNpxyEcq8wA3cVo6xV8ZLy8QV
+         dgGD3CaH7DD/YczE6KVbqvEWssZLyV19EvLBKqS36CPwYxm0ajk7u7/Ik2+3zs6/TJEb
+         zfVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719608903; x=1720213703;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dmhlTQVKP3bt0jrACs+g3oYCc5nmTL2fJ8oisMAUBwk=;
+        b=Ytqd4ZgE3k7RN/bSyfk4FzbKmD/DMK3dPHOrmBiy5OnszgdqEXozO8StZvqodc/Jcf
+         B+xn0C+XziXyA4PCK1Pw3E0hP/NUwPnTPbBIohkx+SJCcvGNiA1DPsRr8CwDszv+ZTS8
+         nkz/OmMXi9EkN5BgumrBNvSUAGzl9SwJneQX6aarpYWYXwcGiGO7H+nGYw1oN9iEhKJI
+         ELZJVvdfp0BVz+R5CMg/RxcJqWoL0YHDrSiVgNL+br45bK3FW+QayFVXR6Al0cQmvQ/+
+         kCHn3M6L8Gag3AiKrex/AVFlWa41DtqoikNGFbal4E3Sao7CbQP4NUirinr0om6FW6rM
+         paAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeZ+TnKIoyDktAgF65cuBsvu0Q4yAQ4PYYnuNJOfXjN4MUex9kdoMjsTYK2DwPiSxzoufJYuetIn+21aysXPKYc6Zf+mzljU//bzU=
+X-Gm-Message-State: AOJu0YxNL+FxBcej4h9Nm0TUd9fu1PQDVIua4/9xi6ueoIJBfGJQHaY+
+	s8nZ1FlH9XbAfR90VDRmNtpKE0YNKjzMNpHM+/k4QB2g6G+S0tDz
+X-Google-Smtp-Source: AGHT+IHPh5XULJ09RYKLkz5YRHePVV5MnL22HsdOUS9qtdmpNP5TPa2vhc8R+fmRFlGZT7a5KXlamQ==
+X-Received: by 2002:a05:6512:31d2:b0:52c:e3bd:c708 with SMTP id 2adb3069b0e04-52ce3bdc757mr14024777e87.10.1719608902122;
+        Fri, 28 Jun 2024 14:08:22 -0700 (PDT)
+Received: from localhost (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af389b3sm51396625e9.1.2024.06.28.14.08.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 14:08:21 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: arm@kernel.org,
+	soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/4] soc/tegra: Changes for v6.11-rc1
+Date: Fri, 28 Jun 2024 23:08:14 +0200
+Message-ID: <20240628210818.3627404-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.44.0
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="M55KJ6JsedfzaN2+"
-Content-Disposition: inline
-In-Reply-To: <cover.1718228494.git.nicolinc@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
+Hi ARM SoC maintainers,
 
---M55KJ6JsedfzaN2+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-Hi!
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-> NVIDIA's Tegra241 (Grace) SoC has a CMDQ-Virtualization (CMDQV) hardware
-> that extends standard ARM SMMUv3 to support multiple command queues with
-> virtualization capabilities. Though this is similar to the ECMDQ in SMMU
-> v3.3, CMDQV provides additional Virtual Interfaces (VINTFs) allowing VMs
-> to have their own VINTFs and Virtual Command Queues (VCMDQs). The VCMDQs
-> can only execute a limited set of commands, mainly invalidation commands
-> when exclusively used by the VMs, compared to the standard SMMUv3 CMDQ.
+are available in the Git repository at:
 
-Text is block-aligned without duplicated spaces. How did you do
-that...?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.11-soc
 
-Anyway, it looks great.
+for you to fetch changes up to cfcd6c46fec46cac3bf6658838d3ea329aff37aa:
 
-Best regards,
+  soc/tegra: pmc: Simplify resource lookup (2024-06-27 09:02:31 +0200)
 
-								Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
+Thanks,
+Thierry
 
---M55KJ6JsedfzaN2+
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------
+soc/tegra: Changes for v6.11-rc1
 
------BEGIN PGP SIGNATURE-----
+This is a simple change that condenses two function calls into one in
+two places to save some boilerplate.
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZn8OSAAKCRAw5/Bqldv6
-8qZXAJ9DkBgF2X8KifU4u59xbet4ETIS0wCfRqMfWdm2bAX+xuqbVdS3ziga0Vo=
-=VuQU
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Jon Hunter (1):
+      soc/tegra: pmc: Simplify resource lookup
 
---M55KJ6JsedfzaN2+--
+ drivers/soc/tegra/pmc.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
