@@ -1,112 +1,107 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C48616D9BA;
-	Mon,  1 Jul 2024 19:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C726716F903
+	for <linux-tegra@vger.kernel.org>; Mon,  1 Jul 2024 20:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719862280; cv=none; b=RgJibpXYdNi25lYD1Va5szu6bdllsnW5grinC1mosvt77d5mHjOek3pD0KmXl+iX3lQkjUIsaBkdk0N2C2NIHBaEE6jkz5S3nuUIqrMubzaVohSQzHD8B6tKlgATiM2F6Iiy25Sa52GT6zzQIrYOlfkTgawUJhhb2/yjrgX3DuE=
+	t=1719864436; cv=none; b=rOxxoNYqDrCizU2zUilKgbhVl8qfYp4OMzdQYZvmn0U5qD62qP1bBZX5/eU1Y5TydxHJQk7lZeURgmhCSR52VRgsdQGVJHH6/RGYxz8btcER3AF8ntxaBg46pxwv9zYluH6irrUS+VpftMd6wMeiRVa2M6EtR4uNOYXHk9porio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719862280; c=relaxed/simple;
-	bh=7uK56noa9OT7NT7AiKzpcK8+8gv6waaOJ9178RHutXM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hNBh3RyusbVzkneC0pKiXNvbaeS4yFYE7jhkXAflHMvRzDKsWxEUvyqNV0SFBL4OR34rvS6zmrrBpypcBzLtRpnE3OK/bHZjAkiLtCfBdGv7FYEV2kDz0kr9Uz8jaLIrxPn3tRgiG9jQl3mX+JyTajOwHIpVztfFbFL/gB7VTRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eprjowPH; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1719864436; c=relaxed/simple;
+	bh=DTx0TnMXknMnU1py/GEV3TbUeQ0A4+c8OwKWSEIEY60=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UYTjkk7tmwpnYHaf8Hqgx21hAQgyeg/O7EdaV1d3vtbtOfVuRqPvUYXUgxcQbaJeEyFvs2QrhxXTOABuIB4cpL2KtUxqVd9TA11y4OX7DLiqXvGmY1uFYGl1bFYB7E9fstSIG8RA7VMatLntuREgTdvq5aPXC6b/RmL3h0fAoho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pV7iWmMn; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eprjowPH"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57d0e3d32f1so102633a12.0;
-        Mon, 01 Jul 2024 12:31:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pV7iWmMn"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57d119fddd9so10812a12.1
+        for <linux-tegra@vger.kernel.org>; Mon, 01 Jul 2024 13:07:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719862277; x=1720467077; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=D0HZlK8nHwoje+lWDsShpqSJVC51ECArGsANp8ntoAw=;
-        b=eprjowPHB66SNBaU4r2f+Y2SPmDt844CfcS+EAzMJbakLaJYJXavfpPOeM6NtzJmQl
-         A/Nm2hT9ttgIqZ9kTgN8Y43spoA+eo1lEKvH6QZrgmhIInxW8jMG3inmd4ekJMFhC8d9
-         IL01b+CGY2stCQOkMPPvSPVjKGY2py4bkNYnNKNyu3yDtoeRR9Jzqd9P5jF21YH2oA7g
-         QCjrEk0cMFRDsKQp1UybuL2uxXdMLB5ni1q1DqAFa8qLR8cbQLXkucWkTvgv7jNXCPva
-         Rn7UxKguKaqVLGYiJtC4W+RpOqgf4iXQdarMdx3VQks2e98vfARVGtGWO3FXI/BebI/g
-         kKKg==
+        d=google.com; s=20230601; t=1719864433; x=1720469233; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HA1dU22m3UNj5lyj13MGSrb+8h3p7MYcfXDGMuEpnwo=;
+        b=pV7iWmMnE4CLmq/TiV0X7tzonmq/wxD24BAM1cWI/CSi7jua2bZ+hR/8iqNnZvmmCD
+         lqfrr8GMbU9DCJpVX3xmkkMZPAmd3kJImpE/q9WXkjnSZxlwd3WYd3Ay/r1od6cJWll7
+         p6XX92skCQsVjeyAB6JEQuuBNPPtUGq4tvFpVRLtmHPgFxHr67+njCHPsasnMnCD6ji/
+         T7D2HQ+O/ZRAozy5waDZoewOIK/hmXFu65GgxBVv9Wzsl/E99kKQGBQRWBExOBWRy6Xg
+         GLhw2ySClsWGHZDTmrbVIkwm0r0/GcijvTusNEuaVAGv+zYb5MptAp3y9KMXp/IEwpsU
+         0fBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719862277; x=1720467077;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D0HZlK8nHwoje+lWDsShpqSJVC51ECArGsANp8ntoAw=;
-        b=GpceVNknpi9Y3WbA7w+/36+hEG2OrtmHR058rtGTy+qFDxhwxxoWcNVeCWoprP/bDB
-         F+Yl6i82GYE9uzJPKlBkJHZZOeFMfhLhk5nQmgl3GaLneKgFWZMaKLAwrPFgFPEEGqhl
-         e+Ge0mWN1gOKnw7E6oBN+oDHOhoecJGu7QgZhy1K0V2GL30+9jfo2gaLbxvH/atuXQ8A
-         enH5pPucVBOHerNngEImUZeQyiwUjcvS3GA8PD8ShH6isB/YYiDOwEU4UMcu6ZRNuMTJ
-         qKIdgahAP+VXUEsuWJp+4cyei+G3xmoaGY6t3wjewSfatMtj2McFvWy1S+6BGzqyLR0U
-         oqHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVitrthq1XLRl+tNUAzyYKMzrIobcTzFwxVyRfvb1c5V1Drxn3C6WtZCP2Pq7HNcfJQMMBClxINh1k62KKn6IZjcuhy87I4KGSa581lXYfCztsHMHtGBDehbHgJqoQWyKp+POtjeTC7WYs=
-X-Gm-Message-State: AOJu0Yx20TupWxFEbhhYeCv7NjaBup90oVTa2PJs1rf/NY6rnU+3Y1zU
-	QOmL0I+jw24WdLPfgNxUGx/ozD7+DD9worYhit+1QsPQZJtqpcdd
-X-Google-Smtp-Source: AGHT+IEtOTFhO5s/ESTanETwKJvhOIab0I4p7PgSG6Bi6jKBUgeYqvdk9TOJBWlSN/5+j6oA7dtTMg==
-X-Received: by 2002:a50:c356:0:b0:57c:bc7f:fb51 with SMTP id 4fb4d7f45d1cf-587a0b030abmr4269936a12.2.1719862276901;
-        Mon, 01 Jul 2024 12:31:16 -0700 (PDT)
-Received: from [192.168.0.103] (p57ba2f9b.dip0.t-ipconnect.de. [87.186.47.155])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58612c835c4sm4730177a12.11.2024.07.01.12.31.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 12:31:16 -0700 (PDT)
-Message-ID: <cbd7ead7-bfe9-40d1-ae9d-053388384356@gmail.com>
-Date: Mon, 1 Jul 2024 21:31:15 +0200
+        d=1e100.net; s=20230601; t=1719864433; x=1720469233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HA1dU22m3UNj5lyj13MGSrb+8h3p7MYcfXDGMuEpnwo=;
+        b=moZJZv5kyZ8zJgSjLftPgx9L7k0WXCJf0uRT38TtNNBKFRtfmsim9haZDZGHt2UoDw
+         Na6NJPDQSLeAXURkHiZ3LnGawszmtWkLyFz9tENME94kfNcEHWH7k3R1NGEMe4K+0I3A
+         XVnYcSqj2MEkiHh59EzSvrLvl581MLHxwm2PkdyjGge+JunquI2jctI9anqMF1SLMugU
+         yzzXIWM20bcSOzpGzylK1bR7TbXRkt3qPkt/S4QESSoeuGpOna7CfnlAek06vxwDGwnb
+         WtwftXjgHb2H6FIB9Ps4ikbQxlMKXTf0ADfBVOXyOe8E67Nng9/BaNdVmiO8MxSUQoS+
+         WhsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZKvTzAVwDIs5eaLlFBfJHQBQF/icLued9Eu1XXLjxhzWE/R9Hn1K7Q1N2frRlsOXHYyXQAo+ZaSWRxI+CJ/JW1x9QfaJ97R+eVbs=
+X-Gm-Message-State: AOJu0YzvGwL0UOdy0GcNn1xvh2+oIZvW9wcGVAaIyVUlUFK1YSyDrENI
+	tetq51d2A4WcKuEf1eLIlUIXpTYvTDS1PK7JRSXDMR0f8xES/HCVGhTLDfb3fxwMXh7TQ6hYqmQ
+	jCNXNohQEAiSdTcylg5HCh4upxoctlvIn0bld
+X-Google-Smtp-Source: AGHT+IH9YyeTHtOmKWNRjWDZNOFaOcyjCIO5hmhn2IbnyBQewSRB362+m++tv5m6fkb6HeoZ2TpHUYTYJYIbCgB85hk=
+X-Received: by 2002:a50:d799:0:b0:58b:93:b624 with SMTP id 4fb4d7f45d1cf-58b0093b6fdmr89607a12.1.1719864432894;
+ Mon, 01 Jul 2024 13:07:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] staging: nvec: Use x instead of x != NULL to improve
- readability.
-To: Tom Mounet <tommounet@gmail.com>, Marc Dietrich <marvin24@gmx.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net,
- linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
-References: <66804898.5d0a0220.6df0f.4f0a@mx.google.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <66804898.5d0a0220.6df0f.4f0a@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240701162025.375134-1-robdclark@gmail.com>
+In-Reply-To: <20240701162025.375134-1-robdclark@gmail.com>
+From: Pranjal Shrivastava <praan@google.com>
+Date: Tue, 2 Jul 2024 01:37:00 +0530
+Message-ID: <CAN6iL-TCsS1dxwZngJ77J1MJcBeRsZW22W9uNLG59Z-isy9J5w@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] iommu/arm-smmu: Prettyify context fault messages
+To: Rob Clark <robdclark@gmail.com>
+Cc: iommu@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	Stephen Boyd <swboyd@chromium.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Rob Clark <robdclark@chromium.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Georgi Djakov <quic_c_gdjako@quicinc.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Jerry Snitselaar <jsnitsel@redhat.com>, Joerg Roedel <jroedel@suse.de>, Krishna Reddy <vdumpa@nvidia.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:POWER MANAGEMENT CORE" <linux-pm@vger.kernel.org>, 
+	"open list:TEGRA IOMMU DRIVERS" <linux-tegra@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/29/24 19:47, Tom Mounet wrote:
-> Use x instead of x != NULL to improve readability.
-> Issue identified by checkpatch.
-> 
-> Signed-off-by: Tom Mounet <tommounet@gmail.com>
-> ---
-> v3: Add change history and proper description
-> v2: Make commit title clearer
-> 
->   drivers/staging/nvec/nvec.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index e5ca78e57..814eb121c 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
->   {
->   	mutex_lock(&nvec->sync_write_mutex);
->   
-> -	if (msg != NULL)
-> +	if (msg)
->   		*msg = NULL;
->   
->   	nvec->sync_write_pending = (data[1] << 8) + data[0];
-> @@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
->   
->   	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
->   
-> -	if (msg != NULL)
-> +	if (msg)
->   		*msg = nvec->last_sync_msg;
->   	else
->   		nvec_msg_free(nvec, nvec->last_sync_msg);
+On Mon, Jul 1, 2024 at 9:50=E2=80=AFPM Rob Clark <robdclark@gmail.com> wrot=
+e:
+>
+> From: Rob Clark <robdclark@chromium.org>
+>
+> v3: Split out the reg bitfield renaming, rework
+>     print_context_fault_info() helper
+>
+> Rob Clark (3):
+>   iommu/arm-smmu: Add CB prefix to register bitfields
+>   iommu/arm-smmu-qcom-debug: Do not print for handled faults
+>   iommu/arm-smmu: Pretty-print context fault related regs
+>
+>  drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c  |  2 +-
+>  .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  | 66 ++++++-----------
+>  drivers/iommu/arm/arm-smmu/arm-smmu.c         | 74 ++++++++++++++-----
+>  drivers/iommu/arm/arm-smmu/arm-smmu.h         | 71 +++++++++++-------
+>  drivers/iommu/arm/arm-smmu/qcom_iommu.c       |  4 +-
+>  5 files changed, 127 insertions(+), 90 deletions(-)
+>
+> --
+> 2.45.2
+>
+For the series:
 
-Reviewed-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
+
+Thanks,
+Praan
