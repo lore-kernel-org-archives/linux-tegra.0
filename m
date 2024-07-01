@@ -1,121 +1,105 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE4C16D9A8
-	for <linux-tegra@vger.kernel.org>; Mon,  1 Jul 2024 16:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82CD516631C;
+	Mon,  1 Jul 2024 16:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719850462; cv=none; b=CRYZAg4uCBfN5xDIGEjVuVLgt6RYFVfx6DFbwPXPk1+BiV+g0Cfl0iotx6OymyUafaa4v5ry/w3+klAb7Nk54Jno7hyaaUCq7HDeJqEV/6ir20wx4Im8D0p8U32E+RWbfodX6T4pbfUtCIL3EiMpJrqpVRbsTaI8B7ziP50Bz2A=
+	t=1719850841; cv=none; b=IYzHCKEvoxrnBKxTeHyUUoZt+mo+dPj8hzWAlrpgtdOyFW+v8Q61ce+EWGkV3s0q5+JGvmGm8d8cVRcwjTmCrHQ0B1mTg2dD4cdKufsm2hf2bRGFXOfTQ0WlSnKHQKN9Jjt8hCAhnWBbYAf+K6vxylA0lLjRonV9yDivIcSuBgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719850462; c=relaxed/simple;
-	bh=0RU0GQGcEkH75BsHRkr45z+TTTqgKiPUKJEo3MLeH8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dbo2ksRbyn+JozfpBkjnnN/ZzC5bV6CkXlrZaXM/IxzHRd2tI1YqB+hFW9CzONw3RdhkamErTOM4ebPBoDU/E3WDCj/AlU6+ETlaa00VOASbRG72J1cW6j/oprb+ns394cwKxu2SLU/KVYEih9amxR4gM7AibiAHPo1v1/OASd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yZj4cOGS; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719850841; c=relaxed/simple;
+	bh=IW8RGWfl2BlHpimDXAA7bRLiZRlSAdHOFyJ5cLC8y/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F4C6nluzKJ8DoEOEKgIdpMS7Jl6ZdGPr4X5JGOJzbaih3Z/WOOGwaitO/vwLw9wPCncMsByc1h5+3l6alQ/u/8dr7+qf2FIkKCBT56aDRrGn5LyErn99P0IV/ig86otlvhn+tfhe1X8kU95p/s5Q3K+akGjY1Ai7eBd1RQ+5JhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KAIotl5R; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yZj4cOGS"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42565cdf99cso28881765e9.3
-        for <linux-tegra@vger.kernel.org>; Mon, 01 Jul 2024 09:14:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAIotl5R"
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5b97a071c92so1524930eaf.1;
+        Mon, 01 Jul 2024 09:20:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719850459; x=1720455259; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qFC/haLZ9KzQj+xaIDgmhhZVWM9GxdpG2nMd31da2xM=;
-        b=yZj4cOGSzAyUtDGChoHBtg6/IZy0RzhHD20ryD8yGabS2YaCfRNT8wilMvLrcmh/m4
-         HGeITs6/ylht3qy9DipkZwfl4ruF52BNsYlw8HvPSD/U5Idp/Zni8oUC7yYwynpKe/AW
-         5arKwsuMvi4Z7jY05G2d3MZKC0QK1l7HLZ0t4oa1IWeBG7rYnQaXqLZiCXisG+qt+xrT
-         FzVmT4m9cS2e5i9HAaDBJBq91crpibDXcPoQdBfmiKGYUWMr0kNcumCM0e+YkOMvdjpn
-         5DSHXuSXID1uAVr6vbAlPYkM5So9YYAQoGMBOnsoylKyKUdV9qu8iYMM3umKfBIaope/
-         Oj+A==
+        d=gmail.com; s=20230601; t=1719850839; x=1720455639; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q1jhsbzsQSOicdV37XZ9var/nTBpCYxPxtGqd7ndFu8=;
+        b=KAIotl5R7epRM9+HR6snTCVFJKjuragodVg+WXICWpVmZ8viARwyZxFzxyS3YG1aFq
+         eU3iOtoWGcHEJWkcI0HbcFkgikjVjTJwBRcSdcVsvWVUiWuuFEznB6c8MwvO+2G1+SW+
+         DeFEmMq5gUHPso7QDYjZZCFYV4Gqp1onMWNKEtvWuLqVSMTveJkakIHv+R0HZ8UDidQW
+         0stTD3WaLtCvOEeSvMxIAWPpnYGBE235YVoUR5M0yL3+wXZ0XpOzIpr/cpYNl5OBmlIV
+         xfJwedetOPV6w+MISEBYRTnUuEz+sEyUZHxzhsv4bgwQN2VKcMs3rg2Z3J4J+9um/9F1
+         JQDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719850459; x=1720455259;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qFC/haLZ9KzQj+xaIDgmhhZVWM9GxdpG2nMd31da2xM=;
-        b=hQeH3G1S1ygThTgPIsKo3N5V0Y3WnXH7Vf5gTnQFCwo/W/tblAPITf4IfcD6Wxu/o+
-         XweBqI0cdrLgKkppTYJDJXqMtG70Opz8nlCGOmO0JaZTdd6GYOGmz3sPAiF2TWLsPjWd
-         K8K/Q023ibZxzUUwBqsrMUCBbO4QUMRtxTeB1nC5lBGJ3Kw/H4dlY0rkIm6MGJoMteU/
-         ql9yMBLctB16ddspRhHcPHOWvsJJshBsvGEeulukFeIMPEjjir6YKaAEc6kuCilJjiTy
-         NFN0xs/QYrPPaPSdLZStNZSsXFQU2b5pP+jiSnUfmkrMFQK46l+lKdu1Yobi1HvUDGUq
-         C5cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvSb3fTd8R8um4PIOTc2VXEVuDCPWNl+CPGNyYzsDg4lB0S7VEGsLyZIK/TPADm7eC0ZCqtMhivfSxvzqCMXrwb7wjEduJin4Gb3k=
-X-Gm-Message-State: AOJu0YyWKZvUTAqTc7tG+Sqh8kjAMXt6Jm072t5LyjcjwaYHKvZr2dGn
-	+kXWGgJDQXaGBzdkVqEaxF8qVtyHIO68mat39z/ZLJmf2ZCqny8TJrm/KXwZkAg=
-X-Google-Smtp-Source: AGHT+IGRrPzTXHiPkwd8Me5LrECNfH4SPW4Xfceuvlm6k2ecNUC83zwkdEYq2h00D81su32yvfY2Qg==
-X-Received: by 2002:a05:600c:1c21:b0:424:addc:c7ae with SMTP id 5b1f17b1804b1-4257a02041emr46524535e9.28.1719850459405;
-        Mon, 01 Jul 2024 09:14:19 -0700 (PDT)
-Received: from [192.168.2.107] ([79.115.63.178])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b09a2bcsm158762215e9.36.2024.07.01.09.14.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 01 Jul 2024 09:14:19 -0700 (PDT)
-Message-ID: <07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
-Date: Mon, 1 Jul 2024 17:14:14 +0100
+        d=1e100.net; s=20230601; t=1719850839; x=1720455639;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q1jhsbzsQSOicdV37XZ9var/nTBpCYxPxtGqd7ndFu8=;
+        b=iorBjTKC3ODXSAPE185YKoohBMLA6yrOKX7igElWF8JMG9rJnMSLuI3MBv+GI5I+1r
+         YdAJNlRQPhyt/xXYEQ7e5B30plk7zlvkFMQLRfoZvb8qxsrj2/A8x1YBUDzW1VC8oMwn
+         AekO5c7ZWICW+/yENw9KSX0/pSIrdKAFBVThbJ2k5FLBHZmNsv97o2SYIoW5jqx6C66p
+         1wmEdDl0gI0p0sb8DsL09jBKBPw+dRwHZurWoAGECKxvpQeEZpS77U1A3SLDbjuQKTLB
+         5vq0Vi+ASdi1yZ0I9SZyWAE/SazX7xVXWMg2fhaAONVw1Z1TWpkFiSzoz+rDfl2cFRlG
+         do6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUWEqMwajae2tuDTPoRNibKEleYuje6UIY5OzcdgRp2eOsqKI0ujHIoxrRQwrQEWGoyXZJD3cTCxit2yLwNl1+vaDpwKWdTbjj5fVns5kP+W2bIJkfhzwqdMHIYvmrrI2ql10OMTmuosXBOyEhNM7RS0F1xK6gQAHRv/rTY3THooewIjg==
+X-Gm-Message-State: AOJu0Yw+/GLVcjLqbxx5hwawExRUed0TArnrmvldq3FvrZeFKvuQBZQD
+	mVvSVV93vEw2aP1i0tQZzQThuaPwOfaKSzB5sd44hiEkd9T4m9fy
+X-Google-Smtp-Source: AGHT+IE7cvLNIICXLZ+ApTE7+JEq/r4+y8wOtGf3rrz7GsGFtHfKDk9f6EPS0mmgXO+f7YcF9Yy4cw==
+X-Received: by 2002:a05:6358:6f93:b0:1a6:72f2:4d03 with SMTP id e5c5f4694b2df-1a6acd61133mr706254455d.9.1719850839491;
+        Mon, 01 Jul 2024 09:20:39 -0700 (PDT)
+Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-72c6a8dbb2fsm4452022a12.31.2024.07.01.09.20.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 09:20:38 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: iommu@lists.linux.dev
+Cc: linux-arm-msm@vger.kernel.org,
+	Stephen Boyd <swboyd@chromium.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Pranjal Shrivastava <praan@google.com>,
+	Rob Clark <robdclark@chromium.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Georgi Djakov <quic_c_gdjako@quicinc.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Jerry Snitselaar <jsnitsel@redhat.com>,
+	Joerg Roedel <jroedel@suse.de>,
+	Krishna Reddy <vdumpa@nvidia.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM SMMU DRIVERS),
+	linux-kernel@vger.kernel.org (open list),
+	linux-pm@vger.kernel.org (open list:POWER MANAGEMENT CORE),
+	linux-tegra@vger.kernel.org (open list:TEGRA IOMMU DRIVERS),
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v3 0/3] iommu/arm-smmu: Prettyify context fault messages
+Date: Mon,  1 Jul 2024 09:20:09 -0700
+Message-ID: <20240701162025.375134-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
-To: Marco Felsch <m.felsch@pengutronix.de>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Russell King <linux@armlinux.org.uk>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Tony Lindgren <tony@atomide.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, imx@lists.linux.dev,
- linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-tegra@vger.kernel.org, openbmc@lists.ozlabs.org,
- linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
- loongarch@lists.linux.dev
-References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
- <20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Rob Clark <robdclark@chromium.org>
 
+v3: Split out the reg bitfield renaming, rework
+    print_context_fault_info() helper
 
-On 7/1/24 2:53 PM, Marco Felsch wrote:
-> EEPROMs can become quite large nowadays (>=64K). Exposing such devices
-> as single device isn't always sufficient. There may be partitions which
-> require different access permissions. Also write access always need to
-> to verify the offset.
-> 
-> Port the current misc/eeprom/at24.c driver to the MTD framework since
-> EEPROMs are memory-technology devices and the framework already supports
+Rob Clark (3):
+  iommu/arm-smmu: Add CB prefix to register bitfields
+  iommu/arm-smmu-qcom-debug: Do not print for handled faults
+  iommu/arm-smmu: Pretty-print context fault related regs
 
-I was under the impression that MTD devices are tightly coupled by erase
-blocks. But then we see MTD_NO_ERASE, so what are MTD devices after all?
+ drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c  |  2 +-
+ .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  | 66 ++++++-----------
+ drivers/iommu/arm/arm-smmu/arm-smmu.c         | 74 ++++++++++++++-----
+ drivers/iommu/arm/arm-smmu/arm-smmu.h         | 71 +++++++++++-------
+ drivers/iommu/arm/arm-smmu/qcom_iommu.c       |  4 +-
+ 5 files changed, 127 insertions(+), 90 deletions(-)
 
-> partitioning. This allow using of-paritions like we do for SPI-NOR
-> devices already:
+-- 
+2.45.2
+
