@@ -1,130 +1,165 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9063D374F5;
-	Tue,  2 Jul 2024 10:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1742EBA2D;
+	Tue,  2 Jul 2024 13:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719916172; cv=none; b=DVnpELo9GPmRKcm2t45mZwcxy7Y+obY1q8ATNU0rsu9/L9ZNZbq3OE2Kb1+cxBsOVNFTjoWQFOX0859XXjSG/wMnsddQf4ozWOmDtCaB2PNgBSMlyEyGeVSuvyFdoKLvlu+Isryast33cQ1PbyFBcy2x1FOHbzoyjpg9UyKLyVc=
+	t=1719927720; cv=none; b=VSd2e7WZ5dwDMwBpcHNKizCkR+MZJBDQG1h3g7Wkj0U5402efaJ0SuMLEqU3yQftHO3MK6NkfafNSchwcyIaUtxrupoH7/7T5BE0MGZQsDzv7FIKRZNlq8Xy5sxaL5fuTePyBmLMFau/NsqYAsC+NNKZqrkOSXeSXHVNci5Rud4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719916172; c=relaxed/simple;
-	bh=H2/3ABc6eBv29cZXj/nd74OqEp38o2YnlcZ74Uiskbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pWZQkY63cWOo1xSnprliRGAek9/Ll2QmHnGDw159XrFgMONakT+5AXXEmMO911PCoHnS3yoq7mnEjwy5bZkYjVEpJHDP7GwPBUYFDnGciw64S26PqiYGfMIHVRObb9QRfAlvUHEsxd6ga9zxwHlkKtd/E8UDZf6MhNn93taSGMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gvHys8v2; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1719927720; c=relaxed/simple;
+	bh=xIoq5ERoFam9CoYgw94MfcDDBIP2EzSXozZdimkHqf4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=U7QjDOS/WxAMykYl9CUX0IEpZ9Ry0YloeAr3+7jjWvQuWp5c5ybaFn8f5CZTWKYewPrj158qXakirfu47a08w6rGZwCqeiVSh/ianUNbVwyT5Q/FWXhmfRfg6I9D9H9v0sN9fzYRbwCFuR1JSd3lRbCMFpDUsshdJrOwiL6mCLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=krETZqZR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvHys8v2"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ce6c8db7bso6042791e87.1;
-        Tue, 02 Jul 2024 03:29:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719916169; x=1720520969; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H2/3ABc6eBv29cZXj/nd74OqEp38o2YnlcZ74Uiskbg=;
-        b=gvHys8v265Cu0EfcvikWMzEnBoEi+tbRyMy0v+WXvyEPTmE9DKzfLHZyIY7KKidy5H
-         FDRAZFw9UST1RcfRlcwBiozc8LJGKJ1qPnPh8suXhwsjaxA4s97/tNC69/FuDm32WENV
-         7i4uPwtYPA7a/bHQlHvTl8x+Xv4zXf/lyNpNbJQzErAyT8XMOkE9X0OWruDiRPaCdCfB
-         sVDPiTBHpv20JVC0rU6UsfCtSi0jvtFtzUCWt8+YwW/yfGBcnrO/scKyl6IHUOuGthgN
-         Eo7+jBCdiVJJsM4dMnWPs3NTV6gnhjhFhybQDz7FYbNfV9bT9a6hCqM8cihmZMqA1DCp
-         z/MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719916169; x=1720520969;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H2/3ABc6eBv29cZXj/nd74OqEp38o2YnlcZ74Uiskbg=;
-        b=sIs6WBSGV80QX3SydlJN1sk9Eek5PkArVC2kIL2aMB7NYcER2ydFvO9od6Ev2c0fJY
-         95NZQYszfCkr5xyIK4f+BwvhZdj0JXYGOqWT2JnNgjSM9JQ+j0HwLDFrWs99LfeYQfVO
-         6YypWSG6df5TZ2w2agOhv+fbFr26YLdlQHw2zYZ+G2dSfNRvzfgTWTcVZi0BAJbB3epk
-         NrMMbroRDp7KtVdsYjC/6ynfDS7QzdUF5xB3ublNhEcMBHqz9kvX4zIXeuM1qnKFqCxA
-         BYSWzk1MhmdvPhrniEhiQQ1SzNj1n99yjp0fSp0tXM6ZOnbKKGbEo/r3U1qlNP8Ivsgx
-         Z91g==
-X-Forwarded-Encrypted: i=1; AJvYcCX04wP670fQD1utgxIfPOktzmcC8fA69e68hLTUVlYy1WNJhdoS4LlmPPO+WkohTYmK8iG6Cl9IYCEdjfSHjO6q1H/iHCAfcDJ0DoUbk4MfoXPbcK42LZXrFXq6U8mwFfYjAWbP9JzJ0H/7vzfnYIvv923ouxnmCZV0JoFusrwiVmM2z2+lDw8ebJgLhzhjkeRC4Q5lzYvwarfZddveumoKNan60gVcKmtL5e6mg71bg18VfG+5L5oEIZWWYVoXZAcgJZUjkCDkOJa8vqN2a3Qyhf2tTJtF
-X-Gm-Message-State: AOJu0YzswhKI+A7mMUOUxHun+8NjGbAVFJKVZ0sB8fINaO7vliq0K5ic
-	mWmBQKusUQF6lcboYxs/qMmIrMvdrzbTPaK14Hp0XNROulDdVT8j
-X-Google-Smtp-Source: AGHT+IH+UZ+cnnKf87ciV6pECjzYY5dFmRwXwK7sPq0mN/njl3BqGEi3ofEaZkVKjtvBMh44Emakkg==
-X-Received: by 2002:a05:6512:3996:b0:52c:a1ad:18bd with SMTP id 2adb3069b0e04-52e82651a88mr6168223e87.6.1719916168007;
-        Tue, 02 Jul 2024 03:29:28 -0700 (PDT)
-Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256d664052sm182632065e9.27.2024.07.02.03.29.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jul 2024 03:29:27 -0700 (PDT)
-Date: Tue, 2 Jul 2024 12:29:25 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Krishna Yarlagadda <kyarlagadda@nvidia.com>, 
-	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jonathanh@nvidia.com, krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net, 
-	andi.shyti@kernel.org, wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org, 
-	adrian.hunter@intel.com, digetx@gmail.com, ldewangan@nvidia.com, mkumard@nvidia.com
-Subject: Re: [RFC PATCH V2 04/12] dt-bindings: misc: tegra-i2c: config
- settings
-Message-ID: <hqlckp6hxvxwkkbiagdb5pm4eo5efu55hwuupdal6lojxj2xu5@5zibskqdbdju>
-References: <20240701151231.29425-1-kyarlagadda@nvidia.com>
- <20240701151231.29425-5-kyarlagadda@nvidia.com>
- <20240701174227.GA148633-robh@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="krETZqZR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBF12C116B1;
+	Tue,  2 Jul 2024 13:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719927719;
+	bh=xIoq5ERoFam9CoYgw94MfcDDBIP2EzSXozZdimkHqf4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=krETZqZRZTW0k1iXLzs/FxWIvDBiOf5o+FbJZkpGtilaCd7GZcjqyo6SomGAunMEB
+	 BUZlu7wccEG6kossKFkepABl2/j8Nsn7yh5jjmmGZM1zHjJ9xrqOuEtGVXyytIMsr2
+	 wG70VQbbYM2x2Z/V9Ig4oLAFMTqYBVlvAMt9/+Ln7Tq6kiinYWiEYV3FCbh+gW1XUs
+	 fS2rs45SRfaUC94gwzDWRVv91uNOx//oOHa5IBx4jkma5NwzrumUbaXnlnE+BGlD5D
+	 5wo+CtDPOBVAmhVS6Z9McL5acmawuElTWYvsSBGtPlNdIXCvftH0RegptVZxUnYM36
+	 rCuzSmxjJO+hA==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Marco Felsch <m.felsch@pengutronix.de>,  Miquel Raynal
+ <miquel.raynal@bootlin.com>,  Richard Weinberger <richard@nod.at>,
+  Vignesh Raghavendra <vigneshr@ti.com>,  Arnd Bergmann <arnd@arndb.de>,
+  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Bartosz Golaszewski
+ <brgl@bgdev.pl>,  Russell King <linux@armlinux.org.uk>,  Joel Stanley
+ <joel@jms.id.au>,  Andrew Jeffery <andrew@codeconstruct.com.au>,  Nicolas
+ Ferre <nicolas.ferre@microchip.com>,  Alexandre Belloni
+ <alexandre.belloni@bootlin.com>,  Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>,  Shawn Guo <shawnguo@kernel.org>,  Sascha
+ Hauer <s.hauer@pengutronix.de>,  Pengutronix Kernel Team
+ <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,  Vladimir
+ Zapolskiy <vz@mleia.com>,  Andrew Lunn <andrew@lunn.ch>,  Gregory Clement
+ <gregory.clement@bootlin.com>,  Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>,  Tony Lindgren <tony@atomide.com>,
+  Geert Uytterhoeven <geert+renesas@glider.be>,  Magnus Damm
+ <magnus.damm@gmail.com>,  Dinh Nguyen <dinguyen@kernel.org>,  Thierry
+ Reding <thierry.reding@gmail.com>,  Jonathan Hunter
+ <jonathanh@nvidia.com>,  Jonathan =?utf-8?Q?Neusch=C3=A4fer?=
+ <j.neuschaefer@gmx.net>,
+  Michael Ellerman <mpe@ellerman.id.au>,  Nicholas Piggin
+ <npiggin@gmail.com>,  Christophe Leroy <christophe.leroy@csgroup.eu>,
+  "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,  Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>,  Huacai Chen <chenhuacai@kernel.org>,  WANG
+ Xuerui <kernel@xen0n.name>,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  linux-i2c@vger.kernel.org,
+  linux-arm-kernel@lists.infradead.org,  linux-aspeed@lists.ozlabs.org,
+  imx@lists.linux.dev,  linux-omap@vger.kernel.org,
+  linux-renesas-soc@vger.kernel.org,  linux-tegra@vger.kernel.org,
+  openbmc@lists.ozlabs.org,  linuxppc-dev@lists.ozlabs.org,
+  linux-mips@vger.kernel.org,  loongarch@lists.linux.dev,  Maxime Ripard
+ <mripard@kernel.org>
+Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
+In-Reply-To: <07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org> (Tudor
+	Ambarus's message of "Mon, 1 Jul 2024 17:14:14 +0100")
+References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
+	<20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
+	<07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
+Date: Tue, 02 Jul 2024 15:41:52 +0200
+Message-ID: <mafs0ikxnykpr.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vtzv7b6agyajbvep"
-Content-Disposition: inline
-In-Reply-To: <20240701174227.GA148633-robh@kernel.org>
+Content-Type: text/plain
 
+On Mon, Jul 01 2024, Tudor Ambarus wrote:
 
---vtzv7b6agyajbvep
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On 7/1/24 2:53 PM, Marco Felsch wrote:
+>> EEPROMs can become quite large nowadays (>=64K). Exposing such devices
+>> as single device isn't always sufficient. There may be partitions which
+>> require different access permissions. Also write access always need to
+>> to verify the offset.
+>> 
+>> Port the current misc/eeprom/at24.c driver to the MTD framework since
+>> EEPROMs are memory-technology devices and the framework already supports
+>
+> I was under the impression that MTD devices are tightly coupled by erase
+> blocks. But then we see MTD_NO_ERASE, so what are MTD devices after all?
 
-On Mon, Jul 01, 2024 at 11:42:27AM GMT, Rob Herring wrote:
-> On Mon, Jul 01, 2024 at 08:42:22PM +0530, Krishna Yarlagadda wrote:
-> > I2C interface timing registers are configured using config setting
-> > framework. List available field properties for Tegra I2C controllers.
->=20
-> How is I2C bus timing parameters specific to NVIDIA? Just because you=20
-> have more controls? No. That's no reason to invent a whole new way to=20
-> specify parameters. Extend what's already there and make it work for=20
-> anyone.
+I was curious as well so I did some digging.
 
-This may be applicable to a subset of this, and yes, maybe we can find
-generalizations for some of these parameters.
+The Kconfig help says:
 
-However, we're also looking for feedback specifically on these config
-nodes that go beyond individual timing parameters. For example in the
-case of I2C, how should parameters for different operating modes be
-described?
+    Memory Technology Devices are flash, RAM and similar chips, often
+    used for solid state file systems on embedded devices [...]
 
-Would you agree with something along the lines provided in this series?
-Do you have any better suggestions?
+The FAQ on the MTD documentation [0] says:
 
-Thanks,
-Thierry
+    Unix traditionally only knew block devices and character devices.
+    Character devices were things like keyboards or mice, that you could
+    read current data from, but couldn't be seek-ed and didn't have a size.
+    Block devices had a fixed size and could be seek-ed. They also happened
+    to be organized in blocks of multiple bytes, usually 512.
 
---vtzv7b6agyajbvep
-Content-Type: application/pgp-signature; name="signature.asc"
+    Flash doesn't match the description of either block or character
+    devices. They behave similar to block device, but have differences. For
+    example, block devices don't distinguish between write and erase
+    operations. Therefore, a special device type to match flash
+    characteristics was created: MTD.
 
------BEGIN PGP SIGNATURE-----
+    So MTD is neither a block nor a char device. There are translations to
+    use them, as if they were. But those translations are nowhere near the
+    original, just like translated Chinese poems.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmaD1oMACgkQ3SOs138+
-s6EUWQ//d69gXBtNSFP7l+KPjDhDZ598cE4CgLGFB1MCw5CciuHjfQ0+hCmcttn9
-uX9wbBufhK4HfhZibObvUSCRQMWASt8xovXIpwQ14fYvQHDZTACjBbrOYvKRjMXS
-go95WVp45nVUe5vtvOMwkY2l7fJ7ooH4kRfsg6P3HHbAUIewyohXaVQxdjzosd7I
-uQ4HtxHrQEVyS0i9ifbUHP/+1H89rBuXOgAbZ9hgXRh6X1uAKTBxdeMP3vC/2UDf
-EUD8lPkAphVeLwOld4SOUtq9wS/MmoxEqr+vh+HNK2R7fHXbGxzyPgX8MhgYDddP
-PjADI5XFQbc4CXpZRsVsgEfR3iOxNhOhqySEP0rMR9/M4/R9PluK2XrbgswwnKnT
-Vn1mRRKDbcDIjyc35OMxB6bqLMLQNmYWAN8Abzkx8UY8VvVk2RSoS+SG/qR+xTZU
-tNCq36PQN6dUnQ9fdq1/DJEtWNEGXJUMMZzGKF9UOg2x9dLap15nCgzB091vkURw
-rnsQ4/3ff1nyVv+3gjOcIuYFuqvMz7SzvthZ8801PO811noTmblYVD9pVxhA/U0V
-C9pmgSQDzRUeJWV+MoeGH7csaUrcSDBzuGLiH2dTLTCoLQQIiMfVSMrPjxMQ3BOb
-ow4FkVuyyKsMuSSPB7RjPsplJ7PN/F0Emo+PoTlRmreN071u4Gg=
-=egWb
------END PGP SIGNATURE-----
+And in the section below, it lists some properties of an MTD device:
 
---vtzv7b6agyajbvep--
+    - Consists of eraseblocks.
+    - Eraseblocks are larger (typically 128KiB).
+    - Maintains 3 main operations: read from eraseblock, write to
+      eraseblock, and erase eraseblock.
+    - Bad eraseblocks are not hidden and should be dealt with in
+      software.
+    - Eraseblocks wear-out and become bad and unusable after about 10^3
+      (for MLC NAND) - 10^5 (NOR, SLC NAND) erase cycles.
+
+This does support the assumption you had about MTD devices being tightly
+coupled with erase block. It also makes it quite clear that an EEPROM is
+not MTD -- since EEPROMs are byte-erasable.
+
+Of course, the existence of MTD_NO_ERASE nullifies a lot of
+these points. So it seems the subsystem has evolved. MTD_NO_ERASE was
+added by 92cbfdcc3661d ("[MTD] replace MTD_RAM with MTD_GENERIC_TYPE")
+in 2006, but this commit only adds the flag. The functionality of "not
+requiring an explicit erase" for RAM devices has existed since the start
+of the git history at least.
+
+I also found a thread from 2013 by Maxime Ripard (+Cc) suggesting adding
+EEPROMs to MTD [1]. The main purpose would have been unifying the EEPROM
+drivers under a single interface. I am not sure what came of it though,
+since I can't find any patches that followed up with the proposal.
+
+Overall, I'd say that while originally MTD was written with flash
+devices with erase blocks in mind, the subsystem seems to have evolved
+with time to include other types of devices.
+
+I don't see anything obviously wrong with adding EEPROMs to the type of
+devices in MTD as well. It doesn't seem to be too invasive to the
+subsystem (I do see some dubious code when skimming through the patches,
+but nothing unfixable). And the EEPROM drivers can get a common
+interface. The other option would be to create a separate subsystem for
+EEPROMs, but perhaps that would just lead to a bunch of code being
+duplicated.
+
+I'd like to hear if somebody thinks otherwise, and sees reasons to _not_
+do this.
+
+[0] http://www.linux-mtd.infradead.org/faq/general.html
+[1] https://lore.kernel.org/linux-mtd/20130705201118.GM2959@lukather/
+
+-- 
+Regards,
+Pratyush Yadav
