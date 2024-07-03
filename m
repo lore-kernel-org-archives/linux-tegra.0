@@ -1,82 +1,90 @@
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8342913B280;
-	Wed,  3 Jul 2024 08:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D20178384;
+	Wed,  3 Jul 2024 11:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719996185; cv=none; b=P82ERttiv6gqREzgMLd6qCu6llVS5bqjKYtDRQNdTjVIEEqDzXYPzd/RT85N1mvY7UqU+wmKvO2aNUdShgkFztnaU+sWgDreKq326LMXxmbuD/h0ul26406ipmfNGCsFtF+Y7Obkn9/clsCdCIh7HJ6/BM3Y+1tenmOw9FceDMU=
+	t=1720006289; cv=none; b=olo6PrzLKQhqyMjEFftrnYp+0h4iTSsIIWpz/2QcfInjMpiL3rGpKBwajryoPV2Cgolpwdk6jloe7g2TTGgsrJ9MPl37BKlkvprKsG9zoD60kk1ejDKAw6Vsn4u+n/nZja+3JxV/bh854kFhaBixAHPDxUkHidvkNSKsyjJHfRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719996185; c=relaxed/simple;
-	bh=YDMov1GnF1t6MVMA2t1akYEDknyRtdfuqMsB0VF+dqc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=K0dl/w8J1UkI7qy7q/4l15ixLotJCM34OBTE7jvCyTunOYQQjIOu/pSAiqBDRXZGmL3pbeUb1RvJHYTvtOZShJ8vKckKThRScpkxWH44nc6yuKso2nBmXBQ5ECstknSy/ruCLGpQEfq7NQ3Bs3hUO1Eh81PQLH0m/8NxxjyGWuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=SYuMdEW6; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1720006289; c=relaxed/simple;
+	bh=OOqX7HXKQvRZ8kJaMG1PBXsJYL3kB9aBJ4y7GrmT338=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AXiLRYSolPtGJTpjmemmarhPrjwi+5ohtLZpWp909Upfm6ObvNqIaLk8z03U0dRGOMhYZEtxk6gTnSepIxlcRmanbypJ7K/d3lFJ2r8ahxuOuoNeFXuGV7gbpm2ldBoaPgmhMaMqMcDQZmBIY3lusX2sF4e7Kc9ByjhBCKE8eaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYbxGRBa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="SYuMdEW6"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=zxuM9QanmDhNSPOocoYoBHYoz3XPBwKZOslRBIQK/2U=;
-	t=1719996181; x=1721205781; b=SYuMdEW6H9mqYcrj0lLcJl8u5a8+Tnso/90iJAg1t4xVh6n
-	SWjQ7Y5FVl9h7azlvZEdQtG2n9tMQqtFw02gJyl3p/K4Jq/p4/4lnX7snbee/LT8LU05S8DWbMRHt
-	FPzKLqIxgi5iZ7buFFDvDOd5AO8LY3RfdnkqWRmLfJXPtPTBPrqXfTkRX60C1lVsSUQ3eTVfn/8lp
-	ZmGb/rBI7SPi16/lrcwFB605IRyEtSGtvWYpslG1uxOW4R+QcfF1AhOGPB5TmTZ/aBpMT3NDR+42e
-	i7ZsKr33lPVEHAP9ZC6zh1NqQw2THsleb3mh4964js2Sm6/t6Nv6S+u6h3y7RBfQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sOvZb-00000008NSb-1kAb;
-	Wed, 03 Jul 2024 10:42:43 +0200
-Message-ID: <c5fdac6f90b7b2191914f632dc89bac8b4701bdc.camel@sipsolutions.net>
-Subject: Re: [RESEND][PATCH v1 3/5] thermal: trip: Pass trip pointer to
- .set_trip_temp() thermal zone callback
-From: Johannes Berg <johannes@sipsolutions.net>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM
- <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>,  Lukasz Luba <lukasz.luba@arm.com>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Srinivas Pandruvada
- <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
- Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Thara Gopinath <thara.gopinath@gmail.com>, Thierry
- Reding <thierry.reding@gmail.com>,  Jonathan Hunter <jonathanh@nvidia.com>,
- linux-wireless@vger.kernel.org, linux-tegra@vger.kernel.org
-Date: Wed, 03 Jul 2024 10:42:41 +0200
-In-Reply-To: <8392906.T7Z3S40VBb@rjwysocki.net>
-References: <1890956.tdWV9SEqCh@rjwysocki.net>
-	 <8392906.T7Z3S40VBb@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYbxGRBa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B480C4AF0E;
+	Wed,  3 Jul 2024 11:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720006289;
+	bh=OOqX7HXKQvRZ8kJaMG1PBXsJYL3kB9aBJ4y7GrmT338=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZYbxGRBaglXSZvrdwzgntW0V74f2TqoCGL+Vwbgw0ZqQuebO1HOJmOLvbOY+Xu+qO
+	 TJNpjMY/7U34DyJb0FgCUypHUCkvxV4LnsFOgmYPLnYYAA+C0+tjCkBoPxF9cPFw3c
+	 HBg87gg3TkQIsunfDw7CyASp9l1hNmmTq7PIFNtPhOhTgLUYgx25YbBVU4OnIqH9Ox
+	 0zD+MxC2fDX4pZNqOFpR37Hr0L2pl/UkE3sBg599P/OnAps9IcFoVbgUSRcZvlxVey
+	 7fvXwe3SEItT+qKg1+AvR5RQSw74QmgUxtzG6j160/jhoAgK9vTX+issGs400HYaI5
+	 gCgwDzLSyCznQ==
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3d56754a4ceso298058b6e.1;
+        Wed, 03 Jul 2024 04:31:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXvdhGcxc/9ZUqeGcNRGvCgIVy/qj0Wl+LCeoNZprEJtJd6M62BjNQ7x452Ied9vZzLMdxQAIM3BKmQfYlhOKY9eI7ay3ufq/ZINVzk5KgdSxUNsSUSK+sEf2U/K6wkMkkHIagLe35bQH/Z/JBEUoydCYbgcNWGh3kSpp0eAMMzLG7cfiwL2jUL0yslckA2+gW50XHxlKkdVFshI/YBB+y65Qr+
+X-Gm-Message-State: AOJu0YwGrn54YUWokqHEH6QkU50gnL7zFv9DVBTlS6ezMvwP4pAD2Sgt
+	jZu9MbMgLns8sqt3zeoE1pmo1J4NPNrnBmM/r7360gypjIYVw5f4T9ySaGbWs89AK7dKcxSsFur
+	Ahjn7yreCwwWuaheAJJQuZLxe8EI=
+X-Google-Smtp-Source: AGHT+IHjc7MTNZRLTBNE7mu4jABEZQGDjUj30z0WrDXIT7TlEe02wTsalj1wTZ4s4WUo3e9PxE2VMnph7z7hy9nYD4M=
+X-Received: by 2002:a05:6870:46a8:b0:25c:f5f8:a822 with SMTP id
+ 586e51a60fabf-25db33f8baamr12061362fac.1.1720006288688; Wed, 03 Jul 2024
+ 04:31:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+References: <1890956.tdWV9SEqCh@rjwysocki.net> <8392906.T7Z3S40VBb@rjwysocki.net>
+ <c5fdac6f90b7b2191914f632dc89bac8b4701bdc.camel@sipsolutions.net>
+In-Reply-To: <c5fdac6f90b7b2191914f632dc89bac8b4701bdc.camel@sipsolutions.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 3 Jul 2024 13:31:17 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gdQtbJHsQ2LMQrgnaQxS3BybaCXLYKeF1sFh7wPW8Uuw@mail.gmail.com>
+Message-ID: <CAJZ5v0gdQtbJHsQ2LMQrgnaQxS3BybaCXLYKeF1sFh7wPW8Uuw@mail.gmail.com>
+Subject: Re: [RESEND][PATCH v1 3/5] thermal: trip: Pass trip pointer to
+ .set_trip_temp() thermal zone callback
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Thara Gopinath <thara.gopinath@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-wireless@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-You said in the cover letter this hasn't received much attention ... as
-far as I can tell, the only wireless thing is this:
+On Wed, Jul 3, 2024 at 10:43=E2=80=AFAM Johannes Berg <johannes@sipsolution=
+s.net> wrote:
+>
+> You said in the cover letter this hasn't received much attention ... as
+> far as I can tell, the only wireless thing is this:
+>
+> > --- linux-pm.orig/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> > +++ linux-pm/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+> > @@ -638,7 +638,7 @@ out:
+> >  }
+> >
+> >  static int iwl_mvm_tzone_set_trip_temp(struct thermal_zone_device *dev=
+ice,
+> > -                                    int trip, int temp)
+> > +                                    const struct thermal_trip *trip, i=
+nt temp)
+> >  {
+> >       struct iwl_mvm *mvm =3D thermal_zone_device_priv(device);
+> >       int ret;
+>
+> which I guess looks totally fine :)
 
-> --- linux-pm.orig/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> +++ linux-pm/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-> @@ -638,7 +638,7 @@ out:
->  }
-> =20
->  static int iwl_mvm_tzone_set_trip_temp(struct thermal_zone_device *devic=
-e,
-> -				       int trip, int temp)
-> +				       const struct thermal_trip *trip, int temp)
->  {
->  	struct iwl_mvm *mvm =3D thermal_zone_device_priv(device);
->  	int ret;
+Well, I would think so. :-)
 
-which I guess looks totally fine :)
-
-johannes
-
+Thanks!
