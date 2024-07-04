@@ -1,54 +1,93 @@
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EE36FBF6
-	for <linux-tegra@vger.kernel.org>; Thu,  4 Jul 2024 07:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197A31A3BC5;
+	Thu,  4 Jul 2024 08:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720077905; cv=none; b=UOClZSqo15mwx+5S0e4nY+lwjdelCRttMjFhoouT679zUOJDW2iybYn+Z5EoqNnkH8MxenFXxcYQUMqZN9cozbvaryx/UaLAtjTMKGXJ9r/kY5D1KHH4zxcjcRK2P4Sr67WzquseXHxdTYf1/TMi5N+xxiaXqVbMT9HuiUdaRF8=
+	t=1720081685; cv=none; b=twUnbOKImGK2GAmgTOBliVygB6Jw41uD6EbWN3CaWI9mlxk2fgFCOpRu5xWNVO94GrnXZLKyp4IVFt0kFkcZAbq7Cab2Qu6IoLDxx1NVfOjKhgSZ+a3FU5mZwnHChkO8I3vVZQXx2KTsWtcCGfo1U2PXrnaXwsUtZj0ynSzRfUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720077905; c=relaxed/simple;
-	bh=uDlexOUUCI3CqChoE3ytKmOwiRinirtnqpUjCxkclWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VnA0fFNp1Jrrsuswwt400UEqoory+d++n3ug6uXVLi0z4xoh22FO7NgU+xTNX1U4SEqPCGVO4gFSDno10R3ZRouBdBf95Pgjc6ED1UQ7zbUZTB8GEr8VtDSleXo7WCJXu+oIrugizHVPNc9UQIpVueqAOsJtnR/qBjxK5Dlpoy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 9D36568AA6; Thu,  4 Jul 2024 09:24:59 +0200 (CEST)
-Date: Thu, 4 Jul 2024 09:24:59 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 17/17] mmc: pass queue_limits to blk_mq_alloc_disk
-Message-ID: <20240704072459.GA25935@lst.de>
-References: <20240627124420.GA11113@lst.de> <0df2f214-0d0d-445b-96a5-03fd70da0dde@nvidia.com> <1a913d79-6a34-4b19-8ed2-6a8d5ecdbfde@intel.com> <20240627144738.GA20202@lst.de> <6a5431e1-fdd2-4595-9cbd-95f8d589cd94@intel.com> <20240628123214.GB17080@lst.de> <48066c53-e421-46a5-a3dd-ecb7a024dff9@intel.com> <20240628125129.GA19835@lst.de> <617e143f-173b-4c74-a039-9a166efbf879@intel.com> <bdc112cc-c004-4137-88fe-fcfa81203ef7@nvidia.com>
+	s=arc-20240116; t=1720081685; c=relaxed/simple;
+	bh=wVc3mDrD8ZHGcxEpI3RL80GBUfv7tqc7amf82VOOdic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TFWEI8CUKTSU0nNT8rUPdjkdsPOMGPr8Mbqcbk1oauSOPKIsM6Dq/+74FTV47fednp3bc2zcxklzsBDKTFlOjK1KulNW1gUyRlLdXdw9M6EpJXKlECHBAkW7KlVhEQZj1R3vtdGDsGG+V4HBJfN9/k+dd/yfGODevSbKc1EgAO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=I9wSr5qn; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="I9wSr5qn"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720081682;
+	bh=wVc3mDrD8ZHGcxEpI3RL80GBUfv7tqc7amf82VOOdic=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I9wSr5qndJJgZNK1GxM3ELWQWxcNRB0+T2ztlEssHpreWLW1x0yx/AW8C8CjFao7q
+	 6tunopOnUy9YaYgE6BhE8LLp/MMeFR9xq5+hu8qRwq2dq2N8b0o1AgcmIv6XOPXExI
+	 SOB6RiEioW7sWw7YaHcV26LEQmTVgkOOV4rxnUhjZgaURn/sxkqmInVgzBi8Nf9xg1
+	 zzQ9MyIkkaBIfpaMD9nANIAFKME2+NH9lhW1iXLwdr6zGpV3HpHBtRCVS2ghQJvc20
+	 P/hQHND/IWN5dEj8pOdBPWdb3hp7Ua4Cb94yo8VbN2Y5tV+kQX5JNm5YDoFQ3+qQZy
+	 DQ1/PpgNHDFeA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E651C37821A0;
+	Thu,  4 Jul 2024 08:27:59 +0000 (UTC)
+Message-ID: <2a1e25ad-c9d2-44f1-b52e-74f12b437381@collabora.com>
+Date: Thu, 4 Jul 2024 10:27:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bdc112cc-c004-4137-88fe-fcfa81203ef7@nvidia.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] cpufreq: Make cpufreq_driver->exit() return void
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Huang Rui <ray.huang@amd.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, Hector Martin <marcan@marcan.st>,
+ Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Markus Mayer <mmayer@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Len Brown <lenb@kernel.org>, Kevin Hilman <khilman@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
+ Lizhe <sensor1010@163.com>, linux-kernel@vger.kernel.org,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+References: <cover.1720075640.git.viresh.kumar@linaro.org>
+ <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 03, 2024 at 09:22:14AM +0100, Jon Hunter wrote:
->> Improving it looks straight forward, but then there is testing and
->> checking the code for anything that might be assuming an sg element
->> is not more than 64KiB.
->>
->> However it doesn't seem to offer any benefit, so it is difficult to
->> justify doing.
->
->
-> Did we come to any agreement on how to fix this?
+Il 04/07/24 08:53, Viresh Kumar ha scritto:
+> From: Lizhe <sensor1010@163.com>
+> 
+> The cpufreq core doesn't check the return type of the exit() callback
+> and there is not much the core can do on failures at that point. Just
+> drop the returned value and make it return void.
+> 
+> Signed-off-by: Lizhe <sensor1010@163.com>
+> [ Viresh: Reworked the patches to fix all missing changes together. ]
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-FYI, all I'm asking is to add a clear comment explaining setting
-a different value depending on the page size.  Otherwise I'm ok with
-the patch from Adrian.
+For MediaTek:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
