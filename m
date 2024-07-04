@@ -1,148 +1,157 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422EB18E769
-	for <linux-tegra@vger.kernel.org>; Wed,  3 Jul 2024 20:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DA71A08D8
+	for <linux-tegra@vger.kernel.org>; Thu,  4 Jul 2024 06:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720038729; cv=none; b=rc5bLHnDsVyTmeRlEv8rV0K+vUra5vbBh0s7Gi2Tn+ZMPyuu47SmSp0YliCmBXa3LiijIMpaJsri43iGLWRy+5uIYiUSMy8GVtDb3VjaKJPm6Ym+PendHylKfotRRkcm9O96xneydl9yC7W15Mxn+lgfPLwvy+wRSFsNLYiYApM=
+	t=1720076054; cv=none; b=TGBLlR7A+1WUncltYWcjs5oYo0/GmGjKcA0+0i5QcoCpVP286BEyJak7wiwtBJaUhZBpGKFKQsGJtPgEtEoEgiRGP28wm0wuLh72bQRp3I/2h2On9dAHpTgPTN3wSXYPfUQ5uToYW61keukksvpyU5IJQY4p68lAJ7XOr/ZfoPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720038729; c=relaxed/simple;
-	bh=hbV5D9yoA5zETqVVoepyLfEbB6C+CmU0yRFOrj08wK8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H9bk+tZa70OKXGK4OPSL/2sqVJ3g49/ZrhntLJONFXZVLmHa3CcHJ8ZgpRxTDXGFpFdFCy/YZX4BAcZTCmEYTR2srC9FX+1rVGMuwRsn+nk5FxwQFwEMwQzgJ5KSkskHPa1xvb/iNkDKaJhN5pRrEOHbOStTt9ENPqmV8JVrkyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Dybwe8UO; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1720076054; c=relaxed/simple;
+	bh=+acP1k0Nkw7OnsyYvGJb6tDt5gJNkeqeIL3W8k34Rd8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KsI7cptdSfQkDgjU3VU75cW9tfprjETErH4NRfSmQuSOQpsBj1hidp22B6PPFwBQSfADi/CZMQqxPSXPM66+aEreG2IDOwcOVtM5ZmFBPpq+dI5Fsn6RzyfglEWfQFXLL8lIRKC+td4fuvcZCmWiS/EiVFFO09WUzWwCj5wpQ6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jyRLZnwp; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Dybwe8UO"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42562a984d3so41298905e9.3
-        for <linux-tegra@vger.kernel.org>; Wed, 03 Jul 2024 13:32:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jyRLZnwp"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fb0d88fdc8so1272045ad.2
+        for <linux-tegra@vger.kernel.org>; Wed, 03 Jul 2024 23:54:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720038725; x=1720643525; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=soNpQ58Fz2hm7V5JZ9ZEYAVAikWNhIPt2irm4De+WfA=;
-        b=Dybwe8UOW8EfCnxlRJ2u31hzCFMdPyNrcQWDZgKNxQHcobn5zo1irS7+NFeYNXzQGO
-         3nqCHK3x/X3BkEz7cLhZXD8Z81XZAuvbXlx5vFJu0dm/2tbg6s+38n/hcabxPQcszzQe
-         /Eo20JqPbt+GEx2BM9Uk6InuRadBlHcS54cBU9pVyfiFpfZVOxvNXpDzBxI5an84vXuc
-         3XzdllsgYqvcCxQcBlGoGfjcsGvj+SUVFuJi3A8c+QlTHBmWMpNMnME6xtIxFmr1vgUj
-         0z1AmDSW2LKLlCwjr7xlITRjauig5l3UOsSiiZshS5ZDIMC+3st0h3oHdyA6GlsQzEpr
-         PSRg==
+        d=linaro.org; s=google; t=1720076051; x=1720680851; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OaHuA4w4nVtdao/fLWo0eQBQ8CqjNDauvvbmii8lIbw=;
+        b=jyRLZnwpjkOdnBn4D5akngZ4DnqIj/v8KX8z/18vBF55UFSm6P/gv/mRsr/qseExRG
+         kR5kbZqqoU+ps3+95XFjrhMutJvehOg3rSxqyF0dHxfBu8g+cVpbOVCtEthz6KophVLo
+         O2UQriFQ0iLASVKrqGZ8+XrZ8mPHHQs2XQlK7Y3KOMkeL+wmwwd0vTAYPucD0I5GCum4
+         v93ejIBc2cVAt3GtCuZLuiZVTcYBXuM+gX3qlwxHVrdoB1FyRpI0mT0Ii6JnrlILkNeS
+         zciZfHGq6n2jgx1otgOpQQ9bn0W1BImhojqf5UllQYLGEXaWBeN4RjzKjX6urGukrF4+
+         BWsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720038725; x=1720643525;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=soNpQ58Fz2hm7V5JZ9ZEYAVAikWNhIPt2irm4De+WfA=;
-        b=uHsy2Ht/tTMQSEJtBwXfeUUF1CzZDK9XfaJgrePY/5mB/VNRWUWfd4obKT4mcBKlpm
-         YXrNzuYGH8i58GPIrEYp7KLR4i0D3OLmkNlDluaBBMZg6I0opMzAgRi8npVexmootamC
-         xfMy87Lp37NQL2SKfOJv9zL/a3ecwr5RezO2P4j1bS9/sIKIQ62e8frB9RVGe8Etvh/n
-         OudZYqZ2sV3SRFU5N8uSj5trzDkK/t/LtrZQb+elelmKaElAzb0J3VZWujm+G0lBYJl/
-         qbiexf8aqsPAWSP55FTbxy2JMzGtGcjWT9g2PD57BAUPPI6ddjfWxR7yRVjAiB1cAjgu
-         /YyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtciimT7nXss+15DcbvaVQZVteMScke+G6LbxHAW3Bo6Y8S3HUCZCJ8xkuYZgJdbuiDV7Ufmo9SuXjxpXlIydt2xc+n3zX+vO6F6w=
-X-Gm-Message-State: AOJu0YzL8uEOi6kGpX1UzbqaIf+m6GdK7KfK6MdCuAJKGxCNTHg+LMgu
-	e/CTeQxgzYOF3diW1usK/eL99TGm8DS1EfQSUIZfWbPnmHTP6Wanm1abPYXLJOg=
-X-Google-Smtp-Source: AGHT+IEQBwm7OCqJ0C1+sLPedSZoAnvYatAaOS5AYpVWYgjgIYzIeidjLFDv/zxc1QKpmoxHnzRP3w==
-X-Received: by 2002:a05:600c:4f52:b0:424:aa64:e9b3 with SMTP id 5b1f17b1804b1-4257a02b701mr80619975e9.29.1720038724401;
-        Wed, 03 Jul 2024 13:32:04 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:10a5:e010:6751:db24:f67e:fa2e? ([2a05:6e02:10a5:e010:6751:db24:f67e:fa2e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-426487c1c66sm1528905e9.0.2024.07.03.13.32.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 03 Jul 2024 13:32:03 -0700 (PDT)
-Message-ID: <922ef023-4375-4a89-af1e-bd9bcf90f750@baylibre.com>
-Date: Wed, 3 Jul 2024 22:31:59 +0200
+        d=1e100.net; s=20230601; t=1720076051; x=1720680851;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OaHuA4w4nVtdao/fLWo0eQBQ8CqjNDauvvbmii8lIbw=;
+        b=fk+rAsaxnVeXGbEB3TOB1eFw7rUrWTfLmMrN7XugbB6uFOANqLoSg5RsTiaPiQQrvI
+         bCcvGuRGcKDPhNtCYUGvzUKUkucdcQ6AZlDg4tg57ISIJZXuNRr/yay6urbOeKRCB4+q
+         cKaJ7srHpdomcbBjVNJl+FrXFD2E7EqQTGbBIAOvbRifHfrRhNSkomUy/nOZbm2xZqAa
+         f9MrHEZcwx2/pbnHgLztdqWE8siaiukUioaFc/85EVPwXPpr2pmQFv27ZOhUBdf6ezYr
+         1lAR7fZZeNXNjrJwV3CZFmezy5ZKH+RpZbluqt2LXhNaHr9t0O4QgO5Mwb9sL6OJWUKB
+         aiPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7R0NI99CVJYqLnI/FgD0V546Mqmw4xk9t+wOsZPrD1eywlAKxSdpGHTxLlSIA2+6it/GwhW0t3XEIq3PQUHk7bAIBoGiJ32nJwQ8=
+X-Gm-Message-State: AOJu0Yzd123WhRzSjRGzdEYZeujZ9uXkaD8ahH0GRZ6msU64JbNh+q7e
+	qBMu9mmdMd5cp6Lw/C17cAAu5fDIHGLNqVY8T81bcAvhtRytZ/YTqaQpY9RfTq4=
+X-Google-Smtp-Source: AGHT+IFgHGJtYuDCHwF2hfQyaKB/hypmybNqgZV2mdKvHoDVjRkC1GVw1vaa0cTn5Yput+q/r8OwGA==
+X-Received: by 2002:a05:6a20:2594:b0:1be:f080:6d27 with SMTP id adf61e73a8af0-1c0cc742219mr739965637.22.1720076050677;
+        Wed, 03 Jul 2024 23:54:10 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c99a989416sm711460a91.29.2024.07.03.23.54.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 23:54:10 -0700 (PDT)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Hector Martin <marcan@marcan.st>,
+	Huang Rui <ray.huang@amd.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Markus Mayer <mmayer@broadcom.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-tegra@vger.kernel.org,
+	Lizhe <sensor1010@163.com>
+Subject: [PATCH 0/4] cpufreq: Make cpufreq_driver->exit() return void
+Date: Thu,  4 Jul 2024 12:23:51 +0530
+Message-Id: <cover.1720075640.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/22] dt-bindings: thermal: amlogic: reference
- thermal-sensor schema
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Vasily Khoruzhick <anarsoul@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Anson Huang <Anson.Huang@nxp.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Amit Kucheria <amitk@kernel.org>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
- Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>,
- Orson Zhai <orsonzhai@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Pascal Paillet <p.paillet@foss.st.com>, Keerthy <j-keerthy@ti.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>,
- zhanghongchen <zhanghongchen@loongson.cn>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-sunxi@lists.linux.dev, imx@lists.linux.dev,
- linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com,
- Florian Fainelli <f.fainelli@gmail.com>,
- linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
- <20240614-dt-bindings-thermal-allof-v1-2-30b25a6ae24e@linaro.org>
-Content-Language: en-US
-From: Guillaume LA ROQUE <glaroque@baylibre.com>
-In-Reply-To: <20240614-dt-bindings-thermal-allof-v1-2-30b25a6ae24e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 14/06/2024 à 11:46, Krzysztof Kozlowski a écrit :
-> Device is a thermal sensor and all in-tree DTS provide
-> '#thermal-sensor-cells', so reference the thermal-sensor.yaml to
-> simplify it, bring the common definition of '#thermal-sensor-cells'
-> property and require it.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->   Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> index 01fccdfc4178..e52fc40e215d 100644
-> --- a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> @@ -11,6 +11,8 @@ maintainers:
->   
->   description: Binding for Amlogic Thermal
->   
-> +$ref: thermal-sensor.yaml#
-> +
->   properties:
->     compatible:
->       oneOf:
-> @@ -44,7 +46,7 @@ required:
->     - clocks
->     - amlogic,ao-secure
->   
-> -additionalProperties: false
-> +unevaluatedProperties: false
->   
->   examples:
->     - |
->
-Reviewed-by: Guillaume LA ROQUE <glaroque@baylibre.com>
+Make exit() return void, since it isn't used by the core.
+
+Based on initial patches sent by Lizhe [1].
+
+Rafael, I will take this through my tree for 6.11.
+
+--
+Viresh
+
+[1] https://lore.kernel.org/all/20240410132132.3526-1-sensor1010@163.com/
+
+Lizhe (1):
+  cpufreq: Make cpufreq_driver->exit() return void
+
+Viresh Kumar (3):
+  cpufreq: nforce2: Remove empty exit() callback
+  cpufreq: loongson2: Remove empty exit() callback
+  cpufreq: pcc: Remove empty exit() callback
+
+ drivers/cpufreq/acpi-cpufreq.c         |  4 +---
+ drivers/cpufreq/amd-pstate.c           |  7 ++-----
+ drivers/cpufreq/apple-soc-cpufreq.c    |  4 +---
+ drivers/cpufreq/bmips-cpufreq.c        |  4 +---
+ drivers/cpufreq/cppc_cpufreq.c         |  3 +--
+ drivers/cpufreq/cpufreq-dt.c           |  3 +--
+ drivers/cpufreq/cpufreq-nforce2.c      |  6 ------
+ drivers/cpufreq/e_powersaver.c         |  3 +--
+ drivers/cpufreq/intel_pstate.c         |  8 +++-----
+ drivers/cpufreq/loongson2_cpufreq.c    |  6 ------
+ drivers/cpufreq/mediatek-cpufreq-hw.c  |  4 +---
+ drivers/cpufreq/mediatek-cpufreq.c     |  4 +---
+ drivers/cpufreq/omap-cpufreq.c         |  3 +--
+ drivers/cpufreq/pasemi-cpufreq.c       |  6 ++----
+ drivers/cpufreq/pcc-cpufreq.c          |  6 ------
+ drivers/cpufreq/powernow-k6.c          |  5 ++---
+ drivers/cpufreq/powernow-k7.c          |  3 +--
+ drivers/cpufreq/powernow-k8.c          |  6 ++----
+ drivers/cpufreq/powernv-cpufreq.c      |  4 +---
+ drivers/cpufreq/ppc_cbe_cpufreq.c      |  3 +--
+ drivers/cpufreq/qcom-cpufreq-hw.c      |  4 +---
+ drivers/cpufreq/qoriq-cpufreq.c        |  4 +---
+ drivers/cpufreq/scmi-cpufreq.c         |  4 +---
+ drivers/cpufreq/scpi-cpufreq.c         |  4 +---
+ drivers/cpufreq/sh-cpufreq.c           |  4 +---
+ drivers/cpufreq/sparc-us2e-cpufreq.c   |  3 +--
+ drivers/cpufreq/sparc-us3-cpufreq.c    |  3 +--
+ drivers/cpufreq/speedstep-centrino.c   | 10 +++-------
+ drivers/cpufreq/tegra194-cpufreq.c     |  4 +---
+ drivers/cpufreq/vexpress-spc-cpufreq.c |  5 ++---
+ include/linux/cpufreq.h                |  2 +-
+ 31 files changed, 37 insertions(+), 102 deletions(-)
+
+-- 
+2.31.1.272.g89b43f80a514
 
