@@ -1,263 +1,225 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2082.outbound.protection.outlook.com [40.107.223.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CA21ACE7B;
-	Thu,  4 Jul 2024 11:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720092717; cv=none; b=UmsSjJ8X8K5dd7tqLLjijD8KfCmt/fve7Bd8806Omr0amnpd1UuYZjmGMO3l/A15sumghcq4YLHfMGbV83Ui9C4odXP32cD1ZmUM14NI0q/WIpDSnw0y6BnBKCzvP+E2BLOfnWj7pKvBZnR4hDGNui1pqblaw78ytNF6wb/MtgM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720092717; c=relaxed/simple;
-	bh=g+KvgiUFmd9xrj0l0ct8gTjWVRQg4/KONtBXm9V0EdM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mVwO0zGd1rc9r1l7YXwJ16D44RiXPFzZCVV2y9CY0e97dhQzTBeXt9BBT+tTlJtnwFx0B5jq8uCUN5uHS45NIAI1ShNduB8YV0KH07a+yU7raAZbwwTNlOdEBMhCbazonz5J+AaDSdXv8KYYXTVtqtkh9h5wOKeeOcafXVXWyLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=kZ/id+70; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDBA14B078;
+	Thu,  4 Jul 2024 11:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720094194; cv=fail; b=i3iNs3g7KTXZwZAxACsC9aI6DcsAHNBfNIXp/FVHloaIDJxopp+TduRS77i+isGlcZP1eFgz67T0wB2lcMjokKIROz2mYRoRyxYBopnd/Fnebdg5BOHGCRXZvFrGWZ++HqK6iHEZXtzeHV69qmFwIh4kMb9VM1Kd6r7O9MtVhJo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720094194; c=relaxed/simple;
+	bh=9WPSV0GPECzZXPnkRc66glV8Uv4czNs2JWxDTFLYCPg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=f6WjSwUuMbVnb9dcJMwSPzIVQTMEf+XXCWHsvBYmyW5YFpXr9Y9TdOVUeaCPReBEMgtgEIj+J0ANP9PwZMftuCdWTDs9Uc/ApbvViXvPE49Q2STf+mZjY5gVTncWkO58GIm9QHMmsWKVD7Hv0ajWaPSFO0RXjMK0oSv2z7/QcGc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kpWo+L2T; arc=fail smtp.client-ip=40.107.223.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="kZ/id+70"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id C1306600343E;
-	Thu,  4 Jul 2024 12:31:45 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id qh4uRhew_bJI; Thu,  4 Jul 2024 12:31:43 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 880216003033;
-	Thu,  4 Jul 2024 12:31:39 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1720092699;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lWBSr6K46TszUgTWhsBBw0C5K5wULzSObaPjEDgFPvs=;
-	b=kZ/id+70Pb2mbGTBpouRTHmBdeEDGnijD+J0ZumLNrvII0UF5div6XACsjSVXubMH+9z0R
-	pHPEj0oO3n6GH7DEp767LV20LAr8rmju23jnwCV2hgW6mDEle/+IOEWwLFygiAYm624HjS
-	VWu1MnrQI9prbDrdlYPrKOtH5zyCOxk=
-Received: from [192.168.1.53] (unknown [IPv6:2a01:14:8073:1e10:c362:ff08:aa85:54c6])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 6B4E03600D3;
-	Thu,  4 Jul 2024 12:31:39 +0100 (WEST)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Date: Thu, 04 Jul 2024 12:31:26 +0100
-Subject: [PATCH v4 7/7] memory: tegra: Rework update_clock_tree_delay()
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kpWo+L2T"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jSclwcWa+yOL+Y7f0spuxT6G6ffqWYpJ5dz1bOaDvNxJd/vmL3kPp81tWNx5U7IuOuLR4zi0Zi3ps1E3d/vVWRQq/m5Ir9UcniZSujFGdmvMYPH6CVIQe36p/4xvHHTGifEc7OoXRRwDkucFlGS4FXvCroY/MPKroo4sw1hp3rZwij6Oj/OidCNH/WGqEklWsntPkZ5/jmP77QlLluR2k0AY0pcdKGbEGGXGRsUp+HP/toIxn1ISxMhjzgpM5wpfke27d0Mo515txg22jtyaBPeSSF4bUuk+GTcS6YNWjK/jk5pDnt46VIri3xYfIKpfg8aI4t6Vhk2AePOfsf+SLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9Nj8ylJiAK4PaC05sjG/G9aUfCyDoaMH5FJUWNxbC9E=;
+ b=Fk0IH1V8QXV+LQus2q/t7vSKPkK72+ApXlcw5nwq8ivX12r5hecorDyxYokZEYFaZ1AYN/IvvCev6Me/IDq3zNsLR8Nx0StWMJkkxDu1ouVFPtx5MVa3smxDufMbm/TMToSCdFLVtnITZY/5A0obVrwapvxXSlTimoGngHrFHKwbriGy2AvBMPpS8jYCR4kJqDkLfhWmAnG6YadLjiRnC/QSPy1uZhtRrV3/G628zlpx8os5F0X4I/W+3Cv6rE/cwYrkH8XOdxMFzYw3q6jvd1YSvxa3qzZjGdajMmfll8OEhWmltplU59S34dTGmo0yR/P8W068NpmEqLTMorBPXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9Nj8ylJiAK4PaC05sjG/G9aUfCyDoaMH5FJUWNxbC9E=;
+ b=kpWo+L2TJh6yg5jtsSiZjJOem9P1wVZqlonZuu7TI4hee+jslJFts1FZC3Pac8bsUxzn90zDWaoTblWPPrfPgQ/jrz0AEIcutZTc4ppjmXDSLGCvM1IvQI+TZA0KAK6cv9+kkuNN+TDNElMhzyQEv8QOTVXs5YGrwaZ272CKTnc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by DM4PR12MB8523.namprd12.prod.outlook.com (2603:10b6:8:18e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.26; Thu, 4 Jul
+ 2024 11:56:29 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.7719.029; Thu, 4 Jul 2024
+ 11:56:29 +0000
+Message-ID: <11b57ff8-91a9-42d8-acbb-ea618157d655@amd.com>
+Date: Thu, 4 Jul 2024 06:56:25 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] cpufreq: Make cpufreq_driver->exit() return void
+To: Viresh Kumar <viresh.kumar@linaro.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Huang Rui <ray.huang@amd.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>, Perry Yuan
+ <perry.yuan@amd.com>, Hector Martin <marcan@marcan.st>,
+ Sven Peter <sven@svenpeter.dev>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Markus Mayer <mmayer@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Len Brown <lenb@kernel.org>, Kevin Hilman <khilman@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Sudeep Holla <sudeep.holla@arm.com>,
+ Cristian Marussi <cristian.marussi@arm.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
+ Lizhe <sensor1010@163.com>, linux-kernel@vger.kernel.org,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+References: <cover.1720075640.git.viresh.kumar@linaro.org>
+ <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <3f73fda736818128558b61ad5fe2bed5dce3ddc4.1720075640.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR11CA0087.namprd11.prod.outlook.com
+ (2603:10b6:806:d2::32) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240704-tegra210_emcfreq-v4-7-3e450503c555@tecnico.ulisboa.pt>
-References: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
-In-Reply-To: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
- Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720092698; l=6209;
- i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
- bh=g+KvgiUFmd9xrj0l0ct8gTjWVRQg4/KONtBXm9V0EdM=;
- b=o3h1BP1nd1LimKWsCKyCJHCy8F6a2OxrF5lvQgCYApWu3yxhYXFs+kPO4/QIJAVGkfwGTVOMb
- VgkMa7kMm1XBc3iOhietfWvBdlOUUiSMVSPo5SAIv2eY/hXogdGeocE
-X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
- pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DM4PR12MB8523:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d45e0ab-be42-48ff-49de-08dc9c205719
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UzYvTUFQWDhuaEtwOG9lRnB5UEl4UHowaVNNZzR6UlQwaHpUWkluNkE0RVZI?=
+ =?utf-8?B?TFRFMlp1c2NHaXRBZy96UzlId1VsYWV1M1hqRlRSdC8rS01JSHhEYlJWTGd5?=
+ =?utf-8?B?L1FDYUtCYmkyR3YrQmJEZ1F2VnNRQjVIWStnaDF4dWthMkluR2EycGZYVnFX?=
+ =?utf-8?B?MFA4OTFyZms2WVB6NnhkdWdsOTJiWWMzUDhRQ3JRcG4xKzRxZjdjQUdrS0lG?=
+ =?utf-8?B?RlR0Rzd6aER0TExmWVI3aDlVWTljblF6T3hBZ1kyT1FnOG92UHF1bkR2eGVy?=
+ =?utf-8?B?VjJGSHlrRFFLSHh4T0RzTnZpNCtIVW8rQWl5M0JGTTYyNmc3SHVtUkFDUVBE?=
+ =?utf-8?B?b2k3QWJlZGxPa0hoTVJVbkRNNjN5RlV1RDBCNmxYUkZoOUlmb1JGS2xLUlBS?=
+ =?utf-8?B?Q0dmL2hzRWxRaXRJWXhpOXZEeEgwbDVRakMzeEE1WEpsUVRENmtvenBPM2Y1?=
+ =?utf-8?B?VjVqQWU2ZkZveEZUOUxvMHJSTGVtS0FmMlZEcVB6YXE3YjNIdHEyY1dLL1dQ?=
+ =?utf-8?B?OW9yWHlZTHlqcUdnU3B6UlN5bWxzZVFRZzV4dG9GY3VCc2RWUGU0bUNGNndk?=
+ =?utf-8?B?Z0pORVhxS044STQrUTRxMEtteXMySkhTcTFEYmw1LzZrRU53clgxR3g1VEZP?=
+ =?utf-8?B?ODRucjlHWXg5azAySXVZV1l5VUMzOG41akhtb3A4eWN4cDRMSlRxclBPOXZt?=
+ =?utf-8?B?R1ZhYVlQVFhGcjlUc24zU2plUnhWekh3RVdKYU1neDBmZ0pWRTkzOTJhY2da?=
+ =?utf-8?B?VzlVNDBjUUpoWERYZmpDRmFuWTV3bzhpVG5DOCswTjFuUmZEMjd5TGFQdFhJ?=
+ =?utf-8?B?S0FWREpDRXNzanF0S0JpcjFoU3BJVlpySCtEQzk1eHhLb3FBaGxkMloyU093?=
+ =?utf-8?B?N2FpM0FFa0NBU3NpeUFtUCtod1RWNDlZREVOY01nNU9qVm9VYmR6NTlBa1lH?=
+ =?utf-8?B?RTFPRENNWXNodDVJcTl0VjU3dWdwR091c1VKY1AzRGcxM2hIWWh3dHk1Nkpp?=
+ =?utf-8?B?ODJBMHlVOGNiZ1plL0pENmd3VkJPa1ZUMjlFa3hkeVl3VWVUejF5cUlYR1cz?=
+ =?utf-8?B?aUsvOWRjSUYzdUNhWnQvZVluN0lYaXkyQ3pQNG5vbU1ydFRSam5QbTdtRitB?=
+ =?utf-8?B?ak5uU1dlazEyQ2trL3NMMWdZSTFGaTZLT3hCNnU2R1RzRWtSbXFNT3RCWkYy?=
+ =?utf-8?B?bjNrMS9oYldXeDd1RVBrQWNkTSs5K3pLRGUxckp1Q05KNWNZeklKRERFOVJi?=
+ =?utf-8?B?M3dZUFM3YXVOK1JDWTlEckI2WTNPZ3J2NTNwbUYwR2VwUU5Fckt3MUJVNGJp?=
+ =?utf-8?B?UWRBdWRTSUNtOFFrTlRsczcrRGU5TlBzNEEvSHh6NHhQWjZDSjE2U3puNDA0?=
+ =?utf-8?B?TzRWc25CU2lZcHRlTVhrZmhPS25TVStCenZVUUxqdHZIZ3NVS2tKbmh6TXJk?=
+ =?utf-8?B?U2g2OEg3Mk1UdEtVMHEwTG8reHNOYzRraE5kRVJrWk1waCtncU04WnNSZ1pn?=
+ =?utf-8?B?SDVHby9wejNlV2F4NFU0anhVdkV5cDhQbDFGQmtqQ09sVmFFTHdLOWU1K21R?=
+ =?utf-8?B?NloyWTcrRFFDcUVUalQzNjVldVFxZUVBcFcyRlYrbzU2SUlrNjFmaGZQMVZp?=
+ =?utf-8?B?cHFSQ1JqLzZnODQ0V0V6L3V0bW5zOVBVa0lHVWhGTWZ5YWJEYnJyY2hsNVE2?=
+ =?utf-8?B?NzdXa3JlNGRoWm5qbi9hdUhiL215NjdSQ3p3cWs3MGkwVExyNXV5dEhFaEJO?=
+ =?utf-8?B?djAyUDBwcURGTVdPSHdxb3VEQXRxTlN2R1RGMHpDODg3TEFIVmhTZDkrRi9n?=
+ =?utf-8?B?eDRaalc2cVFlbDR0Sjk2UHpMR082MWJpRnQwWUdnTzN1TUtWWDc4VWt3MlEw?=
+ =?utf-8?Q?l15JoDHqahDdw?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z2p1ckFwVEsvcE12QUFTMERCS3JoYjY1K0lkWEErcDIzS2tVTDdQY3VnbmU1?=
+ =?utf-8?B?cEFIcDdoV3pPVVZncUdvdXNKaHRicWxxR0tQdkVOdTZUczJJK1k1UDR4OW9K?=
+ =?utf-8?B?RGIrakFLMUhhRWoyNEJ3UGRic0FVeHF3L2FpdlpJampQcHNXV1gwWW1lT0Jm?=
+ =?utf-8?B?SnlocExsRzVnN2FINFdrM2tOV2VTT2oyYUdNSjZvT1c5d2JrNEFvdG1jSlRs?=
+ =?utf-8?B?elB3UG12bnA1S0VTdElEcFovekdLbHhmZWdqMFZ5R2MzOUh6SXcrbEtWbDh4?=
+ =?utf-8?B?SkZiRVVLRTU2TDQ4d3pZaVBmVTl5ZHI2eW9EaDhKU044aGoySzZSeVF4WXAw?=
+ =?utf-8?B?WisvWG5RaHFtcGFTTjJDTnlhVCswQU1OUk8rQTllU2srWVJwZUZRQzgyUm83?=
+ =?utf-8?B?TkgxM2hjckdXZGRWRXdNRTZxV2J0U0owU0R4bHhNTkE0MzVwZ0YzY3o1WU9L?=
+ =?utf-8?B?U0R5eFAxaVFOV0NKc3QwUEMrNGlPRk9kZVZHMXhuYlZZdnV3TTlOKzM3aFFx?=
+ =?utf-8?B?bnVabUFFWlRDZWpMZDhHU1R5RjdGdUQ4Tlo1RmFZSzRaMjZsbFBCY0kxbVdT?=
+ =?utf-8?B?YUVBQ2NuQWRQZXQ5bVhlU2hlQkdXclBMdklrUmRlS05KRng5dUVlUjJJNFdD?=
+ =?utf-8?B?U0Z0VHBnU1hzV2N2STJWcGp6U0VVa3BwdDVhbHJjQ1pncFI3MVRXaG5JWFBv?=
+ =?utf-8?B?bmVXd2NEczhjM1N3TW5kV3NDdHdBZzhOV1hsQTdCVFZuWjlTbUJza0cvYlJq?=
+ =?utf-8?B?QitLSjNnVWloU0JzTURnZE9LakFuMFNYdG1kNzUxdXRReGFOSXBoZjZpSUZ6?=
+ =?utf-8?B?NU1JMnBaL1puUTFtQk52MXVPSEEyOHd2RnRaR21EcFE4RmphSDNRZWc5RFVU?=
+ =?utf-8?B?SFhDSGVMNjdCY2IrVDVHOVAzbEFJOEgvN1RLMU5FU1daeDJ1MUpxMmtlbktz?=
+ =?utf-8?B?Rmh0VlV1Vllqd3J5ZEt3aDdES2pHUjRtTzBRN3RUKzhoV3pySXcrMTBIU3Q0?=
+ =?utf-8?B?bjVQNVc4SWxoaS96MUlqVkVONk5zNTM3OXhVU2J6bTB1R1JxVnNsTWNSSSs4?=
+ =?utf-8?B?cDRCUE9LQXp1T21pcHZqbVM4M2VyV1EvamltLzBhdEhPRWxKQzN6Yi9memNH?=
+ =?utf-8?B?S1E3eUhuWEpwamdnb2VyNVRBcGMyUkJ3SXpjdm1yaEZxV1QvVVRLRTFEb1py?=
+ =?utf-8?B?UmRRSnJhdE9TcDZROXp4MzkrUHpybTE0VUZ3eUlmWS96eEQwNG1QOTVEcHRy?=
+ =?utf-8?B?Uk03RWNPQWc0Y2tyL0VScjk0b2FyMDZ6NHZqSzJVSVRXUkRFOXhTSUR5bFFa?=
+ =?utf-8?B?ZDV0MkN6ekh3WnVkcllXOXFoZVFpc2lnRHpCemJtbmxqMDAwN00wWnIxL0Y0?=
+ =?utf-8?B?c04zNFRpSmhmUWRBVHlVODJMalpTR2NkYXRSMzhIYkQyQTN5YXlrYTdQSlNw?=
+ =?utf-8?B?TkFXazVKU2NPVDVNaWtSZ2VmcXZxeERBRVJsL3FFdzNwQ3QyWVo3Nkc4Uklw?=
+ =?utf-8?B?M3FhWnZDOFNxbmJwNEN3TldOdjVTSlZoLzZIQVdkbnRydkRlc0JhWTZyb3Y2?=
+ =?utf-8?B?WmJaVVBDb2lFQ1ZJMVVlTVlBNnpkVHQzaHlCdyt2SDhiK2JNS1BST0JpM29B?=
+ =?utf-8?B?VFRmVUNtT3lOaThvMXdwYUZuclplclVwVU9sYng5ZGFGT29uZWlad2k1VHdI?=
+ =?utf-8?B?cW9jM3NnREQ1S2dqRDllSXFmTVU3R3M5TUp6TzNTS0QweVZRK2wxbDlUbjly?=
+ =?utf-8?B?bGpXSGdPcjhMOEZQNDJvTS9uQ2NkRXY5WWo1dEcvRzZ2dnVaTHkybVFxcWVZ?=
+ =?utf-8?B?RVRSZ0FPNk4wMU9ZenJtU0VNT1M2WWpqQ0d0OTN5eUZBU1pueFVLMnlqWE9k?=
+ =?utf-8?B?K3hYR0ZJTjV5SkJFQWhXYm9PNURwZ1hiLzB3b09sNjF3cFFieEdoQzVQS0Zh?=
+ =?utf-8?B?WFcvcVErdTNrZmp6K0xnN0tLb0JwNktld3E2L0JQdzhIQ0dONnZvNHViV1lS?=
+ =?utf-8?B?YklOT3NvUUEzQm4vWi9hcGJ5c2t5YmkraE9Uc3I2VjhMMzJ3clRUQ2dBQTZG?=
+ =?utf-8?B?OWVHYzhZTTNlZ3pyODhlb0l1Z3VqVFVPYVV1UFk3SkhiVGJmc1BLVEhTcHdQ?=
+ =?utf-8?Q?FYxajcg53TcY7zbB42KbjizF/?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d45e0ab-be42-48ff-49de-08dc9c205719
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Jul 2024 11:56:29.5669
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: niRj7KYRpM3UUg+fcmUQe8DDJAewM+qvNSVarbAZ/vqCNPSpDUIO0a/OHBI44NAqN+TPLAS1dUZenEWSxU1kTA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8523
 
-Further streamline this function by moving the delay post-processing
-to the callers, leaving it only with the task of returning the measured
-delay values.
+On 7/4/2024 1:53, Viresh Kumar wrote:
+> From: Lizhe <sensor1010@163.com>
+> 
+> The cpufreq core doesn't check the return type of the exit() callback
+> and there is not much the core can do on failures at that point. Just
+> drop the returned value and make it return void.
+> 
+> Signed-off-by: Lizhe <sensor1010@163.com>
+> [ Viresh: Reworked the patches to fix all missing changes together. ]
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>   drivers/cpufreq/acpi-cpufreq.c         |  4 +---
+>   drivers/cpufreq/amd-pstate.c           |  7 ++-----
+>   drivers/cpufreq/apple-soc-cpufreq.c    |  4 +---
+>   drivers/cpufreq/bmips-cpufreq.c        |  4 +---
+>   drivers/cpufreq/cppc_cpufreq.c         |  3 +--
+>   drivers/cpufreq/cpufreq-dt.c           |  3 +--
+>   drivers/cpufreq/e_powersaver.c         |  3 +--
+>   drivers/cpufreq/intel_pstate.c         |  8 +++-----
+>   drivers/cpufreq/mediatek-cpufreq-hw.c  |  4 +---
+>   drivers/cpufreq/mediatek-cpufreq.c     |  4 +---
+>   drivers/cpufreq/omap-cpufreq.c         |  3 +--
+>   drivers/cpufreq/pasemi-cpufreq.c       |  6 ++----
+>   drivers/cpufreq/powernow-k6.c          |  5 ++---
+>   drivers/cpufreq/powernow-k7.c          |  3 +--
+>   drivers/cpufreq/powernow-k8.c          |  6 ++----
+>   drivers/cpufreq/powernv-cpufreq.c      |  4 +---
+>   drivers/cpufreq/ppc_cbe_cpufreq.c      |  3 +--
+>   drivers/cpufreq/qcom-cpufreq-hw.c      |  4 +---
+>   drivers/cpufreq/qoriq-cpufreq.c        |  4 +---
+>   drivers/cpufreq/scmi-cpufreq.c         |  4 +---
+>   drivers/cpufreq/scpi-cpufreq.c         |  4 +---
+>   drivers/cpufreq/sh-cpufreq.c           |  4 +---
+>   drivers/cpufreq/sparc-us2e-cpufreq.c   |  3 +--
+>   drivers/cpufreq/sparc-us3-cpufreq.c    |  3 +--
+>   drivers/cpufreq/speedstep-centrino.c   | 10 +++-------
+>   drivers/cpufreq/tegra194-cpufreq.c     |  4 +---
+>   drivers/cpufreq/vexpress-spc-cpufreq.c |  5 ++---
+>   include/linux/cpufreq.h                |  2 +-
+>   28 files changed, 37 insertions(+), 84 deletions(-)
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
----
- drivers/memory/tegra/tegra210-emc-cc-r21021.c | 122 ++++++++++----------------
- 1 file changed, 48 insertions(+), 74 deletions(-)
+Acked-by: Mario Limonciello <mario.limonciello@amd.com> # 
+drivers/cpufreq/amd-pstate.c
 
-diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-index a8a217502f0c..a30a646ec468 100644
---- a/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-+++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-@@ -105,7 +105,7 @@ enum {
- 			  next->ptfv_list[w])) /			\
- 			(next->ptfv_list[w] + 1);			\
- 									\
--		emc_dbg(emc, EMA_UPDATES, "%s: (s=%lu) EMA: %u\n",	\
-+		emc_dbg(emc, EMA_UPDATES, "%s: (s=%u) EMA: %u\n",	\
- 			__stringify(dev), nval, next->ptfv_list[dqs]);	\
- 	} while (0)
- 
-@@ -130,93 +130,53 @@ static bool tegra210_emc_compare_update_delay(struct tegra210_emc_timing *timing
- 	return false;
- }
- 
--static bool update_clock_tree_delay(struct tegra210_emc *emc, int type)
-+static void tegra210_emc_get_clktree_delay(struct tegra210_emc *emc,
-+					   u32 delay[DRAM_CLKTREE_NUM])
- {
--	bool periodic_training_update = type == PERIODIC_TRAINING_UPDATE;
--	struct tegra210_emc_timing *last = emc->last;
--	struct tegra210_emc_timing *next = emc->next;
--	u32 last_timing_rate_mhz = last->rate / 1000;
--	bool dvfs_update = type == DVFS_UPDATE;
--	bool dvfs_pt1 = type == DVFS_PT1;
--	u32 temp[2][2], value, delay_us;
--	unsigned long cval = 0;
-+	struct tegra210_emc_timing *curr = emc->last;
-+	u32 rate_mhz = curr->rate / 1000;
-+	u32 msb, lsb, dqsosc, delay_us;
- 	unsigned int c, d, idx;
--	bool over = false;
-+	unsigned long clocks;
- 
--	if (dvfs_pt1 || periodic_training_update) {
--		delay_us = tegra210_emc_actual_osc_clocks(last->run_clocks);
--		delay_us *= 1000;
--		delay_us = 2 + (delay_us / last->rate);
-+	clocks = tegra210_emc_actual_osc_clocks(curr->run_clocks);
-+	delay_us = 2 + (clocks / rate_mhz);
- 
--		tegra210_emc_start_periodic_compensation(emc);
--		udelay(delay_us);
--	}
-+	tegra210_emc_start_periodic_compensation(emc);
-+	udelay(delay_us);
- 
- 	for (d = 0; d < emc->num_devices; d++) {
--		if (dvfs_pt1 || periodic_training_update) {
--			/* Dev[d] MSB */
--			value = tegra210_emc_mrr_read(emc, 2 - d, 19);
--
--			for (c = 0; c < emc->num_channels; c++) {
--				temp[c][0] = (value & 0x00ff) << 8;
--				temp[c][1] = (value & 0xff00) << 0;
--				value >>= 16;
--			}
--
--			/* Dev[d] LSB */
--			value = tegra210_emc_mrr_read(emc, 2 - d, 18);
--
--			for (c = 0; c < emc->num_channels; c++) {
--				temp[c][0] |= (value & 0x00ff) >> 0;
--				temp[c][1] |= (value & 0xff00) >> 8;
--				value >>= 16;
--			}
--		}
-+		/* Read DQSOSC from MRR18/19 */
-+		msb = tegra210_emc_mrr_read(emc, 2 - d, 19);
-+		lsb = tegra210_emc_mrr_read(emc, 2 - d, 18);
- 
- 		for (c = 0; c < emc->num_channels; c++) {
- 			/* C[c]D[d]U[0] */
- 			idx = c * 4 + d * 2;
- 
--			if (dvfs_pt1 || periodic_training_update) {
--				cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
--				cval *= 1000000;
--				cval /= last_timing_rate_mhz * 2 * temp[c][0];
--			}
--
--			if (dvfs_pt1)
--				__INCREMENT_PTFV(idx, cval);
--			else if (dvfs_update)
--				__AVERAGE_PTFV(idx);
--			else if (periodic_training_update)
--				__WEIGHTED_UPDATE_PTFV(idx, cval);
-+			dqsosc = (msb & 0x00ff) << 8;
-+			dqsosc |= (lsb & 0x00ff) >> 0;
- 
--			if (dvfs_update || periodic_training_update)
--				over |= tegra210_emc_compare_update_delay(next,
--							__MOVAVG_AC(next, idx), idx);
-+			/* Check for unpopulated channels */
-+			if (dqsosc)
-+				delay[idx] = (clocks * 1000000) /
-+					     (rate_mhz * 2 * dqsosc);
- 
- 			/* C[c]D[d]U[1] */
- 			idx++;
- 
--			if (dvfs_pt1 || periodic_training_update) {
--				cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
--				cval *= 1000000;
--				cval /= last_timing_rate_mhz * 2 * temp[c][1];
--			}
-+			dqsosc = (msb & 0xff00) << 0;
-+			dqsosc |= (lsb & 0xff00) >> 8;
- 
--			if (dvfs_pt1)
--				__INCREMENT_PTFV(idx, cval);
--			else if (dvfs_update)
--				__AVERAGE_PTFV(idx);
--			else if (periodic_training_update)
--				__WEIGHTED_UPDATE_PTFV(idx, cval);
-+			/* Check for unpopulated channels */
-+			if (dqsosc)
-+				delay[idx] = (clocks * 1000000) /
-+					     (rate_mhz * 2 * dqsosc);
- 
--			if (dvfs_update || periodic_training_update)
--				over |= tegra210_emc_compare_update_delay(next,
--							__MOVAVG_AC(next, idx), idx);
-+			msb >>= 16;
-+			lsb >>= 16;
- 		}
- 	}
--
--	return over;
- }
- 
- static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
-@@ -228,8 +188,8 @@ static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 	   (nt)->ptfv_list[PTFV_DVFS_SAMPLES_INDEX]; })
- 
- 	u32 i, samples = next->ptfv_list[PTFV_DVFS_SAMPLES_INDEX];
-+	u32 delay[DRAM_CLKTREE_NUM], idx;
- 	bool over = false;
--	u32 idx;
- 
- 	if (!next->periodic_training)
- 		return 0;
-@@ -252,16 +212,30 @@ static bool periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
- 
- 			for (i = 0; i < samples; i++) {
- 				/* Generate next sample of data. */
--				update_clock_tree_delay(emc, DVFS_PT1);
-+				tegra210_emc_get_clktree_delay(emc, delay);
-+
-+				for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++)
-+					__INCREMENT_PTFV(idx, delay[idx]);
- 			}
- 		}
- 
--		/* Do the division part of the moving average */
--		over = update_clock_tree_delay(emc, DVFS_UPDATE);
-+		for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++) {
-+			/* Do the division part of the moving average */
-+			__AVERAGE_PTFV(idx);
-+			over |= tegra210_emc_compare_update_delay(next,
-+						__MOVAVG_AC(next, idx), idx);
-+		}
- 	}
- 
--	if (type == PERIODIC_TRAINING_SEQUENCE)
--		over = update_clock_tree_delay(emc, PERIODIC_TRAINING_UPDATE);
-+	if (type == PERIODIC_TRAINING_SEQUENCE) {
-+		tegra210_emc_get_clktree_delay(emc, delay);
-+
-+		for (idx = 0; idx < DRAM_CLKTREE_NUM; idx++) {
-+			__WEIGHTED_UPDATE_PTFV(idx, delay[idx]);
-+			over |= tegra210_emc_compare_update_delay(next,
-+						__MOVAVG_AC(next, idx), idx);
-+		}
-+	}
- 
- 	return over;
- }
-
--- 
-2.45.2
 
