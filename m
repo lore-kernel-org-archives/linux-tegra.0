@@ -1,170 +1,179 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08641148844;
-	Fri,  5 Jul 2024 10:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C4F149002
+	for <linux-tegra@vger.kernel.org>; Fri,  5 Jul 2024 11:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720176693; cv=none; b=XAs55txlRRbKjPKdh47G/P5HgH8qnktO+LUbsB69QdD/96hrE6gcpKcWYr3rDYV8gwx9/c7cSgMteiYyg0a8md1SR/t6gsjHPdmt6RnsOJFZvTMnTanHc4UKyVSKBLSRh138vb3ejG7/KmSrBjJuTZ4+QW32UsvpY9o33xvxnmw=
+	t=1720178313; cv=none; b=qu8BOaz4d9euaQgAfZ1EFPZDZFsl1rpwqFqxGqmwC8jZEmqeayuXGoGULeFETulQ3X08RzMRHG0z+IHT/5CQj0NtaV7CPUXLcBpUG6dnDev+gvQvMiZG1d53Xf1rHYnlT1yIJVnY2qzJGz0z7w3PcOHjvF8PbyyoYmIA5hAQ4X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720176693; c=relaxed/simple;
-	bh=AJORAJt9fiLAKgFuj43ReMllSSzMOpQ76O1O1Hy/3gA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GwCABQJ0iX82mvEgz/kKM8L1rfQlOVVG5CXK3uEF1SQlgCKQsOQ6nX0sD8iCFFLcQTgIonCg06F6u8xPuu5XgtMa4NFbS5f7atctc8DTeWkp8aFHMOGi22zUAL7V5qV8ka/w8ZYdO1B9OHgWSly4ygonYRwSbGGdKQy5xeQtr9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BTGgEA5H; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1720178313; c=relaxed/simple;
+	bh=COzKA0BcrGQn+MbmWfktjVwdYe3fKKtWtwipRxZp4bM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RTJtehQeu7g5E0NYrp/6za8yqDhgVTjgub2XS7cwoAnCnneMLvNjVwkPw5YHfIh1GUpLf1rciSSX0NbY5bb/9uBd+hjU30qlxOpDbgZPcq+wQESXDP+Uko1Q1FXKxK0NjiytOVsGvshI+K+q0KOPOhK50Mi5gvt6bR9gy40KODI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UCbEUYgf; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BTGgEA5H"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-367963ea053so1136518f8f.2;
-        Fri, 05 Jul 2024 03:51:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UCbEUYgf"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so18002301fa.2
+        for <linux-tegra@vger.kernel.org>; Fri, 05 Jul 2024 04:18:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720176690; x=1720781490; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AJORAJt9fiLAKgFuj43ReMllSSzMOpQ76O1O1Hy/3gA=;
-        b=BTGgEA5HqmAOdW3KHJI6pwysUG2UuaWHjI373dcJjUmYvlB1uTN/u2Wyosco6nL3q2
-         Dfvah/yDQ6gNtqTacMAjie6ZOTNB8F+r2T6K+5dgFvcwUthjreoVuHzuPSKr4szRaDeR
-         KUyv4xnMC3PjvP1c/GOhdsWQEVFDdkZfTGmKKDFGlKnW6wQgDYpo/NJVHMV5gqVotS6d
-         NG7nN7DqjVmawnFzfkt2cRnVU8iA3xxhgjFWRZytJrnZFBQt3MpVAJl+5zf29ecotjIg
-         CkXcb2Z+9006HxjAzESM6Krx5IC8DOZvTuONTWWCFc3USInPE3ruI042A3C7/t81/U8J
-         73gQ==
+        d=linaro.org; s=google; t=1720178309; x=1720783109; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OgGdrMJAOOlmaDA5n6UZ/NcHyTcSq/fRMMLBh3RpPPA=;
+        b=UCbEUYgf7lZ9q8dyZVdF4VEsQqCwj/9hvE+jdXhJ+f4c34+E0lH/D+NIp9B+VZV7La
+         tFKslq+8+bs0F+aYXOYZ+SXwx0GuPSo7eQ/OPUP48I8TQgRNwT5iJks3EGXTLMyXS6OC
+         UcNZFRQofzbvpNLen9JTQW6KCwfg9QxZfzygFOUWhh2qTjib8BbikbUUx+ZjEv5HLcK5
+         VBtIEvKmdUiv7ckSIhidfC0Yhgk8szirCiJxa8oPmU2t78GOc/A6ZYvd8uGYia03OjL7
+         BG6ZpUR6z9DPYbw17WTVsdX3nkF0LhRPdzIZXMYcX3FHgTKf9zKRcfD1TNsocu6q8fPO
+         Gqmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720176690; x=1720781490;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AJORAJt9fiLAKgFuj43ReMllSSzMOpQ76O1O1Hy/3gA=;
-        b=gBz6/NyBy4JxLmVslp+6iERYRNwo9uHBkDttJKzrpIxlIpxql1Dc+msi1GYkfRWX2Y
-         LWeiw1xU3XGCmC+R7dhv0N/9uCi1b/INE4Bxqkha07+si/ia5+fGm9PJZzidE7RSO+aF
-         QrjCv3hgAQ2Ey9Rg4A9r03rCYH3iO94pytlPHZc6drPN7eSGSzuq8KpvBJ4CPvgB9T27
-         5dOzIGM/FkzQ7QtLKHJGiyrQU/LBrFeX5iUSmU0NthdXORMl44AcfhfWTGvB6s2qlmKy
-         oK/Uqf5ZJ+J6XELoNLc8nX+0i98Gpd29YDrz6hbCNBJs/3+cXA9c9hZw+JrW/w8BYhQK
-         kuEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXX1XhWkx0gs1bvpd+SYoujBkM08G3Eq8WEiTX8eO5QM3jfh1Yh/l6IyIvmSJveEL/IQESU2khYVvj8hV+FmNg0LbHCV7sG2N3xbjqtGdg4pxSYwTpfcRHJwnbGAeukHmc1F/FSxul5Yq1kEvyx/6W7Gp17n3XT+ozgMFD6HypTNY82Me29M2j+dQ89TneA2nClqKppwmD91IgTv4LvIBJpA2XnEb8iIV8VeVWIsL4WP0fxam30bQB/bSlP9xSKMRFRpJ9gD0JDrdtzq8ul5UBDi1cPJG1
-X-Gm-Message-State: AOJu0Yzl71BNvTMhF7AoIv8lXWhfrNmJlqArrN8UhV6vdmeu1L6Q+C3M
-	9WwaTu6POTo69lL6K1QIzxfyW7xFkmXn51wuxsLhf5+xlXV8Vy2z
-X-Google-Smtp-Source: AGHT+IG34mbke5IJo5cR/e8+OiQhSsIhfKjKH4QYsroO50LYMy0yaGverM7QDVIx2MHrrvn7/LDdLQ==
-X-Received: by 2002:a5d:4ace:0:b0:366:e9f9:3d1b with SMTP id ffacd0b85a97d-3679dd10557mr3837762f8f.9.1720176689607;
-        Fri, 05 Jul 2024 03:51:29 -0700 (PDT)
-Received: from orome (p200300e41f162000f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f16:2000:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367938a6e97sm6252663f8f.109.2024.07.05.03.51.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 03:51:29 -0700 (PDT)
-Date: Fri, 5 Jul 2024 12:51:27 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Krishna Yarlagadda <kyarlagadda@nvidia.com>, 
-	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jonathanh@nvidia.com, krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net, 
-	andi.shyti@kernel.org, wsa+renesas@sang-engineering.com, ulf.hansson@linaro.org, 
-	adrian.hunter@intel.com, digetx@gmail.com, ldewangan@nvidia.com, mkumard@nvidia.com
-Subject: Re: [RFC PATCH V2 04/12] dt-bindings: misc: tegra-i2c: config
- settings
-Message-ID: <qg7epd5xmwefp7kimlgummlktnonrd3pd7obnq3chgzrceg3lv@t4iyccqn2zdt>
-References: <20240701151231.29425-1-kyarlagadda@nvidia.com>
- <20240701151231.29425-5-kyarlagadda@nvidia.com>
- <20240701174227.GA148633-robh@kernel.org>
- <hqlckp6hxvxwkkbiagdb5pm4eo5efu55hwuupdal6lojxj2xu5@5zibskqdbdju>
- <CAL_Jsq+hzbHKeKM9UnJ=VK8_rKs5HJpZRGH2YYWAvjtf9SbPRw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1720178309; x=1720783109;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OgGdrMJAOOlmaDA5n6UZ/NcHyTcSq/fRMMLBh3RpPPA=;
+        b=O29aMRZlKT9ThrYYATWwT1ma60CRBtVWhOoaPUouq3wMjHoHvaA6BJIExjtAZCnSvP
+         FlsoLShACGk15l8Fbu9jXe12OnQJ1JMom64WYJAlINRXg2QrZJVg1JMKemxWcLreUyyt
+         CtDsx4+QeILoSDUYya7kcdKP0J1bg9xsgCcZpSyjY0I57WEFBFpPBuVW4XxB3a9t8D2n
+         kWe+uoIwnu4MGG8FP997CNP0fEruLJswOlDIJd7ipELYCSdOvUy+qiPUm1dxtNzmp+Pe
+         zoTn8bxpv5nVGwphM5INTTVvaWjgWCNMLltIxcLSai2uhKj5H4Lj1WZdaPzYlm+UJOSk
+         O5og==
+X-Forwarded-Encrypted: i=1; AJvYcCVUN/FVgTn7aMx/MKRu6woL3Ez0V7Ek7tBjaFDiEjpZ8ZPzBzBeLWOCSa1EHIRD2/wMh7m0HsrlK2jpLCvREEtTOeAhYZImeDzqvfw=
+X-Gm-Message-State: AOJu0YzJ32iyoM0/mB/bMyP2joBYv1sjKQ0wN3uCkBvJMZwZWbj2sRSv
+	nX6hC9rpOWn7jp4dJ3eD5vhqt+op3KKJXnPdAxNQi+A5vorfs6IA2bnnkm6ZYqw=
+X-Google-Smtp-Source: AGHT+IHyMkgn3/gFNE4gv4OJO59bQCoHWgHlPXJAezaplNmRkJ1y1keb/pz2mmb4jwElkz5448BGKA==
+X-Received: by 2002:a2e:2e06:0:b0:2ee:8815:8b28 with SMTP id 38308e7fff4ca-2ee8edd3ec5mr24871001fa.33.1720178308668;
+        Fri, 05 Jul 2024 04:18:28 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0? ([2a05:6e02:1041:c10:c49e:e1a5:3210:b8c0])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3678fe13ef4sm7369352f8f.117.2024.07.05.04.18.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 05 Jul 2024 04:18:28 -0700 (PDT)
+Message-ID: <2aa71d0f-6e4a-4056-9deb-a46526b423a9@linaro.org>
+Date: Fri, 5 Jul 2024 13:18:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2yfry5sotijauhey"
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+hzbHKeKM9UnJ=VK8_rKs5HJpZRGH2YYWAvjtf9SbPRw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 00/22] dt-bindings: thermal: few cleanups
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Zhang Rui <rui.zhang@intel.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Guillaume La Roque <glaroque@baylibre.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, imx@lists.linux.dev,
+ linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ linux-rpi-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Vasily Khoruzhick <anarsoul@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Amit Kucheria <amitk@kernel.org>,
+ =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+ Heiko Stuebner <heiko@sntech.de>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+References: <20240705-dt-bindings-thermal-allof-v1-0-554061b52fbc@linaro.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240705-dt-bindings-thermal-allof-v1-0-554061b52fbc@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 05/07/2024 11:51, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> Resending (with added tags) because patchset was still not applied.
+> Daniel, can you pick it up?
 
---2yfry5sotijauhey
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes
 
-On Wed, Jul 03, 2024 at 02:21:04PM GMT, Rob Herring wrote:
-> On Tue, Jul 2, 2024 at 4:29=E2=80=AFAM Thierry Reding <thierry.reding@gma=
-il.com> wrote:
-> >
-> > On Mon, Jul 01, 2024 at 11:42:27AM GMT, Rob Herring wrote:
-> > > On Mon, Jul 01, 2024 at 08:42:22PM +0530, Krishna Yarlagadda wrote:
-> > > > I2C interface timing registers are configured using config setting
-> > > > framework. List available field properties for Tegra I2C controller=
-s.
-> > >
-> > > How is I2C bus timing parameters specific to NVIDIA? Just because you
-> > > have more controls? No. That's no reason to invent a whole new way to
-> > > specify parameters. Extend what's already there and make it work for
-> > > anyone.
-> >
-> > This may be applicable to a subset of this, and yes, maybe we can find
-> > generalizations for some of these parameters.
-> >
-> > However, we're also looking for feedback specifically on these config
-> > nodes that go beyond individual timing parameters. For example in the
-> > case of I2C, how should parameters for different operating modes be
-> > described?
->=20
-> Like what? It all looks like timing to me.
+> Few cleanups witout practical impact, except maybe the Amlogic schema
+> (bringing required cells).
+> 
+> Link to v1: https://lore.kernel.org/r/20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org
+> 
+> Best regards,
+> Krzysztof
+> 
+> ---
+> Krzysztof Kozlowski (22):
+>        dt-bindings: thermal: samsung,exynos: specify cells
+>        dt-bindings: thermal: amlogic: reference thermal-sensor schema
+>        dt-bindings: thermal: allwinner,sun8i-a83t-ths: reference thermal-sensor schema
+>        dt-bindings: thermal: brcm,avs-ro: reference thermal-sensor schema
+>        dt-bindings: thermal: generic-adc: reference thermal-sensor schema
+>        dt-bindings: thermal: imx8mm: reference thermal-sensor schema
+>        dt-bindings: thermal: nvidia,tegra186-bpmp: reference thermal-sensor schema
+>        dt-bindings: thermal: nvidia,tegra30-tsensor: reference thermal-sensor schema
+>        dt-bindings: thermal: qcom-spmi-adc-tm-hc: reference thermal-sensor schema
+>        dt-bindings: thermal: qcom-spmi-adc-tm5: reference thermal-sensor schema
+>        dt-bindings: thermal: qcom-tsens: reference thermal-sensor schema
+>        dt-bindings: thermal: qoriq: reference thermal-sensor schema
+>        dt-bindings: thermal: rcar-gen3: reference thermal-sensor schema
+>        dt-bindings: thermal: rockchip: reference thermal-sensor schema
+>        dt-bindings: thermal: rzg2l: reference thermal-sensor schema
+>        dt-bindings: thermal: socionext,uniphier: reference thermal-sensor schema
+>        dt-bindings: thermal: sprd: reference thermal-sensor schema
+>        dt-bindings: thermal: st,stm32: reference thermal-sensor schema
+>        dt-bindings: thermal: ti,am654: reference thermal-sensor schema
+>        dt-bindings: thermal: ti,j72xx: reference thermal-sensor schema
+>        dt-bindings: thermal: simplify few bindings
+>        dt-bindings: thermal: cleanup examples indentation
+> 
+>   .../bindings/thermal/allwinner,sun8i-a83t-ths.yaml |  6 +-
+>   .../bindings/thermal/amlogic,thermal.yaml          | 22 ++---
+>   .../bindings/thermal/brcm,avs-ro-thermal.yaml      | 22 ++---
+>   .../devicetree/bindings/thermal/brcm,avs-tmon.yaml | 17 ++--
+>   .../bindings/thermal/brcm,bcm2835-thermal.yaml     |  1 -
+>   .../bindings/thermal/fsl,scu-thermal.yaml          |  1 -
+>   .../bindings/thermal/generic-adc-thermal.yaml      |  5 +-
+>   .../bindings/thermal/imx8mm-thermal.yaml           |  5 +-
+>   .../bindings/thermal/loongson,ls2k-thermal.yaml    |  1 -
+>   .../bindings/thermal/mediatek,lvts-thermal.yaml    |  1 -
+>   .../bindings/thermal/nvidia,tegra124-soctherm.yaml |  1 -
+>   .../thermal/nvidia,tegra186-bpmp-thermal.yaml      | 12 +--
+>   .../bindings/thermal/nvidia,tegra30-tsensor.yaml   |  9 +-
+>   .../bindings/thermal/qcom,spmi-temp-alarm.yaml     |  1 -
+>   .../bindings/thermal/qcom-spmi-adc-tm-hc.yaml      |  8 +-
+>   .../bindings/thermal/qcom-spmi-adc-tm5.yaml        |  8 +-
+>   .../devicetree/bindings/thermal/qcom-tsens.yaml    | 96 ++++++++++------------
+>   .../devicetree/bindings/thermal/qoriq-thermal.yaml |  5 +-
+>   .../bindings/thermal/rcar-gen3-thermal.yaml        | 69 ++++++++--------
+>   .../devicetree/bindings/thermal/rcar-thermal.yaml  | 60 +++++++-------
+>   .../bindings/thermal/rockchip-thermal.yaml         |  5 +-
+>   .../devicetree/bindings/thermal/rzg2l-thermal.yaml | 41 ++++-----
+>   .../bindings/thermal/samsung,exynos-thermal.yaml   |  3 +-
+>   .../thermal/socionext,uniphier-thermal.yaml        |  5 +-
+>   .../devicetree/bindings/thermal/sprd-thermal.yaml  | 47 +++++------
+>   .../bindings/thermal/st,stm32-thermal.yaml         |  5 +-
+>   .../bindings/thermal/ti,am654-thermal.yaml         | 15 ++--
+>   .../bindings/thermal/ti,j72xx-thermal.yaml         |  5 +-
+>   28 files changed, 230 insertions(+), 246 deletions(-)
+> ---
+> base-commit: 0b58e108042b0ed28a71cd7edf5175999955b233
+> change-id: 20240614-dt-bindings-thermal-allof-401c50e61ef2
+> 
+> Best regards,
 
-The problem here isn't the individual properties but rather how to group
-them. More generally the problem is that we have a set of settings that
-need to be applied in different variants. Yes, they are all timings, but
-the values differ based on what mode a given controller operates at.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Take for example I2C where we have things like start-hold time or stop-
-setup time, which we could describe in a more generic way (i.e. leave
-out the vendor prefix). However, depending on the mode that the I2C
-controller runs at (could be standard mode, fast mode or fastplus mode)
-these values need to be adjusted.
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-So it's the same set of properties but with different values for each
-different operating mode. As far as I can tell there's no good construct
-to describe this in DT currently.
-
-> > Would you agree with something along the lines provided in this series?
->=20
-> When there are multiple users/vendors of it, maybe.
->=20
-> In general, it goes against the DT design of properties for foo go in
-> foo's node. This looks more like how ACPI does things where it's add
-> another table for this new thing we need.
-
-Well, that's what Krishna had proposed in the first version of the
-series, which you guys rejected. The problem with that is that we cannot
-easily group these settings using nodes because subnodes of I2C
-controllers are considered to be clients by default. This applies to SPI
-and other busses as well.
-
-This approach avoids these issues and can be more easily optimized since
-settings could be shared between multiple instances of the controllers.
-I have a slight preference of putting this into the controllers' device
-tree nodes, but I can't think of a good way of avoiding the above child
-node problem other than what we had in v1.
-
-Thierry
-
---2yfry5sotijauhey
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmaH0C8ACgkQ3SOs138+
-s6ElSBAAm6OJyI/B+iIOpmlkdlzG7L2zx/a8cXmzetbdsb5pIpZW1oED1gURbiYJ
-YLp50cUtKcBt+sQWpmf0FWUOCJaoN/151zj4ECK4ptlWRdoaiLm+mC9kG4du+ppz
-p5OSGjhHqva85PR4D1jQLOxPZOY2fDyA5tg4HpdoN9TzgrpZtFRawAUJun5f3lXL
-XdyXai7qCiYrGTAOHthRSzp/HyROYmYqZkku2cNsudgJa1KDlit5VvQzv2JJDA9/
-7mVLHI29v4Fj+OpFgiVnXUDtGLkeUBLCkcNOsKQP9NuTHt6dDMlTCv4BKCA+epIT
-mQeYkYkzyT2FpFWiQqPRsaMzJmNArjGgX2vBSsciU5o9VwF8+a+pYg+s7PiwT1aw
-4hz8HA7MpQeUWktOoaIY0pLrw7D0zCHAsVaRvq4uEOvdFPlefYyo12jP8fLgLK8s
-5I2+Z2qDYuJYPFW87Mco9AjopJe+J25a2L/weVUdyj8a5QvAjrPyiOaS+A6ycnnb
-aaKCL3XEWHyIwC95R2QBXqa0bnCiL8eqIyUF7Mwjg6khLJW4pETth9E5eKCPaq9i
-RWKwlvlGKkIedXqFJ/hchK54treZG14Tcdc3Jpm8ky59zZQWQ19zQMJwsfYThwFQ
-kkL+pOqr/LWSgdrIKDUhZalHjT83nQxOD/cWXs6nww1+M5eeV54=
-=6Nt4
------END PGP SIGNATURE-----
-
---2yfry5sotijauhey--
