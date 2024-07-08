@@ -1,79 +1,143 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720C117623C
-	for <linux-tegra@vger.kernel.org>; Sat,  6 Jul 2024 11:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5146B1171D;
+	Mon,  8 Jul 2024 06:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720264939; cv=none; b=JeRhXGEWJRvFwCOdqjI1VO23s874z1vWTpUv21D69I0FFOhnHkvEhT21L0aqvLEtRW43QvzDaKmcQ2ne08DVM69pzpSWc33FRBYnpUkQQBo/W28sqfOKF4+CYf/+L0CtVa/8QUjkgltjOGGqvLtlOoIzL3T+TEY9IA9ZQajD1AA=
+	t=1720421097; cv=none; b=L8I+/4PV/fc/Xp85ejoSA9P4q4md7O1jmOA6k4B0wRZKoOAFZQMe1z7eA0z/q/zCSqeSLRfFnk2J8EpiEt7wDktMYgLh3D+t2+LD7Mk0pnfikq4AdL9JUZVpah0b6Cm+6XFmLhTiy69v0bpPFHrgGoNHw7Lz9hFxnyy1I6e7kEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720264939; c=relaxed/simple;
-	bh=sMBjjjQoRzu/y6oDuR1pOkVv5xeFLjAXjqL3/H01n3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e2icCw7gcFQf6PvvRO0pMJz38jkAgT6EEH7WTVdn7s+Zec0lK0DD23WC6N5s76WDWFb7AZxVqGMOLM+kuLM6Ral8dNTJEZyzGkWTpymlxxE+IoHWZcOFQTw3glR3XZdukCXejT/lrfDp/c+QcyoRY8gGO9z7CG0EwVvW3rKUPXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=mGTNW4DV; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1720421097; c=relaxed/simple;
+	bh=EqDlk82dE7XS0/JGyUAUcCtCsFHxwVbAJvsEIiMzMrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lB7ncdu4H92hljLvLomFhCNSXzlRKANIQYx3y0Afv377oux+58S5vdUUB+T8By9yHlAWS2nprSgZRgCgSWdDWamFs2Rw0J03bba2g988CLlPzrArfyJ+WNMWMP1ZJTKM22HRsuIo4AcxeiyfX86j3YRqNd2h3EeCKkdsW028B0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PzOy6Z2W; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="mGTNW4DV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=RKPno80B5b7lMNmuILEfR5vn3B5nA82KHZrBqcTfrZE=; b=mGTNW4
-	DVedLtKjZp1Vr888EnmryAFZ9XwyXRbyYwt/V3u1KOYBOC+IsHrT2MkW7YlCCdkS
-	azco/mwoUoXbgOS6M1U7SuYHD6CQeKFHAcYuhgJFrv9WnuO+Fzzv3jNKgNdZmDZj
-	Peu93Rb7I21FUH9EBmoLlB5AjT78783hh66Hkx1qv3aRdxLJnQIES/NFAg1EhUtu
-	weMBT37yUHeVuC203oga7Q5TbMrYBRbqrQJEBwcrtKcpztaSpPX2Hg7J8UBEPMkp
-	almAeWaZ6/RoZjRAJhmtjyQzJ6XhkTdGLggGqx0pRbgs1MDmJLe+6sMF4zDJCvAf
-	ZwKMnrsYBJqYXI4Q==
-Received: (qmail 3810984 invoked from network); 6 Jul 2024 13:21:57 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Jul 2024 13:21:57 +0200
-X-UD-Smtp-Session: l3s3148p1@FMhQY5IcZuFQT+F6
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-i2c@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 50/60] i2c: tegra-bpmp: reword according to newest specification
-Date: Sat,  6 Jul 2024 13:20:50 +0200
-Message-ID: <20240706112116.24543-51-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
-References: <20240706112116.24543-1-wsa+renesas@sang-engineering.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PzOy6Z2W"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 817CBE0006;
+	Mon,  8 Jul 2024 06:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1720421086;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kN45r2MzRBKAE4raZ17kWauJPTnIek3N3oaVcC2BO/g=;
+	b=PzOy6Z2WDoUDIURvXSdTtpzbHX3JQqR2TwTpbeUTnfB6vX3dNcZ37ATxjxBqYPJmXyybOW
+	/cSvPuilXVhZeR7B2dXURK6eJ39WhH4IRmB3cgvultxkXbdYRWIJAVPOSzfOAYpJjJ6yjj
+	T4otuw7FybtaZrQhYLIzqq3zUvj4Jc9ZhqWNxjCSwxjRvmd7Z4M+rCx4VXtxp9PGAb8E1q
+	oZ1dnF7ScZhNf1MbVD05qQH3qQWLfMAQwFkOz4wVja8KUEs30B2F3BIx4guMRdC+Ulvnk+
+	YXsH623cgVPmDlxftJRPmEBJAk7rpJRwu3UnaQOHOTk3BC9lbm01fchVhlirnQ==
+Date: Mon, 8 Jul 2024 08:44:40 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Marco Felsch <m.felsch@pengutronix.de>, Richard
+ Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Arnd
+ Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Russell King <linux@armlinux.org.uk>,
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>,
+ Andrew Lunn <andrew@lunn.ch>, Gregory Clement
+ <gregory.clement@bootlin.com>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>, Michael
+ Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
+ <naveen.n.rao@linux.ibm.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Huacai Chen <chenhuacai@kernel.org>, WANG
+ Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ imx@lists.linux.dev, linux-omap@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+ openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
+ linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
+Message-ID: <20240708084440.70186564@xps-13>
+In-Reply-To: <20240702-mighty-brilliant-eel-b0d9fa@houat>
+References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
+	<20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
+	<07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
+	<mafs0ikxnykpr.fsf@kernel.org>
+	<20240702-congenial-vigilant-boar-aeae44@houat>
+	<mafs0ed8byj5z.fsf@kernel.org>
+	<20240702-mighty-brilliant-eel-b0d9fa@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Change the wording of this driver wrt. the newest I2C v7 and SMBus 3.2
-specifications and replace "master/slave" with more appropriate terms.
+Hi,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-tegra-bpmp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > >> >> Port the current misc/eeprom/at24.c driver to the MTD framework s=
+ince
+> > >> >> EEPROMs are memory-technology devices and the framework already s=
+upports =20
+> > >> >
+> > >> > I was under the impression that MTD devices are tightly coupled by=
+ erase
+> > >> > blocks. But then we see MTD_NO_ERASE, so what are MTD devices afte=
+r all? =20
+> > >>=20
+> > >> I was curious as well so I did some digging.
+> > >>  =20
+> > [...] =20
+> > >>=20
+> > >> I also found a thread from 2013 by Maxime Ripard (+Cc) suggesting ad=
+ding
+> > >> EEPROMs to MTD [1]. The main purpose would have been unifying the EE=
+PROM
+> > >> drivers under a single interface. I am not sure what came of it thou=
+gh,
+> > >> since I can't find any patches that followed up with the proposal. =
+=20
+> > >
+> > > That discussion led to drivers/nvmem after I started to work on
+> > > some early prototype, and Srinivas took over that work. =20
+> >=20
+> > So would you say it is better for EEPROM drivers to use nvmem instead of
+> > moving under MTD? =20
+>=20
+> I thought so at the time, but that was more than 10y ago, and I have
+> followed neither nvmem nor MTD since so I don't really have an opinion
+> there.
+>=20
+> It looks like drivers/misc/eeprom/at24.c has support for nvmem though,
+> and MTD can be used as an nvmem provider too, so it's not clear to me
+> why we would want to create yet another variant.
+>=20
+> But again, you shouldn't really ask me in the first place :)
+>=20
+> I'm sure Miquel, Srinivas, and surely others, are much more relevant to
+> answer that question.
 
-diff --git a/drivers/i2c/busses/i2c-tegra-bpmp.c b/drivers/i2c/busses/i2c-tegra-bpmp.c
-index b0840fa0f53e..dabadbcc6d6a 100644
---- a/drivers/i2c/busses/i2c-tegra-bpmp.c
-+++ b/drivers/i2c/busses/i2c-tegra-bpmp.c
-@@ -275,8 +275,8 @@ static u32 tegra_bpmp_i2c_func(struct i2c_adapter *adapter)
- }
- 
- static const struct i2c_algorithm tegra_bpmp_i2c_algo = {
--	.master_xfer = tegra_bpmp_i2c_xfer,
--	.master_xfer_atomic = tegra_bpmp_i2c_xfer_atomic,
-+	.xfer = tegra_bpmp_i2c_xfer,
-+	.xfer_atomic = tegra_bpmp_i2c_xfer_atomic,
- 	.functionality = tegra_bpmp_i2c_func,
- };
- 
--- 
-2.43.0
+More relevant, I doubt, but just a feeling: EEPROMs have their own
+subsystem now, NVMEM, which, as Maxime said, was initially written for
+that very specific case. EEPROMs don't have the complexity of MTD
+devices, and thus pulling the whole MTD subsystem just for getting
+partitions seems counter intuitive to me. You can definitely "split"
+EEPROM devices with NVMEM as well anyway.
 
+Overall I think the idea of getting rid of these misc/ drivers is goes
+into the right direction, but registering directly into NVMEM makes
+more sense IMO.
+
+Thanks,
+Miqu=C3=A8l
