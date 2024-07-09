@@ -1,154 +1,104 @@
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A67615A842;
-	Tue,  9 Jul 2024 12:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D98A19755E
+	for <linux-tegra@vger.kernel.org>; Tue,  9 Jul 2024 14:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720529152; cv=none; b=hc1V7wj7aoDtnm+yplgp3MoOWu+sBRsDDcuqKUOn31QBj5moQXosPUOt0mQTtDyxTC3Hkn4WDADH7vWDynK/ky44VJTUXKGM3zo2IGxO7LXy5ERY6WCabBposX1KX2MuJcZXjxMQ0gRz7P1lb/wN9tmmNmxNrzVhe1VWU5hbJ9s=
+	t=1720533696; cv=none; b=MADPi0aFMAx6+h6Vmr8BmMkm0y440xBjrd92ZKIrj4aSDXsdmcFVrFzHLKafLxCy0keKQQaCl+9LQK5LXp9MTyW/hM7syHLH3mwkA2ee5M2Peu9WA/wJcLT+WgA7EtpVGDgQOoZCw8Yi0huQ++rJYEBIZ3ommfENJN6wMs5iT/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720529152; c=relaxed/simple;
-	bh=O9QjD7xyf7LdxqfElfMDNMZgFewgPFqt+hOvv1SP8XI=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=OtY/plGUApt6O/OeZFvTDUJHmHgx2Navn5u8nhPYzfYCoZaSOGfyPP/D4SQ3v8hYi//OZvdtMiU2PgYxVJQiSDEddfS7ltEWKVlLApEq+j3OyLMdpBptNDXThZComdjiFhBCa3l9j/ilOoKB1t53D66NH8O5f+yUzMR+Jjvs8FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIikM0H5; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1720533696; c=relaxed/simple;
+	bh=iqFt7rBpjKl+zcOjI0TKLOpk5Hm8EOQIZELFZKv7ohg=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=YNI+YWZqtfjO0IAlokjFihrxzre8vKSQi4BODEQFH4SzCKip8GNpLnoaw8GFnt3VZ0iBswrM/2kpuILVMGmLbYedC9Ig6iUHajE0U0gjJ/E2kWtQ3Vf9UdMW5JNkDEbJ3NgpBalgyv4bMd7acZ8oFYWT9w6nJO8iVZhLgMqBSzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=f+OIxBCF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BlKeo6kJ; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIikM0H5"
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1fbc3a9d23bso1289325ad.1;
-        Tue, 09 Jul 2024 05:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720529151; x=1721133951; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=PTkMABYzGdhSQd9C4loTDYzycJLf8ODZaPM06fmE3pI=;
-        b=IIikM0H5UrtnuFPA57JXL9YMX2Bnr2fr/uNixCz7mgKWxo4c3iJagAhzt/gKN57Eqs
-         6haXH8/2RRmAUA9n8rMSBZO/c8rlXiW7vQOkfd3AwVGgf+xg04xRjfc5PFyj51GvefET
-         7bog2suMhMQdpkZzFW/fvsznuqSonGboPW6gRidgIHfbBQQ+ibfM/zZ+AIm5xNtaBIHG
-         sL+F1wIF7qVmLxKCAWYNfG8khXcYWdaEE2HCk/+OszhjJonOUJ+Cp2LWMYMv0ANgkRAY
-         Yh87bKeiawkMVnhAYaBOHgGbFMtj6Fj83OXeKkzeHYsN1NY/qJAl+q6byVKkQkUPjsaX
-         yAZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720529151; x=1721133951;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PTkMABYzGdhSQd9C4loTDYzycJLf8ODZaPM06fmE3pI=;
-        b=N9kFDzpzym0l9lrm1o33e/GJCxpTFlFk3RA0e6h85iik7C6wPJw4+ExvfbTiFQLZvC
-         JKiTZUYwxDMYrE6tWgKWmrDy8AjH36COoVw6EFwKD1d4ghnOHXnDrNItIzTEA7XyXId3
-         nX/GsiJFmXP9kdLij0/OZWzt8Zvo0c9Fa5wpDTmIw+0qxKkk4cWw56Xk4M9fxXvXXu+J
-         SzojyJRzrURqHrv7F/I4BI9y1ehe1G4Zba2zNWoJ1vErt4RKLZkINZkmlMW7E0VwSVR+
-         oQb4+FN/B2NWSS3pA1UIs8mBRPQ0Y31P5TpIGExFy4RVKyn7vDVa1Hfzoef2ERMnCLHb
-         Fcnw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2ip2Y0EKRmjMFirZE+AoAc17O6qOZYuqmLjctwPNhDYj0OswSwbAGkHRwQcEG2wOkoyKLTrKq9+yR62jMEjbQhKnxfUT/1So0ge77qnupeW1R8wfrBe56BgR4iiILOXjr8Y+PuHnHcZPasp9C1/4b/5Vz3J+tokG+h/GLJqvOrl4q3WVNnJDUhcBasfwft15XSMK0FZDwFD1ZCzlzkePpVin8mPL6YuV/ZHnq0neQRt30F/gXy2bM9vbku7k60dRHfBlMySA7zY489ghHP45u
-X-Gm-Message-State: AOJu0YzkXgpFE1ya4w+TRtgsyJtaDYqaKHq9sFmd3nY7CH9aYS4jlHpI
-	rQepCXr68VpiZkK8vHEjratWhBucyviYngOyphhEogdQ0DS1hhXh
-X-Google-Smtp-Source: AGHT+IFOaJNRaCw0x5duAR8ySF29N2zLhsw5jMvf8ySrYnWHRx3vmy5Ah54KY0oG4A60mrkmNodEQw==
-X-Received: by 2002:a05:6a20:734b:b0:1be:caf6:66e5 with SMTP id adf61e73a8af0-1c29820d407mr2618980637.6.1720529150564;
-        Tue, 09 Jul 2024 05:45:50 -0700 (PDT)
-Received: from [127.0.0.1] ([103.156.242.195])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6acf9a3sm15241475ad.255.2024.07.09.05.45.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 05:45:49 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-Message-ID: <44535d2d-c95d-4673-b845-032669cf7abf@gmail.com>
-Date: Tue, 9 Jul 2024 20:45:38 +0800
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="f+OIxBCF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BlKeo6kJ"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 322FF1141690;
+	Tue,  9 Jul 2024 10:01:34 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 09 Jul 2024 10:01:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1720533694; x=1720620094; bh=68ypJHInm/
+	MzQxfMJr91caOG/rGannrTHNTtL/OiTEg=; b=f+OIxBCFD3c804IGAYkpzrgugr
+	/Tl71mEZ7u3Lbb8S/OCgeL9ne/J2+b3UT/n14GD0cvKULffM5rwijX5hE5tscoMp
+	43G40O5HChLgpCMCvuz2UPSwWwcGW1lKyFQ2HR0kEsjE2nhFS4Q0vTMiyp0q78AW
+	fRJH12K3N7Uhn5mmr4IwcanHFHN6nggewxcnaL8LRwuthBQ+Dj0SdRdPR9D3zFjg
+	111U9nHnTxex8VlJWQWmRiWKZjSg5HMXk2J2EszZ97jvDUxGtpfGy1foqLnhR+S4
+	VEsrBx7jUAI7CpcteQ7WtryM17FIN/iAi/v432KG+vL/3hv4cj7Xv5MM5SOQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1720533694; x=1720620094; bh=68ypJHInm/MzQxfMJr91caOG/rGa
+	nnrTHNTtL/OiTEg=; b=BlKeo6kJzlvC9fPl1miMFocE/jfLlJM8apHTLX4aNwxl
+	w7vHm3PlRG9AV/hrxliruPefmr4wn3PA27H6g2YaX+JegtpQhIunkW7by1ErrafL
+	tLCVtEqktq802P2Xk1QhpDKJV3BR02oJA61HmxPHA2FFk+UvfSgkDgZGAWKkV5CK
+	twWTrp9my5ombBFgGAjm4jrWOofNieGmxyc302nNYNA3O5c6hQ9kbQ5Zeo2KWQM0
+	wL9+giBOIxsd53x6bhASJ+3zGBUY9PLsZGrWdmy9i0a9quWYBhIcO0tHAFghVDmB
+	EjFUsOf5tCzvnjJD3PT95VhOfiqPWcg/+mEKZoVAdg==
+X-ME-Sender: <xms:vEKNZpZVtgSECd5wTVy1-ThpxBbPuksGlitXwtjVRvCQvuv3Pi18gQ>
+    <xme:vEKNZgZRxRSlRQPFIumxhMsxM_CMHddkkI9RhisxkkS3tnwlKrdXg2fsysurgBexf
+    SuLWg2eJcTEwreHhUg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgdejudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:vUKNZr87t_tJdZmnEkUTQV92OpYlZYsJqoYbxjDxKWRctlDRdhj09Q>
+    <xmx:vUKNZnp2qce5hO3oqP_o4dQG2qZwed8sqsixLpCyfoa-GsRSY5tlcg>
+    <xmx:vUKNZkrSVISJHQvsXHCvPA-7VZzUjZHxmPSBZl2YPINQVPsUTFiUZA>
+    <xmx:vUKNZtShKhaExISB_YqJFUJuyaJf7WJk6wKup4WDN6EWT3Q3mRg5rw>
+    <xmx:vkKNZpA--nufj_2MtgzfS_M5ook3qnOfjHzmqV-DrTN0olfUQh9vxM5j>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id D6F61B6008F; Tue,  9 Jul 2024 10:01:32 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] arm: defconfig: drop RT_GROUP_SCHED=y from
- bcm2855/tegra/omap2plus
-To: Stefan Wahren <wahrenst@gmx.net>, Kevin Hilman <khilman@kernel.org>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>
-Cc: linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, Lennart Poettering <lennart@poettering.net>,
- Icenowy Zheng <uwu@icenowy.me>, =?UTF-8?Q?Th=C3=A9o_Lebrun?=
- <theo.lebrun@bootlin.com>, Gregory CLEMENT <gregory.clement@bootlin.com>,
- Michael Ellerman <mpe@ellerman.id.au>,
- "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, Sven Joachim
- <svenjoac@gmx.de>, Huacai Chen <chenhuacai@kernel.org>,
- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
- Anup Patel <anup@brainfault.org>, Nicholas Piggin <npiggin@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Rich Felker <dalias@libc.org>,
- Russell King <linux@armlinux.org.uk>, Tony Lindgren <tony@atomide.com>,
- Guo Ren <guoren@kernel.org>, linux-tegra@vger.kernel.org,
- Thierry Reding <thierry.reding@gmail.com>, linux-riscv@lists.infradead.org,
- Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org,
- linux-omap@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
- linux-sh@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-mips@vger.kernel.org, loongarch@lists.linux.dev,
- Mykola Lysenko <mykolal@fb.com>, Yoshinori Sato
- <ysato@users.sourceforge.jp>, Paul Walmsley <paul.walmsley@sifive.com>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- linux-rpi-kernel@lists.infradead.org, WANG Xuerui <kernel@xen0n.name>
-References: <20240530111947.549474-8-CoelacanthusHex@gmail.com>
- <20240530111947.549474-14-CoelacanthusHex@gmail.com>
- <7hv81f78cy.fsf@baylibre.com> <6b7cfe69-4f72-490f-8e86-5343bd244a2d@gmx.net>
-Content-Language: en-GB-large
-In-Reply-To: <6b7cfe69-4f72-490f-8e86-5343bd244a2d@gmx.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-Id: <211ba53e-5cd5-4a38-867c-5eab9356b2ff@app.fastmail.com>
+In-Reply-To: <20240628210818.3627404-1-thierry.reding@gmail.com>
+References: <20240628210818.3627404-1-thierry.reding@gmail.com>
+Date: Tue, 09 Jul 2024 16:01:12 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thierry Reding" <thierry.reding@gmail.com>, arm <arm@kernel.org>,
+ soc@kernel.org
+Cc: "Jon Hunter" <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [GIT PULL 1/4] soc/tegra: Changes for v6.11-rc1
+Content-Type: text/plain
 
+On Fri, Jun 28, 2024, at 23:08, Thierry Reding wrote:
 
-On 2024-07-09 20:26, Stefan Wahren wrote:
-> Hi Celeste,
-> 
-> there is a typo in the subject line
-> 
-> s/bcm2855/bcm2835
+> ----------------------------------------------------------------
+> soc/tegra: Changes for v6.11-rc1
+>
+> This is a simple change that condenses two function calls into one in
+> two places to save some boilerplate.
+>
 
-Will be included in next version.
+Hi Thierry,
 
-> 
-> Am 09.07.24 um 01:49 schrieb Kevin Hilman:
->> Celeste Liu <coelacanthushex@gmail.com> writes:
->>
->>> Commit 673ce00c5d6c ("ARM: omap2plus_defconfig: Add support for distros
->>> with systemd") said it's because of recommendation from systemd. But
->>> systemd changed their recommendation later.[1]
->>>
->>> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
->>> needs an RT budget assigned, otherwise the processes in it will not be able to
->>> get RT at all. The problem with RT group scheduling is that it requires the
->>> budget assigned but there's no way we could assign a default budget, since the
->>> values to assign are both upper and lower time limits, are absolute, and need to
->>> be sum up to < 1 for each individal cgroup. That means we cannot really come up
->>> with values that would work by default in the general case.[2]
->>>
->>> For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
->>> can only be enabled when all RT processes are in the root cgroup. But it will
->>> lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
->>>
->>> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
->>> support it.
->>>
->>> [1]: https://github.com/systemd/systemd/commit/f4e74be1856b3ac058acbf1be321c31d5299f69f
->>> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
->>>
->>> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
->>> ---
->>>   arch/arm/configs/bcm2835_defconfig   | 1 -
->>>   arch/arm/configs/omap2plus_defconfig | 1 -
->>>   arch/arm/configs/tegra_defconfig     | 1 -
->> For omap2plus_defconfig:
->>
->> Acked-by: Kevin Hilman <khilman@baylibre.com>
->>
->>
-> For bcm2835_defconfig:
-> 
-> Tested-by: Stefan Wahren <wahrenst@gmx.net>
+I have merged all four tegra pull requests, but for some reason
+patchwork did not notice this, so there was no automated reply
+and I manually marked them as "Queued" in patchwork now.
 
+Maybe double-check that the contents I have are indeed
+what you sent me.
+
+     Arnd
