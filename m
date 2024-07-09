@@ -1,104 +1,291 @@
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D98A19755E
-	for <linux-tegra@vger.kernel.org>; Tue,  9 Jul 2024 14:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D931412C549;
+	Tue,  9 Jul 2024 17:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720533696; cv=none; b=MADPi0aFMAx6+h6Vmr8BmMkm0y440xBjrd92ZKIrj4aSDXsdmcFVrFzHLKafLxCy0keKQQaCl+9LQK5LXp9MTyW/hM7syHLH3mwkA2ee5M2Peu9WA/wJcLT+WgA7EtpVGDgQOoZCw8Yi0huQ++rJYEBIZ3ommfENJN6wMs5iT/E=
+	t=1720544481; cv=none; b=Oa75+Khw/s79+lnmvYGauuS4nqKGY+kR7XAjHMOwpXsf2rYoHZ3OyXwCn/+VnraD4L9vyMZzy/yNHXgxgHPAUyM6yysRR/QoJO2Gh1Yf1AMjpua2x2CQKR5YcwxN9RAcaQ2nZ8VCKU8x2uUL1jrqJQ0OUWhNgmrFpo3FY/korQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720533696; c=relaxed/simple;
-	bh=iqFt7rBpjKl+zcOjI0TKLOpk5Hm8EOQIZELFZKv7ohg=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=YNI+YWZqtfjO0IAlokjFihrxzre8vKSQi4BODEQFH4SzCKip8GNpLnoaw8GFnt3VZ0iBswrM/2kpuILVMGmLbYedC9Ig6iUHajE0U0gjJ/E2kWtQ3Vf9UdMW5JNkDEbJ3NgpBalgyv4bMd7acZ8oFYWT9w6nJO8iVZhLgMqBSzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=f+OIxBCF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BlKeo6kJ; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="f+OIxBCF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BlKeo6kJ"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 322FF1141690;
-	Tue,  9 Jul 2024 10:01:34 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 09 Jul 2024 10:01:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1720533694; x=1720620094; bh=68ypJHInm/
-	MzQxfMJr91caOG/rGannrTHNTtL/OiTEg=; b=f+OIxBCFD3c804IGAYkpzrgugr
-	/Tl71mEZ7u3Lbb8S/OCgeL9ne/J2+b3UT/n14GD0cvKULffM5rwijX5hE5tscoMp
-	43G40O5HChLgpCMCvuz2UPSwWwcGW1lKyFQ2HR0kEsjE2nhFS4Q0vTMiyp0q78AW
-	fRJH12K3N7Uhn5mmr4IwcanHFHN6nggewxcnaL8LRwuthBQ+Dj0SdRdPR9D3zFjg
-	111U9nHnTxex8VlJWQWmRiWKZjSg5HMXk2J2EszZ97jvDUxGtpfGy1foqLnhR+S4
-	VEsrBx7jUAI7CpcteQ7WtryM17FIN/iAi/v432KG+vL/3hv4cj7Xv5MM5SOQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720533694; x=1720620094; bh=68ypJHInm/MzQxfMJr91caOG/rGa
-	nnrTHNTtL/OiTEg=; b=BlKeo6kJzlvC9fPl1miMFocE/jfLlJM8apHTLX4aNwxl
-	w7vHm3PlRG9AV/hrxliruPefmr4wn3PA27H6g2YaX+JegtpQhIunkW7by1ErrafL
-	tLCVtEqktq802P2Xk1QhpDKJV3BR02oJA61HmxPHA2FFk+UvfSgkDgZGAWKkV5CK
-	twWTrp9my5ombBFgGAjm4jrWOofNieGmxyc302nNYNA3O5c6hQ9kbQ5Zeo2KWQM0
-	wL9+giBOIxsd53x6bhASJ+3zGBUY9PLsZGrWdmy9i0a9quWYBhIcO0tHAFghVDmB
-	EjFUsOf5tCzvnjJD3PT95VhOfiqPWcg/+mEKZoVAdg==
-X-ME-Sender: <xms:vEKNZpZVtgSECd5wTVy1-ThpxBbPuksGlitXwtjVRvCQvuv3Pi18gQ>
-    <xme:vEKNZgZRxRSlRQPFIumxhMsxM_CMHddkkI9RhisxkkS3tnwlKrdXg2fsysurgBexf
-    SuLWg2eJcTEwreHhUg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdelgdejudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:vUKNZr87t_tJdZmnEkUTQV92OpYlZYsJqoYbxjDxKWRctlDRdhj09Q>
-    <xmx:vUKNZnp2qce5hO3oqP_o4dQG2qZwed8sqsixLpCyfoa-GsRSY5tlcg>
-    <xmx:vUKNZkrSVISJHQvsXHCvPA-7VZzUjZHxmPSBZl2YPINQVPsUTFiUZA>
-    <xmx:vUKNZtShKhaExISB_YqJFUJuyaJf7WJk6wKup4WDN6EWT3Q3mRg5rw>
-    <xmx:vkKNZpA--nufj_2MtgzfS_M5ook3qnOfjHzmqV-DrTN0olfUQh9vxM5j>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id D6F61B6008F; Tue,  9 Jul 2024 10:01:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	s=arc-20240116; t=1720544481; c=relaxed/simple;
+	bh=QU81g3USJXkoyfzApTaKOhMJ3FI+JFx3B2tVHMacAxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hcrPRtp8omD8NdKWztVuhbguwpa1j+s/+2FkY0Szazoejub0Ot87wvGxm3GpQ61tirnL92xt/B/p8OpsoBOm/mOOP6QDbqF6K4AucR955LO/Mu+gMl7yE3KB8Rwyy3zofkiipw8ItDeg3yrW+lHbRciWI7OsuoqkfcDENGJfsUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11CF31063;
+	Tue,  9 Jul 2024 10:01:40 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 718563F766;
+	Tue,  9 Jul 2024 10:01:12 -0700 (PDT)
+Message-ID: <b337b93f-830b-4710-87b1-5b7fa4b7a1d2@arm.com>
+Date: Tue, 9 Jul 2024 18:01:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <211ba53e-5cd5-4a38-867c-5eab9356b2ff@app.fastmail.com>
-In-Reply-To: <20240628210818.3627404-1-thierry.reding@gmail.com>
-References: <20240628210818.3627404-1-thierry.reding@gmail.com>
-Date: Tue, 09 Jul 2024 16:01:12 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Thierry Reding" <thierry.reding@gmail.com>, arm <arm@kernel.org>,
- soc@kernel.org
-Cc: "Jon Hunter" <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL 1/4] soc/tegra: Changes for v6.11-rc1
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] iommu: Optimize IOMMU UnMap
+To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org,
+ linux-arm-kernel@lists.infradead.org, Rob Clark <robdclark@gmail.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>
+Cc: vdumpa@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com,
+ jonathanh@nvidia.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240523031935.90856-1-amhetre@nvidia.com>
+ <6b707eb4-5cf3-4b66-8152-5ba252f5df39@arm.com>
+ <2a349725-72cf-45e2-9ca2-5a8b153a6fae@nvidia.com>
+ <d854664c-ab56-46b6-81f9-9ef712c32b3a@nvidia.com>
+ <39d1635d-25b4-47ca-beb3-0baaae6252db@nvidia.com>
+ <cc69b154-ca4b-42eb-950a-9ea3c5a4e4ee@arm.com>
+ <eaa4f128-40f2-4db0-be86-84ae1b652ab7@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <eaa4f128-40f2-4db0-be86-84ae1b652ab7@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jun 28, 2024, at 23:08, Thierry Reding wrote:
+On 09/07/2024 5:39 am, Ashish Mhetre wrote:
+> 
+> On 7/3/2024 9:05 PM, Robin Murphy wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> On 2024-07-01 8:49 am, Ashish Mhetre wrote:
+>>>
+>>> On 5/31/2024 2:52 PM, Ashish Mhetre wrote:
+>>>>
+>>>> On 5/24/2024 6:09 PM, Ashish Mhetre wrote:
+>>>>>
+>>>>> On 5/23/2024 7:11 PM, Robin Murphy wrote:
+>>>>>> External email: Use caution opening links or attachments
+>>>>>>
+>>>>>>
+>>>>>> On 23/05/2024 4:19 am, Ashish Mhetre wrote:
+>>>>>>> The current __arm_lpae_unmap() function calls dma_sync() on 
+>>>>>>> individual
+>>>>>>> PTEs after clearing them. By updating the __arm_lpae_unmap() to call
+>>>>>>> dma_sync() once for all cleared PTEs, the overall performance can be
+>>>>>>> improved 25% for large buffer sizes.
+>>>>>>> Below is detailed analysis of average unmap latency(in us) with and
+>>>>>>> without this optimization obtained by running dma_map_benchmark for
+>>>>>>> different buffer sizes.
+>>>>>>>
+>>>>>>> Size  Time W/O        Time With       % Improvement
+>>>>>>>       Optimization    Optimization
+>>>>>>>       (us)            (us)
+>>>>>>>
+>>>>>>> 4KB   3.0             3.1             -3.33
+>>>>>>> 1MB   250.3           187.9           24.93
+>>>>>>
+>>>>>> This seems highly suspect - the smallest possible block size is 2MB
+>>>>>> so a
+>>>>>> 1MB unmap should not be affected by this path at all.
+>>>>>>
+>>>>> It will be unmapped at 4KB block size, right? The 'size' passed to
+>>>>> __arm_lpae_unmap will be 4KB and 'pgcount' will be 256 for 1MB
+>>>>> buffer from iommu_pgsize() unless the IOVA and phys address met
+>>>>> conditions for next bigger size i.e., 2MB.
+>>>>>>> 2MB   493.7           368.7 25.32
+>>>>>>> 4MB   974.7           723.4           25.78
+>>>>>>
+>>>>>> I'm guessing this is on Tegra with the workaround to force
+>>>>>> everything to
+>>>>>> PAGE_SIZE? In the normal case a 2MB unmap should be nominally 
+>>>>>> *faster*
+>>>>>> than 4KB, since it would also be a single PTE, but with one fewer 
+>>>>>> level
+>>>>>> of table to walk to reach it. The 25% figure is rather misleading if
+>>>>>> it's only a mitigation of an existing erratum workaround, and the
+>>>>>> actual
+>>>>>> impact on the majority of non-broken systems is unmeasured.
+>>>>>>
+>>>>> Yes, I forgot about the workaround we have and agree that without the
+>>>>> workaround, 2MB unmap will be faster without this optimization. But
+>>>>> for any size between 4KB and 2MB, this optimization would help in
+>>>>> improving the unmap latencies. To verify that, I reverted the 
+>>>>> workaround
+>>>>> and again got unmap latencies using dma_map_benchmark which are as
+>>>>> mentioned below. We can see an improvement around 20% to 25%:
+>>>>>
+>>>>> Size          Time WO Opt(us)     Time With Opt(us)       % 
+>>>>> improvement
+>>>>> 4KB          3                                  3.1 -3.33
+>>>>> 64KB        18.6                            15 19.36
+>>>>> 128KB      35.2                            27.7 21.31
+>>>>> 256KB      67.6                            52.6 22.19
+>>>>> 512KB      128.4                          97.7 23.91
+>>>>> 1MB         249.9                          188.1 24.72
+>>>>> 2MB         67.4                             67.5 -0.15
+>>>>> 4MB         121.3                          121.2 0.08
+>>>>>
+>>>>>> (As an aside, I think that workaround itself is a bit broken, 
+>>>>>> since at
+>>>>>> least on Tegra234 with Cortex-A78, PAGE_SIZE could be 16KB which
+>>>>>> MMU-500
+>>>>>> doesn't support.)
+>>>>>>
+>>>>> Yes, that's true. For 16KB PAGE_SIZE, we need to fall back to 4KB
+>>>>> pgsize_bitmap.
+>>>>>>> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+>>>>>>> ---
+>>>>>>>   drivers/iommu/io-pgtable-arm.c | 34
+>>>>>>> +++++++++++++++++++++++++---------
+>>>>>>>   1 file changed, 25 insertions(+), 9 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/iommu/io-pgtable-arm.c
+>>>>>>> b/drivers/iommu/io-pgtable-arm.c
+>>>>>>> index 3d23b924cec1..94094b711cba 100644
+>>>>>>> --- a/drivers/iommu/io-pgtable-arm.c
+>>>>>>> +++ b/drivers/iommu/io-pgtable-arm.c
+>>>>>>> @@ -256,13 +256,15 @@ static void
+>>>>>>> __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
+>>>>>>>                                  sizeof(*ptep) * num_entries,
+>>>>>>> DMA_TO_DEVICE);
+>>>>>>>   }
+>>>>>>>
+>>>>>>> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct
+>>>>>>> io_pgtable_cfg *cfg)
+>>>>>>> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct
+>>>>>>> io_pgtable_cfg *cfg, int num_entries)
+>>>>>>>   {
+>>>>>>> +     int i;
+>>>>>>>
+>>>>>>> -     *ptep = 0;
+>>>>>>> +     for (i = 0; i < num_entries; i++)
+>>>>>>> +             ptep[i] = 0;
+>>>>>>>
+>>>>>>>       if (!cfg->coherent_walk)
+>>>>>>> -             __arm_lpae_sync_pte(ptep, 1, cfg);
+>>>>>>> +             __arm_lpae_sync_pte(ptep, num_entries, cfg);
+>>>>>>>   }
+>>>>>>>
+>>>>>>>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>>>>>>> @@ -633,13 +635,25 @@ static size_t __arm_lpae_unmap(struct
+>>>>>>> arm_lpae_io_pgtable *data,
+>>>>>>>       if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
+>>>>>>>               max_entries = ARM_LPAE_PTES_PER_TABLE(data) -
+>>>>>>> unmap_idx_start;
+>>>>>>>               num_entries = min_t(int, pgcount, max_entries);
+>>>>>>> -
+>>>>>>> -             while (i < num_entries) {
+>>>>>>> -                     pte = READ_ONCE(*ptep);
+>>>>>>> +             arm_lpae_iopte *pte_flush;
+>>>>>>> +             int j = 0;
+>>>>>>> +
+>>>>>>> +             pte_flush = kvcalloc(num_entries, sizeof(*pte_flush),
+>>>>>>> GFP_ATOMIC);
+>>>>>>
+>>>>>> kvmalloc() with GFP_ATOMIC isn't valid. However, I'm not sure if 
+>>>>>> there
+>>>>>> isn't a more fundamental problem here - Rob, Boris; was it just 
+>>>>>> the map
+>>>>>> path, or would any allocation on unmap risk the GPU reclaim deadlock
+>>>>>> thing as well?
+>>>>>>
+>>>>> I am using kvmalloc() here to create an array which is used to store
+>>>>> PTEs
+>>>>> that are going to be flushed after clearing. If we don't store them 
+>>>>> then
+>>>>> those will be lost once cleared and we won't be able to flush them.
+>>>>> I tried using GFP_KERNEL instead of GFP_ATOMIC but then I am getting
+>>>>> warning from might_sleep().
+>>>>> Is there any other alternative way we can use here to store the PTEs?
+>>>>>> Thanks,
+>>>>>> Robin.
+>>>>>>
+>>>>>>> +             if (pte_flush) {
+>>>>>>> +                     for (j = 0; j < num_entries; j++) {
+>>>>>>> +                             pte_flush[j] = READ_ONCE(ptep[j]);
+>>>>>>> +                             if (WARN_ON(!pte_flush[j]))
+>>>>>>> +                                     break;
+>>>>>>> +                     }
+>>>>>>> +                     __arm_lpae_clear_pte(ptep, &iop->cfg, j);
+>>>>>>> +             }
+>>>>>>> +             while (i < (pte_flush ? j : num_entries)) {
+>>>>>>> +                     pte = pte_flush ? pte_flush[i] :
+>>>>>>> READ_ONCE(*ptep);
+>>>>>>>                       if (WARN_ON(!pte))
+>>>>>>>                               break;
+>>>>>>>
+>>>>>>> -                     __arm_lpae_clear_pte(ptep, &iop->cfg);
+>>>>>>> +                     if (!pte_flush)
+>>>>>>> +                             __arm_lpae_clear_pte(ptep, &iop->cfg,
+>>>>>>> 1);
+>>>>>>>
+>>>>>>>                       if (!iopte_leaf(pte, lvl, iop->fmt)) {
+>>>>>>>                               /* Also flush any partial walks */
+>>>>>>> @@ -649,10 +663,12 @@ static size_t __arm_lpae_unmap(struct
+>>>>>>> arm_lpae_io_pgtable *data,
+>>>>>>>                       } else if 
+>>>>>>> (!iommu_iotlb_gather_queued(gather)) {
+>>>>>>> io_pgtable_tlb_add_page(iop, gather,
+>>>>>>> iova + i * size, size);
+>>>>>>>                       }
+>>>>>>> -
+>>>>>>> -                     ptep++;
+>>>>>>> +                     if (!pte_flush)
+>>>>>>> +                             ptep++;
+>>>>>>>                       i++;
+>>>>>>>               }
+>>>>>>> +             if (pte_flush)
+>>>>>>> +                     kvfree(pte_flush);
+>>>>>>>
+>>>>>>>               return i * size;
+>>>>>>>       } else if (iopte_leaf(pte, lvl, iop->fmt)) {
+>>>> Hi all,
+>>>>
+>>>> Can you please provide feedback on this patch? Is this optimization
+>>>> worth pursuing?
+>>>>
+>>>> Thanks,
+>>>> Ashish Mhetre
+>>> Hi Robin,
+>>>
+>>> Can you please share feedback on this? Is more testing required
+>>> for this on non-Tegra platforms? Perhaps shall I send it as RFT ?
+>>> I have used 'dma_map_benchmark' available in kernel to test this.
+>>> Same can be used to test on other platforms.
+>>
+>> Apologies I was slightly mistaken before - I confess I was trying to
+>> remember how the code worked from the patch context alone, and forgot
+>> that this same path is actually used for clearing leaf entries all the
+>> way down to L3 as well as freeing tables. So yes, indeed there should be
+>> something to gain in general from combining the syncs for adjacent leaf
+>> entries. However we still have the problem that we can't put an
+>> unconditional allocation in here, so we'd have to do something like
+>> combine up to the next non-leaf entry and keep the "inline" sync for
+>> those. Or perhaps it might end up quite a neat compromise overall to do
+>> your current idea on a smaller scale, with a fixed number of PTEs that's
+>> reasonable to keep on the stack - even in the worst case, I'd expect to
+>> still get a fair boost from doing, say, 32 syncs of 2 cachelines each
+>> vs. 512 that touch each line multiple times.
+>>
+>> Thanks,
+>> Robin.
+> 
+> Thanks for the feedback Robin. I am thinking of going with "combining sync
+> up to next non-leaf entry" approach. At this point there is a very less 
+> chance
+> of encountering a non-leaf entry as we are entering this part of code after
+> matching size with BLOCK_SIZE.
 
-> ----------------------------------------------------------------
-> soc/tegra: Changes for v6.11-rc1
->
-> This is a simple change that condenses two function calls into one in
-> two places to save some boilerplate.
->
+Good point, that would only happen if a caller, say, maps 2MB + 1MB + 
+1MB then does a combined unmap of 4MB, which *could* technically happen 
+even in the DMA API, via one of the iommu_map_sg() paths, but in 
+practice I'd agree it's unlikely enough to not be worth worrying about 
+optimising for. Thus we could potentially even get away with doing this 
+more like __arm_lpae_map(), i.e. just find and take out any non-leaf 
+entries first, then blat the full range to take care of any remaining 
+leaves.
 
-Hi Thierry,
+> Shall I send a new version with this update?
 
-I have merged all four tegra pull requests, but for some reason
-patchwork did not notice this, so there was no automated reply
-and I manually marked them as "Queued" in patchwork now.
+Sure, if you're happy to have a play around to see what works out 
+cleanest, I'd certainly be interested to see the result (no rush on my 
+behalf though, I'm about to take a couple of weeks off so won't be 
+looking at much until rc1 now anyway.)
 
-Maybe double-check that the contents I have are indeed
-what you sent me.
-
-     Arnd
+Cheers,
+Robin.
