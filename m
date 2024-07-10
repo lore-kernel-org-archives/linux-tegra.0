@@ -1,121 +1,117 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CA9192463
-	for <linux-tegra@vger.kernel.org>; Wed, 10 Jul 2024 13:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFC0193066
+	for <linux-tegra@vger.kernel.org>; Wed, 10 Jul 2024 13:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720616402; cv=none; b=C5XkKcDXLjFfs9xaTTzdq7TZhAXMmVdmx93hUtFYDzHp3Iydqs6DqwWQ/fi3heN5TkD0dML0hdeFXwzk81t62j6mmYyZnKi6NkyoNbfYmP0tMv4MKy7pIfTnTsWGDQp65TVB3yri8oEem8YXAHb3GbcLqFiiHtvQQknDG4nVfnE=
+	t=1720619534; cv=none; b=hyXkH7KWCTJQvRmxngvxok0w4pmizU5t75DHGuic1sRbbI4WzMd/IyTVDOgglwlrQi/3YLfrd3AmtAbLZOn8VUd7rcsq6Nh7nn47Z9OiqVfMdLEOEEQI7Henn9klmJnEkkKdjGxUelCoaJ7qS6WAkfdLxMv66PDbit2cm8NRv7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720616402; c=relaxed/simple;
-	bh=+q8K+JhEmrQnBJLkJsy7lFA+cisrhXhsBdLSScjyYmY=;
+	s=arc-20240116; t=1720619534; c=relaxed/simple;
+	bh=3WiWOBn7pHdmhx9iPoez08ScqRj7WvY9UsQuBoxjbvQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MjjPwgkWtx7qJix11JBlV4SqWwF30koZVl0bimoLrpcagHDN6Uj7cpHSImwPjCyfP9aDniPXrtk+ubacN2i1UESBs4kfhbRE8QC36d+v00wNHNhu6MR9yHND1v0BV6FenqmN7x7URTjGT+jLDVtp4c/WqSoJJHq2V428eY7k8Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=H/pXqN6N; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+	 To:Cc:Content-Type; b=igAN99tJxAaOTVZk5dCorRnqMyvQgIcf07SGf9Gezs8+lK5MILQReXlRO1ZPFGmNAenlSB6xsIeIOSfdJDHc5L7CuREKzHWTr2zz97q3i71JVuOUKrTXjdP4B7lGp9jiL7FLUeh7YLzBjm3Q75lQujTDdmscLiUj/qNPQL8q6xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I/YRcBEf; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="H/pXqN6N"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso61556931fa.3
-        for <linux-tegra@vger.kernel.org>; Wed, 10 Jul 2024 06:00:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I/YRcBEf"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfef5980a69so6665668276.3
+        for <linux-tegra@vger.kernel.org>; Wed, 10 Jul 2024 06:52:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1720616398; x=1721221198; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VGdJpvqIEQU8RX9NGwZGOHnsVHJRF022GnfIot2nots=;
-        b=H/pXqN6Ni5GIa/0lwuWvURtitRPQTpC6tgkWVPIUVd7seDFf1KkPsy6AsiTKhrlffQ
-         sqqne0JaKEDdQLicFH4fhbh5ZhQ54TzWG3xyIZ5oOc2SpTo5r582kO7aF8Ntq6VvHBsC
-         WR5HY8SGW04btEjfM276HTqngrI3yWBkSBe8EHN8ccKUUfHp9q9wycHzfOrVS3Bq8h9e
-         Hnk6jjtwnSDZt6xN7B3i4lkEz6b8/lRyKf83yRSSBW+xE6BQInJB+pTFgiZDlltFNJrR
-         ltOO8+FvBSooMQNIQDnz81QRj9tkvmsWaiJccrnVmiF6eCo0/nhyiYFOGvoFbk7JTyzd
-         zmwg==
+        d=linaro.org; s=google; t=1720619532; x=1721224332; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=s6ihtFgMXol2238V4wCVG6CHvKqmNcnW+Q3HHUXDtbg=;
+        b=I/YRcBEff5PrvIhr8gqO5kZjyjr1Cb4kNaAidhFvpiOXYlphQF2XBfcEnxEeEo2a2a
+         fVPYFO9VaKoanXiEB8wFOSRK8lzhUFSXn1h/08HFQEULyVj7CVH2ZQfJbuT4RJ4kNleX
+         Wuf6pV2vbCBd+OQFoVtY4TrCQ0e7q3l8+Bk1x9UA4KxuyOcRAsnO4h9KFiXrADD8s6Fl
+         izhrQRn3XhMhCMscVDvootI8LWke5iGTYCOI543vCh9OTV+E0IbDS/Mcc0+zyb9F0xG7
+         Rr7MkHzUiTr724g9b4O+tGn97C9QdqSitWoiV3TNVUNE5bBSO1vOkEel6BqrahftsjC6
+         NquA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720616398; x=1721221198;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VGdJpvqIEQU8RX9NGwZGOHnsVHJRF022GnfIot2nots=;
-        b=k8+k778jWRpjVTyvG4XiXwLXpEgbNKWTOCMVGDJB2K4jQS6YvzJpGx+YxWm2K72gcq
-         0dyzarD4P0WaLUjj7KlRWY+wd/+Iz2ckAKKRi/xSCtnfOK6QwEUleN6BxLKYASIZILuJ
-         7cDR5G4ghV4elQO5TAVxLMG8lH3/5/Muvt/V/ozTAL0zDfVQdVExHVNUNqSUzwb/vjLa
-         QaaQXgaVq9imZndG+aVT+xXjFQ3OrymFjB2GlCcJIOITp+SusCNtFrwtH/Rm/0gY3odB
-         3j+deVQg/4xu83TJrdIBwGf0WdxRzOOue5L062HUM5rbUEqO4lgPKllYO5mnC+eFzTkG
-         qlxg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKEzQQyOC9/Xbmm3Ylru7UHckmzMJNHYUFYc7EosvjRookz/LkxCDL2X+iJCKCeIDj5aBp9fEMDugRun8vUS4ks5Wi+RyBHfOTGVs=
-X-Gm-Message-State: AOJu0Yw8jg4VPIrbqFNFG7HW4dcHXBENeKoPAHj+XaegCxpOBMdJ3B0i
-	1+0UD3hypX5dLSGBR8mnH8u47NDPwDU76oRvnfTm9gbdMr04n+Q/5FuXmklAbXa8AaViMaYBNZF
-	xxG2+1RGDGxnsvKFzzmp7ewFr5yzWKWfOY72imQ==
-X-Google-Smtp-Source: AGHT+IH/j0tB3q6Oob0h+dYBea8dzUqqOODjZONtdFvf3j/P6dPoyQJkhUenc2mYLdwUqlwO12I2J5bpi1srvsWqmLs=
-X-Received: by 2002:a2e:b046:0:b0:2ee:83f7:8b32 with SMTP id
- 38308e7fff4ca-2eeb30dc45amr34980521fa.21.1720616398404; Wed, 10 Jul 2024
- 05:59:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720619532; x=1721224332;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s6ihtFgMXol2238V4wCVG6CHvKqmNcnW+Q3HHUXDtbg=;
+        b=EJhFAzgFi8+fAxkpue+/XIsVxbypnjQG7JuLGOvOXIZeWSuLfjClnQVe3efYGRO7xm
+         L4zFC9tn9sdziBZtMwQp4cTSHLrApIYrrrFrKoJqPfqwsYIZTttytxRLQqj4OHoQgpqu
+         u8lODfxDw8/i5J97wSXQtUd9nVLq3DiLmdUVqSUVsTNZRlxm8BOcl/BzYPuVob4RGopy
+         cazhTjxY2Q+DfDhy6RA+2svz1TEb0+LimtguWIYW16Y4cH+H5KoS8k+CRoWLLWx4PIJ6
+         k+CLretyqInRItYBCtEQrLJVR5JiHkDSJTTztcDD0So5Tnu5QK34BXheUYOkYBM0ADGq
+         zIHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvz0tZtH8SwVt6DeyOIOXmYsNaEDA8r3MTEmWxwQhz6n2qk6N+HoOSrj7UpV+P20caOgMuBbIKm5PXFtJSttnQqvDo54fjP8oDuDE=
+X-Gm-Message-State: AOJu0Yw3hGaNg8Yel66tXcjXlE1UQz7EFgySwXp9yCPr65vwUs3PvHOr
+	LaEJRUG5+W1WnnBRpBjl6OK3qExK3q7mca9vK610XmIXT/ErWaZLxbS8ddxnwQqts01wsWqPujP
+	qbvYZHrL5kMafofSjmqjLRj58XeBJci6kbNQd3A==
+X-Google-Smtp-Source: AGHT+IEgGhImB1CZ9V2zyPwOjbF7xu90LRXOFMyWlUsr33fZ9RPD7FcjB6nD790/e/8piCgrefZcj52pseUw7tQZ7qs=
+X-Received: by 2002:a25:bc8a:0:b0:e03:4ddd:49f0 with SMTP id
+ 3f1490d57ef6-e041b22a2c7mr6248368276.57.1720619532289; Wed, 10 Jul 2024
+ 06:52:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
- <20240701-b4-v6-10-topic-usbc-tcpci-v1-5-3fd5f4a193cc@pengutronix.de> <27cf3056-5c7b-4759-b03a-1fa9b785611e@app.fastmail.com>
-In-Reply-To: <27cf3056-5c7b-4759-b03a-1fa9b785611e@app.fastmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 10 Jul 2024 14:59:47 +0200
-Message-ID: <CAMRc=McvRLeCTTXgC_OD5z5OAxQ0pZ46dTKP8XO+T-LkXKgRfQ@mail.gmail.com>
-Subject: Re: [PATCH 5/9] ARM: defconfig: convert to MTD_EEPROM_AT24
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Marco Felsch <m.felsch@pengutronix.de>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@armlinux.org.uk>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Dinh Nguyen <dinguyen@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jon Hunter <jonathanh@nvidia.com>, =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	imx@lists.linux.dev, Linux-OMAP <linux-omap@vger.kernel.org>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+References: <20240618155013.323322-1-ulf.hansson@linaro.org>
+ <20240625105425.pkociumt4biv4j36@vireshk-i7> <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
+ <20240701114748.hodf6pngk7opx373@vireshk-i7> <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
+In-Reply-To: <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 10 Jul 2024 15:51:35 +0200
+Message-ID: <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 2:49=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
-:
+On Tue, 2 Jul 2024 at 07:15, Viresh Kumar <viresh.kumar@linaro.org> wrote:
 >
-> On Mon, Jul 1, 2024, at 15:53, Marco Felsch wrote:
-> > The EEPROM_AT24 Kconfig symbol is marked as deprecated. Make use of the
-> > new Kconfig symbol to select the I2C EEPROM driver support.
+> On 01-07-24, 17:17, Viresh Kumar wrote:
+> > What about this patch instead ?
 > >
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> >  arch/arm/configs/aspeed_g4_defconfig   | 2 +-
-> >  arch/arm/configs/aspeed_g5_defconfig   | 2 +-
-> >  arch/arm/configs/at91_dt_defconfig     | 2 +-
-> >  arch/arm/configs/axm55xx_defconfig     | 2 +-
-> >  arch/arm/configs/davinci_all_defconfig | 2 +-
-> >  arch/arm/configs/imx_v4_v5_defconfig   | 2 +-
-> >  arch/arm/configs/imx_v6_v7_defconfig   | 2 +-
-> >  arch/arm/configs/ixp4xx_defconfig      | 2 +-
-> >  arch/arm/configs/keystone_defconfig    | 2 +-
-> >  arch/arm/configs/lpc18xx_defconfig     | 2 +-
+> > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> > index 5f4598246a87..2086292f8355 100644
+> > --- a/drivers/opp/core.c
+> > +++ b/drivers/opp/core.c
+> > @@ -1091,7 +1091,8 @@ static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
+> >               if (devs[index]) {
+> >                       required_opp = opp ? opp->required_opps[index] : NULL;
+> >
+> > -                     ret = dev_pm_opp_set_opp(devs[index], required_opp);
+> > +                     /* Set required OPPs forcefully */
+> > +                     ret = dev_pm_opp_set_opp_forced(devs[index], required_opp, true);
 >
-> Applied to soc/defconfig, thanks
+> Maybe better to do just this instead:
 >
->    Arnd
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 5f4598246a87..9484acbeaa66 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1386,7 +1386,12 @@ int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
+>                 return PTR_ERR(opp_table);
+>         }
+>
+> -       ret = _set_opp(dev, opp_table, opp, NULL, false);
+> +       /*
+> +        * For a genpd's OPP table, we always want to set the OPP (and
+> +        * performance level) and let the genpd core take care of aggregating
+> +        * the votes. Set `forced` to true for a genpd here.
+> +        */
+> +       ret = _set_opp(dev, opp_table, opp, NULL, opp_table->is_genpd);
+>         dev_pm_opp_put_opp_table(opp_table);
 
-No! Why? This is still being discussed and it's not clear it will even
-make it upstream.
+I think this should work, but in this case we seem to need a similar
+thing for dev_pm_opp_set_rate().
 
-Bart
+Another option is to let _set_opp() check "opp_table->is_genpd" and
+enforce the opp to be set in that case. Whatever you prefer, I can
+re-spin the patch.
+
+Kind regards
+Uffe
