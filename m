@@ -1,117 +1,157 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow2-smtp.messagingengine.com (flow2-smtp.messagingengine.com [103.168.172.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFC0193066
-	for <linux-tegra@vger.kernel.org>; Wed, 10 Jul 2024 13:52:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE952193453;
+	Wed, 10 Jul 2024 14:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720619534; cv=none; b=hyXkH7KWCTJQvRmxngvxok0w4pmizU5t75DHGuic1sRbbI4WzMd/IyTVDOgglwlrQi/3YLfrd3AmtAbLZOn8VUd7rcsq6Nh7nn47Z9OiqVfMdLEOEEQI7Henn9klmJnEkkKdjGxUelCoaJ7qS6WAkfdLxMv66PDbit2cm8NRv7E=
+	t=1720620391; cv=none; b=oVkrnHfATG7StPK/uYc4DDM7Bo3V3RmE1CUaUHX3EGMTgJcwKaxOATNokq71n12HkolHaId7ZA3LVCc6f7oGbtdL0P69SB1GmtWhsx6vtfNPbrTXLZQiQF9RKRzDVhGTH2GHa8wUeHa8d7IyfNyv8ae2nGNq6XK1nV7hYUfZwoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720619534; c=relaxed/simple;
-	bh=3WiWOBn7pHdmhx9iPoez08ScqRj7WvY9UsQuBoxjbvQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=igAN99tJxAaOTVZk5dCorRnqMyvQgIcf07SGf9Gezs8+lK5MILQReXlRO1ZPFGmNAenlSB6xsIeIOSfdJDHc5L7CuREKzHWTr2zz97q3i71JVuOUKrTXjdP4B7lGp9jiL7FLUeh7YLzBjm3Q75lQujTDdmscLiUj/qNPQL8q6xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I/YRcBEf; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720620391; c=relaxed/simple;
+	bh=MLXBuqKlLfNGgq9/cmxPtB7IYgDifqCjYyvR42wX/UQ=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=oFYEf/GhLqBkYrQTCfUC4wwYyYJobGKSgdk8dBO7Q0s9Z/n8S4rlnms+Qpbo1fb3Z50GhgbZP19+SLpDRm0OEA2BKJ4TyD2xKe9ydMn6DIYlkaeZVJO8ea8FsdTABpU39ES5v7oDCYEoHG6IrFNqnmZvz8WyyO+bX/Th/hrhESQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=b1QSu0yR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=l/UJxZbD; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I/YRcBEf"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dfef5980a69so6665668276.3
-        for <linux-tegra@vger.kernel.org>; Wed, 10 Jul 2024 06:52:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720619532; x=1721224332; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=s6ihtFgMXol2238V4wCVG6CHvKqmNcnW+Q3HHUXDtbg=;
-        b=I/YRcBEff5PrvIhr8gqO5kZjyjr1Cb4kNaAidhFvpiOXYlphQF2XBfcEnxEeEo2a2a
-         fVPYFO9VaKoanXiEB8wFOSRK8lzhUFSXn1h/08HFQEULyVj7CVH2ZQfJbuT4RJ4kNleX
-         Wuf6pV2vbCBd+OQFoVtY4TrCQ0e7q3l8+Bk1x9UA4KxuyOcRAsnO4h9KFiXrADD8s6Fl
-         izhrQRn3XhMhCMscVDvootI8LWke5iGTYCOI543vCh9OTV+E0IbDS/Mcc0+zyb9F0xG7
-         Rr7MkHzUiTr724g9b4O+tGn97C9QdqSitWoiV3TNVUNE5bBSO1vOkEel6BqrahftsjC6
-         NquA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720619532; x=1721224332;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s6ihtFgMXol2238V4wCVG6CHvKqmNcnW+Q3HHUXDtbg=;
-        b=EJhFAzgFi8+fAxkpue+/XIsVxbypnjQG7JuLGOvOXIZeWSuLfjClnQVe3efYGRO7xm
-         L4zFC9tn9sdziBZtMwQp4cTSHLrApIYrrrFrKoJqPfqwsYIZTttytxRLQqj4OHoQgpqu
-         u8lODfxDw8/i5J97wSXQtUd9nVLq3DiLmdUVqSUVsTNZRlxm8BOcl/BzYPuVob4RGopy
-         cazhTjxY2Q+DfDhy6RA+2svz1TEb0+LimtguWIYW16Y4cH+H5KoS8k+CRoWLLWx4PIJ6
-         k+CLretyqInRItYBCtEQrLJVR5JiHkDSJTTztcDD0So5Tnu5QK34BXheUYOkYBM0ADGq
-         zIHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvz0tZtH8SwVt6DeyOIOXmYsNaEDA8r3MTEmWxwQhz6n2qk6N+HoOSrj7UpV+P20caOgMuBbIKm5PXFtJSttnQqvDo54fjP8oDuDE=
-X-Gm-Message-State: AOJu0Yw3hGaNg8Yel66tXcjXlE1UQz7EFgySwXp9yCPr65vwUs3PvHOr
-	LaEJRUG5+W1WnnBRpBjl6OK3qExK3q7mca9vK610XmIXT/ErWaZLxbS8ddxnwQqts01wsWqPujP
-	qbvYZHrL5kMafofSjmqjLRj58XeBJci6kbNQd3A==
-X-Google-Smtp-Source: AGHT+IEgGhImB1CZ9V2zyPwOjbF7xu90LRXOFMyWlUsr33fZ9RPD7FcjB6nD790/e/8piCgrefZcj52pseUw7tQZ7qs=
-X-Received: by 2002:a25:bc8a:0:b0:e03:4ddd:49f0 with SMTP id
- 3f1490d57ef6-e041b22a2c7mr6248368276.57.1720619532289; Wed, 10 Jul 2024
- 06:52:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="b1QSu0yR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l/UJxZbD"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailflow.nyi.internal (Postfix) with ESMTP id B9B1820041E;
+	Wed, 10 Jul 2024 10:06:28 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Wed, 10 Jul 2024 10:06:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1720620388;
+	 x=1720627588; bh=FPzIeyUoxgy/zsvmREOhCT66sbHOjXoV3rwrfvjo/oM=; b=
+	b1QSu0yRwxmUk4T9e11CNmCLrSiiiDvCTM+p6gNGgF4NyrNSLVIOHkUZBUOxpgxl
+	d9vXjGnvw1RIRFEnGbndv/NcsmA2GLHmGzS5rJQPxTUIVRHIc5YsWzN3YlDlG8/w
+	vwY2PFDGlan7ERoJa/sElHU/md+4c0p5HPfL6l9s8ZmMuKw48t/vLeQtyNT7xGQA
+	08JzF7ADIoyXkY9zBh7hy27GqOe5iBkl5T6KQBAg4I7sSnV3Bx0wxfh4IffSCDrD
+	EIVAL8hHH2Si9T8S7nGauN4LncCjezn9OQ+3j17vNfQLsEMR2BpYb0oenTLEqeam
+	BkMUq/IWBWnOKLgWug2rTQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720620388; x=
+	1720627588; bh=FPzIeyUoxgy/zsvmREOhCT66sbHOjXoV3rwrfvjo/oM=; b=l
+	/UJxZbDwRbte/g2yuSkS7yviFUoG8LxQcRmLaiOWFtKAn6XFD9z5i8BhgFiwj0y8
+	29JjOMIc2w4FtrW9IR6h2qT2CtX2uPI+r/FHtrpLoTkSoPbJe3J1cehcgwZANS3t
+	XYMJKq7TPb5u/bjrOem4WITUkAc4LfU2b5bDaz8AwaT3QByZ35D8ZMjHSS1yi35y
+	36/dyXCkN+nwX8HvtBeT3ddkLpikQS8EZ4XXcTy6LBfF5l17hW9zP7dZMzOmMwhD
+	XVJREG2So1zHmWfmY5D9lvTGvCqcKkIECCEfL0l0Epvm0v8FzfUmUtTmU/hw+Ez6
+	qJJNz78tvzr+wlzfmgwog==
+X-ME-Sender: <xms:YZWOZnV51EQeUhqFAlZ7tF76IbGPDn0AZ7wRftLLqANLQ8M0Tit2-g>
+    <xme:YZWOZvnwaOkIlW8JDpVJ4uVPdX-o79KWjlklZpPYf1atbq30ICIdwRgOUhrJ5p-D2
+    Q0py9B8mmaXogLqMVM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfedvgdduvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
+    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
+    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:YZWOZjaoGrXUw2M4_1y1ixokbMZsjZ3j3fcIkHhdLxC9KxWjE7s4BQ>
+    <xmx:YZWOZiWPJTo6_33m1wPp7E5VWb0uw6xuIw-rKVLCCKI-iKqUbc-UEw>
+    <xmx:YZWOZhn1-MjLOZ3xu0SsbEEBMly36iOA_myUgrsipjQv0pKFdaMeCQ>
+    <xmx:YZWOZvdtJ2DdefwHMUz8i_IkZzQem-fWQbBtb87UMDnBEk3or4GmNA>
+    <xmx:ZJWOZilNKpqeyxqgV0ZboZyCiXV66jXIKgbBPX_yaK6wioTafD0Okj0c>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 213BBB6008F; Wed, 10 Jul 2024 10:06:25 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618155013.323322-1-ulf.hansson@linaro.org>
- <20240625105425.pkociumt4biv4j36@vireshk-i7> <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
- <20240701114748.hodf6pngk7opx373@vireshk-i7> <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
-In-Reply-To: <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 10 Jul 2024 15:51:35 +0200
-Message-ID: <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-Id: <64662665-929e-4d95-a9ac-c8f66bd83168@app.fastmail.com>
+In-Reply-To: 
+ <CAMRc=McvRLeCTTXgC_OD5z5OAxQ0pZ46dTKP8XO+T-LkXKgRfQ@mail.gmail.com>
+References: 
+ <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
+ <20240701-b4-v6-10-topic-usbc-tcpci-v1-5-3fd5f4a193cc@pengutronix.de>
+ <27cf3056-5c7b-4759-b03a-1fa9b785611e@app.fastmail.com>
+ <CAMRc=McvRLeCTTXgC_OD5z5OAxQ0pZ46dTKP8XO+T-LkXKgRfQ@mail.gmail.com>
+Date: Wed, 10 Jul 2024 16:06:03 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Bartosz Golaszewski" <brgl@bgdev.pl>
+Cc: "Andrew Lunn" <andrew@lunn.ch>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Vignesh Raghavendra" <vigneshr@ti.com>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>, imx@lists.linux.dev,
+ "Tony Lindgren" <tony@atomide.com>,
+ "Marco Felsch" <m.felsch@pengutronix.de>,
+ "Thierry Reding" <thierry.reding@gmail.com>,
+ linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org,
+ "Miquel Raynal" <miquel.raynal@bootlin.com>,
+ "WANG Xuerui" <kernel@xen0n.name>, "Fabio Estevam" <festevam@gmail.com>,
+ linux-aspeed@lists.ozlabs.org, "Richard Weinberger" <richard@nod.at>,
+ "Gregory Clement" <gregory.clement@bootlin.com>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "Magnus Damm" <magnus.damm@gmail.com>,
+ "Russell King" <linux@armlinux.org.uk>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Jon Hunter" <jonathanh@nvidia.com>, "Joel Stanley" <joel@jms.id.au>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ "Andrew Jeffery" <andrew@codeconstruct.com.au>,
+ "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
+ "Sascha Hauer" <s.hauer@pengutronix.de>,
+ =?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+ "Nicholas Piggin" <npiggin@gmail.com>,
+ "Vladimir Zapolskiy" <vz@mleia.com>, loongarch@lists.linux.dev,
+ linux-tegra@vger.kernel.org, Linux-OMAP <linux-omap@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ linux-mips@vger.kernel.org,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ linuxppc-dev@lists.ozlabs.org,
+ "Claudiu Beznea" <claudiu.beznea@tuxon.dev>,
+ linux-kernel@vger.kernel.org,
+ Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+ "Dinh Nguyen" <dinguyen@kernel.org>,
+ "Pengutronix Kernel Team" <kernel@pengutronix.de>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Shawn Guo" <shawnguo@kernel.org>, openbmc@lists.ozlabs.org
+Subject: Re: [PATCH 5/9] ARM: defconfig: convert to MTD_EEPROM_AT24
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2 Jul 2024 at 07:15, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+On Wed, Jul 10, 2024, at 14:59, Bartosz Golaszewski wrote:
+> On Wed, Jul 10, 2024 at 2:49=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
+wrote:
+>>
+>> On Mon, Jul 1, 2024, at 15:53, Marco Felsch wrote:
+>> > The EEPROM_AT24 Kconfig symbol is marked as deprecated. Make use of=
+ the
+>> > new Kconfig symbol to select the I2C EEPROM driver support.
+>> >
+>> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+>> > ---
+>> >  arch/arm/configs/aspeed_g4_defconfig   | 2 +-
+>> >  arch/arm/configs/aspeed_g5_defconfig   | 2 +-
+>> >  arch/arm/configs/at91_dt_defconfig     | 2 +-
+>> >  arch/arm/configs/axm55xx_defconfig     | 2 +-
+>> >  arch/arm/configs/davinci_all_defconfig | 2 +-
+>> >  arch/arm/configs/imx_v4_v5_defconfig   | 2 +-
+>> >  arch/arm/configs/imx_v6_v7_defconfig   | 2 +-
+>> >  arch/arm/configs/ixp4xx_defconfig      | 2 +-
+>> >  arch/arm/configs/keystone_defconfig    | 2 +-
+>> >  arch/arm/configs/lpc18xx_defconfig     | 2 +-
+>>
+>> Applied to soc/defconfig, thanks
 >
-> On 01-07-24, 17:17, Viresh Kumar wrote:
-> > What about this patch instead ?
-> >
-> > diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> > index 5f4598246a87..2086292f8355 100644
-> > --- a/drivers/opp/core.c
-> > +++ b/drivers/opp/core.c
-> > @@ -1091,7 +1091,8 @@ static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
-> >               if (devs[index]) {
-> >                       required_opp = opp ? opp->required_opps[index] : NULL;
-> >
-> > -                     ret = dev_pm_opp_set_opp(devs[index], required_opp);
-> > +                     /* Set required OPPs forcefully */
-> > +                     ret = dev_pm_opp_set_opp_forced(devs[index], required_opp, true);
->
-> Maybe better to do just this instead:
->
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index 5f4598246a87..9484acbeaa66 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -1386,7 +1386,12 @@ int dev_pm_opp_set_opp(struct device *dev, struct dev_pm_opp *opp)
->                 return PTR_ERR(opp_table);
->         }
->
-> -       ret = _set_opp(dev, opp_table, opp, NULL, false);
-> +       /*
-> +        * For a genpd's OPP table, we always want to set the OPP (and
-> +        * performance level) and let the genpd core take care of aggregating
-> +        * the votes. Set `forced` to true for a genpd here.
-> +        */
-> +       ret = _set_opp(dev, opp_table, opp, NULL, opp_table->is_genpd);
->         dev_pm_opp_put_opp_table(opp_table);
+> No! Why? This is still being discussed and it's not clear it will even
+> make it upstream.
 
-I think this should work, but in this case we seem to need a similar
-thing for dev_pm_opp_set_rate().
+Ok, dropped again, thanks for catching this.
 
-Another option is to let _set_opp() check "opp_table->is_genpd" and
-enforce the opp to be set in that case. Whatever you prefer, I can
-re-spin the patch.
-
-Kind regards
-Uffe
+     Arnd
