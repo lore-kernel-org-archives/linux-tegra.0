@@ -1,122 +1,243 @@
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2050.outbound.protection.outlook.com [40.107.92.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5A91CAA4;
-	Wed, 17 Jul 2024 08:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721204405; cv=none; b=KT0BigP3rZ8uuZ4gx/LQ3UeF+dasWLObD+t33igVRaH7gdUlu7wq0x0Aw+PFyVhRIdvUVdr9NcL7GPhoMe4mwnQiyc8ebwhgNKRXdqVUaIzhMgYWfl1QjMa47je0ubAEZLIDpMXY2u/fkX4IpcuAIMePQ6UsyTk2wJxxnMQhNwo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721204405; c=relaxed/simple;
-	bh=2CLtcxjWryy+ZrxMy3V6QLAyq9Tcxt0Pcwt6s+Wmc1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kBcSA844G4wn2Pa3dZeboTJKFdsOBmK0hfbggFabnGmDfv89VkY9rOQdLlnKedbdKJwmRiaWksLg5lHzgAsoAnYRATRpIOlFqjm1YtxUbAfnC+mILlhQMBoA53kGc2502CjVx7H/nn4mu0h25tSgWkB0PkLied8Cj5mD0LQWF94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Q8RMbd3X; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BF63D3BF;
+	Wed, 17 Jul 2024 10:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721210811; cv=fail; b=up0+rfs/IFN96lkPZfABy9GMyJuaH9DYSbosVUkmaM1edZW10+fn15Vsj3HVCyIdTPu1+XhcoW0RoUKXtjHzKij/8P1py34NrOvJW9/YNbuydBvWhNI8DMnQM4JY8xzZikAY47jvwQn06EjU1ZeSkY64n7LWVKIYKh5lGp27etM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721210811; c=relaxed/simple;
+	bh=/EtIBweb8KgKn0AaX7UnCmcQYkf0sIs52CQZZ5WA3lA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XeqSlCaGlzQjzqt/8raIRB6rA8XGv8f0g/HyH8NbEzMQKIA/OrJrS6gCrWiq2k1vID+EV1b1QXBYhNy7PcgpY3ywqCdC2YB4Nu0L0WMyKwvCa65rwMADowNmC63OM136NnZ31i0I6i63qVZAkbBY2xXQvzNtzX2Urr00o2v6iZk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uS4/E/b9; arc=fail smtp.client-ip=40.107.92.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Q8RMbd3X"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 255A8FF803;
-	Wed, 17 Jul 2024 08:19:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1721204394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vYy4jlSppC2pcc6cg+3nF/8GvPZv6nmewlb2L7o9Nw8=;
-	b=Q8RMbd3XCm3mkOoSML4rikXKiJwOmxmdsX2NkXlZwRplYxuKqVu6DdyLJ7G/4YQS4TR3e0
-	tQ9HYyVU0QaJ7mJKdjZ58+NY03/Y4pQSR1nheyy9/gpjRgXyPcN/SYNbnfEvcXYx78cKK1
-	DspBdEnmtUUE2Vh7fB3axwb52s022qgb/fQK8B7JQxuL+DVdX8knHLZC7Oxu4B+r0HSgWa
-	t6AmHSpNSofRHkmWqrwexOh4wFUvNGOiGe2R2Gz1nk0z8FDgM9iuuAszfZbHO/r1L/BknS
-	0yhBDc0k6PoqJGn8/jBTZsc9id1S9XZ4jdCo9jE7HgZr9sw+Ct/c9wyvI/5QfA==
-Date: Wed, 17 Jul 2024 10:19:48 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Maxime Ripard <mripard@kernel.org>, Pratyush Yadav
- <pratyush@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Richard
- Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Russell King <linux@armlinux.org.uk>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery
- <andrew@codeconstruct.com.au>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
- <claudiu.beznea@tuxon.dev>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Vladimir Zapolskiy <vz@mleia.com>,
- Andrew Lunn <andrew@lunn.ch>, Gregory Clement
- <gregory.clement@bootlin.com>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Tony Lindgren <tony@atomide.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Dinh Nguyen <dinguyen@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>, Michael
- Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao"
- <naveen.n.rao@linux.ibm.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Huacai Chen <chenhuacai@kernel.org>, WANG
- Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- imx@lists.linux.dev, linux-omap@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
- openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
- linux-mips@vger.kernel.org, loongarch@lists.linux.dev
-Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
-Message-ID: <20240717101948.2e99f472@xps-13>
-In-Reply-To: <20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
-References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
-	<20240701-b4-v6-10-topic-usbc-tcpci-v1-4-3fd5f4a193cc@pengutronix.de>
-	<07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
-	<mafs0ikxnykpr.fsf@kernel.org>
-	<20240702-congenial-vigilant-boar-aeae44@houat>
-	<mafs0ed8byj5z.fsf@kernel.org>
-	<20240702-mighty-brilliant-eel-b0d9fa@houat>
-	<20240708084440.70186564@xps-13>
-	<20240709092214.omr7ccphdzdk7z7j@pengutronix.de>
-	<20240709114302.3c604ef3@xps-13>
-	<20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uS4/E/b9"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FKUU5xB5XPfq19hiwD/YTNDscU96SpnWcYsE5++n2TLEdEtETOkxzPnOngIFc2Eshvm6w8hJ+c3/H//WyDwLbxo2DjxvMzYJVXwYTNuK89/YxR8bPKL44z2d2fyvxAF9erCpU+feeY6qXd9VJ2unwJVl5q+1wzmj8bqG/IU7WjN7SRfKixfpl2218Ku0wQTsKAGjACGipJqRDrylABPIm46IXJAVlxVYTwTJDsvWsGFJ574NfuSRX91s9Os0KyGR4wyPhwqzdDckPFZwaScWW5+nRVSmAgOSc2U0IfVekEfbjTaBXgl6wf4hS2B0C21Qc/wgxTjxi3B9hvHyk7Mp1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vDjPZCWRIbSgtP5xppt2KGALTvzFItgIlDVqzqfEXgo=;
+ b=SkjFJOljUmmx4ffU1sgRyGbw1VeKgIMZfW74s93vAqMPg0MXfok83fAj2OCF/N6subWrqAeAPo9gSTJJhf0u9iwO/gqLYk7smyyjQOkhlrHcb4a9UIoQ+6rZdA2r4hEPLMhO8HtuPjUkBdKb0flw1wSkJLMouctVOVi2R8BxT5M1wArlVOGUAhMG73NmDo9mW19Swfe0rz3aekITYM9o05QvRv/0evhmQN7treNIOt6tegzXrZgfywE1TbYRAqJr6hcM6s/bjw9bGyFWzdASasY7dLVm8fjdoAhad+GrA5utAaf+u3o9LnXe+k/B0jXa5IgJgHhU7s7v+VS/UEnrvg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vDjPZCWRIbSgtP5xppt2KGALTvzFItgIlDVqzqfEXgo=;
+ b=uS4/E/b9AiO80l8gEZfbjTF39s9InZFpKyFxlYSt+WjQIDF3BCLxjcuPk5qcV5RtDts4IzLTPwRPEblAowA8X0iYzsxWQsu5slf5WycmyT6/GEP4jB1tQPqa/eO0m6SIKGdlrS7hVv0i9Q0jZXPOgNF71GDiG3GafhqCpSaRYd+lJFv4k1dpf9WcmSzNspq7EUnTaAO5cu5VFXRewQbm7bmSXysZId07bzYUO+yiPId2vIiAksyxmzNMtpOei81xI6MvFyh+kTelYpMn8Ik3fyA6RcQWPGMhI/1sHBScJEbmQ7MCJL308Up5zmW4Qjj+fw7NDXMSDahkpGXXIdTosA==
+Received: from CH0PR03CA0345.namprd03.prod.outlook.com (2603:10b6:610:11a::29)
+ by MN0PR12MB6032.namprd12.prod.outlook.com (2603:10b6:208:3cc::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Wed, 17 Jul
+ 2024 10:06:46 +0000
+Received: from CH1PEPF0000AD7A.namprd04.prod.outlook.com
+ (2603:10b6:610:11a:cafe::aa) by CH0PR03CA0345.outlook.office365.com
+ (2603:10b6:610:11a::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14 via Frontend
+ Transport; Wed, 17 Jul 2024 10:06:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH1PEPF0000AD7A.mail.protection.outlook.com (10.167.244.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.11 via Frontend Transport; Wed, 17 Jul 2024 10:06:46 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
+ 2024 03:06:32 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
+ 2024 03:06:32 -0700
+Received: from build-amhetre-20240716T042216611.internal (10.127.8.10) by
+ mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via
+ Frontend Transport; Wed, 17 Jul 2024 03:06:32 -0700
+From: Ashish Mhetre <amhetre@nvidia.com>
+To: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ashish Mhetre
+	<amhetre@nvidia.com>
+Subject: [PATCH 1/2] iommu: Optimize IOMMU UnMap
+Date: Wed, 17 Jul 2024 10:06:18 +0000
+Message-ID: <20240717100619.108250-1-amhetre@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7A:EE_|MN0PR12MB6032:EE_
+X-MS-Office365-Filtering-Correlation-Id: 51a91b58-b092-4075-e9bf-08dca6482a98
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?4xWgCqYatPEJlQfIMlCK4VM4MldUUECwhXeDK1yPaxeARtslXGqYtovG62va?=
+ =?us-ascii?Q?nu/kLcL/tI5MRv4l1r1MwEZnwTC9hueZFkoXpjkmNf3SmUCHhi8tXvL7ojkR?=
+ =?us-ascii?Q?QHue3gCnWcu36pguLeCjtPyV6zUA0gfjpzkpa0cTzFNSkH48cYk/ER3EPFA3?=
+ =?us-ascii?Q?/FY4Om1Yk8GqDCE0VzOke1BOYs5FlmsXyNSWeb9woS0KSpM8+OIlxl7ckZzP?=
+ =?us-ascii?Q?YRP0rJ41+VGXNCQp5M+G+h0bdiyTZGAFPhtI9wbzwaqOAnZAY5AAI4p0xOQv?=
+ =?us-ascii?Q?G2xog3kjhTrCqvY/di+RbJlJokZaiZi+4rESfTYxijohH6h7hVi9keYwPsjY?=
+ =?us-ascii?Q?nvNMz90dOOqme22pdPAZVhlNIT6lhhaSjUlW4ijRUMJ5Pt8tRicaCtkuoABb?=
+ =?us-ascii?Q?SKETUYEoQ/+QEVnQ9HfQEHUlHQxu7Bl7a6BzFij9jIiwGLsFugXjT0G3nAbF?=
+ =?us-ascii?Q?I9xVZUQ+cyiHnFTquSb0JT86cZsDSmZSJhCAUWbsGPaFaaLoMIu9kZUrDsW4?=
+ =?us-ascii?Q?TGUDmwUwSAnCbH/WvFZm2sRpXE5RbWX4s9W/IJkz0hrJ6O1VpAStYoXSlHiI?=
+ =?us-ascii?Q?ShiKliwvx2kO9LweoYjMwP9e9ISm0DUdk3q/w1pXRgO7QBWDSdiDxQAfKYjt?=
+ =?us-ascii?Q?Td7hp2dKsdKlzjPEmE/+QiTDZXBYGrvX9ln4HJvACXt5YMGkxKcVIIDqpykd?=
+ =?us-ascii?Q?PD8hSg8uMIp2QjV1UvG207K2k4+6UEbggTveeN2CIzER4BX/Yx92RR3tLwrf?=
+ =?us-ascii?Q?RsUrBQ27AvxCwDLVRTHlOTxC1atzBbQm2mfpVA0fAqPK0BNOKkL3rmoLQlv9?=
+ =?us-ascii?Q?VKAdl1iWzIsBwMGAosgWgug1RJKgOBMiZIxRTOFL7MQe32BGCxH1AtC/Ng5D?=
+ =?us-ascii?Q?qyAExKvA9h+y1fnzqmUZDUMjJ+AKcS+I7KOZHXAiU+Fo0fx4TZbZdoPA+EiV?=
+ =?us-ascii?Q?QK9aNScqjWIq+HAPMqIk8tQ19gZpkrsypDwpCJstYGvtifNE/JJ0LTniTG4D?=
+ =?us-ascii?Q?/+53IPSfKVQVzN0sJW6ptb5sVac4H7FWsT39Cm7kNwVAvSSd7FNNvnhEbJSp?=
+ =?us-ascii?Q?6aQimFNuG8YXxTs7GCGYH6yJygWMJ+ExnppVZwlEEg+5Nrl1TFDcYzJh762V?=
+ =?us-ascii?Q?JTCUIygjJozYEm2EKSOkjFbblik4cr5MFscqXrDWpqUb/SgJh0uAQcu6IbrZ?=
+ =?us-ascii?Q?x85xbDXt6KE0Kh9lYJiNCEoM5tVrx0kijTyO+FFJ55BltbvmIhK8ES6g8z33?=
+ =?us-ascii?Q?w6Pjfef8KGD9a6xw1ayRdyAAP8oFQnGMz/m5ETOBiGJVaB9w0pgh84eiecUh?=
+ =?us-ascii?Q?fdqKjTPYKrba8/RiUO2Syg+3xb2uJi9HVCr+Oz7MN4ZdhnP+zpqKP9RibnqH?=
+ =?us-ascii?Q?N3jVwEp7C2NA1ymHjujT28TZBRrQGPT50XSHHaatejsCY/YPq66OszPiAN7U?=
+ =?us-ascii?Q?cNAnu7gwwWRtVQaaf4ppbKXtIxlsyu/G?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 10:06:46.0725
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51a91b58-b092-4075-e9bf-08dca6482a98
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7A.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6032
 
-Hi Marco,
+The current __arm_lpae_unmap() function calls dma_sync() on individual
+PTEs after clearing them. Overall unmap performance can be improved by
+around 25% for large buffer sizes by combining the syncs for adjacent
+leaf entries.
+This patch optimizes the unmap time by clearing all the leaf entries and
+issuing a single dma_sync() for them.
+Below is detailed analysis of average unmap latency(in us) with and
+without this optimization obtained by running dma_map_benchmark for
+different buffer sizes.
 
-> > > > Overall I think the idea of getting rid of these misc/ drivers is g=
-oes
-> > > > into the right direction, but registering directly into NVMEM makes
-> > > > more sense IMO.   =20
-> > >=20
-> > > So you propose to have two places for the partition handling (one for
-> > > MTD and one for NVMEM) instead of one and moving the code into NVMEM
-> > > directly? =20
-> >=20
-> > Why two places for the partitions handling? Just one, in NVMEM. Also =20
->=20
-> Without checking the details I think that converting the MTD
-> partitioning code into NVMEM partitioning code is a bigger task. As you
-> said below there are many legacy code paths you need to consider so they
-> still work afterwards as well.
->=20
-> > usually EEPROMs don't require very advanced partitioning schemes,
-> > unlike flashes (which are the most common MTD devices today). =20
->=20
-> As said in my cover letter EEPROMs can become quite large and MTD
-> supports partitioning storage devices which is very handy for large
-> EEPROMs as well.
+		UnMap Latency(us)
+Size	Without		With		% gain with
+	optimiztion	optimization	optimization
 
-Did you had a look at nvmem-layouts ? In particular the fixed-layout.
+4KB	3		3		0
+8KB	4		3.8		5
+16KB	6.1		5.4		11.48
+32KB	10.2		8.5		16.67
+64KB	18.5		14.9		19.46
+128KB	35		27.5		21.43
+256KB	67.5		52.2		22.67
+512KB	127.9		97.2		24.00
+1MB	248.6		187.4		24.62
+2MB	65.5		65.5		0
+4MB	119.2		119		0.17
 
-Is there anything you would like to achieve already that is not
-possible with nvmem but is with mtd?
+Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+---
+ drivers/iommu/io-pgtable-arm.c | 34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
 
-Thanks,
-Miqu=C3=A8l
+diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+index f5d9fd1f45bf..1787615eec24 100644
+--- a/drivers/iommu/io-pgtable-arm.c
++++ b/drivers/iommu/io-pgtable-arm.c
+@@ -274,13 +274,15 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
+ 				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
+ }
+ 
+-static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
++static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
+ {
++	int i;
+ 
+-	*ptep = 0;
++	for (i = 0; i < num_entries; i++)
++		ptep[i] = 0;
+ 
+ 	if (!cfg->coherent_walk)
+-		__arm_lpae_sync_pte(ptep, 1, cfg);
++		__arm_lpae_sync_pte(ptep, num_entries, cfg);
+ }
+ 
+ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+@@ -635,9 +637,10 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+ 			       unsigned long iova, size_t size, size_t pgcount,
+ 			       int lvl, arm_lpae_iopte *ptep)
+ {
++	bool gather_queued;
+ 	arm_lpae_iopte pte;
+ 	struct io_pgtable *iop = &data->iop;
+-	int i = 0, num_entries, max_entries, unmap_idx_start;
++	int i = 0, j = 0, num_entries, max_entries, unmap_idx_start;
+ 
+ 	/* Something went horribly wrong and we ran out of page table */
+ 	if (WARN_ON(lvl == ARM_LPAE_MAX_LEVELS))
+@@ -652,28 +655,33 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+ 	/* If the size matches this level, we're in the right place */
+ 	if (size == ARM_LPAE_BLOCK_SIZE(lvl, data)) {
+ 		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
++		gather_queued = iommu_iotlb_gather_queued(gather);
+ 		num_entries = min_t(int, pgcount, max_entries);
+ 
+-		while (i < num_entries) {
+-			pte = READ_ONCE(*ptep);
++		/* Find and handle non-leaf entries */
++		for (i = 0; i < num_entries; i++) {
++			pte = READ_ONCE(ptep[i]);
+ 			if (WARN_ON(!pte))
+ 				break;
+ 
+-			__arm_lpae_clear_pte(ptep, &iop->cfg);
+-
+ 			if (!iopte_leaf(pte, lvl, iop->fmt)) {
++				__arm_lpae_clear_pte(ptep, &iop->cfg, 1);
++
+ 				/* Also flush any partial walks */
+ 				io_pgtable_tlb_flush_walk(iop, iova + i * size, size,
+ 							  ARM_LPAE_GRANULE(data));
+ 				__arm_lpae_free_pgtable(data, lvl + 1, iopte_deref(pte, data));
+-			} else if (!iommu_iotlb_gather_queued(gather)) {
+-				io_pgtable_tlb_add_page(iop, gather, iova + i * size, size);
+ 			}
+-
+-			ptep++;
+-			i++;
+ 		}
+ 
++		/* Clear the remaining entries */
++		if (i)
++			__arm_lpae_clear_pte(ptep, &iop->cfg, i);
++
++		if (!gather_queued)
++			for (j = 0; j < i; j++)
++				io_pgtable_tlb_add_page(iop, gather, iova + j * size, size);
++
+ 		return i * size;
+ 	} else if (iopte_leaf(pte, lvl, iop->fmt)) {
+ 		/*
+-- 
+2.25.1
+
