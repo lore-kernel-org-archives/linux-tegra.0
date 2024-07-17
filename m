@@ -1,160 +1,118 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2074.outbound.protection.outlook.com [40.107.220.74])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC7C17F37B;
-	Wed, 17 Jul 2024 10:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721210815; cv=fail; b=bOQLUy0gulLVf8LbFIPtoinj/wwEbVgEMdlltgEgjuZe87dFEHls0VjqlySMl4HsN8E2rUldwnw4SThx3nvV5nwNFgAeRl5aYlsjC6eX9ysJndsbu2bifcRasI4EfNxYKAyC/JbskYpMGj7BnWQ+xbzAy0eVv/hnzhi4/kKbFJE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721210815; c=relaxed/simple;
-	bh=jDNmRwOTHblC5WHvyK1XQ9RCaX4kSnUSOsckzwPD9c0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bxIL6N3sEyErrIzO4+VqgxE3H9L4/vS5na3tbMoatnX7CPNWvlvXAC4KV+OpFHUNewapjTRdgpc9PexQEVEjU28e9uCdZLcFoYaZu4o5jp7w0oLYkCHh96fmae9GfzYpCv9w1d5Ex/et6oQUqnIM0Jwq0Qpvgw86clQYW7bO0aA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=s0/Eq+qo; arc=fail smtp.client-ip=40.107.220.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341ED180A60;
+	Wed, 17 Jul 2024 13:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721223769; cv=none; b=nH4Ds2aKv2Bdq37RH1XsB6PrB9ITLmkgBZkTIE4DY2dR2ydfzLIz7sI0cyHbK/1+bMbxCHfszckW928eCWSyOWwYniY5Sly7Fvxa4otvE2qvgtqcD15KGoYda1BiybtKDiUaRrR5q4iBM+dc2DyX2EWdkyIkna4zGpiEZbdQiM4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721223769; c=relaxed/simple;
+	bh=b6M2u0O/VcQWX4e8CRgM/0cmwdYjHB7jwSQO7Cq366U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mDtSeqXCDYSKoxsl3wUaGmGrFtH2MwvcaMHaTLDvFfowpBzIFXl6okcZd/N29AMq8SwpFunjKvvZaFH2U8GN5idcf6ae9ULbt7BEKBcsOwOQAi5SsciHT4wrlxkbNEs3mYcp4hRzxDjHs+Az+t/mV/aImYcBubjFuqjAG33ZYew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pbvj/YA1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="s0/Eq+qo"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nKLvfcyfjEnn+VPuG8QX6ybwAxW2uQ+fBeQRDlkQE8NJo/YnUMxwWByEO7CYmmPAgdV5ZXWzvsbO56Qxwc8xiLKZnRr/RD9BRfnEOIDI+pJsQKNExevuvRPAh1XKPSQm4WbfbXNuBnZaar3vFukcUXVY+ydFZ6/xQnjar8E8jJy6tRmhdM4PyUJdB3vlosukB8u/okd88gLhOiyXZccuqzZhF5R0z/61M0bAsGH5M6K58p2+4hQ/k7nnjXiG35Ukdoy1ZJJcmgtjJKrdxwtqmjcbsZ4kZnC+HfgIxDrH9oZT17WMD/Z2w2Sxsy0xHUupAF85Nc3XrmuSrZUf55Mzlw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z/JYYuNywcOlvbc7IRcLncHn6vGzXZYzbS9x8PuOD4Y=;
- b=UfZyc5uWsNHyjvJI7CkPBpZaHuoiNYAkVjPbxrDxZjxyfU/ij/ppxIs13WVWQ39JjuaYgzxavN752bK2NKWj9VlSGIAE68cDWU//qQbbdgS9U9UapCOj+a1cgiGmpn+hvoYCa0aB2Ndj3rVmhhIXXjfs5qbOOF/ReTQPTZ7JrSRzDMdLEcRwxuSMxbAXbEJwH6oUq5l42MtjCyaE4uZILc3IA7tTaFcrj6halypxuq+RcRZf0A0lUyFT0KS864iOobtBLh82De1uTYsnTWSyouwgCChutVKDpJqdzM7heAMpl9Bf1BYG3pj7LbrzdXM0cwAKU4RiyPLtBux/8uAJzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z/JYYuNywcOlvbc7IRcLncHn6vGzXZYzbS9x8PuOD4Y=;
- b=s0/Eq+qoOnVD6Z83hjENNxUIa7rl1OVAlNDNDbEXD88kzRn0F1L6a37hsJxoXExgn10JNFkhU5LM3HI64vuXEIGLnIMdqAQ+1DEsZRg+leOpSGKrnRPOAlMhE0qDz8R7/GW/+JCm+CDApHbhVM8AWV/iv/4Jbuf411VY1u4q8eciXaI7PsdyitG5y9Wnu3zGWWICSItBqsosCxudkCYsJ9vrlRqMiJLq4d7PghmZxo0jbJwLQAsP0YJYrvHc3+z4pLTTwCxB303rr5tEPJfRFQYPFCSQo0JfYyKyb2Crl/h4h/uwFbRgcNJjb2YDDtKuM/Z9qt+ESA1alZW/wgAfZQ==
-Received: from CH5P222CA0024.NAMP222.PROD.OUTLOOK.COM (2603:10b6:610:1ee::9)
- by PH7PR12MB6417.namprd12.prod.outlook.com (2603:10b6:510:1ff::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.27; Wed, 17 Jul
- 2024 10:06:49 +0000
-Received: from CH1PEPF0000AD74.namprd04.prod.outlook.com
- (2603:10b6:610:1ee:cafe::22) by CH5P222CA0024.outlook.office365.com
- (2603:10b6:610:1ee::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16 via Frontend
- Transport; Wed, 17 Jul 2024 10:06:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH1PEPF0000AD74.mail.protection.outlook.com (10.167.244.52) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.11 via Frontend Transport; Wed, 17 Jul 2024 10:06:49 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
- 2024 03:06:35 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 17 Jul
- 2024 03:06:35 -0700
-Received: from build-amhetre-20240716T042216611.internal (10.127.8.10) by
- mail.nvidia.com (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via
- Frontend Transport; Wed, 17 Jul 2024 03:06:35 -0700
-From: Ashish Mhetre <amhetre@nvidia.com>
-To: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ashish Mhetre
-	<amhetre@nvidia.com>
-Subject: [PATCH 2/2] include: linux: Update gather only if it's not NULL
-Date: Wed, 17 Jul 2024 10:06:19 +0000
-Message-ID: <20240717100619.108250-2-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240717100619.108250-1-amhetre@nvidia.com>
-References: <20240717100619.108250-1-amhetre@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pbvj/YA1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E96C32782;
+	Wed, 17 Jul 2024 13:42:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721223769;
+	bh=b6M2u0O/VcQWX4e8CRgM/0cmwdYjHB7jwSQO7Cq366U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pbvj/YA1Gs/hjRDC0IXr3+tRYix4k2pKaNUcxopwUOt2F3ENxPAeCd7DoRcMp7O0B
+	 UtRs91T42G/Tgpa0EcWDxZUv+lc0rM4ypbkFy3zjVSDe8hbjRV8lOGcgAAws7/rWT2
+	 hMWfV99wFXGsid9gYH9JPJe+Gwp7nsq2+Ti798NJ4mv4beRMWBtHXM07O8c+D1ncb5
+	 3Na3BkeEPeVECGuoDdhPLJch/+W5um8v4lCcvbzDZnLj51nlSj0p8xOEqgfiFUbvG+
+	 3zkYm6sbagImtoDSlJXsv9/nR27VdgbTGY8ixgsZkEWeJB/1U5WF01yc3llYodPJSe
+	 LpWYqd26vKK/g==
+Date: Wed, 17 Jul 2024 15:42:46 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, Lucas Stach <l.stach@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+	Edmund Dea <edmund.j.dea@intel.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Jyri Sarha <jyri.sarha@iki.fi>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, dri-devel@lists.freedesktop.org, igt-dev@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] drm/drm_property: require DRM_MODE_PROP_IMMUTABLE
+ for single-value props
+Message-ID: <20240717-bouncy-horned-mamba-5691b8@houat>
+References: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-0-61e6417cfd99@linaro.org>
+ <20240715-drm-bridge-connector-fix-hdmi-reset-v4-2-61e6417cfd99@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD74:EE_|PH7PR12MB6417:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42bb99e1-c5c1-4af5-ebf9-08dca6482c9c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XeKCDvi1VR6E4atH86uFFmutFuTOUW13owC1m5J85N2P29IK9j/hZrM00VDi?=
- =?us-ascii?Q?886IiaCt/yyBj/1oNmvsxQY0Lsun/Z0VZNPpobjYRVlV64CXJ33BrtNidyz2?=
- =?us-ascii?Q?CNsGxehmDIlgA8YMODyEIBQjzgmrITNGFUzcVGoo9JikDhPOrse99drvtB6Z?=
- =?us-ascii?Q?Hzac4qRFtH6rHGTJFilCraeKg14Z9sIKX3HmBncllt1/KfaSAISzyg3BpSLV?=
- =?us-ascii?Q?9Jj1jvujUclpsfibI3Hk+wq9drNXGLqWO7ypG8kRoNtbVscQ5YnDG6tujV04?=
- =?us-ascii?Q?vEZ3N9lv08BlsQCYuzVLzdbSQGCLA3SsImt6RqiXoYyTiLNSZeXaUzkkiiAC?=
- =?us-ascii?Q?3eH8ns3geNmCs7OW3dPjz8y2by3Eo8lkiVIQI75HseSWMFDZfOOMey3FD0CH?=
- =?us-ascii?Q?uKLhsr/PKYGQcQ/bofDk/DlvgwXdJ5dIM7eRZieoU091pRagFDPu3d6F0KDc?=
- =?us-ascii?Q?Rk3DDhGlLi6cCZPAebn1fOo456W2FgojzeQAC9yUjg/jeXNJY5ZssTZGdKWA?=
- =?us-ascii?Q?9GxAQidK+VQrBPsiR6qORTf8Ic9QWhFUoBgDqFRTinuzjekJ9dfD/luhxibX?=
- =?us-ascii?Q?BQyR2qSshEAmvW38DlIiCnYcL7ReU9mzFu3xHa9GU8tJZ1f0Z/dS8rds7xWh?=
- =?us-ascii?Q?fZGXz1+mTBTG+HJ6hZvRkA9EmccXYycHEuw1DDkbLV1MZAFKu3JJpxKzCyYX?=
- =?us-ascii?Q?PngZmK66eF+JEypO/kJKVFoboIa0Gn5gXH+Ywc47n4rjk91sTQdkwX9y+p8P?=
- =?us-ascii?Q?IZvI+QRiFn7XAVUuv3ZpZ0/wvTmW7QScGd7q1WX8RoY0PVGziW/JLpBYvcfD?=
- =?us-ascii?Q?nzpG8MgXqkgnQiJGQhrjfnu7Cj31byuxgvB4ESjd3cadGAGvB5BCTAiSmW30?=
- =?us-ascii?Q?inSm8Xq/LhrWYfz+BkV4DxPl3l3gHhZ1u8iDFWLknOySSfXrWxrb83r9uFAi?=
- =?us-ascii?Q?C7w5YSdCgKnf1DC9Mg4DKVRF/KTTomBKawlUaFiUazEhwrZMOT7Z33G25RBU?=
- =?us-ascii?Q?RQyYacWD45Q91nUgyP4HtOiL2h5+BrLP29xPjNmk4Zasq9vwz5QBzfo92kdZ?=
- =?us-ascii?Q?oc40pcGo+ZPsLB1vwmy+4G7j3SIE3sLLgnberT4NPIFbqbKh00dNoixVXT3I?=
- =?us-ascii?Q?+wOuHSUzvez9mrNXlOsaweMJ+ZwFZOkZY+t935V2HFYu5ONa9yQsrqgi3qBW?=
- =?us-ascii?Q?uo1sKWzukhdU/9pFWGiCy+JnHHCol0c0BiaYQCK0oIcnkUKxQPGY2MnXwPAs?=
- =?us-ascii?Q?k8ygsD8CkONU9wE3x7Eoo9n2zKkrsGFoBeC+kf4VFVafLbdblbNBGB7MAOqC?=
- =?us-ascii?Q?VZ3EG7FB5ZhQ7I8Qmw5tDO/Ahdoo5o/EMOTs32wM/yB2TIYDCHRnAHd1IkFP?=
- =?us-ascii?Q?7eRfRtJn1sw5rSFOVjLTWs68aDx1Qpl+gevAv0Dx1i+XEAtbVHmlrwM+/WWn?=
- =?us-ascii?Q?aoz8ZoZnPmfCku7/9OsUknCgTaeeWu9n?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jul 2024 10:06:49.4230
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42bb99e1-c5c1-4af5-ebf9-08dca6482c9c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD74.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6417
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6ldj6ctz25xj6y7b"
+Content-Disposition: inline
+In-Reply-To: <20240715-drm-bridge-connector-fix-hdmi-reset-v4-2-61e6417cfd99@linaro.org>
 
-Gather can be NULL when unmap is called for freeing old table while
-mapping. If it's NULL then there is no need to add page for syncing
-the TLB.
 
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- include/linux/iommu.h | 3 +++
- 1 file changed, 3 insertions(+)
+--6ldj6ctz25xj6y7b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 4d47f2c33311..2a28c1ef8517 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -928,6 +928,9 @@ static inline void iommu_iotlb_gather_add_page(struct iommu_domain *domain,
- 					       struct iommu_iotlb_gather *gather,
- 					       unsigned long iova, size_t size)
- {
-+	if (!gather)
-+		return;
-+
- 	/*
- 	 * If the new page is disjoint from the current range or is mapped at
- 	 * a different granularity, then sync the TLB so that the gather
--- 
-2.25.1
+Hi,
 
+On Mon, Jul 15, 2024 at 09:33:02AM GMT, Dmitry Baryshkov wrote:
+> Document that DRM_MODE_PROP_IMMUTABLE must be set for the properties
+> that are immutable by definition - e.g. ranges with min =3D=3D max or enu=
+ms
+> with a single value. This matches the behaviour of the IGT tests, see
+> kms_properties.c / validate_range_prop(), validate_enum_prop(),
+> validate_bitmask_prop().
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+We had a discussion yesterday about it on IRC with Sima, Simon and
+Xaver.
+
+https://oftc.irclog.whitequark.org/dri-devel/2024-07-16#33374622;
+
+The conclusion was that it would create an inconsistency between drivers
+on whether a given property is immutable or not, which will lead to more
+troubles for userspace.
+
+It's not clear why Ville added that check in the first place, so the
+best course of action is to remove the IGT test and get the discussion
+started there.
+
+Maxime
+
+--6ldj6ctz25xj6y7b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZpfKVgAKCRDj7w1vZxhR
+xYH7AQD8w8myEhco9CqAfjh20D1tXY/mlB+W4/bdaby3K0NuIQD/cGVo42JNkoo/
+jCNbgBRkiSwOXLi0a+whYQOE0kxTmwY=
+=bR0t
+-----END PGP SIGNATURE-----
+
+--6ldj6ctz25xj6y7b--
