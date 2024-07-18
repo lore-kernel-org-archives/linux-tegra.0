@@ -1,77 +1,88 @@
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BCF20DE8
-	for <linux-tegra@vger.kernel.org>; Thu, 18 Jul 2024 03:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01C280038
+	for <linux-tegra@vger.kernel.org>; Thu, 18 Jul 2024 09:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721271962; cv=none; b=VFdAadZUYaA1VCj5Gt6tSmdW6ziYspvfNIvniAgttkEvcX+YkWFEGyKadm4Knm8/R91+s4QCgU45ph/d/sf4My7aWCzU3nAUZlDEeLYt1KEd7IK/c0HvLS5GqxYS7iaXAkXta135fGvVezkVsjiINz78p/B9Fg2YciA6iuSU4w0=
+	t=1721294428; cv=none; b=uiizXNmroVq+zWYQHtph5ZyWa8WA9oT/YV+ylPOL8jS+sv1XgDtYiIujzdImgVtwD8noR/rEQQiPGaIE3O7RBVjU3vkcG6O9C2/2xeR/VIKIeVkiYGf17PpPsB5oR+Y2ot7c4jqAeQ+841BCtyRhCKquvjomaMYz8q+rn4X0RkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721271962; c=relaxed/simple;
-	bh=3p1nHlyFmbd2Mqt/h3ECuwH02UH1qFkMjptXlGRXakM=;
+	s=arc-20240116; t=1721294428; c=relaxed/simple;
+	bh=NVmocxKup4CnNxG4HHYvEU51kiKuUcSnBQFJoZmyjlw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EgjnWwEhyIKxoY/rk89ATnVdXujHk/2kbH2nBRvweVcODAgzQseFTRrgGwrgt7aHRaLyZe1rmX7UR2SGbLp/eRYM5It1LBj+fuhmtgUhRXvWMMJ5JRxzqC22jm7TxBe/Ytycxl+kaGkftqkHWytRLe8UoORlIaLttNrXEQUT3d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nf7ruRec; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nf7ruRec"
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-79110d8e459so206665a12.0
-        for <linux-tegra@vger.kernel.org>; Wed, 17 Jul 2024 20:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721271960; x=1721876760; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yeW6dMBKtWe8oDZj4BcQTEdzzbJoa7udjbLAE+AJzpw=;
-        b=nf7ruRecmH17OyG5D6e3NRbhVcNXggf0gG9iOHljGVqvloxoQIPcHQKHUhmwsQoyga
-         GSwfGqPA7JfQZbRLuo4RSmzBpMZWVXRE9Z5Gz14ZILTJRHrlYB9efcWlRTekLfvXC7Bq
-         CXZuwjBf9zeisNKcMLGscV1niHTmykwIALM8MAJFtjjm4jjWy6eTOG1+XNOXyrnVHIaN
-         yB8Zr7tDbSAs1h1QA3NWOOXBHWdew9ePme1Q7neATnw7s6hF1hPklM462Gbq4tW4bbja
-         k7YiaLYo+3tDZGsXzGAm5lAfzG2oJEoe84Pmy6uXiKM13O74D8q8dZCEj46mOUEZkb3O
-         VQig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721271960; x=1721876760;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yeW6dMBKtWe8oDZj4BcQTEdzzbJoa7udjbLAE+AJzpw=;
-        b=FVxLLvash6+pG/QhCiSvbazPPRcKweo9/pBISVZwZKFDTm8NNpacqAGfI9rcMkglNy
-         LspX7blaiAdZzku6ClYzU5OQAt/c9HAxOM+pWZRKFYB421VFf8CnzTs14/1YFkmGWG9f
-         h2sI7AYMDnqu9AeHwI3d9BHfNah9qBam4EgN5nedsU0IlO6GJDz39ViCVz7l2wnUJoKA
-         K/oKWrepUFft3hOD3uP++HuHM4KKNwM7jnyO6MCFlp8h+U5O8abCDjvWfA2/H1NKtXKG
-         U47LmciDbZi809H0bSxIk5c6NKVS5NN3PTsBe05o8ak59FHlnJmY/hAJlN6n50cIWkIq
-         vikQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkXAtvwNfAsad0cy3GGHAT/17pcS0KVmgmFuMGib6LFJWX24VwurXFk7oWeTLii8gyzB2HtHZqIQLSByob2kLDCnSh4WB0i7DGf2M=
-X-Gm-Message-State: AOJu0Yxovmb+0ea3/NJ/T9SiF2Vpc8zY6nTPZgDjbEJ+ukwOsH2PZmrW
-	hdSeTxoqoCvoLMmXtpb/3/N9qFCdUvOIOn6x4LvGUY/0h/0ZjLxZNDqhcA+NrMI=
-X-Google-Smtp-Source: AGHT+IGZQrMHKumtV17odbuMLApq0aWGZDMpuPSD6YxnkxMLKUzBluzrVqhDLqn9KpZgTHq+5klwjQ==
-X-Received: by 2002:a05:6a20:a11e:b0:1bd:253e:28e with SMTP id adf61e73a8af0-1c3fdc962c8mr4939585637.16.1721271960004;
-        Wed, 17 Jul 2024 20:06:00 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fc4bcab736sm18649325ad.233.2024.07.17.20.05.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 20:05:59 -0700 (PDT)
-Date: Thu, 18 Jul 2024 08:35:56 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
- domains
-Message-ID: <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7>
-References: <20240625105425.pkociumt4biv4j36@vireshk-i7>
- <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
- <20240701114748.hodf6pngk7opx373@vireshk-i7>
- <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
- <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
- <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7>
- <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
- <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
- <20240711131637.opzrayksfadimgq4@vireshk-i7>
- <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J2xKwyzPwboLpnCCnz9UT4raflSde4tt3Iq6gGShnvNeR49RxtzKid3KJwdETYmF0ZoTQBPJPPXnKKGftjGaYAJN2jvLT2SzSZ5efpb/ksOauot00HNlYYSOxc+ZhC9Y8lUnWwuJaLMvdZJZvz7fhR8O/rUVxgpIUERfoy0qDGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sUNGz-0002U5-TA; Thu, 18 Jul 2024 11:18:01 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sUNGr-000PqF-MB; Thu, 18 Jul 2024 11:17:53 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sUNGr-003zXS-1Y;
+	Thu, 18 Jul 2024 11:17:53 +0200
+Date: Thu, 18 Jul 2024 11:17:53 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
+	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
+Message-ID: <20240718091753.apwsrvmekn2vvo4k@pengutronix.de>
+References: <07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
+ <mafs0ikxnykpr.fsf@kernel.org>
+ <20240702-congenial-vigilant-boar-aeae44@houat>
+ <mafs0ed8byj5z.fsf@kernel.org>
+ <20240702-mighty-brilliant-eel-b0d9fa@houat>
+ <20240708084440.70186564@xps-13>
+ <20240709092214.omr7ccphdzdk7z7j@pengutronix.de>
+ <20240709114302.3c604ef3@xps-13>
+ <20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
+ <20240717101948.2e99f472@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -80,35 +91,53 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
+In-Reply-To: <20240717101948.2e99f472@xps-13>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
 
-On 11-07-24, 17:25, Ulf Hansson wrote:
-> Right, I get your point.
+Hi Miquel,
+
+On 24-07-17, Miquel Raynal wrote:
+> Hi Marco,
 > 
-> Although, it seems to me that just limiting required-opps to
-> performance-levels, could avoid us from having to enforce the OPPs for
-> genpd. In other words, doing something along the lines of $subject
-> patch should work fine.
+> > > > > Overall I think the idea of getting rid of these misc/ drivers is goes
+> > > > > into the right direction, but registering directly into NVMEM makes
+> > > > > more sense IMO.    
+> > > > 
+> > > > So you propose to have two places for the partition handling (one for
+> > > > MTD and one for NVMEM) instead of one and moving the code into NVMEM
+> > > > directly?  
+> > > 
+> > > Why two places for the partitions handling? Just one, in NVMEM. Also  
+> > 
+> > Without checking the details I think that converting the MTD
+> > partitioning code into NVMEM partitioning code is a bigger task. As you
+> > said below there are many legacy code paths you need to consider so they
+> > still work afterwards as well.
+> > 
+> > > usually EEPROMs don't require very advanced partitioning schemes,
+> > > unlike flashes (which are the most common MTD devices today).  
+> > 
+> > As said in my cover letter EEPROMs can become quite large and MTD
+> > supports partitioning storage devices which is very handy for large
+> > EEPROMs as well.
+> 
+> Did you had a look at nvmem-layouts ? In particular the fixed-layout.
 
-I really don't want to design the code that way. Required OPPs don't
-have anything to do with a genpd. Genpd is just one of the possible
-use cases and I would like the code to reflect it, even if we don't
-have any other users for this kind of stuff for now, but we surely
-can. Just that those problems are solved differently for now. For
-example, cache DVFS along with CPUs, etc.
+Yes I had a look at nvmem-layouts and we use them within a
+mtd-partition. Using them instead of a mtd-partition is not sufficient
+since they:
+ 1) don't support user-space write (I send a patch for it but it doesn't
+    seem to be accepted soon).
+ 2) If write would be supported the user-space need to write the
+    complete cell e.g. no partial writes.
 
-And as I said earlier, it is entirely possible that the genpd OPP
-table wants to configure few more things apart from just level, and
-hence a full fledged set-opp is a better design choice.
+> Is there anything you would like to achieve already that is not
+> possible with nvmem but is with mtd?
 
-> In fact, it looks to me that the required-opps handling for the
-> *single* PM domain case, is already limited to solely
-> performance-levels (opp-level), as there are no required_devs being
-> assigned for it. Or did I get that wrong?
+Please see above.
 
-That's why the API for setting required-opps was introduced, to make
-it a central point of entry for all use cases where we want to attach
-a device.
-
--- 
-viresh
+Regards,
+  Marco
