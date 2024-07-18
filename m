@@ -1,55 +1,55 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F325913213A
-	for <linux-tegra@vger.kernel.org>; Thu, 18 Jul 2024 13:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E8E1864C
+	for <linux-tegra@vger.kernel.org>; Thu, 18 Jul 2024 13:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721307857; cv=none; b=TWqHlc8FFX4dvdW/pZ2bFm4r11D/RWM72aZNXU6YasNUOtvaFbAR6nSFSb4vNkFPo5528zZZWat/vcmxQe+QzxX5fF3kIZ0QYF0WBQaNwtlvY4+Pt4azoXUwJUP6gd5Mcx3Qql4LksSXU8JfEWKjBttnjZzeeTtYzDGdNqChCjI=
+	t=1721309413; cv=none; b=Jb9TsnEOgCX/gCrUgKinQLqXGJNH9XnbSxiza8PwHSG2j7UdhVF2nIiz1imDLy6WwQLeSHU4f8MIFsAKeN44Np0cDQr1Qe9uGDmOwCjb0D/lVc3FWBfpR6bPHjKNYWYgOz9jl+vL00i01Ihu3z+9Yv4gMTGDQFxG9hTq4aWpArY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721307857; c=relaxed/simple;
-	bh=we2441mJ200UsbwMeH+W6qEctdwpO8gZRiXzNVf4FV4=;
+	s=arc-20240116; t=1721309413; c=relaxed/simple;
+	bh=6g2JocoVjYFSu+FazwfDkrN2qhaXz++L7gwGS37uF74=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=glWBlQJM72gImq7TxU4AAW/7G+aW7dF1G3PbGDd63RS9JDnwPuvclBy5KEIIDOtOvY7BOh0aE6OdO0hxHgS4ogXoMixiNIKSgsKIx882MR93MmDiG32CPyGN7Q5o6Cpwhqo93v+UPClFNceEBGXCjZSO1OKxCE0JSzE0NW3EFj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ZODvij7E; arc=none smtp.client-ip=209.85.208.179
+	 To:Cc:Content-Type; b=eULOOwZLhwsJ/dPHFdVCIyhYLOXlPdIG3HnsGhRxuLNZLkkAJ8QMdlAoOZ262ew4lSS0QThZwi5Or6wapMR2oN4opk0FKOxTCDfsAH8kGAqbEAdlLyTQ89ByeSfKsk5hWhf0hoMs8dGGAJD5wQFs90Z6IawnP+Mje3Va64ojP38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=S8Bifhxd; arc=none smtp.client-ip=209.85.208.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ZODvij7E"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eea8ea8bb0so15067171fa.1
-        for <linux-tegra@vger.kernel.org>; Thu, 18 Jul 2024 06:04:13 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="S8Bifhxd"
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2eede876fbfso11991201fa.1
+        for <linux-tegra@vger.kernel.org>; Thu, 18 Jul 2024 06:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721307852; x=1721912652; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1721309410; x=1721914210; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PaoSB/i75fBgDQfjxZ/xBZj8r8hOjb3uHVg3ton7t7o=;
-        b=ZODvij7E/PWDZRp8JxanPSE+4q0iUruBGtwg1nWQlDEP5GPQIf4KIroQydbRtQ15ZH
-         JWUQXBaddQaciHGn0rThwfoAUtsXmM2GoIPy8ksk+cb0IqX3uNYUd/EL1qK5cd66XfFK
-         vBW2PDF3arH28nPjPUcokCbDO86IWtBclsYkWHaFJTjN45apeI9l0EGuRAUfv3lCMI2U
-         vjSeuRTbljh6ogLPtfBmme+vETyO06lDSb4h9rk0euqk3Qf1+Z0zEgjPC6lFFo77sTQQ
-         QR3HdxjY8DuBL+BExYsqY3q1/1IrXJO+1L/QUfxtlEop3LILu7qPMf2o/59aRYAISD0B
-         Ot4w==
+        bh=YT1la3hOSgpRfRsWHpzvZruTBiRkfm0GB/f007d38Pc=;
+        b=S8BifhxdTrOJBqtoJOjAEJS9nRWvQXIHP+Rahvw+x3ign9n8WEeiBtU4A7RPyAvpKi
+         vuDVqKjWiWLMMu/gH/ko8OgFDFdFbQ5NcuDMCpydSNESqjypHDYu5Nlfa6fMT6/8Q71f
+         MA3OdHkBYdSHh8KuBpD8hr/rspRsiAUP3vjuzgruV4T5eaMNEr72ip6rorqvUTj8WmwS
+         U+TmoDCcxnmhO3CowEtxD0aGFs4ubupkv0P2PVGwj9Dkvwthks99lwBuzXWAJuf4fcFc
+         ZQ/gpSWimk7GwuIr2pAdyc64nt1Z34q4Jo1/5aZmGTYoQ0m2bGDIj5Y/exM3UIl4wAdC
+         2D6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721307852; x=1721912652;
+        d=1e100.net; s=20230601; t=1721309410; x=1721914210;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PaoSB/i75fBgDQfjxZ/xBZj8r8hOjb3uHVg3ton7t7o=;
-        b=MnIHNdWVf4VQUPM/IchtC6hDXhrQOIeUDPpKCHvzd7dXGIQD/T6xZq4I4+if9L0rS4
-         9KYlcy+JysHd84q+So9/D+FygcW5gCDACtsYhCXbqvgdhzUfqUlz1U7GuzF+P0AlTj7F
-         EewuZ+LVwofPYNsO+m7QrYJZY9VElS8mQ3mVt4aXPJ931YgR1WmExkl+8xJDC61GnIaD
-         pBNV44Yzxt0W+NVvT0PLU6gUz15cGOhBZSUoqAzrmp0OPZZbLnCvADwLCxdC0rbsNvQv
-         YDeNIBcufRyR5Mt+gcRW6xUj/ut1DrABxxjTEiPlst0eh0HobgoJMYe8i/L/E9DGXl1j
-         URRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHtflyq868COrU0BFLSGV9BPKljUv9ZqAvDvvwU6LCM/W/KBdWHzG3UIk7ehoK5UkHLCONnEDimM+jAMqLAoafAwh8iBHQ1kwOZHw=
-X-Gm-Message-State: AOJu0Ywlm4RJyJFuZjrK8svH9TtKUFL41MLqMxRald6+MPmzENaKBbUH
-	qt+fRBKhLfpxz57mFcVTHG4O5N8vRzlEyQeDFJESW0SmB8jTQ8t3GR/eQMDBBMnf38EM26RHh1t
-	xhGD/ZugV8+hiPunHbMjP8Jv9pxyd2Bdmxty+dw==
-X-Google-Smtp-Source: AGHT+IFdeMEc5qNFLBDKGp+G046kUIHhNXX2IhpfOE33oX22Xj+JyHbPKQLwME12ysWlC6x7Y2Tkkh0PP0R+QhfKifQ=
-X-Received: by 2002:a2e:2c12:0:b0:2ee:8d9a:811a with SMTP id
- 38308e7fff4ca-2ef05d288f9mr19213711fa.31.1721307851931; Thu, 18 Jul 2024
- 06:04:11 -0700 (PDT)
+        bh=YT1la3hOSgpRfRsWHpzvZruTBiRkfm0GB/f007d38Pc=;
+        b=dcW1Re6eRC2N2/fsZeiHjPpoiC772vXyEk2H7+dcSRdolkpMqTwi2qkvyDmencQTO5
+         SYEgBcvP7OMIjz9FNiiLMgUVGdPb+JdNdiYCB2hsLxAJijLd5S2dgNsoyybegk/T5B6y
+         PAQWx0305QbDAcHg2eGN1OA0uY23LKIkjYqIBJbxOpLv8iTdspBhyUPrqtpIFZw1ZIHM
+         IvHf3x5X9UNn5GtcVrbvUd+VoX616FHbScRiNlScBcsiKJ20XiQrYC+dotNL+rqhbq5r
+         XuhTXhU6avihEasXNbpiPYdFSwgCUgz0t5HdaMSgsyJj0xCK9ruAtSnGWE1AVI0++7rL
+         4piw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4Pg4NMvHUbWWeuxICwnjwaz8f9GDNSETbOdHYGYcJIcNYM/El8GkqSxgkMqHyqZYZpr29URfAgSKzJ80V5M5HZL8Ri4VZHs7Zzs8=
+X-Gm-Message-State: AOJu0YwYkjV0RVIJnaDdAIAztC4znK3fXO/cruzpXOR2KGfFYswwxysa
+	EljbvlMBLT8/t2EhwYHM11AECO1kiXyHoggv7h7olvVAQIirc1JOkJeSAC/3cEdMemcNH5rDZOD
+	XJLfkqK99NNlFihIST41H8VmizR231lQstcPYXw==
+X-Google-Smtp-Source: AGHT+IFlZwGom4Cm6D/yzMCO68xfKb+hvi2jTDlVGTvtty+HgV5mjKDUlfhjUX/StKdrcO0SHS8dY7nKIHi377iDFF8=
+X-Received: by 2002:a2e:a16e:0:b0:2ec:1ce8:9a7d with SMTP id
+ 38308e7fff4ca-2ef05c5736cmr16130801fa.4.1721309410027; Thu, 18 Jul 2024
+ 06:30:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -57,11 +57,11 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240708075023.14893-1-brgl@bgdev.pl> <20240708075023.14893-4-brgl@bgdev.pl>
- <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com>
-In-Reply-To: <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com>
+ <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com> <CAMRc=McF93F6YsQ+eT9oOe+c=2ZCQ3rBdj+-3Ruy8iO1B-syjw@mail.gmail.com>
+In-Reply-To: <CAMRc=McF93F6YsQ+eT9oOe+c=2ZCQ3rBdj+-3Ruy8iO1B-syjw@mail.gmail.com>
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 18 Jul 2024 15:04:00 +0200
-Message-ID: <CAMRc=McF93F6YsQ+eT9oOe+c=2ZCQ3rBdj+-3Ruy8iO1B-syjw@mail.gmail.com>
+Date: Thu, 18 Jul 2024 15:29:59 +0200
+Message-ID: <CAMRc=Mc=8Sa76TOZujMMZcaF2Dc8OL_HKo=gXuj-YALaH4zKHg@mail.gmail.com>
 Subject: Re: [RESEND PATCH net-next v3 3/4] net: phy: aquantia: wait for the
  GLOBAL_CFG to start returning real values
 To: Jon Hunter <jonathanh@nvidia.com>
@@ -74,152 +74,68 @@ Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 2:23=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
+On Thu, Jul 18, 2024 at 3:04=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 >
-> Hi Bartosz,
->
-> On 08/07/2024 08:50, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> On Thu, Jul 18, 2024 at 2:23=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com>=
+ wrote:
 > >
-> > When the PHY is first coming up (or resuming from suspend), it's
-> > possible that although the FW status shows as running, we still see
-> > zeroes in the GLOBAL_CFG set of registers and cannot determine availabl=
-e
-> > modes. Since all models support 10M, add a poll and wait the config to
-> > become available.
 > >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >   drivers/net/phy/aquantia/aquantia_main.c | 8 +++++++-
-> >   1 file changed, 7 insertions(+), 1 deletion(-)
+> > With the current -next and mainline we are seeing the following issue o=
+n
+> > our Tegra234 Jetson AGX Orin platform ...
+> >
+> >   Aquantia AQR113C stmmac-0:00: aqr107_fill_interface_modes failed: -11=
+0
+> >   tegra-mgbe 6800000.ethernet eth0: __stmmac_open: Cannot attach to PHY=
+ (error: -110)
+> >
+> >
+> > We have tracked it down to this change and looks like our PHY does not
+> > support 10M ...
+> >
+> > $ ethtool eth0
+> > Settings for eth0:
+> >          Supported ports: [  ]
+> >          Supported link modes:   100baseT/Full
+> >                                  1000baseT/Full
+> >                                  10000baseT/Full
+> >                                  1000baseKX/Full
+> >                                  10000baseKX4/Full
+> >                                  10000baseKR/Full
+> >                                  2500baseT/Full
+> >                                  5000baseT/Full
+> >
+> > The following fixes this for this platform ...
 > >
 > > diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy=
 /aquantia/aquantia_main.c
-> > index 974795bd0860..2c8ba2725a91 100644
+> > index d12e35374231..0b2db486d8bd 100644
 > > --- a/drivers/net/phy/aquantia/aquantia_main.c
 > > +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> > @@ -652,7 +652,13 @@ static int aqr107_fill_interface_modes(struct phy_=
-device *phydev)
-> >       unsigned long *possible =3D phydev->possible_interfaces;
-> >       unsigned int serdes_mode, rate_adapt;
-> >       phy_interface_t interface;
-> > -     int i, val;
-> > +     int i, val, ret;
-> > +
-> > +     ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
-> > +                                     VEND1_GLOBAL_CFG_10M, val, val !=
-=3D 0,
-> > +                                     1000, 100000, false);
-> > +     if (ret)
-> > +             return ret;
+> > @@ -656,7 +656,7 @@ static int aqr107_fill_interface_modes(struct phy_d=
+evice *phydev)
+> >          int i, val, ret;
 > >
-> >       /* Walk the media-speed configuration registers to determine whic=
-h
-> >        * host-side serdes modes may be used by the PHY depending on the
+> >          ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+> > -                                       VEND1_GLOBAL_CFG_10M, val, val =
+!=3D 0,
+> > +                                       VEND1_GLOBAL_CFG_100M, val, val=
+ !=3D 0,
+> >                                          1000, 100000, false);
+> >          if (ret)
+> >                  return ret;
+> >
+> >
+> > However, I am not sure if this is guaranteed to work for all?
 >
->
-> With the current -next and mainline we are seeing the following issue on
-> our Tegra234 Jetson AGX Orin platform ...
->
->   Aquantia AQR113C stmmac-0:00: aqr107_fill_interface_modes failed: -110
->   tegra-mgbe 6800000.ethernet eth0: __stmmac_open: Cannot attach to PHY (=
-error: -110)
->
->
-> We have tracked it down to this change and looks like our PHY does not
-> support 10M ...
->
-> $ ethtool eth0
-> Settings for eth0:
->          Supported ports: [  ]
->          Supported link modes:   100baseT/Full
->                                  1000baseT/Full
->                                  10000baseT/Full
->                                  1000baseKX/Full
->                                  10000baseKX4/Full
->                                  10000baseKR/Full
->                                  2500baseT/Full
->                                  5000baseT/Full
->
-> The following fixes this for this platform ...
->
-> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/a=
-quantia/aquantia_main.c
-> index d12e35374231..0b2db486d8bd 100644
-> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> @@ -656,7 +656,7 @@ static int aqr107_fill_interface_modes(struct phy_dev=
-ice *phydev)
->          int i, val, ret;
->
->          ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
-> -                                       VEND1_GLOBAL_CFG_10M, val, val !=
-=3D 0,
-> +                                       VEND1_GLOBAL_CFG_100M, val, val !=
-=3D 0,
->                                          1000, 100000, false);
->          if (ret)
->                  return ret;
->
->
-> However, I am not sure if this is guaranteed to work for all?
-
-Ah cr*p. No, I don't think it is. We should take the first supported
-mode for a given PHY I think.
-
->
-> On a related note, we had also found an issue with this PHY where
-> the PHY reset is not working quite correctly. What we see is that
-> when polling for the firmware ID in aqr107_wait_reset_complete()
-> is that value in the firware ID registers transitions from 0 to
-> 0xffff and then to the firmware ID. We have been testing the
-> following change to fix this ...
->
-> diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquant=
-ia/aquantia.h
-> index 2465345081f8..278e3b167c58 100644
-> --- a/drivers/net/phy/aquantia/aquantia.h
-> +++ b/drivers/net/phy/aquantia/aquantia.h
-> @@ -20,6 +20,7 @@
->   #define VEND1_GLOBAL_FW_ID                     0x0020
->   #define VEND1_GLOBAL_FW_ID_MAJOR               GENMASK(15, 8)
->   #define VEND1_GLOBAL_FW_ID_MINOR               GENMASK(7, 0)
-> +#define VEND1_GLOBAL_FW_ID_MASK                        GENMASK(15, 0)
->
->   #define VEND1_GLOBAL_MAILBOX_INTERFACE1                        0x0200
->   #define VEND1_GLOBAL_MAILBOX_INTERFACE1_EXECUTE                BIT(15)
-> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/a=
-quantia/aquantia_main.c
-> index 0b2db486d8bd..5023fd70050d 100644
-> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> @@ -447,7 +447,9 @@ int aqr_wait_reset_complete(struct phy_device *phydev=
-)
->          int val;
->
->          return phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
-> -                                        VEND1_GLOBAL_FW_ID, val, val !=
-=3D 0,
-> +                                        VEND1_GLOBAL_FW_ID, val,
-> +                                        ((val & VEND1_GLOBAL_FW_ID_MASK)=
- !=3D 0 &&
-> +                                        (val & VEND1_GLOBAL_FW_ID_MASK) =
-!=3D VEND1_GLOBAL_FW_ID_MASK),
->                                           20000, 2000000, false);
->   }
->
-> I have not tried the resume use-case, but curious if this may
-> also help here?
+> Ah cr*p. No, I don't think it is. We should take the first supported
+> mode for a given PHY I think.
 >
 
-Interesting. Unfortunately this doesn't help with the suspend/resume
-use-case if I revert my offending patch.
+TBH I only observed the issue on AQR115C. I don't have any other model
+to test with. Is it fine to fix it by implementing
+aqr115_fill_interface_modes() that would first wait for this register
+to return non-0 and then call aqr107_fill_interface_modes()?
 
-Bart
-
-> Cheers
-> Jon
->
-> --
-> nvpublic
+Bartosz
