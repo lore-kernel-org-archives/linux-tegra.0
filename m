@@ -1,143 +1,181 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2087.outbound.protection.outlook.com [40.107.94.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01C280038
-	for <linux-tegra@vger.kernel.org>; Thu, 18 Jul 2024 09:20:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721294428; cv=none; b=uiizXNmroVq+zWYQHtph5ZyWa8WA9oT/YV+ylPOL8jS+sv1XgDtYiIujzdImgVtwD8noR/rEQQiPGaIE3O7RBVjU3vkcG6O9C2/2xeR/VIKIeVkiYGf17PpPsB5oR+Y2ot7c4jqAeQ+841BCtyRhCKquvjomaMYz8q+rn4X0RkE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721294428; c=relaxed/simple;
-	bh=NVmocxKup4CnNxG4HHYvEU51kiKuUcSnBQFJoZmyjlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2xKwyzPwboLpnCCnz9UT4raflSde4tt3Iq6gGShnvNeR49RxtzKid3KJwdETYmF0ZoTQBPJPPXnKKGftjGaYAJN2jvLT2SzSZ5efpb/ksOauot00HNlYYSOxc+ZhC9Y8lUnWwuJaLMvdZJZvz7fhR8O/rUVxgpIUERfoy0qDGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sUNGz-0002U5-TA; Thu, 18 Jul 2024 11:18:01 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sUNGr-000PqF-MB; Thu, 18 Jul 2024 11:17:53 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sUNGr-003zXS-1Y;
-	Thu, 18 Jul 2024 11:17:53 +0200
-Date: Thu, 18 Jul 2024 11:17:53 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	imx@lists.linux.dev, linux-omap@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
-	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
-Subject: Re: [PATCH 4/9] mtd: devices: add AT24 eeprom support
-Message-ID: <20240718091753.apwsrvmekn2vvo4k@pengutronix.de>
-References: <07b701a9-7b52-45b7-8dba-1c25d77cbf15@linaro.org>
- <mafs0ikxnykpr.fsf@kernel.org>
- <20240702-congenial-vigilant-boar-aeae44@houat>
- <mafs0ed8byj5z.fsf@kernel.org>
- <20240702-mighty-brilliant-eel-b0d9fa@houat>
- <20240708084440.70186564@xps-13>
- <20240709092214.omr7ccphdzdk7z7j@pengutronix.de>
- <20240709114302.3c604ef3@xps-13>
- <20240709103841.7x7n4hdtqrunyoc3@pengutronix.de>
- <20240717101948.2e99f472@xps-13>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187FF839E4;
+	Thu, 18 Jul 2024 09:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.87
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721296299; cv=fail; b=SlLQ2jrfRexTTCKRdboIGEIe1QgAdgD1gELa5PNe8/mc/GGUbDxK7wBJBgc6lu09+2q3BQVvkJNu2EWMTCoCbzESoxP+upnupvCTIsFAEvQzEwmyek6Y+rPWf1pU0SWueSL0d+zDuek3xdmQx57QS8djegHD37NWCr/GhEBJT4Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721296299; c=relaxed/simple;
+	bh=V2wmEk5sTTj/qOR9viIGN99qZ10BzQSlD7qz5LxPLe0=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=etMkp9vHT02UUO6x7PvI9tTN6Qm4xIx9D7MyQkWOPmn0xveQ3cfvusabzdMFduvfoMsUdLymLaslJdlh2I4gUpvV+iBFNgo/XyT9Tm+SSYDfngvUz/DNE+18EFDF+thdFfO9+LqUUu+Elzo0GWttgHMVXaHpF24KekHO46UkWXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rtOzOvSr; arc=fail smtp.client-ip=40.107.94.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rtOzOvSr"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=I7KQZm1pRX1gSJpuByA1Nd32iz0aD2KuNK6YQm/7toTBj6XQt+ZzOwtlmMUqa7zVf8PmjwHaLdOhBYdI4BEO5MK9OVMsqY9eWNiPAhbs6lCdeX1VL/XVndIXWRrCbOI+JnR8ZV1/AR4Q7h+C/yjn5rtpTAafW0Y+sKdnMOvzdh82oGti3HYx/Y5kYJ0OkXbKR7J+coppAzzbOavl/CTfP/zpvqw7CMGOZNuzbebRTNCfz5CQYkt3JACN5icMZ0bUrzH/DgZ34UGh+EODh4w8/CzjtGQ0EuLU1wqb0RAjETwBXyjs1plX8ciBtS1f5NpLVJ0mzTQZkMT8noTg8Kkf2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EHvYqt/mBFOKl481xqz7tMksv6Vayt/OaW2xD8F0Q9A=;
+ b=knpWSyisnvaSh1JtopKoe0TYfJCk1/2fGufnViBgzV2b6D61WamX15JOtTSUeztSo+G/e281KyL/ev9f8RK0YShg7T0d/YXSME7YLi6oauZXUwvkVLUZEY+Pq/ns10DWXroZEmf+YU6i8OXhaYdoAPdPs23N95oke0BQvzs+PQURT0fWXY3tOIlk6SqVv6kB0r6o3CimjMMHU9gr1yWEJm47FEcXeBKKiHfSUpYukV6KFs8JLNFjUAcn905Gu7BQuZnnY5A9ZDwKclVDu4boWtwlgWKi1QIxDLhWAn0UWkU1fee7XZ+rV10G2HI4NAj9WJKqGpyeGw5QaYcRsPsivg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EHvYqt/mBFOKl481xqz7tMksv6Vayt/OaW2xD8F0Q9A=;
+ b=rtOzOvSrBwzZHcT5OtFCb3BHI217zjlGW0JayQO+YjDQxSDWKgNKGxmTN+PSx9lrQm/2rifvlikplXcr9c64UEPsAMuhb/9WsBYl/fM172sstZK3F1WppUvHfY21xV+KtuTkT1D3KU4I8/LjAINHN5/A4hIsUpRn4vP3wy31W03oqxcnMZGdlKPcbj4cl0dTfRSwahJWGfJC1mWeYCslYKRtoFjIIfozvsFaU6ok9uupuTe7LAHlQNYQrr/WctdVe554EtJ6HsrOYteZK1JvjEd6/w2TfaWOA/OQ4/sOTYPzyGlL8ypUYEGcpLXqQea6UxZAw7qoBzz3VURXugSa+A==
+Received: from DM5PR07CA0095.namprd07.prod.outlook.com (2603:10b6:4:ae::24) by
+ PH8PR12MB7302.namprd12.prod.outlook.com (2603:10b6:510:221::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Thu, 18 Jul
+ 2024 09:51:35 +0000
+Received: from CY4PEPF0000FCC5.namprd03.prod.outlook.com
+ (2603:10b6:4:ae:cafe::82) by DM5PR07CA0095.outlook.office365.com
+ (2603:10b6:4:ae::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28 via Frontend
+ Transport; Thu, 18 Jul 2024 09:51:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CY4PEPF0000FCC5.mail.protection.outlook.com (10.167.242.107) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.11 via Frontend Transport; Thu, 18 Jul 2024 09:51:34 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 18 Jul
+ 2024 02:51:14 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 18 Jul 2024 02:51:14 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 18 Jul 2024 02:51:14 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.19 00/66] 4.19.318-rc3 review
+In-Reply-To: <20240717101028.579732070@linuxfoundation.org>
+References: <20240717101028.579732070@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240717101948.2e99f472@xps-13>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Message-ID: <b04f4a22-d40d-4824-ae6c-407b251194ca@drhqmail202.nvidia.com>
+Date: Thu, 18 Jul 2024 02:51:14 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC5:EE_|PH8PR12MB7302:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96fd0012-3906-4094-47e7-08dca70f3578
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bkt2T0FMQ0JmQjJBTFJkZW5SWDdsbXhvaEdYOTRCdDhhV1ZESDRCb2FzT1Vy?=
+ =?utf-8?B?MEEwMjE3Z3orVThZdndtNjNwcEpYOGV4V0VKUERMT2RaZjN4MkhZNlBjODF4?=
+ =?utf-8?B?eElmcFZyOHhScDhQNllmdXpYeW05NStaVW9iSTgrVDZrbGJNNFVDYTlaQ2kr?=
+ =?utf-8?B?WXkvbC82UmpTV2J6bnJIYy9wQnVxWEdta2RORzNTYjZxeUdTeE5CN2FkZm5P?=
+ =?utf-8?B?TlJiZkRDQXg1Y21oNjFPZjRVNjUyNDVVWjFBK0xvMlVpaE8rUDJoaHlTU1JJ?=
+ =?utf-8?B?bmJiWldoSmc4L1hWWElmZnMybURzaTlxZ1lwRWtHQW8wZVU4b2NzYjN2akND?=
+ =?utf-8?B?RGpqd2lzSjUvQXZUcEExWmZZWER5SEpEVEhkNWJ0RFU5cjFmM2xmRGF4czli?=
+ =?utf-8?B?UDF6ckVxVm9ocjlob3hiZUMvNGFNRGI0R1NhaWwwWXFHcm1FaHpVRnY1dEti?=
+ =?utf-8?B?UlJoKzJabGVINHZsbEp4bjRkRThOc2Zyd1l1NGZUNlZWMGpsdGZMd1owV0tu?=
+ =?utf-8?B?cmI5QkRhMnVEQmZucEhyUmIybk45OExyOEx0eXlERzZKQzBHWXV2K1Y1Wmg2?=
+ =?utf-8?B?SFVvdlFnUXhta3FkdklkdHRrWDVNMjZza0U0UXNBekhLbFpkVCtJWjVmbUJX?=
+ =?utf-8?B?MWhWZ09LcHVVc0ZLSTlxZkVVZUcvMlRYSUwyZ3lMWEhDb0dVbEFHU2NoaWo5?=
+ =?utf-8?B?R2lIRG9GcWE1ajlkbkZKVjRTaDdPanFOdUJQMTNXYVpVT04zL1orVFp1clVv?=
+ =?utf-8?B?a0xtL3Q5bmtLRVpHL0pKZU5ScUhuM3RIQ1ZzR3RrdDNCMFBUbjlzaUlsN2lS?=
+ =?utf-8?B?S3pMZi9KWGw1R25HaWNkOFY3RHI3MGlCbGtNOVl1WDlSNnQ5U09SK2VycFo5?=
+ =?utf-8?B?dWx0aUdXdCtNQkMyTEJJM2t1cDlrUUFGM3BUU1R3ZmVDaU5lazNyVCtOdGxF?=
+ =?utf-8?B?SDZJdWNUUFJQaGtiWm11WmRSRnJpOUxDS2grRlVpTVU5eEsyUi80czFwRk82?=
+ =?utf-8?B?amVDUzZFQ0FQSWNmOENwc1A0Yko3cmErT091cVpZOTZwcjZnY1o4bTNPUlQv?=
+ =?utf-8?B?SmNzaVkxUzQ3REVxSHp5UHhzdE8xd1gzUlU5UEpCKzg0aXNsL3VrYnFWSmZY?=
+ =?utf-8?B?QlNFZlFLL1drSUkyTWFHcWpXcVQ1VXkwb2JCVmlFdWRGM0ZFNTBpMzNGcTN5?=
+ =?utf-8?B?Y2haVVo0TFYvd01POS8wZ1lBQ05PVkJjd3pUbjhuTjVaK25GNTg0VU5vVGhx?=
+ =?utf-8?B?NFAveklUMm43MWFNZ1JKVzZKN01SWEU0V28zdllOQnk5aDhuVEtoRlBDTVhN?=
+ =?utf-8?B?ang0L2tsR2k4RVg1bW1MWmFpV0wzcGpwUHV0MVQyM0FPOFEyam1tUmMzZFpS?=
+ =?utf-8?B?MzY1NnFxMW5EQSt1cDZiOHI2NFF3NVFhNWNOVjlJQi80MDIvUWtrWnZqbS9B?=
+ =?utf-8?B?ajZpODZDTGFXdlZZRVMwZi9QdFNRMTc3YTVpM3l0NTVkU1ZleVBsTUIvSlBP?=
+ =?utf-8?B?Q2l2WHZsNDMxOGJ5RktjZE1mTkNnQU8rQ0JCbUNwbGhVRTY4aWhnYXdkVjdt?=
+ =?utf-8?B?a1FHN3ZMTjVpbHJnOEU1OTN1ZGorR3A2Q3I1NW5CNS9tQkhZK0J6ajBRV3J3?=
+ =?utf-8?B?TG5mTGIraXJWbENPQ0dROUVLcDUvWStKOEhUcTF0NTZWYWxLbms2Unc1M21w?=
+ =?utf-8?B?eC9SamhTYkNrd1dGTDBWZHhGTWt6R1FHM2FkZjNidVJ6ZFhwdGVZUkx4ZTd0?=
+ =?utf-8?B?aU5EenZsemVxYmY4bzRaOVpFR2dnWGxkUGZ2eHRZeUczNU5PTCtmTk1Laisx?=
+ =?utf-8?B?ek9HL1lydkxkU0thd05RK1lVZHc1a0U2RU5BRWFJdUkrNVRocElaYjVHV3la?=
+ =?utf-8?B?cWdDSzdTWERiUFBXODh3M2dMc3BSTHJLVHFvWEpmY0Y4eEIyNGlKT0U4YnR0?=
+ =?utf-8?Q?083kOnctn3zbSHAUcOhfoIDm25FOi7bx?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 09:51:34.2097
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96fd0012-3906-4094-47e7-08dca70f3578
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000FCC5.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7302
 
-Hi Miquel,
-
-On 24-07-17, Miquel Raynal wrote:
-> Hi Marco,
+On Wed, 17 Jul 2024 12:12:44 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.318 release.
+> There are 66 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> > > > > Overall I think the idea of getting rid of these misc/ drivers is goes
-> > > > > into the right direction, but registering directly into NVMEM makes
-> > > > > more sense IMO.    
-> > > > 
-> > > > So you propose to have two places for the partition handling (one for
-> > > > MTD and one for NVMEM) instead of one and moving the code into NVMEM
-> > > > directly?  
-> > > 
-> > > Why two places for the partitions handling? Just one, in NVMEM. Also  
-> > 
-> > Without checking the details I think that converting the MTD
-> > partitioning code into NVMEM partitioning code is a bigger task. As you
-> > said below there are many legacy code paths you need to consider so they
-> > still work afterwards as well.
-> > 
-> > > usually EEPROMs don't require very advanced partitioning schemes,
-> > > unlike flashes (which are the most common MTD devices today).  
-> > 
-> > As said in my cover letter EEPROMs can become quite large and MTD
-> > supports partitioning storage devices which is very handy for large
-> > EEPROMs as well.
+> Responses should be made by Fri, 19 Jul 2024 10:10:11 +0000.
+> Anything received after that time might be too late.
 > 
-> Did you had a look at nvmem-layouts ? In particular the fixed-layout.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.318-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Yes I had a look at nvmem-layouts and we use them within a
-mtd-partition. Using them instead of a mtd-partition is not sufficient
-since they:
- 1) don't support user-space write (I send a patch for it but it doesn't
-    seem to be accepted soon).
- 2) If write would be supported the user-space need to write the
-    complete cell e.g. no partial writes.
+All tests passing for Tegra ...
 
-> Is there anything you would like to achieve already that is not
-> possible with nvmem but is with mtd?
+Test results for stable-v4.19:
+    10 builds:	10 pass, 0 fail
+    20 boots:	20 pass, 0 fail
+    37 tests:	37 pass, 0 fail
 
-Please see above.
+Linux version:	4.19.318-rc3-g8b5720263ede
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Regards,
-  Marco
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
