@@ -1,137 +1,283 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2062.outbound.protection.outlook.com [40.107.220.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0859839EB
-	for <linux-tegra@vger.kernel.org>; Thu, 18 Jul 2024 10:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721299145; cv=none; b=fjhCdbsa42XtfTb02aoM/JyfhIOBcC2hOkrtKT0Uv4y4eqUa5KwYJOXxibD/PZpl+MFkwZIoBJNkr9Jm+UmkTReZkrvCp3N6WunM//r5BjYUEV+ucaXVtVhC7mr00EatG9V48JSTnj0Lt82AEgpP7wqzDpdgjkDI7b68PxSnx3Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721299145; c=relaxed/simple;
-	bh=m4LDLFOl8l/a5mtKOKFxzS9JuC3DNmVRoncGb9gKmNg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=shrUYHLa32qgSeVP9Dcy1RCE872vFI/iNQwYu8pNVXWKbnz9S+QDbq13ELkKPg1GJWNDsmx3ERxYM1G3N1cyCV4S6bxlGp1ST8nY9wYrTq1se551qjzWYoejOo9kXHmTJbrsbcMibShI2lrs3oXEtKVUo8J2l+6fOXYZXexSX/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XOktE1dT; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCF027448;
+	Thu, 18 Jul 2024 12:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721305410; cv=fail; b=F6Ky7MwSv8suGTQFnBFufrYdTdjeobK4sbvY4G20bu0XJrdOPRB2sblnGTAvsgZxN1hDuWBjPfZNFMp/HgKI0TtnTHHuVnetGBFxxkHayMDD6207AZLPQ2iRw10/tL7ounjM7ncmFJi31zk0FumBbayvAndpi/H17hiMBijGLhA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721305410; c=relaxed/simple;
+	bh=ljkIBnU3+B2jkGCgXAK3DrlplL9JfF0SPVxB7mTIKPM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=H60wqQM8OcS/6FCgecbOk5p0XOM4cVs9d+1ZRSMcIvC7t6UaxoTJjt1u0Q5awXB/YN5oRS34ypc/g7cpmAU9RUtL9jvhSQYoNlg9Ip/NI431tvsTmrO38nV/mWBBHBdHdz/eP1jv+bJEWMUpijmwjtCqgIY558yWkSKcr1YuCe0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WRRo5522; arc=fail smtp.client-ip=40.107.220.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XOktE1dT"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e05e2b2d88bso666314276.0
-        for <linux-tegra@vger.kernel.org>; Thu, 18 Jul 2024 03:39:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721299143; x=1721903943; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m4LDLFOl8l/a5mtKOKFxzS9JuC3DNmVRoncGb9gKmNg=;
-        b=XOktE1dTaOUPLr6/+55//gzALsjDbhLAY2fQGgHetNnwewT+v+fPiSeUlxrfANRVdV
-         vs1fbS5faT+x155gQeN/3UbHYeiompu0gTWpCFOWux1/Z1FeLwGC2Xev/Y2Awf7CBU1n
-         UIpGkPFJxfznT2MbtUG3+sGM2sugrCsmqeqoE5Cwt6CgqTIunkP1xgLVquzG2DLdSlVo
-         L9c3bVYx21js3i74pPMJWjN4D/fiTewsZ/0sHPpREaysLwN92hAs/2zlmOVAbeaMxlqp
-         EAdSRWgyCI4RkN2qBD0T4KTKVwzXewYKWtL8Kqgbuza9clYHWimzmex9EU8rr1uFRRld
-         yHow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721299143; x=1721903943;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m4LDLFOl8l/a5mtKOKFxzS9JuC3DNmVRoncGb9gKmNg=;
-        b=e7n9HGXNSnqHsB60bCJdAQWoWxLMdmcY3rwbMhAKH+21Xg8glGZUq1VA7XwCptvias
-         glqxMrb1gyHyYiARofHPzCImEzB99EPto7j/R0xrTNpt7dKJtwtbhEcBO+BHyo49HrVo
-         +Cka3xmpQ0RsDfXm38jorTZmT8X2Y6Pe6/AbhKyGuZR14QH3QSqMo+gz80g+mVIZc1Em
-         HJ5BOpP+A97fuTQGrkZaZ94R9rWAftOPXelIzIAUp14ASCFZRj9G9BWVcy9ZlGrKDnJw
-         BtKEAlCvgII18Bz5LahshYnqIhGYuRDctNxqhI4LwRlS525YlVCgZXtSksuOf45MVa3Y
-         98Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv4hCrQuQzr+H2wNHFKSRAGAVH1EmHIRdxh7YONipG1Y0xcLji5sHV9QnrMm0RX0NKb9yRRSWQqhMRD68IAtc3LxKuoeOo0H1rP/g=
-X-Gm-Message-State: AOJu0YykbW8kL2D4nKv3erGfJu2++y7PGyiSBMhppcsBcsPLHoA2BhUj
-	Atig9bi6+yH+xiWNU6/CCQaxvUNazndmeh2brmQvUQypFqIqEDOGbGIjhtpb71ePygM8mcFuXKa
-	KlJWlQJKJDJOWuL67IZ3OhbZ+sTuL+fz6tflHJA==
-X-Google-Smtp-Source: AGHT+IHNg8DrykyY2P3tA2MPU5TPB6/XmyE7fm2kYggHiVcUTiboVflJDbP+FqCaRFWkD4Ysgbp3lvEg9XsAEqNaGAI=
-X-Received: by 2002:a05:6902:2402:b0:e03:601a:1a83 with SMTP id
- 3f1490d57ef6-e05ed79a0f9mr5163423276.39.1721299142849; Thu, 18 Jul 2024
- 03:39:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WRRo5522"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FFYM2lcv8vEZjW5bNSU7xLeUDaeO2PIxZGBEfSZ9gxBPIXyiW61D4xABJQmR4CUlGu4Et2w4ky3l8TOsb2e1qbEv2Myz2+aWTDh3qQWTXldkgtHeSB3Va8kU6rAZQFvRnwidUurkaHORGuNp+AbVsKkm9khxecdBnsoXIyuWGdmqE32XwOEYaZs0ehR3aoyOg+ItCfjUY2nMjsnI5jItdWHGyMC6fE2OeNbj5GSO/1WKCw6ufFvfQZsDatb+c05WD55qDjocEeSwcHhfQOlTfhh2VoQm1EnTENBUg+8+MP9dDYj+iQI39wSu1O6Zd5gVQJpzRXudpah3Hb7s2ftSZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QjV96QruWOZdqPLMW5giSkQAZV2qWPg6CQ4LbH1KWQE=;
+ b=VA7FhLNW8QSv42lDgFym5KPVULarBdXR6qFNA3h/g4f3IPCp8cPAYxVRlrCNTAvFLJ17cnll+9yIV1MoD37da5jAOkEkBBseBGNoGU/HZb7QhPwPIACk4JyYpw7uAiLrJQcf4JplQPM8szN7jNOrfy/k0FkKMrPQW3I3ay8VOxXsqQEkXk6PZTySSrdUxSmbobp7TqfH44KTQwRXHeWYRcyRNNz88kNixmqpMDcLMde4QVHv6lDMKWSYLcscBFNrLyowLL1P6keGw3E3EKYZBOabw6omV+n44WCUy9fPdFT9+9a83enJND6vMEOAnt1gWXsMJiy+1yBfUS/uGM2XCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QjV96QruWOZdqPLMW5giSkQAZV2qWPg6CQ4LbH1KWQE=;
+ b=WRRo55227siJMmZ7nKJG3ko4Gbo9Qn9fVHHWAHFWidJreVGysO2H47eFcmR7we5shQgqvUMhoMb3A/XT1CUK3Lvfff2O78c6PIUgunM5U1XKN0C14l1gOMuroQI4HufLy8lFDBxheFnN2Y8ARUaLlMAmDvD7BbQkpb16mvJghaK3jDPlSNqlMTLgLixgvO6MtRj6KkL9ZHQFEwiuLEg6l8dJLhowWTizu7R2ddU1LWbPDWDeuJYDvNZO6Utrwv/eD7HQh9v/JcAomREcSnzFaeliS/8HLf0je0elvXtj3OwpqiXiVquS4F5zgfBt0QW5qmwxzACWzVJ0BIqnNzXTsA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ CY8PR12MB7633.namprd12.prod.outlook.com (2603:10b6:930:9c::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.16; Thu, 18 Jul 2024 12:23:25 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3%6]) with mapi id 15.20.7784.017; Thu, 18 Jul 2024
+ 12:23:25 +0000
+Message-ID: <7c0140be-4325-4005-9068-7e0fc5ff344d@nvidia.com>
+Date: Thu, 18 Jul 2024 13:23:19 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH net-next v3 3/4] net: phy: aquantia: wait for the
+ GLOBAL_CFG to start returning real values
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Brad Griffis <bgriffis@nvidia.com>
+References: <20240708075023.14893-1-brgl@bgdev.pl>
+ <20240708075023.14893-4-brgl@bgdev.pl>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20240708075023.14893-4-brgl@bgdev.pl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0668.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:316::14) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625105425.pkociumt4biv4j36@vireshk-i7> <CAPDyKFpLfBjozpcOzKp4jngkYenqSdpmejvCK37XvE1-WbBY2g@mail.gmail.com>
- <20240701114748.hodf6pngk7opx373@vireshk-i7> <20240702051526.hyqhvmxnywofsjp2@vireshk-i7>
- <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
- <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7> <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
- <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
- <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
- <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7>
-In-Reply-To: <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 18 Jul 2024 12:38:26 +0200
-Message-ID: <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|CY8PR12MB7633:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0388d46f-cacc-4793-d63b-08dca7246bc3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?djBIK29kQ3VEUWozdkJSWHgvR2dBSGZDTzYrY3hqaHZROEp6UTYzMDRwR3JZ?=
+ =?utf-8?B?KzZ5OHliTHNXcTVhV1RtTGJaRm4zUzRFMURaMlZNRUVsbGJSSmR0TGppRUZq?=
+ =?utf-8?B?N1hSSXRJdytzakNZUGRZVUV0ajQwQVBOcnB3R3JYSlM4elVyUVFkOWR2aExF?=
+ =?utf-8?B?eTVxWGM5aDVwdWh0Mjg0THAyVnJMVW95WHg0VlhNQmtNVjh5ZDhLQVF0aWtt?=
+ =?utf-8?B?YkI4Z0ZUSXVPRGNBajlYTkd4RkRnb1BDYVNDalRQSnJOYStDQzJ6ZGRMTmtm?=
+ =?utf-8?B?U0xmUTZVaEFVYmhPUXBzVW15SU1EeVhaMm51dHFQN2pvNEdORlk0MytHTHVO?=
+ =?utf-8?B?MkpyeGtNMVRvVUlMTkkzVVZXU0RNQnRxdHRvTEpUcUVxQTNkMkN1UWdTaEpn?=
+ =?utf-8?B?VjFqOXE3RklpZVY3NjdqV05jTnFhaDJ6Y3lXM2VhaDBOTGhTWHljZ0JhMDVL?=
+ =?utf-8?B?TmtaNmhJUmR0YTNrak52czFPUXhvWGdlbHFzclBZQ1c5OGFIWU1EN3dpTzV1?=
+ =?utf-8?B?cTl2SUZMZkJoY2U5NVgwMWtRZ2FFcDBWcGtsWVo5RFRtbXlhQjVWSlF5YlRZ?=
+ =?utf-8?B?cDh0UlFXS2cwNXVxNUZveDB0aWRrWDQ1Qk9XaEpyWFp4cDNTZG5xTzBJTnNI?=
+ =?utf-8?B?U3FWYjVEUzRZTndzVEpnNUVlVms3WGc4akU2OVovRmVmNE9ENFcyK0d3dUNL?=
+ =?utf-8?B?RzZpejlZdXIva21tcUl3WHdXS01PL0kzbXZsSGZNZTF6TWV1aUhDV1Q3eEZs?=
+ =?utf-8?B?TUpsazdpd1diejZwNUViMEZpWEhNdW02WGtoaUMyRXc4UFpkMXdlSmNVN0cr?=
+ =?utf-8?B?QzQ5VmNNTEtPdUxYdEUwdzJSNlZOQUh6N1pTaTJkbFJiVUN1RFJrakYxbGZi?=
+ =?utf-8?B?TzhaTy9HSERYSzRITXcrRVpkNlVJeHozdDM4TEpnYm0zblhvZHlmakFVR3A5?=
+ =?utf-8?B?Y0ZTSlJ0OGFDQy8rMm9EN2k5eVJ2SHBNeWRvb2tpMVVMWndJbzRwZGRTVXdI?=
+ =?utf-8?B?M0lINm9YZXB6dTRNUEFhTU8vaHBFdi9OZGRjS2VBYlZwTHFNMnVINGNMM1Rx?=
+ =?utf-8?B?SkJ3YzFBeDgwYWJEa0VOTVYwYW0wTkMrYzRMVWlnZmIvOWFvMnoySDl3azZq?=
+ =?utf-8?B?VHVseXd0K0lCVGJmd1VTdmpLSjcyTDZEM0o5Zkh3Mk5DVGhWWXE3dktrWTIr?=
+ =?utf-8?B?MHg1UTlmR3Iyd24wa2s0L05jTzFCRHZUVFVsd3lxNkN1UmtaZ2ROc1gydTNM?=
+ =?utf-8?B?QlRmdzFsMmR5cG1PbEUvbG51bGlUOEZNRkllSUc0OUhxM011b2YwaHFaY05R?=
+ =?utf-8?B?L3VOQ3dSNnV5dExiaGVzeXpBV1FJY3h2UXFqbGc2OElDSnNVNHhCeVVvUWNG?=
+ =?utf-8?B?SENudTR1KzdUM0N4RGlzSHgwS0hCY1p5bnZ6emJOSnIrbFJNd3hNWnR1UVNl?=
+ =?utf-8?B?S1l6SWQ1clBBWFYyRTQzbHkxYktTQXdFK2M3ZW16RGgxby9RSXErYTVZMnZG?=
+ =?utf-8?B?SXlJN1J5UDhMZ29yYW8zYmNmQzg5eGN0OEkrS1NhWDRZeW9wMFFrZW4yY0Vi?=
+ =?utf-8?B?dmVWY3FJWm0rSTN5eFhpa0RuMEQ0QkdZbEdwRFJmMDY0Y3lLaE9HOER6MFdL?=
+ =?utf-8?B?KzgwTHJKbGhrR0pDQUs2dURRYUlubTRzVVNyWjZnUHBYdjNDNUptb2pJT0Js?=
+ =?utf-8?B?RmVJcFdzdkVZakF2eFNYSHhGdEZXL2loeWRNWkZNNXZERGlJTDRkWXZWK0tP?=
+ =?utf-8?B?REVLbXd6b2xZVlo3a1hKTGt3bDVOcWc2ODJ4aHMza1hsL0RaU0dTek9uY3pM?=
+ =?utf-8?B?WWdQYmVtaTNOdUg5dTFsdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WnQ4emVOSEhJeGhSNnFzaUJyMlg4Vi8yU09lZkJMNGVTdCtEeG1UQkl5YXVv?=
+ =?utf-8?B?S0x6V3F5QWp5NzRvaTJoekFuY01yakprTzdCT1ZWTXhBUFdTOEQ4L2IydW92?=
+ =?utf-8?B?OVJVSGZoMWNGTGhjOHJDMnd6UHFRQ1hhb3I4K3J3c0hNZ2lsYUNCL0U5MXhw?=
+ =?utf-8?B?NHg2QmE4MEdwWUVDZlVpQlB5Tlh3MnhwdzB4VUFhc1lPYkhEaG5VSVdXV2tW?=
+ =?utf-8?B?UnhjdTNFQ3JpZE1UTGlOc3Vxb20zZFVkUFFxRlR5VzJ5ZFJHMlNjYVZEM0NY?=
+ =?utf-8?B?d3BIdlI1L0hDdDV4dnEwSlcyS0R4RjVMbWMvdVY5OXI4dkdNOTY2OEJIQjcr?=
+ =?utf-8?B?b2REdUxKdjA3b1c5WmkvTmtPUHZmMnk0QzZjZ3VEa09TcE9ObDBqSjdlUkY4?=
+ =?utf-8?B?WVVNclRXVmFYM1dJOWtNWmRGS2VxMitlS3NiSlNnRGVNNkV0aEVIYkVzTGpj?=
+ =?utf-8?B?TUdYd2dudFZsYkJKRGlRUnZlZG1iTEl6V3dsS3didVFud1dFLzFCdFczc0hT?=
+ =?utf-8?B?K1pLRHBaenhGNU5pcmZqSEVjcEptMlFnL1ptVGkzd3ZPa1Y1cDZiOHJHdXpl?=
+ =?utf-8?B?eUJJdERIM0RkaWV5eHpDV2RudnZqNHgyL3JZWnVUSTJvZUtLRHZrY3Z4RUFl?=
+ =?utf-8?B?UlBENXZLUHd2TndjK1NDMjN0L08wV0V2Smh5aUx2TlB6bFVNTHlHdm13NTBM?=
+ =?utf-8?B?V0lYaFN1UStMM0xJQ3pmZ3ZSUEpwc2VHNHZLWHFOOFc4K0padWYrVWpHU0s0?=
+ =?utf-8?B?dFVIcE5JRXJBN250T3FWK0V3UHVkWExGbUJmelo4ZEJod0hUUFV1SVpvVmZI?=
+ =?utf-8?B?WnFqbnVSRkd5QjBvRTZJUis1eHp6NjlOZllSM0t6ZlJ4TENRazJZRy84WUJN?=
+ =?utf-8?B?N2hnT2VuZG5BNTYvc2VqTERoWW43eFRTSkZGdW50VitGQ0Y3WElsN2FQT1FY?=
+ =?utf-8?B?V0M2S1JlaGFJRGlWOEh6OFVYSEs1b2FDNzk2ajQvc0VuamtUL1htOTZmZC9p?=
+ =?utf-8?B?V3Bla3pHQ3VOZVVBVjB5d2szWGlYeVN1QzVVYWxoSDZCRmM0Z1pnTmxiSzZp?=
+ =?utf-8?B?UU9UcElFcUpKQjNObHhubFBhM1FwQ2wyTHVCM0ViUWJTSVpCSXJpeW11amk5?=
+ =?utf-8?B?UjR2U05wVmhacE1sZHM3cnlNOTlMaTdSSkVrMXNjTHZ6U0NvVVNkbGt0bmEz?=
+ =?utf-8?B?U0JTR3c0SVpoUUFFWkN3NHBYQkNqRnR6VFlFaTZBRDJUdEpHNXF0dzF6WjRz?=
+ =?utf-8?B?ODRuNWFXdGwvYk5VRU5PT254WEV4enJxWVJSa3RKRzlMbGRMdjNDZzZGT0Mz?=
+ =?utf-8?B?OE9hQ1dKaTFIVDNVVGZlZVVxTGhzbnBYKzZtaGd0MFNwQkNzVFJpVEJkQXZY?=
+ =?utf-8?B?WlllRXE4REIrNUcyaTQvR1lqTDF2ZExENHB0a2hwYlF2MmdnN1lHMXFvdzBr?=
+ =?utf-8?B?WUh2ZlhQbkhJNk92N3BYZHMrbXVDVUVueDZTSGgyVVkwd2JqYmZZZWpyelFv?=
+ =?utf-8?B?eXlYUGNJNXNUbkFHbExYOXdzSHNldEx4ZFRSaWkxM1d4anZNdjlQRzRkUmxy?=
+ =?utf-8?B?UFF6Vy9mOGdNRDkycGRvdy9HTFdkdGkweUdsVEhIUjdpT3lyWDdwK0JsWmpK?=
+ =?utf-8?B?bUg3SU5jUFRVZUU2U1RUT0xCbVd4cnpVSmxoby9teWIra2FxZW9GdGlUUHBB?=
+ =?utf-8?B?UFhqTmFURlRHVUJ2MzRiNldNWXpVZmJmQlk1YzV4OUs3Q245eFh3OWVNQ3hz?=
+ =?utf-8?B?b2YxZ2R2eER3MC9JM2xXVGRIbUxLRmowUFFRNWZzRmg1NlJTVkJVU2lJa0k5?=
+ =?utf-8?B?aEpxTG9wNVo4bStWci9mK2lLTVI0aGFpcXJCbzVFaVRxUWUvWGVxc2sxZGsy?=
+ =?utf-8?B?M0pJRXY0ajJEKy9tZXhBTHJJMm1xUzYrSjlJdEtaYVBTMDQ4dml6MVNONjcw?=
+ =?utf-8?B?Qzc3R3ErNmdVTFRMY3gyL2x6Unh2SXIrc1NvUElGZi93OUpFTkk3NG91WC9E?=
+ =?utf-8?B?MG5BOGRvSTh1MjdlZXcyNmlpQ3BDZzMrZTFKUFpieElhcGtwTGk3eXVsU3N3?=
+ =?utf-8?B?Ulp3Zi9aRGl5dUczTjlOd2gvR0VjSjg0OWwrRjlCZTZ6TE9uS2dXR21ZdUc0?=
+ =?utf-8?Q?I1BObhObLOxdDS5ynN4yGmwET?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0388d46f-cacc-4793-d63b-08dca7246bc3
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jul 2024 12:23:25.0815
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K5bRZAZrmANugULwiUsdM9+wMWmzc69kIiRB61pIU53wYVD6CfTcEOYWUMfWVy/6wZJ8vxyEaCatb1MScCdSPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7633
 
-On Thu, 18 Jul 2024 at 05:06, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 11-07-24, 17:25, Ulf Hansson wrote:
-> > Right, I get your point.
-> >
-> > Although, it seems to me that just limiting required-opps to
-> > performance-levels, could avoid us from having to enforce the OPPs for
-> > genpd. In other words, doing something along the lines of $subject
-> > patch should work fine.
->
-> I really don't want to design the code that way. Required OPPs don't
-> have anything to do with a genpd. Genpd is just one of the possible
-> use cases and I would like the code to reflect it, even if we don't
-> have any other users for this kind of stuff for now, but we surely
-> can. Just that those problems are solved differently for now. For
-> example, cache DVFS along with CPUs, etc.
->
-> And as I said earlier, it is entirely possible that the genpd OPP
-> table wants to configure few more things apart from just level, and
-> hence a full fledged set-opp is a better design choice.
+Hi Bartosz,
 
-I understand your point, but we don't need to call
-dev_pm_opp_set_opp() from _set_required_opps() to accomplish this. In
-fact, I have realized that calling dev_pm_opp_set_opp() from there
-doesn't work the way we expected.
+On 08/07/2024 08:50, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> When the PHY is first coming up (or resuming from suspend), it's
+> possible that although the FW status shows as running, we still see
+> zeroes in the GLOBAL_CFG set of registers and cannot determine available
+> modes. Since all models support 10M, add a poll and wait the config to
+> become available.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   drivers/net/phy/aquantia/aquantia_main.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+> index 974795bd0860..2c8ba2725a91 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -652,7 +652,13 @@ static int aqr107_fill_interface_modes(struct phy_device *phydev)
+>   	unsigned long *possible = phydev->possible_interfaces;
+>   	unsigned int serdes_mode, rate_adapt;
+>   	phy_interface_t interface;
+> -	int i, val;
+> +	int i, val, ret;
+> +
+> +	ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+> +					VEND1_GLOBAL_CFG_10M, val, val != 0,
+> +					1000, 100000, false);
+> +	if (ret)
+> +		return ret;
+>   
+>   	/* Walk the media-speed configuration registers to determine which
+>   	 * host-side serdes modes may be used by the PHY depending on the
 
-More precisely, at each recursive call to dev_pm_opp_set_opp() we are
-changing the OPP for a genpd's OPP table for a device that has been
-attached to it. The problem with this, is that we may have several
-devices being attached to the same genpd, thus sharing the same
-OPP-table that is being used for their required OPPs. So, we may have
-several active requests for different OPPs for a genpd's OPP table
-simultaneously. It seems wrong from the OPP library point of view. To
-me, it's would be better to leave any kind of aggregation to be
-managed by genpd itself.
 
-For the reason explained above, it still looks correct to call
-_set_opp_level() from _set_required_opps(), as $subject patch proposes
-(but clarifications of why is certainly needed in the commit message).
-Moreover, when/if we see a need for additonal resourses but the level,
-to be managed through a genpd's OPP table, we can extend
-_set_required_opps() to cover that too.
+With the current -next and mainline we are seeing the following issue on
+our Tegra234 Jetson AGX Orin platform ...
 
->
-> > In fact, it looks to me that the required-opps handling for the
-> > *single* PM domain case, is already limited to solely
-> > performance-levels (opp-level), as there are no required_devs being
-> > assigned for it. Or did I get that wrong?
->
-> That's why the API for setting required-opps was introduced, to make
-> it a central point of entry for all use cases where we want to attach
-> a device.
+  Aquantia AQR113C stmmac-0:00: aqr107_fill_interface_modes failed: -110
+  tegra-mgbe 6800000.ethernet eth0: __stmmac_open: Cannot attach to PHY (error: -110)
 
-The API as such isn't the problem, but rather that we are recursivly
-calling dev_pm_opp_set_opp() for the required-devs.
 
-In the single PM domain case, this would simply not work, as there is
-not a separate virtual device we can assign to the required-dev to.
+We have tracked it down to this change and looks like our PHY does not
+support 10M ...
 
-Kind regards
-Uffe
+$ ethtool eth0
+Settings for eth0:
+         Supported ports: [  ]
+         Supported link modes:   100baseT/Full
+                                 1000baseT/Full
+                                 10000baseT/Full
+                                 1000baseKX/Full
+                                 10000baseKX4/Full
+                                 10000baseKR/Full
+                                 2500baseT/Full
+                                 5000baseT/Full
+
+The following fixes this for this platform ...
+
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index d12e35374231..0b2db486d8bd 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -656,7 +656,7 @@ static int aqr107_fill_interface_modes(struct phy_device *phydev)
+         int i, val, ret;
+  
+         ret = phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+-                                       VEND1_GLOBAL_CFG_10M, val, val != 0,
++                                       VEND1_GLOBAL_CFG_100M, val, val != 0,
+                                         1000, 100000, false);
+         if (ret)
+                 return ret;
+
+
+However, I am not sure if this is guaranteed to work for all?
+
+On a related note, we had also found an issue with this PHY where
+the PHY reset is not working quite correctly. What we see is that
+when polling for the firmware ID in aqr107_wait_reset_complete()
+is that value in the firware ID registers transitions from 0 to
+0xffff and then to the firmware ID. We have been testing the
+following change to fix this ...
+
+diff --git a/drivers/net/phy/aquantia/aquantia.h b/drivers/net/phy/aquantia/aquantia.h
+index 2465345081f8..278e3b167c58 100644
+--- a/drivers/net/phy/aquantia/aquantia.h
++++ b/drivers/net/phy/aquantia/aquantia.h
+@@ -20,6 +20,7 @@
+  #define VEND1_GLOBAL_FW_ID                     0x0020
+  #define VEND1_GLOBAL_FW_ID_MAJOR               GENMASK(15, 8)
+  #define VEND1_GLOBAL_FW_ID_MINOR               GENMASK(7, 0)
++#define VEND1_GLOBAL_FW_ID_MASK                        GENMASK(15, 0)
+  
+  #define VEND1_GLOBAL_MAILBOX_INTERFACE1                        0x0200
+  #define VEND1_GLOBAL_MAILBOX_INTERFACE1_EXECUTE                BIT(15)
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index 0b2db486d8bd..5023fd70050d 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -447,7 +447,9 @@ int aqr_wait_reset_complete(struct phy_device *phydev)
+         int val;
+  
+         return phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+-                                        VEND1_GLOBAL_FW_ID, val, val != 0,
++                                        VEND1_GLOBAL_FW_ID, val,
++                                        ((val & VEND1_GLOBAL_FW_ID_MASK) != 0 &&
++                                        (val & VEND1_GLOBAL_FW_ID_MASK) != VEND1_GLOBAL_FW_ID_MASK),
+                                          20000, 2000000, false);
+  }
+
+I have not tried the resume use-case, but curious if this may
+also help here?
+
+Cheers
+Jon
+
+-- 
+nvpublic
