@@ -1,182 +1,247 @@
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2080.outbound.protection.outlook.com [40.107.237.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57903D97A;
-	Wed, 24 Jul 2024 07:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721806588; cv=fail; b=N5UV0UxLNliFUX4Y3EXvGyknQCVeNpKp6QYMaKJw0iGoMHq+0h7hQa/kxK3SkFk60mLMUnd9s3lc5/syWMZip9I77brVxomVvXhi9D7C1xmZQ2v7aG4c2pM3tpS1RBVktQyFsbMci0nOw+8dp3DP8yGs6aKuAgP4iTzPZx+ql2I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721806588; c=relaxed/simple;
-	bh=lsvV+XBgNWu9nd9S/MID1gyszxki2gD0bHRFXYcOllk=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=q3GX74qpkRPcGT5wPswxAQSHhRxHF2WdZ974fZMCDhiK6O/HC8ww3q9HUAM43z1Wrv46xpDOeOkGbh12P8UErZJwSGX9AA9BOQI3tEy4PBdTpyaDIUSmwMO1zlOvp7VMbiCiMs4vg/8AengA289RRyFuL/ED6JMW6AUK+VBgvAY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pDkzHCeu; arc=fail smtp.client-ip=40.107.237.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAD72D030
+	for <linux-tegra@vger.kernel.org>; Wed, 24 Jul 2024 13:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721828857; cv=none; b=UcRMfHM4qm2Tym06/uEDemYYTz5qI9mpSPIeJDNcPPA1bZiIHg26EPfclGB9ei0S1AHeOjzxTBJDr3QcsVXSTFPs/OHhmKgBwLaHYrKKTN/K8sx+HoRNy4qytdZ51k2PL/F5KW6P6Z7tVK+Aj1kJTxZIaGoZvT4nZrYzR89/UPE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721828857; c=relaxed/simple;
+	bh=xjWm/eDlWeqPzKSEQS2S0Ya+3sWJ6iqZgAKGHCaMITE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jBJwoFfGm+KLPSo5Me7j7vTAOqGMLYE1AuwI6e3813QXttanQr4LaC9WhqOxSH7sGvwh/8ETlBnGB2otLeogSD18xztsnTw7heUI3R5ISn4FyJG8FSXNC0WmU2ssPbf4SpRowxA9XEBp9Ml/XY5srzTVwg1jvZf8qj1y6fm1Cy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h7tkJN0I; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pDkzHCeu"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Au5PePMpJCPjVUU/eoDDLl1XKkfxxObULtrw7FhC+p4zsjJwqg8BDQ6wUBPpzbmkv6xKLh8z0uQSNfqrKfJs5XouD0xfyrE97Fp+cwZpN8SBFq8BCrVyxgvnSNLY/4f6KzUB+SPp4xwKwOMU0Q4Qpzk7gKNnhGU74n3FU2lplPtkOXPfxkGcJ+Tq7DqYqiEm51TGSXtcV3JsS/R+aD2YRbA0IzpxeLfmPY5xK8eSWylYGYznr2DAliwpjVkLBdeMvkVcft4fhdPPF0oxwF9WrY1PwIWxY1z2MFobmczNGZlUq2JmYim89klXsnNrpbLLtRp4OdUfwuchEyN5pgB08Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P4V8Fdvge/kRWL9bnCJdBeZdbzCJemJ8RPEwdQZ5TX4=;
- b=R0Cy7i845QAVXu8VVgXspIXR+QwOxl2A6rCbff/MSpP3h9321A4vcpvAFjRQIRZ0aGKzhdxOV1PdmzO9KZBMFmkbjUqfKk57A88SnB3GfrK4iaDcFpeemwaHRei9IpBnWbhDu3j4LFy8do7E6GtO5I/M45eRWCAiXe+/kABl7GUT0O4YZ2TXYvqoq6ceWkFg82Nsg3s17jDDsp+3T1RzTdRBzM5gT7hPlRHITUHuMdUDWlGcTnVwAGuF10ZCt05oanE9rIJyH7EI2WmD+Xz+XmHbqn39k0z9YVggVVM8pVxWQ5ceBrt/ZlAsjvvh1HTlEo22DujNWOIg+IgSLuRhGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P4V8Fdvge/kRWL9bnCJdBeZdbzCJemJ8RPEwdQZ5TX4=;
- b=pDkzHCeubbCrZzRO0iWE6875kCwsjqS1nyWgHrw7jKquAfAH5ySRj9w1Ht3VIu+xLQFc3uQnOXApvOeJtTDtz70wIGoHtQRFSJspAYUbDjlw7uZJkdIhU1WggulAykP/hMy+x+niXf1MLw0gPk8I/LKoJRCrASunS77A73k1Cpo8U25jhnWYIYEyTuaW2k/1B3BkIPKuLeCDiEkxELlsV7avaRbJegr8e/AELvlTuMzq5ztsSF2EJkdxgBTaSLEO7Z+0q/llaTt3HfrL8LQB53686VgIbKQfDRZ0qPf1I+01z2VTUEeJftueOn3JWV7saeJr4ZvUqbXQH9nrsWcFNg==
-Received: from CYXPR03CA0058.namprd03.prod.outlook.com (2603:10b6:930:d1::16)
- by CH3PR12MB9456.namprd12.prod.outlook.com (2603:10b6:610:1c2::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.19; Wed, 24 Jul
- 2024 07:36:21 +0000
-Received: from CY4PEPF0000EE36.namprd05.prod.outlook.com
- (2603:10b6:930:d1:cafe::f4) by CYXPR03CA0058.outlook.office365.com
- (2603:10b6:930:d1::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20 via Frontend
- Transport; Wed, 24 Jul 2024 07:36:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000EE36.mail.protection.outlook.com (10.167.242.42) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.11 via Frontend Transport; Wed, 24 Jul 2024 07:36:21 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 24 Jul
- 2024 00:36:05 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 24 Jul
- 2024 00:36:05 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Wed, 24 Jul 2024 00:36:04 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.10 00/11] 6.10.1-rc2 review
-In-Reply-To: <20240723122838.406690588@linuxfoundation.org>
-References: <20240723122838.406690588@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h7tkJN0I"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc569440e1so17108435ad.3
+        for <linux-tegra@vger.kernel.org>; Wed, 24 Jul 2024 06:47:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721828854; x=1722433654; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SjlS3KeN9meLLfSQsSaPi/f/kHzcBW78TFSUcPryCjM=;
+        b=h7tkJN0IXAmZSDVDgQOpeqfw+8fvEIc3K1Sbftr9/y0yr79iR+NCNt33saVsG1zH+Z
+         fMBSAvmZ+HthOyrGq/J8fiQhuggVeJDZkNx9dZMRxXMSLDVYyn8Rw/h5Sef+QszH30Lg
+         6K4XgaDxEe8PlovPdua7+GVEx0iaBo7NRBdqS6ShNyG1ngwkSWKAjmSy2VgKlg/jIXEz
+         iWM8hn0W6YrN13X5Zgp//JjFslD0GJK3urRYc+pxE+MjAMPv9sDFvhsReSodr4HZO6iL
+         dejcqC8zG9pVucrHnWh1Ejy/FlWkKhe/eaXgMkQioAxsZqCTlkk6V9EMCxX2HfKp97b1
+         L6Rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721828854; x=1722433654;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SjlS3KeN9meLLfSQsSaPi/f/kHzcBW78TFSUcPryCjM=;
+        b=bP0qywYdaVeiUMYM9KbK2MKPWeaRMHRhIi2yLdaMx45aMdItDtuUkFfcJgbDdyCnlP
+         /1r0jpYfRueeaW3AwRJ4nMrw5hhh/MeqQs9IuAl9yq1rkhLXKB+dXlRBNl6uj7hwbM2G
+         whVv+JkiTx7YPs93iy2h3FfGZmBQXSAQD4grSPbTAyECmwSFDlAVOPYAifoghmuxa4Zh
+         xgl2sy5CvqphSpn1VnsbIp1yFxuzyLs7YKUkqnEZ/PRZznOoLppN+UGUBZ4jCHQpUuH4
+         h3XBjtporLIxSvbgYjo4RrCAc61lqhJEEB8plzhM+P8k3SlUijHjjpgad4NaEtajYqFO
+         uj1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXiNMGYAzzzAdUWfX9ijlxi01rBmoPkuEck+LzZcsTOOZgIvJcIJJWOcVgngNyR6Xab5Yg1BZSh4U2pq0hsKjGgHG+fOWg3pVjGglU=
+X-Gm-Message-State: AOJu0YwdtgiorQOkckFf98hN5BWi5q7asUIsY/588mQDaKyYrxqZi1AQ
+	JG3I8kq0uI5ApaZjc9Ul29UEGG0WgQ99/+fHwxrkjXzgiLlsUk6PHHjqJaYN+A==
+X-Google-Smtp-Source: AGHT+IGQ1pRozmQ8WsiHI1I3zmEDTN6hvlFln3KcelbKxSnwPg41LAbjogxZsXYR2+UZUvCxUcYACA==
+X-Received: by 2002:a17:903:244a:b0:1fc:2ee3:d45a with SMTP id d9443c01a7336-1fdd54f46f3mr24825785ad.8.1721828853831;
+        Wed, 24 Jul 2024 06:47:33 -0700 (PDT)
+Received: from thinkpad ([103.244.168.26])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f44f4c4sm94151845ad.224.2024.07.24.06.47.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 06:47:33 -0700 (PDT)
+Date: Wed, 24 Jul 2024 19:17:21 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Aleksandr Mishin <amishin@t-argos.ru>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
+	Jianjun Wang <jianjun.wang@mediatek.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	Joyce Ooi <joyce.ooi@intel.com>,
+	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Koichiro Den <den@valinux.co.jp>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Marc Zyngier <maz@kernel.org>, Michal Simek <michal.simek@amd.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Rob Herring <robh@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
+	Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 05/15] PCI: dwc: Silence set affinity failed warning
+Message-ID: <20240724134721.GC3349@thinkpad>
+References: <20240723132958.41320-1-marek.vasut+renesas@mailbox.org>
+ <20240723132958.41320-6-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <a868725b-6a80-4764-9289-e70e7ffa8f35@rnnvmail203.nvidia.com>
-Date: Wed, 24 Jul 2024 00:36:04 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE36:EE_|CH3PR12MB9456:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5ef6edff-ba3b-4d6b-6a43-08dcabb35039
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Mll3MjB3NjJ4R0FYZEN3TmczYVAwU1JzUm1HdCt4aE02MFpTR0hiYURSMnBZ?=
- =?utf-8?B?aVVmUTBGMVlzZHlwLzhDZ2pVUTFmZFIyYjlJRXo5NHB4TFg2SHFRbGxJQUZh?=
- =?utf-8?B?WWxXMTNZWi9SL1QxNy94TjluU01SbC83WmtSZzJmRkFuZGNLMy9Ed1N1Uk1z?=
- =?utf-8?B?MkFEVkVNbUJTWGZ4c3N6RHRTb3QxK0ZBSDg0S0M5WHJQT0Z1QlF2b3BuYkZL?=
- =?utf-8?B?ZWZoK293Tjd0dGV3eWQ4V1dFQXNvcklUNVhpZElXRTR1bTBUUmVDb0l1Tjhk?=
- =?utf-8?B?Y3R2ZTNXd2Jrek1lUVI3RVdVcFhNWGJsbnBYbWFWUE1lMDZQelI1QTBhUXJV?=
- =?utf-8?B?eGxiUUlaY2k0RURWcmRuVm8xeE9ENmg0ZzN2b0RZZUtmY3BTZWIralBaWFNo?=
- =?utf-8?B?KzFLbHRhVHNxSVhTRWY0NEFHbWh5cHZ1MUZSOURKRnVxM0F3elNsSWxrMnI1?=
- =?utf-8?B?VllwN2NiZ3NWTmRibUErSS9qNkxnNWxnVkVOU3dlaDlwdk9UUlRZYll4NjFr?=
- =?utf-8?B?Mm1LcVNsMHpiS0FtV0lWdEk2UGFqNmFLSXBCUWs2NmVscklTMWNIbEJabzZE?=
- =?utf-8?B?TGZaOGZPVE9RaHdtYm53UXJqZEdvWFVVQXYwVmNzK0ZZREJMc0RvZnU1eEZF?=
- =?utf-8?B?OGI3ZFZXL1MzSElkSi9OZFptSEhXSWtaMTFmcVVPWmgvK3MxcWQzTjkxVHBP?=
- =?utf-8?B?Q3hSYmt6ZkdTZVl1Nml0ZVFoeSt2Qm91VmxKS2VGZ2ZOdlh1NWtJY01UVUth?=
- =?utf-8?B?SXBObXZhck5QYWVBT1lKVHB0Um5xaWVGNVYxWTVtNDRzTGg2ajZGZFdsekhU?=
- =?utf-8?B?V1pEeGxDWHlRYUdEUUpRdnJXd25rVm9aNGgwM0RjNEFvMkI4NDZFMWpwMm5w?=
- =?utf-8?B?MWFXMmVIdkNBU290OVlxZ1MzUy9CcXl2OHJCSExPWjVoUS83Tzhtc3AvRWVl?=
- =?utf-8?B?VC9wejFzOENHbHlwbGdiTEFQSkhvUmVQWHBEQm9JSFhuUXNoTjQxOFgybncv?=
- =?utf-8?B?d25BZEpzOXVqR2tLd3BFbmZXNDBpN3pkdkFvSHhMdTM1MzdoaURMQmF3OG92?=
- =?utf-8?B?Y3NnS2dNdDh1QVFseUtpMEQ0UU1xdEpYM3d0VS9oMjdzcXppMlBXUjljU0U4?=
- =?utf-8?B?V0tXaUpnY3ZRZk5uNDd0dWx5Tm9vL2FHeVFPQ0pILy83dlQ4a21EYVdvUklR?=
- =?utf-8?B?NEFmckZybk02dkgrdGlZc2VENWN0Q1hvSFdmb2lxdkFoYUd5NnVPTHlPN2dJ?=
- =?utf-8?B?eVNiNm4wRTdMaUYzdlErd2FYbm9PdVhZZkF4by9xdmhwcTk0NU1MRERDUXdD?=
- =?utf-8?B?R2c1c1lvTktkOW4wc0t2VVNhc2NHb2VPVEcvNmhTWFd0OWZaZmxWOG1SYUdy?=
- =?utf-8?B?NUdYR0xaV3ZkV3FYS0FwUzdBVit0Wnh3N1oxVkpuNllzTHIrRkdKZnFzdjNl?=
- =?utf-8?B?Qml5QUUyZkFvak4wRE84UXJPNmtJc0FtT1ltSlRKTDN1enVkMHBvWEkrQnJ5?=
- =?utf-8?B?d1hDNEdJSkd4eUExRmNEc29UMTRKQVYzSlUzckZ1OEVFTlRmNnJURHA5QjhD?=
- =?utf-8?B?RndwMlY1UGExMFJZbzhZTmRFK09TZFFlK3VQWEJLTHozZlNSbmR1aS9KT1Bm?=
- =?utf-8?B?MEtYL2lpbVRmRGp3SVI5Z2k0SVZjMi9HT3ZaMGF3WDlzZzJSK1QyeTlBYUVH?=
- =?utf-8?B?dGF6UlBiNE5TQkx4T0F2UVlNMFlDWWl6SUpaTVhJYlhqSTM4SWFTY0ExNzZK?=
- =?utf-8?B?VkdhdXRHZ1pMKzBoK2hzUVNXeG51VFJBSnJ5Y2hMdzQybTdGRVdOS1B4ZEpv?=
- =?utf-8?B?ejRrSUU0bGNjTW1tNi9JMlhCb2JJdXdRZTZ6TU51S0JkTHhtenJkYzI2TWxx?=
- =?utf-8?B?MWVCQXE1NlM0VnFpTjVXNlJBOFNCRDlpTUdkMUVSa1FtdFdxSlE1RWdFNDVU?=
- =?utf-8?Q?Cs8GmHfeYZjQf0CDBhXG3uiOkphH67/y?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 07:36:21.2109
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ef6edff-ba3b-4d6b-6a43-08dcabb35039
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE36.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9456
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240723132958.41320-6-marek.vasut+renesas@mailbox.org>
 
-On Tue, 23 Jul 2024 14:28:51 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.1 release.
-> There are 11 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Jul 23, 2024 at 03:27:05PM +0200, Marek Vasut wrote:
+> Use newly introduced MSI_FLAG_NO_AFFINITY, which keeps .irq_set_affinity unset
+> and allows migrate_one_irq() code in cpuhotplug.c to exit right away, without
+> printing "IRQ...: set affinity failed(-22)" warning.
 > 
-> Responses should be made by Thu, 25 Jul 2024 12:28:30 +0000.
-> Anything received after that time might be too late.
+> Remove .irq_set_affinity implementation which only return -EINVAL from this
+> controller driver.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.1-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> ---
+> Cc: "Krzysztof Wilczyński" <kw@linux.com>
+> Cc: "Pali Rohár" <pali@kernel.org>
+> Cc: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
+> Cc: Aleksandr Mishin <amishin@t-argos.ru>
+> Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> Cc: Anup Patel <apatel@ventanamicro.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+> Cc: Daire McNamara <daire.mcnamara@microchip.com>
+> Cc: Damien Le Moal <dlemoal@kernel.org>
+> Cc: Florian Fainelli <florian.fainelli@broadcom.com>
+> Cc: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Cc: Jianjun Wang <jianjun.wang@mediatek.com>
+> Cc: Jim Quinlan <jim2101024@gmail.com>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> Cc: Jon Hunter <jonathanh@nvidia.com>
+> Cc: Jonathan Derrick <jonathan.derrick@linux.dev>
+> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: Joyce Ooi <joyce.ooi@intel.com>
+> Cc: Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
+> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+> Cc: Koichiro Den <den@valinux.co.jp>
+> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> Cc: Michal Simek <michal.simek@amd.com>
+> Cc: Nicolas Saenz Julienne <nsaenz@kernel.org>
+> Cc: Niklas Cassel <cassel@kernel.org>
+> Cc: Nipun Gupta <nipun.gupta@amd.com>
+> Cc: Nirmal Patel <nirmal.patel@linux.intel.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Ryder Lee <ryder.lee@mediatek.com>
+> Cc: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
+> Cc: Siddharth Vadapalli <s-vadapalli@ti.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-rpi-kernel@lists.infradead.org
+> Cc: linux-tegra@vger.kernel.org
+> ---
+> V4: - New patch
+> ---
+>  drivers/pci/controller/dwc/pci-keystone.c         |  7 -------
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 12 +++---------
+>  2 files changed, 3 insertions(+), 16 deletions(-)
 > 
-> thanks,
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index 52c6420ae2003..ce9d9e0a52609 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -189,12 +189,6 @@ static void ks_pcie_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+>  		(int)data->hwirq, msg->address_hi, msg->address_lo);
+>  }
+>  
+> -static int ks_pcie_msi_set_affinity(struct irq_data *irq_data,
+> -				    const struct cpumask *mask, bool force)
+> -{
+> -	return -EINVAL;
+> -}
+> -
+>  static void ks_pcie_msi_mask(struct irq_data *data)
+>  {
+>  	struct dw_pcie_rp *pp = irq_data_get_irq_chip_data(data);
+> @@ -247,7 +241,6 @@ static struct irq_chip ks_pcie_msi_irq_chip = {
+>  	.name = "KEYSTONE-PCI-MSI",
+>  	.irq_ack = ks_pcie_msi_irq_ack,
+>  	.irq_compose_msi_msg = ks_pcie_compose_msi_msg,
+> -	.irq_set_affinity = ks_pcie_msi_set_affinity,
+>  	.irq_mask = ks_pcie_msi_mask,
+>  	.irq_unmask = ks_pcie_msi_unmask,
+>  };
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index a0822d5371bc5..3e41865c72904 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -48,8 +48,9 @@ static struct irq_chip dw_pcie_msi_irq_chip = {
+>  };
+>  
+>  static struct msi_domain_info dw_pcie_msi_domain_info = {
+> -	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+> -		   MSI_FLAG_PCI_MSIX | MSI_FLAG_MULTI_PCI_MSI),
+> +	.flags	= MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
+> +		  MSI_FLAG_NO_AFFINITY | MSI_FLAG_PCI_MSIX |
+> +		  MSI_FLAG_MULTI_PCI_MSI,
+>  	.chip	= &dw_pcie_msi_irq_chip,
+>  };
+>  
+> @@ -116,12 +117,6 @@ static void dw_pci_setup_msi_msg(struct irq_data *d, struct msi_msg *msg)
+>  		(int)d->hwirq, msg->address_hi, msg->address_lo);
+>  }
+>  
+> -static int dw_pci_msi_set_affinity(struct irq_data *d,
+> -				   const struct cpumask *mask, bool force)
+> -{
+> -	return -EINVAL;
+> -}
+> -
+>  static void dw_pci_bottom_mask(struct irq_data *d)
+>  {
+>  	struct dw_pcie_rp *pp = irq_data_get_irq_chip_data(d);
+> @@ -177,7 +172,6 @@ static struct irq_chip dw_pci_msi_bottom_irq_chip = {
+>  	.name = "DWPCI-MSI",
+>  	.irq_ack = dw_pci_bottom_ack,
+>  	.irq_compose_msi_msg = dw_pci_setup_msi_msg,
+> -	.irq_set_affinity = dw_pci_msi_set_affinity,
+>  	.irq_mask = dw_pci_bottom_mask,
+>  	.irq_unmask = dw_pci_bottom_unmask,
+>  };
+> -- 
+> 2.43.0
 > 
-> greg k-h
 
-All tests passing for Tegra ...
-
-Test results for stable-v6.10:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
-
-Linux version:	6.10.1-rc2-ge89ad42bf499
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+-- 
+மணிவண்ணன் சதாசிவம்
