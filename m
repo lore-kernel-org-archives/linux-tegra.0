@@ -1,134 +1,75 @@
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9C51990D6
-	for <linux-tegra@vger.kernel.org>; Thu, 25 Jul 2024 11:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4C326281;
+	Thu, 25 Jul 2024 12:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721906724; cv=none; b=Vl0GTQCG64EP0XCPXBWmWjI7VEAlHgGK3McnHlqI9FKW6kG6g2hOrs3vQy8EBSHDUOPkIUoKKQbCBO6AJZX1k/XiKQrqj3XLK884RWm2Qh7GTWMMDiFa8y4rkNpeSYLVUvncNsKXPraE9CZyoAkhvt+lOsg0mdjQVzlAnGRi0tw=
+	t=1721911386; cv=none; b=iOUeScpoj9DtQGB/x0iKh3TsRpidiym1WrLpOQUamu11FE2GtKwKwUFTasYawetbhwqSLz5gftymIlxtiaBtvPLJ+b6r02vdi6MbNz1nzmcuYP7mYF6c4HlV2pZsb4xzpJkx/eM1vDWSYFlT7K0jh8H8CzSJ2A6GafZ5+j7MoB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721906724; c=relaxed/simple;
-	bh=JsK7yJjBr07hesTWuuOd0Olz1bm2HQodZpRdnFA5cgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kv9NExnWg7ZIsEll4VqA5wXRj2SWhm8W/Pxf/4nH3pQcwXz4lLjefhuY0/a8oYeGOln6cmeSpuDpOPJ/pc9PDVthnjaFEiRmXKGjPhwd04SjANaEmM30vcOWSlmtaqzTJ5uY9kHmezbT82EN9Dp8JNmMAYlyXMvYXy/NKSR4pTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJSumhwg; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721911386; c=relaxed/simple;
+	bh=tC43HF5shSRy1Qp9aEL/m7tJcGEGxkURSW88ynoN5XU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LC7LmhKH2vL1jWh0+xiW6J9iaCcGFEJO1YFMP3KCkRRXLlrTMfIndQav3KXgRF2F/Wuq024Lyotxtbqu8rvYBBNgSW/U3SKYmqDiqzRHbQNQjuXhDZwWuMz3+/ThRHQu2JJeBR08oU9FHn9F2cx1FjGjyKhgHcsh59vo2DpzOes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XT/Lh4B5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJSumhwg"
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-708adad61f8so421902a34.1
-        for <linux-tegra@vger.kernel.org>; Thu, 25 Jul 2024 04:25:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721906722; x=1722511522; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pB5alhK3P/rWHh7+6LRvYSZnbMJZGnDqL1m2WfhmM9Q=;
-        b=HJSumhwgmCZaXodmOfg9ocbC3JhI/zX3ZkZKQpY8n7OmYpBJQaCFWdKtCbqGheR0lj
-         wk9rAZTfmsWYHGAB2HSKqndQpPWohjTi4ATfVsBpp4nxGYYGSG8TiH414rB5URn744rt
-         jchQGsCf3hNbbqxUhEJmNCaRbsbICuv1smWBhpVyQlhlmcjfmW5UF8Xmzzu7MLLb9oKR
-         e9RFiSPPil4Y38xgvFxYs05KHV7UoPQUkkd+zQiOaNt8lkGOjSwPOU7xnwJvjItrFhRp
-         1j3dyzCoaKZFahyeSVpjcy3LGgcwI08hIBxIesIVAYETq7zEjEqkpNf9R6LG/mLzFAFH
-         Dp+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721906722; x=1722511522;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pB5alhK3P/rWHh7+6LRvYSZnbMJZGnDqL1m2WfhmM9Q=;
-        b=eZPp19euFfF+FH3NW85muXwp8m//ApVmtIRXcsiGHq19TJ02bboelD5ITnrPRD/vVm
-         1AxwvuV5c6fQMmfND8z9aaf2we4v1bDma1snzEdFT04/Iri+xYrnOXogEvwAeiDqenJE
-         +wARsnV0RXwQKxrjvmM7KKIY5yNsjJQ42sCSQ4iaQkBmJopkprkgT0B4njS3vKPEtrnR
-         n7po1bfUChwCYhz/891XFqtokenj7mI6GVJ5GE4XpsKY4NcCB64srmXiAC1fMjtS7cwd
-         pOuYxcomW3YXilCyL0hcksDOkT4+1vUMWzaNoLgoAcNw9BS+Tkq3rE0+sIRCA7b5pE3G
-         KL+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUi43MGfiyhUvus4wS6v7hOnjqI3PiI0dqyfW69uYNpz6CSbWpLIX9F/5z/lnOVkC4UrHLHCL/XcppjfUxc3UBT+A8tQ/1g2ifn+k0=
-X-Gm-Message-State: AOJu0YzEtxe02MI9K7VeNK+wW1XmNhfaWcWCw/hXYsV0vSPQZIwEAro4
-	5UbQo/AHu+przhWQKstJ1f+RA+JHUvTULkCyBzf9COJrKlC3FdD1PjBnfXxnwVg=
-X-Google-Smtp-Source: AGHT+IGB/C7i53ZMxQDVG7er3qrj96VmG0v9dXH1VLSTmcs7GQ7h6A9jCwiBR5/hKLh7wLBNc8M2NA==
-X-Received: by 2002:a05:6870:b020:b0:229:f022:ef83 with SMTP id 586e51a60fabf-266ede9b2f8mr1951899fac.43.1721906722263;
-        Thu, 25 Jul 2024 04:25:22 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8af074sm937252b3a.218.2024.07.25.04.25.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Jul 2024 04:25:21 -0700 (PDT)
-Date: Thu, 25 Jul 2024 16:55:19 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
- domains
-Message-ID: <20240725112519.d6ec7obtclsf3ace@vireshk-i7>
-References: <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
- <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7>
- <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
- <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
- <20240711131637.opzrayksfadimgq4@vireshk-i7>
- <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
- <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7>
- <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
- <20240725060211.e5pnfk46c6lxedpg@vireshk-i7>
- <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XT/Lh4B5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 226FCC116B1;
+	Thu, 25 Jul 2024 12:43:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721911386;
+	bh=tC43HF5shSRy1Qp9aEL/m7tJcGEGxkURSW88ynoN5XU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XT/Lh4B5uF0w84Fk+Mswy75DQppXHRZTGI0GQPw55xdMn+kFSHSYI052KZtH8o8pw
+	 urHYvsRHa2romZV6EDoDOZn2jTL4hDKE7bgyRITaP89FKpJd5wLi3n8WeikFziC8IO
+	 0tu9EVb1kmeeq+ckDCMOLPDKaef1nA1CTwg41z6/AkcrFItcO8jS5I2QaPzAWFvkRN
+	 uzYx2KzkGHymBf/lf4KFrJmlBf8f0XTeXeZ6EvRqglMi2N17WlPzIjaIJgOwCtt2ru
+	 9uXaw+SqHf9bkLnHi4s4+aeRlariaqtCY4Wq8xnP7Ezhjh4XY9RgR0gP6ElCKTy4x2
+	 RDsiUT8NELpfw==
+From: Will Deacon <will@kernel.org>
+To: thierry.reding@gmail.com,
+	vdumpa@nvidia.com,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	Ashish Mhetre <amhetre@nvidia.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] iommu: arm-smmu: Fix Tegra workaround for PAGE_SIZE mappings
+Date: Thu, 25 Jul 2024 13:42:59 +0100
+Message-Id: <172190932508.3262642.13562592827305317735.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20240724173132.219978-1-amhetre@nvidia.com>
+References: <20240724173132.219978-1-amhetre@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 25-07-24, 11:21, Ulf Hansson wrote:
-> Right.
+On Wed, 24 Jul 2024 17:31:32 +0000, Ashish Mhetre wrote:
+> PAGE_SIZE can be 16KB for Tegra which is not supported by MMU-500 on
+> both Tegra194 and Tegra234. Retain only valid granularities from
+> pgsize_bitmap which would either be 4KB or 64KB.
 > 
-> The main issue in regards to the above, is that we may end up trying
-> to vote for different devices, which votes correspond to the same
-> OPP/OPP-table. The one that comes first will request the OPP, the
-> other ones will be ignored as the OPP core thinks there is no reason
-> to already set the current OPP.
-
-Right, but that won't happen with the diff I shared earlier where we set
-"forced" to true. Isn't it ?
-
-> > I think that design is rather correct, just like other frameworks. Just that we
-> > need to do only set-level for genpds and nothing else. That will have exactly
-> > the same behavior that you want.
 > 
-> I don't quite understand what you are proposing. Do you want to add a
-> separate path for opp-levels?
 
-Not separate paths, but ignore clk/regulator changes if the table belongs to a
-genpd.
+Applied to iommu (next), thanks!
 
-> The problem with that would be that platforms (Tegra at least) are
-> already using a combination of opp-level and clocks.
+[1/1] iommu: arm-smmu: Fix Tegra workaround for PAGE_SIZE mappings
+      https://git.kernel.org/iommu/c/726d4f528dbc
 
-If they are using both for a genpd's OPP table (and changes are made for both
-opp-level and clock by the OPP core), then it should already be wrong, isn't it?
-Two simultaneous calls to dev_pm_opp_set_opp() would set the level correctly (as
-aggregation happens in the genpd core), but clock setting would always reflect
-the second caller. This should be fixed too, isn't it ?
-
-> To be able to call dev_pm_opp_set_opp() on the required-dev (which
-> would be the real device in this case), we need to add it to genpd's
-> OPP table by calling _add_opp_dev() on it. See _opp_attach_genpd().
-> 
-> The problem with this, is that the real device already has its own OPP
-> table (with the required-OPPs pointing to genpd's OPP table), which
-> means that we would end up adding the device to two different OPP
-> tables.
-
-I was terrified for a minute after reading this and the current code, as I also
-thought there is an issue there. But I was confident that we used to take care
-of this case separately earlier. A short dive into git logs got me to this:
-
-commit 6d366d0e5446 ("OPP: Use _set_opp_level() for single genpd case")
-
-This should be working just fine I guess.
-
+Cheers,
 -- 
-viresh
+Will
+
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
