@@ -1,75 +1,88 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4C326281;
-	Thu, 25 Jul 2024 12:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8963517B41B;
+	Fri, 26 Jul 2024 12:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721911386; cv=none; b=iOUeScpoj9DtQGB/x0iKh3TsRpidiym1WrLpOQUamu11FE2GtKwKwUFTasYawetbhwqSLz5gftymIlxtiaBtvPLJ+b6r02vdi6MbNz1nzmcuYP7mYF6c4HlV2pZsb4xzpJkx/eM1vDWSYFlT7K0jh8H8CzSJ2A6GafZ5+j7MoB4=
+	t=1721995809; cv=none; b=id/faFU5NPDDoJlH0yCBuF4qW0xpxl9X4l3tR62hqVTA9+wHySKtNn+jsNdBo8zOhBC7r/nkQG1Qi2K3YUrZo2nfMskNwNklnYjdo7589uyQmJu0qz0GsReFqZl4BvzMBKBTrSWJ8+0dvnypHaANpp4pDvK0zpIQjfsJ1KPGk30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721911386; c=relaxed/simple;
-	bh=tC43HF5shSRy1Qp9aEL/m7tJcGEGxkURSW88ynoN5XU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LC7LmhKH2vL1jWh0+xiW6J9iaCcGFEJO1YFMP3KCkRRXLlrTMfIndQav3KXgRF2F/Wuq024Lyotxtbqu8rvYBBNgSW/U3SKYmqDiqzRHbQNQjuXhDZwWuMz3+/ThRHQu2JJeBR08oU9FHn9F2cx1FjGjyKhgHcsh59vo2DpzOes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XT/Lh4B5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721995809; c=relaxed/simple;
+	bh=PlMRijtqCm0MZ6n79QOvrnKsNAELqQTM+5n/uBS9kZA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hVE4nVmhVn91aVbCsOqCKfX3phKTtXskJfjkEoXRI/ciqFarJuQcwS8BTN8ERndAdMg7Eym5ZWCQB4CAS+IyQ+w/HWFM3JtSQO+V3Vq533OU9gxOoeRTC7bju3siNmdmdqMJFEGYkMlv9U7GBAvsblG6vxQPuSP6PWQmFlnMBiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hMJHi9U+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GUqgh+WZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XT/Lh4B5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 226FCC116B1;
-	Thu, 25 Jul 2024 12:43:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721911386;
-	bh=tC43HF5shSRy1Qp9aEL/m7tJcGEGxkURSW88ynoN5XU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XT/Lh4B5uF0w84Fk+Mswy75DQppXHRZTGI0GQPw55xdMn+kFSHSYI052KZtH8o8pw
-	 urHYvsRHa2romZV6EDoDOZn2jTL4hDKE7bgyRITaP89FKpJd5wLi3n8WeikFziC8IO
-	 0tu9EVb1kmeeq+ckDCMOLPDKaef1nA1CTwg41z6/AkcrFItcO8jS5I2QaPzAWFvkRN
-	 uzYx2KzkGHymBf/lf4KFrJmlBf8f0XTeXeZ6EvRqglMi2N17WlPzIjaIJgOwCtt2ru
-	 9uXaw+SqHf9bkLnHi4s4+aeRlariaqtCY4Wq8xnP7Ezhjh4XY9RgR0gP6ElCKTy4x2
-	 RDsiUT8NELpfw==
-From: Will Deacon <will@kernel.org>
-To: thierry.reding@gmail.com,
-	vdumpa@nvidia.com,
-	robin.murphy@arm.com,
-	joro@8bytes.org,
-	Ashish Mhetre <amhetre@nvidia.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] iommu: arm-smmu: Fix Tegra workaround for PAGE_SIZE mappings
-Date: Thu, 25 Jul 2024 13:42:59 +0100
-Message-Id: <172190932508.3262642.13562592827305317735.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240724173132.219978-1-amhetre@nvidia.com>
-References: <20240724173132.219978-1-amhetre@nvidia.com>
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hMJHi9U+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GUqgh+WZ"
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1721995805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PlMRijtqCm0MZ6n79QOvrnKsNAELqQTM+5n/uBS9kZA=;
+	b=hMJHi9U+xbjwzcO3srL9iaOPH7Y2McTHyRrgfTZs3Wndxtaogpvsk4tCVs40q5um/oJLQ3
+	O6+2510Rm46HWKKYfW970fbKc6AXzyhTMofsK2vFdM7p1oRXAe7aix1HFoNLovkn3M5XE3
+	gLxe1ZkWXMZYWzbLpiVG6ISrcWYUEYf6EobQXEzO9+VTZBuJiG/aGdzcXpTTGPJ/MDtDjV
+	Sl4KRlUETXh9R6dt1hwlt+HeJ3KgQ2vcFHEA0+51fbVG72wkyR/kIfR3BU9xcI8fK457y+
+	TTOCJ9KMRj7tKsFsPpMU+2IqUEhxCZneLI1atXLNYVTX9WxNGbwMRbGJ1CcaVg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1721995805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PlMRijtqCm0MZ6n79QOvrnKsNAELqQTM+5n/uBS9kZA=;
+	b=GUqgh+WZUy9cUP3jH6HAQmwLB6N/rSRN+ld5YbX5w3t7JPVliPs2jdOAEv/aETNlXUk4lg
+	EueW8xtjf15dmGCA==
+To: Bjorn Helgaas <helgaas@kernel.org>, Marek Vasut
+ <marek.vasut+renesas@mailbox.org>
+Cc: linux-pci@vger.kernel.org, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+ <kw@linux.com>, Pali
+ =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+ <u.kleine-koenig@pengutronix.de>, Aleksandr Mishin <amishin@t-argos.ru>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, Anup Patel
+ <apatel@ventanamicro.com>, Bjorn Helgaas <bhelgaas@google.com>, Broadcom
+ internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Daire
+ McNamara <daire.mcnamara@microchip.com>, Damien Le Moal
+ <dlemoal@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Jianjun Wang
+ <jianjun.wang@mediatek.com>, Jim Quinlan <jim2101024@gmail.com>, Jingoo
+ Han <jingoohan1@gmail.com>, Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+ Jon Hunter <jonathanh@nvidia.com>, Jonathan Derrick
+ <jonathan.derrick@linux.dev>, Joyce Ooi <joyce.ooi@intel.com>, Karthikeyan
+ Mitran <m.karthikeyan@mobiveil.co.in>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Koichiro Den <den@valinux.co.jp>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Marc Zyngier <maz@kernel.org>, Michal
+ Simek <michal.simek@amd.com>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Niklas Cassel <cassel@kernel.org>, Nipun Gupta <nipun.gupta@amd.com>,
+ Nirmal Patel <nirmal.patel@linux.intel.com>, Rob Herring
+ <robh@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, Shivamurthy Shastri
+ <shivamurthy.shastri@linutronix.de>, Siddharth Vadapalli
+ <s-vadapalli@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, Yoshihiro Shimoda
+ <yoshihiro.shimoda.uh@renesas.com>, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 00/15] genirq/msi: Silence set affinity failed warning
+In-Reply-To: <20240724154314.GA800620@bhelgaas>
+References: <20240724154314.GA800620@bhelgaas>
+Date: Fri, 26 Jul 2024 14:10:04 +0200
+Message-ID: <87wml8uzfn.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, 24 Jul 2024 17:31:32 +0000, Ashish Mhetre wrote:
-> PAGE_SIZE can be 16KB for Tegra which is not supported by MMU-500 on
-> both Tegra194 and Tegra234. Retain only valid granularities from
-> pgsize_bitmap which would either be 4KB or 64KB.
-> 
-> 
+On Wed, Jul 24 2024 at 10:43, Bjorn Helgaas wrote:
+> Happy to apply this series via the PCI tree given an ack from Thomas.
 
-Applied to iommu (next), thanks!
+Here you go:
 
-[1/1] iommu: arm-smmu: Fix Tegra workaround for PAGE_SIZE mappings
-      https://git.kernel.org/iommu/c/726d4f528dbc
-
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
