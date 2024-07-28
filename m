@@ -1,151 +1,271 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2061.outbound.protection.outlook.com [40.107.92.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49CB5914C
-	for <linux-tegra@vger.kernel.org>; Sun, 28 Jul 2024 20:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722197157; cv=none; b=nRHcR4EHEL1MefoaTncTVyPPS5WGR2hAueeFXiMaets5TwmMBN1JYqn2v3q50IiwjXanLO6FoqDcMJb068L7C7GA0zXOA9rdB5nu2+UUDld0MsAQ0rwBW9Iu+dw2UBOrqIggZq2myxATe15AtzHhjXnAMYFBoglSgADn7FNmzPY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722197157; c=relaxed/simple;
-	bh=8qeNIwj16ieiaUyi224RZB9BZqdEjEHvR9Is2j0uLPw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ihBut/nkB3KiYh8su0m0B+CZ9ZQlO3k2Cjwss+vkeBWyaPPVtrrP1lXKYexx35yuTkkRW3vx4lZ6bi69sl1j8nfIoK9R++ZRsFtQ9/cRxnAKFlwuyqS20GaS6XKOh+TGVPKdvZWYKFUT0SpNBv2twUpa7MxG/imIyEMMf22soB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NbtExgpU; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5118F7BAE7;
+	Sun, 28 Jul 2024 22:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722206707; cv=fail; b=rx98Z/SkIVWDUgqAR+6sLm4euYAGoFAhT2qyVw9pEUNHUSEUTGGNDdo6z/q3PIuHRXkrDVjGzultS0144I65cXEh5JY3IBuOHOzTDg7OTvCwGcKGGIzp3K02OKS5Nyq9m9W2DKzByZhEB4v9awtNRk/AwCBgOsPgEimW3ncazGk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722206707; c=relaxed/simple;
+	bh=SWIn9yUFWAOPugRLnbXN6H8tSBYXvuT1iv1VDJm3wWY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GeMOo39ResVN4BQv4YpK9lyOnBqMgRVkEGSoLC8rsUszkPV7i/AOoLhrguQgbxKg+da92NxwRvA0sw0biVXYiqwik3ifdjY/aZd7aXtnRMXR6OL1iZFiEN8ztofeP5n2qdrCv7VJ3tcn5rtiadfYcX7SGeMGQ57UjoYHwFfUGus=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tR8UVdvH; arc=fail smtp.client-ip=40.107.92.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NbtExgpU"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfdb6122992so938353276.3
-        for <linux-tegra@vger.kernel.org>; Sun, 28 Jul 2024 13:05:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722197155; x=1722801955; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8qeNIwj16ieiaUyi224RZB9BZqdEjEHvR9Is2j0uLPw=;
-        b=NbtExgpUkz1knVd9HWgufMYvshbWKWPal27eBL46FSpycKb/nYTdeTxh0TohtQJ36A
-         2AzZiXpmrNGD+X4EESNIFxsVXWNVeOPyXbBRV/8OZSD1brZnQeRm9lYH1TocdKejFOYS
-         YfXHNQUm8xDD64zQ6Zin5zq1NT2620JufHCCk7eejxbQaoqTByeoqsVxbqDojqMT9J1g
-         C0OF9FWHTtpO2lklrRZLFemD7oO6VsUW9p08PlBG3Yca8DPRRiEb4dqUXsVoFsEa7bUf
-         KFIWRJn3qNMtVe/gLKct9WR6HKAWd4Q0L/HDI2h9TMC29+hdZkkIr2QvrEAi5yI5RORv
-         uKMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722197155; x=1722801955;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8qeNIwj16ieiaUyi224RZB9BZqdEjEHvR9Is2j0uLPw=;
-        b=pdOzMGITA0UqqvyMohpd8rr7980wyKofA8VpSIrdKx/YzhzhsmC9eKxy4RbITeeVfp
-         XXeehbhV7t5+/W+Xa0oJ33ZF0KaR5uLXS5o95tkJbfkDexGVuswIAcflGWcCcmsm++qp
-         2uvIgPwYP2aLGrkC3Hi/I0V2tp1fDHufc4o2FGGSrO0uUsKtQKPrmPlFJLqw3/6kG4o8
-         0K9U2TQ+KgBsjE2W7rbBHxrDURYVywjEx2Fi0OssThtqnGA31YDJtW27gyAL5LA8YAhb
-         tUytcmirlw9gK+LouxbuS1oi1lyqjZ0v31GUY6k27w4EFE90sZ8UdL2D+JAEfQiCdm79
-         o0LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsNoX5JBAcGiuTxDCebL1r9N4+uJ/HT52s/UtYA8+qA05+bqbUCBr5Jik5phZqCnqQZ8BSxBgr7R1xPrPzhPMfSWHTjUrCpLQ6VHo=
-X-Gm-Message-State: AOJu0YwSNaSl6Ib/StnhJ+ePyriT6QbmiT1TQtje2MYy7hkO87j1HCxR
-	LQEk/ipFXLqYjO125HRjkMQZca2ubm/7f5i7qsAVgq3ppWTlDwCghRf0xTwAy0muLTWJwu2g0BR
-	R6/uNyLKV4TrCALqc4pdlN3yeyPyVoPO/0tn/oA==
-X-Google-Smtp-Source: AGHT+IH4VuGtnxaaMubh5K8LxqivpdTRbAvbqN7TNbbLCLoKj6PCh4Ss6cSMuqSbY7Yz6HIX8oOVeIGVxbVBUgzgnio=
-X-Received: by 2002:a05:6902:c08:b0:e08:5f16:813 with SMTP id
- 3f1490d57ef6-e0b5464eb88mr5349192276.53.1722197154745; Sun, 28 Jul 2024
- 13:05:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tR8UVdvH"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bUbIGUeZeb155GJ9UuzFVTpYO8CFGpy5iUgpknuT+0gXjE5YB0Fm7dDG4zZbD96r7MUDBxb3HqfW6n46vEG451SQnPm7UJ9Uor5qFbyNoblrJmAKSrK8f/O1Ladopatx/ef3FgLmETw089/zvTdeQPoE+O2YC3gzSsUD2xb+cWQQ7h5ijYhyDnY97nn7cxx1VfggrTOuINH0qG6FzHwMZwQMWbPXm88TsBmj1hRjYsRLLzBd0ZoDY484Pwqkwo6nC14gVTVmUhR0MwW9V0nD0dgiyxJnOsgcYzpr9O6PPXY0VmpmbxnIejFvV1823QMi9coV4hsJdsQMzv88LHVdhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=syLkA5aejnk8gtyQUeRI9psTwAu1dQmMNEPD4kuqTjA=;
+ b=plR+hwZ1tNT9cdNLTTNm/6N9trXrUsQJlveqprsdeajzumKaIe0amP7pPQIcNRYQGdLM+6cWBkJLteC4jlco5IU91h6RAz+5LiSWTO+z3td7IoAtbr3bxfIuEV6QqAsqA8tuX8qhLKYmJyy5JOn5DgHw8qtTVcoK0km1zOyQtrAtY71BBxPSy9yCHHNLiakCC8oMuJiWIE9aFvb7Vu/Iwgj3U1k8MYKtvGZ/nJQbkEUukE5xu6QAAruYtAGGFQvW3tSRAt8a+WYB/s3xjIRkThnq9PXNlOHG9wdqRuvd5TKL+GkG870cNqKRdHeNWeeN+J6L8Z8ZcO572d/kb8lNQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=syLkA5aejnk8gtyQUeRI9psTwAu1dQmMNEPD4kuqTjA=;
+ b=tR8UVdvHGIesMemSMJ1+n8l2sR7s3c3DAXbBWdWs+GlVqLSkGnUsf8VUsjfr7u1Uojb3YXG4ADoDnupQrmS3yt8Ze+RDKuufMH2zIV+Fb2TtOG/PQUx5aNp/rlBQmLCjSgpX2zYm8C1/ye+RNq1LN2YbjafrPZ6gs4HXcdFPY+ROF8JFBql13zXxNYxq6+Ht8ctllhMWOr/r+w1pUI2yZWirDHrWHXO+LeYU1zgSmNrVXcbOZmPOVrqFSDCOzvHD1AutjEUkVaxAvHKaeubUiZv7KpMVf+T9v7axR23ve4DrLmGEAWUczD1KWXDgqqluZJEI/DnBI04qBf0yC0yH+w==
+Received: from PH7P221CA0087.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:328::23)
+ by DS0PR12MB6485.namprd12.prod.outlook.com (2603:10b6:8:c6::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7807.27; Sun, 28 Jul 2024 22:45:01 +0000
+Received: from MWH0EPF000A672F.namprd04.prod.outlook.com
+ (2603:10b6:510:328:cafe::5c) by PH7P221CA0087.outlook.office365.com
+ (2603:10b6:510:328::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.34 via Frontend
+ Transport; Sun, 28 Jul 2024 22:45:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ MWH0EPF000A672F.mail.protection.outlook.com (10.167.249.21) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.11 via Frontend Transport; Sun, 28 Jul 2024 22:45:00 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 28 Jul
+ 2024 15:45:00 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 28 Jul
+ 2024 15:44:59 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 28 Jul 2024 15:44:59 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <will@kernel.org>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH v10 0/9] Add Tegra241 (Grace) CMDQV Support (part 1/2)
+Date: Sun, 28 Jul 2024 15:44:45 -0700
+Message-ID: <cover.1722206275.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPDyKFoA9O5a6xZ+948QOzYqsRjk_0jJaSxeYRwx=76YsLHzXQ@mail.gmail.com>
- <20240711031356.rl2j6fqxrykmqfoy@vireshk-i7> <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
- <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
- <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
- <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7> <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
- <20240725060211.e5pnfk46c6lxedpg@vireshk-i7> <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
- <20240725112519.d6ec7obtclsf3ace@vireshk-i7>
-In-Reply-To: <20240725112519.d6ec7obtclsf3ace@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Sun, 28 Jul 2024 22:05:18 +0200
-Message-ID: <CAPDyKFqTtqYEFfaHq-jbxnp5gD7qm9TbLrah=k=VD2TRArvU8A@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A672F:EE_|DS0PR12MB6485:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05e7b9d0-b9e5-4ad0-aca2-08dcaf56ea22
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Vl3bKPRg7d0qoSHchiLXHULShaywrPU2PtIGnDKTPtFTQJii/6M73Zc9yYJA?=
+ =?us-ascii?Q?/g/ScBnoer9YkJQ1pEOHKA1EhaxGPVE29NU0sT1vFwXES2vqG1NnSsG65Pe/?=
+ =?us-ascii?Q?xI3AOmVNtfCFBJ+1UxFiBrzTusqeuMqiSQpZnUVSZ2O67YmyWAhzN9ggQ+K1?=
+ =?us-ascii?Q?kEGaWW7FZQ5yPM5gO92jHl6QGGxofwLBrO9S7f9dex0LN6rIeuSy16WSU0sq?=
+ =?us-ascii?Q?ClfuIcqwZeWQG9GCg8TGCEK+w162jch+y0UTtO/bxgOS+gguGyrArObKkpNo?=
+ =?us-ascii?Q?1Z8XvcgbIp4R6QJV7f3uC7B25wNc9lo3g7vZDCUb3dfNIzgawWLdZt10GG6e?=
+ =?us-ascii?Q?hVmCHxaIos5aRXL/MVm40CXVpTstZbZ+jfwb70cWE6D8hUZzWa2Kn1ISt/zF?=
+ =?us-ascii?Q?2cT/zl65/PFnHvQe2Dp8qbquvGsF0h4d6htOz2pw0YGx/3ri2jRJkt5Idf7v?=
+ =?us-ascii?Q?37EvucOE/4itQjUKFAlmilBVzYcWd8axrm5kHBHHi63e9irU0Tj4GMWwnv98?=
+ =?us-ascii?Q?1JNxKkpYLeoi/yniRfcmg7NitDZsDMwBPVsKXb4NX6i6m7RS40+xzusflKWH?=
+ =?us-ascii?Q?LCMmPr+JsKXnOC3ecRpiFqw7znIqHtdTB7GOX2CbQGbKD335xdMtB5crYeg8?=
+ =?us-ascii?Q?g8G3h7Nz6HYCpdufWZl92Aon1ri5AwQAQoLM+26o5ckQel0zC4yUS+PP7z1W?=
+ =?us-ascii?Q?wulpC4POTe+WP7bou9MJptZ5KLEib/9WiGbGFlJ/kFsLGOftkDGhN/198FQJ?=
+ =?us-ascii?Q?AKfzC55m5DV9ZbfrCJFhLhbhxMGu88ERoflhEMZbLs9rCms64inY24Czmwjy?=
+ =?us-ascii?Q?b7hYuivlEKbtXhpZkCPAWO486gRWsLMooieaksuG4QX0slPT2ApuC5km0+gi?=
+ =?us-ascii?Q?8uYtDCYLcvKaiTV6SK2NpWtPh/st+lmu0CS90pp+smLFQ1pk64iy9uGR1wyw?=
+ =?us-ascii?Q?GFFayOlrHD2oFERzwHEZYeH0ly8mby5pw9PMZf8AbwYbVZ0BeR5YKf8rlBLB?=
+ =?us-ascii?Q?f4MT6Q80IrJnvljoK3E7Xl4kXz1guQixzrvTdHBkUAGID9kVca2q/MuwwYzu?=
+ =?us-ascii?Q?Co4kYKMlE/8ytXK4vtULG1jubcUvnEB36RUUD96gqcySOHdeeSG4vU0UF0zk?=
+ =?us-ascii?Q?sX3sFc14wNIBIXal8evaFuCmaR+JEee9pfBSYtZG+0/qS4Z/CL611+A4uUDY?=
+ =?us-ascii?Q?sGG8ZfJ+874jn0yhvf/kI4GNePvP0EKAgyrngpx5Y+cQtKTTNQlFN7DvSp0O?=
+ =?us-ascii?Q?zEf8Nswn7ru1uDLjIs0SwExGhiKJ2TKZblOIc2yy+3F278aRxi2tpeSO5QJC?=
+ =?us-ascii?Q?4Oy/bScMvK40qL+1rkMwBRRFsdem0XhU41u5qfJt3i5AuKaCJUs4kgC/bEEJ?=
+ =?us-ascii?Q?MZWymF/zRHmIqVcxiZHQxZPctOKr5z3T+EuZsVuzAVsoXjtg2xsOuw7MQ7OG?=
+ =?us-ascii?Q?L1Y9Mv2c06YvNYmQxMgTpbAA5oGEtkqCP2b9Yhv9cGK+cyS6+THy/A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2024 22:45:00.9175
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05e7b9d0-b9e5-4ad0-aca2-08dcaf56ea22
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A672F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6485
 
-On Thu, 25 Jul 2024 at 13:25, Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 25-07-24, 11:21, Ulf Hansson wrote:
-> > Right.
-> >
-> > The main issue in regards to the above, is that we may end up trying
-> > to vote for different devices, which votes correspond to the same
-> > OPP/OPP-table. The one that comes first will request the OPP, the
-> > other ones will be ignored as the OPP core thinks there is no reason
-> > to already set the current OPP.
->
-> Right, but that won't happen with the diff I shared earlier where we set
-> "forced" to true. Isn't it ?
+NVIDIA's Tegra241 (Grace) SoC has a CMDQ-Virtualization (CMDQV) hardware
+that extends standard ARM SMMUv3 to support multiple command queues with
+virtualization capabilities. Though this is similar to the ECMDQ in SMMU
+v3.3, CMDQV provides additional Virtual Interfaces (VINTFs) allowing VMs
+to have their own VINTFs and Virtual Command Queues (VCMDQs). The VCMDQs
+can only execute a limited set of commands, mainly invalidation commands
+when exclusively used by the VMs, compared to the standard SMMUv3 CMDQ.
 
-Correct.
+Thus, there are two parts of patch series to add its support: the basic
+in-kernel support as part 1, and the user-space support as part 2.
 
->
-> > > I think that design is rather correct, just like other frameworks. Just that we
-> > > need to do only set-level for genpds and nothing else. That will have exactly
-> > > the same behavior that you want.
-> >
-> > I don't quite understand what you are proposing. Do you want to add a
-> > separate path for opp-levels?
->
-> Not separate paths, but ignore clk/regulator changes if the table belongs to a
-> genpd.
->
-> > The problem with that would be that platforms (Tegra at least) are
-> > already using a combination of opp-level and clocks.
->
-> If they are using both for a genpd's OPP table (and changes are made for both
-> opp-level and clock by the OPP core), then it should already be wrong, isn't it?
+The in-kernel support is to detect/configure the CMDQV hardware and then
+allocate a VINTF with some VCMDQs for the kernel/hypervisor to use. Like
+ECMDQ, CMDQV also allows the kernel to use multiple VCMDQs, giving some
+limited performance improvement: up to 20% reduction of TLB invalidation
+time was measured by a multi-threaded DMA unmap benchmark, compared to a
+single queue.
 
-They are changing the clock through the device's OPP table and the
-level (performance-state) via genpd's table (using required OPPs).
-This works fine as of today.
+The user-space support is to provide uAPIs (via IOMMUFD) for hypervisors
+in user space to passthrough VCMDQs to VMs, allowing these VMs to access
+the VCMDQs directly without trappings, i.e. no VM Exits. This gives huge
+performance improvements: 70% to 90% reductions of TLB invalidation time
+were measured by various DMA unmap tests running in a guest OS, compared
+to a nested SMMU CMDQ (with trappings).
 
-> Two simultaneous calls to dev_pm_opp_set_opp() would set the level correctly (as
-> aggregation happens in the genpd core), but clock setting would always reflect
-> the second caller. This should be fixed too, isn't it ?
+This is the part-1 series:
+ - Preparatory changes to share the existing SMMU functions
+ - A new CMDQV driver and extending the SMMUv3 driver to interact with
+   the new driver
+ - Limit the commands for a guest kernel.
 
-As I said before, I don't see a need for this. The recursive call to
-dev_pm_opp_set_opp() is today superfluous.
+It's available on Github:
+https://github.com/nicolinc/iommufd/commits/vcmdq_in_kernel-v10
 
->
-> > To be able to call dev_pm_opp_set_opp() on the required-dev (which
-> > would be the real device in this case), we need to add it to genpd's
-> > OPP table by calling _add_opp_dev() on it. See _opp_attach_genpd().
-> >
-> > The problem with this, is that the real device already has its own OPP
-> > table (with the required-OPPs pointing to genpd's OPP table), which
-> > means that we would end up adding the device to two different OPP
-> > tables.
->
-> I was terrified for a minute after reading this and the current code, as I also
-> thought there is an issue there. But I was confident that we used to take care
-> of this case separately earlier. A short dive into git logs got me to this:
->
-> commit 6d366d0e5446 ("OPP: Use _set_opp_level() for single genpd case")
->
-> This should be working just fine I guess.
+And the part-2 RFC series is also sent for discussion:
+https://lore.kernel.org/all/cover.1712978212.git.nicolinc@nvidia.com/
 
-It's working today for *opp-level* only, because of the commit above.
-That's correct.
+Note that this in-kernel support isn't confined to host kernels running
+on Grace-powered servers, but is also used by guest kernels running on
+VMs virtualized on those servers. So, those VMs must install the driver,
+ideally before the part 2 is merged. So, later those servers would only
+need to upgrade their host kernels without bothering the VMs.
 
-My point is that calling dev_pm_opp_set_opp() recursively from
-_set_required_opps() doesn't make sense for the single PM domain case,
-as we can't assign a required-dev for it. This leads to an
-inconsistent behaviour when managing the required-OPPs.
+Thank you!
 
-To make the behavior consistent (and to fix the bug), I still think it
-would be better to do something along what $subject patch proposes.
+Changelog
+v10:
+ * Rebased on 6.11-rc1
+ * Added impl design mimicing arm-smmu (v2) driver
+ * Replaced the CS_NONE quirk with a new smmu option
+ * Fixed misaligned 64-bit register reading in the isr()
+ * Explicitly assign opcode to arm_smmu_cmdq_batch_init() where
+   cmd/ent might potentially not be initialized.
+v9:
+ https://lore.kernel.org/all/cover.1718228494.git.nicolinc@nvidia.com/
+ * Rebased on 6.10-rc3
+ * Replaced "base + offset" in write_config() with REG helpers
+ * Added "Reviewed-by" line from Jason, to the remaining PATCH-5
+v8:
+ https://lore.kernel.org/all/cover.1716883239.git.nicolinc@nvidia.com/
+ * Added "Reviewed-by" lines from Jason
+ * Replaced memset with a simple "cmd[1] = 0"
+ * Replaced MMIO read/write helpers with REG_* macros
+ * Dropped the racy static string in lvcmdq_error_header()
+ * Added a few lines of comments to arm_smmu_get_cmdq at the line
+   calling tegra241_cmdqv_get_cmdq()
+v7:
+ https://lore.kernel.org/all/cover.1715147377.git.nicolinc@nvidia.com/
+ * Moved all public symbols into one single patch
+ * Enforced a command batch to use the same cmdq
+ * Enforced the use of arm_smmu_cmdq_build_sync_cmd()
+ * Reworked the tegra241-cmdqv driver patch
+   - Dropped logging macros, cmdqv->dev, and atomic
+   - Dropped devm_* and added tegra241_cmdqv_device_remove()
+   - Moved all structure allocations to cmdqv's probe() from
+     device_reset() where only register configurations remains
+   - Switched the config macros to inline functions
+   - Optimized ISR routine with 64-bit reading MMIO
+   - Scan once per batch against command list
+   - Reorganized function locations
+   - Minor readability changes
+v6:
+ https://lore.kernel.org/all/cover.1714451595.git.nicolinc@nvidia.com/
+ * Reordered the patch sequence to fix git-bisect break
+ * Added a status cache to cmdqv/vintf/vcmdq structure
+ * Added gerror/gerrorn value match in hw_deinit()
+ * Minimized changes in __arm_smmu_cmdq_skip_err()
+ * Preallocated VCMDQs to VINTFs for stablility
+v5:
+ https://lore.kernel.org/all/cover.1712977210.git.nicolinc@nvidia.com/
+ * Improved print/mmio helpers
+ * Added proper register reset routines
+ * Reorganized init/deinit functions to share with VIOMMU callbacks in
+   the upcoming part-2 user-space series (RFC)
+v4:
+ https://lore.kernel.org/all/cover.1711690673.git.nicolinc@nvidia.com/
+ * Rebased on v6.9-rc1
+ * Renamed to "tegra241-cmdqv", following other Grace kernel patches
+ * Added a set of print and MMIO helpers
+ * Reworked the guest limitation patch
+v3:
+ https://lore.kernel.org/all/20211119071959.16706-1-nicolinc@nvidia.com/
+ * Dropped VMID and mdev patches to redesign later based on IOMMUFD
+ * Separated HYP_OWN part for guest support into a new patch
+ * Added new preparatory changes
+v2:
+ https://lore.kernel.org/all/20210831025923.15812-1-nicolinc@nvidia.com/
+ * Added mdev interface support for hypervisor and VMs
+ * Added preparatory changes for mdev interface implementation
+ * PATCH-12 Changed ->issue_cmdlist() to ->get_cmdq() for a better
+   integration with recently merged ECMDQ-related changes
+v1:
+ https://lore.kernel.org/all/20210723193140.9690-1-nicolinc@nvidia.com/
 
-Kind regards
-Uffe
+Nate Watterson (1):
+  iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace)
+    CMDQV
+
+Nicolin Chen (8):
+  iommu/arm-smmu-v3: Issue a batch of commands to the same cmdq
+  iommu/arm-smmu-v3: Enforce arm_smmu_cmdq_build_sync_cmd
+  iommu/arm-smmu-v3: Pass in cmdq pointer to
+    arm_smmu_cmdq_build_sync_cmd
+  iommu/arm-smmu-v3: Pass in cmdq pointer to arm_smmu_cmdq_init
+  iommu/arm-smmu-v3: Make symbols public for CONFIG_TEGRA241_CMDQV
+  iommu/arm-smmu-v3: Add ARM_SMMU_OPT_SECONDARY_CMDQ_CS_NONE_ONLY
+  iommu/arm-smmu-v3: Add struct arm_smmu_impl
+  iommu/tegra241-cmdqv: Limit CMDs for guest owned VINTF
+
+ MAINTAINERS                                   |   1 +
+ drivers/iommu/Kconfig                         |  11 +
+ drivers/iommu/arm/arm-smmu-v3/Makefile        |   1 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 199 ++--
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  51 +-
+ .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 900 ++++++++++++++++++
+ 6 files changed, 1089 insertions(+), 74 deletions(-)
+ create mode 100644 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+
+-- 
+2.43.0
+
