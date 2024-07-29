@@ -1,113 +1,133 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7646161321
-	for <linux-tegra@vger.kernel.org>; Mon, 29 Jul 2024 18:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C6F1891B8
+	for <linux-tegra@vger.kernel.org>; Mon, 29 Jul 2024 20:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722278758; cv=none; b=JMud/bLVScIz/PpUcjzFy4wwqzIbhOMhe3M9923MU+zceJjQ+UtyAxzRb/FIkm07mGrYSTZqFmA2dnM4QTO6dBMMaPTy9aMIGOuqYZ8hEwD+Tzo4MEqJLPzaDSEL35HPCJH75XHL1jkTNmerOH3ILp2X14aANLJi2pJrkbh78UQ=
+	t=1722285072; cv=none; b=lRuX8kr6M41jXoOhfhh/F0YlXq9gsWyaNgLeiaNGXRmd9Rw/drZo0jmTftAVxhO8h8XjJslToPrstMWRjiq7mQYgoG9UU6VfRkO8fLapJ/8qSvezxtw2X6x+MnO/u90lE/4N5M8zpoZ0mVO67h1Hq/vQ4Eb4axLKHaDuhWFUdFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722278758; c=relaxed/simple;
-	bh=cmZkYoSI7q+Zo28nkXB10utErUFqfQqwB8/NfvwHTLM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=liy2MZcaq+TdFaIWFtUPGv2gV9LDtooMLE1ZSKlvSorJMt2rLesOfAroIg+g4bQYWYr/nYsTOaRgXdshv4XpQer286VUNKiy/7FF+GIAwBtOAwnQyGqEAl1lLxuCd81eiXw2HAGn23LZjCTV7M3GRvWqxuZUIX3p4V3XeaRIaAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M3yPC7b4; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1722285072; c=relaxed/simple;
+	bh=v1aS1lQVKXhrl5osmvtQvkwGB3PQXy+5n+7ZkC2IU7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UpsbnBjUoalWRAfwA0OOfBPUX5r5YEgrXMr6uBUzATZIYaD83LDEX0ZcXzFRlrdI/flVWkpLlTUT343DntGdbUDxg1l4gvE5oCGSmwpfkb0lVCtMNgFfrDkao90BNZTgDGPdmZ9rjnFI67bM2snv8CrfMCsyaanMaScbs7NNkfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KQngmwtR; arc=none smtp.client-ip=209.85.219.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M3yPC7b4"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4280c55e488so12994935e9.0
-        for <linux-tegra@vger.kernel.org>; Mon, 29 Jul 2024 11:45:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KQngmwtR"
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e0b286b922eso2299193276.1
+        for <linux-tegra@vger.kernel.org>; Mon, 29 Jul 2024 13:31:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722278755; x=1722883555; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1JwAII8/eqnPqXD1nuym1wg/czKUg9JcpmlXBdjhnLE=;
-        b=M3yPC7b4/6F2zqtiHKSFi9XWX80ubUu0p8/O7sJ3d1CEMY2wsTirhOHs83yviy+0uw
-         7KGZ3Pk8XcT4GzWot4L69kPQlDmNmTgZWqF4Fc0T3LdODNA7hDi7zypv0up1OwNUU6F7
-         YMZDplijUJP7xbL2cSPsdP7IY+RGkabI+jhbxSrwbzkTUCRtVNlelb3Vo6IF+jTytJ5S
-         itMkpt16ccDjSbxg9AsaCg/i2shtDwHgjtkilJ1VbBVU4ksRX14Q5aEOMNvFuz0ZvMK3
-         JINm8qHRhZhKtNT4jg7TXkpPh/Y4Rp+LNpGvDC+T+tWZP/0phPBGIjyb7ixZDnOThy59
-         cYjQ==
+        d=linaro.org; s=google; t=1722285068; x=1722889868; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1aS1lQVKXhrl5osmvtQvkwGB3PQXy+5n+7ZkC2IU7k=;
+        b=KQngmwtRP5cPVG0MyedAHOP6kErCF9qnqQXLqr0rhQR4m72Sc4+f3Fa0g/AzKqqqFN
+         5wlO2pgjZjFdrEUTls+fT8doj63YCLamJPcVK3t5IIhdSlYP4zgBilApoCj3eAuxdYwh
+         hykS4C/9NCIRFmTg8hXUvM0LvYECA3k5rAkDBRZe+4hhslzNyY+u+xGagzbrcCxNIxmu
+         Npmw0WmgIa/yBuzm87mpqvULt4Gje1ZuqkW1zqvnWVT9hc4yVt8jr/4DTZh+oTAf0PPN
+         UMJFUkhza3ntX3rgNGu8BdKa3JgkazK+gThFhVOQoMJgra4FuA0lD8oOOqtsZtisX6oT
+         1NjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722278755; x=1722883555;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1JwAII8/eqnPqXD1nuym1wg/czKUg9JcpmlXBdjhnLE=;
-        b=nUdZ77fiOOlisnRieLIYCKFHAe7RaRWTh2lpyVWmVHgqVAh9dzaN/6G6JKtXi8Fdc4
-         99kqEUrCxmdrc0o7OBb8ZeBz5eKdQFxzasEL1U4S4hzpTkIC67R9heg3uBRuPDqzo1pB
-         RKeiqJRckVzo6OT1FCSaxW9doUj60TQSWzgUwg0Nk3U0WPo50TzFVm4SQlrgtC5slQvJ
-         yzv/aqDFmGUi+EQKcBvgYtHWSXSqUmL9Tbw/TLftfirR74UiRKKWwQjSGGYeI+Qul23Y
-         jw7a/MixLxzViOFWVVaX/T1tl9h9pq1pANa2qYi7NGUimvi9pbRekllvSdTCpEhnHv4U
-         ZW4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVVFKR4jeWZhu3jj83duaI6DIE/RghDugo9ZwKOvYbMUJC13ibfNbEIvFqzpdpphUf8SX54/Vunybmc617ikBgYrC8vp+NwQZZuaXY=
-X-Gm-Message-State: AOJu0YzeS6U5WMazETXClVoK2PnCvojXAXHKmN3YM9m1IJYz0FIAkDVC
-	EFMyBLNnK205Oyykrlw5ymVe2xaXCRfAPEjaBCdCATlxCoMMLbere6nHJGQGLco=
-X-Google-Smtp-Source: AGHT+IFpFSKKNuHmfASCd+fYxW7X6C+3Zt8IHdPsv6k0dFaWDunHATz4eTrYP8Hx30Rm5AjV5USswA==
-X-Received: by 2002:a05:600c:3b07:b0:426:5e32:4857 with SMTP id 5b1f17b1804b1-42811d66212mr55242895e9.0.1722278754996;
-        Mon, 29 Jul 2024 11:45:54 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857f23sm12842757f8f.78.2024.07.29.11.45.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 11:45:54 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] memory: tegra: Cleanup Tegra210 EMC frequency scaling
-Date: Mon, 29 Jul 2024 20:45:50 +0200
-Message-ID: <172227869537.353608.6053884899325569791.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
-References: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
+        d=1e100.net; s=20230601; t=1722285068; x=1722889868;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v1aS1lQVKXhrl5osmvtQvkwGB3PQXy+5n+7ZkC2IU7k=;
+        b=vDTXGx4KBaXSVk0ZJTtpxkWRM7pkSaKYHOFV6VNBlCGme4/glkjIQEgdIfVCzTJTTu
+         GXHFC/+/OJ0CJJazRUjyH+XZ9YSrqOKFcvnFQZLDd7btpVswWqhR0ur4pS+is1H2amY+
+         uPRPTwQa2zHoyqchjZKrtCLXe/ri6ktsZTnrICyZBils/wuwoadZ0Tel2yc0FPxGUahd
+         fsmidMSq6LJyCrIKAA4yuwQCMrQnu0BjNTF+mCwrR1N5TR5kOih17PmFLGKu7vbC3KIq
+         VFjwFvrR5isZuKurWKswAE/YIvKh8JKJgEfSgYY9mBnkOxsLjYWd8GAiIiL5P0JcjIIb
+         p9+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVL6yWyCeJQgQB6aASH/eVC8uZUkwPVzfv/LWOKmarxItSE669DZj/6KG3LWOibbtVacK8zr908whe5Pben0NPDxD2FjXW5Ff1jwoM=
+X-Gm-Message-State: AOJu0YxL0ka8hTpDURdoOFdUkzxfiEzcKfplp5EwzHthwN1i0ufc8uWd
+	7Na9zVbSOCCI0agogcpoo97u0dqYG3ULSsP1d2UVDfM72O/xBHfaYncI0ahfWh0c0mvSn1GVvFJ
+	XEVFPkRr6eiat0K4XQiH0l/SdEoYjj1QkWQ5g9A==
+X-Google-Smtp-Source: AGHT+IE6PA+41Auz36YFIeCSe3gwULhATNq0ZrmnNpIMKRjzsevvjklMTd8qJRePRRiUM6vSVA+XVdVmqlOtJX4UP9w=
+X-Received: by 2002:a05:6902:c09:b0:e0b:3c55:747d with SMTP id
+ 3f1490d57ef6-e0b545af5f2mr9330015276.37.1722285068532; Mon, 29 Jul 2024
+ 13:31:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <CAPDyKFocjOt+JyzcAqOfCnmTxBMZmPjMerSh6RZ-hSMajRhzEA@mail.gmail.com>
+ <CAPDyKFoWgX=r1QtrcpEF-Y4BkiOtVnz4jaztL9zggo-=uiKsUg@mail.gmail.com>
+ <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
+ <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7> <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
+ <20240725060211.e5pnfk46c6lxedpg@vireshk-i7> <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
+ <20240725112519.d6ec7obtclsf3ace@vireshk-i7> <CAPDyKFqTtqYEFfaHq-jbxnp5gD7qm9TbLrah=k=VD2TRArvU8A@mail.gmail.com>
+ <20240729060550.crgrmbnlv66645w2@vireshk-i7>
+In-Reply-To: <20240729060550.crgrmbnlv66645w2@vireshk-i7>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 29 Jul 2024 22:30:31 +0200
+Message-ID: <CAPDyKFosi4dhf36iNaNgGN6RHLDunL1nEwD+A_aW2khxER59nQ@mail.gmail.com>
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 29 Jul 2024 at 08:05, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 28-07-24, 22:05, Ulf Hansson wrote:
+> > > > > I think that design is rather correct, just like other frameworks. Just that we
+> > > > > need to do only set-level for genpds and nothing else. That will have exactly
+> > > > > the same behavior that you want.
+> > > >
+> > > > I don't quite understand what you are proposing. Do you want to add a
+> > > > separate path for opp-levels?
+> > >
+> > > Not separate paths, but ignore clk/regulator changes if the table belongs to a
+> > > genpd.
+> > >
+> > > > The problem with that would be that platforms (Tegra at least) are
+> > > > already using a combination of opp-level and clocks.
+> > >
+> > > If they are using both for a genpd's OPP table (and changes are made for both
+> > > opp-level and clock by the OPP core), then it should already be wrong, isn't it?
+> >
+> > They are changing the clock through the device's OPP table and the
+> > level (performance-state) via genpd's table (using required OPPs).
+> > This works fine as of today.
+>
+> There is a problem here I guess then. Lets say there are two devices A and B,
+> that depend on a genpd.
+>
+> A requests required OPP 5 (level 5, clk 1.4 GHz), followed by
+> B requests required OPP 3 (level 3, clk 1 GHz).
+>
+> After this level will be configured to 5 and clk to 1 GHz I think.
 
-On Thu, 04 Jul 2024 12:31:19 +0100, Diogo Ivo wrote:
-> This patch series consists of a general cleanup of the Tegra210 EMC
-> frequency scaling code for revision 7.
-> 
-> Currently the code is relying heavily on a function, update_clock_tree_delay(),
-> that is responsible for too many things, making it long and confusing.
-> The general idea with these patches is to simplify this function and its
-> surrounding code, making it more modular.
-> 
-> [...]
+The level would be 5, as the aggregated votes in genpd would be
+correct in this case.
 
-OK, I found v2 and v3, downloaded and compared. It would have been much easier
-if `b4 diff` just worked, so please be sure to send patches in canonical way so
-maintainer's workflow is easy.
+In regards to the clocks, I assume this is handled correctly too, as
+the clocks are per device clocks that don't belong to the genpd.
 
-Applied, thanks!
+>
+> > It's working today for *opp-level* only, because of the commit above.
+> > That's correct.
+>
+> Good.
+>
+> > My point is that calling dev_pm_opp_set_opp() recursively from
+> > _set_required_opps() doesn't make sense for the single PM domain case,
+> > as we can't assign a required-dev for it. This leads to an
+> > inconsistent behaviour when managing the required-OPPs.
+>
+> We won't be calling that because of the above patch. In case of a single dev,
+> the required device isn't set and so we will never end up calling
+> dev_pm_opp_set_opp() for a single genpd case.
 
-[1/7] memory: tegra: Remove periodic compensation duplicate calls
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/649f4783dcda7400bbed866140df504d09a3b135
-[2/7] memory: tegra: Move DQSOSC measurement to common place
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/7b4dcb8888e1660d590ec13463ba71ec5bbf6333
-[3/7] memory: tegra: Reword and correct comments
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/c5f83622ccd0158cf16c6be8ba56f178c99776a5
-[4/7] memory: tegra: Change macros to interpret parameter as integer
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/a238f62b3666558f38d8abf688d0fecf4ccb48ee
-[5/7] memory: tegra: Loop update_clock_tree_delay()
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/adc720820f963047210efc4fe1c1ff068b4bd773
-[6/7] memory: tegra: Move compare/update current delay values to a function
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/b109656e9ca399d6899152eb40efac2bdd3b4202
-[7/7] memory: tegra: Rework update_clock_tree_delay()
-      https://git.kernel.org/krzk/linux-mem-ctrl/c/ddb869ea237eb4e1c882c8768675fad53623b062
+That's right, but why do we want to call dev_pm_opp_set_opp() for the
+multiple PM domain case then? It makes the behaviour inconsistent.
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Kind regards
+Uffe
