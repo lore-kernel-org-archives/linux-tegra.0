@@ -1,165 +1,189 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2063.outbound.protection.outlook.com [40.107.243.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4377D1494DC;
-	Mon, 29 Jul 2024 15:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722267079; cv=none; b=SNGPOEKM1QYc+aHSkQujjUgvB/jTC0VtirwhzroqAlUGXiGl8M7cfy7IfmPtDrw0dOaneRt+YR3i5HiFDUZF1cj42W9Gvxj/bCFwYK2jbjG+5kewoF9EU671u4gVFYyZjLyRBdhEPJbV5jOEc0SjeKejG8jlSkypLzgkC6aUGV0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722267079; c=relaxed/simple;
-	bh=koUyD7aox0HAEQE+rmy8pQQqygbJWnJvy7PxdrM4gZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t+7fNW4m6G5WJBIQBwnloBqaEj9tRfdlPbN46dhCD2kKdFcYY7PhGSlHNPBZd4vQ4Q5MrpxXPzW/OPkGtEvz/SpDHJfjqekPR8j+ouvaUoBzr1LZ5Rp9eifC8vKkCKjapv1YME4/vKqdVA1w+Nx/+C4bLOXkHhSUOMwK2PtDKjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXgZqMzJ; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B98878B50;
+	Mon, 29 Jul 2024 16:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722272153; cv=fail; b=I8DO9tb9yzu3czdR0bgF5B0wcAeDpCbKQ93aMEnNEt+vUk7genl/TmxqScpaVbszc7V4vfElfSAni9m8M5xZHnk8Ajs2lW9ZOTJ41N17Rkkoyhaa8s0572NaRPyTLrrpBgiwdwckoR2uSefq+CQpxi4QXn1KYxu+K/UQTk1gmwg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722272153; c=relaxed/simple;
+	bh=22ezeCHomg0cGNQlL2T2udQ7QYlk/ookSXhuozfdays=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y/qrqA92jZ9p/U5kX4+vpkFytpN5fmlu/sL3g+Lwk6A8vJmCnzJIxm4n7PgKqbxUcH34RjLOsntEFOzv+LS5NR+0UxFBS5WX83qDhDHA9g4CY7DGa7Lk9yuawrQldiO2zO1Nh0Z94leAkngo3S5DHNtdXTDLAz44BfxIN5Ohw6w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Uf6hQzWl; arc=fail smtp.client-ip=40.107.243.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXgZqMzJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90B3EC4AF09;
-	Mon, 29 Jul 2024 15:31:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722267078;
-	bh=koUyD7aox0HAEQE+rmy8pQQqygbJWnJvy7PxdrM4gZk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZXgZqMzJ6v5VjFl/P1Cw3QOo6+CmEbAWcChu2X/YCfqs5s5j7wRzSIPgjV4PBFAb8
-	 t1hCkNaXuoI6BuBZxB5JBQOuZvXMOBJ26GMdyYiJBKLnQHgUn/s/LdY2iVQu6BGopA
-	 w/T7sGniEYdrgHlpDD/Pse8JK/FWgzMhSfthFO5sVKdHG9hG7bbSiAkOnlO1GsaihK
-	 zdU6EnFqZXY65nQ7XiY7Mcu1JoURflUihFMiHTuqPje5l3QbbqHEiwoCDrQSz1XwVA
-	 T/yAoaFMvYMRucglsl+wnWbVbVIbnZxk2ve4SLxlTqs9c9+UpGef+XD2/42M9Y4wtn
-	 bt1nVtFYh+xWw==
-Message-ID: <8b75756d-aec9-4c28-96be-81cd12496757@kernel.org>
-Date: Mon, 29 Jul 2024 17:31:16 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Uf6hQzWl"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OArMKu7J8tp9JqaTHmkFqi7TA9Fnns2cU05piiel+kdfgemsF8qej461bkXSeoKAcu1FtCfNTvPM/f1u2L3jMTxf2TgDfNvDA3nBQcPFFBVvAVB3mTfVDvuRaQ44kjvycxGpn/UpACLlP7c3WV0mF0DPpYqIqSlW7OQ4Q9Y39ruzfA9Lkfo8i96v9z/Mzvw39c3XeLlYnqWYAuXYrgpm5AC3IPyFRQYLPRqy3XfwOcehAcP/2TLH4kHY6146NVBbOiPf7hCuFMKjR5zkRGrrvv3kRLcqUbzSx5dA/bXCMQ6rsH3g+ZqvdJPdIbwZUWwghKOgwCQZuewWSJDTyvRpxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0SLFtvJTjFBZdpsSgVh9kRgRsUmwkGckey0TPBLL+2c=;
+ b=Dq7VFsdmxVMp7F1dlTy34MxxTrE/HloTAq73kgZoXxrOIPM4g68niqxwNohIP6axY0cjMUESJC4REztUNzxj9ivohlcvfP/rklu9BFG/8AaYUeIELkwQuBA68Vf8HHC7JIxaU5Od1lgjH+F+uClReRYSHL9AN2v3Q2m1nVSv874c03EVjucMKh56Ai/gtQsz0CWUxZvnYwpE0r0uUO7lr5MiSxfJJqRJBRgckZ6Rq/pVkmUWBAkQyoAI3OQulQUdLvc5hIjPhjSEpAV+lKee7vvOWqMWnAHgdefkTVV9UynNmoPvPtZZkAgyVVSrTm4BkYaD5VqlSel1SQtfcywyNA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0SLFtvJTjFBZdpsSgVh9kRgRsUmwkGckey0TPBLL+2c=;
+ b=Uf6hQzWluc8uge8NkejzlhM5ra2QVZgL52pAxygEBon8iGM8kvWtaiH7VwETU4iLiUtNoBhN6ejaIHlI4xA5Ri82DmJG1VABJfjJbI96UJqKeNTz2ecEcXcVSFp1kw9/8YsL7aMkATZYVGW4Yg6/LjlDhzHqYILzQR2igK2NLLG36+kYnRBPx2NdBKIWd1RIwP9mvYpAbmYFHHKWwezuUdPAOkHmHCo+9JE3Kkp40fh1J01guzOBktpV0fT7DafWH47QvrwpvLo1Fv2I1ASle4vPk2JG1I3vjImtkU7SxtGcsFkEB1QckeoD59Fmc/bBw85VZKuuw/dfOCTIFcDiEQ==
+Received: from BL1P223CA0002.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::7)
+ by IA1PR12MB8189.namprd12.prod.outlook.com (2603:10b6:208:3f0::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.26; Mon, 29 Jul
+ 2024 16:55:49 +0000
+Received: from BL6PEPF0001AB78.namprd02.prod.outlook.com
+ (2603:10b6:208:2c4:cafe::15) by BL1P223CA0002.outlook.office365.com
+ (2603:10b6:208:2c4::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.34 via Frontend
+ Transport; Mon, 29 Jul 2024 16:55:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF0001AB78.mail.protection.outlook.com (10.167.242.171) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Mon, 29 Jul 2024 16:55:49 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 29 Jul
+ 2024 09:55:35 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 29 Jul
+ 2024 09:55:34 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Mon, 29 Jul 2024 09:55:33 -0700
+Date: Mon, 29 Jul 2024 09:55:31 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: kernel test robot <lkp@intel.com>
+CC: <will@kernel.org>, <llvm@lists.linux.dev>,
+	<oe-kbuild-all@lists.linux.dev>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<jgg@nvidia.com>, <thierry.reding@gmail.com>, <vdumpa@nvidia.com>,
+	<jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
+	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v10 8/9] iommu/arm-smmu-v3: Add in-kernel support for
+ NVIDIA Tegra241 (Grace) CMDQV
+Message-ID: <ZqfJgxMt77WqqeNH@Asurada-Nvidia>
+References: <ca671f4d090546c21a0aba6fa4ddda8da26d4474.1722206275.git.nicolinc@nvidia.com>
+ <202407292157.BauV7TPf-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/7] memory: tegra: Cleanup Tegra210 EMC frequency
- scaling
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <202407292157.BauV7TPf-lkp@intel.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB78:EE_|IA1PR12MB8189:EE_
+X-MS-Office365-Filtering-Correlation-Id: 856e779d-4827-4e7f-b87b-08dcafef4c5c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pYaWIWS55FZ16FHabLToZ8oR9Kkw/JRqubnX1OTFjLKx6eOFRPJFzyG8YUU3?=
+ =?us-ascii?Q?lIdEtMEetZZCC4O2B5oaBBAkAGpSvN1FZzddxiOkGppES570vZnhQK29JbkM?=
+ =?us-ascii?Q?87VUTNQgUBfOHVd9qW7VR+ir8WfUnoMIroP6VGyiAIXIWWpsRqiJ7yDcjJ2o?=
+ =?us-ascii?Q?WRcPe+GQGeEel7roSoW9dcgqiPSXfpmQR9Cc1fYdmKEdbMjb0Jn/4E01UQ66?=
+ =?us-ascii?Q?C05KHzpl+ILPoCZcnM5p7BZ0oZGOTo43gDiI+RMVbt4OLbMbdBhI8qyZuDD+?=
+ =?us-ascii?Q?PPSyqpOTJpoxQGACNg2R6M4386Ioe3joj+nTA+7RnWR22BnXSzDLvMQh1AZQ?=
+ =?us-ascii?Q?GKTDTh+Y8+kcqfmlJsgCahaiF5t1JBlYmJLjzaSm0C7GULIeUQUqvxxWXHN5?=
+ =?us-ascii?Q?5v5K1zgBD7hyKznO8n0CrfY5SqL5Lxy6oXGpOPwberiq1yRHi0pSnRP27bgu?=
+ =?us-ascii?Q?px2IDFHEr0PrIMzkj7LJe3V61NzijGrBGKtbx7ukuB91uPzZZBRST2ImpxX8?=
+ =?us-ascii?Q?MlEtXA6q6hoR4fTmeSP8ztr/6v73vL6+CxVa4AzMLZtG1g2iQWp+2YCEjYPC?=
+ =?us-ascii?Q?8edz74OlmjtCusFgPxlQYoXqltxKFlv0avo0yDnD2x0tx46+vkvAFbKIeDAc?=
+ =?us-ascii?Q?m4vHxHGmXKDUV5njaa7oQ73syyae7a6ubdXLsyC6Oo6jCveKuUF7QQbbFrRT?=
+ =?us-ascii?Q?2LlI9xL7JWN9O4zS3ZeclIxOnKSW3c2C8OWifABX0zxPu79HRD3+DbQgwA0l?=
+ =?us-ascii?Q?vVekKItAN/SYxmvUiF60cH/eX0A9HyAe6234RGrZHtecTTzA8fBek37dwepQ?=
+ =?us-ascii?Q?BiYd4xnwfeSLqOFVMG1Qp4oCDUU3xA86gxec5Dua+IxhuauLYy83nB1pWSpt?=
+ =?us-ascii?Q?lpSSbvj4kkCtfnPoUMBmFv3rCpnkPUhwnmEY1xAW8VGY1AXkRDZlz1fMUwOe?=
+ =?us-ascii?Q?tf6u0XSVbeb1zcgvMqLVCVmcU1AKwvpFSPtnQlBfLeWIdNWGVcSjzKwBCaPN?=
+ =?us-ascii?Q?atBNqC7QAacHMDfbf+8rv35RFfYmb3yJszfEGpXI4mY9ogRHb3rz7icU1GOw?=
+ =?us-ascii?Q?C66jlw91RRUXpywPAH46bOpnSWrQJ5iLBBhZGzKZ+SFQ8p5xsXvUfepmJvfu?=
+ =?us-ascii?Q?Boecr7L+kGrA4bYzgeQyeZJZFPy5Eq2phFp2TvVd40J95ZtG3DRQIf6b9Jl4?=
+ =?us-ascii?Q?AxEXYn537CmhSTPrY6aW8lnv450V3hebN+LMFdMykc/3HiO+ZtVc5IyXlxA/?=
+ =?us-ascii?Q?WhS0Xx/4Crux2zWfsQnnsOM96BGup+hIAZQoAMqSaHwp0G6yP3qXPNvtUTI6?=
+ =?us-ascii?Q?wWBSQV+xsWCxhHMvIVg9lmVolUCibkEUzDG0oUy58ln5J7BHYjBKJ2Pc+d+p?=
+ =?us-ascii?Q?smMOUjl4JWImOBi9qfPvZKmEdoncoktw4y19M6FXNMmh6PQ3359QzpTQvFFd?=
+ =?us-ascii?Q?rrTUlIukxixZAvA1LOgp2LACZe9tKWHs?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2024 16:55:49.0926
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 856e779d-4827-4e7f-b87b-08dcafef4c5c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB78.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8189
 
-On 04/07/2024 13:31, Diogo Ivo wrote:
-> Hello,
+On Mon, Jul 29, 2024 at 10:01:10PM +0800, kernel test robot wrote:
+ 
+> All warnings (new ones prefixed by >>):
 > 
-> This patch series consists of a general cleanup of the Tegra210 EMC
-> frequency scaling code for revision 7.
+> >> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:186: warning: Function parameter or struct member 'vintfs' not described in 'tegra241_cmdqv'
+> >> drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:186: warning: Excess struct member 'vtinfs' description in 'tegra241_cmdqv'
 > 
-> Currently the code is relying heavily on a function, update_clock_tree_delay(),
-> that is responsible for too many things, making it long and confusing.
-> The general idea with these patches is to simplify this function and its
-> surrounding code, making it more modular.
 > 
-> The motivation behind these changes (besides improving readability and
-> maintainability) is to make it simpler to add support in the future for
-> frequency change revisions other than 7, where we can reuse a large
-> portion of the modularized code rather than essentially repeating 2k
-> lines of code with minimal changes.
+> vim +186 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
 > 
-> There are no functional changes with this patch set, as it is only meant
-> as preparation for following patches where revision 6 support is added.
+>    160
+>    161  /**
+>    162   * struct tegra241_cmdqv - CMDQ-V for SMMUv3
+>    163   * @smmu: SMMUv3 device
+>    164   * @base: MMIO base address
+>    165   * @irq: IRQ number
+>    166   * @num_vintfs: Total number of VINTFs
+>    167   * @num_vcmdqs: Total number of VCMDQs
+>    168   * @num_lvcmdqs_per_vintf: Number of logical VCMDQs per VINTF
+>    169   * @vintf_ids: VINTF id allocator
+
+>    170   * @vtinfs: List of VINTFs
+
+s/vtinfs/vintfs
+
+Will include the typo fix in next ver.
+
+Thanks
+Nicolin
+
+>    171   */
+>    172  struct tegra241_cmdqv {
+>    173          struct arm_smmu_device smmu;
+>    174
+>    175          void __iomem *base;
+>    176          int irq;
+>    177
+>    178          /* CMDQV Hardware Params */
+>    179          u16 num_vintfs;
+>    180          u16 num_vcmdqs;
+>    181          u16 num_lvcmdqs_per_vintf;
+>    182
+>    183          struct ida vintf_ids;
+>    184
+>    185          struct tegra241_vintf **vintfs;
+>  > 186  };
+>    187
 > 
-> Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> ---
-> Changes in v4:
-> - PATCH 07/07: Add missing parenthesis around operands when calculating
->   delay
-> - Link to v3: https://lore.kernel.org/r/20240507093056.3921-1-diogo.ivo@tecnico.ulisboa.pt
-> 
-> ---
-> Diogo Ivo (7):
->       memory: tegra: Remove periodic compensation duplicate calls
->       memory: tegra: Move DQSOSC measurement to common place
->       memory: tegra: Reword and correct comments
->       memory: tegra: Change macros to interpret parameter as integer
->       memory: tegra: Loop update_clock_tree_delay()
->       memory: tegra: Move compare/update current delay values to a function
->       memory: tegra: Rework update_clock_tree_delay()
-> 
->  drivers/memory/tegra/tegra210-emc-cc-r21021.c | 429 ++++++--------------------
->  1 file changed, 86 insertions(+), 343 deletions(-)
-> ---
-> base-commit: 22a40d14b572deb80c0648557f4bd502d7e83826
-> change-id: 20240704-tegra210_emcfreq-9d2466310cec
-
-I don't understand what happened with this series. lore cannot find
-anything for above change-id. b4 diff also fails:
-b4 diff '<20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt>'
-Grabbing thread from
-lore.kernel.org/all/20240704-tegra210_emcfreq-v4-0-3e450503c555@tecnico.ulisboa.pt/t.mbox.gz
-Checking for older revisions
-Grabbing search results from lore.kernel.org
-Nothing matching that query.
----
-Analyzing 8 messages in the thread
-Could not find lower series to compare against.
-
-Link to v3 does not point to v3, but to some resend. Changelog is
-incomplete - mentions only v3, but what happened between v1->v2, v2->v3?
-
-There is canonical way to send patches which makes everything
-straightforward (and IMHO easy). It's called b4. But you can just use
-git format-patch and git send-email. Whatever you choose, this makes
-maintainer life easy.
-
-Way you sent patches is somehow broken, I don't know how, but it does
-not make maintainer life easy.
-
-Please reply with changelog and explanation where is original v3.
-
-
-Best regards,
-Krzysztof
-
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
