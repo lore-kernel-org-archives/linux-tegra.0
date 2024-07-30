@@ -1,69 +1,72 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2046.outbound.protection.outlook.com [40.107.244.46])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2062.outbound.protection.outlook.com [40.107.244.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D39195FCE;
-	Tue, 30 Jul 2024 10:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C1618A92A;
+	Tue, 30 Jul 2024 10:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.62
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722333610; cv=fail; b=OcCUxCSNpx22w0LfEcHMEgTdIiO45SaF3PkjAug+HLXOSQCIhwxdKJzHdrKAzSgiRL21TB/Kz4kuWpDAfpr4R/mDPFvzq7Jgx+Aaa1VCTLarXYW1rQOn+mpSUMPUPXNwemm4JLO1Cra/pSVrDVRoJtrCVDWVdUPrJgKSjcWPjE4=
+	t=1722333736; cv=fail; b=cYsZh70WFHuRgAOoJFAGvvcJKwU/pb/RGq5doWqVT0OFMlfC/Z8FNdAfLHBUbaMdfZQVy9MaNAaJ17BB1g4ILJG2w5qPByPxsoV66kn6gf5X9HpUSyL734YMsQX7gnl+aQNZuy6BbAsfGw2jjhR5CAQlvCtF9NkvmwBJ760YYks=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722333610; c=relaxed/simple;
-	bh=TpaDJWGTJ145Ogxn0LBCCRjwOMHKj6VN+qpldVaup8k=;
+	s=arc-20240116; t=1722333736; c=relaxed/simple;
+	bh=WTlZlsHLTP3ZfSXmIyB6vn/eSUUoL51ANSNlSU4MZp4=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bSG7FwnK9y7vdm/qiL8UaruY7bAMCRoX81fBn4qwrfNqUnhOvyje+rCha8/CVHwvcuMaQ2sffbvL+wHLNKxdwO969tQly+tFYwwdWWfttULBuahjQtA0WQMtfmcX047SFm6YumeAQiyZCoNmCcff0g6PKfUsZEEEj1OyEz1RC58=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SCpKJIiG; arc=fail smtp.client-ip=40.107.244.46
+	 Content-Type:MIME-Version; b=j7/YWxJcJ6PHqdxdKnucQuzKyy5LI/rBVIqR/LrQt61plUrwmYv2ufHedlKq03i+sbOuSVeIHxIT1P9CqPM1/xzON8BOjhK4tvqkjjFp7ioegEoT4NrkSShPQgrxHQ7M0ifSp63/szO/zZYiHwFc1ic+O4D3+khLQyF9bKZOtPA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=cBFazgq5; arc=fail smtp.client-ip=40.107.244.62
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SCpKJIiG"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="cBFazgq5"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jm2UO7ZWR8UzMDvZqas/xqZH9J4USB8llNJfswDK+AHDznLnpEPFmxSUNVoN0e1/AldkuwSsWcdRTwb9LJEdz3uTBKuM3SYWqAjdP1WI5zAwHJHKsNBdEz4mDavf5+uLJGadR0SUAS5QIxdSGwcbffyZTiinjCEKFmgdDLAYhjFAhHpbGiqkgcAqFsnPYUggfbwofqZ23YLiFWcTDChgX4PstpraAHKHIZTtqFBP2BlmEu1zw3MPNC7kjeUGPU0AE3ihiJDXaRvkqheEFCjR87GegjlIjsO81UXeG4T2SQZqBH24Kd4xJLHd8J45A4UfIV6XiYW5I0DBc9QUMvEYoA==
+ b=CzgE52OitZbQfROc3FgpG6/gHI/h5W7O9Z395L4sFmOEGit9tIIw94w3mvymPNNXKNxnbX8t+0dJLqigTr4++NRcicoDcwa42YkEt2iGBQkUVFKu2qvx7mFwPr2JJL+CygoXoQsa3PGJPQL7Py9ZkYBxadCUu10X1c7aZxGshp9cmotRtmoj/+xjsIYgRlU2YqVcyOqLRI5IctBtPN9X4EWt6/gTohJMQwGAkwIGHg0s+9QfcuaX2Zno0/EaDRK1rAKau4tM/em0SbhB+A1Lk71lqC0AJaguCPHom/2+jD8RVwi26dyfFUy+8RdyrjyU4S3l/Qe98fPJwCWk9Pyv5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LDkY9ptTTcli1ftmOwGTczzkE12YdVWbTqqAJUekk6Q=;
- b=X2XlIIXyhBTotyE0OKEgYlmZHksP9dLMm0WNJFGr7EO9e4k3RKbC7d0EE44iClzCpicqy/gxg66Fblaq2jrX3pCtKV4ZhUDB72bWlGLKwyxplKUPX2h1aGO9g1yCURfEntkH00rYmY9qikIVCqSLpeB9oh8nbz6UPYTbqy0cPdgR+dj7n2mXuXG4UIGGCd44lr9dpWqbM7d13SLz/Y9sjF7lmfbsuj/kWsV7YoEGZ0RoV901g+3UvjQsIvqFrWvUvexkRFlTEU26aMqA9MffnNhig8dOSlS6r3qS86FVZsNVwBATDqZaKqgb40lK2qpEnhlbCxob/VI+qD9TzTCy0g==
+ bh=w0BEasvEZMBEObeKmRJx4kKDVAwNE0fm/SPU1H/lQnY=;
+ b=WUlThiOZkdCTe8K525M+sHL1yn6lazedx6ziUMmhSV7ZIKbnGUOi9qxxEAPQ15jHoRuvfxaL5gz2oKBFcE/M/Bcc71AP5cN/OkbYy/pjvM6RqI/3r5i1teHSPHitC++X1fJDKGHsS5H+NbAj63KWmSBYKUFdv2lkheMrABlzdMl94jM+WQu2THs25qtQ2Q/+LDHPDXWTK2bjc57IBfaewTURQTg8f58OIPivt3Xpkj6QwnSNM/zbBRV3ejIH93kPbWyP9lxtiEHn6C6ieo97P8fTPQmPxVthBNqd76VuCrDEAN3pQwghi93SBJbbF04gp+cTVeAmmHbPsJxNQzdJag==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LDkY9ptTTcli1ftmOwGTczzkE12YdVWbTqqAJUekk6Q=;
- b=SCpKJIiGnHVbl7vIfZ6OJPEmBcSu+rp9Ub7K4T9xmqPO1SYHUDwMfzhzeZMDSAul7JdZYbky4EWslUPkRJZts40G54ADxpd+0WOjPnpvz+b68vuvY6WuYLE19YRhpYa9R7hYqVaAIQecOvEtudQjcC5Or/tlW3oaovcyI8O+O6Lm2v5rIjIYNzk6LAyTtWgy5d8WyfihkIsV60b/+liYMFDSDDCTmzeT3uYx7s3WRbJHH8dxAI/wpByH9h4y3BfivyP8/aYSTSQinZpZxZuemAAQFBfUMkhMLkkF8AWp+YCL/4Ujh7gfVM7vBL3Hxy1b5xP0yrXVflVHzo6SYSUTDw==
+ bh=w0BEasvEZMBEObeKmRJx4kKDVAwNE0fm/SPU1H/lQnY=;
+ b=cBFazgq58Rh383i/xjDMjSUHdGq6+DcOC6JfRTHIPWdJInIsgVg6bd8nosFA/wQXqzTCx3sTSBY/r09SRAVYY3Ob5c5ugStr97LMql18b/WVCbrqHHGExaJuuiLwgXv98DpPqI+Fwx+Unl1wYpyLdwIXECXPY+4342IQtd/Yy9dLc8I4byReT6bt5I9jWYZlkdP7h+6gwbj4tulKtSQOtkyysltUnKWMV5WpDoOoEVfhO5oSWBR9K7Hf1Zgk2Mdoj+0NGbwhjxanYKw1S8KJ0+zLshacONVwNZQQsuLm2HdtUhFhyaFg/XXBmSXo1KOPqYdM5Ge5P5by/LzHkPFj2g==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DM8PR12MB5447.namprd12.prod.outlook.com (2603:10b6:8:36::7) by
  DS0PR12MB8456.namprd12.prod.outlook.com (2603:10b6:8:161::8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7807.28; Tue, 30 Jul 2024 10:00:04 +0000
+ 15.20.7807.28; Tue, 30 Jul 2024 10:02:11 +0000
 Received: from DM8PR12MB5447.namprd12.prod.outlook.com
  ([fe80::5f8:82ee:7da9:219b]) by DM8PR12MB5447.namprd12.prod.outlook.com
  ([fe80::5f8:82ee:7da9:219b%3]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
- 10:00:04 +0000
-Message-ID: <8ac00a45-ac61-41b4-9f74-d18157b8b6bf@nvidia.com>
-Date: Tue, 30 Jul 2024 10:59:59 +0100
+ 10:02:11 +0000
+Message-ID: <22cd777b-ffda-439b-b2e5-866235aba05e@nvidia.com>
+Date: Tue, 30 Jul 2024 11:02:07 +0100
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH net-next v3 2/4] net: phy: aquantia: wait for FW
- reset before checking the vendor ID
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Brad Griffis <bgriffis@nvidia.com>
-References: <20240708075023.14893-1-brgl@bgdev.pl>
- <20240708075023.14893-3-brgl@bgdev.pl>
+Subject: Re: [PATCH 3/4] net: phy: aquantia: Poll for TX ready at PHY system
+ side
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Revanth Kumar Uppala <ruppala@nvidia.com>, "andrew@lunn.ch"
+ <andrew@lunn.ch>, "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20230628124326.55732-1-ruppala@nvidia.com>
+ <20230628124326.55732-3-ruppala@nvidia.com>
+ <ZJw2u6BIShe2ZGsw@shell.armlinux.org.uk>
+ <BL3PR12MB64504E3A40CD6D8EAB7FF0C8C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
+ <ZL5nQxCyj8x+5lWk@shell.armlinux.org.uk>
+ <bb949d68-3229-45b8-964c-54ccf812f6f8@nvidia.com>
+ <ZqdzOxYJiRyft1Nh@shell.armlinux.org.uk>
+ <2aefce6d-5009-491b-b797-ca318e8bad4e@nvidia.com>
+ <Zqi1O88vXK3Uonr1@shell.armlinux.org.uk>
 From: Jon Hunter <jonathanh@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <20240708075023.14893-3-brgl@bgdev.pl>
+In-Reply-To: <Zqi1O88vXK3Uonr1@shell.armlinux.org.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0005.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ad::17) To DM8PR12MB5447.namprd12.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0550.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:319::20) To DM8PR12MB5447.namprd12.prod.outlook.com
  (2603:10b6:8:36::7)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -73,175 +76,172 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DM8PR12MB5447:EE_|DS0PR12MB8456:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16004a4e-9ae8-4219-df50-08dcb07e6235
+X-MS-Office365-Filtering-Correlation-Id: 721939e0-0ae2-4ef3-4208-08dcb07eae44
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UHo4MUlBTWVQZ21Hd0YxSDFEMzB1K2xITmJnU3BOc1FuU0JPSGRkcUgxSU9U?=
- =?utf-8?B?WkpPQm80N3NkRFZmQ3hSTmRPYmx1b0Z4M3VjdWNKSFlISVpWMFZoK3JTVzY0?=
- =?utf-8?B?ZFU1VytVcUV3QmVPcDlXUk9BR2ZGQVdBbk43bGthSnlsQzZlV1gxQ3JLNlNm?=
- =?utf-8?B?MkxyMXIrNFlMbnZ1d3lERlJiandrUkIyam5NKytJYWI4ek1oZnAyREVVSEI1?=
- =?utf-8?B?a09yMHkwcG0yNzNGZmRFNCs2TkZHVjBuQnRJNWJBU01lamd4cCtjUlZPZnFV?=
- =?utf-8?B?RTZXdVNCbnU0ME9uRHlNQ1Yrejh4UVBKN1FYSUcyRmhUWS9yRjRZN2h4SmFO?=
- =?utf-8?B?ZVBZQ0V5MTdDL0dabU5IMXJmeG1OTEhuRFJBLzJLQ24yUXg1dmlpRE5SS0h6?=
- =?utf-8?B?TnZ3V3NSWlBWdmQ4OW93amdEM0x3M1p4RFJwRUQ0ZSthYnd6RmppcnB3RUI3?=
- =?utf-8?B?bCtJZUE0bVNzMWU5VnZnV3lZTWplZ1Ara0IzTWNXeDNLekRHQ2htRndvd3hQ?=
- =?utf-8?B?MngrazB1b0hVN0EyYklyWlVSNE01dUhHY1pJNnNFa0lzaklYL3E5di9TUVI2?=
- =?utf-8?B?aXphZHZJTWxPKzIwdDFlQUxqSTVXbVd4NGF2NklYcXZGR0pvNEdvaXpUdXF6?=
- =?utf-8?B?R0tkcWlHcHhvUGN2MUV5dUFVYS9ZakdpTy9iVWhUK05lRFFBcTM1YUkvTzVl?=
- =?utf-8?B?OUFFdzJBQzB1VUc0d3VzSmYxWGVVZVJqN3loOWpOY3BhVFJMKzZlZEVMaW9Y?=
- =?utf-8?B?YjNIZXRXVUllOCs3SktnNWQ5RlVNa1BBWkJtWU9xby9nbzNhUVZpOFZNcWpR?=
- =?utf-8?B?cnhzcFM0dUhudzF2WklFaDZQZ0hWZktDQ05DMWlzRWNRRjZkZmtQZnJQc01u?=
- =?utf-8?B?V1hUR1lMbzQ1THIvd01GdExwb0NCQjhWY3hyc2hYT2k2T2JnTDZ3bjExdnVP?=
- =?utf-8?B?WFZCY0l0K3JNZy83am1IVElMQlQ4Ty9EYTlLcXlWb29kWkFYQzFML01lZGky?=
- =?utf-8?B?WlFxbTBUbDVYbWZJZCttdC9VYzJZcjMrVU94dXRYdldIajB2U2E1bmFhNEtE?=
- =?utf-8?B?TmdMNXVpRTYraWZTTHgvbjdVM3JKMVdpblZnWW9tazRpdTNLSS9qeXJ6dVBO?=
- =?utf-8?B?Qlp4K0kxNGh6YzlhbXplWDZQektGcit4Qi9OdzdYWFFJS0psWktEaWRkOU1X?=
- =?utf-8?B?M3lTRWlTVWxScEdHcVNLS2I0bGpMNWxGUnl2cGNYU0FMLzhaTFE1cG9lamFV?=
- =?utf-8?B?V3gzWnVjUkZoZmw1b292THRwU1BJTFErZ1BMRkJLUDN5Unh1a3VIZGhUaHFz?=
- =?utf-8?B?a093VXEwMjFLWlAydzZPUGtuZkx0djRIa1NFWUdvMFhCS3lKMkdJbytrSDlL?=
- =?utf-8?B?UHNaUnhTUnhQVml6dlhLcFJJR3VucnZKUldhTzFOdG1TS1d4dnBNems0bWJB?=
- =?utf-8?B?ekIzaEFlMk9pUkt2SGpzK3I2bHY1bFRIWTJFUG8rTVhDQXRFdXcxNXZkZXpt?=
- =?utf-8?B?VENHTnEvcWVhZTcvNjlhYlV0SEJTRzd5YlVJZHh1ckV0UTRIaWxjTnNPbnR0?=
- =?utf-8?B?Rkh4RTNLTDgrc3poRW41QlJtc28xNTQra05GeW16Tllybzk3L1BLQno1SHlk?=
- =?utf-8?B?TllDUCtMbkh1Yi9Sb3pqSXNZYjlrRVBvZnpQcVJoajZrWkJBbW1EVmJJRWFl?=
- =?utf-8?B?bXhwTEFqU094SHlCanp1V0NFYnF3QVk2MkNPN0N4WnovY3RFditYRjVhQTc1?=
- =?utf-8?B?aEFQdjdXN2hkNWpNRG4zRFdIQ05acXdOVjYyT1VkdkdjUFBEMG5ZUlV2dlZX?=
- =?utf-8?B?UjM1V3NTQ3RSd20zN0Z3UT09?=
+	=?utf-8?B?QlQ1UHhoQVgxL2k3T2JmVkxZeU9WRlZxa1h6cm5PbW5OVGJWNFRoK3E4Q2lo?=
+ =?utf-8?B?TW53OXVQR0ZkTFhnc3p2VkFzSzlTK3lIajUxVGJ5SGVBQmNpSk8rWC9wbzE5?=
+ =?utf-8?B?VFcrbGxxSDhNaUJzaWxrNG9ubnZ2UUI3Q2xKV3crOXF0R282R2wzQjE3YWs0?=
+ =?utf-8?B?bmlXL3N4MTFzOHEvbld0d0VsMHpqcmV4OURzVmhDOWJJNWpwd2ZzVzdVdEN3?=
+ =?utf-8?B?UUsvSS9yZG0wTWhoTmtUQ1ozRmthbTZCRW1INU1veTBqbUpRS01ma2VjSFJS?=
+ =?utf-8?B?YkR6czE4TENjU3VONzFzTkI3NUdXVWhadG1VNitjT2J3OXdPL2Ewc0xuNGRQ?=
+ =?utf-8?B?ZVljakNSbDZySmNkbWgvYm9KR2gzeWRrUVVoci9SR3I3bE9OY3VNSUNJVUVR?=
+ =?utf-8?B?R0tEQ29wTFFkSGd3UkxCRVEwOWs5NUdlcUtCYVpQMnVlZlNNUUtaUVNyK0xz?=
+ =?utf-8?B?eFA1YWp4dnhhSmZQOUFzc0ZvT2VrNURXdnpxRFNqNWl5WGxQRTExK0FTMU9s?=
+ =?utf-8?B?T2FJaTR6ODdNUmtSY1dLLzBYa05vS3JVbDhWVm1qblNzcEhCZWNPcUxFc294?=
+ =?utf-8?B?UE05YTJiOUFGZUNhTEFUY3N6UXBBZVlPSS9pU0VkWDAwTUFwaHhiV3ZnMWh0?=
+ =?utf-8?B?RVNFbnpjbXZ0TEV6QWRnY09VMGZIalZEMklDc25BWjZqemdGSnVSVHd0MmVM?=
+ =?utf-8?B?cHV1c21pUXRuQlBQbzhjRVkwRTJJY0tWN0grWmtPODhvSFNzRkc1RHdOeHRj?=
+ =?utf-8?B?cHBEaGJWeFEvSCtCUG45STJIWW83T1NicHFFMFkxL1MrRG9EY3FRMkRlcTdi?=
+ =?utf-8?B?S1ZmS2c1a0hXaWpXZjNBMnhVNnQxK3JiZVo1b3B0WjYxMEtTZ3FEWFZhSGFG?=
+ =?utf-8?B?U2FUVGVOb3NQQ243Y1RNbmcyNHJuTWtuT292ei8vUjcwZklxSXpXMnpXd2ts?=
+ =?utf-8?B?c0xjUDMzTFMxMnljZ2dQcXJUQkNSNmR4Zld1VDhPV29hSGUvbHIxNmF5Vy9B?=
+ =?utf-8?B?K0s2YytjMkRqM2k2enVJRUFTUjRPRWVydHFiOXRYYXhmY2xrS3Zvc0h1S2dN?=
+ =?utf-8?B?WUpNc244d3dnQ2w1bHpCMXphWTV3c2NpUStXQVlNUGoyNHJLdmVzK0cwMCtw?=
+ =?utf-8?B?TFdvNXk2VnlZMUdmWXpLSUhhZlNMSUdOaWw2U0UzcWlqaXd6OWRWRWREdlZW?=
+ =?utf-8?B?aHVtMzB1L2Jiem52UnAzOGw2MHRIZjUrMGpMYjB2SVNCNzZFUFdzdEk5NWhV?=
+ =?utf-8?B?Z29nWFF6RFhmblZweVR0MnVOV2JFVnlZV2VtRWJFdGVQRW55Mlo4T0pLZjBk?=
+ =?utf-8?B?L01qRmZXNnBwS2JyZ1QxOFk2NkJZSzNwNlN0L1U1dDJlZC9GbEg3S3hzVjZh?=
+ =?utf-8?B?VVdSalMzMjBQOUkvU2p5eUM1UXVOMGdTUzdKVVRhcllOcktmT2R0NTFTbEYv?=
+ =?utf-8?B?RXlWSkRTK2p0V0RySVgycHlqQWFVOFJkOS9jTkRXcWhXclFXTGN5QTlQdGxz?=
+ =?utf-8?B?WHZJdHJzSVd6Z3dMTlBCaFF4TTV6aDVFdnd1d0RHQktnZExnTmhicmwwayt2?=
+ =?utf-8?B?bmlWVWdhaUpXcmtQTm9URjR2SnVpZFM5ME5NN2ZPcXhoQzF1amRRTDloQkQ2?=
+ =?utf-8?B?bWRqeExoUjlMSVJPRDJ1eUpNcTJhazBRdkFkbmpHNENjT05LajdkdUlJNlBC?=
+ =?utf-8?B?NFpFVmhHQXR3T2lWUnRadXhVZ3VVY2xlQy9VSE5kNk9aR0ZiOWtMZ29WM3hN?=
+ =?utf-8?B?b3VIZlBNT2xoQjh2cDB5TjRBcVFsb1RvMEY3VUxveUJrOUM2THFGdm96a1BU?=
+ =?utf-8?B?RUFnSEJzUkNQQzVaMTFDZz09?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5447.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5447.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eEE2WkJYSWUyNXlNcEE5YzM4cWNrQjljbjRDQjA5RFZCWmZzemk2aThtNDJ3?=
- =?utf-8?B?SkRPR3pVdWtyTzFuL0lZZGY4SE5VRUJOYkM3MWY1RzZYaC9ZM1A1Mlgvei9S?=
- =?utf-8?B?dnQvQVZQcHpMZERqR2dza3Btblc2V05zdWJCRDFFK0Y1alJiS0xOd0xJSkRa?=
- =?utf-8?B?UUFxMzlNVDBoK2wrVTdPSnZjVnRYU2xjZW5rbldQcEllNkRWKzN0UTJPQmVK?=
- =?utf-8?B?MHlwNDM3TmgyanR5MlBZc0Yxd3R1eVVxdnc3c1JjbXFEdFQ1V2RYQkx6Q3Yv?=
- =?utf-8?B?K1dLUW5hbm9FckcvamNqNXVZcEhOTUttVzdDTHlWNTdzU3p1U1BmSkh2Szhj?=
- =?utf-8?B?UzJycWtPdTBCVUpGc3FsNk9HcXBQS21zdmVlcXpyb1JvZnJaNEpVanVUWFE5?=
- =?utf-8?B?M2hQR0g0OGxPdXhWMVpKMkN2aVJYSzM1b3lHZi9zVnFjS2NRR2grM1FFMUZW?=
- =?utf-8?B?UmZNRXJNcUF6T1doTXNJN2JkQmpjQlZYbkRuRjZIVEFTeWF3SWtHSFpyMVc3?=
- =?utf-8?B?d1k4eE9xK3FnRithVkNoK3JzZUJscVhlOExSSTJoSUExeEVtYWh2VFhhUmJn?=
- =?utf-8?B?VU1tOS9sUVRnakdLbVdaSHY2akd1MW5VcThJdzk0dFVVRHJBVFBnMXFPWHF1?=
- =?utf-8?B?VXBjK2xoaGxUTjhHbkZmOXRtYXd6TmVIMXl3Tit3eWtBT3Jqb2M2SFQwTnFX?=
- =?utf-8?B?WmVEa2NDeFh6OWl5UUEwQ3dDTkpsUXBNV3h3czFsNUZGSkNBWXZESVV3Wjdr?=
- =?utf-8?B?MjEvYjF4djRGaGVYOFZYUlpPMDVhakhxTTRIckRTSFhwQVArc1diMy9NSWVF?=
- =?utf-8?B?cUFWbGE2ZHNPd0svaG9FU3VWSFdhZS8yRnoyaDg1emUyQ0x4UFcxOU84SlpN?=
- =?utf-8?B?YmFjd2FzOXk4Z3VWTEtNTi81NnpraE8zUU4wZkRLWXcxN0dYR0dSTndLZHhi?=
- =?utf-8?B?VENYbGZwRGdWR2VaZm8yelBPcGZFRHFaSXBTSEdvTVNiZWtZNzAwVVlMTHhr?=
- =?utf-8?B?eVVPT0I1SWRmOEQxaFBWVWFOb1ZnNUtWcWxXVDExK3Z1cXBJZDlNeWUvODV4?=
- =?utf-8?B?V2tjMW5LT1R1bjhOOTdYejUvV0ZnQzNCWFVTYVpQeGpOVlhBOVhuaXBDSEJW?=
- =?utf-8?B?d29EdVpxcTluQXZFb3ZMZW41ODRPUzZvQjhtTmdwNVFUTC9oYmlJU29CdjZt?=
- =?utf-8?B?ZDl0anFOUlpGN0JuT0txL3BkMzlnSmlkem8weElDakd2Y21mZG9KRWp6UlZE?=
- =?utf-8?B?SXVWTk92ZXdQdUd6SmJ4V0EzdTR0UTBHUnl5UWw0WVFIV2EvUXBNdTJyWndG?=
- =?utf-8?B?a3F1YTZWeHF0eXhPUWgzYmkwYS9qa3dBUGdlRXh4aER5cHdmZkFNbWJpektq?=
- =?utf-8?B?MnlmS0doVy9hUFlJNC90WlgySm1kYXcwTnBVQkhXS3QvR0I0ZWFnUjR0RDM1?=
- =?utf-8?B?QjRIMnpzR1h5cGQvUVBnbDBicEQxTW1wZktWZTEwbFFMNFRBUkZtcVFWMmdH?=
- =?utf-8?B?Vm1JWEkvUCt3ZGFkaTFVN2N6VnlZRnFMTHhBSjArY0x1enlrVVhPRVhqeEVU?=
- =?utf-8?B?Z1N5NFcxb2ZuY3U3RkszcVhMeTEvb3F3MVlieGl5bHpGWWFwU2N0Rmx6UWRp?=
- =?utf-8?B?L2ZBanpQeWhnVG94K1FKa0UwVUNoa2RjU1dxZk1GK2V6ajc1bzJWRklLZldR?=
- =?utf-8?B?UjdwOVFVandRMUwzVk43YzEwK1VwM0hORkhkbENzRXE2Y3g4T1IxT2tkNkhx?=
- =?utf-8?B?bGNwdkFEUWQwZ1krKzR1Z01zMy9LNERtNkdqdzJhYW5DdlQ4MnN5Mko3V1B1?=
- =?utf-8?B?MGFJZFd6aVdVdDdFRnFQRy9NUlFrNmZhSXRxYjZPY05tRVMyQlFyVWg5SHc3?=
- =?utf-8?B?bFhJdklhSmdmc3E1U0ZXbUlUMFVLMjg3SDltbEpNb2lMZERXaHZxYmVzRGtY?=
- =?utf-8?B?ZmlPSzJMd1hVRmNoZDRLSWxxYmtZTkxybThOdGFzRDFFWEVBVVQ2SHcrbnhH?=
- =?utf-8?B?VmQ1NlB1K0RmbVBaSHdCKzV3YmpCMnNSdnNVOXFMSVlLWmJOc0dyYUN1V0I3?=
- =?utf-8?B?TmRrdU45UGJqd3k3SHJYdnVSdjBNNXBOY0N2VVhnbTFrK2FrSVUzYlJHMnY4?=
- =?utf-8?Q?Gx7Uea8jgaKr4AvXYfTiTzh+i?=
+	=?utf-8?B?UVpiN2diZk94bExZczRQbFhvOUNzeHkyTldlQmtKNFJ3L2lvcTZaRXlBRHJM?=
+ =?utf-8?B?NVlIMTJBYmRUKzdqVWFKVkoxWmdLRmNUVEVXSzB0OTZrN2lIRThrNlp1akZV?=
+ =?utf-8?B?OWp0dTg1dDc0SFNoYlZSL3FjNVcxM2FMVXN1RjlGTDBWekxxOUxmdEZxa3RS?=
+ =?utf-8?B?SHREUjVjMyt4bVZrakZvTjZqaStMeUdrVFJseXQ3VEFLbzFGYjhUdEw0Uyta?=
+ =?utf-8?B?azdBUENiSDcyQVZEUzhISGYwbmF3aHBXeHA5OEkwaUJQM1hmTlBydTN3Yk1n?=
+ =?utf-8?B?M1l3eFNRWjVxQ3l6VlpSaEl0RENIdjcrZGk0QThOc2RXdVd5UURNbTBESFh6?=
+ =?utf-8?B?bUphTTMrV1hYZXY3Mm85Ujh6djV5Vzd6TFZDVVhjRXdJUWFrSGRJK1VPcDFR?=
+ =?utf-8?B?dUg0NFB4ZUZ0M0ljWERhZ3FXSzVMR214eE9RbEJDR3NVUFZ4SmR1MitqdEJq?=
+ =?utf-8?B?OXlvdk1JQlQ3UkRkUXFiVUloY1ZEcHIzdjgwaUhWTU9nRWt2ditCaW1ISVdp?=
+ =?utf-8?B?bmJwWkhVU3ZsSUlUQUJJQWRuZXUyOWkwU0pTbzF3R0V6NHo5VThnalBjRm0x?=
+ =?utf-8?B?NGpKQllURWU2SEgzZnFMUEhJekhMYXhHV3QyaW1IQjVMN283c2xUMUxBenlM?=
+ =?utf-8?B?SGhNQ2VTWkFNYThHeHd4dEpINU9hMUs0SGpUZUY0OGZOWVNpMHNkdUNxRlZa?=
+ =?utf-8?B?c2lqR2FBTUYwTmsxVjlkZm1TMkpaVURqbUhiWVJPNmphUVlGVmVEa1JOUElK?=
+ =?utf-8?B?TTNoakJVclY1eUdVRUttRnZFczhtUC9IQ3VXZWpIM3RoZmo4LzU0TTNNOGhL?=
+ =?utf-8?B?NSs2MU5iNmNmSnNkRzRXVzNHQVpQK2tESkswSVZETmVGOXAwbWJMYWl6Wmp0?=
+ =?utf-8?B?anJKTE5YRllhOUplK0l6a2FZb1FpL05rTExjSUdzdjhzZTVWOHlmaTRWVHdY?=
+ =?utf-8?B?ZTJHeVo3cWs5OGo2YUlHMmNiYTRsSWdpTTBwVmFvdjRLV0hFK0c5YWZOdnZH?=
+ =?utf-8?B?Vjh3VFNkNk81a01oWis0ZHhUdmRTbzFRQlVnNHA3ZUJ3TjdvaU9kUk5vcTJl?=
+ =?utf-8?B?S2YyaXJObkZia3FvQ2NPRmxnU09BTTBDZkVsVmsvT2ppYzVDMzBpc2RSK1VI?=
+ =?utf-8?B?QXVGdHArZzlZcXZUT2FLNU9SbGh3QUU3a3pWTVorc1lDdFRWcjAxc2VacEp4?=
+ =?utf-8?B?SVl4MnpGTkcxcUMrRzZnQWdrd0xINmd4LzJvWVp0SmhmUFdqRXVFa2RZSlB2?=
+ =?utf-8?B?K2ZITk5LbmZWdVRGL3NyQUpzbWNkZ0x2QzEyTnNPa2QzZFBubE8rT1pQSkJw?=
+ =?utf-8?B?T093SkxtOFpmUW8wT00zWlBtcWFRNWRVeEY1WUpRMVd0YjZYUWVnbnFMMDZ4?=
+ =?utf-8?B?WDRhaEpzVXN0RnJXOW9BV1k3blVGU1AvRmhzZkVCZ01LcDdLZVZqc0U4TUor?=
+ =?utf-8?B?M3dpU1E2N2NoS2MvcFpncE9mRytRMlAydTVtZjZFQ0tJWHlWQ0pKTStFdjRV?=
+ =?utf-8?B?NVVIQkFvMWVXSlhEL1JRVXBSSWt4NUZwVTdBU0s0aVZHVlRyaFBXOTFSeXVH?=
+ =?utf-8?B?Q0t3VVo2dmNVRDRFTHRHenBmN3R1WGJqdEJwYUUyZHF6c05kMVQwRzFYK1hm?=
+ =?utf-8?B?cGluNkpidHRzZXRUY21PSStuNFZmNHRHUXJxbThFa3A3MkNHWVBiQ0dpOG1Z?=
+ =?utf-8?B?eHpZWkpKTVJpek1IcXRRVW1nZWhwdHNTQkdISkN5dnI1Z1NZa24zUDg4QllX?=
+ =?utf-8?B?Tms2L1hSMWlZR2hxeVA3eE11TzlZZ29DQWlvN3FnV3JWNUVoMXJLR2RHeFFO?=
+ =?utf-8?B?L0lsbjl3UVpYN3g4U08wa3dteTNtWmVJNEJOdEhYaXZQb3JwY0RlSVg4K0ZO?=
+ =?utf-8?B?NHc1cGRUSnV2a1NaZTFxSVNNSFA2d3k2TWVDdi8xT21PaU1BZGRGWmUyU0dQ?=
+ =?utf-8?B?QzNsN3kxSXd6SXRRYmtPVVE2YkJrSVRxblo3MVhFWGppTFpkc1FrS0tXSTAz?=
+ =?utf-8?B?OEdFUGtrVmM5SlRUYnp5ZGYzMlltNkFsWEh5SjFCUXVSbUZxMC8vdHNNYXZF?=
+ =?utf-8?B?RXhHQkJlZHdRWXhlNTQxZEVpQm5BN1JWcWhYVHU5cGxmdjMwVzBacXNXbVNo?=
+ =?utf-8?Q?JziqYQLkiMJ/yaBaWzza4ElqR?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16004a4e-9ae8-4219-df50-08dcb07e6235
+X-MS-Exchange-CrossTenant-Network-Message-Id: 721939e0-0ae2-4ef3-4208-08dcb07eae44
 X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5447.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 10:00:04.1776
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 10:02:11.7776
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ivsYrS16eABFbmwYVpIFBpu8ZYKfQLllcQUCbvCun4pnxrvcIVQdnPkogKBinVhapZImZrRAXg/jsFSjNszUrQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: r+rjHyFL5mCkKQTM4yjoWUp9zdUj3TS3n2RwiSLj3PSfZL5qBA86wFPO9ppQTf5Qb8rp/VDwdhf3RN6pwmlw3w==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8456
 
-Hi Bartosz,
 
-On 08/07/2024 08:50, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 30/07/2024 10:41, Russell King (Oracle) wrote:
+> On Tue, Jul 30, 2024 at 10:36:12AM +0100, Jon Hunter wrote:
+>>
+>> On 29/07/2024 11:47, Russell King (Oracle) wrote:
+>>
+>> ...
+>>
+>>>> Apologies for not following up before on this and now that is has been a
+>>>> year I am not sure if it is even appropriate to dig this up as opposed to
+>>>> starting a new thread completely.
+>>>>
+>>>> However, I want to resume this conversation because we have found that this
+>>>> change does resolve a long-standing issue where we occasionally see our
+>>>> ethernet controller fail to get an IP address.
+>>>>
+>>>> I understand that your objection to the above change is that (per Revanth's
+>>>> feedback) this change assumes interface has the link. However, looking at
+>>>> the aqr107_read_status() function where this change is made the function has
+>>>> the following ...
+>>>>
+>>>> static int aqr107_read_status(struct phy_device *phydev)
+>>>> {
+>>>>           int val, ret;
+>>>>
+>>>>           ret = aqr_read_status(phydev);
+>>>>           if (ret)
+>>>>                   return ret;
+>>>>
+>>>>           if (!phydev->link || phydev->autoneg == AUTONEG_DISABLE)
+>>>>                   return 0;
+>>>>
+>>>>
+>>>> So my understanding is that if we don't have the link, then the above test
+>>>> will return before we attempt to poll the TX ready status. If that is the
+>>>> case, then would the change being proposed be OK?
+>>>
+>>> Here, phydev->link will be the _media_ side link. This is fine - if the
+>>> media link is down, there's no point doing anything further. However,
+>>> if the link is up, then we need the PHY to update phydev->interface
+>>> _and_ report that the link was up (phydev->link is true).
+>>>
+>>> When that happens, the layers above (e.g. phylib, phylink, MAC driver)
+>>> then know that the _media_ side interface has come up, and they also
+>>> know the parameters that were negotiated. They also know what interface
+>>> mode the PHY is wanting to use.
+>>>
+>>> At that point, the MAC driver can then reconfigure its PHY facing
+>>> interface according to what the PHY is using. Until that point, there
+>>> is a very real chance that the PHY <--> MAC connection will remain
+>>> _down_.
+>>>
+>>> The patch adds up to a _two_ _second_ wait for the PHY <--> MAC
+>>> connection to come up before aqr107_read_status() will return. This
+>>> is total nonsense - because waiting here means that the MAC won't
+>>> get the notification of which interface mode the PHY is expecting
+>>> to use, therefore the MAC won't configure its PHY facing hardware
+>>> for that interface mode, and therefore the PHY <--> MAC connection
+>>> will _not_ _come_ _up_.
+>>>
+>>> You can not wait for the PHY <--> MAC connection to come up in the
+>>> phylib read_status method. Ever.
+>>>
+>>> This is non-negotiable because it is just totally wrong to do this
+>>> and leads to pointless two second delays.
+>>
+>>
+>> Thanks for the feedback! We will go away, review this and see if we can
+>> figure out a good/correct way to resolve our ethernet issue.
 > 
-> Checking the firmware register before it complete the boot process makes
-> no sense, it will report 0 even if FW is available from internal memory.
-> Always wait for FW to boot before continuing or we'll unnecessarily try
-> to load it from nvmem/filesystem and fail.
+> Which ethernet driver is having a problem?
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->   drivers/net/phy/aquantia/aquantia_firmware.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/net/phy/aquantia/aquantia_firmware.c b/drivers/net/phy/aquantia/aquantia_firmware.c
-> index 0c9640ef153b..524627a36c6f 100644
-> --- a/drivers/net/phy/aquantia/aquantia_firmware.c
-> +++ b/drivers/net/phy/aquantia/aquantia_firmware.c
-> @@ -353,6 +353,10 @@ int aqr_firmware_load(struct phy_device *phydev)
->   {
->   	int ret;
->   
-> +	ret = aqr_wait_reset_complete(phydev);
-> +	if (ret)
-> +		return ret;
-> +
->   	/* Check if the firmware is not already loaded by pooling
->   	 * the current version returned by the PHY. If 0 is returned,
->   	 * no firmware is loaded.
 
+It is the drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c driver. It 
+works most of the time, but on occasion it fails to get a valid IP 
+address.
 
-Although this fixed another issue we were seeing with this driver, we 
-have been reviewing this change and have a question about it.
-
-According to the description for the function aqr_wait_reset_complete() 
-this function is intended to give the device time to load firmware and 
-check there is a valid firmware ID.
-
-If a valid firmware ID (non-zero) is detected, then 
-aqr_wait_reset_complete() will return 0 (because 
-phy_read_mmd_poll_timeout() returns 0 on success and -ETIMEDOUT upon a 
-timeout).
-
-If it times out, then it would appear that with the above code we don't 
-attempt to load the firmware by any other means?
-
-Hence, I was wondering if we want this ...
-
-diff --git a/drivers/net/phy/aquantia/aquantia_firmware.c 
-b/drivers/net/phy/aquantia/aquantia_firmware.c
-index 524627a36c6f..a167f42ae36b 100644
---- a/drivers/net/phy/aquantia/aquantia_firmware.c
-+++ b/drivers/net/phy/aquantia/aquantia_firmware.c
-@@ -353,16 +353,12 @@ int aqr_firmware_load(struct phy_device *phydev)
-  {
-         int ret;
-
--       ret = aqr_wait_reset_complete(phydev);
--       if (ret)
--               return ret;
--
--       /* Check if the firmware is not already loaded by pooling
-+       /* Check if the firmware is not already loaded by polling
-          * the current version returned by the PHY. If 0 is returned,
--        * no firmware is loaded.
-+        * firmware is loaded.
-          */
--       ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_FW_ID);
--       if (ret > 0)
-+       ret = aqr_wait_reset_complete(phydev);
-+       if (!ret)
-                 goto exit;
-
-         ret = aqr_firmware_load_nvmem(phydev);
-
-
-Our Aquantia PHY has a SPI-NOR and so we don't to test the other 
-firmware loading cases.
-
+Thanks
 Jon
-
 -- 
 nvpublic
