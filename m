@@ -1,63 +1,59 @@
 Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482D918EFE0;
-	Tue, 30 Jul 2024 11:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF181993B0;
+	Tue, 30 Jul 2024 11:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722337942; cv=none; b=e7WGSnGQmwOX+IItQaBD/3w99ty6OmrfQdQxEUCPUiT6se2MoItv70SaaCl1pCBRwZtQ8GHFjtrfTl0rw1brnbSeiJa+g89qbK0t8wys0lfUw2lOE1edyVbkzBgE5AaulsluRZ7EfiuRotZ0W+hlF2PWhRKfl8gSh8X2Cs/YdBo=
+	t=1722338640; cv=none; b=NIjplMJoHCUF5lpFMEiJ8sinOoxUzesAqIdamhuQlX+zlt0uJj4X4bfSNraXhuRAhrYX/eU+rrhgpDEy9LbSN5Hr/g6T32rgI6stygfuTmzM2WEE9p+8maNMxGi88wJ+RdOID0cplc4d2GFvdMA/FRHpd6+MEFK0y8/cI0ph7XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722337942; c=relaxed/simple;
-	bh=vHn/YMFQYvEvdkK2phFGHAoHqay92V6pC/Sk/gri1yk=;
+	s=arc-20240116; t=1722338640; c=relaxed/simple;
+	bh=pOA0+hxVfOzNZYEWL0amhMKDYvzHYLXnQpE9r0FHK8w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+5pvjqUTH7r2cWbSBu3zFCmCq3u4kkKSBcaIJkiX25MfwrlO3BRqSz8vD2q4oYMYTEKMervWvE/bUETWX/GCcISpAGllEf33Tq6ENCv4UeqYEbR0r4CI0NTUBMAH2qs7WPowwNqs5nu1f1PXLMf2lUNZHlOsXr85ZCiGaAJe3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vm/XWdkY; arc=none smtp.client-ip=78.32.30.218
+	 Content-Type:Content-Disposition:In-Reply-To; b=pLddsRfHnYqoBnAOtM+jc12mmoXgHhBUsKPIFJk46n0CcC+auji9a49w61KkntoltuAN+ZP/BU0dKVdmBWtNJHJVWu9P63Ovw1ajRfnbNmzoaqi2fYn6XfCWNd236iWig//pR6SDlTjwx+mQPnF2ydfA3QFtiWiDVRWQypgfztw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bKVMqyYc; arc=none smtp.client-ip=78.32.30.218
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vm/XWdkY"
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bKVMqyYc"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
 	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=00cHFaeuJkRiA6ZZBAXaPk6UlUalmESLB0PKwQ7QRXE=; b=vm/XWdkYsNl1F5HkcFA0fuZr1z
-	nZQSSYkGFEsK7dCx7jIm1FVwigToSDtvdDI0fJ8Q/ESovhqUOEp+6WTUU8+cROKcCJk/TMGy740zS
-	w5t5/0f46QhaHcYldyxQ0ShxBxtOe+fTTE9DqeHAQmhVmp45bxPAX0NjHzVgWvDe/b8Uw4SmJAtYu
-	+rURyKz8zj7xTGLNUa+SI/WUzwLvZIYANpb5c6VXHE/TAt+6kqBy95U0cgs63EBqWlXrrIZc51ENT
-	sG8peN9SwSMq9zc8t5fhp/6gzHaF3I+0ypB0RQxjZX9vVPHrNFdsWMjSZIae7y5UrHg4yCJGi//eF
-	pgzCh86w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44490)
+	bh=/KjOC3r37EogMaWUzeIP1eZFMIvbYUyiLZJrxK8c0Kk=; b=bKVMqyYcjJ2Min/cT7k5ohWK5N
+	RjmDvjJdvdSWvLAZ8VG62e97C1MTtHeAu2HpP1tkbb7ldpbjObedkCgLPvvsLYkyMOWpsduRC8g3W
+	f8zt8EDcPH9+tg/86eq31UTscOG85zeEtpWGgUL2/oTo2M7Fz1mwumOCv2yireeRM54L/KJFdjHit
+	vUxG8jnWPk45FgOfsNAv/KhoZVEUO6Go2tNNRAAkLEs3UzuY9sl3dPLXA0NlHqpx+g0GPF7KSslUf
+	Uq5k/fEiLVAQoH9HYIE6lK3CEvU8Ihv/xFPRKW130dvkUKCG2S43SBvaBoDBhEQQ0N+WhoGUEyiXA
+	Mz5CUjOA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57712)
 	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <linux@armlinux.org.uk>)
-	id 1sYklz-0006W2-3A;
-	Tue, 30 Jul 2024 12:12:08 +0100
+	id 1sYkxD-0006Yd-1d;
+	Tue, 30 Jul 2024 12:23:43 +0100
 Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
 	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sYkm3-0005Dp-Or; Tue, 30 Jul 2024 12:12:11 +0100
-Date: Tue, 30 Jul 2024 12:12:11 +0100
+	id 1sYkxF-0005E8-VO; Tue, 30 Jul 2024 12:23:46 +0100
+Date: Tue, 30 Jul 2024 12:23:45 +0100
 From: "Russell King (Oracle)" <linux@armlinux.org.uk>
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Revanth Kumar Uppala <ruppala@nvidia.com>,
-	"andrew@lunn.ch" <andrew@lunn.ch>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 3/4] net: phy: aquantia: Poll for TX ready at PHY system
- side
-Message-ID: <ZqjKi0iC83BlZ5PT@shell.armlinux.org.uk>
-References: <20230628124326.55732-1-ruppala@nvidia.com>
- <20230628124326.55732-3-ruppala@nvidia.com>
- <ZJw2u6BIShe2ZGsw@shell.armlinux.org.uk>
- <BL3PR12MB64504E3A40CD6D8EAB7FF0C8C302A@BL3PR12MB6450.namprd12.prod.outlook.com>
- <ZL5nQxCyj8x+5lWk@shell.armlinux.org.uk>
- <bb949d68-3229-45b8-964c-54ccf812f6f8@nvidia.com>
- <ZqdzOxYJiRyft1Nh@shell.armlinux.org.uk>
- <2aefce6d-5009-491b-b797-ca318e8bad4e@nvidia.com>
- <Zqi1O88vXK3Uonr1@shell.armlinux.org.uk>
- <22cd777b-ffda-439b-b2e5-866235aba05e@nvidia.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Brad Griffis <bgriffis@nvidia.com>
+Subject: Re: [RESEND PATCH net-next v3 2/4] net: phy: aquantia: wait for FW
+ reset before checking the vendor ID
+Message-ID: <ZqjNQW5HhTUgCc5x@shell.armlinux.org.uk>
+References: <20240708075023.14893-3-brgl@bgdev.pl>
+ <8ac00a45-ac61-41b4-9f74-d18157b8b6bf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -66,132 +62,86 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <22cd777b-ffda-439b-b2e5-866235aba05e@nvidia.com>
+In-Reply-To: <8ac00a45-ac61-41b4-9f74-d18157b8b6bf@nvidia.com>
 Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Jul 30, 2024 at 11:02:07AM +0100, Jon Hunter wrote:
+On Tue, Jul 30, 2024 at 10:59:59AM +0100, Jon Hunter wrote:
+> Hi Bartosz,
 > 
-> On 30/07/2024 10:41, Russell King (Oracle) wrote:
-> > On Tue, Jul 30, 2024 at 10:36:12AM +0100, Jon Hunter wrote:
-> > > 
-> > > On 29/07/2024 11:47, Russell King (Oracle) wrote:
-> > > 
-> > > ...
-> > > 
-> > > > > Apologies for not following up before on this and now that is has been a
-> > > > > year I am not sure if it is even appropriate to dig this up as opposed to
-> > > > > starting a new thread completely.
-> > > > > 
-> > > > > However, I want to resume this conversation because we have found that this
-> > > > > change does resolve a long-standing issue where we occasionally see our
-> > > > > ethernet controller fail to get an IP address.
-> > > > > 
-> > > > > I understand that your objection to the above change is that (per Revanth's
-> > > > > feedback) this change assumes interface has the link. However, looking at
-> > > > > the aqr107_read_status() function where this change is made the function has
-> > > > > the following ...
-> > > > > 
-> > > > > static int aqr107_read_status(struct phy_device *phydev)
-> > > > > {
-> > > > >           int val, ret;
-> > > > > 
-> > > > >           ret = aqr_read_status(phydev);
-> > > > >           if (ret)
-> > > > >                   return ret;
-> > > > > 
-> > > > >           if (!phydev->link || phydev->autoneg == AUTONEG_DISABLE)
-> > > > >                   return 0;
-> > > > > 
-> > > > > 
-> > > > > So my understanding is that if we don't have the link, then the above test
-> > > > > will return before we attempt to poll the TX ready status. If that is the
-> > > > > case, then would the change being proposed be OK?
-> > > > 
-> > > > Here, phydev->link will be the _media_ side link. This is fine - if the
-> > > > media link is down, there's no point doing anything further. However,
-> > > > if the link is up, then we need the PHY to update phydev->interface
-> > > > _and_ report that the link was up (phydev->link is true).
-> > > > 
-> > > > When that happens, the layers above (e.g. phylib, phylink, MAC driver)
-> > > > then know that the _media_ side interface has come up, and they also
-> > > > know the parameters that were negotiated. They also know what interface
-> > > > mode the PHY is wanting to use.
-> > > > 
-> > > > At that point, the MAC driver can then reconfigure its PHY facing
-> > > > interface according to what the PHY is using. Until that point, there
-> > > > is a very real chance that the PHY <--> MAC connection will remain
-> > > > _down_.
-> > > > 
-> > > > The patch adds up to a _two_ _second_ wait for the PHY <--> MAC
-> > > > connection to come up before aqr107_read_status() will return. This
-> > > > is total nonsense - because waiting here means that the MAC won't
-> > > > get the notification of which interface mode the PHY is expecting
-> > > > to use, therefore the MAC won't configure its PHY facing hardware
-> > > > for that interface mode, and therefore the PHY <--> MAC connection
-> > > > will _not_ _come_ _up_.
-> > > > 
-> > > > You can not wait for the PHY <--> MAC connection to come up in the
-> > > > phylib read_status method. Ever.
-> > > > 
-> > > > This is non-negotiable because it is just totally wrong to do this
-> > > > and leads to pointless two second delays.
-> > > 
-> > > 
-> > > Thanks for the feedback! We will go away, review this and see if we can
-> > > figure out a good/correct way to resolve our ethernet issue.
+> On 08/07/2024 08:50, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > > 
-> > Which ethernet driver is having a problem?
+> > Checking the firmware register before it complete the boot process makes
+> > no sense, it will report 0 even if FW is available from internal memory.
+> > Always wait for FW to boot before continuing or we'll unnecessarily try
+> > to load it from nvmem/filesystem and fail.
 > > 
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >   drivers/net/phy/aquantia/aquantia_firmware.c | 4 ++++
+> >   1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/net/phy/aquantia/aquantia_firmware.c b/drivers/net/phy/aquantia/aquantia_firmware.c
+> > index 0c9640ef153b..524627a36c6f 100644
+> > --- a/drivers/net/phy/aquantia/aquantia_firmware.c
+> > +++ b/drivers/net/phy/aquantia/aquantia_firmware.c
+> > @@ -353,6 +353,10 @@ int aqr_firmware_load(struct phy_device *phydev)
+> >   {
+> >   	int ret;
+> > +	ret = aqr_wait_reset_complete(phydev);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >   	/* Check if the firmware is not already loaded by pooling
+> >   	 * the current version returned by the PHY. If 0 is returned,
+> >   	 * no firmware is loaded.
 > 
-> It is the drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c driver. It works
-> most of the time, but on occasion it fails to get a valid IP address.
+> 
+> Although this fixed another issue we were seeing with this driver, we have
+> been reviewing this change and have a question about it.
+> 
+> According to the description for the function aqr_wait_reset_complete() this
+> function is intended to give the device time to load firmware and check
+> there is a valid firmware ID.
+> 
+> If a valid firmware ID (non-zero) is detected, then
+> aqr_wait_reset_complete() will return 0 (because phy_read_mmd_poll_timeout()
+> returns 0 on success and -ETIMEDOUT upon a timeout).
+> 
+> If it times out, then it would appear that with the above code we don't
+> attempt to load the firmware by any other means?
 
-Hmm. dwmac-tegra.c sets STMMAC_FLAG_SERDES_UP_AFTER_PHY_LINKUP, which
-means that the serdes won't be powered up until after the PHY has
-indicated that link is up. If the serdes is not powered up, then the
-MAC facing interface on the PHY won't come up.
+I'm also wondering about aqr_wait_reset_complete(). It uses
+phy_read_mmd_poll_timeout(), which prints an error message if it times
+out (which means no firmware has been loaded.) If we're then going on to
+attempt to load firmware, the error is not an error at all. So, I think
+while phy_read_poll_timeout() is nice and convenient, we need something
+like:
 
-Hence, the code you're adding will, in all probability, merely add a
-two second delay to each and every time the PHY is polled for its
-status when the PHY indicates that the media link is up until such
-time that the stmmac side has processed that the link has come up.
+#define phy_read_poll_timeout_quiet(phydev, regnum, val, cond, sleep_us, \
+                                    timeout_us, sleep_before_read) \
+({ \
+        int __ret, __val; \
+        __ret = read_poll_timeout(__val = phy_read, val, \
+                                  __val < 0 || (cond), \
+                sleep_us, timeout_us, sleep_before_read, phydev, regnum); \
+        if (__val < 0) \
+                __ret = __val; \
+        __ret; \
+})
 
-I also note that mgbe_uphy_lane_bringup_serdes_up() polls the link
-status on the MAC PCS side, waiting for the link to become ready
-on that side.
+#define phy_read_poll_timeout(phydev, regnum, val, cond, sleep_us, \
+                                timeout_us, sleep_before_read) \
+({ \
+        int __ret = phy_read_poll_timeout_quiet(phydev, regnum, val, cond, \
+						sleep_us, timeout_us, \
+						sleep_before_read); \
+        if (__ret) \
+                phydev_err(phydev, "%s failed: %d\n", __func__, __ret); \
+        __ret; \
+})
 
-So, what you have is:
-
-- you bring the interface up. The serdes interface remains powered down.
-- phylib starts polling the PHY.
-- the PHY indicates the media link is up.
-- your new code polls the PHY's MAC facing interface for link up, but
-  because the serdes interface is powered down, it ends up timing out
-  after two seconds and then proceeds.
-- phylib notifies phylink that the PHY has link.
-- phylink brings the PCS and MAC side(s) up, calling
-  stmmac_mac_link_up().
-- stmmac_mac_link_up() calls mgbe_uphy_lane_bringup_serdes_up() which
-  then does receive lane calibration (which is likely the reason why
-  this is delayed to link-up, so the PHY is giving a valid serdes
-  stream for the calibration to use.)
-- mgbe_uphy_lane_bringup_serdes_up() enables the data path, and
-  clears resets, and then waits for the serdes link with the PHY to
-  come up.
-
-While stmmac_mac_link_up() is running, phylib will continue to try to
-poll the PHY for its status once every second, and each time it does
-if the PHY's MAC facing link reports that it's down, the phylib locks
-will be held for _two_ seconds each time. That will mean you won't be
-able to bring the interface down until those two seconds time out.
-
-So, I think one needs to go back and properly understand what is going
-on to figure out what is going wrong.
-
-You will likely find that inserting a two second delay at the start of
-mgbe_uphy_lane_bringup_serdes_up() is just as effective at solving
-the issue - although I am not suggesting that would be an acceptable
-solution. It would help to confirm that the reasoning is correct.
+and aqr_wait_reset_complete() needs to use phy_read_poll_timeout_quiet().
 
 -- 
 RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
