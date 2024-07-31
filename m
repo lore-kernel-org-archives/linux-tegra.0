@@ -1,116 +1,182 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2064.outbound.protection.outlook.com [40.107.96.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30BA18991F
-	for <linux-tegra@vger.kernel.org>; Wed, 31 Jul 2024 10:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722422179; cv=none; b=qENtZQvsNY3JkFB12fFaAWqXfLsYXzXjFoeqvegttajyICq6ufNte06Boh7ioBR8UdXIzxKCkSyRKU+dPuyQXDmk1x3snFOJ8VIO6VWdFTM3z8Db1zuNUs7CUAzEY7NSnuwFZ0ZUzlZNnt981vi48wRT/cRtEPBFU5QTw6Y4nbU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722422179; c=relaxed/simple;
-	bh=O4ckb6Oqb3ncJsu76380tJXMj+cK5C9kz9ggdB4lYew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bSLFf32IUQaeSTzmpy9UosBaaxCXJlKTlWyBv9fpqfFCv7woNjTc9Gsu+ih0WfUhIwBaha2VZq8o2gcLGupCj0aQEmEbQmXFsFFM6FMqxueVkvMKpTR4ks6MsdnXyllMvx2axClD0kUUtJwvapJR42muEej5aKcxgeAcGFtIyJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x4ALYZGY; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E764A3232;
+	Wed, 31 Jul 2024 15:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722438014; cv=fail; b=G7vNcDgICnqOjZJfJHXGcRaiuYkHKOteIl5VO0eWSvSfqZujIPVlvHn7dXr5rPGLfoyIBeW9uUUSU7b5aXdC8mIE1HJPh69xT5IQPmuXs1azN5nj+00MubMZXWMeuXNfE56c1tD8g10i8CHpr8ttoLVrdYQQ99lFlFoh/2+/fNo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722438014; c=relaxed/simple;
+	bh=0UlqRJGUlF6yelFuMnvtXkQG/LcIOt7Az5P2yfFze9M=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=VKz5GjIiLkWTzl/NyaESu1Vd5kFdwrVTCrsH9huvzYtEY660IBvirQiUQfB+eBaNVwW4zpEElRnk4gZgMTOiKRm2mjcpSo2AxW+baFt+Y/Zhx/iHXxdKdfciQE2GiwYJo8SqUHqUdnNHpPrZDkKvzOd1bnP+FoW4FJPnnPJI290=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DkniVtbG; arc=fail smtp.client-ip=40.107.96.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x4ALYZGY"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e05e4c3228bso4327285276.0
-        for <linux-tegra@vger.kernel.org>; Wed, 31 Jul 2024 03:36:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722422177; x=1723026977; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O4ckb6Oqb3ncJsu76380tJXMj+cK5C9kz9ggdB4lYew=;
-        b=x4ALYZGYnX7JQpEVivNIbct/58G9/OEX6YULStOLMGRjBQ69puON/MKyuZP87+BqmY
-         aEnBbsY7uEEn3rmS6t8P6oeiOA0KvKPGSycTfIfyW04Ch0k1UTDkrdbvTqaYQ1H4Zie6
-         pczzFGVTtfG0dHFimI4n89TBoYjrprnrZN+aMv/q8bAXdvCvmTt977hm7H4b2tSyirdh
-         gW3GCKZB2wR4txkUlKCE6ZMqZRTUJBMXGvKx6eYuTac8YuIz8jnWLx15rbNexR92otVR
-         /qAf+9VC6lQpqorMnvYzDyjqLrZaXoloXZo7N/h4DtF3i5bwZwDecTStsLkf9O6Zkost
-         Nhng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722422177; x=1723026977;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O4ckb6Oqb3ncJsu76380tJXMj+cK5C9kz9ggdB4lYew=;
-        b=ePRPnllz8MfyViZMwN9Ka6+tFhtQvFdYc7arorlj6vpuOl+XzZM5e2BuqZJ8l5fXNA
-         bZUtkGOqbiRmu2/WwtdWsF1m6hUqIWUXBeQli09b66kSWTJWN5dpi3B1aaNATXfR/6YY
-         XMQ0OR+KtlmfK79/Oh2o/Tj6tS7SnyxaNllSnifkWAZLdL1hoTUaGGvXPiJY84tdkKWn
-         8CtiJvaMnDg+nV7qeko62dpydKt3/o2zY5DdpOr0TIUdHF3LsvjXQFaG8zkqPoTgnwpQ
-         v8BONtLBtZgZVurPyUtj7APdUOh63SCbpP8EeUk+0JZWl7Wui+iayz7co5owrJeAYusD
-         ErxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXobjZYVYz4sfhlr/YAgZbesaUQ6NZ6PyTEoEpfQcOjAz8tYwbXe19mmVp6QXzJdwuDm9nMS4xudB6qGzrtorDToU7flrZoxv8e++s=
-X-Gm-Message-State: AOJu0YyfOOPzLd+z0VPpWjhb2BWYJBenZ0FvBKQVS9cNYGWbJrQv3kUb
-	HRkhDnZsjucofUubOa9Z/5/SwqvYma0n+UTAQ47qv6MKyBqL4fN9TJ3BqbvgubBP+F9qS6PS5x+
-	ZwzFPYlyvXzs+R3lhkLNVHJzIy25S1mHOSQHuRA==
-X-Google-Smtp-Source: AGHT+IE4Y0e/F10tasO9Hsf+j3yu7/uUrjh/4//0ti7GwEJstGqgDi8KunOtAzG0ELqcvTEvSFLeK3FKcUPdYjLJ62o=
-X-Received: by 2002:a05:6902:120d:b0:e0b:2afc:a803 with SMTP id
- 3f1490d57ef6-e0b544ebb73mr13729666276.30.1722422176743; Wed, 31 Jul 2024
- 03:36:16 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DkniVtbG"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vftU208S2d7NnPtvZFGXGF77VfT6wjigBgP9jeTeQ2BgLxfYaWLY2KMWgx0IG1nOaSaPCW8pgVQweUPUy2L1uBW74DCOzl4LIn4/fltcEj4+W+oOCwk2MZYg8APgTYis9zdMSFiLAnp6KiZ1sS46Nc9lKucHpMLB8oYZEaZVOr7njrIchXm1wEj5vQlOdmSkTQhMNLCfWDbAgsgEwbcDZaqC9/1elQ6sc5AcpzfOxMaZQr+MlIAiVWEgLTrO0fk/TDSNyDT6NhxosWo/ZvD1YplkLxl2CToJVPUzQVCe4dcu7zdOt7QSj8eNgfOKFMn+NjoN6HVZkq3GOMqfsobwnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=doXqGm/6FIr9h8K1DsySdACw7xiIVU9al38vVW03gHw=;
+ b=tMvFylZKtzOiFauFZEhOtVu9luh/2K2gFcQeBxVufsUOAvDnsw1hoymcHu20iGRxlhEeRSC5HbMxRmJ94wi0NRfUqGtQ14Mi13PCM+WD1tE1PqJfOoZmfN3TOPsAcAay17W5ycX7CdByodvOBYzIytHUg0qSLs+XCZkFYneYRlFMw3onyrGXT+ILKwICvSD6R8NPVnYxBhSSVwoyiozp6LRDD0YvAB/DubqTMFSrMcOuaUKlGrIqP7Zck5RPS14MHmuay570jp/QgzFb62dRX5Uvng0DFiG6Ib6djMJjHWdHJMXP+DdyFE2UNvIJiYPC69jcz6KVBFoBhqCVL8LRSw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=doXqGm/6FIr9h8K1DsySdACw7xiIVU9al38vVW03gHw=;
+ b=DkniVtbGAwmUW0r4YlKD4h6Xn6BU/1L7GWStiQMU4F/h0y9EB2t/HdV3RhcEjTvTcMj529+E2K4KU2qqKzY78sw8Vxz8/9J2aYLxlbEw3cXAiPsvlOrsJaFG6ljnROT8H41eV/KsFJ5xUdJq0pNQhhz+Z0LpVc+/GrDYSTu4i0GA8fGIw+IdpWS6Uhg2jwor1OY4Zi4RnUyr5O4GHsUSSxnq8KOminRa5nSYuFK9lyTql41BeCbOOP3IIY5C1eD5CHqE5K4Q6LUx4ZaaoaKyTrherFk+ifI0RQaHQOSwVgz1XpbWxnxm45A4L1ilIX6Y7G3fcgBoVu13mglUUYGRfg==
+Received: from PH0P220CA0022.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:d3::21)
+ by IA1PR12MB8189.namprd12.prod.outlook.com (2603:10b6:208:3f0::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.26; Wed, 31 Jul
+ 2024 15:00:09 +0000
+Received: from SN1PEPF00036F3E.namprd05.prod.outlook.com
+ (2603:10b6:510:d3:cafe::5c) by PH0P220CA0022.outlook.office365.com
+ (2603:10b6:510:d3::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21 via Frontend
+ Transport; Wed, 31 Jul 2024 15:00:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SN1PEPF00036F3E.mail.protection.outlook.com (10.167.248.22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Wed, 31 Jul 2024 15:00:08 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 31 Jul
+ 2024 07:59:55 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 31 Jul
+ 2024 07:59:55 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 31 Jul 2024 07:59:54 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+In-Reply-To: <20240731095022.970699670@linuxfoundation.org>
+References: <20240731095022.970699670@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
- <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7> <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
- <20240725060211.e5pnfk46c6lxedpg@vireshk-i7> <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
- <20240725112519.d6ec7obtclsf3ace@vireshk-i7> <CAPDyKFqTtqYEFfaHq-jbxnp5gD7qm9TbLrah=k=VD2TRArvU8A@mail.gmail.com>
- <20240729060550.crgrmbnlv66645w2@vireshk-i7> <CAPDyKFosi4dhf36iNaNgGN6RHLDunL1nEwD+A_aW2khxER59nQ@mail.gmail.com>
- <20240730033242.4ajotym33bheativ@vireshk-i7>
-In-Reply-To: <20240730033242.4ajotym33bheativ@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 31 Jul 2024 12:35:40 +0200
-Message-ID: <CAPDyKFqbPCrxziTgr65Ku_unJKwdKhZkVFHkm4TKf2jyonrZ4A@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <7d1f6072-fd63-403e-a473-4f419f1badf1@rnnvmail205.nvidia.com>
+Date: Wed, 31 Jul 2024 07:59:54 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F3E:EE_|IA1PR12MB8189:EE_
+X-MS-Office365-Filtering-Correlation-Id: e43cedb5-d65a-4a8a-0371-08dcb1717830
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TFRRWGREakRYVlZ3czBHMTYvaUR2MHgySjl1OGdFTElYNHlIL3NhRFY3amcv?=
+ =?utf-8?B?eHhEbTFETnFuUGkxZ0twWTd5dlpwZlM4ak5ydTI3QUx3RUE5YVpJR095WXVa?=
+ =?utf-8?B?VGJlRXdZQlR5YUlVeEJPbmpsenVONnNTVjBCd205R1dSTGN4UVllNkdBZlBZ?=
+ =?utf-8?B?QU1KaC9Nc05GakIvMlF0WG1tK0FGQ3ZRSFdmc1ZqV0pOMzJROE9YSzcvcHRk?=
+ =?utf-8?B?UU1HVGlaZ0RkRGN2VjA3eDFFcXlKallzeENnck5VQm9GNDhlSFIxNGJ3djNr?=
+ =?utf-8?B?YmhhQjRFVmxyUnpMNnBOWTZOMFdVRVdTbW0rbUtKS0Vac2pMZFRuK3JZSllH?=
+ =?utf-8?B?RkRabnhpaml4TDY1NmhoajNMOVM5amVtZExxcFZKTlY2L3NFT1N0VUIxeFZY?=
+ =?utf-8?B?RUZUanpRbXI0SUxwcE9rRVhNZ2VwWG8xZEpXVGdGWEtndXVWbHN4SHhhYnJZ?=
+ =?utf-8?B?YlRHdTVaSkdIMnErU2lKQnV2SFcxTnNZWVFwSnRKMVMvNEpnZHRjM0hWNDIy?=
+ =?utf-8?B?RnYrT3ZHaHcyOFJBTHB4SGNydHVmODdyRkhSWHlFOVNCREh1NVhEYlpOZ1hs?=
+ =?utf-8?B?UmpEVEFNVlp4L1lBeVJaT01FZnRBSHp6REFZQ1dEa1hUZ3crWEJMN1E5Z2xJ?=
+ =?utf-8?B?ekxkdUxEUTl4ZEorRGxyeFY1VURpRDMwWXZwenJJQXh2QnhvcU5lT3YvZWN1?=
+ =?utf-8?B?dXFkc2NVNHZzVGFXUmlHNW1nUlJQcEtyWGpOdHBzZmtIbEhGeVVkL3pFNVdo?=
+ =?utf-8?B?aWZqM0tic2orMzBiZVBQVUdFTVNvTDVmclludzBBNlF0WnlCaUVlMUxRbmda?=
+ =?utf-8?B?d1hxeEtNODdDcjZKL0pqUEJuZGJkSjE4SHlSS0RnOVRFZkRWbnpmaklicnFS?=
+ =?utf-8?B?TXhxbDF3RDhoNHJpV0dEWlhVS3d1d0s4NVZyWWFiUEVYWngvMlJMR21vb1pR?=
+ =?utf-8?B?RVFhb3BGWTRJS2dIeGl3YmdBOFEzN3dlUlRkaFZxYUo0QllPdWorT2tLSGVq?=
+ =?utf-8?B?Q2hXVU9qUjdHQnNYSEJSK1I3ZXVJekY0Nzc5MGRJWU5DYm15Y2gwcldmblkx?=
+ =?utf-8?B?ckp6NHF2WDBsWVFrbzIrRkYwdTFVYkV2S0U0WDV3SUV2bkZEWEs2TXlZYnZm?=
+ =?utf-8?B?UjN4MUxyQjdyYzdGL0NWdEg2N015d1dHcFpQRWNzVTF1ODhnRzhGeE4wWmZz?=
+ =?utf-8?B?dUF2Rks2Tjc4REpuWkNwT0RMR1JrY1RZaVYwU2NqVnRqaDVaNHJJMnZNeUVs?=
+ =?utf-8?B?RGVmUWNTRjFQRjAvSkREdFdwZGlQdkdYUHFSRGZWYW1QV2xOOWcxSnU1akg5?=
+ =?utf-8?B?MlBQOWhhZk9xUEthVHpENlcrMFo4bmsyaGtmTWd1UHVWZTBSRGVKaGZEUzJu?=
+ =?utf-8?B?aHZKMkt1cHJyalhodmFRbWRZdlVpQWc0d2t4VmU2NUF3ckgzSnJVaWFiSEtt?=
+ =?utf-8?B?TzIrZ2NoMUZaVkFjb05wdDNuRnoySFZ6K0hNWEl4VHpqMjZUelAwM1JMVFZx?=
+ =?utf-8?B?cmhSU3BnMTNCUkQzejcxVnh3ZkhiMnBTZmh6MUNYVTRzYzNTbXdEc3ZzaUJH?=
+ =?utf-8?B?UmtsZkllcnVKT3M1SVQzYmZuNDdtaU5FL3l0N2pOVTZBOHFRWTI0a0wwd1R1?=
+ =?utf-8?B?R09ZeE9xRFRWRVRQaGRlQzRNS05lUXBNU1lXMnhwcVJUVlRLNFF1RDFVNjhN?=
+ =?utf-8?B?VjNzbUlzY2J0ZXA5UFZwYkZvWTVhR25IT2pSeUQxUktSQ3VGMURrTnJyQjVP?=
+ =?utf-8?B?VEtMMDlZVEFJV045Ny9mVmt1T1kycXJ4aUxOekFhanlaeURFNkxERlNHdDdh?=
+ =?utf-8?B?U3lqdFBQalp1bFUvMWtrSXVTdGpWbXo1dWh3ZU5PcUpIQkwwQktoRTF1VzVH?=
+ =?utf-8?B?WFg4b3V5b0dMTWJMQ3Y5ZWJvcGc0QytZOEY1WWZhTDdpWk9sQ0FNZ3JXMVZH?=
+ =?utf-8?Q?gDLsXpcp5TgjgWXIU8X56SZNAHiQHDNo?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 15:00:08.4038
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e43cedb5-d65a-4a8a-0371-08dcb1717830
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F3E.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8189
 
-[...]
+On Wed, 31 Jul 2024 12:03:16 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.3 release.
+> There are 809 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 02 Aug 2024 09:47:47 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.3-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
->
-> > That's right, but why do we want to call dev_pm_opp_set_opp() for the
-> > multiple PM domain case then? It makes the behaviour inconsistent.
->
-> To have a common path for all required OPP device types, irrespective of the
-> fact that the required OPP device is a genpd or not. And we are talking about a
-> required OPP of a separate device here, it must be set via this call only,
-> technically speaking.
->
-> Genpd makes it a little complex, and I agree to that. But I strongly feel this
-> code needs to be generic and not genpd specific. The OPP core should have as
-> less genpd specific code as possible. It must handle all device types with a
-> single code path.
+All tests passing for Tegra ...
 
-I agree that we really should avoid genpd specific code and that's
-exactly what I am working towards too.
+Test results for stable-v6.10:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
-However, calling dev_pm_opp_set_opp() from _set_required_opps() looks
-to me like it has the exact opposite effect:
-*) To solve the bug according to the change you proposed, means more
-genpd hacks.
-**) To make the code for the required OPPs consistent between the
-single/multiple PM domain case, we need additional genpd hacks.
-***) We can't remove some of the existing genpd hacks [1], as those
-would then still be needed.
+Linux version:	6.10.3-rc3-gdf6b86a465e8
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-Finally, while I understand that you prefer a single code path, we can
-still keep _set_required_opps() common and generic. Today, it's used
-only for performance-states of PM domains (the involved code isn't
-even genpd specific as it calls
-dev_pm_domain_set_performance_state()). If tomorrow we see a need to
-extend it to additional resources, it's easy also without calling
-dev_pm_opp_set_opp() from it.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Kind regards
-Uffe
-
- [1]
-https://lore.kernel.org/all/20240718234319.356451-7-ulf.hansson@linaro.org/
+Jon
