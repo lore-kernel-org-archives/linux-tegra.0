@@ -1,191 +1,116 @@
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02olkn2063.outbound.protection.outlook.com [40.92.15.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C1D161320;
-	Tue, 30 Jul 2024 21:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.15.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722373716; cv=fail; b=tcTJ6qoyPd8c/AskjnMFOTY/MxyVHSiHTtnj0usJ4avulncdoIzo6Hr0Qtmw+c3J3xhECzh6BkqTCN+Ce+bIE8/srHz56H9OWNBqQzYRGie6tg3stsxg5SAlP4llcE9EZHWNyG6peM1jjW9oyPa1fSEny2DZqbTXsX9dQeRtPtA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722373716; c=relaxed/simple;
-	bh=2suon3LeJwlMrIGrl3Ms+IbtmnWdSe+YpYeddaeoH98=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VpsodNfVPiFLkFcLk6G0KV90Rf51f66ctP2DAcRZTyreW8gPWIZdsbQk6cVk3sMvt4Sn7UEivWiYfPKpyXFHYCoxLJmc2fEUXNgqP/FCKZuulkCYyiPSW/He9uGgQNJRt9RH3v/VGAUnbwGVaPiFgKYgcaNKIfZ3b6aLLZOQHt4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=iuIjEFrg; arc=fail smtp.client-ip=40.92.15.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30BA18991F
+	for <linux-tegra@vger.kernel.org>; Wed, 31 Jul 2024 10:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722422179; cv=none; b=qENtZQvsNY3JkFB12fFaAWqXfLsYXzXjFoeqvegttajyICq6ufNte06Boh7ioBR8UdXIzxKCkSyRKU+dPuyQXDmk1x3snFOJ8VIO6VWdFTM3z8Db1zuNUs7CUAzEY7NSnuwFZ0ZUzlZNnt981vi48wRT/cRtEPBFU5QTw6Y4nbU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722422179; c=relaxed/simple;
+	bh=O4ckb6Oqb3ncJsu76380tJXMj+cK5C9kz9ggdB4lYew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bSLFf32IUQaeSTzmpy9UosBaaxCXJlKTlWyBv9fpqfFCv7woNjTc9Gsu+ih0WfUhIwBaha2VZq8o2gcLGupCj0aQEmEbQmXFsFFM6FMqxueVkvMKpTR4ks6MsdnXyllMvx2axClD0kUUtJwvapJR42muEej5aKcxgeAcGFtIyJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x4ALYZGY; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="iuIjEFrg"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D4QBy9cWacbqgTnTNWLz7qfS8ggvokw/aBTN6f3VbyO76CHQ2FwdyeqiSYfdyJ30Og8tXINdfF7A0/M9IGcq9BlXnHaCgtUekco9/7gfLA/ua18MoWD+rhxuj7qA8Psr6dgS53boUTkTz5ECNUX2iVlaL8wjTNiUZl3zVofHZ+tukg2pDJIM3gMElNy9bG5udvWM9N1nKHZGeT6leRsS1V6meWynEhATOH2/UEoAxCHA0ctiA+v/b14dorehVlxLUentrw73RvzRmikHQTRHVb3jx7eSpUf8Ixzaz3v8hJNsqQgPIwDa7VPshSMcaYrk8+MxR1suCdb5bXJnXx/Xng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y9mrUVB59R5bVM8C+RfV6hgsCyOEIlC6ZlnwrbmL4PY=;
- b=FoFMt+IFLniTkAIlC99UEJ7S/JshvhvgTUWJyv3Q5gL4r86QnhVkTQDP/A561Oncai1ayEWFj1hGLmEqa5Zzf2xNC/ZPCMHbzzGk0y69XAnqAM9RMVU3QPpzWsOWkF6IA3BTJAhkdWs1O8NsERgiwMd7wcD9k8g0s/lw42vK4eL/ug3020KNBLw0+v+xkHMj3XNoWk287I5pFvFhCWkdVp4klAp5hhf+56WpRwJAd5i041Xry64EiURhDbdpvqVCe3iYhC8QrDGIgfIMddSQmfE6n+xwnLwMIgavAx4r6r9+xG35TgTcyk7UKQV9aHx3DmG12gRqSRgQRgDEf98hXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y9mrUVB59R5bVM8C+RfV6hgsCyOEIlC6ZlnwrbmL4PY=;
- b=iuIjEFrgSXQv/UKFnJJ7HUAaCLj2ovHmsMJ4ymmQk2BDrjx/2odwQHMLFJrNmUh9l6N3M7htMkO124njO3oYLSrUpX7z/DU6xV9PL9GEYBb30ZgEvFEq+jriuUkCJ4LXaVmF5TQdcSmEk/es1Uv4XvPmuhea+g6jgz0KHuE5d9SFkwo++dHFiz58QY8eXvYHlgmrR3UxlUqxHbRbuH/B6hRkVn9jZZ3YcVi4k91N+o+yhmfH90fRa6LWJcOaG1QD2fzROoY2fZehV+wzfth+Bjbj6gHTD/jd+4bnM/B0ZCNv6S2nIsdISeek8yWs8Ip3464FH1uSsM75zxD1UgY4+w==
-Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM (2603:10b6:a03:570::8)
- by SA1P223MB1263.NAMP223.PROD.OUTLOOK.COM (2603:10b6:806:3e9::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Tue, 30 Jul
- 2024 21:08:32 +0000
-Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
- ([fe80::b5cd:c37a:bd3e:e3fd]) by SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
- ([fe80::b5cd:c37a:bd3e:e3fd%2]) with mapi id 15.20.7807.026; Tue, 30 Jul 2024
- 21:08:32 +0000
-From: Steven Davis <goldside000@outlook.com>
-To: marvin24@gmx.de,
-	gregkh@linuxfoundation.org
-Cc: ac100@lists.launchpad.net,
-	linux-tegra@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Steven Davis <goldside000@outlook.com>
-Subject: [PATCH] staging: nvec: Capitalize outputs to match the rest of the driver
-Date: Tue, 30 Jul 2024 17:08:12 -0400
-Message-ID:
- <SJ2P223MB102626B10E837EF5A93ED1F1F7B02@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.45.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [fAXp9/x3ZIhWtAdkdxPUvqaH0zVd1119]
-X-ClientProxiedBy: CH2PR11CA0017.namprd11.prod.outlook.com
- (2603:10b6:610:54::27) To SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:a03:570::8)
-X-Microsoft-Original-Message-ID:
- <20240730210812.5648-1-goldside000@outlook.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x4ALYZGY"
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e05e4c3228bso4327285276.0
+        for <linux-tegra@vger.kernel.org>; Wed, 31 Jul 2024 03:36:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722422177; x=1723026977; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O4ckb6Oqb3ncJsu76380tJXMj+cK5C9kz9ggdB4lYew=;
+        b=x4ALYZGYnX7JQpEVivNIbct/58G9/OEX6YULStOLMGRjBQ69puON/MKyuZP87+BqmY
+         aEnBbsY7uEEn3rmS6t8P6oeiOA0KvKPGSycTfIfyW04Ch0k1UTDkrdbvTqaYQ1H4Zie6
+         pczzFGVTtfG0dHFimI4n89TBoYjrprnrZN+aMv/q8bAXdvCvmTt977hm7H4b2tSyirdh
+         gW3GCKZB2wR4txkUlKCE6ZMqZRTUJBMXGvKx6eYuTac8YuIz8jnWLx15rbNexR92otVR
+         /qAf+9VC6lQpqorMnvYzDyjqLrZaXoloXZo7N/h4DtF3i5bwZwDecTStsLkf9O6Zkost
+         Nhng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722422177; x=1723026977;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O4ckb6Oqb3ncJsu76380tJXMj+cK5C9kz9ggdB4lYew=;
+        b=ePRPnllz8MfyViZMwN9Ka6+tFhtQvFdYc7arorlj6vpuOl+XzZM5e2BuqZJ8l5fXNA
+         bZUtkGOqbiRmu2/WwtdWsF1m6hUqIWUXBeQli09b66kSWTJWN5dpi3B1aaNATXfR/6YY
+         XMQ0OR+KtlmfK79/Oh2o/Tj6tS7SnyxaNllSnifkWAZLdL1hoTUaGGvXPiJY84tdkKWn
+         8CtiJvaMnDg+nV7qeko62dpydKt3/o2zY5DdpOr0TIUdHF3LsvjXQFaG8zkqPoTgnwpQ
+         v8BONtLBtZgZVurPyUtj7APdUOh63SCbpP8EeUk+0JZWl7Wui+iayz7co5owrJeAYusD
+         ErxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXobjZYVYz4sfhlr/YAgZbesaUQ6NZ6PyTEoEpfQcOjAz8tYwbXe19mmVp6QXzJdwuDm9nMS4xudB6qGzrtorDToU7flrZoxv8e++s=
+X-Gm-Message-State: AOJu0YyfOOPzLd+z0VPpWjhb2BWYJBenZ0FvBKQVS9cNYGWbJrQv3kUb
+	HRkhDnZsjucofUubOa9Z/5/SwqvYma0n+UTAQ47qv6MKyBqL4fN9TJ3BqbvgubBP+F9qS6PS5x+
+	ZwzFPYlyvXzs+R3lhkLNVHJzIy25S1mHOSQHuRA==
+X-Google-Smtp-Source: AGHT+IE4Y0e/F10tasO9Hsf+j3yu7/uUrjh/4//0ti7GwEJstGqgDi8KunOtAzG0ELqcvTEvSFLeK3FKcUPdYjLJ62o=
+X-Received: by 2002:a05:6902:120d:b0:e0b:2afc:a803 with SMTP id
+ 3f1490d57ef6-e0b544ebb73mr13729666276.30.1722422176743; Wed, 31 Jul 2024
+ 03:36:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2P223MB1026:EE_|SA1P223MB1263:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9f4fe501-a62b-40a4-fed9-08dcb0dbc47b
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|19110799003|5072599009|8060799006|3412199025|440099028|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	ysYryLvYfbsg75mWbf7dEfPPVqbUYCiAePPORDX0mhJa7q5jlKl3JXbaFE6hmHKjRdak2mz7GWKoVhx5k9xDmBPXmVMAxlQBrppVc24ZLiN5L/x2Mh/JRcrvdDRnJq/Eiq5wcsUXFM/RBOLs/LMJAxFdehJO0XIXyud+qrPj5DHDaG5K9LfAv3DW6TwBX5BRGcyEFFSbdpurTqlb94KIiLzfPKMJDUdvalkqalEVJVBeNunSR7+o1VEuGFKfMh7JDfZwRsToBtRO3qCZVvF2y2QYyZINLkVwBc9iKBIh+B/ML2qwutpdpH18eece35HubJO4X2uD6E3HHOTQOY5K5A/6Ib62OLo0OcuaIeOa7KI5Q3LKT0lEoXOD6a29UP5ANtQNxikeKf9x5RGtl+q712Ja2dvZrARyEAeagperlFKuQpx6U7uwZaQjQcNdn6f9QG8WSQxSPoRwN0GYy+Djh16/c83xH3bKzmPqDSww5iCvRsGdWWuzGQ1d5GpArufWkuYO1Ik+GCtyFgizMQRfL9Bv1bqhXCVwQc12bOFh8BAAw8u2bmuSRgU64GsLy/8akqZGrerXyxi3XzXGmRyAE0CgxbWNfYxmTrD0bzYasVgoOwt2pkgGEV+SwtAa8ibwGtrqh9AAIoKgO91WQoCR7A5LTK6tCkPmXC1oLyhNGENmgKknTNBB01V/x581iW+TFMxQ9T8hIxFS5h6DmKW1PQ==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CSly8yyW4JLR38Ttqot2CDtW8vRtYL9RtIQ0AVG5zpx9a80Dqc6jWrK/TpAo?=
- =?us-ascii?Q?Pc56P+jRgtqMMMMwx8JR0G1XxK51x4/wMpKTUMFQYgZa+xgQZJiCB6LC0vQH?=
- =?us-ascii?Q?oZ7qLNfOukr8VripaMHblPOBMG3bWYxUaayOd4x0FgyxcGq9ax5z0aK+IX8g?=
- =?us-ascii?Q?FZ23j+tq8oM62321cLMZA+W62xF3HHFcLTVBm/tjesJIV03O8rOXW9A8l/T4?=
- =?us-ascii?Q?d55MvQogVGD4sDakzC9CMBD76aAnX1mJzqum5ko4xQ4tvO9sQD4JQeJWX6cH?=
- =?us-ascii?Q?pS8VmwWRLhB+qdvlY7Vev/0EjmlGKAMeV5q68A3V34hBH33iQZt6HP6NG7Vv?=
- =?us-ascii?Q?0JTCZ1nr7fS+G7xjzieRUQiZRe4xUOhXndua+gc9YTbjNcROIzSIwitbcYsu?=
- =?us-ascii?Q?Mg7KazkqA/4iRrZ7ETWdaFvzS2pJHs72GnKVuTGrdSNmgeVK+EMbbCzndPtb?=
- =?us-ascii?Q?0vFQETvnoY1jjMfrxF6HpVZWZSfzA9I0Ns/s5eAFRmjJBjQXHwk8bUOicdZc?=
- =?us-ascii?Q?GE1d+WHak9heBLQjxSzHKMkRXV+6qXY3SwiJHZogkpBI49edvimLcKzSOYnR?=
- =?us-ascii?Q?YhC7ynLrNLSjI1lQOGTwaaWK9HElUvAUskO7hiT1DqvkQNsnSj3fUZyAz00S?=
- =?us-ascii?Q?XUaRPJ+OLcGq7H9FZJ9tACTsOeYSWyV0/BpPxR0T75d2zJAyyu44NXriH3LV?=
- =?us-ascii?Q?tMqET3zxkKbc335U2QtwCsR6wFl8eDpH4VURVDNE6OnyKh/jYETVY/OGlBHh?=
- =?us-ascii?Q?MWpEbS4ePjQll8h6yB4xfVhLhoRpg/PvUKCvxxzUaNLTqZjFIvKJADtYcuHV?=
- =?us-ascii?Q?6cTX0bJPgv7qXV5Rk8WAGe+iccrEg3B9TfdmaFCGxZt4TacIkc3Ufmov55SG?=
- =?us-ascii?Q?WyqQgzD7fSiN/B7yRgqSkxBwSlh2GnuJbmV4QEQBhwuuEMZgL0g+BmD+C0k+?=
- =?us-ascii?Q?+rymtRiee5+pEKwA+mUSDEut7RXzPNQhxH1ZV8BmYffpX0+6lN17jXAyrvux?=
- =?us-ascii?Q?6fvd4cG4+uBAtUaUeQ4YYF/xUSKQKwg0pFZ2pyAzpmy/g6pd480wSPS8oJ0e?=
- =?us-ascii?Q?gLgFoUnShImQ93+13ct4VUJdOclcyQHJiZx0GjaJEk60OWRe9xK651f+zV5z?=
- =?us-ascii?Q?rgVtP34RmGZPyJLdb0hhgyM8Lh4D/7YcdOB8lns8SJxZUaqv6CI8CqeMq3PI?=
- =?us-ascii?Q?X9iEkMd/33hYg0qSXc+o5AcP9a8dMmdBern5qx/ZuHr8au25VWdyU8H3sTg?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f4fe501-a62b-40a4-fed9-08dcb0dbc47b
-X-MS-Exchange-CrossTenant-AuthSource: SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2024 21:08:32.3778
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1P223MB1263
+References: <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
+ <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7> <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
+ <20240725060211.e5pnfk46c6lxedpg@vireshk-i7> <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
+ <20240725112519.d6ec7obtclsf3ace@vireshk-i7> <CAPDyKFqTtqYEFfaHq-jbxnp5gD7qm9TbLrah=k=VD2TRArvU8A@mail.gmail.com>
+ <20240729060550.crgrmbnlv66645w2@vireshk-i7> <CAPDyKFosi4dhf36iNaNgGN6RHLDunL1nEwD+A_aW2khxER59nQ@mail.gmail.com>
+ <20240730033242.4ajotym33bheativ@vireshk-i7>
+In-Reply-To: <20240730033242.4ajotym33bheativ@vireshk-i7>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 31 Jul 2024 12:35:40 +0200
+Message-ID: <CAPDyKFqbPCrxziTgr65Ku_unJKwdKhZkVFHkm4TKf2jyonrZ4A@mail.gmail.com>
+Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Noticing that some messages were capitalized and some weren't, I
-capitalized them to match the rest. This makes the messages relatively
-easier to understand for an end user, and reduces confusion about
-capitalization. A comment was also capitalized.
+[...]
 
-Signed-off-by: Steven Davis <goldside000@outlook.com>
----
- drivers/staging/nvec/nvec.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> > That's right, but why do we want to call dev_pm_opp_set_opp() for the
+> > multiple PM domain case then? It makes the behaviour inconsistent.
+>
+> To have a common path for all required OPP device types, irrespective of the
+> fact that the required OPP device is a genpd or not. And we are talking about a
+> required OPP of a separate device here, it must be set via this call only,
+> technically speaking.
+>
+> Genpd makes it a little complex, and I agree to that. But I strongly feel this
+> code needs to be generic and not genpd specific. The OPP core should have as
+> less genpd specific code as possible. It must handle all device types with a
+> single code path.
 
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index d09211589d1c..bf7a61f05b06 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -175,7 +175,7 @@ static struct nvec_msg *nvec_msg_alloc(struct nvec_chip *nvec,
- 		}
- 	}
- 
--	dev_err(nvec->dev, "could not allocate %s buffer\n",
-+	dev_err(nvec->dev, "Could not allocate %s buffer\n",
- 		(category == NVEC_MSG_TX) ? "TX" : "RX");
- 
- 	return NULL;
-@@ -315,7 +315,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
- 	if (!(wait_for_completion_timeout(&nvec->sync_write,
- 					  msecs_to_jiffies(2000)))) {
- 		dev_warn(nvec->dev,
--			 "timeout waiting for sync write to complete\n");
-+			 "Timeout waiting for sync write to complete\n");
- 		mutex_unlock(&nvec->sync_write_mutex);
- 		return -ETIMEDOUT;
- 	}
-@@ -392,7 +392,7 @@ static void nvec_request_master(struct work_struct *work)
- 								msecs_to_jiffies(5000));
- 
- 		if (err == 0) {
--			dev_warn(nvec->dev, "timeout waiting for ec transfer\n");
-+			dev_warn(nvec->dev, "Timeout waiting for ec transfer\n");
- 			nvec_gpio_set_value(nvec, 1);
- 			msg->pos = 0;
- 		}
-@@ -454,7 +454,7 @@ static void nvec_dispatch(struct work_struct *work)
- 
- 		if (nvec->sync_write_pending ==
- 		      (msg->data[2] << 8) + msg->data[0]) {
--			dev_dbg(nvec->dev, "sync write completed!\n");
-+			dev_dbg(nvec->dev, "Sync write completed!\n");
- 			nvec->sync_write_pending = 0;
- 			nvec->last_sync_msg = msg;
- 			complete(&nvec->sync_write);
-@@ -477,7 +477,7 @@ static void nvec_tx_completed(struct nvec_chip *nvec)
- {
- 	/* We got an END_TRANS, let's skip this, maybe there's an event */
- 	if (nvec->tx->pos != nvec->tx->size) {
--		dev_err(nvec->dev, "premature END_TRANS, resending\n");
-+		dev_err(nvec->dev, "Premature END_TRANS, resending\n");
- 		nvec->tx->pos = 0;
- 		nvec_gpio_set_value(nvec, 0);
- 	} else {
-@@ -608,7 +608,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
- 
- 	/* Filter out some errors */
- 	if ((status & irq_mask) == 0 && (status & ~irq_mask) != 0) {
--		dev_err(nvec->dev, "unexpected irq mask %lx\n", status);
-+		dev_err(nvec->dev, "Unexpected irq mask %lx\n", status);
- 		return IRQ_HANDLED;
- 	}
- 	if ((status & I2C_SL_IRQ) == 0) {
-@@ -631,7 +631,7 @@ static irqreturn_t nvec_interrupt(int irq, void *dev)
- 		if (status != (I2C_SL_IRQ | RCVD))
- 			nvec_invalid_flags(nvec, status, false);
- 		break;
--	case 1:		/* command byte */
-+	case 1:		/* Command byte */
- 		if (status != I2C_SL_IRQ) {
- 			nvec_invalid_flags(nvec, status, true);
- 		} else {
--- 
-2.45.2
+I agree that we really should avoid genpd specific code and that's
+exactly what I am working towards too.
 
+However, calling dev_pm_opp_set_opp() from _set_required_opps() looks
+to me like it has the exact opposite effect:
+*) To solve the bug according to the change you proposed, means more
+genpd hacks.
+**) To make the code for the required OPPs consistent between the
+single/multiple PM domain case, we need additional genpd hacks.
+***) We can't remove some of the existing genpd hacks [1], as those
+would then still be needed.
+
+Finally, while I understand that you prefer a single code path, we can
+still keep _set_required_opps() common and generic. Today, it's used
+only for performance-states of PM domains (the involved code isn't
+even genpd specific as it calls
+dev_pm_domain_set_performance_state()). If tomorrow we see a need to
+extend it to additional resources, it's easy also without calling
+dev_pm_opp_set_opp() from it.
+
+Kind regards
+Uffe
+
+ [1]
+https://lore.kernel.org/all/20240718234319.356451-7-ulf.hansson@linaro.org/
