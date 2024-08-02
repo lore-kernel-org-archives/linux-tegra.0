@@ -1,25 +1,25 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CB1EB4BF;
-	Thu,  1 Aug 2024 16:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC19B1BE87A;
+	Fri,  2 Aug 2024 09:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530577; cv=none; b=R4d3KDLgiwsdWpC96zbB/STOb2YkrlNMGhHFOtKGy4UYGY5se6dLZPqauYse8wYi9y27Ev60B89EA50yfl8DFJ8avlYQlaq1jvPc2d/oKljEvJhC89bQdTfF/caKWq7QucLn/wGaqoKNvWOlUcIqKvpRzdBNNsLOX7jL0dfW00k=
+	t=1722591621; cv=none; b=UJUG8qXH1sW7farpLJWUjLEO5m6M7Q+RE5wtGuMb5QeBoytwvza9dqCGiIkcy2cF6iupxf2wFuoflRzkGlBcTV3QWNdgQM/TO0wW7AV5tBzNE++lYf2iaOYpLUVJ/iN5xvO4LFmsgPibxRSwYh89Y3k7ca/5GA87hCNmkcOHL4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722530577; c=relaxed/simple;
-	bh=Mq/r6yWF9nhwO1MHUfoDU2pzEZ7xg/BqW/xHQR5wfNA=;
+	s=arc-20240116; t=1722591621; c=relaxed/simple;
+	bh=pvF5sWZy7EqMyoymOgEIrh3uKuMiQWpQ4pZjx37a2Nk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PW7Y0SqqmfmWr2ckZ0DtXztTmeQG5pAzLi8DUVB8+BrGww8aAr0M3xkzMqCk3LfPZUf1LjgA5ApQJtHyLgIM5lT3L3BgYBDLpHgFwRNXHvIYkDM5kllAm8b+MaxoZcgSstrxRnVJtb7+Oei+kzXfaSspTA7vQo+8YyCASp5N7Wk=
+	 In-Reply-To:Content-Type; b=PPBLBxGNuRJtcWsoz1SLhW+v02eIjdH5xQhcsawCdMnmFnGS60foLWAO9OEj8d8ARtUibyWJgjWm+vwKEOx0hPzVdPJcHqMlm3AViVaqUJWoLhYYCkAkAcZUdeCQllsDaOUVhXDkQL8EgD4AgX9DWWbdCwflj9dukpNjHWVgWuo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B0D715A1;
-	Thu,  1 Aug 2024 09:43:20 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E8043F5A1;
-	Thu,  1 Aug 2024 09:42:53 -0700 (PDT)
-Message-ID: <6cb4e7db-4ac0-43b4-a823-7d230ff3438b@arm.com>
-Date: Thu, 1 Aug 2024 17:42:52 +0100
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBA711007;
+	Fri,  2 Aug 2024 02:40:44 -0700 (PDT)
+Received: from [10.57.12.204] (unknown [10.57.12.204])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC23D3F766;
+	Fri,  2 Aug 2024 02:40:17 -0700 (PDT)
+Message-ID: <96748e6f-544e-4f13-9721-f1eea91dd639@arm.com>
+Date: Fri, 2 Aug 2024 10:40:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -27,51 +27,145 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] include: linux: Update gather only if it's not
- NULL
-To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org
-Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20240801033432.106837-1-amhetre@nvidia.com>
- <20240801033432.106837-2-amhetre@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240801033432.106837-2-amhetre@nvidia.com>
+Subject: Re: [RESEND][PATCH v1 4/8] thermal: tegra: Introduce struct
+ trip_temps for critical and hot trips
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
+References: <2211925.irdbgypaU6@rjwysocki.net>
+ <9333090.CDJkKcVGEf@rjwysocki.net>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <9333090.CDJkKcVGEf@rjwysocki.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 01/08/2024 4:34 am, Ashish Mhetre wrote:
-> Gather can be NULL when unmap is called for freeing old table while
-> mapping. If it's NULL then there is no need to add page for syncing
-> the TLB.
 
-But that's only because __arm_lpae_unmap() is now choosing to 
-over-invalidate the table entries for simplicity. I think it would make 
-more sense to handle that at the callsite, e.g. "if (gather && 
-!iommu_iotlb_gather_queued(gather))".
 
-Also doesn't this mean that bisection is broken as-is since patch #1 on 
-its own is going to blow up dereferencing NULL->pgsize when it gets here?
-
-Thanks,
-Robin.
-
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
->   include/linux/iommu.h | 3 +++
->   1 file changed, 3 insertions(+)
+On 7/29/24 17:02, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-> index 4d47f2c33311..2a28c1ef8517 100644
-> --- a/include/linux/iommu.h
-> +++ b/include/linux/iommu.h
-> @@ -928,6 +928,9 @@ static inline void iommu_iotlb_gather_add_page(struct iommu_domain *domain,
->   					       struct iommu_iotlb_gather *gather,
->   					       unsigned long iova, size_t size)
->   {
-> +	if (!gather)
-> +		return;
+> Introduce a helper structure, struct trip_temps, for storing the
+> temperatures of the critical and hot trip points.
+> 
+> This helps to make the code in tegra_tsensor_get_hw_channel_trips()
+> somewhat cleaner and will be useful subsequently in eliminating
+> iteration over trip indices from the driver.
+> 
+> No intentional functional impact.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+> 
+> This patch does not depend on the previous patch(es) in the series.
+> 
+> ---
+>   drivers/thermal/tegra/tegra30-tsensor.c |   34 ++++++++++++++++++--------------
+>   1 file changed, 20 insertions(+), 14 deletions(-)
+> 
+> Index: linux-pm/drivers/thermal/tegra/tegra30-tsensor.c
+> ===================================================================
+> --- linux-pm.orig/drivers/thermal/tegra/tegra30-tsensor.c
+> +++ linux-pm/drivers/thermal/tegra/tegra30-tsensor.c
+> @@ -303,8 +303,13 @@ stop_channel:
+>   	return 0;
+>   }
+>   
+> +struct trip_temps {
+> +	int hot_trip;
+> +	int crit_trip;
+> +};
 > +
+>   static void tegra_tsensor_get_hw_channel_trips(struct thermal_zone_device *tzd,
+> -					       int *hot_trip, int *crit_trip)
+> +					       struct trip_temps *temps)
+>   {
+>   	unsigned int i;
+>   
+> @@ -312,8 +317,8 @@ static void tegra_tsensor_get_hw_channel
+>   	 * 90C is the maximal critical temperature of all Tegra30 SoC variants,
+>   	 * use it for the default trip if unspecified in a device-tree.
+>   	 */
+> -	*hot_trip  = 85000;
+> -	*crit_trip = 90000;
+> +	temps->hot_trip  = 85000;
+> +	temps->crit_trip = 90000;
+>   
+>   	for (i = 0; i < thermal_zone_get_num_trips(tzd); i++) {
+>   
+> @@ -322,14 +327,14 @@ static void tegra_tsensor_get_hw_channel
+>   		thermal_zone_get_trip(tzd, i, &trip);
+>   
+>   		if (trip.type == THERMAL_TRIP_HOT)
+> -			*hot_trip = trip.temperature;
+> +			temps->hot_trip = trip.temperature;
+>   
+>   		if (trip.type == THERMAL_TRIP_CRITICAL)
+> -			*crit_trip = trip.temperature;
+> +			temps->crit_trip = trip.temperature;
+>   	}
+>   
+>   	/* clamp hardware trips to the calibration limits */
+> -	*hot_trip = clamp(*hot_trip, 25000, 90000);
+> +	temps->hot_trip = clamp(temps->hot_trip, 25000, 90000);
+>   
 >   	/*
->   	 * If the new page is disjoint from the current range or is mapped at
->   	 * a different granularity, then sync the TLB so that the gather
+>   	 * Kernel will perform a normal system shut down if it will
+> @@ -338,7 +343,7 @@ static void tegra_tsensor_get_hw_channel
+>   	 * shut down gracefully before sending signal to the Power
+>   	 * Management controller.
+>   	 */
+> -	*crit_trip = clamp(*crit_trip + 5000, 25000, 90000);
+> +	temps->crit_trip = clamp(temps->crit_trip + 5000, 25000, 90000);
+>   }
+>   
+>   static int tegra_tsensor_enable_hw_channel(const struct tegra_tsensor *ts,
+> @@ -346,7 +351,8 @@ static int tegra_tsensor_enable_hw_chann
+>   {
+>   	const struct tegra_tsensor_channel *tsc = &ts->ch[id];
+>   	struct thermal_zone_device *tzd = tsc->tzd;
+> -	int err, hot_trip = 0, crit_trip = 0;
+> +	struct trip_temps temps = { 0 };
+> +	int err;
+>   	u32 val;
+>   
+>   	if (!tzd) {
+> @@ -357,24 +363,24 @@ static int tegra_tsensor_enable_hw_chann
+>   		return 0;
+>   	}
+>   
+> -	tegra_tsensor_get_hw_channel_trips(tzd, &hot_trip, &crit_trip);
+> +	tegra_tsensor_get_hw_channel_trips(tzd, &temps);
+>   
+>   	dev_info_once(ts->dev, "ch%u: PMC emergency shutdown trip set to %dC\n",
+> -		      id, DIV_ROUND_CLOSEST(crit_trip, 1000));
+> +		      id, DIV_ROUND_CLOSEST(temps.crit_trip, 1000));
+>   
+> -	hot_trip  = tegra_tsensor_temp_to_counter(ts, hot_trip);
+> -	crit_trip = tegra_tsensor_temp_to_counter(ts, crit_trip);
+> +	temps.hot_trip  = tegra_tsensor_temp_to_counter(ts, temps.hot_trip);
+> +	temps.crit_trip = tegra_tsensor_temp_to_counter(ts, temps.crit_trip);
+>   
+>   	/* program LEVEL2 counter threshold */
+>   	val = readl_relaxed(tsc->regs + TSENSOR_SENSOR0_CONFIG1);
+>   	val &= ~TSENSOR_SENSOR0_CONFIG1_TH2;
+> -	val |= FIELD_PREP(TSENSOR_SENSOR0_CONFIG1_TH2, hot_trip);
+> +	val |= FIELD_PREP(TSENSOR_SENSOR0_CONFIG1_TH2, temps.hot_trip);
+>   	writel_relaxed(val, tsc->regs + TSENSOR_SENSOR0_CONFIG1);
+>   
+>   	/* program LEVEL3 counter threshold */
+>   	val = readl_relaxed(tsc->regs + TSENSOR_SENSOR0_CONFIG2);
+>   	val &= ~TSENSOR_SENSOR0_CONFIG2_TH3;
+> -	val |= FIELD_PREP(TSENSOR_SENSOR0_CONFIG2_TH3, crit_trip);
+> +	val |= FIELD_PREP(TSENSOR_SENSOR0_CONFIG2_TH3, temps.crit_trip);
+>   	writel_relaxed(val, tsc->regs + TSENSOR_SENSOR0_CONFIG2);
+>   
+>   	/*
+> 
+> 
+> 
+
+Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
