@@ -1,188 +1,77 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFEA1DB44C;
-	Fri,  2 Aug 2024 09:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A00136350;
+	Sat,  3 Aug 2024 06:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722592033; cv=none; b=J+Nyql18DGS26P4JIX/8FRTA8/KXIJLxajxwp5vmYUW3v2ZKcPfmCSZtH+KbetcucoLq1X0fDh/Lq7+l/9LkF6rmQSi3vlCHrgtilJcT2wO3PwkhcEELS4OPYU4Fo4t2TkG15MvGrPQf2wrwzIbndd+C1rXQXW9wrX/YLdLebiA=
+	t=1722667079; cv=none; b=kQ/0bjQ2yice8Uwl0RRI3tSFm/lNIgHUhW9/rDGKiuuGGFNnnon6ZfNNgYJ++4oUoZICyd6c7/dR7KpOQ+vGAqP9EHwwH0EiSN+9+ZbzUPuphsYG/QoAmRlnqBqkFQiub5uJJfLWLy87KRaMXi2YFOVWL+FG77QoopN8ISWFZgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722592033; c=relaxed/simple;
-	bh=nQShOS8cSUcF088ozKt9T071B+hV5HljZ1NTVyh3H70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GbPq4SDqoAH3h6k4OoIH0Y9nmaExzZlYu+6evEKr6yAP/+riFRvbwTdXTlW1ZdlQ3FAwhl/Vc7pcxYRGy+KM8rZfnKcEAkKnUqxOLas9SjhDQFAI87fzs2T0ytvHgfv6k8/rcjql2OsYUgzWzdG5elgzJpdPLoBz/ZdwIxYaTxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22FCB1007;
-	Fri,  2 Aug 2024 02:47:36 -0700 (PDT)
-Received: from [10.57.12.204] (unknown [10.57.12.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F65D3F766;
-	Fri,  2 Aug 2024 02:47:08 -0700 (PDT)
-Message-ID: <2fb8441b-d0bb-4e63-998d-cc764db30a23@arm.com>
-Date: Fri, 2 Aug 2024 10:47:39 +0100
+	s=arc-20240116; t=1722667079; c=relaxed/simple;
+	bh=qhvEFc+kU2nhVtJsl/07evnkLD5j58RU75DoN0k+7bc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W9rm/Sqo3YOUvc/MBJQK368T+bV+ioWx4n5xWRQvDc9fe7Rh1QCXc220KQegPM4G5TuepVpQnQADBMO3rShKP4EFu28knbhei0uamtqBPZBQfctS+iU77VgBvp/fcjxzXClGz0I+mhIh0/uK6Pcu9uzHTiwaBl8a0k0QcOevEjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WbXvq1SwpzQnXr;
+	Sat,  3 Aug 2024 14:33:27 +0800 (CST)
+Received: from kwepemd200011.china.huawei.com (unknown [7.221.188.251])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4D2991800A4;
+	Sat,  3 Aug 2024 14:37:49 +0800 (CST)
+Received: from cgs.huawei.com (10.244.148.83) by
+ kwepemd200011.china.huawei.com (7.221.188.251) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Sat, 3 Aug 2024 14:37:48 +0800
+From: Gaosheng Cui <cuigaosheng1@huawei.com>
+To: <digetx@gmail.com>, <myungjoo.ham@samsung.com>,
+	<kyungmin.park@samsung.com>, <cw00.choi@samsung.com>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <cuigaosheng1@huawei.com>
+CC: <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH -next] PM / devfreq: tegra30: Add missing clk_disable_unprepare in devm_tegra_devfreq_init_hw
+Date: Sat, 3 Aug 2024 14:37:48 +0800
+Message-ID: <20240803063748.325133-1-cuigaosheng1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND][PATCH v1 5/8] thermal: tegra: Use
- thermal_zone_for_each_trip() for walking trip points
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
-References: <2211925.irdbgypaU6@rjwysocki.net>
- <1819430.VLH7GnMWUR@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <1819430.VLH7GnMWUR@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd200011.china.huawei.com (7.221.188.251)
 
+Add the missing clk_disable_unprepare() before return in
+devm_tegra_devfreq_init_hw().
 
+Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+---
+ drivers/devfreq/tegra30-devfreq.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-On 7/29/24 17:05, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> It is generally inefficient to iterate over trip indices and call
-> thermal_zone_get_trip() every time to get the struct thermal_trip
-> corresponding to the given trip index, so modify the Tegra thermal
-> drivers to use thermal_zone_for_each_trip() for walking trips.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> This patch does not depend on patches [1-3/8].
-> 
-> ---
->   drivers/thermal/tegra/soctherm.c        |   38 ++++++++++++++++----------------
->   drivers/thermal/tegra/tegra30-tsensor.c |   25 ++++++++++-----------
->   2 files changed, 33 insertions(+), 30 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/tegra/soctherm.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/tegra/soctherm.c
-> +++ linux-pm/drivers/thermal/tegra/soctherm.c
-> @@ -682,24 +682,25 @@ static const struct thermal_zone_device_
->   	.set_trips = tegra_thermctl_set_trips,
->   };
->   
-> -static int get_hot_temp(struct thermal_zone_device *tz, int *trip_id, int *temp)
-> +static int get_hot_trip_cb(struct thermal_trip *trip, void *arg)
->   {
-> -	int i, ret;
-> -	struct thermal_trip trip;
-> +	const struct thermal_trip **trip_ret = arg;
->   
-> -	for (i = 0; i < thermal_zone_get_num_trips(tz); i++) {
-> +	if (trip->type != THERMAL_TRIP_HOT)
-> +		return 0;
->   
-> -		ret = thermal_zone_get_trip(tz, i, &trip);
-> -		if (ret)
-> -			return -EINVAL;
-> -
-> -		if (trip.type == THERMAL_TRIP_HOT) {
-> -			*trip_id = i;
-> -			return 0;
-> -		}
-> -	}
-> +	*trip_ret = trip;
-> +	/* Return nonzero to terminate the search. */
-> +	return 1;
-> +}
->   
-> -	return -EINVAL;
-> +static const struct thermal_trip *get_hot_trip(struct thermal_zone_device *tz)
-> +{
-> +	const struct thermal_trip *trip = NULL;
-> +
-> +	thermal_zone_for_each_trip(tz, get_hot_trip_cb, &trip);
-> +
-> +	return trip;
->   }
->   
->   /**
-> @@ -731,8 +732,9 @@ static int tegra_soctherm_set_hwtrips(st
->   				      struct thermal_zone_device *tz)
->   {
->   	struct tegra_soctherm *ts = dev_get_drvdata(dev);
-> +	const struct thermal_trip *hot_trip;
->   	struct soctherm_throt_cfg *stc;
-> -	int i, trip, temperature, ret;
-> +	int i, temperature, ret;
->   
->   	/* Get thermtrips. If missing, try to get critical trips. */
->   	temperature = tsensor_group_thermtrip_get(ts, sg->id);
-> @@ -749,8 +751,8 @@ static int tegra_soctherm_set_hwtrips(st
->   	dev_info(dev, "thermtrip: will shut down when %s reaches %d mC\n",
->   		 sg->name, temperature);
->   
-> -	ret = get_hot_temp(tz, &trip, &temperature);
-> -	if (ret) {
-> +	hot_trip = get_hot_trip(tz);
-> +	if (!hot_trip) {
->   		dev_info(dev, "throttrip: %s: missing hot temperature\n",
->   			 sg->name);
->   		return 0;
-> @@ -763,7 +765,7 @@ static int tegra_soctherm_set_hwtrips(st
->   			continue;
->   
->   		cdev = ts->throt_cfgs[i].cdev;
-> -		if (get_thermal_instance(tz, cdev, trip))
-> +		if (thermal_trip_is_bound_to_cdev(tz, hot_trip, cdev))
->   			stc = find_throttle_cfg_by_name(ts, cdev->type);
->   		else
->   			continue;
-> Index: linux-pm/drivers/thermal/tegra/tegra30-tsensor.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/tegra/tegra30-tsensor.c
-> +++ linux-pm/drivers/thermal/tegra/tegra30-tsensor.c
-> @@ -308,6 +308,18 @@ struct trip_temps {
->   	int crit_trip;
->   };
->   
-> +static int tegra_tsensor_get_trips_cb(struct thermal_trip *trip, void *arg)
-> +{
-> +	struct trip_temps *temps = arg;
-> +
-> +	if (trip->type == THERMAL_TRIP_HOT)
-> +		temps->hot_trip = trip->temperature;
-> +	else if (trip->type == THERMAL_TRIP_CRITICAL)
-> +		temps->crit_trip = trip->temperature;
-> +
-> +	return 0;
-> +}
-> +
->   static void tegra_tsensor_get_hw_channel_trips(struct thermal_zone_device *tzd,
->   					       struct trip_temps *temps)
->   {
-> @@ -320,18 +332,7 @@ static void tegra_tsensor_get_hw_channel
->   	temps->hot_trip  = 85000;
->   	temps->crit_trip = 90000;
->   
-> -	for (i = 0; i < thermal_zone_get_num_trips(tzd); i++) {
-> -
-> -		struct thermal_trip trip;
-> -
-> -		thermal_zone_get_trip(tzd, i, &trip);
-> -
-> -		if (trip.type == THERMAL_TRIP_HOT)
-> -			temps->hot_trip = trip.temperature;
-> -
-> -		if (trip.type == THERMAL_TRIP_CRITICAL)
-> -			temps->crit_trip = trip.temperature;
-> -	}
-> +	thermal_zone_for_each_trip(tzd, tegra_tsensor_get_trips_cb, temps);
->   
->   	/* clamp hardware trips to the calibration limits */
->   	temps->hot_trip = clamp(temps->hot_trip, 25000, 90000);
-> 
-> 
-> 
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 4a4f0106ab9d..c19f8848d217 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -809,12 +809,15 @@ static int devm_tegra_devfreq_init_hw(struct device *dev,
+ 
+ 	err = devm_add_action_or_reset(dev, devm_tegra_devfreq_deinit_hw,
+ 				       tegra);
+-	if (err)
++	if (err) {
++		clk_disable_unprepare(tegra->clock);
+ 		return err;
++	}
+ 
+ 	err = reset_control_reset(tegra->reset);
+ 	if (err) {
+ 		dev_err(dev, "Failed to reset hardware: %d\n", err);
++		clk_disable_unprepare(tegra->clock);
+ 		return err;
+ 	}
+ 
+-- 
+2.25.1
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
