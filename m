@@ -1,197 +1,115 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82CB39FE5;
-	Mon,  5 Aug 2024 14:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416C615F3F2
+	for <linux-tegra@vger.kernel.org>; Mon,  5 Aug 2024 21:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722868265; cv=none; b=Ihxiq5hP8Pqop9uzuSmVTv3kZF9zWqPBza/G5RLnVyTPZxzaNY5pgaxvWovR4SaaTdhsY+VZ3LUm1ujFquKLtvGYlxiJTN7h8JZOBPaW7FybNK04K+Ig7i/EjmLLEwO6ciuA7Vkl4O34/VlEEVsGaCyAw9fF1ms09pPNFtKMAFE=
+	t=1722894697; cv=none; b=heSAn54AXASaYg6m4G/KA0gt1C4ru1vvI3AFMcrv6+x234kgqTmIYIoKNgTepIz9g58hLZ1XNjXjdCib+ln+TGMhPsbrQiDWYp0lXWGc9T1mb3XC9FIFQro/Doc7HXr+17Krl5+b6ePKuq+v5/JRtfvkk74wsTPRQS7WEysk3TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722868265; c=relaxed/simple;
-	bh=A+ejUO0ucuD8rkWcqVcgovmJzievlnCHGnch/v9cG6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YoXkcB0/kX2kQ9i+4nIE1AN/qXC9bzTlvKKWd/SZ4UyVcXgYj+62ogM/MvCbz95uQ8xHRIRRbmLpedvZIaKRRX8KQEgBzn4h1aRfUd6XX+KWdNoE35mKpxY45i74rOF9kVP5nVp7USo1PTajE/GzNGY6rKaPaAEZleDAmJziFnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ybdskc+3; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1722894697; c=relaxed/simple;
+	bh=7QEoIsXVIp4jLETDDEw0Gsz9F76DdGmqRqMdFAG+/xo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RiqK1xBRZ22AwS/ZuWxMdnnY/Kzy3Dbgd3HlQiG9OP1SONoeZ7d1UxEjKm3dRnhBhKFyxLMZygOWNc70raG1S1onBJH0Xfcr4q5Vo1CUDqd3apFP0PhVLqBwlj0YQcAkdU0MCw5AN9YCj7m4pYewbmlTK8JJPIYFW3Jm8WrXVuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Z+ALS5GG; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ybdskc+3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722868264; x=1754404264;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=A+ejUO0ucuD8rkWcqVcgovmJzievlnCHGnch/v9cG6Q=;
-  b=Ybdskc+3/m0tKVk3OZwFuzYNUfc9CI4smDJbDfMmlTEzuwpHeCn/O5oE
-   HMbL8vi9vV7KPmcWGumgksv2u85C6VBjAH5BMkXrVSAOGB/FEbd6wRT6l
-   aY89L0TkAsLbb76NbvwxLlonpoBPA0UL3bYNrVBdm1QngyVZWEiAedlNf
-   /GMmItJ8m2qx+H0Ej6Ao4/f56moFhjkV6li0dw9Kx8iVafyO4jmEqVjvl
-   iXxwmLQv65KycTTcmAOtLpKVD2eXCB+7WUdAvBpZmcUa9l6WDatFclBxW
-   MKsG68Fl+XnADzmI2CV+mRz8EMC8xqm9rjUUzd8Yt4Hdvx25JdrB1UhMz
-   Q==;
-X-CSE-ConnectionGUID: srJCOYTMS+iUpCXzW1Hn7g==
-X-CSE-MsgGUID: jyDrna/qT3+kmD2lb7ultw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11155"; a="46236818"
-X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="46236818"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 07:30:51 -0700
-X-CSE-ConnectionGUID: 6keIFrHNSxCUdsGhOh0BZw==
-X-CSE-MsgGUID: V3hkeNUJSjaoQEVDF9ySdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,264,1716274800"; 
-   d="scan'208";a="60546846"
-Received: from unknown (HELO localhost) ([10.2.132.131])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Aug 2024 07:30:49 -0700
-Date: Mon, 5 Aug 2024 07:30:47 -0700
-From: Nirmal Patel <nirmal.patel@linux.intel.com>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-pci@vger.kernel.org, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>, Pali =?UTF-8?Q?Roh=C3=A1r?= <pali@kernel.org>, Uwe
- =?UTF-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Aleksandr
- Mishin <amishin@t-argos.ru>, Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Anup Patel <apatel@ventanamicro.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Daire McNamara
- <daire.mcnamara@microchip.com>, Damien Le Moal <dlemoal@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Hou Zhiqiang
- <Zhiqiang.Hou@nxp.com>, Jianjun Wang <jianjun.wang@mediatek.com>, Jim
- Quinlan <jim2101024@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Jisheng
- Zhang <Jisheng.Zhang@synaptics.com>, Jon Hunter <jonathanh@nvidia.com>,
- Jonathan Derrick <jonathan.derrick@linux.dev>, Joyce Ooi
- <joyce.ooi@intel.com>, Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Koichiro Den
- <den@valinux.co.jp>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan
- Sadhasivam <manivannan.sadhasivam@linaro.org>, Marc Zyngier
- <maz@kernel.org>, Michal Simek <michal.simek@amd.com>, Nicolas Saenz
- Julienne <nsaenz@kernel.org>, Niklas Cassel <cassel@kernel.org>, Nipun
- Gupta <nipun.gupta@amd.com>, Rob Herring <robh@kernel.org>, Ryder Lee
- <ryder.lee@mediatek.com>, Shivamurthy Shastri
- <shivamurthy.shastri@linutronix.de>, Siddharth Vadapalli
- <s-vadapalli@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Thomas
- Gleixner <tglx@linutronix.de>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, Yoshihiro Shimoda
- <yoshihiro.shimoda.uh@renesas.com>, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 12/15] PCI: vmd: Silence set affinity failed warning
-Message-ID: <20240805073047.0000286a@linux.intel.com>
-In-Reply-To: <20240723132958.41320-13-marek.vasut+renesas@mailbox.org>
-References: <20240723132958.41320-1-marek.vasut+renesas@mailbox.org>
-	<20240723132958.41320-13-marek.vasut+renesas@mailbox.org>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-w64-mingw32)
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Z+ALS5GG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=Kld3gE4SblWVR0
+	7LYX02//HCfm7mI5jj4CnBnZsYvAk=; b=Z+ALS5GGswuWZfAv42bigkQU+z1T1U
+	FAgPUWZj9zB10tkOLDWO/uV9oAuv/zKGSM1jtOQp07yru0thSeXbU6jZuqEKDFij
+	FoOmL387TPexlhFcaYeICrnDT91mF3xRRzcBC1+fu6E5CbNX0QMBp05gKi4x7rcy
+	Q/mH/hXllgQsajTSgZqWPy7gtuoYhMZ+C92qE7HsHgedRGmag1H7SA6HIn+Oo5ZS
+	nu++LjsVROUyMF+NJqNo1/WUzFRWiJspN9ySW/ctqT7hBfpP7skDXZEHRBL8ONW4
+	7DU7q0vb2M3fKR1H8kvj4Z8M4MV+r+Y5JPVtYiXrjJrGZmBVRQ45MKsQ==
+Received: (qmail 18004 invoked from network); 5 Aug 2024 23:51:25 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Aug 2024 23:51:25 +0200
+X-UD-Smtp-Session: l3s3148p1@2RexrfYe4JRehhYC
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-media@vger.kernel.org
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Andrey Utkin <andrey_utkin@fastmail.com>,
+	Benoit Parrot <bparrot@ti.com>,
+	Bluecherry Maintainers <maintainers@bluecherrydvr.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Eugen Hristev <eugen.hristev@collabora.com>,
+	Fabien Dessenne <fabien.dessenne@foss.st.com>,
+	Ismael Luceno <ismael@iodev.co.uk>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 0/8] media: use 'time_left' instead of 'timeout' with wait_*() functions
+Date: Mon,  5 Aug 2024 23:51:13 +0200
+Message-ID: <20240805215123.3528-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 23 Jul 2024 15:27:12 +0200
-Marek Vasut <marek.vasut+renesas@mailbox.org> wrote:
+Changes since v1:
+* fixed another occasion in the allegro driver (Thanks, Michael)
+* added tags (Thanks Ismael and Thierry)
+* rebased to 6.11-rc1
 
-> Use newly introduced MSI_FLAG_NO_AFFINITY, which keeps
-> .irq_set_affinity unset and allows migrate_one_irq() code in
-> cpuhotplug.c to exit right away, without printing "IRQ...: set
-> affinity failed(-22)" warning.
->=20
-> Remove .irq_set_affinity implementation which only return -EINVAL
-> from this controller driver.
->=20
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> Cc: "Krzysztof Wilczy=C5=84ski" <kw@linux.com>
-> Cc: "Pali Roh=C3=A1r" <pali@kernel.org>
-> Cc: "Uwe Kleine-K=C3=B6nig" <u.kleine-koenig@pengutronix.de>
-> Cc: Aleksandr Mishin <amishin@t-argos.ru>
-> Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> Cc: Anup Patel <apatel@ventanamicro.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Broadcom internal kernel review list
-> <bcm-kernel-feedback-list@broadcom.com> Cc: Daire McNamara
-> <daire.mcnamara@microchip.com> Cc: Damien Le Moal <dlemoal@kernel.org>
-> Cc: Florian Fainelli <florian.fainelli@broadcom.com>
-> Cc: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> Cc: Jianjun Wang <jianjun.wang@mediatek.com>
-> Cc: Jim Quinlan <jim2101024@gmail.com>
-> Cc: Jingoo Han <jingoohan1@gmail.com>
-> Cc: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> Cc: Jon Hunter <jonathanh@nvidia.com>
-> Cc: Jonathan Derrick <jonathan.derrick@linux.dev>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Joyce Ooi <joyce.ooi@intel.com>
-> Cc: Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
-> Cc: Kishon Vijay Abraham I <kishon@kernel.org>
-> Cc: Koichiro Den <den@valinux.co.jp>
-> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Michal Simek <michal.simek@amd.com>
-> Cc: Nicolas Saenz Julienne <nsaenz@kernel.org>
-> Cc: Niklas Cassel <cassel@kernel.org>
-> Cc: Nipun Gupta <nipun.gupta@amd.com>
-> Cc: Nirmal Patel <nirmal.patel@linux.intel.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Ryder Lee <ryder.lee@mediatek.com>
-> Cc: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
-> Cc: Siddharth Vadapalli <s-vadapalli@ti.com>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-> Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: linux-pci@vger.kernel.org
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: linux-rpi-kernel@lists.infradead.org
-> Cc: linux-tegra@vger.kernel.org
-> ---
-> V4: - New patch
-> ---
->  drivers/pci/controller/vmd.c | 13 +------------
->  1 file changed, 1 insertion(+), 12 deletions(-)
->=20
-> diff --git a/drivers/pci/controller/vmd.c
-> b/drivers/pci/controller/vmd.c index a726de0af011f..bc849b0d9e8dc
-> 100644 --- a/drivers/pci/controller/vmd.c
-> +++ b/drivers/pci/controller/vmd.c
-> @@ -204,22 +204,11 @@ static void vmd_irq_disable(struct irq_data
-> *data) raw_spin_unlock_irqrestore(&list_lock, flags);
->  }
-> =20
-> -/*
-> - * XXX: Stubbed until we develop acceptable way to not create
-> conflicts with
-> - * other devices sharing the same vector.
-> - */
-> -static int vmd_irq_set_affinity(struct irq_data *data,
-> -				const struct cpumask *dest, bool
-> force) -{
-> -	return -EINVAL;
-> -}
-> -
->  static struct irq_chip vmd_msi_controller =3D {
->  	.name			=3D "VMD-MSI",
->  	.irq_enable		=3D vmd_irq_enable,
->  	.irq_disable		=3D vmd_irq_disable,
->  	.irq_compose_msi_msg	=3D vmd_compose_msi_msg,
-> -	.irq_set_affinity	=3D vmd_irq_set_affinity,
->  };
-> =20
->  static irq_hw_number_t vmd_get_hwirq(struct msi_domain_info *info,
-> @@ -326,7 +315,7 @@ static struct msi_domain_ops vmd_msi_domain_ops =3D
-> {=20
->  static struct msi_domain_info vmd_msi_domain_info =3D {
->  	.flags		=3D MSI_FLAG_USE_DEF_DOM_OPS |
-> MSI_FLAG_USE_DEF_CHIP_OPS |
-> -			  MSI_FLAG_PCI_MSIX,
-> +			  MSI_FLAG_NO_AFFINITY | MSI_FLAG_PCI_MSIX,
->  	.ops		=3D &vmd_msi_domain_ops,
->  	.chip		=3D &vmd_msi_controller,
->  };
+There is a confusing pattern in the kernel to use a variable named 'timeout' to
+store the result of wait_*() functions causing patterns like:
 
-Reviewed-by: Nirmal Patel <nirmal.patel@linux.intel.com>
+        timeout = wait_for_completion_timeout(...)
+        if (!timeout) return -ETIMEDOUT;
 
-Thanks.
+with all kinds of permutations. Use 'time_left' as a variable to make the code
+obvious and self explaining. Also correct the type of the variable if
+the original code got it wrong.
+
+This is part of a tree-wide series. The rest of the patches can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/time_left
+
+Because these patches are generated, I audit them before sending. This is why I
+will send series step by step. Build bot is happy with these patches, though.
+No functional changes intended.
+
+
+Wolfram Sang (8):
+  media: allegro: use 'time_left' variable with
+    wait_for_completion_timeout()
+  media: atmel-isi: use 'time_left' variable with
+    wait_for_completion_timeout()
+  media: bdisp: use 'time_left' variable with wait_event_timeout()
+  media: fimc-is: use 'time_left' variable with wait_event_timeout()
+  media: platform: exynos-gsc: use 'time_left' variable with
+    wait_event_timeout()
+  media: solo6x10: use 'time_left' variable with
+    wait_for_completion_timeout()
+  media: tegra-vde: use 'time_left' variable with
+    wait_for_completion_interruptible_timeout()
+  media: ti: cal: use 'time_left' variable with wait_event_timeout()
+
+ drivers/media/pci/solo6x10/solo6x10-p2m.c     |  8 +++----
+ .../media/platform/allegro-dvt/allegro-core.c | 24 +++++++++----------
+ drivers/media/platform/atmel/atmel-isi.c      |  8 +++----
+ .../media/platform/nvidia/tegra-vde/h264.c    | 10 ++++----
+ .../platform/samsung/exynos-gsc/gsc-core.c    | 10 ++++----
+ .../platform/samsung/exynos4-is/fimc-core.c   | 10 ++++----
+ .../media/platform/st/sti/bdisp/bdisp-v4l2.c  | 10 ++++----
+ drivers/media/platform/ti/cal/cal.c           |  8 +++----
+ 8 files changed, 44 insertions(+), 44 deletions(-)
+
+-- 
+2.43.0
+
