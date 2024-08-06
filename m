@@ -1,242 +1,284 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2079.outbound.protection.outlook.com [40.107.236.79])
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010070.outbound.protection.outlook.com [52.101.69.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4B51BF339;
-	Tue,  6 Aug 2024 10:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3856C13B2AC;
+	Tue,  6 Aug 2024 11:27:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.70
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722941523; cv=fail; b=e008nOhstFz8JXEKXDIE9RAxUZCPfPbp5vOPw6HYOKICascVsScxOdVtfNXIeenAu8l6CMHNZTJZfetdzi697HUGYNB9rq2J/I00HLeWPEQbx8ApXymfkYXhCAbhUxeflu2nzotZ1O2g47+5s6frz2k/eqR0YwytvLzpEDnqkKs=
+	t=1722943678; cv=fail; b=Yo3yfERI4IUcdLkSOWIypxp4nVCclanskruHT7BP6J75iV1f7NXFMwJ28iAuOfeOxO1LXjbfdT/w3gDLiCQe2cZnxJrM8XNoOZHdh/W34ufTe/CV9TjwpBgUMe1HjLM/Jy3H51GSVNAvTVaszQ0fdFUVU6FQtd5zayYvrYN4ffE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722941523; c=relaxed/simple;
-	bh=+mQAGvfPCIAB5wAIwT5kxcIpDUD/FVFdDWEPrvSDEuY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fSs/UehdSLDWmSYilja6GnRMUNpbuQM4HjtwAmssN8hw8iEEDeKEl1yTjZg7jj8u0/zO1JGiz1G0CwG1S+ItAlv123uoPuD//p2fnWhCjz7yNpNRs6a1G+rcrjXx9/yKl/HyL7R1I5lIRCEkatU4oUItMxyvN1sjA/zg2zGa01w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PVGv16ei; arc=fail smtp.client-ip=40.107.236.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1722943678; c=relaxed/simple;
+	bh=Fffe1334guEbasi2ewFbkqpOHEQ1Vja5+yjJmlG/6Kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Y0uNYTuB8HRUDZ+RI+rIN0fRh8oNaoZs6Cq4Yvw/6kWu+K4Ki9axygUgvuLQC7a73StAcTgi236xtyRiKfdz73TqN/pdp1h5cUEFqhEiNgARtkFeNLV78bx8k6OBgf4xr5oziMPxcvzqq/WmISl/wLA0BmSxx5u4rG+LEoXHXxo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=GB5nGWwP; arc=fail smtp.client-ip=52.101.69.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PVGv16ei"
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="GB5nGWwP"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d3hNv2MCURmBuuzbjIfThfCFbBRT/SaPz14bSP+JYYbNBZmfB+uDLfXH4El2fMzcbfJEdVeZ6RGyoadtknEGRXg6yjMR0ynOzDtjXAFLQSeF7/6ZCbBp8dVDvicWXEtt643yV7y903vbnj3pOEiixyKkFxua7dhIhuqWQxs8iFgUuZmSLKSEZ3UnbKLXJRNtK4Fiwlh2Ibj8f+kj1uLoXEEWlk1F3CgVfF2aKE+NQruoXdSNbIq5zHFOVsf0mIiodORMfCkjCuLxnN0CUQ4K+0SrasDpx2VkkRdI9/DYlBs90Uw8qAqYOZ74cNS1uNZdSVE/oR2QftdDE7KsxowErQ==
+ b=WtuDT14WNKKkhU8r1ByaW6xu9yV6GibyS5ACS6yB1Or68BwTYE6zsPA8If5ov/t+Id+iQKBk6WXBrPF5XiJsYOtFNS44+jVvzgLhDFgmpRN6hDUPJftW6t/Zu3FuX8EVtt3/r+8r9Nnj12D5BLLkV/enfkJKcWweF14uEKKrcctEQLbLGNPSTcYnKKqA0SswvIi0Chz/I5dsoCJJPBscKKxV9H0wgV1tj6E4uLzQPMFrdZZs0B+TyDijZakq32fCjrmBnkvLlnR6QJtMY8v3PIzIav2kCcOezaa1GptF72a5jVljY8oIll8qlT0bBOtm7wL+P/V5yhDuMo4oB3GGhA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R8BCV6Ioh7qJW4s1LhWDGNq8U+9yH5YiDLj8PBBh9RY=;
- b=kuIqzg3pkJcQhbG8zB4TlHwRLbT84p2uPr42M2M0FqcuYv5xzPEalqCbmrsrTgYRXe53L1U/PVc24ZuKtbOh9MV2yCfmeXoQQFtpXX2QTpVhfHoLr6sR/06MuX/MbLbXdQgpLhA/7U/ScTc0f3nlP1Q2J8VoIqenQ6L7M+RiFBjRG2m3Cmgzz1gfZFvRc7HaKn7BsoyaYClvJldgowT5PI2cXGXwagQjqKWzVZmfUOUCn+S5KPZbadKqDe8FKzCeShDud0II5iRv9D9M3qV9l+aACUb/tY1evBMyOu9Ns0VZNc8zgMokkviAujwb+5juZchUCccSzmYbeqddibAOmg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=w0Dp6EFxy+Y9SolB2I26SzwVzooUKoPaqbEPyfxfoAw=;
+ b=vRe/w++Hmevd/ZltARFGYD4bBNkfhwqEqgWXFhFXIAlw+CnqzcGve2KTF1PORT1ZVHdHHDLdc6euvx/w/6WzssigvpRc99539hOk904DGLehXmGsNOLiRQRCLBqeYMAuUPX/Y7KrYkpDA8rlp33P5cLw03Ef4CRP1igchc+aqBW3mG9a7JDkWU5Yd0xw/qz0frF6tp9Xe8ZEfZ8wNYClSLZB2701XqdTJCFbvpjGLFgNEJIptOwASR3Z7/lZGHQuvCkTyjVbV73mQL7ojNDFc/jnGjXu90KB640uNsqAYmZUFCSkD+YX5QmyIvdUkDY+9Dd3EDuf7oYq8JqbFIwdDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R8BCV6Ioh7qJW4s1LhWDGNq8U+9yH5YiDLj8PBBh9RY=;
- b=PVGv16eiq4xRjv2kUomtHkVO3/ybvw2VKHxxFM4771RLH7S8mfASZenzX29i7nk6kmihWDYvoKH4e4nmuDW/jyyd63hcBHWpsY7lEhkftOvzgC5/bbJCupb9h0u+0W/MfPLNQ5yemx/oGNec+ytqUYJUtDAJeykrN7U9vsuOQyAssJjiHclfN5dnDVnwapJz0Lh4CthkPbK420/VUxB9QtKLZp8ltNr/ZpgEcdfizqCpgTVKXJktL7Z9frxRpe8qUQAG1VV/Bs+jyTCohfq6P6T/6qQyUeuwonlm3EqH4NK4gj87JYfFwYebMrjRoyXwPgvXPu0XkdyZrm8y4hi4lA==
-Received: from BLAP220CA0013.NAMP220.PROD.OUTLOOK.COM (2603:10b6:208:32c::18)
- by DS7PR12MB6143.namprd12.prod.outlook.com (2603:10b6:8:99::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.13; Tue, 6 Aug
- 2024 10:51:56 +0000
-Received: from BN3PEPF0000B36D.namprd21.prod.outlook.com
- (2603:10b6:208:32c:cafe::de) by BLAP220CA0013.outlook.office365.com
- (2603:10b6:208:32c::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.27 via Frontend
- Transport; Tue, 6 Aug 2024 10:51:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN3PEPF0000B36D.mail.protection.outlook.com (10.167.243.164) with Microsoft
+ bh=w0Dp6EFxy+Y9SolB2I26SzwVzooUKoPaqbEPyfxfoAw=;
+ b=GB5nGWwPTRHWelWbdD1U4vmDjG6VPpTnVXMw5k2tJQpoQ6exSUzUpgSUNu+8+dKEfvHuARwfl2HMhz5rnFa6VFmQ9u7vH9qiHzmPFpTxy31GrE01cfuUWyFUpznjYH3TaxubDGjfSObC5P3j7bpYLPgZziFLxGIzvNVfByKcHiQ7OOeM3xpJ4G2eNrnjgyhT81CAhn20GdUe0fwkDKU8BhQgIY3rBMzCihKzp/SgNaINNKKWqjVs58pQUklx18+CrzV/m9wnAbjTcuVh6p+EKbQPbNVG2NW1PTQL9BHVlSqguy9EhzLOkwN1F/6KQ2+fSkc+XHUuuH1ZVN/N85slBg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB7PR04MB4555.eurprd04.prod.outlook.com (2603:10a6:5:33::26) by
+ PA4PR04MB7824.eurprd04.prod.outlook.com (2603:10a6:102:cd::7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7875.2 via Frontend Transport; Tue, 6 Aug 2024 10:51:55 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
- 03:51:42 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
- 03:51:42 -0700
-Received: from build-amhetre-20240731T045122751.internal (10.127.8.10) by
- mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.4 via
- Frontend Transport; Tue, 6 Aug 2024 03:51:41 -0700
-From: Ashish Mhetre <amhetre@nvidia.com>
-To: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>, Ashish Mhetre
-	<amhetre@nvidia.com>
-Subject: [PATCH V4] iommu/io-pgtable-arm: Optimise non-coherent unmap
-Date: Tue, 6 Aug 2024 10:51:35 +0000
-Message-ID: <20240806105135.218089-1-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+ 15.20.7828.27; Tue, 6 Aug 2024 11:27:51 +0000
+Received: from DB7PR04MB4555.eurprd04.prod.outlook.com
+ ([fe80::86ff:def:c14a:a72a]) by DB7PR04MB4555.eurprd04.prod.outlook.com
+ ([fe80::86ff:def:c14a:a72a%5]) with mapi id 15.20.7828.021; Tue, 6 Aug 2024
+ 11:27:51 +0000
+Date: Tue, 6 Aug 2024 14:27:47 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Brad Griffis <bgriffis@nvidia.com>,
+	Clark Wang <xiaoning.wang@nxp.com>, Wei Fang <wei.fang@nxp.com>
+Subject: Re: [RESEND PATCH net-next v3 2/4] net: phy: aquantia: wait for FW
+ reset before checking the vendor ID
+Message-ID: <20240806112747.soclko5vex2f2c64@skbuf>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ac00a45-ac61-41b4-9f74-d18157b8b6bf@nvidia.com>
+X-ClientProxiedBy: VI1PR04CA0120.eurprd04.prod.outlook.com
+ (2603:10a6:803:f0::18) To DB7PR04MB4555.eurprd04.prod.outlook.com
+ (2603:10a6:5:33::26)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B36D:EE_|DS7PR12MB6143:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c6452eb-8bb5-49a2-5595-08dcb605ca23
+X-MS-TrafficTypeDiagnostic: DB7PR04MB4555:EE_|PA4PR04MB7824:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3c1ead07-5f10-4cdd-052a-08dcb60ace98
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?JU+q20ApQjdGb9JffN+QkuO/KQG7eo21WtHjYUdjVrMBHkPerdPkm4QVqOIH?=
- =?us-ascii?Q?ayHi27zqCH+RMrtHwgH1xi56W5f2a748fCY9EaiTne0gxefmhE+uMH4zFByb?=
- =?us-ascii?Q?6UVzapWxuq5CfnT28IMkfxO81o+aU3jsDNCtW9PTEjkaYfVcNLigEqYgV2/m?=
- =?us-ascii?Q?FgOpCYyD6gE4PRRgajQT+jMgh6rKPHxKSrjj5EGOTZkiqu3HKn3kRZUW3Ieg?=
- =?us-ascii?Q?Hm16aVM2kP2/uuXbmJsZ1h7MmYxitgQTI1y8yPjChM6bXsxssHkm3fxCTeo+?=
- =?us-ascii?Q?y3T2S5NLd5xebVwZ7lwRj3be0UcXZH6tYRwR0IoytBUcYZQ/IgcwsTsScWTQ?=
- =?us-ascii?Q?8wXVuyqCFZ/L7Hy7DgPeNG3NvdtvtOVdR7bFU3cM1CIaLj4bEhPQ0BifVPy5?=
- =?us-ascii?Q?Zr21KuM4Uap1cy33FPtFLAK6ENNtjaQsvV08vvDx+QkEHB76dE57ozoRkZkU?=
- =?us-ascii?Q?r+RJTT4f85RPHiTnaq8EX5i0KIvOZSrABqrxJafXheWF7ZivM/6afwrrkYJv?=
- =?us-ascii?Q?jaVtXGzEHXq9BZfhLJO1poYPCtBPIbgtEeVq7eiTVNY0qg3w+vFEo2PbOeQ/?=
- =?us-ascii?Q?dNLW8IeshFUHV4H/+XDwtDVGrbkiXUI0PMx3w6gGUN7QqJ6fY19uYPISo4Ol?=
- =?us-ascii?Q?NywGpUMkP3HedO/1fPKqwLrSPglgftt+XW9aDCWmZnhR93WhfIbJCq2Fkz98?=
- =?us-ascii?Q?F6FpZySjutf7CdRgylvEqJeXZCKaECm9g4WM1dqGEXxnbjbXpAKYaFg9ABEJ?=
- =?us-ascii?Q?yv0CXME1YkfugxFq5zMSX3hdPqZEZIZovpAfuL1sNmhSj6p4YdE4MWcOBDXU?=
- =?us-ascii?Q?ddTLuR7jmjR/UpW/ogPOrDkZuDrwYcxeh87DT5QkPrboC1+w5u7IVDN8OZEL?=
- =?us-ascii?Q?2/8s7or/f8VAdd8TlFlByNf3iNu1wCCdAW1qrK+HckzTBa7Aqunqpb60pQn2?=
- =?us-ascii?Q?cqbUT/OJq87s/H6ClZurCiI8vtBUW6YsqgmV/kJmxhq5BnoCrRaH4oN8CtU4?=
- =?us-ascii?Q?FYI/Yz/x+oKVuacayHKXjlqC4ipmFCdLONKBZ4czHYBgtwzcIfsDT9ekI7cE?=
- =?us-ascii?Q?Ji9AZU1SSb2GpFoZV1tw1Bccq9K6bmpqzed37ms/Qudsy7f2NfydnesOBfZp?=
- =?us-ascii?Q?e975USZafotQWjanRkXlwuMRotEkyHQnANEGogjJvcaTv064pFG9PIOmJ2BH?=
- =?us-ascii?Q?X/NAUfa5OyUCbTM5Wi2GdXMNY9HjZ83OTCBOh/e+xFAZc9Nx7TYYrz31tMbC?=
- =?us-ascii?Q?MKrl4icraJ8GWlcmUcL5M4Xx5gP6SASwUQZvKz7IrMeJWZNd7uBKwvSSOdoX?=
- =?us-ascii?Q?vwOhQQHAwYgqSgxzMDTH+4tnmevJvZTieV4jH1RiG4mDf+GxD3KPGRWfYLYt?=
- =?us-ascii?Q?VTGO7+TE1iNu6vX3tJCZSMtZIRXzc/v1BP4jzV+8uvECVtPutWUbckKf6/Xv?=
- =?us-ascii?Q?beufdAz6dG86vAUUlO+KgjOVV5/XlXAs?=
+	=?us-ascii?Q?stYoOnHuaisgaiRUqHyCwLuW8v0vQYQ5SXklcFFq2qkTMP7HHaocPeqT9f4s?=
+ =?us-ascii?Q?hUceVv2hS6Wd29yiQfnLPEsut6dJcKXdO42OWA+kht8IuZD8SUTaDdk+cvB/?=
+ =?us-ascii?Q?rEFI9NHRiVoexv2gTl14mAJouhFtoMWLHEBK9+uYZPvC6nECWF6TSNbXIayD?=
+ =?us-ascii?Q?8hjDGjPgaB6qS86qYPayDDZ+tGKyokq5BCWxezN9qup3PJz0+hAuvnntM7d1?=
+ =?us-ascii?Q?UtR0I9+HdVnwXeABlKu2VxgcikHIjGFKUoH5snU0YicrOrThfNsFK9ZX9FJ6?=
+ =?us-ascii?Q?6gWQF0lv5YUWwCJp/CYOIGxPzmmfvIKncu8TMElwiGN7hEj7o597XTrDCtyv?=
+ =?us-ascii?Q?rz1WBCGF/fXS0lUUKNfwBWB3VTGOsrbV32vPhNLVYk/qih2Y7ghVX9V2uI7/?=
+ =?us-ascii?Q?ACne8a1hQOE2lN+y9o2P8QZYna1haqT40xEr/DmRoDctna5n197B19IbPPaL?=
+ =?us-ascii?Q?+PpjKZ1ocltMs5Rm+s2/VCNqmbKh+NpyNO1JNGfr9ev6IzJRa7Anwjrloqd5?=
+ =?us-ascii?Q?NMqjfuIFZ/XPR3XfldxXRsooiThch2TPEhGWkOmGG1skG4ktM9I+SZLiMcE4?=
+ =?us-ascii?Q?6GbqURd4aikVXVfDeucYZq73OVHm5a5mgB08XluyjI+xXFD4XNI/5Dkjg7YQ?=
+ =?us-ascii?Q?31L/bDAESRf4+Ybt8za0Y6ERucQPVGSYXAM1VQP8+Mb9Iu10vMo6PXdycK+G?=
+ =?us-ascii?Q?BZWns4Z9UfEeeREFKcz5KVIz7C+OiiD/+KSTiuPz0DkD50kawNtYId5+epkW?=
+ =?us-ascii?Q?B03Irl3QqibzGbGNIEvcdTI3g25UZN/uqwQSH/YRHjOCvOXQ5nbmesCPtkjj?=
+ =?us-ascii?Q?lxA0pCXKSymHvg+cMJmzJVnsy+wqAKswJEnG02diPKEE6sFYHR9PGmao+FNf?=
+ =?us-ascii?Q?KGm1WaueHdsHTKT8ow8ecmpIwZKtELec72oePTflu20Q/sBxBv48RnUnjOTS?=
+ =?us-ascii?Q?piXnDnd3wIJSANYivPcmK/jj0CMkN6HYYZqH1r0hddC9+rQUxkdSUBSqKVeM?=
+ =?us-ascii?Q?HVvodOJMF2doklE8/W+rMP2S9jbXtIfREDJqE2AyoRqWZUpk5YhHFeOXm/8q?=
+ =?us-ascii?Q?Armxp6poHXGHULpuESgwSI+aMKb7I4UhIp0XvP8uf/If1ofF62TlDhH3byfw?=
+ =?us-ascii?Q?oDsUKYUul5qrFZJFV25JOkNXq1t0tLUlhJDhqMlS4boSXGfso4gn7T1Z7YbA?=
+ =?us-ascii?Q?ixeg9PRiPgk85ukXswqgw1KovisKGIJrA1W/+6Y+vtotdMX5biYTsQBHWdSU?=
+ =?us-ascii?Q?msJovv6Yc0D1/TbCp04CQ3yhUYVJIvCcJnBMSwzKcpANpMv59fn/8jLcSSlL?=
+ =?us-ascii?Q?bJHbzjZbTFuohaAjdeYZpOidyjehbEF99Nqj6+EaCLZ8tQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 10:51:55.9516
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR04MB4555.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gYsLprG0uhV4rDLi8jfJpebqbBU/by+cIIyihMxpz35P9wfxjKPpOH4xq4yl?=
+ =?us-ascii?Q?BPTIqMLFAtkLio+4gRpC937pSwzosdLmxs7a83hZtaSkJjWzQ3M6JKCuv9mM?=
+ =?us-ascii?Q?vRI3MdIbLgkw7EKhG7B82vihDqX/0sGMTNFpSxNER27Vn3DHL7PWHDlKpbQk?=
+ =?us-ascii?Q?KaZUtLe+5BF1UYSsappt1Y7gbHeVD4q7QJx7Va/va1NjCfwYH9MqHELu0npk?=
+ =?us-ascii?Q?7M0eIjHrIebi9haM8RssV1p6ykzNQItH56ny79lZO8O6oOHIjUUENczx3jWG?=
+ =?us-ascii?Q?PoIVqOvAIKE+Ba6hxVRk2VTv2np0yAME/Xxw2MjIr9uo/KJWGBMtgXzRHW0B?=
+ =?us-ascii?Q?36r8K3e3YJo3h98ybcwodNwvaSVJN8ZGWidv1nxHaIKZZV4Y+sFOcO1JdPst?=
+ =?us-ascii?Q?/DyVT5jhQ3eXuy2PVUU3b8nWukybSW2n2klFtkffLvCJjQBP/wBSb9ElPBiV?=
+ =?us-ascii?Q?VQDKya6gcmx18rzVXurLvUlk4rUitXEOeaHDHqeKOyPDPzIMhwIlz4apIOGj?=
+ =?us-ascii?Q?QVY3qjSucBfGx+owl17YEjwCiC/+p0uvO8DV66TZcYl9prTGJwti6g4Om9wR?=
+ =?us-ascii?Q?6hWJCZVbP3RyXUe1P3MH+LQmVvzHdhz7/jeeEgpJ1G50RIbf+/RDAILC81jQ?=
+ =?us-ascii?Q?20MAxoABabAe3BVs9ld0h8EUwZFSCj6twsLJr3V47yelso44q8hMWwKn/UCz?=
+ =?us-ascii?Q?iTY/D5cZjDQq2HyROUzBhclHhIkacfjovMD43X5wcEyB12YBs3f73DYEfEIm?=
+ =?us-ascii?Q?y6+W4aWLEwiG2J6fddSs4fZTHSEMUbf9h/FfsXpb+2D04gPm/3tOhh8+iJPj?=
+ =?us-ascii?Q?FVVRwJiA53BnW1v4izXUzrwBD6hPIAxyYGAgUBYZ2oI40qPT0svmFkHA9qRQ?=
+ =?us-ascii?Q?muV4VWAfd6U3uxl07RHGNnJBIkluMavZh/q8dXU5LTWlzcX5ubeYV5wTX0Hd?=
+ =?us-ascii?Q?zbZhK7iNEwE643ilPREGwQky/jqXhOst/WxbJg32T+BgtArilBQuYZULjPr5?=
+ =?us-ascii?Q?0iTIEwjwnGhxA4mrX8dms9nbrMPBrk04BBJlkbz6WzuudNZDB8dtxSQYQfDR?=
+ =?us-ascii?Q?c/rxM4eZYeVavu3Fpiivoq+dOxg7gBDFZAYHrfAmxWT1t+OpCGv9oig4j2Us?=
+ =?us-ascii?Q?T8qAED11Nglk4yF2HLldb4klsYZ5sQmQ47znaNX+2lD/RX1PgaMe2NhyZM+Z?=
+ =?us-ascii?Q?1UdO2SHDaLIRCT/IQs5mYbSHTNJDmR2cWJzIKLEo2UCcaEguR10Rdz04Of/n?=
+ =?us-ascii?Q?5IUd6nZgWahKUfqsfzqtRSYXZYCpgyE4QF8C3Iwwoimuv4S7HmcfC+H6Dj1s?=
+ =?us-ascii?Q?+vIu7YBy1SqD2iK7lbGvF2p1i01FOKZ1zumSyGHjmWJCoukPPQK7vU6TOG5G?=
+ =?us-ascii?Q?Hg3m1IU07S/82ozTZXIrG1AMybsTtOh+FfQO5VQ22pM/861GokE39lUJmSnc?=
+ =?us-ascii?Q?Xg8LWs3J8PwnHg3CVkwrdi6u06muZYFFfk7drCu+saFExVcdJIqdMv99B1qE?=
+ =?us-ascii?Q?9JdCynqIctP7yFM8vQiSRH7OOqhRduu1YcOZZHn02my9Mnvry63ayhvX79Xf?=
+ =?us-ascii?Q?/y+8vitXzUK8EglxatQgf3wFnd4Oir6kz2P8yPZaFyzP1Y7Dkvs7Y+he1IzO?=
+ =?us-ascii?Q?jQ=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3c1ead07-5f10-4cdd-052a-08dcb60ace98
+X-MS-Exchange-CrossTenant-AuthSource: DB7PR04MB4555.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2024 11:27:51.4615
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c6452eb-8bb5-49a2-5595-08dcb605ca23
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B36D.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6143
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: odkTKVzEo2RYFMfUr2P+DV3A8Hc3qFXwr9YWBc1t53h4szOs0/7urW3NoE4AgXz8u8a7LUQLWXLC0IKBxK1OsQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7824
 
-The current __arm_lpae_unmap() function calls dma_sync() on individual
-PTEs after clearing them. Overall unmap performance can be improved by
-around 25% for large buffer sizes by combining the syncs for adjacent
-leaf entries.
-Optimize the unmap time by clearing all the leaf entries and issuing a
-single dma_sync() for them.
-Below is detailed analysis of average unmap latency(in us) with and
-without this optimization obtained by running dma_map_benchmark for
-different buffer sizes.
+Hi Jon,
 
-		UnMap Latency(us)
-Size	Without		With		% gain with
-	optimiztion	optimization	optimization
+On Tue, Jul 30, 2024 at 10:59:59AM +0100, Jon Hunter wrote:
+> Hi Bartosz,
+> 
+> On 08/07/2024 08:50, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > 
+> > Checking the firmware register before it complete the boot process makes
+> > no sense, it will report 0 even if FW is available from internal memory.
+> > Always wait for FW to boot before continuing or we'll unnecessarily try
+> > to load it from nvmem/filesystem and fail.
+> > 
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> >   drivers/net/phy/aquantia/aquantia_firmware.c | 4 ++++
+> >   1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/net/phy/aquantia/aquantia_firmware.c b/drivers/net/phy/aquantia/aquantia_firmware.c
+> > index 0c9640ef153b..524627a36c6f 100644
+> > --- a/drivers/net/phy/aquantia/aquantia_firmware.c
+> > +++ b/drivers/net/phy/aquantia/aquantia_firmware.c
+> > @@ -353,6 +353,10 @@ int aqr_firmware_load(struct phy_device *phydev)
+> >   {
+> >   	int ret;
+> > +	ret = aqr_wait_reset_complete(phydev);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> >   	/* Check if the firmware is not already loaded by pooling
+> >   	 * the current version returned by the PHY. If 0 is returned,
+> >   	 * no firmware is loaded.
+> 
+> 
+> Although this fixed another issue we were seeing with this driver, we have
+> been reviewing this change and have a question about it.
+> 
+> According to the description for the function aqr_wait_reset_complete() this
+> function is intended to give the device time to load firmware and check
+> there is a valid firmware ID.
+> 
+> If a valid firmware ID (non-zero) is detected, then
+> aqr_wait_reset_complete() will return 0 (because phy_read_mmd_poll_timeout()
+> returns 0 on success and -ETIMEDOUT upon a timeout).
+> 
+> If it times out, then it would appear that with the above code we don't
+> attempt to load the firmware by any other means?
+> 
+> Hence, I was wondering if we want this ...
+> 
+> diff --git a/drivers/net/phy/aquantia/aquantia_firmware.c
+> b/drivers/net/phy/aquantia/aquantia_firmware.c
+> index 524627a36c6f..a167f42ae36b 100644
+> --- a/drivers/net/phy/aquantia/aquantia_firmware.c
+> +++ b/drivers/net/phy/aquantia/aquantia_firmware.c
+> @@ -353,16 +353,12 @@ int aqr_firmware_load(struct phy_device *phydev)
+>  {
+>         int ret;
+> 
+> -       ret = aqr_wait_reset_complete(phydev);
+> -       if (ret)
+> -               return ret;
+> -
+> -       /* Check if the firmware is not already loaded by pooling
+> +       /* Check if the firmware is not already loaded by polling
+>          * the current version returned by the PHY. If 0 is returned,
+> -        * no firmware is loaded.
+> +        * firmware is loaded.
+>          */
+> -       ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_FW_ID);
+> -       if (ret > 0)
+> +       ret = aqr_wait_reset_complete(phydev);
+> +       if (!ret)
+>                 goto exit;
+> 
+>         ret = aqr_firmware_load_nvmem(phydev);
 
-4KB	3		3		0
-8KB	4		3.8		5
-16KB	6.1		5.4		11.48
-32KB	10.2		8.5		16.67
-64KB	18.5		14.9		19.46
-128KB	35		27.5		21.43
-256KB	67.5		52.2		22.67
-512KB	127.9		97.2		24.00
-1MB	248.6		187.4		24.62
-2MB	65.5		65.5		0
-4MB	119.2		119		0.17
+I agree with your analysis and we also noticed this.
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
-Changes in V2:
-- Updated the commit message to be imperative.
-- Fixed ptep at incorrect index getting cleared for non-leaf entries.
+But actually, you wouldn't want to ignore other return codes from
+phy_read_mmd_poll_timeout() like real errors from phy_read_mmd():
+-ENODEV, -ENXIO etc.
 
-Changes in V3:
-- Used loop-local variables and removed redundant function variables.
-- Added check for zero-sized dma_sync in __arm_lpae_clear_pte().
-- Merged both patches into this single patch by adding check for a
-  NULL gather in __arm_lpae_unmap() itself.
+I found that the logic is more readable with a switch/case statement as below.
 
-Changes in V4:
-- Updated the subject in commit message to correctly reflect the changes
-  made in this patch.
----
- drivers/iommu/io-pgtable-arm.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index f5d9fd1f45bf..6fecf3d9fe67 100644
---- a/drivers/iommu/io-pgtable-arm.c
-+++ b/drivers/iommu/io-pgtable-arm.c
-@@ -274,13 +274,13 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
- 				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
- }
- 
--static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
-+static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
+diff --git a/drivers/net/phy/aquantia/aquantia_firmware.c b/drivers/net/phy/aquantia/aquantia_firmware.c
+index 524627a36c6f..d839f64471bd 100644
+--- a/drivers/net/phy/aquantia/aquantia_firmware.c
++++ b/drivers/net/phy/aquantia/aquantia_firmware.c
+@@ -353,26 +353,33 @@ int aqr_firmware_load(struct phy_device *phydev)
  {
-+	for (int i = 0; i < num_entries; i++)
-+		ptep[i] = 0;
+ 	int ret;
  
--	*ptep = 0;
+-	ret = aqr_wait_reset_complete(phydev);
+-	if (ret)
+-		return ret;
 -
--	if (!cfg->coherent_walk)
--		__arm_lpae_sync_pte(ptep, 1, cfg);
-+	if (!cfg->coherent_walk && num_entries)
-+		__arm_lpae_sync_pte(ptep, num_entries, cfg);
+-	/* Check if the firmware is not already loaded by pooling
+-	 * the current version returned by the PHY. If 0 is returned,
+-	 * no firmware is loaded.
++	/* Check if the firmware is not already loaded by polling
++	 * the current version returned by the PHY.
+ 	 */
+-	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_FW_ID);
+-	if (ret > 0)
+-		goto exit;
++	ret = aqr_wait_reset_complete(phydev);
++	switch (ret) {
++	case 0:
++		/* Some firmware is loaded => do nothing */
++		return 0;
++	case -ETIMEDOUT:
++		/* VEND1_GLOBAL_FW_ID still reads 0 after 2 seconds of polling.
++		 * We don't have full confidence that no firmware is loaded (in
++		 * theory it might just not have loaded yet), but we will
++		 * assume that, and load a new image.
++		 */
++		ret = aqr_firmware_load_nvmem(phydev);
++		if (!ret)
++			goto exit;
+ 
+-	ret = aqr_firmware_load_nvmem(phydev);
+-	if (!ret)
+-		goto exit;
++		ret = aqr_firmware_load_fs(phydev);
++		if (ret)
++			return ret;
+ 
+-	ret = aqr_firmware_load_fs(phydev);
+-	if (ret)
++		break;
++	default:
++		/* PHY read error, propagate it to the caller */
+ 		return ret;
++	}
+ 
+-exit:
+ 	return 0;
  }
- 
- static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
-@@ -654,26 +654,29 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
- 		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
- 		num_entries = min_t(int, pgcount, max_entries);
- 
--		while (i < num_entries) {
--			pte = READ_ONCE(*ptep);
-+		/* Find and handle non-leaf entries */
-+		for (i = 0; i < num_entries; i++) {
-+			pte = READ_ONCE(ptep[i]);
- 			if (WARN_ON(!pte))
- 				break;
- 
--			__arm_lpae_clear_pte(ptep, &iop->cfg);
--
- 			if (!iopte_leaf(pte, lvl, iop->fmt)) {
-+				__arm_lpae_clear_pte(&ptep[i], &iop->cfg, 1);
-+
- 				/* Also flush any partial walks */
- 				io_pgtable_tlb_flush_walk(iop, iova + i * size, size,
- 							  ARM_LPAE_GRANULE(data));
- 				__arm_lpae_free_pgtable(data, lvl + 1, iopte_deref(pte, data));
--			} else if (!iommu_iotlb_gather_queued(gather)) {
--				io_pgtable_tlb_add_page(iop, gather, iova + i * size, size);
- 			}
--
--			ptep++;
--			i++;
- 		}
- 
-+		/* Clear the remaining entries */
-+		__arm_lpae_clear_pte(ptep, &iop->cfg, i);
-+
-+		if (gather && !iommu_iotlb_gather_queued(gather))
-+			for (int j = 0; j < i; j++)
-+				io_pgtable_tlb_add_page(iop, gather, iova + j * size, size);
-+
- 		return i * size;
- 	} else if (iopte_leaf(pte, lvl, iop->fmt)) {
- 		/*
--- 
-2.25.1
-
