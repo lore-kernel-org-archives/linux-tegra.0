@@ -1,100 +1,153 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7854316F288
-	for <linux-tegra@vger.kernel.org>; Mon,  5 Aug 2024 21:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCB015B54C;
+	Tue,  6 Aug 2024 10:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722894702; cv=none; b=S6+o6GK9zdl4yIFN+H/lyHYVrreE6/z4zi1ddeD8GFfiCdGvbNdsWPw837TMVV6mi7oe7fYvcchMifzoqn7RYihzFx6cyaw5Jb2RE8yuslU7r4i09+gLDerokN0imfRwoj85ZOe80iBVVBuIASxB8bLdVS1AVPUro7VBpQRvG3s=
+	t=1722940768; cv=none; b=BiFyO6RIO2y7nflfXokdTb8wtNmiKI8lLPT/zcEC5438BVIncF9DMbfrKixIYTxagjlYwu2UufYUWTdjI2B98n25V7Epj5C2WjZwoQ2g1Wn4DT+OrE8JTFS37O/P0JMaT8+kyZmXOmxFUwNklkq4NP9oMWRrNwJiWQrxlLGneQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722894702; c=relaxed/simple;
-	bh=LZYhrkyc1RQuEk08+xPPpf7DwI8WSA8aMxgUobeQYbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jh6A08RuWgIaiUE3qbZiYagPJLsuTO76OUMsE8heqgtt2w3ydVA4hD/qLaiFXOzImcTFGKtxeam+S1kHO4yRUPfJwKitSVa8YFtHT8ktukUhVtn8pxWnXc7mNAWz/z76qR14puAq1A0F4eCKbp/EPt8VfKNZy3vShILmbIJvJm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=b6vlhH2y; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="b6vlhH2y"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=61SJjG4DfvMnVp2bdP5k8l8MGNPVIUcfz8ktix2R7dI=; b=b6vlhH
-	2yWlciBzJOGLlQu2ShEZRtLn6f3vxwseDLhOn7kO+KytDnRBFVrAo9UYHUVLo3PN
-	uETy3ClfqY28uXg8u73CYeE55reruvX00bJRskE5zp485rOumrq7jW4/suiQ0VWs
-	Uxrd0MmO+5xGM/Ql2a9NGoyJN02QSNqqjrOHyZn8D/KxglnA9iEP3r0jbjFPJ543
-	qJbbyJypcE0SclY9sKhvHKgnuoX24BOHgXH8RGoxX86N/goKnbfPyZ2vlTZgFat2
-	8b3xTN+k5GhbsiI/7EbW+wFvMssE5fYglZslJOCfi20DevO3a3Z/HsZQKCAnG/NG
-	jNKDu3VGmMqvvQcw==
-Received: (qmail 18275 invoked from network); 5 Aug 2024 23:51:32 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Aug 2024 23:51:32 +0200
-X-UD-Smtp-Session: l3s3148p1@x8AcrvYeAptehhYC
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-media@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 7/8] media: tegra-vde: use 'time_left' variable with wait_for_completion_interruptible_timeout()
-Date: Mon,  5 Aug 2024 23:51:20 +0200
-Message-ID: <20240805215123.3528-8-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240805215123.3528-1-wsa+renesas@sang-engineering.com>
-References: <20240805215123.3528-1-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1722940768; c=relaxed/simple;
+	bh=f3yrW3TgSKGlLolol72ndZGCbsVRSJQaOX3C228bnyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oyadqOJP0sUQxXLnokF6H5UGGTtJCnBZG0aSTJ576ASZbzqe4vO4O9NxP4YybY2qSG5NaJ1THNCmXlocsECdMlGcp75phtRV5ROaP5no8a0lJPGtm0Ajz13niAWxrqUBSzOietCTebrsCnrXaJVK0g09Zv25E1JkCzcBAgLtZ9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E24CFEC;
+	Tue,  6 Aug 2024 03:39:51 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E0FC3F6A8;
+	Tue,  6 Aug 2024 03:39:24 -0700 (PDT)
+Message-ID: <bfd0f7c7-5492-47ec-9c66-4c1ad4cd0e52@arm.com>
+Date: Tue, 6 Aug 2024 11:39:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] iommu: Optimize IOMMU UnMap
+To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20240805084106.214584-1-amhetre@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240805084106.214584-1-amhetre@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-There is a confusing pattern in the kernel to use a variable named
-'timeout' to store the result of
-wait_for_completion_interruptible_timeout() causing patterns like:
+On 05/08/2024 9:41 am, Ashish Mhetre wrote:
+> The current __arm_lpae_unmap() function calls dma_sync() on individual
+> PTEs after clearing them. Overall unmap performance can be improved by
+> around 25% for large buffer sizes by combining the syncs for adjacent
+> leaf entries.
+> Optimize the unmap time by clearing all the leaf entries and issuing a
+> single dma_sync() for them.
+> Below is detailed analysis of average unmap latency(in us) with and
+> without this optimization obtained by running dma_map_benchmark for
+> different buffer sizes.
+> 
+> 		UnMap Latency(us)
+> Size	Without		With		% gain with
+> 	optimiztion	optimization	optimization
+> 
+> 4KB	3		3		0
+> 8KB	4		3.8		5
+> 16KB	6.1		5.4		11.48
+> 32KB	10.2		8.5		16.67
+> 64KB	18.5		14.9		19.46
+> 128KB	35		27.5		21.43
+> 256KB	67.5		52.2		22.67
+> 512KB	127.9		97.2		24.00
+> 1MB	248.6		187.4		24.62
+> 2MB	65.5		65.5		0
+> 4MB	119.2		119		0.17
+> 
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+> Changes in V2:
+> - Updated the commit message to be imperative.
+> - Fixed ptep at incorrect index getting cleared for non-leaf entries.
+> 
+> Changes in V3:
+> - Used loop-local variables and removed redundant function variables.
+> - Added check for zero-sized dma_sync in __arm_lpae_clear_pte().
+> - Merged both patches into this single patch by adding check for a
+>    NULL gather in __arm_lpae_unmap() itself.
 
-        timeout = wait_for_completion_interruptible_timeout(...)
-        if (!timeout) return -ETIMEDOUT;
+Yeah, that's cleaned up really nicely!
 
-with all kinds of permutations. Use 'time_left' as a variable to make the
-code self explaining.
+Other than a nit that the subject ideally wants to be something more 
+accurate like "iommu/io-pgtable-arm: Optimise non-coherent unmap" (sorry 
+I forgot to mention that last time),
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
----
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 
-Change since v1: added tag
-
- drivers/media/platform/nvidia/tegra-vde/h264.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/platform/nvidia/tegra-vde/h264.c b/drivers/media/platform/nvidia/tegra-vde/h264.c
-index d8812fc06c67..0e56a4331b0d 100644
---- a/drivers/media/platform/nvidia/tegra-vde/h264.c
-+++ b/drivers/media/platform/nvidia/tegra-vde/h264.c
-@@ -623,14 +623,14 @@ static int tegra_vde_decode_end(struct tegra_vde *vde)
- 	unsigned int read_bytes, macroblocks_nb;
- 	struct device *dev = vde->dev;
- 	dma_addr_t bsev_ptr;
--	long timeout;
-+	long time_left;
- 	int ret;
- 
--	timeout = wait_for_completion_interruptible_timeout(
-+	time_left = wait_for_completion_interruptible_timeout(
- 			&vde->decode_completion, msecs_to_jiffies(1000));
--	if (timeout < 0) {
--		ret = timeout;
--	} else if (timeout == 0) {
-+	if (time_left < 0) {
-+		ret = time_left;
-+	} else if (time_left == 0) {
- 		bsev_ptr = tegra_vde_readl(vde, vde->bsev, 0x10);
- 		macroblocks_nb = tegra_vde_readl(vde, vde->sxe, 0xC8) & 0x1FFF;
- 		read_bytes = bsev_ptr ? bsev_ptr - vde->bitstream_data_addr : 0;
--- 
-2.43.0
-
+> ---
+>   drivers/iommu/io-pgtable-arm.c | 31 +++++++++++++++++--------------
+>   1 file changed, 17 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> index f5d9fd1f45bf..6fecf3d9fe67 100644
+> --- a/drivers/iommu/io-pgtable-arm.c
+> +++ b/drivers/iommu/io-pgtable-arm.c
+> @@ -274,13 +274,13 @@ static void __arm_lpae_sync_pte(arm_lpae_iopte *ptep, int num_entries,
+>   				   sizeof(*ptep) * num_entries, DMA_TO_DEVICE);
+>   }
+>   
+> -static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg)
+> +static void __arm_lpae_clear_pte(arm_lpae_iopte *ptep, struct io_pgtable_cfg *cfg, int num_entries)
+>   {
+> +	for (int i = 0; i < num_entries; i++)
+> +		ptep[i] = 0;
+>   
+> -	*ptep = 0;
+> -
+> -	if (!cfg->coherent_walk)
+> -		__arm_lpae_sync_pte(ptep, 1, cfg);
+> +	if (!cfg->coherent_walk && num_entries)
+> +		__arm_lpae_sync_pte(ptep, num_entries, cfg);
+>   }
+>   
+>   static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+> @@ -654,26 +654,29 @@ static size_t __arm_lpae_unmap(struct arm_lpae_io_pgtable *data,
+>   		max_entries = ARM_LPAE_PTES_PER_TABLE(data) - unmap_idx_start;
+>   		num_entries = min_t(int, pgcount, max_entries);
+>   
+> -		while (i < num_entries) {
+> -			pte = READ_ONCE(*ptep);
+> +		/* Find and handle non-leaf entries */
+> +		for (i = 0; i < num_entries; i++) {
+> +			pte = READ_ONCE(ptep[i]);
+>   			if (WARN_ON(!pte))
+>   				break;
+>   
+> -			__arm_lpae_clear_pte(ptep, &iop->cfg);
+> -
+>   			if (!iopte_leaf(pte, lvl, iop->fmt)) {
+> +				__arm_lpae_clear_pte(&ptep[i], &iop->cfg, 1);
+> +
+>   				/* Also flush any partial walks */
+>   				io_pgtable_tlb_flush_walk(iop, iova + i * size, size,
+>   							  ARM_LPAE_GRANULE(data));
+>   				__arm_lpae_free_pgtable(data, lvl + 1, iopte_deref(pte, data));
+> -			} else if (!iommu_iotlb_gather_queued(gather)) {
+> -				io_pgtable_tlb_add_page(iop, gather, iova + i * size, size);
+>   			}
+> -
+> -			ptep++;
+> -			i++;
+>   		}
+>   
+> +		/* Clear the remaining entries */
+> +		__arm_lpae_clear_pte(ptep, &iop->cfg, i);
+> +
+> +		if (gather && !iommu_iotlb_gather_queued(gather))
+> +			for (int j = 0; j < i; j++)
+> +				io_pgtable_tlb_add_page(iop, gather, iova + j * size, size);
+> +
+>   		return i * size;
+>   	} else if (iopte_leaf(pte, lvl, iop->fmt)) {
+>   		/*
