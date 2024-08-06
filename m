@@ -1,57 +1,57 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5D21C8228;
-	Tue,  6 Aug 2024 12:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2BA1C8FDE;
+	Tue,  6 Aug 2024 12:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722947981; cv=none; b=U15mPSmNH9IoKfzb3zkE8EbEceUv3lePVVkobpnjSbrpZCBIXuvBRNG8YQsiioE6PKcnraOvF16fnbjji/waO0qkTGcUiji7j9BP9uh+pV+7nbip4FOBJ6jj8AJJ9XCP+LZwU5EfgOS2NGEXcOiqfiKfjadcwU6Jibt0J7nqBPc=
+	t=1722947983; cv=none; b=NfPIA/4MXmYlDiI+EYFxE5QArthoWRRL9ZDqZuEOomQwTptPTBmYIZy0CeQLQA8WdWcua5OxPVKeLXABG1OzQnR2uyCshFMbLtfj/d3G5C8tJD2Dq7BlyzjM4jFViwDO0mAUGHsG5iTp88DrrF3uKkg438sfPUFZVYYECe9JBT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722947981; c=relaxed/simple;
-	bh=QzElBNuj1J8hJv9PDx8DoYO0GVDznjYrxqtE1dbgYko=;
+	s=arc-20240116; t=1722947983; c=relaxed/simple;
+	bh=a87ccjybN006OIWzUmkYRjKHZQrsJkKo90qZcZhqM0E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rLVTYrop82hP84av6GQhWPASXPTIO73W+G2E7RMALq0TjdiWEb3yBdYDrIEkZAbzjT105JTCbIWt1ASD6ajjlZXKa5nBbNJSJBnpQ8WAh3nF/oGYl/SGw9bwDvZA9PS5M8MVNpl0qqgqIDLmHExNTeNYl8Z7B5VS9rEohfXZgcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hkzs/U0q; arc=none smtp.client-ip=209.85.208.176
+	 MIME-Version; b=oLbRnrmU9xDnRCak2XJN4ZBMq7D1Vy9/cRuLcjJQOGXGOs78d/BRKEgHsODD2wbFLts++epp/K82fZ2pRe6i/djuZ9L9ov/VcpFkFzFQ81C8M4wLPtoqWvuQajCymMVP8+V8ZXHNl5Q7Qt6PV6E8BjYGAmEJIWKh9bMXLe/gB7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Le/DFkJ0; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hkzs/U0q"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ef2c56da6cso5770001fa.1;
-        Tue, 06 Aug 2024 05:39:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Le/DFkJ0"
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bb85e90ad5so542264a12.3;
+        Tue, 06 Aug 2024 05:39:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722947977; x=1723552777; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722947979; x=1723552779; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pwWVwEo5Wg0A+BqBi7xOEQ6wmwPi2hgeCgjQEqA9Ros=;
-        b=hkzs/U0q7drFMRw4FxByXK9gqfamIACopIOwfOC3C8f8HGYpFd3FFf/1RazlKhfl6t
-         4Jpmj8ImZHEJuQhnqA75CnymjRS2SU4yJ48XwhHej1k0pt/82ctwz/2LhIcvEf9oWooM
-         ZVRb7agtPfWjXPZHcPGb2gIGTtqYoI7p9x7r35bs79ZdAZPXn/g/G+8C1RpjRu6RwKEE
-         Dk8HykhIJpBFf3D7fiY7o+PNOdb8mqkx7VDMpknx4bTZrNhXkKIhirWzoYxyATCKK0lL
-         392cRcJDi3ZldZ/70jmtZM4i87PaByrv29ehIK3DGOBy2+bEWGsoUeOP2NXmcRYuCDQd
-         Iy3g==
+        bh=PNNj5zWwyuqUYqEW2Z7H/Q+MkhzL3QD4Zwkv3kdfROU=;
+        b=Le/DFkJ0hitFVf9+CvMLNKON0FGzPM9GVCIfBUGoE2K0HND2N2qPuFiHzmOLP/xW1v
+         8pIA9Xxu0m9by1blXjLeD52uc55xGfvQ+/s7SddxgMPtqhRvb+qk7wAhfGsf/cOm5y3Q
+         m17aY44dNF7VG59NFiWXZ7ioAI057yJ5pQAGBdv8AbwTM/80gRr9HgWzLk5CW/Tmap0+
+         VgNqg5jWctWhA+CGgYxcr8GgPmZDrOyBQLVherqLGMW78XjmgBNFM+AHg0LVvCOWnSVc
+         HzL0JBuJwmIRT8xE1QuqqtTJt+pAB4QjGC1ICuW/WmsrPHtoqGh/OU1DA4A2Eiyrfr44
+         SaNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722947977; x=1723552777;
+        d=1e100.net; s=20230601; t=1722947979; x=1723552779;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pwWVwEo5Wg0A+BqBi7xOEQ6wmwPi2hgeCgjQEqA9Ros=;
-        b=WzG1gp5/0nyNMIC+yFcAP5aWsPphiFIqUVjO17/fuc4ZVnyqNrcqUkEjqMZx01rFG1
-         4Elnk2UqTXneDPOpV2ek8Itg0kg8PFMWEOU/VdjFpJDnlBPSHFqTE65k6TwXIBa5xQrk
-         53mnodUpJkj4tpdxe6aJlysGRRv6yYhhTRHpL/2oYV/eM8xXO/fvH+kPauHDqr6KZgTT
-         lyJEGGF/Nb2MgTJp7D7jnd4TUMxLy8AEeBLWRAEq/fiMeYSnNQSjBB78MoZjrtxfET2K
-         PJYDRVXQOYjnZdToy2lJNj9n8BjD5uh8tlAxYXP21Ha2o9ErJNlVwCSXQ1F2aJfGFmcJ
-         1bQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv0qpyIqn+vkxnbR5pCqtqv0X+e1ssKBFHz5H2BFxzUM14eL48jF51528oZIFiLyFU6bkd0NExvS5kGblIRShZrqmjOuzsNx6eHYcnGxBPJkZh7IrNSXFsCEjR5PASeCI2LoN4PilQw3I=
-X-Gm-Message-State: AOJu0YwOZjPbTjGCyoFjrTD02Zo+Z0+83DPOWlRSIfm5kshqFeluxALY
-	g1utWcrg24k4/W1LRbcGzP4PuDLSsPNIRxKtKwHuNGLYRIE8DY/x
-X-Google-Smtp-Source: AGHT+IESEywxb4J+BS2OsvkSe3szVw3MJ5nI9XEFbDksvBUkM+kMTL8eL+OCEo5/0BTO80h0D/3NXw==
-X-Received: by 2002:a05:6512:31ca:b0:52c:e556:b7e4 with SMTP id 2adb3069b0e04-530bb3b14c1mr9344873e87.15.1722947977246;
-        Tue, 06 Aug 2024 05:39:37 -0700 (PDT)
+        bh=PNNj5zWwyuqUYqEW2Z7H/Q+MkhzL3QD4Zwkv3kdfROU=;
+        b=Zq72BEX5MQhw0nxYkmbERLHgIxcS5UKEbvId9hk99eBGBafd8451jANn5tiNikUcIB
+         cPG9L3n+Mcq+6O+a/Fe1uTykEUlrdzCKO2O8kUF1picmOd9Vu2Zw4sBe/4F1WIHH9+/j
+         dLbiJBiqNyycUSej9O4S3nDQGLYkiYVck0F/R3oaelylUFCOQuOxkAPblTpXVFJIyMN7
+         PzXh6hmCa6w9u+RuuiJQIBGJLTvz/tiIC3l9b+++92YEyj9Vzh3x5j/2xyaWQ7l1NWCi
+         z4DWJn9q0ATTWB2Cs8LFV2T9cOq6eQHtGL86uYK1JY8Lw0vubVYeFW0aUgIFko+lUY0h
+         hBsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRL5Iv3C5xHRvyhW8GattHR5TZk3hQImEjYZ1ODx9u1hNgKJw4sYz7ZYwEUWw2cRWAgbApFtDGyBk5oOe2t5u7+dcRJOktnP0mxmlX4vmjStSops4nkI4atYc0byURuq7795IDNGNdvW4=
+X-Gm-Message-State: AOJu0YxXpXYRpf7pJdTumdLu1PsUwl16Ub2vn3+hFUWCSHBs9uHOHAMF
+	OapRBC+yQIuPD53eZN9GaFtJLBT5LrLvbA7OfnpCGbSTV9yk63v+
+X-Google-Smtp-Source: AGHT+IGazPuzzzcNYgBVO3ZuyNhvHVmorxPyS0wSU2pzK+UOMpcooUr2Inj7Pzu03xgZVUy4dLxyKg==
+X-Received: by 2002:a17:906:6a29:b0:a7a:9f0f:ab26 with SMTP id a640c23a62f3a-a7dc4de2f92mr1094802166b.23.1722947979249;
+        Tue, 06 Aug 2024 05:39:39 -0700 (PDT)
 Received: from xeon.. ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d8a4b1sm546428366b.151.2024.08.06.05.39.36
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d8a4b1sm546428366b.151.2024.08.06.05.39.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 05:39:37 -0700 (PDT)
+        Tue, 06 Aug 2024 05:39:38 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -62,9 +62,9 @@ To: Rob Herring <robh+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 08/11] ARM: nvidia: tf701t: bind WIFI SDIO and EMMC
-Date: Tue,  6 Aug 2024 15:39:03 +0300
-Message-ID: <20240806123906.161218-9-clamor95@gmail.com>
+Subject: [PATCH v1 10/11] ARM: nvidia: tf701t: use dedicated backlight regulator
+Date: Tue,  6 Aug 2024 15:39:05 +0300
+Message-ID: <20240806123906.161218-11-clamor95@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240806123906.161218-1-clamor95@gmail.com>
 References: <20240806123906.161218-1-clamor95@gmail.com>
@@ -76,90 +76,28 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add mmc nodes configuration along with WIFI binging to ASUS TF701T device-tree.
+Downstream kernel states that backlight has no actual enable GPIO
+and uses fixed regulator.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../boot/dts/nvidia/tegra114-asus-tf701t.dts  | 57 ++++++++++++++++++-
- 1 file changed, 55 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-index 9596cb495c10..1fca3e2e5aa1 100644
+index eb38c036bcc5..e6d0c834c0a2 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
 +++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-@@ -1529,8 +1529,53 @@ i2s@70080600 {		/* i2s3 */
- 		};
- 	};
+@@ -1630,8 +1630,7 @@ usb-phy@7d008000 {
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
  
-+	brcm_wifi_pwrseq: pwrseq-wifi {
-+		compatible = "mmc-pwrseq-simple";
-+
-+		clocks = <&tegra_pmc TEGRA_PMC_CLK_BLINK>;
-+		clock-names = "ext_clock";
-+
-+		reset-gpios = <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_LOW>;
-+		post-power-on-delay-ms = <300>;
-+		power-off-delay-us = <300>;
-+	};
-+
-+	/* WiFi */
- 	mmc@78000000 {
--		/* WiFi */
-+		status = "okay";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		assigned-clocks = <&tegra_car TEGRA114_CLK_SDMMC1>;
-+		assigned-clock-parents = <&tegra_car TEGRA114_CLK_PLL_P>;
-+		assigned-clock-rates = <82000000>;
-+
-+		max-frequency = <82000000>;
-+		keep-power-in-suspend;
-+		bus-width = <4>;
-+		non-removable;
-+
-+		sd-uhs-ddr50;
-+		mmc-ddr-1_8v;
-+
-+		power-gpios = <&gpio TEGRA_GPIO(CC, 5) GPIO_ACTIVE_HIGH>;
-+
-+		nvidia,default-tap = <0x2>;
-+		nvidia,default-trim = <0x2>;
-+
-+		mmc-pwrseq = <&brcm_wifi_pwrseq>;
-+		vmmc-supply = <&vdd_3v3_com>;
-+		vqmmc-supply = <&vdd_1v8_vio>;
-+
-+		wifi@1 {
-+			compatible = "brcm,bcm4329-fmac";
-+			reg = <1>;
-+
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(U, 5) IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "host-wake";
-+		};
- 	};
+-		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
+-		power-supply = <&vdd_5v0_sys>;
++		power-supply = <&vdd_3v7_bl>;
+ 		pwms = <&pwm 1 1000000>;
  
- 	/* MicroSD card */
-@@ -1547,8 +1592,16 @@ mmc@78000400 {
- 		vqmmc-supply = <&vddio_usd>;
- 	};
- 
-+	/* eMMC */
- 	mmc@78000600 {
--		/* eMMC */
-+		status = "okay";
-+		bus-width = <8>;
-+
-+		non-removable;
-+		mmc-ddr-1_8v;
-+
-+		vmmc-supply = <&vcore_emmc>;
-+		vqmmc-supply = <&vdd_1v8_vio>;
- 	};
- 
- 	usb@7d000000 {
+ 		brightness-levels = <1 255>;
 -- 
 2.43.0
 
