@@ -1,57 +1,57 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2BA1C8FDE;
-	Tue,  6 Aug 2024 12:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A0F1C825C;
+	Tue,  6 Aug 2024 12:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722947983; cv=none; b=NfPIA/4MXmYlDiI+EYFxE5QArthoWRRL9ZDqZuEOomQwTptPTBmYIZy0CeQLQA8WdWcua5OxPVKeLXABG1OzQnR2uyCshFMbLtfj/d3G5C8tJD2Dq7BlyzjM4jFViwDO0mAUGHsG5iTp88DrrF3uKkg438sfPUFZVYYECe9JBT0=
+	t=1722947983; cv=none; b=O/24X+E2l3Uhz3KkcSDsaV1EOQ26Uv8jc5TgnpwHOhoVJ3nMqAR8tEDJ4fvbzgIlax+RolROy50Tl4P9YiDAxIB10evc8AppMIboTg8kmiwM/LP/LTY/IGBhYyXMJ/2hdPNBDsRMXbd4n1frj11e5JYIIhrMTBaF2Kjy+JAVATU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722947983; c=relaxed/simple;
-	bh=a87ccjybN006OIWzUmkYRjKHZQrsJkKo90qZcZhqM0E=;
+	bh=T17tyEhXR87LUZpAQk05MvrMtBbdQ/cRnH7Fo8GgPdI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oLbRnrmU9xDnRCak2XJN4ZBMq7D1Vy9/cRuLcjJQOGXGOs78d/BRKEgHsODD2wbFLts++epp/K82fZ2pRe6i/djuZ9L9ov/VcpFkFzFQ81C8M4wLPtoqWvuQajCymMVP8+V8ZXHNl5Q7Qt6PV6E8BjYGAmEJIWKh9bMXLe/gB7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Le/DFkJ0; arc=none smtp.client-ip=209.85.208.54
+	 MIME-Version; b=hJikrjpxc4Krt7GJugiLgA9BjG3GOT0RMo2f08Y5Z4fqrYkg5RGWq1d+Fes70ciO9/OLdeha9+ugmRxCbrEFK7b7tsmltC+u2ctXMB8pq4M9089emPooN48vM7jQgQ/eBx9g/nkWmzt6o/fwrZzKCM6jI+uUlDpdU9J1Kfv8VpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfKPquyy; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Le/DFkJ0"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5bb85e90ad5so542264a12.3;
-        Tue, 06 Aug 2024 05:39:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfKPquyy"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7ab5fc975dso35916266b.1;
+        Tue, 06 Aug 2024 05:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722947979; x=1723552779; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722947978; x=1723552778; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PNNj5zWwyuqUYqEW2Z7H/Q+MkhzL3QD4Zwkv3kdfROU=;
-        b=Le/DFkJ0hitFVf9+CvMLNKON0FGzPM9GVCIfBUGoE2K0HND2N2qPuFiHzmOLP/xW1v
-         8pIA9Xxu0m9by1blXjLeD52uc55xGfvQ+/s7SddxgMPtqhRvb+qk7wAhfGsf/cOm5y3Q
-         m17aY44dNF7VG59NFiWXZ7ioAI057yJ5pQAGBdv8AbwTM/80gRr9HgWzLk5CW/Tmap0+
-         VgNqg5jWctWhA+CGgYxcr8GgPmZDrOyBQLVherqLGMW78XjmgBNFM+AHg0LVvCOWnSVc
-         HzL0JBuJwmIRT8xE1QuqqtTJt+pAB4QjGC1ICuW/WmsrPHtoqGh/OU1DA4A2Eiyrfr44
-         SaNQ==
+        bh=nImzIFtx5SlH47PsIljCYVUBx0TjZ87TW5WbJvpRjC4=;
+        b=cfKPquyyS7mTWh5PRQv+WwttnfWXJZCDGr6aN0Gs7k5DauQP/493s5/nYCDjotDUPj
+         bDGoDxmy+gyKFLaGipxCgcnY2uHAVNgfNhbYKHYvWsc9SPw3cj6pmdJ5sjagv6M0/Rs4
+         BO0IwYxPE5eHWq9pD11TfvffFZBPNCxV0gQlnM2ct06DYESTITiAdM7hehBQHSpRttyX
+         TGQ2+yJMMvtn79MaAHZqdbS+MFfb2IyW0FCl6H85yITzBA0X1h7C0dzR00QwHwxmhS0o
+         Eer5P4lvguYcgsvPW8UASsY9qpFHJYt7sNbplDcudFDhTf1VUKD/KhH40xt0wbNypMLm
+         etxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722947979; x=1723552779;
+        d=1e100.net; s=20230601; t=1722947978; x=1723552778;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PNNj5zWwyuqUYqEW2Z7H/Q+MkhzL3QD4Zwkv3kdfROU=;
-        b=Zq72BEX5MQhw0nxYkmbERLHgIxcS5UKEbvId9hk99eBGBafd8451jANn5tiNikUcIB
-         cPG9L3n+Mcq+6O+a/Fe1uTykEUlrdzCKO2O8kUF1picmOd9Vu2Zw4sBe/4F1WIHH9+/j
-         dLbiJBiqNyycUSej9O4S3nDQGLYkiYVck0F/R3oaelylUFCOQuOxkAPblTpXVFJIyMN7
-         PzXh6hmCa6w9u+RuuiJQIBGJLTvz/tiIC3l9b+++92YEyj9Vzh3x5j/2xyaWQ7l1NWCi
-         z4DWJn9q0ATTWB2Cs8LFV2T9cOq6eQHtGL86uYK1JY8Lw0vubVYeFW0aUgIFko+lUY0h
-         hBsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRL5Iv3C5xHRvyhW8GattHR5TZk3hQImEjYZ1ODx9u1hNgKJw4sYz7ZYwEUWw2cRWAgbApFtDGyBk5oOe2t5u7+dcRJOktnP0mxmlX4vmjStSops4nkI4atYc0byURuq7795IDNGNdvW4=
-X-Gm-Message-State: AOJu0YxXpXYRpf7pJdTumdLu1PsUwl16Ub2vn3+hFUWCSHBs9uHOHAMF
-	OapRBC+yQIuPD53eZN9GaFtJLBT5LrLvbA7OfnpCGbSTV9yk63v+
-X-Google-Smtp-Source: AGHT+IGazPuzzzcNYgBVO3ZuyNhvHVmorxPyS0wSU2pzK+UOMpcooUr2Inj7Pzu03xgZVUy4dLxyKg==
-X-Received: by 2002:a17:906:6a29:b0:a7a:9f0f:ab26 with SMTP id a640c23a62f3a-a7dc4de2f92mr1094802166b.23.1722947979249;
-        Tue, 06 Aug 2024 05:39:39 -0700 (PDT)
-Received: from xeon.. ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d8a4b1sm546428366b.151.2024.08.06.05.39.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=nImzIFtx5SlH47PsIljCYVUBx0TjZ87TW5WbJvpRjC4=;
+        b=dDsyjlqbymhpK1KY+QT4MaSNjWNiEFMA5d+LU7xrRYPTPpbZ62kdSQm+ijcoiR18VU
+         +Jn3s/ihGgcGEMV8O/qYTeuoY5gZTmQ15V1SUbHRPuZjv0EODsos+jSOUKkQv0NjZL1o
+         hhj5eLU+VoDN9ASTB1bXh1ggHK4zirMhpK1jfizdkC9FoVKQkN1e18TVe3pgXU8PFq4h
+         8uiw9WsOi3vLdYbEvhcmkuXAdbmwez4DIQf+CsuAWzUO+aLBchDGPKJxdqWx5dEJ4J1U
+         Tn2iB+d0VUCatnIWL6wZI59BSf0x6dUE9sktYXImqCKjK227uIgxZPPwoTPtRY/Tbq7z
+         OBwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3WtnSG7uEihLt6cvU5k3iWETvHN37xsWEhhv6N27a9R0vW57ZaqJrsO+jfrz2NoPGZu3pyCWQo3H4sHL+b4rLRdoKrpfIYdrYc8g699rNykx96sDVfmZT1TThwtth9WjFdKt9HN6m4SQ=
+X-Gm-Message-State: AOJu0Yzx4muMKXlwiznFA6/ssG89WHztuf8Dv/EqEjwYOEnSx9Ie2iDS
+	UGDDjM+tQvBgVjRP3+3wkEc/2xADONlxYnljYcQqRFf4rR+MowL4
+X-Google-Smtp-Source: AGHT+IEPDyIWBGRteePQrRqq5eQu47iDOoxVZvTe5q/jONVeoncbWcdat+eoE/UgMIfadhyNcZ8wRw==
+X-Received: by 2002:a17:907:60ce:b0:a7a:ab8a:384 with SMTP id a640c23a62f3a-a7dc50a460emr1085482566b.64.1722947978210;
         Tue, 06 Aug 2024 05:39:38 -0700 (PDT)
+Received: from xeon.. ([188.163.112.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d8a4b1sm546428366b.151.2024.08.06.05.39.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 05:39:37 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -62,9 +62,9 @@ To: Rob Herring <robh+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 10/11] ARM: nvidia: tf701t: use dedicated backlight regulator
-Date: Tue,  6 Aug 2024 15:39:05 +0300
-Message-ID: <20240806123906.161218-11-clamor95@gmail.com>
+Subject: [PATCH v1 09/11] ARM: nvidia: tf701t: re-group GPIO keys
+Date: Tue,  6 Aug 2024 15:39:04 +0300
+Message-ID: <20240806123906.161218-10-clamor95@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240806123906.161218-1-clamor95@gmail.com>
 References: <20240806123906.161218-1-clamor95@gmail.com>
@@ -76,28 +76,71 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Downstream kernel states that backlight has no actual enable GPIO
-and uses fixed regulator.
+Group GPIO keys into keys and switches.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ .../boot/dts/nvidia/tegra114-asus-tf701t.dts  | 20 +++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-index eb38c036bcc5..e6d0c834c0a2 100644
+index 1fca3e2e5aa1..eb38c036bcc5 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
 +++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-@@ -1630,8 +1630,7 @@ usb-phy@7d008000 {
- 	backlight: backlight {
- 		compatible = "pwm-backlight";
+@@ -1661,11 +1661,9 @@ connector_in: endpoint {
+ 		};
+ 	};
  
--		enable-gpios = <&gpio TEGRA_GPIO(H, 2) GPIO_ACTIVE_HIGH>;
--		power-supply = <&vdd_5v0_sys>;
-+		power-supply = <&vdd_3v7_bl>;
- 		pwms = <&pwm 1 1000000>;
+-	gpio-hall-sensor {
++	extcon-keys {
+ 		compatible = "gpio-keys";
  
- 		brightness-levels = <1 255>;
+-		label = "GPIO Hall Effect Sensor";
+-
+ 		switch-hall-sensor {
+ 			label = "Hall Effect Sensor";
+ 			gpios = <&gpio TEGRA_GPIO(O, 5) GPIO_ACTIVE_LOW>;
+@@ -1674,14 +1672,20 @@ switch-hall-sensor {
+ 			linux,can-disable;
+ 			wakeup-source;
+ 		};
++
++		switch-lineout-detect {
++			label = "Audio dock line-out detect";
++			gpios = <&gpio TEGRA_GPIO(X, 5) GPIO_ACTIVE_LOW>;
++			linux,input-type = <EV_SW>;
++			linux,code = <SW_LINEOUT_INSERT>;
++			debounce-interval = <10>;
++		};
+ 	};
+ 
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 
+-		label = "GPIO Buttons";
+-
+-		button-power {
++		key-power {
+ 			label = "Power";
+ 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+@@ -1689,14 +1693,14 @@ button-power {
+ 			wakeup-source;
+ 		};
+ 
+-		button-volume-down {
++		key-volume-down {
+ 			label = "Volume Down";
+ 			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_VOLUMEDOWN>;
+ 			debounce-interval = <10>;
+ 		};
+ 
+-		button-volume-up {
++		key-volume-up {
+ 			label = "Volume Up";
+ 			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_VOLUMEUP>;
 -- 
 2.43.0
 
