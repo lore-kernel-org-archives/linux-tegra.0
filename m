@@ -1,57 +1,57 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A0F1C825C;
-	Tue,  6 Aug 2024 12:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AD41C9EA5;
+	Tue,  6 Aug 2024 12:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722947983; cv=none; b=O/24X+E2l3Uhz3KkcSDsaV1EOQ26Uv8jc5TgnpwHOhoVJ3nMqAR8tEDJ4fvbzgIlax+RolROy50Tl4P9YiDAxIB10evc8AppMIboTg8kmiwM/LP/LTY/IGBhYyXMJ/2hdPNBDsRMXbd4n1frj11e5JYIIhrMTBaF2Kjy+JAVATU=
+	t=1722947984; cv=none; b=mS+mzpOf/ewB1UsxX0Qg0UiK9zt+IJIdHeMBMSSGv8qUo+7/OxT2FKW34P07FaCa0IIGzQX6PJ7VyJ3qXwJqIW/y5DitmWmaKzSU4uSpPn6lgglBb4eSb2acpcveTzIcOeNTUxRvayAVlMyelXFHMcn8pYEuHDssNJRBD9JiwUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722947983; c=relaxed/simple;
-	bh=T17tyEhXR87LUZpAQk05MvrMtBbdQ/cRnH7Fo8GgPdI=;
+	s=arc-20240116; t=1722947984; c=relaxed/simple;
+	bh=yPMDwHtB6xyMhjDEG6GPfVut3vH1K2hQubaFGpmcOJ0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hJikrjpxc4Krt7GJugiLgA9BjG3GOT0RMo2f08Y5Z4fqrYkg5RGWq1d+Fes70ciO9/OLdeha9+ugmRxCbrEFK7b7tsmltC+u2ctXMB8pq4M9089emPooN48vM7jQgQ/eBx9g/nkWmzt6o/fwrZzKCM6jI+uUlDpdU9J1Kfv8VpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfKPquyy; arc=none smtp.client-ip=209.85.218.45
+	 MIME-Version; b=JVXFrGiRRnzeYt39Uua+zVikIvCtYIdpD6e+TQPWBmqiNsjE5iGIIuTokxJULcHnr/cN19nlJmVfIyRmjK/UC57vNj1OLSgMrSWKiNdN7JEZ6RUKfnnq8by6SgqDD5WS/L8iR91Fog49dFYSl/yeTyaiCR1moTrepokH4GAkEmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQ8SPXXw; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfKPquyy"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7ab5fc975dso35916266b.1;
-        Tue, 06 Aug 2024 05:39:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ8SPXXw"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ef2d96164aso6597761fa.3;
+        Tue, 06 Aug 2024 05:39:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722947978; x=1723552778; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722947981; x=1723552781; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nImzIFtx5SlH47PsIljCYVUBx0TjZ87TW5WbJvpRjC4=;
-        b=cfKPquyyS7mTWh5PRQv+WwttnfWXJZCDGr6aN0Gs7k5DauQP/493s5/nYCDjotDUPj
-         bDGoDxmy+gyKFLaGipxCgcnY2uHAVNgfNhbYKHYvWsc9SPw3cj6pmdJ5sjagv6M0/Rs4
-         BO0IwYxPE5eHWq9pD11TfvffFZBPNCxV0gQlnM2ct06DYESTITiAdM7hehBQHSpRttyX
-         TGQ2+yJMMvtn79MaAHZqdbS+MFfb2IyW0FCl6H85yITzBA0X1h7C0dzR00QwHwxmhS0o
-         Eer5P4lvguYcgsvPW8UASsY9qpFHJYt7sNbplDcudFDhTf1VUKD/KhH40xt0wbNypMLm
-         etxg==
+        bh=ch4sivXa7WbxCan6nymUmIb/9rywiOLv8it/SNUMy/4=;
+        b=UQ8SPXXwgLsp+R+KrsPzR11KmCxF7fPJS1X3651Y2B9Gas888EONF/TThpJ7lzU0Fb
+         irlXNFqwx4+G7F6xXHTmkJdN1C9G7wE6+tjFYKJkzYwZpn+i5aKpWKgjF+cjUdgk0BXY
+         d46rG2rMlH/xlvEXD2Fpool+LxKDtldDm56L2GG/mLaCm/XKqyAO6aRx4MHNV1jryVOi
+         f+Qf+DDnMOs+eJUNoimqTH9UwLoVtgHQZ3hc+DSFGfZ73e0y6lIO90+KjZgRL/o7Ky6b
+         H3c4npxAMIZ+uufxbsjZvLQlFkcFYsVFjRuxoiXawfMrs2cIGqOJvIAVFYUlAnC4wrdw
+         eR9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722947978; x=1723552778;
+        d=1e100.net; s=20230601; t=1722947981; x=1723552781;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nImzIFtx5SlH47PsIljCYVUBx0TjZ87TW5WbJvpRjC4=;
-        b=dDsyjlqbymhpK1KY+QT4MaSNjWNiEFMA5d+LU7xrRYPTPpbZ62kdSQm+ijcoiR18VU
-         +Jn3s/ihGgcGEMV8O/qYTeuoY5gZTmQ15V1SUbHRPuZjv0EODsos+jSOUKkQv0NjZL1o
-         hhj5eLU+VoDN9ASTB1bXh1ggHK4zirMhpK1jfizdkC9FoVKQkN1e18TVe3pgXU8PFq4h
-         8uiw9WsOi3vLdYbEvhcmkuXAdbmwez4DIQf+CsuAWzUO+aLBchDGPKJxdqWx5dEJ4J1U
-         Tn2iB+d0VUCatnIWL6wZI59BSf0x6dUE9sktYXImqCKjK227uIgxZPPwoTPtRY/Tbq7z
-         OBwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3WtnSG7uEihLt6cvU5k3iWETvHN37xsWEhhv6N27a9R0vW57ZaqJrsO+jfrz2NoPGZu3pyCWQo3H4sHL+b4rLRdoKrpfIYdrYc8g699rNykx96sDVfmZT1TThwtth9WjFdKt9HN6m4SQ=
-X-Gm-Message-State: AOJu0Yzx4muMKXlwiznFA6/ssG89WHztuf8Dv/EqEjwYOEnSx9Ie2iDS
-	UGDDjM+tQvBgVjRP3+3wkEc/2xADONlxYnljYcQqRFf4rR+MowL4
-X-Google-Smtp-Source: AGHT+IEPDyIWBGRteePQrRqq5eQu47iDOoxVZvTe5q/jONVeoncbWcdat+eoE/UgMIfadhyNcZ8wRw==
-X-Received: by 2002:a17:907:60ce:b0:a7a:ab8a:384 with SMTP id a640c23a62f3a-a7dc50a460emr1085482566b.64.1722947978210;
-        Tue, 06 Aug 2024 05:39:38 -0700 (PDT)
+        bh=ch4sivXa7WbxCan6nymUmIb/9rywiOLv8it/SNUMy/4=;
+        b=XSIdgswj2g39ukjD4FuwZBqP58tpExQ3YD60dqgMxG/iFrIwCq1a6FDIiLlGxKr7Nd
+         Q+uVVWDVV0n8Dymwmi07FBXHroeokC060enHHOWSUpewatg0u9ztR/I+kX4eZwchFSms
+         uMZ1v6kax5ZXR0m9boWz2goKYS6jDucFAcpyO7ershMpHCeDf4D3wP0B9uOZjbDVlGSx
+         jDe5nIrwaZU4oSvLhXoWJ4DyWMfu18BttUlVJxI/mjuS+Yjrvf4y9wLhir/3TCtzOZVT
+         4HfnVl47jdR+PZTWAd/Iop0jLm0561U9om4fXpfqDQ90EqH9diSeSr5JZW4v+tSeBFoB
+         6Ydg==
+X-Forwarded-Encrypted: i=1; AJvYcCUraeD4He6fxdhFbsZs/VSpGXBp9jgRJUvm3kzBqrZOXPM1iy3KQ9NsU9PlnTzEe14M6C391L0+eZiiMgCWO4jJaR9Ngcer5pL/d6g0clIXwnvY9N27Zu0gt6k6LsZ+XhrW8UXWfW1yA28=
+X-Gm-Message-State: AOJu0YwhgkztFAhZ8fhffhjBZff6iG9aL5KmP+cKz72kCAQGUiAajXtz
+	eX8yxdokc3ww1CzxdQN85iA2gmF3zaAC4Jw3M1U+q231+oxQOYvd
+X-Google-Smtp-Source: AGHT+IHGOafdBabYlP2c2x+Cz7k9sR9kUTAZvDXhK09l1VfhYbB9xjfqGlqK69PXXXc7UJFrWzQktg==
+X-Received: by 2002:a05:6512:3091:b0:530:aeea:27e1 with SMTP id 2adb3069b0e04-530bb39b760mr9505743e87.50.1722947980138;
+        Tue, 06 Aug 2024 05:39:40 -0700 (PDT)
 Received: from xeon.. ([188.163.112.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d8a4b1sm546428366b.151.2024.08.06.05.39.37
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d8a4b1sm546428366b.151.2024.08.06.05.39.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Aug 2024 05:39:37 -0700 (PDT)
+        Tue, 06 Aug 2024 05:39:39 -0700 (PDT)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
@@ -62,9 +62,9 @@ To: Rob Herring <robh+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 09/11] ARM: nvidia: tf701t: re-group GPIO keys
-Date: Tue,  6 Aug 2024 15:39:04 +0300
-Message-ID: <20240806123906.161218-10-clamor95@gmail.com>
+Subject: [PATCH v1 11/11] ARM: nvidia: tf701t: configure USB
+Date: Tue,  6 Aug 2024 15:39:06 +0300
+Message-ID: <20240806123906.161218-12-clamor95@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240806123906.161218-1-clamor95@gmail.com>
 References: <20240806123906.161218-1-clamor95@gmail.com>
@@ -76,71 +76,45 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Group GPIO keys into keys and switches.
+Fixes issue when resuming after suspend made USB in peripheral
+mode inaccessible.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- .../boot/dts/nvidia/tegra114-asus-tf701t.dts  | 20 +++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-index 1fca3e2e5aa1..eb38c036bcc5 100644
+index e6d0c834c0a2..fbe7eb1a5753 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
 +++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-@@ -1661,11 +1661,9 @@ connector_in: endpoint {
- 		};
+@@ -1604,22 +1604,22 @@ mmc@78000600 {
+ 		vqmmc-supply = <&vdd_1v8_vio>;
  	};
  
--	gpio-hall-sensor {
-+	extcon-keys {
- 		compatible = "gpio-keys";
- 
--		label = "GPIO Hall Effect Sensor";
++	/* Peripheral USB via ASUS connector */
+ 	usb@7d000000 {
+ 		compatible = "nvidia,tegra114-udc";
+ 		status = "okay";
+ 		dr_mode = "peripheral";
 -
- 		switch-hall-sensor {
- 			label = "Hall Effect Sensor";
- 			gpios = <&gpio TEGRA_GPIO(O, 5) GPIO_ACTIVE_LOW>;
-@@ -1674,14 +1672,20 @@ switch-hall-sensor {
- 			linux,can-disable;
- 			wakeup-source;
- 		};
-+
-+		switch-lineout-detect {
-+			label = "Audio dock line-out detect";
-+			gpios = <&gpio TEGRA_GPIO(X, 5) GPIO_ACTIVE_LOW>;
-+			linux,input-type = <EV_SW>;
-+			linux,code = <SW_LINEOUT_INSERT>;
-+			debounce-interval = <10>;
-+		};
+-		/* Peripheral USB via ASUS connector */
  	};
  
- 	gpio-keys {
- 		compatible = "gpio-keys";
+ 	usb-phy@7d000000 {
+ 		status = "okay";
++		dr_mode = "peripheral";
++		vbus-supply = <&avdd_usb>;
+ 	};
  
--		label = "GPIO Buttons";
++	/* Host USB via dock */
+ 	usb@7d008000 {
+ 		status = "okay";
 -
--		button-power {
-+		key-power {
- 			label = "Power";
- 			gpios = <&gpio TEGRA_GPIO(Q, 0) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
-@@ -1689,14 +1693,14 @@ button-power {
- 			wakeup-source;
- 		};
+-		/* Host USB via dock */
+ 	};
  
--		button-volume-down {
-+		key-volume-down {
- 			label = "Volume Down";
- 			gpios = <&gpio TEGRA_GPIO(R, 1) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEDOWN>;
- 			debounce-interval = <10>;
- 		};
- 
--		button-volume-up {
-+		key-volume-up {
- 			label = "Volume Up";
- 			gpios = <&gpio TEGRA_GPIO(R, 2) GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_VOLUMEUP>;
+ 	usb-phy@7d008000 {
 -- 
 2.43.0
 
