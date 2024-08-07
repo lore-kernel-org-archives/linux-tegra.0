@@ -1,21 +1,21 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5C3155C83;
-	Wed,  7 Aug 2024 13:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0D81CCB32;
+	Wed,  7 Aug 2024 13:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723036114; cv=none; b=HDl1kI17VxJ4vSkWG8HHczdOcSbnQPS0DYE+FebnPaJ1qTDJZsjRFskoc+d6JGfWkD2bDoMqSnZl0y+3trzkZsFZT8/HwNnvT3VGMl4OPtmrnX20HRRf1K2OixbpuryMKGeDgFmozWoeqiQPYRR4vIa6WyVVo9hGOhLrtV/28zI=
+	t=1723036575; cv=none; b=Uv08iSVi0w6MRNvZgu8rxTp7UEDcUWk75+NyzwtveeXkSNujN4XzzXrO33XD5nAo5nCCK3yDFPSUn7b88iDFEJU56tiWD9HBKYu+jZiVjvMBXff5lYwP2tTtqlNPq8jMI8dLKr+/01tTFHmfyALECzWQep+S4/gYkTMajz4CkKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723036114; c=relaxed/simple;
-	bh=e77/7qyKarj7g5giX80VLzGThPlXESjT8FkAi9iPS20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GdxuCvbdtOhw5gPSgKNQ6wEzlGAvou24yljH2V8ixy4hRsNJOjyWKIjMYerH+jdCSC4xVm6UzWDLhpgosDxHln+sBblJNmdHbbdLzoDCaPfgIozcxPz9qzgAhA90zzcFKrHwHRUDokOZuRyaSnGAkJ8fmWq8d2LOBj3F4e79n4A=
+	s=arc-20240116; t=1723036575; c=relaxed/simple;
+	bh=2b7UoVMEw/2iOgIvuoItCcPxYLZdnKLMOVS23cbv/yI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=UnXURKCPJm2hC1GIoENEYxcgNDK4z4Mk/MR/rolkL2sUreBVGwfGUHsOEgjMcTRqR2i1jm4ra5dJkzEg2ARFoCWn/oaX1DwFsFxl6pUuEmgDwa/JRYzlanco+jHTPdICn83Q3PhmAr+TrKzzm4PwNdPi4D+9zcjMkn5p6TMIru0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C4EFC4AF0B;
-	Wed,  7 Aug 2024 13:08:29 +0000 (UTC)
-Message-ID: <2f3f3b80-65a6-40b6-9450-41e1313167f0@xs4all.nl>
-Date: Wed, 7 Aug 2024 15:08:28 +0200
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D790C32782;
+	Wed,  7 Aug 2024 13:16:11 +0000 (UTC)
+Message-ID: <05f900b2-1a94-41ed-b365-65b83b58d329@xs4all.nl>
+Date: Wed, 7 Aug 2024 15:16:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -25,6 +25,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2 0/8] media: use 'time_left' instead of 'timeout' with
  wait_*() functions
+From: Hans Verkuil <hverkuil@xs4all.nl>
 To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
  linux-media@vger.kernel.org
 Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
@@ -42,8 +43,8 @@ Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
  Sylwester Nawrocki <s.nawrocki@samsung.com>,
  Thierry Reding <thierry.reding@gmail.com>
 References: <20240805215123.3528-1-wsa+renesas@sang-engineering.com>
+ <2f3f3b80-65a6-40b6-9450-41e1313167f0@xs4all.nl>
 Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
 Autocrypt: addr=hverkuil@xs4all.nl; keydata=
  xsFNBFQ84W0BEAC7EF1iL4s3tY8cRTVkJT/297h0Hz0ypA+ByVM4CdU9sN6ua/YoFlr9k0K4
  BFUlg7JzJoUuRbKxkYb8mmqOe722j7N3HO8+ofnio5cAP5W0WwDpM0kM84BeHU0aPSTsWiGR
@@ -87,70 +88,83 @@ Autocrypt: addr=hverkuil@xs4all.nl; keydata=
  gYmkrmv0duG1FStpY+IIQn1TOkuXrciTVfZY1cZD0aVxwlxXBnUNZZNslldvXFtndxR0SFat
  sflovhDxKyhFwXOP0Rv8H378/+14TaykknRBIKEc0+lcr+EMOSUR5eg4aURb8Gc3Uc7fgQ6q
  UssTXzHPyj1hAyDpfu8DzAwlh4kKFTodxSsKAjI45SLjadSc94/5Gy8645Y1KgBzBPTH7Q==
-In-Reply-To: <20240805215123.3528-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <2f3f3b80-65a6-40b6-9450-41e1313167f0@xs4all.nl>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Wolfram,
+On 07/08/2024 15:08, Hans Verkuil wrote:
+> Hi Wolfram,
+> 
+> On 05/08/2024 23:51, Wolfram Sang wrote:
+>> Changes since v1:
+>> * fixed another occasion in the allegro driver (Thanks, Michael)
+>> * added tags (Thanks Ismael and Thierry)
+>> * rebased to 6.11-rc1
+> 
+> Can you resend this series? This patch series wasn't picked up by our patchwork,
+> probably due to a full filesystem.
 
-On 05/08/2024 23:51, Wolfram Sang wrote:
-> Changes since v1:
-> * fixed another occasion in the allegro driver (Thanks, Michael)
-> * added tags (Thanks Ismael and Thierry)
-> * rebased to 6.11-rc1
+Actually, it's better to wait a bit: I now see that patchwork hasn't accepted new
+patches since August 5th, so until that is fixed, there is no point in resending...
 
-Can you resend this series? This patch series wasn't picked up by our patchwork,
-probably due to a full filesystem.
+I'll let you know when it is OK again.
 
-Apologies for the inconvenience.
+> Apologies for the inconvenience.
 
-Regards,
+Even more apologies,
 
 	Hans
 
 > 
-> There is a confusing pattern in the kernel to use a variable named 'timeout' to
-> store the result of wait_*() functions causing patterns like:
+> Regards,
 > 
->         timeout = wait_for_completion_timeout(...)
->         if (!timeout) return -ETIMEDOUT;
+> 	Hans
 > 
-> with all kinds of permutations. Use 'time_left' as a variable to make the code
-> obvious and self explaining. Also correct the type of the variable if
-> the original code got it wrong.
+>>
+>> There is a confusing pattern in the kernel to use a variable named 'timeout' to
+>> store the result of wait_*() functions causing patterns like:
+>>
+>>         timeout = wait_for_completion_timeout(...)
+>>         if (!timeout) return -ETIMEDOUT;
+>>
+>> with all kinds of permutations. Use 'time_left' as a variable to make the code
+>> obvious and self explaining. Also correct the type of the variable if
+>> the original code got it wrong.
+>>
+>> This is part of a tree-wide series. The rest of the patches can be found here:
+>>
+>> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/time_left
+>>
+>> Because these patches are generated, I audit them before sending. This is why I
+>> will send series step by step. Build bot is happy with these patches, though.
+>> No functional changes intended.
+>>
+>>
+>> Wolfram Sang (8):
+>>   media: allegro: use 'time_left' variable with
+>>     wait_for_completion_timeout()
+>>   media: atmel-isi: use 'time_left' variable with
+>>     wait_for_completion_timeout()
+>>   media: bdisp: use 'time_left' variable with wait_event_timeout()
+>>   media: fimc-is: use 'time_left' variable with wait_event_timeout()
+>>   media: platform: exynos-gsc: use 'time_left' variable with
+>>     wait_event_timeout()
+>>   media: solo6x10: use 'time_left' variable with
+>>     wait_for_completion_timeout()
+>>   media: tegra-vde: use 'time_left' variable with
+>>     wait_for_completion_interruptible_timeout()
+>>   media: ti: cal: use 'time_left' variable with wait_event_timeout()
+>>
+>>  drivers/media/pci/solo6x10/solo6x10-p2m.c     |  8 +++----
+>>  .../media/platform/allegro-dvt/allegro-core.c | 24 +++++++++----------
+>>  drivers/media/platform/atmel/atmel-isi.c      |  8 +++----
+>>  .../media/platform/nvidia/tegra-vde/h264.c    | 10 ++++----
+>>  .../platform/samsung/exynos-gsc/gsc-core.c    | 10 ++++----
+>>  .../platform/samsung/exynos4-is/fimc-core.c   | 10 ++++----
+>>  .../media/platform/st/sti/bdisp/bdisp-v4l2.c  | 10 ++++----
+>>  drivers/media/platform/ti/cal/cal.c           |  8 +++----
+>>  8 files changed, 44 insertions(+), 44 deletions(-)
+>>
 > 
-> This is part of a tree-wide series. The rest of the patches can be found here:
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/time_left
-> 
-> Because these patches are generated, I audit them before sending. This is why I
-> will send series step by step. Build bot is happy with these patches, though.
-> No functional changes intended.
-> 
-> 
-> Wolfram Sang (8):
->   media: allegro: use 'time_left' variable with
->     wait_for_completion_timeout()
->   media: atmel-isi: use 'time_left' variable with
->     wait_for_completion_timeout()
->   media: bdisp: use 'time_left' variable with wait_event_timeout()
->   media: fimc-is: use 'time_left' variable with wait_event_timeout()
->   media: platform: exynos-gsc: use 'time_left' variable with
->     wait_event_timeout()
->   media: solo6x10: use 'time_left' variable with
->     wait_for_completion_timeout()
->   media: tegra-vde: use 'time_left' variable with
->     wait_for_completion_interruptible_timeout()
->   media: ti: cal: use 'time_left' variable with wait_event_timeout()
-> 
->  drivers/media/pci/solo6x10/solo6x10-p2m.c     |  8 +++----
->  .../media/platform/allegro-dvt/allegro-core.c | 24 +++++++++----------
->  drivers/media/platform/atmel/atmel-isi.c      |  8 +++----
->  .../media/platform/nvidia/tegra-vde/h264.c    | 10 ++++----
->  .../platform/samsung/exynos-gsc/gsc-core.c    | 10 ++++----
->  .../platform/samsung/exynos4-is/fimc-core.c   | 10 ++++----
->  .../media/platform/st/sti/bdisp/bdisp-v4l2.c  | 10 ++++----
->  drivers/media/platform/ti/cal/cal.c           |  8 +++----
->  8 files changed, 44 insertions(+), 44 deletions(-)
 > 
 
