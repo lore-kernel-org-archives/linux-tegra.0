@@ -1,144 +1,269 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2052.outbound.protection.outlook.com [40.107.236.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389121D54C4;
-	Tue,  6 Aug 2024 13:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722951826; cv=none; b=NdwjUCNy++F4fzkzZOs/I6hEn0GivXTK4ZDtRx9MAqj2lM2LQZrBoSCeIqN+O62pkMGeBPmnlTsihn8KjMXcKh/5OFMg8VW6c+IJABRHybwuZsK+pNRsTwVq+TP2/oAsRlcKelxm5bMbD74wH95xTnl0nm51DjLcwNpcmlShYmg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722951826; c=relaxed/simple;
-	bh=e9Cji46MWQ7EWSQqMp1wyVoIkqIoBXEY9CBa4vv+zeA=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=S6gogM/aoDbIQel5KnggihWkxi99AuAfoCxRU0CHAgrQ1jgZKaDT+8VlbX+/WCb8qsTOKmp7TCPPpzhnY2OfhSdbS7JAnBN48uZNwHdhqiMRQfJ2mcABahSUEVVa0nyYZYQJbSib99kn9bMa+mzjvhmypxKB3dO/EhitL9rTjkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rq0SS4+v; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67EF5FB95;
+	Wed,  7 Aug 2024 02:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722996740; cv=fail; b=oLNES2B6GHTGBkehYWFO9RG4AYnsVhigjINlzEHKdI8VvcaA77PQLt0DxHiUjXVSVasMDOacepFMFNJfMi6TGnOyQFJnj8rLJI6CBOylsot+fvPVKzZmGSqTdyBFBw0JIo+nMAUorij+eoKhhjuj9Avr4yoS6bLm+DMz0pN8/+8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722996740; c=relaxed/simple;
+	bh=ioS8E6CBw9x8q6KLoJ/Myv+kkMnoQHzGrmo2dQv73pg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uHNcfBONUaiovyCgizwLdSsWt7G1DNoVV7npub/Zd+SV88gOUz/iuxjvjXj+s/hZi+yoJLM/zfW8r99+hqJvW6WYZJZprvIPLnx7yFvMdAVeNe5KbMkObgmi2atSsXRle2Wr41iEvc1wI+DkV6vdI0C4k7pFfWzrX8iIofB1WbE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GjO9UE1T; arc=fail smtp.client-ip=40.107.236.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rq0SS4+v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8408C4AF11;
-	Tue,  6 Aug 2024 13:43:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722951826;
-	bh=e9Cji46MWQ7EWSQqMp1wyVoIkqIoBXEY9CBa4vv+zeA=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=rq0SS4+vhHI4QOL7H79edwDK4WYuN5vYqw3exlD76hp/D8RU5xWph/5lqgI4PKyLz
-	 t9/+7OxwX9l1hGgIPLuNglSN6ZZ+odJO1ADQcvSzA5g7dfnCKcN8mKYIK65Rv77NdA
-	 4IswFwafAeqIgaN43tJcEe1dQ9oXlbUfaoiA1vFMjNOab9xIsoIp038UblRMf/hSRe
-	 faAnc3a5+RNem0hhKjJyY9gOYyk/zbm0QLP8U0MPwjlbKV9SG5X9rqASQFYkE2re+Q
-	 +DTabbGD5laQys/YlQYBReT45ATW3QP67+BasttE/BV93XecdQnOUcrbA9cF0NXJpy
-	 /ujHEyY2WFP8Q==
-Date: Tue, 06 Aug 2024 07:43:44 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GjO9UE1T"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LZm1XnWrC8pDOZeRcUGcD/m3BpCj2znbkDiQIwxuRJElXqwWvtS1Xhrw5Ms7OGAnTqCjO4Co8LJyww/zd3YFoQCDLt7HWxciq8GlBl687vF4NMWO8Oy7396ZzuWx/14ObrMzR2IAM5GsPMibGdVtG6iCr5En1I73xwZUYHdwMOSQAyEB5yG8NvGX+PFLiYxv/S0wjprZTvHh6i8RPBjBAaNfgf/v+IcE8NelM35aZGoVY00I3uzGGoUkbkWWH8E6F6Wno84NhR/SNMkyuV3wnk5GvMO7W+MlkLaUF1xkcztRJeW8OCILIbrRXqR9xP+6GrUqCrypry0lli7j/z4exA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ME3lqSijuKjY6D5f/l41jzaeOlrGkcM+XCKih3NxBdI=;
+ b=cO15yDB1JT+biPSDKKBMF+ExaF21egg6wgf1rcmnBJ31rb4N8un4CPLxhXoEjykL7cMIw0XXsHSHFJKyLpTVGbMZJMPFWi1WA3Kz2DI/nscSWdefQ6MKCAbiIub1Nl3ZGPT/uK3FxL05zFXXTChptl+GugNLGL/PzEzjl0AsGcaAsqoPV3dyAH5F0IN6crerSqQzygBJtbz21MUUiKLTG7C8j7qER/k9R+3V49hsuAXgqG8nuueJnjy0UwCL0hpyXv7cIablW95nPSxQ95FWre6nLFXIH1ZHPud5wLv3m9prCWzy4jJj5LT4ZT0Xw2I3AAxeV4FH6jVZEbdMFd+jMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ME3lqSijuKjY6D5f/l41jzaeOlrGkcM+XCKih3NxBdI=;
+ b=GjO9UE1TdZ+djsCqhCuQwPUyVgceMfw4qTeSMJLvPISNfDgd1NkgIOfJ7F7+VDiy8Uj9SCdcxyUQeMHiy6CY3irMjpL66K1CUDM1ZDRq6wtRlx1CCTOML6JH98BBEj84WF5l0Tj53EfE/uOH0jJC5PBz3/Dnp6WKbpZhZQgVaBCp68wSc55/8Z3U7i/x9tZuJOTFtCFRxlreOtpge83QCKCnGG7jx5OsShpTjC6Acz8CaOlsQ1XSco4OIQ6kJabTtj20L1Xga97vE1Hhi/WW+nVqgu7oOqdk362dazJYydlmaU6B00rQBE6T8mecPXSc6dqQzlD16yrclraf14jMbQ==
+Received: from PH7P221CA0048.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:33c::8)
+ by PH0PR12MB8776.namprd12.prod.outlook.com (2603:10b6:510:26f::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Wed, 7 Aug
+ 2024 02:12:11 +0000
+Received: from SN1PEPF00036F40.namprd05.prod.outlook.com
+ (2603:10b6:510:33c:cafe::ee) by PH7P221CA0048.outlook.office365.com
+ (2603:10b6:510:33c::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.29 via Frontend
+ Transport; Wed, 7 Aug 2024 02:12:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SN1PEPF00036F40.mail.protection.outlook.com (10.167.248.24) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Wed, 7 Aug 2024 02:12:11 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
+ 19:11:57 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 6 Aug 2024
+ 19:11:57 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 6 Aug 2024 19:11:56 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <will@kernel.org>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH v11 0/9] Add Tegra241 (Grace) CMDQV Support (part 1/2)
+Date: Tue, 6 Aug 2024 19:11:45 -0700
+Message-ID: <cover.1722993435.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
- Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org
-In-Reply-To: <20240806123906.161218-1-clamor95@gmail.com>
-References: <20240806123906.161218-1-clamor95@gmail.com>
-Message-Id: <172295171833.1220432.7828757275501895898.robh@kernel.org>
-Subject: Re: [PATCH v1 00/11] Tegra114: complete TF701T device tree
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00036F40:EE_|PH0PR12MB8776:EE_
+X-MS-Office365-Filtering-Correlation-Id: 885715eb-93dc-49fb-a2ff-08dcb68658f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?iN0/g1KrqHpyasZxXIRYQQ+fg37wNx+S93WiOYe5vFtCB3ihzM+Eha1KZUik?=
+ =?us-ascii?Q?M2arl3Aq41pVuw2h/658a18MGuN4y0GCL+p5+1oQ4nhA2tV9dwAbY6t6ZkaY?=
+ =?us-ascii?Q?xzk/aQSyOUX6Po3ZZiTbzU/irP1GBsOILgpjGeVEj+2vCPqvJ6gEMNfEhzs1?=
+ =?us-ascii?Q?rAMo1UbseG7ISLJsBUJMp2yJwT4TBjA0Wmx1FzSOH4srxncHcoM/wTiPEwMm?=
+ =?us-ascii?Q?8u2lhutX0vbn8Adv8BC1ZUle81EPTWsl18l5FVOvEOOgKyuo0qVzG2zrFiQq?=
+ =?us-ascii?Q?uEpDZf3pMtS5GiDiFrNjZoqks/7PZsV2CEZHyi5oMV7MThlkec+1OHgbkWJB?=
+ =?us-ascii?Q?7Tk5DJaLFtHq/NKbH1pidFRBYWhmNw0FrNrjc3FzxQpFbepxdWaM8v9xK/Sm?=
+ =?us-ascii?Q?uObBtmU+Yso8xlUP0l+uxb5HTVwwTU/7OgswxxyVhuqcgkyr40xy+9BOyoLO?=
+ =?us-ascii?Q?DC1nfgBQ913dghVKpdNuZxkEll9j0E44vZGNe5luZ5DPss8WO7O5OHxwH4AW?=
+ =?us-ascii?Q?Gtaeu2KBRv1BLcPUKL4MlUvmUDD1QK44Gw6DplpVEkKmeBd4T9Hr7cNehcW5?=
+ =?us-ascii?Q?/T01YPWjrzvSFXFmWX/XWdtjRkX3l96UPh7QjX9JTRPGQSe+ADjSyhCZmlaU?=
+ =?us-ascii?Q?qbLdWVOX12qCWTslIhvjXAlkFbi1KeBAwrQoBLovCxhgQKfDB7qmMwZKXdjs?=
+ =?us-ascii?Q?maQpOLYpOCWz2uRcvw8r86v+7a+TaYIoY+Ltw5y76PVyoxd7qBbsKjHnaG8P?=
+ =?us-ascii?Q?/sE1AXJPxOzKpnMHmNmYQKROm9KiBqEvuHMgDo/i5ucUgHLI2K1V81qwWO9W?=
+ =?us-ascii?Q?lH2eT/YI+3w/+E4MI1j3Ucwqo2lQRNrHPt0nNXFojf6OPjwQM3n+Q61DIhtd?=
+ =?us-ascii?Q?pkCv4/Z7MQ+I0pS6JHWq5k7ITAsfOeGRzCxrAtskhAxsL45C+kEYL4g4NuWm?=
+ =?us-ascii?Q?+Jv1lKZuXrjKe/uMMwsegTL3/wgaRn6jtzrCHNYmOXvDInycZ154c/DEkW4P?=
+ =?us-ascii?Q?QUjwC46/D30fDeDEElN6WnLCGYowUfofM887/eSuC0igIbLWpnzk3PTYqLvf?=
+ =?us-ascii?Q?laYMYooTg6isfnFpUBassA52dIh20PYP3+9gxSXLj6vEaR7psqAdcY+DMWPZ?=
+ =?us-ascii?Q?eDHG3rvWJThMzPHJIP/wP9XwqtWv+vG2jqDqnCd3SCPUiAO006QdTZD+pX4k?=
+ =?us-ascii?Q?YMUVStZk0B8nvpiVRgELCRRe/eyEORd4/e2x4fAPqyKTzjiMP2tC7rdz44/C?=
+ =?us-ascii?Q?7M/manr3snYN+aRdsTKclSkHWmQRR8PhB2GnpGZCtNireU2ZqtvRpLBXyajt?=
+ =?us-ascii?Q?Lgwi6kvAYt3F31g88tHaqfrP5woK+pVi5QN/NhhkbFk/3H5rSuXeLEJ/ecBn?=
+ =?us-ascii?Q?3kb4kW1rRTNtf61Ch/Jvpx0Kgih+y2KixZsys2nrd93Nlwy//h/JGbpuRlXH?=
+ =?us-ascii?Q?3WHVt3lmBSpNGBNrLI5K2sG46b5McQP6?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Aug 2024 02:12:11.2399
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 885715eb-93dc-49fb-a2ff-08dcb68658f0
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00036F40.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8776
 
+Thus, there are two parts of patch series to add its support: the basic
+in-kernel support as part 1, and the user-space support as part 2.
 
-On Tue, 06 Aug 2024 15:38:55 +0300, Svyatoslav Ryhel wrote:
-> Complete ASUS TF701T device tree with available information
-> about the device.
-> 
-> Svyatoslav Ryhel (11):
->   ARM: nvidia: tf701t: use unimomentary pinmux setup
->   ARM: nvidia: tf701t: bind VDE device
->   ARM: nvidia: tf701t: correct and complete PMIC and PMC bindings
->   ARM: nvidia: tf701t: add HDMI bindings
->   ARM: nvidia: tf701t: add Bluetooth node
->   ARM: nvidia: tf701t: adjust sensors nodes
->   ARM: nvidia: tf701t: complete sound bindings
->   ARM: nvidia: tf701t: bind WIFI SDIO and EMMC
->   ARM: nvidia: tf701t: re-group GPIO keys
->   ARM: nvidia: tf701t: use dedicated backlight regulator
->   ARM: nvidia: tf701t: configure USB
-> 
->  .../boot/dts/nvidia/tegra114-asus-tf701t.dts  | 1516 ++++++++++++++---
->  1 file changed, 1289 insertions(+), 227 deletions(-)
-> 
-> --
-> 2.43.0
-> 
-> 
-> 
+The in-kernel support is to detect/configure the CMDQV hardware and then
+allocate a VINTF with some VCMDQs for the kernel/hypervisor to use. Like
+ECMDQ, CMDQV also allows the kernel to use multiple VCMDQs, giving some
+limited performance improvement: up to 20% reduction of TLB invalidation
+time was measured by a multi-threaded DMA unmap benchmark, compared to a
+single queue.
 
+The user-space support is to provide uAPIs (via IOMMUFD) for hypervisors
+in user space to passthrough VCMDQs to VMs, allowing these VMs to access
+the VCMDQs directly without trappings, i.e. no VM Exits. This gives huge
+performance improvements: 70% to 90% reductions of TLB invalidation time
+were measured by various DMA unmap tests running in a guest OS, compared
+to a nested SMMU CMDQ (with trappings).
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+This is the part-1 series:
+ - Preparatory changes to share the existing SMMU functions
+ - A new CMDQV driver and extending the SMMUv3 driver to interact with
+   the new driver
+ - Limit the commands for a guest kernel.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+It's available on Github:
+https://github.com/nicolinc/iommufd/commits/vcmdq_in_kernel-v11
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+And the part-2 RFC series is also sent for discussion:
+https://lore.kernel.org/all/cover.1712978212.git.nicolinc@nvidia.com/
 
-  pip3 install dtschema --upgrade
+Note that this in-kernel support isn't confined to host kernels running
+on Grace-powered servers, but is also used by guest kernels running on
+VMs virtualized on those servers. So, those VMs must install the driver,
+ideally before the part 2 is merged. So, later those servers would only
+need to upgrade their host kernels without bothering the VMs.
 
+Thank you!
 
-New warnings running 'make CHECK_DTBS=y nvidia/tegra114-asus-tf701t.dtb' for 20240806123906.161218-1-clamor95@gmail.com:
+Changelog
+v11:
+ * Rebased on 6.11-rc2
+ * Fixed "vtinfs" typo in kdoc
+ * Maxed out the max_n_shift to hardware allowed value
+v10:
+ https://lore.kernel.org/all/cover.1722206275.git.nicolinc@nvidia.com/
+ * Rebased on 6.11-rc1
+ * Added impl design mimicing arm-smmu (v2) driver
+ * Replaced the CS_NONE quirk with a new smmu option
+ * Fixed misaligned 64-bit register reading in the isr()
+ * Explicitly assign opcode to arm_smmu_cmdq_batch_init() where
+   cmd/ent might potentially not be initialized.
+v9:
+ https://lore.kernel.org/all/cover.1718228494.git.nicolinc@nvidia.com/
+ * Rebased on 6.10-rc3
+ * Replaced "base + offset" in write_config() with REG helpers
+ * Added "Reviewed-by" line from Jason, to the remaining PATCH-5
+v8:
+ https://lore.kernel.org/all/cover.1716883239.git.nicolinc@nvidia.com/
+ * Added "Reviewed-by" lines from Jason
+ * Replaced memset with a simple "cmd[1] = 0"
+ * Replaced MMIO read/write helpers with REG_* macros
+ * Dropped the racy static string in lvcmdq_error_header()
+ * Added a few lines of comments to arm_smmu_get_cmdq at the line
+   calling tegra241_cmdqv_get_cmdq()
+v7:
+ https://lore.kernel.org/all/cover.1715147377.git.nicolinc@nvidia.com/
+ * Moved all public symbols into one single patch
+ * Enforced a command batch to use the same cmdq
+ * Enforced the use of arm_smmu_cmdq_build_sync_cmd()
+ * Reworked the tegra241-cmdqv driver patch
+   - Dropped logging macros, cmdqv->dev, and atomic
+   - Dropped devm_* and added tegra241_cmdqv_device_remove()
+   - Moved all structure allocations to cmdqv's probe() from
+     device_reset() where only register configurations remains
+   - Switched the config macros to inline functions
+   - Optimized ISR routine with 64-bit reading MMIO
+   - Scan once per batch against command list
+   - Reorganized function locations
+   - Minor readability changes
+v6:
+ https://lore.kernel.org/all/cover.1714451595.git.nicolinc@nvidia.com/
+ * Reordered the patch sequence to fix git-bisect break
+ * Added a status cache to cmdqv/vintf/vcmdq structure
+ * Added gerror/gerrorn value match in hw_deinit()
+ * Minimized changes in __arm_smmu_cmdq_skip_err()
+ * Preallocated VCMDQs to VINTFs for stablility
+v5:
+ https://lore.kernel.org/all/cover.1712977210.git.nicolinc@nvidia.com/
+ * Improved print/mmio helpers
+ * Added proper register reset routines
+ * Reorganized init/deinit functions to share with VIOMMU callbacks in
+   the upcoming part-2 user-space series (RFC)
+v4:
+ https://lore.kernel.org/all/cover.1711690673.git.nicolinc@nvidia.com/
+ * Rebased on v6.9-rc1
+ * Renamed to "tegra241-cmdqv", following other Grace kernel patches
+ * Added a set of print and MMIO helpers
+ * Reworked the guest limitation patch
+v3:
+ https://lore.kernel.org/all/20211119071959.16706-1-nicolinc@nvidia.com/
+ * Dropped VMID and mdev patches to redesign later based on IOMMUFD
+ * Separated HYP_OWN part for guest support into a new patch
+ * Added new preparatory changes
+v2:
+ https://lore.kernel.org/all/20210831025923.15812-1-nicolinc@nvidia.com/
+ * Added mdev interface support for hypervisor and VMs
+ * Added preparatory changes for mdev interface implementation
+ * PATCH-12 Changed ->issue_cmdlist() to ->get_cmdq() for a better
+   integration with recently merged ECMDQ-related changes
+v1:
+ https://lore.kernel.org/all/20210723193140.9690-1-nicolinc@nvidia.com/
 
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: hdmi@54280000: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-hdmi.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: hdmi@54280000: 'nvidia,ddc-i2c-bus' is a required property
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-hdmi.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: hdmi@54280000: 'nvidia,hpd-gpio' is a required property
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-hdmi.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux@70000868: pinmux:gmi-cs4-clk:nvidia,pins:1: 'gmi_clk_lb' is not one of ['ulpi_data0_po1', 'ulpi_data1_po2', 'ulpi_data2_po3', 'ulpi_data3_po4', 'ulpi_data4_po5', 'ulpi_data5_po6', 'ulpi_data6_po7', 'ulpi_data7_po0', 'ulpi_clk_py0', 'ulpi_dir_py1', 'ulpi_nxt_py2', 'ulpi_stp_py3', 'dap3_fs_pp0', 'dap3_din_pp1', 'dap3_dout_pp2', 'dap3_sclk_pp3', 'pv0', 'pv1', 'sdmmc1_clk_pz0', 'sdmmc1_cmd_pz1', 'sdmmc1_dat3_py4', 'sdmmc1_dat2_py5', 'sdmmc1_dat1_py6', 'sdmmc1_dat0_py7', 'clk2_out_pw5', 'clk2_req_pcc5', 'hdmi_int_pn7', 'ddc_scl_pv4', 'ddc_sda_pv5', 'uart2_rxd_pc3', 'uart2_txd_pc2', 'uart2_rts_n_pj6', 'uart2_cts_n_pj5', 'uart3_txd_pw6', 'uart3_rxd_pw7', 'uart3_cts_n_pa1', 'uart3_rts_n_pc0', 'pu0', 'pu1', 'pu2', 'pu3', 'pu4', 'pu5', 'pu6', 'gen1_i2c_sda_pc5', 'gen1_i2c_scl_pc4', 'dap4_fs_pp4', 'dap4_din_pp5', 'dap4_dout_pp6', 'dap4_sclk_pp7', 'clk3_out_pee0', 'clk3_req_pee1', 'gmi_wp_n_pc7', 'gmi_iordy_pi5', 'gmi_wait_pi7', 'gmi_adv_n_pk0', 'gmi_clk_pk1', 'gmi_cs0_n_pj0', 'gmi_cs1_n_pj2', 'gmi_cs2_n_pk3', 'gmi_cs3_n_pk4', 'gmi_cs4_n_pk2', 'gmi_cs6_n_pi3', 'gmi_cs7_n_pi6', 'gmi_ad0_pg0', 'gmi_ad1_pg1', 'gmi_ad2_pg2', 'gmi_ad3_pg3', 'gmi_ad4_pg4', 'gmi_ad5_pg5', 'gmi_ad6_pg6', 'gmi_ad7_pg7', 'gmi_ad8_ph0', 'gmi_ad9_ph1', 'gmi_ad10_ph2', 'gmi_ad11_ph3', 'gmi_ad12_ph4', 'gmi_ad13_ph5', 'gmi_ad14_ph6', 'gmi_ad15_ph7', 'gmi_a16_pj7', 'gmi_a17_pb0', 'gmi_a18_pb1', 'gmi_a19_pk7', 'gmi_wr_n_pi0', 'gmi_oe_n_pi1', 'gmi_dqs_p_pj3', 'gmi_rst_n_pi4', 'gen2_i2c_scl_pt5', 'gen2_i2c_sda_pt6', 'sdmmc4_clk_pcc4', 'sdmmc4_cmd_pt7', 'sdmmc4_dat0_paa0', 'sdmmc4_dat1_paa1', 'sdmmc4_dat2_paa2', 'sdmmc4_dat3_paa3', 'sdmmc4_dat4_paa4', 'sdmmc4_dat5_paa5', 'sdmmc4_dat6_paa6', 'sdmmc4_dat7_paa7', 'cam_mclk_pcc0', 'pcc1', 'pbb0', 'cam_i2c_scl_pbb1', 'cam_i2c_sda_pbb2', 'pbb3', 'pbb4', 'pbb5', 'pbb6', 'pbb7', 'pcc2', 'pwr_i2c_scl_pz6', 'pwr_i2c_sda_pz7', 'kb_row0_pr0', 'kb_row1_pr1', 'kb_row2_pr2', 'kb_row3_pr3', 'kb_row4_pr4', 'kb_row5_pr5', 'kb_row6_pr6', 'kb_row7_pr7', 'kb_row8_ps0', 'kb_row9_ps1', 'kb_row10_ps2', 'kb_col0_pq0', 'kb_col1_pq1', 'kb_col2_pq2', 'kb_col3_pq3', 'kb_col4_pq4', 'kb_col5_pq5', 'kb_col6_pq6', 'kb_col7_pq7', 'clk_32k_out_pa0', 'sys_clk_req_pz5', 'core_pwr_req', 'cpu_pwr_req', 'pwr_int_n', 'owr', 'dap1_fs_pn0', 'dap1_din_pn1', 'dap1_dout_pn2', 'dap1_sclk_pn3', 'clk1_req_pee2', 'clk1_out_pw4', 'spdif_in_pk6', 'spdif_out_pk5', 'dap2_fs_pa2', 'dap2_din_pa4', 'dap2_dout_pa5', 'dap2_sclk_pa3', 'dvfs_pwm_px0', 'gpio_x1_aud_px1', 'gpio_x3_aud_px3', 'dvfs_clk_px2', 'gpio_x4_aud_px4', 'gpio_x5_aud_px5', 'gpio_x6_aud_px6', 'gpio_x7_aud_px7', 'sdmmc3_clk_pa6', 'sdmmc3_cmd_pa7', 'sdmmc3_dat0_pb7', 'sdmmc3_dat1_pb6', 'sdmmc3_dat2_pb5', 'sdmmc3_dat3_pb4', 'hdmi_cec_pee3', 'sdmmc1_wp_n_pv3', 'sdmmc3_cd_n_pv2', 'gpio_w2_aud_pw2', 'gpio_w3_aud_pw3', 'usb_vbus_en0_pn4', 'usb_vbus_en1_pn5', 'sdmmc3_clk_lb_in_pee5', 'sdmmc3_clk_lb_out_pee4', 'reset_out_n', 'drive_ao1', 'drive_ao2', 'drive_at1', 'drive_at2', 'drive_at3', 'drive_at4', 'drive_at5', 'drive_cdev1', 'drive_cdev2', 'drive_dap1', 'drive_dap2', 'drive_dap3', 'drive_dap4', 'drive_dbg', 'drive_sdio3', 'drive_spi', 'drive_uaa', 'drive_uab', 'drive_uart2', 'drive_uart3', 'drive_sdio1', 'drive_ddc', 'drive_gma', 'drive_gme', 'drive_gmf', 'drive_gmg', 'drive_gmh', 'drive_owr', 'drive_uda']
-	from schema $id: http://devicetree.org/schemas/pinctrl/nvidia,tegra114-pinmux.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux@70000868: pinmux:clk-32k-in:nvidia,pins:0: 'clk_32k_in' is not one of ['ulpi_data0_po1', 'ulpi_data1_po2', 'ulpi_data2_po3', 'ulpi_data3_po4', 'ulpi_data4_po5', 'ulpi_data5_po6', 'ulpi_data6_po7', 'ulpi_data7_po0', 'ulpi_clk_py0', 'ulpi_dir_py1', 'ulpi_nxt_py2', 'ulpi_stp_py3', 'dap3_fs_pp0', 'dap3_din_pp1', 'dap3_dout_pp2', 'dap3_sclk_pp3', 'pv0', 'pv1', 'sdmmc1_clk_pz0', 'sdmmc1_cmd_pz1', 'sdmmc1_dat3_py4', 'sdmmc1_dat2_py5', 'sdmmc1_dat1_py6', 'sdmmc1_dat0_py7', 'clk2_out_pw5', 'clk2_req_pcc5', 'hdmi_int_pn7', 'ddc_scl_pv4', 'ddc_sda_pv5', 'uart2_rxd_pc3', 'uart2_txd_pc2', 'uart2_rts_n_pj6', 'uart2_cts_n_pj5', 'uart3_txd_pw6', 'uart3_rxd_pw7', 'uart3_cts_n_pa1', 'uart3_rts_n_pc0', 'pu0', 'pu1', 'pu2', 'pu3', 'pu4', 'pu5', 'pu6', 'gen1_i2c_sda_pc5', 'gen1_i2c_scl_pc4', 'dap4_fs_pp4', 'dap4_din_pp5', 'dap4_dout_pp6', 'dap4_sclk_pp7', 'clk3_out_pee0', 'clk3_req_pee1', 'gmi_wp_n_pc7', 'gmi_iordy_pi5', 'gmi_wait_pi7', 'gmi_adv_n_pk0', 'gmi_clk_pk1', 'gmi_cs0_n_pj0', 'gmi_cs1_n_pj2', 'gmi_cs2_n_pk3', 'gmi_cs3_n_pk4', 'gmi_cs4_n_pk2', 'gmi_cs6_n_pi3', 'gmi_cs7_n_pi6', 'gmi_ad0_pg0', 'gmi_ad1_pg1', 'gmi_ad2_pg2', 'gmi_ad3_pg3', 'gmi_ad4_pg4', 'gmi_ad5_pg5', 'gmi_ad6_pg6', 'gmi_ad7_pg7', 'gmi_ad8_ph0', 'gmi_ad9_ph1', 'gmi_ad10_ph2', 'gmi_ad11_ph3', 'gmi_ad12_ph4', 'gmi_ad13_ph5', 'gmi_ad14_ph6', 'gmi_ad15_ph7', 'gmi_a16_pj7', 'gmi_a17_pb0', 'gmi_a18_pb1', 'gmi_a19_pk7', 'gmi_wr_n_pi0', 'gmi_oe_n_pi1', 'gmi_dqs_p_pj3', 'gmi_rst_n_pi4', 'gen2_i2c_scl_pt5', 'gen2_i2c_sda_pt6', 'sdmmc4_clk_pcc4', 'sdmmc4_cmd_pt7', 'sdmmc4_dat0_paa0', 'sdmmc4_dat1_paa1', 'sdmmc4_dat2_paa2', 'sdmmc4_dat3_paa3', 'sdmmc4_dat4_paa4', 'sdmmc4_dat5_paa5', 'sdmmc4_dat6_paa6', 'sdmmc4_dat7_paa7', 'cam_mclk_pcc0', 'pcc1', 'pbb0', 'cam_i2c_scl_pbb1', 'cam_i2c_sda_pbb2', 'pbb3', 'pbb4', 'pbb5', 'pbb6', 'pbb7', 'pcc2', 'pwr_i2c_scl_pz6', 'pwr_i2c_sda_pz7', 'kb_row0_pr0', 'kb_row1_pr1', 'kb_row2_pr2', 'kb_row3_pr3', 'kb_row4_pr4', 'kb_row5_pr5', 'kb_row6_pr6', 'kb_row7_pr7', 'kb_row8_ps0', 'kb_row9_ps1', 'kb_row10_ps2', 'kb_col0_pq0', 'kb_col1_pq1', 'kb_col2_pq2', 'kb_col3_pq3', 'kb_col4_pq4', 'kb_col5_pq5', 'kb_col6_pq6', 'kb_col7_pq7', 'clk_32k_out_pa0', 'sys_clk_req_pz5', 'core_pwr_req', 'cpu_pwr_req', 'pwr_int_n', 'owr', 'dap1_fs_pn0', 'dap1_din_pn1', 'dap1_dout_pn2', 'dap1_sclk_pn3', 'clk1_req_pee2', 'clk1_out_pw4', 'spdif_in_pk6', 'spdif_out_pk5', 'dap2_fs_pa2', 'dap2_din_pa4', 'dap2_dout_pa5', 'dap2_sclk_pa3', 'dvfs_pwm_px0', 'gpio_x1_aud_px1', 'gpio_x3_aud_px3', 'dvfs_clk_px2', 'gpio_x4_aud_px4', 'gpio_x5_aud_px5', 'gpio_x6_aud_px6', 'gpio_x7_aud_px7', 'sdmmc3_clk_pa6', 'sdmmc3_cmd_pa7', 'sdmmc3_dat0_pb7', 'sdmmc3_dat1_pb6', 'sdmmc3_dat2_pb5', 'sdmmc3_dat3_pb4', 'hdmi_cec_pee3', 'sdmmc1_wp_n_pv3', 'sdmmc3_cd_n_pv2', 'gpio_w2_aud_pw2', 'gpio_w3_aud_pw3', 'usb_vbus_en0_pn4', 'usb_vbus_en1_pn5', 'sdmmc3_clk_lb_in_pee5', 'sdmmc3_clk_lb_out_pee4', 'reset_out_n', 'drive_ao1', 'drive_ao2', 'drive_at1', 'drive_at2', 'drive_at3', 'drive_at4', 'drive_at5', 'drive_cdev1', 'drive_cdev2', 'drive_dap1', 'drive_dap2', 'drive_dap3', 'drive_dap4', 'drive_dbg', 'drive_sdio3', 'drive_spi', 'drive_uaa', 'drive_uab', 'drive_uart2', 'drive_uart3', 'drive_sdio1', 'drive_ddc', 'drive_gma', 'drive_gme', 'drive_gmf', 'drive_gmg', 'drive_gmh', 'drive_owr', 'drive_uda']
-	from schema $id: http://devicetree.org/schemas/pinctrl/nvidia,tegra114-pinmux.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux@70000868: pinmux:clk-32k-in:nvidia,function:0: 'clk' is not one of ['blink', 'cec', 'cldvfs', 'clk12', 'cpu', 'dap', 'dap1', 'dap2', 'dev3', 'displaya', 'displaya_alt', 'displayb', 'dtv', 'emc_dll', 'extperiph1', 'extperiph2', 'extperiph3', 'gmi', 'gmi_alt', 'hda', 'hsi', 'i2c1', 'i2c2', 'i2c3', 'i2c4', 'i2cpwr', 'i2s0', 'i2s1', 'i2s2', 'i2s3', 'i2s4', 'irda', 'kbc', 'nand', 'nand_alt', 'owr', 'pmi', 'pwm0', 'pwm1', 'pwm2', 'pwm3', 'pwron', 'reset_out_n', 'rsvd1', 'rsvd2', 'rsvd3', 'rsvd4', 'sdmmc1', 'sdmmc2', 'sdmmc3', 'sdmmc4', 'soc', 'spdif', 'spi1', 'spi2', 'spi3', 'spi4', 'spi5', 'spi6', 'sysclk', 'trace', 'uarta', 'uartb', 'uartc', 'uartd', 'ulpi', 'usb', 'vgp1', 'vgp2', 'vgp3', 'vgp4', 'vgp5', 'vgp6', 'vi', 'vi_alt1', 'vi_alt3']
-	from schema $id: http://devicetree.org/schemas/pinctrl/nvidia,tegra114-pinmux.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux: pv0-gpio: {'nvidia,pins': ['pv0'], 'nvidia,function': ['rsvd2'], 'nvidia,pull': 2, 'nvidia,tristate': 0, 'nvidia,enable-input': 1} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux: pv1-gpio: {'nvidia,pins': ['pv1'], 'nvidia,function': ['rsvd1'], 'nvidia,pull': 2, 'nvidia,tristate': 0, 'nvidia,enable-input': 1} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux: pu0-gpio: {'nvidia,pins': ['pu0'], 'nvidia,function': ['rsvd3'], 'nvidia,pull': 0, 'nvidia,tristate': 0, 'nvidia,enable-input': 0} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux: pu2-gpio: {'nvidia,pins': ['pu2'], 'nvidia,function': ['rsvd1'], 'nvidia,pull': 2, 'nvidia,tristate': 0, 'nvidia,enable-input': 1} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux: pcc-gpio: {'nvidia,pins': ['pcc1', 'pcc2'], 'nvidia,function': ['rsvd2'], 'nvidia,pull': 1, 'nvidia,tristate': 0, 'nvidia,enable-input': 1} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux: pbb3-gpio: {'nvidia,pins': ['pbb3'], 'nvidia,function': ['rsvd4'], 'nvidia,pull': 0, 'nvidia,tristate': 0, 'nvidia,enable-input': 1} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux: pbb4-5-6-gpio: {'nvidia,pins': ['pbb4', 'pbb5', 'pbb6'], 'nvidia,function': ['rsvd4'], 'nvidia,pull': 0, 'nvidia,tristate': 0, 'nvidia,enable-input': 0} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: pinmux: pbb7-gpio: {'nvidia,pins': ['pbb7'], 'nvidia,function': ['rsvd2'], 'nvidia,pull': 0, 'nvidia,tristate': 0, 'nvidia,enable-input': 0} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: serial@70006200: compatible: 'oneOf' conditional failed, one must be fixed:
-	['nvidia,tegra114-hsuart', 'nvidia,tegra30-hsuart'] is too long
-	'nvidia,tegra114-hsuart' is not one of ['nvidia,tegra20-hsuart', 'nvidia,tegra30-hsuart', 'nvidia,tegra186-hsuart', 'nvidia,tegra194-hsuart']
-	'nvidia,tegra124-hsuart' was expected
-	from schema $id: http://devicetree.org/schemas/serial/nvidia,tegra20-hsuart.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: serial@70006200: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/serial/nvidia,tegra20-hsuart.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: /serial@70006200: failed to match any schema with compatible: ['nvidia,tegra114-hsuart', 'nvidia,tegra30-hsuart']
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: bluetooth: reset-gpios: False schema does not allow [[20, 134, 1]]
-	from schema $id: http://devicetree.org/schemas/net/broadcom-bluetooth.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: /i2c@7000d000/pmic@58/extcon: failed to match any schema with compatible: ['ti,palmas-usb-vid']
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: /i2c@7000d000/pmic@58/palmas_clk32kg@0: failed to match any schema with compatible: ['ti,palmas-clk32kg']
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: sound: nvidia,audio-routing:14: 'IN1N' is not one of ['Headphones', 'Speakers', 'Mic Jack', 'DMIC1', 'DMIC2', 'MICBIAS1', 'IN1P', 'IN1R', 'IN2P', 'IN2R', 'HPOL', 'HPOR', 'LOUTL', 'LOUTR', 'MONOP', 'MONON', 'SPOLP', 'SPOLN', 'SPORP', 'SPORN']
-	from schema $id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-rt5640.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: sound: nvidia,audio-routing:17: 'Int Mic' is not one of ['Headphones', 'Speakers', 'Mic Jack', 'DMIC1', 'DMIC2', 'MICBIAS1', 'IN1P', 'IN1R', 'IN2P', 'IN2R', 'HPOL', 'HPOR', 'LOUTL', 'LOUTR', 'MONOP', 'MONON', 'SPOLP', 'SPOLN', 'SPORP', 'SPORN']
-	from schema $id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-rt5640.yaml#
-arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dtb: sound: nvidia,audio-routing:19: 'Int Mic' is not one of ['Headphones', 'Speakers', 'Mic Jack', 'DMIC1', 'DMIC2', 'MICBIAS1', 'IN1P', 'IN1R', 'IN2P', 'IN2R', 'HPOL', 'HPOR', 'LOUTL', 'LOUTR', 'MONOP', 'MONON', 'SPOLP', 'SPOLN', 'SPORP', 'SPORN']
-	from schema $id: http://devicetree.org/schemas/sound/nvidia,tegra-audio-rt5640.yaml#
+Nate Watterson (1):
+  iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace)
+    CMDQV
 
+Nicolin Chen (8):
+  iommu/arm-smmu-v3: Issue a batch of commands to the same cmdq
+  iommu/arm-smmu-v3: Enforce arm_smmu_cmdq_build_sync_cmd
+  iommu/arm-smmu-v3: Pass in cmdq pointer to
+    arm_smmu_cmdq_build_sync_cmd
+  iommu/arm-smmu-v3: Pass in cmdq pointer to arm_smmu_cmdq_init
+  iommu/arm-smmu-v3: Make symbols public for CONFIG_TEGRA241_CMDQV
+  iommu/arm-smmu-v3: Add ARM_SMMU_OPT_SECONDARY_CMDQ_CS_NONE_ONLY
+  iommu/arm-smmu-v3: Add struct arm_smmu_impl
+  iommu/tegra241-cmdqv: Limit CMDs for guest owned VINTF
 
+ MAINTAINERS                                   |   1 +
+ drivers/iommu/Kconfig                         |  11 +
+ drivers/iommu/arm/arm-smmu-v3/Makefile        |   1 +
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 199 ++--
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   |  51 +-
+ .../iommu/arm/arm-smmu-v3/tegra241-cmdqv.c    | 901 ++++++++++++++++++
+ 6 files changed, 1090 insertions(+), 74 deletions(-)
+ create mode 100644 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
 
-
+-- 
+2.43.0
 
