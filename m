@@ -1,99 +1,103 @@
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01D2163A9B;
-	Mon, 12 Aug 2024 07:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2473B7A8
+	for <linux-tegra@vger.kernel.org>; Mon, 12 Aug 2024 12:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723449214; cv=none; b=RjzpGNGKOXs11r56DmrqtJFSzzS3RumdpDn+zWIS/ww5Y0VOtEMRCRLCselJ8qA8s97PRhSTaAcq5SAc179BY6bp4KfIKxSg3b33ulAw02ENADf8u4osSbBocHgsAWaKml1yOA9aZfT3f2mgJe+a+Gy9gyLy2EB9ZusXrFTgb00=
+	t=1723465863; cv=none; b=UAbsYd4Q0zD9jFD6GoKR8veDF3e+iqCBKFGr9RtQMRwMM1VqAKn65ttu5RfMKqgB60j3jzy40w6OuwVcqQjDdvrG6sDD2s9as3tUzscOPVOGNSDFz+kX7vcIT4MY2l4LtAn2B+2kfiN0z6QbU0nPcxSSQ9BokjU0takpSePf9xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723449214; c=relaxed/simple;
-	bh=6O9UsGTt35vTr9eE1+t9YyuzLBpYD+YgW+Oe7Y1fa64=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=MRtSRgXV3Lip7f/M4+t+/E5fYGhnYtkFtQHIKdZtNJ6oQEduEaXrdy1cJqVlzjwT3htqqJTTrJ9Z/dnqTHlvP8goS9yZ96APsszDFpimECrdp3eo9MM2r4eEM5+vyhHsJILhlclygbRS7TDxdxy6S/Pe58Tb5/5kEom6pGlkDhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=D45LqLEx reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1723465863; c=relaxed/simple;
+	bh=4s62qVRHCnsvaoNH4q2XMZiaS9GZto2/rKo40yJ5wGQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=beYxCK7Fa53E/kaaH0Arnw86M6D4xOEULfzZAhomBFo3m9XMRNMBzDcjCtAN52KAd8b96197c5lgojwFS3oH2Si6zuoveuj+Pijj8tNk3MY9Ew1WjXdDp9RNu+fe+kds15uhIHCliZLLlg/ZFM63+ORnE7xKS0Bq2bcuB1mm/ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=de9bqy/G; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="D45LqLEx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=cf/oDFPh1h7t+vr/sE7Er9gMs7gjh38TKu6Qs3h6YLk=; b=D
-	45LqLExEp5IWUA5Z8fu9VvId/Zb9as0AG1zJy4DsmMaqsD3BL/58cy8bf+47I/V0
-	U5sgfQAbnEIef6DR3KHIXGoPzYhgC641CYEye8WiNXWcxMv/XHZudg9demQ6Bza+
-	gEA8JBp2XxSWPxPAh2QfL1YgC31sPR3OQckHWGQI5w=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-140 (Coremail) ; Mon, 12 Aug 2024 15:52:04 +0800
- (CST)
-Date: Mon, 12 Aug 2024 15:52:04 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Lu Baolu" <baolu.lu@linux.intel.com>
-Cc: "Karol Herbst" <kherbst@redhat.com>, "Lyude Paul" <lyude@redhat.com>, 
-	"Danilo Krummrich" <dakr@redhat.com>, 
-	"David Airlie" <airlied@gmail.com>, 
-	"Daniel Vetter" <daniel@ffwll.ch>, 
-	"Thierry Reding" <thierry.reding@gmail.com>, 
-	"Jonathan Hunter" <jonathanh@nvidia.com>, 
-	"Sandy Huang" <hjc@rock-chips.com>, 
-	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, 
-	"Maxime Ripard" <mripard@kernel.org>, 
-	"Thomas Zimmermann" <tzimmermann@suse.de>, 
-	"Mikko Perttunen" <mperttunen@nvidia.com>, 
-	"Joerg Roedel" <joro@8bytes.org>, "Will Deacon" <will@kernel.org>, 
-	"Robin Murphy" <robin.murphy@arm.com>, 
-	"Jason Gunthorpe" <jgg@ziepe.ca>, 
-	"Kevin Tian" <kevin.tian@intel.com>, dri-devel@lists.freedesktop.org, 
-	nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	"Jason Gunthorpe" <jgg@nvidia.com>
-Subject: Re:[PATCH 2/3] drm/rockchip: Use iommu_paging_domain_alloc()
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20240812071034.9443-2-baolu.lu@linux.intel.com>
-References: <20240812071034.9443-1-baolu.lu@linux.intel.com>
- <20240812071034.9443-2-baolu.lu@linux.intel.com>
-X-NTES-SC: AL_Qu2ZAfiftkkp4ieZY+kXn0kXhec2W8Czvvgg34JRP5k0hyXh4w84enhsBWX50cSJNTCNtx+ebhV8+Ol2d45bUprPl6S0Hryyge3eGEHR2scc
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="de9bqy/G"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-36bcc168cdaso2984172f8f.0
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Aug 2024 05:31:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723465859; x=1724070659; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CrjMzxFTOymK1yhiDsFxq0lcAyXP/N53dsHhhTtc+pE=;
+        b=de9bqy/GLISDqJXhRY/AzKzFfYNx/NlU4BsWVM/a799aNPDuzsnyW3I9Utwsv1aVOT
+         S3pZ2etyjLOt7Ay6g/b0hPnDqn7+FOTpwAiNfW0R56VWkROya8c4kTR96P+Hg3MjTuNm
+         F5O8YsOYvOWPfIWLHKbd06Xh2Pw/1LAa756GUwnqo9gJhE3r9Qy102mh1yzc1Bf4RweG
+         SqhzlOzwXOOyJpMvj4SQ/BBCCQqp8ATfETZ6Lz3Qux63EPv5xtGqkJHKk/1ZAu1H/h5Z
+         1KNmV9gh3GkReiMp68TPUzAOCzYP2uEf0BphBTr+LdI0fUOuk5vNUjFP5AKMemawaarT
+         u/Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723465859; x=1724070659;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CrjMzxFTOymK1yhiDsFxq0lcAyXP/N53dsHhhTtc+pE=;
+        b=DVuWRVhEDy/RvripgOTolAAmj/Tt6MxlR2dSLVp9R+SXQyQ4t710u5+vNOixKTydvX
+         easShKygVoNDsoajDX18Z21Kjku9zdssJA7M8IL5a21Qn29YAs0Nd+iQAicN3FcUx/Rf
+         8LSBXsj9GDZpgUXaYfq5DqM6cShg3KE/HeJSkdE0Lx1anmEkdmpsQt9TfPxE6ggwlkf8
+         jsYyjTzFbkcr1eIxADWgIWl+06BIe4p7HqnRXFC4ZrnRx1AZBmRuKlVHBGC2Wg7+xq0n
+         dfiyoAiXY91DRF1tvNd5uvjcOkio9gc0qY6Yi8ABKo7Bng4Bk7EO++aGn1CxCfVPuy51
+         xLsw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Wgpj2ilWexMDBunMLhkFef5v+FH9pSUr0WBMgTrIeB+SuQVJ9fZX0FtdXYdYl8g8AhPW43yvDmSAcwpqjvEGmB2txvaPcZ5m4EE=
+X-Gm-Message-State: AOJu0YzTHFzB50bZYBEYgMsYn4xha6MIBvFhJ+wKyqz+nYpJEzHaOhDs
+	axY//Pd4geA6bm4/rDw3AEiyhdv33yu6O6IXY2d5cc1y/MQzQ1yp3G4f+Y9mvmg=
+X-Google-Smtp-Source: AGHT+IHqBpkoDp5Wal5s8Y3KdZUq9WqkY3HpRBrs+w1cLO3eMxLwKdriiu6K0wUn5dFjISVeNq3Axg==
+X-Received: by 2002:a05:6000:1b02:b0:368:7282:51d6 with SMTP id ffacd0b85a97d-3716ccef03cmr182934f8f.21.1723465858925;
+        Mon, 12 Aug 2024 05:30:58 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4e51eb10sm7349493f8f.84.2024.08.12.05.30.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 05:30:58 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sumit Gupta <sumitg@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] memory: tegra186-emc: drop unused to_tegra186_emc()
+Date: Mon, 12 Aug 2024 14:30:55 +0200
+Message-ID: <20240812123055.124123-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7031938c.673c.1914592a773.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3H9ckv7lmqS4YAA--.648W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqRg5XmVOCJXbOwABsB
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
 
-Ckhp77yMCiAgVGhhbmtzIGZvciB5b3VyIHBhdGNoCgpBdCAyMDI0LTA4LTEyIDE1OjEwOjMzLCAi
-THUgQmFvbHUiIDxiYW9sdS5sdUBsaW51eC5pbnRlbC5jb20+IHdyb3RlOgo+Q29tbWl0IDw0MjFi
-ZTNlZTM2YTQ+ICgiZHJtL3JvY2tjaGlwOiBSZWZhY3RvciBJT01NVSBpbml0aWFsaXNhdGlvbiIp
-IGhhcwo+cmVmYWN0b3JlZCByb2NrY2hpcF9kcm1faW5pdF9pb21tdSgpIHRvIHBhc3MgYSBkZXZp
-Y2UgdGhhdCB0aGUgZG9tYWluIGlzCj5hbGxvY2F0ZWQgZm9yLiBSZXBsYWNlIGlvbW11X2RvbWFp
-bl9hbGxvYygpIHdpdGgKPmlvbW11X3BhZ2luZ19kb21haW5fYWxsb2MoKSB0byByZXRpcmUgdGhl
-IGZvcm1lci4KPgo+U2lnbmVkLW9mZi1ieTogTHUgQmFvbHUgPGJhb2x1Lmx1QGxpbnV4LmludGVs
-LmNvbT4KPlJldmlld2VkLWJ5OiBKYXNvbiBHdW50aG9ycGUgPGpnZ0BudmlkaWEuY29tPgo+TGlu
-azogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvci8yMDI0MDYxMDA4NTU1NS44ODE5Ny0xOS1iYW9s
-dS5sdUBsaW51eC5pbnRlbC5jb20KICBBY2tlZC1ieTogQW5keSBZYW4gPGFuZHlzaHJrQDE2My5j
-b20+CgoKPi0tLQo+IGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMg
-fCAxMCArKysrKysrLS0tCj4gMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMyBkZWxl
-dGlvbnMoLSkKPgo+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hp
-cF9kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5j
-Cj5pbmRleCA0NGQ3NjlkOTIzNGQuLjExZTVkMTBkZTRkNyAxMDA2NDQKPi0tLSBhL2RyaXZlcnMv
-Z3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMKPisrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMKPkBAIC0xMDMsMTMgKzEwMywxNyBAQCBzdGF0
-aWMgaW50IHJvY2tjaGlwX2RybV9pbml0X2lvbW11KHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2
-KQo+IAlzdHJ1Y3Qgcm9ja2NoaXBfZHJtX3ByaXZhdGUgKnByaXZhdGUgPSBkcm1fZGV2LT5kZXZf
-cHJpdmF0ZTsKPiAJc3RydWN0IGlvbW11X2RvbWFpbl9nZW9tZXRyeSAqZ2VvbWV0cnk7Cj4gCXU2
-NCBzdGFydCwgZW5kOwo+KwlpbnQgcmV0Owo+IAo+IAlpZiAoSVNfRVJSX09SX05VTEwocHJpdmF0
-ZS0+aW9tbXVfZGV2KSkKPiAJCXJldHVybiAwOwo+IAo+LQlwcml2YXRlLT5kb21haW4gPSBpb21t
-dV9kb21haW5fYWxsb2MocHJpdmF0ZS0+aW9tbXVfZGV2LT5idXMpOwo+LQlpZiAoIXByaXZhdGUt
-PmRvbWFpbikKPi0JCXJldHVybiAtRU5PTUVNOwo+Kwlwcml2YXRlLT5kb21haW4gPSBpb21tdV9w
-YWdpbmdfZG9tYWluX2FsbG9jKHByaXZhdGUtPmlvbW11X2Rldik7Cj4rCWlmIChJU19FUlIocHJp
-dmF0ZS0+ZG9tYWluKSkgewo+KwkJcmV0ID0gUFRSX0VSUihwcml2YXRlLT5kb21haW4pOwo+KwkJ
-cHJpdmF0ZS0+ZG9tYWluID0gTlVMTDsKPisJCXJldHVybiByZXQ7Cj4rCX0KPiAKPiAJZ2VvbWV0
-cnkgPSAmcHJpdmF0ZS0+ZG9tYWluLT5nZW9tZXRyeTsKPiAJc3RhcnQgPSBnZW9tZXRyeS0+YXBl
-cnR1cmVfc3RhcnQ7Cj4tLSAKPjIuMzQuMQo+Cg==
+to_tegra186_emc() is not used, W=1 builds:
+
+  tegra186-emc.c:38:36: error: unused function 'to_tegra186_emc' [-Werror,-Wunused-function]
+
+Fixes: 9a38cb27668e ("memory: tegra: Add interconnect support for DRAM scaling in Tegra234")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/memory/tegra/tegra186-emc.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+index 57d9ae12fcfe..33d67d251719 100644
+--- a/drivers/memory/tegra/tegra186-emc.c
++++ b/drivers/memory/tegra/tegra186-emc.c
+@@ -35,11 +35,6 @@ struct tegra186_emc {
+ 	struct icc_provider provider;
+ };
+ 
+-static inline struct tegra186_emc *to_tegra186_emc(struct icc_provider *provider)
+-{
+-	return container_of(provider, struct tegra186_emc, provider);
+-}
+-
+ /*
+  * debugfs interface
+  *
+-- 
+2.43.0
+
