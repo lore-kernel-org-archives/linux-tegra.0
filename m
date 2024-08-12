@@ -1,60 +1,61 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA8F1862B8
-	for <linux-tegra@vger.kernel.org>; Mon, 12 Aug 2024 13:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3F6186E3F
+	for <linux-tegra@vger.kernel.org>; Mon, 12 Aug 2024 13:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723469675; cv=none; b=gQiStEWGHS+6Y/ui0hhY2DfpPTSIbDk5MA+Rt6Cf/IyXwnndwmRSXwSe0hlixJoRoj/cKbRGzrQqaV03tmKYuSs10jh2fLyaBetjNaJ91wc22WAsP1UlGAqQ11WnGItNs3hManKxZ8rqiesPxRNi4jyZSSmd80XR6PtJMV1Uhvc=
+	t=1723469678; cv=none; b=jjOo4NLCAoKV9S14eGh14KkYkSSa1g7wm362+cUAc/GPx1G4POAx8y1AemX96K9igEnwU8lYBaoPrNlGtVA8G+IkK73lYxoEc/QCZzXG/s0vFBGwL/JdQNyD6ncy7LmGFKleL8DL6SNjIKVhbrVbKqoZwXD3Th7kyXqkgLxcT4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723469675; c=relaxed/simple;
-	bh=Qm8I2XYrN4e568eaRkgeUjoCW+fRdkjecwXHEHRljxk=;
+	s=arc-20240116; t=1723469678; c=relaxed/simple;
+	bh=1y9LIZ3UpOVR4pnvMVqojw1S5Kf9CAK2N1Et998QgxM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aYCfDx4bQddLvVQ+89Xmwp2rLy9k4Wq9W0jSbD0/8LH1MO4bsnNkzVL4QMHNrPn2uXb3zuamlqPnNgQ/397mdSATD9c5s+ZfKL+/z1JaY7mtVV8BqDSKSfB9waSVxzasmtyQYlL7s5gE/LTcBZmNsuvtRaFoNsN5uTyHgzGY4Zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bGSAJ33P; arc=none smtp.client-ip=209.85.208.178
+	 In-Reply-To:To:Cc; b=PD1bwMYMfIVTvnuOQlldYE9p6z8ZqeBhRyI8mqCrz42HNh9hB8nff72wnhBLgKR07/kTklGk9d3n7j49bzBvazxO53hLPU7sTYZl1pURmDcHmEc5ak0ZqsgQZ2cNL6VdN1OjdZ0xdshHIe5dlpZsuf7DiLkjhZqRo3tkkaqe80c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RMDLQwpb; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bGSAJ33P"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef2cce8be8so46993751fa.1
-        for <linux-tegra@vger.kernel.org>; Mon, 12 Aug 2024 06:34:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RMDLQwpb"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428ec6c190eso33363005e9.1
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Aug 2024 06:34:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723469672; x=1724074472; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723469673; x=1724074473; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oAYRAyLvoG4oyvTDF3Z4505Z3pwRnY5SCeviwv8U1gY=;
-        b=bGSAJ33PZw/ZPt8758fYkBFxGpXdxlWUS9X5ZyXHp0/htCwjHbV7+viaKHAUAjteVX
-         NjWt3BVVAUXk0Am6YtXSRRjPEeWy/remdNj+iVO1iMa7oKbH+b2iVtTxqjucZIkeaHXD
-         Oy3iDwLHj7wBLcd4CmjDQH081gNV2vR7lWc8kiL6AVyMk/mxHZ9Mv6dLJD2kOOGn+wCR
-         mTV/xW0/MYkU27UpKdcvwcCQN2rSkVOQv8gCWbu4uPVUTiXpS9IoPzm1vbFSTiuB00nH
-         wqXeVLfzJlAhsMpS7n6no6Yh/x2BJ7rWtjZ+5u0kOpRZ7s7+dz5rscbX73wrAEm7T+7b
-         C8kA==
+        bh=KDjln6hpCDXYJ0URbIXokRubyMBzSip15NzhUO8TB7c=;
+        b=RMDLQwpbrNYeWvYBBG3wQC6alJ4BkDSartO7T38R+n2++6HF/JN9IsebeYdt53/0cE
+         MQq003aOzYm62OHOPcNt3Vbp48zTXhnfGb7F1+1Ov+58NOD4KJY1hRGuwMhoHq/26LQX
+         12sdBthwH2tNzO9MqElsSbCp0vTgswVlWbeUFTMweXVZIBkj5LCJsHKPMcA8Mime5wD7
+         +85dbPCoX3isZ+o0zpNrZfXiNdDy1UkdAbjdZeAeRJTSAFP5CDHYoL34NQkxyFxBjywS
+         vO6lcpJ1m4rTVFAudr+t9sVTYS/1evWwD9k4cWw2VjpGKuqZwdTVEgq+tOpgzgUa1ZU/
+         aycQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723469672; x=1724074472;
+        d=1e100.net; s=20230601; t=1723469673; x=1724074473;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oAYRAyLvoG4oyvTDF3Z4505Z3pwRnY5SCeviwv8U1gY=;
-        b=c4yuVd9tmTb2HSDALbfLP5RW4eolSnaj3rMm1WelbZjDo7NoAedXFX/XVVbKQNZZaW
-         itsrEcU8Ic40yJtb/Cg7ALgaC92QFNUgTKLIzd5qEdkKkum+3zOINSWesLc/VWoXISsg
-         3wUWEJF/1GXo1kO3EpXWU3s/w5Kkpo+P558Ym4SrAAg/b6BSgIG4BvjU6qXcKvRicIDm
-         lbC0Z+SNpv9w8RcmMC8sMhzXxqSk6iOoHVlrDyyBove900CrEnn6lIopda3wMg0hhnvq
-         jInWkc+0dFRJSvnJGP6frraG0JLyJ5deLwxvuku0SntHqrmwi1kWYG5TrbTp+RnJSPGG
-         Hxmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWahgFMhXYgQ8zYMhyr3wJYjohopou9byStLfz2bT0JjWfR7HnLWoJrN8P5w36314f8hpt2J4AUhKEIQOB+U5Q/JD4mwMNPXl0FoEY=
-X-Gm-Message-State: AOJu0Yw/udJVUmchUu43+9ezE8Ig6aS+tjYSiLs980SHNw13d1syxMx/
-	mCi3VhnuLeVfCtDwzhE5Md6IqpnvA3nlRffe/8qcAraPWkTdf/Io7ZwJw8LVIQ4=
-X-Google-Smtp-Source: AGHT+IF4Zea8h7AbclFyhVQtS9eZT2Tc6EMfJdGvwHFdzc3KpbF32S6sd5GGemZ+KlUJ1S/LzaVfaw==
-X-Received: by 2002:a05:651c:b29:b0:2ef:2281:2158 with SMTP id 38308e7fff4ca-2f2b7132d7dmr2306451fa.1.1723469671912;
-        Mon, 12 Aug 2024 06:34:31 -0700 (PDT)
+        bh=KDjln6hpCDXYJ0URbIXokRubyMBzSip15NzhUO8TB7c=;
+        b=OlXrWn/WzHSUq3Xyp/u6En5JxBXMQNDqrqcaThtFraWou5L6NtyKEVdHg1EHOQcR8R
+         dwoP2fnGdP4Dx1lb1lRpIXiWyjWSf56j0z2RuwpKK0A+PioelMwOOUG5WogybktO5YJh
+         v72fs/9aTxSI0pnEWDuYqCrQZ3ypY54s/sfoQJRC14KipH/0cp6WZLE3sz8DCQz3VxYJ
+         jETrRoOtzuxm7vytXENR9AqvY/8NQAp+iN3q+vcQZznnXBs/gDr1yVeQMc0j3T8Xf+RY
+         J3Imv2IvYLZyOqQcpWW0nlCG13w0HlBeosg98Abpem9fmRr2gRyYTO7KCWnIWAmWr+87
+         EInw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaZN7AplrEyLjolQt9Fu+mJu8bRTqo1NDFO/Olq8NXoi6WHlwkYreMB3jk9EuylyaEVSFSPxfyiE/Wt6Xbr7u+2pK/D7R9eo0Ahw8=
+X-Gm-Message-State: AOJu0Yygh7u5E2XT09D5Qi+sc8Oc7JXt9wnRn2eLKhnRI8HGM1sx0QOo
+	1f2uzAyjNcAYqQ3/5PEAcu1veveqcBeQQYPLLXP7e0ZK0+duBD3epWvlhYcgk8wBa2ua/BAuoJY
+	g
+X-Google-Smtp-Source: AGHT+IGxNdfGFBc2sd+uT8Mshv7zE0iMHxVPPRhCFdm+enI7xTfevgaIs4pdgcrzguVgeuzP0FcuHg==
+X-Received: by 2002:a05:600c:358a:b0:426:5269:9838 with SMTP id 5b1f17b1804b1-429d47f43a1mr3753855e9.4.1723469673377;
+        Mon, 12 Aug 2024 06:34:33 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm102733975e9.31.2024.08.12.06.34.30
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm102733975e9.31.2024.08.12.06.34.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 06:34:31 -0700 (PDT)
+        Mon, 12 Aug 2024 06:34:32 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 12 Aug 2024 15:34:02 +0200
-Subject: [PATCH 8/9] memory: tegra30-emc: simplify with scoped for each OF
+Date: Mon, 12 Aug 2024 15:34:03 +0200
+Subject: [PATCH 9/9] memory: ti-aemif: simplify with scoped for each OF
  child loop
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -64,7 +65,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240812-cleanup-h-of-node-put-memory-v1-8-5065a8f361d2@linaro.org>
+Message-Id: <20240812-cleanup-h-of-node-put-memory-v1-9-5065a8f361d2@linaro.org>
 References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
 In-Reply-To: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -82,59 +83,75 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1224;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1869;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=Qm8I2XYrN4e568eaRkgeUjoCW+fRdkjecwXHEHRljxk=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmug9X8NotaoXkCeoFvECQEThprz5ONHsMuzD7b
- NbNcj+DjQaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZroPVwAKCRDBN2bmhouD
- 19OvD/94A99rooiagSr1yUUB3q7Tj/0CpbQTlx8GEwagkJMZgezQJ8fSt8lsJRwMBXaisbT1RUu
- /ugtoQOyBWqkLkCZWhr/dt2MLe/xTHkqATxxMe/q3D+SgaGpBqnpb8s3OCcUoLRH2zLUgkSNI/B
- uuVVzd55ascHajpNWi6sBkx/4Ze24W/M4Kzrur9iytpTE0r8vhXx66INDaF8DWK1OKaSFR5C+87
- Xi3jQE9JUlz3sNAXyieSjga2IaM8ORwSZu5uDrQ9H5dih3U5zFbTcVXbvZgWBaehrOS6NJfiCd8
- SzqME8XywWSTxtLCXarn4TdGn3FqnR/O4walESXFoC2LygReE3WiwB/R+ZBHx3iQ7m+4NGDKZK6
- VBpdwrbh0T3/x+HpB1Q1KJZvfqxuUUEOFea5K/1geiiMiFJCWOk3r7PxgZgoHWn4SwuTSHrvFYI
- +219oxZut/xhcq+BqRzL/oR4EZ9TyOFAxpt7eqTU670YOGIom6tb2FG/KaN0L2UuCqlodmYVNsY
- iJbDxcpq4gIrMimT2QT6S+AsS5JZAIV6l0Rg+otm9KBlrSMLK0JFVzGsM/vcvY9suDvqXV0rtwP
- LNsXWOvL2mgzo2mkBI5TGQ0g7g9fhaRALj9GU1rbiyjbDY3dZneug64Vgj4jUmWBINShFwvH3ag
- Y/cmVhGViQKghBw==
+ bh=1y9LIZ3UpOVR4pnvMVqojw1S5Kf9CAK2N1Et998QgxM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmug9YQQCkCmD6RWyldjxAxJ+p417Q43d0hTixW
+ dLzROOtWr+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZroPWAAKCRDBN2bmhouD
+ 1+nCD/9WeAq/6x6IjpXwsbY6q4WpzSCuLIsFjo3y8wWVAXieoqOsqOZ33OR2zlrlb5R7xqAmLOk
+ n+hWanKoaIz81P6uaaOV4ADrfzpSGO3F3pljzOFcC5kjgcvvPffYqPKATl5sUjzZNH+GbX+OJRZ
+ 0av395if4QbFFVZNGRncMfCo2pB8HZQQawKOrIVCOPLzN1l5iqgNomvHLRDECCa/i8nCeaWlmi/
+ 9UjCR9X02xh/BxZW74SjO55jI7IqLA9ohbA/OOGySP5UKVr42BoPn58P1GXpkfY6FZA+HZZ3ZxH
+ v+AGb+6rq80Wl7Lz7DM4tVc3RniN66Yw1veXOM5c0CnQcQHGRGJDD0PV1Mm5Y/UEhTzsYmy3srt
+ a2GcSDTHi2UlW11x5nxxS3OqY5xQ0lPmPn3y1UQ34g+x6gZpPZIQ5sRbQBNisH0kkU20pL32Toj
+ vJG2V8EcF8BgyExdqs5VwUIyMk+IGrWmq9XPpedyVUo3qSrUBR657572wxtDIFSOEkJ4sPtKxg0
+ j3AB0xCbvaDIJIE3xaTuD2DMCy2Tqf/EocjX/gF6//BfmKUbuQQUFxqm5UCiuSihYMtB82scL+Q
+ uQzGTpTFXzJKJUPlJUNaBiagiaOp0EoNTtbPKrmqybnQqPkBi7eMW/iiBy5E8nu+QOfyqv/mAoP
+ uWIYBVUyjipVCyQ==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use scoped for_each_child_of_node_scoped() when iterating over device
-nodes to make code a bit simpler.
+Use scoped for_each_available_child_of_node_scoped() when iterating over
+device nodes to make code a bit simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/memory/tegra/tegra30-emc.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/memory/ti-aemif.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra30-emc.c b/drivers/memory/tegra/tegra30-emc.c
-index d7b0a23c2d7d..921dce1b8bc6 100644
---- a/drivers/memory/tegra/tegra30-emc.c
-+++ b/drivers/memory/tegra/tegra30-emc.c
-@@ -979,7 +979,6 @@ static int emc_check_mc_timings(struct tegra_emc *emc)
- static int emc_load_timings_from_dt(struct tegra_emc *emc,
- 				    struct device_node *node)
- {
--	struct device_node *child;
- 	struct emc_timing *timing;
- 	int child_count;
- 	int err;
-@@ -998,12 +997,10 @@ static int emc_load_timings_from_dt(struct tegra_emc *emc,
- 	emc->num_timings = child_count;
- 	timing = emc->timings;
- 
--	for_each_child_of_node(node, child) {
-+	for_each_child_of_node_scoped(node, child) {
- 		err = load_one_timing_from_dt(emc, timing++, child);
--		if (err) {
--			of_node_put(child);
-+		if (err)
- 			return err;
--		}
- 	}
- 
- 	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
+diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
+index e192db9e0e4b..cd2945d4ec18 100644
+--- a/drivers/memory/ti-aemif.c
++++ b/drivers/memory/ti-aemif.c
+@@ -330,7 +330,6 @@ static int aemif_probe(struct platform_device *pdev)
+ 	int ret = -ENODEV;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+-	struct device_node *child_np;
+ 	struct aemif_device *aemif;
+ 	struct aemif_platform_data *pdata;
+ 	struct of_dev_auxdata *dev_lookup;
+@@ -374,12 +373,10 @@ static int aemif_probe(struct platform_device *pdev)
+ 		 * functions iterate over these nodes and update the cs data
+ 		 * array.
+ 		 */
+-		for_each_available_child_of_node(np, child_np) {
++		for_each_available_child_of_node_scoped(np, child_np) {
+ 			ret = of_aemif_parse_abus_config(pdev, child_np);
+-			if (ret < 0) {
+-				of_node_put(child_np);
++			if (ret < 0)
+ 				goto error;
+-			}
+ 		}
+ 	} else if (pdata && pdata->num_abus_data > 0) {
+ 		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
+@@ -402,13 +399,11 @@ static int aemif_probe(struct platform_device *pdev)
+ 	 * child will be probed after the AEMIF timing parameters are set.
+ 	 */
+ 	if (np) {
+-		for_each_available_child_of_node(np, child_np) {
++		for_each_available_child_of_node_scoped(np, child_np) {
+ 			ret = of_platform_populate(child_np, NULL,
+ 						   dev_lookup, dev);
+-			if (ret < 0) {
+-				of_node_put(child_np);
++			if (ret < 0)
+ 				goto error;
+-			}
+ 		}
+ 	} else if (pdata) {
+ 		for (i = 0; i < pdata->num_sub_devices; i++) {
 
 -- 
 2.43.0
