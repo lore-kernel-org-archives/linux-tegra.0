@@ -1,61 +1,61 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8018D18308E
-	for <linux-tegra@vger.kernel.org>; Mon, 12 Aug 2024 13:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A54183CAA
+	for <linux-tegra@vger.kernel.org>; Mon, 12 Aug 2024 13:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723469668; cv=none; b=kEGgdD9tnEyfBuOEbBKFHj9b19jpmKzEgBUYxYBZecgSNoBG/6LztUfsi5cBb+qhqaE6OCSEeBnXWO5prGbSQDQIpEOmbxNizBegvGitTMJDxiQAHTWnu34Plg60Gx2xRSjEuU66AB6xt9B/eGohxMg0vjua0FtIr3i0gDe2uis=
+	t=1723469669; cv=none; b=OIrJ6JJgLFK9oaSzXtjVKD/C/c5zE7GlJmyew5RqOC7T1q0fT2B83tbdL+rfaVUtFyRiut/g2KAgebqqYoHE7LL1s2w1zTnL+7VJyeUw0dJq9bwgrltijWXlGDFrlQdavhTCHcX+hSgeP8oBwJXSku4C5ld3Wp5g/AsP5Y3Atk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723469668; c=relaxed/simple;
-	bh=ZuL1arzThZP1bH0X88EKns0i/Pwsb1RnCMJkbCddCK8=;
+	s=arc-20240116; t=1723469669; c=relaxed/simple;
+	bh=h5GVRyPEyZM7BuYLl+uIGy5XE4aa3GH8V2JRysNGv/A=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iXJbbQpLt41isHC9KE0B6hmYTe1a226PKbPUXkcx8/jUWg4x7qvXrz2cjHV4gaHB5eZZnM8CPvWtcrZ/O+VmFvC79zxBfH8MLDj52/lMDbypptYXxjmmpFHKlmvrTF80CQkqdeyHQQtl6FJ/hg87NIG65CC4zo1tY2F/xBRUY6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Njq+a92P; arc=none smtp.client-ip=209.85.208.173
+	 In-Reply-To:To:Cc; b=aTuRotnYjsSftFXiCMY3ZNzlplZLDbDI+bhDDjbIe4lPVwK/kmCzkybyK+Vx6IfCrNpwf5o8DuQIFjLjiXHuLbQGN5B3cBkLOw47aXuWZMY8UDHRg7bv7lDSnGj+KhPsGe9xiGi8yp2b7kASmi8Ll1X951zSjlfUqjaCO0cwSrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JVu+Gb9T; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Njq+a92P"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2f0271b0ae9so46286391fa.1
-        for <linux-tegra@vger.kernel.org>; Mon, 12 Aug 2024 06:34:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JVu+Gb9T"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42803bbf842so43171055e9.1
+        for <linux-tegra@vger.kernel.org>; Mon, 12 Aug 2024 06:34:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723469665; x=1724074465; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723469666; x=1724074466; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SQA/PjjohkpV6TqZg91y0zhylBtn0W2KyopE+/TT64c=;
-        b=Njq+a92PA2Q6EkAKZRlyBDvjhntXSOHW7yyhPqZr39gEui1U7jcXKTLloxjXK+lGs9
-         jzUYSCheWK2tHZ1HvtN8FGLSVZK044JQodhqk3Q+VUP1Z1FDun5ZVDLR/eETx0J+zrwK
-         RI//+AzxILVjoV4Pj2JurVAKGwymfx6gj4p/Of2COs94d1DSKz0apR5CdxJboGmopq5m
-         xQveEk2VD8NtAXo8f6sYkzmi2oyyyScegRY3V8XGGkxTYa5nA4hU+aFGMoGr9nBvPK2J
-         VQbDwL/hOwgiAW3kKgiQYvD46z3CNgQlQb8OJeIAbvhITlRZEz9hdkErLUyLIhGOwHf5
-         McNQ==
+        bh=CxelJ2EbVi7FPWoh5bPyWxBtOLrcrZXgDmweNSFWgLY=;
+        b=JVu+Gb9T2YnwV2e7VCdPafQID0NQhXmfyPKZqfwvGLJ14MYIfVbv3GMpnzuSgnlb+T
+         OSXzTUictx7oLOMB/ykvp1371oO93jG9a+1GZMI6EkVScfGpnyu3UhEyY9c1a/cpGmfw
+         PReoGF4o6uz2pn/P/XLXBaAIYoBzUdMaCzLdHZbX4dddwvuyttPItItgpCV5Iau9dxc8
+         TofpPBzHEfZ5BgiSb2K/aDY8lDF3R0GQz8ujyqolTi3JaasWBU3l3L0nA+Uv1JUIXvr/
+         M2+hsxmlaCecIeaXBOrzuYlbOAk0aoqFcH9i04TKqxFuPFo1e7VIorSBwYSJVdmtIVVR
+         rM4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723469665; x=1724074465;
+        d=1e100.net; s=20230601; t=1723469666; x=1724074466;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SQA/PjjohkpV6TqZg91y0zhylBtn0W2KyopE+/TT64c=;
-        b=vvObysTNCIpDyffy/k6keDxii8aLi1TVCzW3e3cRhlF0BBJYkIkpTrXy8unK+LbUYg
-         6TQt9kmWBElexWQ1w2FHbH/19rBY+vhG+YVkVBUFsmch0lfcojApIlzVgd5XhOPfWXbV
-         2j2OOJTe4UEcwZyw4nS+jDGZslsMooWeK7x+5OvNsfpGyc7k9NMO4KpmgEetnCjSL+qK
-         T2r80hswkpEj5gRbYfJBvzybUE6CO4wqTg3vq6cRC6eJ06pBewNic5LC2d7MUUPxoa1I
-         Do9GX039sTcCJy7q4CeHFZKP0xSjfOeCYpSxxjXoNXxpDQTWW3f2XUdWo1xZLgut1g8d
-         T+nw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzObdOZ3iyWJ/n/D5K0RABKhMj8xb/6ekpUOpGeNZ/irNu1Ldg8iH+CZzm9c0j9WpFZSoVZadhluSh7I/JGRu6H4/w1KLLdrRPkmM=
-X-Gm-Message-State: AOJu0Ywvu2N7UluAFm9KXUl269SJFakLAF4fmLP4lU4G5HGAHeRndR9K
-	bQn4SxyiYVN8bn2adlgWHRmsZ4UtL5szZyvoCfv6YY7+t12USJzXiWlZStIs2NQ=
-X-Google-Smtp-Source: AGHT+IFuG2qd+DzlKsP6QmlNw7cGw4vQwIOF5kCUyHlkAobIrwVs2DCtPwAfbJ5IawKIByi9iNKEWA==
-X-Received: by 2002:a2e:d11:0:b0:2f1:9248:c325 with SMTP id 38308e7fff4ca-2f2b717bb9dmr2097961fa.31.1723469664458;
-        Mon, 12 Aug 2024 06:34:24 -0700 (PDT)
+        bh=CxelJ2EbVi7FPWoh5bPyWxBtOLrcrZXgDmweNSFWgLY=;
+        b=uNpCexQ36trI31nMaQVO2a80SnJl9UFAHhHLvGZkkZv66VSX9e+IaFYXEiaTCiN29+
+         TnK5ps2W7Su+JQp2e/o1RvuP3TpCQ6pMbASmQFSpNONWwutrdAo6AC5rDvitcRbFLMGk
+         j+dDMV4mEvpT9zNRptbsE8vuEJGGUeh/d5SYYzgJhsY21w4CF7xeKreKdAf1SgE/FW7c
+         jGP+UwQN64zpj4bcaJDbag+g5Jy36EhvQJIw3wsGLXh+rVCiuDTTN3muUMkEhvRjQMsR
+         TFNHv4qaiCLjfwH0gRf2b9baAoqOLuhu51KavN3cH57liLIfLzot2Sy7cxuRa5+hNGkk
+         6+Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCULL/1z2spFYV2wME8q2w4n8ONmPav5qJ+1ziq1+DD0xvdECQqvsygJxVLZCe6PUmTyH6pnH5CUSblwzLl8+fH9tcsTd4XZZB9qbI8=
+X-Gm-Message-State: AOJu0YwkepTqR7xZnXosbc17UlgER9kQmjvskp847+jmeX+DuaAvuH4T
+	reng181AqsB7T4/K41Sefhev6l8scZ6NBbbeLSvupRPlansT2z7gfkfVVU6b4qU=
+X-Google-Smtp-Source: AGHT+IF/xqgp3fX5/73q32JxRWI738lXHcWaaxk8rQf5ZvZitjmwwt4tX7txoPGOt9wBMUleQlFSDw==
+X-Received: by 2002:a05:600c:1c82:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-429d486efd0mr4284805e9.26.1723469665903;
+        Mon, 12 Aug 2024 06:34:25 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm102733975e9.31.2024.08.12.06.34.22
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm102733975e9.31.2024.08.12.06.34.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 06:34:23 -0700 (PDT)
+        Mon, 12 Aug 2024 06:34:25 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 12 Aug 2024 15:33:57 +0200
-Subject: [PATCH 3/9] memory: samsung: exynos5422-dmc: use scoped device
- node handling to simplify error paths
+Date: Mon, 12 Aug 2024 15:33:58 +0200
+Subject: [PATCH 4/9] memory: stm32-fmc2-ebi: simplify with scoped for each
+ OF child loop
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240812-cleanup-h-of-node-put-memory-v1-3-5065a8f361d2@linaro.org>
+Message-Id: <20240812-cleanup-h-of-node-put-memory-v1-4-5065a8f361d2@linaro.org>
 References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
 In-Reply-To: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -82,114 +82,83 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2782;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1886;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=ZuL1arzThZP1bH0X88EKns0i/Pwsb1RnCMJkbCddCK8=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmug9THrzP+A1BH/yeTSMDTHI9G2M6wGjffRCSn
- dlrxuuifPyJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZroPUwAKCRDBN2bmhouD
- 188OEACJwoc0GJ4OOrq04S9Eqnai7E1TmoY+QS6g/X4/oh4fUgYz6R5MGupwE7ya/svO86v4gOl
- OLe8SdJZKjvqK76134ROWFAUJfVnt+x5RIg6hxI7LsqUOCxd4+P35lymy4T1T6M1Wm1YD+bzZcT
- b+hJuth2lbekjBDszhBlcuwsLCR+eP4qOP4X60dIIz/DTwLKRIsNKi1ZzceLBcnU3FxO29VYJo7
- gPDrthDsbabgcU/p+jDKZpqlwyVbYPGmOwXrB+qA/6UpNUkSgS3rEBGULDktmxaOWiCVYAf/uxU
- hnIEBvoqeT7dGdF/zxzP4IXa33L8dQ3nEhTktFn/KUFO7KSP0npI9YqxGe2wTq4U1Iu5Vv280pp
- ebL96l+uGfl7yGN0vm3XsrETWTo9jkdwTEC6nNhFbXQbMeZfppqiXSnheVM6pyTepzKzcHhmXOo
- 0BysbLIOGMoxpcppLMfsoaimruRVTEn8PloUDzWjtD16zDFGKzngIrJuXFP0QKUiK7nLK+tFGiT
- kt4gMkJiRZCBIxDLPT2HkMhtyfSZMcKX/sIsKruL/TqdZ2oD4zY3RiNFWtZ9NDMNRI2wQP/yB6X
- Jbg4bT8+JbyRvvxHwF0/F4UaF2Wz9fGUB/XnfSw5mFRgs6GJP2sFYXsymEwhYpm/d8s6rmdQ643
- NIuOrNP6Z8e6AGA==
+ bh=h5GVRyPEyZM7BuYLl+uIGy5XE4aa3GH8V2JRysNGv/A=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmug9UQ2G2MLUWfrT/ljckUzPqu+/Ti/gpvU3bj
+ vLbozfzG9+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZroPVAAKCRDBN2bmhouD
+ 1/h1D/9FBIcRGxE/iNnzoy6kaQiSTt/zZow9zS313YkYxSmkqUcdnFL2JyYULkVMPta7hVQ9v9O
+ bZJQVD0bif8TRwAQp1cB71a4T1IENrkqzP4iwFZ8087G4vZ9NdHeU9aLruLynBs9/U631XugQ9o
+ SFXgY5vliVBY1jbiRMwrIPbvEPecG1O1/TKbCJYd8ZhjkDXln2l1HIVce++fZhyE07IJqPqBnI1
+ 8sUFAOB8Eme5pmhnTfeYVvoJ56i+shfDHmsBeEdwbG2M/iv38XN2rrE5+q79M5epLsDdyQr5doq
+ 0fafsJQocAYUgPZVgrdmnBcjhb9zEKgFVsPdEXvdPU1QW4t1RvSS+RzzrLbus/05ljfhwM5Ot0K
+ Z6DywmDKh3uT+EdqtuVpHhIs6rcfAKyjHyEPg4r++MXTNRVWw1062emp7mAlljObs/Tqllgiu78
+ uP9yE2NcARpF16zI4YXRDne98RDnw4oBeRx5oFD74w1SudLrioM1ouoFicZqJwMjrSAjuhcRb8K
+ +dGLLs8fPAVE+GsBu9pu6z++punmdkhJfIqdCX1VCPrYHcYg0aOPPsaA2MgzrD9+gd5o0lRsQY8
+ BAQtw11HqnTQwABAZ1MS5FtvJDkJelkJxE9hWQZZskoCPIq6vj45Ab7Ud2anz27txnCtpZ3ZNwe
+ CmOBzjUDD19MKwg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Obtain the device node reference with scoped/cleanup.h to reduce error
-handling and make the code a bit simpler.
+Use scoped for_each_available_child_of_node_scoped() when iterating over
+device nodes to make code a bit simpler.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/memory/samsung/exynos5422-dmc.c | 31 +++++++++++--------------------
- 1 file changed, 11 insertions(+), 20 deletions(-)
+ drivers/memory/stm32-fmc2-ebi.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
-index da7ecd921c72..d3ae4d95a3ba 100644
---- a/drivers/memory/samsung/exynos5422-dmc.c
-+++ b/drivers/memory/samsung/exynos5422-dmc.c
-@@ -4,6 +4,7 @@
-  * Author: Lukasz Luba <l.luba@partner.samsung.com>
-  */
- 
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/devfreq.h>
- #include <linux/devfreq-event.h>
-@@ -1176,10 +1177,10 @@ static int of_get_dram_timings(struct exynos5_dmc *dmc)
+diff --git a/drivers/memory/stm32-fmc2-ebi.c b/drivers/memory/stm32-fmc2-ebi.c
+index 1c63eeacd071..7167e1da56d3 100644
+--- a/drivers/memory/stm32-fmc2-ebi.c
++++ b/drivers/memory/stm32-fmc2-ebi.c
+@@ -1573,29 +1573,25 @@ static int stm32_fmc2_ebi_setup_cs(struct stm32_fmc2_ebi *ebi,
+ static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
  {
- 	int ret = 0;
- 	int idx;
--	struct device_node *np_ddr;
- 	u32 freq_mhz, clk_period_ps;
+ 	struct device *dev = ebi->dev;
+-	struct device_node *child;
+ 	bool child_found = false;
+ 	u32 bank;
+ 	int ret;
  
--	np_ddr = of_parse_phandle(dmc->dev->of_node, "device-handle", 0);
-+	struct device_node *np_ddr __free(device_node) = of_parse_phandle(dmc->dev->of_node,
-+									  "device-handle", 0);
- 	if (!np_ddr) {
- 		dev_warn(dmc->dev, "could not find 'device-handle' in DT\n");
- 		return -EINVAL;
-@@ -1187,39 +1188,31 @@ static int of_get_dram_timings(struct exynos5_dmc *dmc)
+-	for_each_available_child_of_node(dev->of_node, child) {
++	for_each_available_child_of_node_scoped(dev->of_node, child) {
+ 		ret = of_property_read_u32(child, "reg", &bank);
+ 		if (ret) {
+ 			dev_err(dev, "could not retrieve reg property: %d\n",
+ 				ret);
+-			of_node_put(child);
+ 			return ret;
+ 		}
  
- 	dmc->timing_row = devm_kmalloc_array(dmc->dev, TIMING_COUNT,
- 					     sizeof(u32), GFP_KERNEL);
--	if (!dmc->timing_row) {
--		ret = -ENOMEM;
--		goto put_node;
--	}
-+	if (!dmc->timing_row)
-+		return -ENOMEM;
+ 		if (bank >= FMC2_MAX_BANKS) {
+ 			dev_err(dev, "invalid reg value: %d\n", bank);
+-			of_node_put(child);
+ 			return -EINVAL;
+ 		}
  
- 	dmc->timing_data = devm_kmalloc_array(dmc->dev, TIMING_COUNT,
- 					      sizeof(u32), GFP_KERNEL);
--	if (!dmc->timing_data) {
--		ret = -ENOMEM;
--		goto put_node;
--	}
-+	if (!dmc->timing_data)
-+		return -ENOMEM;
+ 		if (ebi->bank_assigned & BIT(bank)) {
+ 			dev_err(dev, "bank already assigned: %d\n", bank);
+-			of_node_put(child);
+ 			return -EINVAL;
+ 		}
  
- 	dmc->timing_power = devm_kmalloc_array(dmc->dev, TIMING_COUNT,
- 					       sizeof(u32), GFP_KERNEL);
--	if (!dmc->timing_power) {
--		ret = -ENOMEM;
--		goto put_node;
--	}
-+	if (!dmc->timing_power)
-+		return -ENOMEM;
- 
- 	dmc->timings = of_lpddr3_get_ddr_timings(np_ddr, dmc->dev,
- 						 DDR_TYPE_LPDDR3,
- 						 &dmc->timings_arr_size);
- 	if (!dmc->timings) {
- 		dev_warn(dmc->dev, "could not get timings from DT\n");
--		ret = -EINVAL;
--		goto put_node;
-+		return -EINVAL;
- 	}
- 
- 	dmc->min_tck = of_lpddr3_get_min_tck(np_ddr, dmc->dev);
- 	if (!dmc->min_tck) {
- 		dev_warn(dmc->dev, "could not get tck from DT\n");
--		ret = -EINVAL;
--		goto put_node;
-+		return -EINVAL;
- 	}
- 
- 	/* Sorted array of OPPs with frequency ascending */
-@@ -1239,8 +1232,6 @@ static int of_get_dram_timings(struct exynos5_dmc *dmc)
- 	dmc->bypass_timing_data = dmc->timing_data[idx - 1];
- 	dmc->bypass_timing_power = dmc->timing_power[idx - 1];
- 
--put_node:
--	of_node_put(np_ddr);
- 	return ret;
- }
- 
+@@ -1603,7 +1599,6 @@ static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
+ 			ret = ebi->data->check_rif(ebi, bank + 1);
+ 			if (ret) {
+ 				dev_err(dev, "bank access failed: %d\n", bank);
+-				of_node_put(child);
+ 				return ret;
+ 			}
+ 		}
+@@ -1613,7 +1608,6 @@ static int stm32_fmc2_ebi_parse_dt(struct stm32_fmc2_ebi *ebi)
+ 			if (ret) {
+ 				dev_err(dev, "setup chip select %d failed: %d\n",
+ 					bank, ret);
+-				of_node_put(child);
+ 				return ret;
+ 			}
+ 		}
 
 -- 
 2.43.0
