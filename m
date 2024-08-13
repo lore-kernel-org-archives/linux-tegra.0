@@ -1,105 +1,118 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883F31A3BB7
-	for <linux-tegra@vger.kernel.org>; Tue, 13 Aug 2024 19:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9E31AB512;
+	Tue, 13 Aug 2024 22:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723578437; cv=none; b=jRiCGEDPdngdRQoy/9HJU/yjsyDPCSeVeF2GLzrmHShF6/M/5GYXwT6U+7WIWwlccwJ9Ia6noirtU/7C6J0B7zEqE6Vca/iBuGmIURW8FlC/S+mxU0g+/aDifaN/0VeepiiaSvQ8Kq+eLoKUqqhthLeyxi8TD4Qnq0QV1qbtSlU=
+	t=1723589602; cv=none; b=ckdFHyPOf5y0rMkGteZjwip11AWv1GIgJ3cIuFqHqX4NYdkCQuxKLWCvZjCYUIW7D29wqH+SJi3o4fP07PdjH5Bd5DHTISGOQ3tIhlwrt9GbyIDubJ+wBE1J/hF8V4/6qoh+NfkSdOEe4Be+N9Qfzcp6nML/5tysBfMaFNXoMr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723578437; c=relaxed/simple;
-	bh=q1WEkObmezT4cuSE/xHZpVscMy7YILLRUWpLPnFk6fE=;
+	s=arc-20240116; t=1723589602; c=relaxed/simple;
+	bh=f2ndbcAsRTxeYJ0IcGTtOzzOPEzBx+PuBraPZxuFils=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEeNbqnA9B9069JPivcYycnxIO5ju801JI0q7NZdDzcKACYPNqPFR+CBiX9QN8MsoZqTS3lGdbxASbpF4xE4cP7MJrFVO9DeBesmNvInKS5hyzwxrJ7iHEi5pzGZTd+EE17WRyIzsTe/scJZ7r2ccC05yMVGde+PpV+RX1vyYz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=hoeC80sN; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=oRaVk3w9a96rve51JPmhI0HOt26EBbwxwg4+QnrfxMEzaLXpxvqenVPm1N35DqspPMYqUEVXeHHVXKzHZwP4qyXx249DdR+uq2uHsfO6X0/mO20Y5xc/j24sXgWDJdOCIQbcf0EbhwO4tjAAIRAcRvJK1HyFGzbWO/xENTdcmf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOMAkSU5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="hoeC80sN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=q1WE
-	kObmezT4cuSE/xHZpVscMy7YILLRUWpLPnFk6fE=; b=hoeC80sNy5+d5g31f5S5
-	cHnrFL14SBj7IYI5pkPJbJzC+L9zlk9c9AR3X05VbL57XrwsrzPd07oBCZPB8Ajh
-	sBX7j+SnxCPZjcuacCnojCj/k7z08IFrXzi1tD1LZ6vMj11rzf8vHQQleqaIf2S/
-	JNAu9h0/15mLWN5v3adW0WdOMTfMRIScbONBPOyz3T5QNWxOBXcyxbSKk4AWJGV8
-	dCNhckaJIAQKZq7QaU7Ipp0s8y/LXVVcnFqTrNMzy+BVuVuo5XdzzSw4zgaj2uAW
-	vdfjjolYCAo54zQEw3aV7F1NvS5+7UzFWU4gmard5gWeAkAt8+UuekVsC8Rtm0Bs
-	Jw==
-Received: (qmail 1770866 invoked from network); 13 Aug 2024 21:47:05 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Aug 2024 21:47:05 +0200
-X-UD-Smtp-Session: l3s3148p1@2ZS/35UfGMNehhrd
-Date: Tue, 13 Aug 2024 21:47:02 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Breno Leitao <leitao@debian.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOMAkSU5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36FB4C32782;
+	Tue, 13 Aug 2024 22:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723589601;
+	bh=f2ndbcAsRTxeYJ0IcGTtOzzOPEzBx+PuBraPZxuFils=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pOMAkSU57MQ2FCsjDEOlzH8ODW+iIWMozrZaSMxXJce9rppN6H/Irign/jQ0cWIvS
+	 InbbtXZKngHXIRwexNBcv0QW9cKyYjlfkIyUPn6cnLjWCLSq8ygkleT2TWqiXHZ0nZ
+	 hDlphOW5WZ1ypRkyder6u/V2HMtT1TXxdBg13hNybQPzishg/9vWNqZE7WR8lvLDpV
+	 XqK1T1JGs4xjy6L0Y6ZKtLU/h+g+Bf5lGi6jj2U/uqj38nylUs2P8vQ4iQx8/kFrKI
+	 Pwvumjrqg7DrANMk1n8NL+EbnlM54jsXkFtRwvBRle6kqKUO+z1fUaCNsz5UlXP6VT
+	 iaCT3VtepK0rQ==
+Date: Tue, 13 Aug 2024 23:53:17 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, 
+	Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com, Michael van der Westhuizen <rmikey@meta.com>, 
+	Andy Shevchenko <andy@kernel.org>, 
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v2] Do not mark ACPI devices as irq safe
-Message-ID: <Zru4NpfJZCzE6uoa@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Breno Leitao <leitao@debian.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
+Message-ID: <ry4kzh4vr573ymutpjz5sgzmhosn3ekm3jatjy4yfyfm32eqit@cmp376je7viy>
 References: <20240813161254.3509409-1-leitao@debian.org>
- <CAHp75VcLR5ehrCyVsY0TKWSogRt-_ETqkZ1VE=ATVqRc8Y_9vg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vp+VE/yiAlCbU3dL"
-Content-Disposition: inline
-In-Reply-To: <CAHp75VcLR5ehrCyVsY0TKWSogRt-_ETqkZ1VE=ATVqRc8Y_9vg@mail.gmail.com>
-
-
---vp+VE/yiAlCbU3dL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240813161254.3509409-1-leitao@debian.org>
 
+Hi Breno,
 
-> end it will be ~5-6 lines only. Other than that, LGTM.
+You don't need to resend the patch. Because the changes are only
+in the commit log, I can take care of them.
 
-What about a proper prefix in the subject?
+First of all, we need to fix the title to be:
 
+"i2c: tegra: Do not mark ACPI devices as irq safe"
 
---vp+VE/yiAlCbU3dL
-Content-Type: application/pgp-signature; name="signature.asc"
+On Tue, Aug 13, 2024 at 09:12:53AM GMT, Breno Leitao wrote:
+> On ACPI machines, the tegra i2c module encounters an issue due to a
+> mutex being called inside a spinlock. This leads to the following bug:
+> 
+> 	BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
+> 	in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1282, name: kssif0010
+> 	preempt_count: 0, expected: 0
+> 	RCU nest depth: 0, expected: 0
+> 	irq event stamp: 0
+> 
+> 	Call trace:
+> 	__might_sleep
+> 	__mutex_lock_common
+> 	mutex_lock_nested
+> 	acpi_subsys_runtime_resume
+> 	rpm_resume
+> 	tegra_i2c_xfer
 
------BEGIN PGP SIGNATURE-----
+We can keep the trace as:
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma7uDIACgkQFA3kzBSg
-Kba0BQ/8Dp6P0nzxq3BrGGgCD3+Pe6Q9sXIcdvMWnUMmg3fRkPlWj9EV94QuQSjk
-t0hOF5YD7amXLHzgfWTACivXYN3pMbrJ8YdseB2TT+4PDjVBDwPkNIvRlHexmkgX
-EyYs9uUQuqRtQ3D1oFLjQZxaFAn/gAjIS5myT2jYWjb3LrRBnS7JCXawEpsz1dbn
-iCiQh9CcWa17L6yE/yAzf9CVMC+NQSJcU1Gr47bPI3TEoUGw6yydjrgnDUv4/ws6
-glyXdQ6wg+iJdRwLLNvI/F9HzG3CSK+YnT+gzgsqbWSUzRLSOGWv/tTX7mKx0Ns2
-R28N/BZEF2oiUpWy0OZqPE1kVvizgIU21YSMo9rJPFDyps2H6t/w3rKbKUYRgz2s
-duxUdZ5H+I05jQLBL965dw/xmpMF5X8QU1N7gtYOWKPCm21OpDFwkFOru1xW55nQ
-4bKwE9IfANYPP1ILMDrfADpHWQWA5WuGwjki4w4W6kAMjRQcEXjS0eVh94RSTGTf
-QDSaX1hUylvPTIvyz46SoJYwthrLt6S8E6xTHfqMtnDw0LylwVmXImDPQGSTJuBI
-XA6jaEpy6EF+vp5lCbBZLEEF0VjpJlv3df9X3C/HMKQWTAzWo2ZMBUyfnUfMOt/D
-yBd+ViIS4u7IgeNe9kqYM2ycqoq82lXWliWxVy4JEPfX/PRK82Y=
-=NuCY
------END PGP SIGNATURE-----
+	BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
+	...
 
---vp+VE/yiAlCbU3dL--
+	Call trace:
+	__might_sleep
+	__mutex_lock_common
+	mutex_lock_nested
+	acpi_subsys_runtime_resume
+	rpm_resume
+	tegra_i2c_xfer
+
+> The problem arises because during __pm_runtime_resume(), the spinlock
+> &dev->power.lock is acquired before rpm_resume() is called. Later,
+> rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+> mutexes, triggering the error.
+> 
+> To address this issue, devices on ACPI are now marked as not IRQ-safe,
+> considering the dependency of acpi_subsys_runtime_resume() on mutexes.
+> 
+> Co-developed-by: Michael van der Westhuizen <rmikey@meta.com>
+> Signed-off-by: Michael van der Westhuizen <rmikey@meta.com>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+
+I haven't seen Andy explicitly tagging this patch. Andy, can we
+keep it? Or have I missed it.
+
+Besides, you also need:
+
+Fixes: ede2299f7101 ("i2c: tegra: Support atomic transfers")
+Cc: <stable@vger.kernel.org> # v5.6+
+
+Can you please check whether this is right?
+
+This patch won't apply, though, as far as 5.6 so you should
+expect to provide some support for the stable backport.
+
+Andi
