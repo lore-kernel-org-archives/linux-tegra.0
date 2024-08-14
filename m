@@ -1,43 +1,59 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9E31AB512;
-	Tue, 13 Aug 2024 22:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FD31422C3;
+	Wed, 14 Aug 2024 08:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723589602; cv=none; b=ckdFHyPOf5y0rMkGteZjwip11AWv1GIgJ3cIuFqHqX4NYdkCQuxKLWCvZjCYUIW7D29wqH+SJi3o4fP07PdjH5Bd5DHTISGOQ3tIhlwrt9GbyIDubJ+wBE1J/hF8V4/6qoh+NfkSdOEe4Be+N9Qfzcp6nML/5tysBfMaFNXoMr0=
+	t=1723625281; cv=none; b=J0nIpOgRkM1CSx2XRwutCuSqEqwXdQdwt1ftzTHjrkfUnkVpqfGrC1E3GJ5sbP+02S3Ma+Wenhhx908PwYJcDaSxhmqtQHvbC8U4XSxq9I+4h6qyZLy/zvDZ9VfjmQ4pHgSFFTQzXQ3DgqIqQWA7ZZ3GPpsbpi+5Nhfun2SBDA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723589602; c=relaxed/simple;
-	bh=f2ndbcAsRTxeYJ0IcGTtOzzOPEzBx+PuBraPZxuFils=;
+	s=arc-20240116; t=1723625281; c=relaxed/simple;
+	bh=9rX+RbnLcib1ASYWBSEvXjPcnKmaUtLTBClkTMxRHmw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oRaVk3w9a96rve51JPmhI0HOt26EBbwxwg4+QnrfxMEzaLXpxvqenVPm1N35DqspPMYqUEVXeHHVXKzHZwP4qyXx249DdR+uq2uHsfO6X0/mO20Y5xc/j24sXgWDJdOCIQbcf0EbhwO4tjAAIRAcRvJK1HyFGzbWO/xENTdcmf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOMAkSU5; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOMAkSU5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36FB4C32782;
-	Tue, 13 Aug 2024 22:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723589601;
-	bh=f2ndbcAsRTxeYJ0IcGTtOzzOPEzBx+PuBraPZxuFils=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pOMAkSU57MQ2FCsjDEOlzH8ODW+iIWMozrZaSMxXJce9rppN6H/Irign/jQ0cWIvS
-	 InbbtXZKngHXIRwexNBcv0QW9cKyYjlfkIyUPn6cnLjWCLSq8ygkleT2TWqiXHZ0nZ
-	 hDlphOW5WZ1ypRkyder6u/V2HMtT1TXxdBg13hNybQPzishg/9vWNqZE7WR8lvLDpV
-	 XqK1T1JGs4xjy6L0Y6ZKtLU/h+g+Bf5lGi6jj2U/uqj38nylUs2P8vQ4iQx8/kFrKI
-	 Pwvumjrqg7DrANMk1n8NL+EbnlM54jsXkFtRwvBRle6kqKUO+z1fUaCNsz5UlXP6VT
-	 iaCT3VtepK0rQ==
-Date: Tue, 13 Aug 2024 23:53:17 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, 
-	Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com, Michael van der Westhuizen <rmikey@meta.com>, 
-	Andy Shevchenko <andy@kernel.org>, 
-	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYoeoNHkvGfv2UxnYWcIACeZN2D7yvetZWgIhLkl7j938EudXLb3VX47/lY9MP8MTJqObj+Kf0i9O/oml18p2KdrIkeVY+aLD+E/IuipntlW5OQs6RPI2mGMU86HgTRcObK9GUOH750IVjIRRJpqCRBDzqhWFtBWg87IRBg3tDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef2cb7d562so67243341fa.3;
+        Wed, 14 Aug 2024 01:47:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723625277; x=1724230077;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XoEzFPa5Og2Psgq4HyInxDXXf39Xj956SzleRo/JzaU=;
+        b=Kg4d3HUqzEJSfeigGbJOlX7HILpadnLHqcZwutJ1onb1tNabHYTSgrHAnTAbqXJQXZ
+         3ULrF8ZpmHn+r1inae13MvlUigyANshu6AaxOt+P85lXEWyMWjOGTMryL/rIym5rGOo0
+         +00UZPJ7kSi4Cf45U3uGRRkh18o7KedLTiqGQX8HGvzVnUan6Fh1vl3EiIsgKPu6pU6X
+         pllCjSn6iHtR/cSTbVM4pczmHeSAe2bn/F2vNap/hEdgmJ3HALBzfkM+RSoSHyxqjVdj
+         +kw4L864tE3IzgWQTcRaarIT10SJnbZIoVQJWwgsO60oUcezmJODyTQEbxHgb9j5+gTZ
+         07Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVq2m0IQzNm2SJgsOec3EHvjyTLBxv4xhHxSrJ2fdIA5KDUB+LeB9XQj//NKAe4K67SmBDaDE8vMpDo/U57FnYq8EsDE162HF+jJOHOtUtufxSJ2T6Xlm3RBV+papMASoKv1sQv2wNyAiX6b3R3E60gE53gs9Ia5BcJGTVi/1hqlNvD5KY=
+X-Gm-Message-State: AOJu0Yy90eEu7NM1F1s3Ti1rv7oTUcVZei5fHGSP9+/5aG2Dh/Hl6Xzv
+	XJZptYFyO6pXB7rMiW1LMGScmsJjJIq8xjof3vbKTHvpIMTMFArx
+X-Google-Smtp-Source: AGHT+IG13U8UpfbcuMATjHLEmJgpXZZ1NeV/050xdRLNneKphbDxbBSwsFcLsfpPAQA1ApzdC8fRNw==
+X-Received: by 2002:a2e:4609:0:b0:2f3:abca:8b0f with SMTP id 38308e7fff4ca-2f3abca8c13mr8201251fa.27.1723625276758;
+        Wed, 14 Aug 2024 01:47:56 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a602115sm3598747a12.96.2024.08.14.01.47.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2024 01:47:56 -0700 (PDT)
+Date: Wed, 14 Aug 2024 01:47:54 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
+	Michael van der Westhuizen <rmikey@meta.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v2] Do not mark ACPI devices as irq safe
-Message-ID: <ry4kzh4vr573ymutpjz5sgzmhosn3ekm3jatjy4yfyfm32eqit@cmp376je7viy>
+Message-ID: <ZrxvOr6O8weK5cB6@gmail.com>
 References: <20240813161254.3509409-1-leitao@debian.org>
+ <ry4kzh4vr573ymutpjz5sgzmhosn3ekm3jatjy4yfyfm32eqit@cmp376je7viy>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -46,73 +62,39 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240813161254.3509409-1-leitao@debian.org>
+In-Reply-To: <ry4kzh4vr573ymutpjz5sgzmhosn3ekm3jatjy4yfyfm32eqit@cmp376je7viy>
 
-Hi Breno,
+Hello Andi,
 
-You don't need to resend the patch. Because the changes are only
-in the commit log, I can take care of them.
-
-First of all, we need to fix the title to be:
-
-"i2c: tegra: Do not mark ACPI devices as irq safe"
-
-On Tue, Aug 13, 2024 at 09:12:53AM GMT, Breno Leitao wrote:
-> On ACPI machines, the tegra i2c module encounters an issue due to a
-> mutex being called inside a spinlock. This leads to the following bug:
+On Tue, Aug 13, 2024 at 11:53:17PM +0100, Andi Shyti wrote:
+> Hi Breno,
 > 
-> 	BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
-> 	in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1282, name: kssif0010
-> 	preempt_count: 0, expected: 0
-> 	RCU nest depth: 0, expected: 0
-> 	irq event stamp: 0
+> You don't need to resend the patch. Because the changes are only
+> in the commit log, I can take care of them.
+
+In fact, the changes are in the code itself, see the changelog:
+
+  * Replaced ACPI_HANDLE() by has_acpi_companion() (Andy Shevchenko)
+  * Expanded the comment before the change (Andy Shevchenko)
+
+> Besides, you also need:
 > 
-> 	Call trace:
-> 	__might_sleep
-> 	__mutex_lock_common
-> 	mutex_lock_nested
-> 	acpi_subsys_runtime_resume
-> 	rpm_resume
-> 	tegra_i2c_xfer
-
-We can keep the trace as:
-
-	BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
-	...
-
-	Call trace:
-	__might_sleep
-	__mutex_lock_common
-	mutex_lock_nested
-	acpi_subsys_runtime_resume
-	rpm_resume
-	tegra_i2c_xfer
-
-> The problem arises because during __pm_runtime_resume(), the spinlock
-> &dev->power.lock is acquired before rpm_resume() is called. Later,
-> rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
-> mutexes, triggering the error.
+> Fixes: ede2299f7101 ("i2c: tegra: Support atomic transfers")
+> Cc: <stable@vger.kernel.org> # v5.6+
 > 
-> To address this issue, devices on ACPI are now marked as not IRQ-safe,
-> considering the dependency of acpi_subsys_runtime_resume() on mutexes.
-> 
-> Co-developed-by: Michael van der Westhuizen <rmikey@meta.com>
-> Signed-off-by: Michael van der Westhuizen <rmikey@meta.com>
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
+> Can you please check whether this is right?
 
-I haven't seen Andy explicitly tagging this patch. Andy, can we
-keep it? Or have I missed it.
+I would say that we probably want to blame the support for ACPI device,
+which came later than ede2299f7101 ("i2c: tegra: Support atomic
+transfers").
 
-Besides, you also need:
+I'd suggest the following:
 
-Fixes: ede2299f7101 ("i2c: tegra: Support atomic transfers")
-Cc: <stable@vger.kernel.org> # v5.6+
+ Fixes: bd2fdedbf2ba ("i2c: tegra: Add the ACPI support")
+ CC: <stable@vger.kernel.org> # v5.17+
 
-Can you please check whether this is right?
+I am not planning to submit a new patch with these changes, please let
+me know if you need action on my side.
 
-This patch won't apply, though, as far as 5.6 so you should
-expect to provide some support for the stable backport.
-
-Andi
+Thanks for handling this fix,
+--breno
