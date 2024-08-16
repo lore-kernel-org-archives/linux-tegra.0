@@ -1,81 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE1E1E505;
-	Fri, 16 Aug 2024 13:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CEB1AC8B8
+	for <linux-tegra@vger.kernel.org>; Fri, 16 Aug 2024 13:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723816417; cv=none; b=d8uSCF7vC0xonOcR7iPoRJ18JyzrBIsbA/HUV3uc4UaiF8oaGGkPmM7LpC6r504A+aI+gfcAqQoCUPpeXjOWKp+7w2WnJUdzomQtmrS9ZA0YbFdc0meRxpI7WAguTTTEVcLbRuOFa2PA3PRtVkBtpEofQcn2mT+QV9f58iVV8f8=
+	t=1723816653; cv=none; b=VZoABzDTDkBUPamGcgsgFdSsVrzHlz4x++Dffux7/mzacgv20PWzTBSs5q3WtY2o7IUWUPWxwhnMdxKz2blDMvb7d6nJ7Z1tb4ELuFK51+YJVeflIMXvsCSJrXxY/9ScG/eMD6TtHWeVnNPnlSrIKPJ8nR5nKeiUflMgf1S9wgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723816417; c=relaxed/simple;
-	bh=I1cI1Ny0H4g/lNQvAGQgRTIrokQ8aivqsHqBmdZtkDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=me0mNu7n+8uaJTNjq79u85PoMeK5t3KnQRMvnFdkmGtY9EgdZ5aTPQnEuPnHd01nmrjbixMKAFhMAmyj85C8cPDujHOiFNLUZ9LepoDqzikYC9RUErPyNDbCQc5IaS7NCNvrl305JgVwsJBZQedLAeKl7bf0Ft0mGQ0A+ADviVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n6vdj1Qe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723816653; c=relaxed/simple;
+	bh=bhKl8LrqSNNy1pCMzfb2la/HnUfCqWNtqkdVM7XHdW4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fx5nuvWX8WWBEUbHsk7fXV98h3uqetR5bXaI0o8WsacDtynyAdEczrMwm70lToiU7sjVvBBecL27/ZeEgaqIY+/NWz5c6TiaHwV4lYSMIp1OQy3zjNmg0eHjcAsL2pzQRbH0HXJHY0t2+1+9lwlgul97rL5N6YnERIRRKkEJ4Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PUNgIjoU; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n6vdj1Qe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E0FC32782;
-	Fri, 16 Aug 2024 13:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723816417;
-	bh=I1cI1Ny0H4g/lNQvAGQgRTIrokQ8aivqsHqBmdZtkDo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n6vdj1Qe8EJeh7ovIB7iyFJcQaCK5HfYlEQ9XsIKQITWDoRtRuFk/0/hfK3r0/ZDd
-	 cL8JspC0xYQHo95NlSkbij8J/tHt2Yfzs1y9JJ9ifOwfBCi5f1t67rNqVrvXpEMl4t
-	 QLsewN20p7WqfrmTd07QUCBZEfAFl0XsvRfou+wDAz5/V6GbWEH9jUvGp+sm6OGe76
-	 WRv4Gbve+Ku95td0x2FP6S1IhxkMwN6diWBkPk9r6PAk2oQI5JSnG05h+0lnu9eHrs
-	 OmtVF3C/nrAQNzNtj4t3yo7dYtSDf6P8V9TTJSWNJnxYxBaN0K7nc/zMTYGwo/kiQS
-	 0ExjyvSlkXJcQ==
-Date: Fri, 16 Aug 2024 14:53:31 +0100
-From: Will Deacon <will@kernel.org>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
-	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v11 2/9] iommu/arm-smmu-v3: Enforce
- arm_smmu_cmdq_build_sync_cmd
-Message-ID: <20240816135331.GA24607@willie-the-truck>
-References: <cover.1722993435.git.nicolinc@nvidia.com>
- <9e59a460c969357a98b3434ed5007ddf9381899b.1722993435.git.nicolinc@nvidia.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PUNgIjoU"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-429d2d7be1eso10555435e9.1
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Aug 2024 06:57:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723816648; x=1724421448; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TUFNUXrgokXIwMs6WyuldKV0ZX1UE+1k07OmPjO8LYM=;
+        b=PUNgIjoUp4E6BcHv/9txKXtLNQH6UnoJ8vYc79mK6ktExzy4vFH0DVKEKUMbiBHqFT
+         Lud8vllDmLRYVeelE3zoOl14JcUqK6aF5L/5HbtKMtZOGbMBfFBGvM2YeULzkA3Y5kMK
+         eVOUIDsDgV0Xd4iXAriM8pRNB4D18/O2UZ+o0yXjbQ3F3U2zDoLCJ10jnWWTteLbOeBg
+         RLuxURTBUXfDK/fWvETtdSNkyMcyHeZ1F0tTdxgsvmAjObYmr7CKUWsma3pqdvDTneiN
+         2vVqypBE+XGAPHsNTxpet4VjPOH9guXxDxCaQVFlvv34/Tb/T56jCG5nccj7rfGHw29N
+         Q7nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723816648; x=1724421448;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TUFNUXrgokXIwMs6WyuldKV0ZX1UE+1k07OmPjO8LYM=;
+        b=qZl1vKJczvVX+/o9ReH3dheKVqygMing25zHozQbt0fwfmzWWmofb0RxSOnCOXe/SJ
+         WKS8/F5moAtavOtNgjMw3jq4ZxtdNdGP1HxtHWtNkfOw/5PyZMx66Nk65LQj//gF40L+
+         zVeOSwZFvGyp4GYOGoyNelO6jJyS3fyxf8JpvOFwK7BHq07kLZNNFkfD2YuAH4XEb9A7
+         8OuEZgnoUvGsbI71L4MXtCpj5OV4zci59oEKMAu5Qa0HqsUd4g69wAgLDTj0MdfHBD7o
+         PGspbJmr/xyQ21FSg2wPYbb2wakNFc52HjqthySaiP2VAfHoEX8JrApAEUDcEu8uTfqe
+         HgGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuMfzwjtjNKM7C+RLBV3yrMdZio6RvZBD9a2J/rP1/3qn0vHh7ZCRbA1rXUKYa9bR3nte0R1uw1gv0JOUs+fMURrVXKNGjVv088Qc=
+X-Gm-Message-State: AOJu0YzgIuvW2mV3HyzQ8ZUIkXwixc35H7dRfHYT5reTYX/Ifb+zMKh4
+	1E41aW3oKtvf9dyP/YnHEFmRvn5gW+kD2zMNPZ+FfoXieXfmKjXhDn90RTBunEI=
+X-Google-Smtp-Source: AGHT+IFd4s3kymirxsu7ePVn8TcQO9UzOm0dQNnvzYRLs823Sud4ew3QO74mnMOX7OeGvHmgZRcr8Q==
+X-Received: by 2002:a05:600c:450c:b0:424:8743:86b4 with SMTP id 5b1f17b1804b1-429e232b8a0mr48393265e9.6.1723816648319;
+        Fri, 16 Aug 2024 06:57:28 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded36a95sm76183995e9.28.2024.08.16.06.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2024 06:57:27 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Timo Alho <talho@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] firmware: tegra: bpmp: drop unused mbox_client_to_bpmp()
+Date: Fri, 16 Aug 2024 15:57:21 +0200
+Message-ID: <20240816135722.105945-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e59a460c969357a98b3434ed5007ddf9381899b.1722993435.git.nicolinc@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024 at 07:11:47PM -0700, Nicolin Chen wrote:
-> There is an existing arm_smmu_cmdq_build_sync_cmd() so the driver should
-> call it at all places other than going through arm_smmu_cmdq_build_cmd()
-> separately. This helps the following patch that adds a CS_NONE option.
-> 
-> Note that this changes the type of CMD_SYNC in __arm_smmu_cmdq_skip_err,
-> in ARM_SMMU_OPT_MSIPOLL=true case, from previously a non-MSI one to now
-> an MSI one that is proven to still work using a hacking test:
->   nvme: Adding to iommu group 10
->   nvme: --------hacking-----------
->   arm-smmu-v3: unexpected global error reported (0x00000001),
->                this could be serious
->   arm-smmu-v3: CMDQ error (cons 0x01000022): Illegal command
->   arm-smmu-v3: skipping command in error state:
->   arm-smmu-v3:  0x0000000000000000
->   arm-smmu-v3:  0x0000000000000000
->   nvme: -------recovered----------
->   nvme nvme0: 72/0/0 default/read/poll queues
->    nvme0n1: p1 p2
+mbox_client_to_bpmp() is not used, W=1 builds:
 
-Hmm, I'm still a little wary of this. The only reason we emit a CMD_SYNC
-in __arm_smmu_cmdq_skip_err() is because the SMMU doesn't have a NOP
-command. So I'd really like the SYNC to have as little functionality
-as possible in this case.
+  drivers/firmware/tegra/bpmp.c:28:1: error: unused function 'mbox_client_to_bpmp' [-Werror,-Wunused-function]
 
-I think we could either propapate the 'cs' field down to
-arm_smmu_cmdq_build_cmd() or just open-code the command-creation in
-__arm_smmu_cmdq_skip_err().
+Fixes: cdfa358b248e ("firmware: tegra: Refactor BPMP driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/firmware/tegra/bpmp.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-Will
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+index c1590d3aa9cb..c3a1dc344961 100644
+--- a/drivers/firmware/tegra/bpmp.c
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -24,12 +24,6 @@
+ #define MSG_RING	BIT(1)
+ #define TAG_SZ		32
+ 
+-static inline struct tegra_bpmp *
+-mbox_client_to_bpmp(struct mbox_client *client)
+-{
+-	return container_of(client, struct tegra_bpmp, mbox.client);
+-}
+-
+ static inline const struct tegra_bpmp_ops *
+ channel_to_ops(struct tegra_bpmp_channel *channel)
+ {
+-- 
+2.43.0
+
