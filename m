@@ -1,182 +1,139 @@
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2069.outbound.protection.outlook.com [40.107.212.69])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A3F1BDAB5;
-	Fri, 16 Aug 2024 14:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723819468; cv=fail; b=l4vtdWk5SzuZbXuvHKk12CrE/9TdK2A2Qw2vMrK9B0TAhwopN8vkijGn3PjXJZGFw36dgXFP+qk1GSuxSPTpdEi1A9BEbrcixqaloc8H8+9tRfA+z9NVBp6ZbW+hKmj5UuWdwlH7bxnOHBIdTXlSiFcn9sjcgS8BlpHN+dSBMDg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723819468; c=relaxed/simple;
-	bh=gw3slFuC955isIIlT15oMrC7xqekrDM6Wfb4e6Yqo9I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uVygWHOPR07jchOxdkYx8HrhnqzMCoTdh2txnGLnQ5u6G8SwUigaFA/oXwTZYiK0IJVv5EVg1VVRX8vEhgoaxDNNit3KP1rDsOzrNGU1OaIZMtmpEkK/WmYhry7qIbMgFbTU7A5PstYTe2yIhVPSW9+wFEL1xOrMu3Sm6kkGdsM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HhmGG3qc; arc=fail smtp.client-ip=40.107.212.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F921BB68E;
+	Fri, 16 Aug 2024 16:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723824176; cv=none; b=rfzYoWa6u/hcV39OKDSwoRyQDzSwDi8xEmpdSpzJPAvEqD2ZBMvldnLpWUAb+ts1m9aBJkdmWbVE2Zf0gJAL2oCX+RyneJIivCtlbV6YWymqsrvy1ytaA/tjLObfOFPsxtkgxQrWD42clFbZ80/S+cMac4lmIzQ4OTZHYFFVXqg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723824176; c=relaxed/simple;
+	bh=ojxinrOLcNbVPPySpuUlMDM4K5NF51Th8jrtqoS20cg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AQ1D3IvDccgXugaXcYO8d6H19Ok6QE9JomNqNsGQNMrBIU5Ynr7OIJr6Y/hXEMAWeys54L/vOg7eM+y3mZEeNVNIz57uMGfj22Y6LlN6Hv3l8OkEjsgX8mjVd+y3yWs1zh2pXkyVsT1Hxa+wGaocqRensXEy82iTxqf+flqsNgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6XS9IMV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HhmGG3qc"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F90Tbq+V0upGYodL6Z3NLlCl3SbqQm1//IWjPsTcKlW+Z9xemxfyFelu0CHuEuGCuvvLSN1mSn07UrcwTICmvv1RhXTFvILYJkoS0WHlxGqi3eXAz29oXH+/gvR5DVvub9RNh2YVfDlufOCovzzPhOufiS6E1j24QejFQdhyGZo+QamdfAjrUwRwDdeWe4euexenqewxUTKzeGS+vu92PTOgCBG4E82pdki241eB+jJ7w8P4brBmeat9UFTlT9ISYCUZKjOoa6PUp921oAY4ZjIWFRqS7R1ee8pDNEyEti+W9JJqzmrr8LOJsaEKbHQI7IsPz0t4I4tp7pIJdmx6Zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=svfQzugDudijmma2LsQNR1DWfWHvojczAL+XOqErsTI=;
- b=t/amP3eKCPdzzC/ii6MsXa1oWNdgFMAkhCCS1QusZ3TDZXECZwBKrntbxItGJRnuykxJVrelUm8q1d4+zzbNFM8slfPeCBtkgYTM5uZun1R8Or3bLlfqSloW0Vucij33UG2WPit6WkHufRJUX+XsiLoWjOS93urcxX6O1GsUGVb2DynYLxBUl/IFwPZ1qIJG8UN+H1KBmzidBcHSTqSWVAuBtiZTL7srav+ypmDjDKenCl8FfkLdaPO+b5ywjF6B6pjknRtmI1KmJOmLGJJ5Wvui/B1ZXiwFzaFfMxVKmBLy5xvAE7JEQTpIuDh6aQBLYE75yQOYnCentBnqAZnQcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=svfQzugDudijmma2LsQNR1DWfWHvojczAL+XOqErsTI=;
- b=HhmGG3qcPK+SMc9cveHGUMywxHwWi6pDUZjBBB06nlncOoxYUuQQGaJspzu/9zXHwdwPzqCELcUKR/iuMGjZSFSSw4SVa3Z/ba5K6Okm0pMHXsKu1bo3vPVNbN0z4seZirGjBr8CzBF26tpQvypy8u/yy7jQFAZzoA8fX8UeNS1QvYAtm2JhaK35qCFL8F5S8McR4WFzGPvWUuqEQw3LrTWPfQvp3iYcby76PjFf/84kwxgXBzqpLuz8/yuaCyONLN/IOx7fOXA3+C5NDxJdN5HT6rdGup7m/3a2rLozCrs8bblGx5gowhcHdt23tTm1qnb8lk3d1KtZD6Sup1xNNA==
-Received: from CH0P221CA0004.NAMP221.PROD.OUTLOOK.COM (2603:10b6:610:11c::14)
- by CH2PR12MB4214.namprd12.prod.outlook.com (2603:10b6:610:aa::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19; Fri, 16 Aug
- 2024 14:44:20 +0000
-Received: from CH2PEPF00000141.namprd02.prod.outlook.com
- (2603:10b6:610:11c:cafe::b2) by CH0P221CA0004.outlook.office365.com
- (2603:10b6:610:11c::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19 via Frontend
- Transport; Fri, 16 Aug 2024 14:44:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.8 via Frontend Transport; Fri, 16 Aug 2024 14:44:20 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 16 Aug
- 2024 07:44:08 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 16 Aug
- 2024 07:44:08 -0700
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 16 Aug 2024 07:44:04 -0700
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <andriy.shevchenko@intel.com>
-CC: <andi.shyti@kernel.org>, <apopple@nvidia.com>, <digetx@gmail.com>,
-	<jonathanh@nvidia.com>, <ldewangan@nvidia.com>, <leitao@debian.org>,
-	<linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <paulmck@kernel.org>, <rmikey@meta.com>,
-	<thierry.reding@gmail.com>, <akhilrajeev@nvidia.com>
-Subject: Re: [PATCH] [i2c-tegra] Do not mark ACPI devices as irq safe
-Date: Fri, 16 Aug 2024 20:14:03 +0530
-Message-ID: <20240816144403.17756-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <ZrYJPdW0-MQMejP3@smile.fi.intel.com>
-References: <ZrYJPdW0-MQMejP3@smile.fi.intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6XS9IMV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C280BC4AF0B;
+	Fri, 16 Aug 2024 16:02:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723824175;
+	bh=ojxinrOLcNbVPPySpuUlMDM4K5NF51Th8jrtqoS20cg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=U6XS9IMVKC34MPnxz65HHLOwwDzDPs4pNteWmVXQo2fPky2z5uchrNhUtqKX5EK7h
+	 +sU1R//EFZ0eTQR58kQNLdk0PqUwS1ZojjwsGn0/TpOGvCp4YCEO9i5KhiNGiFr/zN
+	 zh6WuM5cAFleSAlas8PDfIxjS1kOSzxGdMwmCmsRCmbYXZuhydcBiVB5gWYa9JuwRK
+	 b4uD0O+mCaJrWIQqJF1pNHFiUSz6Gbo3gQ4VoftrMjTi8GDGq1USfK50Oj8rLHZcux
+	 qAJSoCGmjIp/LeqmBg3iaqNxTFHrk29CT2YOmOjpP8DPnP90jnmUEXRlh1TYeeU/H2
+	 K80AU49JkwQOg==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2610c095ea1so299616fac.3;
+        Fri, 16 Aug 2024 09:02:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVSPf7tkgyTdw/98ehGJFzNLc7yPTlUSkdTzljf412j+SVJX7UgVM0r2nQkRR7Im0Jcmno5jby37qI=@vger.kernel.org, AJvYcCVuvr7pBxb/FpBstRgazoaxSxAqH6Go4A3YLf6zL4FEMX36rqxPZ+sKWdsy7DSfwFz7F86fcO7kJGJrzOx2@vger.kernel.org, AJvYcCWIhfybxHA+sBNqk3EBlFNybfyIIk6Z9gyvxo3vM7wgQ0X2QnW628Vf9B+6xo2QFEyy4d/7WIZZfh1Ai7PE@vger.kernel.org, AJvYcCXa9xdD8AbA90uMYekMZPRIHJ0mKAXmhJ4gZkTE2F/k+UpAG8OLtAM97mueIm3ZEsheEbRln8/MVdyaNbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2Y2js8Dd1Lv9VVoh7OT+b4FOyRVrCipscHBnVYQ9rwqlcnzgD
+	HyV9DnE13yx8RmtMQFuPRS63hlfyK/mQKM5DdKa7yZOO/z2jwRwq3Lg4kDp/xq98pWMH2lZuZ1k
+	o9WIEUlLaOjTCX1rQ0vf7kDxEyj0=
+X-Google-Smtp-Source: AGHT+IEDPxTrNj6EFPbZPOKHv1diO/kM3WHBW6ox5eiR/xox4p4nBVhdyxkPOCjWMWDzftuYBn/6jRnxKDNjx57c3Zg=
+X-Received: by 2002:a05:6870:b253:b0:25f:401a:2ec3 with SMTP id
+ 586e51a60fabf-2701c0a7b6fmr2095254fac.0.1723824174920; Fri, 16 Aug 2024
+ 09:02:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000141:EE_|CH2PR12MB4214:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7df9aeaf-0c3a-40b8-3d25-08dcbe01e9cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?d4LSBFI3BIC2sWdujbWK1lqIHncwKQ3V1Fo+f8+FncAzd37txdYSiccHFCvY?=
- =?us-ascii?Q?gdPH0JR3ocr3EHhSMh6rvCmxGIRSPbDtuf/Tu7oakjgqYo4I8phKUnv/5MLe?=
- =?us-ascii?Q?lUv8JyKX87v+vaWHS87Ehv8/SISqozbmk/TFf7dH1rccedL72dXKN4Jqw874?=
- =?us-ascii?Q?m2pB/f3R7jfo1Q17KTKNGFm6vuQK2iR7De1IsS4ehXM1BiVzhHnYpqNQMcG1?=
- =?us-ascii?Q?74CdHhCeH1eehbkg/lZ4hL2Rw625SsSROoSU/bt9hEn+w8e8XYWKnjXQewLf?=
- =?us-ascii?Q?/BTtq2A+BvA4dxt0JIt7+uN6IW7FSKXDISwu6eBo3+8DWCkC3M+GnZ8Pz4cb?=
- =?us-ascii?Q?+Oa2bfQgr7QNzAHUmnQCQrlAl+zMBlYVBSamgHOZarSxA5TGULaxNJ+XVOvd?=
- =?us-ascii?Q?Kzew0q3V3hSMG4YK+a/fAxr1BjFBM1BuiBtTEOnzDKC10L7zZI27vY95piUu?=
- =?us-ascii?Q?i1y8wZ/rVUadEfJ7tEesdJYapAmzFICAAGu4h42kYFzj1BojYh2YJpUk8JmL?=
- =?us-ascii?Q?R7678Ibj16eswuP1lq6oJ6xDaoYznSv2slsaImN9byGkeUvUsh6fcfzWgSgT?=
- =?us-ascii?Q?uwRBA/Tu6rv2lC7fy9aTBc0nCFSydz9YihUXWQZvHjpOQUWNG1FD93aevBIX?=
- =?us-ascii?Q?IbxjIN782ftoMRGuycZglaLW1UxnH/lkGoyjcquloQuIRUFoA0XLVbdyPct4?=
- =?us-ascii?Q?GqtAoaQMkWQeBqVG5v6W+UmL1K+kHrEs1+vyV4//ipSlJQixIR0mLGFrPdjg?=
- =?us-ascii?Q?eTLOtDuZ+6NuKqPlNS6QlFHHRMtxYc1Qmlznw7NKenguZa61hACVPBZMG73h?=
- =?us-ascii?Q?KwPKZ4COWiTsUSET0MLId/TUMpWPPNUBWo2Sh2uQ1Jxvy50Xlr7Udz5y3F2L?=
- =?us-ascii?Q?keIbX6VYeRdYvZXhVyPKO6dYRNTjimdOh2WuMyw6Cbnk6rRBkhkzZCcL31gi?=
- =?us-ascii?Q?LSaYizM0u3PS+NNkRSuhLfFUvWtpNKY7eQuGgQ4Jy8k5zy7UFGO7DOflgzhV?=
- =?us-ascii?Q?itVMz5pDHwnLLBDHtVEtnUrGherUN8I9rXJ+r3ipEvjjKike9l9kh/qdnNWB?=
- =?us-ascii?Q?CA7YT1O7Rx81urZOEvM1eTCT8Gv4fZIuyMYO8JVfIDqNPhK7BeLhptN1lNo6?=
- =?us-ascii?Q?7Z+G4s7hdKhLPkHm+wFmZ+TDghHauPaub+oCZpNuFnxOHwHhOfLCEJjn8x0M?=
- =?us-ascii?Q?9Z8x2EKB3WPjgKcBrj55nEw1BW8OrIHjM5f1PRUEqIK6Z1GNhRKnrrX66vH1?=
- =?us-ascii?Q?0AJzcag2ah6FAQLyLpvE9eJ85qP5plTLp87xFI9bQwbANMD6hRXVPkuJJbBX?=
- =?us-ascii?Q?CyneDmMzUv9qL9NZ2G0raMQZv3H6eadgYOpPMNEl05GDsWq8b8a+OI3jECwU?=
- =?us-ascii?Q?TPg/ZgUcvdjBsi7PQy+isLpSoARTMr/qH8WBVztuctdZRkpOpfQWCm6ZWYAI?=
- =?us-ascii?Q?+8Vubjdo2y04MykzC048DekbBKgYSyRA?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Aug 2024 14:44:20.4926
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7df9aeaf-0c3a-40b8-3d25-08dcbe01e9cc
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000141.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4214
+References: <20240816-b4-cleanup-h-of-node-put-thermal-v2-0-cee9fc490478@linaro.org>
+ <20240816-b4-cleanup-h-of-node-put-thermal-v2-4-cee9fc490478@linaro.org>
+ <CAJZ5v0j9WTzd5qg3bLLB6Y41xu1zoJMy7TV1xhFxEzW-x=b5=w@mail.gmail.com> <3b33d0b0-ae9f-4afe-af2f-9596394bcc4f@linaro.org>
+In-Reply-To: <3b33d0b0-ae9f-4afe-af2f-9596394bcc4f@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 16 Aug 2024 18:02:43 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ix+mJy6snyYuYg711ERmbJ8cNYV6DtmK1WZGur-Pd2-A@mail.gmail.com>
+Message-ID: <CAJZ5v0ix+mJy6snyYuYg711ERmbJ8cNYV6DtmK1WZGur-Pd2-A@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] thermal: of: Simplify thermal_of_for_each_cooling_maps()
+ with scoped for each OF child loop
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, Chen-Yu Tsai <wenst@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->> I think these are two different goals here. This near term goal is just
->> fix the driver so it can use the pm_runtime_irq_safe() in a saner
->> way, avoiding calling mutexes inside spinlocks.
->> 
->> Getting rid of the IRQ safe PM seems to me to be more a long term
->> desirable goal, and unfortunately I cannot afford doing it now.
->> 
->> Laxman, what is your view on this topic?
+On Fri, Aug 16, 2024 at 2:22=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> Yes, please, comment on this. We would like to get rid of the hack named "IRQ
-> safe PM runtime".
+> On 16/08/2024 13:30, Rafael J. Wysocki wrote:
+> > On Fri, Aug 16, 2024 at 9:40=E2=80=AFAM Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> >>
+> >> Use scoped for_each_child_of_node_scoped() when iterating over device
+> >> nodes to make code a bit simpler.
+> >>
+> >> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+> >> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >> ---
+> >>  drivers/thermal/thermal_of.c | 8 +++-----
+> >>  1 file changed, 3 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of=
+.c
+> >> index 94cc077ab3a1..ce398fde48bb 100644
+> >> --- a/drivers/thermal/thermal_of.c
+> >> +++ b/drivers/thermal/thermal_of.c
+> >> @@ -373,7 +373,7 @@ static int thermal_of_for_each_cooling_maps(struct=
+ thermal_zone_device *tz,
+> >>                                             int (*action)(struct devic=
+e_node *, int, int,
+> >>                                                           struct therm=
+al_zone_device *, struct thermal_cooling_device *))
+> >>  {
+> >> -       struct device_node *tz_np, *cm_np, *child;
+> >> +       struct device_node *tz_np, *cm_np;
+> >>         int ret =3D 0;
+> >>
+> >>         tz_np =3D thermal_of_zone_get_by_name(tz);
+> >> @@ -386,12 +386,10 @@ static int thermal_of_for_each_cooling_maps(stru=
+ct thermal_zone_device *tz,
+> >>         if (!cm_np)
+> >>                 goto out;
+> >>
+> >> -       for_each_child_of_node(cm_np, child) {
+> >> +       for_each_child_of_node_scoped(cm_np, child) {
+> >>                 ret =3D thermal_of_for_each_cooling_device(tz_np, chil=
+d, tz, cdev, action);
+> >> -               if (ret) {
+> >> -                       of_node_put(child);
+> >> +               if (ret)
+> >>                         break;
+> >> -               }
+> >>         }
+> >>
+> >>         of_node_put(cm_np);
+> >>
+> >> --
+> >
+> > This clashes with
+> >
+> > https://lore.kernel.org/linux-pm/1758256.QkHrqEjB74@rjwysocki.net/
+> >
+> > which I would prefer to go in first if you don't mind.
 >
-Any thoughts on how would we handle atomic_xfers without pm_runtime_irq_safe()?
+> My other patchset which fixes bugs here, could go in before:
+> https://lore.kernel.org/all/20240814195823.437597-1-krzysztof.kozlowski@l=
+inaro.org/
 
-Would the below patch be a good way? I didn't test this though.
+Right, but these don't clash significantly if I'm not mistaken.
 
-@@ -1373,10 +1373,15 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
-        struct tegra_i2c_dev *i2c_dev = i2c_get_adapdata(adap);
-        int i, ret;
+It may make sense to push them for 6.11-rc even.
 
--       ret = pm_runtime_get_sync(i2c_dev->dev);
-+       if (i2c_dev->atomic_mode)
-+               ret = tegra_i2c_runtime_resume(i2c_dev->dev);
-+       else
-+               ret = pm_runtime_get_sync(i2c_dev->dev);
-+
-        if (ret < 0) {
-                dev_err(i2c_dev->dev, "runtime resume failed %d\n", ret);
--               pm_runtime_put_noidle(i2c_dev->dev);
-+               if (!i2c_dev->atomic_mode)
-+                       pm_runtime_put_noidle(i2c_dev->dev);
-                return ret;
-        }
+> so it will be backported. Other than that, I am fine with rebasing my
+> changes. There is no point in refactoring the code if it is being
+> removed/reshuffled :)
 
-@@ -1404,7 +1409,10 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
-                        break;
-        }
-
--       pm_runtime_put(i2c_dev->dev);
-+       if (i2c_dev->atomic_mode)
-+               tegra_i2c_runtime_suspend(i2c_dev->dev);
-+       else
-+               pm_runtime_put(i2c_dev->dev);
-
-        return ret ?: i;
- }
-
+OK
