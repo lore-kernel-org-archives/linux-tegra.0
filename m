@@ -1,61 +1,61 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748EA1BB691
-	for <linux-tegra@vger.kernel.org>; Fri, 16 Aug 2024 10:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6559D1BBBE7
+	for <linux-tegra@vger.kernel.org>; Fri, 16 Aug 2024 10:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723805706; cv=none; b=EODa1ZBbN0jtFKPyYfNSW5KBgIV1n96SFHCSNLaZBJwQ+KR0VWpSHTy0cGGEJAjkVwzcDVAtCBGSbtXHDKrQ4HHds6NlooA8CyePDZAq/q19sezTYwrNmJT6wmAGdpU4nFvyw5Q5/Tu2S9T/9XrXwFdRQka11Mzos21P1fXx+Bk=
+	t=1723805708; cv=none; b=X2rFRGSFtm8t9demO3c55w2qucx4s/Y5Jx18KAUv6BEJAYUqotKMzn7u98OlvrFV+EPTH0opKm9Wdto3RNWb9lajsq3EUj7Jx7OHQm/Z2K4Yi4IjBXcSYpZFZG47T5z3m/5Aq8hk3oR239CzWdGTBxhK94sQOVQ6hbpfTmPq+LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723805706; c=relaxed/simple;
-	bh=VDRAiPcP3Nj5IaFsGnt2Bd0rnGw6XleemS6wXHO20gA=;
+	s=arc-20240116; t=1723805708; c=relaxed/simple;
+	bh=sLKW5NlUarRy9P9QN6fIhLPqmjJ63FYokcmqbGYfWRo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U3gUspkBlv+11SAfATCOFbH8Z4+p7/uYNMoqzdDNUbN+5PsNx/Efa9hTq6FAnyw5j3K3/o+3WH4UVyC/j00VfDSVVhg67TbqzmHLEF/70s+O1lX3tn9Mi9gBkxdcCUnLlvN7rFAX2wQOD+OlwJtoUqTmDkkkSVcICDLpu87zYoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DcFf8g50; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:To:Cc; b=RuJ2KkNrYirUZ75Z6ZxKOOHpMCpa9CdIdCrOXk0xvspnN+gBijjgNhLkKSGoe4hn0ENtVo3cM2bUFoVwev+uGtUqT7PdzO0019XRueyuEPTZTrfraKgLN8Wxew+9WoUWsf29qw6cDqgKEQnesW/pCddwg2UqsXOrUz8PktCh19o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OjYMvv1m; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DcFf8g50"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso13463395e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 16 Aug 2024 03:55:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OjYMvv1m"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3718eaf4046so758471f8f.3
+        for <linux-tegra@vger.kernel.org>; Fri, 16 Aug 2024 03:55:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723805702; x=1724410502; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723805704; x=1724410504; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=c/iamU9GEr5KdpKg86o77KhrKhRKzAxdW+GEgZ6rSGI=;
-        b=DcFf8g50+eY8QrVxM5vrms9NQwmJyJEdcsNWWi1Yug2Uv4KSTahkdiNh5x2nzGKxUE
-         ij/C/TfkVj4kT/NrMrtr8DxGsnX8l4ruyqMczjCFDsljKEebPMhwdDaGBKTXcWpTp6yZ
-         OiLDffdHwdaV7YFEbLLJ2zPsvr2RLuAuLviFZ+Nhxfa7VosVqaW1tLdXhhQiBsPpdJWs
-         CfgfCyxLajeG3ko0D51tyEiWjKISj4oyKzf1MHom+2uiltXeMOtfOzuW//dIRh4/mHCh
-         mkwrfqeYDVQk2Qc0/K9RdUIg4+iadgt2D3r8j5w/+oV2KGtCdeEc+pJ3WXvCuXCm3fsC
-         UgpA==
+        bh=sr/Bjb9gFmI1Ph7TbTdrGjwvQKhvfIr9sm0jS+XptdU=;
+        b=OjYMvv1mQ1GVTLtiQpH7vHela0nXJpHtdfjNPDFMBytf7Px3cP3CHrgArhvlTigQen
+         mbDlQ4LCMwDURdEtifl8v+LPhY+81bbdqhi74db1r5D14IX6c98mWVpTfDIHz4rnIpoo
+         L6eBg6dKyoP2Al6ZRBGRYF/LkCNIzhdkR4vibRotd75K/Ck1cFWIOeWZ0VI8P4so4nLV
+         zAmKBNCx0rag/X/Ytikj80plLAP/RFg2R3Bv3+O0CRcx3hp0JPh1+Czc53SwicmZ0hm8
+         zP5PUj4iGxAUsUev+2mRsMTqfF1DJLe8RJJb5gotpVVKYLHdpWtyrE+rUvWaq8J+G/m1
+         jjFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723805702; x=1724410502;
+        d=1e100.net; s=20230601; t=1723805704; x=1724410504;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=c/iamU9GEr5KdpKg86o77KhrKhRKzAxdW+GEgZ6rSGI=;
-        b=tyaoIddxlzNMs3hztabelqI3QXVP34COZnT2zMHFgBdeRwjQUr9sYHvkdcd4ym35Tk
-         iDKmhymjpL5GfIsXgprSqPwszZSIRPxV5r3gvn2nBnG7wcePuKXslQ2pp+3aE4m5X3Pe
-         L1pKSlsdaYLsQ50JkfgL2A7joztOXMTdMVSbMhgP7QnZGTW72THgvP7TwbMmK1k/1MuJ
-         rFt6de79roBsJbEPU2OiWI8aj+2Ts0dTrCHkUoKl01Bqn9UTzFoFZiLwccXEoFTy7In2
-         8fop7w7ctoGyQM/7gULVLGcBGPMJadvY8e1z96trbHGY+bOSSr0Fv6ry46N1Xq/9izlj
-         wUPg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4CuE7SkREdiGPC9hURlwuiPJvrWhyg65Y9KIrYsmzZjyBCQdAd14ZEes2CXKe8ivAjCEyxU+FjtNrB3pEMGCE7Dh6y14NczGHSSo=
-X-Gm-Message-State: AOJu0YzCpZicT/JajzydeMaLiFMt0cLN9e6oNevAaNRpVwOybPKpjCj/
-	jdmkRV+fWMf2nupoEkdbLOLodPLSBb81TJ+fy5CqRt5OWs4ohIkc2x92Ymf6jiJK79WBEb2wXjO
-	Z8Dw=
-X-Google-Smtp-Source: AGHT+IFqPUcKioelayo+oH3fVDDKVUXmOzw5MuZiD+mM3WrmH/wV11bVb9kfp9ex06bAss09/vs1xA==
-X-Received: by 2002:a05:600c:4688:b0:426:6ed5:fd5 with SMTP id 5b1f17b1804b1-429ed7a5f5dmr16488295e9.6.1723805702352;
-        Fri, 16 Aug 2024 03:55:02 -0700 (PDT)
+        bh=sr/Bjb9gFmI1Ph7TbTdrGjwvQKhvfIr9sm0jS+XptdU=;
+        b=INeW/FI2cbMv2sGD7n0K1ZFgWU51+lHO1kdG70NxT3K+kKHHyPG26LionMo31Ej/40
+         fMMIE2xb223akcyiXuqSiTUKw/Gln9qW5royOtk316WGJALuNWYabhAThBk50szV4Akj
+         9vRX8PU7KsDLoUBgc40LTJxTg4SZepQ3PbVE98NtQwBQRyyJwK1qW6Mq8x6U7qLkgtqh
+         4870A+bbRq87XqtSFVxv2sRHt/wa56SXCd7nDMs93KRGLVYoojPcbQ6HTE2hm85HNXgL
+         seU6KaygcCfNJ0q0ljUHvH0utE8Dl16tpUhHRsayztL4LMvX1ktq+uMp/1RvlIiQL5av
+         NAag==
+X-Forwarded-Encrypted: i=1; AJvYcCV9iHFxs6reVGpsGd6x3gRtiQk//sGgmFaBk3qUCasaWvyxcr1tBY5heFzt3E95OpRLfmV1BAQdTyDOMqS8jXtFouu5NIgG/nJK8qQ=
+X-Gm-Message-State: AOJu0Yy19UXixH8q42/3HazeXRTacQnAqO9T7QbGmgJC1BJlq9a8GQP2
+	DhHvBr0gusWXgFtJhyh7wYandf/LQjm++fEF1Zs/NJ34re8ONxk4wG9C4VMZvOE=
+X-Google-Smtp-Source: AGHT+IHb5s6ZOWiwXyP6F+jIPWHsZbVQ1dRLhQ/L4QjqU83lUzy6ofpXe6PirIt9dJ+aARfVbvTAsA==
+X-Received: by 2002:a05:6000:ec4:b0:371:844f:e07 with SMTP id ffacd0b85a97d-37194315732mr1838165f8f.10.1723805703804;
+        Fri, 16 Aug 2024 03:55:03 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed7945cesm19461935e9.40.2024.08.16.03.55.01
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed7945cesm19461935e9.40.2024.08.16.03.55.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2024 03:55:01 -0700 (PDT)
+        Fri, 16 Aug 2024 03:55:03 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 16 Aug 2024 12:54:35 +0200
-Subject: [PATCH v2 11/13] memory: ti-aemif: simplify with dev_err_probe()
+Date: Fri, 16 Aug 2024 12:54:36 +0200
+Subject: [PATCH v2 12/13] memory: ti-aemif: simplify with
+ devm_clk_get_enabled()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240816-cleanup-h-of-node-put-memory-v2-11-9eed0ee16b78@linaro.org>
+Message-Id: <20240816-cleanup-h-of-node-put-memory-v2-12-9eed0ee16b78@linaro.org>
 References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
 In-Reply-To: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
@@ -80,29 +80,31 @@ To: Krzysztof Kozlowski <krzk@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=927;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2695;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=VDRAiPcP3Nj5IaFsGnt2Bd0rnGw6XleemS6wXHO20gA=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvy/wrCSs8PTy9a+acv6ve1DhHDKLl614GOqhd
- SLF3vaqGJuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8v8AAKCRDBN2bmhouD
- 19QTD/4ph7Rh9kOERlKeQFJlMtStsZ/eIUNcyB0K1URSMda/NtsfAfnuC/k29h6RvyDDcqr8xlU
- 4XTcEwCMwQ1nBxT7XwQosn1m7gZ0xyPyfstMv2PIQ4dlIutMxCGBsUUA9XUiKnVr5Z3C+ifWmVs
- hiCR6YfmrmHZfjvpidFRdVOhblMIxh7DEwIV8WTCeMQBlm79y3Ah4KYJtwZrjMnnC5Y3roYoOEp
- FKnlAjPZuA76rEN8IrNHYMKtm+G1yAKENn2PtnYN7Fl/JtRFPjhS5jz1QZ+svOcTVrUTb1oBBwh
- 8O8Rwtppmn+QM6HXf6B766Qs94/nbBi0B61hffqHUDWqAYbcQcw3uHydhMv2vIFyskftpsIjlCv
- iz5SDKPf5wpdk0t8K7FRVMAGAMtDCgeCi4ncPmwW+lnJp3AmiZp21UWGHROnv3cRo7bU3de+WGy
- lV8Kqsp2Yrl9qRYA0I21p4fKoMY8E47YKHjbZ6d4EL/7ADBxSrAWDosifQkJXVrSNWp5xhoMA7O
- uzrobE9b0fbPc1tPdhHj9rq9uog9sq6xmJOthMwvkmCNwWUrDCya6BUOkeQ8OAfA6Ax53z/WQG9
- ADoxcmY3NwxxKo3ClqYQRpvaRA8CgXN4mBgz95fJty1IUKESCJ+a1idDrbVjqLVO3i8cgccxA2T
- bGuzLnFPy3XU9CQ==
+ bh=sLKW5NlUarRy9P9QN6fIhLPqmjJ63FYokcmqbGYfWRo=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmvy/xx0XSFMIPdFQTm4JsvW1nfOTyJJMoinp2O
+ kk2gGkLpXKJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZr8v8QAKCRDBN2bmhouD
+ 13OSD/4riPyN506VHZZ2EtdCDx+J9tg/8JMuyGK6I2fpgTQ/UApIm8QW28ZbKP6Gi4RGaYPLju2
+ gsf2u14b70xcxQIsZQ0/4SaYjDmdyBfWtO7eiEPax9Ib3ezPylJMPsH0oSRv//ITyMXKC99xC/f
+ LgjNORmCyfpeum/TIb+/wgJZfIsRcuscyK0xJVvf9KnipkclzhvsK+gZGCpj2HaXsBa3mRgBegY
+ weZX5najE0BjcG+6o9LNJyCW8zuXfJ5jwNUSbG6zCGHFHV4nF+Hn6yGr9mhswoD/FQ6sl5WO2gi
+ 9wGfXT0evEkmVKRgBfEGpOS58HPNPidZ1vm7kOImjVP1URT47cFw0KKF0lm8B8Ah3YXo8k8Wsmy
+ jvSOvU9NI5IL0iIcFM+tFqcpIz9oyg0M8bxPFDjgkXONJMDo/iDvq/LIyIzWELnYMKEbpKbnMpw
+ PH84I+h5hz++T0WuBEKiwAYRBuXVsnJkMtJA7XHBjjaISe5K9a6xBYNDGkpleHhkaozEUcn7pQ5
+ NyBlJOjDbmx4CPXuGGm6GKBwBCjPj1kslTvLNQUeDPaU84L+J9Q8nFNbrDS2bKjwrJ0YFx6n8MV
+ 71F+bp26PTcPmIYfGGMF+V0i4HBYaBDhYviK1uQE4rEP5Pu6mMVip5QJMvadXyXyCOyGSopSgoB
+ muVoxO1VS66+nzg==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Use dev_err_probe() to avoid dmesg flood on actual defer.  This makes
-the code also simpler.
+Use devm_clk_get_enabled() to drop clock prepare/unprepare parts and
+make code simpler.
 
+Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
@@ -110,26 +112,91 @@ Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Changes in v2:
 1. New patch
 ---
- drivers/memory/ti-aemif.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/memory/ti-aemif.c | 29 ++++++-----------------------
+ 1 file changed, 6 insertions(+), 23 deletions(-)
 
 diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
-index e192db9e0e4b..360f2705b1ff 100644
+index 360f2705b1ff..bb9c8132d8c0 100644
 --- a/drivers/memory/ti-aemif.c
 +++ b/drivers/memory/ti-aemif.c
-@@ -345,10 +345,8 @@ static int aemif_probe(struct platform_device *pdev)
+@@ -344,14 +344,10 @@ static int aemif_probe(struct platform_device *pdev)
+ 
  	platform_set_drvdata(pdev, aemif);
  
- 	aemif->clk = devm_clk_get(dev, NULL);
--	if (IS_ERR(aemif->clk)) {
--		dev_err(dev, "cannot get clock 'aemif'\n");
--		return PTR_ERR(aemif->clk);
--	}
-+	if (IS_ERR(aemif->clk))
-+		return dev_err_probe(dev, PTR_ERR(aemif->clk), "cannot get clock 'aemif'\n");
+-	aemif->clk = devm_clk_get(dev, NULL);
++	aemif->clk = devm_clk_get_enabled(dev, NULL);
+ 	if (IS_ERR(aemif->clk))
+ 		return dev_err_probe(dev, PTR_ERR(aemif->clk), "cannot get clock 'aemif'\n");
  
- 	ret = clk_prepare_enable(aemif->clk);
- 	if (ret)
+-	ret = clk_prepare_enable(aemif->clk);
+-	if (ret)
+-		return ret;
+-
+ 	aemif->clk_rate = clk_get_rate(aemif->clk) / MSEC_PER_SEC;
+ 
+ 	if (np && of_device_is_compatible(np, "ti,da850-aemif"))
+@@ -360,10 +356,8 @@ static int aemif_probe(struct platform_device *pdev)
+ 		aemif->cs_offset = pdata->cs_offset;
+ 
+ 	aemif->base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(aemif->base)) {
+-		ret = PTR_ERR(aemif->base);
+-		goto error;
+-	}
++	if (IS_ERR(aemif->base))
++		return PTR_ERR(aemif->base);
+ 
+ 	if (np) {
+ 		/*
+@@ -376,7 +370,7 @@ static int aemif_probe(struct platform_device *pdev)
+ 			ret = of_aemif_parse_abus_config(pdev, child_np);
+ 			if (ret < 0) {
+ 				of_node_put(child_np);
+-				goto error;
++				return ret;
+ 			}
+ 		}
+ 	} else if (pdata && pdata->num_abus_data > 0) {
+@@ -391,7 +385,7 @@ static int aemif_probe(struct platform_device *pdev)
+ 		if (ret < 0) {
+ 			dev_err(dev, "Error configuring chip select %d\n",
+ 				aemif->cs_data[i].cs);
+-			goto error;
++			return ret;
+ 		}
+ 	}
+ 
+@@ -405,7 +399,7 @@ static int aemif_probe(struct platform_device *pdev)
+ 						   dev_lookup, dev);
+ 			if (ret < 0) {
+ 				of_node_put(child_np);
+-				goto error;
++				return ret;
+ 			}
+ 		}
+ 	} else if (pdata) {
+@@ -420,21 +414,10 @@ static int aemif_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	return 0;
+-error:
+-	clk_disable_unprepare(aemif->clk);
+-	return ret;
+-}
+-
+-static void aemif_remove(struct platform_device *pdev)
+-{
+-	struct aemif_device *aemif = platform_get_drvdata(pdev);
+-
+-	clk_disable_unprepare(aemif->clk);
+ }
+ 
+ static struct platform_driver aemif_driver = {
+ 	.probe = aemif_probe,
+-	.remove_new = aemif_remove,
+ 	.driver = {
+ 		.name = "ti-aemif",
+ 		.of_match_table = of_match_ptr(aemif_of_match),
 
 -- 
 2.43.0
