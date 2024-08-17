@@ -1,110 +1,124 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660BD12FB0A;
-	Sat, 17 Aug 2024 05:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E48213DDCD;
+	Sat, 17 Aug 2024 07:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723873150; cv=none; b=Albf8nPisZSBlTJMTTGP82JwrHrGsGEYsII/skh0s5ypOekigvsgyU5r85R9WYJd5jf3ul0mTZ11jnv/3LvJHAXW/8+6BS/oH0KjJR84aEZ0xJ21N0j9dZGTbbov312YSF4FrB3c7AwoOdWw0YYo+t0ZGShSdhdecQUkqX0qMbY=
+	t=1723880612; cv=none; b=g13Rh/uWl15wU6VVZYCBzp2oYpT+sn8S+gOFsZghFXnZqdJzMWG/qJezxnFbwCRo1i8T5aZZNdOv/ZO77YE77GGS/fLgS0KvQ0ElTYyd46epVC6RXnEt3KgZXjMktZjt443kmUOF96vJT+9XPxfuc6TrPlt4JvkwU1fyJ443GVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723873150; c=relaxed/simple;
-	bh=L/27oyOVLbdmCNH9AknEU1c/3ghg8UF/LJ6ONoZ4cx4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t4CwFua+LQfWZHgq68H3YZaN4H5H+fdUc5DWfzwOFt6f9QsKqGaIV+rJlXMfPTPHuTRZhR7TQS+PCTn5zWEdDJJrEuE5WIU14b6v2sEUbJU5DPl6TUgIxw7jKOFftAsPHGz9CflGgZEdBJDWHytO0ToZlschefMdS28upC5V8BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GA+g27nS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723880612; c=relaxed/simple;
+	bh=A+lGQ5o2T8pTh+g0c7rkc60LOwZr5vn2JgeBHKg8cFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qnu9rqJX1oVwVU+lDAgTj4S9VXDLpD/OSHnlPAY4M3BhRFRbg9S0B4P2dabTd8SucdoGDhoxHuoR9FDee9uQtkMWAjqSGpJ3jYbcHrlkdK39cK2ZjCsPHl4MIn3RITWlwukNEKZizigr29aZrCQOZDa9Rxn+uE6GRXdaK3y+ils=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=b+bOyJLw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GA+g27nS"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DDA6CC4AF0F;
-	Sat, 17 Aug 2024 05:39:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723873149;
-	bh=L/27oyOVLbdmCNH9AknEU1c/3ghg8UF/LJ6ONoZ4cx4=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=GA+g27nSGJyvwV98rp+I2FTrd3esE38DlJHaQxgwNFf/qZoSB9eGxll0OD1LyW2OC
-	 Z6TY+iF4QP4pLtoxsS4YPATeyywISDTruws+/wVEndamCapc35mliHgj9zNhGfy8Oi
-	 8CtCbENfZ/2nzEtOssoHMhiNQ2iOQHdNkYOwaVVyKPaqt013hWvA93O4OQI4xzwXeN
-	 JO4YCNtltKCRiHqmMV/YpBkjbUGqPeXNGgAcYxoQCCG0MZBfSs9FjeTlPZo+Qcg7I7
-	 sD7HED61pY0AKNsjdvCSBkYwkSzQtJscHXgWH4nr3kYPyrgmaXQSnKTLgbg1yfIUjF
-	 bx3FjnH1VGweA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD783C52D7F;
-	Sat, 17 Aug 2024 05:39:08 +0000 (UTC)
-From: Manivannan Sadhasivam via B4 Relay <devnull+manivannan.sadhasivam.linaro.org@kernel.org>
-Subject: [PATCH 0/2] PCI: {qcom-ep/tegra194}: Move endpoint cleanups to
- PERST# deassert handler
-Date: Sat, 17 Aug 2024 11:09:02 +0530
-Message-Id: <20240817-pci-qcom-ep-cleanup-v1-0-d6b958226559@linaro.org>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="b+bOyJLw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D9DC116B1;
+	Sat, 17 Aug 2024 07:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723880612;
+	bh=A+lGQ5o2T8pTh+g0c7rkc60LOwZr5vn2JgeBHKg8cFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b+bOyJLwmiy6YEkoXJgi5GDZAhcU2/ZYt7TdUNHaQNcdkH5tniePs41HNqa+gRM9Y
+	 QqAM1qVgHc0XxSw2EMOQ/GQpwuc8Zwh3+nPdgx915kSm/TfkE2uo1Ao6cHVkZBr9rn
+	 0hAFVN9NfCsNuKHBBk9WEc54gpBSch4nB5SgW6ig=
+Date: Sat, 17 Aug 2024 09:43:28 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "patches@lists.linux.dev" <patches@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux@roeck-us.net" <linux@roeck-us.net>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"patches@kernelci.org" <patches@kernelci.org>,
+	"lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
+	"pavel@denx.de" <pavel@denx.de>,
+	"f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+	"sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
+	"srw@sladewatkins.net" <srw@sladewatkins.net>,
+	"rwarsow@gmx.de" <rwarsow@gmx.de>,
+	"conor@kernel.org" <conor@kernel.org>,
+	"allen.lkml@gmail.com" <allen.lkml@gmail.com>,
+	"broonie@kernel.org" <broonie@kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 000/350] 5.10.224-rc2 review
+Message-ID: <2024081757-single-anime-67a3@gregkh>
+References: <20240816101509.001640500@linuxfoundation.org>
+ <058ae5ab-7040-4bb0-b451-c4fd4e37bb36@drhqmail201.nvidia.com>
+ <DM8PR12MB5447F590697190728874B64FD9812@DM8PR12MB5447.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAHY3wGYC/x3MQQqAIBBA0avErBtQMZSuEi1CpxooNaUIorsnL
- d/i/wcKZaYCffNAposLx1Ah2wbcOoWFkH01KKG0sNJgcoyHiztSQrfRFM6ERgujO1LSWwO1TJl
- mvv/rML7vB4Z5YAFlAAAA
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>
-Cc: linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, 
- linux-tegra@vger.kernel.org, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1346;
- i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=L/27oyOVLbdmCNH9AknEU1c/3ghg8UF/LJ6ONoZ4cx4=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBmwDd5oSWJNpFaLg/slHpFuZZnWAOUt1u//hPmY
- mKDHR5xbhuJATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZsA3eQAKCRBVnxHm/pHO
- 9d1sB/0WCIUlcJV87RKQ5qCtkHnD2ovZLEYil0rw3RCSmWyK//H4Tzkm9kMpbjxaISonGlWLOnm
- ThYAn02ruelSxvKg7TJOHjpRgtJ6CzXGfSammhX3XpzUgTL3ABNUpUgInAS60cHyyp4J3w4bzp3
- L+FWiGeX2mRVyt34Q1P7NgAiH8v2PGGYamFooJOYWTodSNEObHGoKZlZvrgaR9KrO9ODIox6Qm7
- zfSPmFIoKAO3uqB8ZNjkCGl2OcB26VQA7fKpr/LTqJo/82aU84DvZaqFa2/0r2mvHdiLrZdMOp2
- fMm/7p9QsGr5f3u2IhcFpTtLrxHqijs42qulAHGwT7e6B21a
-X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
- fpr=C668AEC3C3188E4C611465E7488550E901166008
-X-Endpoint-Received: by B4 Relay for
- manivannan.sadhasivam@linaro.org/default with auth_id=185
-X-Original-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reply-To: manivannan.sadhasivam@linaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DM8PR12MB5447F590697190728874B64FD9812@DM8PR12MB5447.namprd12.prod.outlook.com>
 
-Hi,
+On Fri, Aug 16, 2024 at 08:12:36PM +0000, Jon Hunter wrote:
+> 
+> ________________________________
+> From: Jon Hunter <jonathanh@nvidia.com>
+> Sent: Friday, August 16, 2024 2:43 PM
+> To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; patches@lists.linux.dev <patches@lists.linux.dev>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; torvalds@linux-foundation.org <torvalds@linux-foundation.org>; akpm@linux-foundation.org <akpm@linux-foundation.org>; linux@roeck-us.net <linux@roeck-us.net>; shuah@kernel.org <shuah@kernel.org>; patches@kernelci.org <patches@kernelci.org>; lkft-triage@lists.linaro.org <lkft-triage@lists.linaro.org>; pavel@denx.de <pavel@denx.de>; Jon Hunter <jonathanh@nvidia.com>; f.fainelli@gmail.com <f.fainelli@gmail.com>; sudipm.mukherjee@gmail.com <sudipm.mukherjee@gmail.com>; srw@sladewatkins.net <srw@sladewatkins.net>; rwarsow@gmx.de <rwarsow@gmx.de>; conor@kernel.org <conor@kernel.org>; allen.lkml@gmail.com <allen.lkml@gmail.com>; broonie@kernel.org <broonie@kernel.org>; linux-tegra@vger.kernel.org <linux-tegra@vger.kernel.org>; stable@vger.kernel.org <stable@vger.kernel.org>
+> Subject: Re: [PATCH 5.10 000/350] 5.10.224-rc2 review
+> 
+> On Fri, 16 Aug 2024 12:22:05 +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.10.224 release.
+> > There are 350 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Sun, 18 Aug 2024 10:14:04 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >        https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.224-rc2.gz
+> > or in the git tree and branch at:
+> >        git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
+> 
+> Failures detected for Tegra ...
+> 
+> Test results for stable-v5.10:
+>     10 builds:  10 pass, 0 fail
+>     31 boots:   26 pass, 5 fail
+>     45 tests:   44 pass, 1 fail
+> 
+> Linux version:  5.10.224-rc2-g470450f8c61c
+> Boards tested:  tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+>                 tegra20-ventana, tegra210-p2371-2180,
+>                 tegra210-p3450-0000, tegra30-cardhu-a04
+> 
+> Boot failures:  tegra186-p2771-0000, tegra210-p2371-2180,
+>                 tegra210-p3450-0000
+> 
+> Test failures:  tegra194-p2972-0000: boot.py
+> 
+> ---
+> 
+> Apologies for the mail formatting. I am travelling and only have outlook for mobile :-(
+> 
+> Bisect points to the following commit ...
+> 
+> # first bad commit: [4bade5a6b1cfe81c9777aa3c8823009ff28a6e7f] memory: fsl_ifc: Make FSL_IFC config visible and selectable
+> 
+> Reverting this does fix the issue. Seems odd but this appears to disable CONFIG_MEMORY for v5.10 with ARM64 defconfig. So something we need to fix.
 
-This series moves the call to endpoint cleanup functions (dw_pcie_ep_cleanup()
-pci_epc_deinit_notify()) to PERST# deassert handler in qcom-ep and tegra194
-drivers. It aims to fix a crash that is seen with Qcom endpoint SoCs when host
-asserts PERST# and the cleanup functions are called without refclk.
+Ah, that's a mess.  I'll go drop this one for now, glad it's not showing
+up on 5.15.y where this commit also is.  It's not really important for
+5.10.y so there's no harm in removing it.
 
-During the review of v1 [1], Bjorn suggested fixing up tegra194 driver as well
-as both drivers share the same design and require refclk from host for
-operation.
+thanks,
 
-Testing
-=======
-
-The Qcom patch is tested on SM8450 development board. For tegra194, I'm
-expecting someone in the Cc list or the community will do the testing.
-
-[1] https://lore.kernel.org/linux-pci/20240815224717.GA53536@bhelgaas/
-
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
-Manivannan Sadhasivam (2):
-      PCI: qcom-ep: Move controller cleanups to qcom_pcie_perst_deassert()
-      PCI: tegra194: Move controller cleanups to pex_ep_event_pex_rst_deassert()
-
- drivers/pci/controller/dwc/pcie-qcom-ep.c  | 6 ++++--
- drivers/pci/controller/dwc/pcie-tegra194.c | 7 ++++---
- 2 files changed, 8 insertions(+), 5 deletions(-)
----
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-change-id: 20240817-pci-qcom-ep-cleanup-740745e21d87
-
-Best regards,
--- 
-Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-
+greg k-h
