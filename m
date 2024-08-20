@@ -1,139 +1,116 @@
-Received: from mail5.25mail.st (mail5.25mail.st [74.50.62.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3332A1BF58;
-	Tue, 20 Aug 2024 04:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.62.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B5C18A92D
+	for <linux-tegra@vger.kernel.org>; Tue, 20 Aug 2024 08:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724126816; cv=none; b=Zqy2dNIn618ZVoqrbqLUEz/Hqmg1VwEKz6JhOrqL8lTx1STAQsOCb4MHkqjpwMNzgJKLEAH8BSSf4ZOgRwffuteguMLjzoeI1q0xyUjIvzjEpaEeYgou+1gsRctNpplau5mEBMCBKo9SzniSYJrcK/lTkxi2PcEFmGxAHzi+EnM=
+	t=1724143477; cv=none; b=FuDdPjIUzsf9TjrJWCOsNaYBcyeb1apWKceoCbD7GR3I5pyv/Q512ieuYq+n3E+hE9n56MLvW98zi+OuBt+OtmTEmt/hS1XDDS1GZkus1yNPDDoD7BIYVu5lltYwm8DhMMyOleqGvA3Dc4KWcYsUZ4A0/cwIW/7EQ4eST8UduH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724126816; c=relaxed/simple;
-	bh=8Lhh/q/1r5cGIvDh8S35Xm8TA5qnRALU9SfMrU6eGjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WYFZPrvAAHxkrg5q+vqGCzxIUajZUKnmNeG0T6iFH//mXq79dsj4DsNVs7OwiaG37eQV/nOUPqK6J9S7u+yeVg9qt8Ua+SJE4UmaHLkdWlibBdMwtAFUYrV5EgZcSXPmXBxCHDokXmVqeyXUib7i+iJySbm2YTp01DpI5ucR65U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com; spf=fail smtp.mailfrom=atomide.com; dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b=O4+DxqiE; arc=none smtp.client-ip=74.50.62.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=atomide.com
+	s=arc-20240116; t=1724143477; c=relaxed/simple;
+	bh=ihPpTKWtmQDqETpS/ko4Upn5KM57AFh71idg3PZivGI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BjYI1t7i9GZzSSE9Ux1MK4Xa+QSQz4/5Mz4n6vX/a7Xh56cMK5RL+yHRdSoVuj/lQ5vZxmd0KC8uS0XpbUaRg6R5S5TnjZ2jA9ZiiSxDRQBVvT6ATZhsG1e5UR2nGd84jcgvfWqo2N/4JneGpJVUk/Ve9OPpdwQ5ItBa36XRBAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cUiKtWKf; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atomide.com header.i=@atomide.com header.b="O4+DxqiE"
-Received: from localhost (91-158-86-216.elisa-laajakaista.fi [91.158.86.216])
-	by mail5.25mail.st (Postfix) with ESMTPSA id DC14460365;
-	Tue, 20 Aug 2024 03:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=atomide.com;
-	s=25mailst; t=1724126270;
-	bh=8Lhh/q/1r5cGIvDh8S35Xm8TA5qnRALU9SfMrU6eGjo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O4+DxqiEGdAkGB/s0A5zr3Ow5gBGGA+3hIBINGocTWrQi6dVfRvz6EdGsbBABSu6N
-	 A9Kb/EPATkjG1T6JfZsw9KmNcBQu3kBcxwq1B4/zaI7NgRdy7EhD6oy7HGgHmc1PcH
-	 Kqe+PwBLdc4dMbR5URoK/pydeAD1JnK//Ng2Iphc/a/n/thm+1cIFmiMlMjkNq6eIj
-	 tfVOnxzCsaU0rmCcX+IqVplkKZFPAIDFQ1pd1e1sPx7vc351tu+VLn5dgKjZjyN0ge
-	 zqgo2pEKF8f5/7rwjJ7i9GveKA7/16MPl1PGVjKim+Nk19erwXXW2zRFbIRaZchGnn
-	 +ExCrUULoXDxg==
-Date: Tue, 20 Aug 2024 06:57:19 +0300
-From: Tony Lindgren <tony@atomide.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Dmitry Osipenko <digetx@gmail.com>, Breno Leitao <leitao@debian.org>,
-	dmitry.osipenko@collabora.com, Andi Shyti <andi.shyti@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH RESEND] Do not mark ACPI devices as irq safe
-Message-ID: <20240820035719.GA5105@atomide.com>
-References: <20240808121447.239278-1-leitao@debian.org>
- <ff4haeeknghdr5pgpp3va7opnrx5ivlpaw5ppboqrq75733iul@zy4c7mu3foma>
- <CAHp75VdbRexEx90ybaFsiPhg8O0CzvpkWT1ER31GnP-y8a1e+w@mail.gmail.com>
- <ZrtgfkzuCbNju3i9@gmail.com>
- <cf2d6ff5-dfea-4e25-8eee-e4e8c9cb1e7e@gmail.com>
- <CAHp75VdHT3g91AirBQGodw1sHbq7U=oKnJq3oSqDcNYS+OUOKQ@mail.gmail.com>
- <6c48f84c-f6da-4f4b-add5-71ec4ea6b963@gmail.com>
- <CAHp75Vffdia3n-FURNa5sB5SwOq+BW84jpTVEYeMCnL+1NZgRw@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cUiKtWKf"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-530e22878cfso5489221e87.2
+        for <linux-tegra@vger.kernel.org>; Tue, 20 Aug 2024 01:44:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724143473; x=1724748273; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W46dkPCLl0CsM8F741fN7/xHRWhTr+kY2TsBuUOfPQg=;
+        b=cUiKtWKfDf2wF04Mgp8Xn6bgLt+ixeeTf8vhEYUk5Zfew0KarJdpxXZ3kAfg07niUy
+         0MdufCzsVQfaUWUhndD0HOI7eAoa050owX5R/mAuHkT4v5xiuNiav8CvY0uXht9a00ry
+         GbEhO1WK1xY/7o2dKB2sHt0ECTDcIuodR+1C9KUANFTX1WbyD2nK4FETDFoEfZAv4v9r
+         QGaxigs41wBOUEClH7+cAsK6dzgv8Eu7+88g/81fKMD7pouG2cKTKILb3tZWhh8ZcqzQ
+         2sWB7V9UZzSgznVOznmP87TDQ0CdY2J8XgL+7sGSlIUra1oQAPMtPCrpoXpBBBLMS302
+         +TSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724143473; x=1724748273;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W46dkPCLl0CsM8F741fN7/xHRWhTr+kY2TsBuUOfPQg=;
+        b=d+L8BjU1ugWrX9puETA7cTX40I/Yi3CN8Ihxocz8zlSPNxEfHxvr0ulPG6KmTkh8tt
+         xx4/xiuZzswq1t6RKXck24Co97mkScSZrsI+uTqQfZrL1FiXuH8KSf16akd1bteM0SQy
+         16VWLhaHCOAg/dzXq2Li8tNF5gOM/yabO3iqaLK+/3vE8a/Uya/CJVXIlLLMiD4JgOzw
+         Vzgyqs5D0lg2USwnFqXfaHWLgMytYHEJfWBHB+kS1SZDtwgR13ZEPmgpK4Jn8OzrZ+6t
+         8bpkwbm3gefEjZ5GGNtTorf9jQfpQKWoNmlmdS/qt5Co6f09iK+o0eH56WRGaBzCu42w
+         x3lw==
+X-Forwarded-Encrypted: i=1; AJvYcCU50I9fCKvu3FpDfwo/GjEnm8mMyxwziQKUYLiWKWNlQQx7fLDVE4MRtxQqgvafQ7rOJjGIoXTknupBbw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCJuzVnJtUtuoMvdvoRw9VS9Sda+FZgJeKcFYyuTY+ZO914dYI
+	pAHj/sjutnQFRvtUwO4CPL1ns/mjrzh9OXjR/5eAnPUmVd9oYWXiegJplUBvntUlU/w6EZLPHaa
+	N
+X-Google-Smtp-Source: AGHT+IEPe41tNiCcGsuD99PSXMjDgsX9VqOdG2fp910RJBAJZ/OA+XpJsjsmNl4MmpOY0ptJcDG4aw==
+X-Received: by 2002:a05:6512:e94:b0:530:aa82:a4fc with SMTP id 2adb3069b0e04-5331c6dc90amr8003501e87.37.1724143473005;
+        Tue, 20 Aug 2024 01:44:33 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8383946973sm728037766b.160.2024.08.20.01.44.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 01:44:32 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/3] dt-bindings: i2c: nvidia,tegra20-i2c: minor cleanups
+Date: Tue, 20 Aug 2024 10:44:23 +0200
+Message-Id: <20240820-dt-bindings-i2c-nvidia-v1-0-2763e9a9a1b0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75Vffdia3n-FURNa5sB5SwOq+BW84jpTVEYeMCnL+1NZgRw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGdXxGYC/x3MQQqDQAxG4atI1g2Mg0LsVaSL0UT9N6nMFCmId
+ 3dw+S3eO6lYhhV6NydlO1Dw9Yr21dC8JV+NodUUQ+yCxMD64wmu8LUw4sx+QJFYhl5lSK2YLFT
+ jPduC/zMeP9d1A9gBYFtoAAAA
+To: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=651;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=ihPpTKWtmQDqETpS/ko4Upn5KM57AFh71idg3PZivGI=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmxFdprZi2BhyVmuU7Hma8eO6WoTQIyR2Ju0ctv
+ uN1HMRN46CJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZsRXaQAKCRDBN2bmhouD
+ 14YmD/41vh5UZXo8unidp9ve8tllo/opQ6Ph64+v1180i8l2usCbE3lZdg2/y2+CAeMukZemxhr
+ Nai01YQhMm6gFyF/iZUjbCvw8AJ5Iq1Cb2msCI8HtWVqWNYNTKz5H0kbBjdGzFw6UXTBDtIIRhZ
+ mbQwci271BWIQvLeBZMhoZAZWrhAGE4PMEOnpI77dJ53mlCB8ntPvfa6vz8R2nLk/yqq6JD8dFe
+ F5blXyBPHAH9RBGfcbk7lN2qFdSqiFnTImsBU1DMizszApwQ9YlXKQvnOce8yX7AcRMwJxur4bF
+ pF0NJylqaxgOahii/DBUIYkWhkeBdx8snF3sF4wj9LIod5G5Tuvic+spf1GPl9BjjwsKdtsEbZE
+ TfZl9Ka1APmRoHMQmGO5Sno0o6qXizvbL9fWzdo7ST8kiSielD9Mckq4f1G/lE1Gb7jKH9TKNpp
+ JYNH2RFsYPIgiTzsR90xoyCmmHXSU438ToU2rgHJq2nXuAqdzxLRMod6ouULSQvcKGimdgLe6eO
+ uWkyQMvqPAF1FMkmaxhnEItAWsTUM9jp6a4+KBWfX9NkcD7ZDhli02syihjsJJGdU7KFx5uQLnB
+ /+ODNOmAEpJ02E+ChX0eDGl0XIz5f4pqiTg7APQQDntcK2Ng5Phi4rPx13Jt7RiBrWvxmI5g2Bh
+ 78k2/UzZtM9cz6A==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-* Andy Shevchenko <andy.shevchenko@gmail.com> [240819 09:21]:
-> +Cc: Tony
-> 
-> On Thu, Aug 15, 2024 at 5:48 AM Dmitry Osipenko <digetx@gmail.com> wrote:
-> > 13.08.2024 18:52, Andy Shevchenko пишет:
-> > ...
-> > >>> but somewhere in the replies
-> > >>> here I would like to hear about roadmap to get rid of the
-> > >>> pm_runtime_irq_safe() in all Tegra related code.
-> > >>
-> > >> What is the problem with pm_runtime_irq_safe()?
-> > >
-> > > It's a hack. It has no reasons to stay in the kernel. It also prevents
-> > > PM from working properly (in some cases, not Tegra).
-> >
-> > Why is it a hack? Why it can't be made to work properly for all cases?
-> 
-> Because it messes up with the proper power transitions of the parent
-> devices. Refer to the initial commit c7b61de5b7b1 ("PM / Runtime: Add
-> synchronous runtime interface for interrupt handlers (v3)") that
-> pretty much explains the constraints of it. Also note, it was added
-> quite a while after the main PM machinery had been introduced.
-> 
-> What you have to use is device links to make sure the parent (PM
-> speaking) may not go away.
-> FWIW, if I am not mistaken the whole reconsideration of
-> pm_runtime_irq_safe() had been started with this [1] thread.
-> 
-> If you want to dive more into the history of this API, run `git log -S
-> pm_runtime_irq_safe`. It gives you also interesting facts of how it
-> was started being used and in many cases reverted or reworked for a
-> reason.
+Simple cleanups for nvidia I2C.
 
-Yeah we should remove pm_runtime_irq_safe() completely. Fixing the use
-of it in a driver afterwards is always a pain. And so far there has
-always been a better solution available for the use cases I've seen.
+Best regards,
+Krzysztof
 
-> > >> There were multiple
-> > >> problems with RPM for this driver in the past, it wasn't trivial to make
-> > >> it work for all Tegra HW generations. Don't expect anyone would want to
-> > >> invest time into doing it all over again.
-> > >
-> > > You may always refer to the OMAP case, which used to have 12 (IIRC,
-> > > but definitely several) calls to this API and now 0. Taking the OMAP
-> > > case into consideration I believe it's quite possible to get rid of
-> > > this hack and retire the API completely. Yes, this may take months or
-> > > even years. But I would like to have this roadmap be documented.
-> >
-> > There should be alternative to the removed API. Otherwise drivers will
-> > have to have own hacks to work around the RPM limitation, re-invent own
-> > PM, or not do RPM at all.
-> >
-> > Looking at the i2c-omap.c, I see it's doing pm_runtime_get_sync() in the
-> > atomic transfer, which should cause a lockup without IRQ-safe RPM,
-> > AFAICT. The OMAP example doesn't look great so far.
-> 
-> Bugs may still appear, but it's not a point. I can easily find a
-> better example with a hint why it's bad to call that API [2][3][4] and
-> so on.
+---
+Krzysztof Kozlowski (3):
+      dt-bindings: i2c: nvidia,tegra20-i2c: combine same if:then: clauses
+      dt-bindings: i2c: nvidia,tegra20-i2c: restrict also clocks in if:then:
+      dt-bindings: i2c: nvidia,tegra20-i2c: define power-domains top-level
 
-Adding Kevin for the i2c-omap.c, sounds like it might depend on the
-autosuspend timeout for runtime PM.
+ .../bindings/i2c/nvidia,tegra20-i2c.yaml           | 27 ++++++++++++----------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
+---
+base-commit: 367b5c3d53e57d51a5878816804652963da90950
+change-id: 20240820-dt-bindings-i2c-nvidia-895d89a18e8f
 
-For issues where the controller may wake to an interrupt while runtime
-idle, there's pm_runtime_get_noresume().
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Regards,
-
-Tony
-
-> [1]: https://lore.kernel.org/all/20180515183409.78046-1-andriy.shevchenko@linux.intel.com/T/#u
-> [2]: https://lore.kernel.org/all/20191114101718.20619-1-peter.ujfalusi@ti.com/
-> [3]: https://lore.kernel.org/all/20180920193532.7714-1-tony@atomide.com/
-> [4]: https://lore.kernel.org/all/1463014396-4095-1-git-send-email-tony@atomide.com/
