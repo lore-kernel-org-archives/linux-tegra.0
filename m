@@ -1,95 +1,120 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B331CFED3;
-	Wed, 21 Aug 2024 10:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62471B1D72;
+	Wed, 21 Aug 2024 11:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724236488; cv=none; b=q290YCA8h9IFSP2joxvELVsgNZsVB3OLEvSbJxtR5/izq7f1AFhGKnjGiZDk+EhafRnQGNAfua0xVxc9JQRrhJdcZaoEXEjF0AbS/UOKThPtWhyIewgiAWy0UkQpg2jmZvsevK/6bPbRXdNU5Hl2suYwGqXVlBIt9UrtXi7koik=
+	t=1724240522; cv=none; b=N3YnymBf8lnhjNsZfUw8oRDe2BxDI2dNbVG18x3gevuPWhyT4Si3rB26/YK84u8P6nefDvIO6DT3ErXbWEPpbTy2VOIiCVBrDFaaeZWnZLy0bk2SMYt5YYaTQLPxSYq+YcEcEzbgMTguRaPMoXXOENXVFd/Ltutwzxj9NfziOcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724236488; c=relaxed/simple;
-	bh=2jzeEdnLYCePgLpuQFWyV5MeZjrftOfeai5HuPW9XyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=udoFPhNbcgL3Sp61MhOfvfi+4oXWYJOhfS21gGEuXpeDXbR8CFo3QohjOYk2MPqwGZwDnpRZe5AW3hBWZK1XjLgRniscm5wLbotJicSW+wtwsqnMJJn3FVv7CvTPqCMvlCUx2gpS0rggpvmJe/w7x8keL69tsTMtUEsU5lQ3DnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=c6J4bnUu; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1724240522; c=relaxed/simple;
+	bh=a9fTj3z2Dh/cRq6dIy9s78ke/rtscTaBH97EuqP63To=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M4X9qorWLpd5BX7siiDxk8AG1dN7YB+C8HMWkY7RTVY3KSJWZYRo0Mxfyuc8UxMkx2Nv3AmuIdzQIKP+g/dZxIipoo2pXqRJj9demjOZf1lwDbdFTMkdXPaXzApQdXBSS1KsqFCBtqDrQCEzBDvbXopC62TLWJuTFXh7YYC3urA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WL/Q6Bxg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="c6J4bnUu"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id A2E4460022F7;
-	Wed, 21 Aug 2024 11:34:36 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id i76sRW4G9r9u; Wed, 21 Aug 2024 11:34:34 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [IPv6:2001:690:2100:1::b3dd:b9ac])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id D60CB6000872;
-	Wed, 21 Aug 2024 11:34:33 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1724236474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gOdZ5DZBzLNtKU43Z18gUBStiQCsdElmzJoMkINRkJ8=;
-	b=c6J4bnUuEYkH7GzQ8pqy9UuHmO2lPZGtzfRHvD9fFP3QFGndKg3fcfHTUGDRnsYOOM+ds/
-	88o1fc+PXwti9EruZPuDBqyYPMobxZdxtsME4vtVNYo+gnbDTcqa3EtUTZ7cPHCNXVlRky
-	ghClDj0jtusl80xcSKqxa4BruGmYUf4=
-Received: from diogo-gram (unknown [IPv6:2a01:14:8073:1e10:c362:ff08:aa85:54c6])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 728D4360086;
-	Wed, 21 Aug 2024 11:34:33 +0100 (WEST)
-Date: Wed, 21 Aug 2024 11:34:28 +0100
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: Tomasz Maciej Nowak <tmn505@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] arm64: tegra: add wp-gpio to P2957 board
-Message-ID: <2qdy5ehshfslfuyqquycsirzx7ngbwbet2mzsrz6xitaa4pyri@oqohc4egyydl>
-References: <20240815-tx1_sdmmc-v1-0-7856ac25a204@tecnico.ulisboa.pt>
- <e544466f-8c9c-441a-a209-bda0b47aeb7d@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WL/Q6Bxg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2232C32782;
+	Wed, 21 Aug 2024 11:41:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724240522;
+	bh=a9fTj3z2Dh/cRq6dIy9s78ke/rtscTaBH97EuqP63To=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WL/Q6BxgkKhnvOOhgONFaQIIWOEFu9sIKPU2sk6Nwc6uGSLPnwHpRzOL1zgU0OQQT
+	 DnRcv0lSYWjzCRzQTkiBeSamWOCyZktvrq5HKLTCwP/l+hilnkTL8udH37nu67HM2V
+	 oVEU5Op5Z9moFnWfrvE0HopoU111SqudueKQkRiSXNIu6X/2h30iREbxb8DuMr94Nh
+	 FBGOIqfW2BhOfqv+9HJtXhglFFqIyfHJNmiDH1GRiQBuN3GJsgbAuzzcf4GucGGlPJ
+	 W99+CSDDhKdI1U/62bz0T8XUz5w7fOuNlhS9MF25/42E0XBYflwllTCnjFzcolvsN/
+	 EOjJ+IgtWsZhg==
+Message-ID: <641cf75c-3b6f-4913-ab49-5d0ee821780e@kernel.org>
+Date: Wed, 21 Aug 2024 13:41:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e544466f-8c9c-441a-a209-bda0b47aeb7d@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/13] memory: simplify with scoped/cleanup.h for
+ device nodes
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Lukasz Luba
+ <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 20, 2024 at 06:32:44PM GMT, Tomasz Maciej Nowak wrote:
+On 16/08/2024 12:54, Krzysztof Kozlowski wrote:
+> Changes in v2:
+> - Add tags
+> - Wrap lines before of_parse_phandle() (Jonathan)
+> - Few new patches (see individual changelogs)
+> - Link to v1: https://lore.kernel.org/r/20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org
 > 
-> W dniu 15.08.2024 o 17:50, Diogo Ivo pisze:
-> > Define the wp-gpio for the P2597 board.
-> > 
-> > For this, patch 1 fixes the assignment of the vmmc supply's gpio that
-> > was incorrectly assigned to the wp-gpio of the external slot.
-> > 
-> > Patch 2 adds the definition of the wp-gpio.
-> > 
-> > Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> > ---
-> > Diogo Ivo (2):
-> >       arm64: tegra: Fix gpio for P2597 vmmc regulator
-> >       arm64: tegra: Add wp-gpio for P2597's external card slot
+> Make code a bit simpler and smaller by using cleanup.h when handling
+> device nodes.
 > 
-> Hi,
-> for both patches
-> Tested-by: Tomasz Maciej Nowak <tmn505@gmail.com>
-> 
-> PS
-> I case You wish to save some digging for other features I enabled BT+WiFi, PWM-FAN
-> and power sensors in this tree: https://github.com/tmn505/linux/tree/jetson-tx1
-> For passing MAC addresses for BT+WiFi from cboot provided dtb check this U-Boot
-> tree: https://github.com/tmn505/u-boot/tree/jetson-tx1
+> Best regards,
 
-Thanks for testing! Are you planning on sending your patches upstream?
-It would be nice to have those features enabled, and I can add my
-Tested-by once I test them.
+Rebased (some changes around ti-aemif) and applied.
 
-Diogo
+Best regards,
+Krzysztof
+
