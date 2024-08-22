@@ -1,172 +1,138 @@
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from terefe.re (terefe.re [5.255.96.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED151CF2A1;
-	Thu, 22 Aug 2024 17:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2482C2AD00;
+	Thu, 22 Aug 2024 18:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.255.96.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724348626; cv=none; b=of0fP+0729CBTwgXJ+G6wV1I0CXLh/4xAQ3Qs1ywN/mGiz+KbslY6u9hnixrLVJkGRMWkfxg0agCaH8MrtoaNqQPcQuML54WHP3ssH67YkIGymfR8eFt9enK70UB5+L5OnVGWwVNB47MhfyKlWUbrsn9YqN7l796PApTYkVUkCA=
+	t=1724352366; cv=none; b=lpgd11D3emqD6tQpj0yCFZfxf0YsXB6XXyNbJYHdf4I0erMy2z648CtKlVlH1QqFb8zO33uBT+ewel555gvvkjMF0nf07Ju+bsdTHA5GtnRHtnW4H/ACWVCAXLpk3y6fHzIQ7rzipO4uBFO0UKjgZJ4HVlCwZerUEIJWqfUlNt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724348626; c=relaxed/simple;
-	bh=NFJyZNClpVUHx0Z3NXNiq6kpWDX+CueV3L4clx5uBrg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pYhcCsEfcISmHVbpSJdZtoCNuzfBA/cHiKHRYHGLucKP8ud37S1rq4ekevIvpRzGbWjRtuoR8nzaoLmS7uO4/d/vURIwxgmpw2LBvMEPkurOmqJ7n53OpG/WAv7bxKqb5BqvP96xvW2yUfc6hAJlgAGFcGf09r5OZUg9JEeM5zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dSOWVQZw; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724352366; c=relaxed/simple;
+	bh=zfOiErGOf9PASUESkcUjB4NpTO1hs1IUST0d42YNoL0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X2IQXkOifkWnKjs4PAx6P7MlMF+1mSGncFPoSbxyqkaAaj9cGz9IkS8+4x5O3OnD7a9h+fSMUVm0WX/OgRnRuAWKA0jhEUXTvrZvbjvHZJ+tH5GXt3QG2WrEOHlg4OwFqMeZWrzCn/PbWwdx68fx/BOxu4q6BtF5+xshXU6GnHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re; spf=pass smtp.mailfrom=terefe.re; dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b=fheAtz0J; arc=none smtp.client-ip=5.255.96.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=terefe.re
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dSOWVQZw"
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-7141b04e7b5so726464b3a.2;
-        Thu, 22 Aug 2024 10:43:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724348624; x=1724953424; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=flQt4FT94ocjxfYVsDsgAIXjhRxl01ohtqmqMtZp6jc=;
-        b=dSOWVQZwhOcxjVN5NhMtpWMc0b4V2cUbWjyNtqKKOSKnkmYyO6Vj43Frn4EyO3C9PA
-         lgVmN0XYJRCg6keRGP1QEj36Tw7oyhhhpRBSbsJ9qoKpXKO9Bcft9R6RPPmGOa2ktSy1
-         KHikYBdIuAOYe5BL4JggNPW0R6KRpKc2ILlupWu1E6I4dixdJv/4N0Tkgi5ZiMQZJfeX
-         st609SF7ifqipGGesTl3QVHbRaq2CiffN10cs+Fp/SmggfhTRDgTDYCRJAjVKo5jNq62
-         EY9gc9bvEbZP9LULIER18n9V6fCGCfNKl+FfOZczz+zme/eBKct68wn7KR1FJL2qPpkl
-         xZMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724348624; x=1724953424;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=flQt4FT94ocjxfYVsDsgAIXjhRxl01ohtqmqMtZp6jc=;
-        b=mXeWGN0phtdJj+9RzgU3jxZFXCq7XCDM+ywV5h4Tl0dww3tjhvT9GFU1WsU2i48HqN
-         8jezbm93jrieXu4SDprYOcHfNxeMGBu1N6FiQZrWS+pNoLkAmOoXG9W8RYDKxAvQ304P
-         gE7sSeWvWazUcBCSB5eJRSgSBy03Hlp4fnEkycNNt5A1tGt2nPPx2luwJ3CVONtk9q14
-         Z/95GRa7MySPXg40glNYzjTvjdSvWY/mqilx4cgPMmIqwwS3hD5iquLk3h05U8cJUw65
-         nMrQ3KdWxBJleu3z91/YP22HtE9eBEWvbyyiypEKZWJSbV/vcNrYA+0v6E0sUXyVTD6K
-         Ga6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVCDbTORMXC3NYrfyvkY6IzP32VoXBuxjEMj9uivGyuvO5byyeEpsq074dUCzBIwuINBBiuae/+630=@vger.kernel.org, AJvYcCVVHajNRqg8yddsy3nZPkHvKWmdI00xSXzoGJIiXeUkw02eT/CyiFu/mawPfgIlQ+dNIDKI1bMl7d4DiJI=@vger.kernel.org, AJvYcCX1YHG6vS72A55wZmw0qs3+jwQOaOwwbaJT5guVVJj2c+a86/pxjH6Wt4HugmpUlAmRwxJknDlcdgTZZ/0=@vger.kernel.org, AJvYcCXsso/i4PhipK/btJL3okGONJleKufxokeRYkXEQQif3epVKpY/HeP8zqiJZetld2w4KPfAV1EKPI78JA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+8aQULUBd70iuyfT3f1SRCEh56/uUBQMuTuWSa3DTpuo2dy1R
-	NG2/19n+WLkFHmV/d4dzAFlHRmxBreBaRiSuxk16c9d8W6RC6RJ0
-X-Google-Smtp-Source: AGHT+IFGkELVvNa0lI1frVFe6EWSijWeT2NndQtVRkhY3tXIvi6/Nr7KdOgUntuymQnVsLZZV1NHsQ==
-X-Received: by 2002:a05:6a20:cfa4:b0:1c4:9c27:77a5 with SMTP id adf61e73a8af0-1cad7fb3fd0mr7479354637.31.1724348623824;
-        Thu, 22 Aug 2024 10:43:43 -0700 (PDT)
-Received: from localhost ([103.156.242.194])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71434af17ebsm1583180b3a.3.2024.08.22.10.43.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 10:43:43 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-Date: Fri, 23 Aug 2024 01:43:29 +0800
-Subject: [PATCH v2 4/4] arm: defconfig: drop RT_GROUP_SCHED=y from
- bcm2835/tegra/omap2plus
+	dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b="fheAtz0J"
+Received: from localhost.localdomain (unknown [212.106.161.95])
+	by terefe.re (Postfix) with ESMTPSA id C6E341FFBF;
+	Thu, 22 Aug 2024 20:46:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=terefe.re; s=default;
+	t=1724352361; bh=zfOiErGOf9PASUESkcUjB4NpTO1hs1IUST0d42YNoL0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fheAtz0J9Uyql+rN9sp41We6TAegcHo5BYGHrpKz4ipGBUw5IX4Y/g2jSbN9rbAHp
+	 /MRHanJPor6D4XFReQW1UNCEA8uuqJOcYgBx28XyWJZuXiogO2PvltL+prv4EN2zHi
+	 Jrf4qg7Fz5/phfLgEYi4e5BLIm8QrOJn+m6BpCQUMoTMys3FQlPoEruLMwJVS2P8l0
+	 jvBrLwMV1IQAaBn7jlv5g1avhMDo7jq+JCAjZRa10EVdLbKbjOysQES0fd3B6QRNpK
+	 dfVspQ82bOPrQXa1fcSRZo6gD1y8HDTpl6/tgGRUv4ZFmTzZVTwi3d3f9BXRO3e/PN
+	 pR4bCrNxIRAuw==
+From: Tomasz Maciej Nowak <tmn505@terefe.re>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tomasz Maciej Nowak <tmn505@gmail.com>
+Subject: [PATCH v2] ARM: tegra: wire up two front panel LEDs on TrimSlice
+Date: Thu, 22 Aug 2024 20:41:02 +0200
+Message-ID: <20240822184555.20353-1-tmn505@terefe.re>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240823-fix-riscv-rt_group_sched-v2-4-e4dbae24f7e1@gmail.com>
-References: <20240823-fix-riscv-rt_group_sched-v2-0-e4dbae24f7e1@gmail.com>
-In-Reply-To: <20240823-fix-riscv-rt_group_sched-v2-0-e4dbae24f7e1@gmail.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Guo Ren <guoren@kernel.org>, Anup Patel <anup@brainfault.org>, 
- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, 
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
- Russell King <linux@armlinux.org.uk>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
- Tony Lindgren <tony@atomide.com>, Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
- linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
- linux-tegra@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Celeste Liu <CoelacanthusHex@gmail.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2823;
- i=CoelacanthusHex@gmail.com; h=from:subject:message-id;
- bh=NFJyZNClpVUHx0Z3NXNiq6kpWDX+CueV3L4clx5uBrg=;
- b=owJ4nJvAy8zAJfY4pvNJRPo6U8bTakkMaccrDivyM1yYePqvmKhQXbdc0o4/M99VH9rqbjfrd
- C2704FIwfKOUhYGMS4GWTFFFrGdT18vK330YRmvyQyYOaxMIEMYuDgF4CKcjAwdc84dWeL8XvrP
- oXWq2Tvq7x9Qlrtz8PpheXWhu2maxd+PMfyvY/2cPcnsqtDXK2v61hZlLJVe4rPDPnSvlHrjhGk
- +FpHMAC41TKg=
-X-Developer-Key: i=CoelacanthusHex@gmail.com; a=openpgp;
- fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
+Content-Transfer-Encoding: 8bit
 
-Commit 673ce00c5d6c ("ARM: omap2plus_defconfig: Add support for distros
-with systemd") said it's because of recommendation from systemd. But
-systemd changed their recommendation later.[1]
+From: Tomasz Maciej Nowak <tmn505@gmail.com>
 
-For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
-needs an RT budget assigned, otherwise the processes in it will not be able to
-get RT at all. The problem with RT group scheduling is that it requires the
-budget assigned but there's no way we could assign a default budget, since the
-values to assign are both upper and lower time limits, are absolute, and need to
-be sum up to < 1 for each individal cgroup. That means we cannot really come up
-with values that would work by default in the general case.[2]
+Pins responsible for controlling these LEDs need to have tristate
+control removed if we want them as GPIOs. This change alings with pinmux
+configuration of "dte" pin group in downstream kernel[1].
+These LEDs had no function assigned on vendor kernel and there is no
+label on the case, the only markings are on PCB which are part of node
+names (ds1 marking is on power LED controlled by PMIC), so generic term
+is assigned as the function.
 
-For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
-can only be enabled when all RT processes are in the root cgroup. But it will
-lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
+1. https://github.com/compulab/trimslice-android-kernel/blob/upstream/arch/arm/mach-tegra/board-trimslice-pinmux.c#L45
 
-Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
-support it.
-
-[1]: https://github.com/systemd/systemd/commit/f4e74be1856b3ac058acbf1be321c31d5299f69f
-[2]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
-
-Tested-by: Stefan Wahren <wahrenst@gmx.net>
-Acked-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
 ---
- arch/arm/configs/bcm2835_defconfig   | 1 -
- arch/arm/configs/omap2plus_defconfig | 1 -
- arch/arm/configs/tegra_defconfig     | 1 -
- 3 files changed, 3 deletions(-)
+Previous version: https://lore.kernel.org/linux-tegra/20180219201623.6987-1-tmn505@gmail.com
+Changes in v2:
+- rebase
+- reword commit title and message
+- align to changes in leds subsystem
+- align to dtschema recomendations
 
-diff --git a/arch/arm/configs/bcm2835_defconfig b/arch/arm/configs/bcm2835_defconfig
-index b5f0bd8dd536..27dc3bf6b124 100644
---- a/arch/arm/configs/bcm2835_defconfig
-+++ b/arch/arm/configs/bcm2835_defconfig
-@@ -7,7 +7,6 @@ CONFIG_BSD_PROCESS_ACCT=y
- CONFIG_BSD_PROCESS_ACCT_V3=y
- CONFIG_LOG_BUF_SHIFT=18
- CONFIG_CFS_BANDWIDTH=y
--CONFIG_RT_GROUP_SCHED=y
- CONFIG_CGROUP_FREEZER=y
- CONFIG_CPUSETS=y
- CONFIG_CGROUP_DEVICE=y
-diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
-index 3a166c2f02bd..9cb265c8d414 100644
---- a/arch/arm/configs/omap2plus_defconfig
-+++ b/arch/arm/configs/omap2plus_defconfig
-@@ -13,7 +13,6 @@ CONFIG_MEMCG=y
- CONFIG_BLK_CGROUP=y
- CONFIG_CGROUP_SCHED=y
- CONFIG_CFS_BANDWIDTH=y
--CONFIG_RT_GROUP_SCHED=y
- CONFIG_CGROUP_FREEZER=y
- CONFIG_CPUSETS=y
- CONFIG_CGROUP_DEVICE=y
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index d2a094ad360c..3a9bda2bf422 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -6,7 +6,6 @@ CONFIG_IKCONFIG=y
- CONFIG_IKCONFIG_PROC=y
- CONFIG_CGROUPS=y
- CONFIG_CGROUP_SCHED=y
--CONFIG_RT_GROUP_SCHED=y
- CONFIG_CGROUP_FREEZER=y
- CONFIG_CGROUP_CPUACCT=y
- CONFIG_CGROUP_DEBUG=y
+ .../arm/boot/dts/nvidia/tegra20-trimslice.dts | 30 +++++++++++++++----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
+diff --git a/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts b/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts
+index 7cae6ad57544..4caeeb9f1e1d 100644
+--- a/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts
+@@ -2,6 +2,7 @@
+ /dts-v1/;
+ 
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/leds/common.h>
+ #include "tegra20.dtsi"
+ #include "tegra20-cpu-opp.dtsi"
+ 
+@@ -201,16 +202,17 @@ uca {
+ 			conf_ata {
+ 				nvidia,pins = "ata", "atc", "atd", "ate",
+ 					"crtp", "dap2", "dap3", "dap4", "dta",
+-					"dtb", "dtc", "dtd", "dte", "gmb",
+-					"gme", "i2cp", "pta", "slxc", "slxd",
+-					"spdi", "spdo", "uda";
++					"dtb", "dtc", "dtd", "gmb", "gme",
++					"i2cp", "pta", "slxc", "slxd", "spdi",
++					"spdo", "uda";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			conf_atb {
+ 				nvidia,pins = "atb", "cdev1", "cdev2", "dap1",
+-					"gma", "gmc", "gmd", "gpu", "gpu7",
+-					"gpv", "sdio1", "slxa", "slxk", "uac";
++					"dte", "gma", "gmc", "gmd", "gpu",
++					"gpu7", "gpv", "sdio1", "slxa", "slxk",
++					"uac";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 			};
+@@ -408,6 +410,24 @@ key-power {
+ 		};
+ 	};
+ 
++	leds {
++		compatible = "gpio-leds";
++
++		led-ds2 {
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <2>;
++			gpios = <&gpio TEGRA_GPIO(D, 2) GPIO_ACTIVE_LOW>;
++		};
++
++		led-ds3 {
++			color = <LED_COLOR_ID_GREEN>;
++			function = LED_FUNCTION_INDICATOR;
++			function-enumerator = <3>;
++			gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_LOW>;
++		};
++	};
++
+ 	poweroff {
+ 		compatible = "gpio-poweroff";
+ 		gpios = <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_LOW>;
 -- 
 2.46.0
 
