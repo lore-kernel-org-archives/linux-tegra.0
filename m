@@ -1,138 +1,99 @@
-Received: from terefe.re (terefe.re [5.255.96.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2482C2AD00;
-	Thu, 22 Aug 2024 18:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.255.96.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4F013AA2E;
+	Thu, 22 Aug 2024 20:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724352366; cv=none; b=lpgd11D3emqD6tQpj0yCFZfxf0YsXB6XXyNbJYHdf4I0erMy2z648CtKlVlH1QqFb8zO33uBT+ewel555gvvkjMF0nf07Ju+bsdTHA5GtnRHtnW4H/ACWVCAXLpk3y6fHzIQ7rzipO4uBFO0UKjgZJ4HVlCwZerUEIJWqfUlNt4=
+	t=1724359852; cv=none; b=rh82TGoCkDsmzSY1Z0IaJMRQk3MtAKGIeyu1TQ49lH5qdbG3xLzHPqpAMiSnoBtGVl04hkVQ0hZMynab1S69jCtJUDg4CpaJCjjjh2NRxjdu4wmMXPMFngymUOiEfkayBse3BKCtop+4ujHAFV4B44hdWnnN4YkqyGxoTWxetq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724352366; c=relaxed/simple;
-	bh=zfOiErGOf9PASUESkcUjB4NpTO1hs1IUST0d42YNoL0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X2IQXkOifkWnKjs4PAx6P7MlMF+1mSGncFPoSbxyqkaAaj9cGz9IkS8+4x5O3OnD7a9h+fSMUVm0WX/OgRnRuAWKA0jhEUXTvrZvbjvHZJ+tH5GXt3QG2WrEOHlg4OwFqMeZWrzCn/PbWwdx68fx/BOxu4q6BtF5+xshXU6GnHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re; spf=pass smtp.mailfrom=terefe.re; dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b=fheAtz0J; arc=none smtp.client-ip=5.255.96.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=terefe.re
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=terefe.re
+	s=arc-20240116; t=1724359852; c=relaxed/simple;
+	bh=Q54Nx+O2Sl23E88hssQiSTeCj8d0ltDBodtJOVav6nk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ldN2jPdcn4bVd3+m7sJW//0r5Es7lZ0dQYpKasnSwWm4y5OY72CHipqesT93USlPRXx18lLZqrmdHwmvcoXrBKrSk0k44z/+BFUJyjtY7WJjMXmGvX6w5jRqMcWzSttB6ar7Lr+sY76und6gnRHP5gDhBHXcV1HOmaHY8Ly0vyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XfvArPAW; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=terefe.re header.i=@terefe.re header.b="fheAtz0J"
-Received: from localhost.localdomain (unknown [212.106.161.95])
-	by terefe.re (Postfix) with ESMTPSA id C6E341FFBF;
-	Thu, 22 Aug 2024 20:46:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=terefe.re; s=default;
-	t=1724352361; bh=zfOiErGOf9PASUESkcUjB4NpTO1hs1IUST0d42YNoL0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fheAtz0J9Uyql+rN9sp41We6TAegcHo5BYGHrpKz4ipGBUw5IX4Y/g2jSbN9rbAHp
-	 /MRHanJPor6D4XFReQW1UNCEA8uuqJOcYgBx28XyWJZuXiogO2PvltL+prv4EN2zHi
-	 Jrf4qg7Fz5/phfLgEYi4e5BLIm8QrOJn+m6BpCQUMoTMys3FQlPoEruLMwJVS2P8l0
-	 jvBrLwMV1IQAaBn7jlv5g1avhMDo7jq+JCAjZRa10EVdLbKbjOysQES0fd3B6QRNpK
-	 dfVspQ82bOPrQXa1fcSRZo6gD1y8HDTpl6/tgGRUv4ZFmTzZVTwi3d3f9BXRO3e/PN
-	 pR4bCrNxIRAuw==
-From: Tomasz Maciej Nowak <tmn505@terefe.re>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tomasz Maciej Nowak <tmn505@gmail.com>
-Subject: [PATCH v2] ARM: tegra: wire up two front panel LEDs on TrimSlice
-Date: Thu, 22 Aug 2024 20:41:02 +0200
-Message-ID: <20240822184555.20353-1-tmn505@terefe.re>
-X-Mailer: git-send-email 2.46.0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfvArPAW"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8666734767so164786966b.1;
+        Thu, 22 Aug 2024 13:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724359849; x=1724964649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fw3+iCjTPQFvMhYVXHpivZMghgw126sYI/qUY4SnqZ8=;
+        b=XfvArPAWBQxV/l4RpMToC5J2cagnMhlCCEG/Oih54fT5N49ok6oPRcxss/nBH+d5vO
+         7ltB8iKupdXZzIi89E5YLdv4tv0TfBomSWVyou0hWltABx8pkBQe2i75vtXMt3/BXznB
+         /0YEfn9d4lZ+Her7XQ8RBA35WsZsMFtc2baJ26UZdiXcK1PgbNGNU2Po9f/2CO+RnADR
+         BNPStNZqXDcBeSdfgHDRtJQMaL02hCexB/c9Ti3XPLnf9cyIYK21Av9h1HVHXFe2HTi1
+         ZiSwyRZ/2Iw1S07x7De8oPINrwbOEWjIwpO7v9lVyGa8dAJ19d6LYOQ88hp0MM/Od4JS
+         3Skw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724359849; x=1724964649;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fw3+iCjTPQFvMhYVXHpivZMghgw126sYI/qUY4SnqZ8=;
+        b=lCpmZ8nFBWQy/ZheaNE6p8/7cRgwVrmzPfe+UOS8tY8QKC9AQrBYgMt6cf5GkAvAYv
+         ihW3Nqdprgf/KQRhSOOUxm/j8vLtfXVMACH9qwR9y+Hk1VTCrpTrC9D3N92s1j8x6Dga
+         3phUfmrWr+hO16265k909xst42e/UzfwczIAIioUr1BXen9eZSQaFOjpwj+AcjfzynN8
+         WO9k30LZ9C/Q/oo67JvdJMuBPuyQ1xCqmiuV1f5NOfu1tKUAF+vyxwYyd4OIdCTw0rSH
+         kxfNAmg9RTwZOxUwwl0kf0L3WvBXrEC8geYLWqt+ObXXS0v/rYrAJF0Ey9v1X5JrnI5a
+         y6Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUFzCYG86Gu9N5y+IaDlxsjoS7p17WVFuKeUwG6ldNxi8AuPpzdJNkxawhUVR695LGcQ99J7+X5j5QN+rU=@vger.kernel.org, AJvYcCVx299T+s9LpHaGYBuffglL52N4W4mHNj9Mq902mgZz+aTk6ezAkPgSjcctxELqIczluODuYv21cnjc1kc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwQtC5EgbloxYQL3h1Si3ddHRo98IRlW7+R1qrNeNDdyErIL78
+	tk48tWhslvpGyPxKSs7K/9v2iAhdVf+oNviUBe9CyliBceIK0i8F
+X-Google-Smtp-Source: AGHT+IHva2stwTSqG7rGZTaZUHh+/wTMO8O+48GKKMUS8dBUyWj5Buqho3Efd6rTd7pGcg1cwITIAQ==
+X-Received: by 2002:a17:906:eec4:b0:a7a:3928:3529 with SMTP id a640c23a62f3a-a866f110c45mr589588266b.13.1724359848540;
+        Thu, 22 Aug 2024 13:50:48 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f436ba2sm162067366b.120.2024.08.22.13.50.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 13:50:48 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/tegra: hdmi: make read-only const array possible_nvram_sizes static
+Date: Thu, 22 Aug 2024 21:50:47 +0100
+Message-Id: <20240822205047.642845-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Tomasz Maciej Nowak <tmn505@gmail.com>
+Don't populate the const read-only array possible_nvram_sizes on the
+stack at run time, instead make it static.
 
-Pins responsible for controlling these LEDs need to have tristate
-control removed if we want them as GPIOs. This change alings with pinmux
-configuration of "dte" pin group in downstream kernel[1].
-These LEDs had no function assigned on vendor kernel and there is no
-label on the case, the only markings are on PCB which are part of node
-names (ds1 marking is on power LED controlled by PMIC), so generic term
-is assigned as the function.
-
-1. https://github.com/compulab/trimslice-android-kernel/blob/upstream/arch/arm/mach-tegra/board-trimslice-pinmux.c#L45
-
-Signed-off-by: Tomasz Maciej Nowak <tmn505@gmail.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Previous version: https://lore.kernel.org/linux-tegra/20180219201623.6987-1-tmn505@gmail.com
-Changes in v2:
-- rebase
-- reword commit title and message
-- align to changes in leds subsystem
-- align to dtschema recomendations
+ drivers/gpu/drm/tegra/hdmi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../arm/boot/dts/nvidia/tegra20-trimslice.dts | 30 +++++++++++++++----
- 1 file changed, 25 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts b/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts
-index 7cae6ad57544..4caeeb9f1e1d 100644
---- a/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts
-+++ b/arch/arm/boot/dts/nvidia/tegra20-trimslice.dts
-@@ -2,6 +2,7 @@
- /dts-v1/;
+diff --git a/drivers/gpu/drm/tegra/hdmi.c b/drivers/gpu/drm/tegra/hdmi.c
+index 09987e372e3e..6bf2dae82ca0 100644
+--- a/drivers/gpu/drm/tegra/hdmi.c
++++ b/drivers/gpu/drm/tegra/hdmi.c
+@@ -434,7 +434,7 @@ tegra_hdmi_get_audio_config(unsigned int audio_freq, unsigned int pix_clock,
  
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
- #include "tegra20.dtsi"
- #include "tegra20-cpu-opp.dtsi"
- 
-@@ -201,16 +202,17 @@ uca {
- 			conf_ata {
- 				nvidia,pins = "ata", "atc", "atd", "ate",
- 					"crtp", "dap2", "dap3", "dap4", "dta",
--					"dtb", "dtc", "dtd", "dte", "gmb",
--					"gme", "i2cp", "pta", "slxc", "slxd",
--					"spdi", "spdo", "uda";
-+					"dtb", "dtc", "dtd", "gmb", "gme",
-+					"i2cp", "pta", "slxc", "slxd", "spdi",
-+					"spdo", "uda";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
- 			};
- 			conf_atb {
- 				nvidia,pins = "atb", "cdev1", "cdev2", "dap1",
--					"gma", "gmc", "gmd", "gpu", "gpu7",
--					"gpv", "sdio1", "slxa", "slxk", "uac";
-+					"dte", "gma", "gmc", "gmd", "gpu",
-+					"gpu7", "gpv", "sdio1", "slxa", "slxk",
-+					"uac";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
-@@ -408,6 +410,24 @@ key-power {
- 		};
+ static void tegra_hdmi_setup_audio_fs_tables(struct tegra_hdmi *hdmi)
+ {
+-	const unsigned int freqs[] = {
++	static const unsigned int freqs[] = {
+ 		32000, 44100, 48000, 88200, 96000, 176400, 192000
  	};
- 
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-ds2 {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_INDICATOR;
-+			function-enumerator = <2>;
-+			gpios = <&gpio TEGRA_GPIO(D, 2) GPIO_ACTIVE_LOW>;
-+		};
-+
-+		led-ds3 {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_INDICATOR;
-+			function-enumerator = <3>;
-+			gpios = <&gpio TEGRA_GPIO(BB, 5) GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
- 	poweroff {
- 		compatible = "gpio-poweroff";
- 		gpios = <&gpio TEGRA_GPIO(X, 7) GPIO_ACTIVE_LOW>;
+ 	unsigned int i;
 -- 
-2.46.0
+2.39.2
 
