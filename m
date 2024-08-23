@@ -1,40 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C055C188A3E;
-	Fri, 23 Aug 2024 15:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9E518893B;
+	Fri, 23 Aug 2024 16:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724428442; cv=none; b=La7B0+kqRrS1wx1JPx2ptuXr3EHpOHTKejW3dm8sdg8iELCA/cQkXDFvA0Yr7E13O0m6E9l9OzT8h9qISr3Ha5paELI8yesuTqFyeUpkWKRKwUxWi9Iy4maYgaanPF5vTSh8DxFwPRv4wuUCY3Tr/pXX9X0v3wFvVa9psW6R+5M=
+	t=1724430339; cv=none; b=RCxikXk1Lh1cPMacAs1EPCXoAv5LuiapNrQAm0s0VuU0V49xJMoIWcKFsf1aC41lhr7ArKglV1qNZesVCswE6mH5BlnR8kOrifNSeIA4gkb2ckP+xKkOfgIGS+FHVIH6XqQxL9oxIS/f2sPCCGAOXXZTevnOY/RHgqSscX8RWI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724428442; c=relaxed/simple;
-	bh=Oknf7Bh9HhKv0p492TrRsH9RWzKQ8QEpPRIapU/vtx4=;
+	s=arc-20240116; t=1724430339; c=relaxed/simple;
+	bh=3XMbUYBDHmzNIbQnFO5jFhgJPAAWpbvUV37uWE91XYY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fZ19FxZR5oGJNn30sNj2EULOnnTCSNL6h+PZbz8/neS0h8S91YrF9Qpi22pvGf4aRXUx/rTV9S89aCOELwYq6bTy0GDgWsH++pB37Lb6XXYhapFQoGJFrB53kN50EO9IOGX/cCCHCpiVKw7JqUnMZLgQed3D+ixR/oNU28wVSq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOaBFcd8; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=QEHFTFhi/IzQIcu+mjVhUbOAx2quy7QIorhicO1D1K4JEt7aHyBfxsbvQMcX7fMQMceKJQBNc3QfH+0f0Jwlyqbiv/tfLjgEYkXDLbn8uI4UeoAwNRxiZZGOhGXgpLWaqZnABCy2LB2WBQ/egdi0a0tNkUvIBuG8PTZmiZq6CjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TEdeqrfc; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOaBFcd8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0485C32786;
-	Fri, 23 Aug 2024 15:54:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724428442;
-	bh=Oknf7Bh9HhKv0p492TrRsH9RWzKQ8QEpPRIapU/vtx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LOaBFcd86Xy8xkLlgveZzv5oo4gHNIAjYJKRrV+TC2Bha+Q2oqc9RS+z+rkF4CG2r
-	 B5sh76TgNhE4pN1HNDODQfBdpvhseP3oeLf/V0phOsnkC5hYiwMbjJsfMPriDnpFr1
-	 1EElvFr60JqEx3pGRRsrwoGDMLKE7F2QsZnMtzWB5Q/WS/hPsK4+GUslyCRxbLUGht
-	 XO+yjRD7jZRykvbhuEAS1i5EBdSN5H5NjKTvTxqSBV4T7lUoAzYdSgLPfQhTWXGw2D
-	 QHPbQkcTkw6x9vSWAi+n/+lSqRlxg5S//qG88Jksy+7Ri/hrEtpjWPn2zUoehjlYa9
-	 jvQ1MPNHFTRYA==
-Date: Fri, 23 Aug 2024 16:53:57 +0100
-From: Will Deacon <will@kernel.org>
-To: Ashish Mhetre <amhetre@nvidia.com>, joro@8bytes.org
-Cc: robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V4] iommu/io-pgtable-arm: Optimise non-coherent unmap
-Message-ID: <20240823155357.GC525@willie-the-truck>
-References: <20240806105135.218089-1-amhetre@nvidia.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TEdeqrfc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724430337; x=1755966337;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3XMbUYBDHmzNIbQnFO5jFhgJPAAWpbvUV37uWE91XYY=;
+  b=TEdeqrfcbxLx99L9+0cq0VBP1FYsYkQCqyGgpEXXB7NgjLpHZmGEZM1o
+   NQx9TreuB4uzCjjmgwPmZd4TZ4zYq1JJJPbtCS5UWIAgG4VmaQp80lwTX
+   UDzzfk3z7DoOLXf17bp1gbFtAz7ALyzMi4oenXbDOjNewuDt53YSbDZ/5
+   4UFEQqQ+4RWJSm+o6hc4Rl+j1HvjrGFwfdj7wqu2RbK/LNo/o3iTeK4jz
+   ZMGCGPBnYcSyUWhURFT+PZt683e2Pv2B48DjJsthobbO70wbeYaEPWx2Y
+   rBIcRHHhvf0+OXYffMtR54DlUuEWXdoL821XPp1c553YjUVva109/sXfB
+   Q==;
+X-CSE-ConnectionGUID: FycDOadURlWiMUKGNasRwQ==
+X-CSE-MsgGUID: vMUjcWdUSKKm9UBG/bpKOw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="22504147"
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="22504147"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 09:25:35 -0700
+X-CSE-ConnectionGUID: TyAhmqenSA+fGrOHJsVz6g==
+X-CSE-MsgGUID: lexLTyUnSgSoAmUAGKiMPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,170,1719903600"; 
+   d="scan'208";a="61694525"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Aug 2024 09:25:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1shX5I-00000000r8v-11Le;
+	Fri, 23 Aug 2024 19:24:20 +0300
+Date: Fri, 23 Aug 2024 19:24:19 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Russell King <linux@armlinux.org.uk>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Vladimir Zapolskiy <vz@mleia.com>, Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	imx@lists.linux.dev, linux-omap@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linuxppc-dev@lists.ozlabs.org,
+	linux-mips@vger.kernel.org, loongarch@lists.linux.dev
+Subject: Re: [PATCH 0/9] AT24 EEPROM MTD Support
+Message-ID: <Zsi3s9XithGEROwX@smile.fi.intel.com>
+References: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -43,60 +99,38 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806105135.218089-1-amhetre@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240701-b4-v6-10-topic-usbc-tcpci-v1-0-3fd5f4a193cc@pengutronix.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Aug 06, 2024 at 10:51:35AM +0000, Ashish Mhetre wrote:
-> The current __arm_lpae_unmap() function calls dma_sync() on individual
-> PTEs after clearing them. Overall unmap performance can be improved by
-> around 25% for large buffer sizes by combining the syncs for adjacent
-> leaf entries.
-> Optimize the unmap time by clearing all the leaf entries and issuing a
-> single dma_sync() for them.
-> Below is detailed analysis of average unmap latency(in us) with and
-> without this optimization obtained by running dma_map_benchmark for
-> different buffer sizes.
+On Mon, Jul 01, 2024 at 03:53:39PM +0200, Marco Felsch wrote:
+> This series adds the intial support to handle EEPROMs via the MTD layer
+> as well. This allow the user-space to have separate paritions since
+> EEPROMs can become quite large nowadays.
 > 
-> 		UnMap Latency(us)
-> Size	Without		With		% gain with
-> 	optimiztion	optimization	optimization
+> With this patchset applied EEPROMs can be accessed via:
+>   - legacy 'eeprom' device
+>   - nvmem device
+>   - mtd device(s)
 > 
-> 4KB	3		3		0
-> 8KB	4		3.8		5
-> 16KB	6.1		5.4		11.48
-> 32KB	10.2		8.5		16.67
-> 64KB	18.5		14.9		19.46
-> 128KB	35		27.5		21.43
-> 256KB	67.5		52.2		22.67
-> 512KB	127.9		97.2		24.00
-> 1MB	248.6		187.4		24.62
-> 2MB	65.5		65.5		0
-> 4MB	119.2		119		0.17
+> The patchset targets only the AT24 (I2C) EEPROMs since I have no access
+> to AT25 (SPI) EEPROMs nor to one of the other misc/eeprom/* devices.
 > 
-> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
-> Changes in V2:
-> - Updated the commit message to be imperative.
-> - Fixed ptep at incorrect index getting cleared for non-leaf entries.
-> 
-> Changes in V3:
-> - Used loop-local variables and removed redundant function variables.
-> - Added check for zero-sized dma_sync in __arm_lpae_clear_pte().
-> - Merged both patches into this single patch by adding check for a
->   NULL gather in __arm_lpae_unmap() itself.
-> 
-> Changes in V4:
-> - Updated the subject in commit message to correctly reflect the changes
->   made in this patch.
-> ---
->  drivers/iommu/io-pgtable-arm.c | 31 +++++++++++++++++--------------
->  1 file changed, 17 insertions(+), 14 deletions(-)
+> Note: I'm not familiar with Kconfig symbol migration so I don't know if
+> the last patch is required at the moment. Please be notified that the
+> list of recipients is quite large due to the defconfig changes.
 
-Acked-by: Will Deacon <will@kernel.org>
+FWIW, I think that MTD is *not* the place for EEPROMs.
 
-Joerg, please can you pick this one up for -next?
+Yeah, we have the driver spread over the kernel for EEPROMs (mostly due to
+historical reasons and absence an umbrella subsystem for them), but it's not
+the reason to hack them into something which is not quite suitable.
 
-Cheers,
+If NVMEM needs to be updated and may cover these cases after all (and do not
+forget about *small* size EEPROMs that most likely appear on the devices with
+limited amount of resources!) in a reasonable size and performance, why not?
 
-Will
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
