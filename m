@@ -1,216 +1,235 @@
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320CA4778C;
-	Sun, 25 Aug 2024 05:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A42155C93
+	for <linux-tegra@vger.kernel.org>; Sun, 25 Aug 2024 13:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724563023; cv=none; b=LbaxOekw3ZOfi62Ncam0vVTzbGK5tghdM+WNEOvtVvHGczdGnS4nueSI1a+kGzKpwD5+LrwZE97iE+EpuD0T4kzRFbRX+TjQZHFte2e4yqonmFyUtKSApIRm3cbNXC25UyuXVhjHX04r4SMoQdEooCgEuXhQ9qP9h41B++bSWuM=
+	t=1724591451; cv=none; b=m5vxCLX74OpMBs6Yerghe4VSxVm0DYEJXrcnZmuzs7xpltY4I7vtcBEJNac4qmnMtZwIGpuG8aBQtmhGGEyYCD+R1ZhWcxV9CzZFKsy+3R4IPJ9jOQdiYqtI446da76jtsydw5pTCfF1sB1xvMvCXeP18aRfFkKn5BE4ZQb1Eu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724563023; c=relaxed/simple;
-	bh=yY4ZVaSxsIM1IRldiqRRPie18QZDpDnG/Gx5Op+I8sM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k+cLKGtSOAwjud0R9P9bbl0OmrjnwTwo7D6EuwgjTuRbimJD5YUe30bwCGbfZdjgmD3iEIMr1n0kXjsqLiIGnN4amiIZV/ttT9crBoPnrj+3LeEtDgb8fLtdBKAUf25AZARnfkSgVzOAr4N3s97QP3JnWeimT/raK+CKFZDu+Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ky5NFyOy; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724591451; c=relaxed/simple;
+	bh=iKMY1BsfXW5DCDOM1rJutDkN7zW/92A/o9tWLFXitOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E8TU4m1/RRvtEZD9vkFWSqghLnhcoGiX+rmesQ6I4QBVEm2JobCRWZ1VKENSSMrOf3ebqSEIbMnL1aJ+ddTlvAHrPX8hYU6BoX1SpCk4VXRvqLQaJmboV/uJt4Gv3spi6klSqdx1W6ORycnk8BoI8C1PRwsIHVmrWnW2PljD3c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GtsD6BWP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ky5NFyOy"
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5daa93677e1so2541516eaf.3;
-        Sat, 24 Aug 2024 22:17:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724563021; x=1725167821; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iL+2InRXO647WU3Yi34+ctBbVoiJtTYGlGR4qSXeVCA=;
-        b=Ky5NFyOyT5Rs3ZCCPReCy0Q8a1H9MoPC/0KwgZS8O3dXX8/8pErvDUPXot/UbeWgWa
-         Ezh+NsWryoKoPvSp3twIQqs7Ul2M6DOJpFZM9UrR1d0pw5gOPowtp9Ga9J2STMwhwaxU
-         vWPMsk2W1SShX+UWmzIXtDLPrUsoTseOtu6LOLWGh+2MWaaEuKdWczlT5eryfX05/Amy
-         6jCfA2M+hwubmMkJyXeTSwnam26T8EDdVjxachlwWrh1Knk4XRMeTf8l6rvn8y3agPLa
-         qsjOO0qbwTAWW3E98EXPRPHQJIuI24WcCW4J1NroS94DWAA3yHtcg7Yo8S+t6RE3LlQk
-         R2Sw==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GtsD6BWP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724591448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u5HPuabIgkyx2GqHJrYxVWzQ9JtdHpCasYdEjisxJKo=;
+	b=GtsD6BWPUetXAT/kd/ERI49JTLgcDIjvFcRHKrF2Y2onodGLiWyTTXbCPcX7HkPAQpSlNc
+	FKA7KNSHdQNpAN4fokuqxMYwpJZMJ3LgaOE/VpTCaI/z4VkWiHflq1t/Y3X1yNnoN7p7r/
+	91K4UbpIDCLq4bFvUChAEz79ANdYtXs=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-284-Rz6SDH3SM1KxYuMql0RYiA-1; Sun, 25 Aug 2024 09:10:46 -0400
+X-MC-Unique: Rz6SDH3SM1KxYuMql0RYiA-1
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-5334844dcc5so3210748e87.0
+        for <linux-tegra@vger.kernel.org>; Sun, 25 Aug 2024 06:10:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724563021; x=1725167821;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iL+2InRXO647WU3Yi34+ctBbVoiJtTYGlGR4qSXeVCA=;
-        b=glzyEvkTDMDeoFoLvBff4ZZrE8eWwZBziAT1nPmFEUCAm5Bu59gHVpHoq0kLUZ4qyf
-         LyZcfLfx85k/ngcCb8bkKRPWRQa74vbrMrriLtTdcwWFycAoNLkvCqI+Lv1VpDK7H0o9
-         54NCHBM/qgp5YTJd8oPZSDXEmuuW44tQ1DWd3drBy/qTCKRoJ8hJCCmjusIseQJ5mO82
-         df1iFmPuaYphT0q9bswyoZDawYNgyc092gM5fbq3MzoqvWdOmy+UXIiHEyeujbmy43w1
-         6TymS6z3XcLdKMRYfwailgcpTJTL794PDKeoPmC9iQ9l1bQYXz2E+Wyyb8LO9Wcv8LHP
-         YzoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcqd6ID+rj6KhBMrc/+k/qc6RH105t1ocpN1sLIsVapF7tE4tC4B84uICtDSMA363GbP5UYor+CZOp/9A=@vger.kernel.org, AJvYcCXcyHhRfKF+LZyqiXIEUA5r1kTPBm/MSTcpoasRKBYw3jVz0Kfvu/f8ZrFuMNctaXrf3Lw4YL6zXl5RR64=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpPiRmvAxPoL/fG55etWJbhBmogLoE2jQYMldWorREIHX51OeZ
-	3m2PZxNOD2GFVBqY/XkKeCIuFMadzDwsQR3HAhAGC86uEAXu/vRzbOKZBw==
-X-Google-Smtp-Source: AGHT+IHIrpT9TrF1Y6WIh6M0wyTrLhvKWZg8Ae6gbV2uHoKlDK9dxT5dBqBF7dMmWUdbcIyQW1ik1w==
-X-Received: by 2002:a05:6808:199a:b0:3d9:3f51:f351 with SMTP id 5614622812f47-3de2a853444mr7501714b6e.11.1724563020952;
-        Sat, 24 Aug 2024 22:17:00 -0700 (PDT)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:66dc:ce07:b7cc:51ea])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7cd9ad55a94sm5622442a12.57.2024.08.24.22.16.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2024 22:17:00 -0700 (PDT)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Jeff LaBundy <jeff@labundy.com>,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 17/17] Input: tegra-kbc - use guard notation when acquiring mutex and spinlock
-Date: Sat, 24 Aug 2024 22:16:21 -0700
-Message-ID: <20240825051627.2848495-18-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-In-Reply-To: <20240825051627.2848495-1-dmitry.torokhov@gmail.com>
-References: <20240825051627.2848495-1-dmitry.torokhov@gmail.com>
+        d=1e100.net; s=20230601; t=1724591445; x=1725196245;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u5HPuabIgkyx2GqHJrYxVWzQ9JtdHpCasYdEjisxJKo=;
+        b=LnaRfHCW0fJHlw+CdWv/0FETNNfx0ZRyHwcpBLAxjzRSQGy0gVvVK0MvTtkyBV+c6J
+         XdPT1zAkwurZwKReqq32MhveuwvTyppQf6E+mNQD/efdlcTIAw2P73xDWitBF0qH5650
+         qCT1ydnn8tYH71pbj6Y52iVHh+ii9hUOadPs3gQ2yFz9xWAW88fRH5L9eF+PmUo5U+Wi
+         8+rRKKuYLsuJnuRYDCB/K4E68Y3dCqtqG0nvYbgXLGqFeHtXkxd9LIIBTek1wMeIVr4I
+         k8XfsBjPM91wGlN2wKHIsV8I0W79jJSyprd3bfQ7cn8LSS5UWzjC/uF/7hJVQnyicNIg
+         LBJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHuMEiix3SHFlwofBoZCgFijVhFUeWqULCDU/UQV0WRwB0DYbMS35Sp5PePu00uiZTz/0Y3yBr+R9IhA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxuu5ta210BfMi0194KHBPRVRnqWNZULjMwoIehcofRuSC7D5v7
+	JPxd2qv3f58m+I3l0KGNc9R0DwvHN0f8GW0C3Q0luZamlZktiesWx/STgeCwxAY+lA7szswgpX5
+	rgPu2iPycEujVbMdXPhGBGrUhnKZKxZ4KTSEbmXu3/up8DzGV9huGxTHp927E2oo+tSAj
+X-Received: by 2002:a05:6512:2814:b0:52e:9ac6:a20f with SMTP id 2adb3069b0e04-534388610f5mr4667332e87.37.1724591444704;
+        Sun, 25 Aug 2024 06:10:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyq3crzju8WROi3/9aXixWRhW7fyntueq+5N6z4YHdvwe29s5TLxrye+t2/cfTKoEIxN6TcA==
+X-Received: by 2002:a05:6512:2814:b0:52e:9ac6:a20f with SMTP id 2adb3069b0e04-534388610f5mr4667316e87.37.1724591444076;
+        Sun, 25 Aug 2024 06:10:44 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f29a4c7sm536588766b.65.2024.08.25.06.10.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Aug 2024 06:10:43 -0700 (PDT)
+Message-ID: <0e8ae323-d6c7-4460-a342-85e52ce0c1ef@redhat.com>
+Date: Sun, 25 Aug 2024 15:10:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/17] Input: gpio-keys - switch to using cleanup
+ functions
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Laxman Dewangan <ldewangan@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>, Tony Lindgren <tony@atomide.com>,
+ Jeff LaBundy <jeff@labundy.com>, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org
+References: <20240825051627.2848495-1-dmitry.torokhov@gmail.com>
+ <20240825051627.2848495-6-dmitry.torokhov@gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240825051627.2848495-6-dmitry.torokhov@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This makes the code more compact and error handling more robust
-by ensuring that locks are released in all code paths when control
-leaves critical section.
+Hi,
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/input/keyboard/tegra-kbc.c | 45 +++++++++++++-----------------
- 1 file changed, 19 insertions(+), 26 deletions(-)
+On 8/25/24 7:16 AM, Dmitry Torokhov wrote:
+> Start using __free() and guard() primitives to simplify the code
+> and error handling. This makes the code more compact and error
+> handling more robust by ensuring that locks are released in all
+> code paths when control leaves critical section and all allocated
+> memory is freed.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index a1765ed8c825..204ba189807e 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -241,11 +241,10 @@ static void tegra_kbc_set_fifo_interrupt(struct tegra_kbc *kbc, bool enable)
- static void tegra_kbc_keypress_timer(struct timer_list *t)
- {
- 	struct tegra_kbc *kbc = from_timer(kbc, t, timer);
--	unsigned long flags;
- 	u32 val;
- 	unsigned int i;
- 
--	spin_lock_irqsave(&kbc->lock, flags);
-+	guard(spinlock_irqsave)(&kbc->lock);
- 
- 	val = (readl(kbc->mmio + KBC_INT_0) >> 4) & 0xf;
- 	if (val) {
-@@ -270,17 +269,14 @@ static void tegra_kbc_keypress_timer(struct timer_list *t)
- 		/* All keys are released so enable the keypress interrupt */
- 		tegra_kbc_set_fifo_interrupt(kbc, true);
- 	}
--
--	spin_unlock_irqrestore(&kbc->lock, flags);
- }
- 
- static irqreturn_t tegra_kbc_isr(int irq, void *args)
- {
- 	struct tegra_kbc *kbc = args;
--	unsigned long flags;
- 	u32 val;
- 
--	spin_lock_irqsave(&kbc->lock, flags);
-+	guard(spinlock_irqsave)(&kbc->lock);
- 
- 	/*
- 	 * Quickly bail out & reenable interrupts if the fifo threshold
-@@ -301,8 +297,6 @@ static irqreturn_t tegra_kbc_isr(int irq, void *args)
- 		kbc->keypress_caused_wake = true;
- 	}
- 
--	spin_unlock_irqrestore(&kbc->lock, flags);
--
- 	return IRQ_HANDLED;
- }
- 
-@@ -413,14 +407,13 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
- 
- static void tegra_kbc_stop(struct tegra_kbc *kbc)
- {
--	unsigned long flags;
- 	u32 val;
- 
--	spin_lock_irqsave(&kbc->lock, flags);
--	val = readl(kbc->mmio + KBC_CONTROL_0);
--	val &= ~1;
--	writel(val, kbc->mmio + KBC_CONTROL_0);
--	spin_unlock_irqrestore(&kbc->lock, flags);
-+	scoped_guard(spinlock_irqsave, &kbc->lock) {
-+		val = readl(kbc->mmio + KBC_CONTROL_0);
-+		val &= ~1;
-+		writel(val, kbc->mmio + KBC_CONTROL_0);
-+	}
- 
- 	disable_irq(kbc->irq);
- 	del_timer_sync(&kbc->timer);
-@@ -724,7 +717,8 @@ static int tegra_kbc_suspend(struct device *dev)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
- 
--	mutex_lock(&kbc->idev->mutex);
-+	guard(mutex)(&kbc->idev->mutex);
-+
- 	if (device_may_wakeup(&pdev->dev)) {
- 		disable_irq(kbc->irq);
- 		del_timer_sync(&kbc->timer);
-@@ -747,11 +741,9 @@ static int tegra_kbc_suspend(struct device *dev)
- 		tegra_kbc_set_keypress_interrupt(kbc, true);
- 		enable_irq(kbc->irq);
- 		enable_irq_wake(kbc->irq);
--	} else {
--		if (input_device_enabled(kbc->idev))
--			tegra_kbc_stop(kbc);
-+	} else if (input_device_enabled(kbc->idev)) {
-+		tegra_kbc_stop(kbc);
- 	}
--	mutex_unlock(&kbc->idev->mutex);
- 
- 	return 0;
- }
-@@ -760,9 +752,10 @@ static int tegra_kbc_resume(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct tegra_kbc *kbc = platform_get_drvdata(pdev);
--	int err = 0;
-+	int err;
-+
-+	guard(mutex)(&kbc->idev->mutex);
- 
--	mutex_lock(&kbc->idev->mutex);
- 	if (device_may_wakeup(&pdev->dev)) {
- 		disable_irq_wake(kbc->irq);
- 		tegra_kbc_setup_wakekeys(kbc, false);
-@@ -787,13 +780,13 @@ static int tegra_kbc_resume(struct device *dev)
- 			input_report_key(kbc->idev, kbc->wakeup_key, 0);
- 			input_sync(kbc->idev);
- 		}
--	} else {
--		if (input_device_enabled(kbc->idev))
--			err = tegra_kbc_start(kbc);
-+	} else if (input_device_enabled(kbc->idev)) {
-+		err = tegra_kbc_start(kbc);
-+		if (err)
-+			return err;
- 	}
--	mutex_unlock(&kbc->idev->mutex);
- 
--	return err;
-+	return 0;
- }
- 
- static DEFINE_SIMPLE_DEV_PM_OPS(tegra_kbc_pm_ops,
--- 
-2.46.0.295.g3b9ea8a38a-goog
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/input/keyboard/gpio_keys.c | 44 ++++++++++++------------------
+>  1 file changed, 17 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+> index 9fb0bdcfbf9e..380fe8dab3b0 100644
+> --- a/drivers/input/keyboard/gpio_keys.c
+> +++ b/drivers/input/keyboard/gpio_keys.c
+> @@ -245,23 +245,20 @@ static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
+>  {
+>  	int n_events = get_n_events_by_type(type);
+>  	const unsigned long *bitmap = get_bm_events_by_type(ddata->input, type);
+> -	unsigned long *bits;
+>  	ssize_t error;
+>  	int i;
+>  
+> -	bits = bitmap_alloc(n_events, GFP_KERNEL);
+> +	unsigned long *bits __free(bitmap) = bitmap_alloc(n_events, GFP_KERNEL);
+>  	if (!bits)
+>  		return -ENOMEM;
+>  
+>  	error = bitmap_parselist(buf, bits, n_events);
+>  	if (error)
+> -		goto out;
+> +		return error;
+>  
+>  	/* First validate */
+> -	if (!bitmap_subset(bits, bitmap, n_events)) {
+> -		error = -EINVAL;
+> -		goto out;
+> -	}
+> +	if (!bitmap_subset(bits, bitmap, n_events))
+> +		return -EINVAL;
+>  
+>  	for (i = 0; i < ddata->pdata->nbuttons; i++) {
+>  		struct gpio_button_data *bdata = &ddata->data[i];
+> @@ -271,12 +268,11 @@ static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
+>  
+>  		if (test_bit(*bdata->code, bits) &&
+>  		    !bdata->button->can_disable) {
+> -			error = -EINVAL;
+> -			goto out;
+> +			return -EINVAL;
+>  		}
+>  	}
+>  
+> -	mutex_lock(&ddata->disable_lock);
+> +	guard(mutex)(&ddata->disable_lock);
+>  
+>  	for (i = 0; i < ddata->pdata->nbuttons; i++) {
+>  		struct gpio_button_data *bdata = &ddata->data[i];
+> @@ -290,11 +286,7 @@ static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
+>  			gpio_keys_enable_button(bdata);
+>  	}
+>  
+> -	mutex_unlock(&ddata->disable_lock);
+> -
+> -out:
+> -	bitmap_free(bits);
+> -	return error;
+> +	return 0;
+>  }
+>  
+>  #define ATTR_SHOW_FN(name, type, only_disabled)				\
+> @@ -470,11 +462,10 @@ static irqreturn_t gpio_keys_irq_isr(int irq, void *dev_id)
+>  {
+>  	struct gpio_button_data *bdata = dev_id;
+>  	struct input_dev *input = bdata->input;
+> -	unsigned long flags;
+>  
+>  	BUG_ON(irq != bdata->irq);
+>  
+> -	spin_lock_irqsave(&bdata->lock, flags);
+> +	guard(spinlock_irqsave)(&bdata->lock);
+>  
+>  	if (!bdata->key_pressed) {
+>  		if (bdata->button->wakeup)
+> @@ -497,7 +488,6 @@ static irqreturn_t gpio_keys_irq_isr(int irq, void *dev_id)
+>  			      ms_to_ktime(bdata->release_delay),
+>  			      HRTIMER_MODE_REL_HARD);
+>  out:
+> -	spin_unlock_irqrestore(&bdata->lock, flags);
+>  	return IRQ_HANDLED;
+>  }
+>  
+> @@ -1062,10 +1052,10 @@ static int gpio_keys_suspend(struct device *dev)
+>  		if (error)
+>  			return error;
+>  	} else {
+> -		mutex_lock(&input->mutex);
+> +		guard(mutex)(&input->mutex);
+> +
+>  		if (input_device_enabled(input))
+>  			gpio_keys_close(input);
+> -		mutex_unlock(&input->mutex);
+>  	}
+>  
+>  	return 0;
+> @@ -1075,20 +1065,20 @@ static int gpio_keys_resume(struct device *dev)
+>  {
+>  	struct gpio_keys_drvdata *ddata = dev_get_drvdata(dev);
+>  	struct input_dev *input = ddata->input;
+> -	int error = 0;
+> +	int error;
+>  
+>  	if (device_may_wakeup(dev)) {
+>  		gpio_keys_disable_wakeup(ddata);
+>  	} else {
+> -		mutex_lock(&input->mutex);
+> -		if (input_device_enabled(input))
+> +		guard(mutex)(&input->mutex);
+> +
+> +		if (input_device_enabled(input)) {
+>  			error = gpio_keys_open(input);
+> -		mutex_unlock(&input->mutex);
+> +			if (error)
+> +				return error;
+> +		}
+>  	}
+>  
+> -	if (error)
+> -		return error;
+> -
+>  	gpio_keys_report_state(ddata);
+>  	return 0;
+>  }
 
