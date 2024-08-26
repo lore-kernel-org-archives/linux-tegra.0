@@ -1,68 +1,68 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2062.outbound.protection.outlook.com [40.107.244.62])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2043.outbound.protection.outlook.com [40.107.93.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB99194096;
-	Mon, 26 Aug 2024 16:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A09F1946B1;
+	Mon, 26 Aug 2024 16:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724690881; cv=fail; b=TEH9n4POm7IkYRMYjDnVQUWS5cYqPy72Asw5WHMxv1JQENqaw2kdO6v3OdRGQe13GPDJiQ+0o/Y8zrPTDALS4QBy277kRRG3ZXRbcxrbsbLnibCVF5h5DgWLZmASzMFvKWxnH0T9wTTacWbhv/OPELh7UdM1hnrDE+1kN5fTgdg=
+	t=1724690886; cv=fail; b=Mn1CZccrCMpYbhKwwAXDcv9ukcZnWTEwAqHhP2hWBteJGyNQmkUqXE/4LOQZxP2EjmDqV8aP4AVQvU5txBTPsGG1Rt47gYdpWPh0BaSroWsrvjjABwfCqNCjezJ7wZ7vuBrvKi+XJYPMSp1/k+rHCWtmuTzXb/bDpMrXdTDz20g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724690881; c=relaxed/simple;
-	bh=s7UUmoW7e1A2qce3pYzVTRCHusCt5dkhWGRarbpIPl8=;
+	s=arc-20240116; t=1724690886; c=relaxed/simple;
+	bh=rE/vs7/LDKJnqXIaPdC9FKDbsX5DvD1rOTMGz3x9leU=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HR5pvdbGpnsrbKmiygdF/+cF4DkQZdIaWIyUOUkgkx/wN80QqUvL5eYOTSOXRJHRR+SSVeTnHQeEixK6E2+lLMnH+7vjOPHhXvDOy6bV1/vcFgQNRTqLXyilicLkDNg81dI9QqF5NdIZ9pDUBDF6kOYUCBkoq9/uk2zFzLFwQAE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZTuEChyR; arc=fail smtp.client-ip=40.107.244.62
+	 MIME-Version:Content-Type; b=r6vxjBs4IrV0lFUXcrrHmglKLDPSZPkLcjpD2nfcneJQJmNBkRyn/TxvjQUNnhWDGypIqkYr61jNIOY8W2uAGgKcadseQjuvkz74Plhg9NkvCB6mviUYj9sM/6gc57utRYlqtmNCXIXo1GuiT8Q1pocsKwkm+SwfPQvWyHziFsE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ku2DjETH; arc=fail smtp.client-ip=40.107.93.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZTuEChyR"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ku2DjETH"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yPfNQOq20WGeMfWmT8b8VNMKskPwNhAKfmY9UrywwePDJ+htMRF77o2sqAQ/6+LKiVEF/Dw7KP7P0gOUoZyrr46oL20wn2VLqRzmkcxfPGMUfwhWxKf0kFPW3wqhoqtXAvC4BdtrlMhyOio+ZLaol49Or4c8CzCPJdK4YKVBwFHtcpIWF1tewjtwfLBUL5DDsjGW4gwzk5Scm1DUeevxye2nB9VgYoBUdQWKox66nD54jD85wdn/et52nbL+KVkBZM0apNYBN6MDWgo9P6++cDF1TI76FYQDZuvxTIPMtXk6UricHRzETOahesN5KjE8eDkE2ZfTF4dgZ4iQ/4YLbw==
+ b=Y+E+eORhslCmMcXkJ1wZBJp3OIDXFzhwY0eKaVUZCz4Fv6o9BaGOvVF6d44BSWGSuvktJ0eDIx+Mv7IB21EtEgIA7ah/h3V2/8utjzDWEUr5mtoRCDpIpUqN0tcd5eQHXpGiZUhxkfcU5Du5coDA7De/5WGgdFKEc7k9iLEentd9UwWwWXk2yv+zYzknruBCDg8ba4p3ZZgrJLovc/ZpBsD8/54U9FHUmniF1EAfrErbJNnpZvZHvFTGXUDHEZqGC/q23fmgtjmfEuX1nkqGccAXtItLWaiapYjPs1Cg+VqTeU066vrY9Ka9077zR7dYZuOn+/+HqHgRYqkBOWESzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=n+b5fkYtnEkgRVv8YHjBoIe6/FeTjNHa0OHzDx+9uiM=;
- b=DtyqS6R/BClicA0CS0Uim5Jkhmn3BPa5ehAAAWz5tGQu9oivj5hzeqm56wLie4DNw6VyoSgEpgLbxT03qvuTIPGtnUKQXSuphcpU3DaJfBbKNazNq/8daiGB2Znddm0OOG8llKVWFEwTsyzz0oqlK8q7HZlQnUcLiaJp9ZD/8+HnT8MpGTuHVmICQe3n7PN0nn9f5DT1YDUH4wuw3joEUof/gwckaRi36hcpZjAeBzf3e/7fwmlRRlPAsOLGrfzPaB06I6jRxXGsZvCd37KBURBaPigr0BePnrRwMBEbjk5n//xH+MxPW2JZFVLjowuzQxqwDSn1qsDIzO/XRKwCOg==
+ bh=ZpHWWL6B8/5/mR+Ij94x20BfazCTUThenf5OHUca7vo=;
+ b=omD4EAy6fai0Fhvzd0sbeKK466z9ztetJ/YbdE8gBrmFy7edyNb0McbzG1e87nVwiTgS5lZxG7H06u3/Gs9YRSJQ6MwZPhJwUEeq0r8zGvT8aw/FbSSOcXf5XgGzKG6QhUrjYOZZxo1iDntUMgTsj1qR6GwMYkVx9M+ptd1lgnmMpWnCtTLNQ416XeXIP/IEuJfFmFJpZjhqj3C1QKQIkFi/LkfSKbcMepmL24yVeoWhbtg49HZBe/+/cJBs36QtZjZLNa0oE34eh0WrpBOsZiki57sm6NDNOhN4cW6+Jsv/DulBh5vuKTHnGP7uLDqDxQUHwEvyzLbQL2LJMIK4Pg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=n+b5fkYtnEkgRVv8YHjBoIe6/FeTjNHa0OHzDx+9uiM=;
- b=ZTuEChyRXmvQ/QR7r9cJaDh6ayzAfIgM8cCmfuESBYU+GSGtnh/DJJ/cGbrs3p7n8HsrK6nM2q+6ljY352fPG0+VHBegVFDkknDQdbVlmOCJMUx7hD/GSLw5dAz7pWKonF5guWvjcU5GIcTkiJf744ush4xiYh3q3P+4t95OUb8AL07aDvdIji9ZDB8Y0a7/xEgoKuXQQyH9UrXOwHaa3ZLgDH/u3qZU+3Squ2LVSoATsZdqH0DV8C3zHCvhfn9OZmMjFd3AnXoI+YFFXA78xAb3sM3JqGr65emBGuYrACURWG3t5HI/qQCH/eyupbaK0pfl430Xtdwf/BRkKEMr9g==
-Received: from PH7P221CA0013.NAMP221.PROD.OUTLOOK.COM (2603:10b6:510:32a::9)
- by BL1PR12MB5705.namprd12.prod.outlook.com (2603:10b6:208:384::5) with
+ bh=ZpHWWL6B8/5/mR+Ij94x20BfazCTUThenf5OHUca7vo=;
+ b=ku2DjETHoyJilJZcZZGjC3lgH08mabozp50dDgckSuGxGXVQiufjGlYox5KKl/72hz56Tvn1JIPedR/06pNfQsWRRaIayZL2ILgDlbehUA/+cMwxLaBQD8mkQqoTKoX70n6CDGVrWkiJY/X7CHhciSmWHgcjGzYs6emQEGLbdO50ytMYmWgUN7QBXr5sI/JduOOrhpl0itukNz/pOA28D6nQVg+C/P6ZssEh43xsCwd+zzI5Z5HHNV7ZAptVQkbz1/pc2SXYqdO5+GUjPWW66ngsKLRLjyHAuPis1ycaG32dxf7ONteHHkxd0pM/yE7DHYiVSeyvY+xkpKnkCuE49A==
+Received: from BN8PR04CA0043.namprd04.prod.outlook.com (2603:10b6:408:d4::17)
+ by SN7PR12MB7225.namprd12.prod.outlook.com (2603:10b6:806:2a8::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25; Mon, 26 Aug
- 2024 16:47:55 +0000
-Received: from CY4PEPF0000EE3A.namprd03.prod.outlook.com
- (2603:10b6:510:32a:cafe::29) by PH7P221CA0013.outlook.office365.com
- (2603:10b6:510:32a::9) with Microsoft SMTP Server (version=TLS1_2,
+ 2024 16:48:02 +0000
+Received: from BN1PEPF00004688.namprd05.prod.outlook.com
+ (2603:10b6:408:d4:cafe::a) by BN8PR04CA0043.outlook.office365.com
+ (2603:10b6:408:d4::17) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.25 via Frontend
- Transport; Mon, 26 Aug 2024 16:47:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ Transport; Mon, 26 Aug 2024 16:48:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CY4PEPF0000EE3A.mail.protection.outlook.com (10.167.242.12) with Microsoft
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BN1PEPF00004688.mail.protection.outlook.com (10.167.243.133) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.13 via Frontend Transport; Mon, 26 Aug 2024 16:47:54 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ 15.20.7918.13 via Frontend Transport; Mon, 26 Aug 2024 16:48:01 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 26 Aug
- 2024 09:47:36 -0700
+ 2024 09:47:44 -0700
 Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 26 Aug 2024 09:47:36 -0700
+ 15.2.1544.4; Mon, 26 Aug 2024 09:47:44 -0700
 Received: from build-dstotland-20240703T000904114.nvidia.com (10.127.8.10) by
  mail.nvidia.com (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.4
- via Frontend Transport; Mon, 26 Aug 2024 09:47:36 -0700
+ via Frontend Transport; Mon, 26 Aug 2024 09:47:44 -0700
 From: Dara Stotland <dstotland@nvidia.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
 	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
@@ -70,9 +70,9 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
 	<jonathanh@nvidia.com>, Brad Griffis <bgriffis@nvidia.com>,
 	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>
 CC: Dara Stotland <dstotland@nvidia.com>
-Subject: [PATCH v2 1/7] arm64: tegra: Add common nodes to AGX Orin module
-Date: Mon, 26 Aug 2024 16:47:19 +0000
-Message-ID: <20240826164725.775199-2-dstotland@nvidia.com>
+Subject: [PATCH v2 2/7] arm64: tegra: Combine AGX Orin board files
+Date: Mon, 26 Aug 2024 16:47:20 +0000
+Message-ID: <20240826164725.775199-3-dstotland@nvidia.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240826164725.775199-1-dstotland@nvidia.com>
 References: <20240826164725.775199-1-dstotland@nvidia.com>
@@ -87,313 +87,114 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE3A:EE_|BL1PR12MB5705:EE_
-X-MS-Office365-Filtering-Correlation-Id: e46349cc-90ac-41a6-747b-08dcc5eed53b
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004688:EE_|SN7PR12MB7225:EE_
+X-MS-Office365-Filtering-Correlation-Id: a971af6f-5a47-403e-3f83-08dcc5eed953
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?a8dLrP0358BHTRkH6EqTtMe6Bsw3acUVIPfjK/23oj7bkyLuUi9qeihoYLet?=
- =?us-ascii?Q?EnEIgC6zuRY+Ki/4D3a14RWCDk4eluzQVUQaj6AWIYqUcINkOi+pR0PY2Shh?=
- =?us-ascii?Q?6pYOaHP2kCdzRtZAJRsHYqCjXMsJjbHFStoTWpgLzQ5EL1ZJWlq1XUA7MoAs?=
- =?us-ascii?Q?5vHtJgdcuIZTe1XcNoIW5au/HvvVIamh0tEbWUdKyfcQzOEpmNnwFzWbk4lt?=
- =?us-ascii?Q?RJkXEM9Czin4WbuWvde8ag0Rq/y2gJUPFnp/fE5wQUEERu/jtZU+QMbSpsDI?=
- =?us-ascii?Q?r3mNZe97AiXACIPyBOBtfGHOmuEbsrQkuD1K1YRNBRsFw8wCSfhrG3+Ybs5a?=
- =?us-ascii?Q?WrGEq9SkI9eNvYbgRw6nw718xl5aKI8VyRCG5JfV27ehI087fb2Eo5r5ipW8?=
- =?us-ascii?Q?AH+6k9/I9adtXLLNr6ptu0XNxj/D7bpKTaYSfim4OevuWtaycaXXOOh2UJhp?=
- =?us-ascii?Q?wdnmKAMBB2iAtIq2gg56ga0bb4J+TgDNLvkTSAgdl645KzBejuULMgadJBme?=
- =?us-ascii?Q?NTcK/0I8uhpnQryOROz4nLOTadL0woJNa2d7KGpoG5LGSkK+u05ayXmD+Suq?=
- =?us-ascii?Q?FT7jd3uY+QoDMoZmmnfoxTRlO3a8xM5RNdpqkrjwt7a16oXoolvEYzzDuBf2?=
- =?us-ascii?Q?5/SqVnOk+4J3bKspZorAhlxVdOXXMDmJtKtUDmorgSFW3s0zpdxvHI96aZjI?=
- =?us-ascii?Q?5Kr/pob54p21regUli7wcZuIPVoshyIpjCU5kszzwxQbNSPmVt9moDeg4Bg5?=
- =?us-ascii?Q?DxXf4HwZuXxHnp6i6mzHQ4HToaFYwh+EQAreMOQvSV9q3PHnl9+dR5zIEJad?=
- =?us-ascii?Q?HKQCH1qMrIb4e50cLoHRyIIRQUmAKGCxuNEfvEtDnXOyBTa41Cz3nwSVtxTG?=
- =?us-ascii?Q?qMURtSDcg3IvlzzxPqxfTdCyINKiPUkyQQdkH2TUHNtI6O30k2MzIcidmYj0?=
- =?us-ascii?Q?KIm8k1BHJNSTGiMDSAq94diEWYEwXEkiZbK9VvEnoZdt5sdhM6mCRNnf5Wjd?=
- =?us-ascii?Q?MkaAsuKAveV86oszWqfE9G/csNs4n9S2L/CjWIBhdGUpTDJ9ogGjWbQx5ioc?=
- =?us-ascii?Q?GxrOhM1gOHyTt06B9wWCQfCROs/jqpCV1ZuuEByfdDw6rLblm3trISx5net3?=
- =?us-ascii?Q?gsMtUAyFP72Wvhi6J5iPc64i/elnVSbBT90NNXxh0rk1fJHJmDDWfu1I+zN+?=
- =?us-ascii?Q?KLeNI8VMuq0KUqRgZzkMGf0l8+E7gCGeQA3EP9zEY3LJfT9qQmehmdigRBm0?=
- =?us-ascii?Q?W1Rw6Cw2UFKS1ssfMv8GavyMkkGyMMYVoZoegvsJQWeO0oH3ANdOEJbl0IzG?=
- =?us-ascii?Q?conBti2XrFAoJAOOQopej8IXXf2H6N5FRJ6h1R6PQRMJDglOLyaSeYypnhOJ?=
- =?us-ascii?Q?RDuYijT1gW2wuBI/GtmtO7yfrnBa102onfXSmhqWHBy3voqG+DshkewXHmrQ?=
- =?us-ascii?Q?ipbES0EYp7rNte7gEEMTN0oaJfjeHt0K?=
+	=?us-ascii?Q?9OH0Z7dOBJ5VKgvRo79rF6f7SAdXJDGMbzZJcu8gQ74VK6VkF7ii8oQP51vR?=
+ =?us-ascii?Q?Jy3zLorbqOzrUL5OB06A66ElVHzAC2U/Es12tSlH1Z5py4v3/nqbQXrMlM/F?=
+ =?us-ascii?Q?4K9AvDHq9e0opAH9RX6oHNxtO4Kwsg97xS15mNiBpaXFRmpKhbeVuj5x2yI7?=
+ =?us-ascii?Q?gXzhn2Ive9FuUs2yU+Ty6nVdbEnUGfHkEp4k70jPucUIJV3iM1FXAvG3W+dw?=
+ =?us-ascii?Q?zVJP1hQlYu8ToxXkzgio/w6d81J9lY7sNVumzImFFQJK5dvn79Ken0vLc4B9?=
+ =?us-ascii?Q?nOu3QjD+Ko6tNn+Y8ATKVz8j5VYDWgii7IvfvXozxLZtCMMVDbOencVCj/60?=
+ =?us-ascii?Q?ri2EAwAud2FcxrEqdPuwloQxG2TnoLoBoCGuNPTgj2jM1FEzVx7lnJWq6H3Q?=
+ =?us-ascii?Q?Tzq+qWozDVMSsaiFwInz2KfOh0sQOtUqf0c0LHzOg8cdJMqXbTlBNtx2Mpy4?=
+ =?us-ascii?Q?SbocpYz9B+qrqFPyFlE8kfnBiu7wBlKQ6v8V0DrB8qF8p2TNphaLGYwI971u?=
+ =?us-ascii?Q?tG0EcEwgjaZ0r7xbR3E2aUHqpUs4NJ9ShngVSzujY9DFbhGBxzzuh3UAjRdc?=
+ =?us-ascii?Q?ouhizLdsZBTwmBrTpf075SUuh3ZimhOSKqF64ARoj+wXU/6+WFThboB3R88A?=
+ =?us-ascii?Q?TrhWJURS9cSXQCxpe3iI8/mZQziFMzLrV07u6PBJYWhU605sYGgClS/Bo6zP?=
+ =?us-ascii?Q?WCKq6AZDbu5qc8KrRqwRO5LtXHK31lOLUlHp523hKZ0Ard3zXrvipyUoxXzY?=
+ =?us-ascii?Q?LthSyjdUVPsgJXf8k14mdchhkr4BApIOdGYKtAdRz3DHU8nyv7B1ud9fl0D1?=
+ =?us-ascii?Q?3yazVieYW0h6zyX1i02B5RNibQasHoO7uwAonQccsZBHpKvhDmaLpJM0LIUR?=
+ =?us-ascii?Q?jkc9UUGGzfZln+mJ4rwN7hiHc5RajSAMlo8/Tu26l28VpopoPYxxf+NOqpF6?=
+ =?us-ascii?Q?QZTLnkkQaD9SZFiHJU48oJ4yXCUFrjXdxw/ssEt+hX6RlSwW7LD8dDzkEPNN?=
+ =?us-ascii?Q?d461NP1+HGbDhMvAWhGD62GB/8K5krPR6hoWpUBi0xj2AjVTbgJgsx//sE9T?=
+ =?us-ascii?Q?QyMT2jvBODzGHb0tOiRhSxzW40ISTtpk7f+CNxyv/FBO39BsJKLpBwFzlLh0?=
+ =?us-ascii?Q?T+uP+Vb1EXaYwAQsPjoqXFIwXQhf/9wKu0RLaToj7FC3Ilrhsusrov7TuQgD?=
+ =?us-ascii?Q?zFY5RMAv6V/PlFYyuDR5dhQWiqPS7t5col7W+n4lXo4357YJoMws3NaO+JTZ?=
+ =?us-ascii?Q?zHcWBq1a0Kzk3OZAi9iigra4uSqtWExnQ2zf0z7Rl4RbisNm+F0oR5Z1naaa?=
+ =?us-ascii?Q?L3t9XQd0lHjw7cX+q705zXNAex7zez6zHDXkey8Df85+JDaqKTSBYrSvy0I6?=
+ =?us-ascii?Q?yO8KlMJxX7XAH/Oybkv4zsxelBb/5gkr4gaPPJIJHwubgAeHUSyV3432Zjuy?=
+ =?us-ascii?Q?XOU4UXT0c3OzQKsfD1o1hzYTWv8x/DAB?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 16:47:54.9005
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Aug 2024 16:48:01.6892
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e46349cc-90ac-41a6-747b-08dcc5eed53b
+X-MS-Exchange-CrossTenant-Network-Message-Id: a971af6f-5a47-403e-3f83-08dcc5eed953
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE3A.namprd03.prod.outlook.com
+	BN1PEPF00004688.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5705
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7225
 
-The AGX Orin module boards contain common nodes that can
-be moved to the included module dtsi. This eliminates
-redundancy within the files and reduces lines of code.
-Data from tegra234-p3701-0000 and tegra234-p3701-0008 that
-is common is now in tegra234-p3701.dtsi.
+The current AGX Orin structure has both a top-level module+board
+file as well as a board file. Most of the data in the board-file
+is closely related to the module itself. The benefit of this
+extra file is outweighed by the additional complexity. Merge
+the board file into the module+board file for simplicity.
 
 Signed-off-by: Dara Stotland <dstotland@nvidia.com>
 ---
- .../boot/dts/nvidia/tegra234-p3701-0000.dtsi  | 83 -----------------
- .../boot/dts/nvidia/tegra234-p3701-0008.dtsi  | 89 -------------------
- .../arm64/boot/dts/nvidia/tegra234-p3701.dtsi | 85 ++++++++++++++++++
- 3 files changed, 85 insertions(+), 172 deletions(-)
+ .../nvidia/tegra234-p3737-0000+p3701-0000.dts | 82 ++++++++++++++++-
+ .../boot/dts/nvidia/tegra234-p3737-0000.dtsi  | 90 -------------------
+ 2 files changed, 80 insertions(+), 92 deletions(-)
+ delete mode 100644 arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
-index cb792041fc62..ea846b879a21 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0000.dtsi
-@@ -1,6 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+index 69db584253da..21feaf434439 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000+p3701-0000.dts
+@@ -3,9 +3,9 @@
  
--#include "tegra234.dtsi"
- #include "tegra234-p3701.dtsi"
+ #include <dt-bindings/input/linux-event-codes.h>
+ #include <dt-bindings/input/gpio-keys.h>
++#include <dt-bindings/sound/rt5640.h>
+ 
+ #include "tegra234-p3701-0000.dtsi"
+-#include "tegra234-p3737-0000.dtsi"
  
  / {
-@@ -8,34 +7,6 @@
- 	compatible = "nvidia,p3701-0000", "nvidia,tegra234";
+ 	model = "NVIDIA Jetson AGX Orin Developer Kit";
+@@ -22,23 +22,90 @@
+ 	};
  
  	bus@0 {
--		i2c@3160000 {
--			status = "okay";
--
--			eeprom@50 {
--				compatible = "atmel,24c02";
--				reg = <0x50>;
--
--				label = "module";
--				vcc-supply = <&vdd_1v8_hs>;
--				address-width = <8>;
--				pagesize = <8>;
--				size = <256>;
--				read-only;
--			};
--		};
--
--		spi@3270000 {
--			status = "okay";
--
--			flash@0 {
--				compatible = "jedec,spi-nor";
--				reg = <0>;
--				spi-max-frequency = <102000000>;
--				spi-tx-bus-width = <4>;
--				spi-rx-bus-width = <4>;
--			};
--		};
--
- 		mmc@3400000 {
- 			status = "okay";
- 			bus-width = <4>;
-@@ -43,12 +14,6 @@
- 			disable-wp;
- 		};
- 
--		mmc@3460000 {
--			status = "okay";
--			bus-width = <8>;
--			non-removable;
--		};
--
- 		padctl@3520000 {
- 			vclamp-usb-supply = <&vdd_1v8_ao>;
- 			avdd-usb-supply = <&vdd_3v3_ao>;
-@@ -72,54 +37,6 @@
- 			};
- 		};
- 
--		rtc@c2a0000 {
--			status = "okay";
--		};
--
--		pmc@c360000 {
--			nvidia,invert-interrupt;
--		};
--	};
--
--	vdd_5v0_sys: regulator-vdd-5v0-sys {
--		compatible = "regulator-fixed";
--		regulator-name = "VIN_SYS_5V0";
--		regulator-min-microvolt = <5000000>;
--		regulator-max-microvolt = <5000000>;
--		regulator-always-on;
--		regulator-boot-on;
--	};
--
--	vdd_1v8_ls: regulator-vdd-1v8-ls {
--		compatible = "regulator-fixed";
--		regulator-name = "VDD_1V8_LS";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		regulator-always-on;
--	};
--
--	vdd_1v8_hs: regulator-vdd-1v8-hs {
--		compatible = "regulator-fixed";
--		regulator-name = "VDD_1V8_HS";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		regulator-always-on;
--	};
--
--	vdd_1v8_ao: regulator-vdd-1v8-ao {
--		compatible = "regulator-fixed";
--		regulator-name = "VDD_1V8_AO";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		regulator-always-on;
--	};
--
--	vdd_3v3_ao: regulator-vdd-3v3-ao {
--		compatible = "regulator-fixed";
--		regulator-name = "VDD_3V3_AO";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		regulator-always-on;
- 	};
- 
- 	vdd_3v3_pcie: regulator-vdd-3v3-pcie {
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0008.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0008.dtsi
-index 62c4fdad0b60..9218ea8d43e6 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3701-0008.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3701-0008.dtsi
-@@ -1,58 +1,10 @@
- // SPDX-License-Identifier: GPL-2.0
- 
--#include "tegra234.dtsi"
- #include "tegra234-p3701.dtsi"
- 
- / {
- 	compatible = "nvidia,p3701-0008", "nvidia,tegra234";
- 
--	bus@0 {
--		i2c@3160000 {
--			status = "okay";
--
--			eeprom@50 {
--				compatible = "atmel,24c02";
--				reg = <0x50>;
--				label = "module";
--				vcc-supply = <&vdd_1v8_hs>;
--				address-width = <8>;
--				pagesize = <8>;
--				size = <256>;
--				read-only;
--			};
--		};
--
--		spi@3270000 {
--			status = "okay";
--
--			flash@0 {
--				compatible = "jedec,spi-nor";
--				reg = <0>;
--				spi-max-frequency = <102000000>;
--				spi-tx-bus-width = <4>;
--				spi-rx-bus-width = <4>;
--			};
--		};
--
--		mmc@3460000 {
--			status = "okay";
--			bus-width = <8>;
--			non-removable;
--		};
--
--		i2c@c240000 {
--			status = "okay";
--		};
--
--		rtc@c2a0000 {
--			status = "okay";
--		};
--
--		pmc@c360000 {
--			nvidia,invert-interrupt;
--		};
--	};
--
- 	bpmp {
- 		i2c {
- 			status = "okay";
-@@ -68,45 +20,4 @@
- 			status = "okay";
- 		};
- 	};
--
--	vdd_1v8_ao: regulator-vdd-1v8-ao {
--		compatible = "regulator-fixed";
--		regulator-name = "VDD_1V8_AO";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		regulator-always-on;
--	};
--
--	vdd_1v8_hs: regulator-vdd-1v8-hs {
--		compatible = "regulator-fixed";
--		regulator-name = "VDD_1V8_HS";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		regulator-always-on;
--	};
--
--	vdd_1v8_ls: regulator-vdd-1v8-ls {
--		compatible = "regulator-fixed";
--		regulator-name = "VDD_1V8_LS";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		regulator-always-on;
--	};
--
--	vdd_3v3_ao: regulator-vdd-3v3-ao {
--		compatible = "regulator-fixed";
--		regulator-name = "vdd-AO-3v3";
--		regulator-min-microvolt = <3300000>;
--		regulator-max-microvolt = <3300000>;
--		regulator-always-on;
--	};
--
--	vdd_5v0_sys: regulator-vdd-5v0-sys {
--		compatible = "regulator-fixed";
--		regulator-name = "VIN_SYS_5V0";
--		regulator-min-microvolt = <5000000>;
--		regulator-max-microvolt = <5000000>;
--		regulator-always-on;
--		regulator-boot-on;
--	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3701.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3701.dtsi
-index 320c8e9b06b4..18bd4ccb6b77 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234-p3701.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234-p3701.dtsi
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- 
-+#include "tegra234.dtsi"
++		aconnect@2900000 {
++			ahub@2900800 {
++				i2s@2901000 {
++					ports {
++						port@1 {
++							endpoint {
++								dai-format = "i2s";
++								remote-endpoint = <&rt5640_ep>;
++							};
++						};
++					};
++				};
++			};
++		};
 +
- / {
- 	compatible = "nvidia,p3701", "nvidia,tegra234";
- 
-@@ -45,6 +47,40 @@
- 			};
+ 		serial@3100000 {
+ 			compatible = "nvidia,tegra194-hsuart";
+ 			reset-names = "serial";
+ 			status = "okay";
  		};
  
 +		i2c@3160000 {
 +			status = "okay";
 +
-+			eeprom@50 {
++			eeprom@56 {
 +				compatible = "atmel,24c02";
-+				reg = <0x50>;
++				reg = <0x56>;
 +
-+				label = "module";
-+				vcc-supply = <&vdd_1v8_hs>;
++				label = "system";
++				vcc-supply = <&vdd_1v8_sys>;
 +				address-width = <8>;
 +				pagesize = <8>;
 +				size = <256>;
@@ -401,82 +202,178 @@ index 320c8e9b06b4..18bd4ccb6b77 100644
 +			};
 +		};
 +
-+		spi@3270000 {
+ 		serial@31d0000 {
+ 			current-speed = <115200>;
+ 			status = "okay";
+ 		};
+ 
++		i2c@31e0000 {
 +			status = "okay";
 +
-+			flash@0 {
-+				compatible = "jedec,spi-nor";
-+				reg = <0>;
-+				spi-max-frequency = <102000000>;
-+				spi-tx-bus-width = <4>;
-+				spi-rx-bus-width = <4>;
++			audio-codec@1c {
++				compatible = "realtek,rt5640";
++				reg = <0x1c>;
++				interrupt-parent = <&gpio>;
++				interrupts = <TEGRA234_MAIN_GPIO(AC, 5) GPIO_ACTIVE_HIGH>;
++				clocks = <&bpmp TEGRA234_CLK_AUD_MCLK>;
++				clock-names = "mclk";
++				realtek,dmic1-data-pin = <RT5640_DMIC1_DATA_PIN_NONE>;
++				realtek,dmic2-data-pin = <RT5640_DMIC2_DATA_PIN_NONE>;
++				realtek,jack-detect-source = <RT5640_JD_SRC_HDA_HEADER>;
++				sound-name-prefix = "CVB-RT";
++
++				port {
++					rt5640_ep: endpoint {
++						remote-endpoint = <&i2s1_dap>;
++						mclk-fs = <256>;
++					};
++				};
 +			};
 +		};
 +
-+		mmc@3460000 {
++		pwm@3280000 {
 +			status = "okay";
-+			bus-width = <8>;
-+			non-removable;
 +		};
 +
- 		i2c@c240000 {
+ 		pwm@32a0000 {
+ 			assigned-clocks = <&bpmp TEGRA234_CLK_PWM3>;
+ 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
  			status = "okay";
+ 		};
  
-@@ -97,5 +133,54 @@
- 				};
++		pwm@32c0000 {
++			status = "okay";
++		};
++
++		pwm@32f0000 {
++			status = "okay";
++		};
++
+ 		hda@3510000 {
+ 			nvidia,model = "NVIDIA Jetson AGX Orin HDA";
+ 			status = "okay";
+@@ -341,8 +408,11 @@
+ 		};
+ 	};
+ 
+-	pwm-fan {
++	fan: pwm-fan {
++		compatible = "pwm-fan";
+ 		cooling-levels = <66 215 255>;
++		pwms = <&pwm3 0 45334>;
++		#cooling-cells = <2>;
+ 	};
+ 
+ 	serial {
+@@ -444,4 +514,12 @@
  			};
  		};
-+
-+		rtc@c2a0000 {
-+			status = "okay";
-+		};
-+
-+		pmc@c360000 {
-+			nvidia,invert-interrupt;
-+		};
-+	};
-+
-+	vdd_1v8_ao: regulator-vdd-1v8-ao {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD_1V8_AO";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_1v8_hs: regulator-vdd-1v8-hs {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD_1V8_HS";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_1v8_ls: regulator-vdd-1v8-ls {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD_1V8_LS";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_3v3_ao: regulator-vdd-3v3-ao {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD_3V3_AO";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	vdd_5v0_sys: regulator-vdd-5v0-sys {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VIN_SYS_5V0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+		regulator-boot-on;
  	};
++
++	vdd_1v8_sys: regulator-vdd-1v8-sys {
++		compatible = "regulator-fixed";
++		regulator-name = "VDD_1V8_SYS";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-always-on;
++	};
  };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi b/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
+deleted file mode 100644
+index eb79e80a9852..000000000000
+--- a/arch/arm64/boot/dts/nvidia/tegra234-p3737-0000.dtsi
++++ /dev/null
+@@ -1,90 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-
+-#include <dt-bindings/sound/rt5640.h>
+-
+-/ {
+-	compatible = "nvidia,p3737-0000";
+-
+-	bus@0 {
+-		aconnect@2900000 {
+-			ahub@2900800 {
+-				i2s@2901000 {
+-					ports {
+-						port@1 {
+-							endpoint {
+-								dai-format = "i2s";
+-								remote-endpoint = <&rt5640_ep>;
+-							};
+-						};
+-					};
+-				};
+-			};
+-		};
+-
+-		i2c@3160000 {
+-			status = "okay";
+-
+-			eeprom@56 {
+-				compatible = "atmel,24c02";
+-				reg = <0x56>;
+-
+-				label = "system";
+-				vcc-supply = <&vdd_1v8_sys>;
+-				address-width = <8>;
+-				pagesize = <8>;
+-				size = <256>;
+-				read-only;
+-			};
+-		};
+-
+-		i2c@31e0000 {
+-			status = "okay";
+-
+-			audio-codec@1c {
+-				compatible = "realtek,rt5640";
+-				reg = <0x1c>;
+-				interrupt-parent = <&gpio>;
+-				interrupts = <TEGRA234_MAIN_GPIO(AC, 5) GPIO_ACTIVE_HIGH>;
+-				clocks = <&bpmp TEGRA234_CLK_AUD_MCLK>;
+-				clock-names = "mclk";
+-				realtek,dmic1-data-pin = <RT5640_DMIC1_DATA_PIN_NONE>;
+-				realtek,dmic2-data-pin = <RT5640_DMIC2_DATA_PIN_NONE>;
+-				realtek,jack-detect-source = <RT5640_JD_SRC_HDA_HEADER>;
+-				sound-name-prefix = "CVB-RT";
+-
+-				port {
+-					rt5640_ep: endpoint {
+-						remote-endpoint = <&i2s1_dap>;
+-						mclk-fs = <256>;
+-					};
+-				};
+-			};
+-		};
+-
+-		pwm@3280000 {
+-			status = "okay";
+-		};
+-
+-		pwm@32c0000 {
+-			status = "okay";
+-		};
+-
+-		pwm@32f0000 {
+-			status = "okay";
+-		};
+-	};
+-
+-	fan: pwm-fan {
+-		compatible = "pwm-fan";
+-		pwms = <&pwm3 0 45334>;
+-		#cooling-cells = <2>;
+-	};
+-
+-	vdd_1v8_sys: regulator-vdd-1v8-sys {
+-		compatible = "regulator-fixed";
+-		regulator-name = "VDD_1V8_SYS";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+-		regulator-always-on;
+-	};
+-};
 -- 
 2.17.1
 
