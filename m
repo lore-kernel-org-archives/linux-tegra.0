@@ -1,128 +1,131 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4792199E98;
-	Tue, 27 Aug 2024 09:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7564A17BEA1;
+	Tue, 27 Aug 2024 10:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724749946; cv=none; b=ckGv0e4Ee680NG1UwyZHnpmhVKiHcN61GOPKkzATMUSju2CUtbgHoLdUHQbzE9BOyiMOMTO+xG+M+KV+PrtSl4uZvBTDzVu4kAT84FmuT3Lq+6u2F1oS3RsTXgAhrvA14BZhCgVITWGpf1IvZ/LEcwMOQWk6J8Nu9oEv1Bv389c=
+	t=1724754653; cv=none; b=TyqvN26jWWR2xWTCGfc2wNTEtx3+w5MZjkMtBnXdCpuAmFY6QBYUI+uKZLh0b4dBwHjsqv74ilVf033t0ZF8QXmsNLNHzmEliYt5Kxn5WVcDU2XJqrCLRZg+7wMIl35fVSd5KBjQGq7pQRT2uxpcq28DZbMnHrG7OEO5hHIhDsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724749946; c=relaxed/simple;
-	bh=PZl2vCFO1281eoFnU2BPuzcAFcsLYdAlE5TlB6KUs7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M9jeL8PwZ4tXngZ7aHeAwqNy77bg+ChtTjJay62qFw0oNh+wO2ftDQrWaxUlGXdYv2AEJf0P2Maap0O11zAgWluIPYo8vn2crruZLpR6UnkYDidwnEumBGSjIC0zytpQntBqV4nNR51G+1Kv8jxFLGQQFqNkyayXNdTsnHVYN2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYsDWP2P; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724754653; c=relaxed/simple;
+	bh=l9izztVExtAUrD6YpzmSThcoQLAFPh5B9SUAyjBtIXw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=t15Ag7Uk62KtgQSZbbJ8sTaFNo6CgfR0z0dUB6XoqyY6yY1OTckU6NcxVSX8j2qIQOEhTwXDjXmk7LV4M9NyaFMwl5klTqJLU2fYoHrMQgChIA7A+BlNPZngNAKfjs8zxa+vvdgdKB3Ct+4MaED7c347FvR4CMKXEeFjaB2joLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=eHwo8Ude; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYsDWP2P"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so44609005e9.3;
-        Tue, 27 Aug 2024 02:12:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724749943; x=1725354743; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PZl2vCFO1281eoFnU2BPuzcAFcsLYdAlE5TlB6KUs7A=;
-        b=jYsDWP2PS3EyZCmVT6uK6aHhEYDuvfwjfXyGdwFwjfoXRsahAB6TNPh2GYMkVrEIq1
-         zmt8Gl2GoYoi+n1Q6U2hdOafR57Tq2a6qCGy9ebIKiGg0k0ncZ/1iVLf9vPvtaN++dg8
-         K/LUy2xskGfHKM/zGyTNYC0smnHW8zQbB9zu91BK3VH5tJN9YLTDZpTnb47wxDwfKahN
-         jWt4rOUjSAhKwvhi4uSNrMntRvqxaHwqchX8SLGa0gajHPtPH3pPC7LC7Tn0BZR2BU+5
-         se3M9n5spd8DmwMm4gC47WAV8h5LuXBnOyEJ3uqxC+gHZBmy+LBDXtQkECnoUCFt5nJR
-         0e5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724749943; x=1725354743;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PZl2vCFO1281eoFnU2BPuzcAFcsLYdAlE5TlB6KUs7A=;
-        b=bw5lk133kuDt1Fd6nScHEKVTak+CsPIAYc8wr1wKqczGiMsCxMJRpllQ6CR3pp8lP0
-         76QMsag+jBqx3LsdczNudm3fKDI64NQeZnB9dhW3kPaBX2zcFcXrNh3L4xK7TshxaD4N
-         eT3Aw+cclCa5FewLcMHg0kihP7VhEAvkJMoBG4a274g8FigjBBd9rM8K7MAFF4oLSIul
-         doSq5cvB9buqQeUp2zifQK9Nqa4HFDxlNry2+4SSZtwoLMG2g7+QhvKHS2cv7VmO/Drr
-         /qFyUXGZE8PyLp6FLAzhBjrvGV6CPPyWtIeuCOChjkkQ50GZinziWy+KiPHpdlc8cW6m
-         nveg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEEp/WlytcXJ2TspNmVRjaw8jq7PWiKAhUX1tiwZ3qxzmn3Fl+WE1H7CDf1M3J2zLU72BT8nt0uRToaZI=@vger.kernel.org, AJvYcCWNdUTE3K2ppG1ANVRHTAVLYmBvL3Qu36GCW9GD7wdXDO20L9Sok1MKO08ybBOS8KZALmQkltNQEBA=@vger.kernel.org, AJvYcCXMvKMSIwO3gYku/zipAXLl5Hq8xh/joi7INRPI6n5rf4bb7mtQyJ4UCAiZHbnuEKiHQUCLjshgXWQoJP0sSbNN32A=@vger.kernel.org, AJvYcCXor3ON6TdMYYI2ON287jAwu9Ujgnrfb8MXPQR7n82G7cXN0wIj5waq37dPVbQPVl8DvvtN63oi9uPe4kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwLseJLR5UeeGuyXN502eXxr0bDFzCSrX//82BZTiyA65O9EnT
-	9VF0iXURTMOnfLMYxw7DqFQv0fFZHZR8Y30u8rrCQY/1CW4jp7AV
-X-Google-Smtp-Source: AGHT+IFrH1pE6tC+TQJPd5XlVKe0OED8mLEGfHKVZm18+ThOAIlLOC9xj1SU4ZgwBYz9RdlGvzKzUA==
-X-Received: by 2002:a7b:c40a:0:b0:428:e820:37ae with SMTP id 5b1f17b1804b1-42b8a0516b1mr69014115e9.1.1724749942211;
-        Tue, 27 Aug 2024 02:12:22 -0700 (PDT)
-Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac5158485sm178380545e9.13.2024.08.27.02.12.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 02:12:21 -0700 (PDT)
-Date: Tue, 27 Aug 2024 11:12:20 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 00/13] memory: simplify with scoped/cleanup.h for
- device nodes
-Message-ID: <qqdysgpkbfwfnelu6epeb2gwqgdo7xgc6x3yhkuahlaswy5lyo@gh5vfwnigbpa>
-References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
- <641cf75c-3b6f-4913-ab49-5d0ee821780e@kernel.org>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="eHwo8Ude"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1724754652; x=1756290652;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=l9izztVExtAUrD6YpzmSThcoQLAFPh5B9SUAyjBtIXw=;
+  b=eHwo8Udez1hdAQtmOKJAEevW4dnfPBSlJlvtQ3Pf1KUnWy40yt+ho++8
+   KnjVNXgBWda5QX3mzKyI3GWHyUvfrnY//UefY40XE7Qeb7pQQ4AIrqjZJ
+   NJr6B3mP2EB4gHIm3OEyTGev4k4dJKlC4b1fMjcRDNByaB+9+UD78rO+d
+   Q+7r1RhyhZz4ruXqIfzDeZQPXvN8MipaAcMidITYdCdcQNKXOwvyhx52Y
+   eRSgd67tQBlzCTZUTVY6J/D0ycBEPzyvUkvC7VwW0U47WIxgupPt/eT8c
+   r+93VdRlU/pRxEeK9BCS6HtO0dVhEJalJD2NcRdxG183eYmNxcCVbOwDy
+   Q==;
+X-CSE-ConnectionGUID: nmYP+ln5QmKnTOldkUy+bQ==
+X-CSE-MsgGUID: t266nJc+TxiW+F+ZHE4JWg==
+X-IronPort-AV: E=Sophos;i="6.10,180,1719903600"; 
+   d="scan'208";a="30945822"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Aug 2024 03:30:51 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 27 Aug 2024 03:30:14 -0700
+Received: from [10.159.224.217] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 27 Aug 2024 03:30:11 -0700
+Message-ID: <18f714f9-1369-4029-b036-3c176377374e@microchip.com>
+Date: Tue, 27 Aug 2024 12:30:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="n64k4hkfi6aufqrw"
-Content-Disposition: inline
-In-Reply-To: <641cf75c-3b6f-4913-ab49-5d0ee821780e@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/13] memory: atmel-ebi: simplify with scoped for each
+ OF child loop
+Content-Language: en-US, fr-FR
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu
+ Beznea <claudiu.beznea@tuxon.dev>, Lukasz Luba <lukasz.luba@arm.com>, Alim
+ Akhtar <alim.akhtar@samsung.com>, Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Santosh Shilimkar <ssantosh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, <linux-tegra@vger.kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20240816-cleanup-h-of-node-put-memory-v2-0-9eed0ee16b78@linaro.org>
+ <20240816-cleanup-h-of-node-put-memory-v2-2-9eed0ee16b78@linaro.org>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20240816-cleanup-h-of-node-put-memory-v2-2-9eed0ee16b78@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 16/08/2024 at 12:54, Krzysztof Kozlowski wrote:
+> Use scoped for_each_available_child_of_node_scoped() when iterating over
+> device nodes to make code a bit simpler.
+> 
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
---n64k4hkfi6aufqrw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Thanks!
+Regards,
+   Nicolas
 
-On Wed, Aug 21, 2024 at 01:41:54PM GMT, Krzysztof Kozlowski wrote:
-> On 16/08/2024 12:54, Krzysztof Kozlowski wrote:
-> > Changes in v2:
-> > - Add tags
-> > - Wrap lines before of_parse_phandle() (Jonathan)
-> > - Few new patches (see individual changelogs)
-> > - Link to v1: https://lore.kernel.org/r/20240812-cleanup-h-of-node-put-=
-memory-v1-0-5065a8f361d2@linaro.org
-> >=20
-> > Make code a bit simpler and smaller by using cleanup.h when handling
-> > device nodes.
-> >=20
-> > Best regards,
->=20
-> Rebased (some changes around ti-aemif) and applied.
+> ---
+>   drivers/memory/atmel-ebi.c | 8 +++-----
+>   1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/memory/atmel-ebi.c b/drivers/memory/atmel-ebi.c
+> index 8f5b3302ee30..8db970da9af9 100644
+> --- a/drivers/memory/atmel-ebi.c
+> +++ b/drivers/memory/atmel-ebi.c
+> @@ -518,7 +518,7 @@ static int atmel_ebi_dev_disable(struct atmel_ebi *ebi, struct device_node *np)
+>   static int atmel_ebi_probe(struct platform_device *pdev)
+>   {
+>          struct device *dev = &pdev->dev;
+> -       struct device_node *child, *np = dev->of_node;
+> +       struct device_node *np = dev->of_node;
+>          struct atmel_ebi *ebi;
+>          int ret, reg_cells;
+>          struct clk *clk;
+> @@ -592,7 +592,7 @@ static int atmel_ebi_probe(struct platform_device *pdev)
+> 
+>          reg_cells += val;
+> 
+> -       for_each_available_child_of_node(np, child) {
+> +       for_each_available_child_of_node_scoped(np, child) {
+>                  if (!of_property_present(child, "reg"))
+>                          continue;
+> 
+> @@ -602,10 +602,8 @@ static int atmel_ebi_probe(struct platform_device *pdev)
+>                                  child);
+> 
+>                          ret = atmel_ebi_dev_disable(ebi, child);
+> -                       if (ret) {
+> -                               of_node_put(child);
+> +                       if (ret)
+>                                  return ret;
+> -                       }
+>                  }
+>          }
+> 
+> 
+> --
+> 2.43.0
+> 
 
-Oh heh... nevermind those Acked-bys that I just sent out then. =3D)
-
-Thierry
-
---n64k4hkfi6aufqrw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbNmHMACgkQ3SOs138+
-s6EojA//YW130a8HBrEqedkHaXwnQAIP7qPmM2Evewmi9wcBVZNgz1GVGpjhOQUX
-XBXltrFkOsbOYojaRZKrXcl2bmgvuEAwrq0qaYqC4YWST4KyMKuXj8W/3QEroxBF
-a76eC9KwmBUawTg3hrMk+b8kryDem56xMx66AxPPpCXxL89JayAjAe0AahXquHNI
-b+Jow1N6uapZMudoQugWsMC/huRcJ+/BA4FAJgi5QgLV3IovkipCnqgTlnRFGuLs
-FViWpdSAAmCuAxsjBzbQTRc0LnfwrEQPOwuJDiJ6E3OpA6cg5pAgN5ahJqZLdagt
-pT7UNzdwG1LnwVa6lg12rMeIENhhQpUUoRkKRGl9kuUYWPr4idTPQLFsB/5Q36BI
-sNSLCXzzxSk5c+9Zxr+k13Yf5DLjp+sgdBdUeFOwQQnqLjhvgnpULlsiXBZNC4A5
-NTLropv5Bh0pBaKaolxtjQ190QNDrtmCA1ZhF+mf9MkDE+ZdAK/XnTIIdfDDD6Hd
-l90kYTSvscD9W2WqzO7f2UqmZABIAyvqZ/j49JKFQLhiOi4iYp4KQzWdQgDKaFyW
-+GBloBNtOQflVimd5yt3LeXffkm8jfrGYY4U+yRTmcHgWKrT5tikjO5t7YwrpJjX
-8ttg2+qAQ1m9vldrAVju+MoF+9gQEJZGxtJy+a6xgjshhPU5zhc=
-=V649
------END PGP SIGNATURE-----
-
---n64k4hkfi6aufqrw--
