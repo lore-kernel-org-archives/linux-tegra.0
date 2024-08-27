@@ -1,218 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A295F8F54;
-	Tue, 27 Aug 2024 13:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA231A0721;
+	Tue, 27 Aug 2024 13:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724766652; cv=none; b=NeMmEJOPhe2lTrQ6ItzMY2t6BEl+AfDPTc03vr3VtEjCWDzrCUV1FGqKW+Pxdi9523NIVvgctv4gK4OXWGlFjy21Ja4GM8cryyxd9ZPkSJwlW7Lu672aG/NXRhTenEk2MOdo/uO89H3GuQBBT6F3Y3OkaT1r2mPbfB+KDMjlnmo=
+	t=1724767029; cv=none; b=UKHd+eqfltrH7vfvWDecwPZDX7/G7s9fcvfe3jOc/qtNLe9pLlnx+URNWkiISSv3mH8saPB8Qmfxs2kS9bbw0RBSDvhZ6ixhCxW6RaQ5jXMdXbsRud8qiW6fRvNRoD/L5ZjGdy7XZ2GiSuFBOzLhjy56PRMjp2X0ROCMRH6qWaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724766652; c=relaxed/simple;
-	bh=yyaK86cIMMTd3wpksUlSfN5t/YeeCIjLW+ZTAg0foC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=e70Z4QRuVTfzVq3sHAjrnD5Nmc7TLTTRY/3HbQfoyGpU+PYXwESrENt61tPqPIE7OpEWixZJehBGNxFYtmud5lb8cSJDe/Tjh2AUbBnDPEriCLcnrdTEiV+cmDTetXRzCoNdknRGo47demCWQjt5/uTFR0UrM1E59jZcW2oCBi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bo3ZzlPo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724767029; c=relaxed/simple;
+	bh=reO3QG+v1itNZN54c+wyIa0kyddzc2cUrltFlAiFcDc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=axgTXl9Sg7QHBIVFMoqv6sEruIn7+PPxu/EcqqCi2tWg7lce6X0InpyFBMR7n7osTEdG81Y/XhT7ChOKs9HcPr3q2rSgB/dbRi6aNG/Bdu0B8uLReKSd8MPvTrsR7DMEhSAgfmzvyyXImGZ0wPQdHXKkUHnoSaBU9ODEV309WWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DlIhxQ3e; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bo3ZzlPo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EDD6C4FDF2;
-	Tue, 27 Aug 2024 13:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724766652;
-	bh=yyaK86cIMMTd3wpksUlSfN5t/YeeCIjLW+ZTAg0foC8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Bo3ZzlPohVVBS/ZKvyxFyFyp2cBhnsbxo9SQzyKnOYbsd9I62/PFsT7OIv0wcW+7J
-	 QhKdxx2gTghDrpfNkuuHYmzDhUM7jpcJsprjKQenAmzGjF/EfX6j+GmtQ990ypUHsc
-	 tWjNFOdobxbggCTId7Sg2L4bbeA3+bgj+KbdyqcjVhXQYTog1AitXi4u3kx8Gs5J6k
-	 45tGjHM1sdDy+AQu2FRbIaQimz+6u6wo1pSqz6DjqtCicU6zLz6v/28dBe3jRE20XT
-	 VWKYBl3hYkEI7YQZ8zhh8FbAws6VehJQlz6Owpn1+xNkHosQtqPk4ylT6TQE2XbMCv
-	 V5gopRNyQjL9w==
-Message-ID: <87abe3f1-3cf2-4331-8dde-a422716dd94a@kernel.org>
-Date: Tue, 27 Aug 2024 15:50:45 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DlIhxQ3e"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428101fa30aso48022095e9.3;
+        Tue, 27 Aug 2024 06:57:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724767026; x=1725371826; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WZEqvc6zEHEfwAN7IHcwm2DC5T9Ho962g1TGUZnthTU=;
+        b=DlIhxQ3edTCpWkZ+mbayL7Q0GzZPc78qRIDO3hC0LWwjNGBrccdPtjHMVzjQhaeVc6
+         wQHJLGyOIAvdF40kYe2PEtebp+UfEHhu/Hoycymtqm7N43OBptczbJW0viP70Py6RR3N
+         UiBEoTtdjlPTR4hI8/VZbfO3FgPELpf7xNqdxM1g26S78NKa6O4qTq7SFOwHxy4Z40yw
+         XbyHSlep/6iwjwEmPgYX2cuoElI3o1Ah5DZAhWGuCHq6ykMJDRpMS7b+3cHx+gcHmd1x
+         or6BR17wS2P2uvt5y3Nz72vGGSz8+9fOLeNbEDe4h9k2XLk9e7lNSqPGZDd+0uBvJr88
+         9RIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724767026; x=1725371826;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WZEqvc6zEHEfwAN7IHcwm2DC5T9Ho962g1TGUZnthTU=;
+        b=YH/d8bviB1EErflor87fRoH3l5S0ibU6DvdoJNRTNuwaAaFyh5wQY6l1UIcfDp9NOK
+         m7RuHbnzqKH9xzAHiL1luhKx7i05lYxcjv4PsaWwAYO1Qqae/F93b62SXc/RST3mKxFy
+         9UIhmxkVwe/Ti1ouGi77QNj4JNVlt2EYb7765cYIk38QGIjgKbeYUGWmZFpUv77otTtZ
+         Pa5ipdTBV+UTK0w8x8J85ENRcvHiZFQvox50Zk/MOeb/80Uux+3NY3tuHwX6Lx9vegFU
+         BlFssj5+TA0W8u/twz5pX75Y0l+yTXvQsAYBanou5cgz3cZM1y8oZKk471Llq0077r1D
+         j0jw==
+X-Forwarded-Encrypted: i=1; AJvYcCVz90iX54khsaxc+MAMtBBsFvLlV0FL2pMAeSpXbLrolixLKUEFdJrRElyS2AGGjwZM+eP95m0Hl65fdV4=@vger.kernel.org, AJvYcCX7EDsX4UHO0JSD9pns+yJkbw6pnU8MjowM5LLf1I9KfGvYQ4qmKvK/1bw1d+/TN7SMRAChqMAYT3McjFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV/eHV47tUEs7xOMWE9LhkALPE3LBupBuPED5hMa4ZiT9AryuE
+	e+Gm+S2kIFxTtuQRtZzPQXa4RNT3uW6W7RqM61xDWxSRb0fWFYmR
+X-Google-Smtp-Source: AGHT+IEjaBiDkWtaA95khky22P6PC5R3VYIlTNatnUSbe9dgj0TFqbAkCCvOcvJ7G8YL9qcSzKRZMQ==
+X-Received: by 2002:a05:600c:1d03:b0:42a:a6aa:4135 with SMTP id 5b1f17b1804b1-42b9adf0b5fmr23266855e9.20.1724767025987;
+        Tue, 27 Aug 2024 06:57:05 -0700 (PDT)
+Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac5162322sm185664985e9.24.2024.08.27.06.57.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 06:57:05 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Timo Alho <talho@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] firmware: tegra: bpmp: drop unused mbox_client_to_bpmp()
+Date: Tue, 27 Aug 2024 15:57:01 +0200
+Message-ID: <172476700282.1247158.4472584146310216649.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240816135722.105945-1-krzysztof.kozlowski@linaro.org>
+References: <20240816135722.105945-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 2/8] soc: fsl: cpm1: Simplify with dev_err_probe()
-To: Jinjie Ruan <ruanjinjie@huawei.com>, andrew@lunn.ch,
- sebastian.hesselbarth@gmail.com, gregory.clement@bootlin.com,
- herve.codina@bootlin.com, qiang.zhao@nxp.com, christophe.leroy@csgroup.eu,
- thierry.reding@gmail.com, jonathanh@nvidia.com, nm@ti.com,
- ssantosh@kernel.org, petlozup@nvidia.com, pshete@nvidia.com,
- christophe.jaillet@wanadoo.fr, ulf.hansson@linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org, jic23@kernel.org
-References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
- <20240827114607.4019972-3-ruanjinjie@huawei.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240827114607.4019972-3-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 27/08/2024 13:46, Jinjie Ruan wrote:
-> Use the dev_err_probe() helper to simplify error handling during probe.
-> This also handle scenario, when EDEFER is returned and useless error
-> is printed.
+From: Thierry Reding <treding@nvidia.com>
 
-? Sorry, this cannot happen. Please point to below code which can defer.
 
+On Fri, 16 Aug 2024 15:57:21 +0200, Krzysztof Kozlowski wrote:
+> mbox_client_to_bpmp() is not used, W=1 builds:
 > 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/soc/fsl/qe/tsa.c | 62 +++++++++++++++-------------------------
->  1 file changed, 23 insertions(+), 39 deletions(-)
+>   drivers/firmware/tegra/bpmp.c:28:1: error: unused function 'mbox_client_to_bpmp' [-Werror,-Wunused-function]
 > 
-> diff --git a/drivers/soc/fsl/qe/tsa.c b/drivers/soc/fsl/qe/tsa.c
-> index 7fa399b7a47c..fc37d23b746d 100644
-> --- a/drivers/soc/fsl/qe/tsa.c
-> +++ b/drivers/soc/fsl/qe/tsa.c
-> @@ -453,10 +453,8 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
->  
->  	for_each_available_child_of_node_scoped(np, tdm_np) {
->  		ret = of_property_read_u32(tdm_np, "reg", &tdm_id);
-> -		if (ret) {
-> -			dev_err(tsa->dev, "%pOF: failed to read reg\n", tdm_np);
-> -			return ret;
-> -		}
-> +		if (ret)
-> +			return dev_err_probe(tsa->dev, ret, "%pOF: failed to read reg\n", tdm_np);
->  		switch (tdm_id) {
->  		case 0:
->  			tsa->tdms |= BIT(TSA_TDMA);
-> @@ -465,18 +463,15 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
->  			tsa->tdms |= BIT(TSA_TDMB);
->  			break;
->  		default:
-> -			dev_err(tsa->dev, "%pOF: Invalid tdm_id (%u)\n", tdm_np,
-> -				tdm_id);
-> -			return -EINVAL;
-> +			return dev_err_probe(tsa->dev, -EINVAL, "%pOF: Invalid tdm_id (%u)\n",
-> +					     tdm_np, tdm_id);
->  		}
->  	}
->  
->  	for_each_available_child_of_node_scoped(np, tdm_np) {
->  		ret = of_property_read_u32(tdm_np, "reg", &tdm_id);
-> -		if (ret) {
-> -			dev_err(tsa->dev, "%pOF: failed to read reg\n", tdm_np);
-> -			return ret;
-> -		}
-> +		if (ret)
-> +			return dev_err_probe(tsa->dev, ret, "%pOF: failed to read reg\n", tdm_np);
->  
->  		tdm = &tsa->tdm[tdm_id];
->  		tdm->simode_tdm = TSA_SIMODE_TDM_SDM_NORM;
-> @@ -484,35 +479,26 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
->  		val = 0;
->  		ret = of_property_read_u32(tdm_np, "fsl,rx-frame-sync-delay-bits",
->  					   &val);
-> -		if (ret && ret != -EINVAL) {
-> -			dev_err(tsa->dev,
-> -				"%pOF: failed to read fsl,rx-frame-sync-delay-bits\n",
-> -				tdm_np);
-> -			return ret;
-> -		}
-> -		if (val > 3) {
-> -			dev_err(tsa->dev,
-> -				"%pOF: Invalid fsl,rx-frame-sync-delay-bits (%u)\n",
-> -				tdm_np, val);
-> -			return -EINVAL;
-> -		}
-> +		if (ret && ret != -EINVAL)
-> +			return dev_err_probe(tsa->dev, ret,
-> +					     "%pOF: failed to read fsl,rx-frame-sync-delay-bits\n",
-> +					     tdm_np);
-> +		if (val > 3)
-> +			return dev_err_probe(tsa->dev, -EINVAL,
-> +					     "%pOF: Invalid fsl,rx-frame-sync-delay-bits (%u)\n",
-> +					     tdm_np, val);
->  		tdm->simode_tdm |= TSA_SIMODE_TDM_RFSD(val);
->  
->  		val = 0;
->  		ret = of_property_read_u32(tdm_np, "fsl,tx-frame-sync-delay-bits",
->  					   &val);
-> -		if (ret && ret != -EINVAL) {
-> -			dev_err(tsa->dev,
-> -				"%pOF: failed to read fsl,tx-frame-sync-delay-bits\n",
-> -				tdm_np);
-> -			return ret;
-> -		}
-> -		if (val > 3) {
-> -			dev_err(tsa->dev,
-> -				"%pOF: Invalid fsl,tx-frame-sync-delay-bits (%u)\n",
-> -				tdm_np, val);
-> -			return -EINVAL;
-> -		}
-> +		if (ret && ret != -EINVAL)
-> +			return dev_err_probe(tsa->dev, ret,
-> +				"%pOF: failed to read fsl,tx-frame-sync-delay-bits\n", tdm_np);
-> +		if (val > 3)
-> +			return dev_err_probe(tsa->dev, -EINVAL,
-> +					     "%pOF: Invalid fsl,tx-frame-sync-delay-bits (%u)\n",
-> +					     tdm_np, val);
->  		tdm->simode_tdm |= TSA_SIMODE_TDM_TFSD(val);
->  
->  		if (of_property_read_bool(tdm_np, "fsl,common-rxtx-pins"))
-> @@ -645,10 +631,8 @@ static int tsa_probe(struct platform_device *pdev)
->  		return PTR_ERR(tsa->si_regs);
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "si_ram");
-> -	if (!res) {
-> -		dev_err(tsa->dev, "si_ram resource missing\n");
-> -		return -EINVAL;
-> -	}
-> +	if (!res)
-> +		return dev_err_probe(tsa->dev, -EINVAL, "si_ram resource missing\n");
->  	tsa->si_ram_sz = resource_size(res);
->  	tsa->si_ram = devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(tsa->si_ram))
+> 
+
+Applied, thanks!
+
+[1/2] firmware: tegra: bpmp: drop unused mbox_client_to_bpmp()
+      commit: 6aa3ed11978d55f6d0377fdc58f1ef19dbd03af7
+[2/2] firmware: tegra: bpmp: use scoped device node handling to simplify error paths
+      commit: d281ecc22a0da7f2f067f61f563c3475d9d90059
 
 Best regards,
-Krzysztof
-
+-- 
+Thierry Reding <treding@nvidia.com>
