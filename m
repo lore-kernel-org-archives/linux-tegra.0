@@ -1,149 +1,237 @@
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187041C4621
-	for <linux-tegra@vger.kernel.org>; Tue, 27 Aug 2024 14:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CFD1CABF;
+	Tue, 27 Aug 2024 14:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724768466; cv=none; b=Az8IgSLz1cF1/kiB4hoHD/z3RWI2F7GNSc1eqUVrTsh84juRUicJ9NE2zeo/0KhPKzkfB6tQWT4yNNZ2yM2GpKSrYadh07zqw1deXkogDBlF8MoYed/lCiLu/Z/vq5WbQ2YZljbcatbbj0ZfbTRridjFhRyeqJSVArAeIankKCI=
+	t=1724768635; cv=none; b=KxD29m2/buTGWoBdIxAnvdyvfuJCKALmMg8uFdrY8a/6Atp9eafj+4Gz57ZKIiCOwSV7ZlfGkny5mWHoT0/3gRxobHvG5ldPtNlvix6NUjlY4lJQhwLTyo/prPmClQcUTtYfPnPi8+Bt0dhjDWI7d+HpION/3ZtBvJzUQhn1foM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724768466; c=relaxed/simple;
-	bh=RT3Ktxp95IJPO4dUMSJPG4nZBJmg0JPVd7dt6mGlzK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L9tjSDITvMCumONth0roQOQfDE+rcyLUP5b5Nem7ObcNBb8zzuL/qiKBGxXPgMdlq5jMdQP5YPc2UBpUqa0XL08c/hRmRZqtaedvKJZtLBXGj5tLpT9LipzwhEfvoVcqqqy2polEXcKGr/Cdy2UcQQnWpAxiJbmQW4G6IfhLDak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vdA3ojmD; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1724768635; c=relaxed/simple;
+	bh=SW8bHj9Uo0ro5yHk0McUtlSLJIiRvkzQx4qLuCv/48o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MMGLEErsEuGg4tctPmWZXnziluMOCdEdRzGwuDv0Nz5sQ+DX6oOfnS8dPYE0QVPxJ4ag4UyDABmv6wadI+5vCTuyy2dkCfGwOwcEiDzE+crAT8zXF+B8NZfQTuzJvU/+HotD9WRrRGBUDVoWc0VconNLGI/Vn8bVvWYyl6gVZt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VsKI4Oyq; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vdA3ojmD"
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37193f192b1so160557f8f.0
-        for <linux-tegra@vger.kernel.org>; Tue, 27 Aug 2024 07:21:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VsKI4Oyq"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42809d6e719so48983185e9.3;
+        Tue, 27 Aug 2024 07:23:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724768463; x=1725373263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=KZ6VbB8HyBnMsUkl4fKTfDKwt8+aObas/KJf86nrNnE=;
-        b=vdA3ojmDDLoOWMoqmpr8UaGqTeZIAqNsQpi9C+jxXuEG0GIVofRTch4Frsv17EyTJ2
-         tS1Y/oMQMTXz8Ht5Jy98HokDGNH1HccFnhlcng5v1BpRUkbWAzlKi/oFRvvptjInaQH9
-         KbSH4lMAvAcbGFtFp8vt7sWAm/VHXSD8wpV+z6pQLPPJRu3Y28SUPcWIGqFCUpP7zqEB
-         7qmm5Zv1nJH2Cx4T3a+MqBZKSdxVUJ14ztC4a65hA8k7zUAAVdOD7tPc8zO2JuwZpt/y
-         7FKWXkYMcTZq+Wza0DyX1cEwLrDuzEYF1zTziHkBAF0aR3JGG4luA7M/2UR0uMD4iVHD
-         7WsA==
+        d=gmail.com; s=20230601; t=1724768632; x=1725373432; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/3WfFEbNY201vx/ED8/DD9qj8f725brCyGAzTnC8PfQ=;
+        b=VsKI4OyqqTBJQCJrXXrA0Aj3Ii3/dF9MxCC6Hy1ojxfU9WUc6jCXbWMprKDDKp518i
+         RsruOpGfKvGE0cpg0K5uilP42uefD+S2CgLZsvBxAHGwFdgxnrblT4vaKp3p5fFFXtVO
+         9EBo2NIBU8jKUKsJH6QeA+OiABIPZjsCF8rIEWKAFMLZvYsvuNBewjPy/KknDS3I4Jp+
+         mxg6avO606keY3Hw7/rAuG/uaQyyBM6HLtM6ZevdQVQ5LxLhc/vj59Rw6ElVDSzkKzh+
+         52M4MNebTykmcrEJ1pOlAqxR2FBHbMGvIX/nOo0X39LRp77pBxcUDI28440Qhdxu/cKZ
+         6R2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724768463; x=1725373263;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KZ6VbB8HyBnMsUkl4fKTfDKwt8+aObas/KJf86nrNnE=;
-        b=t33P7gSz+nocErdhBRGv3JD9IlY5VRN5rCJE36lN+kB0t5dLALC91p8e1pwTiUybVd
-         gwR6FEQ6aobcPz+xU9hlZViZ/S2Y4eGo0A23abtZbgnq+GL7BKRA54fu2a7WRXOD9/3w
-         R9mSYf6DmZyxP9odXJb1rDdF0VhAGJq7QeV6DymPXsfIgGO6S7GXoq1Z/J8gRYrv//CF
-         yWJQxunbbA/vOUxAtGC+nRO1J24U6a9451171fSek/3GoduSrwn5sLSydlFw/vCOFl9U
-         CXpmRCKPiuXVVQFwvuHVl6+UoThmM0ZxzhPkNqEUhuFvVZDTzGiAwypBL2V79wHfBiF/
-         cbdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjU0RK9InqZhcYoqu+Rhl//0OFkCOHAvSxKVW17Hw8wjYKxLnlP50vkVZPN0r4HWk9Bk0oQXkZJU5sJA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YySd7F5c662c9jpbeamhL/ULyGWC6TpH0DFME6HnNNwX3cAr3q+
-	vFAhrTa5BEtPcH1/iS4J/HvKHnC18VQ6I5GO2Fly4b9NWG/riw1SnA4tnn3S5ZE=
-X-Google-Smtp-Source: AGHT+IEEKh54rX7vFqUIV2bypL6OuNfcH1BGVy9P3fIxfJ0cwRO/Flzzh4z68a7zxOFPQB0UpXJuVA==
-X-Received: by 2002:a05:6000:402a:b0:367:95e3:e4c6 with SMTP id ffacd0b85a97d-373118310a2mr5119391f8f.1.1724768463370;
-        Tue, 27 Aug 2024 07:21:03 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.222.82])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3730810ff96sm13242200f8f.14.2024.08.27.07.21.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 07:21:02 -0700 (PDT)
-Message-ID: <36769d45-d827-41bf-befc-e7b0e95f199e@linaro.org>
-Date: Tue, 27 Aug 2024 16:21:01 +0200
+        d=1e100.net; s=20230601; t=1724768632; x=1725373432;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/3WfFEbNY201vx/ED8/DD9qj8f725brCyGAzTnC8PfQ=;
+        b=L0MhKo+3/+s4LrVHiqhz/DiotN6k8mPOmjAcQAZ8+NReW1RdLINhI7vpcl2Imcs34b
+         88YI4dGdjaihnuvgVwKOhJlDeNyGr+5LszoAadjiCG6dylDvdlqMVG+y0RFbCe0x0V/N
+         c0OgI3QYAmVp8Stl+YaU9Z/LEt8u0McchkLk8dk2Snh6T7jeqTnDbPTeiojRXwooNHBE
+         c+rkOh0MbJeFmfIQ909U28n0FXT/A9nGk1cbovFEB30q4JYLV1ZuI6MxbcyoKPrFL7P2
+         8HIO00SEqMS1klqddSW1oSV5YWqW+ISeSavKdODDXcEl0w3iprhKqkfbWEh+2m+FDqoJ
+         r7RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpJ+saR067BscigseD7lxrIvyaglofJf6pjjkl6EpO76uwChneqUnS/YKnJ1XbHCL+muMeCT5C8icp8xU=@vger.kernel.org, AJvYcCWMjqFN2zgVvk3ILBY0QkM17LoTFeOEMvmc2jNzysj0fDdUSXLcIFgbMls6Q9GZmZWLMCw/VfxiDsL7PwTI@vger.kernel.org, AJvYcCXL9DfFlAR8IkdCZboLDTEBimGkUr1lU0gWBLKoMYR+TNxiSUjXXEXiXhi8pbUPQ5fM3lAR1rrVtrp0Gw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyiz8lGoPMDDifRNOtPIOr5Te39NRuGaMl+iDnmw2R5B/aTuItg
+	gmTohKi4XjJ0nLr/VIHRQxdFcQ3pS+VkIhzWVDNYTh4UOxLnLA1koIxQJOCH
+X-Google-Smtp-Source: AGHT+IF9UnxlOJuQNrBlQHqlvu3HG05KXPOD7OMQtkiX8CJCitn9cP+f6f7zRSGdApo5zRXa75oHzg==
+X-Received: by 2002:a05:600c:1f83:b0:426:629f:154e with SMTP id 5b1f17b1804b1-42acc8ff933mr82713635e9.30.1724768630677;
+        Tue, 27 Aug 2024 07:23:50 -0700 (PDT)
+Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abee86d5esm219643205e9.15.2024.08.27.07.23.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2024 07:23:49 -0700 (PDT)
+Date: Tue, 27 Aug 2024 16:23:48 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] input: tegra: Use of_property_read_variable_u32_array()
+ and of_property_present()
+Message-ID: <zyzygwdfncus7nhnu6sgbc2wzjpih3dntgdogorg3it4vc7r6v@aufrf6kwqun3>
+References: <20240731201407.1838385-6-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] dt-bindings: i2c: nvidia,tegra20-i2c: minor cleanups
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240820-dt-bindings-i2c-nvidia-v1-0-2763e9a9a1b0@linaro.org>
- <rzf7wiv7hvalx4svnnxxsu7z2ciprujxfdwbr7te7cqtmi6xkc@757xhotlbren>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <rzf7wiv7hvalx4svnnxxsu7z2ciprujxfdwbr7te7cqtmi6xkc@757xhotlbren>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ls6njxuxikia5hmn"
+Content-Disposition: inline
+In-Reply-To: <20240731201407.1838385-6-robh@kernel.org>
 
-On 27/08/2024 16:03, Thierry Reding wrote:
-> On Tue, Aug 20, 2024 at 10:44:23AM GMT, Krzysztof Kozlowski wrote:
->> Simple cleanups for nvidia I2C.
->>
->> Best regards,
->> Krzysztof
->>
->> ---
->> Krzysztof Kozlowski (3):
->>       dt-bindings: i2c: nvidia,tegra20-i2c: combine same if:then: clauses
->>       dt-bindings: i2c: nvidia,tegra20-i2c: restrict also clocks in if:then:
->>       dt-bindings: i2c: nvidia,tegra20-i2c: define power-domains top-level
->>
->>  .../bindings/i2c/nvidia,tegra20-i2c.yaml           | 27 ++++++++++++----------
->>  1 file changed, 15 insertions(+), 12 deletions(-)
-> 
-> It wasn't clear who you wanted to pick these up, so I've applied them to
-> the Tegra tree. Shout if anybody wants to take them through a different
-> tree.
 
-They target I2C and I think they were merged by Andi:
-https://lore.kernel.org/all/dkcfnidl3xgvspiusp3zftgdftyvlbxahlbumjdfl7dvxgmdmr@nomisqfu2mwb/
+--ls6njxuxikia5hmn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Wed, Jul 31, 2024 at 02:14:01PM GMT, Rob Herring (Arm) wrote:
+> There's no need to get the length of an DT array property before
+> parsing the array. of_property_read_variable_u32_array() takes a
+> minimum and maximum length and returns the actual length (or error
+> code).
+>=20
+> This is part of a larger effort to remove callers of of_get_property()
+> and similar functions. of_get_property() leaks the DT property data
+> pointer which is a problem for dynamically allocated nodes which may
+> be freed.
+> ---
+>  drivers/input/keyboard/tegra-kbc.c | 72 +++++++++++-------------------
+>  1 file changed, 27 insertions(+), 45 deletions(-)
+>=20
+> diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/=
+tegra-kbc.c
+> index a1765ed8c825..53f39fc155ea 100644
+> --- a/drivers/input/keyboard/tegra-kbc.c
+> +++ b/drivers/input/keyboard/tegra-kbc.c
+> @@ -491,12 +491,10 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+>  	struct device_node *np =3D kbc->dev->of_node;
+>  	u32 prop;
+>  	int i;
+> -	u32 num_rows =3D 0;
+> -	u32 num_cols =3D 0;
+> +	int num_rows;
+> +	int num_cols;
+>  	u32 cols_cfg[KBC_MAX_GPIO];
+>  	u32 rows_cfg[KBC_MAX_GPIO];
+> -	int proplen;
+> -	int ret;
+> =20
+>  	if (!of_property_read_u32(np, "nvidia,debounce-delay-ms", &prop))
+>  		kbc->debounce_cnt =3D prop;
+> @@ -510,56 +508,23 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+>  	    of_property_read_bool(np, "nvidia,wakeup-source")) /* legacy */
+>  		kbc->wakeup =3D true;
+> =20
+> -	if (!of_get_property(np, "nvidia,kbc-row-pins", &proplen)) {
+> -		dev_err(kbc->dev, "property nvidia,kbc-row-pins not found\n");
+> -		return -ENOENT;
+> -	}
+> -	num_rows =3D proplen / sizeof(u32);
+> -
+> -	if (!of_get_property(np, "nvidia,kbc-col-pins", &proplen)) {
+> -		dev_err(kbc->dev, "property nvidia,kbc-col-pins not found\n");
+> -		return -ENOENT;
+> -	}
+> -	num_cols =3D proplen / sizeof(u32);
+> -
+> -	if (num_rows > kbc->hw_support->max_rows) {
+> -		dev_err(kbc->dev,
+> -			"Number of rows is more than supported by hardware\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	if (num_cols > kbc->hw_support->max_columns) {
+> -		dev_err(kbc->dev,
+> -			"Number of cols is more than supported by hardware\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	if (!of_get_property(np, "linux,keymap", &proplen)) {
+> +	if (!of_property_present(np, "linux,keymap")) {
+>  		dev_err(kbc->dev, "property linux,keymap not found\n");
+>  		return -ENOENT;
+>  	}
+> =20
+> -	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
+> -		dev_err(kbc->dev,
+> -			"keypad rows/columns not properly specified\n");
+> -		return -EINVAL;
+> -	}
+> -
+>  	/* Set all pins as non-configured */
+>  	for (i =3D 0; i < kbc->num_rows_and_columns; i++)
+>  		kbc->pin_cfg[i].type =3D PIN_CFG_IGNORE;
+> =20
+> -	ret =3D of_property_read_u32_array(np, "nvidia,kbc-row-pins",
+> -				rows_cfg, num_rows);
+> -	if (ret < 0) {
+> +	num_rows =3D of_property_read_variable_u32_array(np, "nvidia,kbc-row-pi=
+ns",
+> +				rows_cfg, 1, KBC_MAX_GPIO);
+> +	if (num_rows < 0) {
+>  		dev_err(kbc->dev, "Rows configurations are not proper\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	ret =3D of_property_read_u32_array(np, "nvidia,kbc-col-pins",
+> -				cols_cfg, num_cols);
+> -	if (ret < 0) {
+> -		dev_err(kbc->dev, "Cols configurations are not proper\n");
+> +		return num_rows;
+> +	} else if (num_rows > kbc->hw_support->max_rows) {
+> +		dev_err(kbc->dev,
+> +			"Number of rows is more than supported by hardware\n");
+>  		return -EINVAL;
+>  	}
+> =20
+> @@ -568,11 +533,28 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+>  		kbc->pin_cfg[rows_cfg[i]].num =3D i;
+>  	}
+> =20
+> +	num_cols =3D of_property_read_variable_u32_array(np, "nvidia,kbc-col-pi=
+ns",
+> +				cols_cfg, 1, KBC_MAX_GPIO);
+> +	if (num_cols < 0) {
+> +		dev_err(kbc->dev, "Cols configurations are not proper\n");
+> +		return num_cols;
+> +	} else if (num_cols > kbc->hw_support->max_columns) {
+> +		dev_err(kbc->dev,
+> +			"Number of cols is more than supported by hardware\n");
+> +		return -EINVAL;
+> +	}
+> +
+>  	for (i =3D 0; i < num_cols; i++) {
+>  		kbc->pin_cfg[cols_cfg[i]].type =3D PIN_CFG_COL;
+>  		kbc->pin_cfg[cols_cfg[i]].num =3D i;
+>  	}
+> =20
+> +	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
+> +		dev_err(kbc->dev,
+> +			"keypad rows/columns not properly specified\n");
+> +		return -EINVAL;
+> +	}
 
+Previously we wouldn't try to initialize the columns when the
+rows/columns were invalid, so this block could move before the last for
+loop above.
+
+But it doesn't really matter given that these are exceptions and really
+shouldn't happen, so:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--ls6njxuxikia5hmn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbN4XAACgkQ3SOs138+
+s6Fhhg//YNQM9DAFPrJ0NZNR1q0bkfReBPV5AxA0d7vnZWz1dCKh1gdH/oqrY+iy
+wel89umYronWEvbVAulm+F+tmH5oCh8D4A5Oe07KnLN/OmDLFwa73lxIaKg+eOBN
+d8p/h+VI4/cI7vI3YORbd1uWeMzdkJYcK6N/f1Y70NMQfVhKcA6y40xJuO5Jfasa
+y6qTLyWYQh4xX/mucGBowx/lSJW4EkkoZ9/83C6WM0kZQVJl0beeYt37ITIV6PeN
+OYnsDYHpe9gLLNHA9b9X05rprm5vie9aEhZDbK/c+CM0mZkNE6UOqfu/nB3X9yd5
+gJjww+ntOUFqMqqbdXhE7sgD2KY+wrSy7AlIWbM7JFj2IeupH6x+Qo4pnquMSr5j
+ZgjLQSXZzaaAR9FwHkw9vQ3Fh/suvIAS1e6wVqBzb9Gxs9huEaoq0vbky2V//n9H
+bbsriE4nGMgJj2rEOO1OvXo+nUju/JX9jLuojLX7nooWiQHVDvMGMMw9J3PVWsNX
+/NlkN3C4DMRoLsND6oBvNecrTEBpz8vv8NnsAu6qE09zvXORmGs4YP/uO8ER2TBc
+Zb4Z9s4yutkaXZqQceqF/1tJjQVxRlBRThiuX/wTF7s96mrAzG1kk3p/FiDsa0xR
+3lkX219OjNJZBqiHXC2CjK8pfXsIgF6QBO5yPuCTDoTfP651wN0=
+=pp6c
+-----END PGP SIGNATURE-----
+
+--ls6njxuxikia5hmn--
