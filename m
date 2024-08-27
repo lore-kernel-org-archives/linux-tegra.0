@@ -1,218 +1,97 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37591C1723;
-	Tue, 27 Aug 2024 15:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DD11C5792;
+	Tue, 27 Aug 2024 15:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724772995; cv=none; b=XuylMp94dKG/bUF2Fj5qVIyaYpMjATtsesgwteOvYdvV5PKrLxD6pB3F7R4TGtLnUbAGD6BhtOOUbzoKpPBWpg9R2krA30U8xNm+WUt2uARtqWa2rJSRU7i+cUBgrfMhZe+NKzFmKJwEJ2/cJyX97AgFbtgs3l65ZFv0ZPbHCB8=
+	t=1724774278; cv=none; b=HuSyMtOkHf/+xpRNXjda2er4KuP6KCFW3EhY7SoBe5zj3KHgfY8LaKi9N1OelcWV0zEyOsTbolsvdHM6f9Sw4URqa9lVBa1KIICNXtZ+JsmaakoWvAnRVbzRshoooHHLxstN4rycAFEEaK12v5arpAwRfMVaeyjstAsbcKNdaHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724772995; c=relaxed/simple;
-	bh=KYrMAoJCt+EV7WoaEnKxjVrsnUTS3xitiFfMxJQdzHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FUVjGCZGedfIkIxeZAS+PXCIz7zeh1jpa0E38aPH09waB30shGjoFB5HULF2p+Tnoi9eP00FV35Ub+ukDLcs5LUjrVqYsloFFF2pVvoNAmxqQpc/Oq/T01s6qXchkjw0IhpiN4ACtlZ0T6sz7VVj6zkGtR9dbGw8ZiysNcssyZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0KE2Ohb; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0KE2Ohb"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-715c160e231so1006078b3a.0;
-        Tue, 27 Aug 2024 08:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724772993; x=1725377793; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i06m+lajlNBP6LGt0oGGIooKzG4I9XsfXSKSmv9z5Nk=;
-        b=P0KE2Ohb7LIvafcZLCw2FjbHH40MaXONqjohJRicSXYTWfBVixY6bjmYhp6qJD3XDS
-         npn+r4/nh4jqdyIsVBm2oiisSFeTs2kBisEzgdih5EAXUPjANCmaykb1KWyoFOJwnm9e
-         LM1qU5tekIaOb8Gjn6F6+Ak2eDGZUkq90iUxWXcohMelj23QUowtGGYon110f52DECDU
-         T7kVCuZXHMNfEJdo986iJSCO1d5SXMT5HYBrQLrC42QDRqk3Osb+BddYsRiHzdt7KlXR
-         PJYj/nHuteO4GBj9UtWu1LEr7l3Wc5FWGVwDaTNLGMhKK7pDCkgA0XajeWeoc6NCY1rC
-         nCyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724772993; x=1725377793;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i06m+lajlNBP6LGt0oGGIooKzG4I9XsfXSKSmv9z5Nk=;
-        b=wR0Y+j51IgYEkCSDdJ9IU1SKWYav2nSzLB+zzAmtCBX34p+YFpi5ejII/n8H6w1GJV
-         rgUE01V5ie8Lq/fEFMDsrtLbkBuhPUILw9u2pnnd3D6asAspT/oLUUovWk0A9YtiBNWn
-         1Dq1DigFBuOv164z64jHbzzhPJawwfIOlUj6iy4geXx55/1b3qJbKvoXzEpmD4mqd+J1
-         us8G/SMwBUqZmKhgisNB+a7ot+dgqzO2+k2djvIUsI+NN7TX9i9FIh0jSvKSPMJLdTjg
-         JAJzRI+mmQRPsXSzBqvHLMTkawIwEc/cuTxux/wAn2A4KiVoEJkVYK5MYtOxJT0E3Nbb
-         3keg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Vc4IovNcCR7m9hK+Y6KvaLtninO5G1HuXV5oT6kkU0PUI1//playbWrhDYK20GNQHPVBkvJ2b7/CdiE=@vger.kernel.org, AJvYcCUy30W66Xz7rpEiZ4Fkn1uFA3XpkNVdaa1+RtHKrDTI0SasJC+RHM/d3XIy4KNwaIN0pd/Yxe+6GWNn4w==@vger.kernel.org, AJvYcCVdo6Igs1jLpYHN9iSALvOUkPVeMWeNiGLsh81VxgB+5i5ZskY9ppXtBs/LwqataFtwNXi6fhKFsb/PBkk4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMsGnzqeJHmED2c2KQg7phUbpkLK2AEodhSqYRAk3PCkI7YmzW
-	7U2ev7H66Me8mrTu4ooeeGYfEtLQQ0JrNRRbwWY8Un+WMgr6n98F
-X-Google-Smtp-Source: AGHT+IEvQGwNNvRjt/gQ3MweAjTwx8USmVtCznICoy0IzZHOhyJB9kgCfh6r6IN+M3mCARs4NX/0eA==
-X-Received: by 2002:a05:6a21:3406:b0:1c4:2134:dd54 with SMTP id adf61e73a8af0-1cc8a079e5cmr15672790637.45.1724772992904;
-        Tue, 27 Aug 2024 08:36:32 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:fce4:8959:e48d:980c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-715c49aa23dsm1267675b3a.5.2024.08.27.08.36.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 08:36:32 -0700 (PDT)
-Date: Tue, 27 Aug 2024 08:36:29 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-input@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] input: tegra: Use of_property_read_variable_u32_array()
- and of_property_present()
-Message-ID: <Zs3yfc1pJDkAwhzc@google.com>
-References: <20240731201407.1838385-6-robh@kernel.org>
- <zyzygwdfncus7nhnu6sgbc2wzjpih3dntgdogorg3it4vc7r6v@aufrf6kwqun3>
+	s=arc-20240116; t=1724774278; c=relaxed/simple;
+	bh=Hv5EEocGMjGU1RLGkQFcoi/uMmMZh5Os9cCyNijklnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=omhm4IcFrhm3p7t9ck529+AtbYvpw9m+NmQ3lP9hSl8/9QGzVePEynon47dtE8W/i2P1F2tQGXCNtyOOiIc+oSWQ8yjgy/Wl2YlypgT5AlCtmwjdefbiZGtSc4d2wCRITP32G1HFam8sWaYg+WpbJM0b/WdHUCetn23y8eH+ErA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 211F8DA7;
+	Tue, 27 Aug 2024 08:58:22 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A0B283F762;
+	Tue, 27 Aug 2024 08:57:54 -0700 (PDT)
+Message-ID: <3256d9ce-2c10-4cdd-b4c4-358f2c30a9a3@arm.com>
+Date: Tue, 27 Aug 2024 16:57:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <zyzygwdfncus7nhnu6sgbc2wzjpih3dntgdogorg3it4vc7r6v@aufrf6kwqun3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 06/10] iommu/arm-smmu-v3: Add
+ acpi_smmu_acpi_probe_model for impl
+To: Will Deacon <will@kernel.org>, Nicolin Chen <nicolinc@nvidia.com>
+Cc: joro@8bytes.org, jgg@nvidia.com, thierry.reding@gmail.com,
+ vdumpa@nvidia.com, jonathanh@nvidia.com, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-tegra@vger.kernel.org
+References: <cover.1724453781.git.nicolinc@nvidia.com>
+ <8a2629bb98cabb1be72b32c120bb5ed0114b21bc.1724453781.git.nicolinc@nvidia.com>
+ <20240827130233.GF4772@willie-the-truck>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240827130233.GF4772@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 27, 2024 at 04:23:48PM +0200, Thierry Reding wrote:
-> On Wed, Jul 31, 2024 at 02:14:01PM GMT, Rob Herring (Arm) wrote:
-> > There's no need to get the length of an DT array property before
-> > parsing the array. of_property_read_variable_u32_array() takes a
-> > minimum and maximum length and returns the actual length (or error
-> > code).
-> > 
-> > This is part of a larger effort to remove callers of of_get_property()
-> > and similar functions. of_get_property() leaks the DT property data
-> > pointer which is a problem for dynamically allocated nodes which may
-> > be freed.
-> > ---
-> >  drivers/input/keyboard/tegra-kbc.c | 72 +++++++++++-------------------
-> >  1 file changed, 27 insertions(+), 45 deletions(-)
-> > 
-> > diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-> > index a1765ed8c825..53f39fc155ea 100644
-> > --- a/drivers/input/keyboard/tegra-kbc.c
-> > +++ b/drivers/input/keyboard/tegra-kbc.c
-> > @@ -491,12 +491,10 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
-> >  	struct device_node *np = kbc->dev->of_node;
-> >  	u32 prop;
-> >  	int i;
-> > -	u32 num_rows = 0;
-> > -	u32 num_cols = 0;
-> > +	int num_rows;
-> > +	int num_cols;
-> >  	u32 cols_cfg[KBC_MAX_GPIO];
-> >  	u32 rows_cfg[KBC_MAX_GPIO];
-> > -	int proplen;
-> > -	int ret;
-> >  
-> >  	if (!of_property_read_u32(np, "nvidia,debounce-delay-ms", &prop))
-> >  		kbc->debounce_cnt = prop;
-> > @@ -510,56 +508,23 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
-> >  	    of_property_read_bool(np, "nvidia,wakeup-source")) /* legacy */
-> >  		kbc->wakeup = true;
-> >  
-> > -	if (!of_get_property(np, "nvidia,kbc-row-pins", &proplen)) {
-> > -		dev_err(kbc->dev, "property nvidia,kbc-row-pins not found\n");
-> > -		return -ENOENT;
-> > -	}
-> > -	num_rows = proplen / sizeof(u32);
-> > -
-> > -	if (!of_get_property(np, "nvidia,kbc-col-pins", &proplen)) {
-> > -		dev_err(kbc->dev, "property nvidia,kbc-col-pins not found\n");
-> > -		return -ENOENT;
-> > -	}
-> > -	num_cols = proplen / sizeof(u32);
-> > -
-> > -	if (num_rows > kbc->hw_support->max_rows) {
-> > -		dev_err(kbc->dev,
-> > -			"Number of rows is more than supported by hardware\n");
-> > -		return -EINVAL;
-> > -	}
-> > -
-> > -	if (num_cols > kbc->hw_support->max_columns) {
-> > -		dev_err(kbc->dev,
-> > -			"Number of cols is more than supported by hardware\n");
-> > -		return -EINVAL;
-> > -	}
-> > -
-> > -	if (!of_get_property(np, "linux,keymap", &proplen)) {
-> > +	if (!of_property_present(np, "linux,keymap")) {
-> >  		dev_err(kbc->dev, "property linux,keymap not found\n");
-> >  		return -ENOENT;
-> >  	}
-> >  
-> > -	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
-> > -		dev_err(kbc->dev,
-> > -			"keypad rows/columns not properly specified\n");
-> > -		return -EINVAL;
-> > -	}
-> > -
-> >  	/* Set all pins as non-configured */
-> >  	for (i = 0; i < kbc->num_rows_and_columns; i++)
-> >  		kbc->pin_cfg[i].type = PIN_CFG_IGNORE;
-> >  
-> > -	ret = of_property_read_u32_array(np, "nvidia,kbc-row-pins",
-> > -				rows_cfg, num_rows);
-> > -	if (ret < 0) {
-> > +	num_rows = of_property_read_variable_u32_array(np, "nvidia,kbc-row-pins",
-> > +				rows_cfg, 1, KBC_MAX_GPIO);
-> > +	if (num_rows < 0) {
-> >  		dev_err(kbc->dev, "Rows configurations are not proper\n");
-> > -		return -EINVAL;
-> > -	}
-> > -
-> > -	ret = of_property_read_u32_array(np, "nvidia,kbc-col-pins",
-> > -				cols_cfg, num_cols);
-> > -	if (ret < 0) {
-> > -		dev_err(kbc->dev, "Cols configurations are not proper\n");
-> > +		return num_rows;
-> > +	} else if (num_rows > kbc->hw_support->max_rows) {
-> > +		dev_err(kbc->dev,
-> > +			"Number of rows is more than supported by hardware\n");
-> >  		return -EINVAL;
-> >  	}
-> >  
-> > @@ -568,11 +533,28 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
-> >  		kbc->pin_cfg[rows_cfg[i]].num = i;
-> >  	}
-> >  
-> > +	num_cols = of_property_read_variable_u32_array(np, "nvidia,kbc-col-pins",
-> > +				cols_cfg, 1, KBC_MAX_GPIO);
-> > +	if (num_cols < 0) {
-> > +		dev_err(kbc->dev, "Cols configurations are not proper\n");
-> > +		return num_cols;
-> > +	} else if (num_cols > kbc->hw_support->max_columns) {
-> > +		dev_err(kbc->dev,
-> > +			"Number of cols is more than supported by hardware\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> >  	for (i = 0; i < num_cols; i++) {
-> >  		kbc->pin_cfg[cols_cfg[i]].type = PIN_CFG_COL;
-> >  		kbc->pin_cfg[cols_cfg[i]].num = i;
-> >  	}
-> >  
-> > +	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
-> > +		dev_err(kbc->dev,
-> > +			"keypad rows/columns not properly specified\n");
-> > +		return -EINVAL;
-> > +	}
+On 27/08/2024 2:02 pm, Will Deacon wrote:
+> On Fri, Aug 23, 2024 at 05:10:40PM -0700, Nicolin Chen wrote:
+>> For model-specific implementation, repurpose the acpi_smmu_get_options()
+>> to a wider acpi_smmu_acpi_probe_model(). A new model can add to the list
+>> in this new function.
+>>
+>> Suggested-by: Will Deacon <will@kernel.org>
+>> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+>> ---
+>>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 18 +++++++++++++-----
+>>   1 file changed, 13 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>> index afdb8a76a72a..ceb31d63f79b 100644
+>> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+>> @@ -4341,18 +4341,28 @@ static int arm_smmu_device_hw_probe(struct arm_smmu_device *smmu)
+>>   }
+>>   
+>>   #ifdef CONFIG_ACPI
+>> -static void acpi_smmu_get_options(u32 model, struct arm_smmu_device *smmu)
+>> +static int acpi_smmu_iort_probe_model(struct acpi_iort_node *node,
+>> +				      struct arm_smmu_device *smmu)
+>>   {
+>> -	switch (model) {
+>> +	struct acpi_iort_smmu_v3 *iort_smmu =
+>> +		(struct acpi_iort_smmu_v3 *)node->node_data;
+>> +
+>> +	switch (iort_smmu->model) {
+>>   	case ACPI_IORT_SMMU_V3_CAVIUM_CN99XX:
+>>   		smmu->options |= ARM_SMMU_OPT_PAGE0_REGS_ONLY;
+>>   		break;
+>>   	case ACPI_IORT_SMMU_V3_HISILICON_HI161X:
+>>   		smmu->options |= ARM_SMMU_OPT_SKIP_PREFETCH;
+>>   		break;
+>> +	case ACPI_IORT_SMMU_V3_GENERIC:
+>> +		break;
+>> +	default:
+>> +		dev_err(smmu->dev, "Unknown/unsupported IORT model!\n");
+>> +		return -ENXIO;
 > 
-> Previously we wouldn't try to initialize the columns when the
-> rows/columns were invalid, so this block could move before the last for
-> loop above.
-> 
-> But it doesn't really matter given that these are exceptions and really
-> shouldn't happen, so:
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+> We probably don't want this 'default' case, otherwise the driver will
+> need to be updated every time there's a new model.
 
-I don't quite like of_property_read_variable_u32_array() because it is
-OF-specific. device_property_count_u32() will return the number of
-elements in an array. But I guess this driver will only be used on an OF
-system... 
+...although the intent is very strongly that there should never be any 
+new models, because by now hardware should really not be failing to 
+implement SMMU_IIDR correctly. In some ways, having this might help 
+further discourage people from abusing the mechanism and making random 
+stuff up in their firmware :/
 
-Applied, thank you.
-
--- 
-Dmitry
+Cheers,
+Robin.
