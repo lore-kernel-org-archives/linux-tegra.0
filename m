@@ -1,155 +1,162 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502CB1A4F2B;
-	Wed, 28 Aug 2024 15:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815EB1AED22
+	for <linux-tegra@vger.kernel.org>; Wed, 28 Aug 2024 20:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724858850; cv=none; b=FJX7VXlxkA4KhLnC4qowMcsdifR+0eehz3RiAs+RQmecUm6K20RHJFj5GmxwQyvRWV2mom42W9wmSlX2iVoMWhMNi2xTL4CIzmZjwySrtF4Po+wKyOiBOD/4osFuhyZDdXYHZu/fC0puPOTUUEfrSQWPHIl7by8jvdXwbxyxs6U=
+	t=1724877867; cv=none; b=QeGOi6BXsvuwLZeVMe0aCiTddQxQVT9FuF/0q/DNN1FZctAF0h5q8MO4oGyhLtEFrEws9qkBS1riB/o23cM22yrtAkfXnpDcgltZ4ZpdfwXKi0eAD07uEpfLrM9sZVQtuQ8XyyJuG8bRAcCW8h7x0sKKu1muq0w1vfAfyGAnqRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724858850; c=relaxed/simple;
-	bh=BtVyzWMVALC/1EFZ2S7XKeV0QsA+D5/40hYHNVrXqJs=;
+	s=arc-20240116; t=1724877867; c=relaxed/simple;
+	bh=2eoefR7cGl72xKUr4g6vFurnaajnZ4ZAp6xvGyEtOdI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=onjQtlCcrqo9FhWI6lrdAwLKLUMi3qBjqFZiUcLzrN3U7Tq6o08hnr1lRjlmYdS4+CI+9d7YTvptuD7NMtrT55qbyKovBs87nKOjUVQIFQ94MXQxEn5ZIfqDyaQ+DV1qjkHOHpdWcDvxi+GxqFkX1IrFFpgN6+Pz0Bzwl0AVOxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dw4l49IQ; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=LUohKKNHP+E4wpCZgiIWLkrCq7/AL2gHH6CrhERcLwn2fDaIWHrGCVY0QwY3kCFblGawB7DnRKYpLscwCC+8GasN6MecygYnFNGZkuBPWwJdhNkr/qeLaI5IkiocuwuMl8CUNGa1XuOAIPQcL2LIFrbbcD38Qt67qQ+vF8I0QOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eXKg5E3e; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dw4l49IQ"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3718ca50fd7so4357905f8f.1;
-        Wed, 28 Aug 2024 08:27:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eXKg5E3e"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5334adf7249so8492246e87.3
+        for <linux-tegra@vger.kernel.org>; Wed, 28 Aug 2024 13:44:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724858848; x=1725463648; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7d72c/mj/2Z6FiVdpOBNTFT01VdBmf1RNvsZEcgNCnA=;
-        b=Dw4l49IQ8w0CAecrgE1av6DbIwWQOWlUSSijhDQpMtUTueGTMekruHM9SXR9QKHFxS
-         i2jXNjQrxSRdY8OfkcIeQ7HeYR4D/c9zPd441YQcYXCg3MdxAF4eQUhhZvEgjMxiJjfj
-         lOfyeA8XMI2K/bg1gf0CHcdDqtro8x9BjJ+9tfEUkQaywA/UoVr6tJ3OxcJkmRn4ZHEt
-         gc06pgApp1DWO5jk4/mdzgRzkffhg1Gy0XhGuXJB1zAdOkRAHVSjr26A5MGkn44kLXUO
-         lSO1TvwfKrZPX+ZsbPZD7f0XumbZYv4N/EacuVwQEG4+PGxLv69uHlwqeox9tWFumqTC
-         DDEA==
+        d=linaro.org; s=google; t=1724877864; x=1725482664; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5ouvwUzqpqqEKUlkh1CpUkYbdJmGHqky9KCVychiJS0=;
+        b=eXKg5E3eyFlOKjKnEk/tDSfley5vvgL26rrv83yJze+Kz5dXKQrLK8l95nJ8sQe05l
+         i4Ae76a0yXsSxzI3kONEc1q/MYRzWOQQUZcnuFqUMe906vuy+oHkaf4hxH1yAMsVEcm5
+         zB6KJp0dVG4yQWS9I47Qc6hNR58cjuKvqk8wUCgGUwCAI2yZrURlihZgcMDlRIpZauXV
+         99oiVWn/vFAmiRlSogxBEIOxpxstuto/PrhicNQYrmISaR9GK8BGujPACaG4kxwm3G1I
+         QB7VlicpHotvHdfWh/Mx8JlYl8jznTtgyawaVxDhw3K3yPMoB4cigTbskktPV6GRlKs4
+         T2pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724858848; x=1725463648;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7d72c/mj/2Z6FiVdpOBNTFT01VdBmf1RNvsZEcgNCnA=;
-        b=N5fwZ+8Uqu2JqAE0dCNDXeSJrsEtER9qj4wIKB39E+IFzT0k42jKVOGMMGhXTDQe0g
-         s0eVMP1yPW1fuu3XLyumAPscuYzGpjYvlE1I8Vmqs9RxwVrvhLTC5NnW7LLU78pm6srA
-         ZUL0fm9n8MNdJIJAy1TXjfuyxtGyrKcWbmVAy+laVf0nVrAgAtQhx3UBmfr1YbWxHJzW
-         WNbHW+SjxxPXqZp30FuryEEd0Dyc+L/2XtHkv42+z+CQkHwIrwDfll6XyXnRgYx7ts2g
-         N3TruUI+Lw8r8MStxNqVe4QTdqkHOJBYDVpIUsCtPZBKA8WnCMT3HFgZFqeQC81JIOO/
-         4EPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUT8uURs/vjkiY6uzAJ26i7szF0yxveldazfUDnP8cFqqj5zWijAc0EdrS04qIWV7N2wMMEQUKkS46iSUg=@vger.kernel.org, AJvYcCUVO7zj2rWCuPqI4BJgStyctRsCDzANO1WICfMcIXTwAVbNM6FAm9tSieUtmOh6c62R6b6klCDESOjKR4c=@vger.kernel.org, AJvYcCWnbNfHv5TQX2WWUWd/J9WdOtGml/RslWkQbXJxzF271rRusEeeWAioaCOeNmSnNQj4In0ojZxTczJusPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFc+ypEg6PAs/UGVO/t8WZkNKZ3so2s5d5WpiWY7ExIV2YlYSn
-	euJLHKpZOoBW20f+ghUmen78WrWR2yDjqgTdvcmmmhEpM9UUo506
-X-Google-Smtp-Source: AGHT+IFy+N6MNpikAMD3IJYGiP5Mfu8DbpT3WuOqB9zdjdgMg/vD1umE1XlYBlEzFehtYhZBgfMtDQ==
-X-Received: by 2002:adf:a3dd:0:b0:371:7e73:de6e with SMTP id ffacd0b85a97d-3749685b56fmr1596718f8f.52.1724858847009;
-        Wed, 28 Aug 2024 08:27:27 -0700 (PDT)
-Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749b238cf7sm81389f8f.33.2024.08.28.08.27.25
+        d=1e100.net; s=20230601; t=1724877864; x=1725482664;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ouvwUzqpqqEKUlkh1CpUkYbdJmGHqky9KCVychiJS0=;
+        b=i6Gro82n3TFD1VcgjHo8ouf3YiRQMPrxongr362Mey7RT25olpsudc0uIMIF6Jt9Qg
+         ecQ6ARN/tfNxvxiRQEvEqPS5YGnoFPZSIzziIGEcyoON5IP/cs83ldSLL5YnyqD7/kki
+         bwVrGXtWq90ZfMh3BW6EJ84qMHZ/84OwI6HRG3rmVuMYrEs1w7gKtxJvKb9ugbG8kkUH
+         ixa3EsGY1+0wlMQVrhE+m0DomJirwyzh3feLT+wbJOMpuza3JqnJEngotFg8ywiqxG3f
+         crCxNyhp2SxMCakw6iGF0zYuKkopnX3MmTgRy3EKsTUqy0yQgv5MtMQhuDkWCoTE4nWL
+         349w==
+X-Forwarded-Encrypted: i=1; AJvYcCUJfz0SWFghiwqKvnXUyVF0vrir20tZ4ulDHWl8Nao5R93exzZN2CHHQyR/aOWtHCRSiiod29aOOZTVnw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQghY/2Gpwh7WIhEkfmjWodXqV/NOZRvQ5av3Vcsnj4OKIsbHi
+	mcml6B4lcscL9EoXHmaav09iVAimoOS6HOmH4Oqq71S1h3wO9oc1KY64Gp1yHMw=
+X-Google-Smtp-Source: AGHT+IH4zRQRIv6Lh7T2/GNqa8t40UFcIfzpQONZac2DDCKlGfTbLoKbr9iAWINSbxj2G3srq82BTw==
+X-Received: by 2002:a05:6512:3c8d:b0:530:c212:4a5a with SMTP id 2adb3069b0e04-5353e549b8cmr356750e87.22.1724877862966;
+        Wed, 28 Aug 2024 13:44:22 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea5d2dbsm2294656e87.195.2024.08.28.13.44.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 08:27:26 -0700 (PDT)
-Date: Wed, 28 Aug 2024 17:27:24 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sandy Huang <hjc@rock-chips.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Kevin Tian <kevin.tian@intel.com>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] drm/tegra: Remove call to iommu_domain_alloc()
-Message-ID: <qyvyd2ftebjlgmzyayfvxsqa64c4wgx7keix3a6eexdspbvawy@a5ffnm5h5tgp>
-References: <20240812071034.9443-1-baolu.lu@linux.intel.com>
- <20240812071034.9443-3-baolu.lu@linux.intel.com>
+        Wed, 28 Aug 2024 13:44:22 -0700 (PDT)
+Date: Wed, 28 Aug 2024 23:44:20 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	kernel test robot <lkp@intel.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
+ comparison
+Message-ID: <kh4diauo5u63mldchmd66pbnqxwnbqfoqcpxsw6wwocbadygvz@3diccu2xt4kj>
+References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
+ <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
+ <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fslg44mz7bzr7agv"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240812071034.9443-3-baolu.lu@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
 
+On Wed, Aug 28, 2024 at 02:47:05PM GMT, Jon Hunter wrote:
+> Hi Satya, Vladimir,
+> 
+> On 13/08/2024 21:01, Vladimir Zapolskiy wrote:
+> > On 8/13/24 12:40, Satya Priya Kakitapalli wrote:
+> > > In zonda_pll_adjust_l_val() replace the divide operator with comparison
+> > > operator since comparisons are faster than divisions.
+> > > 
+> > > Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for
+> > > Zonda PLL")
+> > 
+> > Apparently the change is not a fix, therefore I believe the Fixes tag
+> > shall be removed.
+> 
+> 
+> From the commit message it is not clear that this is a fix, but I
+> believe that it is. With the current -next I am seeing the following
+> build error (with GCC 7.3.1) on ARM ...
+> 
+> drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
+> clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
 
---fslg44mz7bzr7agv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This should be a part of the commit message
 
-On Mon, Aug 12, 2024 at 03:10:34PM GMT, Lu Baolu wrote:
-> Commit <17de3f5fdd35> ("iommu: Retire bus ops") removes iommu ops from
-> the bus structure. The iommu subsystem no longer relies on bus for
-> operations. So iommu_domain_alloc() interface is no longer relevant.
->=20
-> Normally, iommu_paging_domain_alloc() could be a replacement for
-> iommu_domain_alloc() if the caller has the right device for IOMMU API
-> use. Unfortunately, this is not the case for this driver.
->=20
-> Iterate the devices on the platform bus and find a suitable device
-> whose device DMA is translated by an IOMMU. Then use this device to
-> allocate an iommu domain. The iommu subsystem prevents domains
-> allocated by one iommu driver from being attached to devices managed
-> by any different iommu driver.
->=20
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Link: https://lore.kernel.org/r/20240610085555.88197-20-baolu.lu@linux.in=
-tel.com
-> ---
->  drivers/gpu/drm/tegra/drm.c | 34 +++++++++++++++++++++++++---------
->  1 file changed, 25 insertions(+), 9 deletions(-)
+> > > Reported-by: kernel test robot <lkp@intel.com>
+> > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
 
-Actually I think we can just do something like this:
+this Closes tag must come after lkp's Reported-by. Please also add
+Closes with the link to Dan's report.
 
---- >8 ---
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index d9f0728c3afd..d35e411d536b 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1150,7 +1150,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 	}
-=20
- 	if (host1x_drm_wants_iommu(dev) && iommu_present(&platform_bus_type)) {
--		tegra->domain =3D iommu_domain_alloc(&platform_bus_type);
-+		tegra->domain =3D iommu_paging_domain_alloc(dev->dev.parent);
- 		if (!tegra->domain) {
- 			err =3D -ENOMEM;
- 			goto free;
---- >8 ---
+> 
+> There is also the above smatch warning that was reported.
 
-That refers to the physical device that the host1x_device virtual device
-was instantiated from and is a common parent to all physical devices
-that are part of the virtual device.
+And the Smatch warning too should be a part of the commit message.
 
-Thierry
+Last, but not least, as it is a fix, there should be a Fixes: tag and
+optionally a cc:stable.
 
---fslg44mz7bzr7agv
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> > > Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> > > ---
+> > >   drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/qcom/clk-alpha-pll.c
+> > > b/drivers/clk/qcom/clk-alpha-pll.c
+> > > index 2f620ccb41cb..fd8a82bb3690 100644
+> > > --- a/drivers/clk/qcom/clk-alpha-pll.c
+> > > +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> > > @@ -2126,7 +2126,7 @@ static void zonda_pll_adjust_l_val(unsigned
+> > > long rate, unsigned long prate, u32
+> > >       remainder = do_div(quotient, prate);
+> > >       *l = quotient;
+> > 
+> > Since it's not a fix, but a simplification, you may wish to remove
+> > an unnecessary 'quotient' local variable:
+> > 
+> > remainder = do_div(rate, prate);
+> > 
+> > > -    if ((remainder * 2) / prate)
+> > > +    if ((remainder * 2) >= prate)
+> > >           *l = *l + 1;
+> > 
+> > *l = rate + (u32)(remainder * 2 >= prate);
+> 
+> 
+> The above change does fix this build error for me.
+> 
+> Satya, did you intend this to be a fix? Can we get this into -next?
+> 
+> Thanks
+> Jon
+> 
+> -- 
+> nvpublic
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbPQdkACgkQ3SOs138+
-s6Faag/+PLNW+D2IJ1ANTAMAHn0fybn2aGa6fRFPkVgUQSXQP4OlfAdV1W2+DKPi
-CSLmOHisUapqMwyMZECKEkXHkM7+i7Snhz+D6gHCMx7YWFQiLGi0j9KZfT3kfX5V
-tOIVJXrEAcJZN9htxoPZ842Z5QrrzTNgVkvhmC2lhqA6sjy3BbyK8TgncUVpceMC
-wPCVwjnNyJZUxK/MZgyj5OywXC9emVXY5Y0WgjJ14D1KNPScAsSCLKbIvAS5Pku8
-8K0m4Dzv4+WtNRhr42OVrtji9VJwnrjVgJZXuGgJC7aQVDFbghM9rQ2NnaHAztOK
-EL+9DKRDLXo+MwQmvqSWTkY1OEd0Y2cJsagqS9363Q5Xau7Iwrxa2vAXgXUwkWyP
-/Z4cZYzatMr+CF+165NbtQYlJlRqBpW8kDslxGR1DT1NhNLbpE6y0FKaBp9YWXhA
-U8AkaTSeeuO96M7c9jr2sLyHIxIYzMPvsC5vvw44NQRty78DyLp9wE90r0Z954C+
-6DJMnKQIsoa+rCnof94BhK9ThweuwyWWMc/7755EWJoUo2g8VVyDei6m2GBMj5zT
-kkkzVeWz8F1cV3zDn8aa0hYje3tzVdvChHSMXHU44wRHSD6xaoI9KgxehV6TYlCI
-G3/NyFMo6sIP/I5hnEpQmI3pF5641WaJSYeocgjLIRESADr7+Dk=
-=Ka+K
------END PGP SIGNATURE-----
-
---fslg44mz7bzr7agv--
+-- 
+With best wishes
+Dmitry
