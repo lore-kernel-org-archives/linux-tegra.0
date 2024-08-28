@@ -1,97 +1,155 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0842C19AD7E
-	for <linux-tegra@vger.kernel.org>; Wed, 28 Aug 2024 15:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502CB1A4F2B;
+	Wed, 28 Aug 2024 15:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724858840; cv=none; b=a43MYO3/2ZKuqNOOXjZotGSSivl9fuO9ijQK0BbyTUElEMRTDRJkovAKa81A/W0zwPJhAk21tGK644pkiO8CfSsI4EirOHtocDtOfSlgM4xqyqmLlAhAW5FDvOFKnXu/GEhE4gIjjHxGzfxtWzNu6MPHui0qiRM7A65hcIx+Km0=
+	t=1724858850; cv=none; b=FJX7VXlxkA4KhLnC4qowMcsdifR+0eehz3RiAs+RQmecUm6K20RHJFj5GmxwQyvRWV2mom42W9wmSlX2iVoMWhMNi2xTL4CIzmZjwySrtF4Po+wKyOiBOD/4osFuhyZDdXYHZu/fC0puPOTUUEfrSQWPHIl7by8jvdXwbxyxs6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724858840; c=relaxed/simple;
-	bh=9HzJPcyEnxnH+Ag1W1YfqcDxRxVZwQq5Cf1O/A3FzM0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xqgr1iBVwZKipMrB+7AFH+LHiZVy771wQQiWWZF1WTRea5w4XMwn1a9srcB4LDaZ5TEtDnnSNLLmnhKlWSPanfoK9vYpl9uXHFaYJiN3h/ZdHKVb8HxfmEXa/zxEQ1w3Qqt+4xW1s+LXL143+DVHdCUXKufmyl0WMoILES97PDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H0nhP0E2; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1724858850; c=relaxed/simple;
+	bh=BtVyzWMVALC/1EFZ2S7XKeV0QsA+D5/40hYHNVrXqJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=onjQtlCcrqo9FhWI6lrdAwLKLUMi3qBjqFZiUcLzrN3U7Tq6o08hnr1lRjlmYdS4+CI+9d7YTvptuD7NMtrT55qbyKovBs87nKOjUVQIFQ94MXQxEn5ZIfqDyaQ+DV1qjkHOHpdWcDvxi+GxqFkX1IrFFpgN6+Pz0Bzwl0AVOxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dw4l49IQ; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H0nhP0E2"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a869332c2c2so132662366b.0
-        for <linux-tegra@vger.kernel.org>; Wed, 28 Aug 2024 08:27:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dw4l49IQ"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3718ca50fd7so4357905f8f.1;
+        Wed, 28 Aug 2024 08:27:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724858837; x=1725463637; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MOBY3lvV3tV18oDrPAdQ4WWc7mqga2KPzBBZTBJ42n4=;
-        b=H0nhP0E2FpU0nf2paOWcaEJHRBZ/LKmi9cZ9iLzJj7wlN7wetRnM4ZCnCDSe+yHL/3
-         5nrIeLW4XVoas2kGw8GjUmf7OxcxgCYmCfXiCgU4ffEEbQ9bEf5b6Cz1d8Znb6In/c1g
-         WfV92Xm+odaDWJRU53KXMtJ6tojJFS/1eYj7Yl4o0FWC3D+cNuZfQ0w3eWU0L9YIbmrd
-         8y3ZDTs7fPDqqZRvZjsSVbHiLYsgdpyjk2vbHteeCpZOB8r1kiXbsPzLN2q0eOfvkpIr
-         6XNaFl4th4h9qfJwiEqjhB5X2ULh6ENDFdVUzsUYuRnRcmqPv2OiJJZ6ZY6Dko0w6J7q
-         HQVQ==
+        d=gmail.com; s=20230601; t=1724858848; x=1725463648; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7d72c/mj/2Z6FiVdpOBNTFT01VdBmf1RNvsZEcgNCnA=;
+        b=Dw4l49IQ8w0CAecrgE1av6DbIwWQOWlUSSijhDQpMtUTueGTMekruHM9SXR9QKHFxS
+         i2jXNjQrxSRdY8OfkcIeQ7HeYR4D/c9zPd441YQcYXCg3MdxAF4eQUhhZvEgjMxiJjfj
+         lOfyeA8XMI2K/bg1gf0CHcdDqtro8x9BjJ+9tfEUkQaywA/UoVr6tJ3OxcJkmRn4ZHEt
+         gc06pgApp1DWO5jk4/mdzgRzkffhg1Gy0XhGuXJB1zAdOkRAHVSjr26A5MGkn44kLXUO
+         lSO1TvwfKrZPX+ZsbPZD7f0XumbZYv4N/EacuVwQEG4+PGxLv69uHlwqeox9tWFumqTC
+         DDEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724858837; x=1725463637;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MOBY3lvV3tV18oDrPAdQ4WWc7mqga2KPzBBZTBJ42n4=;
-        b=ZOy3+xJ7vyZDBIeFg3XWEI1CRLRetl4U8z53URzSOPCcvgfUt0iaBMRy2EM1p66Cy2
-         E64lZWKOUNFbRlb/i8iPA+WQiFDlmQcFsWIN3X8RgXmHY6SaDv+GcAlCIQqOSntpvZdx
-         zOGK6i2Ky0HDa4gmKIvHKdpG3e/kwMYGhed+CFDu/S/YjmIzU5qFjBucB6O2kVtCWv1i
-         r7UOEivHL722SsYEpxVKGH7c2M2teh7vj0oyAXmnYr5YdRhXz2pHvICNszod5FrqofDd
-         7Bo9rLnmLgCksgIjU1aQOIv6/uZ08xdR0nHLi6IH2Z7E8E+emLxh3o/CcU8C3EJDS8yU
-         al/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXimLALdXRdMkZdVMmds1gTPQ6//9Sp7kzYEqjcInckg6WSKL65vU8VxbwwKxZHc0fTKlDyStXULtZjpg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd0FeZwqkvt4cXCTALGi0sG4oCrUwoY5uzJjV9OOhpkOKYxulr
-	vZXV72YeyEuYuGmFVTa4FDNkMBYA2i0BYo2t24xWgL4q3c2tbhKcwnlFrbIzZ8PumoodPPFCLcv
-	Ec9AALvR0pOkNwZoYmKvmA+L9Pb+Jm0waSASt5Q==
-X-Google-Smtp-Source: AGHT+IFixyOXCmBZEvpwN9wCdDNwQQHCRpTc9E75dou5XrmHQlyvUPK8JdSl5J69mGi3TqnnQJpuzic3MShgOP6KZGo=
-X-Received: by 2002:a17:907:7f21:b0:a86:9f1b:f5c3 with SMTP id
- a640c23a62f3a-a870ab077b3mr311389666b.28.1724858837278; Wed, 28 Aug 2024
- 08:27:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724858848; x=1725463648;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7d72c/mj/2Z6FiVdpOBNTFT01VdBmf1RNvsZEcgNCnA=;
+        b=N5fwZ+8Uqu2JqAE0dCNDXeSJrsEtER9qj4wIKB39E+IFzT0k42jKVOGMMGhXTDQe0g
+         s0eVMP1yPW1fuu3XLyumAPscuYzGpjYvlE1I8Vmqs9RxwVrvhLTC5NnW7LLU78pm6srA
+         ZUL0fm9n8MNdJIJAy1TXjfuyxtGyrKcWbmVAy+laVf0nVrAgAtQhx3UBmfr1YbWxHJzW
+         WNbHW+SjxxPXqZp30FuryEEd0Dyc+L/2XtHkv42+z+CQkHwIrwDfll6XyXnRgYx7ts2g
+         N3TruUI+Lw8r8MStxNqVe4QTdqkHOJBYDVpIUsCtPZBKA8WnCMT3HFgZFqeQC81JIOO/
+         4EPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUT8uURs/vjkiY6uzAJ26i7szF0yxveldazfUDnP8cFqqj5zWijAc0EdrS04qIWV7N2wMMEQUKkS46iSUg=@vger.kernel.org, AJvYcCUVO7zj2rWCuPqI4BJgStyctRsCDzANO1WICfMcIXTwAVbNM6FAm9tSieUtmOh6c62R6b6klCDESOjKR4c=@vger.kernel.org, AJvYcCWnbNfHv5TQX2WWUWd/J9WdOtGml/RslWkQbXJxzF271rRusEeeWAioaCOeNmSnNQj4In0ojZxTczJusPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFc+ypEg6PAs/UGVO/t8WZkNKZ3so2s5d5WpiWY7ExIV2YlYSn
+	euJLHKpZOoBW20f+ghUmen78WrWR2yDjqgTdvcmmmhEpM9UUo506
+X-Google-Smtp-Source: AGHT+IFy+N6MNpikAMD3IJYGiP5Mfu8DbpT3WuOqB9zdjdgMg/vD1umE1XlYBlEzFehtYhZBgfMtDQ==
+X-Received: by 2002:adf:a3dd:0:b0:371:7e73:de6e with SMTP id ffacd0b85a97d-3749685b56fmr1596718f8f.52.1724858847009;
+        Wed, 28 Aug 2024 08:27:27 -0700 (PDT)
+Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749b238cf7sm81389f8f.33.2024.08.28.08.27.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 08:27:26 -0700 (PDT)
+Date: Wed, 28 Aug 2024 17:27:24 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+	Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sandy Huang <hjc@rock-chips.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-media@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] drm/tegra: Remove call to iommu_domain_alloc()
+Message-ID: <qyvyd2ftebjlgmzyayfvxsqa64c4wgx7keix3a6eexdspbvawy@a5ffnm5h5tgp>
+References: <20240812071034.9443-1-baolu.lu@linux.intel.com>
+ <20240812071034.9443-3-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723144610.564273-1-ulf.hansson@linaro.org>
- <20240723144610.564273-2-ulf.hansson@linaro.org> <4455ntyh3v5kk6p2hlprcdc3twy5lgwcihl6fg7akxxlxixr6f@vrpesypllh3o>
-In-Reply-To: <4455ntyh3v5kk6p2hlprcdc3twy5lgwcihl6fg7akxxlxixr6f@vrpesypllh3o>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 28 Aug 2024 17:26:40 +0200
-Message-ID: <CAPDyKFosYtG=6KtDFeNq-XJ9DO0fbFK-bcpR7G8cVH2Zn2az3A@mail.gmail.com>
-Subject: Re: [PATCH 1/4] drm/tegra: gr3d: Convert into dev_pm_domain_attach|detach_list()
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fslg44mz7bzr7agv"
+Content-Disposition: inline
+In-Reply-To: <20240812071034.9443-3-baolu.lu@linux.intel.com>
 
-On Wed, 28 Aug 2024 at 17:06, Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Tue, Jul 23, 2024 at 04:46:07PM GMT, Ulf Hansson wrote:
-> > Rather than hooking up the PM domains through devm_pm_opp_attach_genpd()
-> > and manage the device-link, let's avoid the boilerplate-code by converting
-> > into dev_pm_domain_attach|detach_list.
-> >
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > ---
-> >  drivers/gpu/drm/tegra/gr3d.c | 46 ++++++++++--------------------------
-> >  1 file changed, 13 insertions(+), 33 deletions(-)
->
-> Applied to drm-misc-next, thanks.
 
-Please drop this from your tree. I already have a patch [1] that you
-have acked, which is a newer version of $subject patch.
+--fslg44mz7bzr7agv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry if this was unclear.
+On Mon, Aug 12, 2024 at 03:10:34PM GMT, Lu Baolu wrote:
+> Commit <17de3f5fdd35> ("iommu: Retire bus ops") removes iommu ops from
+> the bus structure. The iommu subsystem no longer relies on bus for
+> operations. So iommu_domain_alloc() interface is no longer relevant.
+>=20
+> Normally, iommu_paging_domain_alloc() could be a replacement for
+> iommu_domain_alloc() if the caller has the right device for IOMMU API
+> use. Unfortunately, this is not the case for this driver.
+>=20
+> Iterate the devices on the platform bus and find a suitable device
+> whose device DMA is translated by an IOMMU. Then use this device to
+> allocate an iommu domain. The iommu subsystem prevents domains
+> allocated by one iommu driver from being attached to devices managed
+> by any different iommu driver.
+>=20
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Link: https://lore.kernel.org/r/20240610085555.88197-20-baolu.lu@linux.in=
+tel.com
+> ---
+>  drivers/gpu/drm/tegra/drm.c | 34 +++++++++++++++++++++++++---------
+>  1 file changed, 25 insertions(+), 9 deletions(-)
 
-Kind regards
-Uffe
+Actually I think we can just do something like this:
 
-[1]
-https://lore.kernel.org/all/CAPDyKFqZ9XXi5_-essaGbdWBDLX8uR5nO9vDJCExBGV+10KqZA@mail.gmail.com/
+--- >8 ---
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index d9f0728c3afd..d35e411d536b 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1150,7 +1150,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
+ 	}
+=20
+ 	if (host1x_drm_wants_iommu(dev) && iommu_present(&platform_bus_type)) {
+-		tegra->domain =3D iommu_domain_alloc(&platform_bus_type);
++		tegra->domain =3D iommu_paging_domain_alloc(dev->dev.parent);
+ 		if (!tegra->domain) {
+ 			err =3D -ENOMEM;
+ 			goto free;
+--- >8 ---
+
+That refers to the physical device that the host1x_device virtual device
+was instantiated from and is a common parent to all physical devices
+that are part of the virtual device.
+
+Thierry
+
+--fslg44mz7bzr7agv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbPQdkACgkQ3SOs138+
+s6Faag/+PLNW+D2IJ1ANTAMAHn0fybn2aGa6fRFPkVgUQSXQP4OlfAdV1W2+DKPi
+CSLmOHisUapqMwyMZECKEkXHkM7+i7Snhz+D6gHCMx7YWFQiLGi0j9KZfT3kfX5V
+tOIVJXrEAcJZN9htxoPZ842Z5QrrzTNgVkvhmC2lhqA6sjy3BbyK8TgncUVpceMC
+wPCVwjnNyJZUxK/MZgyj5OywXC9emVXY5Y0WgjJ14D1KNPScAsSCLKbIvAS5Pku8
+8K0m4Dzv4+WtNRhr42OVrtji9VJwnrjVgJZXuGgJC7aQVDFbghM9rQ2NnaHAztOK
+EL+9DKRDLXo+MwQmvqSWTkY1OEd0Y2cJsagqS9363Q5Xau7Iwrxa2vAXgXUwkWyP
+/Z4cZYzatMr+CF+165NbtQYlJlRqBpW8kDslxGR1DT1NhNLbpE6y0FKaBp9YWXhA
+U8AkaTSeeuO96M7c9jr2sLyHIxIYzMPvsC5vvw44NQRty78DyLp9wE90r0Z954C+
+6DJMnKQIsoa+rCnof94BhK9ThweuwyWWMc/7755EWJoUo2g8VVyDei6m2GBMj5zT
+kkkzVeWz8F1cV3zDn8aa0hYje3tzVdvChHSMXHU44wRHSD6xaoI9KgxehV6TYlCI
+G3/NyFMo6sIP/I5hnEpQmI3pF5641WaJSYeocgjLIRESADr7+Dk=
+=Ka+K
+-----END PGP SIGNATURE-----
+
+--fslg44mz7bzr7agv--
