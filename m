@@ -1,222 +1,188 @@
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66711DDF5;
-	Tue, 27 Aug 2024 17:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4755E1B5AA;
+	Wed, 28 Aug 2024 01:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724781224; cv=none; b=J+4f3S96hhCjxIYUnge9y/DVnbSVKlisPUXqBqBw7t3HQ5OUIxRvzJKX2/20/6a1wakeHobWV/4Fp2Fe0H4grvaQU5CeFPZPPl3jWgbDHusQoYg2F+k1zbq4E8++0kms+tXXrZaZqsDTsiP/K/zdaqNC22o+TTZJk2dBYDu9H1E=
+	t=1724810319; cv=none; b=PxoX2s6/sPi+RFC3yD8Qk4M4HAsUE6ofpaRvaaCRcC8EZ9CXUsYLvzY5rfDfMaIYSHxpckmJy0o7mQMnMfpXTF7xAo+QL91PVaY5dM/grhKkjMOM0uUha5nLmCZOHvKQg9zeobFOgI7YPrSR2vsUtMpLOWoBFC19K6MgGMDtZSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724781224; c=relaxed/simple;
-	bh=Pg+Vim1QiXzWh8/BMjD6NlHKV5Iur9ofBdvIJuJxl3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hVWlksw3VAlEvKRCn0hVQcB2uMA9NYFAJNpdE3HNQYsaJsLA18tgmsFhsj3O2AfZzbqbnmGgSvwwJOOI+i677MXVDdy37/hjcnrz1kgcS6xprk8ljEhPomKLMSzripEmNGqamzAaa5qCbs+53wR/TTS38oUv8le4DXHr4HioVU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fBpAz1LH; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fBpAz1LH"
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2021c03c13aso43803245ad.1;
-        Tue, 27 Aug 2024 10:53:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724781222; x=1725386022; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Bj8+gj6V7QKP757UhUX/hVK4+17oTWH2dqfcY/VtkE=;
-        b=fBpAz1LHoB820UUmcrxKEmyq06NXnHUsO+ovuIst36RT3kOlwBwOJ2ySMCe403Q/ND
-         4uRs0fO9mREKoQexV/OMCviQ1fe36jIZQqbjb3q2E4t4ckuQ6qKSS9IB5pAvmnyCVTE8
-         7vJ+ZHywSN7TYdUX5bJdt2wqilZfp68oMkjiNRsRv3fcswrZKe2IwCy07COap0lMK8SU
-         bfO4nLoqpIXDT72mvhK3434Q5IVE1Gnm4GJCRaUeNwSDtSmbGMNFazrjGer8bY8olLQn
-         EwopfzQyCsy70YrwiUJWttNSxpYW+6vFb5dL2BWBcaJTOQEsadJNRxv64S9hkCvPZYIV
-         qpmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724781222; x=1725386022;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Bj8+gj6V7QKP757UhUX/hVK4+17oTWH2dqfcY/VtkE=;
-        b=kEcWnalCIN7PLpxDv/LA/oV93VwodQqXgCh02adrvqTaOKiJG47C7+yLZgZ2CfRP7Z
-         SHfivycB4kihcNdbgXJ1aPgBWE6Xcq/XGlYobnkLbGcqO53l0sBsSjeefl707gAx6fsp
-         mz305qmEPruu1kFkRyL0jNhOtth8/pX6Sv+DBzzas4ARVYWHXY3GZhW7Z/tla5yeJlYM
-         V8oTHqzhJ7M75aNkgOsA82V/prDItfc9GFTtpKIPBK/VfvIGso7TLYgIZkWAte6qDOYO
-         5jZIrZGy94t4rY9o0dqAXP0wwbwWLneC3y3Cia8h3OGRti9u+Z2SICyuiS5z3fpim/bJ
-         5JPg==
-X-Forwarded-Encrypted: i=1; AJvYcCUX4d8/8Ze0SI9YV/AcTf3W/SwdDCmtTj28frl2KkA3vYOeJbalg8KjaNgDKak5XiEBDAi/ldH6W+flvC0=@vger.kernel.org, AJvYcCVQThLWvIAWX+pcRwm1ItNFivBj+/cmrzA2RpSJUSukBoFPV8n9kquXJE6l38bHJN13iPy+IX7vKJgknzOa@vger.kernel.org, AJvYcCVplmv3hkFDog5HGBmwcR2+ce/nXqhidGRYkj622L5Sdlo2YkyUlZx/4wKoKxY76T+kx353YQ9SFWsvaw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHYJk9d68NEONt9kLz/GBa7lS5Bvu2tCHtTPYqZcNf2PadKL2s
-	8IRhEW/B08NToJlNVduo3ISU4UXaGr4dvMaI+oeOejenp3OXjuCN
-X-Google-Smtp-Source: AGHT+IECPfsn+6jxJiuztxOP2GHxu8eXCDY1P6kLy7/kvpDBEBTCKluS4djYvCsE00HFkMkcybHT2Q==
-X-Received: by 2002:a17:903:2452:b0:202:3617:d52a with SMTP id d9443c01a7336-204f6793a0emr315175ad.6.1724781221860;
-        Tue, 27 Aug 2024 10:53:41 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:95c4:e75d:161d:a90])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385580d38sm85877375ad.93.2024.08.27.10.53.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2024 10:53:41 -0700 (PDT)
-Date: Tue, 27 Aug 2024 10:53:38 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>,
-	Laxman Dewangan <ldewangan@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-input@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] input: tegra: Use of_property_read_variable_u32_array()
- and of_property_present()
-Message-ID: <Zs4SovPgLmlrVOJr@google.com>
-References: <20240731201407.1838385-6-robh@kernel.org>
- <zyzygwdfncus7nhnu6sgbc2wzjpih3dntgdogorg3it4vc7r6v@aufrf6kwqun3>
- <Zs3yfc1pJDkAwhzc@google.com>
+	s=arc-20240116; t=1724810319; c=relaxed/simple;
+	bh=+9iG2Bdhc9Wd8PpUBy/yYjGb7Hb4joMYU5NDCiSDL38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PDD69C2r7nY1EQvIxtzgfUaztbApygHhACqMygG6xN4Is00LloOp0zwMTkKRc5/6RNCwwRY2jxDM+gKSew5Vd3lYXCdo9k0C+nrFU4bxJXoCVsKQwBcMsWK5NQ3+YZ6B4NQuaZ2yNzXcLrp6meIKwijqQSd81Q9evbeshisXZnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WtnZq5xBbz1xty0;
+	Wed, 28 Aug 2024 09:56:35 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4E261140135;
+	Wed, 28 Aug 2024 09:58:33 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 28 Aug 2024 09:58:32 +0800
+Message-ID: <97ff8c02-1a97-7974-06fa-edb35437707d@huawei.com>
+Date: Wed, 28 Aug 2024 09:58:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zs3yfc1pJDkAwhzc@google.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next 2/8] soc: fsl: cpm1: Simplify with dev_err_probe()
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andrew@lunn.ch>,
+	<sebastian.hesselbarth@gmail.com>, <gregory.clement@bootlin.com>,
+	<herve.codina@bootlin.com>, <qiang.zhao@nxp.com>,
+	<christophe.leroy@csgroup.eu>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <nm@ti.com>, <ssantosh@kernel.org>,
+	<petlozup@nvidia.com>, <pshete@nvidia.com>, <christophe.jaillet@wanadoo.fr>,
+	<ulf.hansson@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-tegra@vger.kernel.org>, <jic23@kernel.org>
+References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
+ <20240827114607.4019972-3-ruanjinjie@huawei.com>
+ <87abe3f1-3cf2-4331-8dde-a422716dd94a@kernel.org>
+Content-Language: en-US
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <87abe3f1-3cf2-4331-8dde-a422716dd94a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Tue, Aug 27, 2024 at 08:36:29AM -0700, Dmitry Torokhov wrote:
-> On Tue, Aug 27, 2024 at 04:23:48PM +0200, Thierry Reding wrote:
-> > On Wed, Jul 31, 2024 at 02:14:01PM GMT, Rob Herring (Arm) wrote:
-> > > There's no need to get the length of an DT array property before
-> > > parsing the array. of_property_read_variable_u32_array() takes a
-> > > minimum and maximum length and returns the actual length (or error
-> > > code).
-> > > 
-> > > This is part of a larger effort to remove callers of of_get_property()
-> > > and similar functions. of_get_property() leaks the DT property data
-> > > pointer which is a problem for dynamically allocated nodes which may
-> > > be freed.
-> > > ---
-> > >  drivers/input/keyboard/tegra-kbc.c | 72 +++++++++++-------------------
-> > >  1 file changed, 27 insertions(+), 45 deletions(-)
-> > > 
-> > > diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-> > > index a1765ed8c825..53f39fc155ea 100644
-> > > --- a/drivers/input/keyboard/tegra-kbc.c
-> > > +++ b/drivers/input/keyboard/tegra-kbc.c
-> > > @@ -491,12 +491,10 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
-> > >  	struct device_node *np = kbc->dev->of_node;
-> > >  	u32 prop;
-> > >  	int i;
-> > > -	u32 num_rows = 0;
-> > > -	u32 num_cols = 0;
-> > > +	int num_rows;
-> > > +	int num_cols;
-> > >  	u32 cols_cfg[KBC_MAX_GPIO];
-> > >  	u32 rows_cfg[KBC_MAX_GPIO];
-> > > -	int proplen;
-> > > -	int ret;
-> > >  
-> > >  	if (!of_property_read_u32(np, "nvidia,debounce-delay-ms", &prop))
-> > >  		kbc->debounce_cnt = prop;
-> > > @@ -510,56 +508,23 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
-> > >  	    of_property_read_bool(np, "nvidia,wakeup-source")) /* legacy */
-> > >  		kbc->wakeup = true;
-> > >  
-> > > -	if (!of_get_property(np, "nvidia,kbc-row-pins", &proplen)) {
-> > > -		dev_err(kbc->dev, "property nvidia,kbc-row-pins not found\n");
-> > > -		return -ENOENT;
-> > > -	}
-> > > -	num_rows = proplen / sizeof(u32);
-> > > -
-> > > -	if (!of_get_property(np, "nvidia,kbc-col-pins", &proplen)) {
-> > > -		dev_err(kbc->dev, "property nvidia,kbc-col-pins not found\n");
-> > > -		return -ENOENT;
-> > > -	}
-> > > -	num_cols = proplen / sizeof(u32);
-> > > -
-> > > -	if (num_rows > kbc->hw_support->max_rows) {
-> > > -		dev_err(kbc->dev,
-> > > -			"Number of rows is more than supported by hardware\n");
-> > > -		return -EINVAL;
-> > > -	}
-> > > -
-> > > -	if (num_cols > kbc->hw_support->max_columns) {
-> > > -		dev_err(kbc->dev,
-> > > -			"Number of cols is more than supported by hardware\n");
-> > > -		return -EINVAL;
-> > > -	}
-> > > -
-> > > -	if (!of_get_property(np, "linux,keymap", &proplen)) {
-> > > +	if (!of_property_present(np, "linux,keymap")) {
-> > >  		dev_err(kbc->dev, "property linux,keymap not found\n");
-> > >  		return -ENOENT;
-> > >  	}
-> > >  
-> > > -	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
-> > > -		dev_err(kbc->dev,
-> > > -			"keypad rows/columns not properly specified\n");
-> > > -		return -EINVAL;
-> > > -	}
-> > > -
-> > >  	/* Set all pins as non-configured */
-> > >  	for (i = 0; i < kbc->num_rows_and_columns; i++)
-> > >  		kbc->pin_cfg[i].type = PIN_CFG_IGNORE;
-> > >  
-> > > -	ret = of_property_read_u32_array(np, "nvidia,kbc-row-pins",
-> > > -				rows_cfg, num_rows);
-> > > -	if (ret < 0) {
-> > > +	num_rows = of_property_read_variable_u32_array(np, "nvidia,kbc-row-pins",
-> > > +				rows_cfg, 1, KBC_MAX_GPIO);
-> > > +	if (num_rows < 0) {
-> > >  		dev_err(kbc->dev, "Rows configurations are not proper\n");
-> > > -		return -EINVAL;
-> > > -	}
-> > > -
-> > > -	ret = of_property_read_u32_array(np, "nvidia,kbc-col-pins",
-> > > -				cols_cfg, num_cols);
-> > > -	if (ret < 0) {
-> > > -		dev_err(kbc->dev, "Cols configurations are not proper\n");
-> > > +		return num_rows;
-> > > +	} else if (num_rows > kbc->hw_support->max_rows) {
-> > > +		dev_err(kbc->dev,
-> > > +			"Number of rows is more than supported by hardware\n");
-> > >  		return -EINVAL;
-> > >  	}
-> > >  
-> > > @@ -568,11 +533,28 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
-> > >  		kbc->pin_cfg[rows_cfg[i]].num = i;
-> > >  	}
-> > >  
-> > > +	num_cols = of_property_read_variable_u32_array(np, "nvidia,kbc-col-pins",
-> > > +				cols_cfg, 1, KBC_MAX_GPIO);
-> > > +	if (num_cols < 0) {
-> > > +		dev_err(kbc->dev, "Cols configurations are not proper\n");
-> > > +		return num_cols;
-> > > +	} else if (num_cols > kbc->hw_support->max_columns) {
-> > > +		dev_err(kbc->dev,
-> > > +			"Number of cols is more than supported by hardware\n");
-> > > +		return -EINVAL;
-> > > +	}
-> > > +
-> > >  	for (i = 0; i < num_cols; i++) {
-> > >  		kbc->pin_cfg[cols_cfg[i]].type = PIN_CFG_COL;
-> > >  		kbc->pin_cfg[cols_cfg[i]].num = i;
-> > >  	}
-> > >  
-> > > +	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
-> > > +		dev_err(kbc->dev,
-> > > +			"keypad rows/columns not properly specified\n");
-> > > +		return -EINVAL;
-> > > +	}
-> > 
-> > Previously we wouldn't try to initialize the columns when the
-> > rows/columns were invalid, so this block could move before the last for
-> > loop above.
-> > 
-> > But it doesn't really matter given that these are exceptions and really
-> > shouldn't happen, so:
-> > 
-> > Acked-by: Thierry Reding <treding@nvidia.com>
+
+
+On 2024/8/27 21:50, Krzysztof Kozlowski wrote:
+> On 27/08/2024 13:46, Jinjie Ruan wrote:
+>> Use the dev_err_probe() helper to simplify error handling during probe.
+>> This also handle scenario, when EDEFER is returned and useless error
+>> is printed.
 > 
-> I don't quite like of_property_read_variable_u32_array() because it is
-> OF-specific. device_property_count_u32() will return the number of
-> elements in an array. But I guess this driver will only be used on an OF
-> system... 
+> ? Sorry, this cannot happen. Please point to below code which can defer.
 > 
-> Applied, thank you.
 
-Oh, wait, can I get your SOB please?
+Thank you!
 
--- 
-Dmitry
+This is not referring to a specific one, but rather the benefits it
+offers，simplify code is the main purpose, if necessary, it will be
+removed in next version.
+
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> ---
+>>  drivers/soc/fsl/qe/tsa.c | 62 +++++++++++++++-------------------------
+>>  1 file changed, 23 insertions(+), 39 deletions(-)
+>>
+>> diff --git a/drivers/soc/fsl/qe/tsa.c b/drivers/soc/fsl/qe/tsa.c
+>> index 7fa399b7a47c..fc37d23b746d 100644
+>> --- a/drivers/soc/fsl/qe/tsa.c
+>> +++ b/drivers/soc/fsl/qe/tsa.c
+>> @@ -453,10 +453,8 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
+>>  
+>>  	for_each_available_child_of_node_scoped(np, tdm_np) {
+>>  		ret = of_property_read_u32(tdm_np, "reg", &tdm_id);
+>> -		if (ret) {
+>> -			dev_err(tsa->dev, "%pOF: failed to read reg\n", tdm_np);
+>> -			return ret;
+>> -		}
+>> +		if (ret)
+>> +			return dev_err_probe(tsa->dev, ret, "%pOF: failed to read reg\n", tdm_np);
+>>  		switch (tdm_id) {
+>>  		case 0:
+>>  			tsa->tdms |= BIT(TSA_TDMA);
+>> @@ -465,18 +463,15 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
+>>  			tsa->tdms |= BIT(TSA_TDMB);
+>>  			break;
+>>  		default:
+>> -			dev_err(tsa->dev, "%pOF: Invalid tdm_id (%u)\n", tdm_np,
+>> -				tdm_id);
+>> -			return -EINVAL;
+>> +			return dev_err_probe(tsa->dev, -EINVAL, "%pOF: Invalid tdm_id (%u)\n",
+>> +					     tdm_np, tdm_id);
+>>  		}
+>>  	}
+>>  
+>>  	for_each_available_child_of_node_scoped(np, tdm_np) {
+>>  		ret = of_property_read_u32(tdm_np, "reg", &tdm_id);
+>> -		if (ret) {
+>> -			dev_err(tsa->dev, "%pOF: failed to read reg\n", tdm_np);
+>> -			return ret;
+>> -		}
+>> +		if (ret)
+>> +			return dev_err_probe(tsa->dev, ret, "%pOF: failed to read reg\n", tdm_np);
+>>  
+>>  		tdm = &tsa->tdm[tdm_id];
+>>  		tdm->simode_tdm = TSA_SIMODE_TDM_SDM_NORM;
+>> @@ -484,35 +479,26 @@ static int tsa_of_parse_tdms(struct tsa *tsa, struct device_node *np)
+>>  		val = 0;
+>>  		ret = of_property_read_u32(tdm_np, "fsl,rx-frame-sync-delay-bits",
+>>  					   &val);
+>> -		if (ret && ret != -EINVAL) {
+>> -			dev_err(tsa->dev,
+>> -				"%pOF: failed to read fsl,rx-frame-sync-delay-bits\n",
+>> -				tdm_np);
+>> -			return ret;
+>> -		}
+>> -		if (val > 3) {
+>> -			dev_err(tsa->dev,
+>> -				"%pOF: Invalid fsl,rx-frame-sync-delay-bits (%u)\n",
+>> -				tdm_np, val);
+>> -			return -EINVAL;
+>> -		}
+>> +		if (ret && ret != -EINVAL)
+>> +			return dev_err_probe(tsa->dev, ret,
+>> +					     "%pOF: failed to read fsl,rx-frame-sync-delay-bits\n",
+>> +					     tdm_np);
+>> +		if (val > 3)
+>> +			return dev_err_probe(tsa->dev, -EINVAL,
+>> +					     "%pOF: Invalid fsl,rx-frame-sync-delay-bits (%u)\n",
+>> +					     tdm_np, val);
+>>  		tdm->simode_tdm |= TSA_SIMODE_TDM_RFSD(val);
+>>  
+>>  		val = 0;
+>>  		ret = of_property_read_u32(tdm_np, "fsl,tx-frame-sync-delay-bits",
+>>  					   &val);
+>> -		if (ret && ret != -EINVAL) {
+>> -			dev_err(tsa->dev,
+>> -				"%pOF: failed to read fsl,tx-frame-sync-delay-bits\n",
+>> -				tdm_np);
+>> -			return ret;
+>> -		}
+>> -		if (val > 3) {
+>> -			dev_err(tsa->dev,
+>> -				"%pOF: Invalid fsl,tx-frame-sync-delay-bits (%u)\n",
+>> -				tdm_np, val);
+>> -			return -EINVAL;
+>> -		}
+>> +		if (ret && ret != -EINVAL)
+>> +			return dev_err_probe(tsa->dev, ret,
+>> +				"%pOF: failed to read fsl,tx-frame-sync-delay-bits\n", tdm_np);
+>> +		if (val > 3)
+>> +			return dev_err_probe(tsa->dev, -EINVAL,
+>> +					     "%pOF: Invalid fsl,tx-frame-sync-delay-bits (%u)\n",
+>> +					     tdm_np, val);
+>>  		tdm->simode_tdm |= TSA_SIMODE_TDM_TFSD(val);
+>>  
+>>  		if (of_property_read_bool(tdm_np, "fsl,common-rxtx-pins"))
+>> @@ -645,10 +631,8 @@ static int tsa_probe(struct platform_device *pdev)
+>>  		return PTR_ERR(tsa->si_regs);
+>>  
+>>  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "si_ram");
+>> -	if (!res) {
+>> -		dev_err(tsa->dev, "si_ram resource missing\n");
+>> -		return -EINVAL;
+>> -	}
+>> +	if (!res)
+>> +		return dev_err_probe(tsa->dev, -EINVAL, "si_ram resource missing\n");
+>>  	tsa->si_ram_sz = resource_size(res);
+>>  	tsa->si_ram = devm_ioremap_resource(&pdev->dev, res);
+>>  	if (IS_ERR(tsa->si_ram))
+> 
+> Best regards,
+> Krzysztof
+> 
