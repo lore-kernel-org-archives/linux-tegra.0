@@ -1,84 +1,123 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6690175D47;
-	Wed, 28 Aug 2024 13:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EE3167D98;
+	Wed, 28 Aug 2024 13:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724850377; cv=none; b=SXfFtcrpL4UH2N0QuePxlMUsmlMJa2SA1ENGXaBS72EyQ/j5gnPeggdxRY5gHDEQXipGY8tFw6NP5RUAaF8eb5baU+y5u19djaDcOm6TH5mVM1CMqGgsJYW/Ao1CoRKTN8GZVsnpuYJyRxLYFcN0ppnhj5pVbqviny8dKUYfJZA=
+	t=1724850491; cv=none; b=pjTlCur+rHq5DTaLosRTHI+lospovEVA5Mek4jhq7fHblO6iScrqWxfMrH25SpQhxzxZw3PfRP25urlIxesQnUqm8usauClzuGI6drP3hZfMEaySrPQxVw2P7c1Tgl6cv/5/9e7OAt+OuUAHq5RWBE82tN3aJ+NK0EvL9zlZ0vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724850377; c=relaxed/simple;
-	bh=EAdjClXapxDjpgnzaErsxac7Ms6f3DmQPAtiSikh0mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pz4J9v95tB6zZS9QVko4K3wDnK2o8BAcavSs0JADiCfnoatKWBAsQvqvOIPKNUz/wcTqvQK7v1EM60WrKztudJwPBlORvEV4pDmDU4h6T4Z/hAvZWydaD4mFX4Qe7iMKZp8/9cEdzSlbJ6ZNXBERemSY1EouVPU/ibwaZjLfQsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqhDxg7O; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724850491; c=relaxed/simple;
+	bh=yaNMXXdjBE6xh1aUs25Qs6gO9zLIC6OHaKFtHsr955o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gevC1FDvxiACCwBEdudWdrdXZmrndb/VhbZ1xYNi6pydr0Im76+/6q0jWHsXLMb8jQHtrU+794smxhXJ1M0EPy/FWpT6EndshrcqTrUufZhnfV5Ko7pqqBTwXMtnOm/2VkhCo5k2fh4zwizikUHn4TfiESUFjTjQsxADDJlAErk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HAiFsDAs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqhDxg7O"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B061C515AF;
-	Wed, 28 Aug 2024 13:06:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAiFsDAs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61077C98ED2;
+	Wed, 28 Aug 2024 13:08:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724850377;
-	bh=EAdjClXapxDjpgnzaErsxac7Ms6f3DmQPAtiSikh0mc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rqhDxg7OLfyXhZJg0/6GI7L1rn3nyBCEOpEGcoT2jrkx0uP1NuGUz2vUSz7/2ibPR
-	 Ptl++7k3/8sp8CaT4JREMDaXXKGht7roD/tgfXKeETkGjblPM2dcrOOVdRqJXVLgki
-	 RaLDMoyhCFMe6v36FH+576lIHTDV9XWY52FjTFNgKfz28UZwRR4OCM3CzmNZWXqWPc
-	 MKFWpnoLOwxrkY6r5F/mn58yKtBkpxQKI96rssqDvKMxobXI3jssuYuberTXok3vlr
-	 6JF2JjO8zp+qkmx+h6VcdIU9yri0fg/P39bBAONkKLFfZ0AMSRHtC3r7dHnCyXCgXj
-	 mFY/AjrUg421A==
-Date: Wed, 28 Aug 2024 18:36:13 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Amit Vadhavana <av2082000@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ricardo@marliere.net,
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
-	olivierdautricourt@gmail.com, sr@denx.de,
-	ludovic.desroches@microchip.com, florian.fainelli@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com, rjui@broadcom.com,
-	sbranden@broadcom.com, wangzhou1@hisilicon.com, haijie1@huawei.com,
-	fenghua.yu@intel.com, dave.jiang@intel.com, zhoubinbin@loongson.cn,
-	sean.wang@mediatek.com, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, afaerber@suse.de,
-	manivannan.sadhasivam@linaro.org, Basavaraj.Natikar@amd.com,
-	linus.walleij@linaro.org, ldewangan@nvidia.com,
-	jonathanh@nvidia.com, thierry.reding@gmail.com,
-	laurent.pinchart@ideasonboard.com, michal.simek@amd.com,
-	Frank.Li@nxp.com, n.shubin@yadro.com, yajun.deng@linux.dev,
-	quic_jjohnson@quicinc.com, lizetao1@huawei.com, pliem@maxlinear.com,
-	konrad.dybcio@linaro.org, kees@kernel.org, gustavoars@kernel.org,
-	bryan.odonoghue@linaro.org, linux@treblig.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-actions@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH V2] dmaengine: Fix spelling mistakes
-Message-ID: <Zs8gxcOa8/ja5wDW@vaman>
-References: <20240817080408.8010-1-av2082000@gmail.com>
- <b155a6e9-9fe1-4990-8ba7-e1ff24cca041@stanley.mountain>
- <CAPMW_rLPN1uLNR=j+A7U03AHX5m_LSpd1EnQoCpXixX+0e4ApQ@mail.gmail.com>
- <070cc3e2-d0db-4d50-9a64-6a16d88b30df@stanley.mountain>
- <CAPMW_rJi46_2Ho6KNS9NK0kbfc3ujrx-EJ3586wf0u7vq2kUog@mail.gmail.com>
+	s=k20201202; t=1724850490;
+	bh=yaNMXXdjBE6xh1aUs25Qs6gO9zLIC6OHaKFtHsr955o=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=HAiFsDAsdF6t7Xr1B5cQxHIoAefJ28SjkFhQBQF4eSkwJ+O3/qPXsAzl8y6+7bSl+
+	 5F1i/Uagd/+9ocbcLtsfK9+LJieLzSUeAA5W6zuBoKfKKJ3jrffhVEFu6lORyJ/Fso
+	 iMxBYrLXxZjj2JxqgrsZJIWCrW54u3r6krNcNxajHPbJe8YqfxfS+5NQ0gaBPSc3ZC
+	 J0j+eTXai3PJG5r9AHMuY5K0SuFjwp+OLQ27EoHVYUhxtBRmSrKvSsmAXmfgoIFs4C
+	 tXdrHXFznFJuLS0Fudu/zUXiSBgWi888cb0KE5ukbrNnlPdsFsXkbPZOAMj/oFLUD7
+	 DX4KzuN7rxfLQ==
+Message-ID: <32e8ef50-ae45-4001-92b6-1e9e0608b402@kernel.org>
+Date: Wed, 28 Aug 2024 15:08:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPMW_rJi46_2Ho6KNS9NK0kbfc3ujrx-EJ3586wf0u7vq2kUog@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 2/8] soc: fsl: cpm1: Simplify with dev_err_probe()
+To: Jinjie Ruan <ruanjinjie@huawei.com>, andrew@lunn.ch,
+ sebastian.hesselbarth@gmail.com, gregory.clement@bootlin.com,
+ herve.codina@bootlin.com, qiang.zhao@nxp.com, christophe.leroy@csgroup.eu,
+ thierry.reding@gmail.com, jonathanh@nvidia.com, nm@ti.com,
+ ssantosh@kernel.org, petlozup@nvidia.com, pshete@nvidia.com,
+ christophe.jaillet@wanadoo.fr, ulf.hansson@linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org, jic23@kernel.org
+References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
+ <20240827114607.4019972-3-ruanjinjie@huawei.com>
+ <87abe3f1-3cf2-4331-8dde-a422716dd94a@kernel.org>
+ <97ff8c02-1a97-7974-06fa-edb35437707d@huawei.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <97ff8c02-1a97-7974-06fa-edb35437707d@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 27-08-24, 21:47, Amit Vadhavana wrote:
-
-> Hi All,
+On 28/08/2024 03:58, Jinjie Ruan wrote:
 > 
-> I wanted to follow up on the DMA patch that I submitted on 17 Aug.
-> Kees Cook has already reviewed it. Have you all had a chance to review
-> it as well?
-> Please let me know if any additional changes or updates are needed.
+> 
+> On 2024/8/27 21:50, Krzysztof Kozlowski wrote:
+>> On 27/08/2024 13:46, Jinjie Ruan wrote:
+>>> Use the dev_err_probe() helper to simplify error handling during probe.
+>>> This also handle scenario, when EDEFER is returned and useless error
+>>> is printed.
+>>
+>> ? Sorry, this cannot happen. Please point to below code which can defer.
+>>
+> 
+> Thank you!
+> 
+> This is not referring to a specific one, but rather the benefits it
+> offers，simplify code is the main purpose, if necessary, it will be
+> removed in next version.
 
-Oddly enough, I dont see that in my list, can you please repost
+It just feels like you are doing these in machine way without actually
+knowing concepts behind dev_err_probe().
 
--- 
-~Vinod
+Best regards,
+Krzysztof
+
