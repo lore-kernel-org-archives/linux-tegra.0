@@ -1,162 +1,89 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815EB1AED22
-	for <linux-tegra@vger.kernel.org>; Wed, 28 Aug 2024 20:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37651798C;
+	Thu, 29 Aug 2024 02:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724877867; cv=none; b=QeGOi6BXsvuwLZeVMe0aCiTddQxQVT9FuF/0q/DNN1FZctAF0h5q8MO4oGyhLtEFrEws9qkBS1riB/o23cM22yrtAkfXnpDcgltZ4ZpdfwXKi0eAD07uEpfLrM9sZVQtuQ8XyyJuG8bRAcCW8h7x0sKKu1muq0w1vfAfyGAnqRg=
+	t=1724898360; cv=none; b=s6CoYcEAvOIEnjIRDThp1iAH2mlilf+88jqPfAEATiiU4TQ6VhjlijBJ+P/ZON327qb+AIEgflHgyQNqp7801BULhO3xhN/7rKGclPYXqiRl+OuMmsDIc/jWDXi9oVwlaRCARnl249Syh+hELa6x59EHFB3S23OjDTjEDt9cyUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724877867; c=relaxed/simple;
-	bh=2eoefR7cGl72xKUr4g6vFurnaajnZ4ZAp6xvGyEtOdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LUohKKNHP+E4wpCZgiIWLkrCq7/AL2gHH6CrhERcLwn2fDaIWHrGCVY0QwY3kCFblGawB7DnRKYpLscwCC+8GasN6MecygYnFNGZkuBPWwJdhNkr/qeLaI5IkiocuwuMl8CUNGa1XuOAIPQcL2LIFrbbcD38Qt67qQ+vF8I0QOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eXKg5E3e; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eXKg5E3e"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5334adf7249so8492246e87.3
-        for <linux-tegra@vger.kernel.org>; Wed, 28 Aug 2024 13:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724877864; x=1725482664; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5ouvwUzqpqqEKUlkh1CpUkYbdJmGHqky9KCVychiJS0=;
-        b=eXKg5E3eyFlOKjKnEk/tDSfley5vvgL26rrv83yJze+Kz5dXKQrLK8l95nJ8sQe05l
-         i4Ae76a0yXsSxzI3kONEc1q/MYRzWOQQUZcnuFqUMe906vuy+oHkaf4hxH1yAMsVEcm5
-         zB6KJp0dVG4yQWS9I47Qc6hNR58cjuKvqk8wUCgGUwCAI2yZrURlihZgcMDlRIpZauXV
-         99oiVWn/vFAmiRlSogxBEIOxpxstuto/PrhicNQYrmISaR9GK8BGujPACaG4kxwm3G1I
-         QB7VlicpHotvHdfWh/Mx8JlYl8jznTtgyawaVxDhw3K3yPMoB4cigTbskktPV6GRlKs4
-         T2pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724877864; x=1725482664;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ouvwUzqpqqEKUlkh1CpUkYbdJmGHqky9KCVychiJS0=;
-        b=i6Gro82n3TFD1VcgjHo8ouf3YiRQMPrxongr362Mey7RT25olpsudc0uIMIF6Jt9Qg
-         ecQ6ARN/tfNxvxiRQEvEqPS5YGnoFPZSIzziIGEcyoON5IP/cs83ldSLL5YnyqD7/kki
-         bwVrGXtWq90ZfMh3BW6EJ84qMHZ/84OwI6HRG3rmVuMYrEs1w7gKtxJvKb9ugbG8kkUH
-         ixa3EsGY1+0wlMQVrhE+m0DomJirwyzh3feLT+wbJOMpuza3JqnJEngotFg8ywiqxG3f
-         crCxNyhp2SxMCakw6iGF0zYuKkopnX3MmTgRy3EKsTUqy0yQgv5MtMQhuDkWCoTE4nWL
-         349w==
-X-Forwarded-Encrypted: i=1; AJvYcCUJfz0SWFghiwqKvnXUyVF0vrir20tZ4ulDHWl8Nao5R93exzZN2CHHQyR/aOWtHCRSiiod29aOOZTVnw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQghY/2Gpwh7WIhEkfmjWodXqV/NOZRvQ5av3Vcsnj4OKIsbHi
-	mcml6B4lcscL9EoXHmaav09iVAimoOS6HOmH4Oqq71S1h3wO9oc1KY64Gp1yHMw=
-X-Google-Smtp-Source: AGHT+IH4zRQRIv6Lh7T2/GNqa8t40UFcIfzpQONZac2DDCKlGfTbLoKbr9iAWINSbxj2G3srq82BTw==
-X-Received: by 2002:a05:6512:3c8d:b0:530:c212:4a5a with SMTP id 2adb3069b0e04-5353e549b8cmr356750e87.22.1724877862966;
-        Wed, 28 Aug 2024 13:44:22 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea5d2dbsm2294656e87.195.2024.08.28.13.44.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 13:44:22 -0700 (PDT)
-Date: Wed, 28 Aug 2024 23:44:20 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	kernel test robot <lkp@intel.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
- comparison
-Message-ID: <kh4diauo5u63mldchmd66pbnqxwnbqfoqcpxsw6wwocbadygvz@3diccu2xt4kj>
-References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
- <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
- <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
+	s=arc-20240116; t=1724898360; c=relaxed/simple;
+	bh=T5v75i6KEzDwiZzWw/B06jFoanFigpkuIZeiKhfF/3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Pz1vI8fEET/wbvUbistpWj2hPKHKJUf2x9GuBUMIHtU2qFxZ0pKPh1QGmCXQbLrC9HDXHKtRpztrye/6M3xllymFyYiGuBdF3RP+ICfnha1LsRbcKd1GCDAH0mZlCx/zvwjn+A1bk4nBbya3iyTd6tUCDKnLn23gWGXxIK+N10w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WvQ4c4D8YzQr2n;
+	Thu, 29 Aug 2024 10:21:04 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1966D1400FF;
+	Thu, 29 Aug 2024 10:25:55 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 29 Aug 2024 10:25:54 +0800
+Message-ID: <195dd9e0-ef42-bcf8-b71a-d9d548af014a@huawei.com>
+Date: Thu, 29 Aug 2024 10:25:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH -next 2/8] soc: fsl: cpm1: Simplify with dev_err_probe()
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andrew@lunn.ch>,
+	<sebastian.hesselbarth@gmail.com>, <gregory.clement@bootlin.com>,
+	<herve.codina@bootlin.com>, <qiang.zhao@nxp.com>,
+	<christophe.leroy@csgroup.eu>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <nm@ti.com>, <ssantosh@kernel.org>,
+	<petlozup@nvidia.com>, <pshete@nvidia.com>, <christophe.jaillet@wanadoo.fr>,
+	<ulf.hansson@linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-tegra@vger.kernel.org>, <jic23@kernel.org>
+References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
+ <20240827114607.4019972-3-ruanjinjie@huawei.com>
+ <87abe3f1-3cf2-4331-8dde-a422716dd94a@kernel.org>
+ <97ff8c02-1a97-7974-06fa-edb35437707d@huawei.com>
+ <32e8ef50-ae45-4001-92b6-1e9e0608b402@kernel.org>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <32e8ef50-ae45-4001-92b6-1e9e0608b402@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Wed, Aug 28, 2024 at 02:47:05PM GMT, Jon Hunter wrote:
-> Hi Satya, Vladimir,
-> 
-> On 13/08/2024 21:01, Vladimir Zapolskiy wrote:
-> > On 8/13/24 12:40, Satya Priya Kakitapalli wrote:
-> > > In zonda_pll_adjust_l_val() replace the divide operator with comparison
-> > > operator since comparisons are faster than divisions.
-> > > 
-> > > Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for
-> > > Zonda PLL")
-> > 
-> > Apparently the change is not a fix, therefore I believe the Fixes tag
-> > shall be removed.
-> 
-> 
-> From the commit message it is not clear that this is a fix, but I
-> believe that it is. With the current -next I am seeing the following
-> build error (with GCC 7.3.1) on ARM ...
-> 
-> drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
-> clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
 
-This should be a part of the commit message
 
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+On 2024/8/28 21:08, Krzysztof Kozlowski wrote:
+> On 28/08/2024 03:58, Jinjie Ruan wrote:
+>>
+>>
+>> On 2024/8/27 21:50, Krzysztof Kozlowski wrote:
+>>> On 27/08/2024 13:46, Jinjie Ruan wrote:
+>>>> Use the dev_err_probe() helper to simplify error handling during probe.
+>>>> This also handle scenario, when EDEFER is returned and useless error
+>>>> is printed.
+>>>
+>>> ? Sorry, this cannot happen. Please point to below code which can defer.
+>>>
+>>
+>> Thank you!
+>>
+>> This is not referring to a specific one, but rather the benefits it
+>> offersï¼Œsimplify code is the main purpose, if necessary, it will be
+>> removed in next version.
+> 
+> It just feels like you are doing these in machine way without actually
+> knowing concepts behind dev_err_probe().
 
-this Closes tag must come after lkp's Reported-by. Please also add
-Closes with the link to Dan's report.
+Just try my best to make the code as clean as possible and do it by the way.
 
 > 
-> There is also the above smatch warning that was reported.
-
-And the Smatch warning too should be a part of the commit message.
-
-Last, but not least, as it is a fix, there should be a Fixes: tag and
-optionally a cc:stable.
-
+> Best regards,
+> Krzysztof
 > 
-> > > Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> > > ---
-> > >   drivers/clk/qcom/clk-alpha-pll.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/qcom/clk-alpha-pll.c
-> > > b/drivers/clk/qcom/clk-alpha-pll.c
-> > > index 2f620ccb41cb..fd8a82bb3690 100644
-> > > --- a/drivers/clk/qcom/clk-alpha-pll.c
-> > > +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> > > @@ -2126,7 +2126,7 @@ static void zonda_pll_adjust_l_val(unsigned
-> > > long rate, unsigned long prate, u32
-> > >       remainder = do_div(quotient, prate);
-> > >       *l = quotient;
-> > 
-> > Since it's not a fix, but a simplification, you may wish to remove
-> > an unnecessary 'quotient' local variable:
-> > 
-> > remainder = do_div(rate, prate);
-> > 
-> > > -    if ((remainder * 2) / prate)
-> > > +    if ((remainder * 2) >= prate)
-> > >           *l = *l + 1;
-> > 
-> > *l = rate + (u32)(remainder * 2 >= prate);
-> 
-> 
-> The above change does fix this build error for me.
-> 
-> Satya, did you intend this to be a fix? Can we get this into -next?
-> 
-> Thanks
-> Jon
-> 
-> -- 
-> nvpublic
-
--- 
-With best wishes
-Dmitry
