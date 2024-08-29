@@ -1,69 +1,85 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F68B1B372F
-	for <linux-tegra@vger.kernel.org>; Thu, 29 Aug 2024 15:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF451A01CA;
+	Thu, 29 Aug 2024 15:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724946154; cv=none; b=J/7MlVvkY3zXIuMgOO8Dz3OWUuaLMeBOISFQNXfF6JwXvCMCv/jXU6FVgVnlWSGdCT6E85m7hA9nBk1mQEznEsx13bz79xMgExgqDE2uhAQqnyAGddvuDGzMwOk2F7VVjSBH49w0eh0HQizPO9rXheZY5k/m0NYOHOLJA1jdwZo=
+	t=1724946244; cv=none; b=FR3YO2jQ/nkH0Po7xjSZRvGhNuIqlAdPeVUf/rhUO/kWEfkavUFn/oyyXXZc8F26BLubBBSDyBUMG8zFHRl7XLLo5bfdrJ6EakZaIQgFVrgny9Y7HINXbDYfVssQhIQ9dBRMRvdusliCyvYKNgDuB/l95nc7M0VWppcLebcxH0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724946154; c=relaxed/simple;
-	bh=D7i8P0QFx7KvqTpDlyZVQ43AS524G5RhgKo7+HvygZE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ag7vfyZDno8KAehUOum5elNqv85KAaYZQ+2rcLxXuuXtuoBFfwPAx/ctkNEUGZQ86Px7mWXz9jP5/F3Wd5/JMWomTEsxiC90h5K0F0IpqosZkKuv0lTJ+EnYh2iMsltkRawRq7WXWfo6+6WmMzdAt1jaLA0WQUzzX/4QoFde5us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSmImdYX; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1724946244; c=relaxed/simple;
+	bh=zJMcWE6m2aVp27jVSzAWAxoAmkOiXF9cPAf/sW+wsII=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Npct9cmz6aknepMHKW0Wx1IcFJZxIl9/5FtzZCmrYlFAgu0Mp5ryPnF30IStExHCxg8GYpByMYLaYYlbZF6xsexwt3VUYCieZRinw+MqBJd4tDUxh8H73iY0YYlaoFSRlRvHea1D9XuxPZFyg9jjlyCmibHRX2d7LHAs7A7IK+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CaQ+0t27; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSmImdYX"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37182eee02dso559282f8f.1
-        for <linux-tegra@vger.kernel.org>; Thu, 29 Aug 2024 08:42:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CaQ+0t27"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428101fa30aso7613455e9.3;
+        Thu, 29 Aug 2024 08:44:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724946151; x=1725550951; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724946242; x=1725551042; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zl1x2kxAX2Bl+j/LbLW+hkJuGJTNonG7at6TwFLy9Qo=;
-        b=PSmImdYXxZ7acZ8Mb3KQM5EgKowk/dc/b7nviRzExiCxCqJhJe06aGqDgHdT4IISb8
-         4Osuq6/wjeGw1rxNSe7JiwAXeGNPdCERAaBZbghfB219jrD/9R83GfXRYiIcInMifOo5
-         4AtCX0mCurramdXdvs4HDod6taZTJpFB1QN+cOSsIFXxLMYzDfyFcnErW/AXUd0o8HGS
-         J5c2Bypsdyle22895ZURdjO2XLtWwG2mCVHkVOy1gUiGbE6fqMzjZCifKyPJ8dcYmf9E
-         EaiI1SeSgBjdq8/w4KaKWv7LBjb+kNNGFw1AnKdE53VeB1Wtd8w7AoqFbrIPjAAo1Daa
-         O9MQ==
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cICNfAYxuHlGoBLMmySe2jZdtkeuZEM13jDTfWpAGak=;
+        b=CaQ+0t27FuT1tZ0SrihrmVNpF0SJYN8zE0pQk3KT9RoRLJIBba7CpxFeIU4wb5RQuL
+         I7Lw5iRcRyriof1hwNtzltuSneW/FREfHTtpfCsGhNDlItHFba0dwP/+9KumdE++/99c
+         xl17IQn4eCosc31SJ+4oKDFN6ReVxiwCFGAGoVZwlE78QXYsziuZSJdbo27dAcbqRJle
+         F9+i1tepsewh4/0GHeuCj345zmb1tmifhCA6myGjguf8W/697WBEEGWywcTbGvqok0df
+         yJKAQLMC2iso7zzvs78QlhfgJmStQrZsC3mOk0TDRZzpzkKad+Sfmc2edRCrjPFHKe6x
+         YhCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724946151; x=1725550951;
+        d=1e100.net; s=20230601; t=1724946242; x=1725551042;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zl1x2kxAX2Bl+j/LbLW+hkJuGJTNonG7at6TwFLy9Qo=;
-        b=tfiLuEzea8jcCMFgEmLN6NeSQUubMJLlomrNSeMWtI0qF9zLV5FpRrze4CrEBmlz1o
-         djk1BVSsOfngaO8/4QwyYeOqFKwnJU+CidQXaU0UXiXNUpmf2pQ2fqDSvFYNSbWyBnWn
-         sd27DWtZk9d8qV2oECnWgHbRpJzhJglJO9nkaD5i+WiZPSDbO5tS9B8Syn8QK+ExmqO7
-         YbdcR+VcO4TvBvrGXEDvm3h2UHZuMuqRtDsx3X0fE9xnk6LRQ/E7EzWu1k2Bq/EABR8f
-         FslAK9aIWYWn24LM0j3H4EiDlkgVqIjByQF4w2A89MTD2yVZkSDPrdilMpEtDL53V9BQ
-         /jPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWAYHahC69aJCy0MhyNhrwukTyQYBuge4sAQc5m/bupiBrCtIPTuVLm1/5ZNWFwKtPGisE6+MOlmhVdA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTIMlVum7NHqSJucZntwGswanT6OZevJElNMQI1NEkpc0P7sit
-	euWrZ0fUT1osALKv9SdBZC+R44jd2Il9xbAEtz8R6lbfHgiRfFbG
-X-Google-Smtp-Source: AGHT+IEpej+/3gPV7NoE+Vep8VkJ3YSQdfaYS9B6LQQN1bi19MxGkTf2UZRQmE23l7QCIkvTA1SlOw==
-X-Received: by 2002:a5d:526c:0:b0:36b:bb7b:9244 with SMTP id ffacd0b85a97d-3749c1a9b9cmr1572123f8f.1.1724946150759;
-        Thu, 29 Aug 2024 08:42:30 -0700 (PDT)
+        bh=cICNfAYxuHlGoBLMmySe2jZdtkeuZEM13jDTfWpAGak=;
+        b=ryXbV1vMOhgq9IPFK2jajtpFGIWUzmsD6ziKA7RH23IgzDeu3ZDo6Tpytqq/ctqlpg
+         su3RORW+J7fSdUHV0csOjo/3ybbKQN39sZ/cebn29OzlMe3ihL4u+9VXCiu3f0Rrfacu
+         cANGBQ0QOTqL9XdjlcAoOQ8ah4zUuOZUohmKQeIFu4iyE2l2hNXqZUZxNpudrDhd/TVG
+         YTm1Rz/VoqsOPnwcNuTywmStSjE1Qi6KKbPs0XpLytdYiZWmXiqCWbLSzESaxCRvYi5f
+         KcvhR6WL52w9t5I31qwcz6zTs4ECUualuYQ/ArbHDELVO8LhmIu4r3adden9aW0EEPuq
+         4MNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH9SLrUEfMo5gocta1yv3EzRbUflFRje91f/3ZvPax/px/ypgVAWVLwdCuXZccqaIeG7XDCbSqXV9UB9k=@vger.kernel.org, AJvYcCVOY0TN7yCgdM2dY24tnkm95Ndrb5QTVgOhkqkpxB90gPEOHGVCMD+CvDEu4+dwweRz+/HmpBfGK2hm6hw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN86/AJLNV1oM6Ifrn89mVYTwtlQ4ILa08PIg7Ir0vaPQzgqeT
+	OuqCO/PSo3hYg7gxDDGprvHsoQuDE5FAJKEIkWodFwzMZS+i0xvT
+X-Google-Smtp-Source: AGHT+IGcAdGlG49gRrkCbVOqaBayd5DteBon3uD6YJo6Kzq7DSTeVYyMPSJNW2iUjczaglkr/owaTw==
+X-Received: by 2002:adf:fb4f:0:b0:368:7f4f:9ead with SMTP id ffacd0b85a97d-3749b531648mr2529192f8f.7.1724946241199;
+        Thu, 29 Aug 2024 08:44:01 -0700 (PDT)
 Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee753a8sm1714859f8f.35.2024.08.29.08.42.30
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4d391sm1728239f8f.3.2024.08.29.08.44.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:42:30 -0700 (PDT)
+        Thu, 29 Aug 2024 08:44:00 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] arm64: defconfig: Enable Tegra194 PCIe Endpoint
-Date: Thu, 29 Aug 2024 17:42:29 +0200
-Message-ID: <172494614246.1305701.3893909344140141897.b4-ty@nvidia.com>
+To: andrew@lunn.ch,
+	sebastian.hesselbarth@gmail.com,
+	gregory.clement@bootlin.com,
+	herve.codina@bootlin.com,
+	qiang.zhao@nxp.com,
+	christophe.leroy@csgroup.eu,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	nm@ti.com,
+	ssantosh@kernel.org,
+	petlozup@nvidia.com,
+	pshete@nvidia.com,
+	christophe.jaillet@wanadoo.fr,
+	ulf.hansson@linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-tegra@vger.kernel.org,
+	krzk@kernel.org,
+	jic23@kernel.org,
+	Jinjie Ruan <ruanjinjie@huawei.com>
+Subject: Re: (subset) [PATCH -next 0/8] soc: Simplify with scoped for each OF child loop and dev_err_probe()
+Date: Thu, 29 Aug 2024 17:43:59 +0200
+Message-ID: <172494623252.1306218.1886935295305888202.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240829134252.49661-1-jonathanh@nvidia.com>
-References: <20240829134252.49661-1-jonathanh@nvidia.com>
+In-Reply-To: <20240827114607.4019972-1-ruanjinjie@huawei.com>
+References: <20240827114607.4019972-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -76,16 +92,25 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Thu, 29 Aug 2024 14:42:52 +0100, Jon Hunter wrote:
-> Build the Tegra194 PCIe Endpoint driver as a module by default for
-> ARM64.
+On Tue, 27 Aug 2024 19:45:59 +0800, Jinjie Ruan wrote:
+> Use for_each_child_of_node_scoped() to simplify code.
 > 
+> Jinjie Ruan (8):
+>   soc: fsl: cpm1: Simplify with scoped for each OF child loop
+>   soc: fsl: cpm1: Simplify with dev_err_probe()
+>   soc: fsl: cpm1: qmc: Simplify with scoped for each OF child
+>   soc: fsl: cpm1: qmc: Simplify with dev_err_probe()
+>   soc/tegra: pmc: Simplify with scoped for each OF child loop
+>   soc: dove: Simplify with scoped for each OF child loop
+>   soc: ti: knav_dma: Simplify with scoped for each OF child loop
+>   soc: ti: knav_qmss_queue: Simplify with scoped for each OF child loop
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] arm64: defconfig: Enable Tegra194 PCIe Endpoint
-      commit: 12803ded10b88b376026c544f1ebce62c44d64e0
+[5/8] soc/tegra: pmc: Simplify with scoped for each OF child loop
+      commit: 4d57a840560c3ff04fed07a06b3aec7cbac4bff0
 
 Best regards,
 -- 
