@@ -1,66 +1,70 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02371B1414;
-	Thu, 29 Aug 2024 14:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004CD1A76D3;
+	Thu, 29 Aug 2024 15:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724943272; cv=none; b=m/Dwjho3kFF4ghxXPcjWKtMBjOjTP3H5bOS85dnspeTwsDu4bVFHEecIb+JOBKygowWQ5G0qiv4xEEMVZMING9S0BTCml/Bv44U7LrbR3kkJimLW7Cb6btZ7wEZKp+aiWEz4PKuy6jcmI+OrnrU9QfoED5aDamIXlU84Dy6FZho=
+	t=1724945118; cv=none; b=R4+UU3rGHJlqmkGh1TXqvOz/7Ql7OshlpHmAYpvJUowJEJ7YBhXmpxN3j0ErkEav13b/YkTP8dWWz/LZpfyNm/xWNUn0yOZkN87wgZ1Z1e/UtOoFRbNzL3SSQsoh7w/qiwYgsBYluSR81EwOrYZykcnfMtGBhds/kTx+V55lxz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724943272; c=relaxed/simple;
-	bh=FaCb4F5WVY3FLk9+Oak4LuOKMiyfZkaWU3vPnoYA7B4=;
+	s=arc-20240116; t=1724945118; c=relaxed/simple;
+	bh=W5GQhkVjz2wwdC5lXitoDCDre3m21qvN2+9J1ktg/iQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cs1fJ4r51r7zVDQNbSXwxQps+FDxts05x20qyjzY37CK5nMtpOaWZAYPnuS/qx9dBhH82NrQVOH+DNg6dgPfpWxZfdWmdoQbY0q/vtSI4bGemvSsbsnDfjyc190pnNQfsZBIG7lI0WGy1VQ59gT71PUX8cqTSLrKjoc2bh1xaAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EnTWMlW4; arc=none smtp.client-ip=209.85.128.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCeBhvOO4/roSTwe6K6usqLu+IsRn5Rz1nqdMswJ0fy8DX6juH3/VkTk1m3LRMcyRenHds0C9SpqeEM7ER37HrwHrtenFwOIGq+ZNaX7MmWFNtdMgnAUXp5TjOgpQt0vNzSirAsQ28coWfCEUgwiBMdI0urME5LW2EXTe3nvXPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tey8LXv9; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EnTWMlW4"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-429da8b5feaso8777335e9.2;
-        Thu, 29 Aug 2024 07:54:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tey8LXv9"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428141be2ddso7092325e9.2;
+        Thu, 29 Aug 2024 08:25:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724943269; x=1725548069; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724945115; x=1725549915; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1RvHnm+3SHXcwDriTXTVCIgrco9MOYfTgil1a/kVBbU=;
-        b=EnTWMlW4MSyRt4mtksANrZQLFvUr0Z10NU555/cmaGa5zjcQTKW54swUhSHhArOKza
-         m70KH/aN+8vnQXD23L3rHynoRqmNmL8ZUnzOCFvjh6uwNzdBhmMpf4ts0X6+FtYceFT7
-         DqJmzcWaOq6JU4X880CVqc7YKQ9qd/Ffep5GirM/PBGfyPbW6Ju8nkx/zoj6iZRGWF5E
-         oZLm4dZrKkWowapSVqwQacN9FPSuhE21lZUdS8AdWH2TIH+5lHuTEpI/LU+6m4s5ZtSx
-         DXJeLpC8ekIy5oSMXEGsjo8n0iTPAzM7F6J3OhaimbH13XHyCgG5mM0dh1WhaNPO4jOA
-         uFrA==
+        bh=3CePclmUlJ9R5wUKygyM22ovfabY44x27bhlzsShvYo=;
+        b=Tey8LXv9NHiqcu/Y32HoVzNjsf6xaqLtc7NcTR4LQ5K84vDoFR81iYrrBA7G5Y5orU
+         pJTNjE0lYSx0fAfPM+eYZDFM2efME79dqpzFqKYbJ78yTF9p9mB0NHzMqcrEb2bJ9+JO
+         t7Yo+ErJavMUEe0KUjDi8+dfDOWwGfjKIXaKT1IRcB5LSVMkrALiUeTyVaAOf7YI+ozb
+         4PuFZFVOpD4SeJtzKi4IGjge5scaWP62M2VFjoo61ZCKam2gZJErtLHfBx8NI2MPFeVD
+         3Y0VPVOpz1+RvcUrkW0ykk+Cuqp1OvAKfIYCIPFxHNklqOZtDuJE8xpKaQC90sDHto5r
+         wiEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724943269; x=1725548069;
+        d=1e100.net; s=20230601; t=1724945115; x=1725549915;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1RvHnm+3SHXcwDriTXTVCIgrco9MOYfTgil1a/kVBbU=;
-        b=dCgLPGKdDBnnWaOi3nA8sdVwhEUe/NvVXq0L02ViFaOm9vB/OVknLc68WkBfBfbmrV
-         OIvxvyF4WCDzpmglLCCrD1bMxWW4uASQsVu847A3yxW2n2MzExv4dRF2GhRh4IhSANRo
-         D6b6kUfFoIVTc40veEh9urwZTW20fWRTiq+CIFb/KJm56s6b+hbcM6e3XMBHHTqfIDsI
-         pxrCt+WCb2QKZIo/XW4NL1Dxs7w/NY/NPvrcv5O4L8dbpc9MZauT/R6Thd3QUE8mYCh6
-         bKSky3pTWSDp46sCC9mznoKyRmY4nyAxCjOfA+bmIC1wgBaW4uB7IanH7Ofa29yhdzhu
-         MYjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbadY7WHFjVyMKPxL5Iy1WNrhBzczhvGnJ201MOVDK65/C2kizjOlW2obKbFqXspv4I0xsQtujIk6LjrY=@vger.kernel.org, AJvYcCXx6YtH3e7QdGLt2s9cCMMcAymiZR7ctJFdKf8+DWO6WT/ntrD34e8slMESqy5o9JLXv0xptQc51A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqtzVPDhNOBw8bIG9veFUM429trJ6ulRBTICwAbLqEwnLfG2Cp
-	lSVmLPGMSYfn3YYyIGGakzsN8bH8fDqk4HKBoq6L/A2wGFNFudbx
-X-Google-Smtp-Source: AGHT+IEPLCpekV/0oFK0K++9ZKbbV8Mvl/fcHb+h9oB2OFRyYNoSj2kCBKYooopQ1WUrfkSCee3Qng==
-X-Received: by 2002:a05:600c:45c4:b0:425:64c5:5780 with SMTP id 5b1f17b1804b1-42bb01ae2d7mr31296905e9.1.1724943268412;
-        Thu, 29 Aug 2024 07:54:28 -0700 (PDT)
+        bh=3CePclmUlJ9R5wUKygyM22ovfabY44x27bhlzsShvYo=;
+        b=aQFx0EBYh6N4EVwZk+bgVtzJv6SeI+82YWE73MzjImC/UnChABtc7+eVI5LVn2ZLAt
+         b8eE5Pwbnc+V6IPUJJBEQxtANson44kT/UPv7rkEmjAzFyWie4ej8cQEPvABLcUdP3JF
+         kzXcMdh/aPpXgG4HoiJR6nrYOvcXZ7owmqLGFX8w1wndbvn1MfmhffE+YkNez3fa4aTR
+         ngSzPibD2N4rI3yKMvsgG3CTBom7gPzeKk76IanyQGc4dQekLxAoT5l1/ZeGkEq9AbY+
+         Ey+BXgTmoH1l0v+SdhmXRelrZCruaYXihblvlJaQiz/7GVG0LSDK5sRt3olJfSZyT9GF
+         vA9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUlCLEXFe3JUyRzen1ZUj4c+H3fFD6omSRM/hy/LoadHLrfVa2lesysfhvPpr7cnj8ScTHwaf0JjE+Iw2n1@vger.kernel.org, AJvYcCVSw59G5jQNi8YQkdPtbdI7g2OxnmLX6Rmmd5wdUKJD+j30am046r1ukVh8UnCAc6jZ2ORq+b3KVtyBXTk=@vger.kernel.org, AJvYcCXVu/631ww0GmA6GJpHJmzy80jBUONYcN0UQdtpo/Lfyk04bCeYi5FnKBADRLjm8DTIt0zolk0AHU+9S0k=@vger.kernel.org, AJvYcCXzWFQj8z7uH30wVb9Jb+PYh3MNZVun/KwyBOF74rHAftNp8EO0sdfAoQ+PeocCv7ARcdSHe7v7KmifbhCo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXhkbpF2U0LC5u39auOyiTZ0Ebg3UHuazrvTlwrRyQKOJX+S8g
+	gL4qmU9acOEF/DTbo/t1jgcR1a92QM3FlcJKYV08XNJiTRAIZbTx
+X-Google-Smtp-Source: AGHT+IHB9DwVQH+LaPCki7l5s2XbNvXlqbr5f4VqUYxz7BdDtbuqto3Zl5PtmeS+7pmQVpMQVL7Cmg==
+X-Received: by 2002:a05:600c:474c:b0:426:6e95:78d6 with SMTP id 5b1f17b1804b1-42bb01aa1fdmr26574845e9.4.1724945114644;
+        Thu, 29 Aug 2024 08:25:14 -0700 (PDT)
 Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba639d440sm54374335e9.13.2024.08.29.07.54.27
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb37f7849sm25800085e9.7.2024.08.29.08.25.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 07:54:28 -0700 (PDT)
-Date: Thu, 29 Aug 2024 16:54:26 +0200
+        Thu, 29 Aug 2024 08:25:13 -0700 (PDT)
+Date: Thu, 29 Aug 2024 17:25:12 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Gaosheng Cui <cuigaosheng1@huawei.com>
-Cc: digetx@gmail.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, 
-	cw00.choi@samsung.com, jonathanh@nvidia.com, linux-pm@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH -next] PM / devfreq: tegra30: Add missing
- clk_disable_unprepare in devm_tegra_devfreq_init_hw
-Message-ID: <5vuj7r3wxiqa2nr46tdafe3zf4ru56ja2dz742lt6yfmv7ft5d@26rhlgfleqsx>
-References: <20240803063748.325133-1-cuigaosheng1@huawei.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Dmitry Osipenko <digetx@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: Re: [PATCH 1/2] media: nvidia: tegra: Use iommu_paging_domain_alloc()
+Message-ID: <2o6gpxknio4kvf5fmqgai5jaov65semmw3wvtmt4gdauwzhbti@ii3ydtlmp2sb>
+References: <20240812072105.9578-1-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -68,45 +72,48 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sut5e6g7ajzxwlz6"
+	protocol="application/pgp-signature"; boundary="cowfqq5j65e3ovof"
 Content-Disposition: inline
-In-Reply-To: <20240803063748.325133-1-cuigaosheng1@huawei.com>
+In-Reply-To: <20240812072105.9578-1-baolu.lu@linux.intel.com>
 
 
---sut5e6g7ajzxwlz6
+--cowfqq5j65e3ovof
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 03, 2024 at 02:37:48PM GMT, Gaosheng Cui wrote:
-> Add the missing clk_disable_unprepare() before return in
-> devm_tegra_devfreq_init_hw().
+On Mon, Aug 12, 2024 at 03:21:04PM GMT, Lu Baolu wrote:
+> An iommu domain is allocated in tegra_vde_iommu_init() and is attached to
+> vde->dev. Use iommu_paging_domain_alloc() to make it explicit.
 >=20
-> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Link: https://lore.kernel.org/r/20240610085555.88197-9-baolu.lu@linux.int=
+el.com
 > ---
->  drivers/devfreq/tegra30-devfreq.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
+>  drivers/media/platform/nvidia/tegra-vde/iommu.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---sut5e6g7ajzxwlz6
+--cowfqq5j65e3ovof
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQi54ACgkQ3SOs138+
-s6HkfBAAogvpzmkjnZheaoSrMYwuM/l5MZpdrAdKsbdQyoVwHG4N/krzIcJXCi/O
-tq6dyJ1gTUZlo9x6mczat4X3jFKIJYhq5hfVxCqeNetoVaszJl1i46+F8vH6mmsg
-x6L/ioDI1OIu9zLMP/vyROfKm8c2NzwLi+mv8zPG+K0U2tn/SNR49NW/ETxNvKvy
-GFASUtY5wO1rDXtdXH6By73+b4F4LznPOZ6W6pjvPRm2wnATzqiyxXdofl0CrLAS
-M72eftABhlncMCk6dyGUZ1RAUeOpVFI2Zlu5FLv3suf0Dpm0uS1sHM1GIy4qebs1
-Nkwr1koMe9LXEgB/JtdviCdrJPz/8IM0fQc4qCDAhViFWwyUCS2LhtFtzQAf2LWT
-dhfre6HZXLwruwVjnD4hsGuDpRHzOJcI/GCr835cqtsBCqXaihSZlAemAUI04uel
-Wafj6zublJq6UstqaE2OtW7qMt/9U/E2IS9n1zFnC2fmDegKfYgr20sFQ/XBioN1
-rfS5cIJDcVsFIx6f7dsQbXKfVhKiXND89FDhSEwMABgbZg9pBfhh3UUDdn4B3IuU
-mlXomOd85T6Ib9NW4YGEtT8u2/9yVvjUGbW/hlw/4miGYZ95WJmBzSuuRHc4SnY8
-19Ehp7hLKzgAvD8r7NyTJjSrUJUX6747OYF/INV1z/s0uIl5gk0=
-=GGiR
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQktQACgkQ3SOs138+
+s6EUfRAAme7fMme4dA56e6MubG7cFGGWr8iHzpMLzb7Gxi4bRxcYB/Gtn/cepURr
+Ybbn9lG86we9+zbd+FNlPWTKXxFFZG3kDfKnU4eILM2y56SQApilQzwwicdOgN5a
+7aqDJu0/eEIwagudME6HYDlALal0MCib/UblMbReIP7XnAcrR+HhO1aRMy95l6P+
+xYD6VzW7evnIR1BRkz5CHS9Dgo7o3ykNsGr0wDkYjK6oFjF5g9Y6LZCZIRO3sZxe
+jqijysA0g9cAk+NsDNmWKbd0UEMM3DX1ROebrEzbBkXC9+PWe56LmP77zigyPHVr
+aVXBy9edGGmkJfKvwvkJJLAs3wpjN2cHVO8zPjg2bntFR5VhAPgMo7RJKt4Tj/A9
+rEcmcaPggDUVVgJEbogj1zZtpeTp89+56tGcFjJvMi1sVbudisnejl4aSfx/Hnzc
+4QKrj/ajGfmJkPJbjjUEIzTSV+Z7L3M06jC9eLrgKzURdymvDUAPuVaZWkPcT/DK
+hqiTAVU43r+yr40ZwRoxyuHIQLxGIxmUtnjk96uQhKa7bs3loD4KR00EIX590fGL
+cRL3yZFx2G7ILQ1Cnru0vXA3iF9RxG1eikHZHtqTPsInPseAMx6QpE0Vn0I/gT0G
+S/cBJhFE3NxmP45u2DKKrhq7+pRf6AEpKh1tnwZoB6NIx5cwGG0=
+=3ZMs
 -----END PGP SIGNATURE-----
 
---sut5e6g7ajzxwlz6--
+--cowfqq5j65e3ovof--
