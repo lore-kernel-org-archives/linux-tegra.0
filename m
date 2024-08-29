@@ -1,134 +1,102 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2850F1B252F;
-	Thu, 29 Aug 2024 15:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B881A0732;
+	Thu, 29 Aug 2024 15:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724945278; cv=none; b=FZ0yJWQj/B/PUfqJffOzjcTttLEuXqaczRA4BgIfhsi7hMEFKIn58htsGok8eMVWssT5M0T6SxizrcfzDT1pRbiJy5IhGe2fH5Q9UtP80tuZS1Aa43OKWgkkoay3n16Pwwu1A+GgO53YnzlpvBTODOAL9lngWMAWQIzouXzOFxQ=
+	t=1724945490; cv=none; b=ewDtO0oBS8ScDfS1uKNBQCrNRKmk2moglRhcAZCGG3IwAA2MSn88Er76DXxHb5PvLLSPrnDSSJMAxuf1QZMs6lQN/n/qQ9CA2Ojmff+UYa4yYEVKIYcDGKxx352wmJbJbHVAbKYtA9iYYmJEVsdlGrOaD52Eu3EYeWxbgSGlpIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724945278; c=relaxed/simple;
-	bh=rEHcCrksPK4zKuna47RL6KHvDgrL7S+K+JPsxR4F8NY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YIO4LzOBxDDnt92aw+8tvzY0iJTQxuKa18faPoSJmm+AAyNrL+nDeblTSCgAWUzkNQhngEI7G6k2bARZMT6i4GiUnjHTWhoTMnq4XU543WSy+aUidtnBb/9udYtAjdzbNs8e3QgyksLhyJv8pAzN71N0/SUFKZRW4znFyaUYexw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kXSVpX5I; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1724945490; c=relaxed/simple;
+	bh=7hGXNZWgx//c4c3r9ZLTcXRU4T/PDM96+23D1Ad4A1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f/pv7LNrwLp4Q+xGV9sQKfWRpYU04Fq+8MDPasu4IELcDYIWFwvXY9yfWAX6qBJbpUCG/yO34cDQAYIFUbUieT44TPHO0jfrzbG7k1KNDXK6fzRgq9OvcplN2WJMiZdfrH9H8dHZASU/5X2O03XH5GlI8R1Xzo/QFt9t8Mw5Jm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAw+5xmz; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kXSVpX5I"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-371ba7e46easo566728f8f.0;
-        Thu, 29 Aug 2024 08:27:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAw+5xmz"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-428101fa30aso7503525e9.3;
+        Thu, 29 Aug 2024 08:31:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724945275; x=1725550075; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yw07to4eXEKZD8HOhtMMTh+5t396wUm62mYRHx0re1s=;
-        b=kXSVpX5IC1Hi6XjLNLmqjkGDU+/0fF7A1USW9oDe//Q0Xqp7poLumUlMcoLkBa17Lu
-         RtOXCAmPfUlOBSMwebmwTxd7ddw2HGovQgf+7aMJFagGiNAXjqj9ezcLgZe9D9aNVnBJ
-         xEWp7Fw9D95VUedPFkT9dnWTW78hucW25XD0smpQkud+vWXvo6vWxgGMFmxJNouNIJ8O
-         kkF4B/TYuznH4S0CkWZ7FMeg7o9SqgkFTuuIg3Cuw5pmNIhZRUvvC+HzCzqBkcPPZnko
-         15qyM/zJMi7KvMavIr9NM2kK5Pcn7v9GTjfUc+CiwWXPTI+Ce4Y4C8qaQggewCDvK0eW
-         +ZkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724945275; x=1725550075;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1724945487; x=1725550287; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Yw07to4eXEKZD8HOhtMMTh+5t396wUm62mYRHx0re1s=;
-        b=OVBgXZTBM8/Cm4Y7g8cbf8yFYdSAD6MSSVVXhoIlm29WnB6Vg0sFRIDa41xN7aBMxd
-         FI6OTb8Guf5Kl7vX/DrqbH5HmNeD3Dhl0RY0hnmr9VWAVoSLulS31jq+ryxKaZ2GgWex
-         nXZUROJT5ujs0fcb20a0EexTUJt8bB40yX9fAQCx2Ul9d7D13RaqQiuECsOtSeqOCmF1
-         mlPjrAbsaz+PXf87OYphAZyhfI4Gk/N6uV494fKVJzbVjEGv0NCipD7xmi+fO+Y8LwBv
-         slHaCPLIkEC+WJSmRTiZEpjAYoxZ17Woc7c0iwMsHuL2qfWnPGCKiGmlZhQgA9F3R7qy
-         Tcxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgP5/oHDTDY0DPPHAIHDYy+U/loboXVQqWoZnt3O/a4S36haVJUr7lTkCfOvswrCMulPNFTHld5F8A@vger.kernel.org, AJvYcCUq3NTBbo3osZvrOvZaRRN/5PW1zcA1KLc+of6UNNPGtFDMMPFxo+eDbke/V4GpwAIEOccv7VF5cPBc0TX6@vger.kernel.org, AJvYcCVp44RJHGTyYwCR2f6OsOXMMJCP3de+OUTWFiQ4mhgcnLf7wzyUEkAIjRen4SXTyrj25OAK+wqEzktNK3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJJK3Lh22Up6ky8zxwOrj3YIorT6TRqVnKOBVVZTx0UXKG7mkg
-	Nhxv/VpwnDrOpxtTngQFwa/0FHPaOP0J733/Rj+RRc57XzPgDXs9
-X-Google-Smtp-Source: AGHT+IFcl7nunAt6M7i70ObiC4pL46x8FG3FLkfqKTXOy0/JlSrM/nqJVzGHMedlJBUQqrlMwbEqwA==
-X-Received: by 2002:a05:6000:1a47:b0:367:95e6:158a with SMTP id ffacd0b85a97d-3749b58e42bmr1828448f8f.63.1724945274756;
-        Thu, 29 Aug 2024 08:27:54 -0700 (PDT)
-Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba641db90sm54631535e9.38.2024.08.29.08.27.54
+        bh=1VX275HeOjFKVc6+k2cCnpqbGUp8cwQRAZ5P/IfojC0=;
+        b=IAw+5xmzfM3Wqwjo0Bp/mqogeM7YI9WeUb0hOday0iLYwPc47mEGZVRpJYqEm7XDln
+         kFXD9j4akS2Vxtx1FPjlrI3ciZrVlTrvAm3hbwxKmpui9FYg3rfgkQIPYoeEi5Xqp28Z
+         v0XPrP/rQfHnx/EcFcPnTfBBtAw+jUBGaw58g2UR4nWWCCTC9FQzTXHZx75zbQ4PoUDF
+         1UdE9YXxATXWuIqOu/f2FSXnG9P3hRHCPXeLbrC9OsSCya7DnCufhEvoIgsHP9/HjDjp
+         r0kYD3gRthUykYRiHo7HvpMsa1i8izhKMUXLmRigEtpXWyoq6G7dDq1GCTjID0u35ZQP
+         nI9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724945487; x=1725550287;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1VX275HeOjFKVc6+k2cCnpqbGUp8cwQRAZ5P/IfojC0=;
+        b=heRyyJE7DCyHbf/LAJYCLBmtI3JvVgTaN89IjOxV2iuoc22LNQONzkWxT3anqb7woN
+         jREINAiqRe/pb1GNiXMANN4Xm6iNFRYFjI6lPWW3WwoH+fZuAtXqAI86NSBrWoDzEF+q
+         ZNg+gmrm6+eF1zep2ojMaM75lndcGfYdjdt/NyskiqRk96wodltGRvwxdEw9Oc1XT0gB
+         P0OytQuDa5f7ldaD4H8k7O+8etOnasn9Kslf+PXUaINypMAVhw2k7GNqs/dgsY/51CGM
+         jnorj7btw0oZfIdY5NGwvp9u7LeEc5Wz/Zqxvnl0lWQDGgNejPRSxhcCGcWHV/9k7bUH
+         jYaw==
+X-Forwarded-Encrypted: i=1; AJvYcCV30HVK86KV/PL3R9Cfp5SzrbjZTlfa6XzWp0Fz31PqLmwgLHgTZBGyq6Ad4BIPBL9FuKEtGXBKTKff6QI=@vger.kernel.org, AJvYcCW07jK1fvfxRGnwqc5NHPxrTQbaSnvlaQ52D1nG3eGtCcAsjwkn9XLVZO32hbC5xWCce05ULo7WbQMGVi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWc/nMGxVXaQX9eWMDxFGx5Ynd49afNajouvPLeVR1U34wD/sr
+	h2Kixhec7vF4nYnbQ0WwDfRwQLv/MIbSbEscy73iQcY0uKyge2zO
+X-Google-Smtp-Source: AGHT+IE0z2Lk5+eKz7UAcfVxpx7lU8HWLO3PlHhGWPjs8//GN0A70wdsCXF+MNu0zbxcK4Yjk4mlvA==
+X-Received: by 2002:a05:600c:1382:b0:426:6eac:8314 with SMTP id 5b1f17b1804b1-42bb02c1647mr28131805e9.1.1724945486229;
+        Thu, 29 Aug 2024 08:31:26 -0700 (PDT)
+Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e27c70sm20447765e9.35.2024.08.29.08.31.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:27:54 -0700 (PDT)
-Date: Thu, 29 Aug 2024 17:27:52 +0200
+        Thu, 29 Aug 2024 08:31:25 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 05/11] ARM: nvidia: tf701t: add Bluetooth node
-Message-ID: <iyoa64mxxi47azcvv6fuljsyjlhv3ltf5gajc4yts3uryye2na@mbhnyt2es7xt>
-References: <20240806123906.161218-1-clamor95@gmail.com>
- <20240806123906.161218-6-clamor95@gmail.com>
- <9dda725f-71f6-4f64-87a7-f7151fa1690c@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] arm64: tegra: add wp-gpio to P2957 board
+Date: Thu, 29 Aug 2024 17:31:23 +0200
+Message-ID: <172494536049.1302383.5328678787632525054.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240815-tx1_sdmmc-v1-0-7856ac25a204@tecnico.ulisboa.pt>
+References: <20240815-tx1_sdmmc-v1-0-7856ac25a204@tecnico.ulisboa.pt>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3rum6blmlkk6aglf"
-Content-Disposition: inline
-In-Reply-To: <9dda725f-71f6-4f64-87a7-f7151fa1690c@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+From: Thierry Reding <treding@nvidia.com>
 
 
---3rum6blmlkk6aglf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 15 Aug 2024 16:50:38 +0100, Diogo Ivo wrote:
+> Define the wp-gpio for the P2597 board.
+> 
+> For this, patch 1 fixes the assignment of the vmmc supply's gpio that
+> was incorrectly assigned to the wp-gpio of the external slot.
+> 
+> Patch 2 adds the definition of the wp-gpio.
+> 
+> [...]
 
-On Tue, Aug 06, 2024 at 03:33:58PM GMT, Krzysztof Kozlowski wrote:
-> On 06/08/2024 14:39, Svyatoslav Ryhel wrote:
-> > Add serial node along with bluetooth node to ASUS TF701T device-tree.
-> >=20
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../boot/dts/nvidia/tegra114-asus-tf701t.dts  | 28 ++++++++++++++++++-
-> >  1 file changed, 27 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts b/arch/a=
-rm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-> > index fe1772250a85..00c3325878b9 100644
-> > --- a/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-> > +++ b/arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts
-> > @@ -1111,7 +1111,33 @@ serial@70006040 {
-> >  	};
-> > =20
-> >  	serial@70006200 {
-> > -		/* Bluetooth */
-> > +		compatible =3D "nvidia,tegra114-hsuart", "nvidia,tegra30-hsuart";
->=20
-> Why do you override compatible? Boards do not come with different SoCs,
-> do they?
+Applied, thanks!
 
-Just to clarify this: it's not being overridden because the SoC is
-different but because for Bluetooth we need to enable the high-speed
-UART mode of these devices, as opposed to the standard UART mode used
-for regular serial ports.
+[1/2] arm64: tegra: Fix gpio for P2597 vmmc regulator
+      commit: 46a26db82748a9434fae662738ff80e350b179ee
+[2/2] arm64: tegra: Add wp-gpio for P2597's external card slot
+      commit: ebe899563a83c9bb578248eb4a4d56414275d9fa
 
-Thierry
-
---3rum6blmlkk6aglf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQk3gACgkQ3SOs138+
-s6FuPQ//c/8ii3SnqqB380okkfXtCNYL+zu5HZ1I+KoymGdDHx4VSJiiP1CIf0j6
-XeSttYEv7qvpb8fkZMKXq+1hC0l7T+FcQ2NbXRlb/0UDlBWDg4Bw6+6g6FIBW3Nm
-ODFeUk0CajTNqAzQWl7HpYyPpncur2+HZiCpvG5fyA89NVJMawoIweKp266T4NA8
-YnRdRDMsFhfCX/lWW/RA8t5SL4OKEF3ZZt5EcerdNeAWh5Ik/pvIhDe7r0Bn+0ea
-e6FISn495+IWfh4D5bbb7HyVDjayDqT0AYOajqaGfFDVVy504oZoooyIYS5rJ1Qi
-ou9SAbvKFMHoOLS0JEKfRBU2G4FzmcSDyS5XQzVKtZEfUAxouWRP/ePEQAz5UFNK
-YaXOtdRayXPzqNc5wMTLV0Tjlamy6dzn7M2bgRQL3tJStsAQ5vODYsakVhiVB5on
-eggAdqvt0ATxHJJGSqdKsJV1FShqIybT2sY0GGi0T1ybq6SudymSOMauYHECHJ8l
-NBhgLsAA+Ied3M8EYa8Rp7AGHaNG1G2YCLu5Yi+uIZ9zkVfK2wSmhrs5hGQlq1SR
-og6hM72OC82XWjY8R47KiDdEWdV2XLJhEYfWsBzH1O9w6IbutlNVfJu3fQNvSVzr
-6bMTfNPqeNvxPPdiLS3scn+WTuVfnSLX7RUeQSxMAjPiEiKyvIM=
-=M//d
------END PGP SIGNATURE-----
-
---3rum6blmlkk6aglf--
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
