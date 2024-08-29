@@ -1,112 +1,108 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4FA1917FB
-	for <linux-tegra@vger.kernel.org>; Thu, 29 Aug 2024 11:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82ED1A2C3C;
+	Thu, 29 Aug 2024 13:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724931804; cv=none; b=twIdxrsCACx2TVfo6vLtT02++7US+ecfaj7Q7eUm1V3gAdJ7b8wCMlfBqyiYHT38B73EHxTiq3qUHFhEKwiZoFJYrLSDdVXpd6UqBqjYQQROfOtKRrhO5lTj+uL1ZQ+XO0iwikwUWj0pzauCkxhvviIzUP7g7modCskiXRN+my0=
+	t=1724936628; cv=none; b=dMLRzu62i5ulPVAXtOwd1FQ1tN4GN18tjz05ch95nru407U5tdTxoILNOPsoLWZAcRBut2RPMTG914sPxKFkqx8rDZiD1dGbHpOx5uBqrdUJAGbUtsfhu6VszvvgBFB+RWXX+bv9aGEkC6pUSrpN9sOjgK0++ObyTSHP+l9/cns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724931804; c=relaxed/simple;
-	bh=2L5clSdNBS/T6QTGXkM3oBsR50kY8JLLlyNTq5ZNk7s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BFPt4cFWedIFHq3s308V1GqgSDLYZUqiAIXmUPyrjpk9EBFIGH5rKT4nJBARn69Bvol+E+L7GxCtCf/acQss0uYn+qrh7sMIv46XFu658Dtw2duhnq56ay3SbXvd4bYeohXLGXN7dS9UO9GLz/AypTo39+nhdOLS8qP5EraLQ4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nmmVM3d1; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nmmVM3d1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724931803; x=1756467803;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=2L5clSdNBS/T6QTGXkM3oBsR50kY8JLLlyNTq5ZNk7s=;
-  b=nmmVM3d1IU9Jozar5w+pIHt6FfrA3pgSJFJouFrmARm+Hlt1KcmUMBzu
-   JoszT4zFgchlznOmD9lsxrgUYe6QIh3a5r1TzEuNYcVqDXD1Qrsz1PGx1
-   pE4oTopCu/R991ZROLpChslY8pJyd8Ub0zNRlCt04vcMNMKM4vEE0g62N
-   URvtUMPRYtzUF+xOGCxBqn2OVewUqytXf1o3bHNDO1KHgrsHzGMytbgEL
-   3cU/Czayn4x/NNQlh5ZvppHOek6TWzU+AeNYW4OUPYXAvl1w+O57R0Q8R
-   QWikyWOQyiXHnbYfOAmyBl53jf9aFKW4SGUlThWb0INp2PeAqR0vQVVdS
-   g==;
-X-CSE-ConnectionGUID: Crb17DkDSLOOeg78egIwqA==
-X-CSE-MsgGUID: fudYpaePTWSjoYPjMI3sqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34174090"
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="34174090"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 04:43:23 -0700
-X-CSE-ConnectionGUID: wjhhsfb6RaOOelKKSvefqQ==
-X-CSE-MsgGUID: LvcbZOWsTz+6hLzyG+qTTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
-   d="scan'208";a="63380853"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.14])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Aug 2024 04:43:20 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, Mikko Perttunen
- <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 4/6] drm/tegra: convert to struct drm_edid
-In-Reply-To: <qdzaanzxm3yfkyokc5pacfuuyic5zbfmp2teaxfcf2knimvleb@gdd6g4htpfv5>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1724348429.git.jani.nikula@intel.com>
- <e764b50f4ad2de95e449ccb37f49c3f37b3333fc.1724348429.git.jani.nikula@intel.com>
- <qdzaanzxm3yfkyokc5pacfuuyic5zbfmp2teaxfcf2knimvleb@gdd6g4htpfv5>
-Date: Thu, 29 Aug 2024 14:43:16 +0300
-Message-ID: <87wmjzwo4r.fsf@intel.com>
+	s=arc-20240116; t=1724936628; c=relaxed/simple;
+	bh=xRAHcgILyQrSlNfoTFDBhMpDCu1uBd9K5KrHhKjvR/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BJK9n6ierzr3Sx2d/h/SeC9CUN7iW6R/R8BtC4pls7ZrZYWbblBH6Oto4JdPYffNCcjwM1Fx8rU3tyLNqXuFTI3VEPxKuV7WAyv5Sn0fnrQ872CtElXQ752OHzohr6z+4ZzRrqoriLS4lBqxiv+wgDC2Bv4KpthEnXHRJUbQgds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WvhJ83bBmzpV1q;
+	Thu, 29 Aug 2024 21:02:00 +0800 (CST)
+Received: from dggpemm500020.china.huawei.com (unknown [7.185.36.49])
+	by mail.maildlp.com (Postfix) with ESMTPS id 30B7D18007C;
+	Thu, 29 Aug 2024 21:03:44 +0800 (CST)
+Received: from [10.67.108.52] (10.67.108.52) by dggpemm500020.china.huawei.com
+ (7.185.36.49) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 29 Aug
+ 2024 21:03:43 +0800
+Message-ID: <7c219682-833e-41d6-8708-044b89f9d591@huawei.com>
+Date: Thu, 29 Aug 2024 21:03:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 1/3] media: v4l2-subdev: enable module autoloading
+Content-Language: en-US
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Biju Das
+	<biju.das.jz@bp.renesas.com>
+CC: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>, "mchehab@kernel.org"
+	<mchehab@kernel.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+	"jonathanh@nvidia.com" <jonathanh@nvidia.com>, "jacopo@jmondi.org"
+	<jacopo@jmondi.org>, "sakari.ailus@linux.intel.com"
+	<sakari.ailus@linux.intel.com>, "tomi.valkeinen@ideasonboard.com"
+	<tomi.valkeinen@ideasonboard.com>
+References: <20240829075417.526459-1-liaochen4@huawei.com>
+ <20240829075417.526459-2-liaochen4@huawei.com>
+ <TY3PR01MB11346459841445E77A5FBA37B86962@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <20240829094546.GA12951@pendragon.ideasonboard.com>
+From: "liaochen (A)" <liaochen4@huawei.com>
+In-Reply-To: <20240829094546.GA12951@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500020.china.huawei.com (7.185.36.49)
 
-On Thu, 29 Aug 2024, Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Thu, Aug 22, 2024 at 08:42:50PM GMT, Jani Nikula wrote:
->> Prefer the struct drm_edid based functions for reading the EDID and
->> updating the connector.
->> 
->> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
->> 
->> ---
->> 
->> Cc: Thierry Reding <thierry.reding@gmail.com>
->> Cc: Mikko Perttunen <mperttunen@nvidia.com>
->> Cc: Jonathan Hunter <jonathanh@nvidia.com>
->> Cc: linux-tegra@vger.kernel.org
->> ---
->>  drivers/gpu/drm/tegra/drm.h    |  2 +-
->>  drivers/gpu/drm/tegra/output.c | 29 +++++++++++++++++------------
->>  2 files changed, 18 insertions(+), 13 deletions(-)
->> 
->> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
->> index 682011166a8f..2f3781e04b0a 100644
->> --- a/drivers/gpu/drm/tegra/drm.h
->> +++ b/drivers/gpu/drm/tegra/drm.h
->> @@ -133,7 +133,7 @@ struct tegra_output {
->>  	struct drm_bridge *bridge;
->>  	struct drm_panel *panel;
->>  	struct i2c_adapter *ddc;
->> -	const struct edid *edid;
->> +	const struct drm_edid *drm_edid;
->
-> It perhaps might've been less confusing if this wasn't gratuitously
-> renamed, but either way (and assuming you want to take this through
-> drm-misc):
+On 2024/8/29 17:45, Laurent Pinchart wrote:
+> On Thu, Aug 29, 2024 at 08:27:06AM +0000, Biju Das wrote:
+>> Hi Liao Chen,
+>> On Thursday, August 29, 2024 8:54 AM, Liao Chen wrote:
+>>> Subject: [PATCH -next 1/3] media: v4l2-subdev: enable module autoloading
+>>
+>> Commit header is wrong.
+> 
+> Indeed, it should be
+> 
+> media: i2c: mt9v111: Enable module autoloading
+> 
+>>> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded based on the alias from
+>>> of_device_id table.
+> 
+> Please also reflow the commit message to 72 columns. With those issues
+> fixed,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+>>>
+>>> Signed-off-by: Liao Chen <liaochen4@huawei.com>
+>>> ---
+>>>   drivers/media/i2c/mt9v111.c | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/drivers/media/i2c/mt9v111.c b/drivers/media/i2c/mt9v111.c index
+>>> b0b98ed3c150..b6a2623798c5 100644
+>>> --- a/drivers/media/i2c/mt9v111.c
+>>> +++ b/drivers/media/i2c/mt9v111.c
+>>> @@ -1265,6 +1265,7 @@ static const struct of_device_id mt9v111_of_match[] = {
+>>>   	{ .compatible = "aptina,mt9v111", },
+>>>   	{ /* sentinel */ },
+>>
+>> Nit: Comma can be dropped from terminator entry as a separate patch.
+>>
+>> Cheers,
+>> Biju
+>>
+>>>   };
+>>> +MODULE_DEVICE_TABLE(of, mt9v111_of_match);
+>>>
+>>>   static struct i2c_driver mt9v111_driver = {
+>>>   	.driver = {
+> 
+Thanks for pointing out, just sent a patch series with these issues fixed.
 
-I've been doing that to ensure all call sites, especially kfree(), get
-changed.
-
-> Acked-by: Thierry Reding <treding@nvidia.com>
-
-Thanks, pushed to drm-misc-next.
-
-BR,
-Jani.
-
-
--- 
-Jani Nikula, Intel
+Thanks,
+Chen
