@@ -1,73 +1,76 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23C31B3721;
-	Thu, 29 Aug 2024 15:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D57C1A0732;
+	Thu, 29 Aug 2024 15:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724945506; cv=none; b=YLSE//s20PKDlNSa48sSg/9zZ1vcO4qr8/khKhLUeZw5mfDAODdcMzH+K4eEPnpGavJ0lF353GWdTgE5ejOrjNhwRlkXst7ptGFL3TzboHczaeNS4wJkcG2eU8ouZ3wN5hHIqaG2KfFpZfUTZaB2K37kj68oCf0ciPL1CXy2cS8=
+	t=1724945676; cv=none; b=J6vlNWnmrz93Pvea8CUNsp83HP+slJqjCu7dTwRkn5lg30kQzhsxOaKsTUjHzPLBa/3zpQVi3DFj2NNCfDrYgzf8XPcPuW3Eei2TsB6JP+UGLFnU00W4/GBE4FG5DfJslEpZE4X6zo5Ihc+vjkFjMbsA5DgKAeaSxftS7yo0O2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724945506; c=relaxed/simple;
-	bh=YCHIXQeGGfdMkzQcp67/z9zzjfuNYJ12mrbH917xPAs=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=siF3dSmWk7zm+X91mt8LkrWOrYecjl5VonW3ueRgmz3MNurO9De+dnT1vX84pokfXel4KTd7c16BOns8aGWy+IZfViHymTgfvIrHUYTTbsTqpgB4Ws04G+XpCZpr175XjJsEgvgV5GYMAV8gPZH7y3kYS295TaeIqyJ+TXRP7dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kCGMlUzt; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1724945676; c=relaxed/simple;
+	bh=y/fVmmCNtqQfkk4hjG5Z2JAFKL+I55qX+2uQAcUK3LU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OYem0xo9v+EgBRlaIDD8wATG/ZWlTD54mBEkAuzJMmdh1Vpi6z9jtCn5oMhaHmKJEiBjY7royhGl3vLjtFQK08nsG6PvcbvjSAp9oDCCMKXmjVgGyhsYBLOCG3lpmFCjCSVR7LKAgRaeeczwAHCbUNojtqFUTchToztO2MtfWu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kila/o4t; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kCGMlUzt"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37186c2278bso1036147f8f.1;
-        Thu, 29 Aug 2024 08:31:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kila/o4t"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-371ba7e46easo572092f8f.0;
+        Thu, 29 Aug 2024 08:34:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724945503; x=1725550303; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1724945673; x=1725550473; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9p9exDuS+N2wHltVC5uHJwdiYcj0alqx1w6CprkGJjU=;
-        b=kCGMlUzthokIt9BrtLNsk4PMwc5ehYk6la0RfyvNy6XSoVxGqLEd5s9pyQq/J5NzOF
-         futncAaMsFkmOg+tcfIJjAzAbCWlcre1hCRGi+FXvSV9YpI0KyBoSGYrg1tZ6IiA4jzI
-         GSJ0mepg3TSxLVdQEQ6prZRRYM0FOUAMp7iXLtLOWURV6eWcGFl++eD1ahLJT+yoKTZd
-         HH69IVGsOM85bxk/dolilqG1OKh6C8oOt363xK/8Ee+nCF2OjsR3vBbLdxfOBhikl3iv
-         xedkteECXw9cIXIxWoAmYQ7cMXVsGJ9nOBF0KjaRg+mUyiR2Gx9A+R8pkRwzGYgryPFo
-         Lg+g==
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lMGz4DJlwPSsw6cNmF0/FrAY3O8lCXnqabxmSJHWP94=;
+        b=kila/o4txdT4oFl7o5DvUiG0DBMUQh8/9BNnGffLylZUY9WA0ONdcZ4dYVH2uK/MfR
+         e+uBWVRi/jWu52JTp64dF0rCVnqYAXuMum2GMgUuHLrt9OMorNN2lZj/X0aXNlqgRex5
+         oAd8JvH3yeib+xLe0C9KJJBhumTvcE4bxejBChXUO/+gG7kdKkLMiYS1V5gj9FHMDWId
+         30P9N8+xlL0FBY/MFklDeNqIOcC5YR+uboT6dlTsQnmojVau0O7l85H+K0oFV5fYzQ/3
+         3xh10YbO81tQ0hNPGRiQ4PGZwG5DKEZtejL/hrraZ8jBdz7CXg3978esVwBT1H9ebIgT
+         m9Gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724945503; x=1725550303;
+        d=1e100.net; s=20230601; t=1724945673; x=1725550473;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9p9exDuS+N2wHltVC5uHJwdiYcj0alqx1w6CprkGJjU=;
-        b=EtC32Ro8PaG7FFwQ6t2SSQXvDlZPHIXbVupf4hsZeHhbuFKQq82qw1faDAeKwOQvlJ
-         Zs6T4sE5gUGUeggnu0mlos8NRmcc2UK7LUbFKC5OVWJhvOcjju3lnlvOSvCYVvqMAQGc
-         P5PY0mKjioVhSo/CScvk7bHeUMu/n2vQ5sR7X6+LH1dHK1zCDQkue4Dc/QpPcvKsW9Rn
-         6gsPIKnQlV8puJRpN9vdRPyXIgD4y5ItCJpkbJ98PbTRdUe2is4gd+8aj2nLIPSaE1NR
-         3IG0K4glACbHi4h+EUCYSgrBJZf6rE3iDuKdDnV/3Ku91kO8Ojo0CEAHA/iI2JGA6ezi
-         VyIA==
-X-Forwarded-Encrypted: i=1; AJvYcCV+jokbcMownGOk7K3fsh084mfF7gE3w8Hb/OKE9+MYcLMCFLZl1sIuY5HDnndnh1Hk0TTs6gagc1Fv@vger.kernel.org, AJvYcCWYVAi4ou4yHlbuFTurGXp3uzlUOX4tXNWL/ugvSo3jYLSFF9Pyh14TlZamQbAXQSqJ8/6txIy28FF9hpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj3tXh9dh0DyU6+6In7d6l8eYdFNtLTVcMiHaPSy23vdjJpu5Q
-	f2Ltpi0O5erJ2XJuiVH3ksoxtKSZe3xxpCR/92lE5vVO1g8IgdIHVIPeslvx
-X-Google-Smtp-Source: AGHT+IGRId278AbXJB19K4JskBOVnXVOa49pIxlinyuqsEH5+4Y5PRH2Yn+vk8vi8tvgwgBl8lg5qg==
-X-Received: by 2002:adf:f801:0:b0:374:93c4:2f74 with SMTP id ffacd0b85a97d-374a022999emr1686888f8f.20.1724945502562;
-        Thu, 29 Aug 2024 08:31:42 -0700 (PDT)
+        bh=lMGz4DJlwPSsw6cNmF0/FrAY3O8lCXnqabxmSJHWP94=;
+        b=OQ20NJGSx8Jv2zQBREZ8dLP9DsnCHxESh8ekrzDgO9z/ThkWuXOeO5qP6is14RL4AZ
+         Ayp075np5AXFsroNDMV1aREpUtMllO+4KL2KZc3PsXiEmKm3BfzwPKIwlay3SgYwh1an
+         diLNe7IwxMGn/Kp76MkXanlE1D4tSOnAnuW0MjqXK/q5xYRLr7TDmVVeQvf5EYUl/R71
+         fukb2lwwfWSVewNOf/V9m4wdJvP2SQWiAZNvNBmGvsS2aRX4qy7FFE1znCr7yUlmYpgt
+         KPeUB/AcluvaaENR7QvsaNTHoJbbM/OrmJPAMCV0/zmSfOcSLGu1eqK170KAKiCnx+rP
+         1xsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpNMYtxYTL5AEh0pz/TW5ybJRiNYfwcbaJyf7qn6AZFjqOIxBshLX6sinkMopnOt0MFeCwNB21rADyXSc=@vger.kernel.org, AJvYcCXT58zeHMDvnJTp7F65PU+U9L7ERYDzu4ruf6PukhuGfsBm7njk3qmo6n62Bf2eG4vexjW1dJoEb4mZRP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3rgH8I7KaChupVgUYjdWHZbGxW4ogD42cZFMHOgERIlItFNCp
+	01FhEr2hA1m/YM2Azd2INmAY7VlJwbLd+JuC5viBEEFWe4Vja9pI
+X-Google-Smtp-Source: AGHT+IFxKaGRXv7lvD/MPu70PuRfTyCtPyTd2XObVZ6XcGeS8PxveGi7kO7jcRXs0Leo9U7LZRN4EA==
+X-Received: by 2002:adf:e902:0:b0:368:41bd:149b with SMTP id ffacd0b85a97d-3749b550ef0mr2170947f8f.34.1724945672815;
+        Thu, 29 Aug 2024 08:34:32 -0700 (PDT)
 Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efb007csm1693308f8f.92.2024.08.29.08.31.42
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee94265sm1690690f8f.47.2024.08.29.08.34.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:31:42 -0700 (PDT)
+        Thu, 29 Aug 2024 08:34:32 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	Brad Griffis <bgriffis@nvidia.com>,
-	devicetree@vger.kernel.org,
+	Nicolas Chauvet <kwizart@gmail.com>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
+	Tomasz Maciej Nowak <tmn505@terefe.re>
+Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	Vedant Deshpande <vedantd@nvidia.com>
-Subject: Re: [PATCH 0/2] Tegra234 PCIe-EP definitions
-Date: Thu, 29 Aug 2024 17:31:40 +0200
-Message-ID: <172494549108.1303006.803535931416332245.b4-ty@nvidia.com>
+	linux-kernel@vger.kernel.org,
+	Tomasz Maciej Nowak <tmn505@gmail.com>
+Subject: Re: [PATCH 0/3] arm64: tegra: add power sensors and BT+WiFi to TX1
+Date: Thu, 29 Aug 2024 17:34:31 +0200
+Message-ID: <172494565922.1303542.1681323776551991858.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240816184348.2072535-1-vedantd@nvidia.com>
-References: <20240816184348.2072535-1-vedantd@nvidia.com>
+In-Reply-To: <20240821185829.20997-1-tmn505@terefe.re>
+References: <20240821185829.20997-1-tmn505@terefe.re>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -80,25 +83,27 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Fri, 16 Aug 2024 18:43:46 +0000, Vedant Deshpande wrote:
-> Add PCIe-EP definitions for T234 Device Tree.
+On Wed, 21 Aug 2024 20:58:02 +0200, Tomasz Maciej Nowak wrote:
+> From: Tomasz Maciej Nowak <tmn505@gmail.com>
 > 
-> Vedant Deshpande (2):
->   arm64: tegra: Add T234 PCIe C4 EP definition
->   arm64: tegra: Add p3767 PCIe C4 EP details
+> Jetson TX1 DevKit features bunch of peripherals that we have now drivers
+> for, so wire them up.
 > 
-> .../dts/nvidia/tegra234-p3768-0000+p3767.dtsi | 12 +++++++
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi      | 31 +++++++++++++++++++
->  2 files changed, 43 insertions(+)
+> Tomasz Maciej Nowak (3):
+>   arm64: tegra: wire up power sensors on Jetson TX1 DevKit
+>   arm64: tegra: wire up Bluetooth on Jetson TX1 module
+>   arm64: tegra: wire up WiFi on Jetson TX1 module
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] arm64: tegra: Add T234 PCIe C4 EP definition
-      commit: f52830f84c7113880aa8e0469cd204f906335c83
-[2/2] arm64: tegra: Add p3767 PCIe C4 EP details
-      commit: 74c396a4cda0f21bc413472731c3e571f3fe3709
+[1/3] arm64: tegra: wire up power sensors on Jetson TX1 DevKit
+      commit: 33dea2aa93442559b4bca665e8a5d4e1443dc228
+[2/3] arm64: tegra: wire up Bluetooth on Jetson TX1 module
+      commit: d00df3a8fdecee044518fb77525b41efeaf26df6
+[3/3] arm64: tegra: wire up WiFi on Jetson TX1 module
+      commit: 867a8138bfa3be7e83c7671912b648dcc862b3a2
 
 Best regards,
 -- 
