@@ -1,111 +1,96 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B331B3B08;
-	Thu, 29 Aug 2024 15:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E371B3F2D;
+	Thu, 29 Aug 2024 15:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724946625; cv=none; b=R0bjRwH7WtbZquhkGIuhaYY8jFoZmo+uq5Tq8N0G1bVQeYwPNJ4mqjFEnSlxvXkJfMn4pIw4aPeXhNQaaH/jToADPSkHpRWDv9OJezpDqIgvDjtBeWi7iK8EUsTV48uK8yyBovhoOCPFxyTy3DV9XplW2qpZEUxJI4FTCQEb4wI=
+	t=1724946724; cv=none; b=cGUdv0fLLdbBCwoKvb3QV9AGMvtqSrFWOjokymnFN48th6cVtDw8wvjE1Yz9ZTJos6/OdT3t4fIprgts3D+o+ah6xuf29S68AEepXEz3spH/gZSDH169kF3YFv1GJbX8TLum1ycutwRMS41NfCETHTYYd0O/g/D7pBrEJoX75ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724946625; c=relaxed/simple;
-	bh=rJ1E1FSn9EnVE2v1a7jxMaJli1rgUUJqDUz/uJFASzk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bell4FhJpZdC4pinHJFlUUn7O+92+f4QW0cleqZ3ajoSebgIlqKliB9gdVetKmnJ6COlbtZQvqMB2FYi2hyLhzf4u3EMb/0vyKo+4PCmGlbf/WwXRf3Gw2XjB9VHRh7qCsVYVerox7Hvz4Ni7c6wsBhaxEHTdFWYp0H8wREwRDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEERQ3TB; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1724946724; c=relaxed/simple;
+	bh=6ybnj9xuMyLJPe9tCIoju5s2NkxrXxfmd2ADNwQ8CUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YeDAtACEhAOnrxyou5DnR/qQXRy8IrVRRZuFahS8nSycmuiz1+0oaXSLeD86uC8AGVeO1w1/Sa0INoscCQForPNPt1SrGlGo/aGLy+kqQkp3ro3ot0K/cDNwB23rkDrfDHTpDQjDHsbBC2iXAwdVTeXmmBarOXMpraAlCFFHKg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TmNcy8jk; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEERQ3TB"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3718706cf8aso523373f8f.3;
-        Thu, 29 Aug 2024 08:50:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmNcy8jk"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c210e23651so912860a12.3;
+        Thu, 29 Aug 2024 08:52:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724946622; x=1725551422; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rJ1E1FSn9EnVE2v1a7jxMaJli1rgUUJqDUz/uJFASzk=;
-        b=ZEERQ3TBYHlBY35Xt5aO0MzDOWnJPNDRkwxPafp+fSKDYeREJ5TPfgachm0wUqJVER
-         ppGkODxAHGN0OSKxmYad3mwBJ7Tumigt4oeATp8qFRQDfCyxLbmFnM5gdIY629OFhi8S
-         d7WW4nnDoTo+a04F63mG1uRl/DqjyxDgxnCfjnUGZ6y2Q7DKiYH91/gmgP3dzx2R4Q00
-         Ry52vjsGsoKQCO5HnAlO/fhOBKLesfvZ8SB+msG/ozkf/gGgbq/GaXu+8jmuicmqUepG
-         hjpEfCv9wU5RhxD5D6YX7CGvLGhVq+HnuS1TTxxDP5hFzND7bOgamzTBBy1DWmHlq5v9
-         fR7Q==
+        d=gmail.com; s=20230601; t=1724946721; x=1725551521; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LkzGyg+YpeAYRQA8bRsHPMUzJcZCB8L3Y8kiytwETbg=;
+        b=TmNcy8jkTHMJnyae1VHYnrn1tsC+kyDY8u2X5sAxf65QaMEfK/mrFxILLF2dWrPTiG
+         LbQ7vge8h+w3qEZy2pcSgnoNnTFQndsMtKpPgSgBWm2mTG/YYcSvISS8vlmHjihtEypq
+         xwXG/deQXjRd3WFbBCxk2wreA9CfqYIVH0C1bSpKMpfstGB5QshqWDHxEWN3Vne6WmCE
+         K4dsl7HDaOn6gu8+isPUj4TnAbAQpep8p30Ltwd4PpBW1lN7nO6Mxh68yuFqgzZRWfbN
+         lt2qsC2f0GeMoKN6bpzEKoL8FdVcRB1pnHldEElGX4CmFc3OdwZ8kX5Ql+aq894O3JE4
+         E4rQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724946622; x=1725551422;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rJ1E1FSn9EnVE2v1a7jxMaJli1rgUUJqDUz/uJFASzk=;
-        b=LTUP1pVEi77w14hf58t+7qW8XhkjxBHww3p7LqE1UWIOXbmfCr23lbcJ6ybpPqxyGc
-         l5c2X9K3gdEPFQQLWjvn+98sHw8cHDY8m3zPcq8PNnYmeJpS58/3WyM/BZ5BoOAbNazB
-         7OmqhjhohrU4g/LPcuRC82RdQf7tus/VysqmqlnltJL52oDVefFqq1KocoviwIH3Ginz
-         g1QJTQupR8U+z/QVp2pFYDx8li99JxDLIeiVqCW4HSBBQTgcHqabERhzTZKlbGp2uejy
-         EwvP8uIF6WLt1YNu0lpOsBx6SKX+iUbwC0YeGAP/u9mSMxCMsE9WN0lwjjkVx8nckPmM
-         G7og==
-X-Forwarded-Encrypted: i=1; AJvYcCUOvj+wGiPveXvfO29XBcyfHaE9TJud84Tdf/h+CJhqiwpyHg2YOiVlRv637q/B7W+aX8/pG4WL2bfI4wiX@vger.kernel.org, AJvYcCVhxH8kyINJj0r82RGhKp2XrujxTXfOWQk9BfcKW5uwXp+fW1IFLs19sObNRT0UvpBRnW8GIPk7HhRdUlREXog=@vger.kernel.org, AJvYcCWffVnM2dipQseiMFhDNlihelmFZdE4uELjtYlrdJVOiUUCfXr+0V1iN1M4ibTKzlaarpsz+N0svVRXuPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywosx/ACv2o1aw3wUw5hO+q2w+02fvEl48dWU9C/2eyN+iJCVQQ
-	UeI8YWw+JTkdjPokljuLgPkLoxNGC047lE5keymsh4ZDUj5g+uod
-X-Google-Smtp-Source: AGHT+IHgyWOmnBMDml/2WKTJlzLj30pI0kYETJ0C99Zz7zJftAy4vldU6h2q941Ku1gU8wLUpksIgQ==
-X-Received: by 2002:adf:e005:0:b0:367:9088:fecd with SMTP id ffacd0b85a97d-3749b52e4b2mr2618324f8f.7.1724946621184;
-        Thu, 29 Aug 2024 08:50:21 -0700 (PDT)
-Received: from orome (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee4abbesm1737641f8f.23.2024.08.29.08.50.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 08:50:20 -0700 (PDT)
-Date: Thu, 29 Aug 2024 17:50:19 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/tegra: hdmi: make read-only const array
- possible_nvram_sizes static
-Message-ID: <a3itbzv4hhkbpa3lhe7w42qtyxwiuwdsdntemtzn25uj27skci@trg63xzeh3dp>
-References: <20240822205047.642845-1-colin.i.king@gmail.com>
+        d=1e100.net; s=20230601; t=1724946721; x=1725551521;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LkzGyg+YpeAYRQA8bRsHPMUzJcZCB8L3Y8kiytwETbg=;
+        b=oZHk7bRDCPh2ABO52ChmMlNqVPbFmSirUD2NygCAjKWUDH5TJQTxlfBv0LDCMYOq8S
+         CQuZ0rjcbpoKIqLuUpoZiAmGAGa9URPcCDLkP6yjDIIGuX9CvpzBwJGKUBLaxVAg4/1D
+         nyAsmfTKHmQBIA8G8yx16RoBqs1588iyyoNNoAS6baWuK/9yaYaXmLt61qbYk34eNsNo
+         4bAPqz0ViD7hUpgiEdoj+IdIDDASZqSkggmFIp0tuQAxgd4H/kgckKvXW0rERLCBLtJP
+         VmqOxXZPz1FHJMMcjxjM8Vpd1coY4Z9b9nLSYIwYvyzG+qcMrYyUWCJmf3cL9LANPcdM
+         Z6Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCUywEIhJ5i5LVLLVtjXMZ7RzBldp4zxQ3ApYdvIptk68Awa90k8gtXOukOoGJZqPCyE/5LTNc5ZjCfIHNA=@vger.kernel.org, AJvYcCWogKEYr64ZjCApkVkwrxUVZweFaJLb4Q7RzrtNisYtM5v1ENYbvfa3KdJMcHTj6wPsX0qZiUYwQ4yPJqUg@vger.kernel.org, AJvYcCXTuHIHm637KJImhNMRjctL0r3S4enCZ4ILn5O3qtk4RZnnONjIKtepbd3GJTFaFZypEHUnXNLhOIewepTJ8pI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx62mJ0xlnuNGoNV1Tlk0lK/koj3ehz1kKXjIMteWVDady6Bwti
+	l7n/UsytETuQH4T7Zp+Dif8zMUXVVUdAFAMLOyOeKkHL0dJKL/jg
+X-Google-Smtp-Source: AGHT+IEHax0znxV7voU1XWsSmK6e3PzUEkJanhV5ouCAG7d9c0TJRpfmciNspiwHOZgvpH4UKWgPnA==
+X-Received: by 2002:a05:6402:26c1:b0:5be:dc90:d14d with SMTP id 4fb4d7f45d1cf-5c21ed34a93mr2893643a12.1.1724946720388;
+        Thu, 29 Aug 2024 08:52:00 -0700 (PDT)
+Received: from [192.168.0.101] (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a8989222588sm92753766b.200.2024.08.29.08.51.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 08:51:59 -0700 (PDT)
+Message-ID: <794ca7cc-f27f-410c-8b95-d5403f4ad638@gmail.com>
+Date: Thu, 29 Aug 2024 16:51:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ql3tpfeuhs46rjeh"
-Content-Disposition: inline
-In-Reply-To: <20240822205047.642845-1-colin.i.king@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] drm/tegra: hdmi: make read-only const array
+ possible_nvram_sizes static
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mikko Perttunen <mperttunen@nvidia.com>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240822205047.642845-1-colin.i.king@gmail.com>
+ <a3itbzv4hhkbpa3lhe7w42qtyxwiuwdsdntemtzn25uj27skci@trg63xzeh3dp>
+Content-Language: en-US
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+In-Reply-To: <a3itbzv4hhkbpa3lhe7w42qtyxwiuwdsdntemtzn25uj27skci@trg63xzeh3dp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 29/08/2024 16:50, Thierry Reding wrote:
+> On Thu, Aug 22, 2024 at 09:50:47PM GMT, Colin Ian King wrote:
+>> Don't populate the const read-only array possible_nvram_sizes on the
+> 
+> I've changed this (and the occurrence in the subject) to reflect the
+> actual array name ("freqs") that's being changed here.
+
+Thanks, my bad.
+
+Colin
+
+> 
+> Applied, thanks.
+> 
+> Thierry
 
 
---ql3tpfeuhs46rjeh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Aug 22, 2024 at 09:50:47PM GMT, Colin Ian King wrote:
-> Don't populate the const read-only array possible_nvram_sizes on the
-
-I've changed this (and the occurrence in the subject) to reflect the
-actual array name ("freqs") that's being changed here.
-
-Applied, thanks.
-
-Thierry
-
---ql3tpfeuhs46rjeh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmbQmLsACgkQ3SOs138+
-s6HAGRAAmGbYekDkE+fSbWHiAQEEEopvqtwfi9pf3qQhWrAvTkWHJ+f84L0f97+X
-ZDp2Xvbycz6a5d5XP7OQr8yVRFXw7IQ54dG4tHSi3GkOF4aJt1PxXFAQG9tmxNKf
-b4Vog6rC5eqi6v2S5GvmBhoXVaiUNIhSlIf5g9S+WfY/JnbdIvDQuOfH391oiQVz
-3+ZfpT5Z8BFaiPxJSNv6OeVt98mudHfonN0WrhIWT25gchR5P0+EQjeXfd07f3a5
-LGxa21LsVoObmD8s614dVO5zGcWdrszWisAmT+uJplHBMYjxXPEX2U6cfyLHFoR3
-Z3RSky6J3IHfoygAsFjR6BI5yujN65oMx/DydwoNUpO0Uh5zqEi4IrBANYWMtiJw
-wV4d6ExLkLlPMYCxcENGsStaxy7MkPYFv23desCq97RGiqn5gsS05bU4VmDxpvnF
-WRCwmX7vqBrJB9cIotcywXvXS8Wouc6WMLh/qQ7J8nonPO3QNLRypt85oMpzEOLZ
-kSjxidNri97ooAcQDOL1BKpcsf9C+X0EESQ7HU1cDOM3Q26pe4fsqLlRK6lAeozD
-Ex+g1S499nkWtVAqK+Ace2MqqcJWeQPaAmJ+gXVL9OebQSyPihRQyR7qR6+BCBQq
-k6p7S4BIqDgxRcmuWzCq52UtYgRYW6ZIC4NQOzr+DaZWoD2QhRk=
-=Ba83
------END PGP SIGNATURE-----
-
---ql3tpfeuhs46rjeh--
