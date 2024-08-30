@@ -1,99 +1,101 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B0C17B508;
-	Fri, 30 Aug 2024 10:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4496A170A31
+	for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 14:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725013773; cv=none; b=IqBtqxtGGY1xWR76vIzKn0oXcrOMRsNLgncrJX/n5vS7nxXPUVoODUCkdQQS6SHqREfc0mWLWZyIVQJ+PtqlqTxfhXLWU66OEdtEPfsgr7tcnbk5GXD11rHz9deiSVXcGSzKIxkhIAFhn8d23QRjh+76y6/Lf+woEzoWR1rm5HQ=
+	t=1725027009; cv=none; b=Vxiy8sGCcvMQ524q9zSP99nbG0HsF578oZj7FYf+IYwLtoWUYG+vOSoXQX1gEHTVjoX5to04oKffvrHD7Mh7akeYZ270PNv0ZyzgJlAhgxjilCBIo5w62r01M7/0tYiTP9upYGUqETgqnETc4Hhr0jMcsIWHESz8Tb+BOoX9k2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725013773; c=relaxed/simple;
-	bh=7X5uorWeH4q6GihKuadn5u1Ek5InKG1JjJAOorTZqkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FI+3te+Ha26kwJTGNlShA+MV1T8Bf3HLbSQtBCIl4PT0Kyzbo0ozAB9QtHG21jdc6UeYIgnan64M+aqgJ8FuacEsUqEjdFgQ/IUptWKwW3vbrBoimxJeFv0j1iYabnXoQ3uvHESS8M13cHE7erb/yaPZSX+6yf/7hFsfby9EW0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=Fgl69IBm; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1725027009; c=relaxed/simple;
+	bh=U2r9VR1AY1nFzOKpt4B5CsFpP5W6pSGYPBGLB29VPZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QrI14kiuVja7f5zJc3KYSpeRo1y3vFfSiUK127H3ADYXj23/IljfFMCqogfUdsLbO2IhZaCvEUMzkNOjr7qe0hMuadX/piXtFDjTuv3RrII/4wvNKvBTDVP+zu+qRql0iJ8dYqPIisYruGsHLgJ2xi9CShHIv2dCEM5/KxTnHFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yb5R/+Iq; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="Fgl69IBm"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 8ACDB600881C;
-	Fri, 30 Aug 2024 11:20:55 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id y_YNDg5Yp5Zj; Fri, 30 Aug 2024 11:20:53 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 4D4486008812;
-	Fri, 30 Aug 2024 11:20:53 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1725013253;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eu4S81HobKPBEZpOa/pzICVzPqFu5G68cDTXmSDyMX4=;
-	b=Fgl69IBmSoErzCo3CeMAyNYGEX64+2LILN3qnPhOzAUo4xo+fFbbF4BVZ+F/wzUvz11gha
-	cSfvJEXRkvQ3cybsCU8stLcRwHrxlGXAogJtRFQxBX4MLRgRAxLjLg8RADXEutAOz0KXEp
-	qXF+44CpctLb6hIyTCk6r7/kRbR9XQM=
-Received: from diogo-gram (unknown [IPv6:2a01:14:8073:1e10:c362:ff08:aa85:54c6])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id EBB4E360134;
-	Fri, 30 Aug 2024 11:20:52 +0100 (WEST)
-Date: Fri, 30 Aug 2024 11:20:45 +0100
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] arm64: tegra: add wp-gpio to P2957 board
-Message-ID: <kbz72jma3bj7dnfnvdjo6m5yqrvjwkvz2gtt6bxpezkslwt3kh@a7wqzkssdfvf>
-References: <20240815-tx1_sdmmc-v1-0-7856ac25a204@tecnico.ulisboa.pt>
- <172494536049.1302383.5328678787632525054.b4-ty@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yb5R/+Iq"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42bbe809b06so4060385e9.1
+        for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 07:10:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1725027006; x=1725631806; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M0vfLLVvgVR8/+4UUPNZ173tGMb5xNPNr2QMLpkcyV4=;
+        b=Yb5R/+IqFnZUCPib9vPH8ly1O0l7RzjPRqqV61XesCewJlRw/Jj8JzHvFlTEAKxYuN
+         IyQempTLi0exe0ZN1al4bHIea4kXYdYn1vjx0f29ybEejpvc6Vim3YWpfGGL6psEbV1R
+         Y6ne6pZGcdyBejBI4msTivDMd3Y2C0IkAvdzpG8Yc5zjUb/HAjufJHXYA2kSW657q8xG
+         tzWXFw7Wi2trHeOHw/M8PwnFUtB2Ang/sUGfR3JvX8jlBi5ioLBDB+byWXDqrFPX1si3
+         G3tNvvgWeHn9z/CgWUthNj/8zMkfBkkB9NifKDPL2bBHW5+fFWUA/F0LrecFznlzrqRn
+         p7Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725027006; x=1725631806;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M0vfLLVvgVR8/+4UUPNZ173tGMb5xNPNr2QMLpkcyV4=;
+        b=W9tLEaZfbxlIqUkRtI18iqZkIXnlRovVPrkIigClAgQ/SNXTiSR7QjGcXXLlVPvWPZ
+         F+R7R9yRVGV46qKHceiaDg6nGy18fs8YGizYN3rXY5Wvx7v8vnshrWx+QDdUdvkn5TyE
+         kp8+UFlf9j6QSMVweUp04MWOU+AmdsO5Ge4DSJQfrhmZO/C4Agj+u8XFgQb3tgp0wVmZ
+         QiXfJvsfsUa33N6kWC00SlxGzZ14lNaysD8zTnd8xSqKdcQPfTGhuuYWMZvAz9ho0ix5
+         ANsLchKAyVG0unLgv7/bpEWSZcmkzMG9VqFhVYWYUZ/4BCcoBrzwA8jGl7FIc9vnRj9B
+         uwUg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7+S/sgXPpk8raLTCL2J0EQB9ryCo5GlPZIohv5/dgtVf29ZAc/T9LaFWlyJPQwLU5VbTrVUEf9EHEjA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3EAQeflSzZzaDYFuzLB6Zoc6Tb6coQst7VB2emA3MhR9pfaIn
+	wixnO/cSfDS11a7AHGWCipGXy3I1okzqo+p7/goq3bOcxLI4aK3Z
+X-Google-Smtp-Source: AGHT+IFCnbU8gUpa2S/G+byJk01/HZgK3g0uAHqhn2xulkoTkl8lDqCYGCg1Bj/TJbcau1BPqm8iKw==
+X-Received: by 2002:a05:600c:474c:b0:42b:ac80:52ea with SMTP id 5b1f17b1804b1-42bb02c1098mr49627755e9.6.1725027005702;
+        Fri, 30 Aug 2024 07:10:05 -0700 (PDT)
+Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba642594dsm82113565e9.47.2024.08.30.07.10.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 07:10:05 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: arm@kernel.org,
+	soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/6] soc/tegra: Changes for v6.12-rc1
+Date: Fri, 30 Aug 2024 16:09:58 +0200
+Message-ID: <20240830141004.3195210-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.45.2
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172494536049.1302383.5328678787632525054.b4-ty@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Thierry,
+Hi ARM SoC maintainers,
 
-On Thu, Aug 29, 2024 at 05:31:23PM GMT, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> 
-> On Thu, 15 Aug 2024 16:50:38 +0100, Diogo Ivo wrote:
-> > Define the wp-gpio for the P2597 board.
-> > 
-> > For this, patch 1 fixes the assignment of the vmmc supply's gpio that
-> > was incorrectly assigned to the wp-gpio of the external slot.
-> > 
-> > Patch 2 adds the definition of the wp-gpio.
-> > 
-> > [...]
-> 
-> Applied, thanks!
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Thanks for picking up the patches! In my testing around SD/MMC I found that
-currently UHS-I cards are broken on the P2597. When trying to use one
-the system shows somewhat erratic behaviour where it sometimes hangs and
-some other times it simply fails to read from the SD card. I have
-tracked the point at which this happens to be around
-tegra_sdhci_pad_autocalib() when switching to SDR104 mode, where there
-is the possibility of using specific offsets for this mode. Currently
-there are no values specified in tegra210.dtsi, so the 1.8V values are
-being used. However, when I tried specifying them as
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-	nvidia,pad-autocal-pull-up-offset-sdr104 = <0>;
-	nvidia,pad-autocal-pull-down-offset-sdr104 = <0>;
+are available in the Git repository at:
 
-in the DT things started working fine. I did not send a patch with these
-values since I could not find what they should be on the X1 TRM, are
-there any recommended values for these parameters so that we can have
-this fixed?
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.12-soc
 
-Diogo
+for you to fetch changes up to 4d57a840560c3ff04fed07a06b3aec7cbac4bff0:
+
+  soc/tegra: pmc: Simplify with scoped for each OF child loop (2024-08-29 17:43:43 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+soc/tegra: Changes for v6.12-rc1
+
+This is a single patch that simplifies code a little by employing the
+new scoped OF helpers.
+
+----------------------------------------------------------------
+Jinjie Ruan (1):
+      soc/tegra: pmc: Simplify with scoped for each OF child loop
+
+ drivers/soc/tegra/pmc.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
