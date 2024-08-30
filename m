@@ -1,57 +1,57 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FF51ACDE8
-	for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 14:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C571AF4F8
+	for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 14:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725027010; cv=none; b=m8VwTWXQWIPl9w9uFY5tnxhkxMySIxF+XGLjsTNc4SkQsF2PY+sonCmZeePxa2G3uzs8liuQFBj1Z4rGpha21ri7Jg2KMuqTtZIZw+3epJqw97evLTMtfOeTNrzT3zZGuK5GZzIqGzgRbQAFhA9cv8oc+ckQC2yagVfoVEHVnb8=
+	t=1725027011; cv=none; b=ZpBBtB0gSRLvxhIHnNbz/XPhZc21BcLNyOBm8EeDVfMK4DA4s324v0M6ekuLBK/jvwhlbhFp2jSmuwV7X4esHB1+QyvoHVPxmUp7fiDIgUbjrAEynEB429RtHEzfHNG1yJbVAHXKZ87irPyml85HVCjN1ndgUFe5zEi6E7JLVQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725027010; c=relaxed/simple;
-	bh=fHoI+/CjgNHBexuKR4b0wb98O+WvSpPwIbmMY5XOV2s=;
+	s=arc-20240116; t=1725027011; c=relaxed/simple;
+	bh=6HdRdzXK9/DNv+TUtxgoEqtHPg/BPLeb62A0vTGglTI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fkC/us3AFa9MKNRiyjfiL7sG81rD0vMQ4SjzdZ9/22Q4aKc65GMUuVcTT2Lt3NMDHFS8EvVMaNAZB9KpVdUIgAqHtPQJLd6xX0cdBhE5RhoaFBiQfYNmvhqgoaq4t0pkY9twWo+y7OWNEU+zgzCE38GXy7HdS9l/ixR/xzsfHBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M5gfSDT1; arc=none smtp.client-ip=209.85.221.45
+	 Content-Type:MIME-Version; b=NUUiTIGH/Sn7sWFo5+tXi4oXvlSE+ixwYxGI4+7y1urKtj/uxz3t8FBEXf/ND25vLw3RmN60sSUATq4YI8wyJp6IKcd1cz2DszQCptEDmMgw1B3C/H/m+zrXxya+atbCIwqsUgnkEkIRYm3yIyQACH4f+9KFSUVP+7tQW/9qZKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l8OG1unD; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5gfSDT1"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3718acbc87fso1079049f8f.3
-        for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 07:10:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l8OG1unD"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-371aa511609so1228626f8f.1
+        for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 07:10:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725027007; x=1725631807; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725027008; x=1725631808; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RtpP67cv70Y+Louq0UOChaWqSWUFmRCVAXzaACPA2pY=;
-        b=M5gfSDT17aeQ832Utdbq7XzffbwkPQaCo/b//1uon6uNnz143ayxv0yoYaHQLubyvA
-         jUBvFsBhIt1lmeOsN48Vg+RsNhBZhWUkuiGfXzCIEcIL7R5A/vFbCZg94qmSmFIhFOzs
-         4FrekRMakCmF22RIcQ52YfAYaMUKksvRY72OxyquoTZaAsbvOe39mfHvY7criXyQMyEe
-         wBCBpCCjimN4JbkMxZsbNNOO1fJFB6/LIl6v3d8NXRkLrrroJPHDBowAypHAWxY+eh2C
-         at/Opyvb79U9WgjYoDubF/AhlsCpC19Oy+G0ykc0loczw0O7UdH7Lp7WUiude3AuxItW
-         vzFw==
+        bh=T8AI/Fdop6iHv+uoGGlpuSZ/Od9olmbw4mbRVXSNvW8=;
+        b=l8OG1unD17jShQwK/6GlrlVcPNB3IXwDxtde5My6/VKuWnytBOToZ24E5+0g8WI3jV
+         HHzsJx7wIHEUIKTSQYOAUATU37AKhDjxFg9AXWzBDbyuKBIjFdkOsAtJpkbozTpb0MHj
+         /c+i2Y6uqA1Xst+1/MX0RQbKXovF4HYCp2aQGPWIgGG04knq+ubq1aw87AVco2SQnsh4
+         WWJDs0Xc9TU0ZaHP0difrkY+9L+fhHXAG/VMZgWGFjA5KIsaSFIt5jtoAn2Y/BEWHZaS
+         OZlAJuy6LPlVC1j/by+X7Z6a/vbSCe0L7IeS3ffSgtngYdpDbPco5rE9i+ALsaRm5sZi
+         xQMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725027007; x=1725631807;
+        d=1e100.net; s=20230601; t=1725027008; x=1725631808;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RtpP67cv70Y+Louq0UOChaWqSWUFmRCVAXzaACPA2pY=;
-        b=OP1ajmVyEXt6WWw3J/fl/xbU2q0X5Qj3JyuQZN5kMg7chlb2wSKbjvn6quQFoGKHB5
-         XwUeTn93MvmY801uogYpyTakoidy2WkIOS0iC2U7l/3gJpsrTQ3frN57MLs59H1ivNIN
-         IRrv9YrALYQTFChK0YQGSQk8R6sEYdPK7c61HZv8Gt0OgLCkcwQYGV+n5XtV/JFOl87t
-         jkhuLaGBxcKU0lSphmPTedQa5F0OjuhquMf8JbNCh2don/DKEGxfFieRg5cj1G6SAdK6
-         27yvVSmN1s6QrIIaYME/WRPUtTCG+8hz6s4/n3jCoxxPsJ0cN5OqsxLhB/LdRTmihMM2
-         FvBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwriW3HC0++5tAri8Z89qweV3gBnxOCKT96P77wxoxqrBRY+qkCSdG9Vfs1gMlT9AbppTX7NR+HR+RWw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9Scov1iF7KXBNFZ7S7BJVQuevDweJK1smd+1spWZiySGZCjVm
-	5JiUgPQL+X8tJWnrgsTX2sAvdwwaYfGd+kUB+RKmSemu2txG+jIH
-X-Google-Smtp-Source: AGHT+IGw2yUzapuvRvvhKYsaUVgWMUVUqjU/inDZhwy9DTWkKdQqFGaIZ9mVoZA60vfBKxyefLPqrA==
-X-Received: by 2002:a5d:590a:0:b0:367:8383:6305 with SMTP id ffacd0b85a97d-3749b587a49mr4178706f8f.55.1725027006588;
-        Fri, 30 Aug 2024 07:10:06 -0700 (PDT)
+        bh=T8AI/Fdop6iHv+uoGGlpuSZ/Od9olmbw4mbRVXSNvW8=;
+        b=i9jBt0MoRsib6gLWMqz9UNSnoTd77PY0D7TSYzd8F1mxZLXxW0dL2p1tEjOmU89v+B
+         5zpatiDXgUv15s4Ts+kqPI3m6l0yZeD5cAoqySzEE8/hnsHNSyHe1PLWbcWaoe9//XJL
+         6B7h4Uc+RzKhnNC0hRLPZmf4ue+nQDEhTvhYzmdxEP+rkjg7jrvlL63sT4bRMNpkhDwp
+         xbOc/XYEI6z6conN20sjuompOvkuBCqdhsB6rYTnVG1RYl3yEszEeC7fvwxaCvOPhgNu
+         5KXBOL55hKXVoQI+jALYtCtJIsr8bRUTfuQs8BZ4ERHGHcb+iRIIm+0G/5TsQAeAqPF9
+         dXAw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+m/Z+r6/clXDs74L4utnu8Md9iu665OoFd7IAFKopq7u4UNmrVPh5rRnXwoqoma64DIvnio3IaxTpfQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc/iTgXarVUyvOkFXkFkHrTY1Li/x34kC1Lg0ZQE9oa2Zcoug/
+	KOxtjAPrAYzCyGrU+wfXuvbcisGRWBZqSKgW8lEVDjPwt5VsFMf6ZZlwYtTi
+X-Google-Smtp-Source: AGHT+IFiVV4FognpxJjECOXOy15naDCNUq2hzOneZZRh2PLbxhNsakYmHArm/JlTqzgGmCEZkbrlvQ==
+X-Received: by 2002:a5d:400c:0:b0:371:8c27:4ce8 with SMTP id ffacd0b85a97d-374a959e353mr1606496f8f.27.1725027007382;
+        Fri, 30 Aug 2024 07:10:07 -0700 (PDT)
 Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6deb1ebsm47580525e9.3.2024.08.30.07.10.06
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e27c70sm47297005e9.35.2024.08.30.07.10.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 07:10:06 -0700 (PDT)
+        Fri, 30 Aug 2024 07:10:07 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -59,9 +59,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 2/6] firmware: tegra: Changes for v6.12-rc1
-Date: Fri, 30 Aug 2024 16:09:59 +0200
-Message-ID: <20240830141004.3195210-2-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/6] dt-bindings: Changes for v6.12-rc1
+Date: Fri, 30 Aug 2024 16:10:00 +0200
+Message-ID: <20240830141004.3195210-3-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240830141004.3195210-1-thierry.reding@gmail.com>
 References: <20240830141004.3195210-1-thierry.reding@gmail.com>
@@ -82,25 +82,23 @@ The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.12-firmware
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.12-dt-bindings
 
-for you to fetch changes up to 8812b8689ee652ee7f7e958473a9de56d7c184b6:
+for you to fetch changes up to c20ebc7fbd2ac3af28e8c712cdaf5b20b524bfba:
 
-  firmware: tegra: bpmp: Use scoped device node handling to simplify error paths (2024-08-27 15:58:38 +0200)
+  dt-bindings: arm: tegra: Document Nyan, all revisions in kernel tree (2024-08-29 17:24:49 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-firmware: tegra: Changes for v6.12-rc1
+dt-bindings: Changes for v6.12-rc1
 
-The changes in this set remove some unused code and simplify error paths
-using scoped helpers.
+This adds compatible strings for all revisions of the Nyan board.
 
 ----------------------------------------------------------------
-Krzysztof Kozlowski (2):
-      firmware: tegra: bpmp: Drop unused mbox_client_to_bpmp()
-      firmware: tegra: bpmp: Use scoped device node handling to simplify error paths
+David Heidelberg (1):
+      dt-bindings: arm: tegra: Document Nyan, all revisions in kernel tree
 
- drivers/firmware/tegra/bpmp.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+ Documentation/devicetree/bindings/arm/tegra.yaml | 42 ++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
