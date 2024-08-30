@@ -1,57 +1,57 @@
 Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C571AF4F8
-	for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 14:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CF31B1D43
+	for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 14:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725027011; cv=none; b=ZpBBtB0gSRLvxhIHnNbz/XPhZc21BcLNyOBm8EeDVfMK4DA4s324v0M6ekuLBK/jvwhlbhFp2jSmuwV7X4esHB1+QyvoHVPxmUp7fiDIgUbjrAEynEB429RtHEzfHNG1yJbVAHXKZ87irPyml85HVCjN1ndgUFe5zEi6E7JLVQI=
+	t=1725027012; cv=none; b=Hb9xoheNF7FpLbjeWhtgBVIT4mrB7dyGkpvNuJNN+Bao4gPhZH6knS8J07idVlUN8MFPQzttQjmzZIVn/nQpcDapACUkY59mFRx4zuIJSMbzf5TiEGvwaUDYI+yxUUKMnV280YdSpLP2Q+bFSzPKvqyoKOCLsmvFKS49c2qTfHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725027011; c=relaxed/simple;
-	bh=6HdRdzXK9/DNv+TUtxgoEqtHPg/BPLeb62A0vTGglTI=;
+	s=arc-20240116; t=1725027012; c=relaxed/simple;
+	bh=woBv7xSaBV8J4fMHZzd5ujS01OmY0WReaMhlnsKdjfU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NUUiTIGH/Sn7sWFo5+tXi4oXvlSE+ixwYxGI4+7y1urKtj/uxz3t8FBEXf/ND25vLw3RmN60sSUATq4YI8wyJp6IKcd1cz2DszQCptEDmMgw1B3C/H/m+zrXxya+atbCIwqsUgnkEkIRYm3yIyQACH4f+9KFSUVP+7tQW/9qZKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l8OG1unD; arc=none smtp.client-ip=209.85.221.47
+	 Content-Type:MIME-Version; b=OnJ3pyzCrzmOikQnG0rxxxR0TeQRZzjwI2v+jN2Za1O/JqHr6vo15rrNJKG26xn2d+gdCGVvnQ8wzGzn3ceWUiioX7Pu7sAN371lP9xB2oi+AkD6lZrNvHDVde8kjYnfoqGpkEsB8B4iBX7MOGJm9Idc/i5Pw9Dz8rHHTDQCn8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMq5EEM0; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l8OG1unD"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-371aa511609so1228626f8f.1
-        for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 07:10:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMq5EEM0"
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3717de33d58so1184854f8f.1
+        for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 07:10:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725027008; x=1725631808; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1725027009; x=1725631809; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T8AI/Fdop6iHv+uoGGlpuSZ/Od9olmbw4mbRVXSNvW8=;
-        b=l8OG1unD17jShQwK/6GlrlVcPNB3IXwDxtde5My6/VKuWnytBOToZ24E5+0g8WI3jV
-         HHzsJx7wIHEUIKTSQYOAUATU37AKhDjxFg9AXWzBDbyuKBIjFdkOsAtJpkbozTpb0MHj
-         /c+i2Y6uqA1Xst+1/MX0RQbKXovF4HYCp2aQGPWIgGG04knq+ubq1aw87AVco2SQnsh4
-         WWJDs0Xc9TU0ZaHP0difrkY+9L+fhHXAG/VMZgWGFjA5KIsaSFIt5jtoAn2Y/BEWHZaS
-         OZlAJuy6LPlVC1j/by+X7Z6a/vbSCe0L7IeS3ffSgtngYdpDbPco5rE9i+ALsaRm5sZi
-         xQMQ==
+        bh=+RJ1FPZC+rVZlb51jlc31En5hT69orcbEeq1sqqoigc=;
+        b=cMq5EEM0tvU3raH4cD3bybdQux8AyH8kRAtqk81ayG6nCt2HDxQlyFCjv5gaHAJFVi
+         c8cKOy5MR/FdIKvH8DW57ITxy/avZ4j+15L9k2hiWW9DXdoFL2nXLEVsv9RSJVIqRrde
+         tSZWNVGOTmVxjFQgTItkPaxbUdfZBzxcqCm6FxRK8zq9cueDeHbBQQ42j85/pqpFI/g6
+         plAflIIDTmZQWVeyNn1cL+PIHHPx21J4LKsVyZFTCGbDWPDti/hrtcmoTxbe9gvSKFwR
+         2Xisab+snzTCN4+dL8oXooanQg/DBH8kod8GvC7wnTTJfADimu6xIGFqBcS6F3aGcrUU
+         VtNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725027008; x=1725631808;
+        d=1e100.net; s=20230601; t=1725027009; x=1725631809;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T8AI/Fdop6iHv+uoGGlpuSZ/Od9olmbw4mbRVXSNvW8=;
-        b=i9jBt0MoRsib6gLWMqz9UNSnoTd77PY0D7TSYzd8F1mxZLXxW0dL2p1tEjOmU89v+B
-         5zpatiDXgUv15s4Ts+kqPI3m6l0yZeD5cAoqySzEE8/hnsHNSyHe1PLWbcWaoe9//XJL
-         6B7h4Uc+RzKhnNC0hRLPZmf4ue+nQDEhTvhYzmdxEP+rkjg7jrvlL63sT4bRMNpkhDwp
-         xbOc/XYEI6z6conN20sjuompOvkuBCqdhsB6rYTnVG1RYl3yEszEeC7fvwxaCvOPhgNu
-         5KXBOL55hKXVoQI+jALYtCtJIsr8bRUTfuQs8BZ4ERHGHcb+iRIIm+0G/5TsQAeAqPF9
-         dXAw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+m/Z+r6/clXDs74L4utnu8Md9iu665OoFd7IAFKopq7u4UNmrVPh5rRnXwoqoma64DIvnio3IaxTpfQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc/iTgXarVUyvOkFXkFkHrTY1Li/x34kC1Lg0ZQE9oa2Zcoug/
-	KOxtjAPrAYzCyGrU+wfXuvbcisGRWBZqSKgW8lEVDjPwt5VsFMf6ZZlwYtTi
-X-Google-Smtp-Source: AGHT+IFiVV4FognpxJjECOXOy15naDCNUq2hzOneZZRh2PLbxhNsakYmHArm/JlTqzgGmCEZkbrlvQ==
-X-Received: by 2002:a5d:400c:0:b0:371:8c27:4ce8 with SMTP id ffacd0b85a97d-374a959e353mr1606496f8f.27.1725027007382;
-        Fri, 30 Aug 2024 07:10:07 -0700 (PDT)
+        bh=+RJ1FPZC+rVZlb51jlc31En5hT69orcbEeq1sqqoigc=;
+        b=lloszNcCkU+/h+6+Cdj2Zir0UnSRCIXKU/L5NicQTb7T9NlSK4ho3VnkWOGv0qVqpo
+         4WzZdr9PydYUSR3+gwh/10C4q8BQd2D0hwOjXRa2nh3ob1ETo1xJ+jUBvTTD/guUSeVU
+         O5ALc9wWSl3prHtJ7OLX7X5ywx7ukdl/hKCZ/xL7tfDXo9hXhiFcqhaTYTY5XSw1RI89
+         MLa1z7IrS6oE/mZ2+O8x30823MqClWMSHeedrAojtPTHNBdthq7pdiCVTu5i4hDNnTmQ
+         gekYI+MQjDmvckFDNsClhhjmeqXLZpzNU8ZVPN84o55AKorNm4yuVoy36I/MTDfSiEd+
+         MUyw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0+7BMcjyhfWE7XiytOsTgZEO+ZKFfJR25aMEJp9/0iDjY9ewtIdDuC08SYLrG365YfL2z79DEWXnZtA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd/o9a34z4V4ANwcFOjLVKiQe3cYlGssEOsJfkjL1yOMa6n8DE
+	nfzqgmWiwS6FQKvGQ11wba4Gr/LiJiTotVdNtfgrxa64EgipCyVx
+X-Google-Smtp-Source: AGHT+IEeHeAt1JoFxeGnZsodFkqRqHsRdx29ZzeEC4F0qoCp6hYYtYLfQeRzmunZcnzpHRFwCiXUAg==
+X-Received: by 2002:adf:fc88:0:b0:371:88f2:93e7 with SMTP id ffacd0b85a97d-3749b544847mr4374310f8f.18.1725027008329;
+        Fri, 30 Aug 2024 07:10:08 -0700 (PDT)
 Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e27c70sm47297005e9.35.2024.08.30.07.10.07
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ee72ec6sm4090941f8f.42.2024.08.30.07.10.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 07:10:07 -0700 (PDT)
+        Fri, 30 Aug 2024 07:10:08 -0700 (PDT)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: arm@kernel.org,
 	soc@kernel.org
@@ -59,9 +59,9 @@ Cc: Thierry Reding <thierry.reding@gmail.com>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 3/6] dt-bindings: Changes for v6.12-rc1
-Date: Fri, 30 Aug 2024 16:10:00 +0200
-Message-ID: <20240830141004.3195210-3-thierry.reding@gmail.com>
+Subject: [GIT PULL 4/6] ARM: tegra: Device tree changes for v6.12-rc1
+Date: Fri, 30 Aug 2024 16:10:01 +0200
+Message-ID: <20240830141004.3195210-4-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240830141004.3195210-1-thierry.reding@gmail.com>
 References: <20240830141004.3195210-1-thierry.reding@gmail.com>
@@ -82,23 +82,38 @@ The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.12-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.12-arm-dt
 
-for you to fetch changes up to c20ebc7fbd2ac3af28e8c712cdaf5b20b524bfba:
+for you to fetch changes up to 8f4c834d89150e9b1c6c3e006668ed6fd9ee2b15:
 
-  dt-bindings: arm: tegra: Document Nyan, all revisions in kernel tree (2024-08-29 17:24:49 +0200)
+  ARM: tegra: Wire up two front panel LEDs on TrimSlice (2024-08-29 17:36:39 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Changes for v6.12-rc1
+ARM: tegra: Device tree changes for v6.12-rc1
 
-This adds compatible strings for all revisions of the Nyan board.
+These patches add a bunch more features for the TF701T board and wire up
+the front panel LEDs on TrimSlice.
 
 ----------------------------------------------------------------
-David Heidelberg (1):
-      dt-bindings: arm: tegra: Document Nyan, all revisions in kernel tree
+Svyatoslav Ryhel (11):
+      ARM: tegra: tf701t: Use unimomentary pinmux setup
+      ARM: tegra: tf701t: Bind VDE device
+      ARM: tegra: tf701t: Correct and complete PMIC and PMC bindings
+      ARM: tegra: tf701t: Add HDMI bindings
+      ARM: tegra: tf701t: Add Bluetooth node
+      ARM: tegra: tf701t: Adjust sensors nodes
+      ARM: tegra: tf701t: Complete sound bindings
+      ARM: tegra: tf701t: Bind WIFI SDIO and EMMC
+      ARM: tegra: tf701t: Re-group GPIO keys
+      ARM: tegra: tf701t: Use dedicated backlight regulator
+      ARM: tegra: tf701t: Configure USB
 
- Documentation/devicetree/bindings/arm/tegra.yaml | 42 ++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Tomasz Maciej Nowak (1):
+      ARM: tegra: Wire up two front panel LEDs on TrimSlice
+
+ arch/arm/boot/dts/nvidia/tegra114-asus-tf701t.dts | 1558 ++++++++++++++++++---
+ arch/arm/boot/dts/nvidia/tegra20-trimslice.dts    |   30 +-
+ 2 files changed, 1381 insertions(+), 207 deletions(-)
