@@ -1,105 +1,102 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F1A1AF4F8
-	for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 14:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AAE1BA26B;
+	Fri, 30 Aug 2024 16:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725027013; cv=none; b=QwZticdYMvBtN6PD1ibw0Blq1pRoG+HNFW1FlZxbOXO7tf1Sai0AWEuScNyLHvFFd4muMW/PxKErXJqmpAKu8z2l3H9oOgFo0fMNWF2pb75LJ1zLPhzYnPWUlFZdz+PNzSBmqutbPrB81r37IKKKBuAgdTA+h2kQonI9dDoxzjM=
+	t=1725034355; cv=none; b=YzRxBaVomUU6q3+jbXM0CVMai0pT5a0/eq8FULrinfMQLBKAYkXgNTIotPVpeIBEmhIXSW4QYx+kwcGhrKljtDMU6a7R98eb4gVTT6Y8+OOuIeqHviD3XNoEeEx11vu8n7wVj6WGWVIm2GTO/B6958W76sVPnxdvPTsmwY/Fp3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725027013; c=relaxed/simple;
-	bh=S7LIiDnj7z5XdNG8gw5KyPV/56qVWWb1PYF5/QHCRXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DhTiuvHeeHNWDtHyseIDZGeuRCYarXnslnknNwZSdpoO+BxRPfIw98k3F0FWD13xi0ppNuf3ruZ9n+z9HQ2yvF6VJUKESOOjeiW4xha1FoDBCjyDuvmivuEBT0xFXAMgfRgD8Db+F8t/yqsg0Dw70fWZHgJBn0vPfetigtbUglc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T4bI7Hgx; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725034355; c=relaxed/simple;
+	bh=h8V6mV7LznJSDPyytvtdyWN5LAbvGTbX2O+Xvk3aerI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NmNmM40+kZmBQ8aYyR5ywUFyPLVe/CtUa1QXU9AbH+Rj/3N8D4pWqKJ3fa/QzpwCwGIuMJ3/V1VqIIP4V1WvQ4OQcxE2huliRNW8n3m7DdMokLwx1FxsRZC2Fsmh9itNCVmzQ2EqduhLmoFKlq4dhNUGwbWPZPuU1JoTbhb6htY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbTayib2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4bI7Hgx"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42bbd0a40faso5126095e9.1
-        for <linux-tegra@vger.kernel.org>; Fri, 30 Aug 2024 07:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725027010; x=1725631810; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=46Pu2xVDjmRb9SN/gPNAiK981pmTCgVH/Qk0A/m2lQQ=;
-        b=T4bI7HgxRsnMdCHUS8F4gL+AxWN3GqSrcS3Wd25uz6of+WpkuXkHY3R8nkDDXjRIts
-         sWS54aoyuVxkR8k866PHLidsxTPpiK5TuNr+HNpC5L5O/RDzCAXPtJAC9W7icRHuINBf
-         Rf0qpQTkm+z0oxAIr77q/WERCmZ56RQh3PxyCoYQQH4oJ6gZ2iuGSiuAHWvPEu+jekst
-         1+lhFSdi5mtVRtW8YLjX2sFku2SWcM3DUAeR8FKL6rOe2e1CN4omtR/F5u4N2Tpbgqvu
-         VL+0wOyeLjpiUrMEnDB9yL5og0n5Dpvt4BclOFnEymyz1LkUgMnpGZfT9HEGZj8XSY7w
-         zc3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725027010; x=1725631810;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=46Pu2xVDjmRb9SN/gPNAiK981pmTCgVH/Qk0A/m2lQQ=;
-        b=wuSSEiEFT7siUpGxoAlAXahx8qNXYZvJNVGFSnjITfkEDEWHBP8mudZEWR8DgHAFri
-         QIExKJzhVOp/IfgaELbxyMM0Asv4nqJb9xmvWlSYJr/w4zUvL5tUr0aKJo1upuaSQfW9
-         ooqCdz84b4hEloxIFokG5vXFDzNJOdMy0Fa8oRLiP8JvZ/8B6r3kfmWmgZDGp+CH9DQT
-         m7CapVUYnDUGY/0lYRldYTsCZ3aM3RFcbG5dc4YjMSAaAuzjaYDg5Q2TLkuk1bgm9TiG
-         UfbfbuQ6y07t1ghnLM1RzV1J3xM9ziemt8rgjzATuqCyKXtnm9VmK9OyMjkAgDc75ulh
-         uxcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtHCjETAjFUCBWK8ZVNuVlfq96t0rHDBumF0K4vlTM0LS9TUQoBIcFRizgxVsCZAQdGmbhJyMf5Kqqcg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMK6bQEBK7WDMj+6oHVFhPzk+G52ITyF05dbOk70Jd2zug9zXZ
-	S1TAUITiUJqnk4kia8PVH2165OBA78CaK9RZfoQTbJk9Al6g2Moi
-X-Google-Smtp-Source: AGHT+IHdqpa68NopTVYj97JqK4wUDRPTK3BbA49Ueuq1PtVx0ZLZYybcNApVCirOtMkqMJgkrJfRoQ==
-X-Received: by 2002:a5d:4682:0:b0:371:8bf7:d51e with SMTP id ffacd0b85a97d-3749b5448f5mr4645312f8f.25.1725027010005;
-        Fri, 30 Aug 2024 07:10:10 -0700 (PDT)
-Received: from localhost (p200300e41f29d300f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f29:d300:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e27364sm46931365e9.34.2024.08.30.07.10.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 07:10:09 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: arm@kernel.org,
-	soc@kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbTayib2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4323DC4CEC5;
+	Fri, 30 Aug 2024 16:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725034354;
+	bh=h8V6mV7LznJSDPyytvtdyWN5LAbvGTbX2O+Xvk3aerI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bbTayib2CLnzHLij97ZEpbG3xHLjfxKlFwFb9XMzATn4uyCG7CqbjkZkQy4xlyRRc
+	 bG4FfnqrWpoqQZPWkcTvGPvphtaB/NX+dPEXo7xtJsI9Gsvn3fG6895TJWRTrAVp6q
+	 CgBXrH39O5UrVdR+ZzIKXAZdNj6LioiHnLRMUh6bE8UMu5MMLcXDgLi03d8/FiCdaN
+	 1UcvDVJleF5WnAT8uN8kTLIlDQCOjHyBUrlAkQ8hOui0WZ/Slw49vAXuRIgR7xSYZo
+	 RNFe1oYAh5za17R1MnNa4ShFdl+t82ZvLM4tqH6Ue+of3hdzmaJ81bjf5F15nditOX
+	 7JDGhcLJ0+fmQ==
+From: Will Deacon <will@kernel.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
+	Will Deacon <will@kernel.org>,
+	robin.murphy@arm.com,
+	joro@8bytes.org,
+	thierry.reding@gmail.com,
+	vdumpa@nvidia.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 6/6] arm64: Default configuration changes for v6.12-rc1
-Date: Fri, 30 Aug 2024 16:10:03 +0200
-Message-ID: <20240830141004.3195210-6-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240830141004.3195210-1-thierry.reding@gmail.com>
-References: <20240830141004.3195210-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+	Jason Gunthorpe <jgg@ziepe.ca>
+Subject: Re: [PATCH v14 00/10] Add Tegra241 (Grace) CMDQV Support (part 1/2)
+Date: Fri, 30 Aug 2024 17:12:12 +0100
+Message-Id: <172502752365.3788306.13276843969148976864.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <cover.1724970714.git.nicolinc@nvidia.com>
+References: <cover.1724970714.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Hi ARM SoC maintainers,
+On Thu, 29 Aug 2024 15:34:29 -0700, Nicolin Chen wrote:
+> NVIDIA's Tegra241 (Grace) SoC has a CMDQ-Virtualization (CMDQV) hardware
+> that extends standard ARM SMMUv3 to support multiple command queues with
+> virtualization capabilities. Though this is similar to the ECMDQ in SMMU
+> v3.3, CMDQV provides additional Virtual Interfaces (VINTFs) allowing VMs
+> to have their own VINTFs and Virtual Command Queues (VCMDQs). The VCMDQs
+> can only execute a limited set of commands, mainly invalidation commands
+> when exclusively used by the VMs, compared to the standard SMMUv3 CMDQ.
+> 
+> [...]
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+Thanks for this, Nicolin! I did drop the 'default' statement in the end,
+as I think it's a bit overkill to fail the probe in that case.
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+Applied to will (for-joerg/arm-smmu/updates), thanks!
 
-are available in the Git repository at:
+[01/10] iommu/arm-smmu-v3: Issue a batch of commands to the same cmdq
+        https://git.kernel.org/will/c/56ae8866f3b4
+[02/10] iommu/arm-smmu-v3: Pass in cmdq pointer to arm_smmu_cmdq_build_sync_cmd
+        https://git.kernel.org/will/c/2ea1f0120f90
+[03/10] iommu/arm-smmu-v3: Pass in cmdq pointer to arm_smmu_cmdq_init
+        https://git.kernel.org/will/c/e736c895c45b
+[04/10] iommu/arm-smmu-v3: Make symbols public for CONFIG_TEGRA241_CMDQV
+        https://git.kernel.org/will/c/a7a08b857a32
+[05/10] iommu/arm-smmu-v3: Add ARM_SMMU_OPT_TEGRA241_CMDQV
+        https://git.kernel.org/will/c/b935a5b1c670
+[06/10] iommu/arm-smmu-v3: Add acpi_smmu_iort_probe_model for impl
+        https://git.kernel.org/will/c/6f3f9ff43d00
+[07/10] iommu/arm-smmu-v3: Add struct arm_smmu_impl_ops
+        https://git.kernel.org/will/c/6de80d619203
+[08/10] iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV
+        https://git.kernel.org/will/c/918eb5c856f6
+[09/10] iommu/arm-smmu-v3: Start a new batch if new command is not supported
+        https://git.kernel.org/will/c/f59e85490712
+[10/10] iommu/tegra241-cmdqv: Limit CMDs for VCMDQs of a guest owned VINTF
+        https://git.kernel.org/will/c/a9d40285bdef
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.12-arm64-defconfig
+Cheers,
+-- 
+Will
 
-for you to fetch changes up to 12803ded10b88b376026c544f1ebce62c44d64e0:
-
-  arm64: defconfig: Enable Tegra194 PCIe Endpoint (2024-08-29 17:41:58 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-arm64: Default configuration changes for v6.12-rc1
-
-This contains a single change to enable the Tegra194 PCIe endpoint
-driver by default.
-
-----------------------------------------------------------------
-Jon Hunter (1):
-      arm64: defconfig: Enable Tegra194 PCIe Endpoint
-
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+https://fixes.arm64.dev
+https://next.arm64.dev
+https://will.arm64.dev
