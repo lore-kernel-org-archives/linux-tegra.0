@@ -1,73 +1,114 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060531D54ED;
-	Tue,  3 Sep 2024 07:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9DB205E15;
+	Tue,  3 Sep 2024 08:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725349704; cv=none; b=YUJOMyuDtz4jRzx1rXp3qD0sz3mshZxFR/5bXSivglvNmcJQMJdq4Pv7104k0WO2D7cb0zFM2XwErOdw4TIAb9CQ7CfhZZsttuBmtNdEFSUhSkN5XUGH5qQgncO7kT5cUjgIFOgMfL/c9KAnSUCQoZoaSAl+hcyk3V65+l6CCKo=
+	t=1725351536; cv=none; b=JVhlpVKEqH5ZxtJDTxeSffrV4ggNKoSNvUynSC3xffMrqx3zBsjvy5lRKj+ejTAOTgc+YUFV+nNYnKCCaUHufZXAq5BX99BWUbvE3H4fPf0ve2jEaAIGewCmp8tQ/+KWL0Yn4g2F8zN10oFG9jliu/QSu2vUCWPEKjwx6x69ENM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725349704; c=relaxed/simple;
-	bh=lu0ydB41xdJlQYMtPwPCiKlgr0O59PQnYbE1HTcFdRI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hff8ALf1q1lsiYgEHtc5khYQhaaP7NdR8PDfaDHplNMrj/yOrh9laOmqbqA5vaeJocxMAdR8jX4zdP5a3cU1v6+tmcCLmqVWfNjvFmFmUzC/Ep4Qs50T5/4bd2f57lF1NN5qcZpWW6Iog2yiRIhOkQiX+ao8Z95JJAv2p4JCIQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=i29OWv49; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1725351536; c=relaxed/simple;
+	bh=g7ymmQH2esDD1HmWV3+1wWNSYvcNjH8kYis73gaYP5I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KrlI8np6Hr3MBFctJE1YDoqe4s1V+swHOGmNXqpmXxvp1m3TmQDnHOYpZFHP9zic30sgq0mOLzS0ELq+ptKjtUQ9EPBk2jv5PC9QZgKksaMs6PPeuZW3aizWWkgOzTUtb6d2eAz7AtfIRM57zXOeTQHltGzt84IdLYjUuKW2Kp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=olU2tuWX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="i29OWv49"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=f+J10
-	oItTOqQZZV4SrY5/O50CQ/Gfr/QJfWRwqmvI0w=; b=i29OWv496JpbtuD4zmZwM
-	WAxy1vruOkfWx6FxXw2x8n0Lmr4NbzuBeCEsinHESckQJsWI37FB/OUNuTTAZNix
-	EmXkXpns/r8/JPElcEO/tNlMNToVrdkhGvJjnACJ2y69nFg/Dny4WG5YPa1jf5dC
-	/iUvEGs2PmtA/itGXAkqLw=
-Received: from localhost.localdomain (unknown [36.33.36.240])
-	by gzga-smtp-mta-g1-0 (Coremail) with SMTP id _____wDH1ycxv9Zmn+RlEQ--.23416S2;
-	Tue, 03 Sep 2024 15:48:02 +0800 (CST)
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: thierry.reding@gmail.com,
-	mperttunen@nvidia.com
-Cc: linux-tegra@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="olU2tuWX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CA55C4CEC4;
+	Tue,  3 Sep 2024 08:18:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725351535;
+	bh=g7ymmQH2esDD1HmWV3+1wWNSYvcNjH8kYis73gaYP5I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=olU2tuWXIpJl+vvUtyzzy74giwBPEJKRv8ViT1WDop+wVwLYcWCzt7Fu1FzdP6aOQ
+	 omZ2kda/DoqTHYh3BkIvuTszwSh13Y9pVP4iFGHuElNuBYCZ8Vz6ReM5BwFxRINaD0
+	 iQYhbM7oWAy2epdsGIzsk2p8ejaUfgj+rLveyEhczMqXf8oEfXlZcAUcHKEtTVa7Mj
+	 7s1O+Bgz3RyrHOYTi2tc5gAPrI9OHgf4jYH859LrRxIeVK2YmYyLP60IwNE/VmSLvy
+	 B6zB3xZ8LTxG5NxuO3KX4cOo45+Q1C3iSPJW0YEaPc51JXE6yIaGfAnbACwSfrOjjx
+	 yiZn+bVCzwblw==
+From: Maxime Ripard <mripard@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+	Edmund Dea <edmund.j.dea@intel.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Sandy Huang <hjc@rock-chips.com>,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Qianqiang Liu <qianqiang.liu@163.com>
-Subject: [PATCH] drm/tegra: output: Fix 'Uninitialized pointer read' issue
-Date: Tue,  3 Sep 2024 15:47:22 +0800
-Message-Id: <20240903074722.4328-1-qianqiang.liu@163.com>
-X-Mailer: git-send-email 2.39.2
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v5 0/3] drm: fix two issues related to HDMI Connector implementation
+Date: Tue,  3 Sep 2024 10:18:50 +0200
+Message-ID: <172535151881.1826612.11747911526055879779.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240903-drm-bridge-connector-fix-hdmi-reset-v5-0-daebde6d9857@linaro.org>
+References: <20240903-drm-bridge-connector-fix-hdmi-reset-v5-0-daebde6d9857@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDH1ycxv9Zmn+RlEQ--.23416S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWruryDJw15Zr48GF4UKr18uFg_yoW3Crc_uw
-	1DXrZ3Xw4qgrZ3ArnrAw43ZF92vrs7uF4kKryrKr93JwsrX3Z8X34q9r1fZF17Wa47JF9r
-	JFyYgF1UZFsrKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUSksDUUUUU==
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYAVPamV4I+zPkwAAsO
 
-drm_edid may be passed to drm_edid_connector_update() without an
-initiated value
+On Tue, 03 Sep 2024 05:01:55 +0300, Dmitry Baryshkov wrote:
+> Running IGT tests on Qualcomm Dragonboard820c uncovered two issues with
+> the HDMI Connector implementation and with its integration into the
+> drm_bridge_connector. Fix those issues.
+> 
+> Note, I'm not fully satisfied with the drm_bridge_connector move. Maybe
+> it's better to add drm_bridge_funcs::connector_reset() and call it from
+> __drm_atomic_helper_connector_reset().
+> 
+> [...]
 
-Fixes: 98365ca74cbf (drm/tegra: convert to struct drm_edid)
-Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
----
- drivers/gpu/drm/tegra/output.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to misc/kernel.git (drm-misc-fixes).
 
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index e6b5863fec71..49e4f63a5550 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -21,7 +21,7 @@
- int tegra_output_connector_get_modes(struct drm_connector *connector)
- {
- 	struct tegra_output *output = connector_to_output(connector);
--	const struct drm_edid *drm_edid;
-+	const struct drm_edid *drm_edid = NULL;
- 	int err = 0;
- 
- 	/*
--- 
-2.39.2
-
+Thanks!
+Maxime
