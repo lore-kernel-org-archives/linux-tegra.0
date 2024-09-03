@@ -1,94 +1,192 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707E61A2627
-	for <linux-tegra@vger.kernel.org>; Mon,  2 Sep 2024 16:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBB51581E5
+	for <linux-tegra@vger.kernel.org>; Tue,  3 Sep 2024 02:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725293617; cv=none; b=uwiVZ7QjfqDQ/GXL1ZJKaZ+7MUaf4wrLqJPV5B2V945yWyod7Bov7pMcnOV6foasRPy/9u0z+EOAEAvt3qAMpqWxZJU4cZkg0cokCFFNz6L/nvxTU54k7TX7qzs9UGi6mMo4k60YfordmZr3jO/28zfWDXXmPIFKQlgosnJ3RHU=
+	t=1725328927; cv=none; b=ZGERXBrQMcCEnqn+nY4xw51iULph7GunvC51gJufM+97DUVV2Ia0oBs9S2DQuFUUcl0SL2ThbWJBrjaXcOWqTcOi1SmDje5tqGq1SIJM+zgHxUhkkT5vVpUC+gLhqJFUAAPfSbJdPKrl658jTEaPuBHnSdfeXnd3qAvKT1nGMM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725293617; c=relaxed/simple;
-	bh=y9nzKmp6uHS9PIhToRGVYR3zjbZM7i37a84XGDDhGVE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fYINyTGYWGDbaJcEzkvviifAL0elvQLoATRyIkuxc1nspjifIoizyIgM/8D1jB6GIESeE592Ib51eFyihnt8QAkRjqjzMP+6crWa1WfEQIL27DIe6HT+Qak5oK+li49M5DHWSVMhwu03QYSXM0VcG2ts2w/B8SYfgRUkYtHHCwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JWUEX/wk; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1725328927; c=relaxed/simple;
+	bh=EYI46Bz/nggRktCfUc4nuXKd2sUlD/7bxU6zar/vXO0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eDJxXjaWoJH3QiKjxc04JubUDgh/PIpWzcE8XcPzUriQWvj4P96o1hr16chw3qb2FAF5bKkYsqSN7O3NuD8hlWM/XA68uspLYwID3HKQXam4lli+tPjKdfmdMTAk/iDu5lU83qZ03MDuz2Xg5dgz7oUab7DTWqPxtA1zLXEqmcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wGUxtohm; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JWUEX/wk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1725293615; x=1756829615;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=y9nzKmp6uHS9PIhToRGVYR3zjbZM7i37a84XGDDhGVE=;
-  b=JWUEX/wkY3knmyStL/WGE1tqPz3IBTk+HyxxpxJ6z4W17h7MddQj1daY
-   DH01k3YxaF8JzApJGvj2nBte6XcaHBkJTWsbbnAj6VKi+2jBuosKLXUzp
-   kZvvGQX4B8CjHzkMXfm3hqhxk3lyc9pCm+nKMAhFAGGEvvqWdVyjO2rGZ
-   dwd2gAiFtBIwUGhoOEufHwsrB/IgMSwHmEEBQ1la8rK3sHQa7SQlVNPcB
-   QMVnf+mY7n2n9Y6IpGhtXUIAXE2jpUJlqd2Lzdk2m/BTOegPHZJHV/MTh
-   4Ef3TcGk+LIBqBKkYcTc4DK7qxZvdaCfWky0DS1OZ92azWzIMQHsqJUsy
-   Q==;
-X-CSE-ConnectionGUID: r0sbl02tQf+5NV7DPxSoUw==
-X-CSE-MsgGUID: kzTisuccSp67d4OFJdzA0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11183"; a="23447394"
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="23447394"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 09:13:34 -0700
-X-CSE-ConnectionGUID: 680zeTzfQE6Dfo57Si2mUw==
-X-CSE-MsgGUID: IJXoQuJgQEeKERmpqflBYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,195,1719903600"; 
-   d="scan'208";a="102098066"
-Received: from ltuz-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.4])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Sep 2024 09:13:33 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: dri-devel@lists.freedesktop.org
-Cc: jani.nikula@intel.com,
-	kernel test robot <dan.carpenter@linaro.org>,
-	Thierry Reding <treding@nvidia.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH] drm/tegra: fix potential uninitialized variable use
-Date: Mon,  2 Sep 2024 19:13:17 +0300
-Message-Id: <20240902161317.2437148-1-jani.nikula@intel.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wGUxtohm"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f3f25a1713so56972361fa.2
+        for <linux-tegra@vger.kernel.org>; Mon, 02 Sep 2024 19:02:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725328924; x=1725933724; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jaon4WakhCpB6iL+hPLr96orgJfk9v1/Fqkvo3LCw0o=;
+        b=wGUxtohmCwWG2wtqP6/uWSSzQbqVOTxvnCvYqVd8pYTh5ZwlD/1HhT0DFuTY7zaAHQ
+         w7UKkojYHeLZhwQuM6JGge9aC2EA6qG6R8ZqH1gubJ2QZLKGusqPHwd6yMhOO36AOT/0
+         VSO7qpqem8eLqTubDFF+XRM+dgKLt4ZEfx6w2M7Eqa8youbYvHqLZJKFydyDZVE1N4Qh
+         TjulIrk3qIjOnlhbw5mXgv5BBWPPocgQzMKFhn74kq3ho8JFixbld2OtstN+OK+bqZp7
+         MbYxxqUsywsw6Tg4nROUJtgteWdj7+3L7I1HyPj2kvt7FHMmWyLoWQHkJzCclZlyHLlC
+         gq3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725328924; x=1725933724;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Jaon4WakhCpB6iL+hPLr96orgJfk9v1/Fqkvo3LCw0o=;
+        b=mLRGGf02Qk7TON+whAD0CW+1NdYRC2ncuhhIcaWrGbyoMpFHlguXL3NnaSYI0ygg1r
+         0c0ypi1a5EvfhGcfAUea1klJX1JwY6i9PQmQNnD3aoXJaGrmx4OvpUvwtWial5j9/iHM
+         CFriMPHLrHNRgoUdujNIiT88jfRFLzL+ihObk/hSrobq4gjvf4aiuQjiji3RGyK7/S7i
+         XuQDwP5rXNGifgYv3a+93lfWVFx0tAB7DWUa3xTdyi83qlk0lX1cbjuexMLH0xydoMyA
+         vftDyZN/qxzdDAMaij3iC754tAUMZIl0ZlKEq9pG4YCEdh81+mBJwlTELHYhqzV1DmMj
+         f5DA==
+X-Forwarded-Encrypted: i=1; AJvYcCViNfeBYzzL/SUBX19qYL/4D8zTfijN3K5piuLhSsghyWFyWkHv4/tcdpUgUAWZRjJ8BYLvTujvpEaZPQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0mch+L0vPIOvb9GS3ha2O9b6JLpXkKWOj8H55wYtreuf1OTDQ
+	R5MFmDYIM1tppA6mXk6UFuv4JjBAiFphxcsJ2G52CjlwK60G1MjbqnBolJ4qQOA=
+X-Google-Smtp-Source: AGHT+IH2ddOPWpP9vOPua5bV93XUii65ilyuJnbCbqXryT6U4fN0EdmF5ySMd7clEDi4r6Z/lY2Rhw==
+X-Received: by 2002:a2e:4c09:0:b0:2ef:290e:4a39 with SMTP id 38308e7fff4ca-2f626bbbd74mr47016851fa.35.1725328922705;
+        Mon, 02 Sep 2024 19:02:02 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f614ed15a5sm20827761fa.8.2024.09.02.19.02.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 19:02:01 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v5 0/3] drm: fix two issues related to HDMI Connector
+ implementation
+Date: Tue, 03 Sep 2024 05:01:55 +0300
+Message-Id: <20240903-drm-bridge-connector-fix-hdmi-reset-v5-0-daebde6d9857@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABNu1mYC/53NTW7CMBAF4KsgrzvIHk9C3BX3QF0Ye0IsFbuyU
+ QRCuXsHNi1iQ7t88/O9q2pcEzf1vrqqynNqqWQJ3dtKhcnnA0OKkhVqJN2jhViPsK8pyiaUnDm
+ cSoUxnWGKxwSVG59ABx56P+rOeq9E+qosF/eW3YfkKTX5utxLZ3Ob/s2fDWggw25wFEPksP1M2
+ deyLvWgbgUz/gNFQYfO6UjkDAZ+Qu0PutH4GmoFNbjXbA1S8PSE0i/UdK+hJGhvuCezCWN07gF
+ dluUbDBv28dYBAAA=
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Paul Cercueil <paul@crapouillou.net>, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ Edmund Dea <edmund.j.dea@intel.com>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Kevin Hilman <khilman@baylibre.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Biju Das <biju.das.jz@bp.renesas.com>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-mips@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org, 
+ freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3353;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=EYI46Bz/nggRktCfUc4nuXKd2sUlD/7bxU6zar/vXO0=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBm1m4YRSvsImJpHuC/wcLa1DcZOPuYqAiynu6nD
+ hrSfiRv7eOJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZtZuGAAKCRCLPIo+Aiko
+ 1T8VB/4laRhXOUULaJ+JMQI12xMPUKXQH5ph8rJNcS9B/gmLgbcPLgMhO/fJS4iK0YjhNZoPI0W
+ NJ70iNUleeMx0GBlB+RyVJuS/d1SFgtPXp/jx2RDS0Wm21hPh/X3Fm1nEQ2eqX6oz939nxLb2g1
+ hrjPMsp+fy/DoJp+WyPqy/YwSqHBZlcYwPUPH1mctmZwJC1GkTrajvdYFKB188SS/N9bztPoBUy
+ kG2weWvQkMNcYmSOjnh5gEtxQ6gHkWX2ve9pRhaVXOiHiWkM0q1mHZF6HXhCeGTAAhhiSv/+N17
+ PRBvnlt91b/RQK3b1NoB53F/rapRdYsKJEf9cpwjn7/ZFhmz
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-It's likely either output->drm_edid or output->ddc is non-NULL, but
-avoid the uninitialized variable usage anyway.
+Running IGT tests on Qualcomm Dragonboard820c uncovered two issues with
+the HDMI Connector implementation and with its integration into the
+drm_bridge_connector. Fix those issues.
 
-Reported-by: kernel test robot <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/ZtXLyXxew7z6H2bD@stanley.mountain
-Fixes: 98365ca74cbf ("drm/tegra: convert to struct drm_edid")
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Note, I'm not fully satisfied with the drm_bridge_connector move. Maybe
+it's better to add drm_bridge_funcs::connector_reset() and call it from
+__drm_atomic_helper_connector_reset().
+
+Depends on https://lore.kernel.org/dri-devel/20240704-panel-sw43408-fix-v6-1-3ea1c94bbb9b@linaro.org
+
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/tegra/output.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v5:
+- Rebased on top of drm-misc-next
+- Dropped the DRM_MODE_PROP_IMMUTABLE patches, replaced with the IGT
+  patch.
+- Link to v4: https://lore.kernel.org/r/20240715-drm-bridge-connector-fix-hdmi-reset-v4-0-61e6417cfd99@linaro.org
 
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index e6b5863fec71..49e4f63a5550 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -21,7 +21,7 @@
- int tegra_output_connector_get_modes(struct drm_connector *connector)
- {
- 	struct tegra_output *output = connector_to_output(connector);
--	const struct drm_edid *drm_edid;
-+	const struct drm_edid *drm_edid = NULL;
- 	int err = 0;
- 
- 	/*
+Changes in v4:
+- Fixed DRM_MODE_PROP_IMMUTABLE to use MUST in the single-value clause (Maxime)
+- Rebased on top of DRM_DSC_HELPERS patch
+- Removed 'depends on DRM_DISPLAY_HELPER' (Maxime)
+- Link to v3: https://lore.kernel.org/r/20240702-drm-bridge-connector-fix-hdmi-reset-v3-0-12b0e3124ca4@linaro.org
+
+Changes in v3:
+- Document the DRM_MODE_PROP_IMMUTABLE requirements currently exposed
+  only via IGT tests (Maxime).
+- Move drm_bridge_connector to drm_display_helper.
+- Link to v2: https://lore.kernel.org/r/20240623-drm-bridge-connector-fix-hdmi-reset-v2-0-8590d44912ce@linaro.org
+
+Changes in v2:
+- Actually pass the flags to drm_property_create_range().
+- Link to v1: https://lore.kernel.org/r/20240623-drm-bridge-connector-fix-hdmi-reset-v1-0-41e9894dcdec@linaro.org
+
+---
+Dmitry Baryshkov (3):
+      drm/display: stop depending on DRM_DISPLAY_HELPER
+      drm/bridge-connector: move to DRM_DISPLAY_HELPER module
+      drm/bridge-connector: reset the HDMI connector state
+
+ MAINTAINERS                                        |  2 +-
+ drivers/gpu/drm/Makefile                           |  1 -
+ drivers/gpu/drm/bridge/Kconfig                     |  1 +
+ drivers/gpu/drm/display/Kconfig                    | 25 ++++++++++++----------
+ drivers/gpu/drm/display/Makefile                   |  2 ++
+ .../gpu/drm/{ => display}/drm_bridge_connector.c   | 13 ++++++++++-
+ drivers/gpu/drm/imx/dcss/Kconfig                   |  2 ++
+ drivers/gpu/drm/imx/lcdc/Kconfig                   |  2 ++
+ drivers/gpu/drm/ingenic/Kconfig                    |  2 ++
+ drivers/gpu/drm/kmb/Kconfig                        |  2 ++
+ drivers/gpu/drm/mediatek/Kconfig                   |  2 ++
+ drivers/gpu/drm/meson/Kconfig                      |  2 ++
+ drivers/gpu/drm/msm/Kconfig                        |  1 +
+ drivers/gpu/drm/omapdrm/Kconfig                    |  2 ++
+ drivers/gpu/drm/renesas/rcar-du/Kconfig            |  2 ++
+ drivers/gpu/drm/renesas/rz-du/Kconfig              |  2 ++
+ drivers/gpu/drm/renesas/shmobile/Kconfig           |  2 ++
+ drivers/gpu/drm/rockchip/Kconfig                   |  4 ++++
+ drivers/gpu/drm/tegra/Kconfig                      |  1 +
+ drivers/gpu/drm/tidss/Kconfig                      |  2 ++
+ drivers/gpu/drm/xlnx/Kconfig                       |  1 +
+ 21 files changed, 59 insertions(+), 14 deletions(-)
+---
+base-commit: ca097d4d94d808409386fde414370900cc41adad
+change-id: 20240623-drm-bridge-connector-fix-hdmi-reset-0ce86af053aa
+
+Best regards,
 -- 
-2.39.2
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
