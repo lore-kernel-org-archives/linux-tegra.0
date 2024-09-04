@@ -1,87 +1,124 @@
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585142BD0D;
-	Wed,  4 Sep 2024 16:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61361DA312
+	for <linux-tegra@vger.kernel.org>; Wed,  4 Sep 2024 17:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725467088; cv=none; b=sx8VROYGvISYtNu27FmNe7YUNmM77ZarysmNV9kiW8FkIRuqBigZqtiVJCgq9ED5Wmw1cEBWKzttasXrJHiMwgFGL1F2UmoGweSwVb0B99xMqcwgWXdh98U2ZhJ8UvNtgMOoSJFagn/grUtBxrBSYJPLIvMFsGWKzNbOqjR0+yo=
+	t=1725469947; cv=none; b=tKFPP5oVESqUdc/iT10fJqm0ZZIOYz7h6OVtVUCd/gPmzVpY94+FOa2pccQlbhH6dGTJ0Pbd/TB6s66uSJ7iyyE0o13ihuFzo+T1oYMeJ90OqYBjXlHquJitQ0iXSZfElUh6EIw8+LK/sGb8kxCQh6XpqFzt/+lGIQaR6ZCcBzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725467088; c=relaxed/simple;
-	bh=/7cDYAlEqe7bWicn0Va7ROpOHLi0iVmUDmVo+jOORyY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=n7QwOQlsoENaiqX0eNhSYtZjthf4XZDi5IEQGDCV9VIdfg0m6Yoz7aTsh4j2ToYpY6zIc0161Mq3TVUxCKHL8k7kd0WnctBjoPjT7KyBVxjAg1eaVm8xPpCoL7vmngtGXW+MfQ4Adz9qfufuyx9XZ8BLJKsZUZesXyZjSL3XOIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XU19ASe2; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1725469947; c=relaxed/simple;
+	bh=YyBVaju+LKEXVnoxVu5mj5D/dy3jhLXGBMTUYPRw3B8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o6vXVWGPZj3UB0XOhtirWUrbvov2EgQsW0WT36lhORSK6m2CD+DUft/o5Xfr/qcsSkyaF4Yxjo2Z1Lbmldjyi/ec3K3DHProjKJEY9PDqDrwMn4bP70y9zwxVccJjSAqcFr+mv/8N3aGB/0ot8UrCK1U4jAvpXUNMdfabS1dttA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a6zioKjW; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XU19ASe2"
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82a24deca03so241424239f.0;
-        Wed, 04 Sep 2024 09:24:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a6zioKjW"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374bfc395a5so619424f8f.0
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Sep 2024 10:12:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1725467086; x=1726071886; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+KkAQjjotCRZ4CfWuR8BuZVWPds5hg7Zc/7KBaAAyJM=;
-        b=XU19ASe2NP2Zo5G9ctHPlyLYAqNFUCeR0zn5VtW18GXzvQbNIQ10r/fHNxPmYPik0X
-         RoAVpYxVpBJpdctrvDSYhfrW00hj5ZGNvMufZV4Rq/Dqce4GUt61Cye08rgzoitUHt5x
-         pNubeZPmmh6VOdcO5rfEHkBY8sHyUolm5M3GpUrEUWF4vY+w3+9EYPU9jrrjlSZAsDju
-         2Eb+Dv6Mg7NUbyvTTuv8V+TUzwGiud+YinuwntOdRGAP1s/mWZvY9T0jHKTXGH7I9C0T
-         5b5J5/Xk/GmTZNK5CrQKzjB4HETZec1geFhJetb+GJ/CZSf79VcKN5qDB6B1UqEDUHfl
-         hH2w==
+        d=linaro.org; s=google; t=1725469943; x=1726074743; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sufPgAffU6DtwuR+shMH9kjtLOalG94qLxuZDKPxPIQ=;
+        b=a6zioKjWUFM+ED0+qytYY6s3kCjDWkS1370MUM6ncd+xfT/K+jE983r7L2nBmAEkXW
+         0zTIy+SlSR3cJVRBCFvq0q6WJW6qLNo0VkJOeLkYEQ8iQk2adkRZi6Exz1A9/wDN4LiL
+         I/72vE6ghb3uCOgZfSoxpJhfobUEQeaKlgJWfsM/n06YU6JPuptfERJWaacqWqL49utd
+         jCj1VpRCbSDAxhRlQvb70mQCXIakhsmnyj4yJmANbbw83Z4LI6mdWtj3Gf9H+5b9kQCk
+         qxmYZXeyBU3pKgVasuv3aMeuIx/ssic2eoueJM/YewSm6erCM6SrIEd2VZEc02bD/CkP
+         wJ3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725467086; x=1726071886;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+KkAQjjotCRZ4CfWuR8BuZVWPds5hg7Zc/7KBaAAyJM=;
-        b=hxYDaQT6ZgVcYHTQr85co/rIx2jfMIwuX3eGIO8W3BAjWK+JdJFm6i4fjnz7mmfYob
-         drjFXa38EbcaTJf32/sq/2qq9lLnp7q+Xhwkl819Djg0HVZnjLR98d7mnrB4uiSsgAwS
-         QsHWOJXF692psXN6SWG0nq1hlE1NNsTdoyJck7haN438TriePvecjSXuIv8040bYJSKF
-         3TBfD7zIAgeva5Ej76ji1rEMwXV/OQNZs+cE14X24AujywKFI9XiSEtZwXpAbAcWRY1+
-         iINnQpxi+t5P/q3OJ7Aioywr1EoaTrZcSUFMHOuEe5c6QyEXgBy2exMirfltAzY7Csr2
-         TDEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUq2w8H2w10C0Hio01JPjmPSNCf3UqZQk3xHNhoMDQjZTuZ0KQgFrRCcPRWiR9118SIwlIKkvejftSDmI0=@vger.kernel.org, AJvYcCXZgFVOeIT6EAsuRJZeL7k+VKxqxvtzYqy9/BH+WtBGBFVgE0d8FxU9Jh+COIofd0QSAO4ARb6trmJPyJu8@vger.kernel.org, AJvYcCXdoMsYkUd8d3GEqY/D7ICecsgtNu01J4jv8e4yZ1ehYgMG+IMXDbkTi1u+WbLU++w7Cda+MRvhp08Sr9rm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCd7+c+A06QfluBvsCY8hXPSNZo6j+t8nB3j3QK1ImWPKEUIZI
-	pzPVglCM1KYKkWdTSpV+MvIKwphBDCUWQWp/PK2G1Gm/1T+v8KwLsAjvQo6SMReZjIxALEgmwdQ
-	KAWrR0Bv+E7ICcR0lRxmUKDyZhOy8Ij5S
-X-Google-Smtp-Source: AGHT+IG7Vz+T5qXl228WIdHsyu+M/jpDgswlSvzOewXBN7HGjjAubTwZpX8iIycVwNxPh5j/KRpzh0cJdVcgtU6Cnww=
-X-Received: by 2002:a05:6e02:b2c:b0:39a:e9f4:87b7 with SMTP id
- e9e14a558f8ab-39f4f6ca345mr177420315ab.26.1725467086333; Wed, 04 Sep 2024
- 09:24:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725469943; x=1726074743;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sufPgAffU6DtwuR+shMH9kjtLOalG94qLxuZDKPxPIQ=;
+        b=HqhnL2sQYoV8s71vQt8yE9jfte3zeI+ZL2F1S5TjEtu2lODJ8ucg7xwjhqbvURXi08
+         VjFGt2h0cQtS51QduZGYQs7G7s5dsnLDck/uS0/8eAvxoEKv8GvOdmWysj4mNHVla+IM
+         RncbzD/LRfQZw4CodgcTKMapVGrt+Ss4Tlltq+wlS/jLBxqFtohMZjavwFhnigtGYECt
+         +lLhBpTrLWn5kVwmDPPQIcefBBBYeQsWDVb4rHEsMLTYQYTahq5jjtW3mGHjshQkZkDY
+         PvPoMZnRzMtwr9Lnp6NIZg8MFCG5Q/sZg6axo+/3jbfvlvnWk4OJ8hfeS8ZKbGCfhLY4
+         KrJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbEHvCwiBJMHA2CDw2JXMjRrwNkFCNJiZSO02RJvaCslRN2DvcNIn+j1oiE3Voktl0T6rHE+VvlkjXYg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmwyn/LQrTPUGhWGAno7lpSPo/KYSEgp2KDY8kXrhf1XK4EetL
+	B1N/j+giljAnHEoOiZrVtYsU+wsM5f+2BGJiK/66eUg/CLTMCr3hY1gSKp26H48=
+X-Google-Smtp-Source: AGHT+IEjxGfZuPbhih0bctt9v26csC/sSYjllMJ6b4BHDYxK12zL/eLDqbq8jYX/ApH+OrlHTg34fA==
+X-Received: by 2002:adf:e882:0:b0:374:cc89:174b with SMTP id ffacd0b85a97d-377998aafc7mr2033054f8f.4.1725469943121;
+        Wed, 04 Sep 2024 10:12:23 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-374c046685fsm12291083f8f.79.2024.09.04.10.12.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Sep 2024 10:12:22 -0700 (PDT)
+Date: Wed, 4 Sep 2024 20:12:19 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jgg@nvidia.com,
+	thierry.reding@gmail.com, vdumpa@nvidia.com, jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v14 08/10] iommu/arm-smmu-v3: Add in-kernel support for
+ NVIDIA Tegra241 (Grace) CMDQV
+Message-ID: <fcf44982-166a-4a25-acd0-02a142e205d7@stanley.mountain>
+References: <cover.1724970714.git.nicolinc@nvidia.com>
+ <dce50490b2c10b7254fb36aa73ed7ffd812b283a.1724970714.git.nicolinc@nvidia.com>
+ <38b6ed33-886f-4ec7-9196-1728f1d8c1b3@stanley.mountain>
+ <Zth59xLYZ4skc4yb@Asurada-Nvidia>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rob Clark <robdclark@gmail.com>
-Date: Wed, 4 Sep 2024 09:24:34 -0700
-Message-ID: <CAF6AEGvAEgFeoaxpkNw52fkt73RFg4g8+nhdR++m0ZhVsis=mA@mail.gmail.com>
-Subject: Re: [PATCH V4] iommu/io-pgtable-arm: Optimise non-coherent unmap
-To: amhetre@nvidia.com
-Cc: "open list:IOMMU DRIVERS" <iommu@lists.linux.dev>, Joerg Roedel <joro@8bytes.org>, 
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"open list:TEGRA IOMMU DRIVERS" <linux-tegra@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
-	Will Deacon <will@kernel.org>, Rob Clark <robdclark@chromium.org>, 
-	linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zth59xLYZ4skc4yb@Asurada-Nvidia>
 
-Btw, this seems to be causing iommu faults for me for what (according
-to a sw pgtable walk) should be a valid mapping, indicating
-missing/incomplete tlb invalidation.  This is with drm/msm (which
-probably matters, since it implements it's own iommu_flush_ops) on
-x1e80100 (which probably doesn't matter.. but it is an mmu-500 in case
-it does).
+On Wed, Sep 04, 2024 at 08:17:11AM -0700, Nicolin Chen wrote:
+> Hi Dan,
+> 
+> On Wed, Sep 04, 2024 at 10:29:26AM +0300, Dan Carpenter wrote:
+>  
+> > I was reviewing Smatch warnings:
+> > 
+> >     drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c:616 tegra241_cmdqv_init_vintf()
+> >     error: Calling ida_alloc_max() with a 'max' argument which is a power of 2. -1 missing?
+> > 
+> > The problem is that we're calling ida_alloc_max() where max is always zero.
+> > 
+> > > +static int tegra241_cmdqv_init_vintf(struct tegra241_cmdqv *cmdqv, u16 max_idx,
+> > > +                                  struct tegra241_vintf *vintf)
+> > > +{
+> > > +
+> > > +     u16 idx;
+> > > +     int ret;
+> > > +
+> > > +     ret = ida_alloc_max(&cmdqv->vintf_ids, max_idx, GFP_KERNEL);
+> > > +     if (ret < 0)
+> > > +             return ret;
+> > > +     idx = ret;
+> > 
+> > max_idx is always zero so idx is always zero.
+> 
+> There is a followup series adding support for max[1, max_vintf].
+> And I guess that would make Smatch happy. I'd personally prefer
+> keep this by ignoring the Smatch warning. But if you think the
+> common practice is to drop it and add back, I'd be okay with it.
+> 
 
-I _think_ what is causing this is the change in ordering of
-__arm_lpae_clear_pte() (dma_sync_single_for_device() on the pgtable
-memory) and io_pgtable_tlb_flush_walk().  I'm not entirely sure how
-this patch is supposed to work correctly in the face of other
-concurrent translations (to buffers unrelated to the one being
-unmapped(), because after the io_pgtable_tlb_flush_walk() we can have
-stale data read back into the tlb.
+I'm just reviewing static checker warnings so I don't know the back story...
+How long are we going to have to wait for the follow on patchset?
 
-How is this supposed to work?
+Generally if someone had noticed this in review they would have asked that it
+be dropped but now that it's in, you're probably in the clear.  No one else is
+going to volunteer to refactor this code if you don't.  ;)
 
-BR,
--R
+With regards, to ignoring static checker warnings.  These are one time emails.
+There is always going to be a certain percent of false positives.  You're
+*encouraged* to ignore static checker warnings unless it's a bug or it makes the
+code cleaner.  The goal is never to silence the checker.
+
+regards,
+dan carpenter
+
