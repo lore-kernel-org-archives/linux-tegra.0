@@ -1,343 +1,180 @@
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2050.outbound.protection.outlook.com [40.107.101.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE0B42C0B
-	for <linux-tegra@vger.kernel.org>; Fri,  6 Sep 2024 08:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725611928; cv=fail; b=h8iZq95FwVQ9eLqJo2Olo3drtpASui2zWLPGiLr5E7eD6eBim7oeR5DNb8/KfwtMjqPBd3T6V0mzV0wnScv7ySdl8A8E1T7K5vLgaWpXG7AX1KWtCGeuYnTeXUjh2l50b3z/kJLd04Y7rh6hUr6x7cp23vUn5ACXq9/p7N2k7Qk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725611928; c=relaxed/simple;
-	bh=/bOYDcF0y9KahQ9G0CKKYBz4/IqSE4iqdeGH4XsWF1Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PJJGoEAB+2BKvNGiDyazxAuSHGLbHk7AWaJMlF6ohYNx4OeN/p8mNaDshplD1fn5bnAfvZtetZaEkBxAi2WQ+SzdugAJYxMk27cVJRUpcygNaK4M6wKXi9V0M8p+48zk8MkPDxsOXu7Q9UkmG8/MTpjTpDx5Df/yaGt061Dq5+4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TTxUyJtD; arc=fail smtp.client-ip=40.107.101.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0056415749A;
+	Fri,  6 Sep 2024 09:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725616289; cv=none; b=DY283Wb1eTlZ/EtYbY/BCVQq2n2biy8a5ZObhfTj/882yjS5i7y54v8O3yy6vNOghJUnwBFNlUX6DPIhD10zSXIC0LfArTsnam8iIjE9alO9spu1lLt2GjWWmYaHB2Zcw6s+MGVF7qIKMe5XM36XNLe7EPtUsWAoBiezkuEAeYs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725616289; c=relaxed/simple;
+	bh=r9CQiv9e/H0QQPL0VCa/kPrvaWEFJIp6VitNELBRy98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Cc8vZfOdPST6jk/+vrdhNhOoI0L5+ZIj9ICJUgsW4loz8SEYBMoQqV6t4Ik4vqVrSXjGvCQMx+GvB3zlclk8K+PFJbLVx7Owq02/VDYKfIZeuWyYddAaogafj/cNZk3zn2fFNNDK4IVMF/xfk6pR1EeBxvPyDLEXaSCRRGPl2dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gqbT+Lke; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QZtuf0/q; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gqbT+Lke; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QZtuf0/q; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TTxUyJtD"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p2yVaFBAdOdqwgfx2r6R5DeuJle/7uyT9nJY/X9CC5fMmjZqVCF9MUoxvUfYxxRXLCskRoWEYWWB61gWlOB7Yx45gSY71rNqLe0feKzspCkspbNq38jwPK5QYM0d243GDcYcXx1mUg8p9kxGGTt0EundHENGaDYcogp4mMZ/KMKGqHkvznq1EzWroNGoWmNAYz5s5KPwO29nANiAXmfsIOI/mjxX9ZNUge4wLPhkiID+/pvoav8rddlEG2fYU1avRVb+vwOaGo/dnbICp9GEum/57F6Su/MYnBg+pRTYGdg6zVKzwpNkafTQf/C1CbjgWO0Ft4Xb0Zsw78XvLR9duw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f5pbLq052/WtjzlOu8w+PVfaY396iIdY2cnN8PNa++s=;
- b=xSFVSLlsPLH8NXvs7nNDmFMe+G9rI2S8baSzfcylGkQaod8ZHfVFUP6bFBmWhPwnwCY7f2C1v3BHZk0vKTV1gj2YPYa5azWN5a2JviTk1uxjs/9VPMK4gE09Ca6yv0P0K810iqI5xZUh3dVu3voadJb3ObInr3m0jHH3bR35i6BOsmgsXLhSu6viN43MDgPhtoHvo+qifs5wn9fLhOdDgEFMvfVBm2YdKzbQYTLTC3rJg+n7f3EwS+9qRk6eooXEVuHdlFZP0Xet+6JFKIeiKGEnDZtLh1CpqSlw2jc72Sc/UyGGND15vcRmvg3bMQcGvq0d8+/GHp8QKE280v+Xtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f5pbLq052/WtjzlOu8w+PVfaY396iIdY2cnN8PNa++s=;
- b=TTxUyJtDzAR7tU3QYzIfJFQsy1iPjtkBpL4JYJ1GYk84uUHXWjxZAej5BckT2AvmiMEUbUUSOvTdWM9wb41R33jol/G9+xvZ79rYUJSZX26Qedv7mLF6J5ZQnwsokPgpfiiF+bYJS+pjmOhoER/CZNk1qOO/euf2rVPR4LA1JusNdWiGESC70yO5O7eGLtKOSRTKlIQhbaab9b65xcoszbtc43g4ad7CUNLZVHVJMm0qU4LKJIGsNJnhLjZIC+Myvbv/TOxZe0BR5MQMJohLPye9r04WDLuAWoJoJy/F0rJYPxEJezcFpZYZVx7VpdwQE6vUqOhCu6xWqI7mZGvhFw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM8PR12MB5447.namprd12.prod.outlook.com (2603:10b6:8:36::7) by
- PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 6 Sep
- 2024 08:38:41 +0000
-Received: from DM8PR12MB5447.namprd12.prod.outlook.com
- ([fe80::5f8:82ee:7da9:219b]) by DM8PR12MB5447.namprd12.prod.outlook.com
- ([fe80::5f8:82ee:7da9:219b%4]) with mapi id 15.20.7918.024; Fri, 6 Sep 2024
- 08:38:41 +0000
-Message-ID: <f0720898-aadc-4e98-9369-05ec5821414f@nvidia.com>
-Date: Fri, 6 Sep 2024 09:38:35 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] gpu: host1x: Request syncpoint IRQs only during probe
-To: Mikko Perttunen <cyndis@kapsi.fi>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: Mikko Perttunen <mperttunen@nvidia.com>, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org
-References: <20240531070719.2138-1-cyndis@kapsi.fi>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20240531070719.2138-1-cyndis@kapsi.fi>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO0P265CA0005.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:355::10) To DM8PR12MB5447.namprd12.prod.outlook.com
- (2603:10b6:8:36::7)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gqbT+Lke";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QZtuf0/q";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gqbT+Lke";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QZtuf0/q"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 081D71F8AE;
+	Fri,  6 Sep 2024 09:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725616285; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rx7d4m2HIkXffxsAPOa/6tFUzQ3aGNt1wI/K/bs5f34=;
+	b=gqbT+LkeHNlV6ckPNOCGOuyBlOEEi5I+xpmrXWSb8FiUOySh/fJKRl+BFTZjXCGHAdMtRB
+	VsKudgVNLAa/p7i9OC0OEUzxlKNFhnT2E6DE04TDzUeN+/DYOnelJprmdMrQPQpiABp48i
+	TAB9sbxUUUWxzKYSSMgJb380r+vSDc4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725616285;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rx7d4m2HIkXffxsAPOa/6tFUzQ3aGNt1wI/K/bs5f34=;
+	b=QZtuf0/qw/2OVRuGbMOExaH2QJboUnseDWwUIbjB2vl8jrv/7elLUaTN1CNgyyeeNRWPuL
+	KpMPKg8+jgwEQGDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=gqbT+Lke;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="QZtuf0/q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1725616285; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rx7d4m2HIkXffxsAPOa/6tFUzQ3aGNt1wI/K/bs5f34=;
+	b=gqbT+LkeHNlV6ckPNOCGOuyBlOEEi5I+xpmrXWSb8FiUOySh/fJKRl+BFTZjXCGHAdMtRB
+	VsKudgVNLAa/p7i9OC0OEUzxlKNFhnT2E6DE04TDzUeN+/DYOnelJprmdMrQPQpiABp48i
+	TAB9sbxUUUWxzKYSSMgJb380r+vSDc4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1725616285;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rx7d4m2HIkXffxsAPOa/6tFUzQ3aGNt1wI/K/bs5f34=;
+	b=QZtuf0/qw/2OVRuGbMOExaH2QJboUnseDWwUIbjB2vl8jrv/7elLUaTN1CNgyyeeNRWPuL
+	KpMPKg8+jgwEQGDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 197871395F;
+	Fri,  6 Sep 2024 09:51:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OEtAAZzQ2maDYAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Fri, 06 Sep 2024 09:51:24 +0000
+Message-ID: <d6d5490e-7270-4391-b91a-72af551c6e7d@suse.de>
+Date: Fri, 6 Sep 2024 12:51:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5447:EE_|PH8PR12MB7277:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce73b5ab-8a58-4974-79ae-08dcce4f4f32
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RGsxb2NXYUNXM09OVHJ5QWFwNjY5KzNQU0dRa0lDQXFiV0c5NzNXMGIxOWNX?=
- =?utf-8?B?Y0FmSTAzY0NsdDB5M3R2Y291Ulk1NEltZE9tZ1h0MUYraHUwZzd3a092R2hw?=
- =?utf-8?B?MHlwT3RicVlWN0Y1MjNuM0lMZGIzS09BNUJrS2JYR2RaZXF6T1lVOWl6R2ND?=
- =?utf-8?B?UDI4dG5TVEFPMmUvODZzamc5NnNPN1NwSWRoTU9nWkp3UEdZY05iWTN3bUs1?=
- =?utf-8?B?LzNxemVQQXBTUkYyNFdWeFdSUFBYZTlFelBoTExWczhpcHBDTWsvYkxsRWc3?=
- =?utf-8?B?VXREbnF0ZkJPNTNrMExsUWdOZ2RYbHd0N3pZUEhHdUthU2d4Z2lseTlTUzFX?=
- =?utf-8?B?ZTZ1WGN2MDZyZ3k0WFBkaXV6YSs3SXBSTGxvTTNqZnV5NUxhU0ZkY1kzS095?=
- =?utf-8?B?SEhkdDA4V3V1bkNlTWRHL2ppeHFQQUJieVE2UUJPWkdEdXhjalNydGhyYndU?=
- =?utf-8?B?aVhQNjNmWUNOK2s0M0g2QkhYaHE3eVVmczR0UW1EWUphMGs5QlMreDlweEo5?=
- =?utf-8?B?RXdXbWJrTXVubExlTkxCOWdMTWR4aXVGeFo5QVdFdjNLY29NS20rc1pySUtR?=
- =?utf-8?B?TDdWL1dhQkVuTjhIbG9UOEhsd2YvcVNSNEJFbG5NZkk2Z0tsNlQyYU8yZHpn?=
- =?utf-8?B?RG1oUTA5eXI3QkxNbE9peHJabndvd21HL2p0MHhiYUxmRVpMMGxYTHQ3dUFq?=
- =?utf-8?B?dHh5MHJ0N1ZvRzdIUG50NmVrMmROa1hrMjNuaWpUYXBaSjRseWVpTnhibGtD?=
- =?utf-8?B?ejdUOUFSUEFGMW00SE4rOTZoWi9Rek1UcVpZQmZpWkEzQUxYVGxXdzlvRWp1?=
- =?utf-8?B?akZQVzg3WU8rYlhtbWgxVGRmYmM4QlFDWHNLaWRMRWtwS2FrSmZOU21uc0cx?=
- =?utf-8?B?YU1lMkdTdHBZN1BpTHV5SG5DdHFlSWtYb2ZWYTEralhvVE9LcnJMNXhSNjFW?=
- =?utf-8?B?MzE5M0V0dEowcXRWaTZ6ZUcySCtLc1ZqeDkyU2plT0RaRVpoUmJaK3lxb1Fq?=
- =?utf-8?B?UVEzQk9nQTkvOU1DZlJGM1BDK2xiOXhJZmlmUlNhK0s5WXdUczl4T0hvSEFs?=
- =?utf-8?B?TlU1OG5uVVU0V2huakZqZFRSVnNKZVNFNFpNQmxiamJSaGVwdTFpWlh6UGV2?=
- =?utf-8?B?ZmI3L2VtOGtNYWM3ZElURG8rMFAzSXRULzJmOGEzeE1Tb2VJV3FjOUJabjQ3?=
- =?utf-8?B?dFRiV0d6UVN6dTBCTW1qZXZJdHhPazJsQnkrNkZjTU9kMW5rUVdlckZseVJC?=
- =?utf-8?B?aDlJRG9EbHI3TE00bXN3ZUFhYVFxbEVweHFOdENacFYyZXlaeXpWNWF1VzA2?=
- =?utf-8?B?dWEyZ2E5Y3B1RkkzM2VUWWlqWFZsSDhFM2g5YUJCb3djK2Q3NHVpWVNNR2lv?=
- =?utf-8?B?WUw3ZG5yVHQ3SVNZRk1LLzR1MHVuaXhIclYvK3d0VDFiT04vdGliaGE5bTYw?=
- =?utf-8?B?cDJFWGgzUFg1QzdGQjViY2dPUlYvUkVNblJ0TXN1QjhkWFA4YXkzYm0xRUFz?=
- =?utf-8?B?d0haZjl3SDBPdUdieXBMTENRWmVHTkpuQXM3Yk85V0Z3OVh2cVJUek9uQlpH?=
- =?utf-8?B?N2EvUk1vZ3g0OGtMbkZDUUE5aVdYQTUydW5PRFRQQ1p1MVluWWtXQ2dMY1hT?=
- =?utf-8?B?Q0FhVnpHNnhHN0RsUjlaZnprT25kN29xZkhhYllucHE5bFhrMDFwek50eUFE?=
- =?utf-8?B?TXhjWVc1elluSFliV3BGTEtCSm54UGtCeDJlTWpJS3U0ZUZkTXdzL1E5ckhm?=
- =?utf-8?B?aEY5amZXNG1tU2V6dmxldGxEZlhoeC96SkQ2VjFYZE8xZGtGR041elJNbXFD?=
- =?utf-8?B?amR1S3VIemN4K1ZDNXZBZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5447.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bXpNLytFRWhpV0RlcWlBTk1uWjYwbTlicCs1MUl0bXBVOWVWbCtXcXd1Y2d2?=
- =?utf-8?B?aXV3WCtweGhpRE5CcTQxNUg2bER3Zm42d3RNQ1krZ29hazYvV0gwSXFuWmlq?=
- =?utf-8?B?K0R3MjVhNHBhZEVnQmpRS3ZSZ1RJcFFxSUplQkthWkZTOU5kUnE1Q0V1aGFN?=
- =?utf-8?B?alovS05yTFdET0plMzFtVUE3S3dtem4za3JLSDBXQ3dYQ2VhV2VycDhKdnFO?=
- =?utf-8?B?cGhadGFxUHMrblJ4RFEyN2NNaHVmUzJFeXc5SEtCaC9adzlzZ1RNZkk3YzBo?=
- =?utf-8?B?NlZHdmk2bVkySHV1QWs1RVNJeGszQ0ZkQ3oxVlFUUExpVjV0ZkhpdXYvQUpR?=
- =?utf-8?B?Zzh6NldHN3JlTmFvZkh5bEo0Wjg3aU8xRFhMbVBWT2RnWFdiOHozamFZeG5L?=
- =?utf-8?B?ZXZ6cWphUnh4TWtFaklXOFdPc3RzdDZ5U1VLL3BQblA2S0gzUDVnNG5sUEQy?=
- =?utf-8?B?ZXQzd3RDTDBVKzY1RkMxbHZZQk9JNFIvaHM4VjdBZ3pRRGtpZDRNcnZBci83?=
- =?utf-8?B?bGNiWGxQSHlnSVhXU2ZvNzExdG5WL3dZR0hzR1dNaEFyUHJuRHRud3NYYnBs?=
- =?utf-8?B?ZnBGN3p0RTFwbVBiK2ZEUFlpYUszdjBXY1A3K0ExT2F2YTZsTWtCa3RkS09m?=
- =?utf-8?B?N3BPczV0ZTFLZEZNV2ZlMEVPOHdFa1BveXdMb2Q3QXhrMzhPZmRObk5hR3lE?=
- =?utf-8?B?MkpjaEY3OUw0ZmwxTWo3WDFXckwra09TMnZJSVRFcWRPaHRXRW02blptZ0RG?=
- =?utf-8?B?SWNLcHFsUFRWUm8zaXNRaE9FTVpzQjhMd0dkNUc1eEVxbEpKRzN2ZHRPUjdC?=
- =?utf-8?B?SmhqM0dub0d4citVWTVSTTJKRFhBcEZ3YjNXZ2hORERIU0I2TnpwUi9rQTBn?=
- =?utf-8?B?VTFuMEJFRTNBUGVub0U1T2RhaTlMeGliV3krTWtaQkxRSFVlRUR5cHVwZnl0?=
- =?utf-8?B?SW9qZUZ6WnoyWmh5bGdmV1NCdWxEeEk3Z3Iza0JzUFVtRkxSeUlKVU9aMmVK?=
- =?utf-8?B?dUgrN0NSZUY5a3hMMnJRRHhhS2RyeE0yV3BnV1VlQm1WRVVBU3d6ZzlQVkYr?=
- =?utf-8?B?OUV6amwwNUJoSWN0Qkkzdjl4MVVLeEI1aThwczJxaFRaN3crcFNVb3VCbUh5?=
- =?utf-8?B?d2ZnRkdtQlVaNHBqZW1hMWtGUXpjWGQ4KzBxTC8wWHBqa280RG5BWXB5em1O?=
- =?utf-8?B?WUhZVG93Y0s2R2VUQ2xnYkdNbjBON0VBZFBNV2czZFlXRXRLNE10T0dEYnJ6?=
- =?utf-8?B?S042OGVnSFBUTUlldDBsWW1xL1hGVGY1OHcyTzExQm1SZnhFZHJWUzZYTFNu?=
- =?utf-8?B?NTBrK1EzWDFuNDl0K1FXMlo0bmtiYkd3Q25UWnYzcCtXSzFEdWE4VGF5cGJv?=
- =?utf-8?B?bHFDY3VlckVIWEtlTXJTV2ZUT2pmL1NSYXlnaEdkQXBqNHJWUHhycGVaL1Rw?=
- =?utf-8?B?M1J5c0p6WnZtTTdxWDEvY1lRQk55YjhDNmR2cFJwblI3T2M0SEtPc2FwTEZ1?=
- =?utf-8?B?MlRUdnpTZkphSmZZK0VJWlZtUEllYll6ekN5dU9FOEhmdEtWNHZhYy9VRkNH?=
- =?utf-8?B?L3BXTWtJVjA1N0l2ZGF6WE5tRm1Yenh4WWlNYjZMN1hGZ1YvQjRXMWtnRTFu?=
- =?utf-8?B?b2hjT2hPQUY2QWNaTFNRQ2VwMk84cE02NVNKUTR5MjRvNjBaOVhkWlVScis0?=
- =?utf-8?B?TVMrOVJ1MG9aYzZ1OEZneVhBV1pmNTRBbGNHV2ZFZTcyYllpRC81N2xiMjhr?=
- =?utf-8?B?MTBSQTdENDFKS00yUVkyZzdrWStJMEpSVXoveGdUUVhTWlE5YnA4RlAyK1Fx?=
- =?utf-8?B?aVcycFlyQUVxNE9sVEJHQ2dpT2l0UzJLMTB2SjB1b3ZSaEVSamRMWXhXMlBR?=
- =?utf-8?B?aFRPM1NmUVVBeTJDS2V6R2NPcjZnTUk5TWVydGw0c3YyUTBQU203MUQrWUlM?=
- =?utf-8?B?aHhQa3pHUEdFT0pObnNCVmd1U0h2VWJ2VXZyVHY1b2pQUytuYnR4Z1cvdms5?=
- =?utf-8?B?MG9hR0szTEJFNEE4N0gyamhzK2FGWGgwU0gyWDQ1ZmpxRE9ZWWwzUVZHTENL?=
- =?utf-8?B?ZXl5SDlYR1RjMU5pWGVFMStFUEFzbG95SnhmTll6cjdWa0gxTENCR3Zsczk4?=
- =?utf-8?B?SUE5aWMxc3dDbWdKTUJPNHdOSFA0SDJjTGhEd0c1djZBS0RrVmsrMHNjOHBY?=
- =?utf-8?B?MFArMFFJQ2M4T0VKbXRHeU5aUlF6MWJXYmF2eWJDQTJZcEp3NGtTaGJTYTcw?=
- =?utf-8?B?M3ZWK2QrKy9ZamFxQS9CeTlXVzFRPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce73b5ab-8a58-4974-79ae-08dcce4f4f32
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5447.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Sep 2024 08:38:40.7946
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rUmIMILEKBN5fFYVqxRNPZzNWLuL3SrHQSeQzSTtD2UpnmeAyRkZvGBF4RZOyxL5M/av9mUjc/03+3k/WkbbYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7277
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] media: venus: firmware: Use
+ iommu_paging_domain_alloc()
+To: Jason Gunthorpe <jgg@nvidia.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Dmitry Osipenko <digetx@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, linux-media@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240812072105.9578-1-baolu.lu@linux.intel.com>
+ <20240812072105.9578-2-baolu.lu@linux.intel.com>
+ <c5141c18-3f7b-41ac-a064-9911873d0bf9@gmail.com>
+ <20240904121614.GA782327@nvidia.com>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20240904121614.GA782327@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 081D71F8AE
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	FREEMAIL_TO(0.00)[nvidia.com,gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[linux.intel.com,gmail.com,kernel.org,nvidia.com,quicinc.com,8bytes.org,arm.com,intel.com,vger.kernel.org,lists.linux.dev];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -5.01
+X-Spam-Flag: NO
 
-Hi Mikko,
+Hi Jason,
 
-On 31/05/2024 08:07, Mikko Perttunen wrote:
-> From: Mikko Perttunen <mperttunen@nvidia.com>
+On 9/4/24 15:16, Jason Gunthorpe wrote:
+> On Tue, Aug 20, 2024 at 11:43:50PM +0300, Stanimir Varbanov wrote:
+>> Hi,
+>>
+>> Thank you for the patch!
+>>
+>> On 12.08.24 г. 10:21 ч., Lu Baolu wrote:
+>>> An iommu domain is allocated in venus_firmware_init() and is attached to
+>>> core->fw.dev in the same function. Use iommu_paging_domain_alloc() to
+>>> make it explicit.
+>>>
+>>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>>> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+>>> Link: https://lore.kernel.org/r/20240610085555.88197-10-baolu.lu@linux.intel.com
+>>> ---
+>>>   drivers/media/platform/qcom/venus/firmware.c | 6 +++---
+>>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/media/platform/qcom/venus/firmware.c b/drivers/media/platform/qcom/venus/firmware.c
+>>> index fe7da2b30482..66a18830e66d 100644
+>>> --- a/drivers/media/platform/qcom/venus/firmware.c
+>>> +++ b/drivers/media/platform/qcom/venus/firmware.ced
+>>
+>> Acked-by: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>
+>>
+>> I'll take the patch through linux-media tree.
 > 
-> Syncpoint IRQs are currently requested in a code path that runs
-> during resume. Due to this, we get multiple overlapping registered
-> interrupt handlers as host1x is suspended and resumed.
-> 
-> Rearrange interrupt code to only request IRQs during initialization.
-> 
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->   drivers/gpu/host1x/dev.h        |  2 ++
->   drivers/gpu/host1x/hw/intr_hw.c | 37 +++------------------------------
->   drivers/gpu/host1x/intr.c       | 21 ++++++++++++++++++-
->   drivers/gpu/host1x/intr.h       |  5 +++++
->   4 files changed, 30 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
-> index 53af0334c6e1..d3855a1c6b47 100644
-> --- a/drivers/gpu/host1x/dev.h
-> +++ b/drivers/gpu/host1x/dev.h
-> @@ -9,6 +9,7 @@
->   #include <linux/device.h>
->   #include <linux/iommu.h>
->   #include <linux/iova.h>
-> +#include <linux/irqreturn.h>
->   #include <linux/platform_device.h>
->   #include <linux/reset.h>
->   
-> @@ -81,6 +82,7 @@ struct host1x_intr_ops {
->   	void (*disable_syncpt_intr)(struct host1x *host, unsigned int id);
->   	void (*disable_all_syncpt_intrs)(struct host1x *host);
->   	int (*free_syncpt_irq)(struct host1x *host);
-> +	irqreturn_t (*isr)(int irq, void *dev_id);
->   };
->   
->   struct host1x_sid_entry {
-> diff --git a/drivers/gpu/host1x/hw/intr_hw.c b/drivers/gpu/host1x/hw/intr_hw.c
-> index 9880e0c47235..415f8d7e4202 100644
-> --- a/drivers/gpu/host1x/hw/intr_hw.c
-> +++ b/drivers/gpu/host1x/hw/intr_hw.c
-> @@ -6,18 +6,11 @@
->    * Copyright (c) 2010-2013, NVIDIA Corporation.
->    */
->   
-> -#include <linux/interrupt.h>
-> -#include <linux/irq.h>
->   #include <linux/io.h>
->   
->   #include "../intr.h"
->   #include "../dev.h"
->   
-> -struct host1x_intr_irq_data {
-> -	struct host1x *host;
-> -	u32 offset;
-> -};
-> -
->   static irqreturn_t syncpt_thresh_isr(int irq, void *dev_id)
->   {
->   	struct host1x_intr_irq_data *irq_data = dev_id;
-> @@ -54,7 +47,8 @@ static void host1x_intr_disable_all_syncpt_intrs(struct host1x *host)
->   	}
->   }
->   
-> -static void intr_hw_init(struct host1x *host, u32 cpm)
-> +static int
-> +host1x_intr_init_host_sync(struct host1x *host, u32 cpm)
->   {
->   #if HOST1X_HW < 6
->   	/* disable the ip_busy_timeout. this prevents write drops */
-> @@ -85,32 +79,6 @@ static void intr_hw_init(struct host1x *host, u32 cpm)
->   		host1x_sync_writel(host, irq_index, HOST1X_SYNC_SYNCPT_INTR_DEST(id));
->   	}
->   #endif
-> -}
-> -
-> -static int
-> -host1x_intr_init_host_sync(struct host1x *host, u32 cpm)
-> -{
-> -	int err, i;
-> -	struct host1x_intr_irq_data *irq_data;
-> -
-> -	irq_data = devm_kcalloc(host->dev, host->num_syncpt_irqs, sizeof(irq_data[0]), GFP_KERNEL);
-> -	if (!irq_data)
-> -		return -ENOMEM;
-> -
-> -	host1x_hw_intr_disable_all_syncpt_intrs(host);
-> -
-> -	for (i = 0; i < host->num_syncpt_irqs; i++) {
-> -		irq_data[i].host = host;
-> -		irq_data[i].offset = i;
-> -
-> -		err = devm_request_irq(host->dev, host->syncpt_irqs[i],
-> -				       syncpt_thresh_isr, IRQF_SHARED,
-> -				       "host1x_syncpt", &irq_data[i]);
-> -		if (err < 0)
-> -			return err;
-> -	}
-> -
-> -	intr_hw_init(host, cpm);
->   
->   	return 0;
->   }
-> @@ -144,4 +112,5 @@ static const struct host1x_intr_ops host1x_intr_ops = {
->   	.enable_syncpt_intr = host1x_intr_enable_syncpt_intr,
->   	.disable_syncpt_intr = host1x_intr_disable_syncpt_intr,
->   	.disable_all_syncpt_intrs = host1x_intr_disable_all_syncpt_intrs,
-> +	.isr = syncpt_thresh_isr,
->   };
-> diff --git a/drivers/gpu/host1x/intr.c b/drivers/gpu/host1x/intr.c
-> index 995bfa980837..b3285dd10180 100644
-> --- a/drivers/gpu/host1x/intr.c
-> +++ b/drivers/gpu/host1x/intr.c
-> @@ -6,7 +6,7 @@
->    */
->   
->   #include <linux/clk.h>
-> -
-> +#include <linux/interrupt.h>
->   #include "dev.h"
->   #include "fence.h"
->   #include "intr.h"
-> @@ -100,7 +100,9 @@ void host1x_intr_handle_interrupt(struct host1x *host, unsigned int id)
->   
->   int host1x_intr_init(struct host1x *host)
->   {
-> +	struct host1x_intr_irq_data *irq_data;
->   	unsigned int id;
-> +	int i, err;
->   
->   	mutex_init(&host->intr_mutex);
->   
-> @@ -111,6 +113,23 @@ int host1x_intr_init(struct host1x *host)
->   		INIT_LIST_HEAD(&syncpt->fences.list);
->   	}
->   
-> +	irq_data = devm_kcalloc(host->dev, host->num_syncpt_irqs, sizeof(irq_data[0]), GFP_KERNEL);
-> +	if (!irq_data)
-> +		return -ENOMEM;
-> +
-> +	host1x_hw_intr_disable_all_syncpt_intrs(host);
-> +
-> +	for (i = 0; i < host->num_syncpt_irqs; i++) {
-> +		irq_data[i].host = host;
-> +		irq_data[i].offset = i;
-> +
-> +		err = devm_request_irq(host->dev, host->syncpt_irqs[i],
-> +				       host->intr_op->isr, IRQF_SHARED,
-> +				       "host1x_syncpt", &irq_data[i]);
-> +		if (err < 0)
-> +			return err;
-> +	}
-> +
->   	return 0;
->   }
->   
-> diff --git a/drivers/gpu/host1x/intr.h b/drivers/gpu/host1x/intr.h
-> index 3b5610b525e5..11cdf13e32fe 100644
-> --- a/drivers/gpu/host1x/intr.h
-> +++ b/drivers/gpu/host1x/intr.h
-> @@ -11,6 +11,11 @@
->   struct host1x;
->   struct host1x_syncpt_fence;
->   
-> +struct host1x_intr_irq_data {
-> +	struct host1x *host;
-> +	u32 offset;
-> +};
-> +
->   /* Initialize host1x sync point interrupt */
->   int host1x_intr_init(struct host1x *host);
->   
+> Did this patch and the 1/2:
 
+2/2 is in linux-next now.
 
-This change is causing a boot regression on Tegra186 with the latest 
--next. I have reverted this to confirm that this fixes the problem. I 
-don't see any crash log but the board appears to just hang.
+~Stan
 
-Jon
-
--- 
-nvpublic
