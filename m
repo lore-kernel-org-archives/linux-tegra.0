@@ -1,223 +1,164 @@
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2081.outbound.protection.outlook.com [40.107.95.81])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0CD1B5300;
-	Mon,  9 Sep 2024 10:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725879440; cv=fail; b=RIZiVWwlEXt4Xr/iG7XtCNWMClyuA5RJjsPsZQ94lJt6oqfwfVGmP0+sUYPxZ5A4BwCHfYX0WpCcW2peLjEZ8xWhnXcAuXKyjHWM1hD8pXm+AmdwAOgb/p5TE66tnZkus6Yb/ZibqQukR2T1bk2GWcVQdZL4tde68rEdOrsPmlw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725879440; c=relaxed/simple;
-	bh=dAEeBQDQ/FhB+4w8mJb3n1hhXw55OLfcudOxWtmblLY=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pYGEPrORbRzrf72hazhqsIX0PZ/13Q1h4XTzuJL0wcEKvqzdnqzraQfnuUrwn5/py1H1oqdP5WMjJ6bBQiDeMQPwXLk4dYP0BG9sTIUr+4iFaQ/OsGICxEg6/THNKsxskgJsFZCy+5EzH5L6bk+/g9LxNH8YQA+aqp4HHXeReBY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=E5ndeRrh; arc=fail smtp.client-ip=40.107.95.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0618F17BB04;
+	Mon,  9 Sep 2024 11:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725882861; cv=none; b=QiZu4ADPv+9Qc5svFOFlfELFjPtImInBPYOwOJOIqTn3LaDmhdNOYcG2ToxTGmusEu8545+uXk4+NSSDTpnvAW+nQkFHdZqAqHhWaSDuGRdhzDqE8GGD/jv/I/Bw9xg0X8Equk5EtmdkmjzOlbTLNVjEpDB2BmahVArK1/teDy4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725882861; c=relaxed/simple;
+	bh=S/0Gvcdwc9czGIGZ/KN+mgXrysiIL6aDrU9W19Ga/ZE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pKbgQJwuBrnARVRUytO8nmmmFrrqLOH3ytIKt/NPBv19JV8SbDktlAVR+7mmtNG3xe2vBJ1QsHZtRqLfaPjTB+lB4hzoN8JSqbXZAYl6u9h77tjXjnQZ5uiX8Ey5zdeeLfXsMKtJesDW0ukYnzw/azxArHqnYVRUwWBIThgn9iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=h9w5RVGK; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="E5ndeRrh"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aXHlWySMD2eWuUTh9N3bM3VR1RWuU35XDWnYN+4jGYCrFx+0MUh2EV4w24NSHqhV5zsJfDTPfNrQ08QvvyTOwibhN7iSZ+X+CimVpMHJu2UyFkENT4TIr6NuCRDtoBh05IQg3VBMUi7RnvPSCA24DWnxfhIw33zR2U3L9qOoheLGpl4yMQXkFRGp0jy+Iyb9IcT9WCpsw751oR1CIrL3FrDivj0plDR245XdJsEajpEyeYa9PljvkQ+2wBUCXZPNC1lj3z0TAcxDZLUSTC+M7MrU5m4x1AWtCCK5XDY7srNwUKRe2gDheuzWnyB0x/780yeF36pUXCvuT9AidLCg3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PJqFPpOTRA4HQ72KB+P4eqHL7RD9gg2ErjXYaKAHSg8=;
- b=ldZ9SgrO0R6kOTsG6Z05RjYdK4WB0t4+OCDzt14d2Gz2E5nzSn9XYe7pta61AEabmhc2NvSlxOFwv4qHdoFAKnuFODtGy1B2l/wqIFda9nKS052XLOK5JzAkdLUDFYPqZQQh9J0zJ6FZ1s9AsytOkT2oykwncr69T2vtDdB0vFnkiyppmt6BjudAOUFbUxqBKsm71g0q6LPe+83lC94+ktFGmUbu+1ulmA3Ppx1eBGqtESu4VI3OfWCdpyuHAskq7snbUsX+O4WGfqaArx+8mxMlu/ltWsqRNaxD18xI1LMXj+5VG3Tl2qTACoCSmYR0aE/w0MENkgygwEtQ/Y8PVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PJqFPpOTRA4HQ72KB+P4eqHL7RD9gg2ErjXYaKAHSg8=;
- b=E5ndeRrhh7ZVtU/cZ129BbhQp6Gnhzi3nq+RIP5AmmTEXzPJINZzRCu5fPLSOHXtQbf395u/mOmRfPbztpBd1fTfecPZTcKZGi7zFfmmyvvhoGjOKhB8HOxrYEnwor3ZQpi32lI+PA7GRrJnDck4HNZwY6YP5cexpdSB8vbGLyQpgx46BiEE1yqktRavlLcZSLcRLcwWBybgNCSDuQYyW8l7O0ZYJOjVIXuvzATz9XD3KQrp5Sw010dTMv+RgP+c5ZZjmwTbN9YHCKFUke2AwkX7Qc9czggB2fG0AgaYUlMPYn/1eLyZcb8Cl34kuquCYySLN0oG0GrRHvL1EZBoBA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM8PR12MB5447.namprd12.prod.outlook.com (2603:10b6:8:36::7) by
- MW4PR12MB7437.namprd12.prod.outlook.com (2603:10b6:303:21a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.24; Mon, 9 Sep
- 2024 10:57:15 +0000
-Received: from DM8PR12MB5447.namprd12.prod.outlook.com
- ([fe80::5f8:82ee:7da9:219b]) by DM8PR12MB5447.namprd12.prod.outlook.com
- ([fe80::5f8:82ee:7da9:219b%4]) with mapi id 15.20.7939.017; Mon, 9 Sep 2024
- 10:57:15 +0000
-Message-ID: <9914729c-8e69-4ad5-a530-161f5430b71d@nvidia.com>
-Date: Mon, 9 Sep 2024 11:57:09 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] clk: qcom: clk-alpha-pll: Simplify the
- zonda_pll_adjust_l_val()
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
- Taniya Das <quic_tdas@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- kernel test robot <lkp@intel.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20240906113905.641336-1-quic_skakitap@quicinc.com>
- <fdeadc0c-7f8d-4547-8703-c402bf06e495@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <fdeadc0c-7f8d-4547-8703-c402bf06e495@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO2P265CA0466.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a2::22) To DM8PR12MB5447.namprd12.prod.outlook.com
- (2603:10b6:8:36::7)
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="h9w5RVGK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1725882859; x=1757418859;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=S/0Gvcdwc9czGIGZ/KN+mgXrysiIL6aDrU9W19Ga/ZE=;
+  b=h9w5RVGKp8A/YMgL8zgEtbXena/cWIWEdeH9IOGbgGc4KxM5KLuxaAg7
+   tgx3ImNnN0ZC9eZI9Bhp1hhUrqhJy/S24m69g9qwfOMyRdVvVQEWzz2Zi
+   Oi164IJzZODTJsavTZg27WGHk1UGefXPWmp316CyqhvUo1HBm3wP6Hc2E
+   sIVVv1R1wUWTGoVilrakRujDJu+QzEfYvsQWCC155a++RklOulE68XqMO
+   3OY77aEwy7tT2yOgVZUdZqZR9nB+up/yu9C6cTf4RDuZCLBvwTtnfF+5s
+   R7DPjzONhYmIN37guh+yfaHeDMn9MmDfJd0sL+v+KV6g2CxaYQPrOAf5y
+   Q==;
+X-CSE-ConnectionGUID: Ke3+C3CXR++lxv0xXUTyow==
+X-CSE-MsgGUID: Jln5HjirQm6z9i/EpH+Fiw==
+X-IronPort-AV: E=Sophos;i="6.10,214,1719903600"; 
+   d="asc'?scan'208";a="32144688"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Sep 2024 04:54:17 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 9 Sep 2024 04:53:54 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Mon, 9 Sep 2024 04:53:50 -0700
+Date: Mon, 9 Sep 2024 12:53:17 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Celeste Liu <coelacanthushex@gmail.com>
+CC: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+	<palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren
+	<guoren@kernel.org>, Anup Patel <anup@brainfault.org>, Heinrich Schuchardt
+	<heinrich.schuchardt@canonical.com>, Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz
+	<glaubitz@physik.fu-berlin.de>, Russell King <linux@armlinux.org.uk>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
+ list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>, Tony Lindgren <tony@atomide.com>,
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter
+	<jonathanh@nvidia.com>, Palmer Dabbelt <palmer@rivosinc.com>,
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<loongarch@lists.linux.dev>, <linux-sh@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-rpi-kernel@lists.infradead.org>, <linux-omap@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 1/4] riscv: defconfig: drop RT_GROUP_SCHED=y
+Message-ID: <20240909-gave-celtic-af2ea8bc38d5@wendy>
+References: <20240823-fix-riscv-rt_group_sched-v2-0-e4dbae24f7e1@gmail.com>
+ <20240823-fix-riscv-rt_group_sched-v2-1-e4dbae24f7e1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5447:EE_|MW4PR12MB7437:EE_
-X-MS-Office365-Filtering-Correlation-Id: e6cc647c-e3f7-4252-efe9-08dcd0be2a05
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b044Vk8yV3NNcFFvZlU1anpmQ1lQaCs1cWVnK0dMYS9ZTnE3bEhybi9zRFpK?=
- =?utf-8?B?aHVMK1ljTkVXQW9TeklEZy9KVnNMaTl5ZW1sR2NlbFY2WDNmbFJiemU4UnlI?=
- =?utf-8?B?cU0xcVRJYmRZUVkrUVAyTzdOeFdqY1pGSVVIa3NSRXgzSVBic0l5NDRyWGdl?=
- =?utf-8?B?OXNYQWhWQ1FVVlh0TjBsQ1ZKSzFadWZDTmxRL1hxN1p2VUtvM1BuK2RYamhw?=
- =?utf-8?B?VWlacXZhaEFoNkdxV3ZoMjBiYXI2Y3JocHZaeG9COGljbVFlamhtd294SFJQ?=
- =?utf-8?B?UEY4ZzIwczFqbm9SOFBaSXE4QkJDOVJhem5EQUVLQitmdHphanR4dzRmZEl5?=
- =?utf-8?B?dk4ydGJ3cG5TNGltTVUwaUhyUnZ6MG9NR2UyaXNRRzNhZERzS1R0ZXp0UTJq?=
- =?utf-8?B?cVpSckFKem9qRnlTR2tPZVlKVEkzTFZwbnVTUEFkRkw3TUhhdk5zNlBjSFM0?=
- =?utf-8?B?OHhKa002UXdXbzQ1a0tKUE1NalBSMWZVNTVRMmcydFNCUVJDK0p6QXVrUmdJ?=
- =?utf-8?B?MkY0Sjd0a2ZNS2xUU1RkVU5MQWJsUVg5MkpWQ0VpZ0ovTUUzT2djZlZNUmlw?=
- =?utf-8?B?Z3cvcWVjV3lqRUs5TytlN1BmWDdnZnkrMmNVa2pXYWdCbmZtRnRMcmFwZWNy?=
- =?utf-8?B?Q09JajdMZ2FsOXdPZ09yRm1IWjFrRDMwN2xUS25CL1BMNDd3YVZ3TnpCZ053?=
- =?utf-8?B?ZEl6aFpvVW4yZnRaZ044QkdTUDdCRUxzYjZBd01LUEllc3I2b09hMlRBeVVu?=
- =?utf-8?B?TzVac0RtSkNEQ0l3MHhQZndNQWVvM1l5aUFxamh1N3pXcGdDTjhnUGkzR2dn?=
- =?utf-8?B?c3FzQ0NCa3BrT2RrWWVrTVdjTXdIKzJZakozZ1EwVFl2ZmE5MTlOMFQzRHVn?=
- =?utf-8?B?OGlwc3VrREkwUklNNTNkMWM1OXdtQXY0K3dKSWo2TmxadEp3NlN3aVcvWHVa?=
- =?utf-8?B?dXNvbWxRQnErMnFYNXUweitCeW15ZzlZQzRIbm5MdHF5VlRZck9iaFRnc3pK?=
- =?utf-8?B?cHBUT3lsbkF2UFRCYVZCamQ2ZFB5andkMG8rUzJDdVBpS2NyT05LbWRrMVcr?=
- =?utf-8?B?VVJSQkYwQlNvTitBR0ZFNGFucXE0Y3I2eFFDNG9QUG1zYU9uZGoxTCs0TjBx?=
- =?utf-8?B?cFZLZ29XTG1xeG5mK3VEUHdhYTZiV3hsVVJmOU1Ga1pIOC9PZHJmbVQyL3Ax?=
- =?utf-8?B?Uk05MllBWmg1bGN6aHdncXBZb1ZVZTdJcjFHaGtNZTh0UTVQN0RFL0pwbE9h?=
- =?utf-8?B?N0dKK2VTTG9CUlc5R056WG9VTFcvUmcvdkdERFU2b2MxN3UxRmd0cVBPZnFK?=
- =?utf-8?B?RnBlMGpDb0VIc2JsSUVmcUlCNlRTQ09EOW1hVE95aEVBUUw4a2wzcisyR2h6?=
- =?utf-8?B?NHJYSjlNSTBWSmdYMms3ak1nQ2cvOUpUMkh3TGJFMStMM1VRRFdlUW9XZlY5?=
- =?utf-8?B?VzVFSVh1NVN2V0NXdFc3RWNWNFJDUm5NNy9kdGNhY0lNZTkwSDVhNXFPNFFu?=
- =?utf-8?B?UnYrNW9ubEFreE10MUkyK2kyUEJ3cTB4ZWVuNnJ2T2t3Z0gzd3pFZEJBaVQ4?=
- =?utf-8?B?Tk1nNFNyS0pWTzNwbm5rK0FKMnpSb0ozL2V6bHMvam9NRHZHb0l6MXhlRnpr?=
- =?utf-8?B?M3B3Uk1oVjVYSDJleHR5MDBVcGxxeEFVZW5jS05MTWFXTGhSbXBnSHJSTklv?=
- =?utf-8?B?VDV0UUk1NlFTbWtRS3ZBTUhncFdIaTBvYW9WMVhvam9nSTE0UVVCVTlMMi9u?=
- =?utf-8?B?UzE0OERyeWtkN3k4ZVZyV21PTmt5QUZYb05WZ0EwUFRHVmdTWjJEZXR1N2lS?=
- =?utf-8?Q?zlMq7Q7crZeU5U4Ucwqql61L0ptXyXe5nED4w=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5447.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WnIrT0F4SWhTWkFkWDh5Zzc2THJ0TU14ZXRyZkFnU0drZzBLQWJ4SEZRVWNa?=
- =?utf-8?B?S01VNlVGQ1VvbzVWN0JYK05hUkJZSHM2UC9RTEJjV0YzMHZWb0JDeExDejhn?=
- =?utf-8?B?ZnpnUEF6SVZPbXBLSlljUzVFbHRrczJvVTBJaVVrOW9rSWlSSitocThwcncx?=
- =?utf-8?B?M1NZeGNUWEtpVk10RFplN0dUN1FQci81L09FeGtvcW9ncXVkTm5YVC9aVDhP?=
- =?utf-8?B?bFFpcWVKK1dlcmN5aDN5cytCR0d5RytxUGUwRkpDRUZveXRlb1l1MDZLenFR?=
- =?utf-8?B?UzhBb0ljcDkxWkJxNzcyVjhHeUhTSHlac3VrOFNpeFV0NzhJUUl0bUZkZWhC?=
- =?utf-8?B?MW44QkU3YURveitIeE94YWtUNlBoa2txQXNvRXJNekhESm1lM0hvWnN2MVFW?=
- =?utf-8?B?ZmtxWjJFUWxVTlVETTRIdE0vczl1YUEwTHVWSFhJeHV1OXZFSE9Rb055aVhm?=
- =?utf-8?B?bHRic2ZUT3BjMXd6dGovRFp3elZuWEN1cDgvMEdVTThhOS9wMVNVK1E1enNr?=
- =?utf-8?B?d2tRdHlCVUhsMGRhWVpiTjVmS3FsRkVxVG00UUtVaUpEZHhQb1dFZXBLMVBq?=
- =?utf-8?B?VVNoSU40TUcwVVpZY2h5SkNCcjIyUVhWOHJJMHJlRXZJdk1pVGJRN1NEU1Bw?=
- =?utf-8?B?Nlo4QjRzQUtWR0dINEhNQ2wzdkwwZVhUZ1AxdVBXTGpFZTE4RlczUVhJY3VF?=
- =?utf-8?B?VVZLYU5UUTJ4MVZ4Tk9ZWXlMMFdobVlwNVdwL1hGNEhrVEg2UmNYT3RLcVdV?=
- =?utf-8?B?d1lFaGN0UngvYWZheHhxeUNqdlkzUS9Ud1YyeGp2M1RuMXVaT3dRM2dBQVMx?=
- =?utf-8?B?UGtkOExjdkJBdjkrUElyd0ZHbkMrZE1ZMEpmZDJzcnhoRTV2VFBaRTlSSFVZ?=
- =?utf-8?B?eXQyMUI0RzVzV0ZISkpwRWJvZ0tYeEk4OExMOEdqL2MxT3dxUVVkejBIby80?=
- =?utf-8?B?Uzh2M3FxVzZDTEIyb2JMV3RJdzFFR283NmFyOFlNTUtZc3o3SXRUUzhlQyt2?=
- =?utf-8?B?bjBSV0RVV0JmUzhvbDh6N3AxM0FQSHhzU0JnWkFrUFU3QndIWkhhSE85K2I4?=
- =?utf-8?B?RDRSUjFhVUcveWpWcXpOeUlNWXhCcjRzNXRpbENueno3cTNyZlErQXlXMEVa?=
- =?utf-8?B?M1hjeVJ2UVBzM3oyeFFycVVyTnNZV1B6eVlkRy9KL3lpRGRuRjBMZ0VvNFJF?=
- =?utf-8?B?elhGeEJwVWE1SDhFNHF5YVJIZDh0L1JaZURGUXhJejlOZW0weE1FVFZlaE93?=
- =?utf-8?B?RDZvU0hpS0c0VXR4V2llVkU1MUVBeCt5cTM2VFFRczFyMDE2VHRaSEQ2Q25M?=
- =?utf-8?B?bWE5MEo1UXBORzJYLzQ5c0tLT0cwdDZEYUpQYVFtTzhFWVN0QnJDTXpoelAz?=
- =?utf-8?B?UWhHZ2puemJmQjFIN0FWUnVIS2orczN0cG81RTFnTlNwM3dTRlBwUnN4d2lF?=
- =?utf-8?B?andiNGNYdmtQSUVzUHpWYTJWbDUzV0UzWVdSMCt0alFMVUFlYXpoS0xEWG5H?=
- =?utf-8?B?dlhjRy9Nb2xwSTZjQ1BWbjh4VGN0TUJLOTBTeGxjckZva2dyeENPdVlpeDk5?=
- =?utf-8?B?clZKT2NMUng4dGRCVnFVRVJrUERXZDZ0T2tqUUF4b0x1LzFaVFk5Q0ZiY3h2?=
- =?utf-8?B?VldOTmErclJjR0d5LzhoeDJRVy9YUEtJMjNFbVhNUnc4N1pLdWwyMG9FNWIw?=
- =?utf-8?B?ZFZmTE5STk5wTHFVY1BVZnBSZEpSMjBrS29uL29KblQwNHV6cnlCZHc2c0FL?=
- =?utf-8?B?andSeGxHU3NlT3ZYQ00zUVVlSHk3N0tCemlMMkF5UGJMWThhNUdXZ2FyTUE4?=
- =?utf-8?B?OVFIdUdkZnFwOU05am04MUI4eUIzSlpycDlyUzdVQlJ2YnQ5clRqRm1XSlBL?=
- =?utf-8?B?LzAwM2hLc1M1MVlZT0t5aGtiQktid1QyUko1MVN2Szk1NmFGUU1sTWlZTGF6?=
- =?utf-8?B?V3hMUE9TQ2dPTXErUGFpbzVoakdHd28reUdCWG5uSHVWZDNsdE5Qa1RvcFF3?=
- =?utf-8?B?aE9TNmJZYUp4bElMZmdBUUNlbUZZb2F0Vzd6V2pZY1RUN1F4em1ramVBZmZn?=
- =?utf-8?B?d3BMZUwremJnNVkxTkNIOEkxQzMyT3ZQWksvTWpwcXY2bjczMktENkYrR3V2?=
- =?utf-8?Q?4Z1iPrzM40u52uvVMejQ6nj7g?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6cc647c-e3f7-4252-efe9-08dcd0be2a05
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5447.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2024 10:57:14.8481
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RDFAaJigRzan1LReGJN9HkET7LV0tasBid1w+x4alIzQ3FTKV6GbUYBRoDMxrUzaM3Rfk7gGynLiiEOXkeN8Tw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7437
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="SUs/mhM/C8VTfn2w"
+Content-Disposition: inline
+In-Reply-To: <20240823-fix-riscv-rt_group_sched-v2-1-e4dbae24f7e1@gmail.com>
 
+--SUs/mhM/C8VTfn2w
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 06/09/2024 15:14, Jon Hunter wrote:
-> 
-> On 06/09/2024 12:39, Satya Priya Kakitapalli wrote:
->> In zonda_pll_adjust_l_val() replace the divide operator with comparison
->> operator to fix below build error and smatch warning.
->>
->> drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
->> clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
->>
->> smatch warnings:
->> drivers/clk/qcom/clk-alpha-pll.c:2129 zonda_pll_adjust_l_val() warn: 
->> replace
->> divide condition '(remainder * 2) / prate' with '(remainder * 2) >= 
->> prate'
->>
->> Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for 
->> Zonda PLL")
->> Reported-by: Jon Hunter <jonathanh@nvidia.com>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
->> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
->>   drivers/clk/qcom/clk-alpha-pll.c | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/clk-alpha-pll.c 
->> b/drivers/clk/qcom/clk-alpha-pll.c
->> index 019713c38f25..f9105443d7db 100644
->> --- a/drivers/clk/qcom/clk-alpha-pll.c
->> +++ b/drivers/clk/qcom/clk-alpha-pll.c
->> @@ -2176,10 +2176,8 @@ static void zonda_pll_adjust_l_val(unsigned 
->> long rate, unsigned long prate, u32
->>       quotient = rate;
->>       remainder = do_div(quotient, prate);
->> -    *l = quotient;
->> -    if ((remainder * 2) / prate)
->> -        *l = *l + 1;
->> +    *l = rate + (u32)(remainder * 2 >= prate);
->>   }
->>   static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long 
->> rate,
-> 
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+On Fri, Aug 23, 2024 at 01:43:26AM +0800, Celeste Liu wrote:
+> Commit ba6cfef057e1 ("riscv: enable Docker requirements in defconfig")
+> introduced it because of Docker, but Docker has removed this requirement
+> since [1] (2023-04-19).
+>=20
+> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarch=
+y it
+> needs an RT budget assigned, otherwise the processes in it will not be ab=
+le to
+> get RT at all. The problem with RT group scheduling is that it requires t=
+he
+> budget assigned but there's no way we could assign a default budget, sinc=
+e the
+> values to assign are both upper and lower time limits, are absolute, and =
+need to
+> be sum up to < 1 for each individal cgroup. That means we cannot really c=
+ome up
+> with values that would work by default in the general case.[2]
+>=20
+> For cgroup v2, it's almost unusable as well. If it turned on, the cpu con=
+troller
+> can only be enabled when all RT processes are in the root cgroup. But it =
+will
+> lose the benefits of cgroup v2 if all RT process were placed in the same =
+cgroup.
+>=20
+> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn=
+'t
+> support it.[3]
+>=20
+> [1]: https://github.com/moby/moby/commit/005150ed69c540fb0b5323e0f2208608=
+c1204536
+> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=3D1229700
+> [3]: https://github.com/systemd/systemd/issues/13781#issuecomment-5491643=
+83
+>=20
+> Fixes: ba6cfef057e1 ("riscv: enable Docker requirements in defconfig")
 
+I don't think this fixes tag is suitable, the commit you cite in
+moby/docker is a year younger than the one in the fixes tag, so it was
+correct at the time it was written. I think the fixes tag should just be
+removed, since that commit was not wrong. Or am I missing something?
 
-Looks like this has now landed in the mainline. Can we see if we can get 
-this into v6.11?
+> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+> ---
+>  arch/riscv/configs/defconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> index 12dc8c73a8ac..de85c3ab261e 100644
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -9,7 +9,6 @@ CONFIG_CGROUPS=3Dy
+>  CONFIG_MEMCG=3Dy
+>  CONFIG_CGROUP_SCHED=3Dy
+>  CONFIG_CFS_BANDWIDTH=3Dy
+> -CONFIG_RT_GROUP_SCHED=3Dy
+>  CONFIG_CGROUP_PIDS=3Dy
+>  CONFIG_CGROUP_FREEZER=3Dy
+>  CONFIG_CGROUP_HUGETLB=3Dy
+>=20
+> --=20
+> 2.46.0
+>=20
 
-Thanks!
-Jon
+--SUs/mhM/C8VTfn2w
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-nvpublic
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZt7hrQAKCRB4tDGHoIJi
+0ucHAQCjkWwsUr+Tf13mvf/NIW8TxI0fFZYidIvfu2FZrQ6WAQEA74PlsEXjODkK
+cpamVx+2CMaasJI43MaDxnWfquAS/QU=
+=+ur3
+-----END PGP SIGNATURE-----
+
+--SUs/mhM/C8VTfn2w--
