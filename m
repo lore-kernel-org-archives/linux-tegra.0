@@ -1,94 +1,108 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630FE189F3E;
-	Mon,  9 Sep 2024 21:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAA918B477;
+	Mon,  9 Sep 2024 21:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725915712; cv=none; b=Yl/qCcrSEHNlv2obRcXOUwZ+WnMZOUPshzBbiMtGeXGx1gtg7IqVIzGVaRse1ZMz79EW+OfzNOPy3tV6QO5BGbPS7Wi2rpDT3bDxzd2ohnwTgUg4fHWKg98kMs/BcFhNRsE4LjVDs7Pb6r8lLyxOmgCkQh8LC4+BHUUxvXpK288=
+	t=1725916090; cv=none; b=sBwgquzeppJuFgMZmjeSf3c6P1GTt8ETxd7KTdbTnvbuKNd8oG7aUrUrBMTgPoE/Cr7W/9olxI1HuMF9yE7Z405F9yQxsM42+yqOiIC4flCFfuhWIgk1ZDWfhp+gxCIRPORU1ltv5rYtcWhsjx4KagEseiXTPEFpFPew0lfDitY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725915712; c=relaxed/simple;
-	bh=fk1O36vP6EYATpW7zFnE0wBAJf09Xs8FlL14jwq2K04=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=s8v4TYUuS23W+4wR/aG+231F4/z8cLpBUBxEFWE+AU1mJx43pFP+NK0USRGtYF3qEUC0+I+RfeGZWjK3YUUHSlboWUzy+Ebw2+FxZMwYABt0YFBoVjwx+0fEFXwQA8aanlgQiCUIO5XGY4UUPl4iHRHYZOVS5KCAltHtAaCiYsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U83w8q4v; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725916090; c=relaxed/simple;
+	bh=K0d0Cmm9uco8lIyrpR3SYsnrfPevZWfuyYlDY8b4emo=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Tyq4wXMOyQCtIpw1F22jcQNzwh0PU1ASkCTvV4pbRKx8JMp89hHenlCzGC4sk9kOzoonf7IrCIC9kbRqaX3GnPeqNk5n3xlEYVoSbszjlgNriaiDo5sO+vHHzv/rS5ITrvbwG+5vleSeENKBfgYVPf2y6wOkE0ABTNrrH9Yl54g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qEdBBfYu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U83w8q4v"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DBDC4CEC5;
-	Mon,  9 Sep 2024 21:01:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qEdBBfYu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C8EC4CEC5;
+	Mon,  9 Sep 2024 21:08:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725915712;
-	bh=fk1O36vP6EYATpW7zFnE0wBAJf09Xs8FlL14jwq2K04=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=U83w8q4vmWuUNWWa8wp6WXXICFHNrWHnRAOLoFaJwf+YGIhqaA4++V14XBYpETLmz
-	 Rrd3E+kOLKplgGDfpABUQym08RyIiH3l4jAbmyk5bBAK0s0gOBxgw2KpqYkk67k29Q
-	 bB2annXHCrM4S5XPhPdfW+/6Ff0w15aInu8EqGFqDTaWc6XH5oDKdHJJFazQNbDIc4
-	 p3AukalcGRDrdrFRfFF1YtRIBR9v1CMyNI+juVxM1lxCtHvdKIJ/p3GvzmaDqMOg0z
-	 e01KB1mHz9lEzQnWY0Dh6JJLHfYFid95AQrKjY5TyB7IUFJ0wwiByyCgketuPB89UX
-	 ftt0aAFvxLWog==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: linux-sound@vger.kernel.org, asahi@lists.linux.dev, 
- alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, 
- patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org, 
- linuxppc-dev@lists.ozlabs.org, imx@lists.linux.dev, 
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, sound-open-firmware@alsa-project.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
- linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org
-In-Reply-To: <20240909151230.909818-2-u.kleine-koenig@baylibre.com>
-References: <20240909151230.909818-2-u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH] ASoC: Switch back to struct platform_driver::remove()
-Message-Id: <172591570834.136248.17412626468486255591.b4-ty@kernel.org>
-Date: Mon, 09 Sep 2024 22:01:48 +0100
+	s=k20201202; t=1725916090;
+	bh=K0d0Cmm9uco8lIyrpR3SYsnrfPevZWfuyYlDY8b4emo=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=qEdBBfYuj3iTfoZclaVlSuWmoNniufcLshNhA/2E26qqhpEG5PgIi/RGPKdV+tnm8
+	 W5N1xe/SaHXvXTZdy9gQtmWf7hWCzKsakUk8xwmpvjwl3efjLlipHkg6HWbT5bDCG/
+	 z9aCF3nUmiPuRMymU+4uO7QTQLt1+gUsQOI+iCZDW9VwSrSzUXuKMhOc+sO+qGqop4
+	 yjUlRxcKYkV1RalEI8cNo55+jtKHCqPNjRoOSKTSnpFSoeoQxHprmjm5VGyLA7iCI9
+	 yp3GTceK7ibnrNhInzazL3O44RzvKIhFmSZ5IN0pKEerP8ug8I8KU6gGFGbGqPf/Ms
+	 aNqESTJfuMjbg==
+Message-ID: <1abfacdc460a01b550e888ce593a06d2.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <9914729c-8e69-4ad5-a530-161f5430b71d@nvidia.com>
+References: <20240906113905.641336-1-quic_skakitap@quicinc.com> <fdeadc0c-7f8d-4547-8703-c402bf06e495@nvidia.com> <9914729c-8e69-4ad5-a530-161f5430b71d@nvidia.com>
+Subject: Re: [PATCH V3] clk: qcom: clk-alpha-pll: Simplify the zonda_pll_adjust_l_val()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, Dan Carpenter <dan.carpenter@linaro.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, kernel test robot <lkp@intel.com>, linux-tegra@vger.kernel.org <linux-tegra@vger.kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Date: Mon, 09 Sep 2024 14:08:07 -0700
+User-Agent: alot/0.10
 
-On Mon, 09 Sep 2024 17:12:30 +0200, Uwe Kleine-König wrote:
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
-> 
-> Convert all drivers below sound/soc to use .remove(), with the eventual
-> goal to drop struct platform_driver::remove_new(). As .remove() and
-> .remove_new() have the same prototypes, conversion is done by just
-> changing the structure member name in the driver initializer.
-> 
-> [...]
+Quoting Jon Hunter (2024-09-09 03:57:09)
+>=20
+> On 06/09/2024 15:14, Jon Hunter wrote:
+> >=20
+> > On 06/09/2024 12:39, Satya Priya Kakitapalli wrote:
+> >> In zonda_pll_adjust_l_val() replace the divide operator with comparison
+> >> operator to fix below build error and smatch warning.
+> >>
+> >> drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
+> >> clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivm=
+od'
+> >>
+> >> smatch warnings:
+> >> drivers/clk/qcom/clk-alpha-pll.c:2129 zonda_pll_adjust_l_val() warn:=20
+> >> replace
+> >> divide condition '(remainder * 2) / prate' with '(remainder * 2) >=3D =
 
-Applied to
+> >> prate'
+> >>
+> >> Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for=20
+> >> Zonda PLL")
+> >> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> >> Reported-by: kernel test robot <lkp@intel.com>
+> >> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> >> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+> >> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> >> ---
+> >> =C2=A0 drivers/clk/qcom/clk-alpha-pll.c | 4 +---
+> >> =C2=A0 1 file changed, 1 insertion(+), 3 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/qcom/clk-alpha-pll.c=20
+> >> b/drivers/clk/qcom/clk-alpha-pll.c
+> >> index 019713c38f25..f9105443d7db 100644
+> >> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> >> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> >> @@ -2176,10 +2176,8 @@ static void zonda_pll_adjust_l_val(unsigned=20
+> >> long rate, unsigned long prate, u32
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 quotient =3D rate;
+> >> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 remainder =3D do_div(quotient, prate);
+> >> -=C2=A0=C2=A0=C2=A0 *l =3D quotient;
+> >> -=C2=A0=C2=A0=C2=A0 if ((remainder * 2) / prate)
+> >> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *l =3D *l + 1;
+> >> +=C2=A0=C2=A0=C2=A0 *l =3D rate + (u32)(remainder * 2 >=3D prate);
+> >> =C2=A0 }
+> >> =C2=A0 static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned l=
+ong=20
+> >> rate,
+> >=20
+> >=20
+> > Tested-by: Jon Hunter <jonathanh@nvidia.com>
+>=20
+>=20
+> Looks like this has now landed in the mainline. Can we see if we can get =
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+> this into v6.11?
+>=20
+=20
+Applied to clk-fixes. Was it too hard to keep the if statement and just
+change to a comparison?
 
-Thanks!
-
-[1/1] ASoC: Switch back to struct platform_driver::remove()
-      commit: 130af75b5c05eef4ecd8593371f3e924bcd41241
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+	if (remainder * 2 >=3D prate)
+		*l =3D *l + 1;
