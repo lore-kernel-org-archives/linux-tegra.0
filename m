@@ -1,76 +1,91 @@
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A6C22EE5
-	for <linux-tegra@vger.kernel.org>; Thu, 12 Sep 2024 03:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9953254765;
+	Thu, 12 Sep 2024 06:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726110508; cv=none; b=WkouLpKAc10Kk7yQ9uZaPpRUIqGbpN4hzPrXb8jN5M2vnBYIgmEuxUUT0OQ8tKNOIUDJo20Cy7uGC0OROjACGDN5k8WOyokizNFsKraQ8RycSqGSaVSu1Ep7BnWR8zwdUkAwYVVQyFX1RMBCenS6/24QqviEzQOZ+9zAEOme8AY=
+	t=1726121321; cv=none; b=hc801QCSz2HZbQ2DVn9RV8xqNgdfdJNCOGad/FEwUIqUpCs3MMtOd1yc7JLp4zb7lkChbpwUs7jyqN/hzHqK2HPQlGagdjR45ng8/bs1YDo25pPx8/EwDQ5zshg8Ex51OkemJFNzvPUVURp1wAaGykA8AAVjfdLo9Qj3jTxKeuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726110508; c=relaxed/simple;
-	bh=gcxZru+4SoD0Cl4wt7+JVYrOzI++pZ2WGtgLb9mB44c=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Js+yYn9fpugxyzLuiKD/KqkQljaIIRmVuAPCitC5ufYh3HxrfLUuOoHVkzYeAQet9oHf76+XBz5Ess/fuqTOu87d0q1SV0nLlIozcgczM3hwMlhk8xhfbj/1OoRhp5SjJNfaIpw0BeDOU+g+ahNZW8CsxlJ0ErX1RfCp+msst48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X42QL6D1fzmYyL;
-	Thu, 12 Sep 2024 11:06:18 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2B15C140453;
-	Thu, 12 Sep 2024 11:08:23 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Sep
- 2024 11:08:22 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <marvin24@gmx.de>, <gregkh@linuxfoundation.org>,
-	<ac100@lists.launchpad.net>, <linux-tegra@vger.kernel.org>,
-	<linux-staging@lists.linux.dev>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] staging: nvec: Use IRQF_NO_AUTOEN flag in request_irq()
-Date: Thu, 12 Sep 2024 11:17:31 +0800
-Message-ID: <20240912031731.2211698-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726121321; c=relaxed/simple;
+	bh=CY+w8MGLCF1lNDY9i5VuksfT3MLxRmKIvyYXHo83aqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ublZwImcLi+HYrBigZVLmP5lrk7vdneZSthXB+lnOGXIkkQT87KcIrU2p2cb9GehQF2cnyNx+mwMfu48RgRw0jwZVgJ89gW1W7FKS6ON2qL8eB3BR5PcK9NAgMEfvBguMP511Q37fNzAdaCZqz7lGcDGQFCyxnV+ak5pfXnZSPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bR+X1+RV; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bR+X1+RV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1913AC4CEC6;
+	Thu, 12 Sep 2024 06:08:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726121321;
+	bh=CY+w8MGLCF1lNDY9i5VuksfT3MLxRmKIvyYXHo83aqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bR+X1+RVqQQ2F2cyE8P03ue21ERSFfflNLx1E8Zo8/RZMs+aifnS5jUOcqrGsi3tK
+	 ko2onP43JX4lTJnb81zWYR3IYJaAV07azvxb0T/Lw68GjLetFlPG+C/tpzcp2R8QAr
+	 k8hqPsNcImUIu4+yXpFxcD6pXXx7LroBvtMgKlvl+rJEQX4W6KvdaMXxdSZsxBrRqB
+	 PODjFDAitdH1sop5wNHQYXwHA50vFoWAMGIZZcjaOthAwwUICaTDy6BNXudRhsInt8
+	 OYdu+FOMoBjSueXdNxuQY2FEfKz9ndERcaXUugvBfK5QtAxXuMNC7f00hLMGJdV0j0
+	 lvi4sGzYbCDSw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sod0l-000000004gw-0JHU;
+	Thu, 12 Sep 2024 08:08:59 +0200
+Date: Thu, 12 Sep 2024 08:08:59 +0200
+From: Johan Hovold <johan@kernel.org>
+To: manivannan.sadhasivam@linaro.org
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, abel.vesa@linaro.org,
+	johan+linaro@kernel.org,
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v7 3/4] PCI: qcom: Add equalization settings for 16.0 GT/s
+Message-ID: <ZuKFe6XvZwQOjBJ8@hovoldconsulting.com>
+References: <20240911-pci-qcom-gen4-stability-v7-0-743f5c1fd027@linaro.org>
+ <20240911-pci-qcom-gen4-stability-v7-3-743f5c1fd027@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911-pci-qcom-gen4-stability-v7-3-743f5c1fd027@linaro.org>
 
-disable_irq() after request_irq() still has a time gap in which
-interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
-disable IRQ auto-enable when request IRQ.
+On Wed, Sep 11, 2024 at 08:56:28PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+> 
+> During high data transmission rates such as 16.0 GT/s, there is an
+> increased risk of signal loss due to poor channel quality and interference.
+> This can impact receiver's ability to capture signals accurately. Hence,
+> signal compensation is achieved through appropriate lane equalization
+> settings at both transmitter and receiver. This will result in increased
+> PCIe signal strength.
+> 
+> While at it, let's also modify the pcie-tegra194 driver to make use of the
+> common GEN3_EQ_CONTROL_OFF definitions in pcie-designware.h.
+> 
+> Signed-off-by: Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> [mani: dropped the code refactoring and minor changes]
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/staging/nvec/nvec.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-index d09211589d1c..a4396d9caf45 100644
---- a/drivers/staging/nvec/nvec.c
-+++ b/drivers/staging/nvec/nvec.c
-@@ -845,13 +845,12 @@ static int tegra_nvec_probe(struct platform_device *pdev)
- 		return PTR_ERR(nvec->gpiod);
- 	}
- 
--	err = devm_request_irq(dev, nvec->irq, nvec_interrupt, 0,
-+	err = devm_request_irq(dev, nvec->irq, nvec_interrupt, IRQF_NO_AUTOEN,
- 			       "nvec", nvec);
- 	if (err) {
- 		dev_err(dev, "couldn't request irq\n");
- 		return -ENODEV;
- 	}
--	disable_irq(nvec->irq);
- 
- 	tegra_init_i2c_slave(nvec);
- 
--- 
-2.34.1
-
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
