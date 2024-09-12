@@ -1,99 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B40D186E58;
-	Thu, 12 Sep 2024 07:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5391518BBA1;
+	Thu, 12 Sep 2024 08:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726126458; cv=none; b=VYN2MOGXAUMveFeaGi+ZZSstJYF9zd7nKozjXz1ZWBoEhAu7HN8nH1m2sK+1mDokeofrOSXkcMQ64DF21d0PQdbGyEdt24wM733ArF8//IIS46IQi5MR60okU/I6zaaQ0hVE0CireS3d9o8lwv4pi0O0qRmizxbQrLLF0VTXw5E=
+	t=1726129278; cv=none; b=rEHkY6Wa51/pUDny32XR1MY7fFbRzJhfXNrhEJeS5OxDvmaNCT7TcGO+9+omJYE1KDmppq5sYwyOcG4yj6Dzt6UnpRCksCf1lnh8dVXSk7+n1RmWdfZwpwrsS4vGfQpczt7JyDjvYJdTudvq40lDy7+DEGhBupdiQYn/uEKY72U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726126458; c=relaxed/simple;
-	bh=nYbkOKHYRFOZ+w2JM97HqI9IeKhZ1OUF0sxHdxDDa1E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ccklkLhQv6Yi1xCSjzG17uZi8LsNlnpoEs8CP3Gkq3soPxPQ1WuyWk5OyOHQatVovvEjkjVkeU8lUFB8Wd7LaGUDIs6RFkPHOm8u/xIKIOVzohPnWkKzSDtl/UaFRzv/svQVJH1DYWLmfUbeEwwZo7NqzMYq3JxSHt1gIV+odM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zhmUi3f6; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zhmUi3f6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFD27C4CEC3;
-	Thu, 12 Sep 2024 07:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726126457;
-	bh=nYbkOKHYRFOZ+w2JM97HqI9IeKhZ1OUF0sxHdxDDa1E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=zhmUi3f6KWPUYQ7nTxi0599w7TVQqdSEJOMy7rB/danc/C9HjvsNB3ZTwWvr5cUi5
-	 GAuFRObjPY4XV0pdsLY1nFs0/Ha62kukd6Dm2AKKyuvmXkPAFGIeIk/5OEbLpTtdMS
-	 3aSPNOKnQ955nBMEfBmAv7lFS8k994cyTY69Ft/E=
-Date: Thu, 12 Sep 2024 09:34:14 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 6.6 000/269] 6.6.51-rc1 review
-Message-ID: <2024091214-relearn-emboss-75d0@gregkh>
-References: <20240910092608.225137854@linuxfoundation.org>
- <69a511a3-af84-4123-a837-0ed1e5f62161@drhqmail202.nvidia.com>
- <10b0ef8b-7fd8-40f0-8d48-b44610502eb2@nvidia.com>
+	s=arc-20240116; t=1726129278; c=relaxed/simple;
+	bh=/VfIfyP9TL1T/qToMbw9UamvauZp0459XJC7+YA7tIo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VqUayrGoMMCSQ4CxY7cLUrgexpdZ5B2DcOYDlLuyQeUZhnBTU+zeHZhnlZRQBEF2SnL8Rwslt2SuYMiuS5J919R9HooWove7EqLHBtBpetoeGyVRxg1/cLGB1T+cw6GWokeSO92vLgM8/Lta1JLigIsfSzhnqYul/YXX+3S5ut0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X49PY5WvQz20nnp;
+	Thu, 12 Sep 2024 16:21:05 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id B04AB1A0188;
+	Thu, 12 Sep 2024 16:21:12 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Sep
+ 2024 16:21:11 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <laurentiu.palcu@oss.nxp.com>, <l.stach@pengutronix.de>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<shawnguo@kernel.org>, <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
+	<festevam@gmail.com>, <p.zabel@pengutronix.de>, <robdclark@gmail.com>,
+	<sean@poorly.run>, <konradybcio@kernel.org>, <quic_abhinavk@quicinc.com>,
+	<dmitry.baryshkov@linaro.org>, <marijn.suijten@somainline.org>,
+	<thierry.reding@gmail.com>, <mperttunen@nvidia.com>, <jonathanh@nvidia.com>,
+	<agx@sigxcpu.org>, <gregkh@linuxfoundation.org>, <jordan@cosmicpenguin.net>,
+	<dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+	<linux-tegra@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH v2 0/5] drm: Use IRQF_NO_AUTOEN flag in request_irq()
+Date: Thu, 12 Sep 2024 16:30:15 +0800
+Message-ID: <20240912083020.3720233-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10b0ef8b-7fd8-40f0-8d48-b44610502eb2@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Thu, Sep 12, 2024 at 08:24:38AM +0100, Jon Hunter wrote:
-> Hi Greg,
-> 
-> On 12/09/2024 08:19, Jon Hunter wrote:
-> > On Tue, 10 Sep 2024 11:29:47 +0200, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 6.6.51 release.
-> > > There are 269 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Thu, 12 Sep 2024 09:25:22 +0000.
-> > > Anything received after that time might be too late.
-> > > 
-> > > The whole patch series can be found in one patch at:
-> > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.51-rc1.gz
-> > > or in the git tree and branch at:
-> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> > > and the diffstat can be found below.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > Failures detected for Tegra ...
-> > 
-> > Test results for stable-v6.6:
-> >      10 builds:	7 pass, 3 fail
-> >      20 boots:	20 pass, 0 fail
-> >      98 tests:	98 pass, 0 fail
-> > 
-> > Linux version:	6.6.51-rc1-g415df4b6a669
-> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-> >                  tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-> >                  tegra20-ventana, tegra210-p2371-2180,
-> >                  tegra210-p3450-0000, tegra30-cardhu-a04
-> > 
-> > Builds failed:	arm+multi_v7
-> 
-> 
-> This is the same build issue I reported for 5.15.y and introduced by ...
-> 
-> Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->     clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL
-> 
-> Looks like we still need to drop this from 6.6.y and 6.10.y.
+As commit cbe16f35bee6 ("genirq: Add IRQF_NO_AUTOEN for request_irq/nmi()")
+said, reqeust_irq() and then disable_irq() is unsafe. In the small time gap
+between request_irq() and disable_irq(), interrupts can still come.
 
-Ok, will drop it from those branches as well, thanks!
+IRQF_NO_AUTOEN flag can be used by drivers to request_irq(). It prevents
+the automatic enabling of the requested interrupt in the same
+safe way. With that the usage can be simplified and corrected.
 
-greg k-h
+Compile-tested only.
+
+Changes in v2:
+- Correct the commit subject.
+- Add reviewed-by.
+
+Jinjie Ruan (5):
+  drm/imx: Use IRQF_NO_AUTOEN flag in request_irq()
+  drm/imx/dcss: Use IRQF_NO_AUTOEN flag in request_irq()
+  drm/imx/ipuv3: Use IRQF_NO_AUTOEN flag in request_irq()
+  drm/tegra: dpaux: Use IRQF_NO_AUTOEN flag in request_irq()
+  drm/msm/adreno: Use IRQF_NO_AUTOEN flag in request_irq()
+
+ drivers/gpu/drm/imx/dcss/dcss-crtc.c   | 6 ++----
+ drivers/gpu/drm/imx/dcss/dcss-dtg.c    | 4 +---
+ drivers/gpu/drm/imx/ipuv3/ipuv3-crtc.c | 6 ++----
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c  | 4 +---
+ drivers/gpu/drm/tegra/dpaux.c          | 4 +---
+ 5 files changed, 7 insertions(+), 17 deletions(-)
+
+-- 
+2.34.1
+
