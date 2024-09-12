@@ -1,75 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4360E224CC;
-	Wed, 11 Sep 2024 19:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A6C22EE5
+	for <linux-tegra@vger.kernel.org>; Thu, 12 Sep 2024 03:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726082196; cv=none; b=CEMqCI/3g20U/UR6ngJKiesOjdumjhwUQSnYihRRaWWtks75dvLehUsfeXzMciU/ALOPxEt2jkOLdsqWHYG7M4NQCtmVmslbd9cO6Bgc5S05iq8suouzB1P1wuqOaOwsGhcPsXhZ60DQDC0L3rO9PGbvfHcwtC21DwPI0QnUqzQ=
+	t=1726110508; cv=none; b=WkouLpKAc10Kk7yQ9uZaPpRUIqGbpN4hzPrXb8jN5M2vnBYIgmEuxUUT0OQ8tKNOIUDJo20Cy7uGC0OROjACGDN5k8WOyokizNFsKraQ8RycSqGSaVSu1Ep7BnWR8zwdUkAwYVVQyFX1RMBCenS6/24QqviEzQOZ+9zAEOme8AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726082196; c=relaxed/simple;
-	bh=mnSn1KcuI5tuURsTA+zf9AKHe3vSHhXFiSDFloCrciQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d3GnvHEZaP7UHD2m09hYUfVJ/SfoBzKF0fVwEyxy8HYfWX1HYJ3wEoMOT98pF+10RJgvfDH9pAaIe0jAWOvL/JMHhOm1hO6lYbGoKh/HY1Wfe7sYlfHHwUOfIxljtSOr8nKBIhDknS65OAEa/1nDkyottRM4/dPiX+jFKO5k0Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLwm5e2+; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLwm5e2+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19128C4CEC0;
-	Wed, 11 Sep 2024 19:16:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726082195;
-	bh=mnSn1KcuI5tuURsTA+zf9AKHe3vSHhXFiSDFloCrciQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CLwm5e2+osoIb5680mMwvvHkT9CKoXHcpUhlc4shfRh3f8mXBkxpPqKW0OR6SbwpX
-	 YXwe5kUg+twt0M9s2T9idQiYyC+2lJB9IMZ5axaOEkQdMk4kiY2kMkTO5oN+r9tJ5E
-	 OlKcahmXUYY+mNNJ6CMPsis3s2tbcOH7XowNSSjYCYU6YFiESnQ8n7kV2FYanTqUt2
-	 Cgsb+NYy9nN1A3lUU/PSP5ubPlJ1b3ZF9fs7szzs2bEr5G7Y9nVk/4EaC14JRsPspZ
-	 OQELb+Ihce97lyZ2w/pok3MOyC7IWjrhdaG2A9NixLH0vr7V1lWwcxmA/6VpNJzhlr
-	 ZbQZARpiDgGnw==
-Date: Wed, 11 Sep 2024 20:16:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: cpu: Drop duplicate
- nvidia,tegra186-ccplex-cluster.yaml
-Message-ID: <20240911-rudder-liftoff-8480aa8cf7ef@spud>
-References: <20240910234422.1042486-1-robh@kernel.org>
+	s=arc-20240116; t=1726110508; c=relaxed/simple;
+	bh=gcxZru+4SoD0Cl4wt7+JVYrOzI++pZ2WGtgLb9mB44c=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Js+yYn9fpugxyzLuiKD/KqkQljaIIRmVuAPCitC5ufYh3HxrfLUuOoHVkzYeAQet9oHf76+XBz5Ess/fuqTOu87d0q1SV0nLlIozcgczM3hwMlhk8xhfbj/1OoRhp5SjJNfaIpw0BeDOU+g+ahNZW8CsxlJ0ErX1RfCp+msst48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X42QL6D1fzmYyL;
+	Thu, 12 Sep 2024 11:06:18 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2B15C140453;
+	Thu, 12 Sep 2024 11:08:23 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Sep
+ 2024 11:08:22 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <marvin24@gmx.de>, <gregkh@linuxfoundation.org>,
+	<ac100@lists.launchpad.net>, <linux-tegra@vger.kernel.org>,
+	<linux-staging@lists.linux.dev>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] staging: nvec: Use IRQF_NO_AUTOEN flag in request_irq()
+Date: Thu, 12 Sep 2024 11:17:31 +0800
+Message-ID: <20240912031731.2211698-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="aIzx6lmwYdumY0TV"
-Content-Disposition: inline
-In-Reply-To: <20240910234422.1042486-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
+disable_irq() after request_irq() still has a time gap in which
+interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
+disable IRQ auto-enable when request IRQ.
 
---aIzx6lmwYdumY0TV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/staging/nvec/nvec.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On Tue, Sep 10, 2024 at 06:44:21PM -0500, Rob Herring (Arm) wrote:
-> "nvidia,tegra186-ccplex-cluster" is also documented in
-> arm/tegra/nvidia,tegra-ccplex-cluster.yaml. As it covers Tegra234 as
-> well, drop nvidia,tegra186-ccplex-cluster.yaml.
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index d09211589d1c..a4396d9caf45 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -845,13 +845,12 @@ static int tegra_nvec_probe(struct platform_device *pdev)
+ 		return PTR_ERR(nvec->gpiod);
+ 	}
+ 
+-	err = devm_request_irq(dev, nvec->irq, nvec_interrupt, 0,
++	err = devm_request_irq(dev, nvec->irq, nvec_interrupt, IRQF_NO_AUTOEN,
+ 			       "nvec", nvec);
+ 	if (err) {
+ 		dev_err(dev, "couldn't request irq\n");
+ 		return -ENODEV;
+ 	}
+-	disable_irq(nvec->irq);
+ 
+ 	tegra_init_i2c_slave(nvec);
+ 
+-- 
+2.34.1
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---aIzx6lmwYdumY0TV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuHsjwAKCRB4tDGHoIJi
-0mMAAP0WZd3jCaeo0oh7fhohOy5plQO2w9O4TH1h0HY3TV2hTQD/SCfJ6v+6upGq
-C5oQpxx/p1+9XAUypLiTLyl0wxsWtQU=
-=ISeB
------END PGP SIGNATURE-----
-
---aIzx6lmwYdumY0TV--
