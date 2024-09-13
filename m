@@ -1,183 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AABBA2E;
-	Fri, 13 Sep 2024 20:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724101494DC;
+	Fri, 13 Sep 2024 22:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726258120; cv=none; b=jbCetfBz+w6Zp3T9l5iCII1ufcg0JcRGoWwtVD3NF862G+buR9t66HzbTIW0FYpBE8rbZttAPK/IUsrKF85HrIKiFS5AWrHLYlPyEmDNCl7K2xD+fXr5nJyiEJSrOdrcRYhYGHO0Nnma6fHPU8Ux7Znfc1kJowymraVjhm5+cjc=
+	t=1726267785; cv=none; b=H4EZnlQhjR3us+M71VNENrRFxtH/e9B9AsFcsq4uok2Bd5dSFnoxjvHYuu7ZciLi7mLGrBvRkisj8qqHWEAbP8V26v6YF0DlYZ964GrYSe+g/zAJgCCFBD0qEea6ST1Jk4Ruuj7becDvRoBM6BeqsVdxVwNd3j5dHbILURjd2mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726258120; c=relaxed/simple;
-	bh=dxFpgDa+4nXBtmbI56A2QbjsBwTKl2xZ/2KbD9wx+r0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W3FyOPBSPSKH6SXJuBE2YtL4WiwxcZGSZWZRv25U6uMCCcYbFjqweY4jNsKmrI5McXznqc8FkgkGnghScgPg6SPr/j+WsDjy6+p9el96Ldi2N+uzJH4jHd7iA7v7Zfo8pQjjRE8M1EGHtKaWagge5RpczD1i/g2wnncBeLEajKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TM26i7vJ; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TM26i7vJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9AFAC4CEC0;
-	Fri, 13 Sep 2024 20:08:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726258120;
-	bh=dxFpgDa+4nXBtmbI56A2QbjsBwTKl2xZ/2KbD9wx+r0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=TM26i7vJ0x94FaRh1n8zzhJ/I4T62T6iOXhlaIMsYfWNv+2ruRcxmqgmyf0JVmvAh
-	 yusD4EwybmdTyKHcDcY33cu7snLzI0IjsHWNKx9Jk1zy6pRbZJk0bEojV13p9Ua/IL
-	 jOcg51spC6rIYNzwN+Y5I3Da0zNodgKTuCK+OWkY6q/+InR/JIR2hQHQdEJvoNbdem
-	 8+E6yIt4W0kFB0stSEYILC+VERGKUC7xRmFAagGAh/j8WmpuIfpWHo+oFrUvN7i2bR
-	 M97lgoNpcxCUPDp85toxoEVjRvHwlCoZGnmfGYrwu8gsk7HkCR2HRyocFZ1Dm600dh
-	 Ceom9+YJUTRgg==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	s=arc-20240116; t=1726267785; c=relaxed/simple;
+	bh=g8Qb060ypz4qws5lQ7TXDGnQom5ZoNetKSiXPaJde7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TXq3mqKdeHYh/WpRe73Te9TPlOyXVs3zxswvWjmsT6rMqNfS/99LvRg/ccfL8QNTMdZsIvDrqQdmPdI5RQq3XQjXzwmrHBHf97du3HnBTZBhOfUex1MfWOv+kK5RjWsj0ouxzt3OcyvgdVy/wgUa+/AW/wGk3RKlLLsrwqnTETA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20792913262so2544065ad.3;
+        Fri, 13 Sep 2024 15:49:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726267784; x=1726872584;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wvjD4P7L33hm+SfH0+CG3X96DfNJu81XzBnavQ84R+c=;
+        b=BRNT/re47J+XKXjrfOg89UNDQioP2IZWIGHuriTvJxjEP+QH7AlCDf2rjZfpa7zKea
+         2GeWDtVBxOcXvXLI/UAFxT81XtefIp9uCSjKNQ2fmL0HNW/YIRwD0skI4vvpPfoctX/3
+         IT4n/91ts/zB5GPKpXsIzf0lM6xCYiXMeBMX96CE86d9npQbx2cRnbr59iIxJu7HjHkl
+         6VdJ+7RDM12zBVadVgUpyYp26KBtFNLl2IEIMhK+h91vAhfCM+CEK8Fu+85GrHwVee9K
+         Nq1QLTi4FMk+r2oCVqW/UTrlMjdLRDCFX32jL8T3snOyw6pj33tSXNoNvz8cXFzbFboY
+         gN2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUVjymYri+Tx9RbYlGZTS9ajprN3erFREnPF4LJ/Ig+t147OhatR49VYdRrBVQtwS6WWQXQH8scQV5Vgj9t@vger.kernel.org, AJvYcCVY5Igjh+ZM2cbxfGwxW1zxChyPhYgnlGNq4qjtH2vrIITeTa6k7reTYoEOgxDkmjh3SrUaGSihtbH0lRVH@vger.kernel.org, AJvYcCVqzMQboarBGnHelSV+jgi5DdvtFZUfOus1VLhe225ebwnqosRmd5uYoPYnIFDyh519SobJwqbh2nABUwI=@vger.kernel.org, AJvYcCWSce/U0iXFE3q/iR6znJxWTHVFeKHqkB5/DCn82Y+KgI1bJyTxPhmii2nZ3hSrifpMuBy0G+0wW6Ya@vger.kernel.org, AJvYcCWaSZy8lugj2aFXpiK9O9YU/uohIvDPF3nbpiG5qYtpMMo9AY9aajNa+PvkuJNFtEknBWTMQKp72RUuAj3V9r0aKQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsF3aEfwEgOEHS4ip4/a09uqNWJJEwN3JqjpzbALwHglF5irO+
+	zAewYX/YNkPNV9ruUMCAV75lXhfatrpHRCXd3BH7aHciiUCoDKa+
+X-Google-Smtp-Source: AGHT+IGffhv4YzRcwOzc1EUmqXH+8+XynznIDD+5xBCaM4EbCHFFItgrUN1MptJ5qWG02Y+hhYkfhA==
+X-Received: by 2002:a17:902:ce86:b0:205:4885:235e with SMTP id d9443c01a7336-20782a69abbmr69743905ad.39.1726267783736;
+        Fri, 13 Sep 2024 15:49:43 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945da63fsm1217015ad.38.2024.09.13.15.49.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 15:49:43 -0700 (PDT)
+Date: Sat, 14 Sep 2024 07:49:42 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: manivannan.sadhasivam@linaro.org
+Cc: Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Chuanhua Lei <lchuanhua@maxlinear.com>,
+	Marek Vasut <marek.vasut+renesas@gmail.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Pratyush Anand <pratyush.anand@gmail.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>,
-	linux-input@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] input: tegra: Use of_property_read_variable_u32_array() and of_property_present()
-Date: Fri, 13 Sep 2024 15:08:26 -0500
-Message-ID: <20240913200827.546649-1-robh@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, abel.vesa@linaro.org,
+	johan+linaro@kernel.org,
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
+	linux-tegra@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH v7 0/4] PCI: qcom: Add 16.0 GT/s equalization and
+ margining settings
+Message-ID: <20240913224942.GB635227@rocinante>
+References: <20240911-pci-qcom-gen4-stability-v7-0-743f5c1fd027@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911-pci-qcom-gen4-stability-v7-0-743f5c1fd027@linaro.org>
 
-There's no need to get the length of an DT array property before
-parsing the array. of_property_read_variable_u32_array() takes a
-minimum and maximum length and returns the actual length (or error
-code).
+Hello,
 
-This is part of a larger effort to remove callers of of_get_property()
-and similar functions. of_get_property() leaks the DT property data
-pointer which is a problem for dynamically allocated nodes which may
-be freed.
+> This series adds 16.0 GT/s specific equalization and RX lane margining settings
+> to the Qcom RC and EP drivers. This series is mandatory for the stable operation
+> of the PCIe link at 16.0 GT/s on the Qcom platforms.
+> 
+> NOTE:
+> =====
+> 
+> I've taken over the series from Shashank based on the discussion [1]. In order
+> to apply the equalization/margining settings properly in the Qcom driver, I
+> added the first 2 patches to the series which inevitably touches other vendor
+> drivers also.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
-v2:
- - Fix missing Sob
----
- drivers/input/keyboard/tegra-kbc.c | 72 +++++++++++-------------------
- 1 file changed, 27 insertions(+), 45 deletions(-)
+Applied to controller/qcom, thank you!
 
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index 204ba189807e..6776dd94ce76 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -484,12 +484,10 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
- 	struct device_node *np = kbc->dev->of_node;
- 	u32 prop;
- 	int i;
--	u32 num_rows = 0;
--	u32 num_cols = 0;
-+	int num_rows;
-+	int num_cols;
- 	u32 cols_cfg[KBC_MAX_GPIO];
- 	u32 rows_cfg[KBC_MAX_GPIO];
--	int proplen;
--	int ret;
- 
- 	if (!of_property_read_u32(np, "nvidia,debounce-delay-ms", &prop))
- 		kbc->debounce_cnt = prop;
-@@ -503,56 +501,23 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
- 	    of_property_read_bool(np, "nvidia,wakeup-source")) /* legacy */
- 		kbc->wakeup = true;
- 
--	if (!of_get_property(np, "nvidia,kbc-row-pins", &proplen)) {
--		dev_err(kbc->dev, "property nvidia,kbc-row-pins not found\n");
--		return -ENOENT;
--	}
--	num_rows = proplen / sizeof(u32);
--
--	if (!of_get_property(np, "nvidia,kbc-col-pins", &proplen)) {
--		dev_err(kbc->dev, "property nvidia,kbc-col-pins not found\n");
--		return -ENOENT;
--	}
--	num_cols = proplen / sizeof(u32);
--
--	if (num_rows > kbc->hw_support->max_rows) {
--		dev_err(kbc->dev,
--			"Number of rows is more than supported by hardware\n");
--		return -EINVAL;
--	}
--
--	if (num_cols > kbc->hw_support->max_columns) {
--		dev_err(kbc->dev,
--			"Number of cols is more than supported by hardware\n");
--		return -EINVAL;
--	}
--
--	if (!of_get_property(np, "linux,keymap", &proplen)) {
-+	if (!of_property_present(np, "linux,keymap")) {
- 		dev_err(kbc->dev, "property linux,keymap not found\n");
- 		return -ENOENT;
- 	}
- 
--	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
--		dev_err(kbc->dev,
--			"keypad rows/columns not properly specified\n");
--		return -EINVAL;
--	}
--
- 	/* Set all pins as non-configured */
- 	for (i = 0; i < kbc->num_rows_and_columns; i++)
- 		kbc->pin_cfg[i].type = PIN_CFG_IGNORE;
- 
--	ret = of_property_read_u32_array(np, "nvidia,kbc-row-pins",
--				rows_cfg, num_rows);
--	if (ret < 0) {
-+	num_rows = of_property_read_variable_u32_array(np, "nvidia,kbc-row-pins",
-+				rows_cfg, 1, KBC_MAX_GPIO);
-+	if (num_rows < 0) {
- 		dev_err(kbc->dev, "Rows configurations are not proper\n");
--		return -EINVAL;
--	}
--
--	ret = of_property_read_u32_array(np, "nvidia,kbc-col-pins",
--				cols_cfg, num_cols);
--	if (ret < 0) {
--		dev_err(kbc->dev, "Cols configurations are not proper\n");
-+		return num_rows;
-+	} else if (num_rows > kbc->hw_support->max_rows) {
-+		dev_err(kbc->dev,
-+			"Number of rows is more than supported by hardware\n");
- 		return -EINVAL;
- 	}
- 
-@@ -561,11 +526,28 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
- 		kbc->pin_cfg[rows_cfg[i]].num = i;
- 	}
- 
-+	num_cols = of_property_read_variable_u32_array(np, "nvidia,kbc-col-pins",
-+				cols_cfg, 1, KBC_MAX_GPIO);
-+	if (num_cols < 0) {
-+		dev_err(kbc->dev, "Cols configurations are not proper\n");
-+		return num_cols;
-+	} else if (num_cols > kbc->hw_support->max_columns) {
-+		dev_err(kbc->dev,
-+			"Number of cols is more than supported by hardware\n");
-+		return -EINVAL;
-+	}
-+
- 	for (i = 0; i < num_cols; i++) {
- 		kbc->pin_cfg[cols_cfg[i]].type = PIN_CFG_COL;
- 		kbc->pin_cfg[cols_cfg[i]].num = i;
- 	}
- 
-+	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
-+		dev_err(kbc->dev,
-+			"keypad rows/columns not properly specified\n");
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.45.2
+[01/04] PCI: dwc: Rename 'dw_pcie::link_gen' to 'dw_pcie::max_link_speed'
+        https://git.kernel.org/pci/pci/c/2cebf68a24ab
 
+[02/04] PCI: dwc: Always cache the maximum link speed value in dw_pcie::max_link_speed
+        https://git.kernel.org/pci/pci/c/19a69cbd9d43
+
+[03/04] PCI: qcom: Add equalization settings for 16.0 GT/s
+        https://git.kernel.org/pci/pci/c/d45736b59849
+
+[04/04] PCI: qcom: Add RX lane margining settings for 16.0 GT/s
+        https://git.kernel.org/pci/pci/c/d14bc28af34f
+
+	Krzysztof
