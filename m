@@ -1,83 +1,93 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0190179DC;
-	Sat, 14 Sep 2024 02:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC510381D9;
+	Sat, 14 Sep 2024 06:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726279578; cv=none; b=HTKGZHX1b38VhQSQnG2GDEEmShz/nd5NA8WtddiC7h95ZkaIVf1s2B2pl7L1O75BtNUS2pInBQVfwo8PX3nOgLDXURMYeha2fPUq6ZnuAGRVCfU/fK/S5rJAMMp/rYN78iTmwCRahANlFTPttZtB9WCzb1wl+5IVj//TccSfw5g=
+	t=1726294622; cv=none; b=aux7LVah3CBrW18R9zGZasOLeg0JoFPKstZ0vJwocAuTSO5Vapwduh2zh9+bqfbIGY5pvPooSptDz15X+xxfLTHXR1GaMMHmh9zpWtfEp1eXt9iGA4jKoyd2Jyu8LERRGRBJMnPrDjs+61zDaOPsDDbHSiZwce7pDkIz78UohCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726279578; c=relaxed/simple;
-	bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rA7P6qI2i/xQ2yCaacnD3csUwSNfIb9YZ4RGYiHkeZKux8RTgtFRpjfjENtH9mxWe3DoTyM4/FObOlOh+o+VPWOYJgbpnd0GfhMS6M3vcrNl5O7TvjHZnP7TMUlkhNRR9QOvToqAfa4mf3kkuMDa+bCqBjwLpJ2DOKuzmpNq4OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wx0lFibl; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1726294622; c=relaxed/simple;
+	bh=X7RiSY//HsgH18rVltttj5L639T5JPjjiP4D/Q/jr/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQkj4rqH7EBj85pFZv8ztHbC8j1f/pwCgO2ecFoD7M+v8nVGdDJZGRRONF3Uw6RV0IeLOcjvlA4UX5YwFFBz0HF9JxAlOch22907QLfuazhbCg1PK833GZQ1NL4pqG7gaXZc+5F5AvNJB+0+oDRCLVIBOs7oBY0lqPNxldTjHKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hS+B5GbH; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wx0lFibl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726279576; x=1757815576;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
-  b=Wx0lFiblieA/9/9zel9rjGGqiBhBg5zYjJ/ObIHxufVPcAMw1Fk+5oEb
-   zjOJOQL72vzWiy8zQsKghpnSbtgajYcGTpXhEBXRi9FkGj/Q7G3uHH/k6
-   Mp6q9arZJUfEnohcT+UYK9SFpVyVg8lfV+784+4Kc3JSkMqmKfyfZf8l3
-   1fSe3I8qlsUlHfu1PSil9tghCgNGIa+ZCDyWZFVxhf8+D3hJskkidrG+u
-   8y2xVFJhTo7kBnkBtA1zftgd7EosIg7aXwbmWoHQ6B2E3lw32By4gB1MF
-   HvIqeRGlSQns9/n+49kVgwbAc6m84o675WYdjX7T5Ea9Rc23HTk1zQ702
-   A==;
-X-CSE-ConnectionGUID: 7++i2EDnTCq797+HfENnXQ==
-X-CSE-MsgGUID: 3+9wc8S+TgyxDSnps6brwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="47706728"
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="47706728"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 19:06:15 -0700
-X-CSE-ConnectionGUID: hrcCDiI6S7qL/42olX80Rg==
-X-CSE-MsgGUID: gzoUIxuVSy6K+Ux6zmuDmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="67968803"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
-  by fmviesa007.fm.intel.com with ESMTP; 13 Sep 2024 19:06:12 -0700
-Message-ID: <42bbc500-578c-474b-98ec-1988906f31ef@linux.intel.com>
-Date: Sat, 14 Sep 2024 10:02:05 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hS+B5GbH"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20696938f86so24746595ad.3;
+        Fri, 13 Sep 2024 23:17:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726294620; x=1726899420; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VClzbhLRY0MrFymFtQGe+Ej2FPGNIMEaOmjXvkAGum0=;
+        b=hS+B5GbHjbMNtx3jsd7vR9hDdZbE1YBV8HAejhhAQQZGwv98TvC12IaJegeY2DN8E0
+         wEwvNJBbUty1EMnS+5QCEgY8AuD42VmbfLnNbvEe6TK0jy6kcvecZLlpXoq6bAP37zDz
+         HtRlOPCBGSJtoK2Zr0qUgL7KKaMPRQC7/8Zy4OVV5IXYuZtsjogH+WDfF9ulaaMQOrID
+         CpZP4NWJP1sJrH3km0J6XY/zcdl4X7XyVXYOrtERFVhG81rXK9KYi1yVhXQJ3xDtVvQs
+         7654dUgZgWmfdjEYF6hXyzDcpH3KKMkKnMn7aqYrC5vl9/7JI0demHmeVRKymF+CLffE
+         POyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726294620; x=1726899420;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VClzbhLRY0MrFymFtQGe+Ej2FPGNIMEaOmjXvkAGum0=;
+        b=W0IqiZffAoBzmXLS0ToihAwMWx6FwwQTk/g/4jtS4ib+POQYg7iLXYHe4PNpVRt1Ey
+         IuA/hhESjNhsxwMV6ja8PjXSPF+HCemqNJDuWy8YR32WjXpHoM6DByp7vNCno5wp0YJE
+         tOQEAtuTG+/L3ixTaT+wEoskWJiGlyEDr/r1js9T5HUjy6AogyQskTi2QKyVnsMVaI8t
+         D0b2J8h1r/6CtmDnUuusuGVtANng9gt6VfTAMHKwAw3GYY/s5gaoj4IYlwTWQym5F8GY
+         EVWkxPgrzO3EXgOACu/bOb5UbqqYqfIv8M8mW9pEwueBZpukqQrnxMoxNHeZ8qS0teP2
+         +Yvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoMnZYFtgWbAZGVlXXqwTbvSypH8265e2wVYf8W4SyhpHC87/IMMoOerR9RcxA4s9QFX54J0LGEX4pgggf@vger.kernel.org, AJvYcCVOP8VguikEAvEtl8mdZ9Qp0Uk1Ya80SL17t9r1vDXAuHU7cPwkGfoUlUoo24pUrUcPM+bCp6oMiRT1RfY=@vger.kernel.org, AJvYcCWe/A3YEIjJa7PEpwTWC0jUzalh3tmmjIvARgzQINLhJNv+PcKoITGq+OJJREqqZQgnlC/LVRaPuKO98Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCN8Fn3u5qMChBQe455xD2KIYgNXR6hBTFrN3zmHM/+ufi04zH
+	jlL2J9/VB4yAemqvcki9AmK/rCuY8kfX1mdf7Q84iESskONGs99r
+X-Google-Smtp-Source: AGHT+IHwWtypqvXe91IEEuXIxgvLHN8Fw77NwseOBbbDp2EkoYmogKz+tS1rMNXzfKdkW7g2LeMzfA==
+X-Received: by 2002:a17:902:d2c3:b0:205:968b:31e2 with SMTP id d9443c01a7336-2076e46b8b7mr132545975ad.59.1726294619508;
+        Fri, 13 Sep 2024 23:16:59 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:4c0d:1024:4781:3234])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d5a0bsm4577285ad.145.2024.09.13.23.16.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 23:16:59 -0700 (PDT)
+Date: Fri, 13 Sep 2024 23:16:56 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>, linux-input@vger.kernel.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] input: tegra: Use
+ of_property_read_variable_u32_array() and of_property_present()
+Message-ID: <ZuUqWNVXKO94fQuK@google.com>
+References: <20240913200827.546649-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
- Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/tegra: Fix NULL vs IS_ERR() check in probe()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-References: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913200827.546649-1-robh@kernel.org>
 
-On 9/13/24 10:34 PM, Dan Carpenter wrote:
-> The iommu_paging_domain_alloc() function doesn't  return NULL pointers,
-> it returns error pointers.  Update the check to match.
+On Fri, Sep 13, 2024 at 03:08:26PM -0500, Rob Herring (Arm) wrote:
+> There's no need to get the length of an DT array property before
+> parsing the array. of_property_read_variable_u32_array() takes a
+> minimum and maximum length and returns the actual length (or error
+> code).
 > 
-> Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
-> Signed-off-by: Dan Carpenter<dan.carpenter@linaro.org>
-> ---
->   drivers/gpu/drm/tegra/drm.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> This is part of a larger effort to remove callers of of_get_property()
+> and similar functions. of_get_property() leaks the DT property data
+> pointer which is a problem for dynamically allocated nodes which may
+> be freed.
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Applied, thank you.
 
-Thanks,
-baolu
+-- 
+Dmitry
