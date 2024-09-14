@@ -1,107 +1,83 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724101494DC;
-	Fri, 13 Sep 2024 22:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0190179DC;
+	Sat, 14 Sep 2024 02:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726267785; cv=none; b=H4EZnlQhjR3us+M71VNENrRFxtH/e9B9AsFcsq4uok2Bd5dSFnoxjvHYuu7ZciLi7mLGrBvRkisj8qqHWEAbP8V26v6YF0DlYZ964GrYSe+g/zAJgCCFBD0qEea6ST1Jk4Ruuj7becDvRoBM6BeqsVdxVwNd3j5dHbILURjd2mc=
+	t=1726279578; cv=none; b=HTKGZHX1b38VhQSQnG2GDEEmShz/nd5NA8WtddiC7h95ZkaIVf1s2B2pl7L1O75BtNUS2pInBQVfwo8PX3nOgLDXURMYeha2fPUq6ZnuAGRVCfU/fK/S5rJAMMp/rYN78iTmwCRahANlFTPttZtB9WCzb1wl+5IVj//TccSfw5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726267785; c=relaxed/simple;
-	bh=g8Qb060ypz4qws5lQ7TXDGnQom5ZoNetKSiXPaJde7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TXq3mqKdeHYh/WpRe73Te9TPlOyXVs3zxswvWjmsT6rMqNfS/99LvRg/ccfL8QNTMdZsIvDrqQdmPdI5RQq3XQjXzwmrHBHf97du3HnBTZBhOfUex1MfWOv+kK5RjWsj0ouxzt3OcyvgdVy/wgUa+/AW/wGk3RKlLLsrwqnTETA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20792913262so2544065ad.3;
-        Fri, 13 Sep 2024 15:49:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726267784; x=1726872584;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wvjD4P7L33hm+SfH0+CG3X96DfNJu81XzBnavQ84R+c=;
-        b=BRNT/re47J+XKXjrfOg89UNDQioP2IZWIGHuriTvJxjEP+QH7AlCDf2rjZfpa7zKea
-         2GeWDtVBxOcXvXLI/UAFxT81XtefIp9uCSjKNQ2fmL0HNW/YIRwD0skI4vvpPfoctX/3
-         IT4n/91ts/zB5GPKpXsIzf0lM6xCYiXMeBMX96CE86d9npQbx2cRnbr59iIxJu7HjHkl
-         6VdJ+7RDM12zBVadVgUpyYp26KBtFNLl2IEIMhK+h91vAhfCM+CEK8Fu+85GrHwVee9K
-         Nq1QLTi4FMk+r2oCVqW/UTrlMjdLRDCFX32jL8T3snOyw6pj33tSXNoNvz8cXFzbFboY
-         gN2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUVjymYri+Tx9RbYlGZTS9ajprN3erFREnPF4LJ/Ig+t147OhatR49VYdRrBVQtwS6WWQXQH8scQV5Vgj9t@vger.kernel.org, AJvYcCVY5Igjh+ZM2cbxfGwxW1zxChyPhYgnlGNq4qjtH2vrIITeTa6k7reTYoEOgxDkmjh3SrUaGSihtbH0lRVH@vger.kernel.org, AJvYcCVqzMQboarBGnHelSV+jgi5DdvtFZUfOus1VLhe225ebwnqosRmd5uYoPYnIFDyh519SobJwqbh2nABUwI=@vger.kernel.org, AJvYcCWSce/U0iXFE3q/iR6znJxWTHVFeKHqkB5/DCn82Y+KgI1bJyTxPhmii2nZ3hSrifpMuBy0G+0wW6Ya@vger.kernel.org, AJvYcCWaSZy8lugj2aFXpiK9O9YU/uohIvDPF3nbpiG5qYtpMMo9AY9aajNa+PvkuJNFtEknBWTMQKp72RUuAj3V9r0aKQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsF3aEfwEgOEHS4ip4/a09uqNWJJEwN3JqjpzbALwHglF5irO+
-	zAewYX/YNkPNV9ruUMCAV75lXhfatrpHRCXd3BH7aHciiUCoDKa+
-X-Google-Smtp-Source: AGHT+IGffhv4YzRcwOzc1EUmqXH+8+XynznIDD+5xBCaM4EbCHFFItgrUN1MptJ5qWG02Y+hhYkfhA==
-X-Received: by 2002:a17:902:ce86:b0:205:4885:235e with SMTP id d9443c01a7336-20782a69abbmr69743905ad.39.1726267783736;
-        Fri, 13 Sep 2024 15:49:43 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207945da63fsm1217015ad.38.2024.09.13.15.49.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 15:49:43 -0700 (PDT)
-Date: Sat, 14 Sep 2024 07:49:42 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: manivannan.sadhasivam@linaro.org
-Cc: Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Chuanhua Lei <lchuanhua@maxlinear.com>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Pratyush Anand <pratyush.anand@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, abel.vesa@linaro.org,
-	johan+linaro@kernel.org,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
-	linux-tegra@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH v7 0/4] PCI: qcom: Add 16.0 GT/s equalization and
- margining settings
-Message-ID: <20240913224942.GB635227@rocinante>
-References: <20240911-pci-qcom-gen4-stability-v7-0-743f5c1fd027@linaro.org>
+	s=arc-20240116; t=1726279578; c=relaxed/simple;
+	bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=rA7P6qI2i/xQ2yCaacnD3csUwSNfIb9YZ4RGYiHkeZKux8RTgtFRpjfjENtH9mxWe3DoTyM4/FObOlOh+o+VPWOYJgbpnd0GfhMS6M3vcrNl5O7TvjHZnP7TMUlkhNRR9QOvToqAfa4mf3kkuMDa+bCqBjwLpJ2DOKuzmpNq4OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wx0lFibl; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wx0lFibl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726279576; x=1757815576;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=r1SPEaFbtgONlYp9N92wMuvszR631+QcjZT+HAM08G8=;
+  b=Wx0lFiblieA/9/9zel9rjGGqiBhBg5zYjJ/ObIHxufVPcAMw1Fk+5oEb
+   zjOJOQL72vzWiy8zQsKghpnSbtgajYcGTpXhEBXRi9FkGj/Q7G3uHH/k6
+   Mp6q9arZJUfEnohcT+UYK9SFpVyVg8lfV+784+4Kc3JSkMqmKfyfZf8l3
+   1fSe3I8qlsUlHfu1PSil9tghCgNGIa+ZCDyWZFVxhf8+D3hJskkidrG+u
+   8y2xVFJhTo7kBnkBtA1zftgd7EosIg7aXwbmWoHQ6B2E3lw32By4gB1MF
+   HvIqeRGlSQns9/n+49kVgwbAc6m84o675WYdjX7T5Ea9Rc23HTk1zQ702
+   A==;
+X-CSE-ConnectionGUID: 7++i2EDnTCq797+HfENnXQ==
+X-CSE-MsgGUID: 3+9wc8S+TgyxDSnps6brwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="47706728"
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="47706728"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 19:06:15 -0700
+X-CSE-ConnectionGUID: hrcCDiI6S7qL/42olX80Rg==
+X-CSE-MsgGUID: gzoUIxuVSy6K+Ux6zmuDmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="67968803"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.127]) ([10.239.159.127])
+  by fmviesa007.fm.intel.com with ESMTP; 13 Sep 2024 19:06:12 -0700
+Message-ID: <42bbc500-578c-474b-98ec-1988906f31ef@linux.intel.com>
+Date: Sat, 14 Sep 2024 10:02:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911-pci-qcom-gen4-stability-v7-0-743f5c1fd027@linaro.org>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] drm/tegra: Fix NULL vs IS_ERR() check in probe()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+References: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
-
-> This series adds 16.0 GT/s specific equalization and RX lane margining settings
-> to the Qcom RC and EP drivers. This series is mandatory for the stable operation
-> of the PCIe link at 16.0 GT/s on the Qcom platforms.
+On 9/13/24 10:34 PM, Dan Carpenter wrote:
+> The iommu_paging_domain_alloc() function doesn't  return NULL pointers,
+> it returns error pointers.  Update the check to match.
 > 
-> NOTE:
-> =====
-> 
-> I've taken over the series from Shashank based on the discussion [1]. In order
-> to apply the equalization/margining settings properly in the Qcom driver, I
-> added the first 2 patches to the series which inevitably touches other vendor
-> drivers also.
+> Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
+> Signed-off-by: Dan Carpenter<dan.carpenter@linaro.org>
+> ---
+>   drivers/gpu/drm/tegra/drm.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied to controller/qcom, thank you!
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 
-[01/04] PCI: dwc: Rename 'dw_pcie::link_gen' to 'dw_pcie::max_link_speed'
-        https://git.kernel.org/pci/pci/c/2cebf68a24ab
-
-[02/04] PCI: dwc: Always cache the maximum link speed value in dw_pcie::max_link_speed
-        https://git.kernel.org/pci/pci/c/19a69cbd9d43
-
-[03/04] PCI: qcom: Add equalization settings for 16.0 GT/s
-        https://git.kernel.org/pci/pci/c/d45736b59849
-
-[04/04] PCI: qcom: Add RX lane margining settings for 16.0 GT/s
-        https://git.kernel.org/pci/pci/c/d14bc28af34f
-
-	Krzysztof
+Thanks,
+baolu
