@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688841B85C1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AF75B216;
 	Sun, 15 Sep 2024 22:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726440488; cv=none; b=sct9EUQtyLH2cq2S8v5EJXpW4wG2mKXzHVSM1DOGmgCEiHHHJfu3+u1Wg0be7I4CXLYebdCyUMbjeEQr0VGcTpfzYvfLDxl/ubWrMdrKhh0Vcpuc/f+2k1prZRtwnNJey+VPTlijz4GLYoTOvctHC6RgUv/Ybj4nMT+hWJsA8WI=
+	t=1726440488; cv=none; b=TX5d+tL2xwjIr78vEVArfyxpYNe6epYpJiMrPQs7tBmZwsqQRASPA8Kbdgw4DbDIHIf+c0tjhoL6v5kTA/x61SrAdpgBQdHxX+gUyadxjbTOncMoat2f83yuqxPNdn7gyl2rWQvxxj5GFi2YsYAIe6ikHfA7STPzwksOcOJOcQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726440488; c=relaxed/simple;
-	bh=W3AVPczafQzhHEPVJeMO8EQOQr9O4ild1Pi+en8FGfY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jS9LlJUEdzsurEj5V4Mu90caxmhq9Vt/M/Z1SUjVXOI6rvqUH6C1ssUKINHYzz2nfezjA+cL3NDgl8um1u3aOTaRjF8pgLFUt5toW0Z7x8mLS5toJtxVMKQ5c1MRL0NgSyYO/0T5Uzi0DsBO0VMF9FeZJDeBTK4ivuR5krDyDtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmbBDCoe; arc=none smtp.client-ip=10.30.226.201
+	bh=A5gmCGk6wjjVat1CCMtzmUFixbs9K8glOQ8cDA8fW44=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=oktH8ZfTmrZdJFmfDiQWypnDmdK7DmzlhjVxWq67RB55R1S76wKRR4uTocM9Xh/0x5zHLFgo0mcv1UGrsJr8QdY9YS2FiFcWPFNj4tfb1b0EmUv4XZMbTA5Bj5K1qx5otWsVZfDb4pIM3a6ewru18/goY9CD6m+cNOLvV3GTCqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zwjb6X0x; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmbBDCoe"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C917BC4CEC3;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zwjb6X0x"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D7A59C4CECD;
 	Sun, 15 Sep 2024 22:48:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1726440487;
-	bh=W3AVPczafQzhHEPVJeMO8EQOQr9O4ild1Pi+en8FGfY=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=cmbBDCoe8YIXNQ4cRKOfBR+foeUaN/TAvRnxLLfr9uVATqYSEYphtLMjTwinVdn5b
-	 bW2xvvYeq3SxuMyrdfloOvzGtzQ9XXU1LnGP2JuzL/mCnArd7Wv91rTsmWOse1NkJX
-	 qMEnAiID8/DXeeufEJLauoZRKPU7HjaF0mZPNw4e+IoKnVy+GPf+xY8I1K4kyjN838
-	 mOBM6JnrMBr1PVXR5ZfLPTediVd63R06ZY3G4/X7y+Z5A1yVgEJhJshPrFAjpMbqd+
-	 3INqMPXnVAHXvHWPuvAQppCm9ZYeNm+jcKFohVjmTh3761xTKsE3hmvu8QykGp//1f
-	 VtRUrOnj1Kcyg==
+	bh=A5gmCGk6wjjVat1CCMtzmUFixbs9K8glOQ8cDA8fW44=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=Zwjb6X0xjbE9bWTwLBJ6S0kpku0JrbZtLtuIHrUw71vEB/j65wAjxrYoUzjgqr7ya
+	 y+mYeSzCGRO0aRl4AEEZnxK6vU8FHmooR75J9MmZcdjvseF4U24zDRLM2uCQmea8+M
+	 hPZRqPOqqhD8nDc4XdOMh2GCkUoFC3vXat1cYivho0J/RZ+CzBJay8ZNs0zY7hN2AR
+	 XLGs4ON1LBZMrTU/gIKzvD+SbAdsqLCg/pQ1ISSto+4jzrDvDzkq2pZxdMAEctfMUH
+	 7plyZmK2hSu+WmgzQt0rX6wvQdEz+VbyQxNEZpiLQvA6ZPU535q1yC1QA1IYl8GYKp
+	 4fJ6PsFtVIuZQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2989C3ABB0;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EF8C3ABAF;
 	Sun, 15 Sep 2024 22:48:07 +0000 (UTC)
 From: Jasper Korten via B4 Relay <devnull+jja2000.gmail.com@kernel.org>
-Subject: [PATCH 0/2] Add touchscreen and TMP451 tempsensor nodes to Google
- Pixel C (tegra210-smaug) Device Tree
-Date: Mon, 16 Sep 2024 00:48:12 +0200
-Message-Id: <20240916-touch-temp-v1-0-5a008b2acbc8@gmail.com>
+Date: Mon, 16 Sep 2024 00:48:13 +0200
+Subject: [PATCH 1/2] arm64: dts: nvidia: tegra210-smaug: Add touchscreen
+ node
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -41,9 +41,9 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIACxk52YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0NT3ZL80uQM3ZLU3ALdZDOTJDMLSzPDxNRUJaCGgqLUtMwKsGHRsbW
- 1ALWGrpdcAAAA
+Message-Id: <20240916-touch-temp-v1-1-5a008b2acbc8@gmail.com>
+References: <20240916-touch-temp-v1-0-5a008b2acbc8@gmail.com>
+In-Reply-To: <20240916-touch-temp-v1-0-5a008b2acbc8@gmail.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, 
  Thierry Reding <thierry.reding@gmail.com>, 
@@ -52,11 +52,11 @@ Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
  linux-kernel@vger.kernel.org, Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, 
  Jasper Korten <jja2000@gmail.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726440502; l=1112;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726440502; l=1157;
  i=jja2000@gmail.com; s=20240916; h=from:subject:message-id;
- bh=W3AVPczafQzhHEPVJeMO8EQOQr9O4ild1Pi+en8FGfY=;
- b=ZPhbv3N1xwYF4OASpscfGJybNimUttAT4cGxgIPHBup4hw6xYif8atQccSUpMV8j5olBjwYP7
- aQ/9X5wnKYNC8DaykgGgExDNs5W7AtHl9JM3Mh/Bje4qv9Xm6+y+H50
+ bh=6mK996nKHGO6KB4fA8zD2TKs8erLyGTuSaVELErvZ74=;
+ b=K7zIyR+AKL4IAWMMntVNlIcMsY14XFP0GGL6wY0Iw4hKElB5bXLmsx2VXUv0ETKdmZHAm4K5U
+ TIW81mUuxX4Cv3lRNtSKBcw0n7TMIPK+KPZFuTr/NjSeQsIBBh0CCOc
 X-Developer-Key: i=jja2000@gmail.com; a=ed25519;
  pk=NV6r6q/S3nZILZkoOEuEM7F+uxANotfAYeXyNZTniJc=
 X-Endpoint-Received: by B4 Relay for jja2000@gmail.com/20240916 with
@@ -64,32 +64,45 @@ X-Endpoint-Received: by B4 Relay for jja2000@gmail.com/20240916 with
 X-Original-From: Jasper Korten <jja2000@gmail.com>
 Reply-To: jja2000@gmail.com
 
-Information to get these working was gained from downstream DTS.
-Link: https://android.googlesource.com/kernel/tegra/+/refs/heads/android-tegra-dragon-3.18-oreo-m8/arch/arm64/boot/dts/tegra/tegra210-smaug.dtsi
+From: Jasper Korten <jja2000@gmail.com>
 
-Both were missing upstream and easy to add:
-- It uses a RMI4 HID-over-I2C compatible touchscreen.
-- TMP451 is located close to eMMC according to iFixit's teardown.
-  Link: https://www.ifixit.com/Teardown/Google+Pixel+C+Teardown/62277#s290806
+The Google Pixel C contains a RMI4 HID over I2C touchscreen.
+Add a DT node for the touchscreen.
 
-This is the first time I've ever submitted patches upstream myself.
-If there's anything I've missed or could do better in a new rev,
-please let me know!
+Information gathered from downstream tree.
+Link: https://android.googlesource.com/kernel/tegra/+/refs/heads/android-tegra-dragon-3.18-oreo-m8/arch/arm64/boot/dts/tegra/tegra210-smaug.dtsi#542
 
 Signed-off-by: Jasper Korten <jja2000@gmail.com>
 ---
-Jasper Korten (2):
-      arm64: dts: nvidia: tegra210-smaug: Add touchscreen node
-      arm64: dts: nvidia: tegra210-smaug: Add TMP451 temperature sensor node
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
----
-base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
-change-id: 20240915-touch-temp-c64b68961aee
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 2e5b6b2c1f56..6f77540fd397 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1362,6 +1362,19 @@ bluetooth {
+ 		};
+ 	};
+ 
++	i2c@7000c000 {
++		status = "okay";
++		clock-frequency = <1000000>;
++
++		touchscreen: i2c-hid-dev@20 {
++				compatible = "hid-over-i2c";
++				reg = <0x20>;
++				hid-descr-addr = <0x0020>;
++				interrupt-parent = <&gpio>;
++				interrupts = <TEGRA_GPIO(X, 1) IRQ_TYPE_EDGE_FALLING>;
++		};
++	};
++
+ 	i2c@7000c400 {
+ 		status = "okay";
+ 		clock-frequency = <1000000>;
 
-Best regards,
 -- 
-Jasper Korten <jja2000@gmail.com>
+2.46.0
 
 
