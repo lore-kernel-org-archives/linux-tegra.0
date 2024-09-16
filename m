@@ -1,104 +1,61 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mta-65-228.siemens.flowmailer.net (mta-65-228.siemens.flowmailer.net [185.136.65.228])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5F46F2F8;
-	Sun, 15 Sep 2024 22:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B05A13E41D
+	for <linux-tegra@vger.kernel.org>; Mon, 16 Sep 2024 08:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726440488; cv=none; b=qHZ/dmUPEP76SfxfU1OcUjNUY9o/EYayqpxC9T920R7QcAVDPnNongV3KgpsG9Ms71YsV4VQDdt8zd3jr8i+e3FBOr+C4gUgqbsjKC8VNtqaWoxuY6Kq6OngaZdXSP1AwU+1gFUdXUdgVD8/ps39+IzIF806yQHO6bq4tx/iPew=
+	t=1726475901; cv=none; b=DgL1ccg30D7JWRI0ha8QwZRlxOOkb8zAwKfGNZqerP94GzyYINEhbhsjuCAYjIP68U/BS5sWMxmJrk3+NmjtLGOuSw5E8qILzqXHWH7DExJmvJGkWBTRwAYkjYmZVHeDfncKXFO3VNKUAY0GoO7HnqkhXYlcKQLDuG+0d/20X4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726440488; c=relaxed/simple;
-	bh=Tw4YFLv5KGzPhjNFzyPeFKKPiik8CYlQKqceKFtvFhw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kC8gSgwdCQy9BwagG1EjQscXVjc4/qoEKdWvmQOAFpyQX9sOFg1U6Z2ltbCxFEvAF6MSBDdADVmuvtgJpq5IeAldwuXI0rfasOCvHWsrMbsEEZiekA14tAXjDTtJJn1w59/NtoNMN8X1fg7mrR8/5MwYIMoBedn95qZXteo+ZQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmR2oEGJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1726475901; c=relaxed/simple;
+	bh=3f9bLd9PwryjScgQDzUs/haQ4ZJ5r0q83rdRMs/72HE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bHI+e71pVditFZctn4rrF9db39KfBUDw7B84F173XGTiFgfYMgTdiXcJAhgpKYbyHR+iLVpdRzhKjqMkhZjJxHy3FLiVQHcTTz/pLjGMJqAgk52H0RSGRtp+6v0+rhQc3A9Dlm4gmfcBrQ3Rc7XhlyoJC2sFaI2rycQiWdr3/mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=Jo6dH85z; arc=none smtp.client-ip=185.136.65.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmR2oEGJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E4B96C4CECC;
-	Sun, 15 Sep 2024 22:48:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726440488;
-	bh=Tw4YFLv5KGzPhjNFzyPeFKKPiik8CYlQKqceKFtvFhw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=gmR2oEGJESHVZof1rcfEXrRnsXEAZZ9D1Wf1AJW2Gp80whqBPEa5xRLJpWYq6RL4G
-	 dCxlCGYPjwC4VdKpgpsgQYqAnWQYnjQ+WausaaiH0MwYWEoUNkfaTpRyiz/hslwAi2
-	 7+Zlbx6YxSYMCqTiOP2fEsKRR0bLW/p5CRTyoY0XUZN3gGK/shZQnIaxZzpMrrrdJ7
-	 qYGnhm/KywS0BkGhKgb/Ca1y57XbgKgwRsR5waRafPo6DrgENMcdyGSUYR41ewgOO3
-	 yREW6DFSUMb+goGHgg6+nUdgAl1cwuPDK23gZe5KBy/jPrDtFxb2IqvF/nvrNLYWOR
-	 ZPxd9+tuKA9Tg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BBBC3ABB2;
-	Sun, 15 Sep 2024 22:48:07 +0000 (UTC)
-From: Jasper Korten via B4 Relay <devnull+jja2000.gmail.com@kernel.org>
-Date: Mon, 16 Sep 2024 00:48:14 +0200
-Subject: [PATCH 2/2] arm64: dts: nvidia: tegra210-smaug: Add TMP451
- temperature sensor node
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="Jo6dH85z"
+Received: by mta-65-228.siemens.flowmailer.net with ESMTPSA id 20240916083809b6e6f2a3400f6e1843
+        for <linux-tegra@vger.kernel.org>;
+        Mon, 16 Sep 2024 10:38:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=3f9bLd9PwryjScgQDzUs/haQ4ZJ5r0q83rdRMs/72HE=;
+ b=Jo6dH85zJfwk8VUNVa+Fy5jyD5xLseSV8FH7INZcWn4opk73/+UGhtMmYmIzZS5JuLvfFx
+ NgtsmGqA4qEeVElWySNYH54HoKMIV55mQEgMCkEmximpoPF+NJSzdh5AkHaY3m+RZo7A8h4J
+ bqDu6UJ33aQUwPXYvglXnpr6w9pyJttfEnsbnFuFm7b3u7BQPJnE3UZjsLJoW3fRLlYKIUlw
+ Cf3hKvIVLQKuWGJqKit1AMYFVPwUceCNveueHK4Ao0SEzKAmWDQOLBzuDn+d62SBstvr56XB
+ Ry//7lqVIE1q96YzPpN8eUGZBD7FxRiQr/5XlaLf7mSqF1DFVdgO13Sw==;
+From: Diogo Ivo <diogo.ivo@siemens.com>
+To: diogo.ivo@tecnico.ulisboa.pt
+Cc: conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	jonathanh@nvidia.com,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	robh@kernel.org,
+	thierry.reding@gmail.com
+Subject: Re: [PATCH 0/2] arm64: tegra: add wp-gpio to P2957 board
+Date: Mon, 16 Sep 2024 09:38:03 +0100
+Message-ID: <20240916083803.12364-1-diogo.ivo@siemens.com>
+In-Reply-To: <kbz72jma3bj7dnfnvdjo6m5yqrvjwkvz2gtt6bxpezkslwt3kh@a7wqzkssdfvf>
+References: <kbz72jma3bj7dnfnvdjo6m5yqrvjwkvz2gtt6bxpezkslwt3kh@a7wqzkssdfvf>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240916-touch-temp-v1-2-5a008b2acbc8@gmail.com>
-References: <20240916-touch-temp-v1-0-5a008b2acbc8@gmail.com>
-In-Reply-To: <20240916-touch-temp-v1-0-5a008b2acbc8@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, 
- Jasper Korten <jja2000@gmail.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726440502; l=1092;
- i=jja2000@gmail.com; s=20240916; h=from:subject:message-id;
- bh=bYRs+oTSlXN9NAJLiXE80By1YDR7fhYWaFKCs20PGS8=;
- b=ZeKzeV/Lb0PWjkv6ZN8ArjPpFKgoBtyxJe2gDH5S/UqnreuqZ/4dGEwyfUjR7BPszHFZEK0XG
- 0NQgB3qh8Q0AjaQY2viy6oX4DqvMOn6YbNWh5NWLqmXE6ORhcRwvKhu
-X-Developer-Key: i=jja2000@gmail.com; a=ed25519;
- pk=NV6r6q/S3nZILZkoOEuEM7F+uxANotfAYeXyNZTniJc=
-X-Endpoint-Received: by B4 Relay for jja2000@gmail.com/20240916 with
- auth_id=210
-X-Original-From: Jasper Korten <jja2000@gmail.com>
-Reply-To: jja2000@gmail.com
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1320519:519-21489:flowmailer
 
-From: Jasper Korten <jja2000@gmail.com>
+Hi Thierry,
 
-The Google Pixel C contains a TI TMP451 temperature sensor.
-Add a DT node for temperature sensor.
+Gentle ping on this topic.
 
-Information gathered from downstream tree.
-Link: https://android.googlesource.com/kernel/tegra/+/refs/heads/android-tegra-dragon-3.18-oreo-m8/arch/arm64/boot/dts/tegra/tegra210-smaug.dtsi#1000
-
-Signed-off-by: Jasper Korten <jja2000@gmail.com>
----
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 6f77540fd397..c724cb4d5ad8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1732,6 +1732,15 @@ audio-codec@2d {
- 			#gpio-cells = <2>;
- 			status = "okay";
- 		};
-+
-+		tmp451: temperature-sensor@4c {
-+			compatible = "ti,tmp451";
-+			reg = <0x4c>;
-+			interrupt-parent = <&gpio>;
-+			interrupts = <TEGRA_GPIO(X, 4) IRQ_TYPE_LEVEL_LOW>;
-+			vcc-supply = <&pp1800>;
-+			#thermal-sensor-cells = <1>;
-+		};
- 	};
- 
- 	pmc@7000e400 {
-
--- 
-2.46.0
-
-
+Thanks,
+Diogo
