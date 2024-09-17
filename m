@@ -1,181 +1,182 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2065.outbound.protection.outlook.com [40.107.94.65])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95086185939;
-	Tue, 17 Sep 2024 15:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726586402; cv=fail; b=BMv8JgBOuueji12qqAPyXmd2ngpmRFuFBxWxPpRUWSiQLmXyWeFgbnAnE4sJae1mrbT/ouKhwnUVSNOzK8NyBLg4kHChzZfBeFynVMRba+Ld7P54apCNgNkc0YyZ4AnsDrfjtK5VSavqO1rWUgU6xZJra4TFY0mdKxnRA4f1RUY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726586402; c=relaxed/simple;
-	bh=/Su4v/j24akbPu5txyEubK+a67MnSw6DpUIwDhJy8Ro=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=Glhl2IZrv6CRCeerzuU8GYPuU+ceIkHZjAqfxi7ReG7eAoQ0+aqQHaDR8UQ1caCkoi5vN478QxpJyJ9RKzI9BMZ05+TfnVhhY7Rfue16QLrxL6a/QAST4RUz4IMiPe8MZT737dml6ClNnp/heBxXVODJ/KVPNcqR2WUzZQMC4ic=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hwleVkO7; arc=fail smtp.client-ip=40.107.94.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F3827470;
+	Tue, 17 Sep 2024 20:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726606717; cv=none; b=hBEcDgMEuP179a265VXETRF/2Fuj0EVtUN5DaByomZkISz/80RJ+c6eV0Ard2SWikTmDXDmDkYbMffgo6yBjx2ddWmVv8byAv9Nt6O5R2TswyEfLd/NZXlRyf23aYNKWpxdkJqr+cZI2PJHoP0xfU0z0ZAaaJgsw+p7XE+QdhVQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726606717; c=relaxed/simple;
+	bh=1DnEq3OtxesbaE5y6su/lPozimbl2W5ioRipEl9iM50=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nMJMV3qg3ujF3vY1ZDCjraVyqaBJrcSzrq7EJpWyFxaTPILn7u19bfBznmJxUNdhX29LTJNgzgig4lfHEBfEJZZNVZfQVweJQuPx8GTkIYKp7DUz0f7by5F8syGy8tBbniPw4LL0rGz9LElgqVsRUNvRK3Rm6k9rt9ajp8IpiTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iJw4JQmQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hwleVkO7"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HWWmge31w5zD9PEysFV0p7Ee8akPeiurRZpM0SQgAOd/lm/tWZoLxF1d9R40HG/nS5DTgwKt7lT0djW8jbvtOHom9GEfhFiGw9NifldWuDF+pBKjh67tAZtRraPAv8aY7O2Vup/WoclvGA/My2ug0lFlwSxAHRo8k9EH41gAFgJh9S5Z45bIh1TpPZe1FpWLL4R20zV+1bEgdamK2Jy69FkOtoN3U3iqtXsbNA4aipUXqwAronNdxPsPriMjYXwh7QuQ73BEjDLD5KzVZcORmECHp1BKmF/H9cFJwUvrm71xeYR4sIjwrFwUp2iKy0DSMhJ2P2aymm5QzuqnVKxfpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6xcoGfDdKeOkpjFOxKh/hxz06DnRbwjgmKd9FMjr0Vs=;
- b=lu8uWhLtnyEKbFchBGDN7dD3N1tfX8g9gjbe6zYBCeiN3gzSeSwH54bA/gvwtQIBE/JjSDCr5gaCSV2qSiXAgguSG0hT0a+5TOiGu9JdIRZAj9IZ9qZR9R2gbVKiAaSwmeraOo9ATbjpN1RMNYPvIwV6i7JGXyalGV3pKFTkD84MAcEIfY7cGldtJmArZnowsZx2n7owRf3q+eoptfk8Dm3yXtCfCu8OGJf09MCVJiwXNfFo9aIJuawwkjW5Y2iLcD+M0XieVj6XQxd0F3sY9SGgW6w1kThA1J01FpxP7f66/lUOLzUulPuC8VcnQBNFoMkq0UASiIIxG1i1ev14uA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6xcoGfDdKeOkpjFOxKh/hxz06DnRbwjgmKd9FMjr0Vs=;
- b=hwleVkO7tvKC1Ue9StU+CmyzJJVnIJVUJ7eT9qcmMxKWtFDQ17wJvsi4Pw9ObcbNV1ptLyM+ihhTRR3lHL1QqDyvTepMMjbjsi0cBDKx+bYC9/Hh5PIlX7TZBVet7Lf50UDr8cB/gBqCWjRnMZYB/APYFdqElYt1c3TrTfTl1/z+K2gKdzbo2JPqeWmb7ZRDh/mM5ubysP7+boymNccrIbKTVWGJlhPEPjOGNMAi9fFj5RHH5aZuoecGpXas15/w6iqgMLATEsrIgC88R98gVdBn3JWNHdwOiNKH7hZCrF5+Do8cp+Salfj8+7aFgsZNfuDRlBMb/BPAm52g3zHT3w==
-Received: from PH8PR02CA0017.namprd02.prod.outlook.com (2603:10b6:510:2d0::20)
- by DS7PR12MB6262.namprd12.prod.outlook.com (2603:10b6:8:96::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7962.24; Tue, 17 Sep 2024 15:19:56 +0000
-Received: from SA2PEPF000015C7.namprd03.prod.outlook.com
- (2603:10b6:510:2d0:cafe::5e) by PH8PR02CA0017.outlook.office365.com
- (2603:10b6:510:2d0::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
- Transport; Tue, 17 Sep 2024 15:19:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SA2PEPF000015C7.mail.protection.outlook.com (10.167.241.197) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7918.13 via Frontend Transport; Tue, 17 Sep 2024 15:19:55 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 17 Sep
- 2024 08:19:40 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 17 Sep
- 2024 08:19:40 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 17 Sep 2024 08:19:39 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.10 000/121] 6.10.11-rc1 review
-In-Reply-To: <20240916114228.914815055@linuxfoundation.org>
-References: <20240916114228.914815055@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iJw4JQmQ"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48HHgmbo015455;
+	Tue, 17 Sep 2024 20:58:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rSz8GeEz1hPdodPMqmxwWaTHcv+FJmxacUW6JdoidJ0=; b=iJw4JQmQsjPDmQ+A
+	ptgcHiKs5vQTY/2006tpuUlCbOpn1HB9/C/+Sp980twhdGhT80k9MWcdo6PC6WvO
+	U/AQQesnGimr4PZ0GNlODZLlKLU6WTHqt8Ck052/lf6FnevK2pWY4ocYvUg8QQtK
+	Yg/lJiDkTNq9gDgatZjN5XcsjepQYrgFLfIDix9vJhG7PjgS7BNiY83YsA6nGwbs
+	lDC5M5YwzzgMHJ1/vunnIedkqonWmu6fDlu8UtsdpQ/k+DGocyOOuYIr3Sys5r0L
+	6JwyirlAjZwazjY++iSLqE1FRp9DPwcOk7cYbcqT5M0wEJ5ScaQB0fuESEyKyDzX
+	e7cSIQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41n4kjfyug-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 20:58:10 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48HKw9q1009718
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 17 Sep 2024 20:58:09 GMT
+Received: from [10.110.34.108] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 17 Sep
+ 2024 13:58:05 -0700
+Message-ID: <1c58c34e-8845-41f2-8951-68ba5b9ced38@quicinc.com>
+Date: Tue, 17 Sep 2024 13:57:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <91b2a0f9-44d9-4f01-92de-170805f37d71@rnnvmail203.nvidia.com>
-Date: Tue, 17 Sep 2024 08:19:39 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015C7:EE_|DS7PR12MB6262:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1767a6d3-7610-42e8-9129-08dcd72c2fb7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OEJZQVFDR0RpZ09QU0JCY243a0hVUVh3elRoOFdQQ211eGVsQWZzR25mWG5T?=
- =?utf-8?B?ZGJHOFVINng5VjBWZ0duRkdzNHpNNkp3SmwzRDBzOGplZ3UyTGVkcWh4SnZV?=
- =?utf-8?B?VWtEMTJqb2RXK2JTenZaR1g1eThDQ1QrNXl2M2ZnTnVsRld6c3FBdUt3OTly?=
- =?utf-8?B?Z1M4QlVGcU04YUpJajNwdzd4dWRRTTluT1lEMzZsVnZsL3Z2Wjg4MnM5blVJ?=
- =?utf-8?B?R2wvTmZzcnExU1FITHlPVnd2cVhndVBhdlJWMzcxdk14UXovRUx3amNyQUlC?=
- =?utf-8?B?K2Mzb2VCS1B4UmRvMTZiRVZEblJTbFYwTjlHWDBNcGNXakhlTG5abjJHVVQy?=
- =?utf-8?B?Vk5aWVNBZ2lneEhnNjJMcGZ0Qmh0c2JTS2dLUEg3YVFNWk1QclpMWGRLRzB3?=
- =?utf-8?B?ZlN0WXJTVHF1VHREaFg4TTJVdzdyYkMzd2V4ZzZ2eTB1cXNxMGpra2ZkOFJj?=
- =?utf-8?B?NGtBTzNuWXNRN00wYWZIdkVQdU04d245WE1Pb21xK2hVdGtDZ2hWaWwrNnlz?=
- =?utf-8?B?MzdybFR6NzkwZ1pHeXkxQk9nOUwvU1N2ZXhGY1hZSTIvSTNKWEVjMER5UFNW?=
- =?utf-8?B?VmFiRjJha0dzZS9EMzNlMVY3b1l5eGVGNURESXY0TkNwMXU0Z25ISVVQMU44?=
- =?utf-8?B?RFkzVFF3cU50ZFlJY25vVDZVdWc3VzRWWFgrNWFTdWFLWkFSb0pLREE1cUU1?=
- =?utf-8?B?dGpQOVdzL2tSaHVTV3ByeExnQjFUY0JEMGJiM3p1ZC94bEZvWWkraXFnZE9u?=
- =?utf-8?B?TFRaT2V2SmkzYmk4U0k0R3cxREdwcGpNelBURGNjeURmV3FEaFNna0l3c082?=
- =?utf-8?B?SjBxUGpxY3lFWDBkSjNpaEVKMUlULysyTjh2bS9Ka2tmdlNwUmhBVk9hZC80?=
- =?utf-8?B?RWJiaFdvcm1FdmJUUmJzU1k1c0FVMjRlOGY4VHJYUTZGVzFTbC9VUW1wN2Rl?=
- =?utf-8?B?czErZHBRWkpyZDRJanBOdFMvL0gzL1V3ZEFHSmJ2RytOaEE4NFozODlPVkpO?=
- =?utf-8?B?T2NSb01sTWtnMmo4VHhBRVJWei9DSENwQTk3Z1JPQWg0UzZRWWlMOUlpSUtn?=
- =?utf-8?B?OHNNN0JNZXBzVitEUUN1Y25BSTd4L2Y0RHlIVXNkbm9MV1E3TEROVW4wNTJW?=
- =?utf-8?B?c3RFb2tPL3dxYjBZVGNMRjB4N0xrZ3BtYnczY3grdWpvVTZxR2FxRHVXUS9N?=
- =?utf-8?B?V3FhU2tlNFZqTGtsMWJ1bkszaTJlRDlock91WVRTTEtmd2ZNNWl4bkZGWExY?=
- =?utf-8?B?MFdsSUVHZ3FERlJKZURxYlFIRWpiaERNaHFOYVBvZDVkeStha1ljakY4K0Ri?=
- =?utf-8?B?VVY2d21pMitGdDl2cWpxMGJaQUhiSVRCUkM0WCtmOG9EaGxTRStzVndvQTV6?=
- =?utf-8?B?Y0JXMGlXNHFsN1U1dGM4VFFwK3oySHQwcUN0bHVBRkQzaElack14dk12RU4r?=
- =?utf-8?B?VlZ3aWpEU2Y3MlJmWnBxWmVaQUo1d0RZdEV4Vy9RQ2d4cG83Um56dDUzS1hD?=
- =?utf-8?B?MHB4anRaS1J5T2tWRmd3SStTQkNST0FxdHQ2azlNUHBEcVpscG45TmdBOHND?=
- =?utf-8?B?VFRmQjk1MDVmZVVLSitZV0VOUnpvUkNzZlhqdDZmbTJhQUFvV3RpTE1GZnZ2?=
- =?utf-8?B?aDZJZ05GZkJ3OGtheTEwK3VMRmx5OUhSVmNLUG00U0JXYWRjQzlYQUd0VlZ3?=
- =?utf-8?B?RzE2M08ySUVLSGRuR0x0TGI2YmpZSjBqNFRzRzNnNEtuZHVwUi9MOU5WaVBB?=
- =?utf-8?B?WTV1V1Qrc21GZ2QycFdHakxic1IwUnRUbUNXYjJHNGJoMkFnc2xGUnl2QXdX?=
- =?utf-8?B?NzUzTkFXOTVRZ3RQQnBHaEo0QlpzZDVmYWRPazZZL0J1L044M1pmN2hvV3pr?=
- =?utf-8?B?NHhOUDFPSGdaNGZRMGdYRi8vaUFrclhTSVducDVzWnJYZjl3U21mTTIzYzg4?=
- =?utf-8?Q?YVUze3MrwWH+cig3HJLLpkYDMKORujdr?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Sep 2024 15:19:55.7453
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1767a6d3-7610-42e8-9129-08dcd72c2fb7
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015C7.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6262
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH net v1] net: phy: aquantia: Set phy speed to 2.5gbps
+ for AQR115c
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+        Andrew Lunn
+	<andrew@lunn.ch>
+CC: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
+        "Heiner
+ Kallweit" <hkallweit1@gmail.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>,
+        Brad Griffis <bgriffis@nvidia.com>,
+        "Vladimir
+ Oltean" <vladimir.oltean@nxp.com>,
+        Jon Hunter <jonathanh@nvidia.com>, <kernel@quicinc.com>
+References: <20240913011635.1286027-1-quic_abchauha@quicinc.com>
+ <20240913100120.75f9d35c@fedora.home>
+ <eb601920-c2ea-4ef6-939b-44aa18deed82@quicinc.com>
+ <c6cc025a-ff13-46b8-97ac-3ad9df87c9ff@lunn.ch>
+ <ZulMct3UGzlfxV1T@shell.armlinux.org.uk>
+Content-Language: en-US
+From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
+In-Reply-To: <ZulMct3UGzlfxV1T@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Gi9fHv0lIXjHCzVNutMXWJvaKRE6ae0K
+X-Proofpoint-ORIG-GUID: Gi9fHv0lIXjHCzVNutMXWJvaKRE6ae0K
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0
+ phishscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409170148
 
-On Mon, 16 Sep 2024 13:42:54 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.11 release.
-> There are 121 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+
+
+On 9/17/2024 2:31 AM, Russell King (Oracle) wrote:
+> On Fri, Sep 13, 2024 at 06:35:17PM +0200, Andrew Lunn wrote:
+>> On Fri, Sep 13, 2024 at 09:12:13AM -0700, Abhishek Chauhan (ABC) wrote:
+>>> On 9/13/2024 1:01 AM, Maxime Chevallier wrote:
+>>>> Hi,
+>>>>
+>>>> On Thu, 12 Sep 2024 18:16:35 -0700
+>>>> Abhishek Chauhan <quic_abchauha@quicinc.com> wrote:
+>>>>
+>>>>> Recently we observed that aquantia AQR115c always comes up in
+>>>>> 100Mbps mode. AQR115c aquantia chip supports max speed up to
+>>>>> 2.5Gbps. Today the AQR115c configuration is done through
+>>>>> aqr113c_config_init which internally calls aqr107_config_init.
+>>>>> aqr113c and aqr107 are both capable of 10Gbps. Whereas AQR115c
+>>>>> supprts max speed of 2.5Gbps only.
+>>>>>
+>>>>> Fixes: 0ebc581f8a4b ("net: phy: aquantia: add support for aqr115c")
+>>>>> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+>>>>> ---
+>>>>>  drivers/net/phy/aquantia/aquantia_main.c | 7 +++++++
+>>>>>  1 file changed, 7 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+>>>>> index e982e9ce44a5..9afc041dbb64 100644
+>>>>> --- a/drivers/net/phy/aquantia/aquantia_main.c
+>>>>> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+>>>>> @@ -499,6 +499,12 @@ static int aqr107_config_init(struct phy_device *phydev)
+>>>>>  	if (!ret)
+>>>>>  		aqr107_chip_info(phydev);
+>>>>>  
+>>>>> +	/* AQR115c supports speed up to 2.5Gbps */
+>>>>> +	if (phydev->interface == PHY_INTERFACE_MODE_2500BASEX) {
+>>>>> +		phy_set_max_speed(phydev, SPEED_2500);
+>>>>> +		phydev->autoneg = AUTONEG_ENABLE;
+>>>>> +	}
+>>>>> +
+>>>>
+>>>> If I get your commit log right, the code above will also apply for
+>>>> ASQR107, AQR113 and so on, don't you risk breaking these PHYs if they
+>>>> are in 2500BASEX mode at boot?
+>>>>
+>>>
+>>> I was thinking of the same. That this might break something here for other Phy chip. 
+>>> As every phy shares the same config init. Hence the reason for RFC. 
+>>>
+>>>> Besides that, if the PHY switches between SGMII and 2500BASEX
+>>>> dynamically depending on the link speed, it could be that it's
+>>>> configured by default in SGMII, hence this check will be missed.
+>>>>
+>>>>
+>>> I think the better way is to have AQR115c its own config_init which sets 
+>>> the max speed to 2.5Gbps and then call aqr113c_config_init . 
+>>
+>> phy_set_max_speed(phydev, SPEED_2500) is something a MAC does, not a
+>> PHY. It is a way for the MAC to say is supports less than the PHY. I
+>> would say the current aqcs109_config_init() is doing this wrong.
 > 
-> Responses should be made by Wed, 18 Sep 2024 11:42:05 +0000.
-> Anything received after that time might be too late.
+> Agreed on two points:
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
+> 1) phy_set_max_speed() is documented as a function that the MAC will
+> call.
 > 
-> thanks,
+> 2) calling phy_set_max_speed() in .config_init() is way too late for
+> phylink. .config_init() is called from phy_init_hw(), which happens
+> after the PHY has been attached. However, phylink needs to know what
+> the PHY supports _before_ that, especially for any PHY that is on a
+> SFP, so it can determine what interface to use for the PHY.
 > 
-> greg k-h
+> So, as Andrew says, the current aqcs109_config_init(), and it seems
+> aqr111_config_init() are both broken.
+> 
+> The PHY driver needs to indicate to phylib what is supported by the
+> PHY no later than the .get_features() method.
+> 
 
-All tests passing for Tegra ...
+Noted!. Makes sense. thanks for your review, Russell. 
+We are in the process of figuring out what the phy chip is reporting as 
+its features. Once done i will raise a clean patch for upstream review. 
 
-Test results for stable-v6.10:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
-
-Linux version:	6.10.11-rc1-ge9fde6b546b5
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+> Thanks.
+> 
