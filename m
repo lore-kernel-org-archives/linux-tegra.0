@@ -1,119 +1,149 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2070.outbound.protection.outlook.com [40.107.243.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6C06FB6;
-	Wed, 18 Sep 2024 21:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726695971; cv=none; b=FEKjj+gdp/az5fa+sPZxtWt9KRXLaYGQtDi7BgyMFjXKW+jpisWJIFPePjmq8hiP2HwwLsMBgM3Wxlo2M+6WMJO6pZ9D4iSjX1F64BPfe6u2tJi66XIHSHAmC85qjPXsxCxanSYSJko/sO+bEvi/Qbx1Zzb6TCxoVpS6iZZ7jok=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726695971; c=relaxed/simple;
-	bh=2JAVXLbmvY5chR2s5ENXGYmaUDXwiVf9c2ghoNaPybo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3GtxzaRVBX8dspWD3Og2UTT2LIu2OkpwncXDAJNOH/28fNMdwVbG7lG1XyftTYs9j52Yr475uWPLYj1250DnzvVH/F/Wi13bwCx5l3+mgiiXFe+9J2gexf6QDBRFv4UjKamCWMd+IzQGCrc67Xd6vYI6kT3YiW2aZ1w9b5IGyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=2uMRqhng; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB3F6FB6;
+	Wed, 18 Sep 2024 21:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726696795; cv=fail; b=djLbf2w1lkrL1otJOgYnpMhUDGpoj6llLHdRRsO+WqHqFFlWCN6X6WIaplZpVU2KIc/AnvrEsEgLrd9BOkVe39e6vrP9u09iUw/gMPkFHntu1W7kNvWLqw42PvjbWlYW4TsVJaG8BJId1ZjLYP3VoI9IcUJAHHSGETj7iXJNCow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726696795; c=relaxed/simple;
+	bh=YYGx/qfYBCPy5WxVrk7GPV/8h2BMdy0WiY6Ot2HipQs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I8Ow+zHgKSt+JwTlyvP78pmFKW/dc4yKgrwRgWGgE5bagHlanaNuM1kuKCYwbMSk3p5c8I70r4XBIMKiLcRa8D7EbP/+I4jiUyE5i+4Y3ioKRvsdsuNOWBk5xX8CcR/mYDRbKYMcD18sfYAD9p9c4ozqXcF5IO3xdOvfYtSmgxU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TiMHCIVK; arc=fail smtp.client-ip=40.107.243.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="2uMRqhng"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=LiTlMU5tNsXM0VVteoP1U3alR033HX1QCn0vzJFq568=; b=2uMRqhng2P9k5kwobap9kfvqLz
-	wWF2oIkz+NWodWiTpWv4fNMB+ZD+vjhwEb1JCMp7/hmmOYZ3LXg5EVZTPD5OoUOpbwEZMI9d81syM
-	HmfIdm6VuG0wkKUPoxcbJovX7ALTqObwkFm+Bhp1nB220NTGYTDGGqirD7Gozilvdp0A=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sr2Uk-007kQk-60; Wed, 18 Sep 2024 23:45:54 +0200
-Date: Wed, 18 Sep 2024 23:45:54 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Brad Griffis <bgriffis@nvidia.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Jon Hunter <jonathanh@nvidia.com>, kernel@quicinc.com
-Subject: Re: [RFC PATCH net v1] net: phy: aquantia: Set phy speed to 2.5gbps
- for AQR115c
-Message-ID: <473d2830-c7e0-4adf-8279-33b91e112f80@lunn.ch>
-References: <20240913011635.1286027-1-quic_abchauha@quicinc.com>
- <20240913100120.75f9d35c@fedora.home>
- <eb601920-c2ea-4ef6-939b-44aa18deed82@quicinc.com>
- <c6cc025a-ff13-46b8-97ac-3ad9df87c9ff@lunn.ch>
- <ZulMct3UGzlfxV1T@shell.armlinux.org.uk>
- <1c58c34e-8845-41f2-8951-68ba5b9ced38@quicinc.com>
- <1ed3968a-ed7a-4ddf-99bd-3f1a6aa2528f@quicinc.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TiMHCIVK"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pxAC69W4IQtlSd4o7za87z5ooPABhvNA9K/OacVAgSKGZlc+mH2ltT+iYBY52EQ6JRGwxWqnqbSe2OqIGhA0ijQsrUK0g5F6o16EvaJ/MnaquNPIzEUw7YMMjJlY3Lub8nO0pcWgvzpF2eOkcjML04aTi7UKR6qp/vDDqWvv8ZNu1YKixOFje4Tmi1R2X4ptp2v4Ut1vjtlqxP63cCLwmx5z6ls7vDcCkyp6u09AqfbJS5a9fa7DcmIl88TPPNmlVRMYewZkA+KsoZoppcz1PyBQJ69DvmPgHXxmRKuUVxv6seSBvdSQJKK2q3mDA3hwt+wUSpuPNsbW3mgT4nmO8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xrKEgEmdszQ4YswZzd4bSgnmKKrlpMlIRIshEDVvg0Y=;
+ b=p696ztJ8N+7Ljoskv1DO4EBQqw5Q6oUhSScwE3UlSuqyLE6TaKcNvzPMJnUJQYfRidxutVhaavDLwpV8TNXICK907ss6n4/9OLssBsgZZS6/B+NVkDHB/wamtaiKoSClI2sCjaMJx0q5j4+2m2/1ZMAGhlgrNSJRYv4UtISiQIveXjtgokpkwUefWW+1gubP9kxzKVwTvo0nmlQZTphbuDGs4TlUQbh9nyW5aB0bzNtxVlQOlzYbMkL5uR582fqTWomCNh+c8ai37teU8m3HQ2qmQ98r7RuBBM37w8uBMIjNpPWSZtuMDBZB20K0nj37tjsS/zmCHHuH/vS8+L2Q5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xrKEgEmdszQ4YswZzd4bSgnmKKrlpMlIRIshEDVvg0Y=;
+ b=TiMHCIVKGCfb2s+uYuG2jNTRArWaxRW5ycquAl/eDdy8D6DlHYa/Fmg0JoJcAJvbJiZ36OIK4pPhmShWl7GQLZVE1PKpuHAqEI/lJunmh1V6qAOTODJa6WmDPeIIKbD7Kmos35KuAprjb2bf99yMABmsnwErD15Wa1qhmmi1eSRLCccGrUCH60GECxhj7RLsbn09DbZNfjMI5xHCjAJPSublAPiCZOKBpbVwQSg51A1MDRwlkJ0fUEnKOVpjmsm3X1OL9dOnXvy0K9SWl1bkOqhENm/lfyWnhLQvORrMaaAh9+wyUFDLK75UZGzTQ167zspVrGrv2jKVe9ckBaCSnw==
+Received: from CH5P222CA0013.NAMP222.PROD.OUTLOOK.COM (2603:10b6:610:1ee::14)
+ by DM6PR12MB4338.namprd12.prod.outlook.com (2603:10b6:5:2a2::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.25; Wed, 18 Sep
+ 2024 21:59:50 +0000
+Received: from CH3PEPF0000000A.namprd04.prod.outlook.com
+ (2603:10b6:610:1ee:cafe::ee) by CH5P222CA0013.outlook.office365.com
+ (2603:10b6:610:1ee::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.30 via Frontend
+ Transport; Wed, 18 Sep 2024 21:59:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CH3PEPF0000000A.mail.protection.outlook.com (10.167.244.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Wed, 18 Sep 2024 21:59:50 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 18 Sep
+ 2024 14:59:44 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 18 Sep 2024 14:59:43 -0700
+Received: from build-bwicaksono-20240327T112120892.internal (10.127.8.12) by
+ mail.nvidia.com (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.4
+ via Frontend Transport; Wed, 18 Sep 2024 14:59:43 -0700
+From: Besar Wicaksono <bwicaksono@nvidia.com>
+To: <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+	<vsethi@nvidia.com>, <rwiley@nvidia.com>, <rknight@nvidia.com>, "Besar
+ Wicaksono" <bwicaksono@nvidia.com>
+Subject: [PATCH 0/3] perf: arm_cspmu: nvidia: update event list and filter
+Date: Wed, 18 Sep 2024 21:58:43 +0000
+Message-ID: <20240918215846.1424282-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ed3968a-ed7a-4ddf-99bd-3f1a6aa2528f@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF0000000A:EE_|DM6PR12MB4338:EE_
+X-MS-Office365-Filtering-Correlation-Id: d47c47dc-171d-4040-955f-08dcd82d3817
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?060ngikBBaqpOr/bp3xgHIF4IZ/Y+CRzhyQvjSKuCwsX0sc5UtOzgrhdXuN3?=
+ =?us-ascii?Q?dNQNZzUI9xTRF2MGi+QkV66QjSU9ATPy6zSbkKYOScEyTO/1vCD2ptNR+S+Y?=
+ =?us-ascii?Q?gi6x6WaqvmhoT9VUmZAwCodJb8aip57Fy4WPviSbQ6DE5iJMoSy1o7CTMamr?=
+ =?us-ascii?Q?6wrbD4kMA8LcdQeUjKKb9gC6/wxlVMBjrqb0a67sssJXnlTGN6IOVftS0cSO?=
+ =?us-ascii?Q?Ti4e8Hsxd1J0FdlF26fSQm/L22KZmmIUT5yp/YhdSgxkudTZZKQk2/CQchzZ?=
+ =?us-ascii?Q?KUR9DVPpD19U2Rtqg+G8y/DxxiMZf/LuVXBjSZOEvWDQIDYABAGZ0X0qIOdZ?=
+ =?us-ascii?Q?OyVNevR1r5Az5NjL37/DeXkC9oII6pazMrzmasA2hBkCHyCDHSQI0qANaTtk?=
+ =?us-ascii?Q?a22VkTe36zcfZGjbIo4ZljQEj4JBYhO4E7An2FjNCTdTNRGMnfYOknEpoZKx?=
+ =?us-ascii?Q?XIXHx0dxAlIZ0AoQwtsrm0lfik+I8lLNFTdTAAJrXfkg4Hy85rw5X7h3EOvw?=
+ =?us-ascii?Q?CY1etekrDkn4xL87oOI8FYkEEHWur6AC0k98KYDz3rd1Tb8h7AmaYqIvvd3k?=
+ =?us-ascii?Q?TbMEgXMxgHgNwPNN2zG0JdF8PUdN5cduXPmGDCHM7dqCmXptKiQSv6uP2P+w?=
+ =?us-ascii?Q?kuLGgddBQrJthRjwGFybBw2Et/Tc86kAFb0pGYexieRu0lBnc7K5RJYhIJ4O?=
+ =?us-ascii?Q?asg9idQVmSt3PxguV/gAeS1cdFISIYiieLbC6p1J6XWXI0Bqp64lhm/arAO6?=
+ =?us-ascii?Q?sYt8s0uXTD0k2bKGz5T5m2cFI/8KOGSWMpiVz+yR4otKv60ARn3xh7FJR6p1?=
+ =?us-ascii?Q?gILI/lKeLbZxPAASLoFpQ3fe1LshHBhKqrVwYdOzH2os2h5xVoE5gMJm0Fer?=
+ =?us-ascii?Q?UWyvaRR4GyteuKjbEdU2FIbRioqpEkMBcTkKLzYlDo1A40xtV8xu4p4supDu?=
+ =?us-ascii?Q?kd6hHd+20lRJJvhv7V6e5kkJoYTdH97fxoZuREUnZxDpsuqq5sN4M4dsV2Xh?=
+ =?us-ascii?Q?ge5NvG7l5wGw+MCcfzMRUo1OcvcanBFcQqR4bZDh5qRz7BEc7QftfFnMrH71?=
+ =?us-ascii?Q?Mqmx6Ret53jMU5muhKTynYWdyJcMiLB57DarkjYNJrICfMUi6qjnkopU+7e1?=
+ =?us-ascii?Q?qO7Pd8eajZl2ARYOemdwz86jkboqX7SjobMBTZCPB4CW9IQ46YuSQzXAcGMR?=
+ =?us-ascii?Q?0uOc2ljk/qtR8kxEkhhYooEjWKUWxGqwpXkJmmN8twG1z3cN8kIoqf+yFc4H?=
+ =?us-ascii?Q?u5QHnaJFaMhlVMYtvxF22osqH73p+/N2bL69y6EEO5JdsuOsBctjhNA0ypHs?=
+ =?us-ascii?Q?r3dLs9HGlyeOy7TF3Ysi/OOD/31WwxMrCLJitB5D1nQjZD18oE6PMqFdI5at?=
+ =?us-ascii?Q?q3kBSClHlvanRkjQ6zE13el5V1mO3TUqvHbVbOLEilqAQUBjaG3pBltuzCkG?=
+ =?us-ascii?Q?4tKVZ1oQZ+MXvhs4XAt0C/bCg417HlkG?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2024 21:59:50.4402
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d47c47dc-171d-4040-955f-08dcd82d3817
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF0000000A.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4338
 
-> Russell and Andrew 
-> 
-> we added prints and understood what the phy is reporting as part of the 
-> genphy_c45_pma_read_abilities 
-> 
-> [   12.041576] MDIO_STAT2: 0xb301
-> 
-> 
-> [   12.050722] MDIO_PMA_EXTABLE: 0x40fc
-> 
-> >From the PMA extensible register we see that the phy is reporting that it supports
-> 
-> #define MDIO_PMA_EXTABLE_10GBT		0x0004	/* 10GBASE-T ability */
-> #define MDIO_PMA_EXTABLE_10GBKX4	0x0008	/* 10GBASE-KX4 ability */
-> #define MDIO_PMA_EXTABLE_10GBKR		0x0010	/* 10GBASE-KR ability */
-> #define MDIO_PMA_EXTABLE_1000BT		0x0020	/* 1000BASE-T ability */
-> #define MDIO_PMA_EXTABLE_1000BKX	0x0040	/* 1000BASE-KX ability */
-> #define MDIO_PMA_EXTABLE_100BTX		0x0080	/* 100BASE-TX ability */
-> #define MDIO_PMA_EXTABLE_NBT		0x4000  /* 2.5/5GBASE-T ability */
-> 
-> [   12.060265] MDIO_PMA_NG_EXTABLE: 0x3
-> 
-> /* 2.5G/5G Extended abilities register. */
-> #define MDIO_PMA_NG_EXTABLE_2_5GBT	0x0001	/* 2.5GBASET ability */
-> #define MDIO_PMA_NG_EXTABLE_5GBT	0x0002	/* 5GBASET ability */
-> 
-> I feel that the phy here is incorrectly reporting all these abilities as 
-> AQR115c supports speeds only upto 2.5Gbps 
-> https://www.marvell.com/content/dam/marvell/en/public-collateral/transceivers/marvell-phys-transceivers-aqrate-gen4-product-brief.pdf
-> 
-> AQR115C / AQR115 Single port, 2.5Gbps / 1Gbps / 100Mbps / 10Mbps 7 x 7 mm / 7 x 11 mm
+This series update the list of supported events and filters in NVIDIA Grace
+CoreSight PMUs.
 
-One things to check. Are you sure you have the correct firmware? Many
-of the registers which the standards say should be Read Only can be
-influenced by the firmware. So the wrong firmware, or provisioning
-taken from another device could result in the wrong capabilities being
-set.
+Besar Wicaksono (3):
+  perf: arm_cspmu: nvidia: remove unsupported SCF events
+  perf: arm_cspmu: nvidia: update CNVLINK PMU events
+  perf: arm_cspmu: nvidia: enable NVLINK-C2C port filtering
 
-You might want to report this issue to Marvell, but my guess would be,
-they don't care. I would guess the vendor driver ignores these
-registers and simply uses the product ID to determine what the device
-actually supports.
+ Documentation/admin-guide/perf/nvidia-pmu.rst | 32 +++++++
+ drivers/perf/arm_cspmu/nvidia_cspmu.c         | 92 +++++--------------
+ 2 files changed, 56 insertions(+), 68 deletions(-)
 
-> I am thinking of solving this problem by having 
-> custom .get_features in the AQR115c driver to only set supported speeds 
-> upto 2.5gbps 
 
-Yes, that is the correct solution.
+base-commit: ad618736883b8970f66af799e34007475fe33a68
+-- 
+2.34.1
 
-It would also be good if you could, in a separate patch, change the
-aqcs109_config_init() to not call phy_set_max_speed() and add a custom
-.get_features.
-
-	Andrew
