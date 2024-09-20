@@ -1,82 +1,200 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2082.outbound.protection.outlook.com [40.107.104.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD4F1957E7;
-	Thu, 19 Sep 2024 08:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726736161; cv=none; b=Jmt/bp1iAWgNgI0+HRJqa2OjHgpejLXYz/uVKRG3oe3f3yyD56ry60Y5UqEht1w2bDvCQu/CGxALBV/BvMIpQ9vPms+x5pkKxj5qAGiko7xh6QDPW6NujxA9kuqHamiOIT1nlp3oYJLWT7mHYSsJ7G+QZXWWRgR87aUR7ESq3I4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726736161; c=relaxed/simple;
-	bh=tLo0+Gejk23J0fKT7g+olOV4M1y+Mq8K+ASTF+mWBEs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sNwgJmz3BHMesEZwgc8bMj84G1lFd1qEdySAO/34lPffLJJMJAgKMqX5K5EzaFd22kFsanGfQQC63dJg18GuG9ypBTNrkZNnMknKwW17HhXR7eQnrg0IEUWLv5NioEuIeywJKb36QtmUGhc04U38DRq41n+28oUDQ/0Io5iSK+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=W8rfm6II; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD421E4B2;
+	Fri, 20 Sep 2024 12:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726836262; cv=fail; b=rbHnDMiyFliMewcIMsB9Jofrc4yqaCTVRSbYYu9DttsKWfOZ0YnVlFMwRnLsTSjgtJib0sjApJ6QEo6xt9Y0IrwwcRLQfn7Hni2Wof1JtfQxznJ+88yhLbxp/98DiNWfRGOu9n/IGPC+2+vmbFToSjoLmEMXo+UC96yC3f6Lt4Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726836262; c=relaxed/simple;
+	bh=dfHFovhCzbeLtjWINkz/2Zhc+rWEOBWFv0JaKcPDnUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LBAf4BDhalOi+cpdixMSeNYKPcj9ddz8nFR0fd/aCquu0dPjPHiLURPb60BctO6GHE1ngt2N9L+smx7cEtrwll49NHU1m5pvw6ob6nGRoq2Po4QRijUw8/Zbhxeln9IjD5uo+KIi2T9420dKysZxiEAf4a55Af5ugSyHobnwJhs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=N+KnNc9H; arc=fail smtp.client-ip=40.107.104.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="W8rfm6II"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id E63DE6003C0E;
-	Thu, 19 Sep 2024 09:48:54 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id 94kb_oDrimSw; Thu, 19 Sep 2024 09:48:52 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 32E406000249;
-	Thu, 19 Sep 2024 09:48:52 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1726735732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WvgPBwIZkNLSeUVeZEOkmQqK/jVBqcgra9Qwax10Ge4=;
-	b=W8rfm6IIyDLO58GT/2Lny1iZY59+y39hCAGgUV2wsY/zIOJfE6wLk3LPwUaQsdrpoHbjZR
-	YEbr9sfCLBw0sKjBHTary7tjU3n90357KjpupX0p101g587tEwYBD7ip2Mu1RaehSN7Wa7
-	EQxh0T9ktHVh6jG90MkFBnqUCrWT9Mk=
-Received: from diogo-gram (unknown [IPv6:2001:8a0:6a67:5600:aca0:c311:d240:b169])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id DB82F360107;
-	Thu, 19 Sep 2024 09:48:51 +0100 (WEST)
-Date: Thu, 19 Sep 2024 09:48:46 +0100
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-To: jja2000@gmail.com
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] Add touchscreen and TMP451 tempsensor nodes to
- Google Pixel C (tegra210-smaug) Device Tree
-Message-ID: <sjcgt76mo6pcw6n4vxg3zgxxjbeu6ixfbseqglml67xt6ltwye@a37rvqudxidh>
-References: <20240916-touch-temp-v1-0-5a008b2acbc8@gmail.com>
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="N+KnNc9H"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LQrOSX3tIAsUxBnh5S7sICGA/mXfJARrK8d6FLUB8P3MG1NU6mxtyodd6sceHS+2+3j6RX97gzMuHniBeF0Qc/KY8vX3oYXRqYefonqpdEjW1nDL1MyrWFDZVwWJuGh0l1JFxP+S6OE5wEfN1aSKwe0Wf3OFBPP4eYjyIKR3lIieFgi87d7lJ1QNYDoCGXlxa2W+IRLg8afPwX5YTE0Eq73tB8um4ts8awptw15SC9wo/EoJ/phEA171xQ6KkCl9+uqsZj/lVnYBscp3NzB+InKP+sNv9CYIfDGGHQuFw0wTmamZplQUOsfCriJbCSHuL/2m+4QXZtvwZXovDyBLrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lNuGXDflSXOJJJ9luVlS4TJo37l/9M6SPKX1bdFZDzY=;
+ b=i8LHYdswvuVgXuywS1VBb8MZPxRG4b7yjvI2EqnFL58lxvc87bKADZ+y+qcBmPf+04s0OEWBz6UDjoHzXfyv8YJ2AUv5QnqjZ1RA8FvvAhI1ty5lecV82yTldV8rjULVURC22DNm/U3iwmOLpdP3z/8YB5eKrYP6P3SHK/t8vQlnDFh/VL1lhP5TWsoZsHObXadzL117Rc6Fy7aBYUT/v059fcSh1CPeB9N9OEq76m8E9pJCpoG0W58/6RnSITD0YZiUkWHF/p5m4BrR5EhHVE4OQ4I3IgR60h0DeCcrusp4qeThfaVvnW0cAkqCDBAehL3RSLoZ/vcBkYyp+26hcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lNuGXDflSXOJJJ9luVlS4TJo37l/9M6SPKX1bdFZDzY=;
+ b=N+KnNc9HfpiV+/FZ+SgKfO65B2b0T7WWzWz3axJQ+cYS/Mrz99AWTOR6/x7ylumLVjGjZ416bsW2vZ4+vuVbJHj8amvuRulGSRIF5kuAwMZqFo3W61WhQusAqZxfFb7EyUs7wl9Suz9LJQWOwJIIgEoYt/Nbgw6vyU9K9//Xr1u6RNIrUlQ17idndmX09JmT3XsWal6RW4ONh6cTUl7Ja7z8Dr1aEeyEe5SDdVaUqrOQz4Nscqi8TXTfIacy65yGiRL+TPctSmjG45hpTgh4LHTqEA5ZJV0KjolV9ydBzY0xApyEryGOZ09x9wKjwJp9iBJVsYawE0Wy5mnFIRbiUg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS4PR04MB9576.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::12)
+ by VI1PR04MB6847.eurprd04.prod.outlook.com (2603:10a6:803:134::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.22; Fri, 20 Sep
+ 2024 12:44:15 +0000
+Received: from AS4PR04MB9576.eurprd04.prod.outlook.com
+ ([fe80::9cf2:8eae:c3d1:2f30]) by AS4PR04MB9576.eurprd04.prod.outlook.com
+ ([fe80::9cf2:8eae:c3d1:2f30%7]) with mapi id 15.20.7982.018; Fri, 20 Sep 2024
+ 12:44:15 +0000
+Date: Fri, 20 Sep 2024 15:44:02 +0300
+From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: l.stach@pengutronix.de, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, p.zabel@pengutronix.de, robdclark@gmail.com, sean@poorly.run, 
+	konradybcio@kernel.org, quic_abhinavk@quicinc.com, dmitry.baryshkov@linaro.org, 
+	marijn.suijten@somainline.org, thierry.reding@gmail.com, mperttunen@nvidia.com, 
+	jonathanh@nvidia.com, agx@sigxcpu.org, gregkh@linuxfoundation.org, 
+	jordan@cosmicpenguin.net, dri-devel@lists.freedesktop.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] drm/imx: Use IRQF_NO_AUTOEN flag in request_irq()
+Message-ID: <upylfysoypn36ktq3qjkoyoshbmfp43wvu5rf66pnyxysil5qc@pwx7ljvkvc4f>
+References: <20240912083020.3720233-1-ruanjinjie@huawei.com>
+ <20240912083020.3720233-2-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912083020.3720233-2-ruanjinjie@huawei.com>
+X-ClientProxiedBy: BL1PR13CA0420.namprd13.prod.outlook.com
+ (2603:10b6:208:2c2::35) To AS4PR04MB9576.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4fe::12)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916-touch-temp-v1-0-5a008b2acbc8@gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9576:EE_|VI1PR04MB6847:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3d31bb3-fab0-499f-a29e-08dcd971ef2d
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?l6KU5pjsUgHWmSuORfk7rEz3FOYTdWNSp1Kg1NDvtiYiyOMsNIs+l0DaMO9m?=
+ =?us-ascii?Q?8bcyfF6BMpwhqRM50T4Ec4KBKERj+izR/zvA40ib4YfJlCie0m/soVnfQXgu?=
+ =?us-ascii?Q?mDNA5kX5ScOBoMb8lw9PR6y1WUaU0K3G7swh/feiL+olCeS4xIpvNtVpV57M?=
+ =?us-ascii?Q?xDoBFZ3k2VmhJ6n5PdSLFjDzdss+KStQsgZNK6eK+EXOwMBxnwsjRNSu3C20?=
+ =?us-ascii?Q?1jewCZ+FnP8BDhH2D8ZnEfdpy7FdM70NF2qCZ88XxwTjcsGquKmctVgkG9cb?=
+ =?us-ascii?Q?J9l+xQKrFjFTB61PZSnQsx9CEUwuz7Ov08dBBJxbSE8aQyjZ+CkZY07YBKvt?=
+ =?us-ascii?Q?/VODoRnu8yciffNJoIKHhjH+piAGN2Pa4A4RkMqZAhGK2sBNtK13l00iErEq?=
+ =?us-ascii?Q?DaTn3XoBfi6DQ0TMZiATOzqvcH0tZH4b9w+gTQLS1/ZL9Nka0utoDjVPt3RD?=
+ =?us-ascii?Q?xoCw7HEepWOdarQqPaBamUdZ7v07IaAzJ/VFuCX70P/gBS2MkYPzbGumoAlQ?=
+ =?us-ascii?Q?bkvh/drnH8lUPJydGlZCtN9MFAqXwEtkirXKxCYSCIppZkF0xLkp0byEU0jO?=
+ =?us-ascii?Q?grfMs0ykl7kiaPhgomrTLethljYoO8ey5eoHAUCCrqCQHPPRtEoavA8SbUnu?=
+ =?us-ascii?Q?ZVmqSJlKDSExQgdev4PZLWiiKPQrU8cXE2Ic1IPFs8C8oFjvD9hxs1LloYm7?=
+ =?us-ascii?Q?ll1Su8uG91svCyVXj3F7nS6W7ivwaEooZJAqD8V4+dPjZALlzqqDhr+gD4R3?=
+ =?us-ascii?Q?ngMckox765oRksfSjwLuy7s1iKk7S5WLs/MJVWlqM4VnEv5jK+3lBynzKUuL?=
+ =?us-ascii?Q?0j2nCmOi9vNmlzV7R/bpReJ3MJx9l6k56ku9K2o/Ac3AlpaMr+RVUZAWIDuc?=
+ =?us-ascii?Q?/hI6vv5TLPt3EnZvD11ndi0VgDTd4AE4v2B84jK3XvyK9NpNB3JMxriB3vZs?=
+ =?us-ascii?Q?L/iewvFOqiAy2pKZ+jzTV+NpFyhzo+tlucrsT7VuiG3V3cXClU4c6VN+U0eo?=
+ =?us-ascii?Q?greNgbjifGPMr2iCZLfkwatnbdYATvtJpvOL86o+VCZ9kQ+SI8q+z3FHJse2?=
+ =?us-ascii?Q?ubi9K660OaRHPo6w3xHkxZng+cygQ9fjwUVRjbKz4VTtEG4JBiHOvyIsClUa?=
+ =?us-ascii?Q?+FikqK+xCY+5utfBhqHBRHG//AFU08xp6bMLYVgNuBAflarrJzWUCbjmE9Tg?=
+ =?us-ascii?Q?2rSXMMMVeeInQE+CaiZvfJKMH0cZBeOCU/DGOwzcFTrqjPaYz09GWSxS7KCp?=
+ =?us-ascii?Q?UR9ecqkDePy3o3Fv78WA9f6AGZ9SUFzKr9ftFXxzjw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9576.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7ZLMaZZhpBGRdlo5StbEzeayDD7cVPSbGUyDI6/xNdNnoXLPv/9EmpLkVHBk?=
+ =?us-ascii?Q?q9IhemMVJqxThPiqSx5lINa6dm9YrFXHsip6Mhh3NjnRpavnk9FrubvOBQXc?=
+ =?us-ascii?Q?VShFbVZ7eaHT933sPf6RBgmcKe0F7bzFJ/R22rZR4MGDWrr+7eOz4Wpjvc/o?=
+ =?us-ascii?Q?U2/9JDzHguyJjIvZKaaLQ/LZfPG9ilOnkEol21QGuMwJF2g2owdluBG8DhDA?=
+ =?us-ascii?Q?bpNPITkfN6CeDjQ6lOaYzgDa0nUeEZwbskmDCQh0PNg6G4/j32j4938BVkDR?=
+ =?us-ascii?Q?/WDuYvwPFYnrE4EZT87Mp0yKmh6WJmubs0JlNJ9tHW8RWhaH4kwLP2kWspwF?=
+ =?us-ascii?Q?h8m8QKwOzhY3fzNqBZQxqVHkphHGyIjU28s9Ss4abxAEsKAQCvNdhvOELdN3?=
+ =?us-ascii?Q?rOrdlAKWBBLXkqUJLHT0PXInxa9DKFK1RHvXnslzPtDYFo7GKMNPV8v4hndN?=
+ =?us-ascii?Q?vKgTej3+IQpGsAlqk1hEPI2wBlBkkHJOa9VPEZCmnN6RnFoImXWd+H4UMSBL?=
+ =?us-ascii?Q?sRXNkJQPCJaqqe3qJFCyzIkHfa3QkeYLr0O47+E2yUZ7Mv5rULDA1ggj5Rcj?=
+ =?us-ascii?Q?/PI/5Z90PqxIh1m3HUy63sMZBtA6dJGoF7ir8aJVCVSQlzqHkzMDUCd8FNMo?=
+ =?us-ascii?Q?VA4tOEEdvkKNZ+/weV1+Xspx2+bLR1cLDR5ZY+4YPWV1OZoSFshhTBcM+6/G?=
+ =?us-ascii?Q?wdJf9YRK+x1x9QZ+jWokFAtdxdvABwSFLQh7XIJ3BeJbjY2gpU4Nv5yJoOsx?=
+ =?us-ascii?Q?e5/VKvc3ad2WNVORTBzs55NHfcQlAO0e60kkiTdb8UJg1Ddpyh8p5K2YVYR9?=
+ =?us-ascii?Q?SRZqCATxYfw6FuZI8/ndyv8Ed4IUNA9qufRutlTfVaQxRkE2JNfJyFr/HTYO?=
+ =?us-ascii?Q?Ti7z96Rj40hia8UPT3yROstkJ8I55obd1rMLiSx+at0nzlwjVAxg6BUT9dfj?=
+ =?us-ascii?Q?k7BRSihvoQMl1XHDDHBVwgivDurX4Ht7ze1zOiZLCc5a/OJ9W9WbEFCoGqXY?=
+ =?us-ascii?Q?wIqhZGg/sPRr8QGfeQJKN/fofUTx+3Cc11oh4XTmZhib8L/JZNDomCE1JSVG?=
+ =?us-ascii?Q?OgR+pumJEJhzpyEyx/o3Xiqto9xLiYR0aOHIZ5xEPvaWnXF0iROE4QiQpPhA?=
+ =?us-ascii?Q?HIlVPaxE33x8XFsgpcI6R0xP3WXhh8QF2oUruxWZzj8gjbuKK710aEc6Lkne?=
+ =?us-ascii?Q?QJXDn27aO5fhp8aMKlxrCpfeRk5HmapBXq1OCeR+HurxUgLQS2Z5z+JTcZVV?=
+ =?us-ascii?Q?KmUQ/W1A8Z2n6DO9rnhtubtWhPQNNk46x7M34vAfD97BpAFEjkH7nqiYp0vM?=
+ =?us-ascii?Q?yrMGzS5cSyoSXCBkFpZSkVY9gEHn08d9toPaeTFoth7RHOPiYhkHI8kveS3p?=
+ =?us-ascii?Q?Hyxd4XcYris3Fl0mDdacU8X7hKp1LH/6dENiSBEhjAds++winWn/ogqhGHLM?=
+ =?us-ascii?Q?fJi9ZyK9sYrlV9dNYf7sfl3Dxm2p4DD/BYjFWEMcZMQ/kDHifzn7B43sAH0y?=
+ =?us-ascii?Q?k1dizn0bCoNZ6WEpWC+3Dqpgl4FMsL1VmUUEPkRNNhvI2tbd8Jv7E4XmQ8es?=
+ =?us-ascii?Q?A3XhtisSE+z1Xk8sXVNQl4TdPW19TAEXxilLT09SR4iKHib/MuNnlJS02X1G?=
+ =?us-ascii?Q?Xg=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3d31bb3-fab0-499f-a29e-08dcd971ef2d
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9576.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Sep 2024 12:44:15.1930
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: J2Xu7SwLDN7V1ZA27P3ItK2uXikyzjmXnkdjdYoGja9F6Kjv78ha/dYfUvFiUSy84NF3LzTXx/j10gxdqQ9PMw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6847
 
-On Mon, Sep 16, 2024 at 12:48:12AM GMT, Jasper Korten via B4 Relay wrote:
-> Information to get these working was gained from downstream DTS.
-> Link: https://android.googlesource.com/kernel/tegra/+/refs/heads/android-tegra-dragon-3.18-oreo-m8/arch/arm64/boot/dts/tegra/tegra210-smaug.dtsi
+Hi Jinjie,
+
+On Thu, Sep 12, 2024 at 04:30:16PM +0800, Jinjie Ruan wrote:
+> disable_irq() after request_irq() still has a time gap in which
+> interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
+> disable IRQ auto-enable when request IRQ.
 > 
-> Both were missing upstream and easy to add:
-> - It uses a RMI4 HID-over-I2C compatible touchscreen.
-> - TMP451 is located close to eMMC according to iFixit's teardown.
->   Link: https://www.ifixit.com/Teardown/Google+Pixel+C+Teardown/62277#s290806
+> Fixes: 9021c317b770 ("drm/imx: Add initial support for DCSS on iMX8MQ")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+
+I think the commit subject should start with drm/imx/dcss. Not sure if
+this is worth another patch set just for that. I suppose the commiter
+could fix it before pushing.
+
+Other than that:
+Reviewed-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+
+Thanks,
+Laurentiu
+
+> ---
+> v2:
+> - Update the commit subject.
+> ---
+>  drivers/gpu/drm/imx/dcss/dcss-crtc.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> This is the first time I've ever submitted patches upstream myself.
-> If there's anything I've missed or could do better in a new rev,
-> please let me know!
+> diff --git a/drivers/gpu/drm/imx/dcss/dcss-crtc.c b/drivers/gpu/drm/imx/dcss/dcss-crtc.c
+> index 31267c00782f..af91e45b5d13 100644
+> --- a/drivers/gpu/drm/imx/dcss/dcss-crtc.c
+> +++ b/drivers/gpu/drm/imx/dcss/dcss-crtc.c
+> @@ -206,15 +206,13 @@ int dcss_crtc_init(struct dcss_crtc *crtc, struct drm_device *drm)
+>  	if (crtc->irq < 0)
+>  		return crtc->irq;
+>  
+> -	ret = request_irq(crtc->irq, dcss_crtc_irq_handler,
+> -			  0, "dcss_drm", crtc);
+> +	ret = request_irq(crtc->irq, dcss_crtc_irq_handler, IRQF_NO_AUTOEN,
+> +			  "dcss_drm", crtc);
+>  	if (ret) {
+>  		dev_err(dcss->dev, "irq request failed with %d.\n", ret);
+>  		return ret;
+>  	}
+>  
+> -	disable_irq(crtc->irq);
+> -
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.34.1
 > 
-> Signed-off-by: Jasper Korten <jja2000@gmail.com>
-
-For both patches:
-
-Tested-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-
-Thanks!
