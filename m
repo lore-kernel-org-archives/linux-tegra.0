@@ -1,105 +1,111 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8111A1A0705;
-	Mon, 23 Sep 2024 18:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31C7198830;
+	Mon, 23 Sep 2024 20:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727115937; cv=none; b=OhD59aBLh6M3je8L18pXzIgjnMiiLwMTZjC4TqATKmP9JKSOl141XspeY6szU51qx6zR/s7LjJVcIogpmyVWWTiyaPXn+Fnh0kAVtj51N/i5X0oBdut/L+DIsM9J2HZZBZMlZnjYSF0OrJ6Lm4sD78pt1y8La8mxiiqn1QZ5hhs=
+	t=1727121886; cv=none; b=LCIbJttbYFspZ1cHDDx1GOK1clwYZnISZy3r5kTx9w0cui/8UTaOzCes3TkNJXmF5iLh0VYfUOgkAt42TJPmvT8bphH23DE3eSc8VQSe23gi/0JOYMlkgMr+aNvh1rW+VU4vwzgf5laWiLVLMiyMuoFfrnF9OTiGaSPwaqikppI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727115937; c=relaxed/simple;
-	bh=rgY/vVl37tp0D3IIw585H/GDi1MMkXIhiTN/63FpNmE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MS8lQCVrSf4Km1XOoSEy+/0GlrVf7RGkhWWIfFIsYl8xdPUgbCwKOYEWye/bOphlsyzqA2+ixskL3ddw6gmS9/gdlUGDfcjtpMqn9dS2044adQaIC0UunaaMq3s3zWg/EWpal1GMKL+jkwJt1R0zr91CayZMH7zoRenyHY8uqcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=MoWAEKAG; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1727121886; c=relaxed/simple;
+	bh=ZRHI1Hfm5ZxEGbRNykHoz7TMiTcy3t8/wOqhuSAbZRo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=mX1XsNA6w9NJ47xVxFQvBVpyIZ1tl+V9wP2I+JZuYWkkEtPvpd28mlQwgVwdpESAM+31v1t6CjOicFCmYA8Pn2K3sktz8fNJizS1r0PnCsgHLjjJi2sf6BjRMgbbnXa2dt18Jve6aiWOuyJGq7KJNmLkmeBsKNgNWEP5nL1Mh7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=ALfZhqoX; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="MoWAEKAG"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 0E216600231E;
-	Mon, 23 Sep 2024 19:25:25 +0100 (WEST)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id U7aY_7lLMOXz; Mon, 23 Sep 2024 19:25:22 +0100 (WEST)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id E9BB960029B6;
-	Mon, 23 Sep 2024 19:24:58 +0100 (WEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1727115899;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TRSmLjrAR22kYsud3ztBVUWZY/lz/kb9Ctk04S0sog8=;
-	b=MoWAEKAGm+r02j+TTrsqfmgXxFmnZPddBbSDUnskMpujgZmIO92mRH1USNSt/jWVY63GqU
-	NdKptSANrSFnuYgG9SqpUePWZD5MpVZxIPSAopQm+RFYITn8uRXof3CjoORt6ltTxmG56M
-	Of8LgNxDaC5nRJdFS0FVKi/YmCeYD2o=
-Received: from [192.168.1.151] (unknown [IPv6:2001:8a0:6a67:5600:aca0:c311:d240:b169])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id A542A36011E;
-	Mon, 23 Sep 2024 19:24:58 +0100 (WEST)
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Date: Mon, 23 Sep 2024 19:24:51 +0100
-Subject: [PATCH] arm64: tegra: Add SDMMC sdr104-offsets for Tegra X1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="ALfZhqoX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727121868; x=1727726668; i=markus.elfring@web.de;
+	bh=NyPHHbZJt1HoUZRiEgs1U+YNuccocLd01ZpmSfeY5RU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ALfZhqoXZdWlkpwUpO5jd2zyGQb+kNmoSM0mkPaOdNDq2iuvGbuK5QTga4edS5E8
+	 Kg3jSgBtoQjw7LuDeaqmhnHHzZgFPhG9SYaS/WbsoSDozJnjR7fSC+CQCJf+zFV1l
+	 xZrf6wYXO3BgCT4QsM8N6USMjWlL3lbMeVJWGXOz75+QohgVtEX5sCxSefRondXMq
+	 +d+LB8pFz6RqrPoL0AHnpUrVdsujj1CYPHr6nSykLE/wug12joHUhs8ZsZlfvS6f1
+	 CQKj0yFUSOkqJLhpcJrPgb411p6L7Fn61eVDy0TWPGa7/TG4cMrS3igOCbvUreSQF
+	 wZub1XcmgNE20xezCQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzCA5-1rxiTA3moF-011JJo; Mon, 23
+ Sep 2024 22:04:28 +0200
+Message-ID: <86154518-3338-4370-8fa2-80a8b0e10302@web.de>
+Date: Mon, 23 Sep 2024 22:04:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240923-sdr104-v1-1-ec7b3394f880@tecnico.ulisboa.pt>
-X-B4-Tracking: v=1; b=H4sIAHKy8WYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDSyNj3eKUIkMDE11js+TkRFPzREsDE0sloOKCotS0zAqwQdGxtbUACqK
- PNlgAAAA=
-X-Change-ID: 20240923-sdr104-36cca57a9049
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727115898; l=1337;
- i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
- bh=rgY/vVl37tp0D3IIw585H/GDi1MMkXIhiTN/63FpNmE=;
- b=M3J/ITte7MRVZdkbs49/Vl/+YYNyUfrPHUQdfl6ucPE9rPm7zvs1016mthrc3Ij+Rl7wHcoSK
- S4MjK+5/e5MAdMMNw9UT55hR+0n6ToqsbKQYLuwtfKYQlhhQsKyXh+7
-X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
- pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
+User-Agent: Mozilla Thunderbird
+To: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+ JC Kuo <jckuo@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>, Vinod Koul <vkoul@kernel.org>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] phy: tegra: xusb: Call of_node_put(np) only once in
+ tegra_xusb_padctl_get()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:LQwlz/kX37ShGSCKg+wsmk/jy5QFekqlLkEoDC2C3n6lj3Xnjou
+ EKLG8jhPmkzaNK6J1fBYRRP2X8vZRqDaqi1zmYYs8ZZ2MEgAulmeSdRNWk5lvG8AsmTrC3T
+ UCoTud7osP8h12SZaYl0Ax9F/oV5aglHwebeGfcbwhSrM4GgPT3BktKUM+q/85IaViOwGoc
+ 0sRPGahvH3/apimupIhAw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:84K41IAe/FY=;YAwjXj4z+47HErv9+7gsXYuIAeD
+ t6AOlRx8gIajBq8ny9tmzZK+aOdvJ8ryl+ZG10e7bal6lnpQ2hbEVN43V9sBNmyq0ZwRQ2Hxu
+ uQjpeabO/dfDJ3QVlYbOr7mEdqMf2XY43PHtZxgP1xEjT5lIRb0IE0zjz4feFjP5boM7wmV8/
+ R5hkbq3aHAhqOS0y/lsrmpn28c+LrUgH/ax8FEi2l3XHhkz42cELWmWBqZxBl91iNPcxFHqcO
+ X/xXMvtX1B1XtuaPKV8RJtFTKBJ4JmKz6fsyzJu0MH/c+IySif5VTx4xb+gfAa3PvvDzhHgIJ
+ Y53G9PPu4Fkrbgw6INVkYYRYRwOuc47Lx4TwJQvrekDANIvsmtsGajD9PdawRb7arDyp7z0/w
+ 8XOtNOwiRLpRFfDpwweNYIYw4lb8R79+Akm88jUYqr3Jh3BExNJTvAhL6dZBCLvVMBEK5EcWK
+ etSijjq38HgHi7RALk2tZe5CiBB93oseCnBL86k1iK3X9sZgXfNYOtuIm2PLRFHxS/Dee+r8h
+ PcNkoe88uJZQMeHpPqb32N3fZ8KRFdxvWuz3Smk82EMBLtBO1ogtJGD5vkO/2LVGbXAo+FyYc
+ JadDEQfGuaOqhn6NPz6/1aAVnfWfsBiLFsPHHPiRDvSuk39mAYnx4x8xjU8E+2kFp06m5eyeC
+ +8WtQgiI4nuNW5ojF8fTLQvBYsjMke2N6yeQdT7OtsIjL93zli2bNUnsD8z+knNhTgAym5iqU
+ s799SR+SA3RkEkmq0BPqNRLNYh2+8yyKcHdJ3CjGk8qGndnfC5wOAR6PErNrfZ2Gt7N/gJpMz
+ NYs+q6GJJb8VIFwfIRvbUOfQ==
 
-Define the sdr104-specific offsets, preventing the driver from
-defaulting to the 1.8V offsets, which cause the system to hang during
-the SDR104 mode calibration.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Mon, 23 Sep 2024 21:56:35 +0200
 
-The zeroing of these values was chosen since it restores functionality
-and no better suggestions are provided by the Tegra X1 TRM.
+An of_node_put(np) call was immediately used after a pointer check
+for a of_find_device_by_node() call in this function implementation.
+Thus call such a function only once instead directly before the check.
 
-Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+This issue was transformed by using the Coccinelle software.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 882b1d1f4ada8d9e275e5a6bee633a21cc6cdb2d..942e3a0f81ed768021d2ac25f6369998a9fbfd76 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -1218,6 +1218,8 @@ mmc@700b0000 {
- 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
- 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
- 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x7b>;
-+		nvidia,pad-autocal-pull-up-offset-sdr104 = <0x0>;
-+		nvidia,pad-autocal-pull-down-offset-sdr104 = <0x0>;
- 		nvidia,default-tap = <0x2>;
- 		nvidia,default-trim = <0x4>;
- 		assigned-clocks = <&tegra_car TEGRA210_CLK_SDMMC4>,
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/phy/tegra/xusb.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
----
-base-commit: de5cb0dcb74c294ec527eddfe5094acfdb21ff21
-change-id: 20240923-sdr104-36cca57a9049
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index cfdb54b6070a..1a912ed52416 100644
+=2D-- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -1345,12 +1345,9 @@ struct tegra_xusb_padctl *tegra_xusb_padctl_get(str=
+uct device *dev)
+ 	 * only ever be one per SoC that would be a little overkill.
+ 	 */
+ 	pdev =3D of_find_device_by_node(np);
+-	if (!pdev) {
+-		of_node_put(np);
+-		return ERR_PTR(-ENODEV);
+-	}
+-
+ 	of_node_put(np);
++	if (!pdev)
++		return ERR_PTR(-ENODEV);
 
-Best regards,
--- 
-Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+ 	padctl =3D platform_get_drvdata(pdev);
+ 	if (!padctl) {
+=2D-
+2.46.1
 
