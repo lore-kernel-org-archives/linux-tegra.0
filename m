@@ -1,48 +1,56 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEFAEEB3;
-	Tue, 24 Sep 2024 15:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E7C1AC450
+	for <linux-tegra@vger.kernel.org>; Tue, 24 Sep 2024 16:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727191223; cv=none; b=tdeaPn/jH+2kubFF7OAOHqbjbWE6GZwSLR8jaGjwjOuLrSPxcZNufdiZSE3oksX0tkfyilF/qfH3XVLIxD40jTEMvGCSVPQ/HwQ26CP1Qp1eIrdLLPhkQQqys9HDzTTQzGDBZrtgf3KecH8xBh6P3PCrhH6UYrGESqMMzh4rA9c=
+	t=1727193950; cv=none; b=YsQMIGOKdtznBSK9NHVLopfrCN/A3e+4z8OxnSdZHA+Ec9bc8Y7SZ2gETzhg0Osweafc+FgmYtzwOlg8NZgPlH43qtgt1ggW0xE8Dm9OhdY3ma/UGjTBSuxZZyJCsJgpim4XgrTE2/mPcVwO86gWq/D2zKF8sJDv+GVR8RC30r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727191223; c=relaxed/simple;
-	bh=xh/ZBi1/6defA6gKOipipF9FYVymG46KI7tKxPWOQsE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qd0HUSLHz2xWmzuu/2984T05TcG4KSgH5lAlwXk9zf/Pob0LQZ3fIAxN2lZy7ZKRT6h4XE+ISSSU+kgCqu6/uy+KGyR6qSc2ow/MUAcSgbncoKw3gZ3xEi7obDWz4Styx4zDxWmZdQi4TU8Rk9/rv0lGTq/Qs2IaXesqk7f4Y8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=e5qVcR/V; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1727193950; c=relaxed/simple;
+	bh=nQQTZtX6roW+dxYDtbGKL2XfIHd9IcnhpKNBQ/mM4sM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mKrsMffIm6PSOo7oqt4mXbuy7QJvSOxIEyidh+rG4jzq/74kw8ki8CjCa/C/g+5Yq2ELutSvg9MqnSishnnt5A2G/YaCtmbeQmKuXt1HMEzBZYa8bnuEaHPHBRzU9qAFuXstzHP2od3dmCQrwCES8RKoc+B9K1Qb268dKuZ/J/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aDsJt7w5; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="e5qVcR/V"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48O9fjnK023720;
-	Tue, 24 Sep 2024 15:20:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2S2GiOZZc42HtYtXp1LEi4ri88uyniKURTl4EJXC6w4=; b=e5qVcR/VOFnpV0jr
-	jGhaLnrGbuJ30suRDto38HV2uYcIs4bevBXu9Rts3jg9oDxX4jNh9//GzNPVkshT
-	HnbQhgJ4UrlR72+8GoVpkXwwKdf148pjVrOU5jBtNsNM+IYNGEdvjkTc1ZtPQJe2
-	rfOZ4ZGNiw3GKxnZ6FgmZGEPNFt23+0NFqfo4P1r/udzKpVwKfXpfp4enL3Y2ady
-	6JxNoxmENOCXNlxt2U7PD8lsJK3+NFYO7gh5r05eKmuHgEYqn98HV8eQ5nEsMB0c
-	TA1zWgJB5SbO+PhYYjNV59a77yBpER2ctSwFbZmvgM6267pBlWWZHmntS83YfOVl
-	mWY2wQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41skgn9ey2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 15:20:02 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48OFK13X001228
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 24 Sep 2024 15:20:01 GMT
-Received: from [10.110.100.83] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 24 Sep
- 2024 08:19:57 -0700
-Message-ID: <32ce1fd1-5bf1-4772-9a1a-4089fd87e3f1@quicinc.com>
-Date: Tue, 24 Sep 2024 08:19:57 -0700
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aDsJt7w5"
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-82aa7c3b3dbso295335739f.2
+        for <linux-tegra@vger.kernel.org>; Tue, 24 Sep 2024 09:05:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727193947; x=1727798747; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nGgZC++q2AtpmgeIvTiFEAi7y/z7fLmypkiCbl8bJao=;
+        b=aDsJt7w5d9h35SWMTWffR5560CMLtzic7xKjKbV+6bLyx2x5YFD+ADl0PHAepFlIPD
+         J/6aAWRC73ZbjshLOwq0vRZ1+xRR7cK6+aenp6SlwH6/ZS1RyM9e5K9Ql/Stu6xzQTe2
+         2CL5qcS6cIDVXBnL8DYhCISbBb8gZzuLlr9zo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727193947; x=1727798747;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nGgZC++q2AtpmgeIvTiFEAi7y/z7fLmypkiCbl8bJao=;
+        b=C5351undR5SfbO+W7D8N4SWh4UVms78yn+3R2W9oKROuGzO7blS15mcBv/aljf1iPr
+         s4qsxRgWfLMfkXo8mdDnRo7WY/zcc+fxlalZJ9M8g3TH+DD1ynl1SgCPiVwCuKZQvWSk
+         QQen0XSJkjSDqlEoF3OhXd1+HYtpiQPSW7RDBwMtf3VwWe5N1PcFU+c0YtHsTisIzx23
+         rkeWHfJulu20RbMuu3boXJLTcB8cHxeaBQ5ygqF1z4+QBnzEEUacngAkh+a71gHnRvON
+         mFVSvhFPVdEZJONYgeiBtqKSoF5EnvHNO9UbaPhmpFC69atCRzPBCxjqEq3c0thiVgYk
+         EPaA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+wqjw/mtFgRO1vLLICyezLlL+mBQmvvZaKGBaPwHd1Qa4CJ7hj9Al0l/O5j+jTrHb6qfRuBUBNKZW3g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwydkVHSRp0EmhNIYQFgrbAAtjkRPaXJwSxlcdYmtZ/NMJ6Ij90
+	wyi2hl8TSyzJkV8mmRozBtqZHyvuS63JqbTFdZR+A1TDDwbLrDwMNY3sMfTydeI=
+X-Google-Smtp-Source: AGHT+IG3L22c5EIpJXprkBEjnN4zhBqDpV3boF4+NP3bngxIQ6cQR4CJBuuc7PHkPDw7nlC0RNP3Xg==
+X-Received: by 2002:a05:6e02:194d:b0:3a0:c820:c5f0 with SMTP id e9e14a558f8ab-3a0c9d90ba0mr145533015ab.24.1727193946584;
+        Tue, 24 Sep 2024 09:05:46 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a1a5713af6sm4633385ab.60.2024.09.24.09.05.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 09:05:45 -0700 (PDT)
+Message-ID: <05f24dbb-cfe6-4a75-9382-273c9c734b22@linuxfoundation.org>
+Date: Tue, 24 Sep 2024 10:05:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -50,94 +58,58 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] net: phy: aquantia: Introduce custom get_features
-To: Andrew Lunn <andrew@lunn.ch>
-CC: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Halaney <ahalaney@redhat.com>,
-        "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        Heiner Kallweit
-	<hkallweit1@gmail.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Brad Griffis
-	<bgriffis@nvidia.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Jon Hunter
-	<jonathanh@nvidia.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        <kernel@quicinc.com>
-References: <20240924055251.3074850-1-quic_abchauha@quicinc.com>
- <8a6611fd-bd7b-4d32-8cea-ea925a9979ab@lunn.ch>
+Subject: Re: [PATCH 2/2] selftest: rtc: Check if could access /dev/rtc0 before
+ testing
+To: Joseph Jang <jjang@nvidia.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: "shuah@kernel.org" <shuah@kernel.org>,
+ "avagin@google.com" <avagin@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "brauner@kernel.org" <brauner@kernel.org>, Matt Ochs <mochs@nvidia.com>,
+ Koba Ko <kobak@nvidia.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240524013807.154338-1-jjang@nvidia.com>
+ <20240524013807.154338-3-jjang@nvidia.com>
+ <202406201937464fc96b1c@mail.local>
+ <8c92ef18-6648-4348-9008-4f646d8b6956@nvidia.com>
 Content-Language: en-US
-From: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-In-Reply-To: <8a6611fd-bd7b-4d32-8cea-ea925a9979ab@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <8c92ef18-6648-4348-9008-4f646d8b6956@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: g1lyJ5Atw1Sa4EZuTmKqh9Qo76vXf6Lx
-X-Proofpoint-GUID: g1lyJ5Atw1Sa4EZuTmKqh9Qo76vXf6Lx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- mlxlogscore=999 adultscore=0 suspectscore=0 phishscore=0 impostorscore=0
- spamscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409240109
 
+On 9/23/24 23:37, Joseph Jang wrote:
+> Hi Alexandre,
+> 
+> Thank you for looking at the rtc patch.
+> I saw you Acked the [PATCH 2/2], not sure when could we see the patch
+> in kernel master or next branch ?
+> 
+> Thank you,
+> Joseph.
+> 
 
+Please don't top post. It is hard to follow the thread.
 
-On 9/24/2024 5:04 AM, Andrew Lunn wrote:
->> +static void aqr_supported_speed(struct phy_device *phydev, u32 max_speed)
->> +{
->> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
->> +
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_TP_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Half_BIT, supported);
->> +	linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT, supported);
->> +
->> +	if (max_speed == SPEED_2500) {
->> +		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
->> +		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
->> +	} else if (max_speed == SPEED_5000) {
->> +		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
->> +		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
->> +		linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, supported);
->> +	}
->> +
->> +	linkmode_copy(phydev->supported, supported);
->> +}
-> 
-> So you have got lots of comments....
-> 
-> Please split this into two patches. One patch for the PHY you are
-> interested in, and a second patch to remove phy_set_max_speed() and
-> fix up that PHY.
-> 
-Noted! 
+> On 2024/6/21 3:37 AM, Alexandre Belloni wrote:
+>> On 23/05/2024 18:38:07-0700, Joseph Jang wrote:
+>>> The rtctest requires the read permission on /dev/rtc0. The rtctest will
+>>> be skipped if the /dev/rtc0 is not readable.
+>>>
+>>> Reviewed-by: Koba Ko <kobak@nvidia.com>
+>>> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+>>> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+>>
+>> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>>
 
-> Also, i would prefer you do the normal feature discovery, calling
-> genphy_read_abilities() and/or genphy_c45_pma_read_abilities() and
-> then fixup the results by removing the modes which should not be
-> there.
-> 
-Sounds good! 
-> Take a look at bcm84881_get_features() as an example.
-> 
-Thanks Andrew! 
-> 	Andrew
+Alexandre, I can take this patch through kselftest. Might have
+slipped through my Inbox or the assumption that this will go
+through rtc tree.
+
+thanks,
+-- Shuah
