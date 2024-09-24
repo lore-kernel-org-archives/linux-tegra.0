@@ -1,101 +1,70 @@
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57193126C02;
-	Tue, 24 Sep 2024 12:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC401AAE0F;
+	Tue, 24 Sep 2024 14:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727179458; cv=none; b=qOyXziM4ZFTcLfeY8pNGSO9btt4+GoVLjcHwbneTFmuvWZ2pkugxhRfxxfDt/8JhbsS+fiUTIMcqCJXGKzcp2wc/qbwiYBHo+47FEOTdbyrgC74gWQ+xJoBSFRtBlWqrqza9k4Xa945QMFQMO/evXPypc7cwmuz9qCa432s44Ng=
+	t=1727189048; cv=none; b=tt+wcZhFvXcvhRP3cyhn9f1TOVMBsAikVzrCztk8dJbTJ5AGe0uRzKVBP0LSrI2wvenT6cVtGZuHOYsdZpy+1EC0hnp3YGj97qWLygFQU/aBybwcQdww06ACpQW81QNmlNg2PAaOOTkB53yLOwQGSXho6riLUtMuZ7rgaxmIiOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727179458; c=relaxed/simple;
-	bh=xhXKsKe7xRaBB8yHCKkbWq0/TnAbS4XVrROgurQjgoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qdLaDXKjSWxrnzdkhzq2A9ZW3FDNNE6FAqTPj5yWXaKg3N/dfp59qeJqmVCXBGMd1bU5OpAYw0n6nd/qybeGLln5RrastE6IGf4q6z/Sqfw3mithTnEAS94JykNmUu7hcf+/a7vYwLGdTsS+LDtngt7qGtrkXCLa8/O+Sa0Xxu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=l+I9yExF; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+	s=arc-20240116; t=1727189048; c=relaxed/simple;
+	bh=v39vkI+N9c/ocMSiE3cqjymQKamMcbwCN/N72hQr06g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=T0iqE/iTbQmr3TWaqb3lV8Ui1yW3AOBaf/3BpKhz3Y4vcsvC0kk42hIzpll/0Wake7ViAwjKRmMMlQXoBolfHReQpcxvLpi9sH2KzJgYHlZvetZ7FdHEM8MPBOwYz/CT1iKF/H3lghzhBGB3Yw6q4kpCZ3VlY4CT9i9fYuJ7dLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=THHXGDAv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="l+I9yExF"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=hj4ZKxWdT3c42Zii72T0l9q1XxKsyHj07xzqhV5c8qc=; b=l+I9yExFoVIDrFcrJyVZe5Zw8O
-	rnXPJ/olBWXOX/XffkHJzn/8dQ2oT8E3VpMESUe/ox44u5mklKGjsjgY+fb1A69eXAeuprPZGSGLW
-	SER2yb7h8bbwuFdi9Py3MFsAAyjv7xOsHbWg4heZDOWObwTkCt81grDa47pe0mkTEQtI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1st4Gx-008CQC-CX; Tue, 24 Sep 2024 14:04:03 +0200
-Date: Tue, 24 Sep 2024 14:04:03 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Abhishek Chauhan <quic_abchauha@quicinc.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Halaney <ahalaney@redhat.com>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Brad Griffis <bgriffis@nvidia.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	kernel@quicinc.com
-Subject: Re: [PATCH net v2] net: phy: aquantia: Introduce custom get_features
-Message-ID: <8a6611fd-bd7b-4d32-8cea-ea925a9979ab@lunn.ch>
-References: <20240924055251.3074850-1-quic_abchauha@quicinc.com>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="THHXGDAv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 728F5C4CEC4;
+	Tue, 24 Sep 2024 14:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727189047;
+	bh=v39vkI+N9c/ocMSiE3cqjymQKamMcbwCN/N72hQr06g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=THHXGDAv02dmr0WPaXl3asZcHHGN9wKE/MCdzTTlzgYOKdB0l1KdGz9d8evOev63x
+	 mpFf17dwNEQVHFY8a4PZWD3LdMm9ob1p7wDNxxN3XtXVlSrkDY+ufO2jTiFsfytCBy
+	 Y9hott3gUiGWW1k2XGYKrIXk0xtFw8doM8Eo50Bk=
+Date: Tue, 24 Sep 2024 10:44:06 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Jason Gunthorpe <jgg@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, 
+	helpdesk@kernel.org
+Subject: Bouncing maintainer: Peter De Schrijver
+Message-ID: <20240924-dachshund-of-optimal-politeness-840d3f@lemur>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240924055251.3074850-1-quic_abchauha@quicinc.com>
 
-> +static void aqr_supported_speed(struct phy_device *phydev, u32 max_speed)
-> +{
-> +	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
-> +
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_TP_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Half_BIT, supported);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT, supported);
-> +
-> +	if (max_speed == SPEED_2500) {
-> +		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
-> +		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
-> +	} else if (max_speed == SPEED_5000) {
-> +		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
-> +		linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
-> +		linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, supported);
-> +	}
-> +
-> +	linkmode_copy(phydev->supported, supported);
-> +}
+Hello:
 
-So you have got lots of comments....
+I'm reaching out to co-maintainers of the following subsystems:
 
-Please split this into two patches. One patch for the PHY you are
-interested in, and a second patch to remove phy_set_max_speed() and
-fix up that PHY.
+  - TEGRA CLOCK DRIVER
 
-Also, i would prefer you do the normal feature discovery, calling
-genphy_read_abilities() and/or genphy_c45_pma_read_abilities() and
-then fixup the results by removing the modes which should not be
-there.
+The email address for one of your maintainers is bouncing:
 
-Take a look at bcm84881_get_features() as an example.
+  M: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-	Andrew
+There are several possible courses of action:
+
+1. If you know the new email address for the maintainer, please ask them to
+   submit a patch for MAINTAINERS and .mailmap files.
+
+2. If this maintainer stepped away from their duties, or if co-maintainers are
+   equally unable to reach them via any other means, please submit a patch to
+   MAINTAINERS to remove their M: entry.
+
+The goal is to have no bouncing M: entries in the maintainers file, so please
+follow up as soon as you have decided on the correct course of action.
+
+Best regards,
+--
+Konstantin Ryabitsev
+Linux Foundation
+
+bugspray track
