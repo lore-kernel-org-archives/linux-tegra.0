@@ -1,60 +1,201 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2053.outbound.protection.outlook.com [40.107.93.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FAE1A702;
-	Wed, 25 Sep 2024 15:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727278107; cv=none; b=IvMztmrZBYWM0YA5GN9fttBiBwc4uZqHkvqi6bVUh9jXBKr8n2LgAdYlMYqFX8lxG1nuA66i7wOkSUHyzWQIUMAe7x7OuHvGa+fAWHgTvLLOCwTMgAPG0RoS3hSPVQ5D2c1nEcW3NZCJfoSNUtTAv1sfWdQ5FCKO0zKmJlEGs6g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727278107; c=relaxed/simple;
-	bh=jo1D9Vg9uM2d90sao+PuSuV5IgRK4XoFWpGG9r5MCsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X5zdj/o9CZ3Bfz9Z//Y7abCrMRi+AgUcqHWfbNJc4Gd1rBrcXVyJiGVu34ohPl06LGCTzhDG518zqvNVvXLpF+GUrohlLEqor+zgrrs8he66rfXobL9J7ywJMztxqyjVbsdtETrMsvM4AQYEQWWb51xTZfOxZ8+UeZPUCxFDEkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=x5dD3BJ1; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336551D5AC8
+	for <linux-tegra@vger.kernel.org>; Wed, 25 Sep 2024 16:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727280330; cv=fail; b=rjmV9Fc4xYfbsmDK0BMsTxuW4aMALkmQzBJP4MRWWr9JdM5emO96IyPS4EPX5xlsnbmBJKcRzl3tDjpOqHaqTvZn7RqJC3FZIey/2oeud9W2zTZdWzR8gSZ+DhRmzVCE7AfHuMDkWtd2cbCBrFwb/K5aBVecm/mf0ClmG0vwxQ4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727280330; c=relaxed/simple;
+	bh=cp1nFOdIaMS12Cs9u+BXZrAReEXn5i+ZMrHTfDnm4UE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h/9jLy6zM4PjKXo1d/bL3QgKjeurS3p8evv+qPOTb6Oc1DUhoEx8bTktEV+GE6I5rkbAM1PX1v5TZiJ3ewPrMAUL81piBGIu0fNxldkNVGcGbvUxa3fKtNq0SN/PgRDhTt+rnyRkcGopVWOmHuNEtJipLiPAsm7XVn/ZZwLiMGY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sAjVFa45; arc=fail smtp.client-ip=40.107.93.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="x5dD3BJ1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78672C4CEC3;
-	Wed, 25 Sep 2024 15:28:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727278106;
-	bh=jo1D9Vg9uM2d90sao+PuSuV5IgRK4XoFWpGG9r5MCsk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=x5dD3BJ1bDZVY1N+M6A0tpLAGdFkz2RkpPbRxJ0arGxdy35byNdy1VYok7snzQwLE
-	 IbaCCLKqfebYikrUulWTDIh3tO8lftkEw6VSazesFnzthOXk0AmCpjCFsOXL8gjF4y
-	 aapdCPG2cv+x1AdTmfaDQxJbOe62zUMrTv+6k8vM=
-Date: Wed, 25 Sep 2024 11:28:21 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, 
-	Jason Gunthorpe <jgg@nvidia.com>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, 
-	helpdesk@kernel.org
-Subject: Re: Bouncing maintainer: Peter De Schrijver
-Message-ID: <20240925-jackal-of-flawless-freedom-58a6fa@lemur>
-References: <20240924-dachshund-of-optimal-politeness-840d3f@lemur>
- <dee3wpp255qhhb7znfuqyarshhv6nueq6nsls2gikbzfscsmgc@6nrvnhgbvw44>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sAjVFa45"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sXq2z/65RWCz/GDCvyM2j6jmqBOKNzkn52qFFS8JhEmo7nPaWpnHR2VXgK23hSKLu9wjGlWUBbUCH8o22pSpT/1MLaLFwPXOHpRJHsBDUBNaPyK7moPgKx5kScgZVLY35RHJur9Nh3FwwQozyZxfM9fiUaG6lNG1QBzglRN3R7JsD0sMs2oN5pqi3ExpTGR/3UevHHfED+pdTjthlelHU4n2lRDpHjfd7fASRo/kheDAt61pVoWgvkku4AcrRO7GixDt3uJSrzlxolHt9Zw3D09Z3d9+KWO6cde7Fb8/akAwEYypdZdQbYcyV+8Y1WP//O4zNGbZjiS578GfzmVHvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dIO88w+BSdkHVxp6eKRIFqh72+VZCvhgmy8auYeWk+Q=;
+ b=yAsuutVypV5HjK+8f95CBDHBuPPUQ/zZPGg6pd/lFiSWeCrqOsONXqmcPZlTT5iP+w73YTps/A7wiveKC4jgnItt0ymc/jPVc0xaEF7rdP8p+5xyE5E+d+1BMVAAG61J2E4ptW/AerDPfjuqEQ5OPTFCuntq+UWE6lT0XEX9ydqBa7hY0t8+sbxLHdAQmClziGRtkEzfWV6fGxadnKD0o/QeQvQyv6uEwKnM9QdS0WONnJObriFb8D4o17HDVs91ucpPNynI1tO56gmLmrBUgbutsoC+tSlKqVZnROtBW2iFwOu4wEyZ4IqJ7w6xJbGdiLqIzOJld/yU7jkMfpVbIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dIO88w+BSdkHVxp6eKRIFqh72+VZCvhgmy8auYeWk+Q=;
+ b=sAjVFa45p9tgbIbCM1i8x84NY6aC4JVkH/sPpfsk7NtW6F5+yc8CqGbNNK0q88vqlHJxlIOgYCBGthY6tv0bGMOJnODBojHiTBRMjG99cNX8GGnFtgaRttab+ohLOXtg1ohQwZvdxyQ6d2KjEXjy2eNapLb6Z32sTFBndtZOH6OpW024Y83bBC/TiPBa+D+5cqSZJrNkbzoJGCX+f62MN2P/73tCLjpY+bmHPZTUlU6sOJ/RmHguEWv9flAAc6Kizs8vVnFF7+mX7upz2GBMcT6kUBmeBg7wHOBfTwtFyl7yM1Mow+8kqq8mv1ojFMmc0GSzHwKuftVclkiP5r7EPw==
+Received: from SA1PR04CA0018.namprd04.prod.outlook.com (2603:10b6:806:2ce::23)
+ by DM6PR12MB4203.namprd12.prod.outlook.com (2603:10b6:5:21f::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Wed, 25 Sep
+ 2024 16:05:23 +0000
+Received: from SA2PEPF00001507.namprd04.prod.outlook.com
+ (2603:10b6:806:2ce:cafe::4d) by SA1PR04CA0018.outlook.office365.com
+ (2603:10b6:806:2ce::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.17 via Frontend
+ Transport; Wed, 25 Sep 2024 16:05:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SA2PEPF00001507.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8005.15 via Frontend Transport; Wed, 25 Sep 2024 16:05:23 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 25 Sep
+ 2024 09:05:08 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 25 Sep
+ 2024 09:05:07 -0700
+Received: from moonraker.home (10.127.8.9) by mail.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Wed, 25 Sep
+ 2024 09:05:06 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen
+	<mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-tegra@vger.kernel.org>, "Jon
+ Hunter" <jonathanh@nvidia.com>
+Subject: [PATCH] gpu: host1x: Fix boot regression for Tegra
+Date: Wed, 25 Sep 2024 17:05:04 +0100
+Message-ID: <20240925160504.60221-1-jonathanh@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <dee3wpp255qhhb7znfuqyarshhv6nueq6nsls2gikbzfscsmgc@6nrvnhgbvw44>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00001507:EE_|DM6PR12MB4203:EE_
+X-MS-Office365-Filtering-Correlation-Id: 199fcd69-e080-4462-8e1b-08dcdd7bdcf2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?t2973iBgZYa7pxgzUekzAPVRF1gcDl+O+OSVmzF7K7uAGCfFriV9r0od8f5c?=
+ =?us-ascii?Q?dxSqVFHINh99+e9k0rZYXyEIlIGkTVIyh9onGPvu6heZ6wgj0nNFPEF6Uij4?=
+ =?us-ascii?Q?v9W3o9M21C1Q3TGdOF3wVp6d033H6FEHaB5gS/WwS8XTf2iOk+CON64RGdnZ?=
+ =?us-ascii?Q?ygyBSgeSG4ZsWlzn366xaFOYFgLX1fBGJEAejRRDIL5dPDiDeag7xjuFuaKT?=
+ =?us-ascii?Q?LFzAUgdo+BO5cI+zY7Gz5KnPIamumkj25+7fl4VD/XxzDDSwsiOWlY5FZ68O?=
+ =?us-ascii?Q?f2G7SDUK6iRB6x58rPu08jCYr6Muke9iMzsdaqJm86EkWcHIHg2jq7rMEz04?=
+ =?us-ascii?Q?yC4H8lnfa0pyqS+Bd93bl4ocFRrFBPuIIuowCJpYMpMWRSSpf40NWusLQA7d?=
+ =?us-ascii?Q?NVIE/p537kJpIAHfGG6jDrgxmpyvMZDdcTl1n4UVf8+9qljf+18rcCyfEQAH?=
+ =?us-ascii?Q?LTQcA2jh1nbePpHhcRfNcP0u8cYPCMdsnbSlJOY2D2WBiyTK72VBBMVkJ/6i?=
+ =?us-ascii?Q?T26Ubyb41C9PVvFE10U1U8VnbET6prYIs2lcuyOsLL9gBSZe67AG9rEUBRjW?=
+ =?us-ascii?Q?XF5XYpds4rE8j+h8xr0aJxyX4iuJ2fydL4QeyV52K95D8EVXH3XJlLbw5jBj?=
+ =?us-ascii?Q?JZ6QFgPMDORSXvSKG2fHeLr1+bQHQZ7H8RtKWU7bhb5839wCNcfBqHnIc1Yw?=
+ =?us-ascii?Q?16B1fIVcXziuplZ8qqqM9d5paQzl3XjwcTHv8S30CKQdjrUunzpw3xG5FEBv?=
+ =?us-ascii?Q?9GXfdXahLJqsRMJMXj33bbjGOqIisAdlIjmmXeoLUsNPFtDTUhZjP/oMYCg8?=
+ =?us-ascii?Q?6x66XJq2mjWuqIHJYdNnNhcD1DHhW44oqyYnwC/Mcc/E02DxZcej266NNPeS?=
+ =?us-ascii?Q?osavIfyi2vmztPWzfPR91BiC2H/WmjqhnftU56wOgAfIb0QDdWreKN1HuyHD?=
+ =?us-ascii?Q?hb6QA2yC00uthqdg4RAJ5omB9/EETkVeHXuzDt01+oguYfxMmjQhUu82ztmT?=
+ =?us-ascii?Q?6khRJKmA8/70RT8YvkGDal490SdzXTM/7yPYmJY21GsVSXSVuSLcejFzzXcY?=
+ =?us-ascii?Q?fbhEEURlDZt1xg4mMrxrQQwZyzuWPSCGCyne9MhMu47/O0fwd4EMre9r7oxj?=
+ =?us-ascii?Q?fqe/M6tNIK+w8Mgj8cLcM5S1tnHYr42hs5Ihg8RTRmpgq7+fh7wsQLxBtiFG?=
+ =?us-ascii?Q?h8rx8qIV8yW6wBqM+eVm7b4dC1hZgswOu401tjtYHF9Ha3dYR68qKpsyf+fS?=
+ =?us-ascii?Q?gyIorDur9VFA68q9Ge2izhXSGCPQuQ2hsU14IFzj6XplB/yUEK0QPom60Ejv?=
+ =?us-ascii?Q?NrgwvldOIZl/nXcue/c7MuPBkkzJdvT2JNoVO8kTe75TeoqTw/MnulfTufxJ?=
+ =?us-ascii?Q?JTmZEdWSkMOkh3UFFnukHOjQAu60?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Sep 2024 16:05:23.5961
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 199fcd69-e080-4462-8e1b-08dcdd7bdcf2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00001507.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4203
 
-On Wed, Sep 25, 2024 at 05:26:21PM GMT, Thierry Reding wrote:
-> Prashant doesn't work on the clock driver anymore, so Jon and myself (as
-> the Tegra architecture maintainers) would be the fallback maintainers.
-> We have a regex that should catch this in the main Tegra entry, so one
-> option would be to drop the Tegra clock driver one.
-> 
-> Otherwise I can also send a patch replacing Prashant and Peter with Jon
-> and myself.
-> 
-> Do you have a preference?
+Commit 4c27ac45e622 ("gpu: host1x: Request syncpoint IRQs only during
+probe") caused a boot regression for the Tegra186 device. Following this
+update the function host1x_intr_init() now calls
+host1x_hw_intr_disable_all_syncpt_intrs() during probe. However,
+host1x_intr_init() is called before runtime power-management is enabled
+for Host1x and the function host1x_hw_intr_disable_all_syncpt_intrs() is
+accessing hardware registers. So if the Host1x hardware is not enabled
+prior to probing then the device will now hang on attempting to access
+the registers. So far this is only observed on Tegra186, but potentially
+could be seen on other devices.
 
-Your call, but I think removing the subsystem entry if there is a more generic
-match is the cleaner way to go.
+Fix this by moving the call to the function host1x_intr_init() in probe
+to after enabling the runtime power-management in the probe and update
+the failure path in probe as necessary.
 
--K
+Fixes: 4c27ac45e622 ("gpu: host1x: Request syncpoint IRQs only during probe")
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/gpu/host1x/dev.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index b62e4f0e8130..e98528777faa 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -625,12 +625,6 @@ static int host1x_probe(struct platform_device *pdev)
+ 		goto free_contexts;
+ 	}
+ 
+-	err = host1x_intr_init(host);
+-	if (err) {
+-		dev_err(&pdev->dev, "failed to initialize interrupts\n");
+-		goto deinit_syncpt;
+-	}
+-
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
+@@ -642,6 +636,12 @@ static int host1x_probe(struct platform_device *pdev)
+ 	if (err)
+ 		goto pm_disable;
+ 
++	err = host1x_intr_init(host);
++	if (err) {
++		dev_err(&pdev->dev, "failed to initialize interrupts\n");
++		goto pm_put;
++	}
++
+ 	host1x_debug_init(host);
+ 
+ 	err = host1x_register(host);
+@@ -658,13 +658,11 @@ static int host1x_probe(struct platform_device *pdev)
+ 	host1x_unregister(host);
+ deinit_debugfs:
+ 	host1x_debug_deinit(host);
+-
++	host1x_intr_deinit(host);
++pm_put:
+ 	pm_runtime_put_sync_suspend(&pdev->dev);
+ pm_disable:
+ 	pm_runtime_disable(&pdev->dev);
+-
+-	host1x_intr_deinit(host);
+-deinit_syncpt:
+ 	host1x_syncpt_deinit(host);
+ free_contexts:
+ 	host1x_memory_context_list_free(&host->context_list);
+-- 
+2.34.1
+
