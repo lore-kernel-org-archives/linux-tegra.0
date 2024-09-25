@@ -1,52 +1,53 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A36186E36;
-	Wed, 25 Sep 2024 23:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 036EA186E4C;
+	Wed, 25 Sep 2024 23:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727305316; cv=none; b=ejXtRnYudi7b6sK7ED2jP1QFb/CBazCK8Fa9wgYN1GcbGKk9hPfsYuc+AQy5meTqxNW7HJAThZU7BFgF8PRVL136gsAd7BL5VOwWa9UxnHIN41RD4rg++3Y4VVwou8UzaYsg1uyhj8CRCNL7D3oh6w4TwEP9hVrLKY3sVWMladM=
+	t=1727305317; cv=none; b=E9b4rtsYDmbM3DjKBVu/6LLBie6mPnsSN/YM8po5c8vZYT8txHgmGoshavah1g/s7+NVX0QWEkN49iGasUf+FrAFjBd0KapOVwsGmJkYoe7kMG9w2acoyBVhe3JfGhb9mC5MY/rRJdwJJ5+ZUoSHwRxe37dfN9WkecVyhsAb2YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727305316; c=relaxed/simple;
-	bh=4RRry88l42YWMnIm3Kf7otPxCu4Y3NeGaIx1YdU7vqQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OZ5LyxWFa+DuVWkwOJGswKv9/Pebz98td8+aw8kZAobxF0XQ5HvHncCaoD5Afl+l5jw4X8W+M911OvQeQ4FEU/COXGkmb6KhwOEtBsKWhoVUB7ghpU8Wcfq8plp3a7KYcJceQi1KN5Bux34BeD1YTtBQX6DU7W/284N1hg4WLO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L8DzBNUP; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1727305317; c=relaxed/simple;
+	bh=cEclzMmW3SoLpaU3EDcz4q2mTHy9mkRUlI1h9qbp1zY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=scccXiZVqR5bgWcmNTYZTsCMjdDNsM+IUYqyeOxwR6opWgyUopQYEYI6BmCFGmpPY79N7swSt4LImd8opC8Ol8ZO4z854InTpxMx5EtK2opcJ7UqJmmGZ23UE2NwgZfn6q3pEC+R2xZ3cPJjm2L9xh0HgSIgz9ffn9EDI8MvcMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P+rrTxL+; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L8DzBNUP"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5Dfn007919;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P+rrTxL+"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48PH5IHZ024213;
 	Wed, 25 Sep 2024 23:01:32 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=1uSVyniIwqHCHdlFrBLS7ZeBT58eCVGU7d3
-	n0U0EmDs=; b=L8DzBNUPTgzVZ1vw1CipRMYsp/odeV5u2bxondpJoscVzaDH0Sy
-	63+u3a/Kary7D14atun3+xV0KY0E8FvBQiALQiB4S8ULtAvBPqMoWq9csleBKhUF
-	fkkCc9rKFhFBxfRrNl7lGp2Zum2rsPJWoue53MBB6c314Ik8HTDHxk6rdDQUNzLS
-	9PJrU+dVUwzoV/Of3RmAlrxV47+el4Ey0Dg0W86HjrhMrJKwu7PX4crRNXx0B1tv
-	ldsUYPE76LbUKJYaK4jlTUrZVIE76Pz2jL3ySt9ZRTO5T89xJ3bPp91HOkLzqucZ
-	aml89HdLKihbccN0FBYgTGdn8+xS33hvSpw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sn3sdh3g-1
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=lpYFWhC875s
+	QhosfzHOtmukAuBsGMKYmdlGRDvo6ihc=; b=P+rrTxL+rF2Bw7RmYdu9f/J995D
+	jPJG4eo6aUUdxSKi7IShM+u8xMasckzDYwus8FkxqodlBN4f0LYb6onaKolh6lra
+	Ug2xvrYC/YyEA4dgvaTQpP1UomWH8x5YG6qkNvNTj6xIF2H2TMYdOsPoUPVAGTTX
+	6LQBetH9pIW5tm1zKww+irO60AfRQ+Q+nFN/dyI0podTaKgzVZsUNfa9Lv56wL6E
+	9p/MUkNT1rmvOt31pGCoe/2IcSrQPWmuYjmR6awckrhQ20TArUVSGzSBINIGjr1q
+	UPzcZ0N3W+zgunsXMGPKnhR0u29PK3Hp08hn673oftDxT9K2O24nD2aUC7Q==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41spwewcta-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 25 Sep 2024 23:01:31 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA05.qualcomm.com [127.0.0.1])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48PN1UX8012467;
+Received: from pps.filterd (NALASPPMTA04.qualcomm.com [127.0.0.1])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48PMtALn007889;
 	Wed, 25 Sep 2024 23:01:30 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 41vfmmx1jy-1
+	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 41vjh3c9mn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 25 Sep 2024 23:01:30 +0000
-Received: from NALASPPMTA05.qualcomm.com (NALASPPMTA05.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48PN09ql010238;
+Received: from NALASPPMTA04.qualcomm.com (NALASPPMTA04.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48PN1U6Q014943;
 	Wed, 25 Sep 2024 23:01:30 GMT
 Received: from hu-devc-lv-u20-a-new.qualcomm.com (hu-abchauha-lv.qualcomm.com [10.81.25.35])
-	by NALASPPMTA05.qualcomm.com (PPS) with ESMTPS id 48PN1Ukm012446
+	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 48PN1UVN014941
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Wed, 25 Sep 2024 23:01:30 +0000
 Received: by hu-devc-lv-u20-a-new.qualcomm.com (Postfix, from userid 214165)
-	id DBB8021B91; Wed, 25 Sep 2024 16:01:29 -0700 (PDT)
+	id E190C229BE; Wed, 25 Sep 2024 16:01:29 -0700 (PDT)
 From: Abhishek Chauhan <quic_abchauha@quicinc.com>
 To: "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
@@ -62,10 +63,12 @@ To: "David S. Miller" <davem@davemloft.net>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Przemek Kitszel <przemyslaw.kitszel@intel.com>
 Cc: kernel@quicinc.com
-Subject: [PATCH net v3 0/2] Fix AQR PMA capabilities
-Date: Wed, 25 Sep 2024 16:01:27 -0700
-Message-Id: <20240925230129.2064336-1-quic_abchauha@quicinc.com>
+Subject: [PATCH net v3 2/2] net: phy: aquantia: remove usage of phy_set_max_speed
+Date: Wed, 25 Sep 2024 16:01:29 -0700
+Message-Id: <20240925230129.2064336-3-quic_abchauha@quicinc.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240925230129.2064336-1-quic_abchauha@quicinc.com>
+References: <20240925230129.2064336-1-quic_abchauha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -77,28 +80,17 @@ X-QCInternal: smtphost
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MiWFWSx67aM2dgFDDg9a6wb8Z8YSA_Pv
-X-Proofpoint-ORIG-GUID: MiWFWSx67aM2dgFDDg9a6wb8Z8YSA_Pv
+X-Proofpoint-GUID: rhoeNQLGVDUNzbNhX6SFc_NntnPe_Lfz
+X-Proofpoint-ORIG-GUID: rhoeNQLGVDUNzbNhX6SFc_NntnPe_Lfz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- mlxscore=0 impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=963 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 priorityscore=1501 clxscore=1015
+ malwarescore=0 mlxscore=0 mlxlogscore=999 impostorscore=0 phishscore=0
+ spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2408220000 definitions=main-2409250163
 
-Patch 1:- 
-AQR115c reports incorrect PMA capabilities which includes
-10G/5G and also incorrectly disables capabilities like autoneg
-and 10Mbps support.
-
-AQR115c as per the Marvell databook supports speeds up to 2.5Gbps
-with autonegotiation.
-
-AQR115c also support 2500BaseX 
-
-Patch 2:- 
 Remove the use of phy_set_max_speed in phy driver as the
 function is mainly used in MAC driver to set the max
 speed.
@@ -106,14 +98,156 @@ speed.
 Instead use get_features to fix up Phy PMA capabilities for
 AQR111, AQR111B0, AQR114C and AQCS109
 
+Fixes: 038ba1dc4e54 ("net: phy: aquantia: add AQR111 and AQR111B0 PHY ID")
+Fixes: 0974f1f03b07 ("net: phy: aquantia: remove false 5G and 10G speed ability for AQCS109")
+Fixes: c278ec644377 ("net: phy: aquantia: add support for AQR114C PHY ID")
+Link: https://lore.kernel.org/all/20240913011635.1286027-1-quic_abchauha@quicinc.com/T/
+Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+---
+Changes since v2
+1. seperate out the changes into two different patches. 
+2. remove usage of phy_set_max_speed from the aquantia driver
+3. use phy_gbit_features instead of initializing each and 
+every link mode bits. 
+4. write seperate functions for  5Gbps supported phy 
+5. remove FIBRE bit which was introduced in patch 1
 
-Abhishek Chauhan (2):
-  net: phy: aquantia: AQR115c fix up PMA capabilities
-  net: phy: aquantia: remove usage of phy_set_max_speed
+Changes since v1 
+1. remove usage of phy_set_max_speed in the aquantia driver code.
+2. Introduce aqr_custom_get_feature which checks for the phy id and
+   takes necessary actions based on max_speed supported by the phy
+3. remove aqr111_config_init as it is just a wrapper function. 
 
- drivers/net/phy/aquantia/aquantia_main.c | 73 +++++++++++++++++++-----
- 1 file changed, 58 insertions(+), 15 deletions(-)
+ drivers/net/phy/aquantia/aquantia_main.c | 53 +++++++++++++++---------
+ 1 file changed, 34 insertions(+), 19 deletions(-)
 
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index 88ba12aaf6e0..c508f63f7fac 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -527,12 +527,6 @@ static int aqcs109_config_init(struct phy_device *phydev)
+ 	if (!ret)
+ 		aqr107_chip_info(phydev);
+ 
+-	/* AQCS109 belongs to a chip family partially supporting 10G and 5G.
+-	 * PMA speed ability bits are the same for all members of the family,
+-	 * AQCS109 however supports speeds up to 2.5G only.
+-	 */
+-	phy_set_max_speed(phydev, SPEED_2500);
+-
+ 	return aqr107_set_downshift(phydev, MDIO_AN_VEND_PROV_DOWNSHIFT_DFLT);
+ }
+ 
+@@ -741,6 +735,33 @@ static int aqr113c_config_init(struct phy_device *phydev)
+ 	return aqr113c_fill_interface_modes(phydev);
+ }
+ 
++static int aqr111_get_features(struct phy_device *phydev)
++{
++	int ret;
++	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported) = { 0, };
++
++	/* Normal feature discovery */
++	ret = genphy_c45_pma_read_abilities(phydev);
++	if (ret)
++		return ret;
++
++	/* PHY FIXUP */
++	/* Although the PHY sets bit 12.18.19, it does not support 10G modes */
++	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, phydev->supported);
++	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKX4_Full_BIT, phydev->supported);
++	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKR_Full_BIT, phydev->supported);
++
++	/* Phy supports Speeds up to 5G with Autoneg though the phy PMA says otherwise */
++	linkmode_copy(supported, phy_gbit_features);
++	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseX_Full_BIT, supported);
++	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
++	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, supported);
++
++	linkmode_or(phydev->supported, supported, phydev->supported);
++
++	return 0;
++}
++
+ static int aqr107_probe(struct phy_device *phydev)
+ {
+ 	int ret;
+@@ -757,16 +778,6 @@ static int aqr107_probe(struct phy_device *phydev)
+ 	return aqr_hwmon_probe(phydev);
+ }
+ 
+-static int aqr111_config_init(struct phy_device *phydev)
+-{
+-	/* AQR111 reports supporting speed up to 10G,
+-	 * however only speeds up to 5G are supported.
+-	 */
+-	phy_set_max_speed(phydev, SPEED_5000);
+-
+-	return aqr107_config_init(phydev);
+-}
+-
+ static int aqr115c_get_features(struct phy_device *phydev)
+ {
+ 	int ret;
+@@ -870,6 +881,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.get_sset_count	= aqr107_get_sset_count,
+ 	.get_strings	= aqr107_get_strings,
+ 	.get_stats	= aqr107_get_stats,
++	.get_features   = aqr115c_get_features,
+ 	.link_change_notify = aqr107_link_change_notify,
+ 	.led_brightness_set = aqr_phy_led_brightness_set,
+ 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
+@@ -882,7 +894,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.name		= "Aquantia AQR111",
+ 	.probe		= aqr107_probe,
+ 	.get_rate_matching = aqr107_get_rate_matching,
+-	.config_init	= aqr111_config_init,
++	.config_init	= aqr107_config_init,
+ 	.config_aneg    = aqr_config_aneg,
+ 	.config_intr	= aqr_config_intr,
+ 	.handle_interrupt = aqr_handle_interrupt,
+@@ -894,6 +906,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.get_sset_count	= aqr107_get_sset_count,
+ 	.get_strings	= aqr107_get_strings,
+ 	.get_stats	= aqr107_get_stats,
++	.get_features   = aqr111_get_features,
+ 	.link_change_notify = aqr107_link_change_notify,
+ 	.led_brightness_set = aqr_phy_led_brightness_set,
+ 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
+@@ -906,7 +919,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.name		= "Aquantia AQR111B0",
+ 	.probe		= aqr107_probe,
+ 	.get_rate_matching = aqr107_get_rate_matching,
+-	.config_init	= aqr111_config_init,
++	.config_init	= aqr107_config_init,
+ 	.config_aneg    = aqr_config_aneg,
+ 	.config_intr	= aqr_config_intr,
+ 	.handle_interrupt = aqr_handle_interrupt,
+@@ -918,6 +931,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.get_sset_count	= aqr107_get_sset_count,
+ 	.get_strings	= aqr107_get_strings,
+ 	.get_stats	= aqr107_get_stats,
++	.get_features   = aqr111_get_features,
+ 	.link_change_notify = aqr107_link_change_notify,
+ 	.led_brightness_set = aqr_phy_led_brightness_set,
+ 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
+@@ -1027,7 +1041,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.name           = "Aquantia AQR114C",
+ 	.probe          = aqr107_probe,
+ 	.get_rate_matching = aqr107_get_rate_matching,
+-	.config_init    = aqr111_config_init,
++	.config_init    = aqr107_config_init,
+ 	.config_aneg    = aqr_config_aneg,
+ 	.config_intr    = aqr_config_intr,
+ 	.handle_interrupt = aqr_handle_interrupt,
+@@ -1039,6 +1053,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.get_sset_count = aqr107_get_sset_count,
+ 	.get_strings    = aqr107_get_strings,
+ 	.get_stats      = aqr107_get_stats,
++	.get_features   = aqr111_get_features,
+ 	.link_change_notify = aqr107_link_change_notify,
+ 	.led_brightness_set = aqr_phy_led_brightness_set,
+ 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
 -- 
 2.25.1
 
