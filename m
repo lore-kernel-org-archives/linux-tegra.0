@@ -1,257 +1,220 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2040.outbound.protection.outlook.com [40.107.244.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D321386D1;
-	Fri, 27 Sep 2024 01:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727399184; cv=none; b=eoZIWvjEy0tK5YrmPnA9VOrgx+aizwxaVu4Xt4t0R4r3CiFMH/4crnqiNduUE/9xLfAfim577clBbVP7Yu4BzYMsYG9QgJSm6BVMIqK2sv9DVo7qw3ge7/Kxk8JGa5CMI8k6Mdu3hjwC8382/t37VfsVCJ+S/75GAnme9iyeNkQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727399184; c=relaxed/simple;
-	bh=eAtDoMi7B+vRwGWGL3vxjmjSdR0s4vc3WtXWNkin+Rk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uE2yZidgBr65IxFJ/YMktxvhdesptCKpnvO7GozM77GaXb2ZAKkjdm7mGWV7E6aZRLEK/ZrDuI5rCuuM8U0binxNMV8m5eisebcAQgdghLuKzKB67QeovuS3R0iEn6LQD+VW0vYDI8z1CWsdgPIiE31kXhJQSs1o3jXJ+qInwsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LXuNErBr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3DF142621;
+	Fri, 27 Sep 2024 15:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727451001; cv=fail; b=qDyr9ShEBM+DJQx34zGL6Hqa/eBm/RXWStjh21YBw+GVffMathqOY8bKlz6K8xkVqMQCjhcF/0IKpMNpYvnh2guObaDdeKzfmIuJ35t99lL+NQ6zjBUrqXiW1RzRoAP61EFgwFAlH8h1JbuWzhmDiKZ8vSeprVBVYZjv71Le0i0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727451001; c=relaxed/simple;
+	bh=Neay3oEIunPkLgN6OS/ExqVxBw4kSmZZ5daAFlQsVd8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=rGQZ46J866do/NFROx2509n6bB8R41suUkuaYtrKMBOdanQj1XctpfgTX9gdhZdTGH6U9Tr0igO4g2/sRc25q9aQyZxiLPDbiE1ErgFP48UKVKKMrWDNB4Yr4NLI6rkudAhsyrbQDyND5H7q6wrB5ufNWRLdrTm+7uBOmCYP+1k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MwkxJagD; arc=fail smtp.client-ip=40.107.244.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LXuNErBr"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48QG9mVQ002826;
-	Fri, 27 Sep 2024 01:05:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=eYE1OvQ5B+9
-	eztvmXCCmgcWT6Y5CiaA48OnAiw39nTk=; b=LXuNErBrGQlFuX5O2AqGu7jaRyX
-	rQNk/kg8MQBgkccKFSgjdWQm3Yi7sR+KeGkRwr/L26FFaNKtM2d/9GBxiY1f0oi8
-	DffQnpN2xOSWznu7RDoH4kkLx7+V51PVYf4JGKCYWNGMhfi6UoJHbghlcKeAo979
-	m2G6iGeY5ozQ51XrXsy3E7ryJUxl7ASC8HABeg4P3eVghyjrHC8vaVwQ7ttWAEjY
-	e+RlV/kHWqWF/ODYvZ+EjCI6gqklWmMy3bLE78W6eNfQ9kEb3kZ3vaQLmVhgjaUX
-	0ulu0d+pIrVUXUykj3KHM8h0xNWF+lwMGJaWV3h5LhjvBioebNjUeZniQ7w==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41sqakrtnn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 01:05:55 +0000 (GMT)
-Received: from pps.filterd (NALASPPMTA04.qualcomm.com [127.0.0.1])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48R15sUf000953;
-	Fri, 27 Sep 2024 01:05:54 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 41wahhbpet-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 01:05:54 +0000
-Received: from NALASPPMTA04.qualcomm.com (NALASPPMTA04.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48R15rmx000941;
-	Fri, 27 Sep 2024 01:05:53 GMT
-Received: from hu-devc-lv-u20-a-new.qualcomm.com (hu-abchauha-lv.qualcomm.com [10.81.25.35])
-	by NALASPPMTA04.qualcomm.com (PPS) with ESMTPS id 48R15roG000940
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 27 Sep 2024 01:05:53 +0000
-Received: by hu-devc-lv-u20-a-new.qualcomm.com (Postfix, from userid 214165)
-	id 417232207E; Thu, 26 Sep 2024 18:05:53 -0700 (PDT)
-From: Abhishek Chauhan <quic_abchauha@quicinc.com>
-To: "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>,
-        "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Brad Griffis <bgriffis@nvidia.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: kernel@quicinc.com
-Subject: [PATCH net v4 2/2] net: phy: aquantia: remove usage of phy_set_max_speed
-Date: Thu, 26 Sep 2024 18:05:53 -0700
-Message-Id: <20240927010553.3557571-3-quic_abchauha@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240927010553.3557571-1-quic_abchauha@quicinc.com>
-References: <20240927010553.3557571-1-quic_abchauha@quicinc.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MwkxJagD"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j/xbDSCA/cs/13qqMunStJcjl9s9xa0B2dQMcmd5LnGTVPla4KaJ8TI/sAsGkBRfGgha9ifoDkow784ec8x/+2FNPgAGs/lt0PKbOTNs3lFPQr89BwWKc5XFnXaJJN/b2TCtRd1g6F66O0zrTET39tG9JWyhA8WwCkOJdNxh7yuHJo4ZPvc3B/EUqCjcjJFFWaoacZzwaoUKHuTtLDm95jE0ka/8vGX8cdfsbvmr/l/yQXRKsNKz1dhg4uZFzKNNCHoZl+IU4Q39866/lWtFsCsWVi9ZQd8lEEbC4cBTfYXwkJPCaIat27VXBZ7Bsh93Rf4s26bM0Xh8qedn6lZt2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZAeitlLstPEf29pPGBMA6cmSZZmHUJmylCSZAa/xfls=;
+ b=rXr7PALWthGN7ufisrnGiHQnA/AX1jLOpi+0uaTMcFrAGO6JgwjOJ9HfqHJRPGaFifq/yPXOI3FmNbWuhup6G6WZ2msJRmS4aSi2bRycjKboo3Kxh+ZeUc4eNvZ6clsY+YqkBK4MKFcp0ilHeRbXruWYyJ4TFYdm6uoUd7KQ+iHOTu+ez4DeQXWIUYhIOTc+T1ICPlIF+HRb7q9zX6ubQaG/kj/yV9jozqaleQEewLpIe6uGcp+L7YxYeQaBySzNWSYxrHGnPOcGkU8G6vMIw2rS5+H+jHqgcTj9dv0lbdTNGvFxqHb4rityuNiUiMqodVPhiKy0i0OZYPk5qZxYuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZAeitlLstPEf29pPGBMA6cmSZZmHUJmylCSZAa/xfls=;
+ b=MwkxJagDzBqcY7B5W9papaUKqnth54oEGAz3IzfAKmv1g5DHJaZi3UQtm8r+oTg88+aDENCiih4EOR9hKWNpPpcZrbRS70ft1aLPvi91JgPh6/BWDDpkxSTWW8tZG4dr14Kvqyw9WNVsmJ/yW35yB1NDD3EJWODaBTDgppTMyq96/W9tliMceaxU+NhupMDrskBjkCDJKU75qGANj2ORBdXJs+TdpJJtjcY9fM1fq3Rqu04A44bTV7AXFuK/tEMC5a+jJ6XBlW6XFSSGeWQZRVJIlDZTY01q7w2IwdqAVbzw5K3+dPkZt9FGcnJHuhPc6t3oSPBAc+zIb2rTZdGNng==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM8PR12MB5447.namprd12.prod.outlook.com (2603:10b6:8:36::7) by
+ LV3PR12MB9235.namprd12.prod.outlook.com (2603:10b6:408:1a4::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.24; Fri, 27 Sep
+ 2024 15:29:56 +0000
+Received: from DM8PR12MB5447.namprd12.prod.outlook.com
+ ([fe80::5f8:82ee:7da9:219b]) by DM8PR12MB5447.namprd12.prod.outlook.com
+ ([fe80::5f8:82ee:7da9:219b%4]) with mapi id 15.20.8005.021; Fri, 27 Sep 2024
+ 15:29:56 +0000
+Message-ID: <6fdc8e96-0535-460f-a2da-cd698cff8324@nvidia.com>
+Date: Fri, 27 Sep 2024 16:28:45 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: stmmac: dwmac-tegra: Fix link bring-up sequence
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Paritosh Dixit <paritoshd@nvidia.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Bhadram Varka <vbhadram@nvidia.com>,
+ Revanth Kumar Uppala <ruppala@nvidia.com>, netdev@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20240923134410.2111640-1-paritoshd@nvidia.com>
+ <qcdec6h776mb5vms54wksqmkoterxj4vt7tndtfppck2ao733t@nlhyy7yhwfgf>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <qcdec6h776mb5vms54wksqmkoterxj4vt7tndtfppck2ao733t@nlhyy7yhwfgf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0372.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18e::17) To DM8PR12MB5447.namprd12.prod.outlook.com
+ (2603:10b6:8:36::7)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qx0jjypZKxXFGbuyPWqtpmun7AToNmG4
-X-Proofpoint-GUID: qx0jjypZKxXFGbuyPWqtpmun7AToNmG4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- bulkscore=0 impostorscore=0 suspectscore=0 phishscore=0 adultscore=0
- clxscore=1015 malwarescore=0 lowpriorityscore=0 mlxlogscore=999
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409270006
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5447:EE_|LV3PR12MB9235:EE_
+X-MS-Office365-Filtering-Correlation-Id: a0a28c3f-0c3c-4aa3-979b-08dcdf093d8e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aHNha2JPZkZhME8ybVlSbnNETmY4WGpoUm9melZXRGRzUUxYRk0reGFvYlY4?=
+ =?utf-8?B?U1o2VDhHWDZnb05qNVdCaEN2QWQrNVlkR2JXWkdpek1YNmQrSVVucWtiK0tx?=
+ =?utf-8?B?blU0OFZ3WEIyckpBLzM1Q3U0bUkyVlg1MnBaV0pzTE44N25sczhtSEN0NHAz?=
+ =?utf-8?B?SElMN3oxTUZtZmhhYTR1U09oUkU4MTRKTDhTZWIxL3lLaTM3M3pDKyswQ05E?=
+ =?utf-8?B?ZnNoRThUVEpWcWU3TlIzNWZ1NHpMd3ZHTHpQRG9vWUJuc3pidmxEVm1aT2sy?=
+ =?utf-8?B?ckxYNFBFb2pOT3Y2dDV2Njd5OVgzcVZrZTdlRGRNeldETUdkalJlQlNtc2xi?=
+ =?utf-8?B?dHNwcnRTZ05FWVB2eTBmUytLQUlSdXNwR3FITWZ2bGljcG12TnZRaDc1ZkRa?=
+ =?utf-8?B?KzAvK2JUdHJtbjZoMWpDN3ZCampRNG9FMTBDMVUwMG8vemcvMTgvdDhlT3BM?=
+ =?utf-8?B?TU5xVmFIbURDbWQzRkZvRG45SFNsSHRGNWRQelRKZ0krKy9UTi96Qk9lbDM5?=
+ =?utf-8?B?ekNYd3R0N2xEeHg5dFdUMWVWVjRSREUyM2pUdkpSbjAxWEd5d3ZPcW00blVP?=
+ =?utf-8?B?RWFuU1p2TGl6TFJvNzI0V2Uxa1NyL3JKN0NOa052eXQ2SFFDMVdVQjNpMjV4?=
+ =?utf-8?B?TTZCaFY3UzJWckFMbmNURG9tUXVYSkV6TVc1bmQrWWdxZUxkWElRQW0rK3ZB?=
+ =?utf-8?B?cUxROHphT1FBZms5YXgrWFIrWWE2SmZNQTdpbklSUGlLb3MycXZOeFl0ZXNS?=
+ =?utf-8?B?b3p4NlI0RTZhUG1NTlRtZno4RzVDUkF2YTZlL0k3Ni9xQ1FPVU5ZTUxUTFNt?=
+ =?utf-8?B?ZHB4dXRqRW9GQlU1bEtwLzR0aS8xUExIT3QzRVE4K3pQN0hscm9XNUZZcExs?=
+ =?utf-8?B?Z2llQzB3UXJ1NUV6Um5mZVVWSUo3NGFOVW5tWVE5STJQNG80bERPZzhxV2Ew?=
+ =?utf-8?B?M0dEZEtkYnpKb0hHRkRrak1lUFlINTErc2dmbEZiSGsxRWFEZ0NCQ0duOC9z?=
+ =?utf-8?B?ektaYzVHQy91S2NaelF3eVhraFlvcncwOExoV3p6R01yMVo3ZUM5dWxRWXEz?=
+ =?utf-8?B?WmpCYllacERxczM0blkzUmJHeDBzRFZTVUdGd3lWZVgvdE1vWTVyT1RqeCtZ?=
+ =?utf-8?B?Wnd1MEN5bWVDdlA0d2orSEJGYkh1aXlKZkpJOXA0Y25icVZBSFNxczZxc0Nq?=
+ =?utf-8?B?ZUcrSmVWY0w1REhWUVA3TmwzTmtWTzkrcDdjZmYrRU8rdG1yVkp4OXMwaklY?=
+ =?utf-8?B?S0ozbmpyUS9CL1lQc3BYREY1L2dEQmVyOThKalAySzZ0dmZlRDEzSXlwMkpy?=
+ =?utf-8?B?b25ZUDVqeFk3dWxRVzJXUkMxVEJFWDd4T2gzaFR6eUFzb1BhWXFYUWd0bVl1?=
+ =?utf-8?B?eXZqbFI4THdldXFpS3orRmpCQVFBcXdEN3JuV1VsdVlSOFlDdFcxbUZkT2s5?=
+ =?utf-8?B?Zm1YcEp6TElNUnE2WkJCN1VIcERiYVROY0drNHR0UmxBVjJtQ0JkYU5YOGQ1?=
+ =?utf-8?B?Q3pUc1l3STZNWlhKbjZpbzkydWh6MnBCNUdnRGlNR0xIb1NSUXExenNHc1Fi?=
+ =?utf-8?B?WGlWYjVlOHd4Y0hYUjkrNTI3MjRKZnNwWVYwT3RkQVdmSnBpbGVYL0FpU2l1?=
+ =?utf-8?B?Um9wcVFLZmo1R2hCdi9XbDA1VFVjd3BtcUI4L3dJRzEyTVFhOGNEZCtTWkZN?=
+ =?utf-8?B?YjI5cUxnclY1K3FQWXVPYmdoV0FHM1phT205N2hwaFBhRVYwY1J6SC9nPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5447.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eUxYSlVlaDlVeitFNGY2ZHJRaGx3WnBnRUtlOWtsSmNBcDdNdFRYNEQ5VTVX?=
+ =?utf-8?B?bExuand2SWVxeFM0dnlqS3MzZTJIR1NmS3NBbjhlaWxjdTVnbnZETFVEeWJD?=
+ =?utf-8?B?c3YrSGx2MHlHK3dwVHN1VlJOaEkzdXNkMVpINU52blpIN1NMME1vYjB0NFJp?=
+ =?utf-8?B?UWlqUGZ0bjdLSWczb1ZYTEdxeHlWNFJzNTdkU0xBVGhZcXBWbWl1RnIySFU3?=
+ =?utf-8?B?b09wTk1sbWc4WkFDWEtNUmtES0N2U3JTQjVPc2ZxUXA3czRzK0hSS3lYcGxo?=
+ =?utf-8?B?RVgrNHFxTnl0WFU1U0FtdVlLZ2ZGQTBOU1QzOE5oekNPc24rS2w2SXFOME01?=
+ =?utf-8?B?VVFuVW90NlYrSmhLTXk3RzR0Rk1jYlJ6QTdsTGN0bWNRczdOTFRMVk1qVUJD?=
+ =?utf-8?B?RnlUdWRJMVdWeW9KWmMzVnRCYjdScE1pcVgwM1RwdEtHLzBHTUJKY2Q2Y1Iy?=
+ =?utf-8?B?UU9tcXVaZXMzdVpKREFmd0R3bk5QVGRZM3hjUlF4M0lZanZabjhVTlNsc1Fi?=
+ =?utf-8?B?R3ZEQ3NJUkJYcVZZaW0wQXZpR3l1cFpzSDA1MVQ5a3p6TjNaZWZYd3NuRk9n?=
+ =?utf-8?B?eENqUEh4dnRieHMralpqUURVcGsrMUlXanIxL0ZTY2NtY2YvUjVuZDVyK2lN?=
+ =?utf-8?B?WGhrK0pERE56WSs5dWNPZ3piOVU2cmZqZEc0KzRNNFJGbkVRRFM0OVV1cEs3?=
+ =?utf-8?B?aDFKKzNWMDBNNDdQdDZsM1F5TW95QzAyend2Wmc5L2FSWUU4NnYvamp2Tkth?=
+ =?utf-8?B?eFo2N2xRSGE2S2lTWkdFNjNwVGNGcjZkYVI5RXIxVWFpZUxZWUNCME5kSzVS?=
+ =?utf-8?B?d2g1UlNtYUhtVTRDaXpIZm5uTlVrU21QOTE0UTdmZEVqVzE3Mnk5RlEvUFZw?=
+ =?utf-8?B?SEdEb291MjZTQ04zS0Y1LzVlT2V0eVBJc3BvOGhWMnVlR29IZ3VrQjRoUHRZ?=
+ =?utf-8?B?QjF1Zm5QWlVFbmw4bDlBQ3RtdWlHME4wN1pFeTNmclgxU244a0dmUnNqdi9Q?=
+ =?utf-8?B?Y1daZjkrZlB5Z2lXUnhEN1hwMGlrblBZLy96TUlvK0RqeVF3SndHV3lLN2Fs?=
+ =?utf-8?B?Tm1uRWJJeFJ6bkx2U1VlQlE1cG1HOGV1SzNodTF5Uy8vVVE0ZnVKc2FJdWVT?=
+ =?utf-8?B?NkdGUG80cC9JTTlrdmRkelhFWVBlM3hWK0Y1S3ZNek1RbXdCNGtzc3EyOEVM?=
+ =?utf-8?B?ZGJkYlU3Z1hPZkJvS011TytybXRTY0Fxa3JtVEY0UVFHQ29tQ2FDRFVraWtT?=
+ =?utf-8?B?bEdUd254SU5BVGlmeXMxNFJob1gyWGEyaXVnWmZvS0VsUVpuRVhNb3AwUy9Y?=
+ =?utf-8?B?TFBvYU54L0I3Q2hkckszRUl3L2RTRGVwQjc5TlFIdDNHOVNhSXJTOGNLUDdz?=
+ =?utf-8?B?czZLWVRXcXVyK216cG05c0ZweWVrZXE2cXpqWXVxc1M4aWZzcDFoa0J6Ky9l?=
+ =?utf-8?B?RjhRc01nTUppL1Z5empPWmw4U1Z2b2FaOC81WFNESExKVUpIckUxUUVJeGhP?=
+ =?utf-8?B?SjJyMDlKUUl5cEF2TUxXaWlCYjcvcmlRU0FUNWtid0M5NmpjZHlSckFvZW9F?=
+ =?utf-8?B?OEliTHg4bkZMM1F3ZE4vVHEyejRMb2tPMm1LTmRkVlJlYU1rKytQOVNlVlZw?=
+ =?utf-8?B?ZWZyYkdVNVJCOEFFeUFISElnR2pIWDd2UFVualpleDg4OGh6b0t1ZXlHMCtj?=
+ =?utf-8?B?ZU5XWktXNHpRZTBlcUFEa3JiNUFYcCtTd2tQRUp6UzJUYkQ1NCtEblZ5WFhE?=
+ =?utf-8?B?VjNmWWxBMUVqVDJkaEtuNnc2MXE2YXErM2RJekxEdkF3MXdkUTZoT3NMTVVh?=
+ =?utf-8?B?c2lZaFpWNTRtYUNObHJoTG5KNlFvVU8vYWdOL3U2eFF1SHJKTWhMMDR3S0I4?=
+ =?utf-8?B?RktkcVA5ekZMMS80L3NXd0xZK0N4bDVLZEVyQnpYL0N0dzVUU2Fnc3Rnc05k?=
+ =?utf-8?B?Z0lvQ2ZSeFFVaFJiTlBNTGU1Y2dHbEltNjE5OHBGT0k4NXVkd0ZmRW1lU3Va?=
+ =?utf-8?B?WFF5b3Z4RExBS1pjS042WFNqRksvVTVIUzFuTzkwOGhPMlkycHQ0eU43WVpQ?=
+ =?utf-8?B?QzdsSDZBRVNaNDZyTjY5eHRjZlJNNmxtK2U2enBVTDFZdkZDaE1JcENSckRj?=
+ =?utf-8?B?dm5tR0RGcU5zdEpVSjR0aWduVkE3K29ubjlFRThFMldsbitMa1J1RGZGZU91?=
+ =?utf-8?Q?zN5PDPVa85pVGmfCUDOBC0Wvnr7IL9QnW7UPYlZCOYz+?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a0a28c3f-0c3c-4aa3-979b-08dcdf093d8e
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5447.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 15:29:56.2310
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V+Xfa07W6ziIu+0nbxru2FyHzpwsj1KR2f3qNDKj9xFiZdHIflZ30KCM1cf0daQpW3fdDXmFZwBxeHpRhIMDeQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9235
 
-Remove the use of phy_set_max_speed in phy driver as the
-function is mainly used in MAC driver to set the max
-speed.
+Hi Thierry,
 
-Instead use get_features to fix up Phy PMA capabilities for
-AQR111, AQR111B0, AQR114C and AQCS109
+On 25/09/2024 14:40, Thierry Reding wrote:
+> On Mon, Sep 23, 2024 at 09:44:10AM GMT, Paritosh Dixit wrote:
+>> The Tegra MGBE driver sometimes fails to initialize, reporting the
+>> following error, and as a result, it is unable to acquire an IP
+>> address with DHCP:
+>>
+>>   tegra-mgbe 6800000.ethernet: timeout waiting for link to become ready
+>>
+>> As per the recommendation from the Tegra hardware design team, fix this
+>> issue by:
+>> - clearing the PHY_RDY bit before setting the CDR_RESET bit and then
+>> setting PHY_RDY bit before clearing CDR_RESET bit. This ensures valid
+>> data is present at UPHY RX inputs before starting the CDR lock.
+> 
+> Did you do any testing with only these changes and without the delays?
+> Sounds to me like the sequence was blatantly wrong before, so maybe
+> fixing that already fixes the issue?
 
-Fixes: 038ba1dc4e54 ("net: phy: aquantia: add AQR111 and AQR111B0 PHY ID")
-Fixes: 0974f1f03b07 ("net: phy: aquantia: remove false 5G and 10G speed ability for AQCS109")
-Fixes: c278ec644377 ("net: phy: aquantia: add support for AQR114C PHY ID")
-Link: https://lore.kernel.org/all/20240913011635.1286027-1-quic_abchauha@quicinc.com/T/
-Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
----
-Changes since v3
-1. remove setting of 2500baseX bit introduced as
-   part of previous patches.
-2. follow reverse xmas declaration of variables.
-3. remove local mask introduced as part of
-   previous patch and optimize the logic.
 
-Changes since v2
-1. seperate out the changes into two different patches. 
-2. use phy_gbit_features instead of initializing each and 
-   every link mode bits. 
-3. write seperate functions for 2.5Gbps supported phy. 
-4. remove FIBRE bit which was introduced in patch 1.
+Paritosh was able to confirm that the 30ms delay was the key one to 
+fixing this specific issue. However, when we reviewed this with the 
+design team the other delays and updates to the sequence were 
+recommended. This has been implemented internally in the relevant 
+drivers and so we wanted to align the upstream driver with this too. So 
+we are trying to keep the sequence aligned.
 
-Changes since v1 
-1. remove usage of phy_set_max_speed in the aquantia driver code.
-2. Introduce aqr_custom_get_feature which checks for the phy id and
-   takes necessary actions based on max_speed supported by the phy.
-3. remove aqr111_config_init as it is just a wrapper function. 
+>> - adding the required delays when bringing up the UPHY lane. Note we
+>> need to use delays here because there is no alternative, such as
+>> polling, for these cases.
+> 
+> One reason why I'm hoping that's enough is because ndelay() isn't great.
+> For one it can return early, and it's also usually not very precise. If
+> I look at the boot log on a Tegra234 device, the architecture timer (off
+> of which the ndelay() implementation on arm64 runs) runs at 31.25 MHz so
+> that gives us around 32 ns of precision.
+> 
+> On the other hand, some of these delays are fairly long for busy loops.
+> I'm not too worried about those 50ns ones, but the 500ns is quite a long
+> time (from the point of view of a CPU).
+> 
+> All in all, I wonder if we wouldn't be better off increasing these
+> delays to the point where we can use usleep_range(). That will make
+> the overall lane bringup slightly longer (though it should still be well
+> below 1ms, so hardly noticeable from a user's perspective) but has the
+> benefit of not blocking the CPU during this time.
 
- drivers/net/phy/aquantia/aquantia_main.c | 51 +++++++++++++++---------
- 1 file changed, 32 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-index af6784b118d2..73f4e67e14b6 100644
---- a/drivers/net/phy/aquantia/aquantia_main.c
-+++ b/drivers/net/phy/aquantia/aquantia_main.c
-@@ -527,12 +527,6 @@ static int aqcs109_config_init(struct phy_device *phydev)
- 	if (!ret)
- 		aqr107_chip_info(phydev);
- 
--	/* AQCS109 belongs to a chip family partially supporting 10G and 5G.
--	 * PMA speed ability bits are the same for all members of the family,
--	 * AQCS109 however supports speeds up to 2.5G only.
--	 */
--	phy_set_max_speed(phydev, SPEED_2500);
--
- 	return aqr107_set_downshift(phydev, MDIO_AN_VEND_PROV_DOWNSHIFT_DFLT);
- }
- 
-@@ -741,6 +735,31 @@ static int aqr113c_config_init(struct phy_device *phydev)
- 	return aqr113c_fill_interface_modes(phydev);
- }
- 
-+static int aqr111_get_features(struct phy_device *phydev)
-+{
-+	unsigned long *supported = phydev->supported;
-+	int ret;
-+
-+	/* Normal feature discovery */
-+	ret = genphy_c45_pma_read_abilities(phydev);
-+	if (ret)
-+		return ret;
-+
-+	/* PHY FIXUP */
-+	/* Although the PHY sets bit 12.18.19, it does not support 10G modes */
-+	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, supported);
-+	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKX4_Full_BIT, supported);
-+	linkmode_clear_bit(ETHTOOL_LINK_MODE_10000baseKR_Full_BIT, supported);
-+
-+	/* Phy supports Speeds up to 5G with Autoneg though the phy PMA says otherwise */
-+	linkmode_or(supported, supported, phy_gbit_features);
-+	/* Set the 5G speed if it wasn't set as part of the PMA feature discovery */
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, supported);
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
-+
-+	return 0;
-+}
-+
- static int aqr107_probe(struct phy_device *phydev)
- {
- 	int ret;
-@@ -757,16 +776,6 @@ static int aqr107_probe(struct phy_device *phydev)
- 	return aqr_hwmon_probe(phydev);
- }
- 
--static int aqr111_config_init(struct phy_device *phydev)
--{
--	/* AQR111 reports supporting speed up to 10G,
--	 * however only speeds up to 5G are supported.
--	 */
--	phy_set_max_speed(phydev, SPEED_5000);
--
--	return aqr107_config_init(phydev);
--}
--
- static int aqr115c_get_features(struct phy_device *phydev)
- {
- 	unsigned long *supported = phydev->supported;
-@@ -868,6 +877,7 @@ static struct phy_driver aqr_driver[] = {
- 	.get_sset_count	= aqr107_get_sset_count,
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
-+	.get_features   = aqr115c_get_features,
- 	.link_change_notify = aqr107_link_change_notify,
- 	.led_brightness_set = aqr_phy_led_brightness_set,
- 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-@@ -880,7 +890,7 @@ static struct phy_driver aqr_driver[] = {
- 	.name		= "Aquantia AQR111",
- 	.probe		= aqr107_probe,
- 	.get_rate_matching = aqr107_get_rate_matching,
--	.config_init	= aqr111_config_init,
-+	.config_init	= aqr107_config_init,
- 	.config_aneg    = aqr_config_aneg,
- 	.config_intr	= aqr_config_intr,
- 	.handle_interrupt = aqr_handle_interrupt,
-@@ -892,6 +902,7 @@ static struct phy_driver aqr_driver[] = {
- 	.get_sset_count	= aqr107_get_sset_count,
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
-+	.get_features   = aqr111_get_features,
- 	.link_change_notify = aqr107_link_change_notify,
- 	.led_brightness_set = aqr_phy_led_brightness_set,
- 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-@@ -904,7 +915,7 @@ static struct phy_driver aqr_driver[] = {
- 	.name		= "Aquantia AQR111B0",
- 	.probe		= aqr107_probe,
- 	.get_rate_matching = aqr107_get_rate_matching,
--	.config_init	= aqr111_config_init,
-+	.config_init	= aqr107_config_init,
- 	.config_aneg    = aqr_config_aneg,
- 	.config_intr	= aqr_config_intr,
- 	.handle_interrupt = aqr_handle_interrupt,
-@@ -916,6 +927,7 @@ static struct phy_driver aqr_driver[] = {
- 	.get_sset_count	= aqr107_get_sset_count,
- 	.get_strings	= aqr107_get_strings,
- 	.get_stats	= aqr107_get_stats,
-+	.get_features   = aqr111_get_features,
- 	.link_change_notify = aqr107_link_change_notify,
- 	.led_brightness_set = aqr_phy_led_brightness_set,
- 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
-@@ -1025,7 +1037,7 @@ static struct phy_driver aqr_driver[] = {
- 	.name           = "Aquantia AQR114C",
- 	.probe          = aqr107_probe,
- 	.get_rate_matching = aqr107_get_rate_matching,
--	.config_init    = aqr111_config_init,
-+	.config_init    = aqr107_config_init,
- 	.config_aneg    = aqr_config_aneg,
- 	.config_intr    = aqr_config_intr,
- 	.handle_interrupt = aqr_handle_interrupt,
-@@ -1037,6 +1049,7 @@ static struct phy_driver aqr_driver[] = {
- 	.get_sset_count = aqr107_get_sset_count,
- 	.get_strings    = aqr107_get_strings,
- 	.get_stats      = aqr107_get_stats,
-+	.get_features   = aqr111_get_features,
- 	.link_change_notify = aqr107_link_change_notify,
- 	.led_brightness_set = aqr_phy_led_brightness_set,
- 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
+Yes we can certainly increase the delay and use usleep_range() as you 
+prefer. Let us know what you would recommend here.
+
+Cheers,
+Jon
+
 -- 
-2.25.1
-
+nvpublic
