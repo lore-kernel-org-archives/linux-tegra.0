@@ -1,66 +1,74 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103481925B8
-	for <linux-tegra@vger.kernel.org>; Tue,  1 Oct 2024 20:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1281719AD8D;
+	Tue,  1 Oct 2024 22:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727815236; cv=none; b=GdkfCTd0FOv/Z4gr+My3HRCRq1uCDahw8DBkHrqSNH/vONw/1f+uTkzViufNgxu6CV+lV54VzEHFV0+q9mbJnmWGbsmkB1ZcYX1j/gZJuw1PpUqMOCL6ciDcyhgjpvCdGPBef71NUrC9rpkN8NP2qBii5WQB2jzazyQIY/sSL5Y=
+	t=1727822814; cv=none; b=MDP9NPfjjkNQgec49aHxnORASKMMm0U2XO8Yw6GdxD42fUk95OxBE+hjw7E6NyraohvnCNMXrI1BcUmJMRs26DXobKZriJw0eHKnglBYVpKNwQP99Hl4nJsW38+sZz6NofW9gUI1Pha0tc3v1L03jKMna40zf4LFy/lGtOkldxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727815236; c=relaxed/simple;
-	bh=z7fN0wcDrgSGLJ54CogSRI9qTPvLsqNMXWPMmhQaMK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TBlMMnbNF8AuJXx6hP1IfW59+eOmgjDoZ/Oizvnn4JiOfsxo7zxXJR/axbgFFzedk5mal8tkDHQB+ZQNx1RTd+2/2vY2XCc3nopDGYAiD72WpgcSN/UKpmU87jqDOkx8oVV+5GvALigwqPOB/jrCkV7zjNm+Azy8QDZ9Z6iwONI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YZYYf7y0; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727822814; c=relaxed/simple;
+	bh=eRLn8e0XkupbfZ5IW14NLWXdWA1fZK4AkDr32qLaf0Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cEbx60XgeJnmIuAP9JJH0EJES4Y57whK1494xGO4bAkRJD+YLKKubtVIJLcC/Wvp78BuQF19i7hH0wL/VF2kKuG2IQ+NZBu1C+eKiSfZd0eUFsvkBL8+hp3syYhmnvIgLZdFY38QTtGdn+8RektwsVJZz6R8S4VzPfDfL1UTFnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iLDs8TPw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YZYYf7y0"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cdefe9ae8so7767825e9.1
-        for <linux-tegra@vger.kernel.org>; Tue, 01 Oct 2024 13:40:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727815233; x=1728420033; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EN+IlGnMWsVNl93iDCLUh0QeaNh7xIiYAcmuHj+W00s=;
-        b=YZYYf7y0t3fzNM6K8Io/RKGwI6WHJiV38lKuKDxx9LfCcPwU8pJvhVMQHB989W0lbH
-         qoWoiy9qgzSJXTwlHvoVY/klOuc/FnKHxrSt+/ThBLoF+4ZMIdxmI34w0XKFAd7JAfx8
-         f93rdrCKIFVQ7zI0Zd8AlwtcckIBVp05syFToLAIMtsLJQICv69u2knv5L1ft4pyRgWE
-         +s1He5B/yGCvo9SP/eVKJK5pszJ2nyn3bHSJlK7Q6uRW7vmU8EG57ImDBeQy3IVDruxJ
-         awBkHirnmXngDS0ysmKOyGSWGkRrcSo0bESh1INwZdOgBSDw/5gbBZNY1ZxPYCS9wKx9
-         WZdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727815233; x=1728420033;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EN+IlGnMWsVNl93iDCLUh0QeaNh7xIiYAcmuHj+W00s=;
-        b=Q+gQMp5XVJb1mQnwEz5BedMOTQyhCjQmwSzfyfmd54KnCYVGyrwkOWb4ojqgGPmxsx
-         sdgMIxKSXQ0d5icXd57K2rmoS4HmBz9wR3jwi6RHd8FvIDDbvwt/OkluoW8ugt9YHYQk
-         DUkaBKXQQUdLZLSvaS678j7/UqqxUh9wkukX7E597foS7DLiiW9IVc3l85dxNHBBbLqV
-         alrVtbfeMASIxYxJ2PxkNAnICBIBKT5uMUl7i9owPQ9gZJeTHcfsqB7BF8mcvdRte6fY
-         fL5iq7paLPHBUDmfrgLlZoi/q5dF97k4lSbXwf+kvPTrr6AtUGBZYt9rgoDljBMKlyHZ
-         4Dyw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3xqKykq5vlEWw1NV1X5Msk7VRks5uoxBa7tTq7kWrn8FHEjh2M52GAlfc4alA0h6ykXJz0Uzn+EJyUg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlOxU2/fJdrgt7T7YCPX0pSTcmBco2U04LffzblkSnQ9ghhXdx
-	5HUiYPV2haPcazcyvBSw7HH9JAgfFRtmZZQfoASsszQUPEFTrIKovrKhEp09H88=
-X-Google-Smtp-Source: AGHT+IGT9qvAcHTeHq/UjlDNrHiw+vESOThjdO8ZDEU34vY5psay4GhWwsOZG2VmxNX+sm2JGMKISg==
-X-Received: by 2002:a05:600c:1884:b0:42c:aeee:d8ee with SMTP id 5b1f17b1804b1-42f77951d97mr2528105e9.8.1727815233235;
-        Tue, 01 Oct 2024 13:40:33 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f771c208bsm6214725e9.0.2024.10.01.13.40.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 13:40:32 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] firmware: tegra: bpmp: Revert "firmware: tegra: bpmp: Use scoped device node handling to simplify error paths"
-Date: Tue,  1 Oct 2024 22:40:25 +0200
-Message-ID: <20241001204025.5632-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iLDs8TPw"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491L2Zgl007235;
+	Tue, 1 Oct 2024 22:46:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=+gQXce0lXoR
+	eRi8SO6oBQM6Xlh14ipG0UmhMfrOHfKw=; b=iLDs8TPwDipPowXAx1sl6/+/tCQ
+	0XFUDyjdYuJ4Fn/tiX7MkvaPk6hV1xAfVwHgvEVrt4gNTgxjE3nJ86sQI1MdYGYO
+	MOVQ3QmuSfryP3bk/30LhEUSwa1Cn2xxkLpxF1XZMx4dEeFZCtA/5ysZZ43yrRJ6
+	w8s9Mz3vOxTMG1z0OhbYE7zMRScluOH60u7Sx4BytP427Yg8ZPOg2Cw3daTN3LWv
+	o/IZLs8EJJsXryB+zqezOd3Yy+l9Pzv8W2mHbvvvvnZQ9SXF3+lhQa7VK24RZVsR
+	Lb1cj7jF+QMYfn8UCPEpvZVVvg2ExS8k6OW0AkDa+9wRsKsnk7h6rHsQQ2g==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x9cyhy01-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 22:46:29 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA02.qualcomm.com [127.0.0.1])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 491MkQJO005723;
+	Tue, 1 Oct 2024 22:46:27 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 41ytj3ew04-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 22:46:26 +0000
+Received: from NALASPPMTA02.qualcomm.com (NALASPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 491MkQVh005718;
+	Tue, 1 Oct 2024 22:46:26 GMT
+Received: from hu-devc-lv-u20-a-new.qualcomm.com (hu-abchauha-lv.qualcomm.com [10.81.25.35])
+	by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 491MkQGv005716
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 22:46:26 +0000
+Received: by hu-devc-lv-u20-a-new.qualcomm.com (Postfix, from userid 214165)
+	id 232B7235E1; Tue,  1 Oct 2024 15:46:26 -0700 (PDT)
+From: Abhishek Chauhan <quic_abchauha@quicinc.com>
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>,
+        "Russell King (Oracle)" <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Brad Griffis <bgriffis@nvidia.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: kernel@quicinc.com
+Subject: [PATCH net v6 2/2] net: phy: aquantia: remove usage of phy_set_max_speed
+Date: Tue,  1 Oct 2024 15:46:26 -0700
+Message-Id: <20241001224626.2400222-3-quic_abchauha@quicinc.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241001224626.2400222-1-quic_abchauha@quicinc.com>
+References: <20241001224626.2400222-1-quic_abchauha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -68,77 +76,181 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zmfSY8lM4S3GC3aciIKYgEz4bZa4orRr
+X-Proofpoint-ORIG-GUID: zmfSY8lM4S3GC3aciIKYgEz4bZa4orRr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ bulkscore=0 spamscore=0 phishscore=0 suspectscore=0 priorityscore=1501
+ mlxlogscore=999 impostorscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2410010151
 
-This reverts commit 8812b8689ee6 ("firmware: tegra: bpmp: Use scoped
-device node handling to simplify error paths") because it was silently
-modified by committer during commit process, by moving declaration of
-'struct device_node *np' above the initializer/constructor.  Such code
-was not intention of the author, is not conforming to cleanup.h code
-style and decreases the code readability.
+Remove the use of phy_set_max_speed in phy driver as the
+function is mainly used in MAC driver to set the max
+speed.
 
-I did not write such code and I did not agree to put my name with such
-commit.
+Instead use get_features to fix up Phy PMA capabilities for
+AQR111, AQR111B0, AQR114C and AQCS109
 
-Original patch:
-https://lore.kernel.org/all/20240816135722.105945-2-krzysztof.kozlowski@linaro.org/
-
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Fixes: 038ba1dc4e54 ("net: phy: aquantia: add AQR111 and AQR111B0 PHY ID")
+Fixes: 0974f1f03b07 ("net: phy: aquantia: remove false 5G and 10G speed ability for AQCS109")
+Fixes: c278ec644377 ("net: phy: aquantia: add support for AQR114C PHY ID")
+Link: https://lore.kernel.org/all/20240913011635.1286027-1-quic_abchauha@quicinc.com/T/
+Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
 ---
+Changes since v5
+1. Minor comments addressed to not exceed 80 columns. 
 
-It's very strange to see own patches silently modified without any
-explanation in Signed-off-by area.
----
- drivers/firmware/tegra/bpmp.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+Changes since v4
+1. Forget about asking hardware for PMA capabilites.
+2. Just set the Gbits features along with 2.5Gbps support 
+   for AQCS109 Phy chip. 
+3. Just set the Gbits features along with 5Gbps support 
+   for AQR111, AQR111B0 and AQR114C Phy chips. 
+4. re-use aqr115c_get_features inside aqr111_get_features
+   for further optimizations.
 
-diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-index 2bee6e918f81..c3a1dc344961 100644
---- a/drivers/firmware/tegra/bpmp.c
-+++ b/drivers/firmware/tegra/bpmp.c
-@@ -3,7 +3,6 @@
-  * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
-  */
+
+Changes since v3
+1. remove setting of 2500baseX bit introduced as
+   part of previous patches.
+2. follow reverse xmas declaration of variables.
+3. remove local mask introduced as part of
+   previous patch and optimize the logic.
+
+Changes since v2
+1. seperate out the changes into two different patches. 
+2. use phy_gbit_features instead of initializing each and 
+   every link mode bits. 
+3. write seperate functions for 2.5Gbps supported phy. 
+4. remove FIBRE bit which was introduced in patch 1.
+
+Changes since v1 
+1. remove usage of phy_set_max_speed in the aquantia driver code.
+2. Introduce aqr_custom_get_feature which checks for the phy id and
+   takes necessary actions based on max_speed supported by the phy.
+3. remove aqr111_config_init as it is just a wrapper function.
+
+ drivers/net/phy/aquantia/aquantia_main.c | 37 ++++++++++++------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index 86bb3b5bfc70..819d87b280ac 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -527,12 +527,6 @@ static int aqcs109_config_init(struct phy_device *phydev)
+ 	if (!ret)
+ 		aqr107_chip_info(phydev);
  
--#include <linux/cleanup.h>
- #include <linux/clk/tegra.h>
- #include <linux/genalloc.h>
- #include <linux/mailbox_client.h>
-@@ -35,24 +34,29 @@ channel_to_ops(struct tegra_bpmp_channel *channel)
- 
- struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
- {
--	struct device_node *np __free(device_node);
- 	struct platform_device *pdev;
- 	struct tegra_bpmp *bpmp;
-+	struct device_node *np;
- 
- 	np = of_parse_phandle(dev->of_node, "nvidia,bpmp", 0);
- 	if (!np)
- 		return ERR_PTR(-ENOENT);
- 
- 	pdev = of_find_device_by_node(np);
--	if (!pdev)
--		return ERR_PTR(-ENODEV);
-+	if (!pdev) {
-+		bpmp = ERR_PTR(-ENODEV);
-+		goto put;
-+	}
- 
- 	bpmp = platform_get_drvdata(pdev);
- 	if (!bpmp) {
-+		bpmp = ERR_PTR(-EPROBE_DEFER);
- 		put_device(&pdev->dev);
--		return ERR_PTR(-EPROBE_DEFER);
-+		goto put;
- 	}
- 
-+put:
-+	of_node_put(np);
- 	return bpmp;
+-	/* AQCS109 belongs to a chip family partially supporting 10G and 5G.
+-	 * PMA speed ability bits are the same for all members of the family,
+-	 * AQCS109 however supports speeds up to 2.5G only.
+-	 */
+-	phy_set_max_speed(phydev, SPEED_2500);
+-
+ 	return aqr107_set_downshift(phydev, MDIO_AN_VEND_PROV_DOWNSHIFT_DFLT);
  }
- EXPORT_SYMBOL_GPL(tegra_bpmp_get);
+ 
+@@ -734,6 +728,18 @@ static int aqr115c_get_features(struct phy_device *phydev)
+ 	return 0;
+ }
+ 
++static int aqr111_get_features(struct phy_device *phydev)
++{
++	/* PHY supports speeds up to 5G with autoneg. PMA capabilities
++	 * are not useful.
++	 */
++	aqr115c_get_features(phydev);
++	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
++			 phydev->supported);
++
++	return 0;
++}
++
+ static int aqr113c_config_init(struct phy_device *phydev)
+ {
+ 	int ret;
+@@ -770,15 +776,6 @@ static int aqr107_probe(struct phy_device *phydev)
+ 	return aqr_hwmon_probe(phydev);
+ }
+ 
+-static int aqr111_config_init(struct phy_device *phydev)
+-{
+-	/* AQR111 reports supporting speed up to 10G,
+-	 * however only speeds up to 5G are supported.
+-	 */
+-	phy_set_max_speed(phydev, SPEED_5000);
+-
+-	return aqr107_config_init(phydev);
+-}
+ 
+ static struct phy_driver aqr_driver[] = {
+ {
+@@ -856,6 +853,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.get_sset_count	= aqr107_get_sset_count,
+ 	.get_strings	= aqr107_get_strings,
+ 	.get_stats	= aqr107_get_stats,
++	.get_features   = aqr115c_get_features,
+ 	.link_change_notify = aqr107_link_change_notify,
+ 	.led_brightness_set = aqr_phy_led_brightness_set,
+ 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
+@@ -868,7 +866,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.name		= "Aquantia AQR111",
+ 	.probe		= aqr107_probe,
+ 	.get_rate_matching = aqr107_get_rate_matching,
+-	.config_init	= aqr111_config_init,
++	.config_init	= aqr107_config_init,
+ 	.config_aneg    = aqr_config_aneg,
+ 	.config_intr	= aqr_config_intr,
+ 	.handle_interrupt = aqr_handle_interrupt,
+@@ -880,6 +878,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.get_sset_count	= aqr107_get_sset_count,
+ 	.get_strings	= aqr107_get_strings,
+ 	.get_stats	= aqr107_get_stats,
++	.get_features   = aqr111_get_features,
+ 	.link_change_notify = aqr107_link_change_notify,
+ 	.led_brightness_set = aqr_phy_led_brightness_set,
+ 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
+@@ -892,7 +891,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.name		= "Aquantia AQR111B0",
+ 	.probe		= aqr107_probe,
+ 	.get_rate_matching = aqr107_get_rate_matching,
+-	.config_init	= aqr111_config_init,
++	.config_init	= aqr107_config_init,
+ 	.config_aneg    = aqr_config_aneg,
+ 	.config_intr	= aqr_config_intr,
+ 	.handle_interrupt = aqr_handle_interrupt,
+@@ -904,6 +903,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.get_sset_count	= aqr107_get_sset_count,
+ 	.get_strings	= aqr107_get_strings,
+ 	.get_stats	= aqr107_get_stats,
++	.get_features   = aqr111_get_features,
+ 	.link_change_notify = aqr107_link_change_notify,
+ 	.led_brightness_set = aqr_phy_led_brightness_set,
+ 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
+@@ -1013,7 +1013,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.name           = "Aquantia AQR114C",
+ 	.probe          = aqr107_probe,
+ 	.get_rate_matching = aqr107_get_rate_matching,
+-	.config_init    = aqr111_config_init,
++	.config_init    = aqr107_config_init,
+ 	.config_aneg    = aqr_config_aneg,
+ 	.config_intr    = aqr_config_intr,
+ 	.handle_interrupt = aqr_handle_interrupt,
+@@ -1025,6 +1025,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.get_sset_count = aqr107_get_sset_count,
+ 	.get_strings    = aqr107_get_strings,
+ 	.get_stats      = aqr107_get_stats,
++	.get_features   = aqr111_get_features,
+ 	.link_change_notify = aqr107_link_change_notify,
+ 	.led_brightness_set = aqr_phy_led_brightness_set,
+ 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
 -- 
-2.43.0
+2.25.1
 
