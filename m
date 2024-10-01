@@ -1,60 +1,60 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F28F19FA9D
-	for <linux-tegra@vger.kernel.org>; Tue,  1 Oct 2024 19:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E25E1CDFA9
+	for <linux-tegra@vger.kernel.org>; Tue,  1 Oct 2024 19:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727811726; cv=none; b=R7V6s+Sa5bn2uzKEseAHCWyyjBHGElRny1BBMxSZbl6XmTiDW0UwLlBI0+aDkWhyRy2caIO1zOw67/5+xQyAfk5+r/hJiWxoOQ2JjjJhmHijfPbPugvYVYryoGY2BmbJ9+MHik+3D0ZIb0PfnE9bzkiV2kS5wclK4MWkz8sDbrk=
+	t=1727812711; cv=none; b=ioonLBLbQD7tqHv9ikkdEMvXeA/UnYyW8VhavnoGaXocXkrjya4Gs4/9MB30zk9sW7NeeULQ99G5v8HzNlPMBDzc4evAsvgNk6k6vkLVY5wIztBcrSmb03emC22WjexoQhlCbsBWuSNreHH6zIo34oUwT3I/MGBH8pZRJj/Q2wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727811726; c=relaxed/simple;
-	bh=+x2DbLc6mXviMb4+T2Gm6eysAc4x3ZubIHWk+QuB61w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p2V9+tpzX4VQeve/Tk8KCD6D7oCs2zdEISQExz1ef9oteJpsDFxuDrJviXMVlvM9k7/NRzSgAZItjetzVIX34EYvBqIdqTHSmayauxS5osNYsYrY9RJe6LmfdW9RVc/HmR/go0JtYgMEFtFnzYg+ukGHcYxfdcmcdkaJUn/2aUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GwX4eu7Z; arc=none smtp.client-ip=209.85.128.45
+	s=arc-20240116; t=1727812711; c=relaxed/simple;
+	bh=zCv+nVHPIKnPXRe0/NQz+/wOaa6NGlSUyBL1ZtPRrnk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=j1nODGvngi2eJ8bYQz28mrfW9jaYIRog3TdUEUj0t4X+3Eu840zE8Nyd5H/teMYp4BnpTwz35F+4AdTj2slTv1lUfsjqoRJNsZaWpMK2ZeINOz4hKaz6D2mF8Zssu+2twXo1VOA1vRLRG1fI0+tUogEXxfPfPEbfpP+QXtyf/jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pfqgS27R; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GwX4eu7Z"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb0d0311fso8089725e9.1
-        for <linux-tegra@vger.kernel.org>; Tue, 01 Oct 2024 12:42:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pfqgS27R"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb1866c00so7736515e9.0
+        for <linux-tegra@vger.kernel.org>; Tue, 01 Oct 2024 12:58:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727811723; x=1728416523; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EaRmvDJlFP6ht8qbJ5rkfwUEVBlmulhl+djpxnZ5I94=;
-        b=GwX4eu7ZcMBTxCbNRdhnvtUJrxmZSuwWEgwx1T4Oj/0slMhnHxWwb7HO4GpJK5wSXv
-         St9AZDWWwqjK/CoKzTsR87YEICkn6poPW+n3JhqsGTaFM+SZoaeoyvFaCEmjRQr6zQ14
-         LSHh8n+OTi+SlmjrHMd9o/XJ9aHWuyyDaCVsFSIH8pyedHpNWecjkVCz/YL8cLl9VzC3
-         LgB/COw7ZbHtyeAUR+8LnLDKuOXJNJ8Mp3yOcCwi3Tgy05RfRN0EP9Ded7la3YNxm/9i
-         Q0gBpLcwTng/vid8ooche8x0v+Sr3CHYEDC7XXt37zY+cWA2P0uvMO6xM9dBj76Ou9T0
-         bq+A==
+        d=linaro.org; s=google; t=1727812708; x=1728417508; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=P/2kUEmi3q7RQNneIBQtLe7b1/HLFQJdZb63hgTbQT4=;
+        b=pfqgS27RWzH/RvyGAQMHwX7KOjjKd4iTXlZ4ynAynCJyVdsUW1WrBuxZcQ1r9ZDb7d
+         WaiqYzmmB7bcKV/EGuJnVUxaroSwjsuoi+FiDykslBpxdtuyXyXqshF8JWWO5EDpOny5
+         W2jkgyqq7ue0oLynhGD9p1z+XzxmGm1LUlxWOl+jKX7V02jIn1MhoHTdQqakiKgjFpO2
+         wtV0LRZAF4NHOiePR8d/WFivaVMLXp1/2jLsJkjgAC2C4zOwkIsRMVvIbTFq3Skmsjr6
+         /OUZTGDRTaEI4TtxqYDZnPp6PpCoXXLoZGGxz+CQwCoBEoF+HMbpwcaoIX7ICAcCLTPB
+         RTWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727811723; x=1728416523;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EaRmvDJlFP6ht8qbJ5rkfwUEVBlmulhl+djpxnZ5I94=;
-        b=mVvzoCqgffFM5c3cxV+Nud1r468cDBYPB5STektTxt9DcgHDGrnac8vCvH8rz7JA+v
-         UNqJpaGKAyLJB6ZP5WKaCOMAnDrmZ+X+KqnRFEZaKMhcTARsFwcI7jB3PF6DL0/rUlTA
-         GIgMy5xlGGNu0HbNUeCMQZ92pTtSsHTCsXzD5a+C6HlujUh9C7+DoV6eGUcCmZo3wVKT
-         KEFqeNbct27iLjlCs5WOXs5gkWo2ZEyzCoDgIGtudhljyvULkA77juXXZ/zAN1/2oVtM
-         sM3vq/nX45ADB1Mk7SXLAaQmWkFR75DoUZu4h1C8OFEnDeu6PA+FN0q55jnzkg7b6nDQ
-         rQeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9NkA78BmigrSZFhdO0QBkkrrlg+GrJSO13/9IbHmnODetPuOgf2FICevxkPhr8DHnjKHSjVvvGSuKiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjK83bPoENna1oOcS+9bpn712hpKEeE+oAuuN8qWKkN11yNgzq
-	XMkbSM5iuj82Z5eH5hiVAqK+RqxHXyxqrh7k+2/PIGFa4H/CaF/6ZD69uhZdajA=
-X-Google-Smtp-Source: AGHT+IHGCRGj7y93T1Qd/Iqx3EeZqMOldTBM1eQIP1N1kD7BdRtOm6hWwvTRrw3ScYtwhX1DXMkYXg==
-X-Received: by 2002:a05:600c:1393:b0:42c:ba61:d20b with SMTP id 5b1f17b1804b1-42f790970b6mr494455e9.3.1727811722866;
-        Tue, 01 Oct 2024 12:42:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727812708; x=1728417508;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P/2kUEmi3q7RQNneIBQtLe7b1/HLFQJdZb63hgTbQT4=;
+        b=WfQbyAhqwqKF9YindPVEeU2W0Zi4nspPL1bfguuA7kTIT485cDaPPoy6uhIWpoDeLR
+         9jzFS2Ai8NmYPPCR+NuZlnXfDR6hYloXG7q68Qvm/ihvxGAt/uIlkp1eMaDIaWtDDAC5
+         eFAnk+Ig8lf8d9ZU+2yI3RWVX0lana/V2cvanMmW6FKdXxc/ETiljTcvE6IYfbFnpRTR
+         01/3ILsgDoqg3yZkMtPN/8r5zwWfmeKAnugCkleDzrczpSwCO9/O9U287iYSe28qvFTB
+         gqKuUqfxmsuZkU29mFN/YlCamVsjIekqMcmT6L0Txrg6xdazA2DFeMiR59FckRQNJ8l+
+         VHZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/3Tp8aphMM3D9XNpIwqMG0vctTuzA3Fs5Iga8XXBvd/ohQDaJAt6XZbtFE/6v8MyociEocE39N8JSzQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqAedkKipKTW0HeDiiq9B9c8R69ndzhKCKiytoJ5OKBmbQf98n
+	LfBk3N9xg2MizPoAtSbB0KNe2bQfOudpywf1FqZkRw52CR5t5QzyI5g+anHuYw4=
+X-Google-Smtp-Source: AGHT+IF2vzvSoyMsB+X2kkzL1eIxYdRes4rhYpXqz0DghmRaXAdtaToJwuDT3IACBsUPP8YU8wxemA==
+X-Received: by 2002:a05:6000:1562:b0:37c:fa12:8cf5 with SMTP id ffacd0b85a97d-37cfb815750mr308039f8f.0.1727812708307;
+        Tue, 01 Oct 2024 12:58:28 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd564d029sm12762671f8f.7.2024.10.01.12.42.01
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd564cf63sm12717837f8f.16.2024.10.01.12.58.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 12:42:02 -0700 (PDT)
-Message-ID: <171a2cad-35ab-4a81-a9a3-ee73a762f321@linaro.org>
-Date: Tue, 1 Oct 2024 21:42:00 +0200
+        Tue, 01 Oct 2024 12:58:26 -0700 (PDT)
+Message-ID: <b82f6079-b349-487c-9e9e-a836933dea34@linaro.org>
+Date: Tue, 1 Oct 2024 21:58:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -63,6 +63,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] firmware: tegra: bpmp: Fix freeing uninitialized pointers
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Zichen Xie <zichenxie0106@gmail.com>
 Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com,
  linux-tegra@vger.kernel.org, Zijie Zhao <zzjas98@gmail.com>,
@@ -70,8 +71,8 @@ Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com,
 References: <20241001190953.31152-1-zichenxie0106@gmail.com>
  <e8810b65-8ae7-4d47-a89b-a1471b70409a@linaro.org>
  <CANdh5G5EUhT5N17QofverJyR2QxRDt+BAn7pvThkxgC0S=OB8Q@mail.gmail.com>
+ <171a2cad-35ab-4a81-a9a3-ee73a762f321@linaro.org>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -116,38 +117,40 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CANdh5G5EUhT5N17QofverJyR2QxRDt+BAn7pvThkxgC0S=OB8Q@mail.gmail.com>
+In-Reply-To: <171a2cad-35ab-4a81-a9a3-ee73a762f321@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/10/2024 21:35, Zichen Xie wrote:
-> Thank you for your feedback!
+On 01/10/2024 21:42, Krzysztof Kozlowski wrote:
+> On 01/10/2024 21:35, Zichen Xie wrote:
+>> Thank you for your feedback!
+>>
+>> You can see from commit 90ca6956d383 ("ice: Fix freeing uninitialized
+>> pointers") or any other usages of __free.
+>> Initialization is a necessary and standard way to protect your memory.
 > 
-> You can see from commit 90ca6956d383 ("ice: Fix freeing uninitialized
-> pointers") or any other usages of __free.
-> Initialization is a necessary and standard way to protect your memory.
-
-You did not understand that commit.
-
+> You did not understand that commit.
 > 
-> Additionally, the proper freeing function should be of_node_put()
-> rather than device_node().
-
-What?
-
-> In commit 8812b8689ee6 ("firmware: tegra: bpmp: Use scoped device node
-> handling to simplify error paths"),
-> of_node_put() was originally set to free the memory.
-
-What?!?!
-
-You don't understand this code, do you?
-
+>>
+>> Additionally, the proper freeing function should be of_node_put()
+>> rather than device_node().
 > 
-> And as for the tag mistakes. We are sorry and will correct that later.
+> What?
 > 
-> Best,
+>> In commit 8812b8689ee6 ("firmware: tegra: bpmp: Use scoped device node
+>> handling to simplify error paths"),
+>> of_node_put() was originally set to free the memory.
+> 
+> What?!?!
+> 
+> You don't understand this code, do you?
 
+To be clear:
+1. Neither your code nor explanation make any sense.
+2. Patch is wrong - buggy.
+3. Patch was never even compiled.
+
+That's a NAK, before anyone tries to pick it up.
 
 Best regards,
 Krzysztof
