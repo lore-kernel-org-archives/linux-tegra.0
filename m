@@ -1,60 +1,59 @@
 Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682291CDFD8
-	for <linux-tegra@vger.kernel.org>; Tue,  1 Oct 2024 20:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96AF1BDAAA
+	for <linux-tegra@vger.kernel.org>; Tue,  1 Oct 2024 20:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727813607; cv=none; b=f+F/VKuu+rzHjXxtdSKzGTxjNZJjyQqzb4ZTNvj3RRKCY2n4zo6oXVzqaT9W5zIXIchvGBnM+EOOjXvCkuQLPb2yHJvdqQ0gn2WgIHtgacUG0sl1Uf+a7JgXVSKHs2aYk3+aMT+tmbswQe8gu4ar+T/NtnyPl8zOlyySXzhTWhs=
+	t=1727814870; cv=none; b=fas1bh2E/XqVvFXELPY6neJ0ywEbK0f1BC2Djhxalhwif5oAbWulIrWkjeBzukbRbxqlBzD1a312cgjq5w+J+sIkOF+fj4lleHuWS4gB4lmMQACpr6ypXlk1ZdIkWTpumKMkFg1hWpwgQEBwJ0lWocU/vmrP3mMQ/BdoTrxXrMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727813607; c=relaxed/simple;
-	bh=V/3rGkijda1iknOWYGGI2cA7MgSnr8JlKdZhJdy0l+k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=adl26h6gWRuVh5goTVupDVLEyhlVuogwkUkTbvaMC76dBxt9GzKPT6/eGejPonC/qUOb7UxIhH4PxS8pB54v8+rnY4BeTHzDdP/RLzSgicxgiMK2a4Fkvd2JuhBH1jiLj6FrHqeZ51WyaNGZEpIaoHWBq76QT+EUkBMIDIiwiaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KsIbH0yt; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1727814870; c=relaxed/simple;
+	bh=twyWuEH7ZNZ0FxF8hSQLE0IYI6L5y5QkWu1i6eGuckA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VmDxrOjJy6m465jdkzsYZidY07XoJ/sS/3tEwpAkSHwa3QYwEvgZNAi+ujZx/YhBb9GI3dF0kS++kt1ny5a474Mn8SpMVFSevNgaxuZEe8JX5PJ9wuXzTsy7JctK3KmDRMo4zzuA7Sifk/Awat4GaRoUaYaDGwfLxA8RUQ6FDr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cKid3GhR; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KsIbH0yt"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42caeb4d671so7879115e9.2
-        for <linux-tegra@vger.kernel.org>; Tue, 01 Oct 2024 13:13:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cKid3GhR"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cddc969daso8684975e9.1
+        for <linux-tegra@vger.kernel.org>; Tue, 01 Oct 2024 13:34:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727813604; x=1728418404; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1727814867; x=1728419667; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=C9jFqGpX4fp9+HrJlTag8EVnk6lA6VLrBVAzFPeRcXg=;
-        b=KsIbH0yt1ybvICt4zTf6oC9NpdJA4gDZLSRlkfeURgpdzzrEYecmFgt58b3hvUAR6z
-         faWIopbD+O9EwFsWIDqAxmNHnscBH1BE9PQ+0In2f/sirGuCAfiawsyZOyzSaiFn/jeN
-         TLD0BWe+3+yI+ug5MNACIBsSNYXb+wZVcXPD4GEB9DIP/nJybLnfoL/DI4MqtJ4insIP
-         qDp1KNwbsujsqCets6vWVvBRnd27vGHI1vuNPHdQhCvIRwtAB7Q9KhU/Ox30Aal+Z6nH
-         rbc2IuJAI44x9W7cxyytrwqPi0XNYNlViJwRl4GOtywKlPbjYUD9Wo1vUTk53gNZ+lYm
-         WKNw==
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XUhsUIUdDrwwZHsNvPFB6O8FHHi07d0Hdx096Y1IBPk=;
+        b=cKid3GhRDPMPuQ5KfUc4Geqx4REWp8hPO1+ifp0/lcAon7z1/w4S0Qw6kfaFiwXdyb
+         ycjkJKzSRr7jG2KIv6F1cNJ1kwtmrAmcmHooB4jtFqVWM8kEBA62kr7DlDcrIc8jKrGH
+         rcH5WraWtny60h474kX5L04zqAEy2W286bmCMT27asmjxYnXMpp4N9HOHoiQChoyLOjk
+         mBLtk+xjrquuC8Yi4W0GFRXh7cCfFvkbWrB3Gzc84TJcV8/b8w3Rx0TM6NubxGSQUlSR
+         PaxlpLgScuOOg7ZWEz/cX1vwJ9puEpgb2FcIovJ7/wP2w6y06CSDBT6zgT75aQMk+Xy/
+         qrhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727813604; x=1728418404;
+        d=1e100.net; s=20230601; t=1727814867; x=1728419667;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C9jFqGpX4fp9+HrJlTag8EVnk6lA6VLrBVAzFPeRcXg=;
-        b=XGqh/Iluin2aNpRtdUBDSjC8eYz+lQfJLTyAYqCbuo+ocVpIGPWbAcQK1eyD6B/e3v
-         IDe4eCDkFFxiMHltQ77TAygGVna3o/2vNjC036Ui/+FPm6KrlC165drPbIUwybSjJTSX
-         7L1Ub4MCVMUijFie5r//sSvxdXDxpIFPOVHwNgI4IhqsTvOuZJXiMiCLGDYWkcVWliXp
-         Ehr0GLIoebSpeho+NON/ST2I4xa3xSPKnX5XSTO9y3Jt+ud8ZG2I4hag/u9C61wCbZIK
-         Uidjy8CMMiFrTuP1Oc3q/nDS3evkRly9LxFXsHQzrnf6Wb+Q3B4Kik3VEeJcAEg85zGT
-         ZycA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUGR0UFHxFahS45YPHh4YJDv+4F2svMS+9ULcAr/4/xriTJeIIXcWS67nBB+5qkONjnLCKfWHaWtSc1w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJk49c02pAGl8jZFyQ4ZGzujICPVUlBMTs+nV3FovejvsuLPLx
-	svq9fCCDWAqRYFGAcwC/gIdGazRtX8+VgH4wxK+XVZOex/wHg0c+7j/ANTfSk14=
-X-Google-Smtp-Source: AGHT+IFq9TjM7Rzod52Tz3Xv1rvT5uzGDcSK5lMWx801z5RNhCqCQzaQ+HMLwOwgFcKJ/TEnb8AluQ==
-X-Received: by 2002:a05:600c:3509:b0:42c:ba6c:d9b1 with SMTP id 5b1f17b1804b1-42f777ed465mr2263025e9.4.1727813603746;
-        Tue, 01 Oct 2024 13:13:23 -0700 (PDT)
+         :from:references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XUhsUIUdDrwwZHsNvPFB6O8FHHi07d0Hdx096Y1IBPk=;
+        b=C2V0TK8PTqCirRu5GumIIekyPyPg8z166RDMFgaW/ldD/JUJd8eW+GEpzZyQSrpla9
+         8S62woBpYZKFSO53F2bBEvkT9Z3V/iizk+Wsa+i6n7YJ7AGkkwuIrysjRN4QdBalh8fp
+         4/QIOfTGXGKrL6aESwSwaXOSKxqF9Hj9w7zt37vrQM9J93GmlkvjUGI3c5OgtwZD0J2F
+         QbBYffR2s7Mf+OX9lrKx44CgcWU4fwi0U5t38MptYVbK7N4RHylwRelcuPDYFxlO/OTe
+         b4B8ocWb1kvgOKEmfvQa0PNYZqbJABFzfpL+IK1VfkkCiDGCVuLQjLtPg4bvQIqvrRWd
+         8g2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXXjfB6cyskfpdHVoTbUoX6dh8O6JyL7b6BihMqail3I4k0syoYDFBliu6VbIjsFkqQ69Zcpuj1Wjt71w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTn9ZZXq+u7BuIrF+GdK5Xdt+hu79Vtml7QZY48ocL55aTTIVd
+	WAeyzEDCJaxVy5lkmJVxouhwsBtoFyj4VOaRW2alZ1TKnBVk0xmXw8AuE0ThhKo=
+X-Google-Smtp-Source: AGHT+IHjnrkFTsfnoO1YYJ4m7JpOk2P9PAv+wj6ATG6VN/ZpgMn+48M1GtODuGoKAnonLaUv69c1nQ==
+X-Received: by 2002:a5d:63c2:0:b0:374:cd01:8b72 with SMTP id ffacd0b85a97d-37cfba0a5d0mr221218f8f.9.1727814867007;
+        Tue, 01 Oct 2024 13:34:27 -0700 (PDT)
 Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969f2083sm187099115e9.15.2024.10.01.13.13.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd566a41fsm12614134f8f.45.2024.10.01.13.34.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 13:13:22 -0700 (PDT)
-Message-ID: <8bbcec57-b542-4513-b59e-eca9d22f07ba@linaro.org>
-Date: Tue, 1 Oct 2024 22:13:19 +0200
+        Tue, 01 Oct 2024 13:34:26 -0700 (PDT)
+Message-ID: <c15b73f1-6045-499e-8b4d-6cf8140e7de0@linaro.org>
+Date: Tue, 1 Oct 2024 22:34:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -62,17 +61,13 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: tegra: bpmp: Fix freeing uninitialized pointers
-To: Zichen Xie <zichenxie0106@gmail.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com,
- linux-tegra@vger.kernel.org, Zijie Zhao <zzjas98@gmail.com>,
- Chenyuan Yang <chenyuan0y@gmail.com>
-References: <20241001190953.31152-1-zichenxie0106@gmail.com>
- <e8810b65-8ae7-4d47-a89b-a1471b70409a@linaro.org>
- <CANdh5G5EUhT5N17QofverJyR2QxRDt+BAn7pvThkxgC0S=OB8Q@mail.gmail.com>
- <171a2cad-35ab-4a81-a9a3-ee73a762f321@linaro.org>
- <b82f6079-b349-487c-9e9e-a836933dea34@linaro.org>
- <CANdh5G5T43sS7wKxgkUGUgKcqSdeZoVTHWiC5qU9SKvk2Mq4iw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] firmware: tegra: bpmp: use scoped device node
+ handling to simplify error paths
+To: Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240816135722.105945-1-krzysztof.kozlowski@linaro.org>
+ <20240816135722.105945-2-krzysztof.kozlowski@linaro.org>
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
 Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
@@ -119,32 +114,63 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
  fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
  D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <CANdh5G5T43sS7wKxgkUGUgKcqSdeZoVTHWiC5qU9SKvk2Mq4iw@mail.gmail.com>
+In-Reply-To: <20240816135722.105945-2-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/10/2024 22:09, Zichen Xie wrote:
-> I don't think device_node() is a correct freeing function here:
-> 'struct device_node *np __free(device_node);'
-> even if I'm not an expert in Kernel.
+On 16/08/2024 15:57, Krzysztof Kozlowski wrote:
+> Obtain the device node reference with scoped/cleanup.h to reduce error
+> handling and make the code a bit simpler.
 > 
-> And I think it could be more convincing to explain 'why', rather than
-> simply highlighting the errors repeatedly.
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/firmware/tegra/bpmp.c | 16 ++++++----------
+>  1 file changed, 6 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
+> index c3a1dc344961..2edc3838538e 100644
+> --- a/drivers/firmware/tegra/bpmp.c
+> +++ b/drivers/firmware/tegra/bpmp.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
+>   */
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/clk/tegra.h>
+>  #include <linux/genalloc.h>
+>  #include <linux/mailbox_client.h>
+> @@ -36,27 +37,22 @@ struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
+>  {
+>  	struct platform_device *pdev;
+>  	struct tegra_bpmp *bpmp;
+> -	struct device_node *np;
+>  
+> -	np = of_parse_phandle(dev->of_node, "nvidia,bpmp", 0);
+> +	struct device_node *np __free(device_node) = of_parse_phandle(dev->of_node,
+> +								      "nvidia,bpmp", 0);
 
-If you ever bothered to compile your code, you would see why.
+Uhhh, this is very strange.
 
-None of your arguments make any sense. Your code tries to perform
-initialization, just before assignment so it is completely unnecessary.
-I don't understand why you could not spot that obvious part of the code,
-because this is just C. For obvious reasons I won't be spending my time
-to explain why this:
+Above is correct code which I sent.
 
-some_ptr *ptr = NULL;
-ptr = foo;
-if () ...
-   return ...;
+But look what was applied:
 
-is wrong. You just did not read the code, not built it.
+ struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
+ {
++       struct device_node *np __free(device_node);
+
+That's very different.
+
+See commit 8812b8689ee6 ("firmware: tegra: bpmp: Use scoped device node
+handling to simplify error paths").
+
+Commit msg does not explain at all why my code was changed. It is not
+only a courtesy but also requirement to mark changes done to commits
+when applying.
+
+Shall I assume more of my patches were silently changed when applied,
+including adding questionable code there?
+
 
 Best regards,
 Krzysztof
