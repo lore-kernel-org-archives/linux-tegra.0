@@ -1,157 +1,126 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E25E1CDFA9
-	for <linux-tegra@vger.kernel.org>; Tue,  1 Oct 2024 19:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2F11CDFBE;
+	Tue,  1 Oct 2024 20:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727812711; cv=none; b=ioonLBLbQD7tqHv9ikkdEMvXeA/UnYyW8VhavnoGaXocXkrjya4Gs4/9MB30zk9sW7NeeULQ99G5v8HzNlPMBDzc4evAsvgNk6k6vkLVY5wIztBcrSmb03emC22WjexoQhlCbsBWuSNreHH6zIo34oUwT3I/MGBH8pZRJj/Q2wI=
+	t=1727812812; cv=none; b=TvnNSn7BrlNSmeRtYkgVKJSif76oP0+D/O50sL7TAocJA+7i7WKXhmkEHFROgmrIUtH8fHb1QwWLtsrNoB/JtZxxH9y6CuYQx+7H9PP5XCHxlyhkSx/+9naGwlae7TXgtGIlAXWmXDE/BXWsMGFl/bz6t+mInGsC0eoWnhCYsJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727812711; c=relaxed/simple;
-	bh=zCv+nVHPIKnPXRe0/NQz+/wOaa6NGlSUyBL1ZtPRrnk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=j1nODGvngi2eJ8bYQz28mrfW9jaYIRog3TdUEUj0t4X+3Eu840zE8Nyd5H/teMYp4BnpTwz35F+4AdTj2slTv1lUfsjqoRJNsZaWpMK2ZeINOz4hKaz6D2mF8Zssu+2twXo1VOA1vRLRG1fI0+tUogEXxfPfPEbfpP+QXtyf/jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pfqgS27R; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1727812812; c=relaxed/simple;
+	bh=9nxNhpLrx3HJEq9JhEouMSM4YNgGI4tmenEeJnI7KaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uv3R5UQQFHXY4/67gY2qRHQb+mwRPUm3qcOsVmfUDEEcZVtVOt8oQ/WURwSl0yTqJLLneMGENwRtqOYM/oHnRU0UYRWe7Wl01C78Gj57mHI0i1PYOj669xWpRdebsWaSrFHuXvgS4PHfbCD8JyhSiNgmAe0Rd365/lWom24HPwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=dOvEmBvP; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pfqgS27R"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb1866c00so7736515e9.0
-        for <linux-tegra@vger.kernel.org>; Tue, 01 Oct 2024 12:58:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="dOvEmBvP"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20b7259be6fso32127965ad.0;
+        Tue, 01 Oct 2024 13:00:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727812708; x=1728417508; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=P/2kUEmi3q7RQNneIBQtLe7b1/HLFQJdZb63hgTbQT4=;
-        b=pfqgS27RWzH/RvyGAQMHwX7KOjjKd4iTXlZ4ynAynCJyVdsUW1WrBuxZcQ1r9ZDb7d
-         WaiqYzmmB7bcKV/EGuJnVUxaroSwjsuoi+FiDykslBpxdtuyXyXqshF8JWWO5EDpOny5
-         W2jkgyqq7ue0oLynhGD9p1z+XzxmGm1LUlxWOl+jKX7V02jIn1MhoHTdQqakiKgjFpO2
-         wtV0LRZAF4NHOiePR8d/WFivaVMLXp1/2jLsJkjgAC2C4zOwkIsRMVvIbTFq3Skmsjr6
-         /OUZTGDRTaEI4TtxqYDZnPp6PpCoXXLoZGGxz+CQwCoBEoF+HMbpwcaoIX7ICAcCLTPB
-         RTWQ==
+        d=googlemail.com; s=20230601; t=1727812810; x=1728417610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Txj9X25LmbjQ//MeIX5ksz2p7RxnM6sQFO6w2mk7FrQ=;
+        b=dOvEmBvPamriXlYTdJUeJ9JQvPEsV1ben9lzbzUIZ9HHbp6mjkLrFvfD57QabzUaJB
+         V2gdZu8k7TzvpK1KuHoS66KnKzlZ4wK2VqJax/ZHSS6mL7dwbpAvl/nuUn/62/XS90Em
+         Aka6+MMWmkYEcsQrU0LBKhoBgKANnIR56KLtUEJEwSdnIzTsF8IXVODbKlZrDC27FHdz
+         92s05d8QmhKxpJRxydrQZJCGamh98WDF5Kn0yY5W9Z24feRNEAZjvpGZ5iKozCenWnMt
+         HWXYrAL/qpaKMZEZCgcPN/jWYKXsLUdhRpC+7WGmeXgOe4gmcI7Zp4SNUuUEogol/UTU
+         zlVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727812708; x=1728417508;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P/2kUEmi3q7RQNneIBQtLe7b1/HLFQJdZb63hgTbQT4=;
-        b=WfQbyAhqwqKF9YindPVEeU2W0Zi4nspPL1bfguuA7kTIT485cDaPPoy6uhIWpoDeLR
-         9jzFS2Ai8NmYPPCR+NuZlnXfDR6hYloXG7q68Qvm/ihvxGAt/uIlkp1eMaDIaWtDDAC5
-         eFAnk+Ig8lf8d9ZU+2yI3RWVX0lana/V2cvanMmW6FKdXxc/ETiljTcvE6IYfbFnpRTR
-         01/3ILsgDoqg3yZkMtPN/8r5zwWfmeKAnugCkleDzrczpSwCO9/O9U287iYSe28qvFTB
-         gqKuUqfxmsuZkU29mFN/YlCamVsjIekqMcmT6L0Txrg6xdazA2DFeMiR59FckRQNJ8l+
-         VHZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/3Tp8aphMM3D9XNpIwqMG0vctTuzA3Fs5Iga8XXBvd/ohQDaJAt6XZbtFE/6v8MyociEocE39N8JSzQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqAedkKipKTW0HeDiiq9B9c8R69ndzhKCKiytoJ5OKBmbQf98n
-	LfBk3N9xg2MizPoAtSbB0KNe2bQfOudpywf1FqZkRw52CR5t5QzyI5g+anHuYw4=
-X-Google-Smtp-Source: AGHT+IF2vzvSoyMsB+X2kkzL1eIxYdRes4rhYpXqz0DghmRaXAdtaToJwuDT3IACBsUPP8YU8wxemA==
-X-Received: by 2002:a05:6000:1562:b0:37c:fa12:8cf5 with SMTP id ffacd0b85a97d-37cfb815750mr308039f8f.0.1727812708307;
-        Tue, 01 Oct 2024 12:58:28 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd564cf63sm12717837f8f.16.2024.10.01.12.58.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 12:58:26 -0700 (PDT)
-Message-ID: <b82f6079-b349-487c-9e9e-a836933dea34@linaro.org>
-Date: Tue, 1 Oct 2024 21:58:24 +0200
+        d=1e100.net; s=20230601; t=1727812810; x=1728417610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Txj9X25LmbjQ//MeIX5ksz2p7RxnM6sQFO6w2mk7FrQ=;
+        b=XkRfivHwdkmMi4gaWKS6ihyScQy1pq8M4cuvzfsN5myCGFebeqFNIAGN0hOsrxKY6Q
+         2uM3YS0WcW2alRxhqlonuHvmHPmBj307DYpNym7eauCFb9sTqxAGbN/rsyHbVBFe8VOq
+         gxdAGpZ5/0HGnPQ4fFCEfur+TJis2+zvXuz1zuIWzRgBscCaLviGkCJ2+DJKylsIVNBz
+         +xe5HmSsvwW3u6HI5fLkH6XMW7JnCwMj3hQZCkm1ROPPS/ehZ/M5M92R4M+YfWGSLsUt
+         03m8fEBVOEnmsJBgwPjLsvjtd+4fHLGvs8DrYtQEHBt8WfBlcUs3lFuLks5Vx/4byG+d
+         j2Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCUm2Ob+/N7wM2+qQiEIpr8YY8foSjEtEq5QVt7yPWbdiPyCw24khEGCuGLnq3DPkvyVZgL5wKA5mshODPFO8lWEh5s=@vger.kernel.org, AJvYcCUvP2ABPXHjVCEHtiTZXMISl7fM4EIV6M5sSQp3lH7j4BsUFhuUZxfuBI/PxGw9p7swPmtdJsNmx6F3KH60TqCR3g8=@vger.kernel.org, AJvYcCVnyPRPZW3NyGU+cogkxCaN5uaKZpP2zQUfA2Lp9qk+gaigz7rfwqChBNU7eBXsytc+g9H1JtohGyBCoS2ssA==@vger.kernel.org, AJvYcCXQSogziQtb+6seRW1XzSswGYxW2/6Wwq/HmJ406haVaerMnqdy3ZAhA1xFqDaZ0OW93wM268qAI2H+oCue@vger.kernel.org, AJvYcCXhvF4W249EWiW+p19ai52nZrFS2WWM6U/od8qEwHJA8BY7L1I3He302PNsrxCHiK7BIqjONqtyza1Csg==@vger.kernel.org, AJvYcCXp0UkWtIuxP2TqvPclKZ9AvVCpjzlZBonvD+AXzpV5OVyhH7bP5XgksugCpFUteSFdPjJ+2sKRmsjezBw=@vger.kernel.org, AJvYcCXyTT7hSFmdWLNJLiMj+BcLHPz+eEqUisava0LsHpnFPBM60zi/66AzJxmdYtyeDIMc5HFPzIvxSZfc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz19uYRHGJY3WLqWa6hEI580EU49boq0L+G2N0VOfw/13iQj+hj
+	OhiWQSusLBL81ZHkQPqhoM/tL53k7Jl0IbEFx/7+Nq82eDNAF4GYBfjR9aOb+r8BRXUbRqRJjbP
+	vR44ZFJERoWVzKcTKioZrcpKoDAo=
+X-Google-Smtp-Source: AGHT+IEzN68oFH6UETNrpbvCGpopcDsigqPvgYKygFNF7D6FUqPz4x1zQ8ZA7UoZNXXUi84OPMM6AhdceSvhM1DdNJ4=
+X-Received: by 2002:a17:902:e550:b0:20b:720d:734 with SMTP id
+ d9443c01a7336-20bc5a5cd06mr11151925ad.41.1727812809889; Tue, 01 Oct 2024
+ 13:00:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] firmware: tegra: bpmp: Fix freeing uninitialized pointers
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Zichen Xie <zichenxie0106@gmail.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com,
- linux-tegra@vger.kernel.org, Zijie Zhao <zzjas98@gmail.com>,
- Chenyuan Yang <chenyuan0y@gmail.com>
-References: <20241001190953.31152-1-zichenxie0106@gmail.com>
- <e8810b65-8ae7-4d47-a89b-a1471b70409a@linaro.org>
- <CANdh5G5EUhT5N17QofverJyR2QxRDt+BAn7pvThkxgC0S=OB8Q@mail.gmail.com>
- <171a2cad-35ab-4a81-a9a3-ee73a762f321@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <171a2cad-35ab-4a81-a9a3-ee73a762f321@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240930223550.353882-1-rosenp@gmail.com> <20240930223550.353882-3-rosenp@gmail.com>
+In-Reply-To: <20240930223550.353882-3-rosenp@gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Tue, 1 Oct 2024 21:59:58 +0200
+Message-ID: <CAFBinCB1Rz+C=Tj+RJAL5KZbk9K7cnpF_uR6rKkMeqyCuDBo4A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: assign reg to memory nodes
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Antoine Tenart <atenart@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Jesper Nilsson <jesper.nilsson@axis.com>, 
+	Lars Persson <lars.persson@axis.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, 
+	"maintainer:SPEAR PLATFORM/CLOCK/PINCTRL SUPPORT" <soc@kernel.org>, Marek Vasut <marex@denx.de>, Jisheng Zhang <jszhang@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Nishanth Menon <nm@ti.com>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+	Enric Balletbo i Serra <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, 
+	Alexey Charkov <alchark@gmail.com>, Denis Burkov <hitechshell@mail.ru>, Arnd Bergmann <arnd@arndb.de>, 
+	Stefan Wahren <wahrenst@gmx.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+	Nicolas Chauvet <kwizart@gmail.com>, Tomasz Maciej Nowak <tmn505@gmail.com>, 
+	Robert Eckelmann <longnoserob@gmail.com>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>, 
+	"moderated list:ARM/ASPEED MACHINE SUPPORT" <linux-aspeed@lists.ozlabs.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
+	"moderated list:ARM/NUVOTON NPCM ARCHITECTURE" <openbmc@lists.ozlabs.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>, 
+	"open list:DH ELECTRONICS IMX6 DHCOM/DHCOR BOARD SUPPORT" <kernel@dh-electronics.com>, 
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
+	"open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>, 
+	"open list:ARM/RISC-V/RENESAS ARCHITECTURE" <linux-renesas-soc@vger.kernel.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/10/2024 21:42, Krzysztof Kozlowski wrote:
-> On 01/10/2024 21:35, Zichen Xie wrote:
->> Thank you for your feedback!
->>
->> You can see from commit 90ca6956d383 ("ice: Fix freeing uninitialized
->> pointers") or any other usages of __free.
->> Initialization is a necessary and standard way to protect your memory.
-> 
-> You did not understand that commit.
-> 
->>
->> Additionally, the proper freeing function should be of_node_put()
->> rather than device_node().
-> 
-> What?
-> 
->> In commit 8812b8689ee6 ("firmware: tegra: bpmp: Use scoped device node
->> handling to simplify error paths"),
->> of_node_put() was originally set to free the memory.
-> 
-> What?!?!
-> 
-> You don't understand this code, do you?
+Hello Rosen,
 
-To be clear:
-1. Neither your code nor explanation make any sense.
-2. Patch is wrong - buggy.
-3. Patch was never even compiled.
+when you re-send this, please drop the Amlogic files.
 
-That's a NAK, before anyone tries to pick it up.
+On Tue, Oct 1, 2024 at 12:36=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+[...]
+>  arch/arm/boot/dts/amlogic/meson6-atv1200.dts                    | 2 +-
+This file was dropped with [0]
 
-Best regards,
-Krzysztof
+>  arch/arm/boot/dts/amlogic/meson8-minix-neo-x8.dts               | 2 +-
+>  arch/arm/boot/dts/amlogic/meson8b-ec100.dts                     | 2 +-
+>  arch/arm/boot/dts/amlogic/meson8b-mxq.dts                       | 2 +-
+>  arch/arm/boot/dts/amlogic/meson8b-odroidc1.dts                  | 2 +-
+>  arch/arm/boot/dts/amlogic/meson8m2-mxiii-plus.dts               | 2 +-
+These got updated with [1]
 
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git/commi=
+t/?h=3Dv6.13/arm-dt&id=3De2a3f11ae11c9f9ee780bf49f00a69f12dce3529
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git/commi=
+t/?h=3Dv6.13/arm-dt&id=3D7947fd2d350e6057e7514459c7ee2db39d1096a2
