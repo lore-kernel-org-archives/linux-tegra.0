@@ -1,126 +1,120 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2F11CDFBE;
-	Tue,  1 Oct 2024 20:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9DC1CBE98
+	for <linux-tegra@vger.kernel.org>; Tue,  1 Oct 2024 20:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727812812; cv=none; b=TvnNSn7BrlNSmeRtYkgVKJSif76oP0+D/O50sL7TAocJA+7i7WKXhmkEHFROgmrIUtH8fHb1QwWLtsrNoB/JtZxxH9y6CuYQx+7H9PP5XCHxlyhkSx/+9naGwlae7TXgtGIlAXWmXDE/BXWsMGFl/bz6t+mInGsC0eoWnhCYsJo=
+	t=1727813355; cv=none; b=KMgvO8gOYbZEa6HgQjt9QQTINraC7B0hq+MhGBYodhsmpCT5bJb7KpOx9hqkHumtXm70cZVif9nd/tHcadOi9D4nYn4IOSLbCqmlviSOxTxUhKzz1eZZJ0IKTgu83ZSaN68zz6HP3dMl974axUQT46X0xurCJkRh8sxNLWBabFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727812812; c=relaxed/simple;
-	bh=9nxNhpLrx3HJEq9JhEouMSM4YNgGI4tmenEeJnI7KaI=;
+	s=arc-20240116; t=1727813355; c=relaxed/simple;
+	bh=8HRmpFeZV4eYtlbEGAV1Setz9f/MptVynN2vC19Qpxk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uv3R5UQQFHXY4/67gY2qRHQb+mwRPUm3qcOsVmfUDEEcZVtVOt8oQ/WURwSl0yTqJLLneMGENwRtqOYM/oHnRU0UYRWe7Wl01C78Gj57mHI0i1PYOj669xWpRdebsWaSrFHuXvgS4PHfbCD8JyhSiNgmAe0Rd365/lWom24HPwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=dOvEmBvP; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+	 To:Cc:Content-Type; b=gRLKWPrkN7e576PKNHezHLwDp6ARmGTbPgZtV5XNpC7fVSrECXraIXTsDdJQtwBP6Ogka6QAhYzbXaUZGunWlHc08ennI9GlhrZV88O3GzTuezzeLeKC0UwdflXANhTC+gbFcgZzAI1y82qqD3FZmTSI0XgTDLKWbu4VBJHjWHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NBNK5kqf; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="dOvEmBvP"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20b7259be6fso32127965ad.0;
-        Tue, 01 Oct 2024 13:00:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBNK5kqf"
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20b95359440so21175505ad.0
+        for <linux-tegra@vger.kernel.org>; Tue, 01 Oct 2024 13:09:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1727812810; x=1728417610; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727813354; x=1728418154; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Txj9X25LmbjQ//MeIX5ksz2p7RxnM6sQFO6w2mk7FrQ=;
-        b=dOvEmBvPamriXlYTdJUeJ9JQvPEsV1ben9lzbzUIZ9HHbp6mjkLrFvfD57QabzUaJB
-         V2gdZu8k7TzvpK1KuHoS66KnKzlZ4wK2VqJax/ZHSS6mL7dwbpAvl/nuUn/62/XS90Em
-         Aka6+MMWmkYEcsQrU0LBKhoBgKANnIR56KLtUEJEwSdnIzTsF8IXVODbKlZrDC27FHdz
-         92s05d8QmhKxpJRxydrQZJCGamh98WDF5Kn0yY5W9Z24feRNEAZjvpGZ5iKozCenWnMt
-         HWXYrAL/qpaKMZEZCgcPN/jWYKXsLUdhRpC+7WGmeXgOe4gmcI7Zp4SNUuUEogol/UTU
-         zlVw==
+        bh=8HRmpFeZV4eYtlbEGAV1Setz9f/MptVynN2vC19Qpxk=;
+        b=NBNK5kqfP8uT7SF+QtZWjF9GCaUs3rEmvbZH91FI1ftB4l2S+Z0P5DZRfk0zMCnOL3
+         WTQyJoqnaJc+xVdeseLMv+YYB8JB00H83T9ZFUCBkFQ6HobLdKRmIHOE9kuKGRWYs4Cf
+         qVNBfg26/jFdwV7GmjCGSOGy9C01qArJRn2WyMFLExEvJ/fbhfXLdxHno3+d53B/1ddx
+         nxuPeKQ2PltPQff3T1MefE3hEH6fHk0jA47GQ2aY1xMWlDli0xn/cIOExCsGWdsQnnfY
+         oigfS8vFbbh2zNazeAJPJ+6P8Odz0z8Tk9Ahg9qslp3D7Jz4Pp+MhGNSjdyou/OH4d7y
+         +VPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727812810; x=1728417610;
+        d=1e100.net; s=20230601; t=1727813354; x=1728418154;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Txj9X25LmbjQ//MeIX5ksz2p7RxnM6sQFO6w2mk7FrQ=;
-        b=XkRfivHwdkmMi4gaWKS6ihyScQy1pq8M4cuvzfsN5myCGFebeqFNIAGN0hOsrxKY6Q
-         2uM3YS0WcW2alRxhqlonuHvmHPmBj307DYpNym7eauCFb9sTqxAGbN/rsyHbVBFe8VOq
-         gxdAGpZ5/0HGnPQ4fFCEfur+TJis2+zvXuz1zuIWzRgBscCaLviGkCJ2+DJKylsIVNBz
-         +xe5HmSsvwW3u6HI5fLkH6XMW7JnCwMj3hQZCkm1ROPPS/ehZ/M5M92R4M+YfWGSLsUt
-         03m8fEBVOEnmsJBgwPjLsvjtd+4fHLGvs8DrYtQEHBt8WfBlcUs3lFuLks5Vx/4byG+d
-         j2Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCUm2Ob+/N7wM2+qQiEIpr8YY8foSjEtEq5QVt7yPWbdiPyCw24khEGCuGLnq3DPkvyVZgL5wKA5mshODPFO8lWEh5s=@vger.kernel.org, AJvYcCUvP2ABPXHjVCEHtiTZXMISl7fM4EIV6M5sSQp3lH7j4BsUFhuUZxfuBI/PxGw9p7swPmtdJsNmx6F3KH60TqCR3g8=@vger.kernel.org, AJvYcCVnyPRPZW3NyGU+cogkxCaN5uaKZpP2zQUfA2Lp9qk+gaigz7rfwqChBNU7eBXsytc+g9H1JtohGyBCoS2ssA==@vger.kernel.org, AJvYcCXQSogziQtb+6seRW1XzSswGYxW2/6Wwq/HmJ406haVaerMnqdy3ZAhA1xFqDaZ0OW93wM268qAI2H+oCue@vger.kernel.org, AJvYcCXhvF4W249EWiW+p19ai52nZrFS2WWM6U/od8qEwHJA8BY7L1I3He302PNsrxCHiK7BIqjONqtyza1Csg==@vger.kernel.org, AJvYcCXp0UkWtIuxP2TqvPclKZ9AvVCpjzlZBonvD+AXzpV5OVyhH7bP5XgksugCpFUteSFdPjJ+2sKRmsjezBw=@vger.kernel.org, AJvYcCXyTT7hSFmdWLNJLiMj+BcLHPz+eEqUisava0LsHpnFPBM60zi/66AzJxmdYtyeDIMc5HFPzIvxSZfc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz19uYRHGJY3WLqWa6hEI580EU49boq0L+G2N0VOfw/13iQj+hj
-	OhiWQSusLBL81ZHkQPqhoM/tL53k7Jl0IbEFx/7+Nq82eDNAF4GYBfjR9aOb+r8BRXUbRqRJjbP
-	vR44ZFJERoWVzKcTKioZrcpKoDAo=
-X-Google-Smtp-Source: AGHT+IEzN68oFH6UETNrpbvCGpopcDsigqPvgYKygFNF7D6FUqPz4x1zQ8ZA7UoZNXXUi84OPMM6AhdceSvhM1DdNJ4=
-X-Received: by 2002:a17:902:e550:b0:20b:720d:734 with SMTP id
- d9443c01a7336-20bc5a5cd06mr11151925ad.41.1727812809889; Tue, 01 Oct 2024
- 13:00:09 -0700 (PDT)
+        bh=8HRmpFeZV4eYtlbEGAV1Setz9f/MptVynN2vC19Qpxk=;
+        b=F+16iKlju5xVl/VaetIFO00wbMEfu7Xw1UTGFWBF5oanJlvYxrBiHLCV+5tY7Q+LV+
+         nvbgYTluyCxPgTYqi9IBFqYlBEXjtHw36qImByJkCXN7lNwv1RXk4CED+sm+jEaFvfT7
+         pMIgxf68/+Jb6iCSxeADiFn1bkJrhWPT3zQhQ/KQaAxrBF7oXH8+9cAwfcocjyBiePqo
+         NBZUtET0K5wjq1j9vm02FTFhBgpzn/EeRz/cO5B4vkqiuNEwFhCpwTm0+2UbQxzMmmR6
+         Y3r9uCqC9ze3Y6FANJHyayQVfna6pSNYYgRphTHxoGCqzSGLycOlD3TSNJKHtBupxMrF
+         eebA==
+X-Forwarded-Encrypted: i=1; AJvYcCUwTNFW4jybtHxY1Zf2MYKtFBh3F6AYQ6YgbNISr7GDZDLtIUE/WXDbprk+CTvcHN+FaAVSZWWsRVXJoA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywim1Q5cnM7rvcv/O9G0d/xDqHsnkfbk73WdH9xNbAcSKbQKmNf
+	XmHHH94pZNivmsXmtdnyayvmrvL4A7XcgcZ6Cp/ev+5I+PNXARcwlBBvAhfqDCixLMrJRUTyxtd
+	oIC/V17EearR12gL0+RbqU8sQL2K0I6TeQKMHkAed
+X-Google-Smtp-Source: AGHT+IF7wYL4jN7QzuA8efMSMy2vvQoms1mRzsUUAGRdat3E/L1QKEI9mGPxUMF+5llXS2kz9ysdQkPiPGAeUXyO7Hg=
+X-Received: by 2002:a17:90b:188d:b0:2e1:8a29:99e with SMTP id
+ 98e67ed59e1d1-2e18a290b9fmr348039a91.26.1727813353887; Tue, 01 Oct 2024
+ 13:09:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930223550.353882-1-rosenp@gmail.com> <20240930223550.353882-3-rosenp@gmail.com>
-In-Reply-To: <20240930223550.353882-3-rosenp@gmail.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 1 Oct 2024 21:59:58 +0200
-Message-ID: <CAFBinCB1Rz+C=Tj+RJAL5KZbk9K7cnpF_uR6rKkMeqyCuDBo4A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ARM: dts: assign reg to memory nodes
-To: Rosen Penev <rosenp@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Antoine Tenart <atenart@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Jesper Nilsson <jesper.nilsson@axis.com>, 
-	Lars Persson <lars.persson@axis.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, 
-	"maintainer:SPEAR PLATFORM/CLOCK/PINCTRL SUPPORT" <soc@kernel.org>, Marek Vasut <marex@denx.de>, Jisheng Zhang <jszhang@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Nishanth Menon <nm@ti.com>, 
-	Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, 
-	Enric Balletbo i Serra <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, 
-	Alexey Charkov <alchark@gmail.com>, Denis Burkov <hitechshell@mail.ru>, Arnd Bergmann <arnd@arndb.de>, 
-	Stefan Wahren <wahrenst@gmx.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
-	Nicolas Chauvet <kwizart@gmail.com>, Tomasz Maciej Nowak <tmn505@gmail.com>, 
-	Robert Eckelmann <longnoserob@gmail.com>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>, 
-	"moderated list:ARM/ASPEED MACHINE SUPPORT" <linux-aspeed@lists.ozlabs.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
-	"moderated list:ARM/NUVOTON NPCM ARCHITECTURE" <openbmc@lists.ozlabs.org>, 
-	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
-	"open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>, 
-	"open list:DH ELECTRONICS IMX6 DHCOM/DHCOR BOARD SUPPORT" <kernel@dh-electronics.com>, 
-	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
-	"open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>, 
-	"open list:ARM/RISC-V/RENESAS ARCHITECTURE" <linux-renesas-soc@vger.kernel.org>, 
-	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
-	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
-	"open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>
+References: <20241001190953.31152-1-zichenxie0106@gmail.com>
+ <e8810b65-8ae7-4d47-a89b-a1471b70409a@linaro.org> <CANdh5G5EUhT5N17QofverJyR2QxRDt+BAn7pvThkxgC0S=OB8Q@mail.gmail.com>
+ <171a2cad-35ab-4a81-a9a3-ee73a762f321@linaro.org> <b82f6079-b349-487c-9e9e-a836933dea34@linaro.org>
+In-Reply-To: <b82f6079-b349-487c-9e9e-a836933dea34@linaro.org>
+From: Zichen Xie <zichenxie0106@gmail.com>
+Date: Tue, 1 Oct 2024 15:09:03 -0500
+Message-ID: <CANdh5G5T43sS7wKxgkUGUgKcqSdeZoVTHWiC5qU9SKvk2Mq4iw@mail.gmail.com>
+Subject: Re: [PATCH] firmware: tegra: bpmp: Fix freeing uninitialized pointers
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com, 
+	linux-tegra@vger.kernel.org, Zijie Zhao <zzjas98@gmail.com>, 
+	Chenyuan Yang <chenyuan0y@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Rosen,
+I don't think device_node() is a correct freeing function here:
+'struct device_node *np __free(device_node);'
+even if I'm not an expert in Kernel.
 
-when you re-send this, please drop the Amlogic files.
+And I think it could be more convincing to explain 'why', rather than
+simply highlighting the errors repeatedly.
 
-On Tue, Oct 1, 2024 at 12:36=E2=80=AFAM Rosen Penev <rosenp@gmail.com> wrot=
-e:
-[...]
->  arch/arm/boot/dts/amlogic/meson6-atv1200.dts                    | 2 +-
-This file was dropped with [0]
+Best,
+Zichen
 
->  arch/arm/boot/dts/amlogic/meson8-minix-neo-x8.dts               | 2 +-
->  arch/arm/boot/dts/amlogic/meson8b-ec100.dts                     | 2 +-
->  arch/arm/boot/dts/amlogic/meson8b-mxq.dts                       | 2 +-
->  arch/arm/boot/dts/amlogic/meson8b-odroidc1.dts                  | 2 +-
->  arch/arm/boot/dts/amlogic/meson8m2-mxiii-plus.dts               | 2 +-
-These got updated with [1]
-
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git/commi=
-t/?h=3Dv6.13/arm-dt&id=3De2a3f11ae11c9f9ee780bf49f00a69f12dce3529
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git/commi=
-t/?h=3Dv6.13/arm-dt&id=3D7947fd2d350e6057e7514459c7ee2db39d1096a2
+On Tue, Oct 1, 2024 at 2:58=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 01/10/2024 21:42, Krzysztof Kozlowski wrote:
+> > On 01/10/2024 21:35, Zichen Xie wrote:
+> >> Thank you for your feedback!
+> >>
+> >> You can see from commit 90ca6956d383 ("ice: Fix freeing uninitialized
+> >> pointers") or any other usages of __free.
+> >> Initialization is a necessary and standard way to protect your memory.
+> >
+> > You did not understand that commit.
+> >
+> >>
+> >> Additionally, the proper freeing function should be of_node_put()
+> >> rather than device_node().
+> >
+> > What?
+> >
+> >> In commit 8812b8689ee6 ("firmware: tegra: bpmp: Use scoped device node
+> >> handling to simplify error paths"),
+> >> of_node_put() was originally set to free the memory.
+> >
+> > What?!?!
+> >
+> > You don't understand this code, do you?
+>
+> To be clear:
+> 1. Neither your code nor explanation make any sense.
+> 2. Patch is wrong - buggy.
+> 3. Patch was never even compiled.
+>
+> That's a NAK, before anyone tries to pick it up.
+>
+> Best regards,
+> Krzysztof
+>
