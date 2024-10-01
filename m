@@ -1,44 +1,44 @@
 Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF73E1A0724;
-	Tue,  1 Oct 2024 11:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6B3186607;
+	Tue,  1 Oct 2024 12:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727783975; cv=none; b=usscNr555a5TSbvLzWiEybigX2UBLPtx+AIae4Gi7mFDKiBMTV8UcCi6xEj8ZUXGTvMCWafWsRM0Y4xQUmEFhUOV09vQdPrvmfE90x5oKR6Z/iqweO7Zxq2uk3ZijQkyt52mFWsE/AkPX4Hm6m1UUJ8/W7zANSxKkgIAx3accHs=
+	t=1727784071; cv=none; b=bB1I6e1xPgIGfFgKG66fds3w8l1e4MQPy6+s0GIHXLPpk48SJhW3RhX2mX7iDMq0KYR3O+D6+MZC89hUJn6StCabx+HF8l4BCAWehELoF7XIBZ02fn91obpAlXIX7R8m6Nw+c7UpWTfvZgZ/fiqllMRK1mjzL2OrmG4PABmGwto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727783975; c=relaxed/simple;
-	bh=yTMWajpsNoMElPZu3B6cSfz8r5p7hAwBRGcxHTfVE0o=;
+	s=arc-20240116; t=1727784071; c=relaxed/simple;
+	bh=cY21EQWrMTCAZsqYH9XsCHJ3j7F4pn9FB8g+ti4tI50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvc94Jy3CBskGWoODBquePuHwNPd89TagiSwj1Rr18ECq7g3SzXJ+iLZGwwNSVMuFPueKknNY+XBr8tt+PXOyxREGUmvIRGBvulw07Py0kyXKfn/PEeMXHke3J1yWRwic/FhfsQfZaGRkhUClnAkuO0a0GLktHDDrncRECKdggs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=H8ZyezWs; arc=none smtp.client-ip=78.32.30.218
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmgL4GFIrbvqyhIwh7wY8k12qWJG87TpzwS2vZRfXcxTWtDkdcuGB3Qgt+vHHmyIyjzYk1l3UdAvkQOHOKBpPuZUTUp+6Z1roXaIeIenVvxs0criNBzemyZWZVYyaXa5YQfA/QUIz/LxmsmXpbqIO4u9coGEjNGcdIN4x1B4ax4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=kfZIBFzA; arc=none smtp.client-ip=78.32.30.218
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="H8ZyezWs"
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="kfZIBFzA"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
 	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dF8elWLEz2is1vw+KE3bDeMZw4Jlb7qLCrlZB3mQd3E=; b=H8ZyezWsjdFS94X9/xr1uttRvs
-	b+eW4xgaF4I3k5HTF1d4NcW10cBLgM2sTO/YtaX1gZhEj2DkpJjX/UN77/CrkYEfx+0SKap21s5gf
-	uakF4nNaUVn6rg0EhWdLp+cdN5n+Pt8KdC3Qi7hUjTabiDm/YhTuxQ7ft0TKzqqxbwb87t/IvlH6o
-	hfL2Q2gVMo7uEQ45Gu17x821hK69W6QAha/cVny1QkFsaPeV6umfDDKVqHThk4Mjxsl4rEXfUYLYo
-	mPvmozxmdCYAKlhz35+wbohQwXjRwUwYldfp9KmMFtH3gXIZj7oSyoSv/AGLLd/pW9idVpzHRDW/j
-	g3c5zUoA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44986)
+	bh=Ll58dMychfnKYvvq98aQIv+n7E9gr0v/D/YsXSRrda4=; b=kfZIBFzA6djlotTfpobKv5HzcC
+	zDSlWmNv8SYo9jpKLmBSd4K4th/Llp8ogVSI8bGtWDNIRm4Is6ShAgToK4JimXFEPxuVdVzBIubuU
+	1d0yhyA+jMmzpqORRtKD7dBI7/iCkjRSv36M9sDUe0sl3skfyZe0hEYT6OxkcP/ggmzMQwY28q1z2
+	XmyLE3BIf6yQ7aYFZ/s7a7YRawcERl3kN52D4ZLlzRL59fqHI68inIUrVGw+T6jIQOiy2WyM2FLI7
+	833y5NnFAJsyr762XoxOhJl8NXD0qrpTn7AaFw0s790kkHSRD/pKavhl4l352hN3HlcZlGWJMmxRw
+	LhnxG03A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56312)
 	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <linux@armlinux.org.uk>)
-	id 1svbXE-0005jD-1l;
-	Tue, 01 Oct 2024 12:59:20 +0100
+	id 1svbYo-0005jd-2w;
+	Tue, 01 Oct 2024 13:00:58 +0100
 Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
 	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1svbX7-0004vN-2t;
-	Tue, 01 Oct 2024 12:59:13 +0100
-Date: Tue, 1 Oct 2024 12:59:13 +0100
+	id 1svbYl-0004vm-1X;
+	Tue, 01 Oct 2024 13:00:55 +0100
+Date: Tue, 1 Oct 2024 13:00:55 +0100
 From: "Russell King (Oracle)" <linux@armlinux.org.uk>
 To: Abhishek Chauhan <quic_abchauha@quicinc.com>
 Cc: "David S. Miller" <davem@davemloft.net>,
@@ -54,11 +54,11 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Jon Hunter <jonathanh@nvidia.com>,
 	Maxime Chevallier <maxime.chevallier@bootlin.com>,
 	Przemek Kitszel <przemyslaw.kitszel@intel.com>, kernel@quicinc.com
-Subject: Re: [PATCH net v5 1/2] net: phy: aquantia: AQR115c fix up PMA
- capabilities
-Message-ID: <ZvvkEYYljV4IWlJH@shell.armlinux.org.uk>
+Subject: Re: [PATCH net v5 2/2] net: phy: aquantia: remove usage of
+ phy_set_max_speed
+Message-ID: <Zvvkd1Xi4/rmWQRf@shell.armlinux.org.uk>
 References: <20240930223341.3807222-1-quic_abchauha@quicinc.com>
- <20240930223341.3807222-2-quic_abchauha@quicinc.com>
+ <20240930223341.3807222-3-quic_abchauha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -67,40 +67,23 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240930223341.3807222-2-quic_abchauha@quicinc.com>
+In-Reply-To: <20240930223341.3807222-3-quic_abchauha@quicinc.com>
 Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Sep 30, 2024 at 03:33:40PM -0700, Abhishek Chauhan wrote:
-> AQR115c reports incorrect PMA capabilities which includes
-> 10G/5G and also incorrectly disables capabilities like autoneg
-> and 10Mbps support.
-> 
-> AQR115c as per the Marvell databook supports speeds up to 2.5Gbps
-> with autonegotiation.
+Hi,
 
-Thanks for persisting with this. Just one further item:
-
-> +static int aqr115c_get_features(struct phy_device *phydev)
+On Mon, Sep 30, 2024 at 03:33:41PM -0700, Abhishek Chauhan wrote:
+> +static int aqr111_get_features(struct phy_device *phydev)
 > +{
 > +	/* PHY FIXUP */
-> +	/* Phy supports Speeds up to 2.5G with Autoneg though the phy PMA says otherwise */
-> +	linkmode_or(phydev->supported, phydev->supported, phy_gbit_features);
-> +	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, phydev->supported);
+> +	/* Phy supports Speeds up to 5G with Autoneg though the phy PMA says otherwise */
+> +	aqr115c_get_features(phydev);
+> +	linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, phydev->supported);
 
-I'd still prefer to see:
-
-	unsigned long *supported = phydev->supported;
-
-	/* PHY supports speeds up to 2.5G with autoneg. PMA capabilities
-	 * are not useful.
-	 */
-	linkmode_or(supported, supported, phy_gbit_features);
-	linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, supported);
-
-because that avoids going over column 80, and networking prefers it that
-way.
-
-Other than that, the patch looks the best solution.
+More or less same as the previous. The comment could do with shortening.
+I think for this linkmode_set_bit(), it's not worth using a local
+"supported" variable, so just put phydev->... on the following line to
+avoid the long line.
 
 Thanks.
 
