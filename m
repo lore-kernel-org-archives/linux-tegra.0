@@ -1,122 +1,102 @@
-Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CA210F9
-	for <linux-tegra@vger.kernel.org>; Wed,  2 Oct 2024 00:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2314285;
+	Wed,  2 Oct 2024 03:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727830051; cv=none; b=fTHhJSSzFWD6nqE4z/UENeW25lpwl9gz5KxRAawl932tkspaPzsohsxWcFPU/zNZwWtsRybXzZFxKFCMw2/NDuYiUTun0+vzlQtS4PFd8xJiDTGMyRnF0wPcg2ynJFmvyAd/zwukDaIfvtCwsGTmf9WeI9sKcIo9WpUIxVrGMMY=
+	t=1727840945; cv=none; b=WEUNxlV8+MgG3jnsRYK+WxgrvpH2/nH3o1kAsEzxJLWWeYSbwPRc6xSi3Cupnkwungp8pez3EoMGqt1qpMAwVO2MC1dpB3CqGOE/62O0op77LKKmELJ9mg/gaOoZA6unDQ8iFkQDk+tVlNeoO/EzZcW42zTmaFbNxhSiZCnoKew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727830051; c=relaxed/simple;
-	bh=rbKWC4k3ppkAQHLunY4hwBnSXoSYNwqrCWs3TQKZUJM=;
+	s=arc-20240116; t=1727840945; c=relaxed/simple;
+	bh=nAEKTIpBmymWLR+e+hBkypCfwSNJotZOEB0oMjBgW3A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k+f8qtc1sKOg1HelEA+WyH/Gc4Md/hHky8xNGujCLZa/wMnIYh6/JwoHUzMKzUHDEPpSA8V2X4Kg8Tgg2x+UFFCr5Mk+R23F59QlAZzSCvjsEzACY1nGbIkd+FSpeJvAeKmhiWh1azFJxFP64EKkh/3FZv0zQ2k92e4ssK038Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h3LYqW5n; arc=none smtp.client-ip=209.85.216.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=qU4qu5t4/IvrbAjRIHOfoleV9IjSX2VsStbe7p6d9KuKAvjxUy3Sne1aR7UcUDdljiGu09nRo/X9lqJn/dqmhkADqy5qf/ep0YVtFFbmfAH3i6ywGTOT5cGQ79SQVrzqmbK80v8ivDLl/v11KksWtydxxLGEK9z/ApbSZ81MrCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Af2UjTVf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3LYqW5n"
-Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-2e0d9b70455so3795526a91.3
-        for <linux-tegra@vger.kernel.org>; Tue, 01 Oct 2024 17:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727830050; x=1728434850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=22TxkdZjj03G5CY6/gSt01KcrQ6SrH96ld+f7LuKkG8=;
-        b=h3LYqW5n/ZGCl2O8QXogBC3hLibdCurW6JPemqpP9IqmMIJyNLdss4hVXMBFX7BmBY
-         Gmf2xZFCjR4KnjgKd8WIOLijgCgxwPVjxtO0VrINo4CWfEKRHk/BI5YoAHFkSU0IvDd+
-         JAPAU0StUxYNDLjmzmgfIIc/FG/LVu4cGAuGp8zkOjkD8KjTDKbz38PSwp7+Iw/t5pyJ
-         JSNQ6Ko2i2RW3bY9pPztfHkjruxtFXbPB6BMS+FBUI5+llwmxTbMdM9oH8vGxi2gLJq6
-         sp1C5/GxmzInzYgc4VU4ZLV4cM9VNgOAVvPoHK8/uH4UEXCKuP0JgvJOiqBDwdTKAwk2
-         4M7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727830050; x=1728434850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=22TxkdZjj03G5CY6/gSt01KcrQ6SrH96ld+f7LuKkG8=;
-        b=CGPm7EEuE8cwTC2iMSz2UHUwUsJakS2JGXf5GmlmB+JNWi7sfGQG0k989UXTOuzASx
-         n9N3B5LI/I5pmWt6GbPPkynArn9wdzWdcNisU06K3gwQUC6IPEiWKnSfh5ttuUT/wD4P
-         AlfbjXZbSvtWqFJYlJaxfnT9AZ89+N7f0a5RDOawQFxvkOe133fpAjMMR9QaXv+M1LDX
-         y26ftG16doKF4bQbPwYjpXIYDTqWk06AOVlxTVZoZ8X93L+PXpga3eNT4oy8O/P41oht
-         7pfQVt6vQDVGzZO6WjEHmbU9f5MfaQux7tZP7FZmtbKUFWcikaQyfnwOCgDJ77XBX9vV
-         uypg==
-X-Forwarded-Encrypted: i=1; AJvYcCWo7ezLa5QSWpwTa87sbdAoXPzFzwQgbHnzDX1SJAPDSCWBw8+WX7y+VfpWhOqQEWuwwgFHq1K/puoT2g==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxYokbrFixDO8Ky8TZrfvWnt4Wu+lNdAzczSgCqg+/jC82G9nM
-	8I3zEwlwTpCKybjHCZWTnTcV9/eajL8Lg8PLD2VfrSgXFiIfhudXOltIxJWJN4XG++k927vCeXu
-	DklaAYX94/BLaa/4ni/FsjxwnVhaBHs4rw1Aa49Q8
-X-Google-Smtp-Source: AGHT+IGI3BrXlvG2iJC+fz9hHQGKYlf6N15cxz48qdGpswosSdO/OG+/gH2Pww/0Nn5noPHo00tshbBEOV9+YrEhriY=
-X-Received: by 2002:a17:90b:4a4f:b0:2d8:9255:396d with SMTP id
- 98e67ed59e1d1-2e182cb29b5mr1888501a91.0.1727830049822; Tue, 01 Oct 2024
- 17:47:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Af2UjTVf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4181CC4CEDE;
+	Wed,  2 Oct 2024 03:49:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727840945;
+	bh=nAEKTIpBmymWLR+e+hBkypCfwSNJotZOEB0oMjBgW3A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Af2UjTVfNh6y+KURqioy4b8Bj7Yu5BpvrE0pOuTAaCdsWVGE8VQdAPbay4eP9DqPg
+	 vWMLCMNoxrjpq2dgf0Gkki5SuP7pwmk7jkH2meg7cuorJVxX/VF75raABEWvzkaMHi
+	 vhhxdgRpR3b7B5ke0UhpF0oO9c3sZ7F6qfo5LaAZzh2DiImZJl6yUno80Km9y1f2VX
+	 IIlH0yPKwIL8OBus0S8hdF72eqSA5xm2L3CztnHUgtzPMXEtvUhtadchDi41GC6Mt7
+	 Ca1gozPG5gv1ZiW5uDRIVS53lJA/EuDl2IF4CK5RlPgdKNeNXNE2aGU70QMIY0HzW0
+	 QHOaUeFAAHJ5A==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5398e7dda5fso3508049e87.0;
+        Tue, 01 Oct 2024 20:49:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU661jgz/RIJbG4I37sjlHY3+HzjQEq7gdF3hUcdHNTqpJqoLo0lqmrSpyuZ9FWIaJ7qAqpJA5JFg0sUI8=@vger.kernel.org, AJvYcCV+Cs2ku4ehqOX+Oh6O0c0nXx03CyRRLXgLxU3A2i20bBxB6kXMm82GnkAf3cJ6PYbSV8fdfwJLbbHf@vger.kernel.org, AJvYcCV1+A6ZS+WbvIGf8Oot2kDzfX105XuFz2P1BAj/XMviEnFPv8p2TfUBjP8MUtAcmZExLXaia8Xa5cON69FyZQ0A5VQ=@vger.kernel.org, AJvYcCVMBJQwYCSFMza8IPE3D+jHKERc/eKG3omuh803Q9pZrSDzn/93OWeG7FDY0MyU18keSs03DDc5Ox024+1n@vger.kernel.org, AJvYcCWHJjjzj4RYf0AsB4l92mkzOw1nxzH1Gs9Iwt9jaS2C3FZzq6aB00+HuKqaLBATpHapJGipzN43fbQqzw==@vger.kernel.org, AJvYcCX883rMsdrqX0C6mjzpQurRlWxQnMalH/ciVzAlU/RCFXR6X23psV42EuBhGaZXhh71ygKJ5sNub3yYcWkQ31eTC+I=@vger.kernel.org, AJvYcCXCv/TcvRRVr9Obu0dV+R7BwUqRgfoLhwPOqGjR7NslHV0xdMZaWl/2pT0EzB3CdO8X30BKd3qzI2MK67C25w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxawILxQDjtxV1LowJsGy0NsPmVrhfogDqntUvlsjvZf5/UgGn4
+	lwIHAGJYrzwU//EUBxyo66XHRGZacaF5q+pWuYQcVC+Dlu30Ziy1w7lRicL4vPNisRFkGWWfORh
+	+igKRnseEmiUU0UIZI7FOYGs5MA==
+X-Google-Smtp-Source: AGHT+IEqtnQCtoRUlnvKJ/juvutRb8LD+WF2Ji1IL7egoXyMFlaAGJMVK219VrK0qM0doCIPbjzZD5sR9nPD1sht5+g=
+X-Received: by 2002:a05:6512:1113:b0:533:4638:df40 with SMTP id
+ 2adb3069b0e04-539a067f65cmr743356e87.27.1727840943291; Tue, 01 Oct 2024
+ 20:49:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001190953.31152-1-zichenxie0106@gmail.com>
- <e8810b65-8ae7-4d47-a89b-a1471b70409a@linaro.org> <CANdh5G5EUhT5N17QofverJyR2QxRDt+BAn7pvThkxgC0S=OB8Q@mail.gmail.com>
- <171a2cad-35ab-4a81-a9a3-ee73a762f321@linaro.org> <b82f6079-b349-487c-9e9e-a836933dea34@linaro.org>
- <CANdh5G5T43sS7wKxgkUGUgKcqSdeZoVTHWiC5qU9SKvk2Mq4iw@mail.gmail.com> <8bbcec57-b542-4513-b59e-eca9d22f07ba@linaro.org>
-In-Reply-To: <8bbcec57-b542-4513-b59e-eca9d22f07ba@linaro.org>
-From: Zichen Xie <zichenxie0106@gmail.com>
-Date: Tue, 1 Oct 2024 19:47:19 -0500
-Message-ID: <CANdh5G4nX_PoRsWmCo1=TzoFA6k--29iJFgL-N_B_0anziAskg@mail.gmail.com>
-Subject: Re: [PATCH] firmware: tegra: bpmp: Fix freeing uninitialized pointers
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, sumitg@nvidia.com, 
-	linux-tegra@vger.kernel.org, Zijie Zhao <zzjas98@gmail.com>, 
-	Chenyuan Yang <chenyuan0y@gmail.com>
+References: <20240930223550.353882-1-rosenp@gmail.com> <20240930223550.353882-3-rosenp@gmail.com>
+In-Reply-To: <20240930223550.353882-3-rosenp@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 1 Oct 2024 22:48:50 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKNMhUy3HUAanod27FnJAz35w7FLp7tp0Uo3SeVbG7EGw@mail.gmail.com>
+Message-ID: <CAL_JsqKNMhUy3HUAanod27FnJAz35w7FLp7tp0Uo3SeVbG7EGw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: assign reg to memory nodes
+To: Rosen Penev <rosenp@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Antoine Tenart <atenart@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Jesper Nilsson <jesper.nilsson@axis.com>, 
+	Lars Persson <lars.persson@axis.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, 
+	"maintainer:SPEAR PLATFORM/CLOCK/PINCTRL SUPPORT" <soc@kernel.org>, Marek Vasut <marex@denx.de>, Jisheng Zhang <jszhang@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>, Nishanth Menon <nm@ti.com>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+	Enric Balletbo i Serra <eballetbo@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, 
+	Alexey Charkov <alchark@gmail.com>, Denis Burkov <hitechshell@mail.ru>, Arnd Bergmann <arnd@arndb.de>, 
+	Stefan Wahren <wahrenst@gmx.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+	Nicolas Chauvet <kwizart@gmail.com>, Tomasz Maciej Nowak <tmn505@gmail.com>, 
+	Robert Eckelmann <longnoserob@gmail.com>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:ARM/Amlogic Meson SoC support" <linux-amlogic@lists.infradead.org>, 
+	"moderated list:ARM/ASPEED MACHINE SUPPORT" <linux-aspeed@lists.ozlabs.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>, 
+	"moderated list:ARM/NUVOTON NPCM ARCHITECTURE" <openbmc@lists.ozlabs.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>, 
+	"open list:DH ELECTRONICS IMX6 DHCOM/DHCOR BOARD SUPPORT" <kernel@dh-electronics.com>, 
+	"moderated list:ARM/STM32 ARCHITECTURE" <linux-stm32@st-md-mailman.stormreply.com>, 
+	"open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>, 
+	"open list:ARM/RISC-V/RENESAS ARCHITECTURE" <linux-renesas-soc@vger.kernel.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	"open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, 
+	"open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+On Mon, Sep 30, 2024 at 5:36=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+>
+> Fixes dtc warnings:
 
-Thank you for the explanation and sorry for not realizing the correct
-deallocation function.
+Unfortunately we cannot make this change treewide. Any platform that
+relies on the ATAGS to DT bootloader support in the kernel
+decompressor expects /memory.
 
-I found in another email thread that the NULL initialization following
-the __free() was mainly for readability but not safety. Sorry for the
-confusion.
-
-We are working on a static analysis tool and wanted to report
-potential bugs. We directly sent a patch trying to reduce developer=E2=80=
-=99s
-burden but didn=E2=80=99t not realize the correct use of Reported-by tag. W=
-e
-will be more careful in the future.
-
-Best,
-Zichen
-
-On Tue, Oct 1, 2024 at 3:13=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 01/10/2024 22:09, Zichen Xie wrote:
-> > I don't think device_node() is a correct freeing function here:
-> > 'struct device_node *np __free(device_node);'
-> > even if I'm not an expert in Kernel.
-> >
-> > And I think it could be more convincing to explain 'why', rather than
-> > simply highlighting the errors repeatedly.
->
-> If you ever bothered to compile your code, you would see why.
->
-> None of your arguments make any sense. Your code tries to perform
-> initialization, just before assignment so it is completely unnecessary.
-> I don't understand why you could not spot that obvious part of the code,
-> because this is just C. For obvious reasons I won't be spending my time
-> to explain why this:
->
-> some_ptr *ptr =3D NULL;
-> ptr =3D foo;
-> if () ...
->    return ...;
->
-> is wrong. You just did not read the code, not built it.
->
-> Best regards,
-> Krzysztof
->
+Rob
