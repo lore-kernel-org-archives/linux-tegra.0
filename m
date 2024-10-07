@@ -1,139 +1,146 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDA7125BA;
-	Mon,  7 Oct 2024 08:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD7B1D26E6
+	for <linux-tegra@vger.kernel.org>; Mon,  7 Oct 2024 13:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728288760; cv=none; b=YvZzzx3XP06xF242HRbtmzvHjI9fNBvlM0tMvxiZj74S9rPV05NPobsN5Yq5EYPhWUc/JQV5fM81Si4eGpVL+i8jQ7OY5nB5mS/JvQ86rcLYbGQYcQDEu2AY2LP+IUH6DsZBgpVyLLuJbrz2r0n5hO+t15ljfWdfVUZFEU5Khxo=
+	t=1728306064; cv=none; b=Np0ez+Q7vJ6kBPTY8P7kKhgwXTjMLafeF3vFJnXF77BGM0lQp7yTmQIyoUAl8ByTDJBFOWQ+wV0jo51V1efd/TxMDsBrg/VGX941cVVCt8jZOn5iDL4kKkHl9IuWkwXrMUsFSqJkP+q/hvJ6wl6XXTpVFwkrgTz09W4CUw0/5xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728288760; c=relaxed/simple;
-	bh=DQVwkoRIgL8UJm8NCB27MRhflsVRuGICAaTNssZviZ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=g4EW40h+CZFyf4sW75b2cKq3H9FtztgrwjDDfP/ZCZmtsHiMdOIxfo2Kxu//AiGjL8suPXRJNkEw0XMW8nOF+1odW+mJAJcjFRUfbph4Ok3sfUtf2btDUZTX93M7ThBAQfQxi0/hXjfCZVWw/y/c+tcyR/Yl0vEIFPH7CdK4g8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3NP2d2e; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728306064; c=relaxed/simple;
+	bh=XjNAq8zzNATKpcPKirHtiZswQO2jr+9q0tVuDAQqvVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E5znnoeXh09RdBVLa93BL2Vi+Px7sB7SQQ3s28EYEnmqN/Kg0xPczh/6zT6/BQqiwIfFxtVSqIs/rs7P3du/suHS6w/fDBbtrC5PyHy7BPbyF3CHm0N9yNU0KpzeLjkCZMc/6UCbRbUPL6nCB+pEr19myPOeyDybwgVhjZTFy8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DtDMSCoe; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3NP2d2e"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c89f3f28b6so5964200a12.2;
-        Mon, 07 Oct 2024 01:12:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DtDMSCoe"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37cde5c2700so393581f8f.1
+        for <linux-tegra@vger.kernel.org>; Mon, 07 Oct 2024 06:01:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728288757; x=1728893557; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bP7+WnRgKS8Y9xY8Z0wXxP8X7E8K6aXgN1VH5WOGnLs=;
-        b=A3NP2d2e79Qy/IiMBFUImdwof9y6MxpJAMpEXjN6RcGMVxIO5Yi9jXmSgxsxhYpYh8
-         TDz/Gt1mIa85IMpV3INPG2RuRtqoGXBZnDlMSUj3J9WtfcOtNKGggCCshUZu8iqDsrYk
-         OQOvjWoA6ZVF1F+IzkX/DK/EcdoXrhh5ZTVZUocoHIo4NaHpn8Zoqc063fDAuT3SVFB3
-         UFLfO6o7FghQ4YtpvarFU/tvAC5ouhHqjkMeSl6L0MT4xlzFTTdD4PJMWupoPsbkk4qS
-         UyD7uAjN+qqLoPVjMpB1QCDZFnK/Gp72jkwC6EjWvc4gyH1fT2z+vQOvzXCMDqmyKHs6
-         KdFw==
+        d=linaro.org; s=google; t=1728306061; x=1728910861; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=B3ObtdSIL2l2V/JG61h4POE1nSuGmI4nUjp3Q+3TTvI=;
+        b=DtDMSCoePgEPrfIhX/tlqV4sucXk0NwfZaOeas9npFOqHYKrPrf+37GF3hHQstrwia
+         TNdib2ZZzjBnGNfQdrmY5CRwwYjdLSUmCQfn2RQNv4Uixn0+zTCbhrn03TJLuM2DUFWA
+         FOpHHUC25kH/Z3dHPm0SPoJaK66XgJIq85KHD7TIkLrHV3VBd23uDtRt6tdK1i1mIZdA
+         Ajm4qP28HihK7AfoD9BVYKmYG3oSgttDGwoHrK/V9/dX0cnziv3zTaeYPXDc2F6VR8lm
+         cNq4ylNgnihktV37DM/ZUMOy/oJ/+HcvKjTH3EChqSKkXJu280eN1Pauj2O8xjpMg/VP
+         Shgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728288757; x=1728893557;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1728306061; x=1728910861;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bP7+WnRgKS8Y9xY8Z0wXxP8X7E8K6aXgN1VH5WOGnLs=;
-        b=XnTdLritn6d4csEOMApiT4mMmIBR8HZGjNRJNG59bq3Xceeplz3URjtIaHtTZ2de6C
-         nF1sAg70QLK74JpjmIPsWg1dLHoTZ1675O/QlZwaQWSZZQX7W/QlxnziJQaJo+e6rDPO
-         P/Pcr6PknWtkx11NgEChSzMUc831aXyVjHsxuAN4oZAxX186A9gJULirjhRLyDlQejmC
-         UvJxBhFKhoq8p7HkSN1Q0gTWCf/O5bMGVPyKdG+35yA90yrQsPu3Q6W4gG7NYwvHd4z2
-         Zy02bsvG1K+Sdh+u4umaXy5KF1okkyqBFGgQiCL35jlDNvWC3EzUK7MckKpOicTGrmBK
-         TJRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjmkOjophMx4wKJt7XI6slhH0iBq4IxXn5Qk/4eUSya4HQ5wOqwhZ9G1A6IpnBcpjh6wm+umIt@vger.kernel.org, AJvYcCX6fE0LGjTB7ly7bUOZrbfZfUN5y5PPEXvElaJiY1rOawDem5MIrekUb2nW524hdEj1TRjAMlp4T8iYGwE=@vger.kernel.org, AJvYcCXiItGVIK7D8sOAPIR0glEY+ZzQ7qOJQVAJgjyFCBNIQA7PFyQs3GegEjsib1IvPIkSUUkkT5gqL3rp12c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRQF8QT4B2gKVLp1bipb2eNVI6bin0AD2xXMyn0TrGUA9KqIVl
-	4EB0B/i/lrtbptZI11U4VbQHqOnbjCKaRWZPxR5B5iqo09GBadSu
-X-Google-Smtp-Source: AGHT+IEykYxqXoYAhLTiaAatQMKb3ZNjmkzBVWNHk/YhG+9R7BMikzWwvtQyBjYx7/diRhDrQmslhw==
-X-Received: by 2002:a17:907:3e13:b0:a99:3ed0:58ad with SMTP id a640c23a62f3a-a993ed0b560mr698403966b.64.1728288757385;
-        Mon, 07 Oct 2024 01:12:37 -0700 (PDT)
-Received: from [127.0.1.1] (83-215-114-114.dyn.cablelink.at. [83.215.114.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a994d5745e2sm173661866b.23.2024.10.07.01.12.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Oct 2024 01:12:37 -0700 (PDT)
-From: Benjamin Bara <bbara93@gmail.com>
-Date: Mon, 07 Oct 2024 10:12:30 +0200
-Subject: [PATCH] Revert "ASoC: tegra: machine: Handle component name
- prefix"
+        bh=B3ObtdSIL2l2V/JG61h4POE1nSuGmI4nUjp3Q+3TTvI=;
+        b=Pkq0PVmB+Y97tMKIhcnactXtakzZA6YtO6iBudhSgFGEw0DaDTafP5YuXQtGPB4A05
+         iM5fQLk3XC5ewTopOnfYTZ9bO2Lr8Mmc/Ys//bJLiLpyrZ258NDc1lbvwg5alHW7XXyu
+         a5yV1VQxxdVG2egXp9vYTbyiaIJfmFLz3BO8bP1Nfhs+724D3r+ArXWxORZIDmxqQvxf
+         jIDube5EuwlCSd8y0yKZ42Oh9AwZcOGxMWco43X76ThNjOIW2b/DOITfGAIb59FNM0FO
+         9G6oYC6f3n9ctFR0gQdlBDr+QEvnGdoMNBk2joqjdBYByGHU2EEYS3OYx2qHSGrjBAv5
+         3ixg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2FaNOOzp0aQUZRUSVdaqtwzmRdGWUauAN3VTRI+MD291NMVY5Pzyzz5levFssUtllndxSS2MnxwwfMw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxF131hw6Ip/fmWJ6lZd+lQQudPxvvhHKONJfFrJc/tteXHybd+
+	wbL/Pdxhr2+7AlYXnn9MAHoCwYyRsGdmAP9Jw2eKCpsQLyOiTqLvMaODTGiILIA=
+X-Google-Smtp-Source: AGHT+IGOkOhoHT/NquWnLJBSxnIxGH/WSV5or1VIs9MefuCu6Zuwj+QM7cg4wYkVyH0xCHNFFxRQUg==
+X-Received: by 2002:a5d:598f:0:b0:378:955f:cc09 with SMTP id ffacd0b85a97d-37d0eaf37f5mr3157292f8f.11.1728306060820;
+        Mon, 07 Oct 2024 06:01:00 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1691a713sm5674582f8f.42.2024.10.07.06.00.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 06:00:59 -0700 (PDT)
+Message-ID: <32040b21-370f-44af-b1fe-bd625bc3fd9d@linaro.org>
+Date: Mon, 7 Oct 2024 15:00:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241007-tegra-dapm-v1-1-bede7983fa76@skidata.com>
-X-B4-Tracking: v=1; b=H4sIAO2XA2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDAwNz3ZLU9KJE3ZTEglzd1DRLM8skizRzM6NEJaCGgqLUtMwKsGHRsbW
- 1AI4oEGZcAAAA
-X-Change-ID: 20241007-tegra-dapm-ef969b8f762a
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "ASoC: tegra: machine: Handle component name
+ prefix"
+To: Benjamin Bara <bbara93@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>,
  Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>, 
+Cc: linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>,
  stable@vger.kernel.org
-X-Mailer: b4 0.14.2
+References: <20241007-tegra-dapm-v1-1-bede7983fa76@skidata.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20241007-tegra-dapm-v1-1-bede7983fa76@skidata.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Benjamin Bara <benjamin.bara@skidata.com>
+On 07/10/2024 10:12, Benjamin Bara wrote:
+> From: Benjamin Bara <benjamin.bara@skidata.com>
+> 
+> This reverts commit f82eb06a40c86c9a82537e956de401d497203d3a.
+> 
+> Tegra is adding the DAPM of the respective widgets directly to the card
+> and therefore the DAPM has no component. Without the component, the
+> precondition for snd_soc_dapm_to_component() fails, which results in
+> undefined behavior. Use the old implementation, as we cannot have a
+> prefix without component.
+> 
+> Cc: stable@vger.kernel.org # v6.7+
 
-This reverts commit f82eb06a40c86c9a82537e956de401d497203d3a.
+Fixes: f82eb06a40c8 ("ASoC: tegra: machine: Handle component name prefix")
 
-Tegra is adding the DAPM of the respective widgets directly to the card
-and therefore the DAPM has no component. Without the component, the
-precondition for snd_soc_dapm_to_component() fails, which results in
-undefined behavior. Use the old implementation, as we cannot have a
-prefix without component.
+I think Samsung speyside from the same patchset might repeat this mistake.
 
-Cc: stable@vger.kernel.org # v6.7+
-Signed-off-by: Benjamin Bara <benjamin.bara@skidata.com>
----
-Original Link:
-https://lore.kernel.org/all/20231023095428.166563-18-krzysztof.kozlowski@linaro.org/
----
- sound/soc/tegra/tegra_asoc_machine.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra_asoc_machine.c b/sound/soc/tegra/tegra_asoc_machine.c
-index 775ce433fdbfdbcff4d09d078dbb0e65c0b15b60..bc16f805f52c41d6cb983380ee0ac40944531e52 100644
---- a/sound/soc/tegra/tegra_asoc_machine.c
-+++ b/sound/soc/tegra/tegra_asoc_machine.c
-@@ -81,23 +81,19 @@ static int tegra_machine_event(struct snd_soc_dapm_widget *w,
- 	struct snd_soc_dapm_context *dapm = w->dapm;
- 	struct tegra_machine *machine = snd_soc_card_get_drvdata(dapm->card);
- 
--	if (!snd_soc_dapm_widget_name_cmp(w, "Int Spk") ||
--	    !snd_soc_dapm_widget_name_cmp(w, "Speakers"))
-+	if (!strcmp(w->name, "Int Spk") || !strcmp(w->name, "Speakers"))
- 		gpiod_set_value_cansleep(machine->gpiod_spkr_en,
- 					 SND_SOC_DAPM_EVENT_ON(event));
- 
--	if (!snd_soc_dapm_widget_name_cmp(w, "Mic Jack") ||
--	    !snd_soc_dapm_widget_name_cmp(w, "Headset Mic"))
-+	if (!strcmp(w->name, "Mic Jack") || !strcmp(w->name, "Headset Mic"))
- 		gpiod_set_value_cansleep(machine->gpiod_ext_mic_en,
- 					 SND_SOC_DAPM_EVENT_ON(event));
- 
--	if (!snd_soc_dapm_widget_name_cmp(w, "Int Mic") ||
--	    !snd_soc_dapm_widget_name_cmp(w, "Internal Mic 2"))
-+	if (!strcmp(w->name, "Int Mic") || !strcmp(w->name, "Internal Mic 2"))
- 		gpiod_set_value_cansleep(machine->gpiod_int_mic_en,
- 					 SND_SOC_DAPM_EVENT_ON(event));
- 
--	if (!snd_soc_dapm_widget_name_cmp(w, "Headphone") ||
--	    !snd_soc_dapm_widget_name_cmp(w, "Headphone Jack"))
-+	if (!strcmp(w->name, "Headphone") || !strcmp(w->name, "Headphone Jack"))
- 		gpiod_set_value_cansleep(machine->gpiod_hp_mute,
- 					 !SND_SOC_DAPM_EVENT_ON(event));
- 
-
----
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
-change-id: 20241007-tegra-dapm-ef969b8f762a
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
--- 
-Benjamin Bara <benjamin.bara@skidata.com>
+Krzysztof
 
