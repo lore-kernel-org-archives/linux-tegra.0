@@ -1,170 +1,89 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2430E1BF324;
-	Thu, 10 Oct 2024 11:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD41A1C2DC8;
+	Thu, 10 Oct 2024 11:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728558535; cv=none; b=XKYFodiVcm6Zt+U/KGUReVzuV2SVpJux4FOcsKpYbnujiFqSrUHz11PP0zHnx/pBv6k6kZnKXOWr6dDv1wSFDGkq+iOs9Gwva1Z6d7T4uAP4zIUuutG26akyVw5Xw9774B3qEC+1uD977ACAjxzWIAj7Zq8Znuk+RNAj1YaWE1E=
+	t=1728558849; cv=none; b=oZlEYKmWazZYkCyyzu0SMcg3WDgKZGwehbXMob8KzVTQhog6bYt060D9UPT9wOc8Dnx2k0z7bo8ZCz6HWVpNRoikPn/PWMBMrxYtyjU07VkMoqbuMJFzLnK2EHdPKIIYruCP7VBjfHmCLEhXaIf5lcqtVvPxG/M9hJMsYxGBq/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728558535; c=relaxed/simple;
-	bh=p9H07rn+wuNRM2dxfXfbDsuYp44eVoznRlNZZ4yosiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J8XpBu42a/KYhHz14/tszFWkTDs26OJUqjH3ig+23sOW4MvrZj5uMP18brInGGFTBqZ+gQCw0uQ79rT1j8Y5R5OkFtLh4zIBpiIF0pZOBCfLlZSJg2qG4Vy0+V76hdyxOUfdkKwX0zQ49ybwh1Yaues9dowiCNLouNBAt4mXLDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 16EB5497;
-	Thu, 10 Oct 2024 04:09:23 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F8CF3F58B;
-	Thu, 10 Oct 2024 04:08:48 -0700 (PDT)
-Date: Thu, 10 Oct 2024 13:08:23 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	viresh.kumar@linaro.org
-Cc: Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, rafael@kernel.org, viresh.kumar@linaro.org,
-	yang@os.amperecomputing.com, lihuisong@huawei.com,
-	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
-	Bibek Basu <bbasu@nvidia.com>
-Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
- arch_freq_avg_get_on_cpu
-Message-ID: <Zwe1p0La_AFknglf@arm.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-4-beata.michalska@arm.com>
- <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
- <ZvU4mR_FZa7jXUgk@arm.com>
- <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
- <Zv8PKlr_PJgxazro@arm.com>
- <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
+	s=arc-20240116; t=1728558849; c=relaxed/simple;
+	bh=Xkcwtb0WrnxptNevR20ESVve7MqObs8X2QnVhJ8ogb8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=lYxuZh6BF4/6K9CnCchs8qnYiuXhALZhKGT4V8YuhyAjoH1lpCocAEg/YlkX2C5hZcBsGeS4ViZa9nIEKIzajp0GZjAlrjGu+rqLZYGuKO4KZ9RtmQVcqcgCflWWIeioioc47o4a+3Xk+jMo7HQpRTtwkKkSx+vWEu3cKF/KtgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ex7U2jk4; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ex7U2jk4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A5CC4CEC5;
+	Thu, 10 Oct 2024 11:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728558849;
+	bh=Xkcwtb0WrnxptNevR20ESVve7MqObs8X2QnVhJ8ogb8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Ex7U2jk477p6hZdg9nxjjM4IaQodev13qL6nKjaAlX575f8y1Wq7wXAW0MkOEQkqm
+	 BdCrnr7tCULO2QmQQRPyDgs9yfFIYxrPblJE6DnlF5o4TdeLG1Kwc08LnXLcLGxUc/
+	 ED6KZaVh+YdOKD4MQMVoe3h4vE6p9FcOVVQsT/qjoVm7PCV6eZKtCMu+c57BxvlBau
+	 1MYAJ/xdHWm3C9jSshsY6zwqfEiXl6sRIkN4ycvWNj3rEAzziYAiQ74ioKiHqjL35T
+	 6PDiDsuLqgLgcULBTBW9MKhGH2LCNgIyXcERliLLmoV5u+L/vAI2rGSNjB0pL72YSi
+	 85HA9jRDHaHRQ==
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Benjamin Bara <bbara93@gmail.com>
+Cc: linux-sound@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Benjamin Bara <benjamin.bara@skidata.com>, 
+ stable@vger.kernel.org
+In-Reply-To: <20241008-tegra-dapm-v2-1-5e999cb5f0e7@skidata.com>
+References: <20241008-tegra-dapm-v2-1-5e999cb5f0e7@skidata.com>
+Subject: Re: [PATCH v2] ASoC: dapm: avoid container_of() to get component
+Message-Id: <172855884665.3258793.1116462601049800083.b4-ty@kernel.org>
+Date: Thu, 10 Oct 2024 12:14:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-On Thu, Oct 03, 2024 at 02:54:22PM -0700, Vanshidhar Konda wrote:
-> On Thu, Oct 03, 2024 at 11:39:54PM GMT, Beata Michalska wrote:
-> > On Thu, Sep 26, 2024 at 04:21:14PM -0700, Vanshidhar Konda wrote:
-> > > On Thu, Sep 26, 2024 at 12:34:01PM GMT, Beata Michalska wrote:
-> > > > On Tue, Sep 17, 2024 at 05:41:09PM +0530, Sumit Gupta wrote:
-> > > > > Hi Beata,
-> > > > Hi Sumit,
-> > > > >
-> > > > > Thank you for the patches.
-> > > > Thank you for having a look at those.
-> > > > >
-> > > > > On 13/09/24 18:59, Beata Michalska wrote:
-> > > > > > External email: Use caution opening links or attachments
-> > > > > >
-> > > > > >
-> > > > > > With the Frequency Invariance Engine (FIE) being already wired up with
-> > > > > > sched tick and making use of relevant (core counter and constant
-> > > > > > counter) AMU counters, getting the average frequency for a given CPU,
-> > > > > > can be achieved by utilizing the frequency scale factor which reflects
-> > > > > > an average CPU frequency for the last tick period length.
-> > > > > >
-> > > > > > The solution is partially based on APERF/MPERF implementation of
-> > > > > > arch_freq_get_on_cpu.
-> > > > > >
-> > > > > > Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
-> > > > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> > > > > > ---
-> > > > > >   arch/arm64/kernel/topology.c | 109 +++++++++++++++++++++++++++++++----
-> > > > > >   1 file changed, 99 insertions(+), 10 deletions(-)
-> > > > > >
+On Tue, 08 Oct 2024 13:36:14 +0200, Benjamin Bara wrote:
+> The current implementation does not work for widgets of DAPMs without
+> component, as snd_soc_dapm_to_component() requires it. If the widget is
+> directly owned by the card, e.g. as it is the case for the tegra
+> implementation, the call leads to UB. Therefore directly access the
+> component of the widget's DAPM to be able to check if a component is
+> available.
 > 
-> --- snip ----
-> 
-> > > > >
-> > > > >     ..
-> > > > >   freq_comput:
-> > > > >     scale = arch_scale_freq_capacity(cpu);
-> > > > >     freq = scale * arch_scale_freq_ref(cpu);
-> > > > >   ----
-> > > > >
-> > > > This boils down to the question what that function, and the information it
-> > > > provides, represent really. The 'unknown' here simply says the CPU has been idle
-> > > > for a while and as such the frequency data is a bit stale and it does not
-> > > > represent the average freq the CPU is actually running at anymore, which is
-> > > > the intention here really. Or, that the given CPU is a non-housekeeping one.
-> > > > Either way I believe this is a useful information, instead of providing
-> > > > stale data with no indication on whether the frequency is really the 'current'
-> > > > one or not.
-> > > >
-> > > > If that is somehow undesirable we can discuss this further, though I'd rather
-> > > > avoid exposing an interface where the feedback provided is open to
-> > > > interpretation at all times.
-> > > 
-> > > Would it make sense to identify that the frequency reporting is unknown due to
-> > > cpu being idle vs some other issue like being a non-housekeeping CPU? Would
-> > > returning a value of 0 make it easier for tools to represent that the CPU is
-> > > currently idle?
-> > That is an option.
-> > Another one would be to return an error for those cases. This would make it
-> > easier to distinguish between valid frequency &/| idle CPU vs tickless CPU
-> > (EINVAL vs ENOENT) ?
-> > 
-> 
-> That seems like a good idea but I suspect it would be confusing to the end user.
-> 
-> If a user runs `cat /sys/devices/system/cpu/cpu2/cpuinfo_avg_freq` they would
-> get an error in some cases or get a number in some other iterations.
->
-That is a fair point but I am not entirely convinced using '0' instead makes
-things any more clearer as this is in no way a valid CPU frequency.
-As long as we document the expected behaviour keeping the interface well
-defined,  both options should be fine I guess.
+> [...]
 
-@Viresh: what is your opinion on that one ?
+Applied to
 
----
-BR
-Beata
-> Thanks,
-> Vanshidhar
-> 
-> > ---
-> > BR
-> > Beata
-> > > 
-> > > Thanks,
-> > > Vanshidhar
-> > > 
-> > > >
-> > > > ---
-> > > > Best Regards
-> > > > Beata
-> > > > > Thank you,
-> > > > > Sumit Gupta
-> > > > >
-> > > > > P.S. Will be on afk for next 2 weeks with no access to email. Please expect
-> > > > > a delay in response.
-> > > > >
-> > > > > > +               cpu = ref_cpu;
-> > > > > > +               goto retry;
-> > > > > > +       }
-> > > > > > +       /*
-> > > > > > +        * Reversed computation to the one used to determine
-> > > > > > +        * the arch_freq_scale value
-> > > > > > +        * (see amu_scale_freq_tick for details)
-> > > > > > +        */
-> > > > > > +       scale = arch_scale_freq_capacity(cpu);
-> > > > > > +       freq = scale * arch_scale_freq_ref(cpu);
-> > > > > > +       freq >>= SCHED_CAPACITY_SHIFT;
-> > > > > > +       return freq;
-> > > > > > +}
-> > > > > > +
-> > > > >
-> > > > > >   static void amu_fie_setup(const struct cpumask *cpus)
-> > > > > >   {
-> > > > > >          int cpu;
-> > > > > > --
-> > > > > > 2.25.1
-> > > > > >
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: dapm: avoid container_of() to get component
+      commit: 3fe9f5882cf71573516749b0bb687ef88f470d1d
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
