@@ -1,137 +1,170 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B9D47A60;
-	Thu, 10 Oct 2024 10:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2430E1BF324;
+	Thu, 10 Oct 2024 11:08:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728557307; cv=none; b=O7O0WdvgX0PijfDK97Go72wTUvOILiNGDQ7QEhuZPHjeAREpwwEgSqZF6M6Iq9DeNNQU15rOPrn0tcfQS6XcPBC2O8+DiFSBcFVStPofKixIcRDOMUfNPRwAAldGlFL/Ge/3V36LZK6MRkCYEdxPix0GlcYIuvjC8FI28xhPpp0=
+	t=1728558535; cv=none; b=XKYFodiVcm6Zt+U/KGUReVzuV2SVpJux4FOcsKpYbnujiFqSrUHz11PP0zHnx/pBv6k6kZnKXOWr6dDv1wSFDGkq+iOs9Gwva1Z6d7T4uAP4zIUuutG26akyVw5Xw9774B3qEC+1uD977ACAjxzWIAj7Zq8Znuk+RNAj1YaWE1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728557307; c=relaxed/simple;
-	bh=0T9dRU9geH3kbn5TpRdK2OzXuTFir0IgYdKO0AM+3bM=;
+	s=arc-20240116; t=1728558535; c=relaxed/simple;
+	bh=p9H07rn+wuNRM2dxfXfbDsuYp44eVoznRlNZZ4yosiE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TcoJ1uSeBaKFWjzA631mr36HXGOeGtIgP56u6FwW0Nz++qYKGLq/TFjUtmRg5bdWzSuYtL8YAEbe1OHF1wtOVl+WMknbVV4sG3VTPkJbIRZfVMfRL1EcQWaYEnFs4Djkf8eeL+McMZdXNyuFfIXRt8EbF0nHOT5htW2sHqjXh1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QvX2gmEN; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QvX2gmEN"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37ce8458ae3so574757f8f.1;
-        Thu, 10 Oct 2024 03:48:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728557304; x=1729162104; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0T9dRU9geH3kbn5TpRdK2OzXuTFir0IgYdKO0AM+3bM=;
-        b=QvX2gmENvRl0r6pTUxWM4pn1Y/9rqjE6/xCp/SEIpxVzqfAjR00xAYn5DIHdbp8yWp
-         sta/1VYw4ra7NCperTnfbMKYZupyoCr7TD70Do1pxGWIRK3I2wL2+NHTJWxlUMy/6zK4
-         SQem9BdpKeSvKC3IBcjmCDzPVbuANqJDQz1k2/vge18addDhQbdlOYFG7wMupDnYjKbC
-         W/gsdzLINDiGICbN9SynnkAvFb5lt3IW7GPdH+Xgof6xZ/GjSL0B7+78+MDZauOIWJ9V
-         8BjYXcqkZ2qLK5kx6d+k3QofXFsxcBCDVlasaLssghFK0suRPGqiqLu58Ci5rNQ8pO7V
-         oJbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728557304; x=1729162104;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0T9dRU9geH3kbn5TpRdK2OzXuTFir0IgYdKO0AM+3bM=;
-        b=NrKFLTp7R49xD2I4S7lcjTnihmWeIXvymMLHerm0l6u7Nk71DQT/yMgDrQ9UUfdO44
-         oPCf6Z0HbVTTkp8txdqqqJV2YDyxAGFwaNfv65RGbriIl+q1X2yQOzGdDAvn0FDNL7FJ
-         5PDgBQ/XJdgQoFlqrxPoKNL66rVSxuQOCL6ezEB7ODdQ1SW7UUH7AHhKasECj2ffWgkV
-         I6645Ej8V4EhHkSlD8rn6r3eiccMQVIkF+qlT7mcQ0ofmiv9p/SDHu53769qEt5eB/VB
-         K0dzU6oMLvlD1l2vQs33VCwBTl0m8kb7qtSS1NiR9r5vWIte2RsCj0BqRdUXJzbIWP4k
-         cpZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP3UrV5taPqeDf9dDHUps0zTrcqLOGOdu8bfQkRlyFeEaPnd3PrEF9NxVOUpg9ClTvlxGC7kNTle4Ubg==@vger.kernel.org, AJvYcCWYMFFKJPNnV00VGoYjsMqYV4MAVlA4rLl/CX5C8lJWoGqUlS/8LMtr1YgFYSX65x4WA/4c9H6q@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOfhPqb6SvnPWkmuR4IX2gzAZfMv74IlYLl6BsvCu8SD7LUA+y
-	VuPRW5jB79/hHxYbQeA1FAw+Ka9nDMhkd1gPipRu3YPK2nFapdQ/
-X-Google-Smtp-Source: AGHT+IGFacz8Bxb67pDXXgq4f7zbnGvWuNGMKQTcWN2BroPEPemJxgR9KYZCWv1VkFjJTw2MeMLihA==
-X-Received: by 2002:adf:f850:0:b0:37c:c51b:8d9c with SMTP id ffacd0b85a97d-37d3aae2866mr4805697f8f.38.1728557303716;
-        Thu, 10 Oct 2024 03:48:23 -0700 (PDT)
-Received: from orome (p200300e41f02ba00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f02:ba00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79f9c1sm1175918f8f.68.2024.10.10.03.48.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 03:48:23 -0700 (PDT)
-Date: Thu, 10 Oct 2024 12:48:21 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, Paritosh Dixit <paritoshd@nvidia.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Bhadram Varka <vbhadram@nvidia.com>, Revanth Kumar Uppala <ruppala@nvidia.com>, 
-	netdev@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] net: stmmac: dwmac-tegra: Fix link bring-up sequence
-Message-ID: <dadvdpiexel5c4ckhpbk6y2sf4kwqqsgyk4i2lx44n22f4zem5@3dwaqmert2m7>
-References: <20240923134410.2111640-1-paritoshd@nvidia.com>
- <qcdec6h776mb5vms54wksqmkoterxj4vt7tndtfppck2ao733t@nlhyy7yhwfgf>
- <6fdc8e96-0535-460f-a2da-cd698cff8324@nvidia.com>
- <7485182b-797d-4476-b65c-7b1311d99442@redhat.com>
- <27e70746-ffdf-40fa-a335-bc6e59e7266f@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J8XpBu42a/KYhHz14/tszFWkTDs26OJUqjH3ig+23sOW4MvrZj5uMP18brInGGFTBqZ+gQCw0uQ79rT1j8Y5R5OkFtLh4zIBpiIF0pZOBCfLlZSJg2qG4Vy0+V76hdyxOUfdkKwX0zQ49ybwh1Yaues9dowiCNLouNBAt4mXLDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 16EB5497;
+	Thu, 10 Oct 2024 04:09:23 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F8CF3F58B;
+	Thu, 10 Oct 2024 04:08:48 -0700 (PDT)
+Date: Thu, 10 Oct 2024 13:08:23 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
+	viresh.kumar@linaro.org
+Cc: Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
+	catalin.marinas@arm.com, rafael@kernel.org, viresh.kumar@linaro.org,
+	yang@os.amperecomputing.com, lihuisong@huawei.com,
+	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
+	Bibek Basu <bbasu@nvidia.com>
+Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
+ arch_freq_avg_get_on_cpu
+Message-ID: <Zwe1p0La_AFknglf@arm.com>
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <20240913132944.1880703-4-beata.michalska@arm.com>
+ <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
+ <ZvU4mR_FZa7jXUgk@arm.com>
+ <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
+ <Zv8PKlr_PJgxazro@arm.com>
+ <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gqvovi3vbdnz26rp"
-Content-Disposition: inline
-In-Reply-To: <27e70746-ffdf-40fa-a335-bc6e59e7266f@nvidia.com>
-
-
---gqvovi3vbdnz26rp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
 
-On Mon, Oct 07, 2024 at 02:50:56PM GMT, Jon Hunter wrote:
->=20
-> On 01/10/2024 09:43, Paolo Abeni wrote:
-> > On 9/27/24 17:28, Jon Hunter wrote:
-> > > On 25/09/2024 14:40, Thierry Reding wrote:
-> > > > All in all, I wonder if we wouldn't be better off increasing these
-> > > > delays to the point where we can use usleep_range(). That will make
-> > > > the overall lane bringup slightly longer (though it should still be=
- well
-> > > > below 1ms, so hardly noticeable from a user's perspective) but has =
-the
-> > > > benefit of not blocking the CPU during this time.
-> > >=20
-> > > Yes we can certainly increase the delay and use usleep_range() as you
-> > > prefer. Let us know what you would recommend here.
-> >=20
-> > Use of usleep_range() would be definitely preferrable.
->=20
-> Thanks for the feedback.
->=20
-> Thierry, let us know whether we should keep the 50/500ns ndelay() or swit=
-ch
-> to 10-20us usleep_range() as per the kernel documentation for less than 1=
-0us
-> it says the typical guidance is to use udelay.
+On Thu, Oct 03, 2024 at 02:54:22PM -0700, Vanshidhar Konda wrote:
+> On Thu, Oct 03, 2024 at 11:39:54PM GMT, Beata Michalska wrote:
+> > On Thu, Sep 26, 2024 at 04:21:14PM -0700, Vanshidhar Konda wrote:
+> > > On Thu, Sep 26, 2024 at 12:34:01PM GMT, Beata Michalska wrote:
+> > > > On Tue, Sep 17, 2024 at 05:41:09PM +0530, Sumit Gupta wrote:
+> > > > > Hi Beata,
+> > > > Hi Sumit,
+> > > > >
+> > > > > Thank you for the patches.
+> > > > Thank you for having a look at those.
+> > > > >
+> > > > > On 13/09/24 18:59, Beata Michalska wrote:
+> > > > > > External email: Use caution opening links or attachments
+> > > > > >
+> > > > > >
+> > > > > > With the Frequency Invariance Engine (FIE) being already wired up with
+> > > > > > sched tick and making use of relevant (core counter and constant
+> > > > > > counter) AMU counters, getting the average frequency for a given CPU,
+> > > > > > can be achieved by utilizing the frequency scale factor which reflects
+> > > > > > an average CPU frequency for the last tick period length.
+> > > > > >
+> > > > > > The solution is partially based on APERF/MPERF implementation of
+> > > > > > arch_freq_get_on_cpu.
+> > > > > >
+> > > > > > Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
+> > > > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> > > > > > ---
+> > > > > >   arch/arm64/kernel/topology.c | 109 +++++++++++++++++++++++++++++++----
+> > > > > >   1 file changed, 99 insertions(+), 10 deletions(-)
+> > > > > >
+> 
+> --- snip ----
+> 
+> > > > >
+> > > > >     ..
+> > > > >   freq_comput:
+> > > > >     scale = arch_scale_freq_capacity(cpu);
+> > > > >     freq = scale * arch_scale_freq_ref(cpu);
+> > > > >   ----
+> > > > >
+> > > > This boils down to the question what that function, and the information it
+> > > > provides, represent really. The 'unknown' here simply says the CPU has been idle
+> > > > for a while and as such the frequency data is a bit stale and it does not
+> > > > represent the average freq the CPU is actually running at anymore, which is
+> > > > the intention here really. Or, that the given CPU is a non-housekeeping one.
+> > > > Either way I believe this is a useful information, instead of providing
+> > > > stale data with no indication on whether the frequency is really the 'current'
+> > > > one or not.
+> > > >
+> > > > If that is somehow undesirable we can discuss this further, though I'd rather
+> > > > avoid exposing an interface where the feedback provided is open to
+> > > > interpretation at all times.
+> > > 
+> > > Would it make sense to identify that the frequency reporting is unknown due to
+> > > cpu being idle vs some other issue like being a non-housekeeping CPU? Would
+> > > returning a value of 0 make it easier for tools to represent that the CPU is
+> > > currently idle?
+> > That is an option.
+> > Another one would be to return an error for those cases. This would make it
+> > easier to distinguish between valid frequency &/| idle CPU vs tickless CPU
+> > (EINVAL vs ENOENT) ?
+> > 
+> 
+> That seems like a good idea but I suspect it would be confusing to the end user.
+> 
+> If a user runs `cat /sys/devices/system/cpu/cpu2/cpuinfo_avg_freq` they would
+> get an error in some cases or get a number in some other iterations.
+>
+That is a fair point but I am not entirely convinced using '0' instead makes
+things any more clearer as this is in no way a valid CPU frequency.
+As long as we document the expected behaviour keeping the interface well
+defined,  both options should be fine I guess.
 
-Let's go with the usleep_range() if it works.
+@Viresh: what is your opinion on that one ?
 
-Thierry
-
---gqvovi3vbdnz26rp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcHsPUACgkQ3SOs138+
-s6HmVxAAru/WoonUjH/ZgT6te9HxStmfQleL1dO/RlYQiCp5DQQ7uCfDIm+RFu/y
-ZoHTiZDvXycbAIVeMOJrYEOTFNIfRzlXykebNqaXSw2PVSAEC9WkPbpIjlReDZj3
-84EDaTzLeFxitiMMEPqABo+iCU7xljKxRFY3kJG/aOwmpvhBuo2dquOLOPc57Urt
-tY8Hrl4+TjCzPJfRBcO27TZvr73nN7sV8CtS/s90m/pAGcEecyadkrOHU+lLMXVH
-ZtKouF5MSnmTc0V0w/Mf4xOJKXXXQHIF1PTTC6CmoRQcS6gurxN9AgWL4QVSNSkP
-uIGY23yc0BzvWUrERmtyCRIiOf47Z+EtK7U91BiIDYidwbRI93+Q2FMCWXsv4T2S
-tgm0LKFIso28XTZyjLG7jQv0AZ/JJSQyoW6uKmCVfVoVJIh2U6BMsT2WVuvhfQBH
-tOgm381ZuhFpt8QMHalodtg8CeLRrcK5dJOpO6FB+V/LP9t8u66hvaxP5xyZQ+sr
-tzNBQ1ivyDMHl8YTz7ywKq34ko8xdo6Jm6ApyjfVEFo31tYDHa/W/Sui6EXVoXTD
-jzD5LgMyHBcggrSA1EW5AUhypke1MKxCItZlRxe/d2PSbPnLy1CIZvNUlUwPLcst
-2nsU9pUT58bbY0KjOmbcuTOCTuH2Kh5IfxWIkuOP5xZkvz8i23o=
-=Ru7G
------END PGP SIGNATURE-----
-
---gqvovi3vbdnz26rp--
+---
+BR
+Beata
+> Thanks,
+> Vanshidhar
+> 
+> > ---
+> > BR
+> > Beata
+> > > 
+> > > Thanks,
+> > > Vanshidhar
+> > > 
+> > > >
+> > > > ---
+> > > > Best Regards
+> > > > Beata
+> > > > > Thank you,
+> > > > > Sumit Gupta
+> > > > >
+> > > > > P.S. Will be on afk for next 2 weeks with no access to email. Please expect
+> > > > > a delay in response.
+> > > > >
+> > > > > > +               cpu = ref_cpu;
+> > > > > > +               goto retry;
+> > > > > > +       }
+> > > > > > +       /*
+> > > > > > +        * Reversed computation to the one used to determine
+> > > > > > +        * the arch_freq_scale value
+> > > > > > +        * (see amu_scale_freq_tick for details)
+> > > > > > +        */
+> > > > > > +       scale = arch_scale_freq_capacity(cpu);
+> > > > > > +       freq = scale * arch_scale_freq_ref(cpu);
+> > > > > > +       freq >>= SCHED_CAPACITY_SHIFT;
+> > > > > > +       return freq;
+> > > > > > +}
+> > > > > > +
+> > > > >
+> > > > > >   static void amu_fie_setup(const struct cpumask *cpus)
+> > > > > >   {
+> > > > > >          int cpu;
+> > > > > > --
+> > > > > > 2.25.1
+> > > > > >
