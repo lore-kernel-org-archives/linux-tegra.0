@@ -1,52 +1,53 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2045.outbound.protection.outlook.com [40.107.220.45])
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2064.outbound.protection.outlook.com [40.107.223.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D6A1CF2A1;
-	Fri, 11 Oct 2024 17:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EDB1BD4E7;
+	Fri, 11 Oct 2024 17:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728668254; cv=fail; b=tcPEPNUpKzH4HvQkxaOilqRjMSyMMc23xSD7VZvmLYykB60bgZnCU3j5aJOMQrtTGfAJcmy0Yi7Xw/FF4un1TwNm4aTBrS1yc+UYJIGOTv0GMUfHBt6uchxyBMuF43SKoU7CXwsZXbTEeDfO3USD/1HL918mJk7oVmb5WXJexoc=
+	t=1728668420; cv=fail; b=eW4CwgKI33VQ6zuKD3bT7iI4pl+r9smcCHIiG9bSeirWnN/kifYuepiSdxjxTE0pzLfVn8bgg2SA57DxlVpw4hKPcOKqVj7veBK7+EH59IpKxSWKoOoXuf1/1Ej9G2JgsSsB5uZGpWCVYHEMHE+FppuTwnzRMsHGzb8v1uxL76s=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728668254; c=relaxed/simple;
-	bh=JVY8SBPEc2iRwkfsJWdsDB4z1mVmK7emIJimTfH4MlQ=;
-	h=Message-ID:Date:Subject:To:References:From:Cc:In-Reply-To:
-	 Content-Type:MIME-Version; b=Kcdla261cO2ZnuwhzeA/9BrTlrlfcELkG/NQyOGfD2/K/JtyctK/RVGAE1TP198DOnPetDjNA4FihDXurBjCyNz/ABTL1g8iKFmNJxjGez10G8+LCWGGUysZjzFiKRXKDnKDJGAuPU/BCF2IXsft6e1PBVEDQ+RUBA+bqsuajeg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dWd5Mvw2; arc=fail smtp.client-ip=40.107.220.45
+	s=arc-20240116; t=1728668420; c=relaxed/simple;
+	bh=eC18YO8vx/gzvcwX3TqK1st6OyJm4DjYmv57Hdqkhn0=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PLZD11lH4i1Tj3mJjSTqKAc7HgDKzc4aIaulQyvipICSmg4Qf4Iq5yG9tOuoSLtLD2dVGcEQRIOxj2C3HxMyLvDg3dcppfpZ8jZo55Kkd/cj0TNjFFoUAXNw0vBvVDWTbnBErYRmCuHwj7y1WAX2qpi1nxUnIxo5fwUhfpDDckU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZfVmIQZK; arc=fail smtp.client-ip=40.107.223.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dWd5Mvw2"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZfVmIQZK"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YjOwmRzrv39NyfVR7yHIB3T1JKlSMVqSa6R9KX8Wadpyu3IRPzrhJrt02qU4is4xWKbWHPcgXK6QFoK6GGYj2L76pvP3AqO5s0LZtI+t4yGTPRLxL9DuusfIKfPGd4AGu2LCX9UYp2NIP85VzVEveV0DazAgjKRIDGKsqsijtAsGWQeq+AaVvWewlwZ+0Ah6J6QHaGtQsIb6SBpzRlhFf+D1P56E3lrm6x0/j4waEaDOjcuixtMU27k3hUNBb2upZBEdI3UA3cuzbB1+B8D0xs4J9GJUsbO2jsXn6KLIDj7nFuPY+iRM1i2lPerau90UV7HB2F6g62II4lBU0PaYDA==
+ b=kBJO3sCHmPV3+Gihb1j706bluxoPZKmO2FRJBAAgi4wYZ2N1dFPfSY1p6ZlnFL48JqQeI4KW0n4qpNWds/zO9Pti8S5HA1t54eGkWikAjzMNOfWxvPJ9Ll3mwr3SEhtVjP3WL19VPp179YTakOWo0sRPMcaacWRkRzCx1SqhUAf7IBmcM8PI5d+e016MdLjfJkxuZHpX942Spu/d2t6NVdKOcujJdxaOEZE0mJyjw+9FYB2Bv4yv1JBDLjfC/MxwP10cAq+m3Re+ORGwUg48QaTZN7y5uhBadhh2S2il81r28fx4TvZfYn0y5AMZBQ5yFLhA5Y1nmoUGWIPDImzAfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CHmjdU4wpdGZ1W+exyIo7v74zWqZpTVJkx4W/HdHFgc=;
- b=YOqi0cPAfg49Aggp5BzyOHpdhFkaEqJ6hfJAq8Ho3iJgfpqogPaLRlqaaMLCaZ8EWwNxMuFe0k9L0B1jFffrib7GkNZbB1192q95PK/qMfCKkiDxvlwioerTF1d+y9Ca6oq50P/6G5yXSpdRHqeKnHuRQhloM7xize7UWc11WR0SUwNZZPw8/iTZiP/tWGGvKlhT91M4sDSZJ+n07AHm57peVdMKZs7MkWjn8VB2CEkTfHbaJ1j389WmW8M945HTY5Ci0/AFCFrHxUWbMrWs8MCuyPQ4GXlELODsrwwWSCQ9CSD7b8kTmxjVi7hhnKsdD021/2aip1ao/MrZ0Bj4wQ==
+ bh=8CvVzaWaRBH3xRpFEGYKqsZDV+ob1XAhXvemb3oXY8w=;
+ b=PC5dwhCc3z22K6kTMrt6J8obVioXU19SMj4GbECo/b7BjZL4qAlcAfSIyOF7VTEpkdAF2aCTVihBNBawEtLm99JDQtCw2tSo7dnrg/R2qRcGRmLPhXhGas65YMYAwmwoa2Na30wc0+0xMAPTFACQ3X/73+FuqfwWuEeUkiPcpgpMF57SkBjULfg/pyFmt4ILZ450KgykO5qF4/F3NplPhZXBwfkp5Kn7DB7ZQj9fYB0Qm+sRsOX68Mlla7cHjt/Fnqx/T9VppIf5Uzifv3iB3Op2t2FpVdv3WgA64yhyPevCvF50lDGi3/ie5/kxc++dQJJBX5e4ArckUAnndglyFg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CHmjdU4wpdGZ1W+exyIo7v74zWqZpTVJkx4W/HdHFgc=;
- b=dWd5Mvw2UvLUEJgBrObQjkAu4bKmvI2L0XEAQeHGHmvyBDn1WeIM1GwbfR1Mr7bB9QZ8fTKHWBJSCCtsCrS5U+aCmMQL1+6YBaxm/2xn+hDI1lv0PQ6DOOPCkDkFCu3rjvru1t8q2XlcN+9y0zW3h3GxC87rvPOI2jw7BXM7Y5GhHyOZkVM5Wz+w84cAiIBhPhvmFQPWxIcTUoAHUCKmFo+AuKRVshv5XU7UYQwBo2UmMhGex8CfxbHmsb+ydVnVOnMCE6bhaerXVWu68iqlDX9EEeMPMuX9kliUYqxil06H0rCvgTiuZAGFRuaHCjxcEwdBIrt6djn329wK8rqTPQ==
+ bh=8CvVzaWaRBH3xRpFEGYKqsZDV+ob1XAhXvemb3oXY8w=;
+ b=ZfVmIQZKS9mFsqnWRmUDMUnsn/ifNWaod/c3elQVu8D/Xp+iHStcjDdedQRSRQHWJlQ8UbqzDYp1CIZvYK3szgEd6DFtcLn8Me7uHf1IFM5Lb/xN7nWlNxX0MTaObYYEPkmsKa1mf6qtOXm9ITwIKOE2RtaAjx3Ca5dAHXgCsGjLTQTKAR2m+J8DE06mB8sO0f7FVh+4rSytNUW/s/4vjW1dFDiRk1wft9aQRd2KeBFv3Wvw+k9iSL6JVtRb7ryvQ+HP3JlhvOxN1S6TNbrNYWSM5QGf9iQGX2TLdzb/ihbCr4YXRo2QL/46nvOEiKpeNs/NI3lkdwi1P/4pP1UOvw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by PH0PR12MB8776.namprd12.prod.outlook.com (2603:10b6:510:26f::19) with
+ by DS7PR12MB5933.namprd12.prod.outlook.com (2603:10b6:8:7c::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Fri, 11 Oct
- 2024 17:37:30 +0000
+ 2024 17:40:16 +0000
 Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
  ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
  ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.8048.013; Fri, 11 Oct 2024
- 17:37:30 +0000
-Message-ID: <114b4c03-5d16-42ed-945d-cf78eabea12b@nvidia.com>
-Date: Fri, 11 Oct 2024 18:37:23 +0100
+ 17:40:15 +0000
+Message-ID: <b7fcee99-91bc-4e9f-9acc-8b955212f038@nvidia.com>
+Date: Fri, 11 Oct 2024 18:40:08 +0100
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH net-next v3 2/2] net: phy: aquantia: allow forcing order
  of MDI pairs
+From: Jon Hunter <jonathanh@nvidia.com>
 To: Daniel Golle <daniel@makrotopia.org>,
  "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
  Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
@@ -58,16 +59,16 @@ To: Daniel Golle <daniel@makrotopia.org>,
  Robert Marko <robimarko@gmail.com>, =?UTF-8?Q?Pawe=C5=82_Owoc?=
  <frut3k7@gmail.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 References: <7ccf25d6d7859f1ce9983c81a2051cfdfb0e0a99.1728058550.git.daniel@makrotopia.org>
  <9ed760ff87d5fc456f31e407ead548bbb754497d.1728058550.git.daniel@makrotopia.org>
-From: Jon Hunter <jonathanh@nvidia.com>
+ <114b4c03-5d16-42ed-945d-cf78eabea12b@nvidia.com>
 Content-Language: en-US
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-In-Reply-To: <9ed760ff87d5fc456f31e407ead548bbb754497d.1728058550.git.daniel@makrotopia.org>
+In-Reply-To: <114b4c03-5d16-42ed-945d-cf78eabea12b@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0038.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:61::26) To SJ2PR12MB8784.namprd12.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO2P265CA0067.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:60::31) To SJ2PR12MB8784.namprd12.prod.outlook.com
  (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -76,194 +77,197 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH0PR12MB8776:EE_
-X-MS-Office365-Filtering-Correlation-Id: b5ea1e7f-f7ee-4fef-d412-08dcea1b6194
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DS7PR12MB5933:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac0734fa-c868-40d6-a4bd-08dcea1bc40e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U3lqOG1uWDJJcHpwVm9pNmdIWDVWaUxGbWFtVzE3Ykg4NU9EdVR6NW9pZzJI?=
- =?utf-8?B?dEdNSHNPMmVZcEpDNWZXYWtXL05ZdDIwd3MwR0ErY3hLdVkxUkk3R3FhcFFT?=
- =?utf-8?B?QzBzY3pENWRuWFpneWdkR3JDTTVDMW5NM3NTVWpraDZ6NEtzVnNRTnhKY2U2?=
- =?utf-8?B?ckVGMnZiUFZZdmROQVNxTkJiNnp6K1dER1Q2MFRmR1ZxcVZ2dnIzU2VNdjI3?=
- =?utf-8?B?T1NNNklIU2lqRC9oTDlaU3QwK2JWNTNIWFgzTTNzbVpIL05aaEhyNjZrbHZF?=
- =?utf-8?B?aUMrMzY2S0pVZ0ZML0FGeUEyV25IZGFKak9sZy9HOW9RTzFiQW9xN2tyMi80?=
- =?utf-8?B?N3M5YU9CbkF4SGVmaFVFZG4vK1REd3kzMkd5RE16dXhxRXU2SkxDTzUxdHRI?=
- =?utf-8?B?cDdrMmdQUEpNNmt5b1ZJaEI0SzFrMCtFbWRpR0hDcEd4NnU2REp2aHAxbEd3?=
- =?utf-8?B?cVBBeE9DWnpHY0R1ME5lUGJXenE5RWttNm1qd1ZDVTNaMG1YVEg5Y0F0S0h3?=
- =?utf-8?B?VjI2VkhNdklCZG1ENzFneEUxQlh0cGdhSnRrb3ppUTBER3VxQWM4TnlXL09h?=
- =?utf-8?B?aVFzaFNkcy9wWFE0WFM4ZnY3bllWcVZnYTI3VmZudVdpUmg1eDBPS3B0cHhL?=
- =?utf-8?B?Z0V6T0d5UUc3b3l2Y01OZzh4S1NtSFFvY2o1SGJtVW1tRjJsM0hJNWFvbGtT?=
- =?utf-8?B?QlJvcVMwRFZmeWV3Z1ExN1VQY2p2MTJTdDh6OXNVNjlwNHpDc3pHb3ZNY0NE?=
- =?utf-8?B?dW1la3VXZGhhQ21wTW1xMVMzeWhtbmxBQndqdDlkSDJCRmZEZlE1VlhpTndF?=
- =?utf-8?B?d3B0WjBFSFdtclJkN3dqQmpRdnNmdGNJdjJrU1N0WWxQZ0NXNVd4RzhpYXJB?=
- =?utf-8?B?NmpnQU5NQnZTdXhYa0JFUGZUL051dHNBY0xZRUlDWndlNzNUU1JseGkvTlpI?=
- =?utf-8?B?NzJqSnVEWnpHTkpIc1ZXSTFRUDBncmMwQWJheWZLR2N3dllQMXVUQ3ZiTFg0?=
- =?utf-8?B?VmxpNGM1SUwvY3RSbXY4T0lSaWs1Smc3b1V0Mzc0SEVpdGRGYzdwRW90UDJD?=
- =?utf-8?B?LzQyd3hUZFBQKzFyN24xK3pQaFp5bmVHU3BLMmZoTHl0aFd0VUdnNldtd0d0?=
- =?utf-8?B?SUYreXNSeFdnSVVKZ2lSV2NRVXpEUzhLamtEbVZEc1JpQS9ZSVB5Y1FGR3BC?=
- =?utf-8?B?cFpiT2ZOamQ3MVlIRlQrdFU1aUNYMzJJVE4yckNONHZNSStacmRTS1lMUEpW?=
- =?utf-8?B?eVVrUWZNRENWdjh0bWN5UlJmKy9JT24xcUtYdmRtZW1RWElmaldzaXRrYUp5?=
- =?utf-8?B?MFc3ck5hZ1BaR1lRYzg2cktwSjVGY1NEcHRhazRROWp1eXNrVFBpOENVMXdP?=
- =?utf-8?B?dXpuUThVUFhPWWl3QXhYUklJanJ5dFZVZlFFbFllSUduZmVDemEzakw1U2c0?=
- =?utf-8?B?R21YaW1IZ05tc2pYMFc4emFNSTNSNkxsdE5iU2Y4VGx5ZXBaNUFYeDkrOE5v?=
- =?utf-8?B?c2o3VktLWHRtZFEvYU80K1YwQkNuUUhOWjVWMG9yWUJ1YXdEbDlJaDZBRlhR?=
- =?utf-8?B?VDJjK0xaTE5yTFlmMDJ0YitVMmdPY25SYVBOVHl2MWhPNXpCUDJNS0RDcWVt?=
- =?utf-8?B?R3V2Rmh0NGlrV01PQXZiSGpoRlY5QThEMFEzWGN6bUcrMDJyNUtLVG4xeWRP?=
- =?utf-8?B?RWppMisrN0ZNd3E0NFJLcUp0clhLRWpQRVgwektDZ0N6bE5DSUcyVGxPdnhX?=
- =?utf-8?Q?7B2IFoLmUbnQYS4UKdaZQ/GAQja4ydLitUwNFlD?=
+	=?utf-8?B?N04yN0Fsa0lWaU55MmRESWR5U2RXekZYckhXM05kaHprd095aTBHcC9tV3Fu?=
+ =?utf-8?B?dDBzNjlDTitLY0FzaXk0QVlteElWc3hFakROdWNvMk5najNXcW1qN05MdElm?=
+ =?utf-8?B?b0t6d0dKTzNIMEJubXBady9iV3l1ZkszRlZhRjhBS09pS3lrdktyVGJyV0o3?=
+ =?utf-8?B?dTNTSmNMeXRPTXluRHYwNjN6NHB6alZLakFBTXhERHFRSmJIVjJFN0h0Rkdq?=
+ =?utf-8?B?bk4rV0k5QVFaT1NibXROVXJkR1lKblM0bkdrV0VEaEZYSWt0eXB1UTFiSHZo?=
+ =?utf-8?B?TmZFTFZFL0M3NUd6c2x2ckZxRTc3TGpsTzRJOXA4UmtBZzNmMUVwSkp0SFFm?=
+ =?utf-8?B?NHdJc2ErbHYzNlZ5NW9HYTdRakU5UjFFVTVQQ0xKL3pwMDJaZ0xVdXAzcWU2?=
+ =?utf-8?B?RVk2a2pUNEY1bUlxdzRnYVFveDh0b0RDdjVScUxlSUNPbnhrU09LZStCRDBZ?=
+ =?utf-8?B?T0pRVDl3RXc1VHNHdlhRRXF1M2gyV2FPSTFNajVsUG15MWNpSUpBSUF6Skor?=
+ =?utf-8?B?ZWN4c0psYUhJYlN1V1dKWTV3MkNxeFAvMElkM2F4d0FoaEVTMGNKSWxVano5?=
+ =?utf-8?B?YUxwVEhVOXg5VDIya2VzTnNoNTNhZk9uS3U2ZXRjYlhDbDdRTUV1ay8vUTRH?=
+ =?utf-8?B?WUlXQm5MM3YrcDdRd3lueVprbFEyakRoMVpMcnhLeXlZMytyRUg0czRQTXhi?=
+ =?utf-8?B?cjFBL1hWcW1oMVBxSlR1Tk1ZUFNEMERiK3N1cU1VUml6WFpaVTlCb1FYNDVC?=
+ =?utf-8?B?NGZpS1BWaVhFYVBhd0dxZlF5VmdiRWNLWlN1ZktQYjlZeWhSZVhUWkJpdnlM?=
+ =?utf-8?B?Q1pMdlpCbWtJTyszSVlSb1pFb1FqdFh3K2czajhHYUF5bUJqek1VbzNSWnda?=
+ =?utf-8?B?TEt1cHB2c3pJNFNBdHlweXY5S2g5cXkvSm9wVmo2YzNQR3BMVGxpVlV4WUtm?=
+ =?utf-8?B?eUJHSENDMWZhdS9tdld1TGJjelB6bytDMTRlVmJIbTFhQ1JKUXd2SjBIMnh5?=
+ =?utf-8?B?MGJqaDZXK1dXVUZXTUk0eTNrbHk5OVd3ZzRCQmZYWXJsK091bzJtWkpoUCtk?=
+ =?utf-8?B?UXpLK2FueE9XYmtkR1dld2k5VHFDUW5NWUtFajVtcG9sODA5Snh4WU53NHF6?=
+ =?utf-8?B?am5zK3pSS0pzd1lHaDlCNm4wWjF5TVR5a1N1Q2UwUWtYMTF5QUNqbmhVMklJ?=
+ =?utf-8?B?SUhWU2JHYTZPQjlrcUtHb2xVN0JJRWM4MHd6d3VWeStTaE1yNDUxc1IwVk9E?=
+ =?utf-8?B?T1VoVlE3ZGtVczduUFMvSEtYdW5FampZaXhPV0dBd0tEY3ZVQkZ4UWF2NEdF?=
+ =?utf-8?B?akdQeFdxVGNUVzl5QzdHSDFPaXFxTzdLR0dVbkp3NXRvbk1ndG5KYlRhRGN4?=
+ =?utf-8?B?dzMwUTRIRnJFS2xEdU5scUgyTVBhK2Z2RTBOQkcrL2RjU1YrKzk3S09HUE1y?=
+ =?utf-8?B?RVlnNVByWlFDOVgvZU5ySUp0RkJ3K2R0RjZDb2xBbUk1WXlNUFNsL2QxR1hX?=
+ =?utf-8?B?VHlTUWVqSXVaczkzT3M5dkpFbURZaTVGbjBocXlMZ2RobUZWOGlJcG00Z1d0?=
+ =?utf-8?B?VEVNWVBPL2hXMkdHNUl0T0VEVndXWEd1YjM0ek9pVWlLbHNYbUNXa0RaSWdj?=
+ =?utf-8?B?Znk4a280cE1JZGl6aWRrcXBVLzJkMjZnOWE5c1Ura1pFZTAzcHF1QWx3cUpF?=
+ =?utf-8?B?ZzlteXlnMVUvNktzNWJNbE1wK0ZHTGRzbHFRSHc2SUxLM0FBRmYxRkpsTmdD?=
+ =?utf-8?Q?yHXRhPMnDx3D7OYbgAGz3MUbv7ryUi2FcmvmCQI?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?d0t5c0dqcW5WczNwUjFhQUtEVENuOG80WmgwaStkZlluc3JqVzBQYURnUU5z?=
- =?utf-8?B?R1ExRUY0a3lZY3d6R1k4UTFhUTNoSUVEMGFPZWpiaklvMU5sbDk1VVJ6Z2d1?=
- =?utf-8?B?TzFqbElBZnRjUlNNZEFuUUdtL1JEbVpzeEVIQURhUnUxci81dmdwbnVuTGhG?=
- =?utf-8?B?ZDRkSGVJSFRhbTgrQWJsOU0xVVQ5eldQMStGYndYdmtLNU4vTHBSajVRK0Z5?=
- =?utf-8?B?MWViN0FjWHB1d2JNNmgreTBxanNXMktQdzFUL0tKN3J1VHF1clVhYi9MRHZX?=
- =?utf-8?B?SFlBZlA0bENHQ2IrVWVra0JSTG9NUzFJMTZ2SmIwZ0hxUHE4QnordDZNdWVj?=
- =?utf-8?B?UDIrbEhqd2ZGSlYxK3NUM0hGUHIrTFhhYzBZSDgyRDdQdy9PMEhvek5VSlI2?=
- =?utf-8?B?aWx6QlN3L0FLdmRoV2h3cUc0R0lPeVVReXlZeElQa29abjk1OGFuY2dnZkRJ?=
- =?utf-8?B?aytqbllQUlo3Y1NKRUsxU0Y3OFRzc3I2WjMxZ2pQS2M4SktvYVowam1ZaHlU?=
- =?utf-8?B?M0ZvVkdyUXhtWGRndWlsaUM5UDhvTzh2M2JONWdSNlhCZTJtRlJDeExXVFQy?=
- =?utf-8?B?M1ZBQ2dPdUtPK0o4NERaZGNScnhScjIyUzYyR0ZBWUNzUkxqSkwzeDlOKy9r?=
- =?utf-8?B?TE8yRUxxaVFFdWhpZzFNQU9EdnFIdnpUTWRhbDRJTkZDNWpRNHlOSXkrVVFP?=
- =?utf-8?B?RU1kLy9NYlRaS1BNYjVSRUxNOURGSXhkVWdlcVpSMFhzTnBXclhrd1c3SlNW?=
- =?utf-8?B?NlVvakhjVDNvRFIvRFMvUUUrWVc0THJIKy9nSWJEQzJONEVyWWpKb2orK2JS?=
- =?utf-8?B?YmZzV3h5NEljeHZDbHFrait1dWFMKzBWMzNNYlZsVEI4OHE1aytpWVQ3L292?=
- =?utf-8?B?Q1FEeDhVSXAxUm8rRmY4UEM5MUswaEw2aHo0azJFU0xSMzVjR2FydjhaYTB1?=
- =?utf-8?B?MWlUWjhzM0FER2RMOXBhc1BaaGUxTWFCNEJ6R042YWhobWxJUmc3NVJtL0ZL?=
- =?utf-8?B?MDNtZGtWTTQ3QlVBdm5oanVZOE01OEQ1b2NFaktIWWN6OVMyZnVlOGtnM0M1?=
- =?utf-8?B?eklicEUxc2ZXanptbUdOOTc2VHR2MjhvU2JJZjZRd2xnVnZpVnhtVVNCcEtP?=
- =?utf-8?B?UGhxamJwOXZ1Rm9Wcll3TXpQUFdyZzFUWnZwK3BmK1RadHhaazJoeDZQWWxr?=
- =?utf-8?B?emFudU5DcUxscGhWekthN3dIMVhnbG0wVmh6N3FUOHI5UXQwQm5TNDBmNVF6?=
- =?utf-8?B?WXFJd1c2c3o2UEYzUnl0bnhWRG5FOE14OEdyZ1dIWTVmd0FEbXBKcS8zRW1L?=
- =?utf-8?B?a3VuZ1QzSHRXby9XSkZwMVF5b3VaaDVGWkpKV1g0aUxBamlCd0Q3VkcyRDhL?=
- =?utf-8?B?M3dnWVBlQ3dBYmhNZ005RTRQYnFwZTFDNXJTUnk5WDRxcmtJcFhNY0c5N0oy?=
- =?utf-8?B?R3dYemYwOWVoWklYcmE2dENwM0tQbXlrY0phMVp5KzJOcis5UnJOZmpqa2xt?=
- =?utf-8?B?ejJ1eDBUaStGM1NTRGY1Qm5CVEhKV0VxTWUxeEVlVGErdWgyRGd0Q0lzNVFW?=
- =?utf-8?B?ZUxyWXBDMnpOeE9STzhLbGJpalVMdWpzbXYzNVdQUHB1Qi9FQ1BvMVhFTTF1?=
- =?utf-8?B?c2RXS2N3UlVSQ084VjRqbzN5ZkNDTC9CUUM0d1g5NnorRDk1NVY1V09TWjd2?=
- =?utf-8?B?L2hHTGczYjQ0WjdLY1hWOHVtOE5Ma3hFaW9qNzEybGZyVnhlY2JKOUFraUJE?=
- =?utf-8?B?VTNhQjhFK1BwKytGWWFWVHBJak1kNS83amlPTlBMcnlBUG5OYjVucXdFRVBX?=
- =?utf-8?B?UDVETmZXeDBRb21IUFQzWDgybzhGYUIvY0FzNmovT3VnU3J2aTRISXYvM1NG?=
- =?utf-8?B?ZXh0U1hyNFdoVW1STzQxQjBhSldUUzhCWTF5RmlDTW9Eb2ZjeE53TkdzcVZX?=
- =?utf-8?B?WFpiZGhXMkZvMWRQNU1sckFVdlMxc3o0V0pVTzNwejhyZmJzRUUyMkJ4d1ZC?=
- =?utf-8?B?NndHb3ozU1hZdFYzeUx4S1Z5QzNleC9ESVJWQUVibmZGMm9UN0gxQnVhV0Zz?=
- =?utf-8?B?MlZ6YURhN1VER0VOOE9VTGdVYW5rOFJSL1M4STlnY1M3RWIxNGEwOFErZk8y?=
- =?utf-8?Q?vA2mB8No7OJ6XNoXK9B6A8Exc?=
+	=?utf-8?B?SkVVaU1hcEhHRS9GeGJoUmNFTHMyajJPc3k2OFhKL28wSk9LOXMrTVl0Tmxp?=
+ =?utf-8?B?RXkwNkdzcGZ3QTFqSjNqdkZQOThFZkYxa0xBTU9BbHdVUE1jSzVWdXVBSThN?=
+ =?utf-8?B?UDVZU0IvL0RENnQ1cTFBU0g4TU9TVHBCZmJUd3U5MGw2VGZDVHpNZlkraFJC?=
+ =?utf-8?B?NTZVSnlVVEMxNTJFeFpwdUJLNnpob3hITHFUY2hobnFOV29zUXZ2anVRSjl5?=
+ =?utf-8?B?czlpK1c4ZXVFbytIQ1ZVLzFGeWVxRHRySzI4MERKTytKRVdTZUlDek12V1Jh?=
+ =?utf-8?B?SDNkWDErWVN2YndhUWNkOVJ1dTkwR3ZtVUpQRkJidmJTZnA5TjIvYnN6ZjJj?=
+ =?utf-8?B?U0pFeVBrbXdkMkNSSFVtN2ZXTGZHWkVHQjA0Y1IyT0dhUHVsK1MrOXJFRVN0?=
+ =?utf-8?B?NUpxblhBU1htKzVGS1VyQTdEUDkyTkhHelUyMkxkTVkxeG15eEhNUEVVdHF1?=
+ =?utf-8?B?UlhiOUpZN0JXa1J5ZkRYN2NUclRxUHRwRUdrTGpUYi8yVTFMQ2ZmMjlzd3VE?=
+ =?utf-8?B?amZqajh6ejlJMTRiWTIza0RMZzd2TlBtSURobGQxWU4yQjhrNWZXRzRFWVcz?=
+ =?utf-8?B?R2V1RGdFQ3RKdnh5RUhQVHo3YnE4UkwzSWg5QmxidkZsMGdpOUFsQysvTUNZ?=
+ =?utf-8?B?UTFQM2tUR3ZxOVJSTFNKTysrWENMQ2Y5NnQwNEZyL2R0YmY1Q25PUGRTYWhB?=
+ =?utf-8?B?Mjh2dDQ2S1pKZjgzRlgycVBxU1I4N0M1eUVUK1Jna3FwNTYvQzZCKy9FbHNs?=
+ =?utf-8?B?UFMzaUFtenF6V1dxZGwvdGp3N0MycmdndXFzMGEvbVFBcXhWNGpSRTJ5cWMw?=
+ =?utf-8?B?STJZbHRVbUx3dTZXSERRaGJoOUJpQXJQS2dlTFpXU2J6UFNORnJ4WEErNEpI?=
+ =?utf-8?B?cmg2ckxCZzFvejFXVkJvQlV0SkhnVStHclVIcnE2VG1xMnowM2hWNUFFL0Ri?=
+ =?utf-8?B?SUkwYkwrblk3cDRQWnZSTE14MGRnS1k1U2h2czR4OFVEdkFiaFFuR25FZjhN?=
+ =?utf-8?B?KzU4UEVYbWlLZjZxbVFxdHhMRkJEek9ZY2Zod0t5ZEJYdWtnR1lNRGtvUmti?=
+ =?utf-8?B?VUNieHZBa3hMQXRRTTVCY0hJSHJ5emYwa0ZLblJkMXBaa09seWJxSTNhQzJ1?=
+ =?utf-8?B?RmZqUmN5RHByWHFXQkVxTVVLcCtjWGxZUGJyYi9PVEMrUUs0OFpLd1JMYVdC?=
+ =?utf-8?B?NTNKYUhZS1Jqa0kzdmM1aXFlZ1NzcGh0OFRDR0gyNXB1U0pkZTNpTE5QUllJ?=
+ =?utf-8?B?ejlhUDlDbDYvUVdRRG9RTXJMSmRSUEFZbFoxTGxtQkJPY3d3U0w1N29wNzIy?=
+ =?utf-8?B?NlUrUnVjZUUrbjl4RGpDeG42eE9WTzZPK3dHcUZZb1h0ekQvNDhBL2tKeVRL?=
+ =?utf-8?B?bVhTeDBTaFdMdjdnck03YThaT1prQzVyYjlYNXQ2QnB5N2FkTXFucVM4NURS?=
+ =?utf-8?B?aFVWNFE3U3g1QzdFR3BmRk9JQ2RvcFRoc0RzOVIvcmFzaHphVitEZW9DcExB?=
+ =?utf-8?B?WTczWXhsWDRGNW9janZWcjd6RHErMWZDUnlFeFhkVmpIVnhycllLUS9kbVJR?=
+ =?utf-8?B?L3JFRDl3RTdLVlF3eDJEdTZPMXp3VlJwNStYY3kwNWFVSFZxSGpNcTY5R2pW?=
+ =?utf-8?B?dldyMU5aMldXK0pCYmNtOUZFMlhnR2FKKzg4cm1tdnJTUHF3VExreWd3RzNO?=
+ =?utf-8?B?OFArWXZGQ2tEU0pTa21aSTdpVWFuZXlyQlJ6VlY0VElKL0J0ajZ0OGRoaXNF?=
+ =?utf-8?B?TnNjcDZuQmdzbS9GZWNQWWM3cEk0b28rdk5sQkthS0Q0aFZMZ0FJV0Q4dUpP?=
+ =?utf-8?B?eTFzcThSWFI3OVl6K25TTUc4Vkd6ZGxNOWlCM1liZGZ2UDJSUmtocTk2VVhD?=
+ =?utf-8?B?NTFmV3AyK1F6OG1haWtkMzJSWHRPZGtleEJlMG43enF6OEpRQ2JkQzRiWW15?=
+ =?utf-8?B?MG95Yk5MdzJsOStqSERSbm9nbDlyM0c5UWNrL090MTcwNm9SQ0V6bDlxd0lz?=
+ =?utf-8?B?amRrWVp3aHNFOERJR25HYURHd0pqM2pUVVc1dTA4T3dRelduMlFya2FlcDVt?=
+ =?utf-8?B?cWtJTWtmTit6elFTNGxrMU15R2xMb1d0THQrNzNvclNiRlBCSHhmMk9ZM0Er?=
+ =?utf-8?Q?RD6fJ8kBHoZvaaeYryBEUKiNX?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5ea1e7f-f7ee-4fef-d412-08dcea1b6194
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac0734fa-c868-40d6-a4bd-08dcea1bc40e
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 17:37:30.3024
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 17:40:15.6461
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +AiCzL/tJUEGbUSbjqvhveIJXS/S74+UBIm9zEpAJJ/CGwxD898EseKtv6dLw8hWbMp+8PDEPhzD814fTYG9RA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8776
-
-Hi Daniel,
-
-On 04/10/2024 17:18, Daniel Golle wrote:
-> Despite supporting Auto MDI-X, it looks like Aquantia only supports
-> swapping pair (1,2) with pair (3,6) like it used to be for MDI-X on
-> 100MBit/s networks.
-> 
-> When all 4 pairs are in use (for 1000MBit/s or faster) the link does not
-> come up with pair order is not configured correctly, either using
-> MDI_CFG pin or using the "PMA Receive Reserved Vendor Provisioning 1"
-> register.
-> 
-> Normally, the order of MDI pairs being either ABCD or DCBA is configured
-> by pulling the MDI_CFG pin.
-> 
-> However, some hardware designs require overriding the value configured
-> by that bootstrap pin. The PHY allows doing that by setting a bit in
-> "PMA Receive Reserved Vendor Provisioning 1" register which allows
-> ignoring the state of the MDI_CFG pin and another bit configuring
-> whether the order of MDI pairs should be normal (ABCD) or reverse
-> (DCBA). Pair polarity is not affected and remains identical in both
-> settings.
-> 
-> Introduce property "marvell,mdi-cfg-order" which allows forcing either
-> normal or reverse order of the MDI pairs from DT.
-> 
-> If the property isn't present, the behavior is unchanged and MDI pair
-> order configuration is untouched (ie. either the result of MDI_CFG pin
-> pull-up/pull-down, or pair order override already configured by the
-> bootloader before Linux is started).
-> 
-> Forcing normal pair order is required on the Adtran SDG-8733A Wi-Fi 7
-> residential gateway.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
-> v3: use u32 'marvell,mdi-cfg-order' instead of two mutually exclusive
->      properties as suggested
-> v2: add missing 'static' keyword, improve commit description
-> 
->   drivers/net/phy/aquantia/aquantia_main.c | 33 ++++++++++++++++++++++++
->   1 file changed, 33 insertions(+)
-> 
-> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-> index 4d156d406bab..dcad3fa1ddc3 100644
-> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> @@ -11,6 +11,7 @@
->   #include <linux/module.h>
->   #include <linux/delay.h>
->   #include <linux/bitfield.h>
-> +#include <linux/of.h>
->   #include <linux/phy.h>
->   
->   #include "aquantia.h"
-> @@ -71,6 +72,11 @@
->   #define MDIO_AN_TX_VEND_INT_MASK2		0xd401
->   #define MDIO_AN_TX_VEND_INT_MASK2_LINK		BIT(0)
->   
-> +#define PMAPMD_RSVD_VEND_PROV			0xe400
-> +#define PMAPMD_RSVD_VEND_PROV_MDI_CONF		GENMASK(1, 0)
-> +#define PMAPMD_RSVD_VEND_PROV_MDI_REVERSE	BIT(0)
-> +#define PMAPMD_RSVD_VEND_PROV_MDI_FORCE		BIT(1)
-> +
->   #define MDIO_AN_RX_LP_STAT1			0xe820
->   #define MDIO_AN_RX_LP_STAT1_1000BASET_FULL	BIT(15)
->   #define MDIO_AN_RX_LP_STAT1_1000BASET_HALF	BIT(14)
-> @@ -485,6 +491,29 @@ static void aqr107_chip_info(struct phy_device *phydev)
->   		   fw_major, fw_minor, build_id, prov_id);
->   }
->   
-> +static int aqr107_config_mdi(struct phy_device *phydev)
-> +{
-> +	struct device_node *np = phydev->mdio.dev.of_node;
-> +	u32 mdi_conf;
-> +	int ret;
-> +
-> +	ret = of_property_read_u32(np, "marvell,mdi-cfg-order", &mdi_conf);
-> +
-> +	/* Do nothing in case property "marvell,mdi-cfg-order" is not present */
-> +	if (ret == -ENOENT)
-> +		return 0;
+X-MS-Exchange-CrossTenant-UserPrincipalName: G3CLLqbBCfAUM5elE92R3/NGQbAXwal5AD79ELoNtTwtBRnYUD4ZJ51FPu1iTnEdCy/p66l/TqXnGJrq10dWbw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5933
 
 
-This change is breaking networking for one of our Tegra boards and on 
-boot I am seeing ...
+On 11/10/2024 18:37, Jon Hunter wrote:
+> Hi Daniel,
+> 
+> On 04/10/2024 17:18, Daniel Golle wrote:
+>> Despite supporting Auto MDI-X, it looks like Aquantia only supports
+>> swapping pair (1,2) with pair (3,6) like it used to be for MDI-X on
+>> 100MBit/s networks.
+>>
+>> When all 4 pairs are in use (for 1000MBit/s or faster) the link does not
+>> come up with pair order is not configured correctly, either using
+>> MDI_CFG pin or using the "PMA Receive Reserved Vendor Provisioning 1"
+>> register.
+>>
+>> Normally, the order of MDI pairs being either ABCD or DCBA is configured
+>> by pulling the MDI_CFG pin.
+>>
+>> However, some hardware designs require overriding the value configured
+>> by that bootstrap pin. The PHY allows doing that by setting a bit in
+>> "PMA Receive Reserved Vendor Provisioning 1" register which allows
+>> ignoring the state of the MDI_CFG pin and another bit configuring
+>> whether the order of MDI pairs should be normal (ABCD) or reverse
+>> (DCBA). Pair polarity is not affected and remains identical in both
+>> settings.
+>>
+>> Introduce property "marvell,mdi-cfg-order" which allows forcing either
+>> normal or reverse order of the MDI pairs from DT.
+>>
+>> If the property isn't present, the behavior is unchanged and MDI pair
+>> order configuration is untouched (ie. either the result of MDI_CFG pin
+>> pull-up/pull-down, or pair order override already configured by the
+>> bootloader before Linux is started).
+>>
+>> Forcing normal pair order is required on the Adtran SDG-8733A Wi-Fi 7
+>> residential gateway.
+>>
+>> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+>> ---
+>> v3: use u32 'marvell,mdi-cfg-order' instead of two mutually exclusive
+>>      properties as suggested
+>> v2: add missing 'static' keyword, improve commit description
+>>
+>>   drivers/net/phy/aquantia/aquantia_main.c | 33 ++++++++++++++++++++++++
+>>   1 file changed, 33 insertions(+)
+>>
+>> diff --git a/drivers/net/phy/aquantia/aquantia_main.c 
+>> b/drivers/net/phy/aquantia/aquantia_main.c
+>> index 4d156d406bab..dcad3fa1ddc3 100644
+>> --- a/drivers/net/phy/aquantia/aquantia_main.c
+>> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+>> @@ -11,6 +11,7 @@
+>>   #include <linux/module.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/bitfield.h>
+>> +#include <linux/of.h>
+>>   #include <linux/phy.h>
+>>   #include "aquantia.h"
+>> @@ -71,6 +72,11 @@
+>>   #define MDIO_AN_TX_VEND_INT_MASK2        0xd401
+>>   #define MDIO_AN_TX_VEND_INT_MASK2_LINK        BIT(0)
+>> +#define PMAPMD_RSVD_VEND_PROV            0xe400
+>> +#define PMAPMD_RSVD_VEND_PROV_MDI_CONF        GENMASK(1, 0)
+>> +#define PMAPMD_RSVD_VEND_PROV_MDI_REVERSE    BIT(0)
+>> +#define PMAPMD_RSVD_VEND_PROV_MDI_FORCE        BIT(1)
+>> +
+>>   #define MDIO_AN_RX_LP_STAT1            0xe820
+>>   #define MDIO_AN_RX_LP_STAT1_1000BASET_FULL    BIT(15)
+>>   #define MDIO_AN_RX_LP_STAT1_1000BASET_HALF    BIT(14)
+>> @@ -485,6 +491,29 @@ static void aqr107_chip_info(struct phy_device 
+>> *phydev)
+>>              fw_major, fw_minor, build_id, prov_id);
+>>   }
+>> +static int aqr107_config_mdi(struct phy_device *phydev)
+>> +{
+>> +    struct device_node *np = phydev->mdio.dev.of_node;
+>> +    u32 mdi_conf;
+>> +    int ret;
+>> +
+>> +    ret = of_property_read_u32(np, "marvell,mdi-cfg-order", &mdi_conf);
+>> +
+>> +    /* Do nothing in case property "marvell,mdi-cfg-order" is not 
+>> present */
+>> +    if (ret == -ENOENT)
+>> +        return 0;
+> 
+> 
+> This change is breaking networking for one of our Tegra boards and on 
+> boot I am seeing ...
+> 
+>   tegra-mgbe 6800000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
+>   tegra-mgbe 6800000.ethernet eth0: __stmmac_open: Cannot attach to PHY
+>   (error: -22)
+> 
+> The issue is that of_property_read_u32() does not return -ENOENT if the 
+> property is missing, it actually returns -EINVAL. See the description of 
+> of_property_read_variable_u32_array() which is called by 
+> of_property_read_u32().
+> 
+> Andrew, can we drop this change from -next until this is fixed?
 
-  tegra-mgbe 6800000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
-  tegra-mgbe 6800000.ethernet eth0: __stmmac_open: Cannot attach to PHY
-  (error: -22)
+Sorry, I believe Jakub applied and not Andrew.
 
-The issue is that of_property_read_u32() does not return -ENOENT if the 
-property is missing, it actually returns -EINVAL. See the description of 
-of_property_read_variable_u32_array() which is called by 
-of_property_read_u32().
-
-Andrew, can we drop this change from -next until this is fixed?
-
-Thanks!
 Jon
 
 -- 
