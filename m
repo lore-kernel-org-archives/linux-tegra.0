@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B55611E;
-	Mon, 14 Oct 2024 13:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5594A3E;
+	Mon, 14 Oct 2024 13:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911952; cv=none; b=kZjyfoHzT5qroXGDwgwC3OSiPRe/7wu3nNG3elzMOvQd7rtoWpfzITud7BjbsItIb3GpUnm0iHiXiSEhdyJW/uQdD8Jf4YsY606UoLx5Z3ypHEgVtQFPP4ZHmE+qgzlaoUqAI2C+EkMFOx053X90SolVNfqEpWwYv56UQ4heBv4=
+	t=1728912527; cv=none; b=RZl/+++YPtK9i1Gyzfg7XQ77iKAi6xoqf7pqcQM9aym+VtUTJYm1jLn7NWxBe6U+jq/BgmvwSaBYfouTeVmHcVDOVVM+tn2t3F5eWkTOa/zZEgzM8Ntk6S+SQ/Cpy+pGU3f13OisaVJOftGsuN1fuB93jTkgadVPDHTgpfhrRcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911952; c=relaxed/simple;
-	bh=JGKigdVvMLsH2/kU1hL1nsXpEbmGXTAgoSDJw55UxFY=;
+	s=arc-20240116; t=1728912527; c=relaxed/simple;
+	bh=IJC/r/I8ibvGLVsU2Qx09C27Zj6TxnkngFFKIcYbnnw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oiWE5s32XntNQ2m4XC3uXWTcdnoMcemxXkaeXDulMVpj4yX4GVBD/9gEGC+42sD1Un0hBYdkhrkmdBr3oQjRjDaXDKeV+gWcCR3zVvfenvRkA5wN/CpnWoP5fgEV6TVaw4zPOEEoVaz8NYpMV+s3KYBGYauVaSCk9tDiR4amqNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/nqCKst; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=fxvA4r+zHUmuKopXz6dKm8rj7mRJO0TdOLojoMmEmb9qhZVipa2SQhPiYd5vcRBmBQM4WuW2c5BVqdNB2GUSIkFF4zMoeLR89ZBXBLvJnpZPFLQbPSiMF1F30py9YunOOUOVtZksi1t+T+xm70r36+r4e5zgjYHle5JWeSxhsRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vENYb/E2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/nqCKst"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE49AC4CEC3;
-	Mon, 14 Oct 2024 13:19:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vENYb/E2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4855DC4CEC3;
+	Mon, 14 Oct 2024 13:28:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728911952;
-	bh=JGKigdVvMLsH2/kU1hL1nsXpEbmGXTAgoSDJw55UxFY=;
+	s=k20201202; t=1728912526;
+	bh=IJC/r/I8ibvGLVsU2Qx09C27Zj6TxnkngFFKIcYbnnw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T/nqCKst6pRIAcqnLe5hg1LCOMvlRlgtGoK2rWQ4Y66VzJxqxE0MfNlzlvHmf4Hgw
-	 ZkBtQ62j/ZXvye5sipLr6CG2kOfxTBf85xCy6z9LkVCzVo72C3qxMtntZhgr2mff6A
-	 EtUF+SoB4WqpSkdr24eYLBldbSYerikp3iDx3Jzf5BXA2SFq33j7ewyFogaKUo588s
-	 UsWlFZFTCiYtjEFWQDwhRvdX7TFGOI6ddJ5rNOsUo6tqqrwiHyJZg45yS0nYMrVajO
-	 mvG+oC/kI4F7gmDbE3mDLRa8Je+xz0uy+GeRfV4M2nCMLgsuS0q4tITOkCz9q47JgV
-	 K4144lBtC8oUw==
-Date: Mon, 14 Oct 2024 14:19:06 +0100
+	b=vENYb/E2rDJtJ21mQgAB845FLopbOAlQDyBka97Azx/VEzDHK1e4IcGlX/URWDbqh
+	 OIOsbNXlYR7Rc8Jtn/y7nAuOV/aOblvGeDNzVUqJEPVwszkA5PFF2eHBLB5RD7mDB8
+	 k4Kga91MJoC9VHwO4bf3vjvZFD59FKDfTDEiwis4qLu6xJq8wZYQtc55dtGCSErw5w
+	 tSPEXgHV8jJeM1HwYkpLQ7ChqBJUZpszOlR2vI/h7q6jyea7+97bNkCpDiBAw+/cas
+	 DnQvFsJYFfNF2Yd0IEu8Sdgx/PJ8aKsEFnWZ9Q+D/Lrw56aDowVYxO9ofPnQ32UJ35
+	 gFkZR19klhbQA==
+Date: Mon, 14 Oct 2024 14:28:41 +0100
 From: Will Deacon <will@kernel.org>
 To: Besar Wicaksono <bwicaksono@nvidia.com>
 Cc: suzuki.poulose@arm.com, robin.murphy@arm.com, catalin.marinas@arm.com,
@@ -34,10 +34,11 @@ Cc: suzuki.poulose@arm.com, robin.murphy@arm.com, catalin.marinas@arm.com,
 	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
 	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
 	rwiley@nvidia.com, rknight@nvidia.com
-Subject: Re: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU events
-Message-ID: <20241014131903.GB17353@willie-the-truck>
+Subject: Re: [PATCH 3/3] perf: arm_cspmu: nvidia: enable NVLINK-C2C port
+ filtering
+Message-ID: <20241014132839.GC17353@willie-the-truck>
 References: <20240918215846.1424282-1-bwicaksono@nvidia.com>
- <20240918215846.1424282-3-bwicaksono@nvidia.com>
+ <20240918215846.1424282-4-bwicaksono@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -46,57 +47,91 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240918215846.1424282-3-bwicaksono@nvidia.com>
+In-Reply-To: <20240918215846.1424282-4-bwicaksono@nvidia.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, Sep 18, 2024 at 09:58:45PM +0000, Besar Wicaksono wrote:
-> Rename loc* and rem* events in CNVLINK PMU to cmem* and gmem* events.
+On Wed, Sep 18, 2024 at 09:58:46PM +0000, Besar Wicaksono wrote:
+> Enable NVLINK-C2C port filtering to distinguish traffic from
+> different GPUs connected to NVLINK-C2C.
 > 
 > Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 > ---
->  drivers/perf/arm_cspmu/nvidia_cspmu.c | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
+>  Documentation/admin-guide/perf/nvidia-pmu.rst | 32 +++++++++++++++++++
+>  drivers/perf/arm_cspmu/nvidia_cspmu.c         |  7 ++--
+>  2 files changed, 36 insertions(+), 3 deletions(-)
 > 
+> diff --git a/Documentation/admin-guide/perf/nvidia-pmu.rst b/Documentation/admin-guide/perf/nvidia-pmu.rst
+> index 2e0d47cfe7ea..6d1d3206b4ad 100644
+> --- a/Documentation/admin-guide/perf/nvidia-pmu.rst
+> +++ b/Documentation/admin-guide/perf/nvidia-pmu.rst
+> @@ -86,6 +86,22 @@ Example usage:
+>  
+>     perf stat -a -e nvidia_nvlink_c2c0_pmu_3/event=0x0/
+>  
+> +The NVLink-C2C has two ports that can be connected to one GPU (occupying both
+> +ports) or to two GPUs (one GPU per port). The user can use "port" bitmap
+> +parameter to select the port(s) to monitor. Each bit represents the port number,
+> +e.g. "port=0x1" corresponds to port 0 and "port=0x3" is for port 0 and 1. The
+> +PMU will monitor both ports by default if not specified.
+> +
+> +Example for port filtering:
+> +
+> +* Count event id 0x0 from the GPU connected with socket 0 on port 0::
+> +
+> +   perf stat -a -e nvidia_nvlink_c2c0_pmu_0/event=0x0,port=0x1/
+> +
+> +* Count event id 0x0 from the GPUs connected with socket 0 on port 0 and port 1::
+> +
+> +   perf stat -a -e nvidia_nvlink_c2c0_pmu_0/event=0x0,port=0x3/
+> +
+>  NVLink-C2C1 PMU
+>  -------------------
+>  
+> @@ -116,6 +132,22 @@ Example usage:
+>  
+>     perf stat -a -e nvidia_nvlink_c2c1_pmu_3/event=0x0/
+>  
+> +The NVLink-C2C has two ports that can be connected to one GPU (occupying both
+> +ports) or to two GPUs (one GPU per port). The user can use "port" bitmap
+> +parameter to select the port(s) to monitor. Each bit represents the port number,
+> +e.g. "port=0x1" corresponds to port 0 and "port=0x3" is for port 0 and 1. The
+> +PMU will monitor both ports by default if not specified.
+> +
+> +Example for port filtering:
+> +
+> +* Count event id 0x0 from the GPU connected with socket 0 on port 0::
+> +
+> +   perf stat -a -e nvidia_nvlink_c2c1_pmu_0/event=0x0,port=0x1/
+> +
+> +* Count event id 0x0 from the GPUs connected with socket 0 on port 0 and port 1::
+> +
+> +   perf stat -a -e nvidia_nvlink_c2c1_pmu_0/event=0x0,port=0x3/
+> +
+>  CNVLink PMU
+>  ---------------
+>  
 > diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> index ea2d44adfa7c..d1cd9975e71a 100644
+> index d1cd9975e71a..cd51177347e5 100644
 > --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
 > +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> @@ -112,6 +112,25 @@ static struct attribute *mcf_pmu_event_attrs[] = {
+> @@ -149,6 +149,7 @@ static struct attribute *pcie_pmu_format_attrs[] = {
+>  
+>  static struct attribute *nvlink_c2c_pmu_format_attrs[] = {
+>  	ARM_CSPMU_FORMAT_EVENT_ATTR,
+> +	ARM_CSPMU_FORMAT_ATTR(port, "config1:0-1"),
 >  	NULL,
 >  };
 >  
-> +static struct attribute *mcf_cnvlink_pmu_event_attrs[] = {
-> +	ARM_CSPMU_EVENT_ATTR(rd_bytes_cmem,			0x0),
-> +	ARM_CSPMU_EVENT_ATTR(rd_bytes_gmem,			0x1),
-> +	ARM_CSPMU_EVENT_ATTR(wr_bytes_cmem,			0x2),
-> +	ARM_CSPMU_EVENT_ATTR(wr_bytes_gmem,			0x3),
-> +	ARM_CSPMU_EVENT_ATTR(total_bytes_cmem,			0x4),
-> +	ARM_CSPMU_EVENT_ATTR(total_bytes_gmem,			0x5),
-> +	ARM_CSPMU_EVENT_ATTR(rd_req_cmem,			0x6),
-> +	ARM_CSPMU_EVENT_ATTR(rd_req_gmem,			0x7),
-> +	ARM_CSPMU_EVENT_ATTR(wr_req_cmem,			0x8),
-> +	ARM_CSPMU_EVENT_ATTR(wr_req_gmem,			0x9),
-> +	ARM_CSPMU_EVENT_ATTR(total_req_cmem,			0xa),
-> +	ARM_CSPMU_EVENT_ATTR(total_req_gmem,			0xb),
-> +	ARM_CSPMU_EVENT_ATTR(rd_cum_outs_cmem,			0xc),
-> +	ARM_CSPMU_EVENT_ATTR(rd_cum_outs_gmem,			0xd),
-> +	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> +	NULL,
-> +};
-> +
->  static struct attribute *generic_pmu_event_attrs[] = {
->  	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
->  	NULL,
-> @@ -234,7 +253,7 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
->  	  .filter_default_val = NV_CNVL_FILTER_ID_MASK,
->  	  .name_pattern = "nvidia_cnvlink_pmu_%u",
->  	  .name_fmt = NAME_FMT_SOCKET,
-> -	  .event_attr = mcf_pmu_event_attrs,
-> +	  .event_attr = mcf_cnvlink_pmu_event_attrs,
->  	  .format_attr = cnvlink_pmu_format_attrs
->  	},
+> @@ -193,7 +194,7 @@ static u32 nv_cspmu_event_filter(const struct perf_event *event)
+>  	const struct nv_cspmu_ctx *ctx =
+>  		to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
+>  
+> -	if (ctx->filter_mask == 0)
+> +	if (ctx->filter_mask == 0 || event->attr.config1 == 0)
+>  		return ctx->filter_default_val;
 
-Hmm. Isn't this a user-visible change? For example, will scripts driving
-'perf' with the old event names continue to work after this patch?
+Isn't this a bit too broad? It looks like this filter function is used
+beyond the C2C PMU (i.e. the PCIe PMU) and you're also checking the whole
+of config1 rather than just the port field.
 
 Will
