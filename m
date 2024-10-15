@@ -1,146 +1,87 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8841DE4FB
-	for <linux-tegra@vger.kernel.org>; Tue, 15 Oct 2024 09:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0387D4683;
+	Tue, 15 Oct 2024 10:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728985114; cv=none; b=GPoqe+diHtUvK5kh7sNGbTGUSfXBOcCERCja0M7mdkJMYCHUK4eWV8QNYKIRPkaTwTc/CjC0wUKktTKyaOpiJWyS62lYrojpU3jw1x0WODNqvMtaRcwaHgNVSP/PstIzEgEl+ljGdIbpW4kz/4kplYxTifxd/oWbh/DKHzsrCY8=
+	t=1728989428; cv=none; b=O4a+37IFw/JXbxAGruqoZCpb8dTZoUm/UTACW9b2OUe/y8k3oWBOfJBlg/Whp+q2c1Gd5IMrhuah3lFOBu3nOP79/SlI2eh1mSMpw2EqFs/ZoHD9TcyG1TsAhm+YKU3UqEed8CWfXHrszIZNzTktL0r3CSxHsl//Z4Pwe5j1CmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728985114; c=relaxed/simple;
-	bh=WkFsvszqVPTGJ45zScx2bg3QTySV+PQBpCxtr/kUBMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kj9cUJ2oecyQAE+00xGP7V654MdgdaGelPM4dDiXLDTfYSH8gKzLdzfaA4ZUGAv+u2bbUXmW8mTHACQGgeCBl6Uxjq6AC2cV1+ASRnLZ7boe47SeM6LEbto9Wr8LdWgGj6KEueF7ZsbwK6Itqh2XJjNUR+O9Us+jlVFdcNfvWCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t0e0D-0007sj-GF; Tue, 15 Oct 2024 11:38:05 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t0e0B-00202n-UO; Tue, 15 Oct 2024 11:38:03 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t0e0B-00CdCJ-2g;
-	Tue, 15 Oct 2024 11:38:03 +0200
-Date: Tue, 15 Oct 2024 11:38:03 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
-	allen.lkml@gmail.com, broonie@kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 6.1 000/798] 6.1.113-rc1 review
-Message-ID: <Zw43-8oV-vSeyj5D@pengutronix.de>
-References: <20241014141217.941104064@linuxfoundation.org>
- <3ab1938a-6f6a-4664-9991-d196e684974d@nvidia.com>
- <CAMuHMdVHLiB7PWji9uRLZNWqFa1r7NiTv9MWCCAg=3-924M7tA@mail.gmail.com>
- <CAMuHMdVcE1Wvi+g5P5CEe5RFEuBfSCmR+7HFVfiC1rG6bHdesA@mail.gmail.com>
+	s=arc-20240116; t=1728989428; c=relaxed/simple;
+	bh=ja/d/rq1IfTJFJLTJFWVgn1+fa1Kjnj+heTESXMxPQQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=YArXhRq/3cr/W9LH/qEHe+UFRIyvtEvRt2pkc7Sblu+FYcljLBIn+OjsHKXyoQimu65hULKpJuGy5wrKFifoaMnfaQlTG98vU84P8+fKpb2sMd+97Yqd8jOdSlnuhoThK6kRgxHFGRn5i3vVNnnszKa/wRxXh1jzMhLQSiEoNxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2DuIiZY; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2DuIiZY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15D42C4CEC6;
+	Tue, 15 Oct 2024 10:50:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728989426;
+	bh=ja/d/rq1IfTJFJLTJFWVgn1+fa1Kjnj+heTESXMxPQQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=n2DuIiZYWTMVVAzlXrVBMLoQEKv4nRGtcgPLeXyXfWy/JYyGTyxhtuxszR8EOuHcA
+	 DCj1pZQAvf9fggZFLECwQl4z6+rXigRL6iUg+kbnmba1xSuWTMrSA9y5GqE3lg5t7W
+	 ykwPAKT1nTAhUp3zn+dUnyniafTH+TH/h2FtcVxPxpTex/gvRmctheTtLExHxVGRQL
+	 HuTLxN0zDM1YtwAZzFUgs/eYFOLoUnf5alBYykq7hXEJcuo/w4XfhNu5bqkq4dcdnE
+	 jLXYvBXg2WtWHyFIAi/C9J2DY3cmt/xX9Nyeqjb0ZTFAiKL9H1cU0oAjQM5P2kyyJQ
+	 zoanbx2SGQtWQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F3E3809A8A;
+	Tue, 15 Oct 2024 10:50:32 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdVcE1Wvi+g5P5CEe5RFEuBfSCmR+7HFVfiC1rG6bHdesA@mail.gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-tegra@vger.kernel.org
+Subject: Re: [PATCH V2] net: stmmac: dwmac-tegra: Fix link bring-up sequence
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172898943126.1114309.13560475408965156147.git-patchwork-notify@kernel.org>
+Date: Tue, 15 Oct 2024 10:50:31 +0000
+References: <20241010142908.602712-1-paritoshd@nvidia.com>
+In-Reply-To: <20241010142908.602712-1-paritoshd@nvidia.com>
+To: Paritosh Dixit <paritoshd@nvidia.com>
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, thierry.reding@gmail.com, jonathanh@nvidia.com,
+ vbhadram@nvidia.com, ruppala@nvidia.com, netdev@vger.kernel.org,
+ linux-tegra@vger.kernel.org
 
-Hi all,
+Hello:
 
-On Tue, Oct 15, 2024 at 09:07:14AM +0200, Geert Uytterhoeven wrote:
-> CC Oleksij
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Thu, 10 Oct 2024 10:29:08 -0400 you wrote:
+> The Tegra MGBE driver sometimes fails to initialize, reporting the
+> following error, and as a result, it is unable to acquire an IP
+> address with DHCP:
 > 
-> On Tue, Oct 15, 2024 at 9:06 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Tue, Oct 15, 2024 at 7:32 AM Jon Hunter <jonathanh@nvidia.com> wrote:
-> > > On 14/10/2024 15:09, Greg Kroah-Hartman wrote:
-> > > > This is the start of the stable review cycle for the 6.1.113 release.
-> > > > There are 798 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > >
-> > > > Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
-> > > > Anything received after that time might be too late.
-> > > >
-> > > > The whole patch series can be found in one patch at:
-> > > >       https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.113-rc1.gz
-> > > > or in the git tree and branch at:
-> > > >       git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> > > > and the diffstat can be found below.
-> > > >
-> > > > thanks,
-> > > >
-> > > > greg k-h
-> > > >
-> > > > -------------
-> > > > Pseudo-Shortlog of commits:
-> > >
-> > > ...
-> > >
-> > > > Oleksij Rempel <linux@rempel-privat.de>
-> > > >      clk: imx6ul: add ethernet refclock mux support
-> > >
-> > >
-> > > I am seeing the following build issue for ARM multi_v7_defconfig and
-> > > bisect is point to the commit ...
-> > >
-> > > drivers/clk/imx/clk-imx6ul.c: In function ‘imx6ul_clocks_init’:
-> > > drivers/clk/imx/clk-imx6ul.c:487:34: error: implicit declaration of function ‘imx_obtain_fixed_of_clock’; did you mean ‘imx_obtain_fixed_clock’? [-Werror=implicit-function-declaration]
-> > >    hws[IMX6UL_CLK_ENET1_REF_PAD] = imx_obtain_fixed_of_clock(ccm_node, "enet1_ref_pad", 0);
-> > >                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
-> > >                                    imx_obtain_fixed_clock
-> > > drivers/clk/imx/clk-imx6ul.c:487:32: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-> > >    hws[IMX6UL_CLK_ENET1_REF_PAD] = imx_obtain_fixed_of_clock(ccm_node, "enet1_ref_pad", 0);
-> > >                                  ^
-> > > drivers/clk/imx/clk-imx6ul.c:489:34: error: implicit declaration of function ‘imx_clk_gpr_mux’; did you mean ‘imx_clk_hw_mux’? [-Werror=implicit-function-declaration]
-> > >    hws[IMX6UL_CLK_ENET1_REF_SEL] = imx_clk_gpr_mux("enet1_ref_sel", "fsl,imx6ul-iomuxc-gpr",
-> > >                                    ^~~~~~~~~~~~~~~
-> > >                                    imx_clk_hw_mux
-> > > drivers/clk/imx/clk-imx6ul.c:489:32: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-> > >    hws[IMX6UL_CLK_ENET1_REF_SEL] = imx_clk_gpr_mux("enet1_ref_sel", "fsl,imx6ul-iomuxc-gpr",
-> > >                                  ^
-> > > drivers/clk/imx/clk-imx6ul.c:492:32: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-> > >    hws[IMX6UL_CLK_ENET2_REF_PAD] = imx_obtain_fixed_of_clock(ccm_node, "enet2_ref_pad", 0);
-> > >                                  ^
-> > > drivers/clk/imx/clk-imx6ul.c:494:32: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-> > >    hws[IMX6UL_CLK_ENET2_REF_SEL] = imx_clk_gpr_mux("enet2_ref_sel", "fsl,imx6ul-iomuxc-gpr",
-> >
-> > Missing backports of the other clock-related patches in the original
-> > series[1]?
-> > imx_obtain_fixed_clock() was introduced in commit 7757731053406dd0
-> > ("clk: imx: add imx_obtain_fixed_of_clock()"), but some of the other
-> > patches from that series may be needed, too?
-> >
-> > [1] https://lore.kernel.org/all/20230131084642.709385-1-o.rempel@pengutronix.de/
+>  tegra-mgbe 6800000.ethernet: timeout waiting for link to become ready
+> 
+> As per the recommendation from the Tegra hardware design team, fix this
+> issue by:
+> - clearing the PHY_RDY bit before setting the CDR_RESET bit and then
+> setting PHY_RDY bit before clearing CDR_RESET bit. This ensures valid
+> data is present at UPHY RX inputs before starting the CDR lock.
+> - adding the required delays when bringing up the UPHY lane. Note we
+> need to use delays here because there is no alternative, such as
+> polling, for these cases. Using the usleep_range() instead of ndelay()
+> as sleeping is preferred over busy wait loop.
+> 
+> [...]
 
-Yes, I agree, at least commit 7757731053406dd0 is missing. Other patches
-in [1] series are only interesting if corresponding device trees was
-upstream.
+Here is the summary with links:
+  - [V2] net: stmmac: dwmac-tegra: Fix link bring-up sequence
+    https://git.kernel.org/netdev/net/c/1cff6ff302f5
 
-Regards,
-Oleksij
+You are awesome, thank you!
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
