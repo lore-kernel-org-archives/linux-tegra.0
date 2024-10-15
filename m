@@ -1,45 +1,44 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2085.outbound.protection.outlook.com [40.107.93.85])
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2057.outbound.protection.outlook.com [40.107.236.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A584B1D514C;
-	Tue, 15 Oct 2024 17:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD6661B21AA;
+	Tue, 15 Oct 2024 17:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729012872; cv=fail; b=e5Zz2HhhSS8YtVjouNFeOVkgE4MTZ31phbHHAucPmbWObb55cBbcml7StTVwXzx0hH6ICt4IOjewNFWp4WvU0InIpTtAqwYF1AhvZJREoLMh28XM7HSM+50yzcDi4eOgG744XShxG+GS3m8f7bJ2ZTDOinfsUCfbFhpUMxrQ0Eg=
+	t=1729013376; cv=fail; b=TOkRGZCN4VEGg62D8gl5bzMLA1aKZyBPfP1ZYwhzYO1187nvmjvmq1pZeVpId98xY/9D4WuAe4CMXYug9dsBv7ZUln8ofNPztV+vsSo/4qHkX4R2CQJ0piaDBqcyvYOQRs9lVPuIbv4uwvkX2XiSSEsh3BvqdLw7LJViwaEWDoI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729012872; c=relaxed/simple;
-	bh=x0m42fOOd2LAcjlcqfEsH3xuvzMzQJ5cmiTVsvTSkMg=;
+	s=arc-20240116; t=1729013376; c=relaxed/simple;
+	bh=eEcTIKswsFLllx3uSg9vDvVIaRdi+hY5i8SmLc+fIOQ=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ld7lEJqn8DaLRyOKRnMHbqiqM8vQfrDl4ZTBaRu9T2joRwlfyeaj0BWayGvue3sh6XXRaglGASgft3qqAasnzRn1vUaK+4xAhlKioMnHtnO44oSjigEqqIVgq0ojyDlYDgjGGkgRwjQkPjbiBOnHZ4TKPCW1YjxIqQY4wYNTCYQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ibrwLYIU; arc=fail smtp.client-ip=40.107.93.85
+	 Content-Type:MIME-Version; b=KTtQe9pBX/FDDh0QLUtrTxqUOy2WdcRxGlEQnmnq9rYbW9lvhZvEQLp1PhXIh7gb13occHfIKk7JyuMSFZnqe4tszpzOgu25G70JtUv3z76s6ixGt2NZ2gukip1WO2nPcPFsVKyIK5T8GQZxHNk+O++JpxuVx692MUwW7w9Dtjg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ad0BfJtX; arc=fail smtp.client-ip=40.107.236.57
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ibrwLYIU"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ad0BfJtX"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jzhBR1X15IiL5dwhwdVwRC/VGNoHSY8IpPTbydKXU+pwJ0Zz2GpxAECTrWG2DUbtqSTVyxtStj1KINCqVjZCbjz5hAQzdcCpIquw8weR16U1rkQhf8DA/KQQS8GJexi4amrjACsr5F05JyGVSk6WuLjNAWLxAX3GTzYQs3ZcSybsAqb6mcGR1I6hF/tmfM6W1a928gS0tgRNmM4cBBLB2MbWmDpQP8vkEAJf/NjtFhpXk3kJudy/0BMW9mOViQvpWqO013v+9GedmTlU/L9CvqBGQPyvaYyMOk1eYzijBQMPDl2cLy+N2kv23ml2ZQ3KW0U/1Ud9a5TAeiy4vcO0gw==
+ b=vL/WREYjm/HN8z47T98BMwJfCA03p2xm+fpqgeKxNkQaIrMjyq8WR+OyrC97n6oxM4f6wNp45rFrfu0iTqManBR9jhS8aSLGO3IXfpgm72oWwAphju85k6Dyv0NZEkBq8Tz9202QQBnw2gPfylFtHkfK74METvD6aRG8VRRUHnG74LSmCsARH5jPXRUzQ32Ir/bQcoag/tPqsM9txHf7uTEItBf6Uq9qi6/hPZIt8bqJy2qmQf+VxXPq0vbABbMSJRzw/jYd6xZYeLprGjV8uRMGD4nakOmIufGYFEsmkMI+HtOLb6KV7S/s6eB5JEG/TT9Ccjn5u3YSDH02HisjDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=skt4PDzr1OLsJ4mUTmiN4Kv9uWdycXcpnWo7NWVKd/A=;
- b=mRcuBDjSDN3iUQKcAXR64iTRMGOKQzKPkg4vlipTUeItjR0Gz1OEUf6qZLSgmOk+Km85LVQBzAuTiywGJTaDpy4x58R1mPSEVOQzFIOEUv22FXaFWKB5vVxkTAQROWblMRGPLdVQX5iRo1ygjW5HM1ggfHyu6S3a+vleEaHOD3xNDejTO/cMnYkThDt1Rq0bAiIK4jyS9d4p+sZmbDbkk7mf8xta/jb3MMW3pCjfkRNPxx4RKeaOeHOApjqKCJNDSgu8IdKEKvdwfCQtRknp+PkLEt+4UMvJkOI0YEeoCzYlE28d4bbryJP0nI3kSAkpUoNB8ziVWhOCqOggjlwnBg==
+ bh=r1vJbNuenjDPS5m4zQUeAKtXhzTtdTZ5HM0V/muFUKw=;
+ b=NqIFb/aFGzLwKvyaIjaYh6dy07JeSqz0sXWYr2oUCQKiMvQRwVwHwmlkrVKzW0UoITuZUd173gHHWOzGEk0AcsKZfC4ha4Rpxw9BJt+OnbAla7lDdRVMtJe11ufnp04T/jDhZizhh9tUy2AdY2wxw81rKP1syiqT2LP6SyMnTjM5toTNaGCDd0aSGjZJSsMqNHcF2cETqzRhSMz4y+LUhtlNI11z+bRoIx7/Xq/c7fmiB8B45Pyk7qt84GK4jAkm6D9P0CbxGRmtAcysDaGkCpiwV460E1ZGtFKqHfbQsqLnxDNxUKveX9JxV58vY+EVXIeFU3b3Iw8u8VhZeJL2xA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=skt4PDzr1OLsJ4mUTmiN4Kv9uWdycXcpnWo7NWVKd/A=;
- b=ibrwLYIUKXFYaHyCqindKl9GcoZq74B8ny53zLaxVwvbbBaLH9T6R4DmLhLTGel9iPqF2NinW9IrvtUqBP8wTdymoVld3XXp4V/tyP+6ZsMoM9NcGjbusXnyxW0mm0cmXI4It5e2uG4RYL6XMGBmD69dxETm1TB3jiLR2hk9ez944XxBI9AFs4YWUA9sIdLNB2ubY+rLkD3REjAy1ja7/yGbpafP7c3Jp/FHRgnGt4mnzkUfQ5YxsrYQHevZOamgssmVG8EbhmrvwOSz9lxoCBMMc6O7X0iQTcn4S8UDvXNPV0LK7zNjcHCs5G+Wb3+aTtRBGnd3/yp45NtOwki8Aw==
+ bh=r1vJbNuenjDPS5m4zQUeAKtXhzTtdTZ5HM0V/muFUKw=;
+ b=ad0BfJtXBhPU1GFFZVl0BUNfNS3Qsg8/ZcM80VMOI9PEEPfISZ5p+hUEpqLD7LUVpGdEgbyjQsD+CtnFKBNL55i7t8zl6POoSie8UEvof4+Gk5rWxp+x+PIPsQZKK1r66NsyQ17hkmxmQnwfhKLnFNa/BEpe0XO6TTTRy0i3pjS2cnEx1zzJ2GRVkEJjJP0N08QcRBQbZwJ5+KWOPPzxYcGtEYQVffCJDt3sVZcplrr3bxoY8g8bP8asz/2vr714cpdmDLF2yBogkcglzIIZOAaox6OKupsQpDYJMAbf6yQjj8sXHFburr3w7PzRyewSOoyODd55+m0Z32Bo27hY8g==
 Received: from SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8)
- by IA1PR12MB6484.namprd12.prod.outlook.com (2603:10b6:208:3a7::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Tue, 15 Oct
- 2024 17:21:07 +0000
+ by DM4PR12MB5795.namprd12.prod.outlook.com (2603:10b6:8:62::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8048.26; Tue, 15 Oct 2024 17:29:28 +0000
 Received: from SJ0PR12MB5676.namprd12.prod.outlook.com
  ([fe80::abdb:7990:cc95:89ce]) by SJ0PR12MB5676.namprd12.prod.outlook.com
  ([fe80::abdb:7990:cc95:89ce%3]) with mapi id 15.20.8048.020; Tue, 15 Oct 2024
- 17:21:06 +0000
+ 17:29:28 +0000
 From: Besar Wicaksono <bwicaksono@nvidia.com>
 To: Will Deacon <will@kernel.org>
 CC: "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "robin.murphy@arm.com"
@@ -51,16 +50,18 @@ CC: "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "robin.murphy@arm.com"
 	<linux-tegra@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, Jon
  Hunter <jonathanh@nvidia.com>, Vikram Sethi <vsethi@nvidia.com>, Rich Wiley
 	<rwiley@nvidia.com>, Bob Knight <rknight@nvidia.com>
-Subject: RE: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU events
-Thread-Topic: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU events
-Thread-Index: AQHbChYmMxRBtseJkUCrb6TrJenHELKGYx0AgAHTh7A=
-Date: Tue, 15 Oct 2024 17:21:06 +0000
+Subject: RE: [PATCH 3/3] perf: arm_cspmu: nvidia: enable NVLINK-C2C port
+ filtering
+Thread-Topic: [PATCH 3/3] perf: arm_cspmu: nvidia: enable NVLINK-C2C port
+ filtering
+Thread-Index: AQHbChYj1X5inLf58Umf+UFCUOgZjbKGZcuAgAHTlPA=
+Date: Tue, 15 Oct 2024 17:29:28 +0000
 Message-ID:
- <SJ0PR12MB5676697B93C267CE87C5A474A0452@SJ0PR12MB5676.namprd12.prod.outlook.com>
+ <SJ0PR12MB5676D1817E2C2F3693B82D4EA0452@SJ0PR12MB5676.namprd12.prod.outlook.com>
 References: <20240918215846.1424282-1-bwicaksono@nvidia.com>
- <20240918215846.1424282-3-bwicaksono@nvidia.com>
- <20241014131903.GB17353@willie-the-truck>
-In-Reply-To: <20241014131903.GB17353@willie-the-truck>
+ <20240918215846.1424282-4-bwicaksono@nvidia.com>
+ <20241014132839.GC17353@willie-the-truck>
+In-Reply-To: <20241014132839.GC17353@willie-the-truck>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
@@ -68,66 +69,66 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR12MB5676:EE_|IA1PR12MB6484:EE_
-x-ms-office365-filtering-correlation-id: a2dff7de-6007-417f-0685-08dced3dc0fd
+x-ms-traffictypediagnostic: SJ0PR12MB5676:EE_|DM4PR12MB5795:EE_
+x-ms-office365-filtering-correlation-id: 21aba04a-d855-4edc-371e-08dced3eebe4
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
 x-microsoft-antispam-message-info:
- =?us-ascii?Q?FS8tlvYol+ERUm7f018wd4jcoZ3BZVCSkjXorAPErULtKPVMYM7zwxDVC8v5?=
- =?us-ascii?Q?D6w0SpE7/vWXPYrUvXDMhn2VEJpqA2t8ilRdEpIkfLSU+6zVA7HZQd4GLCHA?=
- =?us-ascii?Q?2LlJ4deL0T/cn5jUhKa9jn2c6z5EfruHKTFV2ZSeBgiY+iMSAece6X+5yUbz?=
- =?us-ascii?Q?/TI4sR2UXZwYR9w3XV9PXWTHwkJ7P7DmXLYytGwJ85O23dg2O8lTqsQCYcrw?=
- =?us-ascii?Q?+y+iA4bKkFvjwwmGEok5fG0kAur0j6ErQgsOSl1q4jJiRf8HmxbnWCe0WzVb?=
- =?us-ascii?Q?KEX3/0PVtolwH29xf+6NMnvcZ0LBqfnIpgaGV4kPq50oLBfRjll4/a32YM2y?=
- =?us-ascii?Q?VRDBSq/s0EFVPve39r/oDJfMqG7a1XaosL5RWAxFenrq+tbbT34k7rKXyFc5?=
- =?us-ascii?Q?lrxMHBxMhOsdv6OR7zaACZZm8wU7yXlUbeOvVVmBQUBNIb8AqLvjgk1H5wOO?=
- =?us-ascii?Q?c27bDEIV64mOs1bcu3/jaFdTjPMAhj+6nCNKHj477/2mWohIzfF+LoZpo384?=
- =?us-ascii?Q?h1bh4ACvtFhEsBd8PtW7idK8pWajGqcxNA4SzMIZf5gKcctanSh4nnbHLz6G?=
- =?us-ascii?Q?Qm3kLo+576sBhI54BJwpcxkWj8tvKxMvHcHstfFh1od3MjkT9iggJ85pwzOQ?=
- =?us-ascii?Q?ykm3dbMtQXUm44cdaYgjM9XPoF2GiY4USILgebIHyoqYIvK3HFD2bVLbYm1j?=
- =?us-ascii?Q?XIPCxs0nnQNHZLVcXZYcCEOa5B2xiOjPic28uEBv8g+8BxYnhsdV8ZG9++Ww?=
- =?us-ascii?Q?VmxQ4qboUy67sYcvD8WMGi3kLXzgDT4ddhj6pU5B7WMk81r8Lmm79s4wsPPO?=
- =?us-ascii?Q?OeX7kS8OU1wRZwZkED7C0XhcabxCxQSwGAoM7Nv+kEm3FbKRuCN/RtD4Wo0+?=
- =?us-ascii?Q?QVH7laCyOej9eMdJL4sRdOzRaErRwnC0rOJt5VcSPrzGRIqma23sKL1g8xbP?=
- =?us-ascii?Q?y9SmqUkOEY/2DEU8s6/RdFNmDFRtJ3/zhBf3hl05cOhwLtnbEPkcYWy1uQV0?=
- =?us-ascii?Q?hjl1uayWF3RqaXGyXwOGGv2PryQfL66gNcmwcFdWoTsjEnu9DKAK4XxA9VZe?=
- =?us-ascii?Q?+Wyiofy6jHpLSDXS3mO5DfmKFZey/+T7fYuXud2WWWkxGPZDWJO4/6M6ojI0?=
- =?us-ascii?Q?Jp2xSb+ZTwDa14sn++jp0Af9toAwDKvzwAN209e+qq4PTYaBl7TKQv5uLqL9?=
- =?us-ascii?Q?/2JVPIK9zIh2Q+7/CA7ZBeDSZJJ0p2tjj9+rMsZSj4An3Cg4Xa7vVvMeA44u?=
- =?us-ascii?Q?Uqaib29rHFgptmENQXAe85FH9MyZ6owe5Zx/Yz4r2AoS1QA568WDLTZxMKK3?=
- =?us-ascii?Q?y0VsrHirMsqmkDgm6H/qX8eCSXI+z7kE+prbZRpMQCwRww=3D=3D?=
+ =?us-ascii?Q?mXte96bUREMMl7ID1wZ7nCpmVl3gwLRbG2DDa4R35zms31ayF8s/1kOka/0V?=
+ =?us-ascii?Q?7xfLLjJcouZa4v/pwBvEwkPS7rHUhC/AYFgUQzFgGRx2c8foai86UDLn7R5U?=
+ =?us-ascii?Q?ObcqjgPn4aaz9QG7507jKm1Hytu+ztF4kjWGFHivWmvG4up8T928Xtc4ETF4?=
+ =?us-ascii?Q?ASt1G6xmUYgndNA0Fswyhc/r/EurhFYFT5vqeNN+UavKO3XKTAf4y9NBzgZQ?=
+ =?us-ascii?Q?ytR7zZKyjgq4nUi/RaOX2EY5oP+jL3qq2Svnfx1Ic7ndxmD9UUrif79JKUMe?=
+ =?us-ascii?Q?F6B/z137LKXdDUWAdGtlTxgsDIB7uOV5hpEqIugeS4uj0WUvH0pAryCse7TG?=
+ =?us-ascii?Q?L9XOrz8zNkNJ8MXYKsb6ivieiQ6Jc0PwIGj1jcRneMdqQBQ42RB/TmasnUZF?=
+ =?us-ascii?Q?fuIKYPaFr3m6X/feIjg4RZbi2tGpSxjAM26qK7Wp4Ez3rQll7YnZvr3WFn0u?=
+ =?us-ascii?Q?VWWeWAX/7/SViv2A8hyzt9u9j+EJkbqIYZsYAHJAGVLIy/omqudycE3a9hyG?=
+ =?us-ascii?Q?9rQvwjB+pfA+ZgEbBoCRhVFHhFWPh0VjYDEYLRaw9iPuh5wXk8mVgPNAA0Sn?=
+ =?us-ascii?Q?sxl7cRK3YMenxJL1y3klQUdI7IqlBqrYyAIO0lJr8PjtPH4pb9ccyQnbeOIT?=
+ =?us-ascii?Q?SL2liGyeb7aYszCWwG6+QeH/vunX9OomwvfNIL7uiJoi5X4RovEaKtdJmx9T?=
+ =?us-ascii?Q?oKdY2NltC6tXVwxAMjthLkhG/AzzSARzORpPhnUNIYcX0FXvuPfgJMEJSDz8?=
+ =?us-ascii?Q?dcCO7MxJ2tO/gDCb9uL5zBo6jGUsnSUE98WgbhOZ80wDmRUL8rV5f5TJ2Pan?=
+ =?us-ascii?Q?QdRHXg/Y93SvAU/feHviISNc15neD2tG6Ovqhpy2FMySffAPjG26Tv8FPL13?=
+ =?us-ascii?Q?eKBYINLiWDqxenKSl4a+29AvtLpbylmX2xR0botMVVF8prEeD2A1Wivxzlqw?=
+ =?us-ascii?Q?sbXPl6UUANKbOdteRm7xI7pvU6QYQ6oFDzFe/WzQxKyUkc/8j9Q4IYR+TBz1?=
+ =?us-ascii?Q?F3Lbwx97TxShiZLyCvoGb3nsi4uGLyXsw0qC9W+0dPXgCdy/11bNB8wTv8EB?=
+ =?us-ascii?Q?OXDoWb23S6V3UJ/n37N5Xd7uGpP1U0QWl/+0mKmq1ijGKybX/XfMVT2RGvao?=
+ =?us-ascii?Q?gVOuLeAiAIeGcikxi7IIPZKONSXzFwa1jf2tz9lNZQtgrmuUO9Cl1NLz/LKO?=
+ =?us-ascii?Q?WKDYa/Qysfd95c9J/DB0JsQcyOsuFFgC+9/VQjdNNoTQEQrVjWsErjWbAqhM?=
+ =?us-ascii?Q?QgbOJgsUuxoviXDLU/jaMVqHgesHGGNCjwecxBZfV/9EM6Tx1EuS2GDXxkX2?=
+ =?us-ascii?Q?EOOjuSX1CtiLoA2NtUCPEKys8qCsYyU9PyXkkpXjJ82BLA=3D=3D?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?uLU/9f3pwz7N9e7eqWFtp346xFAQt9gjfp6jolEzU7HhmkN/zwkvOyP6fOW5?=
- =?us-ascii?Q?1fiyzV0vEN/zc1udRKvAWvPH1nTMIjGZ/b8qUUnSxJLruCsfNhkSAZwr2Akb?=
- =?us-ascii?Q?0g5J8c8oEWgm02f/5MnmgNo7Aiwd0+k5T9U3jbuU6b5RMfjHsOmqX+U2K7o4?=
- =?us-ascii?Q?45oPfftHWvf1Wo0yzllzHJZVSdO7aUHgb+vyAbXiiezmdt8NwUJbD7sQ5GKW?=
- =?us-ascii?Q?2bRW6HH7l/7Y4fyBGK9iKtuNeFiaIRJOcQTjarV4G0fBsIYRHVfw74C8AK44?=
- =?us-ascii?Q?SNYHgGztHsPd9Tp8ZzQT39RYZ8BJWbOtRdVwZW5X9g+Zkl8EWxqBLl1rZr5W?=
- =?us-ascii?Q?j0hJuTgcidftc72s/D9GG84wA1wUB5zgx/DLTMnB79GQ4XLAH02+TBa8aYhS?=
- =?us-ascii?Q?SC49Xo3C1nGoYXAiZ4pzRTKzt9mzJKvZbGl+dmzOKvCTX90Y01mTQaofkKw3?=
- =?us-ascii?Q?5z7CvAHWhDuobe237PJ/etxDxDR2CrMwouQzo6zdss9zSKVEuMS6BaNR34vR?=
- =?us-ascii?Q?0Cvy+V2CD9JALY7nrrD+gQ/Z6FSRvSIo7e+u/tqDCvkzyoj/EYVxuuQsqhOW?=
- =?us-ascii?Q?SIEBt/0xSKqdYwD1xV6QOWAFBCgoIbmAVtiskFlYAjBPyMOBDwPcD9te1NrX?=
- =?us-ascii?Q?ike3syXc8DgglYXuXDuhKZczw8w35yjHLdiqbhxokMbdrDSniwu8Rqd/bRLZ?=
- =?us-ascii?Q?ri9CfMQ+fPFcT/fzQZYVq3DkEBn4ymGBeX7/BePP1W6JIspBC+Clgtxt/U4f?=
- =?us-ascii?Q?/DRUINwraeZVyAPSAhJEfVzqDu1of6GUZguUw10U3GTpx3g/g9y0ciKL64Ex?=
- =?us-ascii?Q?35wdSFIDAF++299lrlZz/ZBNjfiFbeOBPPHNf3wriKRqHdt9xsS4jLOwENKM?=
- =?us-ascii?Q?UTjCUpDI0EMGsYKQj/qm/Z3W/OZfxkmSKg9YMg0UdzB0QO2RIpH8cyHNk5pK?=
- =?us-ascii?Q?uMFfkWfkZ5nmvmAJZlUSXhN8JGlZyS3UgayAIUxRYSQRF5aKD/pngXGa2XVJ?=
- =?us-ascii?Q?5QKt37C6kFM3d2Oew3o/Nhwa0Pl9HZrSzI24Y1mGVP21xbZxFMLg2fZRTUO/?=
- =?us-ascii?Q?+qRwshKAM6f/KqnlzKBlmD3t+NtYXyTvmkZH1hF1f3N/Z3/A5kMZsB+lRW6n?=
- =?us-ascii?Q?68Iy0w0aBWzwVwdVfuzhnrpEf1SpEd9byh04H8qP/yO4PUvNjw9UpT+Wr3f8?=
- =?us-ascii?Q?rIUbvRxYUzS9POWM4tLwh45dGnCptSACoA7wKj/Ke+tNodAAhtokSBu1I6CG?=
- =?us-ascii?Q?sRqf/EbR7MD1AYrwMqPLjX/czfsndpnqecQAAwknpT4aMBOmRujqU1fg+xYS?=
- =?us-ascii?Q?38JFRGddxms533dJNjoZbup0BeOuv0C001mkggXcFxp4XPhe5MGKl0Bgkuj9?=
- =?us-ascii?Q?+ULiVGPmme7ZhEthKx/45V4gSx9OTpuE5BxLeyfqqCws7cW4zr585gnIgcyD?=
- =?us-ascii?Q?ywFytDw0fTEaBHIUFPWg+jmpnmLY+aSFWSRlWZTQ8W5w2xjmby1mu9MRW6fi?=
- =?us-ascii?Q?zYloe3O+S3VPfCiG5J47jYyVdS383vAL7NVkbv7Wq1f/qAUNMcTOIld9YHlX?=
- =?us-ascii?Q?l88Y7SQ5xAVpEQNGPP8iE/EBRL2sN4dJVPpAvI0v?=
+ =?us-ascii?Q?32XeKM07X88ABmyahCjO4XcEhjip6j0X5o5b5OY3S4iOhVfTlIA2HvyT4JJr?=
+ =?us-ascii?Q?q1WRM+1ZxrUjbPtn2P9BsSXbKtiMuFl0pryOX0b2OGjhsmI/ryb9kVj3bYXW?=
+ =?us-ascii?Q?TvDGJBtgI+kJF2j+bhswy2COweTwp9J0SR6uNiofiJzoqQ1uG0Fpb1obST7y?=
+ =?us-ascii?Q?23iKQIOKR0zPHKMrD5V3TTxTD98KUD9W+21LLF3Q+bhft3I4dJ3e3Ra6pObk?=
+ =?us-ascii?Q?ZXQmi3O0CbdHxvml3bDsFbrin2zPDLWU5GzS09Fmi/RXW8R8CuCIpWOPLoUv?=
+ =?us-ascii?Q?0wlAZZwBH43iN0bmoZEwLYsHZ2YmwfT2sFUb/0wKRPF+LPfFNuwetaoT6ccv?=
+ =?us-ascii?Q?hSpfSC+LzoYu/ZNTAcPI5PRQoQaxbkxuBXS6CySv0yVhhLijH2xvop6xDwCz?=
+ =?us-ascii?Q?OmkH14KNH3V2TBXSE2XaqYCdkJXzqgFCigT4QYTAK8fRlhZBeTN1TBJQXoWQ?=
+ =?us-ascii?Q?qj5CHVTWIlE5NgLhGx/56xPFY02mQ7Pl7gn8SQI5tYj1FOP9nDxPWHBUHLAc?=
+ =?us-ascii?Q?vNSX/vgsX5c6tkU1XRqMxhlQKepQM29G4L+JGGU46NGjLbyb43FVKpbwPeGD?=
+ =?us-ascii?Q?iAUbGAUzHjN/Px8Lvq3V5z3rjrbxNo+cbRS/KtgqsqhzlAzPB7lBo6cP93oH?=
+ =?us-ascii?Q?ihv4GGL9/Xtb9HcaywoMZlaThHJUmFXVv/agi5hXi2sz4dcR+cgRQvprRjI/?=
+ =?us-ascii?Q?DViOTJ/+jS1zh+5ps3iTvpjmNcubyrLdJBOh2v2QqIEC3bUKzNRKJpjD+Dvb?=
+ =?us-ascii?Q?5VOem/eMgyZByI/9/KLBRLRYYTBJjUOwDnbBBGL+mNy3vM53rJg/6o+D/WE0?=
+ =?us-ascii?Q?YsrpfJoIq8J1GA0x8GU3U70BENQwYT2XDKi2/JAbi8f+iq0AIWjXIuNDZ9VG?=
+ =?us-ascii?Q?RhhrC4tWkbowBt0REeS+11oZrIkzjchWpGaa6iAnDAA9/lcG2LyhEXahgSSB?=
+ =?us-ascii?Q?BngfWUyafKLRamH2etaA3GHzJ0rP0Z9d5qBuDpfjrfnZbnZNTmI83hjm2x/h?=
+ =?us-ascii?Q?13MJXX+C3U/O4Zryls9KPpJ0LtPnz/qzUmjYfzxgJdLHr/QZhpewupRgkexP?=
+ =?us-ascii?Q?Ervo+2J54tYA0DvaKWl/IG4PFNypPf7NTw6KHLjJKw2Hl9LUAlDbnMucy5N9?=
+ =?us-ascii?Q?oOVw4RUIgpFxJVc6DqPDspGcs5ROjc7Lyc0vO2PlHoPJ2olKpRYx7QtJVa9u?=
+ =?us-ascii?Q?ZuljCqAuzXPbhVgi5KO/m/oQepbpuq6m/dUfFu9yiLLxxR/TzdMd180KHR9b?=
+ =?us-ascii?Q?PcS4nJap6hYJwwSvOIuOM6XaHbHoKpEHYQ05AozTW+FF+0FFn6YvZ9/eibPe?=
+ =?us-ascii?Q?eiyCRDCkEDky/vS9NNot4dCFnYe1Rwp2wHstVXKQpF9Yytnae/5sO07ZDINw?=
+ =?us-ascii?Q?ZhgjzXBZPUH3oR3gFZG2A5Giod2lJtT7NXUBl+2J2eL23Oov7l7pQ3MQJUjQ?=
+ =?us-ascii?Q?rdDuxxZUpJ9pr+0dC2AVcIruLLmuL0Epi3xrYv7e73xEgBdly0t6YNVBTOtJ?=
+ =?us-ascii?Q?Uf2U5lgJkrtvJ9sn/l/KnGRbptsTv9B5jgrfs1GvXXOMsiLepdbBYFt6l+4q?=
+ =?us-ascii?Q?DRD16whs+ysZ/X7cFkZBUacww+jWdssRtHugfran?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -139,20 +140,20 @@ MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5676.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2dff7de-6007-417f-0685-08dced3dc0fd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2024 17:21:06.5781
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21aba04a-d855-4edc-371e-08dced3eebe4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Oct 2024 17:29:28.0525
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dCVP3mgW/vqT1DSocKj1Yp7I+G2TzSXyZ5krF4paKFNi7GjjSQW5mbujzg9AY5i6GGtHaAR5SeJtxUW9JIFt/w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6484
+X-MS-Exchange-CrossTenant-userprincipalname: jqIV8VG6ke2hUFn2OaDHzA3+VJ6MTMwHfIivHiAusVBWfWvg/6acGYJkSIZtkk0KPhxSNOlfkHf/nR8P7yEx1A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5795
 
 
 
 > -----Original Message-----
 > From: Will Deacon <will@kernel.org>
-> Sent: Monday, October 14, 2024 8:19 AM
+> Sent: Monday, October 14, 2024 8:29 AM
 > To: Besar Wicaksono <bwicaksono@nvidia.com>
 > Cc: suzuki.poulose@arm.com; robin.murphy@arm.com;
 > catalin.marinas@arm.com; mark.rutland@arm.com; linux-arm-
@@ -160,72 +161,124 @@ X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6484
 > tegra@vger.kernel.org; Thierry Reding <treding@nvidia.com>; Jon Hunter
 > <jonathanh@nvidia.com>; Vikram Sethi <vsethi@nvidia.com>; Rich Wiley
 > <rwiley@nvidia.com>; Bob Knight <rknight@nvidia.com>
-> Subject: Re: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU
-> events
+> Subject: Re: [PATCH 3/3] perf: arm_cspmu: nvidia: enable NVLINK-C2C port
+> filtering
 >=20
 > External email: Use caution opening links or attachments
 >=20
 >=20
-> On Wed, Sep 18, 2024 at 09:58:45PM +0000, Besar Wicaksono wrote:
-> > Rename loc* and rem* events in CNVLINK PMU to cmem* and gmem*
-> events.
+> On Wed, Sep 18, 2024 at 09:58:46PM +0000, Besar Wicaksono wrote:
+> > Enable NVLINK-C2C port filtering to distinguish traffic from
+> > different GPUs connected to NVLINK-C2C.
 > >
 > > Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
 > > ---
-> >  drivers/perf/arm_cspmu/nvidia_cspmu.c | 21 ++++++++++++++++++++-
-> >  1 file changed, 20 insertions(+), 1 deletion(-)
+> >  Documentation/admin-guide/perf/nvidia-pmu.rst | 32
+> +++++++++++++++++++
+> >  drivers/perf/arm_cspmu/nvidia_cspmu.c         |  7 ++--
+> >  2 files changed, 36 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/Documentation/admin-guide/perf/nvidia-pmu.rst
+> b/Documentation/admin-guide/perf/nvidia-pmu.rst
+> > index 2e0d47cfe7ea..6d1d3206b4ad 100644
+> > --- a/Documentation/admin-guide/perf/nvidia-pmu.rst
+> > +++ b/Documentation/admin-guide/perf/nvidia-pmu.rst
+> > @@ -86,6 +86,22 @@ Example usage:
+> >
+> >     perf stat -a -e nvidia_nvlink_c2c0_pmu_3/event=3D0x0/
+> >
+> > +The NVLink-C2C has two ports that can be connected to one GPU
+> (occupying both
+> > +ports) or to two GPUs (one GPU per port). The user can use "port" bitm=
+ap
+> > +parameter to select the port(s) to monitor. Each bit represents the po=
+rt
+> number,
+> > +e.g. "port=3D0x1" corresponds to port 0 and "port=3D0x3" is for port 0=
+ and 1.
+> The
+> > +PMU will monitor both ports by default if not specified.
+> > +
+> > +Example for port filtering:
+> > +
+> > +* Count event id 0x0 from the GPU connected with socket 0 on port 0::
+> > +
+> > +   perf stat -a -e nvidia_nvlink_c2c0_pmu_0/event=3D0x0,port=3D0x1/
+> > +
+> > +* Count event id 0x0 from the GPUs connected with socket 0 on port 0 a=
+nd
+> port 1::
+> > +
+> > +   perf stat -a -e nvidia_nvlink_c2c0_pmu_0/event=3D0x0,port=3D0x3/
+> > +
+> >  NVLink-C2C1 PMU
+> >  -------------------
+> >
+> > @@ -116,6 +132,22 @@ Example usage:
+> >
+> >     perf stat -a -e nvidia_nvlink_c2c1_pmu_3/event=3D0x0/
+> >
+> > +The NVLink-C2C has two ports that can be connected to one GPU
+> (occupying both
+> > +ports) or to two GPUs (one GPU per port). The user can use "port" bitm=
+ap
+> > +parameter to select the port(s) to monitor. Each bit represents the po=
+rt
+> number,
+> > +e.g. "port=3D0x1" corresponds to port 0 and "port=3D0x3" is for port 0=
+ and 1.
+> The
+> > +PMU will monitor both ports by default if not specified.
+> > +
+> > +Example for port filtering:
+> > +
+> > +* Count event id 0x0 from the GPU connected with socket 0 on port 0::
+> > +
+> > +   perf stat -a -e nvidia_nvlink_c2c1_pmu_0/event=3D0x0,port=3D0x1/
+> > +
+> > +* Count event id 0x0 from the GPUs connected with socket 0 on port 0 a=
+nd
+> port 1::
+> > +
+> > +   perf stat -a -e nvidia_nvlink_c2c1_pmu_0/event=3D0x0,port=3D0x3/
+> > +
+> >  CNVLink PMU
+> >  ---------------
 > >
 > > diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c
 > b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> > index ea2d44adfa7c..d1cd9975e71a 100644
+> > index d1cd9975e71a..cd51177347e5 100644
 > > --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
 > > +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> > @@ -112,6 +112,25 @@ static struct attribute *mcf_pmu_event_attrs[] =3D=
- {
+> > @@ -149,6 +149,7 @@ static struct attribute *pcie_pmu_format_attrs[] =
+=3D {
+> >
+> >  static struct attribute *nvlink_c2c_pmu_format_attrs[] =3D {
+> >       ARM_CSPMU_FORMAT_EVENT_ATTR,
+> > +     ARM_CSPMU_FORMAT_ATTR(port, "config1:0-1"),
 > >       NULL,
 > >  };
 > >
-> > +static struct attribute *mcf_cnvlink_pmu_event_attrs[] =3D {
-> > +     ARM_CSPMU_EVENT_ATTR(rd_bytes_cmem,                     0x0),
-> > +     ARM_CSPMU_EVENT_ATTR(rd_bytes_gmem,                     0x1),
-> > +     ARM_CSPMU_EVENT_ATTR(wr_bytes_cmem,                     0x2),
-> > +     ARM_CSPMU_EVENT_ATTR(wr_bytes_gmem,                     0x3),
-> > +     ARM_CSPMU_EVENT_ATTR(total_bytes_cmem,                  0x4),
-> > +     ARM_CSPMU_EVENT_ATTR(total_bytes_gmem,                  0x5),
-> > +     ARM_CSPMU_EVENT_ATTR(rd_req_cmem,                       0x6),
-> > +     ARM_CSPMU_EVENT_ATTR(rd_req_gmem,                       0x7),
-> > +     ARM_CSPMU_EVENT_ATTR(wr_req_cmem,                       0x8),
-> > +     ARM_CSPMU_EVENT_ATTR(wr_req_gmem,                       0x9),
-> > +     ARM_CSPMU_EVENT_ATTR(total_req_cmem,                    0xa),
-> > +     ARM_CSPMU_EVENT_ATTR(total_req_gmem,                    0xb),
-> > +     ARM_CSPMU_EVENT_ATTR(rd_cum_outs_cmem,                  0xc),
-> > +     ARM_CSPMU_EVENT_ATTR(rd_cum_outs_gmem,                  0xd),
-> > +     ARM_CSPMU_EVENT_ATTR(cycles,
-> ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> > +     NULL,
-> > +};
-> > +
-> >  static struct attribute *generic_pmu_event_attrs[] =3D {
-> >       ARM_CSPMU_EVENT_ATTR(cycles,
-> ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> >       NULL,
-> > @@ -234,7 +253,7 @@ static const struct nv_cspmu_match
-> nv_cspmu_match[] =3D {
-> >         .filter_default_val =3D NV_CNVL_FILTER_ID_MASK,
-> >         .name_pattern =3D "nvidia_cnvlink_pmu_%u",
-> >         .name_fmt =3D NAME_FMT_SOCKET,
-> > -       .event_attr =3D mcf_pmu_event_attrs,
-> > +       .event_attr =3D mcf_cnvlink_pmu_event_attrs,
-> >         .format_attr =3D cnvlink_pmu_format_attrs
-> >       },
+> > @@ -193,7 +194,7 @@ static u32 nv_cspmu_event_filter(const struct
+> perf_event *event)
+> >       const struct nv_cspmu_ctx *ctx =3D
+> >               to_nv_cspmu_ctx(to_arm_cspmu(event->pmu));
+> >
+> > -     if (ctx->filter_mask =3D=3D 0)
+> > +     if (ctx->filter_mask =3D=3D 0 || event->attr.config1 =3D=3D 0)
+> >               return ctx->filter_default_val;
 >=20
-> Hmm. Isn't this a user-visible change? For example, will scripts driving
-> 'perf' with the old event names continue to work after this patch?
+> Isn't this a bit too broad? It looks like this filter function is used
+> beyond the C2C PMU (i.e. the PCIe PMU) and you're also checking the whole
+> of config1 rather than just the port field.
 >=20
 
-Yes this is user visible. I am expecting user script to be updated accordin=
-gly.
-Would this be reasonable?
+I think the other PMUs (PCIE and CNVLINK) that have similar filters will al=
+so benefit
+from this change, since a filter value of 0 on these PMUs are meaningless. =
+Should I
+make the intention clearer by moving this particular change into a separate=
+ patch?
 
-Regards,
+Thanks,
 Besar
