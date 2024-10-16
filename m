@@ -1,160 +1,215 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB88820C009;
-	Wed, 16 Oct 2024 13:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EFC4409;
+	Wed, 16 Oct 2024 20:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729087139; cv=none; b=c+UdFEoQEGP7nSpk/W1kB0dX5sc3Qo8pBk4bofE9lZ5tywDQYW6Q54DuvWrL96vE7Z1p1d2oXcy9cnTAvnIpkqLWi73zztwj8JqCwXROlBl1QpGkMz96w6Szscnvl9JnyaTjF/C2QnPaPesC2XuX54IFWY1Wbw+UWjlP/Y9LcOU=
+	t=1729111584; cv=none; b=Dfxn9HBogMVXeDYKmg5FOmCLNx/MrAblq0UWzelMjeyS4aCKgvN+oJbPgMu7jg7gFXWyaBEuxZlc3U4CKMjHR8HXsodegs9IRGE/e0rSUKLlK+YQxh6+dhY+/qn0+6BVtJWgaATbUJmQJEmb7Y+FZPPrckAW369/nTnBce+TTDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729087139; c=relaxed/simple;
-	bh=DCwW1BXaEzYmomHtjqvPhEnDGnecHTjUZgJNEcpFnTA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oV+a8Ndu+BJiDoBSdy205lZFwASoKPuT/2qnXi7suJfPXiNV8QyBT0PXTd8/RSZv0z7t7ZLeTukmM6avmil9VQ3ODZ2duG7RaLkO+1dEcbTHhMmu7xNqSHmZ/TFGk6tTXgX7aHvIrOVklu6Nn0F1A1rzq5hjM9/f1xMjSYCH1MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XTCGw6RFvz6D8Y7;
-	Wed, 16 Oct 2024 21:58:16 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 54E9E140B67;
-	Wed, 16 Oct 2024 21:58:54 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 16 Oct
- 2024 15:58:52 +0200
-Date: Wed, 16 Oct 2024 14:58:51 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
-	<lukasz.luba@arm.com>, Amit Kucheria <amitk@kernel.org>, Thara Gopinath
-	<thara.gopinath@gmail.com>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Vasily Khoruzhick
-	<anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai
-	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
-	<samuel@sholland.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, Chen-Yu Tsai <wenst@chromium.org>
-Subject: Re: [PATCH v4 2/6] thermal: of: Use scoped memory and OF handling
- to simplify thermal_of_trips_init()
-Message-ID: <20241016145851.00004e90@Huawei.com>
-In-Reply-To: <20241010-b4-cleanup-h-of-node-put-thermal-v4-2-bfbe29ad81f4@linaro.org>
-References: <20241010-b4-cleanup-h-of-node-put-thermal-v4-0-bfbe29ad81f4@linaro.org>
-	<20241010-b4-cleanup-h-of-node-put-thermal-v4-2-bfbe29ad81f4@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729111584; c=relaxed/simple;
+	bh=/KMPwYFTR0mcPuXM/4Ws8Eh2JBFSNKdpOapdPGGNn/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T2uV8JP6UQo8GzuAmG/g+CvKd3220RnQI1T1r+3hlZnTnUP4kRLgqDGMCjKhY0SgrAvFBHyp8npGYAqoK1OEcpapZUba+onsibHd0kn3LBpf1WdXbhuTdBifHqNWRoflhpxtPjT3kL77DD8cmeiL4+ihdbwNdWtutBEK/fY1GTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91F32FEC;
+	Wed, 16 Oct 2024 13:46:49 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DEC03F58B;
+	Wed, 16 Oct 2024 13:46:15 -0700 (PDT)
+Date: Wed, 16 Oct 2024 22:45:35 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Sumit Gupta <sumitg@nvidia.com>
+Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
+	viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
+	catalin.marinas@arm.com, rafael@kernel.org,
+	yang@os.amperecomputing.com, lihuisong@huawei.com,
+	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
+	Bibek Basu <bbasu@nvidia.com>
+Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
+ arch_freq_avg_get_on_cpu
+Message-ID: <ZxAl77IYcMO2SfWh@arm.com>
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <20240913132944.1880703-4-beata.michalska@arm.com>
+ <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
+ <ZvU4mR_FZa7jXUgk@arm.com>
+ <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
+ <Zv8PKlr_PJgxazro@arm.com>
+ <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
+ <Zwe1p0La_AFknglf@arm.com>
+ <evllzzjufritriziohz22gm5qs44jedpft5lcfjfwnekarqtdx@eg42ik2l7bxu>
+ <a183068c-9244-4448-b81c-d1c0556bd43b@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a183068c-9244-4448-b81c-d1c0556bd43b@nvidia.com>
 
-On Thu, 10 Oct 2024 20:06:18 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+On Mon, Oct 14, 2024 at 11:16:36PM +0530, Sumit Gupta wrote:
+> 
+> 
+> On 11/10/24 21:59, Vanshidhar Konda wrote:
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > On Thu, Oct 10, 2024 at 01:08:23PM GMT, Beata Michalska wrote:
+> > > On Thu, Oct 03, 2024 at 02:54:22PM -0700, Vanshidhar Konda wrote:
+> > > > On Thu, Oct 03, 2024 at 11:39:54PM GMT, Beata Michalska wrote:
+> > > > > On Thu, Sep 26, 2024 at 04:21:14PM -0700, Vanshidhar Konda wrote:
+> > > > > > On Thu, Sep 26, 2024 at 12:34:01PM GMT, Beata Michalska wrote:
+> > > > > > > On Tue, Sep 17, 2024 at 05:41:09PM +0530, Sumit Gupta wrote:
+> > > > > > > > Hi Beata,
+> > > > > > > Hi Sumit,
+> > > > > > > >
+> > > > > > > > Thank you for the patches.
+> > > > > > > Thank you for having a look at those.
+> > > > > > > >
+> > > > > > > > On 13/09/24 18:59, Beata Michalska wrote:
+> > > > > > > > > External email: Use caution opening links or attachments
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > With the Frequency Invariance Engine (FIE) being
+> > > > already wired up with
+> > > > > > > > > sched tick and making use of relevant (core counter
+> > > > and constant
+> > > > > > > > > counter) AMU counters, getting the average frequency
+> > > > for a given CPU,
+> > > > > > > > > can be achieved by utilizing the frequency scale
+> > > > factor which reflects
+> > > > > > > > > an average CPU frequency for the last tick period length.
+> > > > > > > > >
+> > > > > > > > > The solution is partially based on APERF/MPERF
+> > > > implementation of
+> > > > > > > > > arch_freq_get_on_cpu.
+> > > > > > > > >
+> > > > > > > > > Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
+> > > > > > > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
+> > > > > > > > > ---
+> > > > > > > > >   arch/arm64/kernel/topology.c | 109
+> > > > +++++++++++++++++++++++++++++++----
+> > > > > > > > >   1 file changed, 99 insertions(+), 10 deletions(-)
+> > > > > > > > >
+> > > > 
+> > > > --- snip ----
+> > > > 
+> > > > > > > >
+> > > > > > > >     ..
+> > > > > > > >   freq_comput:
+> > > > > > > >     scale = arch_scale_freq_capacity(cpu);
+> > > > > > > >     freq = scale * arch_scale_freq_ref(cpu);
+> > > > > > > >   ----
+> > > > > > > >
+> > > > > > > This boils down to the question what that function, and
+> > > > the information it
+> > > > > > > provides, represent really. The 'unknown' here simply says
+> > > > the CPU has been idle
+> > > > > > > for a while and as such the frequency data is a bit stale
+> > > > and it does not
+> > > > > > > represent the average freq the CPU is actually running at
+> > > > anymore, which is
+> > > > > > > the intention here really. Or, that the given CPU is a
+> > > > non-housekeeping one.
+> > > > > > > Either way I believe this is a useful information, instead
+> > > > of providing
+> > > > > > > stale data with no indication on whether the frequency is
+> > > > really the 'current'
+> > > > > > > one or not.
+> > > > > > >
+> > > > > > > If that is somehow undesirable we can discuss this
+> > > > further, though I'd rather
+> > > > > > > avoid exposing an interface where the feedback provided is open to
+> > > > > > > interpretation at all times.
+> > > > > >
+> > > > > > Would it make sense to identify that the frequency reporting
+> > > > is unknown due to
+> > > > > > cpu being idle vs some other issue like being a
+> > > > non-housekeeping CPU? Would
+> > > > > > returning a value of 0 make it easier for tools to represent
+> > > > that the CPU is
+> > > > > > currently idle?
+> > > > > That is an option.
+> > > > > Another one would be to return an error for those cases. This
+> > > > would make it
+> > > > > easier to distinguish between valid frequency &/| idle CPU vs
+> > > > tickless CPU
+> > > > > (EINVAL vs ENOENT) ?
+> > > > >
+> > > > 
+> > > > That seems like a good idea but I suspect it would be confusing
+> > > > to the end user.
+> > > > 
+> > > > If a user runs `cat
+> > > > /sys/devices/system/cpu/cpu2/cpuinfo_avg_freq` they would
+> > > > get an error in some cases or get a number in some other iterations.
+> > > > 
+> > > That is a fair point but I am not entirely convinced using '0'
+> > > instead makes
+> > > things any more clearer as this is in no way a valid CPU frequency.
+> > > As long as we document the expected behaviour keeping the interface well
+> > > defined,  both options should be fine I guess.
+> > > 
+> > 
+> > Another option could be to list out the reason as 'idle' or 'no entry'
+> > instead of
+> > returning EINVAL or ENOENT. These wouldn't be valid values either but
+> > cat on the
+> > sysfs node wouldn't return an error.
+> > 
+> > Thanks,
+> > Vanshidhar
+> > 
+> 
+> Ya, listing the clear reason sounds better.
+> 
+> Thank you,
+> Sumit Gupta
+>
+I'd still prefer returning an error as that is a clear indication on failure
+upon read. Furthermore, that would also make that attribute stick to single-type
+rule for sysfs, which is currently not the case and will not be if we return
+'idle' or 'no entry'. That said, I am happy to make that change if that would be
+the final decision and that one is not mine, as the change is ultimately the
+cpufreq one.
 
-> Obtain the device node reference and allocate memory with
-> scoped/cleanup.h to reduce error handling and make the code a bit
-> simpler.
-> 
-> The code is not equivalent in one minor aspect: outgoing parameter
-> "*ntrips" will not be zeroed on errors of memory allocation.  This
-> difference is not important, because code was already not zeroing it in
-> case of earlier errors and the only caller does not rely on ntrips being
-> 0 in case of errors.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Trivial unrelated comment inline + maybe return_ptr() is the way to go as
-Chen-Yu mentioned.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-> ---
+---
+BR
+Beata
+> > > @Viresh: what is your opinion on that one ?
+> > > 
+> > > ---
+> > > BR
+> > > Beata
+> > > > Thanks,
 > 
-> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: Chen-Yu Tsai <wenst@chromium.org>
+> ....
 > 
-> Changes in v4:
-> 1. Significant change: kzalloc() also with scoped-handling so the entire
->    error handling could be removed.
-> 2. Due to above, drop review-tags (Chen-Yu, Jonathan).
-> 
-> Changes in v2:
-> 1. Drop left-over of_node_put in regular exit path (Chen-Yu)
-> ---
->  drivers/thermal/thermal_of.c | 31 ++++++++-----------------------
->  1 file changed, 8 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-> index f0ffc0e335ba9406f4fd858d6c561f9d23f4b842..37db435b54b124abf25b1d75d6cc4fb75f1c1e5c 100644
-> --- a/drivers/thermal/thermal_of.c
-> +++ b/drivers/thermal/thermal_of.c
-> @@ -95,11 +95,9 @@ static int thermal_of_populate_trip(struct device_node *np,
->  
->  static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *ntrips)
->  {
-> -	struct thermal_trip *tt;
-> -	struct device_node *trips;
->  	int ret, count;
->  
-> -	trips = of_get_child_by_name(np, "trips");
-> +	struct device_node *trips __free(device_node) = of_get_child_by_name(np, "trips");
->  	if (!trips) {
->  		pr_err("Failed to find 'trips' node\n");
->  		return ERR_PTR(-EINVAL);
-> @@ -108,36 +106,23 @@ static struct thermal_trip *thermal_of_trips_init(struct device_node *np, int *n
->  	count = of_get_child_count(trips);
->  	if (!count) {
->  		pr_err("No trip point defined\n");
-> -		ret = -EINVAL;
-> -		goto out_of_node_put;
-> +		return ERR_PTR(-EINVAL);
->  	}
->  
-> -	tt = kzalloc(sizeof(*tt) * count, GFP_KERNEL);
-> -	if (!tt) {
-> -		ret = -ENOMEM;
-> -		goto out_of_node_put;
-> -	}
-> -
-> -	*ntrips = count;
-> +	struct thermal_trip *tt __free(kfree) = kzalloc(sizeof(*tt) * count, GFP_KERNEL);
-
-Trivial and unrelated, but maybe kcalloc(count, sizeof(tt), GFP_KERNEL);
-
-> +	if (!tt)
-> +		return ERR_PTR(-ENOMEM);
->  
->  	count = 0;
->  	for_each_child_of_node_scoped(trips, trip) {
->  		ret = thermal_of_populate_trip(trip, &tt[count++]);
->  		if (ret)
-> -			goto out_kfree;
-> +			return ERR_PTR(ret);
->  	}
->  
-> -	of_node_put(trips);
-> +	*ntrips = count;
->  
-> -	return tt;
-> -
-> -out_kfree:
-> -	kfree(tt);
-> -	*ntrips = 0;
-> -out_of_node_put:
-> -	of_node_put(trips);
-> -
-> -	return ERR_PTR(ret);
-> +	return no_free_ptr(tt);
->  }
->  
->  static struct device_node *of_thermal_zone_find(struct device_node *sensor, int id)
-> 
-
+> > > > > > > > > +               cpu = ref_cpu;
+> > > > > > > > > +               goto retry;
+> > > > > > > > > +       }
+> > > > > > > > > +       /*
+> > > > > > > > > +        * Reversed computation to the one used to determine
+> > > > > > > > > +        * the arch_freq_scale value
+> > > > > > > > > +        * (see amu_scale_freq_tick for details)
+> > > > > > > > > +        */
+> > > > > > > > > +       scale = arch_scale_freq_capacity(cpu);
+> > > > > > > > > +       freq = scale * arch_scale_freq_ref(cpu);
+> > > > > > > > > +       freq >>= SCHED_CAPACITY_SHIFT;
+> > > > > > > > > +       return freq;
+> > > > > > > > > +}
+> > > > > > > > > +
+> > > > > > > >
+> > > > > > > > >   static void amu_fie_setup(const struct cpumask *cpus)
+> > > > > > > > >   {
+> > > > > > > > >          int cpu;
+> > > > > > > > > --
+> > > > > > > > > 2.25.1
+> > > > > > > > >
