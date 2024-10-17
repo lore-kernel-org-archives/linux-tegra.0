@@ -1,215 +1,73 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EFC4409;
-	Wed, 16 Oct 2024 20:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C1E1DF985;
+	Thu, 17 Oct 2024 16:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729111584; cv=none; b=Dfxn9HBogMVXeDYKmg5FOmCLNx/MrAblq0UWzelMjeyS4aCKgvN+oJbPgMu7jg7gFXWyaBEuxZlc3U4CKMjHR8HXsodegs9IRGE/e0rSUKLlK+YQxh6+dhY+/qn0+6BVtJWgaATbUJmQJEmb7Y+FZPPrckAW369/nTnBce+TTDA=
+	t=1729183867; cv=none; b=dsj+aUT0PIuY4kKtMzc1fWHNjcTs9wYB3gM5cyNE/+t+38OqrxPYh0Sn+VgMGvD2oUYxV+kbCFwmkrpT/RjKmk1CCwXVV9saNpa3Me4p3xss0diB0zb4JHTVfFYlocqcLqq8TOLvhNohH3zRkthgMzzg5f5TJ914y/YHfapb3tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729111584; c=relaxed/simple;
-	bh=/KMPwYFTR0mcPuXM/4Ws8Eh2JBFSNKdpOapdPGGNn/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T2uV8JP6UQo8GzuAmG/g+CvKd3220RnQI1T1r+3hlZnTnUP4kRLgqDGMCjKhY0SgrAvFBHyp8npGYAqoK1OEcpapZUba+onsibHd0kn3LBpf1WdXbhuTdBifHqNWRoflhpxtPjT3kL77DD8cmeiL4+ihdbwNdWtutBEK/fY1GTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91F32FEC;
-	Wed, 16 Oct 2024 13:46:49 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DEC03F58B;
-	Wed, 16 Oct 2024 13:46:15 -0700 (PDT)
-Date: Wed, 16 Oct 2024 22:45:35 +0200
-From: Beata Michalska <beata.michalska@arm.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, rafael@kernel.org,
-	yang@os.amperecomputing.com, lihuisong@huawei.com,
-	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
-	Bibek Basu <bbasu@nvidia.com>
-Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
- arch_freq_avg_get_on_cpu
-Message-ID: <ZxAl77IYcMO2SfWh@arm.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-4-beata.michalska@arm.com>
- <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
- <ZvU4mR_FZa7jXUgk@arm.com>
- <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
- <Zv8PKlr_PJgxazro@arm.com>
- <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
- <Zwe1p0La_AFknglf@arm.com>
- <evllzzjufritriziohz22gm5qs44jedpft5lcfjfwnekarqtdx@eg42ik2l7bxu>
- <a183068c-9244-4448-b81c-d1c0556bd43b@nvidia.com>
+	s=arc-20240116; t=1729183867; c=relaxed/simple;
+	bh=qWttzDemKi/gYPJZ/lRMbh7Bi4m3BbF9VbCZIpdWK8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ndp8tWqAknIVXFXZn8gFyiksRQAGxuanK2d/f6i13i4RZ7PrsdbL2d6CFNMCsPmlch6bPtJkm/3PFXrtHg6SmHCKktfgZVDSK9KbiBco2aaewoRMM9EyBWp7w+WDfka8v+Y1dM9hmJOoqOA3NlO0Vv32dlA0Ht2KT3m+6Mvrvvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIsCIWEv; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIsCIWEv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 287F3C4CECE;
+	Thu, 17 Oct 2024 16:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729183867;
+	bh=qWttzDemKi/gYPJZ/lRMbh7Bi4m3BbF9VbCZIpdWK8A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KIsCIWEvkznDlw5q5sG62VX0pnuqPxncDE+0xrbEQ22SAc+DdQp/m9KysEfAzMGvE
+	 uq/H+HAIRs29EHnwZtffWCz8RsNLOkbgVqiNEGV79xVC43GXrkdzluhy+KPkDU3iNY
+	 bHp2uC/N0BhK7IGPJqBkpLVmYBDtlTcbAbpdiN2yPv75hay+ap0HeHXG6v1RlQixEH
+	 pY2B4Sz9pi74MSIThIOIUIXUaaK1eFErtGkh+F/Yb9GGk7vUgZkstFR8I1QBPJphMw
+	 q/t2h07bx5J94OvPjqIcIGO2PfHA6nUrJh2TZpy/bWJJDFINbCsYrlLZujBFIzlEc1
+	 qbqtxRkatBlNA==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 10/10] drivers/clocksource/timer-tegra: Remove clockevents shutdown call on offlining
+Date: Thu, 17 Oct 2024 18:50:41 +0200
+Message-ID: <20241017165041.6954-11-frederic@kernel.org>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20241017165041.6954-1-frederic@kernel.org>
+References: <20241017165041.6954-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a183068c-9244-4448-b81c-d1c0556bd43b@nvidia.com>
 
-On Mon, Oct 14, 2024 at 11:16:36PM +0530, Sumit Gupta wrote:
-> 
-> 
-> On 11/10/24 21:59, Vanshidhar Konda wrote:
-> > External email: Use caution opening links or attachments
-> > 
-> > 
-> > On Thu, Oct 10, 2024 at 01:08:23PM GMT, Beata Michalska wrote:
-> > > On Thu, Oct 03, 2024 at 02:54:22PM -0700, Vanshidhar Konda wrote:
-> > > > On Thu, Oct 03, 2024 at 11:39:54PM GMT, Beata Michalska wrote:
-> > > > > On Thu, Sep 26, 2024 at 04:21:14PM -0700, Vanshidhar Konda wrote:
-> > > > > > On Thu, Sep 26, 2024 at 12:34:01PM GMT, Beata Michalska wrote:
-> > > > > > > On Tue, Sep 17, 2024 at 05:41:09PM +0530, Sumit Gupta wrote:
-> > > > > > > > Hi Beata,
-> > > > > > > Hi Sumit,
-> > > > > > > >
-> > > > > > > > Thank you for the patches.
-> > > > > > > Thank you for having a look at those.
-> > > > > > > >
-> > > > > > > > On 13/09/24 18:59, Beata Michalska wrote:
-> > > > > > > > > External email: Use caution opening links or attachments
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > With the Frequency Invariance Engine (FIE) being
-> > > > already wired up with
-> > > > > > > > > sched tick and making use of relevant (core counter
-> > > > and constant
-> > > > > > > > > counter) AMU counters, getting the average frequency
-> > > > for a given CPU,
-> > > > > > > > > can be achieved by utilizing the frequency scale
-> > > > factor which reflects
-> > > > > > > > > an average CPU frequency for the last tick period length.
-> > > > > > > > >
-> > > > > > > > > The solution is partially based on APERF/MPERF
-> > > > implementation of
-> > > > > > > > > arch_freq_get_on_cpu.
-> > > > > > > > >
-> > > > > > > > > Suggested-by: Ionela Voinescu <ionela.voinescu@arm.com>
-> > > > > > > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> > > > > > > > > ---
-> > > > > > > > >   arch/arm64/kernel/topology.c | 109
-> > > > +++++++++++++++++++++++++++++++----
-> > > > > > > > >   1 file changed, 99 insertions(+), 10 deletions(-)
-> > > > > > > > >
-> > > > 
-> > > > --- snip ----
-> > > > 
-> > > > > > > >
-> > > > > > > >     ..
-> > > > > > > >   freq_comput:
-> > > > > > > >     scale = arch_scale_freq_capacity(cpu);
-> > > > > > > >     freq = scale * arch_scale_freq_ref(cpu);
-> > > > > > > >   ----
-> > > > > > > >
-> > > > > > > This boils down to the question what that function, and
-> > > > the information it
-> > > > > > > provides, represent really. The 'unknown' here simply says
-> > > > the CPU has been idle
-> > > > > > > for a while and as such the frequency data is a bit stale
-> > > > and it does not
-> > > > > > > represent the average freq the CPU is actually running at
-> > > > anymore, which is
-> > > > > > > the intention here really. Or, that the given CPU is a
-> > > > non-housekeeping one.
-> > > > > > > Either way I believe this is a useful information, instead
-> > > > of providing
-> > > > > > > stale data with no indication on whether the frequency is
-> > > > really the 'current'
-> > > > > > > one or not.
-> > > > > > >
-> > > > > > > If that is somehow undesirable we can discuss this
-> > > > further, though I'd rather
-> > > > > > > avoid exposing an interface where the feedback provided is open to
-> > > > > > > interpretation at all times.
-> > > > > >
-> > > > > > Would it make sense to identify that the frequency reporting
-> > > > is unknown due to
-> > > > > > cpu being idle vs some other issue like being a
-> > > > non-housekeeping CPU? Would
-> > > > > > returning a value of 0 make it easier for tools to represent
-> > > > that the CPU is
-> > > > > > currently idle?
-> > > > > That is an option.
-> > > > > Another one would be to return an error for those cases. This
-> > > > would make it
-> > > > > easier to distinguish between valid frequency &/| idle CPU vs
-> > > > tickless CPU
-> > > > > (EINVAL vs ENOENT) ?
-> > > > >
-> > > > 
-> > > > That seems like a good idea but I suspect it would be confusing
-> > > > to the end user.
-> > > > 
-> > > > If a user runs `cat
-> > > > /sys/devices/system/cpu/cpu2/cpuinfo_avg_freq` they would
-> > > > get an error in some cases or get a number in some other iterations.
-> > > > 
-> > > That is a fair point but I am not entirely convinced using '0'
-> > > instead makes
-> > > things any more clearer as this is in no way a valid CPU frequency.
-> > > As long as we document the expected behaviour keeping the interface well
-> > > defined,  both options should be fine I guess.
-> > > 
-> > 
-> > Another option could be to list out the reason as 'idle' or 'no entry'
-> > instead of
-> > returning EINVAL or ENOENT. These wouldn't be valid values either but
-> > cat on the
-> > sysfs node wouldn't return an error.
-> > 
-> > Thanks,
-> > Vanshidhar
-> > 
-> 
-> Ya, listing the clear reason sounds better.
-> 
-> Thank you,
-> Sumit Gupta
->
-I'd still prefer returning an error as that is a clear indication on failure
-upon read. Furthermore, that would also make that attribute stick to single-type
-rule for sysfs, which is currently not the case and will not be if we return
-'idle' or 'no entry'. That said, I am happy to make that change if that would be
-the final decision and that one is not mine, as the change is ultimately the
-cpufreq one.
+The clockevents core already detached and unregistered it at this stage.
 
-
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
-BR
-Beata
-> > > @Viresh: what is your opinion on that one ?
-> > > 
-> > > ---
-> > > BR
-> > > Beata
-> > > > Thanks,
-> 
-> ....
-> 
-> > > > > > > > > +               cpu = ref_cpu;
-> > > > > > > > > +               goto retry;
-> > > > > > > > > +       }
-> > > > > > > > > +       /*
-> > > > > > > > > +        * Reversed computation to the one used to determine
-> > > > > > > > > +        * the arch_freq_scale value
-> > > > > > > > > +        * (see amu_scale_freq_tick for details)
-> > > > > > > > > +        */
-> > > > > > > > > +       scale = arch_scale_freq_capacity(cpu);
-> > > > > > > > > +       freq = scale * arch_scale_freq_ref(cpu);
-> > > > > > > > > +       freq >>= SCHED_CAPACITY_SHIFT;
-> > > > > > > > > +       return freq;
-> > > > > > > > > +}
-> > > > > > > > > +
-> > > > > > > >
-> > > > > > > > >   static void amu_fie_setup(const struct cpumask *cpus)
-> > > > > > > > >   {
-> > > > > > > > >          int cpu;
-> > > > > > > > > --
-> > > > > > > > > 2.25.1
-> > > > > > > > >
+ drivers/clocksource/timer-tegra.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/clocksource/timer-tegra.c b/drivers/clocksource/timer-tegra.c
+index e9635c25eef4..35b6ce9deffa 100644
+--- a/drivers/clocksource/timer-tegra.c
++++ b/drivers/clocksource/timer-tegra.c
+@@ -158,7 +158,6 @@ static int tegra_timer_stop(unsigned int cpu)
+ {
+ 	struct timer_of *to = per_cpu_ptr(&tegra_to, cpu);
+ 
+-	to->clkevt.set_state_shutdown(&to->clkevt);
+ 	disable_irq_nosync(to->clkevt.irq);
+ 
+ 	return 0;
+-- 
+2.46.0
+
