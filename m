@@ -1,192 +1,202 @@
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EBD1D7E5C
-	for <linux-tegra@vger.kernel.org>; Fri, 18 Oct 2024 15:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87C0757F3;
+	Fri, 18 Oct 2024 19:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729266143; cv=none; b=cEfZclxsCX1F/G7AciwmkGiZeCwCpZT07He2s5Xad4kkFzkYZ0+awWBx9QvTLGD9gYg5GVeQK9CbvgEnK4+jUVxM18eHZNZdI22p5SPOVMYH4qP79E3Z7K19s37szbG6ZvLbCYGY1zVOFojMcbNzjLfaIhNl8pm0UsfUg4V0glo=
+	t=1729280054; cv=none; b=KsJkjKvrogWN82dJhZDBhdaKR6vBvlwBPzTwgr2Q5T33Y1NN1/m5qr1gS2BaDRNlpjQKK706KH9td7CY4NwiOzsoqyU1D4DOCnV6JQ71FfEJDqj71IOg84aM5VSI5wzwDIHWVA7VmpOJk4UbSIHPinrmYOvVCh9p8kk+Q8TtaMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729266143; c=relaxed/simple;
-	bh=0pk2DOGGbs1iYIDo8ie2yXiZL4Hp+H8zOHBUMKYTCM0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QGnVYcBdXIiqDoc7TV+08B0bg/Vl42129iYExjc44BQHRTsC2IIxOPjLmJXDwLlgxZieIMd++L0Jte9LqWLljuCwzdXG8Ct+raK4Aqry1xRYp9sFWHH4p/LGwM4qGcensjsCZXmzkqgtylwqGArjZgQjvvayKbkyX7pq6e3fGKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FBnZGGCH; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1729280054; c=relaxed/simple;
+	bh=PA0c7dC1ikcGJw/dBRDgPk7KxYeY0mCH5fO+eV2W+Ew=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=X0rj92QTikiPs9RtozSaTcA2ROec/PNF31ihu1G4efo+9iVXHZUGB93HmJteXneM/kxTDEy3Xog4VDoO+8C12z63NStQe5cdxpHeu0bxN1llOR7e6d0gS/RUxKmE/W8PnnXmLDYIUdDhdPDExR4SpKZBdMFYDXecV/zBt5MoYiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vDj8XJFC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FBnZGGCH"
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-83abcfb9f39so22300839f.1
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Oct 2024 08:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729266141; x=1729870941; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C8VdO6KdJCH4AdSj2++rrFU9nxwKhshOvegF4lZMcqE=;
-        b=FBnZGGCHrja6gfvlKAzFjIibjwZcuvysGUD5DAwKUYFzBwQbLm3C5DcJ/m+zNKseVO
-         rERGGzKT3iKw4dGAkOP0sjPDTjrsNXDuMMQVYJFDVpewUe0BKxk5ZpwHiWw5ok6DKyx1
-         JY06wMfR6kq/31vxrTxl7Ndjr6HCLB/HG7ZMQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729266141; x=1729870941;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C8VdO6KdJCH4AdSj2++rrFU9nxwKhshOvegF4lZMcqE=;
-        b=impfbJmHYXvQMmYLbNPK+kqcCpWB67AQLghF/XPJnLIz47iZcoEjjigSygfSLFP6Kz
-         559B7QB8eOZW1f14cZ8+q/rFSJ0jsPAFAYz7jXkvHbgJt5HEa09EN+051Pz+MgXd+Ku4
-         IH4Ar7SSqHLnKjzHyKyV9xDTyn51If7wgRqWj9iXYwdtqvqrTCADgXhXMtl0hpGuoZ+C
-         eJp2gGDhMxfwwC5SInadcaGGg6myfTj8m63pfa5VZL1Ldq8v/rF/Bvs0Jw+XFVCSxx9I
-         Wr5bXKYYxgBibB/eiet6osRglDMlAxCocx5Q71Gn9+J7ITXRozTQYlCGC5Th+u6cHpq+
-         fIhA==
-X-Forwarded-Encrypted: i=1; AJvYcCV203h1kNQx8CYclCND1dw3Hug95WcbtgR9ypYQaEQbYbsSWegsdpkb/dL9m17q7ynLurnh9iyMgPpqpQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgj4aN1b9bPGNirv88hqHKIlGs9LGnSQbQhVzznZg0uugeNvja
-	jF1Az9vJ0zCNj5nkw7uacwNB2mGXVALYS+EWm9fCA7Bne7Ytd0bqhCaqiORFLZk=
-X-Google-Smtp-Source: AGHT+IH4ogcODgSN39TA6PPVl/6vyDZ/seYFLpla/cknawLNdjkkyApJ+afbquxpiqPpJuNhwG9TGw==
-X-Received: by 2002:a05:6602:2999:b0:82c:da1e:4ae7 with SMTP id ca18e2360f4ac-83aaddda6f7mr430443939f.2.1729266140750;
-        Fri, 18 Oct 2024 08:42:20 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc10c4d6e8sm468697173.127.2024.10.18.08.42.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 08:42:20 -0700 (PDT)
-Message-ID: <a8e0dc0d-1d49-4287-a5c3-41bd4539a372@linuxfoundation.org>
-Date: Fri, 18 Oct 2024 09:42:19 -0600
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vDj8XJFC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49604C4CEC3;
+	Fri, 18 Oct 2024 19:34:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729280053;
+	bh=PA0c7dC1ikcGJw/dBRDgPk7KxYeY0mCH5fO+eV2W+Ew=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=vDj8XJFCc8hIXbVAKXDrjmZA2OdooYyLo6C5Bmap1gc7nq/Zr4H5bI2KEJJRD0wr/
+	 7wvhsTXSrrYY3e9W2zPl88EYBq5Fi/73q0O9CO2n5zGgW92u2d3Mv/3ul8SeoWCQj3
+	 CEi524wYbKRWxqYqfxOJz4mOanOCfxe4gAaIqVP3itTinovQVNtkuOrnXG8G01Arfv
+	 DXrsO2Ng3thvlok1ifhOQwKZGnfJMswdhk+rPqwunk5nnAV2caTeEZBQHERUTIBi6z
+	 j5JVauzmUKEbz/2YE1UzlcpLGM6ON7sRvLYywTwAvJV9uLjJWha/EpHOOThnl07mQh
+	 TvcepjAhmQjZg==
+Date: Fri, 18 Oct 2024 14:34:11 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Joseph Jang <jjang@nvidia.com>
+Cc: shuah@kernel.org, tglx@linutronix.de, mochs@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] selftest: drivers: Add support to check duplicate hwirq
+Message-ID: <20241018193411.GA758389@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftest: rtc: Add to check rtc alarm status for
- alarm related test
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Joseph Jang <jjang@nvidia.com>
-Cc: "shuah@kernel.org" <shuah@kernel.org>,
- "avagin@google.com" <avagin@google.com>,
- "amir73il@gmail.com" <amir73il@gmail.com>,
- "brauner@kernel.org" <brauner@kernel.org>, Matt Ochs <mochs@nvidia.com>,
- Koba Ko <kobak@nvidia.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240524013807.154338-1-jjang@nvidia.com>
- <20240524013807.154338-2-jjang@nvidia.com>
- <20240620193654d3cd1f05@mail.local>
- <c0db5bd6-8c6a-4017-911e-f3e01cd522ed@nvidia.com>
- <c900db54-d764-4389-ad9a-bc2be61eedd2@nvidia.com>
- <20241018082706d7b167ab@mail.local>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241018082706d7b167ab@mail.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240904014426.3404397-1-jjang@nvidia.com>
 
-On 10/18/24 02:27, Alexandre Belloni wrote:
-> On 18/10/2024 12:26:44+0800, Joseph Jang wrote:
->>
->>
->> On 2024/6/24 9:43 AM, Joseph Jang wrote:
->>>
->>>
->>> On 2024/6/21 3:36 AM, Alexandre Belloni wrote:
->>>> On 23/05/2024 18:38:06-0700, Joseph Jang wrote:
->>>>> In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
->>>>> ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
->>>>> skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
->>>>> code. This design may miss detecting real problems when the
->>>>> efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
->>>>> ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
->>>>>
->>>>> In order to make rtctest more explicit and robust, we propose to use
->>>>> RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
->>>>> running alarm related tests. If the kernel does not support RTC_PARAM_GET
->>>>> ioctl interface, we will fallback to check the error number of
->>>>> (RTC_ALM_SET/RTC_WKALM_SET) ioctl call for alarm feature detection.
->>>>>
->>>>> Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
->>>>> as optional")
->>>>>
->>>>> Reviewed-by: Koba Ko <kobak@nvidia.com>
->>>>> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
->>>>> Signed-off-by: Joseph Jang <jjang@nvidia.com>
->>>>> ---
->>>>>     tools/testing/selftests/rtc/Makefile  |  2 +-
->>>>>     tools/testing/selftests/rtc/rtctest.c | 64 +++++++++++++++++++++++++++
->>>>>     2 files changed, 65 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
->>>>> index 55198ecc04db..6e3a98fb24ba 100644
->>>>> --- a/tools/testing/selftests/rtc/Makefile
->>>>> +++ b/tools/testing/selftests/rtc/Makefile
->>>>> @@ -1,5 +1,5 @@
->>>>>     # SPDX-License-Identifier: GPL-2.0
->>>>> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
->>>>> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/
->>>>
->>>> Is this change actually needed?
-
-I saw this and figured it is is still in review.
-
->>>
->>> If we didn't include "-I../../../../usr/include/" in rtctest Makefile,
->>> we may encounter build errors like the following because rtctest default
->>> look at the header file from /usr/include/linux/rtc.h which miss the
->>> definition of struct rtc_param, RTC_PARAM_FEATURES and RTC_PARAM_GET.
->>>
->>> rtctest.c: In function ‘get_rtc_alarm_state’:
->>> rtctest.c:94:15: error: variable ‘param’ has initializer but incomplete
->>> type
->>>       94 |        struct rtc_param param = { 0 };
->>>          |               ^~~~~~~~~
->>> rtctest.c:94:35: warning: excess elements in struct initializer
->>>       94 |        struct rtc_param param = { 0 };
->>>          |                                   ^
->>> rtctest.c:94:35: note: (near initialization for ‘param’)
->>> rtctest.c:94:25: error: storage size of ‘param’ isn’t known
->>>       94 |        struct rtc_param param = { 0 };
->>>          |                         ^~~~~
->>> rtctest.c:98:22: error: ‘RTC_PARAM_FEATURES’ undeclared (first use in
->>> this function)
->>>       98 |        param.param = RTC_PARAM_FEATURES;
->>>          |                      ^~~~~~~~~~~~~~~~~~
->>> rtctest.c:98:22: note: each undeclared identifier is reported only once
->>> for each function it appears in
->>> rtctest.c:100:23: error: ‘RTC_PARAM_GET’ undeclared (first use in this
->>> function); did you mean ‘RTC_ALM_SET’?
->>>      100 |        rc = ioctl(fd, RTC_PARAM_GET, &param);
->>>          |                       ^~~~~~~~~~~~~
->>>          |                       RTC_ALM_SET
->>>
->>> After adding "-I../../../../usr/include/", the rtctest will look at
->>> linux kernel source header files from
->>> <Linux root directory>/usr/include/linux/rtc.h to find the definition of
->>> struct rtc_param, RTC_PARAM_FEATURES and RTC_PARAM_GET and fix the
->>> rtctest build errors.
->>>
->>>
->>> Thank you,
->>> Joseph.
->>>
->>>   >
->> Hi Alexandre,
->>
->> Thank you for reviewing the kernel patch [PATCH 1/2].
->> We are still not sure if we could include linux headers files from kernel
->> source directory by the following change ?
->>
->> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
->> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I../../../../usr/include/
-
-You have to say $(top_srcdir)instead of hardcoding the path
+On Tue, Sep 03, 2024 at 06:44:26PM -0700, Joseph Jang wrote:
+> Validate there are no duplicate hwirq from the irq debug
+> file system /sys/kernel/debug/irq/irqs/* per chip name.
 > 
-> I guess this is ok, I expected Shuah to take this path too.
+> One example log show 2 duplicated hwirq in the irq debug
+> file system.
 > 
->>
+> $ sudo cat /sys/kernel/debug/irq/irqs/163
+> handler:  handle_fasteoi_irq
+> device:   0019:00:00.0
+>      <SNIP>
+> node:     1
+> affinity: 72-143
+> effectiv: 76
+> domain:  irqchip@0x0000100022040000-3
+>  hwirq:   0xc8000000
+>  chip:    ITS-MSI
+>   flags:   0x20
+> 
+> $ sudo cat /sys/kernel/debug/irq/irqs/174
+> handler:  handle_fasteoi_irq
+> device:   0039:00:00.0
+>     <SNIP>
+> node:     3
+> affinity: 216-287
+> effectiv: 221
+> domain:  irqchip@0x0000300022040000-3
+>  hwirq:   0xc8000000
+>  chip:    ITS-MSI
+>   flags:   0x20
+> 
+> The irq-check.sh can help to collect hwirq and chip name from
+> /sys/kernel/debug/irq/irqs/* and print error log when find duplicate
+> hwirq per chip name.
+> 
+> Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
+> [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
 
-Not as is. Need v2 for this with the above change.
+I don't know enough about this issue to understand the details.  It
+seems like you look for duplicate hwirqs in chips with the same name,
+e.g., "ITS-MSI" in this case?  That name seems too generic to me
+(might there be several instances of "ITS-MSI" in a system?)
 
-thanks,
--- Shuah
+Also, the name may come from chip->irq_print_chip(), so it apparently
+relies on irqchip drivers to make the names unique if there are
+multiple instances?
+
+I would have expected looking for duplicates inside something more
+specific, like "irqchip@0x0000300022040000-3".  But again, I don't
+know enough about the problem to speak confidently here.
+
+Cosmetic nits:
+
+  - Tweak subject to match history (use "git log --oneline
+    tools/testing/selftests/drivers/" to see it), e.g.,
+
+      selftests: irq: Add check for duplicate hwirq
+
+  - Rewrap commit log to fill 75 columns.  No point in using shorter
+    lines.
+
+  - Indent the "$ sudu cat ..." block by a couple spaces since it's
+    effectively a quotation, not part of the main text body.
+
+  - Possibly include sample output of irq-check.sh (also indented as a
+    quote) when run on the system where you manually found the
+    duplicate via "sudo cat /sys/kernel/debug/irq/irqs/..."
+
+  - Reword "The irq-check.sh can help ..." to something like this:
+
+      Add an irq-check.sh test to report errors when there are
+      duplicate hwirqs per chip name.
+
+  - Since the kernel patch has already been merged, cite it like this
+    instead of using the https://lore URL:
+
+      db744ddd59be ("PCI/MSI: Prevent MSI hardware interrupt number truncation")
+
+> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+> ---
+>  tools/testing/selftests/drivers/irq/Makefile  |  5 +++
+>  tools/testing/selftests/drivers/irq/config    |  2 +
+>  .../selftests/drivers/irq/irq-check.sh        | 39 +++++++++++++++++++
+>  3 files changed, 46 insertions(+)
+>  create mode 100644 tools/testing/selftests/drivers/irq/Makefile
+>  create mode 100644 tools/testing/selftests/drivers/irq/config
+>  create mode 100755 tools/testing/selftests/drivers/irq/irq-check.sh
+> 
+> diff --git a/tools/testing/selftests/drivers/irq/Makefile b/tools/testing/selftests/drivers/irq/Makefile
+> new file mode 100644
+> index 000000000000..d6998017c861
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/irq/Makefile
+> @@ -0,0 +1,5 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +TEST_PROGS := irq-check.sh
+> +
+> +include ../../lib.mk
+> diff --git a/tools/testing/selftests/drivers/irq/config b/tools/testing/selftests/drivers/irq/config
+> new file mode 100644
+> index 000000000000..a53d3b713728
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/irq/config
+> @@ -0,0 +1,2 @@
+> +CONFIG_GENERIC_IRQ_DEBUGFS=y
+> +CONFIG_GENERIC_IRQ_INJECTION=y
+> diff --git a/tools/testing/selftests/drivers/irq/irq-check.sh b/tools/testing/selftests/drivers/irq/irq-check.sh
+> new file mode 100755
+> index 000000000000..e784777043a1
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/irq/irq-check.sh
+> @@ -0,0 +1,39 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +# This script need root permission
+> +uid=$(id -u)
+> +if [ $uid -ne 0 ]; then
+> +	echo "SKIP: Must be run as root"
+> +	exit 4
+> +fi
+> +
+> +# Ensure debugfs is mounted
+> +mount -t debugfs nodev /sys/kernel/debug 2>/dev/null
+> +if [ ! -d "/sys/kernel/debug/irq/irqs" ]; then
+> +	echo "SKIP: irq debugfs not found"
+> +	exit 4
+> +fi
+> +
+> +# Traverse the irq debug file system directory to collect chip_name and hwirq
+> +hwirq_list=$(for irq_file in /sys/kernel/debug/irq/irqs/*; do
+> +	# Read chip name and hwirq from the irq_file
+> +	chip_name=$(cat "$irq_file" | grep -m 1 'chip:' | awk '{print $2}')
+> +	hwirq=$(cat "$irq_file" | grep -m 1 'hwirq:' | awk '{print $2}' )
+> +
+> +	if [ -z "$chip_name" ] || [ -z "$hwirq" ]; then
+> +		continue
+> +	fi
+> +
+> +	echo "$chip_name $hwirq"
+> +done)
+> +
+> +dup_hwirq_list=$(echo "$hwirq_list" | sort | uniq -cd)
+> +
+> +if [ -n "$dup_hwirq_list" ]; then
+> +	echo "ERROR: Found duplicate hwirq"
+> +	echo "$dup_hwirq_list"
+> +	exit 1
+> +fi
+> +
+> +exit 0
+> -- 
+> 2.34.1
+> 
