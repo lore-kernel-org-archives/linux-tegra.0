@@ -1,55 +1,56 @@
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7372022F4
-	for <linux-tegra@vger.kernel.org>; Fri, 18 Oct 2024 15:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B75201267
+	for <linux-tegra@vger.kernel.org>; Fri, 18 Oct 2024 15:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729265034; cv=none; b=Egh6QT4RRkY6/PvJdclITHz0zKpdnRBU+k9+8wsZfDLuYp7sCUTO6URgwn5YivIl+jhZ6LwU9w3b7f6AOnB6bJyRtEmYYeYV3qJrSFjylbGBCY3SiRTd4P76Ex4ckrutaLn3L+RdsrBv2fbipYtbz3ireq9xnv+38L0pLG3CQoI=
+	t=1729265967; cv=none; b=LkWYccasTZ/JRlFnCZaIfR1yi8C24BCZwFtK38IjgDpGWjWV/3MnQNjUfJ9AGER6fSQ5P8LY86/yxdnAPA7ClktSWd74VH/Q9xt/sq3o2knwzTZSjYt65cR1mfGIvrIp019kwbsbqH6EG6hE6O0ZEhXVgVD+vpQerDos31xD3es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729265034; c=relaxed/simple;
-	bh=aw4TvXBRoxS1QLVyOhClwUJogFEDYLW7y7nKYmwBT08=;
+	s=arc-20240116; t=1729265967; c=relaxed/simple;
+	bh=ZP+tae5klmCMnR+kw2A6FmL8QwoSk5XUQYePyQfmYAc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tfr3Rn7oDqsMfxdgnJolNspcm0QSm1iKxWsTuZ20pKVLnS9O2ii6svyPE3oeI9HAnVqCIH5TaOz9BEWrciJFxx7RkkMuNxIbpPFaON2DiuxJnqLL/Wm7S30XRHtBypk4sOqUHkdKapAkhf9p2j1DNhyN+x6VSe2AUEy+Pq257YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YlCmhHxs; arc=none smtp.client-ip=209.85.166.175
+	 In-Reply-To:Content-Type; b=bNSRfVrJhPyEPE93F40CeL93E/qUn8gNjvrLpByOPErtK+jCzwo3DI+XQewz5dvF2g8kkg13rrFuBMDtaHCxCBmR2PL7ac0V/Rb8vwlCfi4qktHNDMsvfJxv+VNyccudr8whjXLqC9/F3gCjl6db3Q0fiIhqzx+Ehpib2LCqmPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Q4aA9FCQ; arc=none smtp.client-ip=209.85.166.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YlCmhHxs"
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a3bb6a020dso8572035ab.2
-        for <linux-tegra@vger.kernel.org>; Fri, 18 Oct 2024 08:23:51 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Q4aA9FCQ"
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-83a9be2c0e6so97548739f.2
+        for <linux-tegra@vger.kernel.org>; Fri, 18 Oct 2024 08:39:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729265031; x=1729869831; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1729265963; x=1729870763; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=2ujG7zA5UqO+FYt2O4Y3HH9GYNxBYa4vCv9rOHMB0kI=;
-        b=YlCmhHxs3MovcboipEg2j6YCyIODMKgNj5hW4qPOUTL8Ttf+42kML4rO9dJh0skxCQ
-         LwT5o1vWN+ZAXQt21jdlHTC4TbreaBOqx/0iQdauk4QLcMw0+yxCsNnhC2n/L6m51U1o
-         dc13pNamqmyvvym/hO8aQFCp6A5V2IJoXue2g=
+        bh=jOhIwlho/HfHFju/oIk0L9FVfoRtipr8K1k5tMEW8S4=;
+        b=Q4aA9FCQ9gVVps/qSraCwa/cGG5lzw4/uypV0D8mEvczfCL+pMktesVIsncw4D51zw
+         Jb/tFLCpFUXK4fMMdgRijDv3EVsjkWOnnTf2nY5wJl3jgMS4Um1d3CmZdL8alIAGQ3yf
+         e/Or3M1XXa3VpM6Y0cEEQkTlD8Fx/uQAgi2fI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729265031; x=1729869831;
+        d=1e100.net; s=20230601; t=1729265963; x=1729870763;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2ujG7zA5UqO+FYt2O4Y3HH9GYNxBYa4vCv9rOHMB0kI=;
-        b=aJtcpPlexXeWw9birmytIfjqCYc3Fijk6MnIZKn11ImP7lt9gXYtEK/fx4oIc5hF4z
-         XpCpJkG2WYxfl5jKrM/6GnDB88K+X/+flpRjKm5rrbbYNlvNkchLQt0zKndutYU4sOay
-         9EE+VBjSfYhxDRAcoenMMnYDPPTJB7TX8RLiX1lqLFCnsFFdsMXi2YiHZo1drSMSn2gm
-         IL3cL5dcNirs0EoXf55DGsCSnvFISZqyq9F+h398vDs1ghmFdI+WKVmRARbVb8qcnW05
-         EUDABRcTt6ZvXxXXR7mB8fKGQjYyQSmbywWVMbBcMsSg3XSeAQbApl3dX6BfEaks2u55
-         vb9Q==
-X-Gm-Message-State: AOJu0Ywq8ECZb5yFtCJmADrH9fUaOdUNc4P/dGHWIP6M88c7Y4iLmz2f
-	DnkopXSmIIvLuZVLRr70LO0h7xC2yOIUOaFsdVq/CYSTTXFfzLf2+xiugaX/I9s=
-X-Google-Smtp-Source: AGHT+IE9lYlbu2klSew/sozdMK+w2vL/0RkYMdMpgfnkCRFosAwu6PfGf4y0odXrA8wa/bMYfWTccQ==
-X-Received: by 2002:a05:6e02:178b:b0:3a0:9fa5:8f1 with SMTP id e9e14a558f8ab-3a3f40bac08mr30599885ab.24.1729265030742;
-        Fri, 18 Oct 2024 08:23:50 -0700 (PDT)
+        bh=jOhIwlho/HfHFju/oIk0L9FVfoRtipr8K1k5tMEW8S4=;
+        b=bjdqw6bZESxj1lqI1VtlxB366ai77n2TUKa5cvKpQg4EXbT0+BgGvhvePZlbpYFrpB
+         QVOkREDMIu411zVQjmiJRCin2ubyBjpCCkkJcY3lpYPcOWtnGuF4P3KIpCppVwKD0Ymh
+         zSFFQHkrqnZgFnthIOWdk7Ey76vaFE99QYYLdrECPZfDJaMIMJaDgVUk8V6HFOoUUEQW
+         uOcr3wHUqT07Ph2MjGxgoaGWKz7dt7f4mt86brZr6JiYqIuzBC2ZhZ2M8/AOq535oz1m
+         994jMfkGH0ZwDEGFjaSKq+xNrjKCwds2917pWZ2Aw+LedGF+Cdun9V88QKBFOyo91nv8
+         ExVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmnERsCVvnt4K0OQ+xX9KjgqyLfZzw9bD4N91c0iO4bupfoSpY9pURGpsJbQZXkQei2KEqE9cTEvTYAQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2mAi70rByoxHPfL5WwTBaqH3slY4ylIha3mUDrCGtweIftXL6
+	KamvZGKLx4SmGoBbAmgiRBuuU5dokT6ytenci3ugEk9kjXc55WJw4jJiXLnMl+g=
+X-Google-Smtp-Source: AGHT+IFfqiAS9ggQMjIGLNW9Cg5NONB155KyHg7OIvgneNWuQmCp1LEfM+7wAzs872RjX2Oeef+Vxg==
+X-Received: by 2002:a05:6602:1551:b0:834:f2d5:c758 with SMTP id ca18e2360f4ac-83aba65ec4fmr245111339f.13.1729265963494;
+        Fri, 18 Oct 2024 08:39:23 -0700 (PDT)
 Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3f814d63csm1219055ab.65.2024.10.18.08.23.49
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ab9d80b94sm47685839f.4.2024.10.18.08.39.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Oct 2024 08:23:50 -0700 (PDT)
-Message-ID: <2cda7742-d454-4dc3-83f3-2a2abf4cc4d6@linuxfoundation.org>
-Date: Fri, 18 Oct 2024 09:23:49 -0600
+        Fri, 18 Oct 2024 08:39:22 -0700 (PDT)
+Message-ID: <3c93eccf-d7a3-40a8-83e3-91daf2d30e37@linuxfoundation.org>
+Date: Fri, 18 Oct 2024 09:39:21 -0600
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -57,152 +58,92 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftest: drivers: Add support to check duplicate hwirq
-To: Joseph Jang <jjang@nvidia.com>, shuah@kernel.org, tglx@linutronix.de,
- helgaas@kernel.org, mochs@nvidia.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240904014426.3404397-1-jjang@nvidia.com>
- <533eb948-a061-4d62-8d89-5edbdaf785e6@nvidia.com>
+Subject: Re: [PATCH 2/2] selftest: rtc: Check if could access /dev/rtc0 before
+ testing
+To: Joseph Jang <jjang@nvidia.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: "shuah@kernel.org" <shuah@kernel.org>,
+ "avagin@google.com" <avagin@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "brauner@kernel.org" <brauner@kernel.org>, Matt Ochs <mochs@nvidia.com>,
+ Koba Ko <kobak@nvidia.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240524013807.154338-1-jjang@nvidia.com>
+ <20240524013807.154338-3-jjang@nvidia.com>
+ <202406201937464fc96b1c@mail.local>
+ <8c92ef18-6648-4348-9008-4f646d8b6956@nvidia.com>
+ <05f24dbb-cfe6-4a75-9382-273c9c734b22@linuxfoundation.org>
+ <202409241931048861ee5b@mail.local>
+ <a9e43219-a4a7-4b78-8c03-c8deee36befb@linuxfoundation.org>
+ <de127207-40ff-4c9d-bed5-37592de4123f@nvidia.com>
 Content-Language: en-US
 From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <533eb948-a061-4d62-8d89-5edbdaf785e6@nvidia.com>
+In-Reply-To: <de127207-40ff-4c9d-bed5-37592de4123f@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 10/17/24 22:29, Joseph Jang wrote:
+On 10/17/24 22:18, Joseph Jang wrote:
 > 
 > 
-> On 2024/9/4 9:44 AM, Joseph Jang wrote:
->> Validate there are no duplicate hwirq from the irq debug
->> file system /sys/kernel/debug/irq/irqs/* per chip name.
+> On 2024/9/25 3:57 AM, Shuah Khan wrote:
+>> On 9/24/24 13:31, Alexandre Belloni wrote:
+>>> Hello,
+>>>
+>>> On 24/09/2024 10:05:43-0600, Shuah Khan wrote:
+>>>> On 9/23/24 23:37, Joseph Jang wrote:
+>>>>> Hi Alexandre,
+>>>>>
+>>>>> Thank you for looking at the rtc patch.
+>>>>> I saw you Acked the [PATCH 2/2], not sure when could we see the patch
+>>>>> in kernel master or next branch ?
+>>>>>
+>>>>> Thank you,
+>>>>> Joseph.
+>>>>>
+>>>>
+>>>> Please don't top post. It is hard to follow the thread.
+>>>>
+>>>>> On 2024/6/21 3:37 AM, Alexandre Belloni wrote:
+>>>>>> On 23/05/2024 18:38:07-0700, Joseph Jang wrote:
+>>>>>>> The rtctest requires the read permission on /dev/rtc0. The rtctest will
+>>>>>>> be skipped if the /dev/rtc0 is not readable.
+>>>>>>>
+>>>>>>> Reviewed-by: Koba Ko <kobak@nvidia.com>
+>>>>>>> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+>>>>>>> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+>>>>>>
+>>>>>> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>>>>>>
+>>>>
+>>>> Alexandre, I can take this patch through kselftest. Might have
+>>>> slipped through my Inbox or the assumption that this will go
+>>>> through rtc tree.
+>>>
+>>> I assumed this would go through your tree, this is why I didn't carry
+>>> it.
+>>>
 >>
->> One example log show 2 duplicated hwirq in the irq debug
->> file system.
->>
->> $ sudo cat /sys/kernel/debug/irq/irqs/163
->> handler:  handle_fasteoi_irq
->> device:   0019:00:00.0
->>       <SNIP>
->> node:     1
->> affinity: 72-143
->> effectiv: 76
->> domain:  irqchip@0x0000100022040000-3
->>   hwirq:   0xc8000000
->>   chip:    ITS-MSI
->>    flags:   0x20
->>
->> $ sudo cat /sys/kernel/debug/irq/irqs/174
->> handler:  handle_fasteoi_irq
->> device:   0039:00:00.0
->>      <SNIP>
->> node:     3
->> affinity: 216-287
->> effectiv: 221
->> domain:  irqchip@0x0000300022040000-3
->>   hwirq:   0xc8000000
->>   chip:    ITS-MSI
->>    flags:   0x20
->>
->> The irq-check.sh can help to collect hwirq and chip name from
->> /sys/kernel/debug/irq/irqs/* and print error log when find duplicate
->> hwirq per chip name.
->>
->> Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
->> [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
->>
->> Signed-off-by: Joseph Jang <jjang@nvidia.com>
->> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
->> ---
->>   tools/testing/selftests/drivers/irq/Makefile  |  5 +++
->>   tools/testing/selftests/drivers/irq/config    |  2 +
->>   .../selftests/drivers/irq/irq-check.sh        | 39 +++++++++++++++++++
->>   3 files changed, 46 insertions(+)
->>   create mode 100644 tools/testing/selftests/drivers/irq/Makefile
->>   create mode 100644 tools/testing/selftests/drivers/irq/config
->>   create mode 100755 tools/testing/selftests/drivers/irq/irq-check.sh
->>
->> diff --git a/tools/testing/selftests/drivers/irq/Makefile b/tools/testing/selftests/drivers/irq/Makefile
->> new file mode 100644
->> index 000000000000..d6998017c861
->> --- /dev/null
->> +++ b/tools/testing/selftests/drivers/irq/Makefile
->> @@ -0,0 +1,5 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +
->> +TEST_PROGS := irq-check.sh
->> +
->> +include ../../lib.mk
->> diff --git a/tools/testing/selftests/drivers/irq/config b/tools/testing/selftests/drivers/irq/config
->> new file mode 100644
->> index 000000000000..a53d3b713728
->> --- /dev/null
->> +++ b/tools/testing/selftests/drivers/irq/config
->> @@ -0,0 +1,2 @@
->> +CONFIG_GENERIC_IRQ_DEBUGFS=y
->> +CONFIG_GENERIC_IRQ_INJECTION=y
->> diff --git a/tools/testing/selftests/drivers/irq/irq-check.sh b/tools/testing/selftests/drivers/irq/irq-check.sh
->> new file mode 100755
->> index 000000000000..e784777043a1
->> --- /dev/null
->> +++ b/tools/testing/selftests/drivers/irq/irq-check.sh
->> @@ -0,0 +1,39 @@
->> +#!/bin/bash
->> +# SPDX-License-Identifier: GPL-2.0
->> +
->> +# This script need root permission
->> +uid=$(id -u)
->> +if [ $uid -ne 0 ]; then
->> +    echo "SKIP: Must be run as root"
->> +    exit 4
->> +fi
->> +
->> +# Ensure debugfs is mounted
->> +mount -t debugfs nodev /sys/kernel/debug 2>/dev/null
->> +if [ ! -d "/sys/kernel/debug/irq/irqs" ]; then
->> +    echo "SKIP: irq debugfs not found"
->> +    exit 4
->> +fi
->> +
->> +# Traverse the irq debug file system directory to collect chip_name and hwirq
->> +hwirq_list=$(for irq_file in /sys/kernel/debug/irq/irqs/*; do
->> +    # Read chip name and hwirq from the irq_file
->> +    chip_name=$(cat "$irq_file" | grep -m 1 'chip:' | awk '{print $2}')
->> +    hwirq=$(cat "$irq_file" | grep -m 1 'hwirq:' | awk '{print $2}' )
->> +
->> +    if [ -z "$chip_name" ] || [ -z "$hwirq" ]; then
->> +        continue
->> +    fi
->> +
->> +    echo "$chip_name $hwirq"
->> +done)
->> +
->> +dup_hwirq_list=$(echo "$hwirq_list" | sort | uniq -cd)
->> +
->> +if [ -n "$dup_hwirq_list" ]; then
->> +    echo "ERROR: Found duplicate hwirq"
->> +    echo "$dup_hwirq_list"
->> +    exit 1
->> +fi
->> +
->> +exit 0
-> 
-> Hi Tglx,
-> 
-> I follow your suggestions https://www.mail-archive.com/linux-kselftest@vger.kernel.org/msg16952.html to enable IRQ DEBUG_FS and create a new script to scan duplicated hwirq. If you have available time, would you please help to take a look at new patch again ?
-> 
-> 
-> https://lore.kernel.org/all/20240904014426.3404397-1-jjang@nvidia.com/T/
-> 
+>> I will take it through my tree then. Sorry for the delay.
 > 
 > Hi Shuah,
 > 
-> If you have time, could you help to take a look at the new patch ?
+> Thanks your help.
+> May I know when can we see the patch on master branch ?
 > 
 
-Once Thomas reviews this and gives me okay - I will accept the patch.
+Did you check the mainline:
+This is already in  Linux 6.12 since rc2
+
+commit 1ad999870a86d58246b6a614a435d055a9edf269
+Author: Joseph Jang <jjang@nvidia.com>
+Date:   Thu May 23 18:38:07 2024 -0700
+
+     selftest: rtc: Check if could access /dev/rtc0 before testing
 
 thanks,
 -- Shuah
-
 
