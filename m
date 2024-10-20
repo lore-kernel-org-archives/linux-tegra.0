@@ -1,202 +1,110 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87C0757F3;
-	Fri, 18 Oct 2024 19:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89286197A6C;
+	Sun, 20 Oct 2024 19:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729280054; cv=none; b=KsJkjKvrogWN82dJhZDBhdaKR6vBvlwBPzTwgr2Q5T33Y1NN1/m5qr1gS2BaDRNlpjQKK706KH9td7CY4NwiOzsoqyU1D4DOCnV6JQ71FfEJDqj71IOg84aM5VSI5wzwDIHWVA7VmpOJk4UbSIHPinrmYOvVCh9p8kk+Q8TtaMk=
+	t=1729452351; cv=none; b=b9dxzLiA3CBxc67HwddgMsTNirbXo1JVBWgmvaR0cCs5aYt7lP/Zz+erih//bmSdvXl4asoFLGBcFYdy3DqR27Cm0ogJILnO8T2dndvjPxuxTSKGS6NZQUMWtnk2yXnHotguZNVYLYA9ECGTwiHr4ZeVAYcuOcKMVPzDTARPzho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729280054; c=relaxed/simple;
-	bh=PA0c7dC1ikcGJw/dBRDgPk7KxYeY0mCH5fO+eV2W+Ew=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=X0rj92QTikiPs9RtozSaTcA2ROec/PNF31ihu1G4efo+9iVXHZUGB93HmJteXneM/kxTDEy3Xog4VDoO+8C12z63NStQe5cdxpHeu0bxN1llOR7e6d0gS/RUxKmE/W8PnnXmLDYIUdDhdPDExR4SpKZBdMFYDXecV/zBt5MoYiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vDj8XJFC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729452351; c=relaxed/simple;
+	bh=eTrWZfj3b1SV9DAWDUfBG8mJCGcSqYAFT7ITaERAMtw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SK7TreoGPgkC/fbb4KgAWr/p1m93I6QvSYMWuTmSU6sS0aykWvL6hxWTSyToj+QdMaIIiSsoIFyidKOm99WS4Zg5nKiwW2+oiaRD5fMiax6E5j3pVQOT9iWh8YgBfVsbla9XrjvZnZmnFYUrfRcwjwAzO/GQAqaz5TbSieblzM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mFm8vy0Y; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vDj8XJFC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49604C4CEC3;
-	Fri, 18 Oct 2024 19:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729280053;
-	bh=PA0c7dC1ikcGJw/dBRDgPk7KxYeY0mCH5fO+eV2W+Ew=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=vDj8XJFCc8hIXbVAKXDrjmZA2OdooYyLo6C5Bmap1gc7nq/Zr4H5bI2KEJJRD0wr/
-	 7wvhsTXSrrYY3e9W2zPl88EYBq5Fi/73q0O9CO2n5zGgW92u2d3Mv/3ul8SeoWCQj3
-	 CEi524wYbKRWxqYqfxOJz4mOanOCfxe4gAaIqVP3itTinovQVNtkuOrnXG8G01Arfv
-	 DXrsO2Ng3thvlok1ifhOQwKZGnfJMswdhk+rPqwunk5nnAV2caTeEZBQHERUTIBi6z
-	 j5JVauzmUKEbz/2YE1UzlcpLGM6ON7sRvLYywTwAvJV9uLjJWha/EpHOOThnl07mQh
-	 TvcepjAhmQjZg==
-Date: Fri, 18 Oct 2024 14:34:11 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Joseph Jang <jjang@nvidia.com>
-Cc: shuah@kernel.org, tglx@linutronix.de, mochs@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFm8vy0Y"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1ecbso4659103a12.0;
+        Sun, 20 Oct 2024 12:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729452348; x=1730057148; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fa82SFshV6nEwAVMBdimXeinCih4JEM3G6NXQJF+Z+A=;
+        b=mFm8vy0YcvjId4mNZQux1MNPmF6vT2vSTGbj9dE/go+RsTa9VkmwXLBQXpYrsCb7vB
+         R29Id+LhDu1kc3XCUDp5L3Dlm698+SGc7sL19jopZZLabx3DkuitPeX7Y5rOma2hGZaF
+         5Z/rPSz9io6CdZ+ADJNxKeLxkTRlpeIC8QHbX1T2GU7SzQC2EJgUiNmXcHy7M1EJo+35
+         bEIBSrMGGtLQC2QTY/XrS15uafq0Y0W7bg2t6xEW+tUXFD12g+Rgo8kn2SNKyMEQVbqq
+         Hzyg5yldutsMJFqUnh+dhCQ7nFtwM8X6TUHFX93iK2Q5RvxPlika00aulZR5aBis1UFc
+         RAOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729452348; x=1730057148;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fa82SFshV6nEwAVMBdimXeinCih4JEM3G6NXQJF+Z+A=;
+        b=cHF/J5LJZFXJXPWyc988GiziC0cI258NtqrH3z9bs+WGkA/0CWosOpy+yMMsAVbeH3
+         SPaP9IIJQJywElo2T5kWl6AHKZUczSfj13JV6i2koDV2c9pVNhyF7LRUO+acQbhSKyR8
+         fQxq1UEhm3/RNqalICcyux70ZPQjlQOgiEoel4UUydprmBTCYXzDyBfqUIca9Yo+tMf8
+         nc7dl0IQGCxxjwgYdxldqn1blHpDFXeRFaXkbv2nnAbCI0bESA/Mlf6j3tS8487IC+FO
+         cN6q8S0XQqRdKfe9OI3H3/edW8znnq5hVNewayvsR2C2k8erys8Q0cj/38xRcZ4yCgSA
+         VqOw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5iDPJf57NsUJWB+mDiUMzw46JzAHdF18CKZqNmjFCy171OE+/4LtdhvniRuMiUEEiJrAPIUQEFwVnow==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWM4XRu6gCu2TYqCSt6Hdxk5w7jCz74AJNRyt6Val+20vB6VZh
+	wkkj/E6QalCkHRhKENjcu+6VclizmOvBgl6ZpipDnkNyPXzPR9oHxRpGdPUY
+X-Google-Smtp-Source: AGHT+IFLPB1z9G26SqagG7Lh3/KIYmfKr6AU0oKoTjb+qwUIyo1gYVk/ntSeTAE/ZLpn7bY+JzUVxw==
+X-Received: by 2002:a17:907:7f15:b0:a99:43e5:ac37 with SMTP id a640c23a62f3a-a9a69a73b51mr928910166b.15.1729452347520;
+        Sun, 20 Oct 2024 12:25:47 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:2f0e:c501:f600:f753:f6c2:4f3a:5d50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a915599dasm117957366b.118.2024.10.20.12.25.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Oct 2024 12:25:47 -0700 (PDT)
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
+	Akhil R <akhilrajeev@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
 	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] selftest: drivers: Add support to check duplicate hwirq
-Message-ID: <20241018193411.GA758389@bhelgaas>
+Subject: [PATCH 1/2] crypto: tegra - remove unneeded crypto_engine_stop() call
+Date: Sun, 20 Oct 2024 22:25:31 +0300
+Message-Id: <20241020192532.4008-1-ovidiu.panait.oss@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240904014426.3404397-1-jjang@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 03, 2024 at 06:44:26PM -0700, Joseph Jang wrote:
-> Validate there are no duplicate hwirq from the irq debug
-> file system /sys/kernel/debug/irq/irqs/* per chip name.
-> 
-> One example log show 2 duplicated hwirq in the irq debug
-> file system.
-> 
-> $ sudo cat /sys/kernel/debug/irq/irqs/163
-> handler:  handle_fasteoi_irq
-> device:   0019:00:00.0
->      <SNIP>
-> node:     1
-> affinity: 72-143
-> effectiv: 76
-> domain:  irqchip@0x0000100022040000-3
->  hwirq:   0xc8000000
->  chip:    ITS-MSI
->   flags:   0x20
-> 
-> $ sudo cat /sys/kernel/debug/irq/irqs/174
-> handler:  handle_fasteoi_irq
-> device:   0039:00:00.0
->     <SNIP>
-> node:     3
-> affinity: 216-287
-> effectiv: 221
-> domain:  irqchip@0x0000300022040000-3
->  hwirq:   0xc8000000
->  chip:    ITS-MSI
->   flags:   0x20
-> 
-> The irq-check.sh can help to collect hwirq and chip name from
-> /sys/kernel/debug/irq/irqs/* and print error log when find duplicate
-> hwirq per chip name.
-> 
-> Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
-> [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
+The explicit crypto_engine_stop() call is not needed, as it is already
+called internally by crypto_engine_exit().
 
-I don't know enough about this issue to understand the details.  It
-seems like you look for duplicate hwirqs in chips with the same name,
-e.g., "ITS-MSI" in this case?  That name seems too generic to me
-(might there be several instances of "ITS-MSI" in a system?)
+Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+---
+Cc: Akhil R <akhilrajeev@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-tegra@vger.kernel.org
 
-Also, the name may come from chip->irq_print_chip(), so it apparently
-relies on irqchip drivers to make the names unique if there are
-multiple instances?
+ drivers/crypto/tegra/tegra-se-main.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-I would have expected looking for duplicates inside something more
-specific, like "irqchip@0x0000300022040000-3".  But again, I don't
-know enough about the problem to speak confidently here.
+diff --git a/drivers/crypto/tegra/tegra-se-main.c b/drivers/crypto/tegra/tegra-se-main.c
+index f94c0331b148..af11a0b5194d 100644
+--- a/drivers/crypto/tegra/tegra-se-main.c
++++ b/drivers/crypto/tegra/tegra-se-main.c
+@@ -312,7 +312,6 @@ static int tegra_se_probe(struct platform_device *pdev)
+ 
+ 	ret = tegra_se_host1x_register(se);
+ 	if (ret) {
+-		crypto_engine_stop(se->engine);
+ 		crypto_engine_exit(se->engine);
+ 		return dev_err_probe(dev, ret, "failed to init host1x params\n");
+ 	}
+@@ -324,7 +323,6 @@ static void tegra_se_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_se *se = platform_get_drvdata(pdev);
+ 
+-	crypto_engine_stop(se->engine);
+ 	crypto_engine_exit(se->engine);
+ 	host1x_client_unregister(&se->client);
+ }
+-- 
+2.39.5
 
-Cosmetic nits:
-
-  - Tweak subject to match history (use "git log --oneline
-    tools/testing/selftests/drivers/" to see it), e.g.,
-
-      selftests: irq: Add check for duplicate hwirq
-
-  - Rewrap commit log to fill 75 columns.  No point in using shorter
-    lines.
-
-  - Indent the "$ sudu cat ..." block by a couple spaces since it's
-    effectively a quotation, not part of the main text body.
-
-  - Possibly include sample output of irq-check.sh (also indented as a
-    quote) when run on the system where you manually found the
-    duplicate via "sudo cat /sys/kernel/debug/irq/irqs/..."
-
-  - Reword "The irq-check.sh can help ..." to something like this:
-
-      Add an irq-check.sh test to report errors when there are
-      duplicate hwirqs per chip name.
-
-  - Since the kernel patch has already been merged, cite it like this
-    instead of using the https://lore URL:
-
-      db744ddd59be ("PCI/MSI: Prevent MSI hardware interrupt number truncation")
-
-> Signed-off-by: Joseph Jang <jjang@nvidia.com>
-> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
-> ---
->  tools/testing/selftests/drivers/irq/Makefile  |  5 +++
->  tools/testing/selftests/drivers/irq/config    |  2 +
->  .../selftests/drivers/irq/irq-check.sh        | 39 +++++++++++++++++++
->  3 files changed, 46 insertions(+)
->  create mode 100644 tools/testing/selftests/drivers/irq/Makefile
->  create mode 100644 tools/testing/selftests/drivers/irq/config
->  create mode 100755 tools/testing/selftests/drivers/irq/irq-check.sh
-> 
-> diff --git a/tools/testing/selftests/drivers/irq/Makefile b/tools/testing/selftests/drivers/irq/Makefile
-> new file mode 100644
-> index 000000000000..d6998017c861
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/irq/Makefile
-> @@ -0,0 +1,5 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +TEST_PROGS := irq-check.sh
-> +
-> +include ../../lib.mk
-> diff --git a/tools/testing/selftests/drivers/irq/config b/tools/testing/selftests/drivers/irq/config
-> new file mode 100644
-> index 000000000000..a53d3b713728
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/irq/config
-> @@ -0,0 +1,2 @@
-> +CONFIG_GENERIC_IRQ_DEBUGFS=y
-> +CONFIG_GENERIC_IRQ_INJECTION=y
-> diff --git a/tools/testing/selftests/drivers/irq/irq-check.sh b/tools/testing/selftests/drivers/irq/irq-check.sh
-> new file mode 100755
-> index 000000000000..e784777043a1
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/irq/irq-check.sh
-> @@ -0,0 +1,39 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +# This script need root permission
-> +uid=$(id -u)
-> +if [ $uid -ne 0 ]; then
-> +	echo "SKIP: Must be run as root"
-> +	exit 4
-> +fi
-> +
-> +# Ensure debugfs is mounted
-> +mount -t debugfs nodev /sys/kernel/debug 2>/dev/null
-> +if [ ! -d "/sys/kernel/debug/irq/irqs" ]; then
-> +	echo "SKIP: irq debugfs not found"
-> +	exit 4
-> +fi
-> +
-> +# Traverse the irq debug file system directory to collect chip_name and hwirq
-> +hwirq_list=$(for irq_file in /sys/kernel/debug/irq/irqs/*; do
-> +	# Read chip name and hwirq from the irq_file
-> +	chip_name=$(cat "$irq_file" | grep -m 1 'chip:' | awk '{print $2}')
-> +	hwirq=$(cat "$irq_file" | grep -m 1 'hwirq:' | awk '{print $2}' )
-> +
-> +	if [ -z "$chip_name" ] || [ -z "$hwirq" ]; then
-> +		continue
-> +	fi
-> +
-> +	echo "$chip_name $hwirq"
-> +done)
-> +
-> +dup_hwirq_list=$(echo "$hwirq_list" | sort | uniq -cd)
-> +
-> +if [ -n "$dup_hwirq_list" ]; then
-> +	echo "ERROR: Found duplicate hwirq"
-> +	echo "$dup_hwirq_list"
-> +	exit 1
-> +fi
-> +
-> +exit 0
-> -- 
-> 2.34.1
-> 
