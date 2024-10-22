@@ -1,264 +1,261 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2042.outbound.protection.outlook.com [40.107.236.42])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20C62E406;
-	Tue, 22 Oct 2024 15:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729611386; cv=fail; b=arSKsJxChvig3g/4a7/qk2Krnm8uYjFnWITXC3Rc+3rR6wao8CFAHBL097Y7k1EvWmGFfsI1EuIJoQXwdXSHEPkthxpZs3vg8J6yl0VIPDXNJBkfJ4++rD01t9AzTYXW66NE4IyU3ofIaeluP8hMwuO94KmY9SS5g2WCN9/ax+o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729611386; c=relaxed/simple;
-	bh=PrfCzRi86OUkkfW/zgoMG5OXoXydVp46oD8IT6yqBec=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ajVgTcI0kphzSGIO6JOxqH1NxHzJp0aXvwsy+FVqJgR8JD4tjDBMsSqxCGnYEveuf97PzjMErZ4vTIPXlefXzIZDWTYb8Rruh7spCIahA0ruK/7xt6dHZ0zoDEFYlqAFd0LpgtzLp4FcRf0+rbGED1w1RQUIXlGGhdKKQG86hZI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ksUwNtvu; arc=fail smtp.client-ip=40.107.236.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF1A1BD4E0;
+	Tue, 22 Oct 2024 16:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729612922; cv=none; b=u4UHXCybuiSIuv4+jY/iCd2Ih4Dwxq8yDoEVB/l7HWIYI/bpQgcFzUVJi08bgBmiontlqX9+5IUC2ugum/TMKuUWiwyB1ExrHSEyL3TE811gbikKNo1HQ50gi6eJva3eKc1lV3R3qfwySPvEvWxgc/3DpkytF5IG1rlEOVhECg0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729612922; c=relaxed/simple;
+	bh=ewumsz+GK1jAcVcRM+HBUcNMz73tC/m0TcrqhvMpLFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o8H/zuiqUXKptnf+qNcduzjK6PZSdKr0MI7NsoJ8iL6lFHUTWMzoGguYkpilin8mH5eXh3wQeLI2z7mLrnBHDxHv2lj+php6LQujobOA0TMDcUQyIBUpxmbHFKLu5GqsjBYS7DaAqlzTGamQVmhkRLkssF9h3FGwfQlHs6Cy+Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pegB8CoT; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ksUwNtvu"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FXAMYiz+SyV1ChdHqXFmQrhZuQiJvSohxcQHcMsKnd0A77iblCbzLt0D3Thfnw8GGkv3aTZkZPveniT8IlEMUAb7L0CUtIz685LqdEVga+h5L/hhyq5ORi7CEKc6oDtaJ0gUpoc+8MqvJx2uN+H88FkEgFgwDl6WDI4By3F9b9O3/4Xdp9DKaIQcFtU5omE+t6z8Ui4VDTetMywTwbi0TlLeYKfpRdLuPdD6KXkY3PkklZh78jXw6LyY0Ck1Bu9xRPqGfvVyHmIb8IpGh1CrTnwg4Nt2+Vp5m4h2f0NiMwaud+Ru8Q0wKNCRXaFxv5ojcdALLHyrfu4JLP5y9ZgDfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hUjysQuPdZ6wwDfCzitq1Kd/P5NOKSLTFCwgqljWRCQ=;
- b=RlFBo+5iZt3dhwX5w5/FsDet9TARzrMCSBClBXmbIcytHpPODSZWP2VwCMX4Bzaq06dPcWkR2F+2C6L20k6QQG8f68j+xVL01GelXIJfp2PtzYePRwr9xYicHcnNj8T/crWeZ1sbMfSGifDBi9Daj9iSqlHvbYV7AsXfqHHBsPKAhZEyAwsFqnuhOyMjC45d5FPgOBaCO0qcXWur7qsIziQ7vCtyzxiwFmN+c7F+4ecs4ailJSz3OXPGG1Eowp5IHpRHErhzuqy39c45E+NtqDuRp54m47jwQ+tsDYBJ0VT5EeDYZ8QZUpdFlH5+h3X8LFOwlvFw+InQ6y1MPhi02g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hUjysQuPdZ6wwDfCzitq1Kd/P5NOKSLTFCwgqljWRCQ=;
- b=ksUwNtvup5PRPjV/K2WTe1LhdSklmgsbnVjtXB4lp5xyzBolhQ/VTk/YgKSaAWJDc7dNjajycaT2vvily+E57xDgUciMJg3cTuudNR6E6z68KyBJrCZ1Lecin3Q3u3qCxIYRidlhj3msv6epx35lWoo26TkOtj1Tg4+xN8nFSc3pu83hHaiL06u5w7Be+G8y0WgV6oVCpUi3UMbsc5JFqBjqNYuIgUfdAL/Qo3c5erae5dCN0CtAkeL+fpRojwNTh11yA6Fph5zGM49fEgCckbNcju1mSsl+sGr2nvI0Yxu3iZ7KRBcKNi3S/13cjtuqAnRatoLB4W3mbVxZHoqH5w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by LV2PR12MB5990.namprd12.prod.outlook.com (2603:10b6:408:170::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29; Tue, 22 Oct
- 2024 15:36:20 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%5]) with mapi id 15.20.8093.014; Tue, 22 Oct 2024
- 15:36:20 +0000
-Message-ID: <8b1059d8-7f28-4f97-9fb6-1d3c66cc3713@nvidia.com>
-Date: Tue, 22 Oct 2024 16:36:14 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 42/43] drm/fbdev-generic: Convert to fbdev-ttm
-To: Thomas Zimmermann <tzimmermann@suse.de>, daniel@ffwll.ch,
- airlied@gmail.com, deller@gmx.de, javierm@redhat.com
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20240312154834.26178-1-tzimmermann@suse.de>
- <20240312154834.26178-43-tzimmermann@suse.de>
- <1094c262-9d39-4a7b-bede-dc927cd1f52a@nvidia.com>
- <279c7b9b-9973-4eab-8321-a3bc23c97550@suse.de>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <279c7b9b-9973-4eab-8321-a3bc23c97550@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LNXP265CA0039.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5c::27) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pegB8CoT"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 205A11C000B;
+	Tue, 22 Oct 2024 16:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729612917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZlVEyjHwbz0slojlLbzr1PpnHBXIeHtm+szXTJChAAU=;
+	b=pegB8CoTggveMjIXnxFvxx8DNAzBeLZVZ/coKMtYdZV6n2tea0u9VOHwlVNUo24WX+5D6O
+	63SAgaM/7MVjDxAT9HmfY/XDGFDDIrFFc7wW+ie28KvxFKg7aGH9r1yFff20QAjjKO4Q9i
+	j5069MqPLT8V420i7Ajbp4DxzcfK0qX1yQ9qy5FMGY/mOFcGtzu3ySSbKk1l1Ro7A0+zic
+	+m+EF8LnVN6GfPCU0+entlecW+rztWOelNEkatHp0EUHmukzOT2wqcZZLgeTRfusR9O3VW
+	Wo4vJW+CnqVSCm3QLsFEzDRCgBvMrXExah+7Q5qNVwo5AHsoKdUPCNX6kDoUYQ==
+Date: Tue, 22 Oct 2024 18:01:56 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Joseph Jang <jjang@nvidia.com>
+Cc: shuah@kernel.org, avagin@google.com, amir73il@gmail.com,
+	brauner@kernel.org, mochs@nvidia.com, kobak@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] selftest: rtc: Add to check rtc alarm status for
+ alarm related test
+Message-ID: <202410221601561f631bc7@mail.local>
+References: <20241021032213.1915224-1-jjang@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|LV2PR12MB5990:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6b132a78-dd6e-4c2e-9ba7-08dcf2af46b3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R3libGM5cWh3VkhOekRtdmU1UnovRXhlaFJaWkwrdjl5K1VEZmFtM0M0ZjBT?=
- =?utf-8?B?MVBXRVdJYjZBK2hqcHMyZ3I4Q09XaW1JZ0hSNmxqZmpsd3Bwd21mOGtod2ty?=
- =?utf-8?B?QUVzMlRJYUdheHRkWjdGYnBCMmt2UCtjRjI3UWpWZWlwS2Y4SmZZbkxOVEM3?=
- =?utf-8?B?L3pGZUo5N2dYVUpaSmUweGVMNHR6a2VYblRiN0pyK0xFRFhSMlpTbnNwYXhm?=
- =?utf-8?B?WWVZdTBvRFJTYjh5ZVBpZmJQNWJSR0FyNksrcFVIbmhPb2duT2xFczFGMUlJ?=
- =?utf-8?B?MjM0T2liQXBJZ3g5Vmg3Y1M5Mi9aOWdYMHhsTmJIZk9Xb0VKbUg0MFpnQnI5?=
- =?utf-8?B?aVV6N2VDTThmeFg4aHA4clcrakx3SHRvQ1k4LzBOMWY1c1RkQS92MGl0TzZl?=
- =?utf-8?B?QWdTM0dTTGkvZmo2am5WZlg0RHA5eFUvaGNNQlNqT3VYVXMzMlJnZTlvTFAx?=
- =?utf-8?B?L2lVOHZ6aFNyUUc5SEdVZXR5RlR4ZTVRMGxBNmYwaEFmbFpUdjc5NXFaWkls?=
- =?utf-8?B?TmVBZVhhZVVpOUNhS2daZHEwSGFBbkpyUXlyNnF2aENiT1lwdXlKMVpKR3ZO?=
- =?utf-8?B?Nnozay9yL3ExYXI2SnhZRDhJOGdHVlNuRGVpRGhLeWxIUHNmVnlPa1oyRWJ3?=
- =?utf-8?B?eVIrVW5ZSDNTUXI4Nkx0R2I4T1MyU2x1T3IvMW1QVnh2ZVJxbEVvZU9ZMGpG?=
- =?utf-8?B?ZlNVREcvcTZyMXlaZmtpWHBaTGw1R1ozUjY5NUM0ZENUTGJzWE94cW1GU1N2?=
- =?utf-8?B?bXlKVTc5ZE5LbHVBRzF5MWdxbEs2akhxaVhVSHhqQmFndm9yMFBTTVJhT0E2?=
- =?utf-8?B?ZXp5a0FoV2ZDM0RsYU5URE8rSURyTjlyZGI3cnZRVjRhOUNxZVlQYW1tZ0to?=
- =?utf-8?B?Z2ppZEpGaDVrcmYwK2RIbVJ2OHhDaEtUZ0h0aXRNdUNZcUIyR2ZHZzVxdk1L?=
- =?utf-8?B?YlRMWTFjSGYrWU9xQ0RqeG1zbFFReEtGZjd1ZXdPcWxmZ2ovUEhZQWpCdXBt?=
- =?utf-8?B?RjlsMVZMbmV3cytra1g3VndGSW1CcW15cnBIelZJRmhtTDI1YTRreDB3MmNp?=
- =?utf-8?B?RmZVQXJLOUpoc1dxOVE5c0Y2aFFZN0h4ak8rQ29IckFZVm9CRDJ1ckVGRDVE?=
- =?utf-8?B?enhYV1VRQVo1QnJkc2Y4bS9RQU9WWDJEWk43azlHeHhYNTA2bGZKUDByQVh6?=
- =?utf-8?B?SXRkVG83VE1VQWliak9Zd3VQUk5BL1FVV1FjQ0NjenNuMzU1a3IyeXp1bVRj?=
- =?utf-8?B?TVBlWFVhZEVDaHVFZFRNZXEyK295Z0pnUENMR1Q0aU9RanlZeFpSNXNpbmF2?=
- =?utf-8?B?aDBJOVRKY0dScG9aY0I1bjBZQ3V5Tkt5U1JCc2d6S2NPOUZIek9iK2RReUV1?=
- =?utf-8?B?M214NGorZjI2WVpPYncxdW9QbTB0VEhoRnMzODZPaEtpSTJWd3R5TTVmM1cr?=
- =?utf-8?B?UGdOb0pzdG1GWTVGd1kxZzViY0o2blBuU2MvazBGQllXTkZneXZKKzRmSXND?=
- =?utf-8?B?ck91TGMvd0pGNml0OENFWTBGS1V5OGhQanEyQXVDSFlRK2tCdmRFYXdKS1dQ?=
- =?utf-8?B?RjU2Mmp0d0s5cm02RGMyRzA5dWxBdXlETmZqeGo4c01HbThhR0RRc1orUW9Z?=
- =?utf-8?B?RWVWUTBsRUVmUFM5enptVThWUzdtelFvWFNtSXdndjJld3FpTy9EMklKUkxO?=
- =?utf-8?B?VDJXa2pmang2Y1VJclRpUjc4cGFiSWhCVnNSNDlTVHlQYWhINS9ZbXhvNVY1?=
- =?utf-8?Q?ZaB3ck9YsYrql8BCdAgoAaeUiWdACkRV1DMlt17?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OFJXa2xHZUt6OVE2czd1K1QzY1ZRbGc3MWdxWVROV2c3ODVjeVh1V3c1UEdS?=
- =?utf-8?B?QktVNURrVWx4OE5udjcxNmtpS3dkQnJjSU5PdkMyZmsrVFgyajVCayttV2Va?=
- =?utf-8?B?WDZJOXAwS3BRTFprUUI4cDA3dUpWMTJKSzloYnNQN3R6UXZVOUptQU9CbzBL?=
- =?utf-8?B?MVFVVlczdW5tQUl4ODJ3UDBkMmRKNnlVeThLVVFQYldENUtkb0hOWlBqaGE1?=
- =?utf-8?B?dTJLcjBqcm5GUXBnOHpyRDB6bG9EQi9WWlRtSURGaGFxUXRSY3JEdTljem9X?=
- =?utf-8?B?T09QM1BVRVNSbndDZVc1N0VySHRDK045aU1Sem9JUW9YQ0M5bzI1eHlQUThJ?=
- =?utf-8?B?cEZ0OXo5RG45TVg0TDhka29CNDNxUlBuRld1SWtUb0hnVnFpM2RBSlRTdkFm?=
- =?utf-8?B?d00yRmtCWlNPMnVtTGFxWkRveXlZbzI2akI1RlRLMVovYm1WeVZla2I3NnBX?=
- =?utf-8?B?VTd3RVhSTkRHcHVManRIWnZPSFBFdGpyUE14NE4wRVBUd25HemxMUndNTVdo?=
- =?utf-8?B?MWxIUEdWbjlJNU1Tb2c3TzVHMFlvRkYxS2o5WHg4MkxCMEpkOXU0WjJSTTRQ?=
- =?utf-8?B?R0RnaUFxejcwOXdHQUdBM1JBQ2VWNTZJdXJZVzVSOVExSS9nSGpyMndnWFFE?=
- =?utf-8?B?S0JjMUczQWdycWQwNUVRWVdWb21idjlPSWFaeHBSbG9oZExxTEMwNCtiMEo3?=
- =?utf-8?B?cUVVK2hWSkZXbERhS2NzUERKQVN6V1VHNWpqUUFoYk0vYXpuVEQ3aUhBZU9B?=
- =?utf-8?B?YWl4TUJ5RjZTK0tLMUFIVjlmMDQ5eTBuVmFqaW4yVFRiQ1hGM3BBRzVEbWY3?=
- =?utf-8?B?aFpIckxWMTRqOHVwdThTN1V6SEJUL1puVWg2ZXpPOGNlZWJUOEJvRHFpR3NP?=
- =?utf-8?B?NjlCVW5HNWlaSGhXZUZOZitVRXQ3SzdReVl2aGFON0VNaXNRcE4yeWJSenB6?=
- =?utf-8?B?cG5IbW82YkJqMjl1eGpPWkNpZld0ak9TN2t4dkxhVkdqdWhJdng1NmI1WHpt?=
- =?utf-8?B?cCtkQVBHWk9LYnpEbWMwa1I5Uy9KZnF6VXdWU2NHNDhqSVVQMVpXclJmblE3?=
- =?utf-8?B?bms2YzVwQ2tYQ1NCVjZCYkJuSWNDdUUycVIxZUhhcE92a0dwVWFBQ0lwK2My?=
- =?utf-8?B?NUJlY2N1UWRLczZ6Yko3VGNyRmpPUjRBQllzSk5wQ1IrZjJVeFk5K0dKejJp?=
- =?utf-8?B?VjA2UC92TkMyTmVqVm9lSGdXd2x1SVVmNXBsN1VqcWpNSE91VEk5bUFzRWpB?=
- =?utf-8?B?aDh1RDgzZjhDK3E5Y2U1MUxGeHVudXFGTDN4cXFQYjhUNU4zMFFTeEluVGdl?=
- =?utf-8?B?eHlYR2kzeVZFaUowY3R6Ry9BUGdOOW9yb241NzVPMEgyajJtL2xYWjgrSENn?=
- =?utf-8?B?WkVVUWVhMWRqTGxnVzV3V1lMdHU4MngveTdnNmc4VHZxUUxFaVhzQ0Q1VFVj?=
- =?utf-8?B?anJ4bk5yZStBR3o3VVhGc25VQzhvNTlWK3I0N2p5dmtnSFpyaXZkTzF0YjBU?=
- =?utf-8?B?aUREUS9WN3FyM2NOTHlrdUcwK2VLOWU4SVpNWlpkRkFPckdJZmJnVjVKOTd4?=
- =?utf-8?B?WEM0M25jTkdRbDNkVlhyUEp6TVFnNTNRRHFNbkhUNHo4Z2g5dE55c090NzZq?=
- =?utf-8?B?MVZxckJmZTIwOTVTY1ZSZURMMTVpWS9oM3dHbGh1Q1FsK1gveDJ5eDNacVhG?=
- =?utf-8?B?dmxzZTJ6REJWa1RjQWNXZThPak05RGN2SVZ6VUVhS0FiVTVNRzdpNkZwZ003?=
- =?utf-8?B?SWpsdDNJZ0dNc3ZKVFp3bXRxWDJtbENzU05sV3JIRndHS0NLTWFSR2RSWEpY?=
- =?utf-8?B?M3huaFJWWWEzZ0hrYnVUd0MxUkNxNi9HS2txeERGUVlzOEJaWlFBaEVJaUdL?=
- =?utf-8?B?MHJFS3VkcnRid214Rkdsdk1aMlUxVFRHcGtYS1h6U2Jnb3BkRTJYMk1oNzV5?=
- =?utf-8?B?b2gzODAwU01mdDljUG80U2UrL2FaS1JXUDk5V1dQN2h0ampySEF3ZlFybkdC?=
- =?utf-8?B?UmpmcTJva0Z3Z2gxUkxFQWpJbFBNcmp1VFAxM0taZ3N1UjNQMGJ1TEVXSlZj?=
- =?utf-8?B?L0lxK3hEL29ZRTNCcm1tbVV4dWdYajl2bnZBdUdEdSt6Q3lGN0dZaklySGFT?=
- =?utf-8?Q?0FaFyqoyCI1XpQEZuZljgJzre?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b132a78-dd6e-4c2e-9ba7-08dcf2af46b3
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 15:36:20.3861
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HtcLOJ9k9rOUDjNMYCS2Z2ErAd2usTjSydCY7d6vIrIMZtPFlWdP6oUhJXLl/GDIPUHIJETlGNx3Nu+ESHmV/g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5990
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021032213.1915224-1-jjang@nvidia.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-
-On 22/10/2024 15:55, Thomas Zimmermann wrote:
-> Hi
+On 20/10/2024 20:22:13-0700, Joseph Jang wrote:
+> In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
+> ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
+> skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
+> code. This design may miss detecting real problems when the
+> efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
+> ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
 > 
-> Am 22.10.24 um 15:31 schrieb Jon Hunter:
->> Hi Thomas,
->>
->> On 12/03/2024 15:45, Thomas Zimmermann wrote:
->>> Only TTM-based drivers use fbdev-generic. Rename it to fbdev-ttm and
->>> change the symbol infix from _generic_ to _ttm_. Link the source file
->>> into TTM helpers, so that it is only build if TTM-based drivers have
->>> been selected. Select DRM_TTM_HELPER for loongson.
->>>
->>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
->>> ---
->>>   Documentation/gpu/drm-kms-helpers.rst         |  2 +-
->>>   drivers/gpu/drm/Makefile                      |  5 +-
->>>   drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c       |  6 +-
->>>   .../{drm_fbdev_generic.c => drm_fbdev_ttm.c}  | 80 +++++++++----------
->>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  4 +-
->>>   drivers/gpu/drm/loongson/Kconfig              |  1 +
->>>   drivers/gpu/drm/loongson/lsdc_drv.c           |  4 +-
->>>   drivers/gpu/drm/nouveau/nouveau_drm.c         |  6 +-
->>>   drivers/gpu/drm/qxl/qxl_drv.c                 |  4 +-
->>>   drivers/gpu/drm/tiny/bochs.c                  |  4 +-
->>>   drivers/gpu/drm/vboxvideo/vbox_drv.c          |  4 +-
->>>   drivers/gpu/drm/vmwgfx/vmwgfx_drv.c           |  4 +-
->>>   include/drm/drm_fbdev_generic.h               | 15 ----
->>>   include/drm/drm_fbdev_ttm.h                   | 15 ++++
->>>   14 files changed, 77 insertions(+), 77 deletions(-)
->>>   rename drivers/gpu/drm/{drm_fbdev_generic.c => drm_fbdev_ttm.c} (76%)
->>>   delete mode 100644 include/drm/drm_fbdev_generic.h
->>>   create mode 100644 include/drm/drm_fbdev_ttm.h
->>
->> ...
->>
->>> diff --git a/include/drm/drm_fbdev_ttm.h b/include/drm/drm_fbdev_ttm.h
->>> new file mode 100644
->>> index 0000000000000..9e6c3bdf35376
->>> --- /dev/null
->>> +++ b/include/drm/drm_fbdev_ttm.h
->>> @@ -0,0 +1,15 @@
->>> +/* SPDX-License-Identifier: MIT */
->>> +
->>> +#ifndef DRM_FBDEV_TTM_H
->>> +#define DRM_FBDEV_TTM_H
->>> +
->>> +struct drm_device;
->>> +
->>> +#ifdef CONFIG_DRM_FBDEV_EMULATION
->>> +void drm_fbdev_ttm_setup(struct drm_device *dev, unsigned int 
->>> preferred_bpp);
->>> +#else
->>> +static inline void drm_fbdev_ttm_setup(struct drm_device *dev, 
->>> unsigned int preferred_bpp)
->>> +{ }
->>> +#endif
->>> +
->>> +#endif
->>
->>
->> I recently noticed that with Linux v6.11 it is possible to enable
->> CONFIG_DRM_FBDEV_EMULATION without enabling CONFIG_DRM_TTM_HELPER. Now
->> while this does not currently cause any build issues, I believe that if
->> the function drm_fbdev_ttm_setup() is ever used somewhere that does not
->> explicitly select CONFIG_DRM_TTM_HELPER, then you could get a 'ERROR:
->> modpost: "drm_fbdev_ttm_setup"'.
->>
->> So I was thinking that may be this should be ...
->>
->> diff --git a/include/drm/drm_fbdev_ttm.h b/include/drm/drm_fbdev_ttm.h
->> index 9e6c3bdf3537..5b6723a37caa 100644
->> --- a/include/drm/drm_fbdev_ttm.h
->> +++ b/include/drm/drm_fbdev_ttm.h
->> @@ -5,7 +5,7 @@
->>
->>  struct drm_device;
->>
->> -#ifdef CONFIG_DRM_FBDEV_EMULATION
->> +#if defined(CONFIG_DRM_FBDEV_EMULATION) && 
->> defined(CONFIG_DRM_TTM_HELPER)
->>  void drm_fbdev_ttm_setup(struct drm_device *dev, unsigned int 
->> preferred_bpp);
->>  #else
->>  static inline void drm_fbdev_ttm_setup(struct drm_device *dev, 
->> unsigned int preferred_bpp)
->>
->>
->> The above function has been removed now in -next, but I believe we could
->> have the same problem with drm_fbdev_ttm_helper_fb_probe()?
+> In order to make rtctest more explicit and robust, we propose to use
+> RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
+> running alarm related tests. If the kernel does not support RTC_PARAM_GET
+> ioctl interface, we will fallback to check the error number of
+> (RTC_ALM_SET/RTC_WKALM_SET) ioctl call for alarm feature detection.
 > 
-> We'd turn a linker/modpost error into a compiler error. Likely makes no 
-> difference. And AFAICT every driver that selects TTM also selects 
-> TTM_HELPER. Drivers without TTM should not use this header.
+> Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
+> as optional")
+> 
+> Reviewed-by: Koba Ko <kobak@nvidia.com>
+> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+> Signed-off-by: Joseph Jang <jjang@nvidia.com>
 
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Yes I also noted that all the current drivers select TTM_HELPER and so 
-we don't run into this. However, it still seems a bit odd that we don't 
-expose a proper stub if TTM_HELPER is disabled (especially seeing as 
-there is a stub defined).
-
-Jon
+> ---
+> Changes in v2:
+> - Changed to use $(top_srcdir) instead of hardcoding the path.
+> 
+>  tools/testing/selftests/rtc/Makefile  |  2 +-
+>  tools/testing/selftests/rtc/rtctest.c | 64 +++++++++++++++++++++++++++
+>  2 files changed, 65 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
+> index 55198ecc04db..6e3a98fb24ba 100644
+> --- a/tools/testing/selftests/rtc/Makefile
+> +++ b/tools/testing/selftests/rtc/Makefile
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
+> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I$(top_srcdir)/usr/include
+>  LDLIBS += -lrt -lpthread -lm
+>  
+>  TEST_GEN_PROGS = rtctest
+> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
+> index 63ce02d1d5cc..2b12497eb30d 100644
+> --- a/tools/testing/selftests/rtc/rtctest.c
+> +++ b/tools/testing/selftests/rtc/rtctest.c
+> @@ -25,6 +25,12 @@
+>  
+>  static char *rtc_file = "/dev/rtc0";
+>  
+> +enum rtc_alarm_state {
+> +	RTC_ALARM_UNKNOWN,
+> +	RTC_ALARM_ENABLED,
+> +	RTC_ALARM_DISABLED,
+> +};
+> +
+>  FIXTURE(rtc) {
+>  	int fd;
+>  };
+> @@ -82,6 +88,24 @@ static void nanosleep_with_retries(long ns)
+>  	}
+>  }
+>  
+> +static enum rtc_alarm_state get_rtc_alarm_state(int fd)
+> +{
+> +	struct rtc_param param = { 0 };
+> +	int rc;
+> +
+> +	/* Validate kernel reflects unsupported RTC alarm state */
+> +	param.param = RTC_PARAM_FEATURES;
+> +	param.index = 0;
+> +	rc = ioctl(fd, RTC_PARAM_GET, &param);
+> +	if (rc < 0)
+> +		return RTC_ALARM_UNKNOWN;
+> +
+> +	if ((param.uvalue & _BITUL(RTC_FEATURE_ALARM)) == 0)
+> +		return RTC_ALARM_DISABLED;
+> +
+> +	return RTC_ALARM_ENABLED;
+> +}
+> +
+>  TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
+>  	int rc;
+>  	long iter_count = 0;
+> @@ -197,11 +221,16 @@ TEST_F(rtc, alarm_alm_set) {
+>  	fd_set readfds;
+>  	time_t secs, new;
+>  	int rc;
+> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+>  
+>  	if (self->fd == -1 && errno == ENOENT)
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	alarm_state = get_rtc_alarm_state(self->fd);
+> +	if (alarm_state == RTC_ALARM_DISABLED)
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -210,6 +239,11 @@ TEST_F(rtc, alarm_alm_set) {
+>  
+>  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
+>  	if (rc == -1) {
+> +		/*
+> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
+> +		 * error number if rtc alarm state is unknown.
+> +		 */
+> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+>  		ASSERT_EQ(EINVAL, errno);
+>  		TH_LOG("skip alarms are not supported.");
+>  		return;
+> @@ -255,11 +289,16 @@ TEST_F(rtc, alarm_wkalm_set) {
+>  	fd_set readfds;
+>  	time_t secs, new;
+>  	int rc;
+> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+>  
+>  	if (self->fd == -1 && errno == ENOENT)
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	alarm_state = get_rtc_alarm_state(self->fd);
+> +	if (alarm_state == RTC_ALARM_DISABLED)
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -270,6 +309,11 @@ TEST_F(rtc, alarm_wkalm_set) {
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
+>  	if (rc == -1) {
+> +		/*
+> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
+> +		 * error number if rtc alarm state is unknown.
+> +		 */
+> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+>  		ASSERT_EQ(EINVAL, errno);
+>  		TH_LOG("skip alarms are not supported.");
+>  		return;
+> @@ -307,11 +351,16 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+>  	fd_set readfds;
+>  	time_t secs, new;
+>  	int rc;
+> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+>  
+>  	if (self->fd == -1 && errno == ENOENT)
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	alarm_state = get_rtc_alarm_state(self->fd);
+> +	if (alarm_state == RTC_ALARM_DISABLED)
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -320,6 +369,11 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
+>  
+>  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
+>  	if (rc == -1) {
+> +		/*
+> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
+> +		 * error number if rtc alarm state is unknown.
+> +		 */
+> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+>  		ASSERT_EQ(EINVAL, errno);
+>  		TH_LOG("skip alarms are not supported.");
+>  		return;
+> @@ -365,11 +419,16 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+>  	fd_set readfds;
+>  	time_t secs, new;
+>  	int rc;
+> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
+>  
+>  	if (self->fd == -1 && errno == ENOENT)
+>  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
+>  	ASSERT_NE(-1, self->fd);
+>  
+> +	alarm_state = get_rtc_alarm_state(self->fd);
+> +	if (alarm_state == RTC_ALARM_DISABLED)
+> +		SKIP(return, "Skipping test since alarms are not supported.");
+> +
+>  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
+>  	ASSERT_NE(-1, rc);
+>  
+> @@ -380,6 +439,11 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
+>  
+>  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
+>  	if (rc == -1) {
+> +		/*
+> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
+> +		 * error number if rtc alarm state is unknown.
+> +		 */
+> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
+>  		ASSERT_EQ(EINVAL, errno);
+>  		TH_LOG("skip alarms are not supported.");
+>  		return;
+> -- 
+> 2.34.1
+> 
 
 -- 
-nvpublic
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
