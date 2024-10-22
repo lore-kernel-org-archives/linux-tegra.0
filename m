@@ -1,261 +1,181 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2075.outbound.protection.outlook.com [40.107.223.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF1A1BD4E0;
-	Tue, 22 Oct 2024 16:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729612922; cv=none; b=u4UHXCybuiSIuv4+jY/iCd2Ih4Dwxq8yDoEVB/l7HWIYI/bpQgcFzUVJi08bgBmiontlqX9+5IUC2ugum/TMKuUWiwyB1ExrHSEyL3TE811gbikKNo1HQ50gi6eJva3eKc1lV3R3qfwySPvEvWxgc/3DpkytF5IG1rlEOVhECg0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729612922; c=relaxed/simple;
-	bh=ewumsz+GK1jAcVcRM+HBUcNMz73tC/m0TcrqhvMpLFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8H/zuiqUXKptnf+qNcduzjK6PZSdKr0MI7NsoJ8iL6lFHUTWMzoGguYkpilin8mH5eXh3wQeLI2z7mLrnBHDxHv2lj+php6LQujobOA0TMDcUQyIBUpxmbHFKLu5GqsjBYS7DaAqlzTGamQVmhkRLkssF9h3FGwfQlHs6Cy+Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pegB8CoT; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5DF61C579C;
+	Tue, 22 Oct 2024 17:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729619781; cv=fail; b=UxjTgLALixR3rmwX/69IiAwP3nUb904V54qBcwtk9hY/97GPrKUZLbukzymm9tchgX4CK789hXFU/jlC9Ugo/8CdayIMrjqt3oOmykxm8V7mv3Kb3Du/q2joidHsrQN1KfhBNv4NpPWducQhqE3KoDnnFZHDiUuOhtad2H8a96U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729619781; c=relaxed/simple;
+	bh=Fbj9/hPG7n2qB8Mwk2Mku7qajuvbKG9C9nV23PPn3Aw=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=pVhBD2t4gN5GCz2lyJ32i2ivf5D7KTWzQ4sWHcpGSZW0ldlWGzMnswuYg71t/JEsyNI2tdf5hpJXs+ULoduXI0ePVKk7lVepa+lq+tXCzzJlwdBrVRWtRpVHUa9JVZoTOtzydsuWvUjj5F25mDiKhsRpTjbSm3XC2mzDKyCLLfA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MAo/ETK2; arc=fail smtp.client-ip=40.107.223.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pegB8CoT"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 205A11C000B;
-	Tue, 22 Oct 2024 16:01:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729612917;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZlVEyjHwbz0slojlLbzr1PpnHBXIeHtm+szXTJChAAU=;
-	b=pegB8CoTggveMjIXnxFvxx8DNAzBeLZVZ/coKMtYdZV6n2tea0u9VOHwlVNUo24WX+5D6O
-	63SAgaM/7MVjDxAT9HmfY/XDGFDDIrFFc7wW+ie28KvxFKg7aGH9r1yFff20QAjjKO4Q9i
-	j5069MqPLT8V420i7Ajbp4DxzcfK0qX1yQ9qy5FMGY/mOFcGtzu3ySSbKk1l1Ro7A0+zic
-	+m+EF8LnVN6GfPCU0+entlecW+rztWOelNEkatHp0EUHmukzOT2wqcZZLgeTRfusR9O3VW
-	Wo4vJW+CnqVSCm3QLsFEzDRCgBvMrXExah+7Q5qNVwo5AHsoKdUPCNX6kDoUYQ==
-Date: Tue, 22 Oct 2024 18:01:56 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Joseph Jang <jjang@nvidia.com>
-Cc: shuah@kernel.org, avagin@google.com, amir73il@gmail.com,
-	brauner@kernel.org, mochs@nvidia.com, kobak@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] selftest: rtc: Add to check rtc alarm status for
- alarm related test
-Message-ID: <202410221601561f631bc7@mail.local>
-References: <20241021032213.1915224-1-jjang@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MAo/ETK2"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s0C5/iqvYVUlF+O68SR72NqMJYPkn4RweNI64D3Qr495msgo6Cb8hXGhYgU5oOntF31e3sxNaJlqNuQ+yIZFkxtpjDHs+9EVDLn11r5++g3JtiquCWWRmUCl99St9VTrACXWPvl5uGOWqETjQKgUj9KSBTqJeHUP7Bd4up4q8zVWfZK8rNF/EFTB9DlMPobgaqiHSwiW/g7Sj4pa9FWhe+jqpqJBAxTyIMkjysogxrPLn3wEtLQNy6dJOlrLaK0hZDX33vouyd5G5e6+9KjNSbicEjWp/6do8jIK3QUUTfTGYuXTMInUstGW0cmuY+6TOPDCBqwhBigkZ2Ii/1gx8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z8vy2kx4OyGMwTMQBscz6AY213PZcHqDw/OVNpOsIwY=;
+ b=pbQbdIK/NiX5ygNDgd9ATqs2ckk83kagWNMHfv4vGS+V/xYtBwcZz0dH/EaQJN4rGSezeZz14X1k5+o4XfZFiFTV0pM736euzwzmUsXykv4uWSXMY6iYFrZpc0svXweKk8ZaHFwHmhYLrXkZqra4I7sqYHR5sLR85ULEO3z0T8ND6uqRvI3NVwd0LPY372rCSQHeIgE26Jz1dzLMskajsIvZxfynkfv8R5KKiznMJmGgm98+sJ1OeU4CNMjezMrl85QDBRiQZ4Sb/MjXPK9oc1GIjk+GGOJZH7oAIydbsAO0Ge+4qI/+wqTJBXmXb0yN0yHcnoQaqCoxnWsaPNarbg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z8vy2kx4OyGMwTMQBscz6AY213PZcHqDw/OVNpOsIwY=;
+ b=MAo/ETK2edpT6dJaShlekHKAXtqoB0ajKn9Up6I7N05+/AWtkeqteVp+NhnuVycdWar3sHB9HfzgN1T1+lNJsM1QVUo/399DascF8lpSJuRrsYQssRhszIOLCAAtmLco0PF6c/OflBvl0ARxTtCaxIjmcKGQ4+Two92bEdvRoMh1IiDpvxqUBgukcHz4EKsTsCcHaLggKTRmEIFIN0KbkVyaWDu6ZM13PxvdID8GABcc/pM4ZKRguDngdweVmR8MTf2M8voKCXVuVsVg+VG0q2g0bAwbuuwxYHpF7fyfaDaNDplGT+/m1WoMpuEfSks5Ck+SgMaPvBRUrCPijrnQsw==
+Received: from CH3P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1e8::23)
+ by PH7PR12MB6444.namprd12.prod.outlook.com (2603:10b6:510:1f8::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Tue, 22 Oct
+ 2024 17:56:12 +0000
+Received: from CH1PEPF0000AD7D.namprd04.prod.outlook.com
+ (2603:10b6:610:1e8:cafe::28) by CH3P220CA0001.outlook.office365.com
+ (2603:10b6:610:1e8::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17 via Frontend
+ Transport; Tue, 22 Oct 2024 17:56:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH1PEPF0000AD7D.mail.protection.outlook.com (10.167.244.86) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.14 via Frontend Transport; Tue, 22 Oct 2024 17:56:11 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Oct
+ 2024 10:55:55 -0700
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 22 Oct
+ 2024 10:55:55 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 22 Oct 2024 10:55:55 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 00/52] 5.10.228-rc1 review
+In-Reply-To: <20241021102241.624153108@linuxfoundation.org>
+References: <20241021102241.624153108@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021032213.1915224-1-jjang@nvidia.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Message-ID: <d6ae5bbd-93b8-490c-8baa-e8f85541fdea@rnnvmail204.nvidia.com>
+Date: Tue, 22 Oct 2024 10:55:55 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7D:EE_|PH7PR12MB6444:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54aaf705-ea38-41f7-7273-08dcf2c2d0a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V09Gd1JBcXVqMVdScXVGS1FMMWs1VEZ2Sk9sbmNiSTJtVHhlNVNiY2wrWjNh?=
+ =?utf-8?B?bm9iRitxMU5EN2FaWlpITW9ISmxmWkkxVnUzRG1SMkJEWk1vaHZhUUZzSmlx?=
+ =?utf-8?B?UFBYYVUrUy9GQkExTG9aUWdYZnU1RncwS0x1YTJ5NXJ6TkxsZ2pvRzg0bGFI?=
+ =?utf-8?B?ZnZhVUR5bW5LaHFvYTBjVWN2cEdROTV1MWkwMjJXZGVYQ0xzUnJTYStrR3Bz?=
+ =?utf-8?B?bURtdE9rcldqOWdaT2NHalVnWTlwaDN2c3Y5eUNxQlJSaGx1YWd0U0t4K3ZE?=
+ =?utf-8?B?cUhGUXQ5WWNhaWZsSnplVE1NSGhiQm13a3h0RnJxa3pJejFBMVMvVFV2Nk11?=
+ =?utf-8?B?SW9oSmpxUkhQSnlpUUxqaXMrR2x0K2RTQnQzdjczUmlQQzlYWFZWY2h4TFdG?=
+ =?utf-8?B?Q0hqNzR2MmRpRC80WTVmdklOUDFHV3l4SmIrS3dMZnJERVZOeXBoZEQ5TnNy?=
+ =?utf-8?B?c3l1bUlPcWo5WU1xRytoU01wRnp6bm5zdmVBR21VQTlYUFQ0Z1l5M09BS0xY?=
+ =?utf-8?B?Mk5JTHdxTTBMcFlBMTNkUUNVTnF0MW04Y0Q2Ukp5ZVhReUZkYUxvTTVrZFdI?=
+ =?utf-8?B?MDVFRzhSN1ZQL2NpM2Q5d3VoYWlwSVZrOTBJMmhEV2lTSFFkdnVWYm8zSmRq?=
+ =?utf-8?B?ZStBY2dwNlVobXQzS1E5czJNNUpkenp6ZWNoK1NXOHhlbjlDZVQ5MXZNZExS?=
+ =?utf-8?B?QjE5aVhQd2VnOHViNVh3L0I4dFlab09iQ081ZWIyYllBdEdWYmREQVFSS0hO?=
+ =?utf-8?B?UkJZekJuU0dwL1pLdDVjaDBqSnJhWFJFODArMUpIU3dtN1RGMFFqZjlQemxt?=
+ =?utf-8?B?QVpLUTN3ODNvYzBZeGNuMXdscHZONUJNRW16cHJsMjl6akxNd2RSbXdtdWRk?=
+ =?utf-8?B?bWEzOXo4VlpOdUtwTENKMFp6bzRtTHUvOHljaTVJdjcrZFVSblpaVkZFbnJZ?=
+ =?utf-8?B?cTlveDAxQzlSeDEzcjdrRHhPZGFwdzNuSlpsRm5uQ0FnRHFFUkpWZk81ZjZP?=
+ =?utf-8?B?YTltQnNTRTE2czNzRE1DbjAvVHJvaU5NbjBFTE0ydXBPN2tmREhzd3VDZnpD?=
+ =?utf-8?B?clFuVTdmRjkraHM1U2s4RlIvMUxyb1FSODhkNjZjN0FIOUpPZUprd0FVYktj?=
+ =?utf-8?B?KzhpL2ZjTEg3WGFnZlpsNUNWeXJLYnRHSE9lRkRrQm8wb3NmRlVEeDFiQVZF?=
+ =?utf-8?B?UG1zT1VIQ0owV3Vwa2ZRaGdoYkQ0RVZnajB3SFkvNmZaMWtYb2kxbGZaZFU5?=
+ =?utf-8?B?encxSjZoeDB5WERZdXpsc251UVJiS3JKd2RYYWxaS0ZhNWlSaHM5TDMxZ3Yy?=
+ =?utf-8?B?MUl5ZzVZWXpuZkxOaVc1elRHU0QraHl4NjNVS0tkbG5Md2h2b3VSUDhKYSs2?=
+ =?utf-8?B?TWxxTzM3WWdQYTNHYk5jTzU2cXBDWk9WZi9wRnFPYktXVXk2aDhLY08rTUZw?=
+ =?utf-8?B?dDg1SGs1dkhzRCtvdXJvbmZRL3d6eVpMRWUydjB2ZkJUN1BCNlZkNmFsTkFp?=
+ =?utf-8?B?RHltcHAxK0xxQ21zUHZSNHc3WU9Rc3lqSTFqWFpDMm5hV1hFZWdqUzQxcUYr?=
+ =?utf-8?B?NENoYmt5M0tJbmdhVk9UelhyZ2xyTWgyMkY4L0NOb1RLSll0dGo1WFZrOVVj?=
+ =?utf-8?B?WFQrcldmRW15YnhQWUxSTnMxem1mbi9jOXNTN3hMVktCOWxMRE5SVXZQelcy?=
+ =?utf-8?B?aENzalNjWC8vSW80TU5jWVE0Z1VsTDhsUHN6THdnQXRCNlpwZmEzbkFQQnBx?=
+ =?utf-8?B?b29DNk9QeGtBTlBTU0E1OGpISEFwV0toSm9EclQ0NG5YaFgwdGpKNGZ3NXlu?=
+ =?utf-8?B?YmtUSXVYWWhteUdwd2NNUlcyM2MrN2NBMUJCanZ4bnUyRlVtVE5JZHBrNnN3?=
+ =?utf-8?B?NTNBU1VxRyt0V20wSWRRd3RPTm05TUtTdjRTQnp3NEwrd3c9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Oct 2024 17:56:11.6286
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54aaf705-ea38-41f7-7273-08dcf2c2d0a5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000AD7D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6444
 
-On 20/10/2024 20:22:13-0700, Joseph Jang wrote:
-> In alarm_wkalm_set and alarm_wkalm_set_minute test, they use different
-> ioctl (RTC_ALM_SET/RTC_WKALM_SET) for alarm feature detection. They will
-> skip testing if RTC_ALM_SET/RTC_WKALM_SET ioctl returns an EINVAL error
-> code. This design may miss detecting real problems when the
-> efi.set_wakeup_time() return errors and then RTC_ALM_SET/RTC_WKALM_SET
-> ioctl returns an EINVAL error code with RTC_FEATURE_ALARM enabled.
+On Mon, 21 Oct 2024 12:25:21 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.228 release.
+> There are 52 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> In order to make rtctest more explicit and robust, we propose to use
-> RTC_PARAM_GET ioctl interface to check rtc alarm feature state before
-> running alarm related tests. If the kernel does not support RTC_PARAM_GET
-> ioctl interface, we will fallback to check the error number of
-> (RTC_ALM_SET/RTC_WKALM_SET) ioctl call for alarm feature detection.
+> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> Anything received after that time might be too late.
 > 
-> Requires commit 101ca8d05913b ("rtc: efi: Enable SET/GET WAKEUP services
-> as optional")
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.228-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 > 
-> Reviewed-by: Koba Ko <kobak@nvidia.com>
-> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
-> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+> thanks,
+> 
+> greg k-h
 
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+All tests passing for Tegra ...
 
-> ---
-> Changes in v2:
-> - Changed to use $(top_srcdir) instead of hardcoding the path.
-> 
->  tools/testing/selftests/rtc/Makefile  |  2 +-
->  tools/testing/selftests/rtc/rtctest.c | 64 +++++++++++++++++++++++++++
->  2 files changed, 65 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/rtc/Makefile b/tools/testing/selftests/rtc/Makefile
-> index 55198ecc04db..6e3a98fb24ba 100644
-> --- a/tools/testing/selftests/rtc/Makefile
-> +++ b/tools/testing/selftests/rtc/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -CFLAGS += -O3 -Wl,-no-as-needed -Wall
-> +CFLAGS += -O3 -Wl,-no-as-needed -Wall -I$(top_srcdir)/usr/include
->  LDLIBS += -lrt -lpthread -lm
->  
->  TEST_GEN_PROGS = rtctest
-> diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-> index 63ce02d1d5cc..2b12497eb30d 100644
-> --- a/tools/testing/selftests/rtc/rtctest.c
-> +++ b/tools/testing/selftests/rtc/rtctest.c
-> @@ -25,6 +25,12 @@
->  
->  static char *rtc_file = "/dev/rtc0";
->  
-> +enum rtc_alarm_state {
-> +	RTC_ALARM_UNKNOWN,
-> +	RTC_ALARM_ENABLED,
-> +	RTC_ALARM_DISABLED,
-> +};
-> +
->  FIXTURE(rtc) {
->  	int fd;
->  };
-> @@ -82,6 +88,24 @@ static void nanosleep_with_retries(long ns)
->  	}
->  }
->  
-> +static enum rtc_alarm_state get_rtc_alarm_state(int fd)
-> +{
-> +	struct rtc_param param = { 0 };
-> +	int rc;
-> +
-> +	/* Validate kernel reflects unsupported RTC alarm state */
-> +	param.param = RTC_PARAM_FEATURES;
-> +	param.index = 0;
-> +	rc = ioctl(fd, RTC_PARAM_GET, &param);
-> +	if (rc < 0)
-> +		return RTC_ALARM_UNKNOWN;
-> +
-> +	if ((param.uvalue & _BITUL(RTC_FEATURE_ALARM)) == 0)
-> +		return RTC_ALARM_DISABLED;
-> +
-> +	return RTC_ALARM_ENABLED;
-> +}
-> +
->  TEST_F_TIMEOUT(rtc, date_read_loop, READ_LOOP_DURATION_SEC + 2) {
->  	int rc;
->  	long iter_count = 0;
-> @@ -197,11 +221,16 @@ TEST_F(rtc, alarm_alm_set) {
->  	fd_set readfds;
->  	time_t secs, new;
->  	int rc;
-> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
->  
->  	if (self->fd == -1 && errno == ENOENT)
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	alarm_state = get_rtc_alarm_state(self->fd);
-> +	if (alarm_state == RTC_ALARM_DISABLED)
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -210,6 +239,11 @@ TEST_F(rtc, alarm_alm_set) {
->  
->  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
->  	if (rc == -1) {
-> +		/*
-> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
-> +		 * error number if rtc alarm state is unknown.
-> +		 */
-> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
->  		ASSERT_EQ(EINVAL, errno);
->  		TH_LOG("skip alarms are not supported.");
->  		return;
-> @@ -255,11 +289,16 @@ TEST_F(rtc, alarm_wkalm_set) {
->  	fd_set readfds;
->  	time_t secs, new;
->  	int rc;
-> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
->  
->  	if (self->fd == -1 && errno == ENOENT)
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	alarm_state = get_rtc_alarm_state(self->fd);
-> +	if (alarm_state == RTC_ALARM_DISABLED)
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -270,6 +309,11 @@ TEST_F(rtc, alarm_wkalm_set) {
->  
->  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
->  	if (rc == -1) {
-> +		/*
-> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
-> +		 * error number if rtc alarm state is unknown.
-> +		 */
-> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
->  		ASSERT_EQ(EINVAL, errno);
->  		TH_LOG("skip alarms are not supported.");
->  		return;
-> @@ -307,11 +351,16 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
->  	fd_set readfds;
->  	time_t secs, new;
->  	int rc;
-> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
->  
->  	if (self->fd == -1 && errno == ENOENT)
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	alarm_state = get_rtc_alarm_state(self->fd);
-> +	if (alarm_state == RTC_ALARM_DISABLED)
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &tm);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -320,6 +369,11 @@ TEST_F_TIMEOUT(rtc, alarm_alm_set_minute, 65) {
->  
->  	rc = ioctl(self->fd, RTC_ALM_SET, &tm);
->  	if (rc == -1) {
-> +		/*
-> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
-> +		 * error number if rtc alarm state is unknown.
-> +		 */
-> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
->  		ASSERT_EQ(EINVAL, errno);
->  		TH_LOG("skip alarms are not supported.");
->  		return;
-> @@ -365,11 +419,16 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
->  	fd_set readfds;
->  	time_t secs, new;
->  	int rc;
-> +	enum rtc_alarm_state alarm_state = RTC_ALARM_UNKNOWN;
->  
->  	if (self->fd == -1 && errno == ENOENT)
->  		SKIP(return, "Skipping test since %s does not exist", rtc_file);
->  	ASSERT_NE(-1, self->fd);
->  
-> +	alarm_state = get_rtc_alarm_state(self->fd);
-> +	if (alarm_state == RTC_ALARM_DISABLED)
-> +		SKIP(return, "Skipping test since alarms are not supported.");
-> +
->  	rc = ioctl(self->fd, RTC_RD_TIME, &alarm.time);
->  	ASSERT_NE(-1, rc);
->  
-> @@ -380,6 +439,11 @@ TEST_F_TIMEOUT(rtc, alarm_wkalm_set_minute, 65) {
->  
->  	rc = ioctl(self->fd, RTC_WKALM_SET, &alarm);
->  	if (rc == -1) {
-> +		/*
-> +		 * Report error if rtc alarm was enabled. Fallback to check ioctl
-> +		 * error number if rtc alarm state is unknown.
-> +		 */
-> +		ASSERT_EQ(RTC_ALARM_UNKNOWN, alarm_state);
->  		ASSERT_EQ(EINVAL, errno);
->  		TH_LOG("skip alarms are not supported.");
->  		return;
-> -- 
-> 2.34.1
-> 
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    67 tests:	67 pass, 0 fail
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Linux version:	5.10.228-rc1-g11656f6fe2df
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
+
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
