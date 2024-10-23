@@ -1,187 +1,194 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F101C687
-	for <linux-tegra@vger.kernel.org>; Wed, 23 Oct 2024 01:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DB24EB45;
+	Wed, 23 Oct 2024 06:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729645283; cv=none; b=fDONgDF8votYUtxeX2PNhSRyArCXqVnzzeHomwZd7e59UG8B01RzaWBcCvFcjKOhlPjzNUNLEtLmJ82YaCYYs7ONulrG7tPx9t6b843O1eIug7OtN5MBVCiislAl8Bo07kFVKPWaQbxLC2W5O0qToX1VwgSHU50hlDZnxR9wfPU=
+	t=1729665826; cv=none; b=Ze8I/qYegc9ugx0P6PqV1y7RYnVKsjvCl/24WEv9tc21lv79eM9o5v3xVOQUXVYC19V2UHwGu4mc1Lri9ZvCR9xBXXwCFbia1Z4EKk45WfD8r1i79K1ipvvQIPwzkAz5nhbCJjn/GAgw5x2p6M5eW/rQkGcygLv3WIlds4OSWho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729645283; c=relaxed/simple;
-	bh=HFdUON0V2GphcU9k9fNd96djFn4cjLgGiTx0TKpGRsA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YIifX9MfmaGljIPkWjwGJ+5MS0RZAZEGU/zyItaBP/PZI9Vd/6wT32dRaaLzzRUnZzTO0jFzlf6O/LHfwAtNInnmTYO2srNas7IQOECBxkOqbRH/TeABULa5A9QG7p3uP0QuXkAcR1GJu3WQEJ6LCKXRY3lLQla2wiyqyN88xMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UY/T0/fS; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1729665826; c=relaxed/simple;
+	bh=q3brrQLnk431VX/G5q+Qpq5n5tQyj8tpmt0CWOlOtxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BcKVLFTkz2HVMMt/lJunY1UJ0QYyytM/zKxeldXE8F4U5J1ahx5dPyr697tvXb6wz5pR2HNv/CSqKRUAdrbmi6MZN9CwsxqPdJHxPWLxxND4hEmD4B3QVj58bo5FaXsfu7ruGsL4l2GZnpSIgLua0E0MxBdPoPRixqtB9QCa14o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=V/ayLGFf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=cKrNmw1w; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZQr+ZHLN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Vzmnw+1x; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UY/T0/fS"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2e23f2931so4964611a91.0
-        for <linux-tegra@vger.kernel.org>; Tue, 22 Oct 2024 18:01:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729645281; x=1730250081; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7w3BU2HjAXl1RWxHwiHpmCiEMdPfDx7ASOCiiQowi7g=;
-        b=UY/T0/fS+nCIevwkXIU2jK5lV2npbUjntSrOruHsApW1E7ISK83P9f6EAwbpkrslM8
-         s5SAO+rgYakUaWKF+BEedH5c88/hWqiyshZO4IJF0IgBC3+ANnM+luFHHTi1pzwszohb
-         5ZGl1htR2ATgSPoqW+Z3kUOjtcXzNgU44iBvgviUAenk0YAk7K4nU+ZiYaDS5W4v+ew7
-         9NF6KnabRbrrzHEiK9BM9RtojfP4XMyT/NcVEDZriFKDDvd+mFYhsCdconOn4msVG1kd
-         nfjkR5HtTM7M3tl9+RbRzNoSbD3pzbkBletbbmqdSIPUkLtUi4fBZdoa311beaLM7GFZ
-         0wKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729645281; x=1730250081;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7w3BU2HjAXl1RWxHwiHpmCiEMdPfDx7ASOCiiQowi7g=;
-        b=SlsE9rK0YxwLCP9QOzvZRbwA4wLUHa7f6/HnbSVtsfPyUdy7SCLEf+2TXi+55aamJ4
-         LT/NmiLMD32GLJDSnKpRMInVp0Usj8hbXFXOwV4HhHe/xom8dtCaYrE8/CHDRZiVV/OU
-         SdBGADUU4fEmhAw7daPlSAiM0p/hqMVsNdWgmKJlg/SMgYQg7poeB6+nloCpRNFIxg8z
-         BYX+bH5CXSygL49pnru2KzLoKKfWhlItc4+8tGUcy97xrCeURniU98QKnW8vLjotZNSD
-         JL18FWpq/2LrOpv8IAyK+N79lf0OsLFpD2KleCqXo6uG3pe2L5DoLxZA9u8kb35KUZP9
-         txhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV40Rz0kudwNhnedOD02TJ6wPQ1pNWBuNGTFlEOxGxGnkVdmTjiF/fPAc9uDVcq50NVeLKT5pHu7IOLhw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNr8zMXHzy9UhjgGWw7rxDnUmuutuWjOcFMemdLNgiQTlU3wGx
-	eSRl4IB06Z7i/zRXJbfxsXNfAeTDNS4F3wpeWnltWaLYn3omm/EoMWPDr+0ezMQgY+aQYdRZeQR
-	1kdeMJ2tzsSAyw+UyoviNsCYRFapNRamaVHMx
-X-Google-Smtp-Source: AGHT+IFeEoPGIw3p3ijQLJLpEmpS31c9Z2j74F0oEOYPG4hKYfTCoF6Xbw1z+XYwmGwY03CFsDkNifA2pnMGypOacEc=
-X-Received: by 2002:a17:90b:1c8d:b0:2e2:af6c:79b2 with SMTP id
- 98e67ed59e1d1-2e76b6cda3amr966161a91.29.1729645280874; Tue, 22 Oct 2024
- 18:01:20 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="V/ayLGFf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="cKrNmw1w";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZQr+ZHLN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Vzmnw+1x"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B86D321C47;
+	Wed, 23 Oct 2024 06:43:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729665823; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oVxKFC9h7fPzQagNwIhS7arqMWKg1nrOy151viUFUW8=;
+	b=V/ayLGFf7pBm1upYFDVWtfXyXrNj04E1GCXgTmVV0G6RcQVNPgG4f2xWFGMENHE2MWmiXz
+	9tE6OZt88zlnvQLgeCuPXPRnOb31yOhQVVXb6vlJ3DEFgh03r3ftgSea+c6qowdBRBFRiZ
+	hoP5k/P9fMnh5hGvo43+V3VStgbt70I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729665823;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oVxKFC9h7fPzQagNwIhS7arqMWKg1nrOy151viUFUW8=;
+	b=cKrNmw1wCdNQdqFXslm0afKP/qkyFMMSHr8Id3j8nl6DO3XVIeM0e40h3ilY/RoS43hV1D
+	6r5XAFsmBgIgjYCA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZQr+ZHLN;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Vzmnw+1x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729665821; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oVxKFC9h7fPzQagNwIhS7arqMWKg1nrOy151viUFUW8=;
+	b=ZQr+ZHLNa8NBuBOeaVxfqV8DCLmU8AFwa1xHZGiK9tzjbs7VvuTNFDIXJioo+J9sXKgbB9
+	z0f7bOEXsYevRchdDFEvFDBK7S3amdRebQBU0yXQkzediOfDQ8aSfN1hCB1onRWLCIKLcr
+	t4JE0o9AEWeeTmAbPi9n8VYtARVDA9A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729665821;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=oVxKFC9h7fPzQagNwIhS7arqMWKg1nrOy151viUFUW8=;
+	b=Vzmnw+1x1Zze4m2DQx5YVTwcIEh2H1eZAWIti1SEcrijdavIY0C5gdK4hC6VXOUmyM0hDH
+	Ot52GdlZumSkeWCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8138713A63;
+	Wed, 23 Oct 2024 06:43:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ycpdHh2bGGfXdQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 23 Oct 2024 06:43:41 +0000
+Message-ID: <c33af9e5-35c0-43f3-8967-3e5a8505653b@suse.de>
+Date: Wed, 23 Oct 2024 08:43:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910130019.35081-1-jonathanh@nvidia.com> <2024091152-impound-salt-c748@gregkh>
- <d89c89f8-0036-44a4-8ffa-ea89ed576a9f@nvidia.com> <2024091627-online-favored-7a9f@gregkh>
- <b1b67db0-3b9c-4d96-a119-fe3fcf51b6e3@nvidia.com> <CAGETcx8E9FddpwMO4+oqeEc0RVMLbUOs2m+=B900xzrLvEkSXw@mail.gmail.com>
- <2c42677c-5e8e-4805-b6a5-0a5baa3e55b5@nvidia.com> <d9aadede-dfac-410a-b65b-e295c9a64951@notapiano>
-In-Reply-To: <d9aadede-dfac-410a-b65b-e295c9a64951@notapiano>
-From: Saravana Kannan <saravanak@google.com>
-Date: Tue, 22 Oct 2024 18:00:42 -0700
-Message-ID: <CAGETcx-_z4hxyNSwT-D1MKNzAjOGSX+o7x5G8J0KkiUyy+RkDQ@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Don't try to create links if they are not needed
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 42/43] drm/fbdev-generic: Convert to fbdev-ttm
+To: Jon Hunter <jonathanh@nvidia.com>, daniel@ffwll.ch, airlied@gmail.com,
+ deller@gmx.de, javierm@redhat.com
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20240312154834.26178-1-tzimmermann@suse.de>
+ <20240312154834.26178-43-tzimmermann@suse.de>
+ <1094c262-9d39-4a7b-bede-dc927cd1f52a@nvidia.com>
+ <279c7b9b-9973-4eab-8321-a3bc23c97550@suse.de>
+ <8b1059d8-7f28-4f97-9fb6-1d3c66cc3713@nvidia.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <8b1059d8-7f28-4f97-9fb6-1d3c66cc3713@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: B86D321C47
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[nvidia.com,ffwll.ch,gmail.com,gmx.de,redhat.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Thu, Oct 3, 2024 at 7:59=E2=80=AFAM N=C3=ADcolas F. R. A. Prado
-<nfraprado@collabora.com> wrote:
->
-> On Thu, Oct 03, 2024 at 11:25:22AM +0100, Jon Hunter wrote:
-> >
-> > On 02/10/2024 21:38, Saravana Kannan wrote:
-> > > On Wed, Oct 2, 2024 at 11:30=E2=80=AFAM Jon Hunter <jonathanh@nvidia.=
-com> wrote:
-> > > >
-> > > > Hi Greg,
-> > > >
-> > > > On 16/09/2024 18:49, Greg Kroah-Hartman wrote:
-> > > > > On Mon, Sep 16, 2024 at 03:50:34PM +0100, Jon Hunter wrote:
-> > > > > >
-> > > > > > On 11/09/2024 15:32, Greg Kroah-Hartman wrote:
-> > > > > > > On Tue, Sep 10, 2024 at 02:00:19PM +0100, Jon Hunter wrote:
-> > > > > > > > The following error messages are observed on boot with the =
-Tegra234
-> > > > > > > > Jetson AGX Orin board ...
-> > > > > > > >
-> > > > > > > >     tegra-xusb-padctl 3520000.padctl: Failed to create devi=
-ce link (0x180)
-> > > > > > > >       with 1-0008
-> > > > > > > >     tegra-xusb-padctl 3520000.padctl: Failed to create devi=
-ce link (0x180)
-> > > > > > > >       with 1-0008
-> > > > > > > >     tegra-xusb-padctl 3520000.padctl: Failed to create devi=
-ce link (0x180)
-> > > > > > > >       with 1-0008
-> > > > > > > >
-> > > > > > > > In the above case, device_link_add() intentionally returns =
-NULL because
-> > > > > > > > these are SYNC_STATE_ONLY links and the device is already p=
-robed.
-> > > > > > > > Therefore, the above messages are not actually errors. Fix =
-this by
-> > > > > > > > replicating the test from device_link_add() in the function
-> > > > > > > > fw_devlink_create_devlink() and don't call device_link_add(=
-) if there
-> > > > > > > > are no links to create.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> > > > > > >
-> > > > > > > What commit id does this fix?
-> > > > > >
-> > > > > >
-> > > > > > Hard to say exactly. The above error message was first added wi=
-th commit
-> > > > > > 3fb16866b51d ("driver core: fw_devlink: Make cycle detection mo=
-re robust")
-> > > > > > but at this time we did not have the support in place for Tegra=
-234 USB. I am
-> > > > > > guessing we first started seeing this when I enabled support fo=
-r the type-c
-> > > > > > controller in commit 16744314ee57 ("arm64: tegra: Populate USB =
-Type-C
-> > > > > > Controller for Jetson AGX Orin"). I can confirm if that is help=
-ful?
-> > > > > >
-> > > > >
-> > > > > That helps, I'll look at this after -rc1 is out, thanks!
-> > > >
-> > > >
-> > > > Let me know if there is anything else I can answer on this one.
-> > >
-> > > Hi Jon,
-> > >
-> > > See this.
-> > > https://lore.kernel.org/all/c622df86-0372-450e-b3dd-ab93cd051d6f@nota=
-piano/
-> > >
-> > > Ignore my point 1. My point 2 still stands. I got busy and forgot to
-> > > reply to N=C3=ADcolas.
-> > >
-> > > I'm fine with either one of your patches as long as we define a
-> > > "useless link" function and use it in all the places.
-> >
-> >
-> > Thanks! Yes I am also fine with Nicolas' fix too. I quite like the dev_=
-dbg()
-> > in Nicolas' version. I was wondering if we should define a function for=
- this
-> > check too.
-> >
-> > Nicolas do you want to update your patch with a 'useless link' function=
-? I
-> > will be happy to test on my side. Looks like you identified the exact p=
-atch
-> > that introduced this and have the appropriate fixes tag too.
->
-> Hi Jon,
->
-> I just sent a reply to that thread yesterday going a bit further down the=
- rabbit
-> hole to try and answer if there's an underlying issue there that the log
-> messages are just exposing, but I still don't understand all the devlink =
-details
-> involved so was hoping for some feedback from Saravana.
->
-> But if there's no feedback I can surely update the patch with the commoni=
-zed
-> function to fix the immediate problem. I'll wait a couple days to give Sa=
-ravana
-> (and others) some time to respond.
+Hi
 
-Finally managed to squeeze in some time for Nicolas's issue. It was a
-real issue. Replied to the original thread from Nicolas.
+Am 22.10.24 um 17:36 schrieb Jon Hunter:
+>
+>> We'd turn a linker/modpost error into a compiler error. Likely makes 
+>> no difference. And AFAICT every driver that selects TTM also selects 
+>> TTM_HELPER. Drivers without TTM should not use this header.
+>
+>
+> Yes I also noted that all the current drivers select TTM_HELPER and so 
+> we don't run into this. However, it still seems a bit odd that we 
+> don't expose a proper stub if TTM_HELPER is disabled (especially 
+> seeing as there is a stub defined).
 
-Jon, can you do an analysis similar to Nicolas? What consumer node did
-fw_devlink try to create a link for and what consumer device did it
-end up creating a device link with instead?
+It's not different from other headers AFAICT. For example, the TTM 
+headers don't guard any of their interfaces or provide stubs. The guards 
+and stubs only make sense if an interface really is optional wrt some 
+config token. That's not the case here wrt DRM_TTM_HELPER.
 
--Saravana
+Best regards
+Thomas
+
+>
+> Jon
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
