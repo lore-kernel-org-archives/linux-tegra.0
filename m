@@ -1,64 +1,66 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5B11FC7D9;
-	Thu, 24 Oct 2024 17:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69A721364;
+	Thu, 24 Oct 2024 17:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729789880; cv=none; b=Jyr8GlZkXjJtMALRK5+vWkD/ksBWui17ddDAznOtv2YfmlgwImkKCnVUYWFd/aE3yOvJv5mwiZ0OyyeAVLJKtQixrknfSo13oJozRfktWpSHZPpqAQ3/XW6fO5Nv0nTrJOYqxi51BrgPdGBhSYaQNzNQF6CDH8DB+zJpCDYHzSo=
+	t=1729790155; cv=none; b=XOIiOIxozUcJ7wVbwM+45MDj/b+uyC4GzUaCXZ37F8Ai8bUBw5fkSlQiAp4LLLXLVmCdV2GltIxUf5EoXlCYsfY0NYf8PjgHlu/SclLcAbUmkM4eGSZG5+1XfBWS5TgLRkB4KmOoHm57FEkq8RQ4csnBlFCDxT2wfMkDaZNW+mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729789880; c=relaxed/simple;
-	bh=V5blXOjJNWllX91RTrP1Opr+qb7soFgBDwd8A0fxx9c=;
+	s=arc-20240116; t=1729790155; c=relaxed/simple;
+	bh=miuUK+C9UqcII5LUzgz3TqjO7CFqfs1uxTPfIwmAqrA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZGTy9H3pICA3fRXYSrH8+NOCwg1Qk7B0sOrFbcpD/aNgWYCdGvu2J+wHPsIZnBqCe5QdkhHuISIV1QeP0PtmNxQNOscp0MCRs3GhbM1gzjbw5oS1T8DfYEi3j+VnYeGRi4arHQWfhhoJTw9je2bdVMStjQqX/hPjNInNupvek84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f9pOY8hN; arc=none smtp.client-ip=209.85.208.41
+	 Content-Type:Content-Disposition:In-Reply-To; b=pN25ykXzHujl/wKc4czH20gUfrerNwQEvt0k8udiEy0dt62mjkPIv0wyiuVIHIrWRStG0Fzy2IfsN/03/9KP69l3yGMrRZXjZsdRc7iLiP6qMGuHHTw/LBUoPaPW/L3W9Q/EkxqaFRzpC21ZIxhkF+suFO5atC9LRyPlXQFoWDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=klI7fn4g; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9pOY8hN"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so1467198a12.0;
-        Thu, 24 Oct 2024 10:11:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klI7fn4g"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99ebb390a5so425083666b.1;
+        Thu, 24 Oct 2024 10:15:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729789876; x=1730394676; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729790152; x=1730394952; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jVRDMh4v3CEd58OP2wBIPjczPRQa4F6T5qX1vzLxZds=;
-        b=f9pOY8hNm0k4KsiAWmUyrZo7qZv0AOJpMXncwZdeVZ1ydb4G3AlGaWiKTcX7N2b2Os
-         m0qVE4XkN9x/I+YtQtY1j+2iU6y/NOMbbiW32f75SeYZsPvQLEi6pAVV39LlMWtOJRan
-         U9Mdg+HPJCdzUxSQ2YxdT7G2aGB8MSiWLTOZai5wGh6v1lIws3yB4CS6tkivBkAjGi40
-         KrARt4DQcONdGml18ogmr9+f0DdkVs9/cTHV7txwEyd8FSH5Q+mfKu0Hl4GzOIDi5vwv
-         7aFpx71oU36lKIKQweXpv0TnXyYqAhzXhILJGhAcCTa7U1HQbPag0/6F6k74FqGY+2Xb
-         bMfQ==
+        bh=d9GUQ7w8N3r9gVuJfhRZTtK9B+5W12JGKG4NDazj9No=;
+        b=klI7fn4gtjn+pHtvJao1mPN7Hld0gJjtL1TphSEEF8xuE5lrwQ9x81cLvVXXEM2Heq
+         zh0MF8CflZG+d1dxswwA9T5XNzjF2gcckVuQr+xgGyjrCO/hBw3gPu2xZF1PPfhs/6ou
+         KbQ9ANYYvgeXmYibQZkt8m+/xlni9+ge/SGiQnRAtEpPwR1Uw54wQ2KzGN73GJ5dWvCr
+         3qmrgGooA+9xDaL+EeE9oy1i5+IaCxlSq9aWxXpfK5Ll9s+dvo8YSq8DKrcvJW73Vnc5
+         xxA9sam6P1vqAx9vjfQhGPZ2th9dQgWqGR/Ue+EyTNjubsvfLKdtg/+vkJSU/vdqqxeE
+         BR2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729789876; x=1730394676;
+        d=1e100.net; s=20230601; t=1729790152; x=1730394952;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jVRDMh4v3CEd58OP2wBIPjczPRQa4F6T5qX1vzLxZds=;
-        b=a9/i786fUrfUjLdhmOqA560Fll7T8PxxHZjoILjyTxRDl35XEDv6PiO2VnAYaYp/lR
-         X8o/K+I4gP9CdWdUBgGIrg9G/F9HXNj4xeFuqnnt3Kn/rON7GLRm4lD1CJBt4hZxgVhx
-         FQ2QvNMusHCvLAlOE0ZMavJriRdTCcnAa06X4BRflYOqxITR53EcMfa/bIE6IkaPG8B0
-         TNOQ4fywXMXX0meZiF4JlvbKgqZ+DPWqWz2OtRsjWqYt/PTyfDubAXdzQyR1/F+JCuSx
-         Q0ZYY5qhkvDz/IS2d2L7SmXhPDgPbl860YRLYZ0fh0dnj25p/q8fP29obMfAvFwMmHVT
-         xoZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2qSySK2+adJDHkNxYi5MzImDB+LHeD5qVdvwuV6Nt9qfco9YRi1kY/MTo+jSmgD4744s1sWzVHd7wWGg=@vger.kernel.org, AJvYcCVHkfMKyRb/pHlsnJqYW3RYkAX8yrr63tznhgFstN7wqMBAWMuA3nZL0nnqUaldS5euZfjwiPRufR9R2zk=@vger.kernel.org, AJvYcCXlGUUvjyZsuJDowhzgaqiecuzCUov67HzZ3+3SmumK0+Sp7QsLCf75L8NI6+A9pZla/9VH3+S+OWPyAYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAWSXAgGx5IXPI1FSPkvahRe8xXXBp4mjKv3xIVGoQ+4UQSz+p
-	HpRXx6fU3iJqrXtWGNc9dCO53bGGEwpDVk/xckr01niUiBotQs1L
-X-Google-Smtp-Source: AGHT+IGjmlyXMLE3dKbnjF8DXuZcZ3UAnGJ7Nj4af4Rv+ZlHQd4d7mjQ1Fjz4Dh4fSFTXZ/qCJdZAw==
-X-Received: by 2002:a17:907:2d8c:b0:a99:f8a2:cd8f with SMTP id a640c23a62f3a-a9abf9682bemr674542166b.64.1729789876399;
-        Thu, 24 Oct 2024 10:11:16 -0700 (PDT)
+        bh=d9GUQ7w8N3r9gVuJfhRZTtK9B+5W12JGKG4NDazj9No=;
+        b=jcZUs289Qvm85vY7ckoGHVrBtyDmdpFYBd1zUrSH59Z2WOAcK6Rpnv+kY/xrdVoHBz
+         thgwYNE7WzVjYzJ4Wj+0LAFcInVfFklBR5CjhaN3IqHkfPeKPLc7y2f9rTBzYGYsHw1l
+         JurjQNGhpoD/pVWTzc/gHfm4CRiga0d4nruf/5FdY0dbdWVrczPRiucof1IU/vxtrAq5
+         ddtFnbXdwVfPYp4b7vJ2qee2EuGtghzLsHwbPKizTSJy3WOpF400dPlrlZ0wmoFoZZPL
+         phOUSLO0vXpjPVuFFBze4h9ARTYnNBAKkZRVrb5WJOivstsDLwpv8DMMs4gxKkOeeNrl
+         rXkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ5ExzOv49mhjcZ1NGi6GddqKrtLPU9J3t/PryZNfNhKiOsF2Be93BDGuKMy7xEkZZFz/xmjzVgfw=@vger.kernel.org, AJvYcCVY1fAuYIQc7gI2tAi6FacxTZ5MmLSU7S7GS3tUN7XD89mxqdxy5TwX9MEuz4zDXBTVU9jsefiWPRTxFis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHncQVayO+EX/6atlAk3OBJs9hd63vlOPulZLdT2QPD3R7Uyq1
+	4raSo9bkYs5Mql8AZT3s2tZ8C8WfPzBJ2w+FK+r/RXINhp5AHjVH
+X-Google-Smtp-Source: AGHT+IFHC2qTy/jZuWOCk1sR1eH7dE/yu5C9mjDMZyMYAvfJpmUHzcxTr/zYswBWdTGJHnoU36QymQ==
+X-Received: by 2002:a17:907:94cd:b0:a99:5587:2a1f with SMTP id a640c23a62f3a-a9ad19c145emr342150966b.15.1729790151920;
+        Thu, 24 Oct 2024 10:15:51 -0700 (PDT)
 Received: from orome (p200300e41f26ec00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f26:ec00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370e86sm639779066b.110.2024.10.24.10.11.15
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91559929sm640165366b.105.2024.10.24.10.15.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 10:11:15 -0700 (PDT)
-Date: Thu, 24 Oct 2024 19:11:14 +0200
+        Thu, 24 Oct 2024 10:15:51 -0700 (PDT)
+Date: Thu, 24 Oct 2024 19:15:50 +0200
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: digetx@gmail.com, mchehab@kernel.org, jonathanh@nvidia.com, 
-	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: vde: Convert comma to semicolon
-Message-ID: <ue3ccfkhnumjikar5iekotbv56h6p5zpfhkkw7rjb6vbu2oge6@kkrwbc3j75ag>
-References: <20240905022532.1642653-1-nichen@iscas.ac.cn>
+To: Li Zetao <lizetao1@huawei.com>, mturquette@baylibre.com, 
+	sboyd@kernel.org
+Cc: pgaikwad@nvidia.com, jonathanh@nvidia.com, linux-clk@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH -next] clk: tegra: use clamp() in
+ tegra_bpmp_clk_determine_rate()
+Message-ID: <ymehmrggfpuuen4f7st43qijfvvgap5pdipev6iyw4nar2stes@f6oau2c5f4ma>
+References: <20240830012344.603704-1-lizetao1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -66,54 +68,58 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2lkg7gwyztygq2nw"
+	protocol="application/pgp-signature"; boundary="jvgzug45ctbz76id"
 Content-Disposition: inline
-In-Reply-To: <20240905022532.1642653-1-nichen@iscas.ac.cn>
+In-Reply-To: <20240830012344.603704-1-lizetao1@huawei.com>
 
 
---2lkg7gwyztygq2nw
+--jvgzug45ctbz76id
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] media: vde: Convert comma to semicolon
+Subject: Re: [PATCH -next] clk: tegra: use clamp() in
+ tegra_bpmp_clk_determine_rate()
 MIME-Version: 1.0
 
-On Thu, Sep 05, 2024 at 10:25:32AM +0800, Chen Ni wrote:
-> Replace comma between expressions with semicolons.
+On Fri, Aug 30, 2024 at 09:23:44AM +0800, Li Zetao wrote:
+> When it needs to get a value within a certain interval, using clamp()
+> makes the code easier to understand than min(max()).
 >=20
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
->=20
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
->=20
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> Signed-off-by: Li Zetao <lizetao1@huawei.com>
 > ---
->  drivers/media/platform/nvidia/tegra-vde/v4l2.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+>  drivers/clk/tegra/clk-bpmp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Mike, Stephen,
+
+can you pick this up directly? I haven't had any other clock patches in
+a while. If so:
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---2lkg7gwyztygq2nw
+If you'd like me to send a pull request, let me know.
+
+Thanks,
+Thierry
+
+--jvgzug45ctbz76id
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcaf7IACgkQ3SOs138+
-s6FGrxAAoQvep6MJjN0ETLhmO0cz608RmeY1mB7sp8aXMINtslR6zbSyVOqPZk6p
-3V0sQaVLaJzY0DKN4n0JSosBOeQJRZuFxXbNWBbfwvqCRdNvxl/Zk9QIAHMFYEs6
-QPJhVUDd5ql3UXYZym3L2NkwH2pprOAeHNNmqS96MQQPqLdmJMrj3/oHckRgot32
-OWu+UjUft73+TftaUMoZxwMmjDfJz2P39moZMEH5LqjhXtUHRvjAcsY+x3+mr4gT
-+rBneylG6hbz4W8PElx2hUPmpIryilc5UzpJHDbSBR+jEtQQtOWhnxM0NAjZT7cn
-2Qr1ozOW74Ekcy0UAr+wwpLM+CIykUCfMa/hG+Mb4P+62nDnyUsWLMJSjm5lIQZS
-93bXc7sCOipwCSkz4CzXWf38BWeX1ZkOrd51YGpoBtPyC05uFHAl5EE72DgWImI/
-zK6tBWeBjwXFhIkH5UeCYgMV5EzkwSTfuqOEW07T16n3Sv7fv96u2z/hOGBuOwFB
-vI4bauMbuDe6eSCo9283XscRwV5N18r76UJusWTTDoI926KNVrmWCjHCq1OMevtm
-baqmFhSEmWK4I6aOMjavkTNzVa0QPdrnmWzZwv8izVqz5fC5Imk2HljM9zR1hpRK
-XfOFWr6OIMfJ/Q4dJgFKMWuakGa67lWITL6KtzXYdTOWXXLoBSk=
-=UVc/
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcagMYACgkQ3SOs138+
+s6EYqg/8DpVH4dAlTnDRDURt1B+zh9+XXaqTJOr2Q6OdHrZEI1TwA77o2R48MgCd
+uTgA/10wQ+VkQE6uoVYb0B/LcmzTh7tE7DzpyL8iXmbsL4Zvb6eKgZGNJ4zHfiRV
++jFRUv6Ld2yBIqmam+270WD3iS3XftoVWcGdc4ihrsM/2RN6HCsqcYBqQencJtUt
+ps9OrTe0TyDwo3X0PxJLMQpJ879eIZaG99fAdbdFN66QbL93ebe3HjCSo9JMM7Kt
+bkUXvXM0BCaaHrZYjyqR86jbOOSSUkIQhSW9DuPo3WpTcxALMteqMKPHvZj+hS6R
+Ap6zDHGcGeerOFE3XYulpY8mlw5P1OLoCWrfWwl5axsNFCcuwk/zHKCSFzU/T7yt
+qdyVOoHt76w9KamEV4/Oh1OpWB6DwXNWDl2xoBe1IA6jQsh1D8ZG0y+C4z45BnzQ
+wvNiOWMoGcxEc2F6WIzcUWv62ZVTLkBPMwlPMskceSnGSEl9IKltc7TG7iFjEkiU
+wuItDscc8HBn/kuyx5ngX/aKmDive597D9apBn+NIhChfvqRDZn/gZ0utEvTZQeO
+0cWSWZ3M6t/RDZMQ8WQT0nRIgu7l79TWLn/0VSKyxWSR8AgvhmAn4IZ/WQw9dFPZ
+bj9VHiEibLChd4uVqxIM9CPDBZVvxtBjKKyN0B4qbVTagFUFEWk=
+=42yy
 -----END PGP SIGNATURE-----
 
---2lkg7gwyztygq2nw--
+--jvgzug45ctbz76id--
