@@ -1,68 +1,68 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B5D18871F
-	for <linux-tegra@vger.kernel.org>; Thu, 24 Oct 2024 06:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B055D175D53
+	for <linux-tegra@vger.kernel.org>; Thu, 24 Oct 2024 06:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729750448; cv=none; b=BbYSWDRHpuIiTJIS+KSvINVkB8yhA5Kdke/AkFd/KdGm6M4pbt8KxEf2YJgQ/IdW9tUTiD4RqDcRmetDCKh78Coz6V13HSDCO1Qhc/6kgAIGlpxXJt60SKF21dyTwzb6L4Ng2JEaU+A+1FUoyT/pqciGFUTVEXuF9VG4sX8GRXI=
+	t=1729750627; cv=none; b=fQ1YHhRCjm+Zm7NBIv0dI0LqB9/7LPtPwqsOF8zPeKGRwOXgDLRuI0tsie1oMiSu6DEt/O6GrcDrGqQQke1odPF5fp8VPXeli18bKzzdg0GJ1jNg0C2JHas9bF7MOUoU5xb5NZGQN8G55BKHmZXBy0Rg7nkKkvuxBS5fMKsAwDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729750448; c=relaxed/simple;
-	bh=zDXiwnNbOAqIIc1NRxGfQ1iF2PdUDrS7EJdjH4bGXdI=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=km63DEXbj9J38/b036lmAKnvx0cy6a5aiHRnptOgn42YdvMKWbiUi5ZouAFopbeGnGxP2S/LpS1EKPkEeyYWQKMrznf7rfGrEQLH/aP1GffpPzeXPBT44I5L8loR+LFAjp66ngb6R7C9UejkOZHJolqHMn/gPLxvwmYe/dpbe1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qNEVLB5w; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1729750627; c=relaxed/simple;
+	bh=beUOJwjq59gvjOg+j0hyEZL5iyRhWmXytQywp1xo9Cc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EeG12nzlljxHLpSJNCBzBH1CqSbtvbesWt36tSUPFuc832mP+s/JfxDduX9kX9DLhrAXEQTcUmvZD/4EnnLLk9OPQi9cQ7s9W/O4V1Rt2nSxGp28bXzjD3/1MeKR90CR2qDJnqoHsZl9VMm0+maTVBIA0cQBd7g17/QwGZHwS1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IzXwnNNb; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qNEVLB5w"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e376aa4586so10678917b3.1
-        for <linux-tegra@vger.kernel.org>; Wed, 23 Oct 2024 23:14:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IzXwnNNb"
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea6a4f287bso313179a12.3
+        for <linux-tegra@vger.kernel.org>; Wed, 23 Oct 2024 23:17:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729750446; x=1730355246; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RirtA7EgN4fQOOKugcSYCvUnz6k6FXA4tnIv667SP2U=;
-        b=qNEVLB5wZAWqkQZOWbj/Bsr8QbqAdt9Bl0pjOuCJDLT2e8y5c9qH2MhHxRb4VNpIlV
-         KUComeNF9rKthKH4gBKx44hhF9jmGI5ELiKu5rGsCYEubKqdJwSvAVR2FodktfEts0GA
-         mnBKO6vhkxWsy6MI1Hs8M8eA4RXWL4KYEjw62phwE9Z2Je1IWtQmjmhO/0kGRpNTn2bt
-         oghgvA7Qv3qeiqIyk7XllXn29z2AeW6K/5ik2PhqPU8Nltk1zGyji9QwbxvMkG7hhFsK
-         q1ARqz3AMtoaouUWaGautpsveoGOXGu67WRBr1klrng+K6XtL/7T1xXx+ieHZfXH1Z3u
-         Vedg==
+        d=google.com; s=20230601; t=1729750625; x=1730355425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7kDqeaAprBXUkM4Fq1Ym36ZhnawEXTDWt16M3cGZQYI=;
+        b=IzXwnNNbyYwfHPTThI9keQNoqa8QunTpsUXmMewdCGxXs2SQR9WIZAN6pivUMv2KC/
+         shlBnZx+AwEzUuQds2aDvEutsuj7kUu1Pw+4czYOSuf/XpWxdBnppN168cRVC6+FEVXy
+         05AVveqo3luTH64PPSlNNGdeKBCsLOAlKi19T+4AocTI8i48j8gfcCUX82lDP44U64GG
+         jKFY4g0RmtFQyMENfq/MNpaV/trEhj9uyMVf/lyPLoKqiKNNbrqjWCwaoh2lGFtLiT0y
+         wNytoGJUtHggVnsh8E4m4UhmpLMFV1FYgGs5VVaJMs0UJkixNQI1UpzBuveVJ4drFIQi
+         C0Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729750446; x=1730355246;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RirtA7EgN4fQOOKugcSYCvUnz6k6FXA4tnIv667SP2U=;
-        b=V2ApFQbMYrd8RxVyyapsxsr0+fip+TX6pXhyybogVe7IO1jMA73y1Z0LU4dGXhRYWQ
-         Nj2AOFmtqVLZyw5RMcxvWv/Ja4YcLXpgKYqTFn3BIG8OCTsxLEeuQgzZBKsEMLR3HcBe
-         f39Aj0CZ77S797fZ3hwqYk2VvETfGCoaLt50TKQFaQ9vX8ngbHMeeh9s8is7a7AKl/fS
-         +x+EM8kJXQqVzGNmmvJ+P4pinTZJ8oEmT5JSSZjtkW4mQFqmzytbl3dJCZYsro2JNo5T
-         Ss9iUcD+DfELNcLWcfZU9hW8wE41m9690lzSxSWsUKdSyU1n5VdJEpdr8RKIhU/gEc9D
-         dKrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQkSsJ6Hj2/vBahxBb09ElVpvxcJ8+KEO6/xgCXBO3W+uy3rRvatmPYuuZTl6W6lK7VCdiakpY4FMSjA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaDkIBG29BomUtNZXnpvRhzsOmCWoC09IA402u2s2dJvI7nCnw
-	CcgXSTN9bY2M7xuzFSXQxX9trTJOmWHd714RwHHfKNOuxx20En7PhrKsJGtBlnfFwJuIK7UYT6h
-	95yVNCXKWm4CKKg==
-X-Google-Smtp-Source: AGHT+IEJXaAAeZpuDAkTsefFXLL2kex4B2AlfwjdclQcvPn636A6m5nX8BurNhgR4ykV7U+QaaWd5sb2nHuey3k=
-X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:965e:f81d:c9fb:b352])
- (user=saravanak job=sendgmr) by 2002:a05:690c:3749:b0:6e2:4b3:ee22 with SMTP
- id 00721157ae682-6e866359b6fmr171667b3.6.1729750445961; Wed, 23 Oct 2024
- 23:14:05 -0700 (PDT)
-Date: Wed, 23 Oct 2024 23:13:44 -0700
-In-Reply-To: <20241024061347.1771063-1-saravanak@google.com>
-Message-Id: <20241024061347.1771063-4-saravanak@google.com>
+        d=1e100.net; s=20230601; t=1729750625; x=1730355425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7kDqeaAprBXUkM4Fq1Ym36ZhnawEXTDWt16M3cGZQYI=;
+        b=YZAeY67gIkkY1EzDIwElv7ciOG7PFtC1Qs+gYdXjJYDWTZjpLUPqQu/y8KYB5tPIpv
+         kiEPuEb+hxfkVr31/LiGcsHIdvlfz+WtACmtBXgAGs4/kwwCuIWa2s7G4XBE7a0NnrEq
+         7jgvxg8c7NBJ2iAUbKVSKcH986OUqElSRANdyHhAQWKcmu7fyTOKe0Iz1SWDuY7cdrSB
+         /jDYIVo1WG2qlGEk+e1t8CA7O8ok00txxJ3UHgu7x4GPdOUInBiiqJRwaa1XaYoy2CRJ
+         PFeVppwHTgtKTaV+ND3jO/FOc2sd3WnHHhJSS5QY1KC4J2UdIxjVJn1P3d4SoSSIdRIf
+         C/rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl/8ya40ibBpNzO2d/FXzPsaUl7i/sWi93IULX2ExYATR0RDlwBgFemTnaJ/aTPJ8JUCcT6zsoS+1DJw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBGnI4jNGeJJycgmzcUCpUWp3dGAK6NhTr0oehzhnf1YiFBeMo
+	Hm0M0UQjlsDHx3Sm0FZK1uTZacDgwk5K5Yyv4L7xiHw/cocOz9Em9PC0rTEyFjUxHxRpjMOnxjR
+	D/wu3/wrOkUKNhFFSlTrwnoyteh9cTMGB77It
+X-Google-Smtp-Source: AGHT+IFcCYtp7nVgkoJ5rzaztD8OtipNso126UyODrDbPTgNIyDaB+s9edBYS51aMEHDl37/TiPH24OOcDTayFV74a4=
+X-Received: by 2002:a05:6a20:5da3:b0:1d9:83cc:ef90 with SMTP id
+ adf61e73a8af0-1d983ccefdamr1940597637.8.1729750624651; Wed, 23 Oct 2024
+ 23:17:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241024061347.1771063-1-saravanak@google.com>
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH 3/3] drivers: core: fw_devlink: Make the error message a bit
- more useful
+MIME-Version: 1.0
+References: <20241024061347.1771063-1-saravanak@google.com> <20241024061347.1771063-4-saravanak@google.com>
+In-Reply-To: <20241024061347.1771063-4-saravanak@google.com>
 From: Saravana Kannan <saravanak@google.com>
+Date: Wed, 23 Oct 2024 23:16:26 -0700
+Message-ID: <CAGETcx_0gqbo5Xf9mZGrBZszZsmKBdqRreb-=O_PvOR_2Yc5Cw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] drivers: core: fw_devlink: Make the error message a
+ bit more useful
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
 	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -70,39 +70,57 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael
 	Kishon Vijay Abraham I <kishon@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
 	Jonathan Hunter <jonathanh@nvidia.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
 	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Saravana Kannan <saravanak@google.com>, 
-	"=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?=" <nfraprado@collabora.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It would make it easier to debugs issues similar to the ones
-reported[1][2] recently where some devices didn't have the fwnode set.
+Greg,
 
-[1] - https://lore.kernel.org/all/7b995947-4540-4b17-872e-e107adca4598@notapiano/
-[2] - https://lore.kernel.org/all/20240910130019.35081-1-jonathanh@nvidia.com/
+Can you fix up the commit subject prefix to "driver core: fw_devlink:"
+please? Don't want to send v2 just for that.
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/base/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+-Saravana
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index a4c853411a6b..3b13fed1c3e3 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2181,8 +2181,8 @@ static int fw_devlink_create_devlink(struct device *con,
- 		}
- 
- 		if (con != sup_dev && !device_link_add(con, sup_dev, flags)) {
--			dev_err(con, "Failed to create device link (0x%x) with %s\n",
--				flags, dev_name(sup_dev));
-+			dev_err(con, "Failed to create device link (0x%x) with supplier %s for %pfwf\n",
-+				flags, dev_name(sup_dev), link->consumer);
- 			ret = -EINVAL;
- 		}
- 
--- 
-2.47.0.105.g07ac214952-goog
-
+On Wed, Oct 23, 2024 at 11:14=E2=80=AFPM Saravana Kannan <saravanak@google.=
+com> wrote:
+>
+> It would make it easier to debugs issues similar to the ones
+> reported[1][2] recently where some devices didn't have the fwnode set.
+>
+> [1] - https://lore.kernel.org/all/7b995947-4540-4b17-872e-e107adca4598@no=
+tapiano/
+> [2] - https://lore.kernel.org/all/20240910130019.35081-1-jonathanh@nvidia=
+.com/
+>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> ---
+>  drivers/base/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index a4c853411a6b..3b13fed1c3e3 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -2181,8 +2181,8 @@ static int fw_devlink_create_devlink(struct device =
+*con,
+>                 }
+>
+>                 if (con !=3D sup_dev && !device_link_add(con, sup_dev, fl=
+ags)) {
+> -                       dev_err(con, "Failed to create device link (0x%x)=
+ with %s\n",
+> -                               flags, dev_name(sup_dev));
+> +                       dev_err(con, "Failed to create device link (0x%x)=
+ with supplier %s for %pfwf\n",
+> +                               flags, dev_name(sup_dev), link->consumer)=
+;
+>                         ret =3D -EINVAL;
+>                 }
+>
+> --
+> 2.47.0.105.g07ac214952-goog
+>
