@@ -1,115 +1,98 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4311F12E1;
-	Mon, 28 Oct 2024 22:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1B1201008
+	for <linux-tegra@vger.kernel.org>; Tue, 29 Oct 2024 06:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730154880; cv=none; b=fCBSn9PEqGY53CGY/cNqG5+VoK/iAazVt6dK+fewGNTusFIVX5M7bIClsI4e1rOy/0aYr5+r2czmOX9Bx+0+1iyET/Yh3CWiLI4DHlqUHN7420PHT3Y1/oNo5ogbj6u2wJeM0Mo16qyub5ODaUDt6SMSRiz+HX3hiGR7S3VNfSw=
+	t=1730184804; cv=none; b=P8thau9ewVAqE3nJaoFx9mLq//ZIjKTkVpsrjnscryZfkixOVgG1ZOjENymUFTX/qjU1YtRi8fXliWQUrSKx4/cJjd8DC51WFU+pHon2Z+7cJvHCswRVADhx8M8zUUmBLJtJWzyx6EHPsB7sRkv/u6OQzD7xUvebnK9HIhxCtpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730154880; c=relaxed/simple;
-	bh=gKmGr/5ZnbM158J5N7jUh0J54APzNpxKlRD/E0i5/nw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O/Kd3BfuBoF600dmjuQ3YLA+p8GiUmFZC/Z3KIwoqbfzmgJvmp4T50aHMX7AI6l49gCZrcvCWS7CxNLTF+RXDPiRXv9vmge1uAubKjYnwNfz26vyFU6c8XJJLlsZmA6GzMq8/G7BSFTbK2210cuAFCiVnyTriEBkZKKwmYEXzq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hFiWZcGp; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1730184804; c=relaxed/simple;
+	bh=VI5gBCWScORZmQ5M5JKICCGe/z8Tu5nvu1z/DGuqTYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BMYW8ZH1QJvUAzW7uDobIo0e6DXisIHnulxwq+E4EV9qOwK+IGbO6lu4AfIAo0KUj9gNMysmMU9cpDJ/m9t878UXJbpS09e3etejdkdGW1D+FddK9Ks/PSH0gfGeaBLlVY4/RAQfvuBpN/aYMiBa6HXgfWJ0TDQHmC1420FrIsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TsCVp205; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFiWZcGp"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-431ac30d379so11923165e9.1;
-        Mon, 28 Oct 2024 15:34:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TsCVp205"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20e6981ca77so54678655ad.2
+        for <linux-tegra@vger.kernel.org>; Mon, 28 Oct 2024 23:53:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730154876; x=1730759676; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K3K5jfKAz+0lJ+9yVU83P5b7BV0bnKpsmzNSdRQX9b8=;
-        b=hFiWZcGp9ArTLdPCCUYnxmLRaib/xbsFbIbh6sLiM27K2XMRxocYeuRMBYEdOlRWNP
-         ywXefwYklsLhpMDRW2DJUUL04fhlHg0HeQtbvFybWC/SsSCxXatAV1ltps24ZfmAkm+2
-         wMnyD95qbhLeZsHI3yCa3I0Di7rQujalYnazo98vH1taUA4uZRGWGWJpWwuZdSAZd5kf
-         sxk3QWjqPsk5TRfjm+B6peoMG7YMaqnknQMhoIZX+q1Nn5oFVa0VBKH4Apc64stAYmi1
-         bVlfzXbv+/YHw6v7fcu09MUos4JN60h8BqT70pBSZAWQCaE7VkHOA4W1+2K3IBdwq2qd
-         tS+A==
+        d=linaro.org; s=google; t=1730184802; x=1730789602; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gxdqxmWJXdXU8AUeRm4skNzTB6cELoVffMjUmz4VZV4=;
+        b=TsCVp205Z2Rx58O5LNpZUuxsBJqxEYmRVNvrPr05GsIT1URTAfMgYQMYAEKnbzqUGR
+         yajxuID98PopypqyNE4CEFYQD8hTAUi2jV4fay16BNghfISNCYSMVfblB8bDOnrcAKI+
+         nGQ59tbKZbptMj2c6gimilCedT+Cj+tkMpFKZPwwx9+OFdj5IhX1iqyULBaaP09tm0+n
+         MwlMYNWfuGxHxouJHNjdluosOiPy9L8SbbFjV1FnC/bLROYaSZwew/NL3kr6S/7Z8+Qw
+         9xji6NMUiCEcBHTRJaDix1z6b6Oui5lgzyuSZlz0mWLToRDAkCOazRLMb6yl0XIdwN0S
+         R4hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730154876; x=1730759676;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K3K5jfKAz+0lJ+9yVU83P5b7BV0bnKpsmzNSdRQX9b8=;
-        b=TmtnezuYBKBJ5989kEogjWs6p+7XQIhcDRahPhX42qglpBk6y4dZOnnz17AudKmMmI
-         hRB8R4XnF29Pmbjxe0aqdQ8lA5Mk+PISwJ/avPxCE8D6iOGREAD14Yn0SRWv8LjvCjeh
-         WsoG0jn2iaH4v6RVquKYRp51Lad4A45lLyVXnpus4SU/1RTdtKKhcUUIxA1X4RvvFNDg
-         O5bTh/C3NycqkkeAj3MsXkrU/pAOK2Ep4F1MMGuaht7Vo8GNg+wB/dWu2RvWeluKHDtB
-         0iN7uaxr0VQza5gXgqSGtNZglJzSym0dQmh2THEgvS/hRs0mVVZpKjrJZyLFPLpBLSw1
-         2Vzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYg7EYJTxy9szONmu+9yP3Fv7YkOMWoGRZZoYbCO7edPDqT4/0yNNeAnhma1rA9JdayOar9KwRnvCO9lQ=@vger.kernel.org, AJvYcCWAQj6uRw+Ct6h1BlVXwMf1O5ucG+OM9o0JGjfVwKquekn95C7YQ89xs1c4aQcr/Cewej4eQJ7H@vger.kernel.org, AJvYcCWviXEBQTaCb3FBn8yxWsSX+UKbRIHvpCTi+nDBeG8ZrvCwIO//uZ0BqD43pxpa6UfWfS1Uob4SofLhNNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9sHiX4CuCvLiXy8NDOORPaa9vvmJeFiPTMKwpvMBAPEuMDxAL
-	4KDdrgcJYuCrhk1iF/RF1ZVdKklrfpbGyMD5EIisS8tdEh3qq39kUQTwlxtC
-X-Google-Smtp-Source: AGHT+IEde5iw0He7F0LFyazRrBmm2/W/T0eRjGPmeLjtvDNEqAOpB5BmIqMtQsyL281eqhTV69MTow==
-X-Received: by 2002:a05:600c:1390:b0:431:5d4f:73a3 with SMTP id 5b1f17b1804b1-4319acb226amr63557385e9.18.1730154875937;
-        Mon, 28 Oct 2024 15:34:35 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-b273-88b2-f83b-5936.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:b273:88b2:f83b:5936])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f7213sm123899495e9.32.2024.10.28.15.34.34
+        d=1e100.net; s=20230601; t=1730184802; x=1730789602;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gxdqxmWJXdXU8AUeRm4skNzTB6cELoVffMjUmz4VZV4=;
+        b=RdLRPTFQjVwbDhMCiJjhJXcn2+LNhE0MthQ0kSH5Z5BiqSq897sAgzOGm7eegMcVaR
+         Vrr1VVf+R3BMS0Ab+hhmoHqi1XlvQlZ00GqDduGgXMb69ISzK7GhK+rRp2Sg8JEddZvQ
+         KsD0kplQgw5GaYd03g0vPSC/c1g3BuzXZC8PqyQXFeap7wXATpsKHX/Mz/VjCbzWAKUt
+         LRhv9XW6msFypcWzVzv//ZccARcJdYV4A6UJgjnkLmTU4AC/WTywWKWsZeUqr/LrsF86
+         C4L5TJ+tUw6X6ixqYvu/9XVnl1qh1YQhbT3sNKyx9dhOavaZ2VqeGS1HGWVOmuGr8xFl
+         NL2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXXNxtoqTeuZqcnDIzqxSu5p/x/2U6jBnipHdVn2namLkouj7k524dqJ6HK6onruH5OUIE/DTmtDcfYMQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkiKiaOakdsltxAtPOsE8Gs98eK1gU0xi86FQMZ5J+dhjTsIXn
+	UuAq81kW/ESkjF1Uvu0nE//UrzYnHHBBMVKzWhjxiZUHr0X5J3q5fIdpdZ1YOGU=
+X-Google-Smtp-Source: AGHT+IFmnh6BfWm9u00lcdmwhUncv3sqpOQIn0HAENF9MSk8JtP1yLm3zPeUH5AL8E7LPGeuXgJA4A==
+X-Received: by 2002:a05:6a21:3a4a:b0:1d9:1d2d:b656 with SMTP id adf61e73a8af0-1d9a83d9f36mr13743238637.15.1730184801978;
+        Mon, 28 Oct 2024 23:53:21 -0700 (PDT)
+Received: from localhost ([122.172.85.97])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057921daasm6909172b3a.37.2024.10.28.23.53.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 15:34:35 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Mon, 28 Oct 2024 23:33:59 +0100
-Subject: [PATCH 2/2] phy: tegra: xusb: fix device node release in
- tegra210_xusb_padctl_probe
+        Mon, 28 Oct 2024 23:53:21 -0700 (PDT)
+Date: Tue, 29 Oct 2024 12:23:19 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Beata Michalska <beata.michalska@arm.com>
+Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
+	Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
+	catalin.marinas@arm.com, rafael@kernel.org,
+	yang@os.amperecomputing.com, lihuisong@huawei.com,
+	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
+	Bibek Basu <bbasu@nvidia.com>
+Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
+ arch_freq_avg_get_on_cpu
+Message-ID: <20241029065319.zto3wlvceec3fjym@vireshk-i7>
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <20240913132944.1880703-4-beata.michalska@arm.com>
+ <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
+ <ZvU4mR_FZa7jXUgk@arm.com>
+ <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
+ <Zv8PKlr_PJgxazro@arm.com>
+ <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
+ <Zwe1p0La_AFknglf@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241028-phy-tegra-xusb-tegra210-put_device-v1-2-28f74368c9ba@gmail.com>
-References: <20241028-phy-tegra-xusb-tegra210-put_device-v1-0-28f74368c9ba@gmail.com>
-In-Reply-To: <20241028-phy-tegra-xusb-tegra210-put_device-v1-0-28f74368c9ba@gmail.com>
-To: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, linux-phy@lists.infradead.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730154870; l=944;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=gKmGr/5ZnbM158J5N7jUh0J54APzNpxKlRD/E0i5/nw=;
- b=KpcDPrw47pH11bD3BEXoFXs1mAg0X+fkMwnitv4El8oVws91tHTegbMBR8eatX78+ife0YUKS
- wYuBrsZ6YOlCVGkVRhAhsdX9BmDmUtpEHYFJGUsxyFE6FVqn5E5TqYm
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zwe1p0La_AFknglf@arm.com>
 
-A device_node acquired via of_parse_phandle() needs a call to
-of_node_put() when the it is no longer required to decrement its
-refcount and avoid leaking the resource.
+On 10-10-24, 13:08, Beata Michalska wrote:
+> That is a fair point but I am not entirely convinced using '0' instead makes
+> things any more clearer as this is in no way a valid CPU frequency.
+> As long as we document the expected behaviour keeping the interface well
+> defined,  both options should be fine I guess.
+> 
+> @Viresh: what is your opinion on that one ?
 
-Add the missing call to of_node_put() as soon as 'np' is no longer
-required.
-
-Cc: stable@vger.kernel.org
-Fixes: 2d1021487273 ("phy: tegra: xusb: Add wake/sleepwalk for Tegra210")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/phy/tegra/xusb-tegra210.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/phy/tegra/xusb-tegra210.c b/drivers/phy/tegra/xusb-tegra210.c
-index 9c7fdd29b7c4..a77127d6c4fa 100644
---- a/drivers/phy/tegra/xusb-tegra210.c
-+++ b/drivers/phy/tegra/xusb-tegra210.c
-@@ -3164,6 +3164,7 @@ tegra210_xusb_padctl_probe(struct device *dev,
- 	}
- 
- 	pdev = of_find_device_by_node(np);
-+	of_node_put(np);
- 	if (!pdev) {
- 		dev_warn(dev, "PMC device is not available\n");
- 		goto out;
+Failing to get frequency for the CPU shouldn't be represented by 0,
+even if it is confusing for the user.
 
 -- 
-2.43.0
-
+viresh
