@@ -1,101 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903771D1E7A
-	for <linux-tegra@vger.kernel.org>; Wed, 30 Oct 2024 13:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E20F199B9;
+	Wed, 30 Oct 2024 13:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730293940; cv=none; b=MyeqJ4dIxSbYqz7Pd6sYLOvGvLFG4nMyFuOD1tXlayHezOLw2CghgheVfaJi84NZV5dbk7cVt6S+6hNL2tmr/EcXjlmR3Q7clqzp2TcpIyHJfCmaBOUqI6+kwYWkyg05Y3PlR9BmIzL3FpefSB7vEOVUp8G5GeqnFj4Px1TJYs8=
+	t=1730296127; cv=none; b=m53Df08ZixU6PwTN98Lk9KzaFq8bKviKMy8N9TikcLY4HLQePs7yu04/N1h2TX4xICq0Kg2wk/nYqPBy0mJ9xq2vHcUu0Yi5eRaCiocfA0jmscZ56svvhTtkB4QfrcGCTe5Ur82Og9PH3RLXGcsCEA5QTY5V5qgP63cSji+uHa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730293940; c=relaxed/simple;
-	bh=GLmPCKsnRLp7UWJOxMGhqO1S7eCnzR3rTDZxud4PtPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXsDHvcjdQMVjI/ipxdiXZ0g3j0HcAdOQCNB3Mnq/4B5X3E2dyf5k+dmVeBCKUMF/ZkRdPFMfixF+aJyHomy+LfNDRgq8LX62YWsOWSafOXzE70Q5h/JtIiUc1uQvykGYf8gyJE0q9BzBhX6rlFUHI7kVRJ0gOspK+wlowVzpuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0z2elTr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730296127; c=relaxed/simple;
+	bh=dLWpuJbJgWdigN9QmLFw+YaTXgAyQpiMq5oSI+FBn1s=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PEY+BaAQV+q22r4Q6HF+9L7cRQ5aZQO2gOYrA8+7SXYXW3fx5nNWPmli4DuXCuuxwDIa+2Vwp7XVyVZYq617yVilII2YHO5woPFLK0g8IlGWrxbNbY4DbUEK5y06pgPDGB0HekXDzZhHFacNT9ykYYnhsCGT4HglIaLxQcCUSbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=b85UkjG+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n6xdAIGd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=b85UkjG+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n6xdAIGd; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0z2elTr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6775CC4CEE3;
-	Wed, 30 Oct 2024 13:12:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730293939;
-	bh=GLmPCKsnRLp7UWJOxMGhqO1S7eCnzR3rTDZxud4PtPI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y0z2elTryGCHcp4StLsu0v6v2EG6rRWLcgnCznBeAokuG9sJvzNvhqsdwPCjFmFFU
-	 +R9fIB0gN0UtDK9XSOMmFNb5ybrIddRZ1OhA9gZTByt3rAw/UHMGJ3HHkOgdDfh/To
-	 UtR3I//yn80X5mvmimjHxbkYwMdf2qO1tTf7APCxYf6oSH+4lQbsNGibWoAgHUVTiL
-	 fccYDnjRCueV2zbW2u2c1su37tWg8zINUJzluecCa9JsmZr+ycspbBZWfC9akFsxmT
-	 tIazd/GnZ2ZWCN5c/fAC/kJcUmlC7kBXOvnq1++KnrQEW8An+XTBiPMn62w+nIC31H
-	 621pjlrukQ22w==
-Date: Wed, 30 Oct 2024 15:08:21 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Jan Stancek <jstancek@redhat.com>
-Cc: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Jonathan.Cameron@huawei.com, dan.j.williams@intel.com,
-	David Hildenbrand <david@redhat.com>, linux-tegra@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="b85UkjG+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n6xdAIGd";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="b85UkjG+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n6xdAIGd"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A977221F21;
+	Wed, 30 Oct 2024 13:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730296123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KujEQvcemIfAE3TfZJ4xsL+24D2dtfUtYqPmGW4GE8g=;
+	b=b85UkjG+Fw9dOoARUdsSpml+OacZxumFjg49UWHcDnjcLeRJMtrKJbzUbIXB7SMib/t/7b
+	7MGW9LacBsXIAWZtBX9wj8jaXImpcFB0eVpf1iirVAuzSe+jDkpHkNlC+JkIEU71W7d/wF
+	SKXL243SdNksQ8GVsQYrRAhKWbKBjko=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730296123;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KujEQvcemIfAE3TfZJ4xsL+24D2dtfUtYqPmGW4GE8g=;
+	b=n6xdAIGdff0vZvxsrUzs4lNayiLsrlaAhPWZ0MXBXz37G/JlcPhYlJjQSLpp6Wq3tMHCio
+	B8vcCFHuEHZEsiAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730296123; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KujEQvcemIfAE3TfZJ4xsL+24D2dtfUtYqPmGW4GE8g=;
+	b=b85UkjG+Fw9dOoARUdsSpml+OacZxumFjg49UWHcDnjcLeRJMtrKJbzUbIXB7SMib/t/7b
+	7MGW9LacBsXIAWZtBX9wj8jaXImpcFB0eVpf1iirVAuzSe+jDkpHkNlC+JkIEU71W7d/wF
+	SKXL243SdNksQ8GVsQYrRAhKWbKBjko=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730296123;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KujEQvcemIfAE3TfZJ4xsL+24D2dtfUtYqPmGW4GE8g=;
+	b=n6xdAIGdff0vZvxsrUzs4lNayiLsrlaAhPWZ0MXBXz37G/JlcPhYlJjQSLpp6Wq3tMHCio
+	B8vcCFHuEHZEsiAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 35CDD13AD9;
+	Wed, 30 Oct 2024 13:48:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yCb1Czs5ImcJeAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 30 Oct 2024 13:48:43 +0000
+Date: Wed, 30 Oct 2024 14:49:46 +0100
+Message-ID: <87sesdya2t.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Subject: Re: [bug] aarch64 host no longer boots after 767507654c22
- ("arch_numa: switch over to numa_memblks")
-Message-ID: <ZyIvxWghfaK81I4d@kernel.org>
-References: <CAASaF6zxBr2J_-eESQQXCRxOgy4RsuxG0te7d-wOz9d2YXj5Fw@mail.gmail.com>
- <525593F0-1AA8-4BCB-9B6D-630505C49F10@nvidia.com>
- <CAASaF6z7PtNFs1YwohT6N+AXdKx0+h87wiimx18Pod1vDfaBYQ@mail.gmail.com>
- <ZyELRjoDLmHeVvSR@kernel.org>
- <CAASaF6x8cMJUTYpm0dedkh9boXgVaL9WvxaG-r+aHY+6QOpw6Q@mail.gmail.com>
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sound@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] sound: Switch back to struct platform_driver::remove()
+In-Reply-To: <20241029073748.508077-2-u.kleine-koenig@baylibre.com>
+References: <20241029073748.508077-2-u.kleine-koenig@baylibre.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAASaF6x8cMJUTYpm0dedkh9boXgVaL9WvxaG-r+aHY+6QOpw6Q@mail.gmail.com>
+X-Spam-Score: -1.80
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FREEMAIL_ENVRCPT(0.00)[free.fr,gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,zonque.org,gmail.com,free.fr,microchip.com,bootlin.com,tuxon.dev,nvidia.com,ellerman.id.au,csgroup.eu,kernel.org,linux.ibm.com,lists.infradead.org,vger.kernel.org,lists.ozlabs.org];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[baylibre.com:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Oct 29, 2024 at 10:03:31PM +0100, Jan Stancek wrote:
-> On Tue, Oct 29, 2024 at 5:24â€¯PM Mike Rapoport <rppt@kernel.org> wrote:
-> >
-> > On Tue, Oct 29, 2024 at 04:43:39PM +0100, Jan Stancek wrote:
-> > > On Tue, Oct 29, 2024 at 4:07â€¯PM Zi Yan <ziy@nvidia.com> wrote:
-> > > >
-> > > > +tegra mailing list and maintainers
-> > > >
-> > > > On 29 Oct 2024, at 8:47, Jan Stancek wrote:
-> > > >
-> > > > > Hi,
-> > > > >
-> > > > > I'm seeing a regression on Nvidia IGX system, which no longer boots.
-> > > > >
-> > > > > bisect points at commit 767507654c22 ("arch_numa: switch over to numa_memblks").
-> > > > > It hangs very early, with 4k or 64k pages, with no kernel messages printed:
-> > > > >
-> > > > > EFI stub: Booting Linux Kernel...
-> > > > > EFI stub: Using DTB from configuration table
-> > > > > EFI stub: Exiting boot services...
-> > > > > <hangs here>
-> > > > >
-> > > >
-> > > > Is it possible to have earlycon output? It is hard to debug without any
-> > > > information except kernel fails to boot.
-> > >
-> > > I know it was a long shot, so far I haven't had luck getting it to work.
-> >
-> > Does it boot with numa=off and numa=fake?
+On Tue, 29 Oct 2024 08:37:47 +0100,
+Uwe Kleine-König wrote:
 > 
-> No, it doesn't.
- 
-No ideas without the logs, sorry.
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+> 
+> Convert all platform drivers below sound to use .remove(), with
+> the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
+> 
+> On the way do a few whitespace changes to make indention consistent.
+> 
+> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
 
-> > In the log from successful boot it seems there is no NUMA information in
-> > the device tree, can you send the device tree as well please?
-> 
-> https://people.redhat.com/jstancek/aarch64_numa_boot/device_tree
-> 
-> Regards,
-> Jan
+Applied to for-next branch now.
 
--- 
-Sincerely yours,
-Mike.
+
+thanks,
+
+Takashi
