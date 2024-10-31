@@ -1,273 +1,155 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2063.outbound.protection.outlook.com [40.107.244.63])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34A51BD9DC;
-	Wed, 30 Oct 2024 22:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E7981751;
+	Thu, 31 Oct 2024 14:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.66
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730326330; cv=fail; b=aJ07dBzwV374TBEn2sfUTe2hO+MM4bET9pt8ANSXcHTiWrAIM1NaTFuUurlPDHzqDggKGanAkoDshQO7hmAm97dbEuWwyx5SgfFE8ycE0EfVVbYM/1TJN+CXl6lNLprs+/oz+4R9Cp6qlVP+dkatJyYA6Hc+ZwXR58Rhdez5IB4=
+	t=1730384507; cv=fail; b=GN2xlPgXas+5W6P/NucQEMCG+ssMXOpWf+q7yLiR7ZUmfiIKVcvJ4MfzVCaa7ABZ4zjJb0n5I93OQNqRMPNqFHuLV7zOVlTTAAn2g7FgBUgyx7Wc3WF9T69LWCn2hdr82In2Y//g/8RYQocXgwKZoa9/X3HyjeW6kA42VvU9Qgw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730326330; c=relaxed/simple;
-	bh=BAqUlVnSOln6cmOFZtVavu665sqzLxpIOxNL8YIko1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jv8itUeqtT5Q38gmrbBQOcqXFmHBh74XZxslM8cg9ylzcjIpYf4PxzxNyZH1sC0F7F+NbN9qx+hlGfRIdD8pLgvMTvKgeDZY/ODWNhyZisYgktcoGySIek025UVFbJ+hGfKuh21jsawvmxYu01jmzTpj+jnpP0TGMqGLLvAlSeo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Rnbjzbzf; arc=fail smtp.client-ip=40.107.244.63
+	s=arc-20240116; t=1730384507; c=relaxed/simple;
+	bh=4H0/53kno1MhqoDAJdvEesa/iXD+mKbkn5TNuh5uwec=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GU5zY3D2IXgVFY/jM3vG4sCr4wQHabzKSSem4rKF4JHyyGKr0U4xDqjQlf3a9JIpDsVMBChUQevHzb+rQrxpi0s3MZXPwSXci1xcDW9RjMeOwEeWTUuHszvTWJ76QuAeJHGtwKhWq9anIG0ygx9xeBfUwa+8a55Fg4DtBkyWqzw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HKnksQ48; arc=fail smtp.client-ip=40.107.93.66
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Rnbjzbzf"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HKnksQ48"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QqgwlRcYyhMsG1PietpfjB2juE4CBVGI8VWRZ90W6JM6pTvh6m+VeV1kRyXqYScJFdOdRVppMoJVvMwPn2A5uEzwgXm1phjv58KuKpoCmPmZ/Dsi/u7E4Jox8znurz2e7GNyBJbPk5LAtr5MuifmF0FUx2G40+AoHSKuq3UCoeJm9hcNv7zCmnQ0EbxhKC9OwQEptIvW1wCLY4edYQu8rA8GMuazQlK4cpbEv9dwvPqcik4y+uTBbk1RdsDg88QYDHO2B36r+d7zaWMHgt/Qts3wXVRLvMd7mIE0ANebWnWCzyrWz24MlrF4ampDYtXESRt524t8F1CPzu3gWPPQWQ==
+ b=GXuKCLRZD+dcUMCIrlbAPvm6qiBXK4sANXFce570Y7yLM6VCwzXiBA1dsdxoS2OECKMdR4o55BJ+UQ7HkpbHKhFPxgsxtfzx0dpMikTCaPhcAmqR0cIYBQyln1uiC7VbVHYMHLOu1NQ48IZGMaiBvFcBkMa6XOQgImQVVPjYhZ7fFygZFc//IVPLPsLbIuG5qjGDzGqSEgon5wurdrCva3KaEVytaLt89HCoEj2mgTHFsuegTIESuBnpt2kWDPdjA8IYNLXDQb8a7CST53C2Ms1OzI6vtrzbdtQe6+hkn2/eFWn9Mwm4pkGi6PrkYJ9H98dGmZUc6An6JAVhxdUHAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HtPTYxvC7BuGJZY5vvCQzfbMSJ6fkdtN4y+g9738k1k=;
- b=aOk6cybQ66xS03EQIRY9OXvVjGjnBu4tLNTBIOuhCDiU+C4uDB0IZax02NXPLl+tvIq70UnsJgqw8V3Cl1vfG0WJ5RP70S5E86Ak5gspJYho2+Gq0J5qZXk1cz6m65eqRkPQ4hAyPiBc/v68+IIScDKnecNx5kEm5yFoLhp/liNBb4HccjkiVLAlBNUFTgWc7qFhvxwPCLsPPDu/jTyHI7iPkvF/Gop1V5RGdd75WJtmK0gitHMg0bAqsSzIdThtMRNiD4U6JRJVt5t2GtrVfPMHIt1jN15R3zZwEPgiH6SP4K+dBg0wwVJ6xEfkbRQuJhlC1oTtF0y1ArIjE/7+kg==
+ bh=cL53IueEP6hvRhpDtpjzOr68xizZVzXf2tQAV4NvcsM=;
+ b=Oifc9CSZs5yCijihDGUphhX9IDgKmJScdkEQcyrdg7iRjfAM25B6Qkj080xXoT2jzAmFkmupsNQIaWoFiLkCI80KvOG81fmh1UeK/5v8JWE05bJM94JQFjfy6nt2pTcsNUKM25S9bGE645EAJiMgbG6uVLIW21YQHMgjw6WKdCOpWmyLklj95ZtCljoUKT1rs+WkNkRbB80HfCzqB9T28cFI0OXfI3scgHK1QGOFkrwe136dj08Cycfq6iSOyNeL+WdHyOw3JYeajRzJ8rHXcMk+7bK3hUtU++uW0jKgEP9bOttS/aqHv2miOYDh35z/O5EQjZUcxoytmj0bInKErQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
+ 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HtPTYxvC7BuGJZY5vvCQzfbMSJ6fkdtN4y+g9738k1k=;
- b=Rnbjzbzfe7ZFgtCwJGTvHwh+2XBNeOt46FuV+HtZ3VOQGhJTc3qC6/knF/4H5hCp2S1jb0lcq+XQKoYnZFRekcJtICImNlXLkPYtJeP321nwA8JVCT1svLBF0pkcHBTxgsAFq7DrN9YKkPoG1+ydI574NeC0W1jlNyzm9HKxXhjTJ+2G3ZW6l3JvTrGrjgqwHohD1m57iSPuK24rjFqMBGH1kWVUtBvgXwoecqtknZAYqeuIA2BrZ0g8Op2pdbBsdYw9wWxNhyc8Be8PTh+ZxlC41oiQdsQqu75SrqIHd9gzYmCO/lCpSgByhuBEc07aHOOOeaC1jnF17VQIk4SLEA==
-Received: from CH0PR03CA0109.namprd03.prod.outlook.com (2603:10b6:610:cd::24)
- by DS7PR12MB6239.namprd12.prod.outlook.com (2603:10b6:8:95::18) with
+ bh=cL53IueEP6hvRhpDtpjzOr68xizZVzXf2tQAV4NvcsM=;
+ b=HKnksQ480q6dSCfKx7EQnW9XEMXJscAa6zr5GevNJpFdv/XXlO4iFi0nEzYqV4ak4YRox3awAhJjS3t5XFnCLrCMRZxwlv8i81xZt534lvIhZ9fkSghWHGQrtOsP0zNCm2YeGNmLfU/M6YgeydK0eU5H86dSwNg45WtQHA9BP4UYFIyNgeiVayyI4A9CD3JZbqV7YhpT/c4tgiq999v4bwfi2I5YcqpFBn5Sn0jgVK1VnUp0Bs5qL9sHFsJVvSc61bR9CLDtPDLuD5hubL6/Rh06lzOl02xz4vfREnD5PSaZ1y/fGKp4ruMPQ12Ag6u5FMPj6KbhfNd7ivoq6pmzGA==
+Received: from DM6PR02CA0154.namprd02.prod.outlook.com (2603:10b6:5:332::21)
+ by CY8PR12MB8242.namprd12.prod.outlook.com (2603:10b6:930:77::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Wed, 30 Oct
- 2024 22:12:02 +0000
-Received: from CH2PEPF0000014A.namprd02.prod.outlook.com
- (2603:10b6:610:cd:cafe::8f) by CH0PR03CA0109.outlook.office365.com
- (2603:10b6:610:cd::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.17 via Frontend
- Transport; Wed, 30 Oct 2024 22:12:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Thu, 31 Oct
+ 2024 14:21:40 +0000
+Received: from DS3PEPF000099DE.namprd04.prod.outlook.com
+ (2603:10b6:5:332:cafe::4c) by DM6PR02CA0154.outlook.office365.com
+ (2603:10b6:5:332::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20 via Frontend
+ Transport; Thu, 31 Oct 2024 14:21:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH2PEPF0000014A.mail.protection.outlook.com (10.167.244.107) with Microsoft
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ DS3PEPF000099DE.mail.protection.outlook.com (10.167.17.200) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8114.16 via Frontend Transport; Wed, 30 Oct 2024 22:12:02 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 30 Oct
- 2024 15:11:48 -0700
-Received: from [10.41.21.79] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 30 Oct
- 2024 15:11:42 -0700
-Message-ID: <f8fb4eb7-22ec-43a4-b3a9-ad84ca822664@nvidia.com>
-Date: Thu, 31 Oct 2024 03:41:38 +0530
+ 15.20.8114.16 via Frontend Transport; Thu, 31 Oct 2024 14:21:40 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 31 Oct
+ 2024 07:21:25 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 31 Oct
+ 2024 07:21:24 -0700
+Received: from build-bwicaksono-20240327T112120892.internal (10.127.8.12) by
+ mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.4 via
+ Frontend Transport; Thu, 31 Oct 2024 07:21:24 -0700
+From: Besar Wicaksono <bwicaksono@nvidia.com>
+To: <suzuki.poulose@arm.com>, <robin.murphy@arm.com>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <mark.rutland@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+	<vsethi@nvidia.com>, <rwiley@nvidia.com>, <rknight@nvidia.com>,
+	<ywan@nvidia.com>, Besar Wicaksono <bwicaksono@nvidia.com>
+Subject: [PATCH v2 0/4] perf: arm_cspmu: nvidia: update event list and filter
+Date: Thu, 31 Oct 2024 14:21:14 +0000
+Message-ID: <20241031142118.1865965-1-bwicaksono@nvidia.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
-To: Ryan Roberts <ryan.roberts@arm.com>, Thomas Tai <thomas.tai@oracle.com>,
-	Petr Tesarik <ptesarik@suse.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, Anshuman Khandual
-	<anshuman.khandual@arm.com>, Ard Biesheuvel <ardb@kernel.org>, "Catalin
- Marinas" <catalin.marinas@arm.com>, David Hildenbrand <david@redhat.com>,
-	"Greg Marsden" <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
-	"Kalesh Singh" <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241017142752.17f2c816@mordecai.tesarici.cz>
- <aa9a7118-3067-448e-aa34-bbc148c921a2@arm.com>
- <fed3b427-a600-4ce5-afef-4ccbfff64931@oracle.com>
- <df753b4a-0cf1-4544-b073-0ebf2bb71ef2@arm.com>
-Content-Language: en-US
-From: Sumit Gupta <sumitg@nvidia.com>
-In-Reply-To: <df753b4a-0cf1-4544-b073-0ebf2bb71ef2@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
- rnnvmail201.nvidia.com (10.129.68.8)
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000014A:EE_|DS7PR12MB6239:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5040dd4-6294-4842-0ddc-08dcf92fe1a4
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099DE:EE_|CY8PR12MB8242:EE_
+X-MS-Office365-Filtering-Correlation-Id: d44a89ee-728d-4ab5-8091-08dcf9b75671
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026;
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U2ZyS016b0dIZlRCRnlHZ013YjlrYjhtV2ppMmxIamRNTlhTYUcvdWgyZzJ0?=
- =?utf-8?B?VWd4WHljd1Vyc3NkaDJ4ZTJ4S0JFZUQ0NkR1eEtFRDFWNEtxeUhsL1FLU1Zi?=
- =?utf-8?B?N3M0TXVkaEtvR2k5SWEvUWJ2dW5uUEhINThlZWZFbUJRV1F2eDh4MFNtVTQw?=
- =?utf-8?B?SFRGRCtqYUhXNGg4T3lObGJkQmZBUzZXdjc5TEJUWEl1TEorOUZmaFJaWG43?=
- =?utf-8?B?ZHcvMHUrN0RqSlpoQ3NUQzhVN2RZNkNaRGNuTkZjL0FiNGZBeTRqVVd6bDZP?=
- =?utf-8?B?c1ZmbXlnOFdDS2NDcmxROWcwaEsxNmh4Z3dRK0NsVkdyL3V1UDJRaFJRcUo3?=
- =?utf-8?B?NFZrUjFmdzBEcVYzbHF2TkplZ3BhSEFrb09FQmduUGFxLzUycHJvSVorYmpo?=
- =?utf-8?B?Qmp3blNsRzhXTFZXMFlCTTRCVkw5YkhjSVJPM1NRTFNicUtFeWY5UXZwYTFN?=
- =?utf-8?B?L0NYV0FYYSt4UXhrV0kvQlpPVVNXc2JYTTFnMmpPVVJpRmQzbzBtaVZJM25V?=
- =?utf-8?B?NlptdFNDRFpNeGU1dWNERkVQOGhXTGZyK2xtSWV1Z0lXbGx2TTY4dEJEeFdr?=
- =?utf-8?B?NHFaQTVQcWNERmNsWnZrayt0T2VDOG5oWGpJbHlBc0tZQ2s4a0E4MktOZU4v?=
- =?utf-8?B?WjFHUUYzcmxjck8xMVMyeFBzV2pTSDBOdkFUd3JVd05MOTRCU2RUc2Jqd0M5?=
- =?utf-8?B?WnRiYzFiMkVML1kyblZkWnV6dUNTU3JXRTFJNWIxSHRFOTZNU0g5N2U3ZUhV?=
- =?utf-8?B?cTBlWUVsU3JkTW9OTzhScGNZeGFZZ1JPK2VTSnQ3dXZWSnZmSVBmcUJaNlpu?=
- =?utf-8?B?S2lJU0R4Q0JleTl4UFduUFgweDdsRFBMNWdEdXlvRk1SdGdQZm15N2ZOTU9I?=
- =?utf-8?B?dCtjNU9ZTmRFd25DcHVHQnZ3OVdJY1Y4Tm5xenErakxkcFRycEQvaUhHeDdT?=
- =?utf-8?B?QWpuYW5aMFpWRkNrbE53R3UwTXdYRVFKR3F0SzhlaUZid1FrS2hvS0JhWVZ0?=
- =?utf-8?B?ajB6OUNOS3c5RVFDWGhoQ3lTaW9BVVg5TGNkTWZTRGF0a3FFQ2ZVQkplVHdz?=
- =?utf-8?B?cStQbTNITVIzK2hRN2laM3FLbUFCL2RMWXFBR2F6QU0zeUt2b244VE1xYlJU?=
- =?utf-8?B?TW5JbXBldUpWSTRFZmc4LzlxU1JiNnQ2YzVueVhBNzhqYmJ5OGtyQ1l4blkw?=
- =?utf-8?B?MmdQcXVBSnh5VllIR3IwMHFXbWUxV0NEWWhIWnBRWFA3Q3pvUDRmWXBYZTVB?=
- =?utf-8?B?L0llSkhNZDYveDJvbFlMSXRoQ2toYWJNKzM3eGxjTW9jaC9ZRHZSb1N3bzVC?=
- =?utf-8?B?dHdvR2l4bVN1N3R4Wi85R2ZnSzV0dzVlRmU3NjFXT1g0cEY5UDMvYTFzWkhY?=
- =?utf-8?B?R0Y5WGRvakFXQVhocVMvenhPK3JMeGtnU1RmblQrNWo5Und4K0hZM2I0aFBa?=
- =?utf-8?B?QmFpTmdHSXVNTmJLam01aDI3ZjR2R1I1aXhBNTgvOUpZb2RTNkF5b2twSnow?=
- =?utf-8?B?b0M4b3ZpRTU2ZnhRdlFZbys3ZjY5alllaThuTlpQcUhhaWZlNVZoNm1GVDl3?=
- =?utf-8?B?V3A1Qk54T21qY01wMXdqWnZZbUpIZnRyUG45eGM1S3JLdUxjZm0rS0xHbGdh?=
- =?utf-8?B?cDBwcmxPNHZZc2I5SmFQM0hqOGtOYXZmQVFDNndleGthNTNma3d2dDZRay81?=
- =?utf-8?B?eUN4TWxjYmpHU0pnY0s3TkR2SG9HQ3hXOEwreG14VEIzamU1cklaQkEzbnNo?=
- =?utf-8?B?YWh5TDN0SXRlM2g3b21FeXRraDN4Y3NudWdGakhoWDliQmYxemVtbVdvSFZv?=
- =?utf-8?B?ek8rWDFEcXpXZnlJZi9YcXFUTWFIWWFWU0RCQllDcWFGWHFMdUlvNURkVDhy?=
- =?utf-8?B?MDMvaVVVb2VvQUZzbUdxV3ovL3JjZlVtSi96cGJwbk14SXc9PQ==?=
+	=?us-ascii?Q?g4xXOgDzWrs4Qu1ev4AvfxbQESr6d5w0G9Tp9hb6nk1RWozDRn/v8+1HT7J6?=
+ =?us-ascii?Q?Jyw3DVEPoCG0o0Jw/acvxR6fMZZIvV5oLG4NL8t5UIPddxWL5KCUvcxGbh41?=
+ =?us-ascii?Q?YcW5Jr8Iw+cIpXrnoHLSJ8/lJkOood/uV0DNiaUtD2cSM5d283DXZzZ0zJAO?=
+ =?us-ascii?Q?J/RU/qyO3J2qLql3uERpAEsmglI4PmtNWQex7gfUESkg0cZGWdiiCFrBL707?=
+ =?us-ascii?Q?47Jsd0gkDX0oF9g+mrMwv4hW53w/NP9AcH88apL6oeBpyuQzURtigdy+jVnW?=
+ =?us-ascii?Q?vvSUr8u1sUjL061GKvOQp+p0DPq5BEE//EnIP+Wdw9gRYOlXm+3BxcSghTCT?=
+ =?us-ascii?Q?ZEDCB8yu/cyNJbLcsoFAphCTAROqu0Fjci0OucPUlXArhBMKOGgdNVJ40DcO?=
+ =?us-ascii?Q?lPujNONeEiX9e1xV0twQOLKQrE4b1Jnef8nfpwOVSKCyHYNJyxygg3eo6OS8?=
+ =?us-ascii?Q?D+/v/xNYZMfwkTdSL5/zLA2rcG7qju2qE7WealRjEcLIFw8IeRfNDVjyBekS?=
+ =?us-ascii?Q?JUoP3BuhBn21eT8BfoZWOX8Bkj5SaXA6ZTGykiQyYY3PR+4OQQwPzJE0IgJO?=
+ =?us-ascii?Q?gRW6hdsDSCgdMFb/iBQJw+GnOUsBR4yC0lt7yobF8mJWJb8AttUFVCJTbM4Y?=
+ =?us-ascii?Q?WpYmv+TAhBegd7XGZpEe/5MQ5b5YMc4u9yRWjkkz9QfhAVAWzcFnWKept3UC?=
+ =?us-ascii?Q?IhIWV5/roK4O8vEr3mv4oZUHJSmSdOmPpbwRaHe6t0W0L7/sWhuRFiOPANkv?=
+ =?us-ascii?Q?ofF5IsvU4cWYoxd8oxAYx0X6GfGyjp0xpkB5JGnZWYWYFrKqeSCqSkPi2R0x?=
+ =?us-ascii?Q?14PN7TDRssQs4f49JGAzUbWbonz9+CtD1vP+94B+krnX9FU6jwG5VFWSHz/I?=
+ =?us-ascii?Q?HnQgwThjrM9jOXICZHNF5I+1GDKp3AHOFSjZGv+QoCaxfRPi0j3CpqSWeSam?=
+ =?us-ascii?Q?o1+3h8uFPOl7G5GnFeFFwN7qzvNq1V84JNhyVeptXNfcl7x40c7EcS5+PJNe?=
+ =?us-ascii?Q?u2V5i4nk9bOgP+SDoWmGQva8FKfZv7DVL/k3jnbl5s+NLCH+LxIS72oYokMV?=
+ =?us-ascii?Q?461riBKwrlyUqx3XkpFD3RFjEWsvSL01vhxcOqFuUpou6lCfHi+dPFKgoD8O?=
+ =?us-ascii?Q?WB7prv4Hn7pPbsGRSzwkoyAN4kUi+XZ81uj49ozl/cYHtHuPyX8XLk6EqWQd?=
+ =?us-ascii?Q?dDAvICqEaCZeD9CUj2CkWBN4K56J0iua335K+hBxSTXYgmMe/CBrHgVA05iH?=
+ =?us-ascii?Q?9+RGZCm2sZkIAFlq02b7AZ1D/s8ollkstj0obRx6hP8SMxLQ49I+7syRa5I2?=
+ =?us-ascii?Q?Uo/1g0vpyeiJDBflclXAoFp9d84i5ifIoEIj5Arw6tilw0KQiVs+HFjx1V8z?=
+ =?us-ascii?Q?04pb155r/YZbCewwLAd1gPWP7IDphdzO02YXjo8BQcC+aJt83Q=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 22:12:02.2453
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2024 14:21:40.2034
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5040dd4-6294-4842-0ddc-08dcf92fe1a4
+X-MS-Exchange-CrossTenant-Network-Message-Id: d44a89ee-728d-4ab5-8091-08dcf9b75671
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000014A.namprd02.prod.outlook.com
+	DS3PEPF000099DE.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6239
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8242
+
+This series update the list of supported events and filters in NVIDIA Grace
+CoreSight PMUs.
+
+Changes from v1:
+ * Split the change for setting default filter value.
+ * Add new patch to fix NVIDIA PMU sysfs path in kernel doc.
+ * Drop the patch for CNVLINK PMU events renaming from this series.
+v1: https://lore.kernel.org/linux-arm-kernel/20240918215846.1424282-1-bwicaksono@nvidia.com/T/
+
+Besar Wicaksono (4):
+  perf: arm_cspmu: nvidia: remove unsupported SCF events
+  perf: arm_cspmu: nvidia: fix sysfs path in the kernel doc
+  perf: arm_cspmu: nvidia: enable NVLINK-C2C port filtering
+  perf: arm_cspmu: nvidia: monitor all ports by default
+
+ Documentation/admin-guide/perf/nvidia-pmu.rst | 52 ++++++++++---
+ drivers/perf/arm_cspmu/nvidia_cspmu.c         | 75 ++-----------------
+ 2 files changed, 50 insertions(+), 77 deletions(-)
 
 
+base-commit: ad618736883b8970f66af799e34007475fe33a68
+-- 
+2.34.1
 
-On 24/10/24 16:18, Ryan Roberts wrote:
-> External email: Use caution opening links or attachments
-> 
-> 
-> On 23/10/2024 22:00, Thomas Tai wrote:
->>
->> On 10/17/2024 8:32 AM, Ryan Roberts wrote:
->>> On 17/10/2024 13:27, Petr Tesarik wrote:
->>>> On Mon, 14 Oct 2024 11:55:11 +0100
->>>> Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>>
->>>>> [...]
->>>>> The series is arranged as follows:
->>>>>
->>>>>     - patch 1:       Add macros required for converting non-arch code to support
->>>>>                boot-time page size selection
->>>>>     - patches 2-36:  Remove PAGE_SIZE compile-time constant assumption from all
->>>>>                non-arch code
->>>> I have just tried to recompile the openSUSE kernel with these patches
->>>> applied, and I'm running into this:
->>>>
->>>>     CC      arch/arm64/hyperv/hv_core.o
->>>> In file included from ../arch/arm64/hyperv/hv_core.c:14:0:
->>>> ../include/linux/hyperv.h:158:5: error: variably modified ‘reserved2’ at file
->>>> scope
->>>>     u8 reserved2[PAGE_SIZE - 68];
->>>>        ^~~~~~~~~
->>>>
->>>> It looks like one more place which needs a patch, right?
->>> As mentioned in the cover letter, so far I've only converted enough to get the
->>> defconfig *image* building (i.e. no modules). If you are compiling a different
->>> config or compiling the modules for defconfig, you will likely run into these
->>> types of issues.
->>
->> It would be nice if you could provide the defconfig you are using; I also ran
->> into build issues when using the arch/arm64/configs/defconfig.
-> 
-> git clean -xdfq
-> make defconfig
-> 
-> # Set CONFIG_ARM64_BOOT_TIME_PAGE_SIZE
-> ./scripts/config --disable CONFIG_ARM64_4K_PAGES
-> ./scripts/config --disable CONFIG_ARM64_16K_PAGES
-> ./scripts/config --disable CONFIG_ARM64_64K_PAGES
-> ./scripts/config --disable CONFIG_ARM64_BOOT_TIME_PAGE_SIZE
-> ./scripts/config --enable CONFIG_ARM64_BOOT_TIME_PAGE_SIZE
-> 
-> # Set ARM64_VA_BITS_48
-> ./scripts/config --disable ARM64_VA_BITS_36
-> ./scripts/config --disable ARM64_VA_BITS_39
-> ./scripts/config --disable ARM64_VA_BITS_42
-> ./scripts/config --disable ARM64_VA_BITS_47
-> ./scripts/config --disable ARM64_VA_BITS_48
-> ./scripts/config --disable ARM64_VA_BITS_52
-> ./scripts/config --enable ARM64_VA_BITS_48
-> 
-> # Optional: filesystems known to compile with boot-time page size
-> ./scripts/config --enable CONFIG_SQUASHFS_LZ4
-> ./scripts/config --enable CONFIG_SQUASHFS_LZO
-> ./scripts/config --enable CONFIG_SQUASHFS_XZ
-> ./scripts/config --enable CONFIG_SQUASHFS_ZSTD
-> ./scripts/config --enable CONFIG_XFS_FS
-> 
-> # Optional: trace stuff known to compile with boot-time page size
-> ./scripts/config --enable CONFIG_FTRACE
-> ./scripts/config --enable CONFIG_FUNCTION_TRACER
-> ./scripts/config --enable CONFIG_KPROBES
-> ./scripts/config --enable CONFIG_HIST_TRIGGERS
-> ./scripts/config --enable CONFIG_FTRACE_SYSCALLS
-> 
-> # Optional: misc mm stuff known to compile with boot-time page size
-> ./scripts/config --enable CONFIG_PTDUMP_DEBUGFS
-> ./scripts/config --enable CONFIG_READ_ONLY_THP_FOR_FS
-> ./scripts/config --enable CONFIG_USERFAULTFD
-> 
-> # Optional: mm debug stuff known compile with boot-time page size
-> ./scripts/config --enable CONFIG_DEBUG_VM
-> ./scripts/config --enable CONFIG_DEBUG_VM_MAPLE_TREE
-> ./scripts/config --enable CONFIG_DEBUG_VM_RB
-> ./scripts/config --enable CONFIG_DEBUG_VM_PGFLAGS
-> ./scripts/config --enable CONFIG_DEBUG_VM_PGTABLE
-> ./scripts/config --enable CONFIG_PAGE_TABLE_CHECK
-> ./scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
-> 
-> make olddefconfig
-> make -s -j`nproc` Image
-> 
-> So I'm explicitly only building and booting the kernel image, not the modules.
-> The kernel image contains all the drivers needed to get a VM up and running
-> under QEMU/KVM.
-> 
-> Thanks,
-> Ryan
-> 
-
-Thank you for this patch set.
-I was able to boot with minimal configs on Tegra234 board. Will enable 
-more configs and discuss.
-
-Thank you,
-Sumit Gupta
-
->>
->> Thank you,
->> Thomas
->>
->>>
->>> That said, I do have some patches to fix Hyper-V, which Michael Kelley was kind
->>> enough to send me.
->>>
->>> I understand that Suse might be able to help with wider performance testing - if
->>> that's the reason you are trying to compile, you could send me your config and
->>> I'll start working on fixing up other drivers?
->>>
->>> Thanks,
->>> Ryan
->>>
->>>> Petr T
->>>
-> 
-> 
