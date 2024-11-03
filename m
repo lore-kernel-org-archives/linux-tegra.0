@@ -1,125 +1,101 @@
 Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9D614373F
-	for <linux-tegra@vger.kernel.org>; Sat,  2 Nov 2024 17:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D6D83CD3;
+	Sun,  3 Nov 2024 20:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730567478; cv=none; b=ea9kmv4bTVPPLBOWc5xawggjchxWxpYwiW0FTNtacYAC3OQ9bReIDxYNquJuvh5UZXPGIwmtDdQptcrR1YNG+//zl12VoXrsIjVh0ZODeCYH9+y63RgaLOUSmpHi15XhyeAO9we0F+pRiVozs7/X4tvttUa6TnHlKqunVSqgIIs=
+	t=1730667215; cv=none; b=AdzOOnPhtd4aWM61fVzfFa1ftWqacBkbPF2F2j8tsPdjyaxn3F8lq4EtpnOmScW2eBE2y9g9mnI5j967wcIzdk53GzDZPFGrj3cgCb60AF1xt1H42+LYFVXmvHJX04NwGssVF5nCN+Xq4lGkB5FmorbAc6dGvra2yNzmxH9wHpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730567478; c=relaxed/simple;
-	bh=k1KIRyvPe6KpMWttwuAoqiKm9nKOdtspGFDhZiasmY4=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sQjPD86i2FYBvyEBfum2nz1cbSKgZ0BuhxxtXJXFu+uR11AANm4u18I0ghewXOmSrAsVbuAHtDghbX1UeHPWn3UPVpk8Wbs3T85rCgYR6caKt5HEQRpe3dsQTWZRmVRcUce6yVlVjqptA9ql+GVrIXkb1au1FEmXGPDKFm7dWww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N68CZOT6; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N68CZOT6"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e49ad46b1so2495141b3a.1
-        for <linux-tegra@vger.kernel.org>; Sat, 02 Nov 2024 10:11:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730567476; x=1731172276; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=naogVYCbfHgepmXtHeIUqBrExKR0wEfnf5gnXKOTnEI=;
-        b=N68CZOT63uH3CFzvKlDJcK+d4AiWqyCwbIGCKx8XMu3OUlmDNmZLcpdkEzpZpU/FqJ
-         1JjK9OMwrszXk905RZcbebTH8wexmRSsm9bA9qnNU9u8X51659HuWUbeZ5C5kmFKlsIZ
-         05UcZqz4OTqk0vQ5b8xcKu14UwPZZND5m72MNEG/8bU0i2FFtkUhyFj9dsMOpy+WJbrG
-         0+cIMifFc3UtRxQjZO1dMGBNgbr+YnDG75os98oY/99fGMWsUvRa0Hj2pBb6iXQ3T+yW
-         25OKHtzai25Nnn8qiJdCN4YqbPIziYvAPqm1k0KvWaygIJmpZhiyqL8+9mCVh4pnjO7U
-         2HYw==
+	s=arc-20240116; t=1730667215; c=relaxed/simple;
+	bh=ZWYCQQ51VNGgkG/ayFISd1Iy4D0oOcizhMsB9SzyMoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rNrvuEK2wNkhy5KPZFJf0tbsmwF2NDrJfWZtDWTwKVQ3ZNI7ZoQCr1ZzhXaiyXI6Ljdsi/G9axegLklztAk/h9QuXJxYGxw1HfQK8Zvqy+Zi/h03yvQX4QDU4FfJQkkBOlMnc7Joqb9pHsbhl98DsFjKIZ/iZrX/UImsoNpHLV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e70c32cd7so3245381b3a.1;
+        Sun, 03 Nov 2024 12:53:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730567476; x=1731172276;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=naogVYCbfHgepmXtHeIUqBrExKR0wEfnf5gnXKOTnEI=;
-        b=ajo0tRnW4/CNz5M23KdqL9JXrOsnsOdY3r/rFE9SPQwNOGZnqWu4NBnHqaNKXOfx9X
-         mMzj7c9v42scPgezMxo+N8HQDmqnuUJcZd5jZz4vo6Rq7Sn2BwV24sbT+cGOrzaGUsP4
-         BrmyhnWSwPoysyCJM+QKmNoO8IOfnUZ8aLaWufPfezxIcTAz6XDBR0ErX9Z62seMxQC5
-         66KfwGU73G+Yt1EpfviOJiHH8tXE19gfOaVM5zsRGppY8j9/v1iVSYeYiVPpRGi5M5vi
-         qt1qwt+UuNnp0aFPZwteqEgufEGg4J6nPgo7kyxAcwiudNEROSBJgEL4z67yOJ+aDMbH
-         V0Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkzKYLgJVV4gtQK3gU2Sp+w2vTP0PBB0OVov1WGru6fQs8GkbKcPcByAnTuYgJ351N959pAjCyxODE+A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKwVxSSDUqdw0t3EYiKJRcfaGSC+tn6JbqOD6X4EIyJAkriK4Y
-	ihdYP1guoG6Q6cNzgbmCnelpuk7IOcx2hlGN71ai3lKvJ2fiqU4FV+QHbezefw==
-X-Google-Smtp-Source: AGHT+IFGrKry0GXdqZw3UiEUAt/+TG/WgyYeK0gfkTWgNav+BbUqRjfMgVsN5xWLgwY90mfcxhLeXQ==
-X-Received: by 2002:a05:6a21:1645:b0:1d9:2694:44df with SMTP id adf61e73a8af0-1d9a85354dbmr38139599637.43.1730567476034;
-        Sat, 02 Nov 2024 10:11:16 -0700 (PDT)
-Received: from thinkpad ([220.158.156.209])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee45296c97sm4042866a12.14.2024.11.02.10.11.11
+        d=1e100.net; s=20230601; t=1730667213; x=1731272013;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=InjzJWxwQf1lmaUOg5rdT3QQjnZuPbY63EFFbzsRveo=;
+        b=UCX5FZ/ARJ9fUGRDErv6WpEdIOTcACcoNGYWg4u4Kyj4mL0zsv75XWXl1lmFwwPCQG
+         fbESQ1BStvP+tfqWF+lhc0WAmbm/dlpv2n3E8NBHbOaKMmRJITLrGdHWa76J3KG0P6pV
+         Io2Jp40LVTpIQuNzw1aJfrnSGnQoD4Ap2Hn3XwRrKsJwyOJDIWjMBtLFiHyJTenI3+uT
+         O5434mOOSHKM8vTGuLiIAw2qCo4mtQ3g7PS51eIRgey3q3lVaXUCxT66kkmQ9+06B2XO
+         POOi4MJtPo+ADK+5cE8y3vf/5RgO0Z2PdizaCg0UliptSDO1gXmNMn28xOCQSloRVP3T
+         i9MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFax9ry2G9W2Ifs9S74omI2Q+5tOEtOXcsg4bBHZ1fKXFvliBtZl5Jlx+7xwVIkd5myWAuk15zbm84CvY=@vger.kernel.org, AJvYcCVLm0xSOyGAr+cDgzzmIolX1+rDLP4y7Ebb9tmYLnLd8zz8WLTJi5nEfk/CU2oGXTHGQeC6bDHjuTYtIjcy@vger.kernel.org, AJvYcCW2ehvsw/xzxi7yXbpERyywCOiL/bZtUWWmQNEY9bNQE0ws/ibIMDhm1XuY7Sex4rxKfpOo6+b0Ulwk@vger.kernel.org, AJvYcCWW152Sop0uoDfbtVONC/fKsaT6k0eAP61R9Fz59mpCSWOtkC/4gXOmHXFtx9YZqpaf1GMXoeu6bEtDW6Na@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbCDQ2mqAy4tkal1vlljsftfCMlwT3BxIfpiyCHkQUWOJIOZQz
+	xLd3CgwimPiO8m7Rfm4IBNaRb6Owz85P2dvzpI39dxF6yREQWBru
+X-Google-Smtp-Source: AGHT+IHupF8efOyDp7E1SVzfTrPRVCc42EJestRDTVJ2U870NUJIU5+bitobgYTeGa9U5qW2FEm3AQ==
+X-Received: by 2002:a05:6a20:e30b:b0:1d8:abf3:58be with SMTP id adf61e73a8af0-1d9a8402d5emr41221754637.21.1730667213369;
+        Sun, 03 Nov 2024 12:53:33 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b8f9esm6139630b3a.8.2024.11.03.12.53.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Nov 2024 10:11:15 -0700 (PDT)
-Date: Sat, 2 Nov 2024 22:41:07 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+        Sun, 03 Nov 2024 12:53:32 -0800 (PST)
+Date: Mon, 4 Nov 2024 05:53:31 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: manivannan.sadhasivam@linaro.org
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
 	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
 	Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
 	Vidya Sagar <vidyas@nvidia.com>, linux-pci@vger.kernel.org,
 	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 0/2] PCI: {qcom-ep/tegra194}: Move endpoint cleanups to
- PERST# deassert handler
-Message-ID: <20241102171107.p7j44qsi6ojokrmz@thinkpad>
+Subject: Re: [PATCH 1/2] PCI: qcom-ep: Move controller cleanups to
+ qcom_pcie_perst_deassert()
+Message-ID: <20241103205331.GG237624@rocinante>
 References: <20240817-pci-qcom-ep-cleanup-v1-0-d6b958226559@linaro.org>
+ <20240817-pci-qcom-ep-cleanup-v1-1-d6b958226559@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240817-pci-qcom-ep-cleanup-v1-0-d6b958226559@linaro.org>
+In-Reply-To: <20240817-pci-qcom-ep-cleanup-v1-1-d6b958226559@linaro.org>
 
-On Sat, Aug 17, 2024 at 11:09:02AM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> Hi,
-> 
-> This series moves the call to endpoint cleanup functions (dw_pcie_ep_cleanup()
-> pci_epc_deinit_notify()) to PERST# deassert handler in qcom-ep and tegra194
-> drivers. It aims to fix a crash that is seen with Qcom endpoint SoCs when host
-> asserts PERST# and the cleanup functions are called without refclk.
-> 
-> During the review of v1 [1], Bjorn suggested fixing up tegra194 driver as well
-> as both drivers share the same design and require refclk from host for
-> operation.
-> 
-> Testing
-> =======
-> 
-> The Qcom patch is tested on SM8450 development board. For tegra194, I'm
-> expecting someone in the Cc list or the community will do the testing.
-> 
-> [1] https://lore.kernel.org/linux-pci/20240815224717.GA53536@bhelgaas/
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Hello,
 
-Can this series be merged for 6.13?
+> Currently, the endpoint cleanup function dw_pcie_ep_cleanup() and EPF
+> deinit notify function pci_epc_deinit_notify() are called during the
+> execution of qcom_pcie_perst_assert() i.e., when the host has asserted
+> PERST#. But quickly after this step, refclk will also be disabled by the
+> host.
+> 
+> All of the Qcom endpoint SoCs supported as of now depend on the refclk from
+> the host for keeping the controller operational. Due to this limitation,
+> any access to the hardware registers in the absence of refclk will result
+> in a whole endpoint crash. Unfortunately, most of the controller cleanups
+> require accessing the hardware registers (like eDMA cleanup performed in
+> dw_pcie_ep_cleanup(), powering down MHI EPF etc...). So these cleanup
+> functions are currently causing the crash in the endpoint SoC once host
+> asserts PERST#.
+> 
+> One way to address this issue is by generating the refclk in the endpoint
+> itself and not depending on the host. But that is not always possible as
+> some of the endpoint designs do require the endpoint to consume refclk from
+> the host (as I was told by the Qcom engineers).
+> 
+> So let's fix this crash by moving the controller cleanups to the start of
+> the qcom_pcie_perst_deassert() function. qcom_pcie_perst_deassert() is
+> called whenever the host has deasserted PERST# and it is guaranteed that
+> the refclk would be active at this point. So at the start of this function
+> (after enabling resources), the controller cleanup can be performed. Once
+> finished, rest of the code execution for PERST# deassert can continue as
+> usual.
 
-- Mani
+Applied to controller/qcom, thank you!
 
-> ---
-> Manivannan Sadhasivam (2):
->       PCI: qcom-ep: Move controller cleanups to qcom_pcie_perst_deassert()
->       PCI: tegra194: Move controller cleanups to pex_ep_event_pex_rst_deassert()
-> 
->  drivers/pci/controller/dwc/pcie-qcom-ep.c  | 6 ++++--
->  drivers/pci/controller/dwc/pcie-tegra194.c | 7 ++++---
->  2 files changed, 8 insertions(+), 5 deletions(-)
-> ---
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-> change-id: 20240817-pci-qcom-ep-cleanup-740745e21d87
-> 
-> Best regards,
-> -- 
-> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> 
+[01/01] PCI: qcom-ep: Move controller cleanups to qcom_pcie_perst_deassert()
+        https://git.kernel.org/pci/pci/c/7d7cf89b119a
 
--- 
-மணிவண்ணன் சதாசிவம்
+	Krzysztof
