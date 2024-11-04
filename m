@@ -1,58 +1,46 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA80983CD3;
-	Sun,  3 Nov 2024 20:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC8D199E8D;
+	Mon,  4 Nov 2024 07:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730667320; cv=none; b=I0jtCW91WtZP1EprTtfBaAxfb3zqbGRDKuabPP0rhy9wMxrgTIwJpETKVyasmOrdPeMIDDSnKxHW0JwUtQPLsqnqTTO+mG4Fo4dc3QXAvTVBUWSU2UqYg3SetWbHlY9n85CjACRbomVqbyBUPj7FVBcoQRM/Ex3EBtfxeYaLMY4=
+	t=1730707171; cv=none; b=sHyiKNSOQ3fzLZdC29JCklQNraCXCqje8Dz4gaCaC+aTh+ztE5VIZ+6pjyB8rZZrrCpZdWF35EXv3bJ0g62u5KIvmMemw6y2k/4eh0HS8K7PF0rriHpMMDBeowNZpaJq6vlWN9jjjq/ZInaxL4ohZhE/lmYSPhCJlE7Wgn2r3e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730667320; c=relaxed/simple;
-	bh=169TU0I8OqVfMkV44s8qmmQuBgGmdkRGfXbq2TsNqRk=;
+	s=arc-20240116; t=1730707171; c=relaxed/simple;
+	bh=WIXvGA2A94TpVMNOjbk1pkQ/viHW9shMmwkmtcNq3z4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cv6yYb8+h11/EUbb+wdFNwcnr6mTKGEd6A7/LMEVYh/N1q7hxFYNLIv1v5vfXlSdN5+bvHYfEmcytIeYDFQLX9oELSfTocrZ5Yb3d7du8kGuiIytMLHqUxsCJgiWyegcbQ9ScV/mYKx1FPx743akFAVm0st2MdNcpeW8uXiOG9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7203c431f93so3013314b3a.1;
-        Sun, 03 Nov 2024 12:55:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730667318; x=1731272118;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vkTm3ISUki3FFYUseRADV3hbFvsQp+6guXHl9w2tk54=;
-        b=VHFXNxu/vmUX5r/zkC3qlKngITEUXr10lCRxVWU9WXdJHRsG35cXtbsfsdzXg+W5NG
-         oRuYmjg7cLyCrpXYCc8sSRbza++RlMTI6+zf3nBoDRzdBM4ErqHm+pFy0zbV9DhbulX+
-         ojh6WqGr1HIL6qbzkda0/XVEjKUdxretYRggb4C/eGHgxPNv/dmixH2uqU/N6s6BUPl7
-         bqFOcGM/v4IJMVWliir8bnbGgFyk7Yutm1SKplZ235UfY+OSSyo0xuu6fJqEDPaVlS8V
-         QbqJibduQXowOSTGwMsgU00zty19iZzGtFX8FO415x6PxH6BZHoLOrIzKQz6Wl08EsEP
-         mU+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUQdybWBL29nrac2ai8YnOjkM6PPsWOODm6C8eM4oAsXVT5ypSDiPmkavkA/bibFBDhYlBtV532YyfmItQs@vger.kernel.org, AJvYcCW+/rWBSWy30lhm/MhzWIDCkpOf3HPD9yUPx1xK86hmjZ1fhtnqdvrw/q0q2gfbXU/dT76Jjcgs6AO2aLo=@vger.kernel.org, AJvYcCXfjQsfwfSbt2wS5T4XiTrCTLEsesiZtnRlg4ZOBjXi+c7QRqWw3nkjP4s/47KGx4WieA+qdsAQhrYj@vger.kernel.org, AJvYcCXosUCX/+T/buMcL01HoHH1Dcs2e21qVj8UVy/MjIjuEwqnMuIOmyZX7vkoYWY+i+Pcbw4OyVMlgTFra96C@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvwK5UmF5qhz/ii5rkP83VEGeSdv+pmDvjMcyRDVNJk8hA/B2m
-	D1f0aZdwMHhCzB2OUu9jnASd1xnKolTkm6T8ru5lWdUbc3ckj9v1
-X-Google-Smtp-Source: AGHT+IEVUlFcuurAji9Axfc1ULN18ChO+rIWASnT5jNqDNMJTj4409fS7E5e/UYWPl+N9KVFKG0WaA==
-X-Received: by 2002:a05:6a20:a10b:b0:1db:dce8:c26f with SMTP id adf61e73a8af0-1dbdce8c29emr1170730637.33.1730667317773;
-        Sun, 03 Nov 2024 12:55:17 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc2f189dsm6038978b3a.181.2024.11.03.12.55.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Nov 2024 12:55:17 -0800 (PST)
-Date: Mon, 4 Nov 2024 05:55:15 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: manivannan.sadhasivam@linaro.org
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Vidya Sagar <vidyas@nvidia.com>, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/2] PCI: tegra194: Move controller cleanups to
- pex_ep_event_pex_rst_deassert()
-Message-ID: <20241103205515.GH237624@rocinante>
-References: <20240817-pci-qcom-ep-cleanup-v1-0-d6b958226559@linaro.org>
- <20240817-pci-qcom-ep-cleanup-v1-2-d6b958226559@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTyGKO6FOhuMyd24n/TaMEVFCaqpu9BBzKROckfZrjoKeKvRV3+GNQhA5Ia6bvXKKzOrQxJPyON+PAZqF/GwKMNBLD8IdpIr5te8pHCDJxuNX5cAkQE/35IleA1iHSoHdplj4a94m1rMJNmlDls7EOeLQZ8JVDJlJX3WvVm5hiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D90AEFEC;
+	Sun,  3 Nov 2024 23:59:56 -0800 (PST)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 441EA3F6A8;
+	Sun,  3 Nov 2024 23:59:23 -0800 (PST)
+Date: Mon, 4 Nov 2024 08:58:49 +0100
+From: Beata Michalska <beata.michalska@arm.com>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
+	Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
+	catalin.marinas@arm.com, rafael@kernel.org,
+	yang@os.amperecomputing.com, lihuisong@huawei.com,
+	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
+	Bibek Basu <bbasu@nvidia.com>
+Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
+ arch_freq_avg_get_on_cpu
+Message-ID: <Zyh-uVSW-0d0r8oB@arm.com>
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <20240913132944.1880703-4-beata.michalska@arm.com>
+ <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
+ <ZvU4mR_FZa7jXUgk@arm.com>
+ <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
+ <Zv8PKlr_PJgxazro@arm.com>
+ <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
+ <Zwe1p0La_AFknglf@arm.com>
+ <20241029065319.zto3wlvceec3fjym@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -61,40 +49,26 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240817-pci-qcom-ep-cleanup-v1-2-d6b958226559@linaro.org>
+In-Reply-To: <20241029065319.zto3wlvceec3fjym@vireshk-i7>
 
-Hello,
-
-> Currently, the endpoint cleanup function dw_pcie_ep_cleanup() and EPF
-> deinit notify function pci_epc_deinit_notify() are called during the
-> execution of pex_ep_event_pex_rst_assert() i.e., when the host has asserted
-> PERST#. But quickly after this step, refclk will also be disabled by the
-> host.
+On Tue, Oct 29, 2024 at 12:23:19PM +0530, Viresh Kumar wrote:
+> On 10-10-24, 13:08, Beata Michalska wrote:
+> > That is a fair point but I am not entirely convinced using '0' instead makes
+> > things any more clearer as this is in no way a valid CPU frequency.
+> > As long as we document the expected behaviour keeping the interface well
+> > defined,  both options should be fine I guess.
+> > 
+> > @Viresh: what is your opinion on that one ?
 > 
-> All of the tegra194 endpoint SoCs supported as of now depend on the refclk
-> from the host for keeping the controller operational. Due to this
-> limitation, any access to the hardware registers in the absence of refclk
-> will result in a whole endpoint crash. Unfortunately, most of the
-> controller cleanups require accessing the hardware registers (like eDMA
-> cleanup performed in dw_pcie_ep_cleanup(), etc...). So these cleanup
-> functions can cause the crash in the endpoint SoC once host asserts PERST#.
+> Failing to get frequency for the CPU shouldn't be represented by 0,
+> even if it is confusing for the user.
+We still need to decide  whether provide a more descriptive way of informing
+about such cases (whether it be 'unknown' or 'idle' ) or to simply return
+an appropriate error and leave the userspace with dealing with that.
+
+---
+Thanks
+Beata
 > 
-> One way to address this issue is by generating the refclk in the endpoint
-> itself and not depending on the host. But that is not always possible as
-> some of the endpoint designs do require the endpoint to consume refclk from
-> the host.
-> 
-> So let's fix this crash by moving the controller cleanups to the start of
-> the pex_ep_event_pex_rst_deassert() function. This function is called
-> whenever the host has deasserted PERST# and it is guaranteed that the
-> refclk would be active at this point. So at the start of this function
-> (after enabling resources) the controller cleanup can be performed. Once
-> finished, rest of the code execution for PERST# deassert can continue as
-> usual.
-
-Applied to controller/tegra194, thank you!
-
-[01/01] PCI: tegra194: Move controller cleanups to pex_ep_event_pex_rst_deassert()
-        https://git.kernel.org/pci/pci/c/40e2125381dc
-
-	Krzysztof
+> -- 
+> viresh
