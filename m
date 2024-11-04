@@ -1,74 +1,89 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC8D199E8D;
-	Mon,  4 Nov 2024 07:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F12518E359;
+	Mon,  4 Nov 2024 14:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730707171; cv=none; b=sHyiKNSOQ3fzLZdC29JCklQNraCXCqje8Dz4gaCaC+aTh+ztE5VIZ+6pjyB8rZZrrCpZdWF35EXv3bJ0g62u5KIvmMemw6y2k/4eh0HS8K7PF0rriHpMMDBeowNZpaJq6vlWN9jjjq/ZInaxL4ohZhE/lmYSPhCJlE7Wgn2r3e8=
+	t=1730729221; cv=none; b=FgOVaMxfxYFmlLrwAqdmBvupFH1anF5AkVHIZYYJUx/xxUrsHPh0SjkFVJWlfdchCNajHtihgUMwjxpKDWoMR/lYfPw5O7plVLGzPnoEeHOx9vvOup3RnkLBXQnXN8mZ7ka9ee/4Kzsl3qcJHyGroGRNusCeqcelpPJYcKmTtdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730707171; c=relaxed/simple;
-	bh=WIXvGA2A94TpVMNOjbk1pkQ/viHW9shMmwkmtcNq3z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gTyGKO6FOhuMyd24n/TaMEVFCaqpu9BBzKROckfZrjoKeKvRV3+GNQhA5Ia6bvXKKzOrQxJPyON+PAZqF/GwKMNBLD8IdpIr5te8pHCDJxuNX5cAkQE/35IleA1iHSoHdplj4a94m1rMJNmlDls7EOeLQZ8JVDJlJX3WvVm5hiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D90AEFEC;
-	Sun,  3 Nov 2024 23:59:56 -0800 (PST)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 441EA3F6A8;
-	Sun,  3 Nov 2024 23:59:23 -0800 (PST)
-Date: Mon, 4 Nov 2024 08:58:49 +0100
-From: Beata Michalska <beata.michalska@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, rafael@kernel.org,
-	yang@os.amperecomputing.com, lihuisong@huawei.com,
-	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
-	Bibek Basu <bbasu@nvidia.com>
-Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
- arch_freq_avg_get_on_cpu
-Message-ID: <Zyh-uVSW-0d0r8oB@arm.com>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-4-beata.michalska@arm.com>
- <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
- <ZvU4mR_FZa7jXUgk@arm.com>
- <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
- <Zv8PKlr_PJgxazro@arm.com>
- <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
- <Zwe1p0La_AFknglf@arm.com>
- <20241029065319.zto3wlvceec3fjym@vireshk-i7>
+	s=arc-20240116; t=1730729221; c=relaxed/simple;
+	bh=/lGvOk2uNR5QCbKQ2pR0LrRLenxQ7dFMFLqqojh29pc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mTnoOswTZb08CT/3hkB/E8u+27PcyU7gNgqUNuxChsF1Aztq7DfHQ41Z3IMul6lMJo2JvZansXZge8AguOjV8fphCuwL5IiY9MfmHqaw27dsta3JSHpqsoaRc5cADz3xN9ww1yVdHyxAK42YcCUax8tKC27F31yvBaiflMmrO3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oR0BwDzx; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oR0BwDzx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 559D3C4CED1;
+	Mon,  4 Nov 2024 14:06:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730729221;
+	bh=/lGvOk2uNR5QCbKQ2pR0LrRLenxQ7dFMFLqqojh29pc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=oR0BwDzxB8f7XXzSfFCJPIqCS21fAssuB/7IaJUoeahWQXpz08sKbpmmn+cttos0l
+	 IQPI7eFRlesH8Chhe2sZ/cAsiUJ3r5wcZsYyWTK4+3diiII+zsWFuGeKujLS2RCOSA
+	 PM99GERbSNEx0BLWyv6HyEB2//tF5no+afb3X0qYxndBPLkdgZ4XQ9tA4mY8ve8pCj
+	 k3zufr1Q7B8xegdgEG0bO3ihYnXarNJLdlwh2Bd/+RNgo002SUr3ira+1G7x2We9b7
+	 jnCHHvqlDjq+QvqLDASMGQpts55G0KZisw2Lj3mO3tJBRqWLxfb7YA/VOxVLbDdjOb
+	 5FXIZsjdy6FQA==
+From: Mark Brown <broonie@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Sowjanya Komatineni <skomatineni@nvidia.com>, 
+ Laxman Dewangan <ldewangan@nvidia.com>, Breno Leitao <leitao@debian.org>
+Cc: rmikey@meta.com, linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241004125400.1791089-1-leitao@debian.org>
+References: <20241004125400.1791089-1-leitao@debian.org>
+Subject: Re: [PATCH] spi: tegra210-quad: Avoid shift-out-of-bounds
+Message-Id: <173072921908.32316.9323478432792803800.b4-ty@kernel.org>
+Date: Mon, 04 Nov 2024 14:06:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029065319.zto3wlvceec3fjym@vireshk-i7>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-On Tue, Oct 29, 2024 at 12:23:19PM +0530, Viresh Kumar wrote:
-> On 10-10-24, 13:08, Beata Michalska wrote:
-> > That is a fair point but I am not entirely convinced using '0' instead makes
-> > things any more clearer as this is in no way a valid CPU frequency.
-> > As long as we document the expected behaviour keeping the interface well
-> > defined,  both options should be fine I guess.
-> > 
-> > @Viresh: what is your opinion on that one ?
+On Fri, 04 Oct 2024 05:53:59 -0700, Breno Leitao wrote:
+> A shift-out-of-bounds issue was identified by UBSAN in the
+> tegra_qspi_fill_tx_fifo_from_client_txbuf() function.
 > 
-> Failing to get frequency for the CPU shouldn't be represented by 0,
-> even if it is confusing for the user.
-We still need to decide  whether provide a more descriptive way of informing
-about such cases (whether it be 'unknown' or 'idle' ) or to simply return
-an appropriate error and leave the userspace with dealing with that.
+> 	 UBSAN: shift-out-of-bounds in drivers/spi/spi-tegra210-quad.c:345:27
+> 	 shift exponent 32 is too large for 32-bit type 'u32' (aka 'unsigned int')
+> 	 Call trace:
+> 	  tegra_qspi_start_cpu_based_transfer
+> 
+> [...]
 
----
-Thanks
-Beata
-> 
-> -- 
-> viresh
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+
+Thanks!
+
+[1/1] spi: tegra210-quad: Avoid shift-out-of-bounds
+      commit: f399051ec1ff02e74ae5c2517aed2cc486fd005b
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
