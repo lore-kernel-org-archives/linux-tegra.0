@@ -1,181 +1,354 @@
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2052.outbound.protection.outlook.com [40.107.101.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EA02101BC;
-	Thu,  7 Nov 2024 13:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730987046; cv=fail; b=k02UJFVzDzVCUYVF29ZRVbhj4Kwbv2cFlQnholrUxOYBIxbjQYdJ+fGBtw/2pKa/OALRUVEjS/t4TcGVdqcxStHeDvj2mNS8CaVDm3ipfUTIG4cxMrAAMDi1oBr0jG1M6DwJbesEk0Hazy/AtsHP7dlk/+zfuQ7X12p2lozDcLA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730987046; c=relaxed/simple;
-	bh=3Hpyqx6Ra+nie0mPUDM3Cw28x79usYgKDEKEdi0P/Cg=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=LPcb9f8OdS1wqYTPMar3JPLnHYq/24Yt5l5hB+ZQeqs2GSLItXSc0B/WB6B4NAb3ZH1VIrefPzJMlu6Owr5Es7lH4x7YTeMWx/M6Q9Oclhm2egIWPF/Vdr5yfIZAM3MVBUiSWwHsdcDT37hAahrLm/9BWchQ+xQruPiMPG/zWCw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rmvDk99G; arc=fail smtp.client-ip=40.107.101.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB4A212EE3
+	for <linux-tegra@vger.kernel.org>; Thu,  7 Nov 2024 14:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730991463; cv=none; b=IENQunCfdpz1kCpL1pGADDs+N3w58za6AWn6VsqzrAvZRIRb+NMAYSe/gq3q2tCeqtK12cAOX6UyJdwEPJ18FoQSHPmvwdesQnijxYdWua9tYKmz2nurueBbSmBcJMHwh9A60YpEsh68kwc6ypl2QsZY6NqtHlO9iMg3V/mQpqE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730991463; c=relaxed/simple;
+	bh=BLY94gMzJV8bl1rs8ITlqHgcrX3WJaZb1Ugt48De6Y8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nYKke4E9EoubrxIXsVirxPqc9UrW87oflDbaMRHjiTdvyUaeVi7WqjCDfVDau9iaYJ8ftstsOv7mTf8tolLBGDddiwoDQ/n4k6qzDgAO3VRVBwmU7dJCRJ/P4KDmx33/rNkqrlQEbPucSxtuI33BTSxUdoNYhUDyDqvkqipjPoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=md29J8U7; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rmvDk99G"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hk13u8FEDsbrJmrzahtevMfIGybE8QFgehmlyvftBqhi3na+Vdg/BG0E0CAR301PJ5AuLJBJiNxFWiFw3bNqqk2ZQRtQnS/OMryj4Ja/+unpOmTVkeo6EfywZW3gW8OCEGDJ+mpmRLKK+XxMdo8YMxCepoYSf+1ww7QgCRmR0ceaqCmx/32DKXlbvxEMgJqZ+8k3f59TDxR9olcgdWmwnCKUk7zKG+CbDQnH4fYLUmVRGh7lR+2BTdN7ibTfGKeeSJubNh6Wnd1i9SIL2Taqf+weq9yvGi3REt2QAzHt1zgEmSqDFZyisDMspCxr8LEAfk/9jalGBkW1hntyVsqoQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9FDi3P9/rL6wU0tPPx2P1WUYAS4j5jHhUOaTW+84U20=;
- b=Jb/7L9RloDW81ZcBQwzBxKzNZzvjR43CSwpgewEdwFYgBY2GDvQG23S7R6JoQQ2n6VqIEeYrJilabZ1o6B4HxXP3Cy6B4kb5Wo/HXOb8zQXlFC3OQkhrHbT3M+JI1VUtRamDMcbMHn3syuKJCve5WtyUr4tDlmGJKeZdxI/aFf47+IyxOlC1NQa+TT+CvmSBjLjSnidaiV+zRqlWHJgLmd4yv8riefAoHUMDaa6reBIz80Ak8ZfSzWF/rwpbw8yAh1XPEbTwrP6RHLfhIjhZUNGdx/hWDNAF+QMDprPwkF9pZ385DXm4/Vzr5IJtjLcerUiOP37sPOPt07s1LSsPDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9FDi3P9/rL6wU0tPPx2P1WUYAS4j5jHhUOaTW+84U20=;
- b=rmvDk99GEwzeczg1lkLEMR7gLBp5n+RT9FPBKK2UM66YOZMdcpOGcEAK+Hmy4BRQ98bA36gi5W6hc6Ll65WUDqC08wldELnuLlB98LsNJ/xIITO0u1G8h/YI9qDCAzAD/HxQo+8y5vGT5zBSHUnhwrr6eScIjenJd4ix91WC+mPCOZ6PM7ZGAbHTyTYtDGIwCKHB6I0tAaYAhEOHi8xj5KpPIeMP27MIa7YZ1y8auuVDeoJkBOb2ji8wwSDb04lIil8m8lHcKHyyFuFJRPeNSwi/EaP4zox39+vUuOvUy8qiyfdMKKp9mnWD7SzO6pe007nbkigMEMFsyMqx8pLInA==
-Received: from MN0P222CA0014.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:531::21)
- by DM4PR12MB7743.namprd12.prod.outlook.com (2603:10b6:8:101::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.20; Thu, 7 Nov
- 2024 13:43:58 +0000
-Received: from BN1PEPF0000468C.namprd05.prod.outlook.com
- (2603:10b6:208:531:cafe::99) by MN0P222CA0014.outlook.office365.com
- (2603:10b6:208:531::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.19 via Frontend
- Transport; Thu, 7 Nov 2024 13:43:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BN1PEPF0000468C.mail.protection.outlook.com (10.167.243.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8137.17 via Frontend Transport; Thu, 7 Nov 2024 13:43:58 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 7 Nov 2024
- 05:43:48 -0800
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 7 Nov 2024 05:43:48 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Thu, 7 Nov 2024 05:43:48 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hagar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.11 000/249] 6.11.7-rc2 review
-In-Reply-To: <20241107064547.006019150@linuxfoundation.org>
-References: <20241107064547.006019150@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="md29J8U7"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43163667f0eso9411325e9.0
+        for <linux-tegra@vger.kernel.org>; Thu, 07 Nov 2024 06:57:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730991458; x=1731596258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lqk0qjxtF+D8UlnS4c7pFGqetkwdoGFt8LgY3js1r6w=;
+        b=md29J8U7/VHYYyn33wxR9udL2DoXIsYHTWs+uzv6i93xcwWP6pwa8L3qDFYa/chAyK
+         0BlcLGpcFDjYqz+OyX9iv7dVeajesA9oePaPntYSRh1FXM01yWkgeNLG/A72YNJyu1HN
+         ehMAgVj6Vmhgwv74vVmo/E8lNlsk5SPbSHHiIGyLDLcfYsP4gvEUGjkZ1+qD88ZRHe+8
+         2fWXwtl5hI8PX8AS3Us3tvx+scbgVhYENouumy3gRya4m3zOiC9t52AkcseDguGd5FSY
+         swUOon8XtuU4+SiN45YcuiCX+pN8xqRGIrtPMzMl4kJMsuSD4B6PdKkq1GkStSfo5hvb
+         SPkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730991458; x=1731596258;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lqk0qjxtF+D8UlnS4c7pFGqetkwdoGFt8LgY3js1r6w=;
+        b=OCgpHB6TaROItGO7+moNlscgPR3G8HArm63z9YXxrUni4sYx9PJUH+e0B0/D6/9lrd
+         cZxV+oBGpiWI6LkTEEAxbWNo+G4gPib7asTKmynjF9yUzlejk9mrToyi0rh0BNaECv+R
+         9JPmoGkwVbPsoTIsm9+pQx3rIea0mT7jfXSZINhhJ/jyAW7XpUR4u2SfVV64kMNZKe91
+         R4wW21oSRLzXVAFVT7EKJqT+pteiaDWcYbv5k4oHksYWcqKzQab8a98HxRVVCMuQr405
+         cXRBkbTY70i0BKXXyACn0TMZaT4BlTs3YqqgkePEg2AziM3kCxCzIeM0S1Zy5LgL6l9j
+         ZYzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXh1nelvmC1dEnp/hauvsBUlrIHte4Ku9zcC8e4AvW9S7N+DqM372X4/w6dZBvy2ZMHWhesIe6AH0sbDw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOwkM88K+UXBn0IMaFWncmne546RqPWZKKpEO+nuaWPIl3Qh6g
+	rXdhpBKeCIIZpMJEhJi1jLruEwXsqKBQpCZzy2sMEV7D+2LIGelXJpYU6I9S9o0=
+X-Google-Smtp-Source: AGHT+IFutcR0bwD8WGqeYpA0PxXHK8DXeXLoWqc0ukDAw+4BGJ+GPCxRmhBmc2u0+oKs2PA+/pN2iw==
+X-Received: by 2002:a05:600c:3c9d:b0:42f:823d:dddd with SMTP id 5b1f17b1804b1-4328327e6ddmr198325885e9.27.1730991458265;
+        Thu, 07 Nov 2024 06:57:38 -0800 (PST)
+Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432aa5b5e56sm66186115e9.2.2024.11.07.06.57.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 07 Nov 2024 06:57:37 -0800 (PST)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Markus Mayer <mmayer@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Georgi Djakov <djakov@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-omap@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] memory: Switch back to struct platform_driver::remove()
+Date: Thu,  7 Nov 2024 15:57:16 +0100
+Message-ID:  <1a44c5fc95616d64157d2f4a55f460476d382554.1730987047.git.ukleinek@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <db5a1c31-bd26-46f4-ae25-12646627eb54@drhqmail203.nvidia.com>
-Date: Thu, 7 Nov 2024 05:43:48 -0800
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF0000468C:EE_|DM4PR12MB7743:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1e55d2b-9ff7-4ccd-936d-08dcff323b25
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q3JpRlluQ1BwdmpnRFFsaE15WDAzK1EwbW1NYURQUXZTY3dIS0VBSXVBTUxB?=
- =?utf-8?B?SnhUdGV0TFVIZzB1ZDJ2RGZlN3JRWkVVRytRSEY3NXpra09TekpZdHBNT3Rp?=
- =?utf-8?B?bmRJQnFjVnlhaSthdlFSdG1Gb0kxWXRLMiszdFNwUDNYOEI5dGhBQjkzVzRn?=
- =?utf-8?B?OHdycWFHcGREUkc5aVQ3bFI3czRnNXRlVkNSeWNkWTcya0V1WlFtbzB0MW03?=
- =?utf-8?B?Z2tDVHBvZTBJMEtGSmNRNzU3Y1NWWmlSRENZMmpUdDlvQXJRTFlvZER6NCs2?=
- =?utf-8?B?ZTVYa2QxZWxJSEUzQjlXRnJJSE9lWWVhODRkTVBmWkJvT3Z4aWpMb2NzeEk3?=
- =?utf-8?B?N2JGbHJ1L1pEYUN6ZTFLRWxJSVdZZEtIYXQvMGxBRVBObmozNkFBc3JqQkND?=
- =?utf-8?B?cithZ0dPdlRFQmNaUk5VV0FyYm5hK1NrR2ZaUHZnNlNJYUVVOHcxOGZ0enlE?=
- =?utf-8?B?ZmJveTIxeU1mcDZYZ01Xb3M2b0ZMOE9XM3NkMnJkSmNoekE3cnNLTzZoU3dy?=
- =?utf-8?B?MnJXWWsvL091RCtIZmhVQUlHdmdYSldOR3ptTGErL3FvMkozOWI4ci9JVnNq?=
- =?utf-8?B?aEVLdjdyRDdFSnVKb3lMVnNmcFBCNXpncEZ5N2hsWmtsOXVpcU1uNUFXaUow?=
- =?utf-8?B?d1l4UEJ2TWQwa2hiY0JBV3hZUVYvbkFES1dqMEk5azNvMWM5eTA3eCtQZitF?=
- =?utf-8?B?TmlCcEs3KzJTK3cyMFc2citVUjJET0xpSWJMa0xadXJXQ1lMQ2ptOERJRG55?=
- =?utf-8?B?MWFiMWNYTlhnSzV6V1l6eUYrOC9pL3BnOXF4NDM1R3JRQUQxbStTNUMxRnlU?=
- =?utf-8?B?ZHpQcUJxLzFDV0RVSjJDcXFwZUFtMVpXMXFXUkk4WVdnYSs2Q2I5bzJsaTJN?=
- =?utf-8?B?cVpmSUpiRWNKcWNBMC9STWxGaUZCVXpXNXU1NHMvVzErWFVrbnI1dHpxLzdu?=
- =?utf-8?B?bzFZTzlUY0VhM0dGWG5mYTdLNWNmbW83TXUxZWdFQ3NyVzhUTGtjRTVJcW5y?=
- =?utf-8?B?UVJvMVMzQkwrWE93bkNRWjRoUGJ0Uy8reDQzM00zMmpzaUxjVlNqSGo2ZER3?=
- =?utf-8?B?Mks1bWdxQTFjTkJRQzFwUXJmaTdLTDdvakkwSHdzWWZZYzgrRGx4RjZ4TWhD?=
- =?utf-8?B?NjVLV1dHNW5oZnE5V2hFN1M5L2d5Rml1UVRmVUsyTFNOdkpscVVYT2c1V1Zh?=
- =?utf-8?B?MXFRUzNHWXdVYStwKzlwTUdpYkpzNmc3UXo1WWtBVytERDdWY3JoOUZGaFJl?=
- =?utf-8?B?eVdjbFBFb0lHSFNkdXZEYzBZRG94TjFwQmFVdmNlZjZiVlhUNUJTZjhxUnNI?=
- =?utf-8?B?cWVnQVR6dGZmT2I5V2JWdWZvZitMWGhTTU5WcVdPeXJDN3g5eTZwZ29Cdzly?=
- =?utf-8?B?aW5jTGlmK0lwMGNhT214LzNjUXdVb2J3dXFSdlBrVEJGM0J5OFZKRFprT0d2?=
- =?utf-8?B?NmlBNkl2NGdVbHJMMklkK3BycldEaUcwVU5HTzhWNGJJeDVEYTRkZTk0cVQv?=
- =?utf-8?B?eDJJTmtFME1Xa0xIamRqOHdOS25zY0NROE5RYytRZnpuL29INUZmejc1dE10?=
- =?utf-8?B?aWZ3ZTcxTmc1V3gvaWFVWm5PTld1ZWVuTm1vc3VJL2dYZStiZVlQc3N5dnVT?=
- =?utf-8?B?bWtvWVg2Z3NOTkNIWFJJOU9KaHp1MG94bUlLZTdQeDdzT3ZOZ0Q3NFZjNVdU?=
- =?utf-8?B?SVNVYmJpZW5kRjN4QlZUanJaYk9hRHl6dmpmNlRFT01VWXNrcXlGWHNUWlc2?=
- =?utf-8?B?b00xcUxFMmVKZk9KWk5hd1NVTSs1SXV0VHRZeXJtODd2Mnl1OXdqdzZ5anl0?=
- =?utf-8?B?ZkxjZWdqU2MwMTZTOU9sYUpOZHhFTnJ2YXFvVUFjbWJxQ1ZMQm9kN2tLNU4z?=
- =?utf-8?B?RFowaURLUVJmQ0FnSldPZUtKYjhMcGFHSzRGcW84K1lWZGc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Nov 2024 13:43:58.3502
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1e55d2b-9ff7-4ccd-936d-08dcff323b25
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF0000468C.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7743
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9746; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=BLY94gMzJV8bl1rs8ITlqHgcrX3WJaZb1Ugt48De6Y8=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnLNVM5QHSsQ7HgmkC6FzXKigeL1KUUWrXvsJ6O VJasoc4Mn+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZyzVTAAKCRCPgPtYfRL+ TigRB/0bxEq95zaC2k3YuORkpdyWmyAoPbkwl6e0yDuizDWC8tUPgkPxjP6tjGCeLnO0fqtTk3M y5yD+Jo9qpEaO8Q4tCyiWZ/2EMw2eXve2+L6l/hFHq1HwUcDe3uru2yXBaXpbrOgNAuMKRlpApR 4KoXUXbQETaAPe5MhVphrGW+dxWzf5I0XHMXefWcg2fHXsoz2EI5hKEk0c25S3dI4tM4RZFqnfK 08Pp2+RlDKgDMTRbstCJeYXCYZxKahvwrIhg6AK9FP6yPsTpc8rlMvQsdBx6zilVYUex/dBgxeO pXTfPBqNmRn6mTjrN6Qu5lwEUnReoNrvyOCiooTUjAvWL240
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-On Thu, 07 Nov 2024 07:47:28 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.7 release.
-> There are 249 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 09 Nov 2024 06:45:18 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.7-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+return void") .remove() is (again) the right callback to implement for
+platform drivers.
 
-All tests passing for Tegra ...
+Convert all platform drivers below drivers/memory to use .remove(), with
+the eventual goal to drop struct platform_driver::remove_new(). As
+.remove() and .remove_new() have the same prototypes, conversion is done
+by just changing the structure member name in the driver initializer.
 
-Test results for stable-v6.11:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+A few white space changes are included to make indention consistent.
 
-Linux version:	6.11.7-rc2-g504b1103618a
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+Hello,
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+I did a single patch for all of drivers/memory. While I usually prefer
+to do one logical change per patch, this seems to be overengineering
+here as the individual changes are really trivial and shouldn't be much
+in the way for stable backports. But I'll happily split the patch if you
+prefer it split. Also if you object the indentation stuff, I can rework
+that.
 
-Jon
+This is based on yesterday's next, if conflicts arise when you apply it
+at some later time and don't want to resolve them, feel free to just
+drop the changes to the conflicting files. I'll notice and followup at a
+later time then. Or ask me for a fixed resend. (Having said that, I
+recommend b4 am -3 + git am -3 which should resolve most conflicts just
+fine.)
+
+Best regards
+Uwe
+
+ drivers/memory/brcmstb_dpfe.c            | 2 +-
+ drivers/memory/brcmstb_memc.c            | 2 +-
+ drivers/memory/emif.c                    | 2 +-
+ drivers/memory/fsl-corenet-cf.c          | 2 +-
+ drivers/memory/fsl_ifc.c                 | 2 +-
+ drivers/memory/jz4780-nemc.c             | 2 +-
+ drivers/memory/mtk-smi.c                 | 4 ++--
+ drivers/memory/omap-gpmc.c               | 2 +-
+ drivers/memory/renesas-rpc-if.c          | 6 +++---
+ drivers/memory/samsung/exynos5422-dmc.c  | 6 +++---
+ drivers/memory/stm32-fmc2-ebi.c          | 6 +++---
+ drivers/memory/tegra/tegra186-emc.c      | 2 +-
+ drivers/memory/tegra/tegra210-emc-core.c | 2 +-
+ drivers/memory/ti-emif-pm.c              | 2 +-
+ 14 files changed, 21 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/memory/brcmstb_dpfe.c b/drivers/memory/brcmstb_dpfe.c
+index 5028467b2dc9..08d9e05b1b33 100644
+--- a/drivers/memory/brcmstb_dpfe.c
++++ b/drivers/memory/brcmstb_dpfe.c
+@@ -934,7 +934,7 @@ static struct platform_driver brcmstb_dpfe_driver = {
+ 		.of_match_table = brcmstb_dpfe_of_match,
+ 	},
+ 	.probe = brcmstb_dpfe_probe,
+-	.remove_new = brcmstb_dpfe_remove,
++	.remove = brcmstb_dpfe_remove,
+ 	.resume = brcmstb_dpfe_resume,
+ };
+ 
+diff --git a/drivers/memory/brcmstb_memc.c b/drivers/memory/brcmstb_memc.c
+index 4f17a93aa028..c87b37e2c1f0 100644
+--- a/drivers/memory/brcmstb_memc.c
++++ b/drivers/memory/brcmstb_memc.c
+@@ -283,7 +283,7 @@ static DEFINE_SIMPLE_DEV_PM_OPS(brcmstb_memc_pm_ops, brcmstb_memc_suspend,
+ 
+ static struct platform_driver brcmstb_memc_driver = {
+ 	.probe = brcmstb_memc_probe,
+-	.remove_new = brcmstb_memc_remove,
++	.remove = brcmstb_memc_remove,
+ 	.driver = {
+ 		.name		= "brcmstb_memc",
+ 		.of_match_table	= brcmstb_memc_of_match,
+diff --git a/drivers/memory/emif.c b/drivers/memory/emif.c
+index 99eb7d1baa5f..2e1ecae9e959 100644
+--- a/drivers/memory/emif.c
++++ b/drivers/memory/emif.c
+@@ -1159,7 +1159,7 @@ MODULE_DEVICE_TABLE(of, emif_of_match);
+ 
+ static struct platform_driver emif_driver = {
+ 	.probe		= emif_probe,
+-	.remove_new	= emif_remove,
++	.remove		= emif_remove,
+ 	.shutdown	= emif_shutdown,
+ 	.driver = {
+ 		.name = "emif",
+diff --git a/drivers/memory/fsl-corenet-cf.c b/drivers/memory/fsl-corenet-cf.c
+index f47d05f7c5c5..ecd6c1955153 100644
+--- a/drivers/memory/fsl-corenet-cf.c
++++ b/drivers/memory/fsl-corenet-cf.c
+@@ -249,7 +249,7 @@ static struct platform_driver ccf_driver = {
+ 		.of_match_table = ccf_matches,
+ 	},
+ 	.probe = ccf_probe,
+-	.remove_new = ccf_remove,
++	.remove = ccf_remove,
+ };
+ 
+ module_platform_driver(ccf_driver);
+diff --git a/drivers/memory/fsl_ifc.c b/drivers/memory/fsl_ifc.c
+index 15e919c24f81..27e041178c09 100644
+--- a/drivers/memory/fsl_ifc.c
++++ b/drivers/memory/fsl_ifc.c
+@@ -316,7 +316,7 @@ static struct platform_driver fsl_ifc_ctrl_driver = {
+ 		.of_match_table = fsl_ifc_match,
+ 	},
+ 	.probe       = fsl_ifc_ctrl_probe,
+-	.remove_new  = fsl_ifc_ctrl_remove,
++	.remove      = fsl_ifc_ctrl_remove,
+ };
+ 
+ static int __init fsl_ifc_init(void)
+diff --git a/drivers/memory/jz4780-nemc.c b/drivers/memory/jz4780-nemc.c
+index fb6db2ffe71b..1a8161514d03 100644
+--- a/drivers/memory/jz4780-nemc.c
++++ b/drivers/memory/jz4780-nemc.c
+@@ -407,7 +407,7 @@ static const struct of_device_id jz4780_nemc_dt_match[] = {
+ 
+ static struct platform_driver jz4780_nemc_driver = {
+ 	.probe		= jz4780_nemc_probe,
+-	.remove_new	= jz4780_nemc_remove,
++	.remove		= jz4780_nemc_remove,
+ 	.driver	= {
+ 		.name	= "jz4780-nemc",
+ 		.of_match_table = of_match_ptr(jz4780_nemc_dt_match),
+diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+index 2bc034dff691..5710348f72f6 100644
+--- a/drivers/memory/mtk-smi.c
++++ b/drivers/memory/mtk-smi.c
+@@ -616,7 +616,7 @@ static const struct dev_pm_ops smi_larb_pm_ops = {
+ 
+ static struct platform_driver mtk_smi_larb_driver = {
+ 	.probe	= mtk_smi_larb_probe,
+-	.remove_new = mtk_smi_larb_remove,
++	.remove = mtk_smi_larb_remove,
+ 	.driver	= {
+ 		.name = "mtk-smi-larb",
+ 		.of_match_table = mtk_smi_larb_of_ids,
+@@ -838,7 +838,7 @@ static const struct dev_pm_ops smi_common_pm_ops = {
+ 
+ static struct platform_driver mtk_smi_common_driver = {
+ 	.probe	= mtk_smi_common_probe,
+-	.remove_new = mtk_smi_common_remove,
++	.remove = mtk_smi_common_remove,
+ 	.driver	= {
+ 		.name = "mtk-smi-common",
+ 		.of_match_table = mtk_smi_common_of_ids,
+diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+index c8a0d82f9c27..50eb9f49512b 100644
+--- a/drivers/memory/omap-gpmc.c
++++ b/drivers/memory/omap-gpmc.c
+@@ -2743,7 +2743,7 @@ MODULE_DEVICE_TABLE(of, gpmc_dt_ids);
+ 
+ static struct platform_driver gpmc_driver = {
+ 	.probe		= gpmc_probe,
+-	.remove_new	= gpmc_remove,
++	.remove		= gpmc_remove,
+ 	.driver		= {
+ 		.name	= DEVICE_NAME,
+ 		.of_match_table = of_match_ptr(gpmc_dt_ids),
+diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
+index 7fbd36fa1a1b..55209ca43a96 100644
+--- a/drivers/memory/renesas-rpc-if.c
++++ b/drivers/memory/renesas-rpc-if.c
+@@ -794,10 +794,10 @@ static const struct of_device_id rpcif_of_match[] = {
+ MODULE_DEVICE_TABLE(of, rpcif_of_match);
+ 
+ static struct platform_driver rpcif_driver = {
+-	.probe	= rpcif_probe,
+-	.remove_new = rpcif_remove,
++	.probe = rpcif_probe,
++	.remove = rpcif_remove,
+ 	.driver = {
+-		.name =	"rpc-if",
++		.name = "rpc-if",
+ 		.of_match_table = rpcif_of_match,
+ 	},
+ };
+diff --git a/drivers/memory/samsung/exynos5422-dmc.c b/drivers/memory/samsung/exynos5422-dmc.c
+index 7d80322754fa..dfc5ee54a9b7 100644
+--- a/drivers/memory/samsung/exynos5422-dmc.c
++++ b/drivers/memory/samsung/exynos5422-dmc.c
+@@ -1570,10 +1570,10 @@ static const struct of_device_id exynos5_dmc_of_match[] = {
+ MODULE_DEVICE_TABLE(of, exynos5_dmc_of_match);
+ 
+ static struct platform_driver exynos5_dmc_platdrv = {
+-	.probe	= exynos5_dmc_probe,
+-	.remove_new = exynos5_dmc_remove,
++	.probe = exynos5_dmc_probe,
++	.remove = exynos5_dmc_remove,
+ 	.driver = {
+-		.name	= "exynos5-dmc",
++		.name = "exynos5-dmc",
+ 		.of_match_table = exynos5_dmc_of_match,
+ 	},
+ };
+diff --git a/drivers/memory/stm32-fmc2-ebi.c b/drivers/memory/stm32-fmc2-ebi.c
+index 566c225f71c0..2f1e2d7d54b5 100644
+--- a/drivers/memory/stm32-fmc2-ebi.c
++++ b/drivers/memory/stm32-fmc2-ebi.c
+@@ -1814,9 +1814,9 @@ static const struct of_device_id stm32_fmc2_ebi_match[] = {
+ MODULE_DEVICE_TABLE(of, stm32_fmc2_ebi_match);
+ 
+ static struct platform_driver stm32_fmc2_ebi_driver = {
+-	.probe	= stm32_fmc2_ebi_probe,
+-	.remove_new = stm32_fmc2_ebi_remove,
+-	.driver	= {
++	.probe = stm32_fmc2_ebi_probe,
++	.remove = stm32_fmc2_ebi_remove,
++	.driver = {
+ 		.name = "stm32_fmc2_ebi",
+ 		.of_match_table = stm32_fmc2_ebi_match,
+ 		.pm = &stm32_fmc2_ebi_pm_ops,
+diff --git a/drivers/memory/tegra/tegra186-emc.c b/drivers/memory/tegra/tegra186-emc.c
+index 33d67d251719..bc807d7fcd4e 100644
+--- a/drivers/memory/tegra/tegra186-emc.c
++++ b/drivers/memory/tegra/tegra186-emc.c
+@@ -406,7 +406,7 @@ static struct platform_driver tegra186_emc_driver = {
+ 		.sync_state = icc_sync_state,
+ 	},
+ 	.probe = tegra186_emc_probe,
+-	.remove_new = tegra186_emc_remove,
++	.remove = tegra186_emc_remove,
+ };
+ module_platform_driver(tegra186_emc_driver);
+ 
+diff --git a/drivers/memory/tegra/tegra210-emc-core.c b/drivers/memory/tegra/tegra210-emc-core.c
+index 78ca1d6c0977..2d5d8245a1d3 100644
+--- a/drivers/memory/tegra/tegra210-emc-core.c
++++ b/drivers/memory/tegra/tegra210-emc-core.c
+@@ -2051,7 +2051,7 @@ static struct platform_driver tegra210_emc_driver = {
+ 		.pm = &tegra210_emc_pm_ops,
+ 	},
+ 	.probe = tegra210_emc_probe,
+-	.remove_new = tegra210_emc_remove,
++	.remove = tegra210_emc_remove,
+ };
+ 
+ module_platform_driver(tegra210_emc_driver);
+diff --git a/drivers/memory/ti-emif-pm.c b/drivers/memory/ti-emif-pm.c
+index 592f70e9c8e5..df362ecc59e9 100644
+--- a/drivers/memory/ti-emif-pm.c
++++ b/drivers/memory/ti-emif-pm.c
+@@ -330,7 +330,7 @@ static const struct dev_pm_ops ti_emif_pm_ops = {
+ 
+ static struct platform_driver ti_emif_driver = {
+ 	.probe = ti_emif_probe,
+-	.remove_new = ti_emif_remove,
++	.remove = ti_emif_remove,
+ 	.driver = {
+ 		.name = KBUILD_MODNAME,
+ 		.of_match_table = ti_emif_of_match,
+
+base-commit: 5b913f5d7d7fe0f567dea8605f21da6eaa1735fb
+-- 
+2.45.2
+
