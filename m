@@ -1,70 +1,40 @@
-Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C851DB534;
-	Wed,  6 Nov 2024 09:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFA0DF78;
+	Thu,  7 Nov 2024 01:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730887158; cv=none; b=NqX27Dd2qGIJRTjkSns++19xwLIeM7SvlgeTvLAGYSdlyBj0Kprv7IUseuXt0/v9E5Bep/Ca9RyJ00i3auW4nIkfHJtHHtVoWGFTUV8opLzr6XgTJ+7/PC4fA8Xl2ilFqXPSodbilD5PMN4SW/e0BDXQqTeBzpWUnLtWiM3czHQ=
+	t=1730943191; cv=none; b=RV0Xml5AHQ6A0nYlXJteJqBTOMX6zrtAzGkoBS6guS764XlHHTej0lnrZmO3lrNFzcj3vRZuLlrZ4LaW2mGSD9JgwC4Sa7AcplpbsBpTK2ktDv+SLc/TzzWIB+yxP1N+eMdwqNvVh1D8pa7v12vWV2XZDpYUtGe8hs39RX8RDNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730887158; c=relaxed/simple;
-	bh=E5GOAEhRD9j+u1CXK0RooAUO8b6h1E/vhZjKiq9wXqo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ayUSNUOXsKlraq0ilEDhBmur0uheyvG/02HzCQoh11vPj2ZieVFrNojUowumHdYQrznNaMpkVV5I6c5o9ggDpsmiznC4Ta3cU0lh36gBlX370Q6IJwvJMdGjVlCemsLBHG9Vxbf1/3YlOZIw5/iwrZ20ebIF6ecasaiK5NUtTcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CVe+svP7; arc=none smtp.client-ip=209.85.215.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVe+svP7"
-Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7ee386ce3dfso524686a12.1;
-        Wed, 06 Nov 2024 01:59:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730887156; x=1731491956; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YanI8iRaFnbYDLIbwSAL7fPqo0KzjFa50XedZ+8YIHE=;
-        b=CVe+svP7LWpomvfC0RiqXyLiaNSquLYsvn28fI0+MWctGGA+dzWfZi0rJJ54jmJ8na
-         o+y+RuUYO6OkTwo08aJkD7g/F5BfP4b5R+SoO8TS1OiXO+b2t8qJRm5PALl3JtlR3fmW
-         LKqrA2/otUfOi037a8e0Akz7DhBW4aZVir3+yu9PxUJDu79b+mU/SUTsrMCuj0H+dWSb
-         ezPj3iYdNBhUs/AtYT3vNCPqMcV8tJfMULaboELS7jpgoETVR6pCcFcC6LvR0qnmSroP
-         Fg8h7dS9PlZCTRzSfCcLMx0Ps94qjz88+jdp+m/kEh6UbnDO5zA97DnNFMhylWdVDcf0
-         Dhtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730887156; x=1731491956;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YanI8iRaFnbYDLIbwSAL7fPqo0KzjFa50XedZ+8YIHE=;
-        b=uI+JH+QeoDL2ewSpv6rQ4da76T8eWPBJXU8MwmRaVSvALs4opmi9kUMzGxo+O+g7Nl
-         qNXpgy9LSIt2YMand3TPV8E97YWOrH0GUrD6rmoP9Y5VlqUQc4de8zkGZQQ2yRztDuoJ
-         pd+2fs4njDSPKVyeiwYXYA9WIo9quCbP7cbY5Q+hQqWPp6RMvaHh3v0VoE1WvAw+XA5s
-         xpoLTkHj6wAtbf3zwA/MVrWaHQw0J2ucu4IRAXNDHxqMs0JoZBeqvited7Gr7S006j5q
-         RlV3iNbKH3iYlfx50L+SQfADJY5EKHI/gnxh745i9tIclG9NYyKFuoW6gL1vQjn8qa43
-         2hfg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4y03Mrt26a3XmXOrqoWBxYdT9r1cd3enki7IioZP3uYapXXFwpfHU9GzwkYwA3YQhpUs3i/ZM@vger.kernel.org, AJvYcCVNZpZSOMf1eQ4X9k92XIozFpDHOEv90Jb5Ag1r9neqmAAImg/4ztqFSVMdTNo5eHIdyEnsk1KbMknLWMQ=@vger.kernel.org, AJvYcCWtpz6RLUkMIyeR13TxR5wjvkSwlU599dl+qsNHhL3nvFj4C7IS9HiwpshxfBxeP2Fsnbb68m46Sk61/c0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5uX2giLrFeAwkAbecqFinl5DnAcTF3W1SuHXFLPE/50Afv89p
-	//v06VZsHVjwhEjHf7Q6b3O13LjWeMLRjj3pKkEt06F7yQrSrBH5
-X-Google-Smtp-Source: AGHT+IGjHbCdL9n1T25NiYqOv/Egm/PtLSzYQLrz+c1DLzL/71S3yO0qnkuzyroDHsVMSMplfp6p6A==
-X-Received: by 2002:a17:902:f54d:b0:20c:76a1:604b with SMTP id d9443c01a7336-2116c88c016mr32877155ad.12.1730887156274;
-        Wed, 06 Nov 2024 01:59:16 -0800 (PST)
-Received: from tom-QiTianM540-A739.. ([106.39.42.118])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211057087dasm92697005ad.85.2024.11.06.01.59.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2024 01:59:15 -0800 (PST)
-From: Qiu-ji Chen <chenqiuji666@gmail.com>
-To: thierry.reding@gmail.com,
-	mperttunen@nvidia.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
+	s=arc-20240116; t=1730943191; c=relaxed/simple;
+	bh=4nxCp5Sjd0mMPkyeUlSN8LSaCjjPFoaYLgo0iH8mfYw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZQiKQmUZydUbDntGKeW7z7ACDU60tM0THUnGZ4HGVXZ15KxLBn2PZqySITnxGWSGkqh75PR92xNuT2SjVym/WqVJuOdwB0c8ev2x93SFeS9VlyTCB5nILE6tKqJYhFlGgEAN72w8yEWQwLpPnjuj5DUqymKvDEom36PBSaYVHkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XkPhZ3grJz4f3jXs;
+	Thu,  7 Nov 2024 09:32:46 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 813C31A06DA;
+	Thu,  7 Nov 2024 09:33:04 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP4 (Coremail) with SMTP id gCh0CgAXP4PGGCxnWNREBA--.27917S2;
+	Thu, 07 Nov 2024 09:33:04 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: akhilrajeev@nvidia.com,
+	herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	thierry.reding@gmail.com,
 	jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org,
+Cc: linux-crypto@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Qiu-ji Chen <chenqiuji666@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/tegra: fix a possible null pointer dereference
-Date: Wed,  6 Nov 2024 17:59:06 +0800
-Message-Id: <20241106095906.15247-1-chenqiuji666@gmail.com>
+	chenridong@huawei.com,
+	wangweiyang2@huawei.com
+Subject: [PATCH] crypto: tegra - do not transfer req when tegra_cmac_init returns an error
+Date: Thu,  7 Nov 2024 01:24:07 +0000
+Message-Id: <20241107012407.1669481-1-chenridong@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -73,34 +43,58 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXP4PGGCxnWNREBA--.27917S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrKr1DJrW8Xw15tF4kuFyDWrg_yoW8JF4UpF
+	4DZayjvrn5XrZ5CFWxJa15uF15Ga95Zry7Kw4IyasYvFs7J348CrW2ka4UXa15AFZ7try2
+	krs2yw13tr12vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-In tegra_crtc_reset(), new memory is allocated with kzalloc(), but
-no check is performed. Before calling __drm_atomic_helper_crtc_reset,
-state should be checked to prevent possible null pointer dereference.
+From: Chen Ridong <chenridong@huawei.com>
 
-Fixes: b7e0b04ae450 ("drm/tegra: Convert to using __drm_atomic_helper_crtc_reset() for reset.")
-Cc: stable@vger.kernel.org
-Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+The tegra_cmac_init function may return an error when memory is exhausted.
+It should not transfer the request when tegra_cmac_init returns an error.
+
+Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
 ---
- drivers/gpu/drm/tegra/dc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/crypto/tegra/tegra-se-aes.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index be61c9d1a4f0..1ed30853bd9e 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -1388,7 +1388,10 @@ static void tegra_crtc_reset(struct drm_crtc *crtc)
- 	if (crtc->state)
- 		tegra_crtc_atomic_destroy_state(crtc, crtc->state);
+diff --git a/drivers/crypto/tegra/tegra-se-aes.c b/drivers/crypto/tegra/tegra-se-aes.c
+index 9d130592cc0a..10cd19427530 100644
+--- a/drivers/crypto/tegra/tegra-se-aes.c
++++ b/drivers/crypto/tegra/tegra-se-aes.c
+@@ -1747,13 +1747,16 @@ static int tegra_cmac_finup(struct ahash_request *req)
  
--	__drm_atomic_helper_crtc_reset(crtc, &state->base);
-+	if (state)
-+		 __drm_atomic_helper_crtc_reset(crtc, &state->base);
-+	else
-+		 __drm_atomic_helper_crtc_reset(crtc, NULL);
+ static int tegra_cmac_digest(struct ahash_request *req)
+ {
++	int ret;
+ 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+ 	struct tegra_cmac_ctx *ctx = crypto_ahash_ctx(tfm);
+ 	struct tegra_cmac_reqctx *rctx = ahash_request_ctx(req);
+ 
+-	tegra_cmac_init(req);
+-	rctx->task |= SHA_UPDATE | SHA_FINAL;
++	ret = tegra_cmac_init(req);
++	if (ret)
++		return ret;
+ 
++	rctx->task |= SHA_UPDATE | SHA_FINAL;
+ 	return crypto_transfer_hash_request_to_engine(ctx->se->engine, req);
  }
  
- static struct drm_crtc_state *
 -- 
 2.34.1
 
