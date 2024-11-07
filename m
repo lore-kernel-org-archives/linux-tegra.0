@@ -1,40 +1,80 @@
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFA0DF78;
-	Thu,  7 Nov 2024 01:33:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F8FBE4A;
+	Thu,  7 Nov 2024 06:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730943191; cv=none; b=RV0Xml5AHQ6A0nYlXJteJqBTOMX6zrtAzGkoBS6guS764XlHHTej0lnrZmO3lrNFzcj3vRZuLlrZ4LaW2mGSD9JgwC4Sa7AcplpbsBpTK2ktDv+SLc/TzzWIB+yxP1N+eMdwqNvVh1D8pa7v12vWV2XZDpYUtGe8hs39RX8RDNg=
+	t=1730959892; cv=none; b=Th7n3Gkg/Oj3Dk0M3U8BOfHrymYSV5xd1rv1/9b/Q/IMfwxa+SLGtPJhntVtx0RpeArCd1dIPQIUsN1ivbzFQVOpXg+X2HovfNjtYdZwxkQ0lrUOd58lOwve01ZjJ+yygCTo4zjNvgCsSfR/ebTWmkA9t4j65HtiRzs9p7hsDks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730943191; c=relaxed/simple;
-	bh=4nxCp5Sjd0mMPkyeUlSN8LSaCjjPFoaYLgo0iH8mfYw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZQiKQmUZydUbDntGKeW7z7ACDU60tM0THUnGZ4HGVXZ15KxLBn2PZqySITnxGWSGkqh75PR92xNuT2SjVym/WqVJuOdwB0c8ev2x93SFeS9VlyTCB5nILE6tKqJYhFlGgEAN72w8yEWQwLpPnjuj5DUqymKvDEom36PBSaYVHkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XkPhZ3grJz4f3jXs;
-	Thu,  7 Nov 2024 09:32:46 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 813C31A06DA;
-	Thu,  7 Nov 2024 09:33:04 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgAXP4PGGCxnWNREBA--.27917S2;
-	Thu, 07 Nov 2024 09:33:04 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: akhilrajeev@nvidia.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: linux-crypto@vger.kernel.org,
+	s=arc-20240116; t=1730959892; c=relaxed/simple;
+	bh=5ccryXiFMCZqpwAcb8tIEL7hAQ+1BqdnpslvGenxExs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aule1AcC/0s6sP2ndQZ7uzHDbtJzSmab7YhCbwE7/yvlOmFB8W+II07Vciphv6BXwtIVAujDzW4domCPGCw+Gg6z6fbmJLCnQIeHkJUnuhioZyJa69/2qWhEhzFpegZaNWQG4WENVYz3oYndTJ+uobIdxiwbmV8WKQ4ClHcbUoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avDgTOA5; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avDgTOA5"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cdbe608b3so6116215ad.1;
+        Wed, 06 Nov 2024 22:11:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730959890; x=1731564690; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mdcIOwk3kp77s1l8BhKYHWZOlMgYXx/DfwT+R9F7N9E=;
+        b=avDgTOA5cqHarx/sCyjiE4Ihkmm4J69fUUPL+zbOXuNR7vOr+huWDsQcote516dXen
+         767DshPyaRkPnNenZSebmbFe7CHfDNxUZ2ETamnE+C6iC0Jo0/2Sy97Hg5l186gHch2S
+         u5gv4e8NilrMgl2ykU46kRCxN49vQDXSVJAghrhljnpX5DT4N+6QdIHWGm9l92GQTgnM
+         cF+Mm4FY9ddPnx9pvvScF6Watvst+jxfSClj2ql4WXiiFJUopGW5iXZhe6mDo4QnFO1D
+         AgdwSnFgFtqy2Mna/fVgl+lvEQKJHUUE9WraBef4suhn4lqlGMvZXlo32ZulqW24gLim
+         jTNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730959890; x=1731564690;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mdcIOwk3kp77s1l8BhKYHWZOlMgYXx/DfwT+R9F7N9E=;
+        b=utIt3cr14TudAk6otdfMGlj1gVqV+H0hMFUjunp56LN1W2HuWWzBn/K2LsaUpw6g27
+         TN8MMh7Yn1hzjo5ONjXl9AEWQoVYXKGagV221/PNg9SZRZCOpnf9Fd8Q2DFQ6vXmtezr
+         ED76qNWQ526RUK2XeA2ft5J30dG6cF/uLtUASyKpuU1sRhCW752lN6jNTZa3+NCXb5vx
+         l6RWMWZ8hHCuRv6mpp864qMyGhsLMe7nXJdc224ejJwVp67aNZkecZsgnr6qU5kXlW0x
+         /ud/VApmEucrFp/f/uh/B23UDZisGkBpS28qcO+tV1IbDn63J0Syjdf5otr8Y2NOhXBJ
+         RWbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUp6dVJC4mVnj4reef3OMv0inlafehiEL/WgGhy7pv9+GwgeCOR4aKiblUKgAxIUFenwxKIgZiN15kKFgA=@vger.kernel.org, AJvYcCVggHP/5AYiEvC3PePRCwEcvdoDwoKmhnzu6lDwFrAvG13yk0VPIeQhYlZTgY+Ai8bpB/mFpSQC8+3MMUCF@vger.kernel.org, AJvYcCW1iDM2G070S0nxCpAGjHuGTdtX39ZHjqCEhZTOZt5hY0fZijsABE7Czbpsm+LgO146b71TrQCp3DMd@vger.kernel.org, AJvYcCWZZR4WyOYI+KgFL/QFmsfm3A7VMO6HtAeQjb6lISTRKfdaAKB4esY4kNDSN7Zdn1dgDnt1aRt6B/PvYw==@vger.kernel.org, AJvYcCWc7DvzVb2dqeajMcfzL7AyQHbZaYhcXKgJLNqgiQRoZ7sd4wbZhFLncfcdqbaEeA+hIFSjG5T+oW9XnQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6gXc/+dagmEWz2uMIH8Fi9VZf6qyTNmPxPJ2VWUJnljAbb4D8
+	xRd7NzgzskWINgU3CCWw/SZT8A5pO6sflbdJYG5Az5zGMjiW2UDV
+X-Google-Smtp-Source: AGHT+IFb44ve8UxBIvy91ELgGSUmf+xH+y8rohtBiFFGcFZF2HaHBFlJbfOx82kv14jZNYjFRB9GRQ==
+X-Received: by 2002:a17:902:c407:b0:20c:da98:d752 with SMTP id d9443c01a7336-21178618acbmr7885715ad.16.1730959890021;
+        Wed, 06 Nov 2024 22:11:30 -0800 (PST)
+Received: from 1337.tail8aa098.ts.net (ms-studentunix-nat0.cs.ucalgary.ca. [136.159.16.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177dc7cf8sm4652465ad.34.2024.11.06.22.11.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2024 22:11:29 -0800 (PST)
+From: Abhinav Saxena <xandfury@gmail.com>
+To: linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
-	chenridong@huawei.com,
-	wangweiyang2@huawei.com
-Subject: [PATCH] crypto: tegra - do not transfer req when tegra_cmac_init returns an error
-Date: Thu,  7 Nov 2024 01:24:07 +0000
-Message-Id: <20241107012407.1669481-1-chenridong@huaweicloud.com>
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Abhinav Saxena <xandfury@gmail.com>
+Subject: [PATCH 0/2] Documentation: dt-bindings: Fix documentation issues
+Date: Wed,  6 Nov 2024 23:11:22 -0700
+Message-Id: <20241107061124.105930-1-xandfury@gmail.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -43,58 +83,30 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXP4PGGCxnWNREBA--.27917S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrKr1DJrW8Xw15tF4kuFyDWrg_yoW8JF4UpF
-	4DZayjvrn5XrZ5CFWxJa15uF15Ga95Zry7Kw4IyasYvFs7J348CrW2ka4UXa15AFZ7try2
-	krs2yw13tr12vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-From: Chen Ridong <chenridong@huawei.com>
+This small patch series fixes documentation issues in devicetree bindings,
+specifically addressing repeated words and trailing whitespace found using
+checkpatch.pl script. No functional changes are included.
 
-The tegra_cmac_init function may return an error when memory is exhausted.
-It should not transfer the request when tegra_cmac_init returns an error.
+Patch 1 fixes repeated words in various binding documents, while patch 2
+removes trailing whitespace from several files.
 
-Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- drivers/crypto/tegra/tegra-se-aes.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Signed-off-by: Abhinav Saxena <xandfury@gmail.com>
 
-diff --git a/drivers/crypto/tegra/tegra-se-aes.c b/drivers/crypto/tegra/tegra-se-aes.c
-index 9d130592cc0a..10cd19427530 100644
---- a/drivers/crypto/tegra/tegra-se-aes.c
-+++ b/drivers/crypto/tegra/tegra-se-aes.c
-@@ -1747,13 +1747,16 @@ static int tegra_cmac_finup(struct ahash_request *req)
- 
- static int tegra_cmac_digest(struct ahash_request *req)
- {
-+	int ret;
- 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
- 	struct tegra_cmac_ctx *ctx = crypto_ahash_ctx(tfm);
- 	struct tegra_cmac_reqctx *rctx = ahash_request_ctx(req);
- 
--	tegra_cmac_init(req);
--	rctx->task |= SHA_UPDATE | SHA_FINAL;
-+	ret = tegra_cmac_init(req);
-+	if (ret)
-+		return ret;
- 
-+	rctx->task |= SHA_UPDATE | SHA_FINAL;
- 	return crypto_transfer_hash_request_to_engine(ctx->se->engine, req);
- }
- 
+Abhinav Saxena (2):
+  Documentation: dt-bindings: Fix repeated words
+  Documentation: dt-bindings: Remove trailing whitespace
+
+ Documentation/devicetree/bindings/gpio/gpio.txt        |  2 +-
+ .../devicetree/bindings/interrupt-controller/msi.txt   | 10 +++++-----
+ .../interrupt-controller/nvidia,tegra20-ictlr.txt      |  2 +-
+ .../bindings/memory-controllers/mvebu-devbus.txt       |  2 +-
+ .../devicetree/bindings/mips/cavium/bootbus.txt        |  2 +-
+ .../devicetree/bindings/pinctrl/pinctrl-bindings.txt   |  2 +-
+ .../bindings/regulator/regulator-max77620.txt          |  4 ++--
+ .../devicetree/bindings/soc/fsl/cpm_qe/qe/usb.txt      |  2 +-
+ 8 files changed, 13 insertions(+), 13 deletions(-)
+
 -- 
 2.34.1
 
