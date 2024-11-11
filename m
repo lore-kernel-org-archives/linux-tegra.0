@@ -1,164 +1,360 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2044.outbound.protection.outlook.com [40.107.236.44])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2064.outbound.protection.outlook.com [40.107.244.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644024683;
-	Mon, 11 Nov 2024 03:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED21136A;
+	Mon, 11 Nov 2024 07:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731294169; cv=fail; b=qyZRGOOV6hv6DWbc+R83vETTPkFE+h2LBTPvRqWtm7k8O0l8Tq97E9Jngr3Bs+i1Tw27RS3sbqrFp2vviqIFBWldcO/6xqOb0dwMWM2YPCwcp/I1V8OpOidf1kfrqlDhqWVQEs89dShIJkNY/wd+gOjiS91pOg266Ym5pAOrLrI=
+	t=1731309709; cv=fail; b=jdI3qNN1fbwVTkUtwn1/+yjTtFzATFMPz41DB5CAHKXqRWbtdY1pdlYfpNRcQpEU5/KEye5lIKOriyZ8pKkPN6nowFAALuy6WlYyCsKr9diWS8n637QCKPccC0+fr0sPGWBB5UcJa2I0u9KAMseEI7FC+lMa5SQ1ZalaOceqIhw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731294169; c=relaxed/simple;
-	bh=tYCMAIbYJTrhT6y8uX5khL7Mb61AuSx27X7nbtdazz8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DtS6DEXvlpGndx8i5aLlAh9h+LKnWcW9Z8wfimsisAM5izkIB4IB3nk/A9lfMR0apXlmgAq0co/CrQtg4+yKJzU743jxoa7ogOqFfoIvO7srrlyitONF+LqySvqKEuq9bHQunIe9aVsepT4GU9m18+AKAlcgIrLIbIuUlx+JS1M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F7KeE+yp; arc=fail smtp.client-ip=40.107.236.44
+	s=arc-20240116; t=1731309709; c=relaxed/simple;
+	bh=MUllXGzUbP+ziY8Y3YVaJhbUBGZdmjhR2/3CRX8VOC8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hxvzisvMxIDDc/nEwhzFEjOaz983y0na8gfXP1RU6lPNHQprMa9W20WjN07OyZvRCFGEd/D8tiU0BRqnarYR3mNcn75YQ4KHLIdFRykiuh46RLozplFp/eCs7LayPkCQr+1VIjpzlGJ/lYuye9pe3pPZ2YJoF7w58zISdKS4SQU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FXFBLuCJ; arc=fail smtp.client-ip=40.107.244.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F7KeE+yp"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FXFBLuCJ"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u6OY4vtRWgUsIp9EdfDJStVubcOTkx6odHFQmt90BqG2nXwIs1VZLyyb2zSMYmoPnJv1eYJSKv8mDRciCrRGtay1EIGI9ducQxoPuqhXWw7+mP1ZJBt3Q3mCGoXQqLsZnvil206xN+2fZxSPkBawqj0z7a9mQ/8xqBrB1Y4uWfOsuHVvmCmNqnqaxksDSfXOr4p4mN8mG2jl6Vkk0aQ3GoF4PZP6qEqlwrknYq6Wd+dcvfgDoslA3WGUIpQcjhHpEuDPV4mEV4FBp76TLIN7MYI0aFs5yFp59blaUvIt4/3V1Fju/VrdlWny2QNFfEmHhcoz0Wipn3pvtvrphL7xig==
+ b=CSrZwvqy4fHfs5JxOjyoguiZl6xuaaYd7j8coVRmhUJ9moTrwXYyR3SzhPU2SuTNqwZYkxl0QUaYarQi1fmwzshFwRMBLguOqOq46DflmoLU2ekImWFHcO6U6K+t06oQXA+4qpoed0iy454ljlwcVrwk/AvopFnC5VglVMvF9Ty1PXGpb/qbMR0SvGQB4R8/0t4w9gLSIM8KR9UOZBQa9urCTtlMOjCr2h5fTmi5bpyq1GAci62nNddbJVLJ6AZZzHxvtq1E3sm22m+EFyU2bUv3FfNIhqGN4h3yPF5OT0Qh1yryLfLUepzuRC8ZRkeycSks843dcGwy9Kna2QPe9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i8DOhwqBztXboW+g1QyWt7kPa0gz4ruzRUPi2ClTzvc=;
- b=mSSY4eC/CP+DtSSSX0svX7z5nGfU2S7/6/WMGrSSyYIaNOkNE3HZwdAZE79LsQJpBWh7Nv527lm5ZNjuasNrHFeKxwGTKSISyjxVWl8DH9IkgNJIkxvzK5J0giMmNuTMYHgn/BY6ePY4msIuOaScYxM/mwKs8o4gzN1IPooYuKi9NnViCp8xcx7Ra46VdqBm9/Ov5xhBl6pmgSvrYA8GwSG7gwyei7EzHW1WEgRqvS+KyIr2bLPJI0i1P15gInf+zkP49E9Cv6se6v1nVFfgDaAd5Tfxk79WHueR/X3pAA6JV4ePWWDRpYIodBzOAJIJzFxZWEsuxoUEcFPa6Slj/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
+ bh=eLjNEBICNxpgxGsmvBku7D7o6noENcYzcU4EdF/K6VE=;
+ b=KaGIE00o0smm8lKavYHdhzROZOt6EHZr2G49RR1s3gmm3hlqoqcMkAoepvyCElZISyRk3DZ2JzAZoE2dV6jKaKDPabGh36vgNT1DSUnKERMvc2lLt+TClkYwcpmgb3E6/yMMgDEtvetev+pS7OwqpNY2tDvzTHqMsTz0QCmwJ3+iA7ZaAc4Sa2gbsxD7ABufJICbAwOMz6oqDn9ayCY9w0GDSjO1mZJWSqmx4jMhvd6wY5YU6zDv6nohmWNh/avC412WHlyABaEfk3BDvpk8XIL6uhj3eheE3yjn3/Yjx4c/uu5Psg0IO2Uws+uGx0b+oqoEFLb9AZ+keulr0JYpHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i8DOhwqBztXboW+g1QyWt7kPa0gz4ruzRUPi2ClTzvc=;
- b=F7KeE+ypK5NV9UJp6fVZgVYIh/Po3lDlaYrwIgnjh8GO8+HoJWHaTtdjFYsESxAczZGTZ6wZyy8gPzWkDCOVjGtwT0oW8U7gpgF6Eq7i7oBnOgzWzXeVb+QCY5MnsNatUwaLxU3FmZhVs3Bu0d2ptQ/KK7uJR4qwy6kFTpUR8+hB5ApMBkhJrRUjlH4wXYMcKiMaaL/nfmrmrXhtFi/ppQ6tX0d7z9Cdw3cpWS6l4wDd9uFf8x0c47o1GrRhznITEtMwNphk1RM5ucBxSzRE6t62ks91rOIJ5LXQp01S+5jsO2adTTU3O0M0c2dvq44mLGVFp/J892rGwh3/TmWpVA==
-Received: from MW4PR04CA0037.namprd04.prod.outlook.com (2603:10b6:303:6a::12)
- by PH7PR12MB8177.namprd12.prod.outlook.com (2603:10b6:510:2b4::8) with
+ bh=eLjNEBICNxpgxGsmvBku7D7o6noENcYzcU4EdF/K6VE=;
+ b=FXFBLuCJEA91/fyNCALU3Xt3Y0NVuwr0qXOpBboCPAhu0pIEMD5B7wZfglEgRA6/z6FJNl1P1dFIhoe3lldpSY82UDOpowSTtZi3ud0e613104PWElJ5MGeLEfL3NnUiOkVAA1QdfcEJ7s5dNKQh+zXlI6L7AsrKjBli+LqvdF6p0FSAxhdj5aXT0Y6qIHJo9V/X6TgrDpC5VdRzfoEgltNCZxpM+YbQlNx6fnoUqGgsqyAuGCD2yYiPtWOIlnjdVUCHSal6Mkc/vtaR8g927BOeq1OBL2yCAT4F0O5nSWvi8z/wpNVx0Fbi55S3eMFpnAsKsnJJmR33wAhe7nD6ZQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from IA1PR12MB6580.namprd12.prod.outlook.com (2603:10b6:208:3a0::9)
+ by CYXPR12MB9442.namprd12.prod.outlook.com (2603:10b6:930:e3::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Mon, 11 Nov
- 2024 03:02:44 +0000
-Received: from CO1PEPF000075F2.namprd03.prod.outlook.com
- (2603:10b6:303:6a:cafe::59) by MW4PR04CA0037.outlook.office365.com
- (2603:10b6:303:6a::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27 via Frontend
- Transport; Mon, 11 Nov 2024 03:02:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CO1PEPF000075F2.mail.protection.outlook.com (10.167.249.41) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8158.14 via Frontend Transport; Mon, 11 Nov 2024 03:02:43 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 10 Nov
- 2024 19:02:34 -0800
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 10 Nov 2024 19:02:34 -0800
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 10 Nov 2024 19:02:33 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <will@kernel.org>
-CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-Subject: [PATCH rc] iommu/tegra241-cmdqv: Fix alignment failure at max_n_shift
-Date: Sun, 10 Nov 2024 19:02:26 -0800
-Message-ID: <20241111030226.1940737-1-nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.18; Mon, 11 Nov
+ 2024 07:21:44 +0000
+Received: from IA1PR12MB6580.namprd12.prod.outlook.com
+ ([fe80::789d:39c0:6386:9f12]) by IA1PR12MB6580.namprd12.prod.outlook.com
+ ([fe80::789d:39c0:6386:9f12%6]) with mapi id 15.20.8137.022; Mon, 11 Nov 2024
+ 07:21:44 +0000
+Message-ID: <dec53919-034b-4f0e-b415-1bc1de9b0916@nvidia.com>
+Date: Mon, 11 Nov 2024 15:21:36 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftest: drivers: Add support to check duplicate hwirq
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: shuah@kernel.org, tglx@linutronix.de, mochs@nvidia.com,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+References: <20241018193411.GA758389@bhelgaas>
+Content-Language: en-US
+From: Joseph Jang <jjang@nvidia.com>
+In-Reply-To: <20241018193411.GA758389@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0045.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::16) To IA1PR12MB6580.namprd12.prod.outlook.com
+ (2603:10b6:208:3a0::9)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075F2:EE_|PH7PR12MB8177:EE_
-X-MS-Office365-Filtering-Correlation-Id: 675f1376-f1da-4a35-0663-08dd01fd5009
+X-MS-TrafficTypeDiagnostic: IA1PR12MB6580:EE_|CYXPR12MB9442:EE_
+X-MS-Office365-Filtering-Correlation-Id: d806bfb5-d6e1-4025-ddff-08dd02217ec2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OqQ8kc6uUE6Sc4J4O2reNRNZC6woZZN/6EXOl4MU/UOKysngErcxk+ahhrC2?=
- =?us-ascii?Q?8IjqElC12FsnGn4IM2svSqWN1uybA/eTlGB7jwyR4ECzCPgPncATOHPBuI6w?=
- =?us-ascii?Q?S4xf1aCFDwFkJSFv9F+okob+NRCBpplq0kxVcRRXMK9hRkyhCzb+9OP74J+O?=
- =?us-ascii?Q?wtEnQRW2gunOc4LoJRyQ8nQRbGcWfza1xMS94KfCiqMDu8tUPFTQ1XJQxGk7?=
- =?us-ascii?Q?YzTeRPBFSgHbJUIiaVx7+nSYwPA8Jnxinp7UWP4K37EwIOzfH8IqFtmAMp8d?=
- =?us-ascii?Q?TYYGPd81r/ZTxKxZLjEmonOVgCC6Y3/2stZ4rbeUfBYJUdUZ8OgpzSEUBDYZ?=
- =?us-ascii?Q?WuKEJscOmCX3Bw/6cZoWD//G014P3n0VuaJSthVtdnuNQtghYF+oll4D/J7K?=
- =?us-ascii?Q?h2gbQ7uz8+JBjEqV+mbBYetxUcYGF7CWZ6XeL2v/urSkQWPNSnKgfwPUT9Gy?=
- =?us-ascii?Q?VTQzJoe8Zcml0njNowOzGb9OL6lOmtfn0qyWwFI41yeki6YbNdDLhBSmoMzR?=
- =?us-ascii?Q?WUDhi70KE5O0Qc21I24Jz5T1htA4AItXB7/hnWxiXtAyhg2WWak3cRktnGUC?=
- =?us-ascii?Q?XrcAIh/Mvzm10x3Wj0xo9ADK2ybOFZtrXJI1xmdxmWgmWrR72Ou+TFAFruCB?=
- =?us-ascii?Q?qu7GJSEimmw+6DSjgxH5vwnktUnwDOO7My5o+LIDUB2KL3OHYSUwcuWt2i4D?=
- =?us-ascii?Q?LEX6TU0qILQoZv5WI/y7MwL+v7ZHBgPXW17Ns3shUUd4YnT4X8zIvhFgxHYj?=
- =?us-ascii?Q?exJmuBMK1GeN574gmeYx8GH+JCA135M+OCrybyqTCcu1bI3F/yjzvYAttjv3?=
- =?us-ascii?Q?+LlJMMGRo/D1Df7sLjWL1rDeh8MdxT/c5n1dkFwVhrrbytqcDtIKSo+EQXXd?=
- =?us-ascii?Q?t0+yWMR8PFJqGL/MkKZBTPeKinYUYa4DnjrfEPivB8uwEz9w1EvwX19IZfnc?=
- =?us-ascii?Q?kYErwY2b5mCUkYiGrTIhxxPb+sQqy7w/x7xYMQGj13iqECnQKau+sQoe4ucS?=
- =?us-ascii?Q?P5Xxh6KVSClen+RuiP0fWa9m6zhnevLu64HFBqtLAwGgnZiCuQp3roUYCxRF?=
- =?us-ascii?Q?NtQqA3nZRmtDB/EgXYpsqsU0JUiFyvaV0YboHhg/rSzp1+8B9SoBwNgfSsnQ?=
- =?us-ascii?Q?qglpbBdppjw+O49Y0vMTRGdvKpr1UarOMy0/ymFinQnE32v2JF0S3yAIOBoZ?=
- =?us-ascii?Q?GCcnUaYzVMlP2bXgm9spdcbAueUrcNNgM0PpTZEzGUpsjzHKZ4s+qPm8XtYy?=
- =?us-ascii?Q?5arQKCBslBitQFmDc++XTyJyboF86jgNRCe3PCovPEKwbIZcYYSu1G9EBfNX?=
- =?us-ascii?Q?16Gnkv1goVUn9DJWmAjCRSrbshmZphclziZXRTkSB1Ct4PHRUjyc0yLfBZFC?=
- =?us-ascii?Q?bHBZyPZSnAirQQ4naKnTAyGRAnsBiJyZ7NEsUF7krEmPEVWcZw=3D=3D?=
+	=?utf-8?B?bi9CTnc3UTJSQ2FxLzVkei9JQ2twODJ5a3NpVGtzZ25tUkhldVVQNU5tSWNJ?=
+ =?utf-8?B?VzArSzVBM2pCODVidGkzUGJZTmRnWVRsNHNiTzhmNWJWN29mRFVkOElIbkRY?=
+ =?utf-8?B?cHJYVkNmMWxGb0VabXA0RnJuaXp4UE51V2pNU0EvaFhxSXBoZXIyN2ZKQXV1?=
+ =?utf-8?B?akZtZHNuUkNXL2JMc21xQ2g1MXFXVkhVNi82SmtaandCd3M3WEJna1NsSW5G?=
+ =?utf-8?B?bklYVWVTMVVhYktLbmgvOE1USDUwbjJjcHZ6US9sYStUZ0E2aDdxb0tVQ2Va?=
+ =?utf-8?B?NnQ0MmFuR0xBcnRSUkRkZE9TajVhVmMrSnk5c2NUb1RNcWtQWkhMTmV5OEto?=
+ =?utf-8?B?NDhxanhvKzVodE95c29RK0prRzNaZHJKK2IzSXpDZUIwYnpkQWhaUFBUUm5Z?=
+ =?utf-8?B?cmVmSlp3UnNYRC94MmxVZy92c1QyM3VxWHFaeTB2aS9HMHJnZFU3eW45T3VV?=
+ =?utf-8?B?M2lYYjRHMzhIcWdjRmR0Z1krQjNSZnNxME94QmlUMDZCOEVYQjg2RTRxZjJ5?=
+ =?utf-8?B?UmFoK0J5UUZqMDVhNU0vcDlBZTdyMVVoL1BlQVgxOHdaY2tlbHlRenp6UWlo?=
+ =?utf-8?B?eDBQTml4cnNpTVJDR1ZLTDBiQU1EYmxoSzhLcHVHMkgya2h5M2QvWFVyN1la?=
+ =?utf-8?B?ayt4R2JRNm5KZ3YzaEZXblFlaHh6ZHpFSkFlMGJHZ0EzY0dZelB5dkE1bFZI?=
+ =?utf-8?B?R1VVRzd2YnZQVHZLRzMxcy9ZZ3dZY3ZMVFNNL2o3ZjErd0p6amZMVGpXR1lI?=
+ =?utf-8?B?enlWNldoWlFhOXp6RGQ2SzBkR1U0VGtwZ1JsbzlNV1RibEpmN1ZnR2k0MlVX?=
+ =?utf-8?B?dmVyd0dqWHF4emxOUHg2a0NtME15N0t4eDQ4WGMxalQrcExuSm44SXlFdWZD?=
+ =?utf-8?B?YkVuTnFTRnpvWUh6VEZSbEx6RGd3dWI0WVc0NW43ZEhIOCs0cFVRelZ4MHYx?=
+ =?utf-8?B?MzZNYkZyc0dYZHNjR2o0NzNjbUxSYm9NdTc1bGZDdGtXZk5NWkV1bDA2NHNW?=
+ =?utf-8?B?VVFLQUF2anFIYzV0MWRPTVpWSUh2SHFKcWc3OGpLd3ViMEpzWnQ0Q1pIVEZh?=
+ =?utf-8?B?VEdSUXVZcG9rTVg2U1BSemw1Z25zd0hSd3paQWd6OEl0eWRKSkpEOGJ2cTZM?=
+ =?utf-8?B?MXBnQ3BLWFZIdjE1dmkxa1cyU2w5d1BGZFdTVjcxWWNwTjF4WktvQWRKa3FL?=
+ =?utf-8?B?VzFMSW11ZkhEajdvQnZZUXoxU2czMjg3cHdVaEFuM2pRSzdGQXdhdFpTeU5I?=
+ =?utf-8?B?bHVkeXRRR0FwL1R0czVJSDYwK05Uc0ZxaHowVmsyajdTNzFlRG5WcTJ5Q2Mw?=
+ =?utf-8?B?eEQrZ3FkZitEZU95ZlJVTWdwdkR0TUdRTzExOHlBbzhMU1dlb1R6Ui9mWWU5?=
+ =?utf-8?B?aGFhd2k4MGxyMnU2QnFsM2VSeHUrK00rUzRGN3VLa2syUms0cFoxeXRwMkdN?=
+ =?utf-8?B?QzM5cmFqQzk0RUZmUzZPbmFJN1pzNDNlM3Roa2l4UjJGZVg4SU9uY1hGL2JH?=
+ =?utf-8?B?amdaeERLM2pkQUV1bTJUazVBZnVGbGNHNDJvbUNSNE4vWUxnWXRvQ0JPaXJp?=
+ =?utf-8?B?N2twN1J2MUVydmRQak5kb0pJUVE5RTVEYzZWOTZMUDl1L1JOZ244SzZ5emZk?=
+ =?utf-8?B?QWpjZkIwcVFIOVJDakkyOHgxdVlSY29pakQwRzFJUU01dXp3ZEJPRGpKaDJ0?=
+ =?utf-8?B?NXFHRVZNbXF5UEhkU2dEeGFwNUljZlRpMGExeGkydkJ3eEpYV3Voc1ZLcTF6?=
+ =?utf-8?Q?voGalzMzmwXkOwywlmPQX4ntpX/+LJz8Oh2iuhP?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6580.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZXpWVDF4V0g5M29yUUN5b0JuZDZFTlpyZ25oVmRDNXhjTy9hOGQxQWpYdDJS?=
+ =?utf-8?B?eW5zSU9VcU5QdFAxU0hOb2thc1didi83Ujh3Zko1MHk1dzZLdCtobFNPcDIy?=
+ =?utf-8?B?dTFTd0NwWjRuWEpTakkzVnA2SVo1MEJOQ0MzWk1VaEVDd3pCTmhBOUdQK1Fq?=
+ =?utf-8?B?WUpEUXdSSGFVNU1jSndLZk5xN2Z2bEVneUZrMjcrNm1vck9qRWpsK21TZG53?=
+ =?utf-8?B?cHhQTTJEVXRqNVpuZWVnRjY0Qm9lbUc2MFRzZHJDSjJVZEp1ZU9SWmxtUFl1?=
+ =?utf-8?B?bkRDenZ3VUJ3RlNzNWEvLzZ2OEJURFpQTU9ROXR1a2tvbDFYY0Q5ckRnbVdV?=
+ =?utf-8?B?U0VWb2xxdWtuMlZnYXE2Ny9FeWlWY1BxSmp5ZVN2ZHh1cDRSMWgxL0FJSWh1?=
+ =?utf-8?B?ekxOM005NldkQ0Z3YmZNN3J4dklsV1pNWm9qbkFYSXZhcDg0KzllSGhocitF?=
+ =?utf-8?B?ckhQRkRrVTgzNDYySW95c3BLS2F2QXJLemU5cFZIR3lGUlExU1R0b2NhbmNV?=
+ =?utf-8?B?K0srK0ZzUUppNXlOWlcxYllIUmdrNjdpVHpiSm02V25jYTd6djcxcUVPQkho?=
+ =?utf-8?B?aDRhbnhram8vMHhsVHZPaDNlWTNOKzhYZExZRzJFUnY0WjFGcitEU2p0K3Y1?=
+ =?utf-8?B?Rkh6b2Rjb1MyNmhXUXo2RFpUYXJqNVdaYjVkQTVISWMwRmEvNTRMYVVtNm56?=
+ =?utf-8?B?a0JVTzZMdFVSb2x2aXFTcGFTNEtCb3duZDFROVRxOCt0Wkt0eXdpMDRiWE9a?=
+ =?utf-8?B?N1l4RkFrUFdZdWxkSlp4OWZYVnExOEp5WFlqNm9DcHdLYVAzMGNuWUUxUmJi?=
+ =?utf-8?B?TzNZSzR5djZGZXZsMGFtblpxZUZqdTRHNVEwWkczWDhVZ3ZGc2pCVGJEdmxZ?=
+ =?utf-8?B?VzhIL2hUYXFXUW0yL3JoOVZndzhQY0s2QXdKbExwVHExQ2xLZzVUZXFRUzhW?=
+ =?utf-8?B?Q1Y0WWtmSWdHbHNPWXhBV1RuQmZpd2ZmRTNUWEdrZm9Zb0dTaHJDcGRqdGdn?=
+ =?utf-8?B?NHQ3akxMaFZOYmVJZ3U5cnpibWxOMmdZbFRRZjNGQm9URjlFNDBaK1BaUHVO?=
+ =?utf-8?B?NFdWcko5VFg4c203M2NPY1h6YUVKdktKeG1OTGtHckhFVUdRbzhsbDdBTzlX?=
+ =?utf-8?B?VUpEVjY2Z08vYzA3NmJRVlh6d2VoRU5PS25raVpzN2F4ZnpvUER0dHQ1b1hl?=
+ =?utf-8?B?T2F3UG11ZjZ3aDY1R3pLOUc3eUxjL3R6RDFKSG1nR0tUdmZ1djd1dmJqVGJ0?=
+ =?utf-8?B?dFVXeFRXRnpvQzZ4eTFnWFlXaG9WK29VWkFjYmxUMHlrakY0SkRxWGlSeFo2?=
+ =?utf-8?B?M3FlK0VHdHUrSFpTanh3WDlzZWMrd1VzdTFnUDB2LzFIUjlyZkpjUUZpdW8v?=
+ =?utf-8?B?bHhITlV2amxEVno0OFZkd2RiMGduNERrallwRTBlL2pwdkh5NGlXQWlSOVFT?=
+ =?utf-8?B?cmovR2hTM0IyY2xvM0pycWw4ZnM1M3FUc2FoYVUzeDdRbW1MNi92dXJuSDcz?=
+ =?utf-8?B?TGVBOEdmOGlsOHB2OFYxbE9HZU8zV0wwMmRGaExWWEM1ZHFGNlhWaUNQanF2?=
+ =?utf-8?B?dHRLRG11dS9YK2pyK1U5Ym5BVENJYXQ5cVVibjZVY2d4VUs3K05lZitRcU9H?=
+ =?utf-8?B?Q1o5K2xFNWxUcG80RVcvRkx5Uy9TRktZZ1Jsb1hEckVmY0sxSEhLYjBNT1Fu?=
+ =?utf-8?B?T1MzUXoyeDhCZkxMdG5oNkxYSy9vZ3BoNk94ejI4MkQzT3BMMWlCYWplOUZx?=
+ =?utf-8?B?S0JkbGxualcrUHVCRHcvMnZSdk1SMm80V1BaZ2RGdDcySTczQmo0QmRtZnBD?=
+ =?utf-8?B?d2RMc0RjR2xMTFpnQTkxTlZIVWcvUndMVWxRaXBOeHUwYnJOKzF1NXJyYm5O?=
+ =?utf-8?B?Qjc3R0FSTzNWd3J3NDYrN1FzK3R3MzArbXVrZ3ZCM2VYRzYwQ1cyYi83bUhs?=
+ =?utf-8?B?MjAyWmZjbk85bFkzOHlKN2c4bGo3bksySlVMRkpSQzdTN0pDWGNUalZtYVZs?=
+ =?utf-8?B?UmZrYVkweW1lTU80TTVCMnZ5bUdrSHV4eFQrVTFTQVh1K3NYd0NKYWgydFBH?=
+ =?utf-8?B?K21SeCtXcklhQjQ0dnRRcmovWXYwSVhJVWllaGFidzVueENaeEFhOEJpSGxk?=
+ =?utf-8?Q?UTeU1/74o6tWROTYMwiBLLyec?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 03:02:43.7288
+X-MS-Exchange-CrossTenant-Network-Message-Id: d806bfb5-d6e1-4025-ddff-08dd02217ec2
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6580.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 07:21:44.1430
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 675f1376-f1da-4a35-0663-08dd01fd5009
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000075F2.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8177
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tNvkBiflTiPz+CpIDFchsi7gjM7oPrKfHGCnV9pwzeewHSQ2UNCJ7kh+ivlCtfCjKiZQIOxJaxxgQZ1uNWAf/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9442
 
-When configuring a kernel with PAGE_SIZE=4KB, depending on its setting of
-CONFIG_CMA_ALIGNMENT, VCMDQ_LOG2SIZE_MAX=19 could fail the alignment test
-and trigger a WARN_ON:
-    WARNING: at drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3646
-    Call trace:
-     arm_smmu_init_one_queue+0x15c/0x210
-     tegra241_cmdqv_init_structures+0x114/0x338
-     arm_smmu_device_probe+0xb48/0x1d90
 
-Fix it by capping max_n_shift to CMDQ_MAX_SZ_SHIFT as SMMUv3 CMDQ does.
 
-Fixes: 918eb5c856f6 ("iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV")
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 2024/10/19 3:34 AM, Bjorn Helgaas wrote:
+> On Tue, Sep 03, 2024 at 06:44:26PM -0700, Joseph Jang wrote:
+>> Validate there are no duplicate hwirq from the irq debug
+>> file system /sys/kernel/debug/irq/irqs/* per chip name.
+>>
+>> One example log show 2 duplicated hwirq in the irq debug
+>> file system.
+>>
+>> $ sudo cat /sys/kernel/debug/irq/irqs/163
+>> handler:  handle_fasteoi_irq
+>> device:   0019:00:00.0
+>>       <SNIP>
+>> node:     1
+>> affinity: 72-143
+>> effectiv: 76
+>> domain:  irqchip@0x0000100022040000-3
+>>   hwirq:   0xc8000000
+>>   chip:    ITS-MSI
+>>    flags:   0x20
+>>
+>> $ sudo cat /sys/kernel/debug/irq/irqs/174
+>> handler:  handle_fasteoi_irq
+>> device:   0039:00:00.0
+>>      <SNIP>
+>> node:     3
+>> affinity: 216-287
+>> effectiv: 221
+>> domain:  irqchip@0x0000300022040000-3
+>>   hwirq:   0xc8000000
+>>   chip:    ITS-MSI
+>>    flags:   0x20
+>>
+>> The irq-check.sh can help to collect hwirq and chip name from
+>> /sys/kernel/debug/irq/irqs/* and print error log when find duplicate
+>> hwirq per chip name.
+>>
+>> Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
+>> [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
+> 
+> I don't know enough about this issue to understand the details.  It
+> seems like you look for duplicate hwirqs in chips with the same name,
+> e.g., "ITS-MSI" in this case?  That name seems too generic to me
+> (might there be several instances of "ITS-MSI" in a system?)
+> 
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-index 01a6f0c61f44..8a59f3ed8dde 100644
---- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
-@@ -558,7 +558,8 @@ static int tegra241_vcmdq_alloc_smmu_cmdq(struct tegra241_vcmdq *vcmdq)
- 
- 	snprintf(name, 16, "vcmdq%u", vcmdq->idx);
- 
--	q->llq.max_n_shift = VCMDQ_LOG2SIZE_MAX;
-+	/* Queue size, capped to ensure natural alignment */
-+	q->llq.max_n_shift = min_t(u32, CMDQ_MAX_SZ_SHIFT, VCMDQ_LOG2SIZE_MAX);
- 
- 	/* Use the common helper to init the VCMDQ, and then... */
- 	ret = arm_smmu_init_one_queue(smmu, q, vcmdq->page0,
--- 
-2.34.1
+As I know, each PCIe device typically has only one ITS-MSI controller.
+Having multiple ITS-MSI instances for the same device would lead to 
+confusion and potential conflicts in interrupt routing.
 
+> Also, the name may come from chip->irq_print_chip(), so it apparently
+> relies on irqchip drivers to make the names unique if there are
+> multiple instances?
+> 
+> I would have expected looking for duplicates inside something more
+> specific, like "irqchip@0x0000300022040000-3".  But again, I don't
+> know enough about the problem to speak confidently here.
+>
+
+In our case, If we look for duplicates by different irq domains like
+"irqchip@0x0000100022040000-3" and "irqchip@0x0000300022040000-3" as 
+following example.
+
+     $ sudo cat /sys/kernel/debug/irq/irqs/163
+     handler:  handle_fasteoi_irq
+     device:   0019:00:00.0
+          <SNIP>
+     node:     1
+     affinity: 72-143
+     effectiv: 76
+     domain:  irqchip@0x0000100022040000-3
+      hwirq:   0xc8000000
+      chip:    ITS-MSI
+       flags:   0x20
+     $ sudo cat /sys/kernel/debug/irq/irqs/174
+     handler:  handle_fasteoi_irq
+     device:   0039:00:00.0
+         <SNIP>
+     node:     3
+     affinity: 216-287
+     effectiv: 221
+     domain:  irqchip@0x0000300022040000-3
+      hwirq:   0xc8000000
+      chip:    ITS-MSI
+       flags:   0x20
+
+We could not detect the duplicated hwirq number (0xc8000000) in this case.
+
+
+> Cosmetic nits:
+> 
+>    - Tweak subject to match history (use "git log --oneline
+>      tools/testing/selftests/drivers/" to see it), e.g.,
+> 
+>        selftests: irq: Add check for duplicate hwirq
+> 
+>    - Rewrap commit log to fill 75 columns.  No point in using shorter
+>      lines.
+> 
+>    - Indent the "$ sudu cat ..." block by a couple spaces since it's
+>      effectively a quotation, not part of the main text body.
+> 
+>    - Possibly include sample output of irq-check.sh (also indented as a
+>      quote) when run on the system where you manually found the
+>      duplicate via "sudo cat /sys/kernel/debug/irq/irqs/..."
+> 
+>    - Reword "The irq-check.sh can help ..." to something like this:
+> 
+>        Add an irq-check.sh test to report errors when there are
+>        duplicate hwirqs per chip name.
+> 
+>    - Since the kernel patch has already been merged, cite it like this
+>      instead of using the https://lore URL:
+> 
+>        db744ddd59be ("PCI/MSI: Prevent MSI hardware interrupt number truncation")
+> 
+
+If you agree to use irq chip name ("ITS-MSI") to scan duplicate hwirq, I
+could send version 2 patch to fix above suggestions.
+
+
+Thank you,
+Joseph.
+
+>> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+>> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+>> ---
+>>   tools/testing/selftests/drivers/irq/Makefile  |  5 +++
+>>   tools/testing/selftests/drivers/irq/config    |  2 +
+>>   .../selftests/drivers/irq/irq-check.sh        | 39 +++++++++++++++++++
+>>   3 files changed, 46 insertions(+)
+>>   create mode 100644 tools/testing/selftests/drivers/irq/Makefile
+>>   create mode 100644 tools/testing/selftests/drivers/irq/config
+>>   create mode 100755 tools/testing/selftests/drivers/irq/irq-check.sh
+>>
+>> diff --git a/tools/testing/selftests/drivers/irq/Makefile b/tools/testing/selftests/drivers/irq/Makefile
+>> new file mode 100644
+>> index 000000000000..d6998017c861
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/drivers/irq/Makefile
+>> @@ -0,0 +1,5 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +
+>> +TEST_PROGS := irq-check.sh
+>> +
+>> +include ../../lib.mk
+>> diff --git a/tools/testing/selftests/drivers/irq/config b/tools/testing/selftests/drivers/irq/config
+>> new file mode 100644
+>> index 000000000000..a53d3b713728
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/drivers/irq/config
+>> @@ -0,0 +1,2 @@
+>> +CONFIG_GENERIC_IRQ_DEBUGFS=y
+>> +CONFIG_GENERIC_IRQ_INJECTION=y
+>> diff --git a/tools/testing/selftests/drivers/irq/irq-check.sh b/tools/testing/selftests/drivers/irq/irq-check.sh
+>> new file mode 100755
+>> index 000000000000..e784777043a1
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/drivers/irq/irq-check.sh
+>> @@ -0,0 +1,39 @@
+>> +#!/bin/bash
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +
+>> +# This script need root permission
+>> +uid=$(id -u)
+>> +if [ $uid -ne 0 ]; then
+>> +	echo "SKIP: Must be run as root"
+>> +	exit 4
+>> +fi
+>> +
+>> +# Ensure debugfs is mounted
+>> +mount -t debugfs nodev /sys/kernel/debug 2>/dev/null
+>> +if [ ! -d "/sys/kernel/debug/irq/irqs" ]; then
+>> +	echo "SKIP: irq debugfs not found"
+>> +	exit 4
+>> +fi
+>> +
+>> +# Traverse the irq debug file system directory to collect chip_name and hwirq
+>> +hwirq_list=$(for irq_file in /sys/kernel/debug/irq/irqs/*; do
+>> +	# Read chip name and hwirq from the irq_file
+>> +	chip_name=$(cat "$irq_file" | grep -m 1 'chip:' | awk '{print $2}')
+>> +	hwirq=$(cat "$irq_file" | grep -m 1 'hwirq:' | awk '{print $2}' )
+>> +
+>> +	if [ -z "$chip_name" ] || [ -z "$hwirq" ]; then
+>> +		continue
+>> +	fi
+>> +
+>> +	echo "$chip_name $hwirq"
+>> +done)
+>> +
+>> +dup_hwirq_list=$(echo "$hwirq_list" | sort | uniq -cd)
+>> +
+>> +if [ -n "$dup_hwirq_list" ]; then
+>> +	echo "ERROR: Found duplicate hwirq"
+>> +	echo "$dup_hwirq_list"
+>> +	exit 1
+>> +fi
+>> +
+>> +exit 0
+>> -- 
+>> 2.34.1
+>>
+> 
