@@ -1,41 +1,77 @@
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2044.outbound.protection.outlook.com [40.107.236.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131D41B95B;
-	Mon, 11 Nov 2024 01:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731289058; cv=none; b=OCDPwoGbCnpCHpApe5qyNhJCPu46ifzebZdsqb7zBa75zcQnDh/YsZgnrNEA/Yiy3IwyqEtBKTssYzjQnTUoM/Xh1n+8Q4W4V6okc6fneWnPLy/hIw6Muvuxai+mkf/d1vOAraIv7uLbQyhyGWLBzWQ1sAa1WdE+agf5EOo5v7Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731289058; c=relaxed/simple;
-	bh=HOkgBtHSI6baPmbqaXcaZYAi499ImxQjdx/H/6aJ44s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pwxx0flS/h4gGEudhtaAQnKRPzuiQckl0GLba5HMudM3CHSa7KIunCf27y4LYT37kKZON7PKrjJuqz5wgEJNsfnBF25th69SIT/RLxSXvcyou02takNa16ZRIt2spQ+raZhLCeqhUEsOnKrNwltlXY0arSoX/1I/R8ZLzh4dBBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xmsbr3YDSz4f3nT7;
-	Mon, 11 Nov 2024 09:37:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 825CD1A0359;
-	Mon, 11 Nov 2024 09:37:31 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP4 (Coremail) with SMTP id gCh0CgDXAIXRXzFnZ3LFBQ--.3182S2;
-	Mon, 11 Nov 2024 09:37:31 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: akhilrajeev@nvidia.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: linux-crypto@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	chenridong@huawei.com,
-	wangweiyang2@huawei.com
-Subject: [PATCH v2] crypto: tegra - do not transfer req when tegra init fails
-Date: Mon, 11 Nov 2024 01:28:27 +0000
-Message-Id: <20241111012827.1788341-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644024683;
+	Mon, 11 Nov 2024 03:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731294169; cv=fail; b=qyZRGOOV6hv6DWbc+R83vETTPkFE+h2LBTPvRqWtm7k8O0l8Tq97E9Jngr3Bs+i1Tw27RS3sbqrFp2vviqIFBWldcO/6xqOb0dwMWM2YPCwcp/I1V8OpOidf1kfrqlDhqWVQEs89dShIJkNY/wd+gOjiS91pOg266Ym5pAOrLrI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731294169; c=relaxed/simple;
+	bh=tYCMAIbYJTrhT6y8uX5khL7Mb61AuSx27X7nbtdazz8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DtS6DEXvlpGndx8i5aLlAh9h+LKnWcW9Z8wfimsisAM5izkIB4IB3nk/A9lfMR0apXlmgAq0co/CrQtg4+yKJzU743jxoa7ogOqFfoIvO7srrlyitONF+LqySvqKEuq9bHQunIe9aVsepT4GU9m18+AKAlcgIrLIbIuUlx+JS1M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=F7KeE+yp; arc=fail smtp.client-ip=40.107.236.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="F7KeE+yp"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u6OY4vtRWgUsIp9EdfDJStVubcOTkx6odHFQmt90BqG2nXwIs1VZLyyb2zSMYmoPnJv1eYJSKv8mDRciCrRGtay1EIGI9ducQxoPuqhXWw7+mP1ZJBt3Q3mCGoXQqLsZnvil206xN+2fZxSPkBawqj0z7a9mQ/8xqBrB1Y4uWfOsuHVvmCmNqnqaxksDSfXOr4p4mN8mG2jl6Vkk0aQ3GoF4PZP6qEqlwrknYq6Wd+dcvfgDoslA3WGUIpQcjhHpEuDPV4mEV4FBp76TLIN7MYI0aFs5yFp59blaUvIt4/3V1Fju/VrdlWny2QNFfEmHhcoz0Wipn3pvtvrphL7xig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i8DOhwqBztXboW+g1QyWt7kPa0gz4ruzRUPi2ClTzvc=;
+ b=mSSY4eC/CP+DtSSSX0svX7z5nGfU2S7/6/WMGrSSyYIaNOkNE3HZwdAZE79LsQJpBWh7Nv527lm5ZNjuasNrHFeKxwGTKSISyjxVWl8DH9IkgNJIkxvzK5J0giMmNuTMYHgn/BY6ePY4msIuOaScYxM/mwKs8o4gzN1IPooYuKi9NnViCp8xcx7Ra46VdqBm9/Ov5xhBl6pmgSvrYA8GwSG7gwyei7EzHW1WEgRqvS+KyIr2bLPJI0i1P15gInf+zkP49E9Cv6se6v1nVFfgDaAd5Tfxk79WHueR/X3pAA6JV4ePWWDRpYIodBzOAJIJzFxZWEsuxoUEcFPa6Slj/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i8DOhwqBztXboW+g1QyWt7kPa0gz4ruzRUPi2ClTzvc=;
+ b=F7KeE+ypK5NV9UJp6fVZgVYIh/Po3lDlaYrwIgnjh8GO8+HoJWHaTtdjFYsESxAczZGTZ6wZyy8gPzWkDCOVjGtwT0oW8U7gpgF6Eq7i7oBnOgzWzXeVb+QCY5MnsNatUwaLxU3FmZhVs3Bu0d2ptQ/KK7uJR4qwy6kFTpUR8+hB5ApMBkhJrRUjlH4wXYMcKiMaaL/nfmrmrXhtFi/ppQ6tX0d7z9Cdw3cpWS6l4wDd9uFf8x0c47o1GrRhznITEtMwNphk1RM5ucBxSzRE6t62ks91rOIJ5LXQp01S+5jsO2adTTU3O0M0c2dvq44mLGVFp/J892rGwh3/TmWpVA==
+Received: from MW4PR04CA0037.namprd04.prod.outlook.com (2603:10b6:303:6a::12)
+ by PH7PR12MB8177.namprd12.prod.outlook.com (2603:10b6:510:2b4::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27; Mon, 11 Nov
+ 2024 03:02:44 +0000
+Received: from CO1PEPF000075F2.namprd03.prod.outlook.com
+ (2603:10b6:303:6a:cafe::59) by MW4PR04CA0037.outlook.office365.com
+ (2603:10b6:303:6a::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8137.27 via Frontend
+ Transport; Mon, 11 Nov 2024 03:02:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CO1PEPF000075F2.mail.protection.outlook.com (10.167.249.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8158.14 via Frontend Transport; Mon, 11 Nov 2024 03:02:43 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 10 Nov
+ 2024 19:02:34 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Sun, 10 Nov 2024 19:02:34 -0800
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 10 Nov 2024 19:02:33 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <will@kernel.org>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@nvidia.com>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH rc] iommu/tegra241-cmdqv: Fix alignment failure at max_n_shift
+Date: Sun, 10 Nov 2024 19:02:26 -0800
+Message-ID: <20241111030226.1940737-1-nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -43,81 +79,86 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXAIXRXzFnZ3LFBQ--.3182S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF1UJF48ur4UtrWDKF4xCrg_yoW8uFyDpF
-	48Aayjyrn5XFZ5CF4xJF4rCF15Wasavry7G3yIyas5ZFs7Xry8Cr47CFyUXa15AFZ7try7
-	Krs2yw13Jr1YqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075F2:EE_|PH7PR12MB8177:EE_
+X-MS-Office365-Filtering-Correlation-Id: 675f1376-f1da-4a35-0663-08dd01fd5009
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OqQ8kc6uUE6Sc4J4O2reNRNZC6woZZN/6EXOl4MU/UOKysngErcxk+ahhrC2?=
+ =?us-ascii?Q?8IjqElC12FsnGn4IM2svSqWN1uybA/eTlGB7jwyR4ECzCPgPncATOHPBuI6w?=
+ =?us-ascii?Q?S4xf1aCFDwFkJSFv9F+okob+NRCBpplq0kxVcRRXMK9hRkyhCzb+9OP74J+O?=
+ =?us-ascii?Q?wtEnQRW2gunOc4LoJRyQ8nQRbGcWfza1xMS94KfCiqMDu8tUPFTQ1XJQxGk7?=
+ =?us-ascii?Q?YzTeRPBFSgHbJUIiaVx7+nSYwPA8Jnxinp7UWP4K37EwIOzfH8IqFtmAMp8d?=
+ =?us-ascii?Q?TYYGPd81r/ZTxKxZLjEmonOVgCC6Y3/2stZ4rbeUfBYJUdUZ8OgpzSEUBDYZ?=
+ =?us-ascii?Q?WuKEJscOmCX3Bw/6cZoWD//G014P3n0VuaJSthVtdnuNQtghYF+oll4D/J7K?=
+ =?us-ascii?Q?h2gbQ7uz8+JBjEqV+mbBYetxUcYGF7CWZ6XeL2v/urSkQWPNSnKgfwPUT9Gy?=
+ =?us-ascii?Q?VTQzJoe8Zcml0njNowOzGb9OL6lOmtfn0qyWwFI41yeki6YbNdDLhBSmoMzR?=
+ =?us-ascii?Q?WUDhi70KE5O0Qc21I24Jz5T1htA4AItXB7/hnWxiXtAyhg2WWak3cRktnGUC?=
+ =?us-ascii?Q?XrcAIh/Mvzm10x3Wj0xo9ADK2ybOFZtrXJI1xmdxmWgmWrR72Ou+TFAFruCB?=
+ =?us-ascii?Q?qu7GJSEimmw+6DSjgxH5vwnktUnwDOO7My5o+LIDUB2KL3OHYSUwcuWt2i4D?=
+ =?us-ascii?Q?LEX6TU0qILQoZv5WI/y7MwL+v7ZHBgPXW17Ns3shUUd4YnT4X8zIvhFgxHYj?=
+ =?us-ascii?Q?exJmuBMK1GeN574gmeYx8GH+JCA135M+OCrybyqTCcu1bI3F/yjzvYAttjv3?=
+ =?us-ascii?Q?+LlJMMGRo/D1Df7sLjWL1rDeh8MdxT/c5n1dkFwVhrrbytqcDtIKSo+EQXXd?=
+ =?us-ascii?Q?t0+yWMR8PFJqGL/MkKZBTPeKinYUYa4DnjrfEPivB8uwEz9w1EvwX19IZfnc?=
+ =?us-ascii?Q?kYErwY2b5mCUkYiGrTIhxxPb+sQqy7w/x7xYMQGj13iqECnQKau+sQoe4ucS?=
+ =?us-ascii?Q?P5Xxh6KVSClen+RuiP0fWa9m6zhnevLu64HFBqtLAwGgnZiCuQp3roUYCxRF?=
+ =?us-ascii?Q?NtQqA3nZRmtDB/EgXYpsqsU0JUiFyvaV0YboHhg/rSzp1+8B9SoBwNgfSsnQ?=
+ =?us-ascii?Q?qglpbBdppjw+O49Y0vMTRGdvKpr1UarOMy0/ymFinQnE32v2JF0S3yAIOBoZ?=
+ =?us-ascii?Q?GCcnUaYzVMlP2bXgm9spdcbAueUrcNNgM0PpTZEzGUpsjzHKZ4s+qPm8XtYy?=
+ =?us-ascii?Q?5arQKCBslBitQFmDc++XTyJyboF86jgNRCe3PCovPEKwbIZcYYSu1G9EBfNX?=
+ =?us-ascii?Q?16Gnkv1goVUn9DJWmAjCRSrbshmZphclziZXRTkSB1Ct4PHRUjyc0yLfBZFC?=
+ =?us-ascii?Q?bHBZyPZSnAirQQ4naKnTAyGRAnsBiJyZ7NEsUF7krEmPEVWcZw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Nov 2024 03:02:43.7288
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 675f1376-f1da-4a35-0663-08dd01fd5009
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075F2.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8177
 
-From: Chen Ridong <chenridong@huawei.com>
+When configuring a kernel with PAGE_SIZE=4KB, depending on its setting of
+CONFIG_CMA_ALIGNMENT, VCMDQ_LOG2SIZE_MAX=19 could fail the alignment test
+and trigger a WARN_ON:
+    WARNING: at drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c:3646
+    Call trace:
+     arm_smmu_init_one_queue+0x15c/0x210
+     tegra241_cmdqv_init_structures+0x114/0x338
+     arm_smmu_device_probe+0xb48/0x1d90
 
-The tegra_cmac_init or tegra_sha_init function may return an error when
-memory is exhausted. It should not transfer the request when they return
-an error.
+Fix it by capping max_n_shift to CMDQ_MAX_SZ_SHIFT as SMMUv3 CMDQ does.
 
-Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
-Acked-by: Akhil R <akhilrajeev@nvidia.com>
+Fixes: 918eb5c856f6 ("iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV")
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 ---
- drivers/crypto/tegra/tegra-se-aes.c  | 7 +++++--
- drivers/crypto/tegra/tegra-se-hash.c | 7 +++++--
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/tegra/tegra-se-aes.c b/drivers/crypto/tegra/tegra-se-aes.c
-index 9d130592cc0a..d734c9a56786 100644
---- a/drivers/crypto/tegra/tegra-se-aes.c
-+++ b/drivers/crypto/tegra/tegra-se-aes.c
-@@ -1750,10 +1750,13 @@ static int tegra_cmac_digest(struct ahash_request *req)
- 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
- 	struct tegra_cmac_ctx *ctx = crypto_ahash_ctx(tfm);
- 	struct tegra_cmac_reqctx *rctx = ahash_request_ctx(req);
-+	int ret;
+diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+index 01a6f0c61f44..8a59f3ed8dde 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+@@ -558,7 +558,8 @@ static int tegra241_vcmdq_alloc_smmu_cmdq(struct tegra241_vcmdq *vcmdq)
  
--	tegra_cmac_init(req);
--	rctx->task |= SHA_UPDATE | SHA_FINAL;
-+	ret = tegra_cmac_init(req);
-+	if (ret)
-+		return ret;
+ 	snprintf(name, 16, "vcmdq%u", vcmdq->idx);
  
-+	rctx->task |= SHA_UPDATE | SHA_FINAL;
- 	return crypto_transfer_hash_request_to_engine(ctx->se->engine, req);
- }
+-	q->llq.max_n_shift = VCMDQ_LOG2SIZE_MAX;
++	/* Queue size, capped to ensure natural alignment */
++	q->llq.max_n_shift = min_t(u32, CMDQ_MAX_SZ_SHIFT, VCMDQ_LOG2SIZE_MAX);
  
-diff --git a/drivers/crypto/tegra/tegra-se-hash.c b/drivers/crypto/tegra/tegra-se-hash.c
-index 4d4bd727f498..0b5cdd5676b1 100644
---- a/drivers/crypto/tegra/tegra-se-hash.c
-+++ b/drivers/crypto/tegra/tegra-se-hash.c
-@@ -615,13 +615,16 @@ static int tegra_sha_digest(struct ahash_request *req)
- 	struct tegra_sha_reqctx *rctx = ahash_request_ctx(req);
- 	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
- 	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
-+	int ret;
- 
- 	if (ctx->fallback)
- 		return tegra_sha_fallback_digest(req);
- 
--	tegra_sha_init(req);
--	rctx->task |= SHA_UPDATE | SHA_FINAL;
-+	ret = tegra_sha_init(req);
-+	if (ret)
-+		return ret;
- 
-+	rctx->task |= SHA_UPDATE | SHA_FINAL;
- 	return crypto_transfer_hash_request_to_engine(ctx->se->engine, req);
- }
- 
+ 	/* Use the common helper to init the VCMDQ, and then... */
+ 	ret = arm_smmu_init_one_queue(smmu, q, vcmdq->page0,
 -- 
 2.34.1
 
