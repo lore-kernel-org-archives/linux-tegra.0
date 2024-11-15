@@ -1,61 +1,61 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34251E32B0
-	for <linux-tegra@vger.kernel.org>; Fri, 15 Nov 2024 21:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638611E3DD5
+	for <linux-tegra@vger.kernel.org>; Fri, 15 Nov 2024 21:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731704981; cv=none; b=rFxybxTgPZi6Lbxu/YIbKCiXJ+8ujCg3xW2NOa2D1CR1RXJYFKxaPD++TlafKWZhRDiXSwURw5mOmxKcPHgidO4CNTFdNfoucFvsX6tlCWY/RzLxhyxFVxZn60JY5uHZDpYieubuaOMiaEqo6QDJ0AcL2MLolf+gvcwxst+XP5A=
+	t=1731704983; cv=none; b=R58W5Nzd2epGaybHx4gbarR5IE4PpykDMICmhNEuJ5HWb68sJLMs9A+hkN6Pb6ppKbxYnDiE8yQ9UQcUkvJwXuhxAH6IvAlbOWOxrz61Ie7+2rwmylEsTApCTQEsML1yHjhafrLnYrcAvaY/OXx0ObnZIAZ/374CT8tzDr6juc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731704981; c=relaxed/simple;
-	bh=p73O++3wotedHVxEc/OS0iEeK5HjHEeyRJw8kmUrclY=;
+	s=arc-20240116; t=1731704983; c=relaxed/simple;
+	bh=8PHqNvYNhd077+yMZGdRVPVQtJwqcuP4Sa84pHByMBM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=USRXBoBYPGWuEYyHY2GZmJrsu7SEl/SZLUmlPqfPCV3jphppd5xWkFpw78GKIyEyFHV0BJFAeWfmcfhHVegn20Hb+CuP1WmXUvbPJN7xXsYNLst4fZwA2F7zYPz/UNbxN3DQpbqnXRnSOuTbesp9K5qctV9fAGkqQVbIBrkFvj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=veQEx7Qu; arc=none smtp.client-ip=209.85.208.44
+	 In-Reply-To:To:Cc; b=oVzL658RMag7MNWOgtUc73M/xji6Fku3VFjPZttQdjqaPxwGQiDBPaa5L29Xj1g5q/qcTgNFqG05BNQE1dd+5ifLcBhPKgf52/5+T6J7z3+5fClGCFa+rsvJ0Mv2Hejpnl4vbIU4jR7vLMVHnv/K867M8FDoTF8IlI9/yEhXBTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JkntcCHO; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="veQEx7Qu"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cfa1c324c0so239094a12.1
-        for <linux-tegra@vger.kernel.org>; Fri, 15 Nov 2024 13:09:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JkntcCHO"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cf8593ca4bso2388496a12.1
+        for <linux-tegra@vger.kernel.org>; Fri, 15 Nov 2024 13:09:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731704976; x=1732309776; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1731704980; x=1732309780; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MaDJsFjngdpTSC4UtZp0JvItJKL05hX1CQDURe5cIPs=;
-        b=veQEx7QuWyzJ+CF7+u4E9DMC2CruVpihKyWohiIaC5rAw2tb2PQ26unBnarzuBG04R
-         qYZHLeXYQOxTLk6b3DSYiwW/g3MooO75AdKNwRjxEjFDKWAq0XpZxyuJWUHkLEdjqdNs
-         atU67DNyKt9GVCbm/78kSC9dIOFPVlOuhpugP0mY7o8URp4C6tChjz/AKBWvsNvV0BGO
-         aEis2nytfdVihkWGTSatC9oHHL6ySA20on24m9g1FtCR2IqBgu5eVqmL92xHGEe/IhcP
-         wtgN3aDaUlb3zORPULeyb+sidvQPsQ0NTO2enT/PnUkSDekiAlU1bfDZJJalHgHoLZ4e
-         cCWg==
+        bh=6uHMCkPLDPF5XZhqTYsDkYOtTqtnVR38dCpXI61ABZc=;
+        b=JkntcCHO/4sptLT1ROv63/XQSbqFZi3bW8HKLXVmuP4qY+eA3/B9mSXucdrX9NnPar
+         6YaXSdA9gWy6xcyrvOdCHVfZouMMyPd2rBx52Z9/u2ud69icu3GPc/aFoqwmMcFyAJj1
+         vjAm/TIxn4B0QPZuTKSu5TS+U5l0pfi/QPLSgpr3ZtNv1J/7vtS6wYaJkxjSddYT+lvy
+         ULiFzJYGNrW+LpCzji5QG8NSWI3L/mTXljaedv4KVynEozetkmnAzg/5vyuG+ZPdDi6h
+         dwzhkGvkMgloTCbCMt8SUQeR6Flql0ONTOgMlxlqDkGM8sBjagVqyWFzHjatRqp2Ylon
+         FKgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731704976; x=1732309776;
+        d=1e100.net; s=20230601; t=1731704980; x=1732309780;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MaDJsFjngdpTSC4UtZp0JvItJKL05hX1CQDURe5cIPs=;
-        b=UQbWj+RBhM9MwxkII6yUy3McmuWk26aFQDmwLN2Sa68EqzSxLFgX7fSRuThhnSbZfw
-         Ty9H+M7a1lXwG0GE9xqFX/dvFvodOc4oc7cPqwNJnuD+kfAE6yuA4K8jkrZwGhqlEBbx
-         qyjSqAZOUHmqpCX4JvK8lC+f0ZizYACa0maxM9b4G0Yz6K+K3yJV5VrNRz7ggINKnYEO
-         lEt8jCFXZE2fiJY8Gh3YxcD0h7EBLKW6epnUrveIoDuV/Q9K+zVmXNf92Qc7E7si2WVI
-         yTTiCLH8TKP0XIwjcd8SjDOQoeHpqX37HHwaHsGlaQ6Wjf5X7eLA6gp7c1ljKiqcxzwb
-         E85Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU19HiD02j9NTqDuNBm9I6H+NkaoP3wwE/AuRKDG9QbCVxvPSz/3mcJweZtqbvfjwHUnb78oUX3m6bPeA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvf4BVycXSBFDVQbKqkz6Hl4WOcBvtoeT8e2KoanbwEygsWUuV
-	8zKAceXmpmmOdOJ92Zj/AwrgGM1qyh+tISgNI9cH6Mradn5LqhxG6YenKytJDy4=
-X-Google-Smtp-Source: AGHT+IFPY3knSoOjFOSw+FKqV/bCUh7TKMDj4KEvXFLpvr+Y8ELhi4rkKluEpzqZePJKQVtb4lya7g==
-X-Received: by 2002:a17:907:2d91:b0:a99:43e5:ac37 with SMTP id a640c23a62f3a-aa483426214mr277344666b.15.1731704976085;
-        Fri, 15 Nov 2024 13:09:36 -0800 (PST)
+        bh=6uHMCkPLDPF5XZhqTYsDkYOtTqtnVR38dCpXI61ABZc=;
+        b=ulXhEXefat4OtIyZGQMp9AtbfHSOfB3f6G5Siy2TX08Le+tZhvSa2Qp4Qnne0aUFqO
+         wf1T65lFGfOZVViOlZ0VVpmttAiFRJBmGa8CigiUtp/6eZ4YraapwSV2Ut4RWMnOXEj9
+         aFo1rKpCBsNO2whU8uLdpvjDcIVWnE/mbphol3vvEEMOBN3kyseGqNjx/KTMFW7CrI9H
+         e3Vo5cMip6p6gvf7u6ejCI4nDejJKvfSpZlN2+eIv8OgcshpGlI8O4S5Di+W0f7aBp0l
+         3i/MsfJ3klu2tMndblaf4rG1swv9ETIrJO/KnqqQ6UTsKsOZ/8SJNyypMVSApYWeCIY2
+         bWYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpeLOW+3Wp97yXaqvYWAI8gpXZfjSj8sk5LGIkPIusKhDNRAxGofVbyymzitp8GApi/D9urvoBinRRBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVALOSEFKzaZtiz0V6nxQGwEMVyqJkFMN/CuelS6bAV/1PqUd2
+	yUFYYr9XuZXqcS3UwBBm3JTD3jaGEJ7rOYmKKnGtKi2sTDnq5myKGS1FtBEupkk=
+X-Google-Smtp-Source: AGHT+IGxHaf9fcl9XH3Yy4K6OzfNJb+yIGPjb6McxskUEb9IogL1YLwYggNBzkIhim2sOLfufDW+VA==
+X-Received: by 2002:a17:906:ef08:b0:a99:3c32:b538 with SMTP id a640c23a62f3a-aa483528a6fmr360455366b.42.1731704979697;
+        Fri, 15 Nov 2024 13:09:39 -0800 (PST)
 Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df51648sm219626366b.62.2024.11.15.13.09.32
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df51648sm219626366b.62.2024.11.15.13.09.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 13:09:35 -0800 (PST)
+        Fri, 15 Nov 2024 13:09:39 -0800 (PST)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 15 Nov 2024 23:09:26 +0200
-Subject: [PATCH 1/5] drm/encoder_slave: make mode_valid accept const struct
- drm_display_mode
+Date: Fri, 15 Nov 2024 23:09:27 +0200
+Subject: [PATCH 2/5] drm/amdgpu: don't change mode in
+ amdgpu_dm_connector_mode_valid()
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241115-drm-connector-mode-valid-const-v1-1-b1b523156f71@linaro.org>
+Message-Id: <20241115-drm-connector-mode-valid-const-v1-2-b1b523156f71@linaro.org>
 References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
 In-Reply-To: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
 To: Jani Nikula <jani.nikula@linux.intel.com>, 
@@ -122,83 +122,60 @@ Cc: intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
  spice-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, 
  linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2918;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1747;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=p73O++3wotedHVxEc/OS0iEeK5HjHEeyRJw8kmUrclY=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnN7iHg3HP+UcGCGKYRySmptq7KP9Ng42lKX9lx
- EK9A+ybXVWJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZze4hwAKCRCLPIo+Aiko
- 1VmgB/9rxQm+iAzl+wi6vwGpdl+HNgPJZFXzu5cOtg8Q8IyEKfG0Mk/5Adwoa3BqRSDtrUZaI3X
- KiEQo8V0xPwWrJFzEmGzfoN72i6nWFebnQbjfIXt70HZPw6Gu7ufcvJsS3Duq/b/Th8/f3taLfo
- LJj+f+TWV1lC+9ObG14v3/4i6FFKkzzncn8HnS22OpAQ2AxdzLXYGSy7+E4Y7P2T1gDNumfgOHE
- juevCTvhN61ldGGOZFeCPby6Jjgp0M25sRRQkSL6SPQwau7HwCMbjckQexv5lAB9H+6+C6D8p9d
- nSe3+Sp7FKCb/pi71OeXv3z1csTh2P2cNnmAWuGLZ/zAdpir
+ bh=8PHqNvYNhd077+yMZGdRVPVQtJwqcuP4Sa84pHByMBM=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnN7iIkCEBV+I5bR4TS78RU0e2MvivZF+Q9IyXw
+ EixhTur0JyJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZze4iAAKCRCLPIo+Aiko
+ 1RrDCACt21MZrMiNUMyxvhABQ0cPHvM9U/AgIbDDO7KsAj2vwEdyLShml6B1R559Jq8voETjEL9
+ +078yb1nu6CV+kEVMsCLyWFw6UxeB+cYhzNHLNY0XaEijGUK9+P7bqa1vk5P0ciW3yNlxIBE4bG
+ Pbi3ypuJJQOMFd2qx/gt5R3ZNRVS0e/OjOmoRuxABzzNp/GA862gAioxCBoETiqKvawiyBMRFOi
+ 2ofeAeyKDJWD0PfvL2vatCO6Dh4kmfG8TJG7CkGnJtYNGqCMpr+WoR8TW/0eoaN+Rs47pTYqp9X
+ 88uGqYaDw6lWG+6NGKvhI0epp0XANid8bh3EOloIMBAU71W4
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
-accept const struct drm_display_mode argument. Change the mode_valid
-callback of drm_encoder_slave to also accept const argument.
+Make amdgpu_dm_connector_mode_valid() duplicate the mode during the
+test rather than modifying the passed mode. This is a preparation to
+converting the mode_valid() callback of drm_connector to accept const
+struct drm_display_mode argument.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/i2c/ch7006_drv.c          | 2 +-
- drivers/gpu/drm/i2c/sil164_drv.c          | 2 +-
- drivers/gpu/drm/nouveau/dispnv04/tvnv17.c | 2 +-
- include/drm/drm_encoder_slave.h           | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i2c/ch7006_drv.c b/drivers/gpu/drm/i2c/ch7006_drv.c
-index 131512a5f3bd996ad1e2eb869ffa09837daba0c7..a57f0a41c1a9e2006142fe0bad2914b0c344c82a 100644
---- a/drivers/gpu/drm/i2c/ch7006_drv.c
-+++ b/drivers/gpu/drm/i2c/ch7006_drv.c
-@@ -104,7 +104,7 @@ static bool ch7006_encoder_mode_fixup(struct drm_encoder *encoder,
- }
- 
- static int ch7006_encoder_mode_valid(struct drm_encoder *encoder,
--				     struct drm_display_mode *mode)
-+				     const struct drm_display_mode *mode)
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 75d6b90104f8fe196df06383b20ee88196a700bf..d0ca905e91eafe6c53f3f2ebdf3f2ae9589d7f89 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -7381,6 +7381,7 @@ enum drm_mode_status amdgpu_dm_connector_mode_valid(struct drm_connector *connec
  {
- 	if (ch7006_lookup_mode(encoder, mode))
- 		return MODE_OK;
-diff --git a/drivers/gpu/drm/i2c/sil164_drv.c b/drivers/gpu/drm/i2c/sil164_drv.c
-index ff23422727fce290a188e495d343e32bc2c373ec..708e119072fcb50c31b5596b75dc341429b93697 100644
---- a/drivers/gpu/drm/i2c/sil164_drv.c
-+++ b/drivers/gpu/drm/i2c/sil164_drv.c
-@@ -255,7 +255,7 @@ sil164_encoder_restore(struct drm_encoder *encoder)
+ 	int result = MODE_ERROR;
+ 	struct dc_sink *dc_sink;
++	struct drm_display_mode *test_mode;
+ 	/* TODO: Unhardcode stream count */
+ 	struct dc_stream_state *stream;
+ 	struct amdgpu_dm_connector *aconnector = to_amdgpu_dm_connector(connector);
+@@ -7405,11 +7406,16 @@ enum drm_mode_status amdgpu_dm_connector_mode_valid(struct drm_connector *connec
+ 		goto fail;
+ 	}
  
- static int
- sil164_encoder_mode_valid(struct drm_encoder *encoder,
--			  struct drm_display_mode *mode)
-+			  const struct drm_display_mode *mode)
- {
- 	struct sil164_priv *priv = to_sil164_priv(encoder);
+-	drm_mode_set_crtcinfo(mode, 0);
++	test_mode = drm_mode_duplicate(connector->dev, mode);
++	if (!test_mode)
++		goto fail;
++
++	drm_mode_set_crtcinfo(test_mode, 0);
  
-diff --git a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-index 3ecb101d23e949b753b873d24eec01ad6fe7f5d6..35ad4e10d27323c87704a3ff35b7dc26462c82bd 100644
---- a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-+++ b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-@@ -308,7 +308,7 @@ static int nv17_tv_get_modes(struct drm_encoder *encoder,
- }
- 
- static int nv17_tv_mode_valid(struct drm_encoder *encoder,
--			      struct drm_display_mode *mode)
-+			      const struct drm_display_mode *mode)
- {
- 	struct nv17_tv_norm_params *tv_norm = get_tv_norm(encoder);
- 
-diff --git a/include/drm/drm_encoder_slave.h b/include/drm/drm_encoder_slave.h
-index 49172166a164474f43e4afb2eeeb3cde8ae7c61a..b526643833dcf78bae29f9fbbe27de3f730b55d8 100644
---- a/include/drm/drm_encoder_slave.h
-+++ b/include/drm/drm_encoder_slave.h
-@@ -85,7 +85,7 @@ struct drm_encoder_slave_funcs {
- 	 * @mode_valid: Analogous to &drm_encoder_helper_funcs @mode_valid.
- 	 */
- 	int (*mode_valid)(struct drm_encoder *encoder,
--			  struct drm_display_mode *mode);
-+			  const struct drm_display_mode *mode);
- 	/**
- 	 * @mode_set: Analogous to &drm_encoder_helper_funcs @mode_set
- 	 * callback. Wrapped by drm_i2c_encoder_mode_set().
+-	stream = create_validate_stream_for_sink(aconnector, mode,
++	stream = create_validate_stream_for_sink(aconnector, test_mode,
+ 						 to_dm_connector_state(connector->state),
+ 						 NULL);
++	drm_mode_destroy(connector->dev, test_mode);
+ 	if (stream) {
+ 		dc_stream_release(stream);
+ 		result = MODE_OK;
 
 -- 
 2.39.5
