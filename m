@@ -1,127 +1,94 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BCE1CC170;
-	Tue, 19 Nov 2024 13:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476C014A09C
+	for <linux-tegra@vger.kernel.org>; Tue, 19 Nov 2024 16:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732021562; cv=none; b=CRFwnlJV4Qxoj50kDbwmG2i+ibla8Idq7xyL4dOyK0AzFnAWKg2kNOIwE3BAd5IXg1o5ixqe80XiVYqrO6Mml1dL7BtSZuaEEALNvMyHh1dJYQtAZlC58nIq+UV5o9jtsaC2QfArWQ2zlwJ4g7MTmVdMVyw7RTIvO1oDfAB5ORk=
+	t=1732035367; cv=none; b=UjlOA1eyWRRBMLHgJM5N2PhIlYDXVsWio8lhBA1QgEnowNbrqFebeG3OOoGXwLwLxhP6B2U7ITHYeYfdga2mQ4Teksr4f0knP/jxGZ01/T381+TRmGhZb1NfhcXC/FyCapbkS55hfRIg7HrJk1NY/ptOoiWr3K0sABw701zmYfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732021562; c=relaxed/simple;
-	bh=uSwSTdd7HCm/YcK1V1kqqpFIOnCFAFfr1gYiTS1xaBk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lAXIzXnrYNS5it5EY1DgqEAfI0fdSC1AokMjn+XOn831fKbwxwYXiVYR/5gsrHSZcS+GnsQgmcYGYsrXee0thNxr9IvwSuBNbYrCIm2kawmSoVLmKsCkPb8K8hkq7N3yDFyApxugYDGDFVZYNnOINjjNu+t7F8Lk8kV07FgGKU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb5014e2daso26588971fa.0;
-        Tue, 19 Nov 2024 05:05:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732021556; x=1732626356;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r5SnbOSPJM2xbQk5uUW2SdrCV3aSiK5t/lke9tIy5ZM=;
-        b=ANltHQ9SyyyoPO9Shp9Q1EokDBNyURE+V4UZtsFw2eiU9HVxxme8K49bkLpkzp8XQC
-         uEEEyv1QbBWVuvX+lvuzDMbbam44l7QYyroSOgCX4i5yJ5QLAoDMl1ZaTKL0pZqOpsyI
-         wuCjW8v8jXwRDXLknXcvNUqmGI6hRmW6DjKhaHnDJkQzc15udZHil5mNiyWq3jHHid5z
-         boPAjHt/FD4pjF2m+fKKMSq2bLGPJ1T1DBraK/Sihi8JiiYA09Ljqz6Wn5pmr3RoeCrK
-         bokErh05RVUR3GZMsFXLL9BgjwkBYpirmkpE3Oi3pG8SmrqkrnYWVrJI40sXGPF21o57
-         e3oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXHToErbBPLCWjVZ/L60h3BVeWXltRf07hQ88I8IerA3CT5i8geaCNeUxB9ZFAONop1EYaZUy2UUkCgLc=@vger.kernel.org, AJvYcCVbC8/qy1v/2NU5UX0i6QuMNyvf+lrvuCwxJTYkB+H4M2b1vAzYdpUQKT6JsOHEBCY2nX3HRmqXk57muiVa@vger.kernel.org, AJvYcCWhMAfS9rKR+6+luNEmmLLcXy/1idQPNX1zxnJirHRcP69E6MiL8XssYULcde101C5JO72ngTVRFuKw+5Z/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMh88PMuUX5mfcLzig8k7PKnVUkJ9uxtBsQxBUI/Zm+vFeWJvg
-	0M7RMJhHsqJpJ1pP3l9igEjzALqO7sHM6mUv/LFfq1NylTcuxgWdumT9wDUA
-X-Google-Smtp-Source: AGHT+IH0XQk6P8B3PQQ4Ty/GuFjhNpI/I+DvC2i0waLOUq6CTQp+JV16DN7VZh7i0a4m1vo52JvVFA==
-X-Received: by 2002:a2e:a903:0:b0:2fb:3bef:6233 with SMTP id 38308e7fff4ca-2ff6070e042mr83271141fa.33.1732021555447;
-        Tue, 19 Nov 2024 05:05:55 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff698515d0sm12383251fa.19.2024.11.19.05.05.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 05:05:54 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb3110b964so25253001fa.1;
-        Tue, 19 Nov 2024 05:05:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUvoVgTx5CQ4BCnVJMrMqV3tV8v7XTKjibdUeUrFh1fgW+hh95N50sWTPSEwFG29BUBidcjAR9GD6agye0=@vger.kernel.org, AJvYcCVWt24J8tmukF0ivTt1aB19yv/9xezcKdva1uLm67pbaMB+NgeAA5tNzzmPaoctvWn1GcQB/lnqHTHtHVVD@vger.kernel.org, AJvYcCWxUDJz3oD7aEO0tucnp5nPx9dBGH2nlM+MrSepAHCnIeGsGGxYLvP4N35XIuZ9F49ySpwAdeiBq/InEvjO@vger.kernel.org
-X-Received: by 2002:a05:651c:1582:b0:2f7:4cf1:d6b1 with SMTP id
- 38308e7fff4ca-2ff606226a5mr76184521fa.1.1732021553921; Tue, 19 Nov 2024
- 05:05:53 -0800 (PST)
+	s=arc-20240116; t=1732035367; c=relaxed/simple;
+	bh=1qHk9c9UF1EeKWWeqbF/56RTbbac9fdZn150Ee2pIlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pGpJp2sHyfWVB5npJ/qREKjbwWUuSKIEwHuvQhduxvzvkXW/L2dIFSVLsFvf0TSk6XDKRVzGizGPaebsUpQm0wtcmr5vFevmKGcl8Q9ngZZOpTILnU41MaHGh2X351ILCupf2hdaQXIZ+L1XoRm2QESfDt4vAp71Q+Ulc0h7+eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ArManeJs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ArManeJs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732035365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eZY2bvI9jRohMLC1MiiilGj8lvWI0aPVX7q2WlrGEVY=;
+	b=ArManeJs1uqTSLW//b8hp2lTW4lvSD73Sd23xPTvFHlQFaA1RRp29mkYObAiCv1dPusrun
+	cIp3PLdnN8GrSGf+RlkEFHRgHhM8mLnJfTe5q9ogluoT/f6Zr18C4N1i0XlKbpP3j/GpFi
+	x1MOS1eKwKWafw7ZN+BUk+uCB7Ux0l8=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-308-Von8AFHlPcutkbqohtcFAg-1; Tue,
+ 19 Nov 2024 11:56:00 -0500
+X-MC-Unique: Von8AFHlPcutkbqohtcFAg-1
+X-Mimecast-MFC-AGG-ID: Von8AFHlPcutkbqohtcFAg
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E7A419560AD;
+	Tue, 19 Nov 2024 16:55:58 +0000 (UTC)
+Received: from localhost (unknown [10.22.89.254])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 933AB1956086;
+	Tue, 19 Nov 2024 16:55:56 +0000 (UTC)
+Date: Tue, 19 Nov 2024 13:55:55 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH] iommu/tegra241-cmdqv: do not call smp_processor_id in
+ preemptible context
+Message-ID: <ZzzDG6FFprnWPnCj@uudg.org>
+References: <ZzvZkMKhwmJESpdM@uudg.org>
+ <20241119071510.-6OKEw2q@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6f0297ba884c670d604232c2861347940082c8e6.1732004078.git.u.kleine-koenig@baylibre.com>
-In-Reply-To: <6f0297ba884c670d604232c2861347940082c8e6.1732004078.git.u.kleine-koenig@baylibre.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Tue, 19 Nov 2024 22:05:42 +0900
-X-Gmail-Original-Message-ID: <CAGb2v66f6WEYYVm+UQzmz_V87Vqt4BSUkoW5S_qqr_arczc6ug@mail.gmail.com>
-Message-ID: <CAGb2v66f6WEYYVm+UQzmz_V87Vqt4BSUkoW5S_qqr_arczc6ug@mail.gmail.com>
-Subject: Re: [PATCH] mailbox: Switch back to struct platform_driver::remove()
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Michal Simek <michal.simek@amd.com>, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119071510.-6OKEw2q@linutronix.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, Nov 19, 2024 at 5:17=E2=80=AFPM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@baylibre.com> wrote:
->
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
->
-> Convert all platform drivers below drivers/mailbox to use .remove(),
-> with the eventual goal to drop struct platform_driver::remove_new(). As
-> .remove() and .remove_new() have the same prototypes, conversion is done
-> by just changing the structure member name in the driver initializer.
->
-> Make a few indentions consistent while touching these struct
-> initializers.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> ---
-> Hello,
->
-> I did a single patch for all of drivers/mailbox. While I usually prefer
-> to do one logical change per patch, this seems to be overengineering
-> here as the individual changes are really trivial and shouldn't be much
-> in the way for stable backports. But I'll happily split the patch if you
-> prefer it split.
->
-> This is based on today's next, if conflicts arise when you apply it at
-> some later time and don't want to resolve them, feel free to just drop
-> the changes to the conflicting files. I'll notice and followup at a
-> later time then. Or ask me for a fixed resend.
->
-> Best regards
-> Uwe
->
->  drivers/mailbox/bcm-flexrm-mailbox.c    | 2 +-
->  drivers/mailbox/bcm-pdc-mailbox.c       | 2 +-
->  drivers/mailbox/imx-mailbox.c           | 2 +-
->  drivers/mailbox/mailbox-test.c          | 4 ++--
->  drivers/mailbox/mtk-cmdq-mailbox.c      | 2 +-
->  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 2 +-
->  drivers/mailbox/qcom-ipcc.c             | 2 +-
->  drivers/mailbox/stm32-ipcc.c            | 2 +-
+On Tue, Nov 19, 2024 at 08:15:10AM +0100, Sebastian Andrzej Siewior wrote:
+> On 2024-11-18 21:19:28 [-0300], Luis Claudio R. Goncalves wrote:
+> > With PREEMPT_RT enabled some of the calls to tegra241_cmdqv_get_cmdq()
+> > during boot will happen in preemptible context. As this function calls
+> > smp_processor_id(), these calls will trigger a "BUG: using smp_processor_id()
+> > in preemptible" backtrace if DEBUG_PREEMPT is enabled.
+> 
+> If this is only on PREEMPT_RT, where is the disabled preemption coming
+> from on !PREEMPT_RT?
 
+You are correct. This is not exclusive to PREEMPT_RT, also happens with the
+stock kernel. I ran more tests and this time I made sure DEBUG_PREEMPT was
+enabled. That was enough to reproduce the problem.
+ 
+> > As tegra241_cmdqv_get_cmdq() only calls smp_processor_id() to use the
+> > CPU number as a factor to balance out traffic on cmdq usage, it is safe
+> > to use raw_smp_processor_id() here.
+> > 
+> > Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> 
+> Sebastian
+> 
+---end quoted text---
 
->  drivers/mailbox/sun6i-msgbox.c          | 4 ++--
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-
->  drivers/mailbox/tegra-hsp.c             | 2 +-
->  drivers/mailbox/zynqmp-ipi-mailbox.c    | 2 +-
->  11 files changed, 13 insertions(+), 13 deletions(-)
->
