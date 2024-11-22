@@ -1,142 +1,125 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3FF224CC;
-	Fri, 22 Nov 2024 17:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC76917B428;
+	Fri, 22 Nov 2024 20:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732298091; cv=none; b=g1MRJ83qbiP1VT+2sXHBu5DjvVkwJ/0PLSQ9cg/Kmq8Erb7yYgUlwhbXvFQQZc6ZXNVdk+3YCr8AVWuwwN/wojSlrYzO8vPzrWM35iB+WxiyPMCgZF1KvoFoxH0aLW0SMHtDRvYiUWtjVapory5Ecz4KkRm7KADrDk7stI2+uYY=
+	t=1732308221; cv=none; b=AaOSmWhn0drzeFMI7Au4EGn3aR1XCKcG72Xyx69s5kFIa5RVhrnDri3pukdgW0jsR1KjxCpuwt6BSbZMGpiLMHjAML+qBwkWbh8wn0OFBzJMavTok2kzAvZPxvujO1XR8lDKwZBhQMivR5+gzOCaLR8lJS9V081cw3cQqF1iLII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732298091; c=relaxed/simple;
-	bh=sP8GnPMMnf3sjQ7ceImITYA+fvSSpdmMigpOF5UCgrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=FFk7uHkBl/KhlGmCAaDpkwipO80IntMfirrFYuCOHF7Y+zb9l2Tomt4gzp9kQgUNo41K5hNKE5Xzbkfev41fqmJAlqsoXzHnH9bcqBOU75sL4yaK3owIu6odctD7dfjRO2XQOGPH6gtSas4hgCQ13svBHrPC+rukz0MTiItTFEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3EUfFrz; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1732308221; c=relaxed/simple;
+	bh=9ur4fx8g1n2aQGv6Iks60+fVeXS+jljxmXCqMX/FUJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JSTJ/Tuos4ZSVw1zdDQWw38FD84A9zDgb9gZVqCXua5NJNdOyGqgXww6UK9Wtw5Zvjcpdlnuw5qEkdMsyiAutleUH0bkWCV+j8WvaUO1FWPH7Ca10dUJAXbq4eJMB2ZncScvSObOaVF8pdx7AbzUIjqokTfhKA/ooVvZM+fVa4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmJv6Kho; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3EUfFrz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FDDEC4CECE;
-	Fri, 22 Nov 2024 17:54:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmJv6Kho"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65824C4CED0;
+	Fri, 22 Nov 2024 20:43:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732298091;
-	bh=sP8GnPMMnf3sjQ7ceImITYA+fvSSpdmMigpOF5UCgrY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=N3EUfFrzeDpzvD9ErDAIiuO4dbSRbtRl3q2wnf004bJLuwK9lMQsixxey2kwvIMZf
-	 rEWI9C5EX+9guwLZKyhhovd/+1ymk37d34UoXHeFxoTe2tZuEAul1W7NiuYzqshxsm
-	 eMdGeDNIrV8eFdw5Ez90f/B4zHySnRZryHGnP0GbHUpib/yhujEDaqGC1lsymy8rqH
-	 QKjHUbIQzoBPce3Rx32XZuIeFPJwLRtgjor6sgSnMSfy3naciiEB6yOfX79RU4x+Fp
-	 ZifpaDCt/0acv+vaexz0B0UiSVydDT/7PSZeL9++/8a3Uiqrrgk8nRxu06JhbTsw6p
-	 ZldeUHH+buSvw==
-Date: Fri, 22 Nov 2024 11:54:49 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Joseph Jang <jjang@nvidia.com>
-Cc: shuah@kernel.org, tglx@linutronix.de, mochs@nvidia.com,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH] selftest: drivers: Add support to check duplicate hwirq
-Message-ID: <20241122175449.GA2433467@bhelgaas>
+	s=k20201202; t=1732308220;
+	bh=9ur4fx8g1n2aQGv6Iks60+fVeXS+jljxmXCqMX/FUJ4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=WmJv6KhouoPjpYLnMmpuN8uVIn3pLQ0Vd7k2AQGH9abPMLZZhMmh9G6MWgp1q8m4I
+	 Pr/Vc3akz8klX7oxufe/3NkQDg5Xqh7480yRTyKme5dz5LHpLPSreF2O7o0qcfwUdQ
+	 pYpCWaGGkzeSZV6r3tdVuAQnq83X5DIBGBUrORRoVb+1zpbjA5SQHi4WbWgZjAuvqE
+	 hS+XC/Ouj4fPKANKiMnRvsh942pLYXZ6agsarnLBIMOtl9595DP4WIDVp3LB8yBFRq
+	 wlHudLoPFIOdYGvsdqu6nw/2VbtDWeGEJvzoOhab7RmDCoYYFouD97rsHObLFnfNiS
+	 ypKOd1a3pR0MA==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ec1ee25504so1213094eaf.3;
+        Fri, 22 Nov 2024 12:43:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUER6iThg7MTu6Axtj3mJ4cg1reKPjWD7bcaybaXf5gLIxxRWowMmr7qJr2Xu6a5mnoPKhslxM+JN7SNumU@vger.kernel.org, AJvYcCUiChhOCMNvd/q4wZKzxz9NcpWtvjOnFwXbNS6G3gZlR+YaWXgjk/4+rV3GhwlQAzgNCMCMoPxXwUs=@vger.kernel.org, AJvYcCXCnhLQ4UBt3D0FthQ2Int6rdI+O/9z6bwgZRX2Q6CUFBjKuiPP5r+IHajCCnkTbD2LVUJf/DOjNl9xVII=@vger.kernel.org, AJvYcCXmKKRQ7W7GqYrSdnnv9OSxiip05TYsiLpXHEYCXO8NYVuzGEaVhbCjukueEErt73SikOGNDlQ8BoIsZWIV@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+62R+E+1npT1UVEPwCP3cPFeMf9fUp0BXu3ZTqVy6BcX57Cyy
+	3oMAcTLC9wKR7OyHQ5T/lbVhjnDWNcHCte+AHS6hx1b9zPKbS3xEzdbudKbgOmsprdTaCyQjQV7
+	1Z8mnZsycJa4qo9tTOSU3P0bjuZg=
+X-Google-Smtp-Source: AGHT+IEutDuraKb6w9V+8CLjNMD2UYE+lNm29XfGmOiaTuVzMfm8AxFlD6kXcNxHi/+pw8cR8P3Zi9iHFF2EXbeKgV0=
+X-Received: by 2002:a05:6871:69c1:b0:287:d8df:7c22 with SMTP id
+ 586e51a60fabf-29720c59d21mr4407291fac.23.1732308219677; Fri, 22 Nov 2024
+ 12:43:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dec53919-034b-4f0e-b415-1bc1de9b0916@nvidia.com>
+References: <20241010-b4-cleanup-h-of-node-put-thermal-v4-0-bfbe29ad81f4@linaro.org>
+In-Reply-To: <20241010-b4-cleanup-h-of-node-put-thermal-v4-0-bfbe29ad81f4@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 22 Nov 2024 21:43:28 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jjjA6enruipTU9kTnuA6x5p_XUQyXc-4Cr4bo_b4VHtQ@mail.gmail.com>
+Message-ID: <CAJZ5v0jjjA6enruipTU9kTnuA6x5p_XUQyXc-4Cr4bo_b4VHtQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] thermal: scope/cleanup.h improvements
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Chen-Yu Tsai <wenst@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 11, 2024 at 03:21:36PM +0800, Joseph Jang wrote:
-> On 2024/10/19 3:34 AM, Bjorn Helgaas wrote:
-> > On Tue, Sep 03, 2024 at 06:44:26PM -0700, Joseph Jang wrote:
-> > > Validate there are no duplicate hwirq from the irq debug
-> > > file system /sys/kernel/debug/irq/irqs/* per chip name.
-> > > 
-> > > One example log show 2 duplicated hwirq in the irq debug
-> > > file system.
-> > > 
-> > > $ sudo cat /sys/kernel/debug/irq/irqs/163
-> > > handler:  handle_fasteoi_irq
-> > > device:   0019:00:00.0
-> > >       <SNIP>
-> > > node:     1
-> > > affinity: 72-143
-> > > effectiv: 76
-> > > domain:  irqchip@0x0000100022040000-3
-> > >   hwirq:   0xc8000000
-> > >   chip:    ITS-MSI
-> > >    flags:   0x20
-> > > 
-> > > $ sudo cat /sys/kernel/debug/irq/irqs/174
-> > > handler:  handle_fasteoi_irq
-> > > device:   0039:00:00.0
-> > >      <SNIP>
-> > > node:     3
-> > > affinity: 216-287
-> > > effectiv: 221
-> > > domain:  irqchip@0x0000300022040000-3
-> > >   hwirq:   0xc8000000
-> > >   chip:    ITS-MSI
-> > >    flags:   0x20
-> > > 
-> > > The irq-check.sh can help to collect hwirq and chip name from
-> > > /sys/kernel/debug/irq/irqs/* and print error log when find duplicate
-> > > hwirq per chip name.
-> > > 
-> > > Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
-> > > [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
-> > 
-> > I don't know enough about this issue to understand the details.  It
-> > seems like you look for duplicate hwirqs in chips with the same name,
-> > e.g., "ITS-MSI" in this case?  That name seems too generic to me
-> > (might there be several instances of "ITS-MSI" in a system?)
-> 
-> As I know, each PCIe device typically has only one ITS-MSI controller.
-> Having multiple ITS-MSI instances for the same device would lead to
-> confusion and potential conflicts in interrupt routing.
-> 
-> > Also, the name may come from chip->irq_print_chip(), so it apparently
-> > relies on irqchip drivers to make the names unique if there are
-> > multiple instances?
-> > 
-> > I would have expected looking for duplicates inside something more
-> > specific, like "irqchip@0x0000300022040000-3".  But again, I don't
-> > know enough about the problem to speak confidently here.
-> 
-> In our case, If we look for duplicates by different irq domains like
-> "irqchip@0x0000100022040000-3" and "irqchip@0x0000300022040000-3" as
-> following example.
-> 
->     $ sudo cat /sys/kernel/debug/irq/irqs/163
->     handler:  handle_fasteoi_irq
->     device:   0019:00:00.0
->          <SNIP>
->     node:     1
->     affinity: 72-143
->     effectiv: 76
->     domain:  irqchip@0x0000100022040000-3
->      hwirq:   0xc8000000
->      chip:    ITS-MSI
->       flags:   0x20
->     $ sudo cat /sys/kernel/debug/irq/irqs/174
->     handler:  handle_fasteoi_irq
->     device:   0039:00:00.0
->         <SNIP>
->     node:     3
->     affinity: 216-287
->     effectiv: 221
->     domain:  irqchip@0x0000300022040000-3
->      hwirq:   0xc8000000
->      chip:    ITS-MSI
->       flags:   0x20
-> 
-> We could not detect the duplicated hwirq number (0xc8000000) in this
-> case.
+Hi Daniel,
 
-Again, this is really out of my area, but based on
-Documentation/core-api/irq/irq-domain.rst, I assumed the point of
-hwirq was that hwirq numbers were local to an interrupt controller,
-i.e., to an irq_domain.
+On Thu, Oct 10, 2024 at 8:06=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Changes in v4:
+> - Patch 2: rewrite, significant change: kzalloc() also with
+>   scoped-handling so the entire error handling could be removed.
+>   Due to above, drop review-tags (Chen-Yu, Jonathan).
+> - Add Rb tags for other patches.
+> - Link to v3: https://lore.kernel.org/r/20241008-b4-cleanup-h-of-node-put=
+-thermal-v3-0-825122398f71@linaro.org
+>
+> Changes in v3:
+> - Rebase, because there was bigger rework in thermal code.
+>   This made two patches obsolete, but brought new one:
+>   1/6: thermal: of: Simplify thermal_of_should_bind with scoped for each =
+OF child
+> - Link to v2: https://lore.kernel.org/r/20240816-b4-cleanup-h-of-node-put=
+-thermal-v2-0-cee9fc490478@linaro.org
+>
+> Changes in v2:
+> - Drop left-over of_node_put in regular exit path (Chen-Yu)
+> - Link to v1: https://lore.kernel.org/r/20240814-b4-cleanup-h-of-node-put=
+-thermal-v1-0-7a1381e1627e@linaro.org
+>
+> Few code simplifications with scope/cleanup.h.
+>
+> Best regards,
+> Krzysztof
+>
+> ---
+> Krzysztof Kozlowski (6):
+>       thermal: of: Simplify thermal_of_should_bind with scoped for each O=
+F child
+>       thermal: of: Use scoped memory and OF handling to simplify thermal_=
+of_trips_init()
+>       thermal: of: Use scoped device node handling to simplify of_thermal=
+_zone_find()
+>       thermal: qcom-spmi-adc-tm5: Simplify with scoped for each OF child =
+loop
+>       thermal: tegra: Simplify with scoped for each OF child loop
+>       thermal: sun8i: Use scoped device node handling to simplify error p=
+aths
+>
+>  drivers/thermal/qcom/qcom-spmi-adc-tm5.c |  7 ++---
+>  drivers/thermal/sun8i_thermal.c          | 11 +++----
+>  drivers/thermal/tegra/soctherm.c         |  5 ++-
+>  drivers/thermal/thermal_of.c             | 54 ++++++++++----------------=
+------
+>  4 files changed, 25 insertions(+), 52 deletions(-)
+> ---
 
-If that's the case, it should not be a problem if hwirq number
-0xc8000000 is used in two separate irq_domains.
+This seems to have fallen through cracks.
 
-Bjorn
+Since all of the other 6.13 thermal changes have been integrated now,
+I'm going to apply it and push next week unless you have concerns (in
+which case please let me know).
+
+Thanks!
