@@ -1,181 +1,142 @@
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2082.outbound.protection.outlook.com [40.107.223.82])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D401C18BC13;
-	Fri, 22 Nov 2024 08:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732262821; cv=fail; b=uh0HeYeVF0D09KaQ3PWsnMbyzsdqhz0KMQyj01P7E6MzJb5yMdz6oWGUi38/Zi+z/wi2MtPgnXX141tzsMY1WwLOsXixH3yX1s8MASvIv+aeXG5F0+3rI4wvFipadQHpStuttV7WLSRgdAZGzkXeQHwmZMtlP3diNAG5j8yOWWM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732262821; c=relaxed/simple;
-	bh=ERJnHrEivan+3bdtCK30fcRjAKL6mRWZLZ3zVbTvb+U=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=IxWqBwTazLdcUQ5prloY3Y+UMGkuJOpGPReqwiBNqwvnpmr7NlQUwBiJXfcs5izpxVfW1iPmk5Yl9T7aeXfxOz7MKy9QHSxf41Y52bFtlAvvP46/yxbb+gruRPktL7aGW7LBzPz+FRM3KlepsSiFo+5dGfBPiP8DsWdmJ2hjb54=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=edvwVN81; arc=fail smtp.client-ip=40.107.223.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3FF224CC;
+	Fri, 22 Nov 2024 17:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732298091; cv=none; b=g1MRJ83qbiP1VT+2sXHBu5DjvVkwJ/0PLSQ9cg/Kmq8Erb7yYgUlwhbXvFQQZc6ZXNVdk+3YCr8AVWuwwN/wojSlrYzO8vPzrWM35iB+WxiyPMCgZF1KvoFoxH0aLW0SMHtDRvYiUWtjVapory5Ecz4KkRm7KADrDk7stI2+uYY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732298091; c=relaxed/simple;
+	bh=sP8GnPMMnf3sjQ7ceImITYA+fvSSpdmMigpOF5UCgrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=FFk7uHkBl/KhlGmCAaDpkwipO80IntMfirrFYuCOHF7Y+zb9l2Tomt4gzp9kQgUNo41K5hNKE5Xzbkfev41fqmJAlqsoXzHnH9bcqBOU75sL4yaK3owIu6odctD7dfjRO2XQOGPH6gtSas4hgCQ13svBHrPC+rukz0MTiItTFEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3EUfFrz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="edvwVN81"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q/+JUyui4VpBYjgrpCLy6nlnChIZB7e41oIiaihZZx5rGN4UU6ltwXhs8wj2+ZpJMreAihKGPp4QRhZuWN2+maA9iQWQW0Vk3qIrWRhtW3eZGF8PnjJONScpyjLJWDkSCYkNbbKaxX0XJSB7I/7cIkxVkx+Uf0KK776d//z6GRIuENR7P65Df9xqYbPQwxJp8XCg850riditwFuhhH42clXFQSE1SJSCoDlkxuX73QB56NVKt/KRB1OODvgLumfPPiZlz1gJ1DxEekh7oZmgkUsINxbRnkS7BAm7mr8oreyBme1IHF7R98BshQs+EdDDPAumM0C4JV+XgjTyKj/B7Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h4VYLIb2sQjWaIWIrQXQgRnpBfqXxrx2zByIGKlK9Fs=;
- b=HxFOgli4z955dALKZNOX5e4r3WCkdqU9FdDZRSfZ0mIKUcRxGxyn5D2WimwVEqTxQN5sjeZ8wh1PdDp9H7fJB20sDTHNqpvHjt6jAbt3/Judb29TWJdy6BCLOCVbP83mRyzJV8JyUvYrr6Bdml7aW0/CpzYOTPDrYece508FP3OmvD/b8BnLlkqvbu/E+AFmxzrp5uxQwduLMfq4Gw8gA1X2q2Qy5U4uXs1COyKa4+be2ivzJj5/MgFr6ayuAoKdM2q9FYpF1Y4YlqzKXtlBv4UisD3OF6nxqPa+y6lJrTlV2ePJaEqmH6CdYpkGNVn0u1PZEQPoGmbv5MBEbHiYcw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h4VYLIb2sQjWaIWIrQXQgRnpBfqXxrx2zByIGKlK9Fs=;
- b=edvwVN81tiOISKCR4gDTgN+axMNgHbwlr/IvfNNgKQsdAJqUNFJ4FtgXsxNPHSn88LkHyJqj9IuTF3FiC99xL+9F1cr0/UXjj/goJWxi9xwYNWseC4UBxsGaKw+GzBRf6QOws8U8vjrEW6tr6KF2X0QkmiPnciiCnGMV/CKAOO2LW2RSolaqCLbgwESS6kCSgnTF3alNDWvliKahllvOfiQ0pRBegZZ8KsDq8QmWjNqZH5cmxkdutG4DxXKLLe9yxsW2pV8e8tS1O8xcfkFRzi3Ru5Fan8X4PpO1/LC0qBvWVHPTUgoW2Z8vxPxDDVPr2bgigtL2YPU7Ax3FtuSkzw==
-Received: from CH2PR04CA0027.namprd04.prod.outlook.com (2603:10b6:610:52::37)
- by CH2PR12MB4277.namprd12.prod.outlook.com (2603:10b6:610:ae::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Fri, 22 Nov
- 2024 08:06:56 +0000
-Received: from CH2PEPF0000013B.namprd02.prod.outlook.com
- (2603:10b6:610:52:cafe::fd) by CH2PR04CA0027.outlook.office365.com
- (2603:10b6:610:52::37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.15 via Frontend
- Transport; Fri, 22 Nov 2024 08:06:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CH2PEPF0000013B.mail.protection.outlook.com (10.167.244.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8182.16 via Frontend Transport; Fri, 22 Nov 2024 08:06:55 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 22 Nov
- 2024 00:06:44 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Fri, 22 Nov 2024 00:06:44 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Fri, 22 Nov 2024 00:06:44 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
-In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
-References: <20241120125629.681745345@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3EUfFrz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FDDEC4CECE;
+	Fri, 22 Nov 2024 17:54:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732298091;
+	bh=sP8GnPMMnf3sjQ7ceImITYA+fvSSpdmMigpOF5UCgrY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=N3EUfFrzeDpzvD9ErDAIiuO4dbSRbtRl3q2wnf004bJLuwK9lMQsixxey2kwvIMZf
+	 rEWI9C5EX+9guwLZKyhhovd/+1ymk37d34UoXHeFxoTe2tZuEAul1W7NiuYzqshxsm
+	 eMdGeDNIrV8eFdw5Ez90f/B4zHySnRZryHGnP0GbHUpib/yhujEDaqGC1lsymy8rqH
+	 QKjHUbIQzoBPce3Rx32XZuIeFPJwLRtgjor6sgSnMSfy3naciiEB6yOfX79RU4x+Fp
+	 ZifpaDCt/0acv+vaexz0B0UiSVydDT/7PSZeL9++/8a3Uiqrrgk8nRxu06JhbTsw6p
+	 ZldeUHH+buSvw==
+Date: Fri, 22 Nov 2024 11:54:49 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Joseph Jang <jjang@nvidia.com>
+Cc: shuah@kernel.org, tglx@linutronix.de, mochs@nvidia.com,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH] selftest: drivers: Add support to check duplicate hwirq
+Message-ID: <20241122175449.GA2433467@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <0ba6eac5-541a-44df-a234-842bbcc433b0@drhqmail201.nvidia.com>
-Date: Fri, 22 Nov 2024 00:06:44 -0800
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF0000013B:EE_|CH2PR12MB4277:EE_
-X-MS-Office365-Filtering-Correlation-Id: 18b603a6-06b3-414a-da17-08dd0acca1c4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WDdoZFdUWWFTSHhYakgzOEVCb3FYQ3k5SzZ4bldLS3NlMFJBQmR5YkdTTzBx?=
- =?utf-8?B?NklRUGFOS3FPLzFDcCsxOVdDdnByc243ZUtpN2hzaUNzK0tEd3VPZ1FUQmxL?=
- =?utf-8?B?b3JKUnB2TFB3WWhzTVlrL3YyZnBaSmZ2RzZVampnQUhQN1l6dHlLMFdCTk5i?=
- =?utf-8?B?aTdLZ2RQWUV4aXlrWXFBQVlrK294bFg1SjNWd1FubXNmSW04TnhrYW8wY2V5?=
- =?utf-8?B?R1g2N1FkazgyZCsyOGFwR0phSTFOdzlqM0w1UHF6dmM1WjBuclNYbTFJeGhn?=
- =?utf-8?B?UmUzMWJsMzYyNUpLeGxrcXRQRG9DMzR2ZWc1NUxOdzhCSEtwaGEwVDBjdWJl?=
- =?utf-8?B?VEdjcWZESTFRRlhkWjkyWTcwOVJMMTRUMEJNRWJHNVRxYUIxWU5uR3JTZXUw?=
- =?utf-8?B?aUtvVitLclNmTVcxTVRVeWpuU3hNdFpEOWN5UjNvNlpabjRJdFRTUDZOZHh5?=
- =?utf-8?B?blI5ckRCaVJBVktYQkFxRm1SdnhXWnlyZWovaHdhVFdVR2lmYjA4MW9vWGhy?=
- =?utf-8?B?N2NtSXVvVFBBNDdCNW1qc2dwdThIaVNGaFFXVkZQNVdTaGZJamVwbTMzZnlu?=
- =?utf-8?B?SFQxRTBCMkQzbnQ2aVZjempBRmFkWnhCSTZRTFJkcEJWT3l1NUFVT0xMVnFO?=
- =?utf-8?B?MDFnNG1QeGpBL25CR2FMQ281Njh3eUEvc1NiTkcxMXRXRk1CUXVXdFVFSGpG?=
- =?utf-8?B?T0JUMUZ1aVZtQkpvOHB4TFYrRVdQVlpFRnJYVzBZNkJhWi9SZFVwMm1CRUIr?=
- =?utf-8?B?TUpsUDJIWVVKbVRxSHlLNmFzWmdhNExaYWdzRTZiOXlFQU5RMUdLeFFXVk5z?=
- =?utf-8?B?eUJBaGhSdm9mTkFJN3VFdEw3L29hZGRIUVJ5QVZjUnUrYlMrMndOZU5Eek16?=
- =?utf-8?B?a1hlT1F5VTVNWFltMFBSRWRZdElSc1lKaWVCRGlBeWtPYVNZOWM5NUkrUGZa?=
- =?utf-8?B?aENwMUlmYThqUzQ5OFZ2K2VIQk5WM0tkcVJpTlJMbnZ4SGprdXVEeXpleDFr?=
- =?utf-8?B?Nmhmc3FyTk9YYWRUQ0hQODJTcWVKazJyc1YyYTlpUlNQZjhDMW5iY1JPL3lI?=
- =?utf-8?B?M3VUS1VJQW9QbkE3NERFS2dJT0pHbUt1SkdsWUNJN25tWFErM0lNVjdKVFF2?=
- =?utf-8?B?ZGs4WnFVK0t1NEYyN1VkRWxMMkNTRGdzclJrSnFUNHQwbzdXTTlQV3c4RUJK?=
- =?utf-8?B?SVpUeVhQcmI1aSs1MlVOdjR6SmVLVTRLMm1HR1c5VEVUaVVDVmhnOFZvbE5X?=
- =?utf-8?B?b0xBRUJhS3JLQkxqU0ZMM1lTYVNHZ3E1b0JLczlyVXgyRWNVb3VnS2s0UHI4?=
- =?utf-8?B?SGdqcGYzVkJCK2V3RWRoMWZVN0x3U0hRVDFzMlh5c2tjVmttVm95VGU3YjhJ?=
- =?utf-8?B?MTRBREhIM1pnUm5OWmRSR3dGY0w3V0RVUXl1U1B6NWQzZDV2QlNEcS9nRUto?=
- =?utf-8?B?aUd5UXFhOTJwK21NZFg1eFdQMURhVHM3Qk9wS3l6d3lUSUdJUGJnUm1tTDU5?=
- =?utf-8?B?MWVOMnZkWDBtSWZNRjRkTlNiRy9nVlBrL3oybDNTQW52dlBZQXFhTGgxb290?=
- =?utf-8?B?NzV2MDFyQUl2OXA3MmtPclQ1bFNwOWlTdmoxazIxbm1VKzFZNW4xMEo2QmY5?=
- =?utf-8?B?aExUN2FCOGhUSThVYXJ4Y1VIMC9qOVRBVkJlc1RjalQ4QWVSZU52SGMyOGNK?=
- =?utf-8?B?OUJ4alpyMkNIUlZCWTdEYWZxTURlUjdtRFBHWnM0RmF4NmtoS0lGMFZ6cHda?=
- =?utf-8?B?S0x6bFV6Uzk0NFZkcmlpU0wxU0JOYlhoVk02WTQxVmNZbzk5eTR0NExFbzVr?=
- =?utf-8?B?R2hOT3lCUDZQQzArUHd4VUpjVTF1dlNQTU5jK3RrV3JtNW0rRkxMeVRqeHho?=
- =?utf-8?B?cWIra3dCTUVYc2FWdkhDR3BtVnhzZGVaNUN0dzlsZDVYZEE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 08:06:55.8554
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18b603a6-06b3-414a-da17-08dd0acca1c4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF0000013B.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4277
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dec53919-034b-4f0e-b415-1bc1de9b0916@nvidia.com>
 
-On Wed, 20 Nov 2024 13:55:35 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.10 release.
-> There are 107 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Nov 11, 2024 at 03:21:36PM +0800, Joseph Jang wrote:
+> On 2024/10/19 3:34 AM, Bjorn Helgaas wrote:
+> > On Tue, Sep 03, 2024 at 06:44:26PM -0700, Joseph Jang wrote:
+> > > Validate there are no duplicate hwirq from the irq debug
+> > > file system /sys/kernel/debug/irq/irqs/* per chip name.
+> > > 
+> > > One example log show 2 duplicated hwirq in the irq debug
+> > > file system.
+> > > 
+> > > $ sudo cat /sys/kernel/debug/irq/irqs/163
+> > > handler:  handle_fasteoi_irq
+> > > device:   0019:00:00.0
+> > >       <SNIP>
+> > > node:     1
+> > > affinity: 72-143
+> > > effectiv: 76
+> > > domain:  irqchip@0x0000100022040000-3
+> > >   hwirq:   0xc8000000
+> > >   chip:    ITS-MSI
+> > >    flags:   0x20
+> > > 
+> > > $ sudo cat /sys/kernel/debug/irq/irqs/174
+> > > handler:  handle_fasteoi_irq
+> > > device:   0039:00:00.0
+> > >      <SNIP>
+> > > node:     3
+> > > affinity: 216-287
+> > > effectiv: 221
+> > > domain:  irqchip@0x0000300022040000-3
+> > >   hwirq:   0xc8000000
+> > >   chip:    ITS-MSI
+> > >    flags:   0x20
+> > > 
+> > > The irq-check.sh can help to collect hwirq and chip name from
+> > > /sys/kernel/debug/irq/irqs/* and print error log when find duplicate
+> > > hwirq per chip name.
+> > > 
+> > > Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
+> > > [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
+> > 
+> > I don't know enough about this issue to understand the details.  It
+> > seems like you look for duplicate hwirqs in chips with the same name,
+> > e.g., "ITS-MSI" in this case?  That name seems too generic to me
+> > (might there be several instances of "ITS-MSI" in a system?)
 > 
-> Responses should be made by Fri, 22 Nov 2024 12:56:14 +0000.
-> Anything received after that time might be too late.
+> As I know, each PCIe device typically has only one ITS-MSI controller.
+> Having multiple ITS-MSI instances for the same device would lead to
+> confusion and potential conflicts in interrupt routing.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.10-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
+> > Also, the name may come from chip->irq_print_chip(), so it apparently
+> > relies on irqchip drivers to make the names unique if there are
+> > multiple instances?
+> > 
+> > I would have expected looking for duplicates inside something more
+> > specific, like "irqchip@0x0000300022040000-3".  But again, I don't
+> > know enough about the problem to speak confidently here.
 > 
-> thanks,
+> In our case, If we look for duplicates by different irq domains like
+> "irqchip@0x0000100022040000-3" and "irqchip@0x0000300022040000-3" as
+> following example.
 > 
-> greg k-h
+>     $ sudo cat /sys/kernel/debug/irq/irqs/163
+>     handler:  handle_fasteoi_irq
+>     device:   0019:00:00.0
+>          <SNIP>
+>     node:     1
+>     affinity: 72-143
+>     effectiv: 76
+>     domain:  irqchip@0x0000100022040000-3
+>      hwirq:   0xc8000000
+>      chip:    ITS-MSI
+>       flags:   0x20
+>     $ sudo cat /sys/kernel/debug/irq/irqs/174
+>     handler:  handle_fasteoi_irq
+>     device:   0039:00:00.0
+>         <SNIP>
+>     node:     3
+>     affinity: 216-287
+>     effectiv: 221
+>     domain:  irqchip@0x0000300022040000-3
+>      hwirq:   0xc8000000
+>      chip:    ITS-MSI
+>       flags:   0x20
+> 
+> We could not detect the duplicated hwirq number (0xc8000000) in this
+> case.
 
-All tests passing for Tegra ...
+Again, this is really out of my area, but based on
+Documentation/core-api/irq/irq-domain.rst, I assumed the point of
+hwirq was that hwirq numbers were local to an interrupt controller,
+i.e., to an irq_domain.
 
-Test results for stable-v6.11:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    107 tests:	107 pass, 0 fail
+If that's the case, it should not be a problem if hwirq number
+0xc8000000 is used in two separate irq_domains.
 
-Linux version:	6.11.10-rc1-gc9b39c48bf4a
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+Bjorn
