@@ -1,125 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2060.outbound.protection.outlook.com [40.107.93.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC76917B428;
-	Fri, 22 Nov 2024 20:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732308221; cv=none; b=AaOSmWhn0drzeFMI7Au4EGn3aR1XCKcG72Xyx69s5kFIa5RVhrnDri3pukdgW0jsR1KjxCpuwt6BSbZMGpiLMHjAML+qBwkWbh8wn0OFBzJMavTok2kzAvZPxvujO1XR8lDKwZBhQMivR5+gzOCaLR8lJS9V081cw3cQqF1iLII=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732308221; c=relaxed/simple;
-	bh=9ur4fx8g1n2aQGv6Iks60+fVeXS+jljxmXCqMX/FUJ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JSTJ/Tuos4ZSVw1zdDQWw38FD84A9zDgb9gZVqCXua5NJNdOyGqgXww6UK9Wtw5Zvjcpdlnuw5qEkdMsyiAutleUH0bkWCV+j8WvaUO1FWPH7Ca10dUJAXbq4eJMB2ZncScvSObOaVF8pdx7AbzUIjqokTfhKA/ooVvZM+fVa4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmJv6Kho; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1B4DDCD;
+	Tue, 26 Nov 2024 13:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732628758; cv=fail; b=GHr+iL/MNPnU6o0UPQtQR7HjRpEuSYYUyBOlxGmbOPvvzFAS3HMDu9eJ0JoJTvh//Sv6E9nQL/d8Gg2+wMy1OghPd2YB5agPS3MtrNd2UbvoBtJkixIqq1F1De89h2bKuoCv+Z9FdhSGCKJEDaeFINobQTnGyJmloXoynqOSwAM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732628758; c=relaxed/simple;
+	bh=0/LVlvMqJR7uutpIpRrKjp5Sp1WrnBdIdLMhvprbXeE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I23P+28iJgPOe07x5XbHPIC/ef8nKwrleJJWMl9Zj6U9V/3pQvmcbQmEP+QQ58yvslfO5ErC1+4Av/eZxg04xY5Rfay+DXK/X6TPK0g4sPCf44bIj3bb6RistNv+e6UWvXgvOEu8Pa/p5Ff3gWWZgonO4m1WPx319oCTzFhczKg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Uqh51lHB; arc=fail smtp.client-ip=40.107.93.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmJv6Kho"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65824C4CED0;
-	Fri, 22 Nov 2024 20:43:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732308220;
-	bh=9ur4fx8g1n2aQGv6Iks60+fVeXS+jljxmXCqMX/FUJ4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WmJv6KhouoPjpYLnMmpuN8uVIn3pLQ0Vd7k2AQGH9abPMLZZhMmh9G6MWgp1q8m4I
-	 Pr/Vc3akz8klX7oxufe/3NkQDg5Xqh7480yRTyKme5dz5LHpLPSreF2O7o0qcfwUdQ
-	 pYpCWaGGkzeSZV6r3tdVuAQnq83X5DIBGBUrORRoVb+1zpbjA5SQHi4WbWgZjAuvqE
-	 hS+XC/Ouj4fPKANKiMnRvsh942pLYXZ6agsarnLBIMOtl9595DP4WIDVp3LB8yBFRq
-	 wlHudLoPFIOdYGvsdqu6nw/2VbtDWeGEJvzoOhab7RmDCoYYFouD97rsHObLFnfNiS
-	 ypKOd1a3pR0MA==
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ec1ee25504so1213094eaf.3;
-        Fri, 22 Nov 2024 12:43:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUER6iThg7MTu6Axtj3mJ4cg1reKPjWD7bcaybaXf5gLIxxRWowMmr7qJr2Xu6a5mnoPKhslxM+JN7SNumU@vger.kernel.org, AJvYcCUiChhOCMNvd/q4wZKzxz9NcpWtvjOnFwXbNS6G3gZlR+YaWXgjk/4+rV3GhwlQAzgNCMCMoPxXwUs=@vger.kernel.org, AJvYcCXCnhLQ4UBt3D0FthQ2Int6rdI+O/9z6bwgZRX2Q6CUFBjKuiPP5r+IHajCCnkTbD2LVUJf/DOjNl9xVII=@vger.kernel.org, AJvYcCXmKKRQ7W7GqYrSdnnv9OSxiip05TYsiLpXHEYCXO8NYVuzGEaVhbCjukueEErt73SikOGNDlQ8BoIsZWIV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+62R+E+1npT1UVEPwCP3cPFeMf9fUp0BXu3ZTqVy6BcX57Cyy
-	3oMAcTLC9wKR7OyHQ5T/lbVhjnDWNcHCte+AHS6hx1b9zPKbS3xEzdbudKbgOmsprdTaCyQjQV7
-	1Z8mnZsycJa4qo9tTOSU3P0bjuZg=
-X-Google-Smtp-Source: AGHT+IEutDuraKb6w9V+8CLjNMD2UYE+lNm29XfGmOiaTuVzMfm8AxFlD6kXcNxHi/+pw8cR8P3Zi9iHFF2EXbeKgV0=
-X-Received: by 2002:a05:6871:69c1:b0:287:d8df:7c22 with SMTP id
- 586e51a60fabf-29720c59d21mr4407291fac.23.1732308219677; Fri, 22 Nov 2024
- 12:43:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Uqh51lHB"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rX8OTmsvdkSqpCUD058VjTn9ON0sTih5FzbMpeHP/ad/e9g5I7rqdxxthiqk6Q5wvXSr2ragjabMCHeYZlhgjcMlY29b5C5Y/gfHP7jbVnWjxZGeiApoQfApw5ALYHJB4a7hCQbMjfgNnvSoKZg54sVVkfnOmVv54JkNC1ztx6/lbqvFjiYmDxQ8HjWZtZ1S6Vr3jxdFdLa3YtJOMP4JIBIPX1NtmSPLLCAS9zjfJ9S4XbT6iTrXMd7klsfyaU9Hs/I93cK1QiaNIjar+Vot9U3LVI0DNEW//lP1p5qkAOWq1QC1lCqMdIZh5LeJT9SQpp7u6YnJGa8LS6Cme/2xDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XlU4tQu6JBaAItTVaMvjooh2YOKU4DrBhEhtS8Xv/Ro=;
+ b=vL8a6YZ4qFBeLqeGZW87ccdy/V0MdnKHVJZOCLWPZd4jJ8zYzlA6T3EoBO9X/eG6gepiasBV9kVA8KJpOVSkCf3/bJo6f8mnHNmcOatJ2KqjnVLU0X05puydShXwPI8oiU8ShWibYyOjdQCDTij6WX2GWTPtUMUFD3OSllQ6ctYNatBN1VoIicwMyuB7O5zo/cocWWm8vH5SHFjfcnC8537kAtATQfiPJTpZEpPWprsy6bEOFVTxUAMX36UD9qPURF+z7+DsbTDDI73CwpNB2MaHXeB4LJgzsEH3dq2X8noMMiGEp/2LOoDol6Uc9ZjJE6Y6gj+DCc25jTppT6hBpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XlU4tQu6JBaAItTVaMvjooh2YOKU4DrBhEhtS8Xv/Ro=;
+ b=Uqh51lHB9Wu8HCcEwfvNgrfxlsVAAI9Kx4/QpBcJuNKgAzN74TicZKok6Unqa+5D3OhGnI94f171AC2/limcSrGmjlDgpvl2BqdTTu8ZCuU7GmflpUqpDxUPm6jX18jiAZp9Jb+FMCfGqwOHSiV7aRiAlnMQ7TQo4m6MPB22vp5BwTOZP2ESe2El7FFIwUZ163oL13Y4OlYkGaSnv3uQLdDkXh3e9JyeLK1fVkMVrIcr4CubpyNftTH4GydaLpMYBsts2uBI0w5HFtXT6PvlVI+3Pkuuvawb8krLPREVm9bEBUAtQLNhVx/X0xWcb8VoF+D5ptPOC6LHXQKVL6Z/Aw==
+Received: from DM6PR21CA0004.namprd21.prod.outlook.com (2603:10b6:5:174::14)
+ by DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8182.21; Tue, 26 Nov 2024 13:45:51 +0000
+Received: from CY4PEPF0000EE31.namprd05.prod.outlook.com
+ (2603:10b6:5:174:cafe::5d) by DM6PR21CA0004.outlook.office365.com
+ (2603:10b6:5:174::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8207.11 via Frontend Transport; Tue,
+ 26 Nov 2024 13:45:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000EE31.mail.protection.outlook.com (10.167.242.37) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8207.12 via Frontend Transport; Tue, 26 Nov 2024 13:45:51 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 26 Nov
+ 2024 05:45:36 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 26 Nov
+ 2024 05:45:36 -0800
+Received: from build-va-bionic-20241022.nvidia.com (10.127.8.12) by
+ mail.nvidia.com (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.4 via
+ Frontend Transport; Tue, 26 Nov 2024 05:45:32 -0800
+From: Vishwaroop A <va@nvidia.com>
+To: <robh@kernel.org>, <jonathanh@nvidia.com>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <thierry.reding@gmail.com>, <broonie@kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-spi@vger.kernel.org>
+CC: Vishwaroop A <va@nvidia.com>
+Subject: [PATCH 0/3] Add spidev nodes for SPI controllers
+Date: Tue, 26 Nov 2024 13:45:26 +0000
+Message-ID: <20241126134529.936451-1-va@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010-b4-cleanup-h-of-node-put-thermal-v4-0-bfbe29ad81f4@linaro.org>
-In-Reply-To: <20241010-b4-cleanup-h-of-node-put-thermal-v4-0-bfbe29ad81f4@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 22 Nov 2024 21:43:28 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jjjA6enruipTU9kTnuA6x5p_XUQyXc-4Cr4bo_b4VHtQ@mail.gmail.com>
-Message-ID: <CAJZ5v0jjjA6enruipTU9kTnuA6x5p_XUQyXc-4Cr4bo_b4VHtQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] thermal: scope/cleanup.h improvements
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Vasily Khoruzhick <anarsoul@gmail.com>, Yangtao Li <tiny.windzz@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE31:EE_|DS7PR12MB8252:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c62a9a9-1990-4a36-2493-08dd0e20a423
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nGmZ3g/h5WgczznQ262kNqKTwUbS+obURAVv9BBVvo55PTFEUFrLKOQ7gCDF?=
+ =?us-ascii?Q?5Q8YVak0C58QI4Olos2CREKeVStUtuq1WcNL9g5N8RLTVGm3bMLoaYJBiv9J?=
+ =?us-ascii?Q?My6DQnPxv29879SxboJ1fEFeCl0034bT0fIj7SfGoq/oXM7VPv1BuF5Q1izI?=
+ =?us-ascii?Q?ix2s102xYgeMGOZQfvYdlK2UzTazcpu2dHSYrFwa+W6RLr0vi9XnnrcoWuqM?=
+ =?us-ascii?Q?rnvugyq8yj7vQ6CSe9UfK5LeiNg+BlWsRhykb7fNkh0QN23aMb4ODhNsUJpf?=
+ =?us-ascii?Q?sFHSCUmZln9cR1H/f/UX7OmG5URc6cPtTrqj/0a9lTbV+EQo7O8aG9cc6/XT?=
+ =?us-ascii?Q?MlQkpY9jZpYBK6aJKjntBcsXobgP4HqiqWzl7AxI/0PqISfDQ4n90dZbODF4?=
+ =?us-ascii?Q?qObOBKzu7frZ/6cbJ2bIZzYkDEkTvVnXX7HTZnJTLxIz/TvYScN1C6IU/5gG?=
+ =?us-ascii?Q?/Xlee+VO8ejUQWRIDlB+3L0RL5UG3EnTJx3JaCTzeQ5R7sGDSGIq0TR4G/Wi?=
+ =?us-ascii?Q?MwdPcNExPrDCzAsjledp2kHk1yR0cNg84lDAPEdakSBGxr64keMJBg2jh4Gz?=
+ =?us-ascii?Q?Hlw6MwDXal1on4VfIcUG4j4++FKzcjpt+eV7sNdt9nWLTwlMPFt1qms/gnvt?=
+ =?us-ascii?Q?FCaO6W17/aL9zv19vagyekhAsbrGpwxgADOo2Jpl5B6YJ0Bo2WhtrAz/xrMQ?=
+ =?us-ascii?Q?2tc2J88a1DROVy0A/HWl79rpi7sUgbaOOVoa97M7Q2ssahl2YZqrLssqYYts?=
+ =?us-ascii?Q?AmAngSGPsVIKO+kUSenUbRt3bTTIlbiOtjqJ5NOkzqcyr7dpprijmvqXK7M6?=
+ =?us-ascii?Q?VXzjwg6LZzp0gCA8Ffxk80Va9te1P3Bc6LpVoFsGpwBSGcS15x9ri48xINrH?=
+ =?us-ascii?Q?fm0MDsgKBhNcknTQrhXKSon/bc6Mi10KwILV2pAL7H47do5OF1BLpPrqtBHi?=
+ =?us-ascii?Q?mmUC6E3Ah3oHyoQLgpG29zYiiocsQ4HXeekB9X8H/uXutSjRh3rxUCgNTLvj?=
+ =?us-ascii?Q?qWTzcCgP+lxjtPYKshn5cdzP8iIYXqIK1lMlyxPu3uI8NwLMzMC7N6d1beQF?=
+ =?us-ascii?Q?YwWiu6UHUWK9x76tH8IrwOka+xmEri4nmMkLECyqy9MB5muQLqZJyIGSR9nR?=
+ =?us-ascii?Q?mQgN9RNV/stcZXdvEMCYUhv3H2JEhR8EpL6rJkdD1FzXKczbxmCaBYokKLEH?=
+ =?us-ascii?Q?i/RLGPAAWQudZuiX/fFZC0p3ezx5H/zRQHB5ZIzEiBTtuy6Vn4guzK36nPv3?=
+ =?us-ascii?Q?uFAD7YYM/0FEjB9ZbMePpevk/61uwU0uaDW7KGSbt9qHsU8j7kZfIwQWJVin?=
+ =?us-ascii?Q?85AhRt0+mJUZK1Xoc0AK76Eu8llqypSujO49+wVaDWagxJFslZnkZBI2wX/P?=
+ =?us-ascii?Q?nR7CNTKtIyZ/a+svH9cxCQonFN58V9XFtCl3Nc5v0o8G57vNutcildUuUqLO?=
+ =?us-ascii?Q?mImiZmOv5K7stpDundGzSfkWPPU48y7ncDApx+hQwBZH36/UzZGV7w=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2024 13:45:51.0893
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c62a9a9-1990-4a36-2493-08dd0e20a423
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE31.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8252
 
-Hi Daniel,
+The patchset contains spidev node support for SPI Controllers, adds
+DT schema and "tegra-spidev" name string in the spidev driver.
 
-On Thu, Oct 10, 2024 at 8:06=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Changes in v4:
-> - Patch 2: rewrite, significant change: kzalloc() also with
->   scoped-handling so the entire error handling could be removed.
->   Due to above, drop review-tags (Chen-Yu, Jonathan).
-> - Add Rb tags for other patches.
-> - Link to v3: https://lore.kernel.org/r/20241008-b4-cleanup-h-of-node-put=
--thermal-v3-0-825122398f71@linaro.org
->
-> Changes in v3:
-> - Rebase, because there was bigger rework in thermal code.
->   This made two patches obsolete, but brought new one:
->   1/6: thermal: of: Simplify thermal_of_should_bind with scoped for each =
-OF child
-> - Link to v2: https://lore.kernel.org/r/20240816-b4-cleanup-h-of-node-put=
--thermal-v2-0-cee9fc490478@linaro.org
->
-> Changes in v2:
-> - Drop left-over of_node_put in regular exit path (Chen-Yu)
-> - Link to v1: https://lore.kernel.org/r/20240814-b4-cleanup-h-of-node-put=
--thermal-v1-0-7a1381e1627e@linaro.org
->
-> Few code simplifications with scope/cleanup.h.
->
-> Best regards,
-> Krzysztof
->
-> ---
-> Krzysztof Kozlowski (6):
->       thermal: of: Simplify thermal_of_should_bind with scoped for each O=
-F child
->       thermal: of: Use scoped memory and OF handling to simplify thermal_=
-of_trips_init()
->       thermal: of: Use scoped device node handling to simplify of_thermal=
-_zone_find()
->       thermal: qcom-spmi-adc-tm5: Simplify with scoped for each OF child =
-loop
->       thermal: tegra: Simplify with scoped for each OF child loop
->       thermal: sun8i: Use scoped device node handling to simplify error p=
-aths
->
->  drivers/thermal/qcom/qcom-spmi-adc-tm5.c |  7 ++---
->  drivers/thermal/sun8i_thermal.c          | 11 +++----
->  drivers/thermal/tegra/soctherm.c         |  5 ++-
->  drivers/thermal/thermal_of.c             | 54 ++++++++++----------------=
-------
->  4 files changed, 25 insertions(+), 52 deletions(-)
-> ---
+Vishwaroop A (3):
+  arm64: tegra: Add spidev nodes for SPI controllers
+  dt-bindings: spi: Add DT schema for Tegra SPIDEV controller
+  spi: spidev: add "tegra-spidev" name string
 
-This seems to have fallen through cracks.
+ .../devicetree/bindings/trivial-devices.yaml  |  2 ++
+ .../dts/nvidia/tegra234-p3737-0000+p3701.dtsi | 28 +++++++++++++++++++
+ drivers/spi/spidev.c                          |  2 ++
+ 3 files changed, 32 insertions(+)
 
-Since all of the other 6.13 thermal changes have been integrated now,
-I'm going to apply it and push next week unless you have concerns (in
-which case please let me know).
+-- 
+2.17.1
 
-Thanks!
