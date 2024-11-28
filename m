@@ -1,192 +1,139 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2087.outbound.protection.outlook.com [40.107.94.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C20813FD86;
-	Thu, 28 Nov 2024 08:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732784400; cv=fail; b=SHmjv0Z8dmFBBpKSYtvOCKwquqToyPETcA5ZUicugdDDLFi8AQrwgA2bMBSc2nQCtmL96ALO/r8V/xxqRF88wFBzuU0VJyjgZxu0/cKno2IboAqDCC6J6PTP4YoU4T2w7ZjufBPo2dj7LuCBBu7NpDLLbiSkIp8NkQInjQsj1ps=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732784400; c=relaxed/simple;
-	bh=2Dk8B5Wn6SdFsMO9DEvRPZLF/s6b+974mtUHyPN4oa8=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Dukrn4ETfyeKwAtoxkSNGt8w+KLkBbHgA82lsKTTsz3mcWWLub6083xAE3pKe2yRIR2VSpVBXUSZDGBhNzEJoy6PG/0YFnZ6yP8MrcwyTOKGFOghO9a5VLyXFGvFjG/eMk2Mv4IANG++pxpiPwbAVX8/86JdBq5G9Rq1Mj4Pqsk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bARc8p2H; arc=fail smtp.client-ip=40.107.94.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDB113B7BC;
+	Thu, 28 Nov 2024 10:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732789356; cv=none; b=emQ4W9usBnxCf3MeibJQMVXktzXZnf5p+plwO+eKYpx9THa4RoTsnO7U7Zy4wstP90vUypy8mvqLFdmsd+eXOj+cB7dki1t+QQTi7LyHa5mzlWHQyEDifEfZFZZmZ1IhufB8xa9Cck3S+IAb8/LFHQJrOLpuiXpXBKnxEV9sBnI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732789356; c=relaxed/simple;
+	bh=rM+W/r9fCVDAYM30UfVcCV/3Tgxqt7aRP7hQNLr6zUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lpoyLdF7Av+7C/T5U5yx8Oi1hM0imtWc41QehJUeMJTRhJJyu8iExvs1UXZRlAhawkR2nIeCLCPFpEh4vWRiwfu9ynmQixCJbUtPVwEXjRvvR1OfP1r8v6DImS7NYm5Z9+ffzHNjoSsDzHhbQMVKF8T9kvCTSJqcEKVYrDFWQXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d1msiqzU; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bARc8p2H"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SisYS7kcuxdPPorxn0Xsuj5f5dtC8a2ZEi2TZrYQxPQzaxd50zcAxJFg3uGaD+JQ2J73LF9zialEM+euvCpIdtaI1LOG5cZpv9LpRAXDIZynK5Yp01cB/mboANopmx7Qt3r7IJSzEdt11sDIW4tobB+Zk5+ra0Cw5KDT8LdA/qJW4kVQlqrfxKvKIBmj1L464UTRQBZsvCSJuTDk8P5ef6p0XzrbsxkRpwuuzdJ9xPsjei9XKjHybZmuSAdWIb9/hOVbXMxTiSF6n8rMNLXVr4wGvnVW7wdn/+8RsxB8Z/YKwR7MMMLqIf+oxnpWxVoV5Afiikl1yDnomCA7X6EpOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DFq0NOiKQl4VJo2vhzbkJwSYeHpUW4HKr0aRql5lJlI=;
- b=vChqEmCL2LZE9ivMEQR/rinnC2CaUZ4uISCn5ayoCKpDS9HpVdKs0a/5omJU6hz3g4BdrRsJtjJbPDPiIdpQOFQ6WUuvLkbo0fXcTPToj/6yx3eqmgzGtlCMCQ5A6lsvH3ZRq1czEVsanbneCDOvBevtKjZxZ8sutfmNHpbjssdYph3feuLR7K/O1BYBQFeqCKBCdhWCJdd3u0k/zhrwZFdVY9z7FgS/vahFQzzB/aCEe4rj2a+1ShgLzHefQr4P8I5HXUFnVb6lPsgWISS69+EtzK38ijp3jcOKuzfTPPp8XlcKtgmFI3yN5ToNPsy6P1AK9EaPg/WKR6OeWMu7gg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DFq0NOiKQl4VJo2vhzbkJwSYeHpUW4HKr0aRql5lJlI=;
- b=bARc8p2HJPiuBKfoXTrM2s1ebGfdeth5laiU2FcnCkVwZj1ETk1VBx+8utB6a+DulrD0VxCOQcb8gg2z/tPPoUxA714F+QlSR8PcSJks2V5DEru0kVfgKSfqp4lN3V+5khJIaj3L96Rz6rJy8r8XOTmN0zfdK/jFkZKezNjFMyZxh0oduKZHvRV7Vz8uiKmxzBa/Px2vQ0XsH/4/XDmCn62GPFZXRHF8Jc5kR+VrSezdVs09Hn0edNlOthOcEAffuyykiKXnbA5oLbEPynjkOnVedDtVkSbsTXY20lbRvPZ7HuTWRz2Ls4OClTXCK7W4kkVZFGc6+e/O9wZ4siGFXQ==
-Received: from DM6PR02CA0155.namprd02.prod.outlook.com (2603:10b6:5:332::22)
- by IA0PR12MB7674.namprd12.prod.outlook.com (2603:10b6:208:434::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.14; Thu, 28 Nov
- 2024 08:59:55 +0000
-Received: from CY4PEPF0000E9D3.namprd03.prod.outlook.com
- (2603:10b6:5:332:cafe::d0) by DM6PR02CA0155.outlook.office365.com
- (2603:10b6:5:332::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8182.21 via Frontend Transport; Thu,
- 28 Nov 2024 08:59:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000E9D3.mail.protection.outlook.com (10.167.241.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.12 via Frontend Transport; Thu, 28 Nov 2024 08:59:54 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 28 Nov
- 2024 00:59:41 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 28 Nov
- 2024 00:59:41 -0800
-Received: from NV-2XGVVG3.nvidia.com (10.127.8.14) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 28 Nov 2024 00:59:39 -0800
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <jassisinghbrar@gmail.com>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] mailbox: tegra-hsp: Clear mailbox before using message
-Date: Thu, 28 Nov 2024 14:29:30 +0530
-Message-ID: <20241128085930.52571-1-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1msiqzU"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a10588f3so3691265e9.1;
+        Thu, 28 Nov 2024 02:22:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732789353; x=1733394153; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WktIVwcYtva/77VEprM0n+jM9gFJBJG1FR55DeL0i3E=;
+        b=d1msiqzUyCSZZHX/C7VffSM9CZOVitAdcyiSKYCcX54LjO1nyO4guwSLVyDoH0zttw
+         eHOjS15WDWN3xZ7Gy9Ma+OYgrbbnhg8MUoqROzQIM5b5K3zMSplQM73lkeN/p6J9yDu9
+         zibyUm30/EYbyogwPD99yOyN+vWWamS2sIZ2ZJgzUOC74rhLwixfbmvLPMwZHFKqJTvk
+         qCCyVWLytiA5q7JGRgY0Hnzw7ureV8BUjaFUwufZxdA6auuhF0DN9sGaxc7tHplznUqH
+         w6cmSmnt74GHzMNYRg2gl9V8F7AAdXr5OwPKENCdoJRpqRT1TcjFRDl7/BAz3XanoKoq
+         os0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732789353; x=1733394153;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WktIVwcYtva/77VEprM0n+jM9gFJBJG1FR55DeL0i3E=;
+        b=Z2Mxvn6r7sjEhPxr1VAwwarEhUwM07JpkOyI4JQdKLryAow7uCgR+1LSKtLHosHT1R
+         FxuU6oPfaL5QEGPzISN8XEtbOt2+nTaJ4UXkFcIrJqO0Y55Izoeue5j64yYztZZjn/5N
+         wFUrnr6cE0KfryUJTGbT+ox3vsoB6PcEFLjhcdeBhvvB2xYupTMuBcFJn/ZDvUsBoDu+
+         JsH2ZRsPbU/QLKclih+qCG2N5FWG2uAUyX8k0dKx+8PXR8EbGCBazdFkRo4JTy7s3yuW
+         1htpBM/blav9f9EJ1W58U+RAEVwimBJkZly/pUP58YKSaTwRqkmuAkc15CIc7r9f/Jxk
+         pnXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5h+kEEOEEPs9iz4WPcF8udO6hCwg2OsO2ow/Hxb2XcxJkTyxDikSHylqd364C9TH7LiNmDha/OQPkCzI=@vger.kernel.org, AJvYcCXoOeGk6j2DtECgibDaWGgAoSDRe25bcmqLeA3gPUJqO1m3S9c3qlrgQEy0FFxtLL6eZ4ovSETjwGZYRmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpIvzDGL6UzNC2apPOLoBJd8COp1+4H/BxlEXbPOjiaDOC6Eet
+	lOU5obK+mmHJXqDJpcewjI3vs+Z5EaC62FT76n/u9U34hZiE/wQlAwsKvQ==
+X-Gm-Gg: ASbGncuqKIr9mtsaVTFEfqhcJj2alRAkgFUyZW9Tj1Ts6/C2BuhpRnU8Flh3vfttUs0
+	Yv9mh08hsAh7tiUTBFUBxdgqLrNsQazPMrotXiVHXJ53BAVycOooXCOPIcAAK5Q8iLoAYUE329n
+	o6X2h1X83JIJIAgD9ZJzb0O2ENlr4mH/jZz7qDfE93LXYCN4Fvkq4SiMrZpNjD4gQ6/4khRNx22
+	l3KKjNf4MkLM0EfwatCsyx+C6fvtzOUe/mBAF5SIOzEBgliLyPFhvfhMPsDdvibQXHHsKJgdSM7
+	dTzf6kQupD2Vdsq0vkCriXfvWmV0msFx9PaA
+X-Google-Smtp-Source: AGHT+IFAVw0mZ2FXcVynKdgJ8vLzM8AQou1uG0b5nxDGGMyxL7xI+YmGC5tYXs+bd83uwE+en3eOCg==
+X-Received: by 2002:a05:600c:1d03:b0:434:a367:2bd9 with SMTP id 5b1f17b1804b1-434a9dc501bmr67566465e9.14.1732789353278;
+        Thu, 28 Nov 2024 02:22:33 -0800 (PST)
+Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f70d91sm17261055e9.39.2024.11.28.02.22.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Nov 2024 02:22:32 -0800 (PST)
+Date: Thu, 28 Nov 2024 11:22:31 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: jassisinghbrar@gmail.com, jonathanh@nvidia.com, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mailbox: tegra-hsp: Clear mailbox before using message
+Message-ID: <hofrxrz5qvxohlvxme4brhng6rrs7s6wwoqwnu3smjbbonhwh4@xajjliw474v6>
+References: <20241128085930.52571-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D3:EE_|IA0PR12MB7674:EE_
-X-MS-Office365-Filtering-Correlation-Id: ded726ef-c167-4574-3193-08dd0f8b0717
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yBoEgop53Fgf1ZidiaAbJo4sIxeAWjXgwAXOfa8HMV3o4wfM7AF3xKJ+W1w4?=
- =?us-ascii?Q?cfswlHeegfgLiUGwbFK9QcVrf5pwQjgUeWBcqZmEjHQDvSLw3SdC1nd5FdJn?=
- =?us-ascii?Q?1ZjCrtcBk5sx85HJFvlLjmvJOa/KmbKCwJvAwx+F0gKBBSiniAXTYD/ROgeK?=
- =?us-ascii?Q?UFrzQjO5lXfmxtLJuiwu4YWugKFiZqCbCWRzZ6549msEnncxroyYE6HpzytY?=
- =?us-ascii?Q?dkLFg9NtFoAU7OSS+7Anq9SVXcB4VXrik6XZttrkPvTiVuEig0GS4rPsY+7o?=
- =?us-ascii?Q?qGIjboudyHdqIgnqOaO/UvpkIC+xtpORvUJjA8hkqeGlvdkcxqO6Vbbop3Kn?=
- =?us-ascii?Q?cP7iDp1zWtNNuZtxISP9/CdnxY3usjvGti7Le2C2jMTPwPHT/n5uoRUrjE7J?=
- =?us-ascii?Q?yiLH1vzs3WJ51E8lcM1jqTfk5qFdVMAmn2ZH7rCIo+oMRTqXUIDmByUn5+of?=
- =?us-ascii?Q?KeMG/55hkJ4k1lQ8TYp9sal+kdaNc+YAeuY51FEtNctsYjxAAB9wsEYj/w2J?=
- =?us-ascii?Q?oBlDYwr3P0gvhkEpFLFn16udb2un2GCjusxERfT3MyMUdTlgtbo/qQi2NQHg?=
- =?us-ascii?Q?QA01NHadSSx0F2b3VkrkvAyEIWUCAqsS9OjDtsLn2ki1VNbPXttjae6+Wwul?=
- =?us-ascii?Q?2gZ+EbobaQtkKOWX7ee0RjEHTcwNwI6qRWuMEdhFDxhl5TAMo/A00D9xWUL8?=
- =?us-ascii?Q?eVHyQJw+oXGYh5eBEFFRmfga8j4JT5NfQDFLXQUd8DoIZ4YDimSVmVrxO/wj?=
- =?us-ascii?Q?Jfhp24ZKyFTNo+naSi+EIgMnqm64ATJHUEkpZ34gPuoZGSteJUiqt2g/joEM?=
- =?us-ascii?Q?BmkID9MPM5HNeC+akNhyvmzp5zpqExyE491WEM7lQAHBQeREOtJufWHYk71c?=
- =?us-ascii?Q?5XRT7kpcMauDNOGEX9WU4Ft1LHmYTtPsZIkxhXiVfxQPyVEM4VyRzx+qDNmc?=
- =?us-ascii?Q?ll6ZbZRLdo+OyZKQ6rzUXJLCNcxkjivFuSJAF7xf6jvwMKRMUpxo+arNTqjd?=
- =?us-ascii?Q?KAV6oh/Pg5qaD0OnKalepIluE2m5rf7Ov1OVQJQAYik6JqbUCR8izCa3yXwd?=
- =?us-ascii?Q?QfmgUgmg4YAIluSpqBxPJRh2ZB+tiwDXBXN4jM4eMzdLHTvw8T3N3/nnekr3?=
- =?us-ascii?Q?zsqrlTiHCaJVWFd56bEiHIkfnV2YafUN2/rrLKTJISfYZhBwp/t7bcB55WaF?=
- =?us-ascii?Q?qNof/jUXH4bmIpfABNE+GroARiCwkkiVg0Kufk4AwP9r0Up7ErfCQzs4yPGH?=
- =?us-ascii?Q?PnE4h9TjHLP3tWXxGUBWdAAJC9JVDkAKI3A3aC2ZIkvKYkCZyDOSKDO4Prk9?=
- =?us-ascii?Q?PYSOfT267EK8iqmSKU2yRR2YJJT0NSIpA76pzdli0NoyuiSOdAzs6w+2b4IP?=
- =?us-ascii?Q?yGLzEH8wBOgwqKSvUuMmsI7mntiA189UQBvAXmZ3TPqTYrXhu+s1hXhl/mI3?=
- =?us-ascii?Q?7dYDGuIc/h3fXDo59JVc5QXxZUBGo5ju?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Nov 2024 08:59:54.9216
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ded726ef-c167-4574-3193-08dd0f8b0717
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D3.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7674
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="euopke2p2jba35ow"
+Content-Disposition: inline
+In-Reply-To: <20241128085930.52571-1-kkartik@nvidia.com>
 
-From: Pekka Pessi <ppessi@nvidia.com>
 
-Some clients depend on mailbox being empty before processing the
-message. On RT kernel, the thread processing the message may be on
-different CPU or running with higher priority than the interrupt
-handler thread and they may act on the message before mailbox is
-emptied.
+--euopke2p2jba35ow
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] mailbox: tegra-hsp: Clear mailbox before using message
+MIME-Version: 1.0
 
-Fixes: 8f585d14030d ("mailbox: tegra-hsp: Add tegra_hsp_sm_ops")
-Fixes: 74c20dd0f892 ("mailbox: tegra-hsp: Add 128-bit shared mailbox support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Pekka Pessi <ppessi@nvidia.com>
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
----
-v1 -> v2:
-	* Added "Fixes:" tag in the commit message.
-	* Made similar change for 128-bit shared mailboxes.
----
- drivers/mailbox/tegra-hsp.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Thu, Nov 28, 2024 at 02:29:30PM +0530, Kartik Rajput wrote:
+> From: Pekka Pessi <ppessi@nvidia.com>
+>=20
+> Some clients depend on mailbox being empty before processing the
+> message. On RT kernel, the thread processing the message may be on
+> different CPU or running with higher priority than the interrupt
+> handler thread and they may act on the message before mailbox is
+> emptied.
+>=20
+> Fixes: 8f585d14030d ("mailbox: tegra-hsp: Add tegra_hsp_sm_ops")
+> Fixes: 74c20dd0f892 ("mailbox: tegra-hsp: Add 128-bit shared mailbox supp=
+ort")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Pekka Pessi <ppessi@nvidia.com>
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> ---
+> v1 -> v2:
+> 	* Added "Fixes:" tag in the commit message.
+> 	* Made similar change for 128-bit shared mailboxes.
+> ---
+>  drivers/mailbox/tegra-hsp.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
-index 8d5e2d7dc03b..c1981f091bd1 100644
---- a/drivers/mailbox/tegra-hsp.c
-+++ b/drivers/mailbox/tegra-hsp.c
-@@ -388,7 +388,6 @@ static void tegra_hsp_sm_recv32(struct tegra_hsp_channel *channel)
- 	value = tegra_hsp_channel_readl(channel, HSP_SM_SHRD_MBOX);
- 	value &= ~HSP_SM_SHRD_MBOX_FULL;
- 	msg = (void *)(unsigned long)value;
--	mbox_chan_received_data(channel->chan, msg);
- 
- 	/*
- 	 * Need to clear all bits here since some producers, such as TCU, depend
-@@ -398,6 +397,8 @@ static void tegra_hsp_sm_recv32(struct tegra_hsp_channel *channel)
- 	 * explicitly, so we have to make sure we cover all possible cases.
- 	 */
- 	tegra_hsp_channel_writel(channel, 0x0, HSP_SM_SHRD_MBOX);
-+
-+	mbox_chan_received_data(channel->chan, msg);
- }
- 
- static const struct tegra_hsp_sm_ops tegra_hsp_sm_32bit_ops = {
-@@ -433,7 +434,6 @@ static void tegra_hsp_sm_recv128(struct tegra_hsp_channel *channel)
- 	value[3] = tegra_hsp_channel_readl(channel, HSP_SHRD_MBOX_TYPE1_DATA3);
- 
- 	msg = (void *)(unsigned long)value;
--	mbox_chan_received_data(channel->chan, msg);
- 
- 	/*
- 	 * Clear data registers and tag.
-@@ -443,6 +443,8 @@ static void tegra_hsp_sm_recv128(struct tegra_hsp_channel *channel)
- 	tegra_hsp_channel_writel(channel, 0x0, HSP_SHRD_MBOX_TYPE1_DATA2);
- 	tegra_hsp_channel_writel(channel, 0x0, HSP_SHRD_MBOX_TYPE1_DATA3);
- 	tegra_hsp_channel_writel(channel, 0x0, HSP_SHRD_MBOX_TYPE1_TAG);
-+
-+	mbox_chan_received_data(channel->chan, msg);
- }
- 
- static const struct tegra_hsp_sm_ops tegra_hsp_sm_128bit_ops = {
--- 
-2.34.1
+Do we know what exactly "some clients" means? I know that TCU uses this
+shared mailbox and sometimes it does go into a weird state where it can
+loose characters, so I wonder if that's one case that would be fixed by
+this.
 
+Not strictly a requirement, but it would be good if we can give a good
+description of a case where this helps.
+
+Thierry
+
+--euopke2p2jba35ow
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdIRGcACgkQ3SOs138+
+s6HscBAAgmS95TwfRv7d/Av7oNT+xiv4gh9VMqqIpp+xHobPVjDYWxfrnitMBTS6
+Z00ws8zYCuAPw+DarFh3efy4EacZz7KSyWkfy4pnU/CLvpcsnDLG4K+eBjFzok1T
+VPpBA6Ors67BXu3HJa4g+41rFEU0Ba7CwgWSFTfzgAb6shCpspkcaWdZF0ESDwGA
+ZvpvLabSxmEw/blSNsNRNZNaaYV35yQ4lE8sshFNqlac8SM4euKvogQitZCPlc0K
+T69nH+xmDWUggHRU9S9eLvHZRlpZJIFHF/tQGECaYXSXOtUFgcHtE+YhosCmE5SM
+HKRUUzSW51CXp3HvVIxrs04JAMhhbqT7qdI+MoVbD3AMkBLhYw2SS8CWtrr8/6ND
+ReXGFBoDeyf22P4R3+l4lLgK3rTJjdPRtbZv5C2mqN8MqzI5siOEp9qcTGrZBWh7
+D6PuZH1lDgoPQPI262/JwJxlni78cPtYa7rpZHNwmbRecw67RSqffyF1VeKr7hdX
+pe2ePq0hsAE2LpSXKskT9MrH3UwA8jEVEcWfDdRTY0i6rFMw5rBJyc6G4MVKrhkd
+jT7uyV/ss8L6kJN5el+oPmbU+xv+DT76NUf37cFWJ+uJUEQN7Q6eG4tZdYLtm266
+b3SqNUBRbunexRsaSfvIqBKbXkmrBstgnTMe7u8OsZNkyDb6YAs=
+=KfZi
+-----END PGP SIGNATURE-----
+
+--euopke2p2jba35ow--
