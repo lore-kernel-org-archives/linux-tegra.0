@@ -1,139 +1,93 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www381.your-server.de (www381.your-server.de [78.46.137.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDB113B7BC;
-	Thu, 28 Nov 2024 10:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ACD635
+	for <linux-tegra@vger.kernel.org>; Sun,  1 Dec 2024 00:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.137.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732789356; cv=none; b=emQ4W9usBnxCf3MeibJQMVXktzXZnf5p+plwO+eKYpx9THa4RoTsnO7U7Zy4wstP90vUypy8mvqLFdmsd+eXOj+cB7dki1t+QQTi7LyHa5mzlWHQyEDifEfZFZZmZ1IhufB8xa9Cck3S+IAb8/LFHQJrOLpuiXpXBKnxEV9sBnI=
+	t=1733013707; cv=none; b=uZQsqDZDBKhHBYPWsQMUK+y/N4dxw94NT1fuF7QDp9Pn9g2zIi59GN3kdB4SAL9hTNyGpoe5Y30Pecnj9sdOnqxHxUFWYTbUQ7VBpQiLgtpcUlyvQm65FCYGKxnFaD9vLlRztLcB6TIkSurh9q6eV9fJXR1TcIGlghfzY8E3CN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732789356; c=relaxed/simple;
-	bh=rM+W/r9fCVDAYM30UfVcCV/3Tgxqt7aRP7hQNLr6zUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lpoyLdF7Av+7C/T5U5yx8Oi1hM0imtWc41QehJUeMJTRhJJyu8iExvs1UXZRlAhawkR2nIeCLCPFpEh4vWRiwfu9ynmQixCJbUtPVwEXjRvvR1OfP1r8v6DImS7NYm5Z9+ffzHNjoSsDzHhbQMVKF8T9kvCTSJqcEKVYrDFWQXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d1msiqzU; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1733013707; c=relaxed/simple;
+	bh=q5q3SWUiwJH9f8mWAdbdlpWhLqZ7tUpAk8fbDIxbDrc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QfJUSBRBo1eNpGBFWuOaZMKN6irPIcAn8RuIiWWMHLjSy71R4utQQQfTzZVQ92SEKlDOvziYF+kwep6jDQmocdFl+Lwl2PmaynsISLPvmAqB945Ek9qzQS0DoLWGYKCJL1FQ74bBgZKkQxGeYndOTSkKoXnQVr8AoPCUW9DAgJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de; spf=pass smtp.mailfrom=metafoo.de; dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b=FcOTDjbT; arc=none smtp.client-ip=78.46.137.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metafoo.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1msiqzU"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434a10588f3so3691265e9.1;
-        Thu, 28 Nov 2024 02:22:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732789353; x=1733394153; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WktIVwcYtva/77VEprM0n+jM9gFJBJG1FR55DeL0i3E=;
-        b=d1msiqzUyCSZZHX/C7VffSM9CZOVitAdcyiSKYCcX54LjO1nyO4guwSLVyDoH0zttw
-         eHOjS15WDWN3xZ7Gy9Ma+OYgrbbnhg8MUoqROzQIM5b5K3zMSplQM73lkeN/p6J9yDu9
-         zibyUm30/EYbyogwPD99yOyN+vWWamS2sIZ2ZJgzUOC74rhLwixfbmvLPMwZHFKqJTvk
-         qCCyVWLytiA5q7JGRgY0Hnzw7ureV8BUjaFUwufZxdA6auuhF0DN9sGaxc7tHplznUqH
-         w6cmSmnt74GHzMNYRg2gl9V8F7AAdXr5OwPKENCdoJRpqRT1TcjFRDl7/BAz3XanoKoq
-         os0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732789353; x=1733394153;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WktIVwcYtva/77VEprM0n+jM9gFJBJG1FR55DeL0i3E=;
-        b=Z2Mxvn6r7sjEhPxr1VAwwarEhUwM07JpkOyI4JQdKLryAow7uCgR+1LSKtLHosHT1R
-         FxuU6oPfaL5QEGPzISN8XEtbOt2+nTaJ4UXkFcIrJqO0Y55Izoeue5j64yYztZZjn/5N
-         wFUrnr6cE0KfryUJTGbT+ox3vsoB6PcEFLjhcdeBhvvB2xYupTMuBcFJn/ZDvUsBoDu+
-         JsH2ZRsPbU/QLKclih+qCG2N5FWG2uAUyX8k0dKx+8PXR8EbGCBazdFkRo4JTy7s3yuW
-         1htpBM/blav9f9EJ1W58U+RAEVwimBJkZly/pUP58YKSaTwRqkmuAkc15CIc7r9f/Jxk
-         pnXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5h+kEEOEEPs9iz4WPcF8udO6hCwg2OsO2ow/Hxb2XcxJkTyxDikSHylqd364C9TH7LiNmDha/OQPkCzI=@vger.kernel.org, AJvYcCXoOeGk6j2DtECgibDaWGgAoSDRe25bcmqLeA3gPUJqO1m3S9c3qlrgQEy0FFxtLL6eZ4ovSETjwGZYRmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpIvzDGL6UzNC2apPOLoBJd8COp1+4H/BxlEXbPOjiaDOC6Eet
-	lOU5obK+mmHJXqDJpcewjI3vs+Z5EaC62FT76n/u9U34hZiE/wQlAwsKvQ==
-X-Gm-Gg: ASbGncuqKIr9mtsaVTFEfqhcJj2alRAkgFUyZW9Tj1Ts6/C2BuhpRnU8Flh3vfttUs0
-	Yv9mh08hsAh7tiUTBFUBxdgqLrNsQazPMrotXiVHXJ53BAVycOooXCOPIcAAK5Q8iLoAYUE329n
-	o6X2h1X83JIJIAgD9ZJzb0O2ENlr4mH/jZz7qDfE93LXYCN4Fvkq4SiMrZpNjD4gQ6/4khRNx22
-	l3KKjNf4MkLM0EfwatCsyx+C6fvtzOUe/mBAF5SIOzEBgliLyPFhvfhMPsDdvibQXHHsKJgdSM7
-	dTzf6kQupD2Vdsq0vkCriXfvWmV0msFx9PaA
-X-Google-Smtp-Source: AGHT+IFAVw0mZ2FXcVynKdgJ8vLzM8AQou1uG0b5nxDGGMyxL7xI+YmGC5tYXs+bd83uwE+en3eOCg==
-X-Received: by 2002:a05:600c:1d03:b0:434:a367:2bd9 with SMTP id 5b1f17b1804b1-434a9dc501bmr67566465e9.14.1732789353278;
-        Thu, 28 Nov 2024 02:22:33 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434b0f70d91sm17261055e9.39.2024.11.28.02.22.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Nov 2024 02:22:32 -0800 (PST)
-Date: Thu, 28 Nov 2024 11:22:31 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Kartik Rajput <kkartik@nvidia.com>
-Cc: jassisinghbrar@gmail.com, jonathanh@nvidia.com, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mailbox: tegra-hsp: Clear mailbox before using message
-Message-ID: <hofrxrz5qvxohlvxme4brhng6rrs7s6wwoqwnu3smjbbonhwh4@xajjliw474v6>
-References: <20241128085930.52571-1-kkartik@nvidia.com>
+	dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b="FcOTDjbT"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
+	s=default2002; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=X9062Dfv8TGUoF2iBJOb2+MW2me1B5nX84/ndMJ30qc=; b=FcOTDjbTmUP/2ov3omHD9ntSwL
+	WQkSpjduPCJmpMNpAZahuUNbMW/Jc0DHQnomr1Vpc43nysiKH510fPKNRYZfOYGTurM0owztl2285
+	+iPXUbpikz1lapMbd9++Dg8ZVsPgyAf1SoK1A4crG0Jo+JjqxL5J5mkWmNfEKJ0+PPqNo5mJUTnpq
+	mag2M8Sffm54jZAJgPtuflcLaIw45XwtIQhWzEdy1y1jvVOhMVdKw7Zifgzy0hBDyM57pWGSMUqcl
+	TEkrF/3DZD0DmiabU1jx7iwvSZxG9ZOJS5SbFijuenPN/wuydISP9jcnUq+x5MV/hayrag6Dg12WG
+	bQoEfw7g==;
+Received: from sslproxy03.your-server.de ([88.198.220.132])
+	by www381.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96.2)
+	(envelope-from <lars@metafoo.de>)
+	id 1tHXmV-0005ZS-2j;
+	Sun, 01 Dec 2024 01:25:47 +0100
+Received: from [136.25.87.181] (helo=lars-desktop.lan)
+	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <lars@metafoo.de>)
+	id 1tHXmU-000B26-1a;
+	Sun, 01 Dec 2024 01:25:47 +0100
+From: Lars-Peter Clausen <lars@metafoo.de>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Vidya Sagar <vidyas@nvidia.com>,
+	linux-phy@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH] phy: tegra194: p2u: Allow to enable driver on Tegra234
+Date: Sat, 30 Nov 2024 16:25:19 -0800
+Message-Id: <20241201002519.3468-1-lars@metafoo.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="euopke2p2jba35ow"
-Content-Disposition: inline
-In-Reply-To: <20241128085930.52571-1-kkartik@nvidia.com>
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27473/Sat Nov 30 10:41:04 2024)
 
+Commit de6026682569 ("phy: tegra: Add PCIe PIPE2UPHY support for Tegra234")
+add support for Tegra234 to the tegra194-p2u PHY driver. But the driver is
+currently not selectable when Tegra234 SoC support is enabled.
 
---euopke2p2jba35ow
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] mailbox: tegra-hsp: Clear mailbox before using message
-MIME-Version: 1.0
+Update the Kconfig entry to allow the driver to be built when support the
+Tegra234 SoC is enabled.
 
-On Thu, Nov 28, 2024 at 02:29:30PM +0530, Kartik Rajput wrote:
-> From: Pekka Pessi <ppessi@nvidia.com>
->=20
-> Some clients depend on mailbox being empty before processing the
-> message. On RT kernel, the thread processing the message may be on
-> different CPU or running with higher priority than the interrupt
-> handler thread and they may act on the message before mailbox is
-> emptied.
->=20
-> Fixes: 8f585d14030d ("mailbox: tegra-hsp: Add tegra_hsp_sm_ops")
-> Fixes: 74c20dd0f892 ("mailbox: tegra-hsp: Add 128-bit shared mailbox supp=
-ort")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Pekka Pessi <ppessi@nvidia.com>
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
-> ---
-> v1 -> v2:
-> 	* Added "Fixes:" tag in the commit message.
-> 	* Made similar change for 128-bit shared mailboxes.
-> ---
->  drivers/mailbox/tegra-hsp.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+---
+ drivers/phy/tegra/Kconfig | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Do we know what exactly "some clients" means? I know that TCU uses this
-shared mailbox and sometimes it does go into a weird state where it can
-loose characters, so I wonder if that's one case that would be fixed by
-this.
+diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+index c591c958f1ebc..f30cfb42b2103 100644
+--- a/drivers/phy/tegra/Kconfig
++++ b/drivers/phy/tegra/Kconfig
+@@ -13,7 +13,8 @@ config PHY_TEGRA_XUSB
+ 
+ config PHY_TEGRA194_P2U
+ 	tristate "NVIDIA Tegra194 PIPE2UPHY PHY driver"
+-	depends on ARCH_TEGRA_194_SOC || COMPILE_TEST
++	depends on ARCH_TEGRA_194_SOC || ARCH_TEGRA_234_SOC || COMPILE_TEST
+ 	select GENERIC_PHY
+ 	help
+-	  Enable this to support the P2U (PIPE to UPHY) that is part of Tegra 19x SOCs.
++	  Enable this to support the P2U (PIPE to UPHY) that is part of Tegra 19x
++	  and 234 SOCs.
+-- 
+2.39.5
 
-Not strictly a requirement, but it would be good if we can give a good
-description of a case where this helps.
-
-Thierry
-
---euopke2p2jba35ow
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdIRGcACgkQ3SOs138+
-s6HscBAAgmS95TwfRv7d/Av7oNT+xiv4gh9VMqqIpp+xHobPVjDYWxfrnitMBTS6
-Z00ws8zYCuAPw+DarFh3efy4EacZz7KSyWkfy4pnU/CLvpcsnDLG4K+eBjFzok1T
-VPpBA6Ors67BXu3HJa4g+41rFEU0Ba7CwgWSFTfzgAb6shCpspkcaWdZF0ESDwGA
-ZvpvLabSxmEw/blSNsNRNZNaaYV35yQ4lE8sshFNqlac8SM4euKvogQitZCPlc0K
-T69nH+xmDWUggHRU9S9eLvHZRlpZJIFHF/tQGECaYXSXOtUFgcHtE+YhosCmE5SM
-HKRUUzSW51CXp3HvVIxrs04JAMhhbqT7qdI+MoVbD3AMkBLhYw2SS8CWtrr8/6ND
-ReXGFBoDeyf22P4R3+l4lLgK3rTJjdPRtbZv5C2mqN8MqzI5siOEp9qcTGrZBWh7
-D6PuZH1lDgoPQPI262/JwJxlni78cPtYa7rpZHNwmbRecw67RSqffyF1VeKr7hdX
-pe2ePq0hsAE2LpSXKskT9MrH3UwA8jEVEcWfDdRTY0i6rFMw5rBJyc6G4MVKrhkd
-jT7uyV/ss8L6kJN5el+oPmbU+xv+DT76NUf37cFWJ+uJUEQN7Q6eG4tZdYLtm266
-b3SqNUBRbunexRsaSfvIqBKbXkmrBstgnTMe7u8OsZNkyDb6YAs=
-=KfZi
------END PGP SIGNATURE-----
-
---euopke2p2jba35ow--
