@@ -1,133 +1,162 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f195.google.com (mail-qt1-f195.google.com [209.85.160.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60261F706C;
-	Tue,  3 Dec 2024 15:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F461F75B9;
+	Tue,  3 Dec 2024 16:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733239239; cv=none; b=ORZYDx1bMa67s6VRODP9zs+tHYjDZ7VlWkG33/HOifA1m7XovjYpvpI+xrpHV68ICNc45MYU7qfqYBuMorF5dOH2nqSz1pWJA6HJBQBIvhvRLfXPTyAJoSbcCzRNH5UwmavaMpI82h1bV88lLOnOen/5vGVxSNYsugFqTjuU77A=
+	t=1733241742; cv=none; b=nqswRvjvMmfJ8SuknJnVO/GvknQdv5ryzjXxK2rOHGygIJejFXy8d+w3f7+bogaZhSMOoRJdJoBHYB1pQZx2Puvv9TOOSvjqBakOJwEuAJr7kod/iAxphdijpipTMSoZFfijycfNff0SnyAee3t/Yyorfe7uJrPI0lY4EtgH1ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733239239; c=relaxed/simple;
-	bh=oBJX2Ax1+uHJs9Z8ydbI3YLaYkV+n6xPJlD83+UzH80=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GDSntduRwZMu1OwnXC5uaHk8rKqclQC9HsHPJ4WjIRayOAYed2tKcIj75cb4O4fwgVtK1rVZWw4d/AWxdVjHMVEA27u20D9XLa8Lem3S8R+gBLHPw2CxX0DrwA2QlwwP/2EpibxT8Ari1zrAfe32l+cHt7VAaA+1CTAIPXh/Lws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pdOKMpjv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1733241742; c=relaxed/simple;
+	bh=GChH/jFCdkIBNyblvULtWTux4IPlCojVUfqnBTARLcg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nKrmauBcIq2MqZX/6SjOkzwqmw9zazt8JoFn0ZnUZ0+VXjbMXaVC2s4iMCgIpCT/+6JskcLhUZZbA2tYxBCl5HIyKkzaxiwAht1bvn+C5EkVmrkJ/vQ6+HNU59mA4z/Sdg7WJsz+9Ym4ydFDAbwN1YgFfdGuyxl65InZ6XBuMz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hw5MMwwd; arc=none smtp.client-ip=209.85.160.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pdOKMpjv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31357C4CECF;
-	Tue,  3 Dec 2024 15:20:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733239239;
-	bh=oBJX2Ax1+uHJs9Z8ydbI3YLaYkV+n6xPJlD83+UzH80=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pdOKMpjvPK3yLxuXzVmsdpjNfc6VjW88lopGNQuMZVbJWO6x0wywgHROjm11JTXTS
-	 RfjrN40oTARWoOtwljoaO/tDyqOOudS00euvgOi84UTo2c0gagJoyofb9m1/re1aBQ
-	 W2Xow6zXVqsIZY/04wsTYIkY2FbDS6K8sH+6hTHk=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Vidya Sagar <vidyas@nvidia.com>,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hw5MMwwd"
+Received: by mail-qt1-f195.google.com with SMTP id d75a77b69052e-4668f208f10so42556821cf.3;
+        Tue, 03 Dec 2024 08:02:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733241739; x=1733846539; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+WTzDeex6MvV2fYh0DDtmM+R3bGWHPFsxwrTc0tB2Uk=;
+        b=hw5MMwwdaMmckAb70vhL6gF2HOgDzfU7SF4NwC//02/bG2oy3/icEDCM5wKyyzxbpY
+         UIVdtpdtsIOKm1PgMfyjD/Qvg4WOCh6HBIeOOlD7ipeATUwZ3Vk9VY3ppol1YNkXwJnx
+         2h72CDqoLHZ5VdQkSX59czxE1QRCMeLh58uSEtFNQR2kmxsHCELwdu2V5DkBZBunC36G
+         sLHVOkWMj+85hY/vja/DlJjmIin2Q2zJ4GuT/okiUnX6MBWhzEQxhAF+YsMiTH2uPj/V
+         8k11HNn50aLdigbwVsc4seMk+BK8x0r/jiKu9h9MuIeFbrZKtbZsfS2AMJcxRzoJ45jv
+         7lUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733241739; x=1733846539;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+WTzDeex6MvV2fYh0DDtmM+R3bGWHPFsxwrTc0tB2Uk=;
+        b=rXDEFUazvj+ufSMel9u7+Y+HOUOFRcXMWyjsxSumn777F4vMvT3Qw81kEr2Q1OnPXj
+         KvterSNrbOLTlQg11LoSyhQSkBYSa5sTy8+gAa7XfVs8PU4d/snF869u0KyCKOim2ITF
+         o8F/smcleGDblcBvJ52lOd35JQUn6nrxVQHuHycGC3WCwZj4ADDXJVPGK6obUuM3bfC8
+         onzHjQ8lBpRhBy2ISIfqWsrTb4DYn17Q+iOPuka6Zs4CBv8IIA/n0FH3n5d8G7h1Frgo
+         1Mg1P7iThO0ybEb82SVsWwX/ZIaX5YiWDWpYpvtb5JGoGMRSsa606VHCcyKerSWrC0E9
+         uuJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWg6CGIZ/7NvjBT2tmaNbR/vIwpcj8hOpo8h4X0ARE3Wq1YyQSRIYjN0/BEd0hBnO7ekeo/X9qvNECbHA==@vger.kernel.org, AJvYcCXcLS7r2+3dcwuDTy2f7mrrRiC7oio4aYclyUPS/mTL8wGUeMxuyVwq9ambhflibueEWv4K/A9D@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAU6ajYQrRNAb7IzkswaqR89z7ZMORew2DlSl9Cx7//cCAuN46
+	mrBdKYj5PE+CSxnaRkE18O0oX5IojBL502UUdIb2TjLu1nn/Nu8l
+X-Gm-Gg: ASbGncu3oH7w+CuDsCgL748ukAusOkfPcRqbNkK2rAldQttribgx1TJkQvvbzrnBsEM
+	meIkkypzbEoyAugg2ZKSHiMJsXQUzVvtAJkGjhpuOQv0W30iFe/SrvfAo8EzMD7FhAVrmgXqNVx
+	5oImbwob7/Pnv4og0kB2ZI7xP08VbpNBr/fS8g7I7fghiw7aAzf3atUYTBdeKFXgVAo93ARp3kP
+	stOP6u8Xy7a3KUl5YjzW9n/VrjlaVFX+LqK4gwGyIQAX6ev/KLS1JoPsTzyDp3Ikk5A/spAqqwP
+	yUAZQU4G49Ofv+KKrnx7TJi+DUtDm/+YizvWYoWLKqTaMss1e5JkXVStW0U=
+X-Google-Smtp-Source: AGHT+IGDeeGWcRCTKyUCOq7c8fevpRJKKIBDhzv1JtFZuhU7+1av0GGQHLhd5L0WUnUDcgzYEzYebw==
+X-Received: by 2002:ac8:5a8b:0:b0:466:ad0d:f0ca with SMTP id d75a77b69052e-4670c6c5432mr40809661cf.50.1733241739116;
+        Tue, 03 Dec 2024 08:02:19 -0800 (PST)
+Received: from localhost.localdomain (host-36-26.ilcul54.champaign.il.us.clients.pavlovmedia.net. [68.180.36.26])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-466c42319b6sm62809341cf.77.2024.12.03.08.02.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 08:02:18 -0800 (PST)
+From: Gax-c <zichenxie0106@gmail.com>
+To: maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	thierry.reding@gmail.com,
+	mperttunen@nvidia.com,
+	jonathanh@nvidia.com,
+	kraxel@redhat.com,
+	gurchetansingh@chromium.org,
+	olvaffe@gmail.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	mst@redhat.com,
+	airlied@redhat.com
+Cc: dri-devel@lists.freedesktop.org,
 	linux-tegra@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.11 514/817] PCI: tegra194: Move controller cleanups to pex_ep_event_pex_rst_deassert()
-Date: Tue,  3 Dec 2024 15:41:26 +0100
-Message-ID: <20241203144015.944054616@linuxfoundation.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241203143955.605130076@linuxfoundation.org>
-References: <20241203143955.605130076@linuxfoundation.org>
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
+	virtualization@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Zichen Xie <zichenxie0106@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] drm: cast calculation to __u64 to fix potential integer overflow
+Date: Tue,  3 Dec 2024 10:02:00 -0600
+Message-Id: <20241203160159.8129-1-zichenxie0106@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-6.11-stable review patch.  If anyone has any objections, please let me know.
+From: Zichen Xie <zichenxie0106@gmail.com>
 
-------------------
+Like commit b0b0d811eac6 ("drm/mediatek: Fix coverity issue with
+unintentional integer overflow"), directly multiply pitch and
+height may lead to integer overflow. Add a cast to avoid it.
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-[ Upstream commit 40e2125381dc11379112485e3eefdd25c6df5375 ]
-
-Currently, the endpoint cleanup function dw_pcie_ep_cleanup() and EPF
-deinit notify function pci_epc_deinit_notify() are called during the
-execution of pex_ep_event_pex_rst_assert() i.e., when the host has asserted
-PERST#. But quickly after this step, refclk will also be disabled by the
-host.
-
-All of the tegra194 endpoint SoCs supported as of now depend on the refclk
-from the host for keeping the controller operational. Due to this
-limitation, any access to the hardware registers in the absence of refclk
-will result in a whole endpoint crash. Unfortunately, most of the
-controller cleanups require accessing the hardware registers (like eDMA
-cleanup performed in dw_pcie_ep_cleanup(), etc...). So these cleanup
-functions can cause the crash in the endpoint SoC once host asserts PERST#.
-
-One way to address this issue is by generating the refclk in the endpoint
-itself and not depending on the host. But that is not always possible as
-some of the endpoint designs do require the endpoint to consume refclk from
-the host.
-
-Thus, fix this crash by moving the controller cleanups to the start of
-the pex_ep_event_pex_rst_deassert() function. This function is called
-whenever the host has deasserted PERST# and it is guaranteed that the
-refclk would be active at this point. So at the start of this function
-(after enabling resources) the controller cleanup can be performed. Once
-finished, rest of the code execution for PERST# deassert can continue as
-usual.
-
-Fixes: 473b2cf9c4d1 ("PCI: endpoint: Introduce 'epc_deinit' event and notify the EPF drivers")
-Fixes: 570d7715eed8 ("PCI: dwc: ep: Introduce dw_pcie_ep_cleanup() API for drivers supporting PERST#")
-Link: https://lore.kernel.org/r/20240817-pci-qcom-ep-cleanup-v1-2-d6b958226559@linaro.org
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
-Cc: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Vidya Sagar <vidyas@nvidia.com>
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 6d1782919dc9 ("drm/cma: Introduce drm_gem_cma_dumb_create_internal()")
+Fixes: dc5698e80cf7 ("Add virtio gpu driver.")
+Fixes: dc6057ecb39e ("drm/tegra: gem: dumb: pitch and size are outputs")
+Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
+Cc: stable@vger.kernel.org
 ---
- drivers/pci/controller/dwc/pcie-tegra194.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_gem_dma_helper.c | 6 +++---
+ drivers/gpu/drm/tegra/gem.c          | 2 +-
+ drivers/gpu/drm/virtio/virtgpu_gem.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-index 4bf7b433417a3..d68dd18ed43cb 100644
---- a/drivers/pci/controller/dwc/pcie-tegra194.c
-+++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-@@ -1709,9 +1709,6 @@ static void pex_ep_event_pex_rst_assert(struct tegra_pcie_dw *pcie)
- 	if (ret)
- 		dev_err(pcie->dev, "Failed to go Detect state: %d\n", ret);
+diff --git a/drivers/gpu/drm/drm_gem_dma_helper.c b/drivers/gpu/drm/drm_gem_dma_helper.c
+index 870b90b78bc4..020c3b17fc02 100644
+--- a/drivers/gpu/drm/drm_gem_dma_helper.c
++++ b/drivers/gpu/drm/drm_gem_dma_helper.c
+@@ -272,8 +272,8 @@ int drm_gem_dma_dumb_create_internal(struct drm_file *file_priv,
+ 	if (args->pitch < min_pitch)
+ 		args->pitch = min_pitch;
  
--	pci_epc_deinit_notify(pcie->pci.ep.epc);
--	dw_pcie_ep_cleanup(&pcie->pci.ep);
--
- 	reset_control_assert(pcie->core_rst);
+-	if (args->size < args->pitch * args->height)
+-		args->size = args->pitch * args->height;
++	if (args->size < (__u64)args->pitch * args->height)
++		args->size = (__u64)args->pitch * args->height;
  
- 	tegra_pcie_disable_phy(pcie);
-@@ -1790,6 +1787,10 @@ static void pex_ep_event_pex_rst_deassert(struct tegra_pcie_dw *pcie)
- 		goto fail_phy;
- 	}
+ 	dma_obj = drm_gem_dma_create_with_handle(file_priv, drm, args->size,
+ 						 &args->handle);
+@@ -306,7 +306,7 @@ int drm_gem_dma_dumb_create(struct drm_file *file_priv,
+ 	struct drm_gem_dma_object *dma_obj;
  
-+	/* Perform cleanup that requires refclk */
-+	pci_epc_deinit_notify(pcie->pci.ep.epc);
-+	dw_pcie_ep_cleanup(&pcie->pci.ep);
-+
- 	/* Clear any stale interrupt statuses */
- 	appl_writel(pcie, 0xFFFFFFFF, APPL_INTR_STATUS_L0);
- 	appl_writel(pcie, 0xFFFFFFFF, APPL_INTR_STATUS_L1_0_0);
+ 	args->pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
+-	args->size = args->pitch * args->height;
++	args->size = (__u64)args->pitch * args->height;
+ 
+ 	dma_obj = drm_gem_dma_create_with_handle(file_priv, drm, args->size,
+ 						 &args->handle);
+diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
+index d275404ad0e9..a84acdbbbe3f 100644
+--- a/drivers/gpu/drm/tegra/gem.c
++++ b/drivers/gpu/drm/tegra/gem.c
+@@ -548,7 +548,7 @@ int tegra_bo_dumb_create(struct drm_file *file, struct drm_device *drm,
+ 	struct tegra_bo *bo;
+ 
+ 	args->pitch = round_up(min_pitch, tegra->pitch_align);
+-	args->size = args->pitch * args->height;
++	args->size = (__u64)args->pitch * args->height;
+ 
+ 	bo = tegra_bo_create_with_handle(file, drm, args->size, 0,
+ 					 &args->handle);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
+index 7db48d17ee3a..d5407316b12e 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_gem.c
++++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
+@@ -72,7 +72,7 @@ int virtio_gpu_mode_dumb_create(struct drm_file *file_priv,
+ 		return -EINVAL;
+ 
+ 	pitch = args->width * 4;
+-	args->size = pitch * args->height;
++	args->size = (__u64)pitch * args->height;
+ 	args->size = ALIGN(args->size, PAGE_SIZE);
+ 
+ 	params.format = virtio_gpu_translate_format(DRM_FORMAT_HOST_XRGB8888);
 -- 
-2.43.0
-
-
+2.34.1
 
