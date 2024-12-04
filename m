@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D90A20FAA1;
-	Wed,  4 Dec 2024 23:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B82221CA04;
+	Wed,  4 Dec 2024 23:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733355049; cv=none; b=JBlCFWUJ6fr+xnBAL+HIa+yq7c/t+4J9NqFqyADNQMaF+0aH/0e8oWpUuOYaSPdyS8Z3YZbPHL2bi0KveCqXE4xjDmnqbKN7K5DaX4JqMGCrxhjPIk+sxWTPytcdLhg9hDk7/E6HoUnbpZ+swDEV0eQ/lNafsxwtF4kyKAIH5QI=
+	t=1733355067; cv=none; b=AcJnIZZ2xBZTDPdnJGG1gw0wl6smXkBBGlYrxYDVmEXxZwfIqiT09qxrzjtY2hNgMAxtQElY4VEioL+uSQe+Y8pn6YzGa1bhyIOF/pe3UsT8UxyC8ob8KXIiZiLYMAoRahUR1zlnEuQ1xiK35XLxbtyJRlCUHPjwF70IKV9N9fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733355049; c=relaxed/simple;
-	bh=63eQb/YjkjHy+NqDqsUzU/pNatVCkCTz19JCS8efqPQ=;
+	s=arc-20240116; t=1733355067; c=relaxed/simple;
+	bh=7ui9ot9eoh+IkUpPzOlVCenipdDiAvxsCmjSBdH7YbE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JHkUhny/PhlfnLVOxdxN2teLh9SKN1BwTp2jJM7r7ucgyV1Bp93RMSTgIYE5GeCwCRacUPCT2YTMTYiliIVbpq/c1a918D3qEBCIOGO9K3JArdqwZ8KLzx3NQqVxYMwJI6XkR05F4cqJiQ6BZ/5uXQU0iCAWLIuqiWEYqCZTssg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bn2/+6Zz; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=jtOkbsTq1BZBH0ipbIxWjjiS6AtR+WG9I8FCLVrq2o/Kbg6qWWfqed8bi76q4Celqi5UPn0/N5hHP7onQKiprTRYvC16enHFmemLnq9oQbrFFxX3bFhZjtmDLIE4QNTEAAjxC+o5l3zcmnaWa8LFifmyTyFnQdG13sNAnjHjLic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sv5TXyH9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bn2/+6Zz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09A4BC4CECD;
-	Wed,  4 Dec 2024 23:30:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sv5TXyH9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 539AAC4CEDD;
+	Wed,  4 Dec 2024 23:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733355049;
-	bh=63eQb/YjkjHy+NqDqsUzU/pNatVCkCTz19JCS8efqPQ=;
+	s=k20201202; t=1733355065;
+	bh=7ui9ot9eoh+IkUpPzOlVCenipdDiAvxsCmjSBdH7YbE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bn2/+6Zzp9IkflwjhceXj5V4D/X6fMSghrPowYobUDQJ0oCLMtrgkZa8iENaUfFaP
-	 LYDr+gzE7/xAhudjJ0AwUmn5OlqzAT27e9OWXkitFE0SRywzzN8uB4XLK8J9cs9um1
-	 9xnHnEvRDgnlhPRbcXs021aR8Nj1bwm8BDv8voMSTsG7vExiYs59tmY0QmYThkppP6
-	 RwnX2ahaHJ/1MHnuYxxTQEM15/yrAic1JwokgCKgeDxFZHgl2tqA9naQwwq5O1mV8p
-	 0dPpAf1qkY6v7QaLrZ4qVOTHtN2Y8Sj0hNA8fyZArCl1tLdI0EBPo4n8ZbfbjwhELj
-	 4SFspZ/UaBCXA==
+	b=sv5TXyH9KCjl8AnDZ9wOvwPYh+tiLsmIOdFbphEmQw+VjOTVtQWOqJ5LxoFbpudtp
+	 baST1f+GNxHi8cq/rrsBa65DHlauVKWnBetPUtjy9pemNTk3GL9Q63dtT2ZEdcAODb
+	 LvRbX+E+WbMNJa5B33dvIl3gSxifLLDznz1iAalQNyRNFbYZtPheYjcorEYRpR5npd
+	 r4zCVBqbl6dts/CTLGhlskv6oFyk0l1wNb5kowwHuH639k470EdjK97hJk27JBKFy8
+	 abC6tK9c5iCrwG6ZN/YBxJXQgJzm87lVlkenGslwf0F4dxCWpKI+x+xYAYRDNY85kL
+	 bFA27G5KpsIbQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -41,12 +41,12 @@ Cc: Saravana Kannan <saravanak@google.com>,
 	thierry.reding@gmail.com,
 	linux-phy@lists.infradead.org,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 3/5] phy: tegra: xusb: Set fwnode for xusb port devices
-Date: Wed,  4 Dec 2024 17:19:19 -0500
-Message-ID: <20241204221925.2248843-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 3/5] phy: tegra: xusb: Set fwnode for xusb port devices
+Date: Wed,  4 Dec 2024 17:19:36 -0500
+Message-ID: <20241204221942.2248973-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241204221925.2248843-1-sashal@kernel.org>
-References: <20241204221925.2248843-1-sashal@kernel.org>
+In-Reply-To: <20241204221942.2248973-1-sashal@kernel.org>
+References: <20241204221942.2248973-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -56,7 +56,7 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.173
+X-stable-base: Linux 5.10.230
 Content-Transfer-Encoding: 8bit
 
 From: Saravana Kannan <saravanak@google.com>
@@ -84,10 +84,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index bf7706bf101a6..9a204f78f55db 100644
+index 856397def89ac..133f504dfe9a7 100644
 --- a/drivers/phy/tegra/xusb.c
 +++ b/drivers/phy/tegra/xusb.c
-@@ -537,7 +537,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+@@ -531,7 +531,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
  
  	device_initialize(&port->dev);
  	port->dev.type = &tegra_xusb_port_type;
