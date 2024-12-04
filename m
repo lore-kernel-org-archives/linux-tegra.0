@@ -1,264 +1,158 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A480B156997;
-	Wed,  4 Dec 2024 18:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0164F1A8F90
+	for <linux-tegra@vger.kernel.org>; Wed,  4 Dec 2024 19:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733336332; cv=none; b=ZXlvZyUW9UA78peGubXU0OJyeKAxPCHKNREXldmXa8FEQsllVMDkHjSnprdJMVecoN7l8Nu+gYRU5prOi3dEgXx+quCiWb2sj9MD8qL5jXMnqttMvjaxUCfc3VTN/01WmbpPZgjZtedyBiLQrKiFcO5XXYa4oOBOHeLSJk575Mw=
+	t=1733340666; cv=none; b=ngPQoaVLKIzdKAkR3LlDImbJ47+fV0IQWqiz95V5feXQbdnkRJUURuNPFsZkMPrWo/oyN4BrgVvQLBbDUjSwvGPDkdB4Ge8zxAajf76BzZ923tA4mUyIbBUnhUqlqVSYjhoQ09cSOIZvuMWzsTC61QCIFFAdNL6W2FWiJQdi3jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733336332; c=relaxed/simple;
-	bh=iIT9WTlddAJaqwr/4YoIF8Qi4AeZGWiinhaOc3oGwEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PnRPZlON0TXzecqtdw+XK0OhzrWzhDBfW9YJxJI886rq/tqWeR9eFOHAZ/0j7WEQ/lvM2no/ohK/DZ8voQqKgmDh//cKlafCbKhvaTsZtPyiVnBWEiHc66A7aUx0k+8+nQ+S0UmowK4J6j+IgSTCGX5CkmPmZCnLsydzDsb2yg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UXBF5GDD; arc=none smtp.client-ip=209.85.221.42
+	s=arc-20240116; t=1733340666; c=relaxed/simple;
+	bh=5Wmc0FN97C26Lyr5nte64RTZNnJSHXevW3OWTbK0JD4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dxO41sFjtbkZ42BBRiQv06nXptUFN93s4i4Ng3bUOYyYv3tp4ImAgI3cVagNqyqxETIpgcGDTfE3ApDKKv+/DS1G8nQEtBsVL4jBdwUhEyxW12lLrX7NY7+gPDvW/DMLwfmEHMAuYuc/SWu/TAOPqBpDegatElHNwO6O9QqhIkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFRb4LB9; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXBF5GDD"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385e35912f1so63472f8f.3;
-        Wed, 04 Dec 2024 10:18:50 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFRb4LB9"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53e224bbaccso10263e87.3
+        for <linux-tegra@vger.kernel.org>; Wed, 04 Dec 2024 11:31:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733336329; x=1733941129; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RvYXiMNIXwBmvuPCaPr45HpFOmqvpqbSH+NMAIqTqIY=;
-        b=UXBF5GDDlHlW4jov2Uf440nDiykTQUKFxrnflJLK8Owk60wqYXDQ78AA8pHIpgvrdZ
-         wP3NrRjOP/OKjczrkfPGi7/cwI5dM5rszJ8HG2qHX1Tw54CZlvsCLTIcyMGdyV/ZJHNH
-         JcFqwrbDTkrYX838gQcqbiP5ED09ewBvTAVstYDXGGaz/46oeWUxpM4bpVOXlNqVvtsB
-         jFsbN5j7l6nOHkOYJTp8H/hjZ9JMgd5I/YeEo1lPNqHp9aZvRs9y5N/ah9/ZI/4Z5qS8
-         1k3fzeTdSYEFf3QFg0N1Ggtk/3bHnRX+xYA4Ho2AGbVOaHzD3Pf+mVSaJNBvWjCfkDWI
-         kwkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733336329; x=1733941129;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733340663; x=1733945463; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RvYXiMNIXwBmvuPCaPr45HpFOmqvpqbSH+NMAIqTqIY=;
-        b=Wz1Tx9KhIg5Dbruyz3jzVbaMt2UBEvRWMcnNZin62gYUw+qATB1Ju+a3an1z/EvjYM
-         iXWYV9jJOH6mxpuo+YF6WSVNQVCuzVtpudEvpXjyVuMRtC+bE0reazn8V3IjNP/Rm0sC
-         60pV50a7xs9Tz4kpqezxcvIAx7cO1pN+n9pjnxHPuGsm+Tm1OxJd4pH5plQfQljRPO1I
-         b27SNNStJCzWCYodUJ73v3ISg1NdZMfmKqmCSuS/gEK+jV44bxSqQtzIcJgefQpfcEFt
-         N68RtiJQbRkD6psUAaEcjqOJrDlXHELECJVlrxnGN26M9z2k2Z24eCjWwt2hJl92OB0x
-         gj5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUh/JVyUr4SfGHKw1CENeZKMDozoGVptDT+zjtuHpUEvV5nkhMBy8u6A2l8H7MNbS2xwvGAozRI@vger.kernel.org, AJvYcCWkfTQJyGMGXvXsndRt6HE7+5H0PZITItk/KiClPI6YmB1A9W/0k3G1YK0c4DQ4tMqzdmdWwGplL2F0RU4=@vger.kernel.org, AJvYcCXy/gmoXcthIl4fNJJuvce/NRdzbS4S+McRuWlNxvTesXgi2E3nsHsuFXwiM9lKRdLLO1f2UTpWXetv1Zo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/3kP+8ZRLJUHUYZtKV5jspLNQC4IfKY/i1kWDsRr4RwiwudQI
-	N/j0bM6pwPM1nEka/QAypYQMAjd1Ltr9Vu2AFPOdxUGT7vbVXqoF
-X-Gm-Gg: ASbGnctuXfTfw4pJxwW89Oe/2O9OpHwalFvFKguR5qOyUd7nicruPB0Q37NcnJ9byV0
-	11vcbf3Z6TenVco4GyLiQZoEEgc9DLJbuOvXGkc1hEK0U+jk/+pKBZHBKR0SH+sb5TYobFEN1g4
-	y4AjOI9CwARpxQ80JpT0QQCTNbscF3dZbul0TpbbMJXAvI4BWrTrOxEyAIJiPktL8QmhhKgLpC7
-	zqMn0EvtrLE/yOE91UtJ4cD/f3Kqkw0iM9Glh5VjKuEMTugxRSz8dHypOAC4+i1o9CZyYfaR5PA
-	T8f9DqnslbH33+DCNOgEGTdGHCkuiNP6AwZ/
-X-Google-Smtp-Source: AGHT+IHBkvT0ri1XCR+aU4iikxdd7BREWggswkR0IWXNfrk6Mcb/whX3n+sIiaZsFIAUhv8N+QosMQ==
-X-Received: by 2002:a05:6000:2b12:b0:385:df8a:b489 with SMTP id ffacd0b85a97d-385fd42d422mr5214681f8f.55.1733336328708;
-        Wed, 04 Dec 2024 10:18:48 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385d7264f27sm18145336f8f.80.2024.12.04.10.18.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 10:18:47 -0800 (PST)
-Date: Wed, 4 Dec 2024 19:18:46 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Furong Xu <0x1207@gmail.com>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com, Suraj Jaiswal <quic_jsuraj@quicinc.com>, 
-	Thierry Reding <treding@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap
- for non-paged SKB data
-Message-ID: <pckuhqpx33woc7tgcv4mluhwg2clriokzb7r4vkzmr6jz3gy3p@hykwm4qtgv6f>
-References: <20241202163309.05603e96@kernel.org>
- <20241203100331.00007580@gmail.com>
- <20241202183425.4021d14c@kernel.org>
- <20241203111637.000023fe@gmail.com>
- <klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw>
- <df3a6a9d-4b53-4338-9bc5-c4eea48b8a40@arm.com>
- <2g2lp3bkadc4wpeslmdoexpidoiqzt7vejar5xhjx5ayt3uox3@dqdyfzn6khn6>
- <Z1CFz7GpeIzkDro1@shell.armlinux.org.uk>
- <9719982a-d40c-4110-9233-def2e6cb4d74@nvidia.com>
- <Z1CVRzWcSDuPyQZe@shell.armlinux.org.uk>
+        bh=lluttuTh6ERVqm2v1le1MoidfHgvqcBrllLwWWjR1R0=;
+        b=kFRb4LB9RM33Xnwf/2CWQhMa3h1k1IQyfB1WiBJIXbT10QzDYkfr14QtaRltXx6oYD
+         r5tKAIyty+jweiYSct+gShzghRXY6du2XgQyANueR4UcPLLuzlKcyFfR4FflQJ4H2F57
+         e90wotP/+gXSPEgDm+OEWSmc/Wx+gqrSPt2BiI0k+6M9WF8ySxzPG3M4kvToZzX6wlTr
+         N8Euy/Urtlx0OZgiRJbhxvggn3RNSysrl94HRFE9kx6y7EX5qfze9rNDYAj6INgqt5r/
+         opDu+7Mu24UBUuKLoUTW7AOLVMSNqsOVs43hNVldUy2NjLtDqiGEmsKVjbaEXUhm6Rc3
+         MG1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733340663; x=1733945463;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lluttuTh6ERVqm2v1le1MoidfHgvqcBrllLwWWjR1R0=;
+        b=Ef9q9PEFOb2Xa7cnfiVgwtSBiSDzpBNZhC5l3P/oqypRgxD34FEfpT9LcwCPCqYId2
+         zUL0zXZTQjai/0a3RUCygtavi7gDuuw18eo+gIqfo+rOadNjKufUcth8raRPKy80p65f
+         D8tL8hIcu34cK94HCiU82WEFsqXQ4Ybh6cl/uwqnwQWp+YPV9SOYqdj0Gw87BAYC9HT2
+         Xt9ITB/jQpXzzG5/+VyeEZ9+v4AuotxN4n8/17GpBb0wK8xCvPHkGcV2PBbO/lefXr0P
+         P1l3KKionzHblx8JqarL5QAPSDD0bhVFJuniY2h89cyt2RjfdH7SjGXqkEEdHm8M1L/x
+         V5yQ==
+X-Gm-Message-State: AOJu0YyQFT2SfBGP6dJoLxgCjdUIHY58SEMnf0Y4Z9wLdfMkY5F+eWCn
+	sqP7Wk8TDYKpb+77JdhGXN9jZJucj6EXvsNjsSVyrU4pNyCvZT15
+X-Gm-Gg: ASbGncvPUpYexwG6HPZcBRAXzkaXCKUtTWPmYx16P0yR7YSh+0Q9lWXEzuwal2F6PR0
+	2l03cRCMl/zSz8YO+uja4sVljGwIoDHQFHXKmpoM2u1ulaXGxRyYerGa8vBicPyovp9oKFdwcQM
+	w2oBKV3mCzqT8INbXdun1/XQ2dTHy7HkpYV8nlNGx9FtyhbCjq0wQ/KHa9iad5FH37RkMKZ+qDr
+	Tr29ImOJqcrsevox5/ddhcgw+OiqSk8oaa94K9aZBcPJhgtNWOGDgxCqpD8Xev/0yc=
+X-Google-Smtp-Source: AGHT+IEB0kmQnCDTesIYJ9Nr/m0PxR2ptI26NdKIpMccL5sWeet4aGRi5jvzc+Y+HGTExAdZlX285A==
+X-Received: by 2002:ac2:5b92:0:b0:53e:12eb:6c2 with SMTP id 2adb3069b0e04-53e12eb08d7mr3383929e87.2.1733340662715;
+        Wed, 04 Dec 2024 11:31:02 -0800 (PST)
+Received: from foxbook (adqz254.neoplus.adsl.tpnet.pl. [79.185.159.254])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53df646f191sm2326376e87.136.2024.12.04.11.30.57
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Wed, 04 Dec 2024 11:31:01 -0800 (PST)
+Date: Wed, 4 Dec 2024 20:30:45 +0100
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org
+Subject: Re: Reviving Nyan support
+Message-ID: <20241204203045.487da970@foxbook>
+In-Reply-To: <daqxykyvmd445jtai6oyyz6p623bdhw77ml45463xrupwogptg@ub7mo5utl3sv>
+References: <20241108014603.219a0cee@foxbook>
+	<daqxykyvmd445jtai6oyyz6p623bdhw77ml45463xrupwogptg@ub7mo5utl3sv>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iwdew6aguv2p2efu"
-Content-Disposition: inline
-In-Reply-To: <Z1CVRzWcSDuPyQZe@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
---iwdew6aguv2p2efu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap
- for non-paged SKB data
-MIME-Version: 1.0
+> > The kernel came up and userspace got to the login prompt, but then
+> > some issues appeared:  
+> 
+> Okay, that's pretty good given that we haven't had testers for a few
+> years now.
 
-On Wed, Dec 04, 2024 at 05:45:43PM +0000, Russell King (Oracle) wrote:
-> On Wed, Dec 04, 2024 at 05:02:19PM +0000, Jon Hunter wrote:
-> > Hi Russell,
-> >=20
-> > On 04/12/2024 16:39, Russell King (Oracle) wrote:
-> > > On Wed, Dec 04, 2024 at 04:58:34PM +0100, Thierry Reding wrote:
-> > > > This doesn't match the location from earlier, but at least there's
-> > > > something afoot here that needs fixing. I suppose this could simply=
- be
-> > > > hiding any subsequent errors, so once this is fixed we might see ot=
-her
-> > > > similar issues.
-> > >=20
-> > > Well, having a quick look at this, the first thing which stands out i=
-s:
-> > >=20
-> > > In stmmac_tx_clean(), we have:
-> > >=20
-> > >                  if (likely(tx_q->tx_skbuff_dma[entry].buf &&
-> > >                             tx_q->tx_skbuff_dma[entry].buf_type !=3D =
-STMMAC_TXBUF_T
-> > > _XDP_TX)) {
-> > >                          if (tx_q->tx_skbuff_dma[entry].map_as_page)
-> > >                                  dma_unmap_page(priv->device,
-> > >                                                 tx_q->tx_skbuff_dma[e=
-ntry].buf,
-> > >                                                 tx_q->tx_skbuff_dma[e=
-ntry].len,
-> > >                                                 DMA_TO_DEVICE);
-> > >                          else
-> > >                                  dma_unmap_single(priv->device,
-> > >                                                   tx_q->tx_skbuff_dma=
-[entry].buf,
-> > >                                                   tx_q->tx_skbuff_dma=
-[entry].len,
-> > >                                                   DMA_TO_DEVICE);
-> > >                          tx_q->tx_skbuff_dma[entry].buf =3D 0;
-> > >                          tx_q->tx_skbuff_dma[entry].len =3D 0;
-> > >                          tx_q->tx_skbuff_dma[entry].map_as_page =3D f=
-alse;
-> > >                  }
-> > >=20
-> > > So, tx_skbuff_dma[entry].buf is expected to point appropriately to the
-> > > DMA region.
-> > >=20
-> > > Now if we look at stmmac_tso_xmit():
-> > >=20
-> > >          des =3D dma_map_single(priv->device, skb->data, skb_headlen(=
-skb),
-> > >                               DMA_TO_DEVICE);
-> > >          if (dma_mapping_error(priv->device, des))
-> > >                  goto dma_map_err;
-> > >=20
-> > >          if (priv->dma_cap.addr64 <=3D 32) {
-> > > ...
-> > >          } else {
-> > > ...
-> > >                  des +=3D proto_hdr_len;
-> > > ...
-> > > 	}
-> > >=20
-> > >          tx_q->tx_skbuff_dma[tx_q->cur_tx].buf =3D des;
-> > >          tx_q->tx_skbuff_dma[tx_q->cur_tx].len =3D skb_headlen(skb);
-> > >          tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page =3D false;
-> > >          tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type =3D STMMAC_TXBUF_=
-T_SKB;
-> > >=20
-> > > This will result in stmmac_tx_clean() calling dma_unmap_single() using
-> > > "des" and "skb_headlen(skb)" as the buffer start and length.
-> > >=20
-> > > One of the requirements of the DMA mapping API is that the DMA handle
-> > > returned by the map operation will be passed into the unmap function.
-> > > Not something that was offset. The length will also be the same.
-> > >=20
-> > > We can clearly see above that there is a case where the DMA handle has
-> > > been offset by proto_hdr_len, and when this is so, the value that is
-> > > passed into the unmap operation no longer matches this requirement.
-> > >=20
-> > > So, a question to the reporter - what is the value of
-> > > priv->dma_cap.addr64 in your failing case? You should see the value
-> > > in the "Using %d/%d bits DMA host/device width" kernel message.
-> >=20
-> > It is ...
-> >=20
-> >  dwc-eth-dwmac 2490000.ethernet: Using 40/40 bits DMA host/device width
->=20
-> So yes, "des" is being offset, which will upset the unmap operation.
-> Please try the following patch, thanks:
->=20
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/=
-net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 9b262cdad60b..c81ea8cdfe6e 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -4192,8 +4192,8 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff *=
-skb, struct net_device *dev)
->  	struct stmmac_txq_stats *txq_stats;
->  	struct stmmac_tx_queue *tx_q;
->  	u32 pay_len, mss, queue;
-> +	dma_addr_t tso_des, des;
->  	u8 proto_hdr_len, hdr;
-> -	dma_addr_t des;
->  	bool set_ic;
->  	int i;
-> =20
-> @@ -4289,14 +4289,15 @@ static netdev_tx_t stmmac_tso_xmit(struct sk_buff=
- *skb, struct net_device *dev)
-> =20
->  		/* If needed take extra descriptors to fill the remaining payload */
->  		tmp_pay_len =3D pay_len - TSO_MAX_BUFF_SIZE;
-> +		tso_des =3D des;
->  	} else {
->  		stmmac_set_desc_addr(priv, first, des);
->  		tmp_pay_len =3D pay_len;
-> -		des +=3D proto_hdr_len;
-> +		tso_des =3D des + proto_hdr_len;
->  		pay_len =3D 0;
->  	}
-> =20
-> -	stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags =3D=3D 0), queue);
-> +	stmmac_tso_allocator(priv, tso_des, tmp_pay_len, (nfrags =3D=3D 0), que=
-ue);
-> =20
->  	/* In case two or more DMA transmit descriptors are allocated for this
->  	 * non-paged SKB data, the DMA buffer address should be saved to
+I had some hopes because I saw that NVIDIA still tests new kernel
+releases on T124 Jetson, although I don't know how much is tested.
+The kernel seems to be in pretty good shape, save for those issues.
 
-I see, that makes sense. Looks like this has been broken for a few years
-(since commit 34c15202896d ("net: stmmac: Fix the problem of tso_xmit"))
-and Furong's patch ended up exposing it.
+I found that graphics are a bigger problem: X is dog slow, and I get
+black glxgears window and some 150fps, which doesn't look great.
 
-Anyway, this seems to fix it for me. I can usually trigger the issue
-within one or two iperf runs, with your patch I haven't seen it break
-after a dozen or so runs.
+Do you know if it's supposed to be like that or if it's a regression
+or some screwup on my side? I have enabled Nouveau in the kernel and
+installed X11 Nouveau driver and xorg.log shows that it loads.
 
-It may be good to have Jon's test results as well, but looks good so
-far.
+Are there any other options besides Nouveau? Perhaps some newer L4T
+release which would work with mainline host1x driver and Kepler? I
+suppose anything that works on Jetson will work on Nyan too.
 
-Thanks!
-Thierry
+Currently this machine runs Ubuntu 14.04 L4T and 3.10 CrOS kernel,
+so practically anything would be an improvement :)
 
---iwdew6aguv2p2efu
-Content-Type: application/pgp-signature; name="signature.asc"
+>> SPI
+>
+> I'm not sure what the right way is to fix this. The values in DT are
+> clearly required to be nanoseconds, so either the driver needs to
+> learn about those or the core would need to convert somehow. The core
+> doesn't know about what the driver supports, so it can't do a really
+> good job. Maybe a good compromise would be to have the core expose a
+> helper that can convert to clock cycles (the reverse is already done
+> in spi_delay_to_ns()), which drivers can then use if they only support
+> clock cycles.
 
------BEGIN PGP SIGNATURE-----
+I see that a few other drivers which bother to implement this callback
+convert ns to clocks, so options would be to copy-paste their code or
+put that stuff in SPI core. I have never looked at SPI before...
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdQnQIACgkQ3SOs138+
-s6GyGA/+Mi+zWzm7HiVlhKv4XJWkUknxqYmbqs0d/bC8641dT3ogSqPfVbcMFbZO
-s9APdaIXCK2cRivM9PTITkrIrK0YHwgHgbvv0ronPOnsvcX0i4uZ2q/QtILbznwX
-ch7P++KrfYTPikIqDP1GC77bC1L9l5BYzc+/iOTltKRqA9oM/t0cclTVegQkfzdE
-cLfTJ4JzYkqneOl69+f3P5pOLnr1wj3tULGssJK5oDg71gIz6JgtieLgRSV+4d5s
-b6R79vnIJXeWMUK0JN+7yt49SatPrbVMMg5qluURZDmKO4TMIZuVIuq0qK8H7+pf
-atrCkAZIpNKRLnVkN7BZQCsYk/LuDSsZn3DRnCRTo4q/DW5jCO1A7XCQhqV7jnNZ
-9QgZePJR/3STPPC04E37NKKdLiBpinUZcVIgm/EIcXD/mlTJEEFVtTD2f0PucOk7
-AHYRkbHIZ7kvsBVtVG7lW+Z5Y2FE19o5RnhoSNpIgubPRAZXmZSP00PTKxAmdyOo
-HTapRMCe381Y9gjKeIy7ZpFpA0CHqH6WqJAb47DYdKKRaAfZbAgTujOg2NYXhRMO
-43MHpldVISdfxs0wENT0QnHHV3sWCfFa5cJvwRwm/Cr/3y3Ia4LM+mZx5hggaMfJ
-YvlC+2075bywCZn7qfrZ7PxFE5FEgz1RJar4do29uSnbdP5TUBU=
-=p0Oa
------END PGP SIGNATURE-----
+> I think LPAE cannot be enabled by default because it would break on
+> Tegra20 and Tegra30 which both don't support LPAE.
 
---iwdew6aguv2p2efu--
+Fair enough, it's not a huge deal.
+
+> > 3. Some more warnings about bypassed regulators and missing touchpad
+> > supply (but the touchpad is enabled and works, per evtest at
+> > least).  
+> 
+> Not sure how much can be done about this. Unless you can find the
+> schematics we'd probably have to do this on a best effort basis.
+
+I actually have the schematic from some shady laptop repair website.
+IIRC the touchpad runs from some major 3.3V rail which is always on,
+so I didn't bother fixing this yet.
+
+I also learned something new, that platform drivers can ask for their
+probe to be deferred, which was responsible for some other warnings.
+At this point I'm not sure if anything serious remains, but regulators
+are another subsystem I know practically nothing about.
+
+> My first step when debugging suspend/resume issues is usually to pass
+> no_console_suspend on the kernel command-line. That's really only
+> useful for debugging consoles and it probably doesn't work well if
+> you've only got the framebuffer console.
+
+I made zero progress on this, and frankly didn't even try. Serial ports
+are only accessible by soldering to the board. I suppose I could try a
+USB dongle, but it will go dark as soon as xhci is suspended.
+
+> > 5. USB is power-cycled on boot, which is a bit annoying as I'm
+> > booting from a USB connected disk. IIRC CrOS kernel 3.10 wasn't
+> > doing it. Any suggestions where to look?  
+> 
+> Is this really the power going away and coming back up? In that case
+> it might be a regulator that's being temporarily disabled during boot
+> and then brought back up.
+
+Yep, this exactly. I have fixed it already.
+
+Thanks,
+Michal
