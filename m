@@ -1,126 +1,151 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B8D20ADCB;
-	Wed,  4 Dec 2024 16:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503BE15B10D;
+	Wed,  4 Dec 2024 16:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733329566; cv=none; b=mo2HJcd9IMZPA6gZuqihvDwYV4f4nCChxlgwgBBb2iDtZVm+AI/U27uT70sjacGdt6Iv6FjdabpulffoHKiaiLjboC11GfA9pYwpFdvjn3UIWFisBULcSqvM6elCYivnBDp+qjsbQVdSxHwlkY6LSVd6PvGl6lSEr7KYPjYmjWQ=
+	t=1733330398; cv=none; b=b3QWKxAEAd9us2T3wxJfOu1ycwEpYEg6DNqKNKQwgBEoLAGycG2bgiiRoNgmJaoiKS03UcbC2IxJ2R8G2m3qNc71pWNHZEZ5RcxCZ41vVevUtkbaODwavSyRz12lJ5kN7/zSapgZyulnspZVvBfwkXzQuLrAe76andf6DZsQaws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733329566; c=relaxed/simple;
-	bh=s59cjSI41ouAVWN5gqdjx84pbl6lMV5yXuNB7fDXpqs=;
+	s=arc-20240116; t=1733330398; c=relaxed/simple;
+	bh=LI0f/8L5VMaa8rlarlrPNXlZjnS/iGICZEw87IVicV0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=unW2JJ4NFREK1zDV+laPRY+IKdTSZBl9psL1WBLz+1LypdZUvx8vSM4tWRFkf1oasBcP+5FA/3HXLG2NbAj/pN74judqRkzULQmCRGdAD6sc992UlwlLRnSE6DPRaqnoRM2LTpWcJWQAPteoemTZ/pgn5btISczMrP6yYmTmsG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WYbbiUlA; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=LreL2G8rh+OXbzv19nMkIHrB0MHhg3RQ0bzU9f/efq9mn7HA9CRZ1TjbZGv0aXSvFMyHmhIbQp8VMaKnGMy2yNCic+RFaZPJuZm54RDHqXt74VlaQRz4I39qAtl94jnMh2jDuLnDTw6TUTEDgglL4kDMnYCNdueb+B3DO20fnkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ta8+rhef; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WYbbiUlA"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-385e2880606so4875768f8f.3;
-        Wed, 04 Dec 2024 08:26:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733329563; x=1733934363; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KDfuCQe9icjSg3X2+FF0W1suXmAl6dQpcF+jtr4B0rc=;
-        b=WYbbiUlA60s2C+mKVRzKEXRCLEybDyRLP20rVT+RKTl4xHBS8sjY2BdRRMjjut+JRl
-         YaARLcTg1Vkkt25yXf8oHkBCXEgLl+nn+vKNy5KVUdw6Ra6ytL+nPxifzPWzZTVE8svI
-         C3GFo63wuMc36VKNguF6SNYoG0DoOmbsxJyMEpR2EVeI7ZU322vG4+zrm6V3wcJuzFtB
-         vcKmHpFAyaNYgTXLBwusNQALLt2Y24Nq1annUAwIAqN7HtsvlAnzKRYjL0VL0pGhle42
-         ZltZ9rtbbDQlt2tTVnOImj+Jz48+Chz4103VyUKE9aqI6GDiMwMEaJmMoxUDndzy9oCW
-         IsBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733329563; x=1733934363;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KDfuCQe9icjSg3X2+FF0W1suXmAl6dQpcF+jtr4B0rc=;
-        b=f9DYRkTtrbEgbjboTTpEGKlAkcZ0N6SpHqQYel7pMmZp2lbAF5PHAtDNyrzidAHSWQ
-         kE9zxJSKF36LCH+vGzLrUzPWiHua5z/WXbeHJzyLb/c3ORIBwtnDTaZsgP3UqJgAgLWA
-         hinJXlOe6YlFiqbrsetk6p4Q0rjclwDrrtei+fShD37298mc+qnI+qyi+L+CumTvbrYN
-         lZBDJ+Qam2FFT8fUfhwo0t90bMdpChwzqfxo0rysdWg2ouvHwfah7DrpYtYEEVHiKMX8
-         taCVNa2A5F8MFqXZnODmd3GFV2kVrnMdzTjJXvwcgI3imze5pjhWxyeCC8JzLSPW4RMz
-         h40w==
-X-Forwarded-Encrypted: i=1; AJvYcCVLU2nNEp4lLVRwC5b9BpdAwp3GbTGrxBWT1mBIakD64zWtvKWLTnB6pDUhlub2h6hdU3EBVdp9bG7bMys=@vger.kernel.org, AJvYcCW6jG1w9dhlCYB6qh07v3KXV1Gdw4E6xkR7G22OSnMaXOHvAfxRZbz7pvUVIQo0nt1n1mOXLY6QzKKC/do=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh3N0RwWsMVKPSxVPIeGIjV5yb4WkQ7YRua16oC3EmkXxnzEtj
-	B7KmdsS7igQXtV0iqKiGfDta4Xiu+tW2fWcoNmkJ6T7P9aa3bwn9Wzc6Bg==
-X-Gm-Gg: ASbGncuGtLoGAFr3uj7Yy7wW7zli5U0ZpmG8EJE9tBa7fPS2idiCi0Dszzx/A/8cIba
-	N9b+AMChg1xz/ifVIki1mh94+NcIN8chxC8EqrO44aBmQuKGUG+qB5lg1hcyHqnpCvzahi+hvkh
-	ElDrZ3ZQbrHTsx7qkQLSCQ55QfNg1uoYKOzD4oWld7nWuQCbLqOSzgyUffm+9RFP03zwkYV3kuB
-	+u/YFWEb6VTON6iB30pzl26lbcTRQz0KkeTdABvpSRtKsCdaRN6rRifzUhgrUdevWe6xAVNQJZp
-	C8gZovBxyDPamWTdBpfpn83fzVBk6jDwYVT7
-X-Google-Smtp-Source: AGHT+IEn5vWUfD1edchw71iKaQWPJ5zrPY/RlGyVC53tCnJMzCLUo9wCZmfXhp3ZVBQC2zZ3MzIvEg==
-X-Received: by 2002:a05:6000:1a86:b0:385:ef8e:a652 with SMTP id ffacd0b85a97d-385fd43c331mr7817874f8f.56.1733329563235;
-        Wed, 04 Dec 2024 08:26:03 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385ccd3a5f7sm18703181f8f.54.2024.12.04.08.26.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 08:26:02 -0800 (PST)
-Date: Wed, 4 Dec 2024 17:26:01 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: akhilrajeev@nvidia.com, herbert@gondor.apana.org.au, 
-	davem@davemloft.net, jonathanh@nvidia.com, linux-crypto@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, chenridong@huawei.com, wangweiyang2@huawei.com
-Subject: Re: [PATCH v2] crypto: tegra - do not transfer req when tegra init
- fails
-Message-ID: <lpmdwlmokmxhtd2nuwbhtqkowgih7ytwgkbehd4ht43hwet52a@uwdufvfwotfe>
-References: <20241111012827.1788341-1-chenridong@huaweicloud.com>
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ta8+rhef"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=t8Qpni1g+CTP4DtqlAKjnlwu/KLFrA6csbzYi4hK4/c=; b=ta8+rhefvAfTVON2qkfHns8aKZ
+	M3XgNBM1LKMVU/0hPzAABXNPwE1ahhu39CoKAY6ro8Z5K5XSyjrV2mUmNVjMLoH8iRUQ175ViA3ai
+	Cjy25bi6xMVT0qJmza5h/5eTycpxyifsdFrPNu6Onj1aLEoBNw3U1Povys8tefq3W+sxf3HOM0wSm
+	p74skew5erUlsSllvX8L2IxRjnCSrszXm+ncYbx4w6JqSayC1b+GLpdPhtab9hx0vdbDUJFtD18IW
+	AZ30ZID3dKWRdEpD9Cipoh79ds1zjZ2Z5HL8F4GtBH9RWrGu/2wMDE+MIkxmtKUWOzLkMs7MsSRRY
+	m0bccgOw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43724)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tIsPk-0003eW-0H;
+	Wed, 04 Dec 2024 16:39:48 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tIsPf-0005hd-1N;
+	Wed, 04 Dec 2024 16:39:43 +0000
+Date: Wed, 4 Dec 2024 16:39:43 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, Furong Xu <0x1207@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
+	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+	Thierry Reding <treding@nvidia.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap
+ for non-paged SKB data
+Message-ID: <Z1CFz7GpeIzkDro1@shell.armlinux.org.uk>
+References: <20241021061023.2162701-1-0x1207@gmail.com>
+ <d8112193-0386-4e14-b516-37c2d838171a@nvidia.com>
+ <20241128144501.0000619b@gmail.com>
+ <20241202163309.05603e96@kernel.org>
+ <20241203100331.00007580@gmail.com>
+ <20241202183425.4021d14c@kernel.org>
+ <20241203111637.000023fe@gmail.com>
+ <klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw>
+ <df3a6a9d-4b53-4338-9bc5-c4eea48b8a40@arm.com>
+ <2g2lp3bkadc4wpeslmdoexpidoiqzt7vejar5xhjx5ayt3uox3@dqdyfzn6khn6>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dkyalcrzdvdlsjuv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241111012827.1788341-1-chenridong@huaweicloud.com>
+In-Reply-To: <2g2lp3bkadc4wpeslmdoexpidoiqzt7vejar5xhjx5ayt3uox3@dqdyfzn6khn6>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
+On Wed, Dec 04, 2024 at 04:58:34PM +0100, Thierry Reding wrote:
+> This doesn't match the location from earlier, but at least there's
+> something afoot here that needs fixing. I suppose this could simply be
+> hiding any subsequent errors, so once this is fixed we might see other
+> similar issues.
 
---dkyalcrzdvdlsjuv
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] crypto: tegra - do not transfer req when tegra init
- fails
-MIME-Version: 1.0
+Well, having a quick look at this, the first thing which stands out is:
 
-On Mon, Nov 11, 2024 at 01:28:27AM +0000, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
->=20
-> The tegra_cmac_init or tegra_sha_init function may return an error when
-> memory is exhausted. It should not transfer the request when they return
-> an error.
->=20
-> Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> Acked-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->  drivers/crypto/tegra/tegra-se-aes.c  | 7 +++++--
->  drivers/crypto/tegra/tegra-se-hash.c | 7 +++++--
->  2 files changed, 10 insertions(+), 4 deletions(-)
+In stmmac_tx_clean(), we have:
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+                if (likely(tx_q->tx_skbuff_dma[entry].buf &&
+                           tx_q->tx_skbuff_dma[entry].buf_type != STMMAC_TXBUF_T
+_XDP_TX)) {
+                        if (tx_q->tx_skbuff_dma[entry].map_as_page)
+                                dma_unmap_page(priv->device,
+                                               tx_q->tx_skbuff_dma[entry].buf,
+                                               tx_q->tx_skbuff_dma[entry].len,
+                                               DMA_TO_DEVICE);
+                        else
+                                dma_unmap_single(priv->device,
+                                                 tx_q->tx_skbuff_dma[entry].buf,
+                                                 tx_q->tx_skbuff_dma[entry].len,
+                                                 DMA_TO_DEVICE);
+                        tx_q->tx_skbuff_dma[entry].buf = 0;
+                        tx_q->tx_skbuff_dma[entry].len = 0;
+                        tx_q->tx_skbuff_dma[entry].map_as_page = false;
+                }
 
---dkyalcrzdvdlsjuv
-Content-Type: application/pgp-signature; name="signature.asc"
+So, tx_skbuff_dma[entry].buf is expected to point appropriately to the
+DMA region.
 
------BEGIN PGP SIGNATURE-----
+Now if we look at stmmac_tso_xmit():
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdQgpgACgkQ3SOs138+
-s6F+VA//XsmF/86dhPIvYT8EDkVqmnc65aEE8+toNiwurcNTS9f+FwkEijK7aifU
-DnPlknSEymzj2hAzKlY6n5ORz+Fp9XXKraLsxUYyHNNeE4hq2bIRU5AmW+SbJaNy
-KjYfw48SqQ3zViExjWRHrVBA+xN4XojBMtDT2XOQ2s5d6ujVSAgCkbdf9IX1YNbL
-7gF5H10nXYhQZsEmU75spNN4ra2K8kk49+kOpSZkJiOkOmYcdS+4lYg0SorvKqOF
-JQ74XKfDNtauIaKC1FPJ6y55ee+rR5W/Fae5BzgHJeAn3xiq63bZy2zpPskEN7iv
-mA3eNkG9Qf1EzvjtzFA7hSCuYa1yf+f6OelspzjhHD5+0jbEs2zUJNRi3b8/7G3g
-KSjeNsECzN59UmW3XN1tkpMud39lSaut/2hhF7JCQ82TO+9iucXNBJRyE1MXYbLN
-+eVhm4zQYDnBSGKFIF+wkjcmxT7dhLp9g5x71f9Ey9m/4f1xQYqSmLtBChw44Uzx
-+gxrDql697GOcoprI1yIJyWgj6LnK9c8jXAmIBjzrm4fP9UN4QJi71hmc6SDlCO8
-pwM8e6jJ2fevn+ZBYeLZMu73QkiwIxdmPd0KE6A95ukLPdrnxsJM0BJLaHtcdggb
-5fMQublciBZ79W1649/Y/yuIpIeSnJNuI9gksnAANc5rOR83jLo=
-=eI0r
------END PGP SIGNATURE-----
+        des = dma_map_single(priv->device, skb->data, skb_headlen(skb),
+                             DMA_TO_DEVICE);
+        if (dma_mapping_error(priv->device, des))
+                goto dma_map_err;
 
---dkyalcrzdvdlsjuv--
+        if (priv->dma_cap.addr64 <= 32) {
+...
+        } else {
+...
+                des += proto_hdr_len;
+...
+	}
+
+        tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
+        tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_headlen(skb);
+        tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
+        tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
+
+This will result in stmmac_tx_clean() calling dma_unmap_single() using
+"des" and "skb_headlen(skb)" as the buffer start and length.
+
+One of the requirements of the DMA mapping API is that the DMA handle
+returned by the map operation will be passed into the unmap function.
+Not something that was offset. The length will also be the same.
+
+We can clearly see above that there is a case where the DMA handle has
+been offset by proto_hdr_len, and when this is so, the value that is
+passed into the unmap operation no longer matches this requirement.
+
+So, a question to the reporter - what is the value of
+priv->dma_cap.addr64 in your failing case? You should see the value
+in the "Using %d/%d bits DMA host/device width" kernel message.
+
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
