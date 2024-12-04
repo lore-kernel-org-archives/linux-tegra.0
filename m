@@ -1,67 +1,85 @@
 Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69D9207E0F
-	for <linux-tegra@vger.kernel.org>; Wed,  4 Dec 2024 17:50:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7C33A1BF;
+	Wed,  4 Dec 2024 18:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733334629; cv=none; b=VfP2GMEoWVKVdivoMfDFQmPxTByqNGRdqAo3V53PVwcNCrSuNZnAJOOPrDxfwMDfBnwLX+BS/6vZ1PFKDFjJkYWd2h/VxUIp2nrVGNGcFo0Io4NlSw8hbiagD2/Q05QG50nShJw8c71aZ4uYkirwuW13B3bs7aLKWav0W4vJO+Y=
+	t=1733335596; cv=none; b=TMrHBO+wKwG5UblvJBULhQXkAUiVjzDV34m1tAWcduUob/meDNopBzlw4liNanMfDfHZi27KvtIqVr8kZO02BYh4mdXvb0Quu+rmqABVBpBv//ph17WseAuFrFiJ1vvoQTiMD3xu3PK29pnqk7VbWDpDkjO4SEjWrUaFDk7COp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733334629; c=relaxed/simple;
-	bh=JpE7XVa+QpE7giYsqJyJGLOmOhKvLMHCdLIRRh5SoV8=;
+	s=arc-20240116; t=1733335596; c=relaxed/simple;
+	bh=MEH69J8J5ej1FCsWNbR7E55HsHJvluP+bGCwvVt4/+c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uy1gLLtrFUUBsx9Y48mX4ZUpcXztvQjVOgmd/jAly3ZdqefefyZc4UerO06pwPaw0nZYwJbNhUl01VVIm0G6qVOTFRXfBGpDFOeu1ssNIyORshqn1Q9zE1cMVWLMB5B+bXrUCCi1DT4diJtvD/CBMjvtUQHjuj5OqfU4++aqG+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ake3oF00; arc=none smtp.client-ip=209.85.128.41
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXwljPj5zn408Ve2PXKrawrAyLL0vWdohyncQQgpUB80CjB2Qf9VTawLpY1kScYi2v3nJOAbrB1pzumGTKgWCmm/Y2lzo4o67EJ0JKIvc6VJojxj30ZZ8Tnzu0oPV6ApGmxB1B5z58TRMinriMbsnhjl1jrdjWAAopjVc5NrTHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GomGK+aG; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ake3oF00"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a8640763so517865e9.1
-        for <linux-tegra@vger.kernel.org>; Wed, 04 Dec 2024 09:50:27 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GomGK+aG"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4349cc45219so707675e9.3;
+        Wed, 04 Dec 2024 10:06:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733334626; x=1733939426; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733335593; x=1733940393; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JpE7XVa+QpE7giYsqJyJGLOmOhKvLMHCdLIRRh5SoV8=;
-        b=Ake3oF00ZFcU0T5Z6xHjQRk03tvGsyViSYmB+7QzzsmL28aXWYtHUIR8GV89v8eyaw
-         dbUcSkkoizOZD2IlYFTWv29zk4IJ1PQ6pPY+/tT+03cQ+u/UvfqLz+L38FQRIkQJZ+QH
-         AkLzHVCz+vDuujreZIENEKYYEhZURyGekbVm+dF8dOyfqYV2h0m0H8DIU0ok/n5ql/6M
-         f3JQ2cjrWPTUiBs78VE57V/C/tDjpr/EOG8ZFCI1Ze/p+bb0l3W+ScM/BOSTlrK8Ij8H
-         N4H61AtDILNhHeyWUn4SG8LttByCPe2vKQykBxPljeYu4nt1laIHZSZ8WqI2nmUUrtzW
-         A7ew==
+        bh=uyHKOxEKj03rgX35m/QxXvHrY0ktDc+PNXLib8Uap+M=;
+        b=GomGK+aGwN8eY3FXtQsI8ZgHK2us2blO8IcMOMEZy7NpUM3NkMkrmFeNcD685/rkZe
+         muDWt0SzAqlpVPQprEjYgchK5Mcj4TGlqdRXz3zfJtADJPtm5bmyFfdPoMwpb/cwNR6I
+         qUjslW11xWKIEqnf6iQeeKWdxXXW+2tkns4t1i6ShbPoL+lya+f72cVMGyFvQsyY0xBd
+         SLDWFcXFXRl4tZFvGIsRTpo9vAhKb35ae6ZvItS1cHktEAUManTMMGak74tnfKchGVS5
+         /XUZAohlc0jJ70UuJgH664xzv9fJILXyZ11CqIJDztk1KN8RLgFiHguotgKohdgYgZw+
+         QS2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733334626; x=1733939426;
+        d=1e100.net; s=20230601; t=1733335593; x=1733940393;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JpE7XVa+QpE7giYsqJyJGLOmOhKvLMHCdLIRRh5SoV8=;
-        b=qNALwCwIjO6buqtlFCUycxRLmHf4iWT2uVjycLW7sS/surXY/W7ypXFrowJ0cmqAcw
-         1BsxAjjEkTSIiBJSFyxRJrJEPoOrymEfnKKVPxWcEdu2vidCTgaabM9c8VhyYVqVZnHq
-         90iMkmL/7ztd/ngPCzTIbgodEscrAmyaY7q0GTRnMwWTS3aLzGqG5RYkjGYQqsCEsxr1
-         GPPtXD/Puhdel/jMQ1f902YF/KU+dJewMKLSzq7Z+N8Tty3wMrVx+a+dfutFXTV3qChm
-         cfgw/RkG7ZmimFluh/BTrUwP2em+0K8aA8gs2ZeqP+VsHhZzs7ZT1xb6cRkXL+incYGD
-         GMwQ==
-X-Gm-Message-State: AOJu0Yyb+muKUxI9Y8KWTyB/Osy5908ChNvYDVsilE1P5oM/lTkurJFy
-	JN3e/D753ekIit6pkQdUQ5C/3C6KNvODtGxYAfc2KQkNmYMWRHk+0q9EHQ==
-X-Gm-Gg: ASbGnctSPcOKoanbvAcWGM0k2Surt0CfdPMwrZusVRbdLJ3k+h8sBGqbHsEK0OOo1Wz
-	H3bVRQRY2iC1el5cJ3lXqgK3x73bKOOYY3wWSVqc0Ioz4CwLg1524zFbqxP1Cv6CNxYi9L+dzCG
-	clOjUUbr2KRl3WQS1FmALzWGgvuoWPerjGjFq5MwGjCkCosg1H3NvTj3kirQzWzBqdmU0nPQkEJ
-	+p0OC4xSB2LFyir8xWwaYJvvl+gnizHvTiM/nkVXY2tvcDxldnks0w/Ab7UMaBLMbcRJ1XkO/a3
-	2jn/K+p3NJeGAl3v9emUUcNjWeObaH1zI4dD
-X-Google-Smtp-Source: AGHT+IEyL10sRORR7GqY0lslkOjNAHyt4o8akG1inhwbMjINhcIJmLJMFUoBK6OBJImrpFue+7GbKQ==
-X-Received: by 2002:a05:600c:a44:b0:431:60ec:7a96 with SMTP id 5b1f17b1804b1-434d4522624mr35712575e9.25.1733334625734;
-        Wed, 04 Dec 2024 09:50:25 -0800 (PST)
+        bh=uyHKOxEKj03rgX35m/QxXvHrY0ktDc+PNXLib8Uap+M=;
+        b=gtoO207nafccECDWbM0Ow9XpKweVvR9arBLEs5YD3JBA3TKqW9feMtG+Aa1lECAhz4
+         C/2iz/VT5mYK4Agk4nfVbwj6rJFL8x0NcBMdbLTJ6+t4kDjxSn3idwXa1r07YpPqgKl1
+         moA/l4NXB+yK8xXdIGndR6glLgX1mwI6X27Kkz+YV2FTR2SWRiEbSl1iuDAI3AG2j5QZ
+         v6JW6QMQpQB4DRyIW+gl8RGYD8lnKi5H9GSdISivvj0QaLfxNvKCdNSUVvteCKBo1KlI
+         IWTIrXVKiIZL4kgFI/xC9cdgFCjwVhBBhi0YG5LXfk0lSXgHjr5w4rssuFNzOvUkcT+e
+         LRDg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0TbrZwOdueA8EyUXRE52RNyh/yUZmAn2THSW7aKuwzBDrsSgWOGHY5il84vXry0M9KE01KGAq@vger.kernel.org, AJvYcCVBb1M5Osbh/os/PnmhH3v05eZb3neEUXYNJxdUZ2kdrY0ux7rxkb+DIKUra0RSM6nl2t0WpTlbB2Fmu80=@vger.kernel.org, AJvYcCVb7SI0T1DhoNQtcdot7PuZIcrvm1+M6wTTl6xhlhaM4t7mi4VnfSiS2mlt1HX9c/lO7ivdG4SPO8983PI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+nuBav+M9o+pC/+qyaBjki0eAH1AnqwcAo8deTbwnQnMKdZdw
+	TJ82f+iUQB/OhdlTQjUIbB+po4DEtg77Niv0GcftGFMhxF1p1NXs
+X-Gm-Gg: ASbGnctI5glwTU6akzK3jsAHqL5z6vRBng2liA8orq1nXQDrLtfwInf81nqZfhDdKWF
+	YmxuKiFfONx9Uf7Pkv1qNgya2EGw3ruTJISKBvwh4v5SodsQeQn7witCnpxbIZB/P1HmL5LVBLh
+	nENnIMwssRNqwFN9TWr5bX1IBurf9ABJ8VquXnsiAO1lCMK9AC/gv9IFGqbt+KU7yyAhd1AUD5D
+	/7CajJxwiirRQ4JFWAx/6oDdP1rv2amt9jxm2Wf7H9SdYo7N9oQjTtTDSQb1PtPxb3bC36OHtpf
+	DSw7wR5I47f+2VingeXp7H4KlbLJ/Vnnl3AO
+X-Google-Smtp-Source: AGHT+IHJCMa0Jw2obBkAdIaN6jxKiTpv9JchsF8d03P1qW1tmylQdi2YTYrJIpa49ocoRTyBhVpRnA==
+X-Received: by 2002:a7b:c34f:0:b0:434:a923:9313 with SMTP id 5b1f17b1804b1-434d4101881mr42697335e9.25.1733335592675;
+        Wed, 04 Dec 2024 10:06:32 -0800 (PST)
 Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d04e7380sm56134605e9.0.2024.12.04.09.50.24
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5273131sm32003255e9.12.2024.12.04.10.06.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Dec 2024 09:50:24 -0800 (PST)
-Date: Wed, 4 Dec 2024 18:50:23 +0100
+        Wed, 04 Dec 2024 10:06:32 -0800 (PST)
+Date: Wed, 4 Dec 2024 19:06:30 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: =?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>
-Cc: linux-tegra@vger.kernel.org
-Subject: Re: Reviving Nyan support
-Message-ID: <daqxykyvmd445jtai6oyyz6p623bdhw77ml45463xrupwogptg@ub7mo5utl3sv>
-References: <20241108014603.219a0cee@foxbook>
+To: Parker Newman <parker@finest.io>
+Cc: Andrew Lunn <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
+ from device tree
+Message-ID: <uad6id6omswjm7e4eqwd75c52sy5pddtxru3bcuxlukhecvj4u@klzgrws24r2q>
+References: <ed2ec1c2-65c7-4768-99f1-987e5fa39a54@redhat.com>
+ <20241115135940.5f898781.parker@finest.io>
+ <bb52bdc1-df2e-493d-a58f-df3143715150@lunn.ch>
+ <20241118084400.35f4697a.parker@finest.io>
+ <984a8471-7e49-4549-9d8a-48e1a29950f6@lunn.ch>
+ <20241119131336.371af397.parker@finest.io>
+ <f00bccd3-62d5-46a9-b448-051894267c7a@lunn.ch>
+ <20241119144729.72e048a5.parker@finest.io>
+ <mpgilwqb5zg5kb4n7r6zwbhy4uutdh6rq5s2yc6ndhcj6gqgri@qkfr4qwjj3ym>
+ <20241204115317.008f497c.parker@finest.io>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -69,131 +87,147 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ikchujadf2ua4vnx"
+	protocol="application/pgp-signature"; boundary="eyf27zncx4uh4ucn"
 Content-Disposition: inline
-In-Reply-To: <20241108014603.219a0cee@foxbook>
+In-Reply-To: <20241204115317.008f497c.parker@finest.io>
 
 
---ikchujadf2ua4vnx
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--eyf27zncx4uh4ucn
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: Reviving Nyan support
+Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
+ from device tree
 MIME-Version: 1.0
 
-On Fri, Nov 08, 2024 at 01:46:03AM +0100, Micha=C5=82 Pecio wrote:
-> Hi,
+On Wed, Dec 04, 2024 at 11:53:17AM -0500, Parker Newman wrote:
+> On Wed, 4 Dec 2024 17:23:53 +0100
+> Thierry Reding <thierry.reding@gmail.com> wrote:
 >=20
-> It came to my attention that Nvidia provides some degree of mainline
-> support for old Tegra SoCs, so I wanted to try it on my Acer CB5-311.
+> > On Tue, Nov 19, 2024 at 02:47:29PM -0500, Parker Newman wrote:
+> > > On Tue, 19 Nov 2024 20:18:00 +0100
+> > > Andrew Lunn <andrew@lunn.ch> wrote:
+> > >
+> > > > > I think there is some confusion here. I will try to summarize:
+> > > > > - Ihe iommu is supported by the Tegra SOC.
+> > > > > - The way the mgbe driver is written the iommu DT property is REQ=
+UIRED.
+> > > >
+> > > > If it is required, please also include a patch to
+> > > > nvidia,tegra234-mgbe.yaml and make iommus required.
+> > > >
+> > >
+> > > I will add this when I submit a v2 of the patch.
+> > >
+> > > > > - "iommus" is a SOC DT property and is defined in tegra234.dtsi.
+> > > > > - The mgbe device tree nodes in tegra234.dtsi DO have the iommus =
+property.
+> > > > > - There are no device tree changes required to to make this patch=
+ work.
+> > > > > - This patch works fine with existing device trees.
+> > > > >
+> > > > > I will add the fallback however in case there is changes made to =
+the iommu
+> > > > > subsystem in the future.
+> > > >
+> > > > I would suggest you make iommus a required property and run the tes=
+ts
+> > > > over the existing .dts files.
+> > > >
+> > > > I looked at the history of tegra234.dtsi. The ethernet nodes were
+> > > > added in:
+> > > >
+> > > > 610cdf3186bc604961bf04851e300deefd318038
+> > > > Author: Thierry Reding <treding@nvidia.com>
+> > > > Date:   Thu Jul 7 09:48:15 2022 +0200
+> > > >
+> > > >     arm64: tegra: Add MGBE nodes on Tegra234
+> > > >
+> > > > and the iommus property is present. So the requires is safe.
+> > > >
+> > > > Please expand the commit message. It is clear from all the questions
+> > > > and backwards and forwards, it does not provide enough details.
+> > > >
+> > >
+> > > I will add more details when I submit V2.
+> > >
+> > > > I just have one open issue. The code has been like this for over 2
+> > > > years. Why has it only now started crashing?
+> > > >
+> > >
+> > > It is rare for Nvidia Jetson users to use the mainline kernel. Nvidia
+> > > provides a custom kernel package with many out of tree drivers includ=
+ing a
+> > > driver for the mgbe controllers.
+> > >
+> > > Also, while the Orin AGX SOC (tegra234) has 4 instances of the mgbe c=
+ontroller,
+> > > the Nvidia Orin AGX devkit only uses mgbe0. Connect Tech has carrier =
+boards
+> > > that use 2 or more of the mgbe controllers which is why we found the =
+bug.
+> >
+> > Correct. Also, this was a really stupid thing that I overlooked. I don't
+> > recall the exact circumstances, but I vaguely recall there had been
+> > discussions about adding the tegra_dev_iommu_get_stream_id() helper
+> > (that this patch uses) around the time that this driver was created. In
+> > the midst of all of this I likely forgot to update the driver after the
+> > discussions had settled.
+> >
+> > Anyway, I agree with the conclusion that we don't need a compatibility
+> > fallback for this, both because it would be actively wrong to do it and
+> > we've had the required IOMMU properties in device tree since the start,
+> > so there can't be any regressions caused by this.
+> >
+> > I don't think it's necessary to make the iommus property required,
+> > though, because there's technically no requirement for these devices to
+> > be attached to an IOMMU. They usually are, and it's better if they are,
+> > but they should be able to work correctly without an IOMMU.
+> >
+> Thanks for confirming from the Nvidia side! I wasn't sure if they would
+> work without the iommu. That said, if you did NOT want to use the iommu
+> and removed the iommu DT property then the probe will fail after my patch.
+> Would we not need a guard around the writes to MGBE_WRAP_AXI_ASID0_CTRL a=
+s well?
 
-Exciting! I think I do have one of those devices, though equipped with a
-Tegra132, so the 64-bit equivalent of Tegra124.
+Well... frankly, I don't know. There's an override in the memory
+controller which we set when a device is attached to an IOMMU. That's
+usually how the stream ID is programmed. If we don't do that it will
+typically default to a special passthrough stream ID (technically the
+firmware can lock down those register and force them to a specific
+stream ID all the time). I'm not sure what exactly the impact is of
+these ASID registers (there's a few other instances where those are
+needed). They are required if you want to use the IOMMU, but I don't
+know what their meaning is if the IOMMU is not enabled.
 
-> I checked out v6.11.5, applied tegra_defconfig and booted this kernel
-> with tegra124-nyan-big-fhd.dts from mainline, using CrOS bootloader.
->=20
-> The kernel came up and userspace got to the login prompt, but then some
-> issues appeared:
-
-Okay, that's pretty good given that we haven't had testers for a few
-years now.
-
-> 1. Most importantly, the EC keyboard doesn't work, I had to use USB to
-> log in and see what's going on. Turns out, tegra_spi_set_hw_cs_timing()
-> rejects timings expressed in units other than clock cycles, while slave
-> drivers like cros_ec apparently prefer to specify us/ns.
->=20
-> Searching around, I found I'm not the first one to run into this issue,
-> not only on Nyan, not only on T124. I got around it by disabling this
-> callback altogether, because SPI core apparently has a workaround. But=20
-> maybe it's preferable to fix it properly?
-
-I'm not sure what the right way is to fix this. The values in DT are
-clearly required to be nanoseconds, so either the driver needs to learn
-about those or the core would need to convert somehow. The core doesn't
-know about what the driver supports, so it can't do a really good job.
-Maybe a good compromise would be to have the core expose a helper that
-can convert to clock cycles (the reverse is already done in
-spi_delay_to_ns()), which drivers can then use if they only support
-clock cycles.
-
-I think that'd still be preferable over relying on the core's manual
-delaying. If we can make it work, obviously.
-
-> 2. I noticed that tegra_defconfig doesn't include LPAE. Tomorrow I will
-> see if full 4GB works. Maybe LPAE could be a default on 32 bits?
-
-I think LPAE cannot be enabled by default because it would break on
-Tegra20 and Tegra30 which both don't support LPAE. Tegra114 was the
-first to feature this (I think), so we'd need an extra LPAE config
-that's applicable only for newer chips.
-
-> 3. Some more warnings about bypassed regulators and missing touchpad
-> supply (but the touchpad is enabled and works, per evtest at least).
-
-Not sure how much can be done about this. Unless you can find the
-schematics we'd probably have to do this on a best effort basis.
-
-> 4. Doesn't come out of suspend. No idea what's wrong, how to debug it?
-
-My first step when debugging suspend/resume issues is usually to pass
-no_console_suspend on the kernel command-line. That's really only useful
-for debugging consoles and it probably doesn't work well if you've only
-got the framebuffer console.
-
-Other than that it might be possible to try and validate suspend/resume
-on a more "accessible" device (such as a Jetson TK1), fix any issues
-that might have and hope that also fixes Nyan.
-
-You may also want to play around with different suspend modes. Suspend
-to memory is usually easier to make work. Anything else might require
-assistance from the bootloader/firmware side (there's often a warmboot
-binary that needs to be executed when resuming from lower, or I guess
-higher depending on how you look at it, suspend modes).
-
-> 5. USB is power-cycled on boot, which is a bit annoying as I'm booting
-> from a USB connected disk. IIRC CrOS kernel 3.10 wasn't doing it. Any
-> suggestions where to look?
-
-Is this really the power going away and coming back up? In that case it
-might be a regulator that's being temporarily disabled during boot and
-then brought back up. It could also be a USB reset, which I think is
-something that's absolutely necessary in order for the kernel to be able
-to properly enumerate the devices.
-
-If it's a regulator it might be possible to mark it as always-on.
-
-What exactly are the side-effects of the power-cycle? Does it cause the
-USB device not to work at all, or does it stall the boot, or perhaps
-even break it (I assume not since you mentioned you can get to a login
-prompt).
-
-Let me know if you make any progress, or have any questions that I can
-help with. I have limited options since most of the devices from that
-era that I used to have access to have stopped working (or accumulated
-lots of dust at this point), but I'm happy to help if I can.
+There's also different cases: the IOMMU can be disabled altogether, in
+which case no page tables and such exist for any device and no
+translation should happen whatsoever. But there's also the case where an
+IOMMU is enabled, but certain devices shouldn't attach to them. I should
+make it very clear that both of these are not recommended setups and I
+don't know if they'll work. And they are mostly untested. I've been
+meaning, but haven't found the time, to test some of these cases.
 
 Thierry
 
---ikchujadf2ua4vnx
+--eyf27zncx4uh4ucn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdQllwACgkQ3SOs138+
-s6FgHBAAgoKdYp/vwO3xmKrCSqZQF8wxLhEFngYjjU+IBkeWjzEDrf3mPy6GsTPS
-WidwVv7N2tk25JDHyQylvg50JLKx0uDXEDIsOg2+wDqbUIs0dNDg0DGZlblBzVnI
-X/cpvMfDc55XmNwkYd/ncQ21++JkKMHzkuY+VAFzq1b1PV062XuFdh1Ki6fV2cBr
-6GTcI/z3D2e3Oc0/xfp63y6qadsuvgg4mHzeRBcbqbp9Ltb0H/7Zr5L3TjHcBcPP
-b84djYpdzLONrbriLx6u/+ZQNmX8BFF+1CYLZfTnhXm53jo7CYE7SYcd9yy7qkf0
-bhXyKZdUamxZuPvuflXmnLh3A8vdANnOiJ9YnyH2mKsQ2nKIx8CwmDP6WakGDzVC
-aBqH8tRRJ/FgkFZ3PrPaXCY4mOB77xqXZdP1Gepo+Ql7s/NlnEThb/hKfu3wr7y1
-ZKqfjHStnDfANHRSpZn2UuOdIMl1Othio4jXol5dZd9OPoupFSNVFV2eiKK3MKDi
-7w0baIvuqomNfhwjk14izVhsEIvVEmnHSmsDqhFR8KnaRw2wYej1JDJrDbX3WAOw
-uXn6tijz/EpvSIWEUx8wYHPsZ/sh51t28KY04wu/flWYuRTyCDgCp4Sz2P8WDg8x
-ATQbPWQIfsRZ9EXJOwBK0rgr90S4ZsuPY+9bVb5RDNWn27Ph8QA=
-=BdTO
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdQmiMACgkQ3SOs138+
+s6E9NBAAg1IQLMIDjLwoG2qSLXuu9qrgbn1s1FcJGJYi0aJ5A40jrzC2BMsmUQw+
+rjMgze/1lUPdJ+p3uYQtKVkIGqNihbfjhPeY/f06tNey05/yb52eL6SXKWRKiQUQ
+ndr0fNRwdLg2wx09qWHHpo05jBic5iKvW0RtVBOdNSZ2HYHAE/hXWxOyUbYlI8wg
+1qtbxERJ8Tz0EivZjui3U0DqiPJwIjZ/qlcf97UNVxIqYJGvFdBdAt0mcSlb2029
+tASjFveIuFi0d5VgRDNzBn6iYmK5GrXtiM1IbUPPuKkasFHHSu8NQrFJBBqWZaeQ
+1YQr1Um3c4ZeTPVH52KXXdGIr/SfA1W/Ybp1B7JImuTkysUTQFcNQGiCGU8BwV7k
+TNpCsJTUL9b+L+Rd0cjlieG7O9OUnvA4ikJaZqtc5qZVJVPbxctCe+p+UfG3uBfV
+SgGXmBFiyYXisQJB5SpRjXgY12Tzrgy3v234c/zGZ9WjUqOAEl49O+VUvJWnXjIq
+bI94Uh8+VY3PkEdvFk2W6eZ/Eolp+FM1LwBfQeOgraUHDKI8Plf5EHsXwhpF0tH9
+HgZ0S6zdhYMi2AWoVNM0kJLPHFLrTlL4q6ighq4Pdn3jaxjbhaFMnkiQ3/r9IPiW
+CZHmKP4gSmGVmLCBKbPOahWDtQaBVoM2GM9ZtraOG524LGqIXys=
+=zKRe
 -----END PGP SIGNATURE-----
 
---ikchujadf2ua4vnx--
+--eyf27zncx4uh4ucn--
