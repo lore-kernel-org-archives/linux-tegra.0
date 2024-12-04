@@ -1,167 +1,138 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E881F7077;
-	Wed,  4 Dec 2024 14:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED311F7594;
+	Wed,  4 Dec 2024 14:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733321171; cv=none; b=suX+ueN52brdIbJ2iuTQW1VNPLl5hVB6n1zncWEO+1c1RXh3w7VM9mukDVGUhzrRMW2y39+SmV4mJITHpwFqOy2t91Hwd1bijxCj9qzRm8SqvXVR32dfUHj9VFVC96sjcdeZDDutJgdEiYJIaMopUGUZbmlQXPFa1ukqxl8AJ3A=
+	t=1733321408; cv=none; b=oStbf8LP91tX7nUcFloeOc+RE5gx035Z1j4BvWqH6kHul9kHn7coxqkvgXhAEwbSdBFvnDGblnl/NqvEwQaqx00yieHC+U1tLMyQS2oC0lz6NunX2HG8tq5u2FpWkg/8xqPHSxLZFLTJf+G2KocJv3gs1z4hITqnwN3A9k9D6CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733321171; c=relaxed/simple;
-	bh=RWNa4SBIrFNFQj0FDse5D5NKKNuZ/AmE2EIPJPiv8x4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eOCLXGHVas7/dn8munlnUSqO2DFIFm+TFXKqSwL1rXbHHPIERE6Qge14Wcl+XfZ2BdFXysMTYkpvkUjrg3gPoCaht6+1FTmawwdJvy0F/TNcglqz2z+L/Yc1P8dDULqNkjrFtBPDe/WSO5YCFNSalQ+K1wIG1cUNaYusHnkEpZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A6871063;
-	Wed,  4 Dec 2024 06:06:35 -0800 (PST)
-Received: from [10.57.91.76] (unknown [10.57.91.76])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B03393F71E;
-	Wed,  4 Dec 2024 06:06:03 -0800 (PST)
-Message-ID: <df3a6a9d-4b53-4338-9bc5-c4eea48b8a40@arm.com>
-Date: Wed, 4 Dec 2024 14:06:00 +0000
+	s=arc-20240116; t=1733321408; c=relaxed/simple;
+	bh=uxvU4fSRyWue5vxc3QNX7F/+NrrOhVfNfqhWAGT2lK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/JcVs9gVAklyrtNiyA76Rz7L40cfgRnsdoC+Q0UcX9TAmts1fH9/c2lCOeAMYK3hsx724OEXrBz/5qi/lmBjBx2zayiq6aDrwWCo+08hcpc5DtksnxiwM6IRr9Czjmt27LSMTVPrGI5UzEgGcBXfJY3BmIBYNQVzOlR7MH3lWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SwuYM/XL; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwuYM/XL"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so3019560f8f.1;
+        Wed, 04 Dec 2024 06:10:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733321405; x=1733926205; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mrFMLc/jdh5p8JybRnIahA1b8Q2rxGK6wJh2KFAKrwU=;
+        b=SwuYM/XLZJIZU0rHEYclS7RcaRbdK2lv2ECAWsRjPpLUeEnHfhlLeEgy2eosfIxr8i
+         JVM8ssUdobf8t8wk05U1hNQOxIByn3fnBVY5pRQCkX1+qKzOfVf+2ib3YAxzJPE4xSbX
+         7PkDnuaKF8RdAxsiLFg5MaD8lEaDcaMky8G5n6MOdcrHdiyy9Wx8JcMSyGR14kuyHGbi
+         ilXQA47vgWK0Q+f+Yn+8MWKxghRMZeTM2LcAJcuiOsEFUR6MviraK5ba4F2EzTAjDsRy
+         Lgwmz2PGJqZ9VuJZei9CL2smz89Jp7TocGYjHXQc1h3Vu7G2lGB6DFfE0YZXOvlygC+9
+         9EiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733321405; x=1733926205;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mrFMLc/jdh5p8JybRnIahA1b8Q2rxGK6wJh2KFAKrwU=;
+        b=Ryvnq7nuk9tVsKpfkESgJXQIoyWf0hIcS44oZ4VTatCG5EM5VC63R9Ny86xcUewhzs
+         N8P5QNSuOznngRWszdEyOGGbKavMJrkm7gvfXGutGXj1RFcW4tOH5Xzi/6JopC0jS8/6
+         GdCIADmUsSc0ckn0wy+nczBPnW2cgOT84iQyoCla2bzXi8Wgfm/vLOiDn/+LJZSuUNM1
+         GvFwO3DgHnPsJBFgBO+64yMJpLCICbJkYEcxrdhhO2Pd4NRshkMT5fVzj8O4hbDSpoVs
+         6SqckPdoIuj+C5me9wm17kQxTINw9hS68ok6z8obKJIGGbt3IM19XrLQMF7OW7tE5Ex1
+         m/fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ7bYWGnUKSgLVHVLVt7tPAhdV7RofeSwxkK9l5hE+9gCw2QNGLwKuDRSXSbfff1J+hAgaDdmq@vger.kernel.org, AJvYcCUomkoiWO9W0e+/XnOXHuffHTFJO4RzFMz9S9VaCoPlD7oTjSrMaS9XYFaP+Ac3b/7OX9bSWsluji/Z3Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4O3KTA0RMXNTNWZnnIwg+cR0eFKX1FBNrQrQ08EwrA2zKXR3O
+	80UIxL2XT3GmNDA5Y1Bluund7psEJMqDoXgMZFVx603e3f9VeXDa
+X-Gm-Gg: ASbGncvYP7GBOBYyNWD5k3Fj18gHmeiYVnukrAQgAKvrHr0/Ym0cNgHa4jNiHMLLJ4J
+	nS5/73YVTrGq9Zq8fB/eN+23mptzlNFDAOTNBdmOo1dBEF25/rSvqHEkCj2mtrrS6UlS4TimB7O
+	f5IzJJxZS0AIFHM30paiY9Lv1tebXhlMDKEdczGVIRsfty+gu2LQ7Ktxb8vhxnDEu9r7VjyM5v+
+	mSfebURS6wFj1moOP1xLPJ1ObSJwn12v31tTyIVv8q3J8IfEOX1GgVOi+3j5dxwR85otRBr9Cuv
+	v0MvKQ/FgthYSsQG64oTBCIR5LXRwkc592Ho
+X-Google-Smtp-Source: AGHT+IG17qKjHP7hajsb1NqDKGf26pPgtY+u2y2Irx0Mpfq+Bk5d1g+9CG/Zi2mBLwUCzK6vQKtkSA==
+X-Received: by 2002:a5d:598c:0:b0:385:ea2b:12cc with SMTP id ffacd0b85a97d-385fd3e779bmr6188036f8f.13.1733321404995;
+        Wed, 04 Dec 2024 06:10:04 -0800 (PST)
+Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d527257dsm26885385e9.1.2024.12.04.06.10.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2024 06:10:04 -0800 (PST)
+Date: Wed, 4 Dec 2024 15:10:02 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Gax-c <zichenxie0106@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, mperttunen@nvidia.com, 
+	jonathanh@nvidia.com, kraxel@redhat.com, gurchetansingh@chromium.org, 
+	olvaffe@gmail.com, matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	mst@redhat.com, airlied@redhat.com, dri-devel@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org, virtualization@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH] drm: cast calculation to __u64 to fix potential integer
+ overflow
+Message-ID: <xlmfl2rhjgczu6oycgogchqi2gc65w7s3qy33yxzsrf6mbri3q@7onulkroaa7z>
+References: <20241203160159.8129-1-zichenxie0106@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap for
- non-paged SKB data
-To: Thierry Reding <thierry.reding@gmail.com>, Furong Xu <0x1207@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
- netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
- Suraj Jaiswal <quic_jsuraj@quicinc.com>, Thierry Reding
- <treding@nvidia.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Will Deacon <will@kernel.org>
-References: <20241021061023.2162701-1-0x1207@gmail.com>
- <d8112193-0386-4e14-b516-37c2d838171a@nvidia.com>
- <20241128144501.0000619b@gmail.com> <20241202163309.05603e96@kernel.org>
- <20241203100331.00007580@gmail.com> <20241202183425.4021d14c@kernel.org>
- <20241203111637.000023fe@gmail.com>
- <klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="magv3qwbnz55o6h7"
+Content-Disposition: inline
+In-Reply-To: <20241203160159.8129-1-zichenxie0106@gmail.com>
 
-On 2024-12-04 1:57 pm, Thierry Reding wrote:
-> On Tue, Dec 03, 2024 at 11:16:37AM +0800, Furong Xu wrote:
->> On Mon, 2 Dec 2024 18:34:25 -0800, Jakub Kicinski <kuba@kernel.org> wrote:
->>
->>> On Tue, 3 Dec 2024 10:03:31 +0800 Furong Xu wrote:
->>>> I requested Jon to provide more info about "Tx DMA map failed" in previous
->>>> reply, and he does not respond yet.
->>>
->>> What does it mean to provide "more info" about a print statement from
->>> the driver? Is there a Kconfig which he needs to set to get more info?
->>> Perhaps you should provide a debug patch he can apply on his tree, that
->>> will print info about (1) which buffer mapping failed (head or frags);
->>> (2) what the physical address was of the buffer that couldn't be mapped.
->>
->> A debug patch to print info about buffer makes no sense here.
->> Both Tegra186 Jetson TX2(tegra186-p2771-0000) and Tegra194 Jetson AGX Xavier
->> (tegra194-p2972-0000) enable IOMMU/SMMU for stmmac in its device-tree node,
->> buffer info should be investigated with detailed IOMMU/SMMU debug info from
->> drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c together.
->>
->> I am not an expert in IOMMU, so I cannot help more.
->>
->> Without the help from Jon, our only choice is revert as you said.
-> 
-> I was able to reproduce this locally and I get this splat:
-> 
-> --- >8 ---
-> [  228.179234] WARNING: CPU: 0 PID: 0 at drivers/iommu/io-pgtable-arm.c:346 __arm_lpae_map+0x388/0x4e4
-> [  228.188300] Modules linked in: snd_soc_tegra210_mixer snd_soc_tegra210_admaif snd_soc_tegra_pcm snd_soc_tegra186_asrc snd_soc_tegra210_ope snd_soc_tegra210_adx snd_soc_tegra210_mvc snd_soc_tegra210_dmic snd_soc_tegra186_dspk snd_soc_tegra210_sfc snd_soc_tegra210_amx snd_soc_tegra210_i2s tegra_drm drm_dp_aux_bus cec drm_display_helper drm_client_lib tegra210_adma snd_soc_tegra210_ahub drm_kms_helper snd_hda_codec_hdmi snd_hda_tegra snd_soc_tegra_audio_graph_card at24 snd_hda_codec ina3221 snd_soc_audio_graph_card snd_soc_simple_card_utils tegra_bpmp_thermal tegra_xudc snd_hda_core tegra_aconnect host1x fuse drm backlight ipv6
-> [  228.243750] CPU: 0 UID: 0 PID: 0 Comm: swapper/0 Tainted: G S                 6.13.0-rc1-next-20241203 #30
-> [  228.253412] Tainted: [S]=CPU_OUT_OF_SPEC
-> [  228.257336] Hardware name: nvidia NVIDIA P2771-0000-500/NVIDIA P2771-0000-500, BIOS 2025.01-rc3-00040-g36352ae2e68e-dirty 01/01/2025
-> [  228.269239] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [  228.276205] pc : __arm_lpae_map+0x388/0x4e4
-> [  228.280398] lr : __arm_lpae_map+0x120/0x4e4
-> [  228.284587] sp : ffff8000800037f0
-> [  228.287901] x29: ffff800080003800 x28: 0000000000000002 x27: 0000000000000001
-> [  228.295050] x26: 0000000000000001 x25: 0000000111580000 x24: 0000000000001000
-> [  228.302197] x23: 000000ffffc72000 x22: 0000000000000ec0 x21: 0000000000000003
-> [  228.309342] x20: 0000000000000001 x19: ffff00008574b000 x18: 0000000000000001
-> [  228.316486] x17: 0000000000000000 x16: 0000000000000001 x15: ffff800080003ad0
-> [  228.323631] x14: ffff00008574d000 x13: 0000000000000000 x12: 0000000000000001
-> [  228.330775] x11: 0000000000000001 x10: 0000000000000001 x9 : 0000000000001000
-> [  228.337921] x8 : ffff00008674c390 x7 : ffff00008674c000 x6 : 0000000000000003
-> [  228.345066] x5 : 0000000000000003 x4 : 0000000000000001 x3 : 0000000000000002
-> [  228.352209] x2 : 0000000000000001 x1 : 0000000000000000 x0 : ffff00008574b000
-> [  228.359356] Call trace:
-> [  228.361807]  __arm_lpae_map+0x388/0x4e4 (P)
-> [  228.366002]  __arm_lpae_map+0x120/0x4e4 (L)
-> [  228.370198]  __arm_lpae_map+0x120/0x4e4
-> [  228.374042]  __arm_lpae_map+0x120/0x4e4
-> [  228.377886]  __arm_lpae_map+0x120/0x4e4
-> [  228.381730]  arm_lpae_map_pages+0x108/0x250
-> [  228.385922]  arm_smmu_map_pages+0x40/0x120
-> [  228.390029]  __iommu_map+0xfc/0x1bc
-> [  228.393525]  iommu_map+0x38/0xc0
-> [  228.396759]  __iommu_dma_map+0xb4/0x1a4
-> [  228.400604]  iommu_dma_map_page+0x14c/0x27c
-> [  228.404795]  dma_map_page_attrs+0x1fc/0x280
-> [  228.408987]  stmmac_tso_xmit+0x2d0/0xbac
-> [  228.412920]  stmmac_xmit+0x230/0xd14
-> [  228.416505]  dev_hard_start_xmit+0x94/0x11c
-> [  228.420697]  sch_direct_xmit+0x8c/0x380
-> [  228.424540]  __qdisc_run+0x11c/0x66c
-> [  228.428121]  net_tx_action+0x168/0x228
-> [  228.431875]  handle_softirqs+0x100/0x244
-> [  228.435809]  __do_softirq+0x14/0x20
-> [  228.439303]  ____do_softirq+0x10/0x20
-> [  228.442972]  call_on_irq_stack+0x24/0x64
-> [  228.446903]  do_softirq_own_stack+0x1c/0x40
-> [  228.451091]  __irq_exit_rcu+0xd4/0x10c
-> [  228.454847]  irq_exit_rcu+0x10/0x1c
-> [  228.458343]  el1_interrupt+0x38/0x68
-> [  228.461927]  el1h_64_irq_handler+0x18/0x24
-> [  228.466032]  el1h_64_irq+0x6c/0x70
-> [  228.469438]  default_idle_call+0x28/0x58 (P)
-> [  228.473718]  default_idle_call+0x24/0x58 (L)
-> [  228.477998]  do_idle+0x1fc/0x260
-> [  228.481234]  cpu_startup_entry+0x34/0x3c
-> [  228.485163]  rest_init+0xdc/0xe0
-> [  228.488401]  console_on_rootfs+0x0/0x6c
-> [  228.492250]  __primary_switched+0x88/0x90
-> [  228.496270] ---[ end trace 0000000000000000 ]---
-> [  228.500950] dwc-eth-dwmac 2490000.ethernet: Tx dma map failed
-> --- >8 ---
-> 
-> This looks to be slightly different from what Jon was seeing. Looking at
-> the WARN_ON() that triggers this, it seems like for some reason the page
-> is getting mapped twice.
-> 
-> Not exactly sure why that would be happening, so adding Robin and Will,
-> maybe they can shed some light on this from the ARM SMMU side.
-> 
-> Robin, Will, any idea who could be the culprit here? Is this a map/unmap
-> imbalance or something else entirely?
 
-If valid PTEs are getting left behind in the pagetable, that would 
-indicate that a previous dma_unmap_page() was called with a size smaller 
-than its original dma_map_page(). Throwing CONFIG_DMA_API_DEBUG at it 
-should hopefully shed more light.
+--magv3qwbnz55o6h7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] drm: cast calculation to __u64 to fix potential integer
+ overflow
+MIME-Version: 1.0
 
-Cheers,
-Robin.
+On Tue, Dec 03, 2024 at 10:02:00AM -0600, Gax-c wrote:
+> From: Zichen Xie <zichenxie0106@gmail.com>
+>=20
+> Like commit b0b0d811eac6 ("drm/mediatek: Fix coverity issue with
+> unintentional integer overflow"), directly multiply pitch and
+> height may lead to integer overflow. Add a cast to avoid it.
+>=20
+> Fixes: 6d1782919dc9 ("drm/cma: Introduce drm_gem_cma_dumb_create_internal=
+()")
+> Fixes: dc5698e80cf7 ("Add virtio gpu driver.")
+> Fixes: dc6057ecb39e ("drm/tegra: gem: dumb: pitch and size are outputs")
+> Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
+> Cc: stable@vger.kernel.org
+> ---
+>  drivers/gpu/drm/drm_gem_dma_helper.c | 6 +++---
+>  drivers/gpu/drm/tegra/gem.c          | 2 +-
+>  drivers/gpu/drm/virtio/virtgpu_gem.c | 2 +-
+>  3 files changed, 5 insertions(+), 5 deletions(-)
 
-> A lot of the context isn't present in this thread anymore, but here's a
-> link to the top of the thread:
-> 
-> 	https://lore.kernel.org/netdev/d8112193-0386-4e14-b516-37c2d838171a@nvidia.com/T/
-> 
-> Thanks,
-> Thierry
+I don't think this can ever happen. All of these functions should only
+ever be called via drm_mode_create_dumb(), which already ensures that
+these won't overflow.
 
+Thierry
+
+--magv3qwbnz55o6h7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdQYrcACgkQ3SOs138+
+s6HXsxAAtQJlAEOMdgNNQBcnlKziuLGEV6eDn2I2ZMbyfdflAwfxU1IZem8HHolu
+Uf8rl4/XAETFBzeMup8SZ+DvspOCUSQY6kf8Dh+25/5NDTEf50vjBA/TXcws/ced
+6pRImbXzulFvz7kEm/fOaTXdk9w7mKnNDpFj86FUBcuz5kIQm1Qo4uhEYZRR9BSs
+C5c6m77m/4N3Iw7mkJoKW1U0jDJpfgw/iCdUpZrNh2buoKaRhe3WasizYdpXcbIn
+ImHPVPKV7MUgLrlYjdqOlxninIKhRMB9n5hcbvHD2YQcv9Y3pj1XA9YzXu3+4pir
+Sq6HLJFoHy+vmeLdTJZsMEljM25tBtkXkIUVEiWUb4BTbjJHLikCT4IYvfm9wByx
+OKCLKtdAiKyC1mh3aswnmeHb9tHBTt2Zj++nl2u/oUJyUncmBeboX7Wh+C9aCWF3
+cjT8OzvzTFX0bTLWyO9n0hwM9n84di0kuVmN8Bm7erXZcFAQyJfQpVB8lqiXokYA
+iw+IZX7DQQ8oKnxYpXy+V+gxSD19e4fed6jzgGpn7s+JYRuH1SiBSA4iaIQ8OCze
+7FPuGM5WT1d92OgNUU+jC3gjM58QHwLiEFhJgV2Oj6/sOi5fs1JY9uGKlMbxynlF
+PQm2NJU7k9lZXI2hxYRY6AmtikgF4NSYiz5zgglZvHpLoeLItpo=
+=dkp1
+-----END PGP SIGNATURE-----
+
+--magv3qwbnz55o6h7--
