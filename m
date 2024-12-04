@@ -1,110 +1,101 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2D717335C;
-	Wed,  4 Dec 2024 20:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B500B2116F4;
+	Wed,  4 Dec 2024 23:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733345106; cv=none; b=ONSASRzv0jPzA8ujTsQX0v5Luw0prqHSavaRDdYFKOH0WEI8wdHiPjtpumX0ubVVddTwCJsNtIZxXCWbYBLP4jTc4dLM1QSSuW7mg/fl0vipDAUB8qP8PXSer7tOe1NnIo4eITfRv9idYLwYBTIcR3Na5JV+BLjgjZcP9XlGBBk=
+	t=1733354886; cv=none; b=Ll/BvliHyilJbYnpT/6SaVpZfO/2lCvJFVRCdOJTOqUufCwNtFbi2RlDWN4g2Xu8EOv0Y30i/UOA4M09ratN4vdoZGiwNcKZ3LTR4IVTqoov4GqSJAH+g8c1nZhpXnvmE0fxVLQBLiNyKazmznq6KnEqzqZgYr4yPVJI/eYn4CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733345106; c=relaxed/simple;
-	bh=qDYCUgO0lkwc13ngDqszwebpZusgvywdV09ZqWeIUAs=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=mFg6yg9JN3Jp06wqnBCU7jc8rfrhVsMVIcysG9fkSmBHkpSSX5SKHcTcs4LLG+3MUFjsG04nk7KJYq54oxR+38SaBozwIVvqy4a5YL0RHHCqQGaiOxzN7svyYk0yTQ1qb/JebZVKZgrAwU0yu+JWBxtzD/lFKV62YAeZlDOD3hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VO5hUTuU; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1733354886; c=relaxed/simple;
+	bh=Eui2HQ4Hgc+MEWR+/Z9ZyS66EVROKvhofo2EgPXu/LY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WDQRoyBtJTyooZZ3ZRIlyCGTx3HeIEtnDmEOX8ZCHohllGNri6SPXaln+ows08ymcVa2/KvJc366oFgpGp+EE7j0yuEMQvCPkKopY+znrD4BwM75mj9CcE4oTo3OH3v6e277uXUS+XtrnOYBfabUagEcTUE4Y+0hhF4AGgWr/Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S9Xl0Waz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VO5hUTuU"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53df7f6a133so167462e87.3;
-        Wed, 04 Dec 2024 12:45:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733345102; x=1733949902; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:subject:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wP2rc24gyYST1aBIofps8XKlz8dO6SqCcv+ThwnHd5Y=;
-        b=VO5hUTuU8x6xNr6Bw/O0cuPEsa9EqWKew4lYLCn6frFfG7QhQUW/kVS+XopMQS9F9F
-         1AeIK16HtI3zpO6RLs1lgOg6w6fje3ISU0M65dE9ANnJsHACUXYac9fCmTKhpJPQJwe9
-         FIQwhn3UJFlWF9bHc3xG0w1IDaUFOhKm+B9fPTfbYA/KfTgz5cxhgqgCRB1RxSwUfciz
-         6Bj09nl+OR0j91dh1/0MwWgU+RNU7cKjUmt2HwMfJo2ZTxrKaOpNKU5k1hIv/lICiCMz
-         jA8MV4KpWPd3wFJXGPh4CAHzE3MGMuKBx6KAAahrm8oeWEXmYF5vnJyAE7SL8psOyf1T
-         TLHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733345102; x=1733949902;
-        h=content-transfer-encoding:mime-version:message-id:subject:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wP2rc24gyYST1aBIofps8XKlz8dO6SqCcv+ThwnHd5Y=;
-        b=JDtykGlphrD8by4/kKTKE1zKY7tSzTq1/SeYIa0XJIrEBjViy7m4OIZDAX4dv5BpHi
-         Nd/5T0He6oX1xhjVIBr+j72qz+nAHnp2VnV3m23UN6j3ey0wHhgCYpOB+jWnqaol2y5c
-         f79NN8/zJx5ia3m4IiOmjnnckhzA7FpsHfS8YJSBZ8LfziEGho74geOPBk9nUnl8PRz3
-         MLMSlCKT5TdTGOHtnw243gPd8HWgBkFzTEYuuAisiHfSvE0qaoFPmf0Xd1UjYI7Q0yEe
-         y/b3/5CTCXnZ0bqXjPcGZNjL+VxD3G3KioL4+tw036Z37RZyk9qoPGeDg8xgqvfTAqAf
-         Z7lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbZV/QFMY1efBIqR7M5feJ/Ps60Gxkdws9beOW581HOKsw+fs7a/qHYIptOHc4a97J2dXNosy+Yz5lrNM=@vger.kernel.org, AJvYcCVZr7t5XbXvmBN8bw7vs2oykfbZxtFYNXUD+hH2ZpEqXuLPadJe+ZjwztHH7Cap522E7jSjJ97JybrA@vger.kernel.org, AJvYcCX3Z/CydjjMNupJ2KWTNIlKeEHoXork+6bsGmHLZRrlwPj4Zz/lJqOjRfRhLn4dLqk546+S8IpN0+9sPWKB@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDfnF4/SMmCLlcutAPYL9J7eW8S4kByztWF4T9oCNOw6QlQK4b
-	1JK4hQJYWiV/STfsVKeQFptjSMni9RagQh99tsOeIhTDLh6B1u8Pl5UXPE8Q
-X-Gm-Gg: ASbGncsYHYtc5GxhrF6fx9R2Y8eeQ9XMjqErgfM7jAs3I7D5hikejnQmALrcHBgGBUB
-	2GWBZCmt8NhL/Q4UiFtXWEixAIgF0E2NFpgZ17gmElQ6YAUSkOqxD5SeMEU65EXm+81e5DSQQPb
-	p9GJE3k5yKHYfuzw5cktC/iHLfsU8D7F6z9e/98lzsS40ZqCtFWrm3CyElT8xArAgCv9X8rq8ys
-	pYXaFZ2YYOCKv1JXezP5kZ7T4Vy/jArI1DofHM/ICIyWKWpTM68KDdhf4QkKWKaDAI=
-X-Google-Smtp-Source: AGHT+IF0V8q4flOPZdH6tW9pvEoMHiH43l9ZLXXAql1Bn830JLmLBYCNmLB5jdJEBJNspmf4yfl8vw==
-X-Received: by 2002:a05:6512:6c9:b0:53d:e52d:3373 with SMTP id 2adb3069b0e04-53e12a2c9c4mr3276006e87.41.1733345102161;
-        Wed, 04 Dec 2024 12:45:02 -0800 (PST)
-Received: from foxbook (adqz254.neoplus.adsl.tpnet.pl. [79.185.159.254])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e1bb67353sm485964e87.244.2024.12.04.12.44.58
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Wed, 04 Dec 2024 12:45:00 -0800 (PST)
-Date: Wed, 4 Dec 2024 21:44:43 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Mark
- Hasemeyer <markhas@chromium.org>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: tegra: nyan: Maintain power to USB ports on boot
-Message-ID: <20241204214443.3d9c2224@foxbook>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9Xl0Waz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B796FC4CED2;
+	Wed,  4 Dec 2024 23:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733354886;
+	bh=Eui2HQ4Hgc+MEWR+/Z9ZyS66EVROKvhofo2EgPXu/LY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=S9Xl0WaznqnOjxeJxrLeQB9k2VBdNI6TjczRCgRv3/vnzSfwblJhGKTtC+D/ljGqN
+	 BSy+g/WFtPUytPeIi9QVuXwFZo56U8n2mGgoGc0b8KCqOLdzuSMosnkYPM7EjJM4gX
+	 r5b71bLVQFFAm4EqP9mykAwJldk/5HEoU91wDAhB6rHvqVbhwiiztLl/Ec6Tnn0yRq
+	 4WTkaMCT76v4CUmfCQCaWOMMwsEvGYLv6AD5Mj0R9HS3Mt6CXqr4pULVBPpzQgJb5a
+	 KqEHWjXEA19xkMWMfhJHEFjwch7OAJ+OwiBP4/5k7F1uMeqdP5Ya5JfP4gYg1A9iUO
+	 Neuh6TT0m7+Ig==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Saravana Kannan <saravanak@google.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	=?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	jckuo@nvidia.com,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	thierry.reding@gmail.com,
+	linux-phy@lists.infradead.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.12 09/15] phy: tegra: xusb: Set fwnode for xusb port devices
+Date: Wed,  4 Dec 2024 17:16:03 -0500
+Message-ID: <20241204221627.2247598-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241204221627.2247598-1-sashal@kernel.org>
+References: <20241204221627.2247598-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.12.1
+Content-Transfer-Encoding: 8bit
 
-USB ports are turned on by the firmware as it looks for disks to boot,
-ensure that they aren't power cycled before the xHCI driver comes up.
+From: Saravana Kannan <saravanak@google.com>
 
-This enables USB devices to be ready for use faster and reduces wear
-and risk of data loss on storage devices. A particularly annoying case
-was booting from a mechanical disk, which takes time to spin up again.
+[ Upstream commit 74ffe43bad3af3e2a786ca017c205555ba87ebad ]
 
-Vendor kernel also kept these ports powered, and by the same means.
+fwnode needs to be set for a device for fw_devlink to be able to
+track/enforce its dependencies correctly. Without this, you'll see error
+messages like this when the supplier has probed and tries to make sure
+all its fwnode consumers are linked to it using device links:
 
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180) with 1-0008
+
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Closes: https://lore.kernel.org/all/20240910130019.35081-1-jonathanh@nvidia.com/
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Suggested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Link: https://lore.kernel.org/r/20241024061347.1771063-3-saravanak@google.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/phy/tegra/xusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi b/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
-index 8125c1b..974c76f 100644
---- a/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra124-nyan.dtsi
-@@ -716,6 +716,7 @@
- 		regulator-name = "+5V_USB_HS";
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
-+		regulator-boot-on;
- 		gpio = <&gpio TEGRA_GPIO(N, 4) GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 		gpio-open-drain;
-@@ -727,6 +728,7 @@
- 		regulator-name = "+5V_USB_SS";
- 		regulator-min-microvolt = <5000000>;
- 		regulator-max-microvolt = <5000000>;
-+		regulator-boot-on;
- 		gpio = <&gpio TEGRA_GPIO(N, 5) GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 		gpio-open-drain;
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 342f5ccf611d8..d536998288acb 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -543,7 +543,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+ 
+ 	device_initialize(&port->dev);
+ 	port->dev.type = &tegra_xusb_port_type;
+-	port->dev.of_node = of_node_get(np);
++	device_set_node(&port->dev, of_fwnode_handle(of_node_get(np)));
+ 	port->dev.parent = padctl->dev;
+ 
+ 	err = dev_set_name(&port->dev, "%s-%u", name, index);
 -- 
-1.9.1
+2.43.0
 
