@@ -1,334 +1,252 @@
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2042.outbound.protection.outlook.com [40.107.220.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5241946B3;
-	Thu,  5 Dec 2024 11:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733396535; cv=fail; b=cAyaPIgqmkD6HamGyXBKRp909CbOlyq3BxIcTI94jnfIvdmVkAdqhRUcCFn6mjBNJCqY4Cx6Y9FqWKN5jBbAu82Df3xbrXB5Nr0zZgPUsSXtYp5jCk4lMRoS74aWIDvtebvMbXUF9DhE7xyIweSl7Vqusi2+cUQMIO1+/G1bpy0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733396535; c=relaxed/simple;
-	bh=W6jmULg2SaXnqVQlqLUqWIyrfMl5WPYrCgSAERfOIx0=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VuCyWjXPHKAQIQzPo4JHDH0KogCmbDqQ85cEaA0dUaIBLuW/Dh/dPUQg/SAZSmF35rcQQgXTEZMavlOXSoUiorP2m+kmaTuUfFxJTvXz8vJtr+ZtPzPyyapv/d5+YCZEM1nCyl+Fy3HnltyAVsBelWKqkwAEQmE5Hu1O8dxZOE8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gAuXO5P1; arc=fail smtp.client-ip=40.107.220.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B721B0F1F
+	for <linux-tegra@vger.kernel.org>; Thu,  5 Dec 2024 11:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733397423; cv=none; b=CB3itg8Hi30NF0elDFQP6aabGFhPsy9h5nSF5TvjLn9lsA6EaO/q/yqXPt3FyPp0c/aT6dvvS/TOquQ7sju3GxmMFTr+jOzmm/H/gUsdlYwP727kSaDns6xwkh11zDeVQCbd1nBNiphywm+1ZZojLfAoNrFaFp5e+buF6J4U/fA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733397423; c=relaxed/simple;
+	bh=vYxBTgMkY5k2/FPHRvsGno6lKPpQRWkZU5rC25n44Ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dmz0vDEb6yJvdAE2mnhSmwf/dDpobiZtAum1nnfTa6YW660uC5qvhVxn7VsCOZJVr9QDhUZPmLrbdO78kXAgRaGSr8NMEAItey7Rrj04vcJVfVbl/7CIZg0bz+QJ2t9MRBZb64SYf/ubYvLAYpgHQSbb/E5ZvZa9PxcBCcJ395k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hygfsZye; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gAuXO5P1"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W0X2qohuZywZOhZDYP+EPRDkUUpqmyNmEuH9Zadfn7hv5VsQREhCb9kR5ovmE6bVt+hgGVSGICwwKcR0CTJpbzt+FanCBwsaSO0Ukk7Uu6Qa9ONi9qV7mLznLLc2kLOTdsv0xq3obFgqKsI2nQ4tJjtn+wwKsOqbYb2VGvmEJlZdFGf+cDLd8Pbzu3l/3gU+zETIojs+isOHOIO6JUmRhslplz1vjhAe1k+vrvZrOEChboTPIUp3NGq7KYOFfHOdEuBNNiwbqfF4JqTls+GIDzpkZFt3kznrf1IJFpRZH45AJ3cNevopetNd5iPuYePTZaDBKazz4j9d2sEOXnA3Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bAbqJzjg+5Zot9AIRxBD7sFSQQZdZrnLEPbQFmMYleY=;
- b=FVBtazqnqVIdWC9neghSe08dhFaT766LTMEfdFyDRepfVnFv8F//72jwFkmhpfdUdnymWZ/BIfRfINBCAZJip3gg8W97CVL8eIIA+k4UQ2e/jA5NSRus3iS2BtOuAA79ZDda++nMW9EENY9HMRXH1JZWAq1boYlXNNS0sB0KYwYrhuEcXeiGeh4xZfpEtLOwP7a5MsfQ+toPp12qj7+Qds8kupw0m65mUU1jay9tQsHdKulGunnhZLE+aBe24WKXQlVKnqNu77NYY24LF9Xq5F9nKxEa2/fzmKs3MHAAljBAm4fCbxxAZ6InZ983Gt7m56fj0nPY2fA+xEF1p1PVNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bAbqJzjg+5Zot9AIRxBD7sFSQQZdZrnLEPbQFmMYleY=;
- b=gAuXO5P17RdK/YqvbHRUsrHbZIHkw5MuCzbA59hRIbg4CQ3yEacVZuNrSTYZe8SnQ9fXKKNSRsC1fftl0U3R0akYF5AS5sYf8jyDb/BEm/XbqWpXwy9eDyhoNDcgiBWqagd/bK6af+TQeGhVNg051NGjPK/kW2LC9/72gp78QtY9Zf4BjyVqedn4k6PQelcsOEnJ7ulMNYDSwB9w7ElxEIXm1rk5T0cnHBcryDQ8baogmkVX5WbfRt7xlbMbCQnMsR6HuvdibcrCONGXmR0WLmnVMN2Kr8e5l+jntwaTz1XCMZiYzpIHtsFTXcnTrYW7NNOlLORHrCJVIMwDGq2FzQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by CH3PR12MB7548.namprd12.prod.outlook.com (2603:10b6:610:144::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Thu, 5 Dec
- 2024 11:02:06 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%2]) with mapi id 15.20.8207.017; Thu, 5 Dec 2024
- 11:02:06 +0000
-Message-ID: <ddfe8dbf-a2ae-4aa0-ad09-fa5efcb62c12@nvidia.com>
-Date: Thu, 5 Dec 2024 11:02:00 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unbalanced DMA map/unmap for
- non-paged SKB data
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Thierry Reding <thierry.reding@gmail.com>,
- "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Robin Murphy <robin.murphy@arm.com>, Furong Xu <0x1207@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
- Suraj Jaiswal <quic_jsuraj@quicinc.com>, Thierry Reding
- <treding@nvidia.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Will Deacon <will@kernel.org>
-References: <20241202163309.05603e96@kernel.org>
- <20241203100331.00007580@gmail.com> <20241202183425.4021d14c@kernel.org>
- <20241203111637.000023fe@gmail.com>
- <klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw>
- <df3a6a9d-4b53-4338-9bc5-c4eea48b8a40@arm.com>
- <2g2lp3bkadc4wpeslmdoexpidoiqzt7vejar5xhjx5ayt3uox3@dqdyfzn6khn6>
- <Z1CFz7GpeIzkDro1@shell.armlinux.org.uk>
- <9719982a-d40c-4110-9233-def2e6cb4d74@nvidia.com>
- <Z1CVRzWcSDuPyQZe@shell.armlinux.org.uk>
- <pckuhqpx33woc7tgcv4mluhwg2clriokzb7r4vkzmr6jz3gy3p@hykwm4qtgv6f>
- <0ac66b26-9a1b-4bff-94b9-86f5597a106d@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <0ac66b26-9a1b-4bff-94b9-86f5597a106d@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P265CA0231.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:315::17) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hygfsZye"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434aa472617so5401925e9.3
+        for <linux-tegra@vger.kernel.org>; Thu, 05 Dec 2024 03:17:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733397420; x=1734002220; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vYxBTgMkY5k2/FPHRvsGno6lKPpQRWkZU5rC25n44Ik=;
+        b=hygfsZyeKJ/qij3WOCMa//1JhG4y2GwSJ0jFTS6u9pjtnTNAYghqHMZnwqhFKOZk8+
+         Qd5eInaK+pVIP6ZcMLpJpDSIhX1q6KI7+HsDn+HoXRjXYUqLCLFCrnY3h1bJGa1fpM7n
+         qVRtyOvr3N7iz62ef+YXiE6bkCLnzunJiI1L3v5oqPLpZmJx95RRwV+IQm+FVUgHR1Or
+         QTVfqN/0J/H6gzsnTyMyyvi13h5+sQb/LQcNoAUG7uKtCAXsHB6Mygp4ahGvMquEMbQt
+         y3xNAR4qcG1WQRuF5jfvcbyUVk+TPH59USEwei/lxB5hhbENNoSOn4jxpitWvVW/wrYO
+         asjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733397420; x=1734002220;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vYxBTgMkY5k2/FPHRvsGno6lKPpQRWkZU5rC25n44Ik=;
+        b=rsPK8VrxywB9ADTy+UBy2uCDy/S9YcuqFt1kNzBP9qUfwBouMscmikPMzNTHwnKxYA
+         V4LvussKHzttQoBWiea5p4O/CiZjE6f/u1VXU7Y71NK/16p93ohGMuBCwtYbUf3NzFaG
+         c2FF2+CykZNc2FT6Q+Dqk5rDRmYqQfKMoIwRoDraD5QqeY4jTZuD42Bp4+c3YuJQ5rEi
+         3aAMQaE5R+grESi1xgZqyZzcEVhCuI203Mguuhh8EZSKXRiqXXNrXZXeB28pg5PmidIQ
+         HbXr9i6U8wyZXgXf6Zi3Bt/cizawjptzBeIGh4V0uQgsgA03po4pkU46mjHJ2EGGTcua
+         L39w==
+X-Gm-Message-State: AOJu0YxTif8LO68i9G5tAVRPbgkCCodZMPNiUm02PThn0SP+T7nPJCu7
+	H84Y6NDsYiEIzCjUJW9w8yDAI4e4Faq32kwV0Y4hVol5tGNTS++TEwmjUg==
+X-Gm-Gg: ASbGnctafnZhuauyKxIuc/cPdNytVl+pBplbfqoKesnAkgg/5mDG+EqSwet6ZEwowyO
+	ajMjpqWju5a7Z5796qE+Mwz9aqomSoUinIM5UvzC1y9LGegowzRdue6zlU1fDVlStJUDLrzNCxL
+	XW8YSEGLVmRExNLmr9MfqCQLePTtHrarU5Rd3ZdcceV3x0l7UsTtCFceO3L9/7LYelJ6K3DGEmb
+	teooE1cPur1SNm98ddh58AxedW7czHPc8FY2F5SXJX8EobH6D4KYDtL5z/AowldCr2kB/YenhdK
+	V5E7pJD52EPZVfLdHU3b1SCgd8EjLa7Oom6M
+X-Google-Smtp-Source: AGHT+IEk0jrjtVCtY9dODLWkceFhAJ85ujdC9YYju0Dt7vxqz7ntrpnREsWUU5CrT0T5RdeQP281GQ==
+X-Received: by 2002:a05:600c:470b:b0:431:5ce4:bcf0 with SMTP id 5b1f17b1804b1-434d09cced6mr88387455e9.15.1733397419361;
+        Thu, 05 Dec 2024 03:16:59 -0800 (PST)
+Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da118cdasm20113425e9.36.2024.12.05.03.16.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 03:16:58 -0800 (PST)
+Date: Thu, 5 Dec 2024 12:16:57 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: =?utf-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>
+Cc: linux-tegra@vger.kernel.org
+Subject: Re: Reviving Nyan support
+Message-ID: <jzv7tpqtnuolbz7u2jp6jo567h3rhu6srcekt2rkqwak5tmkzy@3uardv4t6ail>
+References: <20241108014603.219a0cee@foxbook>
+ <daqxykyvmd445jtai6oyyz6p623bdhw77ml45463xrupwogptg@ub7mo5utl3sv>
+ <20241204203045.487da970@foxbook>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CH3PR12MB7548:EE_
-X-MS-Office365-Filtering-Correlation-Id: 723c9aa9-10df-434f-a66f-08dd151c41df
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TWMrZTVYem1nbnZIZUwxNjJUTFZFM2JMR2VKQXFBbTdhVlp4aWJWNzBTQ1hN?=
- =?utf-8?B?YWc1TTFjOGQyd25ZMXVOZ1FIRktMOFJNSzJib2Zna1ZhUEdxdTdkMFJLcEZn?=
- =?utf-8?B?ZTVOU3Jhb0VjcVY3anppZmN2VFh2L3BVNUwzNEpQTE5GbTZhZjFsR0xQS2xT?=
- =?utf-8?B?M08zUzcvNktzbDZYZ2k2c253ZzdONm44Wlcwc1BzcytHcTRScUdKeWM2TE5w?=
- =?utf-8?B?MUdGQklMU29XcG54dzlOa1JSMFVxT095QVp2SU15cVdyOVlwMTFvRVZ1dW5T?=
- =?utf-8?B?RTNYeGlFcDRLQW5CdEdGajNkQjFqZGszaWovdzhyUCtZVno5SnlVT25SeXNj?=
- =?utf-8?B?ekU0d0w5SXVtbXpiNyt0K2V6WVRseXlYU0Z1ZlhPU0d1dGpDZkdnbjUxL1B2?=
- =?utf-8?B?bURxWFk2MlRrdE1pMXF1S3QzSUlmbHRHK29qNFFJNllJL1k4SENuNmlzWHlF?=
- =?utf-8?B?ODhYVW05dGJEOUNURXpIZUliRC84cFF6L0ozRGNWbFBXZ3B1NlRmc09SVE1y?=
- =?utf-8?B?MDVDUEpUS2xlU21ZWHdKOW96K1gvU01JUmxTWnpMalc5T2tSMW9zdEdQQmxI?=
- =?utf-8?B?bllnZGpuVEhVcXRFK3RvY3FYWkx2cFJpd0hwZGNCdUJSY29oRklqZWRvaDZV?=
- =?utf-8?B?RGpBcklQbktpVjRFeDZOajE0STdXY2tHWEt0VzFuM3dFemZ2SC9zcUUvZnha?=
- =?utf-8?B?TEVlY3YzbWxJeU5EbnpnbXcvUjQxcm54Y2Z0YWEyNjVSajNlRmtzTTFSUnY5?=
- =?utf-8?B?UjlHYUwyd0pXckNQYVBkMUtMTHpJcTRZRHJzTHM3dXM0dklJVWo2eUNEam9V?=
- =?utf-8?B?M0w0MGVoMDdldVlycUkvZGkxaXV2aUc4akJiZXM0a0ViL21ZVEdwWExyUjk0?=
- =?utf-8?B?QnBHWE9WdE15R0ZaNk9yZ3g3QTlGdEczM1ErT29qWXQ2cTRMRmY5cVc2NmNQ?=
- =?utf-8?B?NjBsRGl2WFhWekxCLzJEdFRVTGtiMHNYcWNBR1FPNlJ3bGpvU05rUjc4R2Iw?=
- =?utf-8?B?Vmd4SDJ2UHZyNTVIeFRnU3piQkpZS1k4WUpNVDdiZ29hYTByUlRaNEVwQzI3?=
- =?utf-8?B?YmtxZVNlekZ0dkdTT0JZcFJUV1FvRGVJRWZpQzlUMXN3TEFGbU5heXdzclQ0?=
- =?utf-8?B?aHF2MXJzTEZQRENIK3hKeUhNcGtYV0RNWVJyUlRNWFRSVzJPNENOUWhmREIv?=
- =?utf-8?B?Z1BqUkkrbEtKQktjZDJvOHBSM25NbGJWbUthUHRJUjE3c3NOTW1WOVdtVUpS?=
- =?utf-8?B?Ny82dlV6TUNxUEhxVERKMElsR3owT0E1dWtYU2o0cUk0SFE4emlTbWxINmlQ?=
- =?utf-8?B?RWY3a0c3cDdQUnFiclVMbDBZcjJHMDY1MzZaK0p5UGlaaURCU1YxL3ViNW81?=
- =?utf-8?B?WjVTSkVlanFtMy9xUjcxck5BQzMzY3VJK3p2QmFyYm5pcWhBNU41d09YM1Z6?=
- =?utf-8?B?aDlWSy82eGRjQ0hoU3NEZlhJaGg0d1RObnoxUk92RmN5ckhFYkM1a3IvM2ho?=
- =?utf-8?B?THJIcXg1Z3MybmVFaURhMDlaQ2QwcytONXMyNnlseEtqcERBMTdmTHJNVVhJ?=
- =?utf-8?B?ZVpiOTJrNzFGcWhSV1hZaVZIdHBBZVlsa2Z5WWIzWUNJd0FEZmVFWmFnekJi?=
- =?utf-8?B?c3ZZMHhjMi80VVFPSFN2cmI2OHE3VER1OGl4R0xkMmhpc21RRzY3RkhvUWlJ?=
- =?utf-8?B?NEhISFVaQTRlRlpBMUJuRVMvTjRsTTZGSmYxTHRqeGpzakpJaXRqaVJucUFv?=
- =?utf-8?B?U3FOa2t5eDUvWUxZczNGSTF2UnlWVlQzb2tpNkVIYkNQVmxOcVp3YTcxWWdi?=
- =?utf-8?B?SWhleHpHWlBFajNxRUl6UT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RW9raVpHSWlzUU1OTGcydXFBc1d5SHpkMXhBZFcxNjQ2YXJ6L1JhNy9rZXlM?=
- =?utf-8?B?QWV6VUZCc21zMWNtcmplVHYxUUFJNXkxZmUzdFNGV0MzZ2cvemdtZW1TWk5D?=
- =?utf-8?B?ekM3bEQ0U1liQmM4S0tFUmVHaXlYc2VyMVAzTDA3aFIxZ0xMMy9MQ2hRMlhl?=
- =?utf-8?B?dUhnUmpjQWlGL0NZQzRxeU5LckI2ckFBcTdLVVFlR2tYY2FrNG4yWEd1Q2lt?=
- =?utf-8?B?K0xoTzlEYUxwMDdDbmw1M2FFZGp2aldxRG9VbWxGU3NvUGFaV3BWeDdnZUZL?=
- =?utf-8?B?TW0wNzA5TVRIMlRxM1J2d05kNEFDaW5FYkQ2dHd4V04rQ0lpa0RWZVJVUnJI?=
- =?utf-8?B?TzRrY2tYRmh1YWR5WVdKQ0J4cmI3NndnZDVRR2ZBT1dWVmdUZDN2RlhoVzVk?=
- =?utf-8?B?RUhEd2E5QWlSLzVUMmR3S05ZV1lTUE4ySjVHWWE5RFhCdkRKbWZlYjJTaFdo?=
- =?utf-8?B?b3hVei80VWs4NG1jTERBTHJvMFh3bVV6NE1oUXBRV1pOR1B0V0tqcTgycGdJ?=
- =?utf-8?B?RlBPU3hEcjdMTm84WWtMRTBXak80Vm9EbitoZC96U1BlZHJLUzVRRGhMV1Zk?=
- =?utf-8?B?SzhUN1ZjYW1QaS95UWo3dFRnOU45U3JZTHBhWStpb3drNWFvQnAyNWV5TG92?=
- =?utf-8?B?eWUydVBnYVRqNE9wOC9HZ1F2MEVpVVJrVGdPUFNuSEtFc0s0U3lYN2dRTitr?=
- =?utf-8?B?WGh2MGwwMW1kQWJLV08zMHRTaENHTSsveXo1OVpIY1VsbWFXQmlCLzFrckNV?=
- =?utf-8?B?dnpISFZTNFV2WHJQYW9DZ1Bob2lLaTREREJPS3dVK0FaZEs2bVFaRmd3RnNT?=
- =?utf-8?B?Vm9iY3NJOFBVMGpaTElJY1ZGVHRzWEVPUWlHVEFsVzJBMi9WSXpLREFZV3hr?=
- =?utf-8?B?QU1MRC9DUk5ROHdzSU9TOFhYc0MzeTdySVlhZmRoRHl4RHFkNXM0a2FmM2l5?=
- =?utf-8?B?UDk3b2dpOHpsejBVbE9uS3NUS2pmdWtxbHJ5ZDR1Lzc5bWo3NnIwWS9MMGdp?=
- =?utf-8?B?ZkV4djlkdzRnb2FSVXBseWJrTWFQUW54VXlORTJsTzFVMG84cVVPTU5kd1k4?=
- =?utf-8?B?RDBSTVFXUlV1bUVHM1FHczdFcUJrYy9uQ2tPeS9aSVA1cUM4clhZTUtWRUl0?=
- =?utf-8?B?MklhY3JuZU9RR1E3eXNtVHpWSndaaFpjczh3RzBWN2djdmltdk5EbHhmcFVi?=
- =?utf-8?B?eEZkT01SMTRWdlU3Wjk5RUlHL3gzNFdBWkFWNXlWMENJWlQ3UkN3MmdLZG5D?=
- =?utf-8?B?WlVic0N3SldXU1BBS2RVclRmNll3OGhnT3k1b092Mm8wZVdBeWJQSUY5MU9X?=
- =?utf-8?B?akxaaGN4MjhhQW84YTNjYldiZ0JCdjhzVE8reEQyNTZZS1VCUUNFY3lYUzFx?=
- =?utf-8?B?OE90Y1AzS1lXT3Iva0dXU0FOSDBiOTdTeWQ0WndNU2xmazFCRVhhM2d4SXBw?=
- =?utf-8?B?M1NHSG41VjdOcXdmTEF6c0Jrb09DZ3J2VVhmWnJ5cFpXSFg0MWNaT25yQlhn?=
- =?utf-8?B?ZnpBRDJ0aVdIODcrOVlRTGNkUjRaK1hkZlFGQmM5cWljekFPcVJldWtzNWpy?=
- =?utf-8?B?VHlGQzNscjJvLzlqYlczNU5iZnM3MnRiMUttWUtsZFNFYmV5bVdIWHNpdWRZ?=
- =?utf-8?B?Ym5FZ0FxQjZoUnMrMXVpOEV6SlBtc1luWUtLdm11cWVOQ0N6bXVwZmlESGxq?=
- =?utf-8?B?VU5KRVQ3cXhJck1VaU14Ukl5UEE0QkNXK0wyOUxyYW1WVU5ZbU0wY29zNzN6?=
- =?utf-8?B?ZU5peDU4RmFjOGpzZmc1cDZ5SVBUcHl3VUZvZTJLRE93K3JNL3NtamlETmxT?=
- =?utf-8?B?T2J4R3hLUEM1QWViRTB5QnVTMzRsZHk5N21PcWlaMGpSa1p3ek9RdmtrS3pm?=
- =?utf-8?B?SnZPM1RqOSs4UkRaRmlPT0doRVVyRzh2NUVnTks2NEhIWWVzS3FCdlJIRXVw?=
- =?utf-8?B?am8vNldXVkYrV01wZmNtT1UycURxVmVhOW9oMUdNdEpxUktZa002VzdXa1c1?=
- =?utf-8?B?UWx2VVZhZXhob0doOGpaWDJ3MGo4cFA5Qzc0QUd3eElLRDBlMXFSL2xVMmta?=
- =?utf-8?B?dTREVlh6M2Z1OHk2RG9Ld3ljOTVPbWYyQ3VjN0sxbkhHMmF5bXhsL25xRnMv?=
- =?utf-8?Q?jAxL09XFdy3jR/n/zrgN9tqPK?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 723c9aa9-10df-434f-a66f-08dd151c41df
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Dec 2024 11:02:06.7360
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HpopsH9HHWtutlWdo4Kg3aAhUfk2Hfi58ICOq3r5Nxsw88rIaxo0DDD9XxJM7hCD4ffLWXk2WlbyEzNuN7bNlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7548
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rzlri6yqgo2fbkz2"
+Content-Disposition: inline
+In-Reply-To: <20241204203045.487da970@foxbook>
 
 
+--rzlri6yqgo2fbkz2
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: Reviving Nyan support
+MIME-Version: 1.0
 
-On 05/12/2024 10:57, Jon Hunter wrote:
-> 
-> On 04/12/2024 18:18, Thierry Reding wrote:
->> On Wed, Dec 04, 2024 at 05:45:43PM +0000, Russell King (Oracle) wrote:
->>> On Wed, Dec 04, 2024 at 05:02:19PM +0000, Jon Hunter wrote:
->>>> Hi Russell,
->>>>
->>>> On 04/12/2024 16:39, Russell King (Oracle) wrote:
->>>>> On Wed, Dec 04, 2024 at 04:58:34PM +0100, Thierry Reding wrote:
->>>>>> This doesn't match the location from earlier, but at least there's
->>>>>> something afoot here that needs fixing. I suppose this could 
->>>>>> simply be
->>>>>> hiding any subsequent errors, so once this is fixed we might see 
->>>>>> other
->>>>>> similar issues.
->>>>>
->>>>> Well, having a quick look at this, the first thing which stands out 
->>>>> is:
->>>>>
->>>>> In stmmac_tx_clean(), we have:
->>>>>
->>>>>                   if (likely(tx_q->tx_skbuff_dma[entry].buf &&
->>>>>                              tx_q->tx_skbuff_dma[entry].buf_type != 
->>>>> STMMAC_TXBUF_T
->>>>> _XDP_TX)) {
->>>>>                           if (tx_q->tx_skbuff_dma[entry].map_as_page)
->>>>>                                   dma_unmap_page(priv->device,
->>>>>                                                  tx_q- 
->>>>> >tx_skbuff_dma[entry].buf,
->>>>>                                                  tx_q- 
->>>>> >tx_skbuff_dma[entry].len,
->>>>>                                                  DMA_TO_DEVICE);
->>>>>                           else
->>>>>                                   dma_unmap_single(priv->device,
->>>>>                                                    tx_q- 
->>>>> >tx_skbuff_dma[entry].buf,
->>>>>                                                    tx_q- 
->>>>> >tx_skbuff_dma[entry].len,
->>>>>                                                    DMA_TO_DEVICE);
->>>>>                           tx_q->tx_skbuff_dma[entry].buf = 0;
->>>>>                           tx_q->tx_skbuff_dma[entry].len = 0;
->>>>>                           tx_q->tx_skbuff_dma[entry].map_as_page = 
->>>>> false;
->>>>>                   }
->>>>>
->>>>> So, tx_skbuff_dma[entry].buf is expected to point appropriately to the
->>>>> DMA region.
->>>>>
->>>>> Now if we look at stmmac_tso_xmit():
->>>>>
->>>>>           des = dma_map_single(priv->device, skb->data, 
->>>>> skb_headlen(skb),
->>>>>                                DMA_TO_DEVICE);
->>>>>           if (dma_mapping_error(priv->device, des))
->>>>>                   goto dma_map_err;
->>>>>
->>>>>           if (priv->dma_cap.addr64 <= 32) {
->>>>> ...
->>>>>           } else {
->>>>> ...
->>>>>                   des += proto_hdr_len;
->>>>> ...
->>>>>     }
->>>>>
->>>>>           tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = des;
->>>>>           tx_q->tx_skbuff_dma[tx_q->cur_tx].len = skb_headlen(skb);
->>>>>           tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
->>>>>           tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = 
->>>>> STMMAC_TXBUF_T_SKB;
->>>>>
->>>>> This will result in stmmac_tx_clean() calling dma_unmap_single() using
->>>>> "des" and "skb_headlen(skb)" as the buffer start and length.
->>>>>
->>>>> One of the requirements of the DMA mapping API is that the DMA handle
->>>>> returned by the map operation will be passed into the unmap function.
->>>>> Not something that was offset. The length will also be the same.
->>>>>
->>>>> We can clearly see above that there is a case where the DMA handle has
->>>>> been offset by proto_hdr_len, and when this is so, the value that is
->>>>> passed into the unmap operation no longer matches this requirement.
->>>>>
->>>>> So, a question to the reporter - what is the value of
->>>>> priv->dma_cap.addr64 in your failing case? You should see the value
->>>>> in the "Using %d/%d bits DMA host/device width" kernel message.
->>>>
->>>> It is ...
->>>>
->>>>   dwc-eth-dwmac 2490000.ethernet: Using 40/40 bits DMA host/device 
->>>> width
->>>
->>> So yes, "des" is being offset, which will upset the unmap operation.
->>> Please try the following patch, thanks:
->>>
->>> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/ 
->>> drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->>> index 9b262cdad60b..c81ea8cdfe6e 100644
->>> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->>> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->>> @@ -4192,8 +4192,8 @@ static netdev_tx_t stmmac_tso_xmit(struct 
->>> sk_buff *skb, struct net_device *dev)
->>>       struct stmmac_txq_stats *txq_stats;
->>>       struct stmmac_tx_queue *tx_q;
->>>       u32 pay_len, mss, queue;
->>> +    dma_addr_t tso_des, des;
->>>       u8 proto_hdr_len, hdr;
->>> -    dma_addr_t des;
->>>       bool set_ic;
->>>       int i;
->>> @@ -4289,14 +4289,15 @@ static netdev_tx_t stmmac_tso_xmit(struct 
->>> sk_buff *skb, struct net_device *dev)
->>>           /* If needed take extra descriptors to fill the remaining 
->>> payload */
->>>           tmp_pay_len = pay_len - TSO_MAX_BUFF_SIZE;
->>> +        tso_des = des;
->>>       } else {
->>>           stmmac_set_desc_addr(priv, first, des);
->>>           tmp_pay_len = pay_len;
->>> -        des += proto_hdr_len;
->>> +        tso_des = des + proto_hdr_len;
->>>           pay_len = 0;
->>>       }
->>> -    stmmac_tso_allocator(priv, des, tmp_pay_len, (nfrags == 0), queue);
->>> +    stmmac_tso_allocator(priv, tso_des, tmp_pay_len, (nfrags == 0), 
->>> queue);
->>>       /* In case two or more DMA transmit descriptors are allocated 
->>> for this
->>>        * non-paged SKB data, the DMA buffer address should be saved to
->>
->> I see, that makes sense. Looks like this has been broken for a few years
->> (since commit 34c15202896d ("net: stmmac: Fix the problem of tso_xmit"))
->> and Furong's patch ended up exposing it.
->>
->> Anyway, this seems to fix it for me. I can usually trigger the issue
->> within one or two iperf runs, with your patch I haven't seen it break
->> after a dozen or so runs.
->>
->> It may be good to have Jon's test results as well, but looks good so
->> far.
-> 
-> 
-> I have been running tests on my side and so far so good too. I have not 
-> seen any more mapping failure cases.
-> 
-> Russell, if you are planning to send a fix for this, please add my ...
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+On Wed, Dec 04, 2024 at 08:30:45PM +0100, Micha=C5=82 Pecio wrote:
+> Hi,
+>=20
+> > > The kernel came up and userspace got to the login prompt, but then
+> > > some issues appeared: =20
+> >=20
+> > Okay, that's pretty good given that we haven't had testers for a few
+> > years now.
+>=20
+> I had some hopes because I saw that NVIDIA still tests new kernel
+> releases on T124 Jetson, although I don't know how much is tested.
+> The kernel seems to be in pretty good shape, save for those issues.
+>=20
+> I found that graphics are a bigger problem: X is dog slow, and I get
+> black glxgears window and some 150fps, which doesn't look great.
+> Do you know if it's supposed to be like that or if it's a regression
+> or some screwup on my side? I have enabled Nouveau in the kernel and
+> installed X11 Nouveau driver and xorg.log shows that it loads.
 
-Nevermind I see Furong already sent a fix.
+That's kind of expected. At one point this was working mostly reliably
+but given that there's been very limited testing, it's not a surprise
+that this is somewhat defunct.
 
-Jon
+One thing to know, though, is that the Nouveau X11 driver won't do you
+any good. The way that it works on Tegra is that the GPU is used only to
+render to offscreen surfaces and the Tegra DRM/KMS driver will then scan
+those buffers out to your display (via X's modesetting driver). In order
+for this to work you need to enable the Nouveau and Tegra drivers in
+Mesa and then they should be able to work together if you've got an up-
+to-date X server. You might also need a bit of luck.
 
--- 
-nvpublic
+> Are there any other options besides Nouveau? Perhaps some newer L4T
+> release which would work with mainline host1x driver and Kepler? I
+> suppose anything that works on Jetson will work on Nyan too.
 
+Unfortunately L4T doesn't work with any of this. Both the display and
+GPU drivers are completely different things in L4T vs. upstream Linux. I
+suppose you could try and port those drivers to a more recent kernel,
+but I can't recommend it.
+
+> Currently this machine runs Ubuntu 14.04 L4T and 3.10 CrOS kernel,
+> so practically anything would be an improvement :)
+
+The plan was to get upstream mostly to feature parity with L4T so that
+it could serve as a long-term option for people after official software
+support was dropped. We managed to do a bunch of things, but there are
+certain aspects that aren't quite as polished as I wanted. Hardware
+accelerated multimedia is among those. You can probably get some of it
+working using the V4L2 Tegra VDE driver. GPU acceleration is another,
+somewhat unfinished bit. Again, an up-to-date Mesa and X server should
+get you there most of the way, but it's not been tested for a while, so
+may have regressed.
+
+> >> SPI
+> >
+> > I'm not sure what the right way is to fix this. The values in DT are
+> > clearly required to be nanoseconds, so either the driver needs to
+> > learn about those or the core would need to convert somehow. The core
+> > doesn't know about what the driver supports, so it can't do a really
+> > good job. Maybe a good compromise would be to have the core expose a
+> > helper that can convert to clock cycles (the reverse is already done
+> > in spi_delay_to_ns()), which drivers can then use if they only support
+> > clock cycles.
+>=20
+> I see that a few other drivers which bother to implement this callback
+> convert ns to clocks, so options would be to copy-paste their code or
+> put that stuff in SPI core. I have never looked at SPI before...
+
+Yeah, that sounds about right.
+
+> > I think LPAE cannot be enabled by default because it would break on
+> > Tegra20 and Tegra30 which both don't support LPAE.
+>=20
+> Fair enough, it's not a huge deal.
+
+Yeah, it's a bit unfortunate, but you'll probably want some custom
+kernel image anyway for this particular use-case. Things are much more
+standardized on 64-bit ARM nowadays, but 32-bit ARM had some wild west,
+shoot-from-the-hip vibes. =3D)
+
+> > > 3. Some more warnings about bypassed regulators and missing touchpad
+> > > supply (but the touchpad is enabled and works, per evtest at
+> > > least). =20
+> >=20
+> > Not sure how much can be done about this. Unless you can find the
+> > schematics we'd probably have to do this on a best effort basis.
+>=20
+> I actually have the schematic from some shady laptop repair website.
+> IIRC the touchpad runs from some major 3.3V rail which is always on,
+> so I didn't bother fixing this yet.
+
+Yeah, if it's an always-on regulator you can usually ignore those
+warnings. It's always good to describe them and that'll get rid of the
+warnings, but it shouldn't be necessary.
+
+> I also learned something new, that platform drivers can ask for their
+> probe to be deferred, which was responsible for some other warnings.
+> At this point I'm not sure if anything serious remains, but regulators
+> are another subsystem I know practically nothing about.
+
+What kinds of warning were related to deferred probe? Normally the
+related messages are debug level, so unless you've enabled those (which
+is probably a good idea for what you're doing) you shouldn't be seeing
+those.
+
+> > My first step when debugging suspend/resume issues is usually to pass
+> > no_console_suspend on the kernel command-line. That's really only
+> > useful for debugging consoles and it probably doesn't work well if
+> > you've only got the framebuffer console.
+>=20
+> I made zero progress on this, and frankly didn't even try. Serial ports
+> are only accessible by soldering to the board. I suppose I could try a
+> USB dongle, but it will go dark as soon as xhci is suspended.
+
+You could always try to see if you can prevent XHCI from being
+suspended. Not sure if there's a standard way to do it, but worst case
+you could try commenting out the code that does it, see if that gets you
+anywhere. It'll probably still break at some point when interrupts get
+disabled and such. Or it may break earlier since the USB subsystem is
+probably not designed to stay up until that late.
+
+Again, it might be better to check with a developer friendly device what
+the status is with suspend/resume on Tegra124 in general. I think the
+tests that we run periodically would've flagged any generic suspend and
+resume issue, so it might be something specific to Nyan (possibly
+display?). Have you tried poking the device in different ways after the
+resume? Does it react at all? Does a network ping perhaps work? I could
+also be that the system wake isn't properly hooked up or something. One
+thing worth trying would be to use the RTC to wake the system up from
+suspend. I think that's what we use in the daily testing. rtcwake is the
+tool that you want to look into for that.
+
+> > > 5. USB is power-cycled on boot, which is a bit annoying as I'm
+> > > booting from a USB connected disk. IIRC CrOS kernel 3.10 wasn't
+> > > doing it. Any suggestions where to look? =20
+> >=20
+> > Is this really the power going away and coming back up? In that case
+> > it might be a regulator that's being temporarily disabled during boot
+> > and then brought back up.
+>=20
+> Yep, this exactly. I have fixed it already.
+
+Excellent!
+
+Thierry
+
+--rzlri6yqgo2fbkz2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdRi6YACgkQ3SOs138+
+s6EcUg//RatfIdKaLAmw0q7ViJucp/iowvMvRaBw7o5rnfDfP2kfx1B8R+bLtSi5
+hWd0tJS8A6ZEUESsrAHviXCBOLun2/53VT38ascolkhsYxwSAjmgZSWPdtuuE+C6
+m04/hiqSCN2nVhiLsUcpBHcLYecOk1R38N/EMRnDZzD9mueaC9rsHXmyhVI4MWmb
+JE94vvu0EnCy49Tr3ztvUuiGvQ6LQL7jvDJvWlpLsh01zis97XDZSyNXK56zE65r
+gGsbw1+8f40l+IZ6VM1K1yb69jdsDch2++Tur4ODoEFVTvb8CdYz2+5rtHgM9sLy
+cztladd/8mCXYQ1rCMerK42h4bf0UThza8Ytr8hQrS3TLA2InEhX2Zj1dk2aPPcl
+eCUdpMDbY8bkuUFr8odTdlgzcSaSM/hF6nKLDqoaIc0cB/8por6twM8mPp7o/Xki
+cv5jC9PX141xfYNXrH/KTC5o8I8L71Wvrz5EHeKD8Y+TaU0T86kQjX/mWFe60dzz
+9dxsH75Ng429RROzuhwdG0aUqZp4XUPhtkaTPuBFtACgzSImh+9zJqpTFI1a0iv8
+/y+n34dNJL85x1B8iYrhO1XEAEMeXFKDDKyATPWEZRS7jY587zaghwKYBkM8ca2r
++ADjaU0OeRG1FD3Y/YP0ZFHCuG/z+lEomQmfp1fNBiEzojqF1EM=
+=oNzq
+-----END PGP SIGNATURE-----
+
+--rzlri6yqgo2fbkz2--
