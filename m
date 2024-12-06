@@ -1,69 +1,69 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE3A3D68
-	for <linux-tegra@vger.kernel.org>; Fri,  6 Dec 2024 00:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693142F5E
+	for <linux-tegra@vger.kernel.org>; Fri,  6 Dec 2024 00:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733443509; cv=none; b=uIZyQL+o6LSMRX/69KgDOOv9wiUrOPEfb2Ocs0hgepnkGJDnmQJ16mI497ulj1lyXZaqOd0PcMFmXd46CbenG9HAAbymEx3wexlJDd08lw6bc/LyOqgoDZ1e5Oug5ufqcJuY3oMoikCt+eWqDvskv5hN8qiBaTXvOOgv5j24eDg=
+	t=1733443526; cv=none; b=szbx/lTKU55nPPb17v5KXaAIYwGn/TT4qGDzCOoGxboTvVRIhwLVXFtXduqLnZlfJnNJHahvVFpMWgkA5Tq6qnT/L6+6oUkd0XiMA0pMkbMO+n8Stj5FQwEEILpT4Hl/OuOibjCMWfihB5UUDMQoWZzDHeUK5qW5TufyslsoMik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733443509; c=relaxed/simple;
-	bh=BwcwkBmpq9qoP9KdrIaMsk9b+cc/VqljtaRzLZNq7Q4=;
+	s=arc-20240116; t=1733443526; c=relaxed/simple;
+	bh=/6/GJCZORmmW5zwY2wzRU1IME7Ylq02ZiwRlWEjx+oM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PwV7VWZjMsq7Vs37ErK3CQ8WK5cy0wWIVF2q9m47bMBDGjSJYxa384xESCQth+hWVKDoRnLDkcdDuKKEXbuINN7MmrdwXHMtEBdLS4qR4D//voQ0V1JCPOgFL3b6I5Z/fPXhcyByNh4EraPsidcyGCCJBmYbY53d2HsDz3so1yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FR8GrlTK; arc=none smtp.client-ip=209.85.167.42
+	 To:Cc:Content-Type; b=fNY/Q3E4BCZQEZ4/2Ss1cKjGzxNQpq0XabASGCAheFJggHJ9ZzKZlMhAIf9Ox2ToCqHTcA5fAg+ivWQR3O2/W8ojmRupzKtBAPbNKx+dcebT/Ildk7yHuoB6PQJTxf2ilQQQXJUZU0TaODDh3yqm8QZU0S39TCYtyd+sUEBZ8lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vnlldfJL; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FR8GrlTK"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53e1c3dfbb0so1426352e87.3
-        for <linux-tegra@vger.kernel.org>; Thu, 05 Dec 2024 16:05:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vnlldfJL"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffa8df8850so16802891fa.3
+        for <linux-tegra@vger.kernel.org>; Thu, 05 Dec 2024 16:05:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733443506; x=1734048306; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733443522; x=1734048322; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4mffP7SIqpVqHwqmdEnMFI8Mhd4D6LAYDdX9afu8rwI=;
-        b=FR8GrlTKu6Ridt8xIB0szGVtwvS5bYx1wG48fVYFMsI5R28opspFztAyyOkq6rM0Au
-         2acEnLqbuT+SIbK15earmzPoShhHOSw3/bM+hWS2a1/zs6js430MM/On5ebsVpwSRozP
-         +PU3uOpjK4BWfcMvI1daLUktuGLpgAvLFCh6xDOko/wQFom4bvFUAzKJCPF+Vtt+RErm
-         QCkOp8h6mBmPGBfZIDSjcRpIjX1AvZqNiQrULo9GQlb+/HrwtUy1WyrpOcwmWoWlKVRJ
-         HhONafIuMLkLcAHitTAhwzA+E03ZB+O17jYI98NPbgMrQ6BRHmFeIGTdYmHYTRpy9Oo1
-         02Ow==
+        bh=H5RtrZRI/1Z/nEZqE6L75MMu2O/LqxV0qtQGfh6HrqA=;
+        b=vnlldfJLNpMAzSunC/nn5xcxNyO7xgSd+dqRH23GhQKM/ZZKR52nrZ/ewsHUvXEK0G
+         sy7h5LjCsBzfGxu8noWQ+Y99bOhmoxTrNjnm5JHkp4v3weMWDdt6h8nmMsUXWnF4QHRb
+         qg3zr760Yha008EQUiWiv3TZS+1Wzb4Fb5KLvWIj/uRa7ovrf7B2H2iiBeG8KxvDtilg
+         e3E2O8TZrCaLuD7ZJJf3bNV07zCEn/n71ULH7LYkS5SO6aAijRGIOlt6MikeiETdYgP+
+         0wBIFcLYuQoBP3OkBsIZ9lVzxQrD7Klu6Rc/3n3Hq1IAujabkJZmCvndKPGlSoCATDxk
+         uFDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733443506; x=1734048306;
+        d=1e100.net; s=20230601; t=1733443522; x=1734048322;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4mffP7SIqpVqHwqmdEnMFI8Mhd4D6LAYDdX9afu8rwI=;
-        b=FykZmxWEBlBhnmTKmSns55uzmc9ux1QUrHWVS/wpMMUnIarneVmeAEmVohlQsT5EFW
-         xkcKcv7yk2TNsfLkOjm7+XggK5F0EOV4gJo1b1wr51BRatP1JJEFJTEeIyBiniKuLsNg
-         ikWKqssja9NIcJEBqsi0JGJYWKtXI0VQC03X9HcgKwUcjvrotwsPS6jIHSXsinihVPYN
-         KnEkFmrKHj3nLtE3Jdv36wkWEQqV9mYFTsaoKPdBMvCTM9dHUajuudCo3MrWv6+0PfkA
-         WPfyBkwUE+Afsck9LVKHZEO0Sfc9NWJ9Xkfr7WKms4HElkPFGIEpLu95pvTXotqgA/4s
-         gTog==
-X-Forwarded-Encrypted: i=1; AJvYcCWOpDSfmRXXE26J5Qako/dASMgHvkEegSIr/ayCifkPji1CDfOLn3iCJPSwv1lZKzk1MgTIYuAk+pLqZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy3VT7qKHbkzOj7vmHouy/lFCFuRPov4p1TsW8kxnUO9Dm5unw
-	IFIg/onKKguzxyDxzndif1l/qEocUR/NYE6/y/09+Dn3XFtIjaOsUlfgS4SI1cz7jCuZiRXl0pS
-	GbLI0b5YErlg3ZdS0dY9VVVBy1SuLwyFvHY1K
-X-Gm-Gg: ASbGncsmhqmxwXrYCYJ+LqwOQdfS+qTrT/+WOCh63PcoYqY7UYX9TK+qW6XaI6AY4x7
-	iAqb3CaPhOY37nNPSyo3Wq4HPrrfB9w==
-X-Google-Smtp-Source: AGHT+IEphwAKG+akjlfTDJM0cFC6ySOTXKmmpvLObu98Xq16kqT8AeY48zqrBxP7D7gn8VnXD7qHI6i/RHkPxXyECew=
-X-Received: by 2002:a05:6512:1cb:b0:53e:3103:b967 with SMTP id
- 2adb3069b0e04-53e3103ba29mr28490e87.35.1733443505497; Thu, 05 Dec 2024
- 16:05:05 -0800 (PST)
+        bh=H5RtrZRI/1Z/nEZqE6L75MMu2O/LqxV0qtQGfh6HrqA=;
+        b=NQ7tVTpTfV56m1rdkFIJttHqQPo+HydmZPoGkviuQOJAbShmfJU5rnj2X72aTEVoa/
+         SUxRIX5UmEA3R+UMciMewkmmCrepzI2Iql4ReTgWH0E76Bmv3r6KtLRP52gW7OQ2qdvk
+         08xt/1cgS8K6YHfaWrWWav3uUqBp9QB2YksLpD70AmCHYiNfW1Mps28DLt3UUbQ5nsl8
+         89ICfNiq5eVmtvMqRmKyZIiWIhp1Rc6nnjcCFr/TJrrKpjs4vFkHmz8yyReEkVkDzeWf
+         21leHYaUq7Gblt+T+fvxGTbi5pCYWpEdw5QsqMgk0Unxf/9PVIfRWtHnAAKRZsmACTlQ
+         A0LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHuy3tNFE6SSAB9GH0G4haBR3kKBf/sVanfEckLi7XQLhgQka24l5MMLFW0idob2t+f3QtO0TkKb4B6Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsAiJHpDJLmBkWbh0L9M1hHTfiKXkY4Mc3Wlit9fqzgsclULJc
+	wyk4Gv072ErUIiTEFsZz3e4HATKn5FA+c+42WdwlFf9WOO4t+xSXsDUK9PRNZ6kFvUwB0/utXLw
+	wRFknVm/YSLvf0lWWkk9aG/Ck85CbHq+meas/
+X-Gm-Gg: ASbGncsdvjlwW83RnHaTENR35aEkd2VCYnUXtZuJMMalc4bgU9kcTpuDSgiZr8dFUBz
+	jnTMDfRBrmn+vSy4O1cG0jkO52TgbFA==
+X-Google-Smtp-Source: AGHT+IFWOhrrumLva06Fo2cZYMRAb2M405YCAEMmk5ILPh80o6m8HUDKsIjwa29hzHHjQIZ46RNwRiWk4LAYzA6au4A=
+X-Received: by 2002:a05:6512:68e:b0:53e:1f14:f6be with SMTP id
+ 2adb3069b0e04-53e2c2e8a9cmr367734e87.38.1733443522467; Thu, 05 Dec 2024
+ 16:05:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204221925.2248843-1-sashal@kernel.org> <20241204221925.2248843-3-sashal@kernel.org>
-In-Reply-To: <20241204221925.2248843-3-sashal@kernel.org>
+References: <20241204221859.2248634-1-sashal@kernel.org> <20241204221859.2248634-5-sashal@kernel.org>
+In-Reply-To: <20241204221859.2248634-5-sashal@kernel.org>
 From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 5 Dec 2024 16:04:29 -0800
-Message-ID: <CAGETcx82VRmbU-UJ3iQxipCWncJPB_N9rO702K5AoVitpLNo9g@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.15 3/5] phy: tegra: xusb: Set fwnode for xusb
+Date: Thu, 5 Dec 2024 16:04:44 -0800
+Message-ID: <CAGETcx_tdhb80X0-sWSBTskY8dMsRr0oV08-=Z_j_yPocWf7cg@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 6.1 5/8] phy: tegra: xusb: Set fwnode for xusb
  port devices
 To: Sasha Levin <sashal@kernel.org>
 Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
@@ -119,7 +119,7 @@ Is there a pressing need for this in 4.19?
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >
 > diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> index bf7706bf101a6..9a204f78f55db 100644
+> index dc22b1dd2c8ba..aa050aea2df58 100644
 > --- a/drivers/phy/tegra/xusb.c
 > +++ b/drivers/phy/tegra/xusb.c
 > @@ -537,7 +537,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_por=
