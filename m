@@ -1,155 +1,99 @@
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2067.outbound.protection.outlook.com [40.107.101.67])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B701762171;
-	Fri,  6 Dec 2024 10:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733482355; cv=fail; b=Ct2XN9yJksv7kRHDw4F+xmW/DuQtnj6UMG1EFGheGL9TycnVkLtq6aIbnR9WBiTFem3KBrXAwLXlYKPAFsfHjzM92l1D9j47I9AeeAUd85aTOpvFPGdOoKDL7uWBMkgUYMAbIogEubqwfjWRciHNZhFZgx6MqAnZmYQQvWH/0qY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733482355; c=relaxed/simple;
-	bh=gqf5WRpOch7G2NNtN1umSVwEVpI+e/coqPtlrsTLv3g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QF05YiroI/JR9HmKx+fm73N0LsuxNDmDm/Z4dwK5BgIX1xMN7zahI1ZRz0xZ7VP7+VFTbHQW/ptK0oMZb9Y4wIn52nFeklGVHhAcjU8ymd+e+dI025cdaIhUh6Mp0SgLImZJrGYMM1xTID3ZgeRwuy7E5GQC2zLt46HWvwyMoJ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=E9UPiiBT; arc=fail smtp.client-ip=40.107.101.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8AA1FC11F
+	for <linux-tegra@vger.kernel.org>; Fri,  6 Dec 2024 13:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733490087; cv=none; b=nYzGh+SQnvdmm0/u5UDJ0wXjsKSH2betEBylu9E/PfJ2aAhDGRg16An+dp9AHUGirXZJS7B0R1gmKGBgthFY4bkuQdrpNIdQiOabMbN9kMKNd+kZOw3r9xGl2SxQ+wL/1b0uFPPALJJoC41y0NCcepjmlZuA3ESpPCpp0WyUEAI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733490087; c=relaxed/simple;
+	bh=D8bEeGyz4QZP8CsYCUeuDe0nvmoNecFz+IoyrmadWVY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y5T4Qo+a93NqwiTnAT39/+v8WOEKNzE8DEsppqdEH4ZAUFSo2NM1c36Sp1/4uwXEWfa5qRSV6hQPlXfyvvPpB/U19TF7C3BToheh0hYOjzaDFarTIdzH9gHdM4jWuwDepdNf+Xxb+Cfm9z4hiuaZWMFDLZOpCpVa2R/tP0oik+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A7jWFS5K; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="E9UPiiBT"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BsKsCqzZvtEbAh9OGhbgjdNpkk/zqfH3unPydgPMLGghJMkbJjOaR6qCDxAINMy57cD2gbMPi08XoJwqDKzseEnbnjOhs3JqWlHOLPG9cqy0gQjLMkc94oHrVg/NQXw0/GsppgbaGN0ZnowL3lifQWc9lyUiSolA2Ys+Pmhf7m3DVvG1aoat9ge0jjUHGgsCccmHnIHehzXAWfoGM8nn7yNITABhB5OOlfj+FO/zr25pHf9RoZRfjjLePuUbhMHVUnusG4Vz4RUjOEzZxh5jIkaxmjKu3bqzk6tiUbhq+8jA0RGT3votgAaT3zwJMkbwYvPkEoQkjtxgcfmHnUabPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dcIsrmyVBp4abxJJOZ8AMnGlKQFA0tKdsFF/e30f/XY=;
- b=ujX3yLjejkyFYFIstsH4cgvzpcM2UsU1wDfo/GdYiIFoh7uIJ5IQXie09Ce6cxgZ4MY/BE1fdGfdGIl3LdqChcXXQR+pp0wtaCvCVLVtBxvGKT2EBZ+ZM1QRtKkEsqVZAsIBtYhUrJhlSdEQgOTLNPeCJ7907b1/+v1aQIvMX0C0x+ZyeCbrqrkELAljhwKhpo0jObJwJKZK7WLQaD3btmRgC/Hh3QfAOzPOGp2FFqxAUO7o8nJqzLxv0SnoEFyAMwZdoz3f678SdbiXORU+vB+G5HqzLEJZpunAF/Lb+olZUrrgk+PJ5MrNmDFa/NY++Tnc09OAUZsazbNcFxPvQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dcIsrmyVBp4abxJJOZ8AMnGlKQFA0tKdsFF/e30f/XY=;
- b=E9UPiiBT7mm4LtoCUiyIr9xdNpQdsNPY02k4Nw4jCBnkVcd+EbARMtoiz6/5cGInMx3lf5d8bKEBQRpUdVX6vR/O4Djug0FUyeBqIjoWZDw6mzLtnDyci87kQwaKlO33ao7Z4ELSzwg5StHIjFM/6h2sHQYC9fPoJd52nVweZoFOQcrFub6sEY/q96Li1HCAAXf+qld5SuZkRgRcpJY53KQScP6NDSvJjH4nj8ETfwo/cjmt1hSLC5NNiUEruUuFdGjK0Mpx5JYH3El2pFtzf+SP3EBNGoPfJtDAjbW2dgPnsKfgd72nJG7kR4UftVxxSd8yRe2UZ8zUCX3hkaxnUg==
-Received: from BYAPR07CA0075.namprd07.prod.outlook.com (2603:10b6:a03:12b::16)
- by DM4PR12MB6447.namprd12.prod.outlook.com (2603:10b6:8:bf::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.16; Fri, 6 Dec
- 2024 10:52:27 +0000
-Received: from SJ1PEPF00002325.namprd03.prod.outlook.com
- (2603:10b6:a03:12b:cafe::c4) by BYAPR07CA0075.outlook.office365.com
- (2603:10b6:a03:12b::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.10 via Frontend Transport; Fri,
- 6 Dec 2024 10:52:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF00002325.mail.protection.outlook.com (10.167.242.88) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8230.7 via Frontend Transport; Fri, 6 Dec 2024 10:52:26 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 6 Dec 2024
- 02:52:12 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 6 Dec 2024
- 02:52:11 -0800
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 6 Dec 2024 02:52:09 -0800
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <thierry.reding@gmail.com>,
-	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH] arm64: tegra: Fix DMA ID for SPI2
-Date: Fri, 6 Dec 2024 16:22:00 +0530
-Message-ID: <20241206105201.53596-1-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.43.2
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A7jWFS5K"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733490084;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=Hw9dbolckMZ4ZjGpjFqfab8MUH1pQKI6bTRKNfiZCIg=;
+	b=A7jWFS5Klmrbhg+5lSuj6tc7/ft1MnZMvS/VSndBEs/xmNhww3jexRjyqds0sDQPuQBiiV
+	k/H53kgdPk+9mLLPVzgs2kKS14ZfaVwshceTD4xFP19y48j5G67Htj4HAKCI8CsYo/qADt
+	DhrAB3xV+UVFuSXLpxLLi40SqHkmYMM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-53-ewdG_bfvM0KR18XlPDJv2g-1; Fri,
+ 06 Dec 2024 08:01:20 -0500
+X-MC-Unique: ewdG_bfvM0KR18XlPDJv2g-1
+X-Mimecast-MFC-AGG-ID: ewdG_bfvM0KR18XlPDJv2g
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 21F9A1955D4B;
+	Fri,  6 Dec 2024 13:01:18 +0000 (UTC)
+Received: from localhost (unknown [10.22.64.148])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8C15519560A2;
+	Fri,  6 Dec 2024 13:01:16 +0000 (UTC)
+Date: Fri, 6 Dec 2024 10:01:14 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev
+Subject: [PATCH v2] iommu/tegra241-cmdqv: do not use smp_processor_id in
+ preemptible context
+Message-ID: <Z1L1mja3nXzsJ0Pk@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002325:EE_|DM4PR12MB6447:EE_
-X-MS-Office365-Filtering-Correlation-Id: e634a412-a41a-406c-472b-08dd15e412d0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?aAOG93+yR0Ha5q73Cy41wAsOlrU1FRCkwBoWYYKbVF/EAOIGZDjneq/J4KSP?=
- =?us-ascii?Q?ai86jQy40h/Y+G9E+xOWuZVdIYncmDmN8kq1nJ3W6KcYUXVULBZcxPuHHI3P?=
- =?us-ascii?Q?882DySzfxMTm3B9fb4wMu5eIUfn2fibLVwJyOVrLxzAF/KXt3CyPLc0Vvq4y?=
- =?us-ascii?Q?BtK+pXOEsrU+I0WMl0KTExpkpg1MlA1xzO1PN+ZgD/PSEwBMhOPBLmSZQ0Dw?=
- =?us-ascii?Q?THV55BM/Wt2kYXIZhQULPbaojlIQBHuEif2/UpBZPNvJl2hlkiBYDRjFvX6t?=
- =?us-ascii?Q?ThREYuTVleNOxDqe8CghJdBnA+C9LD1DFEFoRywD1WvVYLM5eRKYd2H8ED7I?=
- =?us-ascii?Q?XPDwgKhPBd6jBRGu7N1uuW46E+MZvZizE3hktZ7D7H7pw8JX0+f6AyMa2LnP?=
- =?us-ascii?Q?qSixBMOc97yqh4nni8wdoX//hSKmGPtMLl9n6HfbveGZ/84C+pP/gcvqTlSw?=
- =?us-ascii?Q?LAMLrdUE+XeMqvk8ChZFkLnKRqj+/9F/qtf7R594LwQ4xMeQW0VrQB0QfPzV?=
- =?us-ascii?Q?Xi9QSVZNYE1W1chDuwm3I7tmyBNgHLhIkdf6uegygbzbq0/MPTF84qdizoP1?=
- =?us-ascii?Q?fBBq1SHBnHtZCTsBIkAM4vzkUUmdk1Bckqh5lBB7zbYXkrm3/mLBtwphx6q+?=
- =?us-ascii?Q?dhEDYdvhIc8jtY7FvLc1e84vZV6hkfKNIeVW4TJlbJTxYUGPltd49Or/M8ZY?=
- =?us-ascii?Q?tTC/eW/U63f5XNp9lRwEPew40AWo+3Lc9QZae6TMjDrXgF20AuruQsSbvz/g?=
- =?us-ascii?Q?ptl77tVqVsdjmpEiCAfIDQkYzSrjUxlWasWxU8eHtKf6cLPcQ8O5VMkeZzMu?=
- =?us-ascii?Q?sZk/SWjKRnS2ZURTOGzdgd46NouE2nXL0CfLGUkZ+T5G88SY4+i7rH2I7wDq?=
- =?us-ascii?Q?KGVgBTxkwPqHHkJUMXmyON20sbO5p2s7mBAPd/SXTYTrkBfg/ivYUNVRXPpv?=
- =?us-ascii?Q?bnQqaZ7M2VQOSDEXyvk2TBlREaj8FlbcnNyBW4uull+Zjl1HPBYgh2dh0Dgr?=
- =?us-ascii?Q?oVRhHT+P//53aOOyZrcsERcSSFnkneLL/Q0mOKcu/D3LkBQ7aqi0yIzGTFAM?=
- =?us-ascii?Q?6A5ZhDjx7mnEjg4yAsIebWF6uVEvn7Z15UiacRgnIgXYEdPY+ubvBevsWxx2?=
- =?us-ascii?Q?fKl1XMb1YH3KmzzSt5l4a9E0RBynt27lp2r9Cz7p9hJwp6eQexjgCVevAAb+?=
- =?us-ascii?Q?RRH7YCCqP/Nq2x13fEyCDLV4W4DNfpQxTVFsxiwCOpTeJv0fJIskG1YPv/qV?=
- =?us-ascii?Q?l9F5t0UGClllcU6ya9OhQifcPI75uuLwIrUDHk5ZyVK6Fg8VwN11VsMqvK6/?=
- =?us-ascii?Q?dTtn4+5S4wnnv0Vew/2YJXwiyOyN5yNW/FXDuGyu6voQhqQYNop938jPmt6s?=
- =?us-ascii?Q?Jg3IZIjHMrgAL8yjvUt5/dz074dQiG2/pEQJy+5CJrIHYXR6ZsBVw5OMcQTG?=
- =?us-ascii?Q?pGzMTFU/vkV6aSjGYABa10wLNd2qJSSR?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 10:52:26.8532
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e634a412-a41a-406c-472b-08dd15e412d0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002325.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6447
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-DMA ID for SPI2 is '16'. Update the incorrect value in the devicetree.
+During boot some of the calls to tegra241_cmdqv_get_cmdq() will happen
+in preemptible context. As this function calls smp_processor_id(), if
+CONFIG_DEBUG_PREEMPT is enabled, these calls will trigger a series of
+"BUG: using smp_processor_id() in preemptible" backtraces.
 
-Fixes: bb9667d8187b ("arm64: tegra: Add SPI device tree nodes for Tegra234")
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+As tegra241_cmdqv_get_cmdq() only calls smp_processor_id() to use the
+CPU number as a factor to balance out traffic on cmdq usage, it is safe
+to use raw_smp_processor_id() here.
+
+v2: Sebastian helped identify that the problem was not exclusive to kernels
+    with PREEMPT_RT enabled. The delta between v1 and v2 is the description.
+
+Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 2 +-
+ drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-index 984c85eab41a..570331baa09e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-@@ -3900,7 +3900,7 @@ spi@c260000 {
- 			assigned-clock-parents = <&bpmp TEGRA234_CLK_PLLP_OUT0>;
- 			resets = <&bpmp TEGRA234_RESET_SPI2>;
- 			reset-names = "spi";
--			dmas = <&gpcdma 19>, <&gpcdma 19>;
-+			dmas = <&gpcdma 16>, <&gpcdma 16>;
- 			dma-names = "rx", "tx";
- 			dma-coherent;
- 			status = "disabled";
+diff --git a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+index fcd13d301fff6..3ea4369e838fe 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
++++ b/drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
+@@ -339,7 +339,7 @@ tegra241_cmdqv_get_cmdq(struct arm_smmu_device *smmu,
+ 	 * one CPU at a time can enter the process, while the others
+ 	 * will be spinning at the same lock.
+ 	 */
+-	lidx = smp_processor_id() % cmdqv->num_lvcmdqs_per_vintf;
++	lidx = raw_smp_processor_id() % cmdqv->num_lvcmdqs_per_vintf;
+ 	vcmdq = vintf->lvcmdqs[lidx];
+ 	if (!vcmdq || !READ_ONCE(vcmdq->enabled))
+ 		return NULL;
 -- 
-2.43.2
+2.47.0
 
