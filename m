@@ -1,123 +1,111 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C246B1798F;
-	Mon,  9 Dec 2024 14:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3101ACEA3
+	for <linux-tegra@vger.kernel.org>; Mon,  9 Dec 2024 14:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733753926; cv=none; b=WNWA5xaR0HHNx/6oq0ztXfBY+i6iuNB5BIrvBnzsZwHqKLrDharUNCLwrhPxKSteK0eCkY5zTN/f7Shzfdy36FdSI6U/PbMKIUfjztMCpw06gFkBJWZ/La6QlrytwWetgjeDa762KfLoLC92UKvv2q4+kOfIgi0wQH/ZYFNJxS0=
+	t=1733754017; cv=none; b=UxhbGLpqxN2bpei2CTd40K54dZnF4GK2THl2m5MSZaEj2ymYqUgpH3xNnpjzhXEMqOYWUNE1OC45e09Vij9N6QRaTt0ASDCCMbLmZJ3tBGcS4AONTDUJ4XTmgA905kI7ncXQn2kpHk08VNXkiWypN3QzEV6o9IyIRehYIlcHzHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733753926; c=relaxed/simple;
-	bh=8FsLJNnBvkyb0aie8QpxEfYPGhWI0ZQ/I6okIqIV6dc=;
+	s=arc-20240116; t=1733754017; c=relaxed/simple;
+	bh=1IfxwKOe0K+SXDwRfMDias6ZXlgFg4AGO8kVbL4Ta8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HqTxSnv/YbJ5hktPWR1PeeWADBHj2oeQQC7VQCxuvVqFRxWBjovrgLh9wEWrNefKxUr2DKrIBTymZMvZh0LRMhl8TLyCdjJy7oQHV8wp6Tk9iss91EKskAcYVdCXmcy9kSk2mGJDCvbW6si+pUnRQOazMHTa7wGqYR+ztxm6m9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czuJDqZa; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=XjIxIaz6wS+zm6jfnxhaPhYX1PVcH0hDRhhip7LojIM2MZHQeaEsKQtzkEZicQLz25UEq3JCxf7OfcdypxEGK8aQ3Ug7dLX5m/TJULAWB/zVp2wzjUNhq5iUg2BTB8fd7wbp1onTRZw4XP0BQZrYs40U3TOWu4UAMmJnA/3/uKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=WjzmEVol; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czuJDqZa"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3862df95f92so2257241f8f.2;
-        Mon, 09 Dec 2024 06:18:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="WjzmEVol"
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6d8fd060e27so17065956d6.1
+        for <linux-tegra@vger.kernel.org>; Mon, 09 Dec 2024 06:20:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733753923; x=1734358723; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1733754014; x=1734358814; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uqQ7Av76sCQ67PddSXj4+y1Hwv1xMZkPsZ7ivaLRViI=;
-        b=czuJDqZa8HdHq8zEHJi/y8mcs2rMV9ytqqtsnlCptdIC9bsKDBBXnCFalh7jzhz35y
-         OmFU+xrBQt9JwCv0ErEZBQmh9KUJZkd1DsosJpq1pJFxDd9Sqqt+2KIdLPjbVo8QW1Lb
-         +iTY4jHiskl1PiFIvWqdcEaF92v5bSAISjFKMdWhGOrbfG8jjUh6IEEGXynS2CU+tB0k
-         EJG/pv9kZYNQ9z4dxqNI3LSR7FofZ3U32bJLuqTq+pt5WJP7REuNCv4Gl5EdCmRHy3ei
-         EQKauPIRgXEpA5K6bgGVXRN4V7xT4EUXG+pMaYOAN/6Fs0Y0Wca7L+B8CvLP85ai0wu2
-         4uVA==
+        bh=nowhEyl5dI6aIIqwammoplLG7dGCizfgN3AwcDBvNB8=;
+        b=WjzmEVol2HtqNOHDzn89GOi3ABrc8rbz+u0pvZXwDkalIxZVG2aHhGtjGZ2QkNl9W3
+         sbcPg6ZbtF6lwdf9MtUkxlCY7zo2riVzwILSLyWFiQAj/zS48u8EAA70tcMIHvr+Yboi
+         KIAKjJuHxV8r5RcCNk8gHU5W8odM481TXKcM7T3CfDUdPZiabn6B+FbVap1K55xq2Ag7
+         ZOeC9iUJpzJwU7QIibAm5paWKntWlXlR6ZUQsFJzAnXKerYW20mrhmI8GSyGM1DWkOqi
+         wuvwX6nBfBoHr1Ja0aQcz4VtBHK0y4mVIfpmiG3w9lQkJUO7Fwcr8OF1+kOyTrDi+Zpw
+         9hbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733753923; x=1734358723;
+        d=1e100.net; s=20230601; t=1733754014; x=1734358814;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uqQ7Av76sCQ67PddSXj4+y1Hwv1xMZkPsZ7ivaLRViI=;
-        b=WlN22Ak7Bfn+ViCJVbC1u7/Ck5l+lMMj+Y81eHUPat55eeLa0rQOJ9MZIoHCtacdIh
-         kEKVsSSeHAta+kObUdFw3k1HwHW8n8BJ4T7OMekwMKHoEjnHN1bM7gOggATWCL6j9DCD
-         1CFaZKXkDfTqzufyLiKejRDq8xfe4rW0nwuS4swKnx3T67ZNHnxe0OW2HgoOrYIrtCFt
-         0HeJ4ONOufJcRsOW1gs8BibNqupIEdS1C6dvUdpnW9531qxjfAQsbkUXXc0LjiaOMJkx
-         AnflRL2u3aMNH5knnrAQn+rB0zzeP4/2n7DCDW7Prg95Uxg0hF5zRw+6Vf/KWlVIcUog
-         DlSw==
-X-Forwarded-Encrypted: i=1; AJvYcCURPSwZFb6OwqlZLjJI5BZKH3ME3zqy0C3g3ToM8E6Mf0h/SSrD3lNGQWufPLF/olW3lNBU1aaZ2ggs@vger.kernel.org, AJvYcCV+o9hIg6UlOniZOOSMT1uGj6jD8fnMl8arBN7v9P6D2mhy1z8ZFsRhQrc8TlzIroHy6KKR6k7y@vger.kernel.org, AJvYcCX4iy7C3wgIOIXDMhxHB4IURsRdKmfYJFvV2HJWefUbjiDGiaebXXWvHl7VzfgJUJqPa1nhgXUIDF+ZrMI=@vger.kernel.org, AJvYcCXABmySfnsrT4zszJDLXGqApeFkRknSZqJj4L4d62pEk9H9pHB5mbxaIQwFpDllB0U5sUQz5lABXOA/kI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydJaAB6bgHpZRp9sdaoMnyRjUTZhzlIfw7qe5bgqVbzbmd38yu
-	L3QsCmuzg/TbSdre6gIuQhyQ+SPzFZGGLnUA45inUQLNYW/kp0EseUp6Ng==
-X-Gm-Gg: ASbGnctTDB/dPHWHeRvcSlI0B2Lw5eXiNc18fZGffr5iI0CHtYExUDE646Thh930MDW
-	eAr3ynnkLv+267v3en7EMnpDvOEcJSLyd3FxllidkXXDjo+eVZl1fJR6lhOkwVoTUkdu6WdmpjB
-	EJ+Y/1l+/PDVgsczPyH+MY3KMXOty2vvn2g7J3sdg5uFIvxZ8Ki6oE3HSOh+wwmtzq3Y8/jCVzS
-	la+F7egzN+7P/XF3Ju6h0HL710gogwDD260eX8pY36Kd6CENB7OQKLyZu4qSUhRdLanHNfyuQLD
-	0J/zCEdBiaZ02WtLkQDnEXV3cZwKgmiaX1Ad
-X-Google-Smtp-Source: AGHT+IFELAj1vgxKLoKs7dlvlEpcB4HXPiDSG1NhOtqIafP5sTUuMLFi7afz0ZNUuel47+Us0guQWQ==
-X-Received: by 2002:a5d:588f:0:b0:385:f9db:3c4c with SMTP id ffacd0b85a97d-3862b33e5c1mr9840966f8f.9.1733753922778;
-        Mon, 09 Dec 2024 06:18:42 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3862a9705dfsm10955582f8f.4.2024.12.09.06.18.41
+        bh=nowhEyl5dI6aIIqwammoplLG7dGCizfgN3AwcDBvNB8=;
+        b=jW29LwMbhZkC9UDfM75kvlSVaAmSkeonaW8VyAsctaPL0LBgntfeDNRJeo4xPB6MXD
+         J7U/N4kU0xhJ8TmhwafHHEEs+NMw/ZHl6teDnCwP+RUxcquTVvaR9L6UMZWZqKNCTpv5
+         ibDWBlmIOaQc8pBoWQQLJ91JbncbUj0TnNVZ5Hob1z4JB2zEgZB1QujqCKVRp4AByoKO
+         Yff7c12Q0lqwY61vlsup0+5SYZlkdAOJ36kLL1Ebrl58mHl8vwJnyZWvpvrZrmhOyuGf
+         3NRwv5dPzb3pkJlZ/OOnzigrPNlRLos+uz8BAHH22W0eMcCcs4lxIrLzWwCmt8/cI/el
+         8jHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPoPt7VvMC/LL6Tc0GuYts2s6Uvmm/Dzj8rnMYMe3N1OWn+pithhNVUilt7O3hOEPqlvJY65CVaqpu/w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjXCPiloBq/xrqUjk2D4wdDYqPuPrF4JynXIBa9qGN6JpRwO7C
+	cRQHLZqK9GDCcvr3nODgJSwdpdNowRyzwOkloXcc3C23x4rKxUJNrfwZ2Pr4HTA=
+X-Gm-Gg: ASbGnct0MZoOxT5FDnyX8+pmY+fYDJAox6NbZE5Np5q/NAmshq8UrMXVTQ6b8HtXNCj
+	xW7QhJmkj29CXy6IsiDdnBgKOwdnUNKVXz6PONBDQDOEETnxATHUDTw96rEJZZxX586/puht+kE
+	r3SEZ4RxE6c/TexJIQ9U/s+LgepOzye/0Z2O73/p2FnqG6QaTYoRJxhP+bUsaJUDtF3+Zf7WCFw
+	EhBvMZw7eA8B8VS/a2IK0XLoi3UJYbuMrgEgL9iRVNI9TYJ7lIddSW8WEYq687/P9r6ju5r2A0H
+	5Ix5I+d5hXOkMtLT+bl7OS8=
+X-Google-Smtp-Source: AGHT+IHoY1ZOiHkAJnpdjYQRkeVDy7sffj3Siw+V0OMHlwsl39yE0CXPuxOPKOgDNwcCNM/wgKH60A==
+X-Received: by 2002:a05:6214:1c07:b0:6d8:a76d:b66c with SMTP id 6a1803df08f44-6d8e7170365mr191037006d6.30.1733754014582;
+        Mon, 09 Dec 2024 06:20:14 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da6b2291sm48868886d6.58.2024.12.09.06.20.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 06:18:41 -0800 (PST)
-Date: Mon, 9 Dec 2024 15:18:40 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, jonathanh@nvidia.com, 
-	linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	anrao@nvidia.com, stable@vger.kernel.org
-Subject: Re: [PATCH] mmc: sdhci-tegra: Remove
- SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC quirk
-Message-ID: <sxqxmbsdnfieqdrld4xdhwkqngofm6bq64zqwsnpjjweeqkjrn@s7hdf2krdcvq>
-References: <20241209101009.22710-1-pshete@nvidia.com>
+        Mon, 09 Dec 2024 06:20:14 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tKecP-00000009sI1-2JGA;
+	Mon, 09 Dec 2024 10:20:13 -0400
+Date: Mon, 9 Dec 2024 10:20:13 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v2] iommu/tegra241-cmdqv: do not use smp_processor_id in
+ preemptible context
+Message-ID: <20241209142013.GC1888283@ziepe.ca>
+References: <Z1L1mja3nXzsJ0Pk@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wxv6tqvev3dlmdnh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241209101009.22710-1-pshete@nvidia.com>
+In-Reply-To: <Z1L1mja3nXzsJ0Pk@uudg.org>
 
-
---wxv6tqvev3dlmdnh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] mmc: sdhci-tegra: Remove
- SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC quirk
-MIME-Version: 1.0
-
-On Mon, Dec 09, 2024 at 03:40:09PM +0530, Prathamesh Shete wrote:
-> Value 0 in ADMA length decsriptor is interpretated as 65536 on new Tegra
-> chips, remove SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC quirk to make sure
-> max ADMA2 length is 65536
->=20
-> Fixes: 4346b7c7941d ("mmc: tegra: Add Tegra186 support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+On Fri, Dec 06, 2024 at 10:01:14AM -0300, Luis Claudio R. Goncalves wrote:
+> During boot some of the calls to tegra241_cmdqv_get_cmdq() will happen
+> in preemptible context. As this function calls smp_processor_id(), if
+> CONFIG_DEBUG_PREEMPT is enabled, these calls will trigger a series of
+> "BUG: using smp_processor_id() in preemptible" backtraces.
+> 
+> As tegra241_cmdqv_get_cmdq() only calls smp_processor_id() to use the
+> CPU number as a factor to balance out traffic on cmdq usage, it is safe
+> to use raw_smp_processor_id() here.
+> 
+> v2: Sebastian helped identify that the problem was not exclusive to kernels
+>     with PREEMPT_RT enabled. The delta between v1 and v2 is the description.
+> 
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
 > ---
->  drivers/mmc/host/sdhci-tegra.c | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Makes sense
 
---wxv6tqvev3dlmdnh
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdW/D8ACgkQ3SOs138+
-s6HZ4g//abkNvj5aHoLv/O5qmK6fqI1BCApgACLXu5J9FnwoYqPCe6OwViy4iiP9
-dmmqkBW+/wNrpJZZ3CgK2ZL+opMrC1ZfJLWTqzv3I9gB/EISOObv9JKRklBLMA1K
-0KHSfsHcjHkFJDoGZY60OpkMD62ERvBbcCIz4GDEUtrLeyI75aFuxz6KvCWMupqn
-8sp/p2kzKYamd7XMLsgbbpUH/Ex0l5HADnZBbeIHtV6ZzzyYETWQHKO87Y0baV52
-wJ1kUEVV/mWajDS2NhZuJJDdqvt/DkEHjxu3pDe28ruO59964zZih95pcDwf7C5T
-EEI9vHWsRXGvSCzbf291E5l/8bA/47hyIlmVNtuwUlMaMl+NEurtskYXR7qI1NNM
-WJd+7FzVA/vjcc/l9pI+b7H/yqY8hA2gTsjMbl6qKAPNejhbTFUCjRBOw815+rht
-8Z8JqpnM/aDLnMn4aULxAY1Ll+yhIF7UY4gmpi3R6IcxxuBArselQlnD/blFTFwu
-ac+//nil2fBi5CeLZCjjRhxNrAA1UfGEGVtrBaKPVBS+wglO78yUuJFIQuQmL5GA
-Fgqk8vRROvKH/YGuGNiR+HfVYVJUXVGkq+Sh1GBS97aJmDkAFxNFw/7zd4AwivMB
-+jrCwGKSWTBHVTuKpfwtENLNYY/b/tydYmbh0dKK4kbq6hg8yTE=
-=Cl3i
------END PGP SIGNATURE-----
-
---wxv6tqvev3dlmdnh--
+Jason
