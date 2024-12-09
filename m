@@ -1,158 +1,97 @@
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5F11B041F;
-	Mon,  9 Dec 2024 14:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0808F1B0407;
+	Mon,  9 Dec 2024 14:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733754252; cv=none; b=nHOFZ/OTkOUHnZ+czlaEceqcDjOK6vHq5baIWxTS/PzoGCshS/HXs1mmGB6n+BvGS/4DOnrNJx94IR5cRynSmHhjvdBBvvQcZJoniR2K1pXX0AS/N5VKg4dRqkCWVsgm0tXNHUiMWkxg5PPSWTYkMApQS0J0fBf75ZotX6XPi08=
+	t=1733754478; cv=none; b=OVpFdGVddVys7QoYK3SfvHQIz89ffqYrHmnpmdz2Vqcg8Mkkz+JaHlbPp3Rb/veCtG5Bj0wV82NkNg2I48ERVt1Y1+UV8d5c0/rPp1XidFBKxRefu6pGM7qt6mcSShLnLXQxzWFcRxrfCS5ECoDYSM/hKlZVJfTnj9UqY4dHBNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733754252; c=relaxed/simple;
-	bh=loJGK4qglNnZxmQ/mmjN5eIA+Z/el656TuQvp7Y6ios=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eG98iAYhlih6pFY86Zc7G8d2ldEVMTKNSjRqJnmL25gmdHBFQqqhytT+ajspO1n/baQfPgZWZRYBM57IoyxzpRIj+UXkr36+8f4xTDAdfiHN6TgXgnqPxIVZOthHE6FkmIxHxbs0FzeeLe+4kJooGMLVMPyQhEXmUvsEm48MbL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VYqXzMjY; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1733754478; c=relaxed/simple;
+	bh=0m4Nll53SUs8R6YzahIOIM07jNhLhTzeX1XF3EFXvq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q3AaE6qSIojDiycxjhy6Ch2Ljrl3GzZDst3RG4nZJwLhpYhJTHSDd+k+jt4rHIFOHW3sTlxNGvZ+MZuglL4RFIGmA6I/aMPfZbyQoGmdLrYjSgpLi7FW7v1+iLEyS9WmYNDZunFpznkChIlMDPb8job/GDrW4SMsiWnY6G+GAio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UXZyJ6NK; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYqXzMjY"
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3862df95f92so2260527f8f.2;
-        Mon, 09 Dec 2024 06:24:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733754248; x=1734359048; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J4bmO8+d8DdGy7XEHiowe6nmsMnr1jfJx+QmO5T6lzw=;
-        b=VYqXzMjY0Lf/NSxxnKHcavZ++QtZJI4jrMjCPs3PUyNf3qoJ2D39miJkkfQjC4CPLO
-         buJncS4zrVIimZUOaFCOvaeMnWi5p7LOspCCrElp2+x95hiTnzdINuKwLsDdfUdqRSpY
-         SGWG/031xrCkXjpjj3o15Sf6jMd/vmtFArONo/H20jS6aXGKe8Yno/0DUF0OJkl7bnc2
-         3axC0tyj1jMgiJTVwDf1nHguxjpfbFDz+oodM/UcSmXhq72l/3o40/3XFldZl2oTTFSL
-         W7zi62gi7ZynCtAdO+U0WygjhQXZcjBrwYiYFs2hW6+7bkBVwlEOuxoZ0tTCUGp/kL0W
-         lTAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733754248; x=1734359048;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J4bmO8+d8DdGy7XEHiowe6nmsMnr1jfJx+QmO5T6lzw=;
-        b=OjDne9+FH14Z1nb9PBN9EkzwZ1GXAt4YjwbrOqOSZj04T9PW7mJghz4rrJLc1ks3ec
-         wFarHbiJAk7lkloVXl3KSyLkQa23BXWJye/OI6HpjfUEezg1QldwVgiv9aOaoqZPIHTB
-         pHL9jHg2TYNe2bkl+UuLPPHf2kfGho4grdRfS8Ps+JYv3bD2fCVsqc08P197J/3JMblH
-         Ww939Uggpq0GjAJo0DKumgAJwgkRRqq1Ws2LRurvb9Kejk7ZCNr0nwPdcp30e7YWvXuq
-         +W/atv4XuKIeBWrQ3hClizWzvVAaGyORlYPtFfKsiUvRgbqCj6N+O/zvqyc3c0ElNa4B
-         wBLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaSyGoPhjGaV87a0AsswHG9aQrhGtEmb1TmpMOwCzMsvEKcmYXCHNRFNaM+PL32ZnAT64AhCDX1do1@vger.kernel.org, AJvYcCWouD9pa8Cr+/qO77MzQ5SsYCKoxWsh5iWUZ3ctPGd7Ur24rEPHcGDnfA8iITpcElK+FgCUeJOsbI9bZP/P@vger.kernel.org, AJvYcCXoIbXabCxbaHydjRDySa5WjGnITVfj/5cnIwAHPIOHhbBGSTwuVkAzoGwQ5HDY73/ydzpRgx2Ih7r8MAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWadoHMRUw4TIMLeVA78HXxKvsZ+MLvW4rXqDSlJxX5nQHQ/bi
-	tyQR9/Au3C1ywrSPr9CdS+YBSOT/o6SvZMA8yVN1gsBH/yb4NU3LT57PaQ==
-X-Gm-Gg: ASbGncvDxdAly9hpK79mlOu81rMy6XmcQzm8HCBtCW+y4X/CMJZiDXj7JO7UbiEDy5d
-	bDdH4Uzuaxnh2xoWeV1A5sp1l90K/oW6tTbBbpntQvZvzsoVe2ja9wYEksyfdXxZOkkjXZnUjY5
-	29XzEyfqpQJZLevBGOX2ipF0KUcwh+q01SIhVWxXJMnBn/IHMimjepMXw7g69dAdI50lsLUxTJP
-	+0LfZWeYRdP8KAfSZiZuqeBjlObSssJYMyG28/2LYjFy0oQpWl6erl1YTi9N2ZCbJfaSdB90xX8
-	Gu9B5wQFOxi3f9DgqmODSfYlWNrAXhpJnZzr
-X-Google-Smtp-Source: AGHT+IHkB/NdOZh2fTJYGimoI8wlEFEwKE28euDZnByrZuT3OE1yaSiZeEhbLmlQ3rcOd9X7N1yCUQ==
-X-Received: by 2002:a05:6000:2d12:b0:385:faec:d94d with SMTP id ffacd0b85a97d-3862b3e2f99mr6963305f8f.51.1733754248241;
-        Mon, 09 Dec 2024 06:24:08 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38621fbbea8sm13170972f8f.97.2024.12.09.06.24.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 06:24:07 -0800 (PST)
-Date: Mon, 9 Dec 2024 15:24:06 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: linus.walleij@linaro.org, peng.fan@nxp.com, linux-gpio@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl-tegra: Add config property GPIO mode
-Message-ID: <mrhi42z4bnswba4vls3shkrvls3wfqn5wwgb5tm5gvzspysz5h@k65xzhumzhuv>
-References: <20241209101314.22834-1-pshete@nvidia.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UXZyJ6NK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733754476; x=1765290476;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0m4Nll53SUs8R6YzahIOIM07jNhLhTzeX1XF3EFXvq0=;
+  b=UXZyJ6NKTQwOHGHd2i6+jP9EE0+RRWH4rHiBI3TOiv8/vs+J6baNwtqZ
+   13+OJEiIyJxLegxr7z79jbAm7WmWH/vQb7QvkKXqCHUt9KjmUAj6p5wmf
+   pGEbyN4xsICSEA/iJVXFPG6WQT80bbvF66HfOIsaEJjZZooYtL0jAOFP4
+   cR+X4Xcj12ckQ6DrJgB/7BlhOqsJ9Ha7EL679z0liC/z2hbPhS6+9/jzU
+   trDD6sequCD2p8oVXduwRsJaQUdo+mKwvbjwVIRfiUWb6N+FBY0u1eoQs
+   1fLSeSQfqbmIRbOGrWSRr6Gv16+LwgpaQ0TYjfdgqRMVUFkQbBoeuz1Zg
+   w==;
+X-CSE-ConnectionGUID: G23U0cqWScC5ozGLG+tsow==
+X-CSE-MsgGUID: hws2hh0XTcelnZoKmi8w8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="45454738"
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="45454738"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 06:27:55 -0800
+X-CSE-ConnectionGUID: sVJNZMkzQ1ujVxfJ9I1Nfg==
+X-CSE-MsgGUID: vgsEEJ2vQXKqA2fp+eI9xA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="95441055"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 06:27:52 -0800
+Message-ID: <8342dd26-481d-424d-9fd3-819b7c972807@intel.com>
+Date: Mon, 9 Dec 2024 16:27:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="inqf4xrtqtxwf6rm"
-Content-Disposition: inline
-In-Reply-To: <20241209101314.22834-1-pshete@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: sdhci-tegra: Remove
+ SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC quirk
+To: Prathamesh Shete <pshete@nvidia.com>, ulf.hansson@linaro.org,
+ thierry.reding@gmail.com, jonathanh@nvidia.com, linux-mmc@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: anrao@nvidia.com, stable@vger.kernel.org
+References: <20241209101009.22710-1-pshete@nvidia.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241209101009.22710-1-pshete@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
---inqf4xrtqtxwf6rm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pinctrl-tegra: Add config property GPIO mode
-MIME-Version: 1.0
-
-On Mon, Dec 09, 2024 at 03:43:14PM +0530, Prathamesh Shete wrote:
-> The SFIO/GPIO select bit is a crucial part of Tegra's pin multiplexing
-> system:
-> - When set to 1, the pin operates in SFIO mode, controlled by the
->   pin's assigned special function.
-> - When set to 0, the pin operates as a general-purpose GPIO.
->=20
-> This SFIO/GPIO select bit that is set for a given pin is not displayed,
-> adding the support to retrieve this information from the
-> pinmux set for each pin.
->=20
+On 9/12/24 12:10, Prathamesh Shete wrote:
+> Value 0 in ADMA length decsriptor is interpretated as 65536 on new Tegra
+> chips, remove SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC quirk to make sure
+> max ADMA2 length is 65536
+> 
+> Fixes: 4346b7c7941d ("mmc: tegra: Add Tegra186 support")
+> Cc: stable@vger.kernel.org
 > Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
 > ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c | 11 +++++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra.h |  2 ++
->  2 files changed, 13 insertions(+)
->=20
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegr=
-a/pinctrl-tegra.c
-> index 9523b93008d0..b3501c78b5b6 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -96,6 +96,7 @@ static const struct cfg_param {
->  	{"nvidia,slew-rate-falling",	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING},
->  	{"nvidia,slew-rate-rising",	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING},
->  	{"nvidia,drive-type",		TEGRA_PINCONF_PARAM_DRIVE_TYPE},
-> +	{"nvidia,gpio-mode",		TEGRA_PINCONF_PARAM_GPIO_MODE},
->  };
-> =20
->  static int tegra_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
-> @@ -476,6 +477,16 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
->  		*bit =3D g->drvtype_bit;
->  		*width =3D 2;
->  		break;
-> +	case TEGRA_PINCONF_PARAM_GPIO_MODE:
-> +		if (pmx->soc->sfsel_in_mux) {
-> +			*bank =3D g->mux_bank;
-> +			*reg =3D g->mux_reg;
-> +			*bit =3D g->sfsel_bit;
-> +			*width =3D 1;
-> +		} else {
-> +			*reg =3D -ENODEV;
+>  drivers/mmc/host/sdhci-tegra.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 1ad0a6b3a2eb..7b6b82bec855 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -1525,7 +1525,6 @@ static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+>  	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+>  		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+>  		  SDHCI_QUIRK_NO_HISPD_BIT |
+> -		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+>  		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+>  	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+>  		   SDHCI_QUIRK2_ISSUE_CMD_DAT_RESET_TOGETHER,
 
-I think this should be either -EINVAL or -ENOTSUPP. If you look at
-pinconf_generic_dump_one() where this function is ultimately called, it
-will ignore those errors as "legal" but print out an error for all other
-error codes. Since this code will potentially execute on chips that
-don't support SFSEL in the mux register, leaving -ENODEV here might spam
-the output with error messages.
-
-Thierry
-
---inqf4xrtqtxwf6rm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdW/YUACgkQ3SOs138+
-s6ETMA//Q6XxBSaXe92FVUzxunURDD2n+OM5z14ULDVTpv2T73f9IAKhYYDTutLN
-9hiVi0hUeUBuDUjtHQw1sRJlic5kI79iHAPtb6/RCgnWFcmZUey35lX2LknCGTTr
-fMe58ccsHB1Qehly+ibiB70QPj12J9v7iamCpmWcMBPt+pE28o5iUmlFb9Lms4oe
-yWMCrvtXBvmoGPXtXcsNWttOqV1cYdkD37iJqk2G/jMVg0NdRQ8z3boW+8iTUcKI
-d0g4pzMK/fwwgh8nnnxWWAl3fg6SMKCozveAw8dbsvfdgV2MBMr9vatXSYarVt+5
-TiUBmwqk/ewtF57hYeU0Qmo7k2MVQR/eXCoolraqLiZU2JFI4hei94ioMyNmpmt5
-nwa2MnUuwYHwq+HKToIV6GNr+4PLvDPZNo9IIK0kHqVT0XvoiWK65LC9Ck1ZNIgM
-AkN2UnFAVqVGyiumf8c4qT5gxfvm7DMIs6ZCOVOt4lHkJj1TEqTP7TePPvSlIDUb
-UKfIaF5XUbIvK3ilLjpx6AOxdcEZgkrMGI9Mv/NYPl9Ak6wvGhzvhq5IDNXM9D5T
-dKByNSzGUtYUKaHKRxEOgDAcGqSkfo2ep5dsXlPxGu9PgpktNnUjRIdlUW/N4++y
-HiE3z0A+ulbQd5mWngVHj6WY4M0HzpfpwJ5Y77l9/Ofp8knK66Y=
-=dPg4
------END PGP SIGNATURE-----
-
---inqf4xrtqtxwf6rm--
