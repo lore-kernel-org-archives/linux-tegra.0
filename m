@@ -1,70 +1,65 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C400618C02E
-	for <linux-tegra@vger.kernel.org>; Sun,  8 Dec 2024 17:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647D120FA99;
+	Mon,  9 Dec 2024 05:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733677374; cv=none; b=JGapDneP2RG7DIhj3ij/UD4/AlInG13Ma3ztw/qa4y6QqKXOdLpR1LXE2rOA/RQdbfjLkUSNhUbANkjrX3xtefUzBtH5uSkKEDkf7n2tucFaXQZWVGUHh+h1JzWdfv1h4zLVYQXVULqvHpzXS5fXWBl7GC0actVfMlPocJZUSnY=
+	t=1733723516; cv=none; b=rLQFLge4qdWGzdnuf95vT0wn1ta6kyaRGxQGX52KLPIj2NilpzwYWW64HNt1UkI4BApQpm2GB0Q7etrVjrpOgxPyP4afRnKVaj1RdXukmr4ZTeQth+VkS52pCfZfQAe0rFpG5oGOg2oxZKTcWi0xawnH4U/kOiLrjt1vqCiu9uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733677374; c=relaxed/simple;
-	bh=ZWho2upAeW4Yl/HHcd5o6hWdyOJYuXvjof6/QTXHk0Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sUCta+UdEeTYvw247vXMwZL4VJqUR2EMCB6wh2kvntJzqiK6y2aM6vQxitukeSHBwoqhUEKnyd5NzEsuSJq0Df5hX8vCXukLHl2otsyedYxiYIJp9P0j/etwEcLaCW7oIAM0371Lxx7e/PttwgpQgUEBIyEQwIFTLyYTYNzJZ3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgQLHRs1; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgQLHRs1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26F94C4CEE0;
-	Sun,  8 Dec 2024 17:02:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733677374;
-	bh=ZWho2upAeW4Yl/HHcd5o6hWdyOJYuXvjof6/QTXHk0Q=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=TgQLHRs1Gkh5ZLROsIaFLz0lZR1WnAo4yZno4+MQco4/lzZo91T4ew3QHnBRZUSld
-	 +KucDO8oxfNzG/9wZrLbBmB91XmPKoKjbgHE5JVtB3qkhumAtGSXl9aZnO1vNLo6ho
-	 JcIbawMItxPtel83L7ZYOgS1AceAIm73NsA2UO7aKRxBK++OHhZpx39f4j4mNHuPor
-	 enelig0xWzssIm0yZfzna7/djerKxe47eDb+rCgwBFb0n4Piu5nMA8jADsdBXGaj/B
-	 TFkh7xIq47MGxh/3QQJiDMiQCN3nys/5h0pKDFWOFmnZWxIYCJJFSsiarJhwZNMvbn
-	 lY8Y37bFHRGng==
-From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Vidya Sagar <vidyas@nvidia.com>, 
- linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org
-In-Reply-To: <20241201002519.3468-1-lars@metafoo.de>
-References: <20241201002519.3468-1-lars@metafoo.de>
-Subject: Re: [PATCH] phy: tegra194: p2u: Allow to enable driver on Tegra234
-Message-Id: <173367737174.1042266.7031082302793933090.b4-ty@kernel.org>
-Date: Sun, 08 Dec 2024 22:32:51 +0530
+	s=arc-20240116; t=1733723516; c=relaxed/simple;
+	bh=72x7djgpfN8f8z64Q8Ru1LS3POSY02SlwAPXFqu/VsY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QUgC1OLa2b15qBm9h65+LkGYzykIw9f5VSr4CIbNMPSJ4eZFPXwf2x6MdbAMXGR1tqPDachyuBT8vAuJ61yzgXli3pDc3ksO4RBMDfwrfGRXmWCFZC9qeu0u5PXXckKrTw2X5YbL1NtLLXrWwR3EGuDpI/ZWtR9UbzQI28zcSHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee667568575e38-bf70f;
+	Mon, 09 Dec 2024 13:51:49 +0800 (CST)
+X-RM-TRANSID:2ee667568575e38-bf70f
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee66756857496c-a2309;
+	Mon, 09 Dec 2024 13:51:49 +0800 (CST)
+X-RM-TRANSID:2ee66756857496c-a2309
+From: liujing <liujing@cmss.chinamobile.com>
+To: thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] soc/tegra: fix spelling error in tegra234_lookup_slave_timeout()
+Date: Mon,  9 Dec 2024 13:51:48 +0800
+Message-Id: <20241209055148.3749-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
+Fix spelling error in tegra234_lookup_slave_timeout().
 
-On Sat, 30 Nov 2024 16:25:19 -0800, Lars-Peter Clausen wrote:
-> Commit de6026682569 ("phy: tegra: Add PCIe PIPE2UPHY support for Tegra234")
-> add support for Tegra234 to the tegra194-p2u PHY driver. But the driver is
-> currently not selectable when Tegra234 SoC support is enabled.
-> 
-> Update the Kconfig entry to allow the driver to be built when support the
-> Tegra234 SoC is enabled.
-> 
-> [...]
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
 
-Applied, thanks!
-
-[1/1] phy: tegra194: p2u: Allow to enable driver on Tegra234
-      commit: 3d811a4f38c773779748ed52f49cb7a609428b61
-
-Best regards,
+diff --git a/drivers/soc/tegra/cbb/tegra234-cbb.c b/drivers/soc/tegra/cbb/tegra234-cbb.c
+index 5cf0e8c34164..c74629af9bb5 100644
+--- a/drivers/soc/tegra/cbb/tegra234-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra234-cbb.c
+@@ -277,7 +277,7 @@ static void tegra234_lookup_slave_timeout(struct seq_file *file, struct tegra234
+ 	 *    which timed out.
+ 	 *	a) Get block number from the index of set bit in
+ 	 *	   <FABRIC>_SN_AXI2APB_<>_BLOCK_TMO_STATUS_0 register.
+-	 *	b) Get address of register repective to block number i.e.
++	 *	b) Get address of register respective to block number i.e.
+ 	 *	   <FABRIC>_SN_AXI2APB_<>_BLOCK<index-set-bit>_TMO_0.
+ 	 *	c) Read the register in above step to get client_id which
+ 	 *	   timed out as per the set bits.
 -- 
-~Vinod
+2.27.0
+
 
 
