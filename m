@@ -1,27 +1,28 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2044.outbound.protection.outlook.com [40.107.92.44])
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B6086329;
-	Tue, 10 Dec 2024 17:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69631F2385;
+	Tue, 10 Dec 2024 17:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733852780; cv=fail; b=fjlBXBVcKqe+/5F9+4paVmb+xY782AEfYa3JgNw6cDMLqd9blvmuuqqJZQIC6l0EApj4fZy1tx/NsmuiWk29P5bgrvx9DOeOzmQKCnycnswbZgrUO6G3Gq3TVKCmRA41KRlFqikBaPmUY3pji+/QlAJMdXuA5U5+5z41XVPjCcs=
+	t=1733852782; cv=fail; b=PAtvHxrm5YTW42wec3a/WQfc2DPOrOPoaVt7mhOgrPxkH+MTqdT7DSnp9P0qqMso/cdAOGde4jw2ALLx7gyefJetdsvgFsai3R9rbf2iQFR5Qs8iEiStteMvH3uR/cyETN8WXzSXUdo621z0Lyy7iTg19kznVWxvhdzDs4zhphM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733852780; c=relaxed/simple;
-	bh=tIPCxTX2V+IDr8fbh4Sw9GmPI09iT299/z3A0F0ZyEc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fBLX1RP+ra/kwoSGA389NA8QwTUR1yYEhocbgslbge6WKow7rHqG1G4TB6bH8sSgpguXiYZwadlg3hSD5ECiKJgJiPxaMuBPVBPwb9AJUdBIXcajMTzv39TOPlPzswFTq/K1SoJEzg/b/s+7EBALLGhjgJ8/Y05sNvsdicj24jA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hAAHvP4s; arc=fail smtp.client-ip=40.107.92.44
+	s=arc-20240116; t=1733852782; c=relaxed/simple;
+	bh=X9LNmv2qHjIw8zli3pxVjux1bnPMVxkyCwSL0Oh+X0w=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aYjbyiQ6vQPwUErVjBhIryC27NdAZdS8SPkzJv/4dXfkCR4ZIXNR0GeCos/IFLmGX93HlxUrHIi94YcPiLkdlqb64+yUu0WhozLcmFhw2/MVIMKME8pWryxcfcHFieyMkBK88JQm8d//3slVXaOppYPo3mEx+8apPQCF1KEFefA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=N/5d2JMY; arc=fail smtp.client-ip=40.107.236.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hAAHvP4s"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="N/5d2JMY"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hDu86M3DSan61pnqxav4uiMh7WgH1iCO6Gm6c0AGrxBj8/3Wn9DudCvSqf2698C7/CedMTYdtFqDoYt6fdKRHMbj6QJR3yPBv8Kl+8YsXOaB7aF0pm94oBjTfRgI6sft8OMRdQQfAKQcRdooGE97ztYor0tOH08m3bQWwL+TBMk6qlK6pX8Ig2gKhATn5toSPdQfCoPYyWiUjizKQ2w+ijGZ8Dajct23b0RnsgtFed15EZliMtD98iHsF7EUR5i/Wsan3xS38NLrXlpaK3ukH68QusBNhhOdaAzYesVGscOWHYwdnKExTGhUJxBxun+TGOBgmYKXPKcKr6eoAHr1oQ==
+ b=VsMCYIuIk3FejPmfrlvq8C9OYsVCwgCeSk4hSfiPL8DxMGoEaaZ+eUwww2Yp9BcBxbzbabvWwS8uQ8uRct/Z6IIKr+EXzOpQr/dFeoEjBIy3cUXv3n+sVMZQD62NPtXOMLqOVLeLxjVQeIsvbbVM2Ed1csZ8RbLKY7oUQElvSrAwdGzWpLTsU5AD6muHykKjrrqYTZifpPPMjhXGhnp9ZSomzkpR4bXcR5CFOezvwhrFJvWwsYoBDXzpxCpjDTLAjxvgV6n9S2R2ATAERttVIg6VzlKOJqZZfHyIIuoUQTB0wvL7EevGtQZ83hqqPjCyd4hDW3gdzpcSc4BMOxc4/g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/7TyIOfS5xTmcAqOqxV1VvowkfL/GE2I/pYlSGYQGfE=;
- b=VGhPjIezgCEoorRsfo3f2KHLnuHGTo6mMU4CClVZ+/c+WICU5mQYSlhiTAHQi+paKdvD7HEEd32f+/lMXTTTXxizsvRTZN2hDNdeyuylHPRi6FSaKLzYYXE9MK0EAcpXxFqAq1Ca+KsNygrw26sbOzgyZFQ/CgGPGgU7069DEC54RiKmbMntcSBXmalxzCpFWFX7hZItHvUaqbGTMM8Hhaxw84oA24OOvmo6JMbPlcozgal67OM4PDwGJDjb3RXw+e+O22C+pfdWVtXN0JF9jNEeRrCuS0x11PXZmL1cz9VwCdx2QHo9dCnXcPVugavi5467oUsGU9GN3skXiE8Fvw==
+ bh=i1Zpx32ZpJHlEx2zxr8ljF0cJYu/fUivypFZUIlSJ7Q=;
+ b=m808g15L9limCYVMjauOTpbS8cB2R86tlVrHHhH5f4eGWxqnIj5DD7eb4Rtf6oNSqVlRN88+4Oy83nPi1axealIJ1NwnoivforXnEs0Zh0eOObj5JSGStlqjOQB3a5tH03yNCe7K+T9CgXroxsTS0cH48JrkqGLRQ5VMuVy5QBig6z438P72Cdmx2RlzFgeW4PB/3H/8S6pQUP59mturkgkFoAfw38wl9smwC7FovdtHS2aTSkDIdTTW2A/34K0DIVLGuX0YSj0th0XRjoSL4NckcoINheQ0bcBbDQOJraudf2fD60nXzYEEK+2GmzFqnaQ+pBuzPmZ+hVDU9IBqUQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.118.233) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -29,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/7TyIOfS5xTmcAqOqxV1VvowkfL/GE2I/pYlSGYQGfE=;
- b=hAAHvP4s4GlT1FrFPKIpsSShN90SLOl2QD/IdXpUAyt0mfTYvcpNTKVQNHn81S7PB3m33REFqgLDhxwf/tHhdk+ZgDCb+l1hDzEQrM4Cx/Y9ljJZdROy9qyOVRNhc51w24uoor9V1ZIIt5lfHaUe5vF0WPIiOU0YIH39MeGNMFLoKGxM3I1sQee+9Mk7y2WD17xnvm9V7aQohP1nq/NyNa5lTpU/bQJOOV+g4MtgyZajfgy7Hl2KXFrKwXL3Kdk4MC/P621u2WXJsyFYSXFWuQOVeDMsWzSp4JusudHDxv2vXzEWzOnXh0MhQTEeJH2wqv4KgxfBhNn7OUXYkRevSg==
-Received: from BLAPR03CA0177.namprd03.prod.outlook.com (2603:10b6:208:32f::30)
- by PH7PR12MB5594.namprd12.prod.outlook.com (2603:10b6:510:134::13) with
+ bh=i1Zpx32ZpJHlEx2zxr8ljF0cJYu/fUivypFZUIlSJ7Q=;
+ b=N/5d2JMYvNExuFiJSkBzjgnIdAK7EWlEt8jNNUkiaRBABb/tJ81pz1lnWPRSlh3UtFs8NpCAdFw7FbJwYFBhgr7eVHaVi5CBwF/5KMSnFwBSXGENN27rOH2lXwd+eSrqpN1ITJZ5uBubqTIRqezjQ2R0BdxEC4CwjToMjdNZHdrfeeOnLykirENs7BSr71FY4S3k8an2AlQbo9HtYRiGefL5mloicOxoR7fzMs/ZaweBQZtasqSPG2iz11grnhscXVyXeggPkMM0jzgLGA1UTRIHjc9ZGhZ6BObaBXsNL8LZUnXvhmPlStNmVf8fETOv8f8GQKuqkfZn3+azF/yiYQ==
+Received: from BN9PR03CA0976.namprd03.prod.outlook.com (2603:10b6:408:109::21)
+ by CH2PR12MB9494.namprd12.prod.outlook.com (2603:10b6:610:27f::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Tue, 10 Dec
- 2024 17:46:13 +0000
-Received: from MN1PEPF0000ECDB.namprd02.prod.outlook.com
- (2603:10b6:208:32f:cafe::f8) by BLAPR03CA0177.outlook.office365.com
- (2603:10b6:208:32f::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Tue, 10 Dec
+ 2024 17:46:16 +0000
+Received: from MN1PEPF0000ECD5.namprd02.prod.outlook.com
+ (2603:10b6:408:109:cafe::87) by BN9PR03CA0976.outlook.office365.com
+ (2603:10b6:408:109::21) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.13 via Frontend Transport; Tue,
- 10 Dec 2024 17:46:13 +0000
+ 10 Dec 2024 17:46:16 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
  smtp.mailfrom=nvidia.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
@@ -48,20 +49,20 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.118.233 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.118.233) by
- MN1PEPF0000ECDB.mail.protection.outlook.com (10.167.242.139) with Microsoft
+ MN1PEPF0000ECD5.mail.protection.outlook.com (10.167.242.133) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8230.7 via Frontend Transport; Tue, 10 Dec 2024 17:46:12 +0000
+ 15.20.8251.15 via Frontend Transport; Tue, 10 Dec 2024 17:46:16 +0000
 Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
  (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 10 Dec
- 2024 09:45:56 -0800
+ 2024 09:45:58 -0800
 Received: from drhqmail203.nvidia.com (10.126.190.182) by
  drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 10 Dec 2024 09:45:56 -0800
+ 15.2.1544.4; Tue, 10 Dec 2024 09:45:58 -0800
 Received: from thinkpad-t480.nvidia.com (10.127.8.10) by mail.nvidia.com
  (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 10 Dec 2024 09:45:55 -0800
+ Transport; Tue, 10 Dec 2024 09:45:57 -0800
 From: Johnny Liu <johnliu@nvidia.com>
 To: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
 	<skomatineni@nvidia.com>, <luca.ceresoli@bootlin.com>,
@@ -72,10 +73,12 @@ To: <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
 CC: <linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
 	<dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>, Johnny Liu <johnliu@nvidia.com>
-Subject: [PATCH v1 0/5] Support host1x actmon
-Date: Tue, 10 Dec 2024 09:45:49 -0800
-Message-ID: <20241210174554.18869-1-johnliu@nvidia.com>
+Subject: [PATCH v1 2/5] arm64: tegra: Add actmon information
+Date: Tue, 10 Dec 2024 09:45:51 -0800
+Message-ID: <20241210174554.18869-3-johnliu@nvidia.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20241210174554.18869-1-johnliu@nvidia.com>
+References: <20241210174554.18869-1-johnliu@nvidia.com>
 X-NVConfidentiality: public
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -87,90 +90,94 @@ Content-Type: text/plain
 X-NV-OnPremToCloud: AnonymousSubmission
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECDB:EE_|PH7PR12MB5594:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c56ee1b-c8c2-486f-7630-08dd194289fd
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD5:EE_|CH2PR12MB9494:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4b2bf168-be13-4cef-b6e2-08dd19428c21
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|921020;
+	BCL:0;ARA:13230040|7416014|1800799024|376014|36860700013|82310400026|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZF0pS2P8vn/6t3tc1JWSKQDzSbn2pRAatAOGhTlLQxUg1M8GvpbxpgpNTC8J?=
- =?us-ascii?Q?GBLQ6Yxc5QXUt/MOSvqcvJYlNRNCHbHtXxrV1NcBzeDhlUfGWJ9WmUICXn3a?=
- =?us-ascii?Q?on5Ki3f51b9LyrgWMR0VB4lfjf827KSXntuwBO0x2hMJaPaLG8sbM/xDBmJR?=
- =?us-ascii?Q?pnWzoX/sUS2UYw/slSgXSxBBcLWqQqnbqKfCHzPzTlxLc8wDZMvj6kLps00O?=
- =?us-ascii?Q?CdpR0I8LjDngzAoFbsyi53Eiuv/XeH6giMyJWEXWKeSv/1OoQfdjHQKn30my?=
- =?us-ascii?Q?+rCnRFU8TkhBjHvU72S+Iw5blFNEPAJ1gXLMHrnbiSWXIVvm5Ft/BUuuewrY?=
- =?us-ascii?Q?enUFXBjOjvPzGxgd0Jly7iyru8rPfb6Wub95GXrKu2hEHjADtWgkxLKTOKV6?=
- =?us-ascii?Q?ulyVaGLCA6dts52XyVC0wtvOWes76ER6GUbbMXd0pGPq3cGmeLeoycqXjX9R?=
- =?us-ascii?Q?gLujrM9PBh9bT+pEm/BOg7Dr+YzmfWndNtYifKvWLvVE9pDDSnnk8HrZP33G?=
- =?us-ascii?Q?/7Yyui3HKvrLlD+Zt9V4DazdzMfndsMBP0QPYUqanmO9go4NUTbWphj2rb78?=
- =?us-ascii?Q?9qcNULFylo+q/yrSActnxsGejNM/UQ2HIJkCH8bBQu5RP4O5Z4VSz6RfREvz?=
- =?us-ascii?Q?tjDDYZcnMc8qPCM4g/+49DTDEgIvBAjUzHq5XDGbKxoVNC/CzJpfrKRVNOj9?=
- =?us-ascii?Q?f8CUxDfRoHkwrkWj0zY7RZqBG0rA3cPLIEixWd3P8yhG1DWGGeMwNED4kobV?=
- =?us-ascii?Q?EZAHrd6dUBbbbYFhpL6ry85F8GVeQ5qSejm+dqYlFkcLKuEVQKx5ZKG6g0DL?=
- =?us-ascii?Q?6+rgdtuyv9ILXHg/03P/kdReokQxBkjMlW1dDdlQETyCETnAv40i2Eau4teY?=
- =?us-ascii?Q?T0bW4D89N8qfh9zirQtQtTNXLbomwPPIlrd1armXNP7wR45QJjKhk8Jx/JNj?=
- =?us-ascii?Q?ktdrE8em59+2zEQUU5WcDP7pptgAiJ6SLRAOw7pGLj0BX7NqEvguWhP+8Szc?=
- =?us-ascii?Q?OLD8Y6GV0W4J/XllgyrgcYNx5jUdqVFFwYqYDzyz+e6b9PlXf5Pk8gKlFvGC?=
- =?us-ascii?Q?I6zlaSTgKPne4RLdbPadf4zhoaC+oown3po+P1p6RqQBpBhLi0lBPmhkLo93?=
- =?us-ascii?Q?JcanGrLQJFaBKDBBb3otivTU6969D6h3JLmX3EogeSbvP+TvyHILCp2j/eM9?=
- =?us-ascii?Q?nqWcyjhCDwu5sU1N3HleKL479UMLnxpJtWqOZs/0Znk0g9Uo71xD85uLc8rp?=
- =?us-ascii?Q?M6lTwe4I4jueTDEMkXcgTAtAGW8wa1qmR333lZOa4vFmvQaqlF2TOPFFX7PK?=
- =?us-ascii?Q?LQ4U+Ear/Au/A2D6Tq/wgBQRN5hY+if9xNWyXsJcTEuqQw5Qrpowyt66qhVR?=
- =?us-ascii?Q?I4qvCVCxvl7siLUijFZXdS8oHFp1Uw9TlKrxZu2Z4Z29es7i0PF2wT2lQc22?=
- =?us-ascii?Q?gWXUpwMLIjfPPh77wnhbkrvf324t7ObW?=
+	=?us-ascii?Q?n3JyMH1mvnXEl27H8rSIi0CF3VcaWE6GauCrnuP0zR0zfKwcW8txMMUKfMRm?=
+ =?us-ascii?Q?hvntyO3NdXaO6SNa48FRXgPi/jWhZvOiPLk+zPy6YhIIeGurvOWvPqxMgh5S?=
+ =?us-ascii?Q?Lf96aX9b4Wg1aLbc9IstXDl2mpN9ObdH3arxwSC8//tyrHYvxivDmXZkZYVP?=
+ =?us-ascii?Q?N8juQcsx1J0D7LevcoQ40j9pxbrURjqtQZDvx0mHTRDsfkKXohIIXV40tCj+?=
+ =?us-ascii?Q?KiSLSGzMLGpAjTsNAJH/1XSe8vLU6uMVfkX5fRVzL3tIbvssezTakJkTYWLD?=
+ =?us-ascii?Q?jYIgwVp0aB17ou84nzjectdtDQM/6uT0dm5LnWZu2aHN8vscqHU89bd6dTGR?=
+ =?us-ascii?Q?0Glv9WXn4hyYfsetvo4NnkG4mpw6wTVopeotJJzhu+x2ltDfm6n1xyyWkK3k?=
+ =?us-ascii?Q?HdqUrn28XQed+SJ2JtjeO/VohH7pPD8H9KZ16AaB28O2K3wlhgA2cFopHs0M?=
+ =?us-ascii?Q?3Kz2B0go0eagziMF80w+c+0UFou8/BjsVdRxKKwrQ1WHLZ0Fq7rIttn6YOSL?=
+ =?us-ascii?Q?nYtOZ6V7+HKptHF1cl+bd7csfFEOzPNDhVa1+J83A7c6p6ibtrLxhtjZo2Ye?=
+ =?us-ascii?Q?JZmkHsS7bpaRf1OQFKpybbYszFSOUnyeMx6f1GSI5rgzE1pvmhZ6q7FfBuLt?=
+ =?us-ascii?Q?onJc5eYxxKjMsP3HAWkLWfgbClWLy+nxhGDgwxloRjkMCu049pXjE5XiU0O8?=
+ =?us-ascii?Q?kNmScyrq3R/sf5QyerXLXQR5yZXcDQdSpENfzdLPyGYCBODXT7GoAaQIZcQa?=
+ =?us-ascii?Q?A2iG3mO0HxatJlUggZ270N1zsKaEpc5oxVX40vhwfG+PSHaV3Prb+4Lkt7B8?=
+ =?us-ascii?Q?pIHOW3lEn75SGuG8QtXUwJ+KPQ2kg93m+535Ia1fNYjwGDOKqX5w8nnRYXiJ?=
+ =?us-ascii?Q?BowQ+DcpRxMmA5quwGEnuKU0HYBSyLckXukS7SESW4UgBi11gn/FbxZzbTvf?=
+ =?us-ascii?Q?4XKZZbe03ZIpvCUGml8MczW792kIkxoZTOGzbQaTW0O0SmwWq5325w4rWcMF?=
+ =?us-ascii?Q?SB4Za5i1GwYUiWPo0aamHzkQFbuFlfsR3VfiQE41ZYOJRaRsu9sDzKvxFhN5?=
+ =?us-ascii?Q?Q2Oa8ShX522CWpCb3rb8S4Ufg8VvgWY9vjx++bUIZZPZ+GtG6ZlkHls5QYa+?=
+ =?us-ascii?Q?kceh+AxgWKlT+oR/oJu2yRHgpzRMvQ8kizSD7iFYpGqqAjngy+WfjrdrYl3M?=
+ =?us-ascii?Q?bxu5UP18guTLD0FK6Xjnz5nqegUHj+iesR3ev8T47c2GGvs3FV4JwI2+WbIY?=
+ =?us-ascii?Q?rYxT1xcUwbQoiI8hUbZDRGAVsqmhxWzsTiwOInr7p2HG+C03lXG9r2Ag3ARD?=
+ =?us-ascii?Q?P2BVGfHETryNYY/551+GWchtK85LFvCiizkTls7oO2asROwaWjg3GOLHDxMe?=
+ =?us-ascii?Q?80YkklQuJXfdewSrnqBXDddrWeOB/e45BPtMyt6tnWSr0Emsov5PibIdFZdt?=
+ =?us-ascii?Q?7zLtD2jYc6wIGuGAEZHhKu8v3NhINYLAiS9bOakrHRdTHczVazL1uw=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(36860700013)(82310400026)(921020);DIR:OUT;SFP:1101;
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 17:46:12.8228
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Dec 2024 17:46:16.4002
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c56ee1b-c8c2-486f-7630-08dd194289fd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b2bf168-be13-4cef-b6e2-08dd19428c21
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECDB.namprd02.prod.outlook.com
+	MN1PEPF0000ECD5.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5594
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB9494
 
-Activity monitoring (actmon for short) is a means to dynamically
-measure the utilization of units in the system to help drive software
-power management policies.
+An activity monitor (actmon) is used to measure the device runtime
+utilization to help drive software power management policies.
 
-In Tegra, Dynamic Voltage and Frequency Scaling (DVFS) is the primary
-dynamic power management mechanism. It uses utilization information
-from various units to select the most efficient frequency and thereby,
-voltage that the unit should operate while providing the requisite
-performance.
+Configuration of actmon is under the host1x address space. Therefore,
+add the actmon aperture under the host1x.
 
-Johnny Liu (5):
-  dt-bindings: display: tegra: Add actmon information
-  arm64: tegra: Add actmon information
-  gpu: host1x: Support device monitoring with actmon
-  drm/tegra: nvdec: Register the device with actmon
-  drm/tegra: vic: Register the device with actmon
+All unit actmons for host1x clients share the same actmon clock source
+from host1x. Therefore, add the clock phandle in host1x.
 
- .../display/tegra/nvidia,tegra20-host1x.yaml  |  45 +-
- arch/arm64/boot/dts/nvidia/tegra234.dtsi      |  10 +-
- drivers/gpu/drm/tegra/nvdec.c                 |  82 ++-
- drivers/gpu/drm/tegra/vic.c                   |  39 +-
- drivers/gpu/drm/tegra/vic.h                   |   9 +
- drivers/gpu/host1x/Makefile                   |   1 +
- drivers/gpu/host1x/actmon.c                   | 558 ++++++++++++++++++
- drivers/gpu/host1x/actmon.h                   |  46 ++
- drivers/gpu/host1x/dev.c                      |  71 ++-
- drivers/gpu/host1x/dev.h                      |  59 +-
- drivers/gpu/host1x/hw/actmon.h                |  49 ++
- drivers/gpu/host1x/hw/host1x08.c              |   6 +-
- drivers/gpu/host1x/hw/hw_host1x08_common.h    |  16 +-
- drivers/gpu/host1x/hw/intr_general_hw.c       |  83 +++
- include/linux/host1x.h                        |  30 +-
- 15 files changed, 1075 insertions(+), 29 deletions(-)
- create mode 100644 drivers/gpu/host1x/actmon.c
- create mode 100644 drivers/gpu/host1x/actmon.h
- create mode 100644 drivers/gpu/host1x/hw/actmon.h
- create mode 100644 drivers/gpu/host1x/hw/intr_general_hw.c
+Signed-off-by: Johnny Liu <johnliu@nvidia.com>
+---
+ arch/arm64/boot/dts/nvidia/tegra234.dtsi | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+index 984c85eab41af..8faeef83d7596 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
+@@ -4313,8 +4313,9 @@ host1x@13e00000 {
+ 			compatible = "nvidia,tegra234-host1x";
+ 			reg = <0x0 0x13e00000 0x0 0x10000>,
+ 			      <0x0 0x13e10000 0x0 0x10000>,
+-			      <0x0 0x13e40000 0x0 0x10000>;
+-			reg-names = "common", "hypervisor", "vm";
++			      <0x0 0x13e40000 0x0 0x10000>,
++			      <0x0 0x13ef0000 0x0 0x60000>;
++			reg-names = "common", "hypervisor", "vm", "actmon";
+ 			interrupts = <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 449 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 450 IRQ_TYPE_LEVEL_HIGH>,
+@@ -4326,8 +4327,9 @@ host1x@13e00000 {
+ 				     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "syncpt0", "syncpt1", "syncpt2", "syncpt3", "syncpt4",
+ 					  "syncpt5", "syncpt6", "syncpt7", "host1x";
+-			clocks = <&bpmp TEGRA234_CLK_HOST1X>;
+-			clock-names = "host1x";
++			clocks = <&bpmp TEGRA234_CLK_HOST1X>,
++				 <&bpmp TEGRA234_CLK_ACTMON>;
++			clock-names = "host1x", "actmon";
+ 
+ 			#address-cells = <2>;
+ 			#size-cells = <2>;
 -- 
 2.34.1
 
