@@ -1,162 +1,147 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2067.outbound.protection.outlook.com [40.107.95.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D861AF0BA;
-	Fri, 13 Dec 2024 10:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734085735; cv=none; b=VsPMG7uIQqdJoMCBWPAe/fflekFSSIRqk1c/n0YD6mDinUvc43fASMBkzGkhewN+PMdfSe58oumdg4wSFX8Lak3C4PSkPVkzDcrpNZHyFGypgpSMy4gEd45DDg5BtC39OC32ySiiYRjH3Xx0D1sSFYYI0LAxkQz2Ng/TwrXUpj8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734085735; c=relaxed/simple;
-	bh=BXnyrsgsdHGiV455w3HuHCeFEa/SFluCgKXvenSew+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JNejusyJ3uHyDK2loGJ5NcE6pO8SUIGL3Eff+y407ROO1zSYkDY0nNU1VgEx8uJvPK9KznTWaRBXI2YmfAW+RzqwkH8Ias8dQJgITiY51ICdYSwkFozwfSIi3q+/GyGr5Ud08Msb+iv4S2ME7qFHReQyLT45NX4TF3TUA5XJ+1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FumeYSpL; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17851B415F;
+	Fri, 13 Dec 2024 10:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734086408; cv=fail; b=iahQUzIamCzP5PY1NnkT6iLnJHlFvsms9yx83n7oCnDu94/KjPaIZaeDgalhgZN1XE9Tkri8Psq+26yQsz8Ma5FN+aBFuehr9ndjV7Fz54D5j5hdrbckWQeUpueYC5OfbPX/3YGerK/klsqrcw4UY4b6Uk1v7zt8/GhGUvtkHgg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734086408; c=relaxed/simple;
+	bh=youipse0aYIvOwGZ+M5C5obq7jhyECOKMrcD2kZgeik=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=or/jc73LMM104NOwQ8V7OBy8g8M22tHIMEwiuwGUisEFyDaKWmkCWSjEjD+sSfNs1D1QZ+PVf4X3lyodJISlJqqqb6UFKape/n59KX5KYNid63lnfZsq/djASCZ5VSxL+xHaLPKFQq8cbi5wbIedIkRzNbtK8EWW3W9xnNRISis=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pgMor2TB; arc=fail smtp.client-ip=40.107.95.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FumeYSpL"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3863703258fso1619260f8f.1;
-        Fri, 13 Dec 2024 02:28:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734085732; x=1734690532; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xYHxqXx2EMQGflFWtIwoQJfTlQ0gooxKN8SBXQ9zX4E=;
-        b=FumeYSpLAdt9ciPuACVgka8SCR6vtvyYRaX6/3zJQV879+64Z6no1QskVFRGScSUcE
-         BkP30tzOn+fVq3UmVtBlAWUO7jeChvuOtrWlAubyGB3NnLSTjllFH5HwFu70QNOw13sI
-         bpq6ipqKA/Q74FFU96IBuqncI9cLlYXzbcq0bjIzoSbonKEk/oYk0zWP/GozQ9gvMZMx
-         ax4K2OHmvF0jnOqCkM7IXsBmAOf0/FksxJ7y9ccDJTY7asiI4IVazoPF6UlbU1kat44G
-         dTHHpjJeRwy/isnU1gfu002Gtc0qB3zkbMk2GynULHedKXMUSxRWYgDoOxeMevZycIPL
-         9bgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734085732; x=1734690532;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xYHxqXx2EMQGflFWtIwoQJfTlQ0gooxKN8SBXQ9zX4E=;
-        b=Ka0nSXCCgej5EiaVSosDySlna+EJoG7cPHSKqVdcmJrFghnYu6iww2tCz/MsJaOhQZ
-         fcpNS1Xmi8rHp9sMieQsEEsVKKwhPYcJezCBlYnKyJtbjBQNj9cGxMGZ9N8xdYMAwwo3
-         Ogi0MZIq6K42owq8NcAG1/c37SPA+ubsovFqGaCIHzTOBydFyrQHTU8NW0uRWTVsKa/R
-         GqVdmTBHICw04Cmiiks5b3Ejazn1+lG6VRDyJiM603ueMywnFnABUS4pA7DoxWNnwd2j
-         BDF57t13LkrRdrwlx0GTDH2KPH8yYVZujzhydUe4DNNm8W82oEYq6rRx+T0wPvYLQAoR
-         FqpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUoWUn/mL01WPEj2BcIyJNfCBCujC+1rKnild38izy1TuNzd5vjH0BRAvLOjEg8Duxa8ltZDblrVz7WP8=@vger.kernel.org, AJvYcCVgl8rRM/eVydzvi3SBiOMnxQgzps25WD5jMJxBbqIfMEcwVvMJG/R3PJDegwpV8w3NdBk9+9Lkv7ps@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPmSWteQJmfZcw7TRJ3nmKaQys3FV+jCfN5SBmxPiNnp8T6PU3
-	tn8gbEfrQt5bLT0Lax6j7t/uzPxy8lhTyv2eqwVXxuIf1DtngN3B
-X-Gm-Gg: ASbGncsDqVy+I3DkofXqVHQTPanatYjjR7COLD3jgdaPlZVHNrrK4nDWj/7apAIPobm
-	pHrcmcjoEvgoHo7tMnhkZU7Qp2TLRjNSpXwLZ6iInOTeTaUx7zYT8C6+il8j9JoTLUH0NFSpOep
-	bJz6usXwOPwxDDgVV1iFe6Yy0cPkH70mpqwrolJEnWAAly95LP6V6+I9OUp7WC77ZRSgVfmYmZt
-	4SDNkxcUb+IcAmoJSWB1TGIZuse/GSRKKHISVgQipaT3lRvY8yc2HyNi5a2fgPLh8p5BQGuv5Q1
-	fRZRpcHVgIdbEuYjIC1CQNdprT8L2wZ1Gn1D3vxzjrY=
-X-Google-Smtp-Source: AGHT+IGb7Z+gqsmkO0AJw8/NOqY0CM5WThp3oPPb1uqxhGCRWRoFZffU/dYLohNfLqYEYJAOBeU/9w==
-X-Received: by 2002:a05:6000:70e:b0:385:e8e7:d09a with SMTP id ffacd0b85a97d-388c3645ec2mr1356055f8f.2.1734085731798;
-        Fri, 13 Dec 2024 02:28:51 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38782514f29sm6847351f8f.77.2024.12.13.02.28.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2024 02:28:51 -0800 (PST)
-Date: Fri, 13 Dec 2024 11:28:49 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Ivy Huang <yijuh@nvidia.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	Brad Griffis <bgriffis@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>
-Subject: Re: [PATCH 2/2] arm64: tegra: disable Tegra234 sce-fabric node
-Message-ID: <l23rd5dt2it4tvh26225a5ortsl7wwhwl64tyncn33mpamdkxa@5mo7hiasunki>
-References: <20241213000305.3533971-1-yijuh@nvidia.com>
- <20241213000305.3533971-3-yijuh@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pgMor2TB"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=inAUGgZ7HFPDeo9fbY3QF5EepuAq5XmksgiigwUdzcMVEFyCbLaeDLWMJ3Cf0i9jmY+hnquR7zS19CTWs18bjR/W+WFhjx/BbzUautxqdvRe+HxzCVUzC5TmtkHymGYlEeHdlLI0QHBpktdMePYh7zoCo9onbviC1s9CCLPFmbJINhqx5IQUiLrDOPGRdZpTjSd8f5esQMY1Q6Bb7vQi8YR2uDK6bF65zS1H7nPoZ1dA70ok0/VqDMgRSFJLVTSJkZLNeD5bDCNYw86kHiUt8oEoXAWobzSCVSvfZdHmMrdl+CwA2/kBp5ccRedGsuQRa3+FfaSE3MBAOj6IfqrZvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FNc1Hab42082326taptVzhJRlD+v1mvQueKIgrNbtNA=;
+ b=Dm2E6UVAEivBpEbhMYLgsRj9f0vZ4NWMO9jkhz8s7BHrvm5dMjjDvenRii8B0DShgvEdcKgxr2faQluRUJI283Kv5c5Bkrluce7buRlZAPbiOXzSsq3B4+INxEFIjNInMssIjqCQ3mExin5LLqSf5cuxgxaVwpn41wfi4SwkQrPV+9Fa2XrOMgt2DE03vELtyCFAT7V2wKJH8dlGSShrk7aBN5SA2F2VwjL3JHnCkBiIVHSnoDiiQvfT9IWE9Huyrk3RPwHS5oFUDm/52CA91FbJ/yrKJaq6rfyrsMK2Qm9R+Wu0L0kKjpg706sV9M7pv/ugfy/b7tTtG1fzyFyYxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FNc1Hab42082326taptVzhJRlD+v1mvQueKIgrNbtNA=;
+ b=pgMor2TBvE2258ocUcDuZ4Qp7Z3vv4VeUEkyuPXDL3DyJBmqhEkWenqrd59BL7TKSursx2Au3yeNYliJ2ATtzrtAUE9ousX29Rw7rZXlt7hZ8jN2LdMjbQonTJIIL0DOqsn5FNS8uVurXKoxyMP2ObQUkOwRIC773fKdIuVkJLd/Djiluf5XwSg3cOSQ5G+0c6z8gilsTkAIXuLrrrPqUCGBI4kiJgzRyn1bot1a0+d400lxf0K1bMrJdMRDXN1L/FlF8LGxwArR9VY4kgvoDrCBpa9W4nNqKhdtAnZTfu6Sg28m3GvzoiO597esi0HkrsSAwZBbtn4FGkyG03IFrw==
+Received: from SJ0PR13CA0043.namprd13.prod.outlook.com (2603:10b6:a03:2c2::18)
+ by SN7PR12MB6670.namprd12.prod.outlook.com (2603:10b6:806:26e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.15; Fri, 13 Dec
+ 2024 10:40:03 +0000
+Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c2:cafe::ed) by SJ0PR13CA0043.outlook.office365.com
+ (2603:10b6:a03:2c2::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8272.5 via Frontend Transport; Fri,
+ 13 Dec 2024 10:40:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.15 via Frontend Transport; Fri, 13 Dec 2024 10:40:03 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 13 Dec
+ 2024 02:39:51 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 13 Dec
+ 2024 02:39:51 -0800
+Received: from 13db4e1-lcedt.nvidia.com (10.127.8.11) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Fri, 13 Dec 2024 02:39:48 -0800
+From: Mohan Kumar D <mkumard@nvidia.com>
+To: <vkoul@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>, <spujar@nvidia.com>,
+	Mohan Kumar D <mkumard@nvidia.com>
+Subject: [PATCH v2 0/2] Add Tegra ADMA channel page support
+Date: Fri, 13 Dec 2024 16:09:37 +0530
+Message-ID: <20241213103939.3851827-1-mkumard@nvidia.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nswbtxszuhelgfc5"
-Content-Disposition: inline
-In-Reply-To: <20241213000305.3533971-3-yijuh@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|SN7PR12MB6670:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33aa4086-d176-40cd-ff2e-08dd1b628074
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?netOm9a3PuWwOTKjVN93R2pZVQumbF5DllKDjq8sIb7baKlBCLXH3nwrnqPA?=
+ =?us-ascii?Q?anV3vyxv0z92Pb55oWUUYjwBTNbcRSv3w8iHhRLpbByY245QNlEl+6dnblgB?=
+ =?us-ascii?Q?27BeiyhQzjwQdQVBcbfdq2rFMk2PY1bUHmBHE7eKPMr6kGNCgGD9hLw4IDC4?=
+ =?us-ascii?Q?b9Kzx7rYHdmlltTCQltw8hEYYBEcTNW/DoF9FT30B3FUc6KI402jcQk0LubG?=
+ =?us-ascii?Q?srVplMJFFCSIU3xoJSGG3hPT7i/L081woX7Vy7VdwFUar1V/OmV0TzVWL+28?=
+ =?us-ascii?Q?lw0ObofgwebUtWhHjGSav9P8e1J0lJ8EKGyFs/oOZylpWsdWGBswJksJkh2B?=
+ =?us-ascii?Q?nBicvyARcGM67lgCfx7W9HFE856doxIDCBTfEe0w4krvESIRyDhzN1L2p9F7?=
+ =?us-ascii?Q?Vlo4Qvbog9x5+drzx3X6ITBJDMKI3a9vNyVHSyCMzU502RBbCw3vQQJ0ztU+?=
+ =?us-ascii?Q?3uup6fzbf6iWHwMDa6uCzXr1Qop4PbPq0OXIMehAwMk6Y07HEcp5LPYyTd2m?=
+ =?us-ascii?Q?7X5bAKRjsLPGSuGrMVFDBhbrKGwXzu+Sx+YFBy4ppnb1jsFftyb6FtDXkazK?=
+ =?us-ascii?Q?bPj8MHvZJnH+Dqt1KgzxyldQWUYCvudp1q3ei0tM+rB+Ttc5XyrRwHg9TKtZ?=
+ =?us-ascii?Q?cXoAhXsf15pPaZEowWyl14VtcfcyhSBnjxdj9K1L8UO0K5gi0ip5HdndmYDc?=
+ =?us-ascii?Q?7bVbasMU1vBC9loxEWC43z6eOmZJP6MIxSq9THbZFuFA4LRESFDB2iL5mdr3?=
+ =?us-ascii?Q?gJjXUAo1T9WYS9FMeohbqzfuIE1NFaOVxFmUGAdlIuAx8GYikvFfleZG3jkG?=
+ =?us-ascii?Q?gXQHFLLaexpp7hvIt5+eP3bmsGCvODSyTP83SpwPtm/zVnXbqNsdzq9zzuxq?=
+ =?us-ascii?Q?qm426LyIuN1JFJa7FG0c+ubxFMNtS3E3xMYZuhs6Sd3Sv4bxAE6E3KcEOXDB?=
+ =?us-ascii?Q?VAEOPXidau95Y1UoFzbLf8OfzhBtgCs96uwyrT7yDIxZsdZLQcJQGb/aES0m?=
+ =?us-ascii?Q?lRrUlgkicCtuCHdMu8xxbeJYTdVobCHdlCtC352mkwDQmShM/B3TdAMZawtQ?=
+ =?us-ascii?Q?m+pXDwbQBXpbmw7j2f7qu2znaZ+/adGVcipj7+2AjXfCwxrj0UjQIHV1F0EH?=
+ =?us-ascii?Q?RUCLPS9hxtidsEJu8Xk585AFEkWZGMukAUBCdG6qtP4D+reVj7Xs0YNDwczu?=
+ =?us-ascii?Q?4eEjpJbaflOvb/O/9s5uuLFx0ywzIRTfYVICUUCT05SdJP8QcN/5gf32zf2X?=
+ =?us-ascii?Q?p0I2tlNH/1/0h9hgUGA3HsZDLsbSZIsO9JRs/sJX9q8Gl2NKhNbAb3G7aY+C?=
+ =?us-ascii?Q?xxjV6QKGC/jRCXo1pN0EJALkwPRYpDJ2Kc4xW+0onzbsEam/l6Mlb/gaozpt?=
+ =?us-ascii?Q?jXu7XPNVO7jinhQiWFxBijWx4+A39Gf7PbBoZatixWiFBbWTMWZGcdcIG5bR?=
+ =?us-ascii?Q?2bab+yo/GD9HehOKGgyy8Oc7bJHdXODc?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2024 10:40:03.0968
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33aa4086-d176-40cd-ff2e-08dd1b628074
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6670
 
+Multiple ADMA Channel page hardware support has been added from
+TEGRA186 and onwards. Add channel page handling support in the tegra
+adma driver
 
---nswbtxszuhelgfc5
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] arm64: tegra: disable Tegra234 sce-fabric node
-MIME-Version: 1.0
+Mohan Kumar D (2):
+  dt-bindings: dma: Support channel page to nvidia,tegra210-adma
+  dmaengine: tegra210-adma: Support channel page
 
-On Fri, Dec 13, 2024 at 12:03:05AM +0000, Ivy Huang wrote:
-> From: Sumit Gupta <sumitg@nvidia.com>
->=20
-> Access to safety cluster engine (SCE) fabric registers was blocked
-> by firewall after the introduction of Functional Safety Island in
-> Tegra234. After that, any access by software to SCE registers is
-> correctly resulting in the internal bus error. However, when CPUs
-> try accessing the SCE-fabric registers to print error info,
-> another firewall error occurs as the fabric registers are also
-> firewall protected. This results in a second error to be printed.
-> Disable the SCE fabric node to avoid printing the misleading error.
-> The first error info will be printed by the interrupt from the
-> fabric causing the actual access.
->=20
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
-> Signed-off-by: Ivy Huang <yijuh@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra234.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra234.dtsi b/arch/arm64/boot/d=
-ts/nvidia/tegra234.dtsi
-> index d08faf6bb505..05a771ab1ed5 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra234.dtsi
-> @@ -3815,7 +3815,7 @@
->  			compatible =3D "nvidia,tegra234-sce-fabric";
->  			reg =3D <0x0 0xb600000 0x0 0x40000>;
->  			interrupts =3D <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
-> -			status =3D "okay";
-> +			status =3D "disabled";
->  		};
-> =20
->  		rce-fabric@be00000 {
+ .../bindings/dma/nvidia,tegra210-adma.yaml    | 60 ++++++++++++-
+ drivers/dma/tegra210-adma.c                   | 86 ++++++++++++++++---
+ 2 files changed, 132 insertions(+), 14 deletions(-)
 
-Hm... so what's the purpose of having this here if we can't use it? Are
-there cases where we might want to access this? For example, could some
-firmware *not* firewall this in some use-case, and would we want to use
-this for error reporting in such cases?
+-- 
+2.25.1
 
-I don't have a strong opinion on keeping this while being disabled. It
-is a fairly small node, so it doesn't hurt much from that point of view,
-but overall this patch seems like it's taking the easy way out.
-
-For example if there's ever a case where we might want to use this, then
-there should be some other entity (UEFI?) setting status =3D "disabled" at
-runtime. Or perhaps it should be setting status =3D "okay" if it is not
-firewalled. Generally if there's no mechanism that would ever change
-status from "disabled" to "okay" at runtime, there's really no point in
-having the node in DT.
-
-Thierry
-
---nswbtxszuhelgfc5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdcDGEACgkQ3SOs138+
-s6FKExAAvf/o9UE/b46eYB8uD01lyvI//x0eUxtOKRnqfgX+d9bjf3brs26G4hdO
-E/7R03LG8lRjMWx1fKt5eDh0w/tXrjBrswAHfgax8fuNsGuDPhES8cWMz+HWlKrT
-qO8G4TJyDZVXZDbdPnBmx4J0a97QThdY5QIboZpWzM/PFUbMpWoOkscsYluJUzLU
-+WQfkQyOzwNAdZxVugcWwfykC1EW1mXcp3QuzEjD/XnhI0E3j3w5H1Gsuc/9J2ve
-VU/8BlODeeTraUCR5ulx5gxVCGavteQQ7hBxWNA7SFgz9r9vjhSCjGlVBPtpWEf7
-kpQYkCEl9TvpRYkoKL9yIlij9obreueYfDQIfTI4aX/8SpzYiCRZSE8otnmOrSXf
-0oDO5b04iyQcVvR/4yZyoKCGOYAfry8gqDPzdU85OJ+IhyF02l9CiqbCXcXNIwAA
-o78OwNW2Q21S/hDen0ltdVT9xARBH7mz5BZoMDz/5Z52s+S6eOo2DGD6fxKoCnnT
-KoH3mrudnxkUyQClyrGrhfhyopZrrapslwFTEyiaudW6v1FSVjRWkk5F86ff2UUP
-jyAfVFBezuEn2vhYECGtTyH2C+416wqaJ5sDkn0R71RhvGx0Y92ZA75gXDVhlEfN
-WVcOmVz187yeRP263sC5mN2faCjYPUcSI8X4Vuu/k5iPgXhzilY=
-=I9dc
------END PGP SIGNATURE-----
-
---nswbtxszuhelgfc5--
