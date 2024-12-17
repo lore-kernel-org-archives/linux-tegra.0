@@ -1,361 +1,196 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 156061D5AC6;
-	Mon, 16 Dec 2024 22:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734388429; cv=none; b=DWYv9yxvYzIkaN1l/CuyKgR4GEE0ZGa6TuK4Y9SN9+crZbqhEtMblxN/s64cu8PLQ4lyM+ByhzrERsgl7hHIhAUMXvGCCsj4FbKMqjyAOH4cqmx0aax3WFUJoZHYJ9rnBUCZAyTZxh/1nhKPzeDFOea8s0ZOo3rlBlqLMxl4i0c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734388429; c=relaxed/simple;
-	bh=PQzS4WQAw9nV7bI5DZmP1ADIxcQtPHd/qezkN3jwzIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B/Dr4Q6sRyNyTt7N1yvItHBAfV5P2hb9L6PnfmOXXIucRpAHx88Rsrccm786wqSBiFnXwBLEEqSIjNubIYV4h6ocJmk1zlUA8AncpFQ17Co1KLFfSiItj1NYb1+AjDsdcUtwY52aQTxmLyL03uKNn63e97c/S3mLtPFmNy0G9m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76476113E;
-	Mon, 16 Dec 2024 14:34:14 -0800 (PST)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0F81A3F58B;
-	Mon, 16 Dec 2024 14:33:39 -0800 (PST)
-Date: Mon, 16 Dec 2024 23:32:54 +0100
-From: Beata Michalska <beata.michalska@arm.com>
-To: Kai-Heng Feng <kaihengf@nvidia.com>
-Cc: Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, rafael@kernel.org, viresh.kumar@linaro.org,
-	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com,
-	lihuisong@huawei.com, zhanjie9@hisilicon.com,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Phil Auld <pauld@redhat.com>,
-	x86@kernel.org, linux-doc@vger.kernel.org,
-	Carol Soto <csoto@nvidia.com>,
-	linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v8 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
- sysfs entry
-Message-ID: <Z2CqlrtNSyP1rwvv@arm.com>
-References: <20241206135600.4083965-1-beata.michalska@arm.com>
- <20241206135600.4083965-2-beata.michalska@arm.com>
- <3f19c5a8-9ee6-42fe-8b4c-3a66c65c8d35@nvidia.com>
- <955a7947-3053-490e-a803-d55699dddd0c@nvidia.com>
- <e3284392-4f57-4b5f-a79d-40b588e6c70e@nvidia.com>
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2058.outbound.protection.outlook.com [40.107.92.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DC4134BD;
+	Tue, 17 Dec 2024 01:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734397703; cv=fail; b=AVy+8n0z5guW+MxuouUxSFtWfKQ5Hy4jwrk2W1QTZGK3lU5tUY/rMT2chSUVKqB/qQx4+D8QKtGEsnlylwtuE0A5FHLkLMLK9dvpK8uqqsmFTGXuFDza9Y0nmNN4JsVEBt3fx2LNZfBNhXNIMlDAUDx9SyfY4GOurzDIf4gw0Fw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734397703; c=relaxed/simple;
+	bh=mdVz23oZMhIcJehotNBAiFnzFR6dA2uDG1WeSCH/Tzg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cOfbgBdsbnd74ZmzFdBdhFccMWXlymM3AYCcdNVr3Xivz52rjoe2DooahzWo/PuewN6qicZcwxvf9LlhaxLZrwGhijncarcI1oxMTXNS4l6Z+OdrWKuKqps5scnom90ckBYPZECrdv+xJanWimjmVa5Y1WuiycABxuRSX9aSdGY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=j0vBmWSa; arc=fail smtp.client-ip=40.107.92.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="j0vBmWSa"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fY1uaqkIhmfHmaZmTK5XwXqi6tHRlaV41GAcurLyUK2XqjmCUPGtAcdvaULiIAVzhzceyqwTkk5qpE3RY74UsSwfLqb1oe6rcSFb8iBO0adWRPSXquV2b/11Dcb2PKgNST3e7wMyoPu6z+pGx47/eQjAvGtvFcrk2HhXTt8YhhhOPWIq6wE+WLohVDNyY72W+z87m4E3e5j0Bx6mCoBqc/e3NI0c2CX/rwpeJbnqO3CR1PRpItk/bdbR4+zfGYY9TFHvN2GX+E/NCGcebGY0AKtXh5T5RCmOtgLWPQuhTEXozz0SSrbwQFWQ8TqxWBgIeDD2zKNW0fFmDDczHNnsHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SvlLDM4xMPkoyYRrQOC3Cag/X0rAfiT4JIPDZSxGaqQ=;
+ b=VLqzTwC8VK5nn1qHIEsfHvwEfvhW/JZWJ1dNftI6MvqPJ3yQMlhaG+IlKLf+i1MI/o+JTY+149hVwbZ+6B6QaBB53EqjVOT33vpKLhCDGH37fCV5bqOQg8QJzYwNVGNGxL58h9HGzDD56PTnBxIZ83IdO3Bov6/H2Yg4pf4XJu3H33xjJgEjRJrfVGMVtIKeU36qb3kR/IrbPdr7FFCNI9q2lk5e2odzL2XQR7uYxo1A7htuPoxdQoMGrpiHXMLsxy8lU50DFwh48FBkwyXF9HeD9DJVocQCDP8IVECgBgrvt83R/u/3M+AvSIImRw3d7kj/kU+2TVIZxWz2HbsFZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SvlLDM4xMPkoyYRrQOC3Cag/X0rAfiT4JIPDZSxGaqQ=;
+ b=j0vBmWSa/fQVYPe1o1MvEPoGEyRWPmtGeRK9BMqjpBDNJ+M6sxTE1/BrP9kUl35Nyr+hPZYCI6M6Y79U+SB0HZKHjOPPJ21pYjcjPRvQ26DRfFWPrRzoAZ4kc0nPuO95MT4C+xcIvHAqYddWaT9/wUgLjjuPuYP1YFNKjGuQFVb4AR2lxYT0xfrJOuTCZ0DCmoL4rbqZfNpShMEn2a5uVsNI58ToMvbr35TUut9QcN6wZptyfBX07lRM5Zu5KnwbRa+QsNTe0Quy7hv6EowqP2whRAsfkhaaxuzgO/n0iABdxgtxvdpnLG4bhS7fSI1jx3wjU+cLOMAqoFwJ4I5Lbg==
+Received: from DS0PR17CA0003.namprd17.prod.outlook.com (2603:10b6:8:191::17)
+ by LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.20; Tue, 17 Dec
+ 2024 01:08:19 +0000
+Received: from DS2PEPF00003443.namprd04.prod.outlook.com
+ (2603:10b6:8:191:cafe::ae) by DS0PR17CA0003.outlook.office365.com
+ (2603:10b6:8:191::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8251.21 via Frontend Transport; Tue,
+ 17 Dec 2024 01:08:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS2PEPF00003443.mail.protection.outlook.com (10.167.17.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.15 via Frontend Transport; Tue, 17 Dec 2024 01:08:18 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 16 Dec
+ 2024 17:08:07 -0800
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 16 Dec
+ 2024 17:08:07 -0800
+Received: from thinkpad-t480.nvidia.com (10.127.8.11) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 16 Dec 2024 17:08:06 -0800
+From: Johnny Liu <johnliu@nvidia.com>
+To: <krzk@kernel.org>
+CC: <airlied@gmail.com>, <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, <johnliu@nvidia.com>,
+	<jonathanh@nvidia.com>, <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-media@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<luca.ceresoli@bootlin.com>, <maarten.lankhorst@linux.intel.com>,
+	<mperttunen@nvidia.com>, <mripard@kernel.org>, <robh@kernel.org>,
+	<simona@ffwll.ch>, <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+	<tzimmermann@suse.de>
+Subject: Re: [PATCH v1 1/5] dt-bindings: display: tegra: Add actmon information
+Date: Mon, 16 Dec 2024 17:08:05 -0800
+Message-ID: <20241217010806.15703-1-johnliu@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <262c8d8f-f53c-455b-9bca-3440afb7bcd6@kernel.org>
+References: <262c8d8f-f53c-455b-9bca-3440afb7bcd6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e3284392-4f57-4b5f-a79d-40b588e6c70e@nvidia.com>
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003443:EE_|LV2PR12MB5968:EE_
+X-MS-Office365-Filtering-Correlation-Id: a36f05d2-1ec5-4c4a-eb10-08dd1e374b00
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ys6wPC8yKHnqpc1QDxwGoJ98tc35ZSpUJcR58cFC7RwvO4vTshTMtSFo4NRl?=
+ =?us-ascii?Q?sSHc2hfpFZ3DJv9pDczqXC4x9xZAiu59zGBiZCKEDlfaeZU2eHY54AUcsYVm?=
+ =?us-ascii?Q?eG82O8pmva/xaNb1EzzbE8NEihEoWmvy6fh8EoVOvnCRWHv56Sy3vemTCjxw?=
+ =?us-ascii?Q?Ps9lGUPMtQYHSr0jOW3p9agYmTjTJYugHhO8OS6yIxtDNWbd2I7I/xl1dsoy?=
+ =?us-ascii?Q?VLstyXb6/45Iw8A2zVuU5eQBJRmLdZ6TzYFPayj1jMKZu33IJZDmAh/LiWVc?=
+ =?us-ascii?Q?s0YRFpNJ9vgsmqXlYgQrFpRvo3LNRdE6dUW28xS8etfcg2uip28X/Na3GDPL?=
+ =?us-ascii?Q?Qk058SM4rXbQuMQN9z1jTOroy5TLxHs/yAZseCqA7AhlFuGqn/NIYK4NmxzM?=
+ =?us-ascii?Q?lDPcWJ76nVWdGe7jSq5qByWYCGk3dcVf7yf9Xr6oX9VmT8/rCXj+gRqYkq2s?=
+ =?us-ascii?Q?ln8A3qjzQaioYV1Wm92WMumGBmD1/3Kz4s+Yveq+OpoOSxr29a/xOsdNWqQG?=
+ =?us-ascii?Q?ATSd887liuKMjmG0aAHXFqOzAr1+hjcTyR8H+/HQoAPdW/vvZEUJHOKM5ATv?=
+ =?us-ascii?Q?bf4U9Qy7/RBwvCpghELXV1kmzLmlbWygmuck52Y96EXwIxMqzzwVvcjOM0PK?=
+ =?us-ascii?Q?tm6E1+RcQJ06pH59O+zchYns++KmlwyH67JUpsej+wIh5StLDokaQCZhSio/?=
+ =?us-ascii?Q?oiJBQKd/vKVumcJ8cX+0K+lUCHN3lhDdNq3ipHQ48I+c8hxvuO4GfPMkL++H?=
+ =?us-ascii?Q?rDkkPqJvHR+HZ16pdx5AxqZpv7/L5YPfe/AHSI/hkQ4GlnBtgUyAkWaUNkae?=
+ =?us-ascii?Q?r+68lF7Wh3emi9JVJ7YHISuU5i8GC3qB1TBsc4p0f8oIeZhsA//u6H38plUO?=
+ =?us-ascii?Q?iWbHbGQ+Yl9Y3zaoOaGtzWR/EmYJqxt65ZyPPseU8nX+6UF0cAs7mov5uLA/?=
+ =?us-ascii?Q?qIYV+X7qmMT0FiigB1Sp9E8e5cIQ4EIsv+YfoTt9VqmJLY1Ff08RnFHpNJ/l?=
+ =?us-ascii?Q?vNKts0UifsCbzjQHUd+za1e04Ei4x0RxtFkB1vNVb2FqIysg5dB7i3npq+ir?=
+ =?us-ascii?Q?YZwwRjXCED3XlDq/jjwaveD4TKwve86ofb+snLwSQQxAow41MF2gngyqf54S?=
+ =?us-ascii?Q?C66leNCcSD10sM6SEdUStR4ZY52h4asOUvd94eLYXA6flgQFxyOlZR3bZlrV?=
+ =?us-ascii?Q?82fknniKOiG7tvV9lwxBfDD9SEHTHJuN3o/H3J8Kth8d7tPjJNGTFU6vCAoX?=
+ =?us-ascii?Q?fVaHJGfqI9Sg4taidWp5DXJ9xkYw9C/HA8S60jcWVjU6z4fkxJJYy36TNyqT?=
+ =?us-ascii?Q?R3aqFHSM4LkEndddXEtDWNRyFqjxBcsXb2RfnLs/iHzlzXCmRu/skNqb/14Y?=
+ =?us-ascii?Q?zqMbzH3ZD8BLI66g7lq/rF5fWmQ6i4yS3a4mXf4I7WCRTjYwbDlON0dqQElw?=
+ =?us-ascii?Q?iQpN9T21D0tislixf5x2yoOUZepd+8zqL9jA58Rc4xsFZArFLOJDeAwvYvYf?=
+ =?us-ascii?Q?9k2SUOEbcv2OLAI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2024 01:08:18.5301
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a36f05d2-1ec5-4c4a-eb10-08dd1e374b00
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003443.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5968
 
-On Mon, Dec 16, 2024 at 04:33:28PM +0800, Kai-Heng Feng wrote:
-> Hi Sumit,
-> 
-> On 2024/12/16 3:11 PM, Sumit Gupta wrote:
-> > 
-> > 
-> > On 16/12/24 11:13, Kai-Heng Feng wrote:
-> > > Hi Beata,
-> > > 
-> > > On 2024/12/6 9:55 PM, Beata Michalska wrote:
-> > > > Currently the CPUFreq core exposes two sysfs attributes that can be used
-> > > > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
-> > > > and scaling_cur_freq. Both provide slightly different view on the
-> > > > subject and they do come with their own drawbacks.
-> > > > 
-> > > > cpuinfo_cur_freq provides higher precision though at a cost of being
-> > > > rather expensive. Moreover, the information retrieved via this attribute
-> > > > is somewhat short lived as frequency can change at any point of time
-> > > > making it difficult to reason from.
-> > > > 
-> > > > scaling_cur_freq, on the other hand, tends to be less accurate but then
-> > > > the actual level of precision (and source of information) varies between
-> > > > architectures making it a bit ambiguous.
-> > > > 
-> > > > The new attribute, cpuinfo_avg_freq, is intended to provide more stable,
-> > > > distinct interface, exposing an average frequency of a given CPU(s), as
-> > > > reported by the hardware, over a time frame spanning no more than a few
-> > > > milliseconds. As it requires appropriate hardware support, this
-> > > > interface is optional.
-> > > > 
-> > > > Note that under the hood, the new attribute relies on the information
-> > > > provided by arch_freq_get_on_cpu, which, up to this point, has been
-> > > > feeding data for scaling_cur_freq attribute, being the source of
-> > > > ambiguity when it comes to interpretation. This has been amended by
-> > > > restoring the intended behavior for scaling_cur_freq, with a new
-> > > > dedicated config option to maintain status quo for those, who may need
-> > > > it.
-> > > > 
-> > > > CC: Jonathan Corbet <corbet@lwn.net>
-> > > > CC: Thomas Gleixner <tglx@linutronix.de>
-> > > > CC: Ingo Molnar <mingo@redhat.com>
-> > > > CC: Borislav Petkov <bp@alien8.de>
-> > > > CC: Dave Hansen <dave.hansen@linux.intel.com>
-> > > > CC: H. Peter Anvin <hpa@zytor.com>
-> > > > CC: Phil Auld <pauld@redhat.com>
-> > > > CC: x86@kernel.org
-> > > > CC: linux-doc@vger.kernel.org
-> > > > Signed-off-by: Beata Michalska <beata.michalska@arm.com>
-> > > > ---
-> > > >   Documentation/admin-guide/pm/cpufreq.rst | 16 ++++++++++-
-> > > >   arch/x86/kernel/cpu/aperfmperf.c         |  2 +-
-> > > >   arch/x86/kernel/cpu/proc.c               |  7 +++--
-> > > >   drivers/cpufreq/Kconfig.x86              | 12 ++++++++
-> > > >   drivers/cpufreq/cpufreq.c                | 36 +++++++++++++++++++++---
-> > > >   include/linux/cpufreq.h                  |  2 +-
-> > > >   6 files changed, 66 insertions(+), 9 deletions(-)
-> > > > 
-> > > > diff --git a/Documentation/admin-guide/pm/cpufreq.rst
-> > > > b/Documentation/admin- guide/pm/cpufreq.rst
-> > > > index fe1be4ad88cb..76f3835afe01 100644
-> > > > --- a/Documentation/admin-guide/pm/cpufreq.rst
-> > > > +++ b/Documentation/admin-guide/pm/cpufreq.rst
-> > > > @@ -248,6 +248,19 @@ are the following:
-> > > >       If that frequency cannot be determined, this attribute should not
-> > > >       be present.
-> > > > +``cpuinfo_avg_freq``
-> > > > +        An average frequency (in KHz) of all CPUs belonging to a given policy,
-> > > > +        derived from a hardware provided feedback and reported on a time frame
-> > > > +        spanning at most few milliseconds.
-> > > > +
-> > > > +        This is expected to be based on the frequency the
-> > > > hardware actually runs
-> > > > +        at and, as such, might require specialised hardware
-> > > > support (such as AMU
-> > > > +        extension on ARM). If one cannot be determined, this attribute should
-> > > > +        not be present.
-> > > > +
-> > > > +        Note, that failed attempt to retrieve current frequency for a given
-> > > > +        CPU(s) will result in an appropriate error.
-> > > > +
-> > > >   ``cpuinfo_max_freq``
-> > > >       Maximum possible operating frequency the CPUs belonging to this policy
-> > > >       can run at (in kHz).
-> > > > @@ -293,7 +306,8 @@ are the following:
-> > > >       Some architectures (e.g. ``x86``) may attempt to provide information
-> > > >       more precisely reflecting the current CPU frequency through this
-> > > >       attribute, but that still may not be the exact current CPU frequency as
-> > > > -    seen by the hardware at the moment.
-> > > > +    seen by the hardware at the moment. This behavior though, is only
-> > > > +    available via c:macro:``CPUFREQ_ARCH_CUR_FREQ`` option.
-> > > >   ``scaling_driver``
-> > > >       The scaling driver currently in use.
-> > > > diff --git a/arch/x86/kernel/cpu/aperfmperf.c b/arch/x86/kernel/cpu/aperfmperf.c
-> > > > index 0b69bfbf345d..a00059139ca4 100644
-> > > > --- a/arch/x86/kernel/cpu/aperfmperf.c
-> > > > +++ b/arch/x86/kernel/cpu/aperfmperf.c
-> > > > @@ -413,7 +413,7 @@ void arch_scale_freq_tick(void)
-> > > >    */
-> > > >   #define MAX_SAMPLE_AGE    ((unsigned long)HZ / 50)
-> > > > -unsigned int arch_freq_get_on_cpu(int cpu)
-> > > > +int arch_freq_get_on_cpu(int cpu)
-> > > >   {
-> > > >       struct aperfmperf *s = per_cpu_ptr(&cpu_samples, cpu);
-> > > >       unsigned int seq, freq;
-> > > > diff --git a/arch/x86/kernel/cpu/proc.c b/arch/x86/kernel/cpu/proc.c
-> > > > index e65fae63660e..34d8fb93fb70 100644
-> > > > --- a/arch/x86/kernel/cpu/proc.c
-> > > > +++ b/arch/x86/kernel/cpu/proc.c
-> > > > @@ -86,9 +86,12 @@ static int show_cpuinfo(struct seq_file *m, void *v)
-> > > >           seq_printf(m, "microcode\t: 0x%x\n", c->microcode);
-> > > >       if (cpu_has(c, X86_FEATURE_TSC)) {
-> > > > -        unsigned int freq = arch_freq_get_on_cpu(cpu);
-> > > > +        int freq = arch_freq_get_on_cpu(cpu);
-> > > > -        seq_printf(m, "cpu MHz\t\t: %u.%03u\n", freq / 1000, (freq % 1000));
-> > > > +        if (freq <= 0)
-> > > > +            seq_puts(m, "cpu MHz\t\t: Unknown\n");
-> > > > +        else
-> > > > +            seq_printf(m, "cpu MHz\t\t: %u.%03u\n", freq /
-> > > > 1000, (freq % 1000));
-> > > >       }
-> > > >       /* Cache size */
-> > > > diff --git a/drivers/cpufreq/Kconfig.x86 b/drivers/cpufreq/Kconfig.x86
-> > > > index 97c2d4f15d76..212e1b9afe21 100644
-> > > > --- a/drivers/cpufreq/Kconfig.x86
-> > > > +++ b/drivers/cpufreq/Kconfig.x86
-> > > > @@ -340,3 +340,15 @@ config X86_SPEEDSTEP_RELAXED_CAP_CHECK
-> > > >         option lets the probing code bypass some of those checks if the
-> > > >         parameter "relaxed_check=1" is passed to the module.
-> > > > +config CPUFREQ_ARCH_CUR_FREQ
-> > > > +    default y
-> > > > +    bool "Current frequency derived from HW provided feedback"
-> > > > +    help
-> > > > +      This determines whether the scaling_cur_freq sysfs attribute returns
-> > > > +      the last requested frequency or a more precise value based on hardware
-> > > > +      provided feedback (as architected counters).
-> > > > +      Given that a more precise frequency can now be provided via the
-> > > > +      cpuinfo_avg_cur_freq attribute, by enabling this option,
-> > > > +      scaling_cur_freq maintains the provision of a counter based frequency,
-> > > > +      for compatibility reasons.
-> > > > +
-> > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > > > index 04fc786dd2c0..70df2a24437b 100644
-> > > > --- a/drivers/cpufreq/cpufreq.c
-> > > > +++ b/drivers/cpufreq/cpufreq.c
-> > > > @@ -747,9 +747,14 @@ show_one(cpuinfo_transition_latency,
-> > > > cpuinfo.transition_latency);
-> > > >   show_one(scaling_min_freq, min);
-> > > >   show_one(scaling_max_freq, max);
-> > > > -__weak unsigned int arch_freq_get_on_cpu(int cpu)
-> > > > +__weak int arch_freq_get_on_cpu(int cpu)
-> > > >   {
-> > > > -    return 0;
-> > > > +    return -EOPNOTSUPP;
-> > > > +}
-> > > > +
-> > > > +static inline bool cpufreq_avg_freq_supported(struct cpufreq_policy *policy)
-> > > > +{
-> > > > +    return arch_freq_get_on_cpu(policy->cpu) != -EOPNOTSUPP;
-> > > >   }
-> > > >   static ssize_t show_scaling_cur_freq(struct cpufreq_policy *policy, char *buf)
-> > > > @@ -757,8 +762,11 @@ static ssize_t show_scaling_cur_freq(struct
-> > > > cpufreq_policy *policy, char *buf)
-> > > >       ssize_t ret;
-> > > >       unsigned int freq;
-> > > > -    freq = arch_freq_get_on_cpu(policy->cpu);
-> > > > -    if (freq)
-> > > > +    freq = IS_ENABLED(CONFIG_CPUFREQ_ARCH_CUR_FREQ)
-> > > > +        ? arch_freq_get_on_cpu(policy->cpu)
-> > > > +        : 0;
-> > > > +
-> > > > +    if (freq > 0)
-> > > >           ret = sysfs_emit(buf, "%u\n", freq);
-> > > >       else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
-> > > >           ret = sysfs_emit(buf, "%u\n", cpufreq_driver->get(policy->cpu));
-> > > > @@ -802,6 +810,19 @@ static ssize_t show_cpuinfo_cur_freq(struct
-> > > > cpufreq_policy *policy,
-> > > >       return sysfs_emit(buf, "<unknown>\n");
-> > > >   }
-> > > > +/*
-> > > > + * show_cpuinfo_avg_freq - average CPU frequency as detected by hardware
-> > > > + */
-> > > > +static ssize_t show_cpuinfo_avg_freq(struct cpufreq_policy *policy,
-> > > > +                     char *buf)
-> > > > +{
-> > > > +    int avg_freq = arch_freq_get_on_cpu(policy->cpu);
-> > > 
-> > > We are seeing issues when reading cpuinfo_avg_freq on an ARM64 system:
-> > > 
-> > > $ cat /sys/devices/system/cpu/cpufreq/policy1/cpuinfo_avg_freq
-> > > cat: /sys/devices/system/cpu/cpufreq/policy1/cpuinfo_avg_freq:
-> > > Resource temporarily unavailable
-> > > 
-> > > The CPU is in idle state, so arch_freq_get_on_cpu() can't find a
-> > > good alternative source for frequency info.
-> > > 
-> > 
-> > Hi Kai Heng,
-> > This has already been discussed during v7 in [1] & [2].
-> 
-> Thanks for the info!
-@Sumit: Thank you indeed.
-> 
-> > In v7, we were returning zero which printed 'unknown'.
-> > The discussion was about printing in more descriptive way or with an
-> > appropriate error code. In v8 we are returning 'EAGAIN' instead of zero.
-> > The final decision was of Maintainers.
-> 
-> Is there any cpufreq driver that prints "unknown" or error when CPU is in idle?
-I think at this point, for cpuinfo_cur_freq, one gets either the frequency value
-or 'unknown'. I'm not sure whether there are any drivers that report error upon
-'get'.
-> 
-> I think it's more unsurprising to print the lowest CPU frequency when CPU is
-> in idle state, instead of any other error code.
-With that approach one cannot easily determine whether the CPU is actually
-running at the lowest frequency or it's idle.
-Returning an error also avoids mixing types of data provided by the handler.
+> On 14/12/2024 00:29, Johnny Liu wrote:
+> >> On Tue, Dec 10, 2024 at 09:45:50AM -0800, Johnny Liu wrote:
+> >>> An activity monitor (actmon) is used to measure the device runtime
+> >>> utilization to help drive software power management policies.
+> >>>
+> >>> Extend the reg space to include actmon aperture for actmon configuration
+> >>> through host1x.
+> >>
+> >> We kind of see that from the diff. Say what we do not see, e.g. ABI
+> >> impact or why this is flexible/optional for existing devices.
+> >
+> > Since actmon is not well-supported for the previous chips (e.g. T210,
+> > T186, T194, and etc) in this patch series, it's essential to make the
+> > specification of regs property optional for the previous chips.
+>
+> Then your schema should express it.
 
----
-BR
-Beata
-> 
-> Kai-Heng
-> 
-> > 
-> > Viresh,
-> > You have any preference on this?
-> > 
-> > [1] https://lore.kernel.org/lkml/aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com/#t
-> > [2] https://lore.kernel.org/lkml/Zyh-uVSW-0d0r8oB@arm.com/
-> > 
-> > Thank you,
-> > Sumit Gupta
-> > 
-> > > One way to resolve this is to have fallback methods in
-> > > show_cpuinfo_avg_freq() so it will look like this:
-> > > 
-> > > static ssize_t show_cpuinfo_avg_freq(struct cpufreq_policy *policy,
-> > >                                       char *buf)
-> > > {
-> > >          int avg_freq = arch_freq_get_on_cpu(policy->cpu);
-> > >          int ret;
-> > > 
-> > >          if (avg_freq > 0)
-> > >                  ret = sysfs_emit(buf, "%u\n", avg_freq);
-> > >          else if (cpufreq_driver->setpolicy && cpufreq_driver->get)
-> > >                  ret = sysfs_emit(buf, "%u\n", cpufreq_driver->get(policy->cpu));
-> > >          else
-> > >                  ret = sysfs_emit(buf, "%u\n", policy->cur);
-> > >          return ret;
-> > > }
-> > > 
-> > > But that also makes show_cpuinfo_avg_freq() pretty much the same as
-> > > show_scaling_cur_freq().
-> > > 
-> > > So is it possible to consolidate show_cpuinfo_avg_freq() into
-> > > show_scaling_cur_freq(), by making CONFIG_CPUFREQ_ARCH_CUR_FREQ also
-> > > available to ARM64?
-> > > 
-> > > Kai-Heng
-> > > 
-> > > > +
-> > > > +    if (avg_freq > 0)
-> > > > +        return sysfs_emit(buf, "%u\n", avg_freq);
-> > > > +    return avg_freq != 0 ? avg_freq : -EINVAL;
-> > > > +}
-> > > > +
-> > > >   /*
-> > > >    * show_scaling_governor - show the current policy for the specified CPU
-> > > >    */
-> > > > @@ -964,6 +985,7 @@ static ssize_t show_bios_limit(struct
-> > > > cpufreq_policy *policy, char *buf)
-> > > >   }
-> > > >   cpufreq_freq_attr_ro_perm(cpuinfo_cur_freq, 0400);
-> > > > +cpufreq_freq_attr_ro(cpuinfo_avg_freq);
-> > > >   cpufreq_freq_attr_ro(cpuinfo_min_freq);
-> > > >   cpufreq_freq_attr_ro(cpuinfo_max_freq);
-> > > >   cpufreq_freq_attr_ro(cpuinfo_transition_latency);
-> > > > @@ -1091,6 +1113,12 @@ static int
-> > > > cpufreq_add_dev_interface(struct cpufreq_policy *policy)
-> > > >               return ret;
-> > > >       }
-> > > > +    if (cpufreq_avg_freq_supported(policy)) {
-> > > > +        ret = sysfs_create_file(&policy->kobj, &cpuinfo_avg_freq.attr);
-> > > > +        if (ret)
-> > > > +            return ret;
-> > > > +    }
-> > > > +
-> > > >       ret = sysfs_create_file(&policy->kobj, &scaling_cur_freq.attr);
-> > > >       if (ret)
-> > > >           return ret;
-> > > > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-> > > > index d4d2f4d1d7cb..a7b6c0ccf9bc 100644
-> > > > --- a/include/linux/cpufreq.h
-> > > > +++ b/include/linux/cpufreq.h
-> > > > @@ -1194,7 +1194,7 @@ static inline int
-> > > > of_perf_domain_get_sharing_cpumask(int pcpu, const char *list_
-> > > >   }
-> > > >   #endif
-> > > > -extern unsigned int arch_freq_get_on_cpu(int cpu);
-> > > > +extern int arch_freq_get_on_cpu(int cpu);
-> > > >   #ifndef arch_set_freq_scale
-> > > >   static __always_inline
-> > > 
-> 
+Could you explicitly point out which part doesn't express it well?
+
+Considering old variant T194, the schema in this patch already made the
+specification of actmon related properties optional.
+
+If users specify actmon clock handle in clocks/clock-names properties:
+
+ host1x@13e00000 {
+	 compatible = "nvidia,tegra194-host1x";
+	 // ...
+	 clocks = <&bpmp TEGRA194_CLK_HOST1X>,
+		  <&bpmp TEGRA194_CLK_ACTMON>;
+	 clock-names = "host1x", "actmon";
+	 // ...
+ }
+
+Running the dtbs_check will report error WITHOUT this patch will have
+the following error:
+
+$ make O=out ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.yaml
+
+/out/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb: host1x@13e00000: clocks: [[5, 46], [5, 1]] is too long
+/out/arch/arm64/boot/dts/nvidia/tegra194-p3509-0000+p3668-0000.dtb: host1x@13e00000: clock-names: ['host1x', 'actmon'] is too long
+
+
+> >
+> > Enablement/Disablement of actmon won't affect the host1x main functionality.
+> > Its main job is to monitor the engines behind the host1x and serve for
+> > telemetry purpose.
+> >
+> > I could update the commit message to include the above reason. Please
+> > let me know if more information is required.
+>
+> And fix the schema to make it optional only for older variants.
+
+To maintain backward compatibility, shouldn't we keep the newly added
+feature optional for all the variants?
+
+
+Thanks,
+Johnny
