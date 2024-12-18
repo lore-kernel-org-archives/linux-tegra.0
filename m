@@ -1,229 +1,225 @@
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2048.outbound.protection.outlook.com [40.107.93.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303B64C91
-	for <linux-tegra@vger.kernel.org>; Wed, 18 Dec 2024 02:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734490117; cv=none; b=qDuFxVrzJGDS6ak+aDyykaKtQiRn4kcO4CarCIFaUN9D8L+NOU/Y+ZLnTRAzi0faK44gfS+syEbgHA1fjHUSulAFB9kOugMBH/TxIreyyE/bhf6L9AydWT/hvbaRtjR3oG68thk8TMNT/6cY5DYRclaK0mnaqyAikPS2f9/Zn4o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734490117; c=relaxed/simple;
-	bh=NMTHLGaY13yV8rfsMurKGi8SN5d+E6kVGRSO5wY4u8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KF2iLtd+CBNmQdE/aFyobMdvVD9WaJD6kexJH2icF6zRH0owuvn+qJO4JFZFMPLdNjt6w3+CDKD8u80oMFCVWcPn5vpaWvzNoGzNkFGTXEH4IQgGTCJmbOwJOA1Pk4ixphg2CrQCjwdd7YKEBMfY5qhY/pDRffrTMcc/Ivyewlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp; dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b=nNdIf3Hq; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=pf.is.s.u-tokyo.ac.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pf.is.s.u-tokyo.ac.jp
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF79513D8A3;
+	Wed, 18 Dec 2024 16:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734538880; cv=fail; b=o0PhxOqz/8cbSyoqz+zXfa9PxfY9kNc1Ay+KHYZFGzu6KwDFUs9p1jjm0Af6TS4fDvTe1DP5P1QDc8G9dutwrdgY8G2UITrvbSfzzZfbCwn9O8FReAxgXl9vIGW9Ml+TJuNXNNXzf3cazupNkQQCh8NaFyR9eETqjZUtIaVBupI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734538880; c=relaxed/simple;
+	bh=8QBiC41omjl2nvJbKTpvDUx/21njzUqZfTlcJgznjbA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=o40GaC/8GV9j8825zkW0bXHu0bok89qhHnZw9bgeamQDzyWCoZEYqIFQ+bU3xccjYw89PYXew9SJKCLScMBslier20wqt30AnYsqHdtrITDK98LgQypkyzKetbzNld+t6FySNmBCEICnLEoO0fPXSjPYoINVCd33BrOD5sES+6M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XLxeGA7T; arc=fail smtp.client-ip=40.107.93.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.i=@pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com header.b="nNdIf3Hq"
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-728ec840a8aso6359921b3a.0
-        for <linux-tegra@vger.kernel.org>; Tue, 17 Dec 2024 18:48:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pf-is-s-u-tokyo-ac-jp.20230601.gappssmtp.com; s=20230601; t=1734490115; x=1735094915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FCQbj5GAsImXzroS8gfN4kBF+HOBeC8t3dRFw2IjIQ0=;
-        b=nNdIf3HqEg38vpyx8MODedFXlWVh6yQ7rSdP9FhUBAD/sEuHNsBRGr6tkNF67W49g0
-         zj23yhlhvatRvAS0dmoZ1fRD614da8kjYz9VxVaEj50+SlWh1toADHYqLVWWGQpNpWbv
-         cT+zBkXtBrP26MdZZD+Y69zhhvBpFNgC5HbyvE8+sBk9mmyNmqM7GsS9yrzGcTB35Qa6
-         8KDlucMAS0TG4oGezSsGxOh6a85r+GJzhO/mQPF6kMEM8onM0it9pKRYG2DpFEYHvHXs
-         suts9QnSvp5ZS8rXiWczIyBg2goSSI10+1Z7zfSOmPNKb6EVD1L3SH54ishkEu/jogf6
-         Wh/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734490115; x=1735094915;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FCQbj5GAsImXzroS8gfN4kBF+HOBeC8t3dRFw2IjIQ0=;
-        b=GOo6fXVT70Zk+OK1ikFkjBgF6yxw8+XTPSJlNZcd3BTAroaYfmqM7GjEkJj8exd+0W
-         GBv7V/hDf4iN0DLO/kBdHTR8rkd6RQmjcEMtfb5kHmK9VqW8HXIGCfJYzcj9EvC3PSEC
-         K2Oslulmu84Ome9Qylk4fO6W3EY+k7NLhWpGjEdv9FDphpYuKQeZQkaruoXnZocSEFHa
-         0dJIZ6n+NXjiuT35piSY5tv7QlR8w8DMGWxoCzuyEOpsF1gOZjR1mJfDr+vVvm4YHaxb
-         nHitQu477AtYw20euCQMnfexWfrKKvBRXGdqmHFCsOzbFhd+CXoBhCYDINfCb90B7n0K
-         bfaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUEEVd4Tqnqe+YApIReilOb7o0vD2xPHNjPLXKG+DxyTAUSTwQDTsbyFesLzqUo/louqweydyDDWB6cg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvZT6j+kCnHTCBwOU7AAARlXX+Hv2JfTBXe6yzLAo6UboYzu3o
-	vhv+uZl6mQ/fwg7Q8odBhUT39M3k6k8qTNqwL/3Qm5wql2lPMZG4pUmZeoK8p7Y=
-X-Gm-Gg: ASbGnctX7v1MeWhPyIstsYbasnE+v7F7499zH0TVaZOEoOurHuZXPMv7CRdFsxDy3Iu
-	z/CDqzqgtlntX7sR4tP9YLNqO6DOtf8a4PljSbMblAxYVunQ2VQtIKBzhd+ljSwGL/X41vYhMvY
-	62IZN2vZU1nTLiyMJ855tEzaQLydYZSBfWMe8bVgLNHne0b/Kf95+UI8bqIP1zh4PO+fatE3j4M
-	VlssVNFpapH9Z/+oTqwFoEv70uX0tiQshbkWGuiU3vBdRVTLOSCSYToATK6FX7OvX6n7Ez/WKRA
-	Frs3whqsxXT13gC0CjK+FJzu9232OlztRQ==
-X-Google-Smtp-Source: AGHT+IG/Qnto52CiG7/eRPGJZkgRfayId2Z7pbdg5VmTfUqa/hk8jHXAjIWWTsunn8+Dt42jD51UrA==
-X-Received: by 2002:a05:6a00:3992:b0:729:1c0f:b94a with SMTP id d2e1a72fcca58-72a8d2cbcd7mr2328682b3a.23.1734490115287;
-        Tue, 17 Dec 2024 18:48:35 -0800 (PST)
-Received: from [192.168.0.78] (133-32-227-190.east.xps.vectant.ne.jp. [133.32.227.190])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-801d5c3662csm6501873a12.71.2024.12.17.18.48.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2024 18:48:34 -0800 (PST)
-Message-ID: <3ee7d8c0-1a5a-4b04-a1fd-bba5f7fb8f8f@pf.is.s.u-tokyo.ac.jp>
-Date: Wed, 18 Dec 2024 11:48:30 +0900
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XLxeGA7T"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O45zxvyc71tP3y9H7GHSS1N//e10mR/BJ5TAI4BsNt6oHup+hW8hf14J0YCuexgeAEL6b9UdhGfYaradXpVWIYK7UWI6nTfH2W2z559VOa1n1g97FFABor6wFMuieWXEKiMAv9fywLWEFBAuQrbarlg28MQo3661xTF5rbDJ6mQFcaMIPTNe15uImy7kXBd50+lSLNj0BZhXspyDqvGlDxCIpVCnw40Gx4/8gp05DJ8AorEFmzskluKgmUwJN5+OHrgQ5m5qhDp2X5aHkBTQ8sTGhw9RJWlPHAPaAkEJSp2xhckC39PYPmOImNTmZct3f9+oYGVy5qrL+Jja94zovQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kyWQ26s0m8W8oEKuH/2wiylg6YgR99pyQMV+3lwUAtk=;
+ b=ku6jAuYHuZ7nYu5LBBRk9yhceozmAj9WVsU+CPvn2U7F55Kxtg38sWPCXj7jt2+WKR8qK7Na20IEhuY0PLSfGPm410oizcjDSJWbk582CgK9lv5UEAgVaRqfTv5EQs0+LTaG2BK0a5mEi/hj6m8s94H6YAvyobmlkxguqHYT+abA48xBEVigRF+dmPxye7BY4saosPO8n0W1IYxrC1GqBvL0SP353PPtgr2HDZ7tFyaJsbvr9UNR8sAJOwPjzRCNREvgVT6aSiaztFcFqx8jp7/pJsMOvnM8bYb4+SpDyqlAAk1cqGGg3pyrUcJMYt5sHOz2Tnx/Zc5ppCXGRB3mMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kyWQ26s0m8W8oEKuH/2wiylg6YgR99pyQMV+3lwUAtk=;
+ b=XLxeGA7Tlz5S9D4Nlr4NTtsnd2owPMNzDBeTHTR4CkHW78DtWL5KSkVDTYxTh5wHEdfnmPN2Q4PnkilO0F6quodZE8qHn4JARotxq3vjqniBTlwQ0NeIuUTP3ea6F/yBbkyuoy1XMK3yWsJvMAKKTlFKfeO7VtcQA5s1yZV65i2QkJvPSlUfaOqFNpae06ekpANaCyduhmGFZkdvJb2VJZCnsSLvEhkpVeGlqSS7LEq9y+/DIEmZOgrcyL1ipOtzYxTk6LBVE2gLjNvxeXHA0sIlWKpagKMjHLJIo3N32yonEB8Rhes8vBYCs9HybKpZ+cQ2QPpy+bWWvffbMfT2GQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by SJ0PR12MB8116.namprd12.prod.outlook.com (2603:10b6:a03:4ec::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8272.13; Wed, 18 Dec
+ 2024 16:21:13 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.8251.015; Wed, 18 Dec 2024
+ 16:21:13 +0000
+Message-ID: <dd77fa22-fde8-48c7-8ef4-6e2dc700ef0c@nvidia.com>
+Date: Wed, 18 Dec 2024 16:21:05 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] USB: core: Disable LPM only for non-suspended ports
+To: Kai-Heng Feng <kaihengf@nvidia.com>, gregkh@linuxfoundation.org
+Cc: stern@rowland.harvard.edu, mathias.nyman@linux.intel.com,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Wayne Chang <waynec@nvidia.com>, stable@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20241206074817.89189-1-kaihengf@nvidia.com>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20241206074817.89189-1-kaihengf@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0533.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c5::18) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: tegra20-emc: fix an OF node reference bug in
- tegra_emc_find_node_by_ram_code()
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com,
- linux-tegra@vger.kernel.org
-References: <20241217091434.1993597-1-joe@pf.is.s.u-tokyo.ac.jp>
- <80e21d04-75a4-4361-8623-0dbadcd4ff2a@kernel.org>
- <fc0b53bf-029d-4505-a50b-8108b0788eca@stanley.mountain>
- <c79f0cec-a2b4-4b73-9ee6-f432d4529df1@kernel.org>
-Content-Language: en-US
-From: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
-In-Reply-To: <c79f0cec-a2b4-4b73-9ee6-f432d4529df1@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SJ0PR12MB8116:EE_
+X-MS-Office365-Filtering-Correlation-Id: 84840a4b-f6a8-4681-086e-08dd1f7ffd4e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dkVZbjIyMzJvQkhETUtuN2s3cmlxWm41T3Z5RGhIeVpRdEJzd0ZKM1JPUXVL?=
+ =?utf-8?B?MFpkNlE1Nm5hTHJEcmloUWxFWng4cFB3cEE0eVdZUmJzUUEwQjlkQ0Z2Mm50?=
+ =?utf-8?B?VTlUcHNqeS9ZYXJBcWFjdWdMVi95a2JzQlRSYUhjZGRjVFM1b0RQZEZPdUUw?=
+ =?utf-8?B?Rmx5TEcveUpmMkxacGRPUzhlRE9VTDB5TWJubVY2WFJhVFVISEV6Tzk5OGly?=
+ =?utf-8?B?MFcxdVRxMnM2dmk0cDhGVWx4MVUrUW8wNHU1a3BnYmtCb1dYY29XeW0vaTVl?=
+ =?utf-8?B?S0o3TG8wNlVqaGtPTnVSN0xpeGNudC9jUWFBZ0NIL3NHVDNaQXYrQWNwYUV5?=
+ =?utf-8?B?SDVoM1N5TEVhb3M2a0F4a0VZbDJPNFBxNm1JQWorTGk3b1NaS2taUEZJZDhq?=
+ =?utf-8?B?N1ZhT1dBL3lkQlUrc1pvUC9FSkc2QmtRSHZKMTdFb01OdEh1YjhZN0F1NzhC?=
+ =?utf-8?B?K3dLdWFnOUxHMFU0YWp4ZWo2cVYvR1IxM2c4dkVLcnFHMjFZSmNhcS9LVmVY?=
+ =?utf-8?B?Y0lNaDUxM3QyMXJlenRuempCaThyVGx6MGlyVkkyTXVOMGRUMmdZTXNMdk0x?=
+ =?utf-8?B?RndqWDdsV29lVmViNVM4ZzIyZkZGWDZpZm4rMW9DTWxmNG01cThIVy83V0kz?=
+ =?utf-8?B?eVhSUUlxcGdsT3hlSHl6c1RLRGgxelduWEJqZkJwQzJOTXQzMkdLZEV1dFkx?=
+ =?utf-8?B?cXR0OENraEVXd2NZd2o0UWhiYzY5UU1lR1c3d3BBcmRpZGdSKytWNDNMSmlx?=
+ =?utf-8?B?S0RqeXp5OXByNHFBeFFMZnZIOEg1MFppd0RWTXV1UEVBc0kyVW8yeFgvZjhB?=
+ =?utf-8?B?dDltakQvb2lOMW9EeEpSYkVGbzMydG9xc01hU2UwMW5BZDRzb0YvV09zM2tT?=
+ =?utf-8?B?K1RKS3RDWUtkeCt3Ri9pVFY4S3NrNDdGTFZ1bGVxcXFHY1pOUDdVQVgzYXJm?=
+ =?utf-8?B?cVcvSXlBR1dML0ZUd093L1YrZUdsdEw5NUg1MlF5Vml0aVJoZTRLY1hCeEpO?=
+ =?utf-8?B?cTBoaG5QdXlxQkc0YUcremZqYzY2d0RhZ2ZncTV4Qy9nV0kycmpDcTFmSG9s?=
+ =?utf-8?B?QzFEVWVnWXl2RE51RUl2Q2t0SWxCbkJtZ3ZNbVhYUFpHSzBpVTI1K2pIQ2lm?=
+ =?utf-8?B?UHpnTmFDN2s1TzRnUSt3NEhWcHpFWUM1b0lHdllOTU0xSXJYVVRHay9QU2Rv?=
+ =?utf-8?B?TFBxdnVzRVRLdWx6TEVRYXNBWWgvZ2pkV2NSVnVjNVZiOUNaOEl5MUZ0SmZB?=
+ =?utf-8?B?OFhWcmNQYlM5Sm9NWGpPYThhSlF4Vzk3aWd6WWtLZHZqK2M0TUtXdkd6Ri9n?=
+ =?utf-8?B?aDVEdFpldFVKcFByWEFSZVBYMHg3M1ZEcjlwT0xIL05uU0w1T2xXN0FvK2Y4?=
+ =?utf-8?B?c1c2VTFUQ3hNQ2t0N3gvKzhzN3U0dzVXYjZGem1Ec3lFcEZJWmh0TEFLcytL?=
+ =?utf-8?B?K0gvUlBLdElqdUxjS3pUR0xyV24zZzducDBMSjZLUU9lenU1Z0hIUDJvQjdh?=
+ =?utf-8?B?VHBlTDU1N3pSK2xNRDFYSWFOYndSaG5UNGZiWjJabTJib055RzR2dmtiSFZ5?=
+ =?utf-8?B?Z3FHeHBsekFkdzlMMzRRZzF2Q1ZhUGlpdFJmVmczSnR4M2xzcjdsN0ZHb2tW?=
+ =?utf-8?B?WEhmWk5FVkxGS0FLZjNYa2FwU3pNMnl3ejVhYWxUT2l4azBhQytzckFtRmxv?=
+ =?utf-8?B?RjMvSUFYdEh0c3dUMEg0emVYWVk0NjcwRkYzUldCYzBhSmtRYVVQbnNtU3FL?=
+ =?utf-8?B?bHNRVXE3VnRlclduaE9SNFJudm5SdnYvY00vb00vK0d3cDR6YzJjT2VRT3Fq?=
+ =?utf-8?B?OGw2MXY0TG1ERUxOYysrQjEzUjB6L3ZhZG9weTd5SDltU3VrZjUwOE9xRHJu?=
+ =?utf-8?Q?/4tOzR4a2olMz?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SHJ2SHlhOTNqQ3UvN0RxQjhhL1lBMXRIcHJKV1Q4Y0YxMHhyVDRWcWF3WEdJ?=
+ =?utf-8?B?VzJ5eGtkVDI3ZmVrZmczTHo5WDFSSzErY0Ruc0ZIQjFuZDdJYW9aSENRTDdq?=
+ =?utf-8?B?clNOenZwa2JmSnB1OVViZVBnUnhKV0szU0xSYnRxeG10ck02dnkxMXFyNWNN?=
+ =?utf-8?B?ZVNLNVFyOWZ4TkZLYytpcWRxSGxKc284NDNtblFWeG5mWnRNWmVSSUhRT2hD?=
+ =?utf-8?B?MmNTWHdHVEtFcFU1bUI3NUgxbmJuSStqVjdYOEpzZzVacTRCWEJKVVFxejRh?=
+ =?utf-8?B?ZHZObTlMMC8yMjBvQlZ0K1RGbHVDNXhQWTlZb0Zrd2Y4UWZib3FOSU9RcC9P?=
+ =?utf-8?B?T0FmY3diUUMxam55SDBnRlc4RVJRMERoNHNxa0VUVm5xK0FkcGdXbFVwcjNz?=
+ =?utf-8?B?OFpwQzBPb3NYMmRndzF4N29Tekc1YzNuN25WRHVMbGJuekZKOW5rdUpNdm5J?=
+ =?utf-8?B?emdmWDRJZ3FnNkorWlgxSmZvM2FYS2g1S1BsdkFRVXZaQzZlUVVrem9KMG1S?=
+ =?utf-8?B?ZjJISnBtZDE5SlRwdDBIajJPNjJib0kyMDRJQVdLai9QK0F0MUxqRStJTXhH?=
+ =?utf-8?B?RksrbkZ1UnhidUw2UFNRM3RTQXV2MFp3QXAwWXVpd0w3S0xyT1RsNW1rMys3?=
+ =?utf-8?B?ZWJtcnRLamx3YkNpS2l5d1FQbUJ5ek5tczBVbTlJcXRlbzQyc280elRxWno0?=
+ =?utf-8?B?bzd3TGpsTXlRN0F1cjV2b0s2STM1ZTBkMUJJUHd1U3V3cXovdmY0Wjd0M3Zu?=
+ =?utf-8?B?ZXY0bGhVLzJSclFSUkx3N1VBRUhOYlhjNEZWMkJvTE9IejJOYlMySmpCYWMz?=
+ =?utf-8?B?aVpHMTAzTCtvTDAxSEI0K2lPSzRFYWV4TUlhOWxnTW9hNjltWDRXWnBMY3hX?=
+ =?utf-8?B?UzE0dVd2SEM0d1hkRmRaUVltYng4NDl4V0ljS214VjlJclVlOHJQQ3lncjZI?=
+ =?utf-8?B?WDJjZkszaGt1YnNQcEZWSW5YNDExR054dVNkaUF5anVaVmR1Z3JGdFZtaXJz?=
+ =?utf-8?B?bVJJSzVVb2M4aWlmOUgzWGM1ZHVUZnJBdTQ0Y1FkK1N6N04rK0xFVmNpMWhP?=
+ =?utf-8?B?R0RRZktGQ2ZBUGY1RlNtMEs1QTN1Y01ZS3Y4R3JSQjR6L2pnRkxNaithblNU?=
+ =?utf-8?B?SWtaK0JQV3N3Q3hXNnN5YlBZS0JNc2x4RlFaT0VVNEpYZE1DSndmbGt4L1k1?=
+ =?utf-8?B?Y2FGd1ZhenA2Q2JqYS9UdUJkNFFabFpGcVZOclBSUGY4TTdYaDZRZE1ZL1hI?=
+ =?utf-8?B?UkxFL3RMUWp2RHVwS2xKa3lTWUVKekFhVFZSeFl6Q2IwQUttbzlQK3lvd3pZ?=
+ =?utf-8?B?Z1A5eTJCc3pyZTZPazVXMDBsVSszQ2FVV0tlaGx3a0J4ek5RZmNMUWFZM3lN?=
+ =?utf-8?B?UnRoNlR0RzBsYXhEOW92UEJ6VkUwMnhyWnNXMVVaWVFCaC9BcTNNV2VVUE0y?=
+ =?utf-8?B?aGZtc212SVMycURQeEtKbUVCbTJBb2p0NEIvVTRGMzBhOFhoUlBxVi9EQkdU?=
+ =?utf-8?B?aWpXZDZyd2dUS0dBeENBUzY0bFRZTk1URTlmTC9sanFRNndVL210bllxVnZs?=
+ =?utf-8?B?WTdqNDcxYmVIUk4vYmNFd2JGREZVc0Y4NXBxNVN4TWEwSmlYUEF5SXhIczBi?=
+ =?utf-8?B?dlR2SFFZQ0F2bUVmL1VFclRpNXVKS1dtWU9adDhtRWY5M3pHUjRObWlreUU3?=
+ =?utf-8?B?V0JKNlpaK0ZYN1krSmJvOFp0TU11cGQyWHNsd2E1WEp6ajZQdjFuTTNmRkp2?=
+ =?utf-8?B?cjllNS85YVI4T1l3SjhJVFkzSmxLcWxkN0E2Vy9VSkoyT1c5eHJxeVBiVVdj?=
+ =?utf-8?B?YVJadjhqWE5rY21aY3ZxNXhMSWNSQ1pNdU81THUwbjI2Qk5IQ0FRTGsyQjY3?=
+ =?utf-8?B?NkdxRFVBRzNWMmFxVjJ3NkM0cFVZaW1rQWN0WjI0Q2tlRnorQmhVUktXdVpx?=
+ =?utf-8?B?UTMra0kyazBtK0w2R250U2xDM2hxQXp1NHpqREZQNlJuVStheng0UEtwUXJn?=
+ =?utf-8?B?Wk9PL3VxLzhiUFVSVUZsa1pDb0NVZzJiRHp1VUhoNlpVejd6MkgyTm5XWUo0?=
+ =?utf-8?B?dTd2ZkhhNDRMTTladktQSk81MERBSzNOYkRxRUh2cjhnN2RseHRRYW9aQWxv?=
+ =?utf-8?B?QWJFN2l5bkJ0NlRpcDhWRkFMZjhLVEx0WW9HamlvckVldkpkb2l2VWFuWXpU?=
+ =?utf-8?B?UzlTcXpTTG1SYTU1U1hKK0RKc3ZhS2ZESHJmNnZMbk9KZjR4Ujdpa25hdlBw?=
+ =?utf-8?B?YWthdy9GSTMzczlBZCt4NG50OFNRPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84840a4b-f6a8-4681-086e-08dd1f7ffd4e
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2024 16:21:13.0611
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: q6FrWXwaw+wRTMINmGwNDfHcDv5dc5RxLTVO9PRT3m1EWU8hd0HaJkzI5YmLLW5uBfqtBTChOg1LisfB5DFjzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8116
 
 
-
-On 12/17/24 20:57, Krzysztof Kozlowski wrote:
-> On 17/12/2024 12:49, Dan Carpenter wrote:
->> On Tue, Dec 17, 2024 at 10:31:23AM +0100, Krzysztof Kozlowski wrote:
->>> On 17/12/2024 10:14, Joe Hattori wrote:
->>>> As of_find_node_by_name() release the reference of the given OF node,
->>>
->>> No, it does not.
->>>
->>
->> Yeah, it does.
+On 06/12/2024 07:48, Kai-Heng Feng wrote:
+> There's USB error when tegra board is shutting down:
+> [  180.919315] usb 2-3: Failed to set U1 timeout to 0x0,error code -113
+> [  180.919995] usb 2-3: Failed to set U1 timeout to 0xa,error code -113
+> [  180.920512] usb 2-3: Failed to set U2 timeout to 0x4,error code -113
+> [  186.157172] tegra-xusb 3610000.usb: xHCI host controller not responding, assume dead
+> [  186.157858] tegra-xusb 3610000.usb: HC died; cleaning up
+> [  186.317280] tegra-xusb 3610000.usb: Timeout while waiting for evaluate context command
 > 
-> Yeah, I focused on returned 'np', but it is about input argument.
+> The issue is caused by disabling LPM on already suspended ports.
 > 
->>
->> drivers/of/base.c
->>     927  /**
->>     928   * of_find_node_by_name - Find a node by its "name" property
->>     929   * @from:       The node to start searching from or NULL; the node
->>     930   *              you pass will not be searched, only the next one
->>     931   *              will. Typically, you pass what the previous call
->>     932   *              returned. of_node_put() will be called on @from.
->>                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>     933   * @name:       The name string to match against
->>     934   *
->>     935   * Return: A node pointer with refcount incremented, use
->>     936   * of_node_put() on it when done.
->>     937   */
->>     938  struct device_node *of_find_node_by_name(struct device_node *from,
->>     939          const char *name)
->>     940  {
->>     941          struct device_node *np;
->>     942          unsigned long flags;
->>     943
->>     944          raw_spin_lock_irqsave(&devtree_lock, flags);
->>     945          for_each_of_allnodes_from(from, np)
->>     946                  if (of_node_name_eq(np, name) && of_node_get(np))
->>     947                          break;
->>     948          of_node_put(from);
->>                              ^^^^^
->>
->>     949          raw_spin_unlock_irqrestore(&devtree_lock, flags);
->>     950          return np;
->>     951  }
->>
->>>> tegra_emc_find_node_by_ram_code() releases some OF nodes while still in
->>>> use, resulting in possible UAFs. Given the DT structure, utilize the
->>>> for_each_child_of_node macro and of_get_child_by_name() to avoid the bug.
->>>>
->>>> This bug was found by an experimental verification tool that I am
->>>> developing.
->>>>
->>>> Fixes: 96e5da7c8424 ("memory: tegra: Introduce Tegra20 EMC driver")
->>>> Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
->>>> ---
->>>>   drivers/memory/tegra/tegra20-emc.c | 8 ++++----
->>>>   1 file changed, 4 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
->>>> index 7193f848d17e..9b7d30a21a5b 100644
->>>> --- a/drivers/memory/tegra/tegra20-emc.c
->>>> +++ b/drivers/memory/tegra/tegra20-emc.c
->>>> @@ -474,14 +474,15 @@ tegra_emc_find_node_by_ram_code(struct tegra_emc *emc)
->>>>   
->>>>   	ram_code = tegra_read_ram_code();
->>>>   
->>>> -	for (np = of_find_node_by_name(dev->of_node, "emc-tables"); np;
->>              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->> This original code is wrong.
->>
->>>> -	     np = of_find_node_by_name(np, "emc-tables")) {
->>>> +	for_each_child_of_node(dev->of_node, np) {
->>>
->>> I don't understand how this change is related to described problem.
->>>
->>>> +		if (!of_node_name_eq(np, "emc-tables"))
->>>> +			continue;
->>>>   		err = of_property_read_u32(np, "nvidia,ram-code", &value);
->>>>   		if (err || value != ram_code) {
->>>>   			struct device_node *lpddr2_np;
->>>>   			bool cfg_mismatches = false;
->>>>   
->>>> -			lpddr2_np = of_find_node_by_name(np, "lpddr2");
->>>> +			lpddr2_np = of_get_child_by_name(np, "lpddr2");
->>>
->>> Why?
->>
->> This drops the reference on "np"
->>
->>>
->>>>   			if (lpddr2_np) {
->>>>   				const struct lpddr2_info *info;
->>>>   
->>>> @@ -518,7 +519,6 @@ tegra_emc_find_node_by_ram_code(struct tegra_emc *emc)
->>>>   			}
->>>>   
->>>>   			if (cfg_mismatches) {
->>>> -				of_node_put(np);
->>>
->>> If of_find_node_by_name() drops reference, why this was needed?
->>
->> The continue statement also drops the reference.  So this code as an
->> accidental of_node_put(dev->of_node) and two accidental extra calls to
->> of_node_put(np).
+> For USB2 LPM, the LPM is already disabled during port suspend. For USB3
+> LPM, port won't transit to U1/U2 when it's already suspended in U3,
+> hence disabling LPM is only needed for ports that are not suspended.
 > 
-> True, I just thought we talk here about looping and there are actually
-> more issues in the code.
+> Cc: Wayne Chang <waynec@nvidia.com>
+> Cc: stable@vger.kernel.org
+> Fixes: d920a2ed8620 ("usb: Disable USB3 LPM at shutdown")
+> Signed-off-by: Kai-Heng Feng <kaihengf@nvidia.com>
+> ---
+> v3:
+>   Use udev->port_is_suspended which reflects upstream port status
 > 
->>
->> I can't say if the fix is correct, but the bug is real.
+> v2:
+>   Add "Cc: stable@vger.kernel.org"
 > 
-> Probably this can be nicely split into two patches. One handling too
-> many puts within the loop, without breaking it (so the in-loop
-> of_find_node_by_name() and unnecessary of_node_put()). Second of using
-> of_find_node_by_name() in the loop itself, leading to drop of device
-> of_node reference.
-
-Addressed in the v2 patch series.
-
+>   drivers/usb/core/port.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
 > 
-> Assuming of course that all the switch to parsing children is correct.
+> diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
+> index e7da2fca11a4..c92fb648a1c4 100644
+> --- a/drivers/usb/core/port.c
+> +++ b/drivers/usb/core/port.c
+> @@ -452,10 +452,11 @@ static int usb_port_runtime_suspend(struct device *dev)
+>   static void usb_port_shutdown(struct device *dev)
+>   {
+>   	struct usb_port *port_dev = to_usb_port(dev);
+> +	struct usb_device *udev = port_dev->child;
+>   
+> -	if (port_dev->child) {
+> -		usb_disable_usb2_hardware_lpm(port_dev->child);
+> -		usb_unlocked_disable_lpm(port_dev->child);
+> +	if (udev && !udev->port_is_suspended) {
+> +		usb_disable_usb2_hardware_lpm(udev);
+> +		usb_unlocked_disable_lpm(udev);
+>   	}
+>   }
+>   
 
-I'll paste my commit message on the v2 2/2 patch here. Unfortunately I 
-do not have access to the actual device, but I think we can assume the 
-parent-children relationship between the nodes.
 
-According to the yaml file [1] and the dts files [2-4], the "emc-tables"
-node is a child of a node with the property "nvidia,use-ram-code", and
-the "lpddr2" node is a child of the "emc-tables" node. Thus utilize the
-for_each_child_of_node() macro and of_get_child_by_name() instead of
-of_find_node_by_name() to simplify the code.
+This resolves the issue I have been seeing [0].
 
-[1]: 
-Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-emc.yaml
-[2]: arch/arm/boot/dts/nvidia/tegra20-acer-a500-picasso.dts
-[3]: arch/arm/boot/dts/nvidia/tegra20-asus-tf101.dts
-[4]: arch/arm/boot/dts/nvidia/tegra20-paz00.dts
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-> 
-> Best regards,
-> Krzysztof
+Thanks!
+Jon
 
-Best,
-Joe
+[0] 
+https://lore.kernel.org/linux-usb/d5e79487-0f99-4ff2-8f49-0c403f1190af@nvidia.com/
+
+-- 
+nvpublic
+
