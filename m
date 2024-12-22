@@ -1,197 +1,148 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF772A1CA;
-	Sat, 21 Dec 2024 03:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9FA846F
+	for <linux-tegra@vger.kernel.org>; Sun, 22 Dec 2024 10:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734752940; cv=none; b=YZ5yyOcXCBfAtlov9g30hms+mWu3bLKOQTOOLir4iTk9JGaV7a0GRzXC9aTLHYEcSEWRRMmLDOduJKw9PMoVFC+d1PeQeluwwOuMwJEWtuGmDUcCu+S/yDMY/RS1E9Jw4G+S9+CaGy/dKN8g7/Y2J85WY//dcXSOJKplnmDEdhM=
+	t=1734862011; cv=none; b=cwvW9pf4OzJ813WNSCSDbpLjw2bX09FfSilSuxgnDKhUWE86LNwgzgcVr3WZIhVRBPN0kShenz0OoSuoD2eJhusAl4xdvRH4Bu8+ES9cjnqA0+S6TIVvjaXYdYy1FJAbAv86VnW/3G0/xB8X3Dqwaz28ztcPR1BF6RxHpYsnqN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734752940; c=relaxed/simple;
-	bh=UNI3UaUhfIKqixDczGoqkpQOXug8etyv5+hNBAgleug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eRPX/fX5jy1wMouQ91g4macm/GajOY8em4elT3pXoAnvgydYleC9hcBCdB16XmgRXMsHMTIf6+FATRH1YnYpW+OMoy1MmVktVpfIhZ8d2zf7MvthzFi1+PqLlSu4ZA6zwYmzF3JDiVzpAwgg80E4YxvMal6XPHrZX/ar/Fe36Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JW4zkmQ/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734862011; c=relaxed/simple;
+	bh=T8m8Y2H6kLPBc6oDNyrlw+liihofez91a2A3wdJUlOY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hVOIRXNEWAIDwIoS1PiwwKpvb8puF5Flfbe1zQ0ULX99JZD7pwSmjNYLQp8ABVzj9wkupOcnOymeULCgMVl8Utw99hJBcXEMgaj3rjGpAc6xCq81N77cA7VfoltVPgSiDeaTHKMBT73YDojhn3/ZAYYDHMTQjBVzVVZeeIFKLpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxtAHkKn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JW4zkmQ/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9C5C4CED0;
-	Sat, 21 Dec 2024 03:48:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxtAHkKn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBAA1C4CED4;
+	Sun, 22 Dec 2024 10:06:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734752939;
-	bh=UNI3UaUhfIKqixDczGoqkpQOXug8etyv5+hNBAgleug=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JW4zkmQ/JTB8CG3NJg8KDDuFVJYRsGU0hDBn31+cEJ19BxHYzT+MHXvnvVtaGLeIW
-	 hz7nnRNpQHjuoTKUz07Q/zsjcE2KnDvVZhFnFPOshNZ7zstWgj7ER70uIJukgHhalP
-	 dOcm24mmm5sinUJFOoZcxPXW6w7iVnsPWynk8bjCZD/Xqa/hdMurzPjmR7kvR6v22i
-	 ihkwTGLhUy085qoyT2fSw1Q2YfAHE34u1WnzbcwvUyPHkLHuFGSvUzm2s7tNAU0d/D
-	 6YpzGTprZJVllqrrnE9aDN7iG69eI8Q20CYDUdNLSEt4gxVXYD9v6ag9Go1/x8ARuA
-	 rTJFQuE7Unybg==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5401bd6cdb7so2715219e87.2;
-        Fri, 20 Dec 2024 19:48:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVbBSa/GcnHp+lMvoZ7pGpdcRqOFNDfYX+9JkKulglOUQdhISyMEdcVmg8/sLwSryyif+fCQLsLy9gD1Bg=@vger.kernel.org, AJvYcCVp07hPDUqhWh6b/IJxGIbog/8HQkdIiwARm6dyT1hKDoMh3d+W1bxN3CgIS2np5vAIGRnlrgYqj7ZyNV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6FX2eEea/CvOPhWuIAYg+EG+5rdcqVeiNVRWhktN5mnGLivTd
-	yw7TJ6+OoP+DsHJl4V9ITH0aq0adw296Ml+8701adM/nBrIhl2C10nvuBEEnAj0boJ2gmyGRYRJ
-	Fxjz2t8Jacboll+AAcwoeqaTjlpg=
-X-Google-Smtp-Source: AGHT+IFOrqTNy9uQwMIc/GqD69uQcsH+EyKvFd0xFkKyHD8cHE/AD2XDnBVZQAugO7KUyJj/6TAZxur0SN+KQJS1UpU=
-X-Received: by 2002:a05:6512:b86:b0:542:1b63:2e52 with SMTP id
- 2adb3069b0e04-542295229f2mr1622626e87.6.1734752937979; Fri, 20 Dec 2024
- 19:48:57 -0800 (PST)
+	s=k20201202; t=1734862011;
+	bh=T8m8Y2H6kLPBc6oDNyrlw+liihofez91a2A3wdJUlOY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GxtAHkKnntf+h9Ff8qXp50E2202i6oxmyRvcdUxfGGsR7K6kH/h2hEwEIW7iByi91
+	 MJnW2QpAs1AVlwLVwetpcwjW2eaS+43ZSQOID4/aEGbl0if2YB+4HdTrR+F72M5llt
+	 NEh2EBB1qxNxnYhrR9xwx8f1EWezCylMnZcml6E5WW58juSqNSM4nFSqJOR3zCNq9j
+	 dBoZLw3YQTrjv+Q03TL/obt0C+2L3/UWKeTUCuf4qXww+m7X2vyHzHUq/188dPLdv/
+	 5+giqBDDlXtSl2Ld7e9qR2aFjFMXhhifwgH+DFsboTT//dlnayY5153iThmLxq/yrC
+	 WKRYtcKZHNyhA==
+Message-ID: <a56fce70-6bc0-4f8b-b066-41732673c2a2@kernel.org>
+Date: Sun, 22 Dec 2024 11:06:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241212154619.2235767-1-masahiroy@kernel.org>
- <12257d86-a4bc-4e98-bd0f-39ec41f1756d@nvidia.com> <5963c8b3-7e03-4f2d-9198-f02cc3140313@nvidia.com>
-In-Reply-To: <5963c8b3-7e03-4f2d-9198-f02cc3140313@nvidia.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 21 Dec 2024 12:48:21 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ5Fw97MKSMGeMWk+Fj5=tGpJVQxAO4LTG7BLY3iaPHkg@mail.gmail.com>
-Message-ID: <CAK7LNAQ5Fw97MKSMGeMWk+Fj5=tGpJVQxAO4LTG7BLY3iaPHkg@mail.gmail.com>
-Subject: Re: [PATCH] modpost: distinguish same module paths from different
- dump files
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] memory: tegra20-emc: fix an OF node reference bug
+ in tegra_emc_find_node_by_ram_code()
+To: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>, thierry.reding@gmail.com,
+ jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, dan.carpenter@linaro.org
+References: <20241218024415.2494267-1-joe@pf.is.s.u-tokyo.ac.jp>
+ <20241218024415.2494267-2-joe@pf.is.s.u-tokyo.ac.jp>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241218024415.2494267-2-joe@pf.is.s.u-tokyo.ac.jp>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 19, 2024 at 7:48=E2=80=AFPM Jon Hunter <jonathanh@nvidia.com> w=
-rote:
->
->
-> On 12/12/2024 20:17, Jon Hunter wrote:
-> >
-> > On 12/12/2024 15:46, Masahiro Yamada wrote:
-> >> Since commit 13b25489b6f8 ("kbuild: change working directory to extern=
-al
-> >> module directory with M=3D"), module paths are always relative to the =
-top
-> >> of the external module tree.
-> >>
-> >> The module paths recorded in Module.symvers is no longer globally uniq=
-ue
-> >> when they are passed via KBUILD_EXTRA_SYMBOLS for building other exter=
-nal
-> >> modules, which may result in false positive "exported twice" errors.
-> >> Such errors should not occur because external modules should be able t=
-o
-> >> override in-tree modules.
-> >>
-> >> To address this, record the dump file path in struct module and check =
-it
-> >> when searching for a module.
-> >>
-> >> Fixes: 13b25489b6f8 ("kbuild: change working directory to external
-> >> module directory with M=3D")
-> >> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> >> Closes: https://lore.kernel.org/all/eb21a546-a19c-40df-b821-
-> >> bbba80f19a3d@nvidia.com/
-> >> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> >> ---
-> >>
-> >>   scripts/mod/modpost.c | 17 +++++++++--------
-> >>   scripts/mod/modpost.h |  3 ++-
-> >>   2 files changed, 11 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> >> index fb787a5715f5..94ee49207a45 100644
-> >> --- a/scripts/mod/modpost.c
-> >> +++ b/scripts/mod/modpost.c
-> >> @@ -155,12 +155,13 @@ char *get_line(char **stringp)
-> >>   /* A list of all modules we processed */
-> >>   LIST_HEAD(modules);
-> >> -static struct module *find_module(const char *modname)
-> >> +static struct module *find_module(const char *filename, const char
-> >> *modname)
-> >>   {
-> >>       struct module *mod;
-> >>       list_for_each_entry(mod, &modules, list) {
-> >> -        if (strcmp(mod->name, modname) =3D=3D 0)
-> >> +        if (!strcmp(mod->dump_file, filename) &&
-> >> +            !strcmp(mod->name, modname))
-> >>               return mod;
-> >>       }
-> >>       return NULL;
-> >> @@ -2030,10 +2031,10 @@ static void read_dump(const char *fname)
-> >>               continue;
-> >>           }
-> >> -        mod =3D find_module(modname);
-> >> +        mod =3D find_module(fname, modname);
-> >>           if (!mod) {
-> >>               mod =3D new_module(modname, strlen(modname));
-> >> -            mod->from_dump =3D true;
-> >> +            mod->dump_file =3D fname;
-> >>           }
-> >>           s =3D sym_add_exported(symname, mod, gpl_only, namespace);
-> >>           sym_set_crc(s, crc);
-> >> @@ -2052,7 +2053,7 @@ static void write_dump(const char *fname)
-> >>       struct symbol *sym;
-> >>       list_for_each_entry(mod, &modules, list) {
-> >> -        if (mod->from_dump)
-> >> +        if (mod->dump_file)
-> >>               continue;
-> >>           list_for_each_entry(sym, &mod->exported_symbols, list) {
-> >>               if (trim_unused_exports && !sym->used)
-> >> @@ -2076,7 +2077,7 @@ static void write_namespace_deps_files(const
-> >> char *fname)
-> >>       list_for_each_entry(mod, &modules, list) {
-> >> -        if (mod->from_dump || list_empty(&mod->missing_namespaces))
-> >> +        if (mod->dump_file || list_empty(&mod->missing_namespaces))
-> >>               continue;
-> >>           buf_printf(&ns_deps_buf, "%s.ko:", mod->name);
-> >> @@ -2194,7 +2195,7 @@ int main(int argc, char **argv)
-> >>           read_symbols_from_files(files_source);
-> >>       list_for_each_entry(mod, &modules, list) {
-> >> -        if (mod->from_dump || mod->is_vmlinux)
-> >> +        if (mod->dump_file || mod->is_vmlinux)
-> >>               continue;
-> >>           check_modname_len(mod);
-> >> @@ -2205,7 +2206,7 @@ int main(int argc, char **argv)
-> >>           handle_white_list_exports(unused_exports_white_list);
-> >>       list_for_each_entry(mod, &modules, list) {
-> >> -        if (mod->from_dump)
-> >> +        if (mod->dump_file)
-> >>               continue;
-> >>           if (mod->is_vmlinux)
-> >> diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
-> >> index 49848fcbe2a1..8b72c227ebf4 100644
-> >> --- a/scripts/mod/modpost.h
-> >> +++ b/scripts/mod/modpost.h
-> >> @@ -95,14 +95,15 @@ struct module_alias {
-> >>   /**
-> >>    * struct module - represent a module (vmlinux or *.ko)
-> >>    *
-> >> + * @dump_file: path to the .symvers file if loaded from a file
-> >>    * @aliases: list head for module_aliases
-> >>    */
-> >>   struct module {
-> >>       struct list_head list;
-> >>       struct list_head exported_symbols;
-> >>       struct list_head unresolved_symbols;
-> >> +    const char *dump_file;
-> >>       bool is_gpl_compatible;
-> >> -    bool from_dump;        /* true if module was loaded from
-> >> *.symvers */
-> >>       bool is_vmlinux;
-> >>       bool seen;
-> >>       bool has_init;
-> >
-> >
-> > Thanks for fixing!
-> >
-> > Tested-by: Jon Hunter <jonathanh@nvidia.com>
->
->
-> I have not seen this land in -next yet. Would be great to get this applie=
-d.
->
+On 18/12/2024 03:44, Joe Hattori wrote:
+> As of_find_node_by_name() release the reference of the argument OF node,
+> tegra_emc_find_node_by_ram_code() releases some OF nodes while still in
+> use, resulting in possible UAFs. Avoid calling of_node_put() at the end
 
-Now applied to linux-kbuild/fixes.
+Why avoiding? Avoiding is optional, aren't you fixing some bug?
+
+> of the loop, and call of_node_get() before some calls of
+> of_find_node_by_name().
+> 
+> This bug was found by an experimental verification tool that I am
+> developing.
+> 
+> Fixes: 96e5da7c8424 ("memory: tegra: Introduce Tegra20 EMC driver")
+> Signed-off-by: Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>
+> ---
+>  drivers/memory/tegra/tegra20-emc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+> index 7193f848d17e..fef54179ddee 100644
+> --- a/drivers/memory/tegra/tegra20-emc.c
+> +++ b/drivers/memory/tegra/tegra20-emc.c
+> @@ -474,6 +474,7 @@ tegra_emc_find_node_by_ram_code(struct tegra_emc *emc)
+>  
+>  	ram_code = tegra_read_ram_code();
+>  
+> +	of_node_get(dev->of_node);
+>  	for (np = of_find_node_by_name(dev->of_node, "emc-tables"); np;
+>  	     np = of_find_node_by_name(np, "emc-tables")) {
+>  		err = of_property_read_u32(np, "nvidia,ram-code", &value);
+> @@ -481,6 +482,7 @@ tegra_emc_find_node_by_ram_code(struct tegra_emc *emc)
+>  			struct device_node *lpddr2_np;
+>  			bool cfg_mismatches = false;
+>  
+> +			of_node_get(np);
+>  			lpddr2_np = of_find_node_by_name(np, "lpddr2");
+>  			if (lpddr2_np) {
+>  				const struct lpddr2_info *info;
+> @@ -518,7 +520,6 @@ tegra_emc_find_node_by_ram_code(struct tegra_emc *emc)
+>  			}
+>  
+>  			if (cfg_mismatches) {
+> -				of_node_put(np);
+
+Anyway these two patches show that my previous advice was wrong. You add
+code which you immediately remove. I took v1 with tweaked commit msg.
+
+>  				continue;
+>  			}
+>  		}
 
 
---=20
-Best Regards
-Masahiro Yamada
+Best regards,
+Krzysztof
