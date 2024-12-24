@@ -1,95 +1,70 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFB68F66;
-	Tue, 24 Dec 2024 07:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B665F191F91;
+	Tue, 24 Dec 2024 10:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735026728; cv=none; b=j/CX9j5d0LwEhOqEuIXvrZKo63x9s/hacBNQiriRqTOHkPU0ks1jBd6DHeZmfHnZv7pIJXk5mzjhgKKjNj08KA1Ueh0u7n6DLYmlI1Wt7XxEbycwWhollZ3v6OEz2oTl+nLGuh8FBhad5oO9v0iYBN2rtklyivIvib3si0deKvE=
+	t=1735036906; cv=none; b=eFVKT9WsKmAfK68a9WvmbJbONtVPSEHO87d6qPdGvRea3NaWyZyAmqvoR8R7TL2qFWFCDqJA/WKPq2YOsbwgxGnj0OsKTuAQu1cgl+nZy3q6wM/WUE1fi+lJYugdYWsPyLvVTtiFYvaPVF4kxd3J7SeB1ibcAFUccclfvXd6z1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735026728; c=relaxed/simple;
-	bh=K82UHOux3hacbEhV+14iXgn4wi9VECeVfkXAko1fE1U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o/L0av5z6hTcxiiFaFFtHoj8VNNQSNVS+FyzRiZfngP9G3A4jXbawkrEJPuysjkyxLwpwzoGrgw37oCL7/PBPcg1V5I5XQXaLS6P6wkygizc91eNj76z1mEMEBR4vAA6UDNKQNXtwW06bv0SsSEpUoXF01R26LZnDv60cYysFEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=jOi5IPjr; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1735036906; c=relaxed/simple;
+	bh=GkxtSoGgW/YDAL1IFgPolUg9Fn/eunPwJeEcWD/wjLo=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=vBUlqCmFwduZbvWLzddwlXKHLzxBqmrNJlQnKJfg1LqTkd9o7Q9ZelJ/2wBrfUWhYNj/JON2Sojmlxr+pwtFF5ZtUvWu9NGQvT9meUw7Vcuw1J/NANKSOhH3KlVzwWsp0LG+byFK9b8RABg/TVEVLGnsTuZWX5i5AmPIZ3oTDmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMtKRzZ4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="jOi5IPjr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=SNECs
-	J0XKp8vy5JU0Zqz2v1x01Madw93zTND8IbZ038=; b=jOi5IPjrssH7Kc5ew7L5k
-	SwIi84doG3BrbNg/yhbzl60++ya+LLIWdhNaJW5M900tWlfetN3UkSzwnpNwL5pd
-	jkdpyRb7xnxhSA+Urr6Rel+Vp2GN8KNvEUIDesB9RvIMiNtmk6DYjeWoqecHAT6D
-	qx1KlMpUnAlN6DbnhLOzGQ=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wBnofntZ2pnyb0QBQ--.44335S4;
-	Tue, 24 Dec 2024 15:51:17 +0800 (CST)
-From: Ma Ke <make_ruc2021@163.com>
-To: jckuo@nvidia.com,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com
-Cc: linux-phy@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make_ruc2021@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH RESEND] phy: Fix error handling in tegra_xusb_port_init
-Date: Tue, 24 Dec 2024 15:51:08 +0800
-Message-Id: <20241224075108.3770055-1-make_ruc2021@163.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMtKRzZ4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD7CFC4CED7;
+	Tue, 24 Dec 2024 10:41:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1735036906;
+	bh=GkxtSoGgW/YDAL1IFgPolUg9Fn/eunPwJeEcWD/wjLo=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=cMtKRzZ4X7m56eU1OaUovedFWqQhg9U4MhZI+eGeaR2+Ph0lO1O4JiptBBVcn70Rf
+	 7WEk9hhAuKF2JjEFVFfcwnfxqWeaA9opnL/o/yfd8cTJeSSUAkldWmgq3xitAlKzGW
+	 d5ty2SF5V6lnIT52nCbB4tcsxWcB2RTac7IHOY4FRf+JGv46y282sj/jns6alcrlCD
+	 Bh8GWNJ7I1WKvZNOvpREWrboQgZYH+vCXnfG0xDqUBi7dQ3NLryp1s3V8cEn0iEsj8
+	 P+RygfbtXydh2VmDF7djt94VwUAUlXJk9jYgZOp5GxB37DlpJIEAEtirKlr6dZMEuw
+	 721JmB8AtOMuw==
+From: Vinod Koul <vkoul@kernel.org>
+To: ldewangan@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com, 
+ rgumasta@nvidia.com, akhilrajeev@nvidia.com, dmaengine@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kartik Rajput <kkartik@nvidia.com>
+In-Reply-To: <20241212124412.5650-1-kkartik@nvidia.com>
+References: <20241212124412.5650-1-kkartik@nvidia.com>
+Subject: Re: [PATCH] dmaengine: tegra: Return correct DMA status when
+ paused
+Message-Id: <173503690354.903404.1508993653667661297.b4-ty@kernel.org>
+Date: Tue, 24 Dec 2024 16:11:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBnofntZ2pnyb0QBQ--.44335S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Gr15JF48GryxJFy3Zr1UKFg_yoWkXrgEkr
-	nYv3s3WrWvga1kCr15Crn3ZryIkF42qFyIqr4IqF93AayrXrs2vryDWrZxZr47Wws8ur1U
-	Ga45ur48Zr1SgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRM0eHDUUUUU==
-X-CM-SenderInfo: 5pdnvshuxfjiisr6il2tof0z/xtbBFRG-C2dqZf4oZQAAsr
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-The reference count of the device incremented in device_initialize() is
-not decremented when device_add() fails. Add a put_device() call before
-returning from the function to decrement reference count for cleanup.
-Or it could cause memory leak.
 
-Found by code review.
+On Thu, 12 Dec 2024 18:14:12 +0530, Kartik Rajput wrote:
+> Currently, the driver does not return the correct DMA status when a DMA
+> pause is issued by the client drivers. This causes GPCDMA users to
+> assume that DMA is still running, while in reality, the DMA is paused.
+> 
+> Return DMA_PAUSED for tx_status() if the channel is paused in the middle
+> of a transfer.
+> 
+> [...]
 
-Cc: stable@vger.kernel.org
-Fixes: 53d2a715c240 ("phy: Add Tegra XUSB pad controller support")
-Signed-off-by: Ma Ke <make_ruc2021@163.com>
----
- drivers/phy/tegra/xusb.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Applied, thanks!
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 79d4814d758d..c89df95aa6ca 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -548,16 +548,16 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
- 
- 	err = dev_set_name(&port->dev, "%s-%u", name, index);
- 	if (err < 0)
--		goto unregister;
-+		goto put_device;
- 
- 	err = device_add(&port->dev);
- 	if (err < 0)
--		goto unregister;
-+		goto put_device;
- 
- 	return 0;
- 
--unregister:
--	device_unregister(&port->dev);
-+put_device:
-+	put_device(&port->dev);
- 	return err;
- }
- 
+[1/1] dmaengine: tegra: Return correct DMA status when paused
+      commit: ebc008699fd95701c9af5ebaeb0793eef81a71d5
+
+Best regards,
 -- 
-2.25.1
+~Vinod
+
 
