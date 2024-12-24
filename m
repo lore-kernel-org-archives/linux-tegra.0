@@ -1,42 +1,42 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B665F191F91;
-	Tue, 24 Dec 2024 10:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FE71C3BE3;
+	Tue, 24 Dec 2024 10:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735036906; cv=none; b=eFVKT9WsKmAfK68a9WvmbJbONtVPSEHO87d6qPdGvRea3NaWyZyAmqvoR8R7TL2qFWFCDqJA/WKPq2YOsbwgxGnj0OsKTuAQu1cgl+nZy3q6wM/WUE1fi+lJYugdYWsPyLvVTtiFYvaPVF4kxd3J7SeB1ibcAFUccclfvXd6z1s=
+	t=1735036934; cv=none; b=M+GQoEw48AYNGJUdgTxguE4h74nLQgCzSXWPezb63bgvZ8rGcWJF3O3pCs6hx5TNzbEBKhs+zWwkCkcJcMES3AT7tJRY4pRsTzAtQ/WmkwGEhkjhKlsdW6WXf4cLlwwczurcYobYqgeNVE672lmKJzoXgYg+vImZw/4ldb9qZXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735036906; c=relaxed/simple;
-	bh=GkxtSoGgW/YDAL1IFgPolUg9Fn/eunPwJeEcWD/wjLo=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=vBUlqCmFwduZbvWLzddwlXKHLzxBqmrNJlQnKJfg1LqTkd9o7Q9ZelJ/2wBrfUWhYNj/JON2Sojmlxr+pwtFF5ZtUvWu9NGQvT9meUw7Vcuw1J/NANKSOhH3KlVzwWsp0LG+byFK9b8RABg/TVEVLGnsTuZWX5i5AmPIZ3oTDmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMtKRzZ4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735036934; c=relaxed/simple;
+	bh=aMnS4IKN1s//xM/IVQp+b/FMuKdwpIxp7wjx4jEt384=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mxUVM0r9GsjWWxUsUK9SduUil9ZojXI0pk4zuV1W/04GVW1N9ruoLq23JndT49UDgZ9O1JBRdsoUo+frb66AlfyI2afWSvi40J5J7gJjO2DijbX/VkT/OG5z1G1BCUh/cCJb9JcAeGkGCal9u1YBLx2R4CFrkz083L3+0+yAVuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lChuJG9F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMtKRzZ4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD7CFC4CED7;
-	Tue, 24 Dec 2024 10:41:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lChuJG9F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37C4FC4CED4;
+	Tue, 24 Dec 2024 10:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735036906;
-	bh=GkxtSoGgW/YDAL1IFgPolUg9Fn/eunPwJeEcWD/wjLo=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=cMtKRzZ4X7m56eU1OaUovedFWqQhg9U4MhZI+eGeaR2+Ph0lO1O4JiptBBVcn70Rf
-	 7WEk9hhAuKF2JjEFVFfcwnfxqWeaA9opnL/o/yfd8cTJeSSUAkldWmgq3xitAlKzGW
-	 d5ty2SF5V6lnIT52nCbB4tcsxWcB2RTac7IHOY4FRf+JGv46y282sj/jns6alcrlCD
-	 Bh8GWNJ7I1WKvZNOvpREWrboQgZYH+vCXnfG0xDqUBi7dQ3NLryp1s3V8cEn0iEsj8
-	 P+RygfbtXydh2VmDF7djt94VwUAUlXJk9jYgZOp5GxB37DlpJIEAEtirKlr6dZMEuw
-	 721JmB8AtOMuw==
+	s=k20201202; t=1735036934;
+	bh=aMnS4IKN1s//xM/IVQp+b/FMuKdwpIxp7wjx4jEt384=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=lChuJG9FIOvI4BTnpJlyqTLwTUyeyLQlKv4lQWUXoirJUTJuM7B8KBqIrA+RKrPgu
+	 1OMGEr+erSrm6MWzfqSYok/b2tvdMP2XVeXCc5m94oguttiYurK0ntpy6OdiZvvfZo
+	 3784S1ETKNvjHHv0R75z95PSVxvE18dfZC1dPv5VjSo4YPNWO9/rfGIIoVPm5voZlW
+	 YtX/EoQOf6dJIwzMz+lY1i8cXU7PZyJIXdjAvmnnSO6Oz4ACTRO/x/dB3X+pxzGSFg
+	 zOGFwcPH/lsgoYlN5nwRP0yYfxZ5BRXDF/cmyyXBYjFzH9WtztV3qFq8VjUeAvm+o9
+	 PP2G6HjivknUQ==
 From: Vinod Koul <vkoul@kernel.org>
-To: ldewangan@nvidia.com, jonathanh@nvidia.com, thierry.reding@gmail.com, 
- rgumasta@nvidia.com, akhilrajeev@nvidia.com, dmaengine@vger.kernel.org, 
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ Mohan Kumar D <mkumard@nvidia.com>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Kartik Rajput <kkartik@nvidia.com>
-In-Reply-To: <20241212124412.5650-1-kkartik@nvidia.com>
-References: <20241212124412.5650-1-kkartik@nvidia.com>
-Subject: Re: [PATCH] dmaengine: tegra: Return correct DMA status when
- paused
-Message-Id: <173503690354.903404.1508993653667661297.b4-ty@kernel.org>
-Date: Tue, 24 Dec 2024 16:11:43 +0530
+ treding@nvidia.com, jonathanh@nvidia.com, spujar@nvidia.com
+In-Reply-To: <20241217074358.340180-1-mkumard@nvidia.com>
+References: <20241217074358.340180-1-mkumard@nvidia.com>
+Subject: Re: [PATCH v2 RESEND 0/2] Add Tegra ADMA channel page support
+Message-Id: <173503693084.903491.14497745388505993099.b4-ty@kernel.org>
+Date: Tue, 24 Dec 2024 16:12:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -48,20 +48,22 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Thu, 12 Dec 2024 18:14:12 +0530, Kartik Rajput wrote:
-> Currently, the driver does not return the correct DMA status when a DMA
-> pause is issued by the client drivers. This causes GPCDMA users to
-> assume that DMA is still running, while in reality, the DMA is paused.
+On Tue, 17 Dec 2024 13:13:56 +0530, Mohan Kumar D wrote:
+> Multiple ADMA Channel page hardware support has been added from
+> TEGRA186 and onwards. Add channel page handling support in the tegra
+> adma driver
 > 
-> Return DMA_PAUSED for tx_status() if the channel is paused in the middle
-> of a transfer.
+> Changelog
+> =========
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] dmaengine: tegra: Return correct DMA status when paused
-      commit: ebc008699fd95701c9af5ebaeb0793eef81a71d5
+[1/2] dt-bindings: dma: Support channel page to nvidia,tegra210-adma
+      commit: 762b37fc6ae2af0c7ddf36556fe7427575e9c759
+[2/2] dmaengine: tegra210-adma: Support channel page
+      commit: 68811c928f88828f188656dd3c9c184eeec2ce86
 
 Best regards,
 -- 
