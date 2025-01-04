@@ -1,69 +1,68 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D85F1B85C0
-	for <linux-tegra@vger.kernel.org>; Sat,  4 Jan 2025 14:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02D24A3E
+	for <linux-tegra@vger.kernel.org>; Sat,  4 Jan 2025 14:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736000078; cv=none; b=fOMR8gtW8NPqkJ6u09YuZ4KV9ghGxsk+bJAyM4jInHUdV7HK4mCh9KoqTqpHDiG+lNQ4Rzg+lh/Vsbbm9FOl0qPCYBiGO8N+ND5L9VQGl/mCnbsjEaCEfI7dVq9uJgTXZORx9q9cIxyDyvqYSIlqxmUvY3l12zLjOskys/EEsE8=
+	t=1736000405; cv=none; b=ITJSyRMBapyz1K2KmPeENKvHPBm8OyBZvbce/e+7pD82nbXZAv4oE54Mnxj68jaybiBVQUNPkritIQQVxIfSCKPiXWKDdonKGv+x/oNwQwbLxtZNPwjHVIX8bARahsBo+y+MyjVteNcOwA3wOK3VNNmsJsf35iLwVZyiHZ3kDKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736000078; c=relaxed/simple;
-	bh=i8bnxcerM5jTOQq9tgPtD8jdS78JSC3ymp9fz7MJxO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A1qfzqHHN65gMh6r6dV3hN/3QFFtGzTo+z3AeVc6d/9j4uKQKCj7aZtVCYoOi401zKR5Iif7CVN6qaOzYKhUjhfbaHVTjljftC5Z2YvEzveuL3Hpkg8EjtcC4O2yobvfIXCm5irOniEXJ/orjTzdUhT6iDinDs3AMpEaGhmSFpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZRrH247t; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1736000405; c=relaxed/simple;
+	bh=Yw9/qA6qdIyvvXun/xp/2uZfzd7ISgOLONvyhIpN+MQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fwIfmpAdGQ78k/I1U+dDAXaJhr1wNkAvSeNWIhJ+68PraYsdEx7BoXgC4HmmVzmTD9RNH723JZ3dHx2eIRybvWN3O4J3c6IWWiRPG+BcVl7ihY4d9JnHfKhwxuJmJaT3HNw9wCiuCJaWFs2LGAW60nY8KGwh4lqJnCzgjGNcjRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P8+apiS9; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZRrH247t"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43616c12d72so21200355e9.2
-        for <linux-tegra@vger.kernel.org>; Sat, 04 Jan 2025 06:14:35 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P8+apiS9"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d44550adb7so3119013a12.2
+        for <linux-tegra@vger.kernel.org>; Sat, 04 Jan 2025 06:20:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736000074; x=1736604874; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1736000402; x=1736605202; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NAS0zHngx5LNnWHW9jDNMcOJDZmzIAjDDo//KjV8/wY=;
-        b=ZRrH247t/pmkDJRmB2JpkARCD0+Q/OzSnFbCaS5SjyHbrrKOU0+j0Vg41+FPxqrlJx
-         xV85OfrIk2jr5Yc1Xtriivzakb++UUjAyq7JO1fG1l/EVyZeadOZ8zUwQhjRBopejMQj
-         wrkPfX9m8GnbiWhkECGgc6VwHBV4G5XopaGFb4wDQ4g6EihU3ac/24PwuISV3W3gtPEz
-         ukDNjDChDsL1yDobksccHJPSsq1jIOoOwoTqIKf+OV4Ha5buaX0q3OT4ExIMeDJyTa+/
-         hC9UHgKKLOmDW0lud8mtMuz0hQkhKKwMvKRrJl5b2Oo2o+X7SNCqRR+MShrdJI5thvSV
-         ZWVA==
+        bh=DEVdWJGp2oPicz47kN5r+WdNuLFnOSMb7vA6U1ddIq8=;
+        b=P8+apiS9w6mVrTNOUXd8pbmk4550KxgMPGGYKm2Ztxg5aGURi8BLZQKlGFcFeHiQ2t
+         VzXvdLnNTx8KFH6y/5UpNXX3aoLsG9OcWMQdS5nPZrDGR17cUyHy6+RSidydN3FFlln0
+         r1Mp4CUbBERN2+oZVeMD4/PfOel0e8zmYZiu6ZQ844zEGp/2tpTVb8vR3tNvLwRutEJW
+         Yz30JW2zi5P8HW0X/Cu8qMnf6LoBHs1EKGOMR1VOK9N1lBOL0Q2YboKz9gu26CZ6iLNM
+         rRLJHzA3zG63jjGuNAuO/WpqmzH2q9+6g8BE0BnBhttUXcn5Rq9xMVUhZX2MHRm72H0f
+         Fn8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736000074; x=1736604874;
+        d=1e100.net; s=20230601; t=1736000402; x=1736605202;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NAS0zHngx5LNnWHW9jDNMcOJDZmzIAjDDo//KjV8/wY=;
-        b=Qo4HaB+YVvG8aT6Kg6nm7MshstXsIUJfFJ0hF02kccQamYRqidjASAeDs2Waz7chqP
-         MI5vnb/PuFSbticx4Pz3qjkQI/Zateagq03iZguJoMqpR+fwS7B2U4NdFjVRouqn3d4z
-         lCJyFGPecxnm2K4Bx9bD6oKGfQfI5I9toIZ9tcMtmctaJ8oXbtH9x8wjSWTGNXeCyw9Q
-         WOp03vI6RAOBO6ESZvw9wr2wx/T3IHsuxtxM4bz3DsWftDoi5Kl/EMSiuRX+kzFMJsZp
-         tHpkEQvw7wS/vgTY/6MPb/qxjVM2fzXfB2PGzSHkVLd/ZXRBuyJIB865bVJp+TSoCtVb
-         C1mA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeJN1mogVxcGcqocT96bH32GCLq7pCMOE0SYzTEJtL27ph0Q/r+Fue1/CtIaV5TCqOmtwMVcSfWDjhfA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYNQxZ+vHrTyG1PpQ3yDwHvf+4rQ8REbe5RUZxpKv5pBf+iBHx
-	MKRzPZN3R3gRdSsIu5GQofu8kSl9Cv0XdMFTChJJKsDVlom6SNIhPQfrvJQ1dBc=
-X-Gm-Gg: ASbGncu1ryR1Rs/oBnYMXxAvmGQFPqn2B1VFdmtLcc9maZ3HayD71C8PwH+cQRRS6bT
-	UZjxTovXMdt8AXl5oCqfnKCu2/o5jD/JShv9JD/O4Ux4l38u9aIS9KZBvJELazZkE8+P/863Vbk
-	9kdDd5Gqb9tTRdeAHD/viw0S6V5HIhgwiXBbXEVFGT2ogfmSuiHfqcONfmeADXVH5VHseXaDszb
-	q+TQoqoSnFLfR808nitG+hXxIexwkcQN199e5VCPkKnvDhtEP+Pc36YaFXE2o3zXAPLtZk=
-X-Google-Smtp-Source: AGHT+IGDD1lbzRhJpt66gSp3AbzWs+7yye6arMKqoGbFiIjvhXGsAkAae8MMEYvsNAYfM4Ob+xdT7w==
-X-Received: by 2002:a5d:6487:0:b0:386:1cd3:8a06 with SMTP id ffacd0b85a97d-38a22206907mr18279273f8f.9.1736000074339;
-        Sat, 04 Jan 2025 06:14:34 -0800 (PST)
+        bh=DEVdWJGp2oPicz47kN5r+WdNuLFnOSMb7vA6U1ddIq8=;
+        b=EV9BYDojcpIBDKbKX4E94s2cenMSZhR91Nbu6LghZLYOxbH+zI1Ecwyb7j5/yc0b9A
+         MTaX6PC2HtMjceCcmX+76LkTFRTyA7Iot1Xy5O3UsJA/2hdsJ26jcrKG1jyjzP9H7Xls
+         wefAIUtEvrw9LgVcRzn6WmYW3/kaGtd2vEfIGpds1Zq7Ihi8O8vGsL6CLtbPoU9KUiCS
+         x/XS2Y7HiUNFrDtx+yhWwpMmoAroiciDoaNvMA68MTg81VI1mz0we2iOaaoQQY2wr5A9
+         c5emLJquYlIe8qUTadP91pRjBDgmHDX156hlIOHbUBsH4AZO0rEfIrUsMCvk5kA8LdkW
+         lPbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSYDUG0KR6WSkq7OFqW2K8PmDdEuVXCpe9CbUhDmpT2J5k3SlSsXXF5co7jV9UINCrHl3acJSWZIbwyA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4wQtgY7J9ZuQn9G4GQk6yPXGQ6cvqMtvZzho8QZMetK2wiXAk
+	Ca1beyJHZXcEZFfUCaD+yKbr5xIh/RyuphmTIyRMvTvK+OP5NQA/RuOeDsiE030=
+X-Gm-Gg: ASbGnct9y5GtbYWn6sxG0G6bRqD7lS4uguWGmmzGV7A/gb71ol38HJxH1ddjxXhaboC
+	+rUQErm0BDGZ+M6C79WqaYTyxjB9GmkJ1XRJFzfg5S7zzLdx3HBwaOSGpGwafEYcMTTkDcIZ85n
+	vitm9zKB5AIEPzfr8M615TbEKtfjD8vs7YESGOUjxWUjq1kbWiUGNOA2lPhzZWwYzZAlTM9hATQ
+	Ci//csHBU/4qLHkNPiTFrysUA7a2LL7DHpm6DNlq+mu0bqvMAz6HMaE3i+VbkQDNu3iiaw=
+X-Google-Smtp-Source: AGHT+IF0kTNDNwhatI78ot8PP3F5T6/eUJ/qkL8c17ZKWJ39fQiecWvtN2mcb/zxpWtnZxXp/jPhww==
+X-Received: by 2002:a17:907:3e8f:b0:aa5:3e81:5aa2 with SMTP id a640c23a62f3a-aac2adc463dmr1726287666b.4.1736000402221;
+        Sat, 04 Jan 2025 06:20:02 -0800 (PST)
 Received: from krzk-bin.. ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c84840asm43173413f8f.61.2025.01.04.06.14.33
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aac0f05ee5esm2018481866b.171.2025.01.04.06.20.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Jan 2025 06:14:33 -0800 (PST)
+        Sat, 04 Jan 2025 06:20:01 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
+To: Thierry Reding <thierry.reding@gmail.com>,
 	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] memory: tegra20-emc: Drop redundant platform_get_irq() error printk
-Date: Sat,  4 Jan 2025 15:14:30 +0100
-Message-ID: <20250104141430.115031-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] soc: tegra: cbb: Drop unnecessary debugfs error handling
+Date: Sat,  4 Jan 2025 15:19:58 +0100
+Message-ID: <20250104141958.115911-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -73,31 +72,61 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-platform_get_irq() already prints error message, so duplicating it is
-redundant.  The message about "need of updating DT" makes no sense,
-because this code was there since beginning.
+Kernel coding style expects all drivers to ignore debugfs errors.
+Partially because it is purely for debugging, not for important user
+interfaces.  Simplify the code by dropping unnecessary probe failuring
+and error message on debugfs failures, which also fixes incorrect usage
+IS_ERR_OR_NULL() and Smatch warning:
+
+  drivers/soc/tegra/cbb/tegra-cbb.c:80 tegra_cbb_err_debugfs_init() warn: passing zero to 'PTR_ERR'
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/memory/tegra/tegra20-emc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/soc/tegra/cbb/tegra-cbb.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
-index 7193f848d17e..ed094cc3c108 100644
---- a/drivers/memory/tegra/tegra20-emc.c
-+++ b/drivers/memory/tegra/tegra20-emc.c
-@@ -1191,10 +1191,8 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	int irq, err;
+diff --git a/drivers/soc/tegra/cbb/tegra-cbb.c b/drivers/soc/tegra/cbb/tegra-cbb.c
+index 84ab46c9d9f5..6215c6a84fbe 100644
+--- a/drivers/soc/tegra/cbb/tegra-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra-cbb.c
+@@ -69,19 +69,12 @@ static int tegra_cbb_err_show(struct seq_file *file, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(tegra_cbb_err);
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq < 0) {
--		dev_err(&pdev->dev, "please update your device tree\n");
-+	if (irq < 0)
- 		return irq;
+-static int tegra_cbb_err_debugfs_init(struct tegra_cbb *cbb)
++static void tegra_cbb_err_debugfs_init(struct tegra_cbb *cbb)
+ {
+ 	static struct dentry *root;
+ 
+-	if (!root) {
++	if (!root)
+ 		root = debugfs_create_file("tegra_cbb_err", 0444, NULL, cbb, &tegra_cbb_err_fops);
+-		if (IS_ERR_OR_NULL(root)) {
+-			pr_err("%s(): could not create debugfs node\n", __func__);
+-			return PTR_ERR(root);
+-		}
 -	}
+-
+-	return 0;
+ }
  
- 	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
- 	if (!emc)
+ void tegra_cbb_stall_enable(struct tegra_cbb *cbb)
+@@ -148,13 +141,8 @@ int tegra_cbb_register(struct tegra_cbb *cbb)
+ {
+ 	int ret;
+ 
+-	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+-		ret = tegra_cbb_err_debugfs_init(cbb);
+-		if (ret) {
+-			dev_err(cbb->dev, "failed to create debugfs\n");
+-			return ret;
+-		}
+-	}
++	if (IS_ENABLED(CONFIG_DEBUG_FS))
++		tegra_cbb_err_debugfs_init(cbb);
+ 
+ 	/* register interrupt handler for errors due to different initiators */
+ 	ret = cbb->ops->interrupt_enable(cbb);
 -- 
 2.43.0
 
