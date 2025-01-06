@@ -1,148 +1,166 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7441D9A50
-	for <linux-tegra@vger.kernel.org>; Mon,  6 Jan 2025 09:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169981DD529;
+	Mon,  6 Jan 2025 12:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736156741; cv=none; b=qC9p15Rz5YPqGnRMyaEjeqpJzRkuVt2eR6rXc9slyzeHQzzC1IV4YWyCMmMShqlwyaaOoKCAxROSjhIQzou3OiW5YBOCImvtnlNTJXwRLY1y7iJ4S6qmIfhQmVjxwtx5uRJpxB2PXzisnHkoQI/7qhB4cwImrrq5sB33khd0H3I=
+	t=1736166120; cv=none; b=gMhHWwjbY4gVOXAj8uPuGpWmAr5whB+AfOsRb2zZaaz4b0q7DVLMVbhVQ5L0mxuDQrPou3Wrjc8NGRjv5T31fWoyoi85tUoR7KGzo/ddvJkzK7tsAu9FSCCZxADytkHnn/0cW5mB549a56iCJpmso5RMzcFsWvet7Xoj4zpVSDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736156741; c=relaxed/simple;
-	bh=IZYlUVs7+fKI40GFvfmgAb22nVpN8Q2at4NYNL8nKTk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RaqY7nQOLlMOVTJPc/XldrYhx66sTscjSawu38KzPkx6slGu/1Fw7Y8SgeGZtFOwdysN9ari/IR9Yjq5ygUENgLEvFOK7lZaneOCv/XbesZaSQjSa8tY35KwYVrYc2nFTDT5rLsTc/qRFxMrTHoXtEzRHbucsoWS9cQpoAUqOw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=srZmjNWl; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="srZmjNWl"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e461015fbd4so13515442276.2
-        for <linux-tegra@vger.kernel.org>; Mon, 06 Jan 2025 01:45:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736156736; x=1736761536; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DNzark5qtCDwQ7M0G9ZBrwk42sp8e6A1IdLf0YnVhag=;
-        b=srZmjNWli06tECaJhyWDLqqd+z76dZgqOvksX6ohfjyhs1GnRGFuOWj9GHL72gAnxq
-         tfxq5JDp1RiukFOcq6tNwk13d4n7mmi7a8WIOLx+fn31uYyZf1PThaWApSbYYxzouIId
-         1IMYHSz5QSMCZJQ0tEWWYFV6oJp4bd3QRnt7Np9EhyIWICcSbMDu7z/eJXnAci0MOSy6
-         jZenJXWtVIxfW2uymodU69lSVhYi/R4yYVioQaYp9WDMbfP+yt/OoPCOhaKrtmMgHs/m
-         xXq/doIKM6Aq19ZQLRCyb9uJoAfy5kHQUzIcqPAYOssHWEOxuLCivSd68NJSFpgwRQ8E
-         4Mzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736156736; x=1736761536;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DNzark5qtCDwQ7M0G9ZBrwk42sp8e6A1IdLf0YnVhag=;
-        b=tLnl6ggF087v4Bc+sEaInwZF6xBmz3EVhnEIk79nHpXl8oq+7a2QyEwt/5MWCywPpA
-         +uA1uwxLSNkYJ4EwSMkyl04y140Utfi+OJMLDQbVAWrwzh/VDcxqKQIW7hAxyCe+nPRA
-         vCxnDP443x5CdpdY4FnZN1y7QQWcTEnIb+KpD/0DmzW3o/I4dqxfvpXs1iiwE4+suix2
-         VOb0kNVTD2V/BCw0zgrlNGOG3w8/adCbcmLfJqO4c1/8giC0jCFQwicR+isD2PdYc3hd
-         idqxGcXimA3YiqXgxj+3b3H5Fhe6X6F7BxJE0Bs7weGLyyOjg08CloZU/kbxNpfLWH3Z
-         DgvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUukvP+wEq0qBxbPgTiHUsn5a8QscI3x8ldCBh8nDrkuqHVmoJF9kkqJTN0Wrl38huhx0zd8ZYrDER6Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL8tLZWpzlbyA28ZUX3liNeYtzwsTBLIUxR26XGBp8DRjm6WX8
-	RmRQIYW4bYICyGiucyAVC/heHAQp7786RKIqS0EUcsIMHVynIrTJ4+yr1e2iKJumUxOhxT0++SK
-	fKWr5MyDBOI33KxUzI5WdnO0JHEAwE78g7RvlTg==
-X-Gm-Gg: ASbGncs5GoBqSvObD/WGtKzcRXvYu1+DR6TETIFxuVhFRVnuiRNvYanfZoPTQL76IXT
-	akkLtpjHkAK8PCMwPppywmPKILhkukaQlfVhTVMzrgqagZtaEWLepPbPU6ogkBHMYyYAH5A==
-X-Google-Smtp-Source: AGHT+IF4a956+UIVmRcZnhNjgi8nOMg6IoaI0eIk4X2K6tB7iwrgpwMF+LBupvdnoC+iyKAmLzs7x15lyjySzs2uP7E=
-X-Received: by 2002:a05:690c:6d09:b0:6ef:a187:f377 with SMTP id
- 00721157ae682-6f3f820e059mr436161257b3.34.1736156736064; Mon, 06 Jan 2025
- 01:45:36 -0800 (PST)
+	s=arc-20240116; t=1736166120; c=relaxed/simple;
+	bh=bbB1UHL57SGI86zjebsLsB4VAZH8OE8Jqp/y/zAiw3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S20Gr7awYCLHhwPbn+edP1AzrETQIaLxDdm2vERuJt+M9F6oAReKP3l7OJ1TvlKufnc2WPJ6sy9t6g2eLKvmplP/eCaVYkfX2APM7Zt2ZPg0Dz1Cq7DP/5B7tuw0JXzn9GMyW633M5V5LR+SiZg4iMbi907auYXwGRPiSHLN3Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1170C4CEE1;
+	Mon,  6 Jan 2025 12:21:51 +0000 (UTC)
+Message-ID: <f11653a7-bc49-48cd-9cdb-1659147453e4@xs4all.nl>
+Date: Mon, 6 Jan 2025 13:21:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241214-drm-connector-mode-valid-const-v2-0-4f9498a4c822@linaro.org>
- <76ho36jqcraehnsgpjralpye52w7ryshhgizekn4qqfsikiojd@3yyorbvjkc7b> <20250106-passionate-lorikeet-of-apotheosis-c62ff1@houat>
-In-Reply-To: <20250106-passionate-lorikeet-of-apotheosis-c62ff1@houat>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 6 Jan 2025 11:45:26 +0200
-Message-ID: <CAA8EJprwNFVV-1pr64_es6XbmOSYtTUYUUK3eOf7LFKBotbrQA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] drm/connector: make mode_valid() callback accept
- const mode pointer
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Peter Senna Tschudin <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, 
-	Martyn Welch <martyn.welch@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
-	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, intel-gfx@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
-	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Jani Nikula <jani.nikula@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 23/26] media: venus: vdec: Make the range of
+ us_per_frame explicit
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Martin Tuma <martin.tuma@digiteqautomotive.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Hugues Fruchet <hugues.fruchet@foss.st.com>,
+ Alain Volmat <alain.volmat@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Sowjanya Komatineni <skomatineni@nvidia.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Dmitry Osipenko <digetx@gmail.com>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>,
+ Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org
+References: <20240429-fix-cocci-v3-0-3c4865f5a4b0@chromium.org>
+ <20240429-fix-cocci-v3-23-3c4865f5a4b0@chromium.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20240429-fix-cocci-v3-23-3c4865f5a4b0@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 6 Jan 2025 at 10:55, Maxime Ripard <mripard@kernel.org> wrote:
->
-> On Mon, Jan 06, 2025 at 12:47:07AM +0200, Dmitry Baryshkov wrote:
-> > On Sat, Dec 14, 2024 at 03:37:04PM +0200, Dmitry Baryshkov wrote:
-> > > While working on the generic mode_valid() implementation for the HDMI
-> > > Connector framework I noticed that unlike other DRM objects
-> > > drm_connector accepts non-const pointer to struct drm_display_mode,
-> > > while obviously mode_valid() isn't expected to modify the argument.
-> > >
-> > > Mass-change the DRM framework code to pass const argument to that
-> > > callback.
-> > >
-> > > The series has been compile-tested with defconfig for x86-64, arm and
-> > > arm64.
-> > >
-> > > Note: yes, I understand that this change might be hard to review and
-> > > merge. The only viable option that I foresee is to add new callback,
-> > > having the const argument and migrate drivers into using it one by one.
-> >
-> > Colleagues, I'd like to graciously ping regarding this series. Should it
-> > be merged as is (possibly requiring more R-B's)? Or should I rework it
-> > adding something like .mode_valid_new() callback which takes const
-> > argument?
->
-> I think your patch is fine, and you can add my
->
-> Reviewed-by: Maxime Ripard <mripard@kernel.org>
->
-> We seem to lack an Acked-by for amdgpu though?
+On 29/04/2024 17:05, Ricardo Ribalda wrote:
+> Unless the fps is smaller than 0.000232829 fps, this fits in a 32 bit
+> number. Make that explicit.
+> 
+> Found by cocci:
+> drivers/media/platform/qcom/venus/vdec.c:488:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/platform/qcom/venus/vdec.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index 29130a9441e7..2b2874aedb2d 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -464,7 +464,7 @@ static int vdec_s_parm(struct file *file, void *fh, struct v4l2_streamparm *a)
+>  	struct venus_inst *inst = to_inst(file);
+>  	struct v4l2_captureparm *cap = &a->parm.capture;
+>  	struct v4l2_fract *timeperframe = &cap->timeperframe;
+> -	u64 us_per_frame, fps;
+> +	u64 us_per_frame;
+>  
+>  	if (a->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE &&
+>  	    a->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+> @@ -484,10 +484,7 @@ static int vdec_s_parm(struct file *file, void *fh, struct v4l2_streamparm *a)
+>  	if (!us_per_frame)
+>  		return -EINVAL;
+>  
+> -	fps = (u64)USEC_PER_SEC;
+> -	do_div(fps, us_per_frame);
+> -
+> -	inst->fps = fps;
+> +	inst->fps = USEC_PER_SEC / (u32)us_per_frame;
 
-Yes. I think the AMD is the only one missing
+What happens if us_per_frame > USEC_PER_SEC? inst->fps is now 0, and I wonder what
+issues that may cause.
 
+I will drop this patch from the PR, as it is probably wise to return an error if
+us_per_frame > USEC_PER_SEC.
 
--- 
-With best wishes
-Dmitry
+The same issue is present with the venc patch (24/26), but that wasn't included in
+the PR anyway.
+
+Regards,
+
+	Hans
+
+>  	inst->timeperframe = *timeperframe;
+>  
+>  	return 0;
+> 
+
