@@ -1,231 +1,167 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2081.outbound.protection.outlook.com [40.107.244.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB08647;
-	Sun,  5 Jan 2025 23:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736119149; cv=none; b=Qzl5DKp8eOKKNqD6sg81OZeCWNs93qCrx3+2n/KiUWNFfoT3DLNaHcdQZtTK1O6+7H1dZf/uF4TsF3437YgegRxlt7Hz/CKQC2PyPHrUp78+rfKUZH9vSx6hMitmQ/mgpYWBSagvaV1B11aXWa00082k5SZoEIqSoQzPvwIQTzk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736119149; c=relaxed/simple;
-	bh=eN3aRIQ/gGCSrh9ouIKHrFhOanrFncaqzRShN6d8pSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LC32wnSsY4Nf8nO3gCiLcXK1rZax/1mhSmY2V7QkG0nvSumY/b3Y777r0ocimMj0ixuFguvcaqY4M7K5m7kr5uGBnYOhFDEim3fQ4mJ8srO0NeqYq97ecBxOq/DWu1JsF8epD/Ig+tsYQldwF7L0QCrwiJk6HMLNyqiy0pZeewU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UeDysJQP; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9606182C5;
+	Mon,  6 Jan 2025 04:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736136671; cv=fail; b=EqQUyTBvjKwhzIVDyGTiABkqOQKeq+HLG2y1ckCKJfaEYyMsZDMVXXet9RprsiJXFPvBbILbcjIc8QQpWlwWb7fyPWqOnGNfiWrpZgTpca5VQPkX2xmRmeLZa5LgtlFv1EFyJmMUxfBH8VUf6iLedx+ttNnLiN+yU7GKIoROGMc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736136671; c=relaxed/simple;
+	bh=X9ePxcifaAwFTwkuAwOSSVEzOeIbhI8j16n/glisMVQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OFwYev7jkOOZFfU4DTORFRROYKEgJ15jCa4KGrupEgHUvnMrNfWQB57S17V1J3YymSlibXEYQKbRP8sSl64x+TfgVE+U1tqBWRkKp730V6/f3M2dvbfDPTwdYPTtyIoLp/pNdCQ8hPY3gi9t+wrnYs7EfKsrDkxrWu2eOdvJKBQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C4yBR0Rf; arc=fail smtp.client-ip=40.107.244.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UeDysJQP"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8DC5E7E9;
-	Mon,  6 Jan 2025 00:18:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1736119085;
-	bh=eN3aRIQ/gGCSrh9ouIKHrFhOanrFncaqzRShN6d8pSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UeDysJQP/8Oa1/DV3kQKsywDTYtozyWwBNwdqtX1NaCn147rROcOhgDgaBzpl9UCN
-	 dkXrg5A0RWNQK6dEu/jHI3f++kMLiO8kBcwCiPgwkrE+/NNE7iR+kBs+koVfsvkkE+
-	 0++Ipy4b9rU2Z58OdadDTjM+gkVR9C1lYmx7Vl1g=
-Date: Mon, 6 Jan 2025 01:18:53 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Peter Senna Tschudin <peter.senna@gmail.com>,
-	Ian Ray <ian.ray@ge.com>,
-	Martyn Welch <martyn.welch@collabora.co.uk>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v2 0/5] drm/connector: make mode_valid() callback accept
- const mode pointer
-Message-ID: <20250105231853.GA21164@pendragon.ideasonboard.com>
-References: <20241214-drm-connector-mode-valid-const-v2-0-4f9498a4c822@linaro.org>
- <76ho36jqcraehnsgpjralpye52w7ryshhgizekn4qqfsikiojd@3yyorbvjkc7b>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C4yBR0Rf"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ScFNgfN/K/KRWWDzxtB+7mbsEexRGObgFeK2hwDr72R9Afw0O4bJjMC1Ouh8vugh6Ftu3SsFAMDOa2oDOSGio3P1pzEtbfw4bX4oAxWtk4xzfNXfR9roZ8TriG6EH7l+1vNIsgxr11s+j2ck5Mh5eVXZsUMFkIvAYZtaB/A+gEHUXHVwF8QKroymQ78eg14xnWqeTMDd+xdRPtEOfMcZcBVjUBget2oYJhf9VNd6icihsE1ml/VFmWLzTFhCkTEIX99hYvMsR2TSEClaCeO27TI8OON7o3vKc5JUQpTy+usqx1BbuAhamF+aBCYBmhjRqm9uRtfYb8x4AYKCZlvlZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fr48xAUGXecavt21aovFZAOxvRHaNluOKONm8sJTCWo=;
+ b=c3E7MKETxf4cDtuagShsdYbZfDzwNClM6/6/aSTMpVtcczeOj7DTWmUA12QWE+KsgN6jgYiHZMC3/pOOuAmwXzYrMyQd/3DC+ZUPqGY/h8ZQnmWyxMx14A8tRnRxeindR2CXDu4JvqSc1YsEknxkartmhiyGSFcpgj4XD0RkHOmhJG6i1sVAnQE5g1ofn0mVzqzV9D67vM4/MDm1+wWTiNEpbOlXjECHvlo/wF4rfDlzRwiJSx2b2gZ2IY2dn58ddaVflxtR/SiFuBF/lLDG3n6M/5AjNpouSKSWQVNhoAzUAgKNvN4QLvsrwL/vuTsrT4TX0dkHUK1MEjWL11MQPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fr48xAUGXecavt21aovFZAOxvRHaNluOKONm8sJTCWo=;
+ b=C4yBR0Rfhcs+Ve3A2BoXxtRFXfkRld8uYfbqZ2ZOhmeNgicGVqLWOfx9nuAfPRvBmhru6r+b6/0uyxggE2wYnSokrvzPaP/Hm4M4091+mfZwoQvV3ouHP7ZSiY0ajeuNG468cPZFX3Hl3uPOBoqOgAP5sxyCgqQJU6yQrv/QX8tIvKkMLuUaZ9L9B3P2SR9dcFIHrRtc7y+YIryQGqK2VSPN39NpTWtPQXz1SWoOP/ToGEfQy5YZWGDVv85HOTwmsFhBRlFgS1b467sW3eHs6TPzYGD+j4nFS4M7Ow6aMcMbTY6sFQBHGutVdjS0bxb3pJbSjwdH41nxn5FKRO77Mg==
+Received: from PH7PR12MB8178.namprd12.prod.outlook.com (2603:10b6:510:2b3::19)
+ by MN6PR12MB8490.namprd12.prod.outlook.com (2603:10b6:208:470::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8314.17; Mon, 6 Jan
+ 2025 04:11:03 +0000
+Received: from PH7PR12MB8178.namprd12.prod.outlook.com
+ ([fe80::77bb:a9fb:c75b:f530]) by PH7PR12MB8178.namprd12.prod.outlook.com
+ ([fe80::77bb:a9fb:c75b:f530%6]) with mapi id 15.20.8314.015; Mon, 6 Jan 2025
+ 04:11:02 +0000
+From: Akhil R <akhilrajeev@nvidia.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "davem@davemloft.net" <davem@davemloft.net>, "thierry.reding@gmail.com"
+	<thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/7] crypto: tegra: Use separate buffer for setkey
+Thread-Topic: [PATCH 1/7] crypto: tegra: Use separate buffer for setkey
+Thread-Index: AQHbUJ6Qxi+DINGM+kmXYyCUmKJwL7L7mCkAgALfjvCABEn+gIAGfV1w
+Date: Mon, 6 Jan 2025 04:11:02 +0000
+Message-ID:
+ <PH7PR12MB817817C71B80A04A82CEEF1EC0102@PH7PR12MB8178.namprd12.prod.outlook.com>
+References: <20241217161207.72921-1-akhilrajeev@nvidia.com>
+ <20241217161207.72921-2-akhilrajeev@nvidia.com>
+ <Z2_iroxlT3C1d1HQ@gondor.apana.org.au>
+ <PH7PR12MB8178F6A37DE6CD41850529BBC00A2@PH7PR12MB8178.namprd12.prod.outlook.com>
+ <Z3XkxdheTGBnCmQR@gondor.apana.org.au>
+In-Reply-To: <Z3XkxdheTGBnCmQR@gondor.apana.org.au>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR12MB8178:EE_|MN6PR12MB8490:EE_
+x-ms-office365-filtering-correlation-id: 7e117c49-5e82-4a9f-539a-08dd2e082276
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?BkH8b6VKvdMT3L/KzSXaHa3VHYqxfj5Ftrth0JhjpmyJcBOUgMruXl6oLFS8?=
+ =?us-ascii?Q?PDEg7FczNtwf/AHW4Io2tpgbZlGGVxC5702h1lWYsazuOJohgm8cwTgReP5A?=
+ =?us-ascii?Q?pwJ2+ifPCTzv9UDk9xjXFczTo5keKMYuFSEocjPKm3O572IQeJDuKed4+qbW?=
+ =?us-ascii?Q?UtetRnt6eIFOhWBqFybIiygWZ3mNNWXhg2J4TX16uwbHgZys0gF7VxyBE110?=
+ =?us-ascii?Q?MGgHp6SfCPjyY4JUFZo3YoP15S0OAtHRfYy4HzGjIx9UeyFQHAzC9K1MEpxk?=
+ =?us-ascii?Q?QDPgyCAFIFUiFvzR1pUjjkk9kwADQv6zfi4HQchyAaBLWGB4ZJ+WoPXeizzK?=
+ =?us-ascii?Q?rK1to9TLM7PXZaNLYvBYodX/bdUbynk2MkIgkxmq/rCXQSnIG4EOsYdJwsLb?=
+ =?us-ascii?Q?w3UZSB4UqXDA46BptXzaBADj2Og1W8vgupcEaHvbrKejblpKoB4SK0we9iys?=
+ =?us-ascii?Q?6VhA/+6Ou67Iw3gpHhooUe0wOx9rNoCu1oisnj/tzMjRkMCUd4Vj0og2QR47?=
+ =?us-ascii?Q?9II4wU7NOtuDieZneKb5roOXhT1gktNF95zgh15iCVyljzQwd9ZCLJC3RwHi?=
+ =?us-ascii?Q?QJZztHUnNSVjUPR2vegVShtMf8rzRQgx8hAbSMtZKVWQa1W8cVWoTEQWnzk2?=
+ =?us-ascii?Q?sNOm1xAUmX7WTQ9RXmL2ZFm4YWvwqQPo470mJjAKsd8zQGiVfaJO4/DKyMOW?=
+ =?us-ascii?Q?UR4Il47Kn6gi3m6t4FrgJmeFpNJqFOIPN4CPklaiOplLVyGHFrBfXyW7Zx8R?=
+ =?us-ascii?Q?80ONGhufjykeLRyUZwe07hinT2dr+imUJyW919tM3p4RJL4NQFDUDh7aDjP4?=
+ =?us-ascii?Q?nEQyXWPgNqf8lOMKrDPK/tdH0scVH2SxcrGOZuxzGRG3FCXTi727b/QTsAFI?=
+ =?us-ascii?Q?KHjWT+ADzn+Sxtyh1B/g3DSHsdSoRZd5xiwypQMYE16IVCCW3DLGP+A5Qre2?=
+ =?us-ascii?Q?ZUNC82ekv7L8AozMl6qO4MFwcI0Zr0GHqpyui2L49QXmGkSh9ht+CdP37GuA?=
+ =?us-ascii?Q?f22l9N4uTcwHYA4+6PiCBfMN/TFe9sMEshpG7x+CvmV9ayXMDi+zx/Vn+12C?=
+ =?us-ascii?Q?Opyx3Cev9G81rML//ed40MdXs3AzLie0oo9jiywIjFZoUswh+SyZ1AtMgI7K?=
+ =?us-ascii?Q?VpGWTD3hTfUcrboLezokWXaY9k1pxduj7tImDtE1Pux0UBSISLTfGPuNv65g?=
+ =?us-ascii?Q?OYWDyBlxEar1KpQ04cQ7sjyOjHuYOHg46xHctviP0BwXH8pEp2QmV6CnIYlf?=
+ =?us-ascii?Q?79Mzd1yJpwWVxx2d3wflunFs/Z8N/y/8G36GFucUo5TKAKZltDN1nf326d7R?=
+ =?us-ascii?Q?RTwZhWB/0Gvu3SYoXl3YrSshsgEgXAxbsFrX06SH6M20ReCLfHT0svix3i+n?=
+ =?us-ascii?Q?yLAdNIbtct1XoJ/1ZVthBqETXc7hLqqpBciSERZt7mRf8/N96fBV3VbzzKVo?=
+ =?us-ascii?Q?qDpZYVMg2nAyc7e+6ycuMpN5/tcgOT1T?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB8178.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?yraD/8cQvIIZtGhluHJbgHqhNRp0Obi2T9hSJQbMh3qoOWGpOd2mVUb1KXK1?=
+ =?us-ascii?Q?Ztg7wC3fsr8e0fkC8HkPjXFCbcX5cGwqkOXICOcgF6KsXuUe4UFgZxLTUaQa?=
+ =?us-ascii?Q?yl/CEdXTrZY71y3N+EOmr0qATvXOjXo6IbBuhVDCvtHdi1SQ+HR5KL4mbSO8?=
+ =?us-ascii?Q?WlAU6X576aPXNZOPXFXVGvP39U8JEnKNDfbXVDLlerZnsIJM5muCVKDv99fj?=
+ =?us-ascii?Q?bxzHv0cDvp1MoRe4sz6tpcnzRr2BxcltX3d3jES8FTemSkU0qkt33ELlzWxy?=
+ =?us-ascii?Q?SPSBFPQ448eKRK5s3NZU6MeIKQAb+hlxROeUZuxbKL55cU35qVbyQab59Oci?=
+ =?us-ascii?Q?zXy+fLq9fPPfBCkBulMRsoWizjNvu0M8HQAh45dpUHGc6LB1W/ETOFCKE9Qb?=
+ =?us-ascii?Q?0eazaXREvM7rPBGRW5yfynzP3gX+PJt39P0fi5izopHfkrE287swek6z6kZK?=
+ =?us-ascii?Q?ve9L/CeQ+onSucv+bXQrUXikgqtN+RL6KEJS7h7z5lqhQN/aE9e7h1KAug+s?=
+ =?us-ascii?Q?I/iOEQcSRQpOoz7oSEniwUywFnb0xenrFH8nTuZ26UpbTPcrQ+/8w1Mig+yH?=
+ =?us-ascii?Q?A1n7rk6qbZTsWEsdWPVOCkOsfH/2XRx/GKG12VV3QCz/sVqq3DUkBZdXjbds?=
+ =?us-ascii?Q?krb+qj5aWXgqj4FFZsWhvjxswo8IQUwc1Hg7J00BLsKbz7Kiw28QtVvSmjy3?=
+ =?us-ascii?Q?QUT+8YZs6h4MAIj0iKqjT1oeqA6j8qiprurBx+GLpbNtbiSYq0EwodZQ1Jvo?=
+ =?us-ascii?Q?NM5RuVluLctQ9fyrh03mOOWXERb/0zfpSk5Pd6uRkVqQskr/JCKGU7PaFHS5?=
+ =?us-ascii?Q?J049ogckg97T5JHKkZTfyqlcsYumZLBmp149NmHUzmzmEpNKpJKQO0aKhcdZ?=
+ =?us-ascii?Q?JSHu2sRuhGjzcBFh/dQ+p7inNB7jNZWv9ES/+ZLh6K+JVqeq4y41tQtjEUbb?=
+ =?us-ascii?Q?PUJEVj4pTrm7e75mzfqRbpcjlTnIhRrYKaETBFrvnZDo49+jwPYjAOp+zO0f?=
+ =?us-ascii?Q?fhX4KxjOe4Zsu1UziFGl+N7iBsVX5c5RqdWSiRxZ6oz/TtExp+K0z2snP+58?=
+ =?us-ascii?Q?+Iy87KkSHpq10RkOBbDZYJ0sYEeq33+24gHTmiQA9vXQC/084xO+/jsQ08B+?=
+ =?us-ascii?Q?Ci9eXLZZceY6LXAAlg9OVDGW2BUNZEv2tQOTuVB9jKgbc5deMwLObCLSPqHe?=
+ =?us-ascii?Q?Sc9P6IVAZrvO5u4Hrl6oE49aLdz6kIt+jFG0kM8beekLypzjZBqIN073xQPj?=
+ =?us-ascii?Q?tg7lLgPPkZd1V09dJl3CFuGXzWub1aQm+2BqlpeySPChjcT1EkNLCBMoEzTn?=
+ =?us-ascii?Q?4+t/7goTN+pntXNING7yJI4GPwBDslYbd0+cXvmdcPr4r3WKVCGwUIbiS6Uu?=
+ =?us-ascii?Q?2KnK+jJo8juAgFERxMRVErGgYZfFvnG7eTq0IdpK0Qtzg1W6BoH4WkZjUmXN?=
+ =?us-ascii?Q?kxahVRauTSh7coLy/xb+OTIe/fePVevKUQbzXhoxfkKRIiqgzN+5wqpv54Er?=
+ =?us-ascii?Q?YTTbBQ232SS0T5XHWR9i204OJnbRUFzN1QezL5umzqzxYjjmbu2t2HVQTzSg?=
+ =?us-ascii?Q?yEcnH5PqQC46Ke9SFZd9XLwi7K55yshOKcygepes?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <76ho36jqcraehnsgpjralpye52w7ryshhgizekn4qqfsikiojd@3yyorbvjkc7b>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8178.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e117c49-5e82-4a9f-539a-08dd2e082276
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Jan 2025 04:11:02.8763
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mGBzifXxnP2F2U52kj8tGBvubjOivqRMZfdjm6v+KXqg/x+RAVJuP306Znceys7WpPkmB3VjeD+50MOQxUuWRA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8490
 
-On Mon, Jan 06, 2025 at 12:47:07AM +0200, Dmitry Baryshkov wrote:
-> On Sat, Dec 14, 2024 at 03:37:04PM +0200, Dmitry Baryshkov wrote:
-> > While working on the generic mode_valid() implementation for the HDMI
-> > Connector framework I noticed that unlike other DRM objects
-> > drm_connector accepts non-const pointer to struct drm_display_mode,
-> > while obviously mode_valid() isn't expected to modify the argument.
-> > 
-> > Mass-change the DRM framework code to pass const argument to that
-> > callback.
-> > 
-> > The series has been compile-tested with defconfig for x86-64, arm and
-> > arm64.
-> > 
-> > Note: yes, I understand that this change might be hard to review and
-> > merge. The only viable option that I foresee is to add new callback,
-> > having the const argument and migrate drivers into using it one by one.
-> 
-> Colleagues, I'd like to graciously ping regarding this series. Should it
-> be merged as is (possibly requiring more R-B's)? Or should I rework it
-> adding something like .mode_valid_new() callback which takes const
-> argument?
+, Dec 31, 2024 at 04:25:06AM +0000, Akhil R wrote:
+> >
+> > Does it sound good, or do you think it will make the code overly compli=
+cated?
+>=20
+> My main concern was arbitrary failure when you exceeded the 16-slot
+> limit.  As long as that problem goes away I'm happy with any solution.
 
-I personally like the end result. The diffstat isn't very big, I don't
-think it's that hard to review.
+Thanks. I will send out a patch for this along with the other changes as th=
+e next version.=20
 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> > Changes in v2:
-> > - Rebased on top of linux-next
-> > - Replaced 'accept const argument' with 'take a const arugment'
-> >   (Laurent)
-> > - Link to v1: https://lore.kernel.org/r/20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org
-> > 
-> > ---
-> > Dmitry Baryshkov (5):
-> >       drm/encoder_slave: make mode_valid accept const struct drm_display_mode
-> >       drm/amdgpu: don't change mode in amdgpu_dm_connector_mode_valid()
-> >       drm/sti: hda: pass const struct drm_display_mode* to hda_get_mode_idx()
-> >       drm/connector: make mode_valid_ctx take a const struct drm_display_mode
-> >       drm/connector: make mode_valid take a const struct drm_display_mode
-> > 
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c           |  8 ++++----
-> >  drivers/gpu/drm/amd/amdgpu/atombios_dp.c                 |  2 +-
-> >  drivers/gpu/drm/amd/amdgpu/atombios_dp.h                 |  2 +-
-> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c        | 12 +++++++++---
-> >  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h        |  2 +-
-> >  drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c |  2 +-
-> >  drivers/gpu/drm/arm/malidp_mw.c                          |  2 +-
-> >  drivers/gpu/drm/bridge/adv7511/adv7511_drv.c             |  2 +-
-> >  drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c      |  2 +-
-> >  drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c |  7 -------
-> >  drivers/gpu/drm/display/drm_bridge_connector.c           |  2 +-
-> >  drivers/gpu/drm/display/drm_hdmi_state_helper.c          |  2 +-
-> >  drivers/gpu/drm/drm_crtc_helper_internal.h               |  2 +-
-> >  drivers/gpu/drm/drm_probe_helper.c                       |  2 +-
-> >  drivers/gpu/drm/exynos/exynos_hdmi.c                     |  2 +-
-> >  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_rgb.c                |  2 +-
-> >  drivers/gpu/drm/gma500/cdv_intel_crt.c                   |  2 +-
-> >  drivers/gpu/drm/gma500/cdv_intel_dp.c                    |  2 +-
-> >  drivers/gpu/drm/gma500/cdv_intel_hdmi.c                  |  2 +-
-> >  drivers/gpu/drm/gma500/cdv_intel_lvds.c                  |  2 +-
-> >  drivers/gpu/drm/gma500/oaktrail_hdmi.c                   |  2 +-
-> >  drivers/gpu/drm/gma500/psb_intel_drv.h                   |  2 +-
-> >  drivers/gpu/drm/gma500/psb_intel_lvds.c                  |  2 +-
-> >  drivers/gpu/drm/gma500/psb_intel_sdvo.c                  |  2 +-
-> >  drivers/gpu/drm/i2c/ch7006_drv.c                         |  2 +-
-> >  drivers/gpu/drm/i2c/sil164_drv.c                         |  2 +-
-> >  drivers/gpu/drm/i915/display/dvo_ch7017.c                |  2 +-
-> >  drivers/gpu/drm/i915/display/dvo_ch7xxx.c                |  2 +-
-> >  drivers/gpu/drm/i915/display/dvo_ivch.c                  |  2 +-
-> >  drivers/gpu/drm/i915/display/dvo_ns2501.c                |  2 +-
-> >  drivers/gpu/drm/i915/display/dvo_sil164.c                |  2 +-
-> >  drivers/gpu/drm/i915/display/dvo_tfp410.c                |  2 +-
-> >  drivers/gpu/drm/i915/display/icl_dsi.c                   |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_crt.c                 |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_dp.c                  |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_dp_mst.c              |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_dsi.c                 |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_dsi.h                 |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_dvo.c                 |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_dvo_dev.h             |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_hdmi.c                |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_lvds.c                |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_sdvo.c                |  2 +-
-> >  drivers/gpu/drm/i915/display/intel_tv.c                  |  2 +-
-> >  drivers/gpu/drm/i915/display/vlv_dsi.c                   |  2 +-
-> >  drivers/gpu/drm/imx/ipuv3/imx-tve.c                      |  2 +-
-> >  drivers/gpu/drm/msm/disp/mdp4/mdp4_lvds_connector.c      |  2 +-
-> >  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c                |  2 +-
-> >  drivers/gpu/drm/nouveau/dispnv50/disp.c                  |  2 +-
-> >  drivers/gpu/drm/nouveau/nouveau_connector.c              |  2 +-
-> >  drivers/gpu/drm/qxl/qxl_display.c                        |  2 +-
-> >  drivers/gpu/drm/radeon/atombios_dp.c                     |  2 +-
-> >  drivers/gpu/drm/radeon/radeon_connectors.c               | 10 +++++-----
-> >  drivers/gpu/drm/radeon/radeon_mode.h                     |  2 +-
-> >  drivers/gpu/drm/rockchip/cdn-dp-core.c                   |  2 +-
-> >  drivers/gpu/drm/rockchip/inno_hdmi.c                     |  4 ++--
-> >  drivers/gpu/drm/rockchip/rk3066_hdmi.c                   |  2 +-
-> >  drivers/gpu/drm/sti/sti_dvo.c                            |  2 +-
-> >  drivers/gpu/drm/sti/sti_hda.c                            | 12 ++++++------
-> >  drivers/gpu/drm/sti/sti_hdmi.c                           |  2 +-
-> >  drivers/gpu/drm/tegra/dsi.c                              |  2 +-
-> >  drivers/gpu/drm/tegra/hdmi.c                             |  2 +-
-> >  drivers/gpu/drm/tegra/sor.c                              |  2 +-
-> >  drivers/gpu/drm/vc4/vc4_txp.c                            |  2 +-
-> >  drivers/gpu/drm/virtio/virtgpu_display.c                 |  2 +-
-> >  drivers/gpu/drm/vmwgfx/vmwgfx_kms.c                      |  2 +-
-> >  drivers/gpu/drm/vmwgfx/vmwgfx_kms.h                      |  2 +-
-> >  drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c                     |  2 +-
-> >  include/drm/display/drm_hdmi_state_helper.h              |  2 +-
-> >  include/drm/drm_encoder_slave.h                          |  2 +-
-> >  include/drm/drm_modeset_helper_vtables.h                 |  4 ++--
-> >  71 files changed, 92 insertions(+), 93 deletions(-)
-> > ---
-> > base-commit: 4176cf5c5651c33769de83bb61b0287f4ec7719f
-> > change-id: 20241115-drm-connector-mode-valid-const-ae3db0ef6cb7
+Any concerns on the other patches in the series? I can push the updates tog=
+ether in
+the next version, if anything.
 
--- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+Akhil
