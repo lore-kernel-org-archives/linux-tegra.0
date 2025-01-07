@@ -1,187 +1,183 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2057.outbound.protection.outlook.com [40.107.243.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A421DFD83
-	for <linux-tegra@vger.kernel.org>; Tue,  7 Jan 2025 11:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736249497; cv=none; b=HDTjWErHkUXX0sIBZ6L79YTLY5CmhT0O7T3NPi7+lmrPqOAVi3MJ89PGxrimNMvgId5pygfbWlLVdYE4Yf5ub3OAm23zSKsRn/yRUreZqXUETZXLqT5cT2TtGDUdr78K/HnEoAoCbeJ8a3dumULleeMEck1bU2JNUbkISOLlaH8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736249497; c=relaxed/simple;
-	bh=n2ZgSrqVf8Xk2qny3IM696f2eGm4cHoO0kMMWIjRAo8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DteNbSKhen6ocUidMntY3CTW/bIAERGkXv2sw8IgBPubsblm5bysRK1FZKOlv6ZEI7RHSix73wmsZOKBylPa3aeq6noVgpmCpRGyrhzELEpL7LjVIVRJ4/w5Bhfv/FQP86XPEp9D9bNAh5i0Lu9tSnrZ/E59CwODIQX9gbAVswI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bDY0BsLM; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439041DF995;
+	Tue,  7 Jan 2025 12:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736253851; cv=fail; b=T4VhCgeq0aPiRMPB/30/qCCsaDCNJqau+YvRdSFvYiLurTEjnNATgJjwix7qaGCfOByIMgkMUlDMw2f0L5dVGRnEZLUckkQDyRWRFWcsffvb3wpedy7In/GKovLIWEnGhD4yguK6L0wssCmjUG3Q5MKVfzjcm+1eeO+K3JFbw3c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736253851; c=relaxed/simple;
+	bh=Om6dQ0JGNgAlNlrU9C3BfQIGauIAfcJk9oZIbfZp/iU=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=P7FnPP1BBbjDOvJpinEGH3MUWECzYQJtbod1P/zZHbYhSRgXOXwgmRgkBu/yrgiiwv751urKheXtjGw1oL5lUt7A6OR88oRAXaVe6X3QfKtGXNVG8dTTIl9IC3mpP2TSB2maEr+iWm5mIzN2bg4a648VQeoaCLnVOBakEAzfpXE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rLoupF9m; arc=fail smtp.client-ip=40.107.243.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bDY0BsLM"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-54021daa6cbso15499104e87.0
-        for <linux-tegra@vger.kernel.org>; Tue, 07 Jan 2025 03:31:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736249493; x=1736854293; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G3N5s5fdL2YNf7soMuvHTeYgJ8vy52pHoEfk/tcGSD8=;
-        b=bDY0BsLM8At+eWkCdB0yferZt4y0ZuBMSC877h89x4rpgxicEIerr/pRHppopCUyct
-         r9Hs8kpyv0NyehvBBMulpVi3AGyMqt3hekzIS6OTc0qiVk718eILL1u8lgfd3O2Ok46h
-         3AO+SXxP6a2+IKLAoBK7UeYLFhITGa3x61m0q2qiWGM9Vnpsz6xQ/pWrh/K6AA7KYwon
-         i7tgaMHzPKa5Cq/TfGO8wM/cj3KYwgLIq4V/Hot45tlHA2D/8d9DyHIfCha8mcF9i+hv
-         Vma0ec1BpHjWd9DgWbYP9p4vUBGZx8twFatt574zpr8Ka5A1xFodHT490DkqoZRX/OBh
-         Y46A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736249493; x=1736854293;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G3N5s5fdL2YNf7soMuvHTeYgJ8vy52pHoEfk/tcGSD8=;
-        b=B6Eu10WXZbNTr+xu1tKEfx3S8YeXD3uSfPWfnZWW/nHiB8sFETKokWJahEu/0DNYIq
-         6l4tWgWAQfrDE3PR5QKjWpLC/8gz0VIJI9d8Rw+0Y0IkqvOeGgVspwcLXHenlu7IHRxi
-         ifHKuCgUs8m5IzyAxmLd1xyC13kwaJIYESB26P1GwGWG0xTshnhBrywvbFMfFP2F6cDq
-         0hj0TwCzaoBuRDpYA+KcxGhnKdj9a6bz24j2mp1i6fLFQwAbOybR40ikGe1wzHybVL1w
-         39+Xe+veZaq+IGT4xk+uFKU2Hcv4NI3yGj6B6XEGUn99DwaTuWPhdrL+nGl9SDWdUkqF
-         F39g==
-X-Forwarded-Encrypted: i=1; AJvYcCVduXC8SZ/egMc+HeHfF/jTvVTXajHkjIfKbI144vh6B16zE6J7KhEzziiAAX+Smq+8lxLtmVoJRWOa/w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIDeYI1ilpCDbaFx6B9knlVgJxo2Y42f6QjZ/TdMq8W+HVfeLY
-	9K6YC6yhW4Gy0hmSV4mdLFUr92YcB9mMBH9RM336RRvLfj82yeQuLU3hvGFE7tI=
-X-Gm-Gg: ASbGnctzdJzfegb7jOPzYDSdfhpe6JkbdBrNzwpknM8RlskDU/tMy6MVE/NhzNcKD+D
-	2n8t1Ff3zSxvpWs1JfRXe/U1I55vkCKaAQDUaKhEAKURa8uzvHDWmrE1CGfOGmk4Mh6yXaM2EdU
-	NHTKOjnZ3g+wqLcJTsBHOCCzgx2ZZHiwc76F+CMu2pXyDZrC3wKiUdp1p8g5++FjqPPlLmiak5r
-	7X+vEkbBM4hGPYXPELWtRT51KI0t7I14CMgNzYtUVGrxX9kGdZf5qViAGJ5YBZvaUP/D+gOAINc
-	cRmznh+MnuouB4c4xYgdp4JY
-X-Google-Smtp-Source: AGHT+IENf5iIM0eyUUKKI+rIQnGA5rELVSy2jGiVzJtZlwGnyitqzrPGGRO+n/bqFHmHqnjQEDg7ZA==
-X-Received: by 2002:ac2:4c4c:0:b0:542:7217:361a with SMTP id 2adb3069b0e04-54272173890mr3514721e87.10.1736249493006;
-        Tue, 07 Jan 2025 03:31:33 -0800 (PST)
-Received: from eriador.lan (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-542235f658csm5169219e87.44.2025.01.07.03.31.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2025 03:31:31 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Karol Herbst <kherbst@redhat.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Peter Senna Tschudin <peter.senna@gmail.com>,
-	Ian Ray <ian.ray@ge.com>,
-	Martyn Welch <martyn.welch@collabora.co.uk>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Stefan Agner <stefan@agner.ch>,
-	Alison Wang <alison.wang@nxp.com>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Dave Airlie <airlied@redhat.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	spice-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v2 0/5] drm/connector: make mode_valid() callback accept const mode pointer
-Date: Tue,  7 Jan 2025 13:31:28 +0200
-Message-ID: <173624946815.1500596.321177900833598022.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241214-drm-connector-mode-valid-const-v2-0-4f9498a4c822@linaro.org>
-References: <20241214-drm-connector-mode-valid-const-v2-0-4f9498a4c822@linaro.org>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rLoupF9m"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SFcW/JT4eWWVtkjsrVYhnCcICnhTxyXxp5caNZUKqurOQ20clymhexH4cyWWLGm0VZ13D2T8OgEIuj/JHay5AEyunykrPiZGwm5gVdl4gsSPk7Su+MW162LozGb6j7vCpDNeqkLiTu9kd8VkPrHAceRyFocvhgqPATNayYprHEYacD1RaDOHc+CGbwWlF7Lv+ZU33XfCQA9BZtGTIilJjOlLuEEX1edMF0n2I86JS/dpbXeYi+D6ktUxUd78mfehTqS7LaTmSYZdyGqVK1NEAQao4EdG1mYBfAIwrDf21Us7WFUGhjXS9Nrjb6pX5XrUd/Iw8oxkR658wygRqmmAzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6hLK0y8cKOUV5CTNxaIqivHecGe/EFh+dEFIUbeoi0w=;
+ b=HAmAhg5j+xR0dqfvHtabDEUOrZMkOXXELjBl9O4iNtMH1UiMBIVtWMRV6mH6BJFp2/iydu3OXfju5A0p7J3nruVY3WbA2TrcpDp66XZiGmFcHofh8IzzoxpoCovXv9zsztrn6u7HaHTTHCzvV089/sgzCeWBqiYBv3tCR9obdghB8gsK5F58r9LUaP/J/FpLPp2dDFw8gOgbo8MqWz1FrC+P5lGujMHyTp+5YQQ08br0M7yc488k26aSzRkMtN/9SladjjqV+ngWPiNuUoSjzLhiE5aHZmrx+M+z+m9EelzyqC2GSU/ydqnXTa82AnBaeu36yuNY8zboA+Qmokv8jA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6hLK0y8cKOUV5CTNxaIqivHecGe/EFh+dEFIUbeoi0w=;
+ b=rLoupF9mC23tq8USh6RTZ+T54hll70tbYwhuWROnKpSUl7yJud1LzKGy46P8eVvcnkavBTHq0bkX4xVkfHH/NhKddFw8x+30CVBIX0M/PXwIavuddN0VjF54oCoQ+3qPGd1vQMdSr/qu5Rw9VbmJ93UVg+glpGzvrhVsOBoH+efQYnUYiC/1/cDMXTyH+NEyP+4l2HcHK0OKWjVGwkcT194/8WAg3HmIVZNUS+4wI3uyUytBm99md6G44fjswZsbS5rwLh/5nM1iPZo6fMIZoud7GhFbIT7VfCs9X1zbQrd3bjdPJW8DzEOv6ChYs16lVdP+F5uj+rmiDwcN8yWn7Q==
+Received: from CYZPR10CA0007.namprd10.prod.outlook.com (2603:10b6:930:8a::24)
+ by MN0PR12MB6176.namprd12.prod.outlook.com (2603:10b6:208:3c3::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8314.17; Tue, 7 Jan
+ 2025 12:43:58 +0000
+Received: from CY4PEPF0000EE39.namprd03.prod.outlook.com
+ (2603:10b6:930:8a:cafe::9a) by CYZPR10CA0007.outlook.office365.com
+ (2603:10b6:930:8a::24) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8314.18 via Frontend Transport; Tue,
+ 7 Jan 2025 12:43:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CY4PEPF0000EE39.mail.protection.outlook.com (10.167.242.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8335.7 via Frontend Transport; Tue, 7 Jan 2025 12:43:58 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 7 Jan 2025
+ 04:43:57 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 7 Jan 2025 04:43:57 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 7 Jan 2025 04:43:57 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.4 00/93] 5.4.289-rc1 review
+In-Reply-To: <20250106151128.686130933@linuxfoundation.org>
+References: <20250106151128.686130933@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Message-ID: <d1f09749-df87-4f38-a2b9-bd177e776913@drhqmail203.nvidia.com>
+Date: Tue, 7 Jan 2025 04:43:57 -0800
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE39:EE_|MN0PR12MB6176:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1036abb0-8b97-49e8-60fd-08dd2f18f45c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q2JiaTlJUFZKRWIvcWNHVVpaQWo1R1JvZUk1ank3azVQUnhyUU1ISFlQYmNx?=
+ =?utf-8?B?ZUNLaHNwTTJIbWJsNDlvc09EY2tMVzFFY3FlMXozTVozQkp3T2JGa200eUVh?=
+ =?utf-8?B?ZnRhUWs4Z204Vmk1RWlrV2xnSEpsWjZEMzVaNmI4SGlPNjduTytCSmFRZUNR?=
+ =?utf-8?B?NWlmckwrRU1YOCtpR2NSSm9VblAvdU0vZExrOC9MTmRrK0lFTTNqQlNMYlJt?=
+ =?utf-8?B?eUluODl6OVM2MEQ1djZNcTA4QUZpUk0zbFRGeC9Pa0dGczJXNXZXcmhOSGF2?=
+ =?utf-8?B?U2JjK0RuMmRNckNzdFIyM0VKUUllTjN4VGFoZVdndXJOMjRMS0YrL2tHWW9S?=
+ =?utf-8?B?ME1LQnZvY3NWMFVBcXN6VCtXencrTkZ0aDZCOTRHaWljL2xRRmlBbWI4NytZ?=
+ =?utf-8?B?dlIwMDkyMlAwbGNGQW0za1FUejUvSzZET3NtUTQxVVdDR3U4NTM4ajc1ZTBu?=
+ =?utf-8?B?ckpmN2tTN0RQL2hXN2RTTEZBTnFCc3l1VlBZNkNMMGJRMjl2bXcwM1hIdDJG?=
+ =?utf-8?B?WXJNbEtzQ0NRR25vUlJrMkxPSVBxNVNjM3g1TG5Td3ZIcDE3alk1RS9hTHkr?=
+ =?utf-8?B?bE42OFlDTmNDYUZMbWROSlNPanNIU1hsMThxZUxFdG4rcGxSSzRaeDBvV05N?=
+ =?utf-8?B?RkRyWHl5N3pzY3NwOVVYNDdZRDQxRGEwclpjZnRKZFVsR0crUHNIV3VFK0tz?=
+ =?utf-8?B?S25wZzBsWFFuQnFhMXowTExGaloyMHhrMktONkk0QjFMMGlZZERldXVIVkJB?=
+ =?utf-8?B?ZTlrZmEwSWx1ZGRuOXIyOE5CYWd6WWtCaU1UM3NIbG53SGtXZ0xhakphNjU3?=
+ =?utf-8?B?alVLYkV2WXFTR0hKZE9FWkZZRkFRZjNYamNNaG5JTW1wYkRzaldhZURudkxM?=
+ =?utf-8?B?VDE0MnFtejBLd3g5Zlh5OGlqajQvejVsWjlIa2RJNDVHUkNIRzBTRGh4UkNo?=
+ =?utf-8?B?d00yWDl0VUNhdFpYa2UxaGdyUUdHalZvWUtMNVFxZ2YvcjV4QlAydmlkNWVF?=
+ =?utf-8?B?N2ZFbUxSalR1N2E0aFdMT080cFRDcW1zUVo0bGg4UnBvMnBET0ZXN0dBeDhR?=
+ =?utf-8?B?NVFYOFN5a3lVVC9Id3h0bVdJcXlYcGVuNDV4RytkWi94TW1XYk1xRmhkMzg1?=
+ =?utf-8?B?MzRZakZBWTNhdWdQRVFkTGdob1JpbGVGYVFYMUtCcEsvRlRkTUx3YnZkVUY4?=
+ =?utf-8?B?QmRCVkFlT0IwUm12bUNCa21IUkhDclY5RElPUStwa1huZzR0UXZ3Z3pPQXR4?=
+ =?utf-8?B?REpaNUhuOWpGWi9JRzIrcHMwRlNCaHZyUnFzeVVnOFNRbW9GektObEtrQkVS?=
+ =?utf-8?B?QlMyaVBvOFJPd0grcFQ0ME5QaTE3cktYNVVLL00yZ1RLbkhtMXF2UDcvdCt2?=
+ =?utf-8?B?dkg3ZzRXR3ZFckRSUUhDc2dKWWFSc2xtdmZJYTFaYWgzaVlWbk80K2lGTDBF?=
+ =?utf-8?B?MnRhOVhXcDgvbksxWk8yY01YcW5hdHJyM3IrY0I3dW1PVkNaRFJHU3RtMWZw?=
+ =?utf-8?B?UkE0OTdXTFRkZThlOVRDbGhkdW1HNCtJQ1FYNXVFNzdlYXBhekpPUHU4Q2VV?=
+ =?utf-8?B?YzFKM05KZUR2dHhUOS9zNkVZQzEwbUdTZlFsaHpEUEhUNExWUkVVTWE2dkhn?=
+ =?utf-8?B?MmVlalFJWXZsbDZabzFMQWRBVlNkYUJMcVdSNnR0UFNkd1J1TU0rY29IRFkw?=
+ =?utf-8?B?VEFNeXJhanJJdHNabWF6UExQcHhLdk1rTGxBcDZha2VsS2x2UWVGb08wTXJh?=
+ =?utf-8?B?L2pUOUc0dk1BSkRBdmpoRFoyeDJiSTZ6am9BRTFnYlRzZG9Oa2lXZkZIeWNk?=
+ =?utf-8?B?NnBUckhVdm93SHdYR1V3M1VQazVsL1pHclVveGpaRkRGZnZuZk1heDZkaXRp?=
+ =?utf-8?B?WjYycnQwRFcwM2NETDdob3JCbDRleGFOQzRIalNGQlNmOCs3anZraGcrRm5r?=
+ =?utf-8?B?djBUYnpIL3RDQk5mVHdzZ1UycFBISGxreGdzdUlMVjkycTlTODl4NzZkWkNx?=
+ =?utf-8?Q?Tp2JbX3CcVyoL4fNjtBL18EmHFq7LI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jan 2025 12:43:58.0800
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1036abb0-8b97-49e8-60fd-08dd2f18f45c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE39.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6176
 
-On Sat, 14 Dec 2024 15:37:04 +0200, Dmitry Baryshkov wrote:
-> While working on the generic mode_valid() implementation for the HDMI
-> Connector framework I noticed that unlike other DRM objects
-> drm_connector accepts non-const pointer to struct drm_display_mode,
-> while obviously mode_valid() isn't expected to modify the argument.
+On Mon, 06 Jan 2025 16:16:36 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.289 release.
+> There are 93 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Mass-change the DRM framework code to pass const argument to that
-> callback.
+> Responses should be made by Wed, 08 Jan 2025 15:11:04 +0000.
+> Anything received after that time might be too late.
 > 
-> [...]
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.289-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Applied to drm-misc-next, thanks!
+All tests passing for Tegra ...
 
-[1/5] drm/encoder_slave: make mode_valid accept const struct drm_display_mode
-      commit: 7a5cd45fab0a2671aa4ea6d8fb80cea268387176
-[2/5] drm/amdgpu: don't change mode in amdgpu_dm_connector_mode_valid()
-      commit: b255ce4388e09f14311e7912d0ccd45a14a08d66
-[3/5] drm/sti: hda: pass const struct drm_display_mode* to hda_get_mode_idx()
-      commit: 5f011b442006ccb29044263df10843de80fc0b14
-[4/5] drm/connector: make mode_valid_ctx take a const struct drm_display_mode
-      commit: 66df9debcb29d14802912ed79a9cf9ba721b51a4
-[5/5] drm/connector: make mode_valid take a const struct drm_display_mode
-      commit: 26d6fd81916e62d2b0568d9756e5f9c33f0f9b7a
+Test results for stable-v5.4:
+    10 builds:	10 pass, 0 fail
+    24 boots:	24 pass, 0 fail
+    54 tests:	54 pass, 0 fail
 
-Best regards,
--- 
-With best wishes
-Dmitry
+Linux version:	5.4.289-rc1-g0578e8d64d90
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra210-p3450-0000,
+                tegra30-cardhu-a04
 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Jon
