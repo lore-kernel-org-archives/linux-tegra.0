@@ -1,146 +1,152 @@
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A1B1E0DED;
-	Tue,  7 Jan 2025 13:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562C0198A29
+	for <linux-tegra@vger.kernel.org>; Tue,  7 Jan 2025 17:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736257671; cv=none; b=Hdw33S3QojFMSjDhizcpdYp9C+tRYViMS2yPzzCSJaxe2VQxeusOy1atSzsszcqGZzHotO/VUi9GDfITF1+5jBVTYm6ecf6Tqm2lXNccXz1Vmum8CJgoXz6146Ukbq94BmsMbqBI+7n7hvqj3CJytgdxgFfE5ZSM/0y2yMUfaeU=
+	t=1736270815; cv=none; b=PbOPEThSwA4dfLisQzdWRO5gHMeftEnArGxEv4nzJsAR+1IVEPjOGg92/hkZ2klCO0l+wn2LI/ZX+7hAXzbZ0eBgZNU/3bDqt3WfTAU/Dk3t/SzOMlEiBQ+Jmdzh+2FnIx4ompRMxqlsa1EkJiUzhNM++TyBedI0Qoag864JPcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736257671; c=relaxed/simple;
-	bh=bCMttcWQirNicytx6ykU0QZpRRftXACwB5o3zdvB5x8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UGD10H9o5Yp66T8Eoe/5tjQvEdKwoWi/h5UHsxXBZ5Sp0qNMCoq7bR+qVxNZ/eR7aceq9/eavPGr28tmu9WTenN3sFctucJXsnZcuC+3zRlFNxChPKmUGKxOTt3VYzxkF5D4J5l1Bj4kVGf03GJ5WCm8b+bDowSCAGdqforo5U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=CAuHcqGN; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Gp8ECD2a reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1736270815; c=relaxed/simple;
+	bh=xaI1MzU8YqkwNIXSUK+vtpERhBgaIIyYpkmxq2xzGL8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ljD7cgkRgf5xhs4V84tbu0ywQ17WcbMlUxPwEO0tsZ4vIGS00QF0RNhcBtSnPmhoG5C9h/Dcwo9g8/ipzgQT6OZ54YS8S6llZcBNmrmlkSFrLfsqvmjvzPhx3HGspFY1WwihTdOQ9bQAh6jX2Z9eWxf/KMit2dxLT7IH3F6c4XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HQtwcsli; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="CAuHcqGN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Gp8ECD2a"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HQtwcsli"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2163bd70069so41520065ad.0
+        for <linux-tegra@vger.kernel.org>; Tue, 07 Jan 2025 09:26:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1736257666; x=1767793666;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=H2JiFyCh/Tl5YOwhVHC+9/o2zm1iU1FIoUS3LVDCVQM=;
-  b=CAuHcqGNaufqPWJp7fGS5bsTGqRC6pb794W+/8MZkaL4uQn4ahO/wePn
-   01mgAosms7/ZUOmDZc/ERincOyBSOjdWKUkOxj5LnogmDG1mUVk+3B1XX
-   BYtZr2E1Ab19/sZnGhznkJczMBek3d5bqAi4nmxgCyWPusMbPpEPxRu3h
-   koDUZg0L1EQKMdiA8un2Z9BMpE79iq45Av0wRaYuNEuShC+yDH3HBrBtY
-   WKvJ+5+H6PIyjzJPHDwckFPUbGZzJ1hJh8NihF87savy7co0jdrYx6L2Y
-   1BBe9RC4nz3+yaZel5x/ha4mjhXNucttajc4sQIVuNJTOh81aHr2FTNsv
-   A==;
-X-CSE-ConnectionGUID: OVZasUpRQum1PZsDd73xFw==
-X-CSE-MsgGUID: mYpmTubRRzSDooSbu505XQ==
-X-IronPort-AV: E=Sophos;i="6.12,295,1728943200"; 
-   d="scan'208";a="40895891"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 07 Jan 2025 14:47:43 +0100
-X-CheckPoint: {677D307F-16-3C670366-E45AD810}
-X-MAIL-CPID: D9326B8D606E51C9C554D2FC41D37A2A_4
-X-Control-Analysis: str=0001.0A682F28.677D307F.00A7,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12BB0164990;
-	Tue,  7 Jan 2025 14:47:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1736257658;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=H2JiFyCh/Tl5YOwhVHC+9/o2zm1iU1FIoUS3LVDCVQM=;
-	b=Gp8ECD2aEaJ2EoPlQW15Ikeq6rQoBFt/xYZHffSmoaiTRcEt3DyE1007ghx7QUsh6rWleF
-	lVKVhAGrvYWx+CEhDIzb+u3GFfHUIrNePQeY7nizrT961wk3aoCy86jbq9k1WGCr1X2RnA
-	ooMJ7bMSMZAzRbH4f4WwI+NhT3Gr9T1Q7ZZihIWPpiYe4ojX3SOqQh+a2FQ3vSheOrwhcX
-	F5L14kcteB5aHapjOda7uYt6BTq6MW8VaLetOMmY5he1vQAsX4D0qjLcLXWBDFl5WpEvRR
-	JInTk5xg/jzac1LcmHiQQC7oyqGly+SMY4vt8KxMP12YKK3wIRlQbd7PMldfJg==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, Justin Chen <justin.chen@broadcom.com>, Al Cooper <alcooperx@gmail.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Florian Fainelli <f.fainelli@gmail.com>, Benjamin Bara <benjamin.bara@skidata.com>, Bjorn Andersson <andersson@kernel.org>, Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>, Del Regno <angelogioacchino.delregno@collabora.com>, Tianping Fang <tianping.fang@mediatek.com>, Jassi Brar <jaswinder.singh@linaro.org>, Biju Das <biju.das.jz@bp.renesas.com>, Yoshihiro Shimoda <yoshihiro.shimod
- a.uh@renesas.com>, Francesco Dolcini <francesco.dolcini@toradex.com>, Macpaul Lin <macpaul.lin@mediatek.com>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] dt-bindings: usb: Correct indentation and style in DTS example
-Date: Tue, 07 Jan 2025 14:47:27 +0100
-Message-ID: <10618962.nUPlyArG6x@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20250107131015.246461-1-krzysztof.kozlowski@linaro.org>
-References: <20250107131015.246461-1-krzysztof.kozlowski@linaro.org>
+        d=broadcom.com; s=google; t=1736270811; x=1736875611; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnFDI1orT78UbMz4dvewuX8lguog+6111daL66A0sXs=;
+        b=HQtwcslilz7PxsY/C5UXbZhUXVXjlGP/rf6ND2R1lP3uJOGBxO65qbNN5OP+MCttzi
+         AgR7US5LG+0R4W5hhblCHeRlDg6FgzrW+d6RpTOHAMuoA6P9kFG57WMmqPICIUZe7UiO
+         ov/+ZiaZe4xsArAf4r+dkpTK2oP8ZTYHi1tY0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736270811; x=1736875611;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AnFDI1orT78UbMz4dvewuX8lguog+6111daL66A0sXs=;
+        b=KlnmCtK/wwfHr+nSq3A/Rf+XDaIQkDKNvGYZNnM+kbIIw+fj1DAFzc0weBL+vncQ1n
+         jgX6Y8taE/CeAnhBC097l3MRfvQTzjR2MxV0M4ZSJ5y3qVo8asyYRp6rZQAEZqF/UEd6
+         2kPLqUKkixD1gidtvFnDNxN/uPrl7RXF8yv9X2cyUhlzg2D1/5SEUu3FfYTz2aho2AZz
+         +MamM/xZDma+gXBpDJtOIUaSv9E9E4H4VvJGIsufmIxhIjL5NEPr+S2vEpW9gPeU+etH
+         qw+5QAW4GP0cpHHBlWyu2aD9xkuRtLwvWatgOxPMRuzbHviGk6nVW/QVZaXy6T20l7hT
+         OvEw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8FOJncKye5qG9nd2crgWCZR5mzLcmIlidOO7fotO/8pEXe+QrLRAgodFpjMaOGA2P7aAqlU0v8ajBtQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEQbPn0hUlg3GIPlqnU5abS09VA3OkKojtkT8PsKNrfD6elLk+
+	ASKNrT2IjbKwNbLyo/x0PrZfnYF8YGeM6SmzXCPNqLJ47nYP4A9oOX7CC8ra8Q==
+X-Gm-Gg: ASbGncvwIGj6gV9W+R66FxAuvFvbAKJYRWYIRHG62LoyNNYSOOlfABvZOMJ8HAnZuvl
+	ZU114g95IxpTqD4G/CwcWvj7aQtc0D3M2MfoqPNV8YuT1wup62rHTebRM7QrYnWOk1CdH2hMv0f
+	H96JsW13cMh4VLJZJP+ncORSqc1TnYUPilSn7B8jDnYtZveqxWJscR7NvNb1OkzTRpCfdRwxZs5
+	BZa79/arJ1K/zTgPD9BFAi3OxFrABORPGYHScwbAUH7QdQTNP90bqwwAiLUg/CBDGFs5OD1KuMV
+	l101CJsSatIdBrstbi9/
+X-Google-Smtp-Source: AGHT+IEPaGgB9Qa+1DpEpRgPYql8+QmamIMyRh5C1Rx/DzqtHoRCh+8H9eqIioceJgqABRLUqu9iOw==
+X-Received: by 2002:a17:902:c408:b0:216:4d1f:5c83 with SMTP id d9443c01a7336-219e6f26814mr803886345ad.47.1736270810779;
+        Tue, 07 Jan 2025 09:26:50 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc9cdeccsm314093865ad.144.2025.01.07.09.26.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jan 2025 09:26:49 -0800 (PST)
+Message-ID: <e2d33d2f-6b30-495e-a089-b1185b22130f@broadcom.com>
+Date: Tue, 7 Jan 2025 09:26:46 -0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: usb: Correct indentation and style in DTS
+ example
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Justin Chen <justin.chen@broadcom.com>, Al Cooper <alcooperx@gmail.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Florian Fainelli <f.fainelli@gmail.com>,
+ Benjamin Bara <benjamin.bara@skidata.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>,
+ Del Regno <angelogioacchino.delregno@collabora.com>,
+ Tianping Fang <tianping.fang@mediatek.com>,
+ Jassi Brar <jaswinder.singh@linaro.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ Francesco Dolcini <francesco.dolcini@toradex.com>,
+ Macpaul Lin <macpaul.lin@mediatek.com>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20250107131015.246461-1-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250107131015.246461-1-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Am Dienstag, 7. Januar 2025, 14:10:13 CET schrieb Krzysztof Kozlowski:
-
+On 1/7/25 05:10, Krzysztof Kozlowski wrote:
 > DTS example in the bindings should be indented with 2- or 4-spaces and
 > aligned with opening '- |', so correct any differences like 3-spaces or
 > mixtures 2- and 4-spaces in one binding.
->=20
+> 
 > No functional changes here, but saves some comments during reviews of
 > new patches built on existing code.
->=20
+> 
 > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > ---
->  .../bindings/usb/aspeed,usb-vhub.yaml         | 40 +++++++++----------
->  .../devicetree/bindings/usb/brcm,bdc.yaml     | 14 +++----
->  .../devicetree/bindings/usb/cypress,hx3.yaml  | 24 +++++------
->  .../devicetree/bindings/usb/dwc2.yaml         |  4 +-
->  .../devicetree/bindings/usb/fcs,fsa4480.yaml  | 20 +++++-----
->  .../bindings/usb/intel,keembay-dwc3.yaml      | 30 +++++++-------
->  .../devicetree/bindings/usb/ite,it5205.yaml   | 18 ++++-----
->  .../bindings/usb/maxim,max3420-udc.yaml       | 28 ++++++-------
->  .../bindings/usb/nvidia,tegra210-xusb.yaml    |  4 +-
->  .../bindings/usb/renesas,rzv2m-usb3drd.yaml   | 36 ++++++++---------
->  .../bindings/usb/renesas,usb3-peri.yaml       | 24 +++++------
->  .../devicetree/bindings/usb/ti,hd3ss3220.yaml | 38 +++++++++---------
->  .../bindings/usb/ti,tusb73x0-pci.yaml         |  6 +--
->  .../devicetree/bindings/usb/ti,usb8020b.yaml  | 20 +++++-----
->  .../devicetree/bindings/usb/ti,usb8041.yaml   | 16 ++++----
->  15 files changed, 161 insertions(+), 161 deletions(-)
->=20
-> [snip]
-> diff --git a/Documentation/devicetree/bindings/usb/ti,usb8041.yaml b/Docu=
-mentation/devicetree/bindings/usb/ti,usb8041.yaml
-> index c2e29bd61e11..bce730a5e237 100644
-> --- a/Documentation/devicetree/bindings/usb/ti,usb8041.yaml
-> +++ b/Documentation/devicetree/bindings/usb/ti,usb8041.yaml
-> @@ -51,17 +51,17 @@ examples:
-> =20
->          /* 2.0 hub on port 1 */
->          hub_2_0: hub@1 {
-> -          compatible =3D "usb451,8142";
-> -          reg =3D <1>;
-> -          peer-hub =3D <&hub_3_0>;
-> -          reset-gpios =3D <&gpio1 11 GPIO_ACTIVE_LOW>;
-> +            compatible =3D "usb451,8142";
-> +            reg =3D <1>;
-> +            peer-hub =3D <&hub_3_0>;
-> +            reset-gpios =3D <&gpio1 11 GPIO_ACTIVE_LOW>;
->          };
-> =20
->          /* 3.0 hub on port 2 */
->          hub_3_0: hub@2 {
-> -          compatible =3D "usb451,8140";
-> -          reg =3D <2>;
-> -          peer-hub =3D <&hub_2_0>;
-> -          reset-gpios =3D <&gpio1 11 GPIO_ACTIVE_LOW>;
-> +            compatible =3D "usb451,8140";
-> +            reg =3D <2>;
-> +            peer-hub =3D <&hub_2_0>;
-> +            reset-gpios =3D <&gpio1 11 GPIO_ACTIVE_LOW>;
->          };
->      };
->=20
+>   .../bindings/usb/aspeed,usb-vhub.yaml         | 40 +++++++++----------
+>   .../devicetree/bindings/usb/brcm,bdc.yaml     | 14 +++----
 
-=46or ti,usb8041.yaml:
-Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+Acked-by: Florian Fainelli <florian.fainelli@broadcom.com> # brcm,bdc.yaml
+-- 
+Florian
