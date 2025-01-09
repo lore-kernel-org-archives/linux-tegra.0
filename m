@@ -1,157 +1,106 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71F118E05F;
-	Thu,  9 Jan 2025 17:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501B9B677;
+	Thu,  9 Jan 2025 20:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736442927; cv=none; b=dGubg2ijQ3RGfml4/jRRqPVBfbtvjATOSymRvY70WPKJWIk8rUUvTZYSke+ZqbHEIkxx6AcG3diS32WBh9eRG5nr2eV+Jl4267w/8V/i/CWPp4aNILeJdB+uprmLFMmFisE2mMJ9u+ex5E3rytvUcEbvwhKBKwmdxDbqp1C9VRs=
+	t=1736452993; cv=none; b=BNn559wQLBM41doNoMmmAdrWnuPOVkxyJ7XIFQvvsj3rgzggAWSZ8T8nq5xQ06DUheDZea+a0zxWIuNSO11YA/Q6bfZIUM71/PLufQyYL6Q1w7ttkdp7UckmyY+fdsGBAvVOs+kSnCHIdD39KWL+Tvj475v3fDdSiwlwi1D/AkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736442927; c=relaxed/simple;
-	bh=iHe0e5c+fmzIEFb4JwfVINvpf7LWF6/4nvNtj0QRgPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gjSyq4wpUGf05i6SP16AyTL7Q/D1mofNYIHjzqkWVmkJo/2oWTtKqOHx8dnHzMwQM32I40wXMBUFD5CiAkxfQSLdXClJnUNz4ie3/D8V7XP0Fz2S58QCiuxw6HOrjFHinMcxHwbiY1chj8Lr+V7mAXOxHUs0h+Un6TG1cmcWKuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R0mEQ+Wu; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1736452993; c=relaxed/simple;
+	bh=CEraVU4ce4vgP8jPE97cGax/9P4aNGpnQ4WcUIe/0vQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eC2L35ckqF8+lcS/LeoL9Q0P/ljXhExfTciFuq4nMVDzWInFdu4mqDIJl/7fxOUKi8Qa198I4vnG8wUg1L7JT5zmCfMdGF+eGsWj1LUrTvqT2welZlo5BFfzz+1KaAYEEnQ0AuW8xcLHSXpALBKzZVJP4dTpYFrS1UPsbRgYbpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aqnMgi8d; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R0mEQ+Wu"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1736442926; x=1767978926;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=iHe0e5c+fmzIEFb4JwfVINvpf7LWF6/4nvNtj0QRgPQ=;
-  b=R0mEQ+WuUaHa5xHsD1YsYxKojJgiuLbG7KgDusO19vIqAqLmP+cTqSwz
-   LfRIh+glbMsbVuJUi3jpL6ZBCDcehOwtV9cJgwIBIMg15JEUL3x4E8G1o
-   lpwJ/VJIDKIDtPHOQS7yk61zH9xneX1RDTLpMcdppznHK6wBPuw2t1JML
-   L7YkAbgzQxUYbircwgDBGXzhrcBz6KIvKdC4a/+qV6/Q+YtCuwCqYG21f
-   5SOcVm79KzpOdZWsUUlFggDHFv+yFLrGXwNiVdOeZlxFWjUg8jFkc+QsM
-   56bkzb6lj1qK/XBAtbWxQd5p9HU1GBfD3UdT86inl66/Oi4zaJq2YmPWL
-   Q==;
-X-CSE-ConnectionGUID: hMJ0Okn/T5KKfu2pCyyrxA==
-X-CSE-MsgGUID: rNzKv++oTSSC1KgQzZi8fw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11310"; a="36604448"
-X-IronPort-AV: E=Sophos;i="6.12,301,1728975600"; 
-   d="scan'208";a="36604448"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2025 09:15:26 -0800
-X-CSE-ConnectionGUID: sCHGnpr3S22msRSMnEsaNw==
-X-CSE-MsgGUID: Kiw4VfoXQbSJcARHoMEU4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="140776648"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO [10.245.245.241]) ([10.245.245.241])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2025 09:15:20 -0800
-Message-ID: <ec240a46-3fe1-46fa-84bc-2f962d7441ce@intel.com>
-Date: Thu, 9 Jan 2025 17:15:17 +0000
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aqnMgi8d"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 81E65FF802;
+	Thu,  9 Jan 2025 20:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1736452988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ufquL8MTaCaDartUz08Jv9Co5w4deNYxwsOj/E8fcww=;
+	b=aqnMgi8dmXNmdqbb82gZLgfSEWXhFqHsrY4xDCQkXxC1eVbQ/WCgrOzndGV9myrqe/hElG
+	jef5H3/ls9gbinUu25fBKeiz2GZiCFulJ+4WhYBhfC45VCcq4EfPtR0KIHfjbcek+Q1VfV
+	9wBuydXTJ3vjy+3TBFcHwgj4253G33JMK1TEdzYz0Ww2Ja4TgQmwoyNJWYJWfnKuos+WPd
+	cU46FTlgkwEX3NlsLIdW4FYBG1lIgDNygresvTuecEYNDGFWiC7SET7ShqD2glnBctwGq+
+	pVYOLHmLiyMp2+38SZucpgCpNOe0nHGnaKhJZh2gFh8WYrNUDI6LJ28dYOimqg==
+Date: Thu, 9 Jan 2025 21:03:04 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-rtc@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Yiting Deng <yiting.deng@amlogic.com>,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Benson Leung <bleung@chromium.org>,
+	Guenter Roeck <groeck@chromium.org>,
+	Support Opensource <support.opensource@diasemi.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Eddie Huang <eddie.huang@mediatek.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Vincent Shih <vincent.sunplus@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-amlogic@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	chrome-platform@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH] rtc: use boolean values with device_init_wakeup()
+Message-ID: <173644377117.1019413.12980385173648327961.b4-ty@bootlin.com>
+References: <20241217071331.3607-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 23/25] drm/xe: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>
-References: <20250109150310.219442-1-tzimmermann@suse.de>
- <20250109150310.219442-24-tzimmermann@suse.de>
- <91c904f8-ba47-4595-be65-6fb57dcc9c64@intel.com>
- <6666af19-a98d-41d7-8329-7b50807c04a9@suse.de>
-Content-Language: en-GB
-From: Matthew Auld <matthew.auld@intel.com>
-In-Reply-To: <6666af19-a98d-41d7-8329-7b50807c04a9@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241217071331.3607-2-wsa+renesas@sang-engineering.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 09/01/2025 16:26, Thomas Zimmermann wrote:
-> Hi
+On Tue, 17 Dec 2024 08:13:26 +0100, Wolfram Sang wrote:
+> device_init_wakeup() second argument is a bool type. Use proper boolean
+> values when calling it to match the type and to produce unambiguous code
+> which is easier to understand.
 > 
-> 
-> Am 09.01.25 um 17:05 schrieb Matthew Auld:
->> On 09/01/2025 14:57, Thomas Zimmermann wrote:
->>> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch
->>> and buffer size. Align the pitch to a multiple of 8. Align the
->>> buffer size according to hardware requirements.
->>>
->>> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
->>> Cc: Lucas De Marchi <lucas.demarchi@intel.com>
->>> Cc: "Thomas Hellström" <thomas.hellstrom@linux.intel.com>
->>> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
->>> ---
->>>   drivers/gpu/drm/xe/xe_bo.c | 8 ++++----
->>>   1 file changed, 4 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/xe/xe_bo.c b/drivers/gpu/drm/xe/xe_bo.c
->>> index e6c896ad5602..d75e3c39ab14 100644
->>> --- a/drivers/gpu/drm/xe/xe_bo.c
->>> +++ b/drivers/gpu/drm/xe/xe_bo.c
->>> @@ -8,6 +8,7 @@
->>>   #include <linux/dma-buf.h>
->>>     #include <drm/drm_drv.h>
->>> +#include <drm/drm_dumb_buffers.h>
->>>   #include <drm/drm_gem_ttm_helper.h>
->>>   #include <drm/drm_managed.h>
->>>   #include <drm/ttm/ttm_device.h>
->>> @@ -2535,14 +2536,13 @@ int xe_bo_dumb_create(struct drm_file 
->>> *file_priv,
->>>       struct xe_device *xe = to_xe_device(dev);
->>>       struct xe_bo *bo;
->>>       uint32_t handle;
->>> -    int cpp = DIV_ROUND_UP(args->bpp, 8);
->>>       int err;
->>>       u32 page_size = max_t(u32, PAGE_SIZE,
->>>           xe->info.vram_flags & XE_VRAM_FLAGS_NEED64K ? SZ_64K : SZ_4K);
->>>   -    args->pitch = ALIGN(args->width * cpp, 64);
->>> -    args->size = ALIGN(mul_u32_u32(args->pitch, args->height),
->>> -               page_size);
->>> +    err = drm_mode_size_dumb(dev, args, SZ_64, page_size);
->>
->> AFAICT this looks to change the behaviour, where u64 size was 
->> technically possible and was allowed given that args->size is u64, but 
->> this helper is limiting the size to u32. Is that intentional? If so, 
->> we should probably make that clear in the commit message.
-> 
-> That's an interesting observation; thanks. The ioctl's internal checks 
-> have always limited the size to 32 bit. [1] I think it is not supposed 
-> to be larger than that. We can change the helper to support 64-bit sizes 
-> as well.
-
-Ah, I missed the internal check.
-
-> 
-> Having said that, is there any use case? Dumb buffers are for software 
-> rendering only. Allocating more than a few dozen MiB seems like a 
-> mistake. Maybe we should rather limit the allowed allocation size instead?
-
-Yeah, I doubt there are any real users. Given the existing internal 
-check, limiting to u32 makes sense to me.
-
-> 
-> Best regards
-> Thomas
-> 
-> [1] https://elixir.bootlin.com/linux/v6.12.6/source/drivers/gpu/drm/ 
-> drm_dumb_buffers.c#L82
-> 
->>
->>> +    if (err)
->>> +        return err;
->>>         bo = xe_bo_create_user(xe, NULL, NULL, args->size,
->>>                      DRM_XE_GEM_CPU_CACHING_WC,
->>
 > 
 
+Applied, thanks!
+
+[1/1] rtc: use boolean values with device_init_wakeup()
+      https://git.kernel.org/abelloni/c/8c28c4993f11
+
+Best regards,
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
