@@ -1,207 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B774A1A;
-	Thu,  9 Jan 2025 22:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62D052054F9;
+	Thu,  9 Jan 2025 22:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736463278; cv=none; b=jqUPTbOZLS2Qpvy/0QdK+PP78Q7Qxc/6Cqkwbim7s0c+j7EfgKtTD6bK1a21GLypbvmXmW/rtRuO9jxwZ8P2Qq8NvZwemHSZUR0NuAOPjKvM2usP/rHkSveKZe1jmlqOa7NltUpNvALJy4eggiZKj0xZyGNYx3LuCW6YuPt+h1k=
+	t=1736463576; cv=none; b=XrFFtZpKGdJExC8xj65XBisKOGNTO2Q/S9zwnRvL4FAuHpbkhIpdBi0WO1lyDz12I+8rC4tlnc8E7C9OuGF2SZVUtX8Gkv3W719r4WFMDXo3HivPXybqclNy0T42u7LDK7Xt3ecZBts8rIt+Rg1xAwyc2/5T3wTcdOgnzaiteHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736463278; c=relaxed/simple;
-	bh=86eS17qLlvfqrKxaqobXK+iP+4uMsU62Gln9pxxozEQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TCqb3AgTVb9K2fwlR9hiDMHUdUoeA9ojEjPDF//PEtSGs8KsjYHM0+q6M7tkz4o0ArUsgxRiVosuiGgkDJocdTwA2nybI4CkWr10+iuVyQhEGbgJLCqeO6A2otoSrvAQvAqyZTT2KxjYXDNsi1WvrzSV7RwPS1HWED8oPo1G4NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEzam1dX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736463576; c=relaxed/simple;
+	bh=IbAfyCKUbMM4BfqRWRIy3BfY72OJP9ZEtH7KuQecUE8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KOKESOC3lqRyFLdJZU+dGYQBWA6DjisXHJvpbXNJLwUfgKa6s8eb47OPu/OgerhqNj6W7mJpWJtzoRvrMg4s5yyI0JmMXrEONyHPV1SmctLyyKcFdzfytGCc6Zi6tSKAyNBKz4bOn++mrtRqbCXDWx/xAdS0rHDD5vmCfOb+F4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=s+jwsQH2; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEzam1dX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D82FC4CED2;
-	Thu,  9 Jan 2025 22:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736463278;
-	bh=86eS17qLlvfqrKxaqobXK+iP+4uMsU62Gln9pxxozEQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UEzam1dXGAeXOCMIiWcMXSxJcurtAJcKHcN/u/dv0z2I8CNvv42G+jWPcvQtnXkjM
-	 AsQNO88cTeibiFrpO6sDGT60EMfCcFvAV/f7LsJW9ZMEGDQg7LsMUxcEExX8jekdJW
-	 4yKh5FThcEJCV9HPN30amhkCqm4AMo8+LaqdaNB0itA3WBjYoGbb0fNHnBwDEZb5nh
-	 YIzih78TqKB6K4IgdVrlD7eZaz+JSF56RsM0o7pMMeYO8z6gAmJlj3JOKEYrnIHui5
-	 /OoyqkAeyk+Py8dPoTjGqBeoJ5yI31meRuqf9Ne4TuFJDuqZb7LI+P8rpt+AauRHg5
-	 SYf3KBIXqtdvw==
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e549a71dd3dso2670132276.0;
-        Thu, 09 Jan 2025 14:54:38 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW9l8mO72fYFutGSzghNJgz7GvAEBNKMBOpdUqpGB9hPdcjegXn+mREXCo4f8dgro+cIIVe3Uwdy4oj8ms=@vger.kernel.org, AJvYcCXTuszCsILAVfx58404hxOhwlqNAIiMZLo/QcS3QiTOL+BF0I45ZTo+0Fsp0HDwJYrF0Oh9DDoTzu9UYH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ5/1H0vucQVuyQuZ6LddIg5LKsix+m77rgdVuCzIQQbEEAgwb
-	CUpibKx98lw5SXo773prTa7MWYuvT8wcQngRmQuYBvRB2F3YmCtbfjUEJz2Lv5JL74e6n1r4LxI
-	bv/zdisM6+9VwXzjmBh51G+pkgA==
-X-Google-Smtp-Source: AGHT+IG5HG1/6CNvcuH1Keqm2doHJzzNVTXCdWaxY8J03PSbymHlzH+SWYuq5FCI7XWxCKruJYH2Ve4c5r24YnO9/RQ=
-X-Received: by 2002:a05:6902:1b0f:b0:e54:a3c7:a313 with SMTP id
- 3f1490d57ef6-e54edf415f3mr6643385276.9.1736463277233; Thu, 09 Jan 2025
- 14:54:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="s+jwsQH2"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5X3Tmvihn3grkA7Jge4RjfqiSvPeilgE9yOD+d9FpVI=; b=s+jwsQH2++ZJTa21jBBjugQMXI
+	4bHOZkHr3BtbA6u/uOhHobPv3MGeFWhNFGUl43iw9TYIyTjmoijwv6stOdPuOX44mYtM+Ex4veIlv
+	GanP8Ltk9SSPFArY9HIjzDL6w9HBmiDH9lkAf/YRbJ76vQtfeMTBh+9CdrFBgxC6jT1PLksF27MCM
+	uT5h6cp1P/vX38GEwJikltALOY4zAv1uVLPRdaX6J8i+zNB6LmK+4A346bu7woaR2Pb1GBGscGht6
+	qpjxlF/C8UEv09LkPOGTvCxTCmWsQsAVjWgo7DBUgDUT6zw9zcZF7Od+phqWlT6xPgO3SWYExc5bS
+	MfLPLsiA==;
+Received: from i5e860d05.versanet.de ([94.134.13.5] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tW1Uq-0005mI-C2; Thu, 09 Jan 2025 23:59:24 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ Thomas Zimmermann <tzimmermann@suse.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>
+Subject:
+ Re: [PATCH v2 19/25] drm/rockchip: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+Date: Thu, 09 Jan 2025 23:59:23 +0100
+Message-ID: <3227546.fEcJ0Lxnt5@diego>
+In-Reply-To: <20250109150310.219442-20-tzimmermann@suse.de>
+References:
+ <20250109150310.219442-1-tzimmermann@suse.de>
+ <20250109150310.219442-20-tzimmermann@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115193445.3619074-1-robh@kernel.org>
-In-Reply-To: <20241115193445.3619074-1-robh@kernel.org>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 9 Jan 2025 16:54:26 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+9jNNF2yWCbSiiey2ubn2WAX8PdA69+cbXpWCDwPEm_Q@mail.gmail.com>
-X-Gm-Features: AbW1kvZCPWZ0ePVuAp2wPpIypayv0F_QgNtby49jFmmImQegWdE-lffw2n8o7oc
-Message-ID: <CAL_Jsq+9jNNF2yWCbSiiey2ubn2WAX8PdA69+cbXpWCDwPEm_Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: nvidia: Remove unused and undocumented
- "regulator-ramp-delay-scale" property
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On Fri, Nov 15, 2024 at 1:34=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
->
-> Remove "regulator-ramp-delay-scale" property which is both unused in the
-> kernel and undocumented. Most likely they are leftovers from downstream.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Am Donnerstag, 9. Januar 2025, 15:57:13 CET schrieb Thomas Zimmermann:
+> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
+> buffer size. Align the pitch to a multiple of 64.
+>=20
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Sandy Huang <hjc@rock-chips.com>
+> Cc: "Heiko St=FCbner" <heiko@sntech.de>
+> Cc: Andy Yan <andy.yan@rock-chips.com>
+
+I've looked up the patch implementing the new functionality - patch2 of
+this series [0] and that looks really nice to get proper helpers and not
+having many drivers open-coding the same functionality in different ways.
+
+So for the Rockchip adaptation:
+
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+
+and looking forward to this getting merged :-)
+
+Thanks a lot for working on that
+Heiko
+
+[0] https://patchwork.kernel.org/project/linux-rockchip/patch/2025010915031=
+0.219442-3-tzimmermann@suse.de/
+
 > ---
->  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 10 ----------
->  1 file changed, 10 deletions(-)
+>  drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/dr=
+m/rockchip/rockchip_drm_gem.c
+> index 6330b883efc3..3bd06202e232 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/vmalloc.h>
+> =20
+>  #include <drm/drm.h>
+> +#include <drm/drm_dumb_buffers.h>
+>  #include <drm/drm_fb_helper.h>
+>  #include <drm/drm_gem.h>
+>  #include <drm/drm_gem_dma_helper.h>
+> @@ -403,13 +404,12 @@ int rockchip_gem_dumb_create(struct drm_file *file_=
+priv,
+>  			     struct drm_mode_create_dumb *args)
+>  {
+>  	struct rockchip_gem_object *rk_obj;
+> -	int min_pitch =3D DIV_ROUND_UP(args->width * args->bpp, 8);
+> +	int ret;
+> =20
+> -	/*
+> -	 * align to 64 bytes since Mali requires it.
+> -	 */
+> -	args->pitch =3D ALIGN(min_pitch, 64);
+> -	args->size =3D args->pitch * args->height;
+> +	/* 64-byte alignment required by Mali */
+> +	ret =3D drm_mode_size_dumb(dev, args, SZ_64, 0);
+> +	if (ret)
+> +		return ret;
+> =20
+>  	rk_obj =3D rockchip_gem_create_with_handle(file_priv, dev, args->size,
+>  						 &args->handle);
+>=20
 
-Ping!
 
->
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/ar=
-m64/boot/dts/nvidia/tegra210-p3450-0000.dts
-> index c56824d7f4d8..0ecdd7243b2e 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-> @@ -266,7 +266,6 @@ vdd_soc: sd0 {
->                                         regulator-max-microvolt =3D <1170=
-000>;
->                                         regulator-enable-ramp-delay =3D <=
-146>;
->                                         regulator-ramp-delay =3D <27500>;
-> -                                       regulator-ramp-delay-scale =3D <3=
-00>;
->                                         regulator-always-on;
->                                         regulator-boot-on;
->
-> @@ -281,7 +280,6 @@ vdd_ddr: sd1 {
->                                         regulator-max-microvolt =3D <1150=
-000>;
->                                         regulator-enable-ramp-delay =3D <=
-176>;
->                                         regulator-ramp-delay =3D <27500>;
-> -                                       regulator-ramp-delay-scale =3D <3=
-00>;
->                                         regulator-always-on;
->                                         regulator-boot-on;
->
-> @@ -296,7 +294,6 @@ vdd_pre: sd2 {
->                                         regulator-max-microvolt =3D <1350=
-000>;
->                                         regulator-enable-ramp-delay =3D <=
-176>;
->                                         regulator-ramp-delay =3D <27500>;
-> -                                       regulator-ramp-delay-scale =3D <3=
-50>;
->                                         regulator-always-on;
->                                         regulator-boot-on;
->
-> @@ -311,7 +308,6 @@ vdd_1v8: sd3 {
->                                         regulator-max-microvolt =3D <1800=
-000>;
->                                         regulator-enable-ramp-delay =3D <=
-242>;
->                                         regulator-ramp-delay =3D <27500>;
-> -                                       regulator-ramp-delay-scale =3D <3=
-60>;
->                                         regulator-always-on;
->                                         regulator-boot-on;
->
-> @@ -326,7 +322,6 @@ vdd_sys_1v2: ldo0 {
->                                         regulator-max-microvolt =3D <1200=
-000>;
->                                         regulator-enable-ramp-delay =3D <=
-26>;
->                                         regulator-ramp-delay =3D <100000>=
-;
-> -                                       regulator-ramp-delay-scale =3D <2=
-00>;
->                                         regulator-always-on;
->                                         regulator-boot-on;
->
-> @@ -341,7 +336,6 @@ vdd_pex_1v05: ldo1 {
->                                         regulator-max-microvolt =3D <1050=
-000>;
->                                         regulator-enable-ramp-delay =3D <=
-22>;
->                                         regulator-ramp-delay =3D <100000>=
-;
-> -                                       regulator-ramp-delay-scale =3D <2=
-00>;
->
->                                         maxim,active-fps-source =3D <MAX7=
-7620_FPS_SRC_NONE>;
->                                         maxim,active-fps-power-up-slot =
-=3D <0>;
-> @@ -354,7 +348,6 @@ vddio_sdmmc: ldo2 {
->                                         regulator-max-microvolt =3D <3300=
-000>;
->                                         regulator-enable-ramp-delay =3D <=
-62>;
->                                         regulator-ramp-delay =3D <100000>=
-;
-> -                                       regulator-ramp-delay-scale =3D <2=
-00>;
->
->                                         maxim,active-fps-source =3D <MAX7=
-7620_FPS_SRC_NONE>;
->                                         maxim,active-fps-power-up-slot =
-=3D <0>;
-> @@ -371,7 +364,6 @@ vdd_rtc: ldo4 {
->                                         regulator-max-microvolt =3D <1100=
-000>;
->                                         regulator-enable-ramp-delay =3D <=
-22>;
->                                         regulator-ramp-delay =3D <100000>=
-;
-> -                                       regulator-ramp-delay-scale =3D <2=
-00>;
->                                         regulator-disable-active-discharg=
-e;
->                                         regulator-always-on;
->                                         regulator-boot-on;
-> @@ -395,7 +387,6 @@ avdd_1v05_pll: ldo7 {
->                                         regulator-max-microvolt =3D <1050=
-000>;
->                                         regulator-enable-ramp-delay =3D <=
-24>;
->                                         regulator-ramp-delay =3D <100000>=
-;
-> -                                       regulator-ramp-delay-scale =3D <2=
-00>;
->
->                                         maxim,active-fps-source =3D <MAX7=
-7620_FPS_SRC_1>;
->                                         maxim,active-fps-power-up-slot =
-=3D <3>;
-> @@ -408,7 +399,6 @@ avdd_1v05: ldo8 {
->                                         regulator-max-microvolt =3D <1050=
-000>;
->                                         regulator-enable-ramp-delay =3D <=
-22>;
->                                         regulator-ramp-delay =3D <100000>=
-;
-> -                                       regulator-ramp-delay-scale =3D <2=
-00>;
->
->                                         maxim,active-fps-source =3D <MAX7=
-7620_FPS_SRC_1>;
->                                         maxim,active-fps-power-up-slot =
-=3D <6>;
-> --
-> 2.45.2
->
+
+
