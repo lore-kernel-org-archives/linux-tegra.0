@@ -1,244 +1,114 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2072.outbound.protection.outlook.com [40.107.244.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E26C214A78;
-	Fri, 10 Jan 2025 18:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736534460; cv=fail; b=rLA5ie9ys/kM5atfAKAxQe2Zrl8pRwimbmp7pN90s7vrm0AVfZDGHRRN4fGWtXYyAe2CfIhI+AiI/RC7Tl6M6IINp2eSr8qfBVpYFHCCaGJ8mXU1VAYdT5aWvGMGk69DUAatOA1ijhuXc+YtN+BgG9i/J1AgCdkKDZpT73mTpBE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736534460; c=relaxed/simple;
-	bh=p3ACmv3s+ySxFCXmzoxH0E7mO7HZnzxRdSqNKbGLTME=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UcLjA42X2MavQQ8bqTerMrvzcz0Cz0Dq1/uuPmXvOYdKEK4AuEwEFuoHSd0qR/gmy7sMpmkyGmTM7qSW0HYKbj3rkgMrT7VJN1gMGg9vHAmRgKc9A1qTPr3N1oVWx/NXAWiMj0scQMSTnsAKrVo7YuYhfYxfT46a7iXQsfhLRmo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DdJPrPfG; arc=fail smtp.client-ip=40.107.244.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A11A20764A
+	for <linux-tegra@vger.kernel.org>; Fri, 10 Jan 2025 18:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736535251; cv=none; b=Mlj3dG34VftWDx+YDcEoKwRrpgqpwuv2zBPcb4YEGpi4lGCcKspRBuFPcIw//RMcNocbLxQQ1SZkCv34TGBDE8BBgJemyVrm5Bsa6c4Z5CQL92sxooyJJ/W566nyldIjtWIrtVen7dcuO7Pxc8XjL76hW17OoE4JbNt0ZzJpL20=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736535251; c=relaxed/simple;
+	bh=ILhKQ2NtLIQeU0mxhYxB3F58THwtyCqd0wy7ClV+Bfw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=J0PfA4VFwRkzip5V2LrYxRw6fG8Ic8biyPJntEj3lN6Fr8RROT4SJteBP5bzSb8okJsyK3KixQ2amy1nmvqMlbCo0mgeEqVbM0qXz8niDWENRvku9mlOvy+yDsuvNPeullotelaPSZxNOR9dvALyXlwGeGEkvf5lN26qoBCMr0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gX63TCNh; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DdJPrPfG"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kHlZKxxVsLAIvvhd976XP25+nVMLZlSeKFp97LBZGVYCtNqaM4GC9t2MNmkCyyKJZ/0NT/LOfA9wJXHHqYuOTjvJpHkDSNpeulOE2cG/uA/ChLXSr+4bBy5AB8n33ouO/iuO84vSUQvd4EIbEOKFsOe5mRHZZMFmJEJp2sESd+4IL+t7nSmPpEYmeoesZ9m+2VvGw1GaNWZovpnW49cY9rz210hlVm5OOkeOhctSeABgnbnxdvFPLd6tBftzwHa6yXLwy99bMirDU/q4ifQLZ9g/FYvB3biamh0c4sPy0U9Z+lTdjy6RZ/duEZLn07r312y4DbfV5Kz/HKvUtn6pWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3CUMsflQcEvwT/y9TSCKpcKlNqJeKuEBXvlK7vyqpR8=;
- b=tTYTYdiR1rKPkwqYthd4uA3PQfVcUd4xF8n6rjbhkh8cpP9208jsOSZL40I2mGBuVX5WFfvGDRX1AOX425o77lURyIovDD+w7OkfTpCeQVAPSbCah+SweAuBdUW8uij3DqN26kJt975TsaHc6oiZC7HAlbZjpla4mIAZEIfe1iMCPjBfm2vL6GgOIrnV6r39S9a7NPwRBYEZJ1Y6dqTQUnF/x5sf+sU0PhErEJd0X3kdNDSkbAvE+h6+0UpNBv54FAQrFoWnc2OcgRAB15cUYQQZAlCGAbrT5XHHNnHH8SZpIsmreAPNk7Xg1KcRcK7quprwh23MSwX6UOzOLdxcLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3CUMsflQcEvwT/y9TSCKpcKlNqJeKuEBXvlK7vyqpR8=;
- b=DdJPrPfG3W/tUVkDkaHQlq/tOW7IbOXLfAcQv3c4j/xURcoBFRenaEXjBXhF6zo/NYOin5nkLuC5TufmWJDUJLs6ITc9dWqO4NfkSuDz3Ip2SKLVvqzAgvdujwK4naIVSz5oLbZjX/wqwZTYoB/jonLXky5+21BI995fw4ncjkn5n6+D9g3awpW9OwiYBIydXE3sGOP/wU5+WIOEohzJwgZOw9TJ+Rk8YkzUHLc5IFi3KrFT8d07D0KWx1/Ap357SEH1kvkFvmQj1I05JrLkTKzhuaFOkEFUNhDG9b8dHtWca4AutDYByHXEbfRITy53LEJ2q/eJuKTSHbj5T34sbg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by LV8PR12MB9417.namprd12.prod.outlook.com (2603:10b6:408:204::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8335.11; Fri, 10 Jan
- 2025 18:40:50 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.8335.011; Fri, 10 Jan 2025
- 18:40:49 +0000
-Message-ID: <5d7e5c02-00ee-4891-a8cf-09abe3e089e1@nvidia.com>
-Date: Fri, 10 Jan 2025 18:40:42 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20241114142810.794657-1-juri.lelli@redhat.com>
- <ZzYhyOQh3OAsrPo9@jlelli-thinkpadt14gen4.remote.csb>
- <Zzc1DfPhbvqDDIJR@jlelli-thinkpadt14gen4.remote.csb>
- <ba51a43f-796d-4b79-808a-b8185905638a@nvidia.com>
- <Z4FAhF5Nvx2N_Zu6@jlelli-thinkpadt14gen4.remote.csb>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <Z4FAhF5Nvx2N_Zu6@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0079.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2bd::12) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gX63TCNh"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3862f32a33eso1116360f8f.3
+        for <linux-tegra@vger.kernel.org>; Fri, 10 Jan 2025 10:54:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736535248; x=1737140048; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zf//n/LaJv+Bc7QR1tIn9d7aeT/G2u5n60hqMFCkMyg=;
+        b=gX63TCNhRbUs5jEhVKCUO/waPnqd0x3ZwNh3xKvYtZ9gufP7gn4I216B/yPzTUSLml
+         hvnp3vnAdZ/UsvtTC+p82uTSr8badLcszyN0hfj0qHkpcl3kpCQsMDBf5YkZtlcxLxoh
+         WkH/VJahZLOxOnim0sVKfrL+ogCInKbSISMbAu0gXbae878NBrPP2V4Qc8sQ+fMTdTyu
+         1WGOZwfo6Naqi0WFs2c+dLua3xshIp0y8EZD6jzTv51DE91hUghgCw3HfNUaVoUqjkvN
+         ydf/IqGBIELO90BXtpgUY+iCHkAaE/V94cp1SZzMUJJGQ+DRF+hsUbbTRq6MmklmSE25
+         WqzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736535248; x=1737140048;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zf//n/LaJv+Bc7QR1tIn9d7aeT/G2u5n60hqMFCkMyg=;
+        b=E6fVUI6pOvpXDapITADLX8ftR1VJswWN9gRAFjl4363Rfck3qW1VEREQF4s3fXnhC/
+         uBh6jBWVuls3zn+bpunIRQ46FCGSu0NxLHKUGlBv2sziWxjE5SZ9wL+qgDpGD6hZ5sXq
+         5YRaIxlDzaHjyEqSKga3P+vsCw5filsXAKALRk+/gGjza5j5L7khg14ihuQ4tg8M+b0O
+         zGocS3Dgt8v0xxPrbSSlqGWFPtO0EVlYfJwKk1v68JPQB1szu1UxlOvvICjloUFIA9aX
+         iyynU0xLFbxjR4VTaN6CQYAxIm3jkCRLU7n1b4F2D8vsPR9f/R0WkJUYNtETRCZzsNVH
+         TUUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpbjDe8oKcsvzWBcPbRwN6zI56SpoXek5kFcm3xAQbDbmpyJ8kZT3HbG5QkAoduFlXpssrbsOWPFd6vQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0/g2nDgkXPjICf7oxYfxo9NvG2x9wjoOpBKCkWOTiDf0mqS/f
+	UA15hevX8KKWnNygSq5mRTJL4vdjpai0kIA7H5OZ6o81K15zM401sa3o4w==
+X-Gm-Gg: ASbGncv+2dmNCDHiaaI1RZYw7cIuyr0XEl80uyE0xi2NpiZ8q+LSV3yj1HK/nA9jFWr
+	rs/dqnbapUwFzelYtocA32eD86PhcMBpzdMzfw73O6Y0gecUfTACRoKCGp4ai9iNueAW40ml/NN
+	UuXzyKuNKhxCb8mEcJa9+g8lSeoVWi3rivFyuoy2+A8q7KwpPG8PuwshIrMG3emVI6BZDc2kRuR
+	f/us6aiCw2Xx4eXvCg06PQ9VkFiqyQZH+fafpfVwR20J5Cxw6dJ7ZAhtP7AEHxfsp5eaiumYkT3
+	YLbI2A2eEL6x7L08K4ef0Tg0H+UoV8QAEsIfmIAQwveGMfxX
+X-Google-Smtp-Source: AGHT+IGZ6hlN+WoHP63J5jrBDfHHz+4clyA9GOi0tEzZYmYd03alnmZ6mmb51FMSnEhVGza4yao5Dw==
+X-Received: by 2002:a05:6000:1446:b0:385:d7f9:f169 with SMTP id ffacd0b85a97d-38a872f6d09mr10013608f8f.12.1736535247484;
+        Fri, 10 Jan 2025 10:54:07 -0800 (PST)
+Received: from localhost (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9dd1957sm59993665e9.16.2025.01.10.10.54.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2025 10:54:06 -0800 (PST)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: arm@kernel.org,
+	soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/3] soc/tegra: Cleanups for v6.14-rc1
+Date: Fri, 10 Jan 2025 19:53:51 +0100
+Message-ID: <20250110185355.4143505-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.47.1
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|LV8PR12MB9417:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6d659d07-671f-4850-02d6-08dd31a64d98
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|376014|366016|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bkxuUHYwY3dIdENKYnlLSEk2WEtUQmpkU1ZpYXozVVR3SnNUQy9waHdZVHpK?=
- =?utf-8?B?cUJtTThNMjNOeVJ0OHRTVWdYcnlCREhINnhWWGJuRVNhTVZZY2kzY01LQjl6?=
- =?utf-8?B?N1pIOWJJUkFST1EvbkNaU0x1WXdSMTZZUDk4Mk12N0hiOUhlRkVycEwvWFpu?=
- =?utf-8?B?anRzUWN2MStHZUx0eVExS3hRTGpPY1QrSXJtam1jajZaYXJGQnpQRFROZDlQ?=
- =?utf-8?B?Tk5HbXo1K0Q4SmE1OFBSZFE5Y1AyNXBoSkNZZ1pJQWlad3JQZVlBdUc3OVdu?=
- =?utf-8?B?cVpWWnFYaUp2OEhxK1hyMU5LbW9rTldZKzBsVzYydmZlYkE4S3J2VngvVWE3?=
- =?utf-8?B?aE15QlJUYW5qbzI3eEVsOTQvTzFXYVl4ZjZpcURGREhTeTBMVm9vT1NoZERF?=
- =?utf-8?B?ZzU0VjFlOEQvM1pjYmVkWWxEa090dS9jazFJNkJzMGZySmhYbkNnSXZ2d0pv?=
- =?utf-8?B?dllKOGplQVFKbEEyNFFhZEVEV0dUSjI4Wk1HT0RHd1JoUzUvRVp6cmQwTU12?=
- =?utf-8?B?WnVGMUtmeXc3cDB1UUNMYjlBbzNTYzBKbDNXUTVLVFl2b2J6M1g4Z29qWlUy?=
- =?utf-8?B?eXB2WENWWEYxNU8rMzRhN3dwWVRpeml3bW52VmsxMmdDVUp4ZWJPbHVVS0Vo?=
- =?utf-8?B?YUxQSlIwSHlIU0gvNE5IU0tueUFJK0s4MGVVRWVHd0lYL3J5ejlISzRYR21W?=
- =?utf-8?B?N3ZGb3ZzNEVVU3RveUttWmxYQTRURGtGbzhEQ1lUM3ZFODREUDNEUU4vSVNF?=
- =?utf-8?B?YklvcEJHRWRZeld5amRYMXBlOEZoZEFPbW1KdllxcTJlbTlkNlNsS2wxdlR5?=
- =?utf-8?B?NkIwM2l4RitzdGV3RGRUT09qekxMMHpva3pYTksvamdiVFV5akl6dmN5S0RB?=
- =?utf-8?B?cjQ0ZTFpTjFvVDluYUowZncrM0ZOb1BUaFV4T1ZRYWY0NTdaTnovNW1iMjQ3?=
- =?utf-8?B?L3Y2QXI1QysvdU5RRkZDU09iVmU3WmdBak5BazZIMzV5cXgxZW1EeXlta0M5?=
- =?utf-8?B?QXllQVRmVE5PMlByQ3ZOQTROOVVpb1FGTFAxQXBXK0VFSktkRE4reE9QOGF2?=
- =?utf-8?B?UTcwNTFHekdjYmlpREtNQWxaZGdabjgvNjQvSE9iREtXR2pnUTkxN2ZRNnZq?=
- =?utf-8?B?SG01ZmVvV2VGSEpXV2M3OVZxU2krcUxiWHppTkJac1BJeTNaUFlhbVhmSHdx?=
- =?utf-8?B?cWY0S0FBOEZYT2xzS3ZRY3R0RWVJb2tYelZrQTllbGtZai9kM3Q5MWFNUFhU?=
- =?utf-8?B?V1cvZ3pCcUEyK1JMQ3p2OGxncDZDcFBTVTlRalF1dEdINEJSSFVzU2VTeTJY?=
- =?utf-8?B?YXJUeThaYTVOMFVIaUV3akJPbXVIUCtrYVBUK3UzQ3BHV3h3N1VVYUxxUHJq?=
- =?utf-8?B?MXNNSHZTTU1uak9rSnUxcnp2ZXJqajZiQytFdWdwY05xMHlnZlNaQlFGcmxW?=
- =?utf-8?B?RTFDZ2FSbktsT3JmOFU4a1k0b21pWGNGNEVleEd5VGlTZEdJcGdEVTBNN1Nl?=
- =?utf-8?B?dmpPSlBacU1Pa1VtaTIrSXp5MWQ2L21HTG12c3dHM1VXSUJLQUk5Uzh1TmVC?=
- =?utf-8?B?dWRHY3k5TGZrOWtnOFhVQWN2UW80QmlMbmVJODhIK2ViMFQ4R05HUDFEb0c1?=
- =?utf-8?B?V09mRDE0TmcwM05jWnNEVDJWNGhvNlZsVUFJdjhCaU1waFdtNFE1SzI5c3RC?=
- =?utf-8?B?dTY2UFV0R3lOZ29jT2UwWm1GWWZvelI3bk8wbHN2Sk9yWEZ3UURhdWlFeVF0?=
- =?utf-8?B?bXlCKzB5bm1DbU1wbzhYVUtXWHVEaUVkT0c3anZMUklKMWtLMjNVeHpoNk5J?=
- =?utf-8?B?bWl2bEVjZXNSNUFrN05WUUFYZ2dFa2FvTk1RM2E3RzBLR0FWRFpvRmpMTDBL?=
- =?utf-8?Q?uP1dS0fEHrp9M?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TmJQSk1ua1pVQXhHRnI4SWhqTkk5a0hrc0wrWXZzS1BRRzNtRzY4Ty8wa216?=
- =?utf-8?B?UVhrVzc3cDI4djQvUlpKNnVVeXF6bE81U2NPaEY0QnBYUWRpS3hEZUFXc3hE?=
- =?utf-8?B?Wm14aEkva1NVT2FQaG1iZ3B5YThGRnR4WXBuWjJ2cmhqZnlSYWVlZlcwc1ZH?=
- =?utf-8?B?bURxR3dSdmw5SEVuT0cxQk90eG9DSG0yRkkrTjI4ZTJiNFI3TnJjd3ZXUWs2?=
- =?utf-8?B?MXBJTDZJUVFJSFM5UEY4dlNHQWNYWkhlQ3lkMDZPcnJXQk1ua0pEWkZ1bWV2?=
- =?utf-8?B?OW9sd1hmdjJWbUl0YldhQ3kzSW1wMEpTSG81Ly9EWC9FVTk1bW8vNmRZMVJ3?=
- =?utf-8?B?RVM4bFBDbVQ3Z0tMaXRjNGRPRE1hZTcwQjgxQ3FwOFQ3b3ZId1JXbTFCL0RS?=
- =?utf-8?B?d0JLb3R3bHR4VHd0NXRjOERqYUwrNEU3UTBuQmJHekU3SlkwWTZnOE0reVhW?=
- =?utf-8?B?VjZlNHVEcDJDUDZVWHIrc3dEVlJlT1hRdFBJOVJzSUdNSG5oWCtGdklaZlBR?=
- =?utf-8?B?UXR3UDdKbDJsTEI5SGIyd0h6QnBnT2FLUllFRS9kTmVGS3hKTG1aQ0xOdEVt?=
- =?utf-8?B?TTVmdjQ4SDdGeEhuNWVjNGt3dGR0blV6WGNic3VpRkhSR3dvdVl2dFY2bU5v?=
- =?utf-8?B?cTB6MEp0U0hWRzVaWXV0aGpydXp2U0VObU9hU0E2WTZpSHpxRmVFOHdSWGRx?=
- =?utf-8?B?c0I2bnhMMStZNFFVWDd5V1RrTXp0cnVkdHJzcW1LeTlkYkY5bmxvcXg2LytY?=
- =?utf-8?B?L3FERVArb0gvaVRqTkV4bmwrTjNtWnpOYXAyVGJsbUxLd09pbkdkc1ppOEFB?=
- =?utf-8?B?ZFNUeXEvSm0veERGQmxTN0hsL1lVY3dDZEgxcWtFcHBPMnpWVUNXNXJhcjBN?=
- =?utf-8?B?UXVSUWFvaHptQTM0UmtOYTRpT0NKcTIxUG9uYnhWRlRaOVQrWmhMTGcrUTln?=
- =?utf-8?B?eFNnVTNCTjVZU1QySUxXL3pCVFAxbm1qMytURFJ0eGkzVHdBN0J4WjFmbFVP?=
- =?utf-8?B?Yy9mbHdrdGh3NnNQem9WaVp5VkFzL0pxQ2ZsaVpRVjVQc2JWM01MTHluTDBM?=
- =?utf-8?B?SXZBdnFxS1pOMjdwQXRkU2dFY3pUWWlURmlNVWt3QjFISmNyQnA0bnEwd0JX?=
- =?utf-8?B?blRIcVFObDRnQ0NENHpFMEpSWHcvWWRocXgrWFcyenBudXY0QU8wSmxURFpx?=
- =?utf-8?B?Y1NZeVVvaEhweS9RS3pLdk04YWsyd09KV1JpRWVRNFZ5dEROUm5KcjVXOU5U?=
- =?utf-8?B?Y3pkR3lnL1hPNmdMVDRyUzd3Z2pNVnQ2aGg3VkhSZ0l4YWYvNDVOS2tLU0hs?=
- =?utf-8?B?RC9OeXRNRkdLTDBHakk3NFVLUjhtM3JpS0tGTFRjU3ptR09KTTFOZEJvRm9F?=
- =?utf-8?B?ME9zQXZQZnZ4OU84b1JHOTVFNE1KeDJEK2gxcnkyYXYyR3JIbVdkQnFkZTdT?=
- =?utf-8?B?UGNsNG5NT0V6ampYby9xM3lyS3MvK0huUExFbzBZMVNXQ2pDYXlXeVN6L2Jk?=
- =?utf-8?B?MkJ2OGR3RFNnNDNDbGlrOGI1Nzc3RFRBK0ViRlhhRnZVWm5lVEkwZ01yS2NZ?=
- =?utf-8?B?eHVMUmJjelVXbWlyZW95dkZSWDYxMHhVMXlGRUNoTmJWS3pudy9mV1pNRDc0?=
- =?utf-8?B?TGpoVHNkZlJvRVdRZ3paQ2VXUnF2bHkzZWxUT3FxT1ZFRW1RKzlpWkZNWERn?=
- =?utf-8?B?WnRXR3JyaXRUODFYT1RhZjMyS1c4WkdqUVNVa0s5UHhGckQ3ZFRlUW5Fa2Y3?=
- =?utf-8?B?MXhlTG1XQTVVMk80RWlLa0tRTHdVbjdGVmlZNHNDUXJ1QWJZeVJ4Q3A4ZElq?=
- =?utf-8?B?dnFkMzNGV0FaOVlzTnhrMGhGUGFwSlNnalJDbXc2ejgyelhiUSthVUNFZnVu?=
- =?utf-8?B?OU93SGpIMS9jaGZwR0xEN1dlaWhuNEoxWXZDZHlVY0VYanZFbmt2ejNId2tK?=
- =?utf-8?B?cjNERlY3QTBPRG92ZUE1NFUxQU53QXJvMXFyMld3eThyRUV4bmJldG14eXNR?=
- =?utf-8?B?ZFY5MlBEVmI0MGNxeGwrSHgrMEl6RHVzSHZLNVF4YW5XdG5hNWVUcWVVMFNQ?=
- =?utf-8?B?cENMemUzeUZDTHlUdTV1VlRGYlYyZjBFZGpsb3IwWkJ5UmRWZ2syYktFQjJ2?=
- =?utf-8?B?a1FOY3hVQm9DUUFPOE15MVp6ZmwyWklhaFE0M0tUN0J2V3A2NHpCeXBSQ1Vs?=
- =?utf-8?Q?XSKlp2afbSJWdxfznceeBl7qz10SRSH9w7EJQZKub+hH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6d659d07-671f-4850-02d6-08dd31a64d98
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Jan 2025 18:40:49.6347
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: O2AegEVyyOSQ0SwVHX3QEUtwBRQXsy3bj856YQzaCbFFVk8kGjSVgMrahDuG1r3ViehlmKG7iCj/pIkMVBpZag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9417
+Content-Transfer-Encoding: 8bit
 
-Hi Juri,
+Hi ARM SoC maintainers,
 
-On 10/01/2025 15:45, Juri Lelli wrote:
-> Hi Jon,
-> 
-> On 10/01/25 11:52, Jon Hunter wrote:
->> Hi Juri,
->>
-> 
-> ...
-> 
->> I have noticed a suspend regression on one of our Tegra boards and bisect is
->> pointing to this commit. If I revert this on top of -next then I don't see
->> the issue.
->>
->> The only messages I see when suspend fails are ...
->>
->> [   53.905976] Error taking CPU1 down: -16
->> [   53.909887] Non-boot CPUs are not disabled
->>
->> So far this is only happening on Tegra186 (ARM64). Let me know if you have
->> any thoughts.
-> 
-> Are you running any DEADLINE task in your configuration?
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
-Not that I am aware of.
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
 
-> In any case, could you please repro with the following (as a start)?
-> It should print additional debugging info on the console.
-> 
-> Thanks!
-> Juri
-> 
-> ---
->   kernel/sched/deadline.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 62192ac79c30..77736bab1992 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -3530,6 +3530,7 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
->   		 * dl_servers we can discount, as tasks will be moved out the
->   		 * offlined CPUs anyway.
->   		 */
-> +		printk_deferred("%s: cpu=%d cap=%lu fair_server_bw=%llu total_bw=%llu dl_bw_cpus=%d\n", __func__, cpu, cap, fair_server_bw, dl_b->total_bw, dl_bw_cpus(cpu));
->   		if (dl_b->total_bw - fair_server_bw > 0) {
->   			/*
->   			 * Leaving at least one CPU for DEADLINE tasks seems a
-> 
+are available in the Git repository at:
 
-With the above I see the following ...
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.14-soc
 
-[   53.919672] dl_bw_manage: cpu=5 cap=3072 fair_server_bw=52428 total_bw=209712 dl_bw_cpus=4
-[   53.930608] dl_bw_manage: cpu=4 cap=2048 fair_server_bw=52428 total_bw=157284 dl_bw_cpus=3
-[   53.941601] dl_bw_manage: cpu=3 cap=1024 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=2
-[   53.952186] dl_bw_manage: cpu=2 cap=1024 fair_server_bw=52428 total_bw=576708 dl_bw_cpus=2
-[   53.962938] dl_bw_manage: cpu=1 cap=0 fair_server_bw=52428 total_bw=576708 dl_bw_cpus=1
-[   53.971068] Error taking CPU1 down: -16
-[   53.974912] Non-boot CPUs are not disabled
+for you to fetch changes up to 836b341cc8dab680acc06a7883bfeea89680b689:
 
-Thanks
-Jon
+  soc/tegra: fuse: Update Tegra234 nvmem keepout list (2025-01-10 18:51:46 +0100)
 
--- 
-nvpublic
+Thanks,
+Thierry
 
+----------------------------------------------------------------
+soc/tegra: Cleanups for v6.14-rc1
+
+This contains debugfs error handling cleanup, a typofix and an update to
+the FUSE block's keepout list to properly allow reading these registers.
+
+----------------------------------------------------------------
+Kartik Rajput (1):
+      soc/tegra: fuse: Update Tegra234 nvmem keepout list
+
+Krzysztof Kozlowski (1):
+      soc/tegra: cbb: Drop unnecessary debugfs error handling
+
+liujing (1):
+      soc/tegra: Fix spelling error in tegra234_lookup_slave_timeout()
+
+ drivers/soc/tegra/cbb/tegra-cbb.c     | 20 ++++----------------
+ drivers/soc/tegra/cbb/tegra234-cbb.c  |  2 +-
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 17 +++++++++++------
+ 3 files changed, 16 insertions(+), 23 deletions(-)
