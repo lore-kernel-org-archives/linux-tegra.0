@@ -1,75 +1,74 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7470918C928;
-	Fri, 10 Jan 2025 17:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B29213E77;
+	Fri, 10 Jan 2025 17:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736531571; cv=none; b=jkIjXGIrP7jCoY9i8TNSWC5HAerBN3wEYzq2OlvV5pNlCeIVY1eGbpqvtKi0IOq5JvvQyKRka3Xf1aiCVEKk6VHO93QCr7hSwqGCwTPY/YWeuFpm/vHh2s0LW74XCOUhRbhwxLkSU0w65viFYHmrxGAlD9Z/cWBtCeKQjYP9Ev8=
+	t=1736531573; cv=none; b=RzBsjbQbD8xP0WZaNN+Ku/2d7cOXdwrPmfvmyJdc6q4GdNQObnsLZA5PyjIXwp8yV/GNtl6Xh5GLx8HNlNkdwoXdaEVzRLwI2BsxRYR0GhL6hOn5i6d0lxfbsi/VroYZUGxjD4Vohs9IczCuqrS3ioqQ12KjoxMnepQGJYZFHlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736531571; c=relaxed/simple;
-	bh=v0uFyXlVzhEhcuUR68OM/iKvlGoO3L2ICi3e/MiiJg0=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S9aUikwiwB+D6ZTqDK3e13AoR6bF3++fOktc0IF6vJOh5xIzzjblB0PcwiAWKlCILiVNaaNRIzHEEIiTvf/e1mCcLIlPkFaV9Fd5U9c481MKZkhjX9LKNvtRMsWa9rDY//EmFuu7yJ1uobYBJfn37uSFbpA51J/9pIyyzONQaao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UyCZ9f5k; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1736531573; c=relaxed/simple;
+	bh=qCS36lzB+9hwDG5Dur/2dX4CVhG4E51a4Au6gnAVfrM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BVvQwdQKohV4OIf7lH5RWJAyFKlpAwa7CIjh/j7zSI8Js/qjAqS+C+BkDSKu3GoumwtTGnOdG/pnCQGIQFhTv+z8t6kCkgXidYvgqi6MC01poaDdkwr7r7leDNK4eB7Q0uoNDiItibKDR/6//RAbk14o9bN6nZVSMgOS7WwclXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W2vMYJ7P; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UyCZ9f5k"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385e06af753so1312457f8f.2;
-        Fri, 10 Jan 2025 09:52:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W2vMYJ7P"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385dece873cso1284422f8f.0;
+        Fri, 10 Jan 2025 09:52:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736531568; x=1737136368; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1736531570; x=1737136370; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cqn536KUzRuEJXYiulKMOagRxQUsLQSSA5WxvtV6sbE=;
-        b=UyCZ9f5k5Jx1BKmB/vcR3cmnSQfTjGQi0FA94h1fVUMonY8Cb36bkcyZQGhy4C9U6G
-         MQpaAMUn4D5HfvWGljErhjbB0ASI36wJMaykfBrouxsTeQhKp2r25rtLzp1mb6RooTRJ
-         18gdJjGeLpv3p+yF4l/+WbyHlisHlSWBGGcmu31KvtzRt0hq5IaYjw9scWT4yEqVZGBM
-         pW7V4rRQ4CUynBQA0KfLZc9bVmdRzzTTb+nc5cyhwN3oePSwDDA/vZaECRp3tMRfO7Gn
-         baLrpwwFBTUdC8wAECTLT61o9RikFx8hMYC0hVG3kqhjVxxww4iDsq6TYaE9eowVsYCX
-         SWpw==
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AQqTCHALLMU9YHZTE8T7PZhqdQE6PsAWLBHph3N8DvI=;
+        b=W2vMYJ7P91tOQr40sV38tfO+zxvMNwzADUc1JRxtlosVfceDiV0bnmvNyGDcVwA6AA
+         bzIcWe8O4ASNyce3gcnjI1xi4JUWQPNsYQF2lkRHRkU7qaY1SdOAnlQu1tYlD0bh4Wd2
+         HwffLEtxDvDQOgXeawHR3GiN8mq6eHPZqH63yt8M+rWJSDm9Ox8x2BexmGKvsQO9guV2
+         5ezSSYZxXfkO58VUkcEvkfMyfdrCffn2hQxBPscBEqzI6qsnr3jaZ0IyxCiqEweU9Tt7
+         UcezhZI/QCL/zdWzLl8in13XsqT0WdOL8kA60H012/LREi2g59VwbkMSyPenA9faP++u
+         cr9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736531568; x=1737136368;
+        d=1e100.net; s=20230601; t=1736531570; x=1737136370;
         h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cqn536KUzRuEJXYiulKMOagRxQUsLQSSA5WxvtV6sbE=;
-        b=umJ+6CABih0CW+WzxXk2mWdN+svgr2qrIAE6i5eLIKQc/Q1K0Dcd9m2vXO7eJ6N5Pm
-         w5v5Cs1WzWAfrzzL3s0Brl/MNDUoZnPqHIIn9AkK8IK7pizfCL8udG3H2QKVkO0uyzVe
-         0le6Onw8VG+LmyKtjWQFjPj4N6D0wC3RXLPRq2dqnsb+L9KJG7irua/kjyPxU2+nqwYP
-         tYehOiusypU0ujRm/dJz8q+zMwJ/UWk9UwT1NkhSGBQrmQrrSBLpoxbHGLBVOnBIQQfI
-         1UPF+ygZgBcJ8fCzGrrqCCzlg2Hv8bE9eJVAa3LiTzsv0UCFkjf2u39JL2oM7cx79Qf9
-         Ps1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXC2ogFBjhR4gUJqeGxET2/ScSPvcGwrSOGBV3M2Ns9rNqmKr3zDvSxQDIP6dLoSAB9hDHkSV7hyjZqWX0=@vger.kernel.org, AJvYcCXxhwNqTP3arzFq2/IQJSLvhQR2maZxpBRsLv5Xv+5VSYJC8A2FTyDwwIUNYG0TwouX7+tCyNUmjg3gHI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk5afIp1tiGq3jCOFeIHSxNF42+qJ/pHlTZ7IsR+jnAbwRiTnb
-	khFrPvooS3Gk5jDD4gJ/JURm3Eo6frkQYiKG2UM+EmVw8E5uAb1ZWjMU5A==
-X-Gm-Gg: ASbGncvVCBSJwQEiKchUe9iynYcl0huF9yDIJsRW+CIjYo1dCSw0qx1U9I7q5a1D8Xv
-	w2/RKGmugSmIbAp3jGnh53DBpA1dAxzF/1tuo1XplfupF+B+hMmGeRgyBY7JxhSu5yaN6vr9N68
-	TOR+mr3hqn9y5yZpOrge8x3A0J2ShBHRVTsvEkcakDXGao5SOKGsqkHy2Kx73r5fIVZCdRYNqcz
-	VVAvx2Ttk7bd511wRpXvfNzPsiwK9gTY12NUggV8zJy1tggPWkcwc7on7B2lgj4PpO5za/9cnDX
-	U3urpoW6Xqi22zQw3RwMSuWGR9R9Un+7t+P0/GAzy5mayIoX
-X-Google-Smtp-Source: AGHT+IGmwMKKCBezsHtMeivwDw2PQ9Dl+b7FG45OgHPssk1g29Yuyxdw9Uq7Hp7K9lXpN+dHlYdm6A==
-X-Received: by 2002:a05:6000:709:b0:385:e105:d884 with SMTP id ffacd0b85a97d-38a87336aefmr10245577f8f.46.1736531567472;
-        Fri, 10 Jan 2025 09:52:47 -0800 (PST)
+        bh=AQqTCHALLMU9YHZTE8T7PZhqdQE6PsAWLBHph3N8DvI=;
+        b=g45bPj1xfxNLJ6rmw+N0cvd9nSKUnhPYZ+mfldr5xQPnTQ1GPBIp+DkkzRCpmbqEBK
+         1cADNINRRhqlpsKZa1yn0kDKYckgKJ1JwQXAkKeydFkLNxJdyhy1ZFJZFBb4u/s5otf2
+         FIkqthJF0IKQuszP2BFx9Q7ydzMiQD0TFpb2v4i/r4HhcKPlIEOtSuXl+eYfN4essxVl
+         IZZVCChhE1yvaiar2MDmrOR5w94n2uRl/qHql9HT/8DcfUVE/Gvpv98JW+Tz/gGmhfe7
+         8wErX8DNcv/gh7d7CxgtPUizT62hPVcSlYw/KPu/AXvHTFaZUGr3Y8A95V/+7aZPo0fy
+         HzdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUglruz+esNTQCKmxQeQc3rbztUXn6Ei/h9KLQLA0mZv8fn2rmI/gxhpmrs0CY5EIzVYFyzQoKDdPvjI3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBBFynkLuD4VDpoaw9IACjNZdSoEFHOJAWJ/hOGd/NVRPkpC1x
+	nLO+v/DEvsMLvc2QLtihwsFvqh6HCg7cgCT1KFBdC1sm9GLtT6H/6+oSKg==
+X-Gm-Gg: ASbGncvP1SnIECNjr2dvC9qaaXbdJd7k974/dW+5ZAuE7tf4Ucy33gJbMzESdsgQjxu
+	GdIxMj3//Ubyjn4maS2n0eNYVspfWlCX6Q8aHrZpayS5qBdBbM7lkSU+yIDZ+tFi6hn7SCApqEr
+	dN6QOQdGF1NP/8MnzsY7pcAa0zAOnGjJps5h2/uueOVcnF8aRGMCFJ2RKSzna5bexOZGfW/Ztey
+	Men1oAbd1uX0ZCnauEaq43WJSGmpx5Bdf2im+ojlyv7BWz72CrPmksJvRekTiBCLO41IBZsJJCz
+	ztvQY1XYPVkny+byCmsXfpIQxVmj777UzdXx77hMJHFssljW
+X-Google-Smtp-Source: AGHT+IHZdm7ahfELNyWIxjU38hyUwZHm/P6bhP2weRExqhwAGNIDVN19b+6fowYJTjUpf6WnCAkcZA==
+X-Received: by 2002:a05:6000:1789:b0:38a:5122:5a07 with SMTP id ffacd0b85a97d-38a8730394dmr3831280f8f.15.1736531569614;
+        Fri, 10 Jan 2025 09:52:49 -0800 (PST)
 Received: from localhost (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9dc8826sm59284965e9.11.2025.01.10.09.52.46
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e4c1daasm5191810f8f.93.2025.01.10.09.52.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2025 09:52:46 -0800 (PST)
+        Fri, 10 Jan 2025 09:52:48 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
 To: thierry.reding@gmail.com,
 	jonathanh@nvidia.com,
-	arnd@arndb.de,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kartik Rajput <kkartik@nvidia.com>
-Subject: Re: [PATCH] soc/tegra: fuse: Update Tegra234 nvmem keepout list
-Date: Fri, 10 Jan 2025 18:52:41 +0100
-Message-ID: <173653154337.3488930.3320572385594756477.b4-ty@nvidia.com>
+	liujing <liujing@cmss.chinamobile.com>
+Cc: linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc/tegra: fix spelling error in tegra234_lookup_slave_timeout()
+Date: Fri, 10 Jan 2025 18:52:42 +0100
+Message-ID: <173653154336.3488930.17604059106059548405.b4-ty@nvidia.com>
 X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241127061053.16775-1-kkartik@nvidia.com>
-References: <20241127061053.16775-1-kkartik@nvidia.com>
+In-Reply-To: <20241209055148.3749-1-liujing@cmss.chinamobile.com>
+References: <20241209055148.3749-1-liujing@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -82,40 +81,15 @@ Content-Transfer-Encoding: 8bit
 From: Thierry Reding <treding@nvidia.com>
 
 
-On Wed, 27 Nov 2024 11:40:53 +0530, Kartik Rajput wrote:
-> Various Nvidia userspace applications and tests access following fuse
-> via Fuse nvmem interface:
+On Mon, 09 Dec 2024 13:51:48 +0800, liujing wrote:
+> Fix spelling error in tegra234_lookup_slave_timeout().
 > 
-> 	* odmid
-> 	* odminfo
-> 	* boot_security_info
-> 	* public_key_hash
-> 	* reserved_odm0
-> 	* reserved_odm1
-> 	* reserved_odm2
-> 	* reserved_odm3
-> 	* reserved_odm4
-> 	* reserved_odm5
-> 	* reserved_odm6
-> 	* reserved_odm7
-> 	* odm_lock
-> 	* pk_h1
-> 	* pk_h2
-> 	* revoke_pk_h0
-> 	* revoke_pk_h1
-> 	* security_mode
-> 	* system_fw_field_ratchet0
-> 	* system_fw_field_ratchet1
-> 	* system_fw_field_ratchet2
-> 	* system_fw_field_ratchet3
-> 	* optin_enable
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] soc/tegra: fuse: Update Tegra234 nvmem keepout list
-      commit: 836b341cc8dab680acc06a7883bfeea89680b689
+[1/1] soc/tegra: fix spelling error in tegra234_lookup_slave_timeout()
+      commit: c475b68155942cc2142aca02f3fc19f6e730f17e
 
 Best regards,
 -- 
