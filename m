@@ -1,120 +1,112 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150E3223324
-	for <linux-tegra@vger.kernel.org>; Fri, 10 Jan 2025 18:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411BF1BEF77;
+	Sun, 12 Jan 2025 17:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736535254; cv=none; b=tcxBc5R81vhtjhGvjQ1WKC0wfBwKcGDu7nMDl5j3qaEJDjzE0qbQVou/ROQiqflwYcW4LwW9QQXt4AEjWMm2kfzD447hvr3BV3kPLWW2x8X9xO7ShSPVxk2JNfn8aRXHArG99jKXRiOHeP2z/bDia4lsMlg3RC5oFeYV3xXD0YU=
+	t=1736701878; cv=none; b=EADJ0H63g2ygIs+mgn4fNTkFtjg5iwV+IvMdZqkwrXm4vJDxxfGHIfhi8C4JoayZINBjimdt1QVze2fRKj/nQ1773TUYjQP10o6ND+FCPod2LPfLqjccJn591wH3/UiBKXGIdDow55RInrBuQPL1IvgWKCfLzzqsBCLawzSP4Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736535254; c=relaxed/simple;
-	bh=DndyNylIL+ZUCxEtjNb9q4yI0eEiTKy2w9nASbTZbxU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gJIx589mzpH8ToslD4oLQBqnBw7aSipxJhZ6MivIlNodSoVY+wfGo0jUF/joUZhPbB+4X2lEiM8NohLFattKEKuUft2vPBTpwm/NPUuEEi0ICdpYsRqt0BBkiU93bbNnOaWQOmwO9S+pYhNMlEukjnk9tTeJaP8ggAUxAGnyQOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BFwg/HOr; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1736701878; c=relaxed/simple;
+	bh=s7QShYDcJOa5wKM/u3/GrKZBSCoE2UPrTk0RBhJkY88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O/cj+rjKpUvu+EnAycZx8gJuRAIquevfmZ3XeJjc12vfQkI2dOljo0sxc+gHtojHAP45++QEuH19oEuxeV65TzDk7Q1zFgZ49xB6fIDz8IvzzoVkxdM5JhrUhk1cAKwWo+Jcq9vAi9AECdyS3tMgw9Pl+UVlB+E8lp7CBp0Iftw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEju9V+R; arc=none smtp.client-ip=209.85.160.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BFwg/HOr"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4361fe642ddso25542255e9.2
-        for <linux-tegra@vger.kernel.org>; Fri, 10 Jan 2025 10:54:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEju9V+R"
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2a7ccb2c618so2064542fac.2;
+        Sun, 12 Jan 2025 09:11:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736535251; x=1737140051; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1736701876; x=1737306676; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CSzrQeseUUwDfAM8Q0k65Q1Koz1ieX1zSngb4j0vsQc=;
-        b=BFwg/HOr/+cRm3I8l32t//kGzkh2SbDtBzYNIRZHoQAVUSXVgGedR3PK6VyiFzF2Ft
-         FeCOUThPM54Lhn1L+DiiA5gz6XdcZ8x9qwIz6kJ5CNEpP6StfdnTlXKcFY0DDzyZV2XJ
-         v11Z16nbmX9xIKvU9FNeF5M+twEWow9fHvobXDE5C745SdR3ml9U2mDVvMPk1l5TCxpg
-         2OsiEkk5aDwL6hvVWLdxcO/oRpfb54xZGJIrvjN7EMho7e39ZgY+U/K70dyIQX3SPnWu
-         oX/aC1mcDvD+qk6h7PZEAFK6ZtBqOXKa/79ZmZvs4NSlNsVLbf0m/7nn3ynmYHI1qkbu
-         VB5w==
+        bh=BRSvG4lHDviRuzjJRGYuKFbYzwOqYOzJbZ32m62ocNE=;
+        b=ZEju9V+RTzN8gOfhAKwl/HtzQF8S8YxrQtXMxQNIYlzwOn1TMXCDhoH1y1oiJeWQha
+         in/ZA0kXqV1Dn8fh0dj7G9j4RcVkMhtFxbiyLjtf90bpfzprvo9JlGxoTwyX3A/GwpTs
+         9G9fKSQU11rVeoBaMgRrBFQRAcRhyF61hqGCoKkoXc+Z7CDfXcx51JYbKwUwl8Ipktbb
+         hIcmyhXYSZOkgIfQsqN5TWyTDTrte27G7PvFZqgX1Ot7/ojIOyKz8vrxUe6oeNMBG5ku
+         pIELWd80sJIbxjV/rrNn3+E0Xl8vgX7r7OD3PS+1Z0GnvkREcbZJm+7YxZn5NGNVqtvb
+         gsYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736535251; x=1737140051;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1736701876; x=1737306676;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CSzrQeseUUwDfAM8Q0k65Q1Koz1ieX1zSngb4j0vsQc=;
-        b=Q+uKrIZXrGTUnSeeUQpAeAHHZkI5aatcfkx/W515GN6L1TPOhcNZHSz0rJi2MbbafZ
-         pCYo+kaEYrLyYqh6gpvgA8F2xM+8Sb3pQyRwbOVVBI4vQT1UZ1MdSaFUGBpAKFnovjOt
-         R7P1v2F8QMxbdQ6fhoJjwPEBCXIvgiyv6G7QCRyOEmRtxVWDqHbYtDIgdhxolk4dUd8a
-         SldTonvj30M9HIxy0Brf7jl1K76GMkcR2gaXV6BfiRWLEsoeJQtBc+L6JnjzGPpxDRTY
-         3pEM095AUETnU0mi+gy91YcwPlOwgeP8dd/yrNhYcepDa/PYlCLRBuG/YpBWArjKUISw
-         A+ew==
-X-Forwarded-Encrypted: i=1; AJvYcCU+iu76HABrJz8rOOxL0tlqtcn2/eRTVvLfkIBFmSRmF37EhwUjNT+HBhJZNuhFZkSIk4L1xbDftKNImw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEy9qRbbNNu4+Wrw92ay5f92+ViUSw9c8wKaBdAWO4ej8YV90U
-	dtozsQlG/UxYT558tp1PJvUNhHx2A5JkB/SRZeWSupUnWRJq1CW+1XRCgQ==
-X-Gm-Gg: ASbGnctEL+PHWs/6F0FYvWb1oPISpz09yyO77ACQpVc9ilLzc1a70H8i18+Xgbap6O6
-	9Q70WaxehU/VG8n7TWrOTZdrtCS3NaUdfhqa15TGBAhWKBRqC4HtiS/LmDQNoVpKX4bCpAfm6tq
-	AkvTI+N1d2fNhe4AUTMPKThyr/jxFEQsbrj4FB05uDI0mg4bSg33qf3N9lBrR9HeQiD/mHJA2tE
-	wBX1NvnArNUB/6I10VBxUVUiigkDrPAI7VgES9zSY5LUqJ2FdZeRWIgOe+BGwQJ394dZAVoNyHx
-	yR3J0z10DYFYZ67U2fpBF14q6+dNc5aissV76/0No+cqkB5n
-X-Google-Smtp-Source: AGHT+IGL1UNuIWvfIXF5q1ZuB2NL1WSHb5lPRNZ4RnJeqXAHuM/DlevEFHezs0QM4/P/ttrkrToSEA==
-X-Received: by 2002:adf:a295:0:b0:38a:873f:e31f with SMTP id ffacd0b85a97d-38a873fe683mr8253747f8f.1.1736535251283;
-        Fri, 10 Jan 2025 10:54:11 -0800 (PST)
-Received: from localhost (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9dc895esm59818695e9.13.2025.01.10.10.54.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2025 10:54:10 -0800 (PST)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: arm@kernel.org,
-	soc@kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 3/3] arm64: tegra: Device tree fixes for v6.14-rc1
-Date: Fri, 10 Jan 2025 19:53:53 +0100
-Message-ID: <20250110185355.4143505-3-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250110185355.4143505-1-thierry.reding@gmail.com>
-References: <20250110185355.4143505-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        bh=BRSvG4lHDviRuzjJRGYuKFbYzwOqYOzJbZ32m62ocNE=;
+        b=q4atTzsXiON2mDgWV++Nkqca2utwdNsGian17OdYZJWiP7uK0768pLpkmZDhw4OGfU
+         rbnsr4/kaQq0x1ViN+fvA/GV0INUjxitvRAdGD8wCm7T7kEdxtqRJsEzxxMXcQfEUcya
+         KKHAYjISPMS1q0IW8I165HyIAJtMzWpfXVCA3FOQ239YYQpuTiehqVE38iYYkeN+q82I
+         qXppN9AcoYESjBZ2FmQPW3qTrfIV7Mxji99Nc3jHRYEaCiRTKF9bYL4nisWWttWdkubJ
+         ab3IKqosS/vKe3reSC1SUC/uoeMukSZN0W+/b0PjAdLsB7CsKaeeX4QS+0J7UNLDDdcx
+         g4xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCXEsq+XqFXOdEk+if3W6gDBGvM9QsaIKJHv6eOsI47Rx3oYoQNCk4NtRu6eAK3SJoLx5lhW1Mo5EhVzX1V4QTi2M=@vger.kernel.org, AJvYcCX38Zalm3GwnvNGQY4Zl7w4fr7xuv1P7OoPwPdDvTrZHL/3zJzzmiAV6ttEEJhtjPG/7NpK39UBRJb+@vger.kernel.org, AJvYcCXAC1nFqJV2u/ZUDYu3Ti5rJAT9Xae4eDjIyxhNMzqXomtmhGR+Jc61082YiHEC4jitb+CyImhB3mlN@vger.kernel.org, AJvYcCXcKJ/I+5ACSdhLOdglH38X5kBU6Kg+ObqztHWPhOvuxpSxFMAYMN8yt9hV+XvNmUMqshbhpf0ife0FsRc=@vger.kernel.org, AJvYcCXwiMJB4be3fjOL1DU8iYLfappMX43ZBjsOPi7nPEBAqPiv06jcP92pmX5+mpjbMPE5smfEUASmeuvhK/CX@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTUU5JfRFvIGJe4hx2N/wC2FPIFHuinOP7seJ3s37W2b6OM3KL
+	oaqoWh7FlRwtD1xrcvqFajdenW3qEYw6qrSYhZYRY1Y8T0gh1xEZUtJB1AQhsK+x0keX65ZkhhY
+	inVfCwlmzvFMDgLW805cEbmwvSxi4rCTjKNM=
+X-Gm-Gg: ASbGncuulg8uzoWkTfyzVk6e+lsbNwNzQRpLRUAZr373WtNUauy8g5w7RLtQcKJw9vT
+	d+BTfnRz1MpBP/UqYR4bGf7v6F1lNuPgKbeqJn+U=
+X-Google-Smtp-Source: AGHT+IENGjLXxXcSGe+w7tY3R64tOX7yK5WBTBwurxfDdtVFwVvG/FRtTErahZqTGTD6G89aj5oqyZiB1L1vqwlTv1w=
+X-Received: by 2002:a05:6870:ad84:b0:296:bbc8:4a82 with SMTP id
+ 586e51a60fabf-2aa0690e4f6mr10712332fac.27.1736701876276; Sun, 12 Jan 2025
+ 09:11:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250107131015.246461-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250107131015.246461-1-krzysztof.kozlowski@linaro.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sun, 12 Jan 2025 11:11:04 -0600
+X-Gm-Features: AbW1kvbXjyqTnf9gPwBQ9ZLkKzxPws-DMkCbBAzJp--cshKBewoVPRLg0dMWqYE
+Message-ID: <CABb+yY0sgg6-zF-0shQbcZ=TqxYGDO=S847WpLGFcF3Xh9f2Nw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: usb: Correct indentation and style in DTS example
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Justin Chen <justin.chen@broadcom.com>, 
+	Al Cooper <alcooperx@gmail.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Benjamin Bara <benjamin.bara@skidata.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Ahmad Zainie <wan.ahmad.zainie.wan.mohamad@intel.com>, 
+	Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Tianping Fang <tianping.fang@mediatek.com>, Jassi Brar <jaswinder.singh@linaro.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	Francesco Dolcini <francesco.dolcini@toradex.com>, Macpaul Lin <macpaul.lin@mediatek.com>, 
+	Alexander Stein <alexander.stein@ew.tq-group.com>, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi ARM SoC maintainers,
+On Tue, Jan 7, 2025 at 7:10=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> DTS example in the bindings should be indented with 2- or 4-spaces and
+> aligned with opening '- |', so correct any differences like 3-spaces or
+> mixtures 2- and 4-spaces in one binding.
+>
+> No functional changes here, but saves some comments during reviews of
+> new patches built on existing code.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../bindings/usb/aspeed,usb-vhub.yaml         | 40 +++++++++----------
+>  .../devicetree/bindings/usb/brcm,bdc.yaml     | 14 +++----
+>  .../devicetree/bindings/usb/cypress,hx3.yaml  | 24 +++++------
+>  .../devicetree/bindings/usb/dwc2.yaml         |  4 +-
+>  .../devicetree/bindings/usb/fcs,fsa4480.yaml  | 20 +++++-----
+>  .../bindings/usb/intel,keembay-dwc3.yaml      | 30 +++++++-------
+>  .../devicetree/bindings/usb/ite,it5205.yaml   | 18 ++++-----
+>  .../bindings/usb/maxim,max3420-udc.yaml       | 28 ++++++-------
 
-The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
-
-  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.14-arm64-dt
-
-for you to fetch changes up to b615fbd70fce8582d92b3bdbbf3c9b80cadcfb55:
-
-  arm64: tegra: Fix Tegra234 PCIe interrupt-map (2025-01-10 18:47:01 +0100)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-arm64: tegra: Device tree fixes for v6.14-rc1
-
-These patches fix up an issue with the DMA support on one of the SPI
-controllers, as well as properly identify the SCE fabric and disable
-it to prevent accessing registers that may not be accessible to the
-CPU. Finally, the GIC's #address-cells property is set to 0 to fix a
-problem in the PCIe interrupt-map property.
-
-----------------------------------------------------------------
-Akhil R (1):
-      arm64: tegra: Fix DMA ID for SPI2
-
-Brad Griffis (1):
-      arm64: tegra: Fix Tegra234 PCIe interrupt-map
-
-Sumit Gupta (2):
-      arm64: tegra: Fix typo in Tegra234 dce-fabric compatible
-      arm64: tegra: Disable Tegra234 sce-fabric node
-
- arch/arm64/boot/dts/nvidia/tegra234.dtsi | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
