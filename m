@@ -1,113 +1,200 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCCF16DEA0
-	for <linux-tegra@vger.kernel.org>; Tue, 14 Jan 2025 20:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27051459FD;
+	Tue, 14 Jan 2025 20:42:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736887004; cv=none; b=fe4WlFvD2cnXMMYQbJ2UNgY0LJmGCpipZfKLm27uJRp4OFWyh9vDjhMOhCMM71MBUJEccgT0cAj0bOkFgMjahDCdtj8kyJsko4abFfTrltiqaQm1khuRRkP1VORwpZb80qHOg8afHp10cceEIbMq7hp/PNveKjk1ZAmTCXVNAoE=
+	t=1736887322; cv=none; b=PgcFn4sbymovRGJIeVEDVpiu9a/XYgQfmYnGu5X4POQNtyCIlUK/gO+1SuryEuZiSNCKKJBCRs3zktQhfikOUdlxo1sMhQZ1oZCthfvAl/lPeoIMl6ohV7JYHTcAaki9n2aepBCY7jqf6p5fLO6fz9z39EuQpu2nErBuQjoecV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736887004; c=relaxed/simple;
-	bh=5LlDYnhDQy/CTVyf15fqH+zL86j9XCfqYHnb4U/2x0E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NmzavpY+s7HsXHpxQDZHu/7/QSWRFk2NTUM91Y2aLMYxtnCBhUCZmzdJZMnKLaPYuCmtBHXwpvC9hjgV2OOugfkqfx/d8Xv78duKL1OtZwQy5zlkDUNcQKR1cOkxq3kqh2DHbVM/4k+Zw+wzLkDt2atSbqgyiFkNL8+B6N75rAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bnKCYWYN; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1736887322; c=relaxed/simple;
+	bh=cv3jA4lBt73juQxv0ekC6L4lkRU8HB1MI/gw7T+FRhc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OOZ2yso/gf/57N+e/U76xVGk/C1NfTNLnVr7/r9yUjCdgu2G/lBG0dBQEnZzTjpQ4SagwbA5PN+PPkoebGzPCeU5f/sQ7X49J6pvWV7stGrGaLsAqu3RHSKEeb1o3xQlnPXxKjwE6g0sywvX2GD4YBTIGrN7JlI4kbwDNADk9go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name; spf=pass smtp.mailfrom=coelacanthus.name; dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b=Teqv9Aqn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tf2j1Nh0; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coelacanthus.name
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bnKCYWYN"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385db79aafbso496508f8f.1
-        for <linux-tegra@vger.kernel.org>; Tue, 14 Jan 2025 12:36:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1736887001; x=1737491801; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=S+lsixf07wBww2d6F+mQkaeTl25Y76AXbSXm7yKhxjQ=;
-        b=bnKCYWYNA6UeDYeNjNKnFoesfheZaz7SjYdm32BghGt02tZRySBas1qQNe+jhZRiKG
-         HQ7aeAo44DKNbh0fd7pWvWq9vk2DOaTtWDeiEXbtdGTOLRXiczGYptBbgDCWig5mSPhq
-         1AUyUU7R7v8UVqmnILXdvjGZmvHdI3jLivx4gFhwfqr0SM2WzjTfs+MMcXlS8UW/XAFh
-         agUL1XZwsK9JYrYh7mrydB7ndjEIcHKd8/DN5cbTtESeqs6ufxDQTX/8HpMhp4++4/xS
-         ZlIrb11rkbRkE+FjTYaRSILBtZAbUwQZ04NXG/rq9PmOhlqzYZ3CKQEgs3MPCZy0Bojl
-         kS4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736887001; x=1737491801;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S+lsixf07wBww2d6F+mQkaeTl25Y76AXbSXm7yKhxjQ=;
-        b=peqbrLUKQiKUfA8wpmpINhl5OKQBTbNeLFFPk4tSGisvdr+Jio+4UWCIUsk2JrQOPf
-         t9NS0VEdMgJ2dAFjWmIO+YH41C+yAlvME33anU5DbLTrECb5iGQM4/u2ISPzsCxBtRHU
-         NHkyrlhHgoZaw24HvEVLzuovIRlBtDBMRdCa/BC9mpLJPs9adMBAT1caXh41rAcV28R4
-         G9okIoJmGG6MR0BMGH6gmlsha0uMj1ksoBPsnVVdG3QZiU1Sk0JbPUawyiO2YiGJmJJL
-         Gh9i2UjKSurhOrIPAAiqL0Q87Oq9Ut4SoZFU3OayO+ArUAoll8osFr0nbFJiVONQBd34
-         FSQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKSY61+lSpX/dODFVCnHCfU3X9wdeG+IEZ7Zuf5xP0hhBJraUepqOz+qiPAxHa0GlwHx1rldQE8EZ4eA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxobUW2PbxsL2PPvJunnVLvvGrbT+7pf3f6ZoFAvLIRRCChoE8A
-	K+Ot4is79RiVQLdaV3HIIhVfIgHRTiztAWFVK+TiWDWE3A47v79Q1Pd0fqQjKU8=
-X-Gm-Gg: ASbGncuT+VZXmcjXwOSBllGf06knW23S31+BmljsSqqImLKb/5Q2/gU95fyR3kGwKgr
-	hfQZqGsHBEOGtn0+SV9Be5+W9ujiupAFNyY2adPnwPYaYNzyYk232HGG2vsMPW1rHImUPVN2pTC
-	30MEghzOr5wO7fkSxUjp25cRp0oNCRiG0KGMZFSiMIavypuuf6T3lM6d2jiDh19iKPN8jfvjwh+
-	TmwRFTFEenAoeYcdalHXmKHj55xTFkjIv9LxkNuLizCgVWVDRouqSItfV+Y7pzMT+CJo1o=
-X-Google-Smtp-Source: AGHT+IG05k7ldjwYGdQ0daGvcc4Y7On2+HYBKjfdpsnn0s+T+xqpKhe4RXJNnRJVKJglKIkdA59Y9g==
-X-Received: by 2002:a5d:5f86:0:b0:385:dd10:213f with SMTP id ffacd0b85a97d-38a8730ce34mr9913253f8f.9.1736887001180;
-        Tue, 14 Jan 2025 12:36:41 -0800 (PST)
-Received: from krzk-bin.. ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e3834fbsm15614287f8f.26.2025.01.14.12.36.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 12:36:40 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] soc: tegra: Use str_enable_disable-like helpers
-Date: Tue, 14 Jan 2025 21:36:38 +0100
-Message-ID: <20250114203638.1013670-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b="Teqv9Aqn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tf2j1Nh0"
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id EB5D911400D1;
+	Tue, 14 Jan 2025 15:41:58 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Tue, 14 Jan 2025 15:41:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	coelacanthus.name; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:from:from:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm3;
+	 t=1736887318; x=1736973718; bh=x6wdS63I7iHxelb/E+SvOq6HbYS9Fkar
+	ZVemmOHTtbY=; b=Teqv9AqnoHU2b/ZfHDmcu3QdSaoJxH8ugHPqnbyxIMBShcwv
+	Lf2GEsXZukuS9aUclO3QhWHoKvIzbcij/syxWl/4aQI0ZhpNHWXobLO5hcW5ShK9
+	rVBWetAzpiHUUjUJoJuYWIMiTL/WY3l7LkgmZiTge+glzhlm89d/ygR/afLsnG7u
+	SZIkx818drjhQOczxXPZRNjaunM5awjv2mwbxXjwBZp1CKFSF19tv6oHQnPmFRnu
+	g4kWaBM0wy4tq7jyIY29KeVOLG8JPH5Nbz99b10I8yYvmhF7D62o6orTByR1ScZS
+	Tba54HlxHnD+bqVmKjgr+OYMELe8rlbc+aTwVw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1736887318; x=1736973718; bh=x6wdS63I7iHxelb/E+SvOq6HbYS9
+	FkarZVemmOHTtbY=; b=tf2j1Nh0libscBgGxLeSHwVa4wSGqR3zyUOhelkXgYpn
+	AM/zuLgmrSrQKhQ38X5yQz6/NXCTaKSFf/BuclcebU4us1a42zc4VSJ10ag2JF7r
+	WK4YtF36eJyQH04oHPWkB4LfhhKOAjcYkEcjEzH9JT1iOszYi/b0/NeJOzDMZQKN
+	EID4mYT2SW0ku4m6Lh/BwUGrjjiVI/wVFG7HR0aFaFcI4yLF83nTFooAAR+NO5yQ
+	Gb7cX4mos/IHAOxzB13/ODi2QQdtsI5Fu5vYj3I4Gm39OIlXFxeXg6meYqJji4gB
+	jPLwrgkICd/ju68HrS4i3QsyNIbniILAm3X+178SXg==
+X-ME-Sender: <xms:E8yGZ_j7IlxLrfXjd34wKzUYtithnOt_MYecT_MfeaIN8unmzo8mGw>
+    <xme:E8yGZ8A03Elwj1quJsVtJYfR5hfs2eGd9spsr6mQ-ThDUbt6u4ha53OL_ia3e4A_Q
+    EeXdfl2WFx4ISUa8zk>
+X-ME-Received: <xmr:E8yGZ_FNh2JRLuE24yEj99RqS_R_D3jlCBAeIeuGiksqaYVTBoV7_lO4HBEwFw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudehiedgudefkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeen
+    ucfhrhhomhepvegvlhgvshhtvgcunfhiuhcuoehufihusegtohgvlhgrtggrnhhthhhush
+    drnhgrmhgvqeenucggtffrrghtthgvrhhnpeefffevkeegffejheejfeefudehffdvleef
+    gfelkeehgffgueejffektefhgeefvdenucffohhmrghinheprhgvughhrghtrdgtohhmpd
+    hgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgep
+    tdenucfrrghrrghmpehmrghilhhfrhhomhepuhifuhestghovghlrggtrghnthhhuhhsrd
+    hnrghmvgdpnhgspghrtghpthhtohepfeejpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehglhgruhgsihhtiiesphhhhihsihhkrdhfuhdqsggvrhhlihhnrdguvgdprhgtph
+    htthhopehufihusegtohgvlhgrtggrnhhthhhushdrnhgrmhgvpdhrtghpthhtohepjhho
+    nhgrthhhrghnhhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepfhhlohhrihgrnhdrfh
+    grihhnvghllhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehhvghinhhrihgt
+    hhdrshgthhhutghhrghrughtsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtohepth
+    honhihsegrthhomhhiuggvrdgtohhmpdhrtghpthhtoheplhhinhhugidqrhhishgtvhes
+    lhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehtrhgvughinhhgse
+    hnvhhiughirgdrtghomhdprhgtphhtthhopegrnhhuphessghrrghinhhfrghulhhtrdho
+    rhhg
+X-ME-Proxy: <xmx:FMyGZ8QhsqC4rulaQQ1Aa6jDtki7bsIRyEly7GnmFj6CQ-R_rWz4IA>
+    <xmx:FMyGZ8w8IstiWH5mJUgk1U5Us_CS5tr7yDg3mKW6kv7Y9UACQv1G4g>
+    <xmx:FMyGZy7HKbVf8qSEvl6NERCLJ3Bssdr-SNDbRcGHhdOJ3l3ZsGr1nQ>
+    <xmx:FMyGZxy0wqD_ZKbT-P7jdqFXDV_l1yDJHtzdX6nsQ-qsxCyoCU4yvw>
+    <xmx:FsyGZ2n2BgBlb2k_ztDznT66FATWySyZ7bhJ-RRz7vOyUskQ5qYN7RJL>
+Feedback-ID: i95c648bc:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 Jan 2025 15:41:54 -0500 (EST)
+From: Celeste Liu <uwu@coelacanthus.name>
+Subject: [PATCH v4 0/4] defconfig: drop RT_GROUP_SCHED=y
+Date: Wed, 15 Jan 2025 04:41:19 +0800
+Message-Id: <20250115-fix-riscv-rt_group_sched-v4-0-607606fe73a5@coelacanthus.name>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO/LhmcC/33OTWrDMBAF4KsErTtBksc/6arQTe8QSlCksSWIr
+ TByRELw3Suni2TTbgYezPt4d5GIAyXxvrkLphxSiFMJ+LYR1ptpIAiuZKGlRtnoFvpwBQ7JZuD
+ 5MHC8nA/JenLgNEmFR8LOGVHqZ6by+6D33yX3HEeYPZN5gnUllVI7bLc1lovQwWekk7Fmmv0lf
+ dH1YxhNOG1tHFfThzRHvj3WZr3Kv06nq7+HZQ0SCN3RkMa+JfVirsNy9YR2Sv4DVQXCrqG2ptp
+ Q416hZVl+ALc/HAZNAQAA
+X-Change-ID: 20240627-fix-riscv-rt_group_sched-d2e014be48da
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Guo Ren <guoren@kernel.org>, Anup Patel <anup@brainfault.org>, 
+ Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, 
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ Russell King <linux@armlinux.org.uk>, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+ Tony Lindgren <tony@atomide.com>, Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, 
+ Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+ Roger Quadros <rogerq@kernel.org>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+ linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>, 
+ Celeste Liu <uwu@coelacanthus.name>, Xi Ruoyao <xry111@xry111.site>, 
+ Stefan Wahren <wahrenst@gmx.net>, Thierry Reding <treding@nvidia.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2984; i=uwu@coelacanthus.name;
+ h=from:subject:message-id; bh=cv3jA4lBt73juQxv0ekC6L4lkRU8HB1MI/gw7T+FRhc=;
+ b=owJ4nJvAy8zAJeafov85RWVtBeNptSSG9LYzrF3Z/pe2qQhcyZn/MCV2WlTgnZb9bI6XGWaqv
+ NWMu1li9KSjlIVBjItBVkyRJa+E5SfnpbPdezu2d8HMYWUCGcLAxSkAE2mMYPhnf5ezRCRmNU9M
+ 8yb9HuNZh25tn7bKI/6ll/Gjnh18LKWmjAwHNHVXXoyo5D/R+kHNU/Jo6GH+5VxvjMNnC54TvJi
+ 4v5EdAFPWRmA=
+X-Developer-Key: i=uwu@coelacanthus.name; a=openpgp;
+ fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
 
-Replace ternary (condition ? "enable" : "disable") syntax with helpers
-from string_choices.h because:
-1. Simple function call with one argument is easier to read.  Ternary
-   operator has three arguments and with wrapping might lead to quite
-   long code.
-2. Is slightly shorter thus also easier to read.
-3. It brings uniformity in the text - same string.
-4. Allows deduping by the linker, which results in a smaller binary
-   file.
+For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
+needs an RT budget assigned, otherwise the processes in it will not be able to
+get RT at all. The problem with RT group scheduling is that it requires the
+budget assigned but there's no way we could assign a default budget, since the
+values to assign are both upper and lower time limits, are absolute, and need to
+be sum up to < 1 for each individal cgroup. That means we cannot really come up
+with values that would work by default in the general case.[1]
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
+can only be enabled when all RT processes are in the root cgroup. But it will
+lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
+
+Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
+support it.[2]
+
+[1]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
+[2]: https://github.com/systemd/systemd/issues/13781#issuecomment-549164383
+
 ---
- drivers/soc/tegra/pmc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Changes in v4:
+- Update Acked-by
+- Link to v3: https://lore.kernel.org/r/20240910-fix-riscv-rt_group_sched-v3-0-486e75e5ae6d@gmail.com
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index a08c377933c5..51b9d852bb6a 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -47,6 +47,7 @@
- #include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-+#include <linux/string_choices.h>
- #include <linux/syscore_ops.h>
- 
- #include <soc/tegra/common.h>
-@@ -1181,7 +1182,7 @@ static int powergate_show(struct seq_file *s, void *data)
- 			continue;
- 
- 		seq_printf(s, " %9s %7s\n", pmc->soc->powergates[i],
--			   status ? "yes" : "no");
-+			   str_yes_no(status));
- 	}
- 
- 	return 0;
+Changes in v3:
+- Remove Fixes: tag because of it's not suitable.
+- Link to v2: https://lore.kernel.org/r/20240823-fix-riscv-rt_group_sched-v2-0-e4dbae24f7e1@gmail.com
+
+Changes in v2:
+* Remove MIPS and PowerPC patch because of merged.
+* Link to v1: https://lore.kernel.org/lkml/20240530111947.549474-8-CoelacanthusHex@gmail.com/T
+
+Celeste Liu (6):
+  riscv: defconfig: drop RT_GROUP_SCHED=y
+  loongarch: defconfig: drop RT_GROUP_SCHED=y
+  sh: defconfig: drop RT_GROUP_SCHED=y from sdk7786/urquell
+  arm: defconfig: drop RT_GROUP_SCHED=y from bcm2855/tegra/omap2plus
+
+ arch/arm/configs/bcm2835_defconfig         | 1 -
+ arch/arm/configs/omap2plus_defconfig       | 1 -
+ arch/arm/configs/tegra_defconfig           | 1 -
+ arch/loongarch/configs/loongson3_defconfig | 1 -
+ arch/riscv/configs/defconfig               | 1 -
+ arch/sh/configs/sdk7786_defconfig          | 1 -
+ arch/sh/configs/urquell_defconfig          | 1 -
+ 7 files changed, 7 deletions(-)
+
+--
+2.45.1
+
+---
+Celeste Liu (4):
+      riscv: defconfig: drop RT_GROUP_SCHED=y
+      loongarch: defconfig: drop RT_GROUP_SCHED=y
+      sh: defconfig: drop RT_GROUP_SCHED=y from sdk7786/urquell
+      arm: defconfig: drop RT_GROUP_SCHED=y from bcm2835/tegra/omap2plus
+
+ arch/arm/configs/bcm2835_defconfig         | 1 -
+ arch/arm/configs/omap2plus_defconfig       | 1 -
+ arch/arm/configs/tegra_defconfig           | 1 -
+ arch/loongarch/configs/loongson3_defconfig | 1 -
+ arch/riscv/configs/defconfig               | 1 -
+ arch/sh/configs/sdk7786_defconfig          | 1 -
+ arch/sh/configs/urquell_defconfig          | 1 -
+ 7 files changed, 7 deletions(-)
+---
+base-commit: 0e287d31b62bb53ad81d5e59778384a40f8b6f56
+change-id: 20240627-fix-riscv-rt_group_sched-d2e014be48da
+
+Best regards,
 -- 
-2.43.0
+Celeste Liu <uwu@coelacanthus.name>
 
