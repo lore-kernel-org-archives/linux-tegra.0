@@ -1,155 +1,153 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB7E382
-	for <linux-tegra@vger.kernel.org>; Tue, 14 Jan 2025 14:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142F344360;
+	Tue, 14 Jan 2025 14:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736863348; cv=none; b=Za9VBq+smvJxoyK3soLG/+f5rfL6jgLKkVjmZwzyaopQtE2ZkesecMBrMK/T4VmnpKkYdbB8fqrqPPoCVywDHK2VvTpqofAJI6vWa8STApVe7g6iC9CUD78vSkSz0klr24aoYictmpSpc/tv3WluA2IGw8xsWmZOgAPHij7gvFM=
+	t=1736863448; cv=none; b=os26OuudcsRVpYDvtDCMwbmIyaM1l96QDPyyrPrNXnOlRWpmhYOZpDRy/jxE0oZnYdWe+3kaPi43aHE8ujpKMNuSfFuulJHqtyDl0JApcpJd1QKvpP05pJJe65Oqw1ngF/8Kjp/b8YCFSQBONoZPdx4OcQ49+37JQcpQgqN2esY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736863348; c=relaxed/simple;
-	bh=Wwaqhu3BS83hIwdm2jCNfJB9XVk8B4R5hwS28BYn3kU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HLxndfWb/16mZCK1SQn8UA0chunfgL4HcjjhrhM3nwOnVuxzltNm17HRV80ZWgLvfxfR0bU+Icro9ungr+GFWQlbxxlaUJOhuUHet35tWbzYYvOvdR5cnNb/D83KdkNDk55ZXw1Qm4HXNn3BO2qJCzslH4xiko8JJOqYBRJwQ7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L2/8TLzA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1736863448; c=relaxed/simple;
+	bh=jBGGjiAjYD2JOnPDqBA/PIwuCRksQV5KpdLlTR77h4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GI3Oz4Bwbf+pG38l4DVQPJ+pkfSvu9QS3DtEiyoQurNWlO8mzo5X+4KVPAdPPCTwOE1/h83Ylq+EpDNXuzfhCvWlhDUV/uqvwj4OPB/GDlQHZH5Txq+prclG4TkrssT1HoQpIxaIrTSQ7Fv+6kwO9IZ/ZyoLVuiEM/Q+VJDPi5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VUmMPz/T; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L2/8TLzA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736863345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XZ2stY1d0j5tFV9hzbqgrrllt/9ieviJhnDGzEJo1Rw=;
-	b=L2/8TLzA6VqLsYOKgHCPBtf7Jykmtr5LTHusyTgK0xMzpddzFx2EFXyP1lFUnCQkzGxmFr
-	MR8T0+yCu9cPuxnc5uGfrbpfDIgXkxMjXcarFoxdQeC7cQAlJ9pLWeBPRo3oQcA+pQi162
-	JMGICt9t8krNb4F1Wrc8K5qFRIaQ4Yg=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-UFA7r7jSOJ64T__Rj3I9xw-1; Tue, 14 Jan 2025 09:02:23 -0500
-X-MC-Unique: UFA7r7jSOJ64T__Rj3I9xw-1
-X-Mimecast-MFC-AGG-ID: UFA7r7jSOJ64T__Rj3I9xw
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-436723db6c4so37833165e9.3
-        for <linux-tegra@vger.kernel.org>; Tue, 14 Jan 2025 06:02:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736863342; x=1737468142;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XZ2stY1d0j5tFV9hzbqgrrllt/9ieviJhnDGzEJo1Rw=;
-        b=nYv/ikd///aryfW9jHOOulQEt4lsHT4obgk9UlNqjfW4ynmDse0LYh1pT3K54bVr6F
-         Qoxval2QWo97hFhWgaeWGh59Su7N8ek0iCovkmUtID9WFlUW7UzZXUqLZ3GLoDl9uzj4
-         4AQOu0icHbQJ3B8Ja7TsOIr6FRvsp8HoZFQBEmcO12CggZgqCiUJ3J3sVgzTSUZ3l4uF
-         lBw3cXR3M9f0+KbG29bUe4WrmLHIsAwzslHSUqE6yBELbv1GYID9PjxIamCZCZ3puWDE
-         bGziccyBTYJBHiIn3G5nvxFWHQVUMeGlGHXdR45TmR41rqPjWZ0aiyR2b5emcCMAZ6Vj
-         97rA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDfId4SoG2LGzCMCIG/v4GV5oWrkcD92B0ZCaONk2ybdaq2asA4cWBBCDWcTjnHNnTabU1YxFgnBoRVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYzTIe9NgMOPGXjoqEh0Prhg2InzbFXtFo/Y2O1bQ1+T5vc4w5
-	6q38YQFITBNxySlWiDF9P8Zldc4YJ7sX4a1sg2p2rQDGH4p0m1vHPfuQBLI6L8ZEl8Gfl/XaSKa
-	K/WRgLb3ow34AtcqRUmSqxeu+LvybBlj7OuWEuWlwq9WYjKM+55FMTmmLnwBh
-X-Gm-Gg: ASbGnct+eLWD1xqRqJSx1/+DYhdd7Xlpuia4njI4j5Mpm4/XRybXH6MeIhPbp0sX57o
-	WCcrtaSWdYY5POxCXb60IFFsM9GjzOM+yMgjb7KFDTeNSNpvm5g8N3XC3/lFlXAO6LiwBdQeejL
-	0413CFKtdfScLwfTz9zPBmmALpEnxoOTbAQQvZ8J17VsuTQLDVPiheSRmakkz3cQhUlwuDfoiqq
-	DGQ/ljwY+FGsJYNGoL9lYAftcHro0ANnzXSvOnvhyB0ZGrHvGHT9qEslQKtWU/fGezHxX1cr0pp
-	ikgi0iG1mQ==
-X-Received: by 2002:a05:600c:3152:b0:434:f9e1:5cf8 with SMTP id 5b1f17b1804b1-436e271d3a2mr232038265e9.31.1736863342140;
-        Tue, 14 Jan 2025 06:02:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF6SqwrvvdK2Vn+2bLJW+Tuv+cb4ueUK0LuboeZtC3lmAh3e45fHn6HxH0eXGu0MJCRfRdu2g==
-X-Received: by 2002:a05:600c:3152:b0:434:f9e1:5cf8 with SMTP id 5b1f17b1804b1-436e271d3a2mr232037215e9.31.1736863341385;
-        Tue, 14 Jan 2025 06:02:21 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.92.51])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9e37d46sm175300585e9.25.2025.01.14.06.02.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 06:02:20 -0800 (PST)
-Date: Tue, 14 Jan 2025 15:02:17 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, Waiman Long <longman@redhat.com>,
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-Message-ID: <Z4ZuaeGssJ-9RQA2@jlelli-thinkpadt14gen4.remote.csb>
-References: <20241114142810.794657-1-juri.lelli@redhat.com>
- <ZzYhyOQh3OAsrPo9@jlelli-thinkpadt14gen4.remote.csb>
- <Zzc1DfPhbvqDDIJR@jlelli-thinkpadt14gen4.remote.csb>
- <ba51a43f-796d-4b79-808a-b8185905638a@nvidia.com>
- <Z4FAhF5Nvx2N_Zu6@jlelli-thinkpadt14gen4.remote.csb>
- <5d7e5c02-00ee-4891-a8cf-09abe3e089e1@nvidia.com>
- <Z4TdofljoDdyq9Vb@jlelli-thinkpadt14gen4.remote.csb>
- <e9f527c0-4530-42ad-8cc9-cb04aa3d94b7@nvidia.com>
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VUmMPz/T"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 31F9BD21;
+	Tue, 14 Jan 2025 15:03:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1736863387;
+	bh=jBGGjiAjYD2JOnPDqBA/PIwuCRksQV5KpdLlTR77h4U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VUmMPz/TKALedLGdjaIw/OWv6jEHfDPMa8xt4ELJX5I8SbEMhIAPnQ7LMaQ/pxC0d
+	 yctQn2J+9Ex5RD5bSpotgdbZkvyy/groI/l05HXur2OCULVTYWkAA3caibRw5fOAxJ
+	 rPavCX5KpuNQwwNzE4HXGXO6RbtvlTGy6+Ypgri4=
+Message-ID: <c303dcb4-fee9-45d0-aaff-0f5f1fef07f7@ideasonboard.com>
+Date: Tue, 14 Jan 2025 16:04:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9f527c0-4530-42ad-8cc9-cb04aa3d94b7@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/25] drm/omapdrm: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+References: <20250109150310.219442-1-tzimmermann@suse.de>
+ <20250109150310.219442-16-tzimmermann@suse.de>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250109150310.219442-16-tzimmermann@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 14/01/25 13:52, Jon Hunter wrote:
-> 
-> On 13/01/2025 09:32, Juri Lelli wrote:
-> > On 10/01/25 18:40, Jon Hunter wrote:
-> > 
-> > ...
-> > 
-> > > With the above I see the following ...
-> > > 
-> > > [   53.919672] dl_bw_manage: cpu=5 cap=3072 fair_server_bw=52428 total_bw=209712 dl_bw_cpus=4
-> > > [   53.930608] dl_bw_manage: cpu=4 cap=2048 fair_server_bw=52428 total_bw=157284 dl_bw_cpus=3
-> > > [   53.941601] dl_bw_manage: cpu=3 cap=1024 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=2
-> > 
-> > So far so good.
-> > 
-> > > [   53.952186] dl_bw_manage: cpu=2 cap=1024 fair_server_bw=52428 total_bw=576708 dl_bw_cpus=2
-> > 
-> > But, this above doesn't sound right.
-> > 
-> > > [   53.962938] dl_bw_manage: cpu=1 cap=0 fair_server_bw=52428 total_bw=576708 dl_bw_cpus=1
-> > > [   53.971068] Error taking CPU1 down: -16
-> > > [   53.974912] Non-boot CPUs are not disabled
-> > 
-> > What is the topology of your board?
-> > 
-> > Are you using any cpuset configuration for partitioning CPUs?
-> 
-> 
-> I just noticed that by default we do boot this board with 'isolcpus=1-2'. I
-> see that this is a deprecated cmdline argument now and I must admit I don't
-> know the history of this for this specific board. It is quite old now.
-> 
-> Thierry, I am curious if you have this set for Tegra186 or not? Looks like
-> our BSP (r35 based) sets this by default.
-> 
-> I did try removing this and that does appear to fix it.
+Hi,
 
-OK, good.
+On 09/01/2025 16:57, Thomas Zimmermann wrote:
+> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
+> buffer size. Align the pitch to a multiple of 8.
+> 
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> ---
+>   drivers/gpu/drm/omapdrm/omap_gem.c | 15 +++++++--------
+>   1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/omapdrm/omap_gem.c b/drivers/gpu/drm/omapdrm/omap_gem.c
+> index b9c67e4ca360..b8413a2dcdeb 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_gem.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_gem.c
+> @@ -11,6 +11,7 @@
+>   #include <linux/pfn_t.h>
+>   #include <linux/vmalloc.h>
+>   
+> +#include <drm/drm_dumb_buffers.h>
+>   #include <drm/drm_prime.h>
+>   #include <drm/drm_vma_manager.h>
+>   
+> @@ -583,15 +584,13 @@ static int omap_gem_object_mmap(struct drm_gem_object *obj, struct vm_area_struc
+>   int omap_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>   		struct drm_mode_create_dumb *args)
+>   {
+> -	union omap_gem_size gsize;
+> -
+> -	args->pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
+> -
+> -	args->size = PAGE_ALIGN(args->pitch * args->height);
+> +	union omap_gem_size gsize = { };
+> +	int ret;
+>   
+> -	gsize = (union omap_gem_size){
+> -		.bytes = args->size,
+> -	};
+> +	ret = drm_mode_size_dumb(dev, args, SZ_8, 0);
+> +	if (ret)
+> +		return ret;
+> +	gsize.bytes = args->size;
+>   
+>   	return omap_gem_new_handle(dev, file, gsize,
+>   			OMAP_BO_SCANOUT | OMAP_BO_WC, &args->handle);
 
-> Juri, let me know your thoughts.
+Tested on dra76 evm.
 
-Thanks for the additional info. I guess I could now try to repro using
-isolcpus at boot on systems I have access to (to possibly understand
-what the underlying problem is).
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-Best,
-Juri
+  Tomi
 
