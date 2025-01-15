@@ -1,183 +1,179 @@
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2050.outbound.protection.outlook.com [40.107.96.50])
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B61F70808;
-	Wed, 15 Jan 2025 14:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736950450; cv=fail; b=ARyCyBdPTkkriL5SOpiZKqSkJmZEr33lfi7bjoD4WSVTXMkNKf++QTDdrn0KDOsMv8myYoJ7J5dJMaKcJkXlx0pO95ULkcBB2NylHVleP5d8f58RPLsOVL+ehIc/zotC1Fi9bSipTHjVL865/e+9k2owiyIB5HiZ9b/Vc1LeYFc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736950450; c=relaxed/simple;
-	bh=79Ps8HsSEVbfmu7XYWZsstj7/nQ8dNrz85W3z5u41jM=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=TYjCz3vWntLrOaejMgQ7osIrc5j+3PHlA0WqWoZlIbjJ3ZtHkuFA7Fnj/9XF8n+V+a52tJkAKTiMMSBMEnd3cD9SdscFY69GfJRTIJYP8A9pMXoVAolv5zPDYj/xVqUxr/918XooOD5SeQGrivh7vVgx13Tw/sln0TmXpjyipVI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SZLyvQDs; arc=fail smtp.client-ip=40.107.96.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFEB24A7D1;
+	Wed, 15 Jan 2025 14:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1736950827; cv=none; b=kZePhSkoOl49yfg1VkjdZLgIG8Sqm1JremTTu+E9WyQBOKH0JGiuiGEyciW99pDLDF7Knyufx0cU1d9LMbhhka4BkcwY+kOEsebqRvXmwsd/HCjEVLGjRoERN1Icq/LWBahTfMrNR7tkHamSPW9gwlrLTn3+MMqmtSb01PZyAe4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1736950827; c=relaxed/simple;
+	bh=7qiyO+wfBrEyDk/AoXCj+nFogFQS7ryzGCzAqhdWb38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UeNtpLuAkR/JS9iyVdr40FfggXZiWHN2deMYPxC50nYfQOirr8NjqfqebYAvDaFR7P5K1SHdjaP11YB9TrN0YFYu2NaWCW0QPxbW+VKV5MYhVLlPbj2WJ1WOlZ1m23dctOyl/9WZwLQFPfiCvT0cbDxyEuZ8WW6hWCdbb3S+Cbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FNEnqs8p; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SZLyvQDs"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z1lzoFjH+P8ke10pP9uuH76wRpY22K20ct2ZKQ/LKXkHlTr2y+GWcT7AbtZkXD8dTMwCRjalfH2TvMHtq2CuKj2her1KvH3RIJWuM/BpyRlRZ8BAL3fVpOjk7e9eWM/yZ7QoKyZNoM4jqGWiS0PAmQDKbB8KpD/HzOH15Yexv/k+zs4vZJ0sy0RtSUeMepY0jlCldxce+fLJbSatcdHaFjQ6eaozUvTz2YObJ/HSJbgkZsIGvo1S+aR17JQVzV+f09hwQmrTcCF9SKSOy5w1FcfnQGDQMmxDHMEplvZWMaxSlKNnqOWYIyBWhJ3vfMO9DVaAmutkZGIWuBzYoaAh6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rvXaf7RKCcj30Bs/wMZGGupcBRwKZWsoqTY3Sy3IFlc=;
- b=mmTPD23zzVDc6i5GivhSfHoO1zfmsnQcFx42lm3UI7qxkry3nniJ3LBvj0kbawG4ITZzOAHr4nczYVRebIqtB2TihUrjfC5PgJVr2nonpTd0M7ts6OMtZe5rinL1P1s8+MObN+7IKhhK0C+8rXRvyiyWtm7d90ld2A+VqssoGE8V2Bgw//qmUzAlJKknczWjxADq53r6+GwH0smjHOAOudCxvG9imgT0Efd5PbUXkw/oW81HvsunN69/1dtnUzSFGDktNnx207m4cHlKg8wpulRw1NxqzK54G/CDIgs1NyV2bnY1u7LWTlG/6fK+mD6xbwxYGe9cymiUDVggoKxF6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rvXaf7RKCcj30Bs/wMZGGupcBRwKZWsoqTY3Sy3IFlc=;
- b=SZLyvQDs4t1mye1oiJiOzQ5yD9O0NdHguKcSkFt6lTM3f6czN0v1IA/dNmtgZqepyeAw0NnhpPUWQzOocsIN0pKB2EPCzEK6XAFbXhN/iR5xL29kLq3NesfMgPTOqj7ESuZ4NvS2xse5ZSgKyARagsE/1BjnQzFem312o6lbcrPt9378ek/qLtRabedTqWWTvXQ2typbPQaYjIA5J5+IljwbFfNKxIWCXdSA6qScd42bUFgpTDTgkKRoK8+T4ydIQsVeE6JkvlPQdqYy1Z0xzziLnAhfNchuJeKStM56b/+wODa+914eg16xrvyY59sXaI6qVVqBMFEPaVUaYD8pNg==
-Received: from PH8PR15CA0008.namprd15.prod.outlook.com (2603:10b6:510:2d2::27)
- by IA1PR12MB6161.namprd12.prod.outlook.com (2603:10b6:208:3eb::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.13; Wed, 15 Jan
- 2025 14:14:04 +0000
-Received: from CY4PEPF0000EE34.namprd05.prod.outlook.com
- (2603:10b6:510:2d2:cafe::1f) by PH8PR15CA0008.outlook.office365.com
- (2603:10b6:510:2d2::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8356.14 via Frontend Transport; Wed,
- 15 Jan 2025 14:14:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CY4PEPF0000EE34.mail.protection.outlook.com (10.167.242.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8356.11 via Frontend Transport; Wed, 15 Jan 2025 14:14:03 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 15 Jan
- 2025 06:13:47 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 15 Jan
- 2025 06:13:47 -0800
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Wed, 15 Jan 2025 06:13:46 -0800
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.12 000/189] 6.12.10-rc1 review
-In-Reply-To: <20250115103606.357764746@linuxfoundation.org>
-References: <20250115103606.357764746@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FNEnqs8p"
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 15D16526;
+	Wed, 15 Jan 2025 15:19:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1736950766;
+	bh=7qiyO+wfBrEyDk/AoXCj+nFogFQS7ryzGCzAqhdWb38=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FNEnqs8pIxmzmXTlNZ5aoLcVlgUYO4x7tjA2Y+EpzVZYLe4hGm7k1eU8rP1U9FwYK
+	 RPx9CD1DBq9txbEDtdRq2erdoqbqnEGp7lnsvla38haKmYWSWUKigfw6gmUqEA/ioo
+	 GsAPA1Hr9rXNsFdn2I8B1WzDBAcDit9zy8TZ7Wrw=
+Message-ID: <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
+Date: Wed, 15 Jan 2025 16:20:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <91938c95-7d33-44c6-8a6c-935e9e1bd6d4@rnnvmail202.nvidia.com>
-Date: Wed, 15 Jan 2025 06:13:46 -0800
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE34:EE_|IA1PR12MB6161:EE_
-X-MS-Office365-Filtering-Correlation-Id: ecf6e05a-6fca-4ad3-c482-08dd356edd7c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cEk3enBpRG5qVUR0UTc1SGM4NnQ1ZjViVi9UdGhGR1hDN0xtc3E1YmdQVkxv?=
- =?utf-8?B?Z1JPREtrUGFBQkloNnp5OEFndlRGWlRLNkNOcGJ6UkxORDZ1eDRBSURzMmhC?=
- =?utf-8?B?WFBiV1ZaWkxBR1drbUhlOGNUQXdOTlZIbVZhL1hoTE1lRitob1hjMVU5UU91?=
- =?utf-8?B?SWtEdWZKN3daaStQeVBZT0FVWlROdXNNRGFGMTVDSDF2QzFwWEc1RWRJdlFu?=
- =?utf-8?B?RXZlckRRMjVwVlVJWThFZ1hvN3NWb3RPcS92bGp4NDZNczNCLytPTzd1RUJH?=
- =?utf-8?B?blQxdXk2Q3J3QTF3cjZBWlpjRzdTNTdQc0ZucWNwUGE5RXNMeWFJWHF4ek5B?=
- =?utf-8?B?T0dQUGxna2pSRC92MjZ4MGdPcExWVjVlUHk5WlRiQnhZT3lwZGVGOHlUMDdZ?=
- =?utf-8?B?VlkzRTZjNkVTR2RubjZlb0g3YkpOeEExZElIOG53YXRSSWJuY0pFRWJrblMx?=
- =?utf-8?B?Y2xYdmppVHdqNEhFOFMyL2Q5UzlsaTdrSVRoZUwrei9EZitRd2xJMWlwTE1H?=
- =?utf-8?B?THVyMmV0aFk4UjZRSVRMcHNHMGFWUEFzNDEzdy9DMWl6S3hZWDVmcllheWkz?=
- =?utf-8?B?TzVFTHlQeWhqYUozQzRzQlA0bktjZEpYblNKdldaUWhtNFBSMmhQTVVnL1VZ?=
- =?utf-8?B?ZldlVGp2TTZpMTZzTXBXSXV3eVhkM1hNYWM5Y0s4NjBtODhtOXAvTzlVbFdl?=
- =?utf-8?B?NGdPZ1NPcDEvVFh0QVE2U3RiWFdsa1pFaDdRa1VlQ1IxM1lody9ONDdJMkxu?=
- =?utf-8?B?ajVicmJFcWhKejVhYVEvVThoS3lDRUlBbnZYZVJDS3RidlpXcjduMmJuQXV3?=
- =?utf-8?B?OUtIRXdpRE5vdFdJUG45T0ZoR3c3RjJWTVlKZTBtRldxVzF3L1FMMVk4YnF3?=
- =?utf-8?B?QmtyUGdWVktHcGZ0RmtDbVhwVkUwOHZhQ1Fjd2x2ajVrdXc1Y0V6WWdhYW4x?=
- =?utf-8?B?bGpPa3JUZzh2ZTJ3aFhtT2U4QmVuQTV0NXpsMVM5M1FTQTRGMDdnQnZMT2pB?=
- =?utf-8?B?bXVOdzdzSXpTcUtrTlFoUkJaekVZdW1lVVBMQzBvRytWQ0dvYUpDeG9xMVJz?=
- =?utf-8?B?cktDRjdoR0hLYkgyYk9iS1poMlVsRlFRbFU0Qk5haWRIMW5GQ2xsaHk3aGhw?=
- =?utf-8?B?TnpBWnRGT3BTalRVOTdEOEF2ZldsVUJ1eU50bzJjMGZFMFFsT0pwZHBiM3Ni?=
- =?utf-8?B?c0dST0RuTCtId1VNUDl0YlVucDNXUSt2R2JQVUhTUEtRelMxZm5UK2Iyam5r?=
- =?utf-8?B?Y0JTaHAxOHhNbElTSlo1anVUM25mdWN1dDgyZHlvWVJockh5aGxKT0lJOS9r?=
- =?utf-8?B?UGs2RUVhL0tZNTgraUpGL1ZJNmU3SUhTZUswckdGTDRCLzh1WDJyRzZnMUtR?=
- =?utf-8?B?Z3hoSHhkVk02Z0xRbUE2Y21iVEpOaTFUWGpOOURpOHVSSGhSLzhwcHRHNThw?=
- =?utf-8?B?UnVIQkczNU9MT1UxSWdHSTNqR0VjbUZLak8vUURIUi8rbW1LSUQvZ3JHNFpp?=
- =?utf-8?B?YS81UU5KeE9BbUNEZVlLK3NISjh3SWhsY1V3d3Vud1g1YnFSN2NZNk5EZjNj?=
- =?utf-8?B?VmpuRCtkRk1sMlFyb2tWWWhuQmF2cEdFWXg5dEE5NGNhS2NRVi91U1EvODAw?=
- =?utf-8?B?N09OZ0d6VXRnTDE4SDk3ZGorR1E3TXQrZlh1QVptU2N0Ymp0NGQrYjZGQVox?=
- =?utf-8?B?NXRZZzg3Z0JnTHErYnJUeCtNZFhiOUNNZ3BCOHhsYnNvaUZqUEc4R0FQczFv?=
- =?utf-8?B?b2NERnlRcDFWZncvK2wxRmF4N0pWNjB5UjFiVEVHTm15NVN6TFF3ZlQ2YUt4?=
- =?utf-8?B?dnVPR3BjdVZvS2lvaEYzVFpaaU9iZ0RxV0dWZERUNTJpbjI5S2c4cGxlMERW?=
- =?utf-8?B?RXVaMGhVaXRVd1hSN2U4V3hXUFMrRnRpb2E5M1FmalRpS0NadjU4K2p2b1FS?=
- =?utf-8?B?YXg1ZlBzS3JVaHBUYzNZcDVvODYyMVlOeTAzeWJMZ0RBcE5UcE5wWS9keEdo?=
- =?utf-8?Q?OeUjheFJS2RcTMQNxBteO8eEE8S4Mw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2025 14:14:03.4000
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ecf6e05a-6fca-4ad3-c482-08dd356edd7c
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE34.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6161
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Andy Yan <andyshrk@163.com>
+References: <20250109150310.219442-1-tzimmermann@suse.de>
+ <20250109150310.219442-26-tzimmermann@suse.de>
+ <cdbe483d-0895-47aa-8c83-1c28220f4a02@ideasonboard.com>
+ <bc97b92e-7f8a-4b92-af8a-20fa165ead55@suse.de>
+ <f3ba05c7-6e49-4641-a3f9-ba418ebdb7c3@ideasonboard.com>
+ <c6735280-7c32-4319-8ca9-a7305d8117c3@suse.de>
+ <d67adb03-5cd0-4ac9-af58-cf4446dacee3@ideasonboard.com>
+ <0ea6be58-0e04-4172-87cd-064a3e4a43bc@suse.de>
+ <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com>
+ <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 15 Jan 2025 11:34:56 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.12.10 release.
-> There are 189 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 15/01/2025 15:45, Thomas Zimmermann wrote:
+> Hi
 > 
-> Responses should be made by Fri, 17 Jan 2025 10:34:58 +0000.
-> Anything received after that time might be too late.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.10-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> and the diffstat can be found below.
+> Am 15.01.25 um 14:33 schrieb Tomi Valkeinen:
+> [...]
+>>> Yeah, there are constrains in the scanline and buffer alignments and 
+>>> orientation. And if we say that bpp==12 means NV12, it will be a 
+>>> problem for all other cases where bpp==12 makes sense.
+>>
+>> I feel I still don't quite understand. Can't we define and document 
+>> CREATE_DUMB like this:
+>>
+>> If (bpp < 8 || is_power_of_two(bpp))
+>>     bpp means bitsperpixel
+>>     pitch is args->width * args->bpp / 8, aligned up to driver- 
+>> specific-align
+>> else
+>>     bpp is a legacy parameter, and we deal with it case by case.
+>>     list the cases and what they mean
+>>
+>> And describe that when allocating subsampled buffers, the caller must 
+>> adjust the width and height accordingly. And that the bpp and width 
+>> can also refer to pixel groups.
+>>
+>> Or if the currently existing code prevents the above for 16 and 32 
+>> bpps, how about defining that any non-RGB or not-simple buffer has to 
+>> be allocated with bpp=8, and the userspace has to align the pitch 
+>> correctly according to the format and platform's hw restrictions?
 > 
-> thanks,
+> What if a hardware requires certain per-format alignments? Or requires 
+> certain alignments for each plane? Or only supports tile modes? Or has 
+> strict limits on the maximum buffer size?
 > 
-> greg k-h
+> It is not possible to encode all this in a simple 32-bit value. So user- 
+> space code has to be aware of all this and tweak bpp-based allocation to 
+> make it work. Obviously you can use the current UAPI for your use case. 
+> It's just not optimal or future proof.
 
-All tests passing for Tegra ...
+No disagreement there, we need CREATE_DUMB2.
 
-Test results for stable-v6.12:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+My point is that we have the current UAPI, and we have userspace using 
+it, but we don't have clear rules what the ioctl does with specific 
+parameters, and we don't document how it has to be used.
 
-Linux version:	6.12.10-rc1-gd056ad259f16
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
+Perhaps the situation is bad, and all we can really say is that 
+CREATE_DUMB only works for use with simple RGB formats, and the behavior 
+for all other formats is platform specific. But I think even that would 
+be valuable in the UAPI docs.
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
+Thinking about this, I wonder if this change is good for omapdrm or 
+xilinx (probably other platforms too that support non-simple non-RGB 
+formats via dumb buffers): without this patch, in both drivers, the 
+pitch calculations just take the bpp as bit-per-pixels, align it up, and 
+that's it.
 
-Jon
+With this patch we end up using drm_driver_color_mode_format(), and 
+aligning buffers according to RGB formats figured out via heuristics. It 
+does happen to work, for the formats I tested, but it sounds like 
+something that might easily not work, as it's doing adjustments based on 
+wrong format.
+
+Should we have another version of drm_mode_size_dumb() which just 
+calculates using the bpp, without the drm_driver_color_mode_format() 
+path? Or does the drm_driver_color_mode_format() path provide some value 
+for the drivers that do not currently do anything similar?
+
+  Tomi
+
