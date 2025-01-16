@@ -1,194 +1,223 @@
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2068.outbound.protection.outlook.com [40.107.237.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C5B1AAA10;
-	Thu, 16 Jan 2025 06:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737009971; cv=fail; b=lmouc6vdMHIhBvMMWwZVIRGL7RLlI6VvRhZ50q/vtQ6zdjqAHDHi+LnAIRgKfRxwgHtZcwapQT2i9HL9kUEb2DXkNKLtQU1e06TgrU5gtbYMNvSizSEuORh2bwd1DL0D+qBf9R2FAgvD++vWv8s24okrPX5L3axZJwSDcU2Gi2M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737009971; c=relaxed/simple;
-	bh=IfNpVg0m7YroXm4TsUJjaWw8CNn9yaYMJALC5ibXPms=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NrbflBVNgOX357RlGNGB6sK+V64Sih6XSc6nTotoHcKyp7zjifOuSHCDaJd6HpVSzQtPdCbmHwU/nqWSLWvYk0/yu8v/eZ249HawrKKL356nm9/jsQZ2+o9l9FFrLsfjGkntOevtACltAhPQ+UMub0f/NI7+++rXrr5zfAs3kVg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LTxPOW6z; arc=fail smtp.client-ip=40.107.237.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8511DE4C7;
+	Thu, 16 Jan 2025 08:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737014971; cv=none; b=j7iC1MAHRyKNjzHLBdjOT3yKbk7lLmMkIzAXJNdE42bC9uCHuf0mHpydiCyPrGQ3O+IUmPToTgJyiWiahEyfxbrPWPQpC274H5eXGLK/laxen0rudXl5KyZIamtN60eGypmmR6Nmxe9aczgHeeOP3vsuKsdPGm3bb+8LLQza0gM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737014971; c=relaxed/simple;
+	bh=qutSka+w/xEAf59QNYINpaHGaAu6p4W5IyAck9GACX0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oQQCyKEv52wEkyv1WGkhFL+IT13ijbVqH1Kb+EkP1XPPk9fjboCOqW3Rv9+qDQwiHo/GrQkjZRTM2PbqKT1vPJR4sttChUUw0As4rtokxZdwrMZqubuZ15qTHxkpKZ/CwyoYeMh8FCl9I8q3TbD1JMq245jW26mlvkgap0nGuSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=guL7z/7g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QhcTxwz2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=guL7z/7g; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QhcTxwz2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LTxPOW6z"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oLbzSVfu4UGJ0rzkQ2GB1RbRSQFwdIiGPZW7GqoXYvjJ9C+y0i30/jWKGV1ey40Ker44OjmmagNfGWC6nbX6A+Cam/dpbj940BXObRkGSu62XpKP8PLGo534zypitc4OZsD0JB7eDM5HkRcqP0UX8YSm1/bPEAQ/imLe1HuuVaTklwSyqCQH8dBBVuLcnmJMZxYYuZuRw+JHcN5G2vn2ixMclQfg7C0WtJL6+cIZixUdi+mXn2iEm0IEG58i6GTyp76mgHSJWzTpbPoYJROjDoEZcwYNCRo0pc7rw8tTpRKW26q9X9vNXUr2U12ZITmzvqoMVbPzdC+X+rZPNn7MCw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XyOk8uptiOWQrwzJCJepJFE9ycZHXMuoZzTcmbc2Y2g=;
- b=JnvejceUnUiJemkJliy3raZpsZhOxkIcla7IN+SD5QVtmydqnZGI/0WC8k50xYh7VnTVXtM2sbudJEVLv9t29ui2SWU4NaAuIpA8RlxRoAcguWGxUBLKgTS46xXMnukpZXzd/bMMSrta09oeMCqUWczt8C+PZQ1JhyvjsiNJoGTIsUH/CEzwgGE3moWw3lgKCX0uzE7faFZMXLY313YZXftuoD5T9FrnUGbNUT0q8meWdFoqCJ+6h1XqPUCEdpvbiGvJSUrn2h4qFhXGkvkQcACJ1WdPMmmDSZdTJkPjw0dofDzphnYR0dZNUbaRkOLwjMudmTW+mycTfZedvidX0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XyOk8uptiOWQrwzJCJepJFE9ycZHXMuoZzTcmbc2Y2g=;
- b=LTxPOW6zJS6zRL4U+q2ZudRg0u0oaw8fPIX33WA8JH624lGifs6Ni/3RYST87zjdFq+1XJ6zCNU4OkC5xC8HDPybzSaHi7gKyow+u1RcVEnCIC5RUeZJSUctIv8TVEomAIKesySCaLJIxbP62Cw6KpSo6kC9QK+oQecEuSbOdZwylux5UoD45C/gC+89D5AUsKzo+YoshkX52uuX0LMZZp3ay/GVd3VmpGobLTXOyRbWFuRHQkJsdnlyQVBIw2CD4NYvm3wfShLIcxsWtdRbI03LW/GHMLxt2jqSh4ILEl7zxuXnk14X3gpWg4+GN1iZwJJHHccClov54IIqP5z7fA==
-Received: from CH0PR04CA0059.namprd04.prod.outlook.com (2603:10b6:610:77::34)
- by DS7PR12MB5863.namprd12.prod.outlook.com (2603:10b6:8:7a::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.13; Thu, 16 Jan
- 2025 06:45:58 +0000
-Received: from CH2PEPF00000147.namprd02.prod.outlook.com
- (2603:10b6:610:77:cafe::a8) by CH0PR04CA0059.outlook.office365.com
- (2603:10b6:610:77::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8356.14 via Frontend Transport; Thu,
- 16 Jan 2025 06:45:57 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CH2PEPF00000147.mail.protection.outlook.com (10.167.244.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8356.11 via Frontend Transport; Thu, 16 Jan 2025 06:45:57 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 15 Jan
- 2025 22:45:46 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 15 Jan
- 2025 22:45:46 -0800
-Received: from henryl-vm.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 15 Jan 2025 22:45:44 -0800
-From: Henry Lin <henryl@nvidia.com>
-To: JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, "Kishon Vijay
- Abraham I" <kishon@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, Henry Lin <henryl@nvidia.com>
-CC: <linux-phy@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, BH Hsieh <bhsieh@nvidia.com>,
-	<stable@vger.kernel.org>
-Subject: [PATCH] phy: tegra: xusb: reset VBUS & ID OVERRIDE
-Date: Thu, 16 Jan 2025 14:44:25 +0800
-Message-ID: <20250116064425.53551-1-henryl@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="guL7z/7g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QhcTxwz2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="guL7z/7g";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QhcTxwz2"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AF679211D2;
+	Thu, 16 Jan 2025 08:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1737014961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xcxRML23Nx7RFNokQB2O02aJnU9nWJlVXpAUoW6/DUc=;
+	b=guL7z/7g3EcabgvnEePbbCuZQv7xD8Nwr9UitmLW0HdQwyFjV2SSCQgHXiJw8V8gnCT1K2
+	PWtPwlEQencxyOkZzRFYa02U7TT7cyGEKiFsdqSu4Fbz6rTKbBaplstwxqYo2gR84TVDZg
+	EoU34+EHEiZW91gRDl+FfWH9McSLkvo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1737014961;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xcxRML23Nx7RFNokQB2O02aJnU9nWJlVXpAUoW6/DUc=;
+	b=QhcTxwz2tTYoCTzfudp0U1RC65EHxbTx4mcJuk8sOgRjhjNV0lXRty1p1dQWnKcwWKutz2
+	DR+iY8oRFsTbZEBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1737014961; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xcxRML23Nx7RFNokQB2O02aJnU9nWJlVXpAUoW6/DUc=;
+	b=guL7z/7g3EcabgvnEePbbCuZQv7xD8Nwr9UitmLW0HdQwyFjV2SSCQgHXiJw8V8gnCT1K2
+	PWtPwlEQencxyOkZzRFYa02U7TT7cyGEKiFsdqSu4Fbz6rTKbBaplstwxqYo2gR84TVDZg
+	EoU34+EHEiZW91gRDl+FfWH9McSLkvo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1737014961;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xcxRML23Nx7RFNokQB2O02aJnU9nWJlVXpAUoW6/DUc=;
+	b=QhcTxwz2tTYoCTzfudp0U1RC65EHxbTx4mcJuk8sOgRjhjNV0lXRty1p1dQWnKcwWKutz2
+	DR+iY8oRFsTbZEBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3205713A57;
+	Thu, 16 Jan 2025 08:09:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3VTFCrG+iGf+BAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 16 Jan 2025 08:09:21 +0000
+Message-ID: <a2bbeb47-2569-4ee0-9265-92bab139bdc6@suse.de>
+Date: Thu, 16 Jan 2025 09:09:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with
+ drm_mode_size_dumb()
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Andy Yan <andyshrk@163.com>
+References: <20250109150310.219442-1-tzimmermann@suse.de>
+ <20250109150310.219442-26-tzimmermann@suse.de>
+ <cdbe483d-0895-47aa-8c83-1c28220f4a02@ideasonboard.com>
+ <bc97b92e-7f8a-4b92-af8a-20fa165ead55@suse.de>
+ <f3ba05c7-6e49-4641-a3f9-ba418ebdb7c3@ideasonboard.com>
+ <c6735280-7c32-4319-8ca9-a7305d8117c3@suse.de>
+ <d67adb03-5cd0-4ac9-af58-cf4446dacee3@ideasonboard.com>
+ <0ea6be58-0e04-4172-87cd-064a3e4a43bc@suse.de>
+ <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com>
+ <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
+ <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000147:EE_|DS7PR12MB5863:EE_
-X-MS-Office365-Filtering-Correlation-Id: d956eb09-fab4-4946-9338-08dd35f96edb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pvr3uk/dZoHWWMANpbrXr+lHojch6h0Kaj119DsQW6qsEjnh/XKx4sDb9Uuc?=
- =?us-ascii?Q?oeMBCbThZd6aJCZwGHwaiK6auW0n2+Pl07r+5PFE0vcyKZ8+PnO32igayYBN?=
- =?us-ascii?Q?Mv9N4k5DNp6zdU9YKTKtDvKfe5mj+H5MFqCSLqrMONBPozhxnFWXmW8xdMw2?=
- =?us-ascii?Q?LwKhbke9OHK9JGa6bVv5+gAUxc7plwt+Gnf/mQrAgVLXTmWM6K+TIgMrXjiS?=
- =?us-ascii?Q?WFIuFlruZFwK0Happpdc9bU2XYe0xry0v/JLsFQNi+PNh2MKYiIS2RybALsc?=
- =?us-ascii?Q?0JqQyGMwnz+rxHdBYgE+cqqkmp7hVQ2CJVfVzosGyTr43xyQWR1YlC/kyY6T?=
- =?us-ascii?Q?uU7YfloUXtY6VRWF9ywyZH2aDVaHKrRstn/kmrI6at4tD/RS0UPOWBZfi2bp?=
- =?us-ascii?Q?sASv2OTS/NthqkWI5RUhrwtCfHNqYWubTtLJCx6RQjAzWYoP/D5ChFncHLow?=
- =?us-ascii?Q?NgajonMB61CrtK01gaE8/dc6oqikDWf1rYWpH+5wcO+4bDXcwIWfZ/a+MthX?=
- =?us-ascii?Q?dYOsgGJxdKNf4LGidaB1g9GE3df6TCQCqfAWx75Vy9MZW9WP9SoNmLxT39VW?=
- =?us-ascii?Q?YgOJHyQlI6Iu5IT7Lepm3frpO5saRVZTYLQn5SGj8fGaPTLGHNSx5Z3XuSFW?=
- =?us-ascii?Q?6kh/hCKZQjwcNpMFbbD2ohoMyVNUTU47PmOEnNCiqQNM0VSiRguK6ycZr4cx?=
- =?us-ascii?Q?r5NejD/OP7Lu037z2DHLPB3lhA0fZP8WO/tPIwareM+ARhd6vWMGG9Enwr2c?=
- =?us-ascii?Q?FM2OUPyXYvOk3/fvSMhhFCHf0d9LqI3uUbG/D8EO9J6IMImZZc4Hdp2F4pCI?=
- =?us-ascii?Q?SBjljcDP+jPRrZkKQeQvwSstw6XcwVXonKml7pjcCtlUV6iaQyjlYIRR92lA?=
- =?us-ascii?Q?lGs7/O1g8jDdR6Gk6zczff6LRVlnx3tmrjgGb3z0lszEs0Utbw6xaBvfTzjo?=
- =?us-ascii?Q?X1ZpT5HDpdXQNxKKenjZk0NoDaBVHxgeO7C/ilOfPqobt10a4Wluv+f1H3tX?=
- =?us-ascii?Q?Qhi2vugWcTBV9dXR5tM1Vhx7/SKq9VhCJzZ2ZlfI+aa7Awtktii5QBpAsjxf?=
- =?us-ascii?Q?AA1Ug3oiXzwrGbA6JzRLFB8dj6tdJpVG1fsaAAyF+cIPBPZYV8jDgGUALTeG?=
- =?us-ascii?Q?i7oSJDld7bsdYbpImHOjrUrfgjKRMcAHD5Bm3YmXlfjd1dYqIJi1/DKql9LA?=
- =?us-ascii?Q?ICYKmN0xTd1khJXUIPkPP48mUSz9Jlvr/q63RyGxNHEIX5OAblxDVFVScoJ2?=
- =?us-ascii?Q?ETOzeQb3AVmbHhw9zXKj2gyDn1zuXFodTd6qnSM5ianm+oG5EbN3Fd35nX8d?=
- =?us-ascii?Q?WanLkCe3kft0c6KW3sqpHsnREMEy4L+kWmVIZHkB3Zi1oJei4k80wbcnIENZ?=
- =?us-ascii?Q?nHE911SKkE68Vgoa2N6pJrBS1NPPxn15MvLf/4C5RD+5DO4Qc5oFyvRXFXZV?=
- =?us-ascii?Q?mGJvLI2oGPlREs9SsTf+5PjzDnu19pzW3trKQcOSRiMv3yZJYO/rxpiYG5UD?=
- =?us-ascii?Q?lVsLP5mT9FLzjIQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jan 2025 06:45:57.7772
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d956eb09-fab4-4946-9338-08dd35f96edb
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000147.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5863
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[ideasonboard.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.freedesktop.org,lists.infradead.org,vger.kernel.org,lists.linux.dev,lists.xenproject.org,ideasonboard.com,163.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-From: BH Hsieh <bhsieh@nvidia.com>
+Hi
 
-Observed VBUS_OVERRIDE & ID_OVERRIDE might be programmed
-with unexpected value prior to XUSB PADCTL driver, this
-could also occur in virtualization scenario.
 
-For example, UEFI firmware programs ID_OVERRIDE=GROUNDED to set
-a type-c port to host mode and keeps the value to kernel.
-If the type-c port is connected a usb host, below errors can be
-observed right after USB host mode driver gets probed. The errors
-would keep until usb role class driver detects the type-c port
-as device mode and notifies usb device mode driver to set both
-ID_OVERRIDE and VBUS_OVERRIDE to correct value by XUSB PADCTL
-driver.
+Am 15.01.25 um 15:20 schrieb Tomi Valkeinen:
+[...]
+>
+> My point is that we have the current UAPI, and we have userspace using 
+> it, but we don't have clear rules what the ioctl does with specific 
+> parameters, and we don't document how it has to be used.
+>
+> Perhaps the situation is bad, and all we can really say is that 
+> CREATE_DUMB only works for use with simple RGB formats, and the 
+> behavior for all other formats is platform specific. But I think even 
+> that would be valuable in the UAPI docs.
 
-[  173.765814] usb usb3-port2: Cannot enable. Maybe the USB cable is bad?
-[  173.765837] usb usb3-port2: config error
+To be honest, I would not want to specify behavior for anything but the 
+linear RGB formats. If anything, I'd take Daniel's reply mail for 
+documentation as-is. Anyone stretching the UAPI beyond RGB is on their own.
 
-Taking virtualization into account, asserting XUSB PADCTL
-reset would break XUSB functions used by other guest OS,
-hence only reset VBUS & ID OVERRIDE of the port in
-utmi_phy_init.
+>
+> Thinking about this, I wonder if this change is good for omapdrm or 
+> xilinx (probably other platforms too that support non-simple non-RGB 
+> formats via dumb buffers): without this patch, in both drivers, the 
+> pitch calculations just take the bpp as bit-per-pixels, align it up, 
+> and that's it.
+>
+> With this patch we end up using drm_driver_color_mode_format(), and 
+> aligning buffers according to RGB formats figured out via heuristics. 
+> It does happen to work, for the formats I tested, but it sounds like 
+> something that might easily not work, as it's doing adjustments based 
+> on wrong format.
+>
+> Should we have another version of drm_mode_size_dumb() which just 
+> calculates using the bpp, without the drm_driver_color_mode_format() 
+> path? Or does the drm_driver_color_mode_format() path provide some 
+> value for the drivers that do not currently do anything similar?
 
-Fixes: bbf711682cd5 ("phy: tegra: xusb: Add Tegra186 support")
-Cc: stable@vger.kernel.org
-Signed-off-by: BH Hsieh <bhsieh@nvidia.com>
-Signed-off-by: Henry Lin <henryl@nvidia.com>
----
- drivers/phy/tegra/xusb-tegra186.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+With the RGB-only rule, using drm_driver_color_mode_format() makes 
+sense. It aligns dumb buffers and video=, provides error checking, and 
+overall harmonizes code. The fallback is only required because of the 
+existing odd cases that already bend the UAPI's rules.
 
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index 0f60d5d1c167..34c6d424a3e8 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -928,6 +928,7 @@ static int tegra186_utmi_phy_init(struct phy *phy)
- 	unsigned int index = lane->index;
- 	struct device *dev = padctl->dev;
- 	int err;
-+	u32 reg;
- 
- 	port = tegra_xusb_find_usb2_port(padctl, index);
- 	if (!port) {
-@@ -935,6 +936,13 @@ static int tegra186_utmi_phy_init(struct phy *phy)
- 		return -ENODEV;
- 	}
- 
-+	/* reset VBUS&ID OVERRIDE */
-+	reg = padctl_readl(padctl, USB2_VBUS_ID);
-+	reg &= ~VBUS_OVERRIDE;
-+	reg &= ~ID_OVERRIDE(~0);
-+	reg |= ID_OVERRIDE_FLOATING;
-+	padctl_writel(padctl, reg, USB2_VBUS_ID);
-+
- 	if (port->supply && port->mode == USB_DR_MODE_HOST) {
- 		err = regulator_enable(port->supply);
- 		if (err) {
+Best regards
+Thomas
+
+>
+>  Tomi
+>
+
 -- 
-2.25.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
