@@ -1,231 +1,165 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2080.outbound.protection.outlook.com [40.107.92.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE9225A62E;
-	Fri, 17 Jan 2025 14:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737125677; cv=fail; b=DfLWfILHhsegzd4/E5GdDZu5HORtkIVQxJ99czc1YEsXnx5/9RNHBtw7WbCL9mZc9+e0OijYBDoAe2uC70+EASje57oIO9Z8NyHx7pIhMDAmvGLljO0dQbzUcMbBK5fsDQz9jXLUsqoOVyfsk28VZHfnyr5X5KEgzNcaORGFfKU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737125677; c=relaxed/simple;
-	bh=zJ2ILiIWErxyE1xkA7/uVgXIb4JL22cQzM+Q+1yjTrs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LpDIlj1tH0JdMiPDyD+afX8QNHhrltJv19QE33P4sbqW9MP89miNVeGeogQrHJ7I5EQ2fRc40Dr9x6zAbCU4PcD+6n1iENjMjqs0u4XwlLnMjeTqFul1qxeiJehQjGm1n3sX4wkYe1zbSa73hJvTk7ATUwTd2u/ttUhS6Eh9vKc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WOnKVnAX; arc=fail smtp.client-ip=40.107.92.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD9615CD78;
+	Sat, 18 Jan 2025 16:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737218006; cv=none; b=E6XQNviTZh24k3wc5ilbdp5sB/DsdiBLBR/9vwJynTR2x1czmv4gNRtzOPW8PaZ+LKcjkeTnWynCJJYxDkMUK0VxlsNJLtZfykosrTc69Uq9AjNfz2BD5YNuweTkCOmZcpgkRtN22/k39FbKWKs7itKSHkfz+7+GZbF8bSOW7/s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737218006; c=relaxed/simple;
+	bh=N4WKOAPatm/OOVk7jJmgkjomTo8rCT0Ib92cgaZHAIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJZFmuv/LBN/1JJ554TfXU/E1xHYZx4bXisempoJt2SHy4eLT3edsDt6DEUQ8yicNgKGiwG+8DM6qbwWaSy5bWvo2w527KY1dHDA7zBwF2RjwfN8hCRLvBn56pET0J3K20eN3CKc1cxVMJQO3lfz2jj0mf5v7uiNJDKsYAf0wRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMPQn0dN; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WOnKVnAX"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eHNseJua1KeStrCJlGcmPeowy4OV8xEjNz14R5k1W4tXLzl2JbW2o3VFBFhkgkZB/7/1vygzaf6liUrF0GxqvTYOHjAEtxsm4SeBiaBgzaV1+09/XJqYUFNDanxSBiYIQeAt9ODlUHH5dVjiVcfmE13NDPcg7o6l5wWoJHapSoB3FG4Qp4ThuBQVn30RqDaeUOsbsLUP/jxrmBx8ppPkhY8KIoNdFtPsb45jWtE1EoReg4gcak70xlhRhpfMus6uvrGcWgbz9EjYL9Ns+I31AbCBuyAYIPgd5VFy6tkFidIZHB8T90Vij8W07p6rJgEWvPWfmhY7NX0AnBa7c/ngjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tKNN71UaU25PwBrV7slGon/XocwsmDIXDN4WzqZMt9U=;
- b=mD4+CK5DTHi3/RYgKqRwdDKFhXGk8NsbI9a5sMvwPSacknTLSCD86YvgSshCs724EJscJnksOWg9kuaVnoIW75yjzv7lcvprdhnRsT39NoRLCZjpGXpFnYzL8G+5MySlBDnb951XI8ex/voMoYMuztlmHy5cSPIB0g/mnpTHVmuF9QfuaO+gQPLtGP6cuc25NRGv6uaS6+JUVm5/+bbMXISnQlx12TdWHENuQvWCs8Aseaws6XU24219KhIgzYn7suqmnDhuWWeJKz1MN542R/p3xPuiqza0QzzAQrnituHZuMg6fA8xv371DZNbzQ929PspyH7yixKGu8UXhIWpzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tKNN71UaU25PwBrV7slGon/XocwsmDIXDN4WzqZMt9U=;
- b=WOnKVnAX/Gfoqwj9R0TzlvNjh2h4tB1ay57lb3U8UYWLCemX+rLHXt6e8wqauK3BkfeBk5fla0eC8dQBcc7nAVy78mOvt2OeS5tOkw8iL+877Xfc93TlVnaaYGo2keM5CCIs4wY1m+aMwB+/9Z9t+VPdblb8eExrleOvJI709brkok44UBMtn2T7Mw7npaKhu6XGp8YbDeNgWWuyS5146Cf4uaRj551nSrCPn1ULMAT1czrFLISTzBVhLNpUhN3UdIGtUJEEbUF0AtKMRHArCuaKkJMIrNQkvjDjlEFSqs+G4Porrj90KqGf1NY5EpazGE4SD/XPWWN4VLqkQFbFXA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by PH7PR12MB7937.namprd12.prod.outlook.com (2603:10b6:510:270::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.13; Fri, 17 Jan
- 2025 14:54:32 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.8356.010; Fri, 17 Jan 2025
- 14:54:32 +0000
-Message-ID: <6191971f-cf5f-4303-9bc6-3444ccedccd6@nvidia.com>
-Date: Fri, 17 Jan 2025 14:54:27 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] dmaengine: tegra210-adma: check for adma max page
-To: Mohan Kumar D <mkumard@nvidia.com>, vkoul@kernel.org,
- thierry.reding@gmail.com
-Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250116162033.3922252-1-mkumard@nvidia.com>
- <20250116162033.3922252-3-mkumard@nvidia.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20250116162033.3922252-3-mkumard@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0333.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18c::14) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMPQn0dN"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2164b662090so58271295ad.1;
+        Sat, 18 Jan 2025 08:33:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737218004; x=1737822804; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w8mEEkakGykScFNyZ0WPlZb8FWyU5Ac0gzQtTbrAz/U=;
+        b=fMPQn0dNfcZPjo1e88Zia4SSJe+oef62ds8fI8k2uaTGabZED3hJxcARRxtaKckqx8
+         Z2opDC7PKPTZvoUhtErI/4yKQETyaKOCwcbqTla+VPETUw0CZCN+0jzDsns066zirP2f
+         ZoAnxh6JJc0h4/iThJBe4n/TRhBzSXD9x56zLfo/qpA26pC3S5hSV6pM6JXGxOWm300M
+         MbH1tq8nSQJeYqHeI0PBSM3W4bgRJB/nWIMP+1B3G1iMaXKutFl6E75vTpxU21H6sSip
+         MB1NMJYQSstDudee+1lnG7qZ1fhxR0O5Ii0YYUpHWT7lmRtCWnp7rjBNSiWDAcKd7Lem
+         JY5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737218004; x=1737822804;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w8mEEkakGykScFNyZ0WPlZb8FWyU5Ac0gzQtTbrAz/U=;
+        b=XRLq4e9wCHk+67lkLn2x1zttNWX3pN7b7LHydbXFhIvInsgTcR0NMyBw1MKBast/9r
+         CK6fvYU7YZFYb64lVEv/gvFnArvVoLksLHiTIE5S+y7rDi7ck9AgxWLCSqrang3HdcMM
+         gf8eEVzETd6ZeUYqR29VS8or8kq/2WB3sY/cerwVSAzxtlEFRv0oIq5ipgstJz9M+mKh
+         mKv00MpI4sIir36kvrKSdrae5rob3fepA3SHtqf27vyjcPM3/HFVmqhAP59zkszPOZ+n
+         oKVeyNZIvKr3so+ZACZEF+6FpYlWSBOyypQqHJU3wPOjpCJ5wKQdZyJtX/WOgrQpkcqy
+         pZ7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUo/Gebds/MqBAarDYiyNtVSaA42k97x16OSbcorYxvShzNPhQhJXjn0iMAcK4RG0xUmUVKAugiTcBwurS7@vger.kernel.org, AJvYcCVWgV5dq2AEBjRv1si9n6NFIhL9S/Ccxwir1I8r0T80C9u51j0IARjrZYpsN4Bc+VYa1Y3K1FmYedDnESI=@vger.kernel.org, AJvYcCWPSD3R+LOVO3Fo1QYO2f1rK9pmPbauXRVp7tYg7D/vAawIT/FW/+h88EffVihLE8iVk/QW2KhmFUw+@vger.kernel.org, AJvYcCXsjKJzMU44AXae7leXk1y0GDY43taf4cswEw5acqqWBS8rw0+q2WLsuWWze60NZhfA0P39SV1bp4e5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzvx98RKGK71KdXPrqmNBv+oKbCd3Z+t4PsHgBJZt7k+NK3U5z
+	JLQKpQYaSVBqREQz0lbbntlDInAfLPnhwjCspHpMdbg++JriXj0UoVTFVg==
+X-Gm-Gg: ASbGncuBa1pJ1fp0Nrc/WNyOYMRw3JzEX/ZANk7Qa1tThtKZHSeTQ/QcIcTyos4Aq36
+	h6L/299bSrMyRJpD5fLCh1r4uAqRvsl9sX0mjqeH2vJsMfXkHzJjAfovI45lV8k0VdQTd7xPMI1
+	9H4fmWTtvt/Z1vjb0WyL8AfEVJvSlnVVkpnx2kiEjJPkMGluZebQy3eCStl0B5aYAZhHP2eORO/
+	3fE6psm04llevKJV6Q342vZbifbgzjY8au4opKoPho4LpvFPXwr3h5t1aZPkL46r4L+1oHSTAu3
+	Nor7gCI=
+X-Google-Smtp-Source: AGHT+IHEi4wmUrSoEgk5WEe5KpbsQvX76CpDRoF3M4upcFuoYFKc+Mt2Fud5TtYe9vt9uTP+GMo04Q==
+X-Received: by 2002:a05:6a20:3d89:b0:1db:d738:f2ff with SMTP id adf61e73a8af0-1eb2144d6e7mr12815751637.2.1737218003968;
+        Sat, 18 Jan 2025 08:33:23 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72dab9b9ae0sm4040705b3a.93.2025.01.18.08.33.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Jan 2025 08:33:23 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Sat, 18 Jan 2025 08:33:17 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: Mohan Kumar D <mkumard@nvidia.com>
+Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, treding@nvidia.com,
+	jonathanh@nvidia.com, spujar@nvidia.com
+Subject: Re: [PATCH v2 RESEND 2/2] dmaengine: tegra210-adma: Support channel
+ page
+Message-ID: <77e9f23a-60e2-442c-9981-319fc650979a@roeck-us.net>
+References: <20241217074358.340180-1-mkumard@nvidia.com>
+ <20241217074358.340180-3-mkumard@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH7PR12MB7937:EE_
-X-MS-Office365-Filtering-Correlation-Id: a9b21e73-7714-4d74-5239-08dd3706d9d9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UldoMG5YUnAxYnVvb1Ryb2FkZnAzcmRVWnhkZ3BGQ1RQZXQ0RkU2dDR1VVZH?=
- =?utf-8?B?WEM1a3YzSTdCZHVUQVFTcGwzRGw3ZjB1eC9IMFZ0ejcxN2xpNjhKWXlEK1dW?=
- =?utf-8?B?K0FWOXhhN3gvdlQzbnFXYloyY0lja1hJRGEyRnNaTVZ5TzA1K3N6UUNpbnl5?=
- =?utf-8?B?TkhPQjJkWWJQQ3R1em5pNnhXdmZzNmlHNzlrckkvODFVUitaYmg2ZmJmRVNi?=
- =?utf-8?B?L1pCc0Y4ZHRBZ1Z5VmR5aTIvRUxtQTVzY1FvZTJkQWc3Z3FUYjFRVTNRTFVm?=
- =?utf-8?B?UGFMWVlpYTNRVVF2aGU3NmhocUJnLy9zbndBTFVKaDZHTnY4MmVLVzdud2I1?=
- =?utf-8?B?YVczZHZWTiszbmd1QkRTVmNLWXpvRGtVeDdNeU9qeUhMV1FOUHUyb24zR0ZC?=
- =?utf-8?B?SkRpbmxmazhOeUhYRXFidTEvK0w4a2NTOUVkRThoRDhDYk5jSTJ5UjRXNy9p?=
- =?utf-8?B?M0FBS0FuUFlpdHhpcWhoK3l0QU81ZkJnakh3WkJLSjA4U3p5cE5oMmFDUmk2?=
- =?utf-8?B?dkkyblgyWi9zWE5QZ3BzM0RyeU02WWZkMHhKOGdTRU9oWHBLYjRLU3NsZnVB?=
- =?utf-8?B?aUordXp1RXJ1c1NvZjlOSXRkSWNxdjIvcUlmajVoRTZaSmh2VE9rRHRIMStG?=
- =?utf-8?B?QlVDOFEweG9GZmR5Uy9jL2kyZWVnOHI1NTdTTjFTZndXTkdqc0RQYlhHQVND?=
- =?utf-8?B?OTN6UEFGQTZzQjBIc21ieHh0Q1ZuUXN3TTVTREJYWDZlbStSRGhpbGVHcFNa?=
- =?utf-8?B?T0lVbG53ZGFXbWZzS3RxTS9CVExrUFR2TVNQVmFROTF1VjZjUVVVL3hQM2dh?=
- =?utf-8?B?UmJaK2cxTlNubWNrOStVU2doZklTMkhuMjNPVHFxT2FLVEZXSzNqVUxhSXM0?=
- =?utf-8?B?Ly8zME4yRFhNeWFSUnNoL2l1TUxYWE13ZFpQVGIzZVBrOWV3aUhoU3lsdmpz?=
- =?utf-8?B?TEdRVFdUdGlkOVkweUFWYUM2N1NFekw5S3FvemZUM0xnK1FDNXpxbHZQWCtG?=
- =?utf-8?B?WHJXc3crejl4cmVvTzJPVTNjZXlOVTQ4Tlg2eXJNcmd2MytuYXMxQ1ovaG5h?=
- =?utf-8?B?cVMwR1ZsdDN6aXVoTjROQnU1MllBWXdqK3NySkpUQmdpcE95NVlKMXNKd1E1?=
- =?utf-8?B?ci9OK1BGU3VOM050ZzJWcWZaNENaL0hObWlTZHJmUFIvY2IrdERtZmNpR1k2?=
- =?utf-8?B?QnpZL1NXR1ZBYnBBVEdPeko2djJSbmc1QjgzV3V4UVBmNlZPMXpyYzZOZkNQ?=
- =?utf-8?B?czFGVCtnQWJ3K0dDdFp4TS81Y2FucDhac0kraGZZL2xUWkh0dnl0OEpyNlNX?=
- =?utf-8?B?Sk5CUndqSGhQWSt6Y1BObmhvRlJnWTRJd1FXbDhDUWV0UnVBT1o4K20rM3VW?=
- =?utf-8?B?NVkwdkxTQlpBRFJCd0NzSkNYUU1UeFFDSXZxaGp4RFdTdnFNanVhc09adnB1?=
- =?utf-8?B?RTJ3dDhMWFg5KzZ4bThRbXVOWUZqWHRVT2hYN2s4RTJvQi9PbmpteGY5bmc1?=
- =?utf-8?B?YXh2QzhoTkV0dVhwZzBzelA2NEJIVldScjhQZCsrdGR2LzhKVXV5eFhiYnFT?=
- =?utf-8?B?YWgvenN0VTRLSGdYTE12ckl6WFFuNEtUUnJ1Q2hKNjVObnllREVWZEd4MGpv?=
- =?utf-8?B?S3A0blQ2ZHdYWFkyWGg4SlJua2lJUGJueXFnTVlDZjRnWmYyaU9QblF1NjVK?=
- =?utf-8?B?cWZZVzliMmZIaU9NTG92cDdWQllXN3IrT0hqa3NTaitoZEw2b2tqS0hWZFl5?=
- =?utf-8?B?U1E4Tk15YTUxUVlZa0V5R1djc3dTQ1FYVE8xbm1ab1pQQTVBdnZzU3VJcUtt?=
- =?utf-8?B?UkdZUzZmeS9CN2V1RFd0bnkwczFvdlNhZkhjZSt0ak0yU0toODMxZEpXYU8w?=
- =?utf-8?Q?97G68KnYpKzcl?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bVNWV1hBeGtPaE1aWkZGTW9kY3lIQ29kQ0FzTWlvZnNVYUtueGFTd1RyNFlS?=
- =?utf-8?B?NGtqaFR4L2JtbW5neXJkOEdiQUphM2Vyay9kMm45SzlYbkRNUzNPeldkZFgw?=
- =?utf-8?B?N2Y2V3NmTzdJMFNEb3NjVWx0QWlGN3NwOUFyS2VNSHE5RDJTSkhYTVkxcGdD?=
- =?utf-8?B?b1kwZEdqK0lYQXkyTG1senBha3BCcHJpa3FOOUF0cEluYnROL3lPeEFEbGl2?=
- =?utf-8?B?a0V3Z1h0ZzZhVXM3bzFPY1dnd0h1MDIvemg1U044S0MyMlFMYzE3U0RISVB4?=
- =?utf-8?B?ek1ZdWx3RWhjQjh2ZGRIYzRrT0xRVzQ3RlNjWUZsTjVvMDhMLzFSbnR2ditP?=
- =?utf-8?B?SUZ3eFBTcHI1NmV0d09EeVh3c0Zwb3o2UUcyZmVmMDRCcUhZRjVtTDRmSTM4?=
- =?utf-8?B?YXdmVlNFNUVKRnUzeERFa3Ixc1Z0ODdYcHZsRC83aENKajZTOVIvTldWZXEx?=
- =?utf-8?B?MFlyUDNBeEtoTndvRlNNOVhWdTVtSzBQR0Q4ZFk1ODdqWVlWSGxVb1pDZUY4?=
- =?utf-8?B?WXFUUExpdmhVUDlEMkxCb2lZd1pkbGRWS2lYVkZ5QjFjUGJIaGhxMWNLbENk?=
- =?utf-8?B?aGpTZzZ4a1ZtTDZhNUE1ZFNiSnpyU2IvVGJlbGhjcXNwNnRNZitHUnJOelY2?=
- =?utf-8?B?ZHdKSnNNNGxYTTBuUzZUT3R0dlVtdnZLRlU2T3l6Y21ra0tzRTRuTnhod2Zm?=
- =?utf-8?B?Kzd5a3RsdFh4eC9sTW50UFRFakZzZzYwdDdvWG5MSUlZblhZcWxVNFNhYkg3?=
- =?utf-8?B?YTdPVUxqbEhZM2lCL3UyOCttZ01pZ0xIRngyL0M0ZkpkRFNRV1IwRWhUdnNj?=
- =?utf-8?B?VmoyK3hPdndtTlJ3aVY2dExXeUE4NEtNb0cyUVVCUVZqRDhTQWtqbWprRUVo?=
- =?utf-8?B?UTVKRkJlTFpHdDllcVJoNzdBeElDMGxhWC94c0RuT1J4SDh0QXQ2Z3lQSWZ5?=
- =?utf-8?B?bVR2aExodmlJcENOTlR3cHdtVSsyOGcybVI4YTdpZXp4SFZjYm5abGpIbGtq?=
- =?utf-8?B?TnQ5ejhiclIwcjlMOWlseGlWK3oxSUMvUGpYRkxyRmRsRmV0aFpLcXoxUmVv?=
- =?utf-8?B?NjZjeURmT1UwVGY1TzdjNkdvMkpUU3pvalJLTjdidFdKbERkS2Y0WTRmU3lV?=
- =?utf-8?B?dDdzYllqSTUwbTRuQUd5MncvNWV6ZHpNWFZVbGRUNytyc3M5UEIxOU5LS1lR?=
- =?utf-8?B?dkFZUjBScHNPOWQycXFZVmRvc3VIbGg0Yy8vZElGOHFpTFpQbW1wVTc5V1JK?=
- =?utf-8?B?Um1tRXBaWjZxU3IvbE44TE84eVozcWQxdkpQa3lkMC81OUFSUTgvdmNDUm1F?=
- =?utf-8?B?NlFZbjdtSm5xc1I3NllSQUNnekZGUStROFBYVjN2MDRUUm9UTDNabWVhWGJZ?=
- =?utf-8?B?bkNsemdESGlhbFR0K24zOE5yTW1WWWJqVjEydHZxNFZuMWlVUHE4L0U4VkR5?=
- =?utf-8?B?VFI1NDlYOU90MWs0a3dmNis2MkJ5Ky9LbFVteVByQkVIaHYvZEZJS1BxRXdo?=
- =?utf-8?B?K2FMeWk4aXlrUW82WGRTRWJvc3F5WCt2TzF6NUoySnJVUUM0WmVaTHNQd0E1?=
- =?utf-8?B?K0lYblNGb2ZGdG9QdHY1c2ZjZkNSQldLcUlpMHhyMG9FQU42Und6RVRaNVFa?=
- =?utf-8?B?YVRyQlkyZ2VZR05tM3hsNGxXSWdSNmZiWEhUdm9jUmE4YzBDOXp3bkJ0NWFr?=
- =?utf-8?B?QitKNU5VcER0ZmJBb0FxdVh4dUdtejB1NzE4Y0RsNmNGa3dnZzBGYndRWS85?=
- =?utf-8?B?VkVwaDZjZFNTOXRnVXVTVWd5RGJXRXE4RUMydWdOMXZnVUpxb09ZL29Nc3l3?=
- =?utf-8?B?YXdUZGU4ZmlGcVowUTBmaWRZTWo2eWVxNndOYTloV1h4TDNkZVdHUXZTTDdQ?=
- =?utf-8?B?NVkwNkF0TGNqZlFzTGNxME5TSzEvTWhSNC9qLzhydCt5a3h6WlpLR20xUHg3?=
- =?utf-8?B?aVJYdllRWmJNNWE0VFI2YjdVRVNwK0VSblVUNWMyMW5MRFlTZTFsSktFUjJI?=
- =?utf-8?B?dlRUUy9zMFFrS3dtUUhUWlROTWpUN2RCSkZHa1ZFTmFNak1MRUFqcWtLdHUy?=
- =?utf-8?B?S2dvbzljQlpIUFVOZ3JlMjVwMVA3VE9lZDlkcDFNaE5xazhpbWVEekljdzli?=
- =?utf-8?B?bXdKTzNVR1hIcE94Z3RONU1CZW5iYjZxTDR1ZHJwcTEyUGVNbGFQMGxoclUy?=
- =?utf-8?B?WHlSQzkxd1ZyaFdTQk1QQmV0djlzYm0rVlBJblpWMkhSTmdQcXUvdzl1Ty83?=
- =?utf-8?B?L0o2VHNYZ1lJQzhWVkRJVWhMbVNBPT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9b21e73-7714-4d74-5239-08dd3706d9d9
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Jan 2025 14:54:32.3736
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Mb9MQplj1vthKxqN2b0hX8jyGs36RO4ZmPyPg1lm8yxhGmYCwFmC0JmLSoHJy3hxaX2oye8TPR0f60BBMTrd4A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7937
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241217074358.340180-3-mkumard@nvidia.com>
 
+Hi,
 
-On 16/01/2025 16:20, Mohan Kumar D wrote:
-> Have additional check for max channel page during the probe
-> to cover if any offset overshoot happens due to wrong DT
-> configuration.
+On Tue, Dec 17, 2024 at 01:13:58PM +0530, Mohan Kumar D wrote:
+> Multiple ADMA Channel page hardware support has been
+> added from TEGRA186 and onwards.
 > 
-> Fixes: 68811c928f88 ("dmaengine: tegra210-adma: Support channel page")
-> Cc: stable@vger.kernel.org
+> - Add support in the tegra adma driver to handle selective
+>   channel page usage
+> - Make global register programming optional
+> 
 > Signed-off-by: Mohan Kumar D <mkumard@nvidia.com>
-> ---
->   drivers/dma/tegra210-adma.c | 7 ++++++-
->   1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
-> index 258220c9cb50..393e8a8a5bc1 100644
-> --- a/drivers/dma/tegra210-adma.c
-> +++ b/drivers/dma/tegra210-adma.c
-> @@ -83,7 +83,9 @@ struct tegra_adma;
->    * @nr_channels: Number of DMA channels available.
->    * @ch_fifo_size_mask: Mask for FIFO size field.
->    * @sreq_index_offset: Slave channel index offset.
-> + * @max_page: Maximum ADMA Channel Page.
->    * @has_outstanding_reqs: If DMA channel can have outstanding requests.
-> + * @set_global_pg_config: Global page programming.
->    */
->   struct tegra_adma_chip_data {
->   	unsigned int (*adma_get_burst_config)(unsigned int burst_size);
-> @@ -99,6 +101,7 @@ struct tegra_adma_chip_data {
->   	unsigned int nr_channels;
->   	unsigned int ch_fifo_size_mask;
->   	unsigned int sreq_index_offset;
-> +	unsigned int max_page;
->   	bool has_outstanding_reqs;
->   	void (*set_global_pg_config)(struct tegra_adma *tdma);
->   };
-> @@ -854,6 +857,7 @@ static const struct tegra_adma_chip_data tegra210_chip_data = {
->   	.nr_channels		= 22,
->   	.ch_fifo_size_mask	= 0xf,
->   	.sreq_index_offset	= 2,
-> +	.max_page		= 0,
->   	.has_outstanding_reqs	= false,
->   	.set_global_pg_config	= NULL,
->   };
-> @@ -871,6 +875,7 @@ static const struct tegra_adma_chip_data tegra186_chip_data = {
->   	.nr_channels		= 32,
->   	.ch_fifo_size_mask	= 0x1f,
->   	.sreq_index_offset	= 4,
-> +	.max_page		= 4,
->   	.has_outstanding_reqs	= true,
->   	.set_global_pg_config	= tegra186_adma_global_page_config,
->   };
-> @@ -922,7 +927,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
->   			page_offset = lower_32_bits(res_page->start) -
->   						lower_32_bits(res_base->start);
->   			page_no = page_offset / cdata->ch_base_offset;
-> -			if (page_no == 0)
-> +			if (page_no == 0 || page_no > cdata->max_page)
->   				return -EINVAL;
->   
->   			tdma->ch_page_no = page_no - 1;
 
+This patch triggers a build failure when trying to build i386:all{yes,mod}config.
 
-Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+x86_64-linux-ld: drivers/dma/tegra210-adma.o: in function `tegra_adma_probe':
+tegra210-adma.c:(.text+0x1322): undefined reference to `__udivdi3'
 
-Thanks!
-Jon
+Bisect log is attached for reference.
 
--- 
-nvpublic
+Problem is
 
+> +		if (res_base) {
+> +			page_no = (res_page->start - res_base->start) / cdata->ch_base_offset;
+
+->start is phys_addr_t which can be a 64-bit pointer on 32-bit systems,
+making this a 64-bit divide operation.
+
+Bisect log and a possible fix are attached for reference. I am not sure
+though if the suggested fix is correct/complete since page_no might
+overflow on such systems. It should possibly be a phys_addr_t, but that
+is unsigned so the subsequent negative check would not work.
+
+Guenter
+
+---
+# bad: [0907e7fb35756464aa34c35d6abb02998418164b] Add linux-next specific files for 20250117
+# good: [5bc55a333a2f7316b58edc7573e8e893f7acb532] Linux 6.13-rc7
+git bisect start 'HEAD' 'v6.13-rc7'
+# good: [195cedf4deacf84167c32b866ceac1cf4a16df15] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect good 195cedf4deacf84167c32b866ceac1cf4a16df15
+# good: [01c19ecf34e1713365346f932011facd7d2d2bc6] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
+git bisect good 01c19ecf34e1713365346f932011facd7d2d2bc6
+# good: [7fac8eef32d7735a3b01d08f2c98d5e6eaf254da] Merge branch 'driver-core-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+git bisect good 7fac8eef32d7735a3b01d08f2c98d5e6eaf254da
+# bad: [24c55da105e9a641fa77c8d8efbf92472a18bf4e] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git
+git bisect bad 24c55da105e9a641fa77c8d8efbf92472a18bf4e
+# good: [73656a6ab6d428102eb5aaa9599b5fcba4a2501f] intel_th: core: fix kernel-doc warnings
+git bisect good 73656a6ab6d428102eb5aaa9599b5fcba4a2501f
+# good: [b995a104a0aa1d6b90ea4ba3110e657ae9e83213] Merge branch 'tty-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
+git bisect good b995a104a0aa1d6b90ea4ba3110e657ae9e83213
+# good: [002c855847f718e12879808404dc8375207012dd] Merge branch 'next' of git://github.com/awilliam/linux-vfio.git
+git bisect good 002c855847f718e12879808404dc8375207012dd
+# bad: [54e09c8e2d3b0b7d603a64368fa49fe2a8031dd1] dt-bindings: dma: st-stm32-dmamux: Add description for dma-cell values
+git bisect bad 54e09c8e2d3b0b7d603a64368fa49fe2a8031dd1
+# good: [9d880452fb3edc4645e28264381ce35606fb1b19] dmaengine: amd: qdma: make read-only arrays h2c_types and c2h_types static const
+git bisect good 9d880452fb3edc4645e28264381ce35606fb1b19
+# good: [775363772f5e72b984a883e22d510fec5357477a] dt-bindings: dma: ti: k3-bcdma: Add J722S CSI BCDMA
+git bisect good 775363772f5e72b984a883e22d510fec5357477a
+# bad: [36d8cbd661c48f4c18eeb414146ec68a71fd644f] Merge branch 'fixes' into next
+git bisect bad 36d8cbd661c48f4c18eeb414146ec68a71fd644f
+# good: [762b37fc6ae2af0c7ddf36556fe7427575e9c759] dt-bindings: dma: Support channel page to nvidia,tegra210-adma
+git bisect good 762b37fc6ae2af0c7ddf36556fe7427575e9c759
+# bad: [9602a843cb3a16df8930eb9b046aa7aeb769521b] dmaengine: bcm2835-dma: Prevent suspend if DMA channel is busy
+git bisect bad 9602a843cb3a16df8930eb9b046aa7aeb769521b
+# bad: [68811c928f88828f188656dd3c9c184eeec2ce86] dmaengine: tegra210-adma: Support channel page
+git bisect bad 68811c928f88828f188656dd3c9c184eeec2ce86
+# first bad commit: [68811c928f88828f188656dd3c9c184eeec2ce86] dmaengine: tegra210-adma: Support channel page
+
+---
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 6896da8ac7ef..1de3d84d3b7c 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -914,7 +914,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 
+ 		res_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "global");
+ 		if (res_base) {
+-			page_no = (res_page->start - res_base->start) / cdata->ch_base_offset;
++			page_no = div_s64(res_page->start - res_base->start, cdata->ch_base_offset);
+ 			if (page_no <= 0)
+ 				return -EINVAL;
+ 			tdma->ch_page_no = page_no - 1;
