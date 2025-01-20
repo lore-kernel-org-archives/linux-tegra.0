@@ -1,222 +1,229 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E6B199EB7;
-	Mon, 20 Jan 2025 08:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD3C19BA6;
+	Mon, 20 Jan 2025 16:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737363462; cv=none; b=NSJImID5qDcIpsK9TyN6ON39Njvr66/TDpPZAhot+0+qIpfTkZB2rpyIYOwyKd/sRS8MI34kMUDm/eU5buz5PNhyiOtpmrRtFwP207Jj9vVCiS4tOFZZ+f9xdpAyrUbryXvWUPZ53dbTibXg3rkRHTZZRBASoqBTZK1fQJ2K4Wk=
+	t=1737390214; cv=none; b=FVNwVHYXD/iPBdFt4fRogwfNUkXOQ0ugQV22WEGcNuoxu8h88JqxaRRq2Q/Hi8X1pUWKG/XqJ9+IM7ywqzBZKV440fGO4jT1sLoS7ScSfr7dakpkK9yCCxlgCvrTty23VnL0Uhtl/lNC1p+ZKYyIizw6MgvsktHFHvibqA2tAv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737363462; c=relaxed/simple;
-	bh=N5+Ilq+6Sl0BRyXz6K2xEcdVj95XrvSfSot0ouTatYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ebqkyqb5+cIbYUrLYtlidzyJGktKbRicM4qNSQW18WdCGuvHq0GQr40rfljH19q8SWCme2FfZ+3pN/oLcJd5Xen5ZsZf5fgmylIFVK02o5T4ExIOg3QooSVMpiNbxb49rrFl/Ej0j0Fw4hmws8soz28QxAEy2FTWh0VwvwKh/e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kW3Pr8f9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VlO1OePa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kW3Pr8f9; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=VlO1OePa; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1737390214; c=relaxed/simple;
+	bh=iSVSmHIxVlMIcQ2IOpxcwP9Lm6cbjJggq7zkBcuDX2Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rr4veU0MT780bbczGpEBE/JKcim7JUopEJjM3utBa04iKoAYC4lJrN2gE08fO0LKTSXHVvTRXUmqyd9xnEJE1R5rZ28NDEZoFmceoXnBN86INj1p2E0r0oN8n/Q+cfqsJc1ssJmGbOhU5LR4SFNTtZTOxNzxOHp7MQSp24qVOpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BovqAkcj; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kW3Pr8f9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VlO1OePa";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kW3Pr8f9";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="VlO1OePa"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 45D501F7A5;
-	Mon, 20 Jan 2025 08:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1737363458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UxuzgDcZRRA2/FviISYwEq2AIPpj8Irf9o88aWv1Nug=;
-	b=kW3Pr8f901Z7ow0UHFahd4SLynjHr1wROdXiToHoUzdZtS0UDlBfei6zyIhlrIvzjk3tTp
-	1yl9BBLd/wW4AIbYNxR4/K1qnpxSQzwOXdAtcjJfXqEvwzk6HOTU7pxJDjvQKvk3vSEC+G
-	+gkt4/bJ2a6edrgg2+jIR/ApD6tqgY4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1737363458;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UxuzgDcZRRA2/FviISYwEq2AIPpj8Irf9o88aWv1Nug=;
-	b=VlO1OePapx4jPwQ9JJ2gQmbCi/5qM66D0h4jEtVFfdhS3PQIpAi47mvrbt89crlhSXbRc0
-	E8Wy/g/yidV+kRBQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=kW3Pr8f9;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=VlO1OePa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1737363458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UxuzgDcZRRA2/FviISYwEq2AIPpj8Irf9o88aWv1Nug=;
-	b=kW3Pr8f901Z7ow0UHFahd4SLynjHr1wROdXiToHoUzdZtS0UDlBfei6zyIhlrIvzjk3tTp
-	1yl9BBLd/wW4AIbYNxR4/K1qnpxSQzwOXdAtcjJfXqEvwzk6HOTU7pxJDjvQKvk3vSEC+G
-	+gkt4/bJ2a6edrgg2+jIR/ApD6tqgY4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1737363458;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UxuzgDcZRRA2/FviISYwEq2AIPpj8Irf9o88aWv1Nug=;
-	b=VlO1OePapx4jPwQ9JJ2gQmbCi/5qM66D0h4jEtVFfdhS3PQIpAi47mvrbt89crlhSXbRc0
-	E8Wy/g/yidV+kRBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B6E2E139CB;
-	Mon, 20 Jan 2025 08:57:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GIpkKwEQjmc1bAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 20 Jan 2025 08:57:37 +0000
-Message-ID: <dce0191b-8df0-4239-bdee-08a34c4b28d2@suse.de>
-Date: Mon, 20 Jan 2025 09:57:37 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BovqAkcj"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4361b0ec57aso48083935e9.0;
+        Mon, 20 Jan 2025 08:23:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737390210; x=1737995010; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hBDzS6VwvH8X7O7B3FLCvAQ6xo0j0Nw4vahiTQPox4s=;
+        b=BovqAkcjTrYk+ElfxwEX9jcbgrLGxOVxJTOYmeCI+VZ7luw5bxc5W6zwtK2Knus0VE
+         kY5ybzxJxN5aWQES3rwwNYnm4qSYLdUwJFftbFtIImDNjRvJL3zGI/zQFqYY1p+lAlAG
+         q29LzHdMSuOl3tN1SolGs1wlcZ1A68ga5L3I3ujo9vkXilSsJYIpVW911/2CVorbEh/T
+         igXsStTxM6SesIeOq6QiRxz9mKHHw4MY9efL0gcRlqoOChyqdMGlo9WhaDaKi051xyB1
+         o93CqA0SRjxfwbL1OdtisM93L8Tq/McrAIh/HcyOCsqW8W3Ask5At8lhHmudqfv7/Vcb
+         1LeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737390210; x=1737995010;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hBDzS6VwvH8X7O7B3FLCvAQ6xo0j0Nw4vahiTQPox4s=;
+        b=uv7Dz3lkmmOcG+p/n4HAEhbjlob3rbEuxJqJdxDj3DB1r7oQwxOixbnplWvpwMcSBr
+         UIM2BmIdh/831KtMNbFCEHIr2emaqvmVl36jK4tTw4z6ZH0HGD9ld+LPazBWGfFKNqYu
+         2hQ1MYcXDPx8HAKayRx/TzSp1XmSiBWiEZFOacVyKOuDZDVeDIP6rw3AAgOpJvkNDpO1
+         Gj653OoNoTsoENcetqP3Rv+ARnVvJRDyogD2p9PdCbjvfCQJZcsnjrJzaTAnh7ASmjcZ
+         xkL/4T+9oelz2w8ruvyLjZ6CwXGK+nex5SsRzNS9i7GxM+4H09iuQIjj45Hri8ni0z95
+         B8fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUX6D7vk+He88Zam7Xh1CQwa8ZivuezSoLKXhc2uCjnPkjbHFV0NPXj9+dyATFIoOS/hNL/YKmQWXgvaEaT@vger.kernel.org, AJvYcCVZh3aRMWKK8U1nEhCW8dU8w4jiWUyi6QxDdvaIBbnsr7UZxGjJA62J/09BpSaiaNFtg8hMPgEkHv5+3d4=@vger.kernel.org, AJvYcCXtsKBXxgEh+b1KNU9b5K7/GB7dptftW96FnFI/QjsGuq5O3ON0HcwMpw+SvljfKGMzOlpPQT7v+Mkv4Zc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+feW6Klh+yJ9Ks5QfwctZayifZ0yCAEZ4rzLBqTScdgNFwoOL
+	g1ysZctju7SOffo7nmNV6nDd+oZlEW1uDrCFOfosfRspZsqYZHybxYFnRw==
+X-Gm-Gg: ASbGnctYDVzme6ISMpyhtP+iwqLaH9y9Da99GAbOIqTyiSEGyq3ky8Vys7y0iwMkFV6
+	dN2ZqHTY4/jgfqKlZHJ4qEMyJty51RlPz/TMKYCser63jtvem6Ae/H8axc23/ygXU413pWzgRCb
+	BT54ABm7ZbDBhUpTQh3Rgw56onTrGjrZ77xG0j8rqiLCgukxwSSuJ7QOJYPdAfAOJzcgpSh6ZZI
+	iIzosRweSlUnA510D1Q80LQHwvs22UmljfSqJR8WCvtldVaAefP7gFtGvNhYO1bDmSMQ5ZyfEvy
+	dtcPz0K1yvxRigamzsmfIrGexBN2WQXdrPWyL3nmt9+CKpm0qypAaPYx
+X-Google-Smtp-Source: AGHT+IH0vj1NEPrL2fULF2OeUFJ7VBn9vEp7/XOFCer+UqR97w+GrSLfInrta6Rs0GqeEsgewNM1TA==
+X-Received: by 2002:a05:600c:3544:b0:434:a781:f5e2 with SMTP id 5b1f17b1804b1-438913cabedmr117993265e9.8.1737390210251;
+        Mon, 20 Jan 2025 08:23:30 -0800 (PST)
+Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-437c74c475csm207620425e9.20.2025.01.20.08.23.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 20 Jan 2025 08:23:28 -0800 (PST)
+Date: Mon, 20 Jan 2025 17:23:26 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: John Ogness <john.ogness@linutronix.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>, 
+	Niklas Schnelle <schnelle@linux.ibm.com>, Serge Semin <fancer.lancer@gmail.com>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH tty-next v5 5/6] serial: 8250: Switch to nbcon console
+Message-ID: <sx4nrwuzs3vafnbrkgag4dkapll3itvece4k3ylvobvid2vlpk@oncxz3eq33zk>
+References: <20250107212702.169493-1-john.ogness@linutronix.de>
+ <20250107212702.169493-6-john.ogness@linutronix.de>
+ <80b020fc-c18a-4da4-b222-16da1cab2f4c@nvidia.com>
+ <84ldvcyq41.fsf@jogness.linutronix.de>
+ <96b02b20-a51e-480f-a0ce-3a1457650ca9@nvidia.com>
+ <84y0zbyrf0.fsf@jogness.linutronix.de>
+ <bee7de35-e767-4c69-94ad-d09c92a3577a@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andy Yan <andyshrk@163.com>, Daniel Stone <daniel@fooishbar.org>
-References: <20250109150310.219442-1-tzimmermann@suse.de>
- <20250109150310.219442-26-tzimmermann@suse.de>
- <cdbe483d-0895-47aa-8c83-1c28220f4a02@ideasonboard.com>
- <bc97b92e-7f8a-4b92-af8a-20fa165ead55@suse.de>
- <f3ba05c7-6e49-4641-a3f9-ba418ebdb7c3@ideasonboard.com>
- <c6735280-7c32-4319-8ca9-a7305d8117c3@suse.de>
- <d67adb03-5cd0-4ac9-af58-cf4446dacee3@ideasonboard.com>
- <0ea6be58-0e04-4172-87cd-064a3e4a43bc@suse.de>
- <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com>
- <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
- <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
- <a2bbeb47-2569-4ee0-9265-92bab139bdc6@suse.de>
- <f3833771-fcd7-45dc-9019-1525fef34429@ideasonboard.com>
- <156804a9-3095-4c93-888f-d9041f523da6@suse.de>
- <469daa7f-123b-41cb-a99c-4441436d82dc@ideasonboard.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <469daa7f-123b-41cb-a99c-4441436d82dc@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 45D501F7A5
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[ideasonboard.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[lists.freedesktop.org,lists.infradead.org,vger.kernel.org,lists.linux.dev,lists.xenproject.org,ideasonboard.com,163.com,fooishbar.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
-
-Hi
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="bdxbf5etrjypj6iv"
+Content-Disposition: inline
+In-Reply-To: <bee7de35-e767-4c69-94ad-d09c92a3577a@nvidia.com>
 
 
-Am 20.01.25 um 09:51 schrieb Tomi Valkeinen:
-> Hi,
->
-> On 20/01/2025 09:49, Thomas Zimmermann wrote:
->> Hi
->>
->>
->> Am 16.01.25 um 11:03 schrieb Tomi Valkeinen:
->> [...]
->>> Aligning video= and dumb buffers almost sounds like going backwards. 
->>> video= parameter is bad,
->>
->> Who told you that? Video= is still the way to specify an initial 
->> display mode to the kernel and it will remain so.
->
-> You did =). "It aligns dumb buffers and video=". 
+--bdxbf5etrjypj6iv
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH tty-next v5 5/6] serial: 8250: Switch to nbcon console
+MIME-Version: 1.0
 
-I did not tell you "video= parameter is bad".
+On Thu, Jan 16, 2025 at 10:41:08AM +0000, Jon Hunter wrote:
+>=20
+> On 16/01/2025 10:38, John Ogness wrote:
+> > On 2025-01-16, Jon Hunter <jonathanh@nvidia.com> wrote:
+> > > > Do you at least know if it is failing to suspend or failing to resu=
+me
+> > > > (based on power consumption)?
+> > >=20
+> > >=20
+> > > Unfortunately, I don't. These are farm boards and so nothing local I =
+can
+> > > get my hands on. For some reason all the serial console logs are not
+> > > available and so I am going to talk to the farm team about fixing that
+> > > because we should at least have serial logs.
+> >=20
+> > Can you confirm that the board is actually booting? The suspend code for
+> > 8250_tegra.c is quite simple. I am wondering if the farm tests are
+> > failing somewhere else, such as the atomic printing during early boot.
+>=20
+>=20
+> Yes they are all booting fine. I have an independent boot test and that is
+> passing. It is just the suspend test that is failing.
 
-Best regards
-Thomas
+I was able to capture logs, but unfortunately they don't provide much
+insight either. On the first try it doesn't suspend and goes back to
+userspace after a second or so:
 
-> I understand the need for drm_driver_color_mode_format() for video=. 
-> But I think it's bad for CREATE_DUMB, at least for the platforms which 
-> have never aimed for "RGB-only".
->
-> So you're not in favor of a drm_mode_size_dumb() version that does not 
-> use drm_driver_color_mode_format(), for these platforms? I'm still at 
-> loss as to why we would want to change the behavior of CREATE_DUMB. I 
-> see no upside, but I see the chance of regressions.
->
->  Tomi
->
+--- >8 ---
+-sh-5.1# rtcwake --device /dev/rtc1 --mode mem --seconds 5
+rtcwake: assuming RTC uses UTC ...
+rtcwake: wakeup from "mem" using /dev/rtc1 at Thu Jan  1 00:01:00 1970
+[   36.332486] PM: suspend entry (deep)
+[   36.332832] Filesystems sync: 0.000 seconds
+[   36.369331] +1.8V_RUN_CAM: disabling
+[   36.373884] +2.8V_RUN_CAM: disabling
+[   36.375571] +1.2V_RUN_CAM_FRONT: disabling
+[   36.380359] +1.05V_RUN_CAM_REAR: disabling
+[   36.387399] +3.3V_RUN_TOUCH: disabling
+[   36.390808] +2.8V_RUN_CAM_AF: disabling
+[   36.393621] +1.8V_RUN_VPP_FUSE: disabling
+[   36.408218] Freezing user space processes
+[   36.413660] Freezing user space processes completed (elapsed 0.005 secon=
+ds)
+[   36.413680] OOM killer disabled.
+[   36.413693] Freezing remaining freezable tasks
+[   36.415033] Freezing remaining freezable tasks completed (elapsed 0.001 =
+seconds)
+[   36.428474] drm drm: [drm:drm_client_dev_suspend] fbdev: ret=3D0
+[   36.428527] drm drm: [drm:drm_atomic_state_init] Allocated atomic state =
+2e5cd010
+[   36.428547] drm drm: [drm:drm_atomic_get_crtc_state] Added [CRTC:47:crtc=
+-0] 6a6be0ef state to 2e5cd010
+[   36.428561] drm drm: [drm:drm_atomic_get_crtc_state] Added [CRTC:63:crtc=
+-1] 00d818c2 state to 2e5cd010
+[   36.428574] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:32:pl=
+ane-0] 4e145b7d state to 2e5cd010
+[   36.428587] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:36:pl=
+ane-1] dbf67d12 state to 2e5cd010
+[   36.428597] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:40:pl=
+ane-2] 763d8809 state to 2e5cd010
+[   36.428608] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:44:pl=
+ane-3] b6eabcf1 state to 2e5cd010
+[   36.428617] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:48:pl=
+ane-4] 7863878c state to 2e5cd010
+[   36.428628] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:52:pl=
+ane-5] 54b8029c state to 2e5cd010
+[   36.428638] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:56:pl=
+ane-6] 364063af state to 2e5cd010
+[   36.428648] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:60:pl=
+ane-7] e1c11dfb state to 2e5cd010
+[   36.428662] drm drm: [drm:drm_atomic_get_connector_state] Added [CONNECT=
+OR:65:HDMI-A-1] 5cb32770 state to 2e5cd010
+[   36.428674] drm drm: [drm:drm_atomic_state_init] Allocated atomic state =
+832943c7
+[   36.428682] drm drm: [drm:drm_atomic_get_crtc_state] Added [CRTC:47:crtc=
+-0] f09cf73d state to 832943c7
+[   36.428691] drm drm: [drm:drm_atomic_add_affected_planes] Adding all cur=
+rent planes for [CRTC:47:crtc-0] to 832943c7
+[   36.428700] drm drm: [drm:drm_atomic_add_affected_connectors] Adding all=
+ current connectors for [CRTC:47:crtc-0] to 832943c7
+[   36.428711] drm drm: [drm:drm_atomic_get_crtc_state] Added [CRTC:63:crtc=
+-1] 2700922c state to 832943c7
+[   36.428720] drm drm: [drm:drm_atomic_add_affected_planes] Adding all cur=
+rent planes for [CRTC:63:crtc-1] to 832943c7
+[   36.428727] drm drm: [drm:drm_atomic_add_affected_connectors] Adding all=
+ current connectors for [CRTC:63:crtc-1] to 832943c7
+[   36.428737] drm drm: [drm:drm_atomic_check_only] checking 832943c7
+[   36.428759] drm drm: [drm:drm_atomic_commit] committing 832943c7
+[   36.428881] drm drm: [drm:drm_atomic_state_default_clear] Clearing atomi=
+c state 832943c7
+[   36.428897] drm drm: [drm:__drm_atomic_state_free] Freeing atomic state =
+832943c7
+[   36.429085] r8169 0000:01:00.0 eth0: Link is Down
+[   36.713236] Disabling non-boot CPUs ...
+-sh-5.1#
+--- >8 ---
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+A second attempt soft-hangs:
 
+--- >8 ---
+-sh-5.1# rtcwake --device /dev/rtc1 --mode mem --seconds 5
+rtcwake: assuming RTC uses UTC ...
+rtcwake: wakeup from "mem" using /dev/rtc1 at Thu Jan  1 00:01:10 1970
+--- >8 ---
+
+Where "soft-hang" means it doesn't do anything after this and I can't
+SIGINT out of it or anything. However, the serial seems to still be
+responsive.
+
+Thierry
+
+--bdxbf5etrjypj6iv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmeOeHoACgkQ3SOs138+
+s6EnRQ//dzgeuFUjt/OajK4lqEf/jBgpmoOGQz3nlfNjhdgOdZO+q6XyVPgr8oDJ
+ewcxSSIHJWA5ZL1biqLEmBSNM0AYtJQWhO9PpsEKqOIru1iO8EtcWvTEt+lTl6mN
+XnssnNZsTEy3bbsfk0/u7W4FXMsFP+KRyfwWhkljSv57AP6H6wUpd5IZlkDgbBLJ
+TD52f1S/WTjI7CM/0GOnxnEYf8VegR39w1Vz0+Ah0ZljCICtYUvRcAnESXcm1/Mm
+Z3J9PLcxMnBjfTsnfWpMRYdhM5TyWhRgcsYQDG0U0Z2dLb7OgONWQ5OsWU/QJxfV
+/cLfPIimUHXUO4rDqwpwgCLtvKU06zR3op2StZzMYpaZ7hUW1pZyEJ8TmnosroIh
+FJzS00mp7YWHiaEgf+zhM8NzwmOKb2VKSWqovDPiYnoJ/O0zrt0ud+wF5Vs9beoH
+gcQw2IdtFRAO9kOAXD8eCqfC6lQzuUIynyfZlLEDCj0nrty977mi2e4CPKQTRnrN
+S7vmof7ewEbTxhyftMulMo8Q0wt51+gW0VAX3hogIyy/m1cTlFtQWb9RhGUodzza
+MbWIjTr064rodpYnxc8Wd8EFI4CIAu0Ym9zRu/RCvDOD/7ZqxJgBt7Wj3QYf8+4d
+YYUZHInKJ/UT1ckg9Wd0OFzgEI6YXdzE5XcwG96+9dpto1pzQJQ=
+=GucT
+-----END PGP SIGNATURE-----
+
+--bdxbf5etrjypj6iv--
