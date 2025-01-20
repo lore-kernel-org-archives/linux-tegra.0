@@ -1,144 +1,250 @@
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2073.outbound.protection.outlook.com [40.107.96.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA2E13B29F
-	for <linux-tegra@vger.kernel.org>; Mon, 20 Jan 2025 03:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737344097; cv=none; b=gHESb07mg0ZOebjlHh05m80biCKPkt1vWr8UoNgNlJgnZ16f7gX+AE2mKloXjHvNCDo248qtqGxlA26rNg2jo1o6MpCy8kIYzknnBCxZ3dyyQLNRq+aM8Bo9Yu5qgLHtR3XCrDe8duqQnToqJeNYmYNPzSyc33aGAuMHxyuH53k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737344097; c=relaxed/simple;
-	bh=3ndEew46TpTPRF+hcM36ou28NXLmuonYJaArRH6clWk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VBepbN6MrL4NnyFK+kO1VjxN5iv51UxLRS8npmGq2OdREB4fG5Ev5+f5PUqHziDC942N2FnDqbP+WZbNA/9Ln5w3vWW/V1XfSfLCSTweCMuOiiN4Lcvs1r+pv5T/OW2Gi0WFPVbxPfbQi4u7b/MBIqYpLIQLslR5EWkliOI6O9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YY0vmGRw; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67180C2E0;
+	Mon, 20 Jan 2025 03:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737344780; cv=fail; b=d6piF2RYy0CVjGjFwiPCITSI6CA21pRcCRsccA9NbcgBWl62hOJHdtMUMhBS3LG9lgSIDTUMY1t3fMSKxnRJ31u05fN1GtXogJOBqAzPWK3hHuOhynh9G/3BNsGIFJMbBgx1Jw8EzVbqPy/LcN0xQk3R+e3HP6J4ASna3vMdBKY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737344780; c=relaxed/simple;
+	bh=EuN/ZveyMgL+q6DA164kl+yLeR9ke5t5otyvX5vcLuQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ifA0EJp0BD5g2vXREvXOAujXhRjsvkmeiTaQftXJD36SkBCM6elNMr42LfEX1pShcGwYI5haHgz8wPdomjcdA69NbutSm7I/Dxf6Amz4Gzr9WUNo+7FZUmzM/QOvdSyfQyg4vC2dLDJu2eTxQbC2R01J/Bx02sWSnxMWQ5oGnN4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IgYoQjTk; arc=fail smtp.client-ip=40.107.96.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YY0vmGRw"
-Message-ID: <3d4e4bda-f465-4c8a-97c4-846b2f3ecb54@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1737344078;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R9tPeFJh3Z8KzRS9nqqf16JZtB2EUc5uK4Rq+n7DfNw=;
-	b=YY0vmGRwrZUTBrUrgVqfAahrdf8E2LNioasg7jg8ibtK9oZUoF3Gyb6ENECPTEd6jx4ozD
-	dCAprAdgpk+wCkRotDFwZGdWs/yRlXxl8a6R+PVCHx5z5L1Gon1hTd9+nMflzGPYruxiHZ
-	vu7GbnHgrZEtNupovuNQyF4Ah1bgbyA=
-Date: Mon, 20 Jan 2025 11:34:27 +0800
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IgYoQjTk"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JViXN1M2YuCT+W6j4LyoRX2jatRo2yNnFVhN9FqLf6sZlCAEvmY8mOCQMWa6yljX06nYwuytW1oTn1zMfG1oNAQcWRmjGWpaN1/T0NBtYXHWFodASu8a2dV8NRNozZ5oQxyvoo1xi7U4PS9OJfcZ9sG50qb8riNDk3mcbMgoDxkzN/w9D0e1xnL2RztLakyM9WV6Cx5/pn1KXdDdP49ly2uRlhoZer2gtxTG/Fssz6Ru2JuIyQe8+3igfwj/KNfQZZI0lGP4Y2ySZbv9qXlCoXGTW0tpYGeyNg23F852w+TufoiBa8xqhb5sk48JmgsjyoXTXykxTUuAHeYitiy4Tw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dMvZlLpziEJuHfVdcdlAXYKea6O9PWX4mr7kDEdiK48=;
+ b=UIkKpRHurWmQUy8yPVIukN7b6YQOvyMglm0pv53vIqE75sm3kb3mJu2rU5iii7mHfII1PC7pOJY1VELG3DYdBshzgge0it+vL9oc4f6+i3khQKSd5cwQEtTPJQ+DA1Yhve0DVuQuCxAhBUp3NHOyOEu5JD0SL1GlzKUqLLuVhCFvdI7tBxt09YFDTen8tnrjXlW9dmUTRpm4hEMfhw81pHbdj8HcmrpiFML7lSfLbgnLcsyROx68beXdqDJLhFGRpmn6k1TQhgvF+5WfgtP0s7fOzhR5N6gm8VFbiQOks/yY2Z/52dMnLpSRlnYHFU7uiFGc5q2UTSB+VVvqLCNB4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dMvZlLpziEJuHfVdcdlAXYKea6O9PWX4mr7kDEdiK48=;
+ b=IgYoQjTk7pshTrW5oljTrUmrMEaAkSONP5/q3Us7dQ5Ug3ZDqrePRC6XFyDlh8/uesulbFOjD5O9alq5xxZJlFddQiIdy6QGv9PXsGeV1xup1JxmkpJ5MOd9HM6cGFEMiaE4GWa1lQoo1aidinZSREVu83RC2mtZRfwCO7j1JTVjm58lpzJSvsQR3kKhED/qmorgw526aMVNCnkw5565qCVhoWyrohJu2izu2JsP2fYAiJ/IVWMs+suTNMJEDCrY13wq0F5mRIrGaT1k5tYQcI9He2q6LTjqWJC+FlNvT4hwifFnOA02ErNNjzH3b0V+MlFWYzPxIzioq//EvomAhA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB5101.namprd12.prod.outlook.com (2603:10b6:5:390::10)
+ by MN6PR12MB8542.namprd12.prod.outlook.com (2603:10b6:208:477::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.17; Mon, 20 Jan
+ 2025 03:46:14 +0000
+Received: from DM4PR12MB5101.namprd12.prod.outlook.com
+ ([fe80::8a69:5694:f724:868b]) by DM4PR12MB5101.namprd12.prod.outlook.com
+ ([fe80::8a69:5694:f724:868b%5]) with mapi id 15.20.8356.020; Mon, 20 Jan 2025
+ 03:46:14 +0000
+Message-ID: <0f1df4ea-0b31-4431-b538-09dbd27845d8@nvidia.com>
+Date: Mon, 20 Jan 2025 09:16:07 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 RESEND 2/2] dmaengine: tegra210-adma: Support channel
+ page
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+ treding@nvidia.com, jonathanh@nvidia.com, spujar@nvidia.com
+References: <20241217074358.340180-1-mkumard@nvidia.com>
+ <20241217074358.340180-3-mkumard@nvidia.com>
+ <77e9f23a-60e2-442c-9981-319fc650979a@roeck-us.net>
+Content-Language: en-US
+From: Mohan Kumar D <mkumard@nvidia.com>
+In-Reply-To: <77e9f23a-60e2-442c-9981-319fc650979a@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0041.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:81::15) To DM4PR12MB5101.namprd12.prod.outlook.com
+ (2603:10b6:5:390::10)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 25/25] drm/xlnx: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, imx@lists.linux.dev,
- linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
- virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-tegra@vger.kernel.org, intel-xe@lists.freedesktop.org,
- xen-devel@lists.xenproject.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Andy Yan <andyshrk@163.com>, Daniel Stone <daniel@fooishbar.org>
-References: <20250109150310.219442-1-tzimmermann@suse.de>
- <20250109150310.219442-26-tzimmermann@suse.de>
- <cdbe483d-0895-47aa-8c83-1c28220f4a02@ideasonboard.com>
- <bc97b92e-7f8a-4b92-af8a-20fa165ead55@suse.de>
- <f3ba05c7-6e49-4641-a3f9-ba418ebdb7c3@ideasonboard.com>
- <c6735280-7c32-4319-8ca9-a7305d8117c3@suse.de>
- <d67adb03-5cd0-4ac9-af58-cf4446dacee3@ideasonboard.com>
- <0ea6be58-0e04-4172-87cd-064a3e4a43bc@suse.de>
- <f35cb350-6be9-48ca-ad7e-e9dd418281d5@ideasonboard.com>
- <4af0b6a7-c16a-4187-bbf5-365a9c86de21@suse.de>
- <e327ad84-b5c9-4480-b873-dc3aca605538@ideasonboard.com>
- <a2bbeb47-2569-4ee0-9265-92bab139bdc6@suse.de>
- <f3833771-fcd7-45dc-9019-1525fef34429@ideasonboard.com>
- <CAMuHMdXxYa+Na3XxpLTy=-eUL_zQ9kAiUKYu-E04u3KWApusSA@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <CAMuHMdXxYa+Na3XxpLTy=-eUL_zQ9kAiUKYu-E04u3KWApusSA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
-
-Hi,
-
-On 2025/1/16 18:17, Geert Uytterhoeven wrote:
-> On Thu, Jan 16, 2025 at 11:03 AM Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
->> On 16/01/2025 10:09, Thomas Zimmermann wrote:
->>> Am 15.01.25 um 15:20 schrieb Tomi Valkeinen:
->>> [...]
->>>> My point is that we have the current UAPI, and we have userspace using
->>>> it, but we don't have clear rules what the ioctl does with specific
->>>> parameters, and we don't document how it has to be used.
->>>>
->>>> Perhaps the situation is bad, and all we can really say is that
->>>> CREATE_DUMB only works for use with simple RGB formats, and the
->>>> behavior for all other formats is platform specific. But I think even
->>>> that would be valuable in the UAPI docs.
->>> To be honest, I would not want to specify behavior for anything but the
->>> linear RGB formats. If anything, I'd take Daniel's reply mail for
->>> documentation as-is. Anyone stretching the UAPI beyond RGB is on their own.
->>>
->>>> Thinking about this, I wonder if this change is good for omapdrm or
->>>> xilinx (probably other platforms too that support non-simple non-RGB
->>>> formats via dumb buffers): without this patch, in both drivers, the
->>>> pitch calculations just take the bpp as bit-per-pixels, align it up,
->>>> and that's it.
->>>>
->>>> With this patch we end up using drm_driver_color_mode_format(), and
->>>> aligning buffers according to RGB formats figured out via heuristics.
->>>> It does happen to work, for the formats I tested, but it sounds like
->>>> something that might easily not work, as it's doing adjustments based
->>>> on wrong format.
->>>>
->>>> Should we have another version of drm_mode_size_dumb() which just
->>>> calculates using the bpp, without the drm_driver_color_mode_format()
->>>> path? Or does the drm_driver_color_mode_format() path provide some
->>>> value for the drivers that do not currently do anything similar?
->>> With the RGB-only rule, using drm_driver_color_mode_format() makes
->>> sense. It aligns dumb buffers and video=, provides error checking, and
->>> overall harmonizes code. The fallback is only required because of the
->>> existing odd cases that already bend the UAPI's rules.
->> I have to disagree here.
->>
->> On the platforms I have been using (omap, tidss, xilinx, rcar) the dumb
->> buffers are the only buffers you can get from the DRM driver. The dumb
->> buffers have been used to allocate linear and multiplanar YUV buffers
->> for a very long time on those platforms.
->>
->> I tried to look around, but I did not find any mentions that CREATE_DUMB
->> should only be used for RGB buffers. Is anyone outside the core
->> developers even aware of it?
->>
->> If we don't use dumb buffers there, where do we get the buffers? Maybe
->> from a v4l2 device or from a gpu device, but often you don't have those.
->> DMA_HEAP is there, of course.
-> Why can't there be a variant that takes a proper fourcc format instead of
-> an imprecise bpp value?
-
-The 'flags' parameter of the 'struct drm_mode_create_dumb' doesn't gets
-in used so far, I guess the situation will be much better if passing a
-correct fourcc code from the user-space to kernel is allowed.
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5101:EE_|MN6PR12MB8542:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31f34692-85c2-4b46-4946-08dd3904fcbd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ejhnNWsySU56TEthOVc2SENGVFZXT1ljTHd6Rit1QXE3a2V3VVlYZmYzb0d1?=
+ =?utf-8?B?RG5TOGtZckJ5eWYyOEJjTDdLVzI1REhwdThBUWhCTGpBWEdvNnhOd0F5VEJE?=
+ =?utf-8?B?a2lHS0RPRm5rUS9nTlBJT3BLRDVJTkJkZ2tvZU1xOWhOYTZxMHI3cWZ5SEIr?=
+ =?utf-8?B?cE1pcFRpSlg5dGtaaThPMlZJWStGVFlmQVRpOU9BaFo2a0ZzdXVTUE9LOW1T?=
+ =?utf-8?B?c0E4dUNKUFduTHRRYXNYSHlleEc0T2Nlb1l6L2ZEOVQzM1hlem1IVGxQU1JK?=
+ =?utf-8?B?ZWFOZTNDaWJhbCsyRFlsMkZkODJRenRLNjY5dUdrMGgxMkpSSlp3Q0wrYUZL?=
+ =?utf-8?B?Qk52YytiOHBGcG5xdDNFeDA5U1REUmFSaVpvQUY2dTd6WnhmMDdnODZJcnlu?=
+ =?utf-8?B?RWwvbUx0VEVudVRyUlZCTE03d0piU3RjNi84RGh1SEtVZGxGb0pSQlA3WmFt?=
+ =?utf-8?B?NTB5SDRKaXdYTDZ0SVlyNDdVaHovR1ZMaG94enlrWkc1U3RMdm1KdjhUUXY1?=
+ =?utf-8?B?bTI0VkFaVDRuUng1eHo5NldVVFFreGl4aTNidHAzWTd3SlpRUUpCVmx2a2NR?=
+ =?utf-8?B?MENvVStIN0lxdHB5alZ5cDRMMDUwQUYxVDZyM0dqbThLenUvbzRaZ1ZPUFZS?=
+ =?utf-8?B?WDFvaFJmRnlLQzc0QnpuUUNoZzAxbVNhNzdkNXFXRWtZSXRQSWpmdzhKM21Y?=
+ =?utf-8?B?MFhsQzQyNXFEU1VyZHN0ZVBHbFozRUZKbWNnRzFVRHB3Qjh6RUJGcWM1MXhP?=
+ =?utf-8?B?NmUrazZqNGQyZDJMVHNzZTBlR3hMdFg1MlhSeG5JejIwNE5hMnh6SXZtQXJ1?=
+ =?utf-8?B?TXVnb0RacVVoUmYvQjJNZHZQMGRGV0pTRzZrZUJTdzhlWjI3UVRRTFhOYTlW?=
+ =?utf-8?B?WlJkK2tPakNkNkppS0t1bEFjSmJmMkUwOW56UEJKSXNpZXFibjVEa2dGVFM2?=
+ =?utf-8?B?Zk9SZHlYYi9VcnF4SmlZQ3JLYjUxS1BpYVhJejRFem9RQnJIcngvalAwNjRi?=
+ =?utf-8?B?TS9vUjloSURLdC9FSE4xV3UxMlJVSjk2emJ1d2JSYmYzNUVZcE9QWTdOZDlJ?=
+ =?utf-8?B?NnJXaEp4NHFLSmp5NGtUOEN6NVByN05PZ3UxTE44VTNMT2Nqc24rUmt0Z05J?=
+ =?utf-8?B?UlVBM0tQdFFXQ2I2TithTk5rM0JzSU1yMzU3U0QydlJDZjJJbVNHbFc1OUVy?=
+ =?utf-8?B?bWhhQlFGaUQ5eDVmWGNEOGVrUDJ5djNBYS83WUtnZmdLZVV5MEpRdjV5RldF?=
+ =?utf-8?B?dExUeXV1WXhodjR0OG5TNzFWc09MMk1mTFlKdXBxZFRBOUFGUk1Gdzc4eGNN?=
+ =?utf-8?B?U0xKYWNLbGlHOTh5U3c5SWhlUGxiMk1BT0VjdmxkMzY5cjBONEZzenIvUkFr?=
+ =?utf-8?B?Q05wVi91TDBxcEdwQ1RXdnQ2MXhmcExCVTlHZVdRMVlrY3FOaExlckZOb2tt?=
+ =?utf-8?B?KzVEbVhBTDdpR3NIWjdZMm5lSThQMDl6RHozZkJBa24vS1B6VDAwRGoxVEtZ?=
+ =?utf-8?B?Z3NIK3E5M0xBekRQdk9mczFkd21lNlBLa3c2NjMvOWI0bm1Bc3BKbmIva251?=
+ =?utf-8?B?THVOMTh4dVd5OUZiQzJCT0tnTm5ueWNLYVIrZmd2clc3a002T01pNFB1djJD?=
+ =?utf-8?B?b21ZU3JyUmxzYnMzbm1Qa2JmemFubjliejkyYjdOalh1em4vVDJQSkFpbTZr?=
+ =?utf-8?B?RmlmY1BjM1pIdkdpc29NQlgxYkNPNTI1TDdxREVNekVkMFlCMHlTN2tmV1NY?=
+ =?utf-8?B?bVU0YUlXcFNWa0huZ2l3eTVSTUNyOW11VmM4TDB5QklmY05HSkpEeWxtZm4z?=
+ =?utf-8?B?Q0liZjlNaW5TZ3dwVUwycWYxdUVuQTB6b1J6cFFTcmsxZ2lPZVpGdFI3SWMx?=
+ =?utf-8?Q?Mn10pkEp466ZC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ckRjL1czbklmWWlPS3A0dXo5NGpuNVdJVVpvTFAyOUN1SjI3R0RQOFBpVFE0?=
+ =?utf-8?B?eW16aXRKUW5HZ2N5ZnRjK1M5cnJZMkZoTGZRRmYwWnFxaThnWmt6NWFBSi9m?=
+ =?utf-8?B?cldJdG1oREh0c3ZTUU9YTDFISlNETjFOcUVUbWFnWWZPWmU2SUZmS2hMSnpr?=
+ =?utf-8?B?c2NLM2FCT1BHZ2NIUjRVaVJKUy9FeHhlZ2VQWVpySGtQaDlQTHc5UU1KanRo?=
+ =?utf-8?B?QXI0ZThMaXB6RE5OYm5aaWdQYkduVWZ6WlIxVFRwK1NEQ29CRCtMN2h3dHZh?=
+ =?utf-8?B?SlV6S1Ztd0tDSWo3NzByL21LWlNuWExBeEh4VEl0ejRIL2lyaTMzeFFucGFS?=
+ =?utf-8?B?SFhZTXFOUlNzVERtWGtqQ3duR2NmRXpOL2phbHFIemRBbkQ5bDlYSVdxdGlO?=
+ =?utf-8?B?QzIzUGhEMU4xN3VHam1SWThteiswaWE2NlFZQjFhamFwc2N0UEZMNTFLMUVX?=
+ =?utf-8?B?SGJQTGljME1BZ2pxTjRvdUg2aHJOZFROVTFic2F2VC9VSmludnZzT3VsOTBw?=
+ =?utf-8?B?Vk5JVmtET0Mvc3FFeW9tRWgvU3hZbnZHL2JJVXppenc5ZVBKcE5taGVrSkRX?=
+ =?utf-8?B?MnBMckRZQWNneG1jaE8yQTNtczZaRHBtb0J3Y1hyWk5PdXJwLzFNdVo0dDhm?=
+ =?utf-8?B?Mm9OZVV0aDRsZWlZdG1UOE9XNTBnd1pTQWlHOGp2ZzB4RXNyeFZ3aGlRV3p0?=
+ =?utf-8?B?cGhaemh5S1Fya1h6cFJRTDltdnhwSHJNWis1YVlTajRDY1RjTk9VQ0sxRDBL?=
+ =?utf-8?B?czhQZDRmRmpaQkRmV2o2QlFCakIxUEMzNmFOR1F3czRpU2xvWjQ2clFrcERQ?=
+ =?utf-8?B?eWJndERQR0swdHRTbXVSTTM4TGx3eUNPU3Joak5rcXdaSWNjVjlWWG9HQVRH?=
+ =?utf-8?B?OGFxd1Nydm9ob1N4TENDWGV1YXdBcmI4ZnlPUEdkclBUVE1TZFh3RmZVdVQ1?=
+ =?utf-8?B?dmo1TCtWY045SURnMGxGa0dzeFhNUTJuekR4U3lGR2M5Y29sV1cyVG5zQ2pD?=
+ =?utf-8?B?aklsa1dyTnorNXpBVGlGRFdBd0gvaU1UbmFjODlJQ0lWUy9KNGVDNmpkS1M1?=
+ =?utf-8?B?OXRCWFlLc01jTUthOUFaZFlvMy92MHdnOTFuN291ZzYzTmJyWk5aNlVZUERQ?=
+ =?utf-8?B?ZEh2aTZBMkJGamtiYVRJV2VtVHM5NmFKRVlROGN2c2s2VlFSU044MHlwalJl?=
+ =?utf-8?B?a1ExZDZaditKRUorVU9mUU4vWnRMSVIzNEdSUXRQVFgvTE1Pb0NKY2pXQ016?=
+ =?utf-8?B?SzNVcWZuaE9iMnNFcW9vaDdYSTRwZ0pLYUZtU1I0em55R001Q1QreW5oblVJ?=
+ =?utf-8?B?MWRXdTdmQXlaRGVDMCs1dWNiSkQ0cEFiazJGakxaMkdzbWJTd1ZhQTZmdHpt?=
+ =?utf-8?B?Sk1xLzA2czRsQ1JVeFZQRUp0aklpd3B6QkJYMDdpd2RaMnFaNjJrU3kyRFU5?=
+ =?utf-8?B?THNubVN5eUNvRUxqRHhUWTJzaE83ZWJ1eURBT1JVQ1NocEZ1bXZtdFd0U09j?=
+ =?utf-8?B?cWxhazV1U0tOaGNxNTg3NWpnL2ZFcjQrQ2JSODZSczBiOG1KVTZNOURQajdp?=
+ =?utf-8?B?MWk4VUhlUDlBTE43djF4blBZREdCRFFXaFZDRGg4cUQrc2FkdGwvVUFJWEdQ?=
+ =?utf-8?B?aXE0cll6U0FiQ0htZ1V5UFVIQS93Y0Rtd25jeEx2NUZtTE5QSGxlQ3E2SVpO?=
+ =?utf-8?B?b3kvd2NlcmNBWjZINkMzV3ROVE55OCsrWEwxT2Jxc3ROT01rTVY0SG1EdkhN?=
+ =?utf-8?B?T2hnbnRFMGJvRisvbHJURDlheFNhU2NuR1RZeGMzeFlpSVl2OFVKeEgxSk15?=
+ =?utf-8?B?SEZWWGorTjE4dmJSUVJmZElRUHRtWkE5SjdqSkcrSm83WG5RcXZhRGNUMndE?=
+ =?utf-8?B?ZWw5cmg1aEJrOFdRN0hVWldhSGNuZUhEeFo0a2kxalJvSVd3TDNaVnFkUzhw?=
+ =?utf-8?B?WGd1RzBrM1J1ZkxmaVJjZXlwcDlmRlFMN3VTSDRGUmJqVGlJQ0NiMlpJRDFI?=
+ =?utf-8?B?SytyUytlSEYvWFpicGhEZGdLUWN1VE56RVN4bU1ud3A2eGdGKzRUQlIwZXRF?=
+ =?utf-8?B?czJUWXNiZHB4b040Rm4ycGR4QmplaHRUTVFNVWtWb2xMNDhpTVNXMkNWWjUr?=
+ =?utf-8?Q?i4UjWJmv1Ie09Z79GTsXlK+4G?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31f34692-85c2-4b46-4946-08dd3904fcbd
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2025 03:46:14.3058
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: b3G5LkQz2nVlfPCwjevfLP1Tz3YsIbPpISUG+m0VZHCokAB2kHCdoZi2pWMmqE3hAItuTZKzmUxKcSF5Q8PCtw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8542
 
 
-> Gr{oetje,eeting}s,
+On 18-01-2025 22:03, Guenter Roeck wrote:
+> External email: Use caution opening links or attachments
 >
->                          Geert
 >
--- 
-Best regards,
-Sui
-
+> Hi,
+>
+> On Tue, Dec 17, 2024 at 01:13:58PM +0530, Mohan Kumar D wrote:
+>> Multiple ADMA Channel page hardware support has been
+>> added from TEGRA186 and onwards.
+>>
+>> - Add support in the tegra adma driver to handle selective
+>>    channel page usage
+>> - Make global register programming optional
+>>
+>> Signed-off-by: Mohan Kumar D <mkumard@nvidia.com>
+> This patch triggers a build failure when trying to build i386:all{yes,mod}config.
+>
+> x86_64-linux-ld: drivers/dma/tegra210-adma.o: in function `tegra_adma_probe':
+> tegra210-adma.c:(.text+0x1322): undefined reference to `__udivdi3'
+>
+> Bisect log is attached for reference.
+>
+> Problem is
+>
+>> +             if (res_base) {
+>> +                     page_no = (res_page->start - res_base->start) / cdata->ch_base_offset;
+> ->start is phys_addr_t which can be a 64-bit pointer on 32-bit systems,
+> making this a 64-bit divide operation.
+>
+> Bisect log and a possible fix are attached for reference. I am not sure
+> though if the suggested fix is correct/complete since page_no might
+> overflow on such systems. It should possibly be a phys_addr_t, but that
+> is unsigned so the subsequent negative check would not work.
+>
+> Guenter
+https://lore.kernel.org/lkml/20250116162033.3922252-1-mkumard@nvidia.com/T/ 
+has been pushed recently to fix this issue. Can you please consider this 
+patch series.
+>
+> ---
+> # bad: [0907e7fb35756464aa34c35d6abb02998418164b] Add linux-next specific files for 20250117
+> # good: [5bc55a333a2f7316b58edc7573e8e893f7acb532] Linux 6.13-rc7
+> git bisect start 'HEAD' 'v6.13-rc7'
+> # good: [195cedf4deacf84167c32b866ceac1cf4a16df15] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+> git bisect good 195cedf4deacf84167c32b866ceac1cf4a16df15
+> # good: [01c19ecf34e1713365346f932011facd7d2d2bc6] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git
+> git bisect good 01c19ecf34e1713365346f932011facd7d2d2bc6
+> # good: [7fac8eef32d7735a3b01d08f2c98d5e6eaf254da] Merge branch 'driver-core-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git
+> git bisect good 7fac8eef32d7735a3b01d08f2c98d5e6eaf254da
+> # bad: [24c55da105e9a641fa77c8d8efbf92472a18bf4e] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git
+> git bisect bad 24c55da105e9a641fa77c8d8efbf92472a18bf4e
+> # good: [73656a6ab6d428102eb5aaa9599b5fcba4a2501f] intel_th: core: fix kernel-doc warnings
+> git bisect good 73656a6ab6d428102eb5aaa9599b5fcba4a2501f
+> # good: [b995a104a0aa1d6b90ea4ba3110e657ae9e83213] Merge branch 'tty-next' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
+> git bisect good b995a104a0aa1d6b90ea4ba3110e657ae9e83213
+> # good: [002c855847f718e12879808404dc8375207012dd] Merge branch 'next' of git://github.com/awilliam/linux-vfio.git
+> git bisect good 002c855847f718e12879808404dc8375207012dd
+> # bad: [54e09c8e2d3b0b7d603a64368fa49fe2a8031dd1] dt-bindings: dma: st-stm32-dmamux: Add description for dma-cell values
+> git bisect bad 54e09c8e2d3b0b7d603a64368fa49fe2a8031dd1
+> # good: [9d880452fb3edc4645e28264381ce35606fb1b19] dmaengine: amd: qdma: make read-only arrays h2c_types and c2h_types static const
+> git bisect good 9d880452fb3edc4645e28264381ce35606fb1b19
+> # good: [775363772f5e72b984a883e22d510fec5357477a] dt-bindings: dma: ti: k3-bcdma: Add J722S CSI BCDMA
+> git bisect good 775363772f5e72b984a883e22d510fec5357477a
+> # bad: [36d8cbd661c48f4c18eeb414146ec68a71fd644f] Merge branch 'fixes' into next
+> git bisect bad 36d8cbd661c48f4c18eeb414146ec68a71fd644f
+> # good: [762b37fc6ae2af0c7ddf36556fe7427575e9c759] dt-bindings: dma: Support channel page to nvidia,tegra210-adma
+> git bisect good 762b37fc6ae2af0c7ddf36556fe7427575e9c759
+> # bad: [9602a843cb3a16df8930eb9b046aa7aeb769521b] dmaengine: bcm2835-dma: Prevent suspend if DMA channel is busy
+> git bisect bad 9602a843cb3a16df8930eb9b046aa7aeb769521b
+> # bad: [68811c928f88828f188656dd3c9c184eeec2ce86] dmaengine: tegra210-adma: Support channel page
+> git bisect bad 68811c928f88828f188656dd3c9c184eeec2ce86
+> # first bad commit: [68811c928f88828f188656dd3c9c184eeec2ce86] dmaengine: tegra210-adma: Support channel page
+>
+> ---
+> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+> index 6896da8ac7ef..1de3d84d3b7c 100644
+> --- a/drivers/dma/tegra210-adma.c
+> +++ b/drivers/dma/tegra210-adma.c
+> @@ -914,7 +914,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
+>
+>                  res_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "global");
+>                  if (res_base) {
+> -                       page_no = (res_page->start - res_base->start) / cdata->ch_base_offset;
+> +                       page_no = div_s64(res_page->start - res_base->start, cdata->ch_base_offset);
+>                          if (page_no <= 0)
+>                                  return -EINVAL;
+>                          tdma->ch_page_no = page_no - 1;
