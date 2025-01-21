@@ -1,203 +1,342 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2075.outbound.protection.outlook.com [40.107.100.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AD11F12E9
-	for <linux-tegra@vger.kernel.org>; Tue, 21 Jan 2025 11:21:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737458504; cv=none; b=qJT4xNvXoOQm3V4nJ2fZfY++nWzpPtRrD7Ghtf2ipoaeVhrGRqlPYKZ3VdwK7sL+Gi4NhA8boX97BD5iXYR89mYdd5HTFsO5gZlfNqIt5yEvvWhcjMqGsXYmyAieHx8EiF8dtaA42N2ML14T68BMnDdR3gQ2TraxChYT1hg5tfA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737458504; c=relaxed/simple;
-	bh=7rBsUDnZ310zkZmpLtMl2wqib1Sf/yRmyr8uhrOxaLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WePuX3jbiuARiwvk62jmKXBnDzH1khVdSE0PcWLvHijCXmNqgOrCE+MfK39uhIZN7WQZJzWWyGBWn1gOAEu189hZHtqITAwuIQzs4whUBPHiiovpuBlq6AyNurH2kVxl18IqlUFL9ujbVebxyGKQ1ssMHXDJcFlfjFsF+ope1Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vxHQmcL7; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046961D554;
+	Tue, 21 Jan 2025 12:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737461990; cv=fail; b=qC94BY017achyBV5T2IRQFmtqShJq3wzISNGnh/WpVY7LQJDVYbY/bO7xlynmnN0w7Sm0MoPn+fdflVkatysfL+HfLFBCGdtPo11B3T+O23ZooLGEE4RksZSoa25z5exCSks64+z44HdB+erzSs8V/EYcOXACY/RQtzWbMOOt/Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737461990; c=relaxed/simple;
+	bh=ZpojYE1JPH4M7ShLtvIIa1S6Bqd0iNClt9+qtNMS0es=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XlThwoR5d8Ldccg3jIG5Sq8vKQ1HPRKq9of+9+Ob5Ixqxqcc9KuAcRBzVvzPhMvrKk5kA/eGx9SR8V/zPx5bOakqNiXCHW+Vlok/410WUdF8zCq8tVSLh9h1BiA1+a+/EQyZCYdrP5caXVyXKXhQ6euC8gEV7MSQWHMsCppvoqg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=J/BD+qfz; arc=fail smtp.client-ip=40.107.100.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vxHQmcL7"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5401bd6cdb4so5695753e87.2
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Jan 2025 03:21:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737458500; x=1738063300; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ccl7pK+fGoMwVya6mvoYHjlRDfdrE2si7QnLrLuVzrA=;
-        b=vxHQmcL7k4+kcF9DcyGj1gyfA9r+sRZ8wnkg2RUG/jZoI4Ed22oqKXMB4wXYTTU2Jq
-         rXWKsD5ey3ZxlThyzhUjMu0e9iWBQ6eipDc7hnaZPVv1awvvOmSzigjFONuqSLRE3jmG
-         5+biLO86ga/gWj0lA2BrGgHt4I/QSog885uhFCi02u9YWzPkwPFshpdZvz4Cz5SF2yW5
-         3cdX7Uc5jRxQyUZ/OdpS0FQ99MTHZvxZn+Yvh9+vUyCNU6Nkslsa0BsvetCyBiifuiaF
-         ofpPIsCjf8RDcJnugQdsnMRpb699OA9J2IorskL7V4bo72fjLuOgBSbFaiudXLwYSXB+
-         QC1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737458500; x=1738063300;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ccl7pK+fGoMwVya6mvoYHjlRDfdrE2si7QnLrLuVzrA=;
-        b=iEhyiRzZ7iDgr+c7eTwq/hpwchTzxdE+5nlXr7tyP5BLgue0PQ1JwFRHnhF/FefAIE
-         MnRNSfF8BgvuvQ2AGHx9VEjMOp79bcG1hZq6JmGgXzEiv69C6Vg7lAwQ8KotMNO8U7z2
-         SNvqfKi0WBEH2bepBk547SWvRCW80tNa9g4XPqaUrtBB8d5xPRsDN05ZrWPTBl5iZB8H
-         TgCg/PzReVHLDk5ecjZ676Eyoo02yxGgetlmcPf3T3XRI55Osf3RPAc3rg+Ra3h5FA6D
-         R1TrvAs8oJy+L0tuyTgUov+q5S3hQQRGKYnCFvOJrUs0NAqjoz1b1AEU/q9+y7FjATNk
-         s1Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUo2wnzyB+bQGbFIBsVY7922PvpvbJkPTVK9t+iVYPo3repZt9jZBg9hM6eMj4ErwuuUo/vMelCUR+xpg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoNI/Yr8EJ36aCU1240tS6SULEAj6cGbh1ZHqpzlJJwEKTknG7
-	D0iThMQIgbvaMPzgv6zD/DN/+Z1YVFZaGzXMbBh4O1PSqsGtoesSC3jbjOVQ7AA=
-X-Gm-Gg: ASbGnctMtfB9xu8R/IUUCHHla3oXJ/99UomJN/53yEoN9LEYTW0dOUuXgumK2fRwDjs
-	WrrunXi38bNYK87GD8Kcf07nAOA5pvFazALLxwQverIvY1IStna/3wgXUT3qoUfbRB6EpkqiUIP
-	zqdjbnDUsDbeyFgTLkS8cA8BdGXb6fyUK/dvjA7Ml+6cdohZG84mxtcgG/+EaY5J8a6SM9KHDyC
-	Mfd8iQcQxDyNwtiKkUCFVqwmbc5bMoED7gH7hZjJL8FJalL+1kNkyGDhGNxdHNor3jShGGJZL4r
-	yxdCh9nG4cwGixc7MEuWD7pM6QgHFbkyIT0KtNY0nbBDq5UGRA==
-X-Google-Smtp-Source: AGHT+IFYzzED8Wa2HZSUyJkmbJmRc7n+A/fvnsoklQLIV99y/1uEpOedpIlkjVzotwOAh8lDtCA/PA==
-X-Received: by 2002:a05:651c:b2a:b0:300:7f87:a65 with SMTP id 38308e7fff4ca-3072cb1f9b0mr65240811fa.35.1737458499868;
-        Tue, 21 Jan 2025 03:21:39 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3072a51825fsm20633711fa.111.2025.01.21.03.21.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2025 03:21:38 -0800 (PST)
-Date: Tue, 21 Jan 2025 13:21:35 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, 
-	Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, 
-	Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Peter Senna Tschudin <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, 
-	Martyn Welch <martyn.welch@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
-	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, virtualization@lists.linux.dev, 
-	spice-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Jani Nikula <jani.nikula@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v2 0/5] drm/connector: make mode_valid() callback accept
- const mode pointer
-Message-ID: <ak4cz6v6rjguh4jgacyu2mcfh5igtb7qwhvbvdcnfjc5hraloi@d7dwxc7v5gbo>
-References: <20241214-drm-connector-mode-valid-const-v2-0-4f9498a4c822@linaro.org>
- <173624946815.1500596.321177900833598022.b4-ty@linaro.org>
- <CAMuHMdVwcaY2Fgpf7GYhBrE5B+AEg=v0BH4OjMXgnp=wqjxmKg@mail.gmail.com>
- <CAA8EJpos0HQpr9P4XRkto0Jy+Anf1xEH2xhEU8wtCyUQd+XwMg@mail.gmail.com>
- <CAMuHMdW-9F9aypY_XeU3y=dn3AAxjFrZO+H+=hbMF7nGrTLAQQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="J/BD+qfz"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ggvh2nD7+jyncZg4tbpWT5sEd6nAbN9LHNizpi4FULm3YF+IXQinT3tzhQ5olUZs6BFjY4HtL4PH+G4j4o+rBXYkYMqGhjqETmdrVFj0bRcu9kCOX5ccyNgGQiTrGCy+05i1R3RQgc3L3RahQnnQ8sapcnFL/ut/rjfuVCRd1LgualJZOmCkegnU6aXQ5MIP9BaPTnvRnxvwDWVIrxv1a7MdByU9tbKmgFofhmRpZ70DtJo4SeGUZ+XOpbbOXEIChCBxnBvhjW2K823ITNM+XMCVeZgqMG+m5Y36AaPjD146O4Ezy8uXLEinYXQqrY0b4fi0z5zWtRTz8jnZ2RC0Ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ggYppapWX69ekISwgEp0Nd9N0+Gw8o2bnD95k1ldvkE=;
+ b=OW3J8wiBvwu2FkqGMGFD4FDhkG1QV6hjcUqSpphXoKPzXBZD4MN2ZRdwwcBjdjiHdAKuZiRWN9yonQMTY+3LQO5wh77szkUyhizasFjjsIO3WmkXbenGWbaKufvB+bpNkKxmBQlexdOY/psl7vvfcBBp06VVb7ls6M0sXoLO9mBEPcurw5my/XJWxikFMVoZ8+yghHwvH5zDPcs6CuQgvxvF5M047hcKViTo0gLQHe3Tt6zbnIadLHccmo85cX+7e5PT71kIeW65RZBu/WqfYdgawqzO7SjckVA89SffbY50s50G8SmONZGIMk6ELLOR1AcavEjlaqDB790mJ+w3Bg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ggYppapWX69ekISwgEp0Nd9N0+Gw8o2bnD95k1ldvkE=;
+ b=J/BD+qfzyZEo3JmZsjz4xV9lhYlYyTKIag8/HcGsq7CnarIfXsb4urI/VBb4e/Om1Y5Qvl7vnf6A0JBJL4s9rv5QA5pFl14cr8g4+gMhEmpnQ2sdjm0vlbmN4XlfsUt6woEUcXyAtnSzlt9din60zPIkhfIPPWLVW+tjMlnjrtAfW3xBV6nYtgE16RLlMR4RdkI341olFNN6y2qxDf2DwGrqWwgjs/OzG4e6B++3r4iX/8iD2bErMpxzeLDsUIuMi8EqSaFkSPNiLZJ6oVy4ynA6GTR28qdGM5zO69J64Z+m/w9PC4deJGwUOjNgBB0S0COtXtjAnh4IIzKdWFil6g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by PH7PR12MB5878.namprd12.prod.outlook.com (2603:10b6:510:1d6::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.21; Tue, 21 Jan
+ 2025 12:19:43 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.8356.020; Tue, 21 Jan 2025
+ 12:19:43 +0000
+Message-ID: <e3a457d6-092b-4b7a-9032-50daddab6f1f@nvidia.com>
+Date: Tue, 21 Jan 2025 12:19:37 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] usb: gadget: u_serial: Disable ep before setting port
+ to null to fix the crash caused by port being null
+From: Jon Hunter <jonathanh@nvidia.com>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>,
+ Prashanth K <quic_prashk@quicinc.com>, "mwalle@kernel.org"
+ <mwalle@kernel.org>, "quic_jjohnson@quicinc.com"
+ <quic_jjohnson@quicinc.com>, David Brownell
+ <dbrownell@users.sourceforge.net>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "opensource.kernel" <opensource.kernel@vivo.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Brad Griffis <bgriffis@nvidia.com>
+References: <TYUPR06MB621733B5AC690DBDF80A0DCCD2042@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <1037c1ad-9230-4181-b9c3-167dbaa47644@nvidia.com>
+ <2025011633-cavity-earthworm-2b5e@gregkh>
+ <3d9db530-a0b7-4f18-9ad4-233356dfe68c@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <3d9db530-a0b7-4f18-9ad4-233356dfe68c@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0292.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:38f::18) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdW-9F9aypY_XeU3y=dn3AAxjFrZO+H+=hbMF7nGrTLAQQ@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH7PR12MB5878:EE_
+X-MS-Office365-Filtering-Correlation-Id: f36ab616-6bcb-4c29-ebc5-08dd3a15e2dd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|13003099007|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dzBTTDZZdEVIdGgvSVNDdnF0SWR4VUpVQXFDYk9HenJia0RUMHlaZ3UrTkRp?=
+ =?utf-8?B?emVBc05LTldTUURGbmN1dzFQN1NxUHM5TjEvcEFUQjBvMlpYQUZWRjgrTDZ5?=
+ =?utf-8?B?M3UyZVlKU3VlRFlOQlpQM01xTm52TzVTc0YrYmxQbVUzb1V1dC9KOEo0eUJk?=
+ =?utf-8?B?emtBWUNBRFJ1K1hxWjh5M3lzeVVSWStXei9uOGgrOXJ4MndoRE1oQTBaZE1U?=
+ =?utf-8?B?bkpYOVFmcGRISUZJZ3hEbWlBRWtjZ1dPSTNoN1Y3S2NFTTJHWktQTm9iUzNC?=
+ =?utf-8?B?Ynl0K1hmd0JkaG9qeXBVemt1bzA2QTF1NnRCdG9SOWhJanRNaFRGNnJnSGlR?=
+ =?utf-8?B?ZDZOQnJoMGU0WE5nSmFEZ0JPaG9yTjEzd0xHU0lWNGJhcnJoOXBwU3VEYkNX?=
+ =?utf-8?B?NnZPYjVqUjhxVFFkQWNPenllbFhkYTc2dlBFNURzMjFKUjRVYUtCMmFEVGdX?=
+ =?utf-8?B?SHFzSTJyWDhjQmdWNTQycDFKRkNuM083OHBRcU9yYm5FcGorZ0JsbVNnNTE0?=
+ =?utf-8?B?K3NLQmZmS3lUejRyZ29Ia0Z5Rm10aHlyYlBLOHFaRU51eHV3eFF4SnVHRDNL?=
+ =?utf-8?B?Wlo3aGZPdVNKZTViVlpnWkFONUl4OU03VW8vdVIyRGJJMkJHVlJvdVdFeHBt?=
+ =?utf-8?B?dmovYmNhcytjMjQzcVkyTjQ2dWd2RGkrZ3dvNVNGMC94dkpQVkQvdDlSdm9Z?=
+ =?utf-8?B?TEdVL3V3WGsxdEIzZlNxRGs5bjJmTFFyRUlvOG81RHBPV0ppTElCbzNveERQ?=
+ =?utf-8?B?ZHBPTE9XRGVKN0NhUU1lQ2xoSWxvQ09hSVlJUE10TDdDcnREUWplT29SekFm?=
+ =?utf-8?B?L3hPMU52c1g5dWZ4TEs3bkF0NWxlSS9ybGhmUnNEQ20rL3pXdGF6dEtQdEtp?=
+ =?utf-8?B?V3N1YVJYcEpoaHVEK3d4SEZVQzNWYXJVdmVxc0dscncyeDJSalFLMlJwWFlF?=
+ =?utf-8?B?Z29mQ1lTSkZKbWRraUFnRGlhSVZBUW1JNUkwcjhQUTQzZDc0Rm9SWTBtQ3JW?=
+ =?utf-8?B?SGRLYlkvMFdKUXFsQ3hUdVVuREc1M21ndkJYQjlvbHpGWmx6eVpXWi9ScnRU?=
+ =?utf-8?B?RC9zQlJnNjhuU0RVTkZCTXdBQ093cTQ0T216R3huMGxsRGxXVzJsT0xBbDdJ?=
+ =?utf-8?B?eng5dFJsdGgwUlk1MHZwVEtnUHRScnI2V01yV1dYRzZNQ1phbmN4Umo2VEFD?=
+ =?utf-8?B?QmtSaGxScFV4YU5mb3VvTVZhZXNXUlBNZEFUY1V3UXNLdU5wNk11bDYvaEpH?=
+ =?utf-8?B?alJwZ2FRN3JCVTgvNWhHVmE1MXZJS3M4REFOQ2NiL3RqR3RlTDVWbVloeXVy?=
+ =?utf-8?B?RnFJYXVDN1pYaUZOZ1BUMWh4NU1HT01OeVl3dzFOR1RlZ1BHb2FHNGkxVmJL?=
+ =?utf-8?B?UU9KTWNBazlQbkdkS2dDdFh3TUZQWWQyM1g1T3V0aDkvREVaejFJMC9QcXF6?=
+ =?utf-8?B?STQ4eURLcjBjTWE2WVJGamlHV3ZTVFBUNWdKaUtxaFNhL29BaGJOZGFIbzg5?=
+ =?utf-8?B?YkdkSmF6TzlYbmdySm9Hd01PdEJBQlNUQjJ4NDZ0SmlxU2N3aFRpWVJoUDky?=
+ =?utf-8?B?Ky8zWndocDg2OEVzbWFLREZEdmdFbnpSdVkzd0ZoUE92NGJadGFGenZEcHNs?=
+ =?utf-8?B?ZlE4SWc4emFDZ3o4SVR3azF4a3pZdnVvRUpYNzBzd3BBaWxPdTVIeWIxZ0Vh?=
+ =?utf-8?B?OGcvNW9xVlJmZXpESzJnTlNFY0NFOE5ud2p5RGJyaklQekEyQlVGSXh3ekpX?=
+ =?utf-8?B?T3lreElxVEpDWmE5V3BBYTdTQ1NiRVl2Y1UwU2tiU1Y0ZndjL1lFMnd3SUoy?=
+ =?utf-8?B?R1ByWENLS2d5WHZLZGdBVHVCVTd1VkVPZHp4MlZidzRaK2YwVExnM01mMWc0?=
+ =?utf-8?Q?NC4/TFBpiMuZx?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(13003099007)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QzlFektsOU0rR3VpVy9Fa0lleXRFSzgwdmFydDF6ajd5SU1ETnFFdzBPRG5G?=
+ =?utf-8?B?UlVRUkRKSDI4RE04WDRmeVFmeDVyLzh1OXM2cUFzTnQxckozRGhNUTZvQ1pa?=
+ =?utf-8?B?ZUV5ZysySTZiTWJJeW1vbGNSbzRRcTR5RU1IVjdSNjZFN1NPait0dXM2dTQz?=
+ =?utf-8?B?TTNKUUVVUlh5V2JvaDhHZGR2M0tjNFFQcHhDM2ZqeXFzdmRuMkZ3QTYrWHVi?=
+ =?utf-8?B?T0tQZjVseDRkbHNMOXBRV1hDWlNLQ1BIZjBNc3lYSjBWV1Nnck4ySlBTNVY2?=
+ =?utf-8?B?VWtTMVJrTzFXcGNBY0JyR1FWaThxcTVGZ3AzT0lKWDBVYTNzdVgxZUFqODQ5?=
+ =?utf-8?B?RXcxTEFEeTFUdjdyNFd3T0g3YWUwK0htNlY2VWk3ME0wUEN5b25LSU9aN1hF?=
+ =?utf-8?B?K2JqMjZ4Q0VRaWtkQ2dvaDgzS05VRjdtZURSRHRLZDVFVS8rNFV2OWFGUjN6?=
+ =?utf-8?B?THhTSk1GRFZyVW1taVhlMTgrWDNwd01TVy9tS09VL2xIK3NGcnVxSENhY21F?=
+ =?utf-8?B?ZlhicXZiRGVzcmlmbmlxQXlCdzRsT2NhWW9ZUm1mVmhObE4yazk4TUx5L0FS?=
+ =?utf-8?B?WkFyczFqT1VxRndDZmI0cW9jcnFQY1RKdXJaTzBHbVJTY2I1SjRmTHNneVVN?=
+ =?utf-8?B?Q0xEaWVoYWdKSlV6VC9qQm55Y05iZU9rS2MwMm9SejJHbHFjdG9MRGxJeWd1?=
+ =?utf-8?B?cVpHbEU2eDBjcU1sdDBOMVZhcHJQQ1EwNHdBd2VRUXBEeGdPcTlmSGN2WEdB?=
+ =?utf-8?B?MGtBcU5vajhuWk05eVQzZmpNa0t6NTI4TUxURWEwVEpGNVNmbU1NdjlwVXFF?=
+ =?utf-8?B?NnhXaUlUWVo2d0ZqdGxkRlRjbzFVMUVjNjVieklEcEZXcWlTcFI3RTZZU2gv?=
+ =?utf-8?B?bmlBRGs1R0FkZzVFTk01SEFBWjRmZzdqcSs3U2dqNnQzVmhIWkpIODI1RlFH?=
+ =?utf-8?B?L1J1ZStlaTRGaDFKZlZJNXVkdHV6OTkyNzZJbGVla1RaMEJPTEFlNlkvWFNm?=
+ =?utf-8?B?bmQwdHYrU29xb3c1ZEJralBkQWJXNkd1a0Joek11VTgyWTZTc1ptRFUrUHlm?=
+ =?utf-8?B?dmxrV1l0T2xhaGl1QkZmaDYwbnBaWWI0UXVGY0h5OWtTdkozMlZVYmpRWWQ5?=
+ =?utf-8?B?b0tSR29JSzYxb2xwOFQ3MW10UXRDcFdwL0gxV0lYSnp1VStKOHpwSFd1US8y?=
+ =?utf-8?B?UUpEcjZxZFZmZ3VKVUFXd2d5am1xLzRwVEZSRmlqbEsxTkw1U1NiUHkyRXhN?=
+ =?utf-8?B?dC9CWVVsb2l5TkZzNm41R1ZuWjhRZ0FQbEpQazdQY2Y4L2NTcUtQVGd0cURa?=
+ =?utf-8?B?SDF4SmJDeEJ0U21EMExxTExNbE9KRUpGZDh3Vy9EWis5M3pmODY0WElnMGhY?=
+ =?utf-8?B?UjNieEN2N0IzR3pBVnZtM0l0NnQ1bFZ0elZEWlFlMkNaVWNWbEI1dEw1T3Bh?=
+ =?utf-8?B?dE1oV1pkQnYrTHJCYVR2SmozcUZydTZ6NTk1c2s2ajlWamFXUmRESjZRYWlZ?=
+ =?utf-8?B?RkJUR2JyQmZlUTZBaHQ0a3E5dUljZHhFMDdUVUFOK25WdVZ4SDQrbmFlRmd0?=
+ =?utf-8?B?bTNUd3dvR09TR010Q3AvQ2gybGtsOG1yclZjWTBieW13cnJXZU1QUmlseTA3?=
+ =?utf-8?B?UzZRU2trdEEvSDNQQ1lLbU9YWDRBS2xHZmw0TXA1UTJxY1ZUeFAwZ2RGQWI4?=
+ =?utf-8?B?T2ZjMERlc2RGWDhMOHBHWjVpQ2xWSldqZ1hVTTlsL3dST0pXK2taMlVzcVFQ?=
+ =?utf-8?B?TTNsL1JvTjl5RmI3cVVNSXZSNERSdjRrUmMvNjlDRGhXNlB2MGhENWtkU0JQ?=
+ =?utf-8?B?V1hWejhvYkMwZlg3bkJEbFRSdlJHZktXRVhjbFhOZzRJc3ZQZktOS01TN1JU?=
+ =?utf-8?B?aDdJb1V5cU10a2ZMRjcvTEhaeEpDRlhubG1KbU1HLzUvWGNuUUZhbjA3QTZu?=
+ =?utf-8?B?S0VTNVdoL0s4KzVYaFpjY2J0QXV6My92eExsOThzWHd5Y0pCeFZqWlJnYzBY?=
+ =?utf-8?B?VWlnRVpwSnN5dHVoTmdPK2RDSElndkZXNGdqMFdTaFUrdFFrUWcrVVVTSUZs?=
+ =?utf-8?B?d0Y4UnN3UXU3QmNkN2VBS3A1K1ZYaDN0RGxaRG9NcEFUYnhDdmpaUXpXNEl1?=
+ =?utf-8?B?TjdUTERGVHVoTmFiODlVcXc4ODFHcHFqbDZmTTdlNEZkT2F0WjRtVks2R0dF?=
+ =?utf-8?Q?SwKlo2zzy+Zw6r45O/7/+ZHPbiY3axiIgfoBfN8VggHq?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f36ab616-6bcb-4c29-ebc5-08dd3a15e2dd
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jan 2025 12:19:43.2795
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wE1E369bulXDKEvvLZD8iWJD326+WTv2dA+yYygtg6jVHehxYrP/yyUQcaKCtQV2bnibLU7BXpvXe003eWAWUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5878
 
-On Tue, Jan 21, 2025 at 12:10:25PM +0100, Geert Uytterhoeven wrote:
-> Hi Dmitry,
-> 
-> CC sfr
-> 
-> On Tue, Jan 21, 2025 at 11:44 AM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> > On Tue, 21 Jan 2025 at 11:13, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Tue, Jan 7, 2025 at 12:31 PM Dmitry Baryshkov
-> > > <dmitry.baryshkov@linaro.org> wrote:
-> > > > On Sat, 14 Dec 2024 15:37:04 +0200, Dmitry Baryshkov wrote:
-> > > > > While working on the generic mode_valid() implementation for the HDMI
-> > > > > Connector framework I noticed that unlike other DRM objects
-> > > > > drm_connector accepts non-const pointer to struct drm_display_mode,
-> > > > > while obviously mode_valid() isn't expected to modify the argument.
-> > > > >
-> > > > > Mass-change the DRM framework code to pass const argument to that
-> > > > > callback.
-> > > > >
-> > > > > [...]
-> > > >
-> > > > Applied to drm-misc-next, thanks!
-> > > >
-> > > > [1/5] drm/encoder_slave: make mode_valid accept const struct drm_display_mode
-> > > >       commit: 7a5cd45fab0a2671aa4ea6d8fb80cea268387176
-> > > > [2/5] drm/amdgpu: don't change mode in amdgpu_dm_connector_mode_valid()
-> > > >       commit: b255ce4388e09f14311e7912d0ccd45a14a08d66
-> > > > [3/5] drm/sti: hda: pass const struct drm_display_mode* to hda_get_mode_idx()
-> > > >       commit: 5f011b442006ccb29044263df10843de80fc0b14
-> > > > [4/5] drm/connector: make mode_valid_ctx take a const struct drm_display_mode
-> > > >       commit: 66df9debcb29d14802912ed79a9cf9ba721b51a4
-> > > > [5/5] drm/connector: make mode_valid take a const struct drm_display_mode
-> > > >       commit: 26d6fd81916e62d2b0568d9756e5f9c33f0f9b7a
-> > >
-> > > I cannot find these in drm-misc or drm-next, but they are in drm-tip?
-> >
-> > These are in drm-misc/drm-misc-next, the commit IDs are a part of the
-> > Git history.
-> >
-> > > The last one due to commit 2bdc721917cf141f ("Merge remote-tracking
-> > > branch 'drm-misc/drm-misc-next' into drm-tip").
-> > >
-> > > What am I missing?
-> > > Thanks!
-> >
-> > It might be some kind of misinteraction between drm-misc-next vs
-> > drm-misc-next-fixes vs merge window. Let me recheck dim rebuild-tip.
-> 
-> I indeed see the commit in
-> https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/include/drm/drm_modeset_helper_vtables.h?ref_type=heads
-> 
-> [diving deeper]
-> 
-> So I missed the change from the for-linux-next to the drm-misc-next
-> branch.  Hence I fetched only the former, and was using a stale
-> version of the latter.
-> 
-> Apparently Stephen is also using the old branches for linux-next:
-> 
->     drm-misc-fixes git
-> https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next-fixes
->     drm-misc git
-> https://gitlab.freedesktop.org/drm/misc/kernel.git#for-linux-next
-> 
-> I believe the latter should be drm-misc-next.
-> Should the former be drm-misc-fixes or drm-misc-next-fixes? Or both?
 
-No. Both branches are correct. This is how the drm-misc tree managed
-development process: during the merge window (and several preceeding
-weeks) the drm-misc-next branch is open for the commits. However those
-commits are not targeted the forthcoming -rc1. Thus the for-linux-next
-branch is diverted to point to drm-misc-next-fixes. This is all being by
-the dim tool.
+On 16/01/2025 15:01, Jon Hunter wrote:
+> 
+> On 16/01/2025 13:28, gregkh@linuxfoundation.org wrote:
+>> On Thu, Jan 16, 2025 at 01:11:36PM +0000, Jon Hunter wrote:
+>>> Hi Greg, Lianqin,
+>>>
+>>> On 17/12/2024 07:58, 胡连勤 wrote:
+>>>> From: Lianqin Hu <hulianqin@vivo.com>
+>>>>
+>>>> Considering that in some extreme cases, when performing the
+>>>> unbinding operation, gserial_disconnect has cleared gser->ioport,
+>>>> which triggers gadget reconfiguration, and then calls gs_read_complete,
+>>>> resulting in access to a null pointer. Therefore, ep is disabled before
+>>>> gserial_disconnect sets port to null to prevent this from happening.
+>>>>
+>>>> Call trace:
+>>>>    gs_read_complete+0x58/0x240
+>>>>    usb_gadget_giveback_request+0x40/0x160
+>>>>    dwc3_remove_requests+0x170/0x484
+>>>>    dwc3_ep0_out_start+0xb0/0x1d4
+>>>>    __dwc3_gadget_start+0x25c/0x720
+>>>>    kretprobe_trampoline.cfi_jt+0x0/0x8
+>>>>    kretprobe_trampoline.cfi_jt+0x0/0x8
+>>>>    udc_bind_to_driver+0x1d8/0x300
+>>>>    usb_gadget_probe_driver+0xa8/0x1dc
+>>>>    gadget_dev_desc_UDC_store+0x13c/0x188
+>>>>    configfs_write_iter+0x160/0x1f4
+>>>>    vfs_write+0x2d0/0x40c
+>>>>    ksys_write+0x7c/0xf0
+>>>>    __arm64_sys_write+0x20/0x30
+>>>>    invoke_syscall+0x60/0x150
+>>>>    el0_svc_common+0x8c/0xf8
+>>>>    do_el0_svc+0x28/0xa0
+>>>>    el0_svc+0x24/0x84
+>>>>
+>>>> Fixes: c1dca562be8a ("usb gadget: split out serial core")
+>>>> Cc: stable@vger.kernel.org
+>>>> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
+>>>> ---
+>>>>
+>>>> Changes in v3:
+>>>>    - Add --- line above the version tag information
+>>>>    - Remove extra blank lines in commit messages
+>>>>    - Version tag information from v2 to changes in v2
+>>>>    - Link to v2: https://lore.kernel.org/all/ 
+>>>> TYUPR06MB6217DAA095A9863D4B58D57CD23B2@TYUPR06MB6217.apcprd06.prod.outlook.com/
+>>>>
+>>>> Changes in v2:
+>>>>    - Remove some address information from patch descriptions
+>>>>    - Link to v1: https://lore.kernel.org/all/ 
+>>>> TYUPR06MB621763AB815989161F4033AFD2762@TYUPR06MB6217.apcprd06.prod.outlook.com/
+>>>>    - Link to suggestions: https://lore.kernel.org/all/ 
+>>>> TYUPR06MB6217DE28012FFEC5E808DD64D2962@TYUPR06MB6217.apcprd06.prod.outlook.com/
+>>>>
+>>>>    drivers/usb/gadget/function/u_serial.c | 8 ++++----
+>>>>    1 file changed, 4 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/ 
+>>>> gadget/function/u_serial.c
+>>>> index 53d9fc41acc5..bc143a86c2dd 100644
+>>>> --- a/drivers/usb/gadget/function/u_serial.c
+>>>> +++ b/drivers/usb/gadget/function/u_serial.c
+>>>> @@ -1420,6 +1420,10 @@ void gserial_disconnect(struct gserial *gser)
+>>>>        /* REVISIT as above: how best to track this? */
+>>>>        port->port_line_coding = gser->port_line_coding;
+>>>> +    /* disable endpoints, aborting down any active I/O */
+>>>> +    usb_ep_disable(gser->out);
+>>>> +    usb_ep_disable(gser->in);
+>>>> +
+>>>>        port->port_usb = NULL;
+>>>>        gser->ioport = NULL;
+>>>>        if (port->port.count > 0) {
+>>>> @@ -1431,10 +1435,6 @@ void gserial_disconnect(struct gserial *gser)
+>>>>        spin_unlock(&port->port_lock);
+>>>>        spin_unlock_irqrestore(&serial_port_lock, flags);
+>>>> -    /* disable endpoints, aborting down any active I/O */
+>>>> -    usb_ep_disable(gser->out);
+>>>> -    usb_ep_disable(gser->in);
+>>>> -
+>>>>        /* finally, free any unused/unusable I/O buffers */
+>>>>        spin_lock_irqsave(&port->port_lock, flags);
+>>>>        if (port->port.count == 0)
+>>>
+>>>
+>>> We have observed a reboot regression on Tegra234 (I have not tried other
+>>> boards) and bisect is pointing to this commit. Reverting this on top of
+>>> mainline is fixing the problem.
+>>>
+>>> With this change, when the board reboots we see ...
+>>>
+>>> [   59.918177] tegra-xudc 3550000.usb: ep 3 disabled
+>>> [   59.923097] tegra-xudc 3550000.usb: ep 2 disabled
+>>> [   59.927955] tegra-xudc 3550000.usb: ep 5 disabled
+>>> [   80.911432] rcu: INFO: rcu_preempt self-detected stall on CPU
+>>> [   80.917354] rcu:     6-....: (5248 ticks this GP) 
+>>> idle=ec24/1/0x4000000000000000 softirq=1213/1213 fqs=2623
+>>> [   80.927146] rcu:     (t=5253 jiffies g=3781 q=1490 ncpus=12)
+>>> [   80.932704] Sending NMI from CPU 6 to CPUs 2:
+>>> [   90.981555] CPU: 6 UID: 0 PID: 18 Comm: rcu_exp_gp_kthr Not 
+>>> tainted 6.13.0-rc7-00043-g619f0b6fad52 #1
+>>> [   90.981558] Hardware name: NVIDIA NVIDIA Jetson AGX Orin Developer 
+>>> Kit/Jetson, BIOS 00.0.0-dev-main_92e5ae_88fd1_296de 12/16/2024
+>>> [   90.981559] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS 
+>>> BTYPE=--)
+>>> [   90.981562] pc : smp_call_function_single+0xdc/0x1a0
+>>> [   90.981574] lr : __sync_rcu_exp_select_node_cpus+0x228/0x3c0
+>>> [   90.981578] sp : ffff800082eb3cd0
+>>> [   90.981579] x29: ffff800082eb3cd0 x28: 0000000000000010 x27: 
+>>> ffff0000802933c0
+>>> [   90.981582] x26: ffff0007a8a1d700 x25: ffff800082895500 x24: 
+>>> ffff800080132018
+>>> [   90.981584] x23: 0000000000000014 x22: ffff800081fb7700 x21: 
+>>> ffff80008280d970
+>>> [   90.981586] x20: 0000000000000feb x19: ffff800082eb3d00 x18: 
+>>> 0000000000000000
+>>> [   90.981588] x17: 0000000000000000 x16: 0000000000000000 x15: 
+>>> 0000000000000000
+>>> [   90.981590] x14: ffff000080293440 x13: 0000000000000001 x12: 
+>>> 0000000000000000
+>>> [   90.981591] x11: ffff800081fb2388 x10: ffff0000802933c0 x9 : 
+>>> 0000000000000001
+>>> [   90.981593] x8 : 0000000000000040 x7 : 0000000000017068 x6 : 
+>>> ffff800080132018
+>>> [   90.981595] x5 : 0000000000000000 x4 : ffff0007a8a4f9c8 x3 : 
+>>> 0000000000000001
+>>> [   90.981597] x2 : 0000000000000000 x1 : ffff0007a8a4f9c0 x0 : 
+>>> 0000000000000004
+>>> [   90.981599] Call trace:
+>>> [   90.981601]  smp_call_function_single+0xdc/0x1a0 (P)
+>>> [   90.981605]  __sync_rcu_exp_select_node_cpus+0x228/0x3c0
+>>> [   90.981607]  sync_rcu_exp_select_cpus+0x13c/0x2a0
+>>> [   90.981609]  wait_rcu_exp_gp+0x18/0x30
+>>> [   90.981611]  kthread_worker_fn+0xd0/0x188
+>>> [   90.981614]  kthread+0x118/0x11c
+>>> [   90.981619]  ret_from_fork+0x10/0x20
+>>> [  101.416347] sched: DL replenish lagged too much
+>>>
+>>
+>> Odd, you have a usb-serial gadget device in this system that is
+>> disconnecting somehow?  That oops doesn't point to anything in the usb
+>> gadget codebase, "all" we have done is move the call to shutdown the
+>> endpoints to earlier in the disconnect function.
+> 
+> Yes the board starts usb-serial and usb-ethernet gadget and on reboot 
+> when tearing it down I am seeing the above. As soon as it disables the 
+> tegra-xudc endpoints (as seen above) the board appears to stall.
+> 
+>> I'm glad to revert this, but it feels really odd that this is causing
+>> you an rcu stall issue.
+> 
+> Thanks. I can't say I understand it either, but I am certain it is 
+> caused by this change.
+> 
+> Happy to run any tests to narrow this down a bit.
 
-Respective mode_valid changes were applied too late in the cycle, so
-they are not going to land into 6.14-rc1 (and are not a part of the
-for-linux-next branch). Once 6.14-rc1 is released and we start working
-towards 6.15, for-linux-next will again point to drm-misc-next.
+
+I did a bit more looking at this and I see that we setup a USB gadget 
+device via the configfs as described in this doc [0]. The RCU stall 
+occurs when we attempt to disable the gadget on shutdown by ...
+
+  $ echo "" > /path/to/UDC
+
+Jon
+
+[0] https://docs.kernel.org/usb/gadget_configfs.html
 
 -- 
-With best wishes
-Dmitry
+nvpublic
+
