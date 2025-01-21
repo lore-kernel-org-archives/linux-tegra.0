@@ -1,74 +1,66 @@
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2075.outbound.protection.outlook.com [40.107.100.75])
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2043.outbound.protection.outlook.com [40.107.96.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046961D554;
-	Tue, 21 Jan 2025 12:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.75
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1721E9B38;
+	Tue, 21 Jan 2025 17:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.43
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737461990; cv=fail; b=qC94BY017achyBV5T2IRQFmtqShJq3wzISNGnh/WpVY7LQJDVYbY/bO7xlynmnN0w7Sm0MoPn+fdflVkatysfL+HfLFBCGdtPo11B3T+O23ZooLGEE4RksZSoa25z5exCSks64+z44HdB+erzSs8V/EYcOXACY/RQtzWbMOOt/Y=
+	t=1737481613; cv=fail; b=JHO9nvD7PRR1DlePVMrRDuP5u42SUGqO+HJrCBEGmwCbjZRDr0A4PeKYkHbi+kWOUh06ngPiHZZQWn/Q/3xR/He79GehiaNC1eYMGZh9Tdo2YKyGgiUhvI+D9CcHd/59/KAJ8JXrQXPZb1OcSzvgns/1UBU2TXT9vL4u9FnYkkE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737461990; c=relaxed/simple;
-	bh=ZpojYE1JPH4M7ShLtvIIa1S6Bqd0iNClt9+qtNMS0es=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=XlThwoR5d8Ldccg3jIG5Sq8vKQ1HPRKq9of+9+Ob5Ixqxqcc9KuAcRBzVvzPhMvrKk5kA/eGx9SR8V/zPx5bOakqNiXCHW+Vlok/410WUdF8zCq8tVSLh9h1BiA1+a+/EQyZCYdrP5caXVyXKXhQ6euC8gEV7MSQWHMsCppvoqg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=J/BD+qfz; arc=fail smtp.client-ip=40.107.100.75
+	s=arc-20240116; t=1737481613; c=relaxed/simple;
+	bh=qFAzJI8mHBZsUq9WOr+vM/fto4hMVwd94zaEPi/kg4g=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lOxMKKXsa1wutNY/jwCf4nS0QzOQTjgY/O8haNKQUrfanjlV3tEmOHQ10sCguw99z2aw5JUGtFuo4k3wpMmIvkCIn4/gYJGmxytZlrBzw2R+ymRec5TxPOVs5LRt25OkRNIAgk9x8rm2yVK8SUsYMwzEc1dqT8mdw2mgpkTwbPY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dFtKQlWz; arc=fail smtp.client-ip=40.107.96.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="J/BD+qfz"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dFtKQlWz"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ggvh2nD7+jyncZg4tbpWT5sEd6nAbN9LHNizpi4FULm3YF+IXQinT3tzhQ5olUZs6BFjY4HtL4PH+G4j4o+rBXYkYMqGhjqETmdrVFj0bRcu9kCOX5ccyNgGQiTrGCy+05i1R3RQgc3L3RahQnnQ8sapcnFL/ut/rjfuVCRd1LgualJZOmCkegnU6aXQ5MIP9BaPTnvRnxvwDWVIrxv1a7MdByU9tbKmgFofhmRpZ70DtJo4SeGUZ+XOpbbOXEIChCBxnBvhjW2K823ITNM+XMCVeZgqMG+m5Y36AaPjD146O4Ezy8uXLEinYXQqrY0b4fi0z5zWtRTz8jnZ2RC0Ww==
+ b=d6V5cNS/gVe8RL+/JAZZyQJlSldR723EwwAXI9vfwmOk/vr8e0SKcVt6PG+F3y2ieJC2nAJed/gIs73Wqq455yqBxL9oetPybfhe7iaBDlc3IzDmmomuODKHHWixJ5Z9UJEnESggKe8Ic2QOc4QwgtYClKoLRvIYx4DcSKeV6nCKCRSDWPWk7P3gQDIbqI5A2JuZcGru4Lfb1f0B5b0GSaGTGUXKxI7sbfASWlLcVQ/R+P3/DPn3GY5prNl/4HQj5BDKzYA5BUhX09VWgNIMzNJ5bJpcDph/h2sk3a//ZBD9Lj6+7+IAEW50C7h7McGR/6oTbMCa7vB565fueQdgGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ggYppapWX69ekISwgEp0Nd9N0+Gw8o2bnD95k1ldvkE=;
- b=OW3J8wiBvwu2FkqGMGFD4FDhkG1QV6hjcUqSpphXoKPzXBZD4MN2ZRdwwcBjdjiHdAKuZiRWN9yonQMTY+3LQO5wh77szkUyhizasFjjsIO3WmkXbenGWbaKufvB+bpNkKxmBQlexdOY/psl7vvfcBBp06VVb7ls6M0sXoLO9mBEPcurw5my/XJWxikFMVoZ8+yghHwvH5zDPcs6CuQgvxvF5M047hcKViTo0gLQHe3Tt6zbnIadLHccmo85cX+7e5PT71kIeW65RZBu/WqfYdgawqzO7SjckVA89SffbY50s50G8SmONZGIMk6ELLOR1AcavEjlaqDB790mJ+w3Bg==
+ bh=TRk7+7TndtlRkOIdhvP1b2qJxLT/IfcbBO8sv27kcC4=;
+ b=PQw8nAHdlhY8aCshE1yUts09vNbZ/h/bGeVA21jwyiE3ILg/sAuHs3VUURt2KOaMmYSmcYcXakm9bGwHHkpJiYTbpHzs2dHBucXDJJ2T/08H903Szz1fnIysD7qRnDNUdBbti8Zpsx5FI11xL5mGxaahHi+DFcnjBL+RDXIbPBPJoNIRNIS/eQ/KpPob62YW2X80SwqDFjxHm49mqjGi/R+7Oh/NO0io41XMlrRMQD2TmNKZol5c72jZ8scAP8XN3chFiIWPfKS5ZzIWINznm8IGar3jIUVwcWMaAUdFrx4k7yITbKP/ejwN7bVzBj0WzvFJFHRt8x0P0wTQxutrjQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ggYppapWX69ekISwgEp0Nd9N0+Gw8o2bnD95k1ldvkE=;
- b=J/BD+qfzyZEo3JmZsjz4xV9lhYlYyTKIag8/HcGsq7CnarIfXsb4urI/VBb4e/Om1Y5Qvl7vnf6A0JBJL4s9rv5QA5pFl14cr8g4+gMhEmpnQ2sdjm0vlbmN4XlfsUt6woEUcXyAtnSzlt9din60zPIkhfIPPWLVW+tjMlnjrtAfW3xBV6nYtgE16RLlMR4RdkI341olFNN6y2qxDf2DwGrqWwgjs/OzG4e6B++3r4iX/8iD2bErMpxzeLDsUIuMi8EqSaFkSPNiLZJ6oVy4ynA6GTR28qdGM5zO69J64Z+m/w9PC4deJGwUOjNgBB0S0COtXtjAnh4IIzKdWFil6g==
+ bh=TRk7+7TndtlRkOIdhvP1b2qJxLT/IfcbBO8sv27kcC4=;
+ b=dFtKQlWzZbrWIQmgUp/prr+ASN0TgpK3jMlSQBRmIrdjV3RWe5+cdejqabsPT5SS8DzaRCm7l0kLbS8dOjh6J/bHwiMUgPzYUsnHQtYSGrNUHAS1X4AkPpKLwEGW3AuqZ/+KQJEytLCH7WU2Up6TQGSYgooOSlnSCqyD5WGBhHS4l3NwgQ/b0dSrwbGG4ntK/IwJE52qmcOUUh+hzGC7LYyPpkoarQWg53uVMjtnA8hS2fjr3fTVJfyEewmRUbVtQYbvPk9KIsqoDA7A7F8/Hw/mujKNcP5PzynUWgz9c+dQFLVPvRdcJR1v0UFthDAgIffbmiaQTqRq5+9ywmMKIQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by PH7PR12MB5878.namprd12.prod.outlook.com (2603:10b6:510:1d6::10) with
+ by PH0PR12MB8005.namprd12.prod.outlook.com (2603:10b6:510:26c::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8356.21; Tue, 21 Jan
- 2025 12:19:43 +0000
+ 2025 17:46:49 +0000
 Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
  ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
  ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.8356.020; Tue, 21 Jan 2025
- 12:19:43 +0000
-Message-ID: <e3a457d6-092b-4b7a-9032-50daddab6f1f@nvidia.com>
-Date: Tue, 21 Jan 2025 12:19:37 +0000
+ 17:46:49 +0000
+Message-ID: <7474af29-2995-48f6-830b-a23dad2d2bd1@nvidia.com>
+Date: Tue, 21 Jan 2025 17:46:43 +0000
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] usb: gadget: u_serial: Disable ep before setting port
- to null to fix the crash caused by port being null
-From: Jon Hunter <jonathanh@nvidia.com>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>,
- Prashanth K <quic_prashk@quicinc.com>, "mwalle@kernel.org"
- <mwalle@kernel.org>, "quic_jjohnson@quicinc.com"
- <quic_jjohnson@quicinc.com>, David Brownell
- <dbrownell@users.sourceforge.net>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "opensource.kernel" <opensource.kernel@vivo.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
- Brad Griffis <bgriffis@nvidia.com>
-References: <TYUPR06MB621733B5AC690DBDF80A0DCCD2042@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <1037c1ad-9230-4181-b9c3-167dbaa47644@nvidia.com>
- <2025011633-cavity-earthworm-2b5e@gregkh>
- <3d9db530-a0b7-4f18-9ad4-233356dfe68c@nvidia.com>
+Subject: Re: [v11 2/2] misc: pci_endpoint_test: Fix overflow of bar_size
+To: Hans Zhang <18255117159@163.com>, manivannan.sadhasivam@linaro.org
+Cc: kw@linux.com, kishon@kernel.org, arnd@arndb.de,
+ gregkh@linuxfoundation.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, rockswang7@gmail.com,
+ Niklas Cassel <cassel@kernel.org>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20250109094556.1724663-1-18255117159@163.com>
+ <20250109094556.1724663-3-18255117159@163.com>
 Content-Language: en-US
-In-Reply-To: <3d9db530-a0b7-4f18-9ad4-233356dfe68c@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20250109094556.1724663-3-18255117159@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P265CA0292.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:38f::18) To SJ2PR12MB8784.namprd12.prod.outlook.com
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LNXP265CA0045.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:5c::33) To SJ2PR12MB8784.namprd12.prod.outlook.com
  (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -77,265 +69,191 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH7PR12MB5878:EE_
-X-MS-Office365-Filtering-Correlation-Id: f36ab616-6bcb-4c29-ebc5-08dd3a15e2dd
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH0PR12MB8005:EE_
+X-MS-Office365-Filtering-Correlation-Id: d50d0924-e925-4af6-cf91-08dd3a4394aa
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|13003099007|7053199007;
+	BCL:0;ARA:13230040|10070799003|1800799024|366016|7416014|376014|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dzBTTDZZdEVIdGgvSVNDdnF0SWR4VUpVQXFDYk9HenJia0RUMHlaZ3UrTkRp?=
- =?utf-8?B?emVBc05LTldTUURGbmN1dzFQN1NxUHM5TjEvcEFUQjBvMlpYQUZWRjgrTDZ5?=
- =?utf-8?B?M3UyZVlKU3VlRFlOQlpQM01xTm52TzVTc0YrYmxQbVUzb1V1dC9KOEo0eUJk?=
- =?utf-8?B?emtBWUNBRFJ1K1hxWjh5M3lzeVVSWStXei9uOGgrOXJ4MndoRE1oQTBaZE1U?=
- =?utf-8?B?bkpYOVFmcGRISUZJZ3hEbWlBRWtjZ1dPSTNoN1Y3S2NFTTJHWktQTm9iUzNC?=
- =?utf-8?B?Ynl0K1hmd0JkaG9qeXBVemt1bzA2QTF1NnRCdG9SOWhJanRNaFRGNnJnSGlR?=
- =?utf-8?B?ZDZOQnJoMGU0WE5nSmFEZ0JPaG9yTjEzd0xHU0lWNGJhcnJoOXBwU3VEYkNX?=
- =?utf-8?B?NnZPYjVqUjhxVFFkQWNPenllbFhkYTc2dlBFNURzMjFKUjRVYUtCMmFEVGdX?=
- =?utf-8?B?SHFzSTJyWDhjQmdWNTQycDFKRkNuM083OHBRcU9yYm5FcGorZ0JsbVNnNTE0?=
- =?utf-8?B?K3NLQmZmS3lUejRyZ29Ia0Z5Rm10aHlyYlBLOHFaRU51eHV3eFF4SnVHRDNL?=
- =?utf-8?B?Wlo3aGZPdVNKZTViVlpnWkFONUl4OU03VW8vdVIyRGJJMkJHVlJvdVdFeHBt?=
- =?utf-8?B?dmovYmNhcytjMjQzcVkyTjQ2dWd2RGkrZ3dvNVNGMC94dkpQVkQvdDlSdm9Z?=
- =?utf-8?B?TEdVL3V3WGsxdEIzZlNxRGs5bjJmTFFyRUlvOG81RHBPV0ppTElCbzNveERQ?=
- =?utf-8?B?ZHBPTE9XRGVKN0NhUU1lQ2xoSWxvQ09hSVlJUE10TDdDcnREUWplT29SekFm?=
- =?utf-8?B?L3hPMU52c1g5dWZ4TEs3bkF0NWxlSS9ybGhmUnNEQ20rL3pXdGF6dEtQdEtp?=
- =?utf-8?B?V3N1YVJYcEpoaHVEK3d4SEZVQzNWYXJVdmVxc0dscncyeDJSalFLMlJwWFlF?=
- =?utf-8?B?Z29mQ1lTSkZKbWRraUFnRGlhSVZBUW1JNUkwcjhQUTQzZDc0Rm9SWTBtQ3JW?=
- =?utf-8?B?SGRLYlkvMFdKUXFsQ3hUdVVuREc1M21ndkJYQjlvbHpGWmx6eVpXWi9ScnRU?=
- =?utf-8?B?RC9zQlJnNjhuU0RVTkZCTXdBQ093cTQ0T216R3huMGxsRGxXVzJsT0xBbDdJ?=
- =?utf-8?B?eng5dFJsdGgwUlk1MHZwVEtnUHRScnI2V01yV1dYRzZNQ1phbmN4Umo2VEFD?=
- =?utf-8?B?QmtSaGxScFV4YU5mb3VvTVZhZXNXUlBNZEFUY1V3UXNLdU5wNk11bDYvaEpH?=
- =?utf-8?B?alJwZ2FRN3JCVTgvNWhHVmE1MXZJS3M4REFOQ2NiL3RqR3RlTDVWbVloeXVy?=
- =?utf-8?B?RnFJYXVDN1pYaUZOZ1BUMWh4NU1HT01OeVl3dzFOR1RlZ1BHb2FHNGkxVmJL?=
- =?utf-8?B?UU9KTWNBazlQbkdkS2dDdFh3TUZQWWQyM1g1T3V0aDkvREVaejFJMC9QcXF6?=
- =?utf-8?B?STQ4eURLcjBjTWE2WVJGamlHV3ZTVFBUNWdKaUtxaFNhL29BaGJOZGFIbzg5?=
- =?utf-8?B?YkdkSmF6TzlYbmdySm9Hd01PdEJBQlNUQjJ4NDZ0SmlxU2N3aFRpWVJoUDky?=
- =?utf-8?B?Ky8zWndocDg2OEVzbWFLREZEdmdFbnpSdVkzd0ZoUE92NGJadGFGenZEcHNs?=
- =?utf-8?B?ZlE4SWc4emFDZ3o4SVR3azF4a3pZdnVvRUpYNzBzd3BBaWxPdTVIeWIxZ0Vh?=
- =?utf-8?B?OGcvNW9xVlJmZXpESzJnTlNFY0NFOE5ud2p5RGJyaklQekEyQlVGSXh3ekpX?=
- =?utf-8?B?T3lreElxVEpDWmE5V3BBYTdTQ1NiRVl2Y1UwU2tiU1Y0ZndjL1lFMnd3SUoy?=
- =?utf-8?B?R1ByWENLS2d5WHZLZGdBVHVCVTd1VkVPZHp4MlZidzRaK2YwVExnM01mMWc0?=
- =?utf-8?Q?NC4/TFBpiMuZx?=
+	=?utf-8?B?aVlFNHc1VTdEZHg5ZHNZNzlaTytlL0FUQ0NtN1Y1bk5EcHdLRENkazZaZ0I0?=
+ =?utf-8?B?eXhOTHArTVBFcGJjd2xTbDZFaURTNjBTU3NTRGl6K0lrZ1BhaGlDempDOEJN?=
+ =?utf-8?B?emtZZmJlSWgrcmxHR2ZXdmpSbEp0dFRIVE8wRi83d2RrWExoN3dkSzNmN2c0?=
+ =?utf-8?B?Z04xc3U1dXBHbWd3ZU84UDhlWnBZM1NoemVzcWdOaUZjTFZFNUZmUzZxb1N0?=
+ =?utf-8?B?Z0doWk40K0ROd2xHQXpYQW9rU2FCRWlBVFZDeXNxd0FNeHVYOEU1SEdxYmZi?=
+ =?utf-8?B?R0svRlNBam8zbEZSMk9UNjhiQUYyRnU2Q3FYMkZiaUNXY0l3dmt3NDJqNjJR?=
+ =?utf-8?B?eFZ4VE5RN21XTHRYQU0xaEIzRGxXR2dYZWkybGZLeTFVUFNnclUyOFVHRnVw?=
+ =?utf-8?B?YlhQSTlaSThxc1BCNlEwOWlUcDBaa0pJdytXUGFsbzkzVzVPdUthazIxakNF?=
+ =?utf-8?B?NzdFN0d4VWg4VHRNdWE1bklZQmVDQUNabEhFSjJCL09yejBKSXA4SG5TZ0Mx?=
+ =?utf-8?B?VG1EczBaWFVQZm5VcklUYjlPR3lYMkVxeCtTMjB3Nk50YmhXTy9HaXJLQUJW?=
+ =?utf-8?B?dEdhcEhhdmgxOWpzUUl2dnpSTStOKytNeGNHeHB5cUkydGM3US82Y0NMZVQx?=
+ =?utf-8?B?WHhnM3JSMUE4Sk51T2xoMlVJdVVPVGdoQXo5aXAvS2ROSHJQd1RhZU16RXd2?=
+ =?utf-8?B?cDJ3amZTcWQ4dWFyWUtXdEhMR2t3VnphZURXZk9KQy9TOEFGZmRzZkkzS1FT?=
+ =?utf-8?B?RVNyRHJSVzQvT1Y1MDByaG0vcnRMUGp3VjlDd0ltNFhOcWtwaDkzTG9qYVI3?=
+ =?utf-8?B?ODFZNWpDeVJhWUtSK3ovVDUxNGhlUzNpeWZJSkVleGlpZGdLbG9tV1pZMVlZ?=
+ =?utf-8?B?dVhSQ2VTa3JtU1NENG13RWlISG8yZWZZS3J5LzBJZEtJbWVZRmpLSHk5Qmpm?=
+ =?utf-8?B?cWlRZ3BWcGhOakloQkNIdnQ5QzdaekRQeXRqQ1dnTEFsRlpNK1BLK1FZNGpO?=
+ =?utf-8?B?VmJxRy9yWEtWN2hiVU4xRGNWdXFLc3hIa2dFRm5XcG5wVXJEcmNtVGJGNmFr?=
+ =?utf-8?B?UjVmaktBajRmYVpoLzFXWlIwVFpBUnorck5RMnF6SlhtaXhPZktnMXV1TW0r?=
+ =?utf-8?B?bXVLQkxiOGJkdWRxK29UZGlvZStnaFFDR0N6Q2FIWkI0N0hDTEJWS3R5eHQw?=
+ =?utf-8?B?N3RZOG16ZmZuQ1ZTQkNncmVjOXpkbW02VWpLUnFpSDJkZk8xQmhsMjl4UHFB?=
+ =?utf-8?B?WVg1V1hISXFmdklXK2kzUFFyeXZKTEh0bkFLRDNBLzNtVTg1SG4vSWVLWXpD?=
+ =?utf-8?B?L3VSVHluU0t0UkM3RDgxaTJXMXFXOUlZaFNtTTJ4bEx5T0w2eml2UnJYRmxv?=
+ =?utf-8?B?RWhtck92UmNsVHdYSDN4NGVCT2pYUEZlY3ZURXNWRGxXblpmU1U5bG84T0w2?=
+ =?utf-8?B?c0dNSXI0ZnhZU1Q3N0xBaTVqVllxVlRvWlFONmFBcVpOKytUa1NiYmFZK2FE?=
+ =?utf-8?B?WXF0enRHU1E1S0ZFeHRlQ1l0TGJXOHU0YWJtcHE0NEFyZTR3KzI5WVVoR28y?=
+ =?utf-8?B?YmN2ZmxSNTVoNmlwNGdLaSswN29Fc1NKdDIxZmZnYU5ndkdxL1hmQ25hOFRq?=
+ =?utf-8?B?UFM0TFpPVFJDQ1ZaUTFQWHdRN0xWYkVyVFpydlNJSlBFTEY1WW9DK0ZUNlVW?=
+ =?utf-8?B?S203VnVIUDVpZVZ1UmdBNDlWUld1KzZCbVV4MUs0Zy84ZzBXN251cERsWXdC?=
+ =?utf-8?B?M2cwcjBxbnQ3T1haUW5Fc1pXY0trcVlLbnRwcU83K25uZnVORWZ0YmtvRU5H?=
+ =?utf-8?B?Y0NrYlg3SmJZd2lGUytjTGxpN2dXNkl6Zkc2cjEraVphWFFOMEJkUDI2SG5i?=
+ =?utf-8?Q?gE2OUgjoxkg3c?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(13003099007)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QzlFektsOU0rR3VpVy9Fa0lleXRFSzgwdmFydDF6ajd5SU1ETnFFdzBPRG5G?=
- =?utf-8?B?UlVRUkRKSDI4RE04WDRmeVFmeDVyLzh1OXM2cUFzTnQxckozRGhNUTZvQ1pa?=
- =?utf-8?B?ZUV5ZysySTZiTWJJeW1vbGNSbzRRcTR5RU1IVjdSNjZFN1NPait0dXM2dTQz?=
- =?utf-8?B?TTNKUUVVUlh5V2JvaDhHZGR2M0tjNFFQcHhDM2ZqeXFzdmRuMkZ3QTYrWHVi?=
- =?utf-8?B?T0tQZjVseDRkbHNMOXBRV1hDWlNLQ1BIZjBNc3lYSjBWV1Nnck4ySlBTNVY2?=
- =?utf-8?B?VWtTMVJrTzFXcGNBY0JyR1FWaThxcTVGZ3AzT0lKWDBVYTNzdVgxZUFqODQ5?=
- =?utf-8?B?RXcxTEFEeTFUdjdyNFd3T0g3YWUwK0htNlY2VWk3ME0wUEN5b25LSU9aN1hF?=
- =?utf-8?B?K2JqMjZ4Q0VRaWtkQ2dvaDgzS05VRjdtZURSRHRLZDVFVS8rNFV2OWFGUjN6?=
- =?utf-8?B?THhTSk1GRFZyVW1taVhlMTgrWDNwd01TVy9tS09VL2xIK3NGcnVxSENhY21F?=
- =?utf-8?B?ZlhicXZiRGVzcmlmbmlxQXlCdzRsT2NhWW9ZUm1mVmhObE4yazk4TUx5L0FS?=
- =?utf-8?B?WkFyczFqT1VxRndDZmI0cW9jcnFQY1RKdXJaTzBHbVJTY2I1SjRmTHNneVVN?=
- =?utf-8?B?Q0xEaWVoYWdKSlV6VC9qQm55Y05iZU9rS2MwMm9SejJHbHFjdG9MRGxJeWd1?=
- =?utf-8?B?cVpHbEU2eDBjcU1sdDBOMVZhcHJQQ1EwNHdBd2VRUXBEeGdPcTlmSGN2WEdB?=
- =?utf-8?B?MGtBcU5vajhuWk05eVQzZmpNa0t6NTI4TUxURWEwVEpGNVNmbU1NdjlwVXFF?=
- =?utf-8?B?NnhXaUlUWVo2d0ZqdGxkRlRjbzFVMUVjNjVieklEcEZXcWlTcFI3RTZZU2gv?=
- =?utf-8?B?bmlBRGs1R0FkZzVFTk01SEFBWjRmZzdqcSs3U2dqNnQzVmhIWkpIODI1RlFH?=
- =?utf-8?B?L1J1ZStlaTRGaDFKZlZJNXVkdHV6OTkyNzZJbGVla1RaMEJPTEFlNlkvWFNm?=
- =?utf-8?B?bmQwdHYrU29xb3c1ZEJralBkQWJXNkd1a0Joek11VTgyWTZTc1ptRFUrUHlm?=
- =?utf-8?B?dmxrV1l0T2xhaGl1QkZmaDYwbnBaWWI0UXVGY0h5OWtTdkozMlZVYmpRWWQ5?=
- =?utf-8?B?b0tSR29JSzYxb2xwOFQ3MW10UXRDcFdwL0gxV0lYSnp1VStKOHpwSFd1US8y?=
- =?utf-8?B?UUpEcjZxZFZmZ3VKVUFXd2d5am1xLzRwVEZSRmlqbEsxTkw1U1NiUHkyRXhN?=
- =?utf-8?B?dC9CWVVsb2l5TkZzNm41R1ZuWjhRZ0FQbEpQazdQY2Y4L2NTcUtQVGd0cURa?=
- =?utf-8?B?SDF4SmJDeEJ0U21EMExxTExNbE9KRUpGZDh3Vy9EWis5M3pmODY0WElnMGhY?=
- =?utf-8?B?UjNieEN2N0IzR3pBVnZtM0l0NnQ1bFZ0elZEWlFlMkNaVWNWbEI1dEw1T3Bh?=
- =?utf-8?B?dE1oV1pkQnYrTHJCYVR2SmozcUZydTZ6NTk1c2s2ajlWamFXUmRESjZRYWlZ?=
- =?utf-8?B?RkJUR2JyQmZlUTZBaHQ0a3E5dUljZHhFMDdUVUFOK25WdVZ4SDQrbmFlRmd0?=
- =?utf-8?B?bTNUd3dvR09TR010Q3AvQ2gybGtsOG1yclZjWTBieW13cnJXZU1QUmlseTA3?=
- =?utf-8?B?UzZRU2trdEEvSDNQQ1lLbU9YWDRBS2xHZmw0TXA1UTJxY1ZUeFAwZ2RGQWI4?=
- =?utf-8?B?T2ZjMERlc2RGWDhMOHBHWjVpQ2xWSldqZ1hVTTlsL3dST0pXK2taMlVzcVFQ?=
- =?utf-8?B?TTNsL1JvTjl5RmI3cVVNSXZSNERSdjRrUmMvNjlDRGhXNlB2MGhENWtkU0JQ?=
- =?utf-8?B?V1hWejhvYkMwZlg3bkJEbFRSdlJHZktXRVhjbFhOZzRJc3ZQZktOS01TN1JU?=
- =?utf-8?B?aDdJb1V5cU10a2ZMRjcvTEhaeEpDRlhubG1KbU1HLzUvWGNuUUZhbjA3QTZu?=
- =?utf-8?B?S0VTNVdoL0s4KzVYaFpjY2J0QXV6My92eExsOThzWHd5Y0pCeFZqWlJnYzBY?=
- =?utf-8?B?VWlnRVpwSnN5dHVoTmdPK2RDSElndkZXNGdqMFdTaFUrdFFrUWcrVVVTSUZs?=
- =?utf-8?B?d0Y4UnN3UXU3QmNkN2VBS3A1K1ZYaDN0RGxaRG9NcEFUYnhDdmpaUXpXNEl1?=
- =?utf-8?B?TjdUTERGVHVoTmFiODlVcXc4ODFHcHFqbDZmTTdlNEZkT2F0WjRtVks2R0dF?=
- =?utf-8?Q?SwKlo2zzy+Zw6r45O/7/+ZHPbiY3axiIgfoBfN8VggHq?=
+	=?utf-8?B?MTBza1hPVSt4elVjb2QwMzNuK1NiVjQxNW1oaGY5RzUxRFMyaEJrL3owVTRy?=
+ =?utf-8?B?UERpYU9ZVGZRVjhDUHl0Zm1JZE1XZ2YvdUNWMlVDdDR5S1lua1A0RVN4K1VY?=
+ =?utf-8?B?enpmUGlUeUpRUERZN1FMOHZKVGlBRVFMaTZ5bkQ0bmlIR2JSak5lYjQ3NWlw?=
+ =?utf-8?B?cXo5RGdOenZPRFV6YnhJMlNXQ1dQZE9ZOE5hQUpPaEYyd3dRU1hNSU5MN21m?=
+ =?utf-8?B?RGwxYUNaUzNmUmpibUgrcEJKS1JQUXZidFYvU0xJNzJpNFBSUjB6N0FxUjNM?=
+ =?utf-8?B?c0tlRnBoUjdNMytqeC90aW83a2ZPbXZWTFh2YVdaYS9sbTByWnpRWFQvZmtq?=
+ =?utf-8?B?Q21hcFlZZ3IweGFZczk5WGZzQnQra0VHaFIwc0ZwR2VWYjIvMzcyRmRzYVc0?=
+ =?utf-8?B?NlV1TFAzcmRnVDc5WDdXY0xFSjNvUFpyaEhBVFg3R25rMkFTaEZzSWtXZEZr?=
+ =?utf-8?B?RUdjY3lROVJXbkNHWjJ2WDNodDh2TjE5alhuUEV3amUrTFdtZkZGb1kyVUwx?=
+ =?utf-8?B?Ymp6V3E2cVpnbXVnNWRqemNDZUpET3F1WDVKWWNDM1VVTkVRMTRRZlpRR1lP?=
+ =?utf-8?B?a3Z4Vkk0dkErZ1hJTGZ1UjBWNlUrS1Nka2hqUG5lZ3JkelpzZ1A4V0VFcFQw?=
+ =?utf-8?B?UjhyaThjaUxpZUhjU05JNHVwVE5sbXVreGUvajlYeVNkRU1Qb3VIRXY2ZHRl?=
+ =?utf-8?B?R2wwMEE0Sm0xUk0xTFR1NTdDa2YyYkp4aVY4RHd3MCtFYTZuSEVuUXdiTm9J?=
+ =?utf-8?B?K0xCRkFDVjRnWElOcUtLU2RaMWN0bTBHVWZGWisyT3BwREhQVkkzRFBLUWh2?=
+ =?utf-8?B?MEU1cHl3S0J0RGNwRXo4SGtvaVhMU2JrM1JFdEZmcUJwMHNMY01hekVySGNZ?=
+ =?utf-8?B?MnVWdFhxTGRaa2R3Z0M3U1pPZEtKcVBWKzFCcHVzM1lzM3E3VlozeTNNeHVR?=
+ =?utf-8?B?V2hHMTBBSGVaVW9XcnN2Z293L0x6THBSL2drc2pCd0diNTl6YTBMV2puUU0r?=
+ =?utf-8?B?VTdYTnhaUlRDUWhla2ZDaGUzSm9EcEpEOFEwMm5DUytNajZTd01jOEV3T21M?=
+ =?utf-8?B?cVk1eUlQVzgzRXNuTWRmTCszNVFkbW9sTndNZTA2TDJnS3cxaldHaC90djMw?=
+ =?utf-8?B?TGpSeDllMWM0OGhCcmw1c08yVEo2enp2OXZOTWhmeXh2WTQzclV5ODVOQld6?=
+ =?utf-8?B?VFEvYU5MdVA4K0ttYmdyc1lxdFVtL1VONDNmWWRiLzBVK2pnSG9odmRRR1Jv?=
+ =?utf-8?B?V3hiZTZ2Zm5IRjZ4clhKcTdZbW4wRXlEcW4xTCtFUFE1L1Zna2xPeFhCYXlZ?=
+ =?utf-8?B?YS8wdUxLQ2lwS0xHTGpQb0NJcXVEdzByUjZ1ODZHUys4cEV3Mkh5UFY5VS82?=
+ =?utf-8?B?em1MNUpkdTdwVjdvQ1U0R0draVcrbk4rWllqZVVzOHZoUXYvMEZ4SkNNVzBQ?=
+ =?utf-8?B?VlQrY2JBSmhKR0xvcS9mYmFabjh3clFXNFZsUnRsRGZSdE93K3JrWE9rZ0tX?=
+ =?utf-8?B?aWFwb05CRVR5RCt0Uzc4Ty9kZ1B4c3IzYjdiVWp5ZVJmSnNMV3hMN3ZwOXVj?=
+ =?utf-8?B?SFFkT3BPZFU2S3JjeEgvdVlRQWo3RXZ6TEloY2lFSUVFWTJqWkFzS3pkRG9H?=
+ =?utf-8?B?T2FsUUFDSEdZSEZkSVpUMWRLM0xhRGtqVXFRK0RqVFErekJVa3ZxZVZ0clZm?=
+ =?utf-8?B?anUvWlc3Wk5FQXptUm9WWnNSbFZmckp5T0NRdVJEOHZLSkFpNmFZQ1VoZHox?=
+ =?utf-8?B?dTZ3SnNJbm9rOTdiWW9aRk9uWElXc2RrQ1BLMHFNU1Rkd1hOTWRlUHBSMXJZ?=
+ =?utf-8?B?bzlWSGVJbTdleXJ2a3NXZlY1UFExMms5SVlic0JvSnAwOXlLKythUk5yN0M0?=
+ =?utf-8?B?ZFhpWklpWVorcmRoVW4rRXpSQ3dvQ2VoSytXL0c5REp6RXdlNWJLS2l2QkJM?=
+ =?utf-8?B?OFg0Yk0rOEJHYmt3d1dJTmwzaTUrc2w5UURDbUh6Q3pyaStXWmkzY3dSZStj?=
+ =?utf-8?B?WDR1aUMwbGN6YlVLeEVNdUlkeTFsUWYvWSttdVR3TlNGMTB0YmxVbkdqNGdQ?=
+ =?utf-8?B?N1ZUK011eXVDYW1WN1JwR0w2cFhqV1g2b3NqdHZGNUV0UklMeER1S0RTbTVw?=
+ =?utf-8?B?L2RZaEV4anNZa2ZqdEM2WjdEMHVaMzRKakkvZnNqNWVSQ2lWdHJVTlNwZHZU?=
+ =?utf-8?Q?nPLbUNaiTEQinQZeeECN7rYThaG6oR216cObl1T89vO1?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f36ab616-6bcb-4c29-ebc5-08dd3a15e2dd
+X-MS-Exchange-CrossTenant-Network-Message-Id: d50d0924-e925-4af6-cf91-08dd3a4394aa
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jan 2025 12:19:43.2795
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jan 2025 17:46:49.0677
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wE1E369bulXDKEvvLZD8iWJD326+WTv2dA+yYygtg6jVHehxYrP/yyUQcaKCtQV2bnibLU7BXpvXe003eWAWUg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5878
+X-MS-Exchange-CrossTenant-UserPrincipalName: CQQ/FIhqyVboRmYB450b46hWz3n64p1tmtBdKZdb2osZK4GjttAPi/1c/H4LMqR0FG5TfuB6AAJWSiVg7tXfog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8005
+
+Hi Hans,
+
+On 09/01/2025 09:45, Hans Zhang wrote:
+> With 8GB BAR2, running pcitest -b 2 fails with "TEST FAILED".
+> 
+> The return value of the `pci_resource_len` interface is not an integer.
+> Using `pcitest` with an 8GB BAR2, the bar_size of integer type will
+> overflow.
+> 
+> Change the data type of bar_size from integer to resource_size_t, to fix
+> the above issue.
+> 
+> Signed-off-by: Hans Zhang <18255117159@163.com>
+> Suggested-by: Niklas Cassel <cassel@kernel.org>
+> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> ---
+> Changes since v10:
+> https://lore.kernel.org/linux-pci/20250108080951.1700230-3-18255117159@163.com/
+> 
+> - Replace do_div with the div_u64 API.
+> 
+> Changes since v8-v9:
+> https://lore.kernel.org/linux-pci/20250104151652.1652181-1-18255117159@163.com/
+> 
+> - Split the patch.
+> 
+> Changes since v4-v7:
+> https://lore.kernel.org/linux-pci/20250102120222.1403906-1-18255117159@163.com/
+> 
+> - Fix 32-bit OS warnings and errors.
+> - Fix undefined reference to `__udivmoddi4`
+> 
+> Changes since v3:
+> https://lore.kernel.org/linux-pci/20241221141009.27317-1-18255117159@163.com/
+> 
+> - The patch subject were modified.
+> 
+> Changes since v2:
+> https://lore.kernel.org/linux-pci/20241220075253.16791-1-18255117159@163.com/
+> 
+> - Fix "changes" part goes below the --- line
+> - The patch commit message were modified.
+> 
+> Changes since v1:
+> https://lore.kernel.org/linux-pci/20241217121220.19676-1-18255117159@163.com/
+> 
+> - The patch subject and commit message were modified.
+> ---
+>   drivers/misc/pci_endpoint_test.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+> index f78c7540c52c..0f6291801078 100644
+> --- a/drivers/misc/pci_endpoint_test.c
+> +++ b/drivers/misc/pci_endpoint_test.c
+> @@ -280,10 +280,11 @@ static int pci_endpoint_test_bar_memcmp(struct pci_endpoint_test *test,
+>   static bool pci_endpoint_test_bar(struct pci_endpoint_test *test,
+>   				  enum pci_barno barno)
+>   {
+> -	int j, bar_size, buf_size, iters;
+> +	int j, buf_size, iters;
+>   	void *write_buf __free(kfree) = NULL;
+>   	void *read_buf __free(kfree) = NULL;
+>   	struct pci_dev *pdev = test->pdev;
+> +	resource_size_t bar_size;
+>   
+>   	if (!test->bar[barno])
+>   		return false;
+> @@ -307,7 +308,7 @@ static bool pci_endpoint_test_bar(struct pci_endpoint_test *test,
+>   	if (!read_buf)
+>   		return false;
+>   
+> -	iters = bar_size / buf_size;
+> +	iters = div_u64(bar_size, buf_size);
+>   	for (j = 0; j < iters; j++)
+>   		if (pci_endpoint_test_bar_memcmp(test, barno, buf_size * j,
+>   						 write_buf, read_buf, buf_size))
 
 
-On 16/01/2025 15:01, Jon Hunter wrote:
-> 
-> On 16/01/2025 13:28, gregkh@linuxfoundation.org wrote:
->> On Thu, Jan 16, 2025 at 01:11:36PM +0000, Jon Hunter wrote:
->>> Hi Greg, Lianqin,
->>>
->>> On 17/12/2024 07:58, 胡连勤 wrote:
->>>> From: Lianqin Hu <hulianqin@vivo.com>
->>>>
->>>> Considering that in some extreme cases, when performing the
->>>> unbinding operation, gserial_disconnect has cleared gser->ioport,
->>>> which triggers gadget reconfiguration, and then calls gs_read_complete,
->>>> resulting in access to a null pointer. Therefore, ep is disabled before
->>>> gserial_disconnect sets port to null to prevent this from happening.
->>>>
->>>> Call trace:
->>>>    gs_read_complete+0x58/0x240
->>>>    usb_gadget_giveback_request+0x40/0x160
->>>>    dwc3_remove_requests+0x170/0x484
->>>>    dwc3_ep0_out_start+0xb0/0x1d4
->>>>    __dwc3_gadget_start+0x25c/0x720
->>>>    kretprobe_trampoline.cfi_jt+0x0/0x8
->>>>    kretprobe_trampoline.cfi_jt+0x0/0x8
->>>>    udc_bind_to_driver+0x1d8/0x300
->>>>    usb_gadget_probe_driver+0xa8/0x1dc
->>>>    gadget_dev_desc_UDC_store+0x13c/0x188
->>>>    configfs_write_iter+0x160/0x1f4
->>>>    vfs_write+0x2d0/0x40c
->>>>    ksys_write+0x7c/0xf0
->>>>    __arm64_sys_write+0x20/0x30
->>>>    invoke_syscall+0x60/0x150
->>>>    el0_svc_common+0x8c/0xf8
->>>>    do_el0_svc+0x28/0xa0
->>>>    el0_svc+0x24/0x84
->>>>
->>>> Fixes: c1dca562be8a ("usb gadget: split out serial core")
->>>> Cc: stable@vger.kernel.org
->>>> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
->>>> ---
->>>>
->>>> Changes in v3:
->>>>    - Add --- line above the version tag information
->>>>    - Remove extra blank lines in commit messages
->>>>    - Version tag information from v2 to changes in v2
->>>>    - Link to v2: https://lore.kernel.org/all/ 
->>>> TYUPR06MB6217DAA095A9863D4B58D57CD23B2@TYUPR06MB6217.apcprd06.prod.outlook.com/
->>>>
->>>> Changes in v2:
->>>>    - Remove some address information from patch descriptions
->>>>    - Link to v1: https://lore.kernel.org/all/ 
->>>> TYUPR06MB621763AB815989161F4033AFD2762@TYUPR06MB6217.apcprd06.prod.outlook.com/
->>>>    - Link to suggestions: https://lore.kernel.org/all/ 
->>>> TYUPR06MB6217DE28012FFEC5E808DD64D2962@TYUPR06MB6217.apcprd06.prod.outlook.com/
->>>>
->>>>    drivers/usb/gadget/function/u_serial.c | 8 ++++----
->>>>    1 file changed, 4 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/usb/gadget/function/u_serial.c b/drivers/usb/ 
->>>> gadget/function/u_serial.c
->>>> index 53d9fc41acc5..bc143a86c2dd 100644
->>>> --- a/drivers/usb/gadget/function/u_serial.c
->>>> +++ b/drivers/usb/gadget/function/u_serial.c
->>>> @@ -1420,6 +1420,10 @@ void gserial_disconnect(struct gserial *gser)
->>>>        /* REVISIT as above: how best to track this? */
->>>>        port->port_line_coding = gser->port_line_coding;
->>>> +    /* disable endpoints, aborting down any active I/O */
->>>> +    usb_ep_disable(gser->out);
->>>> +    usb_ep_disable(gser->in);
->>>> +
->>>>        port->port_usb = NULL;
->>>>        gser->ioport = NULL;
->>>>        if (port->port.count > 0) {
->>>> @@ -1431,10 +1435,6 @@ void gserial_disconnect(struct gserial *gser)
->>>>        spin_unlock(&port->port_lock);
->>>>        spin_unlock_irqrestore(&serial_port_lock, flags);
->>>> -    /* disable endpoints, aborting down any active I/O */
->>>> -    usb_ep_disable(gser->out);
->>>> -    usb_ep_disable(gser->in);
->>>> -
->>>>        /* finally, free any unused/unusable I/O buffers */
->>>>        spin_lock_irqsave(&port->port_lock, flags);
->>>>        if (port->port.count == 0)
->>>
->>>
->>> We have observed a reboot regression on Tegra234 (I have not tried other
->>> boards) and bisect is pointing to this commit. Reverting this on top of
->>> mainline is fixing the problem.
->>>
->>> With this change, when the board reboots we see ...
->>>
->>> [   59.918177] tegra-xudc 3550000.usb: ep 3 disabled
->>> [   59.923097] tegra-xudc 3550000.usb: ep 2 disabled
->>> [   59.927955] tegra-xudc 3550000.usb: ep 5 disabled
->>> [   80.911432] rcu: INFO: rcu_preempt self-detected stall on CPU
->>> [   80.917354] rcu:     6-....: (5248 ticks this GP) 
->>> idle=ec24/1/0x4000000000000000 softirq=1213/1213 fqs=2623
->>> [   80.927146] rcu:     (t=5253 jiffies g=3781 q=1490 ncpus=12)
->>> [   80.932704] Sending NMI from CPU 6 to CPUs 2:
->>> [   90.981555] CPU: 6 UID: 0 PID: 18 Comm: rcu_exp_gp_kthr Not 
->>> tainted 6.13.0-rc7-00043-g619f0b6fad52 #1
->>> [   90.981558] Hardware name: NVIDIA NVIDIA Jetson AGX Orin Developer 
->>> Kit/Jetson, BIOS 00.0.0-dev-main_92e5ae_88fd1_296de 12/16/2024
->>> [   90.981559] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS 
->>> BTYPE=--)
->>> [   90.981562] pc : smp_call_function_single+0xdc/0x1a0
->>> [   90.981574] lr : __sync_rcu_exp_select_node_cpus+0x228/0x3c0
->>> [   90.981578] sp : ffff800082eb3cd0
->>> [   90.981579] x29: ffff800082eb3cd0 x28: 0000000000000010 x27: 
->>> ffff0000802933c0
->>> [   90.981582] x26: ffff0007a8a1d700 x25: ffff800082895500 x24: 
->>> ffff800080132018
->>> [   90.981584] x23: 0000000000000014 x22: ffff800081fb7700 x21: 
->>> ffff80008280d970
->>> [   90.981586] x20: 0000000000000feb x19: ffff800082eb3d00 x18: 
->>> 0000000000000000
->>> [   90.981588] x17: 0000000000000000 x16: 0000000000000000 x15: 
->>> 0000000000000000
->>> [   90.981590] x14: ffff000080293440 x13: 0000000000000001 x12: 
->>> 0000000000000000
->>> [   90.981591] x11: ffff800081fb2388 x10: ffff0000802933c0 x9 : 
->>> 0000000000000001
->>> [   90.981593] x8 : 0000000000000040 x7 : 0000000000017068 x6 : 
->>> ffff800080132018
->>> [   90.981595] x5 : 0000000000000000 x4 : ffff0007a8a4f9c8 x3 : 
->>> 0000000000000001
->>> [   90.981597] x2 : 0000000000000000 x1 : ffff0007a8a4f9c0 x0 : 
->>> 0000000000000004
->>> [   90.981599] Call trace:
->>> [   90.981601]  smp_call_function_single+0xdc/0x1a0 (P)
->>> [   90.981605]  __sync_rcu_exp_select_node_cpus+0x228/0x3c0
->>> [   90.981607]  sync_rcu_exp_select_cpus+0x13c/0x2a0
->>> [   90.981609]  wait_rcu_exp_gp+0x18/0x30
->>> [   90.981611]  kthread_worker_fn+0xd0/0x188
->>> [   90.981614]  kthread+0x118/0x11c
->>> [   90.981619]  ret_from_fork+0x10/0x20
->>> [  101.416347] sched: DL replenish lagged too much
->>>
->>
->> Odd, you have a usb-serial gadget device in this system that is
->> disconnecting somehow?  That oops doesn't point to anything in the usb
->> gadget codebase, "all" we have done is move the call to shutdown the
->> endpoints to earlier in the disconnect function.
-> 
-> Yes the board starts usb-serial and usb-ethernet gadget and on reboot 
-> when tearing it down I am seeing the above. As soon as it disables the 
-> tegra-xudc endpoints (as seen above) the board appears to stall.
-> 
->> I'm glad to revert this, but it feels really odd that this is causing
->> you an rcu stall issue.
-> 
-> Thanks. I can't say I understand it either, but I am certain it is 
-> caused by this change.
-> 
-> Happy to run any tests to narrow this down a bit.
+This change breaks building the kernel with GCC v7 and I see ...
 
+ERROR: modpost: "__aeabi_uldivmod" [drivers/misc/pci_endpoint_test.ko] 
+undefined!
+ERROR: modpost: "__aeabi_ldivmod" [drivers/misc/pci_endpoint_test.ko] 
+undefined!
 
-I did a bit more looking at this and I see that we setup a USB gadget 
-device via the configfs as described in this doc [0]. The RCU stall 
-occurs when we attempt to disable the gadget on shutdown by ...
-
-  $ echo "" > /path/to/UDC
+I know that this is an old GCC version, but this is a farm builder and 
+the kernel still indicates that GCC v5.1 is still supported [0].
 
 Jon
 
-[0] https://docs.kernel.org/usb/gadget_configfs.html
+[0] 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/process/changes.rst
 
 -- 
 nvpublic
