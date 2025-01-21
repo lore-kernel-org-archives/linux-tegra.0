@@ -1,54 +1,57 @@
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF832CAB;
-	Tue, 21 Jan 2025 09:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022B81DF983
+	for <linux-tegra@vger.kernel.org>; Tue, 21 Jan 2025 10:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737450833; cv=none; b=j3+X2KTeW2NLA5T9z8sPo3ZNLpbo90MtJvCkPw/tfklEc2lqhy0WAtfBwcDaT+uAX2TliQEOxoYs9eCyDXGE5c47C0BGUyTP0GKMeqQaBXOk8SQNbtrVw74d33D27nkS2flvwuUHdq+O+1Xzf9PNzEq/KjldzBMuSnd0TKTv09E=
+	t=1737456281; cv=none; b=NQ7MSom2LEk5odE1oaIIIyOI4KPzUJTVphZBVW1trwDJrFgyOlyB5AmoKqL5bptNBJkEYg98itwMfnGY9Kxy6mjZ74iOBbyfHWDPPYxUp0HlNx5QXQAULcRF9Y7tLwl+cLUAYsqsuSN6W7e/xH+HdqZONfPvdjoHhOux/C4VKNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737450833; c=relaxed/simple;
-	bh=379PWCV/7+kIrmP1pA3alid5iJDIvrSFYacRmagLkUc=;
+	s=arc-20240116; t=1737456281; c=relaxed/simple;
+	bh=iwqLBI6x6ziAFcEg9T4VUa24HE5Sj5tajYDP14hy/pY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C9opk0Hn5nL9YW9iPo3rOArVgHMwxFIuUWQbI21rkdjbKTaqRmtu3Obs/YliOLN7NcgfBY8P/CRInPKTcHx69Et5f2UbqKiAqA+u8F4B1rqRlbpqoTTiKdOxjppZP6OXjiCn5wItad2aaMK1oKFqbMbpf8eZvdX8xQisW9iMKPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b6ed0de64aso491599885a.0;
-        Tue, 21 Jan 2025 01:13:51 -0800 (PST)
+	 To:Cc:Content-Type; b=uvHgWr6aCdQLRQjmUk3ARYLpgcbSC96JhulBPg2p4opO6y0Mx5z1dMBEv5WqN0mh1aPcO5sXg2cGtpqdOshvq+VXPl+eZMhB+xjyJ7TNb8dVnMuGMZHj3jX8HnwyVf3xLAnQ+Pt3JvGKAT5hlrNAVgqxHg1MX6MeRiPwkKBr/fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LogInKre; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LogInKre"
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e5447fae695so9131579276.2
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Jan 2025 02:44:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1737456279; x=1738061079; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fM4RiAz8x0xBzhbf4AlSqIUYbrQ3SaJ7YEvWtIB73WA=;
+        b=LogInKre9ZMj39sWKmwHAk0rt/hsr3v7HfIgT4cYUGBTLclgfqfhBY1nsKXp+0iL0Z
+         k3D8UCwqC4DdkqpoEF+xVdDHUBT5WE04nyWBhydylFlcg/6zjwsdMIWv1g8NH2bh/rKF
+         7o1AqWhhZaivVHSZ+tgHDHp+gVS3OCkdCorKwAOQIrFOufJOI/w4wW4/rLI7cC37SACp
+         LoW/iN2Q6aoWT2B01jqzE7SJRe552Ee0ajRZ7dfCNljOX72CXB9AXQbVvEtvgYEId10g
+         u1DZFof78wmaPT3Uav3gCrulbGmEYSu6SUYOVpcOIAZ6uZYE5Sdl+YMHRaGqRu/cRMof
+         lV7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737450830; x=1738055630;
+        d=1e100.net; s=20230601; t=1737456279; x=1738061079;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=h0F66BpcncnDZq8+yac2PqIUMY5KsLdGVzSelKc0x5s=;
-        b=VQ13uKQiXxzctBx8dzUWSYp9V8AA2JHM6RS47NZdm5HQbvU37C+HjtGhOd18BdkUhV
-         JWrHqgzXQ11I4G7RQEz+GgSDLz7Enkv6Kgoe9x9HVKqEyi/2MWA2LDxuPzxEEsip5abZ
-         SpkLZnnyMGJ3nj6i9UNYWExRTstIwwo5cssx2cwWj47GMM7D2cc8GluReuYYJBuzvc90
-         xKrxYbe9GhEPwecJh8emWDeZyl7P5oMftIGIfwQ45We2YAp7m5xPi2pom+sDjncc7Hwa
-         RjE58s0XyUvXoi24t9xm9WpX7z8Y2JdgSKFPUaxPbvqD4nObY/abpCl9IAjci4QQS7Mr
-         o4Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6HIx7HgaPpA3OfeOMrWfLUbHFMbWfevOwzzbQYbXJym0W6s+siNLb2cN24wMRWdQLu6YkQ4GMSF85kaEH@vger.kernel.org, AJvYcCVYyhpAwtIXbZ6wmgYlEVmghJglBVg2PZHi+64LEVilyqV0GzOoNLFl7YDKb0ytadaI7LAbHYzi6P/44LwnBG/KJPM=@vger.kernel.org, AJvYcCVpdrcT9Nv/TDRHJzPrPGxvMhfge50nBRmomEn3IX8XsZbr8PNsgVIcZ2BRa1A6K2nRgL1O7GI1s3fDjYU=@vger.kernel.org, AJvYcCVxXUw1tQOkj6K25kc5Zpxk8RLi3S5KA7lJA3d0e/w7VC3MyIb3iW26pTpfr3ggZT+gf2vcavPeRq1jeGzx@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHaw+aZCcO58YnjQT9uzkr6tsx7GfOEMT5hCK8aEEvOa5UKdLe
-	tjiu6J4e9lCDR8mHW2pIGQIp3UcBwb+0laK+VMDPJuew1iZzIVTJAp5xaJfM
-X-Gm-Gg: ASbGncv+brHyPxTWO0RKeyAMb9AzrGAXAti7gHa+BA5p5E+l0ndSphglznFxEqlxLlv
-	8acOEiU/5V0QrmrTmlFCuC1E8SMAzi4FQ0DMeBz3BkAYRUriXdMpRoU+FBVi5AoLZDKfGipaLNw
-	vKMBd9oMQZUpp5VzdNUigr5H5ESVvpnmE+Rx23LO22cNHl7XpmRImuqja2YX+yk9W1UcHs/kLY5
-	xLV2/BfSiDAXu6pyxlCrZ0fSb4UU688TPOGfPW/F59r6icgE3egRVtBNupL2baTPcHuw6yDpOmi
-	ldONVKKX35wD1xIQXj/0kPRWM+OzJ2xdOx8I
-X-Google-Smtp-Source: AGHT+IGsEIDFm0b3zj8GAtqWvg6Y2dj7R4OruDN7tdXXTh7qhSzuw9z+v0mqr7aRO7hYzPs7RcfYQg==
-X-Received: by 2002:a05:620a:406:b0:7be:73f6:9e86 with SMTP id af79cd13be357-7be73f6a0a1mr1067351385a.20.1737450830131;
-        Tue, 21 Jan 2025 01:13:50 -0800 (PST)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com. [209.85.222.179])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7be61481543sm535071785a.48.2025.01.21.01.13.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Jan 2025 01:13:49 -0800 (PST)
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b6ed0de64aso491598385a.0;
-        Tue, 21 Jan 2025 01:13:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUiY7l2qJjLLylGaifPY6hIsQRI3WJzTfMqaXFuIo0l/WRBYBPMbBGG9BdI2o9LPGVa/lH39gT3GU2Gs4k=@vger.kernel.org, AJvYcCUmtySTPDUGHNqDIqBqEbUbz9Pqu1wkZPDkmgy/g6vUBv1Wl/CBFPNbawKtY+cWJhwZ18CanqxFbriM6Iovc6t3JKM=@vger.kernel.org, AJvYcCXXVTneqtqk1kmBYnGwcrYkh37/R3pixc9f6WEKijePSQ6XR37N4fMMCAevF+FrL7h0gyNyC6ua/Hcl/JS7@vger.kernel.org, AJvYcCXsIFxoerkLIimgi3dxidOW07ywyytLDfFKQCKAnRbI12hjghhN5p3Pbu4gAD3mnB0QisKfHVoELsgmPC3J@vger.kernel.org
-X-Received: by 2002:a05:6122:1783:b0:517:e7b7:d04b with SMTP id
- 71dfb90a1353d-51cd983d39emr19246646e0c.5.1737450357663; Tue, 21 Jan 2025
- 01:05:57 -0800 (PST)
+        bh=fM4RiAz8x0xBzhbf4AlSqIUYbrQ3SaJ7YEvWtIB73WA=;
+        b=UYT8ISxCTb6Op7EOArRvIop9iqrNQyufrDxpcxvqeXnUJePVDK+nBAGQXZSMHkiysA
+         WeSYCodmZk463PHvLyBKn5i3P9EviOL1fgdH6Rm9D2bdr/TBH0HeF/FDEDPii9pIu8jE
+         XO9xyYTgKmoeALto8iSeEtOFcm6Itoidpepw26KbzFOva5GQ0y8E1oin02PIFaHEcCgD
+         UZaN2cdN9OHi3PHrTmsJ8lMGdaGI/hvsFRPBodLus24diOTdmi65yHW4dbQh8NaG2JLy
+         lGsOdMZOtVVibDcRHJJjFlRSAR2luonwNZJoMcYLXK4ZaNjsloBgtsdjdeQbwnA6TVHb
+         RBkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNC1N3WKYBBzUJiLUPz6weka4/JbwnN9tAH6+hTo9ysAvJOvAjS3mOjMzCvdyTJb9MmA23CS+E5SGmFw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnDF5aKRA/ZTOyxdCYSI3EAWiKIwEYraZxIyMVfJ/sWTewejmz
+	G0TgGgQX4kPXdKRs2ZuzhnyQ7lErST3krPTafflK4QcWDVsdleMz7PgHjnxhPh7U/7pImIOyMu/
+	L/gFrRzezu15G1F1iRyOrDZPw8gg+OTH48casKA==
+X-Gm-Gg: ASbGncsXVYnIvLqgQ+Fu2joHp4uXrwMI3H71qm6VRO+LeyBOxkxdbEi51Z3IeLJNEjy
+	FYVGl1iyfBFlwz7cjEY1+WnQ3lJs1z9Zps2rXKN3YiZh+OOcmhm4DpXqtOKzEy8wg7w==
+X-Google-Smtp-Source: AGHT+IHO0V0jurSGd/L1Ymx0QNx/m/A6wTdCul+m+iz6FYx+lOCJoAuF4E4jOdjfH48/SXNUBM+6kJMlTjWcDWiw9yM=
+X-Received: by 2002:a05:690c:3701:b0:6f6:d4bf:d01a with SMTP id
+ 00721157ae682-6f6eb940fb8mr129606697b3.34.1737456278815; Tue, 21 Jan 2025
+ 02:44:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -56,16 +59,15 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20241214-drm-connector-mode-valid-const-v2-0-4f9498a4c822@linaro.org>
- <173624946815.1500596.321177900833598022.b4-ty@linaro.org>
-In-Reply-To: <173624946815.1500596.321177900833598022.b4-ty@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 Jan 2025 10:05:45 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVwcaY2Fgpf7GYhBrE5B+AEg=v0BH4OjMXgnp=wqjxmKg@mail.gmail.com>
-X-Gm-Features: AbW1kvaysGolt62WeN4DkS2DNKlSt5oN-0lBeK1j4PwxsWLIrFBPjsQ9bnC7ZcA
-Message-ID: <CAMuHMdVwcaY2Fgpf7GYhBrE5B+AEg=v0BH4OjMXgnp=wqjxmKg@mail.gmail.com>
+ <173624946815.1500596.321177900833598022.b4-ty@linaro.org> <CAMuHMdVwcaY2Fgpf7GYhBrE5B+AEg=v0BH4OjMXgnp=wqjxmKg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVwcaY2Fgpf7GYhBrE5B+AEg=v0BH4OjMXgnp=wqjxmKg@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 21 Jan 2025 12:44:27 +0200
+X-Gm-Features: AbW1kvabZ-in97OiEwfu0vjcyzelZUBMNUaWG-jd-XhigpbETlYrZDr4y_chW2I
+Message-ID: <CAA8EJpos0HQpr9P4XRkto0Jy+Anf1xEH2xhEU8wtCyUQd+XwMg@mail.gmail.com>
 Subject: Re: [PATCH v2 0/5] drm/connector: make mode_valid() callback accept
  const mode pointer
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
 	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
 	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -111,56 +113,59 @@ Cc: Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dmitry,
-
-On Tue, Jan 7, 2025 at 12:31=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
-> On Sat, 14 Dec 2024 15:37:04 +0200, Dmitry Baryshkov wrote:
-> > While working on the generic mode_valid() implementation for the HDMI
-> > Connector framework I noticed that unlike other DRM objects
-> > drm_connector accepts non-const pointer to struct drm_display_mode,
-> > while obviously mode_valid() isn't expected to modify the argument.
-> >
-> > Mass-change the DRM framework code to pass const argument to that
-> > callback.
-> >
-> > [...]
+On Tue, 21 Jan 2025 at 11:13, Geert Uytterhoeven <geert@linux-m68k.org> wro=
+te:
 >
-> Applied to drm-misc-next, thanks!
+> Hi Dmitry,
 >
-> [1/5] drm/encoder_slave: make mode_valid accept const struct drm_display_=
-mode
->       commit: 7a5cd45fab0a2671aa4ea6d8fb80cea268387176
-> [2/5] drm/amdgpu: don't change mode in amdgpu_dm_connector_mode_valid()
->       commit: b255ce4388e09f14311e7912d0ccd45a14a08d66
-> [3/5] drm/sti: hda: pass const struct drm_display_mode* to hda_get_mode_i=
-dx()
->       commit: 5f011b442006ccb29044263df10843de80fc0b14
-> [4/5] drm/connector: make mode_valid_ctx take a const struct drm_display_=
-mode
->       commit: 66df9debcb29d14802912ed79a9cf9ba721b51a4
-> [5/5] drm/connector: make mode_valid take a const struct drm_display_mode
->       commit: 26d6fd81916e62d2b0568d9756e5f9c33f0f9b7a
+> On Tue, Jan 7, 2025 at 12:31=E2=80=AFPM Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+> > On Sat, 14 Dec 2024 15:37:04 +0200, Dmitry Baryshkov wrote:
+> > > While working on the generic mode_valid() implementation for the HDMI
+> > > Connector framework I noticed that unlike other DRM objects
+> > > drm_connector accepts non-const pointer to struct drm_display_mode,
+> > > while obviously mode_valid() isn't expected to modify the argument.
+> > >
+> > > Mass-change the DRM framework code to pass const argument to that
+> > > callback.
+> > >
+> > > [...]
+> >
+> > Applied to drm-misc-next, thanks!
+> >
+> > [1/5] drm/encoder_slave: make mode_valid accept const struct drm_displa=
+y_mode
+> >       commit: 7a5cd45fab0a2671aa4ea6d8fb80cea268387176
+> > [2/5] drm/amdgpu: don't change mode in amdgpu_dm_connector_mode_valid()
+> >       commit: b255ce4388e09f14311e7912d0ccd45a14a08d66
+> > [3/5] drm/sti: hda: pass const struct drm_display_mode* to hda_get_mode=
+_idx()
+> >       commit: 5f011b442006ccb29044263df10843de80fc0b14
+> > [4/5] drm/connector: make mode_valid_ctx take a const struct drm_displa=
+y_mode
+> >       commit: 66df9debcb29d14802912ed79a9cf9ba721b51a4
+> > [5/5] drm/connector: make mode_valid take a const struct drm_display_mo=
+de
+> >       commit: 26d6fd81916e62d2b0568d9756e5f9c33f0f9b7a
+>
+> I cannot find these in drm-misc or drm-next, but they are in drm-tip?
 
-I cannot find these in drm-misc or drm-next, but they are in drm-tip?
-The last one due to commit 2bdc721917cf141f ("Merge remote-tracking
-branch 'drm-misc/drm-misc-next' into drm-tip").
+These are in drm-misc/drm-misc-next, the commit IDs are a part of the
+Git history.
 
-What am I missing?
-Thanks!
+> The last one due to commit 2bdc721917cf141f ("Merge remote-tracking
+> branch 'drm-misc/drm-misc-next' into drm-tip").
+>
+> What am I missing?
+> Thanks!
 
-P.S. Sima: noticed while resolving a merge conflict using drm-tip. Thx!
+It might be some kind of misinteraction between drm-misc-next vs
+drm-misc-next-fixes vs merge window. Let me recheck dim rebuild-tip.
 
-Gr{oetje,eeting}s,
+>
+> P.S. Sima: noticed while resolving a merge conflict using drm-tip. Thx!
 
-                        Geert
 
 --=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+With best wishes
+Dmitry
