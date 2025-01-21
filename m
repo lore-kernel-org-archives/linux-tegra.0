@@ -1,171 +1,437 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2073.outbound.protection.outlook.com [40.107.236.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022B81DF983
-	for <linux-tegra@vger.kernel.org>; Tue, 21 Jan 2025 10:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737456281; cv=none; b=NQ7MSom2LEk5odE1oaIIIyOI4KPzUJTVphZBVW1trwDJrFgyOlyB5AmoKqL5bptNBJkEYg98itwMfnGY9Kxy6mjZ74iOBbyfHWDPPYxUp0HlNx5QXQAULcRF9Y7tLwl+cLUAYsqsuSN6W7e/xH+HdqZONfPvdjoHhOux/C4VKNs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737456281; c=relaxed/simple;
-	bh=iwqLBI6x6ziAFcEg9T4VUa24HE5Sj5tajYDP14hy/pY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uvHgWr6aCdQLRQjmUk3ARYLpgcbSC96JhulBPg2p4opO6y0Mx5z1dMBEv5WqN0mh1aPcO5sXg2cGtpqdOshvq+VXPl+eZMhB+xjyJ7TNb8dVnMuGMZHj3jX8HnwyVf3xLAnQ+Pt3JvGKAT5hlrNAVgqxHg1MX6MeRiPwkKBr/fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LogInKre; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA8D1B4137;
+	Tue, 21 Jan 2025 11:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737457810; cv=fail; b=aQkZoJvTRe8gbwXjWNUBZNh2FqxyrP7lifClfUAbG3ZvW7L4JaYI8YfgY+JOGboCDOGRw9w9mfFxgUu/qIP4Fw7z14F60brykAFGKBMJlrRB3DDBzYU3p9ESJZuFbW6Q7/EtTGO2m6NBJSMPISx9yj3/2AddON+vJbUngv3rPIE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737457810; c=relaxed/simple;
+	bh=bNG26iv2etZGFNJRaf/R7Flngymf0T+cLk4dOkiXvLY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U2sK4nozWQ2XoMHi93MoS72wh6HT0jkmKL4zXTeuNxFUM5FQSOWIIuVHbJOlZeklIX0HcsWFM6VkUJJgzSQLUWKip8qIdGZZJvT67mD4nV2IXOJ04+7lrVvdPo2cgpTEvtysIUES937l5qXGQ7qEM9OoEXxFjCuQdo2VL3rI7o0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lrnipY61; arc=fail smtp.client-ip=40.107.236.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LogInKre"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e5447fae695so9131579276.2
-        for <linux-tegra@vger.kernel.org>; Tue, 21 Jan 2025 02:44:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1737456279; x=1738061079; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fM4RiAz8x0xBzhbf4AlSqIUYbrQ3SaJ7YEvWtIB73WA=;
-        b=LogInKre9ZMj39sWKmwHAk0rt/hsr3v7HfIgT4cYUGBTLclgfqfhBY1nsKXp+0iL0Z
-         k3D8UCwqC4DdkqpoEF+xVdDHUBT5WE04nyWBhydylFlcg/6zjwsdMIWv1g8NH2bh/rKF
-         7o1AqWhhZaivVHSZ+tgHDHp+gVS3OCkdCorKwAOQIrFOufJOI/w4wW4/rLI7cC37SACp
-         LoW/iN2Q6aoWT2B01jqzE7SJRe552Ee0ajRZ7dfCNljOX72CXB9AXQbVvEtvgYEId10g
-         u1DZFof78wmaPT3Uav3gCrulbGmEYSu6SUYOVpcOIAZ6uZYE5Sdl+YMHRaGqRu/cRMof
-         lV7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737456279; x=1738061079;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fM4RiAz8x0xBzhbf4AlSqIUYbrQ3SaJ7YEvWtIB73WA=;
-        b=UYT8ISxCTb6Op7EOArRvIop9iqrNQyufrDxpcxvqeXnUJePVDK+nBAGQXZSMHkiysA
-         WeSYCodmZk463PHvLyBKn5i3P9EviOL1fgdH6Rm9D2bdr/TBH0HeF/FDEDPii9pIu8jE
-         XO9xyYTgKmoeALto8iSeEtOFcm6Itoidpepw26KbzFOva5GQ0y8E1oin02PIFaHEcCgD
-         UZaN2cdN9OHi3PHrTmsJ8lMGdaGI/hvsFRPBodLus24diOTdmi65yHW4dbQh8NaG2JLy
-         lGsOdMZOtVVibDcRHJJjFlRSAR2luonwNZJoMcYLXK4ZaNjsloBgtsdjdeQbwnA6TVHb
-         RBkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNC1N3WKYBBzUJiLUPz6weka4/JbwnN9tAH6+hTo9ysAvJOvAjS3mOjMzCvdyTJb9MmA23CS+E5SGmFw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnDF5aKRA/ZTOyxdCYSI3EAWiKIwEYraZxIyMVfJ/sWTewejmz
-	G0TgGgQX4kPXdKRs2ZuzhnyQ7lErST3krPTafflK4QcWDVsdleMz7PgHjnxhPh7U/7pImIOyMu/
-	L/gFrRzezu15G1F1iRyOrDZPw8gg+OTH48casKA==
-X-Gm-Gg: ASbGncsXVYnIvLqgQ+Fu2joHp4uXrwMI3H71qm6VRO+LeyBOxkxdbEi51Z3IeLJNEjy
-	FYVGl1iyfBFlwz7cjEY1+WnQ3lJs1z9Zps2rXKN3YiZh+OOcmhm4DpXqtOKzEy8wg7w==
-X-Google-Smtp-Source: AGHT+IHO0V0jurSGd/L1Ymx0QNx/m/A6wTdCul+m+iz6FYx+lOCJoAuF4E4jOdjfH48/SXNUBM+6kJMlTjWcDWiw9yM=
-X-Received: by 2002:a05:690c:3701:b0:6f6:d4bf:d01a with SMTP id
- 00721157ae682-6f6eb940fb8mr129606697b3.34.1737456278815; Tue, 21 Jan 2025
- 02:44:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lrnipY61"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IFhzpyVgvmXg6IVgYZiOKnutLYf5q0bxTOqGyzUPijYgzEQ+Ob+faF8NYbBsxjZMb6e4GMdPA4BGeSX3+W7GpdPPGD+p2UDV8ZXFppnA/Kxt8ORLvg9kR8zwVGw82d7FP1xHYxxcJRfRegseniLljFe06J6u6CkBjZcEaTNvh9OLTwuE9viECMTjyYz88HzYmjyTqQzfGN6JWLzyznYtBgHIDfPfWzPguQwhUemrwOwougWKUCSu9jotUupzbe5K/w9QCupcK3a5FgtnP0tM/yvqObjmjsw67HStB3OubyhOV0m1MHJEebdckLnzIO2hmGozI9a2tmVt2a4Gpvckmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SPrWkbSTJVK+WGrSDhyFtqFn09I8W/nZMP/aQ6Us7f8=;
+ b=wfff0BxS6HAzOas3Ozql0BVvYEglNvvP3ceUG6H318R8vjMkLFwI2bjilwErvtv1R1wiw0Rc+x9y6A3mzgNJGv37r6Ca0Yck5DQBCdMwnaB9GkLVAh6SmXmTQwhT7af3dRrH/4hXM1+eneI7ra0j6ZOuTrQReZyG6xUsT7LEhrIwFSUixQ5gJ8QtlxTrldVTuH5mVouEX5sqAVgScXGGNyVhY+hzeJxLWmqMTeAY0qhglNeoAOE4x4hfb7zZn7xL0BFeBVO0bsK62yb3mfxKHbTkQP7SQpvO6iIOnKxuTUFgSEuyhsF8XGnR532elkhYowUDL8Tx9gglcBNoFpPcVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SPrWkbSTJVK+WGrSDhyFtqFn09I8W/nZMP/aQ6Us7f8=;
+ b=lrnipY61PO9FJwtjLbnrbOK07UpTZoM2WmNd3EvdKQQRCBOM4QpTSeVtWf0UoRyg+jueoCOPIHyV7hlhtt6S/JYqq3tKTldE0wrkJXduf1nykLqhgsVEI65dj0kuYifMopH6UU5nPvOcYn0ZAiSXTnj7zHgIaiYoyAvCEASeDRSasgpZ4XV+9t7gZgDtOIvNIv8zdL5po3lbYAlQBz1GxW635OPpZFDMd6mey+bCJ+SmtIwZHWDzqqmHbrlBQaqxuJXa3vqzIoM1XpGr0wwq7jjVc7KdGMWhasO4Fxzq+crO3XLtLqsgGpThpqTn26JXWgvnb0QytMrgompI9lt6eQ==
+Received: from BN9PR03CA0508.namprd03.prod.outlook.com (2603:10b6:408:130::33)
+ by CY5PR12MB6252.namprd12.prod.outlook.com (2603:10b6:930:20::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8377.16; Tue, 21 Jan
+ 2025 11:10:03 +0000
+Received: from BN3PEPF0000B076.namprd04.prod.outlook.com
+ (2603:10b6:408:130:cafe::86) by BN9PR03CA0508.outlook.office365.com
+ (2603:10b6:408:130::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8356.22 via Frontend Transport; Tue,
+ 21 Jan 2025 11:10:02 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN3PEPF0000B076.mail.protection.outlook.com (10.167.243.121) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8377.8 via Frontend Transport; Tue, 21 Jan 2025 11:10:02 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 21 Jan
+ 2025 03:09:52 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 21 Jan 2025 03:09:51 -0800
+Received: from build-sheetal-bionic-20241119.nvidia.com (10.127.8.13) by
+ mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4
+ via Frontend Transport; Tue, 21 Jan 2025 03:09:51 -0800
+From: "Sheetal ." <sheetal@nvidia.com>
+To: <broonie@kernel.org>, <linux-sound@vger.kernel.org>
+CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lgirdwood@gmail.com>, <jonathanh@nvidia.com>, <thierry.reding@gmail.com>,
+	<mkumard@nvidia.com>, <spujar@nvidia.com>, Sheetal <sheetal@nvidia.com>
+Subject: [PATCH] ASoC: tegra: Add interconnect support
+Date: Tue, 21 Jan 2025 11:09:28 +0000
+Message-ID: <20250121110928.1799377-1-sheetal@nvidia.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241214-drm-connector-mode-valid-const-v2-0-4f9498a4c822@linaro.org>
- <173624946815.1500596.321177900833598022.b4-ty@linaro.org> <CAMuHMdVwcaY2Fgpf7GYhBrE5B+AEg=v0BH4OjMXgnp=wqjxmKg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVwcaY2Fgpf7GYhBrE5B+AEg=v0BH4OjMXgnp=wqjxmKg@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 21 Jan 2025 12:44:27 +0200
-X-Gm-Features: AbW1kvabZ-in97OiEwfu0vjcyzelZUBMNUaWG-jd-XhigpbETlYrZDr4y_chW2I
-Message-ID: <CAA8EJpos0HQpr9P4XRkto0Jy+Anf1xEH2xhEU8wtCyUQd+XwMg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] drm/connector: make mode_valid() callback accept
- const mode pointer
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Peter Senna Tschudin <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, 
-	Martyn Welch <martyn.welch@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, 
-	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
-	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, intel-gfx@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
-	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
-	Jani Nikula <jani.nikula@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B076:EE_|CY5PR12MB6252:EE_
+X-MS-Office365-Filtering-Correlation-Id: c4bd8840-4ed9-45da-f07a-08dd3a0c2745
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3ms21zoyrlC8qTgQF416hqEV0uX85oBsUZ8At2sDp4qL5ioPgEzBh6laTFD3?=
+ =?us-ascii?Q?SZRXNyQ9SL0C9c4WhFH2Nxydr5oYa0pRJRKJLeHNn0aiIKEztrmLJtNeLxNG?=
+ =?us-ascii?Q?wuuZyZlfBO71lqQq0JZHOVQmf8R1c5j3yGDHIee3oRbsqpynKmbohkGtTNlc?=
+ =?us-ascii?Q?UcJpqDMXTBpGMGc3zw9vcPNrwcl8VtFlPeI7vvgPHql+cuOA5QpvR02enDbK?=
+ =?us-ascii?Q?UPkZmwMcrpbxmEjGt3Dqu2cH6mjD/9K3HiGQkhuMI/hCCAwTa4EGesqT3Z2n?=
+ =?us-ascii?Q?pGGQUAu52OSU3t/mCp7UKZ9GYd+UuC02z0/opor92KCKScHuzKcdyg7eZVGM?=
+ =?us-ascii?Q?ZEbAQuLhy4KiDFvyasiSWYVWvT7fYCCAHYZcen2KELGjrGVDQYXQ9wDebAkw?=
+ =?us-ascii?Q?5Bulgp0nM2YehySc3gyOqjxT70YMJqKAwnubYoijz1KW3bqeq73zIjUXddFd?=
+ =?us-ascii?Q?2KZLI291ve+50JQeaVLTgRRAkwH4ffUhYC1M0Q1cJOWgpYl5kV6qwBhMzSla?=
+ =?us-ascii?Q?cGukDCMVSE7oZt281Lj1Ri8ED5rr+NA1qnzZqkRbvuw4zQ+dIoKJsGODsOcC?=
+ =?us-ascii?Q?7ZMYo1wJAB2kHfsR7sxKYPpLiYyzlCQK3KLvJJZugX4IUJF877c4kS5Cf6HR?=
+ =?us-ascii?Q?3wVIR+Jc8f93SeElhu69a+X12ZOCSOoNvzhn5cmf3vUm3zVVmCvmvUfU5QbR?=
+ =?us-ascii?Q?TK61JAQM2y2G19c5EQtdLWKt4CuJ05rwJMgLjhh6takS0Bo8Ow1Iyk3l9mZE?=
+ =?us-ascii?Q?GBMJ32WfXyWLQz51LYfXS8E7+HGSXeLxjMeadwOJfqF0BKfEJDp+a4kIOqRE?=
+ =?us-ascii?Q?/xbaNeyNBBH/xM74aDDiaukXZv4SxHDY4RdG9wS1ikb69Wy5HvXI5H/W8sn+?=
+ =?us-ascii?Q?TX3dr1B4TBI2Srgqq+f5anPubxcsxWwdELbNDWp5E+zng+tYxUQAYzdxVSzU?=
+ =?us-ascii?Q?DMW5iT2TiNuAV5UZEfuwjuTiJQhSmqKoCb0mdfLBtyvOkGmHHBWBftxqZSc2?=
+ =?us-ascii?Q?9+CkPQzSXe8SgpCOMOKXC4pY4hxHWxGRATmUVO+UYJTmLHnft9LMJ/f7cxyM?=
+ =?us-ascii?Q?1Orc7ptjVscOZMAQ4zK7Rjs3ho0A2yNLfvzwLL5OfYsWCDILLsBf0Wln7tx0?=
+ =?us-ascii?Q?zfxSyVjN+31AnGajnLuNLGPBO2e/wC5ddABkbcJTdjSYSy302exmKHxWuB21?=
+ =?us-ascii?Q?SbsU3R0RJz6te77ggZ5xmdr1DpLUo9rQUsQHxqmHmE2LMjSSoQIeOCUtZA1f?=
+ =?us-ascii?Q?isuU0CBWBTkAB8xhg5qulDvD0ZsyBQVBaCrNNAHnKjrsQb7sZR//ei23E40V?=
+ =?us-ascii?Q?OoMJH6oippjh2tXvo7nmnQyKt5T3sVBvtL4/4br8Wf6ESg9bjVGlbBhZQ3D/?=
+ =?us-ascii?Q?koqMNmYpDnen2CwFThZBKmsqlugt4Szg6aS6jY6YIsRasZvuih3SJ4Z57WiR?=
+ =?us-ascii?Q?AXOAbMM+RrR1K7+TewhWFUj0xDitu0rAnHSldQu+tJ+n9jW52LXd9XK5yTc7?=
+ =?us-ascii?Q?NsNGK+ZH+RC6aVY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jan 2025 11:10:02.7360
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4bd8840-4ed9-45da-f07a-08dd3a0c2745
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B076.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6252
 
-On Tue, 21 Jan 2025 at 11:13, Geert Uytterhoeven <geert@linux-m68k.org> wro=
-te:
->
-> Hi Dmitry,
->
-> On Tue, Jan 7, 2025 at 12:31=E2=80=AFPM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> > On Sat, 14 Dec 2024 15:37:04 +0200, Dmitry Baryshkov wrote:
-> > > While working on the generic mode_valid() implementation for the HDMI
-> > > Connector framework I noticed that unlike other DRM objects
-> > > drm_connector accepts non-const pointer to struct drm_display_mode,
-> > > while obviously mode_valid() isn't expected to modify the argument.
-> > >
-> > > Mass-change the DRM framework code to pass const argument to that
-> > > callback.
-> > >
-> > > [...]
-> >
-> > Applied to drm-misc-next, thanks!
-> >
-> > [1/5] drm/encoder_slave: make mode_valid accept const struct drm_displa=
-y_mode
-> >       commit: 7a5cd45fab0a2671aa4ea6d8fb80cea268387176
-> > [2/5] drm/amdgpu: don't change mode in amdgpu_dm_connector_mode_valid()
-> >       commit: b255ce4388e09f14311e7912d0ccd45a14a08d66
-> > [3/5] drm/sti: hda: pass const struct drm_display_mode* to hda_get_mode=
-_idx()
-> >       commit: 5f011b442006ccb29044263df10843de80fc0b14
-> > [4/5] drm/connector: make mode_valid_ctx take a const struct drm_displa=
-y_mode
-> >       commit: 66df9debcb29d14802912ed79a9cf9ba721b51a4
-> > [5/5] drm/connector: make mode_valid take a const struct drm_display_mo=
-de
-> >       commit: 26d6fd81916e62d2b0568d9756e5f9c33f0f9b7a
->
-> I cannot find these in drm-misc or drm-next, but they are in drm-tip?
+From: Sheetal <sheetal@nvidia.com>
 
-These are in drm-misc/drm-misc-next, the commit IDs are a part of the
-Git history.
+Add interconnect framework support to set required audio bandwidth
+based on PCM device usage. The maximum bandwidth is determined by
+the number of APE PCM devices and maximum audio format supported.
 
-> The last one due to commit 2bdc721917cf141f ("Merge remote-tracking
-> branch 'drm-misc/drm-misc-next' into drm-tip").
->
-> What am I missing?
-> Thanks!
+If interconnect property is not defined or INTERCONNECT config
+is not enabled then the audio usecase will still function.
 
-It might be some kind of misinteraction between drm-misc-next vs
-drm-misc-next-fixes vs merge window. Let me recheck dim rebuild-tip.
+Validate bandwidth updates by reading the interconnect summary sysfs
+node during PCM device open and close operations.
 
->
-> P.S. Sima: noticed while resolving a merge conflict using drm-tip. Thx!
+Signed-off-by: Sheetal <sheetal@nvidia.com>
+---
+ sound/soc/tegra/Makefile          |   2 +-
+ sound/soc/tegra/tegra210_admaif.c |  24 +++++-
+ sound/soc/tegra/tegra210_admaif.h |   9 +-
+ sound/soc/tegra/tegra_isomgr_bw.c | 132 ++++++++++++++++++++++++++++++
+ sound/soc/tegra/tegra_isomgr_bw.h |  31 +++++++
+ 5 files changed, 192 insertions(+), 6 deletions(-)
+ create mode 100644 sound/soc/tegra/tegra_isomgr_bw.c
+ create mode 100644 sound/soc/tegra/tegra_isomgr_bw.h
 
+diff --git a/sound/soc/tegra/Makefile b/sound/soc/tegra/Makefile
+index cea4b0d54378..defea7f53f11 100644
+--- a/sound/soc/tegra/Makefile
++++ b/sound/soc/tegra/Makefile
+@@ -13,7 +13,7 @@ snd-soc-tegra210-dmic-y := tegra210_dmic.o
+ snd-soc-tegra210-i2s-y := tegra210_i2s.o
+ snd-soc-tegra186-asrc-y := tegra186_asrc.o
+ snd-soc-tegra186-dspk-y := tegra186_dspk.o
+-snd-soc-tegra210-admaif-y := tegra210_admaif.o
++snd-soc-tegra210-admaif-y := tegra210_admaif.o tegra_isomgr_bw.o
+ snd-soc-tegra210-mvc-y := tegra210_mvc.o
+ snd-soc-tegra210-sfc-y := tegra210_sfc.o
+ snd-soc-tegra210-amx-y := tegra210_amx.o
+diff --git a/sound/soc/tegra/tegra210_admaif.c b/sound/soc/tegra/tegra210_admaif.c
+index 58fdb0e79954..f56d1e03239d 100644
+--- a/sound/soc/tegra/tegra210_admaif.c
++++ b/sound/soc/tegra/tegra210_admaif.c
+@@ -1,5 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES.
++// SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION & AFFILIATES.
+ // All rights reserved.
+ //
+ // tegra210_admaif.c - Tegra ADMAIF driver
+@@ -13,6 +13,7 @@
+ #include <linux/regmap.h>
+ #include <sound/pcm_params.h>
+ #include <sound/soc.h>
++#include "tegra_isomgr_bw.h"
+ #include "tegra210_admaif.h"
+ #include "tegra_cif.h"
+ #include "tegra_pcm.h"
+@@ -262,6 +263,18 @@ static int tegra_admaif_set_pack_mode(struct regmap *map, unsigned int reg,
+ 	return 0;
+ }
+ 
++static int tegra_admaif_prepare(struct snd_pcm_substream *substream,
++				struct snd_soc_dai *dai)
++{
++	return tegra_isomgr_adma_setbw(substream, dai, true);
++}
++
++static void tegra_admaif_shutdown(struct snd_pcm_substream *substream,
++				  struct snd_soc_dai *dai)
++{
++	tegra_isomgr_adma_setbw(substream, dai, false);
++}
++
+ static int tegra_admaif_hw_params(struct snd_pcm_substream *substream,
+ 				  struct snd_pcm_hw_params *params,
+ 				  struct snd_soc_dai *dai)
+@@ -554,6 +567,8 @@ static const struct snd_soc_dai_ops tegra_admaif_dai_ops = {
+ 	.probe		= tegra_admaif_dai_probe,
+ 	.hw_params	= tegra_admaif_hw_params,
+ 	.trigger	= tegra_admaif_trigger,
++	.shutdown	= tegra_admaif_shutdown,
++	.prepare	= tegra_admaif_prepare,
+ };
+ 
+ #define DAI(dai_name)					\
+@@ -800,6 +815,12 @@ static int tegra_admaif_probe(struct platform_device *pdev)
+ 
+ 	regcache_cache_only(admaif->regmap, true);
+ 
++	err = tegra_isomgr_adma_register(&pdev->dev);
++	if (err) {
++		dev_err(&pdev->dev, "Failed to add interconnect path\n");
++		return err;
++	}
++
+ 	regmap_update_bits(admaif->regmap, admaif->soc_data->global_base +
+ 			   TEGRA_ADMAIF_GLOBAL_ENABLE, 1, 1);
+ 
+@@ -851,6 +872,7 @@ static int tegra_admaif_probe(struct platform_device *pdev)
+ 
+ static void tegra_admaif_remove(struct platform_device *pdev)
+ {
++	tegra_isomgr_adma_unregister(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+ }
+ 
+diff --git a/sound/soc/tegra/tegra210_admaif.h b/sound/soc/tegra/tegra210_admaif.h
+index 96686dc92081..748f886ee74e 100644
+--- a/sound/soc/tegra/tegra210_admaif.h
++++ b/sound/soc/tegra/tegra210_admaif.h
+@@ -1,8 +1,8 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * tegra210_admaif.h - Tegra ADMAIF registers
++/* SPDX-License-Identifier: GPL-2.0-only
++ * SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION & AFFILIATES.
++ * All rights reserved.
+  *
+- * Copyright (c) 2020 NVIDIA CORPORATION.  All rights reserved.
++ * tegra210_admaif.h - Tegra ADMAIF registers
+  *
+  */
+ 
+@@ -157,6 +157,7 @@ struct tegra_admaif {
+ 	unsigned int *mono_to_stereo[ADMAIF_PATHS];
+ 	unsigned int *stereo_to_mono[ADMAIF_PATHS];
+ 	struct regmap *regmap;
++	struct tegra_adma_isomgr *adma_isomgr;
+ };
+ 
+ #endif
+diff --git a/sound/soc/tegra/tegra_isomgr_bw.c b/sound/soc/tegra/tegra_isomgr_bw.c
+new file mode 100644
+index 000000000000..539c989514db
+--- /dev/null
++++ b/sound/soc/tegra/tegra_isomgr_bw.c
+@@ -0,0 +1,132 @@
++// SPDX-License-Identifier: GPL-2.0-only
++// SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES.
++// All rights reserved.
++//
++// ADMA bandwidth calculation
++
++#include <linux/interconnect.h>
++#include <linux/module.h>
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++#include "tegra_isomgr_bw.h"
++#include "tegra210_admaif.h"
++
++/* Max possible rate is 192KHz x 16channel x 4bytes */
++#define MAX_BW_PER_DEV 12288
++
++int tegra_isomgr_adma_setbw(struct snd_pcm_substream *substream,
++			    struct snd_soc_dai *dai, bool is_running)
++{
++	struct device *dev = dai->dev;
++	struct tegra_admaif *admaif = snd_soc_dai_get_drvdata(dai);
++	struct tegra_adma_isomgr *adma_isomgr = admaif->adma_isomgr;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct snd_pcm *pcm = substream->pcm;
++	u32 type = substream->stream, bandwidth = 0, pcm_id;
++	int sample_bytes;
++
++	if (!adma_isomgr)
++		return 0;
++
++	if (!runtime || !pcm)
++		return -EINVAL;
++
++	if (pcm->device >= adma_isomgr->max_pcm_device) {
++		dev_err(dev, "%s: PCM device number %d is greater than %d\n", __func__,
++			pcm->device, adma_isomgr->max_pcm_device);
++		return -EINVAL;
++	}
++
++	/*
++	 * No action if  stream is running and bandwidth is already set or
++	 * stream is not running and bandwidth is already reset
++	 */
++	if ((adma_isomgr->bw_per_dev[type][pcm_id] && is_running) ||
++	    (!adma_isomgr->bw_per_dev[type][pcm_id] && !is_running))
++		return 0;
++
++	if (is_running) {
++		sample_bytes = snd_pcm_format_width(runtime->format) / 8;
++		if (sample_bytes < 0)
++			return sample_bytes;
++
++		/* KB/s kilo bytes per sec */
++		bandwidth = runtime->channels * (runtime->rate / 1000) *
++				sample_bytes;
++	}
++
++	mutex_lock(&adma_isomgr->mutex);
++
++	if (is_running) {
++		if (bandwidth + adma_isomgr->current_bandwidth > adma_isomgr->max_bw)
++			bandwidth = adma_isomgr->max_bw - adma_isomgr->current_bandwidth;
++
++		adma_isomgr->current_bandwidth += bandwidth;
++	} else {
++		adma_isomgr->current_bandwidth -= adma_isomgr->bw_per_dev[type][pcm_id];
++	}
++
++	mutex_unlock(&adma_isomgr->mutex);
++
++	adma_isomgr->bw_per_dev[type][pcm_id] = bandwidth;
++
++	dev_dbg(dev, "Setting up bandwidth to %d KBps\n", adma_isomgr->current_bandwidth);
++
++	return icc_set_bw(adma_isomgr->icc_path_handle,
++			  adma_isomgr->current_bandwidth, adma_isomgr->max_bw);
++}
++EXPORT_SYMBOL(tegra_isomgr_adma_setbw);
++
++int tegra_isomgr_adma_register(struct device *dev)
++{
++	struct tegra_admaif *admaif = dev_get_drvdata(dev);
++	struct tegra_adma_isomgr *adma_isomgr;
++	int i;
++
++	adma_isomgr = devm_kzalloc(dev, sizeof(struct tegra_adma_isomgr), GFP_KERNEL);
++	if (!adma_isomgr)
++		return -ENOMEM;
++
++	adma_isomgr->icc_path_handle = devm_of_icc_get(dev, "write");
++	if (IS_ERR(adma_isomgr->icc_path_handle))
++		return dev_err_probe(dev, PTR_ERR(adma_isomgr->icc_path_handle),
++				"failed to acquire interconnect path\n");
++
++	/* Either INTERCONNECT config OR interconnect property is not defined */
++	if (!adma_isomgr->icc_path_handle) {
++		devm_kfree(dev, adma_isomgr);
++		return 0;
++	}
++
++	adma_isomgr->max_pcm_device = admaif->soc_data->num_ch;
++	adma_isomgr->max_bw = STREAM_TYPE * MAX_BW_PER_DEV * adma_isomgr->max_pcm_device;
++
++	for (i = 0; i < STREAM_TYPE; i++) {
++		adma_isomgr->bw_per_dev[i] = devm_kzalloc(dev, adma_isomgr->max_pcm_device *
++							  sizeof(u32), GFP_KERNEL);
++		if (!adma_isomgr->bw_per_dev[i])
++			return -ENOMEM;
++	}
++
++	adma_isomgr->current_bandwidth = 0;
++	mutex_init(&adma_isomgr->mutex);
++	admaif->adma_isomgr = adma_isomgr;
++
++	return 0;
++}
++EXPORT_SYMBOL(tegra_isomgr_adma_register);
++
++void tegra_isomgr_adma_unregister(struct device *dev)
++{
++	struct tegra_admaif *admaif = dev_get_drvdata(dev);
++
++	if (!admaif->adma_isomgr)
++		return;
++
++	mutex_destroy(&admaif->adma_isomgr->mutex);
++}
++EXPORT_SYMBOL(tegra_isomgr_adma_unregister);
++
++MODULE_AUTHOR("Mohan Kumar <mkumard@nvidia.com>");
++MODULE_DESCRIPTION("Tegra ADMA Bandwidth Request driver");
++MODULE_LICENSE("GPL");
+diff --git a/sound/soc/tegra/tegra_isomgr_bw.h b/sound/soc/tegra/tegra_isomgr_bw.h
+new file mode 100644
+index 000000000000..86db3cfd4e43
+--- /dev/null
++++ b/sound/soc/tegra/tegra_isomgr_bw.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0-only
++ * SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES.
++ * All rights reserved.
++ *
++ * tegra_isomgr_bw.h - Definitions for ADMA bandwidth calculation
++ *
++ */
++
++#ifndef __TEGRA_ISOMGR_BW_H__
++#define __TEGRA_ISOMGR_BW_H__
++
++/* Playback and Capture streams */
++#define STREAM_TYPE 2
++
++struct tegra_adma_isomgr {
++	/* Protect pcm devices bandwidth */
++	struct mutex mutex;
++	/* interconnect path handle */
++	struct icc_path *icc_path_handle;
++	u32 *bw_per_dev[STREAM_TYPE];
++	u32 current_bandwidth;
++	u32 max_pcm_device;
++	u32 max_bw;
++};
++
++int tegra_isomgr_adma_register(struct device *dev);
++void tegra_isomgr_adma_unregister(struct device *dev);
++int tegra_isomgr_adma_setbw(struct snd_pcm_substream *substream,
++			    struct snd_soc_dai *dai, bool is_running);
++
++#endif
+-- 
+2.17.1
 
---=20
-With best wishes
-Dmitry
