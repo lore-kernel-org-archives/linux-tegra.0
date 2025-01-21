@@ -1,242 +1,166 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5561E0DC0;
-	Mon, 20 Jan 2025 16:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF832CAB;
+	Tue, 21 Jan 2025 09:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737390873; cv=none; b=SJMT+sOHDPxvbWivCCnp0iv4ZECPSphf2xmCe4/ijyTwm2nr9Ndg1RDeaGasuSlWROD+aUUq4+Wf8nRnqO9RF0SACKPKD+akuuWP09oByIuLzksW2v29fKRUrMD5HkoIq7chleUjQIRkKWdFECLntJYjuzEB8fmvME64ySgEurw=
+	t=1737450833; cv=none; b=j3+X2KTeW2NLA5T9z8sPo3ZNLpbo90MtJvCkPw/tfklEc2lqhy0WAtfBwcDaT+uAX2TliQEOxoYs9eCyDXGE5c47C0BGUyTP0GKMeqQaBXOk8SQNbtrVw74d33D27nkS2flvwuUHdq+O+1Xzf9PNzEq/KjldzBMuSnd0TKTv09E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737390873; c=relaxed/simple;
-	bh=NaOfdC4w2dusBKWhswHOIYMj7fgn4WHJ3PXero1V1d8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CB394nVBnuwbx9iQGlc1twH0J14qgKBI6/Hsmn3JJuEyWHQ2KLHXU9RhxxGrVVvUd6YyZ51AduURw5CYY0OS8t5jSzLV2MJs9E9w7b8lH8FcMH6bcbVL1a56Xd7d87+5PzSwA8g1oLPotvmNoEFR/eG/3NBZKbB9cI5Dn1Lohw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPJ/UFrP; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1737450833; c=relaxed/simple;
+	bh=379PWCV/7+kIrmP1pA3alid5iJDIvrSFYacRmagLkUc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C9opk0Hn5nL9YW9iPo3rOArVgHMwxFIuUWQbI21rkdjbKTaqRmtu3Obs/YliOLN7NcgfBY8P/CRInPKTcHx69Et5f2UbqKiAqA+u8F4B1rqRlbpqoTTiKdOxjppZP6OXjiCn5wItad2aaMK1oKFqbMbpf8eZvdX8xQisW9iMKPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPJ/UFrP"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4361b0ec57aso48196145e9.0;
-        Mon, 20 Jan 2025 08:34:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737390869; x=1737995669; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hlgzafycjr+D1IG8dXztsrTCccNsvQrvLPOu7qKber4=;
-        b=CPJ/UFrPB2VUtc64e8WBKB99FWpQm0y9JRXi9FZ1a8rq4dG9V7uOyT/dAaSPyrpyXz
-         bKu7ZdGaofBrGkHLQ2auSNFzC6QWOl8j+37BdelUN6O+4UTByjlG1B1WS0bAz7n/ZsQa
-         y/K2qFYccWd0XCfl2SmPobEfoQ4oM9M/ikCkTB6EfmFxEzGop6t7XBJ1nW2sTGyK5Kj5
-         AAqh8z2findBhB3g941GHno3BR+VNCjjaT63Ze3NsDzYtzHYlQj/woXiV3drgWLXx16q
-         sMT6hJ5pMXx9qznipEG9Y74orLCoxF5uHZa/g9UmvEj/dghjEBHW0rTJdAKdsoOBtr/O
-         f8jA==
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b6ed0de64aso491599885a.0;
+        Tue, 21 Jan 2025 01:13:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737390869; x=1737995669;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hlgzafycjr+D1IG8dXztsrTCccNsvQrvLPOu7qKber4=;
-        b=lrKOndamFDz0PHCH7FOIkGEnNe0TgRkegPRO5SoNUypMq1h3dLYOtb/bHgnUxqHrVf
-         qsxcJWIdBk+JxtSEDy/rxM/H9NvLvDyot7olSbAm98xcqZR97nOu0xTfL/IdwFtYdpha
-         7p5bE4/z32Onx18bqxhKt/YEAf3tGdDwkkzAe/y1gpcY47R+quDo6yFgjlWD3M9zopmD
-         xQcKGEIcizv1P7fWqCoYJxi7gnnU2OzC0fgXpU5E+CIUuMtOj5N24OQsPTclwY4uOfjZ
-         tzd/pf8k6psAXlpVg9bCDTI+K2MksrkgZBzvu4lu6RZx4LwkKZyv64ZG4PaOCHdblHlA
-         4rbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIg73cBn1A+0MhV8Hk70uiI7DGZ9yVdl1Na8p/1xc+yYcaZamGp6uQ9t8t8Se26MO9iagRuVQ4b7YVSKQ=@vger.kernel.org, AJvYcCVhL3DXqgSugiioUvnLNpw6jb2Om/uT7XQ3rbeN6t9uNA8LMWbFTDyFKZtb7TMaV7VZyZu1v3jmBw2zY2g=@vger.kernel.org, AJvYcCXefuahoHZt0DT0d+4H8BKAtXA+Ukjk2AVzIyO+YvUZd5omSboex2++PdHgXEG5BJF1+ic7JLGhlK/ea/H2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzn4En1G9yUUxGVJS1KBNFn5wOtjpFOaIjwjKBMuZX8Ec2B6cg1
-	PjKaKChvqXMN67Uvk097HCRpKDDdplZ5XnyTojQT/Rsi1QsPGGjJ
-X-Gm-Gg: ASbGncunY5lk3Y/kabTXsnpiqibAy62YpfFqkyxCRZlcJGm+d2Hq4+Pl/ChSPq9nepi
-	eMU+3Fb90X2K1taIzV+k8lte3v0XME0RCeXhdNqPMgBC8Yu1OM99oIpoN234Mlc58YjprK1eqZl
-	5f3nRXIWGsnnVdJHXi3fhbRRXIT2l1rENeSFZT4jFT33af7G7Fz4pM6R3rEQLPB1fT+lJ4IezBh
-	YH6VhetGyqGeFcksRPz6Aqb0EnZgAoQfE27VFS2p6U77NoyUsU5J+IwnYZxsCmNU/sqz3wWJvbc
-	9JYmNZhXBklEz74cRWFrgmu62GpDTELLncuK1Vogeao8T/atqzMjwVt7
-X-Google-Smtp-Source: AGHT+IG9Y0Ek2Z67J+xIcMtfGU2PhyTql319o+NS9uUNbPE0E1G0g3V9P6Xe1lCTGzkwF4S/E1Rh3w==
-X-Received: by 2002:a5d:52c7:0:b0:386:37f5:99e7 with SMTP id ffacd0b85a97d-38bf5674784mr10655959f8f.33.1737390869315;
-        Mon, 20 Jan 2025 08:34:29 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38bf3215066sm11122929f8f.11.2025.01.20.08.34.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2025 08:34:28 -0800 (PST)
-Date: Mon, 20 Jan 2025 17:34:26 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: John Ogness <john.ogness@linutronix.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Arnd Bergmann <arnd@arndb.de>, Tony Lindgren <tony@atomide.com>, 
-	Niklas Schnelle <schnelle@linux.ibm.com>, Serge Semin <fancer.lancer@gmail.com>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH tty-next v5 5/6] serial: 8250: Switch to nbcon console
-Message-ID: <lrpcbufgu7jnvepqkd3sz2qap2th45ndzv4c4vxh7v4zyhep6k@t635s7vbhkgz>
-References: <20250107212702.169493-1-john.ogness@linutronix.de>
- <20250107212702.169493-6-john.ogness@linutronix.de>
- <80b020fc-c18a-4da4-b222-16da1cab2f4c@nvidia.com>
- <84ldvcyq41.fsf@jogness.linutronix.de>
- <96b02b20-a51e-480f-a0ce-3a1457650ca9@nvidia.com>
- <84y0zbyrf0.fsf@jogness.linutronix.de>
- <bee7de35-e767-4c69-94ad-d09c92a3577a@nvidia.com>
- <sx4nrwuzs3vafnbrkgag4dkapll3itvece4k3ylvobvid2vlpk@oncxz3eq33zk>
+        d=1e100.net; s=20230601; t=1737450830; x=1738055630;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h0F66BpcncnDZq8+yac2PqIUMY5KsLdGVzSelKc0x5s=;
+        b=VQ13uKQiXxzctBx8dzUWSYp9V8AA2JHM6RS47NZdm5HQbvU37C+HjtGhOd18BdkUhV
+         JWrHqgzXQ11I4G7RQEz+GgSDLz7Enkv6Kgoe9x9HVKqEyi/2MWA2LDxuPzxEEsip5abZ
+         SpkLZnnyMGJ3nj6i9UNYWExRTstIwwo5cssx2cwWj47GMM7D2cc8GluReuYYJBuzvc90
+         xKrxYbe9GhEPwecJh8emWDeZyl7P5oMftIGIfwQ45We2YAp7m5xPi2pom+sDjncc7Hwa
+         RjE58s0XyUvXoi24t9xm9WpX7z8Y2JdgSKFPUaxPbvqD4nObY/abpCl9IAjci4QQS7Mr
+         o4Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6HIx7HgaPpA3OfeOMrWfLUbHFMbWfevOwzzbQYbXJym0W6s+siNLb2cN24wMRWdQLu6YkQ4GMSF85kaEH@vger.kernel.org, AJvYcCVYyhpAwtIXbZ6wmgYlEVmghJglBVg2PZHi+64LEVilyqV0GzOoNLFl7YDKb0ytadaI7LAbHYzi6P/44LwnBG/KJPM=@vger.kernel.org, AJvYcCVpdrcT9Nv/TDRHJzPrPGxvMhfge50nBRmomEn3IX8XsZbr8PNsgVIcZ2BRa1A6K2nRgL1O7GI1s3fDjYU=@vger.kernel.org, AJvYcCVxXUw1tQOkj6K25kc5Zpxk8RLi3S5KA7lJA3d0e/w7VC3MyIb3iW26pTpfr3ggZT+gf2vcavPeRq1jeGzx@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHaw+aZCcO58YnjQT9uzkr6tsx7GfOEMT5hCK8aEEvOa5UKdLe
+	tjiu6J4e9lCDR8mHW2pIGQIp3UcBwb+0laK+VMDPJuew1iZzIVTJAp5xaJfM
+X-Gm-Gg: ASbGncv+brHyPxTWO0RKeyAMb9AzrGAXAti7gHa+BA5p5E+l0ndSphglznFxEqlxLlv
+	8acOEiU/5V0QrmrTmlFCuC1E8SMAzi4FQ0DMeBz3BkAYRUriXdMpRoU+FBVi5AoLZDKfGipaLNw
+	vKMBd9oMQZUpp5VzdNUigr5H5ESVvpnmE+Rx23LO22cNHl7XpmRImuqja2YX+yk9W1UcHs/kLY5
+	xLV2/BfSiDAXu6pyxlCrZ0fSb4UU688TPOGfPW/F59r6icgE3egRVtBNupL2baTPcHuw6yDpOmi
+	ldONVKKX35wD1xIQXj/0kPRWM+OzJ2xdOx8I
+X-Google-Smtp-Source: AGHT+IGsEIDFm0b3zj8GAtqWvg6Y2dj7R4OruDN7tdXXTh7qhSzuw9z+v0mqr7aRO7hYzPs7RcfYQg==
+X-Received: by 2002:a05:620a:406:b0:7be:73f6:9e86 with SMTP id af79cd13be357-7be73f6a0a1mr1067351385a.20.1737450830131;
+        Tue, 21 Jan 2025 01:13:50 -0800 (PST)
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com. [209.85.222.179])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7be61481543sm535071785a.48.2025.01.21.01.13.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 21 Jan 2025 01:13:49 -0800 (PST)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b6ed0de64aso491598385a.0;
+        Tue, 21 Jan 2025 01:13:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUiY7l2qJjLLylGaifPY6hIsQRI3WJzTfMqaXFuIo0l/WRBYBPMbBGG9BdI2o9LPGVa/lH39gT3GU2Gs4k=@vger.kernel.org, AJvYcCUmtySTPDUGHNqDIqBqEbUbz9Pqu1wkZPDkmgy/g6vUBv1Wl/CBFPNbawKtY+cWJhwZ18CanqxFbriM6Iovc6t3JKM=@vger.kernel.org, AJvYcCXXVTneqtqk1kmBYnGwcrYkh37/R3pixc9f6WEKijePSQ6XR37N4fMMCAevF+FrL7h0gyNyC6ua/Hcl/JS7@vger.kernel.org, AJvYcCXsIFxoerkLIimgi3dxidOW07ywyytLDfFKQCKAnRbI12hjghhN5p3Pbu4gAD3mnB0QisKfHVoELsgmPC3J@vger.kernel.org
+X-Received: by 2002:a05:6122:1783:b0:517:e7b7:d04b with SMTP id
+ 71dfb90a1353d-51cd983d39emr19246646e0c.5.1737450357663; Tue, 21 Jan 2025
+ 01:05:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="w7gy37l5ix2lyorf"
-Content-Disposition: inline
-In-Reply-To: <sx4nrwuzs3vafnbrkgag4dkapll3itvece4k3ylvobvid2vlpk@oncxz3eq33zk>
-
-
---w7gy37l5ix2lyorf
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20241214-drm-connector-mode-valid-const-v2-0-4f9498a4c822@linaro.org>
+ <173624946815.1500596.321177900833598022.b4-ty@linaro.org>
+In-Reply-To: <173624946815.1500596.321177900833598022.b4-ty@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 21 Jan 2025 10:05:45 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVwcaY2Fgpf7GYhBrE5B+AEg=v0BH4OjMXgnp=wqjxmKg@mail.gmail.com>
+X-Gm-Features: AbW1kvaysGolt62WeN4DkS2DNKlSt5oN-0lBeK1j4PwxsWLIrFBPjsQ9bnC7ZcA
+Message-ID: <CAMuHMdVwcaY2Fgpf7GYhBrE5B+AEg=v0BH4OjMXgnp=wqjxmKg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] drm/connector: make mode_valid() callback accept
+ const mode pointer
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
+	Danilo Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Raphael Gallais-Pou <rgallaispou@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Peter Senna Tschudin <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, 
+	Martyn Welch <martyn.welch@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Sandy Huang <hjc@rock-chips.com>, 
+	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
+	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, intel-gfx@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
+	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	Jani Nikula <jani.nikula@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH tty-next v5 5/6] serial: 8250: Switch to nbcon console
-MIME-Version: 1.0
 
-On Mon, Jan 20, 2025 at 05:23:26PM +0100, Thierry Reding wrote:
-> On Thu, Jan 16, 2025 at 10:41:08AM +0000, Jon Hunter wrote:
-> >=20
-> > On 16/01/2025 10:38, John Ogness wrote:
-> > > On 2025-01-16, Jon Hunter <jonathanh@nvidia.com> wrote:
-> > > > > Do you at least know if it is failing to suspend or failing to re=
-sume
-> > > > > (based on power consumption)?
-> > > >=20
-> > > >=20
-> > > > Unfortunately, I don't. These are farm boards and so nothing local =
-I can
-> > > > get my hands on. For some reason all the serial console logs are not
-> > > > available and so I am going to talk to the farm team about fixing t=
-hat
-> > > > because we should at least have serial logs.
-> > >=20
-> > > Can you confirm that the board is actually booting? The suspend code =
-for
-> > > 8250_tegra.c is quite simple. I am wondering if the farm tests are
-> > > failing somewhere else, such as the atomic printing during early boot.
-> >=20
-> >=20
-> > Yes they are all booting fine. I have an independent boot test and that=
- is
-> > passing. It is just the suspend test that is failing.
->=20
-> I was able to capture logs, but unfortunately they don't provide much
-> insight either. On the first try it doesn't suspend and goes back to
-> userspace after a second or so:
->=20
-> --- >8 ---
-> -sh-5.1# rtcwake --device /dev/rtc1 --mode mem --seconds 5
-> rtcwake: assuming RTC uses UTC ...
-> rtcwake: wakeup from "mem" using /dev/rtc1 at Thu Jan  1 00:01:00 1970
-> [   36.332486] PM: suspend entry (deep)
-> [   36.332832] Filesystems sync: 0.000 seconds
-> [   36.369331] +1.8V_RUN_CAM: disabling
-> [   36.373884] +2.8V_RUN_CAM: disabling
-> [   36.375571] +1.2V_RUN_CAM_FRONT: disabling
-> [   36.380359] +1.05V_RUN_CAM_REAR: disabling
-> [   36.387399] +3.3V_RUN_TOUCH: disabling
-> [   36.390808] +2.8V_RUN_CAM_AF: disabling
-> [   36.393621] +1.8V_RUN_VPP_FUSE: disabling
-> [   36.408218] Freezing user space processes
-> [   36.413660] Freezing user space processes completed (elapsed 0.005 sec=
-onds)
-> [   36.413680] OOM killer disabled.
-> [   36.413693] Freezing remaining freezable tasks
-> [   36.415033] Freezing remaining freezable tasks completed (elapsed 0.00=
-1 seconds)
-> [   36.428474] drm drm: [drm:drm_client_dev_suspend] fbdev: ret=3D0
-> [   36.428527] drm drm: [drm:drm_atomic_state_init] Allocated atomic stat=
-e 2e5cd010
-> [   36.428547] drm drm: [drm:drm_atomic_get_crtc_state] Added [CRTC:47:cr=
-tc-0] 6a6be0ef state to 2e5cd010
-> [   36.428561] drm drm: [drm:drm_atomic_get_crtc_state] Added [CRTC:63:cr=
-tc-1] 00d818c2 state to 2e5cd010
-> [   36.428574] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:32:=
-plane-0] 4e145b7d state to 2e5cd010
-> [   36.428587] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:36:=
-plane-1] dbf67d12 state to 2e5cd010
-> [   36.428597] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:40:=
-plane-2] 763d8809 state to 2e5cd010
-> [   36.428608] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:44:=
-plane-3] b6eabcf1 state to 2e5cd010
-> [   36.428617] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:48:=
-plane-4] 7863878c state to 2e5cd010
-> [   36.428628] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:52:=
-plane-5] 54b8029c state to 2e5cd010
-> [   36.428638] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:56:=
-plane-6] 364063af state to 2e5cd010
-> [   36.428648] drm drm: [drm:drm_atomic_get_plane_state] Added [PLANE:60:=
-plane-7] e1c11dfb state to 2e5cd010
-> [   36.428662] drm drm: [drm:drm_atomic_get_connector_state] Added [CONNE=
-CTOR:65:HDMI-A-1] 5cb32770 state to 2e5cd010
-> [   36.428674] drm drm: [drm:drm_atomic_state_init] Allocated atomic stat=
-e 832943c7
-> [   36.428682] drm drm: [drm:drm_atomic_get_crtc_state] Added [CRTC:47:cr=
-tc-0] f09cf73d state to 832943c7
-> [   36.428691] drm drm: [drm:drm_atomic_add_affected_planes] Adding all c=
-urrent planes for [CRTC:47:crtc-0] to 832943c7
-> [   36.428700] drm drm: [drm:drm_atomic_add_affected_connectors] Adding a=
-ll current connectors for [CRTC:47:crtc-0] to 832943c7
-> [   36.428711] drm drm: [drm:drm_atomic_get_crtc_state] Added [CRTC:63:cr=
-tc-1] 2700922c state to 832943c7
-> [   36.428720] drm drm: [drm:drm_atomic_add_affected_planes] Adding all c=
-urrent planes for [CRTC:63:crtc-1] to 832943c7
-> [   36.428727] drm drm: [drm:drm_atomic_add_affected_connectors] Adding a=
-ll current connectors for [CRTC:63:crtc-1] to 832943c7
-> [   36.428737] drm drm: [drm:drm_atomic_check_only] checking 832943c7
-> [   36.428759] drm drm: [drm:drm_atomic_commit] committing 832943c7
-> [   36.428881] drm drm: [drm:drm_atomic_state_default_clear] Clearing ato=
-mic state 832943c7
-> [   36.428897] drm drm: [drm:__drm_atomic_state_free] Freeing atomic stat=
-e 832943c7
-> [   36.429085] r8169 0000:01:00.0 eth0: Link is Down
-> [   36.713236] Disabling non-boot CPUs ...
-> -sh-5.1#
-> --- >8 ---
->=20
-> A second attempt soft-hangs:
->=20
-> --- >8 ---
-> -sh-5.1# rtcwake --device /dev/rtc1 --mode mem --seconds 5
-> rtcwake: assuming RTC uses UTC ...
-> rtcwake: wakeup from "mem" using /dev/rtc1 at Thu Jan  1 00:01:10 1970
-> --- >8 ---
->=20
-> Where "soft-hang" means it doesn't do anything after this and I can't
-> SIGINT out of it or anything. However, the serial seems to still be
-> responsive.
+Hi Dmitry,
 
-To clarify, this was on top of next-20250120 and reverting the patches
-that Jon mentioned suspend/resume is fixed for me as well.
+On Tue, Jan 7, 2025 at 12:31=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+> On Sat, 14 Dec 2024 15:37:04 +0200, Dmitry Baryshkov wrote:
+> > While working on the generic mode_valid() implementation for the HDMI
+> > Connector framework I noticed that unlike other DRM objects
+> > drm_connector accepts non-const pointer to struct drm_display_mode,
+> > while obviously mode_valid() isn't expected to modify the argument.
+> >
+> > Mass-change the DRM framework code to pass const argument to that
+> > callback.
+> >
+> > [...]
+>
+> Applied to drm-misc-next, thanks!
+>
+> [1/5] drm/encoder_slave: make mode_valid accept const struct drm_display_=
+mode
+>       commit: 7a5cd45fab0a2671aa4ea6d8fb80cea268387176
+> [2/5] drm/amdgpu: don't change mode in amdgpu_dm_connector_mode_valid()
+>       commit: b255ce4388e09f14311e7912d0ccd45a14a08d66
+> [3/5] drm/sti: hda: pass const struct drm_display_mode* to hda_get_mode_i=
+dx()
+>       commit: 5f011b442006ccb29044263df10843de80fc0b14
+> [4/5] drm/connector: make mode_valid_ctx take a const struct drm_display_=
+mode
+>       commit: 66df9debcb29d14802912ed79a9cf9ba721b51a4
+> [5/5] drm/connector: make mode_valid take a const struct drm_display_mode
+>       commit: 26d6fd81916e62d2b0568d9756e5f9c33f0f9b7a
 
-I do have a local device that I can test on, so if there's any patches
-you want me to try, or any options to enable to get more information,
-please let me know.
+I cannot find these in drm-misc or drm-next, but they are in drm-tip?
+The last one due to commit 2bdc721917cf141f ("Merge remote-tracking
+branch 'drm-misc/drm-misc-next' into drm-tip").
 
-Thanks,
-Thierry
+What am I missing?
+Thanks!
 
---w7gy37l5ix2lyorf
-Content-Type: application/pgp-signature; name="signature.asc"
+P.S. Sima: noticed while resolving a merge conflict using drm-tip. Thx!
 
------BEGIN PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmeOexIACgkQ3SOs138+
-s6FsMRAAuKWWsfRVrZ4KfwdQevPuem8lnl06hHKC5IZHuPuCqMVhv3t6qP3T6vHI
-AG/TPVMs5vyhtEapLdI/Ne3rBh6Med8/+GoZAkLa8HGs7Zz7mrGO2gjGAwBTjEKP
-bVvXA+je9RfUCr5dL2zW/2cGvdbSu74hBGE64oyuGk+U3WXHsU8LGrxmkm69wPSi
-MfI0T6YT0CuLnHuQDr3rL9ceq6zU8wwwF/6dmFbHoIWp1A12um6HbaiRK/tt7bGx
-enOJEY2eNWOewpG91NIPNjr70jr7tXhh+HW1/BooZSkphIsSHsJT5b+5vyqIgxFn
-kQtS5+tptVMUk719SoLayiALcm3TiGNgkpcrYH6fbGFUB3C97n/evzGjXn1TcmXK
-e0XDbxG5naDnFvkR4zSIJQpIalZnzTE3JvAo0Qa0+3Z8MzJkf0rrzAV5yBW9bR5O
-/ZAFepJmZTPlHe51/gxwFuxKU7jgWIYYhrNtvwPV7QlV3PYLAF1JHYRIwovH2c2L
-ISypb1PerCIwakek+sELZuBHfEYbm9i2my90B4wvjwjAXZlxZ0DZLHnCwh7uyAjQ
-guWDB5dEGw0rmzwbtzi2ul4dyN1zqXJsSbhWTTcZssFbT/nq/Wtanho90Yds5set
-AbwWyANMaaAjidQuTltZWoSpCJvgk/MqqPe1Ygc/jDMHy60dkAs=
-=bSL4
------END PGP SIGNATURE-----
+                        Geert
 
---w7gy37l5ix2lyorf--
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
