@@ -1,165 +1,85 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D691B808;
-	Tue, 21 Jan 2025 20:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF63E1B95B
+	for <linux-tegra@vger.kernel.org>; Wed, 22 Jan 2025 04:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737491477; cv=none; b=GBZjLSJyRvUJX5TEFHM6YykWMAKp6FfrypiN6wMc6lZZMhn4e+PoGn+b6fQQqdhAmm+A9KeV0EAg7xnpsqhG8bitCKT6NGwsC45t1TUI9Ex6bhg+8nLLJRypr+BLD6REGHl5uyx2S5SSA3sdeMEosAacldnGAQozt3H4HtOaiaU=
+	t=1737518718; cv=none; b=Z33RBUlZVJYYDjjiSriKiAX+uXw/fiqHxOmP7EDnM+zh9FI+BbmNjWdbLMwDVGJlOefA/ngWdeEyHRQVRXk790MK+jTq6T4CvWCKesSwS9r2MXT77XoIvj118kMpzUobt6WjEzvuJyzY2k0tIeu7CAAXVQGAQJRPMtbvVT+FXR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737491477; c=relaxed/simple;
-	bh=0hsTeL52tYYLd7VdgM+3sSM1hLDtf1kuV0EiPZWb700=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=UsUIsGnQ8+PBu3PpAYAhSE0j+MPiZPdtInqeNG/BGfs5OcATJhAGyQl2bl1hbWC0P5zzp1RjcUheHuzjKopILiAlAJSJLuWkBpDf5Nrnv8SsrNaQgIuoGLvrczsJr6mnxlHdDrLZETVOIt03cIaaCvptNLUR++H99QKbVszE3dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nXTbDmS6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737518718; c=relaxed/simple;
+	bh=Eii7dxtEK2mE2YSvM/cVfIDbz+PdFzx/oW523fwi0i4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Ta+sYUNHUsTYUEjV80FlxnZfYq1yigEo/ANRsyae9hSIKRm6c3jO1/XDRoHZBwV/RtWEz90ARtqmGVuNfkJszOHqXEeNMmvinJXfnX0NuS9BgKJerRtEuHTMfjA1a630RGYAd7VM/CDDGfUlzHE+KpChHFkVF9SktLCZp1qgGZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kc1QFtS8; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXTbDmS6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75C49C4CEDF;
-	Tue, 21 Jan 2025 20:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737491475;
-	bh=0hsTeL52tYYLd7VdgM+3sSM1hLDtf1kuV0EiPZWb700=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=nXTbDmS6GaaV7QGWAruZCOp1Ub9BW0NOmTPEAQIjK2swERHP0Ae9EAg/0s8UEepee
-	 TTz8K4YRrL2tiL+B+ByrAAPs4XvmMXWHRCZu8AOm5VroZYRaHnpCjRxaRenddy0lCY
-	 wMqnpK1EdQlPyN8dIsiI+v1RV/GwDVm3PvgJ+GS9u/4EuMJaUGdte4BON76TjHSBv7
-	 J8iGYBxWPE5lwXPZNzcb0aoosxGOLSf3DEbTS/d6wbfSAPh3rcwLhADsqCQP0ccQap
-	 XNLxt1Tk3t2kxTzYG+Yf6IwlKs+GlqS1t7WeWx/dXzc4OF/EpNBp92mygE0ZrUtz9y
-	 alcOTWgicLHBA==
-Date: Tue, 21 Jan 2025 21:31:14 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>, Hans Zhang <18255117159@163.com>,
- manivannan.sadhasivam@linaro.org
-CC: kw@linux.com, kishon@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- rockswang7@gmail.com,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [v11 2/2] misc: pci_endpoint_test: Fix overflow of bar_size
-User-Agent: K-9 Mail for Android
-In-Reply-To: <7474af29-2995-48f6-830b-a23dad2d2bd1@nvidia.com>
-References: <20250109094556.1724663-1-18255117159@163.com> <20250109094556.1724663-3-18255117159@163.com> <7474af29-2995-48f6-830b-a23dad2d2bd1@nvidia.com>
-Message-ID: <87FA054A-053E-4E73-94D7-CB9F4F655053@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kc1QFtS8"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-540254357c8so6149945e87.1
+        for <linux-tegra@vger.kernel.org>; Tue, 21 Jan 2025 20:05:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737518715; x=1738123515; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Eii7dxtEK2mE2YSvM/cVfIDbz+PdFzx/oW523fwi0i4=;
+        b=Kc1QFtS8PzCxe3fcDgvCd5I2dLNj5W1RujTqncYYrmE87vBm2FtxXcZnuiDzo6omsk
+         PmR+io8+0ISqtEEUR3GTMaZpX9GEzqIOV7NDl2BILTZ1MIzWCms3h9w8O6SpLQpst0Ah
+         9MSjaHhg7mT8XPuaiuLJXa1KvdlVtcItU2+lcd9hBkSbiXQ+qI8WW22RHkJLYpEeh/EX
+         1y9rrFSSz3kJqADV8q7a4XJ/u9XzwWO+bosnRG34cfShnWpwJqN3FZOEp+muFgRVhDre
+         bjuLf0m5MZ0+Tq/LXLPFuP+Uvil4zNTAKl3KgoE+XdjvAeGZo/yK60VLooMsliBTY6qd
+         3ZBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737518715; x=1738123515;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Eii7dxtEK2mE2YSvM/cVfIDbz+PdFzx/oW523fwi0i4=;
+        b=sVIcBJpjMXnxiTpZXwpJSYfvSXvL0gNSPeDrdxvbHi/L01XspqtryuPHjgTI0srbSi
+         5IH7DfryFcFhE3ERV1Mw5pHRSbmyVdt0AAQJD611cwecFfMOW1lDAJnmkzGbrkqdl5x+
+         uZwsopLHsgKoZlg6ZDTFOmEWqgHhjQVM5bPin3BrkyJWeqwb3XRgaSOBR5P3+VbqZIRQ
+         ejicBWhaKbHRP4CGAfC2tvxfuFl6/dPHaL4Ry+8ufUKLNkgQNw1GfQWNOjOJnNluR6f+
+         xiqm6TCAEuEn9SCKKIZqbPb27l6icYQGhjChZtA8DTvMhTz7Ew1lv34PqIEsCM/CML9J
+         2Aug==
+X-Gm-Message-State: AOJu0YzM7SeWUpvIBY2mswWBk6Il5dFDdlwEoknfYMPE9xgUp3mzrsl+
+	I3+a70G235TuikVBcBmiPOhE64zB4c+Kwy6iEeX1sMfBrCYsj5Dhd5Za09XGlLbbAGU8J76S3pz
+	Rjlcf5iFk+2/lfo3IatC12BBV/wXCJuxWWlU=
+X-Gm-Gg: ASbGncsu3OuxwJ0FRAl1MgxYsbr45pTLr27NHid7idQu5Xe5jiev0BRZpdRwUv3wRBs
+	gh3mtWY5gsMD8EPs7AK3R4mxIdRUOMvbQbdmy0kLGBaeTpVITktY=
+X-Google-Smtp-Source: AGHT+IE62BI9Ht3ZfSQjDdxrMGhOPel7QGioqsv1kCIgEnxHLV7LOxqLcGKtwb0r1Qlmsq2o132POJAiDEOirF+zhZs=
+X-Received: by 2002:a2e:b554:0:b0:300:2731:4120 with SMTP id
+ 38308e7fff4ca-3072ca8b0a7mr54325231fa.15.1737518714569; Tue, 21 Jan 2025
+ 20:05:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Tue, 21 Jan 2025 22:05:03 -0600
+X-Gm-Features: AbW1kvaQwi9lPFpHjYn-X2oTHy1HQpPsdH8U9wNZ1oW3enZEUdOnPmz7_aA7pXI
+Message-ID: <CALHNRZ-ocU5WWtLzePvUF=4jD45Xvfp0hHsD9AMRRitmyaQ_qA@mail.gmail.com>
+Subject: [BUG] drm/tegra: T186 and T194 don't report a primary plane
+To: linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+A section of drm_hwcomposer [1] fails to find any primary planes on
+t186 and t194, while t124 and t210 work as intended. This was observed
+on the android common kernel 5.15, 6.1, and 6.6 compiled with clang.
+There have been no relevant changes between the stable kernel branches
+and the corresponding android forks in regards to tegra-drm.
 
+I traced the issue back to the shared planes creation and reported a
+suggested fix for this use case to the tegra-drm tracker on
+freedesktop [2], but did not receive any response so I'm opening the
+discussion here.
 
-On 21 January 2025 18:46:43 CET, Jon Hunter <jonathanh@nvidia=2Ecom> wrote=
-:
->Hi Hans,
->
->On 09/01/2025 09:45, Hans Zhang wrote:
->> With 8GB BAR2, running pcitest -b 2 fails with "TEST FAILED"=2E
->>=20
->> The return value of the `pci_resource_len` interface is not an integer=
-=2E
->> Using `pcitest` with an 8GB BAR2, the bar_size of integer type will
->> overflow=2E
->>=20
->> Change the data type of bar_size from integer to resource_size_t, to fi=
-x
->> the above issue=2E
->>=20
->> Signed-off-by: Hans Zhang <18255117159@163=2Ecom>
->> Suggested-by: Niklas Cassel <cassel@kernel=2Eorg>
->> Reviewed-by: Niklas Cassel <cassel@kernel=2Eorg>
->> ---
->> Changes since v10:
->> https://lore=2Ekernel=2Eorg/linux-pci/20250108080951=2E1700230-3-182551=
-17159@163=2Ecom/
->>=20
->> - Replace do_div with the div_u64 API=2E
->>=20
->> Changes since v8-v9:
->> https://lore=2Ekernel=2Eorg/linux-pci/20250104151652=2E1652181-1-182551=
-17159@163=2Ecom/
->>=20
->> - Split the patch=2E
->>=20
->> Changes since v4-v7:
->> https://lore=2Ekernel=2Eorg/linux-pci/20250102120222=2E1403906-1-182551=
-17159@163=2Ecom/
->>=20
->> - Fix 32-bit OS warnings and errors=2E
->> - Fix undefined reference to `__udivmoddi4`
->>=20
->> Changes since v3:
->> https://lore=2Ekernel=2Eorg/linux-pci/20241221141009=2E27317-1-18255117=
-159@163=2Ecom/
->>=20
->> - The patch subject were modified=2E
->>=20
->> Changes since v2:
->> https://lore=2Ekernel=2Eorg/linux-pci/20241220075253=2E16791-1-18255117=
-159@163=2Ecom/
->>=20
->> - Fix "changes" part goes below the --- line
->> - The patch commit message were modified=2E
->>=20
->> Changes since v1:
->> https://lore=2Ekernel=2Eorg/linux-pci/20241217121220=2E19676-1-18255117=
-159@163=2Ecom/
->>=20
->> - The patch subject and commit message were modified=2E
->> ---
->>   drivers/misc/pci_endpoint_test=2Ec | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/drivers/misc/pci_endpoint_test=2Ec b/drivers/misc/pci_endp=
-oint_test=2Ec
->> index f78c7540c52c=2E=2E0f6291801078 100644
->> --- a/drivers/misc/pci_endpoint_test=2Ec
->> +++ b/drivers/misc/pci_endpoint_test=2Ec
->> @@ -280,10 +280,11 @@ static int pci_endpoint_test_bar_memcmp(struct pc=
-i_endpoint_test *test,
->>   static bool pci_endpoint_test_bar(struct pci_endpoint_test *test,
->>   				  enum pci_barno barno)
->>   {
->> -	int j, bar_size, buf_size, iters;
->> +	int j, buf_size, iters;
->>   	void *write_buf __free(kfree) =3D NULL;
->>   	void *read_buf __free(kfree) =3D NULL;
->>   	struct pci_dev *pdev =3D test->pdev;
->> +	resource_size_t bar_size;
->>     	if (!test->bar[barno])
->>   		return false;
->> @@ -307,7 +308,7 @@ static bool pci_endpoint_test_bar(struct pci_endpoi=
-nt_test *test,
->>   	if (!read_buf)
->>   		return false;
->>   -	iters =3D bar_size / buf_size;
->> +	iters =3D div_u64(bar_size, buf_size);
->>   	for (j =3D 0; j < iters; j++)
->>   		if (pci_endpoint_test_bar_memcmp(test, barno, buf_size * j,
->>   						 write_buf, read_buf, buf_size))
->
->
->This change breaks building the kernel with GCC v7 and I see =2E=2E=2E
->
->ERROR: modpost: "__aeabi_uldivmod" [drivers/misc/pci_endpoint_test=2Eko] =
-undefined!
->ERROR: modpost: "__aeabi_ldivmod" [drivers/misc/pci_endpoint_test=2Eko] u=
-ndefined!
->
->I know that this is an old GCC version, but this is a farm builder and th=
-e kernel still indicates that GCC v5=2E1 is still supported [0]=2E
->
+I don't have a non-Android based test case to verify this issue. And
+am unsure if this is a general issue or one caused by the compiler
+setup required by aosp. Is this functionality verified by the
+regression testing setups?
 
-Hmm=2E=2E div_u64() should work on gcc 5=2E1=2E
+[1] https://gitlab.freedesktop.org/drm-hwcomposer/drm-hwcomposer/-/blob/bf13180ffc69446262af666bb8d3c32869572214/drm/DrmDisplayPipeline.cpp#L74
+[2] https://gitlab.freedesktop.org/drm/tegra/-/issues/3
 
-Out of curiosity, is there any difference if you add:
-
-#include <linux/math64=2Eh>
-to
-drivers/misc/pci_endpoint_test=2Ec ?
-
-
-Kind regards,
-Niklas
+Thanks,
+Aaron Kling
