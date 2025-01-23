@@ -1,146 +1,213 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC2720B7E3;
-	Thu, 23 Jan 2025 09:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA4F20E338
+	for <linux-tegra@vger.kernel.org>; Thu, 23 Jan 2025 11:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737622888; cv=none; b=L2owR5o2BKkVh6t9uz+lCWlNvICk4bVJoLlQ5ZKN8c+VJc2XcTgoUFN5UngXe3pWwbqbWH8PO4KDFzPRO5iXAEfzZI9DryT4pnwsOCHXh+yipsFX3hNa1mIF7aj2JnEZW7K/tPs6wX43ipOTy0cHPJOdZ4n1wPQ0FeD7Ol+hIug=
+	t=1737632283; cv=none; b=Tsf1Dt8JGgQDGLmp3npFAmrHs1b4IgtI7RiH29tSLQWi4k41Xh7LKQwkARF/Jvq53Up0chxpWDoowM9YYuMosD3zsfjw5AGmfrQ0TwCfpTbRRIaPI9PM5yoTfcvOcPch7+15YL0QIp/HUfArcywPuTLXcNzEl7jZaCWf2GEeMzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737622888; c=relaxed/simple;
-	bh=9/E1nvOwQ142ouB7l/QczZ2kYOEk8bbjICCME+C1KAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kqzeXLj7ty8dgHeO10JMzg24OhAkuPH60APnf6kuCmcQ0wLgMTVgic/5AyN69KT4gtgw2CNXipwg8Um087qKCYOn+X/EgKRpK9SGvXnmNqI8D4Jj2JYiQcKsWlAFmvK19rOQAirqN7LoBlW9czAB2d3vdA9cRGT/VwFYJZ5Rc5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IwktgbQU; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737632283; c=relaxed/simple;
+	bh=1elHtZeKz6sg8Ec3OUJiSdayZG26nY1iLQravuemXyc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kFoDXUDd7ajqavycH0qeirzRrAoUC+VsndgOXNs9XkbZFlIJued20cDGtP+yPFQ9HaJkBuZhRh07oz4VdQp6zsbdtAr62Zqzotji5696izZqWAynWAGlNmXNblZmdN++4B3HJhcWlbBcRNVyfqw8a/qiF5INafKuODN1e/Yy2oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m1XJP3g8; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwktgbQU"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-438a3216fc2so6317715e9.1;
-        Thu, 23 Jan 2025 01:01:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m1XJP3g8"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ee51f8c47dso1203380a91.1
+        for <linux-tegra@vger.kernel.org>; Thu, 23 Jan 2025 03:38:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737622885; x=1738227685; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G2jI+cPSleUjJx2uFZjXvCaJjGtWxxdbGZO23dapc7c=;
-        b=IwktgbQUwIzplDbSXm8hbzCg6NGlOuFymj4+z3NF4vZqfWb2fh7EXS0sf7mkP0SkAc
-         0tARXuYoVEmzeFbi+PjrH7NnofPM5T2WcjI0+J+csEqggUmP7M9VZbGAjL/YKmXH1Mxh
-         PpdlxMnOCH79llseg1m/2bHfnQxpS/z2+6fMG6AH5rCEv+JfxtHRM3dF4okLddx4JlNI
-         MhLRwyr2Rtn2YCqCUJ0b7uRzgyqIkxdVh2TM4NrHNrNEgQs+sBazsTAtIUBWFp5AYiUg
-         7hj2ih1kQ3d6JRzsilNG+n+cYRTgogNKf6RmuxYEvQR9hKGFZ1aiXj56ttgdRPRNr6Qc
-         LCzw==
+        d=linaro.org; s=google; t=1737632281; x=1738237081; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=G5e0D4ceKro9Yb8N26UgxQagAkkEg3LLRP/2T93ftQc=;
+        b=m1XJP3g8AzZ+JeuIq516eVik7b+vYL/DqXlz1JIXdBftZgozqxIxxIdWj4ASSnF3KB
+         12OlgDhHktPFBSdLAL0l0hIBNIl126IlS8f4I3hg3nvZa5h5fOKB9yUxN+pNHtDZgqDB
+         0d6kRXrxqDWoUY4YoWL95lElfifjOAdRCDB2W6XTB8DAy3PGVFQ2N/zY3LYnu7/GlVSw
+         wJSbrxeCkPpJIyTPuvjx8W8mznwaexFyvMKg6Ueg9f4KSur9/RYXg8oas4g7YM55wYIb
+         rB5ZgyOuohcQ4oevLgyTJS/VZ1/dQ7cMFOBOaNR0TrsuiteCCdTMv/QeXduRLpOWhgtd
+         /W0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737622885; x=1738227685;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G2jI+cPSleUjJx2uFZjXvCaJjGtWxxdbGZO23dapc7c=;
-        b=ryByVAGSAx/9xz0RajObYMt6v/U6Unef//kwAiXH/n3Cd7OnjLT43BlBbgC5MxGB7m
-         ovSxxgd+/xx/UKseglbCWhSaYfbPHsqxz5fy6BTL2JvbBSBjupIFY46gKhouV5O1xCyS
-         LQVHwAnCyARV0OfBYZDJpOIuWdHgbNgGjA0fFv4HWTCk9Hs4CbanOEGKpJ6xZnh3YXbt
-         B/RgnLcRCFsLqH4W0zJQa4P33sZvb2qJOgKqKSQ5s/UjBQW9rfY6yZGOEW07vucwZkue
-         QTbTUk8rsffsLMdlCpaxLlu1ZDFuJSdSKPYJnsNOEW4INh6y127gSBb0hiN22sR4oEfc
-         AOsg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+YjfatAfzt8UocyiXdJXY5rFcRcxQSQOaTR9ulySfw3eo9yJefltZR+QlxiSGlZ5vQOaX6bpzxMTerSBZ@vger.kernel.org, AJvYcCW5cr0noSqllwTauf9+/821IY9XjZM4EkrLtSFj4fVwg/0GUjWy3aiA9nSNi7XyQfGdtQOmpBSCgpV/N7E=@vger.kernel.org, AJvYcCXCJILND5IxU+U6wsEuYxBn08CbwJ93/PqdMrMI+7pzq6Nc/ahxqAM0A9dH7IruFt6LIi8LBRRe2vGA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm9UhVYphv3jJ7RDkFnkFoxqd2USqeXarc6daqui8KA8DhYCCe
-	G69g1NWzn+IQbPzJpJPWloM4p+6pEs6HfW+v0GEWlyFtxV5tEPTg
-X-Gm-Gg: ASbGncuJIAEC+yp/CCuIRhE128WZ0OWDwEn9nkcx3emlQo5UUgzcflBHpbKUZF6g3eM
-	upAC4c1+NW7ktuo4I0LFJlBgQnylGfHXGKGdxTT3SX7iwlHCLnHRhJ3+H/uvmV1L0bUDa02BBUU
-	Ja5/UeWLXFUCktrD8ArHH4y0uRtNnlND3fYxb3blI2lW/PTxnEdf551DpcvJ3hfMt+GiJt18Sve
-	LTU76WRuSBDcM6X2VXKJIzqmTIDIV++BolZIEFGYlPihtFehNuIuOdvvSQP72XsiqGo0Zf75GtJ
-	eq1Il3let7/LgFLZEZkgvqynJZ37aQ0CzpHuJZ8UH1bDbIaft1A1w/ChP1F1hWVj3k8=
-X-Google-Smtp-Source: AGHT+IGLTx2zeo7rHCwiDPBh+Id51Zm2fUPoSovZvuVb9eLl2wPj9NfWOsfkRkmLo7R0T4c8E873yw==
-X-Received: by 2002:a05:600c:6a83:b0:436:713b:cb31 with SMTP id 5b1f17b1804b1-4389daa4ac0mr214622005e9.3.1737622884898;
-        Thu, 23 Jan 2025 01:01:24 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438b31b6ca1sm55715415e9.25.2025.01.23.01.01.21
+        d=1e100.net; s=20230601; t=1737632281; x=1738237081;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G5e0D4ceKro9Yb8N26UgxQagAkkEg3LLRP/2T93ftQc=;
+        b=lOleCeQYwEoUPtEf0voAIV2Zjb8fzWtFTaKfWSdIfseAvJhR8VJ0LrctWcIuXYKeka
+         N3CohxSmZNc38kLQffGqMkupS6ERM8YIiweddKPHZmoXwsE6M7YOuAuJalqDnALIdZIN
+         PmmO9vVo4xTKpj6kPZb6+nju5T04oFKJZ6qOef8ObIXd+cTjXjXqYOqdymQKfLme9ovz
+         qxrMQsoBspxlcn+tnr8ZNXeALIJPNZQ62QUwD/m9SjZrQ+dW02pNjb+r8ZVwBnFnPVTZ
+         eHwcwA7VQJ6EH4jVcQYCnRjTc+B9LcAtNdrctpnPBvFtL+IFO9EgZOxMho+Khy2cm3qO
+         qRkA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5cPe9XrFy+o6ALYEHWUO0RrGFwBG+rVXwkqsRa8qZBzwvzqWsygDOp/nVY4hj4aukDm+G2dHaH9q11Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC3PBsozTdGOAxVzRZJKO+ok0FP0FuBdaJpFObWvgwUGCIsT1v
+	Rf4mNyXawINIUR96chNwOrx6JNaolL7iIUSfTUUOwzluD8yl0iDif5FmM7JIf+8=
+X-Gm-Gg: ASbGncsJatlQB03Zm32T74Oysp+AL8Gzeh2p/fiKIcNwPmlVLnLAiVgLYheDZcCBDdv
+	0OVqr/Ar6R6kfZ4g3w/7D5FtOf3SdFTeD9CxKtfELjDrxMggCjIdoAbDn9K+S2G+LnO3JSnMeE0
+	RQI+Nt8XlI5CnXKYfV+/UpHYvCnN5I7TraL2H4LPydgN0C+T0F0VXsnDUIVIHAGBsPxXMgHbTkh
+	kLSq8HJdTBlCwaRUh1wm9EU42TXj7D/qYq5I43VmlCFTkDDyI8EeBW8CitbDcz2urGD11WSI8de
+	hUzy7qg=
+X-Google-Smtp-Source: AGHT+IGtsIzzGfAcKL/PEpiuES32TcQcp9F7OLmJOeJMP9wYjML8Ng6LAzORWCaFKdsDKOmTsmrEHA==
+X-Received: by 2002:a17:90b:5206:b0:2f4:f7f8:fc8b with SMTP id 98e67ed59e1d1-2f782d4ed77mr37302192a91.27.1737632280204;
+        Thu, 23 Jan 2025 03:38:00 -0800 (PST)
+Received: from localhost ([122.172.84.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f7e6a5e2b2sm3705966a91.3.2025.01.23.03.37.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2025 01:01:21 -0800 (PST)
-Date: Thu, 23 Jan 2025 10:01:19 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Prathamesh Shete <pshete@nvidia.com>, jonathanh@nvidia.com, 
-	peng.fan@nxp.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] pinctrl-tegra: Add config property GPIO mode
-Message-ID: <f42w5rk5fcquqpi64eowlkhndcqg7sar65i2q3et6z5fjbtxwu@dycjfloq4cti>
-References: <20241217153249.5712-1-pshete@nvidia.com>
- <CACRpkdaYwhy+-q=gQjT6WR9Ye8tgK6G9Pr3xzP7srxEH2R74sg@mail.gmail.com>
+        Thu, 23 Jan 2025 03:37:59 -0800 (PST)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Hector Martin <marcan@marcan.st>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Kevin Hilman <khilman@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Markus Mayer <mmayer@broadcom.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Naveen N Rao <naveen@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	WANG Xuerui <kernel@xen0n.name>
+Cc: linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	arm-scmi@vger.kernel.org,
+	asahi@lists.linux.dev,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-tegra@vger.kernel.org,
+	loongarch@lists.linux.dev
+Subject: [PATCH 00/33] cpufreq: manage common sysfs attributes from core
+Date: Thu, 23 Jan 2025 17:05:36 +0530
+Message-Id: <cover.1737631669.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="54e5mdz3ktzwaey4"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaYwhy+-q=gQjT6WR9Ye8tgK6G9Pr3xzP7srxEH2R74sg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Hello,
 
---54e5mdz3ktzwaey4
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] pinctrl-tegra: Add config property GPIO mode
-MIME-Version: 1.0
+Most of the drivers add available and boost frequencies related attributes. This
+patch series tries to avoid duplication and simplify driver's code by managing
+these from core code.
 
-On Fri, Dec 20, 2024 at 02:51:43PM +0100, Linus Walleij wrote:
-> Hi Prathamesh,
->=20
-> thanks for your patch!
->=20
-> a question here:
->=20
-> On Tue, Dec 17, 2024 at 4:33=E2=80=AFPM Prathamesh Shete <pshete@nvidia.c=
-om> wrote:
->=20
-> > The SFIO/GPIO select bit is a crucial part of Tegra's pin multiplexing
-> > system:
-> > - When set to 1, the pin operates in SFIO mode, controlled by the
-> >   pin's assigned special function.
-> > - When set to 0, the pin operates as a general-purpose GPIO.
-> >
-> > This SFIO/GPIO select bit that is set for a given pin is not displayed,
-> > adding the support to retrieve this information from the
-> > pinmux set for each pin.
-> >
-> > Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
->=20
-> If the description is correct, why is this bit not unconditionally
-> set in
-> tegra_pinctrl_gpio_request_enable()
-> and unconditionally cleared in
-> tegra_pinctrl_gpio_disable_free()
-> ?
+A quick search revealed that only the drivers that set the
+policy->freq_table field, enable these attributes. Which makes sense as
+well, since the show_available_freqs() helper works only if the
+freq_table is present.
 
-Sorry for the late reply. This bit is already being set during
-=2Egpio_request_enable() and .gpio_disable_free(). My understanding is
-that this patch is primarily for making this available in debugfs. I
-suppose we could make that clearer by not making this part of the
-standard pinconfig options, but rather put it into a "read-only" set
-configs?
+In order to simplify drivers, create the relevant sysfs files forcefully
+from cpufreq core.
 
-Thierry
+Pushed here:
 
---54e5mdz3ktzwaey4
-Content-Type: application/pgp-signature; name="signature.asc"
+git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/pm.git cpufreq/core-attr
 
------BEGIN PGP SIGNATURE-----
+--
+Viresh
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmeSBV8ACgkQ3SOs138+
-s6EeBA/+Mnwo4yJv81TrMhPG3d6keME570/svWtqyJqLt/78vazlzs3gkWCGSl+U
-kNEw7bFWD/ioQjL5BGghZWLKILs1sVvCxACXETSi7+/suxR+7f4dKGhEmqWNasRt
-+mfBkV02wnrPJOWcijhG89CNV70dpP3iIzlTlsVqgdM+f+2a7NwgSInVLugCGkwl
-TWZ8eAl9nxoGPvVFtsUBrjYsqAETGQVLr1snZHCYYm6cwTU4jO1fioViPz2NMNIA
-pdBWx6wX4ax4bP+jFN7KZtCA3p4FkUfrtC7R6ldmqVQ/eOyojndnaWG3f7XikRl3
-geWXk0eOYQXwcP3K2D0gkdFCNuDZngD5sOi53vvtPEc4zmFYLuRWMn4oWKPfWsTU
-4aw7WumiKR/I3Tr7xcty0wmKvVFfsZ8ZYEB7Jht1LKFca2zTQ/AK7IYR+Hy42ACY
-LBw0GebFFzVRURxd0wgUoqaip7+D2vOp/j9vvvG7hpcFa3kAq9DebHndLoNN+ReI
-YKutrsv+QU5oUcAuYw/LsoM6RcCjFm4AYIaWZU4Ym0hRjobt2syjOzVm+Pgp+VmF
-eNz6gbWDqVABtrrIYBISWfHNJheCkx0SfYjFSOKqfnMLyuYr2MYDjeCEnOej8sNI
-mv9p4RkvyYSGEzl1+JBSBHi9xRrkl6fSMshmf+tmcb7M17VCwhA=
-=KHsn
------END PGP SIGNATURE-----
+Viresh Kumar (33):
+  cpufreq: Always create freq-table related sysfs file
+  cpufreq: dt: Stop setting cpufreq_driver->attr field
+  cpufreq: acpi: Stop setting common freq attributes
+  cpufreq: apple: Stop setting cpufreq_driver->attr field
+  cpufreq: bmips: Stop setting cpufreq_driver->attr field
+  cpufreq: brcmstb: Stop setting common freq attributes
+  cpufreq: davinci: Stop setting cpufreq_driver->attr field
+  cpufreq: e_powersaver: Stop setting cpufreq_driver->attr field
+  cpufreq: elanfreq: Stop setting cpufreq_driver->attr field
+  cpufreq: imx6q: Stop setting cpufreq_driver->attr field
+  cpufreq: kirkwood: Stop setting cpufreq_driver->attr field
+  cpufreq: longhaul: Stop setting cpufreq_driver->attr field
+  cpufreq: loongson: Stop setting cpufreq_driver->attr field
+  cpufreq: mediatek: Stop setting cpufreq_driver->attr field
+  cpufreq: omap: Stop setting cpufreq_driver->attr field
+  cpufreq: p4: Stop setting cpufreq_driver->attr field
+  cpufreq: pasemi: Stop setting cpufreq_driver->attr field
+  cpufreq: pmac: Stop setting cpufreq_driver->attr field
+  cpufreq: powernow: Stop setting cpufreq_driver->attr field
+  cpufreq: powernv: Stop setting common freq attributes
+  cpufreq: qcom: Stop setting cpufreq_driver->attr field
+  cpufreq: qoriq: Stop setting cpufreq_driver->attr field
+  cpufreq: sc520_freq: Stop setting cpufreq_driver->attr field
+  cpufreq: scmi: Stop setting cpufreq_driver->attr field
+  cpufreq: scpi: Stop setting cpufreq_driver->attr field
+  cpufreq: sh: Stop setting cpufreq_driver->attr field
+  cpufreq: spear: Stop setting cpufreq_driver->attr field
+  cpufreq: speedstep: Stop setting cpufreq_driver->attr field
+  cpufreq: tegra: Stop setting cpufreq_driver->attr field
+  cpufreq: vexpress: Stop setting cpufreq_driver->attr field
+  cpufreq: virtual: Stop setting cpufreq_driver->attr field
+  cpufreq: Remove cpufreq_generic_attrs
+  cpufreq: Stop checking for duplicate available/boost freq attributes
 
---54e5mdz3ktzwaey4--
+ drivers/cpufreq/acpi-cpufreq.c         |  1 -
+ drivers/cpufreq/apple-soc-cpufreq.c    |  8 --------
+ drivers/cpufreq/bmips-cpufreq.c        |  1 -
+ drivers/cpufreq/brcmstb-avs-cpufreq.c  |  1 -
+ drivers/cpufreq/cpufreq-dt.c           |  8 --------
+ drivers/cpufreq/cpufreq.c              | 15 +++++++++++++++
+ drivers/cpufreq/davinci-cpufreq.c      |  1 -
+ drivers/cpufreq/e_powersaver.c         |  1 -
+ drivers/cpufreq/elanfreq.c             |  1 -
+ drivers/cpufreq/freq_table.c           |  8 --------
+ drivers/cpufreq/imx6q-cpufreq.c        |  1 -
+ drivers/cpufreq/kirkwood-cpufreq.c     |  1 -
+ drivers/cpufreq/longhaul.c             |  1 -
+ drivers/cpufreq/loongson2_cpufreq.c    |  1 -
+ drivers/cpufreq/loongson3_cpufreq.c    |  1 -
+ drivers/cpufreq/mediatek-cpufreq-hw.c  |  1 -
+ drivers/cpufreq/mediatek-cpufreq.c     |  1 -
+ drivers/cpufreq/omap-cpufreq.c         |  1 -
+ drivers/cpufreq/p4-clockmod.c          |  1 -
+ drivers/cpufreq/pasemi-cpufreq.c       |  1 -
+ drivers/cpufreq/pmac32-cpufreq.c       |  1 -
+ drivers/cpufreq/pmac64-cpufreq.c       |  1 -
+ drivers/cpufreq/powernow-k6.c          |  1 -
+ drivers/cpufreq/powernow-k7.c          |  1 -
+ drivers/cpufreq/powernow-k8.c          |  1 -
+ drivers/cpufreq/powernv-cpufreq.c      |  2 --
+ drivers/cpufreq/qcom-cpufreq-hw.c      |  7 -------
+ drivers/cpufreq/qoriq-cpufreq.c        |  1 -
+ drivers/cpufreq/sc520_freq.c           |  1 -
+ drivers/cpufreq/scmi-cpufreq.c         |  8 --------
+ drivers/cpufreq/scpi-cpufreq.c         |  1 -
+ drivers/cpufreq/sh-cpufreq.c           |  1 -
+ drivers/cpufreq/spear-cpufreq.c        |  1 -
+ drivers/cpufreq/speedstep-centrino.c   |  1 -
+ drivers/cpufreq/speedstep-ich.c        |  1 -
+ drivers/cpufreq/speedstep-smi.c        |  1 -
+ drivers/cpufreq/tegra186-cpufreq.c     |  1 -
+ drivers/cpufreq/tegra194-cpufreq.c     |  1 -
+ drivers/cpufreq/vexpress-spc-cpufreq.c |  1 -
+ drivers/cpufreq/virtual-cpufreq.c      |  1 -
+ include/linux/cpufreq.h                |  1 -
+ 41 files changed, 15 insertions(+), 75 deletions(-)
+
+-- 
+2.31.1.272.g89b43f80a514
+
