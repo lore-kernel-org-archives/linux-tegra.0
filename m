@@ -1,289 +1,196 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2056.outbound.protection.outlook.com [40.107.93.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6901938F83;
-	Thu, 23 Jan 2025 14:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737641213; cv=fail; b=XTK1ZOlCTnPXLg76JNzdHErTDjqwJTusCLAg4DIbv+OemE69hdzOnWIEXI2MyCwRa70qQYBc4Qw7svKptTVMPxWoFIbrP1RT7DuX31RGth0aeJPfydofnHtsO91kZX8NBifBpTpjjkOwJ2FRkolq8pDr0f8wxIW5EZY4CtrXCCs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737641213; c=relaxed/simple;
-	bh=rr4j+b6KFuBQV3rDoTfR+wx+VIl+O9D9/zd375ByWJ0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Xbtta1XBhcpbI3cyzvDPCM+uph5w2Rd9G8spZ1jv0gqa9aOJgxqo73+r94Jg73UoKsBHeVgxNaka4wXNvKerwauDU4q5YMIwoJmU/8Nezvo7n3J0jzmXd9OpTppD1VEwDXd+zVuf/wVquxWdKDpelqczU/Nkz87BdY1UsEP0rgA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=hP/14hdP; arc=fail smtp.client-ip=40.107.93.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685D620FAB7
+	for <linux-tegra@vger.kernel.org>; Thu, 23 Jan 2025 14:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1737644213; cv=none; b=t0XkYpQjdhLh+UauvZ46Eu1Rf2FXuV63/RwcsGydbfeIUMAELUE5iYp9JJ/B10qN5+0jUqnRj+2t2RA+JKbCWP4bDIAjwM0nzTEbJ+1tWtaf7G8vt6pDq33Jl8VqcrLd6MYjAtYEpcNT1xrHmCN7MeWqCEFA/hoI8wImjDMBEWI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1737644213; c=relaxed/simple;
+	bh=mPeEww2aDh9Lfa6WrlRElcyeoSBGRlDAKqVrA7ZgLtA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PeEXSMP6xqG77GeVQN5yypHRe8cjF+Q8TvulnJTiztwOkmQj+mlifc9S6JEw6CMOpqIJOz1KoCM+k5RthauzAez/w1cJ89kvOqkRF+vv9S/DPNmSAnT8wDfDAZySTP+NXyXriIGpnfNgZMvTltUUzbCI0U0E6RmMM+gXvCodIUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bDj46t/+; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="hP/14hdP"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yJt8fIWuq0KLkGyQyRPZvMGWbKcCQ4SlNvFOJms/Th9VagqgnVyirTVBl8H5sQEy3QGQeGpBpMl2H+uWxMUTZGpxenC6DTJY12vCYZD8LAlD0KDfVC8V3MTfCqegG8ZC5NqEZyQBJMmfokxAPj4PwMh2S21IeFUu79AjixXxFJ9Z8qcS2A0aCGiEGfBU+WHZjIQZnZTQECFW2J2z1cdaLr75JTtC+1Y6keWMRMGOp9gRmkadqNwGqdDqt49/RrM3U9q9WBBGooiTgKZQU5c7qsQOY/EeAWLdRcd6ZUIZQd56QQdmO12db9cboZyaB4A5L2gdI9v5iAEQT4nt/F2znA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pqayU74pEcNiPTJ2AMBfqnTr4Kn7Xm4Py9BVe+PzL/4=;
- b=xbszUg1xr/mV3P28NLZjm1y4MMtzBltwUh5a7b1XMeTAf9tp7FJk0NannklleJ28G0iLHtzNF+tZ049rur2bklYmF648A2NdXCB3amdBbXJS84bIF1uRzE590VO1Q9kVuhPjhpDjT/7iXTPwd0wz7myVbfk6nG32Z/acl91DeBPw4xipfn6hQXbpNonaXzY0Wi7SHKklW2/wZOxyC9jTdorFCqMhz5vL1wa/EkT/D/S0H6tSbxPXNfDzuER4Q5Um434ZlEVUdsFqPahzySs0EP9QPvG57JJCMGFcRvm2lr5LdO+9RQzby4S5H/LiFgeArUCe2QgO5BRwFOdDu3A9LQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pqayU74pEcNiPTJ2AMBfqnTr4Kn7Xm4Py9BVe+PzL/4=;
- b=hP/14hdPhw+wfl7TGm+fA8BdFJgF0au94r1XnUyFa/kmYUSiLy+3VClWhjfOPvguNq5YQYQlvun95mLaOp2T1Z/698En1n0irJQDeNnhyn6FwAFhEwXKMAVEnDxZSBpB8jxrF6Ybxh4/niUeYJfcMfCO/hxWnnw4NgV+oOgeKkrQ3dL9ucNtclaA3zJUlsVbEc9mP2aKy7LfCjzDhUZXkmp4tE41rRUe84Nx29lwgyT+ghFCmpYaHSY8vz5J7BKZ1aILLKWRHd1cfjwhAv8ljzCBdVQDYgI/JaEDmu+iRhTKxY/8Q4SsTBMjE9mzbDLri6NjoavsmsJxz+/+Lo9/wQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by SJ0PR12MB6904.namprd12.prod.outlook.com (2603:10b6:a03:483::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8377.18; Thu, 23 Jan
- 2025 14:06:48 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%4]) with mapi id 15.20.8356.020; Thu, 23 Jan 2025
- 14:06:48 +0000
-Message-ID: <d465f277-bac7-439f-be1d-9a47dfe2d951@nvidia.com>
-Date: Thu, 23 Jan 2025 14:06:42 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 1/4] net: stmmac: Switch to zero-copy in
- non-XDP RX path
-To: Furong Xu <0x1207@gmail.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
- Joe Damato <jdamato@fastly.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
- Brad Griffis <bgriffis@nvidia.com>,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <cover.1736910454.git.0x1207@gmail.com>
- <bd7aabf4d9b6696885922ed4bef8fc95142d3004.1736910454.git.0x1207@gmail.com>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <bd7aabf4d9b6696885922ed4bef8fc95142d3004.1736910454.git.0x1207@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0095.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2bc::19) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bDj46t/+"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43634b570c1so7435475e9.0
+        for <linux-tegra@vger.kernel.org>; Thu, 23 Jan 2025 06:56:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1737644210; x=1738249010; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/kKlkfSIKri5TdD1W5+gm1mkbdQr1Quy5Us8nYAfvIk=;
+        b=bDj46t/+MzyPmCEplmnYc1hBzwLmM4dXE39lbvg+ZP3nJ5iMlqn2YKY42wKCeOXf0Y
+         tqMfeOry+0DvADpSLtuAoHmmelwJcSiwI+uB/vTDOZ4Fc5Yu1kYSvT3vpL+8smcnumWj
+         71ojhL2hHHBYXEVdySxtUHNlUZcupfixO7s8rV0oQ3RGDuXu3MXgR+F7HyEMJP1WBq6B
+         M+NK0s80FWGrgigotZlwxiYtqFhZsIFUut0IGLAy6hspf9RYQ9ZQxVVxGRMnCSd3BNUF
+         uXs+CPm+vMOGh+0pscAZ8YTSpOoN171BWx9cPN9t3rpjj7LjQSg1kTv3VBwOkomsIMAU
+         g1Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737644210; x=1738249010;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/kKlkfSIKri5TdD1W5+gm1mkbdQr1Quy5Us8nYAfvIk=;
+        b=Ei6ULA+fbuuOfWVxFqSmvTOuF33Es9Hs82nZWA6AqPHf8r8efXs8FuZ3bnpyMvoa/K
+         86mWVu8q8x39bkexlEIjB227Hv6QPHSKIueGXal2rqr0Jw0/n78sXGpIzHEqoi74jM1F
+         awNgNxR6rwIauSukLsN8OHVLYbYeViTMbhGQIa1iPcFbX9OBinY2xq0CG3FnV4lGSVOk
+         CZgEM5Sx77Ll1G6haRVT5H7M6W8DAjZ4scFuxBfSmRUEJH7AnrOIZVv6NF71kfYO7biY
+         zBK02SvW9z5D0FhpeGyO/Dt7nqmrk5OO49SIsy/073zPeP0ohLsWUEyVc8VDlGqgTYbZ
+         sB9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVsVmMKrO0TlzCMbS5Pje8AWawjIY3HQtnXQenv2F7NMSG9IyC6rpgD71hZHmly5AzNe3i9DBvk7j28BA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yybrqpic43ZC1VT8enCBMaz+aqKyOWhXvxEJKUHscs+zsxt5qNZ
+	tU+XAnziSKxKGCTd7OnRLIsq+nOpGqONzG6yjbHBItxhBSa98S2xw6zFKEVXjuoj1SWJfPQgm9E
+	l
+X-Gm-Gg: ASbGncsRNxf4uaS1pO9Ik/BMdYUNlCKpOTUU0/vXNxDu2w+EHps1MPGR3cxvDULrN7v
+	Q7S0r8gEu2K9AFVW14B4fjRp5M1gByBqoPa7cBTjCA50ZVoVsvnw0a0fcLD17MZ2Jy2VYhlmw+y
+	fmlGA82LzirLp7qT5PLKnBNwkVrg7wa3IjA2spa7IoT1T2jrWGVqqvO5BCu9z327N82NCGhtRlG
+	d9Pw/eLPsFbFw5Anxo/yROhY56E8gLeSQRTXsFVC4AOJfrHb4edcFvaaCewwBXFZAKjCKmDs4lO
+	QsvRTMye/H5L5nA9aTtp
+X-Google-Smtp-Source: AGHT+IGC4rqbvYh8QmcGnHxQ03UDMkvyOOl3/dYk8eGkxND7AQR2Fl7VjdeNq+62ZUDQSmwUUR/CIA==
+X-Received: by 2002:a05:600c:4713:b0:434:fb65:ebbb with SMTP id 5b1f17b1804b1-438913f1654mr257750195e9.17.1737644209563;
+        Thu, 23 Jan 2025 06:56:49 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438b318c004sm65137935e9.4.2025.01.23.06.56.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jan 2025 06:56:48 -0800 (PST)
+Date: Thu, 23 Jan 2025 17:56:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	=?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>,
+	Prashanth K <quic_prashk@quicinc.com>,
+	"mwalle@kernel.org" <mwalle@kernel.org>,
+	"quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+	David Brownell <dbrownell@users.sourceforge.net>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel" <opensource.kernel@vivo.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Brad Griffis <bgriffis@nvidia.com>,
+	Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>
+Subject: Re: [PATCH v3] usb: gadget: u_serial: Disable ep before setting port
+ to null to fix the crash caused by port being null
+Message-ID: <0fa6c6db-fd75-4a09-b4fa-d6a98bb8afac@stanley.mountain>
+References: <TYUPR06MB621733B5AC690DBDF80A0DCCD2042@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <1037c1ad-9230-4181-b9c3-167dbaa47644@nvidia.com>
+ <2025011633-cavity-earthworm-2b5e@gregkh>
+ <3d9db530-a0b7-4f18-9ad4-233356dfe68c@nvidia.com>
+ <e3a457d6-092b-4b7a-9032-50daddab6f1f@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SJ0PR12MB6904:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8051e59c-4e25-4792-8a0b-08dd3bb72d59
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aExTV1JnSlQvMjRGWStvZkJvTlN3eHJWb01FRk9BeW1waWdxT3I4Tk5DWlJH?=
- =?utf-8?B?bXA5RHV3bkVNaWhYZkJrdmVrMjF0ZUhUaEVCRGd3dGF6Vk9XWEFwcmNQVFNV?=
- =?utf-8?B?RHpxVjVCbUhpLzJJbXhLZmhNMDVITllnTFBqUGduZjNycmZwSHpsSFRDV2Qv?=
- =?utf-8?B?Rm9Wbk5aTVFLYi95S3paamxHbjBNL3U0eVNKODVqa2hNSGVXZDlrMWYvYWRs?=
- =?utf-8?B?KzRRVXNKQWtaRVFJUFZjQ3BVWnM1ekVPZjc0bXJNQnVBWjBxbGFBT21xWElz?=
- =?utf-8?B?dmhoOGp3SmRvZ2dhcUpRME5HL1l0VWdDL3NYWnBKZTd3bS83SUdrRTE2c2d3?=
- =?utf-8?B?cnVLamhPb3N0OWk3ZmtYL1BINXlBRWYzTTUvaTZ5U1BuNXRiSS95bDZmMWtD?=
- =?utf-8?B?YVBoWXZhbkJHZUFOSXBUUEt2R2VwMUhYOWU2N2kxYy9kZUxacjA1M09XalZI?=
- =?utf-8?B?T1QyeUlsSSs5TzE5MWJRbXNSZ0JQOU1Ud25iSmFDcmNtcXVQUVdHTnlGWG1F?=
- =?utf-8?B?N2tvUXpON09CK0pFeHJLdkxBYW5TcldUS29nRmVjMDNZY3c4MXBZQitpT3dE?=
- =?utf-8?B?a29WMGdZVjI1YlE1Q1RXTEtpaXdlb05LWlZXOW5VUG85aytGYVdmZ3hURkx1?=
- =?utf-8?B?YVltVjM5OVVoSnhQNzBuRS81MTg2SVpVMWd3QUYyTm42bjV5OHJmd0xJSUl1?=
- =?utf-8?B?N1gwNnRlSysxSHVZTTNvZ3lBVE1TVVVpTUZoY0w4MUJSVEUxaGZzdmtLbEs3?=
- =?utf-8?B?OHMwODdjNWtJV0ZWQmw2Q1YwN0xpeHhkSFh2dXJYZk9NQm1iQ085UlhRUUdO?=
- =?utf-8?B?dzdWQ2d5a3haOVVINTdmV2pIRWJTQjVTSzl0R214b2I4cWduMmFRMEdCeis3?=
- =?utf-8?B?aHF2VEI3amRuRzdlaW9yMFVQb3ZMcTVYZHd6R0F4TjBnK013MlVFRXgxUWcy?=
- =?utf-8?B?cVlqenA5R2JNR0NaamoxZzJrSVBLaUxxak1vWDZRT3prZjE1T2Vzbnc0RUl0?=
- =?utf-8?B?NmhnM1NxTHkrMkFhOVJPcGVBRDdVWXZRYzlHWjVEaExhODZ6Q3pYVDJiZXI1?=
- =?utf-8?B?Si9PTFFUMzNoWmlmKzJwY2lJV01SbnkxR3ZCNlFaY2ZVSE56VmYrZ0dSQllK?=
- =?utf-8?B?cFBVUjZKK25rc3c3QWowaGgvRDhKZE9xakNkNENjUmlEMnJzbTBIL1RpTWZy?=
- =?utf-8?B?emxkZkxNOFM3UHE2NzNERURZR2lpSzZVV3g0VU9DOVJoWk1qdjBCZUZYSEZq?=
- =?utf-8?B?aFlFTmlscFJYTy9Lc2RPVGt1R2NicTZyYkliSm5ZZVFKSVQ5K0RiZUo5VnNY?=
- =?utf-8?B?ZW1zWFF5VTA1dE95dTA4R3VFelllZ3Z3a3VzeVphQzRxSE1ZcC9CWlg4V2cy?=
- =?utf-8?B?NUJXOERvTXlrMDdjT1U2ZUlxNkI2R1l6bUxybDBXb1NjRVBxb0xpTlIxTWdG?=
- =?utf-8?B?NjFpdE82MnJ4MVFPVHJrWUpHcnFhNUp1UGRmTHBibUR6SG95dEp2NkVwdm5i?=
- =?utf-8?B?bmx4UzNydUE4NTh4dFVZOHM2cG4vckc3L09zV2YrSThTSkZsVnc2NEhWOVdV?=
- =?utf-8?B?MzU0dTMyakg2aUd5NUNWdUNkSEVHQVZJdGM3TkdYMDdlSGNqRVBHU3I4c0ZF?=
- =?utf-8?B?ckl5ck14TGNOdFd3clJCbDZ5c0F6VmdtTEUrVFZReVFkcW9jY0RxOEszREJD?=
- =?utf-8?B?VmRya0IzTHl4N0VlS2QzRVlCU2JTQWt2SG9MNmgxaEF1bUNnOTUya242OHg1?=
- =?utf-8?B?S1VFMzQzbE9nUHVkOUtLY29JV1plaVdjNTE3QWpTZ3M3cXRHUDBLZ3J5RTBw?=
- =?utf-8?B?SUhOd2Z5d2tOOUZMNXVUeTR3SElFMTNYMi9OdHNwaDl4M1o1MndURmJkTms2?=
- =?utf-8?Q?0E+08GuirqvCX?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WWhUV1o2eWFUMlljdmtDWHZQeWRnMHBaSWsvVjBzMGtWdVMxT3pnK0FxZS9S?=
- =?utf-8?B?M2tFUnpqL0JtZVpaaXlpVzlCVzNnTXBycHVEa0ZnNFJMdEUwa1FoMzZBK0Yv?=
- =?utf-8?B?NE12alBCZ2lIZWo0VHdRTDUyMjBBY3JlZEVyZDBRZHd3ekVzMGtvS0hPNCtG?=
- =?utf-8?B?SkJhYkcwZzFVL3dvZGZHamt3aVl6ZCtpMW9ZVFdSS2dVSjJzdUc3SlNDTjkx?=
- =?utf-8?B?WXhPNUNOaWR3ZGgzcDNkNU1ZT2ZnOVMrdHVzclBGYWR2TWFCQUhLUE9HM3R0?=
- =?utf-8?B?Y1NsSWpSMlpKQXBzeFpxbE5oUXFOMEJMLy91U1NBbUV3dDN4MHFYSzRzQTkr?=
- =?utf-8?B?em9WdDJIVGw2V2E1bmRmd2dERXdPQ28yR2RsQkNLUDZ4dmcwZDB1ZVByMnV6?=
- =?utf-8?B?ZHpNemoxOXdtQXNpdFhRMkJ1SVpHdFF5Ump1T1RsRjA0aDVGNVYyV1dESFJy?=
- =?utf-8?B?R1JhWHlrZ3lLSUtzOC96RVN3RWcvV3RRazJ0RERpdW90clkzNHFqMVFVL255?=
- =?utf-8?B?eTJ4TGY4TVJRYklEcEJ3SFFONHJKWWdwZ0NsMk9xaVc3OCsyUGV4dzNDbFFh?=
- =?utf-8?B?Z3lmZWdIdzlUVlVhdzMvZHhHZ0xVVzFxeTNvakZGU3VCN0lkczQ3VklFYnRj?=
- =?utf-8?B?blIrOXlZR0JiVFlTMjJNdHVKZmkxaGtwS0UxME5ITklqQnlqSkxtZzBrbm1p?=
- =?utf-8?B?OXY5TjVNSFhkMkNHSDkreTV2bERvRWYyS1l3NUZ5ejFFNy83SGRmZ0hLUTJw?=
- =?utf-8?B?bUgxZWtRTkhJLzVqaGxQcFY4Y2JCTjdFMGpoWXhoWWpJN2Rzayt3ZlNwUFdq?=
- =?utf-8?B?aDdLc3NqaCtoRGgyOWZkeFd6T04wT2I2ZElLQnN0NDVsOTgrY3VObTM4aTlI?=
- =?utf-8?B?Uy8rcUFNaDRTaVN2MUtRWllLMXlUdHJJZlYyeE42d1F0cU5YQ3dzL2YycjVY?=
- =?utf-8?B?QnBNU3hPRVJuUFYwajdBTWhTZFROOG9xMTBxMHZKVHJ4cUphY3FwV1I0T1JP?=
- =?utf-8?B?TVBtaS8zVDdaN0lIOGM2by9tR1NrVWROVWNuYTBicWJmZmhWOFl4bWNqV3Mw?=
- =?utf-8?B?ZUh5YWFwb3pxNCtaS0NuZTZ3ZXBETkcrdmQxME5FYWhWcHgvWE05ZUFvMDdD?=
- =?utf-8?B?YVgwblBCUmdrdUExaXVqNEkxcU1zeW5kWjBRY1N2b3NUR1Y2bFpFTVlvY1E4?=
- =?utf-8?B?Tm4yZHdTb1pmU0RhSEZSWE5jdUkyNXZIRXYyaTdkc091RStZSUFWSVNINHhw?=
- =?utf-8?B?SmtRc244WURmOWtKbmFZbnpRMFJacERzazBjZTlKbzFERjZOaEEvU28valgy?=
- =?utf-8?B?VW0yV3lxRDJvYmFLUW93Q0ZKZUtxL2MvcjlXU3BxM1RTRkZLTStrczJ2MDdm?=
- =?utf-8?B?VlFwc25VS0xWN0V5bmZHL3FuWHRaZWsxenJhNXJlSlRsMHYyYWxmU0tZQUJQ?=
- =?utf-8?B?Zld5S04ydWZ3ZVp1bXg4d1Q0L2ZnS0c2U2d1RFpubTJ1d21RaTNHM1EyWmgv?=
- =?utf-8?B?TFFxbktka2FaTXVKNGlpS3d0Uy9Ea1doK1FOSTZjVG4yMG8zSDhWZENJL0dh?=
- =?utf-8?B?NG5DQnNpV1JVZTdnY09VeFgvNGVLWFVTSDJMUFA0RW9sY29MNTZ5ckFHbGRV?=
- =?utf-8?B?YnlvcXUyQVVkTDlWS1h3WTJXSG5Mb0FmcnUrOGJaR0VJeDNjcW82QXEyS0dm?=
- =?utf-8?B?TVpINlBFUloxTkxXb0tJNXI3WlEwS3AzZHNBMjgvUnFlM0gvalBKRG5iRzNu?=
- =?utf-8?B?ZEV5QlAzWXlUMTJJaDFMMDNRa0pIOGlkMGhCbTQ1ZzcwV20xNWhoVlByQUFt?=
- =?utf-8?B?N2pwU0F0aTN1cThrVlhpRDBWSnI5T21GaXRYM25vZXBHS0FKd3RTZVpycWRO?=
- =?utf-8?B?TE1SckhVRmpPcEd2TzRZUnUwRDNteFhTbkZQYmVBaG80a1J6NEhZdVBkOEpQ?=
- =?utf-8?B?eTBsaTkrVlE1QlJWcytWSFZtcHE5QzlKTFlGRlFCRTZUNnNxT3RQV083Q2pQ?=
- =?utf-8?B?bWJnUEVvMy9KRnV1eG5qSldZby9qcCtLSzQ4L2s2bS85V3BpUG9ERndXTk1D?=
- =?utf-8?B?dTFVb1RLL1FaM0RIZitwSkVLQ2FFNUdydC9rSStjNlFqSENKRkVGSlIzZ2Fw?=
- =?utf-8?B?ODhPSlBMVWdYdGtPWXcvbGdnNElUSnlndGhwamJKTlRSR0J3N3R3NmlUemx2?=
- =?utf-8?Q?t6Ium6N8CSCNJl/6XEhFzteqFZ5sXeWCkoBfznbjostH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8051e59c-4e25-4792-8a0b-08dd3bb72d59
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jan 2025 14:06:48.5601
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rWrBiUcsHDQx3TLBmroAUUp+dqccqwaArLPyrmfyD2jK7KovSHFsTPrao8Q1FWK6TAuhavGOTdhRia4JCEB1Dw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6904
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e3a457d6-092b-4b7a-9032-50daddab6f1f@nvidia.com>
 
-Hi Furong,
-
-On 15/01/2025 03:27, Furong Xu wrote:
-> Avoid memcpy in non-XDP RX path by marking all allocated SKBs to
-> be recycled in the upper network stack.
+On Tue, Jan 21, 2025 at 12:19:37PM +0000, Jon Hunter wrote:
+> > > > [   59.918177] tegra-xudc 3550000.usb: ep 3 disabled
+> > > > [   59.923097] tegra-xudc 3550000.usb: ep 2 disabled
+> > > > [   59.927955] tegra-xudc 3550000.usb: ep 5 disabled
+> > > > [   80.911432] rcu: INFO: rcu_preempt self-detected stall on CPU
+> > > > [   80.917354] rcu:     6-....: (5248 ticks this GP)
+> > > > idle=ec24/1/0x4000000000000000 softirq=1213/1213 fqs=2623
+> > > > [   80.927146] rcu:     (t=5253 jiffies g=3781 q=1490 ncpus=12)
+> > > > [   80.932704] Sending NMI from CPU 6 to CPUs 2:
+> > > > [   90.981555] CPU: 6 UID: 0 PID: 18 Comm: rcu_exp_gp_kthr Not
+> > > > tainted 6.13.0-rc7-00043-g619f0b6fad52 #1
+> > > > [   90.981558] Hardware name: NVIDIA NVIDIA Jetson AGX Orin
+> > > > Developer Kit/Jetson, BIOS 00.0.0-dev-main_92e5ae_88fd1_296de
+> > > > 12/16/2024
+> > > > [   90.981559] pstate: 80400009 (Nzcv daif +PAN -UAO -TCO -DIT
+> > > > -SSBS BTYPE=--)
+> > > > [   90.981562] pc : smp_call_function_single+0xdc/0x1a0
+> > > > [   90.981574] lr : __sync_rcu_exp_select_node_cpus+0x228/0x3c0
+> > > > [   90.981578] sp : ffff800082eb3cd0
+> > > > [   90.981579] x29: ffff800082eb3cd0 x28: 0000000000000010 x27:
+> > > > ffff0000802933c0
+> > > > [   90.981582] x26: ffff0007a8a1d700 x25: ffff800082895500 x24:
+> > > > ffff800080132018
+> > > > [   90.981584] x23: 0000000000000014 x22: ffff800081fb7700 x21:
+> > > > ffff80008280d970
+> > > > [   90.981586] x20: 0000000000000feb x19: ffff800082eb3d00 x18:
+> > > > 0000000000000000
+> > > > [   90.981588] x17: 0000000000000000 x16: 0000000000000000 x15:
+> > > > 0000000000000000
+> > > > [   90.981590] x14: ffff000080293440 x13: 0000000000000001 x12:
+> > > > 0000000000000000
+> > > > [   90.981591] x11: ffff800081fb2388 x10: ffff0000802933c0 x9 :
+> > > > 0000000000000001
+> > > > [   90.981593] x8 : 0000000000000040 x7 : 0000000000017068 x6 :
+> > > > ffff800080132018
+> > > > [   90.981595] x5 : 0000000000000000 x4 : ffff0007a8a4f9c8 x3 :
+> > > > 0000000000000001
+> > > > [   90.981597] x2 : 0000000000000000 x1 : ffff0007a8a4f9c0 x0 :
+> > > > 0000000000000004
+> > > > [   90.981599] Call trace:
+> > > > [   90.981601]  smp_call_function_single+0xdc/0x1a0 (P)
+> > > > [   90.981605]  __sync_rcu_exp_select_node_cpus+0x228/0x3c0
+> > > > [   90.981607]  sync_rcu_exp_select_cpus+0x13c/0x2a0
+> > > > [   90.981609]  wait_rcu_exp_gp+0x18/0x30
+> > > > [   90.981611]  kthread_worker_fn+0xd0/0x188
+> > > > [   90.981614]  kthread+0x118/0x11c
+> > > > [   90.981619]  ret_from_fork+0x10/0x20
+> > > > [  101.416347] sched: DL replenish lagged too much
+> > > > 
+> > > 
+> > > Odd, you have a usb-serial gadget device in this system that is
+> > > disconnecting somehow?  That oops doesn't point to anything in the usb
+> > > gadget codebase, "all" we have done is move the call to shutdown the
+> > > endpoints to earlier in the disconnect function.
+> > 
+> > Yes the board starts usb-serial and usb-ethernet gadget and on reboot
+> > when tearing it down I am seeing the above. As soon as it disables the
+> > tegra-xudc endpoints (as seen above) the board appears to stall.
+> > 
+> > > I'm glad to revert this, but it feels really odd that this is causing
+> > > you an rcu stall issue.
+> > 
+> > Thanks. I can't say I understand it either, but I am certain it is
+> > caused by this change.
+> > 
+> > Happy to run any tests to narrow this down a bit.
 > 
-> This patch brings ~11.5% driver performance improvement in a TCP RX
-> throughput test with iPerf tool on a single isolated Cortex-A65 CPU
-> core, from 2.18 Gbits/sec increased to 2.43 Gbits/sec.
 > 
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> Reviewed-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> ---
->   drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  1 +
->   .../net/ethernet/stmicro/stmmac/stmmac_main.c | 26 ++++++++++++-------
->   2 files changed, 18 insertions(+), 9 deletions(-)
+> I did a bit more looking at this and I see that we setup a USB gadget device
+> via the configfs as described in this doc [0]. The RCU stall occurs when we
+> attempt to disable the gadget on shutdown by ...
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> index e8dbce20129c..f05cae103d83 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> @@ -126,6 +126,7 @@ struct stmmac_rx_queue {
->   	unsigned int cur_rx;
->   	unsigned int dirty_rx;
->   	unsigned int buf_alloc_num;
-> +	unsigned int napi_skb_frag_size;
->   	dma_addr_t dma_rx_phy;
->   	u32 rx_tail_addr;
->   	unsigned int state_saved;
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index acd6994c1764..1d98a5e8c98c 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -1341,7 +1341,7 @@ static unsigned int stmmac_rx_offset(struct stmmac_priv *priv)
->   	if (stmmac_xdp_is_enabled(priv))
->   		return XDP_PACKET_HEADROOM;
->   
-> -	return 0;
-> +	return NET_SKB_PAD;
->   }
->   
->   static int stmmac_set_bfsize(int mtu, int bufsize)
-> @@ -2040,17 +2040,21 @@ static int __alloc_dma_rx_desc_resources(struct stmmac_priv *priv,
->   	struct stmmac_channel *ch = &priv->channel[queue];
->   	bool xdp_prog = stmmac_xdp_is_enabled(priv);
->   	struct page_pool_params pp_params = { 0 };
-> -	unsigned int num_pages;
-> +	unsigned int dma_buf_sz_pad, num_pages;
->   	unsigned int napi_id;
->   	int ret;
->   
-> +	dma_buf_sz_pad = stmmac_rx_offset(priv) + dma_conf->dma_buf_sz +
-> +			 SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-> +	num_pages = DIV_ROUND_UP(dma_buf_sz_pad, PAGE_SIZE);
-> +
->   	rx_q->queue_index = queue;
->   	rx_q->priv_data = priv;
-> +	rx_q->napi_skb_frag_size = num_pages * PAGE_SIZE;
->   
->   	pp_params.flags = PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV;
->   	pp_params.pool_size = dma_conf->dma_rx_size;
-> -	num_pages = DIV_ROUND_UP(dma_conf->dma_buf_sz, PAGE_SIZE);
-> -	pp_params.order = ilog2(num_pages);
-> +	pp_params.order = order_base_2(num_pages);
->   	pp_params.nid = dev_to_node(priv->device);
->   	pp_params.dev = priv->device;
->   	pp_params.dma_dir = xdp_prog ? DMA_BIDIRECTIONAL : DMA_FROM_DEVICE;
-> @@ -5582,22 +5586,26 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
->   		}
->   
->   		if (!skb) {
-> +			unsigned int head_pad_len;
-> +
->   			/* XDP program may expand or reduce tail */
->   			buf1_len = ctx.xdp.data_end - ctx.xdp.data;
->   
-> -			skb = napi_alloc_skb(&ch->rx_napi, buf1_len);
-> +			skb = napi_build_skb(page_address(buf->page),
-> +					     rx_q->napi_skb_frag_size);
->   			if (!skb) {
-> +				page_pool_recycle_direct(rx_q->page_pool,
-> +							 buf->page);
->   				rx_dropped++;
->   				count++;
->   				goto drain_data;
->   			}
->   
->   			/* XDP program may adjust header */
-> -			skb_copy_to_linear_data(skb, ctx.xdp.data, buf1_len);
-> +			head_pad_len = ctx.xdp.data - ctx.xdp.data_hard_start;
-> +			skb_reserve(skb, head_pad_len);
->   			skb_put(skb, buf1_len);
-> -
-> -			/* Data payload copied into SKB, page ready for recycle */
-> -			page_pool_recycle_direct(rx_q->page_pool, buf->page);
-> +			skb_mark_for_recycle(skb);
->   			buf->page = NULL;
->   		} else if (buf1_len) {
->   			dma_sync_single_for_cpu(priv->device, buf->addr,
+>  $ echo "" > /path/to/UDC
+> 
+> Jon
+> 
+> [0] https://docs.kernel.org/usb/gadget_configfs.html
+
+It's an RCU stall so it's probably a locking bug.  The original code
+dropped the port->port_lock, called usb_ep_disable() then took the
+lock again.  There must have been a reason to drop the lock although
+I haven't found it yet.  The new code moved the usb_ep_disable() under
+the lock.
+
+  1431          port->suspended = false;
+  1432          spin_unlock(&port->port_lock);
+  1433          spin_unlock_irqrestore(&serial_port_lock, flags);
+  1434  
+  1435          /* disable endpoints, aborting down any active I/O */
+  1436          usb_ep_disable(gser->out);
+  1437          usb_ep_disable(gser->in);
+  1438  
+  1439          /* finally, free any unused/unusable I/O buffers */
+  1440          spin_lock_irqsave(&port->port_lock, flags);
+  1441          if (port->port.count == 0)
+  1442                  kfifo_free(&port->port_write_buf);
 
 
-We have noticed a boot regression on -next when booting with NFS. Bisect 
-is pointing to this commit and reverting this on top of -next does fix 
-the problem.
+It might help to try testing again with lockdep enabled.
 
-I only see this on Tegra234 which uses the 
-drivers/net/ethernet/stmicro/stmmac/dwmac-tegra.c driver. Tegra194 which 
-uses the drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c driver 
-appears to be fine.
-
-I tried booting without NFS and the network interface seems to come up 
-fine. It only seems to be a problem when booting with NFS. However, I 
-guess I have also not stressed the network interface when booting 
-without NFS. Have you tried booting with NFS?
-
-Thanks
-Jon
-
--- 
-nvpublic
-
+regards,
+dan carpenter
