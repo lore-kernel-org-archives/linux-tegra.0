@@ -1,125 +1,131 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3345383;
-	Sun, 26 Jan 2025 12:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CC218DF6B;
+	Sun, 26 Jan 2025 16:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737896206; cv=none; b=pL0iAgTEc8m+qBHa/PBpwVHK0bRn4htVmbZyhHHP1Lulq0Gx6+bSYB3TwftSpV0Sk10HF0IcfFyIuwGVVJtIBMcLfQN3B+Z4RqRhAPi+tgwndY8bWUjtWG8cMMSH014BsyfgTqqpuboWnYLCsGHZyK5S8//AwxV/LJlJ7myJs5A=
+	t=1737909937; cv=none; b=LtVeR7euC0Ty4z+cDfW0FWpC7OZYsorsJY358m6piwYT3UMoNlzOdklNPsqGctc3Wr5EW+MM73yz2AtuSgEDkLiMRyyNUwIJ6L9fYF7S82XfMjTtx+0FzyRKZRLZTRWwKUjJ4KNjOW4htSwvfbgNJSDsXCW6qNYsVvPEqdgHL8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737896206; c=relaxed/simple;
-	bh=Uf3DfaHFP2+89fbQq7IL1XG33t/w8iPDEXkGa3CzpWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cvyS0s9ujv5BXju3P7lxCJOH+wafRnf8BvL+EtdiYNxbUrWkPLx5sQiy9aAoifkdYaq3N2t3C5z4XpRPV9Tkg+snHJ/OyZt5onOMLRjSl9Klz/c1J1/JoFJ6An5GL02OWasqb/1elh032ASUXjBcuAbA7jK8qiS+1x/LzsJtAVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XRy+5J0n; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737909937; c=relaxed/simple;
+	bh=RAMXiLffNFxcps5QIXjr79VU4lUEaMVI9sVYxPmUPc8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=IGRRtGLrY45R57VBpB/+zVYDV8MNu7AFrOOSzGFhXFCgoWy3L7TvCG4hA7x5oKMf8vY573gK4gdPYm4rOAQB26y8iIh1HkEhBamx9RLgRZ4OwDKgbaKnTgu6xi31WTm9bQCmwwbT+2Q4pymFCJOAyw5wsWqZpypG3gMdevV6fP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXIabqnt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XRy+5J0n"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21636268e43so76907445ad.2;
-        Sun, 26 Jan 2025 04:56:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737896204; x=1738501004; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9KGHfLuP3yfCvrd6niU02daJ3MN3GQPttYCq64ynsaU=;
-        b=XRy+5J0n3gaRtNCMu/kiCtbVSEfgQVTI2M0wBxmGwTcEwxXssnvJ6syzR1+H1SX+dj
-         RbofLQcQseEpGpTjlUZrddwR7HAzHBReFavpgBVEmVbH/Qek+oehuQeOnZRnTHtwkX+e
-         w3cT6qWtnHmY7x9CW0zhfgfAnsrY9ubu02qnqUMO/q+0eG1Gr0WsDMmFpJEUpcyqJ3Y7
-         cFPC34cvc40774ygsVQVR2WJrQTOlhyQsJDSIwiC/MUz5VBVbVg6GOdbXHsNf3y7R6Ia
-         e2vBemJy6PmGlZOgPjlmqwz+2mldDKD3aBrXSdHFx6NMlwv1gDJUN2cUcDXiwKbCZ5OH
-         2jDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737896204; x=1738501004;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9KGHfLuP3yfCvrd6niU02daJ3MN3GQPttYCq64ynsaU=;
-        b=cpKw24nMuOUo74RbmXFXDeiZVAdYz39LXggyHBACq1YsDgRG8C5jke5ERU90xtguy4
-         I8u20xZVtYZuAzeQdvvHILF0dfiVFSDkIkeMgsWEjE4NjpB2dtyi3EJq3bx+/DaTeCWx
-         RMChQnj0oWBU/FVwyxUubNn7QOf6xx5vlAhRcS5CH1RHFPGOp75LcK5sUUFUR0HD/pDu
-         s8Dobw5sO1RmO87FdozgaR4CJFQAiZKLUlxvMNxBQ3OvYl5Y3R9mxzVTd9jPJvuyCPRP
-         s82it6MPaP1Mddqyal5kWksgmsN2GwrCWiQJu28o2jn7KvCI+acppEXYepJle/PipzmP
-         IlHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQGHgSvxsnOlfZH1SWidQ30e2wLOARKPftzn3VVmVujgOvXEagQfsFIdhQyf/bnLsPTAEiwby+C6e0wyI=@vger.kernel.org, AJvYcCWtXQpxOyNTiUn4nNjT+R7hQyiCVgSQXaG+S/MRVjMGnJzxBGF59I0LuIsFsryXjITWDIm1IqOy@vger.kernel.org, AJvYcCXqcglR9bB7OoZxwD1XyZsWxOZIg41KIGpohNB7MbkJc7dr7Zwi/WFazJX+0SLrhBZebjsIpTftB4nfoJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsiD37Ipsdn7CEeDiwUT6GNgBRKwxDEXV9nkSQV0EZ0KeeaKBK
-	b2h8HLYbJ/2iDDudmsrO7RX/MS/3iR+7xJDhP68/huqwxnpgmrcr
-X-Gm-Gg: ASbGnctLboB4z9XVpAsGF25gUe+JHiHNFTjrLJJcIopDehGYS/3igNSFDhvCDxan0Bw
-	8cMMo3psq8LsEwwUOORBNApr/K+Juqrt7rhAcrVHzKGBgNdbsLS/cfE37XMz+AfHP+OssX6NnyR
-	qOYbZs+6/WIuabhgjxnLZ81MrfpmynE6s4Za6go0pdn+zeB3hztil7cG4P92kaHpvT2zIOpTrur
-	lm91cf0juBBzSWGoTac+yED1R3fi9OJ0AS/g21myqLJz88ny5E7XZl7hgRKe6dgmqb4eTN1SckT
-	WA==
-X-Google-Smtp-Source: AGHT+IGYKczzJcB4xAPfGWm8estAlez/srV9f9KVlzRCuc8f9pkMAG6+IqGmDY3HU1400WQhVY/Cuw==
-X-Received: by 2002:a05:6a00:330b:b0:724:59e0:5d22 with SMTP id d2e1a72fcca58-72dafba2625mr53847801b3a.20.1737896203562;
-        Sun, 26 Jan 2025 04:56:43 -0800 (PST)
-Received: from localhost ([129.146.253.192])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72f8a77c7casm5263334b3a.139.2025.01.26.04.56.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 26 Jan 2025 04:56:43 -0800 (PST)
-Date: Sun, 26 Jan 2025 20:56:25 +0800
-From: Furong Xu <0x1207@gmail.com>
-To: Ido Schimmel <idosch@idosch.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Brad Griffis <bgriffis@nvidia.com>, Jon
- Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Alexander Lobakin <aleksander.lobakin@intel.com>, Joe Damato
- <jdamato@fastly.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 1/4] net: stmmac: Switch to zero-copy in
- non-XDP RX path
-Message-ID: <20250126205625.00006d64@gmail.com>
-In-Reply-To: <Z5YeEVrI3zx4VOtF@shredder>
-References: <bd7aabf4d9b6696885922ed4bef8fc95142d3004.1736910454.git.0x1207@gmail.com>
-	<d465f277-bac7-439f-be1d-9a47dfe2d951@nvidia.com>
-	<20250124003501.5fff00bc@orangepi5-plus>
-	<e6305e71-5633-48bf-988d-fa2886e16aae@nvidia.com>
-	<ccbecd2a-7889-4389-977e-10da6a00391c@lunn.ch>
-	<20250124104256.00007d23@gmail.com>
-	<Z5S69kb7Qz_QZqOh@shredder>
-	<20250125224342.00006ced@gmail.com>
-	<Z5X1M0Fs-K6FkSAl@shredder>
-	<20250126183714.00005068@gmail.com>
-	<Z5YeEVrI3zx4VOtF@shredder>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXIabqnt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA09AC4CEE2;
+	Sun, 26 Jan 2025 16:45:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737909937;
+	bh=RAMXiLffNFxcps5QIXjr79VU4lUEaMVI9sVYxPmUPc8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=JXIabqntlEP3PsL52PkWmIEyxVGu2ajlMU8oDhl/YNlndSr8toxcm1NT3Q1BgzjiN
+	 3FDELS9ECZ/AjjA+lHFhcIAz5iKiER2QnGmUQjsrjMzFcNfft1ajTGLeIpIIBTNMpN
+	 LeIvICb2AuaaTyX9k08Z0ucKQmXXpfb/2guJ7pSQyFdxadcVUXXieHOREHeAqj2v6O
+	 N0hA0SjhDt+1RnfUBFz1JiPHTW717rw2eMYfeIjqx8lYKM0jqZ+gu+CgOjlImV9T9j
+	 MS19PKTSQQgfN42a2bg6MxzZ3UaJVtwKKrSFfvbS0+J5cZPvDv/HOdqy1gP8s2cUwI
+	 wP9wDFnct0iLw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Kartik Rajput <kkartik@nvidia.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Sasha Levin <sashal@kernel.org>,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	arnd@arndb.de,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.13 6/8] soc/tegra: fuse: Update Tegra234 nvmem keepout list
+Date: Sun, 26 Jan 2025 11:45:21 -0500
+Message-Id: <20250126164523.963930-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250126164523.963930-1-sashal@kernel.org>
+References: <20250126164523.963930-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.13
+Content-Transfer-Encoding: 8bit
 
-On Sun, 26 Jan 2025 13:35:45 +0200, Ido Schimmel wrote:
+From: Kartik Rajput <kkartik@nvidia.com>
 
-> On Sun, Jan 26, 2025 at 06:37:14PM +0800, Furong Xu wrote:
-> > The "SPH feature" splits header into buf->page (non-zero offset) and
-> > splits payload into buf->sec_page (zero offset).
-> > 
-> > For buf->page, pp_params.max_len should be the size of L3/L4 header,
-> > and with a offset of NET_SKB_PAD.
-> > 
-> > For buf->sec_page, pp_params.max_len should be dma_conf->dma_buf_sz,
-> > and with a offset of 0.
-> > 
-> > This is always true:
-> > sizeof(L3/L4 header) + NET_SKB_PAD < dma_conf->dma_buf_sz + 0  
-> 
-> Thanks, understood, but are there situations where the device is
-> unable to split a packet? For example, a large L2 packet. I am trying
-> to understand if there are situations where the device will write
-> more than "dma_conf->dma_buf_sz - NET_SKB_PAD" to the head buffer.
+[ Upstream commit 836b341cc8dab680acc06a7883bfeea89680b689 ]
 
-Nice catch!
-When receiving a large L2/non-IP packet, more than "dma_conf->dma_buf_sz
-- NET_SKB_PAD" will be written.
+Various Nvidia userspace applications and tests access following fuse
+via Fuse nvmem interface:
 
-So we should:
-pp_params.max_len = dma_conf->dma_buf_sz + stmmac_rx_offset(priv);
+	* odmid
+	* odminfo
+	* boot_security_info
+	* public_key_hash
+	* reserved_odm0
+	* reserved_odm1
+	* reserved_odm2
+	* reserved_odm3
+	* reserved_odm4
+	* reserved_odm5
+	* reserved_odm6
+	* reserved_odm7
+	* odm_lock
+	* pk_h1
+	* pk_h2
+	* revoke_pk_h0
+	* revoke_pk_h1
+	* security_mode
+	* system_fw_field_ratchet0
+	* system_fw_field_ratchet1
+	* system_fw_field_ratchet2
+	* system_fw_field_ratchet3
+	* optin_enable
 
-Thanks a lot, Ido
-Have a nice weekend :)
+Update tegra234_fuse_keepouts list to allow reading these fuse from
+nvmem sysfs interface.
+
+Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+Link: https://lore.kernel.org/r/20241127061053.16775-1-kkartik@nvidia.com
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/soc/tegra/fuse/fuse-tegra30.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
+index eb14e5ff5a0aa..e24ab5f7d2bf1 100644
+--- a/drivers/soc/tegra/fuse/fuse-tegra30.c
++++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
+@@ -647,15 +647,20 @@ static const struct nvmem_cell_lookup tegra234_fuse_lookups[] = {
+ };
+ 
+ static const struct nvmem_keepout tegra234_fuse_keepouts[] = {
+-	{ .start = 0x01c, .end = 0x0c8 },
+-	{ .start = 0x12c, .end = 0x184 },
++	{ .start = 0x01c, .end = 0x064 },
++	{ .start = 0x084, .end = 0x0a0 },
++	{ .start = 0x0a4, .end = 0x0c8 },
++	{ .start = 0x12c, .end = 0x164 },
++	{ .start = 0x16c, .end = 0x184 },
+ 	{ .start = 0x190, .end = 0x198 },
+ 	{ .start = 0x1a0, .end = 0x204 },
+-	{ .start = 0x21c, .end = 0x250 },
+-	{ .start = 0x25c, .end = 0x2f0 },
++	{ .start = 0x21c, .end = 0x2f0 },
+ 	{ .start = 0x310, .end = 0x3d8 },
+-	{ .start = 0x400, .end = 0x4f0 },
+-	{ .start = 0x4f8, .end = 0x7e8 },
++	{ .start = 0x400, .end = 0x420 },
++	{ .start = 0x444, .end = 0x490 },
++	{ .start = 0x4bc, .end = 0x4f0 },
++	{ .start = 0x4f8, .end = 0x54c },
++	{ .start = 0x57c, .end = 0x7e8 },
+ 	{ .start = 0x8d0, .end = 0x8d8 },
+ 	{ .start = 0xacc, .end = 0xf00 }
+ };
+-- 
+2.39.5
+
