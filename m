@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CDE1991AE;
-	Sun, 26 Jan 2025 16:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BE319DFA2;
+	Sun, 26 Jan 2025 16:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737909960; cv=none; b=EQ2mcryZSjZywx8Be4w2nP85djlXFdk6zRAX4TtfuhtQ7C5JKiqg+ez4OIlluAMo8MCkHRW8FoDIJAN0h/AA1UGciaNlLOppl8V/I5qH78UZsIoezZOyicJFmIhaXf+cCpac3mUgqgVwL6qg/vSeAQbgs5jVQLhPi9WFCTvRx1I=
+	t=1737909978; cv=none; b=MH0QaZGdUEruI5L+FK/uEx9iNN75hSgiSMuotjOyP7Ntd+Hywmr5//0ZGg4ncBhNSHaOQBSuAqPLu3mg7q8X5lbBzwUTz8iYSJOtpiRSwSdrZrt9oBUKDOFPNRhiXWwMD1/hc5X6zXyuUh0MSWfqzkULcwj5TNDU3kauUV5/aJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737909960; c=relaxed/simple;
-	bh=RAMXiLffNFxcps5QIXjr79VU4lUEaMVI9sVYxPmUPc8=;
+	s=arc-20240116; t=1737909978; c=relaxed/simple;
+	bh=4M1D8Nf9NWNtXlGrr0mI2OGUhUqO7MM2B1GTAzKs45s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SheSsSqj+oq/4KxCd92fSMbXcV5etIwcwhLgWI8cQdiOlrP0DvTFbpcCOckD0o295uvmAkmQSTxFDSRnjLwaZv/M+vTe9I8iTa/AdVZWRfbHTnEEPfcKbmXqjfGx96Imp09fy8gsB7IDq2ed6fqJr7l5bmXYYv2jmUKI8P4xiAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKQJ4wpL; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=drprAIyWv31ahusM6U8EPVggkMftvHCAY8Zi2Md2eWgJOP8UV+rKrGT1eYNV+ZSeh6qMa5PzDJ0dVrUs3PmvR083VjHn0Sf6XuFqNg3wpoF8jbaodnzVni7nRwfUAz0Te+pCPhMm1njl/BMLVDv6YQ9vpTQz4oZ2qh4s266qap0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PQB41mAb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKQJ4wpL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1476C4CED3;
-	Sun, 26 Jan 2025 16:45:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PQB41mAb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD46C4CEE2;
+	Sun, 26 Jan 2025 16:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737909959;
-	bh=RAMXiLffNFxcps5QIXjr79VU4lUEaMVI9sVYxPmUPc8=;
+	s=k20201202; t=1737909977;
+	bh=4M1D8Nf9NWNtXlGrr0mI2OGUhUqO7MM2B1GTAzKs45s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SKQJ4wpLGNBAkjeCOmiylZudGo/R2sLARJbjjhxHtNKltlaQ+JyAcHY+TZwZUJLeI
-	 ismrLt9x3BteEwsg+Lt5SPsoutIuXhvshIyltRVYKGFqwGsga4lJpjjYWtspLUfZlB
-	 KPIXPgqCLN7rap9x7DQ/Eqzv3GDMaUrrUi+02oontBnp1YI5HuF3aeeMZZUeu+b5SN
-	 69ZtVloCd/2SmkHXQwZ75Y+Nm+cTkXRlJk+Zg7mo+Mrs3BfiO3TdCri0bDfQWhvH1R
-	 Zj5JmTpQFS974oy/pw3WgZN/6y6CiMHyeAaxAz3iMBeRMf8VOqDD0uvalHf19v+yof
-	 v+s0GpEwLjMkg==
+	b=PQB41mAbCkZA2SR+xapyFLZShjyEWsILRWUVABZTC7zCiIl19v8r9CydG/zGqPZq+
+	 BdROjzGn0I6u5mB8FLHtKlROfPycr6/2OG3BqepfNiklvoK8ljAODLQbgFvKTAnPBT
+	 6/vrpzmBEvI/Lpt1XKEEraxpQ58zAqgpEvgw9kLBOu0xu5AjPy/0OPCStA5P5bQ2aS
+	 a8qFtiVKD5njJF7TgE/q7/XWmPNPpADCd3HR5o37fH5wckCGva2vFay2e0hjry/c1o
+	 zQ/VYHXa7E+QQu+s/JGj2/lT5BRz4BruKXpsuy+94Qh29E9+DbFntqFGL/+EHAFllu
+	 z2bcRWW+rhloA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -36,12 +36,12 @@ Cc: Kartik Rajput <kkartik@nvidia.com>,
 	jonathanh@nvidia.com,
 	arnd@arndb.de,
 	linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 5/7] soc/tegra: fuse: Update Tegra234 nvmem keepout list
-Date: Sun, 26 Jan 2025 11:45:47 -0500
-Message-Id: <20250126164549.964058-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 3/3] soc/tegra: fuse: Update Tegra234 nvmem keepout list
+Date: Sun, 26 Jan 2025 11:46:09 -0500
+Message-Id: <20250126164609.964170-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250126164549.964058-1-sashal@kernel.org>
-References: <20250126164549.964058-1-sashal@kernel.org>
+In-Reply-To: <20250126164609.964170-1-sashal@kernel.org>
+References: <20250126164609.964170-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.11
+X-stable-base: Linux 6.6.74
 Content-Transfer-Encoding: 8bit
 
 From: Kartik Rajput <kkartik@nvidia.com>
@@ -96,10 +96,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 11 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/soc/tegra/fuse/fuse-tegra30.c b/drivers/soc/tegra/fuse/fuse-tegra30.c
-index eb14e5ff5a0aa..e24ab5f7d2bf1 100644
+index e94d46372a639..402cf939c0326 100644
 --- a/drivers/soc/tegra/fuse/fuse-tegra30.c
 +++ b/drivers/soc/tegra/fuse/fuse-tegra30.c
-@@ -647,15 +647,20 @@ static const struct nvmem_cell_lookup tegra234_fuse_lookups[] = {
+@@ -646,15 +646,20 @@ static const struct nvmem_cell_lookup tegra234_fuse_lookups[] = {
  };
  
  static const struct nvmem_keepout tegra234_fuse_keepouts[] = {
