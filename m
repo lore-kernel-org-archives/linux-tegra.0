@@ -1,334 +1,123 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6E71DE8B8;
-	Tue, 28 Jan 2025 08:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CED26ACD
+	for <linux-tegra@vger.kernel.org>; Tue, 28 Jan 2025 13:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738054329; cv=none; b=cccG4/wduf4cI5lIA8cpwiFHdUfmkUCS+YezneatcxehNQ6cPjzdfxhyj0EBDOHkpOTG+krYA/N4q26b30Glkg3Melv3eKDn6TjHLaITTGLkCWSF+vnD5KlxCAFiNIDz+XXs07navnwsHu1+c/OulaiDmbrP+L2Br+QaP0yHi1A=
+	t=1738070438; cv=none; b=ihYkH9DU0iKR9afnuE78Wm4BQ9hIVtmzLPvMdKmlOCK8Elby2msaHXQLNrAX8z359+rWk4NMmSmhmfVvZuef8Tx2tOuZWv5y/3vvCuP3gC1C6l1A1AJxFOzNjifc8RgA6L8N+Cr5mAXdIcJKJyHbYUK8TcwAf/wxVTa23hhbsWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738054329; c=relaxed/simple;
-	bh=arBYayUBa7gh3GjVgWUJEeFHyqwuLt462GaAYBUJ17A=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YYM6vjdXgUtfX6lJACdaOwCCOyyb5QsjsnWBHK04xaYwE1NumgadmV3wheVhDRLhFbmnTuqtXzWGr2Mn/Y+0lfnoKJLYVxeNgQ5vOuhNcDEPIlrkQ1mvatBh7vFPQ5g9VhogdFoi43RIlmWd7GBONK55U361s3SyvLGkmVBb0Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hB3MnvPa; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1738070438; c=relaxed/simple;
+	bh=U4suS5LTaOVNoqADNqMm3cSIM2A9q2pA52JYTTgCklY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jQsi01ySg7rPUl4kKLRbRUdYGJ7wu4wEr9Fnicfv5eFYa/1BSrZWbpACLsKnf7RqbEuBc44JnDFGdVadxhb5mO23mROGcmGySV922t9ItmV5h1qLonjng0QhA1ynWwPiTy0amL/Fw+xD0grKDtWxkDqYomiiP6KXZXfhM606XXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Y/iX5bAQ; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hB3MnvPa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738054327; x=1769590327;
-  h=message-id:subject:from:to:date:in-reply-to:references:
-   content-transfer-encoding:mime-version;
-  bh=arBYayUBa7gh3GjVgWUJEeFHyqwuLt462GaAYBUJ17A=;
-  b=hB3MnvPaQQMhi/rQmPS21QXZlCnnN130T7pmxtkAMkRQrvWO+tnuLnuD
-   A0RyyNcvvnyHDnJyt1duvfCuTf4YmA9KL0oR6bjbLdtzVi/C5+iItjzY5
-   WWmWli2F0RtuE0Kqw7WKkHcWzM5gqof3jqZQe8Iot0XDjFnqLxFUjYAjo
-   cCXZCyh5MBc0VdhC9wcGxIkNX96SUW1sySqTe2kVRByqs8z7OiIAik39O
-   pEv2Cn9HVDZMGgY4JUnbfNFUIylWu1Xmy59e4wzYP3Jmv7TBvASwsE4UY
-   GLfzAwicpafCjfbWHyF0lVkxOxQS7GPKvGbApAHbcVhDjwkPNCsByXmvZ
-   g==;
-X-CSE-ConnectionGUID: XLVmHO4ETeKtDw88W6obCw==
-X-CSE-MsgGUID: 8/Aw5VC+QfO/dWrGriAMpQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11328"; a="37732170"
-X-IronPort-AV: E=Sophos;i="6.13,240,1732608000"; 
-   d="scan'208";a="37732170"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2025 00:52:06 -0800
-X-CSE-ConnectionGUID: uiA469o4TnK3CjMIkAHeng==
-X-CSE-MsgGUID: x/aKlPa3TA6n/e4E80RdBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="112680230"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.120]) ([10.245.246.120])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2025 00:52:02 -0800
-Message-ID: <7282ac68c47886caa2bc2a2813d41a04adf938e1.camel@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Y/iX5bAQ"
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b6ed0de64aso517980985a.0
+        for <linux-tegra@vger.kernel.org>; Tue, 28 Jan 2025 05:20:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1738070435; x=1738675235; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GOWXoYYRnWMsoeKK+VVuf/lMuv2V7GO+mfTTLFXfUSE=;
+        b=Y/iX5bAQEEByiwQNOJDftwrQx7wHO5Y9UA51pkGWXkj2Mk83CmggJLSEd8babLOV8V
+         nVlKo7Wns1lCfcty0PWvoFrTXhTdsasEBN3dPYCngRp2hxwOwTKvnQ5TiSV3u109RY3W
+         bOWQsvooFLysWzmORdltM2sACdf2ED1vJs4gJueCSgiW8OxSLiVU2XqEbYZi6BbbMJXj
+         pUz0qZYrwOBJ8fCSWH0vj++MlDlDfljZ9LCMPHIoCZsmsfTzCBvUSYaELvTA2gitzqpX
+         GrXl9drRu0M6N5D+z7h4AK2ssMcwZ1baH3PleulmHmLYnpTHJzV5RftTvqdp0g2oJj6+
+         ZtMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738070435; x=1738675235;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GOWXoYYRnWMsoeKK+VVuf/lMuv2V7GO+mfTTLFXfUSE=;
+        b=MxsbUGG0Z6UHds2vwUNkuhESAjvFdnUVjWxGPO4x3ht3lTsd/z+IsxZRxXdvQr6jYn
+         mV2lRuPriQ6JpKCeuNLGjnPmKP40M9QYQCiBwi4JrZaUJJzYVU3wOIQosUco7XdPC/88
+         EPXSNniYOwA3IIwsV43JDgqPSTc8R8EVvFxAueO4ogq0RdXT7ohqoUIUN67fM5/72GTD
+         ZmFyEdxX5/SLR2n93WumXFKT0/wEUWAe+Jrf4Ov7gXpx2mz/r3SJ7B10DCEpSE70fT0b
+         1qhMrCWgGsdF3H3Y2rpzYhZzZCE0D2q4q7hCIRFfjOjbBYhn9TeMHkAyiC59RbGEOAB9
+         52iw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHC7pReAIcg/BmZULj5I/EOyBVb3l3Nd8luDH/NlidVgk+rNyBgXxxNkybqhdOFnBuNHJKsmJuhbaQpQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOexU8bBvIEPBZA8V7/ck1YXsW75MjZJ4RtP4VVwMntsvD5gLU
+	XOKgzkUDKEqb4s/dBm9Ju3MMBNwhSpKIolX9HUxBUUUHlzV2PgYNxZHrgNE/+Yg=
+X-Gm-Gg: ASbGncv2kW48mHJi1+F0BTFglc2JCEo+y6nkESWHwaCYL3KZLbp1VzWCgqsGs6XND3c
+	4Q1WSZ9KTdQvclWs+EBvMXWp/j92XN2sB5L9YSn4M1WI6PzA8n03GsKsU0RL/ZK8vl4J+LAsOCK
+	A7eVRlPXSEEam7scQFNaLBRmtQ8LxdjVBSfUDq8zOwgLX/mdskGijseAGHcmdRnjTQ9acbOtu94
+	EEbxTgXUG0nO2LjVaHErvBntF2ImpI7Mn4w6j+Xi4sbfi7I/DLqU1x43TJx/0zfEH6YeihpGd5F
+	HBmipBF6+uhR+0tX9ylbBa8gEeKoT2w2q/niOAIobTz+QUIlfApP6d6eGCoaYUmLOQ7SosQRQrA
+	=
+X-Google-Smtp-Source: AGHT+IFfqsRD0FOVkdIg887UXRm977J4ky26yoqHXaGeXqELEj2EneWq+CuXUYKkdzvufPHaZSVAIg==
+X-Received: by 2002:a05:620a:3910:b0:7b7:142d:53a8 with SMTP id af79cd13be357-7bff3fb4946mr402618885a.19.1738070435489;
+        Tue, 28 Jan 2025 05:20:35 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7be9aeedc68sm512887085a.74.2025.01.28.05.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jan 2025 05:20:34 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tclW6-00000007TbE-14aw;
+	Tue, 28 Jan 2025 09:20:34 -0400
+Date: Tue, 28 Jan 2025 09:20:34 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+Cc: Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com, lyude@redhat.com,
+	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
+	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
+	GalShalom@nvidia.com, dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-mm@kvack.org,
+	linux-tegra@vger.kernel.org
 Subject: Re: [RFC 1/5] mm/hmm: HMM API to enable P2P DMA for device private
  pages
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com, lyude@redhat.com,
- 	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch, jgg@ziepe.ca,
- leon@kernel.org, 	jglisse@redhat.com, akpm@linux-foundation.org,
- GalShalom@Nvidia.com, 	dri-devel@lists.freedesktop.org,
- nouveau@lists.freedesktop.org, 	linux-kernel@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-mm@kvack.org, 	linux-tegra@vger.kernel.org
-Date: Tue, 28 Jan 2025 09:51:52 +0100
-In-Reply-To: <20241201103659.420677-2-ymaman@nvidia.com>
+Message-ID: <20250128132034.GA1524382@ziepe.ca>
 References: <20241201103659.420677-1-ymaman@nvidia.com>
-	 <20241201103659.420677-2-ymaman@nvidia.com>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+ <20241201103659.420677-2-ymaman@nvidia.com>
+ <7282ac68c47886caa2bc2a2813d41a04adf938e1.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7282ac68c47886caa2bc2a2813d41a04adf938e1.camel@linux.intel.com>
 
-Hi, Jonatan
+On Tue, Jan 28, 2025 at 09:51:52AM +0100, Thomas Hellström wrote:
 
+> How would the pgmap device know whether P2P is actually possible
+> without knowing the client device, (like calling pci_p2pdma_distance)
+> and also if looking into access control, whether it is allowed?
 
-On Sun, 2024-12-01 at 12:36 +0200, Yonatan Maman wrote:
-> From: Yonatan Maman <Ymaman@Nvidia.com>
->=20
-> hmm_range_fault() by default triggered a page fault on device private
-> when HMM_PFN_REQ_FAULT flag was set. pages, migrating them to RAM. In
-> some
-> cases, such as with RDMA devices, the migration overhead between the
-> device (e.g., GPU) and the CPU, and vice-versa, significantly
-> degrades
-> performance. Thus, enabling Peer-to-Peer (P2P) DMA access for device
-> private page might be crucial for minimizing data transfer overhead.
->=20
-> Introduced an API to support P2P DMA for device private
-> pages,includes:
-> =C2=A0- Leveraging the struct pagemap_ops for P2P Page Callbacks. This
-> callback
-> =C2=A0=C2=A0 involves mapping the page for P2P DMA and returning the
-> corresponding
-> =C2=A0=C2=A0 PCI_P2P page.
->=20
-> =C2=A0- Utilizing hmm_range_fault for initializing P2P DMA. The API
-> =C2=A0=C2=A0 also adds the HMM_PFN_REQ_TRY_P2P flag option for the
-> =C2=A0=C2=A0 hmm_range_fault caller to initialize P2P. If set, hmm_range_=
-fault
-> =C2=A0=C2=A0 attempts initializing the P2P connection first, if the owner
-> device
-> =C2=A0=C2=A0 supports P2P, using p2p_page. In case of failure or lack of
-> support,
-> =C2=A0=C2=A0 hmm_range_fault will continue with the regular flow of migra=
-ting
-> the
-> =C2=A0=C2=A0 page to RAM.
->=20
-> This change does not affect previous use-cases of hmm_range_fault,
-> because both the caller and the page owner must explicitly request
-> and
-> support it to initialize P2P connection.
->=20
-> Signed-off-by: Yonatan Maman <Ymaman@Nvidia.com>
-> Signed-off-by: Gal Shalom <GalShalom@Nvidia.com>
-> ---
-> =C2=A0include/linux/hmm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ++-
-> =C2=A0include/linux/memremap.h |=C2=A0 8 ++++++
-> =C2=A0mm/hmm.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 57 ++++++++++++++++++++++++++++++=
-+++-----
-> --
-> =C2=A03 files changed, 57 insertions(+), 11 deletions(-)
+The DMA API will do this, this happens after this patch is put on top
+of Leon's DMA API patches. The mapping operation will fail and it will
+likely be fatal to whatever is going on.
+ 
+get_dma_pfn_for_device() returns a new PFN, but that is not a DMA
+mapped address, it is just a PFN that has another struct page under
+it.
 
-It appears we're working on a very similar thing, (In fact the original
-proposals were sent out the same day. I have a couple of questions).
+There is an implicit assumption here that P2P will work and we don't
+need a 3rd case to handle non-working P2P..
 
+> but leaves any dma- mapping or pfn mangling to be done after the
+> call to hmm_range_fault(), since hmm_range_fault() really only needs
+> to know whether it has to migrate to system or not.
 
->=20
-> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-> index 62980ca8f3c5..017f22cef893 100644
-> --- a/include/linux/hmm.h
-> +++ b/include/linux/hmm.h
-> @@ -26,6 +26,7 @@ struct mmu_interval_notifier;
-> =C2=A0 * HMM_PFN_DMA_MAPPED - Flag preserved on input-to-output
-> transformation
-> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to mark tha=
-t page is already DMA mapped
-> + * HMM_PFN_ALLOW_P2P - Allow returning PCI P2PDMA page
-> =C2=A0 *
-> =C2=A0 * On input:
-> =C2=A0 * 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - Return the current state of the page, d=
-o not
-> fault it.
-> @@ -41,7 +42,7 @@ enum hmm_pfn_flags {
-> =C2=A0	HMM_PFN_ERROR =3D 1UL << (BITS_PER_LONG - 3),
-> =C2=A0
-> =C2=A0	/* Sticky flag, carried from Input to Output */
-> +	HMM_PFN_ALLOW_P2P =3D 1UL << (BITS_PER_LONG - 6),
-> =C2=A0	HMM_PFN_DMA_MAPPED =3D 1UL << (BITS_PER_LONG - 7),
-> =C2=A0
-> =C2=A0	HMM_PFN_ORDER_SHIFT =3D (BITS_PER_LONG - 8),
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index 3f7143ade32c..cdf5189be5e9 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -89,6 +89,14 @@ struct dev_pagemap_ops {
-> =C2=A0	 */
-> =C2=A0	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
-> =C2=A0
-> +	/*
-> +	 * Used for private (un-addressable) device memory only.
-> Return a
-> +	 * corresponding PFN for a page that can be mapped to device
-> +	 * (e.g using dma_map_page)
-> +	 */
-> +	int (*get_dma_pfn_for_device)(struct page *private_page,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long *dma_pfn);
-> +
-> =C2=A0	/*
-> =C2=A0	 * Handle the memory failure happens on a range of pfns.=C2=A0
-> Notify the
-> =C2=A0	 * processes who are using these pfns, and try to recover
-> the data on
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index a852d8337c73..1c080bc00ee8 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -226,6 +226,51 @@ static inline unsigned long
-> pte_to_hmm_pfn_flags(struct hmm_range *range,
-> =C2=A0	return pte_write(pte) ? (HMM_PFN_VALID | HMM_PFN_WRITE) :
-> HMM_PFN_VALID;
-> =C2=A0}
-> =C2=A0
-> +static bool hmm_handle_device_private(struct hmm_range *range,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long pfn_req_flags,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 swp_entry_t entry,
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long *hmm_pfn)
-> +{
-> +	struct page *page =3D pfn_swap_entry_to_page(entry);
-> +	struct dev_pagemap *pgmap =3D page->pgmap;
-> +	int ret;
->=20
-> +	pfn_req_flags &=3D range->pfn_flags_mask;
-> +	pfn_req_flags |=3D range->default_flags;
-> +
-> +	/*
-> +	 * Don't fault in device private pages owned by the caller,
-> +	 * just report the PFN.
-> +	 */
-> +	if (pgmap->owner =3D=3D range->dev_private_owner) {
-> +		*hmm_pfn =3D swp_offset_pfn(entry);
-> +		goto found;
-> +	}
-> +
-> +	/*
-> +	 * P2P for supported pages, and according to caller request
-> +	 * translate the private page to the match P2P page if it
-> fails
-> +	 * continue with the regular flow
-> +	 */
-> +	if (pfn_req_flags & HMM_PFN_ALLOW_P2P &&
-> +	=C2=A0=C2=A0=C2=A0 pgmap->ops->get_dma_pfn_for_device) {
-> +		ret =3D pgmap->ops->get_dma_pfn_for_device(page,
-> hmm_pfn);
+See above, this is already the case..
 
-How would the pgmap device know whether P2P is actually possible
-without knowing the client device, (like calling pci_p2pdma_distance)
-and also if looking into access control, whether it is allowed?
+> One benefit of using this alternative
+> approach is that struct hmm_range can be subclassed by the caller and
+> for example cache device pairs for which p2p is allowed.
 
-I wonder whether you could consider using something that is a little
-more generic that would fit also our use-case. Here the caller provides
-a callback as to whether devmem access is allowed, but leaves any dma-
-mapping or pfn mangling to be done after the call to hmm_range_fault(),
-since hmm_range_fault() really only needs to know whether it has to
-migrate to system or not. One benefit of using this alternative
-approach is that struct hmm_range can be subclassed by the caller and
-for example cache device pairs for which p2p is allowed.
+If you want to directly address P2P non-uniformity I'd rather do it
+directly in the core code than using a per-driver callback. Every
+driver needs exactly the same logic for such a case.
 
-Current version (after the feedback from Jason looks like this). It
-looks like your use-case could easily be made to fit this one, but, as
-I understand it, not vice versa: (Could send this as a separate patch
-if needed).
-
-Thanks,
-Thomas
-
-
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 126a36571667..8ac1f4125e30 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -76,6 +76,21 @@ static inline unsigned int
-hmm_pfn_to_map_order(unsigned long hmm_pfn)
- 	return (hmm_pfn >> HMM_PFN_ORDER_SHIFT) & 0x1F;
- }
-=20
-+struct hmm_range;
-+
-+/**
-+ * struct hmm_range_ops - Functions for detailed cross-device access.
-+ */
-+struct hmm_range_ops {
-+	/**
-+	 * @devmem_allow: Whether to allow cross-device access to
-device_private pages.
-+	 * @hrange: Pointer to a struct hmm_range. Typically
-subclassed by the caller
-+	 * to provide needed information.
-+	 * @page: The page being queried.
-+	 */
-+	bool (*devmem_allow)(struct hmm_range *hrange, struct page
-*page);
-+};
-+
- /*
-  * struct hmm_range - track invalidation lock on virtual address range
-  *
-@@ -87,6 +102,7 @@ static inline unsigned int
-hmm_pfn_to_map_order(unsigned long hmm_pfn)
-  * @default_flags: default flags for the range (write, read, ... see
-hmm doc)
-  * @pfn_flags_mask: allows to mask pfn flags so that only
-default_flags matter
-  * @dev_private_owner: owner of device private pages
-+ * @ops: Pointer to a struct hmm_range_ops or NULL if no ops provided.
-  */
- struct hmm_range {
- 	struct mmu_interval_notifier *notifier;
-@@ -97,6 +113,7 @@ struct hmm_range {
- 	unsigned long		default_flags;
- 	unsigned long		pfn_flags_mask;
- 	void			*dev_private_owner;
-+	const struct hmm_range_ops *ops;
- };
-=20
- /*
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 7e0229ae4a5a..ea4e08caa14a 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -220,6 +220,15 @@ static inline unsigned long
-pte_to_hmm_pfn_flags(struct hmm_range *range,
- 	return pte_write(pte) ? (HMM_PFN_VALID | HMM_PFN_WRITE) :
-HMM_PFN_VALID;
- }
-=20
-+static bool hmm_devmem_allow(struct hmm_range *range, struct page
-*page)
-+{
-+	if (likely(page->pgmap->owner =3D=3D range->dev_private_owner))
-+		return true;
-+	if (likely(!range->ops))
-+		return false;
-+	return range->ops->devmem_allow(range, page);
-+}
-+
- static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long
-addr,
- 			      unsigned long end, pmd_t *pmdp, pte_t
-*ptep,
- 			      unsigned long *hmm_pfn)
-@@ -245,11 +254,10 @@ static int hmm_vma_handle_pte(struct mm_walk
-*walk, unsigned long addr,
-=20
- 		/*
- 		 * Don't fault in device private pages owned by the
-caller,
--		 * just report the PFN.
-+		 * or that are accessible to the caller. Just report
-the PFN.
- 		 */
- 		if (is_device_private_entry(entry) &&
--		    pfn_swap_entry_to_page(entry)->pgmap->owner =3D=3D
--		    range->dev_private_owner) {
-+		    hmm_devmem_allow(range,
-pfn_swap_entry_to_page(entry))) {
- 			cpu_flags =3D HMM_PFN_VALID;
- 			if (is_writable_device_private_entry(entry))
- 				cpu_flags |=3D HMM_PFN_WRITE;
---=20
-2.48.1
-
-
+Jason
