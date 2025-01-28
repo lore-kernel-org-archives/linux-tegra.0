@@ -1,155 +1,83 @@
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7521CDFD5
-	for <linux-tegra@vger.kernel.org>; Tue, 28 Jan 2025 17:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+Received: from lynxeye.de (ns.lynxeye.de [87.118.118.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F88B15D5C4;
+	Tue, 28 Jan 2025 20:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.118.118.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738084887; cv=none; b=g5AR7rDvPaEGkNlAQ7LEKUTvdwORgcz6gD2lc2lc3ATRHysC81m90khxkqMQtZpFKwBxuV6I+ybQmQrz7J3wopH+wcVHOZelYGsLak3ZFR3Senv4AVVjELuTmX4hzIBgm4OP7iR3nUXP9SrNhP3Id+OUupH2DOGBiF2TfMtFkp4=
+	t=1738095175; cv=none; b=jj1zXHMM6lyhr9NtfPltyx8/K7r+PCfn5NeocN0o+0qHSVQfgNH7lx2KEegx/MObik5uRPtou+FRFSgKspHBu7QeUQB/vx3E2Ilfs56lF11XJXOeU7ckU96JuDiAnOPpNjb1qQTDPvxjirCMi92cq3D5UM3Kk+hOKhQ5OlvLSE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738084887; c=relaxed/simple;
-	bh=LWS+HKZhTEpQAgnrmbl5ecib7RdlRXcgNtTUGmEM03A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CPx3+L9WhRLsMZr7Xi/MuXCXnKd00RIkBKojdyTgYWf6qn663Ph80uv/Jo8YIwTurEdxuoDwQIXSRJyVYTq0Sf/ERPhLdFfdjkklxb3viE9E8gkD7Z9YXpRh5N1IChanCTR+Wui5IMbDkH8t/AHIA82y76PCeckaVFG2YVzB8pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=VSp0Pb07; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="VSp0Pb07"
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e1b11859a7so31778256d6.1
-        for <linux-tegra@vger.kernel.org>; Tue, 28 Jan 2025 09:21:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1738084884; x=1738689684; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WQb9VqqmKpGrKRk3ww/ULOiy6hcfV9wcFh+Cwya87Xc=;
-        b=VSp0Pb07+krCs+4Tq8KrwFa4JAfuXFe2B4cXK9aRHARG3bxXcG4JW6vezh67IZ3K0i
-         nUZpedN8qNd3U3qHM2c1ETuLQjqhpst8tcVq0K56xwNc2thXKJFGllIqd5royiDmmNj/
-         YWKxgYAVF1Eti+teHCeQNSWQt1c3PcfIfUPsPV4FLn0xIjcwVRTkQaT8VJfmiMjabJCL
-         /n+W8EgY8oUHccoUe9g7B/dgaVKp7H/3V3cWcoKjKxTkEIDSsuNWJSEBD724PZP2MNYt
-         5C08Yus+u6SRNHrLyJYWwroTz5eocUZw1QqCVe7DZhBpox8X8lFOfhrstpJP50qCoQkO
-         2HlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738084884; x=1738689684;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WQb9VqqmKpGrKRk3ww/ULOiy6hcfV9wcFh+Cwya87Xc=;
-        b=plVaQdxTiLp6aDqyEj9tyLhcE5vYdXSbp5Fy5b8M7iGDfujsNbsAE7ABCENj6YtJPt
-         NTXI2orWYg0uG1DoMeEz94CMbMClvjZcOGQJRtYXUftICEuyY4sFCmgkckcIMnKhh6Jp
-         41TuHFr/RdiqcOUfdYsb9qrctm1Rup8tjMClz8Ojov6IH+uVYUi32DYr6vcJu9XgVuRl
-         mHSFY0pNKnmmkP8eG18RrdiWpeHHLcRZTSLS0X56u9dcljIMDJokkzPYn3ZhdD/IPThf
-         EaMVhr+mefT3dvu/667zYZGzzT21MNKx80PGIhNQZrq/wnBAOLtK9/H0iH51u+nHvXN/
-         74gg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDrLEwfL6x9IN7f7h8WqXfTCPCYdGAZC9lmYr55s1kDAAyFBuJmb0Lk65aSXrP3mTuILY1eo+zrDKnag==@vger.kernel.org
-X-Gm-Message-State: AOJu0YygtiLy8yjvuD44t8tLZHwPlHWenFn1G7IefbBWpFMmS07jrQF0
-	/OwgzT01F93d7s11//df/xr0S5nhPnJQUs1hCfKFjiyQVrBdDd2neqgGmSxjdls=
-X-Gm-Gg: ASbGncsWzM8JgYJWEoPGhRg2eULJhmkOIHURgzODYnu0XWVvYFGcR1kKRe5o4sxb2tM
-	Poy4EEqMwj+/psN84jNybT+D6Z4fviIhlU6ejwPOyEPoV382iRjkpZ/Lbdh14Nj05LGRQM2eKsy
-	kWAPMEEU+vdo7t6KWph5j7KZ7a70/1oxQtzVkljYaEX1Ol3XThvpX4QL1ZOCSqUOm0xJmKFtUW+
-	Gvl2DsbY/ozBeJcsEt8x8hzZwd1n42r5BHmJD8ln/6Aa6In5Ww6Oaa4ofC1yiWuCz0uHW6xOYCQ
-	DdOP9069JX1ZWbNMuqJLmE6nNK/ecKSdcqzEAoAQchzGn0b5nH/VqHx39MXtDUu6
-X-Google-Smtp-Source: AGHT+IFAz/5UyS+F0PBK9pFt62lYn0eXOpLs0OowxWjeV7IrxMQsEK70VEddYKwgKGQF4XA2ZTXc8w==
-X-Received: by 2002:a05:6214:260a:b0:6d8:8a60:ef2c with SMTP id 6a1803df08f44-6e1b2140cadmr656249486d6.2.1738084884552;
-        Tue, 28 Jan 2025 09:21:24 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e2057a8ab6sm47105096d6.81.2025.01.28.09.21.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2025 09:21:24 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tcpH9-00000007f7z-2OLv;
-	Tue, 28 Jan 2025 13:21:23 -0400
-Date: Tue, 28 Jan 2025 13:21:23 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
-Cc: Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com, lyude@redhat.com,
-	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
-	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
-	GalShalom@nvidia.com, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-mm@kvack.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [RFC 1/5] mm/hmm: HMM API to enable P2P DMA for device private
- pages
-Message-ID: <20250128172123.GD1524382@ziepe.ca>
-References: <20241201103659.420677-1-ymaman@nvidia.com>
- <20241201103659.420677-2-ymaman@nvidia.com>
- <7282ac68c47886caa2bc2a2813d41a04adf938e1.camel@linux.intel.com>
- <20250128132034.GA1524382@ziepe.ca>
- <de293a7e9b4c44eab8792b31a4605cc9e93b2bf5.camel@linux.intel.com>
- <20250128151610.GC1524382@ziepe.ca>
- <b78d32e13811ef1fa57b0535749c811f2afb4dcd.camel@linux.intel.com>
+	s=arc-20240116; t=1738095175; c=relaxed/simple;
+	bh=rEer5Vac7kMVgv5bwbnGzchPKoqx1kUftnZtMdARFIA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=db0W+sR7wRENmOcadHDmMhuU9Vr2KG9Me9+GIrhOt3vOn86p94zb5xNX2zsFm/r6ukFGLagY4MAzFEz1rV4XgK0D9vIcaW5qo0vCaUeeAKdgk3VSAtKbd3DGVcH60b2ZY2g5NjbTkq/cVXRHFUmZWQLVvc64dfsD94+H9HJcHh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lynxeye.de; spf=none smtp.mailfrom=lynxeye.de; arc=none smtp.client-ip=87.118.118.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lynxeye.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lynxeye.de
+Received: by lynxeye.de (Postfix, from userid 501)
+	id 6F899E74071; Tue, 28 Jan 2025 21:04:58 +0100 (CET)
+X-Spam-Level: 
+Received: from [192.168.178.25] (a89-182-99-197.net-htp.de [89.182.99.197])
+	by lynxeye.de (Postfix) with ESMTPSA id 0A738E74067;
+	Tue, 28 Jan 2025 21:04:57 +0100 (CET)
+Message-ID: <c8db4ad722b7dd169ea71990238dbc82da91f3a4.camel@lynxeye.de>
+Subject: Re: [PATCH net-next v3 1/4] net: stmmac: Switch to zero-copy in
+ non-XDP RX path
+From: Lucas Stach <dev@lynxeye.de>
+To: Thierry Reding <thierry.reding@gmail.com>, Furong Xu <0x1207@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Brad Griffis <bgriffis@nvidia.com>, Jon
+ Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Alexander Lobakin <aleksander.lobakin@intel.com>, Joe Damato
+ <jdamato@fastly.com>, Andrew Lunn	 <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet	 <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni	 <pabeni@redhat.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, 	xfr@outlook.com,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Date: Tue, 28 Jan 2025 21:04:56 +0100
+In-Reply-To: <qkjv53fn32qdi5jh2d6bqdfnnl5x4x74cmir6fjtstfw2ijds6@eoxctjkqij7u>
+References: <cover.1736910454.git.0x1207@gmail.com>
+	 <bd7aabf4d9b6696885922ed4bef8fc95142d3004.1736910454.git.0x1207@gmail.com>
+	 <d465f277-bac7-439f-be1d-9a47dfe2d951@nvidia.com>
+	 <20250124003501.5fff00bc@orangepi5-plus>
+	 <e6305e71-5633-48bf-988d-fa2886e16aae@nvidia.com>
+	 <ccbecd2a-7889-4389-977e-10da6a00391c@lunn.ch>
+	 <20250124104256.00007d23@gmail.com>
+	 <qkjv53fn32qdi5jh2d6bqdfnnl5x4x74cmir6fjtstfw2ijds6@eoxctjkqij7u>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b78d32e13811ef1fa57b0535749c811f2afb4dcd.camel@linux.intel.com>
 
-On Tue, Jan 28, 2025 at 05:32:23PM +0100, Thomas Hellström wrote:
-> > This series supports three case:
-> > 
-> >  1) pgmap->owner == range->dev_private_owner
-> >     This is "driver private fast interconnect" in this case HMM
-> > should
-> >     immediately return the page. The calling driver understands the
-> >     private parts of the pgmap and computes the private interconnect
-> >     address.
-> > 
-> >     This requires organizing your driver so that all private
-> >     interconnect has the same pgmap->owner.
-> 
-> Yes, although that makes this map static, since pgmap->owner has to be
-> set at pgmap creation time. and we were during initial discussions
-> looking at something dynamic here. However I think we can probably do
-> with a per-driver owner for now and get back if that's not sufficient.
+Am Freitag, dem 24.01.2025 um 14:15 +0100 schrieb Thierry Reding:
+>=20
+[...]
+> > The dma-coherent property in device tree node is SoC specific, so only =
+the
+> > vendors know if their stmmac ethernet controller is dma coherent and
+> > whether their device tree are missing the critical dma-coherent propert=
+y.
+>=20
+> What I fail to understand is how dma-coherent can make a difference in
+> this case. If it's not present, then the driver is supposed to maintain
+> caches explicitly. But it seems like explicit cache maintenance actually
+> causes things to break. So do we need to assume that DMA coherent
+> devices in generally won't work if the driver manages caches explicitly?
+>=20
+> I always figured dma-coherent was more of an optimization, but this
+> seems to indicate it isn't.
 
-The pgmap->owner doesn't *have* to fixed, certainly during early boot before
-you hand out any page references it can be changed. I wouldn't be
-surprised if this is useful to some requirements to build up the
-private interconnect topology?
+There is a real=C2=A0failure scenario when the device is actually dma-
+coherent, but the DT claims it isn't: If a location from e.g. a receive
+buffer is already allocated in the cache, the write from the device
+will update the cache line and not go out to memory. If you then do the
+usual non-coherent cache maintenance, i.e. invalidate the RX buffer
+area after the device indicated the reception of the buffer, you will
+destroy the updated data in the cache and read stale data from memory.
 
-> >  2) The page is DEVICE_PRIVATE and get_dma_pfn_for_device() exists.
-> >     The exporting driver has the option to return a P2P struct page
-> >     that can be used for PCI P2P without any migration. In a PCI GPU
-> >     context this means the GPU has mapped its local memory to a PCI
-> >     address. The assumption is that P2P always works and so this
-> >     address can be DMA'd from.
-> 
-> So do I understand it correctly, that the driver then needs to set up
-> one device_private struct page and one pcie_p2p struct page for each
-> page of device memory participating in this way?
-
-Yes, for now. I hope to remove the p2p page eventually.
-
-> > If you are just talking about your private multi-path, then that is
-> > already handled..
-> 
-> No, the issue I'm having with this is really why would
-> hmm_range_fault() need the new pfn when it could easily be obtained
-> from the device-private pfn by the hmm_range_fault() caller? 
-
-That isn't the API of HMM, the caller uses hmm to get PFNs it can use.
-
-Deliberately returning PFNs the caller cannot use is nonsensical to
-it's purpose :)
-
-> So anyway what we'll do is to try to use an interconnect-common owner
-> for now and revisit the problem if that's not sufficient so we can come
-> up with an acceptable solution.
-
-That is the intention for sure. The idea was that the drivers under
-the private pages would somehow generate unique owners for shared
-private interconnect segments.
-
-I wouldn't say this is the end all of the idea, if there are better
-ways to handle accepting private pages they can certainly be
-explored..
-
-Jason
+Regards,
+Lucas
