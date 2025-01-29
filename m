@@ -1,177 +1,140 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF6D1C5F2E;
-	Wed, 29 Jan 2025 14:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6E01D9346;
+	Wed, 29 Jan 2025 15:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738162368; cv=none; b=NfDxVMH5apK7QLoToC6yhBIM1HT/HM1WtonDMWh7GGc8j2Mq2mW6WNnph4A1bbLEPu4LoqRPZYERoFn+2CKKLY02wP4dGb8RuvZAMyQ0oMCD3n0/fDvVQgJtsJRaC/D/Mw6bney4BwbX+NYhsR2HaYKaWRxniZxb1rKWLoVSVMI=
+	t=1738164533; cv=none; b=HvA4+4DrrXHiFjW4Q7dE7tq64qiCM+NNsWHe1iWmN8EVKdKhIWITeYbgSs66QoBbbp9Aq4MN1+oYcGKNE5tjrQ+zgCvSegvjDkzwUkJTMJ4buie3AUKBC6pg90euJRXcjVcKRVjhnd7Uvy2TBm5yMCOqyHoUpwfHsK4fUCkNpcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738162368; c=relaxed/simple;
-	bh=rjpba0LFpYm6AyC0WzTszRjZtuSKA5sSBH8QdJgCQYc=;
+	s=arc-20240116; t=1738164533; c=relaxed/simple;
+	bh=bok9TVvjjQCymMYvMKlNAI5VH8lxZtesRpd8zGC0hcI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HVxaA3nmzDubIGROgBagJt2Np4FhKGidLCwCEvdFbNdM6eRZlsNhawNlJM2vGM1Fdflo+rwLAH3aLRPNoTuJaw/B/LghRnaL3sROtO7udkVPY7R1uLrMRqgrHTOLUdwhTwe5ulnxEGwqA2clwW2fSJsmyXMNerUxsTAp+gFjPWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JD01Ib11; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=bO8MnQsIcA4LRjOT08TOP8/QfnE71+5qtusXslCyuCCOci7hzW2jAfhriqf8LDtznis0emq9bwsgcQPrR2kzrU8Ps2Fim2ToPVeJ+xmG+B8/SLrukOm1b5CgERbOKISKdl/KyWlL1TuNq03eVUn7frgNCxJH3N8P+LAMvq8VxKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOyxzPTq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JD01Ib11"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4361f65ca01so73274045e9.1;
-        Wed, 29 Jan 2025 06:52:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738162363; x=1738767163; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rjpba0LFpYm6AyC0WzTszRjZtuSKA5sSBH8QdJgCQYc=;
-        b=JD01Ib11AirVTN4dSQ0OyMCj0XnwTS0wVU3YXPFi7jQCsmppTObfA0LvIjoX8a7lfG
-         1X98Rq7spxMGFKhGjBxaC2nKo4dwiYdd0snGSvvr+z5+3POJGoX8xSkb5VpgsAjOV6ad
-         GBrU9gs0zW2c/gr2R8sU86kTMNumzy+fzCzUEIVKUj2yg1ihABkYFLb7bgHO5T7P282f
-         X/N1qLlHc9gQ0JQkIyq7lF+mU2UcDq4cShIU6jvXkml0sawaW4MFcxy7tCrUoIcOSCeN
-         FSxlS+A+4YMufI3dfH2cmIhT5UDEdnIfEg8MzfaVLNqiUhgevdWEWM3JTUiMed6wuX7d
-         ixFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738162363; x=1738767163;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rjpba0LFpYm6AyC0WzTszRjZtuSKA5sSBH8QdJgCQYc=;
-        b=R4taebWXUHzXA9fo0F/Xv3ir9Ga0EDbR9U8+0vNZLl8Hz9Iae86TqBeJY5K2cwNPUx
-         2GzJmrnv5kWoJcVlCiEANL8Npw1Za6/NrAgoTNlGGAVwotYCBp0ccNdlbX4Ox9upByln
-         LjhDQHg5dfD8VEM4114z4i92RmulbG/LaWwU2JICAi7x6bGB2EwHtmRHoZ6UWeT+c3ZW
-         R/DB5Z06/IWmXb94NaYyDZslWvz53pujZ6Mz0ofGwu02j1xU+uNSnnwu6omXhSI/hHpc
-         ACUSZiJA8z5QWDuMF4AR/V7owsgAClrAmopWqrIxkOT60P6LhisrQaudd7/fWzwNQILL
-         LhqA==
-X-Forwarded-Encrypted: i=1; AJvYcCVR1Ow4aRSM3Fvx+Se0+JhZ4mB6tvERX/DipXTyEB+lEV/dyAnYQltNBYTEdM6ny9cTwFVqKgD1RRCPhgd8@vger.kernel.org, AJvYcCVYxV2G5doJdqTB6tAuSX9h3+1/lideUWJoeD0tkBiDp2oBA796zwz5S32CpjjrBPEEGdFDw2G1iAt4z+A=@vger.kernel.org, AJvYcCW8DI3x+VvKMjOxEedoxjgETDqdD0g4FWfEkocH1yMYADXX4d43MhJFnnv03Mjo87JS6XeH8sxUEn9Eb8UZ@vger.kernel.org, AJvYcCXQmv5+YKy5M3iYoD1rL/bbzl4MAikTLRx9Cni2rn7jtN+5RvgcZoqXSwdFdM3xnKIf1RaVJ8LkDKeH@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO5B7Ax9+dxzwdFSiUY03nWrkAuxPBLcqXs60lnaeYREmDr+aN
-	LzChYLWEZUeDb7MBIZYv49ijxOYwfmZ7mS/UB8uQfDL/D7J84Bm8
-X-Gm-Gg: ASbGncuUSijNVIamirg8UYTDvv2u7ZrX4r6Gc4cMObp7q0uLTgPePoS1SCZZpNrhmS3
-	zn5heCfftErNiws/LM3NxEMCMgXe0oXwAQ7Yewyc62bUmhjQtk84ROjtSJ3XBLS1M6BeZx+u5Sd
-	OmWtrGQHh0OE0r6vDrWScxle7sP7zQZP/O0y4FS9TWgGPgplqNZ83/UWFsY+eidCVMVi7dTc2Bc
-	zs6w+Pq9jcU02T+PT7F+YBHxG8bxDT2KgWOmQ3XJEPjew8+ZNN5utnOW4F5BJAizjigQW5lgtkV
-	SrjeYiJ/y+y/e7Jnx7i6zccbr1nnIJNlalNdRqVxZ/za3j08qkU2xqO4+5pkeY1Mc2Wqwvz/bTw
-	Zhw==
-X-Google-Smtp-Source: AGHT+IHYiD8HHU7c3CPRRKT9FNr4EOClWP6a4zZA9f98b+kcMuPfszC9bzeA10N9+9WO3BBUe4NS9g==
-X-Received: by 2002:a05:600c:3b14:b0:434:a781:f5e2 with SMTP id 5b1f17b1804b1-438dc3c237dmr29171655e9.8.1738162363114;
-        Wed, 29 Jan 2025 06:52:43 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438dcc11ae6sm26173045e9.6.2025.01.29.06.52.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2025 06:52:41 -0800 (PST)
-Date: Wed, 29 Jan 2025 15:52:39 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Kartik Rajput <kkartik@nvidia.com>
-Cc: "krzk@kernel.org" <krzk@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, 
-	"robh@kernel.org" <robh@kernel.org>, "robert.marko@sartura.hr" <robert.marko@sartura.hr>, 
-	"arnd@kernel.org" <arnd@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "jirislaby@kernel.org" <jirislaby@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "hvilleneuve@dimonoff.com" <hvilleneuve@dimonoff.com>, 
-	"schnelle@linux.ibm.com" <schnelle@linux.ibm.com>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, 
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: serial: Add bindings for
- nvidia,tegra264-utc
-Message-ID: <5j3fhrauu7j4vdal4yi34yj5egxe42i3aj4ezuc5oblhz6nfca@ebewyvonecj5>
-References: <20250128064633.12381-1-kkartik@nvidia.com>
- <20250128064633.12381-2-kkartik@nvidia.com>
- <20250128-amusing-squirrel-of-gaiety-b3ba97@krzk-bin>
- <ae6132b93ac30a1f7b2721066a0e0eddc01745d5.camel@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOyxzPTq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21DB6C4CED1;
+	Wed, 29 Jan 2025 15:28:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738164532;
+	bh=bok9TVvjjQCymMYvMKlNAI5VH8lxZtesRpd8zGC0hcI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NOyxzPTqxCIMDXiltBFL33XgRz5+HmhF0fqEkvxsOMQ+6Wzc56dBN6SyjzMqltBb3
+	 6NHtoBcd65EsJ8oCbYGGJvz7/v567MFrM9a76OkdnsX647Ow/whbk9IojguGxowzk/
+	 vbgmUGA5QVu9G7m22EiF1kv31X4aNiRWdytIs030qtfGVFcGpnPSqX2oZnwdYQILpm
+	 Pjpn1K1oNLt3gHaVCozxK5+ncmcRqK8/EMM9cl/FWKOpIv1Co7UcwDOnuN5Jv9Df4M
+	 APJZcGw1WrNChwRUMgJfEVxBXmfA2Yi8igsZSjP24OyJBaMR3b9+I6o4BEWoNaXNbL
+	 K/PKTztalZRiQ==
+Date: Wed, 29 Jan 2025 16:28:49 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>, 
+	Anusha Srivatsa <asrivats@redhat.com>, Joel Stanley <joel@jms.id.au>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
+	Xinliang Liu <xinliang.liu@linaro.org>, Tian Tao <tiantao6@hisilicon.com>, 
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Yongqin Liu <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chunyan Zhang <zhang.lyra@gmail.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Raphael Gallais-Pou <rgallaispou@gmail.com>, Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Alexey Brodkin <abrodkin@synopsys.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-amlogic@lists.infradead.org, imx@lists.linux.dev, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 14/14] Documentation: Update the todo
+Message-ID: <4jn3dfea3eb5yuqobjwvbzfxhwatpvvhtpxbmt6npyrypkyruw@mgtmxignyvt5>
+References: <20250128-cocci-memory-api-v1-0-0d1609a29587@redhat.com>
+ <20250128-cocci-memory-api-v1-14-0d1609a29587@redhat.com>
+ <a389f799-442e-45f3-8609-2eb2f0b7a825@suse.de>
+ <li2awsqmdoye3u7n3gi2mrhbfxs77e3edjmsg5zclnyjinsnul@2bjkc5agyu5u>
+ <2y3lwycrggmktamu3j3gj65uco7quvtu7tlc3724e4mpokhjz2@icedc3kervme>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5smhkbxpyhajfnuz"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ntiwixuo22akqcub"
 Content-Disposition: inline
-In-Reply-To: <ae6132b93ac30a1f7b2721066a0e0eddc01745d5.camel@nvidia.com>
+In-Reply-To: <2y3lwycrggmktamu3j3gj65uco7quvtu7tlc3724e4mpokhjz2@icedc3kervme>
 
 
---5smhkbxpyhajfnuz
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--ntiwixuo22akqcub
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] dt-bindings: serial: Add bindings for
- nvidia,tegra264-utc
+Subject: Re: [PATCH 14/14] Documentation: Update the todo
 MIME-Version: 1.0
 
-On Wed, Jan 29, 2025 at 07:30:55AM +0000, Kartik Rajput wrote:
-> Thanks for reviewing the patch Krzysztof!
+On Wed, Jan 29, 2025 at 03:41:32PM +0100, Thierry Reding wrote:
+> On Wed, Jan 29, 2025 at 03:31:50PM +0100, Maxime Ripard wrote:
+> > Hi Thomas,
+> >=20
+> > On Wed, Jan 29, 2025 at 02:06:15PM +0100, Thomas Zimmermann wrote:
+> > > Am 28.01.25 um 23:29 schrieb Anusha Srivatsa:
+> > > > Remove the TODO now that this series addresses
+> > > > the changes needed.
+> > >=20
+> > > While your series is fine, this TODO item is unrelated. It's about va=
+rious
+> > > ancient fbdev drivers that do not reserve their memory regions correc=
+tly. So
+> > > please drop patch 14 form the series.
+> >=20
+> > Is it? Could we rephrase the entry then? I'm the one that suggested
+> > Anusha to work on this, and it's still not clear to me what it means
+> > exactly if it's not what she worked on :)
 >=20
-> On Tue, 2025-01-28 at 08:52 +0100, Krzysztof Kozlowski wrote:
-> > External email: Use caution opening links or attachments
-> >=20
-> >=20
-> > On Tue, Jan 28, 2025 at 12:16:32PM +0530, Kartik Rajput wrote:
-[...]
-> > > +=C2=A0 nvidia,utc-fifo-threshold:
-> > > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/types.yaml#/definitions/uint32
-> > > +=C2=A0=C2=A0=C2=A0 description:
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This property specifies the UTC TX an=
-d RX client FIFO
-> > > threshold in
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 terms of occupancy.
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This property should have the same va=
-lue as the burst size
-> > > (number
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 of characters read by the Tegra UTC h=
-ardware at a time from
-> > > each
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 client) which is configured by the bo=
-otloader.
-> >=20
-> > Title says this is a client, so quite confusing. Anyway, why is this
-> > board specific?
->=20
-> The client FIFO threshold should match the burst size configured in the
-> UTC controller by bootloader. This value could change depending on what
-> bootloader has programmed. Hence, this is moved to the device-tree.
->=20
-> >=20
-> > Also, missing constraints, missing units. Why common serial
-> > properties
-> > are not applicable?
-> >=20
->=20
-> I do see current-speed defined in serial-peripheral-props.yaml, that
-> can be used here. I also see "rx-threshold" and "tx-threshold"
-> properties defined in serial.yaml, maybe those can be utilized here. I
-> will update this in v2.
+> The text in the TODO sounds pretty clear to me.
 
-I suppose "rx-threshold" and "tx-threshold" could be used instead of the
-custom "nvidia,utc-fifo-threshold" property. It looks like the hardware
-has separate values for the threshold in both directions, so this would
-give us a more accurate description (though from the current state of
-affairs it looks like both are always going to be the same).
+The title is "Request memory regions in all drivers", and the first
+sentence is "Go through all drivers and add code to request the memory
+regions that the driver uses". It's definitely ambiguous if only fbdev
+drivers should be considered, even more so in the DRM documentation.
 
-I'm not so sure about "current-speed", though. There's no concept of
-speed for the UTC, right? It's effectively backed by a physical UART
-that will run at a certain speed, but given that it will multiplex data
-=66rom a variety of sources, "current-speed" will not be accurate in many
-cases.
+> It says that not all drivers request the memory that they are going to
+> use, and suggests to add those missing calls.
 
-Thierry
+Right.
 
---5smhkbxpyhajfnuz
+> But all of the drivers in this series already do that
+
+Nope.
+
+> and the only change here is to convert them to use some of the newer
+> helpers.
+
+For some, yes. For others, it actually adds request_mem_region.
+
+Maxime
+
+--ntiwixuo22akqcub
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmeaQLMACgkQ3SOs138+
-s6Emlg/+MkWZTsiltrG5WOU7FROD1BNtrTMJM1miRG4fNtVf7fSd6xOYPi6Xp+gn
-0fYzToqmpBRNMhQTdEUcmMz/3uKRWC/29BiyV44aBjpb3u/jj7d1DP/B8E/iTuZM
-2ifUzL5QnHVz93Ew4uDsrVxfVSsjzDzeEV148wkiO/liWVWW+rJw7cL+sINssmnN
-g3hYzXNOWA/9DzPdcxydHHe6lh+DNf4cn5cf4jaW7r9HPmXQpLDkmp8lSbqbJYkJ
-I0awauUXVXiZroUqmy+ubyEqFWYzvbFAvrEkyocgPVgheDOndWyauf/wKUsDvWKv
-uFzRO8ypLqYp880+J9vsBoo8MjNCWQayZ3PjwT5vF7wga41ZDKxPMOJNb//l/zw5
-0R2ru9glO+fuf019SEqnx6tVbIsK0++4CVOe9jtfhQPsrHPOGk7RYvoR7R8FYh0J
-l6sPLCuS0DZWeG5MvttwlO2iwS/luOhbNL7FZSRWKmaEiT0Sbnry81GdO4kz4WdK
-avOtQM6yOwJ7q1NRfwd2YnSTW7dIntYVrmajJ3iErL+HjVGKJXA9kHMLUybBvSXT
-CAu4y7GKBPucmZ1+jbRZpAWZz5Fyd0YNNFIugsOUq4yuMb+YvBH3SlRj/DcfMR3F
-ATH8aYHFke6IuNYBwg4ycUBti2oZTuIjojlisbz0bywwKtgldjY=
-=MV3R
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ5pJLAAKCRAnX84Zoj2+
+djXJAX42QJuv9ldBu+AhSOcaGHTmHduDMEY8V8Vl9SA1LQwXd1eGjPx3kK6JEffx
+SuWaI7oBgKL15NjVE6UaWuMksj7yMDft9JYcv/qLSoYx2TpAp/7FYElajo0cqE0S
+btsWT+helA==
+=K+FR
 -----END PGP SIGNATURE-----
 
---5smhkbxpyhajfnuz--
+--ntiwixuo22akqcub--
