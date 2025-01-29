@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AB41D90A5;
-	Wed, 29 Jan 2025 15:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DAA1487D5;
+	Wed, 29 Jan 2025 15:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738164806; cv=none; b=GHHav8XN3X1My8S2yhyivmB7y7x/FRUUbChiFtGgFoCKTI/wJnN7tz88ORMv9HcVhJm/WTgDvK8NsuF7k3kp4t/AvT3WCPmw22A/KRdtZaGHwaH4hU7CrxTrQOFP1UZYCiA1JPq1FNYem+7Oo7h1vxR3ooI8JnaPU6KkBOMsAJo=
+	t=1738165206; cv=none; b=HTGDisMxLGjFNBd+NryCZBiR7d8s708NUFei09s8AiaBn5IuE2ESOXet/oRkiWzNIhIXOQfRveht+sKzVhO9HPNDRgJaxvP2JV5WKD9mzrUSCmfON6HZ9IOB1q/J7ce4u8rhOdyxG9PrFbuZ+7l0HecFnm7/3umR4KtgoYPziJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738164806; c=relaxed/simple;
-	bh=MINsAlGP+IWemPuIKVuQIkc4AnIYXc8ewNTg0fTGbZk=;
+	s=arc-20240116; t=1738165206; c=relaxed/simple;
+	bh=H7Wno81VDmAC8LZxebVHqmFv78aV+GntC7UloBA6wQA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k9ARfZUiow78IynCNE/wlH8Dvy1+qDqmVlSlkBhTHOYmuREHms+b5lbCoKhjecyURuiZEcbiuYQbhIGVjd6F7ejFJKnFnv+lzXzlUDhppb47/f1WkCYBB04ouqqKThoVYMuLXfLI9ujoKCZE6IqneWj01xRA4c7yFLZzxoJ0OqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqrvmPa5; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=L7wvrLsZR44m6AIptBa9pV2ZSli4Wm0lUGWfkbcy86gm60CC6G61H/drZqSMUPWbmEV5I5CEunqGi/zt4PbaV30fHusyNS1d01ZLSeGEeArV5ndFeUv31tBSk5qKZVyNMSRtYBH+CCBpiHDcxSKZVOSSBwVGOsKuNBXuDiDxOPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blVJU1tB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqrvmPa5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8610C4CED1;
-	Wed, 29 Jan 2025 15:33:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blVJU1tB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B54A4C4CED3;
+	Wed, 29 Jan 2025 15:40:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738164806;
-	bh=MINsAlGP+IWemPuIKVuQIkc4AnIYXc8ewNTg0fTGbZk=;
+	s=k20201202; t=1738165205;
+	bh=H7Wno81VDmAC8LZxebVHqmFv78aV+GntC7UloBA6wQA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tqrvmPa5UhekDfsy+cPdeHlTD9eEK6B5/Kuz61v80rcNV7C5be85yrZ3LkZThJuqZ
-	 REhX4Sx6D+sYCmlPMDzeLzuams0lpiG6AfMG21NglJQMD4qblG2xuEBx1Q3hernB8w
-	 eG3UNI53K925jPmHC4QVjBlPQH7d815/egQX0aBgMGqoIsA5BruQ9KbbuqGxk/zAY2
-	 zcTOw7JSTxKnnmHMk/4f7gn6RdZGjntB1ogpqPG4kBR27Hc1KH7qcmlVtke7DwPHfe
-	 BUaaDWTH3JAPzWVYwfALZJW/P8WjAl3TbOMHbarnsPcyJAtx7JESkUJtZKpw2N+Xz4
-	 Bl94cgjlVNDEQ==
-Date: Wed, 29 Jan 2025 16:33:22 +0100
+	b=blVJU1tBuGlKF4p47SaFusm9eG5WZSgkALpUADxFuWuQiIFr9qF7DNpOhnbEUeXbs
+	 7viGrnwFOcJSwLPYI+Ehdw7eY23dv9mEQ7o9fqlXjrbnP3pst1omLXvrGlE1aBm30m
+	 Bi7pbYb1UPpMvMHUuyONufYRLOO7ZVEBsAkaSFoyED0QRRyozXtecJBokIiLtaVWOO
+	 q0djJLUSg4eE2yATE1o5zFnBrTEQd2LiyidKL5wQWTiQ5Taf9QVxZKqyI4HsxEX9wi
+	 K7GNZwBmVTPWfpazFvFm2ldBBFkDsVN11cDjiMvXt+chOhLgfReDoepEnSHIosPwoR
+	 O1uHFNJcIFiaA==
+Date: Wed, 29 Jan 2025 16:40:01 +0100
 From: Maxime Ripard <mripard@kernel.org>
 To: Anusha Srivatsa <asrivats@redhat.com>
 Cc: Joel Stanley <joel@jms.id.au>, 
@@ -57,11 +57,11 @@ Cc: Joel Stanley <joel@jms.id.au>,
 	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
 	linux-amlogic@lists.infradead.org, imx@lists.linux.dev, linux-rockchip@lists.infradead.org, 
 	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 03/14] drm/hisilicon: move to
+Subject: Re: [PATCH 06/14] drm/mxsfb: move to
  devm_platform_ioremap_resource() usage
-Message-ID: <6ccprzvnxkrqphxrsfp5gofzkicqyibjpveniup7wpra7p2tg2@x5tz45kit2oc>
+Message-ID: <ivwhzbasvxnnnzoqpqd6w24d6wma6pufcrc6jl7b6gsyzrnup2@r36hiijgac7m>
 References: <20250128-cocci-memory-api-v1-0-0d1609a29587@redhat.com>
- <20250128-cocci-memory-api-v1-3-0d1609a29587@redhat.com>
+ <20250128-cocci-memory-api-v1-6-0d1609a29587@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -69,20 +69,20 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="dupye724qr742yg3"
+	protocol="application/pgp-signature"; boundary="j6fxajocgelt3kwa"
 Content-Disposition: inline
-In-Reply-To: <20250128-cocci-memory-api-v1-3-0d1609a29587@redhat.com>
+In-Reply-To: <20250128-cocci-memory-api-v1-6-0d1609a29587@redhat.com>
 
 
---dupye724qr742yg3
+--j6fxajocgelt3kwa
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 03/14] drm/hisilicon: move to
+Subject: Re: [PATCH 06/14] drm/mxsfb: move to
  devm_platform_ioremap_resource() usage
 MIME-Version: 1.0
 
-On Tue, Jan 28, 2025 at 05:29:27PM -0500, Anusha Srivatsa wrote:
+On Tue, Jan 28, 2025 at 05:29:30PM -0500, Anusha Srivatsa wrote:
 > Replace platform_get_resource + devm_ioremap_resource
 > with just devm_platform_ioremap_resource()
 >=20
@@ -98,29 +98,24 @@ On Tue, Jan 28, 2025 at 05:29:27PM -0500, Anusha Srivatsa wrote:
 > -ioremap_res =3D devm_ioremap_resource(...);
 > +ioremap_res =3D devm_platform_ioremap_resource(pdev,0);
 >=20
-> Cc: Xinliang Liu <xinliang.liu@linaro.org>
-> Cc: Tian Tao <tiantao6@hisilicon.com>
-> Cc: Xinwei Kong <kong.kongxinwei@hisilicon.com>
-> Cc: Sumit Semwal <sumit.semwal@linaro.org>
-> Cc: Yongqin Liu <yongqin.liu@linaro.org>
-> Cc: John Stultz <jstultz@google.com>
->=20
+> Cc: Marek Vasut <marex@denx.de>
+> Cc: Stefan Agner <stefan@agner.ch>
 > Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
 Maxime
 
---dupye724qr742yg3
+--j6fxajocgelt3kwa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ5pKQgAKCRAnX84Zoj2+
-dgnAAYDocV8Hi1jItqly1rX3RgJxBvbHB7dRM9x+ADwfWacUO02HGMnqwmBc16Bx
-dkudzNMBf01rR/o3BCIIpg5xa99y2kiswp8ppBoSmPORAmV5OyaRnLWfOw8PehtB
-NryfqyN45g==
-=XqRS
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ5pL0QAKCRAnX84Zoj2+
+dpu8AX92mKVtYr4NesUkaNaAZLgSW9h3CZMfohWW2Hi3OHXPAvC1LmJnp0Zowbq8
+4FFBL/wBf2VL8YqmcT3T9+XhphtMFWv/+85mR4/YE14rKn4brg9xZxj2nw0jIWJ5
+ZU3psZFZbg==
+=rMo6
 -----END PGP SIGNATURE-----
 
---dupye724qr742yg3--
+--j6fxajocgelt3kwa--
