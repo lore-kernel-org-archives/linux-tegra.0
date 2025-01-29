@@ -1,121 +1,217 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9E21B4257;
-	Wed, 29 Jan 2025 15:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254C01B040B
+	for <linux-tegra@vger.kernel.org>; Wed, 29 Jan 2025 15:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738165391; cv=none; b=AvULQ3r78WyflSvmvQe+k2EOYgeHn6muyaNDgwRiIJ6y1LK/Wl9TcLFhV2vd9omMOqNilDsCf5yT9B1mSWrLRexcfOZ/AD3FkOEejz5+puXX8MBeroxNbfnShZaRMMq45PkqenGVT4FcFMSdj7jxUoJPI7EUiaBgfnYgZKgAU1M=
+	t=1738165435; cv=none; b=uK2Po2FXLri3/Mk+C4d8TNHnqHqQGkHxh1dQVo0L2MKOgflLuuEkm0YnQR7ha7nKk4sB//nYFn1QXE8SMBDMzxW2ehH0Ew/CHBwnXRaXGIkYN5ZoFCKo5ajaoSEBC6VfrSMTB1HhZRNJYy3ysfRbuBeT6QoD7MEUxJuotfCAvZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738165391; c=relaxed/simple;
-	bh=L+LdrRhCjvS0JAqpjHmxZqRSlO8lZQPof0rDUZpJ/3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D3b0QztoCwZ+ri7m5/wse1EM7NuAEwrFBeL6+vwAUJLittl+SWWnKyIqPKphPeNLagwd385JSJEtSBzcsVxUq/fPXxDqtzTsYNqHsY5sACKb7mQHZBnqGi65vFVmyWH6LcMq4wIaeplUY85qXEIWmBdUiEAMugF6O1MJGxN9tvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOVdq/fw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738165435; c=relaxed/simple;
+	bh=qg3GvwkSQaINnDplbY9Jxv9EAKxWtjMkn+E02u+EVuA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pktVj3hMIzT5/f8zyOyfIrTZqvezYfJyCCcUwhbEfp4nb7todKetBiecyD/8kZZfKzsvBptR4BvRxkVEIaZ4ceWVXFZaCAYf1qNEp/WoWZg2YztlwT7Jyk8+s5wNrXZxnOLXiE4N7IEsVpTp3Lzv9nqV0SZRHJxJEXZzYC3BW4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UBX1lpMK; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOVdq/fw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A633AC4CED1;
-	Wed, 29 Jan 2025 15:43:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738165390;
-	bh=L+LdrRhCjvS0JAqpjHmxZqRSlO8lZQPof0rDUZpJ/3g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cOVdq/fwIMuFmCG3dwznLhjpCXSjCANL10wAYwaWtJIqzzA5mYbhK5QXNL48E4mi6
-	 ca1pkO14kl5vJsyaC/DtiTS9M8ewjKsUWc2GJpDfGb4Ul4UiSENKBQNvj616FBNMqY
-	 RwN4e+O912JSLA6CvrCegVAuCXw4Oc3RhvRPfEvBRxBi7kByhe6Eq5WNpNqeAeMnZG
-	 4nqkcCE09DCnEoPKrf28SvSbU9+JgWPzV3b2h3lXSUatcrpZY9lftsVXMKdf3XJ/Eo
-	 Ri9n7RQZWmg2dISyJgTqgLaet+A8KhsBhZYFQFH5xKl7UEb1qDkjaGvkxV3MCNL2Os
-	 hUzzX2L93dmCA==
-Date: Wed, 29 Jan 2025 16:43:07 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Joel Stanley <joel@jms.id.au>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Stefan Agner <stefan@agner.ch>, 
-	Alison Wang <alison.wang@nxp.com>, Xinliang Liu <xinliang.liu@linaro.org>, 
-	Tian Tao <tiantao6@hisilicon.com>, Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, 
-	John Stultz <jstultz@google.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Alexey Brodkin <abrodkin@synopsys.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jonathan Corbet <corbet@lwn.net>, linux-aspeed@lists.ozlabs.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-amlogic@lists.infradead.org, imx@lists.linux.dev, linux-rockchip@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 11/14] drm/tegra: move to
- devm_platform_ioremap_resource() usage
-Message-ID: <gebnr7fqi4vjf7ah65kbegio3kegvywtwpeqg2nmrbyvr75cd5@gtc3q2fqbmmk>
-References: <20250128-cocci-memory-api-v1-0-0d1609a29587@redhat.com>
- <20250128-cocci-memory-api-v1-11-0d1609a29587@redhat.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UBX1lpMK"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43626213fffso6048695e9.1
+        for <linux-tegra@vger.kernel.org>; Wed, 29 Jan 2025 07:43:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1738165430; x=1738770230; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hPHIr1AdUQXL4S8PLOw7faEqsccJFgDRWTAC+UQvuk0=;
+        b=UBX1lpMK95dcGcyWpaE8//OpfKmXtVX2+2oarTYW6VNywO57OguXIVJsjRwlf/fZVL
+         ZrKcGr5/HT0gM3emRYX8SgtV5WiyQzfZY+3yDLHZl5kaLLioWZT+ywfNvnjJ2FgjgUs4
+         uB3x4iHO9d4vPU/mFcq5+k/RBOuL7oYgi88IJH91AY9e7EMPH1FkqlpdX+E56WFdQRP8
+         +R40W62RkuCx5EhGP2v4Oy6xmpBwmuVCPcuusawX/5WFlhWjv12wuJnN0AHBtJUQcny4
+         xGu5ZL6ZY9LDQ+zal9iZw/WmAt3DE6UI7UIDT7u82VhrnW9c5aJ8Thw05wiUoIGQFprO
+         WxJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738165430; x=1738770230;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hPHIr1AdUQXL4S8PLOw7faEqsccJFgDRWTAC+UQvuk0=;
+        b=pxgnMVWrcdagBFmCBlWjeq470M4kCYB1tqGJz5yNOZ194/Mb87aSbMwkUfmMUdkn4z
+         1gx0YmOerqVAmEPmXMfBXsYVaG20xw2JnWAYCqERfbBCsaF2o7gwe2NJnfUrtLXlHC1X
+         jVA7k3xmBQoFw1u8mYnM53f4ZjybidZliFsMt5wmodmR6ki5UuWRpWHOex64jSm5+i9P
+         4rf1PM34onnjnXsSNr6ueC973iVa6O+2zavzX4IM85kCpdUI/m28XMd81U3gUB12ij86
+         pjA4Ohge19LA7VRyAvGJcFnIudXrP9so7bjLI0E6BoR1aZpx5RVAfC+TRPgGFd6tD+oP
+         LMzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWQvsL/Iku5AZEr1f5q+JQz5u1Z+n8pr+zZXZaQl769xijm5JsVXSTbr0t/i1lPLdbmNKMAN71TsOuPw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqgYrBpt0qnAkInkhOo8O7I6c3Rtw+wNy1+0qXJ+ENNzxV4QDj
+	hXwnaRH0KAp9Bvp6Mj3zD6LuaSAXUskRYq1O5jj4cOcjecXavj0AlE9K2EG9TXU=
+X-Gm-Gg: ASbGncuw+sV980UANL2FeYjJUyBRKeLbrsynA2UY8NEumZJS8an9PrI9jdSkfKx6BFP
+	AmrDxvQyOGm1/4FefM3g8w+sacou1tn3XE6QiXlRQ0+6/fyCpN1VSAFIJy5q3qiZz7DxHhNTMSk
+	06/FhRfs3OrvWyMoC6+f9zBWPiSjPKOXLKqjJvfdts2qFMROvfcgW4/6U6023E40F+/cb5EekU7
+	Olzqkr2C2t7TU3Qe6VzqIUGnp0EGSUWZ2IUOHiyPn+3ggv/mRUHJWLb9VTEUOUxO+/+S4XYtPLA
+	FvIO2PYEkVY0yTYik1H+Kx9Y1v327SSTQUkxop1rkb5DSc1/CvKu/eadlg211Oskie22
+X-Google-Smtp-Source: AGHT+IG+AzLiMQGtSlFoPMZbCjyIVlZSwQQSJOvatG/rHgk08wCvQOFvIicCJd/sEzgRT/WR6JlERw==
+X-Received: by 2002:a05:6000:1f81:b0:38a:a019:30dd with SMTP id ffacd0b85a97d-38c50fe7e90mr3136677f8f.8.1738165430293;
+        Wed, 29 Jan 2025 07:43:50 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:b25e:a614:863b:566e? ([2a01:e0a:982:cbb0:b25e:a614:863b:566e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c2a188689sm17390387f8f.48.2025.01.29.07.43.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jan 2025 07:43:49 -0800 (PST)
+Message-ID: <c7c2f630-ee9d-4427-adc4-0d982f9e7593@linaro.org>
+Date: Wed, 29 Jan 2025 16:43:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="p2f63gspytwxh3p2"
-Content-Disposition: inline
-In-Reply-To: <20250128-cocci-memory-api-v1-11-0d1609a29587@redhat.com>
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 05/14] drm/meson: move to devm_platform_ioremap_resource()
+ usage
+To: Maxime Ripard <mripard@kernel.org>, Anusha Srivatsa <asrivats@redhat.com>
+Cc: Joel Stanley <joel@jms.id.au>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Stefan Agner <stefan@agner.ch>,
+ Alison Wang <alison.wang@nxp.com>, Xinliang Liu <xinliang.liu@linaro.org>,
+ Tian Tao <tiantao6@hisilicon.com>,
+ Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu
+ <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>, Alain Volmat
+ <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
+ Yannick Fertre <yannick.fertre@foss.st.com>,
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+ Philippe Cornu <philippe.cornu@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Alexey Brodkin <abrodkin@synopsys.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Jonathan Corbet <corbet@lwn.net>, linux-aspeed@lists.ozlabs.org,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, imx@lists.linux.dev,
+ linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250128-cocci-memory-api-v1-0-0d1609a29587@redhat.com>
+ <20250128-cocci-memory-api-v1-5-0d1609a29587@redhat.com>
+ <ieknc4dm5ntnqaqz6zdlinphocm2omsn4ll34vlbrohqcddl43@kg35irldnkuw>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <ieknc4dm5ntnqaqz6zdlinphocm2omsn4ll34vlbrohqcddl43@kg35irldnkuw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 29/01/2025 16:40, Maxime Ripard wrote:
+> On Tue, Jan 28, 2025 at 05:29:29PM -0500, Anusha Srivatsa wrote:
+>> Replace platform_get_resource_byname + devm_ioremap
+>> with just devm_platform_ioremap_resource()
+>>
+>> Used Coccinelle to do this change. SmPl patch:
+>> @rule_3@
+>> identifier res;
+>> expression ioremap;
+>> identifier pdev;
+>> constant mem;
+>> expression name;
+>> @@
+>> -struct resource *res;
+>> ...
+>> -res = platform_get_resource_byname(pdev,mem,name);
+>> <...
+>> -if (!res) {
+>> -...
+>> -}
+>> ...>
+>> -ioremap = devm_ioremap(...);
+>> +ioremap = devm_platform_ioremap_resource_byname(pdev,name);
+>>
+>> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+>> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+>> ---
+>>   drivers/gpu/drm/meson/meson_drv.c | 9 +--------
+>>   1 file changed, 1 insertion(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+>> index 81d2ee37e7732dca89d02347b9c972300b38771a..6c805805b7a7f675f8bb03944318972eb4df864e 100644
+>> --- a/drivers/gpu/drm/meson/meson_drv.c
+>> +++ b/drivers/gpu/drm/meson/meson_drv.c
+>> @@ -184,7 +184,6 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+>>   	const struct meson_drm_match_data *match;
+>>   	struct meson_drm *priv;
+>>   	struct drm_device *drm;
+>> -	struct resource *res;
+>>   	void __iomem *regs;
+>>   	int ret, i;
+>>   
+>> @@ -220,14 +219,8 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+>>   	}
+>>   
+>>   	priv->io_base = regs;
+>> -
+>> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
+>> -	if (!res) {
+>> -		ret = -EINVAL;
+>> -		goto free_drm;
+>> -	}
+>>   	/* Simply ioremap since it may be a shared register zone */
+>> -	regs = devm_ioremap(dev, res->start, resource_size(res));
+>> +	regs = devm_platform_ioremap_resource_byname(pdev, "hhi");
+> 
+> Given the comment, this one should probably be skipped.
+> 
+Yes please skip this one.
 
---p2f63gspytwxh3p2
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 11/14] drm/tegra: move to
- devm_platform_ioremap_resource() usage
-MIME-Version: 1.0
+Thanks,
+Neil
 
-On Tue, Jan 28, 2025 at 05:29:35PM -0500, Anusha Srivatsa wrote:
-> Replace platform_get_resource + devm_ioremap_resource
-> with just devm_platform_ioremap_resource()
->=20
-> Used Coccinelle to do this change. SmPl patch:
-> @rule_1@
-> identifier res;
-> expression ioremap_res;
-> identifier pdev;
-> @@
-> -struct resource *res;
-> ...
-> -res =3D platform_get_resource(pdev,...);
-> -ioremap_res =3D devm_ioremap_resource(...);
-> +ioremap_res =3D devm_platform_ioremap_resource(pdev,0);
->=20
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Mikko Perttunen <mperttunen@nvidia.com>
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> Maxime
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-
-Maxime
-
---p2f63gspytwxh3p2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ5pMigAKCRAnX84Zoj2+
-dqzQAYDuiHmk1X6f2Np/A3NbMjhmQEj5ZkcyY0qnwfeFEeNM59hx5iZPW1yTPtKm
-V2IiMl0BgJWdgMjq9Y2WXbz7PRIN/h41jfy/OtQ0u89olAAjJ/Sb4dplYcM9Y/n/
-DRpSqT5XcQ==
-=rZxA
------END PGP SIGNATURE-----
-
---p2f63gspytwxh3p2--
