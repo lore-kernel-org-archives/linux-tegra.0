@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B30D1DDA17;
-	Wed, 29 Jan 2025 15:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E601DD0C7;
+	Wed, 29 Jan 2025 15:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738165245; cv=none; b=VbVwnv/mEwiORJqSDpxOcmVT9VQYD1HinEVqlyV0w4SrYp7CeYwIUErgP1G+x90Zs7b6FfT5Ru67+nc0/uFT+CXB/36VILuUpJvSL1jfHpWbvXXnkjr9R2nDdETGlDotxSComRO8mrprpuLxqJTvEdZRqQjpV7RCriqLi0xszaU=
+	t=1738165309; cv=none; b=lRXLvlQbGgvBGM1lraKvGflPLPwJzxD/g4W4GAAkSJsfUiBXt6jIiOr3nsK7pSfZVJvK25ZT4Y6FNwqW5ONO3mCUfp1wfZT+BqgUmP7YLfaEs9vLSbZC/a2QXmbpLtxaNrlJVv2wjbvsPgl4odc9grjjOgknDwl/PC7VPtkegck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738165245; c=relaxed/simple;
-	bh=rtnZjFO/UfiH1j0rluxhcjeVmz12h1zDXZJJ3+0MvRc=;
+	s=arc-20240116; t=1738165309; c=relaxed/simple;
+	bh=x9FQ10F4P9ene0avOkX6SJRwE4duJpiylNTvH2FHki0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BRE6DdIcQ8KgrSLPDAKhNe+TQLSXR1f1JaHczisMpbNUGR7aDSIHjgtUmCjPI8lZyDVecReiAtou0s7jyKp0owqEmh3ARTXKFYaUvaZPgy9ZC/gQwvIJ/hzJiLL/Q9sfNQGrhXPA94bF8b5/PJeyj7irKyXGhkmgjNSWXXbElkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZM+cZRti; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObI2o/Hg2h3GJ0IafNhRgb4yamXlx/9kSt20zQRQi8cUeqfq7N5+05SCsKMyED5in2UZ8uYi+7j45znQA6J1SPMuabmyKrDOU5FKBkAKv9gxa7bDSnOgAnTprj2tOctL+9i8NUjyIiTCMzGCS0Hic25SqPnXCileEOfS7EOXSPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Doq+/rNz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZM+cZRti"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 770ABC4CED3;
-	Wed, 29 Jan 2025 15:40:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Doq+/rNz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B0D5C4CED1;
+	Wed, 29 Jan 2025 15:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738165245;
-	bh=rtnZjFO/UfiH1j0rluxhcjeVmz12h1zDXZJJ3+0MvRc=;
+	s=k20201202; t=1738165308;
+	bh=x9FQ10F4P9ene0avOkX6SJRwE4duJpiylNTvH2FHki0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZM+cZRtiXnmi0hHc4n40eYcHanFML/aIc6MX0XZhPdogHoKUulxVjPXm6RULnPVkC
-	 iX8Qospo0x/ND4+0f525c7Zu8xxc7Daz/PjoUL8HDbN4/QMLPeR65aHCueaEp1uWIU
-	 DurPDhK4SIaKCpip8GwEy8LkumP3/EdZeVc0QSWZOObMvQAc45nvMv2WpqBGHp6RxU
-	 EYpA95fiVbOw32agYO2Sfqvb3U5f/ACokeGKatfzJ+LRaXLQdUYJ/gCmPWhPOAFOAp
-	 Zr7OInp3vF/BKz0JLCt0vxcL0M2B+OHTkOofX3sauEdMMjc3170klpqg28aRYRHFvC
-	 +wc9LrlSw92yQ==
-Date: Wed, 29 Jan 2025 16:40:41 +0100
+	b=Doq+/rNzHg+crI9ZcWtKePHsQc6DCfqlblaynmX5rkNKoSR8aoRtfLCo8hlplQT8S
+	 SszLnZ7/buZh6jfPwyw7MFwtzbCqliYr1x8R26ffuKILIzG4Dcrlo2vauyEx+ZCa7Q
+	 fGMA+W95aCCNzgyEj0Sl5Hjc6GbfuxBPEg/1VR+9jrU8RajCzwLijwt9d05XfTVIdU
+	 pXcYBPgl+if4aDVy8x6uvii+g9qXvXmGsdU6tc8eW1deajAWLklzKK93vVc7zEKfTM
+	 LfkYLXOkbdJxFMvmKe1KH7TkEg/csOuMkrEGGxXdWVtbhKJsIm3GZwQaznV1b1oyxx
+	 udzvX+QKPoOSw==
+Date: Wed, 29 Jan 2025 16:41:45 +0100
 From: Maxime Ripard <mripard@kernel.org>
 To: Anusha Srivatsa <asrivats@redhat.com>
 Cc: Joel Stanley <joel@jms.id.au>, 
@@ -57,11 +57,11 @@ Cc: Joel Stanley <joel@jms.id.au>,
 	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
 	linux-amlogic@lists.infradead.org, imx@lists.linux.dev, linux-rockchip@lists.infradead.org, 
 	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 05/14] drm/meson: move to
+Subject: Re: [PATCH 07/14] drm/rockchip: move to
  devm_platform_ioremap_resource() usage
-Message-ID: <ieknc4dm5ntnqaqz6zdlinphocm2omsn4ll34vlbrohqcddl43@kg35irldnkuw>
+Message-ID: <fkck6okku766yn4bpfbiykpvvsj5k7tgebko7pvybon3rctn7w@gkl5z2o3bcf2>
 References: <20250128-cocci-memory-api-v1-0-0d1609a29587@redhat.com>
- <20250128-cocci-memory-api-v1-5-0d1609a29587@redhat.com>
+ <20250128-cocci-memory-api-v1-7-0d1609a29587@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -69,92 +69,85 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="wmuf2lutfjid5aqu"
+	protocol="application/pgp-signature"; boundary="n2rj4zmziwj6lmg7"
 Content-Disposition: inline
-In-Reply-To: <20250128-cocci-memory-api-v1-5-0d1609a29587@redhat.com>
+In-Reply-To: <20250128-cocci-memory-api-v1-7-0d1609a29587@redhat.com>
 
 
---wmuf2lutfjid5aqu
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+--n2rj4zmziwj6lmg7
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 05/14] drm/meson: move to
+Subject: Re: [PATCH 07/14] drm/rockchip: move to
  devm_platform_ioremap_resource() usage
 MIME-Version: 1.0
 
-On Tue, Jan 28, 2025 at 05:29:29PM -0500, Anusha Srivatsa wrote:
-> Replace platform_get_resource_byname + devm_ioremap
+On Tue, Jan 28, 2025 at 05:29:31PM -0500, Anusha Srivatsa wrote:
+> Replace platform_get_resource + devm_ioremap_resource
 > with just devm_platform_ioremap_resource()
 >=20
 > Used Coccinelle to do this change. SmPl patch:
-> @rule_3@
+> @rule_1@
 > identifier res;
-> expression ioremap;
+> expression ioremap_res;
 > identifier pdev;
-> constant mem;
-> expression name;
 > @@
 > -struct resource *res;
 > ...
-> -res =3D platform_get_resource_byname(pdev,mem,name);
-> <...
-> -if (!res) {
-> -...
-> -}
-> ...>
-> -ioremap =3D devm_ioremap(...);
-> +ioremap =3D devm_platform_ioremap_resource_byname(pdev,name);
+> -res =3D platform_get_resource(pdev,...);
+> -ioremap_res =3D devm_ioremap_resource(...);
+> +ioremap_res =3D devm_platform_ioremap_resource(pdev,0);
 >=20
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Cc: Sandy Huang <hjc@rock-chips.com>
+> Cc: Heiko St=FCbner <heiko@sntech.de>
+> Cc: Andy Yan <andy.yan@rock-chips.com>
 > Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 > ---
->  drivers/gpu/drm/meson/meson_drv.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 >=20
-> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/me=
-son_drv.c
-> index 81d2ee37e7732dca89d02347b9c972300b38771a..6c805805b7a7f675f8bb03944=
-318972eb4df864e 100644
-> --- a/drivers/gpu/drm/meson/meson_drv.c
-> +++ b/drivers/gpu/drm/meson/meson_drv.c
-> @@ -184,7 +184,6 @@ static int meson_drv_bind_master(struct device *dev, =
-bool has_components)
->  	const struct meson_drm_match_data *match;
->  	struct meson_drm *priv;
->  	struct drm_device *drm;
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/dr=
+m/rockchip/rockchip_drm_vop.c
+> index 57747f1cff26e444ef3569983d6a7f7922f03ff7..4c639f7c868907fc35ce22f2e=
+f7e281ad85c2d9e 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -2187,7 +2187,6 @@ static int vop_bind(struct device *dev, struct devi=
+ce *master, void *data)
+>  	const struct vop_data *vop_data;
+>  	struct drm_device *drm_dev =3D data;
+>  	struct vop *vop;
 > -	struct resource *res;
->  	void __iomem *regs;
->  	int ret, i;
+>  	int ret, irq;
 > =20
-> @@ -220,14 +219,8 @@ static int meson_drv_bind_master(struct device *dev,=
- bool has_components)
->  	}
+>  	vop_data =3D of_device_get_match_data(dev);
+> @@ -2207,8 +2206,7 @@ static int vop_bind(struct device *dev, struct devi=
+ce *master, void *data)
 > =20
->  	priv->io_base =3D regs;
-> -
-> -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "hhi");
-> -	if (!res) {
-> -		ret =3D -EINVAL;
-> -		goto free_drm;
-> -	}
->  	/* Simply ioremap since it may be a shared register zone */
-> -	regs =3D devm_ioremap(dev, res->start, resource_size(res));
-> +	regs =3D devm_platform_ioremap_resource_byname(pdev, "hhi");
+>  	vop_win_init(vop);
+> =20
+> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	vop->regs =3D devm_ioremap_resource(dev, res);
+> +	vop->regs =3D devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(vop->regs))
+>  		return PTR_ERR(vop->regs);
+>  	vop->len =3D resource_size(res);
 
-Given the comment, this one should probably be skipped.
+This one will result in a compile failure too, you removed res but it's
+still used on the last line.
 
 Maxime
 
---wmuf2lutfjid5aqu
+--n2rj4zmziwj6lmg7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ5pL+QAKCRAnX84Zoj2+
-dpWQAYDuVxaraj2eKojNueyW+NChDy3YtnstWS0E/hE4JNegqss7vQXSWOthuO4R
-73qWnq0BfRFtK3i2Os+sXuDOS+LkWHx5AsRtEcQCCeX0wT3sQVfWN3Edu+Ky/NDa
-3DmrzReHUw==
-=Tstn
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ5pMOAAKCRAnX84Zoj2+
+dm9sAX95MxW28qLtlCcTTmdQkMrfL23sMFhwLQtAuxzLU6cNJTr4Laq62TyMz0tE
+fkKBU/cBgOoSJ8YDN8x0kWdfzBz+S1fj4kdxPGLwpdkIMLxH7u1CgpGzqotO9jni
+7iTsYM6fhw==
+=I0Jf
 -----END PGP SIGNATURE-----
 
---wmuf2lutfjid5aqu--
+--n2rj4zmziwj6lmg7--
