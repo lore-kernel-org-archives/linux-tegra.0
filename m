@@ -1,181 +1,182 @@
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ACB42049
-	for <linux-tegra@vger.kernel.org>; Wed, 29 Jan 2025 13:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF5D26289
+	for <linux-tegra@vger.kernel.org>; Wed, 29 Jan 2025 13:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738156697; cv=none; b=pS4EkmSpwEF1UFIG3g1OpkyY67dtgZWGRdL57yxSr1Jvfm2jdRJvpJaNyYYw/26jdkJzbUNr5nhZ2Xi1OkFZOPSXK9nFkz0nvg3PZuu8RWJas/104fXWo8RyWhLLbil17+/Qv8QxxHF3glK5V90yp6lJsKCWRFIW5r48wXxSTJA=
+	t=1738157946; cv=none; b=IFCpip9GAxgdgsWeKr28fC6/KKYJ1LQ7vYbEbFCwbaEnrw+EGv54R+B3+IjH0mLY9Q5hboAO4Yxi2tqIHs1DnUeSh9rfiWRvN/YQYDLiTUdk6zqVBlJbz1Y6RfJwS8HgDckuAnsFF37KiCIODAaQEfTwhH7GdqZaeCi/0GSiIVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738156697; c=relaxed/simple;
-	bh=3XqX4J11YN9y8rkaksX0x+FoIXwM8FEnpGRK0+mZvaU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZMgrHsxZmz9tBjikkPuX6xuIkibttHxMtsKeXiWY/Jml0FBnX46rTVOgeE4EkslfZMboZlAqAurRDvgIBV3IvgKNfhJT1gFs2w2bcjEFo5vDtclkIn1xjeazeGhSYA8JC/AsR8x7GughnUstmzelLvZftekS1dLis5IJEVEcGz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=AWxO1NoZ; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+	s=arc-20240116; t=1738157946; c=relaxed/simple;
+	bh=RxH/qA/BgpYkjBVmBtOP+Wt33+Id7p5IBZ1sJh+PVe8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MkVYKm47AvBuh7Wn4Uw0iy4RsnZfAAvB79pYaJxf8+6+QchZWwBKPMSjn4R7QhaNVhg85kSuoXzkNIU9yhF6rn3yxuKVocw+G53+HfaoWCh87W3L1jI6WRXee/EGqh0rdwAG0RIdcLXbweEdw2cfIuZ5bU8mAL7A9gmrN1kH0W4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=LRbXARLx; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="AWxO1NoZ"
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30227c56b11so68519031fa.3
-        for <linux-tegra@vger.kernel.org>; Wed, 29 Jan 2025 05:18:14 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="LRbXARLx"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-436202dd730so48733335e9.2
+        for <linux-tegra@vger.kernel.org>; Wed, 29 Jan 2025 05:39:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1738156692; x=1738761492; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f+CHJ8n+1weOhv4NN8WEDPgNRoao7eEb7VxTBwhD7To=;
-        b=AWxO1NoZS0jzqahiSG5Odj3t/VHTDq2bVZN0ThSedY65WiPk6pbW8HOTfTDKq9KkJb
-         vgPtpkif6RpEdG2W9NQS9IA1YaBcp2G5gsbi7As/+ttSv+dRubUdFzkiEN7ziVsR61rs
-         iTws0Etu1IPQozkud4XSWsqNbuq5gG5hrx080fIiCUdGmTyB+hG0PFVJ3q2tQmWaimNc
-         Y72jNT8bZNjQwvn2zbC1cQCz4VFZ7ijHm0zKnE+sFc4ktPPpZT48t+LYW4VUQBmvvCF9
-         lo0AfqO2HiyHB5NpGVTNzsAKSXSaO7EJMlZL169dXNgTUGakQjOynlvvbRKlBMsIZWYE
-         r9JA==
+        d=ffwll.ch; s=google; t=1738157942; x=1738762742; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ekPyuSS82CPNI1Lh/E6IsIbzoEEGT2LSw6fRdzUam+8=;
+        b=LRbXARLxcVlSVLOIW9nPwxiGleXpTsHVUK1xrS0UwYak72R+r5JA7lmqK8UxnnQHw+
+         hjfkoSJN3yj16qLBqvfCG4JqRqP92QoaOZ3ZY+1vjEGDAPpILcv+DlIlstdU29B49j00
+         9/MvPxpeF0nk8EcLadAsFREGfVtX/6b+FsBDM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738156692; x=1738761492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f+CHJ8n+1weOhv4NN8WEDPgNRoao7eEb7VxTBwhD7To=;
-        b=U4d0VAaKuFyzWtgXYdU/ROpBPgSmtHnaWtv9xv3EXgw4l9tHo3AdYQg/PsGPvKKTn4
-         8kaSUSDi/VKdHSlrxzhtyMl7mI3o1zSrvrzcF3AAKdvtvOarHRYu5LRxxZbMHc9h1pU/
-         0xpAUk9obfSSmobNVFiu3xoaCdKKeRuQ1ahlPOWUyBOycK0UU32gbGS03Ev9QGSXqBmq
-         LHn1UHtZ4mE/KktDW3bNlhOPTuPHAO/luCWK0bVLGHdZY9fxCuQzcg/mNwDKfLhncJ9B
-         07BU8kKn2LtQ+8Jda+uDMFCnrRPdtvX6HSEzaR+raB0CYHW2nPsXqTgEz7q/Yzuj6COK
-         xNyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTnv5IF7XFf2F9bta6f5hdmCGOSFf4Wa8IxO0sKkcPOEt+tPyWL5tbx60TAXUFjCEPrbHl3a4Qq6Umpg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJoQXce0rnKQuyuDcSA0DlnJyPE4jKgOdPOupXtgiUfiYwb1sR
-	yZP49dpt93b8dypO4QTUsl3ntCUHnbxhHAkdgKkzpnxlt3Iq1phcy+6GNpKL9JZfx9lDzb1NwoC
-	QxHmlQcUBuQNMnbRTX8z0TgHISkywDyPnXiyTcw==
-X-Gm-Gg: ASbGncvYKGJUNh2lMrkWpGljd6lPfqV3KHrs2Re/qfhO5WY0AW0+XacuJasnPBvmIN8
-	OMOdKWMigtHv4HYSpRq6vLlPbFclkKwoMTqSjA81absQZ/9o0Cq5ldfbNj9l+z4bFu7H3Nee/ud
-	A51LTk8p9jmLxUgKRyY+3EcAW9xmCr
-X-Google-Smtp-Source: AGHT+IGFRC+m+r/a8Okn6oewxCN7IKGCsP32ORqURIUMiUOfm5o7kOj6AXMqnFWDbj2MV05dJpu5VXuc2FEJhvoxCWI=
-X-Received: by 2002:a2e:be9c:0:b0:307:2bc6:5eb4 with SMTP id
- 38308e7fff4ca-307968bfa7bmr8911111fa.3.1738156692452; Wed, 29 Jan 2025
- 05:18:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738157942; x=1738762742;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ekPyuSS82CPNI1Lh/E6IsIbzoEEGT2LSw6fRdzUam+8=;
+        b=tChY03fneetlbg91YookYqj48tH4c39Uo9DxYqRGmTYplq99q3GTFPoz/h0sXAcOOA
+         z9XtyFjwdkqnAIUIko5ZXsVIMpDzahmTUC5fAfMiT08MpB8Fef6CbVCicr5OhwTMSJRK
+         S77Fo5tUZTUoH+4R4U8OMflPsZKkbaNsKb/mB6lHMqJsBHupTujS+Q12WkT8OKYHHLOI
+         +m5152701XZaSX2WPbga5LUb2Y3MVg1J59PlDOGv9lBsHDrCsqq6lodYACt1wdxpbg4l
+         HLfB7EIgXysGfc3/4djxqWXsnBRwBN8bvDJo7uX1Cv9PChbFrNmIckFBdVsVcGA4sNaK
+         i2cA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1+VfDp/yscVJqGtGKcQMCQmBJx4hsiZCcrqMsIe/KZPpv6Drq+fOsOHALhlSiKF9+z1bIvqw9RLrfHQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoby/Q1uXvLwnMcR5iRRNY6IGbWms8R/LGwJP6wAkKcdg1J7BQ
+	Szc9SrdRzLu6YrvY6kRZKQIxL0MjbfVp5TlgxjjAvMEt372wn2l1ts22blttN4M=
+X-Gm-Gg: ASbGncvNo96jJJE3doqZfzfqRoTxwvIAeL6nNPf154F/F0vAm8Y2RjPWDRjR+Nrd5Wr
+	4G6UsppnEavcRR+9dTAqHOUpqmVPhm48ztMA0rDI/D/OMrI7mfz0+SCLs2z2W7D4Du9LUKtn2kZ
+	eDRa9+C6rDH9Qyx+jIETErkjhCQM1xAWpaN4+MQsjA2mm8e40Kl2o1A9K0ErEeTC0Q8cdC3afq7
+	l0tvIAoRmctB+9SDmrLi3IVpIgjakeMYkPI+OzXqy/T7ZkmPeUknvj27M+NsZ8zAGmbXhZc5D7C
+	0D44IDTgsEjm/xYQZhkOnN2fhq0=
+X-Google-Smtp-Source: AGHT+IFp40yYl/FrcEC18d1HA1Wbr1YBHRju+Twtn7vgv1BIenNhcb0w0RrYUn5K84MH3BCfQBYGmw==
+X-Received: by 2002:a05:600c:5486:b0:433:c76d:d57e with SMTP id 5b1f17b1804b1-438dc3a40d3mr30211795e9.5.1738157942387;
+        Wed, 29 Jan 2025 05:39:02 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438dcc263f0sm23501465e9.9.2025.01.29.05.39.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2025 05:39:01 -0800 (PST)
+Date: Wed, 29 Jan 2025 14:38:58 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com,
+	lyude@redhat.com, dakr@redhat.com, airlied@gmail.com,
+	simona@ffwll.ch, leon@kernel.org, jglisse@redhat.com,
+	akpm@linux-foundation.org, GalShalom@nvidia.com,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-mm@kvack.org, linux-tegra@vger.kernel.org
+Subject: Re: [RFC 1/5] mm/hmm: HMM API to enable P2P DMA for device private
+ pages
+Message-ID: <Z5ovcnX2zVoqdomA@phenom.ffwll.local>
+Mail-Followup-To: Jason Gunthorpe <jgg@ziepe.ca>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com,
+	lyude@redhat.com, dakr@redhat.com, airlied@gmail.com,
+	simona@ffwll.ch, leon@kernel.org, jglisse@redhat.com,
+	akpm@linux-foundation.org, GalShalom@nvidia.com,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-mm@kvack.org, linux-tegra@vger.kernel.org
+References: <20241201103659.420677-1-ymaman@nvidia.com>
+ <20241201103659.420677-2-ymaman@nvidia.com>
+ <7282ac68c47886caa2bc2a2813d41a04adf938e1.camel@linux.intel.com>
+ <20250128132034.GA1524382@ziepe.ca>
+ <de293a7e9b4c44eab8792b31a4605cc9e93b2bf5.camel@linux.intel.com>
+ <20250128151610.GC1524382@ziepe.ca>
+ <b78d32e13811ef1fa57b0535749c811f2afb4dcd.camel@linux.intel.com>
+ <20250128172123.GD1524382@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250128-cocci-memory-api-v1-0-0d1609a29587@redhat.com> <20250128-cocci-memory-api-v1-13-0d1609a29587@redhat.com>
-In-Reply-To: <20250128-cocci-memory-api-v1-13-0d1609a29587@redhat.com>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 29 Jan 2025 13:17:54 +0000
-X-Gm-Features: AWEUYZktkNT_EsHcnViFnfugP1naRJeQlMuaRyszOFwlglEWr7DXeU7KaxFISbw
-Message-ID: <CAPY8ntBvJpSFhOwqBPmiN59Z0EpienEm-=M-euHdQU8XLGgXUA@mail.gmail.com>
-Subject: Re: [PATCH 13/14] drm/vc4: move to devm_platform_ioremap_resource() usage
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Joel Stanley <joel@jms.id.au>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Stefan Agner <stefan@agner.ch>, 
-	Alison Wang <alison.wang@nxp.com>, Xinliang Liu <xinliang.liu@linaro.org>, 
-	Tian Tao <tiantao6@hisilicon.com>, Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, 
-	John Stultz <jstultz@google.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Marek Vasut <marex@denx.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, 
-	Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Philippe Cornu <philippe.cornu@foss.st.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Alexey Brodkin <abrodkin@synopsys.com>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org, 
-	imx@lists.linux.dev, linux-rockchip@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250128172123.GD1524382@ziepe.ca>
+X-Operating-System: Linux phenom 6.12.11-amd64 
 
-Hi Anusha
+On Tue, Jan 28, 2025 at 01:21:23PM -0400, Jason Gunthorpe wrote:
+> On Tue, Jan 28, 2025 at 05:32:23PM +0100, Thomas Hellström wrote:
+> > > This series supports three case:
+> > > 
+> > >  1) pgmap->owner == range->dev_private_owner
+> > >     This is "driver private fast interconnect" in this case HMM
+> > > should
+> > >     immediately return the page. The calling driver understands the
+> > >     private parts of the pgmap and computes the private interconnect
+> > >     address.
+> > > 
+> > >     This requires organizing your driver so that all private
+> > >     interconnect has the same pgmap->owner.
+> > 
+> > Yes, although that makes this map static, since pgmap->owner has to be
+> > set at pgmap creation time. and we were during initial discussions
+> > looking at something dynamic here. However I think we can probably do
+> > with a per-driver owner for now and get back if that's not sufficient.
+> 
+> The pgmap->owner doesn't *have* to fixed, certainly during early boot before
+> you hand out any page references it can be changed. I wouldn't be
+> surprised if this is useful to some requirements to build up the
+> private interconnect topology?
 
-On Tue, 28 Jan 2025 at 22:33, Anusha Srivatsa <asrivats@redhat.com> wrote:
->
-> Replace platform_get_resource_byname + devm_ioremap_resource
-> with just devm_platform_ioremap_resource()
->
-> Used Coccinelle to do this change. SmPl patch:
-> //rule s/(devm_)platform_get_resource_byname +
-> //(devm_)ioremap/devm_platform_ioremap_resource.
-> @rule_3@
-> identifier res;
-> expression ioremap;
-> identifier pdev;
-> constant mem;
-> expression name;
-> @@
-> -struct resource *res;
-> ...
-> -res =3D platform_get_resource_byname(pdev,mem,name);
-> <...
-> -if (!res) {
-> -...
-> -}
-> ...>
-> -ioremap =3D devm_ioremap(...);
-> +ioremap =3D devm_platform_ioremap_resource_byname(pdev,name);
->
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Cc: "Ma=C3=ADra Canal" <mcanal@igalia.com>
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> ---
->  drivers/gpu/drm/vc4/vc4_hdmi.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdm=
-i.c
-> index 47d9ada98430634cfd8c1e21c2a4d00d501bab7e..e22733f8159aa4b247a915e24=
-a236f620bae932c 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> @@ -2951,15 +2951,10 @@ static int vc5_hdmi_init_resources(struct drm_dev=
-ice *drm,
->  {
->         struct platform_device *pdev =3D vc4_hdmi->pdev;
->         struct device *dev =3D &pdev->dev;
-> -       struct resource *res;
->         int ret;
->
-> -       res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "hdmi"=
-);
-> -       if (!res)
-> -               return -ENODEV;
-> -
-> -       vc4_hdmi->hdmicore_regs =3D devm_ioremap(dev, res->start,
-> -                                              resource_size(res));
-> +       vc4_hdmi->hdmicore_regs =3D devm_platform_ioremap_resource_byname=
-(pdev,
-> +                                                                       "=
-hdmi");
+The trouble I'm seeing is device probe and the fundemantal issue that you
+never know when you're done. And so if we entirely rely on pgmap->owner to
+figure out the driver private interconnect topology, that's going to be
+messy. That's why I'm also leaning towards both comparing owners and
+having an additional check whether the interconnect is actually there or
+not yet.
 
-Whilst I totally agree with this change, why was only one of the 8
-instances of this pattern within this function updated? Is that a
-limitation in your script?
-https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/vc4/vc4_hdmi.=
-c#L2957-L3020
+You can fake that by doing these checks after hmm_range_fault returned,
+and if you get a bunch of unsuitable pages, toss it back to
+hmm_range_fault asking for an unconditional migration to system memory for
+those. But that's kinda not great and I think goes at least against the
+spirit of how you want to handle pci p2p in step 2 below?
 
-  Dave
+Cheers, Sima
 
->         if (!vc4_hdmi->hdmicore_regs)
->                 return -ENOMEM;
->
->
-> --
-> 2.47.0
->
+> > >  2) The page is DEVICE_PRIVATE and get_dma_pfn_for_device() exists.
+> > >     The exporting driver has the option to return a P2P struct page
+> > >     that can be used for PCI P2P without any migration. In a PCI GPU
+> > >     context this means the GPU has mapped its local memory to a PCI
+> > >     address. The assumption is that P2P always works and so this
+> > >     address can be DMA'd from.
+> > 
+> > So do I understand it correctly, that the driver then needs to set up
+> > one device_private struct page and one pcie_p2p struct page for each
+> > page of device memory participating in this way?
+> 
+> Yes, for now. I hope to remove the p2p page eventually.
+> 
+> > > If you are just talking about your private multi-path, then that is
+> > > already handled..
+> > 
+> > No, the issue I'm having with this is really why would
+> > hmm_range_fault() need the new pfn when it could easily be obtained
+> > from the device-private pfn by the hmm_range_fault() caller? 
+> 
+> That isn't the API of HMM, the caller uses hmm to get PFNs it can use.
+> 
+> Deliberately returning PFNs the caller cannot use is nonsensical to
+> it's purpose :)
+> 
+> > So anyway what we'll do is to try to use an interconnect-common owner
+> > for now and revisit the problem if that's not sufficient so we can come
+> > up with an acceptable solution.
+> 
+> That is the intention for sure. The idea was that the drivers under
+> the private pages would somehow generate unique owners for shared
+> private interconnect segments.
+> 
+> I wouldn't say this is the end all of the idea, if there are better
+> ways to handle accepting private pages they can certainly be
+> explored..
+> 
+> Jason
+
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
