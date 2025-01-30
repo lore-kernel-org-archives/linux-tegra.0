@@ -1,165 +1,166 @@
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997FB17597
-	for <linux-tegra@vger.kernel.org>; Thu, 30 Jan 2025 17:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2AF12CDA5;
+	Thu, 30 Jan 2025 17:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738258941; cv=none; b=bs/uYYJ3AY9fhdNANw4HWYoZHs88VdDW8qNwzcSzrhdO2lsKijSZfAs05OO+PzDk7rCe/YmB/QZshrJOJ9J/wNY/5KfwuCv/GbodmVLtU+0NU7I2fEiLolt26v/jsIAwT08bw85RueDBp2qJ5GIV9v+ZWkNooZXJAqMN1mb1n/0=
+	t=1738259362; cv=none; b=b1PFCf0qRxUVojZh6zLhaglHwPLvTXdWsEU52JKlDCBylepYfU4WFGduFC2phTdix01WjtnMC9feo0GORNcYvpWoPZRu5CuTMFD2ccuB7BoiAVSBe0r2v64YR2gmkZ+W6I/iHbhamevB8hPcvmTn+EyGw4Od69NKUX2Iq6iHpfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738258941; c=relaxed/simple;
-	bh=XtQCDwDTly37QPz8i9jNWoc4Mmbx4e+kSb49dC5tsSc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SHg8nrbQSbkpPPxAk9tc17gEX/GOedqWyjkV0SbzeON+bbm8wRM+EWRW+cinrRKFi59QVKdwxpj51anvGMqTjBDg4mlcLM90ZDuzAEZjfMkldnpEXGDHBwicaxnWqPkBvQXEMMfB5Ew5lQ79di6JgpxrVAWonF16CrxfOkDXv5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=LfsE6GDQ; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	s=arc-20240116; t=1738259362; c=relaxed/simple;
+	bh=k/glph5Z7ozMYiVcEJWbK6kVMBSe9w2c0zCXzxWp8j0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=EFpN5a6gwN1wLrHP0yHgUUCBDKCAubIOJrnThEku+d3ofQ0OBbjJQcXukzDQp1+R38HJD4qALpoEWXOjjAkaalwNUly+b9Mzhrua6vrOaAQcEfW7SNyflhpUWGUXIaBksr096MRb3JFQ06VgF8e3tS9DypaioCTTb7DTVoMKzqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zc5rXUin; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="LfsE6GDQ"
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-467a37a2a53so12114801cf.2
-        for <linux-tegra@vger.kernel.org>; Thu, 30 Jan 2025 09:42:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1738258938; x=1738863738; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CVNKXypQwOopSf1xgwOwZSkCQwewZeK8ItDq6p8m+EY=;
-        b=LfsE6GDQbmYz3qyZKrOOziUjzv179Xd1geXzDq1D1pJ1I3nL4P/i9faJFv9Mafzuf/
-         XRNY3NccZdtAfzb19CipjL0ZlTTuj41b8kkLmh59wxXq7OwNlsA7NfYC2BfcpG6umeYg
-         30bih2wE91r8OTRvykqMRowpx4/Dzg4LgxeUuS9T/bMT/LUJcRBzJ3PgFfsL8ORdulNT
-         M5awNuStAudAyLBH9Mgkjc7PXFTkNUS+xMtRI2wtWmXPucEQThOrrlqKvbnQ4QvEyUMH
-         Qm8PlG/V7lW3XKxvJsTp9nco93OtVB8q7Uoa9c2xF1AQFDBp/hnCQe2wNcTaI+cWIv8P
-         caxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738258938; x=1738863738;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CVNKXypQwOopSf1xgwOwZSkCQwewZeK8ItDq6p8m+EY=;
-        b=MxLX8+pq6scyyaWkRf8F4H0xOgaJ+UoKwN5AzqL2FY5KmXw8TQK2amwe8MltKcJplC
-         zhyQsafiRCyBslcdl1l/XtIvFig4OXJvCIXt1rbRuC7cvD4dbV1ziA9Sll98jKaNPLBm
-         sC6Rnm9y6+vfS/ob6twAZmXNM03JYjJekjC3ax5HQlCfgoHHKP46sqgNK2kJMwIFekNm
-         f0Sy6e8g2gHq7lVAOl7rhmBripMQqVVJ9LQRrnh7p6yOKsJUs/A3mjbICn3JXQflI32s
-         DWKPvy1ujDBHc30blJyERaI+w3ZIflpT9czeVlpZqy9s1ugH/F3dVJUR2I/HQ92EBmkB
-         nMLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV68o/ZHVyslZYQ4c5/z3uc9MFf8f0/YoyZNTgJ+37GETetQ1Rylg+TdDwQQY+RgEpBraqUfiwsJCZBFg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGt1pwEIWhYWY1C2OVoRqJnGunYmQva1C8drvcEWeirij44x4M
-	u6GWRZC3t3g7vY2Uap2mOMktK7AhcWEFR+mabxQCOioqIflh6bGNPtBG9FmOd9U=
-X-Gm-Gg: ASbGnctkkImanXFEAWpGl6DQ5NGJsNcitZ2nxyJG8bUvP8MEpklNXSqKYWsHYnDbYXY
-	RGfhMm8MtO3+T8EZ8zCLILs6S/3kTl3asAerwIfqJuF5ALR6BCM3XiM/DOowPQzaiIBY7YOmlwm
-	RfAfchIu1hpi2ft1Y0DiJG9y/U6nFYiHQs7XNOGIwZfdPEJ7VT9hYYwaMx90d1QptAVI/8H2Sck
-	GEz7iaC3kgSI/zzZFwI4qhoY/PyJ/OcsAZ/+J6GlQgnETc5Icso0pLj+1ViEKStdbeJsl6ZIYSj
-	8b9unkWnWVVYqxPWQrnkyKxRQFoOFAImC8F8kRfD/lbnQ9JwcLBaZgEbatSQbp6h
-X-Google-Smtp-Source: AGHT+IFnQ+3H7xNChFVcqgc9dwjk4L8UEnbD/nNL/ykdDG0Q22FK3UpLRKkWb0FWjYtvwvzMuLT+BQ==
-X-Received: by 2002:a05:622a:4296:b0:467:451b:eba3 with SMTP id d75a77b69052e-46fd0a7fe1dmr108793531cf.8.1738258938311;
-        Thu, 30 Jan 2025 09:42:18 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46fdf0ceacesm8793061cf.31.2025.01.30.09.42.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2025 09:42:17 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tdYYT-00000009ew4-0Jjs;
-	Thu, 30 Jan 2025 13:42:17 -0400
-Date: Thu, 30 Jan 2025 13:42:17 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com,
-	lyude@redhat.com, dakr@redhat.com, airlied@gmail.com,
-	simona@ffwll.ch, leon@kernel.org, jglisse@redhat.com,
-	akpm@linux-foundation.org, GalShalom@nvidia.com,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-mm@kvack.org, linux-tegra@vger.kernel.org
-Subject: Re: [RFC 1/5] mm/hmm: HMM API to enable P2P DMA for device private
- pages
-Message-ID: <20250130174217.GA2296753@ziepe.ca>
-References: <20250128132034.GA1524382@ziepe.ca>
- <de293a7e9b4c44eab8792b31a4605cc9e93b2bf5.camel@linux.intel.com>
- <20250128151610.GC1524382@ziepe.ca>
- <b78d32e13811ef1fa57b0535749c811f2afb4dcd.camel@linux.intel.com>
- <20250128172123.GD1524382@ziepe.ca>
- <Z5ovcnX2zVoqdomA@phenom.ffwll.local>
- <20250129134757.GA2120662@ziepe.ca>
- <Z5tZc0OQukfZEr3H@phenom.ffwll.local>
- <20250130132317.GG2120662@ziepe.ca>
- <Z5ukSNjvmQcXsZTm@phenom.ffwll.local>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zc5rXUin"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC43C4CEE0;
+	Thu, 30 Jan 2025 17:49:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738259361;
+	bh=k/glph5Z7ozMYiVcEJWbK6kVMBSe9w2c0zCXzxWp8j0=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Zc5rXUinHsm0RexQJOhCyTO5JJpNVXZS0jOlKgFNdLKZaTL/cf+EhzJCzJ2k0Ckv2
+	 1jFSUn71jtgE7TxoYVhTWjjPXKP3oXpic0SY88p1LjSbItb0HA0RCUUW1tRZ7/FSa6
+	 GEfMYVNYenTHdBhpxEdB4pjmDkFpim8HKFodvod654k4rrO/6p6T6XiTsSdrIIEe5x
+	 BJTl8JeyTwtYkgxFgXiAV/7UYPzudyvuCgw6ByUNp2Yxue18rBTCr+ymOtmphkysjr
+	 BvbMnmy71U9eCT19ErjoOOy7fAioqhAxj4LDy8KoFa2uHTq3MLpYEH22sYNeMLxeZ5
+	 W8yXzrWVRcdoA==
+Message-ID: <4b9777cc-0bb3-44c1-92f8-209c30837f20@kernel.org>
+Date: Thu, 30 Jan 2025 18:49:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z5ukSNjvmQcXsZTm@phenom.ffwll.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] i2c: tegra: Add support for SW mutex register
+To: Kartik Rajput <kkartik@nvidia.com>,
+ "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+ Jon Hunter <jonathanh@nvidia.com>, Akhil R <akhilrajeev@nvidia.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "digetx@gmail.com" <digetx@gmail.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20250130143424.52389-1-kkartik@nvidia.com>
+ <20250130143424.52389-5-kkartik@nvidia.com>
+ <febb1225-3c14-4377-90e0-4d4aee307ede@kernel.org>
+ <0daa503e73099085d84d432bb72a5f79db81a9b1.camel@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <0daa503e73099085d84d432bb72a5f79db81a9b1.camel@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 30, 2025 at 05:09:44PM +0100, Simona Vetter wrote:
-
-> > You could also use an integer instead of a pointer to indicate the
-> > cluster of interconnect, I think there are many options..
+On 30/01/2025 17:35, Kartik Rajput wrote:
+>>>  /**
+>>> @@ -372,6 +382,103 @@ static void i2c_readsl(struct tegra_i2c_dev
+>>> *i2c_dev, void *data,
+>>>       readsl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg),
+>>> data, len);
+>>>  }
+>>>
+>>> +static int tegra_i2c_poll_register(struct tegra_i2c_dev *i2c_dev,
+>>> +                                u32 reg, u32 mask, u32 delay_us,
+>>> +                                u32 timeout_us)
+>>> +{
+>>> +     void __iomem *addr = i2c_dev->base +
+>>> tegra_i2c_reg_addr(i2c_dev, reg);
+>>> +     u32 val;
+>>> +
+>>> +     if (!i2c_dev->atomic_mode)
+>>> +             return readl_relaxed_poll_timeout(addr, val, !(val &
+>>> mask),
+>>> +                                               delay_us,
+>>> timeout_us);
+>>> +
+>>> +     return readl_relaxed_poll_timeout_atomic(addr, val, !(val &
+>>> mask),
+>>> +                                              delay_us,
+>>> timeout_us);
+>>> +}
+>>> +
+>>> +static int tegra_i2c_mutex_trylock(struct tegra_i2c_dev *i2c_dev)
+>>> +{
+>>> +     u32 val, id;
+>>> +
+>>> +     val = i2c_readl(i2c_dev, I2C_SW_MUTEX);
+>>> +     id = FIELD_GET(I2C_SW_MUTEX_GRANT, val);
+>>> +     if (id != 0 && id != I2C_SW_MUTEX_ID)
+>>> +             return 0;
+>>> +
+>>> +     val = FIELD_PREP(I2C_SW_MUTEX_REQUEST, I2C_SW_MUTEX_ID);
+>>> +     i2c_writel(i2c_dev, val, I2C_SW_MUTEX);
+>>
+>> And how do you exactly prevent concurrent, overwriting write? This
+>> looks
+>> like pure race.
+>>
 > 
-> Hm yeah I guess an integer allocater of the atomic_inc kind plus "surely
-> 32bit is enough" could work. But I don't think it's needed, if we can
-> reliable just unregister the entire dev_pagemap and then just set up a new
-> one. Plus that avoids thinking about which barriers we might need where
-> exactly all over mm code that looks at the owner field.
+> The I2C_SW_MUTEX_GRANT field reflects the id of the current mutex
+> owner. The I2C_SW_MUTEX_GRANT field does not change with overwrites to
+> the I2C_SW_MUTEX_REQUEST field, unless I2C_SW_MUTEX_REQUEST field is
+> cleared.
 
-IMHO that is the best answer if it works for the driver.
-> > ? It is supposed to work, it blocks until all the pages are freed, but
-> > AFAIK ther is no fundamental life time issue. The driver is
-> > responsible to free all its usage.
-> 
-> Hm I looked at it again, and I guess with the fixes to make migration to
-> system memory work reliable in Matt Brost's latest series it should indeed
-> work reliable. The devm_ version still freaks me out because of how easily
-> people misuse these for things that are memory allocations.
 
-I also don't like the devm stuff, especially in costly places like
-this. Oh well.
+So second concurrent write to I2C_SW_MUTEX_REQUEST will fail silently,
+and you rely on below check which ID succeeded to write?
 
-> > > An optional callback is a lot less scary to me here (or redoing
-> > > hmm_range_fault or whacking the migration helpers a few times) looks a lot
-> > > less scary than making pgmap->owner mutable in some fashion.
-> > 
-> > It extra for every single 4k page on every user :\
-> > 
-> > And what are you going to do better inside this callback?
-> 
-> Having more comfy illusions :-P
+If that is how it works, then should succeed... except the trouble is
+that you use here i2c_readl/writel wrappers (which was already a poor
+idea, because it hides the implementation for no real gain) and it turns
+out they happen to be relaxed making all your assumptions about ordering
+inaccurate. You need to switch to non-relaxed API.
 
-Exactly!
 
-> Slightly more seriously, I can grab some locks and make life easier,
-
-Yes, but then see my concern about performance again. Now you are
-locking/unlocking every 4k? And then it still races since it can
-change after hmm_range_fault returns. That's not small, and not really
-better.
-
-> whereas sprinkling locking or even barriers over pgmap->owner in core mm
-> is not going to fly. Plus more flexibility, e.g. when the interconnect
-> doesn't work for atomics or some other funny reason it only works for some
-> of the traffic, where you need to more dynamically decide where memory is
-> ok to sit.
-
-Sure, an asymmetric mess could be problematic, and we might need more
-later, but lets get to that first..
-
-> Or checking p2pdma connectivity and all that stuff.
-
-Should be done in the core code, don't want drivers open coding this
-stuff.
-
-> Also note that fundamentally you can't protect against the hotunplug or
-> driver unload case for hardware access. So some access will go to nowhere
-> when that happens, until we've torn down all the mappings and migrated
-> memory out.
-
-I think a literal (safe!) hot unplug must always use the page map
-revoke, and that should be safely locked between hmm_range_fault and
-the notifier.
-
-If the underlying fabric is loosing operations during an unplanned hot
-unplug I expect things will need resets to recover..
-
-Jason
+Best regards,
+Krzysztof
