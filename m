@@ -1,178 +1,229 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2681B21A9
-	for <linux-tegra@vger.kernel.org>; Thu, 30 Jan 2025 16:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBC51DA5F;
+	Thu, 30 Jan 2025 16:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738253391; cv=none; b=i+JWzIxa7UJDAI4uV0xucoXpmX8Y7ewykMml4+oFciKtjTaJOizCF+KUmLlD73WGKoBNh9dBbYsz2Ffusraw0o+CObldl063YpxK5fnHHvnjluRMH5uj5VLLxqCRHxQF8DW/9FIa+tgPXhqnn3hQPKscOIrGID47Rf/kmw6tchM=
+	t=1738253575; cv=none; b=ewBeEDaM2Lcxb8QItKLDKvTn7p2EwNyzCSThY6aKlBV1JAHeD7Z+FILOprX2bAeoMZBcYB4mqNUlJlDtIbAQWNfluhwLaGxiNBlHZPGKJtOqeaLNVLPOsEtRIDoVtQOO3BqhHBEEkICGRo4W1Pbyl9v2lm4GCAJNeUJtqL4gyAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738253391; c=relaxed/simple;
-	bh=+YGWdOLH796KgtIQHApwLPR2A7IV2UrR8iSarAPSu9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iCv7mnPfwcuBdmy7KEWbUlxRMyR2DQJ955BR1GMO/0dJ4MNlhb0oabCOCjKgrd++BpXBXdo+oE+0SyljNhOqWvzEqpw4aUmqTGLS6veGRx1Xvi78uR9zHMBCul5PalZFqLWamFQtHe74hp2x6j2G6y/5cxeSsP9UTiMHPOrVZ8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=kGtmDMmi; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+	s=arc-20240116; t=1738253575; c=relaxed/simple;
+	bh=B0WiyP8kxOBx9oHNPc/Vy+XK0t+Gnb5cVEaSaHNC+IY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YA938I7aG890FNzgLjv7ufaWDvDqhnOAQkmoz3KJWKIPkvcLNTrY6s8vYSDoBGgqo1NmsBW5Saxv8iFrYEy0uFYG/YQ5nV52rR084V1tx0Y3kFir4rDMwM7o4Sc8gmFBZ8sc/ivJDbROMoH4q2oKojCXMi38YZoYqGDVAGjdvOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B4zLAEby; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="kGtmDMmi"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-436326dcb1cso7368615e9.0
-        for <linux-tegra@vger.kernel.org>; Thu, 30 Jan 2025 08:09:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1738253388; x=1738858188; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DHjECDXWr9DtzEWz0JXb8DxrPMtRT+1WnFwQ9T4qTYY=;
-        b=kGtmDMmiKsOTTSd1nxMT6b/rVp8Z5iwuxjyUOhOlAE1wo+hzjW7SyxgXgNsvFmgv2G
-         SG8uYz0MzKEpLQfvxVsSTMoQarFpR45K09iAM3/J4AHh7uxrUpwJ1JNr4+kTjfVc7rDA
-         g5QKrnD707dqUeFathBYAk1d5nmn51t1dVDqY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738253388; x=1738858188;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DHjECDXWr9DtzEWz0JXb8DxrPMtRT+1WnFwQ9T4qTYY=;
-        b=lEC/+zMgeP/p4bA/zxvr5/WaCDmEbnzf/3OcnNP6qwjsg4FtLW51svyO7wzOS9VEIm
-         KLi0+lCbFbT6uYmZyKtOlV0MvqbqIDvRSG+EkZGKZNAqcnrKP6e/MaRmmNdrOFRN99i4
-         FSN+rzkQKQyRz1RVZwbKBqcoLK/gYnfI2lSVllk/EgVtLZCwpwT9WaldUfyHqg/Cx5sX
-         idP93pBil2pK87hA7tggkaFfbMUBrJWRkz5IuHJLlRIttfLIgH2lZic4XL3UN104Ax0S
-         oN19pGQj5KW45MGEOxc1VRFcbXf6nfrojJWSZ+XJfgvENf1zTaVkYamrx6L5EmyYlbE8
-         MJXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWh6JgG2U7tylKeX82XbcRL+kkGwF4idRUPMM9cRhbreSeCkFUETNifr3jGJDevrUnvVYQIO/PxBWDbJg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YySGlUnzqMvkaemlB/H+edrDiEoq/D9H4d6sShFavDyLNH9hVUw
-	ziHybZLQ2CQRpiK5mm1gaeCvh4u9/Cqnf0Movm9114IKdHYIR2MGvcK0CuIOXQc=
-X-Gm-Gg: ASbGncvHXiBQJdBTWMehKWYg6UfwwnmneNePieLjMzIFulH7W7c23Wt2hducgAvG+kR
-	lSPxdQN3TcVzeL1FGNF7ruKiStsJs30GRMrNLie+iK3/y9v3qWJYp+FsGTvYsmcvM7I/+f9Ech+
-	orD9ria+Gcg35ZOLjRVmyCw8QpHHDqpKLpSfDvaODJG4cHsdiKR5ySqVYFgSsz5HEhtsN8lai7G
-	Z7FuJcn5nb7cB4DI+YjMTFLxAE4GBvMfB/arnwFCPcFk3uoKaS566BTpqdSO70SYslsqtauSqM+
-	iKa0O9nz/SCf5fRHI/Ad5O+ZA/M=
-X-Google-Smtp-Source: AGHT+IHzkAlG33CPN/kMrEln846pAhOyRPiLkWV/nev8K+POyx7veXX/IQAiWwM1YsBE7oYiCeZW/A==
-X-Received: by 2002:a05:600c:1e0d:b0:436:f960:3427 with SMTP id 5b1f17b1804b1-438dc40ffbbmr65699075e9.22.1738253387756;
-        Thu, 30 Jan 2025 08:09:47 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438dcc2ef08sm64120395e9.22.2025.01.30.08.09.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2025 08:09:46 -0800 (PST)
-Date: Thu, 30 Jan 2025 17:09:44 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com,
-	lyude@redhat.com, dakr@redhat.com, airlied@gmail.com,
-	simona@ffwll.ch, leon@kernel.org, jglisse@redhat.com,
-	akpm@linux-foundation.org, GalShalom@nvidia.com,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-mm@kvack.org, linux-tegra@vger.kernel.org
-Subject: Re: [RFC 1/5] mm/hmm: HMM API to enable P2P DMA for device private
- pages
-Message-ID: <Z5ukSNjvmQcXsZTm@phenom.ffwll.local>
-Mail-Followup-To: Jason Gunthorpe <jgg@ziepe.ca>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com,
-	lyude@redhat.com, dakr@redhat.com, airlied@gmail.com,
-	simona@ffwll.ch, leon@kernel.org, jglisse@redhat.com,
-	akpm@linux-foundation.org, GalShalom@nvidia.com,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-mm@kvack.org, linux-tegra@vger.kernel.org
-References: <7282ac68c47886caa2bc2a2813d41a04adf938e1.camel@linux.intel.com>
- <20250128132034.GA1524382@ziepe.ca>
- <de293a7e9b4c44eab8792b31a4605cc9e93b2bf5.camel@linux.intel.com>
- <20250128151610.GC1524382@ziepe.ca>
- <b78d32e13811ef1fa57b0535749c811f2afb4dcd.camel@linux.intel.com>
- <20250128172123.GD1524382@ziepe.ca>
- <Z5ovcnX2zVoqdomA@phenom.ffwll.local>
- <20250129134757.GA2120662@ziepe.ca>
- <Z5tZc0OQukfZEr3H@phenom.ffwll.local>
- <20250130132317.GG2120662@ziepe.ca>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4zLAEby"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28336C4CEE0;
+	Thu, 30 Jan 2025 16:12:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738253575;
+	bh=B0WiyP8kxOBx9oHNPc/Vy+XK0t+Gnb5cVEaSaHNC+IY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=B4zLAEbyaXFQ1A7gMx0FuLfBziPwEhReXIdTy6jtSQxG3Qw2dMzivdoBEdJKf8avM
+	 j+rSC1EvyRye4HdGOMgbYN1YmxYiCJZdvjveYk62oU748su8ncXGLjeTim5a7aXa7j
+	 oZFlQyPGujRZqkn2cy+BjlSzgaTrY0sg7o61d2IhrTOfbqvgy23SZMutw4cJEYUjaw
+	 2PjAfjSIPyWyAzGq+URH46wx1vfz6QJ2RhHaUO8ONHJfFT2qJ3cjEunGZmw2CMqCUk
+	 U8y/ho6GWuaC0KLWACPgcT5+mU6vw0mN6fJXhMhFPdfwrQe63o2qcB/QNZ/+U6XpKh
+	 V//HFpXVlZ0wA==
+Message-ID: <febb1225-3c14-4377-90e0-4d4aee307ede@kernel.org>
+Date: Thu, 30 Jan 2025 17:12:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250130132317.GG2120662@ziepe.ca>
-X-Operating-System: Linux phenom 6.12.11-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] i2c: tegra: Add support for SW mutex register
+To: Kartik Rajput <kkartik@nvidia.com>, akhilrajeev@nvidia.com,
+ andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+ ldewangan@nvidia.com, digetx@gmail.com, linux-i2c@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250130143424.52389-1-kkartik@nvidia.com>
+ <20250130143424.52389-5-kkartik@nvidia.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250130143424.52389-5-kkartik@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 30, 2025 at 09:23:17AM -0400, Jason Gunthorpe wrote:
-> On Thu, Jan 30, 2025 at 11:50:27AM +0100, Simona Vetter wrote:
-> > On Wed, Jan 29, 2025 at 09:47:57AM -0400, Jason Gunthorpe wrote:
-> > > On Wed, Jan 29, 2025 at 02:38:58PM +0100, Simona Vetter wrote:
-> > > 
-> > > > > The pgmap->owner doesn't *have* to fixed, certainly during early boot before
-> > > > > you hand out any page references it can be changed. I wouldn't be
-> > > > > surprised if this is useful to some requirements to build up the
-> > > > > private interconnect topology?
-> > > > 
-> > > > The trouble I'm seeing is device probe and the fundemantal issue that you
-> > > > never know when you're done. And so if we entirely rely on pgmap->owner to
-> > > > figure out the driver private interconnect topology, that's going to be
-> > > > messy. That's why I'm also leaning towards both comparing owners and
-> > > > having an additional check whether the interconnect is actually there or
-> > > > not yet.
-> > > 
-> > > Hoenstely, I'd rather invest more effort into being able to update
-> > > owner for those special corner cases than to slow down the fast path
-> > > in hmm_range_fault..
-> > 
-> > I'm not sure how you want to make the owner mutable.
+On 30/01/2025 15:34, Kartik Rajput wrote:
+> From: Akhil R <akhilrajeev@nvidia.com>
 > 
-> You'd probably have to use a system where you never free them until
-> all the page maps are destroyed.
+> Add support for SW mutex register introduced in Tegra264 to provide
+> an option to share the interface between multiple firmwares and/or
+> VMs.
 > 
-> You could also use an integer instead of a pointer to indicate the
-> cluster of interconnect, I think there are many options..
-
-Hm yeah I guess an integer allocater of the atomic_inc kind plus "surely
-32bit is enough" could work. But I don't think it's needed, if we can
-reliable just unregister the entire dev_pagemap and then just set up a new
-one. Plus that avoids thinking about which barriers we might need where
-exactly all over mm code that looks at the owner field.
-
-> > And I've looked at the lifetime fun of unregistering a dev_pagemap for
-> > device hotunplug and pretty firmly concluded it's unfixable and that I
-> > should run away to do something else :-P
+> However, the hardware does not ensure any protection based on the
+> values. The driver/firmware should honor the peer who already holds
+> the mutex.
 > 
-> ? It is supposed to work, it blocks until all the pages are freed, but
-> AFAIK ther is no fundamental life time issue. The driver is
-> responsible to free all its usage.
-
-Hm I looked at it again, and I guess with the fixes to make migration to
-system memory work reliable in Matt Brost's latest series it should indeed
-work reliable. The devm_ version still freaks me out because of how easily
-people misuse these for things that are memory allocations.
-
-> > An optional callback is a lot less scary to me here (or redoing
-> > hmm_range_fault or whacking the migration helpers a few times) looks a lot
-> > less scary than making pgmap->owner mutable in some fashion.
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+> ---
+> v1 -> v2:
+> 	* Fixed typos.
+> 	* Fix tegra_i2c_mutex_lock() logic.
+> 	* Add a timeout in tegra_i2c_mutex_lock() instead of polling for
+> 	  mutex indefinitely.
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 132 +++++++++++++++++++++++++++++----
+>  1 file changed, 117 insertions(+), 15 deletions(-)
 > 
-> It extra for every single 4k page on every user :\
-> 
-> And what are you going to do better inside this callback?
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 7c8b76406e2e..aa92faa6f5cb 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -135,6 +135,14 @@
+>  #define I2C_MST_FIFO_STATUS_TX			GENMASK(23, 16)
+>  #define I2C_MST_FIFO_STATUS_RX			GENMASK(7, 0)
+>  
+> +#define I2C_SW_MUTEX				0x0ec
+> +#define I2C_SW_MUTEX_REQUEST			GENMASK(3, 0)
+> +#define I2C_SW_MUTEX_GRANT			GENMASK(7, 4)
+> +#define I2C_SW_MUTEX_ID				9
+> +
+> +/* SW mutex acquire timeout value in milliseconds. */
+> +#define I2C_SW_MUTEX_TIMEOUT			25
+> +
+>  /* configuration load timeout in microseconds */
+>  #define I2C_CONFIG_LOAD_TIMEOUT			1000000
+>  
+> @@ -203,6 +211,7 @@ enum msg_end_type {
+>   * @has_interface_timing_reg: Has interface timing register to program the tuned
+>   *		timing settings.
+>   * @has_hs_mode_support: Has support for high speed (HS) mode transfers.
+> + * @has_mutex: Has mutex register for mutual exclusion with other firmwares or VM.
+>   */
+>  struct tegra_i2c_hw_feature {
+>  	bool has_continue_xfer_support;
+> @@ -229,6 +238,7 @@ struct tegra_i2c_hw_feature {
+>  	u32 setup_hold_time_hs_mode;
+>  	bool has_interface_timing_reg;
+>  	bool has_hs_mode_support;
+> +	bool has_mutex;
+>  };
+>  
+>  /**
+> @@ -372,6 +382,103 @@ static void i2c_readsl(struct tegra_i2c_dev *i2c_dev, void *data,
+>  	readsl(i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg), data, len);
+>  }
+>  
+> +static int tegra_i2c_poll_register(struct tegra_i2c_dev *i2c_dev,
+> +				   u32 reg, u32 mask, u32 delay_us,
+> +				   u32 timeout_us)
+> +{
+> +	void __iomem *addr = i2c_dev->base + tegra_i2c_reg_addr(i2c_dev, reg);
+> +	u32 val;
+> +
+> +	if (!i2c_dev->atomic_mode)
+> +		return readl_relaxed_poll_timeout(addr, val, !(val & mask),
+> +						  delay_us, timeout_us);
+> +
+> +	return readl_relaxed_poll_timeout_atomic(addr, val, !(val & mask),
+> +						 delay_us, timeout_us);
+> +}
+> +
+> +static int tegra_i2c_mutex_trylock(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	u32 val, id;
+> +
+> +	val = i2c_readl(i2c_dev, I2C_SW_MUTEX);
+> +	id = FIELD_GET(I2C_SW_MUTEX_GRANT, val);
+> +	if (id != 0 && id != I2C_SW_MUTEX_ID)
+> +		return 0;
+> +
+> +	val = FIELD_PREP(I2C_SW_MUTEX_REQUEST, I2C_SW_MUTEX_ID);
+> +	i2c_writel(i2c_dev, val, I2C_SW_MUTEX);
 
-Having more comfy illusions :-P
+And how do you exactly prevent concurrent, overwriting write? This looks
+like pure race.
 
-Slightly more seriously, I can grab some locks and make life easier,
-whereas sprinkling locking or even barriers over pgmap->owner in core mm
-is not going to fly. Plus more flexibility, e.g. when the interconnect
-doesn't work for atomics or some other funny reason it only works for some
-of the traffic, where you need to more dynamically decide where memory is
-ok to sit. Or checking p2pdma connectivity and all that stuff.
+> +
+> +	val = i2c_readl(i2c_dev, I2C_SW_MUTEX);
+> +	id = FIELD_GET(I2C_SW_MUTEX_GRANT, val);
+> +
+> +	if (id != I2C_SW_MUTEX_ID)
+> +		return 0;
+> +
+> +	return 1;
+> +}
+> +
+> +static void tegra_i2c_mutex_lock(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	unsigned int num_retries = I2C_SW_MUTEX_TIMEOUT;
+> +
+> +	/* Poll until mutex is acquired or timeout. */
+> +	while (--num_retries && !tegra_i2c_mutex_trylock(i2c_dev))
+> +		usleep_range(1000, 2000);
+> +
+> +	WARN_ON(!num_retries);
 
-But we can also do all that stuff by checking afterwards or migrating
-memory around as needed. At least for drivers who cooperate and all set
-the same owner, which I think is Thomas' current plan.
 
-Also note that fundamentally you can't protect against the hotunplug or
-driver unload case for hardware access. So some access will go to nowhere
-when that happens, until we've torn down all the mappings and migrated
-memory out.
--Sima
--- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Blocked thread is not a reason to reboot entire system (see panic on
+warn). Drop or change to some dev_warn.
+
+
+> +}
+> +
+> +static void tegra_i2c_mutex_unlock(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	u32 val, id;
+> +
+> +	val = i2c_readl(i2c_dev, I2C_SW_MUTEX);
+> +	id = FIELD_GET(I2C_SW_MUTEX_GRANT, val);
+> +
+> +	if (WARN_ON(id != I2C_SW_MUTEX_ID))
+
+Same problem here.
+
+
+
+Best regards,
+Krzysztof
