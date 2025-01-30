@@ -1,140 +1,94 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11581819
-	for <linux-tegra@vger.kernel.org>; Thu, 30 Jan 2025 13:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954711E7C2E;
+	Thu, 30 Jan 2025 14:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738243401; cv=none; b=TPjQ4kDgU7zXOi5/IxaoneYIDdHe3qi/9J36h+3J20uNUyOuaPYeo+1D1idvZq8dBMz5qTfLoBxIRGN+1hMqIrXCctUv1ExUEd4+9igycZAGjSCUIASvIiQEqIJGFSvEm9K+OVa8SpEh3oi6r6UAkbXWX3k2jVQ6QfoLcZFU3zE=
+	t=1738246218; cv=none; b=ozuNlG9eDEQJdSvROIiXCcr4JwRqpMuvywHdfFXuubDOYYlFPGmcOausZcDrS9EjKzubAmCf9D7R6QlgyC9dyUuCf8fKyMkIRXmGXFgOvAWfo/o4S7A1E2xUyqYtp93tslRe26QK22/t2n8yEZd5jiHUe0qjS0jxlPamHh010jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738243401; c=relaxed/simple;
-	bh=p4tpidr02nY0Oi4LOQySSJVaWNlyV3JVNjJbzcvsD10=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ubk0lO2KmRsXf4nd1yyTmcq9qtuccMphpg68flnVN+nSPcYrptxEhXLnDr5ZDo7xuUp65kKt9ixckCkN3GXwmcRZpptYXm9bOLl4Llk+ggpohbguOhxnINBKL28yKlsDUdtZfvyzeuAiovRMyWeorg1sQJvYHOjpF89Xr0Btevc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=ABUEH9VS; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+	s=arc-20240116; t=1738246218; c=relaxed/simple;
+	bh=9+g/CdbDGQY0MKh8KuXIORy84Cune0MY5qj0W7Kj2Qs=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=XjiKgm92iaULHc1gCyXztLJSqtnVnyL8rGEd4mkH3PfdDOF9g4hYUMPFNdS1l//EMBZx53tyyisHGc8g1t9TkvQZfHJOr3OA30Hx7FVrxqhPfdheb0SQTi/6NniGGDbxfQkL5BP3NIVaWFDBNA9ZQgHqw4xwxu56LcZvfuCXlUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tjr7SdDB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ABUEH9VS"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6dd420f82e2so10192306d6.1
-        for <linux-tegra@vger.kernel.org>; Thu, 30 Jan 2025 05:23:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1738243399; x=1738848199; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z4xPSZzw/OoNchPOgrFnhgjUTxZA4+QRO6/LNv63tO8=;
-        b=ABUEH9VSNvxBTycE6cPxd5CFHhFWr3OnVrtW09pH0NCrw85ehnrDhJ7t9KYRHrxBir
-         5lB6RFeFMFwB6B7cUhxDgie6m1y9xYsXm0VJiW3AsgWmDyPVC8BCUl047JumBaET1BwS
-         NCRQLz3+BKocsfy34wavOdksK0Z/iWNtX8bw+EIW4NGrlFYb04swA4HZY0cJUbNNBJOw
-         oF8tWjyN2Hd8AjydptFOm2I1PMCAfe9MDuIMDYBPWGCfRTqkzW1jw+gPeRxG52+TCJgA
-         UAm4hkAe33gbY4mgEnorr3zH9DJQfxsiruTCtqNjS3ugbcMDGrJIxDikQ7/Qp4aSi2e1
-         Zxxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738243399; x=1738848199;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z4xPSZzw/OoNchPOgrFnhgjUTxZA4+QRO6/LNv63tO8=;
-        b=qcuWK6us62cCfGCsDKlWDcrvDGcJABc69kz0QG3pElTyQ9Ffws8v8PIX456vhlwgK9
-         VwU8BzaAXx7JuwG6yZOH8J0o47xVRGYKHAas4bcLPZBXE0Gmo6KmBv+TiyOT/wIXd7wj
-         mi3mxw8i2pwBlVtUyu6KUC3/0ur910dSLS1bsNrO23PoZJmCcTMjiSAynKl3degnP6BG
-         Ii/K7hBRiS3euB4jn8c1nMgoCuxLwsZrFChf47CHLrabMMoQn35h2qML31oymBaexi4B
-         1tF0e7jFONptUZUzvYtS0bVC6BeT2jwj5BarpcRUG22T1vpCKqzKMTcjus3q1d0czhQS
-         JHbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpRmk3MKfm2oLBIxch3SKt2R0VNLWM4yBBhlkWPLqVox5rDlcI8OTxB9egg/tHAfSISrPKzGjpHerrpg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTcJPSJWAzCOofLDZy9+4E3zLS1vxnDx1LHEhFkFGgSacHNPc0
-	sFImA3cn1x/3eTLFs503aKjc29jkV43dBG4ZW86tbY610sF6GfByC/P3lfWWjYY=
-X-Gm-Gg: ASbGnctiT6JDhytd1+vq1O1p/drjrCHMBfTm+FnWUwXnDtnVaSkrNi1eSBBrc+X2Dfo
-	mlB1e1bgVm2AFLLXPxkiT/MrBCMuFNhs729aMPUabx8pgU0jtmn0XguOVE6i2yMHbGWb4VG8NuU
-	4vkOSy8K8MvTcgFGNaTbw7efeCkVt8V52tXxVyuIgLz8nNPitb5zzR8TcqZLYr5/EPHJZHYB7up
-	bVcL2/VOOIITAjg7iGnS+HgNFYLH7Pi0B2B3TLFso/kGyDLZymZry2ANeqh/sK9hF+EBzZQ4dae
-	yCPs/1hY9fTMqtcoEqQBur3k7EXc9lj3+p/4Rq5YLxLFX5LepH6M/l69LDjGL2Bu
-X-Google-Smtp-Source: AGHT+IGu3gG6c418DyCLyq64UOVytvPPjptyLj9HsxmCFyjptBXKcCidLbQRWokyMo3VhHjgkQmzrQ==
-X-Received: by 2002:ad4:5d63:0:b0:6d8:aa45:a8a2 with SMTP id 6a1803df08f44-6e243bbbb2bmr94974656d6.11.1738243398854;
-        Thu, 30 Jan 2025 05:23:18 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e2549222cesm6056236d6.83.2025.01.30.05.23.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2025 05:23:18 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tdUVp-00000009YDe-2eaQ;
-	Thu, 30 Jan 2025 09:23:17 -0400
-Date: Thu, 30 Jan 2025 09:23:17 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com,
-	lyude@redhat.com, dakr@redhat.com, airlied@gmail.com,
-	simona@ffwll.ch, leon@kernel.org, jglisse@redhat.com,
-	akpm@linux-foundation.org, GalShalom@nvidia.com,
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-mm@kvack.org, linux-tegra@vger.kernel.org
-Subject: Re: [RFC 1/5] mm/hmm: HMM API to enable P2P DMA for device private
- pages
-Message-ID: <20250130132317.GG2120662@ziepe.ca>
-References: <20241201103659.420677-2-ymaman@nvidia.com>
- <7282ac68c47886caa2bc2a2813d41a04adf938e1.camel@linux.intel.com>
- <20250128132034.GA1524382@ziepe.ca>
- <de293a7e9b4c44eab8792b31a4605cc9e93b2bf5.camel@linux.intel.com>
- <20250128151610.GC1524382@ziepe.ca>
- <b78d32e13811ef1fa57b0535749c811f2afb4dcd.camel@linux.intel.com>
- <20250128172123.GD1524382@ziepe.ca>
- <Z5ovcnX2zVoqdomA@phenom.ffwll.local>
- <20250129134757.GA2120662@ziepe.ca>
- <Z5tZc0OQukfZEr3H@phenom.ffwll.local>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjr7SdDB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 078F6C4CEE0;
+	Thu, 30 Jan 2025 14:10:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738246218;
+	bh=9+g/CdbDGQY0MKh8KuXIORy84Cune0MY5qj0W7Kj2Qs=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=tjr7SdDBr3+Fs5IbJYELFc574X1htZLZbpExQuJpDk6mlc5B3WtoRHftpc2AuN4jI
+	 xquntxyf3Wx3YVhFUFadZRK2T/ZZIBkq38GU5TeMsAXqXcwyEAFvoj8SvpmmHK1a4D
+	 o4U2lBqkVv1HLfl5so3xYsMVWLVHMKLUth3KVKM6KGPPAY/NBHXJy30Zyc8U34a1KE
+	 k1GkM8ffZTFa6U1c5ldyoqgp0Gy8/UsZpsuO8Jqj7HjN/Ud9VjP1+NAgI6zSpV7qjG
+	 vZZt+SxdpF0paX7sLwgIwnwZwCKwu3BvJfJqMBdSimzREinVNOGl7tUsnk/ZfhrOSU
+	 hs20squu2pOCA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71114380AA66;
+	Thu, 30 Jan 2025 14:10:45 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z5tZc0OQukfZEr3H@phenom.ffwll.local>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 0/4] defconfig: drop RT_GROUP_SCHED=y
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <173824624400.971083.13259437466133760961.git-patchwork-notify@kernel.org>
+Date: Thu, 30 Jan 2025 14:10:44 +0000
+References: <20250115-fix-riscv-rt_group_sched-v4-0-607606fe73a5@coelacanthus.name>
+In-Reply-To: <20250115-fix-riscv-rt_group_sched-v4-0-607606fe73a5@coelacanthus.name>
+To: Celeste Liu <uwu@coelacanthus.name>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, guoren@kernel.org,
+ anup@brainfault.org, heinrich.schuchardt@canonical.com,
+ chenhuacai@kernel.org, kernel@xen0n.name, ysato@users.sourceforge.jp,
+ dalias@libc.org, glaubitz@physik.fu-berlin.de, linux@armlinux.org.uk,
+ florian.fainelli@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+ rjui@broadcom.com, sbranden@broadcom.com, tony@atomide.com,
+ thierry.reding@gmail.com, jonathanh@nvidia.com, aaro.koskinen@iki.fi,
+ andreas@kemnade.info, khilman@baylibre.com, rogerq@kernel.org,
+ palmer@rivosinc.com, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+ linux-tegra@vger.kernel.org, charlie@rivosinc.com, xry111@xry111.site,
+ wahrenst@gmx.net, treding@nvidia.com
 
-On Thu, Jan 30, 2025 at 11:50:27AM +0100, Simona Vetter wrote:
-> On Wed, Jan 29, 2025 at 09:47:57AM -0400, Jason Gunthorpe wrote:
-> > On Wed, Jan 29, 2025 at 02:38:58PM +0100, Simona Vetter wrote:
-> > 
-> > > > The pgmap->owner doesn't *have* to fixed, certainly during early boot before
-> > > > you hand out any page references it can be changed. I wouldn't be
-> > > > surprised if this is useful to some requirements to build up the
-> > > > private interconnect topology?
-> > > 
-> > > The trouble I'm seeing is device probe and the fundemantal issue that you
-> > > never know when you're done. And so if we entirely rely on pgmap->owner to
-> > > figure out the driver private interconnect topology, that's going to be
-> > > messy. That's why I'm also leaning towards both comparing owners and
-> > > having an additional check whether the interconnect is actually there or
-> > > not yet.
-> > 
-> > Hoenstely, I'd rather invest more effort into being able to update
-> > owner for those special corner cases than to slow down the fast path
-> > in hmm_range_fault..
+Hello:
+
+This series was applied to riscv/linux.git (for-next)
+by Palmer Dabbelt <palmer@rivosinc.com>:
+
+On Wed, 15 Jan 2025 04:41:19 +0800 you wrote:
+> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
+> needs an RT budget assigned, otherwise the processes in it will not be able to
+> get RT at all. The problem with RT group scheduling is that it requires the
+> budget assigned but there's no way we could assign a default budget, since the
+> values to assign are both upper and lower time limits, are absolute, and need to
+> be sum up to < 1 for each individal cgroup. That means we cannot really come up
+> with values that would work by default in the general case.[1]
 > 
-> I'm not sure how you want to make the owner mutable.
+> [...]
 
-You'd probably have to use a system where you never free them until
-all the page maps are destroyed.
+Here is the summary with links:
+  - [v4,1/4] riscv: defconfig: drop RT_GROUP_SCHED=y
+    https://git.kernel.org/riscv/c/26f2d6de4179
+  - [v4,2/4] loongarch: defconfig: drop RT_GROUP_SCHED=y
+    (no matching commit)
+  - [v4,3/4] sh: defconfig: drop RT_GROUP_SCHED=y from sdk7786/urquell
+    (no matching commit)
+  - [v4,4/4] arm: defconfig: drop RT_GROUP_SCHED=y from bcm2835/tegra/omap2plus
+    (no matching commit)
 
-You could also use an integer instead of a pointer to indicate the
-cluster of interconnect, I think there are many options..
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> And I've looked at the lifetime fun of unregistering a dev_pagemap for
-> device hotunplug and pretty firmly concluded it's unfixable and that I
-> should run away to do something else :-P
 
-? It is supposed to work, it blocks until all the pages are freed, but
-AFAIK ther is no fundamental life time issue. The driver is
-responsible to free all its usage.
-
-> An optional callback is a lot less scary to me here (or redoing
-> hmm_range_fault or whacking the migration helpers a few times) looks a lot
-> less scary than making pgmap->owner mutable in some fashion.
-
-It extra for every single 4k page on every user :\
-
-And what are you going to do better inside this callback?
-
-Jason
