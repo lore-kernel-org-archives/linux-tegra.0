@@ -1,191 +1,178 @@
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2052.outbound.protection.outlook.com [40.107.243.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064291BB6BC;
-	Thu, 30 Jan 2025 14:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738247736; cv=fail; b=ncNlNxoD4bUyDuNpU7b+GxNRS0j9cxGwWyRwWs2QILWUC/6vtwHKFr7D4Se9UK3S461Fzix3AHTVgnN7q97kKsaA4d5r8NgDqipDF3jvuDXId5uNYlvMbo2Y7cC3XwDmwPk+votWdU4Wpqu8NL8SGoAfqUIfQlYsxpX5cL6OxMY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738247736; c=relaxed/simple;
-	bh=U6J7P5r7bhfF/VRlIeRlDRIrHmD1TGuC0i0ze/R9SKA=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EiDLzFskG3XiY8wyvB522HetDYV/nu+RpsbNbbeWjPYXfNvILhLc/O7KeOqEI15zkoKuncfdnMJ34L7FB9ghXKUzbMUdu87zBG7/UdQwoq1guH+C4bwOa4/jyuHQv0DGoHykSc+H+kVVcu3s47eT/+QjhM1f8hvelYtJriPjwYA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W4HnyBDf; arc=fail smtp.client-ip=40.107.243.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2681B21A9
+	for <linux-tegra@vger.kernel.org>; Thu, 30 Jan 2025 16:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738253391; cv=none; b=i+JWzIxa7UJDAI4uV0xucoXpmX8Y7ewykMml4+oFciKtjTaJOizCF+KUmLlD73WGKoBNh9dBbYsz2Ffusraw0o+CObldl063YpxK5fnHHvnjluRMH5uj5VLLxqCRHxQF8DW/9FIa+tgPXhqnn3hQPKscOIrGID47Rf/kmw6tchM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738253391; c=relaxed/simple;
+	bh=+YGWdOLH796KgtIQHApwLPR2A7IV2UrR8iSarAPSu9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iCv7mnPfwcuBdmy7KEWbUlxRMyR2DQJ955BR1GMO/0dJ4MNlhb0oabCOCjKgrd++BpXBXdo+oE+0SyljNhOqWvzEqpw4aUmqTGLS6veGRx1Xvi78uR9zHMBCul5PalZFqLWamFQtHe74hp2x6j2G6y/5cxeSsP9UTiMHPOrVZ8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=kGtmDMmi; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W4HnyBDf"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xh1C4kAy8LWP4QU3ZzqTF3pg/AE+TXyRw9ulrtKz70+CtaBoGdBLjQcbXzh5Vh6ztV6uL0JC0TwzYBt4B+tM5qfJwKCa2mUdeUq2d5Sz+04fquPsfSUiqq4qT6ZVBc6r8+lwft5YAGdmsSVc+8lKxLHokHfkbYatvpyfKk7oo17ZN+6nhQsXE3NjBy6YdbDaujAFVSlRUERlOmoqVDmw+dqVRbMqUnlGfCPDTLwE5lq8kKL28U0cOeMucPcOJYFeZssDJZLXntvkJZYr0LqjZzPt0owSlJQnsHWGuWhLF1PyoScSEQlUPMu20IzWLwtF/0paPq7JdRIq3JNPQhwTAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gTD858treBe/4AVwJsJgAayrxyI6Wh+nR7PDWFF+vgA=;
- b=LIXvRAmT2RpImLLIXkehwsEREoiZ2d8Fd/co/21Um4JlFalv3UVUFOsFuqArM8TVY6hFAVKo3HZoOG2irL/eolct/Bjq/Tw7wUzRaBaSlpQ4atgYh2yeWs0YvCYUjmTiSahD9IdjA3iucHiX9ZC/hCCUunhamEitHG3Sh4XgO3YmCENrqvU+SQ6rmWeOLosMx0UlKxXEWreaFB65XdCEwyHms24AqfeUUMqzuRrgCz1G1gKqhcpeRe2qD8Zio1BZd7CJiGclQ43oHGNQslucvYog/10Q/33jBrchqJHieErtWO1Z+mW6Qr6NQdlNpHu/wTLVNIOe6wFc5I+O7pdRag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gTD858treBe/4AVwJsJgAayrxyI6Wh+nR7PDWFF+vgA=;
- b=W4HnyBDfPpOjy6kYGUIHq7HKH7qM4zqvqs11H8VsJvED6PXYAdmwVVs/PwJvoinxwTzZCg40CI63j2dLhuVjdsfjyYGjlOmIMTn/UFXKMbDu5MVJm+nmWdPfV0n8Yu8wFuKWFEtJl77Vr2LTgthA38IOhamhLi0UEIM7f9Py/3QUO1YPRDG1UiYM8WoR3iB3iWaq6tH/3QJ9CZbfQ9QPATGLW6M1QSWCrNyvVG6VyfKKc1wm7O/vafMa4gDcdLHAOD4oY/OdlQS4CMKUBDCZljA/Sjg6vxeUT8yqZrsdfthXEsYFrbJGq8u1KA/NNnocm4npR15YZbu3njjzxwBpWw==
-Received: from BN9P223CA0010.NAMP223.PROD.OUTLOOK.COM (2603:10b6:408:10b::15)
- by SA1PR12MB7174.namprd12.prod.outlook.com (2603:10b6:806:2b1::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8377.22; Thu, 30 Jan
- 2025 14:35:28 +0000
-Received: from BL6PEPF0001AB53.namprd02.prod.outlook.com
- (2603:10b6:408:10b:cafe::aa) by BN9P223CA0010.outlook.office365.com
- (2603:10b6:408:10b::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.18 via Frontend Transport; Thu,
- 30 Jan 2025 14:35:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL6PEPF0001AB53.mail.protection.outlook.com (10.167.241.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8398.14 via Frontend Transport; Thu, 30 Jan 2025 14:35:26 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 30 Jan
- 2025 06:35:06 -0800
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 30 Jan
- 2025 06:35:05 -0800
-Received: from NV-2XGVVG3.nvidia.com (10.127.8.13) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Thu, 30 Jan 2025 06:35:01 -0800
-From: Kartik Rajput <kkartik@nvidia.com>
-To: <akhilrajeev@nvidia.com>, <andi.shyti@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <ldewangan@nvidia.com>, <digetx@gmail.com>,
-	<linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 5/5] i2c: tegra: Add Tegra264 support
-Date: Thu, 30 Jan 2025 20:04:24 +0530
-Message-ID: <20250130143424.52389-6-kkartik@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250130143424.52389-1-kkartik@nvidia.com>
-References: <20250130143424.52389-1-kkartik@nvidia.com>
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="kGtmDMmi"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-436326dcb1cso7368615e9.0
+        for <linux-tegra@vger.kernel.org>; Thu, 30 Jan 2025 08:09:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1738253388; x=1738858188; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DHjECDXWr9DtzEWz0JXb8DxrPMtRT+1WnFwQ9T4qTYY=;
+        b=kGtmDMmiKsOTTSd1nxMT6b/rVp8Z5iwuxjyUOhOlAE1wo+hzjW7SyxgXgNsvFmgv2G
+         SG8uYz0MzKEpLQfvxVsSTMoQarFpR45K09iAM3/J4AHh7uxrUpwJ1JNr4+kTjfVc7rDA
+         g5QKrnD707dqUeFathBYAk1d5nmn51t1dVDqY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738253388; x=1738858188;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DHjECDXWr9DtzEWz0JXb8DxrPMtRT+1WnFwQ9T4qTYY=;
+        b=lEC/+zMgeP/p4bA/zxvr5/WaCDmEbnzf/3OcnNP6qwjsg4FtLW51svyO7wzOS9VEIm
+         KLi0+lCbFbT6uYmZyKtOlV0MvqbqIDvRSG+EkZGKZNAqcnrKP6e/MaRmmNdrOFRN99i4
+         FSN+rzkQKQyRz1RVZwbKBqcoLK/gYnfI2lSVllk/EgVtLZCwpwT9WaldUfyHqg/Cx5sX
+         idP93pBil2pK87hA7tggkaFfbMUBrJWRkz5IuHJLlRIttfLIgH2lZic4XL3UN104Ax0S
+         oN19pGQj5KW45MGEOxc1VRFcbXf6nfrojJWSZ+XJfgvENf1zTaVkYamrx6L5EmyYlbE8
+         MJXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWh6JgG2U7tylKeX82XbcRL+kkGwF4idRUPMM9cRhbreSeCkFUETNifr3jGJDevrUnvVYQIO/PxBWDbJg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YySGlUnzqMvkaemlB/H+edrDiEoq/D9H4d6sShFavDyLNH9hVUw
+	ziHybZLQ2CQRpiK5mm1gaeCvh4u9/Cqnf0Movm9114IKdHYIR2MGvcK0CuIOXQc=
+X-Gm-Gg: ASbGncvHXiBQJdBTWMehKWYg6UfwwnmneNePieLjMzIFulH7W7c23Wt2hducgAvG+kR
+	lSPxdQN3TcVzeL1FGNF7ruKiStsJs30GRMrNLie+iK3/y9v3qWJYp+FsGTvYsmcvM7I/+f9Ech+
+	orD9ria+Gcg35ZOLjRVmyCw8QpHHDqpKLpSfDvaODJG4cHsdiKR5ySqVYFgSsz5HEhtsN8lai7G
+	Z7FuJcn5nb7cB4DI+YjMTFLxAE4GBvMfB/arnwFCPcFk3uoKaS566BTpqdSO70SYslsqtauSqM+
+	iKa0O9nz/SCf5fRHI/Ad5O+ZA/M=
+X-Google-Smtp-Source: AGHT+IHzkAlG33CPN/kMrEln846pAhOyRPiLkWV/nev8K+POyx7veXX/IQAiWwM1YsBE7oYiCeZW/A==
+X-Received: by 2002:a05:600c:1e0d:b0:436:f960:3427 with SMTP id 5b1f17b1804b1-438dc40ffbbmr65699075e9.22.1738253387756;
+        Thu, 30 Jan 2025 08:09:47 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438dcc2ef08sm64120395e9.22.2025.01.30.08.09.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2025 08:09:46 -0800 (PST)
+Date: Thu, 30 Jan 2025 17:09:44 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com,
+	lyude@redhat.com, dakr@redhat.com, airlied@gmail.com,
+	simona@ffwll.ch, leon@kernel.org, jglisse@redhat.com,
+	akpm@linux-foundation.org, GalShalom@nvidia.com,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-mm@kvack.org, linux-tegra@vger.kernel.org
+Subject: Re: [RFC 1/5] mm/hmm: HMM API to enable P2P DMA for device private
+ pages
+Message-ID: <Z5ukSNjvmQcXsZTm@phenom.ffwll.local>
+Mail-Followup-To: Jason Gunthorpe <jgg@ziepe.ca>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com,
+	lyude@redhat.com, dakr@redhat.com, airlied@gmail.com,
+	simona@ffwll.ch, leon@kernel.org, jglisse@redhat.com,
+	akpm@linux-foundation.org, GalShalom@nvidia.com,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-mm@kvack.org, linux-tegra@vger.kernel.org
+References: <7282ac68c47886caa2bc2a2813d41a04adf938e1.camel@linux.intel.com>
+ <20250128132034.GA1524382@ziepe.ca>
+ <de293a7e9b4c44eab8792b31a4605cc9e93b2bf5.camel@linux.intel.com>
+ <20250128151610.GC1524382@ziepe.ca>
+ <b78d32e13811ef1fa57b0535749c811f2afb4dcd.camel@linux.intel.com>
+ <20250128172123.GD1524382@ziepe.ca>
+ <Z5ovcnX2zVoqdomA@phenom.ffwll.local>
+ <20250129134757.GA2120662@ziepe.ca>
+ <Z5tZc0OQukfZEr3H@phenom.ffwll.local>
+ <20250130132317.GG2120662@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB53:EE_|SA1PR12MB7174:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6802beb5-79cf-42ff-c699-08dd413b56c8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7ZvFPRGCvnUsIpOc//AtKLODYhfM0RFDDMsM3I8nVQsc9n2z8ykad35oBWqm?=
- =?us-ascii?Q?RgD7qeLgR67DFuOXC7XtDQwje87hXvclQ5yKOO6zXPKEOmikebz+dTg1MTmj?=
- =?us-ascii?Q?wSQQPuXklJmFqWTKI85luF+fmLSWNsCSgaHYUpCiI5nswfrGQJCkF2HlTVnP?=
- =?us-ascii?Q?EqIpKrHftSpA14LKE6FWq2niC70htyj8+AKKfobWCDQ3bPeOlJGhv5oMjocP?=
- =?us-ascii?Q?PY7bZ95Gy+dwvbi9ohy6ALR+InUyH+LdjYgYa+OF+CMdkLavouxvreiw7bRN?=
- =?us-ascii?Q?VNY/aGhocM4dOFTJc7+ymjqW9T7YBhyqxB0pY7/+WHH/KBrT/2O0TH0J0iHs?=
- =?us-ascii?Q?d/MmpoeprFjo2N+l3LAtUglNjUSehOOXJthEJRwe6l5kWm57Nlxkoyf0VImY?=
- =?us-ascii?Q?iG73m+0Zoj7WpLbtXW52yt0X/YB7loSdfWB8BaP42mA7exF14FqoSG/N2m+6?=
- =?us-ascii?Q?lx+GBaJ5DiA73q71n5OMNnj3iFqSsUgkLymhQRFXtZ/Tz93GE7vQmRlx45GN?=
- =?us-ascii?Q?Vrh9/vMbFHyppGH+T25WzJUtKfvoKy3HJeCVtxUf2Z6Gxz3Chbl8BKOm1tDr?=
- =?us-ascii?Q?BvgstXsnszfQegVaQEpptZ6guDftt3lAJXu98/Du85/cl8knjWVc92c9R+/4?=
- =?us-ascii?Q?6d1uZtgxC5X9djQaTEdu45m+qgH9Ic+8zTPkR+OgCwD9thhUzH33F1PrCYaC?=
- =?us-ascii?Q?gXL5GHXYuhZm4ZoTrmKxSEqvaAApfIbB0vlHvQUmCaEL9QUv9ihgEYU/Mykg?=
- =?us-ascii?Q?Bmm7N1UOCURqvgYOKSZUTD3C8hPA9dKmjvZy6PfzFb4dbey3cmzlB+UJtfnN?=
- =?us-ascii?Q?Gi2D+JgLFi3LPK6qLsHxB5wHosk57OMnjQDMHMbFpnafz5sTMWo63jTBSsAs?=
- =?us-ascii?Q?OzwvZpJ6n12N895k9nM+dwOE9LHH/O/y6v+3FeZNTp+olVHHBpMgcx0zRc88?=
- =?us-ascii?Q?hiF5f7ZDv2JRa6Ovxu1cfvZxROwYzPF33HnVZ4ggA0CCKUMIRV5Q+iYUvszb?=
- =?us-ascii?Q?t6HvM/WB/O4KiCTCsNXAVOB0fYW9ULDQl5EL/ep4WNYuTtw7foQrd9dWDXFV?=
- =?us-ascii?Q?1Gtyy0ZVxTgfThTLQGi+utnLTKZMP9O6RAUZYHkEH62F8WPLp55oglIqGQdm?=
- =?us-ascii?Q?RhGqzpRawihT77N1n1NZ0GZp759jbFpsPHAegb4G6SjRicV0EicNFrYqdrcK?=
- =?us-ascii?Q?liuslHVl4HiXx+FGsm3fh9M4bQbrkwuDukhnybXk2h1J6XCULUEOJvxxHnvd?=
- =?us-ascii?Q?/FvWckQnaXxZRcqnmr/Ueb2mJFLJCkGLpOJucr3ZxbBzFknfLqoCRDP079GN?=
- =?us-ascii?Q?qKP6f4xDaIGdKgtVUfOU8kQZMoqiwbYiTmJH3xfMmV3+Bwf7o+L++eQPCCrd?=
- =?us-ascii?Q?mp9RgZ/hzCETD6KItmzYODabUDYToBMRZDxSu1+1W5Vnv7lbpe9ft3cVwPOA?=
- =?us-ascii?Q?VF3wXdPEoc8YXgAq+wJjaTTA5b2oYFaNM1Tj29vNUVcbKUgmsuDh+ZxJb2ZS?=
- =?us-ascii?Q?9tFo+bNmk7vYG5C1JiPDFZv9rw3lr0qqvLM2?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jan 2025 14:35:26.9166
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6802beb5-79cf-42ff-c699-08dd413b56c8
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB53.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7174
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250130132317.GG2120662@ziepe.ca>
+X-Operating-System: Linux phenom 6.12.11-amd64 
 
-From: Akhil R <akhilrajeev@nvidia.com>
+On Thu, Jan 30, 2025 at 09:23:17AM -0400, Jason Gunthorpe wrote:
+> On Thu, Jan 30, 2025 at 11:50:27AM +0100, Simona Vetter wrote:
+> > On Wed, Jan 29, 2025 at 09:47:57AM -0400, Jason Gunthorpe wrote:
+> > > On Wed, Jan 29, 2025 at 02:38:58PM +0100, Simona Vetter wrote:
+> > > 
+> > > > > The pgmap->owner doesn't *have* to fixed, certainly during early boot before
+> > > > > you hand out any page references it can be changed. I wouldn't be
+> > > > > surprised if this is useful to some requirements to build up the
+> > > > > private interconnect topology?
+> > > > 
+> > > > The trouble I'm seeing is device probe and the fundemantal issue that you
+> > > > never know when you're done. And so if we entirely rely on pgmap->owner to
+> > > > figure out the driver private interconnect topology, that's going to be
+> > > > messy. That's why I'm also leaning towards both comparing owners and
+> > > > having an additional check whether the interconnect is actually there or
+> > > > not yet.
+> > > 
+> > > Hoenstely, I'd rather invest more effort into being able to update
+> > > owner for those special corner cases than to slow down the fast path
+> > > in hmm_range_fault..
+> > 
+> > I'm not sure how you want to make the owner mutable.
+> 
+> You'd probably have to use a system where you never free them until
+> all the page maps are destroyed.
+> 
+> You could also use an integer instead of a pointer to indicate the
+> cluster of interconnect, I think there are many options..
 
-Add support for Tegra264 SoC which supports 17 generic I2C controllers,
-two of which are in the AON (always-on) partition of the SoC. Tegra264
-I2C supports all the features supported by Tegra194 I2C controllers.
+Hm yeah I guess an integer allocater of the atomic_inc kind plus "surely
+32bit is enough" could work. But I don't think it's needed, if we can
+reliable just unregister the entire dev_pagemap and then just set up a new
+one. Plus that avoids thinking about which barriers we might need where
+exactly all over mm code that looks at the owner field.
 
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+> > And I've looked at the lifetime fun of unregistering a dev_pagemap for
+> > device hotunplug and pretty firmly concluded it's unfixable and that I
+> > should run away to do something else :-P
+> 
+> ? It is supposed to work, it blocks until all the pages are freed, but
+> AFAIK ther is no fundamental life time issue. The driver is
+> responsible to free all its usage.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index aa92faa6f5cb..415337e069f5 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -1751,7 +1751,36 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_mutex = false,
- };
- 
-+static const struct tegra_i2c_hw_feature tegra264_i2c_hw = {
-+	.has_continue_xfer_support = true,
-+	.has_per_pkt_xfer_complete_irq = true,
-+	.clk_divisor_hs_mode = 1,
-+	.clk_divisor_std_mode = 0x1d,
-+	.clk_divisor_fast_mode = 0x15,
-+	.clk_divisor_fast_plus_mode = 0x8,
-+	.has_config_load_reg = true,
-+	.has_multi_master_mode = true,
-+	.has_slcg_override_reg = true,
-+	.has_mst_fifo = true,
-+	.quirks = &tegra194_i2c_quirks,
-+	.supports_bus_clear = true,
-+	.has_apb_dma = false,
-+	.tlow_std_mode = 0x8,
-+	.thigh_std_mode = 0x7,
-+	.tlow_fast_fastplus_mode = 0x2,
-+	.thigh_fast_fastplus_mode = 0x2,
-+	.tlow_hs_mode = 0x4,
-+	.thigh_hs_mode = 0x2,
-+	.setup_hold_time_std_mode = 0x08080808,
-+	.setup_hold_time_fast_fast_plus_mode = 0x02020202,
-+	.setup_hold_time_hs_mode = 0x090909,
-+	.has_interface_timing_reg = true,
-+	.has_hs_mode_support = true,
-+	.has_mutex = true,
-+};
-+
- static const struct of_device_id tegra_i2c_of_match[] = {
-+	{ .compatible = "nvidia,tegra264-i2c", .data = &tegra264_i2c_hw, },
- 	{ .compatible = "nvidia,tegra194-i2c", .data = &tegra194_i2c_hw, },
- 	{ .compatible = "nvidia,tegra186-i2c", .data = &tegra186_i2c_hw, },
- #if IS_ENABLED(CONFIG_ARCH_TEGRA_210_SOC)
+Hm I looked at it again, and I guess with the fixes to make migration to
+system memory work reliable in Matt Brost's latest series it should indeed
+work reliable. The devm_ version still freaks me out because of how easily
+people misuse these for things that are memory allocations.
+
+> > An optional callback is a lot less scary to me here (or redoing
+> > hmm_range_fault or whacking the migration helpers a few times) looks a lot
+> > less scary than making pgmap->owner mutable in some fashion.
+> 
+> It extra for every single 4k page on every user :\
+> 
+> And what are you going to do better inside this callback?
+
+Having more comfy illusions :-P
+
+Slightly more seriously, I can grab some locks and make life easier,
+whereas sprinkling locking or even barriers over pgmap->owner in core mm
+is not going to fly. Plus more flexibility, e.g. when the interconnect
+doesn't work for atomics or some other funny reason it only works for some
+of the traffic, where you need to more dynamically decide where memory is
+ok to sit. Or checking p2pdma connectivity and all that stuff.
+
+But we can also do all that stuff by checking afterwards or migrating
+memory around as needed. At least for drivers who cooperate and all set
+the same owner, which I think is Thomas' current plan.
+
+Also note that fundamentally you can't protect against the hotunplug or
+driver unload case for hardware access. So some access will go to nowhere
+when that happens, until we've torn down all the mappings and migrated
+memory out.
+-Sima
 -- 
-2.43.0
-
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
