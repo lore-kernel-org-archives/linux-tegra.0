@@ -1,124 +1,98 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED8D200BA9
-	for <linux-tegra@vger.kernel.org>; Mon,  3 Feb 2025 11:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B162036F0
+	for <linux-tegra@vger.kernel.org>; Mon,  3 Feb 2025 11:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738580773; cv=none; b=asghVdkY4tfqlEM3s5UFGPhXKNpd4dTlH2MgdkX3Ova6S17dZnx6J5DuW1vsA+wEA50qnYjabqQWqBrH13eHLWhBeyJfXOQk9tqdIVYJ+5tcyMQWQ6rEU0slSUFJjRro36P6/c2orwg4JqDtMdaRHuYs1NUp5vnPHE4OYiCvMOc=
+	t=1738583638; cv=none; b=asN7k6vd/hna8ri85tLxSwN7ZcT6oawoni15PjWJSQO/wGnUdNEf97mIBBfgR2O3mMUbn/038/9FWsiBIi3G1yetElJSg9PmTUJlnltiOYJlVhx+mueReQF7oPoSIcV2GavtTj8fLO2a0yhrBLZaTWfbeCaonNZnNR7kYIRWyNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738580773; c=relaxed/simple;
-	bh=L0zjq6jDBZI7ii7JiZWpbP+ZJV7dABNH4fjU0c/3R2c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dXjjijSKw4Oe0bSHNErgxnY4zdpodOSl2YoZKZWMSUMMWNQFqhl6vq8Jejwn+xT7GVgJbLdFkKIVWPv6sgMOc5/kz7XUWKZa5mV796WyACAM4FC+LMDOrbN/K8qexAjdea5SB384IvXrOQHNPwnRMDTuCTMOprQYNFZwz/8aN68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-518a52c8b5aso1057708e0c.2
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Feb 2025 03:06:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738580769; x=1739185569;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+	s=arc-20240116; t=1738583638; c=relaxed/simple;
+	bh=meh/lrf3lQBId3u3rudz9MSEfCO2RYxB5NClOQzPRCY=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JGeGkZE1yzVFL4Ky+PUB8NiAFcmBdk/aC1xCdP/PWJVTQ3Y8H1AXJkXo8XvpNOq89w0TEqZejPjusdqPrtTkrFwIjt7mD3ObxBMaFurSMUgySmPS+tcEDnNasMjxQU+n1lnpC2lduU+TYIB2yKuF23nYqv5jfVdVR5MU+/4iRRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zxUSxLvz; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zxUSxLvz"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d3cd821c60so845572a12.3
+        for <linux-tegra@vger.kernel.org>; Mon, 03 Feb 2025 03:53:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1738583634; x=1739188434; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7LtzZBZK1xYBhlRCCK/qfM5LmHxuaONLUZDHgOpET4U=;
-        b=cjjg/IOWp9Sl+dEyjflK7/erqxAu9HjbAPEUELsn8xYInFMv0OH/VpNwQN/YFfvjd+
-         1GodjD3sPj7HVMMXo1IvZ/WLAk8uJBxP53nV77juXn/CvTYhOaPVJT0sWkbZdm2rvwla
-         aQ+nkyhkPhaAhxaROha3kNOdgPlaAh5CanXLQjN6SBE1uiZ0fuvRUG9O4SfEhnWTbNX/
-         26LOLZscFsTDRP9vSDXzlJN0Z9xFOh8dod6/Qke/z+bKrBaTJljxAAZhflMYvy1Ee+AG
-         yrpbH5Z2iiqS1gWqexnSoTcRE6V7lyfjSM45pBpP6RE1qBBEnavo9EKLG2HvCjkQRpOu
-         DT4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUwkO3PHR/Sez9ZwY1tIIU/8efUkgH4KDTKsc+kDYVOUzTOzKGTI254QzswamQIJDCnlzCO+jMsxF3o3g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzat67ysUdLjI2e2CKPz3SeLybGf3Pefz6ijH8QWBr2K3kvrn/9
-	BX25GP6AbA494skXQfo/esthJiQvYKY2Wcaf26LVJWnQKxbpi3xEEmQ2bH/7
-X-Gm-Gg: ASbGncu3iYqQhiKkF2HNilXp5h34AcjPO3xWlK9M2Pipqi6xxQAKlLDu7qF/l3MyCGF
-	5stSpOIUkb9FFEjEia66vexts9htTneUJ8bq9eur0eqKVuwAhRt1kq/3Eb/aVvef5HHyPkSQfyV
-	H8mM6V705XNFv8ombSrFm9pibny23I7CpOt5L60qY99ojKxjvegj3PjTJQNG5M6yugvWRcRiQW9
-	fSIsA583MkONgl6I9Wm9foDZXPPl5w1YWfcJuwe40Q57HSyrySjtNVkw/GzA850N16f7mCCnwAk
-	VVLF5ZgwrlMRAipkfGQkfjK26csIWDsvQkq9DRjidmUvtL6N/vP2TQ==
-X-Google-Smtp-Source: AGHT+IHr6MZb5nx3jHOMb1X6ZxWI5rkPAeiTEEZTrDf3h4JK897Csk4lkV4ElY4LqTqDe8ZlpGinyg==
-X-Received: by 2002:a05:6122:6609:b0:515:3bfb:d421 with SMTP id 71dfb90a1353d-51e9e4fe79amr17210904e0c.6.1738580769273;
-        Mon, 03 Feb 2025 03:06:09 -0800 (PST)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86694051d48sm1550162241.3.2025.02.03.03.06.08
-        for <linux-tegra@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Feb 2025 03:06:08 -0800 (PST)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4aff31b77e8so1676116137.1
-        for <linux-tegra@vger.kernel.org>; Mon, 03 Feb 2025 03:06:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW/VQK8SdRn7UBXFHUsim0EtDJkL7QdA5aSTG2JJGP2k7zfK2m/ZSYlUAs6NMVeI5IrDZnVTf+GgPECFw==@vger.kernel.org
-X-Received: by 2002:a05:6102:3581:b0:4af:bf45:39a8 with SMTP id
- ada2fe7eead31-4b9a5237dbbmr13881253137.16.1738580768726; Mon, 03 Feb 2025
- 03:06:08 -0800 (PST)
+        bh=d9tM7OqjYQPC/oIGbMDoNHBcwCYZBpgt07HcYPZRjQ8=;
+        b=zxUSxLvzFi55qo/3ZY2ZY+L7uy+KOguK0ymUIQTtI3OOgjfgRWnMdfXaeCUeYCZZAc
+         avEvbkVz/QkjwsXh5heMLPEmXRYnopxPUQD71P453hDFeRs/md3WTQXQrjDtHrbe6MA7
+         hA1pDqOQtTZkA6nZ7rhbFNoPpshASzcnt3UmVkPc6oYMutMaMS0ZxLaWBjaASpcxCDAP
+         ymSP5pM6Zm+EZCNlF+1LGsrvrEWvc675GwW/cc6rdYj0N9nJTLvEtHtXUIybfX6vB4ZY
+         zA77DTg02tG8OJyFGkObijATmMyH0X9qk6qyXL4blqAW5H3k4b1evgGGR3jAw8q0nHpd
+         numQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738583634; x=1739188434;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d9tM7OqjYQPC/oIGbMDoNHBcwCYZBpgt07HcYPZRjQ8=;
+        b=iuCLnm+fN2sU0DzE+WJg6XP0Ragxi1Sc3dGlLD+5O+Cek+FUXcpijWwZjhPFWZfgSc
+         3hcLrDKiGMOrIfiOCPC69FtV8B0e9/pkcRwjX4/Vj5j8bJzwZnZeQZxtEQHpuGylia7S
+         e6eH++W32TdK9C4050iu3ZLEWPy0y/Vp8+cXcdTR6UAbnFAqfG2qUsOSHezi+E4PbWaW
+         br6aSsAVU3ydiycNKyMJKiBuA+cRvmNo6sVm63MBF+Gg+sBBhuFVBjnOB0huWvksQ6d2
+         ecWncw8xDLg933UX0+ML5ZRTpec6tnSb2FudSkfJFozo3Oc4bImvDmJ2atC9WcafDTCV
+         TYvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVbONEnB0H3tvBJdGZu1ez2l3u4p/Wvd1dLL9tm4j+aVpWH4s/nrz331jYuidieXa3lbDcYXlSHtwf8Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyhi/YQbJwcOSZuxJBSGRgLEXJ6+6tGqw6yCWHTWFlRakLqrGt
+	Kd++Ic4qewhP4D3qgSFO/DMIB5n5NM9R0VFKNLOVngX5OVTtsEVe6pJni25sGUU=
+X-Gm-Gg: ASbGncvEjJOqoMWdBH2M/rvPjNAeX0mGh/6XYgqnmGqCKj5y7X9sdcT3vodITEepbOk
+	6E/qrNS2gXvnZuOsgCuc0G0ThaZ3Uzjrt8fsjACXawPIvUDKKnKTHQLGP9elX3yynuLaAtoX07O
+	C94OU+VZt+PvZ6tFyIyMV2lOeay5NdavROeuBakq4+gPQQGnqaw94ZgWyjiQAwV68dBUvcgQv04
+	LKJqN1GQ9n7cu6hAN92HYwGmbCXFhXRpRZHZZ7/vS1q2AdBQlVzvfWDYxL2NRcWVuqS7jLxFUgB
+	E4YgCnyZmG2rXEavXj4+Bpoc+43HiHo=
+X-Google-Smtp-Source: AGHT+IEwxGompX0RDX7IgATosUk/dQdYe878OcQcDjQG1dWZ5fVvuhozBCD2DX2UUP85oceDFhvY1w==
+X-Received: by 2002:a05:6402:4287:b0:5d0:bf79:e925 with SMTP id 4fb4d7f45d1cf-5dc5efec149mr9404962a12.6.1738583633919;
+        Mon, 03 Feb 2025 03:53:53 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.218.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dc724c9cffsm7586519a12.74.2025.02.03.03.53.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2025 03:53:53 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250104141430.115031-1-krzysztof.kozlowski@linaro.org>
+References: <20250104141430.115031-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] memory: tegra20-emc: Drop redundant platform_get_irq()
+ error printk
+Message-Id: <173858363265.129675.12403410768215721898.b4-ty@linaro.org>
+Date: Mon, 03 Feb 2025 12:53:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250201105658.37043-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250201105658.37043-1-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 3 Feb 2025 12:05:57 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVrry1ZV=C0vuEO+7GcF5Tqwtecxu4UPOnrtzXv6RUm4Q@mail.gmail.com>
-X-Gm-Features: AWEUYZnzGowivfh3HKcvshI6ESRr_FkQLsKDAfk4pJYroEWG9h9gdbwxIR0ysxU
-Message-ID: <CAMuHMdVrry1ZV=C0vuEO+7GcF5Tqwtecxu4UPOnrtzXv6RUm4Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, dri-devel@lists.freedesktop.org, 
-	linux-tegra@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Biju Das <biju.das.au@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi Biju,
 
-Thanks for your patch!
+On Sat, 04 Jan 2025 15:14:30 +0100, Krzysztof Kozlowski wrote:
+> platform_get_irq() already prints error message, so duplicating it is
+> redundant.  The message about "need of updating DT" makes no sense,
+> because this code was there since beginning.
+> 
+> 
 
-On Sat, 1 Feb 2025 at 11:57, Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Simplify tegra_dc_rgb_probe() by using of_get_available_child_by_name().
+Applied, thanks!
 
-That's not the only thing this patch does...
+[1/1] memory: tegra20-emc: Drop redundant platform_get_irq() error printk
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/2f76a890fd2c636c640af1387b333aeb0cf69c75
 
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-> --- a/drivers/gpu/drm/tegra/rgb.c
-> +++ b/drivers/gpu/drm/tegra/rgb.c
-> @@ -202,12 +202,12 @@ static const struct drm_encoder_helper_funcs tegra_rgb_encoder_helper_funcs = {
->
->  int tegra_dc_rgb_probe(struct tegra_dc *dc)
->  {
-> -       struct device_node *np;
-> +       struct device_node *np _free(device_node) =
-
-Adding the _free()...
-
-> +               of_get_available_child_by_name(dc->dev->of_node, "rgb");
->         struct tegra_rgb *rgb;
->         int err;
->
-> -       np = of_get_child_by_name(dc->dev->of_node, "rgb");
-> -       if (!np || !of_device_is_available(np))
-> +       if (!np)
->                 return -ENODEV;
-
-... fixes the reference count in case of an unavailable node...
-
->
->         rgb = devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
-
-... but as np is stored below, it must not be freed when it goes out
-of context?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
