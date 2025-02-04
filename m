@@ -1,77 +1,77 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56EB216603;
-	Tue,  4 Feb 2025 17:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96DD1D516A
+	for <linux-tegra@vger.kernel.org>; Tue,  4 Feb 2025 18:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738691898; cv=none; b=h9cq3NhvUEoa9QDw/3cX1q0gXtA/HXED7e2amM9ozWBOg7LnSrYxnyjgfSPRgbR/UITppC/NAMqMV1r6lei87xP1Nm3CzO3QSbxjWEMpszVtiyc9N6RzVjZmiLMDorpCQpvjOCviHsZAbuZT1HLKNAKWw4rfWxQzOdmyQk+L92I=
+	t=1738692136; cv=none; b=E3iRbwonHX1bEscrhhxNQiSVbAP0e3muCJo9t1/a/jvCKL4xNxaFKVVUo8QaeJtRX//maf9WDJ1B0EYchQ32GKRfQTdJ2camlM3mzDZ4vLUAFkxuHjuvG8QTYtDKUdkkM4NEE0sASzwngpOVUDWFJbrjlMrWRNqQa8hq3VfFwvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738691898; c=relaxed/simple;
-	bh=fJMyfC+FpkEe+Jc7PZhQm0cn15ZCm3XeLaHlbE+jTJI=;
+	s=arc-20240116; t=1738692136; c=relaxed/simple;
+	bh=r9K0Vwf65AUuHE/bjxxuzEp9L+I0CWIaTET4D2MHAmw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gpIVAV5iSK0RU0XXfMO7++VrYMetom9PK9e6F9IzzsasQPh0gzP67EI/V9L1X9sehNzMtNLZV7r3obJ9QllZQCWEeD6hHbt+vypOSoXi0HJ+MAD5WYL2qaag4rrqSBlXgJb6bLVJdPQgZhRfha2S7MP9xNhNB+J4PFEUp+ohrxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g16CE0EP; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=LOfaZXWI9ZLQgtOjEjc4afU0BtKlW6hYtCOIBTac+UPJE3nXKv/h5/nFQFnOXBlvkVQBsJ908uOjgYmaXQpla2RsoOyEc/YhRAeoFbB5GycYBAAe/5/qX42YaHl4jcucVpMpnjUfUGJWe47nh8rvtEf2IoJ7ESazAG29gERQ6TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mf6BVEPf; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g16CE0EP"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43635796b48so249655e9.0;
-        Tue, 04 Feb 2025 09:58:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mf6BVEPf"
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so3093412f8f.0
+        for <linux-tegra@vger.kernel.org>; Tue, 04 Feb 2025 10:02:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738691895; x=1739296695; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738692133; x=1739296933; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DaCr7q2IZb+qDsykGK4JI38oEwvknkiA23OdMdPwp10=;
-        b=g16CE0EPJ89Qocgp2G//9oXJAG4TvY2lEAvermLgFl/SIHarlt8QRCeQ3iNg+hYO8d
-         OHEvoeKHNIZEygrMjs4unMWjNP1y+6qFbVbz4X9Km5cmF0/fHPncc0P2jTQFuB9Ne6Sf
-         SrxJHvbMsN5FHOiO6IHP/g8tV5PRHJ5N0IHCM6KirvT2XI588ynT5KapW1G7TKm63m7y
-         yVPn53MgF2LmKWD36WGsp8aaBCbHp0O24SPDCYahFIj+sPHd7RGLiJXokZHsz4zIRDxz
-         0Q8R7qtu5sfG67j2GIK3hITiXLDZ4mfiqRSXP71suajI6JjRHe0287D9LE6eeDMjhTOI
-         UBlg==
+        bh=T4z5wAQZzKrG8mW8jnRw2NXQidvYvNXR1bP88Txg4ik=;
+        b=Mf6BVEPf40knHe3DSU56OQ6BqLpscktKF1/KYDBoie0W+GsJtoI8VyH7FeDjx9BVUt
+         2JvA+OJtzeeQlHc3BzBGT9U6KhYBodHdOBeo8Acp78AXCkdUd9uVd+Yf+t1UAMs3qWYr
+         0lSHOluokPTJH8zYJk0NHW/VThhE7uerf2+GQwQeHpgS4/vaFYWuSZL1pINM1ZcWUH8w
+         7N/lrZaGlH1HSBtDBv5bfMBkUTp7NOGD24S4rBxDvZBKdzFg4f9rFoWV6FwdX04FemVq
+         zN3EKvNG0kOxMPVRHpgOctXnlfA+/6bxjzuG1lxoUo9nq0K2Zr0Zjduj6TK/nqzi4dtr
+         0GNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738691895; x=1739296695;
+        d=1e100.net; s=20230601; t=1738692133; x=1739296933;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DaCr7q2IZb+qDsykGK4JI38oEwvknkiA23OdMdPwp10=;
-        b=eWzdOmLhSPAtResyUayyF5dIQ95YCZDVaezqShw57SS6NRMqKweEsUFoJ+0H3y6gKm
-         oyWIFrcuhaBuma48dwY9U26quM/RowyhzP+2pY49E1EheSwsBJmhe9yyWjge9FVZXFS+
-         aSwGnH+wD3bOvdBZK9bWT9PIYDMsPeezK5aggmy2XrP1v94ShIMTkRvH9pwCaUT0cinC
-         57GrsHE0c+D1Zz8QetcNdrH/KzSsHjJTZMIPZ94SrqKX2pGkEazhUtdM4D/TajI7cEwp
-         31R2cHUXaNX08SuoywAox2BEiwzJnUcxrjGUq9BVQOXD1loISLe5s33xU0niFLR4OKPz
-         SxCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlNBWQcxE5mkvQy1HNUoNECjD78AK68uj/yUfC+4gX5NyMSCl+Nstj59TZG4niedbsCda0RCuyU7FTuIOS@vger.kernel.org, AJvYcCUw4OcCMDFk19cNSPSRcRiD5f/oZVNxTb2do3HKQtPsZ9C1pp9b40PCzXcJUYNMckQR7YONqIFY@vger.kernel.org, AJvYcCVeuVNo4jAJBb2plx11XBs7Y/yNp/F4b8grNuwcYaudLVU6LCmz+FvegKcNx6By1yFdYBVEzo2cXqHE6zQ=@vger.kernel.org, AJvYcCVzXX0JQitANLh+3qOgStA3BzGvY9KRe7NcRmFR03+juNe8U5V5EbdiTXbCZd8AfAdoT8iF3TYcwdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlOCv8zDjifF09jcdu8IWl/VPFXF2eJ0lsGCV5kYp60g2m3XQY
-	daHBKOudbkNB2RoAUz6DLlPpsMu2Lk9xnkRdnBbufA2H9PzUS4z+Kv3olw==
-X-Gm-Gg: ASbGncvmUklZhC4oN86iXvmXkWN44bB+AEFO0koknZFh+yzjQcNYbcpDUOLsn91j9Ez
-	5t3FvqYqYQSL1hkETJn1xc6y2Cf8crkWLc9ofu35yi12Y6mxykCKFfj4CIiWI/XEppjQ5TwK6mH
-	mG1ptSmxJEJ7WfmOCLDaZJO2r2f+anPrG5Xhy7St/9FXMWJG6SqyvlomJzhPOFmN6zW2zsEwWf1
-	56en1TuB4KmZZjsFXhB8ENH/IlueDCjzVa2h7rTixXMx3AjPjrF1PdwGWyeDjrzthT2xTDXaKcP
-	QlzkJLcisSo0a1Bb6HKTrhQyTHKJnnM7md7Uts/AhxnCmjDxY37eaFj5UY0wB3pqHso/YNiyJBh
-	sGA==
-X-Google-Smtp-Source: AGHT+IGBotAZQJEfQycHZ/2NUlQP/ZgrtfGYyoTTbSoDLtBldbC2nDEWF4vmnVBugGiq3s4Cg+ikMg==
-X-Received: by 2002:a7b:c411:0:b0:434:ff08:202e with SMTP id 5b1f17b1804b1-43905f78241mr31249675e9.8.1738691894558;
-        Tue, 04 Feb 2025 09:58:14 -0800 (PST)
+        bh=T4z5wAQZzKrG8mW8jnRw2NXQidvYvNXR1bP88Txg4ik=;
+        b=XTbLpoGfAFME0cycEMphO3kqqjJYtVSAp+gJUkEB3Qs6YqCsPMayfzAKGE4f7dw7dA
+         YlA416wbwOhCckGKI0J/hO57DbQO4m8dDQsHoEFzTjbpzAvbmjhf2PBix+rotBWYnG4r
+         2yYFk+ERrv+nNfZvEAo0jTM+MyIId37LctYa5WCLGKuSvW2Q5iAo7yocHRo2DpFKDd5A
+         POER5900/uIt16kfM2aeFz0SzFwNiY6ypwHEzn6aB4recN2yAgjklkkaepUBY4Q4gx95
+         2Ogk/TQ79XBQvsFfjTVFFwMIdQVqrNzMgUzuwImpIeIGQ3jSHuw3XqM/QjRGXSnH7tX+
+         CxSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSBovd0Gh3ipvn+5HvX5FXjOgUGo3k4F7jFMmEQSknYsONRxWmWMN7lizl+ZKuy7WsWd6mFD9kc3JkOw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfMqVjzDUBlQ1HwMH1z+zZMvo+XWBW+ANgiAZD1jxxVK5IWEvM
+	GdGWCnqt6Py/MIIfyRGVzROQKt1ZS5+JNP8vmWLtlRuwlO9AyXUb
+X-Gm-Gg: ASbGncsUmwpv0CnIG13hpv0xP++lwZFyCH9Ns9KZIedV+unj2nhepliZRm1eGpR2Wuu
+	5pcbtJ9QqqLYgQNQtoFqTwU8JnYF68KS9lILpj+8t7k3zRuOovrMgHOLEteEPk3ufQ0QSxmwUGl
+	AcRehTK28kdOoht3mKKlSilR53ERfIAe+kL69hMgqZyTOF7a5j34c9tLvHlB8bBt84DhKKjckpq
+	6hE2M5vE+KO2f4RM3SMMRUQQKV2XFFlFwD/39keoNy5edC961mAnchfrbMn61R8jlNNr+uVj+dk
+	8lartq/X3+TQgILcSzeAeiip7ldsBYRu4c1uxVh/zQ///mVGesxUsyxFv2MPv6n1bmREl44RzkI
+	WAg==
+X-Google-Smtp-Source: AGHT+IHi9W+AQaPHkr1CjugG/NXnUKiYfyTQwQx2Wg4bwuqIWZM2eYaLtkut4n/MAS1Igy54G/nAnA==
+X-Received: by 2002:a05:6000:4010:b0:385:f398:3e2 with SMTP id ffacd0b85a97d-38c52096217mr23296233f8f.37.1738692132463;
+        Tue, 04 Feb 2025 10:02:12 -0800 (PST)
 Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c5c1cf571sm16200097f8f.82.2025.02.04.09.58.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38c5c11fadbsm16194196f8f.44.2025.02.04.10.02.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2025 09:58:13 -0800 (PST)
-Date: Tue, 4 Feb 2025 18:58:11 +0100
+        Tue, 04 Feb 2025 10:02:11 -0800 (PST)
+Date: Tue, 4 Feb 2025 19:02:09 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Mohan Kumar D <mkumard@nvidia.com>, vkoul@kernel.org, 
-	dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 1/2] dmaengine: tegra210-adma: Fix build error due to
- 64-by-32 division
-Message-ID: <uboixhzbccbt3ugdv6z4wsyyn4cpviw6okjwmfeqaslecotgpj@47afypfx5xo7>
-References: <20250116162033.3922252-1-mkumard@nvidia.com>
- <20250116162033.3922252-2-mkumard@nvidia.com>
- <dsxaisxdpsxecyna527cifixyurmkgo3cfaiheau5jjdl5qysp@64qquncxdmof>
- <84382200-e793-4e9a-b25a-8dc43e7a8bd0@nvidia.com>
- <52n364alceto6tgitbnjbfgtrk2lpe5ipztxi4abnuikjwgnvk@i6irrkj6fqbb>
- <c5e7e8a3-2e8e-4d68-8e06-a7a3f7fc451e@nvidia.com>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, "biju.das.au" <biju.das.au@gmail.com>
+Subject: Re: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
+Message-ID: <wdxol4ua2zjzepvbdqrsybizl6ocpppjb2dmql62rbcmjjyqeb@5z4i2g7hf5vn>
+References: <20250201105658.37043-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdVrry1ZV=C0vuEO+7GcF5Tqwtecxu4UPOnrtzXv6RUm4Q@mail.gmail.com>
+ <TY3PR01MB11346E195D7B44DA6EA30E25986F42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <2spuar4m4kcv62r7d6ovtpttpooodwrvsjk6tyxhlnuynw2aru@aj6s4xcgwfjf>
+ <TY3PR01MB11346FD535BB442955F43050C86F42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -79,182 +79,133 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="np3j6rj6ep4uje44"
+	protocol="application/pgp-signature"; boundary="3p7xeptfzcupllfn"
 Content-Disposition: inline
-In-Reply-To: <c5e7e8a3-2e8e-4d68-8e06-a7a3f7fc451e@nvidia.com>
+In-Reply-To: <TY3PR01MB11346FD535BB442955F43050C86F42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
 
---np3j6rj6ep4uje44
+--3p7xeptfzcupllfn
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 1/2] dmaengine: tegra210-adma: Fix build error due to
- 64-by-32 division
+Subject: Re: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
 MIME-Version: 1.0
 
-On Tue, Feb 04, 2025 at 05:18:46PM +0000, Jon Hunter wrote:
+On Tue, Feb 04, 2025 at 03:33:53PM +0000, Biju Das wrote:
+> Hi Thierry Reding,
 >=20
-> On 04/02/2025 17:03, Thierry Reding wrote:
-> > On Tue, Feb 04, 2025 at 10:13:09PM +0530, Mohan Kumar D wrote:
-> > >=20
-> > > On 04-02-2025 21:06, Thierry Reding wrote:
-> > > > On Thu, Jan 16, 2025 at 09:50:32PM +0530, Mohan Kumar D wrote:
-> > > > > Kernel test robot reported the build errors on 32-bit platforms d=
-ue to
-> > > > > plain 64-by-32 division. Following build erros were reported.
-> > > > >=20
-> > > > >      "ERROR: modpost: "__udivdi3" [drivers/dma/tegra210-adma.ko] =
-undefined!
-> > > > >       ld: drivers/dma/tegra210-adma.o: in function `tegra_adma_pr=
-obe':
-> > > > >       tegra210-adma.c:(.text+0x12cf): undefined reference to `__u=
-divdi3'"
-> > > > >=20
-> > > > > This can be fixed by using lower_32_bits() for the adma address s=
-pace as
-> > > > > the offset is constrained to the lower 32 bits
-> > > > >=20
-> > > > > Fixes: 68811c928f88 ("dmaengine: tegra210-adma: Support channel p=
-age")
-> > > > > Cc: stable@vger.kernel.org
-> > > > > Reported-by: kernel test robot <lkp@intel.com>
-> > > > > Closes: https://lore.kernel.org/oe-kbuild-all/202412250204.GCQhdK=
-e3-lkp@intel.com/
-> > > > > Signed-off-by: Mohan Kumar D <mkumard@nvidia.com>
-> > > > > ---
-> > > > >    drivers/dma/tegra210-adma.c | 14 +++++++++++---
-> > > > >    1 file changed, 11 insertions(+), 3 deletions(-)
-> > > > >=20
-> > > > > diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-a=
-dma.c
-> > > > > index 6896da8ac7ef..258220c9cb50 100644
-> > > > > --- a/drivers/dma/tegra210-adma.c
-> > > > > +++ b/drivers/dma/tegra210-adma.c
-> > > > > @@ -887,7 +887,8 @@ static int tegra_adma_probe(struct platform_d=
-evice *pdev)
-> > > > >    	const struct tegra_adma_chip_data *cdata;
-> > > > >    	struct tegra_adma *tdma;
-> > > > >    	struct resource *res_page, *res_base;
-> > > > > -	int ret, i, page_no;
-> > > > > +	unsigned int page_no, page_offset;
-> > > > > +	int ret, i;
-> > > > >    	cdata =3D of_device_get_match_data(&pdev->dev);
-> > > > >    	if (!cdata) {
-> > > > > @@ -914,9 +915,16 @@ static int tegra_adma_probe(struct platform_=
-device *pdev)
-> > > > >    		res_base =3D platform_get_resource_byname(pdev, IORESOURCE_M=
-EM, "global");
-> > > > >    		if (res_base) {
-> > > > > -			page_no =3D (res_page->start - res_base->start) / cdata->ch_b=
-ase_offset;
-> > > > > -			if (page_no <=3D 0)
-> > > > > +			if (WARN_ON(lower_32_bits(res_page->start) <=3D
-> > > > > +						lower_32_bits(res_base->start)))
-> > > > Don't we technically also want to check that
-> > > >=20
-> > > > 	res_page->start <=3D res_base->start
-> > > >=20
-> > > > because otherwise people might put in something that's completely o=
-ut of
-> > > > range? I guess maybe you could argue that the DT is then just broke=
-n,
-> > > > but since we're checking anyway, might as well check for all corner
-> > > > cases.
-> > > >=20
-> > > > Thierry
-> > > ADMA Address range for all Tegra chip falls within 32bit range. Do yo=
-u think
-> > > still we need to have this extra check which seems like redundant for=
- now.
+> > -----Original Message-----
+> > From: Thierry Reding <thierry.reding@gmail.com>
+> > Sent: 04 February 2025 15:25
+> > Subject: Re: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
 > >=20
-> > No, you're right. If this is all within the lower 32 bit range, this
-> > should be plenty enough. It might be worth to make it a bit more
-> > explicit and store these values in variables and add a comment as to
-> > why we only need the 32 bits. That would also make the code a bit
-> > easier to read by making the lines shorter.
+> > On Tue, Feb 04, 2025 at 09:07:05AM +0000, Biju Das wrote:
+> > > Hi Geert,
+> > >
+> > > Thanks for the feedback.
+> > >
+> > > > -----Original Message-----
+> > > > From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf
+> > > > Of Geert Uytterhoeven
+> > > > Sent: 03 February 2025 11:06
+> > > > Subject: Re: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
+> > > >
+> > > > Hi Biju,
+> > > >
+> > > > Thanks for your patch!
+> > > >
+> > > > On Sat, 1 Feb 2025 at 11:57, Biju Das <biju.das.jz@bp.renesas.com> =
+wrote:
+> > > > > Simplify tegra_dc_rgb_probe() by using of_get_available_child_by_=
+name().
+> > > >
+> > > > That's not the only thing this patch does...
+> > > >
+> > > > >
+> > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > >
+> > > > > --- a/drivers/gpu/drm/tegra/rgb.c
+> > > > > +++ b/drivers/gpu/drm/tegra/rgb.c
+> > > > > @@ -202,12 +202,12 @@ static const struct drm_encoder_helper_funcs
+> > > > > tegra_rgb_encoder_helper_funcs =3D {
+> > > > >
+> > > > >  int tegra_dc_rgb_probe(struct tegra_dc *dc)  {
+> > > > > -       struct device_node *np;
+> > > > > +       struct device_node *np _free(device_node) =3D
+> > > >
+> > > > Adding the _free()...
+> > >
+> > > Yes it fixes a memory leak aswell.
+> > >
+> > > >
+> > > > > +               of_get_available_child_by_name(dc->dev->of_node,
+> > > > > + "rgb");
+> > > > >         struct tegra_rgb *rgb;
+> > > > >         int err;
+> > > > >
+> > > > > -       np =3D of_get_child_by_name(dc->dev->of_node, "rgb");
+> > > > > -       if (!np || !of_device_is_available(np))
+> > > > > +       if (!np)
+> > > > >                 return -ENODEV;
+> > > >
+> > > > ... fixes the reference count in case of an unavailable node...
+> > > >
+> > > > >
+> > > > >         rgb =3D devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
+> > > >
+> > > > ... but as np is stored below, it must not be freed when it goes ou=
+t of context?
+> > >
+> > > OK, But it is used in tegra_output_probe() and never freed.
+> > > Maybe remove should free it??
 > >=20
-> > 	// memory regions are guaranteed to be within the lower 4 GiB
-> > 	u32 base =3D lower_32_bits(res_base->start);
-> > 	u32 page =3D lower_32_bits(res_page->start);
-> >=20
-> > 	if (WARN_ON(page <=3D base))
-> > 		...
-> >=20
-> > etc.
-> >=20
-> > Hm... on the other hand. Do we know that it's always going to stay that
-> > way? What if we ever get a chip that has a very different address map?
+> > It's not quite as simple as that. tegra_output_probe() can also store
+> > output->dev->of_node in output->of_node, so we'd also need to track a
+> > flag of some sort to denote that this needs to be freed.
 >=20
-> You mean a DMA register space that crosses a 4GB address boundary? I would
-> hope not but maybe I should not assume that!
-
-Not cross the boundary, but simply be beyond that boundary. The current
-check will falsely succeed if you've got something like this:
-
-	base: 0x00_44000000
-	page: 0x01_45000000
-
-or:
-
-	base: 0x01_44000000
-	page: 0x00_45000000
-
-For both of them the page > base condition is true, but they are clearly
-not related. Of course this would only happen in the hypothetical case
-where there are multiple instances, which is not the case for ADMA, but
-for other devices this could happen.
-
-So I think it's always good to be prepared for those cases and do the
-right thing regardless.
-
+> OK.
 >=20
-> > Maybe we can do a combination of Arnd's patch and this. In conjunction
-> > with your second patch here, this could become something along these
-> > lines:
 > >=20
-> > 	u64 offset, page;
-> >=20
-> > 	if (WARN_ON(res_page->start <=3D res_base->start))
-> > 		return -EINVAL;
-> >=20
-> > 	offset =3D res_page->start - res_base->start;
-> > 	page =3D div_u64(offset, cdata->ch_base_offset);
+> > Ultimately I'm not sure if it's really worth it. Do we really expect th=
+ese nodes to ever be freed (in
+> > which case this might leak memory)?
+> > These are built-in devices and there's no code anywhere to remove any s=
+uch nodes.
 >=20
->=20
-> We were trying to avoid the div_u64 because at some point we want to conv=
-ert
-> the result to 32-bits to avoid any further 64-bit math and we really don't
-> need 64-bits for the page number.
+> If there is no use case for bind/rebind for the built-in device then no i=
+ssue.
+> Or in .remove() free the node or use dev_action_reset()??
 
-Well, we can always safely cast page to u32 after this, or after
-checking (in the second patch) that it's within an expected range. But
-then again, do we really need to do 64-bit divisions using these numbers
-again? As far as I can tell this is only used in
-tegra186_adma_global_page_config(), where it's multiplied by 4, and that
-should work just fine with a 64-bit variable. But it's also fine to just
-cast to whatever ch_page_no is (unsigned int). That's ultimately what
-lower_32_bits() ends up doing anyway.
+Bind/rebind is possible, but that's not even a problem. Worst case the
+reference count on the device node will keep increasing, so we'll just
+keep leaking the same node over and over again. I guess potentially
+there's a problem when we rebind for the 2^32-th time, but I'm not sure
+that's something we need to consider.
+
+That said, devm_add_action_or_reset() sounds like a good solution if we
+really want to make sure that this doesn't leak, so yeah, I'm in favour
+of that.
 
 Thierry
 
---np3j6rj6ep4uje44
+--3p7xeptfzcupllfn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmeiVTAACgkQ3SOs138+
-s6H9oRAAmejb7jcFuCXS2M0/90bBDaif6rNzrZoXUcaiiBI2DaKNqh8BGMuwYHpo
-uDRDuLShJTji0dgNEkIfX3vlsB9mDIP08GSTGyUbXzWyVD2G6lafkuByBgqKPuZf
-CTaKhxUnZaDHNmKoDTRTt1nL7ua5pyxVQ+6JffOFI9Q1MLMIpsiJBPmYmnMPHH5b
-8NzVvEq5GklS3nilLcmDT19c/x4oEtnXP74gS+IaxUAoRDpNeE5cacpUKTapnjLZ
-MRVbBu/6Xb+nonacEnzh5QkozCf99K1KscJm208cgqoN/cmgyU1/TKcYOB1rdlLm
-/yCp3PaIVUjQwI+QTCy+nvF7lJTpOeOSP7Y2YVaKXd3+eOqET2WITgc3nQb87nHd
-qDf3XVVMLafKpi8SFV3Lqy/scEn0l74dOEnDq0P1CrCA4ZtIoP6RN8I1rHvEGPR6
-dDs+h3OA/voxtSQzT3ygDa3roK4A+YNh3ArY7FVlbByzXPQkBy3fp/SnGmnzkakY
-G0PrM2T/BfiYclTwCSMhrhr9z7gOHBQyOrNEt5GHNPBLFS/44Wy3W5kdMLFZ2Iw9
-mEHlvnL7BZ8Du3szZZ1Gc0W6cxhPVY9SzGfWBTBqBJck7CBFa5bQMAzfK8fmQmoN
-cOlDCQZ++RA8QYuExqXMVfoYNw/JOwWAEX+ljOppcRSoQjhK4v8=
-=mtwp
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmeiViEACgkQ3SOs138+
+s6Gomg//axDIv8lDZQI+Tb6vo+p5J65aHkZXr5gCcDDWdWuJHHm6RFxVv640fN73
+P+7oaTvquB52OBtcaJT4hGppK4Ai2meTIL0Dhe0EPT0Yz7WaD1GHR4IDa8ptNbDQ
+81kjhAwVpRPjdP3QdnFPD0hjCBjuyFYBjlGqqI+sXP3RCDtXx3oe7F1+Qzg/8X91
+PZ3jC2CeITJgnN/HTJG5qRMGBvvyjl4zr0+k2bS5dGPofpwE2Bx0dmbuv38vJQeo
+QTHCFMA61P9o63hVm/QS3542WWFAIU8SyJmfniA1QiPdzeHZzOz39N9YIRl0qIS8
+PEeonLhXLx+zgd3WHb4HzZJvFvvUIXxIaI0uwHFIpmbfOpf0DPGRV3nnKemgBPeK
+u7p1jIdgzdeR+JjmFqTS3fEgDxsGzhuJLA2e1Sufyj8ofmrwiBj/T8ePvel+R6kb
+tk5hN0Bdko08ahXeZRp9lLbaK/7ToRabZTuTEMosDc75fe/fQZG2V7SQ9zDbaCIQ
+l/JnRrntXMtYrgA8ClidDTIEHOknCYRjtRhAnwO19za5QbLrQyG8o2X41ReW2sZS
+xQMkZS2aABVkgnl/X/6fNqrW20YKHzur/GhHc78QsUBdUDJS7EvF9DdSB9yMPVon
+/1Z7AZRCjCT+Bl7h12KdogdHEowyVcIgGTJiXExeRDDV9+n1GdI=
+=CA70
 -----END PGP SIGNATURE-----
 
---np3j6rj6ep4uje44--
+--3p7xeptfzcupllfn--
