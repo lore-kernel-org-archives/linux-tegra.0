@@ -1,242 +1,185 @@
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011002.outbound.protection.outlook.com [52.101.125.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B42213E8C
-	for <linux-tegra@vger.kernel.org>; Tue,  4 Feb 2025 15:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738683248; cv=fail; b=fqeWo9akvmfaFlugxxrMyO3fNW44DAnF92XLYUHPm/h871Yqvpl01l+CzDMYMnODwne2LW95rRxn5pm4/Oea0GEZ83DbCTuXhFzAtzm47fXb5OU6yrr+bw1SGlMuDOeqY2liUY0YkqwS05pS1vnj2KHOSIMnpiTVDtv4vVpFxMY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738683248; c=relaxed/simple;
-	bh=R2n+kL2NSeuUYDiUgw6bqudg182t+zK+VBHpXCM7D2Q=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=c0vqQR0jztpNonC4MjBWpbSXGCfRcbh1I5/2a0KUL3CckfTvtCz53xz5XGLn1qZeYIhvPl1OmAk5Q44kVnitZEZ/WbErbjh079krnZLA5LTcszmHe7ZE2GFwq8MOOI6K0RD3K951UwDqZSoYEMQMwE8zXgM5MrpAzxVdQVzheB8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=TfeonCJi; arc=fail smtp.client-ip=52.101.125.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E4E213E90;
+	Tue,  4 Feb 2025 15:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738683395; cv=none; b=dO+opSIwvtpMgELelbxM36VAYNGjYvmGlvsKJDk0R7EPOHixQBoUHTV449acoZQ7k8rGOR2rXnSRHhRnbaJPSA+JEKgAI2rG4wJCsgy4fS6f3nEejqAXbDY0WHTEqk/8vjSc5zHMcoBcloeABaf9xAcfqNgk5oZ3jsLSDwriSec=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738683395; c=relaxed/simple;
+	bh=Hperjmt2vFY8V7jP1srdf54/2dxyzRb2naI2WZdG0o0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/TXascUsorUQaUxBjN8TiEmVlOihYC0cTHUqtRGAA5iL0RbJMUXTCg+Cr6x2Sm9EvM+tNd9B+E44NPAxFRy9C5X43rMzfOAA6SgtwpLvGOGrnTEoL7mgtYwIeqRMPHIpmRUWXeACthBS61im4TlRfuFSelbhOyXZWayxa7VXTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoN5abod; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="TfeonCJi"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oVeCP2eyD0/FB5OPVZvWCN2HmRA1H6Y/1/SMc9jUnndSzRJgkG0Hrjgx8fOMRFqwY/WNFzluHkVZrzMIQdhnbHEOR1q+UIxpB90qQIEZkGQjEH+C04rjRIRWk0IsFdBFwOycGN7/RCUL1Iixq5Tysl1K7ybPwy/PbrOm2dlMw/umcaqtdkKoE12S6fe7Tv3WILRjsoh6HamGHCNIHiSS8gSsFvfXtXooJfgvOIkbptHuBXl3U8/td/E7U3OT2kPYKtYfgeIOeFJjDDZ4gaFTHlZvy/rE6XUjYB5mnaljPM8i8o2Ur/mMaIt9w8drAYUsXuyvkyYuowblclTAqBnDDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3y5whwvICYVH9e+gb9/SRjCLmYW8yC98tVcW5jrUCO8=;
- b=FwExnPOeU7jPKRKrJRGAkTPL6Q6pVdw8aVCmxePRWijrTvBpJvl3RkFOBfkbUOk4GpViELh29lwfm+TWzsVw2CvipgYzL/HDYBmZ1ODAClP+5uY6PlTW0B2ZMolQvTYPN/HksoU4ld+GiEjYjbgZqoHguO3quWEMxIWCkNwqu/nXvcnMO1b4OC+VA7XTZK5e7U6qEXceo85D3FjUSkgeCBvb3R6wP5Jw/4cE/jr0hbl54891Li1Z7oHpB+3R1gzTgE3vW0hzpbcQBzZM5aqkd58JNEe1Gap+BOJbDaLLURLP7TJNj0YxE/wAxlFDVKEbMOZQKYHmSBtycOks/K4zZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3y5whwvICYVH9e+gb9/SRjCLmYW8yC98tVcW5jrUCO8=;
- b=TfeonCJiWJYasSC2EFPsN7TKPQvtb4B9v+qSpYYZOB6EMbpyzSoRRXwDTg5URWQiVIgSHc1Du/333eo6qXhoVxS8XE3qKC/CkT+6TWfPuZYEyYj7vu0qxPp34jZAICkKmXS4CROkaogq8XiUYq3GpTkTb0eOvwv7EGYrjXEJczk=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TY3PR01MB10111.jpnprd01.prod.outlook.com (2603:1096:400:1d8::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.26; Tue, 4 Feb
- 2025 15:34:00 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.8422.010; Tue, 4 Feb 2025
- 15:33:53 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-CC: Geert Uytterhoeven <geert@linux-m68k.org>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Mikko Perttunen
-	<mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, biju.das.au <biju.das.au@gmail.com>
-Subject: RE: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
-Thread-Topic: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
-Thread-Index: AQHbdJgP9S/z2tVCcU2bggWheT9O97M1bgOAgAFv+jCAAGrLgIAAAF2A
-Date: Tue, 4 Feb 2025 15:33:53 +0000
-Message-ID:
- <TY3PR01MB11346FD535BB442955F43050C86F42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250201105658.37043-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdVrry1ZV=C0vuEO+7GcF5Tqwtecxu4UPOnrtzXv6RUm4Q@mail.gmail.com>
- <TY3PR01MB11346E195D7B44DA6EA30E25986F42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <2spuar4m4kcv62r7d6ovtpttpooodwrvsjk6tyxhlnuynw2aru@aj6s4xcgwfjf>
-In-Reply-To: <2spuar4m4kcv62r7d6ovtpttpooodwrvsjk6tyxhlnuynw2aru@aj6s4xcgwfjf>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY3PR01MB10111:EE_
-x-ms-office365-filtering-correlation-id: a317cc9e-f133-4eeb-a027-08dd453154f1
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?BKHo296GGKbQk/AYy68vIDePXSU/tcWsoIU/BZhHrEusxvAnOoa2wUrUArq7?=
- =?us-ascii?Q?UDQO6lswvB6jS3Shm7ny2nphwCrxBwcl3UyhDyq/gKgPoo2tHPa83z3h/EIj?=
- =?us-ascii?Q?bT1G7VTkWwYJTws2J2rq9kAuf5r7hAWQcBw/0GxocyxKMuVSKPTBNJhx3SDc?=
- =?us-ascii?Q?8UiUXOomOqCS0d30ITfdzMn2VIXDxwosXm8AfGDu5e3sKxgYwhULVjjhsf5i?=
- =?us-ascii?Q?vPyyAAmtuCYU+U7O+pwC49EGoM3wcCtFx3IXUuYItVOk39Qu5JXdFcXFfgHH?=
- =?us-ascii?Q?GJt8ZvuJMq177yToL8xD0PqUX56vY9/1M8BNVn+fX0jG0VP/lddlpvFoUJpM?=
- =?us-ascii?Q?BEW1OX6tfHmEtcbZJn8jOP850/dR2WK1dfAQLrBhTlcS14hxr2tG0hqB7ckO?=
- =?us-ascii?Q?x8o28HFyHKRonXurtfbwIcZxoaxujqkPrCIf4iPzSVxWY8cViPCjtd/1HxKL?=
- =?us-ascii?Q?0slyCHLxZWa0uyWvcepURbplt4Evi7uhvefDFbRyhBWgZlrh0QoBIJTmyLXS?=
- =?us-ascii?Q?48S0m+dyKFnljU6RYOOJH4LythpOGhtINXPy+KeNXM3UJz+YEakDaydq4Jrx?=
- =?us-ascii?Q?0dKEuNCuHhqz5/VYztGtmYR8lTKgFRTpYNSCwDAoMmeT5xsdiQWbFgIzSl2G?=
- =?us-ascii?Q?6gwzjhbJdAO64D7phJ2I+kdQSgijrTbkrT3JLvKOafn+le+1EwDkjlpETpqt?=
- =?us-ascii?Q?vhXcUSn2Xx+fyMVX91pXazixdsdHMbhqoWpVgflxaJ7EKRoY6baAPvkZ+P5P?=
- =?us-ascii?Q?kv90fHdRV5EMPXOim5Mw9h9g7zmLucmxl5pALECSghA8qnLBMfXRN/ZF9mO3?=
- =?us-ascii?Q?F/yAXBt0PwzLPGrWK42LjBt7UBap89uX9gc6XrFoEDEdkfBmQW1MgbhYshnb?=
- =?us-ascii?Q?uluTBgEjxJnwFxc6C2SSZ5AoqtnKARUfBzCaG1n1Oi4x2Ev8KKYkePGq+Gvf?=
- =?us-ascii?Q?PVMbruV7zy6Xap9vSywVWVGmM6kSG2FWtnrKrs7a1A6a3cb498XUtu5X2BPx?=
- =?us-ascii?Q?LVisQreA0B3CyYDHCyqdiC55b2l88sDuM5Mp4Jdu1XVq+h+OFA/jpCj5StK7?=
- =?us-ascii?Q?cn0WqVjVYIw7LRZ7Z8CQF/cdHPVK5WQ/VimDdbr2TO3Z59DmxkoNArC+VjjP?=
- =?us-ascii?Q?gp6PmO52MMtyN6vZ9smcg4ZzT9/JJytN3Gt9ofkU588oUlWpSch/9Seu3zQP?=
- =?us-ascii?Q?DZtaCl3F+yjsDRsWYhVn43NYKOtfMSsMuuKhn78wKzmqq09CKTl3Vz8XjopE?=
- =?us-ascii?Q?HKySFcMFSr4VBSl4ZN4I3WLlSgyVhVPvOqWrSqeUTFv93KWZEtKYJlZ6sg+M?=
- =?us-ascii?Q?RGrx82CbrJMEswU4EAY7U2SBce4Dn/66aaLpIy0bsH6PHI5K8YYVM5SSP1ni?=
- =?us-ascii?Q?910aFmOJ+Vm9QA8Lgb0cWOKfZAfUJhwh6ok2aShOG8nkQq/l0qRgNK7rb9/N?=
- =?us-ascii?Q?PhAOAh47DLoQ/JniM2SVJe+2CSQ85ita?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?LyaqDtalMxaHIDBiTDS0JLyjPQf5y/KpWQLuPKQbXlAWe9nUlvH8knZ3rpEv?=
- =?us-ascii?Q?vOD54HED3BQfxyJ5mMaUKS9txalGjW6CfER1l9tKpN06Dc7s4u38p6aTFGfG?=
- =?us-ascii?Q?nYnJjvMxEOm4W4zsaJMmNjYsq78rAJg6Pz8QPdTz0Z69NTrmE2jYnx8LRDPj?=
- =?us-ascii?Q?5RbnsrQ17hmcVKofWPFG+l5oj45PRM5UA3iEE1iZfo1h3K7K7C6a7qjvmeNC?=
- =?us-ascii?Q?Wb/PQ47aY4lOIwbVkJoUwRGxlaCBXk0dXziof14EW1Iqmxavj1PdfJpDdzGr?=
- =?us-ascii?Q?BU14z4atFsLAXuPyM7m+Y1SJzA3u8d4VQtD6JsELXkNQmhbR6TJToQ3/HOHe?=
- =?us-ascii?Q?Gg0I5ANFShFPl74IT5rAEGszyK3SBPs8ZA0sglpR3AWSRLgSBaBBWeqQOLRz?=
- =?us-ascii?Q?rlJAmpUQPeFjQfmsZoKVo4EpSk/FDih7sl/BRsGj8SJFMIf0/uBBdGT9aZpi?=
- =?us-ascii?Q?IVVZ02PpXOElgJsXa9hojrX1mf3agr6Z2/Xnpa7cFBXX3Q4xli/5Fm5Qo4u+?=
- =?us-ascii?Q?q7jjkd4KoLQHBxPV/y8PxyWnrggyDWomHQqTOu+koNP8osxoQ9Ou40hKllRX?=
- =?us-ascii?Q?vyWpv81yg8tixTfsaqDZTHEhqPdFWBBAPX3zJ0qNlOuNtI4X6CB151FX9Lyp?=
- =?us-ascii?Q?7tVsO6JKzgdYso0W/kMJ/8nZ6VmMhAiNkf5iv6eieY0BzS35RMkw5byPX88f?=
- =?us-ascii?Q?SBFJdj4dwx+MPPtzjunKt39F8Oelg0vFioD9nC3z3U9CLVOOSSWfQ7VHNiY3?=
- =?us-ascii?Q?kBzXMjPAllAA6nU2jQHigeSyks/K699DMied/JI77Oo1jC/7jvYvsagZ6Fv/?=
- =?us-ascii?Q?B1YD3fJJpcSzYlJhC9kRxD+p5CxOHxRsdMQiNh+/q2ZbL0C42L5JIxePuuJi?=
- =?us-ascii?Q?dNdreXiLiIYbExSN4VkL4UGEulrMvf+Gs0dTOlP2Sf1QMFT73kTbnHEqKybH?=
- =?us-ascii?Q?xZxzFDuE15msjlkDkrdiX9odG3jif1GgFeulCnzebhO1qWJzupMesee3xlBo?=
- =?us-ascii?Q?Lic/HAy4ptaob/nzIX9UqEWA2+mxE7NfETMJ2KzMKr4ocBaJWh8Vck0jMDTc?=
- =?us-ascii?Q?HgO/VvNA2SLBQGyf+1oUaJsiboIKlCCyn0WSFie+GJ1yrRz/QzTJn7+iQSyn?=
- =?us-ascii?Q?VNOQl0tfh8oPXT4KZP/pVM1duaENsdIGpzS05Fa3HFT6NKpj7u4+eewGe/v/?=
- =?us-ascii?Q?vVro2mTwIm7FlA90/5CcFVXHtOrs3J25ioFRL7c+kCZWKlUh6ihyakQ0WDo8?=
- =?us-ascii?Q?ujAlc9zm/B/sWm3mNeFnTzos6RdTCJnJFeEfa/uiWQwro1a3wte1jmjhKiyq?=
- =?us-ascii?Q?cBG+2KO6dx5RYZqKMznrJ05oGVKY+D4XKOVcy6qMTcuSjg5vbztU9O4LE/mX?=
- =?us-ascii?Q?sYePBskjtCzXe3iiyuKXpqfKckW6pjckiIzyL2bKrQdMCPYqKjkA5vAAiCsi?=
- =?us-ascii?Q?MI7BuJCIhYguGQfbBuPIl7UNECBKbMYeBuBkrLi6DfFxGVImOfMN/N8iS1b4?=
- =?us-ascii?Q?HyYhWcdYIi3+ZEuQEtNbLM2UzEbJX4fM5xscwmLynC3UVRTi3TpL3bSgPFLR?=
- =?us-ascii?Q?Ms5AN2lwM2al2GtEcDvRoeZAS7E5C0R/gLXbJqBxWjax7sZounZEHjt7GcA+?=
- =?us-ascii?Q?Ig=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoN5abod"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-436341f575fso67788525e9.1;
+        Tue, 04 Feb 2025 07:36:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1738683392; x=1739288192; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6yfhdfuu6Jne04lXzCONZTO6jud9pXKpEXOoexC1v38=;
+        b=NoN5abodXK5oGSB06E2pHmJ4GgJf12Voc7uNbEydOMrZvOwwq2fhnyWtJsdKm9Hywm
+         tVlW3aWmJsLr3AvfTyq6rcxGYgXsi7/kpa5zD3+JOxPc4stgMb5QFU5bvxbgcLkI1GFz
+         UOyHsn6NJkR26FlC8Dx7PXhK4Vt0d2s39GZPlcGOJUD5Juf/hCmWZ7se+1nWidItAWNV
+         6xfUYpEGdVG3YMB1WcTqpYX3QhacTCsiTLf+GMaRYENQDAcpxqX+vawgmtsom/53YHPK
+         NC70yJvKlEWL905eB1ZscggewSVd68g+Q7B+hy2SpHl2wMD+RItkXWTdd8ZHdzvcD8JO
+         4HbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738683392; x=1739288192;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6yfhdfuu6Jne04lXzCONZTO6jud9pXKpEXOoexC1v38=;
+        b=lAZ8T97mbvMqOAH0065+KN8cWc474KsFMhIu/zsifw3Z6884f0auK2KGe+JTUJ8kLY
+         arH7d62yPFMeTq61nRRCpbEplxC9+pYseqIGAGapnpowrB2a6mXJaN8ogoF7Stg8NnbF
+         xiDdkBsc26b3LA3P2qeKMPipB7sEYF4QSsBGL4ac+zD2EhCbT1E1rs/IrXwnFC8aulix
+         D0kcwT2Sr+PP7IWa3Qj3CUYvRrw9K9dUdjx8mnIFXy8rZvbQogd8BWtGjs5t6HBDKwPC
+         U/eSSRSYyIcCyiNJlXIkdG7TzwjOBR9pbSv/0KzH0KTVXoeRqBA6vLCUFAILQZbME5Dt
+         QLvA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1BPhwuhXn1dOHkw/YWPfrY1/p/ceAS4G0413BCRijhNupSJ2Kc/+G9rcD73gWG5HCcQCsEpyonzYaRhMT@vger.kernel.org, AJvYcCVGMMmQ8pyhJ3cCzPu3DLtPC/X6shg7/jgHXC6fN4KwkszZCwqAAOGn6+DNE2m8MBBHsWR2ge5Y@vger.kernel.org, AJvYcCWohQ+CMrcgjEnLqbqKX47aRkTDPHun7pMKdSxM7vuRz8GPGt9/cDNSI8kxG69jamxqiq5EAyMpepU=@vger.kernel.org, AJvYcCX9YL2x8vWk4eJSO4px2A6oWjNlQcEM/4PCWPr15TmWm7JA6mlDwUkFac4B3bluuzcLUG+Ex0W3yuQjQfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygyMlMehbRzz6j0VobC/IeQNKrOn1ZDwLMHUn80a4TLDs+9Lky
+	+tac5dyZyKzxClCAS6peVg4ZY3yA6Gd5SFbZhZk7NCiNaqFxYZcB
+X-Gm-Gg: ASbGnctiJhertZ72ChBOrGF7iZJ/4AVmMpmJB8tyPcoazkrjmSTzEXpNzK2RzXUNvaA
+	kjp4I72YS/Bly4wO97m7439R2icwg/eMXIZkPqkHKKFNfqUBrodcMnYL86mX07uX8VtgVSTuHCW
+	51a+7Yz4YN8Xj4sY2UezBBWVSIeMnkxeXR5iohW/wtYoEEE27jUw73tPJsAbPdoi5jthxPPDBXt
+	RaJxukAAsI+3LA7G5Xyx99lQdFt66glWRltaU15AyPxrJelvaU7V9zNqeB1aaggFM3HfolZuLcI
+	Ephp+kTDCczRp/qctulSCWXamUiJU+YNjf/IT9uC0XzMWbzaZV4Cw94xD5cE4fbP56K+QRRqmqX
+	O3A==
+X-Google-Smtp-Source: AGHT+IHHb0F37JA4DghmanO5lvxkHhYtOLWV4Qig4WpmdgfCxNk95q0DUf0KBslAz5XhKw7iztyrNg==
+X-Received: by 2002:a7b:c5d7:0:b0:431:542d:2599 with SMTP id 5b1f17b1804b1-438e07cd500mr214704025e9.22.1738683390301;
+        Tue, 04 Feb 2025 07:36:30 -0800 (PST)
+Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438e244ef41sm198097785e9.32.2025.02.04.07.36.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2025 07:36:29 -0800 (PST)
+Date: Tue, 4 Feb 2025 16:36:27 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Mohan Kumar D <mkumard@nvidia.com>
+Cc: vkoul@kernel.org, jonathanh@nvidia.com, dmaengine@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 1/2] dmaengine: tegra210-adma: Fix build error due to
+ 64-by-32 division
+Message-ID: <dsxaisxdpsxecyna527cifixyurmkgo3cfaiheau5jjdl5qysp@64qquncxdmof>
+References: <20250116162033.3922252-1-mkumard@nvidia.com>
+ <20250116162033.3922252-2-mkumard@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a317cc9e-f133-4eeb-a027-08dd453154f1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2025 15:33:53.6752
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3frVDp1YNHinoc0+rlxg/7qmpXvsO4eho7n7pH0iXPWmBlwxar6FHByjV6x+ACyU9VQ40fgmrqG/NJy9o/ovujwLmhcaR6eQcM1OdNBPdls=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB10111
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="thw54jjy27rwk2q7"
+Content-Disposition: inline
+In-Reply-To: <20250116162033.3922252-2-mkumard@nvidia.com>
 
-Hi Thierry Reding,
 
-> -----Original Message-----
-> From: Thierry Reding <thierry.reding@gmail.com>
-> Sent: 04 February 2025 15:25
-> Subject: Re: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
+--thw54jjy27rwk2q7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/2] dmaengine: tegra210-adma: Fix build error due to
+ 64-by-32 division
+MIME-Version: 1.0
+
+On Thu, Jan 16, 2025 at 09:50:32PM +0530, Mohan Kumar D wrote:
+> Kernel test robot reported the build errors on 32-bit platforms due to
+> plain 64-by-32 division. Following build erros were reported.
 >=20
-> On Tue, Feb 04, 2025 at 09:07:05AM +0000, Biju Das wrote:
-> > Hi Geert,
-> >
-> > Thanks for the feedback.
-> >
-> > > -----Original Message-----
-> > > From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On Behalf
-> > > Of Geert Uytterhoeven
-> > > Sent: 03 February 2025 11:06
-> > > Subject: Re: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
-> > >
-> > > Hi Biju,
-> > >
-> > > Thanks for your patch!
-> > >
-> > > On Sat, 1 Feb 2025 at 11:57, Biju Das <biju.das.jz@bp.renesas.com> wr=
-ote:
-> > > > Simplify tegra_dc_rgb_probe() by using of_get_available_child_by_na=
-me().
-> > >
-> > > That's not the only thing this patch does...
-> > >
-> > > >
-> > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > >
-> > > > --- a/drivers/gpu/drm/tegra/rgb.c
-> > > > +++ b/drivers/gpu/drm/tegra/rgb.c
-> > > > @@ -202,12 +202,12 @@ static const struct drm_encoder_helper_funcs
-> > > > tegra_rgb_encoder_helper_funcs =3D {
-> > > >
-> > > >  int tegra_dc_rgb_probe(struct tegra_dc *dc)  {
-> > > > -       struct device_node *np;
-> > > > +       struct device_node *np _free(device_node) =3D
-> > >
-> > > Adding the _free()...
-> >
-> > Yes it fixes a memory leak aswell.
-> >
-> > >
-> > > > +               of_get_available_child_by_name(dc->dev->of_node,
-> > > > + "rgb");
-> > > >         struct tegra_rgb *rgb;
-> > > >         int err;
-> > > >
-> > > > -       np =3D of_get_child_by_name(dc->dev->of_node, "rgb");
-> > > > -       if (!np || !of_device_is_available(np))
-> > > > +       if (!np)
-> > > >                 return -ENODEV;
-> > >
-> > > ... fixes the reference count in case of an unavailable node...
-> > >
-> > > >
-> > > >         rgb =3D devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL);
-> > >
-> > > ... but as np is stored below, it must not be freed when it goes out =
-of context?
-> >
-> > OK, But it is used in tegra_output_probe() and never freed.
-> > Maybe remove should free it??
+>    "ERROR: modpost: "__udivdi3" [drivers/dma/tegra210-adma.ko] undefined!
+>     ld: drivers/dma/tegra210-adma.o: in function `tegra_adma_probe':
+>     tegra210-adma.c:(.text+0x12cf): undefined reference to `__udivdi3'"
 >=20
-> It's not quite as simple as that. tegra_output_probe() can also store
-> output->dev->of_node in output->of_node, so we'd also need to track a
-> flag of some sort to denote that this needs to be freed.
-
-OK.
-
+> This can be fixed by using lower_32_bits() for the adma address space as
+> the offset is constrained to the lower 32 bits
 >=20
-> Ultimately I'm not sure if it's really worth it. Do we really expect thes=
-e nodes to ever be freed (in
-> which case this might leak memory)?
-> These are built-in devices and there's no code anywhere to remove any suc=
-h nodes.
+> Fixes: 68811c928f88 ("dmaengine: tegra210-adma: Support channel page")
+> Cc: stable@vger.kernel.org
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202412250204.GCQhdKe3-lkp@i=
+ntel.com/
+> Signed-off-by: Mohan Kumar D <mkumard@nvidia.com>
+> ---
+>  drivers/dma/tegra210-adma.c | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+> index 6896da8ac7ef..258220c9cb50 100644
+> --- a/drivers/dma/tegra210-adma.c
+> +++ b/drivers/dma/tegra210-adma.c
+> @@ -887,7 +887,8 @@ static int tegra_adma_probe(struct platform_device *p=
+dev)
+>  	const struct tegra_adma_chip_data *cdata;
+>  	struct tegra_adma *tdma;
+>  	struct resource *res_page, *res_base;
+> -	int ret, i, page_no;
+> +	unsigned int page_no, page_offset;
+> +	int ret, i;
+> =20
+>  	cdata =3D of_device_get_match_data(&pdev->dev);
+>  	if (!cdata) {
+> @@ -914,9 +915,16 @@ static int tegra_adma_probe(struct platform_device *=
+pdev)
+> =20
+>  		res_base =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "globa=
+l");
+>  		if (res_base) {
+> -			page_no =3D (res_page->start - res_base->start) / cdata->ch_base_offs=
+et;
+> -			if (page_no <=3D 0)
+> +			if (WARN_ON(lower_32_bits(res_page->start) <=3D
+> +						lower_32_bits(res_base->start)))
 
-If there is no use case for bind/rebind for the built-in device then no iss=
-ue.
-Or in .remove() free the node or use dev_action_reset()??
+Don't we technically also want to check that
 
-Cheers,
-Biju
+	res_page->start <=3D res_base->start
 
+because otherwise people might put in something that's completely out of
+range? I guess maybe you could argue that the DT is then just broken,
+but since we're checking anyway, might as well check for all corner
+cases.
 
+Thierry
 
+> +				return -EINVAL;
+> +
+> +			page_offset =3D lower_32_bits(res_page->start) -
+> +						lower_32_bits(res_base->start);
+> +			page_no =3D page_offset / cdata->ch_base_offset;
+> +			if (page_no =3D=3D 0)
+>  				return -EINVAL;
+> +
+>  			tdma->ch_page_no =3D page_no - 1;
+>  			tdma->base_addr =3D devm_ioremap_resource(&pdev->dev, res_base);
+>  			if (IS_ERR(tdma->base_addr))
+> --=20
+> 2.25.1
+>=20
+
+--thw54jjy27rwk2q7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmeiM/gACgkQ3SOs138+
+s6EAhQ//UuOqtMwn4ZLx9RPtnBdcZn+Wg7pQsAmcr0XD4jHnYolpSfqmsPV2zTtP
+O75WWbyRmVKnbptotIqINN1iya+U68KFYMP6sdkc+jZMj7q/SwU4oAgWpw1p3aZx
+FlPRGJ4z4OkdbJZLJm97yslvtSLs4s1e+xKtryimq012yUkJ87hzxNMZgHx8z5Cn
+SM4DSHZ9KN9+IBzRBU2hQffcMk25xeCIb6mH/+TbOQTJff+TqUc0X3G/EXgGUHF3
+B0ZzfcbtMFKH6jqWBX9kvr0KKgNkgk8SqYlURIUdt5kFiQwWT/SXqh+pxodLqHfk
+1lc295BrT6bt9siTMEUll1n8DHvuvgaUoSTKqTGjZD29tolMRgXde/O3ssSGMIvO
+phTTHef2IKT2rHC0zobsPYosyqgKvvdzq+dtUCDqQ4eF3qBaomt1eZL1YKiWH/Ai
+lP4C19IZ+nsnk4Xk0Da9M948ZkSdIdm/fKaK6WZOPphC73y4k6YG/FQ3uBcMe1DI
+qed0GwrIWD9GQcTOq/uIzQV2RJ/tCGh2HoJ3MUVFV2hK9YAQnq7hyM3n3mjNEOw5
+Wh//M1hJIP13WnItRKmjMNUoHGiC3DxNEl5F6ie20k8ppjPsT04Rc9/kwGQfMJJr
+7CRdc1wVurPd7nN2uTmaNtWzohKSOLHRhbFUE3XOZsjF0a9WdqQ=
+=kX0N
+-----END PGP SIGNATURE-----
+
+--thw54jjy27rwk2q7--
