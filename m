@@ -1,175 +1,151 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59CF20766E;
-	Tue,  4 Feb 2025 09:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B11212B22
+	for <linux-tegra@vger.kernel.org>; Tue,  4 Feb 2025 13:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738661561; cv=none; b=LrMD7t0ao81sjUwUk/p7VnlrwoQBZJdi7XMH/GlmSSQbiJBtp3lYgKZZhyWdUQfsRC3cV3P9M77ASE9YrNbjbem/PoCLSvdy4AGJsIWFnXdUuAbUM14qL274cVH1+ruRinrKb4PnEtnKfUMWk28d0ONDcTkeDMUFjOALkMKsly0=
+	t=1738675276; cv=none; b=jMR47tbHJP+gFK0iu+DGjhbcCk+P3fZcOWakZ7FJsGagGQ5+k/9efhSF0ZET1+alFb+QGbMPszV42KRZGq9o69NfYo5eU9M218BVJJZgFYwL9oNEbJT3LHXA/d7Ma6XDR0leJ1MGyxc0fX+Mwo4SificFf4h20h9lL63EhewECk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738661561; c=relaxed/simple;
-	bh=afC03Ee5hYfBovzmOOaQQ63aQs98FWYrDWq0Cfbx4RI=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cjUwwWNKgFoC1mN//WlcW0IE4nvxZXVAzK4XlSP2GQ8NuFBtkFJYb3yESBkul79sjGkpNSbft4wgmVxF5E1Yx/Q1PwyNI38qRiASB70zN/aPTNYN5Ai3mPW6sEVnNGv7KIYh+qFd9ORoxLa2qfTX0zIasr1Kik30Hgy4cC7p/5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gEA6NivY; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1738675276; c=relaxed/simple;
+	bh=DYoArqhz9bnwOrJj2sFoc+2pshtV2jJmtePZZiRSIq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DSJYvxg3pt5qvfZR+9JFKmjETS/igGIWToxVXDeumXut0jWaZvtpL2/xFChhh4ac0LvARbflikzEbXPlWD2g2GJxZWZpDk3QBC7ivIwKMfCs5+vhqk5n3SbKYH+Sx9IlcGUKCAeuv9/k9WH/SrNkvGngsKzyxl/HpVm6Cl1o5xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=dm+u/REN; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gEA6NivY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738661560; x=1770197560;
-  h=message-id:subject:from:to:date:in-reply-to:references:
-   content-transfer-encoding:mime-version;
-  bh=afC03Ee5hYfBovzmOOaQQ63aQs98FWYrDWq0Cfbx4RI=;
-  b=gEA6NivYYSqql33BfJi+IqI5kvZ1lQrpEpzCtl4K3MI/GrEKM0rKBY2J
-   ycU1/Q8CrXasfmUzKFQrkpLW/WNT8CtZ/z9WWSNwuZxOOfeDOrC4a9ZIo
-   48PVzbzRVyk5Zb+ngVBz9Xu55zHzXi6gIUFNQMyuuuFsZXvffGri/kMif
-   QJzajLu63iiYMhQFLQhb5+AYe7Pnr7O07RU4rokrLtMcMm7a2yPMbv7+j
-   OO8e7A08sgFSLuxhg2szWFAinnAPRbG5VT9WX0azq1M2/mJoxsCr019jJ
-   rnaVxtMM0RLfGf1fCpkfuk51SQkxGto1gIiPSofkUdwkSb7aJIyUPDmXo
-   Q==;
-X-CSE-ConnectionGUID: 7x9uh/hHR/G7oQZeoau83Q==
-X-CSE-MsgGUID: QJ/uSoThSXSyNdEsC/gLRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="43100957"
-X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; 
-   d="scan'208";a="43100957"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2025 01:32:39 -0800
-X-CSE-ConnectionGUID: zfYHGJSsSyC0q1C1d5OGAQ==
-X-CSE-MsgGUID: ByXkmf1TR56RDx03kwQdlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="110998417"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.144]) ([10.245.246.144])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2025 01:32:35 -0800
-Message-ID: <7b7a15fb1f59acc60393eb01cefddf4dc1f32c00.camel@linux.intel.com>
-Subject: Re: [RFC 1/5] mm/hmm: HMM API to enable P2P DMA for device private
- pages
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Yonatan Maman <ymaman@nvidia.com>, 
-	kherbst@redhat.com, lyude@redhat.com, dakr@redhat.com, airlied@gmail.com, 
-	simona@ffwll.ch, leon@kernel.org, jglisse@redhat.com,
- akpm@linux-foundation.org, 	GalShalom@nvidia.com,
- dri-devel@lists.freedesktop.org, 	nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, 	linux-rdma@vger.kernel.org,
- linux-mm@kvack.org, linux-tegra@vger.kernel.org
-Date: Tue, 04 Feb 2025 10:32:32 +0100
-In-Reply-To: <20250203150805.GC2296753@ziepe.ca>
-References: <20250128151610.GC1524382@ziepe.ca>
-	 <b78d32e13811ef1fa57b0535749c811f2afb4dcd.camel@linux.intel.com>
-	 <20250128172123.GD1524382@ziepe.ca> <Z5ovcnX2zVoqdomA@phenom.ffwll.local>
-	 <20250129134757.GA2120662@ziepe.ca> <Z5tZc0OQukfZEr3H@phenom.ffwll.local>
-	 <20250130132317.GG2120662@ziepe.ca> <Z5ukSNjvmQcXsZTm@phenom.ffwll.local>
-	 <20250130174217.GA2296753@ziepe.ca> <Z50BbuUQWIaDPRzK@phenom.ffwll.local>
-	 <20250203150805.GC2296753@ziepe.ca>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dm+u/REN"
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b6ef047e9bso495652085a.1
+        for <linux-tegra@vger.kernel.org>; Tue, 04 Feb 2025 05:21:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1738675273; x=1739280073; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RYGog+BswJMrw0pyjx8F7JNxxtJRa9tDqKmDTEz+voo=;
+        b=dm+u/RENYqBFJbpkMlTuItQ931epOkIE1nRLltGoa9IsC4e9SpknO8PtNRtmDSi71O
+         IDKnfo439PmTQz3Sz7sUOsSuKBe1a/0yhtmS0DQ+NnZZwcw6LC4N6dsArWwAjz79i8ln
+         PDPrBJC2GTlYrxVf5Le8t89ZPY01km4eUCydp8GKaCGpT+4fbWNuXtg4kl9qo54CLUox
+         SNU6CyBy+kMJrE0Lsxo49eVf06hj1lwf5tF2x6Z0LymAzv4NLbcHMSJFwqyh18NFS4Hq
+         J548uq+566UwlC8+VKRSGCvYyNcxGA1VryZfnR+YY1nNvAdTHuArS9yIsZhoAeww3kPL
+         K+qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738675273; x=1739280073;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RYGog+BswJMrw0pyjx8F7JNxxtJRa9tDqKmDTEz+voo=;
+        b=GNJKWExSYUpUncm4vRipJAf20ns4ZxLIqrok2fR4pR32GJMINVHY0RrJ96nzJ60qGg
+         6G8x6/5PEeqysoc+MoQeGCPks13Ho82GWrVP+37NjyJmT8UJ0jdafAAbxNQajAie9Co7
+         aLaBeAuU8dcq5GhueK7udq1PNRlBCN3CRozWSMi9s8yeeDp/7fukDEuK1HiqgQKEWGhi
+         8Q8dQbv8UOC2/NWxby2e0SsYBQxelFl2un25/mQSW+brd4dG2LGRypyIMy3wsy/AZ3Lm
+         qtVwHEG2A4VybNbP6mHAiAh/yLMlhbONsD19mD/4ZAK7+qVI1lZUPx0CoTicb19955c8
+         A/9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXC/RhLjGnBCAz2LTpSqxg5UlHSRe8rVxL2T00FZLGnYa0yWGCNuVs1mmRNS3S9rWIDSMq9i+K08f36pA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxhsw4R1MPzJ6UwA8XmujMzsYXZeW+FwGefee1ObJ0QBmcJyN+
+	lLqDl6Czb76+JQIPnb6GkEHK0cF2CjxfctbSmiDiosSOKDyFMGyu4ilNUnFRV8E=
+X-Gm-Gg: ASbGncsr52SfcvH9hA6c7L4gliPnUteZUuy2+aotNF1GEkGMf7Ad/oKH6N5YdaET3CX
+	cwGb1C9sbmchjrTbt1Ze3UhSL45ccHds6x4isnQnEVejFjY2MjiNFgj2MD73yo+H1n6JJQZWHk8
+	t5e8F/Yk8XoOtUWsxiFJ1rl4CrA2JjVDhtMkqjMy0id86+OBj8wDfO1wXvF3g8LlKcvUUogfaMV
+	2czvjUdByy6lhLcFls6jUMe88g6cxWuTLICscHZRT+bVOTbcaHXaYin0wY3E0SPpL+v+sjFZpmw
+	Z/TE1w3ynaJ24CPK1HBXI1jXYIl5lDtUIkTuTsD2m/SSx58XD5tNNkxEHZyWXsfx
+X-Google-Smtp-Source: AGHT+IFUKUoX2jULeFPKEB1swp6FZ+1r6kccPcITYBbJl4Daknruc2a86ltK8n50/s0eCiuq5Mvn3w==
+X-Received: by 2002:a05:620a:43a1:b0:7bc:db7a:4f78 with SMTP id af79cd13be357-7c02ec1063cmr525137685a.4.1738675273573;
+        Tue, 04 Feb 2025 05:21:13 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c00a905b6esm637056485a.68.2025.02.04.05.21.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2025 05:21:13 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tfIrY-0000000BRLd-1okT;
+	Tue, 04 Feb 2025 09:21:12 -0400
+Date: Tue, 4 Feb 2025 09:21:12 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, thierry.reding@gmail.com,
+	vdumpa@nvidia.com, joro@8bytes.org, will@kernel.org,
+	jonathanh@nvidia.com, baolu.lu@linux.intel.com, jsnitsel@redhat.com,
+	jroedel@suse.de, regressions@lists.linux.dev,
+	linux-tegra@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [REGRESSION] Invalid gather when using Tegra210 media engines
+Message-ID: <20250204132112.GH2296753@ziepe.ca>
+References: <c6a6f114-3acd-4d56-a13b-b88978e927dc@tecnico.ulisboa.pt>
+ <20250203170617.GE2296753@ziepe.ca>
+ <4ea1a48c-9020-4793-ac9b-b51fc289e442@tecnico.ulisboa.pt>
+ <20250203174331.GF2296753@ziepe.ca>
+ <a0f776ba-bfd2-41fd-8370-14818b86bfbe@arm.com>
+ <20250203191346.GG2296753@ziepe.ca>
+ <ff901d60-dd54-440f-a0da-4b72052eafd6@kapsi.fi>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ff901d60-dd54-440f-a0da-4b72052eafd6@kapsi.fi>
 
-On Mon, 2025-02-03 at 11:08 -0400, Jason Gunthorpe wrote:
-> On Fri, Jan 31, 2025 at 05:59:26PM +0100, Simona Vetter wrote:
->=20
-> > So one aspect where I don't like the pgmap->owner approach much is
-> > that
-> > it's a big thing to get right, and it feels a bit to me that we
-> > don't yet
-> > know the right questions.
->=20
-> Well, I would say it isn't really complete yet. No driver has yet
-> attempted to use a private interconnect with these scheme. Probably
-> it
-> needs more work.
->=20
-> > A bit related is that we'll have to do some driver-specific
-> > migration
-> > after hmm_range_fault anyway for allocation policies. With coherent
-> > interconnect that'd be up to numactl, but for driver private it's
-> > all up
-> > to the driver. And once we have that, we can also migrate memory
-> > around
-> > that's misplaced for functional and not just performance reasons.
->=20
-> Are you sure? This doesn't seem to what any hmm_range_fault() user
-> should be doing. hmm_range_fault() is to help mirror the page table
-> to a secondary, that is all. Migration policy shouldn't be part of
-> it,
-> just mirroring doesn't necessarily mean any access was performed, for
-> instance.
->=20
-> And mirroring doesn't track any access done by non-faulting cases
-> either.
->=20
-> > The plan I discussed with Thomas a while back at least for gpus was
-> > to
-> > have that as a drm_devpagemap library,=20
->=20
-> I would not be happy to see this. Please improve pagemap directly if
-> you think you need more things.
+On Tue, Feb 04, 2025 at 12:26:46PM +0900, Mikko Perttunen wrote:
+> On 2/4/25 4:13 AM, Jason Gunthorpe wrote:
+> > On Mon, Feb 03, 2025 at 06:49:07PM +0000, Robin Murphy wrote:
+> > > I'd hope the historical reasons for not supporting IOMMU_DOMAIN_DMA in
+> > > tegra-smmu no longer apply, given that all the default domain stuff has now
+> > > been integrated into host1x for the newer arm-smmu based Tegras.
+> > 
+> > Indeed I do see appropriate looking calls to the normal DMA API, and
+> > the other mapping path is conditionalized by !host->domain.
+> > 
+> > So, why didn't it work for Diogo? Even in identity mode the DMA API
+> > will return correct DMA addresses and the !host->domain path will skip
+> > mapping them.
+> > 
+> > Poking around I wonder if there is some assumption that if other parts
+> > of the stack, maybe the DRM driver, are using the special domain than
+> > everyone is? It seems to blindly pass around IOVA without really
+> > checking who is consuming it.
+> 
+> I'm not sure where that would be, but it's certainly possible given that
+> this combination of code paths wouldn't have been tested.
 
-These are mainly helpers to migrate and populate a range of cpu memory
-space (struct mm_struct) with GPU device_private memory, migrate to
-system on gpu memory shortage and implement the migrate_to_vram pagemap
-op, tied to gpu device memory allocations, so I don't think there is
-anything we should be exposing at the dev_pagemap level at this point?
+I saw some weird stuff.. Like tegra_bo_pin() does:
 
->=20
-> > which would have a common owner (or
-> > maybe per driver or so as Thomas suggested).=20
->=20
-> Neither really match the expected design here. The owner should be
-> entirely based on reachability. Devices that cannot reach each other
-> directly should have different owners.
+	/*
+	 * If we've manually mapped the buffer object through the IOMMU, make sure to return the
+	 * existing IOVA address of our mapping.
+	 */
+	if (!obj->mm) {
+	} else {
+		map->phys = obj->iova;
+		map->chunks = 1;
 
-Actually what I'm putting together is a small helper to allocate and
-assign an "owner" based on devices that are previously registered to a
-"registry". The caller has to indicate using a callback function for
-each struct device pair whether there is a fast interconnect available,
-and this is expected to be done at pagemap creation time, so I think
-this aligns with the above. Initially a "registry" (which is a list of
-device-owner pairs) will be driver-local, but could easily have a wider
-scope.
+And obj->iova isn't obviously linked to a dma map on dev.. The comment
+reads like it is making the assumption that there is only one iommu
+domain shared by everyone (without checking dev is part of that
+scheme)
 
-This means we handle access control, unplug checks and similar at
-migration time, typically before hmm_range_fault(), and the role of
-hmm_range_fault() will be to over pfns whose backing memory is directly
-accessible to the device, else migrate to system.
+> > Christian was telling me DMABUF had some drivers that made the
+> > (incorrect!) assumption they were all sharing translation.
+> > 
+> > It does seem like a nice project for someone who has the hardware to
+> > rip out all of this custom domain stuff and just have the iommu layer
+> > setup a shared dma-iommu domain.
+> 
+> This has been a long-standing project. The issue is that some boot chains
+> set up the display expecting identity mappings,
 
-Device unplug would then be handled by refusing migrations to the
-device (gpu drivers would probably use drm_dev_enter()), and then evict
-all device memory after a drm_dev_unplug(). This of course relies on
-that eviction is more or less failsafe.
+The smmu driver can match on compatible strings and leave some devices
+in identity mode, if that helps. Other drivers are doing this to work
+around various issues.
 
-/Thomas
+> See https://lore.kernel.org/linux-iommu/20220512190052.1152377-5-thierry.reding@gmail.com/
 
->=20
-> > But upfront speccing all this out doesn't seem like a good idea to,
-> > because I honestly don't know what we all need.
->=20
-> This is why it is currently just void *owner=C2=A0 :)
+But using RMR seems like a better solution?
 
-Again, with the above I think we are good for now, but having
-experimented a lot with the callback, I'm still not convinced by the
-performance argument, for the following reasons.
+We could perhaps also figure out some way to leave the translation in
+identity until the DRM driver completes the reset, then the DRM driver
+could activate the DMA API translation manually.
 
-1) Existing users would never use the callback. They can still rely on
-the owner check, only if that fails we check for callback existence.
-2) By simply caching the result from the last checked dev_pagemap, most
-callback calls could typically be eliminated.
-3) As mentioned before, a callback call would typically always be
-followed by either migration to ram or a page-table update. Compared to
-these, the callback overhead would IMO be unnoticeable.
-4) pcie_p2p is already planning a dev_pagemap callback?
-=20
-/Thomas
-
->=20
-> Jason
-
+Jason
