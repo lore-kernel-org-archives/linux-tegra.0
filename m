@@ -1,199 +1,175 @@
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010026.outbound.protection.outlook.com [52.101.229.26])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15456207DE4
-	for <linux-tegra@vger.kernel.org>; Tue,  4 Feb 2025 09:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738660032; cv=fail; b=oH/aB+s/3y8Kn4Sad2YrEF+TUZWfZcbdQQWbCcqjemQWDcZ+0LvJKQrhHi1pnS9CZ1lOCv2VH/JmQ+g9d5mVMC1tH2s7FMxm9oOe6xe4fkozWvDeN9ILz7/3rDL1YMnx3+njX6hYsHYOkYMN/xNaHzWciZRcgaTr/ELYbhc6HTc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738660032; c=relaxed/simple;
-	bh=aoK+OFvcNQSuCS2Xz6oTJ+aCC0P6vn3iNa1DaM5FEWk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fWfB6asWRfTH29DxV8CDPVaD4U0JMIjpZtCuMNbTtBh3xKllm/tBf3hvZU5Vy3JgdJHZm0sPQz4YcYLrf95YLdajXbwEp+Z0ix7ZG7sNAUOSr0jayCdDECr6Fj4BTE1GZU9wlu2rngPKPHrMM9RfHnVMNsSjajpDSyiFMegwqWg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=pzDIkSR/; arc=fail smtp.client-ip=52.101.229.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59CF20766E;
+	Tue,  4 Feb 2025 09:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738661561; cv=none; b=LrMD7t0ao81sjUwUk/p7VnlrwoQBZJdi7XMH/GlmSSQbiJBtp3lYgKZZhyWdUQfsRC3cV3P9M77ASE9YrNbjbem/PoCLSvdy4AGJsIWFnXdUuAbUM14qL274cVH1+ruRinrKb4PnEtnKfUMWk28d0ONDcTkeDMUFjOALkMKsly0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738661561; c=relaxed/simple;
+	bh=afC03Ee5hYfBovzmOOaQQ63aQs98FWYrDWq0Cfbx4RI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cjUwwWNKgFoC1mN//WlcW0IE4nvxZXVAzK4XlSP2GQ8NuFBtkFJYb3yESBkul79sjGkpNSbft4wgmVxF5E1Yx/Q1PwyNI38qRiASB70zN/aPTNYN5Ai3mPW6sEVnNGv7KIYh+qFd9ORoxLa2qfTX0zIasr1Kik30Hgy4cC7p/5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gEA6NivY; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="pzDIkSR/"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sjhDvWW5dxmml594JR7DdR+kZBBD+rapU4SWwgD/MFTNPN/KnsignzH8ScIzKcgXSjXjoPex6GKt9Q8WWN6DDz+2TyksJJL3yYStF9tszwNtuzkDTJj2eioVPYmHxS6IyLMdmCj2UQ3SN0IvuofWIQgxj1Ag7LcHjSIFsFbZpk/NwpicuaF6k5nZXwgTE2tcTV/N8TtWMSHchAMLisboSkuTncfNI9YBhxrGdxf29KhzoVWXvhCGQewokQB3l/itJXsmusddEF3c+wZ6G1bIyficwX7eNfxhvQG2xloLoadh8aS65tlhbjl0EjhhhH60vzsI1ThVRxl9O3ASfYyXMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aoK+OFvcNQSuCS2Xz6oTJ+aCC0P6vn3iNa1DaM5FEWk=;
- b=ZG9ThC7bWzDmUHLbqy+9magH0i65iEtE4oo3rkbd3YZwsT17JcF7UUPRz0oiA0RacYSogU6kydi2tzIJL2kt4es9ZvmPM1/RXgX0cAhsGrdzrKJ6PupT3W+69wR8nU6mdAgDwDfDFCKi4uiYlNIy0PNKA+Obq6upu+MGpzVdM/Jb6iSHlDFZ7W8Raof7gWKK+Gg8fDCAdEIJjsBj/uQC+pF0BGu5r5xHP+k5N2DU1acCww51dBnpYuxwJgComTCsXKse8phrwpu6df7iWIjILrK9bvg/IRg6zlF0CqyaIX8T5eyUSHWBBr72EMK9PfAHjiFUzkaYryNA/xU/zShpqA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aoK+OFvcNQSuCS2Xz6oTJ+aCC0P6vn3iNa1DaM5FEWk=;
- b=pzDIkSR/A1WgFWsWaekqmcyGD02TiomBUPqpjiEdMWxp/X6xpkAChzT8+Q54EQIe6fMyvRd8JXbCbOLdrFIB6ZK4e+uPVA7HeVMYnzGeubhLVcVdE7Ez1ANpJY+tU1cq/YS43yFoPDcLYrsOyesISuriGctNElC2O23TwB1bYTI=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYYPR01MB8000.jpnprd01.prod.outlook.com (2603:1096:400:f9::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8398.24; Tue, 4 Feb
- 2025 09:07:05 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%2]) with mapi id 15.20.8398.021; Tue, 4 Feb 2025
- 09:07:05 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-CC: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Thierry
- Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
-	biju.das.au <biju.das.au@gmail.com>
-Subject: RE: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
-Thread-Topic: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
-Thread-Index: AQHbdJgP9S/z2tVCcU2bggWheT9O97M1bgOAgAFv+jA=
-Date: Tue, 4 Feb 2025 09:07:05 +0000
-Message-ID:
- <TY3PR01MB11346E195D7B44DA6EA30E25986F42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20250201105658.37043-1-biju.das.jz@bp.renesas.com>
- <CAMuHMdVrry1ZV=C0vuEO+7GcF5Tqwtecxu4UPOnrtzXv6RUm4Q@mail.gmail.com>
-In-Reply-To:
- <CAMuHMdVrry1ZV=C0vuEO+7GcF5Tqwtecxu4UPOnrtzXv6RUm4Q@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYYPR01MB8000:EE_
-x-ms-office365-filtering-correlation-id: e968ba4c-a80b-4d47-b32a-08dd44fb4b7d
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?b24rVHNUZnVMbXhweUJ1clpXTytCbDdKaDk5WDU5UENsbU1XVjhLU2V6R3hp?=
- =?utf-8?B?TzkzZy93ZmtkMzRkTk1kaGRTV0h2NU1VUDUrNS9sbDJ5M3hLbVNmNXhrTHc3?=
- =?utf-8?B?NUpXM04zQjRTQkZ6R3psTVlkSS9LYUMzRUZjK3ZCNTh5RHdzZjhQM3pMOFA3?=
- =?utf-8?B?Mk1Fd3Y2TmN3UzRFRGhuYnc4ZnluTDh5dlVqUDFhR2FDcTV4SVRYdG9kTDh0?=
- =?utf-8?B?MGxTUXAwWS84QUVjMTdLbDJCWE53dC9TWlFEUjE1MGFINmdqZTZmanl1cGpJ?=
- =?utf-8?B?a2N0TTdId1R4QU1vWk9HV1pEZEpUZi9YdE9IWnN0bnc4cUVzaVdSQXIrekNP?=
- =?utf-8?B?NUVJdGhQQ0YxWFlyejZrakxCWjVEZGNFVVJieFBQVktUTmZtRFpvOFB6QjM2?=
- =?utf-8?B?dmwwM1BSUi9TSjVtRWo0Y3lXZ1A4U0EveS9SWm1IeW9KNmhRdDBrdi9seGho?=
- =?utf-8?B?WTN5Skd2UG16Z3l1ekhsTkhOT1JHSUg0bWRpSzlXUDl5Mk5LVExyZjJUNkRV?=
- =?utf-8?B?N3pPd3ZCZkQzVG5FS2pONkZFNUc2aDBjaDNvYUd3THpqbVpCZlp0UEFOSU84?=
- =?utf-8?B?YkN6ejJNQ0pXS2djTERNd2ZKSVM1MEdkRUwrSXF5V1B0WWdtak9NRGFVNjl6?=
- =?utf-8?B?d2xKeVJsQmY4ejRVSTlmc1lEVjRmMVB3bVFGT0NwQktvVnN5aGFGUU5TOXMz?=
- =?utf-8?B?eU9uUUV1bVM2VTZLWVJyNXlhZll4NVVOc1VrWDNiTHF3dHhQOHNqOU10VGpT?=
- =?utf-8?B?UmtnUTIreWd4Y3g4L0toVUtpQVNwempmamdPTmFIbVUydnlXSWc2Y2phZDAr?=
- =?utf-8?B?VE9HNDduWVVtNldEOGNCcTBJTFVIY1VuWE9uTjdIWHhzTGJqRDlmY095Qkpt?=
- =?utf-8?B?MEk0azQzUm5saVkvcFU3S29YTHptM1I1TUd4Q0xrREc4SDhmeG1xTXFmaVox?=
- =?utf-8?B?a0o5Wi9tUGtmR2dJK0RiNlRUUG9ybWRmb24xMGJkV0thQnRkQnQra3VLTXVY?=
- =?utf-8?B?ejYzWkZBWTI4eXR2NXdBQWs3ZWlFdnlRYVpnNTdkQS9GUDNqSml2V3UxUE9u?=
- =?utf-8?B?YmZUb1IyVjhGeU5MSk5FNTNrWHh0MGF0b2JOb2lSeEVwLzExd3F6dHcwTTBO?=
- =?utf-8?B?RTUvdndEY3pObDU4TDh4L0RRYjZGRjI3cUE1N1ZMaEZHeXhkNjc3QlU4OFo3?=
- =?utf-8?B?Ym1RcHRHT0puUUpQQ2haVnlKSm5IL3dpRzBFYTVTWGc5VjQrM1pNVSs0b2Fs?=
- =?utf-8?B?aXpPMGFEeVg2K1gzTFoyeGViNHJ5YTZkZm9FaHAyS0crS2pnVG1haUw1cmtL?=
- =?utf-8?B?NVRKR2hQMnRTb0g4MVBKOXNrRko2U1BCOW9OTElBUXczcG1kQ3NrRXVpeUVl?=
- =?utf-8?B?YTVHVnZYYjVPTkV3Z05COGkwdFE5K3ZXSTlYQi9SOHhqSHFjU0VsY0s1bWJr?=
- =?utf-8?B?OHA1VTlOeUVhWDRValpRdlNISFlBU3EzYlZqRHAyZnVoRlF3STNzY01DOElI?=
- =?utf-8?B?UVdlakV4TmMyZ0dYZ2FKTGc2NXBJLzVQYUgxaGNib2RWKzk1dTVLMmI5L1NI?=
- =?utf-8?B?bHJMbm95c3ZvSFgzWmpvZWZvQnUrTENxdm9uWlBiaGhPQnNsWkFxSjlZeitu?=
- =?utf-8?B?VmpQdnovTG5wTzM0Um1rWFFmMFdpcUJpVlNzcjh4bk9LSWhMU0p6NHRGdDFx?=
- =?utf-8?B?VUhybGlEbXF6QjRRdUVMY04rRFlDQjdkdXNGeFNYNldpd1pjQ2lEeFRlRHJC?=
- =?utf-8?B?K2djSUR1cnFGbXhRNnpQKzNvL0U5eStnNU9ZaTgxOWtkYmxaTE1OU0NGNTlR?=
- =?utf-8?B?S2Q5OWNDUVpxT2EzTDdTQ1M4WUg5M1Y0MVVNQ3FCbVh6OGFZTWM0S0h6bUNC?=
- =?utf-8?B?eEJRZkFxeC9SQ013OUxRUFlTanpmSVJ0Rm9KdzdJNXBvb3RvVGd1dVpsU1ZE?=
- =?utf-8?Q?ftc9x6Ha/Sd8LUiMwBliEAtSyVd9dOPM?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SzYzcVZsWjluTENUNHBxUzNGWXVUUGdGK0tMYjJCb2I2RENoR1R2KzBDZ0RV?=
- =?utf-8?B?emVBQWdmQitHMUVnbEZBTGo1WkkrT1JhbnEvSDhBc2ovZkR0TmoyTWZOT0lk?=
- =?utf-8?B?alUwUXN1a215K3Q0NndTekZBMEdHaEpUUEQ5TlF4WHRKcUd2aWFPQldRZy9m?=
- =?utf-8?B?Z0NNOFpkQmczcXAySUJtUmZqWk1GNlc5cFkrWFpMNVJUdTR3Wm45ek8wdUYz?=
- =?utf-8?B?V1BlVW5vbmxVM29ZSEp3MmczUHpFbHpsWHcrcEEzbVpUMzBVRGNSRDYxZ1R5?=
- =?utf-8?B?L3A5VWZ4alF5cWh5anhjR0t5VjRYS3ZZR2RRTzNrQ09OU0R4V2oxTk0xa3lU?=
- =?utf-8?B?dkxWclpPQUVOM2dvT09ka0E2MStwbFN2c0t5dG9jREpIeDNYMXNwaUpvNEJP?=
- =?utf-8?B?ZWdnUGpDOFZWQmFqSFNYb0x3Y29ibGRrdWlJUm5nbHZnMUY4NGQ1OWRDT1pF?=
- =?utf-8?B?OXMzRXhTNmRKYVJEeG5ON3lRUU5RNVpZamdMZVMvZFhrWWtGZU5WeWhhSDdC?=
- =?utf-8?B?WVFFM2JZWkxoWVUvZWNCMW00ZnZjaHJSS2xkRzdLK1NxZldlblhVRmVrV2tF?=
- =?utf-8?B?ajZpTnlvWCthSDZVUzJJWFVBRnhodG93azB4TnFTMWhLajYvT3MrZHRIejh6?=
- =?utf-8?B?d1dva2FKY1hRSUpENGY5dHpyK3RNS25mTWE4WGd0bTgwdmJiQnNMcmxva0xK?=
- =?utf-8?B?RzY2ZHExb0dFMmtkSVFqSEozQ0NFbis4TUN4cS9sR2ZTSmFuV3E3ajVXOGlP?=
- =?utf-8?B?TG92ajYxZnZKL1BhZkgybGdURTJTa2h0dmNhbG54OS9seFh1OWRWcDEwRS9Z?=
- =?utf-8?B?MTMvN1lMV1plMmkxNDk0VWRORG1ick5Zdzg0NThyR3E1ZEs3bTRIcDVxRndl?=
- =?utf-8?B?MUJlVTNaelR6Zll0d2ZYdmxkaEtCWGRxQllER2NvcHhsMjMweU9Za216YVFN?=
- =?utf-8?B?WHJ6YWFTVVRWZkRJdnczVTZmQ2tsdWZMcnU1N0N6bitnZ2ozaFNzNjhTOWdF?=
- =?utf-8?B?M2RPM1YxQXBnMUpPQVlJUXhGdzFoMGgwYW9qampYaDJmaHpwbGNsNUR0alRs?=
- =?utf-8?B?ZmZVSVVteVRENGxGVSs1d0lIQmJleVBaUE0reTFzYkFjTVVlZU5adFFxdzMv?=
- =?utf-8?B?ei9NN2MwSEVjVGZvOWppeFZaM2V1bHFGN3VaQ21QZXRHWUMyY1hNdkZxTTF2?=
- =?utf-8?B?MlV5WXVSOFZqTzJENHhta0JPN0tUM2xlN2kzdlk3U1E1WEkvMFhHVU4xcG9q?=
- =?utf-8?B?L0NXQlVZVG9RQ0JWd0xiR1hrOVdsdnlYUHFtSDNSTGxZaUhubWUxeXJ1dUVU?=
- =?utf-8?B?TDRiaGdYR1JzOXlyUjI3eWdHTjhjTEVvUWE0TS9RbU93MDdFUWNmc3pwR0da?=
- =?utf-8?B?SktzQ3d3ZXZlWEQ5VHpLc1dHOXd3LzhUM1NzQlJNWVZ0YkM5Vjh6c3RwS0ly?=
- =?utf-8?B?ZklXalAyNm1PemxLR2NtN2llcFNrU0hpVWRlc3VQS081YjRDNDFZMTNzOVA0?=
- =?utf-8?B?Unk3NmVaaXB1NTZyTE5EUGg4a293NGhJSTNSdW1tY3VLNStNdGRhdVJscjZn?=
- =?utf-8?B?UGkvWndqSGJyeVVPUDhYQVVYVlNEaitXZHRiMjBEaTBJUkJEL3c1MUdMbHhM?=
- =?utf-8?B?NTdlK0FkNHNZZ0wwbkFmWlpXZWZaa25yMU1DY0w1dGVYZEJnQ3pmNk9ReUYr?=
- =?utf-8?B?S3dmaGtFSGRjdFlOV25NNWEyNXpPVzZoL05FdWZDZG9McU80QTlQd01kTHlR?=
- =?utf-8?B?Znh3ellxTXlJSWlHeHd2bVdhemFobGtEenVOUW8zdk9rcGNydE1Cc0FtcGlr?=
- =?utf-8?B?dHhoYmFiUkI0cGd0MnBHTkxUMVdoVUxLc0FldEtNdXpiS1dtWkc5WXdkWVN5?=
- =?utf-8?B?UVNuT2xqMlBQeWVnS2ZwcVkydEd0Y1lPSVFpQzdndDNNd2VkbzJaWmNieDRX?=
- =?utf-8?B?eEZwbVkrT2VwWGM0d0QyY2tEOGFyNDJuR2J1RittOVdlNzFWckkwRHpFdTk4?=
- =?utf-8?B?b0ZBRnFvenl3NkdzWmRUbE5PUFJGVkN5eDh6bjI2RDVLNlY3MzNGQjVOd0x2?=
- =?utf-8?B?dCttazEzWUlrWng3TVJkV0ttUXJJdG4vSCs4MlNueVhxcUUwQUVkc0ZEWCs1?=
- =?utf-8?B?MTVab1NKaVZlQTEyaHR6VE0yOGxlSDE0T0dZdTl2R3A2c3dOQzVkWFpWNVY1?=
- =?utf-8?B?N3c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gEA6NivY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1738661560; x=1770197560;
+  h=message-id:subject:from:to:date:in-reply-to:references:
+   content-transfer-encoding:mime-version;
+  bh=afC03Ee5hYfBovzmOOaQQ63aQs98FWYrDWq0Cfbx4RI=;
+  b=gEA6NivYYSqql33BfJi+IqI5kvZ1lQrpEpzCtl4K3MI/GrEKM0rKBY2J
+   ycU1/Q8CrXasfmUzKFQrkpLW/WNT8CtZ/z9WWSNwuZxOOfeDOrC4a9ZIo
+   48PVzbzRVyk5Zb+ngVBz9Xu55zHzXi6gIUFNQMyuuuFsZXvffGri/kMif
+   QJzajLu63iiYMhQFLQhb5+AYe7Pnr7O07RU4rokrLtMcMm7a2yPMbv7+j
+   OO8e7A08sgFSLuxhg2szWFAinnAPRbG5VT9WX0azq1M2/mJoxsCr019jJ
+   rnaVxtMM0RLfGf1fCpkfuk51SQkxGto1gIiPSofkUdwkSb7aJIyUPDmXo
+   Q==;
+X-CSE-ConnectionGUID: 7x9uh/hHR/G7oQZeoau83Q==
+X-CSE-MsgGUID: QJ/uSoThSXSyNdEsC/gLRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11335"; a="43100957"
+X-IronPort-AV: E=Sophos;i="6.13,258,1732608000"; 
+   d="scan'208";a="43100957"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2025 01:32:39 -0800
+X-CSE-ConnectionGUID: zfYHGJSsSyC0q1C1d5OGAQ==
+X-CSE-MsgGUID: ByXkmf1TR56RDx03kwQdlA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="110998417"
+Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.144]) ([10.245.246.144])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2025 01:32:35 -0800
+Message-ID: <7b7a15fb1f59acc60393eb01cefddf4dc1f32c00.camel@linux.intel.com>
+Subject: Re: [RFC 1/5] mm/hmm: HMM API to enable P2P DMA for device private
+ pages
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>, Yonatan Maman <ymaman@nvidia.com>, 
+	kherbst@redhat.com, lyude@redhat.com, dakr@redhat.com, airlied@gmail.com, 
+	simona@ffwll.ch, leon@kernel.org, jglisse@redhat.com,
+ akpm@linux-foundation.org, 	GalShalom@nvidia.com,
+ dri-devel@lists.freedesktop.org, 	nouveau@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, 	linux-rdma@vger.kernel.org,
+ linux-mm@kvack.org, linux-tegra@vger.kernel.org
+Date: Tue, 04 Feb 2025 10:32:32 +0100
+In-Reply-To: <20250203150805.GC2296753@ziepe.ca>
+References: <20250128151610.GC1524382@ziepe.ca>
+	 <b78d32e13811ef1fa57b0535749c811f2afb4dcd.camel@linux.intel.com>
+	 <20250128172123.GD1524382@ziepe.ca> <Z5ovcnX2zVoqdomA@phenom.ffwll.local>
+	 <20250129134757.GA2120662@ziepe.ca> <Z5tZc0OQukfZEr3H@phenom.ffwll.local>
+	 <20250130132317.GG2120662@ziepe.ca> <Z5ukSNjvmQcXsZTm@phenom.ffwll.local>
+	 <20250130174217.GA2296753@ziepe.ca> <Z50BbuUQWIaDPRzK@phenom.ffwll.local>
+	 <20250203150805.GC2296753@ziepe.ca>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e968ba4c-a80b-4d47-b32a-08dd44fb4b7d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2025 09:07:05.0319
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 31kqHV4jl/4mHQhBO+CHU77FB03XRy2PcaH8vQZnT1hUhOL6UfxCtc8S1FyOvz6EOE6zcGAIIWN6Tl852k6OY3rg/GfRs+PrIX22zjITT+4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB8000
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IC0tLS0tT3JpZ2luYWwg
-TWVzc2FnZS0tLS0tDQo+IEZyb206IGRyaS1kZXZlbCA8ZHJpLWRldmVsLWJvdW5jZXNAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnPiBPbiBCZWhhbGYgT2YgR2VlcnQgVXl0dGVyaG9ldmVuDQo+IFNlbnQ6
-IDAzIEZlYnJ1YXJ5IDIwMjUgMTE6MDYNCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gZHJtL3RlZ3Jh
-OiByZ2I6IFNpbXBsaWZ5IHRlZ3JhX2RjX3JnYl9wcm9iZSgpDQo+IA0KPiBIaSBCaWp1LA0KPiAN
-Cj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiANCj4gT24gU2F0LCAxIEZlYiAyMDI1IGF0IDEx
-OjU3LCBCaWp1IERhcyA8YmlqdS5kYXMuanpAYnAucmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+IFNp
-bXBsaWZ5IHRlZ3JhX2RjX3JnYl9wcm9iZSgpIGJ5IHVzaW5nIG9mX2dldF9hdmFpbGFibGVfY2hp
-bGRfYnlfbmFtZSgpLg0KPiANCj4gVGhhdCdzIG5vdCB0aGUgb25seSB0aGluZyB0aGlzIHBhdGNo
-IGRvZXMuLi4NCj4gDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBCaWp1IERhcyA8YmlqdS5kYXMu
-anpAYnAucmVuZXNhcy5jb20+DQo+IA0KPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9y
-Z2IuYw0KPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9yZ2IuYw0KPiA+IEBAIC0yMDIs
-MTIgKzIwMiwxMiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9lbmNvZGVyX2hlbHBlcl9mdW5j
-cw0KPiA+IHRlZ3JhX3JnYl9lbmNvZGVyX2hlbHBlcl9mdW5jcyA9IHsNCj4gPg0KPiA+ICBpbnQg
-dGVncmFfZGNfcmdiX3Byb2JlKHN0cnVjdCB0ZWdyYV9kYyAqZGMpICB7DQo+ID4gLSAgICAgICBz
-dHJ1Y3QgZGV2aWNlX25vZGUgKm5wOw0KPiA+ICsgICAgICAgc3RydWN0IGRldmljZV9ub2RlICpu
-cCBfZnJlZShkZXZpY2Vfbm9kZSkgPQ0KPiANCj4gQWRkaW5nIHRoZSBfZnJlZSgpLi4uDQoNClll
-cyBpdCBmaXhlcyBhIG1lbW9yeSBsZWFrIGFzd2VsbC4NCg0KPiANCj4gPiArICAgICAgICAgICAg
-ICAgb2ZfZ2V0X2F2YWlsYWJsZV9jaGlsZF9ieV9uYW1lKGRjLT5kZXYtPm9mX25vZGUsDQo+ID4g
-KyAicmdiIik7DQo+ID4gICAgICAgICBzdHJ1Y3QgdGVncmFfcmdiICpyZ2I7DQo+ID4gICAgICAg
-ICBpbnQgZXJyOw0KPiA+DQo+ID4gLSAgICAgICBucCA9IG9mX2dldF9jaGlsZF9ieV9uYW1lKGRj
-LT5kZXYtPm9mX25vZGUsICJyZ2IiKTsNCj4gPiAtICAgICAgIGlmICghbnAgfHwgIW9mX2Rldmlj
-ZV9pc19hdmFpbGFibGUobnApKQ0KPiA+ICsgICAgICAgaWYgKCFucCkNCj4gPiAgICAgICAgICAg
-ICAgICAgcmV0dXJuIC1FTk9ERVY7DQo+IA0KPiAuLi4gZml4ZXMgdGhlIHJlZmVyZW5jZSBjb3Vu
-dCBpbiBjYXNlIG9mIGFuIHVuYXZhaWxhYmxlIG5vZGUuLi4NCj4gDQo+ID4NCj4gPiAgICAgICAg
-IHJnYiA9IGRldm1fa3phbGxvYyhkYy0+ZGV2LCBzaXplb2YoKnJnYiksIEdGUF9LRVJORUwpOw0K
-PiANCj4gLi4uIGJ1dCBhcyBucCBpcyBzdG9yZWQgYmVsb3csIGl0IG11c3Qgbm90IGJlIGZyZWVk
-IHdoZW4gaXQgZ29lcyBvdXQgb2YgY29udGV4dD8NCg0KT0ssIEJ1dCBpdCBpcyB1c2VkIGluIHRl
-Z3JhX291dHB1dF9wcm9iZSgpIGFuZCBuZXZlciBmcmVlZC4NCk1heWJlIHJlbW92ZSBzaG91bGQg
-ZnJlZSBpdD8/IA0KDQoNCkNoZWVycywNCkJpanUNCg==
+On Mon, 2025-02-03 at 11:08 -0400, Jason Gunthorpe wrote:
+> On Fri, Jan 31, 2025 at 05:59:26PM +0100, Simona Vetter wrote:
+>=20
+> > So one aspect where I don't like the pgmap->owner approach much is
+> > that
+> > it's a big thing to get right, and it feels a bit to me that we
+> > don't yet
+> > know the right questions.
+>=20
+> Well, I would say it isn't really complete yet. No driver has yet
+> attempted to use a private interconnect with these scheme. Probably
+> it
+> needs more work.
+>=20
+> > A bit related is that we'll have to do some driver-specific
+> > migration
+> > after hmm_range_fault anyway for allocation policies. With coherent
+> > interconnect that'd be up to numactl, but for driver private it's
+> > all up
+> > to the driver. And once we have that, we can also migrate memory
+> > around
+> > that's misplaced for functional and not just performance reasons.
+>=20
+> Are you sure? This doesn't seem to what any hmm_range_fault() user
+> should be doing. hmm_range_fault() is to help mirror the page table
+> to a secondary, that is all. Migration policy shouldn't be part of
+> it,
+> just mirroring doesn't necessarily mean any access was performed, for
+> instance.
+>=20
+> And mirroring doesn't track any access done by non-faulting cases
+> either.
+>=20
+> > The plan I discussed with Thomas a while back at least for gpus was
+> > to
+> > have that as a drm_devpagemap library,=20
+>=20
+> I would not be happy to see this. Please improve pagemap directly if
+> you think you need more things.
+
+These are mainly helpers to migrate and populate a range of cpu memory
+space (struct mm_struct) with GPU device_private memory, migrate to
+system on gpu memory shortage and implement the migrate_to_vram pagemap
+op, tied to gpu device memory allocations, so I don't think there is
+anything we should be exposing at the dev_pagemap level at this point?
+
+>=20
+> > which would have a common owner (or
+> > maybe per driver or so as Thomas suggested).=20
+>=20
+> Neither really match the expected design here. The owner should be
+> entirely based on reachability. Devices that cannot reach each other
+> directly should have different owners.
+
+Actually what I'm putting together is a small helper to allocate and
+assign an "owner" based on devices that are previously registered to a
+"registry". The caller has to indicate using a callback function for
+each struct device pair whether there is a fast interconnect available,
+and this is expected to be done at pagemap creation time, so I think
+this aligns with the above. Initially a "registry" (which is a list of
+device-owner pairs) will be driver-local, but could easily have a wider
+scope.
+
+This means we handle access control, unplug checks and similar at
+migration time, typically before hmm_range_fault(), and the role of
+hmm_range_fault() will be to over pfns whose backing memory is directly
+accessible to the device, else migrate to system.
+
+Device unplug would then be handled by refusing migrations to the
+device (gpu drivers would probably use drm_dev_enter()), and then evict
+all device memory after a drm_dev_unplug(). This of course relies on
+that eviction is more or less failsafe.
+
+/Thomas
+
+>=20
+> > But upfront speccing all this out doesn't seem like a good idea to,
+> > because I honestly don't know what we all need.
+>=20
+> This is why it is currently just void *owner=C2=A0 :)
+
+Again, with the above I think we are good for now, but having
+experimented a lot with the callback, I'm still not convinced by the
+performance argument, for the following reasons.
+
+1) Existing users would never use the callback. They can still rely on
+the owner check, only if that fails we check for callback existence.
+2) By simply caching the result from the last checked dev_pagemap, most
+callback calls could typically be eliminated.
+3) As mentioned before, a callback call would typically always be
+followed by either migration to ram or a page-table update. Compared to
+these, the callback overhead would IMO be unnoticeable.
+4) pcie_p2p is already planning a dev_pagemap callback?
+=20
+/Thomas
+
+>=20
+> Jason
+
