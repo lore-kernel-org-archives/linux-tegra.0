@@ -1,151 +1,153 @@
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B11212B22
-	for <linux-tegra@vger.kernel.org>; Tue,  4 Feb 2025 13:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975CC8634A
+	for <linux-tegra@vger.kernel.org>; Tue,  4 Feb 2025 13:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738675276; cv=none; b=jMR47tbHJP+gFK0iu+DGjhbcCk+P3fZcOWakZ7FJsGagGQ5+k/9efhSF0ZET1+alFb+QGbMPszV42KRZGq9o69NfYo5eU9M218BVJJZgFYwL9oNEbJT3LHXA/d7Ma6XDR0leJ1MGyxc0fX+Mwo4SificFf4h20h9lL63EhewECk=
+	t=1738675579; cv=none; b=lx8QtFZKFjOFnU5cxHn3Pr8QwVLRwzPIyxcb8mf1c4zGbwHo8z2/cQgvWd3jAsXlp8gEVNrAvuD3GDemvBhqUKY8f1idpXrcSKDQuhjMRdlxzd3IoC7R2/WQZQMkG4Rh+EaSFJBdXkuSK8PdrLT5SIxvhcqAMj/lV5rSC3bAA0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738675276; c=relaxed/simple;
-	bh=DYoArqhz9bnwOrJj2sFoc+2pshtV2jJmtePZZiRSIq0=;
+	s=arc-20240116; t=1738675579; c=relaxed/simple;
+	bh=5LJTr/ZPjO5d8ubgU1RzCLXSrJ44hRaRLu0S3BgGeDA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DSJYvxg3pt5qvfZR+9JFKmjETS/igGIWToxVXDeumXut0jWaZvtpL2/xFChhh4ac0LvARbflikzEbXPlWD2g2GJxZWZpDk3QBC7ivIwKMfCs5+vhqk5n3SbKYH+Sx9IlcGUKCAeuv9/k9WH/SrNkvGngsKzyxl/HpVm6Cl1o5xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=dm+u/REN; arc=none smtp.client-ip=209.85.222.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=TClJvdOFLCDPa3IPFCccCnccPKmYJ2b560FzdZlssNxyuUdML3CW5AG7/3l5v5r8PLhKLRsb2Acl3I4DY62ybbSREqydLCQE0PXIXMR/dy1rHYIrjbSJQKvCEidny3y4B0DiTnRK2fd1AW+LRprzaih2qskztBfGpPUri7Urvo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NaPPhZE3; arc=none smtp.client-ip=209.85.219.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dm+u/REN"
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7b6ef047e9bso495652085a.1
-        for <linux-tegra@vger.kernel.org>; Tue, 04 Feb 2025 05:21:14 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NaPPhZE3"
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6e4295b72b5so4754406d6.2
+        for <linux-tegra@vger.kernel.org>; Tue, 04 Feb 2025 05:26:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1738675273; x=1739280073; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RYGog+BswJMrw0pyjx8F7JNxxtJRa9tDqKmDTEz+voo=;
-        b=dm+u/RENYqBFJbpkMlTuItQ931epOkIE1nRLltGoa9IsC4e9SpknO8PtNRtmDSi71O
-         IDKnfo439PmTQz3Sz7sUOsSuKBe1a/0yhtmS0DQ+NnZZwcw6LC4N6dsArWwAjz79i8ln
-         PDPrBJC2GTlYrxVf5Le8t89ZPY01km4eUCydp8GKaCGpT+4fbWNuXtg4kl9qo54CLUox
-         SNU6CyBy+kMJrE0Lsxo49eVf06hj1lwf5tF2x6Z0LymAzv4NLbcHMSJFwqyh18NFS4Hq
-         J548uq+566UwlC8+VKRSGCvYyNcxGA1VryZfnR+YY1nNvAdTHuArS9yIsZhoAeww3kPL
-         K+qA==
+        d=ziepe.ca; s=google; t=1738675576; x=1739280376; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AVp4b+FFVRvgHW7eQGwrIGJ0Ud3zrEOqDnH6Jl7Uugg=;
+        b=NaPPhZE3CR5s9YAau5oCW85w4ZnzGzRJJYvNSPHq+D+poKU3NkVLjNV9IuHNfFVSYv
+         GARUU654zsS/5Ev/yuqvRtjdpV2hg0b1yUKgVhBwTF51BtBqhPGp9q1ys/uznybAl37D
+         T/qYjN/MWMXWBEhwjOoao4LL0U2CjPzXofJpp9GaA/jFsgd8MSwcDF9BtQ8FRonvOOTe
+         kVM0JckIIgwIn8EI8iRFD1HPd75Wk3YbpO1CVra/5E2MIMy07tKdSZcmf45aZUESlVFy
+         7XBgDeC8PYunWBERCnJzR23UXlu016zH71icMfWAL9H5jWnAqG40TixtU1oHpikuFkSa
+         t7Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738675273; x=1739280073;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RYGog+BswJMrw0pyjx8F7JNxxtJRa9tDqKmDTEz+voo=;
-        b=GNJKWExSYUpUncm4vRipJAf20ns4ZxLIqrok2fR4pR32GJMINVHY0RrJ96nzJ60qGg
-         6G8x6/5PEeqysoc+MoQeGCPks13Ho82GWrVP+37NjyJmT8UJ0jdafAAbxNQajAie9Co7
-         aLaBeAuU8dcq5GhueK7udq1PNRlBCN3CRozWSMi9s8yeeDp/7fukDEuK1HiqgQKEWGhi
-         8Q8dQbv8UOC2/NWxby2e0SsYBQxelFl2un25/mQSW+brd4dG2LGRypyIMy3wsy/AZ3Lm
-         qtVwHEG2A4VybNbP6mHAiAh/yLMlhbONsD19mD/4ZAK7+qVI1lZUPx0CoTicb19955c8
-         A/9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXC/RhLjGnBCAz2LTpSqxg5UlHSRe8rVxL2T00FZLGnYa0yWGCNuVs1mmRNS3S9rWIDSMq9i+K08f36pA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxhsw4R1MPzJ6UwA8XmujMzsYXZeW+FwGefee1ObJ0QBmcJyN+
-	lLqDl6Czb76+JQIPnb6GkEHK0cF2CjxfctbSmiDiosSOKDyFMGyu4ilNUnFRV8E=
-X-Gm-Gg: ASbGncsr52SfcvH9hA6c7L4gliPnUteZUuy2+aotNF1GEkGMf7Ad/oKH6N5YdaET3CX
-	cwGb1C9sbmchjrTbt1Ze3UhSL45ccHds6x4isnQnEVejFjY2MjiNFgj2MD73yo+H1n6JJQZWHk8
-	t5e8F/Yk8XoOtUWsxiFJ1rl4CrA2JjVDhtMkqjMy0id86+OBj8wDfO1wXvF3g8LlKcvUUogfaMV
-	2czvjUdByy6lhLcFls6jUMe88g6cxWuTLICscHZRT+bVOTbcaHXaYin0wY3E0SPpL+v+sjFZpmw
-	Z/TE1w3ynaJ24CPK1HBXI1jXYIl5lDtUIkTuTsD2m/SSx58XD5tNNkxEHZyWXsfx
-X-Google-Smtp-Source: AGHT+IFUKUoX2jULeFPKEB1swp6FZ+1r6kccPcITYBbJl4Daknruc2a86ltK8n50/s0eCiuq5Mvn3w==
-X-Received: by 2002:a05:620a:43a1:b0:7bc:db7a:4f78 with SMTP id af79cd13be357-7c02ec1063cmr525137685a.4.1738675273573;
-        Tue, 04 Feb 2025 05:21:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738675576; x=1739280376;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AVp4b+FFVRvgHW7eQGwrIGJ0Ud3zrEOqDnH6Jl7Uugg=;
+        b=jtoeJR3mtyCrn6n4EFHpHWJOXCdYI/eSOPsEZtYIkHbKgbPs9HkGYoVKz5tYqP69L6
+         Ii1YP05CqiXTy5V7vMYiml3vmQASmTXmbKDDIsCAKrBoI3zH7yIxBrk3AB2Nsd40GsOf
+         dV1D/18jMUarfdc9Eg4D62Rm3qS7uimYQIRSqf8WyP+uwDpEb3Wx4Pk164YVUeiqUIXF
+         JReB5ThVZ0Qam1dgktDaxgRp8VtK7YaAMtMnCuU81ZVom5N8M+zIwmbXUid7G+B6xYAT
+         z6WnW48LuZiF/YxpBTEG7FP6pXxFArNqXcnoDqwIsWwj7zT3Xb5LRIo3uuow+7t8IhMG
+         7ejA==
+X-Forwarded-Encrypted: i=1; AJvYcCXASE81gT64v/rwo5Bzx929qbSvqLGihVevESldz0f9Nq7Acd1UJRbuDTfPb3anQDIMPqU267t0rYjMgg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFpM84qU3wLxXN3dfNAn9/WOcp8N/Ct2Wp4LLJFqTCzM6b6lbM
+	CpnAXxPm3KhpaLsCJ8DSGHfwOIbE/Vtcs7TFN1C07SQ/JfuLzqk4X7s19MuwUwI=
+X-Gm-Gg: ASbGnctzeYW1Iz8Q4m7wrRIci1hCs9DyvRdWrtDtbgLfPFgCF3xUx5UagELqqa/HCPs
+	YB1PExUbp0j1YyToByIVr/vHT0r3i8NX4mRn4CzmDLdBi0jHfoDaYSkKF8byRzBAuca+zjyq+k6
+	fOBzwmVhY2hcyYYUK1vnreje0eQU9Xgfv0irDeTdXnSP/Xa3OKh7nwP0xhDAU6uKZ706eZwu3dS
+	iRjbP5q3Wp1xrhRlQd+u3ZtsS3zzwMUq5kopv2DFcmOwXxJG8Jx/adv74yUcqZQm8YZWDPPIAMz
+	HbMXFAGIjHnT9babn2vu6daonVe8KzJuTDrLAMzm2OpXrAoKhuNP5JAsy9wOHDUZ
+X-Google-Smtp-Source: AGHT+IHlCOKBY+zoBFq/ioLTJPh7bDGQBSV2BY/QCHd0dQL9OkhFoX4vLeuIVKLlvifCm+9qEIE5+w==
+X-Received: by 2002:a05:6214:5d87:b0:6d8:a5da:3aba with SMTP id 6a1803df08f44-6e243c3b07amr371097016d6.20.1738675576494;
+        Tue, 04 Feb 2025 05:26:16 -0800 (PST)
 Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c00a905b6esm637056485a.68.2025.02.04.05.21.12
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e254814d1esm61954386d6.38.2025.02.04.05.26.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2025 05:21:13 -0800 (PST)
+        Tue, 04 Feb 2025 05:26:15 -0800 (PST)
 Received: from jgg by wakko with local (Exim 4.97)
 	(envelope-from <jgg@ziepe.ca>)
-	id 1tfIrY-0000000BRLd-1okT;
-	Tue, 04 Feb 2025 09:21:12 -0400
-Date: Tue, 4 Feb 2025 09:21:12 -0400
+	id 1tfIwR-0000000BRNQ-1pE0;
+	Tue, 04 Feb 2025 09:26:15 -0400
+Date: Tue, 4 Feb 2025 09:26:15 -0400
 From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, thierry.reding@gmail.com,
-	vdumpa@nvidia.com, joro@8bytes.org, will@kernel.org,
-	jonathanh@nvidia.com, baolu.lu@linux.intel.com, jsnitsel@redhat.com,
-	jroedel@suse.de, regressions@lists.linux.dev,
-	linux-tegra@vger.kernel.org, iommu@lists.linux.dev
-Subject: Re: [REGRESSION] Invalid gather when using Tegra210 media engines
-Message-ID: <20250204132112.GH2296753@ziepe.ca>
-References: <c6a6f114-3acd-4d56-a13b-b88978e927dc@tecnico.ulisboa.pt>
- <20250203170617.GE2296753@ziepe.ca>
- <4ea1a48c-9020-4793-ac9b-b51fc289e442@tecnico.ulisboa.pt>
- <20250203174331.GF2296753@ziepe.ca>
- <a0f776ba-bfd2-41fd-8370-14818b86bfbe@arm.com>
- <20250203191346.GG2296753@ziepe.ca>
- <ff901d60-dd54-440f-a0da-4b72052eafd6@kapsi.fi>
+To: Thomas =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+Cc: Yonatan Maman <ymaman@nvidia.com>, kherbst@redhat.com, lyude@redhat.com,
+	dakr@redhat.com, airlied@gmail.com, simona@ffwll.ch,
+	leon@kernel.org, jglisse@redhat.com, akpm@linux-foundation.org,
+	GalShalom@nvidia.com, dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-mm@kvack.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [RFC 1/5] mm/hmm: HMM API to enable P2P DMA for device private
+ pages
+Message-ID: <20250204132615.GI2296753@ziepe.ca>
+References: <20250128172123.GD1524382@ziepe.ca>
+ <Z5ovcnX2zVoqdomA@phenom.ffwll.local>
+ <20250129134757.GA2120662@ziepe.ca>
+ <Z5tZc0OQukfZEr3H@phenom.ffwll.local>
+ <20250130132317.GG2120662@ziepe.ca>
+ <Z5ukSNjvmQcXsZTm@phenom.ffwll.local>
+ <20250130174217.GA2296753@ziepe.ca>
+ <Z50BbuUQWIaDPRzK@phenom.ffwll.local>
+ <20250203150805.GC2296753@ziepe.ca>
+ <7b7a15fb1f59acc60393eb01cefddf4dc1f32c00.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ff901d60-dd54-440f-a0da-4b72052eafd6@kapsi.fi>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7b7a15fb1f59acc60393eb01cefddf4dc1f32c00.camel@linux.intel.com>
 
-On Tue, Feb 04, 2025 at 12:26:46PM +0900, Mikko Perttunen wrote:
-> On 2/4/25 4:13 AM, Jason Gunthorpe wrote:
-> > On Mon, Feb 03, 2025 at 06:49:07PM +0000, Robin Murphy wrote:
-> > > I'd hope the historical reasons for not supporting IOMMU_DOMAIN_DMA in
-> > > tegra-smmu no longer apply, given that all the default domain stuff has now
-> > > been integrated into host1x for the newer arm-smmu based Tegras.
-> > 
-> > Indeed I do see appropriate looking calls to the normal DMA API, and
-> > the other mapping path is conditionalized by !host->domain.
-> > 
-> > So, why didn't it work for Diogo? Even in identity mode the DMA API
-> > will return correct DMA addresses and the !host->domain path will skip
-> > mapping them.
-> > 
-> > Poking around I wonder if there is some assumption that if other parts
-> > of the stack, maybe the DRM driver, are using the special domain than
-> > everyone is? It seems to blindly pass around IOVA without really
-> > checking who is consuming it.
+On Tue, Feb 04, 2025 at 10:32:32AM +0100, Thomas Hellström wrote:
+> > I would not be happy to see this. Please improve pagemap directly if
+> > you think you need more things.
 > 
-> I'm not sure where that would be, but it's certainly possible given that
-> this combination of code paths wouldn't have been tested.
+> These are mainly helpers to migrate and populate a range of cpu memory
+> space (struct mm_struct) with GPU device_private memory, migrate to
+> system on gpu memory shortage and implement the migrate_to_vram pagemap
+> op, tied to gpu device memory allocations, so I don't think there is
+> anything we should be exposing at the dev_pagemap level at this point?
 
-I saw some weird stuff.. Like tegra_bo_pin() does:
+Maybe that belongs in mm/hmm then?
 
-	/*
-	 * If we've manually mapped the buffer object through the IOMMU, make sure to return the
-	 * existing IOVA address of our mapping.
-	 */
-	if (!obj->mm) {
-	} else {
-		map->phys = obj->iova;
-		map->chunks = 1;
-
-And obj->iova isn't obviously linked to a dma map on dev.. The comment
-reads like it is making the assumption that there is only one iommu
-domain shared by everyone (without checking dev is part of that
-scheme)
-
-> > Christian was telling me DMABUF had some drivers that made the
-> > (incorrect!) assumption they were all sharing translation.
-> > 
-> > It does seem like a nice project for someone who has the hardware to
-> > rip out all of this custom domain stuff and just have the iommu layer
-> > setup a shared dma-iommu domain.
+> > Neither really match the expected design here. The owner should be
+> > entirely based on reachability. Devices that cannot reach each other
+> > directly should have different owners.
 > 
-> This has been a long-standing project. The issue is that some boot chains
-> set up the display expecting identity mappings,
+> Actually what I'm putting together is a small helper to allocate and
+> assign an "owner" based on devices that are previously registered to a
+> "registry". The caller has to indicate using a callback function for
+> each struct device pair whether there is a fast interconnect available,
+> and this is expected to be done at pagemap creation time, so I think
+> this aligns with the above. Initially a "registry" (which is a list of
+> device-owner pairs) will be driver-local, but could easily have a wider
+> scope.
 
-The smmu driver can match on compatible strings and leave some devices
-in identity mode, if that helps. Other drivers are doing this to work
-around various issues.
+Yeah, that seems like a workable idea
 
-> See https://lore.kernel.org/linux-iommu/20220512190052.1152377-5-thierry.reding@gmail.com/
+> This means we handle access control, unplug checks and similar at
+> migration time, typically before hmm_range_fault(), and the role of
+> hmm_range_fault() will be to over pfns whose backing memory is directly
+> accessible to the device, else migrate to system.
 
-But using RMR seems like a better solution?
+Yes, that sound right
 
-We could perhaps also figure out some way to leave the translation in
-identity until the DRM driver completes the reset, then the DRM driver
-could activate the DMA API translation manually.
+> 1) Existing users would never use the callback. They can still rely on
+> the owner check, only if that fails we check for callback existence.
+> 2) By simply caching the result from the last checked dev_pagemap, most
+> callback calls could typically be eliminated.
+
+But then you are not in the locked region so your cache is racy and
+invalid.
+
+> 3) As mentioned before, a callback call would typically always be
+> followed by either migration to ram or a page-table update. Compared to
+> these, the callback overhead would IMO be unnoticeable.
+
+Why? Surely the normal case should be a callback saying the memory can
+be accessed?
+
+> 4) pcie_p2p is already planning a dev_pagemap callback?
+
+Yes, but it is not a racy validation callback, and it already is
+creating a complicated lifecycle problem inside the exporting the
+driver.
 
 Jason
