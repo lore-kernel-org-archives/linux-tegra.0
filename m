@@ -1,39 +1,38 @@
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B601FCCE2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649181FDA86;
 	Wed,  5 Feb 2025 17:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738777021; cv=none; b=eCso1gkZGIZ8rZHZz/MgkwOxUlsKnU9OmymeBy9UY381JNLrRomlRxPZTRJfm+JVVmhZBlXKCe7LrekuLtd0RFyhg9zA3wm4MsGiiOXtepCZbCuDUSsoocN+AfewKw0gWaaHHXil1nsFcwfUk3P2Jgd1vquTpTB1fccWySVJ+bc=
+	t=1738777022; cv=none; b=OuyqOW/nimin9K75MHHz6r/dVLnawjeb9hpbr04BWGwxSSMy5oLeQl3VPrJ1y4ceIHigzBQCZa0fZNkbSj6mvOZ48MvRGQdLfLPLLn2GhvSJeiWk/R+CdjLyv4k/iWxfgJMBNsyUwTdplTOKETH0wlFBmFLZwHIvCedyLAt6+fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738777021; c=relaxed/simple;
-	bh=Vp+s5STg/eBTsVW9sbCsI6/iQysISIMLy09nfVcx9Qw=;
+	s=arc-20240116; t=1738777022; c=relaxed/simple;
+	bh=HrEKbLmzvRNHBh9MzvIBNZ1CGpWtfMw0QOj+KsjPUOI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mM5uauDXqNEJ80axFpk19OJKBivKOLdXmDazx1xhbdrFH0asx1/26aM5jWgTCtTHf53m5DsdY7BCdHhuNA+CjcDJnnvoy/9E9S5gPtUw+SHay6CUc4MAhf90bs6tA/4ZZoeb05hOpa0+fPwA8VrzedlPSm4LdtgjBd/vygF6Ico=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cR8mdZiB; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:To:Cc; b=l4PLXW0xMYQ2hDNt0wZmzwbL27/K8B+fYxSXsLqp3gDJzSM3xsfVLLRK/R+EIkSTbiFW4Yz4c4br/eICPO4jdu67pZR6+OwSY4oH9XTrZteCeU88oSHKuOKq9NrVBN2Xtzd2YeIslM83e8byEzPoPmDPrfRLxQMhiGTGa4zbzA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=RqgGAIyQ; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cR8mdZiB"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A0B794442C;
-	Wed,  5 Feb 2025 17:36:51 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="RqgGAIyQ"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B8954443F8;
+	Wed,  5 Feb 2025 17:36:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1738777012;
+	t=1738777013;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=SwNVcGJTgjvSX/GUhdtWl6uItAObpat1KGBENkGTYyY=;
-	b=cR8mdZiBOBDL8Z9/JVjU3O6BBRcwb03dKVzsKrMBA5ND2/6uCBq8PNj+vt6GOKcRatSvFu
-	cLO9ufYafAQ98nHFHY+UMm5N+XJ2Dhi/o9hoGT8icqFLVNMl+ulTQYQmDzzRyvzxLTZ7lC
-	ionnZqu1Zg5U+Gk4lGUCYuARKYKpGDDsrn2hLu5DuTQ0SyHDZh+SYITvE8WpHkGW055BH2
-	yx/eVt68WmvZ1Xz/wz2e4P7WkiytfeYRJqWP0wy+iSnuFkr+h6vkOgEIFU3RM/YIyHrUKP
-	XmjlaN9VApvhXsEtPxCpejoHaHo8SZjLzNL0D3c2sw9Ccu/S5fXLewNI32AxoA==
+	bh=EmDK4DByW4Ebav/5C7x8nIQDar5bPNyT7udAmfynGZM=;
+	b=RqgGAIyQ0mzrMD7VUt+4rZgmsPrkCVLnH8M70iRWzJh1MFK+ev+Vs9vSCoBhW1maeKTYMs
+	WZGJcGA0RZMzbD0swre240ld2+VwI0t2QNaqik6Nrgvya/D4By6XTHN6oQv+PnOAzrKqSQ
+	HWMTBnFBLJ1qnW7V+ZPsA0lokVB4AbkNaqg+54bDwkQRvITtT6mkATYuBt2lZ+W/J3BDCb
+	AUm9mfNyNbyaz1ZJyFkDEPBnaqf5omWnMlNbo/8U+IIqCvQHak84XEs4uW3FQQg/cHX8gM
+	bqQFZQcqNtm+U+iL9hDOfg9phlZpj8ruxcG+TRfEr0ldkgIBQL+ezUJTn9Jwaw==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 05 Feb 2025 18:36:48 +0100
-Subject: [PATCH v7 3/9] usb: cdns3: rename hibernated argument of
- role->resume() to lost_power
+Date: Wed, 05 Feb 2025 18:36:50 +0100
+Subject: [PATCH v7 5/9] usb: cdns3-ti: move reg writes to separate function
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,7 +41,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250205-s2r-cdns-v7-3-13658a271c3c@bootlin.com>
+Message-Id: <20250205-s2r-cdns-v7-5-13658a271c3c@bootlin.com>
 References: <20250205-s2r-cdns-v7-0-13658a271c3c@bootlin.com>
 In-Reply-To: <20250205-s2r-cdns-v7-0-13658a271c3c@bootlin.com>
 To: Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>, 
@@ -62,78 +61,137 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgedtkecutefuodetggdotef
  hdrohhrghdprhgtphhtthhopehprgifvghllhestggruggvnhgtvgdrtghomhdprhgtphhtthhopehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidquhhssgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvghrrdgthhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhoghgvrhhqsehkvghrnhgvlhdrohhrgh
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-The cdns_role_driver->resume() callback takes a second boolean argument
-named `hibernated` in its implementations. This is mistaken; the only
-potential caller is:
+The device probe function mixes management code and hardware
+initialisation code. Extract the latter into an explicitly named
+cdns_ti_reset_and_init_hw() function to clarify intent. It also will
+allow easier transition to using runtime PM for triggering HW init.
 
-int cdns_resume(struct cdns *cdns)
-{
-	/* ... */
-
-	if (cdns->roles[cdns->role]->resume)
-		cdns->roles[cdns->role]->resume(cdns, cdns_power_is_lost(cdns));
-
-	return 0;
-}
-
-The argument can be true in cases outside of return from hibernation.
-Reflect the true meaning by renaming both arguments to `lost_power`.
-
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/usb/cdns3/cdns3-gadget.c | 4 ++--
- drivers/usb/cdns3/cdnsp-gadget.c | 2 +-
- drivers/usb/cdns3/core.h         | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/cdns3/cdns3-ti.c | 82 ++++++++++++++++++++++++--------------------
+ 1 file changed, 44 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
-index fd1beb10bba726cef258e7438d642f31d6567dfe..694aa14577390b6e9a98ce8c4685ac8f56e43ad4 100644
---- a/drivers/usb/cdns3/cdns3-gadget.c
-+++ b/drivers/usb/cdns3/cdns3-gadget.c
-@@ -3468,7 +3468,7 @@ __must_hold(&cdns->lock)
- 	return 0;
- }
+diff --git a/drivers/usb/cdns3/cdns3-ti.c b/drivers/usb/cdns3/cdns3-ti.c
+index 040bb91e9c017d8298a7e251fd0e192a336e8a52..d573a259f1ae5c4efd59a496a43b23b75e859dd8 100644
+--- a/drivers/usb/cdns3/cdns3-ti.c
++++ b/drivers/usb/cdns3/cdns3-ti.c
+@@ -58,6 +58,7 @@ struct cdns_ti {
+ 	unsigned vbus_divider:1;
+ 	struct clk *usb2_refclk;
+ 	struct clk *lpm_clk;
++	int usb2_refclk_rate_code;
+ };
  
--static int cdns3_gadget_resume(struct cdns *cdns, bool hibernated)
-+static int cdns3_gadget_resume(struct cdns *cdns, bool lost_power)
+ static const int cdns_ti_rate_table[] = {	/* in KHZ */
+@@ -98,15 +99,50 @@ static const struct of_dev_auxdata cdns_ti_auxdata[] = {
+ 	{},
+ };
+ 
++static void cdns_ti_reset_and_init_hw(struct cdns_ti *data)
++{
++	u32 reg;
++
++	/* assert RESET */
++	reg = cdns_ti_readl(data, USBSS_W1);
++	reg &= ~USBSS_W1_PWRUP_RST;
++	cdns_ti_writel(data, USBSS_W1, reg);
++
++	/* set static config */
++	reg = cdns_ti_readl(data, USBSS_STATIC_CONFIG);
++	reg &= ~USBSS1_STATIC_PLL_REF_SEL_MASK;
++	reg |= data->usb2_refclk_rate_code << USBSS1_STATIC_PLL_REF_SEL_SHIFT;
++
++	reg &= ~USBSS1_STATIC_VBUS_SEL_MASK;
++	if (data->vbus_divider)
++		reg |= 1 << USBSS1_STATIC_VBUS_SEL_SHIFT;
++
++	cdns_ti_writel(data, USBSS_STATIC_CONFIG, reg);
++	reg = cdns_ti_readl(data, USBSS_STATIC_CONFIG);
++
++	/* set USB2_ONLY mode if requested */
++	reg = cdns_ti_readl(data, USBSS_W1);
++	if (data->usb2_only)
++		reg |= USBSS_W1_USB2_ONLY;
++
++	/* set default modestrap */
++	reg |= USBSS_W1_MODESTRAP_SEL;
++	reg &= ~USBSS_W1_MODESTRAP_MASK;
++	reg |= USBSS_MODESTRAP_MODE_NONE << USBSS_W1_MODESTRAP_SHIFT;
++	cdns_ti_writel(data, USBSS_W1, reg);
++
++	/* de-assert RESET */
++	reg |= USBSS_W1_PWRUP_RST;
++	cdns_ti_writel(data, USBSS_W1, reg);
++}
++
+ static int cdns_ti_probe(struct platform_device *pdev)
  {
- 	struct cdns3_device *priv_dev = cdns->gadget_dev;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *node = pdev->dev.of_node;
+ 	struct cdns_ti *data;
+-	int error;
+-	u32 reg;
+-	int rate_code, i;
+ 	unsigned long rate;
++	int error, i;
  
-@@ -3476,7 +3476,7 @@ static int cdns3_gadget_resume(struct cdns *cdns, bool hibernated)
- 		return 0;
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+@@ -146,7 +182,11 @@ static int cdns_ti_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
- 	cdns3_gadget_config(priv_dev);
--	if (hibernated)
-+	if (lost_power)
- 		writel(USB_CONF_DEVEN, &priv_dev->regs->usb_conf);
+-	rate_code = i;
++	data->usb2_refclk_rate_code = i;
++	data->vbus_divider = device_property_read_bool(dev, "ti,vbus-divider");
++	data->usb2_only = device_property_read_bool(dev, "ti,usb2-only");
++
++	cdns_ti_reset_and_init_hw(data);
  
- 	return 0;
-diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
-index 97edf767ecee9067e3db66c2373d4b1a7a2e29de..87f310841735092b6209ba6cbb9b56afa963e84c 100644
---- a/drivers/usb/cdns3/cdnsp-gadget.c
-+++ b/drivers/usb/cdns3/cdnsp-gadget.c
-@@ -1974,7 +1974,7 @@ static int cdnsp_gadget_suspend(struct cdns *cdns, bool do_wakeup)
- 	return 0;
- }
+ 	pm_runtime_enable(dev);
+ 	error = pm_runtime_get_sync(dev);
+@@ -155,40 +195,6 @@ static int cdns_ti_probe(struct platform_device *pdev)
+ 		goto err;
+ 	}
  
--static int cdnsp_gadget_resume(struct cdns *cdns, bool hibernated)
-+static int cdnsp_gadget_resume(struct cdns *cdns, bool lost_power)
- {
- 	struct cdnsp_device *pdev = cdns->gadget_dev;
- 	enum usb_device_speed max_speed;
-diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
-index 57d47348dc193b1060f4543c2ef22905f464293b..921cccf1ca9db27a66b06c7c7873b13537c74b05 100644
---- a/drivers/usb/cdns3/core.h
-+++ b/drivers/usb/cdns3/core.h
-@@ -30,7 +30,7 @@ struct cdns_role_driver {
- 	int (*start)(struct cdns *cdns);
- 	void (*stop)(struct cdns *cdns);
- 	int (*suspend)(struct cdns *cdns, bool do_wakeup);
--	int (*resume)(struct cdns *cdns, bool hibernated);
-+	int (*resume)(struct cdns *cdns, bool lost_power);
- 	const char *name;
- #define CDNS_ROLE_STATE_INACTIVE	0
- #define CDNS_ROLE_STATE_ACTIVE		1
+-	/* assert RESET */
+-	reg = cdns_ti_readl(data, USBSS_W1);
+-	reg &= ~USBSS_W1_PWRUP_RST;
+-	cdns_ti_writel(data, USBSS_W1, reg);
+-
+-	/* set static config */
+-	reg = cdns_ti_readl(data, USBSS_STATIC_CONFIG);
+-	reg &= ~USBSS1_STATIC_PLL_REF_SEL_MASK;
+-	reg |= rate_code << USBSS1_STATIC_PLL_REF_SEL_SHIFT;
+-
+-	reg &= ~USBSS1_STATIC_VBUS_SEL_MASK;
+-	data->vbus_divider = device_property_read_bool(dev, "ti,vbus-divider");
+-	if (data->vbus_divider)
+-		reg |= 1 << USBSS1_STATIC_VBUS_SEL_SHIFT;
+-
+-	cdns_ti_writel(data, USBSS_STATIC_CONFIG, reg);
+-	reg = cdns_ti_readl(data, USBSS_STATIC_CONFIG);
+-
+-	/* set USB2_ONLY mode if requested */
+-	reg = cdns_ti_readl(data, USBSS_W1);
+-	data->usb2_only = device_property_read_bool(dev, "ti,usb2-only");
+-	if (data->usb2_only)
+-		reg |= USBSS_W1_USB2_ONLY;
+-
+-	/* set default modestrap */
+-	reg |= USBSS_W1_MODESTRAP_SEL;
+-	reg &= ~USBSS_W1_MODESTRAP_MASK;
+-	reg |= USBSS_MODESTRAP_MODE_NONE << USBSS_W1_MODESTRAP_SHIFT;
+-	cdns_ti_writel(data, USBSS_W1, reg);
+-
+-	/* de-assert RESET */
+-	reg |= USBSS_W1_PWRUP_RST;
+-	cdns_ti_writel(data, USBSS_W1, reg);
+-
+ 	error = of_platform_populate(node, NULL, cdns_ti_auxdata, dev);
+ 	if (error) {
+ 		dev_err(dev, "failed to create children: %d\n", error);
 
 -- 
 2.48.1
