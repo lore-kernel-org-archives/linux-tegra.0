@@ -1,208 +1,279 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011064.outbound.protection.outlook.com [40.107.74.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AE122A4DB
-	for <linux-tegra@vger.kernel.org>; Wed,  5 Feb 2025 10:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738750342; cv=none; b=qXEiZTbS1+BBA53QCEU73Hh4IP/Y2NbWgkmFjJmC3mnO4LVmjbfRMtDK0eCgzdt9pzBrWBuYlN6eItBNzql1paXLcxKjfZmf96HYaM9dpQGi1WHbaH+gctcvWuvUUk6sXyzNXXGF2N7d0JJhHFWNHxjOsGURF6iGUiRkqk/3Iss=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738750342; c=relaxed/simple;
-	bh=a2P+2eH17up+Ofa94del8h0XUqFDuWoe68Y1Hf85Cm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PeMZpBc+KU9Rj+e3NfH4O9X2ICKQiAcTYHCvglySiX6ST9E0VR3sX/270+/aiOTvXkgRAZOyo8XjUaJjrp0OI4s2kOH229czYMh4gdXg8wkuyDW+OcsGtcBWAm4i+tqttcN9jHAqAoPF4jrKg84LqtyAYoPb3whS9/uF/bNba/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oj+SFF8k; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39B0228C91
+	for <linux-tegra@vger.kernel.org>; Wed,  5 Feb 2025 10:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1738750814; cv=fail; b=SQ2jj8B83CSFJApctM0Cl32W8WUpRilp98NZiwfUjTwzVguPYiagRmoywKoOcUChfVbu0pmPj+eyRra6bPs7f01XZilQeIwEMYVnCiWtYtxYbiECeTVzTRx5Eb9m7AYvgMei2Z4vsaa0gCzFYTO7sKTBrP60pJ8r2n6Hj2Dgslk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1738750814; c=relaxed/simple;
+	bh=f96UzEZdWWWuGG8ZmFNzV14pOvr4RsDychYc4GaSfJU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eePbZNKi8SU3LSSRbWlfLEb10KaLP3VJliDEcOhE0y2W1CM14mhddYgmezcncrDSEjsBpxhw5CC80DnT1qUMhk9pNjoQGJ0S6GBBF8J8tpDXPPNwXDRSaOfOKb86z6r4UP8RpA7lcPCd885U3ustIwmIJ7dsvO260bO19++9bSs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=K//76SRP; arc=fail smtp.client-ip=40.107.74.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oj+SFF8k"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1738750339;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=08znvKD929SmLMJj92WNC0Au1O4yxtiLADSy4vJ5xMg=;
-	b=Oj+SFF8kXXURp6wOlV7bDrpt/gK8AeUFXuLj9M0r1IGyr6+IJ9NYR7PuYQX6b2cCBfTAgc
-	uK7DL5xuskvSr4x0drWBTHVHYzZ9kWABNe7SD/G7NcwIO8bpdGZYj4SbX1vXMk1+emhskP
-	bPu4n1Zc4YwTq5EBQ7zoprdLDvxqb+g=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-651--dG_47J0OoWckzSyjf3P2Q-1; Wed, 05 Feb 2025 05:12:18 -0500
-X-MC-Unique: -dG_47J0OoWckzSyjf3P2Q-1
-X-Mimecast-MFC-AGG-ID: -dG_47J0OoWckzSyjf3P2Q
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38c5d9530ebso3811436f8f.1
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Feb 2025 02:12:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738750337; x=1739355137;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=08znvKD929SmLMJj92WNC0Au1O4yxtiLADSy4vJ5xMg=;
-        b=RGym5oR8VqaI7rG0lzltolRsVvXEGcLUtHPI68Wd8IRa94AtMxFWe2ZE+7/ZEmOC9F
-         kgiFsp8GisvQQV2a5fEcPCVIh9DsuMIue5IkMfsIN7sdRhsd1hNvKIHWhUeVfI8Lv+5s
-         I1iod8Xvnq4uuY8HY4UlUqr/hiOqTl9oschFQzhLYUGYNAFCUOvkJ7VA/OzlmsXnlKYz
-         Pi7xegz5JKa5AiC5VVt1ex+GY7aCpNiqSWx7GArONLznH5yFaZrGWx6reH2Tz3JJN25i
-         eqlToAT0MdnOjU6SJbjhw6Gs+PBZDpbD5qAxUZCdjtHB65Wqz5VTyelR1ZOeF/Bqv+1n
-         yYOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTDDFepsEXJfIQkFlGG2wdNqm1AI4bOMZrJGDJZhrBvGNkcYqZW36InBLH5UzvcTRiZybuII3IzI518Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/s7kINd/oQLgILMmUV8i0wAXlOD4GO/lWRYDw6H05uEV2m3Ts
-	jxBQ2s1KDZZYu947rhDq59OdIkrqqa+LAdWbmJbaTezOpvEbY/9JCCZnOtAe2eFSQq0x89ZXcJk
-	KyupUdeWdxOhhMLAwjFvLyFWpBU/EgU+SK3Qtw9C+3KVdXqxfzXhvCYZIP3jr
-X-Gm-Gg: ASbGncu5hbRwLo3get6SuFCMVRmhNidz0ELUDqXppz1rDBBHly4yxNfukZ1jSS+u+TV
-	GCM8LbO6qqR646uczV26iQiLMfAPRyEfuIS92kxeW969CyJeThKLirvcnC5Rbm+7xGslHjJPyOo
-	8Z2l85asTqOSOK51sVr1ialz68U6WWAgWmoYTBGhN7eU9sAUJ8BEXJHM7wElThIFtGYvSn2dg+X
-	9jiyYc+x6IoC/IY3AHa5lezmGcd/CsFqAlBfFIUILvk96MyKlfqg8wl/mQ4PNz1LDscFCCBaJbD
-	z+9MLBk/RMEgKkJPmiaJCd0fo8IBaFvk02fr
-X-Received: by 2002:a5d:4d8f:0:b0:38b:ed18:2f3b with SMTP id ffacd0b85a97d-38db48fde1cmr1533518f8f.48.1738750336890;
-        Wed, 05 Feb 2025 02:12:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGBp5ds39K1Z0cI93vntWmYRE9t9+g0+e2YclFwvxaztwPXTJF7S8AlnkTaxvuqyjPtyZlBXQ==
-X-Received: by 2002:a5d:4d8f:0:b0:38b:ed18:2f3b with SMTP id ffacd0b85a97d-38db48fde1cmr1533479f8f.48.1738750336470;
-        Wed, 05 Feb 2025 02:12:16 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.128.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38da8f6691bsm4315071f8f.42.2025.02.05.02.12.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2025 02:12:15 -0800 (PST)
-Date: Wed, 5 Feb 2025 11:12:13 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thierry Reding <treding@nvidia.com>, Waiman Long <longman@redhat.com>,
-	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-Message-ID: <Z6M5fQB9P1_bDF7A@jlelli-thinkpadt14gen4.remote.csb>
-References: <Z4FAhF5Nvx2N_Zu6@jlelli-thinkpadt14gen4.remote.csb>
- <5d7e5c02-00ee-4891-a8cf-09abe3e089e1@nvidia.com>
- <Z4TdofljoDdyq9Vb@jlelli-thinkpadt14gen4.remote.csb>
- <e9f527c0-4530-42ad-8cc9-cb04aa3d94b7@nvidia.com>
- <Z4ZuaeGssJ-9RQA2@jlelli-thinkpadt14gen4.remote.csb>
- <Z4fd_6M2vhSMSR0i@jlelli-thinkpadt14gen4.remote.csb>
- <aebb2c29-2224-4d14-94e0-7a495923b401@nvidia.com>
- <Z4kr7xq7tysrKGoR@jlelli-thinkpadt14gen4.remote.csb>
- <cfcea236-5b4c-4037-a6f5-267c4c04ad3c@nvidia.com>
- <Z6MLAX_TKowbmdS1@jlelli-thinkpadt14gen4.remote.csb>
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="K//76SRP"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Kg008mWt66jKsrTFB9quOnWDOqo6p2H0OZsRfkS74Hl4jN/+irjXaYXAdc/gdD2bKfdMD6sXUgphtRFIghApNDVrWQ7hRdaofFshyo2nwua7xd9hab0YRbdckcg5HzSZWN2IU9mzIo2qHkWEQT04V+ELORW2wvsPm6Uo1ehhowZKCpt5yj5fkl0w7X6yl3IXxp1GSPq6oEYbfjdjVNjMSx0qSbPnk8qJlgVhksItDHzUPb6IQ2wMB3Gy7mGekPX1DPVX9daf+XKWs6S37RbyMmbAKQhGbYHGEbr87HCALU7edHusMAP8TW3yX36z6Gxi5XkPvdECNe3MGBaAeCsrFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XCIbQ6cB6xJ+wWom7n5WryIT8WV4hAdSjrMiFOADH+M=;
+ b=yju93IkPtz8H4EVPHrokUF+KL83TKeygCUaPEVcPM9CDopb4r5AhOUX9eX3eit0HtX4BXV8c6Qqoe4HJt1p17Tgyuic1T27qjna/hnsm9aD18HGgbuBF/WQIW5mc2qn2Am0VbVsYnSoZRcikCX0xlO23n89c+Wver3LBxscggQJoUBBWXR/4hDyiA+3/oUEmicBTYCLTVX7Z/Xi/l0qdGYvo/j/ZEUIDoWQutwi0FTLqpyIgad009z8BhHyKB5IfhiLrnEc1vQrCtV00eKTSzD8+7pNtizldvV/K40v/chKOoxW7kvzT7MbzjUwnFjdtpG7vAebgXXY+llK6JH8jDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XCIbQ6cB6xJ+wWom7n5WryIT8WV4hAdSjrMiFOADH+M=;
+ b=K//76SRPm4nMH8HGHvU2x34LcukheAVCPISkzX9G8JdjPCEQBrkLCivvDjEfcgmL2DFkt6w5MedfwnN3h39X3l9X04APTXuQvOPSOpMTUyzWXEkl/kkjMEQyPaDcKB1OEWK5iOGPYjiR3fe8E49PJBsZIeM53KkpiZurJ2geHb8=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TYWPR01MB11396.jpnprd01.prod.outlook.com (2603:1096:400:401::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.11; Wed, 5 Feb
+ 2025 10:20:06 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.8422.010; Wed, 5 Feb 2025
+ 10:20:06 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+CC: Geert Uytterhoeven <geert@linux-m68k.org>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Mikko Perttunen
+	<mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, biju.das.au <biju.das.au@gmail.com>
+Subject: RE: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
+Thread-Topic: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
+Thread-Index:
+ AQHbdJgP9S/z2tVCcU2bggWheT9O97M1bgOAgAFv+jCAAGrLgIAAAF2AgAAre4CAAQPygA==
+Date: Wed, 5 Feb 2025 10:20:06 +0000
+Message-ID:
+ <TY3PR01MB11346E21DC023B3972A7A380686F72@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20250201105658.37043-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdVrry1ZV=C0vuEO+7GcF5Tqwtecxu4UPOnrtzXv6RUm4Q@mail.gmail.com>
+ <TY3PR01MB11346E195D7B44DA6EA30E25986F42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <2spuar4m4kcv62r7d6ovtpttpooodwrvsjk6tyxhlnuynw2aru@aj6s4xcgwfjf>
+ <TY3PR01MB11346FD535BB442955F43050C86F42@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <wdxol4ua2zjzepvbdqrsybizl6ocpppjb2dmql62rbcmjjyqeb@5z4i2g7hf5vn>
+In-Reply-To: <wdxol4ua2zjzepvbdqrsybizl6ocpppjb2dmql62rbcmjjyqeb@5z4i2g7hf5vn>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYWPR01MB11396:EE_
+x-ms-office365-filtering-correlation-id: c40008d2-1675-4dce-35e2-08dd45cea98b
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?xqF57PP7ZYkpJJSo39Q+icbf3A2+7BSASTTPhkx0OMRY8BsMzX07uS1bPEIC?=
+ =?us-ascii?Q?pUwU2AiEPj/IHUqhQ7kuq+5hzi369Wa7qQfE/OxndsZLaK8unDYHidNvU3EM?=
+ =?us-ascii?Q?P7a3Zx2qXoEIVcXR0nOaZbPUsOThq2e8ryGMuBjEeNpV0iNsT/9GiAhSDl5y?=
+ =?us-ascii?Q?E62EIFvQ4j/ERJf88pJf1mIGpoHWpD+O8LJDEak/G8OO7IWei4YfyXZxXolE?=
+ =?us-ascii?Q?v0RCkbc3HGQdaW0hflJFjVdLgiNBFmB6bNAzpWDvzMeI9h+CLJJ3qH93KDc1?=
+ =?us-ascii?Q?CbI/Q0hy5VtllL+PTEQKCJ0vn3wxHLrSskWppRqHGH+8EvCYu4dim3aws9zL?=
+ =?us-ascii?Q?zNEwq0V3eGrdyx1jYyxOMfflctELmHI/2wsCCo3C6VwF5VWvrR2tlOdAmPN1?=
+ =?us-ascii?Q?NNk+f9phdskBCjRr4tVSSdd861Wa5dy3vnF2m0UFnUwmqI429VM4knfdelto?=
+ =?us-ascii?Q?17IqtG9N5Yvc8c7XkRYZgqXMhxCu0imaxyJtwxWapaAy/6VVZzNxBuIkHryQ?=
+ =?us-ascii?Q?hDu+4arpDHOdePu4fYQN1aMF6wFfVMcHZNx0NoC1VH20DxMQZCpeGMvTH4zQ?=
+ =?us-ascii?Q?JyRvO+GpsbmWvtY9mZ92ldo71Poq880X2ON6hfpWp/48dUDG0LNhAFiSmURs?=
+ =?us-ascii?Q?sxUZgw8+dti6kojP2UUmFyyMFsbJWH4vzMx3WfUAlbbc65O0vh793mszAZGM?=
+ =?us-ascii?Q?k+yyAh8aczstPQJpZ3HXkmpPzHqv0fTalWxfFnsrrrnF8BGHaE6qRU+sP9w/?=
+ =?us-ascii?Q?TkEZ55UEkrKAgs2KyjhudMbbmOy044a/DLdpPMFZ95cH6iDUPZasbvVEWo87?=
+ =?us-ascii?Q?BJJqTFlPGgl2vxEurlCL/mct5ut2tOF5/Tdf/h4onIcepZpaCLwR6KoAxUAb?=
+ =?us-ascii?Q?BzmK+E6ZVrSDv0Dh2K0Audev46A8Ok0VSAWersUkm+TLphmMMQp7emApFuEZ?=
+ =?us-ascii?Q?eKV53R7GuuvD+iMRa1Wj+Q61/pgadvH8chDw2d3DI2pbIFFoqlUhI4d0dgqp?=
+ =?us-ascii?Q?4WXlR+PHN3z77YJcPK4lwHUUGNR1C+EvwaEa0KhSsKRbgPyF4K8gWUmToKVo?=
+ =?us-ascii?Q?UgRnNlhuS8JnQH9UUs70rpncwqdsQShYaUd/n2WFZgEZE9uUPN45Y3obwEFf?=
+ =?us-ascii?Q?+5XQi+kLRW7Ow4NoAwRun3CDWrumcUFf030xUdSOi57KpxgSZmsItI52xm9d?=
+ =?us-ascii?Q?YK/6zl5dZxPavj9WYnUd2ie2GO4aFaEAB20EJ7Itq/YzNV9ipbB6kPLNAgUt?=
+ =?us-ascii?Q?bLGJ60aokZrMSZ0s42YcIXnKo09vSpFX17V86XDdl3z86aKdun+ReTWmKlCI?=
+ =?us-ascii?Q?3kCSe1y3MQ2/6lXYKer1FHzKR9hDimZLWsYfIH/ORdWiiT0V8K3aSsp+o39m?=
+ =?us-ascii?Q?0SweG3ZDQu1Dbq8XJcn957ht6sYwJhBqTMmbvsTUg6iRW4ewJQTCn4QZpIdb?=
+ =?us-ascii?Q?XhMiRpkLsk2WGtCSevyOqDvVEMjaqNEW?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?Ft3ZBYYJQNGUh2sfNg8BH5sCzWJIY8lj/+0Hyap5ixOtywq24PMmpebzbiKK?=
+ =?us-ascii?Q?3QeubxxGGP29Y812IaBcFt1YJRsQvrihW0JPDBTsXJ+/zkRLaZ3fIvgOCMPL?=
+ =?us-ascii?Q?/ashCf4zLtaDlPilLp0Je5Bia2MsQj+YgoM5ablsgl5GwmO5dD7oHSwyucFq?=
+ =?us-ascii?Q?WHyCcvRwtd+c46oYJvJ8CtNXvCVl/d2w6Py8QIjgmRSqtPlliDLhJm6WJ3Ds?=
+ =?us-ascii?Q?llzfO09SExv+fXoZWdDJGNXiST3h2xlCU7p/bgen+H5RvZLVRFMe7tZBdWQb?=
+ =?us-ascii?Q?bhv8S0gy6tK+b4h57IWIks2pcE0n8t5xRF8tGzHMuJxrYkgWdTX4P7ZY32uK?=
+ =?us-ascii?Q?JUNKV/i/n8rqko7EneCYzXY3jL+hrsJlw3+iy1GMD7N0TJi7IJAFqe/JzvXg?=
+ =?us-ascii?Q?RFEbG8vj5xOE33FqXjBVrK+Boke9vf+k2t2ZBBiKJp9VttEaLCgTg2hWPKlL?=
+ =?us-ascii?Q?aqEWoBQk7Tzs3GHycTa9WVUFNswj6OfLe3KEjkaZb27aEe+Zm1UXHQunCM3G?=
+ =?us-ascii?Q?UB3n3zrV4RsL4bM13ebS+78i3oV5a/a+HuAKazYC13a1i6R4pJOgQJeygekw?=
+ =?us-ascii?Q?hAc8+zsEkZi1QlSSokDgrzDXzcrcCTwSQLK9RvPxybf0AkF/Q4YD07S40hog?=
+ =?us-ascii?Q?jC+hwGkB3+liWDhPpq+toZ319zcFuC1paNmpmHg0CBgezlmNOCl7Tisj75m6?=
+ =?us-ascii?Q?MeXyARRKk7pEU7xV2/K/KAMFtUM1Z8+gJ48fhJ3iVqUZwwmdC5MjvzJjArta?=
+ =?us-ascii?Q?k2JY5uVk6LJi56zl6hbAEiP7ruHz4/KCvOxw7PfFegRKdwh4/121ilRvr1QG?=
+ =?us-ascii?Q?3pn6eHY5H5i91ZocuQAMuds19kQbu+s/kwpUZFOc91po33S4djrUwfDriLkZ?=
+ =?us-ascii?Q?0OPw3zQAWdYcrqNAUOcQW1Bn4PX4wm7lhMvuAcY0Yuyeu8cfSwAX04ImoXq1?=
+ =?us-ascii?Q?Lr8Lkr/W1vQqhqzRwiG3gKwisWqtMHj7hA3fQ7dh+n0//cqosXTJkKNa+a7H?=
+ =?us-ascii?Q?D3U491v8h/lwwi9MBVL5JE5f/c3u2F4ocQvUIoZDoPWw6WIvaGsXP0CkcoGY?=
+ =?us-ascii?Q?kUh0j5wRhUpyxPt9DpG8AhQC6zNVk0KY3eDDR559x+PlHd43N+Sd7ZowLiSG?=
+ =?us-ascii?Q?L7dDg07BXn5gTDHZMiciiF9yNfNEWWPtAV6y6zSycZLmbO9N8KoV+GuEp2tH?=
+ =?us-ascii?Q?kMDw7pYA9gciYjUsVZ5FOmlFKXravSkKahotK4x9TXUPafyJHr4ijXY/DRxi?=
+ =?us-ascii?Q?YWyrqvn7tLEo8PZDBBdvjHthqJFEDcft5jUf/6Whh5IAaIm7mH81rwmzgCm2?=
+ =?us-ascii?Q?MsI3eZzkfHDZeIvFZ8jYCIWoULOoaywXbUegVsmQMih0Q7QKGNP5YdSeC8F/?=
+ =?us-ascii?Q?pvuQWFc2v9sIOaP/Lfj5/KHYnc1usGSZwO8KtzWOItodPGCx3puaEW+RdfLq?=
+ =?us-ascii?Q?lZWH/95GSfCOm+OZI/3Qgti05fzaYMpo1BvLP/CAXOvRxi6T4XN+ewZA+Mnb?=
+ =?us-ascii?Q?E25OQZ7X9jCPdPZd4OeOGk+HbjcSQ8fXI+CYareELhSkxfndk0KrFVa3jvoH?=
+ =?us-ascii?Q?bhSZn6y9VLYAk7/dZl87n5U0VFIwDThWbYiYpb0GZKzEnnQ6St+myAxq1lDD?=
+ =?us-ascii?Q?8Q=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z6MLAX_TKowbmdS1@jlelli-thinkpadt14gen4.remote.csb>
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c40008d2-1675-4dce-35e2-08dd45cea98b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2025 10:20:06.6211
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: k7EVSgCYj0jCad5hVuO/GsRQyCZBZ6d9qE6hNdO4AdDufTFqSjQ8lZcr5e2zYF0l+8BepqFCQ44nGag4Nxd6r4cfPEvfhLQEubVLtrE5p3c=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11396
 
-On 05/02/25 07:53, Juri Lelli wrote:
-> On 03/02/25 11:01, Jon Hunter wrote:
-> > Hi Juri,
-> > 
-> > On 16/01/2025 15:55, Juri Lelli wrote:
-> > > On 16/01/25 13:14, Jon Hunter wrote:
-> 
-> ...
-> 
-> > > > [  210.595431] dl_bw_manage: cpu=5 cap=3072 fair_server_bw=52428 total_bw=209712 dl_bw_cpus=4
-> > > > [  210.606269] dl_bw_manage: cpu=4 cap=2048 fair_server_bw=52428 total_bw=157284 dl_bw_cpus=3
-> > > > [  210.617281] dl_bw_manage: cpu=3 cap=1024 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=2
-> > > > [  210.627205] dl_bw_manage: cpu=2 cap=1024 fair_server_bw=52428 total_bw=262140 dl_bw_cpus=2
-> > > > [  210.637752] dl_bw_manage: cpu=1 cap=0 fair_server_bw=52428 total_bw=262140 dl_bw_cpus=1
-> > >                                                                            ^
-> > > Different than before but still not what I expected. Looks like there
-> > > are conditions/path I currently cannot replicate on my setup, so more
-> > > thinking. Unfortunately I will be out traveling next week, so this
-> > > might required a bit of time.
-> > 
-> > 
-> > I see that this is now in the mainline and our board is still failing to
-> > suspend. Let me know if there is anything else you need me to test.
-> 
-> Ah, can you actually add 'sched_verbose' and to your kernel cmdline? It
-> should print our additional debug info on the console when domains get
-> reconfigured by hotplug/suspends, e.g.
-> 
->  dl_bw_manage: cpu=3 cap=3072 fair_server_bw=52428 total_bw=209712 dl_bw_cpus=4
->  CPU0 attaching NULL sched-domain.
->  CPU3 attaching NULL sched-domain.
->  CPU4 attaching NULL sched-domain.
->  CPU5 attaching NULL sched-domain.
->  CPU0 attaching sched-domain(s):
->   domain-0: span=0,4-5 level=MC
->    groups: 0:{ span=0 cap=766 }, 4:{ span=4 cap=908 }, 5:{ span=5 cap=989 }
->  CPU4 attaching sched-domain(s):
->   domain-0: span=0,4-5 level=MC
->    groups: 4:{ span=4 cap=908 }, 5:{ span=5 cap=989 }, 0:{ span=0 cap=766 }
->  CPU5 attaching sched-domain(s):
->   domain-0: span=0,4-5 level=MC
->    groups: 5:{ span=5 cap=989 }, 0:{ span=0 cap=766 }, 4:{ span=4 cap=908 }
->  root domain span: 0,4-5
->  rd 0,4-5: Checking EAS, CPUs do not have asymmetric capacities
->  psci: CPU3 killed (polled 0 ms)
-> 
-> Can you please share this information as well if you are able to collect
-> it (while still running with my last proposed fix)?
+Hi Thierry Reding,
 
-Also, if you don't mind, add the following on top of the existing
-changes.
+> -----Original Message-----
+> From: Thierry Reding <thierry.reding@gmail.com>
+> Sent: 04 February 2025 18:02
+> Subject: Re: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
+>=20
+> On Tue, Feb 04, 2025 at 03:33:53PM +0000, Biju Das wrote:
+> > Hi Thierry Reding,
+> >
+> > > -----Original Message-----
+> > > From: Thierry Reding <thierry.reding@gmail.com>
+> > > Sent: 04 February 2025 15:25
+> > > Subject: Re: [PATCH] drm/tegra: rgb: Simplify tegra_dc_rgb_probe()
+> > >
+> > > On Tue, Feb 04, 2025 at 09:07:05AM +0000, Biju Das wrote:
+> > > > Hi Geert,
+> > > >
+> > > > Thanks for the feedback.
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: dri-devel <dri-devel-bounces@lists.freedesktop.org> On
+> > > > > Behalf Of Geert Uytterhoeven
+> > > > > Sent: 03 February 2025 11:06
+> > > > > Subject: Re: [PATCH] drm/tegra: rgb: Simplify
+> > > > > tegra_dc_rgb_probe()
+> > > > >
+> > > > > Hi Biju,
+> > > > >
+> > > > > Thanks for your patch!
+> > > > >
+> > > > > On Sat, 1 Feb 2025 at 11:57, Biju Das <biju.das.jz@bp.renesas.com=
+> wrote:
+> > > > > > Simplify tegra_dc_rgb_probe() by using of_get_available_child_b=
+y_name().
+> > > > >
+> > > > > That's not the only thing this patch does...
+> > > > >
+> > > > > >
+> > > > > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > > >
+> > > > > > --- a/drivers/gpu/drm/tegra/rgb.c
+> > > > > > +++ b/drivers/gpu/drm/tegra/rgb.c
+> > > > > > @@ -202,12 +202,12 @@ static const struct
+> > > > > > drm_encoder_helper_funcs tegra_rgb_encoder_helper_funcs =3D {
+> > > > > >
+> > > > > >  int tegra_dc_rgb_probe(struct tegra_dc *dc)  {
+> > > > > > -       struct device_node *np;
+> > > > > > +       struct device_node *np _free(device_node) =3D
+> > > > >
+> > > > > Adding the _free()...
+> > > >
+> > > > Yes it fixes a memory leak aswell.
+> > > >
+> > > > >
+> > > > > > +
+> > > > > > + of_get_available_child_by_name(dc->dev->of_node,
+> > > > > > + "rgb");
+> > > > > >         struct tegra_rgb *rgb;
+> > > > > >         int err;
+> > > > > >
+> > > > > > -       np =3D of_get_child_by_name(dc->dev->of_node, "rgb");
+> > > > > > -       if (!np || !of_device_is_available(np))
+> > > > > > +       if (!np)
+> > > > > >                 return -ENODEV;
+> > > > >
+> > > > > ... fixes the reference count in case of an unavailable node...
+> > > > >
+> > > > > >
+> > > > > >         rgb =3D devm_kzalloc(dc->dev, sizeof(*rgb), GFP_KERNEL)=
+;
+> > > > >
+> > > > > ... but as np is stored below, it must not be freed when it goes =
+out of context?
+> > > >
+> > > > OK, But it is used in tegra_output_probe() and never freed.
+> > > > Maybe remove should free it??
+> > >
+> > > It's not quite as simple as that. tegra_output_probe() can also
+> > > store
+> > > output->dev->of_node in output->of_node, so we'd also need to track
+> > > output->dev->a
+> > > flag of some sort to denote that this needs to be freed.
+> >
+> > OK.
+> >
+> > >
+> > > Ultimately I'm not sure if it's really worth it. Do we really expect
+> > > these nodes to ever be freed (in which case this might leak memory)?
+> > > These are built-in devices and there's no code anywhere to remove any=
+ such nodes.
+> >
+> > If there is no use case for bind/rebind for the built-in device then no=
+ issue.
+> > Or in .remove() free the node or use dev_action_reset()??
+>=20
+> Bind/rebind is possible, but that's not even a problem. Worst case the re=
+ference count on the device
+> node will keep increasing, so we'll just keep leaking the same node over =
+and over again. I guess
+> potentially there's a problem when we rebind for the 2^32-th time, but I'=
+m not sure that's something
+> we need to consider.
 
-Just to be sure we don't get out of sync, I pushed current set to
+Agreed.
 
-https://github.com/jlelli/linux.git experimental/dl-debug
+>=20
+> That said, devm_add_action_or_reset() sounds like a good solution if we r=
+eally want to make sure that
+> this doesn't leak, so yeah, I'm in favour of that.
 
----
- kernel/sched/deadline.c | 2 +-
- kernel/sched/topology.c | 5 ++++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+OK, Will send a patch after of_get_available_child_by_name() [1] hit on mai=
+nline.
 
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 9a47decd099a..504ff302299a 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -3545,7 +3545,7 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
- 		 * dl_servers we can discount, as tasks will be moved out the
- 		 * offlined CPUs anyway.
- 		 */
--		printk_deferred("%s: cpu=%d cap=%lu fair_server_bw=%llu total_bw=%llu dl_bw_cpus=%d\n", __func__, cpu, cap, fair_server_bw, dl_b->total_bw, dl_bw_cpus(cpu));
-+		printk_deferred("%s: cpu=%d cap=%lu fair_server_bw=%llu total_bw=%llu dl_bw_cpus=%d type=%s span=%*pbl\n", __func__, cpu, cap, fair_server_bw, dl_b->total_bw, dl_bw_cpus(cpu), (cpu_rq(cpu)->rd == &def_root_domain) ? "DEF" : "DYN", cpumask_pr_args(cpu_rq(cpu)->rd->span));
- 		if (dl_b->total_bw - fair_server_bw > 0) {
- 			/*
- 			 * Leaving at least one CPU for DEADLINE tasks seems a
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 93b08e76a52a..996270cd5bd2 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -137,6 +137,7 @@ static void sched_domain_debug(struct sched_domain *sd, int cpu)
- 
- 	if (!sd) {
- 		printk(KERN_DEBUG "CPU%d attaching NULL sched-domain.\n", cpu);
-+		printk(KERN_CONT "span=%*pbl\n", cpumask_pr_args(def_root_domain.span));
- 		return;
- 	}
- 
-@@ -2534,8 +2535,10 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
- 	if (has_cluster)
- 		static_branch_inc_cpuslocked(&sched_cluster_active);
- 
--	if (rq && sched_debug_verbose)
-+	if (rq && sched_debug_verbose) {
- 		pr_info("root domain span: %*pbl\n", cpumask_pr_args(cpu_map));
-+		pr_info("default domain span: %*pbl\n", cpumask_pr_args(def_root_domain.span));
-+	}
- 
- 	ret = 0;
- error:
+https://lore.kernel.org/all/TY3PR01MB1134656CBDAF5FFCEB6C8D20F86F42@TY3PR01=
+MB11346.jpnprd01.prod.outlook.com/
+
+
+
+Cheers,
+Biju
+
 
