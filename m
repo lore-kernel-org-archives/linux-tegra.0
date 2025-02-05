@@ -1,154 +1,184 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2678D1519A4;
-	Wed,  5 Feb 2025 14:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4479337160;
+	Wed,  5 Feb 2025 15:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738764927; cv=none; b=qr1HPH7c7MOVltp2Eo2sTBjq2FlorL0tu18+bO0/VBE4niLOa8sECYUlp9pn0XzNTzGpGf7XSWUghFbCgLcRH1+et8PQiXXS0YvkC5BsGOLSkdS3lKnQeWe41IlPJzfCx7/JpyA8LRE1EmVbuWt6qCVVOOwArAp5BjxNZsjLZy8=
+	t=1738770436; cv=none; b=Ycn7Kz8fsgIDV57lXlDy4pZ2XYrMv+rWzi6NXYmWlwj9vJSzSZRLFzUjTRtMEhRgfIV/5pfgfFQ50UR+E8YMcDPea+8XLTTSyvsJuSrVuLwWddOj+n+Cd1vY9AhbtdKu2JvbQWwS0LNT67l5j+WuFrRld37bggMN4J7noDoe7M8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738764927; c=relaxed/simple;
-	bh=K9MxXJAzE/5V8y3RnE95M277Dhdg1tieL4Y2vxbi33Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pRE6Up6PPuaykmdoFZ7higy+Kg97yT7zzItTzxGbV0M4lbNnpfDoBX4O5eEZumjQcj0th/FqG8FhMNWRZsovBuN9L4bkMCUvNKUntmMUIvq9t7VeJ2u05Z4XpEktGuxo0Mykn5WpprhFGWMNjNJ3F+yMvkH2RpEZPSYnEzntxNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fQzo5ObJ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fQzo5ObJ"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-436281c8a38so48354235e9.3;
-        Wed, 05 Feb 2025 06:15:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738764924; x=1739369724; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=H/NXXdDcgKO6ZclLlGW4nSts7m5ZN5bv2I7qQmsbW+8=;
-        b=fQzo5ObJgvkk557gPbhZETS/YY46dlzv1IN9zVtcbRTqHE7KoCdfM+fRD99W1ry4O2
-         8XBcSa0VPO3N4av0i25NrYinra6K9hh2pHGWfOA5Q0MkX5mdAjqQLj7FPQpx8K1KdW2p
-         qtZ8Ryv5UQzwErNn7EQNl7yMBZ0SBHHUvsbZr/pZ2i0+fhjA4KDFD1TC+jfrTEJusvfM
-         rRNVIWc+kDyEsJdg41FKvziPopR010QYmNmd0+Yqw9gCDNftWnD5VSwP+QRywzdsoIET
-         0/HD0hvKPQ/qEwgyQUiiPrFfHUkh0xQM/f7oeHJzsPTanT69B8UNPR1u4SGI62JMIG7R
-         rKSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738764924; x=1739369724;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H/NXXdDcgKO6ZclLlGW4nSts7m5ZN5bv2I7qQmsbW+8=;
-        b=LjsA3jt9tAX1S70lmWStJ8hi7HDdVkxdUjbns08OnsLul5tlReXpevVfQTcdKBXzCu
-         50LNjVglQw45ehwRcfxbGlbUQayjZS1toz2vGcsKwT2Wp8jlNxuc7WKp6Rug9bqkJ1R8
-         M630eM/kQvqXsVKtHVEFiZwC1ivwdfMSEP5/G55QBf/rWuAeS11Yhnp3jJZDkesb1hx6
-         NYL68GJKOWtXn3Mf8lZpunzCPtxSZTzIqSSVkC9Aaw4FE2YeBSjcytdofiQg6MaAGnmw
-         yLMOwZ8zLInlWVVNEMx8D0+0DDV5gldxR6W8eGjfghfTk9O3eOtJAB5JuYIHwit4WcKT
-         wE5g==
-X-Forwarded-Encrypted: i=1; AJvYcCU25a18u805JNTJUiGaWirp3o4uUg59VVlBoSwLPSrIs9KQUHXP8YJ8Y3XWIRaDibYAv0Fra1WNruOAAvk=@vger.kernel.org, AJvYcCVrBtusXzYccvX1TI9S1YfZtQrr0uRWSv//xYR/5wYaKNSOqExzou1+drpf8o1uR/gIVjKVHktJ1qDJlWc=@vger.kernel.org, AJvYcCWqXzC5x7rebEl+OM9iIt8S9vYzGAHuI9HII3tUVNlwvvfc8+iVlsDRHHE0EGhJb0NSHNpK9dD2X1orkow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtkugnkJ5CHipVd26ti8jXYKuMpLyuzxwc/6VpxxQAo8VD5zez
-	Q/2xItkfsKP4IwAjGN3i5iPozdgSMXI1ficJQAue2qwnZew5o2lccAe5aA==
-X-Gm-Gg: ASbGncvFYEsF3j8zophhWbAQcQ9ismXlcmcoB8d4ow4CtgNBY0Q5ypBlsObq0aHDNMY
-	XXNM6juyYbdE9M6LhrMkytUPH4iXyxSPKLOAX/fLjAN/rXCsGYTIsegLJovXNFzGDBLddAYBXm0
-	Txd9uxbU0mhRTIJwopSNCU0kCLYqJqyvZKHJX7scSR5CaAp144O/0HJ/FJxWSYUpvd9i5iazQvR
-	Y7vzuxQCgz2LxYoWFNyFFTYOcE/evloKnvwmEZvpLmDbyfaDwiVZqSm+cPbtOK6BlTtPtSJ8jHn
-	lXzMzWD4mkD1mGaRgbbK3ohbmOMC8QfdQlGWYSe5PKsEO5NlUImBMQaFO+DlkiHtBcYL7fDgfeA
-	aFg==
-X-Google-Smtp-Source: AGHT+IHOCy8i2UKdFurN9zjvJS7a08G1zOqiWVyrthDhxKETqjPjeaQ7WgsWUtA5m9zAKOO4/kBpxw==
-X-Received: by 2002:a05:600c:4452:b0:434:f609:1afa with SMTP id 5b1f17b1804b1-4390d42cc54mr24356075e9.4.1738764923968;
-        Wed, 05 Feb 2025 06:15:23 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4390db110dfsm23234075e9.36.2025.02.05.06.15.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2025 06:15:22 -0800 (PST)
-Date: Wed, 5 Feb 2025 15:15:20 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: "Sheetal ." <sheetal@nvidia.com>
-Cc: broonie@kernel.org, linux-sound@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, 
-	mkumard@nvidia.com, spujar@nvidia.com
-Subject: Re: [PATCH V2] ASoC: tegra: Add interconnect support
-Message-ID: <ftyikuzu7avxlbyfruubjg5zucbstq5psilehpoahvdhpuqlr6@pcubq7dsm6fw>
-References: <20250203105304.4155542-1-sheetal@nvidia.com>
+	s=arc-20240116; t=1738770436; c=relaxed/simple;
+	bh=ejHE1a8+aYs3y71VCzE1Ju3Quet9sFhTMD+pAmsBqF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EMqrxmPicfi7KMQI+H43H15aUKKBqOIFo6otUEiYYa/zxC5a7Xaf0FTZDqow+L23gZPywZLQxOZsj/Nx3KmGdDBRWlPnrO7sGN9CeEM9NadddbXKj8+3ErRb7uk+WPfNM0fz47xyZk4jtDgMDlRmTaG6xGes6iQB6vlk78rF22A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A8AF1063;
+	Wed,  5 Feb 2025 07:47:37 -0800 (PST)
+Received: from [10.57.35.21] (unknown [10.57.35.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 03F493F5A1;
+	Wed,  5 Feb 2025 07:47:05 -0800 (PST)
+Message-ID: <23d4c47e-a00c-4f15-ab42-303bd2aca032@arm.com>
+Date: Wed, 5 Feb 2025 15:47:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cqh3gyz3giblo4rm"
-Content-Disposition: inline
-In-Reply-To: <20250203105304.4155542-1-sheetal@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 18/19] iommu: Update various drivers to pass in lg2sz
+ instead of order to iommu pages
+To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
+ asahi@lists.linux.dev, Lu Baolu <baolu.lu@linux.intel.com>,
+ David Woodhouse <dwmw2@infradead.org>, Heiko Stuebner <heiko@sntech.de>,
+ iommu@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel@sholland.org>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
+ Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+ David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
+References: <18-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <18-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
---cqh3gyz3giblo4rm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH V2] ASoC: tegra: Add interconnect support
-MIME-Version: 1.0
-
-On Mon, Feb 03, 2025 at 10:53:04AM +0000, Sheetal . wrote:
-> From: Sheetal <sheetal@nvidia.com>
->=20
-> Add interconnect framework support to set required audio bandwidth
-> based on PCM device usage. The maximum bandwidth is determined by
-> the number of APE PCM devices and maximum audio format supported.
->=20
-> If interconnect property is not defined or INTERCONNECT config
-> is not enabled then the audio usecase will still function.
->=20
-> Validate bandwidth updates by reading the interconnect summary sysfs
-> node during PCM device open and close operations.
->=20
-> Signed-off-by: Sheetal <sheetal@nvidia.com>
->=20
+On 2025-02-04 6:34 pm, Jason Gunthorpe wrote:
+> Convert most of the places calling get_order() as an argument to the
+> iommu-pages allocator into order_base_2() or the _sz flavour
+> instead. These places already have an exact size, there is no particular
+> reason to use order here.
+> 
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
-> v2: Fix pcm_id parameter uninitialized warning.
-> ---
->  sound/soc/tegra/Makefile          |   2 +-
->  sound/soc/tegra/tegra210_admaif.c |  24 +++++-
->  sound/soc/tegra/tegra210_admaif.h |   9 +-
->  sound/soc/tegra/tegra_isomgr_bw.c | 132 ++++++++++++++++++++++++++++++
->  sound/soc/tegra/tegra_isomgr_bw.h |  31 +++++++
->  5 files changed, 192 insertions(+), 6 deletions(-)
->  create mode 100644 sound/soc/tegra/tegra_isomgr_bw.c
->  create mode 100644 sound/soc/tegra/tegra_isomgr_bw.h
->=20
-> diff --git a/sound/soc/tegra/Makefile b/sound/soc/tegra/Makefile
-> index cea4b0d54378..defea7f53f11 100644
-> --- a/sound/soc/tegra/Makefile
-> +++ b/sound/soc/tegra/Makefile
-> @@ -13,7 +13,7 @@ snd-soc-tegra210-dmic-y :=3D tegra210_dmic.o
->  snd-soc-tegra210-i2s-y :=3D tegra210_i2s.o
->  snd-soc-tegra186-asrc-y :=3D tegra186_asrc.o
->  snd-soc-tegra186-dspk-y :=3D tegra186_dspk.o
-> -snd-soc-tegra210-admaif-y :=3D tegra210_admaif.o
-> +snd-soc-tegra210-admaif-y :=3D tegra210_admaif.o tegra_isomgr_bw.o
+[...]
+> @@ -826,7 +825,7 @@ void *__init iommu_alloc_4k_pages(struct amd_iommu *iommu, gfp_t gfp,
+>   				  size_t size)
+>   {
+>   	int order = get_order(size);
+> -	void *buf = iommu_alloc_pages(gfp, order);
+> +	void *buf = iommu_alloc_pages_lg2(gfp, order + PAGE_SHIFT);
 
-I don't understand why this had to be tacked on like this? Why do we
-need exported symbols for something that looks otherwise very specific
-to ADMAIF? Will this ever be used outside of the ADMAIF driver? If not
-this should just be moved into tegra210_admaif.c and then there's no
-need for the EXPORT_SYMBOL() either.
+This is a size, really - it's right there above.
 
-Thierry
+(although alloc_cwwb_sem() passing 1 looks highly suspicious - judging 
+by other cmd_sem references that probably should be PAGE_SIZE...)
 
---cqh3gyz3giblo4rm
-Content-Type: application/pgp-signature; name="signature.asc"
+Furthermore even the set_memory_4k() call doesn't really want an order 
+either, PAGE_ALIGN(size) >> PAGE_SHIFT would do.
 
------BEGIN PGP SIGNATURE-----
+>   
+>   	if (buf &&
+>   	    check_feature(FEATURE_SNP) &&
+[...]
+> @@ -1702,8 +1701,10 @@ int dmar_enable_qi(struct intel_iommu *iommu)
+>   	 * Need two pages to accommodate 256 descriptors of 256 bits each
+>   	 * if the remapping hardware supports scalable mode translation.
+>   	 */
+> -	order = ecap_smts(iommu->ecap) ? 1 : 0;
+> -	desc = iommu_alloc_pages_node(iommu->node, GFP_ATOMIC, order);
+> +	desc = iommu_alloc_pages_node_lg2(iommu->node, GFP_ATOMIC,
+> +					  ecap_smts(iommu->ecap) ?
+> +						  order_base_2(SZ_8K) :
+> +						  order_base_2(SZ_4K));
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmejcnUACgkQ3SOs138+
-s6GDExAAoAoyjpYgo8IxgRo1iJ0rnn3HHg+tYI5vmZ38biLzRJe+N9HpoBMrjPwd
-li4HLhhIzhH57LXkALCuBFfxdR8/72YbHSvNlTEk4nIkIblbyA0MzojF5z4uhAsu
-DnnSUYcqIWOM0PwK34Ak3heQ7Y4OCvQ/+SRdneJXmrJK5STvnJVULes5+69p79RU
-mCF5kmQ05cPfZc+ZXmjl4kKyb1Dk0/s5c8MTfzMrhZOnlJNRMou+/F8TqmadxgjK
-PJaKlpeNM3gmy9sv++RQUF81lBfYHf1Ge2w2w/sdaxs8uFs9+kNMvmAKRvuMsro/
-OEsftYyzpKNdLrJK+BDUBzQPkRRE5+sp6KhFdkYItOL782usz7obBINNm+ibC6fJ
-HBooQqXLxvPwpaKh8CZe4jUnkijMLAd8EWm/e4F5x1302BNRGfkg9WpDLCJ5wMAu
-XIceT4wgW9TY+UsFamLOnEFDsKE064gaTaLwWAXkXsyVUJvjBDmTH+2hy+qNWJ/z
-k3GctRRHEnwLlasTBUH/P0r+N6xQd9PpUlkIvBqOiGSBO63OMrvk5Cd1JKmW+zh/
-kGamv5rMdGkbbdYndYw6mWSNuCetSPpOomAjawo+DlJe4a/C1r4v5dZk5ksEfxhZ
-vIg4takTlcqzAlRZK//XM9ZaSnl9RNDQe6BO5hJAAJ2U89nC2Rs=
-=8TgE
------END PGP SIGNATURE-----
+These are also clearly sizes.
 
---cqh3gyz3giblo4rm--
+>   	if (!desc) {
+>   		kfree(qi);
+>   		iommu->qi = NULL;
+> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> index 8727d8e1e02f45..0e1dd519c3b9b3 100644
+> --- a/drivers/iommu/io-pgtable-arm.c
+> +++ b/drivers/iommu/io-pgtable-arm.c
+> @@ -263,14 +263,14 @@ static void *__arm_lpae_alloc_pages(size_t size, gfp_t gfp,
+>   				    void *cookie)
+>   {
+>   	struct device *dev = cfg->iommu_dev;
+> -	int order = get_order(size);
+>   	dma_addr_t dma;
+>   	void *pages;
+>   
+>   	if (cfg->alloc)
+>   		pages = cfg->alloc(cookie, size, gfp);
+>   	else
+> -		pages = iommu_alloc_pages_node(dev_to_node(dev), gfp, order);
+> +		pages = iommu_alloc_pages_node_lg2(dev_to_node(dev), gfp,
+> +						   order_base_2(size));
+
+Another size. Same thing in patch #17 too. I don't see any need to have 
+the log2 stuff at all, I think we just switch iommu_alloc_pages{_node}() 
+to take a size and keep things simple.
+
+Thanks,
+Robin.
+
+>   
+>   	if (!pages)
+>   		return NULL;
+> diff --git a/drivers/iommu/io-pgtable-dart.c b/drivers/iommu/io-pgtable-dart.c
+> index a4cbd8a8a2976e..3b57d14baa9c1d 100644
+> --- a/drivers/iommu/io-pgtable-dart.c
+> +++ b/drivers/iommu/io-pgtable-dart.c
+> @@ -107,13 +107,6 @@ static phys_addr_t iopte_to_paddr(dart_iopte pte,
+>   	return paddr;
+>   }
+>   
+> -static void *__dart_alloc_pages(size_t size, gfp_t gfp)
+> -{
+> -	int order = get_order(size);
+> -
+> -	return iommu_alloc_pages(gfp, order);
+> -}
+> -
+>   static int dart_init_pte(struct dart_io_pgtable *data,
+>   			     unsigned long iova, phys_addr_t paddr,
+>   			     dart_iopte prot, int num_entries,
+> @@ -255,7 +248,7 @@ static int dart_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
+>   
+>   	/* no L2 table present */
+>   	if (!pte) {
+> -		cptep = __dart_alloc_pages(tblsz, gfp);
+> +		cptep = iommu_alloc_pages_sz(gfp, tblsz);
+>   		if (!cptep)
+>   			return -ENOMEM;
+>   
+> @@ -412,7 +405,8 @@ apple_dart_alloc_pgtable(struct io_pgtable_cfg *cfg, void *cookie)
+>   	cfg->apple_dart_cfg.n_ttbrs = 1 << data->tbl_bits;
+>   
+>   	for (i = 0; i < cfg->apple_dart_cfg.n_ttbrs; ++i) {
+> -		data->pgd[i] = __dart_alloc_pages(DART_GRANULE(data), GFP_KERNEL);
+> +		data->pgd[i] =
+> +			iommu_alloc_pages_sz(GFP_KERNEL, DART_GRANULE(data));
+>   		if (!data->pgd[i])
+>   			goto out_free_data;
+>   		cfg->apple_dart_cfg.ttbr[i] = virt_to_phys(data->pgd[i]);
+> diff --git a/drivers/iommu/sun50i-iommu.c b/drivers/iommu/sun50i-iommu.c
+> index 3d77aed8507373..d0e515bf5dd1f6 100644
+> --- a/drivers/iommu/sun50i-iommu.c
+> +++ b/drivers/iommu/sun50i-iommu.c
+> @@ -690,8 +690,8 @@ sun50i_iommu_domain_alloc_paging(struct device *dev)
+>   	if (!sun50i_domain)
+>   		return NULL;
+>   
+> -	sun50i_domain->dt = iommu_alloc_pages(GFP_KERNEL | GFP_DMA32,
+> -					      get_order(DT_SIZE));
+> +	sun50i_domain->dt =
+> +		iommu_alloc_pages_sz(GFP_KERNEL | GFP_DMA32, DT_SIZE);
+>   	if (!sun50i_domain->dt)
+>   		goto err_free_domain;
+>   
+
