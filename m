@@ -1,39 +1,39 @@
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC00204F94;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBA5204F66;
 	Wed,  5 Feb 2025 17:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738777024; cv=none; b=i77IQq2ieURFbGC09B2Mk5YiWM/PS+gJvaSf5ztUTfmkUNOUhdpZ/lr7rtfr3Opbh3+HuDwcrLGPko+xqidkr6USegwb/2mDfqSIQE1OHuXwPmcFnGrxQLE3O6fg0DICw7AGRhVvm8y89fK+75IOnmD/QhARSyJZLvfB5+5f+ec=
+	t=1738777024; cv=none; b=k6Mz2+VGD9ClfnIYYXkWaAA0NuguG/f46gQVt7WRVNuyOURlm2KZ5n3wGqQVOw0YtX6DGEEZrVUZzTFUHJUflXaBlqHYzB2EihYLdMwULy/Fif9hKcpn6CG7Kn7ckG9mnAorzUXsAGUDN/0MndcDJpN9KMEVEJNuLyi2BteucRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1738777024; c=relaxed/simple;
-	bh=V8F6TdsgqBtnFKgf5hPwESPymaXywufQvtZc6vNurlw=;
+	bh=aZakQoZXAhFe7CMLavL6gM2yiTLegTEEPy3dWGGQ8j0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YFfZMBtw61yiT2b2+V4afB5z/EBBCZ7sXMgOEbj5Mmsm7dSE/JyDJ8IB8bWoJbMAGyN3/pxa+w/QIsp7vWYWkfib7lnT9sLfzX6H4F7noD0mSktI/PInXNN8A5F6ssTh5539Rt3+qAqTHIUAUrNei4UU9RwonYTehCkJtOr4lFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LxLypu03; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:To:Cc; b=DZfb/Tnn2mQk02E71dQV660wKHw3GtBOM4Kiyx6tqNQo2cvSpKc5PqpXiY7+Gzt2v7eJwDRS7ExRo5g8XAVNnEZBEObURHhU7D1iQsGKBq5oXw+edXI7AjmrpEYK1tAQ3PraZZrL3CU5IicdGqc1sUt4B7n/6K7/ZncDTRWD/D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=E2eZftjh; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LxLypu03"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CE09444436;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="E2eZftjh"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 53C4444434;
 	Wed,  5 Feb 2025 17:36:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1738777015;
+	t=1738777014;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YbIosQlo9K+96iArYQbe2IRA2NSkxyi0YsELJCoNokI=;
-	b=LxLypu03DOPSdZ+KIRSms2UpjEoX8JGfg/RS33unASIecWSp3X9iAKU4zgifq0MCa4F/9K
-	7dp7PNoHbLZ5hLV4vkQW9bFrnALOjFM7py2zfi/GtMfA2tXKXaLmNy0GgNmnmeapKSoXBv
-	8XAP1T2Yx+quF5ZNjK9iuNqaScaCXTMSVpE8UMYh3WMVWCXPt0Q0Mpk8hSL7Oc340wnOuW
-	+8hPGJdLrr/P09tz5VNQImdd/er7U5LO6dIkRVyFgeqGEFuDhAO87PkYEVeA4M0HJngy9M
-	3VVGcdFne6jPxG+c8oOQhgQRXNTJ7LXBAyRZc1f95i8JX1YifvpXX//wD9nBIQ==
+	bh=Xa4w4yiK4Wol0r4srxzFKFrOoMuptZYzIGRg6T1LNC0=;
+	b=E2eZftjhfi6MTaDKTJLDX/IatARsOEsl2WSNENAdG+URdYEujK1jYVotTWS/YKHoSaA7Go
+	s8nBVB3ARuf9dKhceFo6juz5r3ATtGkKDQGRaJ/RYYqVQRj/eZa/ZGXHhNSlopGi8VoZHi
+	UEJON2hpCF4ZDjzsXLt2ANlYDP4QDMQiqo0v369GpFmbUNrNhHd+G14N/O8x6xTpyGkVl2
+	6eFgKf08K8QvmcztvASYVUEuIyuuDpLm0rj8nkM3iEgWn2FOIUKIoJW9g9Es759pkVAiV4
+	ZDRqfm/mb/IA8vhAYWSN46jQ7wOsa9lhO8svWZ2Mz3eTX/PrYKgtUWVm5iDZBQ==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 05 Feb 2025 18:36:54 +0100
-Subject: [PATCH v7 9/9] usb: host: cdns3: forward lost power information to
- xhci
+Date: Wed, 05 Feb 2025 18:36:53 +0100
+Subject: [PATCH v7 8/9] usb: host: xhci-plat: allow upper layers to signal
+ power loss
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,7 +42,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250205-s2r-cdns-v7-9-13658a271c3c@bootlin.com>
+Message-Id: <20250205-s2r-cdns-v7-8-13658a271c3c@bootlin.com>
 References: <20250205-s2r-cdns-v7-0-13658a271c3c@bootlin.com>
 In-Reply-To: <20250205-s2r-cdns-v7-0-13658a271c3c@bootlin.com>
 To: Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>, 
@@ -58,53 +58,55 @@ Cc: =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
 X-Mailer: b4 0.14.2
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgedtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpefvhhorohcunfgvsghruhhnuceothhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepleevhfekueefvdekgfehhffgudekjeelgfdthedtiedvtdetteegvdeileeiuefhnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemieeigegsmehftdhffhemfhgvuddtmeelvghfugenucevlhhushhtvghrufhiiigvpeeknecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemieeigegsmehftdhffhemfhgvuddtmeelvghfugdphhgvlhhopegludelvddrudeikedruddtrdelvdgnpdhmrghilhhfrhhomhepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqthgvghhrrgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhon
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgedtkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtkeertdertdejnecuhfhrohhmpefvhhorohcunfgvsghruhhnuceothhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepleevhfekueefvdekgfehhffgudekjeelgfdthedtiedvtdetteegvdeileeiuefhnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemieeigegsmehftdhffhemfhgvuddtmeelvghfugenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemieeigegsmehftdhffhemfhgvuddtmeelvghfugdphhgvlhhopegludelvddrudeikedruddtrdelvdgnpdhmrghilhhfrhhomhepthhhvghordhlvggsrhhunhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqthgvghhrrgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhon
  hdrohhrghdprhgtphhtthhopehprgifvghllhestggruggvnhgtvgdrtghomhdprhgtphhtthhopehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidquhhssgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvghrrdgthhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhoghgvrhhqsehkvghrnhgvlhdrohhrgh
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-cdns3-plat can know if power was lost across system-wide suspend.
-Forward that information:
-
- - Grab the lost_power bool from cdns_role_driver::resume(). Store it
-   into the power_lost field in struct xhci_plat_priv.
-
- - xhci-plat will call xhci_resume() with that value (ORed to whether we
-   are in a hibernation restore).
+Now that xhci_resume() exposes a power_lost boolean argument, expose
+that to all xhci-plat implementations. They are free to set it from
+wherever they want:
+ - Their own resume() callback.
+ - The xhci_plat_priv::resume_quirk() callback.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/usb/cdns3/host.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/usb/host/xhci-plat.c | 3 ++-
+ drivers/usb/host/xhci-plat.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/cdns3/host.c b/drivers/usb/cdns3/host.c
-index 7ba760ee62e3310e9c678d269d7675c9cb952ec6..f0df114c2b53bcb2a1fbeb1e582e0cbd69451d97 100644
---- a/drivers/usb/cdns3/host.c
-+++ b/drivers/usb/cdns3/host.c
-@@ -138,6 +138,16 @@ static void cdns_host_exit(struct cdns *cdns)
- 	cdns_drd_host_off(cdns);
- }
- 
-+static int cdns_host_resume(struct cdns *cdns, bool power_lost)
-+{
-+	struct usb_hcd *hcd = platform_get_drvdata(cdns->host_dev);
-+	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
-+
-+	priv->power_lost = power_lost;
-+
-+	return 0;
-+}
-+
- int cdns_host_init(struct cdns *cdns)
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 7c2d7c4e601188ab721fd22c338456ca8100240b..3155e3a842da9a979f29e5cad18a3b18d70cfdab 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -482,6 +482,7 @@ static int xhci_plat_suspend(struct device *dev)
+ static int xhci_plat_resume_common(struct device *dev, bool power_lost)
  {
- 	struct cdns_role_driver *rdrv;
-@@ -148,6 +158,7 @@ int cdns_host_init(struct cdns *cdns)
+ 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
++	struct xhci_plat_priv *priv = hcd_to_xhci_priv(hcd);
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+ 	int ret;
  
- 	rdrv->start	= __cdns_host_init;
- 	rdrv->stop	= cdns_host_exit;
-+	rdrv->resume	= cdns_host_resume;
- 	rdrv->state	= CDNS_ROLE_STATE_INACTIVE;
- 	rdrv->name	= "host";
+@@ -501,7 +502,7 @@ static int xhci_plat_resume_common(struct device *dev, bool power_lost)
+ 	if (ret)
+ 		goto disable_clks;
  
+-	ret = xhci_resume(xhci, power_lost, false);
++	ret = xhci_resume(xhci, power_lost || priv->power_lost, false);
+ 	if (ret)
+ 		goto disable_clks;
+ 
+diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
+index 6475130eac4b38061ea038ad14b00a48f269d4e0..fe4f95e690fa69a60ea8c7671cda41634ab86e80 100644
+--- a/drivers/usb/host/xhci-plat.h
++++ b/drivers/usb/host/xhci-plat.h
+@@ -15,6 +15,7 @@ struct usb_hcd;
+ struct xhci_plat_priv {
+ 	const char *firmware_name;
+ 	unsigned long long quirks;
++	bool power_lost;
+ 	void (*plat_start)(struct usb_hcd *);
+ 	int (*init_quirk)(struct usb_hcd *);
+ 	int (*suspend_quirk)(struct usb_hcd *);
 
 -- 
 2.48.1
