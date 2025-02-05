@@ -1,39 +1,39 @@
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B0F1FC7EA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B601FCCE2;
 	Wed,  5 Feb 2025 17:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738777021; cv=none; b=CNwDY20t9TCe3JLTUX1cvt3hMMU06+hWc78Vbqxww+2Qo7e4dZ1XPTPo7ixe9jfrvSc/ZAs5EEtANdrNaV5sym3lIOqscQodUFzjjG5o7rIurhI14Qb7mYOwaAIF3PJTtEKGtswXhfWIhikXYvi/nHjGrXXPhRUBaDoJjjaFRWQ=
+	t=1738777021; cv=none; b=eCso1gkZGIZ8rZHZz/MgkwOxUlsKnU9OmymeBy9UY381JNLrRomlRxPZTRJfm+JVVmhZBlXKCe7LrekuLtd0RFyhg9zA3wm4MsGiiOXtepCZbCuDUSsoocN+AfewKw0gWaaHHXil1nsFcwfUk3P2Jgd1vquTpTB1fccWySVJ+bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1738777021; c=relaxed/simple;
-	bh=7vAooUGUGwbstMos/UXojSzP5BR6u1QlNcZwvfKyxqk=;
+	bh=Vp+s5STg/eBTsVW9sbCsI6/iQysISIMLy09nfVcx9Qw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hy7fbL/NNtMc+M72+GXNoL96jmnOpFSq+jmfFa6xLajekxEIBaWg+IQkwGeK2yPb0jCDE9HYYP9gExQtqCNKXDoQKTLO4KzdjPA35WuP50i96rTaTKouvp0F/t53n33I3E+3IwOgg83eYLWgA20GHOtk7RAz8BJkEG5nBwtg/u0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GLo9Hfxv; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:To:Cc; b=mM5uauDXqNEJ80axFpk19OJKBivKOLdXmDazx1xhbdrFH0asx1/26aM5jWgTCtTHf53m5DsdY7BCdHhuNA+CjcDJnnvoy/9E9S5gPtUw+SHay6CUc4MAhf90bs6tA/4ZZoeb05hOpa0+fPwA8VrzedlPSm4LdtgjBd/vygF6Ico=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cR8mdZiB; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GLo9Hfxv"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1FCEA43433;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cR8mdZiB"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A0B794442C;
 	Wed,  5 Feb 2025 17:36:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1738777011;
+	t=1738777012;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZXYQcikTtcRhtswqqr9n2TtVIwWIphQC2x5GRcAOW+0=;
-	b=GLo9HfxvwG0j09dtXuQb6eS15ktA+Wwu4QhmKyo45ntCxZm9N0D7/N9bmBqcHyaNha2R4D
-	/4nDwDLZYaN3WjuMYv1HdIj4N7dsimtPQOuH0qAEKDnAk4ffUDtwuQrQq7AanO4jBYMWHF
-	ALEuS/adUqvO7i96TZ4gMA0TCTK9gXLa+XOrqsCR/8VH8Ak4JU/J49OBeia900XA6uNGNC
-	gF7Jyrr9P0Uo/kc+Dzdx4p1zAUEJgWMX9O4NRIhngnTyrUokB+x1mdHv1rnv96I+xQHhsM
-	+JcnSWsSx/0RVxx1RMhUQ9FG9Dkhz/Z+WSQVPahVO4DjNvAAuCgOYuLS7fxomQ==
+	bh=SwNVcGJTgjvSX/GUhdtWl6uItAObpat1KGBENkGTYyY=;
+	b=cR8mdZiBOBDL8Z9/JVjU3O6BBRcwb03dKVzsKrMBA5ND2/6uCBq8PNj+vt6GOKcRatSvFu
+	cLO9ufYafAQ98nHFHY+UMm5N+XJ2Dhi/o9hoGT8icqFLVNMl+ulTQYQmDzzRyvzxLTZ7lC
+	ionnZqu1Zg5U+Gk4lGUCYuARKYKpGDDsrn2hLu5DuTQ0SyHDZh+SYITvE8WpHkGW055BH2
+	yx/eVt68WmvZ1Xz/wz2e4P7WkiytfeYRJqWP0wy+iSnuFkr+h6vkOgEIFU3RM/YIyHrUKP
+	XmjlaN9VApvhXsEtPxCpejoHaHo8SZjLzNL0D3c2sw9Ccu/S5fXLewNI32AxoA==
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Wed, 05 Feb 2025 18:36:47 +0100
-Subject: [PATCH v7 2/9] usb: xhci: tegra: rename `runtime` boolean to
- `is_auto_runtime`
+Date: Wed, 05 Feb 2025 18:36:48 +0100
+Subject: [PATCH v7 3/9] usb: cdns3: rename hibernated argument of
+ role->resume() to lost_power
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,7 +42,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250205-s2r-cdns-v7-2-13658a271c3c@bootlin.com>
+Message-Id: <20250205-s2r-cdns-v7-3-13658a271c3c@bootlin.com>
 References: <20250205-s2r-cdns-v7-0-13658a271c3c@bootlin.com>
 In-Reply-To: <20250205-s2r-cdns-v7-0-13658a271c3c@bootlin.com>
 To: Peter Chen <peter.chen@kernel.org>, Pawel Laszczak <pawell@cadence.com>, 
@@ -62,55 +62,78 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgedtkecutefuodetggdotef
  hdrohhrghdprhgtphhtthhopehprgifvghllhestggruggvnhgtvgdrtghomhdprhgtphhtthhopehthhgvohdrlhgvsghruhhnsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidquhhssgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvghrrdgthhgvnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhhoghgvrhhqsehkvghrnhgvlhdrohhrgh
 X-GND-Sasl: theo.lebrun@bootlin.com
 
-Unify naming convention: use `is_auto_runtime` in xhci-tegra, to be in
-phase with (future) drivers/usb/host/xhci.c.
+The cdns_role_driver->resume() callback takes a second boolean argument
+named `hibernated` in its implementations. This is mistaken; the only
+potential caller is:
+
+int cdns_resume(struct cdns *cdns)
+{
+	/* ... */
+
+	if (cdns->roles[cdns->role]->resume)
+		cdns->roles[cdns->role]->resume(cdns, cdns_power_is_lost(cdns));
+
+	return 0;
+}
+
+The argument can be true in cases outside of return from hibernation.
+Reflect the true meaning by renaming both arguments to `lost_power`.
 
 Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 ---
- drivers/usb/host/xhci-tegra.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/usb/cdns3/cdns3-gadget.c | 4 ++--
+ drivers/usb/cdns3/cdnsp-gadget.c | 2 +-
+ drivers/usb/cdns3/core.h         | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 22dc86fb5254731fdf1c81e0c4e9dd201e8a1526..107a95b595413bea8a0017867497c48a47c7eaae 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -2162,11 +2162,11 @@ static void tegra_xhci_program_utmi_power_lp0_exit(struct tegra_xusb *tegra)
- 	}
+diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
+index fd1beb10bba726cef258e7438d642f31d6567dfe..694aa14577390b6e9a98ce8c4685ac8f56e43ad4 100644
+--- a/drivers/usb/cdns3/cdns3-gadget.c
++++ b/drivers/usb/cdns3/cdns3-gadget.c
+@@ -3468,7 +3468,7 @@ __must_hold(&cdns->lock)
+ 	return 0;
  }
  
--static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool runtime)
-+static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool is_auto_resume)
+-static int cdns3_gadget_resume(struct cdns *cdns, bool hibernated)
++static int cdns3_gadget_resume(struct cdns *cdns, bool lost_power)
  {
- 	struct xhci_hcd *xhci = hcd_to_xhci(tegra->hcd);
- 	struct device *dev = tegra->dev;
--	bool wakeup = runtime ? true : device_may_wakeup(dev);
-+	bool wakeup = is_auto_resume ? true : device_may_wakeup(dev);
- 	unsigned int i;
- 	int err;
- 	u32 usbcmd;
-@@ -2232,11 +2232,11 @@ static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool runtime)
- 	return err;
+ 	struct cdns3_device *priv_dev = cdns->gadget_dev;
+ 
+@@ -3476,7 +3476,7 @@ static int cdns3_gadget_resume(struct cdns *cdns, bool hibernated)
+ 		return 0;
+ 
+ 	cdns3_gadget_config(priv_dev);
+-	if (hibernated)
++	if (lost_power)
+ 		writel(USB_CONF_DEVEN, &priv_dev->regs->usb_conf);
+ 
+ 	return 0;
+diff --git a/drivers/usb/cdns3/cdnsp-gadget.c b/drivers/usb/cdns3/cdnsp-gadget.c
+index 97edf767ecee9067e3db66c2373d4b1a7a2e29de..87f310841735092b6209ba6cbb9b56afa963e84c 100644
+--- a/drivers/usb/cdns3/cdnsp-gadget.c
++++ b/drivers/usb/cdns3/cdnsp-gadget.c
+@@ -1974,7 +1974,7 @@ static int cdnsp_gadget_suspend(struct cdns *cdns, bool do_wakeup)
+ 	return 0;
  }
  
--static int tegra_xusb_exit_elpg(struct tegra_xusb *tegra, bool runtime)
-+static int tegra_xusb_exit_elpg(struct tegra_xusb *tegra, bool is_auto_resume)
+-static int cdnsp_gadget_resume(struct cdns *cdns, bool hibernated)
++static int cdnsp_gadget_resume(struct cdns *cdns, bool lost_power)
  {
- 	struct xhci_hcd *xhci = hcd_to_xhci(tegra->hcd);
- 	struct device *dev = tegra->dev;
--	bool wakeup = runtime ? true : device_may_wakeup(dev);
-+	bool wakeup = is_auto_resume ? true : device_may_wakeup(dev);
- 	unsigned int i;
- 	u32 usbcmd;
- 	int err;
-@@ -2287,7 +2287,7 @@ static int tegra_xusb_exit_elpg(struct tegra_xusb *tegra, bool runtime)
- 	if (wakeup)
- 		tegra_xhci_disable_phy_sleepwalk(tegra);
- 
--	err = xhci_resume(xhci, runtime ? PMSG_AUTO_RESUME : PMSG_RESUME);
-+	err = xhci_resume(xhci, is_auto_resume ? PMSG_AUTO_RESUME : PMSG_RESUME);
- 	if (err < 0) {
- 		dev_err(tegra->dev, "failed to resume XHCI: %d\n", err);
- 		goto disable_phy;
+ 	struct cdnsp_device *pdev = cdns->gadget_dev;
+ 	enum usb_device_speed max_speed;
+diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
+index 57d47348dc193b1060f4543c2ef22905f464293b..921cccf1ca9db27a66b06c7c7873b13537c74b05 100644
+--- a/drivers/usb/cdns3/core.h
++++ b/drivers/usb/cdns3/core.h
+@@ -30,7 +30,7 @@ struct cdns_role_driver {
+ 	int (*start)(struct cdns *cdns);
+ 	void (*stop)(struct cdns *cdns);
+ 	int (*suspend)(struct cdns *cdns, bool do_wakeup);
+-	int (*resume)(struct cdns *cdns, bool hibernated);
++	int (*resume)(struct cdns *cdns, bool lost_power);
+ 	const char *name;
+ #define CDNS_ROLE_STATE_INACTIVE	0
+ #define CDNS_ROLE_STATE_ACTIVE		1
 
 -- 
 2.48.1
