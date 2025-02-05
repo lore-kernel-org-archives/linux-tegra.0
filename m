@@ -1,271 +1,93 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDB21FE457;
-	Wed,  5 Feb 2025 19:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from box.windestam.se (box.windestam.se [85.90.246.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC5C1FF1B3;
+	Wed,  5 Feb 2025 19:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.90.246.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738783736; cv=none; b=VA45I0IUgexTluWMrxmo49uLIIvj4E5eXdYnV54oQKeuMp/wUOilChpS7YxZn8HwL2zLPf0uMXc+FdXExeyPHxA6L7a7lfuo08rPUV5oMFxlvASNRWTAeTj6Ql7hARkujayEEB850RvnNALkzVIa9uug9sBYVLOHSzmqiAjYzwA=
+	t=1738784313; cv=none; b=PmPEYhz7kf4Q4iCVddGgfwrvq28KBfWHya5CR1mZ9/7rNyCWkbTeVfwTTV02sZapH+bpTWMpNSpynrSudAab3/uYEdoyLQ0cysnuqyQXl4EwLozLHXAho8Y3cu1ZLKvwla/x+dxhSfMx3cjcsQ/Tx78kNfSg/cYWqB0ET31l2/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738783736; c=relaxed/simple;
-	bh=CVSmvf4JDPuVGxBFx/HwVVb29l+JTKh8ULy8blTX1DM=;
+	s=arc-20240116; t=1738784313; c=relaxed/simple;
+	bh=/ZHEOo3BjG0CaiMT3jtL30v8DzgZGFxF2E6krJc6J4E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W+YktVqKU1Ar0W6DBF3OJ+lPhqr2/gEmlr147wliJy9jiqvCDc84aBqjsValQ9sRm5ls+SPYq5CIiUz0JS8OL99EtAIU7FfylOsn9iWcFez52wjHPpAgLJLJ07PsaFiKeTYzK2WYx1KncUNxUKxhWbXAgyVX5tyQh0/LY4GB9b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6FFB1063;
-	Wed,  5 Feb 2025 11:29:16 -0800 (PST)
-Received: from [10.57.35.21] (unknown [10.57.35.21])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6D0C3F5A1;
-	Wed,  5 Feb 2025 11:28:38 -0800 (PST)
-Message-ID: <be153973-550c-4ea8-bf65-35b5ce28ac22@arm.com>
-Date: Wed, 5 Feb 2025 19:28:37 +0000
+	 In-Reply-To:Content-Type; b=sMTxM50pwg1YtOf88Tw/uErLj3NBs3aREk9Bxe1TYkLodQ8zwn3Xkd4vNaLhclz9iBvEmf1sxwbjq5vc+qtmdGLnRovbCUNTauNJurm8ctAMgYqiORYLUId0jKsB6/pVcymVs2U+Ih3XD8cFPoUtX0yLcxIskczqRnedlTbKz8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=windestam.se; spf=pass smtp.mailfrom=windestam.se; dkim=pass (2048-bit key) header.d=windestam.se header.i=@windestam.se header.b=Ydz9/kL2; arc=none smtp.client-ip=85.90.246.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=windestam.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windestam.se
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=windestam.se header.i=@windestam.se header.b="Ydz9/kL2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=windestam.se; s=mail;
+	t=1738783768; bh=/ZHEOo3BjG0CaiMT3jtL30v8DzgZGFxF2E6krJc6J4E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ydz9/kL2vZsRdiq7CgeWA5Wj4dAMp0W4Qu91AnlPn58WDY3guGVn0goBXbyMdn8vh
+	 XWVLWPPs5aHZMxWxy259Vd2oEBkNLTIlBr3FAhguhfLZzOaMUPyTOsbCC7fKoisCvT
+	 mwc3QuYAhSuHOqQD39sStVn5Sw/S7bpAVBMSzxfV4yXM//rnJ8utR/aY4sjAemnxyf
+	 TpIE9CLTL8xpPG9PSe/Zwu1heJpKKYU2a3M344i854nwQZjcSGmjHONxQkjlYKJj9v
+	 mZz9ac+mL+OKLwjuSEg1AfeolOgNZFXTsbM9kBqvp3Sa1RCyGtUwY0PdJBMB96hhQ9
+	 WLWRgHMTcxJOA==
+Received: from authenticated-user (box.windestam.se [85.90.246.140])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by box.windestam.se (Postfix) with ESMTPSA id 682E6407C8;
+	Wed,  5 Feb 2025 20:29:27 +0100 (CET)
+Message-ID: <f264888e-6100-4812-9661-ffad174f45af@windestam.se>
+Date: Wed, 5 Feb 2025 20:29:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/19] iommu/tegra: Do not use struct page as the handle
- for pts
-To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
- asahi@lists.linux.dev, Lu Baolu <baolu.lu@linux.intel.com>,
- David Woodhouse <dwmw2@infradead.org>, Heiko Stuebner <heiko@sntech.de>,
- iommu@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
- Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>,
- Samuel Holland <samuel@sholland.org>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
- Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
- Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
- David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
-References: <2-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <2-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
+Subject: =?UTF-8?B?UmU6IOetlOWkjTogW1BBVENIIHYzXSB1c2I6IGdhZGdldDogdV9zZXJp?=
+ =?UTF-8?Q?al=3A_Disable_ep_before_setting_port_to_null_to_fix_the_crash_cau?=
+ =?UTF-8?Q?sed_by_port_being_null?=
+To: =?UTF-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
+Cc: Prashanth K <quic_prashk@quicinc.com>,
+ "mwalle@kernel.org" <mwalle@kernel.org>,
+ "quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+ David Brownell <dbrownell@users.sourceforge.net>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "opensource.kernel" <opensource.kernel@vivo.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Brad Griffis <bgriffis@nvidia.com>,
+ Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>
+References: <TYUPR06MB621733B5AC690DBDF80A0DCCD2042@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <1037c1ad-9230-4181-b9c3-167dbaa47644@nvidia.com>
+ <2025011633-cavity-earthworm-2b5e@gregkh>
+ <3d9db530-a0b7-4f18-9ad4-233356dfe68c@nvidia.com>
+ <e3a457d6-092b-4b7a-9032-50daddab6f1f@nvidia.com>
+ <0fa6c6db-fd75-4a09-b4fa-d6a98bb8afac@stanley.mountain>
+ <TYUPR06MB621712E6A082791B397088BFD2F72@TYUPR06MB6217.apcprd06.prod.outlook.com>
+Content-Language: en-US
+From: Pelle Windestam <pelle@windestam.se>
+In-Reply-To: <TYUPR06MB621712E6A082791B397088BFD2F72@TYUPR06MB6217.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2025-02-04 6:34 pm, Jason Gunthorpe wrote:
-> Instead use the virtual address and dma_map_single() like as->pd
-> uses. Introduce a small struct tegra_pt instead of void * to have some
-> clarity what is using this API and add compile safety during the
-> conversion.
+>>>>> Odd, you have a usb-serial gadget device in this system that is
+>>>>> disconnecting somehow?  That oops doesn't point to anything in the
+>>>>> usb gadget codebase, "all" we have done is move the call to
+>>>>> shutdown the endpoints to earlier in the disconnect function.
+>>>>
+>>>> Yes the board starts usb-serial and usb-ethernet gadget and on
+>>>> reboot when tearing it down I am seeing the above. As soon as it
+>>>> disables the tegra-xudc endpoints (as seen above) the board appears to
+>> stall.
+>>>>
+>>>>> I'm glad to revert this, but it feels really odd that this is
+>>>>> causing you an rcu stall issue.
+>>>>
+>>>> Thanks. I can't say I understand it either, but I am certain it is
+>>>> caused by this change.
+>>>>
 
-Hmm, I'm not sure it's all that clear to have a major discrepancy 
-between how different levels of pagetable are referenced - I'd say 
-either use an explicit type for both, or just rework this as a u32** 
-along the same lines as the current patch #1.
-
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->   drivers/iommu/tegra-smmu.c | 68 ++++++++++++++++++++------------------
->   1 file changed, 36 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 717bcd3b8de7dc..1e85141c80548d 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -51,13 +51,15 @@ struct tegra_smmu {
->   	struct iommu_device iommu;	/* IOMMU Core code handle */
->   };
->   
-> +struct tegra_pt;
-> +
->   struct tegra_smmu_as {
->   	struct iommu_domain domain;
->   	struct tegra_smmu *smmu;
->   	unsigned int use_count;
->   	spinlock_t lock;
->   	u32 *count;
-> -	struct page **pts;
-> +	struct tegra_pt **pts;
->   	u32 *pd;
->   	dma_addr_t pd_dma;
->   	unsigned id;
-> @@ -155,6 +157,10 @@ static inline u32 smmu_readl(struct tegra_smmu *smmu, unsigned long offset)
->   #define SMMU_PDE_ATTR		(SMMU_PDE_READABLE | SMMU_PDE_WRITABLE | \
->   				 SMMU_PDE_NONSECURE)
->   
-> +struct tegra_pt {
-> +	u32 val[SMMU_NUM_PTE];
-> +};
-> +
->   static unsigned int iova_pd_index(unsigned long iova)
->   {
->   	return (iova >> SMMU_PDE_SHIFT) & (SMMU_NUM_PDE - 1);
-> @@ -564,11 +570,9 @@ static void tegra_smmu_set_pde(struct tegra_smmu_as *as, unsigned long iova,
->   	smmu_flush(smmu);
->   }
->   
-> -static u32 *tegra_smmu_pte_offset(struct page *pt_page, unsigned long iova)
-> +static u32 *tegra_smmu_pte_offset(struct tegra_pt *pt, unsigned long iova)
->   {
-> -	u32 *pt = page_address(pt_page);
-> -
-> -	return pt + iova_pt_index(iova);
-> +	return &pt->val[iova_pt_index(iova)];
->   }
->   
->   static u32 *tegra_smmu_pte_lookup(struct tegra_smmu_as *as, unsigned long iova,
-> @@ -576,19 +580,19 @@ static u32 *tegra_smmu_pte_lookup(struct tegra_smmu_as *as, unsigned long iova,
->   {
->   	unsigned int pd_index = iova_pd_index(iova);
->   	struct tegra_smmu *smmu = as->smmu;
-> -	struct page *pt_page;
-> +	struct tegra_pt *pt;
->   
-> -	pt_page = as->pts[pd_index];
-> -	if (!pt_page)
-> +	pt = as->pts[pd_index];
-> +	if (!pt)
->   		return NULL;
->   
->   	*dmap = smmu_pde_to_dma(smmu, as->pd[pd_index]);
->   
-> -	return tegra_smmu_pte_offset(pt_page, iova);
-> +	return tegra_smmu_pte_offset(pt, iova);
->   }
->   
->   static u32 *as_get_pte(struct tegra_smmu_as *as, dma_addr_t iova,
-> -		       dma_addr_t *dmap, struct page *page)
-> +		       dma_addr_t *dmap, struct tegra_pt *pt)
->   {
->   	unsigned int pde = iova_pd_index(iova);
->   	struct tegra_smmu *smmu = as->smmu;
-> @@ -596,21 +600,21 @@ static u32 *as_get_pte(struct tegra_smmu_as *as, dma_addr_t iova,
->   	if (!as->pts[pde]) {
->   		dma_addr_t dma;
->   
-> -		dma = dma_map_page(smmu->dev, page, 0, SMMU_SIZE_PT,
-> -				   DMA_TO_DEVICE);
-> +		dma = dma_map_single(smmu->dev, pt, SMMU_SIZE_PD,
-
-SMMU_SIZE_PT (yeah they're numerically the same, but still...)
-
-> +				     DMA_TO_DEVICE);
->   		if (dma_mapping_error(smmu->dev, dma)) {
-> -			__iommu_free_pages(page, 0);
-> +			iommu_free_page(pt);
->   			return NULL;
->   		}
->   
->   		if (!smmu_dma_addr_valid(smmu, dma)) {
->   			dma_unmap_page(smmu->dev, dma, SMMU_SIZE_PT,
->   				       DMA_TO_DEVICE);
-
-All the unmaps should be converted to _single as well (and in patch #1) 
-- the APIs are not officially interchangeable.
-
-Thanks,
-Robin.
-
-> -			__iommu_free_pages(page, 0);
-> +			iommu_free_page(pt);
->   			return NULL;
->   		}
->   
-> -		as->pts[pde] = page;
-> +		as->pts[pde] = pt;
->   
->   		tegra_smmu_set_pde(as, iova, SMMU_MK_PDE(dma, SMMU_PDE_ATTR |
->   							      SMMU_PDE_NEXT));
-> @@ -633,7 +637,7 @@ static void tegra_smmu_pte_get_use(struct tegra_smmu_as *as, unsigned long iova)
->   static void tegra_smmu_pte_put_use(struct tegra_smmu_as *as, unsigned long iova)
->   {
->   	unsigned int pde = iova_pd_index(iova);
-> -	struct page *page = as->pts[pde];
-> +	struct tegra_pt *pt = as->pts[pde];
->   
->   	/*
->   	 * When no entries in this page table are used anymore, return the
-> @@ -646,7 +650,7 @@ static void tegra_smmu_pte_put_use(struct tegra_smmu_as *as, unsigned long iova)
->   		tegra_smmu_set_pde(as, iova, 0);
->   
->   		dma_unmap_page(smmu->dev, pte_dma, SMMU_SIZE_PT, DMA_TO_DEVICE);
-> -		__iommu_free_pages(page, 0);
-> +		iommu_free_page(pt);
->   		as->pts[pde] = NULL;
->   	}
->   }
-> @@ -666,16 +670,16 @@ static void tegra_smmu_set_pte(struct tegra_smmu_as *as, unsigned long iova,
->   	smmu_flush(smmu);
->   }
->   
-> -static struct page *as_get_pde_page(struct tegra_smmu_as *as,
-> -				    unsigned long iova, gfp_t gfp,
-> -				    unsigned long *flags)
-> +static struct tegra_pt *as_get_pde_page(struct tegra_smmu_as *as,
-> +					unsigned long iova, gfp_t gfp,
-> +					unsigned long *flags)
->   {
->   	unsigned int pde = iova_pd_index(iova);
-> -	struct page *page = as->pts[pde];
-> +	struct tegra_pt *pt = as->pts[pde];
->   
->   	/* at first check whether allocation needs to be done at all */
-> -	if (page)
-> -		return page;
-> +	if (pt)
-> +		return pt;
->   
->   	/*
->   	 * In order to prevent exhaustion of the atomic memory pool, we
-> @@ -685,7 +689,7 @@ static struct page *as_get_pde_page(struct tegra_smmu_as *as,
->   	if (gfpflags_allow_blocking(gfp))
->   		spin_unlock_irqrestore(&as->lock, *flags);
->   
-> -	page = __iommu_alloc_pages(gfp | __GFP_DMA, 0);
-> +	pt = iommu_alloc_page(gfp | __GFP_DMA);
->   
->   	if (gfpflags_allow_blocking(gfp))
->   		spin_lock_irqsave(&as->lock, *flags);
-> @@ -696,13 +700,13 @@ static struct page *as_get_pde_page(struct tegra_smmu_as *as,
->   	 * if allocation succeeded and the allocation failure isn't fatal.
->   	 */
->   	if (as->pts[pde]) {
-> -		if (page)
-> -			__iommu_free_pages(page, 0);
-> +		if (pt)
-> +			iommu_free_page(pt);
->   
-> -		page = as->pts[pde];
-> +		pt = as->pts[pde];
->   	}
->   
-> -	return page;
-> +	return pt;
->   }
->   
->   static int
-> @@ -712,15 +716,15 @@ __tegra_smmu_map(struct iommu_domain *domain, unsigned long iova,
->   {
->   	struct tegra_smmu_as *as = to_smmu_as(domain);
->   	dma_addr_t pte_dma;
-> -	struct page *page;
-> +	struct tegra_pt *pt;
->   	u32 pte_attrs;
->   	u32 *pte;
->   
-> -	page = as_get_pde_page(as, iova, gfp, flags);
-> -	if (!page)
-> +	pt = as_get_pde_page(as, iova, gfp, flags);
-> +	if (!pt)
->   		return -ENOMEM;
->   
-> -	pte = as_get_pte(as, iova, &pte_dma, page);
-> +	pte = as_get_pte(as, iova, &pte_dma, pt);
->   	if (!pte)
->   		return -ENOMEM;
->   
-
+I do not have much to add in terms of solutions but want to chime in 
+that the same issue happened to me the other day when I upgraded my 
+kernel. It manifests itself with the rcu stall whenever I try to reboot 
+my device with the USB-cable connected (it is a usb-serial gadget 
+device). Moving the usb_ep_disable() calls to outside the lock (where 
+they were before the patch) solves it.
