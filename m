@@ -1,41 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C5222D4D5;
-	Wed,  5 Feb 2025 12:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1A822F162;
+	Wed,  5 Feb 2025 12:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738759463; cv=none; b=JANX49vaB3U2vZpfxNVYi3QTvQJRMxXpfPHFm8Z9VVFvTPggF9jIWINO92EZLe4poUcOu0knBnl6c5D26rUTsrCoW11iwT9jjKrJLrQovoLT694XYkFE+Lj2TVW8kx6kOxR9Hrt+ntO3D0K+ekvRuvb2alUuu+lIEdc7BzoDf60=
+	t=1738759473; cv=none; b=rBe0q3wQ75vZ5JDjEHD+ju7ZV20ABUbEjTaR9q3T2af+OWgpvXDM1XGY2uTBGcAwBHItqSdq0aRzru+YT1Kzhu9hHeyNmTk8MVYTWJv9WTzgsfHCL0+Zt9/6f9JKxdpyF+wWFIfWqdGlVpO6nvZ952sU7phnPOZKSbBsv90E1yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738759463; c=relaxed/simple;
-	bh=ykF7Gf+vTxj6q7kByCS0b9VG8rwjXiLsDJrPiDjtRbU=;
+	s=arc-20240116; t=1738759473; c=relaxed/simple;
+	bh=e4x9ZDUe/siPo6t7idtJPPnEwGukGRQRmtPbHmtoEE8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AE+fjMUDh+xFr/w3AkO2fQx2PlY0+uylEGwkB10Nfn2gLSJbUuccCebBPfzlcTLnmv+JIi3KyKbHL4F4jCFcSsmnYTJekSJKgS2G1fhVeeiPoX/qahud/RFm8ShGPXv46PwgpWq9IoBPYbKn5bUF1XH3ZRSCz5ecGq4PtixYz1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMplDV/k; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=oV1Q92fhZZXAk4cS6ZbbRNx8knMneohOu3x2KCm1icjSMdmGKP7kQTEM0yWP4jcbmWHj7ENHYVqnHCRfcDgCW7PSo8gWcRe23CWy3VUEpa7yidUn9xdUNHBvDEc63hpXRnuPY70MCkZnY7Ncnw9BUGueCX47CdQhozOp0AaO+3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QStcy2mE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMplDV/k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A41EBC4CEE4;
-	Wed,  5 Feb 2025 12:44:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QStcy2mE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7D95C4CEE8;
+	Wed,  5 Feb 2025 12:44:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738759463;
-	bh=ykF7Gf+vTxj6q7kByCS0b9VG8rwjXiLsDJrPiDjtRbU=;
+	s=k20201202; t=1738759473;
+	bh=e4x9ZDUe/siPo6t7idtJPPnEwGukGRQRmtPbHmtoEE8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=VMplDV/kZKPDWEz3wRzzrBz2FmLo4Mkwnk1x9n14GZhifDcsduZfyb4B6e2WqwiSP
-	 bfnvXnTnMLIvqKm6ZSNnnH2INQoAQSxjd9iADS6Yxj6GbclPxjkAwvhptk9oqhCImo
-	 OpyHw9FuRJoRKFZ8W0HXxmJBhn1TMbVXGn53dPN+mXAhUFu2/4/ptu7oOExL5Ppcyb
-	 /dG/53SnpUdlRFiNZ27WFtYzaSerB3ox6Pspv+BmM8RZTkDlVP0bRbFYporOAybsKQ
-	 Ytdlr3UJxYC3LcqdYl72SZ9IZTYs6wSRJexgB3i8rLvs4Atj90jcT1dIgChqmCcbaA
-	 +pJVPXwoAegiw==
+	b=QStcy2mEtP1MyZuYt25CFdgRIaJWB62QkyfPEQZlm5lI+lOgUoKHL9RGWLGDL/0ew
+	 smN7jRZyYpGCgd6EEUTKarHwejCCPHuhiCOQzUFLV/3SIwL1GaHydopG8k3ewzo6e0
+	 Og3oOX78DlgfONat75b0j+eGng6Ngr68ZX8rW9CT3d9RtIcJeoWx5+dDynzxETZiR3
+	 SabhaBfxaIVx88dei0eqfmDVx5NVplPj+q862K+ZXdMj80PsdsD2KSf/QljEfZnc1V
+	 JkeDO8gB8w8trlg0NCnGZLkmhz61Bsxi0WstSv/JyAXdS/6qj5LQ96TjIkbfmXLQZR
+	 UtWwShj4Yn0uw==
 From: Mark Brown <broonie@kernel.org>
 To: linux-sound@vger.kernel.org, "Sheetal ." <sheetal@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
- lgirdwood@gmail.com, jonathanh@nvidia.com, thierry.reding@gmail.com, 
- mkumard@nvidia.com, spujar@nvidia.com
-In-Reply-To: <20250121110928.1799377-1-sheetal@nvidia.com>
-References: <20250121110928.1799377-1-sheetal@nvidia.com>
-Subject: Re: [PATCH] ASoC: tegra: Add interconnect support
-Message-Id: <173875946142.32457.3346189191163709126.b4-ty@kernel.org>
-Date: Wed, 05 Feb 2025 12:44:21 +0000
+ jonathanh@nvidia.com, thierry.reding@gmail.com, mkumard@nvidia.com, 
+ spujar@nvidia.com
+In-Reply-To: <20250203105304.4155542-1-sheetal@nvidia.com>
+References: <20250203105304.4155542-1-sheetal@nvidia.com>
+Subject: Re: [PATCH V2] ASoC: tegra: Add interconnect support
+Message-Id: <173875947150.32457.3575258063637479820.b4-ty@kernel.org>
+Date: Wed, 05 Feb 2025 12:44:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -46,7 +46,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-1b0d6
 
-On Tue, 21 Jan 2025 11:09:28 +0000, Sheetal . wrote:
+On Mon, 03 Feb 2025 10:53:04 +0000, Sheetal . wrote:
 > Add interconnect framework support to set required audio bandwidth
 > based on PCM device usage. The maximum bandwidth is determined by
 > the number of APE PCM devices and maximum audio format supported.
