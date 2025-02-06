@@ -1,239 +1,129 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843E2225419;
-	Thu,  6 Feb 2025 07:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA05422686B
+	for <linux-tegra@vger.kernel.org>; Thu,  6 Feb 2025 09:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738828654; cv=none; b=e5qC9/yFSElxVcCL7YDTVURO0EUoO2RwNcinn8J072MKbzmdhRiiC+QCCS64q+3i61RErtpOmEExpxUwybcESOCDC7R4VnOel10XhomjQpefpLhS9P31qKr4/CFpvxYDAxVBKArvEEJ/9tckHq0kZkhZVq/G06YohM1Q5GthD38=
+	t=1738834180; cv=none; b=BEKMXHzesx/N8xOdVDNBQxvKzumbr1mlS8yhmhXEsOTiKboSNaX6lEHGPwwob/cx+8vlz5HCxJwbdr+ArWN4Q1igwM9sY/cGs1P9mFvscS/YL12c3yx0w8nZfhHVDnG5sHF/ckMx7X17Zm4Rd6ZhhaKHvCzPxV4BFPNSMLTm8Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738828654; c=relaxed/simple;
-	bh=39lJj/rYaa6b4DYxpGmi+0oPY1rIW/US0+1a1DLMoSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q9Sa4LxpZmVYHFLHq9Xmg9CZdWpnCjvy0Z8tmaCA71gB/+1f9HdicUevptqi9KqXspCEu0LvW09c6UMaxkFoeo19dabX3MAGK64JRYmgDfUrdfOlS4ShzkXGz+joHMxzRMG51TeTX6DDsXk3DtNaSwVqHLAfs3kwmAaOGTIO3GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1txTOlkC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=86WS+XUc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1txTOlkC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=86WS+XUc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1738834180; c=relaxed/simple;
+	bh=EYcX+Tl80Sl7d+CDd9SpGmBn5rsXiLy+uE7dn71Jszk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f7pBws8NbWP10Nj8sRFTWDOOBAsfkbk0124sN2Tvt+0h0s4bKjLsvpOC+F6vntiFNHaeQD1PGLtLSbGhCTV+zOl5jxz6RsxANca0iAezMk82N1QvLVnx2ghXn9+wTul9DyPPMlO2JIgjmMfKosHGuoR9r6x+tqylqqdMxYgf1w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IHQrJ32W; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1txTOlkC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="86WS+XUc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1txTOlkC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="86WS+XUc"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B1CA721161;
-	Thu,  6 Feb 2025 07:57:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738828649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KDYCmBOGb4xTAklwCidsim6czDQYd5zcQdD1tQKuGyU=;
-	b=1txTOlkCv21S2vTjLJ68cZxl4jsQ9ELFo/3lM7aE8z9MUmN/ZfUvuFHosGpCWUYqa3ZfYZ
-	9OAk/1R5sB6jCPKj4lheu+LybPTLxbeOLNccjYC19a9Jg3HcywlKiOKoGbz+Ws77xJqFWl
-	JgtWjDEzXQc3tBDjKMZjxUeug3yIoQM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738828649;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KDYCmBOGb4xTAklwCidsim6czDQYd5zcQdD1tQKuGyU=;
-	b=86WS+XUcHnvTFYUQUcShqzKdwDJyOWE7MEKQ9TG8amX86ECJ8RUpO/X14DKvP0q3yTgmqA
-	CkcRsjz1W4Fxd9Bw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1738828649; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KDYCmBOGb4xTAklwCidsim6czDQYd5zcQdD1tQKuGyU=;
-	b=1txTOlkCv21S2vTjLJ68cZxl4jsQ9ELFo/3lM7aE8z9MUmN/ZfUvuFHosGpCWUYqa3ZfYZ
-	9OAk/1R5sB6jCPKj4lheu+LybPTLxbeOLNccjYC19a9Jg3HcywlKiOKoGbz+Ws77xJqFWl
-	JgtWjDEzXQc3tBDjKMZjxUeug3yIoQM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1738828649;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KDYCmBOGb4xTAklwCidsim6czDQYd5zcQdD1tQKuGyU=;
-	b=86WS+XUcHnvTFYUQUcShqzKdwDJyOWE7MEKQ9TG8amX86ECJ8RUpO/X14DKvP0q3yTgmqA
-	CkcRsjz1W4Fxd9Bw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 63B8513697;
-	Thu,  6 Feb 2025 07:57:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oE1eFmhrpGcBKgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 06 Feb 2025 07:57:28 +0000
-Message-ID: <73bad044-f5fc-40ea-9e32-571912573a5f@suse.de>
-Date: Thu, 6 Feb 2025 08:57:10 +0100
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IHQrJ32W"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738834177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KOagAZK7fofXxMgw0dAFRrT7sTcHKFQ+LQJsrXs9r54=;
+	b=IHQrJ32Wa3Wy9ahAdbzxKsxPZ5sEKscqRjiGZ4z+TeVpIrGqKWkId/K8DVkkTGahUdOMZG
+	e47tKBltyBTp32dBIHNCjxonDl3BlvpSme9gBp7ypcU9pg2SVksrb4J5Qc3dJvDThkJ42R
+	eSsfhF/zmk/MgypgMG5rM90RQCtHfAc=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-417-Wutls0f2NJeI3xUMbrNoPw-1; Thu, 06 Feb 2025 04:29:36 -0500
+X-MC-Unique: Wutls0f2NJeI3xUMbrNoPw-1
+X-Mimecast-MFC-AGG-ID: Wutls0f2NJeI3xUMbrNoPw
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38dbd36c021so222430f8f.1
+        for <linux-tegra@vger.kernel.org>; Thu, 06 Feb 2025 01:29:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738834175; x=1739438975;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KOagAZK7fofXxMgw0dAFRrT7sTcHKFQ+LQJsrXs9r54=;
+        b=HorGzh8Z7rKGTvzySAFgCDfTGIYpjMkyNLyke0EWS/77YpWbbHwUiAvVyD2RA7qprf
+         ddUuxawe5Ulhv/nn+o3FchiT6bozROiwtb7aw++cwl9gLI8GlXaBml3CWMRGkocm8IIZ
+         4QSKHfKrsTBBciqnXF4YZ8vx+ILYmOst2H6O5vWW9QhkR6eNZ5jiRbrbyfnMUyfb1gjK
+         M1EmEOhad/7VtsTVD7aU7BW+IIS4fX/0DgCaNFhIQ617+m3+7Fc/8NXoHStL93pz1cAy
+         p77gJvk9Krd1tVpliEDBT1wz2mdhZQLu1MfHBbAC/9Hs8WLwmbpblaaWTGQbbZixSv1s
+         4wJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpbRfUYI2JvmX0Bo+pwDhAebKyS2FBwD3t0cOSijpzSRQtu9CnIoHlR7xDlVG0T0yVfShR+iXjNgmUNg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yykqb4UMYbWZkVA+66Alv3lZL9bP2v6wBtO8p/Yshe6lBo8Lo7O
+	vdTxLsLZIYZTt3t1Gk36ThrQAbb9RFqF53goRq+AWS4BXpwB0V2Lb6QMfWFOLgGQjQO1sxut58k
+	n8pE7vENqDlL1ZiltGUW0K7zxyAZhLNV41crGO4jpYhga5lgl+83Gc5QmbooU
+X-Gm-Gg: ASbGncvXM0xcfQv2uuZsA8jGrNf6DRadR17C9Na2KA6XNAqaxHFHdvoNKLGA2aY3YNQ
+	YfVCeZivUB+se/Zzj4LVq7lIrpr764U56i1rgXIvskgzLkB860ens5YQxqiaTwWdCn9LQKFAsOn
+	pmgwV+t+E9KejSNyTJGzT6DFaVnwd2JNExH3a4lbwoKmr/tbnAU2wtwbKSw1V77YRi5DcPJsk3u
+	Zct36mnYYXOQpN4HvQIDYSjITDZ4cYuWkClUlCa8hke54H14qkIsss/e6CRU6+wekYywFVHC6wR
+	XNmVYzwqdVGaZzuNsCKDP8WPpPrnC7RlxZIF
+X-Received: by 2002:a5d:5988:0:b0:38c:1362:41b5 with SMTP id ffacd0b85a97d-38db486108amr4535900f8f.6.1738834175184;
+        Thu, 06 Feb 2025 01:29:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEACMLPnRenHtTztqiW2IAcbQnqshOGTNeLp4rXCm+kaU1iNlAag5arspiSZQxoQu++qZxvNA==
+X-Received: by 2002:a5d:5988:0:b0:38c:1362:41b5 with SMTP id ffacd0b85a97d-38db486108amr4535875f8f.6.1738834174782;
+        Thu, 06 Feb 2025 01:29:34 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.128.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4390692a66esm53015975e9.0.2025.02.06.01.29.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2025 01:29:34 -0800 (PST)
+Date: Thu, 6 Feb 2025 10:29:31 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>, Waiman Long <longman@redhat.com>,
+	Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+Message-ID: <Z6SA-1Eyr1zDTZDZ@jlelli-thinkpadt14gen4.remote.csb>
+References: <Z4TdofljoDdyq9Vb@jlelli-thinkpadt14gen4.remote.csb>
+ <e9f527c0-4530-42ad-8cc9-cb04aa3d94b7@nvidia.com>
+ <Z4ZuaeGssJ-9RQA2@jlelli-thinkpadt14gen4.remote.csb>
+ <Z4fd_6M2vhSMSR0i@jlelli-thinkpadt14gen4.remote.csb>
+ <aebb2c29-2224-4d14-94e0-7a495923b401@nvidia.com>
+ <Z4kr7xq7tysrKGoR@jlelli-thinkpadt14gen4.remote.csb>
+ <cfcea236-5b4c-4037-a6f5-267c4c04ad3c@nvidia.com>
+ <Z6MLAX_TKowbmdS1@jlelli-thinkpadt14gen4.remote.csb>
+ <Z6M5fQB9P1_bDF7A@jlelli-thinkpadt14gen4.remote.csb>
+ <8572b3bc-46ec-4180-ba55-aa6b9ab7502b@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/12] Documentation: Update the todo
-To: Anusha Srivatsa <asrivats@redhat.com>, Joel Stanley <joel@jms.id.au>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Jeffery
- <andrew@codeconstruct.com.au>, Stefan Agner <stefan@agner.ch>,
- Alison Wang <alison.wang@nxp.com>, Xinliang Liu <xinliang.liu@linaro.org>,
- Tian Tao <tiantao6@hisilicon.com>,
- Xinwei Kong <kong.kongxinwei@hisilicon.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu
- <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, Alain Volmat
- <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
- Yannick Fertre <yannick.fertre@foss.st.com>,
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
- Philippe Cornu <philippe.cornu@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Alexey Brodkin <abrodkin@synopsys.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
- linux-rockchip@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20250205-mem-cocci-newapi-v1-0-aebf2b0e2300@redhat.com>
- <20250205-mem-cocci-newapi-v1-12-aebf2b0e2300@redhat.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250205-mem-cocci-newapi-v1-12-aebf2b0e2300@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[redhat.com,jms.id.au,linux.intel.com,kernel.org,gmail.com,ffwll.ch,codeconstruct.com.au,agner.ch,nxp.com,linaro.org,hisilicon.com,google.com,pengutronix.de,collabora.com,denx.de,rock-chips.com,sntech.de,linux.alibaba.com,foss.st.com,nvidia.com,synopsys.com,raspberrypi.com,igalia.com,lwn.net];
-	TAGGED_RCPT(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[55];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8572b3bc-46ec-4180-ba55-aa6b9ab7502b@nvidia.com>
 
-Hi
+On 05/02/25 16:56, Jon Hunter wrote:
 
+...
 
-Am 05.02.25 um 21:08 schrieb Anusha Srivatsa:
-> Update the Documentation to be more precise.
->
-> v2: Update for clarity
->
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> ---
->   Documentation/gpu/todo.rst | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
-> index 256d0d1cb2164bd94f9b610a751b907834d96a21..03fcd086889acbd1294669b260292ffc79e97e2f 100644
-> --- a/Documentation/gpu/todo.rst
-> +++ b/Documentation/gpu/todo.rst
-> @@ -441,13 +441,13 @@ Contact: Thomas Zimmermann <tzimmermann@suse.de>
->   
->   Level: Intermediate
->   
-> -Request memory regions in all drivers
-> --------------------------------------
-> +Request memory regions in all fbdev drivers
-> +--------------------------------------------
->   
-> -Go through all drivers and add code to request the memory regions that the
-> -driver uses. This requires adding calls to request_mem_region(),
-> -pci_request_region() or similar functions. Use helpers for managed cleanup
-> -where possible.
-> +Old/ancient fbdev drivers do not request their memory properly.
-> +Go through these drivers and add code to request the memory regions that the
-> +driver uses. Problematic areas include hardware that has exclusive ranges like
-> +VGA. VGA16fb does not request the range as it is expected.
+> Thanks! That did make it easier :-)
+> 
+> Here is what I see ...
 
-I'd keep both, old and new text, and turn them into a single paragraph. 
-The old text explains what to do and the new text gives examples.
+Thanks!
 
-Best regards
-Thomas
+Still different from what I can repro over here, so, unfortunately, I
+had to add additional debug printks. Pushed to the same branch/repo.
 
->   
->   Drivers are pretty bad at doing this and there used to be conflicts among
->   DRM and fbdev drivers. Still, it's the correct thing to do.
->
+Could I ask for another run with it? Please also share the complete
+dmesg from boot, as I would need to check debug output when CPUs are
+first onlined.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Best,
+Juri
 
