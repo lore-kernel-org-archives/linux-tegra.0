@@ -1,164 +1,79 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from box.windestam.se (box.windestam.se [85.90.246.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DBA1FCCED
-	for <linux-tegra@vger.kernel.org>; Thu,  6 Feb 2025 05:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187291FCFCB;
+	Thu,  6 Feb 2025 07:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.90.246.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738821189; cv=none; b=KdjkEiFBS9ydk/MpKfs8ow2CmP5aBhkioEKABJnKGUegJRDgU0lc9GcoD+dcPRjpeyTGXtbLn4D9eT8n1ou3hmGiR6UTmL01WAB8c5UBwnjquxoyw7FHAp7uisyhV3YA6YL2gZKF9SZIPy/Jolpy0/i1J2xVA2e3DJqdZBm9sBA=
+	t=1738828058; cv=none; b=TAxUhua1r8JkcJXICX/U3uoYrSEhyueaVlEubyJJFKwprkCPWp/ztoUtZs3+lkmqXlAc7WJ9jtMR9T3YqEOsOZHiDhPhI2Mk6Ah9ezvEAl0ULxLa6sAIDBW6fJBu1OIB6nLbfW/tnhNaNz3vIxjThebiNtn3hEavOY+zYYE8VIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738821189; c=relaxed/simple;
-	bh=AqBJlKICIlVN/KVB1S54nyOy92xf+Ecum9ESyS7lCGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yu0hmILwQezN0pWHVBDDk3Nq4X51CC4hyIYegCPlFIS8uRhkMggNFqgdppvJtCZeKZyU4hwR2FRy73juFK6ufDx7YhnRsCliyJupt6BcKeILAduEI8PT6cbpY9gRMLjyfnrw+MGerggYWTLwCIfdUbEKGI/4lxYyMaqGXQT0Vdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=3Iey3V9U; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+	s=arc-20240116; t=1738828058; c=relaxed/simple;
+	bh=8d+2aMdp4wHrWfwojuD6UdqQVMO3zQEkJkTwtgBJEMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n1VgTDgNpZDiDujXL1eJd77IUXZOJ+HJ/tOjKfX4usJLdoWL4RunqI983ABh6+obHwqQDksVglhjTL6LDV4SLeKh59I8SweLGQzpePAxJ+pt1cNXTZeLs9S3AocZDL97w34TOBU5Kbux/GCORf0s6F5hW9Tm6q8dhLS46DrubFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=windestam.se; spf=pass smtp.mailfrom=windestam.se; dkim=pass (2048-bit key) header.d=windestam.se header.i=@windestam.se header.b=0vfrmw7+; arc=none smtp.client-ip=85.90.246.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=windestam.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windestam.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="3Iey3V9U"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-219f8263ae0so11237155ad.0
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Feb 2025 21:53:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1738821186; x=1739425986; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U5ldcxqakXbm8AP3lHPyZs0Noc32OWjVSFhOYUYpAno=;
-        b=3Iey3V9U8BmoaRI7cBg3moW/4Xh4hzjsSBqSBv/RFkGLnvKglxiPD2BgE7VGVblp3i
-         DL2mIZ/8es9j3p1E6Wx93WPRAPMX/r8qunH5Gps1ywcdhAn0OnBBM59NDZ1T25rU8nPr
-         LU6PzTOFYQdGqCMjS1g5Ogg2Khwe0Q8TuI5VLynLKML8qsoU63EnMDylRtC817eYJ1nh
-         FvTAXgWmmO7gGX7EpBWKCzsRCyBWyWyCbko5fdeG4fPbztvmbM4ac785Kqo0A/mKP8Ll
-         hklnIu8Uaax3PD8a2Dr9aS/StqOoSGt18SJv2do6nfTP+yVIvsJuJduCXCNNXMig3bTu
-         QNFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738821186; x=1739425986;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U5ldcxqakXbm8AP3lHPyZs0Noc32OWjVSFhOYUYpAno=;
-        b=urOUj4Mu6llYHC0yaYW7h3QVMi6/bN72Y9U8boujUIJOr8yLayQE9DOJlzXGN7mlp2
-         mOIz5hZF9exzdnPGPUSOidgjYrWf6PLPOJDaqvTHWHshVKzLCGL5XwFcVz1kT04pm7xq
-         YeOi7rh3f1GdwzUCVF/c6Yk36pBL/xISULwT1SfdZ/d3oihLRY3i+AJLEQ4N59KpFnn/
-         cIHXWUTS9/Fxh25Ag3G6c+IQTHiUyC8gwKYdEBOdfpZEChIRv1yr3rrR85lGS4CWt3RS
-         2aUdX45HJFX8W88wJuEyNYdPHDDp+3fdIpgcD+aLwbEMRzc5fyhWWpZ6AF+jgnKMG81O
-         6sdw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3lwMLEgNZ0A3pdZzke8u3G5UeJ6ermS+fSjvbY65nDPD/RqavJQPW6XWLDntMF1Z+uLUH69gl/r4DAQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQsun/WLorZSKoAR6MpcMzqYwN+yB/BiOYAwewmv17bO7fh5KG
-	Whcxt7VCLSIpqe5jDrJwfFFCk6F9nWgC8PQPTLzKgncRoQTNIF6hUTz+kWo9CFk=
-X-Gm-Gg: ASbGncukNZus+BQY2vN2aljacoQl2KFiS/ylgfWIZ45k4es0wHaCR9ROYd0TRCAb+EZ
-	fiHA872gx8RDDaK4BCkKzbhQGEZGoIg1+RbjEQxpg52pDW+i0nNw4RpbKcOFVvQIKBIPBe184gH
-	FUirlToFg3KmhVZmK8eaAQOXBSgG+1w5Lb5FhF688OdbncqYsDiNEoEiQe2v6PauW1ySCO1aGc2
-	FfbjNZG7rcc7PyFM5UrGTlFsi2viOcUg4dq3RC8u95jkJr7NXLVjxDoMbWoZhLXf6L71N/DWaG3
-	y9qpFjXAYUyBgZa6UsQjpyIfkvPSnu0i8Q==
-X-Google-Smtp-Source: AGHT+IGCr9xd2Dhw5KUTmjMsz2hIPxrdWNp4ze88e5FpvAsB5Znxk1UOOvf/vmpixanfPva87r8KEw==
-X-Received: by 2002:a17:902:c403:b0:21f:35fd:1b6a with SMTP id d9443c01a7336-21f35fd2116mr20176495ad.51.1738821185899;
-        Wed, 05 Feb 2025 21:53:05 -0800 (PST)
-Received: from tjeznach.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21f3687c746sm3841885ad.180.2025.02.05.21.53.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Feb 2025 21:53:05 -0800 (PST)
-Date: Wed, 5 Feb 2025 21:53:02 -0800
-From: Tomasz Jeznach <tjeznach@rivosinc.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Hector Martin <marcan@marcan.st>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-	Sven Peter <sven@svenpeter.dev>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, Chen-Yu Tsai <wens@csie.org>,
-	Will Deacon <will@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
-	Joerg Roedel <jroedel@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
-	David Rientjes <rientjes@google.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 09/19] iommu/riscv: Convert to use struct iommu_pages_list
-Message-ID: <Z6ROPsbXHYlQ0TgF@tjeznach.ba.rivosinc.com>
-References: <0-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
- <9-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=windestam.se header.i=@windestam.se header.b="0vfrmw7+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=windestam.se; s=mail;
+	t=1738828051; bh=8d+2aMdp4wHrWfwojuD6UdqQVMO3zQEkJkTwtgBJEMQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=0vfrmw7+FWsTJt6cBXIGLZZ0wEIiIb7JesxCFm05z39TCTd9iniJkR7sWwQG83HdW
+	 5FIQ6Qf3jYOcp3bY5OsuWRAfwPr4Wh6/87XEppbwfEdm86d9/0V1Y86LVb9lBaVy62
+	 7TR/8EGLY+DtoQZC3C7eib+g0PLu1IOREnPTaPb1npHqkm1cqX5ben7WQTqtwpj/oC
+	 A/WXurW9n5hrviV52RPzTLYfjyb3wlN31HK7yXPc0hfzc0hMgPwzw3jaV5eP9qBuQ6
+	 RY/rCW4b04NuTPut+hLOoc7wAYxGyIx+SU1kFk/gzdwEyaxCuo3HGFZOeYSLsG/OwR
+	 L3RBE5BBQ95lA==
+Received: from authenticated-user (box.windestam.se [85.90.246.140])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by box.windestam.se (Postfix) with ESMTPSA id 112484118F;
+	Thu,  6 Feb 2025 08:47:31 +0100 (CET)
+Message-ID: <4735da72-63b7-4168-974c-ac4681d69a1e@windestam.se>
+Date: Thu, 6 Feb 2025 08:47:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
+Subject: =?UTF-8?B?UmU6IOetlOWkjTogW1BBVENIIHYzXSB1c2I6IGdhZGdldDogdV9zZXJp?=
+ =?UTF-8?Q?al=3A_Disable_ep_before_setting_port_to_null_to_fix_the_crash_cau?=
+ =?UTF-8?Q?sed_by_port_being_null?=
+To: Prashanth K <prashanth.k@oss.qualcomm.com>, =?UTF-8?B?6IOh6L+e5Yuk?=
+ <hulianqin@vivo.com>, "gregkh@linuxfoundation.org"
+ <gregkh@linuxfoundation.org>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Jon Hunter <jonathanh@nvidia.com>
+Cc: "mwalle@kernel.org" <mwalle@kernel.org>,
+ "quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+ David Brownell <dbrownell@users.sourceforge.net>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "opensource.kernel" <opensource.kernel@vivo.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+ Brad Griffis <bgriffis@nvidia.com>,
+ Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>
+References: <TYUPR06MB621733B5AC690DBDF80A0DCCD2042@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <1037c1ad-9230-4181-b9c3-167dbaa47644@nvidia.com>
+ <2025011633-cavity-earthworm-2b5e@gregkh>
+ <3d9db530-a0b7-4f18-9ad4-233356dfe68c@nvidia.com>
+ <e3a457d6-092b-4b7a-9032-50daddab6f1f@nvidia.com>
+ <0fa6c6db-fd75-4a09-b4fa-d6a98bb8afac@stanley.mountain>
+ <TYUPR06MB621712E6A082791B397088BFD2F72@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <f264888e-6100-4812-9661-ffad174f45af@windestam.se>
+ <33a19657-a890-4d59-b7ea-5798cf8f7d9b@oss.qualcomm.com>
+Content-Language: en-US
+From: Pelle Windestam <pelle@windestam.se>
+In-Reply-To: <33a19657-a890-4d59-b7ea-5798cf8f7d9b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 04, 2025 at 02:34:50PM -0400, Jason Gunthorpe wrote:
-> Change the internal freelist to use struct iommu_pages_list.
-> 
-> riscv uses this page list to free page table levels that are replaced
-> with leaf ptes.
-> 
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->  drivers/iommu/riscv/iommu.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-> index 6e7df7273426da..549bd8d0615d75 100644
-> --- a/drivers/iommu/riscv/iommu.c
-> +++ b/drivers/iommu/riscv/iommu.c
-> @@ -1085,7 +1085,8 @@ static void riscv_iommu_iotlb_sync(struct iommu_domain *iommu_domain,
->  #define _io_pte_entry(pn, prot)	((_PAGE_PFN_MASK & ((pn) << _PAGE_PFN_SHIFT)) | (prot))
->  
->  static void riscv_iommu_pte_free(struct riscv_iommu_domain *domain,
-> -				 unsigned long pte, struct list_head *freelist)
-> +				 unsigned long pte,
-> +				 struct iommu_pages_list *freelist)
->  {
->  	unsigned long *ptr;
->  	int i;
-> @@ -1103,7 +1104,7 @@ static void riscv_iommu_pte_free(struct riscv_iommu_domain *domain,
->  	}
->  
->  	if (freelist)
-> -		list_add_tail(&virt_to_page(ptr)->lru, freelist);
-> +		iommu_pages_list_add(freelist, ptr);
->  	else
->  		iommu_free_page(ptr);
->  }
-> @@ -1192,7 +1193,7 @@ static int riscv_iommu_map_pages(struct iommu_domain *iommu_domain,
->  	unsigned long *ptr;
->  	unsigned long pte, old, pte_prot;
->  	int rc = 0;
-> -	LIST_HEAD(freelist);
-> +	struct iommu_pages_list freelist = IOMMU_PAGES_LIST_INIT(freelist);
->  
->  	if (!(prot & IOMMU_WRITE))
->  		pte_prot = _PAGE_BASE | _PAGE_READ;
-> @@ -1223,7 +1224,7 @@ static int riscv_iommu_map_pages(struct iommu_domain *iommu_domain,
->  
->  	*mapped = size;
->  
-> -	if (!list_empty(&freelist)) {
-> +	if (!iommu_pages_list_empty(&freelist)) {
->  		/*
->  		 * In 1.0 spec version, the smallest scope we can use to
->  		 * invalidate all levels of page table (i.e. leaf and non-leaf)
-> -- 
-> 2.43.0
-> 
+> Are you also using tegra-xudc ? ep_disable routine may be called in an
+> atomic (interrupt) context.
 
-Reviewed-by: Tomasz Jeznach <tjeznach@rivosinc.com>
+Nope, I have a board based on a NXP iMX7D CPU, I'm not 100% sure what 
+the tegra-xudc equivalent would be for that.
 
-Thanks,
-- Tomasz
+//Pelle
