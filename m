@@ -1,151 +1,182 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD9D46BF
-	for <linux-tegra@vger.kernel.org>; Thu,  6 Feb 2025 04:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC0D223710
+	for <linux-tegra@vger.kernel.org>; Thu,  6 Feb 2025 05:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738815859; cv=none; b=dhyAEje/XEde9E4Ro4OCTVoWN0PsEkWD0+Np1AMl62qaQ3WPYJiC07Qya4xodzWNfjOpIpmuLucFjhWICluEDUJFrKb82opoWjsI89n/+QvqA90Pp3a3Ej01CPW7wbuXMRLgwja9MI9T0qdBzgNApGl3bdrMrkQ8vDRqZTyocUM=
+	t=1738819811; cv=none; b=LuIPq5lYOksUK0G//jsiWAu1T8s/PjELiTkMLNYA+42AFNZBNlhBNkKViYR9r/bAVAvEAxi8L3g79nFpA0BVVh/fxTcXFum0tOixTBFoRpkZ4gs6en/D8HG796fin+B9pnQzBB+C9ZvWH1fcXPyRmye23lw1388bQy1doeNcczE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738815859; c=relaxed/simple;
-	bh=x3RoQDABbP3pMXuxhTOvr017iXEkAiYBJfNFjunIDd4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l9eo8eKwX2XADH6B5LGx5ISUqysLA8gOLyBwhIJwtG27aQ/0MNJkH1o8Lcwf2FZNF8sQzh0ulNaPiZ1VxAbkoXRwjIzI/js2dhEJ/0WUH7olhH/r/soe68pp3ixiPSuKs66OnaPgI4HDGD3jeF+gsaXTSw0i6KkuceEP44CpUSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c8nkR86c; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+	s=arc-20240116; t=1738819811; c=relaxed/simple;
+	bh=tNOsQ8XTPAWYz9ImmrEJwRpNQeju67/8X20L+ujIqzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jD+lW5kNA0+NKAyc4Osu9nfMaxbwnAE85dHh22ruHr9Uf3TJFLOfUQbmPMxNSotkRfMSWRqrpJAN2aBV3O/WJOR70Q6Lntya+WB1bzOWAxhArWJHiEIZMr5nc91+PVnzsska9e8pLt4obhPj/3tbGENQ9PnhaSNQfLvl2AasL2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=aFtGIE7K; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c8nkR86c"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 515ErRlp010840
-	for <linux-tegra@vger.kernel.org>; Thu, 6 Feb 2025 04:24:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UzZDnfGZLX8HvjMJIk88Bhmcd/aj0bIaFc3nWEIhLaE=; b=c8nkR86c6BC5hEkn
-	06WRCLGJhjYiKrGQITC3YOwKgG2fU73gFNkFFVrEH+dTurP/GEgsT+p38xGymqX7
-	9U5g4bPctb0MTuKHlzqdsGNicCkLYjxPdOmWpnCydGMxy2P+3EsfVXhsRcC7+35b
-	hQjwNkV6nEVPvaxwKHomkaohsUGAJNGmzliFXjv1nQzDe4aUXd9T8DKwim7i703f
-	67yKf6btiWDYi37YPQWUkzn2E3B4hKuWrrdPAa6VjhpZ05wANiZHBfm+oGHHGNb8
-	1jOmWVq1W/N0uqb1SpwM+nrffrQRuTpvmc0lxCwVSdoF8FuCVTTDWWogpSB421Py
-	RrcSAA==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44ma599phm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-tegra@vger.kernel.org>; Thu, 06 Feb 2025 04:24:16 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-21a7cbe3b56so8179325ad.0
-        for <linux-tegra@vger.kernel.org>; Wed, 05 Feb 2025 20:24:16 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="aFtGIE7K"
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2163dc5155fso10121235ad.0
+        for <linux-tegra@vger.kernel.org>; Wed, 05 Feb 2025 21:30:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1738819809; x=1739424609; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pRoJEJRUPVObRh6bcpNHZcCJSeUoo6qbmkVpHeNteUs=;
+        b=aFtGIE7Ke07hLmtV9WzmBjip2ob6fdttQ1op22Y+3qlgWKX7DfPSCbMw9OKTte7m0K
+         cuiIrtB76f1gHLRDDXMwXAbUsW523mSvao7okd96U64uesGMX6g6iKCL+p/xgIo1WIon
+         ki7qXmZUj/qHJdGJsMReHmXfwHdBPJwV0/3msSC447ze+55shmY5G92YmD+oOE7pk//4
+         7pW/xPXgXJiQQlofkMeJ5OgoHeg/MhBypQ2dp+b0ClrZwzjFtZyOU1neplHzlW+PPwB6
+         ObLH2NHKLDVFT+AVEMZOZAe37G9C8Ce0S/iMPXZ9ZgfQKIHNbIpB8/GDft2ASViFGA2s
+         0eCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738815855; x=1739420655;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UzZDnfGZLX8HvjMJIk88Bhmcd/aj0bIaFc3nWEIhLaE=;
-        b=XEPOc9BXwC9G5d6UwXr+4aBqoY2Yn3sEJkpLH5bjE2tSKc0O5RkwakJgAENis/endn
-         +v8RKEXdG3IW3IvIi6LtX3Ssm/uePR86qg36EehPxgEChkf2IU/Wxo+0aY+ny/5n37CT
-         pKvvjgzGWG3wiIvZgONCa0iNPWA5UZduQht+YY5a2Lkca+IJJCYc8pQhWwmp8zL7ruUi
-         mnc0AdXnnHyvPPd2dahksPYooZQcAwRzgqhob665du2V2NwOUOhWOGkDNfmuzs9PwRVi
-         CLIf8QwNMxNkf+ApgT4cLt128w4gcaN1r+E5vdRhO0RKqND2IbpeMnGGTJayr9Cs/I62
-         4Tzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRD+rcTrp/a7IfDXOE/MJbo1OG2iSz6NgGNQOoOJE3Mt1v1oU/szrBbi5msM4IQrXbqMWUSeNFgBePng==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3zHj9y05igxAmmsObNjed5cphnKbhs0xmH+ntpOr6nB0/zNON
-	2Z3G2JRkQiUH3QKl31bJMkH2UXDq8YzZcdjCE0njLM9odREB6Ad5D5NK8nuBbrYHGnTASAh9dA5
-	BOTKppp1iA7GUaaHlVwGihxYjzDhP6gwe4Dn1MIRFHamSaEa4rswfjCbTumIecw==
-X-Gm-Gg: ASbGncvM6mCtKhAwj6XdIDzZb25ZWqXQbrchYq9c7HDgBereb9sPXfijz1Rw5YG20fV
-	T9fk33ZnaZ1xEB7fOzni63LPjs8QGSw7H+dHuhv7ELXvdMelque+Xl0fb9INkdfj6mSKdd2rQmd
-	Mketj5341W0hcp+3fXv2Xix5vbK9KCC7kvmW/qSoKjX3QNX3bZeIHZ9nBXqxZm1mG9c3Mk5dM++
-	U0rrQe0g4qPO9lpRZj5bzYc1za5GFEDpnKLq8Lsu/HVIRixOKsI6pfJk69o3aIk/Ot06Kq+dk5m
-	Amrm6N6CfMDgUJeqoAtDKl5jAqNtwA==
-X-Received: by 2002:a05:6a21:8cc2:b0:1e1:b12e:edb8 with SMTP id adf61e73a8af0-1ede88b2334mr12379135637.30.1738815855151;
-        Wed, 05 Feb 2025 20:24:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH4bOrr5uUDRlCbMOWSGKN7WtxiRHglYPcsXxM0kkvRTF76K3q2h/bgcDp9ITqdP4O/UH8rzg==
-X-Received: by 2002:a05:6a21:8cc2:b0:1e1:b12e:edb8 with SMTP id adf61e73a8af0-1ede88b2334mr12379098637.30.1738815854768;
-        Wed, 05 Feb 2025 20:24:14 -0800 (PST)
-Received: from [10.218.35.239] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ad51af780ccsm190657a12.71.2025.02.05.20.24.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Feb 2025 20:24:14 -0800 (PST)
-Message-ID: <33a19657-a890-4d59-b7ea-5798cf8f7d9b@oss.qualcomm.com>
-Date: Thu, 6 Feb 2025 09:54:09 +0530
+        d=1e100.net; s=20230601; t=1738819809; x=1739424609;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pRoJEJRUPVObRh6bcpNHZcCJSeUoo6qbmkVpHeNteUs=;
+        b=eFO3WqTeMsAdtU2NtYY2EyLN0SxEgG20sjQKgp+UBEo01gwPFGdmEXyf0aC2ebFMwO
+         t4ENjwzFHL3TPrIIb2lLI7wInOT8o90jltDyKN872ii+9n+1ozFQBPNvuOaHKubZkDqi
+         o8urEBjA5asPP+k+PSOpXqBr8FRBRC380DW0Gejl4IqTk8rEMfCUv5658IliwkeWkmIQ
+         8YJ5jLQgPV2EL4CJzzW4zGDb9YZ8ZhazZ+FnQ042tw42CmEcGQ9UrZN7BXmibzYADFcv
+         UaS1DcJ0VWzBZ79P3yhYvz32K0JhGerdZ1U5wljoM916mnjuuIHOgZQYTd8alGV/RO+x
+         Ks5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUYwtcaxTAYWEwsS5umi5AJATj0K7dwDe9JPIYb5D2gAIx3DInRwr+4lHd3TSiTFzGPFtsaO3OmcWoNiw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpz0+WIw2vdctFBkfVVsFtdSGKLvC+sbF4UIe4AtiYkzq6TVf3
+	f8bAe8Gs1lakkB81ApjV+QjCsOiVxOx0MjSCjzKHru94PQZZNlz7m9SMg2SLFxA=
+X-Gm-Gg: ASbGncug5fjmbQ4Ivub9BxRm+kSwwjHBCqwP5En373GhLjllME76s5JHCdwcetQq5Eh
+	JIe2+Sx1OkJFjTUHQmDf3lJeU2VZL3CHbPPqBGSLIeFvV0+AeFDeCyJeMw1BTZJphKoOQ3GZl5J
+	hNBJyR4qdhf4lii5JlGyEq2TQ5F89NoXG7XwMqFQ8yvHAo/tSnoSAjt1QZc83ah8CaedMY3kjDP
+	a/Q1xJGTrYA5rBJUb6PfS8gF7W3ideboXaY54mqtwts0u0SNfgOUmpnfNCC3/XXJVDDDfNYzGA6
+	Y7tqZKwP6EXpxqtX1TZoG0aDzu6wbEF+RA==
+X-Google-Smtp-Source: AGHT+IE1tNZkBLKVThcpOUcjJPjEE6LeUB5SuPAtY9c/ZHJbnXa2ZNVKpzCci8Lb0vwwFKWpOtSe+Q==
+X-Received: by 2002:a17:902:d28b:b0:216:410d:4c53 with SMTP id d9443c01a7336-21f17ebba71mr74788475ad.41.1738819809035;
+        Wed, 05 Feb 2025 21:30:09 -0800 (PST)
+Received: from tjeznach.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21f3653c997sm3459215ad.78.2025.02.05.21.30.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Feb 2025 21:30:08 -0800 (PST)
+Date: Wed, 5 Feb 2025 21:30:05 -0800
+From: Tomasz Jeznach <tjeznach@rivosinc.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Hector Martin <marcan@marcan.st>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Chen-Yu Tsai <wens@csie.org>,
+	Will Deacon <will@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
+	Joerg Roedel <jroedel@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+	David Rientjes <rientjes@google.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 17/19] iommu/riscv: Update to use
+ iommu_alloc_pages_node_lg2()
+Message-ID: <Z6RI3ftJTrm3UxoO@tjeznach.ba.rivosinc.com>
+References: <0-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
+ <17-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IOetlOWkjTogW1BBVENIIHYzXSB1c2I6IGdhZGdldDogdV9zZXJp?=
- =?UTF-8?Q?al=3A_Disable_ep_before_setting_port_to_null_to_fix_the_crash_cau?=
- =?UTF-8?Q?sed_by_port_being_null?=
-To: Pelle Windestam <pelle@windestam.se>,
-        =?UTF-8?B?6IOh6L+e5Yuk?=
- <hulianqin@vivo.com>,
-        "gregkh@linuxfoundation.org"
- <gregkh@linuxfoundation.org>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        Jon Hunter <jonathanh@nvidia.com>
-Cc: "mwalle@kernel.org" <mwalle@kernel.org>,
-        "quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
-        David Brownell <dbrownell@users.sourceforge.net>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "opensource.kernel" <opensource.kernel@vivo.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Brad Griffis <bgriffis@nvidia.com>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>
-References: <TYUPR06MB621733B5AC690DBDF80A0DCCD2042@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <1037c1ad-9230-4181-b9c3-167dbaa47644@nvidia.com>
- <2025011633-cavity-earthworm-2b5e@gregkh>
- <3d9db530-a0b7-4f18-9ad4-233356dfe68c@nvidia.com>
- <e3a457d6-092b-4b7a-9032-50daddab6f1f@nvidia.com>
- <0fa6c6db-fd75-4a09-b4fa-d6a98bb8afac@stanley.mountain>
- <TYUPR06MB621712E6A082791B397088BFD2F72@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <f264888e-6100-4812-9661-ffad174f45af@windestam.se>
-Content-Language: en-US
-From: Prashanth K <prashanth.k@oss.qualcomm.com>
-In-Reply-To: <f264888e-6100-4812-9661-ffad174f45af@windestam.se>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: WpdI8ipfnhCU16qhZ5VBwSqy3Ik5tFl6
-X-Proofpoint-ORIG-GUID: WpdI8ipfnhCU16qhZ5VBwSqy3Ik5tFl6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-06_01,2025-02-05_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=561 malwarescore=0 adultscore=0 clxscore=1011 phishscore=0
- bulkscore=0 spamscore=0 mlxscore=0 impostorscore=0 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502060032
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17-v1-416f64558c7c+2a5-iommu_pages_jgg@nvidia.com>
 
-
-
-On 06-02-25 12:59 am, Pelle Windestam wrote:
->>>>>> Odd, you have a usb-serial gadget device in this system that is
->>>>>> disconnecting somehow?  That oops doesn't point to anything in the
->>>>>> usb gadget codebase, "all" we have done is move the call to
->>>>>> shutdown the endpoints to earlier in the disconnect function.
->>>>>
->>>>> Yes the board starts usb-serial and usb-ethernet gadget and on
->>>>> reboot when tearing it down I am seeing the above. As soon as it
->>>>> disables the tegra-xudc endpoints (as seen above) the board appears to
->>> stall.
->>>>>
->>>>>> I'm glad to revert this, but it feels really odd that this is
->>>>>> causing you an rcu stall issue.
->>>>>
->>>>> Thanks. I can't say I understand it either, but I am certain it is
->>>>> caused by this change.
->>>>>
+On Tue, Feb 04, 2025 at 02:34:58PM -0400, Jason Gunthorpe wrote:
+> One part of RISCV already has a computed size, the other part seems to use
+> PAGE_SIZE (which is probably SZ_4K?). Convert the call.
 > 
-> I do not have much to add in terms of solutions but want to chime in
-> that the same issue happened to me the other day when I upgraded my
-> kernel. It manifests itself with the rcu stall whenever I try to reboot
-> my device with the USB-cable connected (it is a usb-serial gadget
-> device). Moving the usb_ep_disable() calls to outside the lock (where
-> they were before the patch) solves it.
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> ---
+>  drivers/iommu/riscv/iommu.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+> index 549bd8d0615d75..b7cee3d651b179 100644
+> --- a/drivers/iommu/riscv/iommu.c
+> +++ b/drivers/iommu/riscv/iommu.c
+> @@ -65,13 +65,15 @@ static int riscv_iommu_devres_pages_match(struct device *dev, void *res, void *p
+>  	return devres->addr == target->addr;
+>  }
+>  
+> -static void *riscv_iommu_get_pages(struct riscv_iommu_device *iommu, int order)
+> +static void *riscv_iommu_get_pages(struct riscv_iommu_device *iommu,
+> +				   unsigned int size)
+>  {
+>  	struct riscv_iommu_devres *devres;
+>  	void *addr;
+>  
+> -	addr = iommu_alloc_pages_node(dev_to_node(iommu->dev),
+> -				      GFP_KERNEL_ACCOUNT, order);
+> +	addr = iommu_alloc_pages_node_lg2(dev_to_node(iommu->dev),
+> +					  GFP_KERNEL_ACCOUNT,
+> +					  order_base_2(size));
+>  	if (unlikely(!addr))
+>  		return NULL;
+>  
+> @@ -161,9 +163,8 @@ static int riscv_iommu_queue_alloc(struct riscv_iommu_device *iommu,
+>  	} else {
+>  		do {
+>  			const size_t queue_size = entry_size << (logsz + 1);
+> -			const int order = get_order(queue_size);
+>  
+> -			queue->base = riscv_iommu_get_pages(iommu, order);
+> +			queue->base = riscv_iommu_get_pages(iommu, queue_size);
+>  			queue->phys = __pa(queue->base);
 
-Are you also using tegra-xudc ? ep_disable routine may be called in an
-atomic (interrupt) context.
+All allocations must be 4k aligned, including sub-page allocs.
 
-Regards,
-Prashanth K
+Note from IOMMU/RISC-V spec:
+
+"If the command-queue has 256 or fewer entries then the base address of the
+queue is always aligned to 4-KiB."
+
+I can't find this to be guaranteed with new allocation API.
+
+>  		} while (!queue->base && logsz-- > 0);
+>  	}
+> @@ -618,7 +619,7 @@ static struct riscv_iommu_dc *riscv_iommu_get_dc(struct riscv_iommu_device *iomm
+>  				break;
+>  			}
+>  
+> -			ptr = riscv_iommu_get_pages(iommu, 0);
+> +			ptr = riscv_iommu_get_pages(iommu, PAGE_SIZE);
+>  			if (!ptr)
+>  				return NULL;
+>  
+> @@ -698,7 +699,7 @@ static int riscv_iommu_iodir_alloc(struct riscv_iommu_device *iommu)
+>  	}
+>  
+>  	if (!iommu->ddt_root) {
+> -		iommu->ddt_root = riscv_iommu_get_pages(iommu, 0);
+> +		iommu->ddt_root = riscv_iommu_get_pages(iommu, PAGE_SIZE);
+>  		iommu->ddt_phys = __pa(iommu->ddt_root);
+>  	}
+>  
+> -- 
+> 2.43.0
+> 
+
+best,
+- Tomasz
