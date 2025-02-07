@@ -1,177 +1,249 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0249923C8DE;
-	Fri,  7 Feb 2025 16:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0858199EB7;
+	Fri,  7 Feb 2025 18:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738946538; cv=none; b=KRXBZ+8izq2IlZSb/pou/jMEbKDYaqQdMVNu6u96izsSaxA7zCoCz3KWU4Xmamv668uRJJsayu9N9eZV2kPzFeV/JGvmlgjnnpL7KD5/l3KE8+ihB9quaXjnJnWpTenf9p7FDgVJH9iMcc6v+J90stKa4eBQoqtbaAa1ecSGPGc=
+	t=1738952080; cv=none; b=QadlWuDlLzNrMbJM+nZNzGjaF5JsOet2PPcYrvovTyPkU/rvSeGOYK8wKy4wLop/l/199Ogsmk6rkbJ2+qNp7BwffsbItu1tH8jGTy8rYn5kvo8Rb538htXcgcjIPlqO7mfK8tUaRKhLmBgNkqNnFSzvZxkPnhWXOKDiT1HDQfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738946538; c=relaxed/simple;
-	bh=xahoYTgr2JXlBEBiH4Eh9CeXWNus+8o8NYBdfY24J1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HRECTWWDo0VZ7+9tqwREAyuiu81RGZPtBqdCenV0hmLUE5x1VLzrVo0moxSFy82uBNaR+AQCUhdSm3oObOgY1P+cl4LVp1oGrJrBqhyKOSG2bqyiSmp8ZNVzrXRnMFAC7n6cTUGXPGpNcmmi5uCwLCLoKt+FXdmtC6OCdpQiq5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QuTqCW8G; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1738952080; c=relaxed/simple;
+	bh=2vRQARBPfRDe4Y7LUWzZxwe6nvtPE+deE1jVBXnCDRM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gx0lu5ro3GfMw0AYsDP6jmo8VTfAmN4rG8OCfb97eetU9XrgiL8bz404H6kafQvLZuBlN7KhCeRwz/m7f+XpPq+Er9tNr7Idq/psKblnQQc6Iw7xSN8G8jfegPzmVNVGTTWavPbI77gwjipdwm+FztDhqhPY7vdRyVCxDX7wOlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+la3ER1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuTqCW8G"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-436341f575fso27832015e9.1;
-        Fri, 07 Feb 2025 08:42:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738946535; x=1739551335; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FiPV/oHe7RmZIp/M852C28biSFhSs4bIOllT1QoCRG4=;
-        b=QuTqCW8GlqBrQsgS1iMUPOTh5xsw8n14Ap4L4KDg0LuMS4ApXp+89jAfMIxcT//1IW
-         aBBvlgDMfuiEVnVFe5lO4Lxt/1iVMlbFSi+2Ul7s8ClZkKp76pHPsBOfGjt2OoA+5p2k
-         h3XG+87bTI1S0KvKge1INoR+KcMR/ObnEEtZEuC/arI30vOA/gm1M9vfVA6P8wrhvMTB
-         Qn2xJA1DWbhcDsZB+w3HJ24YcIIRctySrwDBTAUr1+8qKp0l0NoFda3a6Ah6szMRv6ul
-         LMtiETMuF3dxa46QOYa+CQW0c9KJM99lGgH9/Aq8/6imj/Uv3EJxdGQ8H1oL+aWEPy4G
-         JPsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738946535; x=1739551335;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FiPV/oHe7RmZIp/M852C28biSFhSs4bIOllT1QoCRG4=;
-        b=bUdHwKym8HnPP4PbbQhk5fComzgTcG43uFteEhW5vUL869PfrKiIi2mvNlDlrJMNK7
-         CpOGS+bxWNbyt4nyczMyl9bKYDEAnw9Sgsi3qAFe6Z2Z23KK2QT2UpxVQQuI0XEqHhJv
-         QCQiCbRKRIwiYqH/EZuTUgm0FTR2w0lC0eUHQvvdpzCpfi/CA6z/Zm+PE8XkSON+tR47
-         Y1DlBOYKLnxukFIxF0i69VlI4Pls+yzgqL/gQ7jHo0J0izmD/dnvS8uia1GDj3X38nUR
-         S1N/r6Sfoj7semkbooTad1Y6qpad6tP6AKNmz9wRe1YBlMl9qvW/TaY+4dBKMNbQUrt6
-         8uuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVTJdL7FkgEdoLn8azsbeS8gIOdPZKAyZdYEEw6Vfwg4G+XBEpdC/QdX6SKt25yU2F0y9ZcDnu@vger.kernel.org, AJvYcCXpZqNzLN3MCGr42y40JZnTnTJG5PEKMGdq79lCYIqk8a6eWiPHb0x4geA+AkTzgPSCabQOP0D/F2tqnkk=@vger.kernel.org, AJvYcCXstpVvzl/77KyuSsPZve4cNTm9jQCM16K+pNb6DMHh+esCJMlOJ1PiK+OAvUaf4nE0asoHKEPu/Uhlkbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfYH7r4BU2cda2vJDZ2HZalFuO+Fdlsw49veIo8l18ly1l62Z1
-	CmzseHghEBQ8SKvlwIkmdwrUfTi/xju+vpTu+iUVYikCli1OyTXz7U9tAQ==
-X-Gm-Gg: ASbGncuTtH1f2FTGQcsCnFWHMzymLB/38KkuFMy69A8wkMnnOE4xnG8d1BFiwemT3ho
-	3n5SkX7patgI5+v+n0rmd8KJNMYFPDoN9W1LOYpF0UPgBJZurJ5G13P2O5euxJSS5eHD/z8Br/2
-	opcfTClltwIL1tikK4YLHF0gOVQ5Gis/3L6t8ALKxJrH9YTdf8b9GdCmHTliSBn/+ZQMWZ6COoJ
-	g++Al3OEkP2rjz/pAmS3Nk9Hzf7RSrrOlC/WQIYY0GWH2m+TlcwKELyYVxh0k7mK7EKA/5ewB8t
-	On18qgBMIYncJFgv0tzBZYJZ/AutOAjy9b67cknq2102YmdLEncPdmn+Emp833M7H94fkbm+Z8H
-	nVQ==
-X-Google-Smtp-Source: AGHT+IF7y5ag5xXtJbBXF9RYFf/lu5m+MBmyeyrGK4CKk4esPPFHu01PFcCg+qkitoVRNQ1xblHDPw==
-X-Received: by 2002:a05:6000:1863:b0:38d:d0e7:7d5c with SMTP id ffacd0b85a97d-38dd0e77fc3mr943984f8f.23.1738946534954;
-        Fri, 07 Feb 2025 08:42:14 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4390db11264sm94032655e9.35.2025.02.07.08.42.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Feb 2025 08:42:13 -0800 (PST)
-Date: Fri, 7 Feb 2025 17:42:11 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Furong Xu <0x1207@gmail.com>, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, xfr@outlook.com, 
-	Brad Griffis <bgriffis@nvidia.com>, Ido Schimmel <idosch@idosch.org>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH net v1] net: stmmac: Apply new page pool parameters when
- SPH is enabled
-Message-ID: <heg3exbrmo4zt64cdeolououo25lj2idusepuyuu7iggxgn5fe@6bky6h5pe3tu>
-References: <20250207085639.13580-1-0x1207@gmail.com>
- <8fc7c79d-ace8-4e05-acef-1699ee6c4158@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+la3ER1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BE80C4CEE5;
+	Fri,  7 Feb 2025 18:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738952080;
+	bh=2vRQARBPfRDe4Y7LUWzZxwe6nvtPE+deE1jVBXnCDRM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Z+la3ER1pTtRYJCGc5WodTYtCbhNFjnKTd2flqLFtAwWANwKZBmF8BvdDt0oEbzOA
+	 eK7hXvvvk5T9nGy8/5YksIBna5j4vBuV38bVxbkkkzp/U1+rnNJkjmWBeiEA2cyHPN
+	 LgKooOIU94q1ozAAkUQjklavjNyXb6bHSjnu0611vBoHlO6MGk9SnHz3yfYGOE/KQk
+	 oa9MeUxI+Tgw4o3hQfA4YjAybLCZGZ4ETry86e0LRzFcWZaYtJA/dVlwvlP76yf14P
+	 /OI1PLt6832NaQ0VvJE0SkZHkwpXLnAznr2erI1Jv94H+HRB+xysLdB/A/2rjBxcpl
+	 5FGERo52uk+oQ==
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5fa2a2bdde9so677304eaf.0;
+        Fri, 07 Feb 2025 10:14:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUM3pzl5no+QXVQJZy0TIc7P/iduxd1qCMYxSispAnLCCvhBzXCTw7jeNyJ5F/6mfn4x2WjzieYuYg/wOE=@vger.kernel.org, AJvYcCVg5OJ5oKPgU79Viu9pQ0WVjo96EzA6qyw/r59efeF7Ueks7VN18smO8P6IgG19uCyHJrwB/BUU4WE9@vger.kernel.org, AJvYcCWIvToEI6mjr+YT2j2ub5n60MBwBIWaxvXG+Tb8xOppsxx3HWTNk4UtR2YrYzrzu4WnM5O4+J4Ef3isMKE=@vger.kernel.org, AJvYcCXq2rQJbYZjpRMUq9bqIhHgZR1taCYt2ykdmxrnsx4ngXBlLc7Z4ux4ldUbLifFqo0k++5RJ9oiquY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsVHlTxzulWqI6Fk+1SQyUcqOf3g8W56KNG27ZWVa0c84A+m22
+	t0KMPqesunklxVLLS/QJY7UpeG8pUgpr4Fr2UO1JSSumG3uMECAIEpMJXvYg6b0engrubkSa/Ye
+	yMWq/4kleN/8tTg1QO96yfzjgGGM=
+X-Google-Smtp-Source: AGHT+IHGI0WXftuL7wk8a3wFGS2gQ6lju6Fy2RlUNGM9RMxSD4fsyY9blHC5wTJ99nQoBl2LvRdE2HLCP4IXR/lyXfg=
+X-Received: by 2002:a05:6820:209:b0:5fa:61b9:3efb with SMTP id
+ 006d021491bc7-5fc5e70f19fmr2791995eaf.4.1738952079465; Fri, 07 Feb 2025
+ 10:14:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="fkugobpneo3jjh3p"
-Content-Disposition: inline
-In-Reply-To: <8fc7c79d-ace8-4e05-acef-1699ee6c4158@nvidia.com>
+References: <12619233.O9o76ZdvQC@rjwysocki.net> <1c2433d4-7e0f-4395-b841-b8eac7c25651@nvidia.com>
+ <Z6YPpbRF_U0TxAbf@hovoldconsulting.com> <Z6YcjFBWAVVVANf2@hovoldconsulting.com>
+ <CAJZ5v0iHjkfoh2A+hAmMCTG9_nBcJrsRYFD0Hp4ZChYUo7bFEg@mail.gmail.com>
+ <Z6YviAFD4Az3EIBa@hovoldconsulting.com> <Z6Y0NlW40yHTIlzm@hovoldconsulting.com>
+In-Reply-To: <Z6Y0NlW40yHTIlzm@hovoldconsulting.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 7 Feb 2025 19:14:27 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gBCQW2wwdB+4SyBXtqiis2k1Z2L8SOVKwcVbNxPHqvYA@mail.gmail.com>
+X-Gm-Features: AWEUYZlA78d4afzHjo-SK92VyRsVbR94MpDMbDNVuWS4dzSNsm4T_ttlhRpNfD0
+Message-ID: <CAJZ5v0gBCQW2wwdB+4SyBXtqiis2k1Z2L8SOVKwcVbNxPHqvYA@mail.gmail.com>
+Subject: Re: [PATCH v1] PM: sleep: core: Synchronize runtime PM status of
+ parents and children
+To: Johan Hovold <johan@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, 
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, 
+	Bjorn Helgaas <helgaas@kernel.org>, Linux PCI <linux-pci@vger.kernel.org>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Kevin Xie <kevin.xie@starfivetech.com>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000fa9276062d915482"
 
-
---fkugobpneo3jjh3p
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+--000000000000fa9276062d915482
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH net v1] net: stmmac: Apply new page pool parameters when
- SPH is enabled
-MIME-Version: 1.0
 
-On Fri, Feb 07, 2025 at 01:41:49PM +0000, Jon Hunter wrote:
-> Hi Furong,
->=20
-> On 07/02/2025 08:56, Furong Xu wrote:
-> > Commit df542f669307 ("net: stmmac: Switch to zero-copy in
-> > non-XDP RX path") makes DMA write received frame into buffer at offset
-> > of NET_SKB_PAD and sets page pool parameters to sync from offset of
-> > NET_SKB_PAD. But when Header Payload Split is enabled, the header is
-> > written at offset of NET_SKB_PAD, while the payload is written at
-> > offset of zero. Uncorrect offset parameter for the payload breaks dma
-> > coherence [1] since both CPU and DMA touch the page buffer from offset
-> > of zero which is not handled by the page pool sync parameter.
-> >=20
-> > And in case the DMA cannot split the received frame, for example,
-> > a large L2 frame, pp_params.max_len should grow to match the tail
-> > of entire frame.
-> >=20
-> > [1] https://lore.kernel.org/netdev/d465f277-bac7-439f-be1d-9a47dfe2d951=
-@nvidia.com/
-> >=20
-> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> > Reported-by: Brad Griffis <bgriffis@nvidia.com>
-> > Suggested-by: Ido Schimmel <idosch@idosch.org>
-> > Fixes: df542f669307 ("net: stmmac: Switch to zero-copy in non-XDP RX pa=
-th")
-> > Signed-off-by: Furong Xu <0x1207@gmail.com>
-> > ---
-> >   drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 5 +++++
-> >   1 file changed, 5 insertions(+)
-> >=20
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/driver=
-s/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > index b34ebb916b89..c0ae7db96f46 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > @@ -2094,6 +2094,11 @@ static int __alloc_dma_rx_desc_resources(struct =
-stmmac_priv *priv,
-> >   	pp_params.offset =3D stmmac_rx_offset(priv);
-> >   	pp_params.max_len =3D dma_conf->dma_buf_sz;
-> > +	if (priv->sph) {
-> > +		pp_params.offset =3D 0;
-> > +		pp_params.max_len +=3D stmmac_rx_offset(priv);
-> > +	}
-> > +
-> >   	rx_q->page_pool =3D page_pool_create(&pp_params);
-> >   	if (IS_ERR(rx_q->page_pool)) {
-> >   		ret =3D PTR_ERR(rx_q->page_pool);
->=20
->=20
-> Thanks for sending this. I can confirm that it fixes the issue we are see=
-ing
-> and so ...
->=20
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+On Fri, Feb 7, 2025 at 5:26=E2=80=AFPM Johan Hovold <johan@kernel.org> wrot=
+e:
+>
+> On Fri, Feb 07, 2025 at 05:06:32PM +0100, Johan Hovold wrote:
+> > On Fri, Feb 07, 2025 at 04:41:18PM +0100, Rafael J. Wysocki wrote:
+> > > On Fri, Feb 7, 2025 at 3:45=E2=80=AFPM Johan Hovold <johan@kernel.org=
+> wrote:
+> > > > On Fri, Feb 07, 2025 at 02:50:29PM +0100, Johan Hovold wrote:
+> >
+> > > > Ok, so the driver data is never set and runtime PM is never enabled=
+ for
+> > > > this simple bus device, which uses pm_runtime_force_suspend() for s=
+ystem
+> > > > sleep.
+> > >
+> > > This is kind of confusing.  Why use pm_runtime_force_suspend() if
+> > > runtime PM is never enabled and cannot really work?
+> >
+> > It's only done for some buses that this driver handles. The driver is
+> > buggy; I'm preparing a fix for it regardless of the correctness of the
+> > commit that now triggered this.
+>
+> Hmm. The driver implementation is highly odd, but actually works as long
+> as the runtime PM status is left at 'suspended' (as
+> pm_runtime_force_resume() won't enable runtime PM unless it was enabled
+> before suspend).
+>
+> So we'd strictly only need something like the below if we are going to
+> keep the set_active propagation.
 
-Yes, I can confirm as well. I've tested based on the discussion in the
-earlier thread and had the equivalent of this patch (modulo the ->sph
-check, but that's always true on this system), so:
+I think you are right.
 
-Tested-by: Thierry Reding <treding@nvidia.com>
+> diff --git a/drivers/bus/simple-pm-bus.c b/drivers/bus/simple-pm-bus.c
+> index 5dea31769f9a..d8e029e7e53f 100644
+> --- a/drivers/bus/simple-pm-bus.c
+> +++ b/drivers/bus/simple-pm-bus.c
+> @@ -109,9 +109,29 @@ static int simple_pm_bus_runtime_resume(struct devic=
+e *dev)
+>         return 0;
+>  }
+>
+> +static int simple_pm_bus_suspend(struct device *dev)
+> +{
+> +       struct simple_pm_bus *bus =3D dev_get_drvdata(dev);
+> +
+> +       if (!bus)
+> +               return 0;
+> +
+> +       return pm_runtime_force_suspend(dev);
+> +}
+> +
+> +static int simple_pm_bus_resume(struct device *dev)
+> +{
+> +       struct simple_pm_bus *bus =3D dev_get_drvdata(dev);
+> +
+> +       if (!bus)
+> +               return 0;
+> +
+> +       return pm_runtime_force_resume(dev);
+> +}
+> +
+>  static const struct dev_pm_ops simple_pm_bus_pm_ops =3D {
+>         RUNTIME_PM_OPS(simple_pm_bus_runtime_suspend, simple_pm_bus_runti=
+me_resume, NULL)
+> -       NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_fo=
+rce_resume)
+> +       NOIRQ_SYSTEM_SLEEP_PM_OPS(simple_pm_bus_suspend, simple_pm_bus_re=
+sume)
+>  };
+>
+>  #define ONLY_BUS       ((void *) 1) /* Match if the device is only a bus=
+. */
 
---fkugobpneo3jjh3p
-Content-Type: application/pgp-signature; name="signature.asc"
+In the meantime, I've cut the attached (untested) patch that should
+take care of the pm_runtime_force_suspend() issue altogether.
 
------BEGIN PGP SIGNATURE-----
+It changes the code to only set the device's runtime PM status to
+"active" if runtime PM is going to be enabled for it by the first
+pm_runtime_enable() call, which never happens for devices where
+runtime PM has never been enabled (because it is disabled for them
+once again in device_suspend_late()) and for devices subject to
+pm_runtime_force_suspend() during system suspend (because it disables
+runtime PM for them once again).
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmemN+MACgkQ3SOs138+
-s6Fq3A//eleSd2dC6AIYwZSlmN2xxQXFAVjTTNU/LQhRI2PSENWvFHSXJDcGTG+U
-OTEIid1JgSaw+/xwshMu0F6lR1OmIeBCMudKmla/AxFUEOYF2JWkYPQgCfGalJxe
-Ig9uZMsXmaxIeunEhaRQhYiBU0F9l7+IKe5yr8sFnUNrI1UJUQ23aJqAnCxJmtW7
-3w/KbNMMii2TygqUrDaVHaDqOe4azGVzAGNYSd1g1iNpVYiORO8t6VHpiUBtJfme
-k3ryZ+ptRKVTJX6pdiUYtjfTlSOW9ncvlgwyD8OGGaLG1RsoOWBiVTdGm13XDbm2
-tDEY4ggUyPYUmphjKNsCjivZ9vqeMWoQ35MDCR3/pI6j/RVDkNSQmEH55qLyW4WD
-67s3SF4eoDiAQAzzZ1C9vp96I2bm10J/NX2flJ036cw+2SXAl2rprzDrARhTupC9
-uKTCXlV7vep2zRRDIljBxZDE90WTUL4fj/u9cKDXjRkkYrf5inVJuMM9zTO56HGn
-hyYqmUhDklG4jLYmEp/g2H9pberttT7RCVo6UeI/P+Ms9B5Xszf+tiIzGti/SrDv
-pCTV4/2D/wucb7zdNeX+a2j6D1rr6CgITO5sWT7i2w/o/UcHoXQV4E/gY39V4s9O
-g1NrNtk9aOd2qalUqpS56aboQSaz04QWnYNubjlbxDgT9R+f46E=
-=AlgO
------END PGP SIGNATURE-----
+--000000000000fa9276062d915482
+Content-Type: text/x-patch; charset="US-ASCII"; name="pm-runtime-cond-set-active.patch"
+Content-Disposition: attachment; filename="pm-runtime-cond-set-active.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m6v342uq0>
+X-Attachment-Id: f_m6v342uq0
 
---fkugobpneo3jjh3p--
+LS0tCiBkcml2ZXJzL2Jhc2UvcG93ZXIvbWFpbi5jICAgIHwgICAyMCArKysrKysrKysrKysrKysr
+LS0tLQogZHJpdmVycy9iYXNlL3Bvd2VyL3J1bnRpbWUuYyB8ICAgNDEgKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrLS0tLS0KIGluY2x1ZGUvbGludXgvcG1fcnVudGltZS5oICAg
+fCAgICA1ICsrKysrCiAzIGZpbGVzIGNoYW5nZWQsIDU3IGluc2VydGlvbnMoKyksIDkgZGVsZXRp
+b25zKC0pCgotLS0gYS9kcml2ZXJzL2Jhc2UvcG93ZXIvbWFpbi5jCisrKyBiL2RyaXZlcnMvYmFz
+ZS9wb3dlci9tYWluLmMKQEAgLTY1NSwxNCArNjU1LDI1IEBACiAJICogdGhpcyBkZXZpY2UgbGF0
+ZXIsIGl0IG5lZWRzIHRvIGFwcGVhciBhcyAic3VzcGVuZGVkIiB0byBQTS1ydW50aW1lLAogCSAq
+IHNvIGNoYW5nZSBpdHMgc3RhdHVzIGFjY29yZGluZ2x5LgogCSAqCi0JICogT3RoZXJ3aXNlLCB0
+aGUgZGV2aWNlIGlzIGdvaW5nIHRvIGJlIHJlc3VtZWQsIHNvIHNldCBpdHMgUE0tcnVudGltZQot
+CSAqIHN0YXR1cyB0byAiYWN0aXZlIiB1bmxlc3MgaXRzIHBvd2VyLnNldF9hY3RpdmUgZmxhZyBp
+cyBjbGVhciwgaW4KLQkgKiB3aGljaCBjYXNlIGl0IGlzIG5vdCBuZWNlc3NhcnkgdG8gdXBkYXRl
+IGl0cyBQTS1ydW50aW1lIHN0YXR1cy4KKwkgKiBPdGhlcndpc2UsIHRoZSBkZXZpY2UgaXMgZ29p
+bmcgdG8gYmUgcmVzdW1lZCwgc28gdHJ5IHRvIHVwZGF0ZSBpdHMKKwkgKiBQTS1ydW50aW1lIHN0
+YXR1cyB1bmxlc3MgaXRzIHBvd2VyLnNldF9hY3RpdmUgZmxhZyBpcyBjbGVhciwgaW4gd2hpY2gK
+KwkgKiBjYXNlIGl0IGlzIG5vdCBuZWNlc3NhcnkgdG8gZG8gdGhhdC4KIAkgKi8KIAlpZiAoc2tp
+cF9yZXN1bWUpIHsKIAkJcG1fcnVudGltZV9zZXRfc3VzcGVuZGVkKGRldik7CiAJfSBlbHNlIGlm
+IChkZXYtPnBvd2VyLnNldF9hY3RpdmUpIHsKLQkJcG1fcnVudGltZV9zZXRfYWN0aXZlKGRldik7
+CisJCS8qCisJCSAqIElmIFBNLXJ1bnRpbWUgaXMgbm90IGdvaW5nIHRvIGJlIGFjdHVhbGx5IGVu
+YWJsZWQgZm9yIHRoZQorCQkgKiBkZXZpY2UgYnkgYSBzdWJzZXF1ZW50IHBtX3J1bnRpbWVfZW5h
+YmxlZCgpIGNhbGwsIGl0IG1heQorCQkgKiBoYXZlIG5ldmVyIGJlZW4gZW5hYmxlZCBvciBwbV9y
+dW50aW1lX2ZvcmNlX3N1c3BlbmQoKSBtYXkKKwkJICogaGF2ZSBiZWVuIHVzZWQuICBEb24ndCB1
+cGRhdGUgdGhlIFBNLXJ1bnRpbWUgc3RhdHVlIGluCisJCSAqIHRoYXQgY2FzZSBhbmQgc2V0IHBv
+d2VyLm5lZWRzX2ZvcmNlX3Jlc3VtZSBpbiBjYXNlCisJCSAqIHBtX3J1bnRpbWVfZm9yY2VfcmVz
+dW1lKCkgd2lsbCBiZSBjYWxsZWQgZm9yIHRoZSBkZXZpY2UKKwkJICogc3Vic2VxdWVudGx5Lgor
+CQkgKi8KKwkJaWYgKHBtX3J1bnRpbWVfY29uZF9zZXRfYWN0aXZlKGRldikgPiAwKQorCQkJZGV2
+LT5wb3dlci5uZWVkc19mb3JjZV9yZXN1bWUgPSB0cnVlOworCiAJCWRldi0+cG93ZXIuc2V0X2Fj
+dGl2ZSA9IGZhbHNlOwogCX0KIApAQCAtOTg4LDYgKzk5OSw3IEBACiAgRW5kOgogCWVycm9yID0g
+ZHBtX3J1bl9jYWxsYmFjayhjYWxsYmFjaywgZGV2LCBzdGF0ZSwgaW5mbyk7CiAJZGV2LT5wb3dl
+ci5pc19zdXNwZW5kZWQgPSBmYWxzZTsKKwlkZXYtPnBvd2VyLm5lZWRzX2ZvcmNlX3Jlc3VtZSA9
+IGZhbHNlOwogCiAgVW5sb2NrOgogCWRldmljZV91bmxvY2soZGV2KTsKLS0tIGEvZHJpdmVycy9i
+YXNlL3Bvd2VyL3J1bnRpbWUuYworKysgYi9kcml2ZXJzL2Jhc2UvcG93ZXIvcnVudGltZS5jCkBA
+IC0xMjUzLDkgKzEyNTMsMTAgQEAKIEVYUE9SVF9TWU1CT0xfR1BMKHBtX3J1bnRpbWVfZ2V0X2lm
+X2luX3VzZSk7CiAKIC8qKgotICogX19wbV9ydW50aW1lX3NldF9zdGF0dXMgLSBTZXQgcnVudGlt
+ZSBQTSBzdGF0dXMgb2YgYSBkZXZpY2UuCisgKiBwbV9ydW50aW1lX3NldF9zdGF0dXNfaW50ZXJu
+YWwgLSBTZXQgcnVudGltZSBQTSBzdGF0dXMgb2YgYSBkZXZpY2UuCiAgKiBAZGV2OiBEZXZpY2Ug
+dG8gaGFuZGxlLgogICogQHN0YXR1czogTmV3IHJ1bnRpbWUgUE0gc3RhdHVzIG9mIHRoZSBkZXZp
+Y2UuCisgKiBAY29uZDogQ2hhbmdlIHRoZSBzdGF0dXMgaWYgcnVudGltZSBQTSB3aWxsIGJlIGVu
+YWJsZWQgYnkgdGhlIG5leHQgYXR0ZW1wdC4KICAqCiAgKiBJZiBydW50aW1lIFBNIG9mIHRoZSBk
+ZXZpY2UgaXMgZGlzYWJsZWQgb3IgaXRzIHBvd2VyLnJ1bnRpbWVfZXJyb3IgZmllbGQgaXMKICAq
+IGRpZmZlcmVudCBmcm9tIHplcm8sIHRoZSBzdGF0dXMgbWF5IGJlIGNoYW5nZWQgZWl0aGVyIHRv
+IFJQTV9BQ1RJVkUsIG9yIHRvCkBAIC0xMjc1LDggKzEyNzYsMTIgQEAKICAqIG9mIHRoZSBAc3Rh
+dHVzIHZhbHVlKSBhbmQgdGhlIHN1cHBsaWVycyB3aWxsIGJlIGRlYWN0aWNhdGVkIG9uIGV4aXQu
+ICBUaGUKICAqIGVycm9yIHJldHVybmVkIGJ5IHRoZSBmYWlsaW5nIHN1cHBsaWVyIGFjdGl2YXRp
+b24gd2lsbCBiZSByZXR1cm5lZCBpbiB0aGF0CiAgKiBjYXNlLgorICoKKyAqIElmIEBjb25kIGlz
+IHNldCwgb25seSBjaGFuZ2UgdGhlIHN0YXR1cyBpZiBwb3dlci5kaXNhYmxlX2RlcHRoIGlzIGVx
+dWFsIHRvIDEsCisgKiBvciBkbyBub3RoaW5nIGFuZCByZXR1cm4gKHBvd2VyLmRpc2FibGVfZGVw
+dGggLSAxKSBvdGhlcndpc2UuCiAgKi8KLWludCBfX3BtX3J1bnRpbWVfc2V0X3N0YXR1cyhzdHJ1
+Y3QgZGV2aWNlICpkZXYsIHVuc2lnbmVkIGludCBzdGF0dXMpCitzdGF0aWMgaW50IHBtX3J1bnRp
+bWVfc2V0X3N0YXR1c19pbnRlcm5hbChzdHJ1Y3QgZGV2aWNlICpkZXYsCisJCQkJCSAgdW5zaWdu
+ZWQgaW50IHN0YXR1cywgYm9vbCBjb25kKQogewogCXN0cnVjdCBkZXZpY2UgKnBhcmVudCA9IGRl
+di0+cGFyZW50OwogCWJvb2wgbm90aWZ5X3BhcmVudCA9IGZhbHNlOwpAQCAtMTI5MiwxMCArMTI5
+NywyNiBAQAogCSAqIFByZXZlbnQgUE0tcnVudGltZSBmcm9tIGJlaW5nIGVuYWJsZWQgZm9yIHRo
+ZSBkZXZpY2Ugb3IgcmV0dXJuIGFuCiAJICogZXJyb3IgaWYgaXQgaXMgZW5hYmxlZCBhbHJlYWR5
+IGFuZCB3b3JraW5nLgogCSAqLwotCWlmIChkZXYtPnBvd2VyLnJ1bnRpbWVfZXJyb3IgfHwgZGV2
+LT5wb3dlci5kaXNhYmxlX2RlcHRoKQotCQlkZXYtPnBvd2VyLmRpc2FibGVfZGVwdGgrKzsKLQll
+bHNlCisJaWYgKGRldi0+cG93ZXIucnVudGltZV9lcnJvcikgeworCQlpZiAoY29uZCkKKwkJCWVy
+cm9yID0gLUVJTlZBTDsKKwkJZWxzZQorCQkJZGV2LT5wb3dlci5kaXNhYmxlX2RlcHRoKys7CisJ
+fSBlbHNlIGlmIChkZXYtPnBvd2VyLmRpc2FibGVfZGVwdGgpIHsKKwkJLyoKKwkJICogSWYgY29u
+ZCBpcyBzZXQsIG9ubHkgYXR0ZW1wdCB0byBjaGFuZ2UgdGhlIHN0YXR1cyBpZiB0aGUKKwkJICog
+bmV4dCBpbnZvY2F0aW9uIG9mIHBtX3J1bnRpbWVfZW5hYmxlKCkgZm9yIHRoZSBkZXZpY2UgaXMK
+KwkJICogZ29pbmcgdG8gYWN0dWFsbHkgZW5hYmxlIHJ1bnRpbWUgUE0gZm9yIGl0LgorCQkgKgor
+CQkgKiBUaGlzIGlzIHVzZWQgaW4gYSBjb3JuZXIgY2FzZSBkdXJpbmcgc3lzdGVtLXdpZGUgcmVz
+dW1lLgorCQkgKi8KKwkJaWYgKGNvbmQgJiYgZGV2LT5wb3dlci5kaXNhYmxlX2RlcHRoID4gMSkK
+KwkJCWVycm9yID0gZGV2LT5wb3dlci5kaXNhYmxlX2RlcHRoIC0gMTsKKwkJZWxzZQorCQkJZGV2
+LT5wb3dlci5kaXNhYmxlX2RlcHRoKys7CisJfSBlbHNlIHsKIAkJZXJyb3IgPSAtRUFHQUlOOwor
+CX0KIAogCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmRldi0+cG93ZXIubG9jaywgZmxhZ3MpOwog
+CkBAIC0xMzc2LDYgKzEzOTcsMTYgQEAKIAogCXJldHVybiBlcnJvcjsKIH0KKworaW50IHBtX3J1
+bnRpbWVfY29uZF9zZXRfYWN0aXZlKHN0cnVjdCBkZXZpY2UgKmRldikKK3sKKwlyZXR1cm4gcG1f
+cnVudGltZV9zZXRfc3RhdHVzX2ludGVybmFsKGRldiwgUlBNX0FDVElWRSwgdHJ1ZSk7Cit9CisK
+K2ludCBfX3BtX3J1bnRpbWVfc2V0X3N0YXR1cyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHVuc2lnbmVk
+IGludCBzdGF0dXMpCit7CisJcmV0dXJuIHBtX3J1bnRpbWVfc2V0X3N0YXR1c19pbnRlcm5hbChk
+ZXYsIHN0YXR1cywgZmFsc2UpOworfQogRVhQT1JUX1NZTUJPTF9HUEwoX19wbV9ydW50aW1lX3Nl
+dF9zdGF0dXMpOwogCiAvKioKLS0tIGEvaW5jbHVkZS9saW51eC9wbV9ydW50aW1lLmgKKysrIGIv
+aW5jbHVkZS9saW51eC9wbV9ydW50aW1lLmgKQEAgLTc1LDYgKzc1LDcgQEAKIGV4dGVybiBpbnQg
+cG1fcnVudGltZV9nZXRfaWZfYWN0aXZlKHN0cnVjdCBkZXZpY2UgKmRldik7CiBleHRlcm4gaW50
+IHBtX3J1bnRpbWVfZ2V0X2lmX2luX3VzZShzdHJ1Y3QgZGV2aWNlICpkZXYpOwogZXh0ZXJuIGlu
+dCBwbV9zY2hlZHVsZV9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgdW5zaWduZWQgaW50IGRl
+bGF5KTsKK2V4dGVybiBpbnQgcG1fcnVudGltZV9jb25kX3NldF9hY3RpdmUoc3RydWN0IGRldmlj
+ZSAqZGV2KTsKIGV4dGVybiBpbnQgX19wbV9ydW50aW1lX3NldF9zdGF0dXMoc3RydWN0IGRldmlj
+ZSAqZGV2LCB1bnNpZ25lZCBpbnQgc3RhdHVzKTsKIGV4dGVybiBpbnQgcG1fcnVudGltZV9iYXJy
+aWVyKHN0cnVjdCBkZXZpY2UgKmRldik7CiBleHRlcm4gdm9pZCBwbV9ydW50aW1lX2VuYWJsZShz
+dHJ1Y3QgZGV2aWNlICpkZXYpOwpAQCAtMjY4LDYgKzI2OSwxMCBAQAogewogCXJldHVybiAtRUlO
+VkFMOwogfQorc3RhdGljIGlubGluZSBpbnQgcG1fcnVudGltZV9jb25kX3NldF9hY3RpdmUoc3Ry
+dWN0IGRldmljZSAqZGV2KQoreworCXJldHVybiAxOworfQogc3RhdGljIGlubGluZSBpbnQgX19w
+bV9ydW50aW1lX3NldF9zdGF0dXMoc3RydWN0IGRldmljZSAqZGV2LAogCQkJCQkgICAgdW5zaWdu
+ZWQgaW50IHN0YXR1cykgeyByZXR1cm4gMDsgfQogc3RhdGljIGlubGluZSBpbnQgcG1fcnVudGlt
+ZV9iYXJyaWVyKHN0cnVjdCBkZXZpY2UgKmRldikgeyByZXR1cm4gMDsgfQo=
+--000000000000fa9276062d915482--
