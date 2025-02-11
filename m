@@ -1,481 +1,225 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2058.outbound.protection.outlook.com [40.107.93.58])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E621F4E3B;
-	Tue, 11 Feb 2025 10:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739270325; cv=fail; b=Ms26OipwMfXO+zSkexTHOpp3T0KrSNuT5oyiYLzTLLMem9RituJg3V96ONZsH1zt5KO7RtZLh0qyEO24xH749/ELq1HfcQJehl9ufyBXXsAZJ/JGdVsllxlLf8gVxRUr54ofiN2NLZhb9L5ffWZxgkrfwGzcoIFwXmozU1bBJhQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739270325; c=relaxed/simple;
-	bh=EXWf8B6tJ+T6u1ROcz287hsTdW1GxFokAd5ZjrpnYgA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Zze5Lnie+zQguUSdtxyvrl/34MY9ztv7Qwcyo4veKnEBU4Ih/Fi94iguww2e/EVAgHQxExbNN1b9Vw4O1stbbZ2dPM8B0r/g+CxmkYiUp4WCrXeceOBsf8ie+TNTYir0V8R9KWzLWeElr1JOBI2SLDeOPSLiCLL6FlmrMDGLTh0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Cst8iV3e; arc=fail smtp.client-ip=40.107.93.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D0B1F4E30
+	for <linux-tegra@vger.kernel.org>; Tue, 11 Feb 2025 10:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739270575; cv=none; b=ciHk8EEAJXcvF7M9SbyaY4/OUdg2/uyjZ0xdSO1Y7JcyaKjCGqljXxgjLsuSvi8FZt3vqsYa1RmNgaVtGUXZLu8mbJTlRPcjPrZPELyCe2D0ePM1Sq9+jb67nGmMAFaluxB0nqBG+vd8IgAoJwoVkNgwsidCmLLAN5rt/VUgKU8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739270575; c=relaxed/simple;
+	bh=E+sxrL1yANaEdJKT0z+BGlqsjvtvKEsGiY76jvUa0OE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ptYwKfWPMxyTfBsXpbKDmPyLnxdbLKyeayf+Bx8Cnu5XCtYue2tMehdxlZYwnbpozASUJ+k15UaPuvtcyBDto7ohqYTNHsGq66WZGTKQJ8qXBnw4AkRb02O1pBWtg5Jwqssh/ZZgAnnG8FaAllYRpylPuDwV3EIbdwF1bVwl2gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z4f+qoev; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Cst8iV3e"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ix0BAokoQNdI/dEQspE1rQdnkREER4B91WRVKP+RF3Zrby+5g5OzA7ZDZ3Pfpm29Nqh1tP9jGkjfwYZmRKakIAqZdg++BXLF1DwwDvGweZ+KaLKHY0y8xLshSIM53exuU1vsrioUBIfNrQ+4zM6p2dkLhw1JMt5GyknUJWkeiGNIrSVHN/ui3YQMxODUgIPtTfs+55zWjghNqF/9a6D0bpS+Szryb8nEu9JOEtoMFeC9JotWTF7cUHEcuE8CEafREfekfetpMOpX3+i3T82RGm/at2DZgBSGG7O0XgPKhEBXFFFtFX/BdovdYuSAi1Iwl3vaYNiVOlhg1VI7e41Btg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qnUuf7SehEfhVQIBXOaRT/pW9PHDCJlw2IJl3xtBEr0=;
- b=vdDRu50CGTT1uG0cQHMcqWOL2SqH5vcWiXT3wlMhgIzR103nE0XqIxM8N+ST5Z/f/54Y+sJk8HpbhVOZXRsROcsnzGBYlc3dm5LtYe0ZlpyKABW3qWqRSl/Uk6QWdNR9z1iysIToYJVfFas5npnov+Ms61DvNLGNtM1FF+y2E/vk3lEvoaGywQG8GdcfZfoCMuT/x6o3yl3c2n+NwN9qYrlS7WsrFXI1R7B8nG/cxQdvrDSL1vR9SKxbAhbZn//e2NDajsxAsdw2KinQDjrS00aVEN4241VvFbnN1MCTzDJCpnO74uZ0EMfN9u0b5wQwbr4fKJJQK1y2iAPs1/fXrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qnUuf7SehEfhVQIBXOaRT/pW9PHDCJlw2IJl3xtBEr0=;
- b=Cst8iV3exioxRyrmEwyhGmsQObF7NtaPxjj79Y1AMzT3d12PC6qBUrla5YXApr8zi+QQOd01kFIfqXB4pg3tOQADf/wmr+c40B2cr5VqWyRJ4uGPhd71i7ZCu0nqOQbeZ7vVMiK5CnsqY9k7h7zlU3f/SSOoUOW5664DMMm/UXI8exsmLTkIrJSGu6WzapvNycv9YJ+UpF3fv+DqE3VwhhPVBMbM5Hcu8jLfuYZc/45IjebDvOJ9Sh/lYIIBR+7NT+UwWvL9bWWPtj4W05y2a5PLLoS6vekD5h7gpDopVi0wbrSD2Aij6nl6f3vUFJ5MXjTpkflThLnced645tbtow==
-Received: from BL1PR13CA0071.namprd13.prod.outlook.com (2603:10b6:208:2b8::16)
- by MW4PR12MB7429.namprd12.prod.outlook.com (2603:10b6:303:21b::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8422.18; Tue, 11 Feb
- 2025 10:38:37 +0000
-Received: from BL6PEPF0001AB4A.namprd04.prod.outlook.com
- (2603:10b6:208:2b8:cafe::11) by BL1PR13CA0071.outlook.office365.com
- (2603:10b6:208:2b8::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.11 via Frontend Transport; Tue,
- 11 Feb 2025 10:38:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF0001AB4A.mail.protection.outlook.com (10.167.242.68) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.10 via Frontend Transport; Tue, 11 Feb 2025 10:38:36 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 11 Feb
- 2025 02:38:22 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 11 Feb
- 2025 02:38:22 -0800
-Received: from sumitg-l4t.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Tue, 11 Feb 2025 02:38:17 -0800
-From: Sumit Gupta <sumitg@nvidia.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <lenb@kernel.org>,
-	<robert.moore@intel.com>, <corbet@lwn.net>, <linux-pm@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<acpica-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <treding@nvidia.com>,
-	<jonathanh@nvidia.com>, <sashal@nvidia.com>, <vsethi@nvidia.com>,
-	<ksitaraman@nvidia.com>, <sanjayc@nvidia.com>, <bbasu@nvidia.com>,
-	<sumitg@nvidia.com>
-Subject: [Patch 5/5] cpufreq: CPPC: Add cppc_cpufreq_epp instance for Autonomous mode
-Date: Tue, 11 Feb 2025 16:07:37 +0530
-Message-ID: <20250211103737.447704-6-sumitg@nvidia.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250211103737.447704-1-sumitg@nvidia.com>
-References: <20250211103737.447704-1-sumitg@nvidia.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z4f+qoev"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1739270564;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tS4uDfWcuvYQmGwBRTPugY/bH8znvZA+Tt+Mk7Qa6b0=;
+	b=Z4f+qoevn0ayyp/xF3ZTkGdR462bjVn+KQLSfwUF020MIZMwUwSwhvPdZfi3Hsqxa0FLIm
+	XYDMcIxWI0/YQPJZYDPPdgFLp2UbViW8yUeo03vcPkqY6Rr0FPnZMn+tHIExfS8LdZACp8
+	XPA+iRd1qRa5KrESnAWLlBwUfBvMcg0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-U3bxnvLeNB6Esldtk16OGg-1; Tue, 11 Feb 2025 05:42:43 -0500
+X-MC-Unique: U3bxnvLeNB6Esldtk16OGg-1
+X-Mimecast-MFC-AGG-ID: U3bxnvLeNB6Esldtk16OGg
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38ddf370932so1101887f8f.0
+        for <linux-tegra@vger.kernel.org>; Tue, 11 Feb 2025 02:42:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739270562; x=1739875362;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tS4uDfWcuvYQmGwBRTPugY/bH8znvZA+Tt+Mk7Qa6b0=;
+        b=FeLoepkGr5q10CvGa9CqHBeGxcgTmfFgtKpEMvBkra6Obn7La3KM3U172yWy5C5GZr
+         hlrDmoMbBXpmBLB8pYMVpemvebsy0tP0awmYN1LKnRBbi+8oJKI2QqOfzFB3Ypjt3JHO
+         9YEC1QojFhQbX797HG7CvMBI2KrFub4CUSzpxqMpN0rXH6OzIY9yAE/UokW4rB1+GbZ7
+         kSWxMoOa3kz8d6pfXtwQ/sbqIAPmRUslEyZsWogKgH/l1RmA0R/jh2O3Knbo8aC0S2Rn
+         k3xnrnAaN1nGUftZ09PIEHdNNwCytugTCqt8TMO0akDR1EhOUo8ttTCznD+8uJ5pzHAj
+         lH7w==
+X-Forwarded-Encrypted: i=1; AJvYcCX9by2UpeI6DbrGsCzu9UqWdA6lBoIez7Z+bq8IusE6V5OnQqYPM1wcCI/5wfBAVgVKjYRTNLhSEyJGjA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYaggW9HvKhMsZNh4l5wqaYwsf2OX/He2jPnPaH8Z1ov2X59WF
+	UycGE5uV38BfrTuXoNlL4MPU3ZYAHaeSRTLtEezSCNUU3iHvprZoXfz1HZDViOmxaN3UVQ4RV5u
+	d96d61YiEpwUESIgQUGyF31/YO3pGZrHSG+4pJOJIRqXzQrTd8pIAkxG3bMQs
+X-Gm-Gg: ASbGncu9wO9BvNjY6afNxeWjz3GirJV1WuGx9LW3ftXhH4AZrqfBpSSVvcv1eb71X5K
+	wHZ7A9aGKkuzkUlQux8Gti/qE2DM305Mcx256qT6MIFP22EDe+sjUqaXGIb6BChK3pzFmS+iCYG
+	sIMZ18MVOMvfWnRyckT/i/x8IhrAEU58XceTmCqD8eNIqX6Wsr/cCARP9rVhJVCGsTJZ9gMRQyD
+	WWgiXbPE3fNAWLfkXFc9fAQOYLZSI9BCFGX9KWmMS8SlZ3eKgPd1BKXwFCv+GcoiXXP/9aw29ry
+	6SRX2abeiVeSiOTFgCzpR06YsvCRxMw6oA==
+X-Received: by 2002:a5d:64e4:0:b0:38d:d2ea:9579 with SMTP id ffacd0b85a97d-38dd2ea96fbmr10470503f8f.46.1739270562248;
+        Tue, 11 Feb 2025 02:42:42 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE0oXoqkT03z4wD6sPrQ0LX9Ru2emhr5eBpgbRtVoEkFV4H0QONGEpLDzcnBm1oq86T69xrlw==
+X-Received: by 2002:a5d:64e4:0:b0:38d:d2ea:9579 with SMTP id ffacd0b85a97d-38dd2ea96fbmr10470469f8f.46.1739270561863;
+        Tue, 11 Feb 2025 02:42:41 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.34.42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dc5c8c37esm12705014f8f.2.2025.02.11.02.42.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2025 02:42:41 -0800 (PST)
+Date: Tue, 11 Feb 2025 11:42:39 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+Message-ID: <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
+References: <Z6MLAX_TKowbmdS1@jlelli-thinkpadt14gen4.remote.csb>
+ <Z6M5fQB9P1_bDF7A@jlelli-thinkpadt14gen4.remote.csb>
+ <8572b3bc-46ec-4180-ba55-aa6b9ab7502b@nvidia.com>
+ <Z6SA-1Eyr1zDTZDZ@jlelli-thinkpadt14gen4.remote.csb>
+ <a305f53d-44d4-4d7a-8909-6a63ec18a04b@nvidia.com>
+ <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
+ <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
+ <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
+ <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
+ <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4A:EE_|MW4PR12MB7429:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4bf04b6-3274-438c-bf71-08dd4a883db2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|36860700013|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+lwverIXwSQlWR1Lt2zXelA9gmFTiYU2KS2Vcbu90iQcvjLWdOKzL3bfhc3m?=
- =?us-ascii?Q?/KPQ6PFCq8O89F8UCot4BGomcW8C7aAFLHx3bEjQPrg2Lra9ziTvIW1NaAvQ?=
- =?us-ascii?Q?2qZioqQEuK+JT6Ha6rO/LtX+2BcVvcsVtAS+TeWJMkTvX4JfZMW8Wiy8hpU6?=
- =?us-ascii?Q?EDfMkoUuseP9JgzaqqM+0Zy2cy/N2Eq08hoRBBwXKqRuoIQ5SQ8jC3gF15B0?=
- =?us-ascii?Q?ULt2L2vIPV/kkUJv+OyXjcmBsRk3HekQaU+gSwhSH8Q3LbXPUeJkYKQWRyHR?=
- =?us-ascii?Q?nTs02UBkAt8sGyM2BISie8e1jzI3xgHMziYRAkrR3dtQutcSTmpeuMIRJdLE?=
- =?us-ascii?Q?9GQ4+hmm/07f5xze7Vh3wgV+qz9QSmUvvr1IR2W+QhjLrmCIjMvksfx+b0d7?=
- =?us-ascii?Q?91zgw8uMqrqZ1ejiI1VGkXkeVpRpd/rIH7u1wTrcnqYLYdTc2uE9XO8qvnvo?=
- =?us-ascii?Q?Lgg0z0npYRgGd44Ou64ScQxv171y/3GP+S/opLwzhrQQs2uWwh/CyLJ0tMEV?=
- =?us-ascii?Q?V8jACGoOsikYaHCFT7LRMSvzLzilu8MqM2zsp3k6QVaZxXGItr0kgHYadPda?=
- =?us-ascii?Q?X4HoP98Jowt5flkJHrCxdNRB97LOqNu+4Coxmm/TN4dlIY8Inr4iE/fa0eVk?=
- =?us-ascii?Q?4Iz+F/v/Bb5r6svDKBl65lnexIF2yz8zsM3088GSCUAo0agH+5mfSPdpX15Y?=
- =?us-ascii?Q?5CH1ntPcPJ84AH0FJX/8kd7wWZf19OUb8GEI5iOtlG+A1alM17eB4QEHdqai?=
- =?us-ascii?Q?jbP+M7fGS6xZ/Dtl1Z1FASv9iLZFxckAODvXxETgE9mhpLnxx0fKgbqiNlUR?=
- =?us-ascii?Q?UCY7tkN1nQZzNZFxfOFo1xX+ZeUyxh/WRDEfgMjHSHsOJwV1U8PtwMqyveB9?=
- =?us-ascii?Q?olikGGqXbPe03sxxbJ97ciQOiQDHoKKWIiX5nTfw02R+iRthd7+dzBAEEexf?=
- =?us-ascii?Q?7/6GMWbxehUaA2xtAJbEbfsdiceOZxRh8UO5PSaZ7xs7FJk0W52EU2ovB9Yv?=
- =?us-ascii?Q?kSkiC6hd0yhCiE9QnGi4w2Z1k1lGKjXzikzrZj5bXQNRhTHckTS79aopNUhz?=
- =?us-ascii?Q?8qyqiSb5wNSdL//YAMJjRTOORTN4BtJZTmQW7qhtViMZqrTqO/Sga2BFbV6d?=
- =?us-ascii?Q?3iF4C2YmUdP3HwVT4gClYfwDNi7yXu6NmSbabMB+huFGeH6dLrcjHQbGWXAT?=
- =?us-ascii?Q?Ybz8iyEkGD+oY09S/EiXSdolbTAgycMxxExeDFg3lJuLyyVwWAyI5e5vzrXz?=
- =?us-ascii?Q?dQHEZfTlniEpV0ZP1atQHKcitOmYLJXgsYSHqIoq65xNc74TRMid2eOrUWJt?=
- =?us-ascii?Q?VFgCL3Vm+6Iq/LkyAQt7hW9eER/A7i1jymG/X0XtJzNzuyUWFDCdYlvApURP?=
- =?us-ascii?Q?DjtqTv4P2Xb6Vc1rwinxPL6ZtXqc+AIiJIe0p4bLXdmI496NCYpasX10vaTN?=
- =?us-ascii?Q?LX4w0bueNTwXKlFL5iDtUwafv9RAdSFx4BKTKB++hobapeSm1LI8PEpJGYiv?=
- =?us-ascii?Q?LlpjFgzxd7/Py8yhhcuWBceKB42wQm5Ojeby?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(36860700013)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2025 10:38:36.5735
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4bf04b6-3274-438c-bf71-08dd4a883db2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB4A.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7429
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
 
-Add new 'cppc_cpufreq_epp' instance of the 'cppc_cpufreq' driver for
-supporting the Autonomous Performance Level Selection and Engergy
-Performance Preference (EPP) as per the ACPI specification.
-Autonomous selection will get enabled during boot if 'cppc_auto_sel'
-bootarg is present or the 'Autonomous Selection Enable' register is
-set before kernel boot.
+On 11/02/25 10:15, Christian Loehle wrote:
+> On 2/10/25 17:09, Juri Lelli wrote:
+> > Hi Christian,
+> > 
+> > Thanks for taking a look as well.
+> > 
+> > On 07/02/25 15:55, Christian Loehle wrote:
+> >> On 2/7/25 14:04, Jon Hunter wrote:
+> >>>
+> >>>
+> >>> On 07/02/2025 13:38, Dietmar Eggemann wrote:
+> >>>> On 07/02/2025 11:38, Jon Hunter wrote:
+> >>>>>
+> >>>>> On 06/02/2025 09:29, Juri Lelli wrote:
+> >>>>>> On 05/02/25 16:56, Jon Hunter wrote:
+> >>>>>>
+> >>>>>> ...
+> >>>>>>
+> >>>>>>> Thanks! That did make it easier :-)
+> >>>>>>>
+> >>>>>>> Here is what I see ...
+> >>>>>>
+> >>>>>> Thanks!
+> >>>>>>
+> >>>>>> Still different from what I can repro over here, so, unfortunately, I
+> >>>>>> had to add additional debug printks. Pushed to the same branch/repo.
+> >>>>>>
+> >>>>>> Could I ask for another run with it? Please also share the complete
+> >>>>>> dmesg from boot, as I would need to check debug output when CPUs are
+> >>>>>> first onlined.
+> >>>>
+> >>>> So you have a system with 2 big and 4 LITTLE CPUs (Denver0 Denver1 A57_0
+> >>>> A57_1 A57_2 A57_3) in one MC sched domain and (Denver1 and A57_0) are
+> >>>> isol CPUs?
+> >>>
+> >>> I believe that 1-2 are the denvers (even thought they are listed as 0-1 in device-tree).
+> >>
+> >> Interesting, I have yet to reproduce this with equal capacities in isolcpus.
+> >> Maybe I didn't try hard enough yet.
+> >>
+> >>>
+> >>>> This should be easy to set up for me on my Juno-r0 [A53 A57 A57 A53 A53 A53]
+> >>>
+> >>> Yes I think it is similar to this.
+> >>>
+> >>> Thanks!
+> >>> Jon
+> >>>
+> >>
+> >> I could reproduce that on a different LLLLbb with isolcpus=3,4 (Lb) and
+> >> the offlining order:
+> >> echo 0 > /sys/devices/system/cpu/cpu5/online
+> >> echo 0 > /sys/devices/system/cpu/cpu1/online
+> >> echo 0 > /sys/devices/system/cpu/cpu3/online
+> >> echo 0 > /sys/devices/system/cpu/cpu2/online
+> >> echo 0 > /sys/devices/system/cpu/cpu4/online
+> >>
+> >> while the following offlining order succeeds:
+> >> echo 0 > /sys/devices/system/cpu/cpu5/online
+> >> echo 0 > /sys/devices/system/cpu/cpu4/online
+> >> echo 0 > /sys/devices/system/cpu/cpu1/online
+> >> echo 0 > /sys/devices/system/cpu/cpu2/online
+> >> echo 0 > /sys/devices/system/cpu/cpu3/online
+> >> (Both offline an isolcpus last, both have CPU0 online)
+> >>
+> >> The issue only triggers with sugov DL threads (I guess that's obvious, but
+> >> just to mention it).
+> > 
+> > It wasn't obvious to me at first :). So thanks for confirming.
+> > 
+> >> I'll investigate some more later but wanted to share for now.
+> > 
+> > So, problem actually is that I am not yet sure what we should do with
+> > sugovs' bandwidth wrt root domain accounting. W/o isolation it's all
+> > good, as it gets accounted for correctly on the dynamic domains sugov
+> > tasks can run on. But with isolation and sugov affected_cpus that cross
+> > isolation domains (e.g., one BIG one little), we can get into troubles
+> > not knowing if sugov contribution should fall on the DEF or DYN domain.
+> > 
+> > Hummm, need to think more about it.
+> 
+> That is indeed tricky.
+> I would've found it super appealing to always just have sugov DL tasks activate
+> on this_cpu and not have to worry about all this, but then you have contention
+> amongst CPUs of a cluster and there are energy improvements from always
+> having little cores handle all sugov DL tasks, even for the big CPUs,
+> that's why I introduced
+> commit 93940fbdc468 ("cpufreq/schedutil: Only bind threads if needed")
+> but that really doesn't make this any easier.
 
-When Autonomous selection capability is enabled, then the hardware is
-allowed to autonomously select the CPU frequency within the min and
-max perf boundaries according to EPP hints.
+What about we actually ignore them consistently? We already do that for
+admission control, so maybe we can do that when rebuilding domains as
+well (until we find maybe a better way to deal with them).
 
-EPP values range from '0x0'(performance preference) to '0xFF'(energy
-efficiency preference). It influences the rate of performance
-increase/decrease and the result of the hardware's energy efficiency
-and performance optimization policies.
+Does the following make any difference?
 
-Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
 ---
- .../admin-guide/kernel-parameters.txt         |  11 +
- drivers/cpufreq/cppc_cpufreq.c                | 234 +++++++++++++++++-
- 2 files changed, 241 insertions(+), 4 deletions(-)
+ kernel/sched/deadline.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index aa7447f8837c..8777970e6e35 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -904,6 +904,17 @@
- 			Format:
- 			<first_slot>,<last_slot>,<port>,<enum_bit>[,<debug>]
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index b254d878789d..8f7420e0c9d6 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2995,7 +2995,7 @@ void dl_add_task_root_domain(struct task_struct *p)
+ 	struct dl_bw *dl_b;
  
-+	cppc_auto_sel=  [CPU_FREQ] Autonomous Performance Level Selection.
-+			When Autonomous selection is enabled, then the hardware is
-+			allowed to autonomously select the CPU frequency.
-+			In Autonomous mode, Engergy Performance Preference(EPP)
-+			provides input to the hardware to favour performance (0x0)
-+			or energy efficiency (0xff).
-+			Format: <bool>
-+			Default: disabled.
-+			0: force disabled
-+			1: force enabled
-+
- 	cpuidle.off=1	[CPU_IDLE]
- 			disable the cpuidle sub-system
- 
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index 17c49653a3c4..a4fa46cc2a6f 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -34,7 +34,10 @@
-  */
- static LIST_HEAD(cpu_data_list);
- 
--static struct cpufreq_driver cppc_cpufreq_driver;
-+/* Autonomous Selection */
-+static bool auto_sel_mode;
-+
-+static struct cpufreq_driver *current_cppc_cpufreq_driver;
- 
- #ifdef CONFIG_ACPI_CPPC_CPUFREQ_FIE
- static enum {
-@@ -519,7 +522,7 @@ static int populate_efficiency_class(void)
- 		}
- 		index++;
+ 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
+-	if (!dl_task(p)) {
++	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
+ 		raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
+ 		return;
  	}
--	cppc_cpufreq_driver.register_em = cppc_cpufreq_register_em;
-+	current_cppc_cpufreq_driver->register_em = cppc_cpufreq_register_em;
- 
- 	return 0;
- }
-@@ -567,6 +570,12 @@ static struct cppc_cpudata *cppc_cpufreq_get_cpu_data(unsigned int cpu)
- 		goto free_mask;
- 	}
- 
-+	ret = cppc_get_perf_ctrls(cpu, &cpu_data->perf_ctrls);
-+	if (ret) {
-+		pr_debug("Err reading CPU%d perf ctrls: ret:%d\n", cpu, ret);
-+		goto free_mask;
-+	}
-+
- 	list_add(&cpu_data->node, &cpu_data_list);
- 
- 	return cpu_data;
-@@ -672,6 +681,171 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	return ret;
- }
- 
-+static int cppc_cpufreq_epp_cpu_init(struct cpufreq_policy *policy)
-+{
-+	unsigned int cpu = policy->cpu;
-+	struct cppc_cpudata *cpu_data;
-+	struct cppc_perf_ctrls *ctrls;
-+	struct cppc_perf_caps *caps;
-+	int ret;
-+
-+	cpu_data = cppc_cpufreq_get_cpu_data(cpu);
-+	if (!cpu_data) {
-+		pr_err("Error in acquiring _CPC/_PSD data for CPU%d.\n", cpu);
-+		return -ENODEV;
-+	}
-+	caps = &cpu_data->perf_caps;
-+	ctrls = &cpu_data->perf_ctrls;
-+	policy->driver_data = cpu_data;
-+
-+	policy->min = cppc_perf_to_khz(caps, ctrls->min_perf);
-+	policy->max = cppc_perf_to_khz(caps, ctrls->max_perf);
-+
-+	/*
-+	 * Set cpuinfo.min_freq to Lowest to make the full range of performance
-+	 * available if userspace wants to use any perf between lowest & minimum perf
-+	 */
-+	policy->cpuinfo.min_freq = cppc_perf_to_khz(caps, caps->lowest_perf);
-+	policy->cpuinfo.max_freq = cppc_perf_to_khz(caps, caps->highest_perf);
-+
-+	policy->transition_delay_us = cppc_cpufreq_get_transition_delay_us(cpu);
-+	policy->shared_type = cpu_data->shared_type;
-+
-+	switch (policy->shared_type) {
-+	case CPUFREQ_SHARED_TYPE_HW:
-+	case CPUFREQ_SHARED_TYPE_NONE:
-+		/* Nothing to be done - we'll have a policy for each CPU */
-+		break;
-+	case CPUFREQ_SHARED_TYPE_ANY:
-+		/*
-+		 * All CPUs in the domain will share a policy and all cpufreq
-+		 * operations will use a single cppc_cpudata structure stored
-+		 * in policy->driver_data.
-+		 */
-+		cpumask_copy(policy->cpus, cpu_data->shared_cpu_map);
-+		break;
-+	default:
-+		pr_debug("Unsupported CPU co-ord type: %d\n",
-+			 policy->shared_type);
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	/* Set policy->cur to max now. The governors will adjust later. */
-+	policy->cur = cppc_perf_to_khz(caps, caps->highest_perf);
-+
-+	ret = cppc_set_perf_ctrls(cpu, &cpu_data->perf_ctrls);
-+	if (ret) {
-+		pr_debug("Err setting perf value:%d on CPU:%d. ret:%d\n",
-+			 caps->highest_perf, cpu, ret);
-+		goto out;
-+	}
-+
-+	cppc_cpufreq_cpu_fie_init(policy);
-+	return 0;
-+
-+out:
-+	cppc_cpufreq_put_cpu_data(policy);
-+	return ret;
-+}
-+
-+static int cppc_cpufreq_epp_update_perf_ctrls(struct cpufreq_policy *policy,
-+					      u32 highest_perf, u32 lowest_perf)
-+{
-+	struct cppc_cpudata *cpu_data = policy->driver_data;
-+	int ret;
-+
-+	pr_debug("cpu%d, curr max_perf:%u, curr min_perf:%u, highest_perf:%u, lowest_perf:%u\n",
-+		 policy->cpu, cpu_data->perf_ctrls.max_perf, cpu_data->perf_ctrls.min_perf,
-+		 highest_perf, lowest_perf);
-+
-+	cpu_data->perf_ctrls.max_perf = highest_perf;
-+	cpu_data->perf_ctrls.min_perf = lowest_perf;
-+
-+	ret = cppc_set_perf_ctrls(policy->cpu, &cpu_data->perf_ctrls);
-+	if (ret) {
-+		pr_debug("Failed to set perf_ctrls on CPU:%d. ret:%d\n", policy->cpu, ret);
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+static int cppc_cpufreq_epp_update_auto_mode(struct cpufreq_policy *policy, int auto_sel, u32 epp)
-+{
-+	struct cppc_cpudata *cpu_data = policy->driver_data;
-+	int ret, curr_epp;
-+
-+	curr_epp = cpu_data->perf_ctrls.energy_perf;
-+	pr_debug("cpu%d, curr epp:%u, new epp:%u, curr mode:%u, new mode:%u\n",
-+		 curr_epp, epp, cpu_data->perf_caps.auto_sel, auto_sel);
-+
-+	/* set Performance preference as default */
-+	cpu_data->perf_ctrls.energy_perf = epp;
-+	ret = cppc_set_epp_perf(policy->cpu, &cpu_data->perf_ctrls, auto_sel);
-+	if (ret < 0) {
-+		pr_err("failed to set energy perf value (%d)\n", ret);
-+		cpu_data->perf_ctrls.energy_perf = curr_epp;
-+		return ret;
-+	}
-+	cpu_data->perf_caps.auto_sel = auto_sel;
-+
-+	return ret;
-+}
-+
-+static int cppc_cpufreq_epp_update_perf(struct cpufreq_policy *policy, int auto_sel, u32 epp,
-+					u32 highest_perf, u32 lowest_perf)
-+{
-+	struct cppc_cpudata *cpu_data = policy->driver_data;
-+	int ret;
-+
-+	ret = cppc_cpufreq_epp_update_perf_ctrls(policy, highest_perf, lowest_perf);
-+	if (ret)
-+		return ret;
-+
-+	ret = cppc_cpufreq_epp_update_auto_mode(policy, auto_sel, epp);
-+	if (ret)
-+		return ret;
-+
-+	return ret;
-+}
-+
-+static int cppc_cpufreq_epp_set_policy(struct cpufreq_policy *policy)
-+{
-+	struct cppc_cpudata *cpu_data = policy->driver_data;
-+	int ret;
-+
-+	if (!cpu_data)
-+		return -ENODEV;
-+
-+	ret = cppc_cpufreq_epp_update_perf(policy, true, CPPC_EPP_PERFORMANCE_PREF,
-+					   cpu_data->perf_caps.highest_perf,
-+					   cpu_data->perf_caps.lowest_perf);
-+	if (ret)
-+		return ret;
-+
-+	return ret;
-+}
-+
-+static void cppc_cpufreq_epp_cpu_exit(struct cpufreq_policy *policy)
-+{
-+	struct cppc_cpudata *cpu_data = policy->driver_data;
-+	int ret;
-+
-+	cppc_cpufreq_cpu_fie_exit(policy);
-+
-+	cpu_data->perf_ctrls.desired_perf = cpu_data->perf_caps.lowest_perf;
-+
-+	cppc_cpufreq_epp_update_perf_ctrls(policy, cpu_data->perf_caps.highest_perf,
-+					   cpu_data->perf_caps.lowest_perf);
-+
-+	ret = cppc_set_auto_sel(policy->cpu, false);
-+	if (ret)
-+		pr_debug("failed to disable autonomous selection (%d)\n", ret);
-+
-+	cppc_cpufreq_put_cpu_data(policy);
-+}
-+
- static void cppc_cpufreq_cpu_exit(struct cpufreq_policy *policy)
- {
- 	struct cppc_cpudata *cpu_data = policy->driver_data;
-@@ -828,17 +1002,57 @@ static struct cpufreq_driver cppc_cpufreq_driver = {
- 	.name = "cppc_cpufreq",
- };
- 
-+static struct cpufreq_driver cppc_cpufreq_epp_driver = {
-+	.flags = CPUFREQ_CONST_LOOPS,
-+	.verify = cppc_verify_policy,
-+	.setpolicy = cppc_cpufreq_epp_set_policy,
-+	.get = cppc_cpufreq_get_rate,
-+	.init = cppc_cpufreq_epp_cpu_init,
-+	.exit = cppc_cpufreq_epp_cpu_exit,
-+	.attr = cppc_cpufreq_attr,
-+	.name = "cppc_cpufreq_epp",
-+};
-+
-+static int cppc_cpufreq_auto_sel_enable(bool auto_sel_mode)
-+{
-+	struct cppc_cpudata *cpu_data;
-+	int cpu, pref, ret = 0;
-+
-+	if (auto_sel_mode) {
-+		for_each_present_cpu(cpu) {
-+			/* Enable autonomous mode */
-+			ret = cppc_set_auto_sel(cpu, true);
-+			if (ret)
-+				pr_debug("failed to enable autonomous selection (%d)\n", ret);
-+		}
-+	}
-+
-+	return ret;
-+}
-+
- static int __init cppc_cpufreq_init(void)
- {
-+	struct cppc_perf_caps caps;
- 	int ret;
- 
- 	if (!acpi_cpc_valid())
- 		return -ENODEV;
- 
-+	cppc_get_auto_sel_caps(0, &caps);
-+	if (auto_sel_mode || caps.auto_sel) {
-+		ret = cppc_cpufreq_auto_sel_enable(true);
-+		if (ret)
-+			return ret;
-+
-+		current_cppc_cpufreq_driver = &cppc_cpufreq_epp_driver;
-+	} else {
-+		current_cppc_cpufreq_driver = &cppc_cpufreq_driver;
-+	}
-+
- 	cppc_freq_invariance_init();
- 	populate_efficiency_class();
- 
--	ret = cpufreq_register_driver(&cppc_cpufreq_driver);
-+	ret = cpufreq_register_driver(current_cppc_cpufreq_driver);
- 	if (ret)
- 		cppc_freq_invariance_exit();
- 
-@@ -859,12 +1073,24 @@ static inline void free_cpu_data(void)
- 
- static void __exit cppc_cpufreq_exit(void)
- {
--	cpufreq_unregister_driver(&cppc_cpufreq_driver);
-+	cpufreq_unregister_driver(current_cppc_cpufreq_driver);
- 	cppc_freq_invariance_exit();
- 
- 	free_cpu_data();
- }
- 
-+static int __init cppc_auto_sel_setup(char *buf)
-+{
-+	int ret = 0;
-+
-+	ret = kstrtobool(buf, &auto_sel_mode);
-+	if (!ret)
-+		pr_err("Wrong autonomous selection param\n");
-+
-+	return ret;
-+}
-+__setup("cppc_auto_sel=", cppc_auto_sel_setup);
-+
- module_exit(cppc_cpufreq_exit);
- MODULE_AUTHOR("Ashwin Chaugule");
- MODULE_DESCRIPTION("CPUFreq driver based on the ACPI CPPC v5.0+ spec");
--- 
-2.25.1
 
