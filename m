@@ -1,174 +1,377 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2085.outbound.protection.outlook.com [40.107.236.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C574262D21;
-	Tue, 11 Feb 2025 17:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739294474; cv=fail; b=Co59ygllmvpceEyTjPEyeUrab3tlq/8AvWXdWgB33Qw8hkpIr3NawPkh+oZcM+ZZpAp6c7tOn6nCLJ/8jd9EVhSV9cUZGbFJBqBtyLuMla/KLWNqLKBSygwGjMS1x4Sjn/RSCA3rjRhM2w8D1s2y9o+1dmZ6vdy3pZfe95NaVCM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739294474; c=relaxed/simple;
-	bh=37W3yOA3j/RWRFmUR0HLIPlC8kpGry9zzti8PefNSrg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JWFlCAI/qPUUVFOeoZIzZQLkS+gbCqyS0eJDUUCoTdQ67pJ3I3wZUDjH5Y06v+vBxWZSSf0JyELD2G7zUgIrxpNGL5IwUcQ9hCx/CYRw2vZ3T0W4ps28arXj+WGbP1zto+/ZRbWwckSFCg0jSexQ2Hh53oxDTdwtJ55HlK8X7o4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Pa5CMcHa; arc=fail smtp.client-ip=40.107.236.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEE626157E;
+	Tue, 11 Feb 2025 17:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739295940; cv=none; b=YmBIXym/ilwnVoeYqwdwClIpOIxOsmtZIRrhP2Q908pmOhGZYPIZGvHWwBLT+LH1gfBosmIvv4ebX3QQ/pumXNDjhZcbze0MHQTnRxfIp8IzQBq2EwVIfUYJt2kazYMVLOWE1Ohp3hxPNJkRrL0UPHzIXI2mPGOibIhXT3WDbbE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739295940; c=relaxed/simple;
+	bh=uf8OFglXgDhKFByMZzbpcJz9amIWUJuSpmzKzXAIXFo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X3gTdW9reF1cHVEZoqlWsHrjNnuIOzOMuKb9Qjvbt1q7WM3CcnZGpP0EzJWzUbiSropkfjcybCXlYMhGW7fseJYe24kNPhpTp+T2c/UF37qMbQfcO4O0mZk+1Thx2zD6181o9BEkgkc1ub3OmnFdBO5lo/6VhnbyicOdbsz6vIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NoFvSaSt; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Pa5CMcHa"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JK7I4N+limHnlSh2eSPA/LSh0r3l/9Hr/a1w0GO2JJB9LNzb1ZYnmUJCO4wZ98POuxtHGY0xDeU7mkxNjC6Chhm8NNUb04RPUCxl6uYV6xFX0efcoYI/iwSB2XT6dkw1ZOssoCOG+5LB8vFXkNWG6qjftXJHNEy9IFx4YMktiE1Az7i3uonIgM9S46ifTJnoRFkuSEng6pZFw31M7e9M06m3zkpKaE6pQs++5LtNusGYhscUvjuj/A96Wfj34/tBN+MM5vUXB9G5vKbv33qsHlziVdB9roSX0top1bjlFGL+zWKFvTX0jwwG5wSbH4Tk9SJ9Kfd9QLw8EOAPxL+jJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2xkh8gOUn+tIzldnXrb/Kpm4oA/hXqAd1LJMDcwDARU=;
- b=ury7+Spupsbq1ZIwvw99kPViVaK9RmG5mLS8xUcxCw4DhkoIX8Nel3AMG0paqDGRUQaHxzHa1mQu6Qt4nCWV4P47OT/eDZKZhrYdJyKRTH22TulKk0XxnK5qbgwbsJzuEVn+R7/SkxHuHlY5mfBaTCbulbbQ7LpFIyfwZnl22OjF2xOx/2Xb3OTPRT/qPbpvlKWdCJASMX1REjJNg+SbYi93xsAUT3quMNKHiZG4b7BcW5PFGEijLiLLn9utD7Nx/naqTeFL/wFVWALwE659hyvJfmzrG1Cg9mO+v4R39FZWLd7b38wLJworFzKSn621X/ue2z1ReXQ94l7v3K2Vyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gondor.apana.org.au
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2xkh8gOUn+tIzldnXrb/Kpm4oA/hXqAd1LJMDcwDARU=;
- b=Pa5CMcHa+lkvMvuH2RukCtscbvzlPDnfUofOTr/WUO9z5ZL5Xe1ole2JnjDxIWEbkcB84D3yjGNwf/R/SZeOmxXtMF99fxNbe0P0wdjBOcnQOhl5UaJA9tkuCbelNfwnQRo1ht5DtBOfR6MYRi/GfyKkQMnJx1mmRE7Q1xlHzBGE7ve5gQwGZ8AlwpWGF3f9xhsTPd19taFcmD0tWFoIYY7k4sWocfBG/lG6NNw7OhfvNh3+GVjDV2aZ2EleH/EEvs1b/9b3dI3uXbke7gqzA+GAc5MwHSD+FgyaMOqltDt7dDfDA3j0xM0r7h5HoKoWzoFEN0+Kx5Mqyk0FXDrDIA==
-Received: from DM6PR08CA0037.namprd08.prod.outlook.com (2603:10b6:5:1e0::11)
- by DM6PR12MB4108.namprd12.prod.outlook.com (2603:10b6:5:220::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.11; Tue, 11 Feb
- 2025 17:21:07 +0000
-Received: from DS1PEPF00017095.namprd03.prod.outlook.com
- (2603:10b6:5:1e0:cafe::ce) by DM6PR08CA0037.outlook.office365.com
- (2603:10b6:5:1e0::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8398.31 via Frontend Transport; Tue,
- 11 Feb 2025 17:21:07 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- DS1PEPF00017095.mail.protection.outlook.com (10.167.17.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.10 via Frontend Transport; Tue, 11 Feb 2025 17:21:07 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 11 Feb
- 2025 09:20:44 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 11 Feb
- 2025 09:20:44 -0800
-Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Tue, 11 Feb 2025 09:20:41 -0800
-From: Akhil R <akhilrajeev@nvidia.com>
-To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-	<linux-crypto@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Akhil R <akhilrajeev@nvidia.com>
-Subject: [PATCH v2 10/10] crypto: tegra: Use HMAC fallback when keyslots are full
-Date: Tue, 11 Feb 2025 22:47:13 +0530
-Message-ID: <20250211171713.65770-11-akhilrajeev@nvidia.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250211171713.65770-1-akhilrajeev@nvidia.com>
-References: <20250211171713.65770-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NoFvSaSt"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43944181e68so27644025e9.0;
+        Tue, 11 Feb 2025 09:45:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739295937; x=1739900737; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OVukLjmjU7JWbNgNRIVE9jMDHO3O38O0IgGphOEr4s4=;
+        b=NoFvSaSt76diylFH7QyM7oWZNzNUVZnwQyDgGXiTkgEstfj+sk1DASVXzOSzu10WN+
+         xe8/oqHr51Ti7+YnbKNGcIbxDECRsNqoq+fMN+BWWD8HVDDz+8T3RV4x5RqXijUkM05m
+         pVjlMCPzFYz95n5vIdbXRMqz2yNaQgncBYld25spIARs3Iqc54NFR1FUeH5NhNyZ5Ehx
+         WAcvMa4VIOyKZ7g6bqnaGyKHyNkHuw6SRrrG1LDzz0nzsOjvBO+ldYnuvwfw7rvSVO3b
+         UdOqijnDNpT9rRgxtPrwjssoWkGPk+FSM/lSUoyf+SWLZIBlCwSjOH9xLewEN+zbEC7V
+         a3ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739295937; x=1739900737;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OVukLjmjU7JWbNgNRIVE9jMDHO3O38O0IgGphOEr4s4=;
+        b=l+bEHmIOIR6qJii0MZRKiEZMgFbKtYuAAlibl+ZKgB70onPRcz3z7cH4Z+b4gePa/J
+         EaCkIDmC+u5hPEAxqzBajc7/YfT23dIHsF2IwB6rIFWEKvfzqf9+R/z6aIOy7Vaai/im
+         POlg9XtoRzXeYcCmVVC4XuJWuI4NYTgTsXnfJjxr5vNW47NLlmUJyMBGKAsfaihCkEtf
+         bOJ1dXcYfTiTNokA9SO3nIJCpO+c9Mx0xCGUqotEfkMJcfKdhhk+BbRIpMoRnm+mifz4
+         BxPZYr4z7oCm5Kpz1ipdnyPBbpf1UZKnhmbgjksoBAJD4rWDjtp5R7dwFYRzsZT5gxHC
+         rdYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUHoEr3kubTKhvRQs4cxP8uDBqBjzd1pCJBL0NtrRUcE2up9Odxir/8MMZscgkqIsKCJuj4bEugshA=@vger.kernel.org, AJvYcCUHy7+OLgWRX5Ek5AmTanKXzKLMOvoIagiFD92nyXRvgm/kwnEwQbnefGx/SfvXWCzAv8a1xhPTsRpRqt2W@vger.kernel.org, AJvYcCV4IVwScAk3t2sB1TR7spfjl6NHr6FDPPEHytXKsQAZgwdENKOjBJ1DcwVFdWGNIW7P98D6Plx9LrCR+ao=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8mrdvoWO6WOc9OPbAMe4Wf53SJ3nlheGqU9MAxGvrDM3YfNzk
+	HzauLI2oD7RYrCpC3VRG+NP4LVJVExwfoDmWZlrhPI2PQ6IEjuEP
+X-Gm-Gg: ASbGnctMkACZUGDr2mO18i6UCV7PeGBtVLcimWmXM9eF/FAfI9FapcLUG3dsfCZhyqQ
+	oqPXLNNNdZqhaUkE1uKvByho0c8AUoXdjsaiocjWYbbkyOdl+D1SVZQPBwOV42qRILBbHLIHagH
+	d29GXh9oJ+HFjiCV79ZnmPwp2tgc+rj9ay7mNp9KvNUGnYmX7Kkl5NMVNCy8i1sqZHxq1qc2gsM
+	s9lbkIXdXmY9WJ3tExwozDShjAZTglLbmZu1Ahjk0xrVWKrcC7Sx458U+uHyH3Gz8RRhioqcX+b
+	8dh5gYKnDAhsThO3vIX5yzKSylryu70TfZC53cJg4xJ45IzreoBNn8HewcvBWNA=
+X-Google-Smtp-Source: AGHT+IHevhnQA52ksSDKCk/5HBFf2WQR6jKC1x+TgyxG0JLSuHfuqUjzxDwjKzCxF5CuvX9dIZjkUA==
+X-Received: by 2002:a05:600c:c0c:b0:430:57e8:3c7e with SMTP id 5b1f17b1804b1-439581caafbmr1240075e9.28.1739295936426;
+        Tue, 11 Feb 2025 09:45:36 -0800 (PST)
+Received: from ?IPV6:2001:861:3385:e20:2acd:89a8:83d9:4be5? ([2001:861:3385:e20:2acd:89a8:83d9:4be5])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4390db11750sm222041925e9.40.2025.02.11.09.45.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Feb 2025 09:45:36 -0800 (PST)
+Message-ID: <c11a234e-de9e-465e-bd09-bfa516dba6dd@gmail.com>
+Date: Tue, 11 Feb 2025 18:45:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/12] drm/sti: move to devm_platform_ioremap_resource()
+ usage
+To: Anusha Srivatsa <asrivats@redhat.com>, Joel Stanley <joel@jms.id.au>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Stefan Agner
+ <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
+ Xinliang Liu <xinliang.liu@linaro.org>, Tian Tao <tiantao6@hisilicon.com>,
+ Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu
+ <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>, Alain Volmat
+ <alain.volmat@foss.st.com>, Yannick Fertre <yannick.fertre@foss.st.com>,
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+ Philippe Cornu <philippe.cornu@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Alexey Brodkin <abrodkin@synopsys.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
+ linux-rockchip@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org,
+ linux-doc@vger.kernel.org
+References: <20250205-mem-cocci-newapi-v1-0-aebf2b0e2300@redhat.com>
+ <20250205-mem-cocci-newapi-v1-7-aebf2b0e2300@redhat.com>
+Content-Language: en-US, fr
+From: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>
+In-Reply-To: <20250205-mem-cocci-newapi-v1-7-aebf2b0e2300@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017095:EE_|DM6PR12MB4108:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef9ff5fc-8fc2-43cc-ccab-08dd4ac07884
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?O3PzD+nocRCCb5EqzABvpZ8ph1Uv7K/60aZ+aKA3nqH9jJXiJ8SpMECBBSKr?=
- =?us-ascii?Q?iAcJlgesWDpqrCRgX2Gl0LyCUBDg50/sZonlX+wD6qMHUfVnaigUIlnjVI+8?=
- =?us-ascii?Q?u4Ly6EUxPDiw+Yf6M07cb8z6IqSGIJ77+vABSWlFnO2GXwaOlKrZ88JLdYPE?=
- =?us-ascii?Q?M6XCMwe5ciu+iKHYSwY+85/5OLiEWXESKr9BOAPJy8t5CYfWnai4C1JXv/UW?=
- =?us-ascii?Q?GKGFQ+9SUKOsS+uwy4j1rV+S+Hx9Cw0RbEB98V2DN1tXMrLmDrOaP45NGqLA?=
- =?us-ascii?Q?3eE/gFcxlw7B1NfhiAg5Jbb0vboEKS2kIu1B630nlvUZtlEagz2qu9vN/7Rs?=
- =?us-ascii?Q?hLXmoSUzQp/lsYFr4H6Y1/2zdJxQGGZfHR13gjxtJhjuvsFixYOUjSecGLYL?=
- =?us-ascii?Q?g5joCCyA7lj4qP1/agh3MMEL/imibbgcN7Ej9ayaO00ahlDj2ikIEc4cyjQP?=
- =?us-ascii?Q?0/0CU6fOOv6Ph9qUF1EEsJtyvnHWpkS8sMenAlkBD0tuTFDbBnku5+cV2NVw?=
- =?us-ascii?Q?mDiam+ONcgZDOIReuMQtBkwRQafd8K+i/SQgJ2O7Hmcac/P2S/VFwJuWgxsP?=
- =?us-ascii?Q?dFeqFK5nWavQlV4qD31ddeT7wRkCobQlBpiD3TnO1ZlrnUUAEXm6a20htlJi?=
- =?us-ascii?Q?aj9i/3yM2zojg17KUbzDlGvfxjyLFOL+Tn6atEW94bpqEstH+HPJMGRxS2X1?=
- =?us-ascii?Q?n4d2ym9CXnnLtlm7eE/kBmR5pQcD3EEnSo/9fL2RS5AAKp6Rpc1XRXj5S72r?=
- =?us-ascii?Q?EDByVMRRa2V5HIecg2QfIlmfX5tTaE1PVvve/QQ2DUKNsvCU79Qk2loyes2T?=
- =?us-ascii?Q?Cf3QTfdt9ooSngY7w/LlJ+jZR+OFudLlZp0HLRH8l0VKBEg+hnGm0fDjP+ZE?=
- =?us-ascii?Q?Wl+368mm7Sli2fTV8RV8VUR8aB9vIa22J8BdJm2aQO7m0VHjxaqhnaPn9weZ?=
- =?us-ascii?Q?B+p1jqZv/1RyRLIakyEPnYktaKLPBC9h/Cc8Yq7hgZFtQIHPJS5N7d21ix9R?=
- =?us-ascii?Q?BT16yQBAAVfSlyxSimEnPgW4i1/I9/VvBQ+eq9VvqPT2hexVhwTKjMp6Y7Cq?=
- =?us-ascii?Q?qB9ORD4VUcIacurr6zGB/D5nPWftxD8U3KgoXZbfAzsCSLyNT3rEKaCHDNjo?=
- =?us-ascii?Q?fCDgMD0UfNeXzo6p5ByQPB5pPmsmizKvp2gqI5885S75toc1ZMM9rYft3H5e?=
- =?us-ascii?Q?EYdy1PfQFOccw+h4ajG23YEG/cwqCBueDu9tNcLr+lJeZERdadGO8qWDjPMF?=
- =?us-ascii?Q?PcFmRB1+7pQSu8sn46ZExNk7bZYp7qaO4cJVTJGAVpM5+rqzMoo5NYuwOj2t?=
- =?us-ascii?Q?KbAx3/Rw1fegB7+Q7MQtvVQWZLcTN4zL2qkcerWALwGc+sSEYqOtcSQjMuU6?=
- =?us-ascii?Q?QvHdMLvMF/w73XHVrreetGJhkULe3zAnvHtkewNDmdpY+wXuoEB/1JE3gcM2?=
- =?us-ascii?Q?fM7OIQJwj6fOwTgnfrsnBJueK8grff1MPVFJdXbrKazU2vAQZ6fUXyRKZjXY?=
- =?us-ascii?Q?wo74c5Vj2OQIox0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2025 17:21:07.0905
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef9ff5fc-8fc2-43cc-ccab-08dd4ac07884
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017095.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4108
 
-The intermediate results for HMAC is stored in the allocated keyslot by
-the hardware. Dynamic allocation of keyslot during an operation is hence
-not possible. As the number of keyslots are limited in the hardware,
-fallback to the HMAC software implementation if keyslots are not available
 
-Fixes: 0880bb3b00c8 ("crypto: tegra - Add Tegra Security Engine driver")
-Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
----
- drivers/crypto/tegra/tegra-se-hash.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/tegra/tegra-se-hash.c b/drivers/crypto/tegra/tegra-se-hash.c
-index 89c1e1a0016b..c607a37d5e0e 100644
---- a/drivers/crypto/tegra/tegra-se-hash.c
-+++ b/drivers/crypto/tegra/tegra-se-hash.c
-@@ -631,13 +631,18 @@ static int tegra_hmac_setkey(struct crypto_ahash *tfm, const u8 *key,
- 			     unsigned int keylen)
- {
- 	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
-+	int ret;
- 
- 	if (aes_check_keylen(keylen))
- 		return tegra_hmac_fallback_setkey(ctx, key, keylen);
- 
-+	ret = tegra_key_submit(ctx->se, key, keylen, ctx->alg, &ctx->key_id);
-+	if (ret)
-+		return tegra_hmac_fallback_setkey(ctx, key, keylen);
-+
- 	ctx->fallback = false;
- 
--	return tegra_key_submit(ctx->se, key, keylen, ctx->alg, &ctx->key_id);
-+	return 0;
- }
- 
- static int tegra_sha_init(struct ahash_request *req)
--- 
-2.43.2
+Le 05/02/2025 à 21:08, Anusha Srivatsa a écrit :
+> Replace platform_get_resource/_byname + devm_ioremap
+> with just devm_platform_ioremap_resource()
+> 
+> Used Coccinelle to do this change. SmPl patch:
+> 
+> @rule@
+> identifier res;
+> expression ioremap;
+> identifier pdev;
+> constant mem;
+> expression name;
+> @@
+> -struct resource *res;
+> ...
+> -res = platform_get_resource_byname(pdev,mem,name);
+> <...
+> -if (!res) {
+> -...
+> -}
+> ...>
+> -ioremap = devm_ioremap(...);
+> +ioremap = devm_platform_ioremap_resource_byname(pdev,name);
+> 
+> and
+> @rule_2@
+> identifier res;
+> expression ioremap;
+> identifier pdev;
+> @@
+> -struct resource *res;
+> ...
+> -res = platform_get_resource(pdev,...);
+> <...
+> -if (!res) {
+> -...
+> -}
+> ...>
+> -ioremap = devm_ioremap(...);
+> +ioremap = devm_platform_ioremap_resource(pdev,0);
+> 
+> v2: Fix compilation error.
+
+Hi Anusha,
+
+Just a nit: changelog should be after the ‘---’ separator. :-)
+
+Other than this, it is
+Acked-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+
+Thanks,
+Regards,
+Raphaël
+> 
+> Cc: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+> Cc: Alain Volmat <alain.volmat@foss.st.com>
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> ---
+>   drivers/gpu/drm/sti/sti_compositor.c | 10 +---------
+>   drivers/gpu/drm/sti/sti_dvo.c        | 10 +---------
+>   drivers/gpu/drm/sti/sti_hda.c        |  9 +--------
+>   drivers/gpu/drm/sti/sti_hdmi.c       | 11 +----------
+>   drivers/gpu/drm/sti/sti_hqvdp.c      | 10 +---------
+>   drivers/gpu/drm/sti/sti_tvout.c      | 10 +---------
+>   drivers/gpu/drm/sti/sti_vtg.c        | 10 +---------
+>   7 files changed, 7 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/sti/sti_compositor.c b/drivers/gpu/drm/sti/sti_compositor.c
+> index 063f82d23d80c4ba83624a0066a18416a2b37351..7aefce6706ba2cd7d97a33228c9b9812edecf06f 100644
+> --- a/drivers/gpu/drm/sti/sti_compositor.c
+> +++ b/drivers/gpu/drm/sti/sti_compositor.c
+> @@ -177,7 +177,6 @@ static int sti_compositor_probe(struct platform_device *pdev)
+>   	struct device_node *np = dev->of_node;
+>   	struct device_node *vtg_np;
+>   	struct sti_compositor *compo;
+> -	struct resource *res;
+>   	unsigned int i;
+>   
+>   	compo = devm_kzalloc(dev, sizeof(*compo), GFP_KERNEL);
+> @@ -194,14 +193,7 @@ static int sti_compositor_probe(struct platform_device *pdev)
+>   
+>   	memcpy(&compo->data, of_match_node(compositor_of_match, np)->data,
+>   	       sizeof(struct sti_compositor_data));
+> -
+> -	/* Get Memory ressources */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (res == NULL) {
+> -		DRM_ERROR("Get memory resource failed\n");
+> -		return -ENXIO;
+> -	}
+> -	compo->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	compo->regs = devm_platform_ioremap_resource(pdev, 0);
+>   	if (compo->regs == NULL) {
+>   		DRM_ERROR("Register mapping failed\n");
+>   		return -ENXIO;
+> diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.c
+> index c6c2abaa1891cd3ea025805b50d275ec314512c3..660588f01f90950a9b2c180ab230188c19901f26 100644
+> --- a/drivers/gpu/drm/sti/sti_dvo.c
+> +++ b/drivers/gpu/drm/sti/sti_dvo.c
+> @@ -511,7 +511,6 @@ static int sti_dvo_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+>   	struct sti_dvo *dvo;
+> -	struct resource *res;
+>   	struct device_node *np = dev->of_node;
+>   
+>   	DRM_INFO("%s\n", __func__);
+> @@ -523,14 +522,7 @@ static int sti_dvo_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	dvo->dev = pdev->dev;
+> -
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dvo-reg");
+> -	if (!res) {
+> -		DRM_ERROR("Invalid dvo resource\n");
+> -		return -ENOMEM;
+> -	}
+> -	dvo->regs = devm_ioremap(dev, res->start,
+> -			resource_size(res));
+> +	dvo->regs = devm_platform_ioremap_resource_byname(pdev, "dvo-reg");
+>   	if (!dvo->regs)
+>   		return -ENOMEM;
+>   
+> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
+> index b12863bea95559c4f874eb94cea8938609d435d4..0b5dbaf4d5305989846e25a1cab6f82d191aa9a5 100644
+> --- a/drivers/gpu/drm/sti/sti_hda.c
+> +++ b/drivers/gpu/drm/sti/sti_hda.c
+> @@ -750,14 +750,7 @@ static int sti_hda_probe(struct platform_device *pdev)
+>   		return -ENOMEM;
+>   
+>   	hda->dev = pdev->dev;
+> -
+> -	/* Get resources */
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hda-reg");
+> -	if (!res) {
+> -		DRM_ERROR("Invalid hda resource\n");
+> -		return -ENOMEM;
+> -	}
+> -	hda->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	hda->regs = devm_platform_ioremap_resource_byname(pdev, "hda-reg");
+>   	if (!hda->regs)
+>   		return -ENOMEM;
+>   
+> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+> index ca2fe17de4a5d1e0199e59a97e6c7601e139ed9e..666143c48b0d0f2c20cd26323ddbc8e69d966622 100644
+> --- a/drivers/gpu/drm/sti/sti_hdmi.c
+> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+> @@ -1380,7 +1380,6 @@ static int sti_hdmi_probe(struct platform_device *pdev)
+>   	struct device *dev = &pdev->dev;
+>   	struct sti_hdmi *hdmi;
+>   	struct device_node *np = dev->of_node;
+> -	struct resource *res;
+>   	struct device_node *ddc;
+>   	int ret;
+>   
+> @@ -1399,15 +1398,7 @@ static int sti_hdmi_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	hdmi->dev = pdev->dev;
+> -
+> -	/* Get resources */
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hdmi-reg");
+> -	if (!res) {
+> -		DRM_ERROR("Invalid hdmi resource\n");
+> -		ret = -ENOMEM;
+> -		goto release_adapter;
+> -	}
+> -	hdmi->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	hdmi->regs = devm_platform_ioremap_resource_byname(pdev, "hdmi-reg");
+>   	if (!hdmi->regs) {
+>   		ret = -ENOMEM;
+>   		goto release_adapter;
+> diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
+> index 0f658709c9d0d398c4eed65202443db9d0b41f8c..420395598d119a403d531211022e6005d6a2bd59 100644
+> --- a/drivers/gpu/drm/sti/sti_hqvdp.c
+> +++ b/drivers/gpu/drm/sti/sti_hqvdp.c
+> @@ -1356,7 +1356,6 @@ static int sti_hqvdp_probe(struct platform_device *pdev)
+>   	struct device *dev = &pdev->dev;
+>   	struct device_node *vtg_np;
+>   	struct sti_hqvdp *hqvdp;
+> -	struct resource *res;
+>   
+>   	DRM_DEBUG_DRIVER("\n");
+>   
+> @@ -1367,14 +1366,7 @@ static int sti_hqvdp_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	hqvdp->dev = dev;
+> -
+> -	/* Get Memory resources */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res) {
+> -		DRM_ERROR("Get memory resource failed\n");
+> -		return -ENXIO;
+> -	}
+> -	hqvdp->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	hqvdp->regs = devm_platform_ioremap_resource(pdev, 0);
+>   	if (!hqvdp->regs) {
+>   		DRM_ERROR("Register mapping failed\n");
+>   		return -ENXIO;
+> diff --git a/drivers/gpu/drm/sti/sti_tvout.c b/drivers/gpu/drm/sti/sti_tvout.c
+> index af6c06f448c4819def8cc0d0836e30f991529690..0bebe815f5e7567f84388af93723a6fa7d2cc7a2 100644
+> --- a/drivers/gpu/drm/sti/sti_tvout.c
+> +++ b/drivers/gpu/drm/sti/sti_tvout.c
+> @@ -838,7 +838,6 @@ static int sti_tvout_probe(struct platform_device *pdev)
+>   	struct device *dev = &pdev->dev;
+>   	struct device_node *node = dev->of_node;
+>   	struct sti_tvout *tvout;
+> -	struct resource *res;
+>   
+>   	DRM_INFO("%s\n", __func__);
+>   
+> @@ -850,14 +849,7 @@ static int sti_tvout_probe(struct platform_device *pdev)
+>   		return -ENOMEM;
+>   
+>   	tvout->dev = dev;
+> -
+> -	/* get memory resources */
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "tvout-reg");
+> -	if (!res) {
+> -		DRM_ERROR("Invalid glue resource\n");
+> -		return -ENOMEM;
+> -	}
+> -	tvout->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	tvout->regs = devm_platform_ioremap_resource_byname(pdev, "tvout-reg");
+>   	if (!tvout->regs)
+>   		return -ENOMEM;
+>   
+> diff --git a/drivers/gpu/drm/sti/sti_vtg.c b/drivers/gpu/drm/sti/sti_vtg.c
+> index 5ba469b711b5318e9e9e6d8df127fb8933d1fac1..b5353fe774d72fd629ecd3ef75a5d2817ca8617f 100644
+> --- a/drivers/gpu/drm/sti/sti_vtg.c
+> +++ b/drivers/gpu/drm/sti/sti_vtg.c
+> @@ -380,20 +380,12 @@ static int vtg_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+>   	struct sti_vtg *vtg;
+> -	struct resource *res;
+>   	int ret;
+>   
+>   	vtg = devm_kzalloc(dev, sizeof(*vtg), GFP_KERNEL);
+>   	if (!vtg)
+>   		return -ENOMEM;
+> -
+> -	/* Get Memory ressources */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res) {
+> -		DRM_ERROR("Get memory resource failed\n");
+> -		return -ENOMEM;
+> -	}
+> -	vtg->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	vtg->regs = devm_platform_ioremap_resource(pdev, 0);
+>   	if (!vtg->regs) {
+>   		DRM_ERROR("failed to remap I/O memory\n");
+>   		return -ENOMEM;
+> 
 
