@@ -1,58 +1,58 @@
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D831E7C19;
-	Wed, 12 Feb 2025 16:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056972135A1;
+	Wed, 12 Feb 2025 17:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739378213; cv=none; b=jTzKeCFRRjVNjngE+8bkVjQ1xG6QUWSXgvK/gAun4T5QrCt6hlkB44Dt2t/AozbrVwdnVKByyTjdptsndvP0kxTezxTBMzF0VBCeVX8JKFkSUaShZzKJzvLy23cVs6NOBZWNGKm4uLuGoF/QoQvWPGidq6doL85GZ91fjnx9n6k=
+	t=1739381296; cv=none; b=ih2arZebqZj9QCOcWxuHJJcnp/FpjGEq15IZkK4Yh7j2EYX5+iz7kHV3L13EQAbB74SDg3X299m/1T2cdQd9CDG87XhlJNoF4lSywzn+xHIUHJjTw5iaPtEkdS7ssG7WCC/sIgDviLmuhoJS7XuFhazXFwomXGLxgPAIw3KrVwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739378213; c=relaxed/simple;
-	bh=XjXapKCS9DhbpWnAR+2WMTVHpJk/hxkglVsqF28WSAg=;
+	s=arc-20240116; t=1739381296; c=relaxed/simple;
+	bh=y402Yi8SlQ7bGjb7YK7/fHgP8dhEV3YupmxX00SBe0I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XM7fL2qWG4DHGMBMYsojoSPzdDxi/r6pZC6xkYtcWPXTjhf2GMps1NVDsm1Ou7PjUWGkX0SXZsySvAaB9BVIbZ/5YxY66gR6L+40H/EEPqgrzMHjqbDcc6bmm5wTFbUB5FX4xEjnl++uw7ui4dGpzugJqWPEXRyUrxlclZPTTpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPqvZ4iR; arc=none smtp.client-ip=209.85.221.47
+	 To:Cc:Content-Type; b=e1YZDifdFY6yrN+5k0PJ6/OmudzmJgeFE1JJTMSuywa+Zfh+rHjBZeFcK73La6A2XLU5c21JQLjr7thy7oSRYPCtgV8+Uu8PYzWjMeUhuaappupyi2NtXbfq29Bf8Mq2ruKY72P37UNUvwTgsWRMQh+vQkLwj1jc8UzTyRN4CQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NLAqTWMf; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPqvZ4iR"
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-38dcb33cba1so2984196f8f.2;
-        Wed, 12 Feb 2025 08:36:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLAqTWMf"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38dcae0d6dcso3305530f8f.1;
+        Wed, 12 Feb 2025 09:28:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739378210; x=1739983010; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739381293; x=1739986093; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WTlFMZehIqXgecWOhPXG5xGdb+Nga31tOiqshQdfZVw=;
-        b=IPqvZ4iRivsEbfYl/jYKvv51xN4710sERjvDHWJ0HBbbfGlIoqNtrxFnWYzjZ8fLzI
-         jo/lzx/D+yZzzJop61G5BHGHseQayp4Cb06/e7jTU4DuTwcRi6VnrImhr7qRAEyQ4M9Q
-         agbrI1+BvvZvR5mEOsdW5FC03VZDen4KrBWUTt8q8hcXo1t2RWnXJCQN0O6B+4/oLJFF
-         CA+uTM+rtnY2hC7yuNPd/hR7Or26xIZCU3XB01tayVoQTITgSlqYXAqzlSsgigyDlW6T
-         Iayq7w3eR8ESIdOPTX/gWgQN3XhWwSEgtwJJ1mnEaSIsVNCUTE0AEsKSpY8zhVUvTMlo
-         Li0g==
+        bh=nH75rro3+C3cMLVqxRXiovHK/yvOZnOVe7YXKDBOPmc=;
+        b=NLAqTWMfpoAzJb+sP/p9O08mhUpdcA/fkapQMefIfG4PtKHL5jlYshVjnLbOtAKXP+
+         +MSvyIp1ojs6786uuroK9w/cWO8wYPlP/ngH/PCTasZwZTJVwtxAQVTCkrfp3CsxRkOE
+         w9Mck2sUB3upcZgWYF+NnU1Xiwd9x+57tpTYzalXpkiKKBMFYCv17xSnB2uv2ryxO4sg
+         zV3I0IimZCNPX3EFMtkrG/g55ArocYScxv885M6IOimcQJ4ozC84HurRsadoTeumdbdr
+         jIfLt3XP5zgXTMe6cQazPOilZSjmqT1pZY4KEBuj2nUQpGCO/sPp60XU/l6TSPegBqpn
+         aMbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739378210; x=1739983010;
+        d=1e100.net; s=20230601; t=1739381293; x=1739986093;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WTlFMZehIqXgecWOhPXG5xGdb+Nga31tOiqshQdfZVw=;
-        b=knZT20gjGGwfap0VuqBqaet2d3e4SdD4R6zza9JbjBV3pYUd5QR+IeWvC/T4gY4iIP
-         4FjK7fscWKpHj2SYJm1ABWFEfQ3qxPAEHzZPMTOo2/nINSV9yl54MCFvJy/3ytXpD2vR
-         RrxCLBjXQXr4Pb3afnfeX9KEmZ4fIj0/l0ZnPgvmKO446Ostu0rox4tbGr3NAdsTmRKs
-         v6jXHQ5xjaPVZrBnPxw7OufXL34iIqi3B38qbagnrajwh7QglkAXESjxxjXP8wA0bsf/
-         Ahw18pWcqmnJCrruDu6c2d18AyDLfFsjyil7cUUDyHJxhsaGFKWyE+i/2to2/WVp9E6A
-         dYJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfDHYrZPY1jLvpfVIz70xYHVJVDGGf0hWWkiUM3WMxBbPPUgxrKe8u8fHiiSRPezabzSwuvIccaog9@vger.kernel.org, AJvYcCV1PQOf8suIPSNRMlmMVpGvScmhVKc72EOMwDtokcEkriTQy58fERIizYv/rr80afMQPbmVXE9D9IskMlc=@vger.kernel.org, AJvYcCV6nur+PVbC4f87ygEqUrBiBIQx3JAlBMijGO+TNZz5fMQL/Htah3D5m8Z5CWyCnXg2yYl1vrnoceQ8MekB@vger.kernel.org, AJvYcCVCH4gKZHuF7crjv7ZwTq7u8FfyhmkuCs72EPnMy0T/4q8tfyVZhqKV3Np+N+J5vgl47aHuOF99VPxZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq7FyeeaUhM3OJb2vnwaoUDCmQGQHjVCvh/8XdI0FHAjpPVDCb
-	1DiigfrbRJf0gOMU8h182zrJKYdhvcDfPz3x62CFBSEgZ/g+T9lYqf+9wtOnGwxeBk1edHuzzMS
-	tHGSFt7CJXCsv6GvAjc+lfsepy0eMpg==
-X-Gm-Gg: ASbGncuUTbdKbehEFl/SMdEuorrrWtKGPBOv2hbeJevFAZRjq2GI47dzlmG7ZNF8567
-	E+l1XzlD4ophdM7YAoGgLlBDiLoXgdtnUwF0BI0idbi+scwUzxdm46bIT4Zu+C/i/+XJtDjGwTg
+        bh=nH75rro3+C3cMLVqxRXiovHK/yvOZnOVe7YXKDBOPmc=;
+        b=He8JecktzLxmqDijjOTkex/PKrTheSlxVLDOvwHkS67/ZA41fWNDPWkzVQioyFJDXz
+         OioZtZ/5e76wQ3DoZVUO1GwpoJChjUTalfIc5UZjnS+LgOb2aU1UlAKDow0AKQlG9kzI
+         T0sm2zaZlIqBx7hzIVp9ee4MLauDiVDmtdllVKovIoocwUv0GCrfE2FODiijuRNNyDY7
+         gia+1t5qQl02WsT6R480Wq6iuVr+NPf+JS9kbCc8ZKm/XncmfsCTV5Vz/Y6NeSebOj0c
+         n2s4uLYWre+7jgnRNdJAX79ElakD0E3GLm7Pxyh/e44jicNK22MGEE6tqdRo55p6gSHd
+         ZNxg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgveNgVpiFcPBJNzVyxnl6uAiYZ+F9W0L4CnpR2PXPtKaC8+1OgEv8WPlDyz2TvJGNjmHYztRC6DVb+pA=@vger.kernel.org, AJvYcCVu3gHf/H0F8u+JVWcSOYNsUuSNDr4higjhFAXIQabGXzr+2Z3eT6+7ETRPkOfLLckbs7yTVPjdau/VQyrb@vger.kernel.org, AJvYcCWWqUZQsLqi73gmXgBBxL4xZQVHiD6Qqpq3EtZ9OoG5TeyVvX98ADmrW0wZiT5Scoz67JKoyK6SJZ5a@vger.kernel.org, AJvYcCXIqYQENwuMO5UHXhvwZ7ALgh5DkRiHCKW5+tZl9eryIYgHdC9bapNnfFnFZq7qiBbuOzGlfQkNCbJc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzK4Y5/3qBUxzmwduOaoWqJAOuJx2bywwVuhXz91xz2Dql0YrqW
+	jrcirOnUOTOdQjfOP9cRBcyZMAwjUyN+fCgjXLG2XzMRn8stCgnvW2FZfZSFZavurVPOsyszPFt
+	jsuh1Q/6+UL6JyEs2A63A0On6ypvG4g==
+X-Gm-Gg: ASbGnct4zmIPenhT2BfAfsr+NL1t27JQ0P5I0AAvyOBeKEA9R/Ewid9AmfUBmP8tIu8
+	aemgmr1ENS7yKoeBB2iw5E7lEZbnGLFaRFO0YnoMEkuHYvmGmpY2oRv4GLuiBBedaSoQlSGM3Rg
 	==
-X-Google-Smtp-Source: AGHT+IGQEufUpjj5ULRRznk/c/Wl4Rh7ecaawR42k5U/cp7XNdZFM1/A3Qh3udeid87272JmNlRqh9HTrm+ZJzgtFRA=
-X-Received: by 2002:a5d:6382:0:b0:38d:d18e:8811 with SMTP id
- ffacd0b85a97d-38f244e960amr27142f8f.25.1739378209380; Wed, 12 Feb 2025
- 08:36:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFHGp2VcddJyJd0r3Yjkkf4R+8u+ifNxosxw3I+t06VNCVxc0BSZYOBbdWlqlQrvmWVh0BuxAawy0AYWiecw+E=
+X-Received: by 2002:a5d:59ab:0:b0:38c:5d42:1516 with SMTP id
+ ffacd0b85a97d-38dea2e9023mr3528978f8f.34.1739381293078; Wed, 12 Feb 2025
+ 09:28:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -64,9 +64,9 @@ References: <20250212064657.5683-1-clamor95@gmail.com> <20250212064657.5683-3-cl
  <Z6zIAGLot3YQLo9S@smile.fi.intel.com>
 In-Reply-To: <Z6zIAGLot3YQLo9S@smile.fi.intel.com>
 From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 12 Feb 2025 18:36:37 +0200
-X-Gm-Features: AWEUYZnbM7zgO_XJOjqXMrt1Da05HvGz34TRc0lHrZw-1LWDZ1rEM1N2DbfBwYY
-Message-ID: <CAPVz0n1Mf02GvSBd_TOuNiuCVTTOx4-228qkdf-JL_eqGCh2MA@mail.gmail.com>
+Date: Wed, 12 Feb 2025 19:28:01 +0200
+X-Gm-Features: AWEUYZmbKhIPHc15NWh3JjbFH7JV2WWJgN4WfsaqJ90DpyIvebOO039oY67e30k
+Message-ID: <CAPVz0n0YFXUugt1E5siZSYbCBcp6LdNv136eTWGQTbLAXE4pxQ@mail.gmail.com>
 Subject: Re: [PATCH v1 2/3] iio: light: Add support for AL3000a illuminance sensor
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
@@ -141,10 +141,6 @@ Andy Shevchenko
 > who is the maintainer of IIO code, had even tried it for real some time a=
 go.
 >
-
-So it is not adopted by the Linux kernel. Lets return to this once it
-will be adopted.
-
 > > > > +#include <linux/iio/iio.h>
 > > > > +#include <linux/iio/sysfs.h>
 >
@@ -213,3 +209,9 @@ tted
 > Andy Shevchenko
 >
 >
+
+I will apply all your suggestions. Thank you.
+
+Regards other patch series, may you please contain all advice inside
+patch series since it is quite hard to track between them. For future
+patches, I will try to avoid listed issues. Thank you.
