@@ -1,110 +1,195 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E48B256C70;
-	Wed, 12 Feb 2025 17:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C599925D553;
+	Wed, 12 Feb 2025 18:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739381661; cv=none; b=b/9R22eChwFIgafOfhmXCss2RXj2ALiLZffu3EEl/HCeFYX4wTmF/saGwNymeS+M1JM1QK0+3y6xFg/3i/U63e1HwHQ4vERI6/Z2VIviabkgm2A5qA00kPmQoYDgYcSYoOWqXzgoT+OCaycDF9OzSPAJ5s4SA1ULgUjHpmq/nxY=
+	t=1739384569; cv=none; b=OBR4IofFfL3VJDKVaV3379crBOcCZtiLoxOPoSjDr+Yl6H3dyJo3GgrmLjLHzPF2idiE/HlW+a4YdzQLu9GSyi/T8kQNni97IA75HY5WKOOgTmPXiP59QCSaj2U1dt+RQK5+zFHC2zyE8JNeTffl+MGT1cutosgiSz76QyNjf48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739381661; c=relaxed/simple;
-	bh=tpEXLf1sOsIjYYF2jiTHF8Z5OELiNJ77sVQ7ndJer8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XhXCxmMRx5A5Pca+giRJEV1JJQnDVvmXmjjmSr5CmkaC1mRfWtqGWCTrtY+PuoV5WK6tl2ALpnzArMQS+RTsY6m7n39ntKlATBY3y2DSC2ueTqq1DeRe70BflN0a6vM2SaNWbpb1uTdmJUjp3+3hMGoaoRqPF3nLHhI5Po2/KxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pv9hbJOF; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pv9hbJOF"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739381660; x=1770917660;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=tpEXLf1sOsIjYYF2jiTHF8Z5OELiNJ77sVQ7ndJer8Q=;
-  b=Pv9hbJOFalDUfHjm/6PYBVoE+ryHU5txkLsYpDp8nZsNnjpVcgGQSwe7
-   02POlh9Rl9HKR5/rQ4HQN+fo6PQGF5T7rLEwtElyNxegREuXqig9cY1TB
-   QTpdvmVtyt06mxnDxcfVk+ytm07WExCp//A5xoyKTrGkgLsiZw15KCccP
-   NhilzUHi1YzSEhxujZxnR5E1Gc9OHI6wzNGu0vLzO7EMNJUDszcOmkaRE
-   Laakjovqhfro753JsKiGMXfRStu6w4y4NvY+zgI1sCAlGuplnorWXDgy0
-   Rpn86NWPfbLnHR1SJwkeFgZVb6iQFzluNSRpU3drHGrDrZRNDUMmpKbPT
-   Q==;
-X-CSE-ConnectionGUID: r1NFPBa0SPeXP8FF+p1r+g==
-X-CSE-MsgGUID: ohYBPn6XTCKtZ/tKnpfncw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="50273374"
-X-IronPort-AV: E=Sophos;i="6.13,280,1732608000"; 
-   d="scan'208";a="50273374"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 09:34:18 -0800
-X-CSE-ConnectionGUID: Ae8cs+FITvm9nz9eCjoNgg==
-X-CSE-MsgGUID: szzSN6DhTCm3Bj/0Tlv1hA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113795531"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 09:34:14 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tiGck-0000000AuJf-0Ew8;
-	Wed, 12 Feb 2025 19:34:10 +0200
-Date: Wed, 12 Feb 2025 19:34:09 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Emil Gedenryd <emil.gedenryd@axis.com>,
-	Arthur Becker <arthur.becker@sentec.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] iio: light: Add support for AL3000a illuminance
- sensor
-Message-ID: <Z6zbkXi9koucyqe0@smile.fi.intel.com>
-References: <20250212064657.5683-1-clamor95@gmail.com>
- <20250212064657.5683-3-clamor95@gmail.com>
- <Z6ywGgofzU1bvm0H@smile.fi.intel.com>
- <CAPVz0n1UuZPCb3Jdj_fK3Ut7WKBgtvj7aROqJ4YeYVMutuyv7A@mail.gmail.com>
- <Z6zIAGLot3YQLo9S@smile.fi.intel.com>
- <CAPVz0n0YFXUugt1E5siZSYbCBcp6LdNv136eTWGQTbLAXE4pxQ@mail.gmail.com>
+	s=arc-20240116; t=1739384569; c=relaxed/simple;
+	bh=rY4r5GKMn7v/sgkD/QcMMkNOQLXMfFnAoQP1x9J6QR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t1xWYK4enZMMPBJsbakIei8Cdo1++yolitJaa3nrMtPYjmgwqKC+2F0yrDJmCodauw25zkBVVOn5Zv6plkJQ4XQOitWJZa+5h+TKfJUhazXJ3nnfhoBHnycHu6J2wNshGF6GxTFjaseoOTG54mVgqeFj4SMNFG6OU1yxQPyVh4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A8B212FC;
+	Wed, 12 Feb 2025 10:23:07 -0800 (PST)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB8AC3F58B;
+	Wed, 12 Feb 2025 10:22:42 -0800 (PST)
+Message-ID: <285a43db-c36d-400e-8041-0566f089a482@arm.com>
+Date: Wed, 12 Feb 2025 19:22:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n0YFXUugt1E5siZSYbCBcp6LdNv136eTWGQTbLAXE4pxQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+To: Juri Lelli <juri.lelli@redhat.com>,
+ Christian Loehle <christian.loehle@arm.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>,
+ Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
+ Shin Kawamura <kawasin@google.com>,
+ Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <Z6MLAX_TKowbmdS1@jlelli-thinkpadt14gen4.remote.csb>
+ <Z6M5fQB9P1_bDF7A@jlelli-thinkpadt14gen4.remote.csb>
+ <8572b3bc-46ec-4180-ba55-aa6b9ab7502b@nvidia.com>
+ <Z6SA-1Eyr1zDTZDZ@jlelli-thinkpadt14gen4.remote.csb>
+ <a305f53d-44d4-4d7a-8909-6a63ec18a04b@nvidia.com>
+ <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
+ <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
+ <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
+ <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
+ <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
+ <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 12, 2025 at 07:28:01PM +0200, Svyatoslav Ryhel wrote:
-> ср, 12 лют. 2025 р. о 18:10 Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> пише:
-
-...
-
-> I will apply all your suggestions. Thank you.
+On 11/02/2025 11:42, Juri Lelli wrote:
+> On 11/02/25 10:15, Christian Loehle wrote:
+>> On 2/10/25 17:09, Juri Lelli wrote:
+>>> Hi Christian,
+>>>
+>>> Thanks for taking a look as well.
+>>>
+>>> On 07/02/25 15:55, Christian Loehle wrote:
+>>>> On 2/7/25 14:04, Jon Hunter wrote:
+>>>>>
+>>>>>
+>>>>> On 07/02/2025 13:38, Dietmar Eggemann wrote:
+>>>>>> On 07/02/2025 11:38, Jon Hunter wrote:
+>>>>>>>
+>>>>>>> On 06/02/2025 09:29, Juri Lelli wrote:
+>>>>>>>> On 05/02/25 16:56, Jon Hunter wrote:
+>>>>>>>>
+>>>>>>>> ...
+>>>>>>>>
+>>>>>>>>> Thanks! That did make it easier :-)
+>>>>>>>>>
+>>>>>>>>> Here is what I see ...
+>>>>>>>>
+>>>>>>>> Thanks!
+>>>>>>>>
+>>>>>>>> Still different from what I can repro over here, so, unfortunately, I
+>>>>>>>> had to add additional debug printks. Pushed to the same branch/repo.
+>>>>>>>>
+>>>>>>>> Could I ask for another run with it? Please also share the complete
+>>>>>>>> dmesg from boot, as I would need to check debug output when CPUs are
+>>>>>>>> first onlined.
+>>>>>>
+>>>>>> So you have a system with 2 big and 4 LITTLE CPUs (Denver0 Denver1 A57_0
+>>>>>> A57_1 A57_2 A57_3) in one MC sched domain and (Denver1 and A57_0) are
+>>>>>> isol CPUs?
+>>>>>
+>>>>> I believe that 1-2 are the denvers (even thought they are listed as 0-1 in device-tree).
+>>>>
+>>>> Interesting, I have yet to reproduce this with equal capacities in isolcpus.
+>>>> Maybe I didn't try hard enough yet.
+>>>>
+>>>>>
+>>>>>> This should be easy to set up for me on my Juno-r0 [A53 A57 A57 A53 A53 A53]
+>>>>>
+>>>>> Yes I think it is similar to this.
+>>>>>
+>>>>> Thanks!
+>>>>> Jon
+>>>>>
+>>>>
+>>>> I could reproduce that on a different LLLLbb with isolcpus=3,4 (Lb) and
+>>>> the offlining order:
+>>>> echo 0 > /sys/devices/system/cpu/cpu5/online
+>>>> echo 0 > /sys/devices/system/cpu/cpu1/online
+>>>> echo 0 > /sys/devices/system/cpu/cpu3/online
+>>>> echo 0 > /sys/devices/system/cpu/cpu2/online
+>>>> echo 0 > /sys/devices/system/cpu/cpu4/online
+>>>>
+>>>> while the following offlining order succeeds:
+>>>> echo 0 > /sys/devices/system/cpu/cpu5/online
+>>>> echo 0 > /sys/devices/system/cpu/cpu4/online
+>>>> echo 0 > /sys/devices/system/cpu/cpu1/online
+>>>> echo 0 > /sys/devices/system/cpu/cpu2/online
+>>>> echo 0 > /sys/devices/system/cpu/cpu3/online
+>>>> (Both offline an isolcpus last, both have CPU0 online)
+>>>>
+>>>> The issue only triggers with sugov DL threads (I guess that's obvious, but
+>>>> just to mention it).
+>>>
+>>> It wasn't obvious to me at first :). So thanks for confirming.
+>>>
+>>>> I'll investigate some more later but wanted to share for now.
+>>>
+>>> So, problem actually is that I am not yet sure what we should do with
+>>> sugovs' bandwidth wrt root domain accounting. W/o isolation it's all
+>>> good, as it gets accounted for correctly on the dynamic domains sugov
+>>> tasks can run on. But with isolation and sugov affected_cpus that cross
+>>> isolation domains (e.g., one BIG one little), we can get into troubles
+>>> not knowing if sugov contribution should fall on the DEF or DYN domain.
+>>>
+>>> Hummm, need to think more about it.
+>>
+>> That is indeed tricky.
+>> I would've found it super appealing to always just have sugov DL tasks activate
+>> on this_cpu and not have to worry about all this, but then you have contention
+>> amongst CPUs of a cluster and there are energy improvements from always
+>> having little cores handle all sugov DL tasks, even for the big CPUs,
+>> that's why I introduced
+>> commit 93940fbdc468 ("cpufreq/schedutil: Only bind threads if needed")
+>> but that really doesn't make this any easier.
 > 
-> Regards other patch series, may you please contain all advice inside
-> patch series since it is quite hard to track between them. For future
-> patches, I will try to avoid listed issues. Thank you.
+> What about we actually ignore them consistently? We already do that for
+> admission control, so maybe we can do that when rebuilding domains as
+> well (until we find maybe a better way to deal with them).
+> 
+> Does the following make any difference?
 
-Sure, it was just a hint. I will check the other series as well when
-I have time and motivation.
+It at least seems to solve the issue. And like you mentioned on irc, we
+don't know the bw req of sugov anyway.
 
--- 
-With Best Regards,
-Andy Shevchenko
+So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
 
+dl_rq[0]:
+  .dl_nr_running                 : 0
+  .dl_bw->bw                     : 996147
+  .dl_bw->total_bw               : 0       <-- !
+
+IMHO, people who want to run serious DL can always check whether there
+are already these infrastructural DL tasks or even avoid schedutil.
+
+> 
+> ---
+>  kernel/sched/deadline.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index b254d878789d..8f7420e0c9d6 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -2995,7 +2995,7 @@ void dl_add_task_root_domain(struct task_struct *p)
+>  	struct dl_bw *dl_b;
+>  
+>  	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
+> -	if (!dl_task(p)) {
+> +	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
+>  		raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
+>  		return;
+>  	}
+> 
 
