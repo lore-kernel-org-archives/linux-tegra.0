@@ -1,195 +1,124 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C599925D553;
-	Wed, 12 Feb 2025 18:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A731D5CCC;
+	Wed, 12 Feb 2025 19:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739384569; cv=none; b=OBR4IofFfL3VJDKVaV3379crBOcCZtiLoxOPoSjDr+Yl6H3dyJo3GgrmLjLHzPF2idiE/HlW+a4YdzQLu9GSyi/T8kQNni97IA75HY5WKOOgTmPXiP59QCSaj2U1dt+RQK5+zFHC2zyE8JNeTffl+MGT1cutosgiSz76QyNjf48=
+	t=1739388007; cv=none; b=CaZY2ZzOUthzU8bnSIYCqlKVH47cIXcI7+amUB9wQhBYQTUBKpnPDp+RxdOhI9/BgRa7gUlmMASz295w+236oYVB+QSFyjk+A2ZfhiLCKgSstjKWIfT9fJzR0DuNKW6815hWZeieYSui27OjJ6tscnGrN/3WaKG/dcZyqaoyOX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739384569; c=relaxed/simple;
-	bh=rY4r5GKMn7v/sgkD/QcMMkNOQLXMfFnAoQP1x9J6QR8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t1xWYK4enZMMPBJsbakIei8Cdo1++yolitJaa3nrMtPYjmgwqKC+2F0yrDJmCodauw25zkBVVOn5Zv6plkJQ4XQOitWJZa+5h+TKfJUhazXJ3nnfhoBHnycHu6J2wNshGF6GxTFjaseoOTG54mVgqeFj4SMNFG6OU1yxQPyVh4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A8B212FC;
-	Wed, 12 Feb 2025 10:23:07 -0800 (PST)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB8AC3F58B;
-	Wed, 12 Feb 2025 10:22:42 -0800 (PST)
-Message-ID: <285a43db-c36d-400e-8041-0566f089a482@arm.com>
-Date: Wed, 12 Feb 2025 19:22:35 +0100
+	s=arc-20240116; t=1739388007; c=relaxed/simple;
+	bh=/+7+e/jvBGvPMsVtB+/kIZ1XYrpNImVdDnT7+1bEVHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XybMd9+1Jd7aC5mPiprEO5Tp1Jc4MOnmDL75BQIZHUSVu+dPIQ0YlW33yrvr/BC3Nb/VMNaGD/R7l5EObB3/6/jDjMUikb0ElDl/hiFkmgTj+9qvxgXUvT4YJvcVQx5Q0hzzmS92IC8MwIY/igPpwKNLBTpp0X/yDhYXQAxb/Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AcT8gh8J; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcT8gh8J"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A7B9C4CEE5;
+	Wed, 12 Feb 2025 19:20:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739388007;
+	bh=/+7+e/jvBGvPMsVtB+/kIZ1XYrpNImVdDnT7+1bEVHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AcT8gh8JgwgRfEIT6E8hX/7mDnv7N5ycokXyJk/Avr1G+k7FYAHx+Bf7InCMzao56
+	 oUD8IEL9vI/Xdig1Zw6w9IaZn7aaNoYelFEhpwnZAMJAQdNG/K3ip1ZfYCX7ma6KVI
+	 TkiTlpnyy4pf5CJPS6+4NBzTVrzXE4E9usrirdFs84uq8mCToiDlNWQ66A8kMNLJey
+	 zg255T9kUGxREaqXFMYyAl6ggBIosvLWVK5G422fH3H+5KPLe5iVoSlmpnD9IK7LIY
+	 0v8Sogl7rHN7GIpn+pxNEaoGAaVu8/YWLhiTELLbHwTMkSQ6thhboAFPBm+O/hfhYK
+	 hQJnK29ZaFlnA==
+Date: Wed, 12 Feb 2025 19:20:00 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a
+ support
+Message-ID: <20250212-unwritten-compile-7011777a11b3@spud>
+References: <20250212064657.5683-1-clamor95@gmail.com>
+ <20250212064657.5683-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-To: Juri Lelli <juri.lelli@redhat.com>,
- Christian Loehle <christian.loehle@arm.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>,
- Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <Z6MLAX_TKowbmdS1@jlelli-thinkpadt14gen4.remote.csb>
- <Z6M5fQB9P1_bDF7A@jlelli-thinkpadt14gen4.remote.csb>
- <8572b3bc-46ec-4180-ba55-aa6b9ab7502b@nvidia.com>
- <Z6SA-1Eyr1zDTZDZ@jlelli-thinkpadt14gen4.remote.csb>
- <a305f53d-44d4-4d7a-8909-6a63ec18a04b@nvidia.com>
- <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
- <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
- <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
- <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="LbItYNKzTdw8M51m"
+Content-Disposition: inline
+In-Reply-To: <20250212064657.5683-2-clamor95@gmail.com>
 
-On 11/02/2025 11:42, Juri Lelli wrote:
-> On 11/02/25 10:15, Christian Loehle wrote:
->> On 2/10/25 17:09, Juri Lelli wrote:
->>> Hi Christian,
->>>
->>> Thanks for taking a look as well.
->>>
->>> On 07/02/25 15:55, Christian Loehle wrote:
->>>> On 2/7/25 14:04, Jon Hunter wrote:
->>>>>
->>>>>
->>>>> On 07/02/2025 13:38, Dietmar Eggemann wrote:
->>>>>> On 07/02/2025 11:38, Jon Hunter wrote:
->>>>>>>
->>>>>>> On 06/02/2025 09:29, Juri Lelli wrote:
->>>>>>>> On 05/02/25 16:56, Jon Hunter wrote:
->>>>>>>>
->>>>>>>> ...
->>>>>>>>
->>>>>>>>> Thanks! That did make it easier :-)
->>>>>>>>>
->>>>>>>>> Here is what I see ...
->>>>>>>>
->>>>>>>> Thanks!
->>>>>>>>
->>>>>>>> Still different from what I can repro over here, so, unfortunately, I
->>>>>>>> had to add additional debug printks. Pushed to the same branch/repo.
->>>>>>>>
->>>>>>>> Could I ask for another run with it? Please also share the complete
->>>>>>>> dmesg from boot, as I would need to check debug output when CPUs are
->>>>>>>> first onlined.
->>>>>>
->>>>>> So you have a system with 2 big and 4 LITTLE CPUs (Denver0 Denver1 A57_0
->>>>>> A57_1 A57_2 A57_3) in one MC sched domain and (Denver1 and A57_0) are
->>>>>> isol CPUs?
->>>>>
->>>>> I believe that 1-2 are the denvers (even thought they are listed as 0-1 in device-tree).
->>>>
->>>> Interesting, I have yet to reproduce this with equal capacities in isolcpus.
->>>> Maybe I didn't try hard enough yet.
->>>>
->>>>>
->>>>>> This should be easy to set up for me on my Juno-r0 [A53 A57 A57 A53 A53 A53]
->>>>>
->>>>> Yes I think it is similar to this.
->>>>>
->>>>> Thanks!
->>>>> Jon
->>>>>
->>>>
->>>> I could reproduce that on a different LLLLbb with isolcpus=3,4 (Lb) and
->>>> the offlining order:
->>>> echo 0 > /sys/devices/system/cpu/cpu5/online
->>>> echo 0 > /sys/devices/system/cpu/cpu1/online
->>>> echo 0 > /sys/devices/system/cpu/cpu3/online
->>>> echo 0 > /sys/devices/system/cpu/cpu2/online
->>>> echo 0 > /sys/devices/system/cpu/cpu4/online
->>>>
->>>> while the following offlining order succeeds:
->>>> echo 0 > /sys/devices/system/cpu/cpu5/online
->>>> echo 0 > /sys/devices/system/cpu/cpu4/online
->>>> echo 0 > /sys/devices/system/cpu/cpu1/online
->>>> echo 0 > /sys/devices/system/cpu/cpu2/online
->>>> echo 0 > /sys/devices/system/cpu/cpu3/online
->>>> (Both offline an isolcpus last, both have CPU0 online)
->>>>
->>>> The issue only triggers with sugov DL threads (I guess that's obvious, but
->>>> just to mention it).
->>>
->>> It wasn't obvious to me at first :). So thanks for confirming.
->>>
->>>> I'll investigate some more later but wanted to share for now.
->>>
->>> So, problem actually is that I am not yet sure what we should do with
->>> sugovs' bandwidth wrt root domain accounting. W/o isolation it's all
->>> good, as it gets accounted for correctly on the dynamic domains sugov
->>> tasks can run on. But with isolation and sugov affected_cpus that cross
->>> isolation domains (e.g., one BIG one little), we can get into troubles
->>> not knowing if sugov contribution should fall on the DEF or DYN domain.
->>>
->>> Hummm, need to think more about it.
->>
->> That is indeed tricky.
->> I would've found it super appealing to always just have sugov DL tasks activate
->> on this_cpu and not have to worry about all this, but then you have contention
->> amongst CPUs of a cluster and there are energy improvements from always
->> having little cores handle all sugov DL tasks, even for the big CPUs,
->> that's why I introduced
->> commit 93940fbdc468 ("cpufreq/schedutil: Only bind threads if needed")
->> but that really doesn't make this any easier.
-> 
-> What about we actually ignore them consistently? We already do that for
-> admission control, so maybe we can do that when rebuilding domains as
-> well (until we find maybe a better way to deal with them).
-> 
-> Does the following make any difference?
 
-It at least seems to solve the issue. And like you mentioned on irc, we
-don't know the bw req of sugov anyway.
+--LbItYNKzTdw8M51m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
+On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
+> AL3000a is an ambient light sensor quite closely related to
+> exising AL3010 and can re-use exising schema for AL3010.
 
-dl_rq[0]:
-  .dl_nr_running                 : 0
-  .dl_bw->bw                     : 996147
-  .dl_bw->total_bw               : 0       <-- !
+Quite close you say, but the driver is entirely different it seems. How
+closely related is the hardware itself?
 
-IMHO, people who want to run serious DL can always check whether there
-are already these infrastructural DL tasks or even avoid schedutil.
-
-> 
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
->  kernel/sched/deadline.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index b254d878789d..8f7420e0c9d6 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2995,7 +2995,7 @@ void dl_add_task_root_domain(struct task_struct *p)
->  	struct dl_bw *dl_b;
->  
->  	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
-> -	if (!dl_task(p)) {
-> +	if (!dl_task(p) || dl_entity_is_special(&p->dl)) {
->  		raw_spin_unlock_irqrestore(&p->pi_lock, rf.flags);
->  		return;
->  	}
-> 
+>  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010=
+=2Eyaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> index a3a979553e32..6db4dfd5aa6c 100644
+> --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> @@ -4,14 +4,16 @@
+>  $id: http://devicetree.org/schemas/iio/light/dynaimage,al3010.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> =20
+> -title: Dyna-Image AL3010 sensor
+> +title: Dyna-Image AL3000a/AL3010 sensor
+> =20
+>  maintainers:
+>    - David Heidelberg <david@ixit.cz>
+> =20
+>  properties:
+>    compatible:
+> -    const: dynaimage,al3010
+> +    enum:
+> +      - dynaimage,al3010
+> +      - dynaimage,al3000a
+> =20
+>    reg:
+>      maxItems: 1
+> --=20
+> 2.43.0
+>=20
 
+--LbItYNKzTdw8M51m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ6z0YAAKCRB4tDGHoIJi
+0j+dAP49r84HHxrbKXxQV5QNOkt9MHHKgzrCq9fZbRdxtpQLPwD/ZAuFVV674Yte
+IXcQmPTqkS6v/K0PKZEkMjblXoKiiQE=
+=2zvA
+-----END PGP SIGNATURE-----
+
+--LbItYNKzTdw8M51m--
