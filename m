@@ -1,162 +1,117 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAAE207676;
-	Thu, 13 Feb 2025 06:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9C920A5DA;
+	Thu, 13 Feb 2025 07:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739428010; cv=none; b=q4bhOnKtaRCPxMLqCxHDdsQ2NceMoYkINBVGM6vz4tyTGPtauoXENNZoZy0dNae9uoVAeMThL0RyalTa8MZYvdXxhfjLivMFynfXnN8OJBKoSwFv51aqy1+rAkul6jPokaRTdPxzm0XBCYHBarhtoRC/YjDQsy3gGiU1J3Dx/z4=
+	t=1739432301; cv=none; b=aNpBuyie6me3ZNO3rOhdQ++klkSKZ2gn+Ne/zhWwswzvJPKbwKI70vb5lg+3z/JtDS+HNSRyzGF7XqwQlHyW2F54/S6cvA8eU1I7bBbgb2AmH7eciqVe+QRHOaSPHWjmlk/ZEtsvc3rDFV+8/mM9iyUfCs0rVHdXmM75qM2CtpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739428010; c=relaxed/simple;
-	bh=oZmU0KoHrhWM8blSSbz/XJuHot3imuYgtI96UTpgbXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uTfmR3RB/55bEQrMTKjcjqjh1laQbn3XtuWEU3fmkA5QdqdLQg/jvzD4LWFDIDGzRsLhyG9TZn7hHnFygSX6HeaFqofkBRf4PTSmvDHy1jFAfuKpE+Y9TwqsxDcdF4RBgI9FyVkQoD//T9dW+ef8vHHTGGaY3MiTqJQ1XWFdiqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PwbklkDq; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1739432301; c=relaxed/simple;
+	bh=ycqh/+ptlPhGnt0C6FkxCQZVCVx2KwVJ8PkH3Nq90Zo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j4dnBaRWfszDCHHbtTHSweT8MYowjgE/deDjOo7ZoIQsH2ggZAGI/nkEtIy4MTcNXTK8G82sacizZy0aYPD36E2OZW3EL8aoBw3+NEMTfphDoWIufjAL59liak3JCSuI5KuoY/OmRAReHO95KkNI8qTtdtrx9cu0j3K3Ouk9jT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZjaxdWRu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PwbklkDq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739428009; x=1770964009;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oZmU0KoHrhWM8blSSbz/XJuHot3imuYgtI96UTpgbXg=;
-  b=PwbklkDqWCVT4hAh4YcoX/khr4ZEHq37dPr85QR5RPiNgMp52iZz2qpR
-   LSlQ3iKbuqb8YKq7ttCFXMmrE87BL7h3A5Xaig2ZplxFqCyxUea4F/PBO
-   PqlbkY/KyMUsJ5F0UCf1IzMmhba8KOwjYWFzJZmObFUjL2ocpOUEzLwgD
-   2GTWhIGy37omU55wQ+GQpAm+B3SeInMShJP6pGY3FptubzL3K5g4xpLNV
-   Dy32r91UV0aXvHXRXcWODK8gv/wQeAzD8jOAsavhiI2C7zge/k3NmbyMK
-   Wo2g94cbc++U/EOqOO7pxEfsQwxWQr7eo2v9Ud5Vr7w9+Sxg8cLMOru1K
-   Q==;
-X-CSE-ConnectionGUID: 0V5VmEmSSlOGFJtHcdSy2w==
-X-CSE-MsgGUID: cWarmFWUSSamNeCo49gHBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="62581474"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="62581474"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 22:26:48 -0800
-X-CSE-ConnectionGUID: MVmFH9VdTAOgkleN2g4fhg==
-X-CSE-MsgGUID: dH9zWk9SR8qJaIs02IqDxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="143992862"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 12 Feb 2025 22:26:45 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiSgN-0016dl-0g;
-	Thu, 13 Feb 2025 06:26:43 +0000
-Date: Thu, 13 Feb 2025 14:26:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Akhil R <akhilrajeev@nvidia.com>, herbert@gondor.apana.org.au,
-	davem@davemloft.net, thierry.reding@gmail.com, jonathanh@nvidia.com,
-	linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Akhil R <akhilrajeev@nvidia.com>
-Subject: Re: [PATCH v2 06/10] crypto: tegra: Fix HASH intermediate result
- handling
-Message-ID: <202502131419.R9s0l3RE-lkp@intel.com>
-References: <20250211171713.65770-7-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZjaxdWRu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D521C4CED1;
+	Thu, 13 Feb 2025 07:38:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739432300;
+	bh=ycqh/+ptlPhGnt0C6FkxCQZVCVx2KwVJ8PkH3Nq90Zo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZjaxdWRuwaXxhyrqiIO2jip6dHbfVfQOMySqgwcFc0ncvGkackvRLy6P1g6C0zIfL
+	 cl9Yopny1ami7wEsBQyTeVZ7a9QTnhr9FJ8tUC5UEa7i89097AFkGglrIJ89SPIO21
+	 zee2iBfBiRsm5T6+yw+7en+3KJfXUC3OGCt3VoEAZPap79WBFdJEFZvsyBmGblOyYe
+	 bw7coEqqTekDdMC2bKt2P+G4rCooDtgzXYUYJftEo8A+OpP3Ig1crBBfxPqewbc9MV
+	 mEBasa/+fVslEEOOakjZ6cDIz8wL6s2NwkW4m4kbBzuATFWvSZHHFAHn4dXUOAh/xF
+	 se3uAgZp0tFJg==
+Message-ID: <6f3e6958-25eb-4835-88e1-2d531c892dbe@kernel.org>
+Date: Thu, 13 Feb 2025 08:38:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211171713.65770-7-akhilrajeev@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] serial: tegra-utc: Add driver for Tegra UART Trace
+ Controller (UTC)
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Kartik Rajput <kkartik@nvidia.com>
+Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
+ hvilleneuve@dimonoff.com, arnd@kernel.org, geert+renesas@glider.be,
+ robert.marko@sartura.hr, schnelle@linux.ibm.com,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20250212104132.61060-1-kkartik@nvidia.com>
+ <20250212104132.61060-3-kkartik@nvidia.com>
+ <Z6y5vRGyouZsQWyj@smile.fi.intel.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <Z6y5vRGyouZsQWyj@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Akhil,
+On 12. 02. 25, 16:09, Andy Shevchenko wrote:
+>> +static bool tegra_utc_tx_chars(struct tegra_utc_port *tup)
+>> +{
+>> +	struct uart_port *port = &tup->port;
+>> +	unsigned int pending;
+>> +	u8 c;
+>> +
+>> +	pending = uart_port_tx(port, c,
+>> +		     !(tegra_utc_tx_readl(tup, TEGRA_UTC_FIFO_STATUS) & TEGRA_UTC_FIFO_FULL),
+>> +		     tegra_utc_tx_writel(tup, c, TEGRA_UTC_DATA));
+> 
+> Make the last two to reside in temporary variables with self-explanatory names.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on herbert-crypto-2.6/master]
-[also build test WARNING on herbert-cryptodev-2.6/master linus/master v6.14-rc2 next-20250212]
-[cannot apply to tegra/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/crypto-tegra-Use-separate-buffer-for-setkey/20250212-012434
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git master
-patch link:    https://lore.kernel.org/r/20250211171713.65770-7-akhilrajeev%40nvidia.com
-patch subject: [PATCH v2 06/10] crypto: tegra: Fix HASH intermediate result handling
-config: nios2-randconfig-r112-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131419.R9s0l3RE-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250213/202502131419.R9s0l3RE-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502131419.R9s0l3RE-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/crypto/tegra/tegra-se-hash.c:258:41: sparse: sparse: cast to restricted __be32
->> drivers/crypto/tegra/tegra-se-hash.c:258:41: sparse: sparse: cast to restricted __be32
->> drivers/crypto/tegra/tegra-se-hash.c:258:41: sparse: sparse: cast to restricted __be32
->> drivers/crypto/tegra/tegra-se-hash.c:258:41: sparse: sparse: cast to restricted __be32
->> drivers/crypto/tegra/tegra-se-hash.c:258:41: sparse: sparse: cast to restricted __be32
->> drivers/crypto/tegra/tegra-se-hash.c:258:41: sparse: sparse: cast to restricted __be32
-   drivers/crypto/tegra/tegra-se-hash.c: note: in included file (through include/uapi/linux/swab.h, include/linux/swab.h, include/uapi/linux/byteorder/little_endian.h, ...):
-   arch/nios2/include/uapi/asm/swab.h:31:24: sparse: sparse: too many arguments for function __builtin_custom_ini
-
-vim +258 drivers/crypto/tegra/tegra-se-hash.c
-
-   214	
-   215	static int tegra_se_insert_hash_result(struct tegra_sha_ctx *ctx, u32 *cpuvaddr,
-   216				      struct tegra_sha_reqctx *rctx)
-   217	{
-   218		u32 *res = (u32 *)rctx->intr_res.buf;
-   219		int i = 0, j;
-   220	
-   221		cpuvaddr[i++] = 0;
-   222		cpuvaddr[i++] = host1x_opcode_setpayload(HASH_RESULT_REG_COUNT);
-   223		cpuvaddr[i++] = se_host1x_opcode_incr_w(SE_SHA_HASH_RESULT);
-   224	
-   225		for (j = 0; j < HASH_RESULT_REG_COUNT; j++) {
-   226			int idx = j;
-   227	
-   228			/*
-   229			 * The initial, intermediate and final hash value of SHA-384, SHA-512
-   230			 * in SHA_HASH_RESULT registers follow the below layout of bytes.
-   231			 *
-   232			 * +---------------+------------+
-   233			 * | HASH_RESULT_0 | B4...B7    |
-   234			 * +---------------+------------+
-   235			 * | HASH_RESULT_1 | B0...B3    |
-   236			 * +---------------+------------+
-   237			 * | HASH_RESULT_2 | B12...B15  |
-   238			 * +---------------+------------+
-   239			 * | HASH_RESULT_3 | B8...B11   |
-   240			 * +---------------+------------+
-   241			 * |            ......          |
-   242			 * +---------------+------------+
-   243			 * | HASH_RESULT_14| B60...B63  |
-   244			 * +---------------+------------+
-   245			 * | HASH_RESULT_15| B56...B59  |
-   246			 * +---------------+------------+
-   247			 *
-   248			 */
-   249			if (ctx->alg == SE_ALG_SHA384 || ctx->alg == SE_ALG_SHA512)
-   250				idx = (j % 2) ? j - 1 : j + 1;
-   251	
-   252			/* For SHA-1, SHA-224, SHA-256, SHA-384, SHA-512 the initial
-   253			 * intermediate and final hash value when stored in
-   254			 * SHA_HASH_RESULT registers, the byte order is NOT in
-   255			 * little-endian.
-   256			 */
-   257			if (ctx->alg <= SE_ALG_SHA512)
- > 258				cpuvaddr[i++] = be32_to_cpu(res[idx]);
-   259			else
-   260				cpuvaddr[i++] = res[idx];
-   261		}
-   262	
-   263		return i;
-   264	}
-   265	
+Not sure what you mean here? They are needed to be evaluated 
+(read/written) in every loop.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+js
+suse labs
