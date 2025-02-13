@@ -1,124 +1,146 @@
-Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 242FC28A2A7
-	for <linux-tegra@vger.kernel.org>; Thu, 13 Feb 2025 16:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58132222DE;
+	Thu, 13 Feb 2025 20:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739465480; cv=none; b=Bq191WVmgz24PkHCEk7AM3OTpTMJncA/RjdX+C1pF8ajP6/euJ2zNt1f5TgVGsx27eX/JlHPXeAbUfgpS1aAADAm25ikUacR7HmLocsDv7ol/Erfcv4Vb6ARr0c86gS1EWaFV/UB4UyGHifkNEEU91LWq3TYTt7XDSUdmE3zNBU=
+	t=1739477733; cv=none; b=XxedS2Ad6IAUwDySCl5mgvog7jFBRo5VuVY+J/AxhcZITwtPDYQbEk+vCen2SugVeBqUYX6KSzDM72/vbJVjhhK0tSW1tc1B7U4+/nQUPeEe9m0D/BMkwQWr5Rn4QngcYDQ7DqbflaHic3+lhTdg6gof3F8Br9FnESYK9zENk/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739465480; c=relaxed/simple;
-	bh=Or++wAxBmTJfTqytxnx0k6YY2ypc0YGiThOE0+0mx8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dc2r3ddXNvv0ON6ACO3/E2S9nw6EEMLBNNR7ScMDQn/QIvLeX3TOcZ1MLULSHovKfiURhGM5P7Siah664+GC9BLH+kuXtsew2mb5k4o6z6ifoVpIpwcqor90VJxZ+WrjNmuI6ALs5d/2MycmNA6tg3eCmQdh4W98mrMpn5iNw08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=D4jdYieB; arc=none smtp.client-ip=193.136.128.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+	s=arc-20240116; t=1739477733; c=relaxed/simple;
+	bh=gFS8GPR4Ajl60UP7+4KVw9gDH4TZ0PhIA+MKoUXArxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ml4M4yEPNAPXsipqUw65uv+IYHENcdt53D2Od1wV6Y5/9raUZsydxzaIt26tDvCbcc5BkEI+9U5rSH/SSa9oCTDiadFN1yIJ7AyNZDcTqoDmrS665o+4lJ+MAyYQgoLurYK6eIV9VsrJe445HbBSbiPGqDYSRu+Cwn8TH3Bt1PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqdZwsfx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="D4jdYieB"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 28C78600022F;
-	Thu, 13 Feb 2025 16:45:14 +0000 (WET)
-X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
-Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
- by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
- with LMTP id D_X-8oSLhMw0; Thu, 13 Feb 2025 16:45:11 +0000 (WET)
-Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
-	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id CB87E60020DD;
-	Thu, 13 Feb 2025 16:45:10 +0000 (WET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
-	s=mail; t=1739465111;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=//D+0qXwv5Gm0YeDVVYXQrXCtiWyh/Qcg6tCR6GBt/s=;
-	b=D4jdYieBlgGj0cdGpUzvaClL8gP/IjGHUNP1odAglnuYitwG8ZtYOd6oMKsnKxq6yXH+Xk
-	VG7X9GbHmY3Z6SAkLpu9IZZzr3GPKZlgkG/vZo50cTCx3qZgFy1dsf1cW8iN1ylxwfFvQd
-	Ut9Vvt19KWCaK1kuYlb9o+GzcxVWEis=
-Received: from [IPV6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde] (unknown [IPv6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde])
-	(Authenticated sender: ist187313)
-	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id A77A6360259;
-	Thu, 13 Feb 2025 16:45:09 +0000 (WET)
-Message-ID: <a77768b7-b4f5-47b1-8134-ca7e2bf5660b@tecnico.ulisboa.pt>
-Date: Thu, 13 Feb 2025 16:45:09 +0000
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqdZwsfx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39819C4CED1;
+	Thu, 13 Feb 2025 20:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739477733;
+	bh=gFS8GPR4Ajl60UP7+4KVw9gDH4TZ0PhIA+MKoUXArxY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TqdZwsfx82xJagVlpspFyy/Vqw95aHWlQwiSyeXIdxGnjLmYIMhY9zqVEA+DoEkY4
+	 lcDlxACjZbZmLgFNIlt9Ic2vOKl/55wjlk8re2mb/TUUQGNz58EYUwWf8QXmPN/+rK
+	 Wogs0dSQiqmX5ixXI1DeRb7X7BPfxILNLZn/8nGD2EMu+G+3qMmMm0lqjN8SC3YiJh
+	 4LSMSWX8nax7zC6KcxhBb2PCP4xlaIths1HfnKr1/3Y/vsS9y18Bdt6oUU0dW0hXok
+	 1WsvsGjcng0HOhvXddBUxeF5NBXUermedA2vQUJwBlr8ideBdv4vsOXs4kdHZ0PWh4
+	 jauAh15stszMQ==
+Date: Thu, 13 Feb 2025 20:15:27 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a
+ support
+Message-ID: <20250213-reflex-earlobe-ebbeaece6fad@spud>
+References: <20250212064657.5683-1-clamor95@gmail.com>
+ <20250212064657.5683-2-clamor95@gmail.com>
+ <20250212-unwritten-compile-7011777a11b3@spud>
+ <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH rc] gpu: host1x: Do not assume that a NULL domain means no
- DMA IOMMU
-To: Jason Gunthorpe <jgg@nvidia.com>, David Airlie <airlied@gmail.com>,
- dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- Mikko Perttunen <mperttunen@nvidia.com>, Simona Vetter <simona@ffwll.ch>,
- Thierry Reding <thierry.reding@gmail.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <jroedel@suse.de>,
- Jerry Snitselaar <jsnitsel@redhat.com>, patches@lists.linux.dev
-References: <0-v1-10dcc8ce3869+3a7-host1x_identity_jgg@nvidia.com>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-In-Reply-To: <0-v1-10dcc8ce3869+3a7-host1x_identity_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7dqWvGhGUC+okugZ"
+Content-Disposition: inline
+In-Reply-To: <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
 
-Hi all,
 
-On 2/4/25 7:18 PM, Jason Gunthorpe wrote:
-> Previously with tegra-smmu, even with CONFIG_IOMMU_DMA, the default domain
-> could have been left as NULL. The NULL domain is specially recognized by
-> host1x_iommu_attach() as meaning it is not the DMA domain and
-> should be replaced with the special shared domain.
-> 
-> This happened prior to the below commit because tegra-smmu was using the
-> NULL domain to mean IDENTITY.
-> 
-> Now that the domain is properly labled the test in DRM doesn't see NULL.
-> Check for IDENTITY as well to enable the special domains.
-> 
-> This is the same issue and basic fix as seen in
-> commit fae6e669cdc5 ("drm/tegra: Do not assume that a NULL domain means no
-> DMA IOMMU").
-> 
-> Fixes: c8cc2655cc6c ("iommu/tegra-smmu: Implement an IDENTITY domain")
-> Reported-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> Closes: https://lore.kernel.org/all/c6a6f114-3acd-4d56-a13b-b88978e927dc@tecnico.ulisboa.pt/
-> Tested-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-> ---
->   drivers/gpu/host1x/dev.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-> index 7b1d091f3c090c..5d27662019d28b 100644
-> --- a/drivers/gpu/host1x/dev.c
-> +++ b/drivers/gpu/host1x/dev.c
-> @@ -361,6 +361,10 @@ static bool host1x_wants_iommu(struct host1x *host1x)
->   	return true;
->   }
->   
-> +/*
-> + * Returns ERR_PTR on failure, NULL if the translation is IDENTITY, otherwise a
-> + * valid paging domain.
-> + */
->   static struct iommu_domain *host1x_iommu_attach(struct host1x *host)
->   {
->   	struct iommu_domain *domain = iommu_get_domain_for_dev(host->dev);
-> @@ -385,6 +389,8 @@ static struct iommu_domain *host1x_iommu_attach(struct host1x *host)
->   	 * Similarly, if host1x is already attached to an IOMMU (via the DMA
->   	 * API), don't try to attach again.
->   	 */
-> +	if (domain && domain->type == IOMMU_DOMAIN_IDENTITY)
-> +		domain = NULL;
->   	if (!host1x_wants_iommu(host) || domain)
->   		return domain;
->   
-> 
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+--7dqWvGhGUC+okugZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Any updates on the status of this patch?
+On Wed, Feb 12, 2025 at 09:39:06PM +0200, Svyatoslav Ryhel wrote:
+> =D1=81=D1=80, 12 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 21:20 Co=
+nor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
+> > > AL3000a is an ambient light sensor quite closely related to
+> > > exising AL3010 and can re-use exising schema for AL3010.
+> >
+> > Quite close you say, but the driver is entirely different it seems. How
+> > closely related is the hardware itself?
+> >
+>=20
+> Well, I can simply duplicate al3010 or al3320a schema if re-using
+> schema is not allowed. AL3000a has no available datasheet online.
+> Downstream code for al3000a and al3010 seems to have same principles,
+> apart from light measurements.
 
-Thanks,
-Diogo
+It's probably more of a question as to why you're duplicating the driver
+for them, rather than telling you not to put both bindings together.
+That said, information on what's actually different is helpful in the
+binding, to explain why you're not using a fallback compatible etc.
+
+>=20
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++++=
+--
+> > >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al=
+3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.ya=
+ml
+> > > index a3a979553e32..6db4dfd5aa6c 100644
+> > > --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.ya=
+ml
+> > > +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.ya=
+ml
+> > > @@ -4,14 +4,16 @@
+> > >  $id: http://devicetree.org/schemas/iio/light/dynaimage,al3010.yaml#
+> > >  $schema: http://devicetree.org/meta-schemas/core.yaml#
+> > >
+> > > -title: Dyna-Image AL3010 sensor
+> > > +title: Dyna-Image AL3000a/AL3010 sensor
+> > >
+> > >  maintainers:
+> > >    - David Heidelberg <david@ixit.cz>
+> > >
+> > >  properties:
+> > >    compatible:
+> > > -    const: dynaimage,al3010
+> > > +    enum:
+> > > +      - dynaimage,al3010
+> > > +      - dynaimage,al3000a
+> > >
+> > >    reg:
+> > >      maxItems: 1
+> > > --
+> > > 2.43.0
+> > >
+
+--7dqWvGhGUC+okugZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ65S3gAKCRB4tDGHoIJi
+0pBLAP9DAfvM0GW8mfJUiDrGHRO8QboPxmy+oxCqMZyJ3p0YuwD/VCGGvaVtnZ7a
+l9NBlucIVYIqUW1e7vIi8IqvOfjpdgs=
+=U7G9
+-----END PGP SIGNATURE-----
+
+--7dqWvGhGUC+okugZ--
