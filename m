@@ -1,131 +1,93 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED19720B80D;
-	Thu, 13 Feb 2025 13:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6664126982E;
+	Thu, 13 Feb 2025 13:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739453928; cv=none; b=tuhvtGJHN0ieU3/bmIJ6YfS3/Mza8af82hMw/PiQVSwvc0vmiM3k1GdsQYKEe4Py7zGvCJhgNmt41WnRXAVHnz4pIShrj+ebVLubXg2iB8pnansymwkZhRh64SG32T16tcSQM6kgiIqrBJXHPL1ABSgwc4S/fOHRt7j2ywmkG1w=
+	t=1739455162; cv=none; b=V8w9NMBR+Y8F6XGPGvVmIX4RLflQNQlUc4AKDdQtQPAFKS1fF+aUJrl54DD7jjxL7HXbt53fjsVy3qGTXvakaltjcFg3UNA7HTazdzEH2fgXeXcZqy3J4VrMGMZsvEHntenD+XKH7Jo8gXU5yyOz3M12g2NmVSJx60zvu3zUL8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739453928; c=relaxed/simple;
-	bh=pzBCvlYbL5cZxHO40BZm6owVnS0Y4kV/DE6Ud4axTWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XHmeE+2/wJ08/wvOAByeqz3v1EESEg8C+UhgMM4TrBeEqdoL90k7LDF0UgB3OrGtKeAgRtV5I+a1IB9ch+qbkGB30dDbugOhvZKCXdBCVoVExx1Ccvm7KwN8GpiawLgKTD7R914hjvap1ad4Zk3VWieAR+pV6FGdJHXCTpFxZ9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B385616F3;
-	Thu, 13 Feb 2025 05:39:04 -0800 (PST)
-Received: from [10.1.30.41] (e127648.arm.com [10.1.30.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9188A3F58B;
-	Thu, 13 Feb 2025 05:38:39 -0800 (PST)
-Message-ID: <9629f060-28f4-4743-9e60-688cba039f87@arm.com>
-Date: Thu, 13 Feb 2025 13:38:37 +0000
+	s=arc-20240116; t=1739455162; c=relaxed/simple;
+	bh=M1wZSTlysra8qn4RUhjimztIhsfk5rrbCEkwkFbEduw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pozEgjl6/0VaPEG+PzdaFfq/s+xiqh7qxw+agIuUJHdIG8UGfKBMFBWadjr1wI458qbkSwGu5L3yUDq//NacBGcTnq0zc4bbWL/cM9H4E/NZTParX9NU0jx2olHhv2UU8Q93/+hpETRx03dP8/EwYQRUUFo9P5ZGd7YIZhVOfPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QcbxM6gz; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QcbxM6gz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739455161; x=1770991161;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=M1wZSTlysra8qn4RUhjimztIhsfk5rrbCEkwkFbEduw=;
+  b=QcbxM6gzLdZcDa3Cj95Tdky/avqRrgx9NQPOUgmETW/gRwBzaGIi1Oi3
+   i/darvnPpVVe7HMpRzl5FtEDDUjQOYtJtapaqLfnqR+FJm2lcevuz1uJw
+   +0ZWeFreuxu8xqVZX7WvafUV8Xde4T2ZLtPBBiOWhEXNiqJ6GKKA50Q0R
+   ccAyrPWZqRDSZ+xX3Huqf11aHCAl5VQBhFiEAoCnKDgX3x9704C/Ycy8U
+   PrdQocdZOTlAP1Qx3u9COe+aEERzDlvgEKpxnkagvQA0HL+0eokb1LfTX
+   YbXipuv+oz0V8za9YWhfWylxogz1YERizmZq/kZOjlYlR/B9XOJyYAdBb
+   Q==;
+X-CSE-ConnectionGUID: ktMyIf2jSxadjndoJt1k5g==
+X-CSE-MsgGUID: tty55IUPQGiRTP0rAEm5/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="43807187"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="43807187"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:59:20 -0800
+X-CSE-ConnectionGUID: QT0KT4bSRIu59xZB+6WNGQ==
+X-CSE-MsgGUID: gVufrTrsREyvbArL7qnigw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="118236766"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 05:59:17 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tiZkI-0000000BBEX-1KDE;
+	Thu, 13 Feb 2025 15:59:14 +0200
+Date: Thu, 13 Feb 2025 15:59:14 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, hvilleneuve@dimonoff.com, arnd@kernel.org,
+	geert+renesas@glider.be, robert.marko@sartura.hr,
+	schnelle@linux.ibm.com, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] serial: tegra-utc: Add driver for Tegra UART
+ Trace Controller (UTC)
+Message-ID: <Z636stK76iRkubEV@smile.fi.intel.com>
+References: <20250213125612.4705-1-kkartik@nvidia.com>
+ <20250213125612.4705-3-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>,
- Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <a305f53d-44d4-4d7a-8909-6a63ec18a04b@nvidia.com>
- <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
- <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
- <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
- <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <285a43db-c36d-400e-8041-0566f089a482@arm.com>
- <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
- <c8f626ba-1be4-4c25-b283-d1e11a061aac@arm.com>
- <Z630nGN1IHhyYIYl@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <Z630nGN1IHhyYIYl@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213125612.4705-3-kkartik@nvidia.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 2/13/25 13:33, Juri Lelli wrote:
-> On 13/02/25 12:27, Christian Loehle wrote:
->> On 2/13/25 06:20, Juri Lelli wrote:
->>> On 12/02/25 19:22, Dietmar Eggemann wrote:
->>>> On 11/02/2025 11:42, Juri Lelli wrote:
->>>
->>> ...
->>>
->>>>> What about we actually ignore them consistently? We already do that for
->>>>> admission control, so maybe we can do that when rebuilding domains as
->>>>> well (until we find maybe a better way to deal with them).
->>>>>
->>>>> Does the following make any difference?
->>>>
->>>> It at least seems to solve the issue. And like you mentioned on irc, we
->>>> don't know the bw req of sugov anyway.
->>>>
->>>> So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
->>>>
->>>> dl_rq[0]:
->>>>   .dl_nr_running                 : 0
->>>>   .dl_bw->bw                     : 996147
->>>>   .dl_bw->total_bw               : 0       <-- !
->>>>
->>>> IMHO, people who want to run serious DL can always check whether there
->>>> are already these infrastructural DL tasks or even avoid schedutil.
->>>
->>> It definitely not ideal and admittedly gross, but not worse than what we
->>> are doing already considering we ignore sugovs at AC and the current
->>> bandwidth allocation its there only to help with PI. So, duck tape. :/
->>>
->>> A more proper way to work with this would entail coming up with sensible
->>> bandwidth allocation for sugovs, but that's most probably hardware
->>> specific, so I am not sure how we can make that general enough.
->>>
->>> Anyway, looks like Jon was still seeing the issue. I asked him to verify
->>> he is using all the proposed changes. Let's see what he reports.
->>
->> FWIW it also fixes my reproducer.
->>
->> I agree that dummy numbers for sugov bw is futile, but real bw numbers
->> also don't make a lot of sense (what if we exceed them? The system
->> won't be able to change frequency, i.e. might not be able to provide
->> bw for other DL tasks then either?).
->> I'm slightly worried about now allowing the last legal CPU for a sugov
->> cluster to offline, which would lead to a cluster still being active
->> but sugov DL unable to run anywhere. I can't reproduce this currently
->> though. Is this an issue in theory? Or am I missing something?
+On Thu, Feb 13, 2025 at 06:26:12PM +0530, Kartik Rajput wrote:
+> The Tegra264 SoC supports the UART Trace Controller (UTC), which allows
+> multiple firmware clients (up to 16) to share a single physical UART.
+> Each client is provided with its own interrupt and has access to a
+> 128-character wide FIFO for both transmit (TX) and receive (RX)
+> operations.
 > 
-> Not sure I get what your worry is, sorry. In my understanding when the
-> last cpu of a policy/cluster gets offlined the corresponding sugov
-> kthread gets stopped as well (sugov_exit)?
-> 
+> Add tegra-utc driver to support Tegra UART Trace Controller (UTC)
+> client.
 
-The other way round.
-We may have sugov kthread of cluster [6,7] affined to CPU1. Is it
-guaranteed that we cannot offline CPU1 (while CPU6 or CPU7 are still
-online)?
-Or without the affinity:
-cluster [6,7] with isolcpu=6 (i.e. sugov kthread of that cluster can
-only run on CPU7). Is offlining of CPU6 then prevented (as long as
-CPU7 is online)?
-I don't see how.
-Anyway we probably want to change isolcpu and affinity to merely be 
-a suggestion for the sugov DL case. Fundamentally it belongs to what
-is run on that CPU anyway.
+LGTM now, FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
