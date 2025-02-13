@@ -1,220 +1,157 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2049.outbound.protection.outlook.com [40.107.93.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAA520B7FF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADCEA211474;
 	Thu, 13 Feb 2025 10:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739441119; cv=none; b=HxPVfX6/h/rSVqe3+I1hP1csEadm2J09IJQHcEJsk4kPHxogjwXrj3bL+jxbz4Jl4+24t7VEoPQa9YDxUgAQq0Ut2itLOh28rshRmylpI0Rq/M7CflSDnPclQavDo8+IeNSffSqyq6pkN1MbMAVs5Jqed0q/d3V7GJSn8U8aQNM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739441119; c=relaxed/simple;
-	bh=bESPLDr+8nVNncMhL1D53mkVy8OYQrkWgX15UF2J8sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hshZ+HV54seeTb3oy73VnbyH7VV4dqPzhJ2lBp72C8u35fEwPLlB3zAFocacdUEOVFTMME11PMmFaAglSoBvJ5cUYkAdiLYrEUqxsKfaV42ntOMDz3pHnkGQnEe4S8d19FYE3dZQgwNApZ2dkt3EqOEfZl9d4A9dJifi1f4zwgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LpnldGkJ; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739441120; cv=fail; b=vFSnhEXHsj8niCPRS27xAVa6FRSmWNmOl6tmzg9coJDPXo63B1liWETLhyte2O0wIAgzU2cRKiOZQcnwu+hYXiORseg1xYHNPMoLZVkzFeFrmWeZBfYjyxzaSz2vkJHe+crbOYWtTrAH9QJ6vrQuBHrf13BAxKc/FjowoFktfQE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739441120; c=relaxed/simple;
+	bh=Jlf6YrZjZjyKswlRWcGZen7WrnylwvP7ClaIDq75Jbw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZaCJS9sG6pPZnRhMHl+6Kv2NELOXTRuV4/Tj8yFiDoGFJnv1mpjusyQF48qHQHw/yiooRA3M+l09EH8XwccaMvwW7db/i0z62Y0huV3HFiJkITwGb1mk7X5z2c1uWyj3HFLh37LoX5W1RvUYiotiRJrnqWPik37lv/dO8lF3dYo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WEUdk+p3; arc=fail smtp.client-ip=40.107.93.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LpnldGkJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739441117; x=1770977117;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bESPLDr+8nVNncMhL1D53mkVy8OYQrkWgX15UF2J8sc=;
-  b=LpnldGkJ6iECZducrshW0NyXWQdcfaMyiKCi9cmQrXBjZW77WIxDoGkP
-   T9FEOSQHvVEl6I+Wjnv5g2sHSqvOrM5V6lAfjmH1b50GUzCTqpg5zZjr5
-   6CiKnBZUa05cvGU4y+sZ5shQeMCFqidK6t7rYJ7uWZ85WW3RsNW52tHcp
-   9uml1YfbfzBfRJWEQSathpLFlyB1Qqgp3WropPVxlMxxyST/722LxvbCt
-   aoblcc265e/tl5l2onZ2sLhwrGZOpslzZ98TjIvACExc533pN5Opf/j4G
-   NZPItb9thb5XtFPQplOG2XKsEuWnpbs4c+Cw9oYNqdbZCz2Etd5XnRWYW
-   A==;
-X-CSE-ConnectionGUID: IhIHV3QNQf+m9Z96mxUzuA==
-X-CSE-MsgGUID: K/8lI4+hSmWmktiqrM6TIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="65488301"
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="65488301"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 02:05:16 -0800
-X-CSE-ConnectionGUID: HQaiDeNsQzaJnXRKxE40dw==
-X-CSE-MsgGUID: pi9aOJ/CQlCXzQxpQOQVMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="112864987"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 13 Feb 2025 02:05:13 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiW5m-0016tb-0v;
-	Thu, 13 Feb 2025 10:05:10 +0000
-Date: Thu, 13 Feb 2025 18:04:59 +0800
-From: kernel test robot <lkp@intel.com>
-To: Akhil R <akhilrajeev@nvidia.com>, herbert@gondor.apana.org.au,
-	davem@davemloft.net, thierry.reding@gmail.com, jonathanh@nvidia.com,
-	linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Akhil R <akhilrajeev@nvidia.com>
-Subject: Re: [PATCH v2 06/10] crypto: tegra: Fix HASH intermediate result
- handling
-Message-ID: <202502131717.CFOwEfqA-lkp@intel.com>
-References: <20250211171713.65770-7-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WEUdk+p3"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MwDPKuq8+Hh03d5SdeEwy2gjlSupPCXiM50ckgyih0Jsynw6L8dznuZBu0/HFythN4IWZQH9L5y+ho5ynbcfaFFvrwn8Qh/Os+yFw6wb/dlT3ZmQxEzwZtPmlzTOJ7YdXXLqJiKHaiadYhOXifvpqU7DA2Lee9PK0anMS6EGA0cXsJdOPkOMhmuXki0qUhXt/vDqGriEoLQoiWHUHPg3L0CS4QjYdrg6cjbUH4BgyuxXkRDpruaLztlxLcqcZC7BAMytVcoWLgnRQlX0V3JTqEInIhmUYckbmYMfC6qx7TFTj+tw8dRjR+63LBJmijhPS/h7e3QbXo/VjdzfST5I/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p4UVKXAu2bMNuD93pjAvo/2q8qW5+sybznugIUZsc9s=;
+ b=pxQ14Cz/D5il81fGUyHLRgASBzXqZvoexQxObbEFOHJZQlFIWVKPMav95rYWZSRIjjaHXGeXVP4xayXl5VSdS04KXgg4mPKneBNc72fh301byifz9SWgbmpN4cb03cBKEpjl7jDBD170hFyYLqsddRfHRIVzlAx2Y/TuVF5LZhiE0XNNOBUGrbjuljHm4wGcM0Xv2OwrTL1e/ORI7lXFfZTxzPPbvWAlp5kYqlTo6ZUv0X0mfhXC7zc9/dLuJTZ/NYj+BmHAItbmuzZTAD+MZuVF9MB9HXdj/uN/krB3KR2Ul2AdS0UgWoIC80Zd3636xqJM8Dv3Y8bcTLRiVjhyTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
+ is 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=temperror action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p4UVKXAu2bMNuD93pjAvo/2q8qW5+sybznugIUZsc9s=;
+ b=WEUdk+p3F+s3kbCegNNVkfY2VM8jgrq5GSqK1P3g1nArtlZyeoQ1YoXSRW/s6mpCPGB8u4Jw6qHgrbmQZCACrJaY6t4h+5f7dzM6ty64BdDSIFLsPAGX+BUJi9OCqkdJ2x4ugYJ3lbjCV3KIhEtHUIZEjw/ciJNow5tcTpdDpsjw2hZYAPm4b1Gg1aqy4v8d2b4nKnf7PH9TBl2PsfcK8+GNn4dakuOL3zLqb1gDLR8svZ2TNfGsutLUhTTqRs4nu1DC9BrTXq8sxjyaMOVS2kSGC/zkVeL4y1dwtuUbdlLKmnJKV1l15h9zwdXxqMrrZaS07YjMzDSNjpxNcALBgw==
+Received: from BYAPR02CA0024.namprd02.prod.outlook.com (2603:10b6:a02:ee::37)
+ by DM4PR12MB7526.namprd12.prod.outlook.com (2603:10b6:8:112::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.16; Thu, 13 Feb
+ 2025 10:05:13 +0000
+Received: from SJ1PEPF00001CE9.namprd03.prod.outlook.com
+ (2603:10b6:a02:ee:cafe::a1) by BYAPR02CA0024.outlook.office365.com
+ (2603:10b6:a02:ee::37) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.14 via Frontend Transport; Thu,
+ 13 Feb 2025 10:05:12 +0000
+X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
+ 216.228.118.233) smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=temperror action=none header.from=nvidia.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of nvidia.com: DNS Timeout)
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ1PEPF00001CE9.mail.protection.outlook.com (10.167.242.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8445.10 via Frontend Transport; Thu, 13 Feb 2025 10:05:11 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 13 Feb
+ 2025 02:05:04 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 13 Feb 2025 02:05:04 -0800
+Received: from NV-2XGVVG3.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Thu, 13 Feb 2025 02:04:59 -0800
+From: Kartik Rajput <kkartik@nvidia.com>
+To: <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <hvilleneuve@dimonoff.com>, <arnd@kernel.org>,
+	<geert+renesas@glider.be>, <robert.marko@sartura.hr>,
+	<schnelle@linux.ibm.com>, <andriy.shevchenko@linux.intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>
+Subject: [PATCH v4 0/2] Add support for Tegra UART Trace Controller (UTC) client
+Date: Thu, 13 Feb 2025 15:34:40 +0530
+Message-ID: <20250213100442.45773-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250211171713.65770-7-akhilrajeev@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE9:EE_|DM4PR12MB7526:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6976cf7a-803a-4236-c1f8-08dd4c15e768
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ivND/Kwf7O4P1oFNXVzkpqznEjXUYINAUCWKxvYK9Thd+lUcx26aGeaggPm5?=
+ =?us-ascii?Q?wV5lktsjFDhTxaHSD0d8bNJmhyDBTRdB0GjqA7BrULnn1tGXm6VqMKGQ4ko0?=
+ =?us-ascii?Q?6R48PzHlHJ7rzfm4k5RhwU5uoJATc8O+JH9XJxHoZ6khA2ZYNKj6aQBzjgBw?=
+ =?us-ascii?Q?zPM1zlnS6he4uZ3OH/mYCRBhSyUVZMXgkdyN0Lt1RdNlktkCJSDTY7903kOc?=
+ =?us-ascii?Q?uUkid32/nTuzeAsTj14SHsT2jF0jf6bMeXFPRFa9z8SwY9rPfZYMhXqhts1k?=
+ =?us-ascii?Q?wigJcvzxZhumWeH7WDBdKHIJkFleq+I5wX30w9xzDyuUdQmvfiTvh5gYAWIb?=
+ =?us-ascii?Q?1woBxfHXFZnEI+2BHnl3sfQVqcLb2s6sK2rgnzVG85q9bAXWTXLPHQHuEEzG?=
+ =?us-ascii?Q?2cJIF2oSNtZ2zIviq5rRVgAwaabizljwmrja5fhQbRgz4JgRAVDS26xkwVTc?=
+ =?us-ascii?Q?a0IluhmAfj6oMvrJs61nH7rFPvPT9G8Laivq5D/aK/cFjKqkQPFSVPdFXa1T?=
+ =?us-ascii?Q?dOgZQ96JskP5Yld3KHBrk0xgtBzLn6rXazDv1NkGQaCFZp86tnhsJF5mAf07?=
+ =?us-ascii?Q?X8e5dJNANfKOZ+Wuc+LZpSB9hi52w06pSNxUBbS54NtHWCOieDcDmrjnF+H7?=
+ =?us-ascii?Q?FXXzs1xD0jA8+8Zzxe4RcWNT/YtU1Rex65fqh/wyysZgWfU7inGgyKidoTHv?=
+ =?us-ascii?Q?PgZCkBKqwcC3xCrAIBW5NufLIu6z8G1IDqXZLTYV+fG+UeFoZqzDE0Au3IKw?=
+ =?us-ascii?Q?HgE1a2MnaUibJAUw0Dr7P0QpEgO1HOpNYJAQZ4EaglvN5iiyJNqs764+SHbr?=
+ =?us-ascii?Q?XZRxErYNR/94qdCbJeXHq2gsxsz0cct0Rt+tLKwBzabToErpVIB+D/ksCDgQ?=
+ =?us-ascii?Q?2BpKUE8+ft+sSfznto2FTatnp99aBVS9W22u4pQLC+G0SeWIHEb4IPaFmllA?=
+ =?us-ascii?Q?MBrvFymCi9XsikJhG+2kpOBGkaDaoibxm2Wy6yo5WXdAv9efKuqdRrSy4atB?=
+ =?us-ascii?Q?7w4oANw7+zDipPDf7k1Odgw8t+LmpdfHCSg32WIma0xC3FZHZ/efno/Lm3UQ?=
+ =?us-ascii?Q?+wfFqe7sJQPF9mouju7PqjIW44S1i+SrJxmO+Oo/gENqW7V16DxyRKgQr0xo?=
+ =?us-ascii?Q?V2ahT5vyqPTi2uLVLNVmhBnMDx1ed6+Vez8rJhS4XMllhYll+a/GbY6V8vHN?=
+ =?us-ascii?Q?pMo2E5xQvN8q1cXZngqGN3ruz1aqBWO4RdiAAbeSNhpO/v2cQXvBeFARfX9L?=
+ =?us-ascii?Q?5M8N1aCIim/oOJSU5siAIChFyTYEe8mwASzYOEIKohpv75Dt1tp9IHug6d8B?=
+ =?us-ascii?Q?DhW/DS3zN86or3ZfH4q827fdoV6XMsDIthVe0WUkRhHM/YXdD7H8kU3SLEDL?=
+ =?us-ascii?Q?oYoHjhy10SdR3vdz32cxU71Pr/6sG8HSz9u/KpuYwMjm6l6Y4sLFqX/1sKIc?=
+ =?us-ascii?Q?+vWsweW3cJKuPjhUgmGg5XSHqW+qcNksn4AwxeiriVrRLQN9DwL5lQ76/0y6?=
+ =?us-ascii?Q?jhX2r8piwwNY6w0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 10:05:11.6279
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6976cf7a-803a-4236-c1f8-08dd4c15e768
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE9.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7526
 
-Hi Akhil,
+The Tegra UTC (UART Trace Controller) is a hardware controller that allows
+multiple systems within the Tegra SoC to share a hardware UART interface.
+It supports up to 16 clients, with each client having its own interrupt and a
+FIFO buffer for both RX (receive) and TX (transmit), each capable of holding
+128 characters.
 
-kernel test robot noticed the following build warnings:
+The Tegra UTC uses 8-N-1 configuration and operates on a pre-configured
+baudrate, which is configured by the bootloader.
 
-[auto build test WARNING on herbert-crypto-2.6/master]
-[also build test WARNING on herbert-cryptodev-2.6/master linus/master v6.14-rc2 next-20250213]
-[cannot apply to tegra/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Kartik Rajput (2):
+  dt-bindings: serial: Add bindings for nvidia,tegra264-utc
+  serial: tegra-utc: Add driver for Tegra UART Trace Controller (UTC)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/crypto-tegra-Use-separate-buffer-for-setkey/20250212-012434
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git master
-patch link:    https://lore.kernel.org/r/20250211171713.65770-7-akhilrajeev%40nvidia.com
-patch subject: [PATCH v2 06/10] crypto: tegra: Fix HASH intermediate result handling
-config: i386-buildonly-randconfig-002-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131717.CFOwEfqA-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250213/202502131717.CFOwEfqA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502131717.CFOwEfqA-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/crypto/tegra/tegra-se-hash.c:8:
-   In file included from include/linux/dma-mapping.h:8:
-   In file included from include/linux/scatterlist.h:8:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
->> drivers/crypto/tegra/tegra-se-hash.c:343:22: warning: format specifies type 'unsigned long' but the argument has type 'ssize_t' (aka 'int') [-Wformat]
-     342 |         dev_dbg(se->dev, "msg len %llu msg left %llu sz %lu cfg %#x",
-         |                                                         ~~~
-         |                                                         %zd
-     343 |                 msg_len, msg_left, rctx->datbuf.size, rctx->config);
-         |                                    ^~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:165:39: note: expanded from macro 'dev_dbg'
-     165 |         dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                      ~~~     ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:274:19: note: expanded from macro 'dynamic_dev_dbg'
-     274 |                            dev, fmt, ##__VA_ARGS__)
-         |                                 ~~~    ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:59: note: expanded from macro '_dynamic_func_call'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |                                                                  ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:248:65: note: expanded from macro '_dynamic_func_call_cls'
-     248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
-         |                                                                        ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:224:15: note: expanded from macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   drivers/crypto/tegra/tegra-se-hash.c:701:6: warning: unused variable 'ret' [-Wunused-variable]
-     701 |         int ret;
-         |             ^~~
-   3 warnings generated.
-
-
-vim +343 drivers/crypto/tegra/tegra-se-hash.c
-
-   265	
-   266	static int tegra_sha_prep_cmd(struct tegra_sha_ctx *ctx, u32 *cpuvaddr,
-   267				      struct tegra_sha_reqctx *rctx)
-   268	{
-   269		struct tegra_se *se = ctx->se;
-   270		u64 msg_len, msg_left;
-   271		int i = 0;
-   272	
-   273		msg_len = rctx->total_len * 8;
-   274		msg_left = rctx->datbuf.size * 8;
-   275	
-   276		/*
-   277		 * If IN_ADDR_HI_0.SZ > SHA_MSG_LEFT_[0-3] to the HASH engine,
-   278		 * HW treats it as the last buffer and process the data.
-   279		 * Therefore, add an extra byte to msg_left if it is not the
-   280		 * last buffer.
-   281		 */
-   282		if (rctx->task & SHA_UPDATE) {
-   283			msg_left += 8;
-   284			msg_len += 8;
-   285		}
-   286	
-   287		cpuvaddr[i++] = host1x_opcode_setpayload(8);
-   288		cpuvaddr[i++] = se_host1x_opcode_incr_w(SE_SHA_MSG_LENGTH);
-   289		cpuvaddr[i++] = lower_32_bits(msg_len);
-   290		cpuvaddr[i++] = upper_32_bits(msg_len);
-   291		cpuvaddr[i++] = 0;
-   292		cpuvaddr[i++] = 0;
-   293		cpuvaddr[i++] = lower_32_bits(msg_left);
-   294		cpuvaddr[i++] = upper_32_bits(msg_left);
-   295		cpuvaddr[i++] = 0;
-   296		cpuvaddr[i++] = 0;
-   297		cpuvaddr[i++] = host1x_opcode_setpayload(2);
-   298		cpuvaddr[i++] = se_host1x_opcode_incr_w(SE_SHA_CFG);
-   299		cpuvaddr[i++] = rctx->config;
-   300	
-   301		if (rctx->task & SHA_FIRST) {
-   302			cpuvaddr[i++] = SE_SHA_TASK_HASH_INIT;
-   303			rctx->task &= ~SHA_FIRST;
-   304		} else {
-   305			/*
-   306			 * If it isn't the first task, program the HASH_RESULT register
-   307			 * with the intermediate result from the previous task
-   308			 */
-   309			i += tegra_se_insert_hash_result(ctx, cpuvaddr + i, rctx);
-   310		}
-   311	
-   312		cpuvaddr[i++] = host1x_opcode_setpayload(4);
-   313		cpuvaddr[i++] = se_host1x_opcode_incr_w(SE_SHA_IN_ADDR);
-   314		cpuvaddr[i++] = rctx->datbuf.addr;
-   315		cpuvaddr[i++] = (u32)(SE_ADDR_HI_MSB(upper_32_bits(rctx->datbuf.addr)) |
-   316					SE_ADDR_HI_SZ(rctx->datbuf.size));
-   317	
-   318		if (rctx->task & SHA_UPDATE) {
-   319			cpuvaddr[i++] = rctx->intr_res.addr;
-   320			cpuvaddr[i++] = (u32)(SE_ADDR_HI_MSB(upper_32_bits(rctx->intr_res.addr)) |
-   321						SE_ADDR_HI_SZ(rctx->intr_res.size));
-   322		} else {
-   323			cpuvaddr[i++] = rctx->digest.addr;
-   324			cpuvaddr[i++] = (u32)(SE_ADDR_HI_MSB(upper_32_bits(rctx->digest.addr)) |
-   325						SE_ADDR_HI_SZ(rctx->digest.size));
-   326		}
-   327	
-   328		if (rctx->key_id) {
-   329			cpuvaddr[i++] = host1x_opcode_setpayload(1);
-   330			cpuvaddr[i++] = se_host1x_opcode_nonincr_w(SE_SHA_CRYPTO_CFG);
-   331			cpuvaddr[i++] = SE_AES_KEY_INDEX(rctx->key_id);
-   332		}
-   333	
-   334		cpuvaddr[i++] = host1x_opcode_setpayload(1);
-   335		cpuvaddr[i++] = se_host1x_opcode_nonincr_w(SE_SHA_OPERATION);
-   336		cpuvaddr[i++] = SE_SHA_OP_WRSTALL | SE_SHA_OP_START |
-   337				SE_SHA_OP_LASTBUF;
-   338		cpuvaddr[i++] = se_host1x_opcode_nonincr(host1x_uclass_incr_syncpt_r(), 1);
-   339		cpuvaddr[i++] = host1x_uclass_incr_syncpt_cond_f(1) |
-   340				host1x_uclass_incr_syncpt_indx_f(se->syncpt_id);
-   341	
-   342		dev_dbg(se->dev, "msg len %llu msg left %llu sz %lu cfg %#x",
- > 343			msg_len, msg_left, rctx->datbuf.size, rctx->config);
-   344	
-   345		return i;
-   346	}
-   347	
+ .../bindings/serial/nvidia,tegra264-utc.yaml  |  73 ++
+ drivers/tty/serial/Kconfig                    |  23 +
+ drivers/tty/serial/Makefile                   |   1 +
+ drivers/tty/serial/tegra-utc.c                | 625 ++++++++++++++++++
+ 4 files changed, 722 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra264-utc.yaml
+ create mode 100644 drivers/tty/serial/tegra-utc.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
