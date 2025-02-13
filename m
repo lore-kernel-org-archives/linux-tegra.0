@@ -1,146 +1,218 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58132222DE;
-	Thu, 13 Feb 2025 20:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41149257AF1;
+	Thu, 13 Feb 2025 20:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739477733; cv=none; b=XxedS2Ad6IAUwDySCl5mgvog7jFBRo5VuVY+J/AxhcZITwtPDYQbEk+vCen2SugVeBqUYX6KSzDM72/vbJVjhhK0tSW1tc1B7U4+/nQUPeEe9m0D/BMkwQWr5Rn4QngcYDQ7DqbflaHic3+lhTdg6gof3F8Br9FnESYK9zENk/M=
+	t=1739478560; cv=none; b=BjrpHRavfmUJDu3ZsCrvQTXjKICMB62ZAcZpgLqy/4DJqovX77heexIvWuk84RKRkbeztIQJYyrxiInVnAEy6/llSQBpovlXPPxl9xREaSfNHVkokTv35zTC7o9IPcw9y3tv4GPezU/JLcGKE0hAU7465WpzXTXUckeZEWDKB3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739477733; c=relaxed/simple;
-	bh=gFS8GPR4Ajl60UP7+4KVw9gDH4TZ0PhIA+MKoUXArxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ml4M4yEPNAPXsipqUw65uv+IYHENcdt53D2Od1wV6Y5/9raUZsydxzaIt26tDvCbcc5BkEI+9U5rSH/SSa9oCTDiadFN1yIJ7AyNZDcTqoDmrS665o+4lJ+MAyYQgoLurYK6eIV9VsrJe445HbBSbiPGqDYSRu+Cwn8TH3Bt1PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqdZwsfx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739478560; c=relaxed/simple;
+	bh=YppzhLV/rFWU5bXPekJ7n27J1mtqKJ+RmDLes5j0r7A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WV/1W40telKtkiDhB+Jh5Bk39mqYZMKSc6gLEUvh2/2QTIz9VgMOxlROZe4NWBQ8pSx7gN2hEbj28wlX3bjCl401UpT99WViW8+rhBp7hRzYlfI6W7T7QA887n3ss8ySQwWeMENLPm9QNZFqqJnQ5tqPd5DLbDaVZCdzcPnT6Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CH1/khpn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqdZwsfx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39819C4CED1;
-	Thu, 13 Feb 2025 20:15:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CH1/khpn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6F11C4AF09;
+	Thu, 13 Feb 2025 20:29:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739477733;
-	bh=gFS8GPR4Ajl60UP7+4KVw9gDH4TZ0PhIA+MKoUXArxY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TqdZwsfx82xJagVlpspFyy/Vqw95aHWlQwiSyeXIdxGnjLmYIMhY9zqVEA+DoEkY4
-	 lcDlxACjZbZmLgFNIlt9Ic2vOKl/55wjlk8re2mb/TUUQGNz58EYUwWf8QXmPN/+rK
-	 Wogs0dSQiqmX5ixXI1DeRb7X7BPfxILNLZn/8nGD2EMu+G+3qMmMm0lqjN8SC3YiJh
-	 4LSMSWX8nax7zC6KcxhBb2PCP4xlaIths1HfnKr1/3Y/vsS9y18Bdt6oUU0dW0hXok
-	 1WsvsGjcng0HOhvXddBUxeF5NBXUermedA2vQUJwBlr8ideBdv4vsOXs4kdHZ0PWh4
-	 jauAh15stszMQ==
-Date: Thu, 13 Feb 2025 20:15:27 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Emil Gedenryd <emil.gedenryd@axis.com>,
-	Arthur Becker <arthur.becker@sentec.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a
- support
-Message-ID: <20250213-reflex-earlobe-ebbeaece6fad@spud>
-References: <20250212064657.5683-1-clamor95@gmail.com>
- <20250212064657.5683-2-clamor95@gmail.com>
- <20250212-unwritten-compile-7011777a11b3@spud>
- <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
+	s=k20201202; t=1739478559;
+	bh=YppzhLV/rFWU5bXPekJ7n27J1mtqKJ+RmDLes5j0r7A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CH1/khpnAwSHv0v/TORUt7bvTSslWqvT+7z6QS7Z4w2m2s8ZDDswHzCBIy4giQUPx
+	 CpOPcFx2ZL7qjLAsoCzU9lJ/wdN7Yg9Ok3QJ6IzTYzuUL07v8UBofG+JPgLCd6OAMX
+	 FbJoXsPz4fRbW/5Vs+ruqBM5EBpC2pN3tWlggxC/46TsPqV9f4Hvqas0eJK073idR5
+	 Kt3DHXTOp+J2muWYlsu52I/MJGioAcQIig9tP4ZwPAeJmyu7Ida5jnztUcRcLKKXst
+	 J1n6QvtdGjV+7YSGm6C5/mNMnPe4BQTLNjNDXf5kNDfhRpPbVsu6ESUf8cjuYXzd88
+	 Sir8dsCVCJOuA==
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5de74599749so1991732a12.1;
+        Thu, 13 Feb 2025 12:29:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUgQ/ukS+YksRqWy6qjnQMMv4Nnu1MGfcMZ26SH97EAZKO6OiG8sPEHWfagtgtHgBN9ly5l90VuuilHDy0=@vger.kernel.org, AJvYcCXi4+gHGvNwT01soqhl/yGcFbhHzfDazFsa3RznGL4t/eMBAAv7zq+EhBxaKQLzyrrqX3sa+zhDYkl1wUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaMUmQWLbK1fkCx6e/K7Zn8RLlP0k2dWi4VA0U+1HzDgXn94Qs
+	85xDHRmRHyGP0KV4Un3bjn6vXUyt9yh/jZPlAgD1YMQqRXN2zn7aXJPBssoppPwl5AuPfYgG/gz
+	kq8kEk/3krI4gxorZ4KiTHyLjmA==
+X-Google-Smtp-Source: AGHT+IEXVitIjVCDOm5xYt53H9+9JSTgqyspa689L/MSfkj4BshuTrjYl7R+w5GsXZmrMafsMmFJz4EvkMLWpFgEpOM=
+X-Received: by 2002:a05:6402:2748:b0:5dc:c3c2:225e with SMTP id
+ 4fb4d7f45d1cf-5dec9d3eb64mr3747640a12.8.1739478558277; Thu, 13 Feb 2025
+ 12:29:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7dqWvGhGUC+okugZ"
-Content-Disposition: inline
-In-Reply-To: <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
-
-
---7dqWvGhGUC+okugZ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20241115193445.3619074-1-robh@kernel.org> <CAL_Jsq+9jNNF2yWCbSiiey2ubn2WAX8PdA69+cbXpWCDwPEm_Q@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+9jNNF2yWCbSiiey2ubn2WAX8PdA69+cbXpWCDwPEm_Q@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 13 Feb 2025 14:29:06 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLMcSU0NCgkbuLjKd567nvwHdc0os=6avZtyf=Qf01UJA@mail.gmail.com>
+X-Gm-Features: AWEUYZm5ygLbqYDPrwlTSKCLbdlDwtmYsC6_pLReODMb6-exZj-ap83lI-2bv6k
+Message-ID: <CAL_JsqLMcSU0NCgkbuLjKd567nvwHdc0os=6avZtyf=Qf01UJA@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: nvidia: Remove unused and undocumented
+ "regulator-ramp-delay-scale" property
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 09:39:06PM +0200, Svyatoslav Ryhel wrote:
-> =D1=81=D1=80, 12 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 21:20 Co=
-nor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+On Thu, Jan 9, 2025 at 4:54=E2=80=AFPM Rob Herring <robh@kernel.org> wrote:
+>
+> On Fri, Nov 15, 2024 at 1:34=E2=80=AFPM Rob Herring (Arm) <robh@kernel.or=
+g> wrote:
 > >
-> > On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
-> > > AL3000a is an ambient light sensor quite closely related to
-> > > exising AL3010 and can re-use exising schema for AL3010.
+> > Remove "regulator-ramp-delay-scale" property which is both unused in th=
+e
+> > kernel and undocumented. Most likely they are leftovers from downstream=
+.
 > >
-> > Quite close you say, but the driver is entirely different it seems. How
-> > closely related is the hardware itself?
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> >  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 10 ----------
+> >  1 file changed, 10 deletions(-)
+>
+> Ping!
+
+Ping again...
+
+>
 > >
->=20
-> Well, I can simply duplicate al3010 or al3320a schema if re-using
-> schema is not allowed. AL3000a has no available datasheet online.
-> Downstream code for al3000a and al3010 seems to have same principles,
-> apart from light measurements.
-
-It's probably more of a question as to why you're duplicating the driver
-for them, rather than telling you not to put both bindings together.
-That said, information on what's actually different is helpful in the
-binding, to explain why you're not using a fallback compatible etc.
-
->=20
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++++=
---
-> > >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al=
-3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.ya=
-ml
-> > > index a3a979553e32..6db4dfd5aa6c 100644
-> > > --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.ya=
-ml
-> > > +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.ya=
-ml
-> > > @@ -4,14 +4,16 @@
-> > >  $id: http://devicetree.org/schemas/iio/light/dynaimage,al3010.yaml#
-> > >  $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >
-> > > -title: Dyna-Image AL3010 sensor
-> > > +title: Dyna-Image AL3000a/AL3010 sensor
-> > >
-> > >  maintainers:
-> > >    - David Heidelberg <david@ixit.cz>
-> > >
-> > >  properties:
-> > >    compatible:
-> > > -    const: dynaimage,al3010
-> > > +    enum:
-> > > +      - dynaimage,al3010
-> > > +      - dynaimage,al3000a
-> > >
-> > >    reg:
-> > >      maxItems: 1
-> > > --
-> > > 2.43.0
-> > >
-
---7dqWvGhGUC+okugZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ65S3gAKCRB4tDGHoIJi
-0pBLAP9DAfvM0GW8mfJUiDrGHRO8QboPxmy+oxCqMZyJ3p0YuwD/VCGGvaVtnZ7a
-l9NBlucIVYIqUW1e7vIi8IqvOfjpdgs=
-=U7G9
------END PGP SIGNATURE-----
-
---7dqWvGhGUC+okugZ--
+> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/=
+arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > index c56824d7f4d8..0ecdd7243b2e 100644
+> > --- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > +++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+> > @@ -266,7 +266,6 @@ vdd_soc: sd0 {
+> >                                         regulator-max-microvolt =3D <11=
+70000>;
+> >                                         regulator-enable-ramp-delay =3D=
+ <146>;
+> >                                         regulator-ramp-delay =3D <27500=
+>;
+> > -                                       regulator-ramp-delay-scale =3D =
+<300>;
+> >                                         regulator-always-on;
+> >                                         regulator-boot-on;
+> >
+> > @@ -281,7 +280,6 @@ vdd_ddr: sd1 {
+> >                                         regulator-max-microvolt =3D <11=
+50000>;
+> >                                         regulator-enable-ramp-delay =3D=
+ <176>;
+> >                                         regulator-ramp-delay =3D <27500=
+>;
+> > -                                       regulator-ramp-delay-scale =3D =
+<300>;
+> >                                         regulator-always-on;
+> >                                         regulator-boot-on;
+> >
+> > @@ -296,7 +294,6 @@ vdd_pre: sd2 {
+> >                                         regulator-max-microvolt =3D <13=
+50000>;
+> >                                         regulator-enable-ramp-delay =3D=
+ <176>;
+> >                                         regulator-ramp-delay =3D <27500=
+>;
+> > -                                       regulator-ramp-delay-scale =3D =
+<350>;
+> >                                         regulator-always-on;
+> >                                         regulator-boot-on;
+> >
+> > @@ -311,7 +308,6 @@ vdd_1v8: sd3 {
+> >                                         regulator-max-microvolt =3D <18=
+00000>;
+> >                                         regulator-enable-ramp-delay =3D=
+ <242>;
+> >                                         regulator-ramp-delay =3D <27500=
+>;
+> > -                                       regulator-ramp-delay-scale =3D =
+<360>;
+> >                                         regulator-always-on;
+> >                                         regulator-boot-on;
+> >
+> > @@ -326,7 +322,6 @@ vdd_sys_1v2: ldo0 {
+> >                                         regulator-max-microvolt =3D <12=
+00000>;
+> >                                         regulator-enable-ramp-delay =3D=
+ <26>;
+> >                                         regulator-ramp-delay =3D <10000=
+0>;
+> > -                                       regulator-ramp-delay-scale =3D =
+<200>;
+> >                                         regulator-always-on;
+> >                                         regulator-boot-on;
+> >
+> > @@ -341,7 +336,6 @@ vdd_pex_1v05: ldo1 {
+> >                                         regulator-max-microvolt =3D <10=
+50000>;
+> >                                         regulator-enable-ramp-delay =3D=
+ <22>;
+> >                                         regulator-ramp-delay =3D <10000=
+0>;
+> > -                                       regulator-ramp-delay-scale =3D =
+<200>;
+> >
+> >                                         maxim,active-fps-source =3D <MA=
+X77620_FPS_SRC_NONE>;
+> >                                         maxim,active-fps-power-up-slot =
+=3D <0>;
+> > @@ -354,7 +348,6 @@ vddio_sdmmc: ldo2 {
+> >                                         regulator-max-microvolt =3D <33=
+00000>;
+> >                                         regulator-enable-ramp-delay =3D=
+ <62>;
+> >                                         regulator-ramp-delay =3D <10000=
+0>;
+> > -                                       regulator-ramp-delay-scale =3D =
+<200>;
+> >
+> >                                         maxim,active-fps-source =3D <MA=
+X77620_FPS_SRC_NONE>;
+> >                                         maxim,active-fps-power-up-slot =
+=3D <0>;
+> > @@ -371,7 +364,6 @@ vdd_rtc: ldo4 {
+> >                                         regulator-max-microvolt =3D <11=
+00000>;
+> >                                         regulator-enable-ramp-delay =3D=
+ <22>;
+> >                                         regulator-ramp-delay =3D <10000=
+0>;
+> > -                                       regulator-ramp-delay-scale =3D =
+<200>;
+> >                                         regulator-disable-active-discha=
+rge;
+> >                                         regulator-always-on;
+> >                                         regulator-boot-on;
+> > @@ -395,7 +387,6 @@ avdd_1v05_pll: ldo7 {
+> >                                         regulator-max-microvolt =3D <10=
+50000>;
+> >                                         regulator-enable-ramp-delay =3D=
+ <24>;
+> >                                         regulator-ramp-delay =3D <10000=
+0>;
+> > -                                       regulator-ramp-delay-scale =3D =
+<200>;
+> >
+> >                                         maxim,active-fps-source =3D <MA=
+X77620_FPS_SRC_1>;
+> >                                         maxim,active-fps-power-up-slot =
+=3D <3>;
+> > @@ -408,7 +399,6 @@ avdd_1v05: ldo8 {
+> >                                         regulator-max-microvolt =3D <10=
+50000>;
+> >                                         regulator-enable-ramp-delay =3D=
+ <22>;
+> >                                         regulator-ramp-delay =3D <10000=
+0>;
+> > -                                       regulator-ramp-delay-scale =3D =
+<200>;
+> >
+> >                                         maxim,active-fps-source =3D <MA=
+X77620_FPS_SRC_1>;
+> >                                         maxim,active-fps-power-up-slot =
+=3D <6>;
+> > --
+> > 2.45.2
+> >
