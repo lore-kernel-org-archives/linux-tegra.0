@@ -1,69 +1,63 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1900E20B209;
-	Thu, 13 Feb 2025 08:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B9E2054EE;
+	Thu, 13 Feb 2025 08:31:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739434168; cv=none; b=ARlbKRBPX7O0dt2Ym5jlaRYvCXhUTpsFc0NmGswNkGSh0RWNw4BhOg3v7bELHyKuYmS6aqsVqmB+09TaickUGDqW7vUAcE7FvUSV7dyhdXv+SWT+oQrKCpt3rPGx1Uj8yXd0n/mK3mtWjH3OmHXxVIUr3juyjL3uRIxEJBieCCc=
+	t=1739435469; cv=none; b=cskVOkGf8kn5C/dO2428oZbeGtaPmi0WXy2QDP5lVcEefhrFsaL8cBXaTZ76IyIOwZE5OBBQAB43HVVZEdwMvAH3TrtDNpmXxR0CRxD94TTliiecx6cxs7RV/8aeLbFYERoIKzmJX0OjXYoEJMejje2n/V/s8KXd/ix7Z94Dc00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739434168; c=relaxed/simple;
-	bh=W9slmLEgwfMI1MJeemIMaWcXhgHgot5xKS72Ii/ulmU=;
+	s=arc-20240116; t=1739435469; c=relaxed/simple;
+	bh=tEA0Byc+ppVC6QbfCcbNtnO9sl0V+gqizcThzhBI4hc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uh7ehd16h1w5j/fwF5HmE2wr9rv0t2vP8gkZ4/wI2aCOqPlHXQRkOsVe9s795gq4Dv5xtaByPgixU8RADghgYwMFk8dyf3914/tIARtiuonDIGjl47dW4Ot8qYXdTG5WOMseCJtBtx7a/sJZtkO0Iw4DroWp6jnvPh8pSD9AVrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MXcuYDKA; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZgUc4nEhrjSrX2Q3I5GdC1iAv87za0no7qdQolnY5QAHvnNuQ5zChHTUFrbuprJ1zjuv+40Fdu0wUzTWeQkUy5AjAQogQ22SK40DecYwgfzChCbSGQLWC8o4MatuQwrV620a9m4zML94ZnXoRi0UVOtBzw1riQ8xk78qZl9+PGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AV2gY5oI; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MXcuYDKA"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AV2gY5oI"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739434167; x=1770970167;
+  t=1739435467; x=1770971467;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=W9slmLEgwfMI1MJeemIMaWcXhgHgot5xKS72Ii/ulmU=;
-  b=MXcuYDKAg8Rwhds6gS+fsX/amMmSKQvJuLjgdeEDLUQyN7BkR1F1P81n
-   2VkSxslmMxWBGebgpk/gTXnqniQWA51V5RI4Jf3A+9wxrFUoXIG5Fi369
-   q+IxnCWzorQ+Inb2w9K+Y3di5Oxdo2f8tbiwuUOfBLy4841FfHwQuqjvk
-   L/9+y2+4mp/PDT7XKUvTU80xYxtj+YrFDJJJr22BOmS/iqsj6GdIZUdu7
-   ZRxesQoSZkvWfSljOzq9VGldDUi/UIGDx0fWaKr/3CLMr7eWzA60lD45c
-   1zaDQpNl0CmWZotvKm6RKNj6Sxc5MThhlB0rE05RlhNSx2sdpk86NGs4f
+  bh=tEA0Byc+ppVC6QbfCcbNtnO9sl0V+gqizcThzhBI4hc=;
+  b=AV2gY5oIia1u/M+lIoV02lWX8SskN6qgmEkfsjyOk72SfaIE06TPFePo
+   2xQJGT2wxPsQIxCFmfhIRYjdwTAOBddjGyWALBlG1fcxeYM9vj6FleLOd
+   S9sgYmB+mQlp27Fr0FL8vm4nThw3VUfuRQKTK58rdVzOjMMkFXRDIJcBN
+   h3esxAG8TJC0iS7RYtAHgbSYhWdSI2T95+zCsNur1VNOWhj6yDnxeoiQx
+   lyBYgjnm+f/8nk2yUsIeQlG61z1Blo9SLVJiTBc7Yl7SodrXNvf3DDmqG
+   WZys1dMRkixqgmnZxVOKWhSwt29YbQnbXTeKkIiT29lOJMQqeE2N6a3+T
    Q==;
-X-CSE-ConnectionGUID: 5SW3goOhR7epPZHOnj9lBA==
-X-CSE-MsgGUID: qAjLNwPRSoeq4eupKmhrmA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="39310948"
+X-CSE-ConnectionGUID: o+gFQ3kdSMuTjdM6Gdgyyg==
+X-CSE-MsgGUID: d+GEXfOuSC+14YDfoORHCg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="50773030"
 X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="39310948"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 00:09:26 -0800
-X-CSE-ConnectionGUID: P3lpblIAQcefB4B+R52lfA==
-X-CSE-MsgGUID: sx1hI1lLQkqqOvfWD3cbBw==
+   d="scan'208";a="50773030"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 00:31:04 -0800
+X-CSE-ConnectionGUID: H8EM1sk1Ti6K4ZEIQEk4DA==
+X-CSE-MsgGUID: vZPKhXH7RJCqHrwBYihoAw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113968316"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 00:09:21 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tiUHe-0000000B6H9-0ZfZ;
-	Thu, 13 Feb 2025 10:09:18 +0200
-Date: Thu, 13 Feb 2025 10:09:17 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Kartik Rajput <kkartik@nvidia.com>, gregkh@linuxfoundation.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	thierry.reding@gmail.com, jonathanh@nvidia.com,
-	hvilleneuve@dimonoff.com, arnd@kernel.org, geert+renesas@glider.be,
-	robert.marko@sartura.hr, schnelle@linux.ibm.com,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] serial: tegra-utc: Add driver for Tegra UART
- Trace Controller (UTC)
-Message-ID: <Z62orWpDF5obQZLy@smile.fi.intel.com>
-References: <20250212104132.61060-1-kkartik@nvidia.com>
- <20250212104132.61060-3-kkartik@nvidia.com>
- <Z6y5vRGyouZsQWyj@smile.fi.intel.com>
- <6f3e6958-25eb-4835-88e1-2d531c892dbe@kernel.org>
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="113065383"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 13 Feb 2025 00:31:01 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tiUcc-0016oB-2E;
+	Thu, 13 Feb 2025 08:30:58 +0000
+Date: Thu, 13 Feb 2025 16:30:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Akhil R <akhilrajeev@nvidia.com>, herbert@gondor.apana.org.au,
+	davem@davemloft.net, thierry.reding@gmail.com, jonathanh@nvidia.com,
+	linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Akhil R <akhilrajeev@nvidia.com>
+Subject: Re: [PATCH v2 09/10] crypto: tegra: Reserve keyslots to allocate
+ dynamically
+Message-ID: <202502131627.mj5t3YOe-lkp@intel.com>
+References: <20250211171713.65770-10-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -72,27 +66,60 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6f3e6958-25eb-4835-88e1-2d531c892dbe@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250211171713.65770-10-akhilrajeev@nvidia.com>
 
-On Thu, Feb 13, 2025 at 08:38:15AM +0100, Jiri Slaby wrote:
-> On 12. 02. 25, 16:09, Andy Shevchenko wrote:
+Hi Akhil,
 
-...
+kernel test robot noticed the following build warnings:
 
-> > > +	pending = uart_port_tx(port, c,
-> > > +		     !(tegra_utc_tx_readl(tup, TEGRA_UTC_FIFO_STATUS) & TEGRA_UTC_FIFO_FULL),
-> > > +		     tegra_utc_tx_writel(tup, c, TEGRA_UTC_DATA));
-> > 
-> > Make the last two to reside in temporary variables with self-explanatory names.
-> 
-> Not sure what you mean here? They are needed to be evaluated (read/written)
-> in every loop.
+[auto build test WARNING on herbert-crypto-2.6/master]
+[also build test WARNING on herbert-cryptodev-2.6/master linus/master v6.14-rc2 next-20250213]
+[cannot apply to tegra/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Ah, uart_port_tx() is a macro!
+url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/crypto-tegra-Use-separate-buffer-for-setkey/20250212-012434
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git master
+patch link:    https://lore.kernel.org/r/20250211171713.65770-10-akhilrajeev%40nvidia.com
+patch subject: [PATCH v2 09/10] crypto: tegra: Reserve keyslots to allocate dynamically
+config: nios2-randconfig-r112-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131627.mj5t3YOe-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250213/202502131627.mj5t3YOe-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502131627.mj5t3YOe-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   drivers/crypto/tegra/tegra-se-aes.c: note: in included file:
+>> drivers/crypto/tegra/tegra-se.h:509:37: sparse: sparse: marked inline, but without a definition
+>> drivers/crypto/tegra/tegra-se.h:509:37: sparse: sparse: marked inline, but without a definition
+   drivers/crypto/tegra/tegra-se-aes.c: note: in included file (through include/uapi/linux/swab.h, include/linux/swab.h, include/uapi/linux/byteorder/little_endian.h, ...):
+   arch/nios2/include/uapi/asm/swab.h:31:24: sparse: sparse: too many arguments for function __builtin_custom_ini
+   arch/nios2/include/uapi/asm/swab.h:25:24: sparse: sparse: too many arguments for function __builtin_custom_ini
+   arch/nios2/include/uapi/asm/swab.h:31:24: sparse: sparse: too many arguments for function __builtin_custom_ini
+   drivers/crypto/tegra/tegra-se-aes.c: note: in included file:
+>> drivers/crypto/tegra/tegra-se.h:509:37: sparse: sparse: marked inline, but without a definition
+>> drivers/crypto/tegra/tegra-se.h:509:37: sparse: sparse: marked inline, but without a definition
+>> drivers/crypto/tegra/tegra-se.h:509:37: sparse: sparse: marked inline, but without a definition
+
+vim +509 drivers/crypto/tegra/tegra-se.h
+
+   500	
+   501	/* Functions */
+   502	int tegra_init_aes(struct tegra_se *se);
+   503	int tegra_init_hash(struct tegra_se *se);
+   504	void tegra_deinit_aes(struct tegra_se *se);
+   505	void tegra_deinit_hash(struct tegra_se *se);
+   506	int tegra_key_submit(struct tegra_se *se, const u8 *key,
+   507			     u32 keylen, u32 alg, u32 *keyid);
+   508	
+ > 509	inline int tegra_key_submit_reserved(struct tegra_se *se, const u8 *key,
+   510					     u32 keylen, u32 alg, u32 *keyid);
+   511	
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
