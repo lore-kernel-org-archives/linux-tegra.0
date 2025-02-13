@@ -1,175 +1,246 @@
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2056.outbound.protection.outlook.com [40.107.94.56])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E8020AF66;
-	Thu, 13 Feb 2025 11:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739445158; cv=fail; b=fLsNL6zW4LA9a7O518FoxXdkauGynt1tF+tdlqi03t8ctY2qDl7qcUHIjbO8ptsz6wf/dQcJShrLTFKpGOD8fNU10wQvi51ImB/8x/ghTDtf7BglgwjPpHX3dDr8z2btsRfLMB5n9PkA/GhTmhBSGmGOJMTVg2QfwS4L64zRIg4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739445158; c=relaxed/simple;
-	bh=GqwUhh4gOU0idU8+SBUHdFqWRAicHzMRQpYg83Fohj8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SH+fAPOUk5blHC/sXirK+0L4D4t1kOY8CGUvdl3BVRJTyOmAXfO26SWVZD2/vbh5mjOuXkcbD5VK4zn8Zw7/HmaP9delPtc4/CXW/8HsEOZCIJ3eJ4D3hLG8/MD1zk8EITB37lpNfqHAah5eshMjTAkH6TM9pHEopyeadxIjX/Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ss27Kx4F; arc=fail smtp.client-ip=40.107.94.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2A1227E8D;
+	Thu, 13 Feb 2025 11:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1739446662; cv=none; b=KTwdHG2ohsomlhunyAirfPpEn3jMGOrSgY0LqRL/whADA794qPtLIAdTMsz+OVv40mCrTgLAlF5Q/rfJA+xO0flEyhxUtjqjlq09pGjkfqWDRmKqtoY33kaT3PdJKq+OTtGzT2uI3gH8F0KPAWb9a4ur9IMow9fx/v/GxPbZ/hU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1739446662; c=relaxed/simple;
+	bh=TPAyIIX/YfbPOxBlRz+HmUEInmJ/lGMaLvI/YohKVw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=joC8X5OcrBwInwh2lXzxbswAKtW+Ri5UDzAomU+qPSumydqwNq/+551jyFm7PgSkO2W+3BFz/ZKAo/ZLUch/TRQ+IhVjwNUnI6B8REpVm7E7qy6XxgDLpJb30w8xutAbG0SlUlUdraOImfspDbzsiC455/+W7qVrwQq6PLOdurc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ciyZL3RD; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ss27Kx4F"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ACQ9+eZdBlNtv4uRjJBg55iyDpSH+GAoupsBXxIzCJjGhJ9rR4tr9IJaC6jOLFvNTDE5lVmhcoZE7vipCH6DlhO7CEqW2iVlmBrfRHuki6Z/fu91oM0yC0nfDcGsvKMbKuriC6nzCQf6k35XcEscJwOHsSkB2Ov9r2cLes9jqM52HMXiZv1+yBKmXzQ95B3O1i2B4y2Ksh1aVDW37t3vuESD+W1pE0GRB4Gt5CRwleL0fj1AbNnl+dxNKFNzVgExVILWY1aLkp/ZPDzVzxaOnfwlf9BTOLD9o++XUmiDyYSEOTX6nmBbSF9rLAXcBnhbcIvs4bHCNmZK1rrsxjx7CQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G6bV9v+Ga4zFngowc1KRlcoXz5D9Ak6rIRssBSLCDE4=;
- b=dtysn7UfoAKw0w0KbFd9GTpmDIimCIv312O5IPFpOH+txlP+6X6EI/sl62ZYZOxTh2tzF/3Frwhr6zjHFM0QCEnDnh3j5I+3+WYtnPNcwhizAuw/rCV7FcUOUBS/tDf2gtwtMNveBX+aQCoKY28OA1aOdnbCbNOjOYJ4oBraNse2J+xFnC8/t/QrN9Y/fI8GOhkQejoqBb7rJioD6CYuywbJPP480E1shh6st6EqPgDSNILMfOb/Zp/9B8FV/J0HgwYZuRGDNpztGoOGXjpju3PiwgYdlwHhvS1UUBsBo2oCqA4S4O2CzPx6xMkhxcXyNk90xV32TvPDe2Cn0iUaVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G6bV9v+Ga4zFngowc1KRlcoXz5D9Ak6rIRssBSLCDE4=;
- b=Ss27Kx4FSoitwxl8GyjbMVDapGgLMdky92pjfNg9U6mQHvPOEu/co75tTsbm4egBZ8SuN7+/KvviAtwjXo4YSj2t7Xxrh/bikOjCNrfi7ZG8QJGBBYO87H810wFzPyDuXeqmphBbcYe0lKSw3c2+Pls7P5szRaXO/zNPtfEg6762dvP+5AJlpf/t+Gq/uhN5f6m+atfsRlejNUhAmkiBoed05pZHHWDPbykwNNYkHE+3RoSt/DRcYWZb5w6trP+jrNUMzdn9ndlZHIO0yy/cA+ROJ87ad1pD3DLsa3/v/ZWrqcLbx/5Qit8d6xPiw3hAtkfxULWBic2bHKzMys/86Q==
-Received: from SA1P222CA0167.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c3::15)
- by PH8PR12MB7028.namprd12.prod.outlook.com (2603:10b6:510:1bf::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Thu, 13 Feb
- 2025 11:12:31 +0000
-Received: from SA2PEPF00003F68.namprd04.prod.outlook.com
- (2603:10b6:806:3c3:cafe::88) by SA1P222CA0167.outlook.office365.com
- (2603:10b6:806:3c3::15) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8445.14 via Frontend Transport; Thu,
- 13 Feb 2025 11:12:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SA2PEPF00003F68.mail.protection.outlook.com (10.167.248.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8445.10 via Frontend Transport; Thu, 13 Feb 2025 11:12:31 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 13 Feb
- 2025 03:12:21 -0800
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 13 Feb 2025 03:12:21 -0800
-Received: from build-sheetal-bionic-20241119.nvidia.com (10.127.8.13) by
- mail.nvidia.com (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14
- via Frontend Transport; Thu, 13 Feb 2025 03:12:21 -0800
-From: "Sheetal ." <sheetal@nvidia.com>
-To: <broonie@kernel.org>, <linux-sound@vger.kernel.org>
-CC: <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<jonathanh@nvidia.com>, <thierry.reding@gmail.com>, <mkumard@nvidia.com>,
-	<spujar@nvidia.com>, Sheetal <sheetal@nvidia.com>
-Subject: [PATCH] ASoC: tegra: Remove the isomgr_bw APIs export
-Date: Thu, 13 Feb 2025 11:12:16 +0000
-Message-ID: <20250213111216.1238344-1-sheetal@nvidia.com>
-X-Mailer: git-send-email 2.17.1
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ciyZL3RD"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=272ecwD0qQOvyWC3T+Go9BkCCvBpAAQ1+7vxu5z9xyw=; b=ciyZL3RDpG3knXa8xEsj60OGWO
+	vmPEULi5M/IzT2AVQuPWwdP4dWxHaroeM/02ZttcGHJv6Kw8Fxyhq9VgvEkUvf9s3+Cy4dIzN+R4M
+	wQpjoalZ97eCdNRmbhQRnBGWUspHE9pDzMYfmjnBl9+vaO23BZprjYDpGYoYOQizWM9H40DHWLJ8g
+	wsXbi/w91EOndLeRgU2//n6JsIp6V7dFclLoKaMObplw2LcUcyQqJzFUuOxh3EcJcrUVhP9KGNGtL
+	N4uEhoN7v7wnnV8gv0fT1pmArPzDkziH49hPcXKdoDN+ebIG940bHtcDVLRV1YF8PJjXBnd2H82rf
+	W+Q9oUGQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44508)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tiXX0-0000xe-0h;
+	Thu, 13 Feb 2025 11:37:22 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tiXWv-00025n-1H;
+	Thu, 13 Feb 2025 11:37:17 +0000
+Date: Thu, 13 Feb 2025 11:37:17 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Bryan Whitehead <bryan.whitehead@microchip.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, UNGLinuxDriver@microchip.com,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH net-next 9/9] net: stmmac: convert to phylink managed EEE
+ support
+Message-ID: <Z63Zbaf_4Rt57sox@shell.armlinux.org.uk>
+References: <Z4gdtOaGsBhQCZXn@shell.armlinux.org.uk>
+ <E1tYAEG-0014QH-9O@rmk-PC.armlinux.org.uk>
+ <6ab08068-7d70-4616-8e88-b6915cbf7b1d@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F68:EE_|PH8PR12MB7028:EE_
-X-MS-Office365-Filtering-Correlation-Id: b976b7cd-8809-47c2-2631-08dd4c1f4f43
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?L9q+3/ldnshQ94RPSFSKU5UoF0UTTYDW4IAnK8iTXDG3KNc51oV+O7IDE2ZP?=
- =?us-ascii?Q?c24A/VFIX5m/O9AiZs6SSeXi/T14BZeibjUbGGHFxNZUMXmMGYVmVoEKPf22?=
- =?us-ascii?Q?umBuAZGaYOuNDQv29J0/Zlx2371gr6gqIC/vNlt7dt4aFueHHq2urNF8/ZG5?=
- =?us-ascii?Q?bdGnQAYKxCk1a0gY97FKKP4UFN4SfTFV6zG5rxglx50wglNRl03gUK0oFR3G?=
- =?us-ascii?Q?AW292TRDKaS7hGnYH1oAUPwbrTYt86nhs2BHNy5rWcEfjBUzjd559q9qY/0F?=
- =?us-ascii?Q?DKHdTEim4R/b3/d3C2by6hBDhyrJrufTdiVNDDz7pqSm7ZTluMCmrhM7M5KQ?=
- =?us-ascii?Q?vbvK9EcdypgrDyF1t9/yvAMkhzNU014GGvd8U4g9GIOxRaFdogIc8ASFR1CZ?=
- =?us-ascii?Q?7lBnm3h2+VFbWmOGavsyph+V/idmuYy47h+doxJfCNdB4vdo1eAi7ZEqNRcT?=
- =?us-ascii?Q?VTNxyz2gexWd9ZSshHz4HnN+q3fWuZhR6lKUdCmYSxMojOK2ejzxZlon9uGH?=
- =?us-ascii?Q?ByH8YSDmRF4VqRDsWWebmDSKEQYlXxpvE0cWzAi809AbOEydRpVD8AYl4H89?=
- =?us-ascii?Q?MmD5HrVHJ7P5uM8kKShliK3Njv/LHCBKHWusr+KC7fucp+4l6h79cLeyolII?=
- =?us-ascii?Q?2mizG6XzOQR0QaQb+eB5KQPRzVi4SCK5huKywvRapmEp+XqBriCaEqtUK72x?=
- =?us-ascii?Q?PRGZRjV+zO3K89BwBvzXJDWnw5zQjZxyoyJaXyTIFBvHKX1YMzqJ3cV5MvMJ?=
- =?us-ascii?Q?E6cqwt/pv66haEAgmAixJXQrTClHMP+i41En9FUs5SZARo+6hXHLFi1TxzEU?=
- =?us-ascii?Q?ePA70bcdqii01Z4lVEdwvF/Okye6QdkMzLtkw28sIEmhRZ7RHZIQwjtydtZg?=
- =?us-ascii?Q?Ukm+tZHVB8nfnfQfWfsxj+yNRsXifMhMHdeUzsr0XHAExtrZ9taHxiF3LmQJ?=
- =?us-ascii?Q?gIF9i/IQWcsBP8UV6VJkWM5Y6zn/eRIC0mPySgALd4Vis3u3w60vWzkB9JN8?=
- =?us-ascii?Q?nxyzLRf24UcgCsq/Zgn/Wc4LGvTt4qrRO5QMyjXRfQ/iEXVWwXLt2JM8/KyP?=
- =?us-ascii?Q?REbN8E3bYTFETydwa+EqGRgsZuFFMtp4Z5o6pD9WXKO2HAi+mtZbL8yFqRPH?=
- =?us-ascii?Q?umfqsrPGUDiLDFzTI0GcR2H/9JGF7bpS/QoQ7u/DfsX+YuZHcexXZO3kYwuO?=
- =?us-ascii?Q?wy46fO8eTI4ggy32HIeedUkEFy5BC3Xds6LKtt8oQ/IEM24/ox7NE0r4jA8L?=
- =?us-ascii?Q?eozaGmYg/dXJj+PhzNQr6SBrCWfZlTFSpZ5eTZxlvK0zvNF2tOenBRtPzmn1?=
- =?us-ascii?Q?K/rASV02MmAFZJ4zpyQVRBa0UjFQhFU/08lBCbE57UZsXa9MtFBzg4k1s7vG?=
- =?us-ascii?Q?BTOccQuV/vxL7Fp9EmWNKc6gvgNuTgNqdKFsfe7ohuMwKj1HBOR7W+2p+h33?=
- =?us-ascii?Q?wr+uoPYqHmakD5EJmJb7sF19eDzd/CYHWYFYh5DkordPt8cmtP03KYibCTBy?=
- =?us-ascii?Q?94e4QBtjH5l+YMY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2025 11:12:31.2570
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b976b7cd-8809-47c2-2631-08dd4c1f4f43
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F68.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7028
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6ab08068-7d70-4616-8e88-b6915cbf7b1d@nvidia.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Sheetal <sheetal@nvidia.com>
+On Thu, Feb 13, 2025 at 11:05:01AM +0000, Jon Hunter wrote:
+> Hi Russell,
+> 
+> On 15/01/2025 20:43, Russell King (Oracle) wrote:
+> > Convert stmmac to use phylink managed EEE support rather than delving
+> > into phylib:
+> > 
+> > 1. Move the stmmac_eee_init() calls out of mac_link_down() and
+> >     mac_link_up() methods into the new mac_{enable,disable}_lpi()
+> >     methods. We leave the calls to stmmac_set_eee_pls() in place as
+> >     these change bits which tell the EEE hardware when the link came
+> >     up or down, and is used for a separate hardware timer. However,
+> >     symmetrically conditionalise this with priv->dma_cap.eee.
+> > 
+> > 2. Update the current LPI timer each time LPI is enabled - which we
+> >     need for software-timed LPI.
+> > 
+> > 3. With phylink managed EEE, phylink manages the receive clock stop
+> >     configuration via phylink_config.eee_rx_clk_stop_enable. Set this
+> >     appropriately which makes the call to phy_eee_rx_clock_stop()
+> >     redundant.
+> > 
+> > 4. From what I can work out, all supported interfaces support LPI
+> >     signalling on stmmac (there's no restriction implemented.) It
+> >     also appears to support LPI at all full duplex speeds at or over
+> >     100M. Set these capabilities.
+> > 
+> > 5. The default timer appears to be derived from a module parameter.
+> >     Set this the same, although we keep code that reconfigures the
+> >     timer in stmmac_init_phy().
+> > 
+> > 6. Remove the direct call to phy_support_eee(), which phylink will do
+> >     on the drivers behalf if phylink_config.eee_enabled_default is set.
+> > 
+> > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> > ---
+> >   .../net/ethernet/stmicro/stmmac/stmmac_main.c | 57 +++++++++++++++----
+> >   1 file changed, 45 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > index acd6994c1764..c5d293be8ab9 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > @@ -988,8 +988,8 @@ static void stmmac_mac_link_down(struct phylink_config *config,
+> >   	struct stmmac_priv *priv = netdev_priv(to_net_dev(config->dev));
+> >   	stmmac_mac_set(priv, priv->ioaddr, false);
+> > -	stmmac_eee_init(priv, false);
+> > -	stmmac_set_eee_pls(priv, priv->hw, false);
+> > +	if (priv->dma_cap.eee)
+> > +		stmmac_set_eee_pls(priv, priv->hw, false);
+> >   	if (stmmac_fpe_supported(priv))
+> >   		stmmac_fpe_link_state_handle(priv, false);
+> > @@ -1096,13 +1096,8 @@ static void stmmac_mac_link_up(struct phylink_config *config,
+> >   		writel(ctrl, priv->ioaddr + MAC_CTRL_REG);
+> >   	stmmac_mac_set(priv, priv->ioaddr, true);
+> > -	if (phy && priv->dma_cap.eee) {
+> > -		phy_eee_rx_clock_stop(phy, !(priv->plat->flags &
+> > -					     STMMAC_FLAG_RX_CLK_RUNS_IN_LPI));
+> > -		priv->tx_lpi_timer = phy->eee_cfg.tx_lpi_timer;
+> > -		stmmac_eee_init(priv, phy->enable_tx_lpi);
+> > +	if (priv->dma_cap.eee)
+> >   		stmmac_set_eee_pls(priv, priv->hw, true);
+> > -	}
+> >   	if (stmmac_fpe_supported(priv))
+> >   		stmmac_fpe_link_state_handle(priv, true);
+> > @@ -1111,12 +1106,32 @@ static void stmmac_mac_link_up(struct phylink_config *config,
+> >   		stmmac_hwtstamp_correct_latency(priv, priv);
+> >   }
+> > +static void stmmac_mac_disable_tx_lpi(struct phylink_config *config)
+> > +{
+> > +	struct stmmac_priv *priv = netdev_priv(to_net_dev(config->dev));
+> > +
+> > +	stmmac_eee_init(priv, false);
+> > +}
+> > +
+> > +static int stmmac_mac_enable_tx_lpi(struct phylink_config *config, u32 timer,
+> > +				    bool tx_clk_stop)
+> > +{
+> > +	struct stmmac_priv *priv = netdev_priv(to_net_dev(config->dev));
+> > +
+> > +	priv->tx_lpi_timer = timer;
+> > +	stmmac_eee_init(priv, true);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >   static const struct phylink_mac_ops stmmac_phylink_mac_ops = {
+> >   	.mac_get_caps = stmmac_mac_get_caps,
+> >   	.mac_select_pcs = stmmac_mac_select_pcs,
+> >   	.mac_config = stmmac_mac_config,
+> >   	.mac_link_down = stmmac_mac_link_down,
+> >   	.mac_link_up = stmmac_mac_link_up,
+> > +	.mac_disable_tx_lpi = stmmac_mac_disable_tx_lpi,
+> > +	.mac_enable_tx_lpi = stmmac_mac_enable_tx_lpi,
+> >   };
+> >   /**
+> > @@ -1189,9 +1204,6 @@ static int stmmac_init_phy(struct net_device *dev)
+> >   			return -ENODEV;
+> >   		}
+> > -		if (priv->dma_cap.eee)
+> > -			phy_support_eee(phydev);
+> > -
+> >   		ret = phylink_connect_phy(priv->phylink, phydev);
+> >   	} else {
+> >   		fwnode_handle_put(phy_fwnode);
+> > @@ -1201,7 +1213,12 @@ static int stmmac_init_phy(struct net_device *dev)
+> >   	if (ret == 0) {
+> >   		struct ethtool_keee eee;
+> > -		/* Configure phylib's copy of the LPI timer */
+> > +		/* Configure phylib's copy of the LPI timer. Normally,
+> > +		 * phylink_config.lpi_timer_default would do this, but there is
+> > +		 * a chance that userspace could change the eee_timer setting
+> > +		 * via sysfs before the first open. Thus, preserve existing
+> > +		 * behaviour.
+> > +		 */
+> >   		if (!phylink_ethtool_get_eee(priv->phylink, &eee)) {
+> >   			eee.tx_lpi_timer = priv->tx_lpi_timer;
+> >   			phylink_ethtool_set_eee(priv->phylink, &eee);
+> > @@ -1234,6 +1251,9 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
+> >   	/* Stmmac always requires an RX clock for hardware initialization */
+> >   	priv->phylink_config.mac_requires_rxc = true;
+> > +	if (!(priv->plat->flags & STMMAC_FLAG_RX_CLK_RUNS_IN_LPI))
+> > +		priv->phylink_config.eee_rx_clk_stop_enable = true;
+> > +
+> >   	mdio_bus_data = priv->plat->mdio_bus_data;
+> >   	if (mdio_bus_data)
+> >   		priv->phylink_config.default_an_inband =
+> > @@ -1255,6 +1275,19 @@ static int stmmac_phy_setup(struct stmmac_priv *priv)
+> >   				 priv->phylink_config.supported_interfaces,
+> >   				 pcs->supported_interfaces);
+> > +	if (priv->dma_cap.eee) {
+> > +		/* Assume all supported interfaces also support LPI */
+> > +		memcpy(priv->phylink_config.lpi_interfaces,
+> > +		       priv->phylink_config.supported_interfaces,
+> > +		       sizeof(priv->phylink_config.lpi_interfaces));
+> > +
+> > +		/* All full duplex speeds above 100Mbps are supported */
+> > +		priv->phylink_config.lpi_capabilities = ~(MAC_1000FD - 1) |
+> > +							MAC_100FD;
+> > +		priv->phylink_config.lpi_timer_default = eee_timer * 1000;
+> > +		priv->phylink_config.eee_enabled_default = true;
+> > +	}
+> > +
+> >   	fwnode = priv->plat->port_node;
+> >   	if (!fwnode)
+> >   		fwnode = dev_fwnode(priv->device);
+> 
+> 
+> I have been tracking down a suspend regression on Tegra186 and bisect is
+> pointing to this change. If I revert this on top of v6.14-rc2 then
+> suspend is working again. This is observed on the Jetson TX2 board
+> (specifically tegra186-p2771-0000.dts).
 
-Commit 4a91fe4c0d683 ("ASoC: tegra: Add interconnect support") exported
-tegra_isomgr_adma_setbw, tegra_isomgr_adma_register and
-tegra_isomgr_adma_register APIs, but there are no users of these that
-required these symbols to be exported.
-Hence, remove the exporting of the symbols.
+Thanks for the report.
 
-Fixes: 4a91fe4c0d683 ("ASoC: tegra: Add interconnect support")
-Signed-off-by: Sheetal <sheetal@nvidia.com>
----
- sound/soc/tegra/tegra_isomgr_bw.c | 3 ---
- 1 file changed, 3 deletions(-)
+> This device is using NFS for testing. So it appears that for this board
+> networking does not restart and the board hangs. Looking at the logs I
+> do see this on resume ...
+> 
+> [   64.129079] dwc-eth-dwmac 2490000.ethernet: Failed to reset the dma
+> [   64.133125] dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: DMA engine initialization failed
+> 
+> My first thought was if 'dma_cap.eee' is not supported for this device,
+> but from what I can see it is and 'dma_cap.eee' is true. Here are some
+> more details on this device regarding the ethernet controller.
 
-diff --git a/sound/soc/tegra/tegra_isomgr_bw.c b/sound/soc/tegra/tegra_isomgr_bw.c
-index 7789efe13873..18e802bca6a6 100644
---- a/sound/soc/tegra/tegra_isomgr_bw.c
-+++ b/sound/soc/tegra/tegra_isomgr_bw.c
-@@ -75,7 +75,6 @@ int tegra_isomgr_adma_setbw(struct snd_pcm_substream *substream,
- 	return icc_set_bw(adma_isomgr->icc_path_handle,
- 			  adma_isomgr->current_bandwidth, adma_isomgr->max_bw);
- }
--EXPORT_SYMBOL(tegra_isomgr_adma_setbw);
- 
- int tegra_isomgr_adma_register(struct device *dev)
- {
-@@ -114,7 +113,6 @@ int tegra_isomgr_adma_register(struct device *dev)
- 
- 	return 0;
- }
--EXPORT_SYMBOL(tegra_isomgr_adma_register);
- 
- void tegra_isomgr_adma_unregister(struct device *dev)
- {
-@@ -125,7 +123,6 @@ void tegra_isomgr_adma_unregister(struct device *dev)
- 
- 	mutex_destroy(&admaif->adma_isomgr->mutex);
- }
--EXPORT_SYMBOL(tegra_isomgr_adma_unregister);
- 
- MODULE_AUTHOR("Mohan Kumar <mkumard@nvidia.com>");
- MODULE_DESCRIPTION("Tegra ADMA Bandwidth Request driver");
+Could you see whether disabling EEE through ethtool (maybe first try
+turning tx-lpi off before using the "eee off") to see whether that
+makes any difference please?
+
 -- 
-2.17.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
