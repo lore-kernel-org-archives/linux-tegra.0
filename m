@@ -1,112 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAB52AD21;
-	Thu, 13 Feb 2025 07:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512D82063C9;
+	Thu, 13 Feb 2025 07:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739432516; cv=none; b=mPBwymb0Xm7EL4B85X4iOaCAxNq1cBnsJWBkhw8lURlDzF+bMjdgHxuhtnRbENDosHRVTRuoGiVybfzB9wBR/LutUEIMfknIgLxVtkEXfIzZhKBvouomGrg8ZqbtE0AoCZpm/gUmceMl7Lx0nhclgR8WRSUj4fR/0RLLcGp0sBU=
+	t=1739432820; cv=none; b=PIacdX94ees4LWPccxRug0bUiZxpN66faRuJN9+RoX72LWF+dRZMphUINtn0vodgSrsvVlkTL67SRtFmY0AAzv/thJBHfj31uRCwTsvEUCn2b6pRG/vZWloIblt1CddJcVLL+swTa2JcMNjCDuaXwhYNDHCn2Pd615yzbuZsKZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739432516; c=relaxed/simple;
-	bh=e/3JNcqQMxvz3itjS8WwyLDjbYO0p7j+scWMAkOJjck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jDu7PYDi0OTSdZZj29UOYsHA5GPGQNphlbgnykIxsRObpvqd5ObW8FXR3WTSD+eKN4LnYMTM6OK4kEMEK8TrXLJ7bK4icbh9iCNvreGsvhf+Q0t/4Rf/6qbvxvwOS+6W6xQyJe6EBkDU7MB9qFFDILj2ULb34Xr7ZKUvIR3CwOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXYQJROW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739432820; c=relaxed/simple;
+	bh=m7N01gpsrS64Ul0ZF1AXLBTZ2lTKOYhMJOH5bm/b/Gw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njx3F3W749i4EHwD6PCD2nMEytAOoebYUllC6YWYWBEgntuhexhRj34BYqtJyKYrxMxWcRTJBaAyfnLekTpmvqimx/j3blIsJQX1zky7rLLTmC4UqeL0amTySLHM4vzLv83HnWf6S6CB4wrGmIw8SK/Wd1JTE6IDT+T2zoctWPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEvnj/Km; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXYQJROW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B15F1C4CED1;
-	Thu, 13 Feb 2025 07:41:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739432515;
-	bh=e/3JNcqQMxvz3itjS8WwyLDjbYO0p7j+scWMAkOJjck=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=OXYQJROWARCU8Je+ozQ1L/zk6Dp3qK9w8BPxfceaFIF6Y3fBgtrOWVAE9EezVco0m
-	 BFFrUZwIRr4Mub8g5ZsIi6AL54iAewAxr7RqQRSOpKDhjw3GBwYq2CFaIPRqeaIM6S
-	 l2oDzLRaFs4L29micsjjQV+AUM5xbk/ZCG53G15ewHWvvISlKdn+om9bYwH5H55myA
-	 icxLxbcfo27A5b2avPvTbqUkJ2LRoZZuewlyDHjoT9gaYe8yvKOoECZ8C6AXhRRb4U
-	 vdtH3G9CxmzHdY1fK6xHzb0V6fFGedRBGrzcx2O41Lez806E5/2dsxWoWHDkleq9Oj
-	 /Tqjhn2y1/cYA==
-Message-ID: <d2912853-82eb-4dae-97e7-dbe51ef7175c@kernel.org>
-Date: Thu, 13 Feb 2025 08:41:47 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEvnj/Km"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739432819; x=1770968819;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=m7N01gpsrS64Ul0ZF1AXLBTZ2lTKOYhMJOH5bm/b/Gw=;
+  b=jEvnj/KmTN71p2O7tzX2+RP7fPE+OPoQHi5be69Mkug3m3GqxsPXbgMW
+   DUa8iJvFxrITyrz9UzwKIbmWLfCspJIVChmeymrwZs7/Tn1NodEzmgxCV
+   vB+78Y7NCPy+35kgjbz3kz8NoTuFSm10WHFw9YifEvyNZeCyrpskq0Q9I
+   ZaFqzxnwciHUlmExG9ydNCE26MTs40VNAErjnL8L/sHQBWF6oU/Qkdoiw
+   ynuHAFGDDPNV2oRT1jA9iRpcsx2i5iw68aZDQyEynycmYabI0zJ7739RW
+   0Vwk5EdhOcQ8RoZMYyKEu7H3AADgHH/Jq2j3B3b8YDPP2ROpjjIx56g0m
+   g==;
+X-CSE-ConnectionGUID: F5d4mfVqTTCo8n9JxIp6YQ==
+X-CSE-MsgGUID: 3qqvpQWCTXKv+rJsJ6ko8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="43889586"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="43889586"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 23:46:58 -0800
+X-CSE-ConnectionGUID: kIMk4oU5TYacoA6Out/RQA==
+X-CSE-MsgGUID: unga1muWThCDLOmV4wVp6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="113027361"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 12 Feb 2025 23:46:55 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tiTvw-0016k1-2o;
+	Thu, 13 Feb 2025 07:46:52 +0000
+Date: Thu, 13 Feb 2025 15:46:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Akhil R <akhilrajeev@nvidia.com>, herbert@gondor.apana.org.au,
+	davem@davemloft.net, thierry.reding@gmail.com, jonathanh@nvidia.com,
+	linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Akhil R <akhilrajeev@nvidia.com>
+Subject: Re: [PATCH v2 05/10] crypto: tegra: Transfer HASH init function to
+ crypto engine
+Message-ID: <202502131554.aBNVn7S9-lkp@intel.com>
+References: <20250211171713.65770-6-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: serial: Add bindings for
- nvidia,tegra264-utc
-To: Kartik Rajput <kkartik@nvidia.com>, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, thierry.reding@gmail.com, jonathanh@nvidia.com,
- hvilleneuve@dimonoff.com, arnd@kernel.org, geert+renesas@glider.be,
- robert.marko@sartura.hr, schnelle@linux.ibm.com,
- andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org
-References: <20250212104132.61060-1-kkartik@nvidia.com>
- <20250212104132.61060-2-kkartik@nvidia.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250212104132.61060-2-kkartik@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250211171713.65770-6-akhilrajeev@nvidia.com>
 
-On 12/02/2025 11:41, Kartik Rajput wrote:
-> The Tegra UTC (UART Trace Controller) allows multiple clients within
-> the Tegra SoC to share a physical UART interface. It supports up to 16
-> clients. Each client operates as an independent UART endpoint with a
-> dedicated interrupt and 128-character TX/RX FIFOs.
-> 
-> Add device tree binding documentation for the Tegra UTC client.
-> 
-> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+Hi Akhil,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+kernel test robot noticed the following build warnings:
 
-Best regards,
-Krzysztof
+[auto build test WARNING on herbert-crypto-2.6/master]
+[also build test WARNING on herbert-cryptodev-2.6/master linus/master v6.14-rc2 next-20250212]
+[cannot apply to tegra/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Akhil-R/crypto-tegra-Use-separate-buffer-for-setkey/20250212-012434
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git master
+patch link:    https://lore.kernel.org/r/20250211171713.65770-6-akhilrajeev%40nvidia.com
+patch subject: [PATCH v2 05/10] crypto: tegra: Transfer HASH init function to crypto engine
+config: i386-buildonly-randconfig-002-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131554.aBNVn7S9-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250213/202502131554.aBNVn7S9-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502131554.aBNVn7S9-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/crypto/tegra/tegra-se-hash.c:8:
+   In file included from include/linux/dma-mapping.h:8:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/crypto/tegra/tegra-se-hash.c:657:6: warning: unused variable 'ret' [-Wunused-variable]
+     657 |         int ret;
+         |             ^~~
+   2 warnings generated.
+--
+   In file included from drivers/crypto/tegra/tegra-se-aes.c:8:
+   In file included from include/linux/dma-mapping.h:8:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+>> drivers/crypto/tegra/tegra-se-aes.c:1788:6: warning: unused variable 'ret' [-Wunused-variable]
+    1788 |         int ret;
+         |             ^~~
+   2 warnings generated.
+
+
+vim +/ret +657 drivers/crypto/tegra/tegra-se-hash.c
+
+0880bb3b00c855 Akhil R     2024-04-03  651  
+0880bb3b00c855 Akhil R     2024-04-03  652  static int tegra_sha_digest(struct ahash_request *req)
+0880bb3b00c855 Akhil R     2024-04-03  653  {
+0880bb3b00c855 Akhil R     2024-04-03  654  	struct tegra_sha_reqctx *rctx = ahash_request_ctx(req);
+0880bb3b00c855 Akhil R     2024-04-03  655  	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
+0880bb3b00c855 Akhil R     2024-04-03  656  	struct tegra_sha_ctx *ctx = crypto_ahash_ctx(tfm);
+15589bda468306 Chen Ridong 2024-11-11 @657  	int ret;
+0880bb3b00c855 Akhil R     2024-04-03  658  
+0880bb3b00c855 Akhil R     2024-04-03  659  	if (ctx->fallback)
+0880bb3b00c855 Akhil R     2024-04-03  660  		return tegra_sha_fallback_digest(req);
+0880bb3b00c855 Akhil R     2024-04-03  661  
+0c179ef38db723 Akhil R     2025-02-11  662  	rctx->task |= SHA_INIT | SHA_UPDATE | SHA_FINAL;
+0880bb3b00c855 Akhil R     2024-04-03  663  
+0880bb3b00c855 Akhil R     2024-04-03  664  	return crypto_transfer_hash_request_to_engine(ctx->se->engine, req);
+0880bb3b00c855 Akhil R     2024-04-03  665  }
+0880bb3b00c855 Akhil R     2024-04-03  666  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
