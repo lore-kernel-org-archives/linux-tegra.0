@@ -1,77 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DA4263F25;
-	Fri, 14 Feb 2025 12:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A952673B9;
+	Fri, 14 Feb 2025 12:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739535681; cv=none; b=sVngt0D/sYe0I+l+KoTnDB75SuB/lHmJm6zVTwx08zKBmwwodxrHBx7eaRdmlSqucvQ7CIZMLgFtUUq9NB4bj7+hFXQudnqAGK1eX/YzJXfQZoygIe5xYNXWP5aHS2yDEE8DAWbpDpQcq5RxCm1pDOvuIO49ws2MDUG86G0OD8Q=
+	t=1739537947; cv=none; b=O0PYcGMJNENdg4vnfJSutKVePHeQG0siK+Vk2tq/ctlLuH085stK9fIWdxlC82kGlu95RE4/c5tiUiWJzuKsSVWCAk/ijahFXZ+A9K33BH3x+G/hIM96BMzHOTJT7iAlyRj+MjIq5Nf240q6iJr5KEXw0EHmGb2XFVruHGFD8Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739535681; c=relaxed/simple;
-	bh=QVeyAHjLchA7WqNCbOqpcUiyNoAjfJYd0+puryVp7pk=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=DabkQMa+PO8RHs672Th4oE4CZT45zSpRPWXXhUsp9Rpgiva89OyfaYvBc4+JrFsnCERYyY/tO632IAaiKhX+6Qe+r68h21GvWSH+vZviSifDTu5Z2Qxq8jZf5/v3/qv9BEDfCNhXi4yD0+imz7ST1KEWxDqdsA02ii7syXlN96o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUjk/HNS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739537947; c=relaxed/simple;
+	bh=0t4EN5GnlE4WyRk4DynmYLIny9UltXQDQoRGx9PjTqM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jclIXD2re7/PK5Ylgno2E0xve/xQgWksP/mZJOGkEGo3KaT3j68sMAJOWFm9zD2omYKN5HEYvnVktmUDaIVkBa4NRnHXPYhw96DJQvlFA//g9DH8njx/+oNuyY/lQHYYAB/znuyzbXFiMAtyTn5Efsqmby89TI3sora+Qp1ifIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFn52Xgm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUjk/HNS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18DDCC4CEDF;
-	Fri, 14 Feb 2025 12:21:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFn52Xgm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B032DC4CEDF;
+	Fri, 14 Feb 2025 12:59:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739535680;
-	bh=QVeyAHjLchA7WqNCbOqpcUiyNoAjfJYd0+puryVp7pk=;
-	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=AUjk/HNSoYoQ/6J7hjZcAlA15HEnPLWX8YfTGndmLW2hjnNec5mewKqHd3o4W7hn1
-	 BRejwhFBtkt0Ou/hhrCr7MBj8foKiGnTV43qoiKEdocEbiKnBmgLreJK/YOTEVKPN3
-	 +A143cv0JRt5IesiDDjXgNTavFgIBYxDBRUaN00DB7p+FrFY2uJyHYz5UplrnP2F5q
-	 g7zwJDQKL+1a6+P0N8QeTIIB/O1r8Ld7StCoKkmZ3d4Ixq2ekTm3LtkRLs1vDw8dNS
-	 GehvDSkL6cE4lZUY9EYrRGBPRnZC6rukHydjIItJvaaudbv3dquLg/8mujJzlMYbNH
-	 RxXBM5LjvADdw==
-Message-ID: <c045b5b46c8daf79b124e6da9f951fe8@kernel.org>
-Date: Fri, 14 Feb 2025 12:21:18 +0000
-From: "Maxime Ripard" <mripard@kernel.org>
-To: "Anusha Srivatsa" <asrivats@redhat.com>
-Subject: Re: [PATCH 11/12] drm/vc4: move to devm_platform_ioremap_resource()
- usage
-In-Reply-To: <20250213-mem-cocci-v3-v1-11-93466d165349@redhat.com>
-References: <20250213-mem-cocci-v3-v1-11-93466d165349@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, "Alain
- Volmat" <alain.volmat@foss.st.com>, "Alexandre Torgue" <alexandre.torgue@foss.st.com>, "Alexey
- Brodkin" <abrodkin@synopsys.com>, "Alison Wang" <alison.wang@nxp.com>, "Andrew
- Jeffery" <andrew@codeconstruct.com.au>, "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>, "Baolin
- Wang" <baolin.wang@linux.alibaba.com>, "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Chunyan
- Zhang" <zhang.lyra@gmail.com>, "Dave Stevenson" <dave.stevenson@raspberrypi.com>, "David
- Airlie" <airlied@gmail.com>, "Fabio Estevam" <festevam@gmail.com>, "Joel
- Stanley" <joel@jms.id.au>, "John Stultz" <jstultz@google.com>, "Jonathan
- Corbet" <corbet@lwn.net>, "Jonathan Hunter" <jonathanh@nvidia.com>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Marek Vasut" <marex@denx.de>, "Matthias
- Brugger" <matthias.bgg@gmail.com>, "Maxime Coquelin" <mcoquelin.stm32@gmail.com>, "Maxime
- Ripard" <mripard@kernel.org>, =?utf-8?b?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, "Mikko
- Perttunen" <mperttunen@nvidia.com>, "Orson Zhai" <orsonzhai@gmail.com>, "Pengutronix
- Kernel Team" <kernel@pengutronix.de>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Philippe
- Cornu" <philippe.cornu@foss.st.com>, "Raphael Gallais-Pou" <raphael.gallais-pou@foss.st.com>, "Raphael
- Gallais-Pou" <rgallaispou@gmail.com>, "Raspberry Pi Kernel Maintenance" <kernel-list@raspberrypi.com>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, "Simona
- Vetter" <simona@ffwll.ch>, "Stefan Agner" <stefan@agner.ch>, "Sumit Semwal" <sumit.semwal@linaro.org>, "Thierry
- Reding" <thierry.reding@gmail.com>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Tian
- Tao" <tiantao6@hisilicon.com>, "Xinliang Liu" <xinliang.liu@linaro.org>, "Xinwei
- Kong" <kong.kongxinwei@hisilicon.com>, "Yannick Fertre" <yannick.fertre@foss.st.com>, "Yongqin
- Liu" <yongqin.liu@linaro.org>
-Content-Transfer-Encoding: 7bit
+	s=k20201202; t=1739537946;
+	bh=0t4EN5GnlE4WyRk4DynmYLIny9UltXQDQoRGx9PjTqM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=XFn52XgmS1epWC9hOxanEtt3L0FzrhAuLYpbr//o3xOV1xQ7wwp2UJKeuI49v1NnH
+	 ohjJRu/OQe6b5U0LutbcBtN7hMVhXUGHi012QyPt8H89EYSmTRFr+CFfw7FBzDuSqK
+	 jOfYe9sQDDqLxtLzyEnXYaudKgSsVFFra32F6YGZ31K77CqZ58lPshXeGbeLmlRW5P
+	 vp5UMALK/gu45HotLdB3l615ZhAA5Z9gzOCWUtZBs2Uc5Gv9Yva2gP5OpCF+giR01A
+	 BMAZnHDxsYxjVPC0OQOe9d3SjxUUTzxpAVC9/EEdpIj5Y4bu7ZrFES+nwVUcmVdW5Z
+	 Htm1dg2WKQ87Q==
+From: Vinod Koul <vkoul@kernel.org>
+To: JC Kuo <jckuo@nvidia.com>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Henry Lin <henryl@nvidia.com>
+Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, BH Hsieh <bhsieh@nvidia.com>, 
+ stable@vger.kernel.org
+In-Reply-To: <20250122105943.8057-1-henryl@nvidia.com>
+References: <20250122105943.8057-1-henryl@nvidia.com>
+Subject: Re: [PATCH v2] phy: tegra: xusb: reset VBUS & ID OVERRIDE
+Message-Id: <173953794334.323038.6276165864210863274.b4-ty@kernel.org>
+Date: Fri, 14 Feb 2025 18:29:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Thu, 13 Feb 2025 19:19:24 -0500, Anusha Srivatsa wrote:
-> Replace platform_get_resource_byname + devm_ioremap_resource
-> with just devm_platform_ioremap_resource()
+
+On Wed, 22 Jan 2025 18:59:43 +0800, Henry Lin wrote:
+> Observed VBUS_OVERRIDE & ID_OVERRIDE might be programmed
+> with unexpected value prior to XUSB PADCTL driver, this
+> could also occur in virtualization scenario.
 > 
-> Used Coccinelle to do this change. SmPl patch:
-> //rule s/(devm_)platform_get_resource_byname +
+> For example, UEFI firmware programs ID_OVERRIDE=GROUNDED to set
+> a type-c port to host mode and keeps the value to kernel.
+> If the type-c port is connected a usb host, below errors can be
+> observed right after usb host mode driver gets probed. The errors
+> would keep until usb role class driver detects the type-c port
+> as device mode and notifies usb device mode driver to set both
+> ID_OVERRIDE and VBUS_OVERRIDE to correct value by XUSB PADCTL
+> driver.
 > 
-> [ ... ]
+> [...]
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Applied, thanks!
 
-Thanks!
-Maxime
+[1/1] phy: tegra: xusb: reset VBUS & ID OVERRIDE
+      commit: 55f1a5f7c97c3c92ba469e16991a09274410ceb7
+
+Best regards,
+-- 
+~Vinod
+
+
