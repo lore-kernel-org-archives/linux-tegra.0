@@ -1,138 +1,77 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68482627FB;
-	Fri, 14 Feb 2025 11:22:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DA4263F25;
+	Fri, 14 Feb 2025 12:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739532125; cv=none; b=mWCaROpJSOFbV2P3DJTbqb3aDWnRiutzgmm+ERQh/1SCp9oKxdj723Dsh+B013RKNzt9Qrn9op95nxmLxBVz6PywnBP3ez8roDaPqgFs/VA0Hv6gmzuvcuAlxCRyQQtPY27NKoHyzgmr/z9ppBRE5A+LOerQLFKLDPwr3qvCYCQ=
+	t=1739535681; cv=none; b=sVngt0D/sYe0I+l+KoTnDB75SuB/lHmJm6zVTwx08zKBmwwodxrHBx7eaRdmlSqucvQ7CIZMLgFtUUq9NB4bj7+hFXQudnqAGK1eX/YzJXfQZoygIe5xYNXWP5aHS2yDEE8DAWbpDpQcq5RxCm1pDOvuIO49ws2MDUG86G0OD8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739532125; c=relaxed/simple;
-	bh=p/tvgyRTAO1erproUoKnB9xObhXdJUOSTKz24T3lqTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4mM4wxZVxHHNPGoM4hvMeKrEz7rsPaEhp5+zDrtu/w7d5ZeMfTuyQPxwCE5DgTwY3ShcFGkV29HUAtcw6NKc+6U0Qi3CFwuPmI2d5wodO8Aspk67ICIGK7beTFluxYDcwJV6y/r7p9rz91JoXJcNbJy1rh/c5ucAyw7micRTPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ZqwoGD7z; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1739535681; c=relaxed/simple;
+	bh=QVeyAHjLchA7WqNCbOqpcUiyNoAjfJYd0+puryVp7pk=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=DabkQMa+PO8RHs672Th4oE4CZT45zSpRPWXXhUsp9Rpgiva89OyfaYvBc4+JrFsnCERYyY/tO632IAaiKhX+6Qe+r68h21GvWSH+vZviSifDTu5Z2Qxq8jZf5/v3/qv9BEDfCNhXi4yD0+imz7ST1KEWxDqdsA02ii7syXlN96o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUjk/HNS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZqwoGD7z"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=RHsXfurBVo9Ce74LImjTzy7g4TxkHm2re9qA247p8t0=; b=ZqwoGD7zEhypQ51Pi4psu8Fb13
-	/M062gsF/RpRU603avscdnXAaIUmLMynxoJXCkG97ZPu+jDU9lvsApZ2pUI9la2K8wcp5/qJqqkfC
-	nVQ+Ou1d5c8c51byR5HVr3qBSKtZAqPgd7jT28SJJxLYnMeLbhTHo5lDsGzD7GY7bB6slaYEyYDpg
-	DXSoP8mAuIKvlRTFstoju/rha43m1qGWx+5rvSHnoA6sjS9nXn7sUu6mmnRdSlHCn35AMYu/4g/jZ
-	n9jGMmun594EzdICsIBCyRRB2EYIjL0e5iAI16AwW0JvmbVcLmO/J2SxY4QuyUwSQ2JQjTeUMlYlh
-	v/DVqI1A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59702)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1titlU-0004px-3D;
-	Fri, 14 Feb 2025 11:21:49 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1titlQ-00037F-2R;
-	Fri, 14 Feb 2025 11:21:44 +0000
-Date: Fri, 14 Feb 2025 11:21:44 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Bryan Whitehead <bryan.whitehead@microchip.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, UNGLinuxDriver@microchip.com,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH net-next 9/9] net: stmmac: convert to phylink managed EEE
- support
-Message-ID: <Z68nSJqVxcnCc1YB@shell.armlinux.org.uk>
-References: <Z4gdtOaGsBhQCZXn@shell.armlinux.org.uk>
- <E1tYAEG-0014QH-9O@rmk-PC.armlinux.org.uk>
- <6ab08068-7d70-4616-8e88-b6915cbf7b1d@nvidia.com>
- <Z63Zbaf_4Rt57sox@shell.armlinux.org.uk>
- <Z63e-aFlvKMfqNBj@shell.armlinux.org.uk>
- <05987b45-94b9-4744-a90d-9812cf3566d9@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUjk/HNS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18DDCC4CEDF;
+	Fri, 14 Feb 2025 12:21:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739535680;
+	bh=QVeyAHjLchA7WqNCbOqpcUiyNoAjfJYd0+puryVp7pk=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=AUjk/HNSoYoQ/6J7hjZcAlA15HEnPLWX8YfTGndmLW2hjnNec5mewKqHd3o4W7hn1
+	 BRejwhFBtkt0Ou/hhrCr7MBj8foKiGnTV43qoiKEdocEbiKnBmgLreJK/YOTEVKPN3
+	 +A143cv0JRt5IesiDDjXgNTavFgIBYxDBRUaN00DB7p+FrFY2uJyHYz5UplrnP2F5q
+	 g7zwJDQKL+1a6+P0N8QeTIIB/O1r8Ld7StCoKkmZ3d4Ixq2ekTm3LtkRLs1vDw8dNS
+	 GehvDSkL6cE4lZUY9EYrRGBPRnZC6rukHydjIItJvaaudbv3dquLg/8mujJzlMYbNH
+	 RxXBM5LjvADdw==
+Message-ID: <c045b5b46c8daf79b124e6da9f951fe8@kernel.org>
+Date: Fri, 14 Feb 2025 12:21:18 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Anusha Srivatsa" <asrivats@redhat.com>
+Subject: Re: [PATCH 11/12] drm/vc4: move to devm_platform_ioremap_resource()
+ usage
+In-Reply-To: <20250213-mem-cocci-v3-v1-11-93466d165349@redhat.com>
+References: <20250213-mem-cocci-v3-v1-11-93466d165349@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, "Alain
+ Volmat" <alain.volmat@foss.st.com>, "Alexandre Torgue" <alexandre.torgue@foss.st.com>, "Alexey
+ Brodkin" <abrodkin@synopsys.com>, "Alison Wang" <alison.wang@nxp.com>, "Andrew
+ Jeffery" <andrew@codeconstruct.com.au>, "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>, "Baolin
+ Wang" <baolin.wang@linux.alibaba.com>, "Chun-Kuang Hu" <chunkuang.hu@kernel.org>, "Chunyan
+ Zhang" <zhang.lyra@gmail.com>, "Dave Stevenson" <dave.stevenson@raspberrypi.com>, "David
+ Airlie" <airlied@gmail.com>, "Fabio Estevam" <festevam@gmail.com>, "Joel
+ Stanley" <joel@jms.id.au>, "John Stultz" <jstultz@google.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, "Jonathan Hunter" <jonathanh@nvidia.com>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Marek Vasut" <marex@denx.de>, "Matthias
+ Brugger" <matthias.bgg@gmail.com>, "Maxime Coquelin" <mcoquelin.stm32@gmail.com>, "Maxime
+ Ripard" <mripard@kernel.org>, =?utf-8?b?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, "Mikko
+ Perttunen" <mperttunen@nvidia.com>, "Orson Zhai" <orsonzhai@gmail.com>, "Pengutronix
+ Kernel Team" <kernel@pengutronix.de>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Philippe
+ Cornu" <philippe.cornu@foss.st.com>, "Raphael Gallais-Pou" <raphael.gallais-pou@foss.st.com>, "Raphael
+ Gallais-Pou" <rgallaispou@gmail.com>, "Raspberry Pi Kernel Maintenance" <kernel-list@raspberrypi.com>, "Sascha
+ Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>, "Simona
+ Vetter" <simona@ffwll.ch>, "Stefan Agner" <stefan@agner.ch>, "Sumit Semwal" <sumit.semwal@linaro.org>, "Thierry
+ Reding" <thierry.reding@gmail.com>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Tian
+ Tao" <tiantao6@hisilicon.com>, "Xinliang Liu" <xinliang.liu@linaro.org>, "Xinwei
+ Kong" <kong.kongxinwei@hisilicon.com>, "Yannick Fertre" <yannick.fertre@foss.st.com>, "Yongqin
+ Liu" <yongqin.liu@linaro.org>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <05987b45-94b9-4744-a90d-9812cf3566d9@nvidia.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Feb 14, 2025 at 10:58:55AM +0000, Jon Hunter wrote:
-> Thanks for the feedback. So ...
+On Thu, 13 Feb 2025 19:19:24 -0500, Anusha Srivatsa wrote:
+> Replace platform_get_resource_byname + devm_ioremap_resource
+> with just devm_platform_ioremap_resource()
 > 
-> 1. I can confirm that suspend works if I disable EEE via ethtool
-> 2. Prior to this change I do see phy_eee_rx_clock_stop being called
->    to enable the clock resuming from suspend, but after this change
->    it is not.
+> Used Coccinelle to do this change. SmPl patch:
+> //rule s/(devm_)platform_get_resource_byname +
 > 
-> Prior to this change I see (note the prints around 389-392 are when
-> we resume from suspend) ...
-> 
-> [    4.654454] Broadcom BCM89610 stmmac-0:00: phy_eee_rx_clock_stop: clk_stop_enable 0
+> [ ... ]
 
-This is a bug in phylink - it shouldn't have been calling
-phy_eee_rx_clock_stop() where a MAC doesn't support phylink managed EEE.
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-> [    4.723123] dwc-eth-dwmac 2490000.ethernet eth0: configuring for phy/rgmii link mode
-> [    7.629652] Broadcom BCM89610 stmmac-0:00: phy_eee_rx_clock_stop: clk_stop_enable 1
-
-Presumably, this is when the link comes up before suspend, so the PHY
-has been configured to allow the RX clock to be stopped prior to suspend
-
-> [  389.086185] dwc-eth-dwmac 2490000.ethernet eth0: configuring for phy/rgmii link mode
-> [  392.863744] Broadcom BCM89610 stmmac-0:00: phy_eee_rx_clock_stop: clk_stop_enable 1
-
-Presumably, as this is after resume, this is again when the link comes
-up (that's the only time that stmmac calls phy_eee_rx_clock_stop().)
-
-> After this change I see ...
-> 
-> [    4.644614] Broadcom BCM89610 stmmac-0:00: phy_eee_rx_clock_stop: clk_stop_enable 1
-> [    4.679224] dwc-eth-dwmac 2490000.ethernet eth0: configuring for phy/rgmii link mode
-> [  191.219828] dwc-eth-dwmac 2490000.ethernet eth0: configuring for phy/rgmii link mode
-
-To me, this looks no different - the PHY was configured for clock stop
-before suspending in both cases.
-
-However, something else to verify with the old code - after boot and the
-link comes up (so you get the second phy_eee_rx_clock_stop() at 7s),
-try unplugging the link and re-plugging it. Then try suspending.
-
-The point of this test is to verify whether the PHY ignores changes to
-the RX clock stop configuration while the link is up.
-
-
-
-The next stage is to instrument dwmac4_set_eee_mode(),
-dwmac4_reset_eee_mode() and dwmac4_set_eee_lpi_entry_timer() to print
-the final register values in each function vs dwmac4_set_lpi_mode() in
-the new code. Also, I think instrumenting stmmac_common_interrupt() to
-print a message when we get either CORE_IRQ_TX_PATH_IN_LPI_MODE or
-CORE_IRQ_TX_PATH_EXIT_LPI_MODE indicating a change in LPI state would
-be a good idea.
-
-I'd like to see how this all ties up with suspend, resume, link up
-and down events, so please don't trim the log so much.
-
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks!
+Maxime
