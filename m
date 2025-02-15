@@ -1,134 +1,120 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91DFB19049B;
-	Sat, 15 Feb 2025 09:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7AC748F;
+	Sat, 15 Feb 2025 10:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739613058; cv=none; b=U8E7uuttlMUptD9Nc5ZZwV8M+VTrhQG33CUKtPheMnNxhXYWtNgdMc2Md4UKUG2o+vAzI99pHmm2/ZAEMQ1byFxFY5jjC3HDpDTiwqrUpMJz1qOyBQEve0QRVvPoKfSWz3e8Cc2fP5UZcm9GxNlxzkCNA65pfrgAM4uAMaG9gPQ=
+	t=1739615547; cv=none; b=ezUHrJl39Hz/wkQzlWAk+Y4REw6Ea5lWhnmKBXf5ysm8OKdEhpTvuHJk+sRJ9Gm5Hmrrlk1ZIxTma7tKZy3hbsfPTMwSOWSs7JXItPaV4CfrNMt5I5Sf6dODlS7Ysx3KsNK4/csK2beAICXufiVeaHY9Wxw4R8/ZcCyi9/KiLBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739613058; c=relaxed/simple;
-	bh=MYtye3mXOSgmjNVwAdiLAWnVTAT6ccam/tc+AZHY5DU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bI9SJ5p0ZBEREI59bk8sSppOj0jtPaF28bUBg/U+dRf9WCwvYsrmx8EGvoF/jRLm9B/Yn/yqWl0wizttx630v2BRPtMICqQh5PideF8zQ5b0FpGHqsqwMmRNvHp/omOBvQjJo60NZLYDCyHR38TPZ4tRurqtI5jXLYpTDWbfqdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HZn57gNs; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1739615547; c=relaxed/simple;
+	bh=PBgr8FLz5oLAqGvU0Ww9gruaAbHJmlB0I5+cST1gO04=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dLvrD7pRLRDcCfGwYPOPJHB23vCN61QlSwvqfe6+dbilYhj/FKBfKIp3zU1tWvv9vGF24gvS7oc7LGECE1N0/TzXEQA2CzDM89ZyTVyZBS3B+6L9flRnHwMv49tJJzUAaRInM/JTRIzhobiHU/amJxFoExZ0dzpMwlEYSIUnQBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S7sJS+Ph; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HZn57gNs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739613057; x=1771149057;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MYtye3mXOSgmjNVwAdiLAWnVTAT6ccam/tc+AZHY5DU=;
-  b=HZn57gNsQtn06a0haQdzAuFtqZhobhpWGh6XiRpmGXK3QA4wm1CMPmq9
-   2gNgp5x5lpZRza1uIKTo6vOlrVGfgR0QsDsLZZFOCEdtuCuE65XhRkcP8
-   1DaIPYwQa/v+SYyNc/KOMu/cDTZQMSAUSn61xT+EqfylVNwnj6d5CkDCO
-   IYR2WBsvmrNcAhqZK55NeqTxE28vscLRcAO6YhBVPxpr4e0UZFjcybX34
-   ArOxQa7MUjCQj2A2WmMZmBv1PwpAxS/34oysCXHDn5ovzC7Lv1pZbkU8D
-   acq2ub7Y7cyDf5Mf5kbb4TRCSotXA1KYdVwcozvNGS5kQVvnc2nxzrDJS
-   w==;
-X-CSE-ConnectionGUID: LxHxY5KYQ76LRgr4Nmk9QQ==
-X-CSE-MsgGUID: MEtolS2URVWQwa09VSFuLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="62830872"
-X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="62830872"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 01:50:56 -0800
-X-CSE-ConnectionGUID: Wx9nhBKeSyWUiDCwEGa+UA==
-X-CSE-MsgGUID: tBrnDxKzSJ2qq/G5C/lSng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="113858921"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 01:50:48 -0800
-Message-ID: <d66e555b-8054-4f73-8077-201b51139773@linux.intel.com>
-Date: Sat, 15 Feb 2025 17:47:51 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7sJS+Ph"
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5450681b606so2821494e87.0;
+        Sat, 15 Feb 2025 02:32:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1739615544; x=1740220344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+IFODiovVbi6js9JilOujPK29SFBBxZbaFpvul0+tsA=;
+        b=S7sJS+PhERUdjraYQxlrVbOkq8L4cRCHfYtxsfup4qudbUAMw+nKK+nIGVgXC3VUCp
+         X+jDr+KpEUzr9IaBqq8ae/XnI4jAk0CReJCAk2awAruFbCOw3qSI7au1EyXnUg9cXF4J
+         vl3Hn8if86Pab3XBX36gjjVX/iZ77EVA3xiYUsFIXoS8p07BeBmVtVrlPnR1MoPdBCqe
+         nmlCWGDy0baehxtqhI58W77WOC/9lvb/VMYt+4dIbd6c7lDvFEj9HPEvFLtDcBOo0oYY
+         ZPmIBHM5q5V2ik1Rq57+1sZyOnKj/vRZBja8oPDftPkUFNxYNQlpqQPGsA8MA82p5PTN
+         7vpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739615544; x=1740220344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+IFODiovVbi6js9JilOujPK29SFBBxZbaFpvul0+tsA=;
+        b=dzOLb5uoQteqbQGxoZ8BmrjvubiPipfQB4jO5CWcnpKK2WorotGsyqC+g4h8+ieQEZ
+         NzDOD0/ab269vvBgfmBqWyqWAEJyHWtxcIQP++ycCPFYMEgpJWMKNA65FOwKRno8z4Ub
+         Ecm1fMW9xrjvkmpssiBneKcUcBY/VfKYyYhPz4JdtjKf8566C+S1yte6VGZj73LbMnG5
+         LqIVsv+6iarNz/R4ryfSyh1QIOCpAjFFvgKlRNW6P5qg5Ajv84L3lKMjQa5S4ZW9SmPr
+         w/fYn52S7N16zBDSrml/fITGrILj68QxY8AFbQCE+qAhGmk1OO0lZGoxxqFJGyd19V11
+         /MCg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBrZIH77uwHBo2We4A7I5rUyXsyODWIr1muurubXRHqlhsde0EWSHxU05Fs9pKxIBnVaZoPNID8WNMfVgh@vger.kernel.org, AJvYcCUDz+6CYLnxlM6hCihB2yq1vHZC24B1nbkCVxOJqxVjDjioRuT4Js9uX2T+wkMAb1xMwcn12edzIq93etc=@vger.kernel.org, AJvYcCVX8VFkHyUwENx9FZUKL7A/iMmqpgN1EsUN+jarH5WZSlPnhoivDORCFRPEfW4pyRnZ7VzTKvE8AvEG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc8QU6BFcZc693icb7jO8h8b4kSX5UJy/WwnRTOtetyPG25vz8
+	gJtqAwrJv2AYF7Su9gm7OguhUIynoudthV5CIvuj5k4oRethmLhQ
+X-Gm-Gg: ASbGnctp4dcVkc9oVYtgmijssB9gKke/TDkW9DL0XA/h5wNiwcqrYZwiOcj8DQXs9Zx
+	1JobabzmCzMG6Ky+NyukvJA4mii1C3WgwNMZ68fmdgYKlbYXijn8TGuV0g1CpdC9u6ay6gaVjpN
+	SImiwxk45yDON9oNqU4zu1toniFAnqcchTvchOKz+5WCPaItfJFqe+KpjyTe+LF5/QuwMc91VJQ
+	MrZ6cI6tr8Z2LSd5Au2F5lyHOpfTqKIl0C0dlsECjlCFN507KfL9cvNzf8s5FMcicZHGliZNo9Z
+	ubRRmNE=
+X-Google-Smtp-Source: AGHT+IH113Zt+sUzS2Ps9oWib8/GKvxz3e6n6frTNjstX8eVnnrEEQKhdQnxlnIAeaOGJTRH+rvo2Q==
+X-Received: by 2002:a05:6512:4025:b0:545:ea9:1a11 with SMTP id 2adb3069b0e04-5452fe2738amr746168e87.5.1739615543524;
+        Sat, 15 Feb 2025 02:32:23 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-309298dc5eesm2201571fa.95.2025.02.15.02.32.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Feb 2025 02:32:22 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>
+Cc: linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v2 0/3] iio: light: add al3000a als support
+Date: Sat, 15 Feb 2025 12:31:56 +0200
+Message-ID: <20250215103159.106343-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 23/23] iommu/pages: Remove iommu_alloc_pages_node()
-To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
- asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
- Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
- Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
- <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
- Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
- Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
- David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
-References: <23-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <23-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2/15/25 01:07, Jason Gunthorpe wrote:
-> diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-> index dd980808998da9..1036ed0d899472 100644
-> --- a/drivers/iommu/intel/iommu.h
-> +++ b/drivers/iommu/intel/iommu.h
-> @@ -493,14 +493,13 @@ struct q_inval {
->   
->   /* Page Request Queue depth */
->   #define PRQ_ORDER	4
-> -#define PRQ_RING_MASK	((0x1000 << PRQ_ORDER) - 0x20)
-> -#define PRQ_DEPTH	((0x1000 << PRQ_ORDER) >> 5)
-> +#define PRQ_SIZE	(SZ_4K << PRQ_ORDER)
-> +#define PRQ_RING_MASK	(PRQ_SIZE - 0x20)
-> +#define PRQ_DEPTH	(PRQ_SIZE >> 5)
->   
->   struct dmar_pci_notify_info;
->   
->   #ifdef CONFIG_IRQ_REMAP
-> -/* 1MB - maximum possible interrupt remapping table size */
+AL3000a is an illuminance sensor found in ASUS TF101 tablet.
 
-Can we keep this line of comment,
+---
+Changes on switching from v1 to v2:
+- sort compatible alphabetically in schema
+- clarify commit descriptions
+- convert to use regmap
+- arrangle lux conversion table in rows of 8
+- add more used headers
+- improve code formatting 
+---
 
-and move it ...
+Svyatoslav Ryhel (3):
+  dt-bindings: iio: light: al3010: add al3000a support
+  iio: light: Add support for AL3000a illuminance sensor
+  ARM: tegra: tf101: Add al3000a illuminance sensor node
 
-> -#define INTR_REMAP_PAGE_ORDER	8
->   #define INTR_REMAP_TABLE_REG_SIZE	0xf
->   #define INTR_REMAP_TABLE_REG_SIZE_MASK  0xf
->   
-> diff --git a/drivers/iommu/intel/irq_remapping.c b/drivers/iommu/intel/irq_remapping.c
-> index d6b796f8f100cd..735e26498ee9f2 100644
-> --- a/drivers/iommu/intel/irq_remapping.c
-> +++ b/drivers/iommu/intel/irq_remapping.c
-> @@ -538,11 +538,10 @@ static int intel_setup_irq_remapping(struct intel_iommu *iommu)
->   	if (!ir_table)
->   		return -ENOMEM;
->   
-> -	ir_table_base = iommu_alloc_pages_node(iommu->node, GFP_KERNEL,
-> -					       INTR_REMAP_PAGE_ORDER);
-> +	ir_table_base =
+ .../bindings/iio/light/dynaimage,al3010.yaml  |   6 +-
+ .../boot/dts/nvidia/tegra20-asus-tf101.dts    |  11 +
+ drivers/iio/light/Kconfig                     |  10 +
+ drivers/iio/light/Makefile                    |   1 +
+ drivers/iio/light/al3000a.c                   | 221 ++++++++++++++++++
+ 5 files changed, 247 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/iio/light/al3000a.c
 
-... here?
+-- 
+2.43.0
 
-> +		iommu_alloc_pages_node_sz(iommu->node, GFP_KERNEL, SZ_1M);
->   	if (!ir_table_base) {
-> -		pr_err("IR%d: failed to allocate pages of order %d\n",
-> -		       iommu->seq_id, INTR_REMAP_PAGE_ORDER);
-> +		pr_err("IR%d: failed to allocate 1M of pages\n", iommu->seq_id);
->   		goto out_free_table;
->   	}
-
-Thanks,
-baolu
