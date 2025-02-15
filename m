@@ -1,50 +1,50 @@
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBBF18A93F;
-	Sat, 15 Feb 2025 08:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB1D18C01E;
+	Sat, 15 Feb 2025 08:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739609474; cv=none; b=MGrLKfDtm7h1lqfWwbpMJBLwXq/cg8eiDBC3ZJMsmZW0YoYKPKB9o+MDuIYvB2GcWMhFRuYNZlJIL2WM7nZawxwQcCBvBp8EDpRmkyopUNKNCC52BqMqaJinbSM/qfWe9Gv8hL4W0zkr71qBFE4C90WPPjBBPK9LDGhVNXfkUMM=
+	t=1739609559; cv=none; b=GTSu1enY/TveVFDNVlEk5IGTBU81zCSWyEceDCVlaWF7l28phZ9jY12sA7n/KeKsW6ovWTp3yzzSUhInuIYZACiEmVSu0m8eOXKsk+mCKslKT+yezlBZ7p6wWeJdcouYVWIedoa7OeUH1W+k1pvWVy0SInpVpLvqWiB6urdO9H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739609474; c=relaxed/simple;
-	bh=bOL7hyxwdyA5NZF7YWFX1w7MgDLf45Pn8T+oWqiAy80=;
+	s=arc-20240116; t=1739609559; c=relaxed/simple;
+	bh=7GL2U5SpT2VoHIZNpeGTc6jbEWPVggoPMzS2SMqOKM8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XzZS1Pe5I3yyjM3HyfuqitCWc191AddOmELMcFl2kytrSuV7nEky31t7LoMzEJj1sdlDMQv66gkphx/DAK6Gxj2ar1UdBdcoFShO7tgNx5MVMWOdjCOyVhryrOyfMWx1qz5ljTC9EWY3CE5WpxDUewJky7dXutGk7J7QdDsSRkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j/luwkOS; arc=none smtp.client-ip=198.175.65.10
+	 In-Reply-To:Content-Type; b=JdjqWCSZHOOBC30NjCfZXVRLH/qF6Kb6W6B+rjKaulOldWbZZzo49Q0EKkDuG2XNmj2YU8In+u8t0yau+ThSWPvH5NWG/msbiRFbCoDLPI/e7UWVIDOJQhfVnN+1xn/MuQ+kmzxEVRQCECq0n8FaQs1b6cM2S8m5hTs6IvajUB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M/LsGibK; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j/luwkOS"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M/LsGibK"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739609473; x=1771145473;
+  t=1739609558; x=1771145558;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=bOL7hyxwdyA5NZF7YWFX1w7MgDLf45Pn8T+oWqiAy80=;
-  b=j/luwkOSeWKokaacvlHoaKSz3XIbxKaT6KNpBc5knprsH0FtP37rKKL1
-   XFWJvygAVK6VUJ2te4RxpxNsNc6G1WWDld4wInPhbiKa1COPqs18F8FvX
-   LRV9suf+ry+Zr8HrGUJgckqbO9m9T7i1zVEUVnNTLC3yRedkW2SR52zs9
-   X2MQQg6hfIQKllFzNbWOAuz8wd8Cog7vzgqOLYCjn5DkNYUBZ5D0jh6UI
-   N0U/T9gOBRgqcoQQqv/5M/Sd2kh5fL8ZcW7H0cilsUsBoJBkBay9VuyJ7
-   JPu0zJjZ28oWX0pW5mLmV1eR2cGwmUy/gEY8wDlibnSEsQS8+yiV8dK9Q
-   g==;
-X-CSE-ConnectionGUID: 2yyRVp7eRUmmfqZYf8bZhw==
-X-CSE-MsgGUID: WV4BwruJTpqgc3yytYHkNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57764820"
+  bh=7GL2U5SpT2VoHIZNpeGTc6jbEWPVggoPMzS2SMqOKM8=;
+  b=M/LsGibKDgjEgsPzsDLXBdkbOrdWYSa7zQpLG3kUan74hVR7Oo54iTlS
+   HbWNzBBEEUmb8ExuxPC1Jcfaw2u1l0EqMawfgQeIvoYuIoJPh42y+kCCc
+   7sjnH9ysSqkZbNEOTjE5Jv9D78Hdb2wR3GVjiUoSpimDvnAjBICMm2r2q
+   vz/tM2W1QOa1EW02TCmUwg1Z1rRg68CUx87CkvZxrgElfeVd7TIV2Y+iT
+   Pmhlk4Rbles0F6N/2tsOSnlY125oaHDmaAw3PWlcJ9NVc3GYKjsnuZ20W
+   f8wxfWJqR7muR8pQLi8NRmeTZTCyOrn6mTd4jbRUq/5kAzntidJxhK6ie
+   Q==;
+X-CSE-ConnectionGUID: cm5RfFrlTxeRiIm5AW+MOw==
+X-CSE-MsgGUID: Nua+U2ntSQOXz8e+tVIP1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57764872"
 X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="57764820"
+   d="scan'208";a="57764872"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:51:12 -0800
-X-CSE-ConnectionGUID: /r+F0jx4RVKMBSVF09lU6w==
-X-CSE-MsgGUID: r0L1deRvR9Cz9JN551mbGw==
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:52:37 -0800
+X-CSE-ConnectionGUID: vye0sqE8QmCQ4YPGfHOQQg==
+X-CSE-MsgGUID: h5vIpSbnRHO9zzjW9Kx4YA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="114287640"
+   d="scan'208";a="114287785"
 Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:51:04 -0800
-Message-ID: <84fd4500-a12c-40d6-a532-e2956ed1c35e@linux.intel.com>
-Date: Sat, 15 Feb 2025 16:48:04 +0800
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:52:30 -0800
+Message-ID: <bd54b742-16c8-4b55-95cb-5cb6847cec07@linux.intel.com>
+Date: Sat, 15 Feb 2025 16:49:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/23] iommu/pages: De-inline the substantial functions
+Subject: Re: [PATCH v2 08/23] iommu/vtd: Use virt_to_phys()
 To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
  Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
  asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
@@ -73,111 +73,31 @@ To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
 Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
  Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
  David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
-References: <7-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
+References: <8-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
 Content-Language: en-US
 From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <7-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
+In-Reply-To: <8-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 2/15/25 01:07, Jason Gunthorpe wrote:
-> These are called in a lot of places and are not trivial. Move them to the
-> core module.
+> If all the inlines are unwound virt_to_dma_pfn() is simply:
+>     return page_to_pfn(virt_to_page(p)) << (PAGE_SHIFT - VTD_PAGE_SHIFT);
 > 
-> Tidy some of the comments and function arguments, fold
-> __iommu_alloc_account() into its only caller, change
-> __iommu_free_account() into __iommu_free_page() to remove some
-> duplication.
+> Which can be re-arranged to:
+>     (page_to_pfn(virt_to_page(p)) << PAGE_SHIFT) >> VTD_PAGE_SHIFT
+> 
+> The only caller is:
+>     ((uint64_t)virt_to_dma_pfn(tmp_page) << VTD_PAGE_SHIFT)
+> 
+> re-arranged to:
+>     ((page_to_pfn(virt_to_page(tmp_page)) << PAGE_SHIFT) >> VTD_PAGE_SHIFT) << VTD_PAGE_SHIFT
+> 
+> Which simplifies to:
+>     page_to_pfn(virt_to_page(tmp_page)) << PAGE_SHIFT
+> 
+> That is the same as virt_to_phys(tmp_page), so just remove all of this.
 > 
 > Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
-> ---
->   drivers/iommu/Makefile      |   1 +
->   drivers/iommu/iommu-pages.c |  84 +++++++++++++++++++++++++++++
->   drivers/iommu/iommu-pages.h | 103 ++----------------------------------
->   3 files changed, 90 insertions(+), 98 deletions(-)
->   create mode 100644 drivers/iommu/iommu-pages.c
-> 
-> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-> index 5e5a83c6c2aae2..fe91d770abe16c 100644
-> --- a/drivers/iommu/Makefile
-> +++ b/drivers/iommu/Makefile
-> @@ -1,6 +1,7 @@
->   # SPDX-License-Identifier: GPL-2.0
->   obj-y += amd/ intel/ arm/ iommufd/ riscv/
->   obj-$(CONFIG_IOMMU_API) += iommu.o
-> +obj-$(CONFIG_IOMMU_SUPPORT) += iommu-pages.o
->   obj-$(CONFIG_IOMMU_API) += iommu-traces.o
->   obj-$(CONFIG_IOMMU_API) += iommu-sysfs.o
->   obj-$(CONFIG_IOMMU_DEBUGFS) += iommu-debugfs.o
-> diff --git a/drivers/iommu/iommu-pages.c b/drivers/iommu/iommu-pages.c
-> new file mode 100644
-> index 00000000000000..dbf7205bb23dcc
-> --- /dev/null
-> +++ b/drivers/iommu/iommu-pages.c
-> @@ -0,0 +1,84 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2024, Google LLC.
-> + * Pasha Tatashin<pasha.tatashin@soleen.com>
-> + */
-> +#include "iommu-pages.h"
-> +#include <linux/gfp.h>
-> +#include <linux/mm.h>
-> +
-> +/**
-> + * iommu_alloc_pages_node - Allocate a zeroed page of a given order from
-> + *                          specific NUMA node
-> + * @nid: memory NUMA node id
-> + * @gfp: buddy allocator flags
-> + * @order: page order
-> + *
-> + * Returns the virtual address of the allocated page. The page must be
-> + * freed either by calling iommu_free_page() or via iommu_put_pages_list().
 
-nit: ... by calling iommu_free_pages() ...
-
-and
-
-  s/page/pages/g in above comments?
-
-> + */
-> +void *iommu_alloc_pages_node(int nid, gfp_t gfp, unsigned int order)
-> +{
-> +	const unsigned long pgcnt = 1UL << order;
-> +	struct page *page;
-> +
-> +	page = alloc_pages_node(nid, gfp | __GFP_ZERO | __GFP_COMP, order);
-> +	if (unlikely(!page))
-> +		return NULL;
-> +
-> +	/*
-> +	 * All page allocations that should be reported to as "iommu-pagetables"
-> +	 * to userspace must use one of the functions below. This includes
-> +	 * allocations of page-tables and other per-iommu_domain configuration
-> +	 * structures.
-> +	 *
-> +	 * This is necessary for the proper accounting as IOMMU state can be
-> +	 * rather large, i.e. multiple gigabytes in size.
-> +	 */
-> +	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, pgcnt);
-> +	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, pgcnt);
-> +
-> +	return page_address(page);
-> +}
-> +EXPORT_SYMBOL_GPL(iommu_alloc_pages_node);
-> +
-> +static void __iommu_free_page(struct page *page)
-
-It's more readable if renaming it to __iommu_free_pages()?
-
-> +{
-> +	unsigned int order = folio_order(page_folio(page));
-> +	const unsigned long pgcnt = 1UL << order;
-> +
-> +	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, -pgcnt);
-> +	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, -pgcnt);
-> +	put_page(page);
-> +}
-
-Thanks,
-baolu
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
