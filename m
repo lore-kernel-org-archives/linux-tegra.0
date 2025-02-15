@@ -1,102 +1,183 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63528126C18;
-	Sat, 15 Feb 2025 07:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBBF18A93F;
+	Sat, 15 Feb 2025 08:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739605557; cv=none; b=Jha49vrooigpaYPoWMr+ba4Xeo95bG8oa62leh9zWXhfo1d4QoJyUGu+y5LENqg0S2jEQkyaLaILCYdl9zz/3JLhKARv4sW+p76jvjuBz2s3Y9qokBUIztWig9Qq1wmu/3OVW/NaQJqSQoXIbQk60a8usLItD7TxbXZ79QYGsDk=
+	t=1739609474; cv=none; b=MGrLKfDtm7h1lqfWwbpMJBLwXq/cg8eiDBC3ZJMsmZW0YoYKPKB9o+MDuIYvB2GcWMhFRuYNZlJIL2WM7nZawxwQcCBvBp8EDpRmkyopUNKNCC52BqMqaJinbSM/qfWe9Gv8hL4W0zkr71qBFE4C90WPPjBBPK9LDGhVNXfkUMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739605557; c=relaxed/simple;
-	bh=qlq0mYc6i5WWBc/Lorm9EOv7T5OYfse3LTvwazBQoyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XuIec9yGPA38sOSW/VN0jF8AISPZRwyE3edeCiadyePEq/lmKOe2imViuZmLrMas1bcQHdUpWVBYJsc1ENhc/VSu64WVpSLx8mob1cC07/s1GbuaTLO/05lRvz2YRfZ0EaVK0LYqERTp/lL95ZsNe9Swfo0jKKLmEOWQOGs9uHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aey1bzAX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739609474; c=relaxed/simple;
+	bh=bOL7hyxwdyA5NZF7YWFX1w7MgDLf45Pn8T+oWqiAy80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XzZS1Pe5I3yyjM3HyfuqitCWc191AddOmELMcFl2kytrSuV7nEky31t7LoMzEJj1sdlDMQv66gkphx/DAK6Gxj2ar1UdBdcoFShO7tgNx5MVMWOdjCOyVhryrOyfMWx1qz5ljTC9EWY3CE5WpxDUewJky7dXutGk7J7QdDsSRkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j/luwkOS; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aey1bzAX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C1CEC4CEDF;
-	Sat, 15 Feb 2025 07:45:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739605556;
-	bh=qlq0mYc6i5WWBc/Lorm9EOv7T5OYfse3LTvwazBQoyQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aey1bzAXGrHx2AIo538Fs1z79XV5sWeMSRSEd7R1MxQBPITlLalOo6LlN1gUlU5B5
-	 6abSdP2RXHPv8sKsaSvNoRjbyYuR0H+Nm5EOEhbmfVHePLtSaD6jWhciCM1QcGY7fI
-	 +6gyzzps3yY202O1VGX+FZsGA1EKNRjksgYg15qQ=
-Date: Sat, 15 Feb 2025 08:45:53 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 6.12 000/419] 6.12.14-rc2 review
-Message-ID: <2025021540-attic-limelight-0fb3@gregkh>
-References: <20250214133845.788244691@linuxfoundation.org>
- <57e42fbb-9372-4618-bbed-71da01326ffe@rnnvmail203.nvidia.com>
- <bcf76664-e77c-44b3-b78f-bcefc7aa3fc1@nvidia.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j/luwkOS"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739609473; x=1771145473;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bOL7hyxwdyA5NZF7YWFX1w7MgDLf45Pn8T+oWqiAy80=;
+  b=j/luwkOSeWKokaacvlHoaKSz3XIbxKaT6KNpBc5knprsH0FtP37rKKL1
+   XFWJvygAVK6VUJ2te4RxpxNsNc6G1WWDld4wInPhbiKa1COPqs18F8FvX
+   LRV9suf+ry+Zr8HrGUJgckqbO9m9T7i1zVEUVnNTLC3yRedkW2SR52zs9
+   X2MQQg6hfIQKllFzNbWOAuz8wd8Cog7vzgqOLYCjn5DkNYUBZ5D0jh6UI
+   N0U/T9gOBRgqcoQQqv/5M/Sd2kh5fL8ZcW7H0cilsUsBoJBkBay9VuyJ7
+   JPu0zJjZ28oWX0pW5mLmV1eR2cGwmUy/gEY8wDlibnSEsQS8+yiV8dK9Q
+   g==;
+X-CSE-ConnectionGUID: 2yyRVp7eRUmmfqZYf8bZhw==
+X-CSE-MsgGUID: WV4BwruJTpqgc3yytYHkNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57764820"
+X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
+   d="scan'208";a="57764820"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:51:12 -0800
+X-CSE-ConnectionGUID: /r+F0jx4RVKMBSVF09lU6w==
+X-CSE-MsgGUID: r0L1deRvR9Cz9JN551mbGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
+   d="scan'208";a="114287640"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:51:04 -0800
+Message-ID: <84fd4500-a12c-40d6-a532-e2956ed1c35e@linux.intel.com>
+Date: Sat, 15 Feb 2025 16:48:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bcf76664-e77c-44b3-b78f-bcefc7aa3fc1@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/23] iommu/pages: De-inline the substantial functions
+To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
+ asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
+ Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
+ <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
+ Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+ David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
+References: <7-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <7-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 09:12:39PM +0000, Jon Hunter wrote:
-> Hi Greg,
+On 2/15/25 01:07, Jason Gunthorpe wrote:
+> These are called in a lot of places and are not trivial. Move them to the
+> core module.
 > 
-> On 14/02/2025 21:11, Jon Hunter wrote:
-> > On Fri, 14 Feb 2025 14:58:41 +0100, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 6.12.14 release.
-> > > There are 419 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > > 
-> > > Responses should be made by Sun, 16 Feb 2025 13:37:21 +0000.
-> > > Anything received after that time might be too late.
-> > > 
-> > > The whole patch series can be found in one patch at:
-> > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.14-rc2.gz
-> > > or in the git tree and branch at:
-> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-> > > and the diffstat can be found below.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > Failures detected for Tegra ...
-> > 
-> > Test results for stable-v6.12:
-> >      10 builds:	10 pass, 0 fail
-> >      26 boots:	26 pass, 0 fail
-> >      116 tests:	107 pass, 9 fail
-> > 
-> > Linux version:	6.12.14-rc2-ga58d06766300
-> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-> >                  tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-> >                  tegra20-ventana, tegra210-p2371-2180,
-> >                  tegra210-p3450-0000, tegra30-cardhu-a04
-> > 
-> > Test failures:	tegra124-jetson-tk1: cpu-hotplug
-> >                  tegra124-jetson-tk1: pm-system-suspend.sh
-> >                  tegra186-p2771-0000: cpu-hotplug
-> >                  tegra20-ventana: cpu-hotplug
-> >                  tegra210-p2371-2180: cpu-hotplug
-> >                  tegra210-p3450-0000: cpu-hotplug
-> > 
+> Tidy some of the comments and function arguments, fold
+> __iommu_alloc_account() into its only caller, change
+> __iommu_free_account() into __iommu_free_page() to remove some
+> duplication.
 > 
+> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+> ---
+>   drivers/iommu/Makefile      |   1 +
+>   drivers/iommu/iommu-pages.c |  84 +++++++++++++++++++++++++++++
+>   drivers/iommu/iommu-pages.h | 103 ++----------------------------------
+>   3 files changed, 90 insertions(+), 98 deletions(-)
+>   create mode 100644 drivers/iommu/iommu-pages.c
 > 
-> Bisect is pointing to this commit ...
-> 
-> # first bad commit: [3efd1a4cc13eccc1ae02b0511aec5bc74a168b74] sched/deadline: Correctly account for allocated bandwidth during hotplug
+> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> index 5e5a83c6c2aae2..fe91d770abe16c 100644
+> --- a/drivers/iommu/Makefile
+> +++ b/drivers/iommu/Makefile
+> @@ -1,6 +1,7 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   obj-y += amd/ intel/ arm/ iommufd/ riscv/
+>   obj-$(CONFIG_IOMMU_API) += iommu.o
+> +obj-$(CONFIG_IOMMU_SUPPORT) += iommu-pages.o
+>   obj-$(CONFIG_IOMMU_API) += iommu-traces.o
+>   obj-$(CONFIG_IOMMU_API) += iommu-sysfs.o
+>   obj-$(CONFIG_IOMMU_DEBUGFS) += iommu-debugfs.o
+> diff --git a/drivers/iommu/iommu-pages.c b/drivers/iommu/iommu-pages.c
+> new file mode 100644
+> index 00000000000000..dbf7205bb23dcc
+> --- /dev/null
+> +++ b/drivers/iommu/iommu-pages.c
+> @@ -0,0 +1,84 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024, Google LLC.
+> + * Pasha Tatashin<pasha.tatashin@soleen.com>
+> + */
+> +#include "iommu-pages.h"
+> +#include <linux/gfp.h>
+> +#include <linux/mm.h>
+> +
+> +/**
+> + * iommu_alloc_pages_node - Allocate a zeroed page of a given order from
+> + *                          specific NUMA node
+> + * @nid: memory NUMA node id
+> + * @gfp: buddy allocator flags
+> + * @order: page order
+> + *
+> + * Returns the virtual address of the allocated page. The page must be
+> + * freed either by calling iommu_free_page() or via iommu_put_pages_list().
 
-Thanks, let me go delete that from both 6.12 and 6.13 queues.
+nit: ... by calling iommu_free_pages() ...
 
-greg k-h
+and
+
+  s/page/pages/g in above comments?
+
+> + */
+> +void *iommu_alloc_pages_node(int nid, gfp_t gfp, unsigned int order)
+> +{
+> +	const unsigned long pgcnt = 1UL << order;
+> +	struct page *page;
+> +
+> +	page = alloc_pages_node(nid, gfp | __GFP_ZERO | __GFP_COMP, order);
+> +	if (unlikely(!page))
+> +		return NULL;
+> +
+> +	/*
+> +	 * All page allocations that should be reported to as "iommu-pagetables"
+> +	 * to userspace must use one of the functions below. This includes
+> +	 * allocations of page-tables and other per-iommu_domain configuration
+> +	 * structures.
+> +	 *
+> +	 * This is necessary for the proper accounting as IOMMU state can be
+> +	 * rather large, i.e. multiple gigabytes in size.
+> +	 */
+> +	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, pgcnt);
+> +	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, pgcnt);
+> +
+> +	return page_address(page);
+> +}
+> +EXPORT_SYMBOL_GPL(iommu_alloc_pages_node);
+> +
+> +static void __iommu_free_page(struct page *page)
+
+It's more readable if renaming it to __iommu_free_pages()?
+
+> +{
+> +	unsigned int order = folio_order(page_folio(page));
+> +	const unsigned long pgcnt = 1UL << order;
+> +
+> +	mod_node_page_state(page_pgdat(page), NR_IOMMU_PAGES, -pgcnt);
+> +	mod_lruvec_page_state(page, NR_SECONDARY_PAGETABLE, -pgcnt);
+> +	put_page(page);
+> +}
+
+Thanks,
+baolu
