@@ -1,50 +1,50 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB1D18C01E;
-	Sat, 15 Feb 2025 08:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32489198E78;
+	Sat, 15 Feb 2025 09:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739609559; cv=none; b=GTSu1enY/TveVFDNVlEk5IGTBU81zCSWyEceDCVlaWF7l28phZ9jY12sA7n/KeKsW6ovWTp3yzzSUhInuIYZACiEmVSu0m8eOXKsk+mCKslKT+yezlBZ7p6wWeJdcouYVWIedoa7OeUH1W+k1pvWVy0SInpVpLvqWiB6urdO9H4=
+	t=1739610818; cv=none; b=dLoAYVlHfIJAXhU2AxMmGQRbfguqQSZVlxH4ZsfYYxfOIsPhY8mXIWcN2L9+lYZaRRnRhx07KdBSnvXBT996luyMsic/qt6akEA5Sk+0cfKKQGnPLTSyNRd9goGndZMqbylt+Fw/nWBXlRTiy++xh7TPlAzVbkIO06not13/gro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739609559; c=relaxed/simple;
-	bh=7GL2U5SpT2VoHIZNpeGTc6jbEWPVggoPMzS2SMqOKM8=;
+	s=arc-20240116; t=1739610818; c=relaxed/simple;
+	bh=G/Qt6dZjMBOmDsbuyaRv6OzX+guIhg98BM2jS68/vTk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JdjqWCSZHOOBC30NjCfZXVRLH/qF6Kb6W6B+rjKaulOldWbZZzo49Q0EKkDuG2XNmj2YU8In+u8t0yau+ThSWPvH5NWG/msbiRFbCoDLPI/e7UWVIDOJQhfVnN+1xn/MuQ+kmzxEVRQCECq0n8FaQs1b6cM2S8m5hTs6IvajUB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M/LsGibK; arc=none smtp.client-ip=198.175.65.10
+	 In-Reply-To:Content-Type; b=nC1ecdCt1P5lqo0yH7v0R1AoB7pOVMVwulDVYkaD9ktp0xUbTcxbVo9W4FNvEkyhv8uPD6UMNvfYnaNHiaz1ZA5UrII7cfYYV/Q9wTknZgXVoh+wstrPxWM5+uWlzrTEMz5bzpqMXXutBYAjWLEMlSARRpSKg2fALO5U9J8q7gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lEXNpWtk; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M/LsGibK"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lEXNpWtk"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739609558; x=1771145558;
+  t=1739610818; x=1771146818;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=7GL2U5SpT2VoHIZNpeGTc6jbEWPVggoPMzS2SMqOKM8=;
-  b=M/LsGibKDgjEgsPzsDLXBdkbOrdWYSa7zQpLG3kUan74hVR7Oo54iTlS
-   HbWNzBBEEUmb8ExuxPC1Jcfaw2u1l0EqMawfgQeIvoYuIoJPh42y+kCCc
-   7sjnH9ysSqkZbNEOTjE5Jv9D78Hdb2wR3GVjiUoSpimDvnAjBICMm2r2q
-   vz/tM2W1QOa1EW02TCmUwg1Z1rRg68CUx87CkvZxrgElfeVd7TIV2Y+iT
-   Pmhlk4Rbles0F6N/2tsOSnlY125oaHDmaAw3PWlcJ9NVc3GYKjsnuZ20W
-   f8wxfWJqR7muR8pQLi8NRmeTZTCyOrn6mTd4jbRUq/5kAzntidJxhK6ie
-   Q==;
-X-CSE-ConnectionGUID: cm5RfFrlTxeRiIm5AW+MOw==
-X-CSE-MsgGUID: Nua+U2ntSQOXz8e+tVIP1A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="57764872"
+  bh=G/Qt6dZjMBOmDsbuyaRv6OzX+guIhg98BM2jS68/vTk=;
+  b=lEXNpWtkQ/pY+MJgCLoW9+7sYNgcJiv1O6uI0KMnqYpZSPogozPategN
+   spHl5DAjdGlwtL2GjZvdVkhTjYg7xF539nPleAxmhQY+YPC0Y0ldQwQGr
+   si6Fkcv5F7lwHbTycmObtxRoXb2ZPss+efUdZOrMHd4ZYkWpxt7ERYBvd
+   /FeOQ+qohkcjFoqdjl7pWthMGzyskpwVku4NvGWLCXOloNIhRUm0rJPOy
+   t8C0yNpntUgRMMSQziiFPEFyq6SV6jvJXGw51Q+7TTYHRRsRtYO9brpBu
+   HJGPNAy3rCANKCqc5jX5SToOVxTXD4PS9IprrQUYgW4LMBHN2VgN7C35O
+   g==;
+X-CSE-ConnectionGUID: qAEGesD4T3O+DHJhgHcXCg==
+X-CSE-MsgGUID: TdYbXiRUS9iwAHGrkOpTmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="40279515"
 X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="57764872"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:52:37 -0800
-X-CSE-ConnectionGUID: vye0sqE8QmCQ4YPGfHOQQg==
-X-CSE-MsgGUID: h5vIpSbnRHO9zzjW9Kx4YA==
+   d="scan'208";a="40279515"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 01:13:37 -0800
+X-CSE-ConnectionGUID: OjCkaXbcS1WOq7oKO+qQrA==
+X-CSE-MsgGUID: ncWbRhG0QRqp+uOwSydKkQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.13,288,1732608000"; 
-   d="scan'208";a="114287785"
+   d="scan'208";a="118688305"
 Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 00:52:30 -0800
-Message-ID: <bd54b742-16c8-4b55-95cb-5cb6847cec07@linux.intel.com>
-Date: Sat, 15 Feb 2025 16:49:34 +0800
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2025 01:13:28 -0800
+Message-ID: <d68dd230-96c1-44c2-b8f5-59f87fcca25a@linux.intel.com>
+Date: Sat, 15 Feb 2025 17:10:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,7 +52,8 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/23] iommu/vtd: Use virt_to_phys()
+Subject: Re: [PATCH v2 15/23] iommu/pages: Move the __GFP_HIGHMEM checks into
+ the common code
 To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
  Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
  asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
@@ -73,31 +74,23 @@ To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
 Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
  Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
  David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
-References: <8-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
+References: <15-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
 Content-Language: en-US
 From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <8-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
+In-Reply-To: <15-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 2/15/25 01:07, Jason Gunthorpe wrote:
-> If all the inlines are unwound virt_to_dma_pfn() is simply:
->     return page_to_pfn(virt_to_page(p)) << (PAGE_SHIFT - VTD_PAGE_SHIFT);
-> 
-> Which can be re-arranged to:
->     (page_to_pfn(virt_to_page(p)) << PAGE_SHIFT) >> VTD_PAGE_SHIFT
-> 
-> The only caller is:
->     ((uint64_t)virt_to_dma_pfn(tmp_page) << VTD_PAGE_SHIFT)
-> 
-> re-arranged to:
->     ((page_to_pfn(virt_to_page(tmp_page)) << PAGE_SHIFT) >> VTD_PAGE_SHIFT) << VTD_PAGE_SHIFT
-> 
-> Which simplifies to:
->     page_to_pfn(virt_to_page(tmp_page)) << PAGE_SHIFT
-> 
-> That is the same as virt_to_phys(tmp_page), so just remove all of this.
+> The entire allocator API is built around using the kernel virtual address,
+> it is illegal to pass GFP_HIGHMEM in as a GFP flag. Block it in the common
+> code. Remove the duplicated checks from drivers.
 > 
 > Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+> ---
+>   drivers/iommu/io-pgtable-arm.c  | 2 --
+>   drivers/iommu/io-pgtable-dart.c | 1 -
+>   drivers/iommu/iommu-pages.c     | 4 ++++
+>   3 files changed, 4 insertions(+), 3 deletions(-)
 
 Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
