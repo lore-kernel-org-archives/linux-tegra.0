@@ -1,74 +1,87 @@
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97989450;
-	Sun, 16 Feb 2025 16:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EE0191499;
+	Sun, 16 Feb 2025 16:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739722171; cv=none; b=gfvqG4s0PXAYj3/DeyYmT2XZvbomn/Sl11gFJm1bH4UoNLIgfJkVk+hN/qQpYaggYKY4p83wvws8LHPKSDxKzTNxl/Ik+H/xMimdoWIgW7N6KzLlc13LjxnEd3WXVL+uPoFghPUH2jj60vAl1uL+YRxVb4/PYrzPFFmtguJQ5Yg=
+	t=1739723264; cv=none; b=lAr3gUvKNfn811GnQlu4O+oztML9MiEz4SZ2SaZS7L1XvHPgOqWCIxDaK57/i3tYccoQ6vEqR7zNRmeMSZHsvLK8v6N4kw6Ww3UkrpiJcwV3pCk090ynmoe4ze7P4eBzlZJHYEQpz8nHYhDJw62vSqocCqKmR14Aa6ISnuo5Sn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739722171; c=relaxed/simple;
-	bh=mfbl0vJ7voZrewg6vqPE5K/y2Lsehv8G+ZR6l9PEvH0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KKpEspcE2l2fLqP1NaUQzoaMSo2npdaAJjEz+LHg8zeLUL94kxrFg2OmjteXOWZv6sM/2ZdvGQeSk6C61sVQ8f0RTqxBhczvD8HGq9XXUunsghUCHLGAXcSGhFlbWGbnGlq8qLFyJHOFveH8XmGI1leNt6U3CMu/6ajDfqRdO1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YA4tE66s; arc=none smtp.client-ip=209.85.160.45
+	s=arc-20240116; t=1739723264; c=relaxed/simple;
+	bh=yTLzjAo+KcqoWNduSSE0mzD0ceiO5DTQAXIIndfLujA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TbxIQXo1vMhVMWfQr6BeLQimrb0kXBKYdQ8Iqsz5Y1LL7JYLXNxqvJxwSbl8g9gRPEP0IVbzFgM9CNo2ZZs1C33000ASOzgCJ6xGFD8jgItRJWY1v9L2j7RKz9245Do6ER9rt77EtlVGGpUe/ek0WYq1bCk1nA028DzniEJXVFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QenDqNEl; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YA4tE66s"
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2b89395a3efso1847494fac.2;
-        Sun, 16 Feb 2025 08:09:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QenDqNEl"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5452c2805bcso2327512e87.2;
+        Sun, 16 Feb 2025 08:27:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739722169; x=1740326969; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1739723261; x=1740328061; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rwXwJhkTpn0cp8zSQjVUxqBuPCU0+4gNIispero9yJo=;
-        b=YA4tE66sWIuN6iYuyWeIr6s6gEVzmIAaUusZcglqeibsR43nGTyhoJs0IU2pWtCsVC
-         CgbVax1zsosT4iAf5PpdxbSegrYLdp9ryhZ4IFsa1CF4FrRDsfRLZyrJS8NOSp3ybG9K
-         HejzFdHcDnKe0kHR9PU9M+a+ReC858+7KtS3dQQa3QYvBpDfRzG+7lD+GxVe3zeRRRvv
-         C5dP5jxM2jhP5OQioNKQGm9DXAJE1WHwV3BHfYfIULw4SMiEZPgS6v5o9+pwwVwgae8t
-         CptV4dR/CL6ElaT+1aqGAUpg5lUffnis9MlLafjjPyVpUvTdDkBcgb4N7dp4LXLcXX1A
-         fXZA==
+        bh=zauf5zxFWWLZSth2HbJwJMsQ216gUntGDkfuE30UgBk=;
+        b=QenDqNElfw31q077uHvoZEGgovnipnCbeMVXPJykoa4mmr7Nqh27zDZz3wrIKAUQEI
+         if9Hc9iEdIv89enY+oW788SgARSXHC07v5YqkaVfpf9eF3p8kb+EQWhXQfRsEvjICApI
+         tyBDdVtSt2PU3ugSD/G2roqF1YM3/qPbnFm6vQOzr545OhO05XgDn6E4o9A+oNIBo8fC
+         1xMlwR5w6f/TXKVCaOlvm7rNEq/pt46UXIVg/xEgwCJdJyX61p67PhuDQNWMvP//VsGd
+         1a1vGekeS7lZfPdnohs4n74byuJyKu09SRcHfMv6DE26PYsY8cyLIbhSsAiDN6N+Dzme
+         vALQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739722169; x=1740326969;
+        d=1e100.net; s=20230601; t=1739723261; x=1740328061;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=rwXwJhkTpn0cp8zSQjVUxqBuPCU0+4gNIispero9yJo=;
-        b=B2gKFHA6geanHf/XsxvMg6xJG2ICpp5Cp3ui07VCybmZ0hJtWat4CDzkiyETsX5MQk
-         NMBUjcAFnYBKIQxkqIISDqL2LI4gLoyFMNE8y2QraGMQshUhykxt/p4KZPC54Pm7HuWc
-         vMhhrpVUZ14w/q+zIfLr73Xuer3FSDQHCXaFk4fMcvQumeAMpLQh83WFYaYGJOEW5xgs
-         h9ZHLBXeQzi00QDUfLm6fVXJaGfhf5XGod94qsiLb30q6tr5JytWwlTYiCazjlyfXIEl
-         vWG9JFae3IcVtHHPyD8zbmyZEHqnpuVQvliNISOKSN1baaLrJbS0KOwYXJviMKqSn+Nz
-         l/XA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYJBNIhWsC3VRPW6kTk5J0oKz1fwXUTOMwTH++BzWq8und4346kpjGn8Gp1j+hSahy63l9rklUsqj75Pw=@vger.kernel.org, AJvYcCV3pyWdoeMgNxxui0s39/636SKazhW4A/5TIEfvR+TKHgK3N+5HImHqcM4/xznZriv4mkCDAHSgbQQ=@vger.kernel.org, AJvYcCXJeMCPIxG+eNRjv7wxEwULz5N58dcUEdbUuT2BRBFLu2xu0ZMJhhhRfj3CCHWhu/n/+TYJY0x9IlUuwXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbBhHCVsVMJ6j7M4ZkxiM+Rt9oIgNIivEACeQ80NpJgcPw4vhF
-	xr/soIjNWeJKxySLw3gx4oVU+FqGBdI5n3Bb6tuB9xoonuFPFyGE
-X-Gm-Gg: ASbGncuOv58C1e+1Lz8THOi9ie4PKhyBp3YHkqHvBt0ypiXcwQ+8gAnsRLkdrVR/Tqr
-	oev9Q0FoZVufAozSY5/opmgkwQTnoBSLDhebrPf5fbzUo196SyUBiacWtK+k6DwKr/Qe3aIe94t
-	U3+scY1b8bDKSXzgw/iQ58m+ad35YUXl1KdiKTn98Esf3vdhByQkztc3YcYLkJ/Fk3kycRWId0j
-	mUy2y+B3yuVhcSLPtbqw+Fym7lT02FSIVRK9M+FIlvNtLMncofvol632Ebfx60FzIq16N+Vj/Hr
-	jgzonNQwC6a0LndrriD4cPR01w==
-X-Google-Smtp-Source: AGHT+IFJPDGkTR5KrflDiwTGE1Nz3oDLGA/P37bHvK58TqTMmGm8EI2n/rlW/oxOOtIfbvxA4e/B9A==
-X-Received: by 2002:a05:6870:280f:b0:29e:4a13:603f with SMTP id 586e51a60fabf-2bc99a4b935mr3705664fac.4.1739722168850;
-        Sun, 16 Feb 2025 08:09:28 -0800 (PST)
-Received: from vengeance.tcpc.lan ([97.75.251.196])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b954875e0esm3355467fac.14.2025.02.16.08.09.27
+        bh=zauf5zxFWWLZSth2HbJwJMsQ216gUntGDkfuE30UgBk=;
+        b=h3vov2RDlCyUBYO8TEH+4gEo8OsUoP0cP9NE9Cm3eI/CzCbKmSdnZ5jwgTgrqgsmpU
+         5Kr14Tsuhx9WPSQRG7t0WFjT+4LYNZeJN98j4WIu9Zq0VhenfEQGf70adMItlG/CnNiZ
+         FBhFKbdVY3CDFc56Fs/uaBpB6rMUXu2JzYNy11/JZDQ3aZbVi2r2gZE/GrSl0hJTwqbG
+         z/PAHqjnsz9AksmK6PXw3fsDs4qls+hCgPWyEavegjKdxMDa2C0XTUyhj0/bXkjmnA0C
+         5zYonN4XVI+z5sm1atvvWMYlVD8KYIO8fqQYijw1oiiAWbVLC5rOCJVLnQijutPNyCsW
+         48Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCULb9Y5X4KN7AqSE4r82rSO9NcDGQ2DkoaH1Y4fWGpkykLT5wJv2na6QaotM1pUJCRt+TEOQogrxBFOB38=@vger.kernel.org, AJvYcCUUqrOGFts8PXWN3Efovdbfe1jm/s1HbmOnfoeJwRIHnPdO/MQf4HscJmcSIEN7/edRY4ukt34z2eS8ilTB@vger.kernel.org, AJvYcCXhpbCoYnXhxqy0e/Xeddh2lLpbrfNaBPYCBRH0ihgBTAKu/ypkgEy9KGIxB3B4JEazz4yiGMPSf0qZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKFw7Bn697nKS5G0GrTgek73RSFGlo276QV4NoUuT0D2ZawqY2
+	Bw8EOksQADtC+yuKETaf3hI0kzhEutK44CDpWOWGaqTtqwxWiTrH
+X-Gm-Gg: ASbGnctr16Pm8TmGCtL6CUgoeUdxiQUtQlq4AoZcDr7lk9gSmJaHk2LroCzS7OpFsBK
+	gw52LhI+o5xTqRw4O1+OVwueQJoI51QXeMi5pEs6bk3ti5GP2p1nf9FStsKubs4lPo4gFNbhfjJ
+	UeGDrtDvYREYLeD9vbHIuds2v9v1Aa1IQi+vchu6aYSzgM7bbjwr8NaijxXgiUTyVp4MLiZwrY7
+	KeJPBHMg7YC+mpKY2yD+d8XwbMUnXD0+kDbect41PVvQby//V/ElDv2R3depl5RZ7BaujlzTQiy
+	uNkl8Q==
+X-Google-Smtp-Source: AGHT+IEfyw19KqgBgbX8BnoR8UCxGSSP+RtIOF9FWGWE9j0G1d3J+HWE+7CvgJ0oLl3OVIOTDVIE1w==
+X-Received: by 2002:a05:6512:1189:b0:545:3dd:aa5f with SMTP id 2adb3069b0e04-5452fe92491mr1764798e87.36.1739723260558;
+        Sun, 16 Feb 2025 08:27:40 -0800 (PST)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5456468c28csm481835e87.122.2025.02.16.08.27.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2025 08:09:28 -0800 (PST)
-From: Aaron Kling <luceoscutum@gmail.com>
-X-Google-Original-From: Aaron Kling <webgeek1234@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
+        Sun, 16 Feb 2025 08:27:40 -0800 (PST)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Aaron Kling <webgeek1234@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: tegra186: Share policy per cluster
-Date: Sun, 16 Feb 2025 10:08:06 -0600
-Message-ID: <20250216160806.391566-1-webgeek1234@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Svyatoslav Ryhel <clamor95@gmail.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>
+Cc: linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH v3 0/3]  iio: light: add al3000a als support
+Date: Sun, 16 Feb 2025 18:27:18 +0200
+Message-ID: <20250216162721.124834-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -77,37 +90,39 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This functionally brings tegra186 in line with tegra210 and tegra194,
-sharing a cpufreq policy between all cores in a cluster.
+AL3000a is an illuminance sensor found in ASUS TF101 tablet.
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
 ---
- drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Changes on switching from v2 to v3:
+- droped linux/iio/sysfs.h
+- set driver name directly
+- switched to IIO_CHAN_INFO_PROCESSED
+- split al3000a_set_pwr into 2 functions
+- added i2c_device_id
+- improved code formatting 
 
-diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
-index c7761eb99f3cc..c832a1270e688 100644
---- a/drivers/cpufreq/tegra186-cpufreq.c
-+++ b/drivers/cpufreq/tegra186-cpufreq.c
-@@ -73,11 +73,18 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
- 	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
-+	u32 cpu;
- 
- 	policy->freq_table = data->clusters[cluster].table;
- 	policy->cpuinfo.transition_latency = 300 * 1000;
- 	policy->driver_data = NULL;
- 
-+	/* set same policy for all cpus in a cluster */
-+	for (cpu = 0; cpu < (sizeof(tegra186_cpus)/sizeof(struct tegra186_cpufreq_cpu)); cpu++) {
-+		if (data->cpus[cpu].bpmp_cluster_id == cluster)
-+			cpumask_set_cpu(cpu, policy->cpus);
-+	}
-+
- 	return 0;
- }
- 
+Changes on switching from v1 to v2:
+- sort compatible alphabetically in schema
+- clarify commit descriptions
+- convert to use regmap
+- arrangle lux conversion table in rows of 8
+- add more used headers
+- improve code formatting 
+---
+
+Svyatoslav Ryhel (3):
+  dt-bindings: iio: light: al3010: add al3000a support
+  iio: light: Add support for AL3000a illuminance sensor
+  ARM: tegra: tf101: Add al3000a illuminance sensor node
+
+ .../bindings/iio/light/dynaimage,al3010.yaml  |   6 +-
+ .../boot/dts/nvidia/tegra20-asus-tf101.dts    |  11 +
+ drivers/iio/light/Kconfig                     |  10 +
+ drivers/iio/light/Makefile                    |   1 +
+ drivers/iio/light/al3000a.c                   | 223 ++++++++++++++++++
+ 5 files changed, 249 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/iio/light/al3000a.c
+
 -- 
-2.48.1
+2.43.0
 
