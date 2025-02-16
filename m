@@ -1,338 +1,113 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A50C481B6;
-	Sun, 16 Feb 2025 15:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97989450;
+	Sun, 16 Feb 2025 16:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739718042; cv=none; b=CgA2dmhXiSVlmojZFJ+1ZBFMR3Lh5kNUWlYMbRPzT1pLAeHTNJzEitISbO1nYAigP2RDnSU+EOEi49tI6zgSmB9w6lPzzHENVqYBc7eCtLZ/+bB5drz0vd8tlKdhxSdBvdmSzB8uEbv8/zJnLCi5PGKZH3HaTy+8G0wJVZj2ewg=
+	t=1739722171; cv=none; b=gfvqG4s0PXAYj3/DeyYmT2XZvbomn/Sl11gFJm1bH4UoNLIgfJkVk+hN/qQpYaggYKY4p83wvws8LHPKSDxKzTNxl/Ik+H/xMimdoWIgW7N6KzLlc13LjxnEd3WXVL+uPoFghPUH2jj60vAl1uL+YRxVb4/PYrzPFFmtguJQ5Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739718042; c=relaxed/simple;
-	bh=xWu5AMDcB/b1rlBeAaHe2jTry3zxNH8L9O7xE/k+aOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FophooCFYy0294CjiMkL8uw5bCHUS3sMy+IAGAK/ApOw4XZf2OyVWnOYWXX4qHUv0N5Q/CDaJGckotWDv/oXmvyz4qzgkt/vD56wetqJf/ehUJA8l3O30xpguq1t8Xkw+yrZHVf6JtLSa/vA7DmSPegHsCead1XCsZLk1RF5HFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=boAdKouQ; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1739722171; c=relaxed/simple;
+	bh=mfbl0vJ7voZrewg6vqPE5K/y2Lsehv8G+ZR6l9PEvH0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KKpEspcE2l2fLqP1NaUQzoaMSo2npdaAJjEz+LHg8zeLUL94kxrFg2OmjteXOWZv6sM/2ZdvGQeSk6C61sVQ8f0RTqxBhczvD8HGq9XXUunsghUCHLGAXcSGhFlbWGbnGlq8qLFyJHOFveH8XmGI1leNt6U3CMu/6ajDfqRdO1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YA4tE66s; arc=none smtp.client-ip=209.85.160.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="boAdKouQ"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43967004304so14631145e9.2;
-        Sun, 16 Feb 2025 07:00:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YA4tE66s"
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2b89395a3efso1847494fac.2;
+        Sun, 16 Feb 2025 08:09:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739718038; x=1740322838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GYc8zE2dH/HQVe/SrTqs+pYMIPfy617kKGj1N+1qpYs=;
-        b=boAdKouQTFua4/pYABv19eW3FRsEtvKqOiBQ0uAWoEN3yopOIzcbhY1JJG7l2kfapk
-         3Vp8xDjZcJpvvEqQEZmD1cJqtRcOdNpK2GavJ8oxKzGuZXma5CmjZkWjtdRF5frD3F8T
-         rMhDBwOWoHviZE34Q1Pfydq+XEYCLhrT42xwJXqG3uYSVrH50+OmyKplXSqEJ4V4tOMs
-         8DjpSQus2ofxefmLMFpOoZKQiu8weOlZbKcR/VOeHLFI7qkO2ju4hrrhRr3H8BtFTKSz
-         wvPizyQu5tMn04pMqRAvH3ZIiqtwfw/axim1esVmOLzQKQu1M2glXucn+sA2lcPW07Mw
-         Vitg==
+        d=gmail.com; s=20230601; t=1739722169; x=1740326969; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rwXwJhkTpn0cp8zSQjVUxqBuPCU0+4gNIispero9yJo=;
+        b=YA4tE66sWIuN6iYuyWeIr6s6gEVzmIAaUusZcglqeibsR43nGTyhoJs0IU2pWtCsVC
+         CgbVax1zsosT4iAf5PpdxbSegrYLdp9ryhZ4IFsa1CF4FrRDsfRLZyrJS8NOSp3ybG9K
+         HejzFdHcDnKe0kHR9PU9M+a+ReC858+7KtS3dQQa3QYvBpDfRzG+7lD+GxVe3zeRRRvv
+         C5dP5jxM2jhP5OQioNKQGm9DXAJE1WHwV3BHfYfIULw4SMiEZPgS6v5o9+pwwVwgae8t
+         CptV4dR/CL6ElaT+1aqGAUpg5lUffnis9MlLafjjPyVpUvTdDkBcgb4N7dp4LXLcXX1A
+         fXZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739718038; x=1740322838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GYc8zE2dH/HQVe/SrTqs+pYMIPfy617kKGj1N+1qpYs=;
-        b=gmwtAopoa4eRl7lR5nCRJVNUzh1q0y6ONz3ib3R9M8WnFH3o0HYqQ+ICHE3J/roDD2
-         Sv46qr8b6BpHtDNOQjzcHTwBeCZP/1k21E5sV0cPGpDj2nkTV/ef3aDqSd4fn+57aTue
-         juSvtfqeNJHHd5N+HkpWFVk2uEpKePnDVUuO/SmBL0tINbnN+RLJgnm2D3kCsNi/tU7R
-         +SmbtiWAT8BnWjkeYaiyqvoOva/XDKOrjqkS0oaXancX9TP6FlJGTSFmwx7dVZAOz4fS
-         erPRXwibWQjvVp5UfjmZcR8dDcr5QyzqS7edBX5rCluKEOoyWIfsWAbX7SkKBkZVbIl1
-         XQAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH+qVyPX3EKxnLd6MOeCSQ0ofvPlXys60jNHlQhagpWLJ7o/vr21O3tePCd98jUtToMAb+xZUoAYmDnK0=@vger.kernel.org, AJvYcCWRsGileGj38dbL0ETRHAmW0RZBk0oeC25n2B4Ngdcr1n9pcq0Hw3qedjyBLqwN/mnxNJsxK4OmNel3gveK@vger.kernel.org, AJvYcCWpYPtogiUOaYyXPeNw/SbklK81wok5Z/3yWWvZE4dEB2RQHKKCfcdLD+rC/VrM8ubJ33eBcuaZ1x2A@vger.kernel.org, AJvYcCX72XmddJbNmHdSTDov69AsqXpiDGYFnesLQwTdqq23wJXVMx6l+HcRA8OtHWb0Vw5PcwQ7kp6N26nD@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhPvxpVDq1e9n0nuk/orQc6s3JeedDYvr6LJjLgDhEwI/BDd+h
-	Yl3VwcCodUC6rA27jDvc565JYGUifkgZpxQenP1MOQkZBn/dJzhlE72GhL58NcQG4yJnmj9u8dW
-	5SyHmbAROL9NXEGmYVMtnVQhetsM=
-X-Gm-Gg: ASbGnctjLrlinyv9q8IU4JMi2tH0A1R8miS7I6OSGpSppEJpTueRPUuF9XRqGHIw/8X
-	M/qGIQHWpa1hVYIj7XbetVRJ2WHkaAP9PaOXFA/J1brfhdNcIIJMoJ2GgG2fdc4vrFMwAdCQNzw
-	==
-X-Google-Smtp-Source: AGHT+IGMFN6PDlWv2aXvF+GdUDrJHQv5I/i33JVGy1lwTBeYCGtRdoin6I2fUp0vPIqKxudIOgXmNxl9m6ihZTjPiLo=
-X-Received: by 2002:a05:600c:510c:b0:439:5573:933c with SMTP id
- 5b1f17b1804b1-4396e739c67mr49080025e9.20.1739718038044; Sun, 16 Feb 2025
- 07:00:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739722169; x=1740326969;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rwXwJhkTpn0cp8zSQjVUxqBuPCU0+4gNIispero9yJo=;
+        b=B2gKFHA6geanHf/XsxvMg6xJG2ICpp5Cp3ui07VCybmZ0hJtWat4CDzkiyETsX5MQk
+         NMBUjcAFnYBKIQxkqIISDqL2LI4gLoyFMNE8y2QraGMQshUhykxt/p4KZPC54Pm7HuWc
+         vMhhrpVUZ14w/q+zIfLr73Xuer3FSDQHCXaFk4fMcvQumeAMpLQh83WFYaYGJOEW5xgs
+         h9ZHLBXeQzi00QDUfLm6fVXJaGfhf5XGod94qsiLb30q6tr5JytWwlTYiCazjlyfXIEl
+         vWG9JFae3IcVtHHPyD8zbmyZEHqnpuVQvliNISOKSN1baaLrJbS0KOwYXJviMKqSn+Nz
+         l/XA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYJBNIhWsC3VRPW6kTk5J0oKz1fwXUTOMwTH++BzWq8und4346kpjGn8Gp1j+hSahy63l9rklUsqj75Pw=@vger.kernel.org, AJvYcCV3pyWdoeMgNxxui0s39/636SKazhW4A/5TIEfvR+TKHgK3N+5HImHqcM4/xznZriv4mkCDAHSgbQQ=@vger.kernel.org, AJvYcCXJeMCPIxG+eNRjv7wxEwULz5N58dcUEdbUuT2BRBFLu2xu0ZMJhhhRfj3CCHWhu/n/+TYJY0x9IlUuwXE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbBhHCVsVMJ6j7M4ZkxiM+Rt9oIgNIivEACeQ80NpJgcPw4vhF
+	xr/soIjNWeJKxySLw3gx4oVU+FqGBdI5n3Bb6tuB9xoonuFPFyGE
+X-Gm-Gg: ASbGncuOv58C1e+1Lz8THOi9ie4PKhyBp3YHkqHvBt0ypiXcwQ+8gAnsRLkdrVR/Tqr
+	oev9Q0FoZVufAozSY5/opmgkwQTnoBSLDhebrPf5fbzUo196SyUBiacWtK+k6DwKr/Qe3aIe94t
+	U3+scY1b8bDKSXzgw/iQ58m+ad35YUXl1KdiKTn98Esf3vdhByQkztc3YcYLkJ/Fk3kycRWId0j
+	mUy2y+B3yuVhcSLPtbqw+Fym7lT02FSIVRK9M+FIlvNtLMncofvol632Ebfx60FzIq16N+Vj/Hr
+	jgzonNQwC6a0LndrriD4cPR01w==
+X-Google-Smtp-Source: AGHT+IFJPDGkTR5KrflDiwTGE1Nz3oDLGA/P37bHvK58TqTMmGm8EI2n/rlW/oxOOtIfbvxA4e/B9A==
+X-Received: by 2002:a05:6870:280f:b0:29e:4a13:603f with SMTP id 586e51a60fabf-2bc99a4b935mr3705664fac.4.1739722168850;
+        Sun, 16 Feb 2025 08:09:28 -0800 (PST)
+Received: from vengeance.tcpc.lan ([97.75.251.196])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2b954875e0esm3355467fac.14.2025.02.16.08.09.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2025 08:09:28 -0800 (PST)
+From: Aaron Kling <luceoscutum@gmail.com>
+X-Google-Original-From: Aaron Kling <webgeek1234@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Aaron Kling <webgeek1234@gmail.com>,
+	linux-pm@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: tegra186: Share policy per cluster
+Date: Sun, 16 Feb 2025 10:08:06 -0600
+Message-ID: <20250216160806.391566-1-webgeek1234@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250215103159.106343-1-clamor95@gmail.com> <20250215103159.106343-3-clamor95@gmail.com>
- <20250216145445.1278b6ae@jic23-huawei>
-In-Reply-To: <20250216145445.1278b6ae@jic23-huawei>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Sun, 16 Feb 2025 17:00:26 +0200
-X-Gm-Features: AWEUYZlPB9PR963HkziPQ5GEqBhqUTPZc-qjUUsRkmxsSP1AlZjKiXhEneBJjOM
-Message-ID: <CAPVz0n1529ydFRHn9N3jEsS8Rhdf-c4xECkMd9TDczzBTNuJzA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] iio: light: Add support for AL3000a illuminance sensor
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Emil Gedenryd <emil.gedenryd@axis.com>, 
-	Arthur Becker <arthur.becker@sentec.com>, Mudit Sharma <muditsharma.info@gmail.com>, 
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>, Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
-	Ivan Orlov <ivan.orlov0322@gmail.com>, David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-=D0=BD=D0=B4, 16 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:54 Jona=
-than Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Sat, 15 Feb 2025 12:31:58 +0200
-> Svyatoslav Ryhel <clamor95@gmail.com> wrote:
->
-> > AL3000a is a simple I2C-based ambient light sensor, which is
-> > closely related to AL3010 and AL3320a, but has significantly
-> > different way of processing data generated by the sensor.
-> >
-> > Tested-by: Robert Eckelmann <longnoserob@gmail.com>
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->
-> Hi,
->
-> A few really minor comments inline.  A nice small driver :)
->
-> Jonathan
->
->
-> > diff --git a/drivers/iio/light/al3000a.c b/drivers/iio/light/al3000a.c
-> > new file mode 100644
-> > index 000000000000..58d4336dd081
-> > --- /dev/null
-> > +++ b/drivers/iio/light/al3000a.c
-> > @@ -0,0 +1,221 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +#include <linux/array_size.h>
-> > +#include <linux/bitfield.h>
-> > +#include <linux/device.h>
-> > +#include <linux/err.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/module.h>
-> > +#include <linux/pm.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/regulator/consumer.h>
-> > +#include <linux/types.h>
-> > +
-> > +#include <linux/iio/iio.h>
-> > +#include <linux/iio/sysfs.h>
-> The iio/sysfs.h header is a bit of a legacy thing.  Ideally we will
-> eventually get rid of it.  In this driver, you are correctly not using
-> anything it provides so drop this include.
->
-> > +
-> > +static const struct iio_chan_spec al3000a_channels[] =3D {
-> > +     {
-> > +             .type =3D IIO_LIGHT,
-> > +             .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |
-> > +                                   BIT(IIO_CHAN_INFO_SCALE),
-> As below. I'm a little confused on units, but this may want to just
-> be BIT(IIO_CHAN_INFO_PROCESSED)
-> > +     },
-> > +};
-> > +
-> > +static int al3000a_set_pwr(struct al3000a_data *data, bool pwr)
-> > +{
-> > +     struct device *dev =3D regmap_get_device(data->regmap);
-> > +     u8 val =3D pwr ? AL3000A_CONFIG_ENABLE : AL3000A_CONFIG_DISABLE;
-> > +     int ret;
-> > +
-> > +     if (pwr) {
->
-> The two flows are different enough I'd split this into power on and power
-> off functions.  Will be a few lines longer but slightly easier to read.
->
-> > +             ret =3D regulator_enable(data->vdd_supply);
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to enable vdd power supply\n=
-");
-> > +                     return ret;
-> > +             }
-> > +     }
-> > +
-> > +     ret =3D regmap_write(data->regmap, AL3000A_REG_SYSTEM, val);
-> > +     if (ret < 0) {
-> > +             dev_err(dev, "failed to write system register\n");
-> > +             return ret;
-> > +     }
-> > +
-> > +     if (!pwr) {
-> > +             ret =3D regulator_disable(data->vdd_supply);
-> > +             if (ret < 0) {
-> > +                     dev_err(dev, "failed to disable vdd power supply\=
-n");
-> > +                     return ret;
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void al3000a_set_pwr_off(void *_data)
-> > +{
-> > +     struct al3000a_data *data =3D _data;
-> > +
-> > +     al3000a_set_pwr(data, false);
-> > +}
-> > +
-> > +static int al3000a_init(struct al3000a_data *data)
-> > +{
-> > +     int ret;
-> > +
-> > +     ret =3D al3000a_set_pwr(data, true);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret =3D regmap_write(data->regmap, AL3000A_REG_SYSTEM, AL3000A_CO=
-NFIG_RESET);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret =3D regmap_write(data->regmap, AL3000A_REG_SYSTEM, AL3000A_CO=
-NFIG_ENABLE);
->
-> regmap functions return <=3D 0 in all cases. So you can just do if (ret)
-> or in cases like this save a few lines with
->
->         return regmap_write();
->
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int al3000a_read_raw(struct iio_dev *indio_dev,
-> > +                         struct iio_chan_spec const *chan, int *val,
-> > +                         int *val2, long mask)
-> > +{
-> > +     struct al3000a_data *data =3D iio_priv(indio_dev);
-> > +     int ret, gain;
-> > +
-> > +     switch (mask) {
-> > +     case IIO_CHAN_INFO_RAW:
-> > +             ret =3D regmap_read(data->regmap, AL3000A_REG_DATA, &gain=
-);
-> > +             if (ret < 0)
-> > +                     return ret;
-> > +
-> > +             *val =3D lux_table[gain & AL3000A_GAIN_MASK];
->
-> I may have misinterpreted the other thread.  IS this value in lux?
-> If it is make this channel IIO_CHAN_INFO_PROCESSED instead.
->
+This functionally brings tegra186 in line with tegra210 and tegra194,
+sharing a cpufreq policy between all cores in a cluster.
 
-This is actually a really good hint, I will check if this works out
-and if yes, then definitely will use it. Thank you.
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+ drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> > +
-> > +             return IIO_VAL_INT;
-> > +     case IIO_CHAN_INFO_SCALE:
-> > +             *val =3D 1;
->
-> Either way, default scale is 1 so this should not be expressed at all.
->
-> > +
-> > +             return IIO_VAL_INT;
-> > +     default:
-> > +             return -EINVAL;
-> > +     }
-> > +}
-> > +
-> > +static const struct iio_info al3000a_info =3D {
-> > +     .read_raw       =3D al3000a_read_raw,
->
-> I'd not put a tab in the middle.  Single space is fine.
-> This sort of alignment is a pain for long term maintenance anyway
-> as we get very noisy patches realigning things.
-> It makes even less sense with only one item!
->
-> > +};
-> > +
-> > +static int al3000a_probe(struct i2c_client *client)
-> > +{
-> > +     struct al3000a_data *data;
-> > +     struct device *dev =3D &client->dev;
-> > +     struct iio_dev *indio_dev;
-> > +     int ret;
-> > +
-> > +     indio_dev =3D devm_iio_device_alloc(dev, sizeof(*data));
-> > +     if (!indio_dev)
-> > +             return -ENOMEM;
-> > +
-> > +     data =3D iio_priv(indio_dev);
-> > +     i2c_set_clientdata(client, indio_dev);
-> > +
-> > +     data->regmap =3D devm_regmap_init_i2c(client, &al3000a_regmap_con=
-fig);
-> > +     if (IS_ERR(data->regmap))
-> > +             return dev_err_probe(dev, PTR_ERR(data->regmap),
-> > +                                  "cannot allocate regmap\n");
-> > +
-> > +     data->vdd_supply =3D devm_regulator_get(dev, "vdd");
-> > +     if (IS_ERR(data->vdd_supply))
-> > +             return dev_err_probe(dev, PTR_ERR(data->vdd_supply),
-> > +                                  "failed to get vdd regulator\n");
-> > +
-> > +     indio_dev->info =3D &al3000a_info;
-> > +     indio_dev->name =3D AL3000A_DRV_NAME;
->
-> As there is no actual reason why this name should necessarily match the
-> name of the driver I'd prefer to see the string expressed directly in bot=
-h
-> places.  That avoids giving the wrong impression as the driver gains supp=
-ort
-> for additional devices and generally makes things slightly easier to revi=
-ew.
->
-> > +     indio_dev->channels =3D al3000a_channels;
-> > +     indio_dev->num_channels =3D ARRAY_SIZE(al3000a_channels);
-> > +     indio_dev->modes =3D INDIO_DIRECT_MODE;
-> > +
-> > +     ret =3D al3000a_init(data);
-> > +     if (ret < 0)
-> > +             return dev_err_probe(dev, ret, "failed to init ALS\n");
-> > +
-> > +     ret =3D devm_add_action_or_reset(dev, al3000a_set_pwr_off, data);
-> > +     if (ret < 0)
-> > +             return dev_err_probe(dev, ret, "failed to add action\n");
-> > +
-> > +     return devm_iio_device_register(dev, indio_dev);
-> > +}
->
-> > +
-> > +static DEFINE_SIMPLE_DEV_PM_OPS(al3000a_pm_ops, al3000a_suspend, al300=
-0a_resume);
-> > +
-> > +static const struct of_device_id al3000a_of_match[] =3D {
-> > +     { .compatible =3D "dynaimage,al3000a" },
-> > +     { /* sentinel */ }
-> > +};
-> > +MODULE_DEVICE_TABLE(of, al3000a_of_match);
->
-> Also provide the i2c_device_id table as it's used for autoprobing of the
-> driver (long story for why we still need that!)
->
-> > +
-> > +static struct i2c_driver al3000a_driver =3D {
-> > +     .driver =3D {
-> > +             .name =3D AL3000A_DRV_NAME,
-> > +             .of_match_table =3D al3000a_of_match,
-> > +             .pm =3D pm_sleep_ptr(&al3000a_pm_ops),
-> > +     },
-> > +     .probe =3D al3000a_probe,
-> > +};
-> > +module_i2c_driver(al3000a_driver);
-> > +
-> > +MODULE_AUTHOR("Svyatolsav Ryhel <clamor95@gmail.com>");
-> > +MODULE_DESCRIPTION("al3000a Ambient Light Sensor driver");
-> > +MODULE_LICENSE("GPL");
->
+diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+index c7761eb99f3cc..c832a1270e688 100644
+--- a/drivers/cpufreq/tegra186-cpufreq.c
++++ b/drivers/cpufreq/tegra186-cpufreq.c
+@@ -73,11 +73,18 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
+ {
+ 	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
+ 	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
++	u32 cpu;
+ 
+ 	policy->freq_table = data->clusters[cluster].table;
+ 	policy->cpuinfo.transition_latency = 300 * 1000;
+ 	policy->driver_data = NULL;
+ 
++	/* set same policy for all cpus in a cluster */
++	for (cpu = 0; cpu < (sizeof(tegra186_cpus)/sizeof(struct tegra186_cpufreq_cpu)); cpu++) {
++		if (data->cpus[cpu].bpmp_cluster_id == cluster)
++			cpumask_set_cpu(cpu, policy->cpus);
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.48.1
 
-Everything else, acknowledged and accepted. Thank you.
