@@ -1,85 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7365B1991B8;
-	Sat, 15 Feb 2025 16:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC25118BC1D;
+	Sun, 16 Feb 2025 14:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739638026; cv=none; b=pjNiLzmF0FJDNyGHfjVN1EnuXGNs5NPwaMk1bH2Etl5PZreO28Im4VZ+DxKk2WzXrFYIIGiH8xUEGLLzYcWwRi/I45jPekmjTe2Zf46UJRwQXgPvA6TzKlsG88svx0dBiAotUFRTvyKeAuq6xwhFD4SJBZoZT2JuUtOSa9os00s=
+	t=1739716936; cv=none; b=L46w0FUjNcBHN+uU0I6S+BasaQ5EqT3guZCtlFaU5rXusYLc8i8Z2HPvALl9RWLIxAyFuUyVZFjrTbZq77oKi4lAke8R3QO+0sUZCd8yZECLb316t2SOkTpWzrIl9HkT9V62mJrp43XBgcB+16HYfF8f16ds4KINKrydif9q4QY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739638026; c=relaxed/simple;
-	bh=fsemyYviayrMqmaEoMnLdr7Sih/TjQ/sv8vBN4HPuzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TU99SAn/6b/WJAecOANWHvvqrQs5TbINkIfFgLdU4REvML0a43DsWoKY3GCtbTPUyb7LJFk02rA36DDnzQr/iGHRJ3VDJBv5S3obLBxqQ6IGmZrKFN8CEmPuuZ7VlgcK1fsOqKQ8qF3atLWJLJWiFaD7XOpssm5+6sCn3wxQMGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FDn+1umM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739716936; c=relaxed/simple;
+	bh=nSV3mTrYuDqfC5mHexNWs8s03xuNlarcsyBmNmFt2Iw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bJYHUCJSoP+MVoYOYFPJgdCNCMjo2U6sX3EFCfzrd5Pb/+a0kjQPNsoVAF/Ref91LYFQttufplj6umUNF6+yGwCjI3DvaKmamXiFyCnhs68Hmg3zqWvprFtedeIc1hwHFJ4+fWJjA25TO1lgzEMIbIi+/WrD/rUVjwwIpIyN7UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mE1mQ6Y0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FDn+1umM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56FA3C4CEDF;
-	Sat, 15 Feb 2025 16:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1739638025;
-	bh=fsemyYviayrMqmaEoMnLdr7Sih/TjQ/sv8vBN4HPuzQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FDn+1umMmbgVRQ+3DehicQe/rM+qPLKgLyyiX6YZGr27hZ3MlGX8L4RWYTxI72Lml
-	 EtnVWRJnS/qMu2+UwVlJL0bMTirR9b2d6cX7CdfTFpjN6jxToliHRpTYJDISgvASZf
-	 m94z0iF80Qvu1Wj4nPmb4DgdEGXoxsSSeeExz5hg=
-Date: Sat, 15 Feb 2025 17:47:01 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 6.13 000/442] 6.13.3-rc3 review
-Message-ID: <2025021557-fame-reliance-74ca@gregkh>
-References: <20250215075925.888236411@linuxfoundation.org>
- <89b2547b-f351-4029-a5cf-b54690996b6c@rnnvmail204.nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mE1mQ6Y0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE43C4CEDD;
+	Sun, 16 Feb 2025 14:42:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739716934;
+	bh=nSV3mTrYuDqfC5mHexNWs8s03xuNlarcsyBmNmFt2Iw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mE1mQ6Y0szZpOJUw+OPpP4x0QiS+1r43y54/8tNEk3v1COEH7QoLkTiumROz4yTZb
+	 jDhZS6eQJBFMqi//+x6TfqaLTQWJdLEkhuXBc1BaofsqoYH4JsYgHcMY13/AYAGoVk
+	 dB1+rEkl3a3a4cYBZ4TdogQO0w+oQtT3GPIiB7A8zHTe89uwg0rwCk4pG+4PL3zELZ
+	 OzEyBxXzmTHsf22BXyHOoQCp3pBUcinUvyDztTySvkKXcRw3sUgbqZthQDeXxxx92A
+	 tbhX863UE9F5X5Mw/pH/bK4P9/oZn9IriCcPSfQSeiwQLpgcx9YsBq35WxRbQ2cFR3
+	 O7w0CiTKoRhOQ==
+Date: Sun, 16 Feb 2025 14:42:01 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
+ <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
+ Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
+ <perdaniel.olsson@axis.com>, Subhajit Ghosh
+ <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
+ David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: iio: light: al3010: add al3000a
+ support
+Message-ID: <20250216144201.6238345c@jic23-huawei>
+In-Reply-To: <20250215103159.106343-2-clamor95@gmail.com>
+References: <20250215103159.106343-1-clamor95@gmail.com>
+	<20250215103159.106343-2-clamor95@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <89b2547b-f351-4029-a5cf-b54690996b6c@rnnvmail204.nvidia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 15, 2025 at 08:22:11AM -0800, Jon Hunter wrote:
-> On Sat, 15 Feb 2025 09:00:06 +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 6.13.3 release.
-> > There are 442 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Mon, 17 Feb 2025 07:57:54 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.3-rc3.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> All tests passing for Tegra ...
-> 
-> Test results for stable-v6.13:
->     10 builds:	10 pass, 0 fail
->     26 boots:	26 pass, 0 fail
->     116 tests:	116 pass, 0 fail
-> 
-> Linux version:	6.13.3-rc3-gf10c3f62c5fd
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
->                 tegra20-ventana, tegra210-p2371-2180,
->                 tegra210-p3450-0000, tegra30-cardhu-a04
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
+On Sat, 15 Feb 2025 12:31:57 +0200
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-Finally, thanks!
+> AL3000a is an ambient light sensor quite closely related to
+> exising AL3010 and can reuse exising schema for AL3010.
+Hi,
+
+For a binding like this, also explain how they are different enough that
+we can't use a fallback compatible.
+
+Thanks,
+
+Jonathan
+
+> 
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../devicetree/bindings/iio/light/dynaimage,al3010.yaml     | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> index a3a979553e32..f1048c30e73e 100644
+> --- a/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> +++ b/Documentation/devicetree/bindings/iio/light/dynaimage,al3010.yaml
+> @@ -4,14 +4,16 @@
+>  $id: http://devicetree.org/schemas/iio/light/dynaimage,al3010.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+> -title: Dyna-Image AL3010 sensor
+> +title: Dyna-Image AL3000a/AL3010 sensor
+>  
+>  maintainers:
+>    - David Heidelberg <david@ixit.cz>
+>  
+>  properties:
+>    compatible:
+> -    const: dynaimage,al3010
+> +    enum:
+> +      - dynaimage,al3000a
+> +      - dynaimage,al3010
+>  
+>    reg:
+>      maxItems: 1
+
