@@ -1,88 +1,110 @@
-Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80B74C70;
-	Sun, 16 Feb 2025 21:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E723611E;
+	Mon, 17 Feb 2025 01:07:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739741634; cv=none; b=lt/+IVuhW1QlCEglpJsBFrYbfn8eI2LVUBEpoD/5BDUSRzuISS+zfFgn6BfAZh/7TFML6p3BNTDYxgrcMh/1kCvWhkPeAhT8oF8nMIWsAB2wt/g3DsBqI4V0tzKiNTAL4Kaahswtsm0e9wmDK+E6WcBAoABJvUm0RlH3mxFReyE=
+	t=1739754434; cv=none; b=oRbtoDC7OLxgPYzSuTNPnCoHh5ZpAf6hiO/s61Io5tCxXU6JXVZefVANCs6kNCZgUKYzQqCeRoB+AZwC+NhwW36QthqE6Zc/wN16oW12FtWdJgpHIXDxgGZ4tPp2tvpuy0yjVAGWk+8QCAfdqIZFSCoVbYDFuNRiN70pIG5kYjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739741634; c=relaxed/simple;
-	bh=7guRH1aGM8Oh0aNzrHu+kgdJ26FPwWdwt/A0ZwzFSsU=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=p3RiZj62dNmBTgMyenTtSMazRqPOrXn0j/FbxKwjhwtOS3g/4yHGe/uQ1OJsoCOxF7lTXPGhAQn9gPu6wsmROKGnZ4ocFOgE1zS/QKQqBhvLOJA2McHDVX+XZPI8ksnIVxWmJuBVfnmzEu8B4fiyvPTXPNZJU8wEvUl9zbkUc8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=QbRGpGXT; arc=none smtp.client-ip=80.12.242.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="QbRGpGXT"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id jm7qtro1wBmk4jm7ttKqTm; Sun, 16 Feb 2025 22:24:36 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1739741076;
-	bh=0lA5RpCI8RgDLbiFA6kjdlW7BOO4zRImL2WUGm+cZio=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=QbRGpGXTEERSgWydbfK8F3S6nB4XFi7sMpQThiZi3L0G3x1FhjjcK0mAXUB2juw5s
-	 YyEblB6RihQXQQvLViMLCCLKHNKSYHbfoUcl8AzKes/6VASSCpdypOqSC+xeB/O3CK
-	 7jlmGxNCSH0zaZhUbJxpIcJxvRDPiEpC29zIVdCFUJt6on8Mj1pZvahJOlO2hAfQ8s
-	 AxgeS98Wnw7hMXdkq09/79Z9iP3ujUsk+rHW7sKzpnuHhUIjICrq75p1JyZl+eKqWJ
-	 nQYSnL89h0Yh5fzw+gb6eOdiHpgL5XpZOxn0/eq2F6yIsOeQo1AwUtaiYn0L4lu2tR
-	 GGTjVF3PkqJmw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 16 Feb 2025 22:24:36 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <b0af7103-882d-41ec-8b15-7c8955e1b77e@wanadoo.fr>
-Date: Sun, 16 Feb 2025 22:24:30 +0100
+	s=arc-20240116; t=1739754434; c=relaxed/simple;
+	bh=sS6epZ/Q0dmr2tgVut1X+sY8gavr366YXLTOVDwcdzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fV8f416VL3sPPcmQ/+yKFiBZ3YOQP704LTH+JDxW8JW8PCgEycb3GZSg3woLZ44ETsLNcGSo7uZbgHBEAGEXHrK8kq8Zv7XZvMta7OWaFU+T4VMNj7OU9X/nReNEkVSdE1GHodLkOgaT3rXeLjI5Df+0p2uqh71VeRmTWL4Vntk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAAHDqKmi7Jn3P6zDQ--.18663S2;
+	Mon, 17 Feb 2025 09:06:55 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: jckuo@nvidia.com,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com
+Cc: linux-phy@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH v2 RESEND] phy: Fix error handling in tegra_xusb_port_init
+Date: Mon, 17 Feb 2025 09:06:45 +0800
+Message-Id: <20250217010645.2238757-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] iio: light: Add support for AL3000a illuminance
- sensor
-References: <20250216162721.124834-1-clamor95@gmail.com>
- <20250216162721.124834-3-clamor95@gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: clamor95@gmail.com
-Cc: andriy.shevchenko@linux.intel.com, arthur.becker@sentec.com,
- conor+dt@kernel.org, david@ixit.cz, devicetree@vger.kernel.org,
- emil.gedenryd@axis.com, ivan.orlov0322@gmail.com,
- javier.carrasco.cruz@gmail.com, jic23@kernel.org, jonathanh@nvidia.com,
- krzk+dt@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
- mazziesaccount@gmail.com, muditsharma.info@gmail.com,
- perdaniel.olsson@axis.com, robh@kernel.org, subhajit.ghosh@tweaklogic.com,
- thierry.reding@gmail.com
-In-Reply-To: <20250216162721.124834-3-clamor95@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAHDqKmi7Jn3P6zDQ--.18663S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw4DKFWkAF15tFW3Aw4fKrg_yoW8XFyDpa
+	1DGas8Kr9YgrWkKF4jvF409Fy5GF42k3yrur1rJ34akrn3W348tas8trWxXa4UArZ7uF4U
+	ArnxJa4kJFyUC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUOmhFUUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Le 16/02/2025 à 17:27, Svyatoslav Ryhel a écrit :
-> AL3000a is a simple I2C-based ambient light sensor, which is
-> closely related to AL3010 and AL3320a, but has significantly
-> different way of processing data generated by the sensor.
+If device_add() fails, do not use device_unregister() for error
+handling. device_unregister() consists two functions: device_del() and
+put_device(). device_unregister() should only be called after
+device_add() succeeded because device_del() undoes what device_add()
+does if successful. Change device_unregister() to put_device() call
+before returning from the function.
 
-...
+As comment of device_add() says, 'if device_add() succeeds, you should
+call device_del() when you want to get rid of it. If device_add() has
+not succeeded, use only put_device() to drop the reference count'.
 
-> +static int al3000a_resume(struct device *dev)
-> +{
-> +	struct al3000a_data *data = iio_priv(dev_get_drvdata(dev));
-> +
-> +	return al3000a_set_pwr_on(data);
-> +}
-> +
-> +static DEFINE_SIMPLE_DEV_PM_OPS(al3000a_pm_ops, al3000a_suspend, al3000a_resume);
-> +
-> +static const struct i2c_device_id al3000a_id[] = {
-> +	{"al3000a", },
+Found by code review.
 
-Nitpick: missing leading space after {
+Cc: stable@vger.kernel.org
+Fixes: 53d2a715c240 ("phy: Add Tegra XUSB pad controller support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v2:
+- modified the bug description as suggestions.
+---
+ drivers/phy/tegra/xusb.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(i2c, al3010_id);
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index 79d4814d758d..c89df95aa6ca 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -548,16 +548,16 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+ 
+ 	err = dev_set_name(&port->dev, "%s-%u", name, index);
+ 	if (err < 0)
+-		goto unregister;
++		goto put_device;
+ 
+ 	err = device_add(&port->dev);
+ 	if (err < 0)
+-		goto unregister;
++		goto put_device;
+ 
+ 	return 0;
+ 
+-unregister:
+-	device_unregister(&port->dev);
++put_device:
++	put_device(&port->dev);
+ 	return err;
+ }
+ 
+-- 
+2.25.1
+
