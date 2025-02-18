@@ -1,231 +1,307 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49691F584F;
-	Tue, 18 Feb 2025 19:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB201E8338;
+	Tue, 18 Feb 2025 19:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739906609; cv=none; b=pwBs2ttKW2W0JudLehA7nTiKHkKX+B3HvynF2PndpCyUDxq12zQ1nvd+cyYW9piD2ofYjBsQqUhTKiXdjkCloO9qRHOezULN5NHVL+yY5OXQD4eGd9WRlAWuTZUZ5tZD+lDnXRNzTMLKiijiSMRRuh+qA9r9yxUUaclT3ZgpyOs=
+	t=1739907168; cv=none; b=UyzqLvAhiSGyZWCUmzC3CUi51KgbvEgEiT8LlMgixh2uRiZvJ3a/vw9zp5bOHx+hq8UqhuT+qDVodKMmjwwE59VXG48wtMNdng57B/VdRMcOr0oYCHjD44iJQtjyyoo6scB5mz4GJGuT02eQ3SOR36Cx3pvtDgD3g7DlsDjywOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739906609; c=relaxed/simple;
-	bh=tHGA5G2WYkatnmKUK3lUU0vRU387uRxbNlWbdsK5rwE=;
+	s=arc-20240116; t=1739907168; c=relaxed/simple;
+	bh=K639qySusfhqWVzkmR1NrpWaIuD4POoCyjA6d1Oq07g=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Shifk4dB9Ra4mkFj3C6w0ffoiitU/biZJdQ1GZnNk3BAJ/Q/Qu7Jwhf8/RdGQU1ZxBSNCkJvW501cbLUgHl6v8Bkt86t5OvIZtqtGLLkEHaLlmW+MAH/VWzp6oq9YZsLQ5LXiMcEt/fqBda/ZgU6IvnkvGbvSt8swAF5iLw7YL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBjICclE; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBjICclE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F610C4CEEE;
-	Tue, 18 Feb 2025 19:23:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739906609;
-	bh=tHGA5G2WYkatnmKUK3lUU0vRU387uRxbNlWbdsK5rwE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=OBjICclEAhuFsYzZQCfh187X4A70ZB8kLhlGB+G0Y1WH52H1IVUzEefn3Yr47eVzD
-	 SRCMzEexqdZQKEQDRkNQd05L5cnaPhfvHF7iBXIoRaAHKU59bKop6m/vjg5FIw9yaq
-	 CemDgQZneYRRgnQCG6eFr9+Q4ya7+dcrDxZZAoyrTeZxwQ9v4mfA8xJSw3/kY2KYuw
-	 wWA3MAaso2buF5NziFfkUx0EqYV8hQXGpshjYnV3PeyUoYeIL5u2b7yTGTkxd/M1PX
-	 SOyARhe5rafluU1t/PdE80Q+y0wcP8OQTC04wtwMR48UIsqdCtOcg35iQ9NPMQ5a+W
-	 aKmBt9T9L4pGQ==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3f3e0498beaso55035b6e.1;
-        Tue, 18 Feb 2025 11:23:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUydrDvMsjlG0S5RSi/SGB0HJHyud9/73NldlGgxh1LjchF7xxaSrxRoD+/KvZSrQ2JxmA12o1HzmfE@vger.kernel.org, AJvYcCV2EvD4F2b8wX+PBWPRkzlPlDDdsX6dS5krwOxtEQYsTOytuOS19TAsZ8oIKdEgEJd+Qa4sdcDnoa0=@vger.kernel.org, AJvYcCVz4ni+AQ5ZntpEs4sANscnw1xQRk+h1/S5ENwcKqQ9/8CwoBBeR8VpNK4S7ONrfrjyNxmZxC3K8kfx/m8=@vger.kernel.org, AJvYcCWZhiLzhIq8Rov14dLShZTZJ77KIzuciU4seJ1VFlVFHZPepGrlyfop0pi9hrQuVRPn64CSlYo2+rUCPWVV@vger.kernel.org, AJvYcCWdyjueOjhCKGL1Da03mtQPBpG6wREcNobR7jLCTEWlUl1Gf7rDQtdwxFP0WKY29AdNp+eB6BFNqh/T@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFY/guWF5YHN284cEA9+g22sgajlJfdKvQZlIslWox2ZvH8S+s
-	MAs4GOAYHLxxnUxg32L56Q/SM92k8kCqUQgVrn9/2wux14V9BtXSMxeoeNrh/6JLOuOZlFwW8Vp
-	fe25i76PjMw9aKZT45HHRrNvIXGc=
-X-Google-Smtp-Source: AGHT+IFnQSrEOQ5XyF8kcORbR22aIZWDMKNGLzVsGwRAAbFTPsjQg/3r9VLhR4uCpNrzjbTL59N8kAtr10x5ERBjPf4=
-X-Received: by 2002:a05:6808:188b:b0:3f4:9e6:fb7 with SMTP id
- 5614622812f47-3f40eefb38fmr790244b6e.1.1739906608509; Tue, 18 Feb 2025
- 11:23:28 -0800 (PST)
+	 To:Cc:Content-Type; b=PEM3ujJTjd8p5N7bTjkcrU/Pyxzt8WJJTCsgF3KEKD736RRUseltnnZ5ZPD9LmjBbixxBBYkdihtqkFHDW/BWRWDUR52kHx0hWfy3ph++wNzYN6rS5oyg0XaJBJ+wfAGbbOYLz9JKj6WXQarQf8JEQe/s5kItEAlh2CZqNlMzl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5209ca3e9a6so1115450e0c.2;
+        Tue, 18 Feb 2025 11:32:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739907163; x=1740511963;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yb7jRjd6uguB9cG41rTvHpSN+ZVtgW/KmSvyau5JmeE=;
+        b=rjqWmTb+726NERGirauhqdhJ1ECVSMt9jfS6SsjzkyMzDoUQBGnTr0pXzbwep6OO4T
+         7qwusH/fPj8BGaxDwm3ZZL5p1Usq4UEIObOl1PC7sSFV7a7GpT1cXDwXbV1vkH430nSN
+         OIFC69T2H/KMNZZW+HMu7XZSGciY582HyVpvHr04LYQtpJmolW4zYncYF8TXd07GS3Dc
+         xTirNPNeKcpGBcgqhr6OWsTnBm8zDV79DIFMYld+JZTz3jZKpHUVZrksyUudEspXdHFG
+         3eiQJW3di/uaza3yWv1OUtG8s5nCbIdcNYlBBTQ5NS0ufTL255sk681EbRH/7xOTD3MR
+         yXIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvmij3GiYOl2dOcjFQpJoPc8+VF4VMBVvezIpqW4lMpCmV+bCnMXW6mWwEbo4aaj70PQTU3wnwn5ovv4I=@vger.kernel.org, AJvYcCVH2wW3TKGxiWLNWEFFQXLkOAGSiG4K401bc+kHHjUVuC9BMZGR8SEisOzxBaP1hDFBMGot2O8KcTmsdAeSaQ46wsY=@vger.kernel.org, AJvYcCWFS4x3ESDE1cDV/VoL4KDdTF2v45RVmrlVN7gpJU24+05/kyvE1ymTYX07fdZ2qxdgCDCxWs7k9z2xG7LA4rPYJWg=@vger.kernel.org, AJvYcCXae97kRmIs1JQ9xDD7d3CtdekMLTzp6PlyJJ+NJGOuEB+tjqUBeWHe8DFWVCLbarM9XYjnA46ATvvycmbh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1SiVVbr79f7LwN0h1jcFMOjUcIuq8ym3gHlTspcM3auFm2CEI
+	yWQZuL6Y+pusr9el9LJoeJKXtM3JL/ov08b9KxlorSnwvIBHS7bzYPE3bfwZ
+X-Gm-Gg: ASbGncs2b8gk+p1Lv36jX93BvRbWEAOGkJsSlE58hOXgmZqmsbvllI78fRNokfib+ni
+	39zA0uLKxlqfEuYGtK5bsvVO72g9Jbx8eYQp2ccq6SJoApErgOyHbSsglINsL+zCk2PaX/qUtfv
+	aQjmDywSRo72EqSSiKiDpERwCFUto4dUvQsWxVhHoE+LGMbPM/7zzwlhR/cdgd0+0r5yMH2hw78
+	3lfuxBOpQJoyeMADv/fj/n5SzACghhxPg7iqalaNXcrM5VhhaP//P3ZG0NnX12n/Gn+9fl26V+Y
+	TDabG+yveHupj3yqVp7aw6MGuwunl/zayiqDPwc5FHFHtj5fpORe8g==
+X-Google-Smtp-Source: AGHT+IGfJAwFjAoDydTJzePAPfD6wVMVF3T64exnojHFQGgbaybg3dZcYd0IBnNW70mT4MJT0woGkg==
+X-Received: by 2002:a05:6122:218d:b0:520:62ce:990f with SMTP id 71dfb90a1353d-521c4694818mr547033e0c.11.1739907161646;
+        Tue, 18 Feb 2025 11:32:41 -0800 (PST)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52098805834sm2222249e0c.26.2025.02.18.11.32.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Feb 2025 11:32:40 -0800 (PST)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4be5b33ff91so631733137.1;
+        Tue, 18 Feb 2025 11:32:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUbrIXYcc+mqlqWNdTBrpAAtPxPRoCOcwoUYupKK0AHfWhxI1FkYOvvSjhuJgd0KMeu4+1Uz4MIuyHqkjMT@vger.kernel.org, AJvYcCWDGGIWDShcWf52HRFdXaQu/o3p/9c1uOA8ARE7rzyesBBcfApUA6jnSXMYOtHdtP2rI5tOK4XeHUGo9pDWeQE0TGg=@vger.kernel.org, AJvYcCXEAdinysuxI3FcT2jT1B49zR966bncMWEEAueN5rhm9P7qAYlpHiIVB5EKwo21qRtJbxM6IWHFWjTpxKU9cc0eSz0=@vger.kernel.org, AJvYcCXoWZwWQcZQ3JZKakY5CBn0ZAciNayE4Eo9Mr2HqOqzJV2jxIyDYvI7QDlt/b/IkXmOpLcXVvzYkn5kNL8=@vger.kernel.org
+X-Received: by 2002:a05:6102:b10:b0:4bb:d394:46c5 with SMTP id
+ ada2fe7eead31-4be85bb8970mr656557137.9.1739907160582; Tue, 18 Feb 2025
+ 11:32:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211103737.447704-1-sumitg@nvidia.com> <20250211104428.dibsnxmkiluzixvz@vireshk-i7>
- <b45d0d81-e4f7-474e-a146-0075a6145cc2@huawei.com> <868d4c2a-583a-4cbb-a572-d884090a7134@nvidia.com>
- <8d5e0035-d8fe-49ef-bda5-f5881ff96657@huawei.com> <94bdab73-adc4-4b43-9037-5639f23e3d1e@nvidia.com>
-In-Reply-To: <94bdab73-adc4-4b43-9037-5639f23e3d1e@nvidia.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 18 Feb 2025 20:23:17 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
-X-Gm-Features: AWEUYZnjK1GpyeSViY75mprA6AS3e808U82IVCn4oReC-_uewxJCKtkO01zA8nA
-Message-ID: <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
-Subject: Re: [Patch 0/5] Support Autonomous Selection mode in cppc_cpufreq
-To: Sumit Gupta <sumitg@nvidia.com>, "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, rafael@kernel.org, lenb@kernel.org, 
-	robert.moore@intel.com, corbet@lwn.net, linux-pm@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
-	sashal@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com, 
-	sanjayc@nvidia.com, bbasu@nvidia.com
+References: <20250218142542.438557-1-tzimmermann@suse.de> <20250218142542.438557-3-tzimmermann@suse.de>
+In-Reply-To: <20250218142542.438557-3-tzimmermann@suse.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 18 Feb 2025 20:32:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV939ibJTRSaO-oW2Jz4zbkXGRpUYrmA7e=yQfF7W-k_g@mail.gmail.com>
+X-Gm-Features: AWEUYZnARFSxvjPUxC-uDBDfMGz-IvL-HNvEMBPwKo8soOA7GylWEHj75pA7v34
+Message-ID: <CAMuHMdV939ibJTRSaO-oW2Jz4zbkXGRpUYrmA7e=yQfF7W-k_g@mail.gmail.com>
+Subject: Re: [PATCH v3 02/25] drm/dumb-buffers: Provide helper to set pitch
+ and size
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com, 
+	simona@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org, 
+	linux-arm-msm@vger.kernel.org, imx@lists.linux.dev, 
+	linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, intel-xe@lists.freedesktop.org, 
+	xen-devel@lists.xenproject.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 8:09=E2=80=AFAM Sumit Gupta <sumitg@nvidia.com> wro=
-te:
->
->
->
-> On 12/02/25 16:22, zhenglifeng (A) wrote:
-> > External email: Use caution opening links or attachments
-> >
-> >
-> > On 2025/2/11 22:08, Sumit Gupta wrote:
-> >>
-> >>
-> >>>
-> >>> On 2025/2/11 18:44, Viresh Kumar wrote:
-> >>>> On 11-02-25, 16:07, Sumit Gupta wrote:
-> >>>>> This patchset supports the Autonomous Performance Level Selection m=
-ode
-> >>>>> in the cppc_cpufreq driver. The feature is part of the existing CPP=
-C
-> >>>>> specification and already present in Intel and AMD specific pstate
-> >>>>> cpufreq drivers. The patchset adds the support in generic acpi cppc
-> >>>>> cpufreq driver.
-> >>>>
-> >>>> Is there an overlap with:
-> >>>>
-> >>>> https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@hu=
-awei.com/
-> >>>>
-> >>>> ?
-> >>>
-> >>> Ha, it looks like we're doing something very similar.
-> >>>
-> >>
-> >> Hi Viresh,
-> >>
-> >> Thank you for pointing to [1].
-> >>
-> >> There seems to be some common points about updating the 'energy_perf'
-> >> and 'auto_sel' registers for autonomous mode but the current patchset
-> >> has more comprehensive changes to support Autonomous mode with the
-> >> cppc_cpufreq driver.
-> >>
-> >> The patches in [1]:
-> >> 1) Make the cpc register read/write API=E2=80=99s generic and improves=
- error
-> >>     handling for 'CPC_IN_PCC'.
-> >> 2) Expose sysfs under 'cppc_cpufreq_attr' to update 'auto_select',
-> >>     'auto_act_window' and 'epp' registers.
-> >>
-> >> The current patch series:
-> >> 1) Exposes sysfs under 'cppc_attrs' to keep CPC registers together.
-> >> 2) Updates existing API=E2=80=99s to use new registers and creates new=
- API
-> >>     with similar semantics to get all perf_ctrls.
-> >> 3) Renames some existing API=E2=80=99s for clarity.
-> >> 4) Use these existing API=E2=80=99s from acpi_cppc sysfs to update the=
- CPC
-> >>     registers used in Autonomous mode:
-> >>     'auto_select', 'epp', 'min_perf', 'max_perf' registers.
-> >> 5) Add separate 'cppc_cpufreq_epp' instance of the 'cppc_cpufreq'
-> >>     driver to apply different limit and policy for Autonomous mode.
-> >>     Having it separate will avoid confusion between SW and HW mode.
-> >>     Also, it will be easy to scale and add new features in future
-> >>     without interference. Similar approach is used in Intel and AMD
-> >>     pstate drivers.
-> >>
-> >> Please share inputs about the preferred approach.
-> >>
-> >> Best Regards,
-> >> Sumit Gupta
-> >>
-> >> [1] https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@=
-huawei.com/
-> >>
-> >>
-> >
-> > Hi Sumit,
-> >
-> > Thanks for upstreaming this.
-> >
-> > I think the changes to cppc_acpi in this patchset is inappropriate.
-> >
-> > 1) cppc_attrs are common sysfs for any system that supports CPPC. That
-> > means, these interfaces would appear even if the cpufreq driver has alr=
-eady
-> > managing it, e.g. amd-pstate and cppc_cpufreq. This would create multip=
-le
-> > interfaces to modify the same CPPC regs, which may probably introduce
-> > concurrency and data consistency issues. Instead, exposing the interfac=
-es
-> > under cppc_cpufreq_attr decouples the write access to CPPC regs.
-> >
->
-> Hi Lifeng,
->
-> I think its more appropriate to keep all the CPC registers together
-> instead of splitting the read only registers to the acpi_cppc sysfs
-> and read/write registers to the cpufreq sysfs.
->
-> Only the EPP register is written from Intel and AMD.
->   $ grep cpufreq_freq_attr_rw drivers/cpufreq/* | grep -v scaling
->   drivers/cpufreq/acpi-cpufreq.c:cpufreq_freq_attr_rw(cpb);
->
-> drivers/cpufreq/amd-pstate.c:cpufreq_freq_attr_rw(energy_performance_pref=
-erence);
->
-> drivers/cpufreq/intel_pstate.c:cpufreq_freq_attr_rw(energy_performance_pr=
-eference);
->
-> We are currently updating four registers and there can be more in
-> future like 'auto_act_window' update attribute in [1].
-> Changed to make this conditional with 'ifdef CONFIG_ACPI_CPPC_CPUFREQ'
-> to not create attributes for Intel/AMD.
->
->   +++ b/drivers/acpi/cppc_acpi.c
->   @@ static struct attribute *cppc_attrs[] =3D {
->           &lowest_freq.attr,
->   +#ifdef CONFIG_ACPI_CPPC_CPUFREQ
->           &max_perf.attr,
->           &min_perf.attr,
->           &perf_limited.attr,
->           &auto_activity_window.attr,
->           &energy_perf.attr,
->   +#endif
->
-> > 2) It's inappropriate to call cpufreq_cpu_get() in cppc_acpi. This file
-> > currently provides interfaces for cpufreq drivers to use. It has no ABI
-> > dependency on cpufreq at the moment.
-> >
->
-> cpufreq_cpu_get() is already used by multiple non-cpufreq drivers.
-> So, don't think its a problem.
->   $ grep -inr "=3D cpufreq_cpu_get(.*;" drivers/*| grep -v "cpufreq/"|wc =
--l
->   10
->
-> > Apart from the changes to cppc_acpi, I think the whole patchset in [1] =
-can
-> > be independent to this patchset. In other words, adding the
-> > cppc_cpufreq_epp_driver could be standalone to discuss. I think combini=
-ng
-> > the use of ->setpolicy() and setting EPP could be a use case? Could you
-> > explain more on the motivation of adding a new cppc_cpufreq_epp_driver?
-> >
->
-> With 'cppc_cpufreq_epp_driver', we provide an easy option to boot all
-> CPU's in auto mode with right epp and policy min/max equivalent of
-> {min|max}_perf. The mode can be found clearly with scaling_driver node.
-> Separating the HW and SW mode based on driver instance also
-> makes it easy to scale later.
-> Advanced users can program sysfs to switch individual CPU's in and out
-> of the HW mode. We can update policy min/max values accordingly.
-> In this case, there can be some CPU's in SW mode with epp driver
-> instance. But a separate instance will be more convenient for the
-> users who want all CPU's either in HW mode or in SW mode than having
-> to explicitly set all the values correctly.
+Hi Thomas,
 
-There seems to be some quite fundamental disagreement on how this
-should be done, so I'm afraid I cannot do much about it ATM.
+On Tue, 18 Feb 2025 at 15:26, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> Add drm_modes_size_dumb(), a helper to calculate the dumb-buffer
+> scanline pitch and allocation size. Implementations of struct
+> drm_driver.dumb_create can call the new helper for their size
+> computations.
+>
+> There is currently quite a bit of code duplication among DRM's
+> memory managers. Each calculates scanline pitch and buffer size
+> from the given arguments, but the implementations are inconsistent
+> in how they treat alignment and format support. Later patches will
+> unify this code on top of drm_mode_size_dumb() as much as possible.
+>
+> drm_mode_size_dumb() uses existing 4CC format helpers to interpret
+> the given color mode. This makes the dumb-buffer interface behave
+> similar the kernel's video= parameter. Current per-driver implementations
+> again likely have subtle differences or bugs in how they support color
+> modes.
+>
+> The dumb-buffer UAPI is only specified for known color modes. These
+> values describe linear, single-plane RGB color formats or legacy index
+> formats. Other values should not be specified. But some user space
+> still does. So for unknown color modes, there are a number of known
+> exceptions for which drm_mode_size_dumb() calculates the pitch from
+> the bpp value, as before. All other values work the same but print
+> an error.
+>
+> v3:
+> - document the UAPI semantics
+> - compute scanline pitch from for unknown color modes (Andy, Tomi)
+>
+> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Please agree on a common approach and come back to me when you are ready.
+Thanks for your patch!
 
-Sending two concurrent patchsets under confusingly similar names again
-and again isn't particularly helpful.
+> --- a/drivers/gpu/drm/drm_dumb_buffers.c
+> +++ b/drivers/gpu/drm/drm_dumb_buffers.c
+> +/**
+> + * drm_mode_size_dumb - Calculates the scanline and buffer sizes for dumb buffers
+> + * @dev: DRM device
+> + * @args: Parameters for the dumb buffer
+> + * @pitch_align: Scanline alignment in bytes
+> + * @size_align: Buffer-size alignment in bytes
+> + *
+> + * The helper drm_mode_size_dumb() calculates the size of the buffer
+> + * allocation and the scanline size for a dumb buffer. Callers have to
+> + * set the buffers width, height and color mode in the argument @arg.
+> + * The helper validates the correctness of the input and tests for
+> + * possible overflows. If successful, it returns the dumb buffer's
+> + * required scanline pitch and size in &args.
+> + *
+> + * The parameter @pitch_align allows the driver to specifies an
+> + * alignment for the scanline pitch, if the hardware requires any. The
+> + * calculated pitch will be a multiple of the alignment. The parameter
+> + * @size_align allows to specify an alignment for buffer sizes. The
+> + * returned size is always a multiple of PAGE_SIZE.
+> + *
+> + * Returns:
+> + * Zero on success, or a negative error code otherwise.
+> + */
+> +int drm_mode_size_dumb(struct drm_device *dev,
+> +                      struct drm_mode_create_dumb *args,
+> +                      unsigned long pitch_align,
+> +                      unsigned long size_align)
+> +{
+> +       u64 pitch = 0;
+> +       u32 fourcc;
+> +
+> +       /*
+> +        * The scanline pitch depends on the buffer width and the color
+> +        * format. The latter is specified as a color-mode constant for
+> +        * which we first have to find the corresponding color format.
+> +        *
+> +        * Different color formats can have the same color-mode constant.
+> +        * For example XRGB8888 and BGRX8888 both have a color mode of 32.
+> +        * It is possible to use different formats for dumb-buffer allocation
+> +        * and rendering as long as all involved formats share the same
+> +        * color-mode constant.
+> +        */
+> +       fourcc = drm_driver_color_mode_format(dev, args->bpp);
+> +       if (fourcc != DRM_FORMAT_INVALID) {
+> +               const struct drm_format_info *info = drm_format_info(fourcc);
+> +
+> +               if (!info)
+> +                       return -EINVAL;
+> +               pitch = drm_format_info_min_pitch(info, 0, args->width);
+> +       } else if (args->bpp) {
+> +               /*
+> +                * Some userspace throws in arbitrary values for bpp and
+> +                * relies on the kernel to figure it out. In this case we
+> +                * fall back to the old method of using bpp directly. The
+> +                * over-commitment of memory from the rounding is acceptable
+> +                * for compatibility with legacy userspace. We have a number
+> +                * of deprecated legacy values that are explicitly supported.
+> +                */
+> +               switch (args->bpp) {
+> +               default:
+> +                       drm_warn(dev, "Unknown color mode %d; guessing buffer size.\n",
 
-Thanks!
+%u
+
+> +                                args->bpp);
+> +                       fallthrough;
+> +               case 12:
+> +               case 15:
+> +               case 30: /* see drm_gem_afbc_get_bpp() */
+> +               case 10:
+
+Perhaps keep them sorted numerically?
+
+> +               case 64: /* used by Mesa */
+> +                       pitch = args->width * DIV_ROUND_UP(args->bpp, SZ_8);
+> +                       break;
+> +               }
+> +       }
+> +
+> +       if (!pitch || pitch > U32_MAX)
+> +               return -EINVAL;
+> +
+> +       args->pitch = pitch;
+> +
+> +       return drm_mode_align_dumb(args, pitch_align, size_align);
+> +}
+> +EXPORT_SYMBOL(drm_mode_size_dumb);
+> +
+>  int drm_mode_create_dumb(struct drm_device *dev,
+>                          struct drm_mode_create_dumb *args,
+>                          struct drm_file *file_priv)
+> diff --git a/include/drm/drm_dumb_buffers.h b/include/drm/drm_dumb_buffers.h
+> new file mode 100644
+> index 000000000000..6fe36004b19d
+> --- /dev/null
+> +++ b/include/drm/drm_dumb_buffers.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: MIT */
+> +
+> +#ifndef __DRM_DUMB_BUFFERS_H__
+> +#define __DRM_DUMB_BUFFERS_H__
+> +
+> +struct drm_device;
+> +struct drm_mode_create_dumb;
+> +
+> +int drm_mode_size_dumb(struct drm_device *dev,
+> +                      struct drm_mode_create_dumb *args,
+> +                      unsigned long pitch_align,
+> +                      unsigned long size_align);
+> +
+> +#endif
+> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> index c082810c08a8..eea09103b1a6 100644
+> --- a/include/uapi/drm/drm_mode.h
+> +++ b/include/uapi/drm/drm_mode.h
+> @@ -1058,7 +1058,7 @@ struct drm_mode_crtc_page_flip_target {
+>   * struct drm_mode_create_dumb - Create a KMS dumb buffer for scanout.
+>   * @height: buffer height in pixels
+>   * @width: buffer width in pixels
+> - * @bpp: bits per pixel
+> + * @bpp: color mode
+>   * @flags: must be zero
+>   * @handle: buffer object handle
+>   * @pitch: number of bytes between two consecutive lines
+> @@ -1066,6 +1066,50 @@ struct drm_mode_crtc_page_flip_target {
+>   *
+>   * User-space fills @height, @width, @bpp and @flags. If the IOCTL succeeds,
+>   * the kernel fills @handle, @pitch and @size.
+> + *
+> + * The value of @bpp is a color-mode number describing a specific format
+> + * or a variant thereof. The value often corresponds to the number of bits
+> + * per pixel for most modes, although there are exceptions. Each color mode
+> + * maps to a DRM format plus a number of modes with similar pixel layout.
+> + * Framebuffer layout is always linear.
+> + *
+> + * Support for all modes and formats is optional. Even if dumb-buffer
+> + * creation with a certain color mode succeeds, it is not guaranteed that
+> + * the DRM driver supports any of the related formats. Most drivers support
+> + * a color mode of 32 with a format of DRM_FORMAT_XRGB8888 on their primary
+> + * plane.
+> + *
+> + * +------------+------------------------+------------------------+
+> + * | Color mode | Framebuffer format     | Compatibles            |
+> + * +============+========================+========================+
+> + * |     32     |  * DRM_FORMAT_XRGB8888 |  * DRM_FORMAT_XBGR8888 |
+> + * |            |                        |  * DRM_FORMAT_RGBX8888 |
+> + * |            |                        |  * DRM_FORMAT_BGRX8888 |
+> + * +------------+------------------------+------------------------+
+> + * |     24     |  * DRM_FORMAT_RGB888   |  * DRM_FORMAT_BGR888   |
+> + * +------------+------------------------+------------------------+
+> + * |     16     |  * DRM_FORMAT_RGB565   |  * DRM_FORMAT_BGR565   |
+> + * +------------+------------------------+------------------------+
+> + * |     15     |  * DRM_FORMAT_XRGB1555 |  * DRM_FORMAT_XBGR1555 |
+> + * |            |                        |  * DRM_FORMAT_RGBX1555 |
+> + * |            |                        |  * DRM_FORMAT_BGRX1555 |
+> + * +------------+------------------------+------------------------+
+> + * |      8     |  * DRM_FORMAT_C8       |  * DRM_FORMAT_R8       |
+
++ DRM_FORMAT_D8? (and 4/2/1 below)
+
+And DRM_FORMAT_Y8, if/when Tomi's series introducing that is accepted...
+
+> + * +------------+------------------------+------------------------+
+> + * |      4     |  * DRM_FORMAT_C4       |  * DRM_FORMAT_R4       |
+> + * +------------+------------------------+------------------------+
+> + * |      2     |  * DRM_FORMAT_C2       |  * DRM_FORMAT_R2       |
+> + * +------------+------------------------+------------------------+
+> + * |      1     |  * DRM_FORMAT_C1       |  * DRM_FORMAT_R1       |
+> + * +------------+------------------------+------------------------+
+> + *
+> + * Color modes of 10, 12, 15, 30 and 64 are only supported for use by
+> + * legacy user space. Please don't use them in new code. Other modes
+> + * are not support.
+> + *
+> + * Do not attempt to allocate anything but linear framebuffer memory
+> + * with single-plane RGB data. Allocation of other framebuffer
+> + * layouts requires dedicated ioctls in the respective DRM driver.
+>   */
+>  struct drm_mode_create_dumb {
+>         __u32 height;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
