@@ -1,84 +1,137 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5690D26E14C;
-	Tue, 18 Feb 2025 15:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CB026FD99;
+	Tue, 18 Feb 2025 17:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739894248; cv=none; b=MjvTWxwTNWSYxYFeV4LMf9SVStYyOiak3X7SH0Y4xGpUm8fIgxl8DoilS0jzKlDYr2a4OhEBF06RuI4G8ior2kmLjCL6pbRW+PG04FiF3G/g301MSxPvIU2CNpzLs0zAHqqPxF458h2fXtRmCcoa6uVQ509385ZszFoSv/o+GXg=
+	t=1739898828; cv=none; b=RCD27ORRQMflzUzqJ0DMWzKGTnc+Os/h2SmZOuVYDLNG546qxsGdXKYKCd8M55DMQzE8pVgM9LqZnxtJVMuPistkagZZO9gbAq5LRT8ANd+eXO270kNvZZXe1AjARifYVClqzx/2cx7hjiJ/GB0FGvbdaxPL6QyZtznbHgC/0NQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739894248; c=relaxed/simple;
-	bh=RoOHTJvVlo6Ondp+M6nn7MqbSaI7ASpM1NPY1XhuHU8=;
+	s=arc-20240116; t=1739898828; c=relaxed/simple;
+	bh=zMBG5U0y5k0fAXa5nBTK3Y5aZzrRhzGrNTjaVJUvAHk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HA07rIkY9M9Jii9WXfeBFH38JKK8I7kbbTbh8jwApY/X9M5YCMC5Q+7ZRPezuk4YqKE4R4/7aLtTVIgZDEnpEc4asKIbYid/A56ZwAZmWgkJfKT1ZiRG5scKzsMYdCaiDbQ7txPQeyScDy1PgwwYSuaoXUJ4sReo7/jIQsMjHXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=TPgp3EXJ; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=fIQpcuhl+HvtmNDCF0kPXpRCvfUKJVN/WcpBRPWGLhi03YjdLeH8La36dyTTxUTyeCZGrpPvPfOY95i6k5ph6sAXT8/Tu6vZlY+eZFkgiFteymEWkco5x0s8YvpaHtRe4m+Ss35pHDnY744PPySPG4quywSqjkopw8jhjigECUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ksu2lZaa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="TPgp3EXJ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KZBDJtxcaW+EbK7xr8lVciQc5WFsH1M+cUzHurUjtms=; b=TPgp3EXJIxknNdQRFhGKtjsSGD
-	zh4oCSSNqtHdPQMgdkyQvRpsrKvYx+FfAcbjG1SEjN46nlQGNh1VzvYSPlgseTPRMjdLM/i9cpMj9
-	fLr8mhI8SxYDvXtugtqKsWdgSXeq87xwkVhYvmajXXxibojsAq/8Wk39wKqtPz3T4beE9QXZafPNF
-	soUyX6Y40/lic0qMOCa+I1W6Oi9kgpSzpKz0zAjPH5iiEZvMycxwI/2JnlVvGxZaUgUy6GfjlffP5
-	GYZGJ2RSLoTewgKGctKEHMR4CVHcP5yxhFQXwUwiw1GhFZxNPyh87MOEhHyi/DyOlzN1euG+K476r
-	oh59WZhw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37344)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tkPy8-0002Wi-1o;
-	Tue, 18 Feb 2025 15:57:08 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tkPy4-0007NT-0f;
-	Tue, 18 Feb 2025 15:57:04 +0000
-Date: Tue, 18 Feb 2025 15:57:04 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org, imx@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v3 06/25] drm/armada: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-Message-ID: <Z7St0O3A_mXEYK49@shell.armlinux.org.uk>
-References: <20250218142542.438557-1-tzimmermann@suse.de>
- <20250218142542.438557-7-tzimmermann@suse.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ksu2lZaa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8C1CC4CEE2;
+	Tue, 18 Feb 2025 17:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739898827;
+	bh=zMBG5U0y5k0fAXa5nBTK3Y5aZzrRhzGrNTjaVJUvAHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ksu2lZaakOto5UkVGseoZ948bXS4+zoqZKlxwoJ7T9LCElMhPfUmxGFfGyZBRANAM
+	 ZI75jXLhiZUABGl0X/E72U03C0eaLuWll1e4h2MwPw/e1Kn2oasNTDtUM5lDNmx4QI
+	 VgsBSfcaeybkLRY5cZj7D7icpWmEZzIHvnkh2296g9EIEg6dXhTmXVSr04DGgwzS5X
+	 QA1p63m0KPbKxBy+RAoJaLwHsb+nzYksUMSsJ3kJx1lLIxVu1IXAzy8VCl/CPQ3UCW
+	 4bvRXOZVlyqzYxUv1edgrvKhY5aWCA3TwVo0Xb9RTMdG7yG1ndRS9EiW+lK8f6phqn
+	 XIa2Qd8sRG3wg==
+Date: Tue, 18 Feb 2025 17:13:41 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Emil Gedenryd <emil.gedenryd@axis.com>,
+	Arthur Becker <arthur.becker@sentec.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Ivan Orlov <ivan.orlov0322@gmail.com>,
+	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a
+ support
+Message-ID: <20250218-browse-animator-50e846a616b0@spud>
+References: <20250212064657.5683-1-clamor95@gmail.com>
+ <20250212064657.5683-2-clamor95@gmail.com>
+ <20250212-unwritten-compile-7011777a11b3@spud>
+ <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
+ <20250213-reflex-earlobe-ebbeaece6fad@spud>
+ <CAPVz0n1aw1+kKhvGwOUi_58HqRqo0fHxDNRQZt_2O4yJ=ws56w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9aHkRpTM7X6bOBao"
 Content-Disposition: inline
-In-Reply-To: <20250218142542.438557-7-tzimmermann@suse.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <CAPVz0n1aw1+kKhvGwOUi_58HqRqo0fHxDNRQZt_2O4yJ=ws56w@mail.gmail.com>
 
-On Tue, Feb 18, 2025 at 03:23:29PM +0100, Thomas Zimmermann wrote:
-> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
-> buffer size. No alignment required.
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Russell King <linux@armlinux.org.uk>
 
-armada_pitch() does have some special alignment (it aligns the pitch to
-128 bytes). I've no idea what drm_mode_size_dumb() does. Can you check
-whether it does the same please?
+--9aHkRpTM7X6bOBao
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If it doesn't, then this patch is incorrect.
+On Fri, Feb 14, 2025 at 08:21:03AM +0200, Svyatoslav Ryhel wrote:
+> =D1=87=D1=82, 13 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 22:15 Co=
+nor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Wed, Feb 12, 2025 at 09:39:06PM +0200, Svyatoslav Ryhel wrote:
+> > > =D1=81=D1=80, 12 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 21:2=
+0 Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> > > >
+> > > > On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
+> > > > > AL3000a is an ambient light sensor quite closely related to
+> > > > > exising AL3010 and can re-use exising schema for AL3010.
+> > > >
+> > > > Quite close you say, but the driver is entirely different it seems.=
+ How
+> > > > closely related is the hardware itself?
+> > > >
+> > >
+> > > Well, I can simply duplicate al3010 or al3320a schema if re-using
+> > > schema is not allowed. AL3000a has no available datasheet online.
+> > > Downstream code for al3000a and al3010 seems to have same principles,
+> > > apart from light measurements.
+> >
+> > It's probably more of a question as to why you're duplicating the driver
+> > for them, rather than telling you not to put both bindings together.
+> > That said, information on what's actually different is helpful in the
+> > binding, to explain why you're not using a fallback compatible etc.
+> >
+>=20
+> Quoting writing-bindings.rst:
+> DON'T refer to Linux or "device driver" in bindings. Bindings should
+> be based on what the hardware has, not what an OS and driver currently
+> support.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+No need to quite that back at me, I'm the one usually attempting to
+enforce these things. I just expect more information about the
+similiarties/differences when you're content splitting into two drivers
+but want to reuse the same binding.
+
+>=20
+> From all available data, hw configuration of al3000a closely matches
+> al3010 and seems to be part of same sensor lineup. It is not
+> prohibited to add new compatibles to existing schema. Schema does not
+> take in account way of processing data generated by sensor and this is
+> the main difference between al3000a and al3010
+
+Please mention this in your commit message.
+
+Cheers,
+Conor.
+
+--9aHkRpTM7X6bOBao
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7S/xQAKCRB4tDGHoIJi
+0iZLAP9TckPYqEb93zq2HyljnW8ogxHQF5BWPdBZFfXYC7ZbTAEA9FAUL1hTR9S/
+NqdS/aPc+GE5mlLICMyhaTI8PnmoIwA=
+=GuzI
+-----END PGP SIGNATURE-----
+
+--9aHkRpTM7X6bOBao--
