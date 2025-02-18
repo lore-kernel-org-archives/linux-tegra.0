@@ -1,137 +1,231 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68CB026FD99;
-	Tue, 18 Feb 2025 17:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49691F584F;
+	Tue, 18 Feb 2025 19:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739898828; cv=none; b=RCD27ORRQMflzUzqJ0DMWzKGTnc+Os/h2SmZOuVYDLNG546qxsGdXKYKCd8M55DMQzE8pVgM9LqZnxtJVMuPistkagZZO9gbAq5LRT8ANd+eXO270kNvZZXe1AjARifYVClqzx/2cx7hjiJ/GB0FGvbdaxPL6QyZtznbHgC/0NQ=
+	t=1739906609; cv=none; b=pwBs2ttKW2W0JudLehA7nTiKHkKX+B3HvynF2PndpCyUDxq12zQ1nvd+cyYW9piD2ofYjBsQqUhTKiXdjkCloO9qRHOezULN5NHVL+yY5OXQD4eGd9WRlAWuTZUZ5tZD+lDnXRNzTMLKiijiSMRRuh+qA9r9yxUUaclT3ZgpyOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739898828; c=relaxed/simple;
-	bh=zMBG5U0y5k0fAXa5nBTK3Y5aZzrRhzGrNTjaVJUvAHk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fIQpcuhl+HvtmNDCF0kPXpRCvfUKJVN/WcpBRPWGLhi03YjdLeH8La36dyTTxUTyeCZGrpPvPfOY95i6k5ph6sAXT8/Tu6vZlY+eZFkgiFteymEWkco5x0s8YvpaHtRe4m+Ss35pHDnY744PPySPG4quywSqjkopw8jhjigECUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ksu2lZaa; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739906609; c=relaxed/simple;
+	bh=tHGA5G2WYkatnmKUK3lUU0vRU387uRxbNlWbdsK5rwE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Shifk4dB9Ra4mkFj3C6w0ffoiitU/biZJdQ1GZnNk3BAJ/Q/Qu7Jwhf8/RdGQU1ZxBSNCkJvW501cbLUgHl6v8Bkt86t5OvIZtqtGLLkEHaLlmW+MAH/VWzp6oq9YZsLQ5LXiMcEt/fqBda/ZgU6IvnkvGbvSt8swAF5iLw7YL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBjICclE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ksu2lZaa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8C1CC4CEE2;
-	Tue, 18 Feb 2025 17:13:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBjICclE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F610C4CEEE;
+	Tue, 18 Feb 2025 19:23:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739898827;
-	bh=zMBG5U0y5k0fAXa5nBTK3Y5aZzrRhzGrNTjaVJUvAHk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ksu2lZaakOto5UkVGseoZ948bXS4+zoqZKlxwoJ7T9LCElMhPfUmxGFfGyZBRANAM
-	 ZI75jXLhiZUABGl0X/E72U03C0eaLuWll1e4h2MwPw/e1Kn2oasNTDtUM5lDNmx4QI
-	 VgsBSfcaeybkLRY5cZj7D7icpWmEZzIHvnkh2296g9EIEg6dXhTmXVSr04DGgwzS5X
-	 QA1p63m0KPbKxBy+RAoJaLwHsb+nzYksUMSsJ3kJx1lLIxVu1IXAzy8VCl/CPQ3UCW
-	 4bvRXOZVlyqzYxUv1edgrvKhY5aWCA3TwVo0Xb9RTMdG7yG1ndRS9EiW+lK8f6phqn
-	 XIa2Qd8sRG3wg==
-Date: Tue, 18 Feb 2025 17:13:41 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Emil Gedenryd <emil.gedenryd@axis.com>,
-	Arthur Becker <arthur.becker@sentec.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Ivan Orlov <ivan.orlov0322@gmail.com>,
-	David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] dt-bindings: iio: light: al3010: add al3000a
- support
-Message-ID: <20250218-browse-animator-50e846a616b0@spud>
-References: <20250212064657.5683-1-clamor95@gmail.com>
- <20250212064657.5683-2-clamor95@gmail.com>
- <20250212-unwritten-compile-7011777a11b3@spud>
- <CAPVz0n0xR_nGPdWn800H=HhMCPqnRUhqP-s1P4eMhtpZdxpxzg@mail.gmail.com>
- <20250213-reflex-earlobe-ebbeaece6fad@spud>
- <CAPVz0n1aw1+kKhvGwOUi_58HqRqo0fHxDNRQZt_2O4yJ=ws56w@mail.gmail.com>
+	s=k20201202; t=1739906609;
+	bh=tHGA5G2WYkatnmKUK3lUU0vRU387uRxbNlWbdsK5rwE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OBjICclEAhuFsYzZQCfh187X4A70ZB8kLhlGB+G0Y1WH52H1IVUzEefn3Yr47eVzD
+	 SRCMzEexqdZQKEQDRkNQd05L5cnaPhfvHF7iBXIoRaAHKU59bKop6m/vjg5FIw9yaq
+	 CemDgQZneYRRgnQCG6eFr9+Q4ya7+dcrDxZZAoyrTeZxwQ9v4mfA8xJSw3/kY2KYuw
+	 wWA3MAaso2buF5NziFfkUx0EqYV8hQXGpshjYnV3PeyUoYeIL5u2b7yTGTkxd/M1PX
+	 SOyARhe5rafluU1t/PdE80Q+y0wcP8OQTC04wtwMR48UIsqdCtOcg35iQ9NPMQ5a+W
+	 aKmBt9T9L4pGQ==
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3f3e0498beaso55035b6e.1;
+        Tue, 18 Feb 2025 11:23:29 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUydrDvMsjlG0S5RSi/SGB0HJHyud9/73NldlGgxh1LjchF7xxaSrxRoD+/KvZSrQ2JxmA12o1HzmfE@vger.kernel.org, AJvYcCV2EvD4F2b8wX+PBWPRkzlPlDDdsX6dS5krwOxtEQYsTOytuOS19TAsZ8oIKdEgEJd+Qa4sdcDnoa0=@vger.kernel.org, AJvYcCVz4ni+AQ5ZntpEs4sANscnw1xQRk+h1/S5ENwcKqQ9/8CwoBBeR8VpNK4S7ONrfrjyNxmZxC3K8kfx/m8=@vger.kernel.org, AJvYcCWZhiLzhIq8Rov14dLShZTZJ77KIzuciU4seJ1VFlVFHZPepGrlyfop0pi9hrQuVRPn64CSlYo2+rUCPWVV@vger.kernel.org, AJvYcCWdyjueOjhCKGL1Da03mtQPBpG6wREcNobR7jLCTEWlUl1Gf7rDQtdwxFP0WKY29AdNp+eB6BFNqh/T@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFY/guWF5YHN284cEA9+g22sgajlJfdKvQZlIslWox2ZvH8S+s
+	MAs4GOAYHLxxnUxg32L56Q/SM92k8kCqUQgVrn9/2wux14V9BtXSMxeoeNrh/6JLOuOZlFwW8Vp
+	fe25i76PjMw9aKZT45HHRrNvIXGc=
+X-Google-Smtp-Source: AGHT+IFnQSrEOQ5XyF8kcORbR22aIZWDMKNGLzVsGwRAAbFTPsjQg/3r9VLhR4uCpNrzjbTL59N8kAtr10x5ERBjPf4=
+X-Received: by 2002:a05:6808:188b:b0:3f4:9e6:fb7 with SMTP id
+ 5614622812f47-3f40eefb38fmr790244b6e.1.1739906608509; Tue, 18 Feb 2025
+ 11:23:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="9aHkRpTM7X6bOBao"
-Content-Disposition: inline
-In-Reply-To: <CAPVz0n1aw1+kKhvGwOUi_58HqRqo0fHxDNRQZt_2O4yJ=ws56w@mail.gmail.com>
-
-
---9aHkRpTM7X6bOBao
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250211103737.447704-1-sumitg@nvidia.com> <20250211104428.dibsnxmkiluzixvz@vireshk-i7>
+ <b45d0d81-e4f7-474e-a146-0075a6145cc2@huawei.com> <868d4c2a-583a-4cbb-a572-d884090a7134@nvidia.com>
+ <8d5e0035-d8fe-49ef-bda5-f5881ff96657@huawei.com> <94bdab73-adc4-4b43-9037-5639f23e3d1e@nvidia.com>
+In-Reply-To: <94bdab73-adc4-4b43-9037-5639f23e3d1e@nvidia.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 18 Feb 2025 20:23:17 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
+X-Gm-Features: AWEUYZnjK1GpyeSViY75mprA6AS3e808U82IVCn4oReC-_uewxJCKtkO01zA8nA
+Message-ID: <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
+Subject: Re: [Patch 0/5] Support Autonomous Selection mode in cppc_cpufreq
+To: Sumit Gupta <sumitg@nvidia.com>, "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, rafael@kernel.org, lenb@kernel.org, 
+	robert.moore@intel.com, corbet@lwn.net, linux-pm@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com, 
+	sashal@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com, 
+	sanjayc@nvidia.com, bbasu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 14, 2025 at 08:21:03AM +0200, Svyatoslav Ryhel wrote:
-> =D1=87=D1=82, 13 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 22:15 Co=
-nor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+On Fri, Feb 14, 2025 at 8:09=E2=80=AFAM Sumit Gupta <sumitg@nvidia.com> wro=
+te:
+>
+>
+>
+> On 12/02/25 16:22, zhenglifeng (A) wrote:
+> > External email: Use caution opening links or attachments
 > >
-> > On Wed, Feb 12, 2025 at 09:39:06PM +0200, Svyatoslav Ryhel wrote:
-> > > =D1=81=D1=80, 12 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 21:2=
-0 Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > > >
-> > > > On Wed, Feb 12, 2025 at 08:46:55AM +0200, Svyatoslav Ryhel wrote:
-> > > > > AL3000a is an ambient light sensor quite closely related to
-> > > > > exising AL3010 and can re-use exising schema for AL3010.
-> > > >
-> > > > Quite close you say, but the driver is entirely different it seems.=
- How
-> > > > closely related is the hardware itself?
-> > > >
-> > >
-> > > Well, I can simply duplicate al3010 or al3320a schema if re-using
-> > > schema is not allowed. AL3000a has no available datasheet online.
-> > > Downstream code for al3000a and al3010 seems to have same principles,
-> > > apart from light measurements.
 > >
-> > It's probably more of a question as to why you're duplicating the driver
-> > for them, rather than telling you not to put both bindings together.
-> > That said, information on what's actually different is helpful in the
-> > binding, to explain why you're not using a fallback compatible etc.
+> > On 2025/2/11 22:08, Sumit Gupta wrote:
+> >>
+> >>
+> >>>
+> >>> On 2025/2/11 18:44, Viresh Kumar wrote:
+> >>>> On 11-02-25, 16:07, Sumit Gupta wrote:
+> >>>>> This patchset supports the Autonomous Performance Level Selection m=
+ode
+> >>>>> in the cppc_cpufreq driver. The feature is part of the existing CPP=
+C
+> >>>>> specification and already present in Intel and AMD specific pstate
+> >>>>> cpufreq drivers. The patchset adds the support in generic acpi cppc
+> >>>>> cpufreq driver.
+> >>>>
+> >>>> Is there an overlap with:
+> >>>>
+> >>>> https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@hu=
+awei.com/
+> >>>>
+> >>>> ?
+> >>>
+> >>> Ha, it looks like we're doing something very similar.
+> >>>
+> >>
+> >> Hi Viresh,
+> >>
+> >> Thank you for pointing to [1].
+> >>
+> >> There seems to be some common points about updating the 'energy_perf'
+> >> and 'auto_sel' registers for autonomous mode but the current patchset
+> >> has more comprehensive changes to support Autonomous mode with the
+> >> cppc_cpufreq driver.
+> >>
+> >> The patches in [1]:
+> >> 1) Make the cpc register read/write API=E2=80=99s generic and improves=
+ error
+> >>     handling for 'CPC_IN_PCC'.
+> >> 2) Expose sysfs under 'cppc_cpufreq_attr' to update 'auto_select',
+> >>     'auto_act_window' and 'epp' registers.
+> >>
+> >> The current patch series:
+> >> 1) Exposes sysfs under 'cppc_attrs' to keep CPC registers together.
+> >> 2) Updates existing API=E2=80=99s to use new registers and creates new=
+ API
+> >>     with similar semantics to get all perf_ctrls.
+> >> 3) Renames some existing API=E2=80=99s for clarity.
+> >> 4) Use these existing API=E2=80=99s from acpi_cppc sysfs to update the=
+ CPC
+> >>     registers used in Autonomous mode:
+> >>     'auto_select', 'epp', 'min_perf', 'max_perf' registers.
+> >> 5) Add separate 'cppc_cpufreq_epp' instance of the 'cppc_cpufreq'
+> >>     driver to apply different limit and policy for Autonomous mode.
+> >>     Having it separate will avoid confusion between SW and HW mode.
+> >>     Also, it will be easy to scale and add new features in future
+> >>     without interference. Similar approach is used in Intel and AMD
+> >>     pstate drivers.
+> >>
+> >> Please share inputs about the preferred approach.
+> >>
+> >> Best Regards,
+> >> Sumit Gupta
+> >>
+> >> [1] https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@=
+huawei.com/
+> >>
+> >>
 > >
->=20
-> Quoting writing-bindings.rst:
-> DON'T refer to Linux or "device driver" in bindings. Bindings should
-> be based on what the hardware has, not what an OS and driver currently
-> support.
+> > Hi Sumit,
+> >
+> > Thanks for upstreaming this.
+> >
+> > I think the changes to cppc_acpi in this patchset is inappropriate.
+> >
+> > 1) cppc_attrs are common sysfs for any system that supports CPPC. That
+> > means, these interfaces would appear even if the cpufreq driver has alr=
+eady
+> > managing it, e.g. amd-pstate and cppc_cpufreq. This would create multip=
+le
+> > interfaces to modify the same CPPC regs, which may probably introduce
+> > concurrency and data consistency issues. Instead, exposing the interfac=
+es
+> > under cppc_cpufreq_attr decouples the write access to CPPC regs.
+> >
+>
+> Hi Lifeng,
+>
+> I think its more appropriate to keep all the CPC registers together
+> instead of splitting the read only registers to the acpi_cppc sysfs
+> and read/write registers to the cpufreq sysfs.
+>
+> Only the EPP register is written from Intel and AMD.
+>   $ grep cpufreq_freq_attr_rw drivers/cpufreq/* | grep -v scaling
+>   drivers/cpufreq/acpi-cpufreq.c:cpufreq_freq_attr_rw(cpb);
+>
+> drivers/cpufreq/amd-pstate.c:cpufreq_freq_attr_rw(energy_performance_pref=
+erence);
+>
+> drivers/cpufreq/intel_pstate.c:cpufreq_freq_attr_rw(energy_performance_pr=
+eference);
+>
+> We are currently updating four registers and there can be more in
+> future like 'auto_act_window' update attribute in [1].
+> Changed to make this conditional with 'ifdef CONFIG_ACPI_CPPC_CPUFREQ'
+> to not create attributes for Intel/AMD.
+>
+>   +++ b/drivers/acpi/cppc_acpi.c
+>   @@ static struct attribute *cppc_attrs[] =3D {
+>           &lowest_freq.attr,
+>   +#ifdef CONFIG_ACPI_CPPC_CPUFREQ
+>           &max_perf.attr,
+>           &min_perf.attr,
+>           &perf_limited.attr,
+>           &auto_activity_window.attr,
+>           &energy_perf.attr,
+>   +#endif
+>
+> > 2) It's inappropriate to call cpufreq_cpu_get() in cppc_acpi. This file
+> > currently provides interfaces for cpufreq drivers to use. It has no ABI
+> > dependency on cpufreq at the moment.
+> >
+>
+> cpufreq_cpu_get() is already used by multiple non-cpufreq drivers.
+> So, don't think its a problem.
+>   $ grep -inr "=3D cpufreq_cpu_get(.*;" drivers/*| grep -v "cpufreq/"|wc =
+-l
+>   10
+>
+> > Apart from the changes to cppc_acpi, I think the whole patchset in [1] =
+can
+> > be independent to this patchset. In other words, adding the
+> > cppc_cpufreq_epp_driver could be standalone to discuss. I think combini=
+ng
+> > the use of ->setpolicy() and setting EPP could be a use case? Could you
+> > explain more on the motivation of adding a new cppc_cpufreq_epp_driver?
+> >
+>
+> With 'cppc_cpufreq_epp_driver', we provide an easy option to boot all
+> CPU's in auto mode with right epp and policy min/max equivalent of
+> {min|max}_perf. The mode can be found clearly with scaling_driver node.
+> Separating the HW and SW mode based on driver instance also
+> makes it easy to scale later.
+> Advanced users can program sysfs to switch individual CPU's in and out
+> of the HW mode. We can update policy min/max values accordingly.
+> In this case, there can be some CPU's in SW mode with epp driver
+> instance. But a separate instance will be more convenient for the
+> users who want all CPU's either in HW mode or in SW mode than having
+> to explicitly set all the values correctly.
 
-No need to quite that back at me, I'm the one usually attempting to
-enforce these things. I just expect more information about the
-similiarties/differences when you're content splitting into two drivers
-but want to reuse the same binding.
+There seems to be some quite fundamental disagreement on how this
+should be done, so I'm afraid I cannot do much about it ATM.
 
->=20
-> From all available data, hw configuration of al3000a closely matches
-> al3010 and seems to be part of same sensor lineup. It is not
-> prohibited to add new compatibles to existing schema. Schema does not
-> take in account way of processing data generated by sensor and this is
-> the main difference between al3000a and al3010
+Please agree on a common approach and come back to me when you are ready.
 
-Please mention this in your commit message.
+Sending two concurrent patchsets under confusingly similar names again
+and again isn't particularly helpful.
 
-Cheers,
-Conor.
-
---9aHkRpTM7X6bOBao
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7S/xQAKCRB4tDGHoIJi
-0iZLAP9TckPYqEb93zq2HyljnW8ogxHQF5BWPdBZFfXYC7ZbTAEA9FAUL1hTR9S/
-NqdS/aPc+GE5mlLICMyhaTI8PnmoIwA=
-=GuzI
------END PGP SIGNATURE-----
-
---9aHkRpTM7X6bOBao--
+Thanks!
