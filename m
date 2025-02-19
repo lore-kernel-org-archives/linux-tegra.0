@@ -1,147 +1,183 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2081.outbound.protection.outlook.com [40.107.93.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF63821516A;
-	Wed, 19 Feb 2025 20:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739998691; cv=none; b=s1ULth7Y+NGHg+jdcaxlBA6F8m+7PUzAC0DPO2R3zJ0ZL8MWsRZeCGhdrHRPV+G4UH2CKm7QvNWglz4B0uE6Id/F/tEJJTpePT9HNGsIZhP53IETeeGMGiNKkKbloQvZJILHkgooycXwXPVK0O9FB16UhAZHHYDYCDMmxM//w1U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739998691; c=relaxed/simple;
-	bh=uY9tpDYXVCCT3oI01wALVYqdN1lMr0kJ3zLRomdZBfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+I7+KAY+4vPLNnJ3gySsC7/z9QX2kAglY728j0YcMieFlcWDe4RAbEjWzRfK+QUXKNSAznZcvWF1zsJRq7yyW9jmZ0LgbBkmpyR1ZoK4yCCuLs6a6R2IrAxGT12EKu+xrDDnN4Qc6kJzUgBdA3debqTw8JOTv+/lV06DbjirII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=n8ViKVvK; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAF525EFB2;
+	Wed, 19 Feb 2025 23:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740007770; cv=fail; b=fEhWT2wovlnF0U5SQBuqxgkByYchWuhvAySukSv2iJS1r37RztMmWWa8O931OD0A/2eJtSwnLdCHYdmiDlRrXTRdtJ3/MH2tiGMQWuQhIYmdMQe/WcdEy7LzbSL37suueZLkyO5kbGo+StAuo1CwpVNaMcLcnK1dyYpCSoeAEAo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740007770; c=relaxed/simple;
+	bh=POyZu5E74kLhZhjxSfJ/WgO57FkFxc9sRSQgCZ0+XEw=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=OVoakVW36Y13Hd93a54y54p3ZHZhIQBuMsthHW9U6lgOaarWDWU/a4/Y2lnOpOLmPQ6ziu6E3vPfFEhQhfoOGBTOQPZmb7LX/puLUXR3BSwSfcFUsrDBv045MdJBKxAgRlniyyzF8/sOOI6uHqpzU1hwupL1UaHgPbB4zgpNwzk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eizMWr9S; arc=fail smtp.client-ip=40.107.93.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="n8ViKVvK"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Ox9CV6LHUd6gMf+zEh49UTkS5cD9NmltHJfCvXce8LM=; b=n8ViKVvKPHMGMgCG7hd0ZjkDop
-	vRrK8EqFjl6XVOMIziTBve1ppUE4XDjhAly0AlAMU5JohcyadSfLdQxpgdbV0U46N1g24urRc4bky
-	rpEoBoRkJoJPOHiLqV+MOp2P+ePgMT9+fnme5HPdLS/FfPwne73dWH35eBco1FqmPUYF/2I9Y5n+X
-	wTC5lp5qa5FPX1CDRlyw+mG/BMPQAkJr+BzLgTCE+fcqgLcjKtgLzr4UU1isKe49TWsmf6LgfbzFi
-	LCWbW/i9ll2qUk+h4x3J4GbhUPLKPr52n+ZfZA9CG99Sd7CZ1/Aj2y9qvPCOlWSSqRxrgiyNuM/2e
-	TFBYXFRw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34186)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tkr8n-00071t-1d;
-	Wed, 19 Feb 2025 20:57:57 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tkr8j-0000DX-2Z;
-	Wed, 19 Feb 2025 20:57:53 +0000
-Date: Wed, 19 Feb 2025 20:57:53 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Bryan Whitehead <bryan.whitehead@microchip.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, UNGLinuxDriver@microchip.com,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH net-next 9/9] net: stmmac: convert to phylink managed EEE
- support
-Message-ID: <Z7ZF0dA4-jwU7O2E@shell.armlinux.org.uk>
-References: <6ab08068-7d70-4616-8e88-b6915cbf7b1d@nvidia.com>
- <Z63Zbaf_4Rt57sox@shell.armlinux.org.uk>
- <Z63e-aFlvKMfqNBj@shell.armlinux.org.uk>
- <05987b45-94b9-4744-a90d-9812cf3566d9@nvidia.com>
- <Z68nSJqVxcnCc1YB@shell.armlinux.org.uk>
- <86fae995-1700-420b-8d84-33ab1e1f6353@nvidia.com>
- <Z7X6Z8yLMsQ1wa2D@shell.armlinux.org.uk>
- <203871c2-c673-4a98-a0a3-299d1cf71cf0@nvidia.com>
- <Z7YtWmkVl0rWFvQO@shell.armlinux.org.uk>
- <fd4af708-0c92-4295-9801-bf53db3a16cc@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eizMWr9S"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xEhrKhrZT2r0hmsiLSuuEaKPan8ZEjTTsQ41fls5VImGWdk8ArTFYESeoSew9D2vVV200+b0H7AyPv1XhxZn8E1am2uNuwp/bZ08jiUP8rfEEjF/jef/EUatU2b23XZ6jzs7iTaMzAyntjs2sfRMnMl3NKgjzZFi5jeStfYdpT5XHNFHmub1/9zLnVIbhHW7Ukw2KJpdhaFU2Rxt0b35QOs7Tj+ad9/KmgJYQMKFNkx/7Us4DXuG+5xAqAMF1JwaRBjPT7a9cs7OQYEisCT9YuMglXITpEYKpAxfKp7hC5aNwm+nWcaLW/NUCucW7KJl1y5sF91H9Ybg1N+tULsG3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NUlBjhS/dr7fgcuE6r+3alO+AsiUuBApgnO/I+hG2E4=;
+ b=xiZGvtK6tXk08fvRzHj8ZsRgaqQPyqecbxCpWOwf1kQJ0V3qHFYt+VGMEFXvzloF5n+Z89lloPlreS5T2fH0C41OTem5UtNn4TblqC6efxCFLdPV8Guojfqsg4dgkitV4QKHyeHptEpusjUopWK1eno9Tb1jqX+jizP3gJldlzWjtUrpLWc7BWwcCd7RcSK8xUxFjfGtAZu1ITGQ6n6HRCuYCy+KqJE5e0V9PH08r2z137B4trEoalfb41/1baUWTwFr7QpUYQdPe3kI+fOvmmdUo2OSW7g4dopD4tmKBL2e2lyDJPnm1Uxbsq1uhC6SQGLlb71hREvMPwsY2gw+Eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NUlBjhS/dr7fgcuE6r+3alO+AsiUuBApgnO/I+hG2E4=;
+ b=eizMWr9ShtuDoza9FS9Q/7KFbX9NIkkxHD7uESnhadCc33VqDFQEEWgg78Mwn8KOyytLF57jQ8HS0FtrO8HhF7oi3imWGQnTrxZOYmnm3/LKWO2W80gsgUCpUdGXVmCv7llhiLHDuyUpPydwXH6Ya7Cdr10kDuSheDwkBfX9kVWsQJrFhsSLRw8naVW5mShkNywmk+aqeul0nrm4spJruqXPEKeC7U8MV2O11PK+BvJfNVE9wnlgKVKGa1LDH2MTzyaYevnjoVpsmqqvgc6uJ0EUzm3uqZLw/mZMnECygH7jIBIYf4WeI7RDjBVTmvbrvi4rqLF9VCkcqe0JYvaZ3w==
+Received: from CY8PR12CA0008.namprd12.prod.outlook.com (2603:10b6:930:4e::12)
+ by PH7PR12MB7795.namprd12.prod.outlook.com (2603:10b6:510:278::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.19; Wed, 19 Feb
+ 2025 23:29:23 +0000
+Received: from CY4PEPF0000EE30.namprd05.prod.outlook.com
+ (2603:10b6:930:4e:cafe::d8) by CY8PR12CA0008.outlook.office365.com
+ (2603:10b6:930:4e::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.15 via Frontend Transport; Wed,
+ 19 Feb 2025 23:29:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ CY4PEPF0000EE30.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Wed, 19 Feb 2025 23:29:23 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 19 Feb
+ 2025 15:29:14 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 19 Feb 2025 15:29:14 -0800
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Wed, 19 Feb 2025 15:29:14 -0800
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <hargar@microsoft.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 000/578] 6.1.129-rc1 review
+In-Reply-To: <20250219082652.891560343@linuxfoundation.org>
+References: <20250219082652.891560343@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd4af708-0c92-4295-9801-bf53db3a16cc@nvidia.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Message-ID: <ba978f1f-f3df-4a8a-a618-004c7abbafb9@drhqmail202.nvidia.com>
+Date: Wed, 19 Feb 2025 15:29:14 -0800
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE30:EE_|PH7PR12MB7795:EE_
+X-MS-Office365-Filtering-Correlation-Id: a28b6c00-9186-415a-01cf-08dd513d3e56
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|7416014|376014|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?clVuVHJPR1lyWEJ3K3NBWmNReVlGaCtKNUhEMU1sU1dMRGJuSVhBZkZ4NFBm?=
+ =?utf-8?B?RSs3WVI2Y1JsYXRYS2RMdllydE9IaEM2cFF1ci9wTDFHZzlHSVVKNXMwVGQ1?=
+ =?utf-8?B?ek41dGdkMXdqVEUwNHpVQ1VaZFFtS0pYM1dEQ2hqb3dFbWltdGZTUFVnbzBx?=
+ =?utf-8?B?ZXRyUzNXSHdZZkZjTzVTUE1JcDFPbTdDai9pc25HUnd1THFIYmtoKzI1b0Fr?=
+ =?utf-8?B?YjdpWFB0Z0Rma1YrUTV5MUxUaTcwakJBYjVXZloxTFBQSFJPa0VKcG1jZHZ3?=
+ =?utf-8?B?NG5pZHY3cElGZ3JyTDNkOFo3cjZyUmZYM1NxM09zTi9mazdUZjJPYy8zLy81?=
+ =?utf-8?B?QVFtN0ZRMnErSXVOcis5NUQ4UWw5MTJqUm8xZGdYZDcyKzBiNytxTy9NK0Zo?=
+ =?utf-8?B?TzFrUENjYVo1S1A1K1FMUDhUUkFhMjZrMm9aMUltSGpCV0RLQXZiNzVGeGgx?=
+ =?utf-8?B?ZEdvQ2FNVVU2ZWRTOHMzRDJNUkU2K3g1NExkMklCeGJhdXhwZnpJQmp6bEFh?=
+ =?utf-8?B?SUxlOGlveUZXR2N2eXpyaWFZNXA5ZjVud1d5RTRabGE1dEloS096T1ZBZVcz?=
+ =?utf-8?B?VFdFQ1M2R0ZFZmlTaEdLeFJHMUVIRHovMnNqd1FEY1N6cnpyMTV3Q2tMSFNY?=
+ =?utf-8?B?UjNOa1lraG9sU25vYzY5b25SVFU1T3lFd2RzT3FYQk4xMXF1dHFrUWJVS3VR?=
+ =?utf-8?B?MlBzbTJLUkdVWUUydzg0dU9mOHJMaW1UeUNxUDZDQjRseE8raW5qbFVQMDRz?=
+ =?utf-8?B?SEU4UXpJN2xTZU9iUTVsZFpTUHhvWmJObDZJdlVkZUwrRlFZVG16ZkZIZ2FT?=
+ =?utf-8?B?SzgvWnFGcnRzSGFmejk5RUhRRHFqNlNEMkdRNnVkVzdJUlRjRnI1WXBOYXVj?=
+ =?utf-8?B?UkRtL2ZGTm0xOS9NZUxZajdUNXdTWlAreW5TSG1keFVFOEwwVjNWOE5CWVdu?=
+ =?utf-8?B?cWg0MHFzcGxpSmRwdW9HSGFud09FZUh2d0VvN2E2cXpDbVAyRnJpdEVqcTho?=
+ =?utf-8?B?Sk1QZ1l5SDZ2SVB3N1djUExyMnFaV3QxTkVJVjhmSG9vblBabTFyb1cyRkYv?=
+ =?utf-8?B?WksyWGNCZkxtWXp1d3JWMEJWcWd1YW0rVUlFdGlLZnR3L1pxWkpsY0hGS3pI?=
+ =?utf-8?B?N1JmYys4dHBvbis5NlFTd01XYnhPS1h0RGNTWWQ3M0d2Y3pqTGNGZytxYmJn?=
+ =?utf-8?B?WHMzdlFZUEZlOUI5c2kvbnJaLzdrZVVXblhFV0VnYnMralBjbmhOcWVqdlZk?=
+ =?utf-8?B?L0JXK095bGpCZWg2OGFXcXJBSXUva0FKbTZScFFua3dhNHZwV010Rm9VT28w?=
+ =?utf-8?B?a2Q5MmtIZ0ErL3B0Mmh1ZzMzVFg0ZDlKMkpCMHUrYmZTYm9QKy9OQlBrcFFr?=
+ =?utf-8?B?Y1RBczJUTEloTjRaWFNnZ2J5NzhUeWhxamtkSm9ZeWh2ZXhoNkIvYlJSQWtG?=
+ =?utf-8?B?KzB0dUNMQm8rQWxGcE1yOXNuWnRJeXIxbFM4WXk3a01jU2dydXMyRmJvVjN1?=
+ =?utf-8?B?ZGxkMHdNa2NHN01kREpGT1lpVkVoWW9zaEdPUEpoRGdxOU9oV1ZxUEg3VUx1?=
+ =?utf-8?B?a1dxT3ZDVW10M2RYTVUvRVUvMktwNklONFpYWE5qWjZmam41K0hKQ3BCVWYx?=
+ =?utf-8?B?RXZFWHFwdU9YV1pWdmdjaHFtZEgzZkgyeTVQNDlVUjUvYlBQVG9vQXRIMjhM?=
+ =?utf-8?B?QTNPWGFlMDMwcE9ienhOVzc2dFRid2FCZXF0c3YyeEE0Y003Y0ZZWFZ2eUls?=
+ =?utf-8?B?aldkRUdNWW41TDlNMHllUDN0Z2F0eDBUNUtVYzVYWVdBSUg5VHBRRTliSXdH?=
+ =?utf-8?B?UFRwRnU1d2xWNXZ4UmkveTIzL2ZjR2tGRnZpRGtTZEY1a1ByQnhmNlE1MEls?=
+ =?utf-8?B?VldMQlc1NDFKb2k5QU4yL3k1SkVnQllXYThJaXRkakk5QlU4cTNaVEJXaWM3?=
+ =?utf-8?B?d1F1U0hTM2NWdXdNU3ltWWhkb0VPTWpoVXpudk9Ka0puSlg5OTVQVC9uendQ?=
+ =?utf-8?Q?IlAtRlXkyeLm3knK4ds60JJ+levPhY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(7416014)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2025 23:29:23.6063
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a28b6c00-9186-415a-01cf-08dd513d3e56
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE30.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7795
 
-On Wed, Feb 19, 2025 at 08:05:57PM +0000, Jon Hunter wrote:
-> On 19/02/2025 19:13, Russell King (Oracle) wrote:
-> > On Wed, Feb 19, 2025 at 05:52:34PM +0000, Jon Hunter wrote:
-> > > On 19/02/2025 15:36, Russell King (Oracle) wrote:
-> > > > So clearly the phylink resolver is racing with the rest of the stmmac
-> > > > resume path - which doesn't surprise me in the least. I believe I raised
-> > > > the fact that calling phylink_resume() before the hardware was ready to
-> > > > handle link-up is a bad idea precisely because of races like this.
-> > > > 
-> > > > The reason stmmac does this is because of it's quirk that it needs the
-> > > > receive clock from the PHY in order for stmmac_reset() to work.
-> > > 
-> > > I do see the reset fail infrequently on previous kernels with this device
-> > > and when it does I see these messages ...
-> > > 
-> > >   dwc-eth-dwmac 2490000.ethernet: Failed to reset the dma
-> > >   dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: DMA engine
-> > >    initialization failed
-> > 
-> > I wonder whether it's also racing with phylib, but phylink_resume()
-> > calling phylink_start() going in to call phy_start() is all synchronous.
-> > That causes __phy_resume() to be called.
-> > 
-> > Which PHY device/driver is being used?
+On Wed, 19 Feb 2025 09:20:04 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.129 release.
+> There are 578 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
+> Responses should be made by Fri, 21 Feb 2025 08:25:11 +0000.
+> Anything received after that time might be too late.
 > 
-> Looks like it is this Broadcom driver ...
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.129-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
->  Broadcom BCM89610 stmmac-0:00: phy_eee_rx_clock_stop: clk_stop_enable 1
+> thanks,
+> 
+> greg k-h
 
-I don't see anything special happening in the PHY driver - it doesn't
-implement suspend/resume/config_aneg methods, so there's nothing going
-on with clocks in that driver beyond generic stuff.
+All tests passing for Tegra ...
 
-So, let's try something (I haven't tested this, and its likely you
-will need to work it in to your other change.)
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    115 tests:	115 pass, 0 fail
 
-Essentially, this disables the receive clock stop around the reset,
-something the stmmac driver has never done in the past.
+Linux version:	6.1.129-rc1-ga377a8af64e7
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 1cbea627b216..8e975863a2e3 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -7926,6 +7926,8 @@ int stmmac_resume(struct device *dev)
- 	rtnl_lock();
- 	mutex_lock(&priv->lock);
- 
-+	phy_eee_rx_clock_stop(priv->dev->phydev, false);
-+
- 	stmmac_reset_queues_param(priv);
- 
- 	stmmac_free_tx_skbufs(priv);
-@@ -7937,6 +7939,9 @@ int stmmac_resume(struct device *dev)
- 
- 	stmmac_restore_hw_vlan_rx_fltr(priv, ndev, priv->hw);
- 
-+	phy_eee_rx_clock_stop(priv->dev->phydev,
-+			      priv->phylink_config.eee_rx_clk_stop_enable);
-+
- 	stmmac_enable_all_queues(priv);
- 	stmmac_enable_all_dma_irq(priv);
- 
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Jon
