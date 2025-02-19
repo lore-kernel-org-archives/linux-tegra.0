@@ -1,81 +1,25 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156F11C54B3
-	for <linux-tegra@vger.kernel.org>; Wed, 19 Feb 2025 08:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBD01D416E;
+	Wed, 19 Feb 2025 09:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739952602; cv=none; b=Hyn2YpMIdQEhJ8S+K2gpOkeczKEV9hYL3wjD6UtmjVoDaz0lJNsu4ATV/7armosuwHHXsumvHI94lG4T4UllL0Ejt6uJAOyHvbGKhbUqHdL2puUKn8mr1q3OcPdfeCgCVNojJ5pp/ox0sUaoBh6aHM+wOzQuZ74pL7soIjLzp4E=
+	t=1739957367; cv=none; b=KubZ5tXI7pC9kjcFSnhMYzNcwMoiYNn+ypQnFPpH8iTXPVtdzwpVwuiLIh4YRGRu1x7KorDS8WsZF+VS8gH4tyfjNrct3SMZs/nsmnpkA4iBaKWMtJcqpxghoveZlINW2y5w7GtsUVQ/Bjp3fDVtOwASFP3R5OLhtFiN15beCyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739952602; c=relaxed/simple;
-	bh=c2Q0P13UZz4aWmHg7pSHLaZiCbXWTYiI29CLyzh8Cdo=;
+	s=arc-20240116; t=1739957367; c=relaxed/simple;
+	bh=TiX5hKFzn5cHW3dXI+eazWWgHEaso2Kv4HnEi0UzIJ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N2NozIc9Z0qypbObguBKb0v9CU2foDOdBccprIfQSoRoEbVNEtqFGBmxIDn/X3+ZmbB/+bDjTZ6f6p4qifjfB1efmtivqM+C2E7kOiHiWwqDefg6WePFYZUr5VQY91F2xkbkG0eoK57e/1pRUJ9DqXXD+KjM+UsmcQt3Lslntak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=fail smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dKPf/W8O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MeWi0m6i; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dKPf/W8O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MeWi0m6i; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=suse.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dKPf/W8O";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MeWi0m6i";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dKPf/W8O";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MeWi0m6i"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1D76821940;
-	Wed, 19 Feb 2025 08:09:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739952599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7n22irSeGWIqSBNiIIhY8dUu78jzeyktmwLlH058QWI=;
-	b=dKPf/W8OQXbxt6ftlFfGpxSgQu7gVp2dstzZ3XzqVgl5Z357Tinp+N+mnS5eZMNrmbpIct
-	ERkIgZLFbCqLer2bR/7cT4Nal5dezMobDUN5PBm/4ffPV3aQDn17w9FIeMBLCA5L6STVWi
-	Fu675OecpkfIKo5+vbkkfz5g/IUDu/c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739952599;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7n22irSeGWIqSBNiIIhY8dUu78jzeyktmwLlH058QWI=;
-	b=MeWi0m6iVBnfg747H1LUoCuWVrL86D9smnRpv47ULAXeqgfodW1nBInmL14qgH8vx7K4fX
-	EIRt6Mg5pinhPRCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="dKPf/W8O";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MeWi0m6i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1739952599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7n22irSeGWIqSBNiIIhY8dUu78jzeyktmwLlH058QWI=;
-	b=dKPf/W8OQXbxt6ftlFfGpxSgQu7gVp2dstzZ3XzqVgl5Z357Tinp+N+mnS5eZMNrmbpIct
-	ERkIgZLFbCqLer2bR/7cT4Nal5dezMobDUN5PBm/4ffPV3aQDn17w9FIeMBLCA5L6STVWi
-	Fu675OecpkfIKo5+vbkkfz5g/IUDu/c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1739952599;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7n22irSeGWIqSBNiIIhY8dUu78jzeyktmwLlH058QWI=;
-	b=MeWi0m6iVBnfg747H1LUoCuWVrL86D9smnRpv47ULAXeqgfodW1nBInmL14qgH8vx7K4fX
-	EIRt6Mg5pinhPRCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93F3213806;
-	Wed, 19 Feb 2025 08:09:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id p5PBItaRtWd5FwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 19 Feb 2025 08:09:58 +0000
-Message-ID: <0b68b63f-a826-45f5-8845-11db9b46757d@suse.de>
-Date: Wed, 19 Feb 2025 09:09:58 +0100
+	 In-Reply-To:Content-Type; b=R4vDVNYTs9mDSJZhpEyg5ZJLYlYHJ4bwQm/m1NnmDqD9F3kNrtUKX3vrd7fLT5esfxaP14rrFHLXyz2hV/RAZ/nHCPS6tsVRrx2VAvKRAXBj3VkAlsuSDhf23M/SFQGxwRAwWen5+2m/Y7XMAG+Pi4udFXCHI22keO3rTuKZ0ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13D371682;
+	Wed, 19 Feb 2025 01:29:43 -0800 (PST)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F0BED3F59E;
+	Wed, 19 Feb 2025 01:29:20 -0800 (PST)
+Message-ID: <a0f03e3e-bced-4be7-8589-1e65042b39aa@arm.com>
+Date: Wed, 19 Feb 2025 10:29:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -83,112 +27,155 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/25] drm/armada: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, imx@lists.linux.dev,
- linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
- virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-tegra@vger.kernel.org, intel-xe@lists.freedesktop.org,
- xen-devel@lists.xenproject.org
-References: <20250218142542.438557-1-tzimmermann@suse.de>
- <20250218142542.438557-7-tzimmermann@suse.de>
- <Z7St0O3A_mXEYK49@shell.armlinux.org.uk>
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+ Christian Loehle <christian.loehle@arm.com>,
+ Thierry Reding <treding@nvidia.com>, Waiman Long <longman@redhat.com>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+ Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
+ Shin Kawamura <kawasin@google.com>,
+ Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
+ <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
+ <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
+ <78f627fe-dd1e-4816-bbf3-58137fdceda6@nvidia.com>
+ <Z62ONLX4OLisCLKw@jlelli-thinkpadt14gen4.remote.csb>
+ <30a8cda5-0fd0-4e47-bafe-5deefc561f0c@nvidia.com>
+ <151884eb-ad6d-458e-a325-92cbe5b8b33f@nvidia.com>
+ <Z7Ne49MSXS2I06jW@jlelli-thinkpadt14gen4.remote.csb>
+ <Z7RZ4141H-FnoQPW@jlelli-thinkpadt14gen4.remote.csb>
+ <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
+ <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <Z7St0O3A_mXEYK49@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 1D76821940
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,lists.infradead.org,vger.kernel.org,lists.linux.dev,lists.xenproject.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
 
-Hi
+On 18/02/2025 15:18, Juri Lelli wrote:
+> On 18/02/25 15:12, Dietmar Eggemann wrote:
+>> On 18/02/2025 10:58, Juri Lelli wrote:
+>>> Hi!
+>>>
+>>> On 17/02/25 17:08, Juri Lelli wrote:
+>>>> On 14/02/25 10:05, Jon Hunter wrote:
 
-Am 18.02.25 um 16:57 schrieb Russell King (Oracle):
-> On Tue, Feb 18, 2025 at 03:23:29PM +0100, Thomas Zimmermann wrote:
->> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
->> buffer size. No alignment required.
+[...]
+
+>> Yeah, looks like suspend/resume behaves differently compared to CPU hotplug.
 >>
->> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
->> Cc: Russell King <linux@armlinux.org.uk>
-> armada_pitch() does have some special alignment (it aligns the pitch to
-> 128 bytes). I've no idea what drm_mode_size_dumb() does. Can you check
-> whether it does the same please?
->
-> If it doesn't, then this patch is incorrect.
+>> On my Juno [L b b L L L]
+>>                 ^^^
+>>                 isolcpus=[2,3]
+>>
+>> # ps2 | grep DLN
+>>    98    98 S 140      0   - DLN sugov:0
+>>    99    99 S 140      0   - DLN sugov:1
+>>
+>> # taskset -p 98; taskset -p 99
+>> pid 98's current affinity mask: 39
+>> pid 99's current affinity mask: 6
+>>
+>>
+>> [   87.679282] partition_sched_domains() called
+>> ...
+>> [   87.684013] partition_sched_domains() called
+>> ...
+>> [   87.687961] partition_sched_domains() called
+>> ...
+>> [   87.689419] psci: CPU3 killed (polled 0 ms)
+>> [   87.689715] __dl_bw_capacity() mask=2-5 cap=1024
+>> [   87.689739] dl_bw_cpus() cpu=6 rd->span=2-5 cpu_active_mask=0-2 cpus=1
+>> [   87.689757] dl_bw_manage: cpu=2 cap=0 fair_server_bw=52428
+>> total_bw=209712 dl_bw_cpus=1 type=DEF span=2-5
+>> [   87.689775] dl_bw_cpus() cpu=6 rd->span=2-5 cpu_active_mask=0-2 cpus=1
+>> [   87.689789] dl_bw_manage() cpu=2 cap=0 overflow=1 return=-16
+>> [   87.689864] Error taking CPU2 down: -16                       <-- !!!
+>> ...
+>> [   87.690674] partition_sched_domains() called
+>> ...
+>> [   87.691496] partition_sched_domains() called
+>> ...
+>> [   87.693702] partition_sched_domains() called
+>> ...
+>> [   87.695819] partition_and_rebuild_sched_domains() called
+>>
+> 
+> Ah, OK. Did you try with my last proposed change?
 
-Indeed, I should have noticed. Will be fixed in the next iteration. 
-Thanks for the review.
+I did now. 
 
-Best regards
-Thomas
+Patch-wise I have:
 
->
+(1) Putting 'fair_server's __dl_server_[de|at]tach_root() under if  
+    '(cpumask_test_cpu(rq->cpu, [old_rd->online|cpu_active_mask))' in 
+    rq_attach_root()
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+    https://lkml.kernel.org/r/Z7RhNmLpOb7SLImW@jlelli-thinkpadt14gen4.remote.csb
 
+(2) Create __dl_server_detach_root() and call it in rq_attach_root()
+
+    https://lkml.kernel.org/r/Z4fd_6M2vhSMSR0i@jlelli-thinkpadt14gen4.remote.csb
+
+plus debug patch:
+
+    https://lkml.kernel.org/r/Z6M5fQB9P1_bDF7A@jlelli-thinkpadt14gen4.remote.csb
+
+plus additional debug.
+
+The suspend issue still persists.
+
+My hunch is that it's rather an issue with having 0 CPUs left in DEF
+while deactivating the last isol CPU (CPU3) so we set overflow = 1 w/o
+calling __dl_overflow(). We want to account fair_server_bw=52428
+against 0 CPUs. 
+
+l B B l l l
+
+      ^^^
+      isolcpus=[3,4]
+
+
+cpumask_and(mask, rd->span, cpu_active_mask)
+
+mask = [3-5] & [0-3] = [3] -> dl_bw_cpus(3) = 1
+
+---
+
+dl_bw_deactivate() called cpu=5
+
+dl_bw_deactivate() called cpu=4
+
+dl_bw_deactivate() called cpu=3
+
+dl_bw_cpus() cpu=6 rd->span=3-5 cpu_active_mask=0-3 cpus=1 type=DEF
+                   ^^^^^^^^^^^^ ^^^^^^^^^^^^^^^^^^^
+  cpumask_subset(rd->span, cpu_active_mask) is false
+
+  for_each_cpu_and(i, rd->span, cpu_active_mask)
+    cpus++                                       <-- cpus is 1 !!!
+
+dl_bw_manage: cpu=3 cap=0 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=1 type=DEF span=3-5
+
+  called w/ 'req = dl_bw_req_deactivate'
+
+  dl_b->total_bw - fair_server_bw = 104856 - 52428 > 0
+
+    dl_bw_cpus(cpu) - 1 = 0
+   
+      overflow = 1
+
+So there is simply no capacity left in DEF for DL but
+'dl_b->total_bw - old_bw + new_bw' = 52428 > 0
