@@ -1,132 +1,139 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7831F1508;
-	Thu, 20 Feb 2025 10:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B10D1EB9FD;
+	Thu, 20 Feb 2025 10:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740046123; cv=none; b=tW+qNeaT5JdKrSAy1Soh3GkLYLAsuHGmvBvWPQkDNLYkrClFXrw9BokLAXCrFObP0fbhGopMHby/Kjfm1gks+jkL0rS7vMS2jz4IDap5BzhdbBt52d4cCQ/y1/LxI1mNre6OAsieFo5jFr1JB239NIPaPReOpA4mbpAqE1pqSnw=
+	t=1740047647; cv=none; b=AwNYamh1Cc4y57TSE3epARmZBu95+FQbwJWgLBHYGHTP7K8btgzOJFIbWcsHctj1qIYOcGoD6SirG3QUcEujDpPz0YDnJad+Qs/9ltd/xqrbZlSSOd8ZKFGzvGIQgL4WRusHqdYE2c2BSkUGC+VT6ipoE46/GSWfBGMK+0tPj24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740046123; c=relaxed/simple;
-	bh=qEEkaGFEKdByIXhxlRz4s/blmxr0i3FKT7WWs7RYcVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rzt8O2zvgjaCutDXkPax04BGJfGafJtg+OUIAuYfLgw+M0ayaM9v+0Goaz7lorkBHZB6vcayEwsqVD6sZoDI/YR4XiboqHV6y7JMDFGULvD76oxBg2Fpy+azvchx5pSCE+BHj1tgCrhIx+JrNktE9RuVenzVvQFLoi5Zp0YZ+uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Js2YtSm2; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1740047647; c=relaxed/simple;
+	bh=K31js+Y/EcBO6V3WQ4R9CBWdey1VZsrQnmVOn6z2drg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOIE0uxv3eXraFruPR+G5b7ZbHmk6c54IEoIQ9Ci4f6np4FGzyYAhsofJdn0iQyR7wZNcLhfYgAkTYW6e+OiN4a3MyZ+A2pRBhLAnGNq56honddWtje5xH/KevvWfOpBRKo+v6dwBAiHIv7A5rJDTAbkedwZ1IbKUWHCKMrYRuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=l5FBJtwn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Js2YtSm2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740046121; x=1771582121;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qEEkaGFEKdByIXhxlRz4s/blmxr0i3FKT7WWs7RYcVE=;
-  b=Js2YtSm23SX09ECAeyG+E0bWqFZk8fw8HtXh+EazJvcBVjkWoaUmFc9i
-   YcXcso8mk/RXYY2t90n1aDS3b5Nne4uLFwkm8gX+zrDJFxwLYb7K7PcPi
-   H+JxIjnqpu/KHTXIt9osI76mChz0+aM0ggGLJd78JWjiRWt1ZHRiDJ/h8
-   fV+CetiDk3baXJKMnajlkikHuobf1y5fVY5C/zgkaygJ8MrS1f6QYfkXK
-   SpMDy7wNnipsgrepEnA8KuDjFzKhAfbqxXOEna7kRJwyKZ+tk/2yETxnj
-   X3HAoZCDZ/qT6uzNeMTVDah/Qx8MLyD3m3oENWtW6XNniKk+mg1UzkOFH
-   Q==;
-X-CSE-ConnectionGUID: itITFt9BRUKHcKMimWcyCw==
-X-CSE-MsgGUID: tscZdd6nRie/VFF5DOAi4Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11350"; a="44734925"
-X-IronPort-AV: E=Sophos;i="6.13,301,1732608000"; 
-   d="scan'208";a="44734925"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 02:08:40 -0800
-X-CSE-ConnectionGUID: UUemawqKTUWXKRiDeorKDQ==
-X-CSE-MsgGUID: hc9L0Du1SByRgSK2VuJbDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120221268"
-Received: from dhhellew-desk2.ger.corp.intel.com (HELO [10.245.244.161]) ([10.245.244.161])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2025 02:08:36 -0800
-Message-ID: <92c1b182-5a0b-4d13-9b16-172ac970b62e@intel.com>
-Date: Thu, 20 Feb 2025 10:08:33 +0000
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="l5FBJtwn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C2C5C4CED1;
+	Thu, 20 Feb 2025 10:34:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740047646;
+	bh=K31js+Y/EcBO6V3WQ4R9CBWdey1VZsrQnmVOn6z2drg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l5FBJtwnQRa2oa4TkBtzPqEQv/qNNXlRPLkkKK+OvNPMg7rNhv4c0apJq4h9kp4pY
+	 5LzD/syGrCZYHf5mJKusog796GVFkkwEkYNgsQdnmnKX9R4Z8My0TJiiO4IdbUBjpU
+	 xj+nvjdayRN7I3VRW1OmK3mY5MOngmApCi7CrCBA=
+Date: Thu, 20 Feb 2025 11:34:04 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Holger =?iso-8859-1?Q?Hoffst=E4tte?= <holger@applied-asynchrony.com>,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 6.12 000/230] 6.12.16-rc1 review
+Message-ID: <2025022040-vintage-dissuade-bcc4@gregkh>
+References: <20250219082601.683263930@linuxfoundation.org>
+ <b5a72621-a76a-41a1-a415-5ab1cabf0108@rnnvmail201.nvidia.com>
+ <9836adde-8d67-48b5-944b-1b9f107434a8@nvidia.com>
+ <2025021938-prowling-semisoft-0d2b@gregkh>
+ <b686ddb5-aeff-47c2-ba94-b6be9dbafcc1@nvidia.com>
+ <2bb3354c-7f77-b07f-55b2-ac3bf5159532@applied-asynchrony.com>
+ <15f46da3-8744-4aac-bc2e-ecf06ea3367d@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 23/25] drm/xe: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>
-References: <20250218142542.438557-1-tzimmermann@suse.de>
- <20250218142542.438557-24-tzimmermann@suse.de>
-Content-Language: en-GB
-From: Matthew Auld <matthew.auld@intel.com>
-In-Reply-To: <20250218142542.438557-24-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <15f46da3-8744-4aac-bc2e-ecf06ea3367d@nvidia.com>
 
-On 18/02/2025 14:23, Thomas Zimmermann wrote:
-> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch
-> and buffer size. Align the pitch to a multiple of 8. Align the
-> buffer size according to hardware requirements.
+On Wed, Feb 19, 2025 at 02:04:23PM +0000, Jon Hunter wrote:
 > 
-> Xe's internal calculation allowed for 64-bit wide buffer sizes, but
-> the ioctl's internal checks always verified against 32-bit wide limits.
-> Hance, it is safe to limit the driver code to 32-bit calculations as
-> well.
+> On 19/02/2025 13:55, Holger Hoffst‰tte wrote:
+> > On 2025-02-19 14:32, Jon Hunter wrote:
+> > > 
+> > > On 19/02/2025 13:20, Greg Kroah-Hartman wrote:
+> > > > On Wed, Feb 19, 2025 at 01:12:41PM +0000, Jon Hunter wrote:
+> > > > > Hi Greg,
+> > > > > 
+> > > > > On 19/02/2025 13:10, Jon Hunter wrote:
+> > > > > > On Wed, 19 Feb 2025 09:25:17 +0100, Greg Kroah-Hartman wrote:
+> > > > > > > This is the start of the stable review cycle for the 6.12.16 release.
+> > > > > > > There are 230 patches in this series, all will be
+> > > > > > > posted as a response
+> > > > > > > to this one.† If anyone has any issues with these
+> > > > > > > being applied, please
+> > > > > > > let me know.
+> > > > > > > 
+> > > > > > > Responses should be made by Fri, 21 Feb 2025 08:25:11 +0000.
+> > > > > > > Anything received after that time might be too late.
+> > > > > > > 
+> > > > > > > The whole patch series can be found in one patch at:
+> > > > > > > ††††https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/
+> > > > > > > patch-6.12.16-rc1.gz
+> > > > > > > or in the git tree and branch at:
+> > > > > > > ††††git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-
+> > > > > > > stable-rc.git linux-6.12.y
+> > > > > > > and the diffstat can be found below.
+> > > > > > > 
+> > > > > > > thanks,
+> > > > > > > 
+> > > > > > > greg k-h
+> > > > > > 
+> > > > > > Failures detected for Tegra ...
+> > > > > > 
+> > > > > > Test results for stable-v6.12:
+> > > > > > ††††† 10 builds:††† 10 pass, 0 fail
+> > > > > > ††††† 26 boots:††† 26 pass, 0 fail
+> > > > > > ††††† 116 tests:††† 115 pass, 1 fail
+> > > > > > 
+> > > > > > Linux version:††† 6.12.16-rc1-gcf505a9aecb7
+> > > > > > Boards tested:††† tegra124-jetson-tk1, tegra186-p2771-0000,
+> > > > > > ††††††††††††††††† tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+> > > > > > ††††††††††††††††† tegra20-ventana, tegra210-p2371-2180,
+> > > > > > ††††††††††††††††† tegra210-p3450-0000, tegra30-cardhu-a04
+> > > > > > 
+> > > > > > Test failures:††† tegra186-p2771-0000: pm-system-suspend.sh
+> > > > > 
+> > > > > 
+> > > > > The following appear to have crept in again ...
+> > > > > 
+> > > > > Juri Lelli <juri.lelli@redhat.com>
+> > > > > †††† sched/deadline: Check bandwidth overflow earlier for hotplug
+> > > > > 
+> > > > > Juri Lelli <juri.lelli@redhat.com>
+> > > > > †††† sched/deadline: Correctly account for allocated
+> > > > > bandwidth during hotplug
+> > > > 
+> > > > Yes, but all of them are there this time.† Are you saying none should be
+> > > > there?† Does 6.14-rc work for you with these targets?
+> > 
+> > > The 1st one definitely shouldn't. That one is still under debug for
+> > > v6.14 [0]. I can try reverting only that one and seeing if it now
+> > > passes with the 2nd.
+> > Most certainly not - you need all three or none:
+> > https://lore.kernel.org/stable/905eb8ab-2635-e030-b671-
+> > ab045b55f24c@applied-asynchrony.com/
+> > 
+> > > [0] https://lore.kernel.org/linux-tegra/ba51a43f-796d-4b79-808a-
+> > > b8185905638a@nvidia.com/
+> > 
+> > I was about to link to that.. please try 6.14-rc and see if it works for
+> > you.
 > 
-> v3:
-> - mention 32-bit calculation in commit description (Matthew)
-> 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-> Cc: "Thomas Hellstr√∂m" <thomas.hellstrom@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Reviewed-by: Matthew Auld <matthew.auld@intel.com>
+> 6.14-rc is still failing for this board. Like I said, and per the above
+> thread, that issue is still being debugged.
 
+Ok, I'm dropping them all from both 6.13 and 6.12 now and will push out
+-rc2 versions soon.
 
-> ---
->   drivers/gpu/drm/xe/xe_bo.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/xe/xe_bo.c b/drivers/gpu/drm/xe/xe_bo.c
-> index 78d09c5ed26d..b34f446ad57d 100644
-> --- a/drivers/gpu/drm/xe/xe_bo.c
-> +++ b/drivers/gpu/drm/xe/xe_bo.c
-> @@ -9,6 +9,7 @@
->   #include <linux/nospec.h>
->   
->   #include <drm/drm_drv.h>
-> +#include <drm/drm_dumb_buffers.h>
->   #include <drm/drm_gem_ttm_helper.h>
->   #include <drm/drm_managed.h>
->   #include <drm/ttm/ttm_device.h>
-> @@ -2672,14 +2673,13 @@ int xe_bo_dumb_create(struct drm_file *file_priv,
->   	struct xe_device *xe = to_xe_device(dev);
->   	struct xe_bo *bo;
->   	uint32_t handle;
-> -	int cpp = DIV_ROUND_UP(args->bpp, 8);
->   	int err;
->   	u32 page_size = max_t(u32, PAGE_SIZE,
->   		xe->info.vram_flags & XE_VRAM_FLAGS_NEED64K ? SZ_64K : SZ_4K);
->   
-> -	args->pitch = ALIGN(args->width * cpp, 64);
-> -	args->size = ALIGN(mul_u32_u32(args->pitch, args->height),
-> -			   page_size);
-> +	err = drm_mode_size_dumb(dev, args, SZ_64, page_size);
-> +	if (err)
-> +		return err;
->   
->   	bo = xe_bo_create_user(xe, NULL, NULL, args->size,
->   			       DRM_XE_GEM_CPU_CACHING_WC,
+thanks,
 
+greg k-h
