@@ -1,134 +1,175 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1231CDFA6;
-	Thu, 20 Feb 2025 16:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740067855; cv=pass; b=aMTLhOdq5e4XfQahmdSKtyY1BXpdnhHR4DiHV+QbDJAhz/c844espDR2Cx8a+quNfrBLupLwYRLNj79idKWUu4OOB9Zglsxae8EjoZ69tAcoVj6BBoZZ4DrsZB/2+4qaxGdt4Krsh4KXUTRtiBbIOzMM2GfBGbGmGyVVcLn16ls=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740067855; c=relaxed/simple;
-	bh=nI4YvPODF0CSfU1Q8RwoW99HnVMb3lO3KpFjsvSqG3s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AB8Zy0ZcqM7pLZ6A+prwHp0eXf7ptVylUEWDJPBaZNXsnPRkxM2KxmDD/9C7sEvGgLD3/mfx304BlX4cvnd/Uo4SHoVapntqEaYmA2YXa62YtEnb3cRL56H3+fEHFnlm7AhFnmJS8MJCWHYtW4UGJfSEVz03WO0hKshs6dG8wC4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=EduweB5K; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841F126462B
+	for <linux-tegra@vger.kernel.org>; Thu, 20 Feb 2025 19:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740080156; cv=none; b=Ik5ut0tLRnPnh8hDKuD1FHNzk+dcYaEJQGelsNE+kHdjGvwGY2cm3TFx8ETZUSmxMfs1FBZIQarj0Y4KDCh14Yfcd6Y7gwo7Fnk3YjYABXMSf+wV0fY+WfruIfLCstAuaeUy+DGeQzO3N9T6E+sQq1RZOQvZspjqR0o1hA1aB3I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740080156; c=relaxed/simple;
+	bh=Cn4+MbGF93ZPciRW8w9henqPO1354AGpPKF7B/F7T8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IKcvWJDXlqtWAFDTCci1/hppawadqy/vEQOSh63uRMNgJJuQEIjHPRPpNJh99Lh6rtj4rN3SBCrUswKbgEVn04mt0E+PLIs9zVji4AhoI8ci2sqkqt/Lu/1MokRchRa/xef+ibg5lW/VqOho+H481x+zedYgZVty3IErB4B0XU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=rNDaCpeJ; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="EduweB5K"
-ARC-Seal: i=1; a=rsa-sha256; t=1740067826; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fK0hgpnSc7wHdnScZwsvHvmbOkyWb03c01zpIeu3IanN4S/24IADwzwMmHCxMzZh69e0QFLKw+VJlDSQ5aln/0YB2RDSXVsVBcOmmHiTso9hMIalmUv2v2fkpsh2ReLVgNiLiHMfkoe1PZI015y2wn/sO3WfP5mg6mjLzsr/2s8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740067826; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ZELLhyNrX/AMU/X/XLHluCd0loXd+7aqRfqJaYVGOoE=; 
-	b=ViwEYwSYLaplLiRRebA+EavTbgXaGFDif39tG9l0dYzvRf0ts/sv5Zr3fKIj0Tpa2mXGglvmOEcv8ZzesWzbD/NQRcb1JjyqPZqc3wMYU5+EunyG9GZcm9+M2YI1x2DBHIaTHIgSZWttgVwQS7+aK1fAp99vFS8yjuL3nyBC814=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740067826;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=ZELLhyNrX/AMU/X/XLHluCd0loXd+7aqRfqJaYVGOoE=;
-	b=EduweB5KBkR0ccyYBTaR71kHlB+Cm2C1+uOYpnAGhP8fsVCU4dd1oLWvb0mZNeiJ
-	5LPdG3Z1MweoTCjWRid30oQ6iHV9OeNchE42cx4IMeeJ1b4OBPQ5wC3b9rSZ5Fztbc0
-	7ra/K4+6kLD4/HJUfSiWtBOZSIxhWfXx8uvFMDg0=
-Received: by mx.zohomail.com with SMTPS id 1740067825336681.7729656180264;
-	Thu, 20 Feb 2025 08:10:25 -0800 (PST)
-Message-ID: <d2bd8baf-e1f7-4e8a-9e33-259051d6f97a@collabora.com>
-Date: Thu, 20 Feb 2025 19:10:18 +0300
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="rNDaCpeJ"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-220bfdfb3f4so29135235ad.2
+        for <linux-tegra@vger.kernel.org>; Thu, 20 Feb 2025 11:35:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1740080152; x=1740684952; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2bN/NPVn1vKfJddb+/MWowQ/DYT7KXXiFwwxB/L9OIQ=;
+        b=rNDaCpeJMwkY6YrV7sOuTj8fe0IhPje9phuImXtcL1DCSt4pR03Z42zlYeuIw9SEvf
+         ftBNPc9jAcy5ST7hmuIjyQLKBa4oRORtZ3xbfoS7+Hdb6zzjpsBKUZJrbg7Un13jSCIB
+         3E/64SX9odvmOgZp/ZWNYiS9IvGRUlbYlE3tuzc9zTj8AXJjcHkZ7Rx+uzNV+ZUCiChr
+         iUhBNlSjkyOKLdBm2Ci1bzFCTkWDJ5DiKXWxPSYQHW61DvcuCBqx5hkBae59oCRcRab+
+         SraP+C6XWF2Sgxh6gm+KFRdks6CPrftu9fRCLrzku41kwkPQiy8fRRek4Qlq59XMBTOC
+         2s1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740080152; x=1740684952;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2bN/NPVn1vKfJddb+/MWowQ/DYT7KXXiFwwxB/L9OIQ=;
+        b=AxqTSVbIIG+wiKuLUjJyeay+EXivqjGn1Jal/bHDp9MB9nxueZ/LOHihNp64WMOpoa
+         kS6e8O+RnLYC0OX9Hs1QvhX+B5XYmdFGQDJOJvY2hVpUgGtzI4CGCtLnfRfi7v0b0Jzn
+         A/UwMlp2FlunfRAPAzUNTaPAMBj0vinx8cq3Y5eWaXUcLjqIUeOKkiPUoA8SqrMphBMN
+         1yIhtChKRfRei+UfkITQ4EbXpiOEnc3JhpnkpLUCqR2aID3rTCc9YWi3YnXwYuMA4JsJ
+         hv4UXUBA1q6gq56ZCKXrYiYFau+lDWbUJcNIG79hIHHIy/GWpDYbf69X9y5g3YXofHgw
+         iA3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWK0zMPSzIToPEI0pJ6wtMuBTA9Z8Sc8ROpCX7vaVRMvoQ31v8vTj7f59/R2meRVgJ647s/jgitcqOvqQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLHdyo3z0Uts5QNp7qAroXf/LsJ1VmQa8ZRNv9bQPRy08mS0Ne
+	kAbZLz3pRkGXqHF1z5kIbOGmGZvPwvg0Q/VxC+cyZSYkE1gb8KYqMY3l4K4SvqA=
+X-Gm-Gg: ASbGncuM7sejLxMTz+B7vkIhuicOvbV/dAo0H+wyMC+6USkvqf9XjXsrxDly+AcoiwN
+	4mBLjSKhJgVfHE2AzPdwKK5ltPi0Z/RV5zMAiy4Bns/M3lQwX4B00YKI+nfCQqQ1POZEzkLLCjm
+	w8VWdC+O8lRMFCWSgKFvIiS4WFy3W1AJt3xIAqT7XMa0c/IqLO0g9dsuZFLSSgQmmdNqmqo+m/d
+	PH9u8unn4eEn5ndV3ZKlMc5GZza+Y+0BaLVYYaCWieum5dZxZBg5Zq08iDoD45bEEZu+h+pJN+U
+	3pO6yeohHuXmbcRyfTS13mgZ6MRUITHNJQ==
+X-Google-Smtp-Source: AGHT+IFLUZkJqTzzZT+I/M3yqbHhvCV9FHZfFsSF+/uPg4tVfA/GlpswgR4SI57hCH58PcrddckVtQ==
+X-Received: by 2002:a17:902:db07:b0:216:73f0:ef63 with SMTP id d9443c01a7336-2219fff4377mr5157465ad.49.1740080152564;
+        Thu, 20 Feb 2025 11:35:52 -0800 (PST)
+Received: from tjeznach.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545c9bbsm123012805ad.127.2025.02.20.11.35.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 11:35:52 -0800 (PST)
+Date: Thu, 20 Feb 2025 11:35:49 -0800
+From: Tomasz Jeznach <tjeznach@rivosinc.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Albert Ou <aou@eecs.berkeley.edu>, asahi@lists.linux.dev,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Hector Martin <marcan@marcan.st>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	Sven Peter <sven@svenpeter.dev>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Chen-Yu Tsai <wens@csie.org>,
+	Will Deacon <will@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
+	Joerg Roedel <jroedel@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+	David Rientjes <rientjes@google.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 19/23] iommu/riscv: Update to use
+ iommu_alloc_pages_node_lg2()
+Message-ID: <Z7eEFagK3xugrkKH@tjeznach.ba.rivosinc.com>
+References: <0-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
+ <19-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 21/25] drm/virtio: Compute dumb-buffer sizes with
- drm_mode_size_dumb()
-Content-Language: en-US
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>
-References: <20250109150310.219442-1-tzimmermann@suse.de>
- <20250109150310.219442-22-tzimmermann@suse.de>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20250109150310.219442-22-tzimmermann@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19-v2-545d29711869+a76b5-iommu_pages_jgg@nvidia.com>
 
-On 1/9/25 17:57, Thomas Zimmermann wrote:
-> Call drm_mode_size_dumb() to compute dumb-buffer scanline pitch and
-> buffer size. Align the pitch to a multiple of 4.
+On Fri, Feb 14, 2025 at 01:07:52PM -0400, Jason Gunthorpe wrote:
+> One part of RISCV already has a computed size, however the queue
+> allocation must be aligned to 4k. The other objects are 4k by spec.
 > 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: David Airlie <airlied@redhat.com>
-> Cc: Gerd Hoffmann <kraxel@redhat.com>
-> Cc: Gurchetan Singh <gurchetansingh@chromium.org>
-> Cc: Chia-I Wu <olvaffe@gmail.com>
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 > ---
->  drivers/gpu/drm/virtio/virtgpu_gem.c | 11 +++++------
->  1 file changed, 5 insertions(+), 6 deletions(-)
+>  drivers/iommu/riscv/iommu.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
-> index 5aab588fc400..22cf1cd2fdfd 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_gem.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
-> @@ -23,6 +23,7 @@
->   * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
->   */
+> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+> index 2750f2e6e01a2b..8835c82f118db4 100644
+> --- a/drivers/iommu/riscv/iommu.c
+> +++ b/drivers/iommu/riscv/iommu.c
+> @@ -65,13 +65,14 @@ static int riscv_iommu_devres_pages_match(struct device *dev, void *res, void *p
+>  	return devres->addr == target->addr;
+>  }
 >  
-> +#include <drm/drm_dumb_buffers.h>
->  #include <drm/drm_file.h>
->  #include <drm/drm_fourcc.h>
+> -static void *riscv_iommu_get_pages(struct riscv_iommu_device *iommu, int order)
+> +static void *riscv_iommu_get_pages(struct riscv_iommu_device *iommu,
+> +				   unsigned int size)
+>  {
+>  	struct riscv_iommu_devres *devres;
+>  	void *addr;
 >  
-> @@ -66,15 +67,14 @@ int virtio_gpu_mode_dumb_create(struct drm_file *file_priv,
->  	struct virtio_gpu_object_params params = { 0 };
->  	struct virtio_gpu_device *vgdev = dev->dev_private;
->  	int ret;
-> -	uint32_t pitch;
-> +
-> +	ret = drm_mode_size_dumb(dev, args, SZ_4, 0);
+> -	addr = iommu_alloc_pages_node(dev_to_node(iommu->dev),
+> -				      GFP_KERNEL_ACCOUNT, order);
+> +	addr = iommu_alloc_pages_node_sz(dev_to_node(iommu->dev),
+> +					 GFP_KERNEL_ACCOUNT, size);
+>  	if (unlikely(!addr))
+>  		return NULL;
+>  
+> @@ -161,9 +162,9 @@ static int riscv_iommu_queue_alloc(struct riscv_iommu_device *iommu,
+>  	} else {
+>  		do {
+>  			const size_t queue_size = entry_size << (logsz + 1);
+> -			const int order = get_order(queue_size);
+>  
+> -			queue->base = riscv_iommu_get_pages(iommu, order);
+> +			queue->base = riscv_iommu_get_pages(
+> +				iommu, max(queue_size, SZ_4K));
+>  			queue->phys = __pa(queue->base);
+>  		} while (!queue->base && logsz-- > 0);
+>  	}
+> @@ -618,7 +619,7 @@ static struct riscv_iommu_dc *riscv_iommu_get_dc(struct riscv_iommu_device *iomm
+>  				break;
+>  			}
+>  
+> -			ptr = riscv_iommu_get_pages(iommu, 0);
+> +			ptr = riscv_iommu_get_pages(iommu, SZ_4K);
+>  			if (!ptr)
+>  				return NULL;
+>  
+> @@ -698,7 +699,7 @@ static int riscv_iommu_iodir_alloc(struct riscv_iommu_device *iommu)
+>  	}
+>  
+>  	if (!iommu->ddt_root) {
+> -		iommu->ddt_root = riscv_iommu_get_pages(iommu, 0);
+> +		iommu->ddt_root = riscv_iommu_get_pages(iommu, SZ_4K);
+>  		iommu->ddt_phys = __pa(iommu->ddt_root);
+>  	}
+>  
+> -- 
+> 2.43.0
+> 
 
-Nit: I'd keep using PAGE_SIZE instead of 0 for more clarity, but that's
-an optional wish.
+Reviewed-by: Tomasz Jeznach <tjeznach@rivosinc.com>
 
-> +	if (ret)
-> +		return ret;
->  
->  	if (args->bpp != 32)
->  		return -EINVAL;
->  
-> -	pitch = args->width * 4;
-> -	args->size = pitch * args->height;
-> -	args->size = ALIGN(args->size, PAGE_SIZE);
-> -
->  	params.format = virtio_gpu_translate_format(DRM_FORMAT_HOST_XRGB8888);
->  	params.width = args->width;
->  	params.height = args->height;
-> @@ -92,7 +92,6 @@ int virtio_gpu_mode_dumb_create(struct drm_file *file_priv,
->  	if (ret)
->  		goto fail;
->  
-> -	args->pitch = pitch;
->  	return ret;
->  
->  fail:
 
-Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-
--- 
-Best regards,
-Dmitry
-
+Thanks,
+- Tomasz
