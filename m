@@ -1,170 +1,303 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7229B1EFF9B;
-	Thu, 20 Feb 2025 10:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BBD1FDE06
+	for <linux-tegra@vger.kernel.org>; Thu, 20 Feb 2025 15:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740048791; cv=none; b=iQodQLFujMWUyJwjmXUL3Yud6wk/6bwiOU689CnivogAgEY29RoMyn0jLveS8NL10azUNWHh6PbHIIM452PHXqal1gSlYNaYyKG4cxKMaw7I/pdtKGsdUx0TVK2qJhPN72Yof17jqPq6FkoE08Dm4fkmSXWB/Vphb8Rs2F6B+ZE=
+	t=1740065163; cv=none; b=JKpWG0bjQbvjAsqDKc6jODzcxLiiOSnJAA1LmYxUWXpL0NCoEnwaN0nT7tjSSp0NTi+HFs3CvUWy0s9lopAKPegVmDSYFMkRNu9yHR+m4gAFHRX2DFVDNPpqXC9IZjYOFLon3FfWHusqQiFiztPUHWXJvazkU3fw1DCgEOLCfPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740048791; c=relaxed/simple;
-	bh=cGmqrMQrzQNKvOYoVbXWr6Lo7FskS49XuKpEvHODBjA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oHiiC9zSxCy8c/R73xPoIBegmHPk8y+CEpOMvzT9/vJlAbOYc5hgKUUni+9wxCSrKRS/X9R1QWc6KUiyrSCSSN7MFsCFty4Hl0sifOIK3Zl+sxM8QLhvNt2jyqAh1HEtU9erKy/UtMI765o1klOs96aWvLQpXVTsG+o/0Yldsa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=wF6C4CGD; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1740065163; c=relaxed/simple;
+	bh=BxyksjnVBxS5f6pgAQEVB2aqaDm/wu22jdIya9tj2BI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BeVStru8Lzcc+VCm/M/glThX+rN7vPhiFTPAMcCEiSWAfDcfRHydw3IBwG/ju25uyIBrATMmq+GPCi9zNTek7tdhrH8TGckt8Sk0dGuxl1m/tIU4KhLd+5dNYOng5ufp4HSp4t2LPK1Gdo2zpkCuGdVp0BwIcXEvcET/WRdE4pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c30Bw9Uk; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wF6C4CGD"
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C69249FC;
-	Thu, 20 Feb 2025 11:51:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740048703;
-	bh=cGmqrMQrzQNKvOYoVbXWr6Lo7FskS49XuKpEvHODBjA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wF6C4CGDoP+/HkpCLJaEAJQ5SUDGi9n0fFlEojmHm56G4KxPszUsR/q+aXtSRtihR
-	 AQoXwkJ+zXwR8f+vg71cO6pL6HL787yGlQcQZD3c6z5sRdwltXCONK8mS2/SPW2eEM
-	 lzKYZgKG0aXbNUjO1esnvXLsAJsX44MVKluFgT40=
-Message-ID: <596b960e-71f8-4c2c-9abe-058206df1dfb@ideasonboard.com>
-Date: Thu, 20 Feb 2025 12:53:03 +0200
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c30Bw9Uk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740065160;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wuTV6mP01rxN+f4H8bWXYcVacuTnGTYaBSQNRccUQnM=;
+	b=c30Bw9UkMNyuv2m2ZiF1TVXEEyYQIaSx/56hS1eLCgGqIxB4Po06gmsOaoSyfM/o91ecu+
+	9zIN09tZP/PVa0RmhFaxwH8k4Tjti5vpR8gse4ufEO5Q8i3Wplo8Bro8B9HAA+RvhZb70l
+	pFiSNu43PYcxG2r5VXM2WkFdE38mxck=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-193-rIRkuxZ_P5qGWer7dSKTcA-1; Thu, 20 Feb 2025 10:25:58 -0500
+X-MC-Unique: rIRkuxZ_P5qGWer7dSKTcA-1
+X-Mimecast-MFC-AGG-ID: rIRkuxZ_P5qGWer7dSKTcA_1740065158
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-438da39bb69so7252935e9.0
+        for <linux-tegra@vger.kernel.org>; Thu, 20 Feb 2025 07:25:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740065153; x=1740669953;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wuTV6mP01rxN+f4H8bWXYcVacuTnGTYaBSQNRccUQnM=;
+        b=TXsDJwgtBN/1lGmshU9t1oOOQrbRu6WEUq8WTViQCmzUklpkZbcstt6vqAlsVkFDDm
+         +vptVE82rV520DNJpAbYmP48CMWqC4BHICpPeyy/f7L/l1JMkhNKe8TeZxCKlKFWDrF3
+         TvqNRNBpxHNkU3Z3U8k5+bhihopr5Khl7N0Q4urGhzbX0MtEJuQka9M80+bJmIHhwbqH
+         Kw7mHx2PrD8V6tTqZ0i7TkQoFRGV07EAH7uID28tUO6jrDC0bCoZANy10ctIGd2uq/ye
+         GLgJndrNw+sLojQYtmtsjbY0IMhvM/Jm1uiqqm0AeP8lGi8L4ffY0hwSDj0OYzO74mGX
+         W/Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXk9gtsv02gdQkdJSBgjuqLX2fEDnBq4lunwI9wF/eeciuzxwXXZW+F3tulba1pltNFUAZqlbFet+bAng==@vger.kernel.org
+X-Gm-Message-State: AOJu0YysNnmUtngxVCJLpHxC7yKOzBmdYsiMosrOSu4f5CP3YBy6NF2K
+	cq/cg7rRSSGYRIVBYBlwjMSs+3cfzCz+dtCuTl+7HMKnGE6QLyK0kVLtiXqh7RAJVimwoLbkNug
+	PeZ43RXp8xrEBDTV7b//8EiyRqyg4RKGco1VRcl8HO+Ot8DkIu+rlRncqEKjZ
+X-Gm-Gg: ASbGncv2hxL/Atysh1TqF9I7v9iUSfZsu+QqE9hHXF2DuphCOq0GAkU26xSgd35aymO
+	33QPjhYBvvh0o7K3XfSznKCCsLLhLi/DGBx0k95APrg0cpuSDCvRiFvubSW6ALcyAGfw5uxrdGR
+	baYQtAag9eGqm3LxxwrDf0Mnn/YQXQ12AKNh1KseoBZrFsZpdmUAWXs2mMdGOFBBmW4kVcffM04
+	2W4Cf8EEmtg/QlkEsev+gTog7pjWXj0zRn6kjt3PWuuLZ2WIgBJQqLAuaMLEU1teK6OWkssQT1t
+	vpncY9GbOoYPjT9dtywx0mQoN019i0nolA==
+X-Received: by 2002:a05:600c:4691:b0:439:88bb:d02f with SMTP id 5b1f17b1804b1-43999d7563emr93406535e9.5.1740065152638;
+        Thu, 20 Feb 2025 07:25:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFa5YMsmCmOZzVxQ6vaznN0QlVkW/DH9INFlWqmg3o/zovbuIfJB/FVL5h8TnkgWoo3nPQuIA==
+X-Received: by 2002:a05:600c:4691:b0:439:88bb:d02f with SMTP id 5b1f17b1804b1-43999d7563emr93406135e9.5.1740065152200;
+        Thu, 20 Feb 2025 07:25:52 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.34.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399c41022csm49874695e9.40.2025.02.20.07.25.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2025 07:25:50 -0800 (PST)
+Date: Thu, 20 Feb 2025 16:25:47 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	Aashish Sharma <shraash@google.com>,
+	Shin Kawamura <kawasin@google.com>,
+	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
+ for hotplug
+Message-ID: <Z7dJe7XfG0e6ECwr@jlelli-thinkpadt14gen4.remote.csb>
+References: <151884eb-ad6d-458e-a325-92cbe5b8b33f@nvidia.com>
+ <Z7Ne49MSXS2I06jW@jlelli-thinkpadt14gen4.remote.csb>
+ <Z7RZ4141H-FnoQPW@jlelli-thinkpadt14gen4.remote.csb>
+ <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
+ <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
+ <a0f03e3e-bced-4be7-8589-1e65042b39aa@arm.com>
+ <Z7WsRvsVCWu_By1c@jlelli-thinkpadt14gen4.remote.csb>
+ <4c045707-6f5a-44fd-b2d1-3ad13c2b11ba@arm.com>
+ <537f2207-b46b-4a5e-884c-d6b42f56cb02@arm.com>
+ <Z7cGrlXp97y_OOfY@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/25] drm/dumb-buffers: Provide helper to set pitch
- and size
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20250218142542.438557-1-tzimmermann@suse.de>
- <20250218142542.438557-3-tzimmermann@suse.de>
- <dcd59a75-7945-4a2e-99f9-3abbb3e9de14@ideasonboard.com>
- <355ed315-61fa-4a9d-b72b-8d5bc7b5a16c@suse.de>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <355ed315-61fa-4a9d-b72b-8d5bc7b5a16c@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7cGrlXp97y_OOfY@jlelli-thinkpadt14gen4.remote.csb>
 
-Hi,
+On 20/02/25 11:40, Juri Lelli wrote:
+> On 19/02/25 19:14, Dietmar Eggemann wrote:
 
-On 20/02/2025 12:05, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 20.02.25 um 10:18 schrieb Tomi Valkeinen:
-> [...]
->>> + * Color modes of 10, 12, 15, 30 and 64 are only supported for use by
->>> + * legacy user space. Please don't use them in new code. Other modes
->>> + * are not support.
->>> + *
->>> + * Do not attempt to allocate anything but linear framebuffer memory
->>> + * with single-plane RGB data. Allocation of other framebuffer
->>> + * layouts requires dedicated ioctls in the respective DRM driver.
->>
->> According to this, every driver that supports, say, NV12, should 
->> implement their own custom ioctl to do the exact same thing? And, of 
->> course, every userspace app that uses, say, NV12, should then add code 
->> for all these platforms to call the custom ioctls?
-> 
-> Yes, that's exactly the current status.
-> 
-> There has been discussion about a new dumb-create ioctl that takes a DRM 
-> format as parameter. I'm all for it, but it's out of the scope for this 
-> series.
-> 
->>
->> As libdrm's modetest currently supports YUV formats with dumb buffers, 
->> should we remove that code, as it's not correct and I'm sure people 
->> use libdrm code as a reference?
-> 
-> Of course not.
-> 
->>
->> Well, I'm not serious above, but I think all my points from the 
->> earlier version are still valid. I don't like this. It changes the 
->> parameters of the ioctl (bpp used to be bits-per-pixel, not it's 
->> "color mode"), and the behavior of the ioctl, behavior that we've had 
->> for a very long time, and we have no idea how many users there are 
->> that will break (could be none, of course). And the documentation 
->> changes make the current behavior and uses wrong or legacy.
-> 
-> Before I go into details about this statement, what use case exactly are 
-> you referring to when you say that behavior changes?
+...
 
-For every dumb_buffer allocation with bpp that is not divisible by 8, 
-the result is different, i.e. instead of DIV_ROUND_UP(width * bpp, 8), 
-we now have width * DIV_ROUND_UP(bpp, 8). This, of course, depends on 
-the driver implementation. Some already do the latter.
+> OK. CPU3 + CPU4 (CPU5 offline).
+> 
+> > [  171.003085] __dl_update() (3) cpu=2 rq->dl.extra_bw=1122848
+> > [  171.003091] __dl_update() (3) cpu=3 rq->dl.extra_bw=1022361
+> > [  171.003096] __dl_update() (3) cpu=4 rq->dl.extra_bw=1035468
+> > [  171.003103] dl_bw_cpus() cpu=2 rd->span=0-2 cpu_active_mask=0-4 cpumask_weight(rd->span)=3 type=DYN
+> > [  171.003113] __dl_server_attach_root() called cpu=2
+> > [  171.003118] dl_bw_cpus() cpu=2 rd->span=0-2 cpu_active_mask=0-4 cpumask_weight(rd->span)=3 type=DYN
+> > [  171.003127] __dl_add() tsk_bw=52428 dl_b->total_bw=157284 type=DYN rd->span=0-2
+> > [  171.003136] __dl_update() (3) cpu=0 rq->dl.extra_bw=477111
+> > [  171.003141] __dl_update() (3) cpu=1 rq->dl.extra_bw=851970
+> > [  171.003147] __dl_update() (3) cpu=2 rq->dl.extra_bw=1105372
+> > [  171.003188] root domain span: 0-2
+> > [  171.003194] default domain span: 3-5
+> > [  171.003220] rd 0-2: Checking EAS, schedutil is mandatory
+> > [  171.005840] psci: CPU5 killed (polled 0 ms)
+> 
+> OK. DYN has (CPU0,1,2) 157284 and DEF (CPU3,4) 104856.
+> 
+> CPU4 going offline (it's isolated on DEF).
+> 
+> > [  171.006436] dl_bw_deactivate() called cpu=4
+> > [  171.006446] __dl_bw_capacity() mask=3-5 cap=892
+> > [  171.006454] dl_bw_cpus() cpu=4 rd->span=3-5 cpu_active_mask=0-4 cpus=2 type=DEF
+> > [  171.006464] dl_bw_manage: cpu=4 cap=446 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=2 type=DEF span=3-5
+> > [  171.006475] dl_bw_cpus() cpu=4 rd->span=3-5 cpu_active_mask=0-4 cpus=2 type=DEF
+> > [  171.006485] CPU: 4 UID: 0 PID: 36 Comm: cpuhp/4 Not tainted 6.13.0-09343-g9ce523149e08-dirty #172
+> > [  171.006495] Hardware name: ARM Juno development board (r0) (DT)
+> > [  171.006499] Call trace:
+> > [  171.006502]  show_stack+0x18/0x24 (C)
+> > [  171.006514]  dump_stack_lvl+0x74/0x8c
+> > [  171.006528]  dump_stack+0x18/0x24
+> > [  171.006541]  dl_bw_manage+0x3a0/0x500
+> > [  171.006554]  dl_bw_deactivate+0x40/0x50
+> > [  171.006564]  sched_cpu_deactivate+0x34/0x24c
+> > [  171.006579]  cpuhp_invoke_callback+0x138/0x694
+> > [  171.006591]  cpuhp_thread_fun+0xb0/0x198
+> > [  171.006604]  smpboot_thread_fn+0x200/0x224
+> > [  171.006616]  kthread+0x12c/0x204
+> > [  171.006627]  ret_from_fork+0x10/0x20
+> > [  171.006639] __dl_overflow() dl_b->bw=996147 cap=446 cap_scale(dl_b->bw, cap)=433868 dl_b->total_bw=104856 old_bw=52428 new_bw=0 type=DEF rd->span=3-5
+> > [  171.006652] dl_bw_manage() cpu=4 cap=446 overflow=0 req=0 return=0 type=DEF
+> > [  171.006706] partition_sched_domains() called
+> > [  171.006713] CPU: 4 UID: 0 PID: 36 Comm: cpuhp/4 Not tainted 6.13.0-09343-g9ce523149e08-dirty #172
+> > [  171.006722] Hardware name: ARM Juno development board (r0) (DT)
+> > [  171.006727] Call trace:
+> > [  171.006730]  show_stack+0x18/0x24 (C)
+> > [  171.006740]  dump_stack_lvl+0x74/0x8c
+> > [  171.006754]  dump_stack+0x18/0x24
+> > [  171.006767]  partition_sched_domains+0x48/0x7c
+> > [  171.006778]  sched_cpu_deactivate+0x1a8/0x24c
+> > [  171.006792]  cpuhp_invoke_callback+0x138/0x694
+> > [  171.006805]  cpuhp_thread_fun+0xb0/0x198
+> > [  171.006817]  smpboot_thread_fn+0x200/0x224
+> > [  171.006829]  kthread+0x12c/0x204
+> > [  171.006840]  ret_from_fork+0x10/0x20
+> > [  171.006852] partition_sched_domains_locked() ndoms_new=1
+> > [  171.006861] partition_sched_domains_locked() goto match2
+> > [  171.006867] rd 0-2: Checking EAS, schedutil is mandatory
+> > [  171.007774] psci: CPU4 killed (polled 4 ms)
+> 
+> As I guess you were saying above, CPU4 contribution is not removed from
+> DEF.
+> 
+> > [  171.007971] dl_bw_deactivate() called cpu=3
+> > [  171.007981] __dl_bw_capacity() mask=3-5 cap=446
+> > [  171.007989] dl_bw_cpus() cpu=3 rd->span=3-5 cpu_active_mask=0-3 cpus=1 type=DEF
+> > [  171.007999] dl_bw_manage: cpu=3 cap=0 fair_server_bw=52428 total_bw=104856 dl_bw_cpus=1 type=DEF span=3-5
+>                                                                           ^^^^
+> And this is now wrong. :/
 
-This change also first calls the drm_driver_color_mode_format(), which 
-could change the behavior even more, but afaics at the moment does not. 
-Although, maybe some platform does width * DIV_ROUND_UP(bpp, 8) even for 
-bpp < 8, and then this series changes it for 1, 2 and 4 bpps (but not 
-for 3, 5, 6, 7, if I'm not mistaken).
+So, CPU4 was still on DEF and we don't go through any of the accouting
+functions. I wonder if we could simplify this by always re-doing the
+accounting after root domains are stable (also for partition_
+sched_domain()). So, please take a look at what below. It can definitely
+be better encapsulated (also more cleanups are needed) and maybe it's
+just useless/stupid (hard to say here because I always see 'pass'
+whatever I try to change), but anyway. Also pushed to the usual branch.
 
-However, as the bpp is getting rounded up, this probably won't break any 
-user. But it _is_ a change in the behavior of a uapi, and every time we 
-change a uapi that's been out there for a long time, I'm getting 
-slightly uncomfortable.
+---
+ include/linux/sched/deadline.h |  4 ++++
+ kernel/cgroup/cpuset.c         | 13 ++++++++-----
+ kernel/sched/deadline.c        | 11 ++++++++---
+ kernel/sched/topology.c        |  1 +
+ 4 files changed, 21 insertions(+), 8 deletions(-)
 
-So, as a summary, I have a feeling that nothing will break, but I can't 
-say for sure. And as I'm having trouble seeing the benefit of this 
-change for the user, I get even more uncomfortable.
-
-  Tomi
+diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
+index 3a912ab42bb5..8fc4918c6f3f 100644
+--- a/include/linux/sched/deadline.h
++++ b/include/linux/sched/deadline.h
+@@ -34,6 +34,10 @@ static inline bool dl_time_before(u64 a, u64 b)
+ struct root_domain;
+ extern void dl_add_task_root_domain(struct task_struct *p);
+ extern void dl_clear_root_domain(struct root_domain *rd);
++extern void dl_clear_root_domain_cpu(int cpu);
++
++extern u64 dl_generation;
++extern bool dl_bw_visited(int cpu, u64 gen);
+ 
+ #endif /* CONFIG_SMP */
+ 
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 0f910c828973..52243dcc61ab 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -958,6 +958,8 @@ static void dl_rebuild_rd_accounting(void)
+ {
+ 	struct cpuset *cs = NULL;
+ 	struct cgroup_subsys_state *pos_css;
++	int cpu;
++	u64 gen = ++dl_generation;
+ 
+ 	lockdep_assert_held(&cpuset_mutex);
+ 	lockdep_assert_cpus_held();
+@@ -965,11 +967,12 @@ static void dl_rebuild_rd_accounting(void)
+ 
+ 	rcu_read_lock();
+ 
+-	/*
+-	 * Clear default root domain DL accounting, it will be computed again
+-	 * if a task belongs to it.
+-	 */
+-	dl_clear_root_domain(&def_root_domain);
++	for_each_possible_cpu(cpu) {
++		if (dl_bw_visited(cpu, gen))
++			continue;
++		
++		dl_clear_root_domain_cpu(cpu);
++	}
+ 
+ 	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
+ 
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 8f7420e0c9d6..a6723ed84e68 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -166,7 +166,7 @@ static inline unsigned long dl_bw_capacity(int i)
+ 	}
+ }
+ 
+-static inline bool dl_bw_visited(int cpu, u64 gen)
++bool dl_bw_visited(int cpu, u64 gen)
+ {
+ 	struct root_domain *rd = cpu_rq(cpu)->rd;
+ 
+@@ -207,7 +207,7 @@ static inline unsigned long dl_bw_capacity(int i)
+ 	return SCHED_CAPACITY_SCALE;
+ }
+ 
+-static inline bool dl_bw_visited(int cpu, u64 gen)
++bool dl_bw_visited(int cpu, u64 gen)
+ {
+ 	return false;
+ }
+@@ -3037,6 +3037,11 @@ void dl_clear_root_domain(struct root_domain *rd)
+ 	}
+ }
+ 
++void dl_clear_root_domain_cpu(int cpu) {
++	printk_deferred("%s: cpu=%d\n", __func__, cpu);
++	dl_clear_root_domain(cpu_rq(cpu)->rd);
++}
++
+ #endif /* CONFIG_SMP */
+ 
+ static void switched_from_dl(struct rq *rq, struct task_struct *p)
+@@ -3216,7 +3221,7 @@ DEFINE_SCHED_CLASS(dl) = {
+ };
+ 
+ /* Used for dl_bw check and update, used under sched_rt_handler()::mutex */
+-static u64 dl_generation;
++u64 dl_generation;
+ 
+ int sched_dl_global_validate(void)
+ {
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index c6a140d8d851..9892e6fa3e57 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -2814,5 +2814,6 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ {
+ 	mutex_lock(&sched_domains_mutex);
+ 	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
++	dl_rebuild_rd_accounting();
+ 	mutex_unlock(&sched_domains_mutex);
+ }
 
