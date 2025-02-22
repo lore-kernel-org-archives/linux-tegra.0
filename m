@@ -1,25 +1,31 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05D513B787;
-	Fri, 21 Feb 2025 14:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2D2202C40;
+	Sat, 22 Feb 2025 10:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740149114; cv=none; b=Jj94YvKAypqr+TLkgC36vCLb7ZNARTnzEtP4F+6sAgf0F90UG7/HAIA9eChl1OezO75+bqjjfGkO1erjz8cdUOwu5bfta8y6A2HYAujJMMLrYaAxmZEaaO5ONvamFbq0F4Bmn30OmZYQ7qRhv6KP+hCzBXBk41IMOGejQ03oXi0=
+	t=1740218798; cv=none; b=SLQ2KJb//vZSNHUpyc4X4r8vZA9UHNFBR+7J9DRUVizBS6Y4SFRmjGwVtA872b78dUtuy/8caTw7dVUscb3mf3D1Tl48jBxiZmd3194kOtcNYaha+4JXOBCbS89QJaqe1hgN6xNP8Z2xM7qus+1oLlrL/3M7Iq7Ket6DUV3zRac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740149114; c=relaxed/simple;
-	bh=R7JS7jIZcjDSPrwz8G0a0Y/N00Su0rg91ouIBSJPJcI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KLQ5/jmBwldG/MKPadHk1JVKpXQOCoZjm5LAVFecvMiYP4gpQIdyYe2wdYjB4BKll5Oo5EfJo3mncwSOlMSkw5cHZnAEIlZP7F9Xh2+IVUxdd9IGeGdlpl0ezb5mlYF2twT5y7v/SVxk4bEZmvlpXzV/1H0WXgRz8KuvOjcSZPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5183A106F;
-	Fri, 21 Feb 2025 06:45:27 -0800 (PST)
-Received: from [192.168.2.132] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E84843F5A1;
-	Fri, 21 Feb 2025 06:45:04 -0800 (PST)
-Message-ID: <d5162d16-e9fd-408f-9bc5-68748e4b1f87@arm.com>
-Date: Fri, 21 Feb 2025 15:45:03 +0100
+	s=arc-20240116; t=1740218798; c=relaxed/simple;
+	bh=Lv2voLQK6jHaJMOKYmw7WUiLwYV7+E67yPAzbTONFmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Qq+/UjicFKfYyxRRS5XF6En6jsydKEu2cvC+vJS7xGmHlDTnJO6GSDV6kJcf5Df3Rk8r/d4UsAELP29ak9taR8zQ8WjPja9uzMnQntAQTVM02UBpK487651RWV8fmzM63iBxWkSyjiuxhKFDV7UEXuKOSx+oVwAFwJibCtRnupw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z0N0C0bJ5z1HJhc;
+	Sat, 22 Feb 2025 18:04:59 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 452991406AC;
+	Sat, 22 Feb 2025 18:06:32 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
+ (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 22 Feb
+ 2025 18:06:31 +0800
+Message-ID: <da5d18c7-cf09-4956-ad9c-231b12cc0267@huawei.com>
+Date: Sat, 22 Feb 2025 18:06:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -27,91 +33,90 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-To: Jon Hunter <jonathanh@nvidia.com>, Juri Lelli <juri.lelli@redhat.com>
-Cc: Christian Loehle <christian.loehle@arm.com>,
- Thierry Reding <treding@nvidia.com>, Waiman Long <longman@redhat.com>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <151884eb-ad6d-458e-a325-92cbe5b8b33f@nvidia.com>
- <Z7Ne49MSXS2I06jW@jlelli-thinkpadt14gen4.remote.csb>
- <Z7RZ4141H-FnoQPW@jlelli-thinkpadt14gen4.remote.csb>
- <d7cc3a3c-155e-4872-a426-cbd239d79cac@arm.com>
- <Z7SWvr86RXlBbJlw@jlelli-thinkpadt14gen4.remote.csb>
- <a0f03e3e-bced-4be7-8589-1e65042b39aa@arm.com>
- <Z7WsRvsVCWu_By1c@jlelli-thinkpadt14gen4.remote.csb>
- <4c045707-6f5a-44fd-b2d1-3ad13c2b11ba@arm.com>
- <537f2207-b46b-4a5e-884c-d6b42f56cb02@arm.com>
- <Z7cGrlXp97y_OOfY@jlelli-thinkpadt14gen4.remote.csb>
- <Z7dJe7XfG0e6ECwr@jlelli-thinkpadt14gen4.remote.csb>
- <1c75682e-a720-4bd0-8bcc-5443b598457f@nvidia.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <1c75682e-a720-4bd0-8bcc-5443b598457f@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [Patch 0/5] Support Autonomous Selection mode in cppc_cpufreq
+To: Sumit Gupta <sumitg@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>
+CC: Viresh Kumar <viresh.kumar@linaro.org>, <lenb@kernel.org>,
+	<robert.moore@intel.com>, <corbet@lwn.net>, <linux-pm@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<acpica-devel@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-tegra@vger.kernel.org>, <treding@nvidia.com>, <jonathanh@nvidia.com>,
+	<sashal@nvidia.com>, <vsethi@nvidia.com>, <ksitaraman@nvidia.com>,
+	<sanjayc@nvidia.com>, <bbasu@nvidia.com>
+References: <20250211103737.447704-1-sumitg@nvidia.com>
+ <20250211104428.dibsnxmkiluzixvz@vireshk-i7>
+ <b45d0d81-e4f7-474e-a146-0075a6145cc2@huawei.com>
+ <868d4c2a-583a-4cbb-a572-d884090a7134@nvidia.com>
+ <8d5e0035-d8fe-49ef-bda5-f5881ff96657@huawei.com>
+ <94bdab73-adc4-4b43-9037-5639f23e3d1e@nvidia.com>
+ <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
+ <e58a20f8-e8bf-409c-a878-af2bd3c7d243@nvidia.com>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <e58a20f8-e8bf-409c-a878-af2bd3c7d243@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-On 21/02/2025 12:56, Jon Hunter wrote:
+On 2025/2/21 21:14, Sumit Gupta wrote:
 > 
-> On 20/02/2025 15:25, Juri Lelli wrote:
->> On 20/02/25 11:40, Juri Lelli wrote:
->>> On 19/02/25 19:14, Dietmar Eggemann wrote:
-
-[...]
-
-> Latest branch is not building for me ...
 > 
->   CC      kernel/time/hrtimer.o
-> In file included from kernel/sched/build_utility.c:88:
-> kernel/sched/topology.c: In function ‘partition_sched_domains’:
-> kernel/sched/topology.c:2817:9: error: implicit declaration of function
-> ‘dl_rebuild_rd_accounting’ [-Werror=implicit-function-declaration]
->  2817 |         dl_rebuild_rd_accounting();
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~
+> On 19/02/25 00:53, Rafael J. Wysocki wrote:
+>>
+>> There seems to be some quite fundamental disagreement on how this
+>> should be done, so I'm afraid I cannot do much about it ATM.
+>>
+>> Please agree on a common approach and come back to me when you are ready.
+>>
+>> Sending two concurrent patchsets under confusingly similar names again
+>> and again isn't particularly helpful.
+>>
+>> Thanks!
+> 
+> Hi Rafael,
+> 
+> Thank you for looking into this.
+> 
+> Hi Lifeng,
+> 
+> As per the discussion, we can make the driver future extensible and
+> also can optimize the register read/write access.
+> 
+> I gave some thought and below is my proposal.
+> 
+> 1) Pick 'Patch 1-7' from your patch series [1] which optimize API's
+>    to read/write a cpc register.
 
-This should fix it for now:
+'patch 1-7' in [1] doesn't conflicts with [2], so can be reviewed and
+applied separately. I would follow this up in that series.
 
--->8--
+> 
+> 2) Pick my patches in [2]:
+>    - Patch 1-4: Keep all cpc registers together under acpi_cppc sysfs.
+>                 Also, update existing API's to read/write regs in batch.
+>    - Patch 5: Creates 'cppc_cpufreq_epp_driver' instance for booting
+>      all CPU's in Auto mode and set registers with right values.
+>      They can be updated after boot from sysfs to change hints to HW.
+>      I can use the optimized API's from [1] where required in [2].
+> 
+> Let me know if you are okay with this proposal.
+> I can also send an updated patch series with all the patches combined?
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 52243dcc61ab..3484dda93a94 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -954,7 +954,9 @@ static void dl_update_tasks_root_domain(struct cpuset *cs)
-        css_task_iter_end(&it);
- }
- 
--static void dl_rebuild_rd_accounting(void)
-+extern void dl_rebuild_rd_accounting(void);
-+
-+void dl_rebuild_rd_accounting(void)
- {
-        struct cpuset *cs = NULL;
-        struct cgroup_subsys_state *pos_css;
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 9892e6fa3e57..60c9996ccf47 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -2806,6 +2806,8 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
-        update_sched_domain_debugfs();
- }
- 
-+extern void dl_rebuild_rd_accounting(void);
-+
- /*
-  * Call with hotplug lock held
-  */
+As mentioned above, 'patch 1-7' in [1] can be reviewed and applied
+separately. No need to be combined with other patches.
+
+About how to support auto selection mode in cppc_cpufreq, I think we need
+to sort out usecases, scenarios, and requirements from both of us before we
+disscus and agree on a design to implement. I am currently working on it
+and will sent out my thoughts later.
+
+Regards,
+Lifeng
+
+> 
+> [1] https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@huawei.com/
+> [2] https://lore.kernel.org/lkml/20250211103737.447704-1-sumitg@nvidia.com/
+> 
+> Regards,
+> Sumit Gupta
+> 
 
