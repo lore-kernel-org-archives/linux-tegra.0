@@ -1,173 +1,173 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2062.outbound.protection.outlook.com [40.107.237.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340772045A5
-	for <linux-tegra@vger.kernel.org>; Sat, 22 Feb 2025 23:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740268789; cv=none; b=VaNS9fZjTQKant2Rmkz/o3baQy58Z4hfgb4xzhfSVWZCyVHjkhRUBeF2z7NDOlgB8YrmrxoDdbdJ4e+a7fsnK2Eqp5+Gz7SsNiefDZey0gL5KRBSy/vw9BniKCzbLtg7KnAVFnBaIaprW7Wac7jXQnMx3pl+h9f2sqetql/Fkqw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740268789; c=relaxed/simple;
-	bh=BC1VikLvaQ+wmk7I7O5kqTkttd71b1FW4KIkZw3Br0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vt/SWKy5GxtA6KTeDu7qTRBKeeeQJlBZ7JfPkBoTp7Kns15ZdpqXpHozt456YzhediXQjXHHLOeQc76YQZ+Jhma9fPDJFrXiIk+j3DT1JlsXjtwZ7n8lGzraDaB6JbAWeXZ3HlyhMPR9mlGs/s6YJ+IFuuIb91MSahV5iRJlXdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=HMMaV2Ty; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39668192B95;
+	Mon, 24 Feb 2025 09:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740388597; cv=fail; b=s8njKgZkTjfVCQOz9NEqLDPFnYZeS1So24GOuiS//1iC5tB6GnEbcHvCOy/sfi1HHs3hq7qMo72FkFeuNBoA3PfQW2xqnV17WcUWjKR3VFCtImIaODF2SK2myrZjOYLdfZgqkiodZcou0Pw+gagEMkS4l8F6+RQIZbi5fR/it84=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740388597; c=relaxed/simple;
+	bh=kHY7oQ0rhbbYTNxuQsrQx8yfPEbuejGrNTwywiKs2Sg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H0pyMDvq172ywAN5owFDlMqkejRByE3cSu23jOllYHW2oo9yMT+1aZp/msU5nu0F6MYfAsyk7CSL+gvEXjWkORIm/FJkDTrXEub1GYn7wgJ8TdDQlJQ8JIT0Bui4992R86lnwKPIk90JipgupPk2bR+BUzRQK+973nljYRnBMic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=X1SQYI/T; arc=fail smtp.client-ip=40.107.237.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="HMMaV2Ty"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so7938956a12.1
-        for <linux-tegra@vger.kernel.org>; Sat, 22 Feb 2025 15:59:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1740268785; x=1740873585; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lu2LoNkT4EDP4h3CKy4CP8LgrHHyNd0iD27ycNO3cNY=;
-        b=HMMaV2Tynj3BGowSvfj9cHuQoVqAX/HkWUxJOH1zJzPICzw+fYsk5FE2gDA8+fRDnL
-         7fE5yb8roH+HqCw9DVVnqwxvBeHhldTN9xIxZBed2j/r0Jz0sKJblk+ersgetj7Qze3a
-         4YNeiSn8CtZ1JM92TtHW7UPt6eISGPCqjITB7leBAq8I8yAHxwWvx3+I4cU3vju75b77
-         Bw5weGObOTNk5aC6kYtV2psXM3aC3pVXtia3Uq4RboDgGSeQVswCxAESKKAhiaUJTi1n
-         n/CKj8G1ubmFZ8URoI4I9nEeY8XXu8xtLCYjRSmIdkXfEnRpP+dybVt9Bu+o4GJyoWjj
-         /isA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740268785; x=1740873585;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lu2LoNkT4EDP4h3CKy4CP8LgrHHyNd0iD27ycNO3cNY=;
-        b=TDo7cwN3Pj5Q+aXc+PMZBVyu2sAiorKQoOAB7g0qoX/bOLqK9jYMwvDFFF1aU5jo8F
-         O/FUF2y/C5YeRYXnthAegRyHidqdFgMjpR7REs0f6XN2UWvtA7viVndm40pEL0VjXRU0
-         w6Cxp0lZc3g1rM3ElvttKO0S24N23VRMmM/Lh+8Xm+DvvpSlkveuxGaQVH6DcT7a/zmQ
-         tTvoT2U2anIeITZFLinYtCupccuv/4LmSXoJUUZ8pxvDXa1zdFkozN4DfzlD0o1495Iw
-         FqTc+DzrJordllR3T3cwl7CD6Gqs9kPWQ/2VP6bgU03STEoP4I6n4F8Ys6/IYt/4Re9U
-         U/eg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0IaK3kyNwzJzuel3GfoLQ8SaUjweOuxbQNE9EVOeeM+Es20pDb958idnVx2NeZpwuKgLfkHkPnrKaGg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTVtGVgz27hJCZb3D+xNM3/NNl94OtUKDc4Hz2cHNlVjm6iJdd
-	IbR57L78gF9odgPbkaWNVnmMzdfxOD3Xc9ufIfkBKKPQKqsq4QWTchku4Xk5vqs=
-X-Gm-Gg: ASbGnct1xl175faUU80DNBfnFYlkevECePOcX6sgnkAn7uCBUtcQNhgclVf+EV9uAJI
-	S8DYJnZ6n9VQZw4DPx7ghotCIRnXSq80bhs9i5KR/C6rSGdlP0mnkOzz6Eellgg99mC/JyNkHc+
-	fjpvlFHDWcnIh6amxFIARYFpw1Szltniqx6U8QfW5n3YfBsHg/h04Sxv8OXjgrlXPsoIOQoSU/f
-	yEbUiAkSl+WIvbfCBLMI9aFjoE8OItmgiJU7y1krvvQuDel9hqX4oxw9twlfnEo32Ky6/1/zkLt
-	fDXuhtlirMr9lLUZu2lM
-X-Google-Smtp-Source: AGHT+IEwAuQGxMOVSUtusVjN0BopgUdnw2fnKA4dzOqvUMZKdjWs0Zk6qVmFxkFPYOp6ZdBA7ynXRg==
-X-Received: by 2002:a17:907:7fa7:b0:abb:d334:73e7 with SMTP id a640c23a62f3a-abc0ae910a4mr749202366b.14.1740268785510;
-        Sat, 22 Feb 2025 15:59:45 -0800 (PST)
-Received: from airbuntu ([46.186.201.36])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8209a2cbsm1458407366b.133.2025.02.22.15.59.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 15:59:45 -0800 (PST)
-Date: Sat, 22 Feb 2025 23:59:36 +0000
-From: Qais Yousef <qyousef@layalina.io>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-Message-ID: <20250222235936.jmyrfacutheqt5a2@airbuntu>
-References: <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
- <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
- <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
- <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <285a43db-c36d-400e-8041-0566f089a482@arm.com>
- <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
- <20250216163340.ttwddti5pzuynsj5@airbuntu>
- <Z7NNHmGgrEF666W_@jlelli-thinkpadt14gen4.remote.csb>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="X1SQYI/T"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DfB7/HbHQMXYvMoKyuevFxCnMhNMbMl3qWDy79csh8rsvIbs2+nVwLmtUAmrZ5tWwx0zSfEqBl0s9eqobqnvsoaSTZ0uSgOcNHtR8wFrc3AWvEtWick2KP+d/aj0/QFqD9d1l8C4JbTY47+zBk100ZVjZxQTC5TR7caVga/lOQSU40pP6K4mRofdP0qoqwMFrmr+W02klCiJUaJBQwFf8v3W6jwUnnibAh3IvuZFKQ/ZhwCqFeJzaYi5OJESjwqbaCJsq6/2YwPtxoGJ4rE9Mj/CCWYpbFNCNJxNX4i+ZE1NJgxq+NrlPbCHlG1ZRB15F4fhbnl0CxBLZd1vXZd77g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PbwwG8BZ448l5CwTRj8VyG+yRPl80m083RVzXddRSb4=;
+ b=tSYYGCOZEwbJVsWDdOrjcFqfgVU/PF46P2z8X8JFjsxpbm+1G1SsfiFEFxTBk6Km1o9Pxxfo1oB15934UQuQ8BcVTDjQg0sZvB7BwFLvTvjrBXKgQFdb7v9736VcmlFoATc2Rp3ImEzPN3rzjwHW1869ouse/TsVSZFnEoKyKQrA4hZQLCgoBoJCJeswmOM1m59IwPj2EkTrlNk6AsDbJJKhoIGzKDKcGffiGsSgbljrovbvzCzVkDu/vOk+nLLoXAGWxfFWgzfgMUvDffvHdc0tzikG8ZQsu6E2+3DhtMxdQXFkjObMX7rxek41+FVdqiWlj1Ge5FpnparJbUjb1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=gondor.apana.org.au
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PbwwG8BZ448l5CwTRj8VyG+yRPl80m083RVzXddRSb4=;
+ b=X1SQYI/TBW4p/kfV3XAlo7Mjg9iWuISyryvwasjQovOcjzFJul+i3cPL2jYBz4k9immL/BfWq+u/JmEM9w2eOVH0Z7hKEfx4oFhCgRikmS4NhiiCRPi+vTZSvwR9CdterzqDuqV+iUXP21bKBlK44CAT2/zfulG38eAu/BqpYDPNxAIv+wSPgEPeZVYqhqlCBCMeQjtjXXdPteUYgtL2x14XjX8+aHFy5m/fGfO6Rch/VWCoBvVsP0TaZ8QVkp7DBR2sxAbBbJf/ApWd31GGbTMsy/Ht23dzT3gM7+cYxE8P5cXSJ4Sw9rrfrzRhvcBQKoh8y4cwDSGpVahx7BQ+nQ==
+Received: from MW4PR03CA0085.namprd03.prod.outlook.com (2603:10b6:303:b6::30)
+ by SJ2PR12MB7894.namprd12.prod.outlook.com (2603:10b6:a03:4c6::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Mon, 24 Feb
+ 2025 09:16:30 +0000
+Received: from SJ1PEPF00002313.namprd03.prod.outlook.com
+ (2603:10b6:303:b6:cafe::9a) by MW4PR03CA0085.outlook.office365.com
+ (2603:10b6:303:b6::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.17 via Frontend Transport; Mon,
+ 24 Feb 2025 09:16:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ1PEPF00002313.mail.protection.outlook.com (10.167.242.167) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.16 via Frontend Transport; Mon, 24 Feb 2025 09:16:29 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 24 Feb
+ 2025 01:16:21 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 24 Feb 2025 01:16:20 -0800
+Received: from BUILDSERVER-IO-L4T.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 24 Feb 2025 01:16:18 -0800
+From: Akhil R <akhilrajeev@nvidia.com>
+To: <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+	<thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+	<linux-crypto@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Akhil R <akhilrajeev@nvidia.com>
+Subject: [PATCH v3 00/10] Tegra Security Engine driver improvements
+Date: Mon, 24 Feb 2025 14:46:00 +0530
+Message-ID: <20250224091610.49683-1-akhilrajeev@nvidia.com>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z7NNHmGgrEF666W_@jlelli-thinkpadt14gen4.remote.csb>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002313:EE_|SJ2PR12MB7894:EE_
+X-MS-Office365-Filtering-Correlation-Id: c9e88f78-cc2d-4549-67fa-08dd54b3ec77
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?VNHWbIhvelXI5rv/Ux/CrHYzfL7yNbLxG34DE6uqVVWNwewJk1qij/EqFE6e?=
+ =?us-ascii?Q?ta4I5sSg8d0B2oaQi7kUm+vx2YwbUEdIMpp/01916QmmH1Mf3sR0XEdtn1wo?=
+ =?us-ascii?Q?9W0l8F9LF7mqS3PjqcxyNzRHL7or0rKr3aI9PZPcCXqKti5745MVP6doc5xh?=
+ =?us-ascii?Q?TbCBC9cFdu/9bZGtAex+dAFWLRtFTWkxHR96avXdyugoj1UPCftTvLLBv0mw?=
+ =?us-ascii?Q?ZDCWn476CcUjyV+T8WGOV7fanLkZxe8DhqGgpBE/rhnP85Azymm8rWT3xjCd?=
+ =?us-ascii?Q?NDKw50BX1czg2Y817u14XvLMFNRBg7XhRpKKGITdEj0lEIY2XGVCQyrfAPW2?=
+ =?us-ascii?Q?fprZnYA7tZI3flxG16Kj7OVb4582/MRXacVCa+HoWjPx7gdAn8c4FOWt4Iin?=
+ =?us-ascii?Q?zElEBUluRaNI9qzvzpAv2erBIk+LVRzmYphxuJio1J6qmB5v3DFdwugW/tts?=
+ =?us-ascii?Q?rZSwwBdB4HKIrptRLYlnwiSDmYYpKhokni8BGJ99dXWyrfb1LLjHHS2HG50G?=
+ =?us-ascii?Q?pXpOBOy47D4BqrrsKru65Z5n/5Ox8/Div9S+LUjuyg3PUiAmUTs44iV+2ZmY?=
+ =?us-ascii?Q?G/Cx4uNEnUpPVqRpQ69w1RNxsHCqKE1uf0el57l4IExsQKsLUKHb/xUnE7wV?=
+ =?us-ascii?Q?kj14T6+JZM69IyOIMAC1mfV7t61aHKT/NniNNppIMX1nEauBvHEqt6JWQE+2?=
+ =?us-ascii?Q?iivCb57a+B1TM8ScucirCKBIBCcyG4XV+G/3f8g0FpdeWcVW95t1z7ynMd53?=
+ =?us-ascii?Q?+mtovveGW9bjkMZWhjD/0GbqJQEGvS4WzOOJD17zETDuDhYZ0Yw89SUkjDc0?=
+ =?us-ascii?Q?1VuX/Gb3Tct+sAEgZZvkYWpKN06R9kHX9l0rdjJZ/iM4jat1lG/zivjUtohF?=
+ =?us-ascii?Q?Ugdoe3Xfk9S63sFewB5BFx77L1FPaKjUrx/4nmC8m3VC5xT7SVuod4GaxYTO?=
+ =?us-ascii?Q?mKoLQcIOFzThIfeePzHXnHu2tSQkUpzNjPAzhEEngVkPI+dU+I9vV5SVri09?=
+ =?us-ascii?Q?LEaTsqAkY9DoxJUPifgMfsKFa9q/ZG5/a4mKM9cchL9HsLNXZCzDtyYxX4M5?=
+ =?us-ascii?Q?PdRLxNs38Y+fZpCyNlMUpk8hwtABlsG0pHA9zbULdJ18qW/HlElOeC2OyfN8?=
+ =?us-ascii?Q?BnjQHIisYKRpUnfmBllo78TMUSVr2d1K060S85SViQNw/RMf5T7yvryDUBWd?=
+ =?us-ascii?Q?DHS739O5KMnPJSP5KChEXtq2CKnrGsO9Mb1D/o9EvRbKHIHA9H2RSAwt5Vpm?=
+ =?us-ascii?Q?IfmyxCIRuGr3+5iyuHZIVeKktqCBOM0bVgPi1yxwu2jESXeS7WotC8dUzvli?=
+ =?us-ascii?Q?czmSWAEjENwpaFdBK5Svnf3gKZU8+ba7XQkNJ1EN0luPfAd1pWKt5bkhPPLX?=
+ =?us-ascii?Q?h4Uu1S0n0KPayWHsHc7yLqnxQCiySLur8U964oQ6SEE7uzaVPnfejqJs17Gv?=
+ =?us-ascii?Q?wWVgV99rSIqHXDUrwauRzs2GAs6LRPOx9cpI/i64mnIKR7axebQT9cK2mRVB?=
+ =?us-ascii?Q?vPrzTtmrjGXj3o4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 09:16:29.8981
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9e88f78-cc2d-4549-67fa-08dd54b3ec77
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002313.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7894
 
-On 02/17/25 15:52, Juri Lelli wrote:
-> On 16/02/25 16:33, Qais Yousef wrote:
-> > On 02/13/25 07:20, Juri Lelli wrote:
-> > > On 12/02/25 19:22, Dietmar Eggemann wrote:
-> > > > On 11/02/2025 11:42, Juri Lelli wrote:
-> > > 
-> > > ...
-> > > 
-> > > > > What about we actually ignore them consistently? We already do that for
-> > > > > admission control, so maybe we can do that when rebuilding domains as
-> > > > > well (until we find maybe a better way to deal with them).
-> > > > > 
-> > > > > Does the following make any difference?
-> > > > 
-> > > > It at least seems to solve the issue. And like you mentioned on irc, we
-> > > > don't know the bw req of sugov anyway.
-> > > > 
-> > > > So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
-> > > > 
-> > > > dl_rq[0]:
-> > > >   .dl_nr_running                 : 0
-> > > >   .dl_bw->bw                     : 996147
-> > > >   .dl_bw->total_bw               : 0       <-- !
-> > > > 
-> > > > IMHO, people who want to run serious DL can always check whether there
-> > > > are already these infrastructural DL tasks or even avoid schedutil.
-> > > 
-> > > It definitely not ideal and admittedly gross, but not worse than what we
-> > > are doing already considering we ignore sugovs at AC and the current
-> > > bandwidth allocation its there only to help with PI. So, duck tape. :/
-> > > 
-> > > A more proper way to work with this would entail coming up with sensible
-> > > bandwidth allocation for sugovs, but that's most probably hardware
-> > > specific, so I am not sure how we can make that general enough.
-> > 
-> > I haven't been following the problem closely, but one thing I was considering
-> > and I don't know if it makes sense to you and could help with this problem too.
-> > Shall we lump sugov with stopper class or create a new sched_class (seems
-> > unnecessary, I think stopper should do)? With the consolidate cpufreq update
-> > patch I've been working on Vincent raised issues with potential new ctx switch
-> > and to improve that I needed to look at improving sugov wakeup path. If we
-> > decouple it from DL I think that might fix your problem here and could allow us
-> > to special case it for other problems like the ones I faced more easily without
-> > missing up with DL.
-> > 
-> > Has the time come to consider retire the simple solution of making sugov a fake
-> > DL task?
-> 
-> Problem is that 'ideally' we would want to explicitly take sugovs into
-> account when designing the system. We don't do that currently as a
-> 'temporary solution' that seemed simpler than a proper approach (started
-> wondering if it's indeed simpler). So, not sure if moving sugovs outside
-> DL is something we want to do.
+With the CRYPTO_TEST now being run asynchronously unveiled some
+concurrency issues in the Security Engine driver. These were not
+caught during functional or fuzz testing as all the tests were run
+synchronously.
 
-Okay I see. The issue though is that for a DL system with power management
-features on that warrant to wake up a sugov thread to update the frequency is
-sort of half broken by design. I don't see the benefit over using RT in this
-case. But I appreciate I could be misguided. So take it easy on me if it is
-obviously wrong understanding :) I know in Android usage of DL has been
-difficult, but many systems ship with slow switch hardware.
+This patchset contains the fixes for the concurrency issues and few
+other improvements identified during the stress-ng and cryptsetup tests.
 
-How does DL handle the long softirqs from block and network layers by the way?
-This has been in a practice a problem for RT tasks so they should be to DL.
-sugov done in stopper should be handled similarly IMHO. I *think* it would be
-simpler to masquerade sugov thread as irq pressure.
+---
+v2->v3:
+ * Fixed testbot warnings.
+v1->v2:
+ * Added patch to handle the scenario when keyslots are full
+ * Added patch to finalize crypto request which was not called in some
+   error cases.
 
-You can use the rate_limit_us as a potential guide for how much bandwidth sugov
-needs if moving it to another class really doesn't make sense instead?
+v1: https://lore.kernel.org/lkml/20241217161207.72921-1-akhilrajeev@nvidia.com/
+
+Akhil R (10):
+  crypto: tegra: Use separate buffer for setkey
+  crypto: tegra: Do not use fixed size buffers
+  crypto: tegra: finalize crypto req on error
+  crypto: tegra: check return value for hash do_one_req
+  crypto: tegra: Transfer HASH init function to crypto engine
+  crypto: tegra: Fix HASH intermediate result handling
+  crypto: tegra: Fix CMAC intermediate result handling
+  crypto: tegra: Set IV to NULL explicitly for AES ECB
+  crypto: tegra: Reserve keyslots to allocate dynamically
+  crypto: tegra: Use HMAC fallback when keyslots are full
+
+ drivers/crypto/tegra/tegra-se-aes.c  | 401 ++++++++++++++++++---------
+ drivers/crypto/tegra/tegra-se-hash.c | 287 ++++++++++++-------
+ drivers/crypto/tegra/tegra-se-key.c  |  27 +-
+ drivers/crypto/tegra/tegra-se-main.c |  16 +-
+ drivers/crypto/tegra/tegra-se.h      |  39 ++-
+ 5 files changed, 523 insertions(+), 247 deletions(-)
+
+-- 
+2.43.2
+
