@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DC419D886;
-	Tue, 25 Feb 2025 17:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AF919ABAB;
+	Tue, 25 Feb 2025 17:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504844; cv=none; b=N20Y7s5M5z0KogBIhCHpnUgHZ/GlbtlWlYJmK8gh2k/mj05zcdgbSVWT3odNgmBy1UM3wfqOc9l+zlHQGLvXn6PAxbCYGrn7kJ/ABt7c17a+u2aEoHbBch6z7K2grdaaq7i89BHl1gVpNBMHK71rCqaiL6cy56TB7CDHoWaXcqI=
+	t=1740505086; cv=none; b=ij1ItwTI2fBpSOiCzG4GGW+xjPQezezBUD5ksH+O97KOe8Kk5u9hHQCT3xAC1+TbdpDTNQS79IeFNWCyNJBeRISBq7+P1dH9YuRElPLHBwSgQlgsjRVEB1d40buC46/moAOVa/GJvuL5L8rxt8d+bN88DinltgqL4jGWnbje58A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504844; c=relaxed/simple;
-	bh=tZFhG68X8zjVBA5cFtbJSnqGt99fdL++T2P2zVsQdgY=;
+	s=arc-20240116; t=1740505086; c=relaxed/simple;
+	bh=Fggr0Su0nsN38bSQrHX2SWJ5oz4ipC2B9qOqksMQyHU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o5SiRpb+k0B/QhJ5V0c9VXjIHdBV15vWHHYOQiVaf35nBVBob/NDlVeai/FspuPRLwrA83aygDbcZXt2e5bCQIGeka9Bx2QZEKRKSicpyf21Spdi2fxh37BfFygmgQaagtlA/gz9PgF4CjwXi33X/1E0xTl0OnadJ0D5zjCHhGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPXoEbzm; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=ahVhezEVyGMbB3tCegKkiA0huYcloqtj3B7IObJvNowlKg/+RZIIR7TCq0FbmqrJMJbrGa81oVKGnXxf805c0jRFGDfUDmx7cE18S+JipDD+/p3hYYoqWRLYVXsagx7eMl0wiem5UBT814TUuQdUVI2L4IMts9fUfvIKwyqwz88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BokiDJ15; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPXoEbzm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A39CFC4CEE7;
-	Tue, 25 Feb 2025 17:33:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BokiDJ15"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BEECC4CEDD;
+	Tue, 25 Feb 2025 17:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740504843;
-	bh=tZFhG68X8zjVBA5cFtbJSnqGt99fdL++T2P2zVsQdgY=;
+	s=k20201202; t=1740505086;
+	bh=Fggr0Su0nsN38bSQrHX2SWJ5oz4ipC2B9qOqksMQyHU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cPXoEbzmN1Rs6alNlyO1Vqmv4G0Pw+8lCADUb+9ZDxLgvVu6v7AwvqDYgIi47jfuC
-	 Q98dCq/rl0y8veuaasqxu0FgqcAG2EY8jw3peJysf9bJYlwCivFOzlpLF2cmUlSgj4
-	 KqLCzq1FBFWzeu7jO2wU6QzcaFbYfMEROAGiY5gpsrVSRujlHSkkAq0jWxoj7yYV02
-	 z2GtAyWT2DSxoGmTSlbV3yFlheRbJRpcFbwj0DKXn4ogPl/Aae0dLBsBnfboG8tCdD
-	 772V4aHR+OcaX+zJb1uikmElzANm1rZRUtWlQBTAFMZREjYqevzlFEe7GnbktNZ5um
-	 uPpdnDda/0Ydg==
-Message-ID: <b7c6771b-c63d-4e95-a81c-ce8304d2f52b@kernel.org>
-Date: Tue, 25 Feb 2025 18:33:56 +0100
+	b=BokiDJ15QEaRKlukS3bG3lxgUHWMexQfezWh1NSzp1F4snh3zOoJ3lcavCOMCbMj8
+	 9oBpCZwV49AlOH+/r3fLHITpfzzVCfFDh3ltQDcPx2TVRPOXbqzMNNC+J6JEHVX6JA
+	 zXyi4sfBKjPagdqWt6uyFXLtylKUJqEwdJFyWlltl8MGAeD4KU+ZzG3t5fanszf6yO
+	 1sFL8z2oZdsw0iTnwfMJ5U/rfGbW71jlWPXYilRZqzTY7fPzGjfsJpKB+hjMca3vSM
+	 ctNsX1pmfTWXA9jxZE6eSJ+lwu5eFVdNLLV5VX03YxjctSeGAu5TojO/AdFPeuId0Y
+	 bVmNLQScPH9bA==
+Message-ID: <329c3a3f-970a-4407-9c7b-eed87881536e@kernel.org>
+Date: Tue, 25 Feb 2025 18:37:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/9] dt-bindings: memory: tegra114: Add memory client
- IDs
+Subject: Re: [PATCH v1 2/9] dt-bindings: memory: Document Tegra114 Memory
+ Controller
 To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Thierry Reding
  <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
@@ -48,7 +48,7 @@ To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20250225143501.68966-1-clamor95@gmail.com>
- <20250225143501.68966-5-clamor95@gmail.com>
+ <20250225143501.68966-3-clamor95@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,18 +94,70 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250225143501.68966-5-clamor95@gmail.com>
+In-Reply-To: <20250225143501.68966-3-clamor95@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 25/02/2025 15:34, Svyatoslav Ryhel wrote:
-> Each memory client has unique hardware ID, add these IDs.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  include/dt-bindings/memory/tegra114-mc.h | 67 ++++++++++++++++++++++++
+> +
+> +properties:
+> +  compatible:
+> +    const: nvidia,tegra114-mc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: mc
 
-Header constants are part of bindings doc patch.
+Drop clock-names, not really useful if it copies device name.
+
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  "#iommu-cells":
+> +    const: 1
+> +
+> +  "#interconnect-cells":
+> +    const: 1
+> +
+> +patternProperties:
+> +  "^emc-timings-[0-9]+$":
+> +    type: object
+> +    properties:
+> +      nvidia,ram-code:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          Value of RAM_CODE this timing set is used for.
+
+This spreads to multiple bindings now. This really needs to be in shared
+schema.
+
+> +
+> +    patternProperties:
+> +      "^timing-[0-9]+$":
+> +        type: object
+> +        properties:
+> +          clock-frequency:
+> +            description:
+> +              Memory clock rate in Hz.
+> +            minimum: 1000000
+> +            maximum: 1066000000
+
+clock-frequency is a legacy property, not really desired for new
+bindings. Memory controllers can operate with different speed, so how do
+you factor this here?
+
+BTW, same review could have been given last time and you will be deemed
+to repeat everything, unless this is captured in description or commit msg.
 
 Best regards,
 Krzysztof
