@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26B8198E6F;
-	Tue, 25 Feb 2025 17:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DC419D886;
+	Tue, 25 Feb 2025 17:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504814; cv=none; b=KGefvlzxD/jTGpPpIlxrH+XCoyinqUyETVuqcyGZrtQazKDQjXAyX6mmo/RQEQU9O6n6L7V7t/QKMxOdxtEYvrFXKf5b+Nu5tmGJrXXk7P2iQTF/mf93GV1sM2pBSMepUlrXNtoOcuXXWGI22m0STEjizAaxZyFtOsfO2d07lH8=
+	t=1740504844; cv=none; b=N20Y7s5M5z0KogBIhCHpnUgHZ/GlbtlWlYJmK8gh2k/mj05zcdgbSVWT3odNgmBy1UM3wfqOc9l+zlHQGLvXn6PAxbCYGrn7kJ/ABt7c17a+u2aEoHbBch6z7K2grdaaq7i89BHl1gVpNBMHK71rCqaiL6cy56TB7CDHoWaXcqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504814; c=relaxed/simple;
-	bh=JcsrOdIbLrarvfbjtivB1uY1FcSwa61hquIJ+yJR1zc=;
+	s=arc-20240116; t=1740504844; c=relaxed/simple;
+	bh=tZFhG68X8zjVBA5cFtbJSnqGt99fdL++T2P2zVsQdgY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UJ6rV8q2NYiF62lKxKYnUCDuNgYKfoPZxGm1Vj9ZeZ0/XXNopNrfNjnDbpnAimM5WeVguEFoYYngBgAnl17c+i7qNHuQy9DCypFMa2u2o5wsbDX/b8fX/5DahR1VsTeRpQNc03yGU1dvOSsko1DNCZYosa4lPMtw5Yisu3lMpmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mF3bWZ8D; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=o5SiRpb+k0B/QhJ5V0c9VXjIHdBV15vWHHYOQiVaf35nBVBob/NDlVeai/FspuPRLwrA83aygDbcZXt2e5bCQIGeka9Bx2QZEKRKSicpyf21Spdi2fxh37BfFygmgQaagtlA/gz9PgF4CjwXi33X/1E0xTl0OnadJ0D5zjCHhGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cPXoEbzm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mF3bWZ8D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271D2C4CEDD;
-	Tue, 25 Feb 2025 17:33:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPXoEbzm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A39CFC4CEE7;
+	Tue, 25 Feb 2025 17:33:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740504813;
-	bh=JcsrOdIbLrarvfbjtivB1uY1FcSwa61hquIJ+yJR1zc=;
+	s=k20201202; t=1740504843;
+	bh=tZFhG68X8zjVBA5cFtbJSnqGt99fdL++T2P2zVsQdgY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mF3bWZ8D79fCvlPOiFNT/Rtqpoe/QvjxTu3E3Nko6N+GmFFOZ5T5Our3x03va3sgg
-	 Gwq5QQtBTAh3UOomXv5kXvxPrSTJPz5euDpV/HrN4P27NKs80HnKlunurWG1fkixDs
-	 BWdjZKPsU6Fq8vYmeXhwACXHhzkVCEbwS47SIYQGIi2LT9A3oKO+qSOlND3QHX+B6H
-	 eUzxO/u0BKJ231RcgKdn4cFiqCFtF6HsG9yx39fImyvNs9kNtTiQjDIHuTegEOQImh
-	 vag6yTVKSNocDvaTd9eIwX9wfWjPxgT+4K0u8oZo7O2mq31uj/QdOA5/IXzB9orTr4
-	 OJ3kC044wxrSw==
-Message-ID: <d774ce7f-1abd-4381-a616-a5126e606d8d@kernel.org>
-Date: Tue, 25 Feb 2025 18:33:26 +0100
+	b=cPXoEbzmN1Rs6alNlyO1Vqmv4G0Pw+8lCADUb+9ZDxLgvVu6v7AwvqDYgIi47jfuC
+	 Q98dCq/rl0y8veuaasqxu0FgqcAG2EY8jw3peJysf9bJYlwCivFOzlpLF2cmUlSgj4
+	 KqLCzq1FBFWzeu7jO2wU6QzcaFbYfMEROAGiY5gpsrVSRujlHSkkAq0jWxoj7yYV02
+	 z2GtAyWT2DSxoGmTSlbV3yFlheRbJRpcFbwj0DKXn4ogPl/Aae0dLBsBnfboG8tCdD
+	 772V4aHR+OcaX+zJb1uikmElzANm1rZRUtWlQBTAFMZREjYqevzlFEe7GnbktNZ5um
+	 uPpdnDda/0Ydg==
+Message-ID: <b7c6771b-c63d-4e95-a81c-ce8304d2f52b@kernel.org>
+Date: Tue, 25 Feb 2025 18:33:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/9] ARM: tegra: Add ACTMON support on Tegra114
+Subject: Re: [PATCH v1 4/9] dt-bindings: memory: tegra114: Add memory client
+ IDs
 To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Thierry Reding
  <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
@@ -47,9 +48,9 @@ To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20250225143501.68966-1-clamor95@gmail.com>
- <20250225143501.68966-2-clamor95@gmail.com>
-Content-Language: en-US
+ <20250225143501.68966-5-clamor95@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -93,26 +94,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250225143501.68966-2-clamor95@gmail.com>
+In-Reply-To: <20250225143501.68966-5-clamor95@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 25/02/2025 15:34, Svyatoslav Ryhel wrote:
-> Add support for ACTMON on Tegra114. This is used to monitor activity from
-> different components. Based on the collected statistics, the rate at which
-> the external memory needs to be clocked can be derived.
-> 
-> Actmon driver has T30 and T124 compatibles, T124 fits for T114 as well.
+> Each memory client has unique hardware ID, add these IDs.
 > 
 > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
+>  include/dt-bindings/memory/tegra114-mc.h | 67 ++++++++++++++++++++++++
 
-DTS at beginning of patchset suggests you have dependency and nothing
-can depend on DTS. Please organize it for standard way, so DTS is at the
-end or, *better* separate patchset.
-
-Nothing in cover letter explained dependecies, so I assume this can be
-split into separate patchsets, because you target two different subsystems.
+Header constants are part of bindings doc patch.
 
 Best regards,
 Krzysztof
