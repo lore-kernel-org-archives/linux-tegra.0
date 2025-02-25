@@ -1,50 +1,50 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4277B212FAC
-	for <linux-tegra@vger.kernel.org>; Tue, 25 Feb 2025 22:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B132135AC
+	for <linux-tegra@vger.kernel.org>; Tue, 25 Feb 2025 22:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522098; cv=none; b=EpYiNUEEEDmy8qvKOEQvMgWp9WKeSTz1E5co2ncJJlrs0EjnONSSQC7orHorX/SssIK7eiHF8h7gWDRx364zH8jxhtfwAljo5cLFd0XnnRv9rimxmzewSDM0s4uWFAM89faPBPIU3WRDeWPLiy6cloZM9VWukaltZ4ovikJ+EwY=
+	t=1740522109; cv=none; b=iJZEU6dWfcMpDsdDWIYiwmK8BY++vpCafprk9HaPE/hq1zW1cNLABYs86xqBEBFTkIUAvHz8s002zEbyU1nMqY+/mAS73ogNzCSnsSauOUQTebwFSAB1txhs+u46A7DH9j+4GXrVsfiCzeGZWkyP6ibGeerhxZqGK7T5bVjc7Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522098; c=relaxed/simple;
-	bh=oMnZPC9HfrwqOolnznL0vrEyroxHYMcgs+Plnnla5aQ=;
+	s=arc-20240116; t=1740522109; c=relaxed/simple;
+	bh=kFCOcGQY9D8TzyaRT9RN2mfIAjcd4C4Nrt+RPwYLIdE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sMqg4iQLn2U4PDVRLhS1Fh9Qtg5LYTG7oeERNzh42G7jPeEonxX5gzeyM7Arrbdu3q8PqDIA8stYoB5OWCjx7zRmOGCmxE/wZ0qgYa1UVFR1JuYxBVX235T2bok2wrSBgV7D1OsgHQM2fR2mzqVV04Rqa+E1KPLwR/iADSITqvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FF/mz40M; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:To:Cc; b=axGRq2iSUg1cAxwZF29T5C9/0/kHJ6U5QqL4cq1/q+oWSO9ZXmLI+FJHN1mVTnQkNhWfIMpj2PWRmq7HsfbGwtHBkaEczh6meBzq1eJ5oA4Tzq4twGcL4A+jxx50UrJ5/Aeoi2Wqdf9W2PDTLtfQAwxV4KzxWKIfD0Chg5s+lkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DVJGL+w8; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FF/mz40M"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DVJGL+w8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740522096;
+	s=mimecast20190719; t=1740522107;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LQce4qpcRmddUf2QLSsjxR1D9l6diq/uQYF6rsz7TN8=;
-	b=FF/mz40M9k6yIZdm/XQTlR2PJL9wKnwaZo8EELu2yZKMdGvTL4qOuAq5nAPDoiSO8DH46d
-	eV66W7U5WfckrPLQKAUdepOUaV7j8iGgBqVuXIz252K6CgBbc6JVVISWg2ZbH0w415KHGQ
-	z8/hZHv4aS5ua/CX0uHPap5E4sVgcLQ=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=6AwvElau9bWD8//2IbXRBKfSQA+YGh6bloJOkjJckZ8=;
+	b=DVJGL+w8r1ADlf/16NB8AAAWLEt64WIGgs2iGv3RleB3fnm4ND4X2EluHvYhk7mMF6nj+h
+	Ez0lbhehh1SFwaHJiZb20Zp++Y4bFVdLzU4P4wc6EI2iGJPY0InxSUdtWZgI4m+G8ej9Mq
+	eU8DGAXpqcUJFBzr2IrRMJ0GeUeIsTM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-620-RwvQjC-rPeSwJtEIYNXVCA-1; Tue,
- 25 Feb 2025 17:21:35 -0500
-X-MC-Unique: RwvQjC-rPeSwJtEIYNXVCA-1
-X-Mimecast-MFC-AGG-ID: RwvQjC-rPeSwJtEIYNXVCA_1740522094
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-185-P-y_jBRNMsSoazN8fQ8Vvw-1; Tue,
+ 25 Feb 2025 17:21:45 -0500
+X-MC-Unique: P-y_jBRNMsSoazN8fQ8Vvw-1
+X-Mimecast-MFC-AGG-ID: P-y_jBRNMsSoazN8fQ8Vvw_1740522104
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4FC7D1800875
-	for <linux-tegra@vger.kernel.org>; Tue, 25 Feb 2025 22:21:34 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B31FE193578F;
+	Tue, 25 Feb 2025 22:21:44 +0000 (UTC)
 Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.79])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 054BF1800368;
-	Tue, 25 Feb 2025 22:21:23 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9B8991800366;
+	Tue, 25 Feb 2025 22:21:34 +0000 (UTC)
 From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Tue, 25 Feb 2025 17:20:44 -0500
-Subject: [PATCH RESEND 03/12] drm/hisilicon: move to
+Date: Tue, 25 Feb 2025 17:20:45 -0500
+Subject: [PATCH RESEND 04/12] drm/mediatek: move to
  devm_platform_ioremap_resource() usage
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-memory-drm-misc-next-v1-3-9d0e8761107a@redhat.com>
+Message-Id: <20250225-memory-drm-misc-next-v1-4-9d0e8761107a@redhat.com>
 References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
 In-Reply-To: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
 To: Joel Stanley <joel@jms.id.au>, 
@@ -96,12 +96,13 @@ Cc: linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
- linux-doc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740522045; l=2968;
+ linux-doc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>, 
+ CK Hu <ck.hu@mediatek.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740522045; l=8775;
  i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=oMnZPC9HfrwqOolnznL0vrEyroxHYMcgs+Plnnla5aQ=;
- b=ruvyJhsj+Q6O7BkE9kpuQEM0Z7yBhMViu0Boc2FhfQnAPW9Bxnsy4Z0JMzsfaClpRusd7q+jQ
- ehspHYptTk5BLbAm3jEAoitZVfoKaaumjLnabn+h6illuRMQ/A4kXnH
+ bh=kFCOcGQY9D8TzyaRT9RN2mfIAjcd4C4Nrt+RPwYLIdE=;
+ b=qYv7i5GwH+Bi37QflJq1taNo71j8iMT5Gf5a12sVcte27tGRYcxtPGTcibkw3JKboZtdGQvOQ
+ z5HXAZ3Xck7Bw9Vdc3Z3XBw26xq9q86DC4QffQqkW1QqDgGBfITObfX
 X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
  pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
@@ -121,64 +122,198 @@ identifier pdev;
 -ioremap_res = devm_ioremap_resource(...);
 +ioremap_res = devm_platform_ioremap_resource(pdev,0);
 
-Cc: Xinliang Liu <xinliang.liu@linaro.org>
-Cc: Tian Tao <tiantao6@hisilicon.com>
-Cc: Xinwei Kong <kong.kongxinwei@hisilicon.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Yongqin Liu <yongqin.liu@linaro.org>
-Cc: John Stultz <jstultz@google.com>
-
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
- drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c    | 4 +---
- drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_disp_color.c | 4 +---
+ drivers/gpu/drm/mediatek/mtk_disp_gamma.c | 4 +---
+ drivers/gpu/drm/mediatek/mtk_disp_merge.c | 4 +---
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c   | 4 +---
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c  | 4 +---
+ drivers/gpu/drm/mediatek/mtk_dsi.c        | 4 +---
+ drivers/gpu/drm/mediatek/mtk_hdmi.c       | 4 +---
+ drivers/gpu/drm/mediatek/mtk_mdp_rdma.c   | 4 +---
+ 8 files changed, 8 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-index 2eea9fb0e76bf3ead8f5914e6ebb65b5b3603b9a..e80debdc41763357cb2cf321205c0dfac80a911e 100644
---- a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-@@ -825,7 +825,6 @@ static const struct component_ops dsi_ops = {
- static int dsi_parse_dt(struct platform_device *pdev, struct dw_dsi *dsi)
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_color.c b/drivers/gpu/drm/mediatek/mtk_disp_color.c
+index dd8433a38282a9ba1bcc3a4ddd01dd89738ccb60..39c7de4cdcc16b56a5a1d046aaabaf5580227ed2 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_color.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_color.c
+@@ -96,7 +96,6 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
  {
- 	struct dsi_hw_ctx *ctx = dsi->ctx;
--	struct resource *res;
- 
- 	ctx->pclk = devm_clk_get(&pdev->dev, "pclk");
- 	if (IS_ERR(ctx->pclk)) {
-@@ -833,8 +832,7 @@ static int dsi_parse_dt(struct platform_device *pdev, struct dw_dsi *dsi)
- 		return PTR_ERR(ctx->pclk);
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	ctx->base = devm_ioremap_resource(&pdev->dev, res);
-+	ctx->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(ctx->base)) {
- 		DRM_ERROR("failed to remap dsi io region\n");
- 		return PTR_ERR(ctx->base);
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-index 2eb49177ac42bc6dba692328cca5c99d5925041c..45c4eb008ad5d639340f769ad022d186ec454722 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-@@ -844,7 +844,6 @@ static struct drm_plane_funcs ade_plane_funcs = {
- static void *ade_hw_ctx_alloc(struct platform_device *pdev,
- 			      struct drm_crtc *crtc)
- {
--	struct resource *res;
  	struct device *dev = &pdev->dev;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct ade_hw_ctx *ctx = NULL;
-@@ -856,8 +855,7 @@ static void *ade_hw_ctx_alloc(struct platform_device *pdev,
- 		return ERR_PTR(-ENOMEM);
- 	}
+ 	struct mtk_disp_color *priv;
+-	struct resource *res;
+ 	int ret;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+@@ -108,8 +107,7 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(priv->clk),
+ 				     "failed to get color clk\n");
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	ctx->base = devm_ioremap_resource(dev, res);
-+	ctx->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(ctx->base)) {
- 		DRM_ERROR("failed to remap ade io base\n");
- 		return ERR_PTR(-EIO);
+-	priv->regs = devm_ioremap_resource(dev, res);
++	priv->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->regs))
+ 		return dev_err_probe(dev, PTR_ERR(priv->regs),
+ 				     "failed to ioremap color\n");
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
+index b17b11d93846f2019d8c4afb294375333e22dc42..8afd15006df2a21f3f52fe00eca3c5501f4fb76a 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
+@@ -256,7 +256,6 @@ static int mtk_disp_gamma_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct mtk_disp_gamma *priv;
+-	struct resource *res;
+ 	int ret;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+@@ -268,8 +267,7 @@ static int mtk_disp_gamma_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(priv->clk),
+ 				     "failed to get gamma clk\n");
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->regs = devm_ioremap_resource(dev, res);
++	priv->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->regs))
+ 		return dev_err_probe(dev, PTR_ERR(priv->regs),
+ 				     "failed to ioremap gamma\n");
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_merge.c b/drivers/gpu/drm/mediatek/mtk_disp_merge.c
+index 563b1b248fbbb38ef03bb3e3ceecdd265961df60..b174dda091d3fbd16796e8e128b030fccf5b902c 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_merge.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_merge.c
+@@ -306,7 +306,6 @@ static const struct component_ops mtk_disp_merge_component_ops = {
+ static int mtk_disp_merge_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+ 	struct mtk_disp_merge *priv;
+ 	int ret;
+ 
+@@ -314,8 +313,7 @@ static int mtk_disp_merge_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->regs = devm_ioremap_resource(dev, res);
++	priv->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->regs))
+ 		return dev_err_probe(dev, PTR_ERR(priv->regs),
+ 				     "failed to ioremap merge\n");
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+index df82cea4bb79c472acbb66e0df27fbad3e70bd20..d0581c4e3c999cf865fdd0aaf4c2f38dd404926e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+@@ -604,7 +604,6 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct mtk_disp_ovl *priv;
+-	struct resource *res;
+ 	int irq;
+ 	int ret;
+ 
+@@ -621,8 +620,7 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(priv->clk),
+ 				     "failed to get ovl clk\n");
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->regs = devm_ioremap_resource(dev, res);
++	priv->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->regs))
+ 		return dev_err_probe(dev, PTR_ERR(priv->regs),
+ 				     "failed to ioremap ovl\n");
+diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+index bf47790e4d6be5d60070c63c15c75fa201cc4b27..c9d41d75e7f2a3af5820921b7e563da377ce8d0d 100644
+--- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
++++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+@@ -313,7 +313,6 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct mtk_disp_rdma *priv;
+-	struct resource *res;
+ 	int irq;
+ 	int ret;
+ 
+@@ -330,8 +329,7 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(priv->clk),
+ 				     "failed to get rdma clk\n");
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->regs = devm_ioremap_resource(dev, res);
++	priv->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->regs))
+ 		return dev_err_probe(dev, PTR_ERR(priv->regs),
+ 				     "failed to ioremap rdma\n");
+diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+index b50dc9a013ac5a50e464134f548fa773a5662138..0683c2b3ca5bc5b09439c42d30fb1380e1c67c97 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dsi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+@@ -1192,7 +1192,6 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+ {
+ 	struct mtk_dsi *dsi;
+ 	struct device *dev = &pdev->dev;
+-	struct resource *regs;
+ 	int irq_num;
+ 	int ret;
+ 
+@@ -1217,8 +1216,7 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dsi->hs_clk))
+ 		return dev_err_probe(dev, PTR_ERR(dsi->hs_clk), "Failed to get hs clock\n");
+ 
+-	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	dsi->regs = devm_ioremap_resource(dev, regs);
++	dsi->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(dsi->regs))
+ 		return dev_err_probe(dev, PTR_ERR(dsi->regs), "Failed to ioremap memory\n");
+ 
+diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+index ac5e40c2761710dfbe722e1ba569d76e4cd5b8fb..d4ab098e117477eea8fad568a134c0a796b380db 100644
+--- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
++++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
+@@ -1424,7 +1424,6 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
+ 	struct device_node *cec_np, *remote, *i2c_np;
+ 	struct platform_device *cec_pdev;
+ 	struct regmap *regmap;
+-	struct resource *mem;
+ 	int ret;
+ 
+ 	ret = mtk_hdmi_get_all_clk(hdmi, np);
+@@ -1470,8 +1469,7 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
+ 	}
+ 	hdmi->sys_regmap = regmap;
+ 
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	hdmi->regs = devm_ioremap_resource(dev, mem);
++	hdmi->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(hdmi->regs)) {
+ 		ret = PTR_ERR(hdmi->regs);
+ 		goto put_device;
+diff --git a/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c b/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
+index fc69ee38ce7d6a245a7460cfde8de426e83b2e80..7982788ae9df51f1a378d8d538737f38af7299f2 100644
+--- a/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
++++ b/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
+@@ -291,7 +291,6 @@ static const struct component_ops mtk_mdp_rdma_component_ops = {
+ static int mtk_mdp_rdma_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct resource *res;
+ 	struct mtk_mdp_rdma *priv;
+ 	int ret = 0;
+ 
+@@ -299,8 +298,7 @@ static int mtk_mdp_rdma_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->regs = devm_ioremap_resource(dev, res);
++	priv->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->regs))
+ 		return dev_err_probe(dev, PTR_ERR(priv->regs),
+ 				     "failed to ioremap rdma\n");
 
 -- 
 2.48.1
