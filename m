@@ -1,130 +1,85 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3B01519A5;
-	Tue, 25 Feb 2025 10:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DA01C8625;
+	Tue, 25 Feb 2025 10:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478181; cv=none; b=o8mXNBxYh36iMnYgSkPyHpNCEljO9qlCy78lz9mzToiwbhssZc6OanBRcyOM/g9VAFjeDuxHDUvpIjhWp/nalHyNojTf3eSh+lgIHtRuAAAYLGvvPJ9+r8BqNlNzWJN1IXDrZZKbeLUFSxbNemABz26qmRpS+DGSZpk97pqkd2k=
+	t=1740479612; cv=none; b=McfNer5x4I4PJ+nXWMdhIGk2ZKWf7fwTq3lJCvw2WPZjUM97nxOhCiriKIQDv+VHP4/HWk96H6DQe5Q1tz4jBiqchdC3lC/616AFxD44/Y7VsG+4HyqT1/y6K8C0D9h+mgfmUPfvHsndjkVu6QK3AQiG9YLXKclnB2fXIQElg6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478181; c=relaxed/simple;
-	bh=bQ19GPyEpcj0UVq+Sl5IbDI1kfRuc1RHQHJ5d5vyfwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NOjYi4XNwDE/jAdYO9gtH8B8To4itPmI2LZYPrCMuoJAYywiKgEvpUJaIlHuVAfgRXjfWDv2WUTMEIxJex0kzVDEWxSFqnCd+uRWJSiUGoCeCtt36T5RiHM7O7rbn6ZbndpQoQL2U5eazgfVr6yQInpLx7Mg5Y9dP8caj5xfGOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BEDF01516;
-	Tue, 25 Feb 2025 02:09:54 -0800 (PST)
-Received: from [10.1.35.64] (unknown [10.1.35.64])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C244C3F6A8;
-	Tue, 25 Feb 2025 02:09:32 -0800 (PST)
-Message-ID: <cbb364c8-5008-4fa4-b604-2d04e0095c9c@arm.com>
-Date: Tue, 25 Feb 2025 10:09:30 +0000
+	s=arc-20240116; t=1740479612; c=relaxed/simple;
+	bh=NasLaFCTh8OVIdznOnAP+iiGwnp+cgpHZ9eZS5tukHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fWGXOhe1YMGPDgJRtaX2YhbY+wafjO9zmWkijor7cNg4qetzN2hiYHA97wLuLLmfYq/8O9aD+yEK8XMCkQOzqBIm/r2z6Pt2P6U1DHJkcPYwB976lPs1gl9tMrcZ7cV4uyjt8qvfHhgFrmmOi5GkpeMqONiKwuvepFLfzHaWKOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YtYJ9t6b; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YtYJ9t6b"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B5FC4CEDD;
+	Tue, 25 Feb 2025 10:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740479612;
+	bh=NasLaFCTh8OVIdznOnAP+iiGwnp+cgpHZ9eZS5tukHc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YtYJ9t6boa1zdSHm0JT0wqm4N0mW/bGXnuMbBC7tPuW8GN2vit4kDkNJRb7bDuIWR
+	 jdmdBtNdB39ygnMHwgozRkEfh0oDrsIQqWLTPV8z0tizz6x53L01FDrtL4aGWkcZK2
+	 NZZG2mNiKqlh0630ixm6GueFEc8UoMoVMCMKQdBw=
+Date: Tue, 25 Feb 2025 11:32:22 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 6.13 000/137] 6.13.5-rc2 review
+Message-ID: <2025022514-malt-decade-1518@gregkh>
+References: <20250225064750.953124108@linuxfoundation.org>
+ <e8372ca2-1f23-447e-a8c9-7afc7a19bc74@rnnvmail204.nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-To: Juri Lelli <juri.lelli@redhat.com>, Qais Yousef <qyousef@layalina.io>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <treding@nvidia.com>,
- Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Phil Auld <pauld@redhat.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Joel Fernandes (Google)" <joel@joelfernandes.org>,
- Suleiman Souhlal <suleiman@google.com>, Aashish Sharma <shraash@google.com>,
- Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <285a43db-c36d-400e-8041-0566f089a482@arm.com>
- <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
- <20250216163340.ttwddti5pzuynsj5@airbuntu>
- <Z7NNHmGgrEF666W_@jlelli-thinkpadt14gen4.remote.csb>
- <20250222235936.jmyrfacutheqt5a2@airbuntu>
- <Z7w7g1zb0nfu9-C7@jlelli-thinkpadt14gen4.remote.csb>
- <20250225000237.nsgbibqigl6nhhdu@airbuntu>
- <Z72Rka_g1imcX5lt@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <Z72Rka_g1imcX5lt@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e8372ca2-1f23-447e-a8c9-7afc7a19bc74@rnnvmail204.nvidia.com>
 
-On 2/25/25 09:46, Juri Lelli wrote:
-> On 25/02/25 00:02, Qais Yousef wrote:
->> On 02/24/25 10:27, Juri Lelli wrote:
->>
->>>> Okay I see. The issue though is that for a DL system with power management
->>>> features on that warrant to wake up a sugov thread to update the frequency is
->>>> sort of half broken by design. I don't see the benefit over using RT in this
->>>> case. But I appreciate I could be misguided. So take it easy on me if it is
->>>> obviously wrong understanding :) I know in Android usage of DL has been
->>>> difficult, but many systems ship with slow switch hardware.
->>>>
->>>> How does DL handle the long softirqs from block and network layers by the way?
->>>> This has been in a practice a problem for RT tasks so they should be to DL.
->>>> sugov done in stopper should be handled similarly IMHO. I *think* it would be
->>>> simpler to masquerade sugov thread as irq pressure.
->>>
->>> Kind of a trick question :), as DL doesn't handle this kind of
->>
->> :-)
->>
->>> load/pressure explicitly. It is essentially agnostic about it. From a
->>> system design point of view though, I would say that one should take
->>> that into account and maybe convert sensible kthreads to DL, so that the
->>> overall bandwidth can be explicitly evaluated. If one doesn't do that
->>> probably a less sound approach is to treat anything not explicitly
->>> scheduled by DL, but still required from a system perspective, as
->>> overload and be more conservative when assigning bandwidth to DL tasks
->>> (i.e. reduce the maximum amount of available bandwidth, so that the
->>> system doesn't get saturated).
->>
->> Maybe I didn't understand your initial answer properly. But what I got is that
->> we set as DL to do what you just suggested of converting it kthread to DL to
->> take its bandwidth into account. But we have been lying about bandwidth so far
->> and it was ignored? (I saw early bailouts of SCHED_FLAG_SUGOV was set in
->> bandwidth related operations)
+On Tue, Feb 25, 2025 at 01:30:08AM -0800, Jon Hunter wrote:
+> On Tue, 25 Feb 2025 07:49:18 +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 6.13.5 release.
+> > There are 137 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu, 27 Feb 2025 06:47:33 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.5-rc2.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
 > 
-> Ignored as to have something 'that works'. :)
+> All tests passing for Tegra ...
 > 
-> But, it's definitely far from being good.
+> Test results for stable-v6.13:
+>     10 builds:	10 pass, 0 fail
+>     26 boots:	26 pass, 0 fail
+>     116 tests:	116 pass, 0 fail
 > 
->>>> You can use the rate_limit_us as a potential guide for how much bandwidth sugov
->>>> needs if moving it to another class really doesn't make sense instead?
->>>
->>> Or maybe try to estimate/measure how much utilization sugov threads are
->>> effectively using while running some kind of workload of interest and
->>> use that as an indication for DL runtime/period.
->>
->> I don't want to side track this thread. So maybe I should start a new thread to
->> discuss this. You might have seen my other series on consolidating cpufreq
->> updates. I'm not sure sugov can have a predictable period. Maybe runtime, but
->> it could run repeatedly, or it could be quite for a long time.
+> Linux version:	6.13.5-rc2-g1a0f764e17e3
+> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+>                 tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+>                 tegra20-ventana, tegra210-p2371-2180,
+>                 tegra210-p3450-0000, tegra30-cardhu-a04
 > 
-> Doesn't need to have a predictable period. Sporadic (activations are not
-> periodic) tasks work well with DEADLINE if one is able to come up with a
-> sensible bandwidth allocation for them. So for sugov (and other
-> kthreads) the system designer should be thinking about the amount of CPU
-> to give to each kthread (runtime/period) and the granularity of such
-> allocation (period).
+> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-The only really sensible choice I see is
-rate_limit * some_constant_approximated_runtime
-and on many systems that may yield >100% of the capacity.
-Qais' proposed changes would even remove the theoretical rate_limit cap here.
-A lot of complexity for something that is essentially a non-issue in practice
-AFAICS...
+Wonderful, thanks for the quick testing!
