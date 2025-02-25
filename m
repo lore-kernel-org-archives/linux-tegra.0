@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2AF919ABAB;
-	Tue, 25 Feb 2025 17:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B21516A95B;
+	Tue, 25 Feb 2025 17:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740505086; cv=none; b=ij1ItwTI2fBpSOiCzG4GGW+xjPQezezBUD5ksH+O97KOe8Kk5u9hHQCT3xAC1+TbdpDTNQS79IeFNWCyNJBeRISBq7+P1dH9YuRElPLHBwSgQlgsjRVEB1d40buC46/moAOVa/GJvuL5L8rxt8d+bN88DinltgqL4jGWnbje58A=
+	t=1740505315; cv=none; b=NwSD1qVIXW8yIsilTm3ft6/OwZK3Lk+FoZPTmffuQHFJ+2g4HbjxUQtXQKu3Vc92nR/TqKohAMGLtYTjRuERvwyG+nUq/nq9P10rSbgyP8RI3+UG5Byzn1w4lAX5BFVZiWr7IVIlYxsxEEtWiT+cHhnsy84HpkdAyeRZFakclxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740505086; c=relaxed/simple;
-	bh=Fggr0Su0nsN38bSQrHX2SWJ5oz4ipC2B9qOqksMQyHU=;
+	s=arc-20240116; t=1740505315; c=relaxed/simple;
+	bh=nqyQyTAbYndnzQJ+HYlkTqXiothFTkm6xScY3NPcIJ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ahVhezEVyGMbB3tCegKkiA0huYcloqtj3B7IObJvNowlKg/+RZIIR7TCq0FbmqrJMJbrGa81oVKGnXxf805c0jRFGDfUDmx7cE18S+JipDD+/p3hYYoqWRLYVXsagx7eMl0wiem5UBT814TUuQdUVI2L4IMts9fUfvIKwyqwz88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BokiDJ15; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=RBugVNc3EswKpOVrPQ+rRxQhQ2F6bi14Ygs3OgL10M/tTh2WaQII3eT0CvUDF0vNN++PL8ElMAEJcoaSqx+dHHsr+2+jjl6HFz7PqnJbR6Nuuw9U6gKosEsh+oEu0qpB2O76ckzdS3rv9JNngaTFu/JDnbUc8/+e+3+OCa6J7PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJVbb/3F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BokiDJ15"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BEECC4CEDD;
-	Tue, 25 Feb 2025 17:38:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJVbb/3F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 354B0C4CEDD;
+	Tue, 25 Feb 2025 17:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740505086;
-	bh=Fggr0Su0nsN38bSQrHX2SWJ5oz4ipC2B9qOqksMQyHU=;
+	s=k20201202; t=1740505313;
+	bh=nqyQyTAbYndnzQJ+HYlkTqXiothFTkm6xScY3NPcIJ0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BokiDJ15QEaRKlukS3bG3lxgUHWMexQfezWh1NSzp1F4snh3zOoJ3lcavCOMCbMj8
-	 9oBpCZwV49AlOH+/r3fLHITpfzzVCfFDh3ltQDcPx2TVRPOXbqzMNNC+J6JEHVX6JA
-	 zXyi4sfBKjPagdqWt6uyFXLtylKUJqEwdJFyWlltl8MGAeD4KU+ZzG3t5fanszf6yO
-	 1sFL8z2oZdsw0iTnwfMJ5U/rfGbW71jlWPXYilRZqzTY7fPzGjfsJpKB+hjMca3vSM
-	 ctNsX1pmfTWXA9jxZE6eSJ+lwu5eFVdNLLV5VX03YxjctSeGAu5TojO/AdFPeuId0Y
-	 bVmNLQScPH9bA==
-Message-ID: <329c3a3f-970a-4407-9c7b-eed87881536e@kernel.org>
-Date: Tue, 25 Feb 2025 18:37:59 +0100
+	b=iJVbb/3FvArjT8/eqR7UURPb4vTE/qvD8VBfPQne8uOxYe/DW2Cw9VKv4qd8qOVL3
+	 hZtazKHPHh3W/sIKR1BiW+yR+4WzGy4vYXWFYaUSvbKnkc4F5/a7THoxWntaneWoXX
+	 laeJ1PgmnNO1NvUaik3UBcYaaPJYenouBzxz0ZZrWopxBMnbYom6V+jACRB+/yTJQm
+	 B9S72t7JaH7zL1B8qShw/BzXOYCWLvWaOiYHDXwG6+62CSYQRqBmeoVRXJnTBi/ciF
+	 NRDnQ36NHtLEB/H30ByXr4lbYmGsrdams0WhjWJtlw9Vfw5wrwBBIx/9Tq2Zp6tDIQ
+	 ebdXw5f/ZhfKg==
+Message-ID: <b687b44b-013e-44b0-b97f-9f7ee2c2a62f@kernel.org>
+Date: Tue, 25 Feb 2025 18:41:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/9] dt-bindings: memory: Document Tegra114 Memory
- Controller
+Subject: Re: [PATCH v1 6/9] dt-bindings: memory: Document Tegra114 External
+ Memory Controller
 To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, Thierry Reding
  <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
@@ -48,7 +48,7 @@ To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
  linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20250225143501.68966-1-clamor95@gmail.com>
- <20250225143501.68966-3-clamor95@gmail.com>
+ <20250225143501.68966-7-clamor95@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -94,7 +94,7 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250225143501.68966-3-clamor95@gmail.com>
+In-Reply-To: <20250225143501.68966-7-clamor95@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
@@ -102,7 +102,7 @@ On 25/02/2025 15:34, Svyatoslav Ryhel wrote:
 > +
 > +properties:
 > +  compatible:
-> +    const: nvidia,tegra114-mc
+> +    const: nvidia,tegra114-emc
 > +
 > +  reg:
 > +    maxItems: 1
@@ -112,35 +112,50 @@ On 25/02/2025 15:34, Svyatoslav Ryhel wrote:
 > +
 > +  clock-names:
 > +    items:
-> +      - const: mc
+> +      - const: emc
 
-Drop clock-names, not really useful if it copies device name.
+Drop clock-names
 
 > +
 > +  interrupts:
 > +    maxItems: 1
 > +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  "#iommu-cells":
-> +    const: 1
-> +
 > +  "#interconnect-cells":
-> +    const: 1
+> +    const: 0
+> +
+> +  nvidia,memory-controller:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      phandle of the memory controller node
+
+For what? Your description copies property name and schema, which makes
+it useless. Say something not obvious - why this is needed here, what
+its purpose is. Do not repeat schema nor property name.
+
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +    description:
+> +      Phandle of the SoC "core" power domain.
+
+Drop description, redundant.
+
+> +
+> +  operating-points-v2:
+> +    description:
+> +      Should contain freqs and voltages and opp-supported-hw property, which is
+> +      a bitfield indicating SoC speedo ID mask.
 > +
 > +patternProperties:
 > +  "^emc-timings-[0-9]+$":
 > +    type: object
+> +    additionalProperties: false
 > +    properties:
 > +      nvidia,ram-code:
 > +        $ref: /schemas/types.yaml#/definitions/uint32
 > +        description:
-> +          Value of RAM_CODE this timing set is used for.
-
-This spreads to multiple bindings now. This really needs to be in shared
-schema.
-
+> +          value of the RAM_CODE field in the PMC_STRAPPING_OPT_A register that
+> +          this timing set is used for
 > +
 > +    patternProperties:
 > +      "^timing-[0-9]+$":
@@ -148,16 +163,37 @@ schema.
 > +        properties:
 > +          clock-frequency:
 > +            description:
-> +              Memory clock rate in Hz.
+> +              external memory clock rate in Hz
 > +            minimum: 1000000
-> +            maximum: 1066000000
+> +            maximum: 1000000000
+> +
+> +          nvidia,emc-auto-cal-config:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            description:
+> +              value of the EMC_AUTO_CAL_CONFIG register for this set of timings
+> +
+> +          nvidia,emc-auto-cal-config2:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            description:
+> +              value of the EMC_AUTO_CAL_CONFIG2 register for this set of timings
+> +
+> +          nvidia,emc-auto-cal-config3:
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            description:
+> +              value of the EMC_AUTO_CAL_CONFIG3 register for this set of timings
+> +
+> +          nvidia,emc-auto-cal-interval:
+> +            description:
+> +              pad calibration interval in microseconds
 
-clock-frequency is a legacy property, not really desired for new
-bindings. Memory controllers can operate with different speed, so how do
-you factor this here?
+User proper unit suffix
 
-BTW, same review could have been given last time and you will be deemed
-to repeat everything, unless this is captured in description or commit msg.
+> +            $ref: /schemas/types.yaml#/definitions/uint32
 
+Drop
+
+> +            minimum: 0
+> +            maximum: 2097151
+> +
 Best regards,
 Krzysztof
