@@ -1,239 +1,268 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2085.outbound.protection.outlook.com [40.107.93.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D41265CBE;
-	Tue, 25 Feb 2025 13:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740491129; cv=none; b=cWHZ6HyZc3UL9991b5WFOs/ZjRMwlNuTZ8qJmNdcQlqYFqcyG4AHtCUuL0qjQhIP7hUJpH1QfVJa1jWfdFs6MkhzLAPYiGA6c+eFoTnElUSWKh4xEas3VpMMxmH4Pz1ZD/3anxH8PnkED3NZjtoeUwQWfksjGNh/SnTI+G3SYNA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740491129; c=relaxed/simple;
-	bh=JFC+miNbc8z+8hh+i0aV4a/eWqJcZlJ5xtiAErPuktY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I8BBgO//JPpsMtsi9qKV0AT02ntOwC+abOpqtqutW1M6tewTn6A+aJO3ZdKKwif6gxvozEKq8XhxlohKyt16Z3+aXQVl+BvrxQY1cV/CZ2DE699elZqjdyUPrRq/55oK0K/W969qJV7UUxTGPwteYadGp0q82G1Tq2C6lkkZxZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=TqAOEm8j; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9B3269803;
+	Tue, 25 Feb 2025 14:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740493285; cv=fail; b=CYu+Q8TJVcuyioptpErSXn1NyXhX6tGaulZgvdkKabC+sARt4lsPKLUdT+sZ6Jikqu5iADmWtdj+ISXP79Q5gPFJg7Ivcsc8f/nfimTeNoUVGvlQM0HYvfeKPw0AOMW1No+qo8lajjAHMfcvYoxZtYZ7GfJJU/4DKEF+Rv1lt9M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740493285; c=relaxed/simple;
+	bh=lMPqFHNmGrj7dIrim2wtt8TZCe4jZe7c8mLJeO/ts2g=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=H35VfBRS+ao7YhV0XOLsS7Ay6PwsVRPHCxnMzontWmOkl7rsCEga1unTXBS03eYVk9dItEXDV5TYyWMhn6kEASlfBa/JomW9Oncf6mbZSRW7aSKFzFau2/AKn1hz3HOzTIBJ3cWzEfWhHEkcErewROfT72G7CqtEa686lT6gK6E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oCx2znV3; arc=fail smtp.client-ip=40.107.93.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="TqAOEm8j"
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B326D82E;
-	Tue, 25 Feb 2025 14:43:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740491038;
-	bh=JFC+miNbc8z+8hh+i0aV4a/eWqJcZlJ5xtiAErPuktY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TqAOEm8jY6aGAOQ9BLN0iANHoj9EuhjvkXpBKUccldcKmyKt0NStoy2kNYhgofeYZ
-	 cUbxnpnvTsSayJiVOvExLLPlDM3UqxjFgDEnVVrdk1CIPi9iMuRQtQFt1hZU3tRKsg
-	 1eg95cZ+G1uKJIo455If+sXgT6dP77C6jL2Y3A4E=
-Message-ID: <f74af5cc-bca8-45c1-9204-b362fcd6f998@ideasonboard.com>
-Date: Tue, 25 Feb 2025 15:45:21 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oCx2znV3"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WSQm8e2lbdLMG0W8vrdE86J0dyAxgRDdVzvKfJZfWpYueQQoeQ3DWSoOfavQk7pU+KkPE78IkxSPF3tpbgSwafgL9rcBZApfYgFN3QIWZvGWRg9OMmN9nHKGEQeXY1+R8J+RRS6ztXD+tLKRXIT9BdOKnPs2tEIioUKrtzv1MPSosZ4/abn9gCrq9vrk+kBAQD/R03aKfp7E2Rkn7F+m4+ZF6uRbb7Ei01kTP4BeVP/nNnbL0FIlRDSb5aiwCjlaQ8/8G2v05KwUwwyHZV+Yzi6r9d/JmdHScWQdRG6imOb6COzqEgDZrY2D7beYTIPC7RcgStlGvzu7rXCFKkx1CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c3cl0mYF1Tw6ztEBysd6MbBFFKn2Jv3whEDlQfgPMs8=;
+ b=johJMWE2YgzLh1OuuyVmHGnUfMhERuhoRrW3VY0KM8OdFQBJc7gxIu0bM+J9+R7q/W77xtCDzxiNDSLt7XSpjuOahjZp8LbZFHd5DiMevbFTSr49VoopXewKgCAeb9yYk3EEcryMOJ62a3gKjoBcAIK5/c/yZ1P/V6L2c/S9w9KpdJRzqQZtUqcC2/H/Aq901hUSVaj/LLzFbl/Sj6Jm7PAAGVP2NATJVDbYVT23LXUf6sTEmmwOEuwK3gvnGwil0ewpnYN7QJr5vWPbP10oMd3esuLe8ypt+YNdd+cwR2qok8cQSZzEii88S571JjdYtLrRSDAwb+lCCOCZK+kigg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c3cl0mYF1Tw6ztEBysd6MbBFFKn2Jv3whEDlQfgPMs8=;
+ b=oCx2znV3B+ntfV8g+smLf9OoL6P9iX99peH0HfcylNAg2EbEyJrW5AGjU/vncG4JboDuSubg2CTARmCSBWaB5qvDOz3Yji4/st4n9WjAO+CsvJlfCBA9LLNOinqxybFlhJ2Mp2+nARZfDBW988yQOoIUujRx1fsp+MocHuse02Kdhqu4zNe1MKaggnRhOvXt5iZbmRsMHNqmxc9eBza0UTqUoF0t9xczRIm3dZ2/RKsgVJ8wrFrmVexm5tb2/3/sGCf3mS5nkW2hFDu8OGI8ROsX9y9FHXzXJwz2VduAM4fgYq+465ZqbzAY8ly6KbmuIQWeu8+kZf/RfHTeGtypzw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by SN7PR12MB6765.namprd12.prod.outlook.com (2603:10b6:806:26b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8445.13; Tue, 25 Feb
+ 2025 14:21:16 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%6]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
+ 14:21:16 +0000
+Message-ID: <31731125-ab8f-48d9-bd6f-431d49431957@nvidia.com>
+Date: Tue, 25 Feb 2025 14:21:01 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 9/9] net: stmmac: convert to phylink managed EEE
+ support
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>,
+ Bryan Whitehead <bryan.whitehead@microchip.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+ Paolo Abeni <pabeni@redhat.com>, UNGLinuxDriver@microchip.com,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <6ab08068-7d70-4616-8e88-b6915cbf7b1d@nvidia.com>
+ <Z63Zbaf_4Rt57sox@shell.armlinux.org.uk>
+ <Z63e-aFlvKMfqNBj@shell.armlinux.org.uk>
+ <05987b45-94b9-4744-a90d-9812cf3566d9@nvidia.com>
+ <Z68nSJqVxcnCc1YB@shell.armlinux.org.uk>
+ <86fae995-1700-420b-8d84-33ab1e1f6353@nvidia.com>
+ <Z7X6Z8yLMsQ1wa2D@shell.armlinux.org.uk>
+ <203871c2-c673-4a98-a0a3-299d1cf71cf0@nvidia.com>
+ <Z7YtWmkVl0rWFvQO@shell.armlinux.org.uk>
+ <fd4af708-0c92-4295-9801-bf53db3a16cc@nvidia.com>
+ <Z7ZF0dA4-jwU7O2E@shell.armlinux.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <Z7ZF0dA4-jwU7O2E@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CWLP123CA0063.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:401:59::27) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/25] drm/dumb-buffers: Provide helper to set pitch
- and size
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20250218142542.438557-1-tzimmermann@suse.de>
- <20250218142542.438557-3-tzimmermann@suse.de>
- <dcd59a75-7945-4a2e-99f9-3abbb3e9de14@ideasonboard.com>
- <355ed315-61fa-4a9d-b72b-8d5bc7b5a16c@suse.de>
- <596b960e-71f8-4c2c-9abe-058206df1dfb@ideasonboard.com>
- <87ca2b81-a67a-468b-ae2b-30d02a3a64bc@suse.de>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <87ca2b81-a67a-468b-ae2b-30d02a3a64bc@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SN7PR12MB6765:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1e70885-0438-43d3-3cda-08dd55a7aa4d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WG9Rb2c0dWE5WkJGYlREQUdNSDVOR0dZMEVFemdZbm1TT2RUdTczNkN1ZGN0?=
+ =?utf-8?B?a0wwN3kreFo4Y2xJUFViMS9Xdk5kYkh0MW1oazhpdTNYbUN3Qjc5Sk9NamVJ?=
+ =?utf-8?B?UmRLUjJGOGlqWitxeVV3VnZNNzk3bnFXNzhHZDJud294Nk9xMlArNXhtb3lE?=
+ =?utf-8?B?ZUlqWXdKRGw2aGNsckUzSU5XSUcxSjFMd3BRTWV0MW4yektBNWN2dHVSdDUz?=
+ =?utf-8?B?TjlxSkxkMDVMVWwyL3lNcjBqVnIxM29hOWVFcWtweVVjaDV0RFNCRkRLMHNj?=
+ =?utf-8?B?MWw2RVJVTEVyLzlkcndHRUN6Rk9FbEpVNWE1TjlncTVOVGlIYVRzQWh1bm1u?=
+ =?utf-8?B?T2svd2dzdmdtV3ptK1lEZnduc1pLTHY1dU9neVhsVlJ1YXhxMnFRdDM2b1RX?=
+ =?utf-8?B?TythRUtYOUZndGl6dlR3NXRHc1NxY1F2WmVJU1dJbGozRWUxOUtWcWMxWnRX?=
+ =?utf-8?B?L296UkJCcUlTb0FzejdydjhDcDhRMnJVVXFEYTI4TU13eTB3L05WdHNyT3dU?=
+ =?utf-8?B?MlFZUHZZZXdZd20vNlY2b0VHM3dvd1cva1dGL2VWN1IyaGlXSXQ1RkorL2sx?=
+ =?utf-8?B?WDFsNFZaUVNDWUw0MW5RRFhBYXdBR2lPVDJHOW51YkdsWDFveEsyU1BXY1la?=
+ =?utf-8?B?ZFhHNFVWRHVCRlRrUHJ1ME5GUE8ranpQTGtOWnVqVzkwd2hYU2tWVXpBSW0w?=
+ =?utf-8?B?SWxXcWNGTnlMN0VGblQyR0RKTHNubmVDdnMyZmFaK01WOFEybHlDRzNwVjAw?=
+ =?utf-8?B?L3JWV09KbTVEMmlEWXRSaHgwWDhhcmh6S1dyRE1pUWQ5dmRmYVpqYm9obGds?=
+ =?utf-8?B?aE9nN3YzZ0wyWGx6VGZ1QjdPMkxhNmtmV0FKM2RMZ0NOOXEvaGhYaHNEU2Iy?=
+ =?utf-8?B?YVI4cjQ2bktPRk0rKzN3dS9PRE9uNFVITG1kcEsvTUdKYTBvYWY5c0RXLzFX?=
+ =?utf-8?B?NUw0TWR2Z21qTFdVYVU4Q0F3bWUrVUc4aGJQbU16WFN0MjZtR0oxTEJQakRU?=
+ =?utf-8?B?UHJCOFRvU1RJd01tUmdLeDZNZHIxRDVFNVd4eTUrZXI2QVMzckYyeHhON3R6?=
+ =?utf-8?B?TkVjR1U2ay85aEdkaGtuNjNuc1IzTm9ramRlaS9wVHBLbVA3NDlvRWRLWll5?=
+ =?utf-8?B?alpmdk04VnBCY01wMmlMQVBpL1Q2WHVTNjcyRXJKYVdaQXVoTzVYRWk3RS9B?=
+ =?utf-8?B?elZaNXRuVVRWU3BqdUJqLzhYdlNnMWVVbGwwVVVkVlpPNG82QVJISFlNU2Ew?=
+ =?utf-8?B?T002SGUyNEgyd3BnbUc2dkxJRlhIaVJXMmtLMERyS2FsZDhsQmMrYXd2dDFj?=
+ =?utf-8?B?N3FTd1hKQys1eTdBa1dEeXptN0cvY1lsZUdrVVZrYXNFNjZ6SndORDVVRGV6?=
+ =?utf-8?B?eXYxOUppUGVQN1hGQlR2YXdyLzJtVFYzb1ZyVlNGQjVWZ1ZQWG9wc3JNMDZa?=
+ =?utf-8?B?U0NJQTNiNnVzRGs0NkZhSGFPMGpLdForRXc4emRpOWdFSmtnRWZtZ3F3Q1p1?=
+ =?utf-8?B?a3lWVlhIbElGMGVwL2VGSm9oditxZkE3OVlvVXZvNG40UjlxQmJyVFJCOWxo?=
+ =?utf-8?B?cGdLT21ZQ2pzYXZkd1NkVDQxeVhhYVBVcGtncEJRNm0vYXBjSlN4bk9IWUQ3?=
+ =?utf-8?B?VzVxMXdjR25JTnRHM0tRY0ZMNlBjbkl0bzgxWDlVOXQzMyttb1IzaERHbUg0?=
+ =?utf-8?B?M09jTSt6R0Q4TzdiMXAzZ3MxWHR6SzZ1bFFqUWNnV3JSdTVWUWFmM05jQXZp?=
+ =?utf-8?B?N0lQT250WGRNTkQ2Z0pVeFNJUC9IbU1GK2pEZittUW9mNlRSRkUyWGpDc2Y1?=
+ =?utf-8?B?aHo0c0wvSkxiZ2lHNnZFODJnR0dTeU1Fb3RHU1VLaHU5aEU4NWNieHVyMmI5?=
+ =?utf-8?Q?CXulxPokJ/+jl?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q1RSWkFjR3N0aXMxemhkZlQwS25Kclg4S2JzSjNMd2JLYmNiSDRUeW9KTHhS?=
+ =?utf-8?B?NXhIbmtmMUR5MEhNYmxuY3dMUkFCZG1GRzZRa29DMWliVDBpR25zelBOMENi?=
+ =?utf-8?B?eVN6L3B2dzVyM1RPUWIxY1pNSG56TmtMSEM3WFJHMm5BRXB2emlROUtOSnVk?=
+ =?utf-8?B?WVRmVWc2R3ZvS01QVUMrSjFWMHVCcjNqRC9uYytQRC9QMWRNT0h1aWpNcHk4?=
+ =?utf-8?B?TUZOQThpRXZzc1o4WlBSY09sWmJvM25WR1ludVZrZmFxamlzQ3dWQUxXaTZJ?=
+ =?utf-8?B?VFZXSG4wS0NGS0wzcGhzeDRsbG5xdng2SVh0cEJ6cTZSeXpzdlp4NmNrbTUx?=
+ =?utf-8?B?VVNUeGlpYjZTUXhrYnFQVTlZR3g5KzlCOFgvSmpmWml0RmZXS0pWQ1FWYitN?=
+ =?utf-8?B?NlB6bFptMXd5bVlkejFLV0RhS2R5emQ3c0pERVpKSE05aWNPekR0SGhJdGZQ?=
+ =?utf-8?B?TlhYOEVoNnVlM0xUdXZzYWlEU00vMDFJOTd4ZURLMmFyTUZpY2RaNHlmZkRQ?=
+ =?utf-8?B?c09kS2czZE5rbjNhNGZOaEx6Vk5VUmJWY1A5bnQvRzhVUDlpSFZ5dUROVURH?=
+ =?utf-8?B?cTZCNHFneVdrdmZFVTlSSjhLSEsveUdpQWEzNlB1QmxrWmZyb0syRDgvQ3o1?=
+ =?utf-8?B?REtnRVlMQ1RUbmdueDVVZTd3bG96SEtFMHgyWW5yTjczQktzQjRvZTk1SnBK?=
+ =?utf-8?B?VEhBTDVXSS9HdkZsbjBXSzAvMlVCRk5hMHp2MENGblBvaUdFSW9FWGdrK1VI?=
+ =?utf-8?B?emM4MENUNXFvakZYOTlZV3FLNzZid3lBcGdRUnVwMGVmT1lxb2dQVmZyaVJ4?=
+ =?utf-8?B?aG45ZnAvOHU1bjhtTjJmcEJWcHVYaUxUZEtkQlAyRmJoNkJ0VzU0LzVOU0Er?=
+ =?utf-8?B?Qm94K0xCWWF3eFBEYWYyelFQMkFyK1pYa01KK25ZYTVPNmJkKzBxd3lXVWtG?=
+ =?utf-8?B?RS9NV0hWZngwazVFNlI3MCtxUXNrZU90Yk83Y2VidjYxbkQ2eXYrQkVVMW8w?=
+ =?utf-8?B?OVlqb1ZqZDE5dVVYY3cxSDNsaU92K2ZsNU9uRkRoQ3ZtWThXSlZXZDFQZ3B6?=
+ =?utf-8?B?ZFZTVTJEMm8rZTc5cTJ0WGxXS0gzdnpPWjhOdnVnUG41TFpKVVk0bktjTm8w?=
+ =?utf-8?B?ZXMyWk5FNC9Rb3ROZ1dHTEVtZ2tSUU9kRFQzQmlhTWdKc1FKSnVEQlpKSlhD?=
+ =?utf-8?B?aDZqcW5UNHpqZVd5ZSs0RVo4RnBOblFmWFNRVEt2eC9nM1pveElONG1CWFRJ?=
+ =?utf-8?B?NFcyZVFUamJISSs4OG1LUzN1MXhsMzhhQ2JFVk9CUzJRWjU2STE4aDhEcG5X?=
+ =?utf-8?B?MW9LRWxDTzg3ZTBIbmovM1pCc1JOUTBXcWtaUlJ1Z2dRTXdSS3YvSURhbG85?=
+ =?utf-8?B?aGxad1REY2o2cHNhNDVNY3Z6dnliYUhhR2ZtUndBTVBtT001RW1EQVp5NlIz?=
+ =?utf-8?B?Tm1rczhRemc2NlRoMi9uamtlbWNTbjI4UHdoc0N4dGk2V2lPOW5PNFFuZXNY?=
+ =?utf-8?B?d0hVNHQrVFdYNjFlVERpOFpSQjRRdHdDK3Avb0k3UDNVdDRFSUdSZlkwUldk?=
+ =?utf-8?B?TjQxeCs4b1dqNmlGYWJuTThpWWFlS2JhRjdZbjYreENhTy91Q0RGN1o3Wis1?=
+ =?utf-8?B?em45d25iSFA1YS9uaXRlVnBvcEcrMWNXL3BwY3ZPNWtvWlhyekxvS05KaVhJ?=
+ =?utf-8?B?MFNkSW1xOVRodWtvMll3ZnpMTEc3Wm92M1lpd010SXM2dlloc0dYZE5VOXpk?=
+ =?utf-8?B?ZC9RcHh3M3JyRVliWnlsZWdFcm1ibmdCdkNUYkI0d3E5VHM2VzhnbU5IeThU?=
+ =?utf-8?B?UHg2QkxIVnljUk4wRHg1R0pFMElEZmZGMlJHQWtOWVpRcTl5Nnd5YlNxbTNF?=
+ =?utf-8?B?UmVqckttTGUwQU9OTXF1VFNHd1dnTTkrUVR5RkZ1S2hjV0pTQ2hMcyttbkhk?=
+ =?utf-8?B?NDZ2MjgreWN6bXZTMnBqakhPTExyLzNabU5vZ21EOVlSckZQdkpGNXlYYWFK?=
+ =?utf-8?B?T2dBMENjSDNiTXJBOGVGRU5Pb0dsRmROV2hVTUdUUG5SVzJjbzlMQnJ6L1c2?=
+ =?utf-8?B?aWg2Qmp3VlgvZldIUURvVDZIeDROdDYrZ1ZOODZjNVk2OGJRZUVOZnFuaW52?=
+ =?utf-8?Q?+ibhw3NQYbqhnqhqVXkrT+/jO?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1e70885-0438-43d3-3cda-08dd55a7aa4d
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 14:21:16.2853
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AaQXDQAw1pIS16uyVYZCC9x3ouzG4WxJ+kx75RY7P+g9OWpIQ1UEoWJFKuPpYQQ2aUzyzEfjMwkDU8vlsLxaTg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6765
 
-Hi,
+Hi Russell,
 
-On 21/02/2025 11:19, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 20.02.25 um 11:53 schrieb Tomi Valkeinen:
->> Hi,
->>
->> On 20/02/2025 12:05, Thomas Zimmermann wrote:
->>> Hi
->>>
->>> Am 20.02.25 um 10:18 schrieb Tomi Valkeinen:
->>> [...]
->>>>> + * Color modes of 10, 12, 15, 30 and 64 are only supported for use by
->>>>> + * legacy user space. Please don't use them in new code. Other modes
->>>>> + * are not support.
->>>>> + *
->>>>> + * Do not attempt to allocate anything but linear framebuffer memory
->>>>> + * with single-plane RGB data. Allocation of other framebuffer
->>>>> + * layouts requires dedicated ioctls in the respective DRM driver.
+On 19/02/2025 20:57, Russell King (Oracle) wrote:
+> On Wed, Feb 19, 2025 at 08:05:57PM +0000, Jon Hunter wrote:
+>> On 19/02/2025 19:13, Russell King (Oracle) wrote:
+>>> On Wed, Feb 19, 2025 at 05:52:34PM +0000, Jon Hunter wrote:
+>>>> On 19/02/2025 15:36, Russell King (Oracle) wrote:
+>>>>> So clearly the phylink resolver is racing with the rest of the stmmac
+>>>>> resume path - which doesn't surprise me in the least. I believe I raised
+>>>>> the fact that calling phylink_resume() before the hardware was ready to
+>>>>> handle link-up is a bad idea precisely because of races like this.
+>>>>>
+>>>>> The reason stmmac does this is because of it's quirk that it needs the
+>>>>> receive clock from the PHY in order for stmmac_reset() to work.
 >>>>
->>>> According to this, every driver that supports, say, NV12, should 
->>>> implement their own custom ioctl to do the exact same thing? And, of 
->>>> course, every userspace app that uses, say, NV12, should then add 
->>>> code for all these platforms to call the custom ioctls?
->>>
->>> Yes, that's exactly the current status.
->>>
->>> There has been discussion about a new dumb-create ioctl that takes a 
->>> DRM format as parameter. I'm all for it, but it's out of the scope 
->>> for this series.
->>>
+>>>> I do see the reset fail infrequently on previous kernels with this device
+>>>> and when it does I see these messages ...
 >>>>
->>>> As libdrm's modetest currently supports YUV formats with dumb 
->>>> buffers, should we remove that code, as it's not correct and I'm 
->>>> sure people use libdrm code as a reference?
+>>>>    dwc-eth-dwmac 2490000.ethernet: Failed to reset the dma
+>>>>    dwc-eth-dwmac 2490000.ethernet eth0: stmmac_hw_setup: DMA engine
+>>>>     initialization failed
 >>>
->>> Of course not.
+>>> I wonder whether it's also racing with phylib, but phylink_resume()
+>>> calling phylink_start() going in to call phy_start() is all synchronous.
+>>> That causes __phy_resume() to be called.
 >>>
->>>>
->>>> Well, I'm not serious above, but I think all my points from the 
->>>> earlier version are still valid. I don't like this. It changes the 
->>>> parameters of the ioctl (bpp used to be bits-per-pixel, not it's 
->>>> "color mode"), and the behavior of the ioctl, behavior that we've 
->>>> had for a very long time, and we have no idea how many users there 
->>>> are that will break (could be none, of course). And the 
->>>> documentation changes make the current behavior and uses wrong or 
->>>> legacy.
->>>
->>> Before I go into details about this statement, what use case exactly 
->>> are you referring to when you say that behavior changes?
+>>> Which PHY device/driver is being used?
 >>
->> For every dumb_buffer allocation with bpp that is not divisible by 8, 
->> the result is different, i.e. instead of DIV_ROUND_UP(width * bpp, 8), 
->> we now have width * DIV_ROUND_UP(bpp, 8). This, of course, depends on 
->> the driver implementation. Some already do the latter.
-> 
-> The current dumb-buffer code does a stride computation at [1], which is 
-> correct for all cases; although over-allocates sometimes. It's the one 
-> you describe as "width * DIV_ROUND_UP(bpp, 8)". It's in the ioctl entry 
-> point, so it's somewhat authoritative for all driver's implementations. 
-> It's also used by several drivers.
-> 
-> The other variant, "DIV_ROUND_UP(width * bpp, 8)", is used by gem-dma, 
-> gem-shmem and others. It can give incorrect results and possibly OOBs. 
-> To give a simple example, let's allocate 15-bit XRGB1555. Bpp is 15. 
-> With a width of 1024, that would result in 1920 bytes per scanline. But 
-> because XRGB1555 has a filler bit, so the pixel is actually 16 bit and a 
-> scanline needs to be 2048 bytes. The new code fixes that. This is not 
-> just a hypothetical scenario: we do have drivers that support XRGB1555 
-> and some of them also export a preferred_depth of 15 to userspace. [2] 
-> In the nearby comment, you'll see that this value is meant for dumb 
-> buffers.
-> 
-> Rounding up the depth value in user space is possible for RGB, but not 
-> for YUV. Here different pixel planes have a different number of bits. 
-> Sometimes pixels are sharing bits. The value of bits-per-pixel becomes 
-> meaningless. That's why it's also deprecated in struct drm_format_info. 
-> The struct instead uses a more complicated per-plane calculation to 
-> compute the number of bits per plane. [3] The user-space code currently 
-> doing YUV on dumb buffers simply got lucky.
-> 
-> [1] https://elixir.bootlin.com/linux/v6.13.3/source/drivers/gpu/drm/ 
-> drm_dumb_buffers.c#L77
-> [2] https://elixir.bootlin.com/linux/v6.13.3/source/include/drm/ 
-> drm_mode_config.h#L885
-> [3] https://elixir.bootlin.com/linux/v6.13.3/source/include/drm/ 
-> drm_fourcc.h#L83
-> 
 >>
->> This change also first calls the drm_driver_color_mode_format(), which 
->> could change the behavior even more, but afaics at the moment does not. 
+>> Looks like it is this Broadcom driver ...
+>>
+>>   Broadcom BCM89610 stmmac-0:00: phy_eee_rx_clock_stop: clk_stop_enable 1
 > 
-> Because currently each driver does its own thing, it can be hard to 
-> write user space that reliably allocates on all drivers. That's why it's 
-> important that parameters are not just raw numbers, but have well- 
-> defined semantics. The raw bpp is meaningless; it's also important to 
-> know which formats are associated with each value. Otherwise, you might 
-> get a dumb buffer with a bpp of 15, but it will be displayed 
-> incorrectly. This patch series finally implements this and clearly 
-> documents the assumptions behind the interfaces. The assumptions 
-> themselves have always existed.
+> I don't see anything special happening in the PHY driver - it doesn't
+> implement suspend/resume/config_aneg methods, so there's nothing going
+> on with clocks in that driver beyond generic stuff.
+> 
+> So, let's try something (I haven't tested this, and its likely you
+> will need to work it in to your other change.)
+> 
+> Essentially, this disables the receive clock stop around the reset,
+> something the stmmac driver has never done in the past.
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 1cbea627b216..8e975863a2e3 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -7926,6 +7926,8 @@ int stmmac_resume(struct device *dev)
+>   	rtnl_lock();
+>   	mutex_lock(&priv->lock);
+>   
+> +	phy_eee_rx_clock_stop(priv->dev->phydev, false);
+> +
+>   	stmmac_reset_queues_param(priv);
+>   
+>   	stmmac_free_tx_skbufs(priv);
+> @@ -7937,6 +7939,9 @@ int stmmac_resume(struct device *dev)
+>   
+>   	stmmac_restore_hw_vlan_rx_fltr(priv, ndev, priv->hw);
+>   
+> +	phy_eee_rx_clock_stop(priv->dev->phydev,
+> +			      priv->phylink_config.eee_rx_clk_stop_enable);
+> +
+>   	stmmac_enable_all_queues(priv);
+>   	stmmac_enable_all_dma_irq(priv);
+>   
 
-This is perhaps where the biggest gap in understanding/view is: I have 
-always thought dumb-buffer's "bpp" to mean bits-per-pixel, where, for 
-more complex formats, "pixel" is not necessarily a visible pixel but a 
-container unit of some kind. So bpp * width = stride.
 
-It would not occur to me to allocate XRGB1555 dumb-buffer with 15 bpp, 
-but 16 bpp, as that's what a pixel takes. I have never seen the 
-dumb-buffer bpp connected directly to the pixel format (that's what the 
-ADDFB brings in).
+Sorry for the delay, I have been testing various issues recently and 
+needed a bit more time to test this.
 
-I may be alone with that thinking, but afaics the documentation leans a 
-bit on my interpretation (instead of considering bpp as a "color mode"), 
-although admittedly the docs also don't really say much so this may be 
-fully just my interpretation:
+It turns out that what I had proposed last week does not work. I believe 
+that with all the various debug/instrumentation I had added, I was again 
+getting lucky. So when I tested again this week on top of vanilla 
+v6.14-rc2, it did not work :-(
 
-https://man.archlinux.org/man/drm-memory.7.en
+However, what you are suggesting above, all by itself, is working. I 
+have tested this on top of vanilla v6.14-rc2 and v6.14-rc4 and it is 
+working reliably. I have also tested on some other boards that use the 
+same stmmac driver (but use the Aquantia PHY) and I have not seen any 
+issues. So this does fix the issue I am seeing.
 
-https://cgit.freedesktop.org/drm/libdrm/tree/include/drm/drm_mode.h#n1055
+I know we are getting quite late in the rc for v6.14, but not sure if we 
+could add this as a fix?
 
-I (mostly) understand all the complexities around here, thanks to your 
-replies, and I think I'm ok with the series as it doesn't break anything 
-(need to test the v3, though).
+Thanks!
+Jon
 
-I still don't like it though =). And I would be happier with the simpler 
-"bpp" interpretation that I mentioned above, instead of it being a color 
-mode. But we can't have it both ways, and perhaps it's better to unify 
-the code and have the behavior explained explicitly as you do in this 
-series, even if the explanation only covers some RGB formats.
-
-  Tomi
+-- 
+nvpublic
 
