@@ -1,50 +1,50 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B132135AC
-	for <linux-tegra@vger.kernel.org>; Tue, 25 Feb 2025 22:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E2E21421A
+	for <linux-tegra@vger.kernel.org>; Tue, 25 Feb 2025 22:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522109; cv=none; b=iJZEU6dWfcMpDsdDWIYiwmK8BY++vpCafprk9HaPE/hq1zW1cNLABYs86xqBEBFTkIUAvHz8s002zEbyU1nMqY+/mAS73ogNzCSnsSauOUQTebwFSAB1txhs+u46A7DH9j+4GXrVsfiCzeGZWkyP6ibGeerhxZqGK7T5bVjc7Bs=
+	t=1740522119; cv=none; b=FOMVQHBqDrXHvXeEiyJLEsYpU/Kb8X4dAhCC7O9hdODQGzWeg1XhNJU5ehBr/Z0BEN5f8CIaWghsbI0SerC+Vu3NWRCMMj0unKFkFsnJC3VvrnU8eNGcYYQ2Jp2Rgflhq6Aqr5G89gzvJmBZ5956HSIjSYlZt3TGDyK7VqWhWzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522109; c=relaxed/simple;
-	bh=kFCOcGQY9D8TzyaRT9RN2mfIAjcd4C4Nrt+RPwYLIdE=;
+	s=arc-20240116; t=1740522119; c=relaxed/simple;
+	bh=+h+zwJrqhz4KcKBFOtg5ltWWvHHlCjpJOJiBG2cNAao=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=axGRq2iSUg1cAxwZF29T5C9/0/kHJ6U5QqL4cq1/q+oWSO9ZXmLI+FJHN1mVTnQkNhWfIMpj2PWRmq7HsfbGwtHBkaEczh6meBzq1eJ5oA4Tzq4twGcL4A+jxx50UrJ5/Aeoi2Wqdf9W2PDTLtfQAwxV4KzxWKIfD0Chg5s+lkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DVJGL+w8; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:To:Cc; b=HEME5FEp2gaJiiTxI5JjD4jDGD2V6qAZIW1v0A2x7xRpHVS5/quLf+igmQ2OJYaLF+W8TIoE+zC5SzO27wITOMYs99MMdPF3pZQGfoJpIkdsWQ8RJe0DP3OVGAYVOGWAiXC2uXKGHxuKGhwoNGmA2O57nMmKgCZl60xqdEsL+WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZN2mdgAF; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DVJGL+w8"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZN2mdgAF"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740522107;
+	s=mimecast20190719; t=1740522116;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6AwvElau9bWD8//2IbXRBKfSQA+YGh6bloJOkjJckZ8=;
-	b=DVJGL+w8r1ADlf/16NB8AAAWLEt64WIGgs2iGv3RleB3fnm4ND4X2EluHvYhk7mMF6nj+h
-	Ez0lbhehh1SFwaHJiZb20Zp++Y4bFVdLzU4P4wc6EI2iGJPY0InxSUdtWZgI4m+G8ej9Mq
-	eU8DGAXpqcUJFBzr2IrRMJ0GeUeIsTM=
+	bh=kpyWlOaModCxFl+Tqqpp85hFGJYXyqIGL3Cy6JBVo+g=;
+	b=ZN2mdgAFQoD67l6qgmbWZpsu6CwZ02Gryw5BLoKUt1Qp3ytyBJRjl1KCdwXSNjBa1wMPH2
+	7KobnBD5gtgkLEZIkTvD9YL/kChCpD9WLAtK4R7QQ6CdsR3b8R4hPhPCBLlOOv+/61/Tjt
+	L1idUWMkQDq/XPus2E3/S1zrrK/1+8A=
 Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-185-P-y_jBRNMsSoazN8fQ8Vvw-1; Tue,
- 25 Feb 2025 17:21:45 -0500
-X-MC-Unique: P-y_jBRNMsSoazN8fQ8Vvw-1
-X-Mimecast-MFC-AGG-ID: P-y_jBRNMsSoazN8fQ8Vvw_1740522104
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-e2kiOPWbO2KHndIn8cGFRQ-1; Tue,
+ 25 Feb 2025 17:21:55 -0500
+X-MC-Unique: e2kiOPWbO2KHndIn8cGFRQ-1
+X-Mimecast-MFC-AGG-ID: e2kiOPWbO2KHndIn8cGFRQ_1740522114
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B31FE193578F;
-	Tue, 25 Feb 2025 22:21:44 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4418919039C1
+	for <linux-tegra@vger.kernel.org>; Tue, 25 Feb 2025 22:21:54 +0000 (UTC)
 Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.79])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9B8991800366;
-	Tue, 25 Feb 2025 22:21:34 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 07B12180035F;
+	Tue, 25 Feb 2025 22:21:44 +0000 (UTC)
 From: Anusha Srivatsa <asrivats@redhat.com>
-Date: Tue, 25 Feb 2025 17:20:45 -0500
-Subject: [PATCH RESEND 04/12] drm/mediatek: move to
+Date: Tue, 25 Feb 2025 17:20:46 -0500
+Subject: [PATCH RESEND 05/12] drm/mxsfb: move to
  devm_platform_ioremap_resource() usage
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-memory-drm-misc-next-v1-4-9d0e8761107a@redhat.com>
+Message-Id: <20250225-memory-drm-misc-next-v1-5-9d0e8761107a@redhat.com>
 References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
 In-Reply-To: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
 To: Joel Stanley <joel@jms.id.au>, 
@@ -96,13 +96,12 @@ Cc: linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
- linux-doc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>, 
- CK Hu <ck.hu@mediatek.com>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740522045; l=8775;
+ linux-doc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740522045; l=2524;
  i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=kFCOcGQY9D8TzyaRT9RN2mfIAjcd4C4Nrt+RPwYLIdE=;
- b=qYv7i5GwH+Bi37QflJq1taNo71j8iMT5Gf5a12sVcte27tGRYcxtPGTcibkw3JKboZtdGQvOQ
- z5HXAZ3Xck7Bw9Vdc3Z3XBw26xq9q86DC4QffQqkW1QqDgGBfITObfX
+ bh=+h+zwJrqhz4KcKBFOtg5ltWWvHHlCjpJOJiBG2cNAao=;
+ b=k+LJjuc8ROIZ94VcX2vJBYoSZVLRroxcG4/mX7Ow5YRn2etCmM+Q7u1YmoWhA+q5GPKLk/sq8
+ Mmua5UaO4QXCZYG7SAUnmnYGEXvMwqhAWGkBzsIQqT0LS2AQdLILv0U
 X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
  pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
@@ -122,198 +121,59 @@ identifier pdev;
 -ioremap_res = devm_ioremap_resource(...);
 +ioremap_res = devm_platform_ioremap_resource(pdev,0);
 
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Marek Vasut <marex@denx.de>
+Cc: Stefan Agner <stefan@agner.ch>
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
 Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
- drivers/gpu/drm/mediatek/mtk_disp_color.c | 4 +---
- drivers/gpu/drm/mediatek/mtk_disp_gamma.c | 4 +---
- drivers/gpu/drm/mediatek/mtk_disp_merge.c | 4 +---
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c   | 4 +---
- drivers/gpu/drm/mediatek/mtk_disp_rdma.c  | 4 +---
- drivers/gpu/drm/mediatek/mtk_dsi.c        | 4 +---
- drivers/gpu/drm/mediatek/mtk_hdmi.c       | 4 +---
- drivers/gpu/drm/mediatek/mtk_mdp_rdma.c   | 4 +---
- 8 files changed, 8 insertions(+), 24 deletions(-)
+ drivers/gpu/drm/mxsfb/lcdif_drv.c | 4 +---
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_color.c b/drivers/gpu/drm/mediatek/mtk_disp_color.c
-index dd8433a38282a9ba1bcc3a4ddd01dd89738ccb60..39c7de4cdcc16b56a5a1d046aaabaf5580227ed2 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_color.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_color.c
-@@ -96,7 +96,6 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/mxsfb/lcdif_drv.c b/drivers/gpu/drm/mxsfb/lcdif_drv.c
+index 8ee00f59ca821cea8e823e7100fb4d7534283994..fcb2a7517377e9a5bbd2997c578c579b1b079f92 100644
+--- a/drivers/gpu/drm/mxsfb/lcdif_drv.c
++++ b/drivers/gpu/drm/mxsfb/lcdif_drv.c
+@@ -134,7 +134,6 @@ static int lcdif_load(struct drm_device *drm)
  {
- 	struct device *dev = &pdev->dev;
- 	struct mtk_disp_color *priv;
+ 	struct platform_device *pdev = to_platform_device(drm->dev);
+ 	struct lcdif_drm_private *lcdif;
 -	struct resource *res;
  	int ret;
  
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-@@ -108,8 +107,7 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(priv->clk),
- 				     "failed to get color clk\n");
+ 	lcdif = devm_kzalloc(&pdev->dev, sizeof(*lcdif), GFP_KERNEL);
+@@ -144,8 +143,7 @@ static int lcdif_load(struct drm_device *drm)
+ 	lcdif->drm = drm;
+ 	drm->dev_private = lcdif;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->regs = devm_ioremap_resource(dev, res);
-+	priv->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->regs))
- 		return dev_err_probe(dev, PTR_ERR(priv->regs),
- 				     "failed to ioremap color\n");
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
-index b17b11d93846f2019d8c4afb294375333e22dc42..8afd15006df2a21f3f52fe00eca3c5501f4fb76a 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_gamma.c
-@@ -256,7 +256,6 @@ static int mtk_disp_gamma_probe(struct platform_device *pdev)
+-	lcdif->base = devm_ioremap_resource(drm->dev, res);
++	lcdif->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(lcdif->base))
+ 		return PTR_ERR(lcdif->base);
+ 
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+index 59020862cf65e5cc488903f1263ed16dfbce06f9..377d4c4c9979ad9538cfec5464827a82936f811b 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+@@ -215,7 +215,6 @@ static int mxsfb_load(struct drm_device *drm,
  {
- 	struct device *dev = &pdev->dev;
- 	struct mtk_disp_gamma *priv;
+ 	struct platform_device *pdev = to_platform_device(drm->dev);
+ 	struct mxsfb_drm_private *mxsfb;
 -	struct resource *res;
  	int ret;
  
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-@@ -268,8 +267,7 @@ static int mtk_disp_gamma_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(priv->clk),
- 				     "failed to get gamma clk\n");
+ 	mxsfb = devm_kzalloc(&pdev->dev, sizeof(*mxsfb), GFP_KERNEL);
+@@ -226,8 +225,7 @@ static int mxsfb_load(struct drm_device *drm,
+ 	drm->dev_private = mxsfb;
+ 	mxsfb->devdata = devdata;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->regs = devm_ioremap_resource(dev, res);
-+	priv->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->regs))
- 		return dev_err_probe(dev, PTR_ERR(priv->regs),
- 				     "failed to ioremap gamma\n");
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_merge.c b/drivers/gpu/drm/mediatek/mtk_disp_merge.c
-index 563b1b248fbbb38ef03bb3e3ceecdd265961df60..b174dda091d3fbd16796e8e128b030fccf5b902c 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_merge.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_merge.c
-@@ -306,7 +306,6 @@ static const struct component_ops mtk_disp_merge_component_ops = {
- static int mtk_disp_merge_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	struct mtk_disp_merge *priv;
- 	int ret;
+-	mxsfb->base = devm_ioremap_resource(drm->dev, res);
++	mxsfb->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(mxsfb->base))
+ 		return PTR_ERR(mxsfb->base);
  
-@@ -314,8 +313,7 @@ static int mtk_disp_merge_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->regs = devm_ioremap_resource(dev, res);
-+	priv->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->regs))
- 		return dev_err_probe(dev, PTR_ERR(priv->regs),
- 				     "failed to ioremap merge\n");
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index df82cea4bb79c472acbb66e0df27fbad3e70bd20..d0581c4e3c999cf865fdd0aaf4c2f38dd404926e 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -604,7 +604,6 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct mtk_disp_ovl *priv;
--	struct resource *res;
- 	int irq;
- 	int ret;
- 
-@@ -621,8 +620,7 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(priv->clk),
- 				     "failed to get ovl clk\n");
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->regs = devm_ioremap_resource(dev, res);
-+	priv->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->regs))
- 		return dev_err_probe(dev, PTR_ERR(priv->regs),
- 				     "failed to ioremap ovl\n");
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-index bf47790e4d6be5d60070c63c15c75fa201cc4b27..c9d41d75e7f2a3af5820921b7e563da377ce8d0d 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-@@ -313,7 +313,6 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct mtk_disp_rdma *priv;
--	struct resource *res;
- 	int irq;
- 	int ret;
- 
-@@ -330,8 +329,7 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(priv->clk),
- 				     "failed to get rdma clk\n");
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->regs = devm_ioremap_resource(dev, res);
-+	priv->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->regs))
- 		return dev_err_probe(dev, PTR_ERR(priv->regs),
- 				     "failed to ioremap rdma\n");
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index b50dc9a013ac5a50e464134f548fa773a5662138..0683c2b3ca5bc5b09439c42d30fb1380e1c67c97 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -1192,7 +1192,6 @@ static int mtk_dsi_probe(struct platform_device *pdev)
- {
- 	struct mtk_dsi *dsi;
- 	struct device *dev = &pdev->dev;
--	struct resource *regs;
- 	int irq_num;
- 	int ret;
- 
-@@ -1217,8 +1216,7 @@ static int mtk_dsi_probe(struct platform_device *pdev)
- 	if (IS_ERR(dsi->hs_clk))
- 		return dev_err_probe(dev, PTR_ERR(dsi->hs_clk), "Failed to get hs clock\n");
- 
--	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	dsi->regs = devm_ioremap_resource(dev, regs);
-+	dsi->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(dsi->regs))
- 		return dev_err_probe(dev, PTR_ERR(dsi->regs), "Failed to ioremap memory\n");
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi.c b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-index ac5e40c2761710dfbe722e1ba569d76e4cd5b8fb..d4ab098e117477eea8fad568a134c0a796b380db 100644
---- a/drivers/gpu/drm/mediatek/mtk_hdmi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_hdmi.c
-@@ -1424,7 +1424,6 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
- 	struct device_node *cec_np, *remote, *i2c_np;
- 	struct platform_device *cec_pdev;
- 	struct regmap *regmap;
--	struct resource *mem;
- 	int ret;
- 
- 	ret = mtk_hdmi_get_all_clk(hdmi, np);
-@@ -1470,8 +1469,7 @@ static int mtk_hdmi_dt_parse_pdata(struct mtk_hdmi *hdmi,
- 	}
- 	hdmi->sys_regmap = regmap;
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	hdmi->regs = devm_ioremap_resource(dev, mem);
-+	hdmi->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(hdmi->regs)) {
- 		ret = PTR_ERR(hdmi->regs);
- 		goto put_device;
-diff --git a/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c b/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
-index fc69ee38ce7d6a245a7460cfde8de426e83b2e80..7982788ae9df51f1a378d8d538737f38af7299f2 100644
---- a/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
-+++ b/drivers/gpu/drm/mediatek/mtk_mdp_rdma.c
-@@ -291,7 +291,6 @@ static const struct component_ops mtk_mdp_rdma_component_ops = {
- static int mtk_mdp_rdma_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
- 	struct mtk_mdp_rdma *priv;
- 	int ret = 0;
- 
-@@ -299,8 +298,7 @@ static int mtk_mdp_rdma_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	priv->regs = devm_ioremap_resource(dev, res);
-+	priv->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(priv->regs))
- 		return dev_err_probe(dev, PTR_ERR(priv->regs),
- 				     "failed to ioremap rdma\n");
 
 -- 
 2.48.1
