@@ -1,62 +1,62 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F8C26E63A;
-	Wed, 26 Feb 2025 10:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD47F26F465;
+	Wed, 26 Feb 2025 10:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567399; cv=none; b=tISX8DKSCI9TZp6EqVa4epit10Pk9FlI6RoAFbI5DoXXJi7MsQ9b41Z0eQ3cGHSl4ITPNXAmOYsK2Rv9zS+zSuBVY7thRtFUmU2TWC1Zsv87XbHTkp+8a3GFY/VYf4kG4szV7mcaSJVp0jNE7Lwmxxgrmk+yT6cWXAzHmqMBPFA=
+	t=1740567400; cv=none; b=O6p7CzLEE3I5ULk3CwRNEu8ANOKT4PRn/k3KPio/t3OZpBvK00qpjAo7p9Ziqo6mtjQz20F3DS1ecfzHjd4OpieuyoXU36FKclkn4i7tque4zwp9600i42FnUDKK/XTa+vbRhZ9Bm5h5NmvvCf0zoU2Zuu+Ema/UaENEmgiaUAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740567399; c=relaxed/simple;
-	bh=ruMCBNYEsH2H/F+zLxI4ZuYKFJui4PTP6oTejvUsLgc=;
+	s=arc-20240116; t=1740567400; c=relaxed/simple;
+	bh=gXfEDFzH2yg/xdoPSye7mRhvuYC/zfRXRNvgFdmYVKA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nCjzUa1n2V1bPBBMVXxQdAKqcKk1IYFsrBzCBl+11uC+JEt9GJyowK0YO1KiUpzQQI4Lz8045Kn9beTg1VAqdIbMLBIvxfyU2Fw+BjQC9vjuJrban4S6WE+KaoQx83cnLtaVvxMQibo41RqH8TiKZ85OQS/WHN2vyWo2bWpACbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q13rDxbl; arc=none smtp.client-ip=209.85.218.54
+	 MIME-Version; b=Vag0awu36POFtt6tqRM/bwcWLsZ2/UE3467y3RVYdPsXnmKFzQtqfEfj+eajZh2i5raXijgiBptHJKXaMWz8xH39L/k6ou8+26Hm9SjPeRykrGoqI9BJZu7CqH6cQSfa781eMF73S7G0NEq12IPIV+Y0FZCJyWDVzZApppCNAac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nRDbIVd0; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q13rDxbl"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abb81285d33so158685766b.0;
-        Wed, 26 Feb 2025 02:56:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nRDbIVd0"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abb7520028bso896305466b.3;
+        Wed, 26 Feb 2025 02:56:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740567396; x=1741172196; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740567397; x=1741172197; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v1iuGJLT0O3BTgwFq2zcSTsLSVOa6qSThtFXqCRlBtA=;
-        b=Q13rDxbltFe8DkdQ7MRxEN/Q0uHftYN/uS0Lz6WMFRsJW0XOkuywQPZAJtkgTb0ztM
-         d94zvaxEsiuwfIK3zcjwp141IhEIC4eQNE5alnEIUMhYxx8ec5vnkK7qJzLXK7E7NI8L
-         vca6vZ4n65OLKhAhkPCpiKWEKDB905roYHeTG/ieQqdl1KcnNMlSpmbf1dzVjDB5ULSb
-         jPTqKJYv4WgLU/+e72UtghcDpBmcg0/ANAFLf3efZvym8hYXiXybWpFdV34hQDb05TdG
-         LY+iDp0qCLd9WQkbyJpoGUvKbUNU/uP4gfLhK2KLCLSwHOyx6A7qZ0AmrFjBJO9p/75R
-         hxjA==
+        bh=teLVO07keaSMySlhCYbKxzXch11YTOvCvybQWXMyrH0=;
+        b=nRDbIVd0738VxaMqQaaHH2aGk5ZCUS1+xz4czFbDwXkMMMXtnS/HKV1uSh1FHy2nZU
+         ccnUxTip853l6YeVBFo3+7MTZYAGj0SkEOW7cGO/ONfqAqj07naSQJRpsstbEstzNBuU
+         3kLKveAQTV938B1ZMs8gKpTChxejwaqR4yndpVI/GT5Hg7nHfBQRwqQ+QjW0svtVqkue
+         juPKej+Ug+TBJKfQ2YF/zAhIo07wKaEOoE2uIKkhSoVdPV3PRzy+L4fIRZBxsAkp36ZN
+         KfQ5oSdDer32OXsnYCcOsWlQ5VBvdkIjeSwOmuv3eSn7M/TM0TPEgZroLmtQRZqgTrrX
+         k7OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740567396; x=1741172196;
+        d=1e100.net; s=20230601; t=1740567397; x=1741172197;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=v1iuGJLT0O3BTgwFq2zcSTsLSVOa6qSThtFXqCRlBtA=;
-        b=F5gQEl5tvGmkAzeemsHAcvq9dOSzOI9yV5/fG2hWwMeRPjTq3VL8zB2bBtqFg9AVCl
-         uwqvs66hdy/t35COgdswtZUl9HqsTtIgI8dgiy1qe+dwOdqGTu2ioD7Mi7SmD578IW0k
-         4lk0gnYFvrT31nK5ElbsgDRR4z1VucTbDVF/xlvbRsne6rTKO0TnOUBmMDGtTdKPmt8x
-         ml21PVEaXteY31ZrBC9+SBhYVTk+iysqndjVApDLTpuRcymMPoq9QDeCG9By/Ta+VfJP
-         3gBbQgR4C0HRK+gshhm2F8YEMks9v/+dNR0IfRRf3z4zyf91WdxlVxPmQwLuFjx+ZBwY
-         pkHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0l+FzBkHKfrlqZ8QI2JDgsElCcwkN5+0jaSL4P5eyCzEmwyabjgGz+Sk5Yk3NMYYlPSwuAgjOBmuNXRQ=@vger.kernel.org, AJvYcCVPqZcjjVYWSWip0g3cBqvvbaL9QPt86ElTGnKu/WwHFnZCHJjcsy1d8ZH4VaEoGnZMxNyK28H+oXdaIw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ9nXW/dWfzPFwp75zK+E+3buXR27jQP9mt9cnyLZHbuGxUMiz
-	XBFCLRc5sW7flZMEvZf7ZQ2ls0bcQShoeQKrNDIveYhThcWiSKfC
-X-Gm-Gg: ASbGnctUf6eArWluVnpF5T47ckloqhY2kkUhb6TEwBqSfzaqVmrwiRDi4AADBzpB7+j
-	6Gj1eDHZ7d0hSFX5pDLeTfl5vk1f7+wTU3A8DjLCksPvGp/URZF1iq0MI0FSti2R561SuUetRwb
-	BLdAO5yLVQXkAZUzM8xs4ZzfuzCQOwUdZs5vhV3pWg4Ch3rMnqRevV82mjWvf4VBbRRSJWPzoFn
-	2p6rXO4COM0k1CD0C122j9DZDClzxmABdoDW6ujIL/xJaMZ6W9a3LS2qjSaPhkJL0pLU//4R0bb
-	bKPj3daYe8l5i4NXVg==
-X-Google-Smtp-Source: AGHT+IGhBDaTqylM6rBq2WK2ESfGo+hK5MppSpY16i8zUEywqv9+x/kRNNSD4agEnQ7SLM9CZ748dw==
-X-Received: by 2002:a17:907:9c05:b0:ab7:bf2f:422e with SMTP id a640c23a62f3a-abc09a80912mr2415544166b.27.1740567395735;
-        Wed, 26 Feb 2025 02:56:35 -0800 (PST)
+        bh=teLVO07keaSMySlhCYbKxzXch11YTOvCvybQWXMyrH0=;
+        b=w/O/RFuMR2i7zKZeCa9okO4hs5BufOlH/0qDwNEJRnOu+bsnrdLNmH5/99HL7A+Ig3
+         IQe9dmzI/lVgVn9uvdby920RScwGxBNYkHT8ODpRUg7x9c5gfI88L2dafqA7jrjIUwbr
+         oUWRB1CZLOZAxXKRaTtoKlbr2BfpwtLkXRQQNEZGPCPOTm/LZOmdQrpZ5sJStu1oGkSJ
+         YcBL/xDVb9iiQYlrw7lNy4c5H+Iz4rfMrQvkhBG4Ju8hVdZDOd2OBx89vbYtz4xCBoBs
+         W359uK4T27cZ3D+a6ZoqGDUAHizUqbVxeClwxUt5mY90Q/xG69oUI0aGpqA6W/Rm+82b
+         ZOTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWQcxqynIzP01cYdUZ4RJE1l0V8dqGkREMJdpSbkTsi95ZOxVygI+VSOzKQMK+nOMTjGDmzW+LPZoV3ZI=@vger.kernel.org, AJvYcCVrZVG59p7wl9kr8w8RvNOER7SnroWo9s3M65hOG1MqHc3AeEQkKAPn8iEUxxIcDWlm5RyEkkhgOs5uxHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPK/3DQN+Bli9UO0fO1dg2A+AaCwYyF9feBkvBfWvbAia9qdnB
+	XpvVgmST09GOQJgmWyObm/TD5NNnSf8biuOWfgffGOfEQ6VkyyX4
+X-Gm-Gg: ASbGncs0LiXRN3Tt8s5s4tsAFx3g+qxOlUz9NHtL0qwUMAUHwrpp7iKN5Vfrvg8AZ06
+	uT/P6pGimFm6UVwYaOvTJsVxKcoRC2iHAseKBXvNndpWf/LMJlvGD226CRCyRe0pGg9JO+KRd45
+	YH3jFPmRbjZYUwK7i8e/hXMRdZfLo4cYg0wSLS68AOO33LmSCQihyOZeb7Xkx+9+tKX4e4HOVDW
+	iWl8MFkF3vHB/vMbHoyXIIiNL0BvWifqoEPOPQR/HQVkGtjmXsu7f7xrQX+VNADufyk/HCPkYCB
+	SHxk/W64XryaQy+cvGaExoz8zGB7mK/qO2of
+X-Google-Smtp-Source: AGHT+IHhfWa9TaOCXiM/6yV0P64HDrLoIyk2Z56gp4Rqc9AASEIIUWC6AxK0ol55GQULD/3B1as6XA==
+X-Received: by 2002:a17:907:cf86:b0:ab7:ec8b:c642 with SMTP id a640c23a62f3a-abeeecf6f79mr327539666b.5.1740567396925;
+        Wed, 26 Feb 2025 02:56:36 -0800 (PST)
 Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed205e53fsm299771266b.159.2025.02.26.02.56.34
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed205e53fsm299771266b.159.2025.02.26.02.56.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 02:56:35 -0800 (PST)
+        Wed, 26 Feb 2025 02:56:36 -0800 (PST)
 From: Svyatoslav Ryhel <clamor95@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -67,9 +67,9 @@ To: Rob Herring <robh@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/6] ARM: tegra114: switch DSI-B clock parent to PLLD
-Date: Wed, 26 Feb 2025 12:56:11 +0200
-Message-ID: <20250226105615.61087-3-clamor95@gmail.com>
+Subject: [PATCH v1 3/6] ARM: tegra114: add ARM PMU node
+Date: Wed, 26 Feb 2025 12:56:12 +0200
+Message-ID: <20250226105615.61087-4-clamor95@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250226105615.61087-1-clamor95@gmail.com>
 References: <20250226105615.61087-1-clamor95@gmail.com>
@@ -81,27 +81,62 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-PLLD is usually used as parent clock for internal video devices, like DSI
-for example, while PLLD2 is used as parent for HDMI.
+Add ARM PMU node for Tegra 4 like it is done for Tegra 3 and Tegra K1.
 
 Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 ---
- arch/arm/boot/dts/nvidia/tegra114.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/nvidia/tegra114.dtsi | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/nvidia/tegra114.dtsi b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-index 4365daee2f3a..62d4a2bbde0e 100644
+index 62d4a2bbde0e..9021c6698ee5 100644
 --- a/arch/arm/boot/dts/nvidia/tegra114.dtsi
 +++ b/arch/arm/boot/dts/nvidia/tegra114.dtsi
-@@ -178,7 +178,7 @@ dsib: dsi@54400000 {
- 			reg = <0x54400000 0x00040000>;
- 			clocks = <&tegra_car TEGRA114_CLK_DSIB>,
- 				 <&tegra_car TEGRA114_CLK_DSIBLP>,
--				 <&tegra_car TEGRA114_CLK_PLL_D2_OUT0>;
-+				 <&tegra_car TEGRA114_CLK_PLL_D_OUT0>;
- 			clock-names = "dsi", "lp", "parent";
- 			resets = <&tegra_car 82>;
- 			reset-names = "dsi";
+@@ -870,31 +870,40 @@ cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0>;
+ 		};
+ 
+-		cpu@1 {
++		cpu1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 		};
+ 
+-		cpu@2 {
++		cpu2: cpu@2 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <2>;
+ 		};
+ 
+-		cpu@3 {
++		cpu3: cpu@3 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <3>;
+ 		};
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a15-pmu";
++		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
++	};
++
+ 	timer {
+ 		compatible = "arm,armv7-timer";
+ 		interrupts =
 -- 
 2.43.0
 
