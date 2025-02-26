@@ -1,80 +1,50 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946A424DFE2
-	for <linux-tegra@vger.kernel.org>; Wed, 26 Feb 2025 10:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8CA21C9E4;
+	Wed, 26 Feb 2025 10:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740565000; cv=none; b=lLCClbEKHuRy7bShfZUEfNE0StIybDvOS7ebypn0tGANiFJLytP1oVwMPQf8DzInbGTsllrF82AkvEGRiNTZdtj9mzwDn/U5DA6L5EXddOtvJGWz3fRoCdsLdnJpxwv75IX/Bv3kj29F5kkD3p9+SDDgMi5KA7cpj2D+gLkHrUs=
+	t=1740565192; cv=none; b=GOqSGTovpdejJH08hVNB4kqI0abMifPh5lnh+XsUqWyHZmW5TNFLjRRZ+Zfql26GbcHEG96qC7SgFtOeTd/lN7hJ2zv43Y53WF8P123dXSbnjAyOMPGlaeUGpPzA16QS5lS8s8LdJc/JbYqKS7i4gH0tIuvO2z0pyWa4CLFuzqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740565000; c=relaxed/simple;
-	bh=dIedMb4lwQBVScSxDRpIfkc8+JevTX/YCTTblYgJwRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aD6EL2jDcZFqKDkuPT1sHyzrsqroEtIb7GhZ4yGty/+HRDTmmMg6y+8Hd6OPrp2XoWzxCbXyNLluzuBA/59FitaNpvDWomPyYyqjNq4LZeIlmPaAJ51YbvbF93m6I/uVVmgt3rd8vhDc89LRDoCjF3n4/NIpIObjPhmTNcNvh4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CYhMLnp7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=py/wyHhe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CYhMLnp7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=py/wyHhe; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1740565192; c=relaxed/simple;
+	bh=mbN2m0EpH8LQ6sVgK+ooq3M28nLWYE+cBynmDz6o5kg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VMnV+pnDELP3KDyaMdk+yPhjA+AyMTHAzWXwGDtMQsoOIvGLPXBvbmGsxcx1PEk6IdJzja8tDrMv1qcTrTtIFirEXkFJKM1XQVsDoVOFNJv0AJzEW7FFsuf05ING+w7isgfhTzZg8qpFhGdihypa39GURgcItvgS050e6JvAqOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=cAE1KzUs; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CYhMLnp7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="py/wyHhe";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CYhMLnp7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="py/wyHhe"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B800B1F388;
-	Wed, 26 Feb 2025 10:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740564996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
-	b=CYhMLnp7q0zfIxH8iu3DNheOYB4NL+Nf+4CwGTh2xeQ6XaiMe2y/w5C4nc6bW9xz7RbgAw
-	8ryL8T8ngv+vFjbcTTbAftFmRhYB2lclHddKns9vVCLWfBZDzJSvvQlUKLgV5Wmz5BH8cQ
-	v3TWwB2RQtT2+I3JBCLYix3NLqlliWA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740564996;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
-	b=py/wyHhesHkF3t5R/Yc8G+Nte20Q0gW31h5UiRetlboW695aUKEXNBzADKuVjVvPuLRL9V
-	oWrCKyFxSZ0u4RBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740564996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
-	b=CYhMLnp7q0zfIxH8iu3DNheOYB4NL+Nf+4CwGTh2xeQ6XaiMe2y/w5C4nc6bW9xz7RbgAw
-	8ryL8T8ngv+vFjbcTTbAftFmRhYB2lclHddKns9vVCLWfBZDzJSvvQlUKLgV5Wmz5BH8cQ
-	v3TWwB2RQtT2+I3JBCLYix3NLqlliWA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740564996;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
-	b=py/wyHhesHkF3t5R/Yc8G+Nte20Q0gW31h5UiRetlboW695aUKEXNBzADKuVjVvPuLRL9V
-	oWrCKyFxSZ0u4RBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3ED391377F;
-	Wed, 26 Feb 2025 10:16:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8GvYDQTqvmfDagAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 26 Feb 2025 10:16:36 +0000
-Message-ID: <97832f2b-ea2f-4fec-990b-bbd5ccaa9a91@suse.de>
-Date: Wed, 26 Feb 2025 11:16:35 +0100
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="cAE1KzUs"
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51Q8gGpm004998;
+	Wed, 26 Feb 2025 11:18:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	MlTVB78Bxku5VTa57kqTeAEK8EBqya2T3N8W9o9jXJc=; b=cAE1KzUseBXfhSJQ
+	S1O7NDJXDSxLRYq+LMpwPw3qrr6KbywYmdEtnzSbWsluuwCuiGsK+kNow6iT3ys7
+	2tvkEHCxh+8gDlLnLQSeTvJuoPozwTNkc4ndZ2dljHNKTflXnzRC6aDGPlC4pv2M
+	8Q1RFoHhnsgmEHa/XcLdbfgmYDVcJCmcHghZKF6jN6FQRbdij1tvpFH96RpyVMWj
+	s2Hzn2zKG3UIyrTyuZsP+ZwLUsHFdqcYNQ+//EJlnsl7Dt+Dn7FFqCKhGHyYGnZQ
+	d9nnVCLG3bPbwDCuud27z/r9AlswNQVFC3vtu0xQVJPuqIttjaH9qEpEW8rtxQac
+	DzzEcg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 451pst3am7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Feb 2025 11:18:13 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1C2BC40053;
+	Wed, 26 Feb 2025 11:14:00 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6D6D757B521;
+	Wed, 26 Feb 2025 10:06:16 +0100 (CET)
+Received: from [10.129.178.211] (10.129.178.211) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Feb
+ 2025 10:06:14 +0100
+Message-ID: <24958ae8-6153-4798-abeb-e770d66ca8e4@foss.st.com>
+Date: Wed, 26 Feb 2025 10:06:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -82,266 +52,342 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 02/25] drm/dumb-buffers: Provide helper to set pitch
- and size
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
- simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
- intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20250218142542.438557-1-tzimmermann@suse.de>
- <20250218142542.438557-3-tzimmermann@suse.de>
- <dcd59a75-7945-4a2e-99f9-3abbb3e9de14@ideasonboard.com>
- <355ed315-61fa-4a9d-b72b-8d5bc7b5a16c@suse.de>
- <596b960e-71f8-4c2c-9abe-058206df1dfb@ideasonboard.com>
- <87ca2b81-a67a-468b-ae2b-30d02a3a64bc@suse.de>
- <f74af5cc-bca8-45c1-9204-b362fcd6f998@ideasonboard.com>
+Subject: Re: [PATCH RESEND 07/12] drm/sti: move to
+ devm_platform_ioremap_resource() usage
+To: Anusha Srivatsa <asrivats@redhat.com>, Joel Stanley <joel@jms.id.au>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Andrew Jeffery
+	<andrew@codeconstruct.com.au>,
+        Stefan Agner <stefan@agner.ch>, Alison Wang
+	<alison.wang@nxp.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Tian Tao
+	<tiantao6@hisilicon.com>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Sumit
+ Semwal <sumit.semwal@linaro.org>,
+        Yongqin Liu <yongqin.liu@linaro.org>,
+        John
+ Stultz <jstultz@google.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Philipp
+ Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        Marek
+ Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer
+	<s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin
+ Wang <baolin.wang@linux.alibaba.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Alain Volmat <alain.volmat@foss.st.com>,
+        Raphael Gallais-Pou
+	<rgallaispou@gmail.com>,
+        Yannick Fertre <yannick.fertre@foss.st.com>,
+        Philippe Cornu <philippe.cornu@foss.st.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen
+	<mperttunen@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Alexey
+ Brodkin <abrodkin@synopsys.com>,
+        Dave Stevenson
+	<dave.stevenson@raspberrypi.com>,
+        =?UTF-8?Q?Ma=C3=ADra_Canal?=
+	<mcanal@igalia.com>,
+        Raspberry Pi Kernel Maintenance
+	<kernel-list@raspberrypi.com>,
+        Jonathan Corbet <corbet@lwn.net>
+CC: <linux-aspeed@lists.ozlabs.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <imx@lists.linux.dev>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-tegra@vger.kernel.org>, <linux-doc@vger.kernel.org>
+References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
+ <20250225-memory-drm-misc-next-v1-7-9d0e8761107a@redhat.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <f74af5cc-bca8-45c1-9204-b362fcd6f998@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+In-Reply-To: <20250225-memory-drm-misc-next-v1-7-9d0e8761107a@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.990];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[ideasonboard.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[20];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-26_02,2025-02-26_01,2024-11-22_01
 
-Hi
 
-Am 25.02.25 um 14:45 schrieb Tomi Valkeinen:
-> Hi,
+On 2/25/25 23:20, Anusha Srivatsa wrote:
+> Replace platform_get_resource/_byname + devm_ioremap
+> with just devm_platform_ioremap_resource()
 >
-> On 21/02/2025 11:19, Thomas Zimmermann wrote:
->> Hi
->>
->> Am 20.02.25 um 11:53 schrieb Tomi Valkeinen:
->>> Hi,
->>>
->>> On 20/02/2025 12:05, Thomas Zimmermann wrote:
->>>> Hi
->>>>
->>>> Am 20.02.25 um 10:18 schrieb Tomi Valkeinen:
->>>> [...]
->>>>>> + * Color modes of 10, 12, 15, 30 and 64 are only supported for 
->>>>>> use by
->>>>>> + * legacy user space. Please don't use them in new code. Other 
->>>>>> modes
->>>>>> + * are not support.
->>>>>> + *
->>>>>> + * Do not attempt to allocate anything but linear framebuffer 
->>>>>> memory
->>>>>> + * with single-plane RGB data. Allocation of other framebuffer
->>>>>> + * layouts requires dedicated ioctls in the respective DRM driver.
->>>>>
->>>>> According to this, every driver that supports, say, NV12, should 
->>>>> implement their own custom ioctl to do the exact same thing? And, 
->>>>> of course, every userspace app that uses, say, NV12, should then 
->>>>> add code for all these platforms to call the custom ioctls?
->>>>
->>>> Yes, that's exactly the current status.
->>>>
->>>> There has been discussion about a new dumb-create ioctl that takes 
->>>> a DRM format as parameter. I'm all for it, but it's out of the 
->>>> scope for this series.
->>>>
->>>>>
->>>>> As libdrm's modetest currently supports YUV formats with dumb 
->>>>> buffers, should we remove that code, as it's not correct and I'm 
->>>>> sure people use libdrm code as a reference?
->>>>
->>>> Of course not.
->>>>
->>>>>
->>>>> Well, I'm not serious above, but I think all my points from the 
->>>>> earlier version are still valid. I don't like this. It changes the 
->>>>> parameters of the ioctl (bpp used to be bits-per-pixel, not it's 
->>>>> "color mode"), and the behavior of the ioctl, behavior that we've 
->>>>> had for a very long time, and we have no idea how many users there 
->>>>> are that will break (could be none, of course). And the 
->>>>> documentation changes make the current behavior and uses wrong or 
->>>>> legacy.
->>>>
->>>> Before I go into details about this statement, what use case 
->>>> exactly are you referring to when you say that behavior changes?
->>>
->>> For every dumb_buffer allocation with bpp that is not divisible by 
->>> 8, the result is different, i.e. instead of DIV_ROUND_UP(width * 
->>> bpp, 8), we now have width * DIV_ROUND_UP(bpp, 8). This, of course, 
->>> depends on the driver implementation. Some already do the latter.
->>
->> The current dumb-buffer code does a stride computation at [1], which 
->> is correct for all cases; although over-allocates sometimes. It's the 
->> one you describe as "width * DIV_ROUND_UP(bpp, 8)". It's in the ioctl 
->> entry point, so it's somewhat authoritative for all driver's 
->> implementations. It's also used by several drivers.
->>
->> The other variant, "DIV_ROUND_UP(width * bpp, 8)", is used by 
->> gem-dma, gem-shmem and others. It can give incorrect results and 
->> possibly OOBs. To give a simple example, let's allocate 15-bit 
->> XRGB1555. Bpp is 15. With a width of 1024, that would result in 1920 
->> bytes per scanline. But because XRGB1555 has a filler bit, so the 
->> pixel is actually 16 bit and a scanline needs to be 2048 bytes. The 
->> new code fixes that. This is not just a hypothetical scenario: we do 
->> have drivers that support XRGB1555 and some of them also export a 
->> preferred_depth of 15 to userspace. [2] In the nearby comment, you'll 
->> see that this value is meant for dumb buffers.
->>
->> Rounding up the depth value in user space is possible for RGB, but 
->> not for YUV. Here different pixel planes have a different number of 
->> bits. Sometimes pixels are sharing bits. The value of bits-per-pixel 
->> becomes meaningless. That's why it's also deprecated in struct 
->> drm_format_info. The struct instead uses a more complicated per-plane 
->> calculation to compute the number of bits per plane. [3] The 
->> user-space code currently doing YUV on dumb buffers simply got lucky.
->>
->> [1] https://elixir.bootlin.com/linux/v6.13.3/source/drivers/gpu/drm/ 
->> drm_dumb_buffers.c#L77
->> [2] https://elixir.bootlin.com/linux/v6.13.3/source/include/drm/ 
->> drm_mode_config.h#L885
->> [3] https://elixir.bootlin.com/linux/v6.13.3/source/include/drm/ 
->> drm_fourcc.h#L83
->>
->>>
->>> This change also first calls the drm_driver_color_mode_format(), 
->>> which could change the behavior even more, but afaics at the moment 
->>> does not. 
->>
->> Because currently each driver does its own thing, it can be hard to 
->> write user space that reliably allocates on all drivers. That's why 
->> it's important that parameters are not just raw numbers, but have 
->> well- defined semantics. The raw bpp is meaningless; it's also 
->> important to know which formats are associated with each value. 
->> Otherwise, you might get a dumb buffer with a bpp of 15, but it will 
->> be displayed incorrectly. This patch series finally implements this 
->> and clearly documents the assumptions behind the interfaces. The 
->> assumptions themselves have always existed.
+> Used Coccinelle to do this change. SmPl patch:
 >
-> This is perhaps where the biggest gap in understanding/view is: I have 
-> always thought dumb-buffer's "bpp" to mean bits-per-pixel, where, for 
-> more complex formats, "pixel" is not necessarily a visible pixel but a 
-> container unit of some kind. So bpp * width = stride.
+> @rule@
+> identifier res;
+> expression ioremap;
+> identifier pdev;
+> constant mem;
+> expression name;
+> @@
+> -struct resource *res;
+> ...
+> -res = platform_get_resource_byname(pdev,mem,name);
+> <...
+> -if (!res) {
+> -...
+> -}
+> ...>
+> -ioremap = devm_ioremap(...);
+> +ioremap = devm_platform_ioremap_resource_byname(pdev,name);
 >
-> It would not occur to me to allocate XRGB1555 dumb-buffer with 15 bpp, 
-> but 16 bpp, as that's what a pixel takes. I have never seen the 
-> dumb-buffer bpp connected directly to the pixel format (that's what 
-> the ADDFB brings in).
+> and
+> @rule_2@
+> identifier res;
+> expression ioremap;
+> identifier pdev;
+> @@
+> -struct resource *res;
+> ...
+> -res = platform_get_resource(pdev,...);
+> <...
+> -if (!res) {
+> -...
+> -}
+> ...>
+> -ioremap = devm_ioremap(...);
+> +ioremap = devm_platform_ioremap_resource(pdev,0);
 >
-> I may be alone with that thinking, but afaics the documentation leans 
-> a bit on my interpretation (instead of considering bpp as a "color 
-> mode"), although admittedly the docs also don't really say much so 
-> this may be fully just my interpretation:
->
-> https://man.archlinux.org/man/drm-memory.7.en
+> v2: Fix compilation error.
 
-Agreed, this could be read in the way you do. Is this being generated 
-from source somehow? The information is not incorrect, but how did they 
-get to this interpretation? It would definitely need an update with this 
-patch series applied. Citing from the man page:
 
-   "/bpp/ is the number of bits-per-pixel and must be a multiple of 8."
+Hi Anusha, 
 
-That's what currently works on all drivers. But nothing enforces that it 
-"must by a multiple of 8". Doing so would prevent C1/C2/etc pixel 
-formats without over-allocation.  OR bpp is not bits-per-pixel but just 
-some factor that controls the buffer size. This is how you use it for 
-YUV formats.
 
-   "You most commonly want to pass 32 here."
+You did not take into account my comment regarding the changelog. :-)
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#commentary
 
-That's also just semi-true. 32 is simply what mostly works in practice 
-IFF you interpret it as XRGB8888. Userspace should read the formats from 
-the primary plane, or at least look at the driver-provided 
-preferred_depth field.
+While the commit summary do not specify the version, this changelog suggests
+that the version of your series as been incremented.
+If this is a v2, then a version descriptor should be applied to the patchset.
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#subject-line
+
+
+Regards,
+Raphaël
 
 >
-> https://cgit.freedesktop.org/drm/libdrm/tree/include/drm/drm_mode.h#n1055
-
-This one doesn't say anything specific AFAICT. Bpp is somewhat pointless 
-information without a known pixel and framebuffer layout, as I've 
-outlined before.
-
+> Cc: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+> Cc: Alain Volmat <alain.volmat@foss.st.com>
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> Acked-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> ---
+>  drivers/gpu/drm/sti/sti_compositor.c | 10 +---------
+>  drivers/gpu/drm/sti/sti_dvo.c        | 10 +---------
+>  drivers/gpu/drm/sti/sti_hda.c        |  9 +--------
+>  drivers/gpu/drm/sti/sti_hdmi.c       | 11 +----------
+>  drivers/gpu/drm/sti/sti_hqvdp.c      | 10 +---------
+>  drivers/gpu/drm/sti/sti_tvout.c      | 10 +---------
+>  drivers/gpu/drm/sti/sti_vtg.c        | 10 +---------
+>  7 files changed, 7 insertions(+), 63 deletions(-)
 >
-> I (mostly) understand all the complexities around here, thanks to your 
-> replies, and I think I'm ok with the series as it doesn't break 
-> anything (need to test the v3, though).
-
-Thank you so much.
-
+> diff --git a/drivers/gpu/drm/sti/sti_compositor.c b/drivers/gpu/drm/sti/sti_compositor.c
+> index 063f82d23d80c4ba83624a0066a18416a2b37351..7aefce6706ba2cd7d97a33228c9b9812edecf06f 100644
+> --- a/drivers/gpu/drm/sti/sti_compositor.c
+> +++ b/drivers/gpu/drm/sti/sti_compositor.c
+> @@ -177,7 +177,6 @@ static int sti_compositor_probe(struct platform_device *pdev)
+>  	struct device_node *np = dev->of_node;
+>  	struct device_node *vtg_np;
+>  	struct sti_compositor *compo;
+> -	struct resource *res;
+>  	unsigned int i;
+>  
+>  	compo = devm_kzalloc(dev, sizeof(*compo), GFP_KERNEL);
+> @@ -194,14 +193,7 @@ static int sti_compositor_probe(struct platform_device *pdev)
+>  
+>  	memcpy(&compo->data, of_match_node(compositor_of_match, np)->data,
+>  	       sizeof(struct sti_compositor_data));
+> -
+> -	/* Get Memory ressources */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (res == NULL) {
+> -		DRM_ERROR("Get memory resource failed\n");
+> -		return -ENXIO;
+> -	}
+> -	compo->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	compo->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (compo->regs == NULL) {
+>  		DRM_ERROR("Register mapping failed\n");
+>  		return -ENXIO;
+> diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.c
+> index 4dcddd02629b6a1052be8fb8333bd3aa17c083c5..c877298a7f2bad171724eca4d43ea622db4c81cd 100644
+> --- a/drivers/gpu/drm/sti/sti_dvo.c
+> +++ b/drivers/gpu/drm/sti/sti_dvo.c
+> @@ -511,7 +511,6 @@ static int sti_dvo_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct sti_dvo *dvo;
+> -	struct resource *res;
+>  	struct device_node *np = dev->of_node;
+>  
+>  	DRM_INFO("%s\n", __func__);
+> @@ -523,14 +522,7 @@ static int sti_dvo_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	dvo->dev = pdev->dev;
+> -
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dvo-reg");
+> -	if (!res) {
+> -		DRM_ERROR("Invalid dvo resource\n");
+> -		return -ENOMEM;
+> -	}
+> -	dvo->regs = devm_ioremap(dev, res->start,
+> -			resource_size(res));
+> +	dvo->regs = devm_platform_ioremap_resource_byname(pdev, "dvo-reg");
+>  	if (!dvo->regs)
+>  		return -ENOMEM;
+>  
+> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
+> index 14fdc00d2ba03d4f96ba407ac8e576decb6f32c0..3ca3abb80d425901f4c031edfd327a770d624e1c 100644
+> --- a/drivers/gpu/drm/sti/sti_hda.c
+> +++ b/drivers/gpu/drm/sti/sti_hda.c
+> @@ -750,14 +750,7 @@ static int sti_hda_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	hda->dev = pdev->dev;
+> -
+> -	/* Get resources */
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hda-reg");
+> -	if (!res) {
+> -		DRM_ERROR("Invalid hda resource\n");
+> -		return -ENOMEM;
+> -	}
+> -	hda->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	hda->regs = devm_platform_ioremap_resource_byname(pdev, "hda-reg");
+>  	if (!hda->regs)
+>  		return -ENOMEM;
+>  
+> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+> index 164a34d793d86f114394048667ae3189e1c39242..c64ce7a1ef58b9ce4429edd368269bea87d86984 100644
+> --- a/drivers/gpu/drm/sti/sti_hdmi.c
+> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+> @@ -1380,7 +1380,6 @@ static int sti_hdmi_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct sti_hdmi *hdmi;
+>  	struct device_node *np = dev->of_node;
+> -	struct resource *res;
+>  	struct device_node *ddc;
+>  	int ret;
+>  
+> @@ -1399,15 +1398,7 @@ static int sti_hdmi_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	hdmi->dev = pdev->dev;
+> -
+> -	/* Get resources */
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "hdmi-reg");
+> -	if (!res) {
+> -		DRM_ERROR("Invalid hdmi resource\n");
+> -		ret = -ENOMEM;
+> -		goto release_adapter;
+> -	}
+> -	hdmi->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	hdmi->regs = devm_platform_ioremap_resource_byname(pdev, "hdmi-reg");
+>  	if (!hdmi->regs) {
+>  		ret = -ENOMEM;
+>  		goto release_adapter;
+> diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
+> index 0f658709c9d0d398c4eed65202443db9d0b41f8c..420395598d119a403d531211022e6005d6a2bd59 100644
+> --- a/drivers/gpu/drm/sti/sti_hqvdp.c
+> +++ b/drivers/gpu/drm/sti/sti_hqvdp.c
+> @@ -1356,7 +1356,6 @@ static int sti_hqvdp_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *vtg_np;
+>  	struct sti_hqvdp *hqvdp;
+> -	struct resource *res;
+>  
+>  	DRM_DEBUG_DRIVER("\n");
+>  
+> @@ -1367,14 +1366,7 @@ static int sti_hqvdp_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	hqvdp->dev = dev;
+> -
+> -	/* Get Memory resources */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res) {
+> -		DRM_ERROR("Get memory resource failed\n");
+> -		return -ENXIO;
+> -	}
+> -	hqvdp->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	hqvdp->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (!hqvdp->regs) {
+>  		DRM_ERROR("Register mapping failed\n");
+>  		return -ENXIO;
+> diff --git a/drivers/gpu/drm/sti/sti_tvout.c b/drivers/gpu/drm/sti/sti_tvout.c
+> index af6c06f448c4819def8cc0d0836e30f991529690..0bebe815f5e7567f84388af93723a6fa7d2cc7a2 100644
+> --- a/drivers/gpu/drm/sti/sti_tvout.c
+> +++ b/drivers/gpu/drm/sti/sti_tvout.c
+> @@ -838,7 +838,6 @@ static int sti_tvout_probe(struct platform_device *pdev)
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *node = dev->of_node;
+>  	struct sti_tvout *tvout;
+> -	struct resource *res;
+>  
+>  	DRM_INFO("%s\n", __func__);
+>  
+> @@ -850,14 +849,7 @@ static int sti_tvout_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	tvout->dev = dev;
+> -
+> -	/* get memory resources */
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "tvout-reg");
+> -	if (!res) {
+> -		DRM_ERROR("Invalid glue resource\n");
+> -		return -ENOMEM;
+> -	}
+> -	tvout->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	tvout->regs = devm_platform_ioremap_resource_byname(pdev, "tvout-reg");
+>  	if (!tvout->regs)
+>  		return -ENOMEM;
+>  
+> diff --git a/drivers/gpu/drm/sti/sti_vtg.c b/drivers/gpu/drm/sti/sti_vtg.c
+> index 5ba469b711b5318e9e9e6d8df127fb8933d1fac1..b5353fe774d72fd629ecd3ef75a5d2817ca8617f 100644
+> --- a/drivers/gpu/drm/sti/sti_vtg.c
+> +++ b/drivers/gpu/drm/sti/sti_vtg.c
+> @@ -380,20 +380,12 @@ static int vtg_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct sti_vtg *vtg;
+> -	struct resource *res;
+>  	int ret;
+>  
+>  	vtg = devm_kzalloc(dev, sizeof(*vtg), GFP_KERNEL);
+>  	if (!vtg)
+>  		return -ENOMEM;
+> -
+> -	/* Get Memory ressources */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res) {
+> -		DRM_ERROR("Get memory resource failed\n");
+> -		return -ENOMEM;
+> -	}
+> -	vtg->regs = devm_ioremap(dev, res->start, resource_size(res));
+> +	vtg->regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (!vtg->regs) {
+>  		DRM_ERROR("failed to remap I/O memory\n");
+>  		return -ENOMEM;
 >
-> I still don't like it though =). And I would be happier with the 
-> simpler "bpp" interpretation that I mentioned above, instead of it 
-> being a color mode. But we can't have it both ways, and perhaps it's 
-> better to unify the code and have the behavior explained explicitly as 
-> you do in this series, even if the explanation only covers some RGB 
-> formats.
-
-No worries. The intention is not to break anything and existing code 
-will continue to work.
-
-Best regards
-Thomas
-
->
->  Tomi
->
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
