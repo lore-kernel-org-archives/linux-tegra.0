@@ -1,268 +1,347 @@
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2066.outbound.protection.outlook.com [40.107.95.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB192459D0;
-	Wed, 26 Feb 2025 10:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740564729; cv=fail; b=Yt56/lz8i9wBBgw09236S9Wy7f8jTB0qFuPUoHGU5taBeT80rTSODXjOmviK1IJe8r5GnOPOvxIEBEo/5VRGzmguClKaM1lyLQ3fm7m1LGSSOZfiypm4XivYXG+oWC/Mmik+vELCeCkB9DfLn/PNQaFWcM/lu7TJlQASW38mlC8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740564729; c=relaxed/simple;
-	bh=Xc0DaAK1JyaVK5ZfLLjxeXucoZSPLz1a8NL0MIiEl3A=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=I5SBiSPYOS8E6jV7800w7QxsL0zxCStiHr/h0vFdsLFgN+GHwagFD5S8u4bHjttM1TSV3cy2gRIG8aEXBtbWGSR18h6DmtjKlqLUTDy9sqMo9yAwdBbOw2FOoruNQ4Fn3D5WJUXkkeKIBRHdiU3DoTH+Vfzg//1HtLyaJjXAVBc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kQ74kyFE; arc=fail smtp.client-ip=40.107.95.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946A424DFE2
+	for <linux-tegra@vger.kernel.org>; Wed, 26 Feb 2025 10:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740565000; cv=none; b=lLCClbEKHuRy7bShfZUEfNE0StIybDvOS7ebypn0tGANiFJLytP1oVwMPQf8DzInbGTsllrF82AkvEGRiNTZdtj9mzwDn/U5DA6L5EXddOtvJGWz3fRoCdsLdnJpxwv75IX/Bv3kj29F5kkD3p9+SDDgMi5KA7cpj2D+gLkHrUs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740565000; c=relaxed/simple;
+	bh=dIedMb4lwQBVScSxDRpIfkc8+JevTX/YCTTblYgJwRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aD6EL2jDcZFqKDkuPT1sHyzrsqroEtIb7GhZ4yGty/+HRDTmmMg6y+8Hd6OPrp2XoWzxCbXyNLluzuBA/59FitaNpvDWomPyYyqjNq4LZeIlmPaAJ51YbvbF93m6I/uVVmgt3rd8vhDc89LRDoCjF3n4/NIpIObjPhmTNcNvh4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CYhMLnp7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=py/wyHhe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CYhMLnp7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=py/wyHhe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kQ74kyFE"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gN+vtBZKLqIDvwyjV9THrKo4DymUcKmrcbYz1fB6scNz1TayLuTGJybforLHijYPmTMmGIi15Px5Gz6ZJMATKQmr4IPA1Yijm6RjPVaVw7dxIE5m7jer8SbEhEmvnEloNl3JhfJGkaEqb4VW9lILXT5DDHFD5w+dtWkISB4iXnhYp7FK7aGQIjHiQGz3qIdD1L5CgjeeJhYg+B+ZRxLpCRd1P2T4cEe5zSumZd1NGDrYlAmTDm6iW4TQ/m7nGRzZ9l0/hF/J2t62/tGpj/Kr7zM11aU6XyfdX1AEL2mjEYA8sXNcmKt53qRRt/xzMVDEs0f0G8/vuK46I3HNygDYQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0QsDKY2CSLlQddoeVqcNL3EzhTiLQkZI5yk+dqrF2ms=;
- b=Dv7CImHhfcirSFYNx8F/r/naV7q32MiUa0mrdcf+8cpBBA3yIgJlv2ulBDmhOGk2M+Xf2EpwzNh+NcbkM3/EEbWzAyqhgGjfBvFDHzkaeG/C2TfxccwysOrYbNVa8sIRxahBW0DS5WHD0qYJCcnvhqCwaRQoFYZVLizlVKquI/h+lXuap8IcSZT7Qv70JwttTd18l+jVYTKemEKsjCW2tLx62PlAswvtUvKPotah+TPC7MKrcJdqYqfHoYjKJh6k+qV7NPt6dmLnj/HjzkQ0XegXBGThnJTBVZVkY5F0gG/07ZfcfN7w8en8M+xE1fOfGxweTivXuQJFHLv7lFddiQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0QsDKY2CSLlQddoeVqcNL3EzhTiLQkZI5yk+dqrF2ms=;
- b=kQ74kyFEbAtNAaxN08BIkzpI4KVzCAHhlTUjUGgRYlHVWUbA2Rou7qFTYOfvF+bpnUAco9wOxXLskJzyzuImSsitdF85RmEpQYWiYMPFmSjy65OITBZGtrOvQ5xmcjPN+H7yB59sg+ycxdyFmbPYWUVpSn7UAYJRJy2niJB6A38Q99Qv7jCl2maLviInNCAqLezmg+C8fQhTqbRewyXhtORfDy3d1nbm7BuQQFoEi2jyrLWisEyXg9v0l/5xbEmkiJJXOKbv69KQvH75L2YBgevpPk45zRghx1XFo69lGOyAP9b2GqexI/psDW2dVQKunKRnxxa0MKPOHuLt2iELZA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by SN7PR12MB6837.namprd12.prod.outlook.com (2603:10b6:806:267::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Wed, 26 Feb
- 2025 10:12:05 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%6]) with mapi id 15.20.8466.016; Wed, 26 Feb 2025
- 10:12:05 +0000
-Message-ID: <dd1f65bf-8579-4d32-9c9c-9815d25cc116@nvidia.com>
-Date: Wed, 26 Feb 2025 10:11:58 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 9/9] net: stmmac: convert to phylink managed EEE
- support
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- Bryan Whitehead <bryan.whitehead@microchip.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com,
- Marcin Wojtas <marcin.s.wojtas@gmail.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>, UNGLinuxDriver@microchip.com,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <Z63e-aFlvKMfqNBj@shell.armlinux.org.uk>
- <05987b45-94b9-4744-a90d-9812cf3566d9@nvidia.com>
- <Z68nSJqVxcnCc1YB@shell.armlinux.org.uk>
- <86fae995-1700-420b-8d84-33ab1e1f6353@nvidia.com>
- <Z7X6Z8yLMsQ1wa2D@shell.armlinux.org.uk>
- <203871c2-c673-4a98-a0a3-299d1cf71cf0@nvidia.com>
- <Z7YtWmkVl0rWFvQO@shell.armlinux.org.uk>
- <fd4af708-0c92-4295-9801-bf53db3a16cc@nvidia.com>
- <Z7ZF0dA4-jwU7O2E@shell.armlinux.org.uk>
- <31731125-ab8f-48d9-bd6f-431d49431957@nvidia.com>
- <Z77myuNCoe_la7e4@shell.armlinux.org.uk>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <Z77myuNCoe_la7e4@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0503.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:13b::10) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CYhMLnp7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="py/wyHhe";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CYhMLnp7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="py/wyHhe"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B800B1F388;
+	Wed, 26 Feb 2025 10:16:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740564996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
+	b=CYhMLnp7q0zfIxH8iu3DNheOYB4NL+Nf+4CwGTh2xeQ6XaiMe2y/w5C4nc6bW9xz7RbgAw
+	8ryL8T8ngv+vFjbcTTbAftFmRhYB2lclHddKns9vVCLWfBZDzJSvvQlUKLgV5Wmz5BH8cQ
+	v3TWwB2RQtT2+I3JBCLYix3NLqlliWA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740564996;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
+	b=py/wyHhesHkF3t5R/Yc8G+Nte20Q0gW31h5UiRetlboW695aUKEXNBzADKuVjVvPuLRL9V
+	oWrCKyFxSZ0u4RBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740564996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
+	b=CYhMLnp7q0zfIxH8iu3DNheOYB4NL+Nf+4CwGTh2xeQ6XaiMe2y/w5C4nc6bW9xz7RbgAw
+	8ryL8T8ngv+vFjbcTTbAftFmRhYB2lclHddKns9vVCLWfBZDzJSvvQlUKLgV5Wmz5BH8cQ
+	v3TWwB2RQtT2+I3JBCLYix3NLqlliWA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740564996;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W7huWkA+q4tRzFzbc4OooKbD6jGNlYW/aDI0Z6LcjV8=;
+	b=py/wyHhesHkF3t5R/Yc8G+Nte20Q0gW31h5UiRetlboW695aUKEXNBzADKuVjVvPuLRL9V
+	oWrCKyFxSZ0u4RBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3ED391377F;
+	Wed, 26 Feb 2025 10:16:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8GvYDQTqvmfDagAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 26 Feb 2025 10:16:36 +0000
+Message-ID: <97832f2b-ea2f-4fec-990b-bbd5ccaa9a91@suse.de>
+Date: Wed, 26 Feb 2025 11:16:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|SN7PR12MB6837:EE_
-X-MS-Office365-Filtering-Correlation-Id: e0780930-e3f7-4ac7-eade-08dd564e04bf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|10070799003|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZytlR0l2SDcxNnBWN3paRW0yejFCc0wvOWxNckFYWWZVWk1aMVYwN0dKYUE5?=
- =?utf-8?B?eFRlVy8zRm1kbHc5TU5leEZOSzVaN3ZJOVhhWnYzZTFWRkxrZGdoaExTUEZm?=
- =?utf-8?B?dWlLdjNnYUoyZ3ByaDJkM2RrOVVpVlZsT2M0NnhucmZPTExpWlZ2YThubmw2?=
- =?utf-8?B?NDI4Z1FSSnJ6RWI2ZWh6U2UwbWZLUmEreDV0SU5BdW1UL0FObi9reW1ibkJD?=
- =?utf-8?B?Qy9IeEF4c0JMN1VPZ2p5NGF0QUpDcWc5TzNxTUhPNHErM1VHbjRHdXczbDhK?=
- =?utf-8?B?UTMyQWFiVlFwcVpNTUNSZFcxMW1XUTFMdFp4QThpQ29SQ0U1dDFBZWZBaDV5?=
- =?utf-8?B?ZHE2WVhLRHI0WlpBR015VTFIdTVBQ24rQXRMRE91emxEc0hVcDFVSGtyRVhJ?=
- =?utf-8?B?SHJQVDB1a25oQ3RzdXMveFFDYkcrRE52NmczQ08wRGJJY1g0d1N0bDVmSkJY?=
- =?utf-8?B?TWVxTHlxYnNpbTZKc2ZIQ2pGb2w4U3hKMTZIMmxNTFVWcUtGc2Vza2F5UlBQ?=
- =?utf-8?B?eTRWVmdCb3lxZWtJMWdveHl5dUNlWnhQOXl1aHg1cHdIREw2UWJhaFJuU3FF?=
- =?utf-8?B?eGNFTGhJZUFLajVJRWVCQStMeE1Ncll1eFIvamNvUGZ2bmE3Z3R2bWdmSFpE?=
- =?utf-8?B?bXNEcThkRmFXdWZISHd5eWJsTXlEUmIrVnpBSXRRSm9FQW5odThVZWFCSmto?=
- =?utf-8?B?em9kSUh5bjZrZ0ZINW5zakhOZ0hiR0lhb2RmazhuVXY2dU8ycmpOcUduZ0hF?=
- =?utf-8?B?K2NFSDFhZ3JLRkN0U3luNHNzR0Z4eE12cUtMMHR2RExJWXh3b3p1aWhELytL?=
- =?utf-8?B?VWFkTnBJVGlnWU4xL09qeElOTWpYdEkySUtEK1Qxd3o3ckdiMVVqZ3QzYzEw?=
- =?utf-8?B?V0ZhZURDQlZvVW85QlZpRzl0b2ptTFNLT3hEREpWYTBtUEZya2x1N25ZWi94?=
- =?utf-8?B?dzc0YWhaSko3cE9xbmV5b05kaDgzbzMxbkpOaGdVZ2dHL3V6UTlua083UWxS?=
- =?utf-8?B?N0pFVTljWWFzOHllTzBHRWNnZjI0WnZsamVEVFlmUVo2NU1jdnRRTXJpTzNJ?=
- =?utf-8?B?VGh5ZEgzMER5RW93WE1wVFQvYzFuL0ZmN1RObUcrOTNuODFnWFN4aXZlWUVu?=
- =?utf-8?B?THJ3Nmo5WnVUQVFabW5UMExaNkV4ZmRwbUJvdGFEN0VqVEQxamdtM0JTYkJo?=
- =?utf-8?B?bDVDdndWSnc5aGhZT01CaStoYm0zd3V1eG9Id2RFT3B1bW1oTi9RSmlDU2F5?=
- =?utf-8?B?Z0pkcE4rSUxMYWs1aEg0WUV4czlUYWJFYUhsbEdsWGsvdHN3N0pPMlRLOVoy?=
- =?utf-8?B?a0lYbXRDb1Y4dmVSdWtqN2ZRV2JldUhncE9uZXN3eXhqZG44eU9Fb01OSHdm?=
- =?utf-8?B?c3UxTUxleThPQ0s2bmthSFN2a0hob2podEptT09hYkR3RFEvYzk4RzRZaTlD?=
- =?utf-8?B?MXZiblY1UDJ0SWZmWm05VTZFQ2JGTk5oTm1PZzdJbzBOZkVQU0dtdWpKbVhM?=
- =?utf-8?B?d29DbFpNYXFPOVo2VDdkNWtyODZxNFRYYXduZmljNUVtS0M0N3NzY05FRDVF?=
- =?utf-8?B?QURid25FU3R3WGpjRXhST1RPQU9rZStiLzJBTEJxRnhMZmdZVTNKVVQxdW5v?=
- =?utf-8?B?YWhiV09kQkdNMjF2QnVoelc3Y1R6UHI5d0t6RERNd1ZkYy9jbFpqUWo2ejJW?=
- =?utf-8?B?TkR4SVRoMUhBVzZEU2Q0QWUvNDV5RXdUcXpsWnZYSUlZMW1tMTU4cHVDM1Zq?=
- =?utf-8?B?dGZyR0prM29zN1F1Rk9wa0dYWG5vYVQrOTNxeW9IaGM0WVJESUFvbS9xa1Fl?=
- =?utf-8?B?cUY3SUJYdkZicE5ZU1hRQjh3UG0zaWErS2xqNnJjWTYwL0wvYmREbHd6Y3g2?=
- =?utf-8?Q?eHkPu2wgCJO0Q?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NUlhdGpXcU16MlZIZGdUcEFOTnN6NWVYYlp0dEUwNXVIalZMeFArSFk5VVo2?=
- =?utf-8?B?aFViY3FNK3h5dncrNS94RFQ3RG45bXNhRGJIU0JmQWVGZ2VJZmpNcW9ZSE1k?=
- =?utf-8?B?K1lxbDNBOHR3Y3lpTkhRQWt1SnJBRDQzZnFETXplOGhiRmpaN1VzMXdpNXF4?=
- =?utf-8?B?VFRkNGhGaDNVYzNmZXRWWDJyZ2o4UDZKUDdrT1Y5TStNSHBRaVBWM0lJSkQ1?=
- =?utf-8?B?MW9LWW9pVlhsVU9lOFhvTzJ2OE9nNE8zWUZnR2RnR2xtWkJTYWZySG81Ym1K?=
- =?utf-8?B?ZXhQVDhkVk43Z1ZUU2VTeTFQdGlxQ3NjTmZJQUtWcnh2U0JybVVkcThkL0s0?=
- =?utf-8?B?enlsSFc0NHg1ei95Ny9Zd1ZvdWJha1JudjRYb1FJbzZKRHRhUHNxUFhEdWo1?=
- =?utf-8?B?YVBLZ3VDc3NOTzVkTDA0cFRBRHUwQlk1OG1ib1ZaSVdsR09iVTBSY0ErYVI1?=
- =?utf-8?B?SVhTeXF4cWpiaFAxYTc0dHV0d1FUNFE2SW5adkpMK0JKK0w3eTJRN3h2dExC?=
- =?utf-8?B?RmhCYy96NHVXbzNjeHd3ZVk1L1VoWHYzMkFCMDlaQUxPcGhGVUF2NnVBMnVV?=
- =?utf-8?B?R1hadXB6MWlUQUJHZnF4cWpqVncyK1ZFcWRUK0l5ejIwSWpveHova01FTkM3?=
- =?utf-8?B?ekJGby9uNjNzZTRER1crRi94cHRDR0o4cGdPeS9PNzExcUFXMGw4UEVhOXRo?=
- =?utf-8?B?Yy9rUHFweWxCVkJ0SkFWWWt6bmlUdFZHVmdBdjVXZFZrM3ZjT25vdWFMalhm?=
- =?utf-8?B?aW00QWF6QU8rR0p0L0dTYmdkbWIwNDBYeFIxeEtmMndETWZGOVJvd1k4Y2xn?=
- =?utf-8?B?cUpkN0hxZDBrZmtlRzRkWFNCMGg2TXJ1L1hPVkZXSzZ2Tng5Sis5Mm52cE9o?=
- =?utf-8?B?TEZ1NjBmR2JQUHErZ1NkTGs3eGRkZ3BPVlZjRXNhNWRodzlEYXR6ZGZPc3pU?=
- =?utf-8?B?VlZKTWc0MDF3S29pU2YvNVBWMnR3RE1mWW9uZHhNNCszUDBzanZ5dU9TV0Mv?=
- =?utf-8?B?d1J1c0l6QjgxaGRlb01BZGJpQzJjbW52ajdWcDNwczNSN2hWQmdnSENnb1Vi?=
- =?utf-8?B?WitpYjY3SWN5VEs1WkFEM29US2gxbzRnbmFrS3lySVRCVDRyd1lzQUxYNEJt?=
- =?utf-8?B?Q1hCOFRCMThpMkkwakdFVjFMamd6WmZrRWk3UW9xQkdpSkFPa2NsbyswRytP?=
- =?utf-8?B?bE0xRGlybW4vcUZHNG9PYktnN1UvQ3NWM25EMm1OSjFJT0VrTStTdGY4Q2NC?=
- =?utf-8?B?ZStZL2xmM3hSRTNjM2FhMXMySzhKVUhxT2hFajcvd0kwMm5tTWNucndqa3JH?=
- =?utf-8?B?QUtpaVVBOExHa3ZSZXhMR3N5Z1Z5ZzFWOEg0dWg0YndkTGd1ZEdDSGRYSWpm?=
- =?utf-8?B?RnNFbHpmTTQrWXRXZ1VIY3hmYlVhQ2VxK0pKTzIrUEVhSUJ3Z09kYVpBaWk2?=
- =?utf-8?B?NXI1bG5LWVVEUWdFRnhhOUJvQlYrRE9zSkZVQ3JCZG9GN2ppeTh0NzFYL1Vk?=
- =?utf-8?B?SU9iY2RIWU44YmtIU1RIN1JJeGljSlBQa0N6dSt0aFZFbGxMOHB5cG9uWVJr?=
- =?utf-8?B?bjJFR25xb0x3S2tjSlliNXNYdktSTjdxdnZwM1c2aEx2QW1uUHo0NG0wN013?=
- =?utf-8?B?MWQvZTlLVDVLS2xjNFA2Ty9HWFhPNVRPb1FPM0hoeHNOZDBiU2p5NUM0ODQ5?=
- =?utf-8?B?VjIzVHBLZjF3bW1PQ2RKZ3RCZ2ZXQklsTkVhL2twVC8zRWV0cVlEZE5PUXNE?=
- =?utf-8?B?K0hoa0Y2MGVkejlGNkp2cFVFa2lPamlONVNBOWZ4T2doUDVVeGRIY0VkbFJu?=
- =?utf-8?B?Tm1rVEoxbkE4TmxWR25XTEdpdXphSHVVTTR1NlIybXdXZVZDb2lWb3ZqK3Bw?=
- =?utf-8?B?K3BwbldJUUZLNWRadTV5WFZQUDVWQ1BKTGlwdm1hMWhMOEVMVGQzT0paVERW?=
- =?utf-8?B?VWtMYzlTeSt3RmpGR3ljRzA1cEhBa2pLa21qK0Fmd293aW9hZ1I0NWQrMmMr?=
- =?utf-8?B?S0dtMWg0N1JXWmVLWEhOZzlSWmxwcW1LdUtJN1E5VEd2ZHkzaXFMRkV2a1g1?=
- =?utf-8?B?NEhwVnRsTUNzQ3IybU5xZzdKeWYrTGNGU09IbE5qS0loTkszMk1ZQVd3RDhH?=
- =?utf-8?B?eWhTSHVaTjRKKy8yS1UrZ3pXWmpBTFFjajZ0NU1WY0FDVWU2anMxbW1lNnBJ?=
- =?utf-8?Q?VBZNbfMwWWLXs5M8BIr1PoEkRRbzd5Xk6iHWIOVxdFAz?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0780930-e3f7-4ac7-eade-08dd564e04bf
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2025 10:12:04.6605
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fSkxRapeTjIR6NFXi6lhx+h7IcqRbzXrJtvwHHany+lJfAd3ViEOmUSDJVbrA60fD43sQs+lvLl0r4R/utVWeQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6837
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 02/25] drm/dumb-buffers: Provide helper to set pitch
+ and size
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ imx@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+ nouveau@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20250218142542.438557-1-tzimmermann@suse.de>
+ <20250218142542.438557-3-tzimmermann@suse.de>
+ <dcd59a75-7945-4a2e-99f9-3abbb3e9de14@ideasonboard.com>
+ <355ed315-61fa-4a9d-b72b-8d5bc7b5a16c@suse.de>
+ <596b960e-71f8-4c2c-9abe-058206df1dfb@ideasonboard.com>
+ <87ca2b81-a67a-468b-ae2b-30d02a3a64bc@suse.de>
+ <f74af5cc-bca8-45c1-9204-b362fcd6f998@ideasonboard.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <f74af5cc-bca8-45c1-9204-b362fcd6f998@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.990];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[ideasonboard.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+Hi
 
-On 26/02/2025 10:02, Russell King (Oracle) wrote:
-> On Tue, Feb 25, 2025 at 02:21:01PM +0000, Jon Hunter wrote:
->> Hi Russell,
+Am 25.02.25 um 14:45 schrieb Tomi Valkeinen:
+> Hi,
+>
+> On 21/02/2025 11:19, Thomas Zimmermann wrote:
+>> Hi
 >>
->> On 19/02/2025 20:57, Russell King (Oracle) wrote:
->>> So, let's try something (I haven't tested this, and its likely you
->>> will need to work it in to your other change.)
+>> Am 20.02.25 um 11:53 schrieb Tomi Valkeinen:
+>>> Hi,
 >>>
->>> Essentially, this disables the receive clock stop around the reset,
->>> something the stmmac driver has never done in the past.
+>>> On 20/02/2025 12:05, Thomas Zimmermann wrote:
+>>>> Hi
+>>>>
+>>>> Am 20.02.25 um 10:18 schrieb Tomi Valkeinen:
+>>>> [...]
+>>>>>> + * Color modes of 10, 12, 15, 30 and 64 are only supported for 
+>>>>>> use by
+>>>>>> + * legacy user space. Please don't use them in new code. Other 
+>>>>>> modes
+>>>>>> + * are not support.
+>>>>>> + *
+>>>>>> + * Do not attempt to allocate anything but linear framebuffer 
+>>>>>> memory
+>>>>>> + * with single-plane RGB data. Allocation of other framebuffer
+>>>>>> + * layouts requires dedicated ioctls in the respective DRM driver.
+>>>>>
+>>>>> According to this, every driver that supports, say, NV12, should 
+>>>>> implement their own custom ioctl to do the exact same thing? And, 
+>>>>> of course, every userspace app that uses, say, NV12, should then 
+>>>>> add code for all these platforms to call the custom ioctls?
+>>>>
+>>>> Yes, that's exactly the current status.
+>>>>
+>>>> There has been discussion about a new dumb-create ioctl that takes 
+>>>> a DRM format as parameter. I'm all for it, but it's out of the 
+>>>> scope for this series.
+>>>>
+>>>>>
+>>>>> As libdrm's modetest currently supports YUV formats with dumb 
+>>>>> buffers, should we remove that code, as it's not correct and I'm 
+>>>>> sure people use libdrm code as a reference?
+>>>>
+>>>> Of course not.
+>>>>
+>>>>>
+>>>>> Well, I'm not serious above, but I think all my points from the 
+>>>>> earlier version are still valid. I don't like this. It changes the 
+>>>>> parameters of the ioctl (bpp used to be bits-per-pixel, not it's 
+>>>>> "color mode"), and the behavior of the ioctl, behavior that we've 
+>>>>> had for a very long time, and we have no idea how many users there 
+>>>>> are that will break (could be none, of course). And the 
+>>>>> documentation changes make the current behavior and uses wrong or 
+>>>>> legacy.
+>>>>
+>>>> Before I go into details about this statement, what use case 
+>>>> exactly are you referring to when you say that behavior changes?
 >>>
->>> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->>> index 1cbea627b216..8e975863a2e3 100644
->>> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->>> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
->>> @@ -7926,6 +7926,8 @@ int stmmac_resume(struct device *dev)
->>>    	rtnl_lock();
->>>    	mutex_lock(&priv->lock);
->>> +	phy_eee_rx_clock_stop(priv->dev->phydev, false);
->>> +
->>>    	stmmac_reset_queues_param(priv);
->>>    	stmmac_free_tx_skbufs(priv);
->>> @@ -7937,6 +7939,9 @@ int stmmac_resume(struct device *dev)
->>>    	stmmac_restore_hw_vlan_rx_fltr(priv, ndev, priv->hw);
->>> +	phy_eee_rx_clock_stop(priv->dev->phydev,
->>> +			      priv->phylink_config.eee_rx_clk_stop_enable);
->>> +
->>>    	stmmac_enable_all_queues(priv);
->>>    	stmmac_enable_all_dma_irq(priv);
+>>> For every dumb_buffer allocation with bpp that is not divisible by 
+>>> 8, the result is different, i.e. instead of DIV_ROUND_UP(width * 
+>>> bpp, 8), we now have width * DIV_ROUND_UP(bpp, 8). This, of course, 
+>>> depends on the driver implementation. Some already do the latter.
 >>
+>> The current dumb-buffer code does a stride computation at [1], which 
+>> is correct for all cases; although over-allocates sometimes. It's the 
+>> one you describe as "width * DIV_ROUND_UP(bpp, 8)". It's in the ioctl 
+>> entry point, so it's somewhat authoritative for all driver's 
+>> implementations. It's also used by several drivers.
 >>
->> Sorry for the delay, I have been testing various issues recently and needed
->> a bit more time to test this.
+>> The other variant, "DIV_ROUND_UP(width * bpp, 8)", is used by 
+>> gem-dma, gem-shmem and others. It can give incorrect results and 
+>> possibly OOBs. To give a simple example, let's allocate 15-bit 
+>> XRGB1555. Bpp is 15. With a width of 1024, that would result in 1920 
+>> bytes per scanline. But because XRGB1555 has a filler bit, so the 
+>> pixel is actually 16 bit and a scanline needs to be 2048 bytes. The 
+>> new code fixes that. This is not just a hypothetical scenario: we do 
+>> have drivers that support XRGB1555 and some of them also export a 
+>> preferred_depth of 15 to userspace. [2] In the nearby comment, you'll 
+>> see that this value is meant for dumb buffers.
 >>
->> It turns out that what I had proposed last week does not work. I believe
->> that with all the various debug/instrumentation I had added, I was again
->> getting lucky. So when I tested again this week on top of vanilla v6.14-rc2,
->> it did not work :-(
+>> Rounding up the depth value in user space is possible for RGB, but 
+>> not for YUV. Here different pixel planes have a different number of 
+>> bits. Sometimes pixels are sharing bits. The value of bits-per-pixel 
+>> becomes meaningless. That's why it's also deprecated in struct 
+>> drm_format_info. The struct instead uses a more complicated per-plane 
+>> calculation to compute the number of bits per plane. [3] The 
+>> user-space code currently doing YUV on dumb buffers simply got lucky.
 >>
->> However, what you are suggesting above, all by itself, is working. I have
->> tested this on top of vanilla v6.14-rc2 and v6.14-rc4 and it is working
->> reliably. I have also tested on some other boards that use the same stmmac
->> driver (but use the Aquantia PHY) and I have not seen any issues. So this
->> does fix the issue I am seeing.
+>> [1] https://elixir.bootlin.com/linux/v6.13.3/source/drivers/gpu/drm/ 
+>> drm_dumb_buffers.c#L77
+>> [2] https://elixir.bootlin.com/linux/v6.13.3/source/include/drm/ 
+>> drm_mode_config.h#L885
+>> [3] https://elixir.bootlin.com/linux/v6.13.3/source/include/drm/ 
+>> drm_fourcc.h#L83
 >>
->> I know we are getting quite late in the rc for v6.14, but not sure if we
->> could add this as a fix?
-> 
-> The patch above was something of a hack, bypassing the layering, so I
-> would like to consider how this should be done properly.
-> 
-> I'm still wondering whether the early call to phylink_resume() is
-> symptomatic of this same issue, or whether there is a PHY that needs
-> phy_start() to be called to output its clock even with link down that
-> we don't know about.
-> 
-> The phylink_resume() call is relevant to this because I'd like to put:
-> 
-> 	phy_eee_rx_clock_stop(priv->dev->phydev,
-> 			      priv->phylink_config.eee_rx_clk_stop_enable);
-> 
-> in there to ensure that the PHY is correctly configured for clock-stop,
-> but given stmmac's placement that wouldn't work.
-> 
-> I'm then thinking of phylink_pre_resume() to disable the EEE clock-stop
-> at the PHY.
-> 
-> I think the only thing we could do is try solving this problem as per
-> above and see what the fall-out from it is. I don't get the impression
-> that stmmac users are particularly active at testing patches though, so
-> it may take months to get breakage reports.
+>>>
+>>> This change also first calls the drm_driver_color_mode_format(), 
+>>> which could change the behavior even more, but afaics at the moment 
+>>> does not. 
+>>
+>> Because currently each driver does its own thing, it can be hard to 
+>> write user space that reliably allocates on all drivers. That's why 
+>> it's important that parameters are not just raw numbers, but have 
+>> well- defined semantics. The raw bpp is meaningless; it's also 
+>> important to know which formats are associated with each value. 
+>> Otherwise, you might get a dumb buffer with a bpp of 15, but it will 
+>> be displayed incorrectly. This patch series finally implements this 
+>> and clearly documents the assumptions behind the interfaces. The 
+>> assumptions themselves have always existed.
+>
+> This is perhaps where the biggest gap in understanding/view is: I have 
+> always thought dumb-buffer's "bpp" to mean bits-per-pixel, where, for 
+> more complex formats, "pixel" is not necessarily a visible pixel but a 
+> container unit of some kind. So bpp * width = stride.
+>
+> It would not occur to me to allocate XRGB1555 dumb-buffer with 15 bpp, 
+> but 16 bpp, as that's what a pixel takes. I have never seen the 
+> dumb-buffer bpp connected directly to the pixel format (that's what 
+> the ADDFB brings in).
+>
+> I may be alone with that thinking, but afaics the documentation leans 
+> a bit on my interpretation (instead of considering bpp as a "color 
+> mode"), although admittedly the docs also don't really say much so 
+> this may be fully just my interpretation:
+>
+> https://man.archlinux.org/man/drm-memory.7.en
 
+Agreed, this could be read in the way you do. Is this being generated 
+from source somehow? The information is not incorrect, but how did they 
+get to this interpretation? It would definitely need an update with this 
+patch series applied. Citing from the man page:
 
-We can ask Furong to test as he seems to active and making changes, but 
-otherwise I am not sure how well it is being tested across various 
-devices. On the other hand, it feels like there are still lingering 
-issues like this with the driver and so I would hope this is moving in 
-the right direction.
+   "/bpp/ is the number of bits-per-pixel and must be a multiple of 8."
 
-Let me know if you have a patch you want me to test and I will run in on 
-our Tegra186, Tegra194 and Tegra234 devices that all use this.
+That's what currently works on all drivers. But nothing enforces that it 
+"must by a multiple of 8". Doing so would prevent C1/C2/etc pixel 
+formats without over-allocation.  OR bpp is not bits-per-pixel but just 
+some factor that controls the buffer size. This is how you use it for 
+YUV formats.
 
-Thanks
-Jon
+   "You most commonly want to pass 32 here."
+
+That's also just semi-true. 32 is simply what mostly works in practice 
+IFF you interpret it as XRGB8888. Userspace should read the formats from 
+the primary plane, or at least look at the driver-provided 
+preferred_depth field.
+
+>
+> https://cgit.freedesktop.org/drm/libdrm/tree/include/drm/drm_mode.h#n1055
+
+This one doesn't say anything specific AFAICT. Bpp is somewhat pointless 
+information without a known pixel and framebuffer layout, as I've 
+outlined before.
+
+>
+> I (mostly) understand all the complexities around here, thanks to your 
+> replies, and I think I'm ok with the series as it doesn't break 
+> anything (need to test the v3, though).
+
+Thank you so much.
+
+>
+> I still don't like it though =). And I would be happier with the 
+> simpler "bpp" interpretation that I mentioned above, instead of it 
+> being a color mode. But we can't have it both ways, and perhaps it's 
+> better to unify the code and have the behavior explained explicitly as 
+> you do in this series, even if the explanation only covers some RGB 
+> formats.
+
+No worries. The intention is not to break anything and existing code 
+will continue to work.
+
+Best regards
+Thomas
+
+>
+>  Tomi
+>
 
 -- 
-nvpublic
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
