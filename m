@@ -1,265 +1,154 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62E22036EB;
-	Wed, 26 Feb 2025 09:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE1620F076;
+	Wed, 26 Feb 2025 10:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740561362; cv=none; b=KsVk72lzdTsingQjpoM3MiX4lWUOMwdMZ+h3gX5km4zqYD01GheEFOoefo/gXzygkGJ/kaZGlHuwcgbRhdOPEsT8bWnWF0R8ebO8/lhiBpGFKiAVaRM1pxEMCPfUM8iUGm0A3divKQ2S0rBmQ8M9eT/jasadM3BR7ej33bL2uL0=
+	t=1740564184; cv=none; b=ryHGDNUpNjjanF+7HWLQhwbR+vzUBxcm9pLqQEwZuqLEVIFW5rvBYk9xlkvG6tiEvG9lbOhlDFLhX2WxjJ+eGQCE9RY18LUIWYUp8Flz90FHAuI9xdchdal4T+NrdK3o2gWJ8P9GVMsdAqhwB0CcAycvuNOxUHRHG2/O8NB64pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740561362; c=relaxed/simple;
-	bh=HmmdzVTTi/DjoKLcmrxW1fMIoviGanIxaCaW6zxswLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=lM6QbtjS/VosFiKvstSycQs4ZNkECaPC+JCcWdXFiRcThHzrX+bAJDRNrZjCQapx6BlTO0v0LcLY6rkA8ezMRtacHxikRj5FKdqo3PYVkn6bkHtFQjVsY5V3LpQaDmSqiLQqsOc7VQSdvhI7nF2zH6r78FPhbaG49KlAYCqnjd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pd0qKB6S; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1740564184; c=relaxed/simple;
+	bh=ilF/MM0HvGAS0cu+PQ/B0oKUkCagzEcSVdzHJOh/TPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=clfZJ1bG53qvrAm9XvK6Kf/u5E2gOj+mMJ3JQBLXVtJVGCJRaxA4Yp0ZDV8D4Mvxvf6pZCfo9hnh1tSsHmMIbl/V6cHCaOpdr2x9o5XmoFV1pInQ9BD+RA/7PuREV656+ShIV0smhtucTqtXWTsoTdUQ34LxkGfddqQkIhk6yVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=a3jjbCej; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pd0qKB6S"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250226091557euoutp0161733e589313a5d360143bf659ed2ac4~nt1UUMSFJ0235702357euoutp018;
-	Wed, 26 Feb 2025 09:15:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250226091557euoutp0161733e589313a5d360143bf659ed2ac4~nt1UUMSFJ0235702357euoutp018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740561357;
-	bh=jfJCJyoMIpaltaIU+7lWbslcg8FIPqfxsGd8Aa/3U4g=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=pd0qKB6SEv3qSWA5608B8oO2iGWR7WjfUjY2eZgAJKutotBUbf09dxzRJ6HokEIfl
-	 SENoGO7kGj+s5+5W9pcnL1jlx+tZjJeceP8qzzOTwn25j197LEY2e5ro61VeUURHeg
-	 tpP39Yc9WB7YuWNRDkkxYYqX3jPJHhQLSkY8WSSc=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250226091556eucas1p29db20e03f1f9ea1782103d1167564e1b~nt1T3fxAv0815308153eucas1p2U;
-	Wed, 26 Feb 2025 09:15:56 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id B1.88.20397.CCBDEB76; Wed, 26
-	Feb 2025 09:15:56 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250226091555eucas1p1320cf0ed08b514c5259710476a930e60~nt1TNvpGD1197611976eucas1p1P;
-	Wed, 26 Feb 2025 09:15:55 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250226091555eusmtrp1d211ba6163f39cbff93c4ff3e854775d~nt1TMYUVW3155431554eusmtrp1P;
-	Wed, 26 Feb 2025 09:15:55 +0000 (GMT)
-X-AuditID: cbfec7f5-e59c770000004fad-b0-67bedbccae7f
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 40.E0.19920.BCBDEB76; Wed, 26
-	Feb 2025 09:15:55 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250226091552eusmtip1c4c7761f98c6c76160fa00aed2a5042b~nt1QGGXF83166531665eusmtip1L;
-	Wed, 26 Feb 2025 09:15:52 +0000 (GMT)
-Message-ID: <1a6f693d-5ebe-46f5-be89-5edc0e77e316@samsung.com>
-Date: Wed, 26 Feb 2025 10:15:51 +0100
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="a3jjbCej"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=sOnGjWaUSP+NrqHGRjXXETsxWrtELjRMWXZ4J2QAXBI=; b=a3jjbCejJFHavFiOa/9msozzW1
+	gE/Kr1/w4AbrZZXkmidqaEKjoDPldXqb1Ca/Ve8uAESMYXtYi0f/7zt4ZqZyypSy6uGmrMw4WFBFq
+	ANh3d9rHgldCo9YJzaoYfYqpNDUZJNfiKcQDyWy6x7PxCM8B2I5aVs2jpgtq2UHw2xBesYHdXzeCU
+	yPCaciZaV14itjQ9S21Z1beS59Al0zbJj9FvhvENlTP45UXhd/rbHQDgh68ozZ9Zi7xz1Alb/lncv
+	2gyUfB/K+XfwQQY88PFlIpQYKmibRV2Iec1JUyxk8Zny3C3Je8hrY3i+A0n58nblXR6NcoiF8K2T3
+	WIVfdE/Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48516)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tnEFh-0003qa-0t;
+	Wed, 26 Feb 2025 10:02:53 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tnEFe-0006xo-1j;
+	Wed, 26 Feb 2025 10:02:50 +0000
+Date: Wed, 26 Feb 2025 10:02:50 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Bryan Whitehead <bryan.whitehead@microchip.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, UNGLinuxDriver@microchip.com,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH net-next 9/9] net: stmmac: convert to phylink managed EEE
+ support
+Message-ID: <Z77myuNCoe_la7e4@shell.armlinux.org.uk>
+References: <Z63e-aFlvKMfqNBj@shell.armlinux.org.uk>
+ <05987b45-94b9-4744-a90d-9812cf3566d9@nvidia.com>
+ <Z68nSJqVxcnCc1YB@shell.armlinux.org.uk>
+ <86fae995-1700-420b-8d84-33ab1e1f6353@nvidia.com>
+ <Z7X6Z8yLMsQ1wa2D@shell.armlinux.org.uk>
+ <203871c2-c673-4a98-a0a3-299d1cf71cf0@nvidia.com>
+ <Z7YtWmkVl0rWFvQO@shell.armlinux.org.uk>
+ <fd4af708-0c92-4295-9801-bf53db3a16cc@nvidia.com>
+ <Z7ZF0dA4-jwU7O2E@shell.armlinux.org.uk>
+ <31731125-ab8f-48d9-bd6f-431d49431957@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 21/23] iommu/pages: Remove iommu_alloc_page/pages()
-To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
-	asahi@lists.linux.dev, Lu Baolu <baolu.lu@linux.intel.com>, David Woodhouse
-	<dwmw2@infradead.org>, Heiko Stuebner <heiko@sntech.de>,
-	iommu@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>, Jonathan
-	Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>, Krzysztof
-	Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org, Hector Martin <marcan@marcan.st>, Palmer
-	Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Robin Murphy <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, Sven Peter
-	<sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>, Tomasz
-	Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>, Chen-Yu
-	Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev, David
-	Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <21-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02TfVBUVRjGO/fevbsws3BlKY5Wg22YxQRCinMaya9JvUMzGs1kTM0oK1wX
-	AlbbZROKmdD4WlAEwYKLLjvm8CEbrCxugYTthrBAgkAZ8hFfWwQIhECwLLKxXCz++z3v+5zz
-	vO+ZOQLcbYjcJIiUxTJymSRaTDoThgZrq8/PPXVSv3N5G9GA2kCiqpZMgG7ZWD6y/uqCLp8F
-	SJ99i0TZpTk4sg+N89DiLEIjheUA/bJcC1ASe41AqgIdH+U0X8VQW9sKVQ4/4CHDTBKJHg/Y
-	cZTXVoeh3LoaEqlmWRK1PNDw0WjneRw1WxNQp7kDoBTWFaVcv4kh498WHhoZUq3kLWgAWuqx
-	Y8haoybQbFEqQJk/vIespjYMJfUGINvCFXLvFtpiVGN0cscTktaqtYDWDZXx6EejowT9U9os
-	n65m+/i0plJJ60u86cobKpJWNwXT+utf0H/p8wH9TVE1SV/4cpKku9iQdzd+6BwYzkRHfsrI
-	t+0OdY4wTzwEp9u3xjWNDfISQfLmdOAkgNQOqG9IxNOBs8CNKgGwbzIHcGIWwLQ7lXxOzACo
-	q1nkPT1iaDWuuYoBNKdp18Q0gAU1D/kOl5DaDTPU7atMUFugyngb5+obYFO+hXDws5Qn7O/O
-	W/WIqCCoKrBjjovcKZsADo2WrzZwqg/AcZU3xx6w21KIOZik/GH6RDrpYCdqPzSXZGKcxxN+
-	N3FldSNILTjD5OoLODf327CvW7fGIjjWWMXn+AXYknOe4A6kAqix9WOcyAIwcaQbcK5dsLd1
-	cSVOsBLxGqyo2caV98Hi0mrMUYaUC+ya2MAN4QIvGb7GubIQpqW4ce5XINtY/l+s8X4HngXE
-	7Lp3Ydetya5bh/0/VwOIG8CDUSpipIxiu4w546uQxCiUMqlv2KmYSrDyDVqWG+e+ByVj074m
-	gAmACUABLnYXOkXWSt2E4ZL4zxj5qeNyZTSjMIHnBYTYQ3jtTrLUjZJKYpkohjnNyJ92MYHT
-	pkRMlHD74uay6SP5J94kXpW9tEBdMvZOZsyFNptkP0Lvk4qLuQcihkVhHTfvBum3nhz+pP+P
-	R74fHTv3VsjH/kvyg/mHXvynwbCdbfxgyis8v6Ki+J7yeNbv0aHio7Ga4GH7y/cfl9aH7Aya
-	yhApc+Ldz8abeDqZX2B7SsBcqDbsOXNQXPAOs6g06mjC8J9qS175VOoemesRUS6e0aWNzD4s
-	sN39bXDc6/CMPevqt4EZFwP2uN7r8fCMTjzIjyt8Y2R/lnC+VqeNaqvau9PPph4QaZrGijo/
-	T0ga/KrlgNd81644TeSJqqVn6oURRv93fLqMGt/3LcfOzE+yh163Lvvsq39SNiAVE4oIib83
-	LldI/gU/varkdQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMKsWRmVeSWpSXmKPExsVy+t/xu7qnb+9LNzi3StfiwbxtbBZbTvcx
-	Wmz9PYvd4udVPoupjYwWmyduZbOYuHIys8X/R69ZLX59sbB4Pn8do8WVf3sYLVpmLWKx6Jy9
-	gd1i8qm5TBbnzwNZmx5fY7XY9rmFzeLTg//MFjPO72OymLJvF5tF55dZbBanry1gt3h5uYfZ
-	4tTPGovLJy4xWrTN4rdoW7KRyeLghyesFs8fdQLt+7GA0eLP7f9MFj93zWOx+LKsndGib2+Q
-	xc9D55ksWu6YWvz+MYfNQdXjycF5TB6tl/6yeayZt4bRY8Oj1aweb16+ZPE43PGF3WPnrLvs
-	Hgs2lXpsXqHlsWlVJ5vHvJOBHpuX1Hu82DyT0WPxsp1sHr3N79g8bsyKCJCM0rMpyi8tSVXI
-	yC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Ms48fYmY8FF9YqTrx6y
-	NjC2KnQxcnJICJhIbDt3kLGLkYtDSGApo0T/l8vsEAkZiZPTGlghbGGJP9e62CCK3jNKLLw8
-	nQUkwStgJ9E97yJYA4uAqkTnwd3MEHFBiZMzn4DViArIS9y/NQOsRljAS6Jz9n8mEFtE4C+H
-	xMR+b5ChzAJ3GSUOLV7PBpIQEpjKKHFslQ+IzSwgLnHryXywBjYBQ4mut11gNZwCThInVvQx
-	QdSYSXRt7WKEsOUltr+dwzyBUWgWkjtmIRk1C0nLLCQtCxhZVjGKpJYW56bnFhvqFSfmFpfm
-	pesl5+duYgSmvm3Hfm7ewTjv1Ue9Q4xMHIyHGCU4mJVEeDkz96QL8aYkVlalFuXHF5XmpBYf
-	YjQFBsZEZinR5Hxg8s0riTc0MzA1NDGzNDC1NDNWEud1u3w+TUggPbEkNTs1tSC1CKaPiYNT
-	qoFpXur+pXc6TXhT/bYZpk0InGB9IsTsWvpbcd5APuNKY8XdpYqxy5mNlbWz12b3d7e+k19p
-	122ov7wzeJZ7k5jY0+vafy7qLDWZrPbX2VNdL2X9dt/WZ+/aP2Y5GNXynNZmaF5UUaMT717x
-	x+1sn6iJl987u/dO8QzW0Q/chWOyVv5rdziy5/jmKtmTd86xBtwN1rG8slGg40SSzZsbS2d/
-	S7jv5fn8WCFv08TYphK3SYaC3IvfddqdmSN2VrdNONatdf/9n8s/KU7SOh65djPjDTWuGT7C
-	Da1igRmrC5b/9me7vDX/7Skdmx3pZQZbZPz2nNXaHrJ7donPvNAYafP3J0vXRH8+t/yUsMIi
-	ayWW4oxEQy3mouJEAGWS78wGBAAA
-X-CMS-MailID: 20250226091555eucas1p1320cf0ed08b514c5259710476a930e60
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250225194054eucas1p14df0adad570f01d8a8f93a0042555a51
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250225194054eucas1p14df0adad570f01d8a8f93a0042555a51
-References: <CGME20250225194054eucas1p14df0adad570f01d8a8f93a0042555a51@eucas1p1.samsung.com>
-	<21-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <31731125-ab8f-48d9-bd6f-431d49431957@nvidia.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 25.02.2025 20:39, Jason Gunthorpe wrote:
-> A few small changes to the remaining drivers using these will allow
-> them to be removed:
->
-> - Exynos wants to allocate fixed 16K/8K allocations
-> - Rockchip already has a define SPAGE_SIZE which is used by the
->    dma_map immediately following, using SPAGE_ORDER which is a lg2size
-> - tegra has size constants already for its two allocations
->
-> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-For exynos-iommu:
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->   drivers/iommu/exynos-iommu.c   |  4 ++--
->   drivers/iommu/iommu-pages.h    | 26 --------------------------
->   drivers/iommu/rockchip-iommu.c |  6 ++++--
->   drivers/iommu/tegra-smmu.c     |  4 ++--
->   4 files changed, 8 insertions(+), 32 deletions(-)
->
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 1019e08b43b71c..74337081278551 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -902,11 +902,11 @@ static struct iommu_domain *exynos_iommu_domain_alloc_paging(struct device *dev)
->   	if (!domain)
->   		return NULL;
->   
-> -	domain->pgtable = iommu_alloc_pages(GFP_KERNEL, 2);
-> +	domain->pgtable = iommu_alloc_pages_sz(GFP_KERNEL, SZ_16K);
->   	if (!domain->pgtable)
->   		goto err_pgtable;
->   
-> -	domain->lv2entcnt = iommu_alloc_pages(GFP_KERNEL, 1);
-> +	domain->lv2entcnt = iommu_alloc_pages_sz(GFP_KERNEL, SZ_8K);
->   	if (!domain->lv2entcnt)
->   		goto err_counter;
->   
-> diff --git a/drivers/iommu/iommu-pages.h b/drivers/iommu/iommu-pages.h
-> index 3c4575d637da6d..4513fbc76260cd 100644
-> --- a/drivers/iommu/iommu-pages.h
-> +++ b/drivers/iommu/iommu-pages.h
-> @@ -100,20 +100,6 @@ static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp,
->   	return iommu_alloc_pages_node_sz(nid, gfp, 1 << (order + PAGE_SHIFT));
->   }
->   
-> -/**
-> - * iommu_alloc_pages - allocate a zeroed page of a given order
-> - * @gfp: buddy allocator flags
-> - * @order: page order
-> - *
-> - * returns the virtual address of the allocated page
-> - * Prefer to use iommu_alloc_pages_lg2()
-> - */
-> -static inline void *iommu_alloc_pages(gfp_t gfp, int order)
-> -{
-> -	return iommu_alloc_pages_node_sz(NUMA_NO_NODE, gfp,
-> -					 1 << (order + PAGE_SHIFT));
-> -}
-> -
->   /**
->    * iommu_alloc_pages_sz - Allocate a zeroed page of a given size from
->    *                          specific NUMA node
-> @@ -141,16 +127,4 @@ static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
->   	return iommu_alloc_pages_node_sz(nid, gfp, PAGE_SIZE);
->   }
->   
-> -/**
-> - * iommu_alloc_page - allocate a zeroed page
-> - * @gfp: buddy allocator flags
-> - *
-> - * returns the virtual address of the allocated page
-> - * Prefer to use iommu_alloc_pages_lg2()
-> - */
-> -static inline void *iommu_alloc_page(gfp_t gfp)
-> -{
-> -	return iommu_alloc_pages_node_sz(NUMA_NO_NODE, gfp, PAGE_SIZE);
-> -}
-> -
->   #endif	/* __IOMMU_PAGES_H */
-> diff --git a/drivers/iommu/rockchip-iommu.c b/drivers/iommu/rockchip-iommu.c
-> index 798e85bd994d56..5af82072b03a17 100644
-> --- a/drivers/iommu/rockchip-iommu.c
-> +++ b/drivers/iommu/rockchip-iommu.c
-> @@ -730,7 +730,8 @@ static u32 *rk_dte_get_page_table(struct rk_iommu_domain *rk_domain,
->   	if (rk_dte_is_pt_valid(dte))
->   		goto done;
->   
-> -	page_table = iommu_alloc_page(GFP_ATOMIC | rk_ops->gfp_flags);
-> +	page_table = iommu_alloc_pages_sz(GFP_ATOMIC | rk_ops->gfp_flags,
-> +					  SPAGE_SIZE);
->   	if (!page_table)
->   		return ERR_PTR(-ENOMEM);
->   
-> @@ -1064,7 +1065,8 @@ static struct iommu_domain *rk_iommu_domain_alloc_paging(struct device *dev)
->   	 * Each level1 (dt) and level2 (pt) table has 1024 4-byte entries.
->   	 * Allocate one 4 KiB page for each table.
->   	 */
-> -	rk_domain->dt = iommu_alloc_page(GFP_KERNEL | rk_ops->gfp_flags);
-> +	rk_domain->dt = iommu_alloc_pages_sz(GFP_KERNEL | rk_ops->gfp_flags,
-> +					     SPAGE_SIZE);
->   	if (!rk_domain->dt)
->   		goto err_free_domain;
->   
-> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-> index 844682a41afa66..a9c35efde56969 100644
-> --- a/drivers/iommu/tegra-smmu.c
-> +++ b/drivers/iommu/tegra-smmu.c
-> @@ -295,7 +295,7 @@ static struct iommu_domain *tegra_smmu_domain_alloc_paging(struct device *dev)
->   
->   	as->attr = SMMU_PD_READABLE | SMMU_PD_WRITABLE | SMMU_PD_NONSECURE;
->   
-> -	as->pd = iommu_alloc_page(GFP_KERNEL | __GFP_DMA);
-> +	as->pd = iommu_alloc_pages_sz(GFP_KERNEL | __GFP_DMA, SMMU_SIZE_PD);
->   	if (!as->pd) {
->   		kfree(as);
->   		return NULL;
-> @@ -695,7 +695,7 @@ static struct tegra_pt *as_get_pde_page(struct tegra_smmu_as *as,
->   	if (gfpflags_allow_blocking(gfp))
->   		spin_unlock_irqrestore(&as->lock, *flags);
->   
-> -	pt = iommu_alloc_page(gfp | __GFP_DMA);
-> +	pt = iommu_alloc_pages_sz(gfp | __GFP_DMA, SMMU_SIZE_PT);
->   
->   	if (gfpflags_allow_blocking(gfp))
->   		spin_lock_irqsave(&as->lock, *flags);
+On Tue, Feb 25, 2025 at 02:21:01PM +0000, Jon Hunter wrote:
+> Hi Russell,
+> 
+> On 19/02/2025 20:57, Russell King (Oracle) wrote:
+> > So, let's try something (I haven't tested this, and its likely you
+> > will need to work it in to your other change.)
+> > 
+> > Essentially, this disables the receive clock stop around the reset,
+> > something the stmmac driver has never done in the past.
+> > 
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > index 1cbea627b216..8e975863a2e3 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > @@ -7926,6 +7926,8 @@ int stmmac_resume(struct device *dev)
+> >   	rtnl_lock();
+> >   	mutex_lock(&priv->lock);
+> > +	phy_eee_rx_clock_stop(priv->dev->phydev, false);
+> > +
+> >   	stmmac_reset_queues_param(priv);
+> >   	stmmac_free_tx_skbufs(priv);
+> > @@ -7937,6 +7939,9 @@ int stmmac_resume(struct device *dev)
+> >   	stmmac_restore_hw_vlan_rx_fltr(priv, ndev, priv->hw);
+> > +	phy_eee_rx_clock_stop(priv->dev->phydev,
+> > +			      priv->phylink_config.eee_rx_clk_stop_enable);
+> > +
+> >   	stmmac_enable_all_queues(priv);
+> >   	stmmac_enable_all_dma_irq(priv);
+> 
+> 
+> Sorry for the delay, I have been testing various issues recently and needed
+> a bit more time to test this.
+> 
+> It turns out that what I had proposed last week does not work. I believe
+> that with all the various debug/instrumentation I had added, I was again
+> getting lucky. So when I tested again this week on top of vanilla v6.14-rc2,
+> it did not work :-(
+> 
+> However, what you are suggesting above, all by itself, is working. I have
+> tested this on top of vanilla v6.14-rc2 and v6.14-rc4 and it is working
+> reliably. I have also tested on some other boards that use the same stmmac
+> driver (but use the Aquantia PHY) and I have not seen any issues. So this
+> does fix the issue I am seeing.
+> 
+> I know we are getting quite late in the rc for v6.14, but not sure if we
+> could add this as a fix?
 
-Best regards
+The patch above was something of a hack, bypassing the layering, so I
+would like to consider how this should be done properly.
+
+I'm still wondering whether the early call to phylink_resume() is
+symptomatic of this same issue, or whether there is a PHY that needs
+phy_start() to be called to output its clock even with link down that
+we don't know about.
+
+The phylink_resume() call is relevant to this because I'd like to put:
+
+	phy_eee_rx_clock_stop(priv->dev->phydev,
+			      priv->phylink_config.eee_rx_clk_stop_enable);
+
+in there to ensure that the PHY is correctly configured for clock-stop,
+but given stmmac's placement that wouldn't work.
+
+I'm then thinking of phylink_pre_resume() to disable the EEE clock-stop
+at the PHY.
+
+I think the only thing we could do is try solving this problem as per
+above and see what the fall-out from it is. I don't get the impression
+that stmmac users are particularly active at testing patches though, so
+it may take months to get breakage reports.
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
