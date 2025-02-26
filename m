@@ -1,96 +1,94 @@
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0530151991;
-	Tue, 25 Feb 2025 23:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6FC267AF7;
+	Wed, 26 Feb 2025 06:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740525533; cv=none; b=UjVY1yZnX7Eh4LMlZbV0x/VKl/5Zqnuo4kpDQE9BPUjtj2f8mKSddjvIeNXujF74PsTvWejplMyIXGA8D2z2D2R4XyYjRbNl8jKIekIHArS/VqNK0RNXMH05kdTMahVKwCANf5UkXctckdzkCp7y36vnnWvnQfljTG3FtS+ygd8=
+	t=1740551344; cv=none; b=AnyYCWelnHgqqQ020+oF1ROGbZ6Suoxgn9AU1D9HvFSyxN9hIFOdeLKTRm6AZwbg0c4lrLuz1OkRZzJpBBCE1MhOMp1ve90817UyTv2JXFzCKBreJ7j1rNZaXzKB0MypQMRD2EMDUVUnctEUa7Ap4gb1SVjPi1wcNF6YqSXKmH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740525533; c=relaxed/simple;
-	bh=76Jhh4fUvVx9+AeTNo/sVtcgC9p+Mf69ylluqkqvljo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dYoR5rNWbNAihxJ1LyZiumkw1cQxCFZMaf2kp2ZbmVJIM9XTdR63wlu8V6waB1RJZ9uCC6a5/bT1OTBoFPbqCkqXU5RAF39NVhU+TpIwfRjJI5bNBnU9ik8eGNcNh2IMXCmFMUFk5rYFL/okbWQJge62GSHxQy6g+6IRuyHMEIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BdTVLRx2; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+	s=arc-20240116; t=1740551344; c=relaxed/simple;
+	bh=lXhU7sd67KpdS+ygAGbHgQMDj+NU0WLx7YcQjO+y+Dw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DlRycIOelOD2bZ+zZWaDincbVXepgemtZmoABQr/SvvDOwApZK6rNGmuotUAB69oEyNlqEjJFgbSeiisevQEtvlXC9phaHyecJYEvdgQxAQoFvkmxZPn8mplDIQ3F3Ojs8K93zilfuqldbw16yJ/dZcFZNB3dd5wMYC6C0FnYxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DFr/5DLe; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BdTVLRx2"
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PMZ9QH005739;
-	Tue, 25 Feb 2025 23:17:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2023-11-20; bh=76Jhh
-	4fUvVx9+AeTNo/sVtcgC9p+Mf69ylluqkqvljo=; b=BdTVLRx21vS0X4QPrpmQP
-	gxjS/9u6fRZyE4Byg4vfc4YlNFidlfoumJZju1fkuHNLLO1iNYkhNTapIuB3JcVC
-	GZN2FE1YB22Hc23UTdd/dG47rPfuY63dJZCC/MdwcDraA5OJByued2JFhClzIA7X
-	3P3yeS68ikYiu72KvZOPVLT5WJJhbwMhTZbIXCD7FYTlg85nwpyp+1N09tE3w6zU
-	Gz63B0fW+JuC1Dk6yyikq1T5EzOkevrpRXRXA7RJnfN/W+SgwWC1YGNDE42HtdBG
-	Ictnn31S+NQnM/Y+yhjWFsUKT8/cl0DLh2J/jtJERBVvv/2Xsc588act3B6Tkdyc
-	A==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 451pse81tc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Feb 2025 23:17:50 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51PLIQm2025216;
-	Tue, 25 Feb 2025 23:17:48 GMT
-Received: from alaljime-e5-test-20240903-1847.osdevelopmeniad.oraclevcn.com (alaljime-e5-test-20240903-1847.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.206])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 44y51gg9ht-1;
-	Tue, 25 Feb 2025 23:17:48 +0000
-From: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-To: jgg@nvidia.com
-Cc: alim.akhtar@samsung.com, alyssa@rosenzweig.io, aou@eecs.berkeley.edu,
-        asahi@lists.linux.dev, bagasdotme@gmail.com, baolu.lu@linux.intel.com,
-        dwmw2@infradead.org, heiko@sntech.de, iommu@lists.linux.dev,
-        jernej.skrabec@gmail.com, jonathanh@nvidia.com, joro@8bytes.org,
-        jroedel@suse.de, krzk@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, m.szyprowski@samsung.com,
-        marcan@marcan.st, palmer@dabbelt.com, pasha.tatashin@soleen.com,
-        patches@lists.linux.dev, paul.walmsley@sifive.com, rientjes@google.com,
-        robin.murphy@arm.com, samuel@sholland.org,
-        suravee.suthikulpanit@amd.com, sven@svenpeter.dev,
-        thierry.reding@gmail.com, tjeznach@rivosinc.com, vdumpa@nvidia.com,
-        wens@csie.org, will@kernel.org, willy@infradead.org
-Subject: Re: [PATCH v3 00/23] iommu: Further abstract iommu-pages
-Date: Tue, 25 Feb 2025 23:17:47 +0000
-Message-ID: <20250225231747.15277-1-alejandro.j.jimenez@oracle.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <0-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
-References: <0-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DFr/5DLe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740551343; x=1772087343;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lXhU7sd67KpdS+ygAGbHgQMDj+NU0WLx7YcQjO+y+Dw=;
+  b=DFr/5DLeJxygtylYdBlVk/USakt+72UKMkQV6nOF/yrSk9ssVD9MKoVo
+   Rf2OfX9Igy1dfngwjtpcsXco9lA9EK1sMzEKfkn6gaquOcPkrAS921uz4
+   pJj7lFwunCvI352aUtbKIVdXoQvl+9ZW+Xh4fhmVeCcDWJyJeE6Dg3Wtx
+   Mv6ACeG6qO03w+RFJ50RYenwZRDfjsE0i2OKshR3y/Gp0KSyotj9L7BY7
+   Suq59YSb3gy9unMocZ3v//zfqj9s7mK8IiJj9ed4ouNZlTg29x3ddKYzP
+   t8KloUh88DSJ/JveVLxP2BRHUAB7mAEp8ieCq5NNUZ+JQi8XTyZH/2Nr/
+   Q==;
+X-CSE-ConnectionGUID: WR8VGerVRe6ZnSYaoLZ2aA==
+X-CSE-MsgGUID: 00or/SqQR3eiZS649tYkuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41298291"
+X-IronPort-AV: E=Sophos;i="6.13,316,1732608000"; 
+   d="scan'208";a="41298291"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:29:02 -0800
+X-CSE-ConnectionGUID: 2JLYeRJ8SYy4f0Hre3l56g==
+X-CSE-MsgGUID: UbYTX0nDQsG2v0uK0Z0EBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="147525482"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 22:28:55 -0800
+Message-ID: <a76deb10-314d-4b49-8dc6-8372564266ae@linux.intel.com>
+Date: Wed, 26 Feb 2025 14:25:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_08,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 mlxlogscore=987
- phishscore=0 mlxscore=0 suspectscore=0 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2502250137
-X-Proofpoint-GUID: Xr02HcGTinEg17mYvbDuWPbxj8NLDu8q
-X-Proofpoint-ORIG-GUID: Xr02HcGTinEg17mYvbDuWPbxj8NLDu8q
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 03/23] iommu/pages: Remove
+ __iommu_alloc_pages()/__iommu_free_pages()
+To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
+ asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
+ Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
+ <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
+ Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+ David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
+References: <3-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <3-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
->Improve the API to work directly on sizes instead of order, the drivers
-> generally have HW specs and code paths that already have specific sizes.
-> Pass those sizes down into the allocator to remove some boiler plate
-> get_order() in drivers. This is cleanup to be ready for a possible sub
-> page allocator some day.
->
-> This is on github: https://github.com/jgunthorpe/linux/commits/iommu_pages
->
-> v3:
+On 2/26/25 03:39, Jason Gunthorpe wrote:
+> These were only used by tegra-smmu and leaked the struct page out of the
+> API. Delete them since tega-smmu has been converted to the other APIs.
+> 
+> In the process flatten the call tree so we have fewer one line functions
+> calling other one line functions.. iommu_alloc_pages_node() is the real
+> allocator and everything else can just call it directly.
+> 
+> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
 
-Tested v3 on AMD Zen4 bare metal host, using v1/v2 page table formats. Ran host
-kernel with iommu.passthrough=0. Launched KVM guest with large memory (512+ G)
-and 16 VFs. No errors or warnings found.
-
-Tested-by: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
