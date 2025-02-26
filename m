@@ -1,40 +1,50 @@
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F002E16F288;
-	Wed, 26 Feb 2025 12:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28E72153D1;
+	Wed, 26 Feb 2025 12:42:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740573552; cv=none; b=X47BnKpfCeaMwCA2UM86Nc1DEw0eIcDOf10tsnbhNOtDEI6rsCoAU9wAlzAeKyMAmDp5WnAcnBLXBYfGAhYC1akCx5gdaMg/ZSf8TsCTU7VQN+rtbI6d7W+R8u/Do3PuEQY2NV6xrpbRbbxZH+tvQdWVOek2zpxmxvudFQnHG4M=
+	t=1740573756; cv=none; b=atzVotXv8mIB5r4JSiscJwvLNojGSV7LUkjtI9TKhIYX0zCtC0AhGqqXLVMh81hIHg33V/feYz0+3dG8ou3hqEskXJyt1nZqJ92DS5PDsHSeSvhMVrcx2TXD4/Oi56rra/1STKx8AHVehgcD2l7fxG9wJ9Ec+5MoOPyDMpT68eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740573552; c=relaxed/simple;
-	bh=Be98U+3nuuSPxPyag9P+ADgagKKSNdsCQD96gtP6QyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hyDZemJjvwRqCHHe1hohLLewpu6hapy88KrI+Ft6xwJholMqbQd3Rp8RaUGKNLvyV9suPlmoW+NaPCdT9hRKyXiX8ttLd4oK67OhxUpv8yGRQDbARdj3m3RIHnpbX+4pVTIXlJAbGhLKSmNfPxVm3V0ENDIm5Bfc/EgnOUPNfms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TVokcpGW; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1740573756; c=relaxed/simple;
+	bh=WkXc7BocQbpip7ciVHNFAiTeTqJtNYIch4zaYSdoITI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=i1Dcud8CmP3A1muf2FwVvrKJv9c9wwpuCQbeMH1/qYK9Ms9msih/HDVRd6PVtXst5Dom7erMg1tLQWNtXGo7hh5V7c8LV9xRBJBLdKyXo5BxlpiSjwN1R/AfijdW6DZ17WArCNz/ePWUpM5bok1vUF2XFpBSBdbfIFR/uqF2d9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GdDlRf/X; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TVokcpGW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740573548;
-	bh=Be98U+3nuuSPxPyag9P+ADgagKKSNdsCQD96gtP6QyM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TVokcpGW6T6rlNiHJ1PBSVs/Pu4XLYWfDKUY+5a+lNzwgyVZKfI/QCuF08TxawQfT
-	 aNZnWSolzvrl8qXzo8n8PL0+VSi+EnT6bxaksECCHNGLx0cWH9+KR4CuiSYs5u3Y+M
-	 etDWL3yql/ZsVhAWgBLlNQkrHvjZ5J1oOJurmjb3OjJD3fQSJOcZWfZVQpKndBHpWc
-	 6EX/eg7UgJaPWjMuXc80TkOXXBqVEVXK3BHf9Cq/m+x5o+534iaQSaO47Ixp4nBdlU
-	 kpp3ucNWUGGxM2lTo8EeQqXoLeUxmNbKL2YHzNBLCdjpKsYINxdNjxH5URJGHQ7P1E
-	 D3LFh4MbhRc5Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 44AF317E061D;
-	Wed, 26 Feb 2025 13:39:06 +0100 (CET)
-Message-ID: <17850817-123d-41d9-9b1c-41ded05e2be1@collabora.com>
-Date: Wed, 26 Feb 2025 13:39:05 +0100
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GdDlRf/X"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740573755; x=1772109755;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WkXc7BocQbpip7ciVHNFAiTeTqJtNYIch4zaYSdoITI=;
+  b=GdDlRf/XjPticAJwwgcqbdBEQ5Te2mca7GqASFuXGS1goojPEH0Tl+o4
+   MEdviSXqHTj8Tc93z4vC8Xm8swYScjQoGAtX2Mx5xATHkOsotl5i26uGj
+   br92FvPj+USmO8e1O1RhLtfm3raFGw6kjYXfbTmp5S6pHPVjZh9ya3wx8
+   O8vBaBT70jJN0VOM10JxDV1n/PkXCutmqZsV1DFV17oCGfNk9/swkrrZ1
+   VWw8BD5WFVctU1jGxPUVmoKX7vtCfMmvNLRiNkIegC3wXLAbProZRiFRU
+   la582XF9fDZ4iE08PGIbO7gOTtuoQfEE8k+3DlyqRv7Zh5LxkYUyDixeM
+   A==;
+X-CSE-ConnectionGUID: 7EIrtc0eS0qEXfNHFoNSOw==
+X-CSE-MsgGUID: ewlMxf7PT12zili9EA5qGg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41543462"
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="41543462"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 04:42:34 -0800
+X-CSE-ConnectionGUID: qzXgd/NORXi327/S3f15AA==
+X-CSE-MsgGUID: bn1g+MruTuG+TRPKXFaDnA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
+   d="scan'208";a="139911002"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.105]) ([10.124.240.105])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 04:42:26 -0800
+Message-ID: <fafdcc71-b246-4855-a088-24854b124b21@linux.intel.com>
+Date: Wed, 26 Feb 2025 20:42:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -42,75 +52,66 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 04/12] drm/mediatek: move to
- devm_platform_ioremap_resource() usage
-To: Anusha Srivatsa <asrivats@redhat.com>, Joel Stanley <joel@jms.id.au>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, Stefan Agner
- <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
- Xinliang Liu <xinliang.liu@linaro.org>, Tian Tao <tiantao6@hisilicon.com>,
- Xinwei Kong <kong.kongxinwei@hisilicon.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu
- <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Matthias Brugger <matthias.bgg@gmail.com>, Marek Vasut <marex@denx.de>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>, Alain Volmat
- <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
- Yannick Fertre <yannick.fertre@foss.st.com>,
- Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
- Philippe Cornu <philippe.cornu@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Alexey Brodkin <abrodkin@synopsys.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org,
- linux-doc@vger.kernel.org, CK Hu <ck.hu@mediatek.com>
-References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
- <20250225-memory-drm-misc-next-v1-4-9d0e8761107a@redhat.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: baolu.lu@linux.intel.com, Bagas Sanjaya <bagasdotme@gmail.com>,
+ Joerg Roedel <jroedel@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>,
+ patches@lists.linux.dev, David Rientjes <rientjes@google.com>,
+ Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 14/23] iommu/pages: Move from struct page to struct
+ ioptdesc and folio
+To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
+ asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
+ Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
+ <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
+ Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
+References: <14-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
 Content-Language: en-US
-In-Reply-To: <20250225-memory-drm-misc-next-v1-4-9d0e8761107a@redhat.com>
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <14-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 25/02/25 23:20, Anusha Srivatsa ha scritto:
-> Replace platform_get_resource + devm_ioremap_resource
-> with just devm_platform_ioremap_resource()
+On 2025/2/26 3:39, Jason Gunthorpe wrote:
+> This brings the iommu page table allocator into the modern world of having
+> its own private page descriptor and not re-using fields from struct page
+> for its own purpose. It follows the basic pattern of struct ptdesc which
+> did this transformation for the CPU page table allocator.
 > 
-> Used Coccinelle to do this change. SmPl patch:
-> @rule_1@
-> identifier res;
-> expression ioremap_res;
-> identifier pdev;
-> @@
-> -struct resource *res;
-> ...
-> -res = platform_get_resource(pdev,...);
-> -ioremap_res = devm_ioremap_resource(...);
-> +ioremap_res = devm_platform_ioremap_resource(pdev,0);
+> Currently iommu-pages is pretty basic so this isn't a huge benefit,
+> however I see a coming need for features that CPU allocator has, like sub
+> PAGE_SIZE allocations, and RCU freeing. This provides the base
+> infrastructure to implement those cleanly.
+
+I understand that this is intended as the start point of having private
+descriptors for folios allocated to iommu drivers. But I don't believe
+this is currently the case after this patch, as the underlying memory
+remains a struct folio. This patch merely uses an iommu-pages specific
+structure pointer to reference it.
+
+Could you please elaborate a bit on the future plans that would make it
+a true implementation of iommu private page descriptors?
+
 > 
-> Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> Remove numa_node_id() calls from the inlines and instead use NUMA_NO_NODE
+> which will get switched to numa_mem_id(), which seems to be the right ID
+> to use for memory allocations.
+> 
+> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+> ---
+>   drivers/iommu/iommu-pages.c | 54 ++++++++++++++++++++++++++-----------
+>   drivers/iommu/iommu-pages.h | 43 ++++++++++++++++++++++++++---
+>   2 files changed, 78 insertions(+), 19 deletions(-)
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
+Thanks,
+baolu
