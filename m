@@ -1,176 +1,170 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738E0254AE7;
-	Wed, 26 Feb 2025 10:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0554B322A;
+	Wed, 26 Feb 2025 11:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567404; cv=none; b=ZBDY6niX5huH5t8eML77ibEr4pbTeb1UNjbhKIkoRObTD3auw3gnREGMWYItT53ofOL6IFfmfKUdLYNn9hrJGlGl+mFhk0in6X8p7Am/uvTlFHlp2EE6WNqjWmEXqalRoCBQJWOH5fcrAw9x6teT5Ndci9Bdjb9aHAEo89OGTEY=
+	t=1740567619; cv=none; b=l7Pv7TJcvBI24F6Jrk/4JnfkaRTf+rBqIq8z50be3wUVX8jxyPHPRvf38hCTnhL2luKRe0pp88Z80Nt74klkHzagyJGRsNkrs6DQZcvtSaOLBYC9unyq4h1/Cp1uM2RHpZspH4H29Xi1tSDmPYML3zKIPBwyVdF62aYpSerT0+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740567404; c=relaxed/simple;
-	bh=vipXrssnj8kz2KjBt/rEO3MgSq6CgBP7HQs5kD5whLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cUBhobvqNZSTr6ub1e59cEBjeWQUVYII3BEUUeu3GTptyY69IXIA31dmxei6jMGxqzRr9Q81DY43/76xUL78FF3U2052h64gM1tCqNO6gd6aAaFuDj9hUJYxFfdiq7vWoZ2oK5uQDkGlhqU4DIeLb9LyWd+ZftFG7+EZaISGWuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YuKSx3R4; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740567619; c=relaxed/simple;
+	bh=ApG6Ew9SI1aZoG+UxvBTZ+sutgnzMe2rdoFQZX2cS6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b4ermQlUMQgT4EKYykJMps8NnDj06qZUjPNMs1zeo5/kWQwAQGYz7cb/UknGhxt5ePSaTlM3wCi35PH2Yv2dIwqgBFhcbx709res+px4Sq5uwiAVlC7hO2igUW9hU/kZcMjhVls+08M5/5wvCymdunMArcnDfsE6H5X59r5xMRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=YpuC46+x; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YuKSx3R4"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abbdc4a0b5aso145186366b.0;
-        Wed, 26 Feb 2025 02:56:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740567401; x=1741172201; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P6Z+Hj6qi2T4t107ctalIyB/ngMx8qQGhx6GDOGMZ34=;
-        b=YuKSx3R4/4bdz2COYtH5olLayvafxRmrCVyQusUyrjy542tfass6DKDWkY7Fn/rJOB
-         TLv0oKVQsolwEb/36kecMEOIVBMSCMgh7dYNgozs0tncJp/k1OIYgwNGLqkyDdiVFbk8
-         CV/S8fNw71b0r1Lbmsrz+dE8l3KqFtV/r+pNJpLWgaDcrtSTZtjMzc99LpsxpabaimDp
-         lNBIbAsxPFzp6nVLzzcPFrMo2RhTjhpRDMNSOCFvdzdu+NOGoM5tqF6YDO3Xx2uk1xRN
-         0MHfDHfC6lVOyCG3WITkozUOby15Axzhk8vEGHFZR79hyNibJtCbId0TL2t/FDKbFWWA
-         Bipw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740567401; x=1741172201;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P6Z+Hj6qi2T4t107ctalIyB/ngMx8qQGhx6GDOGMZ34=;
-        b=XKU1/6AYoDkKsLgKgHK5+LGI9dRRf9ua+HxjUqKWf8VUMc3RySIaVFLERjFOtr9SSU
-         2U2wxxeJtKENfJ1rwrOnncWZsCiBpKamEpzjhPIXBgSRBQs/YH9Sk0HloSj9eq9LvZKa
-         d5/puSOYyu6lUaYCFR8VVaYiYV+61ovXWQFdE8kdFIKVieWluD2faSe8rNR0x2WHWpDe
-         xeqLYchnrf1dSFSOv+l91uTdY96fK3Xrej7/+sMkZoBVmLlKZ4VmvhyJlOs6qQuWtjen
-         vLaLgF0S44AluX9jyzUEo6iVma5MU/fIiQEnSZH7tqNh8Zm9w/utZc69tJAz7/Aaoio0
-         BKNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/kk4Nc3x9SUmg8J85y7P2Xbt4MqDhD1qAQ/3jbpZ/HLpeWZFNRubrA6xmOrWyk2YuvpD+xH7pOMRaLWM=@vger.kernel.org, AJvYcCWKpvQROzQm0grlFfP03VwOxwsn5Y74QSvSUT8iYGQPqaR2qrfOV5uOemywPM+3ylPviT9B/9bxSWO8M1M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPbH+FW2le3enLJmQNvmlKltykfxRDRK61NK5+gjEB42bLOCRx
-	EnGp1cBQFqedmQEoWXHiDA+g15Uq+9SAlAwVwU6ef2IL/dMSiOfw
-X-Gm-Gg: ASbGncu6cRriy/jeCPID/fzQmCGFRoaGfjwmWxyvfExmFrHtqCpoFYR6LyLUW7pDU2k
-	31Syw2UFDhcMxQtN4b6xvhb8Ap17BerYUSOcPKLBGw+AgFfa6XAs2IoH/Sf9qey2fzrmG3Gmnrr
-	Nn8pjnKp9EhQSYhlB7WB5W7mglo97TeytQeATwfD2SicFfA+wL4WmtUscPuDS67diKGmZqBr7wV
-	ns5EmAjImOguKeMi8YaMErHq74JqfwtDt32TcA4tlozKNgjUivbVDlLGvz/1bKHxzz+ywmZqChx
-	OzI7iB3/f33s/a3eTQ==
-X-Google-Smtp-Source: AGHT+IFx+Pd6Als0NDc8SD0Wt0wdCgaBbwwN7wh8dJGN11uuKukwG1GVnyZSgxTx5zyhOt0NwHBpdA==
-X-Received: by 2002:a17:907:7a88:b0:ab7:d44b:355f with SMTP id a640c23a62f3a-abc0b0c6077mr1918667666b.25.1740567400517;
-        Wed, 26 Feb 2025 02:56:40 -0800 (PST)
-Received: from xeon.. ([188.163.112.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed205e53fsm299771266b.159.2025.02.26.02.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 02:56:40 -0800 (PST)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 6/6] ARM: tegra124: complete HOST1X devices binding
-Date: Wed, 26 Feb 2025 12:56:15 +0200
-Message-ID: <20250226105615.61087-7-clamor95@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250226105615.61087-1-clamor95@gmail.com>
-References: <20250226105615.61087-1-clamor95@gmail.com>
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="YpuC46+x"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=u959TBYWOv9S7YvoxEBIspvDOHEq4YyJ10CaapL1Rnw=; b=YpuC46+xpDCnI9LSS2IXu08VWA
+	RAQ4FGKjOmXC7t3M5vbVF2q93gZ/nbORvFCxSvEZAW1CdpdJsBLQSOA50BBqM0qKA6NBQ1EQn2sQ7
+	jTAYkPaiNYVJvfNElRkwbjFDmwkq0XQG66S7ZKmB1Ze/GkTIa5moVBOKdTsULxLvxcsOj3lWeM9qe
+	pk5jghlkg/CZxlwKFYkAqfWWCoBmUwScTMyFqomSM5F6kfqHfV1c4O6PA3qlqDik3d7jlsrQNXPa1
+	8bV/HpTG2ICCPy2zXQutFS2/sUBKCvMlNpmdMnrUCXB5oIo8CKPMUu5j1AXX1R9KKE5AWTgAtk3US
+	1H5xstuQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52384)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tnF8z-00041N-02;
+	Wed, 26 Feb 2025 11:00:01 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tnF8v-000704-13;
+	Wed, 26 Feb 2025 10:59:57 +0000
+Date: Wed, 26 Feb 2025 10:59:57 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Bryan Whitehead <bryan.whitehead@microchip.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, UNGLinuxDriver@microchip.com,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH net-next 9/9] net: stmmac: convert to phylink managed EEE
+ support
+Message-ID: <Z770LRrhPOjOsdrd@shell.armlinux.org.uk>
+References: <Z68nSJqVxcnCc1YB@shell.armlinux.org.uk>
+ <86fae995-1700-420b-8d84-33ab1e1f6353@nvidia.com>
+ <Z7X6Z8yLMsQ1wa2D@shell.armlinux.org.uk>
+ <203871c2-c673-4a98-a0a3-299d1cf71cf0@nvidia.com>
+ <Z7YtWmkVl0rWFvQO@shell.armlinux.org.uk>
+ <fd4af708-0c92-4295-9801-bf53db3a16cc@nvidia.com>
+ <Z7ZF0dA4-jwU7O2E@shell.armlinux.org.uk>
+ <31731125-ab8f-48d9-bd6f-431d49431957@nvidia.com>
+ <Z77myuNCoe_la7e4@shell.armlinux.org.uk>
+ <dd1f65bf-8579-4d32-9c9c-9815d25cc116@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd1f65bf-8579-4d32-9c9c-9815d25cc116@nvidia.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Add nodes for devices on the HOST1X bus: VI, ISP, ISPB, MSENC and TSEC.
+On Wed, Feb 26, 2025 at 10:11:58AM +0000, Jon Hunter wrote:
+> 
+> On 26/02/2025 10:02, Russell King (Oracle) wrote:
+> > On Tue, Feb 25, 2025 at 02:21:01PM +0000, Jon Hunter wrote:
+> > > Hi Russell,
+> > > 
+> > > On 19/02/2025 20:57, Russell King (Oracle) wrote:
+> > > > So, let's try something (I haven't tested this, and its likely you
+> > > > will need to work it in to your other change.)
+> > > > 
+> > > > Essentially, this disables the receive clock stop around the reset,
+> > > > something the stmmac driver has never done in the past.
+> > > > 
+> > > > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > > > index 1cbea627b216..8e975863a2e3 100644
+> > > > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > > > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> > > > @@ -7926,6 +7926,8 @@ int stmmac_resume(struct device *dev)
+> > > >    	rtnl_lock();
+> > > >    	mutex_lock(&priv->lock);
+> > > > +	phy_eee_rx_clock_stop(priv->dev->phydev, false);
+> > > > +
+> > > >    	stmmac_reset_queues_param(priv);
+> > > >    	stmmac_free_tx_skbufs(priv);
+> > > > @@ -7937,6 +7939,9 @@ int stmmac_resume(struct device *dev)
+> > > >    	stmmac_restore_hw_vlan_rx_fltr(priv, ndev, priv->hw);
+> > > > +	phy_eee_rx_clock_stop(priv->dev->phydev,
+> > > > +			      priv->phylink_config.eee_rx_clk_stop_enable);
+> > > > +
+> > > >    	stmmac_enable_all_queues(priv);
+> > > >    	stmmac_enable_all_dma_irq(priv);
+> > > 
+> > > 
+> > > Sorry for the delay, I have been testing various issues recently and needed
+> > > a bit more time to test this.
+> > > 
+> > > It turns out that what I had proposed last week does not work. I believe
+> > > that with all the various debug/instrumentation I had added, I was again
+> > > getting lucky. So when I tested again this week on top of vanilla v6.14-rc2,
+> > > it did not work :-(
+> > > 
+> > > However, what you are suggesting above, all by itself, is working. I have
+> > > tested this on top of vanilla v6.14-rc2 and v6.14-rc4 and it is working
+> > > reliably. I have also tested on some other boards that use the same stmmac
+> > > driver (but use the Aquantia PHY) and I have not seen any issues. So this
+> > > does fix the issue I am seeing.
+> > > 
+> > > I know we are getting quite late in the rc for v6.14, but not sure if we
+> > > could add this as a fix?
+> > 
+> > The patch above was something of a hack, bypassing the layering, so I
+> > would like to consider how this should be done properly.
+> > 
+> > I'm still wondering whether the early call to phylink_resume() is
+> > symptomatic of this same issue, or whether there is a PHY that needs
+> > phy_start() to be called to output its clock even with link down that
+> > we don't know about.
+> > 
+> > The phylink_resume() call is relevant to this because I'd like to put:
+> > 
+> > 	phy_eee_rx_clock_stop(priv->dev->phydev,
+> > 			      priv->phylink_config.eee_rx_clk_stop_enable);
+> > 
+> > in there to ensure that the PHY is correctly configured for clock-stop,
+> > but given stmmac's placement that wouldn't work.
+> > 
+> > I'm then thinking of phylink_pre_resume() to disable the EEE clock-stop
+> > at the PHY.
+> > 
+> > I think the only thing we could do is try solving this problem as per
+> > above and see what the fall-out from it is. I don't get the impression
+> > that stmmac users are particularly active at testing patches though, so
+> > it may take months to get breakage reports.
+> 
+> 
+> We can ask Furong to test as he seems to active and making changes, but
+> otherwise I am not sure how well it is being tested across various devices.
+> On the other hand, it feels like there are still lingering issues like this
+> with the driver and so I would hope this is moving in the right direction.
+> 
+> Let me know if you have a patch you want me to test and I will run in on our
+> Tegra186, Tegra194 and Tegra234 devices that all use this.
 
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
----
- arch/arm/boot/dts/nvidia/tegra124.dtsi | 65 ++++++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+Do we think this needs to be a patch for the net tree or the net-next
+tree? I think we've established that it's been a long-standing bug,
+so maybe if we target net-next to give it more time to be tested?
 
-diff --git a/arch/arm/boot/dts/nvidia/tegra124.dtsi b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-index ec4f0e346b2b..8181e5d88654 100644
---- a/arch/arm/boot/dts/nvidia/tegra124.dtsi
-+++ b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-@@ -103,6 +103,45 @@ host1x@50000000 {
- 
- 		ranges = <0 0x54000000 0 0x54000000 0 0x01000000>;
- 
-+		vi@54080000 {
-+			compatible = "nvidia,tegra124-vi";
-+			reg = <0x0 0x54080000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_VI>;
-+			resets = <&tegra_car 20>;
-+			reset-names = "vi";
-+
-+			iommus = <&mc TEGRA_SWGROUP_VI>;
-+
-+			status = "disabled";
-+		};
-+
-+		isp@54600000 {
-+			compatible = "nvidia,tegra124-isp";
-+			reg = <0x0 0x54600000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_ISP>;
-+			resets = <&tegra_car TEGRA124_CLK_ISP>;
-+			reset-names = "isp";
-+
-+			iommus = <&mc TEGRA_SWGROUP_ISP2>;
-+
-+			status = "disabled";
-+		};
-+
-+		isp@54680000 {
-+			compatible = "nvidia,tegra124-isp";
-+			reg = <0x0 0x54680000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_ISPB>;
-+			resets = <&tegra_car TEGRA124_CLK_ISPB>;
-+			reset-names = "ispb";
-+
-+			iommus = <&mc TEGRA_SWGROUP_ISP2B>;
-+
-+			status = "disabled";
-+		};
-+
- 		dc@54200000 {
- 			compatible = "nvidia,tegra124-dc";
- 			reg = <0x0 0x54200000 0x0 0x00040000>;
-@@ -209,6 +248,32 @@ dsib: dsi@54400000 {
- 			#size-cells = <0>;
- 		};
- 
-+		msenc@544c0000 {
-+			compatible = "nvidia,tegra124-msenc";
-+			reg = <0x0 0x544c0000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_MSENC>;
-+			resets = <&tegra_car TEGRA124_CLK_MSENC>;
-+			reset-names = "msenc";
-+
-+			iommus = <&mc TEGRA_SWGROUP_MSENC>;
-+
-+			status = "disabled";
-+		};
-+
-+		tsec@54500000 {
-+			compatible = "nvidia,tegra124-tsec";
-+			reg = <0x0 0x54500000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_TSEC>;
-+			resets = <&tegra_car TEGRA124_CLK_TSEC>;
-+			reset-names = "tsec";
-+
-+			iommus = <&mc TEGRA_SWGROUP_TSEC>;
-+
-+			status = "disabled";
-+		};
-+
- 		sor@54540000 {
- 			compatible = "nvidia,tegra124-sor";
- 			reg = <0x0 0x54540000 0x0 0x00040000>;
 -- 
-2.43.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
