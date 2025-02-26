@@ -1,50 +1,40 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 706211CFBC;
-	Wed, 26 Feb 2025 12:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F002E16F288;
+	Wed, 26 Feb 2025 12:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740573102; cv=none; b=BdReNrtExM/p0990T/eyrP+KtCtwklAqRN0W2mmQs8bh61hl4OHSfGmF1ekUj/e331ImXoKGLCa84c1df8+VUZQUUQhUiou+lTDMVwzP/MA6IcY8wzh6UzKHRVhPGpaOO8947dIAujWpysbgMypBqOFlnSV27KgyAP4cLp0glNk=
+	t=1740573552; cv=none; b=X47BnKpfCeaMwCA2UM86Nc1DEw0eIcDOf10tsnbhNOtDEI6rsCoAU9wAlzAeKyMAmDp5WnAcnBLXBYfGAhYC1akCx5gdaMg/ZSf8TsCTU7VQN+rtbI6d7W+R8u/Do3PuEQY2NV6xrpbRbbxZH+tvQdWVOek2zpxmxvudFQnHG4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740573102; c=relaxed/simple;
-	bh=afc2o7ByS+Aq4HwtiZsVeJaJLJlUP9V4slrBeXFjQn8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eDEetHYFX14F4wu+aNz5BU5GfQ4gWOt9Yrl9KjwYNEfgTCWHTOmabC1PSbrNg5XtcqMosrBQRkaUX/kX8zncPW1w+jLKOXQLCKCoe3tdDPlIi+QzJRJUI7eQqyfwpU63+fMEHPxade0DERe+tLCvflShwuZuTV5nTlUnGmeWtC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R8r4/QwL; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1740573552; c=relaxed/simple;
+	bh=Be98U+3nuuSPxPyag9P+ADgagKKSNdsCQD96gtP6QyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hyDZemJjvwRqCHHe1hohLLewpu6hapy88KrI+Ft6xwJholMqbQd3Rp8RaUGKNLvyV9suPlmoW+NaPCdT9hRKyXiX8ttLd4oK67OhxUpv8yGRQDbARdj3m3RIHnpbX+4pVTIXlJAbGhLKSmNfPxVm3V0ENDIm5Bfc/EgnOUPNfms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TVokcpGW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R8r4/QwL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740573101; x=1772109101;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=afc2o7ByS+Aq4HwtiZsVeJaJLJlUP9V4slrBeXFjQn8=;
-  b=R8r4/QwL0MfUo5FYxYCI4qcXqDIwykUhJ5kT8bbiA8X1Rsanf/Q0cM2m
-   pV9/Q0xnEL64KR8KOynEebBzYKaIvgpHIg3d4M/ytDLgn8g/FsvutiADY
-   MuRwXSBFUkVnOHB9CRIwpvL7HSWbuwDVy9kYTZqUkZd3iq8LjMAIwYmTt
-   7T0TJeHu0ivE5i/7MyvRuUKxaao79YLj0BM0rRghSrHRse2/mhtBXRWzW
-   ri+OHzihf/Q5WeAozwY9NN+lgUDY82A2s5lb7TSsCbS/Zw0cVkYpN8ikz
-   xuGyvogImOxBjRJjTcuTWPYdCLLOs67ufRqkBGoMGowl3XcePOJDqnPLv
-   g==;
-X-CSE-ConnectionGUID: vugHgBcsR+ypDgYqDC92gQ==
-X-CSE-MsgGUID: VOcAm60XS/aZ7JCQskSI9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41431990"
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="41431990"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 04:30:18 -0800
-X-CSE-ConnectionGUID: +jUAibbHQkiSW9UiaTJzYw==
-X-CSE-MsgGUID: JhiilTP7RRS5yHYOUzdzYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,317,1732608000"; 
-   d="scan'208";a="117310467"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.105]) ([10.124.240.105])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 04:30:10 -0800
-Message-ID: <a339ee09-4b12-4c05-a39d-7af5deb9ffaf@linux.intel.com>
-Date: Wed, 26 Feb 2025 20:30:08 +0800
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TVokcpGW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740573548;
+	bh=Be98U+3nuuSPxPyag9P+ADgagKKSNdsCQD96gtP6QyM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TVokcpGW6T6rlNiHJ1PBSVs/Pu4XLYWfDKUY+5a+lNzwgyVZKfI/QCuF08TxawQfT
+	 aNZnWSolzvrl8qXzo8n8PL0+VSi+EnT6bxaksECCHNGLx0cWH9+KR4CuiSYs5u3Y+M
+	 etDWL3yql/ZsVhAWgBLlNQkrHvjZ5J1oOJurmjb3OjJD3fQSJOcZWfZVQpKndBHpWc
+	 6EX/eg7UgJaPWjMuXc80TkOXXBqVEVXK3BHf9Cq/m+x5o+534iaQSaO47Ixp4nBdlU
+	 kpp3ucNWUGGxM2lTo8EeQqXoLeUxmNbKL2YHzNBLCdjpKsYINxdNjxH5URJGHQ7P1E
+	 D3LFh4MbhRc5Q==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 44AF317E061D;
+	Wed, 26 Feb 2025 13:39:06 +0100 (CET)
+Message-ID: <17850817-123d-41d9-9b1c-41ded05e2be1@collabora.com>
+Date: Wed, 26 Feb 2025 13:39:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -52,39 +42,75 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Bagas Sanjaya <bagasdotme@gmail.com>,
- Joerg Roedel <jroedel@suse.de>, Pasha Tatashin <pasha.tatashin@soleen.com>,
- patches@lists.linux.dev, David Rientjes <rientjes@google.com>,
- Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 23/23] iommu/pages: Remove iommu_alloc_pages_node()
-To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
- asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
- Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
- Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
- <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
- Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
- Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
-References: <23-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+Subject: Re: [PATCH RESEND 04/12] drm/mediatek: move to
+ devm_platform_ioremap_resource() usage
+To: Anusha Srivatsa <asrivats@redhat.com>, Joel Stanley <joel@jms.id.au>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, Stefan Agner
+ <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
+ Xinliang Liu <xinliang.liu@linaro.org>, Tian Tao <tiantao6@hisilicon.com>,
+ Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Yongqin Liu
+ <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Marek Vasut <marex@denx.de>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Chunyan Zhang <zhang.lyra@gmail.com>, Alain Volmat
+ <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
+ Yannick Fertre <yannick.fertre@foss.st.com>,
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
+ Philippe Cornu <philippe.cornu@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>,
+ Alexey Brodkin <abrodkin@synopsys.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>,
+ =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, imx@lists.linux.dev,
+ linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org,
+ linux-doc@vger.kernel.org, CK Hu <ck.hu@mediatek.com>
+References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
+ <20250225-memory-drm-misc-next-v1-4-9d0e8761107a@redhat.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <23-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+In-Reply-To: <20250225-memory-drm-misc-next-v1-4-9d0e8761107a@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2025/2/26 3:39, Jason Gunthorpe wrote:
-> Intel is the only thing that uses this now, convert to the size versions,
-> trying to avoid PAGE_SHIFT.
+Il 25/02/25 23:20, Anusha Srivatsa ha scritto:
+> Replace platform_get_resource + devm_ioremap_resource
+> with just devm_platform_ioremap_resource()
 > 
-> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
+> Used Coccinelle to do this change. SmPl patch:
+> @rule_1@
+> identifier res;
+> expression ioremap_res;
+> identifier pdev;
+> @@
+> -struct resource *res;
+> ...
+> -res = platform_get_resource(pdev,...);
+> -ioremap_res = devm_ioremap_resource(...);
+> +ioremap_res = devm_platform_ioremap_resource(pdev,0);
+> 
+> Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Reviewed-by: Maxime Ripard <mripard@kernel.org>
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+
