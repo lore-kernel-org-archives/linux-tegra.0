@@ -1,44 +1,44 @@
 Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0554B322A;
-	Wed, 26 Feb 2025 11:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1DB216382;
+	Wed, 26 Feb 2025 11:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740567619; cv=none; b=l7Pv7TJcvBI24F6Jrk/4JnfkaRTf+rBqIq8z50be3wUVX8jxyPHPRvf38hCTnhL2luKRe0pp88Z80Nt74klkHzagyJGRsNkrs6DQZcvtSaOLBYC9unyq4h1/Cp1uM2RHpZspH4H29Xi1tSDmPYML3zKIPBwyVdF62aYpSerT0+c=
+	t=1740569905; cv=none; b=DMcF+D4GRb+fuJUkuQG8qYdwVlWHrNkskGNfQrMIHVZ7WK8cU/NiHGr1NAXBlf9OWv7FKbzOFBzZAjVZVFwq0Sqwgjs4N026uRJvwEutF/1z5lmaXztACg4CHdhw/xiXEu94JnbjEYLBBr9wlh6u46BJx5vw4vFKXlw2lg/OHIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740567619; c=relaxed/simple;
-	bh=ApG6Ew9SI1aZoG+UxvBTZ+sutgnzMe2rdoFQZX2cS6Q=;
+	s=arc-20240116; t=1740569905; c=relaxed/simple;
+	bh=OUg8cZA7IfFfcuR+4iMWbOGkxw9GJ0G5Kdx4qjUdK5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b4ermQlUMQgT4EKYykJMps8NnDj06qZUjPNMs1zeo5/kWQwAQGYz7cb/UknGhxt5ePSaTlM3wCi35PH2Yv2dIwqgBFhcbx709res+px4Sq5uwiAVlC7hO2igUW9hU/kZcMjhVls+08M5/5wvCymdunMArcnDfsE6H5X59r5xMRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=YpuC46+x; arc=none smtp.client-ip=78.32.30.218
+	 Content-Type:Content-Disposition:In-Reply-To; b=A1m292Qwe8jqi6PJ8G9NBpNe1HunDzr+vbT4qF5od/hT4KW3wRxracHKcWWcO0t2SjnJzIKJe88dKBg62xfwyQOdGeWC8fnhk3tMN6VC0wi7PI845EVFk/OjS+neZ+VJ4BR4c0aBb8vEVZv7jUvN1P70YVf23kfiiD/0N5VnGdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=D1SpJUTl; arc=none smtp.client-ip=78.32.30.218
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="YpuC46+x"
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="D1SpJUTl"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
 	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=u959TBYWOv9S7YvoxEBIspvDOHEq4YyJ10CaapL1Rnw=; b=YpuC46+xpDCnI9LSS2IXu08VWA
-	RAQ4FGKjOmXC7t3M5vbVF2q93gZ/nbORvFCxSvEZAW1CdpdJsBLQSOA50BBqM0qKA6NBQ1EQn2sQ7
-	jTAYkPaiNYVJvfNElRkwbjFDmwkq0XQG66S7ZKmB1Ze/GkTIa5moVBOKdTsULxLvxcsOj3lWeM9qe
-	pk5jghlkg/CZxlwKFYkAqfWWCoBmUwScTMyFqomSM5F6kfqHfV1c4O6PA3qlqDik3d7jlsrQNXPa1
-	8bV/HpTG2ICCPy2zXQutFS2/sUBKCvMlNpmdMnrUCXB5oIo8CKPMUu5j1AXX1R9KKE5AWTgAtk3US
-	1H5xstuQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52384)
+	bh=y9BAqSnFFNaw8imer/kwMAPgxvAbHzc55cjQboyE68c=; b=D1SpJUTlsB6X390df0Z143pp1m
+	N4oNs6gz9iuF/Ff/JFJvTgpa0RWUOjFTKJD1ClCHelSSvsi1BoG0rr/FuAfjG2Vhra1TdP88nmhj0
+	JI3RC7uOPNGJHKp9mpZheKAe7V9xczdeNqdpcEu5Kfb/h15ixpMWWbyH6i46iPo+i85+hq5PbrUuj
+	dfi4P49Smxd4FXvbsvPl9H1ygrhLEyL3hF/SnqiO1qJzyhtAoDU3HQnc5rJ/H1hEPYdNLkXW6VUnM
+	NnEUh55FDtXESogMy7zcOXjUYXSNNdQV6rTv5h2M4DjsHshAtXzYsXDKvxlkZOoZd2ssH1c7Pn4mf
+	eLE6cs1Q==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36448)
 	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <linux@armlinux.org.uk>)
-	id 1tnF8z-00041N-02;
-	Wed, 26 Feb 2025 11:00:01 +0000
+	id 1tnFjo-00046K-2J;
+	Wed, 26 Feb 2025 11:38:04 +0000
 Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
 	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tnF8v-000704-13;
-	Wed, 26 Feb 2025 10:59:57 +0000
-Date: Wed, 26 Feb 2025 10:59:57 +0000
+	id 1tnFjj-00071h-28;
+	Wed, 26 Feb 2025 11:37:59 +0000
+Date: Wed, 26 Feb 2025 11:37:59 +0000
 From: "Russell King (Oracle)" <linux@armlinux.org.uk>
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
@@ -56,7 +56,7 @@ Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
 	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 Subject: Re: [PATCH net-next 9/9] net: stmmac: convert to phylink managed EEE
  support
-Message-ID: <Z770LRrhPOjOsdrd@shell.armlinux.org.uk>
+Message-ID: <Z779FzlWTwbbKW1s@shell.armlinux.org.uk>
 References: <Z68nSJqVxcnCc1YB@shell.armlinux.org.uk>
  <86fae995-1700-420b-8d84-33ab1e1f6353@nvidia.com>
  <Z7X6Z8yLMsQ1wa2D@shell.armlinux.org.uk>
@@ -73,61 +73,18 @@ List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="6YZS2zdWWQ7tS9pq"
 Content-Disposition: inline
 In-Reply-To: <dd1f65bf-8579-4d32-9c9c-9815d25cc116@nvidia.com>
 Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
+
+--6YZS2zdWWQ7tS9pq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
 On Wed, Feb 26, 2025 at 10:11:58AM +0000, Jon Hunter wrote:
-> 
 > On 26/02/2025 10:02, Russell King (Oracle) wrote:
-> > On Tue, Feb 25, 2025 at 02:21:01PM +0000, Jon Hunter wrote:
-> > > Hi Russell,
-> > > 
-> > > On 19/02/2025 20:57, Russell King (Oracle) wrote:
-> > > > So, let's try something (I haven't tested this, and its likely you
-> > > > will need to work it in to your other change.)
-> > > > 
-> > > > Essentially, this disables the receive clock stop around the reset,
-> > > > something the stmmac driver has never done in the past.
-> > > > 
-> > > > diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > > > index 1cbea627b216..8e975863a2e3 100644
-> > > > --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > > > +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> > > > @@ -7926,6 +7926,8 @@ int stmmac_resume(struct device *dev)
-> > > >    	rtnl_lock();
-> > > >    	mutex_lock(&priv->lock);
-> > > > +	phy_eee_rx_clock_stop(priv->dev->phydev, false);
-> > > > +
-> > > >    	stmmac_reset_queues_param(priv);
-> > > >    	stmmac_free_tx_skbufs(priv);
-> > > > @@ -7937,6 +7939,9 @@ int stmmac_resume(struct device *dev)
-> > > >    	stmmac_restore_hw_vlan_rx_fltr(priv, ndev, priv->hw);
-> > > > +	phy_eee_rx_clock_stop(priv->dev->phydev,
-> > > > +			      priv->phylink_config.eee_rx_clk_stop_enable);
-> > > > +
-> > > >    	stmmac_enable_all_queues(priv);
-> > > >    	stmmac_enable_all_dma_irq(priv);
-> > > 
-> > > 
-> > > Sorry for the delay, I have been testing various issues recently and needed
-> > > a bit more time to test this.
-> > > 
-> > > It turns out that what I had proposed last week does not work. I believe
-> > > that with all the various debug/instrumentation I had added, I was again
-> > > getting lucky. So when I tested again this week on top of vanilla v6.14-rc2,
-> > > it did not work :-(
-> > > 
-> > > However, what you are suggesting above, all by itself, is working. I have
-> > > tested this on top of vanilla v6.14-rc2 and v6.14-rc4 and it is working
-> > > reliably. I have also tested on some other boards that use the same stmmac
-> > > driver (but use the Aquantia PHY) and I have not seen any issues. So this
-> > > does fix the issue I am seeing.
-> > > 
-> > > I know we are getting quite late in the rc for v6.14, but not sure if we
-> > > could add this as a fix?
-> > 
 > > The patch above was something of a hack, bypassing the layering, so I
 > > would like to consider how this should be done properly.
 > > 
@@ -161,10 +118,334 @@ On Wed, Feb 26, 2025 at 10:11:58AM +0000, Jon Hunter wrote:
 > Let me know if you have a patch you want me to test and I will run in on our
 > Tegra186, Tegra194 and Tegra234 devices that all use this.
 
-Do we think this needs to be a patch for the net tree or the net-next
-tree? I think we've established that it's been a long-standing bug,
-so maybe if we target net-next to give it more time to be tested?
+The attached patches shows what I'm thinking of - it's just been roughed
+out, and only been build tested.
 
 -- 
 RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
 FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+
+--6YZS2zdWWQ7tS9pq
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-net-phylink-add-config-of-PHY-receive-clock-stop-in-.patch"
+
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Bcc: linux@mail.armlinux.org.uk
+Subject: [PATCH net-next 1/5] net: phylink: add config of PHY receive
+ clock-stop in phylink_resume()
+MIME-Version: 1.0
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+---
+ drivers/net/phy/phylink.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index a3b186ab3854..0aae0bb2a254 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -2264,7 +2264,7 @@ static int phylink_bringup_phy(struct phylink *pl, struct phy_device *phy,
+ 	pl->mac_tx_clk_stop = phy_eee_tx_clock_stop_capable(phy) > 0;
+ 
+ 	if (pl->mac_supports_eee_ops) {
+-		/* Explicitly configure whether the PHY is allowed to stop it's
++		/* Explicitly configure whether the PHY is allowed to stop its
+ 		 * receive clock.
+ 		 */
+ 		ret = phy_eee_rx_clock_stop(phy,
+@@ -2645,8 +2645,22 @@ EXPORT_SYMBOL_GPL(phylink_suspend);
+  */
+ void phylink_resume(struct phylink *pl)
+ {
++	int ret;
++
+ 	ASSERT_RTNL();
+ 
++	if (pl->mac_supports_eee_ops && pl->phydev) {
++		/* Explicitly configure whether the PHY is allowed to stop its
++		 * receive clock on resume to ensure that it is correctly
++		 * configured.
++		 */
++		ret = phy_eee_rx_clock_stop(pl->phydev,
++					    pl->config->eee_rx_clk_stop_enable);
++		if (ret == -EOPNOTSUPP)
++			phylink_warn(pl, "failed to set rx clock stop: %pe\n",
++				     ERR_PTR(ret));
++	}
++
+ 	if (test_bit(PHYLINK_DISABLE_MAC_WOL, &pl->phylink_disable_state)) {
+ 		/* Wake-on-Lan enabled, MAC handling */
+ 
+-- 
+2.30.2
+
+
+--6YZS2zdWWQ7tS9pq
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0002-net-phylink-add-phylink_prepare_resume.patch"
+
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Bcc: linux@mail.armlinux.org.uk
+Subject: [PATCH net-next 2/5] net: phylink: add phylink_prepare_resume()
+MIME-Version: 1.0
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+
+Add a resume preparation function, which will ensure that the receive
+clock from the PHY is appropriately configured while resuming.
+
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+---
+ drivers/net/phy/phylink.c | 24 ++++++++++++++++++++++++
+ include/linux/phylink.h   |  1 +
+ 2 files changed, 25 insertions(+)
+
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index 0aae0bb2a254..976e569feb70 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -2636,6 +2636,30 @@ void phylink_suspend(struct phylink *pl, bool mac_wol)
+ }
+ EXPORT_SYMBOL_GPL(phylink_suspend);
+ 
++/**
++ * phylink_prepare_resume() - prepare to resume a network device
++ * @pl: a pointer to a &struct phylink returned from phylink_create()
++ *
++ * Optional, thus must be called prior to phylink_resume().
++ *
++ * Prepare to resume a network device, preparing the PHY as necessary.
++ */
++void phylink_prepare_resume(struct phylink *pl)
++{
++	ASSERT_RTNL();
++
++	/* If the MAC requires the receive clock, but receive clock
++	 * stop was enabled at the PHY, we need to ensure that the
++	 * receive clock is running. Disable receive clock stop.
++	 * phylink_resume() will re-enable it if necessary.
++	 */
++	if (pl->mac_supports_eee_ops && pl->phydev &&
++	    pl->config->mac_requires_rxc &&
++	    pl->config->eee_rx_clk_stop_enable)
++		phy_eee_rx_clock_stop(pl->phydev, false);
++}
++EXPORT_SYMBOL_GPL(phylink_prepare_resume);
++
+ /**
+  * phylink_resume() - handle a network device resume event
+  * @pl: a pointer to a &struct phylink returned from phylink_create()
+diff --git a/include/linux/phylink.h b/include/linux/phylink.h
+index 08df65f6867a..071ed4683c8c 100644
+--- a/include/linux/phylink.h
++++ b/include/linux/phylink.h
+@@ -699,6 +699,7 @@ void phylink_start(struct phylink *);
+ void phylink_stop(struct phylink *);
+ 
+ void phylink_suspend(struct phylink *pl, bool mac_wol);
++void phylink_prepare_resume(struct phylink *pl);
+ void phylink_resume(struct phylink *pl);
+ 
+ void phylink_ethtool_get_wol(struct phylink *, struct ethtool_wolinfo *);
+-- 
+2.30.2
+
+
+--6YZS2zdWWQ7tS9pq
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0003-net-stmmac-move-phylink_resume-after-resume-setup-is.patch"
+
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Bcc: linux@mail.armlinux.org.uk
+Subject: [PATCH net-next 3/5] net: stmmac: move phylink_resume() after resume
+ setup is complete
+MIME-Version: 1.0
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+
+Move phylink_resume() to be after the setup in stmmac_resume() has
+completed, as phylink_resume() may result in an immediate call to the
+.mac_link_up method, which will enable the transmitter and receiver,
+and enable the transmit queues.
+
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+---
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index d552e64eaa90..b9f651d77c4f 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -7926,16 +7926,6 @@ int stmmac_resume(struct device *dev)
+ 			return ret;
+ 	}
+ 
+-	rtnl_lock();
+-	if (device_may_wakeup(priv->device) && priv->plat->pmt) {
+-		phylink_resume(priv->phylink);
+-	} else {
+-		phylink_resume(priv->phylink);
+-		if (device_may_wakeup(priv->device))
+-			phylink_speed_up(priv->phylink);
+-	}
+-	rtnl_unlock();
+-
+ 	rtnl_lock();
+ 	mutex_lock(&priv->lock);
+ 
+@@ -7954,6 +7944,15 @@ int stmmac_resume(struct device *dev)
+ 	stmmac_enable_all_dma_irq(priv);
+ 
+ 	mutex_unlock(&priv->lock);
++
++	if (device_may_wakeup(priv->device) && priv->plat->pmt) {
++		phylink_resume(priv->phylink);
++	} else {
++		phylink_resume(priv->phylink);
++		if (device_may_wakeup(priv->device))
++			phylink_speed_up(priv->phylink);
++	}
++
+ 	rtnl_unlock();
+ 
+ 	netif_device_attach(ndev);
+-- 
+2.30.2
+
+
+--6YZS2zdWWQ7tS9pq
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0004-net-stmmac-simplify-calls-to-phylink_suspend-and-phy.patch"
+
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Bcc: linux@mail.armlinux.org.uk
+Subject: [PATCH net-next 4/5] net: stmmac: simplify calls to phylink_suspend()
+ and phylink_resume()
+MIME-Version: 1.0
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+
+Currently, the calls to phylink's suspend and resume functions are
+inside overly complex tests, and boil down to:
+
+	if (device_may_wakeup(priv->device) && priv->plat->pmt) {
+		call phylink
+	} else {
+		call phylink and
+		if (device_may_wakeup(priv->device))
+			do something else
+	}
+
+This results in phylink always being called, possibly with differing
+arguments for phylink_suspend().
+
+Simplify this code, noting that each site is slightly different due to
+the order in which phylink is called and the "something else".
+
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+---
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 22 +++++++------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index b9f651d77c4f..262718e5c4f3 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -7831,13 +7831,11 @@ int stmmac_suspend(struct device *dev)
+ 	mutex_unlock(&priv->lock);
+ 
+ 	rtnl_lock();
+-	if (device_may_wakeup(priv->device) && priv->plat->pmt) {
+-		phylink_suspend(priv->phylink, true);
+-	} else {
+-		if (device_may_wakeup(priv->device))
+-			phylink_speed_down(priv->phylink, false);
+-		phylink_suspend(priv->phylink, false);
+-	}
++	if (device_may_wakeup(priv->device) && !priv->plat->pmt)
++		phylink_speed_down(priv->phylink, false);
++
++	phylink_suspend(priv->phylink,
++			device_may_wakeup(priv->device) && priv->plat->pmt);
+ 	rtnl_unlock();
+ 
+ 	if (stmmac_fpe_supported(priv))
+@@ -7945,13 +7943,9 @@ int stmmac_resume(struct device *dev)
+ 
+ 	mutex_unlock(&priv->lock);
+ 
+-	if (device_may_wakeup(priv->device) && priv->plat->pmt) {
+-		phylink_resume(priv->phylink);
+-	} else {
+-		phylink_resume(priv->phylink);
+-		if (device_may_wakeup(priv->device))
+-			phylink_speed_up(priv->phylink);
+-	}
++	phylink_resume(priv->phylink);
++	if (device_may_wakeup(priv->device) && !priv->plat->pmt)
++		phylink_speed_up(priv->phylink);
+ 
+ 	rtnl_unlock();
+ 
+-- 
+2.30.2
+
+
+--6YZS2zdWWQ7tS9pq
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0005-net-stmmac-call-phylink_prepare_resume.patch"
+
+From: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Bcc: linux@mail.armlinux.org.uk
+Subject: [PATCH net-next 5/5] net: stmmac: call phylink_prepare_resume()
+MIME-Version: 1.0
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+
+The stmmac core needs the receive clock to be running in order to
+complete its software triggered reset. However, the media link may
+be in EEE low-power mode, and as the driver allows the PHY receive
+clock to be disabled, the receive clock may not be present while
+resuming. This has been observed with Tegra 186.
+
+Fix this by using the newly provided phylink_prepare_resume() to
+temporarily disable receive clock stop while resuming. phylink_resume()
+will restore the receive clock stop setting according to the
+configuration passed from the netdev driver.
+
+Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 262718e5c4f3..31ec1818211d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -7925,6 +7925,8 @@ int stmmac_resume(struct device *dev)
+ 	}
+ 
+ 	rtnl_lock();
++	phylink_prepare_resume(priv->phylink);
++
+ 	mutex_lock(&priv->lock);
+ 
+ 	stmmac_reset_queues_param(priv);
+-- 
+2.30.2
+
+
+--6YZS2zdWWQ7tS9pq--
