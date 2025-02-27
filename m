@@ -1,101 +1,129 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099A61E521C;
-	Thu, 27 Feb 2025 05:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB99224220;
+	Thu, 27 Feb 2025 10:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740633668; cv=none; b=ipuxSHEs+jZtE5g1hXxDZ2R5xcmxabggJwgAl1EYG6R1BDe6hATTwBe8JllGK4PqJxRXNjjjwPUXdqh5a5ES7Fjzs0ybV0mP6up4wAf9ae6+vwp+5jum1whHkwALaTlDy5rTMR1t98fGMAvNxi+gd2o7fnkEGKHWGMjyYUIG3XM=
+	t=1740652509; cv=none; b=cwbYI8sZqBFHYkcN3tEzdekn79D3CDkZS7K58zEAiXi++0zhLSKLof0FccmigNGf3jnus26TTNQsa5KkbHufHbXw/y7OypKgu+BsRrTlCQQBShlhnH23/hxl88ZNBI6plLEHklcpcHLf/QND2gdUOklx/0yhYAtqa+ApOqs664Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740633668; c=relaxed/simple;
-	bh=PQtjihnmxnJNt9cGH7dsXgv0bEF3d3LqLBB92T9bDY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWhxiLB+6/+X6Zp5nnF8ltTIThpohzXFfwjac0TCNsa4oeIBFMsBuSag4REcPOF8sHU8rOXOQ8GP6Pa6dscXCmwPJdml9pbr+fcPSg6Qd8f301BNGOhMV1pLfwcYEfRQEaekdReUQjizRVHEntMZjTxpkU9rryN+sybbGPkWUzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nOi1NzNU; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1740652509; c=relaxed/simple;
+	bh=/gSiPfl2IWIVmGQEQpnjZOajWysmeHjZBX2nnKMmtf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZOjZaSKW5ALbb1e9k/oZHy8YEO5klPc1mecpl4eu7rFeQwBwsJs5Uu3DFw5e2F93GjuDLc51t6a2cB6Rmov7fnBE9Dake7adQnLX0Y0akd6M4Nxo3GxsCNqvShP0twY4eJXTzn9QEAK4YMsN7hWUjY6Z0woIpbh9u4qmF3eU24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LmO6QNOj; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nOi1NzNU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740633667; x=1772169667;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PQtjihnmxnJNt9cGH7dsXgv0bEF3d3LqLBB92T9bDY8=;
-  b=nOi1NzNUdbggdBHHiDeFss3Lm5WGznG6mP6tIvkGIjbbgxfggzjw7tJR
-   gWjV5hldv8TfHgKnJUoAXiHttToREhu29K0DJaHnWZ+4L5J/iqg7hbm8U
-   t/evBD0Uz4oB2VADeS38+W/X4nhrEdbwT1O1mfKp1/5ynxKtuWOd5eK98
-   1HTkqywDwCCo0bidGIDnUIs54iJmVwbq32RN8GQygYkQbJ5FYw+2zGkNP
-   M3E5i3lr1bWVqN2jMhk2WwX+o4vRxr+KeXy/Ic0tUOW8Gq08lf1ao2+xp
-   d6lsrXgmE2rtEbqj9RXoCtSRfV1cKbd/q+k/607D/HfTJdlylQFMC+cvC
-   w==;
-X-CSE-ConnectionGUID: mbbMvASoQdyU3/KIAxp5Mg==
-X-CSE-MsgGUID: cpz+Zl3aQGe5U4zeLIEMsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11357"; a="41638784"
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="41638784"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 21:21:06 -0800
-X-CSE-ConnectionGUID: IDSQ03WOT0Sf2y1g0JuloQ==
-X-CSE-MsgGUID: X4xnN020QO2lRkAamUgJOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,319,1732608000"; 
-   d="scan'208";a="117561589"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Feb 2025 21:20:59 -0800
-Message-ID: <397fbef1-3aef-4421-bd68-107e289a95aa@linux.intel.com>
-Date: Thu, 27 Feb 2025 13:17:42 +0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LmO6QNOj"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7430e27b2so120165766b.3;
+        Thu, 27 Feb 2025 02:35:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740652506; x=1741257306; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9sxkJWxd6UsgKUfI4wcK1yWzsn8f/a10WzHxCIztzwo=;
+        b=LmO6QNOjvtnxTK5qRExUOhjeEuVLt4xzptorsRFhlcwrybZvYUDOPfLBat1mJbX1jS
+         hjbQDxF9Mv/GO2sWHFAO//0IbtfPZJcdV1iWXqZeS4jzDfcaovSkiqPbZzmcuoDE1Abp
+         TIU7p2mII2tykem58j8Z4iHJlnJP1BpclnQW4HjQyOUUBTlHl3P+QPhlo2OYTDud5Y4/
+         yzsen7vyS2UgGdyfA27StnJRCi+U9erUkut2j9HbCjIrADG6w5gDnYKp89ZyLsbrxgb2
+         E4kS20XDBNDXcmhpy9C0WO0hh+ba7gFMWrLbSF3/m1xpvw/3Z8AKZKS9mDZWXn2nGcwa
+         fsLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740652506; x=1741257306;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9sxkJWxd6UsgKUfI4wcK1yWzsn8f/a10WzHxCIztzwo=;
+        b=jUA8BuKMWUU0XX4mHxQipKjael1w5u2yG3sGylws4IYaEOR2cfbLTW5gzJ8zNkAaon
+         wztyR5jQjXqnfVHSfQ6HXUzUFEcwIJTMCS4ZhaDhcLGKjwwftW4RdrhYv/XsHQyo0UVZ
+         ERWiig31S/OhujavECVKMGj1vHnijN2aT19adjGwRiR3hcDYeokE5AWUqHpkdvmhy7HD
+         6oA99mOt2RPghe7+fBPykJ8x+JFFtXMfDwIc5w/0/Ep7z6N1WTyRjmW/Yaddjod/uvHs
+         jJWSp4yDJc3dIJNbjJEanRKNTGyhokt6YyhgoVrgjUvvGup9mamsFX4JVBrtmLh9hj6C
+         bkvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKRixgDAOYIOFU5eVBIsxu9xoduP4lNJ1R3ZuKQMlQNzctEHUZzD8CBjAkb28R3Y89ybVUVbN0X34/2FY=@vger.kernel.org, AJvYcCWt7c15V80CdZ90SC84kheJmtTunoWedYVm/0u8qigoPgCHLPnNw4FgeTpewnrz9UbmE7rMDnIDL4kvYGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdMFwpRKZVE9HtBk+Gq7vvamaG9EOHE9VQPxfLFequur/2FYfb
+	NsliP1gU/tBrcj7fwkYsbqzAo/mZzQ4e7uh3gLky1CrJeAfBA6BO
+X-Gm-Gg: ASbGncuhw2H3vNX09JqGTTjy/UKhKAEFztw9Ajtmal2j0wyKlmg1oopxciB8q2p51Wj
+	XV+G0NtlXNMoB4rJkBJUnjArM8/AKxQ56rM2xglsKvGRcvVxVIgx1wM7AK+FjOu0/CT62tt5tQQ
+	EH8obcIz4uKEatVSxFm6MBT1uw6vsqzlYY+h1VDwXwiAVlWQo6tiRZhzEQ8MJJcdxFNfCZS+MAM
+	KGNi+XpSnXVornIFB6V8PiSnSaG2kpGWaYmd56583x6TV7BaTmfDujZbql4tFBf0/uu1104GlpI
+	csweY9wzPKqbqx4HZ1nWvA90rAnvhyPV5Sz5+QebQGXrKts4SymwZMkB3tTdBwQ2fdtQHs3+hnq
+	xxAfROP94rNf7
+X-Google-Smtp-Source: AGHT+IHpSCLenbOlVJa2Jny2cStNj9M8RbZyNt4dxi/XKa8JppqmdIO9byNQ6LgMxixRIdveAOBMJw==
+X-Received: by 2002:a17:907:9619:b0:abe:ebe2:6747 with SMTP id a640c23a62f3a-abeebe26b4amr1011525566b.9.1740652505788;
+        Thu, 27 Feb 2025 02:35:05 -0800 (PST)
+Received: from orome (p200300e41f187700f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f18:7700:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c1013d5sm99944066b.76.2025.02.27.02.35.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2025 02:35:04 -0800 (PST)
+Date: Thu, 27 Feb 2025 11:35:03 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Kartik Rajput <kkartik@nvidia.com>
+Cc: jassisinghbrar@gmail.com, jonathanh@nvidia.com, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mailbox: tegra-hsp: Define dimensioning masks in soc data
+Message-ID: <hgvxugls732nt5yfoqygvxn52x73ioh4qpbbmu6swwmafsrmm7@w2gcbjinmujj>
+References: <20250123124632.9061-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 14/23] iommu/pages: Move from struct page to struct
- ioptdesc and folio
-To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
- asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
- Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
- Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
- <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
- Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
- Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
- Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
- Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
-Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
- Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
- David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
-References: <14-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <14-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6wisknckvtuuvxhj"
+Content-Disposition: inline
+In-Reply-To: <20250123124632.9061-1-kkartik@nvidia.com>
 
-On 2/26/25 03:39, Jason Gunthorpe wrote:
-> This brings the iommu page table allocator into the modern world of having
-> its own private page descriptor and not re-using fields from struct page
-> for its own purpose. It follows the basic pattern of struct ptdesc which
-> did this transformation for the CPU page table allocator.
-> 
-> Currently iommu-pages is pretty basic so this isn't a huge benefit,
-> however I see a coming need for features that CPU allocator has, like sub
-> PAGE_SIZE allocations, and RCU freeing. This provides the base
-> infrastructure to implement those cleanly.
-> 
-> Remove numa_node_id() calls from the inlines and instead use NUMA_NO_NODE
-> which will get switched to numa_mem_id(), which seems to be the right ID
-> to use for memory allocations.
-> 
-> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
 
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+--6wisknckvtuuvxhj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] mailbox: tegra-hsp: Define dimensioning masks in soc data
+MIME-Version: 1.0
+
+On Thu, Jan 23, 2025 at 06:16:32PM +0530, Kartik Rajput wrote:
+> Tegra264 has updated HSP_INT_DIMENSIONING register as follows:
+> 	* nSI is now BIT17:BIT21.
+> 	* nDB is now BIT12:BIT16.
+>=20
+> Currently, we are using a static macro HSP_nINT_MASK to get the values
+> from HSP_INT_DIMENSIONING register. This results in wrong values for nSI
+> for HSP instances that supports 16 shared interrupts.
+>=20
+> Define dimensioning masks in soc data and use them to parse nSI, nDB,
+> nAS, nSS & nSM values.
+>=20
+> Fixes: 602dbbacc3ef ("mailbox: tegra: add support for Tegra264")
+> Cc: stable@vger.kernel.org
+>=20
+> Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+
+Maybe remove the blank line between the Cc: and S-o-b: tags. Also, "soc"
+-> "SoC" in the subject and commit message. With that:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--6wisknckvtuuvxhj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfAP9YACgkQ3SOs138+
+s6Gx+A/9E6Cz7K9Ry67u9s3XR5mnDMquX4N1K8hkQmBRHmi28tPDgAiutEMelyzH
+PV4KYTpZ+e3eJNDMj9p3BCOPB0rHIlCvvh/vODHo6hkSm15vWNR7dYx5+rep7Krw
+YlVfLjcDpS8FsZiOCblmRIWdApte+VmJ4E9W9juFT/kBqscpUaPPLa7JTyHb1aBd
+etdyiTM8dxHOgjzHC4I/v40Ar33Gyh8eGRENOR5azeexdQLxFlhrBli6V/niwWwi
+GGIlZTPGG5YYRiS+AZY147VSPS+I8NDMRdTtVHYW20z2b88QyUj/LnnCVM7u2YT1
+419j5idHIzL10sSjFKIJJs6SOKl2PRLNkl/MPUftCGxrclz7E/1fDICd/lM3KYwC
+BFFJ9OnaQv8elRB34YgE21WkqLZzK3BZR0pYB8hAqiF9AJdv2QgnphNJXHbjIIGL
+8V4CxqnvAS1Xs+9OwAxJNkoT2GWEH+0aZQHRhVfSs6zH67a4cbI56/uaI2LjwAiC
+WaxWgyeG3zCx2nmO1PQHikCkEo/OfVoIUKJ2kleOxhGBnMpq95c2rh+syE6EO5Gs
+2EFwjK5RAiPFiB+cDgEIfKgCt85iITaJrkxvqlLV0ZhBm2sLY3krN1Qr0jzgTDyK
+wDjZ/7XsyLDCxXlLvD97x3rPb7iYftv1azil7ZKLZGj+3ebRqPQ=
+=lTHa
+-----END PGP SIGNATURE-----
+
+--6wisknckvtuuvxhj--
