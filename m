@@ -1,99 +1,113 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15EE8F6B
-	for <linux-tegra@vger.kernel.org>; Fri, 28 Feb 2025 08:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1411B4250;
+	Fri, 28 Feb 2025 15:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731928; cv=none; b=KJptsIfX691+J9yJBnw0GoavWUGD2Xv6FHxGLlrHnyl6subw9HK5ajhTUVHCyacdN1srbqdiXwU+cv/SiC1p/dZtgnxLcwJjFu86GzWqXJ+gSM6HOqt6Au22d5dxCJX/F2mruhZImfhHBto6m/9MkY1U8rjd/ZQ2nsy79QdDuBY=
+	t=1740757700; cv=none; b=mRIuSu8H1FsMT4iR4tjwvvCpzhz4oe/dK+UhKvoocTYA7gwfRRlb0wKduyO9k85/ifXUvMPdtN2Kz0Rbvh5emyh3iHtg0NrRnmlJmSw++b6LM6WgguEupGZ4Q5Vcbu4Rcs/VADaj25tps8gWtsr164XJuEsB7tXBYtQekPtlLB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731928; c=relaxed/simple;
-	bh=A1hq1DB07dwQXcqWwcco9SDEwQn8DEialn3ZI9yG+nI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r//b7b1DbLYWPbiStb5xNa9TzS/Pg4XNOvBaKnw5JyLhKrnarEmtr78yJ4n+DRXIewnJGX/Rl7L3YNU7LoEdA0ytv61zK1zMl04HkiYT2hrulRmGFtPDMcajcHvayzXyRv97FwPQUsi+wNqKLx8ArdE+k0H+pRLtZhnhUIqUIAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ktlfyo5R; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1740757700; c=relaxed/simple;
+	bh=9P6/+EsVlp5BNVchl8htmv7DBh6aF+YmtS3T/EuAKas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jxUy/5gHys3CNZKkUdozDtY+uzq67Zc6HPO4cK0uo7mj/kXZ7Lon4icbwCYtCp8JGpr6HOnWDmosHpO/wdluv03mPUBhf0Q5tfh3Sh3Y9LZ9bqEEyt8sRvxO1b4Mqo8Z4CDiYeD4JrxJF4OIc96NZ0jLMsmp1v5HjNcSa1sKwWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Rq4UGavv; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ktlfyo5R"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30a2f240156so22019121fa.3
-        for <linux-tegra@vger.kernel.org>; Fri, 28 Feb 2025 00:38:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740731925; x=1741336725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fhQwmFqFnuuSHTQ4pAgL3POj8tqEsseUbiv1Ze3QwuU=;
-        b=ktlfyo5Rezu/DwyRXtB+mouxaCxNdMiOvsPrFQiZ6MqUd8kl38loCYP8gZilR3av/9
-         4orW/S5c6/3vJGv3xIkdfisMrmvsD5ezvh1wIfGla9GD4IxSJZ4nh0w9OT9Z2907Fpfu
-         6oiM0lua77jpKFdrTWRsLmzJ+dCnPk7Kz+4bFFvePfWh468oY9almut+KlraH8Lwx+rA
-         KwT45/3TRElrH8wbzNksnRDCIgwKw/hzAKjGWW3Oi/9fcPwkjEdIQ6Kj5zxbONafI7GB
-         oeZyUjWwAqpV+eoagBIruEFbRlq/fqNqjkcPK2B1T1j7cRzY65Gc2xstHMbWJ0zO6Xes
-         Xojg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740731925; x=1741336725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fhQwmFqFnuuSHTQ4pAgL3POj8tqEsseUbiv1Ze3QwuU=;
-        b=dXyFMDzmIawwddM9jMlGIgsdKUbMGQph5TY/pudZHxDxaKagXJNGSXjY8dl9Rg7jDy
-         N7JT9y7/iAemVTR86fden1EDMxu9awSe16yhgVu+Jd8b1My1APzMydeRsYPnR9sK5G2Q
-         /Nn/9U28Z56vgUhPzZZ1GRkvHcm01s3dHiIA3QO0SZKAkdbT2BizpEV76vnhgY7zuvW6
-         aTvHdcNDFP8zMQeX1dj7g/BVTpcaUwPrAr9trvHUKB9wH1muZOS+vvuOhVHh6g0lyMHM
-         fphGbnDBaWzQ8XqQMfvCFWGflsdjE/8KrWsw/GbR9LnL/pTB8u5oPIfxCBeU+mmSd45+
-         FzSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpVpG/fL4C3ofgg0+ShZ3dK6WASdkN3n1BgwHXm1t4MThkS8FcF+ceC/kbEQ0QwNlvm4Bk0CqHCnmhgQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaCHXJmZYj/slvuRsW+i+3gwR7vojhUNrMtaMv2QpbUBHk0ywx
-	8U2opXnGPkpXcOBQUvadj/adZwE6PK+tV+uNYrrQeZWfrbPFVdT69oPT3lxy4Za59ziLH8wb8j8
-	78Y3MV0hug/jxU3T5g+JS0JGsWdDFgQ8ePeYDnA==
-X-Gm-Gg: ASbGncuHlasX9czpzLtHmUoQ1EeqcEmCqLFcqlF9j5Y3fdHjPzo6JOsOe/urd7sPtZs
-	Rw/92pRuIiyXkrtQJZngeS1m0YsZtK0jf17jH4W3f8/9RP+uCzopx7RWxAUlrKi0ZgplyZ7gabc
-	pGtXdBF1o=
-X-Google-Smtp-Source: AGHT+IGAeIIeJSXlZOyD09BfTdJNYrhaAtk2Dv0VSScJsFIn/A0Qltg4bWtfnluZesdEZ3LGCJeP/Y2geE3003qeeVo=
-X-Received: by 2002:a2e:be03:0:b0:309:1d7b:f027 with SMTP id
- 38308e7fff4ca-30b9320f37bmr8362171fa.9.1740731924837; Fri, 28 Feb 2025
- 00:38:44 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Rq4UGavv"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=I0xJ39hUZ6TGWLlkG1MakJCHxny3Dc6eRv0GRs5Wrko=; b=Rq4UGavvAKlw+Zg9
+	6fWEfvg+jHej+O9ehAgHbPN21bVMnqiq63hddWimR/6oar2YBnOSezOO4tloaJlzShIoop/tlAC35
+	wvgQcVQ47uprJG1HRU2qEyTo3Wr2eeLBGYENaFzmwlBrerU3ngH+Xl6vqOXPG5rurjyWJegdB0+SD
+	VJHXTwQsg68k5x3kEKoKvdtMlac6PIFbLW4iMVo0LimFI5I7wiL8p+D73eD/c5gqgvdGatEWEVoCX
+	SprRIgqjr2KRUqncN/FC5NJ6VJ5mFHVa799ULaqpLJ3t2EJpCfHrkEgggkg2OmvLTf0E8ZpNOiKHi
+	ksWOPdTyW7LSLfd1YA==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1to2aw-001g8w-09;
+	Fri, 28 Feb 2025 15:48:10 +0000
+Date: Fri, 28 Feb 2025 15:48:09 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: airlied@gmail.com, simona@ffwll.ch, tzimmermann@suse.de
+Cc: Mikko Perttunen <cyndis@kapsi.fi>, thierry.reding@gmail.com,
+	mperttunen@nvidia.com, linux-tegra@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpu: host1x: Remove unused host1x_debug_dump_syncpts
+Message-ID: <Z8HauW1ewQoz0iLh@gallifrey>
+References: <20241215214750.448209-1-linux@treblig.org>
+ <0036ecec-8476-4617-ac40-8ff90fb33c07@kapsi.fi>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241217153249.5712-1-pshete@nvidia.com>
-In-Reply-To: <20241217153249.5712-1-pshete@nvidia.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 28 Feb 2025 09:38:32 +0100
-X-Gm-Features: AQ5f1JphGbre185SJnlbZEv6StWJ-0HLtZWYERPdgLdD9d15LkTt3vUooRToznI
-Message-ID: <CACRpkdZGB=O_1ieN-RhFTVxsm6RWAcjO_JWvVBO8gLgUBZ4_CA@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl-tegra: Add config property GPIO mode
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, peng.fan@nxp.com, 
-	linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <0036ecec-8476-4617-ac40-8ff90fb33c07@kapsi.fi>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 15:47:30 up 296 days,  3:01,  1 user,  load average: 0.01, 0.01,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Hi Prathamesh,
+Hi,
 
-On Tue, Dec 17, 2024 at 4:33=E2=80=AFPM Prathamesh Shete <pshete@nvidia.com=
-> wrote:
+* Mikko Perttunen (cyndis@kapsi.fi) wrote:
+> On 12/16/24 6:47 AM, linux@treblig.org wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > host1x_debug_dump_syncpts() has been unused since
+> > commit f0fb260a0cdb ("gpu: host1x: Implement syncpoint wait using DMA
+> > fences")
+> > 
+> > Remove it.
+> > 
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >   drivers/gpu/host1x/debug.c | 9 ---------
+> >   drivers/gpu/host1x/debug.h | 1 -
+> >   2 files changed, 10 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/host1x/debug.c b/drivers/gpu/host1x/debug.c
+> > index a18cc8d8caf5..6433c00d5d7e 100644
+> > --- a/drivers/gpu/host1x/debug.c
+> > +++ b/drivers/gpu/host1x/debug.c
+> > @@ -216,12 +216,3 @@ void host1x_debug_dump(struct host1x *host1x)
+> >   	show_all(host1x, &o, true);
+> >   }
+> > -
+> > -void host1x_debug_dump_syncpts(struct host1x *host1x)
+> > -{
+> > -	struct output o = {
+> > -		.fn = write_to_printk
+> > -	};
+> > -
+> > -	show_syncpts(host1x, &o, false);
+> > -}
+> > diff --git a/drivers/gpu/host1x/debug.h b/drivers/gpu/host1x/debug.h
+> > index 62bd8a091fa7..c43c61d876a9 100644
+> > --- a/drivers/gpu/host1x/debug.h
+> > +++ b/drivers/gpu/host1x/debug.h
+> > @@ -41,6 +41,5 @@ extern unsigned int host1x_debug_trace_cmdbuf;
+> >   void host1x_debug_init(struct host1x *host1x);
+> >   void host1x_debug_deinit(struct host1x *host1x);
+> >   void host1x_debug_dump(struct host1x *host1x);
+> > -void host1x_debug_dump_syncpts(struct host1x *host1x);
+> >   #endif
+> 
+> Acked-by: Mikko Perttunen <mperttunen@nvidia.com>
 
-> The SFIO/GPIO select bit is a crucial part of Tegra's pin multiplexing
-> system:
-> - When set to 1, the pin operates in SFIO mode, controlled by the
->   pin's assigned special function.
-> - When set to 0, the pin operates as a general-purpose GPIO.
->
-> This SFIO/GPIO select bit that is set for a given pin is not displayed,
-> adding the support to retrieve this information from the
-> pinmux set for each pin.
->
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Can this find it's way into drm please.
 
-Sorry for taking so long and losing track of this :(
+Thanks,
 
-Patch applied, I take it this is for getting the right info
-in debugfs as Thierry says, and that's fine.
+Dave
 
-Yours,
-Linus Walleij
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
