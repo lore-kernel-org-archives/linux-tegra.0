@@ -1,223 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5C32CA8;
-	Sat,  1 Mar 2025 03:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966A41487D1;
+	Sat,  1 Mar 2025 16:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740800087; cv=none; b=sRSqzYprrzm1nx3BsOZyQnPI1KRwehfdwq7+X8roKScg7MFfBrrgEEZPvv0mXqGOu8U/wp59v/KTGg8lvqO/Zfj6NmEwffZmKTx3wCnCK7Af5nVlyQJ9G6Rrj6jp0slSCGHcNmw8HqEEYuhdReTh1gJI3zHFL5HXmFHKPHrodhI=
+	t=1740846583; cv=none; b=p+7StccTfnN4pVvqoe226mBylmu5t6y8mSRdXC4toAqTxDvFgbIQ7aYMOFsZ+wTeQA8WDWwjjp4XZLMjntyrVgb/MdOf+rUSBwd4Mq32tacg8i7w0irCxRaTqNTRpbIkTSnoQi0gRXXUk2MlnHv29PlzPaytN6znKuTC/Nn4AIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740800087; c=relaxed/simple;
-	bh=tAJNw2MDGLpKl93xpuAYLKLGIAWdQ8TUaSUVndweFds=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NujZjFcwn9hNyO8sfkJuYgyaqP0XIhYZc//yDhB3BvuURhWCIQKVXxqCmWcNSXm1fusZCaT5CV7kVpF8WXq5uhd3S7F0UCWUHOE5exHbZouC0Hv+HOwk6w4x+wEXJRFoJsOTnz40NSjcS2rDrAd1nAP8BZZYbCxtvbr0dHXjm3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/gnFiBd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740846583; c=relaxed/simple;
+	bh=HHShl6fmzO4CDNXm56EjpFDU0XBN5j6Jo9fKXnk6j54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z73Xc75kDcTqsu0otbWUxgxYdpLZ9rsHVxQDnPkhgoFtUgfaRbyZ0g9ksxmzgKAYY/BkgABMlN6Z0peSR9GJDGuDCFmdtIyGPiaBamP1tMKywREjOHibM6Xbm64aAoNXT8IKiKLwgG8DHmD5z7HNkkJvaiZLsBSGFvpdi4A+QxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kggXazpR; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/gnFiBd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0621C4CEDD;
-	Sat,  1 Mar 2025 03:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740800086;
-	bh=tAJNw2MDGLpKl93xpuAYLKLGIAWdQ8TUaSUVndweFds=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r/gnFiBdbhTk77m8x/7T1N/RoHmTyTOKUTDeoExUeG4jKnOq8Tpg8FFPQuwH3bKao
-	 P3MOpQIAwXjstduqGjiPsGBtNXUMiz9O4bxgOZn9LD7ot1HEIzFwtqAJweK/B0Ak2E
-	 KgdctjEidl/MBfbo1jM58cxjw0Z6jn41DSnRaZVuA2CLsHbpS4j8v0pVXigTgxR2gW
-	 8gQbsAGIq74G5GSAULbsVqYY4RpEeDM3iFRF5dc3ES91q+EuWTKGwN7/YU2KDS+NP8
-	 TSicT6qcMniR2lbbRAFazOug50agdl53DgU/94NEvV3N6ErUh5+47VwJUxsRvM8P5i
-	 Imgfft+VZaVlA==
-Date: Sat, 1 Mar 2025 03:34:28 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
- <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
- Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
- <perdaniel.olsson@axis.com>, Subhajit Ghosh
- <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
- David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] iio: light: Add support for AL3000a illuminance
- sensor
-Message-ID: <20250301033428.34b71e4d@jic23-huawei>
-In-Reply-To: <CAPVz0n1xCFKzCFf7oM0vYKLQX1eb4_JnehVNPz0Cpxfb5COfsA@mail.gmail.com>
-References: <20250217140336.107476-1-clamor95@gmail.com>
-	<20250217140336.107476-3-clamor95@gmail.com>
-	<20250222125335.177fc746@jic23-huawei>
-	<CAPVz0n3YHgct6x_3-mhzmTOTejLj19xDLm9C8Dqe-GHv8fJBrA@mail.gmail.com>
-	<20250222172536.5fb73658@jic23-huawei>
-	<CAPVz0n1xCFKzCFf7oM0vYKLQX1eb4_JnehVNPz0Cpxfb5COfsA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kggXazpR"
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-2adc2b6837eso817234fac.1;
+        Sat, 01 Mar 2025 08:29:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740846580; x=1741451380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NZEUaQpxNWQ0VLyb0pFtWCnEhCo7qZid/hN1L1j+FZ4=;
+        b=kggXazpRY55j5+/mlLOS0/ng99wfrPqrkUETshG9RT7kVru2Kk2KYyGLyCT7hNNmmU
+         nSrj74++Kwfo8kxEo7NEKZRPO/HeVTWpYAtpOLE+NzHGK65reSNe1y+/+UGTjszx/+4+
+         RKjHb8mwgBhvw7h5qaXoJIBcWPFRZyHnPwYjnjTAZncbTciQjIjEAbvingJzCRR9u2io
+         2Ky7MxLM0DggVZHRtVRmY6RILQLqGNZco3L8wCmmhbdMrIuKVeERLXfTkstBWdv3j0JM
+         a+5f7J2bJbnP1z3KXzDRMYyNmnNhKiG3b0udyePWmbcpLU2bMuU7bGfKpSvKW6LyEyUD
+         RRww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740846580; x=1741451380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NZEUaQpxNWQ0VLyb0pFtWCnEhCo7qZid/hN1L1j+FZ4=;
+        b=Bcuj1gDQhHRSQWHQztaAqJ+YLl2XU2WywuH0CULfqHktO/RdUwgpFUykCmvK0E4MIX
+         AivpTmh+5IDLvuAVM4JO8GOV6GF7jMCLog6JN4gaBsJT1PdPOf0B4DoN9YlpXvs49QaH
+         i/kOuOMu7uTPzZ1skRuqpwftXm+vb266oxL88tsWuPc+9b1vffK1DnBEaMemNSRBrb2W
+         i8PPb6QoRRbkoe/+Qw8GMqJCUHJYSTAO5ai8lA5wS8Uf5GsdTVHKsoXLbx7UPp+aCo6S
+         CvJEtopMASVdvDXWa0SdU3M+9b0rXSjLN8Yr9KZ47Zfo4GG9dJpuzLQsFB6QgRiJwe/c
+         DySw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpK/RojR/vAES9ym5f+1cEWXwhQxcIX1iglSJZuNMu+a0d6pisw+NNMwzsvhZUgTXUWgi5BQz0M47iYD4=@vger.kernel.org, AJvYcCWLkamKU6bN9qDgnLIhV+WR2JXBYsIB9kq8eoY4Fz3P2Vh0wYpAuViO6MRto3u0DfxduOhF0A4r@vger.kernel.org, AJvYcCXjcf91jZc+/Q95tx/vmXwuo2sdeBWcGk4M7ZHHKda1mBCQsO5+kpHTyiC9/kJCVmLhcjGN1sRYD69rZJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVp6b6LjkRHTNYT3Y4cW7KrRmXr6MFpPH26Dsgxeqnk9njQ02S
+	AN76yWMrxo19cUDnWSNHHz/2jUHHJzm9eTL84Hrw/YVGP+v1xhCl2tMuSUDYFQ3fiHGUI7lS8To
+	WJWbftV8URdgqHg2wf+mUZA8oYFo=
+X-Gm-Gg: ASbGnctjwGqzEErg3sFvB6M1kGPrNf7vffz9RVpeo5JSXkedI/KmXWTV2xlbkRXgrkP
+	fATdFouMXnFyBi7QPTnbRYjWudIaaI9tyVSi7tOBfCn9d/2JeB8hV1UNVOvmEQWImYNnsS1Kave
+	Cv5BYnJsL/jsiuNx6lCJ1JtnahK9k=
+X-Google-Smtp-Source: AGHT+IFLHW43DGVnGXOFanwomRC74l4qNdWZrjLIPoHIxamo09AWIXLwMxZA6XLplMHBHwCIOVz4tMkmC7T/9yOmmsg=
+X-Received: by 2002:a05:6870:82a6:b0:29d:c964:f035 with SMTP id
+ 586e51a60fabf-2c1787bbdb7mr4893395fac.35.1740846580586; Sat, 01 Mar 2025
+ 08:29:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250219022753.2589753-1-haoxiang_li2024@163.com>
+In-Reply-To: <20250219022753.2589753-1-haoxiang_li2024@163.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sat, 1 Mar 2025 10:29:29 -0600
+X-Gm-Features: AQ5f1JoEz6qNtlf8qYTx1DcstTc7Vho0S-m-HrMV1VKqR5yyS7jhPr7ifohbSwo
+Message-ID: <CABb+yY3wC5Rp4DJFL=61uyYyGtJ-kPTWks8JMG7jQpp=V3P-Zg@mail.gmail.com>
+Subject: Re: [PATCH] mailbox: tegra-hsp: Add check for devm_kstrdup_const()
+To: Haoxiang Li <haoxiang_li2024@163.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, brgl@bgdev.pl, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, 22 Feb 2025 19:27:22 +0200
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+On Tue, Feb 18, 2025 at 8:28=E2=80=AFPM Haoxiang Li <haoxiang_li2024@163.co=
+m> wrote:
+>
+> Add check for the return value of devm_kstrdup_const() in
+> tegra_hsp_doorbell_create() to catch potential exception.
+>
+> Fixes: a54d03ed01b4 ("mailbox: tegra-hsp: use devm_kstrdup_const()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+> ---
+>  drivers/mailbox/tegra-hsp.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+> index c1981f091bd1..773a1cf6d93d 100644
+> --- a/drivers/mailbox/tegra-hsp.c
+> +++ b/drivers/mailbox/tegra-hsp.c
+> @@ -285,6 +285,8 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, cons=
+t char *name,
+>         db->channel.hsp =3D hsp;
+>
+>         db->name =3D devm_kstrdup_const(hsp->dev, name, GFP_KERNEL);
+> +       if (!db->name)
+> +               return ERR_PTR(-ENOMEM);
 
-> =D1=81=D0=B1, 22 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 19:25 Jo=
-nathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Sat, 22 Feb 2025 14:56:41 +0200
-> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-> > =20
-> > > =D1=81=D0=B1, 22 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 14:5=
-3 Jonathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5: =20
-> > > >
-> > > > On Mon, 17 Feb 2025 16:03:35 +0200
-> > > > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
-> > > > =20
-> > > > > AL3000a is a simple I2C-based ambient light sensor, which is
-> > > > > closely related to AL3010 and AL3320a, but has significantly
-> > > > > different way of processing data generated by the sensor.
-> > > > >
-> > > > > Tested-by: Robert Eckelmann <longnoserob@gmail.com>
-> > > > > Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com>
-> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > > Reviewed-by: David Heidelberg <david@ixit.cz> =20
-> > > >
-> > > > Whilst I am confused by earlier statements about not
-> > > > having information on the conversion to illuminance values, I'm
-> > > > going to assume the look up table in here is based on some
-> > > > reasonable data from somewhere and hence that this is a sensor
-> > > > with appropriate filtering of the light to be able to do a non line=
-ar
-> > > > conversion from the value read and standard light curves.
-> > > >
-> > > > As such the IIO_LIGHT channel type is fine for this device.
-> > > > =20
-> > >
-> > > Thank you, but IIO_INTENSITY may be proper channel as well, after your
-> > > explanations. If you wish, I may upload v5 with swapping LIGHT with
-> > > INTENSITY. =20
-> >
-> > Where does the lux_table set of values come from?
-> > That seems to be key question for this driver.
-> > =20
->=20
-> 3.1.10 kernel driver for this device
-Ok. So until we know otherwise let us trust that data as being
-correct.
+ tegra_hsp_doorbell.name seems unused, so maybe just get rid of it...  Thie=
+rry ?
 
-Jonathan
-
->=20
-> > > =20
-> > > > Applied patches 1 and 2 to the togreg branch of iio.git.
-> > > > Note that I'll initially push this out as testing to allow
-> > > > the autobuilders to see if they can find any issues that we missed.
-> > > > Patch 3 will need to go via the appropriate SoC tree as normal.
-> > > >
-> > > > Jonathan
-> > > > =20
-> > > > > ---
-> > > > >  drivers/iio/light/Kconfig   |  10 ++
-> > > > >  drivers/iio/light/Makefile  |   1 +
-> > > > >  drivers/iio/light/al3000a.c | 209 ++++++++++++++++++++++++++++++=
-++++++
-> > > > >  3 files changed, 220 insertions(+)
-> > > > >  create mode 100644 drivers/iio/light/al3000a.c
-> > > > >
-> > > > > diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
-> > > > > index 29ffa8491927..37f83e1d8893 100644
-> > > > > --- a/drivers/iio/light/Kconfig
-> > > > > +++ b/drivers/iio/light/Kconfig
-> > > > > @@ -43,6 +43,16 @@ config ADUX1020
-> > > > >        To compile this driver as a module, choose M here: the
-> > > > >        module will be called adux1020.
-> > > > >
-> > > > > +config AL3000A
-> > > > > +     tristate "AL3000a ambient light sensor"
-> > > > > +     depends on I2C
-> > > > > +     help
-> > > > > +       Say Y here if you want to build a driver for the Dyna Ima=
-ge AL3000a
-> > > > > +       ambient light sensor.
-> > > > > +
-> > > > > +       To compile this driver as a module, choose M here: the
-> > > > > +       module will be called al3000a.
-> > > > > +
-> > > > >  config AL3010
-> > > > >       tristate "AL3010 ambient light sensor"
-> > > > >       depends on I2C
-> > > > > diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makef=
-ile
-> > > > > index f14a37442712..03f10786273a 100644
-> > > > > --- a/drivers/iio/light/Makefile
-> > > > > +++ b/drivers/iio/light/Makefile
-> > > > > @@ -7,6 +7,7 @@
-> > > > >  obj-$(CONFIG_ACPI_ALS)               +=3D acpi-als.o
-> > > > >  obj-$(CONFIG_ADJD_S311)              +=3D adjd_s311.o
-> > > > >  obj-$(CONFIG_ADUX1020)               +=3D adux1020.o
-> > > > > +obj-$(CONFIG_AL3000A)                +=3D al3000a.o
-> > > > >  obj-$(CONFIG_AL3010)         +=3D al3010.o
-> > > > >  obj-$(CONFIG_AL3320A)                +=3D al3320a.o
-> > > > >  obj-$(CONFIG_APDS9300)               +=3D apds9300.o
-> > > > > diff --git a/drivers/iio/light/al3000a.c b/drivers/iio/light/al30=
-00a.c
-> > > > > new file mode 100644
-> > > > > index 000000000000..e2fbb1270040
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/iio/light/al3000a.c
-> > > > > @@ -0,0 +1,209 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > > > +#include <linux/array_size.h>
-> > > > > +#include <linux/bitfield.h>
-> > > > > +#include <linux/device.h>
-> > > > > +#include <linux/err.h>
-> > > > > +#include <linux/i2c.h>
-> > > > > +#include <linux/mod_devicetable.h>
-> > > > > +#include <linux/module.h>
-> > > > > +#include <linux/pm.h>
-> > > > > +#include <linux/regmap.h>
-> > > > > +#include <linux/regulator/consumer.h>
-> > > > > +#include <linux/types.h>
-> > > > > +
-> > > > > +#include <linux/iio/iio.h>
-> > > > > +
-> > > > > +#define AL3000A_REG_SYSTEM           0x00
-> > > > > +#define AL3000A_REG_DATA             0x05
-> > > > > +
-> > > > > +#define AL3000A_CONFIG_ENABLE                0x00
-> > > > > +#define AL3000A_CONFIG_DISABLE               0x0b
-> > > > > +#define AL3000A_CONFIG_RESET         0x0f
-> > > > > +#define AL3000A_GAIN_MASK            GENMASK(5, 0)
-> > > > > +
-> > > > > +/*
-> > > > > + * These are pre-calculated lux values based on possible output =
-of sensor
-> > > > > + * (range 0x00 - 0x3F)
-> > > > > + */
-> > > > > +static const u32 lux_table[] =3D {
-> > > > > +     1, 1, 1, 2, 2, 2, 3, 4,                                 /* =
-0 - 7 */
-> > > > > +     4, 5, 6, 7, 9, 11, 13, 16,                              /* =
-8 - 15 */
-> > > > > +     19, 22, 27, 32, 39, 46, 56, 67,                         /* =
-16 - 23 */
-> > > > > +     80, 96, 116, 139, 167, 200, 240, 289,                   /* =
-24 - 31 */
-> > > > > +     347, 416, 499, 600, 720, 864, 1037, 1245,               /* =
-32 - 39 */
-> > > > > +     1495, 1795, 2155, 2587, 3105, 3728, 4475, 5373,         /* =
-40 - 47 */
-> > > > > +     6450, 7743, 9296, 11160, 13397, 16084, 19309, 23180,    /* =
-48 - 55 */
-> > > > > +     27828, 33408, 40107, 48148, 57803, 69393, 83306, 100000 /* =
-56 - 63 */
-> > > > > +}; =20
-> > > > =20
-> > =20
->=20
-
+Thnx
