@@ -1,118 +1,223 @@
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2ECC27CCF8;
-	Fri, 28 Feb 2025 18:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5C32CA8;
+	Sat,  1 Mar 2025 03:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740767599; cv=none; b=qPpfLZOPK39hDNSlF6n4Qwk0isY2wGFT19ZlfOdtdIpJmQbuVZUXrji7YbZzroKpHqDGPlxILfr5OjSmqMgRImHclvfdEwlQh5JuoXGceJ/xPlCrjMvLn+fOzx0OB0cbRLNpt80R9Hd6HJcwjIO4CzJCutjuWlZ3IhhJRskm89M=
+	t=1740800087; cv=none; b=sRSqzYprrzm1nx3BsOZyQnPI1KRwehfdwq7+X8roKScg7MFfBrrgEEZPvv0mXqGOu8U/wp59v/KTGg8lvqO/Zfj6NmEwffZmKTx3wCnCK7Af5nVlyQJ9G6Rrj6jp0slSCGHcNmw8HqEEYuhdReTh1gJI3zHFL5HXmFHKPHrodhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740767599; c=relaxed/simple;
-	bh=ycf2bl0VWoTizsmfs43ud2ZmBfVJT6nFjvpBPE74YXs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=vE7vmjqxxQE37uIEDsiZ68tSk1Gp7n737RIyXHJKVfFkeImL/OEO8WhfTIfOPugLvoDRQSB9Jdye1GhZx8U8+WKlqBmtOnqtUSsY8f9Ep0o26oeJ646anOI/hLRi7xRoaQeWtIHjCvPhf/MiDnvKbrfsuLn1ewmMudiRPMkrMuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GH0WjZvW; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1740800087; c=relaxed/simple;
+	bh=tAJNw2MDGLpKl93xpuAYLKLGIAWdQ8TUaSUVndweFds=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NujZjFcwn9hNyO8sfkJuYgyaqP0XIhYZc//yDhB3BvuURhWCIQKVXxqCmWcNSXm1fusZCaT5CV7kVpF8WXq5uhd3S7F0UCWUHOE5exHbZouC0Hv+HOwk6w4x+wEXJRFoJsOTnz40NSjcS2rDrAd1nAP8BZZYbCxtvbr0dHXjm3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r/gnFiBd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GH0WjZvW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740767593; x=1741372393; i=markus.elfring@web.de;
-	bh=P+/3PbJZn1fNerf6m6udrxAYpGzCGltY+949KWMWnUA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=GH0WjZvWMDfzdKS7OGG50dI/ZnB4XKn2xj7wBB+HvIjlSAqvIBI/W6AyxzwAW2e7
-	 4eFiwlbVyhexJ0r4kiLtFvkStqvmIS31nKqjNOWTLYL36yGIQS6ylhaN6UkmeFchr
-	 vtz7GX0iynSmP4xjp5hfGoTOr4cO+K8NNz7ntVb7CwYKcd/08saQFbXX2rSXDgU93
-	 zIYmE5m0XLpZh1a0SkGuNrmA71CzWTA5H0gth1JHThAgJlOYm3ZRKdsfQXSFUCd8F
-	 t7U/zYV74uQ2UlvtPUYCWEsI/FVh/ehq7fKHwGWGZEXhM2hlQVT42gOkpb/mc5Kzl
-	 VGC6eNj/UztHACqCbg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.27]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MnFyI-1tOxcT2sOC-00i452; Fri, 28
- Feb 2025 19:33:13 +0100
-Message-ID: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de>
-Date: Fri, 28 Feb 2025 19:33:10 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r/gnFiBd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0621C4CEDD;
+	Sat,  1 Mar 2025 03:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740800086;
+	bh=tAJNw2MDGLpKl93xpuAYLKLGIAWdQ8TUaSUVndweFds=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=r/gnFiBdbhTk77m8x/7T1N/RoHmTyTOKUTDeoExUeG4jKnOq8Tpg8FFPQuwH3bKao
+	 P3MOpQIAwXjstduqGjiPsGBtNXUMiz9O4bxgOZn9LD7ot1HEIzFwtqAJweK/B0Ak2E
+	 KgdctjEidl/MBfbo1jM58cxjw0Z6jn41DSnRaZVuA2CLsHbpS4j8v0pVXigTgxR2gW
+	 8gQbsAGIq74G5GSAULbsVqYY4RpEeDM3iFRF5dc3ES91q+EuWTKGwN7/YU2KDS+NP8
+	 TSicT6qcMniR2lbbRAFazOug50agdl53DgU/94NEvV3N6ErUh5+47VwJUxsRvM8P5i
+	 Imgfft+VZaVlA==
+Date: Sat, 1 Mar 2025 03:34:28 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
+ <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
+ Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
+ <perdaniel.olsson@axis.com>, Subhajit Ghosh
+ <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
+ David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] iio: light: Add support for AL3000a illuminance
+ sensor
+Message-ID: <20250301033428.34b71e4d@jic23-huawei>
+In-Reply-To: <CAPVz0n1xCFKzCFf7oM0vYKLQX1eb4_JnehVNPz0Cpxfb5COfsA@mail.gmail.com>
+References: <20250217140336.107476-1-clamor95@gmail.com>
+	<20250217140336.107476-3-clamor95@gmail.com>
+	<20250222125335.177fc746@jic23-huawei>
+	<CAPVz0n3YHgct6x_3-mhzmTOTejLj19xDLm9C8Dqe-GHv8fJBrA@mail.gmail.com>
+	<20250222172536.5fb73658@jic23-huawei>
+	<CAPVz0n1xCFKzCFf7oM0vYKLQX1eb4_JnehVNPz0Cpxfb5COfsA@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-tegra@vger.kernel.org, linux-mtd@lists.infradead.org,
- Jonathan Hunter <jonathanh@nvidia.com>, Lucas Stach <dev@lynxeye.de>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Stefan Agner <stefan@agner.ch>,
- Thierry Reding <thierry.reding@gmail.com>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Qasim Ijaz <qasdev00@gmail.com>, Natalie Vock <natalie.vock@gmx.de>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] mtd: rawnand: tegra: Simplify maximum determination in
- tegra_nand_setup_timing()
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hWGNMTeSFiMmmha5RneunFk1Fm60pvlO4UxmgUHnGkA2Qz8LPAX
- AlAGnXxSQrhN/iURP92oQy69SzFM7LWzFoIyX038jdfHsUaVzZfJtK6GX/EgS7IN+R3Vlub
- SWVfWfm3Nwxzo+ZgOE8agHY3UPPcJp3NQylvg/WfH4SN9BLpM1SwHDb/g6F2LAicne8EjH9
- rs3qMX50pqLMH/7nvOPUw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mma6z8WXO8A=;Ch2aVyeui5h/mnQ9HePSBuxvJC2
- 7XXdJh1HWUW7j+i750YByjCpVJsVmTs/dzKMbcfSK3OUUMPRKBcgqFSaPZzItEcYniwJvm3wp
- ih9T4pw24nzwWj8YL5vzYipAqp9h40WFQeyAeO4X3xYpYi5dL3CPju6psH2v9qsudha6fleMA
- rZv59kyrq0odiTrP9P78umRkJIxkdUZhb7zyhw9ehahsl6IqAFd5R67Ku89jpmXJ47A3O2nAe
- ZZ0FnbJWfkH4Pv4WAdeXhfSbjx3TlNQhnRgMX909AzO/O9aqSNSAf4PadX0MA7I7MJB5lBYI5
- g8C7TMSB2IdiOw7NjWZNa+rh4Hp7Qlcx4QOICYmaKzXW6qZ09PdZSvZ2PnbB2mHEz8QxIGrCo
- RQM2O4AXLrMaZ+6Ytrybgq7ETd3+0x/DnK3khs0gavKX1pvcvtaExA7dF4kO2ofgt34GEOJg7
- 00yhC+DbLNMliUImRNtJeiwPn6mC1WG7zhwp70olRjs8Stl+MB7bOMOt8axS0k90Db37zI1AA
- XAPuMBRfAP25PHGqyB+AkHKM83hI6uXjvWj/JWEs7Q8twMqFhvTotyGJt90adRgbRYOZiQ5TH
- VaJax72H/QOK/w81jxfoozfIy2Ch/XfZpGLgz2doIDMh5ORAwdguEorYH0gnaOqwbZlmwEKr0
- GHiYS78LcjXieU9dtTTUsLrmIW+JNhCvobwU8CEM5vZMFWI/4yjMjtr6SuMWFb2X6VVeylbq9
- j6XFjaCIPwVR/PRLPcoKb582Yepi4Bs4wGdEllrINGYjmqiIUX/yDOfVQnLgWt+9Ab4c90C0c
- sxkovclFpKVB3vj+hxkCKr3Z5o5Eln0tjUkKQOHOc06cKn8880IvoTLRdmsbwzNibDADxpaqU
- q24ut6O5gDN9f+5/LsbDyd1YNnH+08V9otIlRulIp3cAD6+x8nVy4vdSKZqgiWcMc47tKKjy9
- +1bv6LTI1crQ9SeK9ckXlGGvNeNJreSzQ5Ew1+/XvZeJK1jZurujNNM5Gb8chdtgIFoIHrCkK
- EbetAQ2wN8F3GPZ963qBRM/amlMmZ97gaKHJS0vBediC9b5kCgdZJCy4RQIvXU6Tr0+G3OwP6
- mJf/C/B97/fIUOcRQ/UC7x+Pgn0nm2o2Ku/6AC730RbUpNrYtL+8TQpPmgWss9je6t7wQTnvb
- eE28rnxTKHInsQg3Ah4nBNkZZs15xh6G6RDzSFcWuE9XZhOBZd7xzor+l45ST/ws/nq3iT6lh
- x4ocTXZR11G2UlPfv14hBo7eh1859zDGQzsXGhZrMW6fbxMatHTY2b6LT0W1bftqfpncO7/Re
- i7hEOIWTP973s7LH+POd55SQZd4HYpyfL515nSYLVXo3G9XrHPYpmwOhDDgZzOHzBFv7/DJj1
- snd3/EZZVYZhrOMLyQdQvFfURHHAr3XXDXW6RiHplhoETVue/WpaD9J5xGGOoy/PawDLOPuN0
- GP9SihA==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 28 Feb 2025 19:19:45 +0100
+On Sat, 22 Feb 2025 19:27:22 +0200
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-Reduce nested max() calls by a single max3() call in this
-function implementation.
+> =D1=81=D0=B1, 22 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 19:25 Jo=
+nathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Sat, 22 Feb 2025 14:56:41 +0200
+> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> > =20
+> > > =D1=81=D0=B1, 22 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 14:5=
+3 Jonathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5: =20
+> > > >
+> > > > On Mon, 17 Feb 2025 16:03:35 +0200
+> > > > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> > > > =20
+> > > > > AL3000a is a simple I2C-based ambient light sensor, which is
+> > > > > closely related to AL3010 and AL3320a, but has significantly
+> > > > > different way of processing data generated by the sensor.
+> > > > >
+> > > > > Tested-by: Robert Eckelmann <longnoserob@gmail.com>
+> > > > > Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com>
+> > > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > > > Reviewed-by: David Heidelberg <david@ixit.cz> =20
+> > > >
+> > > > Whilst I am confused by earlier statements about not
+> > > > having information on the conversion to illuminance values, I'm
+> > > > going to assume the look up table in here is based on some
+> > > > reasonable data from somewhere and hence that this is a sensor
+> > > > with appropriate filtering of the light to be able to do a non line=
+ar
+> > > > conversion from the value read and standard light curves.
+> > > >
+> > > > As such the IIO_LIGHT channel type is fine for this device.
+> > > > =20
+> > >
+> > > Thank you, but IIO_INTENSITY may be proper channel as well, after your
+> > > explanations. If you wish, I may upload v5 with swapping LIGHT with
+> > > INTENSITY. =20
+> >
+> > Where does the lux_table set of values come from?
+> > That seems to be key question for this driver.
+> > =20
+>=20
+> 3.1.10 kernel driver for this device
+Ok. So until we know otherwise let us trust that data as being
+correct.
 
-The source code was transformed by using the Coccinelle software.
+Jonathan
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/mtd/nand/raw/tegra_nand.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/tegra_nand.c b/drivers/mtd/nand/raw/tegr=
-a_nand.c
-index 7f9eb5f042a7..c03f11e5e18c 100644
-=2D-- a/drivers/mtd/nand/raw/tegra_nand.c
-+++ b/drivers/mtd/nand/raw/tegra_nand.c
-@@ -793,8 +793,8 @@ static void tegra_nand_setup_timing(struct tegra_nand_=
-controller *ctrl,
- 				timings->tRC_min), period);
- 	reg |=3D TIMING_TCR_TAR_TRR(OFFSET(val, 3));
-
--	val =3D DIV_ROUND_UP(max(max(timings->tCS_min, timings->tCH_min),
--			       max(timings->tALS_min, timings->tALH_min)),
-+	val =3D DIV_ROUND_UP(max3(timings->tCS_min, timings->tCH_min,
-+				max(timings->tALS_min, timings->tALH_min)),
- 			   period);
- 	reg |=3D TIMING_TCS(OFFSET(val, 2));
-
-=2D-
-2.48.1
+>=20
+> > > =20
+> > > > Applied patches 1 and 2 to the togreg branch of iio.git.
+> > > > Note that I'll initially push this out as testing to allow
+> > > > the autobuilders to see if they can find any issues that we missed.
+> > > > Patch 3 will need to go via the appropriate SoC tree as normal.
+> > > >
+> > > > Jonathan
+> > > > =20
+> > > > > ---
+> > > > >  drivers/iio/light/Kconfig   |  10 ++
+> > > > >  drivers/iio/light/Makefile  |   1 +
+> > > > >  drivers/iio/light/al3000a.c | 209 ++++++++++++++++++++++++++++++=
+++++++
+> > > > >  3 files changed, 220 insertions(+)
+> > > > >  create mode 100644 drivers/iio/light/al3000a.c
+> > > > >
+> > > > > diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+> > > > > index 29ffa8491927..37f83e1d8893 100644
+> > > > > --- a/drivers/iio/light/Kconfig
+> > > > > +++ b/drivers/iio/light/Kconfig
+> > > > > @@ -43,6 +43,16 @@ config ADUX1020
+> > > > >        To compile this driver as a module, choose M here: the
+> > > > >        module will be called adux1020.
+> > > > >
+> > > > > +config AL3000A
+> > > > > +     tristate "AL3000a ambient light sensor"
+> > > > > +     depends on I2C
+> > > > > +     help
+> > > > > +       Say Y here if you want to build a driver for the Dyna Ima=
+ge AL3000a
+> > > > > +       ambient light sensor.
+> > > > > +
+> > > > > +       To compile this driver as a module, choose M here: the
+> > > > > +       module will be called al3000a.
+> > > > > +
+> > > > >  config AL3010
+> > > > >       tristate "AL3010 ambient light sensor"
+> > > > >       depends on I2C
+> > > > > diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makef=
+ile
+> > > > > index f14a37442712..03f10786273a 100644
+> > > > > --- a/drivers/iio/light/Makefile
+> > > > > +++ b/drivers/iio/light/Makefile
+> > > > > @@ -7,6 +7,7 @@
+> > > > >  obj-$(CONFIG_ACPI_ALS)               +=3D acpi-als.o
+> > > > >  obj-$(CONFIG_ADJD_S311)              +=3D adjd_s311.o
+> > > > >  obj-$(CONFIG_ADUX1020)               +=3D adux1020.o
+> > > > > +obj-$(CONFIG_AL3000A)                +=3D al3000a.o
+> > > > >  obj-$(CONFIG_AL3010)         +=3D al3010.o
+> > > > >  obj-$(CONFIG_AL3320A)                +=3D al3320a.o
+> > > > >  obj-$(CONFIG_APDS9300)               +=3D apds9300.o
+> > > > > diff --git a/drivers/iio/light/al3000a.c b/drivers/iio/light/al30=
+00a.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..e2fbb1270040
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/iio/light/al3000a.c
+> > > > > @@ -0,0 +1,209 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > > +#include <linux/array_size.h>
+> > > > > +#include <linux/bitfield.h>
+> > > > > +#include <linux/device.h>
+> > > > > +#include <linux/err.h>
+> > > > > +#include <linux/i2c.h>
+> > > > > +#include <linux/mod_devicetable.h>
+> > > > > +#include <linux/module.h>
+> > > > > +#include <linux/pm.h>
+> > > > > +#include <linux/regmap.h>
+> > > > > +#include <linux/regulator/consumer.h>
+> > > > > +#include <linux/types.h>
+> > > > > +
+> > > > > +#include <linux/iio/iio.h>
+> > > > > +
+> > > > > +#define AL3000A_REG_SYSTEM           0x00
+> > > > > +#define AL3000A_REG_DATA             0x05
+> > > > > +
+> > > > > +#define AL3000A_CONFIG_ENABLE                0x00
+> > > > > +#define AL3000A_CONFIG_DISABLE               0x0b
+> > > > > +#define AL3000A_CONFIG_RESET         0x0f
+> > > > > +#define AL3000A_GAIN_MASK            GENMASK(5, 0)
+> > > > > +
+> > > > > +/*
+> > > > > + * These are pre-calculated lux values based on possible output =
+of sensor
+> > > > > + * (range 0x00 - 0x3F)
+> > > > > + */
+> > > > > +static const u32 lux_table[] =3D {
+> > > > > +     1, 1, 1, 2, 2, 2, 3, 4,                                 /* =
+0 - 7 */
+> > > > > +     4, 5, 6, 7, 9, 11, 13, 16,                              /* =
+8 - 15 */
+> > > > > +     19, 22, 27, 32, 39, 46, 56, 67,                         /* =
+16 - 23 */
+> > > > > +     80, 96, 116, 139, 167, 200, 240, 289,                   /* =
+24 - 31 */
+> > > > > +     347, 416, 499, 600, 720, 864, 1037, 1245,               /* =
+32 - 39 */
+> > > > > +     1495, 1795, 2155, 2587, 3105, 3728, 4475, 5373,         /* =
+40 - 47 */
+> > > > > +     6450, 7743, 9296, 11160, 13397, 16084, 19309, 23180,    /* =
+48 - 55 */
+> > > > > +     27828, 33408, 40107, 48148, 57803, 69393, 83306, 100000 /* =
+56 - 63 */
+> > > > > +}; =20
+> > > > =20
+> > =20
+>=20
 
