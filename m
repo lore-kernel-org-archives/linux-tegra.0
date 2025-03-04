@@ -1,178 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBEB1F55ED;
-	Tue,  4 Mar 2025 08:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6489D202F7C;
+	Tue,  4 Mar 2025 12:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741075495; cv=none; b=Kx5wzJ1mcOauMiMZUaCHeo0yYVuopk6HNlV8IdTtWLH8eonHvIEtZEQLjKnkSpoB6yc/Ibfs/RKG/URdW2wq+8si8FOePDBq9pxlOau+SIs0uhMGtSen3VpuFiytmiM/atHQglbjQSpnpNerK9V4CVT+IRv01157h6WlncjCniA=
+	t=1741091625; cv=none; b=nCGgMwVGh8evZbPW55mySF7qmDlnFX+5UuYuL1qMM7JQwgJtWN2xnyaeUxxQCKduO3YvQOZettOMCwws2OSbxHs/slJ0JEqINLdaff2BtH8xkzRyJtB8x8aAigIRd7ceDC60t2CNHoK3A9fay3RuFY8r0iLovW1M8GY1vHgYnbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741075495; c=relaxed/simple;
-	bh=vIjLPcUzgSKENXMFoyq8MSR3rL6XCeonIPvrarBTHfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B3U28mQepnDeUKBZ3n6NMOTj1oq13K3Ud7oOpW42XburH4dZohnZurfBb24PF2hIqk3KcLpSJpsARfjv8Uq0j0wDklZMadRDHcbwIBaIV+cTjwdWnR9jpKda7Fz9W+yXl5p/GZw/YVpUpIwHCcHe3LN3VSeuo2p7w3BGDx6jYKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTMooLPO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741091625; c=relaxed/simple;
+	bh=TsNA83VsfGHxuJXznKqc2gmfbctX5gEAjPkF4aG/umA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XfHPqDnsDiPhcDouabwGAgO2hg4hN/s45QGIuA24c0jrghaRb9OYjg2VEHUWoMC8jzGf7Z+6ao7h0PUonm4uxVZ1xK8jH/MR+k43B3S13qdNuZZGoZSlf4VKo6GbxwtVLLKuD7XIOAn4Wart01m44j09V3fVK3xFDM3KRodUmRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xra/hDtA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTMooLPO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DCBEC4CEE5;
-	Tue,  4 Mar 2025 08:04:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xra/hDtA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402FFC4CEE5;
+	Tue,  4 Mar 2025 12:33:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741075492;
-	bh=vIjLPcUzgSKENXMFoyq8MSR3rL6XCeonIPvrarBTHfI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MTMooLPO8Bbb2GKqdM1BuZCtLRVMLpPUiZewyqhTUOANTZEdA7zKLpNVpc2b4+pde
-	 qLxD1GPfTrr2crKHjmFBRkbsQhLcZE/wIdMSn7xP+K7vJd7ZRJEAH9qDQUxuZcs5kx
-	 PTy2NgT0nWNSVjrgvdi0A9uofQ0NxTbml1X58f1jrN3deGiad5mCcW/u5Oh/f1kNxH
-	 WkgVk5ns/TvPqpAEbTVtWOTQmUYqzcBtq42vbowT/RyyDgHhCJdC0cKAvbzxnmEotI
-	 4k4ylvc9gwaqMoZC+TRzV16b9VRVTbQY41zF+zC/l+py0e6GMwaWsk+QqwNP9zvG1O
-	 WP0yWgzyy+/YA==
-Date: Tue, 4 Mar 2025 09:04:50 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
-	Joel Stanley <joel@jms.id.au>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
-	Xinliang Liu <xinliang.liu@linaro.org>, Tian Tao <tiantao6@hisilicon.com>, 
-	Xinwei Kong <kong.kongxinwei@hisilicon.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Yongqin Liu <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Yannick Fertre <yannick.fertre@foss.st.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Alexey Brodkin <abrodkin@synopsys.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jonathan Corbet <corbet@lwn.net>, linux-aspeed@lists.ozlabs.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH RESEND 07/12] drm/sti: move to
- devm_platform_ioremap_resource() usage
-Message-ID: <20250304-astute-curvy-ladybug-f9ff15@houat>
-References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
- <20250225-memory-drm-misc-next-v1-7-9d0e8761107a@redhat.com>
- <24958ae8-6153-4798-abeb-e770d66ca8e4@foss.st.com>
- <CAN9Xe3Q8=_Tz51i6gxNM6445p-rhNiK7B5Ljcga8g_Nn676dCQ@mail.gmail.com>
+	s=k20201202; t=1741091624;
+	bh=TsNA83VsfGHxuJXznKqc2gmfbctX5gEAjPkF4aG/umA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Xra/hDtAZ1p8zlKY7qL9UC9tW0QAIYrKhS/26297e+rK5sxBwtubTgJldsRlLedXh
+	 AoAyHicp7K8tArkm+uQhV9KKS2xOjkgbJ8dBxypuZVJiA6KecK52lxS2/fmZhBUwB9
+	 ybNjMoHu9MBYlPhGI3m7sqtpa1UdQBJPeczwk0dw+oq5DoWj998XwNjNdiY6qz+09P
+	 WabsqKFo5SPjCM7PuUT9Cq8fJBwcnL4fWpKoxHgcqf+dPETy5CwXvIkOjZuaagT0WS
+	 g+Dv9eTqMjYEcenV+1sVPiVIf3iH8Y/UJ1zFtxHEumGw1NI/s2KgNW6mpJQHnWkfzI
+	 WGc8nLTSLkHwg==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Sheetal <sheetal@nvidia.com>, 
+ Sameer Pujar <spujar@nvidia.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Ritu Chaudhary <rituc@nvidia.com>, Thorsten Blum <thorsten.blum@linux.dev>
+Cc: stable@vger.kernel.org, linux-sound@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250222225700.539673-2-thorsten.blum@linux.dev>
+References: <20250222225700.539673-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH] ASoC: tegra: Fix ADX S24_LE audio format
+Message-Id: <174109162199.25452.7706567834275487089.b4-ty@kernel.org>
+Date: Tue, 04 Mar 2025 12:33:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="3cvx2hh6lak7gb3g"
-Content-Disposition: inline
-In-Reply-To: <CAN9Xe3Q8=_Tz51i6gxNM6445p-rhNiK7B5Ljcga8g_Nn676dCQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
+On Sat, 22 Feb 2025 23:56:59 +0100, Thorsten Blum wrote:
+> Commit 4204eccc7b2a ("ASoC: tegra: Add support for S24_LE audio format")
+> added support for the S24_LE audio format, but duplicated S16_LE in
+> OUT_DAI() for ADX instead.
+> 
+> Fix this by adding support for the S24_LE audio format.
+> 
+> Compile-tested only.
+> 
+> [...]
 
---3cvx2hh6lak7gb3g
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RESEND 07/12] drm/sti: move to
- devm_platform_ioremap_resource() usage
-MIME-Version: 1.0
+Applied to
 
-On Mon, Mar 03, 2025 at 12:29:19PM -0500, Anusha Srivatsa wrote:
-> On Wed, Feb 26, 2025 at 5:19=E2=80=AFAM Raphael Gallais-Pou <
-> raphael.gallais-pou@foss.st.com> wrote:
->=20
-> >
-> > On 2/25/25 23:20, Anusha Srivatsa wrote:
-> > > Replace platform_get_resource/_byname + devm_ioremap
-> > > with just devm_platform_ioremap_resource()
-> > >
-> > > Used Coccinelle to do this change. SmPl patch:
-> > >
-> > > @rule@
-> > > identifier res;
-> > > expression ioremap;
-> > > identifier pdev;
-> > > constant mem;
-> > > expression name;
-> > > @@
-> > > -struct resource *res;
-> > > ...
-> > > -res =3D platform_get_resource_byname(pdev,mem,name);
-> > > <...
-> > > -if (!res) {
-> > > -...
-> > > -}
-> > > ...>
-> > > -ioremap =3D devm_ioremap(...);
-> > > +ioremap =3D devm_platform_ioremap_resource_byname(pdev,name);
-> > >
-> > > and
-> > > @rule_2@
-> > > identifier res;
-> > > expression ioremap;
-> > > identifier pdev;
-> > > @@
-> > > -struct resource *res;
-> > > ...
-> > > -res =3D platform_get_resource(pdev,...);
-> > > <...
-> > > -if (!res) {
-> > > -...
-> > > -}
-> > > ...>
-> > > -ioremap =3D devm_ioremap(...);
-> > > +ioremap =3D devm_platform_ioremap_resource(pdev,0);
-> > >
-> > > v2: Fix compilation error.
-> >
-> >
-> > Hi Anusha,
-> >
-> >
-> > You did not take into account my comment regarding the changelog. :-)
-> >
-> > https://www.kernel.org/doc/html/latest/process/submitting-patches.html#=
-commentary
-> >
-> > While the commit summary do not specify the version, this changelog
-> > suggests
-> > that the version of your series as been incremented.
-> > If this is a v2, then a version descriptor should be applied to the
-> > patchset.
-> >
-> > https://www.kernel.org/doc/html/latest/process/submitting-patches.html#=
-subject-line
-> >
-> > Hi  Raphael,
->=20
-> That is correct. While this patch is a v2, there is another patch or two =
-in
-> the same series that is on v4 when it got acked and reviewed. Having
-> patches belonging to the same series with different version prefixes seem=
-ed
-> odd when I sent the series. Hence added what exactly changed in the commit
-> log.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-This breaks a lot of tools though. If your series changes, you need to
-increase the version number, no matter how small or insignificant it
-changed compared to the previous one. resend is only meant to be used
-when you send the exact same series.
+Thanks!
 
-Maxime
+[1/1] ASoC: tegra: Fix ADX S24_LE audio format
+      commit: 3d6c9dd4cb3013fe83524949b914f1497855e3de
 
---3cvx2hh6lak7gb3g
-Content-Type: application/pgp-signature; name="signature.asc"
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
------BEGIN PGP SIGNATURE-----
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8a0GwAKCRAnX84Zoj2+
-dvPAAX0T6CB5j6he9IlacsjKLYZXt0M1IhAKVugJHAC1WHuswlCAJSgEyELEpzS1
-ddcuQ7kBf3wXscEAe3lhr3vk0F2KVEj4r8JtBnUwxNM0o1E63auMQV7dNPG5Z5Ku
-4gxKbq/wJQ==
-=hPVI
------END PGP SIGNATURE-----
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
---3cvx2hh6lak7gb3g--
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
