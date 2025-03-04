@@ -1,91 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6489D202F7C;
-	Tue,  4 Mar 2025 12:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FC727EC73;
+	Tue,  4 Mar 2025 15:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741091625; cv=none; b=nCGgMwVGh8evZbPW55mySF7qmDlnFX+5UuYuL1qMM7JQwgJtWN2xnyaeUxxQCKduO3YvQOZettOMCwws2OSbxHs/slJ0JEqINLdaff2BtH8xkzRyJtB8x8aAigIRd7ceDC60t2CNHoK3A9fay3RuFY8r0iLovW1M8GY1vHgYnbY=
+	t=1741100948; cv=none; b=NdGUihLeWlEeYaHp3wyJefJJn53KQ+Prymswq7fGXmS0qiNljRCXn7mFILsL21juwBWeHoOh255RF49u+r9vgIwCRhGJ/gCi7xdyrZ8yjeMXOyCfZ24pMCxsoJfmz9hC2WWBzC+QlrMgZdG5f324t6V8cV549jJ0GKmDfpxdi2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741091625; c=relaxed/simple;
-	bh=TsNA83VsfGHxuJXznKqc2gmfbctX5gEAjPkF4aG/umA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=XfHPqDnsDiPhcDouabwGAgO2hg4hN/s45QGIuA24c0jrghaRb9OYjg2VEHUWoMC8jzGf7Z+6ao7h0PUonm4uxVZ1xK8jH/MR+k43B3S13qdNuZZGoZSlf4VKo6GbxwtVLLKuD7XIOAn4Wart01m44j09V3fVK3xFDM3KRodUmRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xra/hDtA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741100948; c=relaxed/simple;
+	bh=DG/AM3etG1nE9vfZIfc0a6ublPwhvIwD2A9YRgWbjkw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sW0EW161+g4OZLCB7uSOGnm22uZ+mpm+gucAHVC7jruzM372XiLZ4MKWmkji2syUj/hU0cQ19AxkXIpZbzdeSBEL3Ac8TQfhRLR4ttStlIOTlz0uo/CWXAe92jvLSHdDYTm4eXahVv8rGIzIoglfXNANgxSJA41pgwc1SxFBFjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kc0XItSD; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xra/hDtA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402FFC4CEE5;
-	Tue,  4 Mar 2025 12:33:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741091624;
-	bh=TsNA83VsfGHxuJXznKqc2gmfbctX5gEAjPkF4aG/umA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Xra/hDtAZ1p8zlKY7qL9UC9tW0QAIYrKhS/26297e+rK5sxBwtubTgJldsRlLedXh
-	 AoAyHicp7K8tArkm+uQhV9KKS2xOjkgbJ8dBxypuZVJiA6KecK52lxS2/fmZhBUwB9
-	 ybNjMoHu9MBYlPhGI3m7sqtpa1UdQBJPeczwk0dw+oq5DoWj998XwNjNdiY6qz+09P
-	 WabsqKFo5SPjCM7PuUT9Cq8fJBwcnL4fWpKoxHgcqf+dPETy5CwXvIkOjZuaagT0WS
-	 g+Dv9eTqMjYEcenV+1sVPiVIf3iH8Y/UJ1zFtxHEumGw1NI/s2KgNW6mpJQHnWkfzI
-	 WGc8nLTSLkHwg==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, Sheetal <sheetal@nvidia.com>, 
- Sameer Pujar <spujar@nvidia.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
- Ritu Chaudhary <rituc@nvidia.com>, Thorsten Blum <thorsten.blum@linux.dev>
-Cc: stable@vger.kernel.org, linux-sound@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250222225700.539673-2-thorsten.blum@linux.dev>
-References: <20250222225700.539673-2-thorsten.blum@linux.dev>
-Subject: Re: [PATCH] ASoC: tegra: Fix ADX S24_LE audio format
-Message-Id: <174109162199.25452.7706567834275487089.b4-ty@kernel.org>
-Date: Tue, 04 Mar 2025 12:33:41 +0000
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kc0XItSD"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D166D43D79;
+	Tue,  4 Mar 2025 15:09:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741100944;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DG/AM3etG1nE9vfZIfc0a6ublPwhvIwD2A9YRgWbjkw=;
+	b=kc0XItSDzTYBLeiVj8NChyMYyQnpRRvxMFdALbWvrST2T4NKDBJpgwBbhyPhjtSeE9Te2j
+	u9wWrrxSltQPZxpqeYPJw4uzoWInpg86JLUsVaP1Dzg7QeiRajC/4yW8cnVWVYviMehZi+
+	R2hpFmNWmS7/iwaeOoMSdpWFEVXP/VibGlYOQG6XD/sAOSpQYI0wM4t8dLcOR9Ltv4bXd4
+	0Ec7YTezS1dlhe1QQWlcMMnscqds/y9bDnq5okPWDIW4p7Zylx4mhpnS99d7C3QI5ho8EM
+	N+e2pdeehuulTYWxI6KSVJerJ68luqbFAZ7I3QsLI8ADTCcqjN2PhCVeN2sPAg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-tegra@vger.kernel.org,  linux-mtd@lists.infradead.org,  Jonathan
+ Hunter <jonathanh@nvidia.com>,  Lucas Stach <dev@lynxeye.de>,  Richard
+ Weinberger <richard@nod.at>,  Stefan Agner <stefan@agner.ch>,  Thierry
+ Reding <thierry.reding@gmail.com>,  Vignesh Raghavendra <vigneshr@ti.com>,
+  LKML <linux-kernel@vger.kernel.org>,  kernel-janitors@vger.kernel.org,
+  Qasim Ijaz <qasdev00@gmail.com>,  Natalie Vock <natalie.vock@gmx.de>
+Subject: Re: mtd: rawnand: tegra: Simplify maximum determination in
+ tegra_nand_setup_timing()
+In-Reply-To: <10afda2a-4c52-47a8-bdfd-4bfd7bd9cb34@web.de> (Markus Elfring's
+	message of "Mon, 3 Mar 2025 12:15:25 +0100")
+References: <d564cafe-d45a-40b5-9a91-a2e2b97c80d6@web.de>
+	<87pliy9yyv.fsf@bootlin.com>
+	<0193ac44-e858-4aff-a50f-dd95dbf3de5b@web.de>
+	<87h64a9y04.fsf@bootlin.com>
+	<10afda2a-4c52-47a8-bdfd-4bfd7bd9cb34@web.de>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 04 Mar 2025 16:09:03 +0100
+Message-ID: <87zfi0ygs0.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-1b0d6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddvfeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopeforghrkhhushdrgfhlfhhrihhnghesfigvsgdruggvpdhrtghpthhtoheplhhinhhugidqthgvghhrrgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepjhhonhgrthhhrghnhhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepuggvvheslhihnhigvgihvgdru
+ ggvpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrghtpdhrtghpthhtohepshhtvghfrghnsegrghhnvghrrdgthhdprhgtphhtthhopehthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomh
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Sat, 22 Feb 2025 23:56:59 +0100, Thorsten Blum wrote:
-> Commit 4204eccc7b2a ("ASoC: tegra: Add support for S24_LE audio format")
-> added support for the S24_LE audio format, but duplicated S16_LE in
-> OUT_DAI() for ADX instead.
-> 
-> Fix this by adding support for the S24_LE audio format.
-> 
-> Compile-tested only.
-> 
-> [...]
+Sorry for not being clear.
 
-Applied to
+On 03/03/2025 at 12:15:25 +01, Markus Elfring <Markus.Elfring@web.de> wrote:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+>>> You would eventually like to express that a maximum should be determined
+>>> from three (or even four?) values.
+>>
+>> If there was a max4(), why not, but in this case I don't see the point.
+> Do you miss such a programming interface so far?
 
-Thanks!
+No.
 
-[1/1] ASoC: tegra: Fix ADX S24_LE audio format
-      commit: 3d6c9dd4cb3013fe83524949b914f1497855e3de
+> Would you be looking for corresponding software adjustments?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+No.
 
 Thanks,
-Mark
-
+Miqu=C3=A8l
