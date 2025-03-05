@@ -1,92 +1,118 @@
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC5C24EA94;
-	Wed,  5 Mar 2025 15:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388BC567D;
+	Wed,  5 Mar 2025 17:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741189873; cv=none; b=eL0TFLYJgQxMLX9QchE92G5ZbbAwpF/gzxOpItdS1kVlUcB+rgm5v6HhUCrWOoFpDzFpA4WYrLdnH19kzxxMquJyI0S5j4qC9TEC8lxzg3JaoCDwVhdCd4WqVdBNyN7xmuMbDZn1y1CPqsnh49DQijtGbgeG8W4YfkxzsmIzbdQ=
+	t=1741195045; cv=none; b=VmLlw1forfPuWfmRWD0E8Q2f6Wzsj6ItWtroi7qWsGrWxYzsBlnUh2c4yZqZNEPl3iJr9oU8xXGvBNj739kttU3uyk3JwsJdA4D+lovnPgdG+X6pkukJmGLbmW9Gi/+m+fd/AZVsgCgSJ62u+FeRsqerDqpp4ie3db5kYEVOAa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741189873; c=relaxed/simple;
-	bh=bcZ3Y1maZR/FkCTZAmhpnI9rOg3F5c8NqHwJtJ8fpwg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R1HUgGwIWFzvUouB3DiuOjXqQR9/PB+JwzgPIASYmAqP5QIIaeoB9AgZKoKRenGRpkLRE7w+xCLlvX+4sLV86krp2VjiJQDuojgURqhFNelQQj+cuNdc2ZHHTZW38yANH8DbN1FwOaw1igmaiyvjCl0vIOW73bpcrUEezulvnhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-03 (Coremail) with SMTP id rQCowACXfTAAcchnVHqTEg--.44952S2;
-	Wed, 05 Mar 2025 23:43:02 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: thierry.reding@gmail.com,
-	mperttunen@nvidia.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/tegra: Handle EDID allocation failures in tegra_output_connector_get_modes()
-Date: Wed,  5 Mar 2025 23:40:38 +0800
-Message-ID: <20250305154038.2062-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1741195045; c=relaxed/simple;
+	bh=rgaJ8Vl+DVZyMaAeb8l37NkQiLBSOoKduXMe+7d8pA8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sjODuCFgbCCxHbyUWL2LZ/QtJLiwsZTYzjNE8nUb1yTO6DuajmFXr+ze0RjNfpgKM3AuWomYp4XeOUyNs+pQI5C+jG4RVG/JIXLMfnbDKp7MnjsVPqkEdHQHj5ruybhG+J9Sz8dwnJUlsF9c2tx+YxRJZvJkyIjrXgWZFjhUu/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R6bwMf49; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R6bwMf49"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741195043; x=1772731043;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=rgaJ8Vl+DVZyMaAeb8l37NkQiLBSOoKduXMe+7d8pA8=;
+  b=R6bwMf49MV/Tbvm5voY39fmTyABwvgNwX+CtDpBSoyyHrjFQgtq7H6Ib
+   9KVV2rR3XziuUUpHvEBo3HaOVA0DN4JE+BKL3N/Kd356Gc4KV0KYHtVxQ
+   tV7Ujvy1tSErh8JuCSkTR84+jUME22i21FWAI4tdOGI51Nc1/XvUaIfYK
+   UF8LOD5hKiew7LKUECCDr7KJGwexuC3htpeawD+yV88sByx6pQR7sgtuS
+   ud1dz2oLH5gT0Kj10/vH004JULjUMzLEz9iEAb1qx0UUUxlNFX0J4Wvbr
+   +bubQoblckHvhX5EVQJ1L3b5ZbjMykauptQ3PBVIt0syC/GAW4I2fO582
+   g==;
+X-CSE-ConnectionGUID: bBpFmfLdQf6FQUAkLUThJQ==
+X-CSE-MsgGUID: A/vvGbDFRZGerVt4IOTbqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="59717255"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="59717255"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 09:17:23 -0800
+X-CSE-ConnectionGUID: AFdM3JGSScqtVQ+GbsGbVg==
+X-CSE-MsgGUID: V0HpwSGmRH2oG5k/Wqy/Sw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119672490"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.49])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 09:17:19 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Wentao Liang <vulab@iscas.ac.cn>, thierry.reding@gmail.com,
+ mperttunen@nvidia.com, airlied@gmail.com, simona@ffwll.ch,
+ jonathanh@nvidia.com
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] drm/tegra: Handle EDID allocation failures in
+ tegra_output_connector_get_modes()
+In-Reply-To: <20250305154038.2062-1-vulab@iscas.ac.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250305154038.2062-1-vulab@iscas.ac.cn>
+Date: Wed, 05 Mar 2025 19:17:15 +0200
+Message-ID: <874j07xuqs.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowACXfTAAcchnVHqTEg--.44952S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww1UWryxArWrXFyxuF1Utrb_yoW8JFWUpF
-	srtFyY9ryktrWFkF1jyF18uFy3uas2kFWUK3s5Ca1q9rs0yr9Fqr45tw1UWFWUGr98JF13
-	tanFqrW7JFyxCF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9j14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
-	6r4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvf
-	C2KfnxnUUI43ZEXa7VUb8hL5UUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ4MA2fILwlxYQABsQ
+Content-Type: text/plain
 
-The return values of `drm_edid_dup()` and `drm_edid_read_ddc()` must
-be checked in `tegra_output_connector_get_modes()` to prevent NULL
-pointer dereferences. If either function fails, the function should
-immediately return 0, indicating that no display modes can be retrieved.
+On Wed, 05 Mar 2025, Wentao Liang <vulab@iscas.ac.cn> wrote:
+> The return values of `drm_edid_dup()` and `drm_edid_read_ddc()` must
+> be checked in `tegra_output_connector_get_modes()` to prevent NULL
+> pointer dereferences. If either function fails, the function should
+> immediately return 0, indicating that no display modes can be retrieved.
 
-A proper implementation can be found in `vidi_get_modes()`, where the
-return values are carefully validated, and the function returns 0 upon
-failure.
+No. It works as designed, and drm_edid_connector_update() and
+cec_notifier_set_phys_addr() *must* be called with NULL drm_edid in case
+of failure.
 
-Fixes: 98365ca74cbf ("drm/tegra: convert to struct drm_edid")
-Cc: stable@vger.kernel.org # 6.12+
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/gpu/drm/tegra/output.c | 3 +++
- 1 file changed, 3 insertions(+)
+> A proper implementation can be found in `vidi_get_modes()`, where the
+> return values are carefully validated, and the function returns 0 upon
+> failure.
 
-diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-index 49e4f63a5550..360c4f83a4f8 100644
---- a/drivers/gpu/drm/tegra/output.c
-+++ b/drivers/gpu/drm/tegra/output.c
-@@ -39,6 +39,9 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
- 	else if (output->ddc)
- 		drm_edid = drm_edid_read_ddc(connector, output->ddc);
- 
-+	if (!drm_edid)
-+		return 0;
-+
- 	drm_edid_connector_update(connector, drm_edid);
- 	cec_notifier_set_phys_addr(output->cec,
- 				   connector->display_info.source_physical_address);
+That case is slightly different, as it doesn't actually access the
+display at that point, but it wouldn't be wrong to skip the early
+!drm_edid check there too.
+
+> Fixes: 98365ca74cbf ("drm/tegra: convert to struct drm_edid")
+
+When you claim to fix a commit, it's encouraged to Cc: the author and
+possibly reviewers of said commit.
+
+
+BR,
+Jani.
+
+
+> Cc: stable@vger.kernel.org # 6.12+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/gpu/drm/tegra/output.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+> index 49e4f63a5550..360c4f83a4f8 100644
+> --- a/drivers/gpu/drm/tegra/output.c
+> +++ b/drivers/gpu/drm/tegra/output.c
+> @@ -39,6 +39,9 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
+>  	else if (output->ddc)
+>  		drm_edid = drm_edid_read_ddc(connector, output->ddc);
+>  
+> +	if (!drm_edid)
+> +		return 0;
+> +
+>  	drm_edid_connector_update(connector, drm_edid);
+>  	cec_notifier_set_phys_addr(output->cec,
+>  				   connector->display_info.source_physical_address);
+
 -- 
-2.42.0.windows.2
-
+Jani Nikula, Intel
