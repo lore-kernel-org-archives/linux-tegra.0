@@ -1,118 +1,146 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388BC567D;
-	Wed,  5 Mar 2025 17:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29841FF1A2;
+	Wed,  5 Mar 2025 22:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741195045; cv=none; b=VmLlw1forfPuWfmRWD0E8Q2f6Wzsj6ItWtroi7qWsGrWxYzsBlnUh2c4yZqZNEPl3iJr9oU8xXGvBNj739kttU3uyk3JwsJdA4D+lovnPgdG+X6pkukJmGLbmW9Gi/+m+fd/AZVsgCgSJ62u+FeRsqerDqpp4ie3db5kYEVOAa4=
+	t=1741215068; cv=none; b=le7mAKMslTCNVThWo6PhIaNmhs6vKLxKHsTStgdyb3v3xamsYUXD9bZjwO/oeZ5XyYWQ3VW0u/k2wlxvtwP7zqA+fY6cUSU2+9u3eZM8aZHqWzmeeV53nFjLpZCZjdJbX6cVwuYU7OnwNRTptCXPpeJHZyKzsfHDlv4c22xqUOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741195045; c=relaxed/simple;
-	bh=rgaJ8Vl+DVZyMaAeb8l37NkQiLBSOoKduXMe+7d8pA8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=sjODuCFgbCCxHbyUWL2LZ/QtJLiwsZTYzjNE8nUb1yTO6DuajmFXr+ze0RjNfpgKM3AuWomYp4XeOUyNs+pQI5C+jG4RVG/JIXLMfnbDKp7MnjsVPqkEdHQHj5ruybhG+J9Sz8dwnJUlsF9c2tx+YxRJZvJkyIjrXgWZFjhUu/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R6bwMf49; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1741215068; c=relaxed/simple;
+	bh=4kn0alaAsGGXPN7YZT7+IeoQ/dtwpPBvCEYm9hxAS+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i2qui6cMjBmqqFONR1yx8B93eotNBpo81QifFkpq9NT3FqrvC2I5AnHeZuspqcfAB1j5pc10o6dQ1xW2w2F4weGFWp2COuTEnshqLSh8kY/8/1mKgnljFAopsZUaT13ep4M+Q8BpFx7SHgNPFl7o9WcQ4GWlAYU7LsIyvFrcC2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uln1OaN8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R6bwMf49"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741195043; x=1772731043;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=rgaJ8Vl+DVZyMaAeb8l37NkQiLBSOoKduXMe+7d8pA8=;
-  b=R6bwMf49MV/Tbvm5voY39fmTyABwvgNwX+CtDpBSoyyHrjFQgtq7H6Ib
-   9KVV2rR3XziuUUpHvEBo3HaOVA0DN4JE+BKL3N/Kd356Gc4KV0KYHtVxQ
-   tV7Ujvy1tSErh8JuCSkTR84+jUME22i21FWAI4tdOGI51Nc1/XvUaIfYK
-   UF8LOD5hKiew7LKUECCDr7KJGwexuC3htpeawD+yV88sByx6pQR7sgtuS
-   ud1dz2oLH5gT0Kj10/vH004JULjUMzLEz9iEAb1qx0UUUxlNFX0J4Wvbr
-   +bubQoblckHvhX5EVQJ1L3b5ZbjMykauptQ3PBVIt0syC/GAW4I2fO582
-   g==;
-X-CSE-ConnectionGUID: bBpFmfLdQf6FQUAkLUThJQ==
-X-CSE-MsgGUID: A/vvGbDFRZGerVt4IOTbqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="59717255"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="59717255"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 09:17:23 -0800
-X-CSE-ConnectionGUID: AFdM3JGSScqtVQ+GbsGbVg==
-X-CSE-MsgGUID: V0HpwSGmRH2oG5k/Wqy/Sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119672490"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.49])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 09:17:19 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Wentao Liang <vulab@iscas.ac.cn>, thierry.reding@gmail.com,
- mperttunen@nvidia.com, airlied@gmail.com, simona@ffwll.ch,
- jonathanh@nvidia.com
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>,
- stable@vger.kernel.org
-Subject: Re: [PATCH] drm/tegra: Handle EDID allocation failures in
- tegra_output_connector_get_modes()
-In-Reply-To: <20250305154038.2062-1-vulab@iscas.ac.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250305154038.2062-1-vulab@iscas.ac.cn>
-Date: Wed, 05 Mar 2025 19:17:15 +0200
-Message-ID: <874j07xuqs.fsf@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uln1OaN8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44FCEC4CED1;
+	Wed,  5 Mar 2025 22:51:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741215067;
+	bh=4kn0alaAsGGXPN7YZT7+IeoQ/dtwpPBvCEYm9hxAS+Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uln1OaN8EPJRkG/4lBXIoKjv30iTN6/M4db/1cmIwCxcXDBwJ8SOm6Y9H0es7OpNH
+	 UsmxUM8G1algdX+Es2HLaRn7rjjQ8JmtVoiEJlTx+HL1cMnBPgHiFA2GeJOj+l5s05
+	 k1++sYg74Ytv9B3HM0cy/WUF1U6a7/ij0dKVMC40G64JBZ01ICmYVoo6EmVfNkNgn6
+	 Kp0wbcgYm1fNCt40sKBzDf3vxxAzzP0xlK0FOqj7d9DXFvm532KCdRHMfxUW3SVLMX
+	 TEgcfOEzqYc+rgwP3DLOXMbroHI+DMuBQ/yU04hxT3IitZ7BHkBj1IjkpnLMzF51d/
+	 H5rVjIvfPmIog==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: soc@kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] arm64: dts: nvidia: Remove unused and undocumented "regulator-ramp-delay-scale" property
+Date: Wed,  5 Mar 2025 16:49:52 -0600
+Message-ID: <20250305224952.2995841-2-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Wed, 05 Mar 2025, Wentao Liang <vulab@iscas.ac.cn> wrote:
-> The return values of `drm_edid_dup()` and `drm_edid_read_ddc()` must
-> be checked in `tegra_output_connector_get_modes()` to prevent NULL
-> pointer dereferences. If either function fails, the function should
-> immediately return 0, indicating that no display modes can be retrieved.
+Remove "regulator-ramp-delay-scale" property which is both unused in the
+kernel and undocumented. Most likely they are leftovers from downstream.
 
-No. It works as designed, and drm_edid_connector_update() and
-cec_notifier_set_phys_addr() *must* be called with NULL drm_edid in case
-of failure.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+Arnd, please take this directly as the NVIDIA maintainers seem to be 
+AWOL.
 
-> A proper implementation can be found in `vidi_get_modes()`, where the
-> return values are carefully validated, and the function returns 0 upon
-> failure.
+ arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-That case is slightly different, as it doesn't actually access the
-display at that point, but it wouldn't be wrong to skip the early
-!drm_edid check there too.
-
-> Fixes: 98365ca74cbf ("drm/tegra: convert to struct drm_edid")
-
-When you claim to fix a commit, it's encouraged to Cc: the author and
-possibly reviewers of said commit.
-
-
-BR,
-Jani.
-
-
-> Cc: stable@vger.kernel.org # 6.12+
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
-> ---
->  drivers/gpu/drm/tegra/output.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
-> index 49e4f63a5550..360c4f83a4f8 100644
-> --- a/drivers/gpu/drm/tegra/output.c
-> +++ b/drivers/gpu/drm/tegra/output.c
-> @@ -39,6 +39,9 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
->  	else if (output->ddc)
->  		drm_edid = drm_edid_read_ddc(connector, output->ddc);
->  
-> +	if (!drm_edid)
-> +		return 0;
-> +
->  	drm_edid_connector_update(connector, drm_edid);
->  	cec_notifier_set_phys_addr(output->cec,
->  				   connector->display_info.source_physical_address);
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+index c56824d7f4d8..0ecdd7243b2e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
+@@ -266,7 +266,6 @@ vdd_soc: sd0 {
+ 					regulator-max-microvolt = <1170000>;
+ 					regulator-enable-ramp-delay = <146>;
+ 					regulator-ramp-delay = <27500>;
+-					regulator-ramp-delay-scale = <300>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+ 
+@@ -281,7 +280,6 @@ vdd_ddr: sd1 {
+ 					regulator-max-microvolt = <1150000>;
+ 					regulator-enable-ramp-delay = <176>;
+ 					regulator-ramp-delay = <27500>;
+-					regulator-ramp-delay-scale = <300>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+ 
+@@ -296,7 +294,6 @@ vdd_pre: sd2 {
+ 					regulator-max-microvolt = <1350000>;
+ 					regulator-enable-ramp-delay = <176>;
+ 					regulator-ramp-delay = <27500>;
+-					regulator-ramp-delay-scale = <350>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+ 
+@@ -311,7 +308,6 @@ vdd_1v8: sd3 {
+ 					regulator-max-microvolt = <1800000>;
+ 					regulator-enable-ramp-delay = <242>;
+ 					regulator-ramp-delay = <27500>;
+-					regulator-ramp-delay-scale = <360>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+ 
+@@ -326,7 +322,6 @@ vdd_sys_1v2: ldo0 {
+ 					regulator-max-microvolt = <1200000>;
+ 					regulator-enable-ramp-delay = <26>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+ 
+@@ -341,7 +336,6 @@ vdd_pex_1v05: ldo1 {
+ 					regulator-max-microvolt = <1050000>;
+ 					regulator-enable-ramp-delay = <22>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
+ 					maxim,active-fps-power-up-slot = <0>;
+@@ -354,7 +348,6 @@ vddio_sdmmc: ldo2 {
+ 					regulator-max-microvolt = <3300000>;
+ 					regulator-enable-ramp-delay = <62>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
+ 					maxim,active-fps-power-up-slot = <0>;
+@@ -371,7 +364,6 @@ vdd_rtc: ldo4 {
+ 					regulator-max-microvolt = <1100000>;
+ 					regulator-enable-ramp-delay = <22>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 					regulator-disable-active-discharge;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+@@ -395,7 +387,6 @@ avdd_1v05_pll: ldo7 {
+ 					regulator-max-microvolt = <1050000>;
+ 					regulator-enable-ramp-delay = <24>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
+ 					maxim,active-fps-power-up-slot = <3>;
+@@ -408,7 +399,6 @@ avdd_1v05: ldo8 {
+ 					regulator-max-microvolt = <1050000>;
+ 					regulator-enable-ramp-delay = <22>;
+ 					regulator-ramp-delay = <100000>;
+-					regulator-ramp-delay-scale = <200>;
+ 
+ 					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
+ 					maxim,active-fps-power-up-slot = <6>;
 -- 
-Jani Nikula, Intel
+2.47.2
+
