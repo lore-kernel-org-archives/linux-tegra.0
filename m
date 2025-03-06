@@ -1,105 +1,102 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00B7148FF5;
-	Thu,  6 Mar 2025 15:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3ED419B5B4;
+	Thu,  6 Mar 2025 17:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741275887; cv=none; b=fYQYxO63SXqApByXCT8A8Nvd+PlDkKti0xdhGyIeKi96sqkmZ4OfPoagEkNjO34NzV//s6xljsMz16DyZHyE2CSVA7nwXxTOfxAV/14d8gNmKhGhL/R5ML9jnCyHe1Mp1PmroLHX3V51Zgol62V4mGBEug36t/6ZfKbjGxN5FqQ=
+	t=1741282473; cv=none; b=focANeVCMMQAEYMZiLHbBfyl0frXWSQcxzLcO2fWMBTIYeKXUEMkdaLsjM9AdRVkHq0YpNL0RGRC1dBAs0PHyStxzgwrjUE2iR9gI0WndS1oPg4WoFCRJiXwa32DnfT2D3vGZjTwYMSyxtc5H+9DcmDVb4MYbZKT6YOa7T2ktq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741275887; c=relaxed/simple;
-	bh=aixKISa0kyko036hL5V+qG8LL9qF3VO6FIAxvZvxJ70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E1b5oS+VmPT+Smfy7w3WnN2IzyEnfQjqxaUjsr4H7gYWaLAhLC/SLMV/8oie7uA4AWxOtXBVAMc8lFsYMABDbk/LckkKHB8qFsdT9oiizCTQ7uWXXJmReKFq/dlPGkP23EFOVqoFzkqhl8sAxemuenXQUdMzYnFLx7Gnn9mG390=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=zg5fWzzg; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1741282473; c=relaxed/simple;
+	bh=QhjZjPi8Pu4MuaZELNAV68zJpLOkhthhs/bKYjykGQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SG0z9jecXSPOHMixivOqF6cjg+dmWA2crPNfDwJjLxwUpv6AQjtGXXruxR6CXBlBkkWmaN8u/gCIc6xeuiO0OtPUf482Udz3G9NNHtHdN0USHCfc7bLWYZZXNFcMWP0d0o8XlJAC8KMPHdk7Xp0+JiBzrRlXAPjdRtOCw01+45k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UuqHSGlb; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="zg5fWzzg"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=iqLTGgFW/Idb/RWJchf5+oj54Xp1Xr/3EggXQFnKjbg=; b=zg5fWzzg0ciofiTPI5rB/vbzNy
-	WfPtrhrK/GWO2fk4YllvIpM+OR9zwj+nAcHdFxGejKYSLJxFb14lamIUz029dUennkO+S/8xVwuKc
-	pWpGlU0OakPqbwkewGvaK7xfdpzRob+q6JwaxaXhNoWbqP9Op+aRtpsOdJre4ZOSQX1nrxyDbY+36
-	dwWYXr59SJGNLnf9PF1mlryhiM4aHClD6+aAm22Y4/shvpvQn0l2CNkrHW7lUv7g6/QFOfOTssfz+
-	4myjdw/1c6uQYOEnEyXLxfIhfWMGyWFfhFtY6V5aE6sU8xkDUpYR9cz8mguYi05IG5uCLynbEIjiF
-	Xtu/bAfA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36454)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tqDOj-00067c-2X;
-	Thu, 06 Mar 2025 15:44:33 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tqDOh-0006uz-01;
-	Thu, 06 Mar 2025 15:44:31 +0000
-Date: Thu, 6 Mar 2025 15:44:30 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>,
-	Thierry Reding <treding@nvidia.com>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH RFC 0/5] net: stmmac: fix resume failures due to RX clock
-Message-ID: <Z8nC3vvZWAl5_8WZ@shell.armlinux.org.uk>
-References: <Z8B4tVd4nLUKXdQ4@shell.armlinux.org.uk>
- <f783cf9c-9f79-4680-a6e9-d078abbd96ec@nvidia.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UuqHSGlb"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-390e3b3d432so564325f8f.2;
+        Thu, 06 Mar 2025 09:34:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741282470; x=1741887270; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=klXCq3m5VWm+0HPJRbYO3amBiaqCuvTQ/FZ8TPHnVFA=;
+        b=UuqHSGlbudtONVH6pqbW0uEDW3H8KhudYGqeQCMmD3lhPJZfowWJPORyrkpCFC98VL
+         iEv4vrS/MqgFGnHl4BvcJO+eXrXKqRuUmK2dEYKuGu+YZGtcn0Xmwue8x5Atf/Rm/WfS
+         nEFiuXXdzh684JbPLrLrP/XwQ6J2A7X4vwPSl+Xh10SGlCIojJzY6hfljjGSfdRL8q8z
+         rebjOpHprjFM6rt60IN2LBKB1kY7bZbrUuN7YGqzQY5XccLgI2exTpHGcFfBC3SE6UbS
+         OOUvHX1srhul+d2io8gxhlOoxk7KVTOXjlgGzbU3FvuyylbNOciDscVpWxsk6QXdrdbf
+         l1Qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741282470; x=1741887270;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=klXCq3m5VWm+0HPJRbYO3amBiaqCuvTQ/FZ8TPHnVFA=;
+        b=pRpp2IdCH6DcYsH9soQMNq+aAA5iQWh0ScW3NJ2cygvEvb2I1UGrZCnEfcr/lU4uKJ
+         zW0EJcGCGF+EmVeQNqlCJx7rOd2zmnb23gwRIRIK+iVSWf4Ejyxr44JkHljCfTuJoKGr
+         qDTJEiGp9ElE5+jfl5mIOIP6ZiOGRaV4doXCFtiOvQXt6JZmJMg1COhYjVxuM07tAYTA
+         6mXkK9K9OIiDFwCdMSZ5OCbyWd7gpu5sD1ljkkrNqrSEblf5BqBE1s7feSsBCWjxKgMm
+         J2+VV4p8pR6LHcicjMay2pYTry364+uxAjHZC6z64f1lST9GAwEqz4giEqR9Et/ybzcA
+         rBMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdXGamYxEEOrjR910gKEGCEeds49g8iowVHBqxm9A+QWiCQVjDe2+54YyTofHU/PXfHsy7eRQyKT6FgME=@vger.kernel.org, AJvYcCXnj7lGDT+z4maV7V+BK+r2VGQ7CNykrYavrlnroiNg0HFjgY7M97NmMyYY72D5Mi2PzH3E9sazQTgMF2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLzQmTq2UaL3wvD4a+28sq/B4EBP1L7cOC2/wqvmJr3gw/aho1
+	y7fIz4BouslNqWpTG2Z8gVyb4H8w2EMxWelJiBL6CC4Nr+aWhM/p
+X-Gm-Gg: ASbGncsvm/a+anZjGDcBK5zFYh1auw+js/X/Yd9qq6a5uBv/FmJT/3o68uzbaLtZhd0
+	rzjKViPLWNDLfUPxGpcfmgh8g6g29oJ9lY5PZVctIYTZbqo9kf/a5CoQZ8bbQvWKEpu0BUBZEo8
+	E1fWxzGV2pcvkug6E04G49IOs01cjFtZWoc7kAS3qAJkh09bAvCM0H2bAZVq+MifjTBLXKaduiB
+	cJYnE0eAR2W7DctjC6vJ+T1z2G9E2HG24ihhrjDFK7smbc+sOeMqWxPKcSSX3vLz6YHXolGAioF
+	jXiEcIl8L5eriZM6CSVH9UGjyWawpT0dJBRvXt/jwz5IKr7OGqFt4DS+AoICkn340NkXYcvr2D4
+	Nz9jgw5ihJD0bGlRFb+j/weVWMWDxr3ybydeU
+X-Google-Smtp-Source: AGHT+IEnKllRb/k1/H98dNGUZJ9z50/qfSr+qeIFuQxpsKNHvLmqaCrlFdFgoQXYNB7IHYqXWxdlKg==
+X-Received: by 2002:a5d:64e9:0:b0:391:2192:ccd6 with SMTP id ffacd0b85a97d-3912192cd5fmr6881752f8f.39.1741282469939;
+        Thu, 06 Mar 2025 09:34:29 -0800 (PST)
+Received: from localhost (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912bfdfbb4sm2738249f8f.30.2025.03.06.09.34.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 09:34:28 -0800 (PST)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: soc@kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] arm64: dts: nvidia: Remove unused and undocumented "regulator-ramp-delay-scale" property
+Date: Thu,  6 Mar 2025 18:34:22 +0100
+Message-ID: <174128244841.2024061.11431672640522584852.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250305224952.2995841-2-robh@kernel.org>
+References: <20250305224952.2995841-2-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f783cf9c-9f79-4680-a6e9-d078abbd96ec@nvidia.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 06, 2025 at 11:30:53AM +0000, Jon Hunter wrote:
-> Hi Russell,
+From: Thierry Reding <treding@nvidia.com>
+
+
+On Wed, 05 Mar 2025 16:49:52 -0600, Rob Herring (Arm) wrote:
+> Remove "regulator-ramp-delay-scale" property which is both unused in the
+> kernel and undocumented. Most likely they are leftovers from downstream.
 > 
-> On 27/02/2025 14:37, Russell King (Oracle) wrote:
-> > Hi,
-> > 
-> > This series is likely dependent on the "net: stmmac: cleanup transmit
-> > clock setting" series which was submitted earlier today.
 > 
-> I tested this series without the above on top of mainline and I still saw
-> some issues with suspend. However, when testing this on top of -next (which
-> has the referenced series) it works like a charm. So yes it does appear to
-> be dependent indeed.
-> 
-> I have tested this on Tegra186, Tegra194 and Tegra234 with -next and all are
-> working fine. So with that feel free to add my ...
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Hi Jon,
+Applied, thanks!
 
-I came up with an alternative approach which should make this safer -
-for example, if the PHY remains linked with the partner over an
-ifdown or module remove/re-insert.
+[1/1] arm64: dts: nvidia: Remove unused and undocumented "regulator-ramp-delay-scale" property
+      commit: 90a1dc90d08bd1b8a324d4272d06d74525f51409
 
-Please see v2 of "net: stmmac: approach 2 to solve EEE LPI reset
-issues" which replaces this series.
-
-https://lore.kernel.org/r/Z8m-CRucPxDW5zZK@shell.armlinux.org.uk
-
-Thanks.
-
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thierry Reding <treding@nvidia.com>
