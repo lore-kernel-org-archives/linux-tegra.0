@@ -1,171 +1,203 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2076.outbound.protection.outlook.com [40.107.243.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A34221DA5;
-	Fri,  7 Mar 2025 16:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741363468; cv=none; b=jHOSTRNwhX8ALpifge7dd1UCLE2orOflh5MVJHSqj6Kdq+37lIBGF/ayVyXtbV++Loc2dWS/q7gTO4PbvQkuSS590rbzPxMlW1ZNlQ5bhPUGhMNragGuWsJq7gx6NptLxFwTlMCImunVgDpZagc24GC9ZD+dWvZePRcoC3v6q9M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741363468; c=relaxed/simple;
-	bh=zQ5/51OJ6A7GH/km/DNm0NrLqE9BBXAG+s8BrdcniLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cC9wcsfAE6dkPv5K1JQUmI4b20R3OFGaXto+qusJRtkAUJd7B6WCSkRSMLoonLuDPZeYLE4juOaeguEbKlimVQNO9LjKmRMsjv5/YqRV6kLx8TcS7TmcpZ9jY/evaRX4kyxIFVnif1GvrNxDTW51jCyQKT9OHHMclS29XRN95gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sp5q/mAj; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD48D220696;
+	Fri,  7 Mar 2025 16:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741363893; cv=fail; b=h4CnWPCfz61AypLGcmUnwn4ZopAp8zg97A+K30M0cCU5G+KCwZPFq4MSvvnUNf99MuRt8Cf6P1WEkMnUidDaCM86Ala1lxVfjA/8bb3PuIVN7pMzeeV2txsV55rPh2trC9QmvJWt3Fqj6xUoFTkt5dda+DiI0qalXxKmu8oGbCo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741363893; c=relaxed/simple;
+	bh=z828COofRP4MZKJG1DO3Y28eqroxG/4265JXCXrFueY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fhHLvm9Rdtku2MJkjGK1kU5LzM/Ta3IUPvuugw42Yrp+cej8iy9UNk/3jE6HCL8nznN1g2nMvB/3+4BfX7wJ71dyC2c7Bw/UXZdzwYDa1CToBtFIgnu3dw04z9k8ItMXVM4Bqke+pLaw5pQJvQr1foHB2sA40z/MlCMxg4qeLwk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IGmzej1+; arc=fail smtp.client-ip=40.107.243.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sp5q/mAj"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bcfa6c57fso11917165e9.0;
-        Fri, 07 Mar 2025 08:04:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741363465; x=1741968265; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwjL2JeCD7492pD+v5K74R2jLpOlCz510bxKlVeMnHc=;
-        b=Sp5q/mAj0Beb2g/kKB5ZQ9fZxSOx+qamj0JJ6STfywu7FUQQz5hyvLshSl9NHLAh+e
-         EThXjGGoI/HO9trZBy9EfHDt2jemBSqW1DfTLfKhxkBYA+M8cpbm/vorSk2UKOW6Ah+7
-         1JA5mw+3e7sx+OMnR47ENrbae1LiLN/8tayfjtZajy2bWpCS7QIywLWKznyaSQ5tFfTD
-         Q9FmBARQP/3SUiyz5lWZ9t7U9C/rB/f9W/zCvrezHTzWgGF1htJymJKBfq9PR4ISMNAo
-         2g9dSKGG3gCPN539iyPEKOTEr61o7Nn1/MFaetrnyEZVnV5fb2prbxEhdX00czAXiI/l
-         1khA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741363465; x=1741968265;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WwjL2JeCD7492pD+v5K74R2jLpOlCz510bxKlVeMnHc=;
-        b=H3mk2JiPZM5EClmruLLWgkhOBjypeWYN0ZSYCjm2+O+i9HBzV4HS38yKLCLw8g0fIi
-         0xrPeHJGRcvGe1muImmSF9tZJWiRwPob756qmcg/Gk4Rze2SxfJe4IENpX37FEofrDrT
-         cYfD37aPL/RErD9T9wgdj9sfTExeNya96Ul+eckOjGdNTKr2N4RakTMHiP30ZrCc7BRI
-         UznQ08pEK1itx33Dk4iiML4czTB8gaGpGsqm7igepZx1tuj+0Q34luL5PjllLhYA2cN8
-         zWJkpgD1E6xMjPT7/9ESUdDaVqQoYlw7iQyqskAK16A9IZ7uDHNceZkyKty+CxRysB1U
-         bTKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJPCTSB8l5b6CnQTuDstGfWdagqgwig+0XS194+aN7n4a9FarJf2as6N9mumfTMu7EWDdoWfnNNr4q12w=@vger.kernel.org, AJvYcCVykE+hdbqF9edJgPZdRVO/aJaQe9nNrjHrJTkJZTQB/VBIGvNw6+j7pl0eMEIZhpfEhdhYp6XN2mBuLY0=@vger.kernel.org, AJvYcCXPmWC9AHJ0BIGL9UQnOorv8sWZi5636XlvKVdRDsN2j5SWPV0A2XUODVu09vxF/bcl/00hw/3mFPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZNxuWd5WNJHHnJ533h3xL/SS2O3frxvX+82aqloeihHoSe6d7
-	T5f/Pfon7PP1DKVzYKRBaadK8jd059DwIU4xvKsMzhFBx2NahfdE
-X-Gm-Gg: ASbGnct3SzRX7Bp9O531tyPFwF5KpdggA6kS8bOsNTOq6ijf1sxJpfJCU0THRgUMAxo
-	7m8uad2NMpcRjpreJQQ9/bSc5svXvQy76yi3ZsURq3JbOpWoEJOk2XYN53LtBI/enLzrGLAaUUt
-	GRKchusykmgdoaAYyNRKCaFpOR8Pi8HUK33bQJ8schSR6ZNu5ArVAPTlbhzFz06HzR5WNjA0yox
-	0QHe6gwMIgLEARxKZ8USkeQW3NIYSGvpbwIPMVEkxr1lGg4z14WIyyinCXh6DIeRl1CvFxemTAo
-	mfP/WWClKkPauljgEFQnvQTN7CeSqIT8j56G0YVTQTZ02s7F9gXyp5rwIxLfr+YF1zzBwMO9iho
-	OiaX3++39JKf/D+4ArQid1vTAkCxN8GI=
-X-Google-Smtp-Source: AGHT+IGrAge31wWWWkJAL7QmrD3Y+M3QdNovaR6s8dn2J2Biu6rh9+8Zpq+lkjc7JUZ2mDgObHmWgw==
-X-Received: by 2002:a05:600c:190f:b0:439:8346:505f with SMTP id 5b1f17b1804b1-43c5a631638mr24627945e9.20.1741363464415;
-        Fri, 07 Mar 2025 08:04:24 -0800 (PST)
-Received: from orome (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd93c9b6sm55198925e9.29.2025.03.07.08.04.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 08:04:23 -0800 (PST)
-Date: Fri, 7 Mar 2025 17:04:21 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, 
-	Aaron Kling <luceoscutum@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Jon Hunter <jonathanh@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] cpufreq: tegra186: Share policy per cluster
-Message-ID: <cebhjkffkcksy4xx42yyfdpkyd22rmqbwmtcqoqn2grt7jy7iy@plqfstv3ng62>
-References: <20250216160806.391566-1-webgeek1234@gmail.com>
- <20250303100306.rwaosbumr7omcqce@vireshk-i7>
- <fndrufuwpt4nptgs7hlucio6j7ia5sc4yeyasrherdv4dxs7s5@p4y6wsa7mxin>
- <c4ef9787-aaa6-463b-8c7d-6772fc208a48@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IGmzej1+"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q0EwFDjkstvTqwVK0JY49+ByiQIae9tfiql2rjdyTnLnQxjDk6DXOe21U7FkdcHJ6XJJRzqZixuQtU1pvt8vJGlFJcQEKbzOJ8oT2BCKFWXJTdObZ6yGvAPqnFT6N1C7HoPhsKd/sfYWLltM6Uf08yaPBfUPn6bCC2gY8aiDesGhSRlN+8FmJ/4GO1ik4jbRGzYxfnEPSbxG2zhFpTLISXW4UDCHEIOAMBQaQ8k8WYg7TZLyAPq8mY51KBAHR3vqkM1TYoIcJfd1SGB/GwpIRdEz1FKj4rWztV4PN7e/jMrLi2M01Zs0nDZ9YwqLpqJZ7+3Dy6jRIYS182B7YV6bjg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XBYuoHWs860VfL10nrLLC/KLmKXNfHEYvVGwVj9ipH0=;
+ b=QO0D7N7Z+efjoCWoB8aj+4mxUQhIjF6vW7hhvpZs7HQOZyFAdgG/ibtfoPzuEamQIyFCbMJMfchleaYrB48eNvUM8+MwnSYjbASmferSyPho6w7J62VvvDLq/6qzpvELmHXCzQumEeBU7LmDm2gfNbUzAwJV0pihinK83Xuvi5OWWwRicOauGvD1CFrIUXAJgfspTs22e9HyLpVtGgGBBWpOMrIhSBbtkqFaupn6yiuy3Rhx9dilJQU2/OaHG518J8BsZWMTyDeUZze7zje0MFDojdrOCbI9H5hMSaHExVUMWWdBTFzaN6fGLmN1SOusKgFcud62b21IDcBO1fpt1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XBYuoHWs860VfL10nrLLC/KLmKXNfHEYvVGwVj9ipH0=;
+ b=IGmzej1++HCGfEgVYgvItJPjG5ewSbClF6VQpc1+084y3SoyXqqCe3o/qAP2bdmZFAe16V1pneo+MpiFId5kmb14qPJDoaQ0wHL/9E/DQFK1uz5TstVkdumCeaIiP8uiwoEWY153nphglw7s3LP27AQp0l4do2qPdTknoxqxky4ErZmIksmQFYD2u/hwzvJ2AjNba2T/dA//+vKw6FfJC39IrinqponjG6qhkb8N4gft/sx24AbXYRKrIeHH3DJdCLE3/5ZeC5XrHHFhL9bZqLBGWTXwVI/w6ZQz2BZxE/Z0gFG33Apzdvp1w2FHTnliJlZV/b7bW+0OZT5cM33I9g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by CY5PR12MB6479.namprd12.prod.outlook.com (2603:10b6:930:34::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Fri, 7 Mar
+ 2025 16:11:28 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%6]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
+ 16:11:26 +0000
+Message-ID: <29bc7abd-b5cc-4359-8aa6-dbf66e8b70e4@nvidia.com>
+Date: Fri, 7 Mar 2025 16:11:19 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC net-next v2 0/3] net: stmmac: approach 2 to solve EEE
+ LPI reset issues
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Thierry Reding <treding@nvidia.com>,
+ "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Andrew Lunn <andrew@lunn.ch>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+ Paolo Abeni <pabeni@redhat.com>,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <Z8m-CRucPxDW5zZK@shell.armlinux.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <Z8m-CRucPxDW5zZK@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P302CA0022.GBRP302.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c1::7) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nbz2j76m3ebgwwor"
-Content-Disposition: inline
-In-Reply-To: <c4ef9787-aaa6-463b-8c7d-6772fc208a48@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|CY5PR12MB6479:EE_
+X-MS-Office365-Filtering-Correlation-Id: be366105-c7db-44ce-3af4-08dd5d92b604
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OEpiaHozb3NSSWliVUxaRGNoR1RUcHpteHhPOXJOM3FNUlNBVW5NendONGQ4?=
+ =?utf-8?B?T3g4cHhyWERFejdqOUtTUjhuTG9qV0pCUTZvNE11VEl5d0ZtdVJpWHZZdGJ3?=
+ =?utf-8?B?U05lOVUvTGtNZGdRbndVN1I5OTl0bWZ2TUlnV2t0STU5bTIrdkRIdGtjWXZN?=
+ =?utf-8?B?R0Vka1A5aWxPS0dEc1pHTVZYWEZ6WjE5NnoyZE1vb1lvQkpOZmZCbFphT3pV?=
+ =?utf-8?B?M0ZVTGdlNDNFejhPVEZIRmZLemtaa3ZDZnQ1STZWVFB1MWFUbmI2WWRQSkM4?=
+ =?utf-8?B?Zzc5RWJGYklXdUVFNlVEWGVXRlY4WjRzNUdIa1RPbWRmQVdPcVhlcnIyNmlX?=
+ =?utf-8?B?NmQ1OGxWZkMrRG03MWMxQ3RHVisxbDdha29NV2lUL05nOEdhYXdLbStHdkpK?=
+ =?utf-8?B?aUM0dy9kUFRYRVh2VXJtRXgxOWpFa1JiaElNZ1FLZEJiSXZPUkdvVjZLaWVM?=
+ =?utf-8?B?aWZVSS9XU1lYclVoVGoxNWp4eWtXbnhPNnE3K2h3cmhaN3FNc2h1b1RKK0Z1?=
+ =?utf-8?B?ZjVIaktXVWF5dFV4bG9wTG91Ym5XZkhWd0hpazM0MDEzcG9TbGpkaU5PckJZ?=
+ =?utf-8?B?bWpvQ1BMUEFqU2ttblJpS2EvamVOaHoxRkk1bVllTGxvVUFpVXNmSXJsdmVX?=
+ =?utf-8?B?NnphOEdEZGRPU25EQlZCUmxHVmhhZzlWdXB3dFVoalRoN0ZoOEJtSWtsT2NJ?=
+ =?utf-8?B?TlMrb2lycnFLc1dNTDVUYkVUT1l2SXBzMWU5Qm5yb0MxUXl6OVpCeTJ5UDk4?=
+ =?utf-8?B?QXAvWk55ZkJoZVF0OXRkNGY2UWN0UXdGZmpWSmdpZ1pQM1VYRUZ4clBHMEZn?=
+ =?utf-8?B?NjIyYi8yaGFhMHFNczQ2eVZJOVQ1SlluTUh0bXRMMDhPV0VJbmZnL0ZSM3cy?=
+ =?utf-8?B?SHQ3VXp5NHNKbFNCaDVubG0rRHZtcEMvbHJkYXovWHplSnZndUxieTh4WnM4?=
+ =?utf-8?B?c1RqVHdacnhuSEw3UzdnNTVxb3JRd05nTmQyR3dCeW9KeDRVbTNvNjlPMXRX?=
+ =?utf-8?B?RVZnelB4dXJyNjdkeUhXV3phd1hkUlI0cTcwVE9IZHRpc2NpeVpKK2NoOUd3?=
+ =?utf-8?B?QUxQUVpvaU0rWHF3aDA0QS9uMzNHRit5N3ZnQVFKZWIyYmxWZGx1dEJ1QnZN?=
+ =?utf-8?B?N1NCN1dZTXdWTUJKc2hwVXp6TDJYWVlKODlNMEpnTFpWcjUvelpYZ1F5ekY4?=
+ =?utf-8?B?UTVJK3Q1QkFNNWZWUlFlRVl4eUxrd21iYkkrMG9RZ1A1N2owYTMvcE9BdGF5?=
+ =?utf-8?B?ZFJMWkJiSVFYMythdGFMMXJhWTdOSld1ZGdadnR5bXNNYlIvb0hzeTFPckhh?=
+ =?utf-8?B?ZVcrY05DYmpSYzlwYlQ0NkVrLzZrNUVRZjhKSFBDcmhwQUw3UzAvVzdiMmJZ?=
+ =?utf-8?B?WCtURk9uYVVYOTZXNnRDU0lVWi9sUjdjQjI0UFQrS2Rna0RmVi8yNythNmJB?=
+ =?utf-8?B?WjZjK3NMVmZyc1FQOVZNWGlqd1p5RXh1eWlDY0lidkgwVTk2N01WeTZEQlYr?=
+ =?utf-8?B?TWcybjJ6UWdUZXV0UDlmdUlmNkR6VzNWR0pQd1NpbDl3VElqdkpVY2pYa3E4?=
+ =?utf-8?B?c2ZFYzBUN3RBZWg1ZXFKMHZJeTBnVWVjZVdnR0FsTkY1eVFMM0kvZjBseTgw?=
+ =?utf-8?B?cS9JTS93ajRyVllhdnE3TW0wM0RDeUJRVitOQlVzWkFLYkQrcWw5L1BFSk40?=
+ =?utf-8?B?d2tSdlI4eVdUY1FuM0tRYkRRbHN2bEpSSGhubVlzSlZhcXJ4S2N6dzEyK25J?=
+ =?utf-8?B?Kzh2cUM0eWdQT25GRnhlcDdVTURkSitqTjliQVJmVnJEZmpxWFU4SU9zeXh5?=
+ =?utf-8?B?SS9mcGFKczlyakQyQ0hjV2JKckk0WEdCY2xtL0V1cHZDRkNma3MxTFFaNkt6?=
+ =?utf-8?Q?qQ+5P6M9n7SD+?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NXA0bFJRTkZMSklmd0pXYTVDanN3U0M2TnZSWEhqanRtZ3d4NFJ1ZHMzL2x4?=
+ =?utf-8?B?VXFnYmRvNDlzaUdmYlFUaFl2TWkxNkR2M2dmWGZVS2FvZFhNbkFlSkZla1Ar?=
+ =?utf-8?B?Mkx0a1dKd3BHZWZKNG9kYzhKVVg0OGdzbFBiSURkRzdNUGRyL3F3OWlUNm1S?=
+ =?utf-8?B?NTV0NFRZb3orSmZFNE9vOFgzQ1ZaMEZxalpBRlJ4VzRKcjJGd1BnV2VKWnpN?=
+ =?utf-8?B?MWgzZVZhTUVPdk8vZUhQNy9jdko5bUF5OFhIcng0eHNQSDF5cU16T1pFOHJ2?=
+ =?utf-8?B?dm5UeUFVMDMrRDEwK05XY3FNaWRLRDBRN3p3aW9ya05Sc0tjSGRyZXRZekZs?=
+ =?utf-8?B?bjIvaUhPbkRBUXp1ekliL1FuN3N4aUpuWmZLVTZHR3hiMzZrR2VpWEJ2MGVN?=
+ =?utf-8?B?SnB6K1hhWFo4Vy9WVXdWdm5qWStKR0w4eU9lQ1hsNXo3ZkovdDFmUDlyUnFU?=
+ =?utf-8?B?WDljcXdDeCtRMU5ITytPdE8vTFphZ2gxUkFWejhSb1hRTUU1QlNXc0xaOEQx?=
+ =?utf-8?B?SWt5bzFvMVVrUEt0T1dhR2EvcGxaL1lQTGZYYUU0RGtsS2d1enJ4ZHg5em54?=
+ =?utf-8?B?THRlU0gzZHovMlhOcDU3eVdzUDhpbjF5SXpua1QrazEvRU43WGhCRTFWakpn?=
+ =?utf-8?B?ZEJLbXB0bW9uYlVSUnphYi9tQURoVkRXQi90SForNGhhdTM3VzFCSGRyT1ln?=
+ =?utf-8?B?TCs0c1hYbzhJNTFHNmlDdnBicjhUUnVpZDFBS1VsMWw1YXVkdm0ydWgvb2tU?=
+ =?utf-8?B?UnpQbWJ0ejF1M0xKbVFaUXR4Vm13ZVpRUURtSFllWFdvWUpPclE5SmRVVFAw?=
+ =?utf-8?B?SDV0dk1PUXhsclY1M1RGR2svRTNVaFl6Y09mV2FGck5aWExGTXhscHJDb3Rq?=
+ =?utf-8?B?WEU4OVJKY1FZK1g3bTJtdjVBRjFjM3ZkYWpYZWdiWUNrRVJXdmZKbTFsbzk4?=
+ =?utf-8?B?T3JGQU5IVklMazl1WVVzdStaZURrQkJaVEtBSFNaZER2WEJIbURpa0hEcG44?=
+ =?utf-8?B?d244NStCTUpsUFdFWjVsaW1iRU94VVlUNlg1UmsxWnQzQ2Y4eDVQeVJsaXpX?=
+ =?utf-8?B?U05XU1ZuMUFKbkgwRFZWVWZ5SGV6RFFTQkF2VC9HdkZkQUZhanMrSTlBU2tD?=
+ =?utf-8?B?S0VsWjFRclpiWEU0NUVZYWNNM1FSRXZHMkFjVmdnTlFxZFpTem9meTdqLy9D?=
+ =?utf-8?B?d3AyRE1ON2V0c0VQM0VYZkEyTi9VWWJsKzdLTWdvajVxaDBpbjJSS2FYSWYv?=
+ =?utf-8?B?UmVxWFdkbjdSM09TajdkZzNMV2lnMCtZSGtNbnRTRWFWSVRvdGd3VytZajFF?=
+ =?utf-8?B?bXZTcnVPUXc2UmY2ZTc4WWV5K0w4c3FOQVpXNG83NS80YlN6cXdLYTRaMDc1?=
+ =?utf-8?B?Q0tYV2hIbm1MakxkU2ZkbHpMMnYyOE5WT29OOEZJZ2JkanFjZ0dKaUJ6UHdi?=
+ =?utf-8?B?MUZRNlVUTUp0Y0xGZU1LQ01Xb2RubDBYMDlJNmMreE4wajA5OXdPQkg1RmdH?=
+ =?utf-8?B?SXZONnJHUnNyS0U2STc5S2pUVTFpUjlIQ1IzcVZld2JQdU5TV2dvbkpJdnhK?=
+ =?utf-8?B?Mi9BWG9tc0RkaGhwbW9mOXlZOEJsNWl5ZUlPbWt5L1dRNWlReVlNTnN2Q1NU?=
+ =?utf-8?B?ZldFNExMN2tIaXF1M044QWMxMTlOU1VMbGhCa1RRdEVDc3pGN21SRFFUN3V5?=
+ =?utf-8?B?OXJRU2JXTVhZMy9OWDdZNTlJVmkrMzhGT01oTFRsMWZPSXM0ZE5rK3UvTWVR?=
+ =?utf-8?B?QTBhSW54U0VuSXpQaVZuTTZ1enFkYktwclI4eUl4aEt2cHlydXpPRmdtbUpX?=
+ =?utf-8?B?WnYzSC9Uc3RYa0NHUkhEeXlmQm45eGdVWnR6STNET1BKRWdnUDZNR3dLVTdG?=
+ =?utf-8?B?ZXBmTmpMblBXWC9vc09wTGltUTBqVEFhdWh6MTdyZ1dFZ3RySXptWmdETUxa?=
+ =?utf-8?B?bUcwWjZDK1ZNY3JGRHVhaDAvRDZSNU9ScVFvaXlrK0ZhTVJ3QWJzWmRlemFo?=
+ =?utf-8?B?S0xqaXAva2pBK3Z4UldoaXlOVWVpV0xDZUFKSkZubkduMUFaWkt4SGJZbTN3?=
+ =?utf-8?B?cVZOK25IS2NHTStVdnVpZlUwNjdHaEdsNllwTndVT1d1M1YvQnVaUDFyYnMw?=
+ =?utf-8?B?NnBqOUJQN2szLzlmNWo4MDdXazF0cDFVM1ptcUg0eHVRRHdhS1RMUTNoVEJt?=
+ =?utf-8?Q?w6vtHqahaV5GP8wKRHWuJoqz+XeBOG0vBscptb5OHfH/?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be366105-c7db-44ce-3af4-08dd5d92b604
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 16:11:26.0173
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZcMktB9DrG7FicFT29tR0fJvholaE1v4YBcnaEJNMi7TyF/PR7KBsUAxivTR7MhSumTnPX0mg5CeOeNcwijDAg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6479
+
+Hi Russell,
+
+On 06/03/2025 15:23, Russell King (Oracle) wrote:
+> Hi,
+> 
+> This is a second approach to solving the STMMAC reset issues caused by
+> the lack of receive clock from the PHY where the media is in low power
+> mode with a PHY that supports receive clock-stop.
+> 
+> The first approach centred around only addressing the issue in the
+> resume path, but it seems to also happen when the platform glue module
+> is removed and re-inserted (Jon - can you check whether that's also
+> the case for you please?)
+> 
+> As this is more targetted, I've dropped the patches from this series
+> which move the call to phylink_resume(), so the link may still come
+> up too early on resume - but that's something I also intend to fix.
+> 
+> This is experimental - so I value test reports for this change.
 
 
---nbz2j76m3ebgwwor
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] cpufreq: tegra186: Share policy per cluster
-MIME-Version: 1.0
+The subject indicates 3 patches, but I only see 2 patches? Can you 
+confirm if there are 2 or 3?
 
-On Fri, Mar 07, 2025 at 08:45:29PM +0530, Sumit Gupta wrote:
->=20
->=20
-> On 03/03/25 21:18, Thierry Reding wrote:
-> > On Mon, Mar 03, 2025 at 03:33:06PM +0530, Viresh Kumar wrote:
-> > > On 16-02-25, 10:08, Aaron Kling wrote:
-> > > > This functionally brings tegra186 in line with tegra210 and tegra19=
-4,
-> > > > sharing a cpufreq policy between all cores in a cluster.
-> > > >=20
-> > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > > > ---
-> > > >   drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
-> > > >   1 file changed, 7 insertions(+)
-> > > >=20
-> > > > diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/t=
-egra186-cpufreq.c
-> > > > index c7761eb99f3cc..c832a1270e688 100644
-> > > > --- a/drivers/cpufreq/tegra186-cpufreq.c
-> > > > +++ b/drivers/cpufreq/tegra186-cpufreq.c
-> > > > @@ -73,11 +73,18 @@ static int tegra186_cpufreq_init(struct cpufreq=
-_policy *policy)
-> > > >   {
-> > > >   	struct tegra186_cpufreq_data *data =3D cpufreq_get_driver_data();
-> > > >   	unsigned int cluster =3D data->cpus[policy->cpu].bpmp_cluster_id;
-> > > > +	u32 cpu;
-> > > >   	policy->freq_table =3D data->clusters[cluster].table;
-> > > >   	policy->cpuinfo.transition_latency =3D 300 * 1000;
-> > > >   	policy->driver_data =3D NULL;
-> > > > +	/* set same policy for all cpus in a cluster */
-> > > > +	for (cpu =3D 0; cpu < (sizeof(tegra186_cpus)/sizeof(struct tegra1=
-86_cpufreq_cpu)); cpu++) {
-> > > > +		if (data->cpus[cpu].bpmp_cluster_id =3D=3D cluster)
-> > > > +			cpumask_set_cpu(cpu, policy->cpus);
-> > > > +	}
-> > > > +
-> > > >   	return 0;
-> > > >   }
-> > >=20
-> > > Thierry / Jonathan,
-> > >=20
-> > > Any inputs on this ?
-> >=20
-> > Sumit,
-> >=20
-> > does this look reasonable?
-> >=20
-> > Thanks,
-> > Thierry
->=20
-> Looks good to me.
->=20
-> Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
+So far I have only tested to resume case with the 2 patches to make that 
+that is working but on Tegra186, which has been the most problematic, it 
+is not working reliably on top of next-20250305.
 
-Thanks, in that case:
+Cheers,
+Jon
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+-- 
+nvpublic
 
---nbz2j76m3ebgwwor
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfLGQUACgkQ3SOs138+
-s6G3FQ/+PNLPhpaW15ilfxHRm6P2Ao8iip+lddH9yz+xhqgpD5yC8RGkVHU9P2Eo
-iXH8aTAOgSSrHIPr1r11zx1DrCWI+BoXZWgkjBilVABL+c0hCPGQTP3/5TREsh6v
-t0fQP189FamSz+YsMMnswWnYcAMYc+spX7nEmcgDxsM7vER1pu41wNBzWbEq+vGq
-oCWIxtHAy7I/hbKNv3R7OqdlS+YLeGtZ4PKN/LhKyZgXAIhvTgGE+87aGsEg7HmL
-9h1AzLAQPJbJSMoSXhxkfydAVLNyT0pp2pPT06+Ry8j8Ps/cVaOLFBUuh2WwHolN
-lr5ORLjW1+ljmhwXHX7GIBD0vmVZcMfOf1ztIx3b5rxpAfcuGTLK3i8lalPg9EPn
-FADy1Nr+2ZbYn8RJcjGp0xhpj6CCJPTjF/98RE9yrvN0v/Vp9UcvNP+QFbWSRcEF
-zgQUsCmwLaQb5KBozv05rPngZxBjLltHxeFmx0Fip8xPY3oGk4jOX9Kn/gFGaZNk
-dOpzNI9NDpFGpPtpSmnkOdvplyREhggcBAc59tvwNa/JM4NMHzdHfima1Gd0TP1W
-b/kDgWFY242d/WfhwcSu5q0WhZkTadxoPmyMyQUekFNinTiEqpjlvj4mw1Olj4Ja
-eDjDtyY8+Coc1e6JYThbUkXwQ3Ieu6UyX3GV5GpRVy2P+EXuzfk=
-=5KPW
------END PGP SIGNATURE-----
-
---nbz2j76m3ebgwwor--
