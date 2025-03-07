@@ -1,133 +1,188 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0A023BCF2
-	for <linux-tegra@vger.kernel.org>; Fri,  7 Mar 2025 16:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E115521ABA4;
+	Fri,  7 Mar 2025 17:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741364625; cv=none; b=b5Un/EGAW/3W9laHWO0f2MuQb/ZSu/Ty5Cp6oMrvRBRX5loV21GkoG6N7FNwSRa15HYpZWq24GGVwcyOMv5SA6xoHWf8Bonls5+9VIl+75rEC9CdquMZiirBK7G843cF485FxIkCo2mC1dETZ9a9GhyxNcXOPARQTjEL06OJeqs=
+	t=1741367297; cv=none; b=kxFK4FjzuMoyCEUjgGCuLGbLe0d57WjHEgyS8oARxAPLRpdIoX2SIhXp3hf/UemirnSrCB6dR5V1Xw91gUCLhhYOlLEQMbi2fo7QqckQC5Om5l1pSm1EhunY4gMZO0q8cceT+caUOX/U0V5iHvRGH4HhRlqwY6D4D2RL7UIsFZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741364625; c=relaxed/simple;
-	bh=BvfJPnPoTJGAMOKyBRjxVZ6zo6K8+m/dLW0B09xMfn4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=UtYcqd+5ll50TUTsofTAmV9fVRQdBzVnr0YhnIm1YtaibWOvbPVXatl/X9l3o0DqmI/xsA9K8yJKilE9TIiy7IufcmWQPaSQp+eq1yogqzn/X7xwMTCrvksuZyqbVEzlkk5ktOFHHuAsyouVsku3ZJxB/r8GSuIKK4QSt7FbcYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eN2PKX/n; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741367297; c=relaxed/simple;
+	bh=oZP1Rnhtj/yyDjOPYxqLIUM0mS04DUlPNMc0L5v8ifI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JaCASrlFvWHf/t5QApScFrEQAoFyDXzj7zuemN0T7VB6+i4dXhLZIlo8hUKacHjXOeKHgJRV0v8iWMB3S1ZKzbBReyaIvWpQHLdDaibRhkMLzb34RZYWDNJw9scIU/UoeauRPxA33lfn6cL1jHhgJD8KKm2fDso5LRXk64cDWqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Me7TskvP; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eN2PKX/n"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bcc85ba13so16236335e9.0
-        for <linux-tegra@vger.kernel.org>; Fri, 07 Mar 2025 08:23:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741364622; x=1741969422; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s6fFwuKvG8aQ6i524e9kMLuHLTSCjpwest+iUIY2vbE=;
-        b=eN2PKX/nNqrpGIcnQHkIu1u7toeF9TMHKrOtcCvn7z05+OE10Fxmf8HJhhpkag4z2/
-         kNvpfYEkA4TP+fnpn/F+51/S1LSM4HN3ydLbE6at1WnWkqifLOTDGQZakAyLi+xHckbF
-         GmtQU7/BVpfLCx/Zm3/b8SOl/aKE6h0KtQjN8GanLc6B7csDBw3gKgODQOHLW0Rhakw+
-         998FFmXpFG/mS7VtcEnzE+ee7Fm+iR+kBoYfNkhogxs+eL+DLDdZxYYQuGO5Aw+ODuTR
-         RNSfOSmUOqlTX3fHg5wLfLJUz8oQNa0plFgWlHfXBKYs/MQ/rxSoUEfRUFz8LvkBUv0/
-         NwKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741364622; x=1741969422;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s6fFwuKvG8aQ6i524e9kMLuHLTSCjpwest+iUIY2vbE=;
-        b=eqycMxFO46K5gC9zvuoCmQ1JT+xhYp2o7YF7UZmY08mLz19XeMU+6WrnaGK3frmYVe
-         r1NFfX3wUzjkefLXOuc3NDKwWon5IRtUAprLRr5OiaQrLn/f3pvVbBAJ/I4fm6DA7Q7k
-         jjr0SQY+c/wvkJ2bDbs+aaVXg0y9xtopKQ0rZmG/arFZ2SZ8rML0pbd0khcAkPCyOdXq
-         z/k82wbm0sKtxJ2v3ZUVlQklk2kBZrJWs/oxsUmz5c/27PwdXFgQIYNp7V1VYTxs3yId
-         txuZbEAXGySNFb5J6ubgyNPaR8cOcEb7QU7hQF20/Rlxr04Z8sY+TcCTE7wOWkZlKmSH
-         wSmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7pjaDtS7NcVzPjiVu7KcwYtHESI6Wq4AC3x/z2KQK5xDGMJnvkdY5dMCSAtSjEh5oBQXRVpIsQrRM8Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzux1wrUouu8vDiaL2chwkUREleBHu3Vfboh0S29zu+hmH1JeAW
-	EhmSR6wqOBc7MRc1loCtZfmFqEFRdGOYa9HdeuoCIA6aV25Bcpam
-X-Gm-Gg: ASbGncvBpAEfkHrQBsU+YZe3gts1fQzH/Tp+XIzCI48aNsblnF8Z44/DUTnRvc/0DKG
-	adsgbj6PjQYuEPTOv1GWlOPA0g4o3xcBRD0TzFE7zyhLcKsw1HDXYpFDhUy+NKH/lQb9sSCr6DJ
-	sDLkBe9A/2PpB5aADFNDgi2+MjpbLEH3QVHS4T9E60bBE30stSVHeYS0WLua8S5ENJipf9E6bCZ
-	knCM9roXMFg9VAecZGaaWAuBshncUvKj5ZdA8EbRVq4YsOlQrN/buTGTBKmgW+ukamZG1nlRMuu
-	Mei+alyp/1DgT8Go8IbM09RJa7WhaaGrHDhAwHNGOXVkXq10RU4YwBoGBR6Je3rUtYFiiAbz2zV
-	uEHsgbcfs59gjs57wovZWQ8lHHGj+H9zwB0AU
-X-Google-Smtp-Source: AGHT+IGYSZAdIPByuhfnlGvu8gIwV8NG9QDkn6z6XiamtvDMqZsy7KeQwy/cINDke3X/SNx+z6U0jQ==
-X-Received: by 2002:a05:600c:19ca:b0:43b:cf37:c7ed with SMTP id 5b1f17b1804b1-43c5a5e5259mr24255695e9.1.1741364622143;
-        Fri, 07 Mar 2025 08:23:42 -0800 (PST)
-Received: from localhost (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e2b8bsm5846199f8f.64.2025.03.07.08.23.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 08:23:40 -0800 (PST)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: arm@kernel.org,
-	soc@kernel.org
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 5/5] arm64: tegra: Device tree changes for v6.15-rc1
-Date: Fri,  7 Mar 2025 17:23:31 +0100
-Message-ID: <20250307162332.3451523-5-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250307162332.3451523-1-thierry.reding@gmail.com>
-References: <20250307162332.3451523-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Me7TskvP"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=q7E4PcWNtVztNl9koit0EYLU2YsvVBN7/lhEg0a+ImA=; b=Me7TskvPCscwzFG0LaYdzuIL36
+	dcSuTeYJg/isxgg5fGvzNVO85C61gE5lVDRIVmkS0jjZIlliANkBNqXb3Zs9Ow5R/OLXTG3aVyILT
+	5z19j+soJyoLLUviNr838iJ+WfDstArcYlJ7R1VtkfRY1/LFb3qwouMvevV1RNgclqk3HB4VzqVMo
+	aH84fQtFY7JicZBuPI3nbYZrGvmQDgCZCMB7HwMChJB5HmtG3UQTKOhGSkw+7SuRSG7wot+Z2fSlX
+	xSq5W6VgjeDO/y0qx5Ipm0EtanZzpLM9Y9NP9V0vQHLwVlmyZ5KAq8QwYePEJUMM2Wcnj1YCuVXQU
+	qGRANl/A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53554)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tqbB5-0007lH-2P;
+	Fri, 07 Mar 2025 17:08:03 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tqbAz-0007zi-1o;
+	Fri, 07 Mar 2025 17:07:57 +0000
+Date: Fri, 7 Mar 2025 17:07:57 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>,
+	"Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andrew Lunn <andrew@lunn.ch>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH RFC net-next v2 0/3] net: stmmac: approach 2 to solve EEE
+ LPI reset issues
+Message-ID: <Z8sn7b_ra_QnWUjw@shell.armlinux.org.uk>
+References: <Z8m-CRucPxDW5zZK@shell.armlinux.org.uk>
+ <29bc7abd-b5cc-4359-8aa6-dbf66e8b70e4@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="eyhX0LjiM8fsaWBt"
+Content-Disposition: inline
+In-Reply-To: <29bc7abd-b5cc-4359-8aa6-dbf66e8b70e4@nvidia.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi ARM SoC maintainers,
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+--eyhX0LjiM8fsaWBt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+On Fri, Mar 07, 2025 at 04:11:19PM +0000, Jon Hunter wrote:
+> Hi Russell,
+> 
+> On 06/03/2025 15:23, Russell King (Oracle) wrote:
+> > Hi,
+> > 
+> > This is a second approach to solving the STMMAC reset issues caused by
+> > the lack of receive clock from the PHY where the media is in low power
+> > mode with a PHY that supports receive clock-stop.
+> > 
+> > The first approach centred around only addressing the issue in the
+> > resume path, but it seems to also happen when the platform glue module
+> > is removed and re-inserted (Jon - can you check whether that's also
+> > the case for you please?)
+> > 
+> > As this is more targetted, I've dropped the patches from this series
+> > which move the call to phylink_resume(), so the link may still come
+> > up too early on resume - but that's something I also intend to fix.
+> > 
+> > This is experimental - so I value test reports for this change.
+> 
+> 
+> The subject indicates 3 patches, but I only see 2 patches? Can you confirm
+> if there are 2 or 3?
 
-are available in the Git repository at:
+Yes, 2 patches is correct.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.15-arm64-dt
+> So far I have only tested to resume case with the 2 patches to make that
+> that is working but on Tegra186, which has been the most problematic, it is
+> not working reliably on top of next-20250305.
 
-for you to fetch changes up to c33a71fd0e3644520af7b5926926c06597d6d355:
+To confirm, you're seeing stmmac_reset() sporadically timing out on
+resume even with these patches appled? That's rather disappointing.
 
-  arm64: tegra: p2180: Add TMP451 temperature sensor node (2025-03-06 20:35:53 +0100)
+Do either of the two attached diffs make any difference?
 
-Thanks,
-Thierry
+Thanks for testing!
 
-----------------------------------------------------------------
-arm64: tegra: Device tree changes for v6.15-rc1
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
-This contains some cleanup patches that remove unused properties and an
-unusable key that was erroneously exposed. A fix to support GPUs with a
-large amount of video memory on IGX Orin is also included.
+--eyhX0LjiM8fsaWBt
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="stmmac-block-rx-clk-stop.diff"
 
-Finally, some additional devices, such as a temperature sensor, are
-enabled on Jetson TX1, and the output voltage of some pins is adjusted.
-A fix for the VDD_LCD_1V8_DIS power supply is also included.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 8d3cae5b43c5..63d30e09c095 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3108,9 +3108,7 @@ static int stmmac_init_dma_engine(struct stmmac_priv *priv)
+ 		priv->plat->dma_cfg->atds = 1;
+ 
+ 	/* Note that the PHY clock must be running for reset to complete. */
+-	phylink_rx_clk_stop_block(priv->phylink);
+ 	ret = stmmac_reset(priv, priv->ioaddr);
+-	phylink_rx_clk_stop_unblock(priv->phylink);
+ 	if (ret) {
+ 		netdev_err(priv->dev, "Failed to reset the dma\n");
+ 		return ret;
+@@ -3480,7 +3478,9 @@ static int stmmac_hw_setup(struct net_device *dev, bool ptp_register)
+ 		phylink_pcs_pre_init(priv->phylink, priv->hw->phylink_pcs);
+ 
+ 	/* DMA initialization and SW reset */
++	phylink_rx_clk_stop_block(priv->phylink);
+ 	ret = stmmac_init_dma_engine(priv);
++	phylink_rx_clk_stop_unblock(priv->phylink);
+ 	if (ret < 0) {
+ 		netdev_err(priv->dev, "%s: DMA engine initialization failed\n",
+ 			   __func__);
 
-----------------------------------------------------------------
-Diogo Ivo (4):
-      arm64: tegra: p2597: Fix gpio for vdd-1v8-dis regulator
-      arm64: tegra: Define pinmuxing for gpio pads on Tegra210
-      arm64: tegra: p2597: Enable TCA9539 as IRQ controllers
-      arm64: tegra: p2180: Add TMP451 temperature sensor node
+--eyhX0LjiM8fsaWBt
+Content-Type: text/x-diff; charset=us-ascii
+Content-Disposition: attachment; filename="stmmac-block-rx-clk-stop-2.diff"
 
-Jon Hunter (1):
-      arm64: tegra: Resize aperture for the IGX PCIe C5 slot
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 8d3cae5b43c5..bebc9f98c875 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3108,9 +3108,7 @@ static int stmmac_init_dma_engine(struct stmmac_priv *priv)
+ 		priv->plat->dma_cfg->atds = 1;
+ 
+ 	/* Note that the PHY clock must be running for reset to complete. */
+-	phylink_rx_clk_stop_block(priv->phylink);
+ 	ret = stmmac_reset(priv, priv->ioaddr);
+-	phylink_rx_clk_stop_unblock(priv->phylink);
+ 	if (ret) {
+ 		netdev_err(priv->dev, "Failed to reset the dma\n");
+ 		return ret;
+@@ -4045,7 +4043,9 @@ static int __stmmac_open(struct net_device *dev,
+ 		}
+ 	}
+ 
++	phylink_rx_clk_stop_block(priv->phylink);
+ 	ret = stmmac_hw_setup(dev, true);
++	phylink_rx_clk_stop_unblock(priv->phylink);
+ 	if (ret < 0) {
+ 		netdev_err(priv->dev, "%s: Hw setup failed\n", __func__);
+ 		goto init_error;
+@@ -7949,7 +7949,9 @@ int stmmac_resume(struct device *dev)
+ 	stmmac_free_tx_skbufs(priv);
+ 	stmmac_clear_descriptors(priv, &priv->dma_conf);
+ 
++	phylink_rx_clk_stop_block(priv->phylink);
+ 	stmmac_hw_setup(ndev, false);
++	phylink_rx_clk_stop_unblock(priv->phylink);
+ 	stmmac_init_coalesce(priv);
+ 	stmmac_set_rx_mode(ndev);
+ 
 
-Ninad Malwade (1):
-      arm64: tegra: Remove the Orin NX/Nano suspend key
-
-Rob Herring (Arm) (1):
-      arm64: tegra: Remove unused and undocumented "regulator-ramp-delay-scale" property
-
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi       | 13 +++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi       | 20 +++++++++++++++++++-
- arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts   | 10 ----------
- arch/arm64/boot/dts/nvidia/tegra210.dtsi             | 10 ++++++++++
- .../dts/nvidia/tegra234-p3740-0002+p3701-0008.dts    | 10 ++++++++++
- .../boot/dts/nvidia/tegra234-p3768-0000+p3767.dtsi   |  7 -------
- 6 files changed, 52 insertions(+), 18 deletions(-)
+--eyhX0LjiM8fsaWBt--
