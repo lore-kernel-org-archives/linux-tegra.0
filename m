@@ -1,377 +1,117 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79487219E93
-	for <linux-tegra@vger.kernel.org>; Fri,  7 Mar 2025 13:19:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03E722EE5;
+	Fri,  7 Mar 2025 13:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741353559; cv=none; b=pSU8kUkB8Dxxj152dlfH0DP+gdBlL1cVNwDvGeDrdSECwIteaKscbX3lr1Jwt6CWGJagRZOItSWmH2eDQg9JIuEVzEMPIqRxNWmYmiGLuM3h1dwGvwZsc7NbCfQiZwQWfbJbhM2o0WEKmN2iHjcNno8N/DBVEKeXb+5MGOLCBDI=
+	t=1741353960; cv=none; b=kM8jpe8JWWx+3Ps6xOuFdSpPMD9CIZYgKbfkq3aj9AVosjDPfeWSFS7fPnyVhCoJ0bOLsHgXWLghSUL/I1Y0Q9lgmIgU19XUhzgMPzrTEVol0WWrxlhRXHZHam2e++QLaDlSks9qQc4p7ShT3cxTaecIIIklwiz4CRZCHZ5NITA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741353559; c=relaxed/simple;
-	bh=jt+9rA9ZPCCaYRIrwyfR3Op0oyoIsDZhOFigxKin82U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aO4iD+g8qZQhn7GyCfr7Apf6HvQsFgVOFB+z4E6+3QGCEcaG+hOp3QQ/Dogwg1wEuGXSDXxQdlfYPOfw1e4PGCZfmQUYj+ItHy8wEIopyuwa0WPwSQvriSd+USiWjtdzg7BUmuMJsT7cSSwbD9hcCh0JeHk/Fpr+IdQb2xwmTVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=VOvmr3uN; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+	s=arc-20240116; t=1741353960; c=relaxed/simple;
+	bh=LEKn/iVCDqHF6UuoX0gnwRLWk845tZ27d/a8XRfdFns=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=UEeaRsLFoU/n6TSFy2OHbom880pP6fuK+nCaED7VYaa51X3wc30xzrBHkRCaxMS2GjU+Fvyc4FmrkzJTDkc2E72tkCAZTYqbQ5n9sfEGghpwhKnv/BZ+iDCnQIsHzcmAuNv2jV8qDiGEYKYtGjD0Xpo12IWPjZXRYmLZzgqhPGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujmQT0N6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="VOvmr3uN"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abf5e1a6cd3so337726966b.2
-        for <linux-tegra@vger.kernel.org>; Fri, 07 Mar 2025 05:19:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1741353556; x=1741958356; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GmXXr/GHvAGv2swMlIkbl+Www19HcX8d7ze1AMoIM9w=;
-        b=VOvmr3uN5yuFAP7jsmQaIjjt6EjSI5vHPJ2bPVQurpz/9bFA9L4kY7Dug9TNe4h/Z2
-         SJPn0UXR+ZjajyDBuAgUz9pbLvf37vos0vGtOMxpRVrS5sZmT4h6RAg0aNEr8+dtwpum
-         P4s7CyJJ6uiK1iN35KtAMuA0oUBZj/O0pFHm8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741353556; x=1741958356;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GmXXr/GHvAGv2swMlIkbl+Www19HcX8d7ze1AMoIM9w=;
-        b=v2BNHy9tAG79WgROHQ9Bk0nyw+Hgz5OgB22GIWK3HxOCh7DHl4B7NP2hjsNDALYPmw
-         qNRcv6k9HK08A8Zl1nDGEJCVutmbKS5/fJUUFroEf5hc/9Vg+4Lfeokcm6ube8RlcCKt
-         zUjROwdDoe/1k42Q2e7VCLddgGv2GpiqrU9d/rP3vnTtJEK+sQeYlFVmEvZa4Ixn42gl
-         fy1AfLjdwcdMiQCtuFJ8M7iwP40E+BL8Bnv+SmobB+H2ATKUHnKsCXcHJNcJaGQ4p4+N
-         x5D/8uIstgtjSo/06dS2eCxJO8UcFxfhAObxM5pw5PqPTirU95WjhKyt90ttMJZOmu2m
-         Ty9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVy5QItUX0gKFSpcoRoOBNzp/Ps/D9lHQ/2e9LJCTq3s6vB/fdYHlntIjKrv5cU0YqpYhB4jJWF085nWw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgwFQgR+73GSLxfqaJidqnvTi364E6eBlEuf4bL8p8z2q2RJbb
-	3iyI3dsvl0kZKFX9j+x1djnd3PXoSe066fH/dVe5fyxABSD7tiGBXUucY3x3++Y=
-X-Gm-Gg: ASbGncsSJ+bPgq2af0+7FR1X32kdhGuJXpCLg6kawbdKk9dmphMbqrSmOti+9nKUNHe
-	gfT3heHgpFy16x5acRqwDV9tGhbI7rEYQZkeVjgI2yXdcRCPYMqTCtZTp0wL4Vrma2YkVMfCxpi
-	vkNntMpbjZBrXnn8e6yC3QHB6FzgGdSpo6x9LVM4FJjzZXSUvEL+L4qoN3JwAPIe9SWcwcZbIkJ
-	UDu+qPKfMT3Ldx+z/AXHIbDUeptNCsKVrGTJs9DEZsaTLIPyZv7ET5wLdNLKQu/0uabs/erivd2
-	Hg2DcGUKrVQl0Yu3uhhP2y+C9+wl+8ZntJUf85wAMGmdvLOVuf4oZVS0
-X-Google-Smtp-Source: AGHT+IGWJEXpT4oFObUhXEX1baZSA5ka+RDW0BObeZF31pqEHYIrQhNdRsTwmr/EHhhCwd6ldgP0tQ==
-X-Received: by 2002:a17:907:7ea9:b0:abf:6b30:7a94 with SMTP id a640c23a62f3a-ac252f4c9eamr387695566b.45.1741353555414;
-        Fri, 07 Mar 2025 05:19:15 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2399d2dd8sm272788966b.166.2025.03.07.05.19.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 05:19:14 -0800 (PST)
-Date: Fri, 7 Mar 2025 14:19:12 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org,
-	linux-mediatek@lists.infradead.org, freedreno@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org, imx@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org, nouveau@lists.freedesktop.org,
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
-	intel-xe@lists.freedesktop.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v3 02/25] drm/dumb-buffers: Provide helper to set pitch
- and size
-Message-ID: <Z8ryUGgxqVTEw9pe@phenom.ffwll.local>
-References: <20250218142542.438557-1-tzimmermann@suse.de>
- <20250218142542.438557-3-tzimmermann@suse.de>
- <Z8qxcTIcD4W5OGwL@phenom.ffwll.local>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujmQT0N6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C6EEC4AF09;
+	Fri,  7 Mar 2025 13:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741353959;
+	bh=LEKn/iVCDqHF6UuoX0gnwRLWk845tZ27d/a8XRfdFns=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=ujmQT0N6gf65OIZAzyctWyrhVDHH+NoBKkPRP9nIUk8R/cDtq0oWXQXk2/EsBIsfu
+	 0sGEj5/wXbPMZDZXSKxL2AO6+gq0rhyrxBzDWkT/7DEHzvi5N1wYHsWSCJOkHh6CzO
+	 lLqXe6RR2nwGRbexL2qTzE/HRNiVUdUReSnVZTSa7cAOCk0BL8vYn64HvFUFPDEyfa
+	 nMwkWgAUehuE5qYIW0p+WQmOZ2lvM90B/5fa97faBy5R2vjG7SCdDsPFFkkxttwlEt
+	 JTyRl8mD6AoGVfNOzrh4xkvDdEXH/0l5IxpAuqUv3bq/ub4GTzJBOFzUjshpTuxM9H
+	 2+b+fz8o486VQ==
+Date: Fri, 07 Mar 2025 07:25:57 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8qxcTIcD4W5OGwL@phenom.ffwll.local>
-X-Operating-System: Linux phenom 6.12.11-amd64 
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
+ Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+In-Reply-To: <20250307081047.13724-1-clamor95@gmail.com>
+References: <20250307081047.13724-1-clamor95@gmail.com>
+Message-Id: <174135385223.4031140.10808514258285152164.robh@kernel.org>
+Subject: Re: [PATCH v2 0/3] ARM: tegra: complete Tegra 4 and Tegra K1
+ device trees
 
-On Fri, Mar 07, 2025 at 09:42:25AM +0100, Simona Vetter wrote:
-> On Tue, Feb 18, 2025 at 03:23:25PM +0100, Thomas Zimmermann wrote:
-> > Add drm_modes_size_dumb(), a helper to calculate the dumb-buffer
-> > scanline pitch and allocation size. Implementations of struct
-> > drm_driver.dumb_create can call the new helper for their size
-> > computations.
-> > 
-> > There is currently quite a bit of code duplication among DRM's
-> > memory managers. Each calculates scanline pitch and buffer size
-> > from the given arguments, but the implementations are inconsistent
-> > in how they treat alignment and format support. Later patches will
-> > unify this code on top of drm_mode_size_dumb() as much as possible.
-> > 
-> > drm_mode_size_dumb() uses existing 4CC format helpers to interpret
-> > the given color mode. This makes the dumb-buffer interface behave
-> > similar the kernel's video= parameter. Current per-driver implementations
-> > again likely have subtle differences or bugs in how they support color
-> > modes.
-> > 
-> > The dumb-buffer UAPI is only specified for known color modes. These
-> > values describe linear, single-plane RGB color formats or legacy index
-> > formats. Other values should not be specified. But some user space
-> > still does. So for unknown color modes, there are a number of known
-> > exceptions for which drm_mode_size_dumb() calculates the pitch from
-> > the bpp value, as before. All other values work the same but print
-> > an error.
-> > 
-> > v3:
-> > - document the UAPI semantics
-> > - compute scanline pitch from for unknown color modes (Andy, Tomi)
-> > 
-> > Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> > ---
-> >  drivers/gpu/drm/drm_dumb_buffers.c | 116 +++++++++++++++++++++++++++++
-> >  include/drm/drm_dumb_buffers.h     |  14 ++++
-> >  include/uapi/drm/drm_mode.h        |  46 +++++++++++-
-> >  3 files changed, 175 insertions(+), 1 deletion(-)
-> >  create mode 100644 include/drm/drm_dumb_buffers.h
-> > 
-> > diff --git a/drivers/gpu/drm/drm_dumb_buffers.c b/drivers/gpu/drm/drm_dumb_buffers.c
-> > index 9916aaf5b3f2..600ab281712b 100644
-> > --- a/drivers/gpu/drm/drm_dumb_buffers.c
-> > +++ b/drivers/gpu/drm/drm_dumb_buffers.c
-> > @@ -25,6 +25,8 @@
-> >  
-> >  #include <drm/drm_device.h>
-> >  #include <drm/drm_drv.h>
-> > +#include <drm/drm_dumb_buffers.h>
-> > +#include <drm/drm_fourcc.h>
-> >  #include <drm/drm_gem.h>
-> >  #include <drm/drm_mode.h>
-> >  
-> > @@ -57,6 +59,120 @@
-> >   * a hardware-specific ioctl to allocate suitable buffer objects.
-> >   */
-> >  
-> > +static int drm_mode_align_dumb(struct drm_mode_create_dumb *args,
-> > +			       unsigned long pitch_align,
-> > +			       unsigned long size_align)
-> > +{
-> > +	u32 pitch = args->pitch;
-> > +	u32 size;
-> > +
-> > +	if (!pitch)
-> > +		return -EINVAL;
-> > +
-> > +	if (pitch_align)
-> > +		pitch = roundup(pitch, pitch_align);
-> > +
-> > +	/* overflow checks for 32bit size calculations */
-> > +	if (args->height > U32_MAX / pitch)
-> > +		return -EINVAL;
-> > +
-> > +	if (!size_align)
-> > +		size_align = PAGE_SIZE;
-> > +	else if (!IS_ALIGNED(size_align, PAGE_SIZE))
-> > +		return -EINVAL;
-> > +
-> > +	size = ALIGN(args->height * pitch, size_align);
-> > +	if (!size)
-> > +		return -EINVAL;
-> > +
-> > +	args->pitch = pitch;
-> > +	args->size = size;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * drm_mode_size_dumb - Calculates the scanline and buffer sizes for dumb buffers
-> > + * @dev: DRM device
-> > + * @args: Parameters for the dumb buffer
-> > + * @pitch_align: Scanline alignment in bytes
-> > + * @size_align: Buffer-size alignment in bytes
-> > + *
-> > + * The helper drm_mode_size_dumb() calculates the size of the buffer
-> > + * allocation and the scanline size for a dumb buffer. Callers have to
-> > + * set the buffers width, height and color mode in the argument @arg.
-> > + * The helper validates the correctness of the input and tests for
-> > + * possible overflows. If successful, it returns the dumb buffer's
-> > + * required scanline pitch and size in &args.
-> > + *
-> > + * The parameter @pitch_align allows the driver to specifies an
-> > + * alignment for the scanline pitch, if the hardware requires any. The
-> > + * calculated pitch will be a multiple of the alignment. The parameter
-> > + * @size_align allows to specify an alignment for buffer sizes. The
-> > + * returned size is always a multiple of PAGE_SIZE.
-> > + *
-> > + * Returns:
-> > + * Zero on success, or a negative error code otherwise.
-> > + */
-> > +int drm_mode_size_dumb(struct drm_device *dev,
-> > +		       struct drm_mode_create_dumb *args,
-> > +		       unsigned long pitch_align,
-> > +		       unsigned long size_align)
-> > +{
-> > +	u64 pitch = 0;
-> > +	u32 fourcc;
-> > +
-> > +	/*
-> > +	 * The scanline pitch depends on the buffer width and the color
-> > +	 * format. The latter is specified as a color-mode constant for
-> > +	 * which we first have to find the corresponding color format.
-> > +	 *
-> > +	 * Different color formats can have the same color-mode constant.
-> > +	 * For example XRGB8888 and BGRX8888 both have a color mode of 32.
-> > +	 * It is possible to use different formats for dumb-buffer allocation
-> > +	 * and rendering as long as all involved formats share the same
-> > +	 * color-mode constant.
-> > +	 */
-> > +	fourcc = drm_driver_color_mode_format(dev, args->bpp);
-> > +	if (fourcc != DRM_FORMAT_INVALID) {
-> > +		const struct drm_format_info *info = drm_format_info(fourcc);
-> > +
-> > +		if (!info)
-> > +			return -EINVAL;
-> > +		pitch = drm_format_info_min_pitch(info, 0, args->width);
-> > +	} else if (args->bpp) {
-> > +		/*
-> > +		 * Some userspace throws in arbitrary values for bpp and
-> > +		 * relies on the kernel to figure it out. In this case we
-> > +		 * fall back to the old method of using bpp directly. The
-> > +		 * over-commitment of memory from the rounding is acceptable
-> > +		 * for compatibility with legacy userspace. We have a number
-> > +		 * of deprecated legacy values that are explicitly supported.
-> > +		 */
-> > +		switch (args->bpp) {
-> > +		default:
-> > +			drm_warn(dev, "Unknown color mode %d; guessing buffer size.\n",
-> > +				 args->bpp);
-> > +			fallthrough;
-> 
-> We cannot let userspace trigger dmesg warnings (or anything else really
-> that spams logs). Also I think for future proofing it would be good if we
-> just reject anything we don't currently know about instead of silently
-> letting this mess become worse. Hence my vote is to reject unknown bpp
-> hack values.
-> 
-> > +		case 12:
-> > +		case 15:
-> > +		case 30: /* see drm_gem_afbc_get_bpp() */
-> 
-> This is a bit too cryptic to me, I think if you want to do comments I'd
-> just put a long-form one above each value that explains where we've found
-> it and why it happens. I'm also assuming these all have depth = 0, which I
-> guess is something we should check just to keep this as strict as
-> possible? Or do they have matching depth?
 
-Correction from irc: Thomas pointed out that there's no depth in the
-create_dumb ioctl, I was mixing this up with addfb and failed to check. So
-please disregard this part, I was fabricating stuff out of some very thin
-air (and probably not enough coffee in the brain too).
--Sima
+On Fri, 07 Mar 2025 10:10:44 +0200, Svyatoslav Ryhel wrote:
+> Complete T114 and T124 device trees.
+> 
+> ---
+> Changes in v2:
+> - dropped accepted commits
+> - added EPP, MPE and ISP compatibility for T114 and T124
+> - added TSEC schema
+> ---
+> 
+> Svyatoslav Ryhel (3):
+>   dt-bindings: display: tegra: document EPP, ISP, MPE and TSEC for
+>     Tegra114 and Tegra124
+>   ARM: tegra114: complete HOST1X devices binding
+>   ARM: tegra124: complete HOST1X devices binding
+> 
+>  .../display/tegra/nvidia,tegra114-tsec.yaml   | 70 +++++++++++++++++++
+>  .../display/tegra/nvidia,tegra20-epp.yaml     | 12 ++--
+>  .../display/tegra/nvidia,tegra20-isp.yaml     | 16 +++--
+>  .../display/tegra/nvidia,tegra20-mpe.yaml     | 30 ++++++--
+>  arch/arm/boot/dts/nvidia/tegra114.dtsi        | 65 +++++++++++++++++
+>  arch/arm/boot/dts/nvidia/tegra124.dtsi        | 65 +++++++++++++++++
+>  6 files changed, 244 insertions(+), 14 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+> 
+> --
+> 2.43.0
+> 
+> 
+> 
 
-> 
-> Cheers, Sima
-> 
-> > +		case 10:
-> > +		case 64: /* used by Mesa */
-> > +			pitch = args->width * DIV_ROUND_UP(args->bpp, SZ_8);
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	if (!pitch || pitch > U32_MAX)
-> > +		return -EINVAL;
-> > +
-> > +	args->pitch = pitch;
-> > +
-> > +	return drm_mode_align_dumb(args, pitch_align, size_align);
-> > +}
-> > +EXPORT_SYMBOL(drm_mode_size_dumb);
-> > +
-> >  int drm_mode_create_dumb(struct drm_device *dev,
-> >  			 struct drm_mode_create_dumb *args,
-> >  			 struct drm_file *file_priv)
-> > diff --git a/include/drm/drm_dumb_buffers.h b/include/drm/drm_dumb_buffers.h
-> > new file mode 100644
-> > index 000000000000..6fe36004b19d
-> > --- /dev/null
-> > +++ b/include/drm/drm_dumb_buffers.h
-> > @@ -0,0 +1,14 @@
-> > +/* SPDX-License-Identifier: MIT */
-> > +
-> > +#ifndef __DRM_DUMB_BUFFERS_H__
-> > +#define __DRM_DUMB_BUFFERS_H__
-> > +
-> > +struct drm_device;
-> > +struct drm_mode_create_dumb;
-> > +
-> > +int drm_mode_size_dumb(struct drm_device *dev,
-> > +		       struct drm_mode_create_dumb *args,
-> > +		       unsigned long pitch_align,
-> > +		       unsigned long size_align);
-> > +
-> > +#endif
-> > diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-> > index c082810c08a8..eea09103b1a6 100644
-> > --- a/include/uapi/drm/drm_mode.h
-> > +++ b/include/uapi/drm/drm_mode.h
-> > @@ -1058,7 +1058,7 @@ struct drm_mode_crtc_page_flip_target {
-> >   * struct drm_mode_create_dumb - Create a KMS dumb buffer for scanout.
-> >   * @height: buffer height in pixels
-> >   * @width: buffer width in pixels
-> > - * @bpp: bits per pixel
-> > + * @bpp: color mode
-> >   * @flags: must be zero
-> >   * @handle: buffer object handle
-> >   * @pitch: number of bytes between two consecutive lines
-> > @@ -1066,6 +1066,50 @@ struct drm_mode_crtc_page_flip_target {
-> >   *
-> >   * User-space fills @height, @width, @bpp and @flags. If the IOCTL succeeds,
-> >   * the kernel fills @handle, @pitch and @size.
-> > + *
-> > + * The value of @bpp is a color-mode number describing a specific format
-> > + * or a variant thereof. The value often corresponds to the number of bits
-> > + * per pixel for most modes, although there are exceptions. Each color mode
-> > + * maps to a DRM format plus a number of modes with similar pixel layout.
-> > + * Framebuffer layout is always linear.
-> > + *
-> > + * Support for all modes and formats is optional. Even if dumb-buffer
-> > + * creation with a certain color mode succeeds, it is not guaranteed that
-> > + * the DRM driver supports any of the related formats. Most drivers support
-> > + * a color mode of 32 with a format of DRM_FORMAT_XRGB8888 on their primary
-> > + * plane.
-> > + *
-> > + * +------------+------------------------+------------------------+
-> > + * | Color mode | Framebuffer format     | Compatibles            |
-> > + * +============+========================+========================+
-> > + * |     32     |  * DRM_FORMAT_XRGB8888 |  * DRM_FORMAT_XBGR8888 |
-> > + * |            |                        |  * DRM_FORMAT_RGBX8888 |
-> > + * |            |                        |  * DRM_FORMAT_BGRX8888 |
-> > + * +------------+------------------------+------------------------+
-> > + * |     24     |  * DRM_FORMAT_RGB888   |  * DRM_FORMAT_BGR888   |
-> > + * +------------+------------------------+------------------------+
-> > + * |     16     |  * DRM_FORMAT_RGB565   |  * DRM_FORMAT_BGR565   |
-> > + * +------------+------------------------+------------------------+
-> > + * |     15     |  * DRM_FORMAT_XRGB1555 |  * DRM_FORMAT_XBGR1555 |
-> > + * |            |                        |  * DRM_FORMAT_RGBX1555 |
-> > + * |            |                        |  * DRM_FORMAT_BGRX1555 |
-> > + * +------------+------------------------+------------------------+
-> > + * |      8     |  * DRM_FORMAT_C8       |  * DRM_FORMAT_R8       |
-> > + * +------------+------------------------+------------------------+
-> > + * |      4     |  * DRM_FORMAT_C4       |  * DRM_FORMAT_R4       |
-> > + * +------------+------------------------+------------------------+
-> > + * |      2     |  * DRM_FORMAT_C2       |  * DRM_FORMAT_R2       |
-> > + * +------------+------------------------+------------------------+
-> > + * |      1     |  * DRM_FORMAT_C1       |  * DRM_FORMAT_R1       |
-> > + * +------------+------------------------+------------------------+
-> > + *
-> > + * Color modes of 10, 12, 15, 30 and 64 are only supported for use by
-> > + * legacy user space. Please don't use them in new code. Other modes
-> > + * are not support.
-> > + *
-> > + * Do not attempt to allocate anything but linear framebuffer memory
-> > + * with single-plane RGB data. Allocation of other framebuffer
-> > + * layouts requires dedicated ioctls in the respective DRM driver.
-> >   */
-> >  struct drm_mode_create_dumb {
-> >  	__u32 height;
-> > -- 
-> > 2.48.1
-> > 
-> 
-> -- 
-> Simona Vetter
-> Software Engineer, Intel Corporation
-> http://blog.ffwll.ch
 
--- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250307081047.13724-1-clamor95@gmail.com:
+
+arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2-eval.dtb: isp@54680000: reset-names:0: 'isp' was expected
+	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
+arch/arm/boot/dts/nvidia/tegra124-nyan-blaze.dtb: isp@54680000: reset-names:0: 'isp' was expected
+	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
+arch/arm/boot/dts/nvidia/tegra124-apalis-eval.dtb: isp@54680000: reset-names:0: 'isp' was expected
+	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
+arch/arm/boot/dts/nvidia/tegra124-nyan-big.dtb: isp@54680000: reset-names:0: 'isp' was expected
+	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
+arch/arm/boot/dts/nvidia/tegra124-venice2.dtb: isp@54680000: reset-names:0: 'isp' was expected
+	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
+arch/arm/boot/dts/nvidia/tegra124-nyan-big-fhd.dtb: isp@54680000: reset-names:0: 'isp' was expected
+	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
+arch/arm/boot/dts/nvidia/tegra124-jetson-tk1.dtb: isp@54680000: reset-names:0: 'isp' was expected
+	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
+
+
+
+
+
