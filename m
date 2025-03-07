@@ -1,33 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2064.outbound.protection.outlook.com [40.107.93.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA7821ABDB;
-	Fri,  7 Mar 2025 14:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356423; cv=none; b=A+9KaHuxPfPAALyHmkx/Vwz1aupD/u+tm3xn5wBW/Wqx81uiNxV2duZZb3k49YqAqJOVpbBv2sN724ddnX1fMG030UxyT7ScoBV5cKhICt5syCcF+Fgj6koiw6ciQQvPTStwsVfP1+itnh3gUp2uDwQigQsz6w5xafQLhNq2whs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356423; c=relaxed/simple;
-	bh=mmv2E9F+UfPAQ/2f6RZO6VoS3fV6ohPEF0Q1R0VuLMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=htELGh44E7tmEKAWaPPjhcTKbjqV9ko+6PPIRH6F7DElLvkYEZKgIz/PVGFVdr+xnxpjIJP+tgFZNxdrCM4gW5AHl7QHI7yz3EHgjIu6dC3MnZhXiC+AIaT630Ohu4NxynnIIzYdjeIOs5O5SoibAhiD+af/xYj6SrqT32SNdR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+i3hJmC; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3EE21CC54;
+	Fri,  7 Mar 2025 15:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741360557; cv=fail; b=u5nFJ/toyxrcdjCM++R+u+iDFvGmNjYbtc0YvZdgyLw9I3UeE1JBLHivB4t7nUOkleHb38V9xKaZMPdsKo6V2icE5aP/CRlZmiUrNJHRMj3Ku7g0O60zvY7Q7YjSXRL/3MKIBYEyT51AA+IflCDwvfhE8UhnFdFo78h3my/p/EU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741360557; c=relaxed/simple;
+	bh=26U2HYSooBSQxXdrsKKWaCp4M2OQfOKdx9czzYtkbIU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nG2GZxcADKklnddFy+FmrWMzjWtAosRpKHe0jswbvwZ6zBvH8tkJF7thTo79O9LtseHeXG0BQjIxpAqkIcYU0NxbceodnNVfHj3bXvLMkwBkb/cAz6ljjnR2Kne3pjQbwZ7mFpOqxPRum33a3jVJROjCMpWbVGdyRxGBj75s2SU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fEyDiOwk; arc=fail smtp.client-ip=40.107.93.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+i3hJmC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B93B4C4CEE7;
-	Fri,  7 Mar 2025 14:06:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741356422;
-	bh=mmv2E9F+UfPAQ/2f6RZO6VoS3fV6ohPEF0Q1R0VuLMA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U+i3hJmCJq6JdAbCq+2zbE69YmNji1k0H0ii5Ri5sz4QeoUo1/TN+bARDZ+XjLq+2
-	 gJ72mbISMZTAyIxM3Yf3BTwnDRVLfzJ3Nafs8PeUamTQG5/JUu3sGWlnm8ncY/MkF0
-	 C0N32lyuYRuNr2VvRDqfA0xW8VeLDCqm2fvXGu79in40Whw8tOal+48G9sj0Oxk9Rh
-	 yEVsC59CwB7UHWKdokmzCBicZiOXjJTMG12om5QsKzaWPoNdIcZVGDxjnm+jyR9/J6
-	 PPPk83FOcThC2tiV21VcYkgciYZDQ38S4YSjNmU37zO12BVv4P2F+d3Ph+cfGFM6BV
-	 Fidw7qSt7PsOA==
-Message-ID: <7d3b0aa7-9ebf-4493-94ae-338207448429@kernel.org>
-Date: Fri, 7 Mar 2025 15:06:54 +0100
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fEyDiOwk"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yYSOBC4UaXBgOHlXNUW3IDmvyuC4DYUIktMBydFuWjyDvpVY9KOSz8ZvkbfJAwr5JVZOdPAa68kcnbLHbqP3sGcoHIAi7n6OtI1yftFJV6KmMuGLmNy3vkIAprFSLWrPYxkO4+RUGNXABW63TR3VQtMbSRqBDZh/bJHNNoWH6U69jevi4vzEmjFyRgSnhNbLGSWo5qTlYz40/YU3fE8lxrin5r95ItsJsnlxIN+b7j4OGJG0TNKGspEk5FE//dohaPP5ZoapLQ1TzPpF9HdiMws788QdSh9RU0D2AeZIzXkEzb48acJFoWPcRqq5s3CJlAh6qo6c4tNMxUo5Vp6s2g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qSJzCpmzRE2MJD9aKlUZKUX0tD2CMTEIOmGSdmUM+Jg=;
+ b=j1y6l3xqXvQII+H2CHHeqWjrp0JjH+dfWscStuOGMK0YSQd3fFFhvf5X3NmbSpxDvPuvxMw9MX8eQgDeeVakYLrwOE3sNVxxkVJtYk3eGh0NAy1gVFFDObu1+FhhQAJbZIbeCMhDIs1AokfiXohfLTETQAIRjrRdtIo733p3GGL2CRTtMpGZOWnXO85KQiuNUh5pEdfQgKeWpQKFbNwXhfVxqmypQOEt4EGamhK61rKDPdy4q2zgZs2pAyNTCGX/d/geweb06/r/vKbG83i7J3PvFXs8vdeNchEtT+IfnI883ujTPvuPSAtTqFUlxCKVLfzM0AIMEDrQ/nOKjcV+gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qSJzCpmzRE2MJD9aKlUZKUX0tD2CMTEIOmGSdmUM+Jg=;
+ b=fEyDiOwkxJJdygwVpJn3dcLsz7eYbUFYM+q0gQlMHbJV3+romdeoupAWK5OIGpLwLvrG5LQ+M8RKMs8LQ0tUY4Kll8e0CtkuTuUs7kPYV9m3DRI/hnMDLRnfJ/9mr74dU52ZGcnH41BDLd2oqMzjACtjiUYuv7eX1e9RJxVpwrgz4z2VyJnniE/5PGYCabyhxAAS+m3E0Zz9thO8rT8Abx1BEm5crU3kUaJ4wq4AGmDwABqbAAb52rqNz8pNjkNZ8zvmPfI3yWqpxvT9kLOetdi+5uWO7rz+n2vLQ9uQPTP4LNEhfMlLMMcxDTj7VTeeSPrrzAMWj9LUU5VhEGaxqA==
+Received: from BLAPR05CA0038.namprd05.prod.outlook.com (2603:10b6:208:335::19)
+ by MW4PR12MB6802.namprd12.prod.outlook.com (2603:10b6:303:20f::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
+ 2025 15:15:51 +0000
+Received: from BN2PEPF000044A7.namprd04.prod.outlook.com
+ (2603:10b6:208:335:cafe::79) by BLAPR05CA0038.outlook.office365.com
+ (2603:10b6:208:335::19) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.11 via Frontend Transport; Fri,
+ 7 Mar 2025 15:15:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN2PEPF000044A7.mail.protection.outlook.com (10.167.243.101) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.15 via Frontend Transport; Fri, 7 Mar 2025 15:15:51 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 7 Mar 2025
+ 07:15:34 -0800
+Received: from [10.41.21.119] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 7 Mar
+ 2025 07:15:32 -0800
+Message-ID: <c4ef9787-aaa6-463b-8c7d-6772fc208a48@nvidia.com>
+Date: Fri, 7 Mar 2025 20:45:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -35,316 +69,133 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: display: tegra: document EPP, ISP,
- MPE and TSEC for Tegra114 and Tegra124
-To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250307081047.13724-1-clamor95@gmail.com>
- <20250307081047.13724-2-clamor95@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] cpufreq: tegra186: Share policy per cluster
+To: Thierry Reding <thierry.reding@gmail.com>, Viresh Kumar
+	<viresh.kumar@linaro.org>
+CC: Aaron Kling <luceoscutum@gmail.com>, "Rafael J. Wysocki"
+	<rafael@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Aaron Kling
+	<webgeek1234@gmail.com>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org"
+	<linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+References: <20250216160806.391566-1-webgeek1234@gmail.com>
+ <20250303100306.rwaosbumr7omcqce@vireshk-i7>
+ <fndrufuwpt4nptgs7hlucio6j7ia5sc4yeyasrherdv4dxs7s5@p4y6wsa7mxin>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250307081047.13724-2-clamor95@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Sumit Gupta <sumitg@nvidia.com>
+In-Reply-To: <fndrufuwpt4nptgs7hlucio6j7ia5sc4yeyasrherdv4dxs7s5@p4y6wsa7mxin>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A7:EE_|MW4PR12MB6802:EE_
+X-MS-Office365-Filtering-Correlation-Id: 478202ff-004f-4e82-2a46-08dd5d8af2ce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z1diOUhQSktDUTAzdFNqVHpoSjFzT1FPMk9KY25kKzcrazY4SVdETTZla3ky?=
+ =?utf-8?B?SnZRT3prR01LeUJKblBKcnhBWmMrWTNhWHQ4bnpEVVJvRmxVOUpJUGRDc3Ja?=
+ =?utf-8?B?TUJvVngvN3hCWGRrQURMMXlndkJCQjRteTF6N3dPWHdEajJLMlR3em9kLzdz?=
+ =?utf-8?B?ejdUODF2ai82QlRPSlRRaGxhUDF4c2xqNTlTOXE4L2xISXpXcjQ1S0xrRmtR?=
+ =?utf-8?B?V0k4aW1DLzJWWW9QRDR5L0VxS1hJNEFMV3BSMk1KQ0JTWm9wY1pFdUptdWdP?=
+ =?utf-8?B?cHlRZkJDR1VJVkFITUthMFIxS3U3Y3hKYWFmdEpTdE5Sc3U3eEZGdGJGeUNl?=
+ =?utf-8?B?aWJGN1M2blo1MWVRMUtERko5d0Rhamg2aUo3bDdHTUNoZk5SM3RjRThkWlRE?=
+ =?utf-8?B?dTJVRmpVMzN6M0lNNDJSM2g1WUVhak43N29qeTdhUTlBOGkwdnhkRTJtdDFp?=
+ =?utf-8?B?TklFSmVLbGpXd0xUTDFyNUJiazFQRnFCSGl5YmwvSGhBeVpCYjRMaG15bUgr?=
+ =?utf-8?B?UWpNMUFSN2ZUYzVMbzNRcjluUVFSRjY4Z3ZVZ0JQR1FMS0NqK1JVVGJoZCtl?=
+ =?utf-8?B?a0tMOW1GWGhQZTVDVmxSYkY4aGh2ZkxaOVU3U0k2ZzdLRGlTYVhYNFRvNFl0?=
+ =?utf-8?B?bDk4MGR2RFNDN0NTVmp1V041bWVLSVVUUXkrY29KWHVsRWpheHZRVHhySmFQ?=
+ =?utf-8?B?NkZ0bG9aQ1VTbDZySzZSaGhoODR5aGtqb0hVWFZuNXY2L3dScDVZazNBYW0r?=
+ =?utf-8?B?SVVINzd2YXp1TkxRcU1iQU1RdThsQVF0eThPTS9DOTF2UlJPUExWWVovemN6?=
+ =?utf-8?B?TWdZT2RWM1Y2VkwrWUJBOTVlM1pBQ0lSa3Axb0RkZmsvSFl4WnFFRUhlMFBq?=
+ =?utf-8?B?VEFqZStRWTgwLzRrcjJSNkNaSUdERzdVaWQ3TDVyU2k2d2VCaEdOUHpJa0V3?=
+ =?utf-8?B?T0pSUHk5endRVHd4akJiTmJrYTZVUG1hSWlaK3BGdmVNVzhsT0gyMnpsd05U?=
+ =?utf-8?B?enZNUlNNcmZZYWhuWHlreVpKTXltQXdxZjk2N1pJU0FvVUZ2NFJIdnQvcHV3?=
+ =?utf-8?B?V2I5aXVRVnc4eFR6M3RhYVVwM0lOZmdxY3ZRTnlmUTBibFdwOFZDMFNaaUw1?=
+ =?utf-8?B?bTU2N2hKaTQ3bVJTRGxNa3JNZFRRQ21BY01ockZxalFKVitzd1k0ODh1eFNM?=
+ =?utf-8?B?RXNOYU1RTWVmQm9wVUZlQXFZU3FxVDRtcHBSR3ZyVlhORnhhVktKVC9sdHdU?=
+ =?utf-8?B?dGorenZVNDh4KzFEM2hlRTlsN1g0UGFWWTlkVEJqNkU4TkNoYnBrZjlKYUdx?=
+ =?utf-8?B?aGlKQW1PWVVyNW9NcTFGQmtPVWx1a3V1NDlSOWY2Z0NUeFR0anZoMEovSkhJ?=
+ =?utf-8?B?QTA2eTA3VmQvVCtCK3EwV2RNUVFFaGVXYnd2dWNtdnpsNUFDdXZSUElpQk5X?=
+ =?utf-8?B?NXdKaER4RmhmU1JBOHdlVGJrMDBsZG9rVElZM2RvbWxLNkExb1lQNUdXS2l4?=
+ =?utf-8?B?OUNTUXlhUmpROWlFSmtIdzQyTG42VFJwSkx4ZnFmZzBJdmRadmJyUDc0OGlH?=
+ =?utf-8?B?MzB2TE9LSC9YQnBNYmhzUHg4Y0pwZ21UbVl6emZMekhiaUNQRzhmRDFtTnFJ?=
+ =?utf-8?B?bDEwVHI4L1cweHZlTEdwSFZxWHdXUGs0ckNFVWhacGxUcWZuVEZZbXUrNWRt?=
+ =?utf-8?B?WThnUURQdEJiKzdscWVLT3JnTU04NEhaai9FcW42dS9meUEzcjI0bnBoZ3JL?=
+ =?utf-8?B?WFl0aXFBQzZRRkxMUCtJTnZkTE5maEFkZlY5Q2MybzU0VGV1V3ZJWHdveXBE?=
+ =?utf-8?B?c2ZEM0N3RDFCT2MyeVNyN2c5cjFsSFNjS2lrYzFNZjMxcWx0YWJzaXBKR3dG?=
+ =?utf-8?B?SmRhUTl3aVBLVCtkS2JKSHp3WERVbUlaVHdwckxiTTlaVTNaTng1dWFjRExW?=
+ =?utf-8?B?Q0RlSS82bjY5VTcwSzN4YjZLUUpkZWhtVG5mbktRV3NISjJ3VzdrN3NjWHg5?=
+ =?utf-8?Q?Fo5IGpVDsGSngLvx3lm3N0bhtUp4Tc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 15:15:51.3977
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 478202ff-004f-4e82-2a46-08dd5d8af2ce
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044A7.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6802
 
-On 07/03/2025 09:10, Svyatoslav Ryhel wrote:
-> The current EPP, ISP and MPE schemas are largely compatible with Tegra114 and Tegra124,
-> requiring only minor adjustments. Additionally, the TSEC schema for the Security engine,
-> which is available from Tegra114 onwards, is included.
 
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-
+On 03/03/25 21:18, Thierry Reding wrote:
+> On Mon, Mar 03, 2025 at 03:33:06PM +0530, Viresh Kumar wrote:
+>> On 16-02-25, 10:08, Aaron Kling wrote:
+>>> This functionally brings tegra186 in line with tegra210 and tegra194,
+>>> sharing a cpufreq policy between all cores in a cluster.
+>>>
+>>> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+>>> ---
+>>>   drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
+>>>   1 file changed, 7 insertions(+)
+>>>
+>>> diff --git a/drivers/cpufreq/tegra186-cpufreq.c b/drivers/cpufreq/tegra186-cpufreq.c
+>>> index c7761eb99f3cc..c832a1270e688 100644
+>>> --- a/drivers/cpufreq/tegra186-cpufreq.c
+>>> +++ b/drivers/cpufreq/tegra186-cpufreq.c
+>>> @@ -73,11 +73,18 @@ static int tegra186_cpufreq_init(struct cpufreq_policy *policy)
+>>>   {
+>>>   	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
+>>>   	unsigned int cluster = data->cpus[policy->cpu].bpmp_cluster_id;
+>>> +	u32 cpu;
+>>>   
+>>>   	policy->freq_table = data->clusters[cluster].table;
+>>>   	policy->cpuinfo.transition_latency = 300 * 1000;
+>>>   	policy->driver_data = NULL;
+>>>   
+>>> +	/* set same policy for all cpus in a cluster */
+>>> +	for (cpu = 0; cpu < (sizeof(tegra186_cpus)/sizeof(struct tegra186_cpufreq_cpu)); cpu++) {
+>>> +		if (data->cpus[cpu].bpmp_cluster_id == cluster)
+>>> +			cpumask_set_cpu(cpu, policy->cpus);
+>>> +	}
+>>> +
+>>>   	return 0;
+>>>   }
+>>
+>> Thierry / Jonathan,
+>>
+>> Any inputs on this ?
 > 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../display/tegra/nvidia,tegra114-tsec.yaml   | 70 +++++++++++++++++++
->  .../display/tegra/nvidia,tegra20-epp.yaml     | 12 ++--
->  .../display/tegra/nvidia,tegra20-isp.yaml     | 16 +++--
->  .../display/tegra/nvidia,tegra20-mpe.yaml     | 30 ++++++--
->  4 files changed, 114 insertions(+), 14 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+> Sumit,
 > 
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
-> new file mode 100644
-> index 000000000000..84d9ab9394d5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra114-tsec.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NVIDIA Tegra Security co-processor
+> does this look reasonable?
+> 
+> Thanks,
+> Thierry
 
-How security processor is related to display?
+Looks good to me.
+
+Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
 
 
-
-> +
-> +maintainers:
-> +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> +  - Thierry Reding <thierry.reding@gmail.com>
-
-Please provide description of the hardware here.
-
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: nvidia,tegra114-tsec
-> +      - const: nvidia,tegra124-tsec
-
-That's just enum
-
-> +      - items:
-> +          - const: nvidia,tegra132-tsec
-> +          - const: nvidia,tegra124-tsec
-> +      - const: nvidia,tegra210-tsec
-
-And this goes to enum.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: module clock
-
-Instead: maxItems: 1
-
-> +
-> +  resets:
-> +    items:
-> +      - description: module reset
-
-Instead: maxItems: 1
-
-
-> +
-> +  reset-names:
-> +    items:
-> +      - const: tsec
-
-Drop reset-names, redundant.
-
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  interconnects:
-> +    maxItems: 6
-
-You need to list the items.
-
-> +
-> +  interconnect-names:
-> +    maxItems: 6
-
-You need to list the items.
-
-> +
-> +  operating-points-v2: true
-
-No opp-table?
-
-> +
-> +  power-domains:
-> +    items:
-> +      - description: phandle to the core power domain
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/tegra114-car.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    tsec@54500000 {
-> +        compatible = "nvidia,tegra114-tsec";
-> +        reg = <0x54500000 0x00040000>;
-> +        interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&tegra_car TEGRA114_CLK_TSEC>;
-> +        resets = <&tegra_car TEGRA114_CLK_TSEC>;
-> +        reset-names = "tsec";
-> +    };
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
-> index 3c095a5491fe..a50e3261a191 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
-> @@ -15,10 +15,14 @@ properties:
->      pattern: "^epp@[0-9a-f]+$"
->  
->    compatible:
-> -    enum:
-> -      - nvidia,tegra20-epp
-> -      - nvidia,tegra30-epp
-> -      - nvidia,tegra114-epp
-> +    oneOf:
-> +      - const: nvidia,tegra20-epp
-> +      - const: nvidia,tegra30-epp
-> +      - const: nvidia,tegra114-epp
-> +      - const: nvidia,tegra124-epp
-
-No, that was an enum.
-
-> +      - items:
-> +          - const: nvidia,tegra132-epp
-> +          - const: nvidia,tegra124-epp
->  
->    reg:
->      maxItems: 1
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
-> index 3bc3b22e98e1..bfef4f26a3d7 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
-> @@ -11,11 +11,19 @@ maintainers:
->    - Jon Hunter <jonathanh@nvidia.com>
->  
->  properties:
-> +  $nodename:
-> +    pattern: "^isp@[0-9a-f]+$"
-
-Why?
-
-Nothing in commit msg explains this.
-
-
-> +
->    compatible:
-> -    enum:
-> -      - nvidia,tegra20-isp
-> -      - nvidia,tegra30-isp
-> -      - nvidia,tegra210-isp
-> +    oneOf:
-> +      - const: nvidia,tegra20-isp
-> +      - const: nvidia,tegra30-isp
-> +      - const: nvidia,tegra114-isp
-> +      - const: nvidia,tegra124-isp
-> +      - items:
-> +          - const: nvidia,tegra132-isp
-> +          - const: nvidia,tegra124-isp
-> +      - const: nvidia,tegra210-isp
->  
->    reg:
->      maxItems: 1
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
-> index 2cd3e60cd0a8..35e3991f1135 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
-> @@ -12,13 +12,19 @@ maintainers:
->  
->  properties:
->    $nodename:
-> -    pattern: "^mpe@[0-9a-f]+$"
-> +    oneOf:
-> +      - pattern: "^mpe@[0-9a-f]+$"
-> +      - pattern: "^msenc@[0-9a-f]+$"
->  
->    compatible:
-> -    enum:
-> -      - nvidia,tegra20-mpe
-> -      - nvidia,tegra30-mpe
-> -      - nvidia,tegra114-mpe
-> +    oneOf:
-> +      - const: nvidia,tegra20-mpe
-> +      - const: nvidia,tegra30-mpe
-> +      - const: nvidia,tegra114-msenc
-> +      - const: nvidia,tegra124-msenc
-> +      - items:
-> +          - const: nvidia,tegra132-msenc
-> +          - const: nvidia,tegra124-msenc
->  
->    reg:
->      maxItems: 1
-> @@ -36,7 +42,9 @@ properties:
->  
->    reset-names:
->      items:
-> -      - const: mpe
-> +      - enum:
-> +          - mpe
-> +          - msenc
-
-No, why? That's redundant. Having names equal to module name brings zero
-benefits. This change even shows that it is counter productive.
-
->  
->    iommus:
->      maxItems: 1
-> @@ -58,6 +66,7 @@ additionalProperties: false
->  examples:
->    - |
->      #include <dt-bindings/clock/tegra20-car.h>
-> +    #include <dt-bindings/clock/tegra114-car.h>
->      #include <dt-bindings/interrupt-controller/arm-gic.h>
->  
->      mpe@54040000 {
-> @@ -68,3 +77,12 @@ examples:
->          resets = <&tegra_car 60>;
->          reset-names = "mpe";
->      };
-> +
-> +    msenc@544c0000 {
-> +        compatible = "nvidia,tegra114-msenc";
-
-Difference in compatible does not mean you need new example.
-
-
-Best regards,
-Krzysztof
+Best Regards,
+Sumit Gupta
