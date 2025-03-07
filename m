@@ -1,163 +1,125 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572F721A43C
-	for <linux-tegra@vger.kernel.org>; Fri,  7 Mar 2025 17:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C7B21A43C
+	for <linux-tegra@vger.kernel.org>; Fri,  7 Mar 2025 17:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741369760; cv=none; b=qSdS39bPApDJCt0ApdBxuMAzlYCYoYMAihvNCa6YAJ4Vosj9pUk7GTFpmnXCA52gQ8uGTqItKJzj1Ka0XjberP/1UPQwJ9ENv61DAn6OvCfDZWi9FZ3C0geKCfb0WKO7cWcNYl9hBIE6rMtErr5rlKLbQpu4RGpj2hsi1BpSo0s=
+	t=1741369783; cv=none; b=Yra0fvg8db0IvUUYiap8Sao+u+/fyuYwX18k66+Xw4ReuFewzktL4Rj/g8zdUm7/IP1FYRklu/K+Yf8yWVOePJYFmiE2Jv2aO6N1w2R9L+aKHBFrC9sbAWyyIdQlwaI8+rW4yxuNnf+uOhK4MLo7sIA8SakijUVM4z9P0p8f4GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741369760; c=relaxed/simple;
-	bh=lydFLWj67WtyjXuomBRVH2WkhbZf44SVom2Q3MnbuTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdvbu3BwlGJGdfbaLrIe75pJyGysLWp57KTOE7KjbHvkMN7lsTs553/l7F6NPFZk/TvTOwslrWSfB33GYGIsA/hvtfp8N6YBITxstlA7FYyfBXYP91qjbcj3gELnmY/6qzWEEORdswdV/8pNhK6LtIK1seiS1TAeATAtPhMvcgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KCSRh2kX; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1741369783; c=relaxed/simple;
+	bh=+bWbpozrLQ8Y28qYv0RsdTy8ONY6agBjzjQ1RHwRl20=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=cbdr5ycZ1XipDCQfwXMWimFVOkmQrqD/If+IUR3WCWfco4NrGKsJXiz8FFh03U5QNyz/x+fgSnI4zyo+tKO2ZdToZF5Mo6P5Cx7p+VqZTaHws9aVNe7LE3comDt7GqLIkUAjcjbTts+BimA1iQ5QjkLN20B4hu4rSZAI5OJ3QH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H/vinuR4; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KCSRh2kX"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38a25d4b9d4so1119427f8f.0
-        for <linux-tegra@vger.kernel.org>; Fri, 07 Mar 2025 09:49:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H/vinuR4"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-391342fc1f6so1025152f8f.1
+        for <linux-tegra@vger.kernel.org>; Fri, 07 Mar 2025 09:49:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741369756; x=1741974556; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8QF34UIm/mDVHphQGWjdR/1AzekgNrOu9yMsFMVisYs=;
-        b=KCSRh2kXslutUFm+bYIjSh4amM1Eu31Bldy+6/Qos8qkNxr1vf5WplarVPBiDWRqq+
-         BzwZpoKvXsPepr2n8geDa+NBudoFcctz+wYZFSW9wQPIftIjfmYouynHwtF0fa9F7FLc
-         b0+370sRVUKgbS54CTn44ARR0AyX5aq35hAc8F/ddU2+GZIAF31SiaFrLfC6KHThZAKL
-         hamCI4u2R0r1fu90x97x1t9SEXdIlQY/GVOr5L85Nv3JscJZAxzWAv1NT/jtIWjxv83G
-         3AM+ojALTqIzVwTI1nQbcLdvoz7gAjmMaM/m+Zf1xg1b23QlAl7Fh9rEMT10YRC2jHtu
-         RFtA==
+        d=gmail.com; s=20230601; t=1741369780; x=1741974580; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J90ROVYIlVunjJAyLM7koC/nUgKephX5yjyqgLDTy/o=;
+        b=H/vinuR4ZQThEj/EoakzSZzPfwPTtHrDl5Y+xexyP1eHFMqy9wq3hw4QY4qBrmvKzA
+         zEho4Wd0myTM09fa5uZYlvfXJFRuP8rtsUhf4FPCIze3+VapdPpa6I3iUGYDF8p3dc1K
+         3Tri3+9fgtuaTky9vELajAVsaBbzGeZxP8VzX7r2biu/nIKjLD75WwnUdmbPfwTud49N
+         UXyaJJ48/6BXXm2FWw+KPfKyrwq9CI/CEr6uD2F81+K4q16eS5eIcwPjBd5K4cD/jTbw
+         MmEbhlIOFA3HGJFXFLNmvnkR5wr+F76RSArnHlw4A/0OR5Rrg4eBNUpYCrBrspsL7ubi
+         1Uww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741369756; x=1741974556;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8QF34UIm/mDVHphQGWjdR/1AzekgNrOu9yMsFMVisYs=;
-        b=B+tvos+USEpCjiQ9pMbu2pKoS1zNp9u/rxTI2yGGDeujAwso+7p8Yu7rxHy4sBQ5qz
-         sdEjtTmKiXxaDACslBaXYvOOe/Nk5qRN1kFLQFJNhtiKlNaGviOjFR775HM7Tkqr1icz
-         jm4+5eTucJNMWTaljxu7GjRKsuOuFsOAtZeGGWIWIWJAQnH/uD/NViOYLkLk3Z8nZ6Ea
-         u4OjQPRtUlTo1ONnIkmS4Sgka216sAk36Fp5afhbxKvBzTbYMlRYEIxvuVgGHqCd8GZ1
-         13hp7cuOm4Wuky9rQU4Qns1/Hyk7BXjmEkf51L6kGh/CzcNCF+FrVx6wlQdqQRmRM96x
-         f+YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIev6zZ2J4eNPRUmx/P03wZRfiVFAF7NM0o3xrI+MgjNDKMt9wEr4RXCa2/7rs4hLRN/y41ADQupsy1Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx73G2z6IyJ6gJuJRq+hfpgr0UuPPpTPqc5W/DLnE1uiYkgv3q6
-	IZaoPxjdcWdQ3J8K551n8gzwrE3xHA54Nnvb/4yIxGXijn9p4gvnfz4gCA==
-X-Gm-Gg: ASbGncsSYSKaD7/RNYpR5rkOZxxsFxANaEpe+I5VWtg529ekuQE3i8aVI490Ag4NHIE
-	4tG1RldP/0bBtzD9Bdj2ooDL1aS1O6g2wCOAF5yMS70ci8tA2r6452XSBENKSaIl2WoTGbXfWwg
-	SpEKnTSiOU3ens9wdeB3my6ap4F7MYP8rqDaRsKapwA+nhR92O5HLq8kX9wTdB9cCFsuOs9Objd
-	LYlva/ObFdecy9qwEGHqEdzc6xJE9F6nqnPfp5khltrMZg5NLcT0duDeAy6zcwNEdppJGonf2bx
-	j6tFam4EP2auejSuQfvI3pl2AIv6+M222NJG77txuLMFRn4RdLzXmbnI3MH//llqQVYcOchgo+d
-	lCIUTmw4tc4Iqjr5TtzYVQL5w1T/yfi8=
-X-Google-Smtp-Source: AGHT+IHX4k9h2dUIfbIghSN4dswH6DxltJKXaksN3tcy+Fhl/9UKW5pGEUDWt7ze0avENn0h6Vn5sw==
-X-Received: by 2002:a05:6000:18ae:b0:390:f394:6271 with SMTP id ffacd0b85a97d-39132da96b3mr3169491f8f.43.1741369756267;
-        Fri, 07 Mar 2025 09:49:16 -0800 (PST)
-Received: from orome (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb79fbsm6174821f8f.13.2025.03.07.09.49.13
+        d=1e100.net; s=20230601; t=1741369780; x=1741974580;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J90ROVYIlVunjJAyLM7koC/nUgKephX5yjyqgLDTy/o=;
+        b=nWyKIdyzzmj97fA8mw6K1mu9lCfXOecpI0mFv5zzRFaVwaY1FF4FmxE7ryr7FUtls6
+         aKVD1XujdGUDu7pIBP8S698vsGNSqEs4ZX29AR6ZBAKuKBy5gPnDsuOtrxelfTxXyjsR
+         ZF0AHP4hSSYqV9iYPNoBUfacItTXAJCFPXKk+xyNKMnBaHXtq2HJtbuYqx2QVzCOU2+K
+         JCwCP5HuCdho6LPzRIDvNHtMnDLgGCIZ0szdRsV9Y4lUu6CjaUif/l2ZxwiWaJz/Lyec
+         dIijMJM4qRGZOjoTUg7HfUgh1mjjTve8sRsv2D2QFa/ImBFINcf/M64r9zgz61i6yf5B
+         qZ1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWHdKmekISm3d4T/oG0Ln6nMGtqfwaAR27TQzq4BdxH7KNpmTQ87XwZgSh+ciL2uJ94AwnNPlilI++2KQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxKa56n3UsEBt6XX0golxFLSwIL95tDLsFf8KW6kky5X8UzNDy
+	+JYkNp4FSnDdBo7HQcD61kdvEbIlGe1nt18Ro5wOQHEk4MnE82Yj
+X-Gm-Gg: ASbGncun8UZPEZWYwBicODkc+cbgEAykupaiMhpgBXyTlaKQqJGPhfQLxqKxpIsQfm0
+	hGX6fDVTRPmM1CsYj5+2I25IAhIrhQAI6/7AyX0DoMlcka/C9Y0djetU4ROqwaRUUIH4oI5xrVC
+	AySTz1NM4xnjgK1jNmjFC2X0eS6Ug+BSlFn17M1LfdhIebxkow9f9UKFaV6NBSFHU5t3dvDtR+h
+	Qd8DJBb0TLIQZW1GJNOv5NFVc6dX5cLdcI2p1winy3eOIj1p/CiJRl1dXhhhJJ9QTmTZLo9ROl2
+	11Po+pkS/Le2F5Yd/zfJn2vN/Qth+x7JjmkQRDjAw4gtAQvULZCnyTzR4l38Al5ONNK03fhZFhX
+	45SAchCnxmXP+YWqR1OXOCh9yzv1EoiWbO3l/
+X-Google-Smtp-Source: AGHT+IFQwfhw0TWFcyPyKOcZOJGtcyGZ4hJE72wsBJf4kNuTmJUWQ1NzJYzItPPrui90jo20M3KYow==
+X-Received: by 2002:a05:6000:402a:b0:390:e535:8758 with SMTP id ffacd0b85a97d-39132d2afc2mr2954780f8f.9.1741369780278;
+        Fri, 07 Mar 2025 09:49:40 -0800 (PST)
+Received: from localhost (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bdd8b04casm58181535e9.8.2025.03.07.09.49.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 09:49:14 -0800 (PST)
-Date: Fri, 7 Mar 2025 18:49:12 +0100
+        Fri, 07 Mar 2025 09:49:39 -0800 (PST)
 From: Thierry Reding <thierry.reding@gmail.com>
-To: arm@kernel.org, soc@kernel.org
-Cc: Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+To: arm@kernel.org,
+	soc@kernel.org
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: Re: [GIT PULL 5/5] arm64: tegra: Device tree changes for v6.15-rc1
-Message-ID: <ei5lzgdpckb23la7xdsyyaeru32whrgyb6zdzzp6srawfi7obc@4mb35lgik26a>
-References: <20250307162332.3451523-1-thierry.reding@gmail.com>
- <20250307162332.3451523-5-thierry.reding@gmail.com>
+Subject: [GIT PULL v2] arm64: tegra: Device tree changes for v6.15-rc1
+Date: Fri,  7 Mar 2025 18:49:37 +0100
+Message-ID: <20250307174938.3456275-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.48.1
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bhwaqg7unpd2doim"
-Content-Disposition: inline
-In-Reply-To: <20250307162332.3451523-5-thierry.reding@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Hi ARM SoC maintainers,
 
---bhwaqg7unpd2doim
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [GIT PULL 5/5] arm64: tegra: Device tree changes for v6.15-rc1
-MIME-Version: 1.0
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-On Fri, Mar 07, 2025 at 05:23:31PM +0100, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
->=20
-> The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f0=
-5b:
->=20
->   Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegr=
-a-for-6.15-arm64-dt
->=20
-> for you to fetch changes up to c33a71fd0e3644520af7b5926926c06597d6d355:
->=20
->   arm64: tegra: p2180: Add TMP451 temperature sensor node (2025-03-06 20:=
-35:53 +0100)
->=20
-> Thanks,
-> Thierry
->=20
-> ----------------------------------------------------------------
-> arm64: tegra: Device tree changes for v6.15-rc1
->=20
-> This contains some cleanup patches that remove unused properties and an
-> unusable key that was erroneously exposed. A fix to support GPUs with a
-> large amount of video memory on IGX Orin is also included.
->=20
-> Finally, some additional devices, such as a temperature sensor, are
-> enabled on Jetson TX1, and the output voltage of some pins is adjusted.
-> A fix for the VDD_LCD_1V8_DIS power supply is also included.
->=20
-> ----------------------------------------------------------------
-> Diogo Ivo (4):
->       arm64: tegra: p2597: Fix gpio for vdd-1v8-dis regulator
->       arm64: tegra: Define pinmuxing for gpio pads on Tegra210
->       arm64: tegra: p2597: Enable TCA9539 as IRQ controllers
->       arm64: tegra: p2180: Add TMP451 temperature sensor node
->=20
-> Jon Hunter (1):
->       arm64: tegra: Resize aperture for the IGX PCIe C5 slot
->=20
-> Ninad Malwade (1):
->       arm64: tegra: Remove the Orin NX/Nano suspend key
->=20
-> Rob Herring (Arm) (1):
->       arm64: tegra: Remove unused and undocumented "regulator-ramp-delay-=
-scale" property
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
-Sorry, I missed that you already pulled this into the ARM SoC tree. I've
-dropped it from the Tegra tree and I've sent out an updated pull
-request.
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-6.15-arm64-dt-v2
+
+for you to fetch changes up to 65d691a4400e111e8bb2422a5f4f28de34298be7:
+
+  arm64: tegra: p2180: Add TMP451 temperature sensor node (2025-03-07 18:38:29 +0100)
+
+Thanks,
 Thierry
 
---bhwaqg7unpd2doim
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------
+arm64: tegra: Device tree changes for v6.15-rc1
 
------BEGIN PGP SIGNATURE-----
+This contains a patch to remove an unusable key that was erroneously
+exposed as well as a fix to support GPUs with a large amount of video
+memory on IGX Orin.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfLMZgACgkQ3SOs138+
-s6HJDhAAvkmWYhwK6ieB05CXS9ujeUbGdmfhD/JFL/eZy53b99HyVWdulPnnFHMQ
-SWpEGGKPAHAWVijcJTlWY1flPd8vRcuzI+lDo+3rUIOpTkcZcCNvlNxi4sTY3ee1
-uUN+YMlDPYKVMOsAoyTHt0k4l7GvbTaGpCx0dHuIi/qhaEWkn9t4ny0Sq56hVpAF
-C3fk9rr3mAY5uZQcCpqAn2uyzMVPt/KTkiz+qDgm/3UW+zRiIHomihf3ijQVmY/a
-yUoqpKzFzT+Q1aJUvn2qumkgvfgqYtvm8bL+ML6eDGvIHUQVXDbjDlbY3FKKRh/0
-zWZZBYBPSi8iq6nYBUpB4JHNpALUue0lh65VvXFeIPDtMLk7gRbG7hmS/Lt1kOPl
-ILz73L54sdZo0HcWMD6C0WlQlCu6HrEFLchpDx8t5fHN+bBrtuNY/XiPZAMZFmM1
-xL3HqLX2cxRAlavE7aiCgXiRtmQ+Jbxk7YbD79UQSA3DtOwa3rYfOMu1gCISweGX
-TcrcM0wp6g1DbFtiZloKJC7ZEUDhk41nf+wKikDtl4nPq/w3KWgy1fURfvN1+/6a
-rhrPwKVStMp2yunrmY1/UeMIUekgI+bTs/M3rhx93Z8L0wyk3dh+zbPwWawc+WaT
-wdX5DSqXPKQ4tX4wWCmcGU6gwbXRnEv9tSJDbNP1ameR23QH4Yc=
-=v5V6
------END PGP SIGNATURE-----
+Finally, some additional devices, such as a temperature sensor, are
+enabled on Jetson TX1, the output voltage of some pins is adjusted and
+the VDD_LCD_1V8_DIS power supply now uses the correct enable GPIO.
 
---bhwaqg7unpd2doim--
+----------------------------------------------------------------
+Diogo Ivo (4):
+      arm64: tegra: p2597: Fix gpio for vdd-1v8-dis regulator
+      arm64: tegra: Define pinmuxing for gpio pads on Tegra210
+      arm64: tegra: p2597: Enable TCA9539 as IRQ controllers
+      arm64: tegra: p2180: Add TMP451 temperature sensor node
+
+Jon Hunter (1):
+      arm64: tegra: Resize aperture for the IGX PCIe C5 slot
+
+Ninad Malwade (1):
+      arm64: tegra: Remove the Orin NX/Nano suspend key
+
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi       | 13 +++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi       | 20 +++++++++++++++++++-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi             | 10 ++++++++++
+ .../dts/nvidia/tegra234-p3740-0002+p3701-0008.dts    | 10 ++++++++++
+ .../boot/dts/nvidia/tegra234-p3768-0000+p3767.dtsi   |  7 -------
+ 5 files changed, 52 insertions(+), 8 deletions(-)
