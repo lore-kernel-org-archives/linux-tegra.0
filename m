@@ -1,98 +1,98 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744B7184F
-	for <linux-tegra@vger.kernel.org>; Mon, 10 Mar 2025 05:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B93227B95
+	for <linux-tegra@vger.kernel.org>; Mon, 10 Mar 2025 12:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741585835; cv=none; b=NbFWi6I5K/IYO+mQ4mGAa0cqWgDx6yKkBSDyi+98OcuwYX/r3qIWlNh7rTbxnSrkYCNqIkCRa4+6UJhfg7OsOVWcaPg958cbbLXg0iuU+4uElNCohP7EXqgzuyPmjRLp9W4Z2BlNJGuJdQi1JkzA6xnXQcKOl95m7vsP1dxS9yA=
+	t=1741610480; cv=none; b=Ge9csmoau3yqiu1vPPpCgMxcL5vnx5vGgK4VUU5JxAKLLnZKCunXRHfczKusXDTi1LqNRBF0N/aGmNGPbLUIMUJElEGoGWxcT7182EETyN4qCDYyMYdlXqaR45SVPf6Sy3X0Cj+p3zVEGbzW0cdp0xDiSu+f+UOs2L3aAUPtjC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741585835; c=relaxed/simple;
-	bh=zYnvO7UxXaLKDgnQdtARGxHYoWdcUJWZPhez49Oo7HA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mzKu1BBbhXrFzuaYfIxz33xR/z1SZXqAdubF39hhdQbunSCGiEL0ox1cwdlvDRS+bdrad0jMqeuPMuiVwfjLqn7ZSqDudnFx/DPTdd/o9XVOgVF2gDRDQL+JhmkzegVTngo3qjCs/EbeqQUb1oszlwRXwydHkiFVJwSeATyOBJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lsYelF8V; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1741610480; c=relaxed/simple;
+	bh=7y+Ce3En3FYPPydb2HFzABw4vaWNGqVitA3xGTZeeEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fGCttC/iAWnu0WcQ6jOz6UXw2TFDAHVuYiDyVpaFMdRKZRJ9dzUPsb+oj9Phg/fOZ9J31oRj+mdB/L4CKMlMWe7lixGnPKxKEJqPu7pqqIYoedAmRq6lXLyqNDpALGfMjzQyqdq7tGZ0RiuTgYydQtD7LnVGhaAt8+TUvXzICcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=nzFN2P0q; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lsYelF8V"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2254e0b4b79so32444965ad.2
-        for <linux-tegra@vger.kernel.org>; Sun, 09 Mar 2025 22:50:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741585833; x=1742190633; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UwUL+b7ViJdTbaqWpBCbM43ivsoRmiuqDxKHQGJRDvo=;
-        b=lsYelF8VO/wVUjaV36pPJvzGnzNrVXBmOxjOXcbW9T9adNqy1w7H7YZm3JH6Zi7mPX
-         DEOejG45HV4inYdrOVmVkfG1XS2CAhDL0ufkHN5zObwGIhhZPsf0cfgu8li36aRR9DXW
-         9X8VuONPHJzMzTU2xeKxsM73CmsW2Kn9IZdW/tJxdm6xCdaSCaLcpccQAC5AVkKdu6h3
-         9MbopGVLHCOScwMj+4+RuyycmfV/AU99HOIijxo+gLTOaw3Eiqp5GQp6uZwvuVftIkcN
-         74Rqk6ePDcixAumaaI2OQodmVWXjANuwAnHuLBVIzilLaRrTMvwzsxNDkHDqtBx50HcJ
-         rWzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741585833; x=1742190633;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UwUL+b7ViJdTbaqWpBCbM43ivsoRmiuqDxKHQGJRDvo=;
-        b=pUuCW+P4EiJnc+dJ2shZvE25I1BKcH2j02Y7V4nVpxnhEqyK1FQFfHpKysTAqlHnhL
-         MDCS7zLNcmk40RDEZvpBCweBCqzk0fLkfGvogC8YsPjsGF0YckD0PmKZEcq/+rXAla1Z
-         VUipT9DYKvty+MsOd5iHXqKu4917IzA5pKakeoORFBgttMlQt78ih6GJbLIqi4RG1Snb
-         EUei8jRa3s7M9k7ZYkg7XqMsIRTRQ2KyJdUIMJp4UZeTKQ0mlrsr3UIO9VEJvURThhii
-         LZX9Ledd9zod+OexmQiL6ABEumDfrbFYwrPlszI5reWChqCzUSlZqvTsEMETAxUCb9C2
-         Xiew==
-X-Forwarded-Encrypted: i=1; AJvYcCVsn9VyIkSIOYjCcxvh+8oS0rfQcDNHX4JTholOSRTKSM0hCHjChwEusHr3WTSWI6h6QEei2YNYM/PuBw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYFqOb2hJJghYkT00vqAbk0wp9vSLblLv/1FMLp+zpGpUkxffd
-	vLgPaxHG9PnytdbaW0voixidqLQS3NODj6oOKLdHU1LUCx9hE2NR12sXFdC2S1A=
-X-Gm-Gg: ASbGnctTWna4zzMxPZh30cuUISZxI9Wd1Ku5K3DAETqtMS/jvgu+vmyKmEmuh47JbeX
-	6DFNFu38e34HBrNLmDdA0aHuaNiLi3luqR9jqJlhwlWIQ0BAS7vG6TbE34AUDba24mMg5qoFruo
-	ed/gg+KL76Od7V3wXJlVk9qig5wOFCrv/B7RkKLUK7oJSF+r7zIcZUOEzYu23k/HgEeJxnUl3C5
-	ZpMRBhhJHj29gjFu+EhiYTEnYrFtXbIgeuvU+dMPfRGQsf9kS2fKEZja1e1jkwhr/7VQ7cZ4ZnD
-	65yY4GZNrAo6otWUWP9hKJ8OG9x8dsN+HZdmnsbl0CghlA==
-X-Google-Smtp-Source: AGHT+IHPp3K4l2ZyxYf/rKQ3RqUoT3ZhMn6STVsJw+Ky5U+CU8LfyTho0FXbT7xpiSFmiuzSgnUX3w==
-X-Received: by 2002:a05:6a00:b4e:b0:736:592e:795f with SMTP id d2e1a72fcca58-736aaa1d1d6mr13217009b3a.9.1741585832714;
-        Sun, 09 Mar 2025 22:50:32 -0700 (PDT)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736ca79944csm2481508b3a.87.2025.03.09.22.50.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 22:50:32 -0700 (PDT)
-Date: Mon, 10 Mar 2025 11:20:29 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: webgeek1234@gmail.com
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Aaron Kling <luceoscutum@gmail.com>,
-	Sumit Gupta <sumitg@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH v2] cpufreq: tegra186: Share policy per cluster
-Message-ID: <20250310055029.7u4qkmcnfqhtof24@vireshk-i7>
-References: <20250310-cpufreq-t186-share-policy-v2-1-d0b743cd051f@gmail.com>
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="nzFN2P0q"
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 87D63600302B;
+	Mon, 10 Mar 2025 12:34:41 +0000 (WET)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id WKBhROGT4aPH; Mon, 10 Mar 2025 12:34:38 +0000 (WET)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id 5C2506000230;
+	Mon, 10 Mar 2025 12:34:38 +0000 (WET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1741610078;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nm9bV3SCT7LdcvOrvp1YJMQOgiJT5opS8tBpLu2IzIw=;
+	b=nzFN2P0qNrK3M1M7HF/Fw6LYlMHSE5FIdkCtc5prG+gsIvEO9b9ZJAFuO4ItDYXiGOlW8D
+	C4yUwhxMJkt13OZx9r6JOXE4lY+K8M6ndjpO8x1UBNVkC+ZZHvgAyLS2yBQe+Ipc+19KVy
+	OMGsGXWRyldKgtfTQd8aLim7EQQqiB8=
+Received: from [IPV6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde] (unknown [IPv6:2001:8a0:57db:f00:3ee2:38aa:e2c9:7dde])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 89AC73600D1;
+	Mon, 10 Mar 2025 12:34:37 +0000 (WET)
+Message-ID: <19478509-5007-4a20-9512-b965126b7026@tecnico.ulisboa.pt>
+Date: Mon, 10 Mar 2025 12:34:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250310-cpufreq-t186-share-policy-v2-1-d0b743cd051f@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH rc] gpu: host1x: Do not assume that a NULL domain means no
+ DMA IOMMU
+To: Jason Gunthorpe <jgg@nvidia.com>, David Airlie <airlied@gmail.com>,
+ dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ Mikko Perttunen <mperttunen@nvidia.com>, Simona Vetter <simona@ffwll.ch>,
+ Thierry Reding <thierry.reding@gmail.com>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <jroedel@suse.de>,
+ Jerry Snitselaar <jsnitsel@redhat.com>, patches@lists.linux.dev,
+ regressions@lists.linux.dev
+References: <0-v1-10dcc8ce3869+3a7-host1x_identity_jgg@nvidia.com>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+In-Reply-To: <0-v1-10dcc8ce3869+3a7-host1x_identity_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10-03-25, 00:28, Aaron Kling via B4 Relay wrote:
-> From: Aaron Kling <luceoscutum@gmail.com>
+
+Hello again,
+
+On 2/4/25 7:18 PM, Jason Gunthorpe wrote:
+> Previously with tegra-smmu, even with CONFIG_IOMMU_DMA, the default domain
+> could have been left as NULL. The NULL domain is specially recognized by
+> host1x_iommu_attach() as meaning it is not the DMA domain and
+> should be replaced with the special shared domain.
 > 
-> This functionally brings tegra186 in line with tegra210 and tegra194,
-> sharing a cpufreq policy between all cores in a cluster.
+> This happened prior to the below commit because tegra-smmu was using the
+> NULL domain to mean IDENTITY.
 > 
-> Reviewed-by: Sumit Gupta <sumitg@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> ---
->  drivers/cpufreq/tegra186-cpufreq.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Now that the domain is properly labled the test in DRM doesn't see NULL.
+> Check for IDENTITY as well to enable the special domains.
+> 
+> This is the same issue and basic fix as seen in
+> commit fae6e669cdc5 ("drm/tegra: Do not assume that a NULL domain means no
+> DMA IOMMU").
+> 
+> Fixes: c8cc2655cc6c ("iommu/tegra-smmu: Implement an IDENTITY domain")
+> Reported-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+> Closes: https://lore.kernel.org/all/c6a6f114-3acd-4d56-a13b-b88978e927dc@tecnico.ulisboa.pt/
+> Tested-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Applied. Thanks.
+Any news on this patch or any other solutions for this regression? It's
+not great if this falls through the cracks, especially when there is a
+solution for the problem.
 
--- 
-viresh
+Thanks,
+Diogo
