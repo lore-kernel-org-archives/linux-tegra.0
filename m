@@ -1,100 +1,111 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0075013C8F3;
-	Sat,  8 Mar 2025 08:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616B1170A11;
+	Mon, 10 Mar 2025 02:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741422597; cv=none; b=dQGjWlw2kREnRlGbN8bIsRAgRHKG2UYak8Svcg1ZMA0vDCROOSOy726U9U/XN+uWcBmb+dlY/PBkLWCbz5ZSh34R61LJxl2MjsN1+7ps6Wya8nTlvOJwiHHyXcXs7obC9HtkP0fPipjORC33j700TABPBYoMwW0WZ5IqKTGvPrc=
+	t=1741573464; cv=none; b=Ia8x0eyx3PaS50CWTp741XS/yGU4UhHVvX7cdqu+21+WW4sAM8SS0Sju2YR1XVXOtI0e55rNgteD/ZgbHIZOLtNT6sOq0h3D3wVUlUjrG4OmvhUIKK2GwnslqK5TnVDcibT+I/biqqLZ0djAy9xPpVBGPqT6HGo683zhbLAw+vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741422597; c=relaxed/simple;
-	bh=WSNA3BBLFKSfUikJj+CfS+8eXC42JmjW0MdCGY60QbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QPPcRHioAjgcD6CJkVy6nOTRvpOhNUGOAhOCiq3zluRh6lAFauE/q0TTkcSy/8GEjrkHlejsV7Vjz2vORnGw/krQz5oaYD8bpMgaog0CTo37UH94vbfxpL8GwtGk4s8FlMRqFmZv8n6OqBnne/qLmMAgfiv6dS8WlFp+5BOvo80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=hLgz5Zs3; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	s=arc-20240116; t=1741573464; c=relaxed/simple;
+	bh=WKFaRGNbm41ygiDOYwuZyQiHlC64X9yBshoJhOG//8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=plM+0vTpOJsF2xYBz2EYtmpY2YP5YJgecABIeWJU4ESBXlC/gijMZ0+zkMsMs4+9Tmgu6mp9FnSwXawT5q88OZp4GLef2kqRl2OuIZ2Jox28zCofYONYcGUusJTttH0T3EVOzKt0SoKXIDISNJVfBX3XmVEUg/dWFVbURuhNRnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jnMlHSSF; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="hLgz5Zs3"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=tZ+2bGh/MnVSsospfWDJ6WhrM00mV4Pwz55VQ3nG+C0=; b=hLgz5Zs3jAvhCOCW/KPX3pxJh1
-	LioTKil2EY2SdGkDsxZIpfbxED0HppEacOxF0IEmd8crY2Wzid/pk7KiXnJDBAVX3LwHVa1+Pv2nQ
-	5Am3unn+mlBdmhka9t48fDTuihPRo83RpuPCeBBA9mXYYE+2LjRiQgzOHCZCtDkiNipN0cP6BUFpz
-	OE/str7My4rTgFP+07z7hmITlD3YozZUGGQftgxPrKk2fCzNv6dIL+kZxuNYzn1+xJkAqiiefL04C
-	Z/sr9+GU2O+tD6aw+cs3Je2CIojAcqYDHdQUpjU1kU+tm+xlToZGvTuECG+jvsFLO9YppY/UUASfC
-	NE+10GIA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tqpZ2-004oeR-0m;
-	Sat, 08 Mar 2025 16:29:45 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 08 Mar 2025 16:29:44 +0800
-Date: Sat, 8 Mar 2025 16:29:44 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: davem@davemloft.net, thierry.reding@gmail.com, jonathanh@nvidia.com,
-	linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/10] Tegra Security Engine driver improvements
-Message-ID: <Z8v_-B8ZTIY4scFm@gondor.apana.org.au>
-References: <20250224091610.49683-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jnMlHSSF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741573463; x=1773109463;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WKFaRGNbm41ygiDOYwuZyQiHlC64X9yBshoJhOG//8I=;
+  b=jnMlHSSFwCSoSxg9WKFmeAiZG8gycT6bCJQWCDO/I3IFI8KD34U7WPFX
+   iCxurxqJG2A4DewW6JddKpHXppSP6lsaygkVRoO5fr8+WLIMUowBffZST
+   uZdKjJ5oEC7AEo4ad8uhXQihb1dVjoPVeXtx30NhissLz8CEBEb/1tKdA
+   +lrKAziR77JL6d158ktQ70dxxypsPmhyut2+WS63XJrAuanGTiRZocCXK
+   KP/KhJ6ja4HvBdwOW1GzJzpmOTJQTXFTbMw4TbCFHQ/+84ODELq50NuWH
+   y5UpVeTr2kgO5nYOtoMeN2ZFdL/ueEk3P8coAyLVn8GZXZok4qKwjTavv
+   Q==;
+X-CSE-ConnectionGUID: Sx9VJylFTDOGQ93ijgqBHg==
+X-CSE-MsgGUID: v9DqswfPS4WJ623Mg+xtOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="65000956"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="65000956"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 19:24:22 -0700
+X-CSE-ConnectionGUID: EBcI4p/gQFCFWXYHUd2zOQ==
+X-CSE-MsgGUID: kuyCE67oS6CBdcD22w3xyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="124459380"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 19:24:15 -0700
+Message-ID: <2db8d0c9-f6df-48f3-8bbb-4592e86d92fa@linux.intel.com>
+Date: Mon, 10 Mar 2025 10:21:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224091610.49683-1-akhilrajeev@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/23] iommu/vtd: Use virt_to_phys()
+To: Jason Gunthorpe <jgg@nvidia.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Albert Ou <aou@eecs.berkeley.edu>,
+ asahi@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>,
+ Heiko Stuebner <heiko@sntech.de>, iommu@lists.linux.dev,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Joerg Roedel <joro@8bytes.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-riscv@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-tegra@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Hector Martin <marcan@marcan.st>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Robin Murphy
+ <robin.murphy@arm.com>, Samuel Holland <samuel@sholland.org>,
+ Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+ Sven Peter <sven@svenpeter.dev>, Thierry Reding <thierry.reding@gmail.com>,
+ Tomasz Jeznach <tjeznach@rivosinc.com>, Krishna Reddy <vdumpa@nvidia.com>,
+ Chen-Yu Tsai <wens@csie.org>, Will Deacon <will@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>, Joerg Roedel <jroedel@suse.de>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
+ David Rientjes <rientjes@google.com>, Matthew Wilcox <willy@infradead.org>
+References: <8-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <8-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 02:46:00PM +0530, Akhil R wrote:
-> With the CRYPTO_TEST now being run asynchronously unveiled some
-> concurrency issues in the Security Engine driver. These were not
-> caught during functional or fuzz testing as all the tests were run
-> synchronously.
+On 2/26/25 03:39, Jason Gunthorpe wrote:
+> If all the inlines are unwound virt_to_dma_pfn() is simply:
+>     return page_to_pfn(virt_to_page(p)) << (PAGE_SHIFT - VTD_PAGE_SHIFT);
 > 
-> This patchset contains the fixes for the concurrency issues and few
-> other improvements identified during the stress-ng and cryptsetup tests.
+> Which can be re-arranged to:
+>     (page_to_pfn(virt_to_page(p)) << PAGE_SHIFT) >> VTD_PAGE_SHIFT
 > 
+> The only caller is:
+>     ((uint64_t)virt_to_dma_pfn(tmp_page) << VTD_PAGE_SHIFT)
+> 
+> re-arranged to:
+>     ((page_to_pfn(virt_to_page(tmp_page)) << PAGE_SHIFT) >> VTD_PAGE_SHIFT) << VTD_PAGE_SHIFT
+> 
+> Which simplifies to:
+>     page_to_pfn(virt_to_page(tmp_page)) << PAGE_SHIFT
+> 
+> That is the same as virt_to_phys(tmp_page), so just remove all of this.
+> 
+> Reviewed-by: Lu Baolu<baolu.lu@linux.intel.com>
+> Signed-off-by: Jason Gunthorpe<jgg@nvidia.com>
 > ---
-> v2->v3:
->  * Fixed testbot warnings.
-> v1->v2:
->  * Added patch to handle the scenario when keyslots are full
->  * Added patch to finalize crypto request which was not called in some
->    error cases.
-> 
-> v1: https://lore.kernel.org/lkml/20241217161207.72921-1-akhilrajeev@nvidia.com/
-> 
-> Akhil R (10):
->   crypto: tegra: Use separate buffer for setkey
->   crypto: tegra: Do not use fixed size buffers
->   crypto: tegra: finalize crypto req on error
->   crypto: tegra: check return value for hash do_one_req
->   crypto: tegra: Transfer HASH init function to crypto engine
->   crypto: tegra: Fix HASH intermediate result handling
->   crypto: tegra: Fix CMAC intermediate result handling
->   crypto: tegra: Set IV to NULL explicitly for AES ECB
->   crypto: tegra: Reserve keyslots to allocate dynamically
->   crypto: tegra: Use HMAC fallback when keyslots are full
-> 
->  drivers/crypto/tegra/tegra-se-aes.c  | 401 ++++++++++++++++++---------
->  drivers/crypto/tegra/tegra-se-hash.c | 287 ++++++++++++-------
->  drivers/crypto/tegra/tegra-se-key.c  |  27 +-
->  drivers/crypto/tegra/tegra-se-main.c |  16 +-
->  drivers/crypto/tegra/tegra-se.h      |  39 ++-
->  5 files changed, 523 insertions(+), 247 deletions(-)
-> 
-> -- 
-> 2.43.2
+>   drivers/iommu/intel/iommu.c |  3 ++-
+>   drivers/iommu/intel/iommu.h | 19 -------------------
+>   2 files changed, 2 insertions(+), 20 deletions(-)
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Queued this cleanup patch for iommu/vt-d.
+
+Thanks,
+baolu
