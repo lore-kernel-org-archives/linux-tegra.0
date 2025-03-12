@@ -1,63 +1,63 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C671C244EA1
-	for <linux-tegra@vger.kernel.org>; Wed, 12 Mar 2025 12:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A5D243956
+	for <linux-tegra@vger.kernel.org>; Wed, 12 Mar 2025 12:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741783549; cv=none; b=a5uA+c/TYr2682y6VokI1WeRAH0Tt+FswBI95a9yiH4s2N0BUVFacEKOWHwcIcPUepfyvs2I2IFQU/TcqLh8Qt+cD9QODFLc8t3Y+z6jFWwta5PZxlstyTXbvYeAtqcaNC+9Z/4bKdGIFZpwjW5am7cWSJhyMU2KVKFyoj5GDA0=
+	t=1741784349; cv=none; b=aq3MJsF01qQ+r3x4LR1uPQSvq7wt1pISf1YrIU00GSnyCD5vyu4Ei1pA14jufWmOx1JOWLnJamu02BCud05BwNBlZHaodUpgs0LWYn5bKDEK++qm1u3k6PHepT0Jm8aZVqbXJMf4LoChRIc+tEZ9j+4TkgZ0dho6K1CbdvcZtSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741783549; c=relaxed/simple;
-	bh=w7qxWcK6Y+lr9flaT5izlqxkohZLAMbvmvIVsbTBCwo=;
+	s=arc-20240116; t=1741784349; c=relaxed/simple;
+	bh=OXwVk7cSVE+TDqEc3HVraviwVrXEEbqZxuHx7kPXpwY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovsHC2MnKci86rqyD2HgFqPVCsyzqbCMiRp/pIrCSRIYci458U5DwrrM2ENxX9fimdVVAOwym+vPbYkothzWa47wedPONvJCbSsiwuziCr5Vq7A0QYnnYP940Ry4ZuvVvButxpPvC7TBPww11cfjhgvGV8byHcsdfqszkEppCwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ywe7fQuL; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=CcBn2wrno77TwOm9cMEd9rGFpT6ZyNRFZtZjzH0AYccC7oKL9Vo6jPhxm1E6pKNQg6cv0y9xVl/AbG9hI/qNo+Jrv/0QfyQOkMM4Q1TwuQ3T47EPikce5Ua1jzRSlZiw+5NKy05OdJ1fEioHeuWCqCpkO9eba82uRXe0QWFB56o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=llG4Dfma; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ywe7fQuL"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-438d9c391fcso44225e9.0
-        for <linux-tegra@vger.kernel.org>; Wed, 12 Mar 2025 05:45:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="llG4Dfma"
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cf3192d8bso43585e9.1
+        for <linux-tegra@vger.kernel.org>; Wed, 12 Mar 2025 05:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741783545; x=1742388345; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741784345; x=1742389145; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O7nXrf8enrrb8z3uABVuZMTlrSLNofRDk6iKufuqXac=;
-        b=Ywe7fQuLhRoN2XSCceaZXzeIZbcdIXj1wOnXDBPxOkHZrgOblbnv3U04HQQh6srIsB
-         caOSb8a7nwCJbLkVKUBuKCt4h9nKxHc/QpVBQSoxifq+iOEE1JN0YFFRaJVJBxbxnvXs
-         I73XiZ3QkK7YgO9fc5tLiGYIu46Yop/8EgFDRBpPN+mbR/+DbSGP5yIzd+qv9KlU0C1/
-         ixqgSTtk2TavArOPSiMPB4vlrewijDM2wkx9MkfHZ/S825fdKGYwv/xYWwOS+c8B3ND3
-         UAoh5QzGh81Dh468uoDMfDNz7tJnvdZ5hhoaOZ8QSKxtKeJqWuwth6CILdNwpph2wXf3
-         nEtw==
+        bh=4hVHQpBdFL8A1OMCaWXXGUDiGHIY98dt+fAh5aFuAqk=;
+        b=llG4DfmabaNk+M/sfnYimYovR9l1t1074DU850BtofPU4IIlSb19lgxjR6FTs7UpvU
+         3M828vB8UglZsVQhuyCsVFXk7V76HqVfvfiorMmZ5n03tI652WfktRG1We4xzGtNowtl
+         L3rn5trTwLKgLJwSGqOyag86L227281UnqNE1TK2j1J34LCirzeqfDPNELiEVmnFxiB/
+         cZvTaT/1TRz+Qqf1veQ0p18OicNZmv3gJLULpP22xs61HWNY/HJcYkr19nFuu+TEc7dO
+         zftbe3a83pmoIgsYT947VEq9txO2Pqu8hHUr/n+HLjf29sRNC3ffoxXjZcRLNNN3blt6
+         DkGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741783545; x=1742388345;
+        d=1e100.net; s=20230601; t=1741784345; x=1742389145;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O7nXrf8enrrb8z3uABVuZMTlrSLNofRDk6iKufuqXac=;
-        b=vW7uZxiTXT1lmDTTnMYKTY8ZJf4nP5mCzE+axSd97JO0463W+a4cwTJBP770/P8fMa
-         XtInEIjY0X6k1r/5jNKwKwnM2Je6x7pyraH/R+irElYVOA6piQe5wvOb+kU+WEa7pCxM
-         50J7oOXF/UpAIZUX33ipZo/S7NBOEv1n5lf+4n/KfvU4ROJi9/t3IsWgndBUKNp/uo1f
-         bwLLpBf4yNqV/ZhRZbrMTd7tuFtXg+W9+lfaZXVXZK2UNWDsexI17TZmpLB92dAQkXE9
-         MVbuIkcNzeqPr8c6N7DtWLbNzkJAhLGjCjndncktVbe/glcoaFhnvkgz2VgE+fnbUCSH
-         aO7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdsAgku7vVCeSSRooRWvcXwc1Fbz6RQvbmp5sbkSGl7U2lGFcew+O02amei+uqKzEW8gX+WfoFdeIiKA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfGUSuB8TVsXpXBz5AgEK0kbgpXcPTYDr/0Cd7GFJm9q6HEpK0
-	KqvMGV3nC6/sKL5QsrbfyqnENxHQKXIX3LATKpXJI27ITQJ1RFdw8HlSgY/rFA==
-X-Gm-Gg: ASbGnct6uLm+LdteSKgkv9ibzMaQp6Zh6W1vz2792aqeFzbVGk1EBNh7qYTRDlKpOQb
-	b3E4ReTY4KqkcKQPmQaZ2vLRbNJ5qcREuT8YYbJu+DbrpRxZRFL2m0oE9USWinrT0CXUDHIHFye
-	z+TUImnIY9vYe3tT8sMMB5nHT2S230WJWNvRssTGVCFVxbvzhem8+l9U1jWQWBaKmLUPm5Wrh03
-	UcL0FFclaTsecR4D9CRQPKNcbgPDe8wJY1h2+mOYjnAy9tr8OQxHxELtKdAD9IM1Wp0fSgfyhcj
-	eoE13MkmlmWpUKW13Jbr904RjXFLtMiRcQEMxCqfVJFkdc+4r2zDmDNR81z2YmqqDI7Ik+jMfrD
-	j+GpsT9MOs94JJdE=
-X-Google-Smtp-Source: AGHT+IGl6ij5XGs/qN6P6iUkVVrm0h4AAzKswiqP0QsBVlB9onr8dRHcRoIgJqJfm8N1ML/DsO9qAQ==
-X-Received: by 2002:a05:600c:5801:b0:43b:bfe9:8b43 with SMTP id 5b1f17b1804b1-43d09ea3748mr1245205e9.4.1741783544916;
-        Wed, 12 Mar 2025 05:45:44 -0700 (PDT)
+        bh=4hVHQpBdFL8A1OMCaWXXGUDiGHIY98dt+fAh5aFuAqk=;
+        b=KkL3M90qQveYKuaXa1Zb34DY1OoPu1ijYuEQ1csuhkyuRxHdHHj0cvxHQXsArRJTti
+         f8lZ9wAuHUV5rvikc8SL5IatP9biSVA0HCO1LwM9nCR2b+FuRE6lpYIzz0LQOble3VbV
+         O/b5iVpggn35zvCHFOgu5xk9A0WPnswkRAXeKpk723QDIGMGUKoGpkL1Kbmg6Mnzs08V
+         r0rG3YCNbr0zJ2zs0ocoxYGTbjlc1fr6LsUE1f9XxJIk37NyhhPvBlwtwU505mxIJKUa
+         D1obZeHnoL/N3LQY2zoGvWnYNUbqkv0SrrfKh523Uyi2hd3qZLOmfbHs8HB8E+gVdJm5
+         R0oA==
+X-Forwarded-Encrypted: i=1; AJvYcCViQkTY63STouqq44dz2qwVvtoIkvf90SojyW4DR/8yvUvkNxgybB2z3k8GYxpRnbiooVvTWD2eHkhRSQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUhW4Ltu4ipMwxzXgjHvHyckzTvq/M25ZXZCmS0Pmc2RCsRm/9
+	xZZSaHCF9N/EdMCSEOB62hXNFWCkG55bRvOmvcV3ODchCe07jrue+rm71T4yeQ==
+X-Gm-Gg: ASbGncv9oQvgYsL+4wUMCh5gsosm+G5KqpZjSKLHatjFdS6YZKKEH0ONfKLVY8riMjC
+	r6m7YGye9gPIJ/gv6LPVECXQreKKREN6FpEA3DuHvDa6ahlXIxgEkdvrM2bEc/RrkH3xorptqtM
+	Lrrh/rh5gmKv2cLW/HAvioWyDpHTOOzCp588D2wt6y8hder7QYCKP+I5V6tfWoQkJxiXX6H2wjm
+	8dDrDTZaVSjxzhIFEpWd0c1jsuIlIymxxIgePQxx7xHSx05GhjKCP58x9XFwqRkG99Z3GiM6K3V
+	4v9fCCQSs+rHa78j3RadqIbvRrk2SQy+0lE5VSyggqaTRmYJzMbe46OKLmDjsMbDf9IB5YSgHqB
+	1jTI6
+X-Google-Smtp-Source: AGHT+IGv3VwL/nDTfZJkT02Z+Ln6cpEc0JtjX8qb40ZbVAGSWsBoi80OOQ8vIb/VOjdd5NkKwgkkDw==
+X-Received: by 2002:a05:600c:1c11:b0:439:9434:1b66 with SMTP id 5b1f17b1804b1-43d0a5e3299mr1028055e9.1.1741784344924;
+        Wed, 12 Mar 2025 05:59:04 -0700 (PDT)
 Received: from google.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43d0a8c5d0fsm20697625e9.32.2025.03.12.05.45.43
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3947a24449bsm1688998f8f.45.2025.03.12.05.59.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 05:45:44 -0700 (PDT)
-Date: Wed, 12 Mar 2025 12:45:39 +0000
+        Wed, 12 Mar 2025 05:59:04 -0700 (PDT)
+Date: Wed, 12 Mar 2025 12:59:00 +0000
 From: Mostafa Saleh <smostafa@google.com>
 To: Jason Gunthorpe <jgg@nvidia.com>
 Cc: Alim Akhtar <alim.akhtar@samsung.com>,
@@ -90,11 +90,11 @@ Cc: Alim Akhtar <alim.akhtar@samsung.com>,
 	Pasha Tatashin <pasha.tatashin@soleen.com>, patches@lists.linux.dev,
 	David Rientjes <rientjes@google.com>,
 	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 15/23] iommu/pages: Move the __GFP_HIGHMEM checks into
- the common code
-Message-ID: <Z9GB8_j_8a4xCTsT@google.com>
+Subject: Re: [PATCH v3 20/23] iommu: Update various drivers to pass in lg2sz
+ instead of order to iommu pages
+Message-ID: <Z9GFFBvUFg7a9WEg@google.com>
 References: <0-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
- <15-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+ <20-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -103,62 +103,222 @@ List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <15-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
+In-Reply-To: <20-v3-e797f4dc6918+93057-iommu_pages_jgg@nvidia.com>
 
-On Tue, Feb 25, 2025 at 03:39:32PM -0400, Jason Gunthorpe wrote:
-> The entire allocator API is built around using the kernel virtual address,
-> it is illegal to pass GFP_HIGHMEM in as a GFP flag. Block it in the common
-> code. Remove the duplicated checks from drivers.
+On Tue, Feb 25, 2025 at 03:39:37PM -0400, Jason Gunthorpe wrote:
+> Convert most of the places calling get_order() as an argument to the
+> iommu-pages allocator into order_base_2() or the _sz flavour
+> instead. These places already have an exact size, there is no particular
+> reason to use order here.
 > 
-> Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
 > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
-Reviewed-by: Mostafa Saleh <smostafa@google.com>
 > ---
->  drivers/iommu/io-pgtable-arm.c  | 2 --
->  drivers/iommu/io-pgtable-dart.c | 1 -
->  drivers/iommu/iommu-pages.c     | 4 ++++
->  3 files changed, 4 insertions(+), 3 deletions(-)
+>  drivers/iommu/amd/init.c        | 29 +++++++++++++++--------------
+>  drivers/iommu/intel/dmar.c      |  6 +++---
+>  drivers/iommu/io-pgtable-arm.c  |  3 +--
+>  drivers/iommu/io-pgtable-dart.c | 12 +++---------
+>  drivers/iommu/sun50i-iommu.c    |  4 ++--
+>  5 files changed, 24 insertions(+), 30 deletions(-)
 > 
+> diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
+> index e3f4283ebbc201..a5720df7b22397 100644
+> --- a/drivers/iommu/amd/init.c
+> +++ b/drivers/iommu/amd/init.c
+> @@ -635,8 +635,8 @@ static int __init find_last_devid_acpi(struct acpi_table_header *table, u16 pci_
+>  /* Allocate per PCI segment device table */
+>  static inline int __init alloc_dev_table(struct amd_iommu_pci_seg *pci_seg)
+>  {
+> -	pci_seg->dev_table = iommu_alloc_pages(GFP_KERNEL | GFP_DMA32,
+> -					       get_order(pci_seg->dev_table_size));
+> +	pci_seg->dev_table = iommu_alloc_pages_sz(GFP_KERNEL | GFP_DMA32,
+> +						  pci_seg->dev_table_size);
+>  	if (!pci_seg->dev_table)
+>  		return -ENOMEM;
+>  
+> @@ -716,8 +716,7 @@ static void __init free_alias_table(struct amd_iommu_pci_seg *pci_seg)
+>   */
+>  static int __init alloc_command_buffer(struct amd_iommu *iommu)
+>  {
+> -	iommu->cmd_buf = iommu_alloc_pages(GFP_KERNEL,
+> -					   get_order(CMD_BUFFER_SIZE));
+> +	iommu->cmd_buf = iommu_alloc_pages_sz(GFP_KERNEL, CMD_BUFFER_SIZE);
+>  
+>  	return iommu->cmd_buf ? 0 : -ENOMEM;
+>  }
+> @@ -820,14 +819,16 @@ static void __init free_command_buffer(struct amd_iommu *iommu)
+>  void *__init iommu_alloc_4k_pages(struct amd_iommu *iommu, gfp_t gfp,
+>  				  size_t size)
+>  {
+> -	int order = get_order(size);
+> -	void *buf = iommu_alloc_pages(gfp, order);
+> +	void *buf;
+>  
+> -	if (buf &&
+> -	    check_feature(FEATURE_SNP) &&
+> -	    set_memory_4k((unsigned long)buf, (1 << order))) {
+> +	size = PAGE_ALIGN(size);
+> +	buf = iommu_alloc_pages_sz(gfp, size);
+> +	if (!buf)
+> +		return NULL;
+> +	if (check_feature(FEATURE_SNP) &&
+> +	    set_memory_4k((unsigned long)buf, size / PAGE_SIZE)) {
+>  		iommu_free_pages(buf);
+> -		buf = NULL;
+> +		return NULL;
+>  	}
+>  
+>  	return buf;
+> @@ -922,11 +923,11 @@ static int iommu_init_ga_log(struct amd_iommu *iommu)
+>  	if (!AMD_IOMMU_GUEST_IR_VAPIC(amd_iommu_guest_ir))
+>  		return 0;
+>  
+> -	iommu->ga_log = iommu_alloc_pages(GFP_KERNEL, get_order(GA_LOG_SIZE));
+> +	iommu->ga_log = iommu_alloc_pages_sz(GFP_KERNEL, GA_LOG_SIZE);
+>  	if (!iommu->ga_log)
+>  		goto err_out;
+>  
+> -	iommu->ga_log_tail = iommu_alloc_pages(GFP_KERNEL, get_order(8));
+> +	iommu->ga_log_tail = iommu_alloc_pages_sz(GFP_KERNEL, 8);
+>  	if (!iommu->ga_log_tail)
+>  		goto err_out;
+>  
+> @@ -1021,8 +1022,8 @@ static bool __copy_device_table(struct amd_iommu *iommu)
+>  	if (!old_devtb)
+>  		return false;
+>  
+> -	pci_seg->old_dev_tbl_cpy = iommu_alloc_pages(GFP_KERNEL | GFP_DMA32,
+> -						     get_order(pci_seg->dev_table_size));
+> +	pci_seg->old_dev_tbl_cpy = iommu_alloc_pages_sz(
+> +		GFP_KERNEL | GFP_DMA32, pci_seg->dev_table_size);
+>  	if (pci_seg->old_dev_tbl_cpy == NULL) {
+>  		pr_err("Failed to allocate memory for copying old device table!\n");
+>  		memunmap(old_devtb);
+> diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
+> index c812c83d77da10..4c7ce92acf6976 100644
+> --- a/drivers/iommu/intel/dmar.c
+> +++ b/drivers/iommu/intel/dmar.c
+> @@ -1681,7 +1681,6 @@ int dmar_enable_qi(struct intel_iommu *iommu)
+>  {
+>  	struct q_inval *qi;
+>  	void *desc;
+> -	int order;
+>  
+>  	if (!ecap_qis(iommu->ecap))
+>  		return -ENOENT;
+> @@ -1702,8 +1701,9 @@ int dmar_enable_qi(struct intel_iommu *iommu)
+>  	 * Need two pages to accommodate 256 descriptors of 256 bits each
+>  	 * if the remapping hardware supports scalable mode translation.
+>  	 */
+> -	order = ecap_smts(iommu->ecap) ? 1 : 0;
+> -	desc = iommu_alloc_pages_node(iommu->node, GFP_ATOMIC, order);
+> +	desc = iommu_alloc_pages_node_sz(iommu->node, GFP_ATOMIC,
+> +					 ecap_smts(iommu->ecap) ? SZ_8K :
+> +								  SZ_4K);
+>  	if (!desc) {
+>  		kfree(qi);
+>  		iommu->qi = NULL;
 > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index 62df2528d020b2..08d0f62abe8a09 100644
+> index 08d0f62abe8a09..d13149ec5be77e 100644
 > --- a/drivers/iommu/io-pgtable-arm.c
 > +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -267,8 +267,6 @@ static void *__arm_lpae_alloc_pages(size_t size, gfp_t gfp,
+> @@ -263,14 +263,13 @@ static void *__arm_lpae_alloc_pages(size_t size, gfp_t gfp,
+>  				    void *cookie)
+>  {
+>  	struct device *dev = cfg->iommu_dev;
+> -	int order = get_order(size);
 >  	dma_addr_t dma;
 >  	void *pages;
 >  
-> -	VM_BUG_ON((gfp & __GFP_HIGHMEM));
-> -
 >  	if (cfg->alloc)
 >  		pages = cfg->alloc(cookie, size, gfp);
 >  	else
+> -		pages = iommu_alloc_pages_node(dev_to_node(dev), gfp, order);
+> +		pages = iommu_alloc_pages_node_sz(dev_to_node(dev), gfp, size);
+
+Although, the current implementation of iommu_alloc_pages_node_sz() would round
+the size to order, but this is not correct according to the API definition
+"The returned allocation is round_up_pow_two(size) big, and is physically aligned
+to its size."
+
+SMMUv3 has special alignment with small number of entries at the start level,
+according the manual:
+	A 64-byte minimum alignment on starting-level translation table addresses
+	is imposed when TG0 selects 64KB granules and the effective IPS value
+	indicates 52-bit output. In this case bits [5:0] are treated as zero.
+
+And according to the Arm Arm (ex D24.2.195 in Version L)
+	- Bits A[(x-1):0] of the stage 1 translation table base address are zero.
+	... The smallest permitted value of x is 5.
+Which 32 bytes
+
+For a case as (which is valid in Linux)
+- S1 with IAS 40-bits and 4K, start level has 2 entries (16 bytes) but alignment
+  must be at least 32 bytes.
+
+- Similarly with 16K and 48 bits.
+
+I'd say we can align the size or use min with 64 bytes before calling the
+function would be enough (or change the API to state that allocations
+are rounded to order)
+
+Thanks,
+Mostafa
+
+>  
+>  	if (!pages)
+>  		return NULL;
 > diff --git a/drivers/iommu/io-pgtable-dart.c b/drivers/iommu/io-pgtable-dart.c
-> index 7efcaea0bd5c86..ebf330e67bfa30 100644
+> index ebf330e67bfa30..a0988669bb951a 100644
 > --- a/drivers/iommu/io-pgtable-dart.c
 > +++ b/drivers/iommu/io-pgtable-dart.c
-> @@ -111,7 +111,6 @@ static void *__dart_alloc_pages(size_t size, gfp_t gfp)
->  {
->  	int order = get_order(size);
->  
-> -	VM_BUG_ON((gfp & __GFP_HIGHMEM));
->  	return iommu_alloc_pages(gfp, order);
+> @@ -107,13 +107,6 @@ static phys_addr_t iopte_to_paddr(dart_iopte pte,
+>  	return paddr;
 >  }
 >  
-> diff --git a/drivers/iommu/iommu-pages.c b/drivers/iommu/iommu-pages.c
-> index 3077df642adb1f..a7eed09420a231 100644
-> --- a/drivers/iommu/iommu-pages.c
-> +++ b/drivers/iommu/iommu-pages.c
-> @@ -37,6 +37,10 @@ void *iommu_alloc_pages_node(int nid, gfp_t gfp, unsigned int order)
->  	const unsigned long pgcnt = 1UL << order;
->  	struct folio *folio;
+> -static void *__dart_alloc_pages(size_t size, gfp_t gfp)
+> -{
+> -	int order = get_order(size);
+> -
+> -	return iommu_alloc_pages(gfp, order);
+> -}
+> -
+>  static int dart_init_pte(struct dart_io_pgtable *data,
+>  			     unsigned long iova, phys_addr_t paddr,
+>  			     dart_iopte prot, int num_entries,
+> @@ -255,7 +248,7 @@ static int dart_map_pages(struct io_pgtable_ops *ops, unsigned long iova,
 >  
-> +	/* This uses page_address() on the memory. */
-> +	if (WARN_ON(gfp & __GFP_HIGHMEM))
-> +		return NULL;
-> +
->  	/*
->  	 * __folio_alloc_node() does not handle NUMA_NO_NODE like
->  	 * alloc_pages_node() did.
+>  	/* no L2 table present */
+>  	if (!pte) {
+> -		cptep = __dart_alloc_pages(tblsz, gfp);
+> +		cptep = iommu_alloc_pages_sz(gfp, tblsz);
+>  		if (!cptep)
+>  			return -ENOMEM;
+>  
+> @@ -412,7 +405,8 @@ apple_dart_alloc_pgtable(struct io_pgtable_cfg *cfg, void *cookie)
+>  	cfg->apple_dart_cfg.n_ttbrs = 1 << data->tbl_bits;
+>  
+>  	for (i = 0; i < cfg->apple_dart_cfg.n_ttbrs; ++i) {
+> -		data->pgd[i] = __dart_alloc_pages(DART_GRANULE(data), GFP_KERNEL);
+> +		data->pgd[i] =
+> +			iommu_alloc_pages_sz(GFP_KERNEL, DART_GRANULE(data));
+>  		if (!data->pgd[i])
+>  			goto out_free_data;
+>  		cfg->apple_dart_cfg.ttbr[i] = virt_to_phys(data->pgd[i]);
+> diff --git a/drivers/iommu/sun50i-iommu.c b/drivers/iommu/sun50i-iommu.c
+> index 6385560dbc3fb0..76c9620af4bba8 100644
+> --- a/drivers/iommu/sun50i-iommu.c
+> +++ b/drivers/iommu/sun50i-iommu.c
+> @@ -690,8 +690,8 @@ sun50i_iommu_domain_alloc_paging(struct device *dev)
+>  	if (!sun50i_domain)
+>  		return NULL;
+>  
+> -	sun50i_domain->dt = iommu_alloc_pages(GFP_KERNEL | GFP_DMA32,
+> -					      get_order(DT_SIZE));
+> +	sun50i_domain->dt =
+> +		iommu_alloc_pages_sz(GFP_KERNEL | GFP_DMA32, DT_SIZE);
+>  	if (!sun50i_domain->dt)
+>  		goto err_free_domain;
+>  
 > -- 
 > 2.43.0
 > 
