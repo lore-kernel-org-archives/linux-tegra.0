@@ -1,108 +1,232 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC26268FD2;
-	Thu, 13 Mar 2025 15:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784CC18CBE1
+	for <linux-tegra@vger.kernel.org>; Thu, 13 Mar 2025 17:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741879784; cv=none; b=mzpc2F5XtWdwH93LayQIjhhK1OIot7utApn/zF8xk3HfgKWKryGk+MSVnFnrWrEFA/LJTaI+tS4ZyTZa2QXz4JuW4GLSM+oVSZi9o8tTufvHw3Z2hMWiX1VR4+mK7QrUx3+jyXDJpUUj9db8uNMjmul93PIksAh/Q0d882QxPTY=
+	t=1741887732; cv=none; b=NBifLeq3hUAtlrSWJMh03jG0ePwdA/w1rLbt2TzJUXDB+dhqC5bhBuhb3rUDfw/mUN4qqchCB+Vh//5sjJKf4faS49yferhV3i8N/O9EaKzLsmTeiyzMrUvn+/Y52dIWFXRLhz1M7WQ1AaCzqM+xitywvmxYd6JGz4LBWxwA88A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741879784; c=relaxed/simple;
-	bh=p8oj2k04SR0Y4Adn+a0Scom7cwlrttmkdwEQiX14sqA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k8VnqVArJbxtp77vWjvCpmt/OOGFT27oWYc7jVqtYzhf2rkWZLmzCa4w6Pe6KNmyGN+imTznn2MQuoQ6xyxIiHQcraOIh+EB/rs1tbhxVs8idNbRs/zJwcs00NWAvdEXO3FPCTSomWPcrpDU0cR84YqUC+2QPEju8avHddMzCsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lXO9s5IA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741887732; c=relaxed/simple;
+	bh=RsA9j94p+YVvKdB90cd3Q/61+ZX91AldYwaYz9pEC0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=b9+i8KFP9SDplb8rBfEELmqCY4sZWbv4fuawFk9xZUC2N8nlotvip9uYSycC79/E4VyFrLkcgBozSNQCcicGCN5yMkZQ88iGVe2a3g7WJepDDRRZUMniNhfzUtd/NlNThxeHx39pX8BH87ckNAC/edIOAG3P4KoQQA/+zLS4am4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ykQTyMem; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=549nby3B; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ykQTyMem; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=549nby3B; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lXO9s5IA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95A42C4CEDD;
-	Thu, 13 Mar 2025 15:29:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741879782;
-	bh=p8oj2k04SR0Y4Adn+a0Scom7cwlrttmkdwEQiX14sqA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=lXO9s5IArrkSjpRoMHcC9AIMA/uVv8qTkrE3sC5fWdjFDFGDh/te3HcZLIha4Qbu9
-	 s4Qo2FCTvpDxt81rkSBoN6FnSHhKys1R4R2LS0NIyA1mmSkNKVQg5TEzDKs+7CM2LL
-	 Wb98ZG8CDZtsPPjdtxnUUXvoFTGT83jYZm+EQ6dIzRBX+b9qGnnjPTjp2o7kiL3m0H
-	 pFA6BdgZLCek+lBRzv3+ZCeTwaVlLsjOFVS8JL1ohzA+AWXcRyIRswl8VoEFl9xSOm
-	 dr54bmng/pBjHtgSN/AhgsxpmEdvXMK177krQmusJuasVdyZdxWamJrHs8IjwaE/WB
-	 uTzE7MNNp5yOg==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Thu, 13 Mar 2025 16:29:31 +0100
-Subject: [PATCH] crypto: tegra - Fix format specifier in
- tegra_sha_prep_cmd()
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ykQTyMem";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="549nby3B";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ykQTyMem";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="549nby3B"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B13611F7B4;
+	Thu, 13 Mar 2025 17:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741887728; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CFKEjjkIm78Ad6srk/hCg61amYwn0Z51tJngkFiWp6I=;
+	b=ykQTyMemgcDeUgX3A1DRVqRAcDbTN1CFSySAqMMOPcHtUZX0SNSR22wfzUj5p9kMxcMCw7
+	ibNpQ7U+gxZHsk8CjbB+UwaozPXqDZXqlh1HLp8mAW4EFtR0+X0Nh6dS0UHqnc+MpZxepm
+	LzcWgqAeMpN/R9WQpYXdL6EN1/1E2BE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741887728;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CFKEjjkIm78Ad6srk/hCg61amYwn0Z51tJngkFiWp6I=;
+	b=549nby3BsSdxF4qgTF03aqvKCUWfK6YYKyV+fmMoM/hscJjKMtYEpkmQJGplyZgWXW2J2v
+	B8GJULBPBeY9gOCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ykQTyMem;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=549nby3B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741887728; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CFKEjjkIm78Ad6srk/hCg61amYwn0Z51tJngkFiWp6I=;
+	b=ykQTyMemgcDeUgX3A1DRVqRAcDbTN1CFSySAqMMOPcHtUZX0SNSR22wfzUj5p9kMxcMCw7
+	ibNpQ7U+gxZHsk8CjbB+UwaozPXqDZXqlh1HLp8mAW4EFtR0+X0Nh6dS0UHqnc+MpZxepm
+	LzcWgqAeMpN/R9WQpYXdL6EN1/1E2BE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741887728;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CFKEjjkIm78Ad6srk/hCg61amYwn0Z51tJngkFiWp6I=;
+	b=549nby3BsSdxF4qgTF03aqvKCUWfK6YYKyV+fmMoM/hscJjKMtYEpkmQJGplyZgWXW2J2v
+	B8GJULBPBeY9gOCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8A9C113A24;
+	Thu, 13 Mar 2025 17:42:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EBpRIPAY02cFRQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 13 Mar 2025 17:42:08 +0000
+From: Takashi Iwai <tiwai@suse.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-sound@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH 83/89] ASoC: tegra186: Convert to RUNTIME_PM_OPS() & co
+Date: Thu, 13 Mar 2025 18:41:28 +0100
+Message-ID: <20250313174139.29942-84-tiwai@suse.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250313174139.29942-1-tiwai@suse.de>
+References: <20250313174139.29942-1-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250313-crypto-tegra-fix-format-specifier-for-size_t-v1-1-0b957726c9e5@kernel.org>
-X-B4-Tracking: v=1; b=H4sIANr50mcC/x2N0QrCMAxFf2Xk2UDbKTp/RWSELp15cC1JEd3Yv
- 1t9PBfOPRsYq7DBtdtA+SUmeWngDx3EBy0zo0yNIbhwcr3vMeqn1IyVZyVM8saU9UkVrXCUJKy
- /AU1WHisGPxBdBpqOZwftsig35Z+73ff9C7lHKjp+AAAA
-X-Change-ID: 20250313-crypto-tegra-fix-format-specifier-for-size_t-219aa89ad470
-To: Akhil R <akhilrajeev@nvidia.com>, 
- Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org, 
- patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2429; i=nathan@kernel.org;
- h=from:subject:message-id; bh=p8oj2k04SR0Y4Adn+a0Scom7cwlrttmkdwEQiX14sqA=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDOmXfj5lXHuTb8EXPdeYZcbsjh+mzNr2vq0vTkHt6ucdP
- MLsu3VjO0pZGMS4GGTFFFmqH6seNzScc5bxxqlJMHNYmUCGMHBxCsBEnJQZGVZs/Lrw29+o+2mH
- pA9wr8zv53draj+x4GzULeOzUlJH/A4wMsyQfiXx0e8nj52W+f3jEbsVxb8diDT/L7A3R3XhwWf
- Zj7kB
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: B13611F7B4
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	R_RATELIMIT(0.00)[to_ip_from(RLi691ga9brjh6qjnnbs1osk4o)];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-When building for 32-bit targets, for which ssize_t is 'int' instead of
-'long', there is a warning due to an incorrect format specifier:
+Use the newer RUNTIME_PM_OPS() and SYSTEM_SLEEP_PM_OPS() macros
+instead of SET_RUNTIME_PM_OPS() and SET_SYSTEM_SLEEP_PM_OPS() together
+with pm_ptr(), which allows us dropping ugly __maybe_unused
+attributes.
 
-  In file included from include/linux/printk.h:610,
-                   from include/linux/kernel.h:31,
-                   from include/linux/clk.h:13,
-                   from drivers/crypto/tegra/tegra-se-hash.c:7:
-  drivers/crypto/tegra/tegra-se-hash.c: In function 'tegra_sha_prep_cmd':
-  drivers/crypto/tegra/tegra-se-hash.c:343:26: error: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'ssize_t' {aka 'int'} [-Werror=format=]
-    343 |         dev_dbg(se->dev, "msg len %llu msg left %llu sz %lu cfg %#x",
-        |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  ...
-  drivers/crypto/tegra/tegra-se-hash.c:343:59: note: format string is defined here
-    343 |         dev_dbg(se->dev, "msg len %llu msg left %llu sz %lu cfg %#x",
-        |                                                         ~~^
-        |                                                           |
-        |                                                           long unsigned int
-        |                                                         %u
-  cc1: all warnings being treated as errors
+This optimizes slightly when CONFIG_PM is disabled, too.
 
-Use '%zd', the proper specifier for ssize_t, to resolve the warning.
-
-Fixes: ff4b7df0b511 ("crypto: tegra - Fix HASH intermediate result handling")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-tegra@vger.kernel.org
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- drivers/crypto/tegra/tegra-se-hash.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/tegra/tegra186_asrc.c | 13 ++++++-------
+ sound/soc/tegra/tegra186_dspk.c | 13 ++++++-------
+ 2 files changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/crypto/tegra/tegra-se-hash.c b/drivers/crypto/tegra/tegra-se-hash.c
-index 65a50f29bd7e..42d007b7af45 100644
---- a/drivers/crypto/tegra/tegra-se-hash.c
-+++ b/drivers/crypto/tegra/tegra-se-hash.c
-@@ -340,7 +340,7 @@ static int tegra_sha_prep_cmd(struct tegra_sha_ctx *ctx, u32 *cpuvaddr,
- 	cpuvaddr[i++] = host1x_uclass_incr_syncpt_cond_f(1) |
- 			host1x_uclass_incr_syncpt_indx_f(se->syncpt_id);
+diff --git a/sound/soc/tegra/tegra186_asrc.c b/sound/soc/tegra/tegra186_asrc.c
+index d914dba56013..5c67e1f01d9b 100644
+--- a/sound/soc/tegra/tegra186_asrc.c
++++ b/sound/soc/tegra/tegra186_asrc.c
+@@ -76,7 +76,7 @@ static void tegra186_asrc_lock_stream(struct tegra186_asrc *asrc,
+ 		     1);
+ }
  
--	dev_dbg(se->dev, "msg len %llu msg left %llu sz %lu cfg %#x",
-+	dev_dbg(se->dev, "msg len %llu msg left %llu sz %zd cfg %#x",
- 		msg_len, msg_left, rctx->datbuf.size, rctx->config);
+-static int __maybe_unused tegra186_asrc_runtime_suspend(struct device *dev)
++static int tegra186_asrc_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra186_asrc *asrc = dev_get_drvdata(dev);
  
- 	return i;
-
----
-base-commit: eca6828403b80343647de39d4782ee56cc9e36dd
-change-id: 20250313-crypto-tegra-fix-format-specifier-for-size_t-219aa89ad470
-
-Best regards,
+@@ -86,7 +86,7 @@ static int __maybe_unused tegra186_asrc_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused tegra186_asrc_runtime_resume(struct device *dev)
++static int tegra186_asrc_runtime_resume(struct device *dev)
+ {
+ 	struct tegra186_asrc *asrc = dev_get_drvdata(dev);
+ 	int id;
+@@ -1021,17 +1021,16 @@ static void tegra186_asrc_platform_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct dev_pm_ops tegra186_asrc_pm_ops = {
+-	SET_RUNTIME_PM_OPS(tegra186_asrc_runtime_suspend,
+-			   tegra186_asrc_runtime_resume, NULL)
+-	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+-				pm_runtime_force_resume)
++	RUNTIME_PM_OPS(tegra186_asrc_runtime_suspend,
++		       tegra186_asrc_runtime_resume, NULL)
++	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+ };
+ 
+ static struct platform_driver tegra186_asrc_driver = {
+ 	.driver = {
+ 		.name = "tegra186-asrc",
+ 		.of_match_table = tegra186_asrc_of_match,
+-		.pm = &tegra186_asrc_pm_ops,
++		.pm = pm_ptr(&tegra186_asrc_pm_ops),
+ 	},
+ 	.probe = tegra186_asrc_platform_probe,
+ 	.remove = tegra186_asrc_platform_remove,
+diff --git a/sound/soc/tegra/tegra186_dspk.c b/sound/soc/tegra/tegra186_dspk.c
+index 1be6c09cbe1a..21fdab2a1977 100644
+--- a/sound/soc/tegra/tegra186_dspk.c
++++ b/sound/soc/tegra/tegra186_dspk.c
+@@ -181,7 +181,7 @@ static int tegra186_dspk_put_stereo_to_mono(struct snd_kcontrol *kcontrol,
+ 	return 1;
+ }
+ 
+-static int __maybe_unused tegra186_dspk_runtime_suspend(struct device *dev)
++static int tegra186_dspk_runtime_suspend(struct device *dev)
+ {
+ 	struct tegra186_dspk *dspk = dev_get_drvdata(dev);
+ 
+@@ -193,7 +193,7 @@ static int __maybe_unused tegra186_dspk_runtime_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-static int __maybe_unused tegra186_dspk_runtime_resume(struct device *dev)
++static int tegra186_dspk_runtime_resume(struct device *dev)
+ {
+ 	struct tegra186_dspk *dspk = dev_get_drvdata(dev);
+ 	int err;
+@@ -532,17 +532,16 @@ static void tegra186_dspk_platform_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct dev_pm_ops tegra186_dspk_pm_ops = {
+-	SET_RUNTIME_PM_OPS(tegra186_dspk_runtime_suspend,
+-			   tegra186_dspk_runtime_resume, NULL)
+-	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+-				pm_runtime_force_resume)
++	RUNTIME_PM_OPS(tegra186_dspk_runtime_suspend,
++		       tegra186_dspk_runtime_resume, NULL)
++	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+ };
+ 
+ static struct platform_driver tegra186_dspk_driver = {
+ 	.driver = {
+ 		.name = "tegra186-dspk",
+ 		.of_match_table = tegra186_dspk_of_match,
+-		.pm = &tegra186_dspk_pm_ops,
++		.pm = pm_ptr(&tegra186_dspk_pm_ops),
+ 	},
+ 	.probe = tegra186_dspk_platform_probe,
+ 	.remove = tegra186_dspk_platform_remove,
 -- 
-Nathan Chancellor <nathan@kernel.org>
+2.43.0
 
