@@ -1,129 +1,88 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6450713F43A;
-	Fri, 14 Mar 2025 08:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45041EF09A
+	for <linux-tegra@vger.kernel.org>; Fri, 14 Mar 2025 10:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741940289; cv=none; b=tis0sm0KyCzyCM2BiXzsWqKEM9+TO6IRzk9R3ODQelKgBYPNobCO3cdfEj0YB261Izs0p5TP5x9Ol8opnkK5N7M98keXYYml/foL2BV4a3woh2zeKfzuWSRvkk3Ashi9Cb8Ft/jRM1tSCHchM8xqr4/4rOEO/CxdtAx4yqr1SYE=
+	t=1741946670; cv=none; b=LJyvs02tQtL9tlqgSx94TWM8sNdX2Cs82CZ2a3mB2Y11NtxFDPKSMFys/sxc+VB2GuPoEAaakghXkDFg4R5FzMALUujYBBVaEyZphJmIUe5wA1/sruQHqYSaLZcpTrb0eCuJuDUJoXodd42XckwxJ9CCzwrewKr432+D08HDutg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741940289; c=relaxed/simple;
-	bh=bUjE1grgqPjBCZ1jCnPOwHeG5CEobwCIGC2F2LNcNaI=;
+	s=arc-20240116; t=1741946670; c=relaxed/simple;
+	bh=HrE09mKedOk9fo3MpK0rYjDRK3jK5wC9NgMIu9SSbyI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XTNZWghHaTjFevAVCwI8CL/SXxgIgm28aA3gAs6hgly+az5cA50Djr2xK6J7zn6as2gGzkn+tVuEnQYwmvMM9ZzIgI63uI+0/w940paSgYaoDLI2WsM20CY4EwOo/1XHNVgddlU4FA78b9vRW9QYMlTQzZTuxEgOR5T5T85ZvME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=asaFkOz2; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=lsYOf7HQlNVViNDMdmq747urzgdt5/MIXRKKqWxxfHD+8INUlGLij7ydNFgdCfzS9nN2h039eJ0rnx6vBjDSDgLR9eWmD0c2LiWnDGfj88h2yxqEk7Rh7aBzrKPHyUbaRxG2jH3RNbVUrqme5qEyBysaWc53TyfpPFWyxIwpico=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fRFz+CVT; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asaFkOz2"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3913d129c1aso1439328f8f.0;
-        Fri, 14 Mar 2025 01:18:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fRFz+CVT"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30b83290b7bso19432671fa.1
+        for <linux-tegra@vger.kernel.org>; Fri, 14 Mar 2025 03:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741940286; x=1742545086; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741946666; x=1742551466; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bUjE1grgqPjBCZ1jCnPOwHeG5CEobwCIGC2F2LNcNaI=;
-        b=asaFkOz2VhZtxD+VSln6Bnd1vVQMYlqa0COwOJoaE3I3hrXYn2HOb40+mdnZTzr0nr
-         j8hfy/nstGEeOjoynlHkn9kvvxpRnmzxbcYupvstAadZUaIPkpuYbSTufuEeiXK/vxXR
-         wuCNkcfChgejkJQBwlB4dWLGHMVLr/vcwpBj94Wh1+ZMoRFoaW45ujEWKxGbfoWMAIYq
-         72Fm4cxC4T1ms4NaZTJG+Ektba6EPn0E9L0rYoAQBtTrMAQhSHn42n0Ki1l3tW3tQXDs
-         0HNmDRJYsaZmms5SnjVMlrvh7InB9noH8L0xR34kkNmx/Rkol8MHhTOMX+PWQjUTprEk
-         VQnw==
+        bh=HrE09mKedOk9fo3MpK0rYjDRK3jK5wC9NgMIu9SSbyI=;
+        b=fRFz+CVTQzcXSawwdIUbuElv9csN3dJzClHpjYLb3w4lsLtSB9c/zhswXlQOmhVd7e
+         xBPENOMhpDOeMvEYDK2Oru5gLih8Fz6iGgCF/fVGKSTQ8iOZYaEk+vNBH4vEaIR4L3LH
+         HcjTYvssraNPJ8G36kw/RVUscSMN7jO47FP1nQAcVDOBXQLRboWd2i7p934TsaeNOuAP
+         rbzWVmDPJaYbSB+/VGn6X128UcJopmKrhls18ensxLsvxGXhOPcfJcXtNa1bPdF+KHrK
+         hOIiQjXl7kHKgq4OdiIU9YwoBq+J9U6FESgqHRnxshlk4qNxGy8eRiC6IrSyw2Y5rgJM
+         6Llw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741940286; x=1742545086;
+        d=1e100.net; s=20230601; t=1741946666; x=1742551466;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bUjE1grgqPjBCZ1jCnPOwHeG5CEobwCIGC2F2LNcNaI=;
-        b=bO1/lixxOWiDTUWdMjofSi1Xg+Aeq+vP865spwsWbMDwGkratirmV6qP6IWeUGzmjv
-         iwU5+tcJMWbfyza22zN9Kmalqn8IOQfue2YS1BsKv8cPLOnTsIWTZNxK3MBwgFN3JAY5
-         XYYEH364khFYbGp/7Mhj54vo8EkxxzV1YY3QejT6gQBm4yQSbYjODwWAbtiGtLOimYVV
-         Hi3B5PR7MS80V3SgCM2UmeFA3JwyfN8oaMBq3v4hnZaj03NBGD6fuAcYlTB/aQfDfejj
-         0o5s2bbtuhXctJfmHOOrisdmRcXg6UTh15UL/wGdKG9ewZYbn/TGgoDFX/P9ewloF82R
-         fPqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPLEjie8NlvKnJgmEA4ph++DFNJ2sj5pxninPNbQvAuIm3NdGPB6QDRpoizttigpIvwuGvdOs2zNkJ@vger.kernel.org, AJvYcCWmzf7dLPJlp7Rsuxpp8OGXj5e7mWS85oIO3aiPqr3LTVjk86t5BdUIAWiDSVp1jgUqr1YwL6AOMgIocDU=@vger.kernel.org, AJvYcCX03O42AwEeBgU8SgbPCKF9qs9GoNQFRHCGzjgNNgXkks9S3SsyCCJcbCUgDhqwAqNgolmlj4dpA+hoDBdy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHA/1yXku+/Cs8erAEWWJW1eCqmXkvctAHUNDLF/PQb3Eyi8gf
-	fhLUXu6dgvpdF15TkV4gdYea44YXi+QP+SFa59DIhXO8YyCkNsslHoFexvR9Ptpp7sgoHSa/wo0
-	NIoRgzL8ZDgwU0niLKuK2VMx/loY=
-X-Gm-Gg: ASbGnctAT7RoDjb6NMx4D3Wx3P+FU8CVWwzX2U/9sB6sqp0yGE0eV2cYubenYcvL1H0
-	2wOuHqBdfW4w4971VhE9h0NxXXE5k+/HsRGymsN4EkGFil57yLiDOcCE+ca1NH8VQxEn7ncXrsL
-	G9Be37E7kEmwW6Ce3CYLWK8rf+Ubrxd3FRdqMObQ==
-X-Google-Smtp-Source: AGHT+IFoOF9dFap5NyPlVNrmNSY0W1yMPSPjydwo61FQLNvZuDqkAAkBQSYn/BXaytlaU+a1SlitKD0/2MoFwE52w4w=
-X-Received: by 2002:a05:6000:1acb:b0:390:f5c8:1079 with SMTP id
- ffacd0b85a97d-395b9b10df3mr5321175f8f.24.1741940285731; Fri, 14 Mar 2025
- 01:18:05 -0700 (PDT)
+        bh=HrE09mKedOk9fo3MpK0rYjDRK3jK5wC9NgMIu9SSbyI=;
+        b=dvl19Aov0M51JapCSvNAVroY5jeHayyZFIAATLSCBhuqyBD0mR5OqoAi4gD1njSszn
+         p6NCbr7DW7SaDfUXFhk/AB1Q2/TWRBGsww1A15XaI+918csMJutnfYtotjPxrIJLCMj8
+         Snw825gLzES0mZHL3Y8VQ4mJUKurjy0qxH91K0nKcCLAbzeggLynbo5d7DZsVtjgpCwn
+         uYIgoNxjgAOAl13O9CigKgxDYwhMA0m8oUNpU0UKQz4BOF/YCdoQv5czM1Z84xOrrCRw
+         cZZ51tXJk+HN2YH2KLGFmH1q+7hYQ8YuvJF6GMOmJoewDhGQvURhkJ6bW3nywJmWdVfB
+         Ds5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXxJhA/jew9LPHMwU5L7pWeJAUH2gx6pgWDGbKAUQpTNr96jmg1QmL+j91OEA6M/Ej2vNvBpsJfxEJmMg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQHthNe5htPZS09J2YjJ0KaQV3/zsQ+JDazE7rsz27hD0TdBjO
+	5/1FTuhPNOBMH9dlI0LBWaHWvqeb3dqOB8DIA65tu7EZaAvn/up555Y8jFg0uC6Ofmzy/KUyaM9
+	UQ+6kR7MgbrqvOMt6n0v5WppWrmm1PvIp2FDqXA==
+X-Gm-Gg: ASbGnctbt3oQr5dA5bX1gpTMWX0O6fdG36SqCYO0NmFLmw642DV6mWwxmraeJ2/XUB8
+	Ec1sPNmf+LP0bWp80XVPOsvlVl3dVbdCEkdJgu+ETsRvPe6uE6Z6Tf7DqSX58E5LsE3wYLsydK0
+	7PByCsH+nMe0t9JNjjtgzhUE4=
+X-Google-Smtp-Source: AGHT+IGgoI83vSiToX3Ab2Md4G9QTPt2uvDlfvIFor3poPeFCoQq/Et8/x3cJtVhEho87JFB+bRoP0HoW39vS4Eny+4=
+X-Received: by 2002:a05:6512:1386:b0:549:66d8:a1f3 with SMTP id
+ 2adb3069b0e04-549c39610d3mr518455e87.40.1741946665777; Fri, 14 Mar 2025
+ 03:04:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250314074557.16367-1-clamor95@gmail.com> <20250314074557.16367-2-clamor95@gmail.com>
- <d2c41dbd-ca11-4e06-9081-db772f8cdd2c@kernel.org> <CAPVz0n1fNnkbfCc7-kB2RAJjDVQZU=zUBuBzqyynO54np4Wi5g@mail.gmail.com>
- <09089b80-ac68-4113-ab6a-3ff94c85e895@kernel.org>
-In-Reply-To: <09089b80-ac68-4113-ab6a-3ff94c85e895@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 14 Mar 2025 10:17:54 +0200
-X-Gm-Features: AQ5f1JpXUkZH_NaTlrNp48ivu0VEBI2PC9Exh4m2Wwar6maqyU53cGARfOLhaqI
-Message-ID: <CAPVz0n0o8dVkzm2UYKghb1yiXs+N1txR7-_anbJdBXJ+vGS6Cw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: display: tegra: document EPP, ISP,
- MPE and TSEC for Tegra114 and Tegra124
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+References: <20250305104939.15168-1-pshete@nvidia.com>
+In-Reply-To: <20250305104939.15168-1-pshete@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 14 Mar 2025 11:04:14 +0100
+X-Gm-Features: AQ5f1JoOEe7T9gHagqVccCbtiE4HvkyR3XLHW6KSzkjBygNKsQbkExvz7sXEKJw
+Message-ID: <CACRpkdb_c5nfS-WsQdOViYw7nHQo7CfDkcSiVho7=Ufh15i9yg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: tegra: Add descriptions for SoC data fields
+To: Prathamesh Shete <pshete@nvidia.com>
+Cc: thierry.reding@gmail.com, jonathanh@nvidia.com, linux-gpio@vger.kernel.org, 
 	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D0=BF=D1=82, 14 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:11 Krzy=
-sztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On 14/03/2025 08:59, Svyatoslav Ryhel wrote:
-> > =D0=BF=D1=82, 14 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:56 =
-Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >>
-> >> On 14/03/2025 08:45, Svyatoslav Ryhel wrote:
-> >>> The current EPP, ISP and MPE schemas are largely compatible with Tegr=
-a114
-> >>> and Tegra124, requiring only minor adjustments. Additionally, the TSE=
-C
-> >>> schema for the Security engine, which is available from Tegra114 onwa=
-rds,
-> >>> is included.
-> >>>
-> >>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> >>
-> >> <form letter>
-> >> This is a friendly reminder during the review process.
-> >>
-> >> It seems my or other reviewer's previous comments were not fully
-> >> addressed. Maybe the feedback got lost between the quotes, maybe you
-> >> just forgot to apply it. Please go back to the previous discussion and
-> >> either implement all requested changes or keep discussing them.
-> >>
-> >> Thank you.
-> >> </form letter>
-> >>
-> >
-> > I kept reset-names for TSEC since it seems that it is needed, ask
->
->
-> reset-names are not needed and the rest is not applied. I don't see
-> opp-table either.
+On Wed, Mar 5, 2025 at 11:50=E2=80=AFAM Prathamesh Shete <pshete@nvidia.com=
+> wrote:
 
-You are exaggerating, I have either changed as you asked or removed
-property if I cannot provide needed change. About reset-name I
-mentioned in the changelog and I would like to hear what Thierry
-thinks about this. About opp-table be more specific please, do I need
-to provide an opp table in the example, or include some yaml
-reference, or what? That would be really helpful.
+> Add detailed descriptions for the remaining fields in the
+> tegra_pinctrl_soc_data structure. This improves code documentation
+> and clarifies the purpose of each field, particularly for the
+> pin-specific configuration options.
+>
+> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
 
->
-> You didn't bother to acknowledge nor respond to comments, so it is
-> expected you will implement it fully. Not me to keep checking if you
-> read each comment and decided to silently ignore it.
->
->
-> Best regards,
-> Krzysztof
+Both patches applied!
+
+Yours,
+Linus Walleij
