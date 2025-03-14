@@ -1,133 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3642189BB3;
-	Fri, 14 Mar 2025 08:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6450713F43A;
+	Fri, 14 Mar 2025 08:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741939868; cv=none; b=QrKwWAJLkyqAt48Z47soPK4Lg2MSQMnVqaFCvlv38RK/h4t5mkgzJGUZwf1GJK7nk/RsDNszPu2ISYRpTArAyqugQKmpYES8FK2wk4uBCsJ00UJomMvhTbC8CFINB1PefAowYf3mbe0NggU1GWRCVVhvhQBUc19fqnF6SJ32rYs=
+	t=1741940289; cv=none; b=tis0sm0KyCzyCM2BiXzsWqKEM9+TO6IRzk9R3ODQelKgBYPNobCO3cdfEj0YB261Izs0p5TP5x9Ol8opnkK5N7M98keXYYml/foL2BV4a3woh2zeKfzuWSRvkk3Ashi9Cb8Ft/jRM1tSCHchM8xqr4/4rOEO/CxdtAx4yqr1SYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741939868; c=relaxed/simple;
-	bh=IR1KZBTp/MJ7U2Qtx8GPmluyIMcrhMyk3KByBeXpRDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aFRkxDHqC1Hk3vcWlKRwey8Sj2pdd8f9Ob7FzCqnHLCtBRsnvvBU5u61WEr4Y9CgBFKLUmA0eEU6cv0e0W0F54SWh2BAb6iDhRWDeifP8dknJjRPr79zF4U2HB89jpUR5TCnTAAYZilkaUcYxQ7xBw4AIdwklK8fHyuufqZFDuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHQI3O7k; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741940289; c=relaxed/simple;
+	bh=bUjE1grgqPjBCZ1jCnPOwHeG5CEobwCIGC2F2LNcNaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XTNZWghHaTjFevAVCwI8CL/SXxgIgm28aA3gAs6hgly+az5cA50Djr2xK6J7zn6as2gGzkn+tVuEnQYwmvMM9ZzIgI63uI+0/w940paSgYaoDLI2WsM20CY4EwOo/1XHNVgddlU4FA78b9vRW9QYMlTQzZTuxEgOR5T5T85ZvME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=asaFkOz2; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHQI3O7k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB290C4CEE5;
-	Fri, 14 Mar 2025 08:11:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741939868;
-	bh=IR1KZBTp/MJ7U2Qtx8GPmluyIMcrhMyk3KByBeXpRDM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VHQI3O7ky7flSCCCnZyH4t+0SeTZZVuNT9koKZqvkv7psYOW+kgIK7OFQBpXr/RsP
-	 TY7V21qZjemcUf+Ue4DDFVzEp3PxOEZ0S8fTy7uZejOYxp+eOUMl+8I3kai9tdhp17
-	 sYy4azHSheOZJsTu9Fe1PV3fLKrROwGLOQr9dWn7wdsh1lUrqGrJhUdeQmIWYKP8Vr
-	 XIY7a49WuoQUUzybPj6AnllzxhtGsikZtVzypHgI+6ZJtn0wctmrqVIt7FYmpTHDvM
-	 FIQDAl8ANunT43KOtIuM2SoJPZLEXNGTwNIsGCHDWuook8TDV5W7ch3Clb/gl+o7R6
-	 KDHG048aR7/GA==
-Message-ID: <09089b80-ac68-4113-ab6a-3ff94c85e895@kernel.org>
-Date: Fri, 14 Mar 2025 09:11:02 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asaFkOz2"
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3913d129c1aso1439328f8f.0;
+        Fri, 14 Mar 2025 01:18:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741940286; x=1742545086; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bUjE1grgqPjBCZ1jCnPOwHeG5CEobwCIGC2F2LNcNaI=;
+        b=asaFkOz2VhZtxD+VSln6Bnd1vVQMYlqa0COwOJoaE3I3hrXYn2HOb40+mdnZTzr0nr
+         j8hfy/nstGEeOjoynlHkn9kvvxpRnmzxbcYupvstAadZUaIPkpuYbSTufuEeiXK/vxXR
+         wuCNkcfChgejkJQBwlB4dWLGHMVLr/vcwpBj94Wh1+ZMoRFoaW45ujEWKxGbfoWMAIYq
+         72Fm4cxC4T1ms4NaZTJG+Ektba6EPn0E9L0rYoAQBtTrMAQhSHn42n0Ki1l3tW3tQXDs
+         0HNmDRJYsaZmms5SnjVMlrvh7InB9noH8L0xR34kkNmx/Rkol8MHhTOMX+PWQjUTprEk
+         VQnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741940286; x=1742545086;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bUjE1grgqPjBCZ1jCnPOwHeG5CEobwCIGC2F2LNcNaI=;
+        b=bO1/lixxOWiDTUWdMjofSi1Xg+Aeq+vP865spwsWbMDwGkratirmV6qP6IWeUGzmjv
+         iwU5+tcJMWbfyza22zN9Kmalqn8IOQfue2YS1BsKv8cPLOnTsIWTZNxK3MBwgFN3JAY5
+         XYYEH364khFYbGp/7Mhj54vo8EkxxzV1YY3QejT6gQBm4yQSbYjODwWAbtiGtLOimYVV
+         Hi3B5PR7MS80V3SgCM2UmeFA3JwyfN8oaMBq3v4hnZaj03NBGD6fuAcYlTB/aQfDfejj
+         0o5s2bbtuhXctJfmHOOrisdmRcXg6UTh15UL/wGdKG9ewZYbn/TGgoDFX/P9ewloF82R
+         fPqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPLEjie8NlvKnJgmEA4ph++DFNJ2sj5pxninPNbQvAuIm3NdGPB6QDRpoizttigpIvwuGvdOs2zNkJ@vger.kernel.org, AJvYcCWmzf7dLPJlp7Rsuxpp8OGXj5e7mWS85oIO3aiPqr3LTVjk86t5BdUIAWiDSVp1jgUqr1YwL6AOMgIocDU=@vger.kernel.org, AJvYcCX03O42AwEeBgU8SgbPCKF9qs9GoNQFRHCGzjgNNgXkks9S3SsyCCJcbCUgDhqwAqNgolmlj4dpA+hoDBdy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHA/1yXku+/Cs8erAEWWJW1eCqmXkvctAHUNDLF/PQb3Eyi8gf
+	fhLUXu6dgvpdF15TkV4gdYea44YXi+QP+SFa59DIhXO8YyCkNsslHoFexvR9Ptpp7sgoHSa/wo0
+	NIoRgzL8ZDgwU0niLKuK2VMx/loY=
+X-Gm-Gg: ASbGnctAT7RoDjb6NMx4D3Wx3P+FU8CVWwzX2U/9sB6sqp0yGE0eV2cYubenYcvL1H0
+	2wOuHqBdfW4w4971VhE9h0NxXXE5k+/HsRGymsN4EkGFil57yLiDOcCE+ca1NH8VQxEn7ncXrsL
+	G9Be37E7kEmwW6Ce3CYLWK8rf+Ubrxd3FRdqMObQ==
+X-Google-Smtp-Source: AGHT+IFoOF9dFap5NyPlVNrmNSY0W1yMPSPjydwo61FQLNvZuDqkAAkBQSYn/BXaytlaU+a1SlitKD0/2MoFwE52w4w=
+X-Received: by 2002:a05:6000:1acb:b0:390:f5c8:1079 with SMTP id
+ ffacd0b85a97d-395b9b10df3mr5321175f8f.24.1741940285731; Fri, 14 Mar 2025
+ 01:18:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20250314074557.16367-1-clamor95@gmail.com> <20250314074557.16367-2-clamor95@gmail.com>
+ <d2c41dbd-ca11-4e06-9081-db772f8cdd2c@kernel.org> <CAPVz0n1fNnkbfCc7-kB2RAJjDVQZU=zUBuBzqyynO54np4Wi5g@mail.gmail.com>
+ <09089b80-ac68-4113-ab6a-3ff94c85e895@kernel.org>
+In-Reply-To: <09089b80-ac68-4113-ab6a-3ff94c85e895@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Fri, 14 Mar 2025 10:17:54 +0200
+X-Gm-Features: AQ5f1JpXUkZH_NaTlrNp48ivu0VEBI2PC9Exh4m2Wwar6maqyU53cGARfOLhaqI
+Message-ID: <CAPVz0n0o8dVkzm2UYKghb1yiXs+N1txR7-_anbJdBXJ+vGS6Cw@mail.gmail.com>
 Subject: Re: [PATCH v3 1/3] dt-bindings: display: tegra: document EPP, ISP,
  MPE and TSEC for Tegra114 and Tegra124
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250314074557.16367-1-clamor95@gmail.com>
- <20250314074557.16367-2-clamor95@gmail.com>
- <d2c41dbd-ca11-4e06-9081-db772f8cdd2c@kernel.org>
- <CAPVz0n1fNnkbfCc7-kB2RAJjDVQZU=zUBuBzqyynO54np4Wi5g@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAPVz0n1fNnkbfCc7-kB2RAJjDVQZU=zUBuBzqyynO54np4Wi5g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14/03/2025 08:59, Svyatoslav Ryhel wrote:
-> пт, 14 бер. 2025 р. о 09:56 Krzysztof Kozlowski <krzk@kernel.org> пише:
->>
->> On 14/03/2025 08:45, Svyatoslav Ryhel wrote:
->>> The current EPP, ISP and MPE schemas are largely compatible with Tegra114
->>> and Tegra124, requiring only minor adjustments. Additionally, the TSEC
->>> schema for the Security engine, which is available from Tegra114 onwards,
->>> is included.
->>>
->>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->>
->> <form letter>
->> This is a friendly reminder during the review process.
->>
->> It seems my or other reviewer's previous comments were not fully
->> addressed. Maybe the feedback got lost between the quotes, maybe you
->> just forgot to apply it. Please go back to the previous discussion and
->> either implement all requested changes or keep discussing them.
->>
->> Thank you.
->> </form letter>
->>
-> 
-> I kept reset-names for TSEC since it seems that it is needed, ask
+=D0=BF=D1=82, 14 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:11 Krzy=
+sztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On 14/03/2025 08:59, Svyatoslav Ryhel wrote:
+> > =D0=BF=D1=82, 14 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 09:56 =
+Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >>
+> >> On 14/03/2025 08:45, Svyatoslav Ryhel wrote:
+> >>> The current EPP, ISP and MPE schemas are largely compatible with Tegr=
+a114
+> >>> and Tegra124, requiring only minor adjustments. Additionally, the TSE=
+C
+> >>> schema for the Security engine, which is available from Tegra114 onwa=
+rds,
+> >>> is included.
+> >>>
+> >>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> >>
+> >> <form letter>
+> >> This is a friendly reminder during the review process.
+> >>
+> >> It seems my or other reviewer's previous comments were not fully
+> >> addressed. Maybe the feedback got lost between the quotes, maybe you
+> >> just forgot to apply it. Please go back to the previous discussion and
+> >> either implement all requested changes or keep discussing them.
+> >>
+> >> Thank you.
+> >> </form letter>
+> >>
+> >
+> > I kept reset-names for TSEC since it seems that it is needed, ask
+>
+>
+> reset-names are not needed and the rest is not applied. I don't see
+> opp-table either.
 
+You are exaggerating, I have either changed as you asked or removed
+property if I cannot provide needed change. About reset-name I
+mentioned in the changelog and I would like to hear what Thierry
+thinks about this. About opp-table be more specific please, do I need
+to provide an opp table in the example, or include some yaml
+reference, or what? That would be really helpful.
 
-reset-names are not needed and the rest is not applied. I don't see
-opp-table either.
-
-You didn't bother to acknowledge nor respond to comments, so it is
-expected you will implement it fully. Not me to keep checking if you
-read each comment and decided to silently ignore it.
-
-
-Best regards,
-Krzysztof
+>
+> You didn't bother to acknowledge nor respond to comments, so it is
+> expected you will implement it fully. Not me to keep checking if you
+> read each comment and decided to silently ignore it.
+>
+>
+> Best regards,
+> Krzysztof
