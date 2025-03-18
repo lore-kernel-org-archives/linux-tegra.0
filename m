@@ -1,121 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387FC18A6DB;
-	Mon, 17 Mar 2025 17:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898A746426
+	for <linux-tegra@vger.kernel.org>; Tue, 18 Mar 2025 06:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742232270; cv=none; b=KVe8DaDckBDiEvb9L1MO5QjcC0s7R8kR0zrAmpnaN2TGHRlZdKYUC0jAGbnoSAyu8UL/wlNf29SOvvmndjJ+NyLM7tih0tu3G5QxQu8NRsuKNgTIxuKtddP2tFbqE08Kawi7oo3TFI2bMof+lijoDlg61pIZFlcBpN8ZwzjsLfo=
+	t=1742279748; cv=none; b=GA6yopxOE2gaFrF2W63XWBW/MpwhEsXLpFgE5EnwC8t8EvevN1NavLojYgAg0wGMVE4yFgPlbX2SsaXjH0Jo0b2XVCDzvNa05LcJ+5rDdhzA9CnzqQ52J+gyPuZrv9HveFoJhu8YQhgmHmraAaq2Au9SX+tNll/vjXeiLdouEsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742232270; c=relaxed/simple;
-	bh=zbbR6WbFaC4VlMNV/gml+ZSldzu+moegdui9CEsqH7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tJwiby4Q5TakEO9zG5KfzZY+hTzzaEzNPaqJnIo7tpaK4ckLiyAbOEtxsEoFrQ3MTTZ/OynzRULQoaA3kVSJyDiaUmB3cSwPLO6XWCy9A7z9JSWjukWXGI5dr4nx4SZOE+CoI4afhKqh6/dhRzra30qgR3xgsHsDLSPHTnAi0/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5114C4CEE3;
-	Mon, 17 Mar 2025 17:24:27 +0000 (UTC)
-Date: Mon, 17 Mar 2025 17:24:24 +0000
-From: Mark Brown <broonie@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rmikey@meta.com, kernel-team@meta.com
-Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
- instead of device_reset()
-Message-ID: <f3e47d12-f6be-4bb5-b87b-84aa0037e1ef@sirena.org.uk>
-References: <20250317-tegra-v1-0-78474efc0386@debian.org>
- <20250317-tegra-v1-1-78474efc0386@debian.org>
- <22ffa8f5-6590-4602-853d-ceffed580f22@sirena.org.uk>
- <20250317-solemn-debonair-sambar-f04fa7@leitao>
+	s=arc-20240116; t=1742279748; c=relaxed/simple;
+	bh=g5LDPeZFEOQBI+DgPiE4h4bJJm4JY0NkSiAoW64Upvc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=O5bz1KlhHQsAUU5OZ2RS95wfYP0C6WRdNx+UCsbY0XmXTALil7flGDwhaVChKhV+9QOmnuM8JE0KW3uw9uofZ6oX3EkZo8sCUfmxod52cnZYwNNvwS0F8Sxybs/XHExGMlhnOUCPYItu3SAIfMiuzHEV0qdk0KJDrLAR9O/QGWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=nOU4A+w9; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="nOU4A+w9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=rPBTU
+	KbnNgaTouZNcb18EqWega5P/0Ty2iUC9/ZbyI4=; b=nOU4A+w9e3xPUle5k6gVe
+	2Nq0w09lLfcCAG/oY3Q8JG3WogxWq7bzTzrsWO8I/3qtz9Ylahej3jDVzeVQhucr
+	68HLOWRHmHnXt/4Z/RRhm8SuGBQJ/+7tPRanw9Og0K0NUtQcl86hrTb9PNTiTEC/
+	UCJiJJKc1K62kr+8OGAMBA=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDnnuYSFNlnP+WyAA--.9231S5;
+	Tue, 18 Mar 2025 14:35:04 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: lumag@kernel.org
+Cc: mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	dri-devel@lists.freedesktop.org,
+	dianders@chromium.org,
+	jani.nikula@intel.com,
+	lyude@redhat.com,
+	jonathanh@nvidia.com,
+	thierry.reding@gmail.com,
+	victor.liu@nxp.com,
+	rfoss@kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH v2 4/5] drm/bridge: anx78xx: Switch to common helpers to power up/down dp link
+Date: Tue, 18 Mar 2025 14:34:38 +0800
+Message-ID: <20250318063452.4983-4-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250318063452.4983-1-andyshrk@163.com>
+References: <20250318063452.4983-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mKVuPqVh/OxM585l"
-Content-Disposition: inline
-In-Reply-To: <20250317-solemn-debonair-sambar-f04fa7@leitao>
-X-Cookie: I know how to do SPECIAL EFFECTS!!
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnnuYSFNlnP+WyAA--.9231S5
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cr4ktrW5tF1kur4rZryUAwb_yoW8AFW5pr
+	1fKw42vr1xuw13Xr4YkF40gFW5Za4DW395CrW7Gw4vy3WUAFnF9a4IvFyfGas8Jr95AF10
+	qr1DAasrZa409w7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jlXd8UUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hMUXmfZEI52+wAAsm
 
+From: Andy Yan <andy.yan@rock-chips.com>
 
---mKVuPqVh/OxM585l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Use the common dp link power up/down helpers to avoid duplicating code.
 
-On Mon, Mar 17, 2025 at 09:56:43AM -0700, Breno Leitao wrote:
-> Hello Mark,
->=20
-> On Mon, Mar 17, 2025 at 04:45:31PM +0000, Mark Brown wrote:
-> > On Mon, Mar 17, 2025 at 08:44:01AM -0700, Breno Leitao wrote:
-> > > My UEFI machines with tegra210-quad consistently report "device reset
-> > > failed". Investigation showed this isn't an actual failure
-> > > - __device_reset() returns -ENOENT because ACPI has no "*_RST" method.
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+---
 
-> > That's not the case, it's returning an error because there is no reset
-> > controller discoverable via any mechanism.=20
+(no changes since v1)
 
-> Sorry, I was not very familiar with this subsystem, but I chase down
-> __device_reset(), and I found the return was coming from:
+ .../drm/bridge/analogix/analogix-anx78xx.c    | 30 +------------------
+ 1 file changed, 1 insertion(+), 29 deletions(-)
 
-> 	int __device_reset(struct device *dev, bool optional)
-> 	{
-> 		acpi_handle handle =3D ACPI_HANDLE(dev);
-> 		if (handle) {
-> 			if (!acpi_has_method(handle, "_RST"))
-> 				return optional ? 0 : -ENOENT;
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+index f74694bb9c50..3d9daa885eef 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
++++ b/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c
+@@ -656,35 +656,7 @@ static int anx78xx_dp_link_training(struct anx78xx *anx78xx)
+ 	if (err)
+ 		return err;
+ 
+-	/*
+-	 * Power up the sink (DP_SET_POWER register is only available on DPCD
+-	 * v1.1 and later).
+-	 */
+-	if (anx78xx->dpcd[DP_DPCD_REV] >= 0x11) {
+-		err = drm_dp_dpcd_readb(&anx78xx->aux, DP_SET_POWER, &dpcd[0]);
+-		if (err < 0) {
+-			DRM_ERROR("Failed to read DP_SET_POWER register: %d\n",
+-				  err);
+-			return err;
+-		}
+-
+-		dpcd[0] &= ~DP_SET_POWER_MASK;
+-		dpcd[0] |= DP_SET_POWER_D0;
+-
+-		err = drm_dp_dpcd_writeb(&anx78xx->aux, DP_SET_POWER, dpcd[0]);
+-		if (err < 0) {
+-			DRM_ERROR("Failed to power up DisplayPort link: %d\n",
+-				  err);
+-			return err;
+-		}
+-
+-		/*
+-		 * According to the DP 1.1 specification, a "Sink Device must
+-		 * exit the power saving state within 1 ms" (Section 2.5.3.1,
+-		 * Table 5-52, "Sink Control Field" (register 0x600).
+-		 */
+-		usleep_range(1000, 2000);
+-	}
++	drm_dp_link_power_up(&anx78xx->aux, anx78xx->dpcd[DP_DPCD_REV]);
+ 
+ 	/* Possibly enable downspread on the sink */
+ 	err = regmap_write(anx78xx->map[I2C_IDX_TX_P0],
+-- 
+2.43.0
 
-> > There's no specific handling for ACPI here. =20
-
-> Do you mean no _RST method as stated above?
-
-That's only happening in the case where the device has an ACPI handle,
-the SPI driver has no idea why the reset API failed to look up a reset
-controller.  Your change is to the SPI driver, not the reset framework.
-
-> > It's also not clear that this is a false positive, the
-> > driver did indeed fail to reset the device and especially for the error
-> > handling case that seems like relevant information.
-
-> If the driver failed to reset the device, then device_reset_optional()
-> it will return an error code, but it will not return an error code if
-> the RST method is not found, right?
-
-> Sorry, if I am mis-understading the code here.
-
-Clearly if no reset controller is available then the driver will have
-been unable to reset the hardware.  That seems like something it
-actually wanted to do, especially in the error handling case - it's a
-lot less likely that we'll recover things without the reset happening.
-During probe it's possibly not so urgent but at other times it seems
-more relevant.
-
-> > At the very least the changelog should be clarified.
-
-> What would you add to the changelog to make this clear?
-
-For starters the mention of ACPI is irrelevant to what the SPI driver is
-doing.  This sounds like a change specific to ACPI but it affects all
-users.
-
---mKVuPqVh/OxM585l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfYWscACgkQJNaLcl1U
-h9CdMwf9HG+W0/aFm8iS2Lnww7hNSddYKsFT9JGqqbd6NHP0gTTAJcjrJmauPW/+
-uRbvYzVP7ps9l53qUJZaYoY2nbrywHmog1aV4bdes+XrWGLOixff+NsV7P3OmleR
-DquV/mN6H1IQ4C8uCPJUE4br/wfqNakpThSRXAAhhYgShwm38WMAjH2fV1XprU4o
-P2FAjBQAWXPq6HdQ96zkNSWhgyLk13F1vHT8YBCaCnpZ+EFwM4gtK0vFxBNzyCzh
-o5v5BV9TlA+U1jJviDltp4BYQ7ZmHcJehbEIxJNJSWO3fDh/IHPp2LodWYDs5GJh
-NtFMyB/t6cj2H0ED1Uq2WXwvDwvA3w==
-=zlnz
------END PGP SIGNATURE-----
-
---mKVuPqVh/OxM585l--
