@@ -1,75 +1,84 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308981DF747
-	for <linux-tegra@vger.kernel.org>; Wed, 19 Mar 2025 18:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5F21DA60D;
+	Wed, 19 Mar 2025 18:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742407849; cv=none; b=HuRtpddkhu62HNnVoO1FrIyBKiAVfndo2cTjYVlfMuPbh8NqJhfOGMEPEB4MDjhM01lZZhNGain2msqehawwfrFSBUR4xIi3zNfNE4xY2A9V1NwV0P6cfli9yYDZWRSoCG/H/33+aWFZ/gzFz1gKSRUjZE/vnea1KuGbdn8iwXo=
+	t=1742408818; cv=none; b=HDFBoTaWRQB9F5oFwr9gmx+xdzKkvwH6EPMZoM1/Uvh943JBCED5Zu4pdGqyI32Wr9q4UrpBNjJ2KVDPro2gm+sNDCpY6hQfEISEqsR9NTYCx1lsu0jbyvPZmMvKNtduMN0UWTl+sY1hr68Y5rM1GqAdxYhUfHGniqDA6g3J9PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742407849; c=relaxed/simple;
-	bh=NRDBPEHgXUupa2eHopjm+NVMZxrKrUuYtULMiQNFxdw=;
+	s=arc-20240116; t=1742408818; c=relaxed/simple;
+	bh=c8KJbqyFeOXT1W0A8M6QD8rxISSyoKopzevMnMHTX4A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hliFUxqOqo5+5tLEZydLiCjoA0kMw7dkcqfppcLpRVfizYJbh6u6KolF3eirCOExl2ALBVyGKJMeNLJDPrTOev8iYcUI+1mpKik1Yx7Z/hYErn/4gkO5qgbzEwCF0qtF0A6QFdAhOW+8Q3yuwRgii8sSKxTnfTbajJ6TkP0GDE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k5wpG7CM; arc=none smtp.client-ip=209.85.128.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=ABkjuLjskdG4HjfL4/svC4UDVUhnRLv7KOIWGl/gM7WOmcOyeg+6HuK34Kttid6PGGvcNbk7v+ccyqHz9haXhpwSUo+rWnynQDuVADZLfYiUJR49F3vYi1Smm0iPW+59gh/H0+7u5Y6LIMg3GykswP+BVyrBgpJUqqxC1lTdaHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LMfRN337; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5wpG7CM"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43d2d952eb1so33018595e9.1
-        for <linux-tegra@vger.kernel.org>; Wed, 19 Mar 2025 11:10:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMfRN337"
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bb6b0b898so49248055e9.1;
+        Wed, 19 Mar 2025 11:26:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742407846; x=1743012646; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1742408815; x=1743013615; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NRDBPEHgXUupa2eHopjm+NVMZxrKrUuYtULMiQNFxdw=;
-        b=k5wpG7CMKkvIib2bwXMjx1UqdzGrgFPYWVcIhAS/E29Lv83swRQ1LSQ8guFnC3Pmji
-         bCkaaw+1Udbb/YMalY4/Rp9ZDspo35hjJujsrFouUobTb+DqZ26S63vcRdp7VG4htL1F
-         zbBeE/b/tFSrcIP/20jHMVE5l37XAcL1+XPhgaGaxuDeCDHwbpS4DwUHzw9d+lrZaW5z
-         M1Bl537NJgp/6YR+Ahkq82YVKtU2pSoSZ/PnqhwjrIWgYeKcxS+3wJVj67UWGCDFbty/
-         zA3pkwDXp/7xruw4AUH0oVOlY+DT7k7YZEOvClEIX4XYGPOIJGxSqWjf4vbxq9tBdYRU
-         pT4w==
+        bh=lhykt64jTkBM3zw9HlR0nEGp0CgKH+Gr/6bGbuJ3YG4=;
+        b=LMfRN337NliNo2kUTTnNdBeUU14nsuwo9qhyKWjDMqDbZaU4BYiflKihHsYuIk85EE
+         5ZWDCDLSAza00u1Y5arohkJxWh6R+o/uk55b1xQ3eMPE0eKHSu8KB6jgJSjZOMoNgU0D
+         j7Dep3ZUCcfYUSLIW6jgK/wmu4J+ppThD17H5Vroz56W8pZ79yd7ZXD44sQ1SV8kZkgO
+         KOSVJzFvSuE4ceUS4HPkJS2jCHk/juzNQsd1UrVuzYGhNU8b1f5JcXdVCRYJ9tXyvIH3
+         SxjT4RvI6UfKL3ISuNWQ5dsFTSJU4r28hPRx/DbebaFgQCzfnAVN0HyhyjeIZwLzLgve
+         +tqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742407846; x=1743012646;
+        d=1e100.net; s=20230601; t=1742408815; x=1743013615;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NRDBPEHgXUupa2eHopjm+NVMZxrKrUuYtULMiQNFxdw=;
-        b=FAIQY5L9L3A6e52AfXijomL5Rtgf+/KSvutBkpcLepzKHkb/ehfddWtUNr/vdFSLtl
-         nsBZl6D7JIKXWlOlxkpi4ayQWsiYqrnET593Lo0tjwuu0XUCEpBxCMXnARatQLY0tDPE
-         oeHe50F/VmJfwYI50eVWidqbLQGZrc1CtowBJOjL6AFv10d3W62Wldgy/346z6ei8cNO
-         DrAGiYnnCmUb2Y9e1ajOTNxOLFCsHtJiFpxNaM7jt8WTW8E8gWSqmHhkTZ0WOHESvCg1
-         k5amsOdUoDw28PSANXUYD8XDWatHxpJ43pzPqlWc0BjKxaG5R6hBnZasWj7KK5mV3iPJ
-         A13Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWnrFhfWvfTsozYLEiMGg4LO76Rw1iD8tNIurkGlkE7hZU+XgVVhSP6FGh0wC2WXkBBqMZ2reMa+T0TSQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPD0xHbPGAssHyJ8K8XklilzNjS2KaOvTjzAgERMfCQuglnxgT
-	RJ09UkF5j1HARiCkDDiB1bBdK+6OcpI728QSg5enaDJVjiyVyoCr
-X-Gm-Gg: ASbGncvsF4HCAHb4/ne/SrcSdGEqmvXS3s41sCtlgtw0xe81WDcvc8f0ydmb8d2SEF7
-	wKAsiK2z0oumBHlg1gIM1CASpSJIKZrbwEQjCH6/fKwf8RK6eCoK9+kq/qmrTEdoN3DTPvTwjxG
-	fyTitUy+dPnk0JshsFpP80jdRQ6bv3690oycH40lYcfJHyQRRJJkwKPfPCw9gnfPYuLaCa0Fiaj
-	ZYBS71Q4I3eXF0b4W3nxR37EvSGFP+mhcMuAnJI4yAqphRwSWS9OBihaDb4zyoi1f+C8IKdoIXg
-	3W40UgCh8vVzSWOMuJ+44KT+Fv9hYMgji2fd2LYV/hNGSBd845fwDodDlQARZb6a3wOrhiotbVM
-	t/z1jeuIEdD+O7sld2WGAIGj3jIaQGsQ=
-X-Google-Smtp-Source: AGHT+IHYFWZdONoLhtaU63p45Xf9+bWz8YoVzEW+0yAcNTLY2gKQG7/aemrHzQVaMzVWmdFrLB4q/A==
-X-Received: by 2002:a05:600c:348e:b0:43c:f16a:641e with SMTP id 5b1f17b1804b1-43d43781690mr33983605e9.6.1742407846139;
-        Wed, 19 Mar 2025 11:10:46 -0700 (PDT)
+        bh=lhykt64jTkBM3zw9HlR0nEGp0CgKH+Gr/6bGbuJ3YG4=;
+        b=gfzAgTPM7MXI7hrWFiO4n3GYKh+LJqlElgqoHIZYXP+475EHv9CxgAWvhCSWanch5t
+         vBrphAUAo7E0ojO5fuKxbca3UBYq+yvbTeJxQUQgjlIQA43iqeEbAcycHQbzkIbYynNB
+         nQnX8eHhGbCAUmykz+ngvAjjWSB9lyrGaj6t5/zptY6DDrWChvVvQWCCe2YTXE/yYsBB
+         F8HIq6NDNhji0cnekRKkp8RqlUbgP0ejzwaTRuroHx4D3SzgHaXoBTbPOIE84GvN04PU
+         YjIIwjO+Ykiy9hR7WHJ0MJP+q1aKWOQj4zgWEKHs7owCFqeX5c2gDULKpyuTCh2xyr4F
+         MhVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOVUU7qZpc0WB9zTC0W3oXOIdX70Ejo9ZHP02TOUBAiAUDY5BfEQo/DadaDe+X/FAkmiWkC9fu09DP@vger.kernel.org, AJvYcCWzFsHdn71jgOYklDzLWBGLSahF0mp/NmmKh8M0MdRs9E0btAAYnl8ydkdslRhoi1TmEz3H4Z+GGilhWu8=@vger.kernel.org, AJvYcCXPQ3oWpneh5zle3ZC6VyzHsfUgf+0Ww/i1KxmmrAUPnfJRw9c0oDcAY4ttiRZSJ+jBDZvVVfEWXKJ6YE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJD5Yi0ylebJHDFOF4U8LjcoSsDLZLj/oV9G5Iq9AbuwH/77+o
+	ydMvcvbFKmehbOyo2CW16m1KBpizH1jGx19ytTExBgQg09I1oOFm
+X-Gm-Gg: ASbGncu1sqbfrw8KCHlTbKqKaPTPT8OR9/IBZNFUA+4n4BE8yxRqL0l0Z3211YsVGle
+	Pc2oqvVR1StgMG0/iXp/NLBSl3+7ngPsiGHh7jpzZYU10ZQyJ5Mv3DrM9voDffE7JsvKhUaGHyD
+	J88kiQwEbM8FkLq/Aut3jLMHE94EinIYu+Gtd1/vkR1vGX1/W32wwu4KAUDc2c/uB5KdYzTJkst
+	x3Qs0CaMmoxvGByYzNqolS/SvApYkoEA0VQl2j0hRufdlWxU7kgjDxbq19vYn5HZwt6anDXcmFe
+	Rilxynk2Yy+5G8Zli6TlIxzgp/V3ezfddPFs6ZWuaGrltGl7QT8GsT7rMEYjOpOLmHprchJCJdw
+	C7qBvpLF8kk+WU59LIU9WsrwbQnb7eDw=
+X-Google-Smtp-Source: AGHT+IE5djeXIfkhhx/3/CZ7BtZ4I/Qfy9MihH/y+m8mB9v6onJocrLIBYe97asPjAw8ioCIfm3tPQ==
+X-Received: by 2002:a5d:5889:0:b0:391:1213:9475 with SMTP id ffacd0b85a97d-399739c871fmr3389404f8f.24.1742408815046;
+        Wed, 19 Mar 2025 11:26:55 -0700 (PDT)
 Received: from orome (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c8881187sm21267993f8f.41.2025.03.19.11.10.44
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-395c7df344dsm22271780f8f.10.2025.03.19.11.26.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Mar 2025 11:10:45 -0700 (PDT)
-Date: Wed, 19 Mar 2025 19:10:43 +0100
+        Wed, 19 Mar 2025 11:26:54 -0700 (PDT)
+Date: Wed, 19 Mar 2025 19:26:52 +0100
 From: Thierry Reding <thierry.reding@gmail.com>
-To: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Simona Vetter <simona@ffwll.ch>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <jroedel@suse.de>, 
-	Jerry Snitselaar <jsnitsel@redhat.com>, patches@lists.linux.dev, regressions@lists.linux.dev
-Subject: Re: [PATCH rc] gpu: host1x: Do not assume that a NULL domain means
- no DMA IOMMU
-Message-ID: <vn6lqxfqvi6tbxomrvn6ct3ezvegx3y2q4sdwpjkvbehzzs3gl@ctek3pks5y3e>
-References: <0-v1-10dcc8ce3869+3a7-host1x_identity_jgg@nvidia.com>
- <19478509-5007-4a20-9512-b965126b7026@tecnico.ulisboa.pt>
+To: Breno Leitao <leitao@debian.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, jonathanh@nvidia.com, 
+	skomatineni@nvidia.com, Mark Brown <broonie@debian.org>, 
+	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rmikey@meta.com, kernel-team@meta.com, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, noodles@earth.li, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Peter Huewe <peterhuewe@gmx.de>
+Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
+ instead of device_reset()
+Message-ID: <5doq6itaz6uicvqcn37q2dkaxyzy3etz5qgv6wlsyd5troqlag@yqs6ltjp3gsz>
+References: <20250318-cuddly-translucent-teal-e2ac2d@leitao>
+ <6355bbb3-a4b1-4fdc-8a97-d81bc5e1cf65@sirena.org.uk>
+ <20250318-furry-piquant-orca-da28c2@leitao>
+ <47c40ec0-291c-4664-a66e-d76bd6360c0d@sirena.org.uk>
+ <20250318-boisterous-adorable-chowchow-cea03b@leitao>
+ <20250318-psychedelic-thundering-guppy-22bba2@leitao>
+ <b3da27ce-161b-4462-a608-c36f4b0696ce@app.fastmail.com>
+ <fbeca9fd-38a6-49ba-bb5f-6df5302d139d@sirena.org.uk>
+ <6cf8af69-634e-40fa-af45-912540b29aac@app.fastmail.com>
+ <20250319-aloof-rottweiler-of-perception-4c1ad4@leitao>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
@@ -77,75 +86,116 @@ List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3vs3sblqwnplgzuh"
+	protocol="application/pgp-signature"; boundary="xdslpcvgl4x5phod"
 Content-Disposition: inline
-In-Reply-To: <19478509-5007-4a20-9512-b965126b7026@tecnico.ulisboa.pt>
+In-Reply-To: <20250319-aloof-rottweiler-of-perception-4c1ad4@leitao>
 
 
---3vs3sblqwnplgzuh
+--xdslpcvgl4x5phod
 Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH rc] gpu: host1x: Do not assume that a NULL domain means
- no DMA IOMMU
+Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
+ instead of device_reset()
 MIME-Version: 1.0
 
-On Mon, Mar 10, 2025 at 12:34:35PM +0000, Diogo Ivo wrote:
+On Wed, Mar 19, 2025 at 03:09:57AM -0700, Breno Leitao wrote:
+> Hello Arnd, Thierry, Jonathan, Sowjanya,
 >=20
-> Hello again,
+> On Tue, Mar 18, 2025 at 09:07:28PM +0100, Arnd Bergmann wrote:
+> > On Tue, Mar 18, 2025, at 20:13, Mark Brown wrote:
+> > > On Tue, Mar 18, 2025 at 08:00:05PM +0100, Arnd Bergmann wrote:
+> > >
+> > >> That does sound like the easiest answer: if the spi controller driver
+> > >> knows that it needs a reset but there is no reset controller, shutti=
+ng
+> > >> itself down and removing its child devices seems like the least
+> > >> offensive action.
+> > >
+> > > In that case it's probably more just refuse to probe in the first case
+> > > without the reset controller.  Given that the device isn't working at
+> > > all it seems like the hardware description is broken anyway...
+> >=20
+> > Right, I see now that it's doing a rather silly
+> >=20
+> >        if (device_reset(tqspi->dev) < 0)
+> >                dev_warn_once(tqspi->dev, "device reset failed\n");
+> >=20
+> > after which it just continues instead of propagating returning
+> > the error from the probe function.=20
 >=20
-> On 2/4/25 7:18 PM, Jason Gunthorpe wrote:
-> > Previously with tegra-smmu, even with CONFIG_IOMMU_DMA, the default dom=
-ain
-> > could have been left as NULL. The NULL domain is specially recognized by
-> > host1x_iommu_attach() as meaning it is not the DMA domain and
-> > should be replaced with the special shared domain.
-> >=20
-> > This happened prior to the below commit because tegra-smmu was using the
-> > NULL domain to mean IDENTITY.
-> >=20
-> > Now that the domain is properly labled the test in DRM doesn't see NULL.
-> > Check for IDENTITY as well to enable the special domains.
-> >=20
-> > This is the same issue and basic fix as seen in
-> > commit fae6e669cdc5 ("drm/tegra: Do not assume that a NULL domain means=
- no
-> > DMA IOMMU").
-> >=20
-> > Fixes: c8cc2655cc6c ("iommu/tegra-smmu: Implement an IDENTITY domain")
-> > Reported-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> > Closes: https://lore.kernel.org/all/c6a6f114-3acd-4d56-a13b-b88978e927d=
-c@tecnico.ulisboa.pt/
-> > Tested-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-> > Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> This would be another option, and I would be happy to update this patch
+> with this suggestion.
 >=20
-> Any news on this patch or any other solutions for this regression? It's
-> not great if this falls through the cracks, especially when there is a
-> solution for the problem.
+> This patch was attempting to address the issue the other way around,
+> where I was expecting that the reset methods are optional, thus
+> marking the device_reset() function as optional.
+>=20
+> It appears that on certain UEFI machine types, the ACPI firmware doesn't
+> implement the _RST methods, and device_reset() will *always* fail. It's
+> unclear whether this is due to a broken ACPI table or if it was
+> intentionally designed this way.
+>=20
+> Tagging the driver maintainer (Thierry, Jonathan, Sowjanya) who might
+> have a better understanding of the design in such cases.
 
-Looks like I had marked this as applied by mistake. Thanks for the
-reminder, it's applied now.
+Can you specify what device this is and what software you've been
+running (including firmware, L4T release, etc.)? I can try to find out
+if this is a known issue, or if it's even intended to be this way.
 
+> > This is also broken when
+> > the reset controller driver has not been loaded yet and it
+> > should do an -EPROBE_DEFER.
+> >=20
+> > In case of a broken ACPI table, this would simply fail the
+> > probe() with an error, which seems like a sensible behavior.
+>=20
+> Do we agree that the device reset methods MUST always exist (on both DT
+> and UEFI hosts)?
+>=20
+> Anyway, from my naive view, we should:
+>=20
+> 1) Mark as required, and fail the probe,  if this device_reset() must
+>    have available methods. (Arnd's suggestion)
+>=20
+> 2) Mark device_reset as optional if device reset is optional (as the
+>    current situation suggest). =20
+>=20
+>    a) If the requirements are different for DT and UEFI, then should we=
+=20
+>       create a "device_reset_optional_on_acpi_but_not_DT()" helper to
+>       handle such cases(!?)
+
+I'm not very familiar with the ACPI side of things, but my recollection
+is that essentially ACPI talks to BPMP in the background, much the same
+way that we do using the BPMP driver if booted with a DT. I wouldn't
+expect there to be any functional differences, so the lack of _RST for
+this controller seems strange.
+
+Again, if you can provide a bit more information about the set up, I can
+try to find out more.
+
+Thanks,
 Thierry
 
---3vs3sblqwnplgzuh
+--xdslpcvgl4x5phod
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfbCKMACgkQ3SOs138+
-s6Gc0A//TrzbaprQO4xc8Hgq6tcEIg3KdqfdbBdYgELgL6bY+60NkY0cm5wcsUaG
-he5y3ZfuZLUBjV2rlhJAuyOdpScrjekO0lB12wmnTKypOsp/ugFDTgDnrdgIgQU9
-Brs4DDAVu9AB/pjN8jHnQ0wOYpR5yXW69ZKGZuu+FAlscC8hVQ2SoyAUP9WDBcw5
-cy2E5pZuVs7ti6MhF4MaL1hkFz4QjPnlupAxwBEMslsf/6vzJeTwVwAB9wq6aoj7
-43NFJ2U7VLPMBQA0DfdPMI50gJGeAkKfBWuQMIXwRsH2XUT93uzXrJr0qKDWROUA
-/s8z6kuKi1jnUZ+gbUUZauQyHFF9OT8sJAND9Tx2bnDUncfmj7ZSrP4MU0F6uYJV
-PU13U30Dm76w6IV0X+zNfDUyRUoapVBAbpFRtlKX8yn+mGrZy5vMJdGiu+AUZJBS
-hbuEAg5qW+DDcwwJsrjMpOTfIPAEWJ6Kxm2t5Qr/Jtd1WpiCmQD6pDrxud24yEBt
-DQ897YMsOP7DT5UJG8B7IXFL95OTyDYTXcSFK8D802Il1tBfjh1jZnoteva8VhHd
-wI0bHAyWDdND+KrX8WbtLeDzCc97vw9yJ4RfI7ZI9G2waRmQBdpWXTv1K8lt5gDy
-03jmd6jX8CfULyXueikrm5+Br92M9afX66J+ubSq1o2QPn9R+UU=
-=aAbR
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfbDGgACgkQ3SOs138+
+s6FCuw/+NrSBnVKcOJalwt+lfgUb0j/Kfwgp6ctoxRdhshHwdVI10hh522B5bysT
+6aEx+vczVSnQYW6/PIhbHHLXiRnzE6WHW6I/PkxYyDEo7Qva7ODrmGPrBQhW/Do5
+UGw13+uoYQbG85feknSBLMtz3o5uYZGZkWqWWoETU24LF9M41W4C/UIizdHyYCl1
+CeqYrD9AM4K8jrvuJQZhATfXbEwZge5ihyU6bMbewEQVTFDrvit8LtyYJVCYW8v/
+G9EaeqWTmqywBZX2ugzSVLBU/9KekTx0sH9ddZ9AKg/j9ZM2xVZz0M7oWh+4ap+p
+BT9JOhBN6ZuqYjN88yw8DvJ3P/K6CrF+n4yF6nZbJ0X4fbHeCDFMrpluOCrgw7vA
+zoSdQRGfDdauVHa/YGer9LqDnUESMTqdCPnS8hsi0fIBBr5yhVGyf1yEZhBC0f4f
+RvDFy47C+9wHu66d81TzGpLXcdfdCH2mXQGmkQTU9LAhdGe7Pvzoo4yMJq+E3ujr
+6Vbj7VWoVFVhZymOAEPqehwqLrzYI0rjBPvqmvgmUtD255BOKSVDkc5pHX4G7WbH
+XsKfHd7CbdpHYQRbKAMA5zBFzW0GatGIz66wISZg19NhYC/BpcJFoxJSfdgjGgMY
+PfSN8E/DwebH90KPvdEcZ2nZmC241QJjeRomMMed/oQRZ0S/3n0=
+=Aoq/
 -----END PGP SIGNATURE-----
 
---3vs3sblqwnplgzuh--
+--xdslpcvgl4x5phod--
