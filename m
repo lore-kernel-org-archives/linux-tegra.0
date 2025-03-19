@@ -1,85 +1,144 @@
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8867E155A25
-	for <linux-tegra@vger.kernel.org>; Wed, 19 Mar 2025 07:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789F51F4CBE;
+	Wed, 19 Mar 2025 10:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742368337; cv=none; b=nGjoqFEYZjFLBeAV5MbL4ALga6xD7v7w3xAZwLaQI2SP0d4/yqHWbnq44GBcG80C3VARW2Xrpe6Xax1TwVeCgWzqYjj1hqnGk0IhdhQh+DIgGCV8t21Dgs8h7WlY774Q4MsBmfQ2GA4ni3H/30B1Wb6QeE7RvQUivpTMjo6Im4U=
+	t=1742379004; cv=none; b=dIBMjbi2QxB6EjGq33nRz+DhD/26L+OwK3fyfdqnoO9yU76HscKeNj0cgrJNZGPlXFZOyQkCYo6+MWRWqlSalED0iFldVt//MKWz3nDsdjM1zHuKgA5fq0VgRrDAGsMxvbIBlypp4l3LTQAV1jXDUqUKL/S8ZSuUVITHLdRBzgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742368337; c=relaxed/simple;
-	bh=gAPl73nB1/HYJwqwFsCBDZYKVaVTHM6tgFaD9NMhd5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TjMtvC8LotT+ogTIX0MUidcijxDJhuWUcuAq/NMzG6psNyWaflb2HaLuzBJOjCed9gddJwtJh5h8AvOo8gEmhZNigqGR4w/26gGkgoz4a01v4kyOeZPtUxlhARyzMxcbTOGVstrGYarqfG86W4fFfqrPibsp3Bg8XjCc4FB5BV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HAdDviIa; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HAdDviIa"
-Message-ID: <f12442a9-c8b9-4cda-9f15-3a3091250685@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1742368322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c39d0sN46EFBdX+bBun70+OOV7ydvqD1sY/1k8B9HpI=;
-	b=HAdDviIadASHNtZvPD7I+l54Z0VOHEPJKwl/00sC8cHoHPixbKKBQy9vyjAtJwLIMFSk5F
-	8ERkpGaixDqRgPZA1f3+yGQx+N0lg03O26ASCDjAB1M6HpESUCQAzPVx1bc7yhPPi3s7vr
-	fGs9+D5ijxQ4CtWFgpkaylQJCWKHKpc=
-Date: Wed, 19 Mar 2025 15:11:10 +0800
+	s=arc-20240116; t=1742379004; c=relaxed/simple;
+	bh=8ycg39I2wHuY+9uPk1NX0odRnxkh8w2jlOGBQ6BT3bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qKOWo6ExfxMJMLPtolkyAPCrmIEgqSWS2gDLGiu2y2b0ASogy2iccdzWuOVRiLNnzRCYiiV3+RSaKeOlwJeIYEvRpPlEIxoMqYY54Lpy3lCuAgaVUDTNO9540z1av+R50Y7+RqrvHo4ALk0BAo7b2443bVouPBt9jCJ+qwd6fAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so10129682a12.0;
+        Wed, 19 Mar 2025 03:10:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742379001; x=1742983801;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mR0/XB887KCpYdNFg9r9RqYX9JCiuL75dasck2rSEYY=;
+        b=Igb9XWiMiUS0Q71IeWL9X3svmcHMYCtuREbK6Y9pm527or8tKSEmRTVpVT0mwO7EUf
+         nPj0azJ7IJJf9JrisYvi0XQjDOaNHSM5BjsxlOxyhJI4vMARyPd3ey519vCekzAOpSIA
+         4viy4PrHOrwhRluJMsbjg4Ehi7t/cHVTC/S+2PQB9kPCSB8uhhXYxbXxMtlMq4esnupj
+         jieVhBhMwXZa/zuUIosM8vczUuTZGaPfoRuMwty4ky33yQ/mUA0lMSxUEtmAjJQoTK7X
+         mlkDVS0MKjNyF69DiNCcFRFQ2CKvSCEO96NmbAsw199mqzJHcQ4MyQ/AcCkqIr+aFloR
+         h7FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGy1rAEyCq6OZMy/VBNo70r80pceMXqlFjCy8XCc7AYbZY8ktVOiluq02nVp+dyUdRpwirNalXu7f+@vger.kernel.org, AJvYcCVliSKrN6r2rJmY24gFb360sfk0T/HL658psY066HfLkEt6ZDuRZT+//HkbVpWixHUfBDFLZvXAH2aRuco=@vger.kernel.org, AJvYcCXA17dGPeZGqML3i5jNoGUUYIKJXiiwBz5j3k9g0LimuSUc15DF4d6EsLj1skuyPil8ErxwRevwh5Phyjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9urZLHKx6TIJSh0iKD+iKRkfjBIkZrqHwCfG+PioMhgqmsRaI
+	+fzIYgMCsSeb8hQJ7Hl3solD8AY32b2gTVgWAhs1aRn0GIokOo1D
+X-Gm-Gg: ASbGnctXcLMr4tplNkWOnYLSD0T5OahDCGZChmoESyuG8TJMKK/n4OLcsb4BsQ7BXUO
+	qlpjZVJp/kbbFjdUd9XiZKWSPh+4umS+0PIowK4r5Wlfl2MGK1m2/gLOvsWTGMExlw+tnv/Ut+1
+	tIygVvpG8mqN6FIBdFI1ArR0Mg4B1KIuG10XDE20k9d8z0xlhKBKw20tsoDaB0BCy7oNbAVm2X1
+	TcPbD4sZv3UF4pEFTBe0Mm0ENP+i87HD7SE02UO++UxRISnCPkKMtQJGu+tyUwCzHqZ9vV/2yxA
+	TmRflvFg0pnwu3+h9ZCjrd9ih6pPjMYTYfE=
+X-Google-Smtp-Source: AGHT+IGrRhA3xHX7uqYSsvheB0imCylMZtgzaDJ8aubkr0yjakEs8ZGZWHrPAdMOtzawR/3J1d9eiQ==
+X-Received: by 2002:a17:907:944e:b0:ac3:8896:8c47 with SMTP id a640c23a62f3a-ac3b7f79431mr211303066b.47.1742379000383;
+        Wed, 19 Mar 2025 03:10:00 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:6::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac314a4738csm981904666b.150.2025.03.19.03.09.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Mar 2025 03:09:59 -0700 (PDT)
+Date: Wed, 19 Mar 2025 03:09:57 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Arnd Bergmann <arnd@arndb.de>, thierry.reding@gmail.com,
+	jonathanh@nvidia.com, skomatineni@nvidia.com
+Cc: Mark Brown <broonie@debian.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Sowjanya Komatineni <skomatineni@nvidia.com>,
+	Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rmikey@meta.com, kernel-team@meta.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, noodles@earth.li,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Peter Huewe <peterhuewe@gmx.de>
+Subject: Re: [PATCH 1/3] spi: tegra210-quad: use device_reset_optional()
+ instead of device_reset()
+Message-ID: <20250319-aloof-rottweiler-of-perception-4c1ad4@leitao>
+References: <f3e47d12-f6be-4bb5-b87b-84aa0037e1ef@sirena.org.uk>
+ <20250318-cuddly-translucent-teal-e2ac2d@leitao>
+ <6355bbb3-a4b1-4fdc-8a97-d81bc5e1cf65@sirena.org.uk>
+ <20250318-furry-piquant-orca-da28c2@leitao>
+ <47c40ec0-291c-4664-a66e-d76bd6360c0d@sirena.org.uk>
+ <20250318-boisterous-adorable-chowchow-cea03b@leitao>
+ <20250318-psychedelic-thundering-guppy-22bba2@leitao>
+ <b3da27ce-161b-4462-a608-c36f4b0696ce@app.fastmail.com>
+ <fbeca9fd-38a6-49ba-bb5f-6df5302d139d@sirena.org.uk>
+ <6cf8af69-634e-40fa-af45-912540b29aac@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH next] pinctrl: tegra: Fix off by one in
- tegra_pinctrl_get_group()
-Content-Language: en-US
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Prathamesh Shete <pshete@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Peng Fan <peng.fan@nxp.com>,
- linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kunwu Chan <kunwu.chan@linux.dev>
-In-Reply-To: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6cf8af69-634e-40fa-af45-912540b29aac@app.fastmail.com>
 
-On 2025/3/19 15:05, Dan Carpenter wrote:
-> This should be >= pmx->soc->ngroups instead of > to avoid an out of
-> bounds access.  The pmx->soc->groups[] array is allocated in
-> tegra_pinctrl_probe().
->
-> Fixes: c12bfa0fee65 ("pinctrl-tegra: Restore SFSEL bit when freeing pins")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->   drivers/pinctrl/tegra/pinctrl-tegra.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> index 0246acba7703..11ecbd6a9b2a 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -306,7 +306,7 @@ static const struct tegra_pingroup *tegra_pinctrl_get_group(struct pinctrl_dev *
->   {
->   	struct tegra_pmx *pmx = pinctrl_dev_get_drvdata(pctldev);
->   
-> -	if (group_index < 0 || group_index > pmx->soc->ngroups)
-> +	if (group_index < 0 || group_index >= pmx->soc->ngroups)
->   		return NULL;
->   
->   	return &pmx->soc->groups[group_index];
+Hello Arnd, Thierry, Jonathan, Sowjanya,
 
-Reviewed-by: Kunwu Chan <kunwu.chan@linux.dev>
+On Tue, Mar 18, 2025 at 09:07:28PM +0100, Arnd Bergmann wrote:
+> On Tue, Mar 18, 2025, at 20:13, Mark Brown wrote:
+> > On Tue, Mar 18, 2025 at 08:00:05PM +0100, Arnd Bergmann wrote:
+> >
+> >> That does sound like the easiest answer: if the spi controller driver
+> >> knows that it needs a reset but there is no reset controller, shutting
+> >> itself down and removing its child devices seems like the least
+> >> offensive action.
+> >
+> > In that case it's probably more just refuse to probe in the first case
+> > without the reset controller.  Given that the device isn't working at
+> > all it seems like the hardware description is broken anyway...
+> 
+> Right, I see now that it's doing a rather silly
+> 
+>        if (device_reset(tqspi->dev) < 0)
+>                dev_warn_once(tqspi->dev, "device reset failed\n");
+> 
+> after which it just continues instead of propagating returning
+> the error from the probe function. 
 
--- 
-Thanks,
-   Kunwu.Chan(Tao.Chan)
+This would be another option, and I would be happy to update this patch
+with this suggestion.
 
+This patch was attempting to address the issue the other way around,
+where I was expecting that the reset methods are optional, thus
+marking the device_reset() function as optional.
+
+It appears that on certain UEFI machine types, the ACPI firmware doesn't
+implement the _RST methods, and device_reset() will *always* fail. It's
+unclear whether this is due to a broken ACPI table or if it was
+intentionally designed this way.
+
+Tagging the driver maintainer (Thierry, Jonathan, Sowjanya) who might
+have a better understanding of the design in such cases.
+
+> This is also broken when
+> the reset controller driver has not been loaded yet and it
+> should do an -EPROBE_DEFER.
+> 
+> In case of a broken ACPI table, this would simply fail the
+> probe() with an error, which seems like a sensible behavior.
+
+Do we agree that the device reset methods MUST always exist (on both DT
+and UEFI hosts)?
+
+Anyway, from my naive view, we should:
+
+1) Mark as required, and fail the probe,  if this device_reset() must
+   have available methods. (Arnd's suggestion)
+
+2) Mark device_reset as optional if device reset is optional (as the
+   current situation suggest).  
+
+   a) If the requirements are different for DT and UEFI, then should we 
+      create a "device_reset_optional_on_acpi_but_not_DT()" helper to
+      handle such cases(!?)
+
+Thanks for the discussion,
+--breno
