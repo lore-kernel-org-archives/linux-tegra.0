@@ -1,90 +1,93 @@
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2D01E378C
-	for <linux-tegra@vger.kernel.org>; Thu, 20 Mar 2025 07:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A3E20B7F0
+	for <linux-tegra@vger.kernel.org>; Thu, 20 Mar 2025 08:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742455336; cv=none; b=SeZnqqwp6nxxGmpPz/1B2AI9YtDnvd7pf6+rWC5+Ni+CuqWmepMu5yCi4SAxh0Z/oHwf7ewZ3EuX4E1wRa7emg7F2IUBRm17WgwaurYtpbZvcbCZld5vkX1YmIusbw8jV2iUqPZUklTT1H7jtP+AxflCwN7p+3XA4sqWm01FPq0=
+	t=1742458417; cv=none; b=UsCInKjdLYTOOxQQQZmTGxKegZtmPoDf71rvdnN3NGEWevOaYf4wTZQ/F0p8vcrzW7e6GHtLWiOpgTu+syyZx6QpmIs0+P7EL4XVxLEZSGxlqvzQMFIEa2krgIjKO0sCEm2FQ1S2xdSSCsmRG6a80CTcoQzH8UEiNylQV2obKbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742455336; c=relaxed/simple;
-	bh=VxiIaIGYPsQJ5ZaP30ByAl2xle8cn6Fjq+AfbVGI/ag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E7m7yyv5DBwTd083Vk5z7uZtkaCa0XeIoYiO3iul3qaWrpteJXD222JJ2AEycuIvfuF++BPzQe965wXJ+EcvBFubi2NoQ3FX7DVI/Pe9gl3BW0ZZWrR08karyBIEmN36gbnp8bqlZjZZnZBVtPjGBDh73ANgn/aFZT+WHGQ6yQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cOpk/4WM; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+	s=arc-20240116; t=1742458417; c=relaxed/simple;
+	bh=6Ji1RBIOpRF3KKxjONADrWSLZ8hGYxB9lOHKQd1SPN8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Swu69ehV30ps2GJLZjT831yS4QrxfFe7legILXu7ce3E36UahsusDVH4XymRoGRbFYnFTQNJcPk5Au18pX80CtNPjv7H+eSbqgUPN3oOFz5FsUQOHXv86Yg2kLD13l/Vo/B2WBUOXsqyO8HVenIS3XWDpSPaXpirSVockdPAbjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nWhxWzso; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cOpk/4WM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=VxiI
-	aIGYPsQJ5ZaP30ByAl2xle8cn6Fjq+AfbVGI/ag=; b=cOpk/4WMuXL5uLUtxOww
-	vj/nPwjyPmSbkFHS6Q3/hqaVkhN0Em3SwZawe+itzCKzRX7G6Sqg7vIVOd8y49P4
-	5Q3tOv0o3PWhi3B8mySdtwHP1Rsk17v0T3ZuOiVi30TkuzYMWlfkJtjt0CUPid3v
-	YtGAq/ww5YqsT8fo1u4kYCsSEUa0doRtbm3aBx2WKMyx+Ala0Xcx9BpBgl9ZfqNX
-	JmPef5hMtVhBdSN5+KkkiH29uZHrI3jLUBvpPkZT6p3pwAKibBmJj0k90ergf9Nv
-	plkynR/QP+FKr+I9GsF5WxBAcy0xqiWNvq5jLvuvefpJsyYi2qgeUDglygLcSwv9
-	IA==
-Received: (qmail 527233 invoked from network); 20 Mar 2025 08:22:04 +0100
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Mar 2025 08:22:04 +0100
-X-UD-Smtp-Session: l3s3148p1@A6Cg/sAwZL8gAwDPXyTHAJp038nK7dx+
-Date: Thu, 20 Mar 2025 08:21:58 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: ldewangan@nvidia.com, digetx@gmail.com, andi.shyti@kernel.org,
-	thierry.reding@gmail.com, jonathanh@nvidia.com, wsa@kernel.org,
-	linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: tegra: Return if SMBUS message length is zero
-Message-ID: <Z9vCFkt3ycFDBw-i@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Akhil R <akhilrajeev@nvidia.com>, ldewangan@nvidia.com,
-	digetx@gmail.com, andi.shyti@kernel.org, thierry.reding@gmail.com,
-	jonathanh@nvidia.com, wsa@kernel.org, linux-i2c@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250320062201.54070-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nWhxWzso"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-549963b5551so569773e87.2
+        for <linux-tegra@vger.kernel.org>; Thu, 20 Mar 2025 01:13:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1742458413; x=1743063213; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FH/3f5Dac1JZ7PB6fCTYluQ28FDUu14YKXsBxY9FGQg=;
+        b=nWhxWzsobggiluwJCxbDVfDnPmsDCfvAABhSrHVU5Iw1vBbjUXA1W/RkeIUwka7q0N
+         i37OH3tnLf1Na42ip7whz+23z+xpuTwg0QViQMQwueWsGXdEWqesVJxYMqg+TJdEVK2I
+         5G0wFEosfn1XtAEaq7eRrnQPdXuUE00Uhqhr3tGOZgfcTOKv2Ew2yHN5BudbFdfaAwaa
+         NdTs6KcEJNc9SB6rTscuRJwz4pfJ8tHKnYRvx1+n98L8LOa35gjHvGaFZOMYrA2xQpbJ
+         n/RbxVB+RmoqP9WaTzEpBCtVho8h9QnZmSRDU8/VtvbnKWUWA1ynSRyBGrAvJ1QkgRaB
+         AcNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742458413; x=1743063213;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FH/3f5Dac1JZ7PB6fCTYluQ28FDUu14YKXsBxY9FGQg=;
+        b=o+O1B/q/QaUCUVYOq0yytdR80tA8WSzAPKuTiH4bO+fMbGd5tCYvhnw4/9UYoTEeCq
+         EnBfR8dU/Y4R8FloeqEaTsw5suY6i1HFOZpFX0VhUZHyZsXE6juMzUi2HFhmYV0it4nc
+         dNSGj+mNqgS5bffDjVIkwnGmQTPvVJrg2W6/tyWgvGIHfsKGOzRubgmVVKDr+FTR3+eu
+         UaNiRDne885JdvxEjaA3lQqGjMOuoMPQ7dKk6H+DZ37etnp64BYG8PKKJbZPifoSOh4i
+         Qe+Kgh8+2qn8SJoGdFbYIBUYN6hdPtoz5ZjXb1kl/7fQS78DUFoaxp12yeAqOsOlqegq
+         UzPg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+EnYQpIOAdG/x+LOGmZbdIxh178qMarVyF6ht3XxicZl8zL0BRPIyj/RWxu1MF8+RSI9x0aAHch2uxA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhXdmVc13mAGfivyV3oHIjLNVkFnsRg8izQO3Y91tEgYgiBrP6
+	NIppm+AhiTKR2zj56mF/DD3zguohZ/NnTAYsmbWSF+RFeroTm5jswQuokGcUQ+E5kv8CFW3Y7iu
+	MIDy86o8w+CCdpSyf9kqWux/0b3sfYAYv6GqhfIfpOrBW6zvhJkRInw==
+X-Gm-Gg: ASbGnctkRhUhM7mi7C5QbMz1trjb35QFVE37OtM7OU8gH+u1fXN0MdBI7kon+vuJ3cQ
+	AZvv5A+NbjpTuXjMjKir+FNXZA0g4DyZFmioYs7pwGA9nqIbnZzgNkaXG+4A9+mjoCzWPRlBj2d
+	alcwxAJA0V5Zs+EjCvGqHWTuM=
+X-Google-Smtp-Source: AGHT+IHlRAMm6DHFmGnX4O6qtM7WU7UfemcO1DW0vJWDefpFUiW/wKer02pkqfNiLKCodEdnMprWlIdw9ApK2Vl4254=
+X-Received: by 2002:a05:6512:3d27:b0:549:b0fa:6733 with SMTP id
+ 2adb3069b0e04-54acb1fc7f6mr2205401e87.37.1742458412840; Thu, 20 Mar 2025
+ 01:13:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kcHYkJHyVb6PiCu3"
-Content-Disposition: inline
-In-Reply-To: <20250320062201.54070-1-akhilrajeev@nvidia.com>
+References: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
+In-Reply-To: <82b40d9d-b437-42a9-9eb3-2328aa6877ac@stanley.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 20 Mar 2025 09:13:42 +0100
+X-Gm-Features: AQ5f1JrO8Xfjg5ntIWbaCB7qZbTiTVkH-WMLNIyd4WNCkBTjqRZTBB1zv4h7_O8
+Message-ID: <CACRpkdY1NhHQ43L+pAoC6EC_ydJKY2u+P=nhNAgo_Gw9McNngw@mail.gmail.com>
+Subject: Re: [PATCH next] pinctrl: tegra: Fix off by one in tegra_pinctrl_get_group()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Prathamesh Shete <pshete@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Peng Fan <peng.fan@nxp.com>, linux-gpio@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Mar 19, 2025 at 8:05=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
 
---kcHYkJHyVb6PiCu3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> This should be >=3D pmx->soc->ngroups instead of > to avoid an out of
+> bounds access.  The pmx->soc->groups[] array is allocated in
+> tegra_pinctrl_probe().
+>
+> Fixes: c12bfa0fee65 ("pinctrl-tegra: Restore SFSEL bit when freeing pins"=
+)
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-On Thu, Mar 20, 2025 at 11:52:01AM +0530, Akhil R wrote:
-> For SMBUS block read, do not continue to read if the message length
-> passed from the device is '0'.
+Thanks Dan, excellent find.
 
-You probably should also check for I2C_SMBUS_BLOCK_MAX while here.
+Patch applied!
 
-
---kcHYkJHyVb6PiCu3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmfbwhEACgkQFA3kzBSg
-KbYMRxAAhRzgjE8EO+1EugWLvKKE+pRLUYgQ/0ogaF7/5hCxFGkpuSfit9xPVKe7
-8SLONik+y1yA1H3e+lgLXYJVhX0JR4zIqTSIGr6l0YiFa5L0PLU0Tim1sCcV28P0
-RGwVeOkGR6MV6RPRGU3+OzwdmEdD+ewMpIw0D/i4bW09JsOzi9xxgDHeliSfRt3b
-DDVew9hJPuBpbYj8194k/sru9mfMAnmKuCj2WZ/rO1xpFBjLSCc2HbkzROI6+WzY
-G1a5h1A8SwW/dU6QQqqJ6OZxhgW4ssou45sJBlihIcJ2zj5MeUfmN94UymKBYDQx
-FX7mzUTvaY3PqxvBDolipY5spj6GBegL6vajlWdxxzye/93EthDHcxOQpGr7Zn7Y
-J82tV/Mwo+fKGCST3XMC63HcpIjADofBUpqgwXDKPVk2hwd+Meh7E6bY0jhBhpn4
-e/mcprXsrxCgiKL/Nrt3OWd1U435Uf2qYNXs9L1OGRaCZRzK9CbJg3QvRyUgXILQ
-e+nqAlykFkYlE2cNaQTRroxle2mR7X3depYHGUYj6B5sXES+RAq0EahIl/GOwxQN
-0qzeZu9XN4KxqCbuWXAJFDmKl5LaVabFhgICWAm+lnv3INLph3HdkQuTMEu27fLv
-ranqGLs9buJK7CJgt4axW7a4mYDJOJ1mf4MSWp5ji6SZfLDtAvw=
-=BrIG
------END PGP SIGNATURE-----
-
---kcHYkJHyVb6PiCu3--
+Yours,
+Linus Walleij
