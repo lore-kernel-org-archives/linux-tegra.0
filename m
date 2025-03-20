@@ -1,158 +1,317 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2068.outbound.protection.outlook.com [40.107.244.68])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2040.outbound.protection.outlook.com [40.107.220.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1373B1B87EB;
-	Thu, 20 Mar 2025 13:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FE41E3DC4;
+	Thu, 20 Mar 2025 16:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.40
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742476990; cv=fail; b=DXXBGeATOyR1tiOwYXarLxDAwPFJJGBnayxBRB0InKMmNQ7vVfMZKUp1x6gGmm4IxRl0JueummMNeJe+Tkyv9B69vFHmm8OhLcOr2sZgQ4U21RgDtxlIkvscpg06UGJLXegR/nzlAyYbV0eUi0fViredlzM2kbjii+hOV+HHRcI=
+	t=1742487055; cv=fail; b=BlwvzUp8fX0LrumcqvEq5sxKXJW8F/Xji2LfzfsL6yvQmpAGvep1zrb2/0fkZ1UG2eUL6TjBb2dAJceIfpq8XiOY++ySSUqQN9nBb7i9JAHBwPDFfPeCGpSbHqHbL0veXnQCy89By8a7IYTTROTS+IcPWfri/r5Ts0pUSkvIL3g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742476990; c=relaxed/simple;
-	bh=VzKOtCRvoP5nlvZhOizha5sX83/vMxpYMLU4LRYvy/k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ebZVWVjheRC2ucHhBko6yL2quPrfaAqiVdg5PFi1jexpGuie15Z6heG/mq06OgBXLHTZJlea4pLX6xQMNQUzAcldPsJX8KRGAr+rlRqWC/PnE7B6eGLmKIfWJQDIgErZ5/yb4A6ieUc5kKKkDy5LLKIotOqNMbw4/1VhCCSGtS4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BUZ8P5Vr; arc=fail smtp.client-ip=40.107.244.68
+	s=arc-20240116; t=1742487055; c=relaxed/simple;
+	bh=gUZS9MqK7QBeBO240Re9tCGHI+kQp5rlVhbfR9LDrGk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pRP+laj/WvqhpsOrFBDV+T0/LRxDtWZriSsobNfnQLkfcIpTCEklMTdJSkVijyZxdD4LRFYVTt028+MDwywVqWktMgYv7mI9Fe5WOMn7VXsXgIgpvQW2UnqojB+Rl7WwhG1wYU5eCf5rDzouWaf38gTs7PBWegJO7ESwxqkt86I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NDev4dpz; arc=fail smtp.client-ip=40.107.220.40
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BUZ8P5Vr"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NDev4dpz"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oCAHnjCeOt916vILOtXbTTKx03ZP0DwXLK4lu1btgyeI30XrPtBbvyh21/aasx9NdLmcbKgwGd+3m+AfVTtE+jhXow6miqqTlxqCNuk3IHFFnYWMO7UOIvSPjeVlTPc/JbaddJ0eQF5lAK6vyoU5hRoa7g2Sreu7/vRL34DCrPy9qLTuHSZAC47uc4HBkSTPFLqsiRy5VXkQfwDE7x6L+OTKLFB8gS7KKjKTtJ0wvHc2W73CLydd1kG0zCuCnk+WspTi4phnn2VIhILkJjcghVi94OSmCAoUev9FbagzzIM7QS5DFwoGnCuOshq22NCB6opp83v31umjuNgXq/xD6A==
+ b=KLnBBnmECDzZP0lUhIe6Nd0qaXBnTCTv/LS0eKv8ajSPh1uY7h0QS0an/IAYb0Lzo6iZALxkk7jI9n9mNFMDJkZK6OIkKqywm7oN94KEP+g+BJHkz8CrW9tyPQG8JjQ3eg73bFqOA5YYoB3iffEDczYeFDJe/8OUF5RHfidyHLuCPCvg5y/BSrADAw0vXuQjKrCJXvBnl6XbkQ9CtGCiFSF45i099J+TsZCTsXEoGc/q6j7YYJxH/rtuu39XvqDjQi/wVYmxtjNdwAOrLEuiZ1vP6JQ7XvwdEd4K+NYh8SYqQng1u0iTfu6mRRNo1xBZmK8bDYvQLkx28tQTWWlMIA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VzKOtCRvoP5nlvZhOizha5sX83/vMxpYMLU4LRYvy/k=;
- b=BjU+kszY3AHD2nrCKr03rNLy9QGjoq3RMEcR5sbB+vUksJlWYH6Tfg1Bm9F0B4c5c9UfdC+kTkLcG/9Cs10+uZHK56pL9+LqKUCn2Vx4pantwKply6hrv5PJN5rpdlkD794VVmEuct5mTZ5uUwiFekNnMYuTloTPYDlCyD7CQkCkh9zaPrqpBG685EmtfVRwMtngyZPyBYENWE5dF2GO3UbSRF52ubMLDdrGUw3FhgYeSRlLDoTO+jJzoElbr8H9vYnJPqyEaFhsU3wE1Fc350Ha0xmy6jFqDDEHYAPNb47VoLq+im/0YF00q3FE0sTrSzgr02ay43U0RwuuYwHUrA==
+ bh=8Q6/c1f9SAeWML5Jl14E0zFX/6aruu8NAFrMm8UNiX0=;
+ b=KCaS7mUJ/uOFnP7ExJK/F4o0zdRy6sM7KFQBku0TX9+Qdb/Xrmc2AsEYuIqRWV6MYl+/iZ9wijg01HXzNGlbpbiwsfmHG4XBdkxzRT6GW2RCdvdl8K/FmJs50eaUIRj5d8kMxcya6EeomAC4zJwPsNK9KCDwowBEkP5E4ULSQ4B7KcgHxzq9bZTPqphVDH5Z8NpFBFWwZlQn5DznIdSo2WPxomRzCVy9pweco9yVmCJBeqTGb1qDmlkylzUJtAVObV/vFo2Otia3OUBSd3JEt2pRDvd1jzJX+PSZ3vD349DoCiuuFtVo3KU/nuxmIBBrsrWwf0J7sWoqgi5rhwcuBQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VzKOtCRvoP5nlvZhOizha5sX83/vMxpYMLU4LRYvy/k=;
- b=BUZ8P5Vr7nxAzUrztaSJQLcs/iC5KWLHI6s1sxgfuj0isE9sz4iYsiv4lBTmaWDOGlJC7FNz0EXZqDGDi4WOuw2+XP3fWgW5VDjX4Ab4DQVk7/mi+/umdQG4ycCsY7Fv15BsCh698aynM4Ad9zNTmldewt/efd7SJgY6phL/QSDwiWMtDKh+LtXQBWCM9atMrlABIGwl+gnBbMXLRn1PSCzJHFytCFXZ46yKAWu98KnaUQu3p52ccPFgHTcEaJ5lmiHKuEQ5+LW8fmbe3X/lRxWmLhRuqM8NIvjwmqN9ec+7dQ4G2BbUfmMEHd3po6DAwFHSUULkChwgkivWWesTpw==
-Received: from PH7PR12MB8178.namprd12.prod.outlook.com (2603:10b6:510:2b3::19)
- by MW4PR12MB7263.namprd12.prod.outlook.com (2603:10b6:303:226::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.34; Thu, 20 Mar
- 2025 13:23:05 +0000
-Received: from PH7PR12MB8178.namprd12.prod.outlook.com
- ([fe80::77bb:a9fb:c75b:f530]) by PH7PR12MB8178.namprd12.prod.outlook.com
- ([fe80::77bb:a9fb:c75b:f530%7]) with mapi id 15.20.8534.034; Thu, 20 Mar 2025
- 13:23:05 +0000
-From: Akhil R <akhilrajeev@nvidia.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-CC: Laxman Dewangan <ldewangan@nvidia.com>, "digetx@gmail.com"
-	<digetx@gmail.com>, "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, Jon Hunter
-	<jonathanh@nvidia.com>, "wsa@kernel.org" <wsa@kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] i2c: tegra: Return if SMBUS message length is zero
-Thread-Topic: [PATCH] i2c: tegra: Return if SMBUS message length is zero
-Thread-Index: AQHbmWEINVdBTWcSWUmpAbH4fYNxMbN7nsUAgABESiA=
-Date: Thu, 20 Mar 2025 13:23:05 +0000
-Message-ID:
- <PH7PR12MB81787B702A7F976113F6DBEAC0D82@PH7PR12MB8178.namprd12.prod.outlook.com>
-References: <20250320062201.54070-1-akhilrajeev@nvidia.com>
- <Z9vCFkt3ycFDBw-i@shikoro>
-In-Reply-To: <Z9vCFkt3ycFDBw-i@shikoro>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
+ bh=8Q6/c1f9SAeWML5Jl14E0zFX/6aruu8NAFrMm8UNiX0=;
+ b=NDev4dpz71TNKq2atkQLy56E1ToK4sjw9PdIXJ3DVzA+3716HbeUwH0EZydeW44X6R9OYV79oN6r4Wu87/DgtL61Pg7KSC5Hqnej8W1gzrwl3AE2ls5lB6gufnp6lZbziXbjpKr1qpiy3YXoglpkikEudm6vqcWxX+aL9cHHogciUsdZN5YodU7+b3jsFcMDASA1u0VE4B9+Q/oqU0OAllulPHvbdES7ALPsjhUnpp6TXROcpqPAZee9Brbn/F1cHQQRp4TyOHCZC+vEt3BFvW4YyKBA+OlcF/nAVKkq0W7z/M4o0bU5HX533+zr67ORvTZtqjuCMzRf9JkX8Sw/Ew==
+Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR12MB8178:EE_|MW4PR12MB7263:EE_
-x-ms-office365-filtering-correlation-id: 0360f954-db90-4691-fca2-08dd67b258ef
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?eJbLHZn+tiMq8wSRVJxibvD9ytIY/3h0oYZ5RZBSMwlRereszN08URJS6OO5?=
- =?us-ascii?Q?9tR9NAAxcVjaF5Ard/JKNCa64abJuMuhLkL+ZvXbUwtV5sBOYssBSnyjQmDA?=
- =?us-ascii?Q?TpJxoXFOl6gwtq0/P+MUXs+xWLKyaDzMkeL5HBmyEmBd6yDWrY9tNvVc2zBb?=
- =?us-ascii?Q?qAgZMMAJizz2UabxFHuRVGiu0sBb6uQwMXP+UO7/hmDSKKIay7TRfNgcCnn+?=
- =?us-ascii?Q?KMFwfqWGfBfFkKpj0dBDJH0l6YyNgNFJ89DQcJtoE/SDkR/pRw5GRyZ2mm7+?=
- =?us-ascii?Q?gSr6A70vN7nQT6UidYVIC9Rvt7d5BlDDEdk5PmWh5//uaCCmNm9reS1j9ppO?=
- =?us-ascii?Q?jjq9NfmxjFHbRQob/vOJUXXw0nZbPvK/CNAIVrKrKJllVx8/8yYxwQd/IfIH?=
- =?us-ascii?Q?zRb8GwKEr8Q86HhJ7vi+SFNmjqGc6R2Askvyu9raBnhItQnN9aVopmoYEKvP?=
- =?us-ascii?Q?d0L3tOPvFuE9qoB9CbOikXI0snICjMkVDp/DauKhhgaGsKS00VX6H4OqsDMK?=
- =?us-ascii?Q?0ZA52zh+qk/OzWY/dCPnUgQ1rkZn+6Y5QhQ+rC+5EJgRrulDcro1mkcXVdfp?=
- =?us-ascii?Q?JVzABTXG9SgoLpcvmEXASkPhQa+a3znqaCBeuET2lg7bA4Z3gQRxbKXQo78h?=
- =?us-ascii?Q?hCKp2ozQBBnWK/4pxnFD1hjVrRk+klV+RpyKJBOQaiJYaHU4qMdnhBZHcFLu?=
- =?us-ascii?Q?EE4HhkTRJs7BEljvCGf/ZBTG/HNsjkQoUGgWsiIZv+ExC984OaLm2w4FqA3A?=
- =?us-ascii?Q?kDAiMS5t6Bid9gAE97nxm9ISDqxqKppFsA5aTJTdeax0ATXqVBwRYhugoz6s?=
- =?us-ascii?Q?Qhf68cnbKxBiM+cM34SN7ZGMOCusXhcZq7VE90GYGPdpMirBeO/WiRjqwosg?=
- =?us-ascii?Q?SFfvr33RsQ0kIS4yyPWqtfPUcy1/g7yqiIA39xE+4tGWdNJD/ipopuURz33S?=
- =?us-ascii?Q?uZXqcwdK0tqc1XolZL1EWK1702q9BlaElExfERRtdSobKPydd/ij4qcnlWDM?=
- =?us-ascii?Q?gDusAc8TEY3kuBY90pBar22sMK44/qfn8u3qwQ8YuHNf1rcWv45f5O6dl5qr?=
- =?us-ascii?Q?CNZ4L86HMN0eStrDPY/h6+hf30cVoHNf5jZu/tZwz684xVhY2xwOeEMSIlBf?=
- =?us-ascii?Q?0J+zUIx7ee/JmvQ2QoosgiRYS1xQKzX1N+csthwmz1852bD3C+E08LxUbaKL?=
- =?us-ascii?Q?Tt82Hxnelv1cUAHqOiOlyPs3oCpl3t3ZQf7neK4NhrMz6lDEb24vyG7JOLOr?=
- =?us-ascii?Q?YKJHke5raL7stGORM2N3vSZMs34Y30DfjfNymD4tmkuejqi5lNsFMCxqyZJs?=
- =?us-ascii?Q?dLCDPD7MYVK1pLn+suejZjCfXqv8yKuQ8RWkTiV/fyoFtHefaGnT818X0DQk?=
- =?us-ascii?Q?hQVvGTCpjCElAUBCx1m1Rf9Tl1kR+SA2JddML+JYNHh4QtIFjMVO2C415Akq?=
- =?us-ascii?Q?t+n27RxhTqi4sXU5HfSI8xbxAlErk8zL?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB8178.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?edVwze0zUvV05A3eCCXWPC9iYiA3N+clNIx9lyI/YxCZn9g50VdViVM5Bf40?=
- =?us-ascii?Q?N7zhrAQqMrlRr87KsPQMRTs2ncL6jYKpOChfEHDW13+WOwocxkmrPpHS0aUm?=
- =?us-ascii?Q?KBd4Dzr19/hv7ksYUFwUbiG4G+vGPuI6SC4FYPvxtrcCmst5QhdAvUtZDEHL?=
- =?us-ascii?Q?ebrZJVL5g9yKaxGHJZxI4WQ5UkOY2hvy+WvT7DXD0W7uqrZX/17VNCD5b9YW?=
- =?us-ascii?Q?0CvQuzKHPJsopMDV4MIH8LdiPBr7gq5KuvLKBGK5zrFCh2PR6SoWBYNv0nPU?=
- =?us-ascii?Q?01LHowjBBhi3SorK9w1QpsbtynpwVkHdudUEU3swosxTIVr+7I8fa1L7JJlp?=
- =?us-ascii?Q?WfJcWcIN1DylG3lpvNHC2gNtZpI+SqxzP7YHHTGO2FFSTMlEsSCT3oXZTDdD?=
- =?us-ascii?Q?zz9+Z6sZJ4K+40auFxdHlxmqYlznWnAxhwLIWEKZwp52yj4DKhIkI1EQqCOn?=
- =?us-ascii?Q?mZymTnhtb5IVL/MY0IdflkIxgzL//ezPkUvdE0Pd8tj1dMmUbCNTIh+taMph?=
- =?us-ascii?Q?Z0B/T15IusPx9AiNbOzCiKZiqH5QWgbOOeK9cM9kpf/usk+TEBAzMYAG2JaA?=
- =?us-ascii?Q?ywpbLqJa0gdy/bm7M3xqhL65lm0RzEJLL77O+M7+js6lDJcHaLgaYd2zBz4D?=
- =?us-ascii?Q?kB5PDZer7LmG8YqZln+dPTCwbMsY8U5X4yTVK9c6ncUMAPnaT0dK4XY47m4S?=
- =?us-ascii?Q?FMv2t7s1qQVmvDU4WSi8vwVgosXOvvz+M0vqIEOqrvLa0O7DTG4zPdjeFm/0?=
- =?us-ascii?Q?0hSRh3621aRYId3E7VgG8a1k020Q1v2vIs6uK3wD5jNriq/uK24PFSKMlzSO?=
- =?us-ascii?Q?SjfsYGUqrCmOODbTvqaOFn0qISpfHq7lLOu3Sk4GYcufb+sxuQ2vQ3AsmhS3?=
- =?us-ascii?Q?YIBByUYPotkRteqzhhYp7GHLn1S9tZigmLKY5ZaoiXV2Gp2Va9S40w4lYyJG?=
- =?us-ascii?Q?rEaY6QbI3PrPV2D8RjelRd7xQe8TH/heDnF5fvkzIQVGrn3xZBbAEU/SNEvT?=
- =?us-ascii?Q?9olodl+9qgGVNRtW9XpLIZXkZuXWJquIMCvZ3ZQWVN6rZ0XozwBHOnOe/v5H?=
- =?us-ascii?Q?dpaefyRaRUS/SSAAnBFlsazifTsTfJreuzBcFA2HtspqL580391mgKq3T3sH?=
- =?us-ascii?Q?7P5qGe/ukVimAXvHbyzrpDxphv5tRbeUMqgRK0NOYUkhzm11VV7gFqkVJoX6?=
- =?us-ascii?Q?k47HBVQiaruE+A7gUBBBx6R/XSQzaFiHK+Sr0YI0ovArummTetez1YDHjtSM?=
- =?us-ascii?Q?NEBj2w2OqRDGyT492Qt2lIFJcMtv6s6JR4DA/le+j6GQcwp3nFQ94qZOAtwk?=
- =?us-ascii?Q?9L4E3YqJoTHdNkI2j993yzTZHQU1mAW/4LJTWyNRr8v/AKOO29PwQcfSjf/o?=
- =?us-ascii?Q?jH8RCgrUAdyiCUHWsd/xWg1JleKeREPWXo/H87JNzvBUCa8m6zoeE/kTJGlF?=
- =?us-ascii?Q?H1CvLNpKgGgNRAp3KnwByCf9JrQrgwqmoIX1i1lJ5jTIWCrovRduYm9ebJxi?=
- =?us-ascii?Q?EhEmCWw7/uBukmclcb50G5zaBzPMf0il1pAeD5GUkOnX07L0EFJxmpTgOals?=
- =?us-ascii?Q?H9GopAHTYYQcc/P0jCcperjAH9NT91xIlxcPCfaK?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by DM4PR12MB5963.namprd12.prod.outlook.com (2603:10b6:8:6a::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.34; Thu, 20 Mar 2025 16:10:50 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%6]) with mapi id 15.20.8534.031; Thu, 20 Mar 2025
+ 16:10:50 +0000
+Message-ID: <052cdca4-4fc0-4ea2-ad77-e8a0209833e7@nvidia.com>
+Date: Thu, 20 Mar 2025 09:10:48 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] phy: tegra: xusb: Use a bitmask for UTMI pad power
+ state tracking
+To: Wayne Chang <waynec@nvidia.com>, thierry.reding@gmail.com,
+ jckuo@nvidia.com, vkoul@kernel.org, kishon@kernel.org
+Cc: linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250314073348.3705373-1-waynec@nvidia.com>
+Content-Language: en-US
+From: Jon Hunter <jonathanh@nvidia.com>
+In-Reply-To: <20250314073348.3705373-1-waynec@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR08CA0054.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::31) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|DM4PR12MB5963:EE_
+X-MS-Office365-Filtering-Correlation-Id: b43dfd69-7098-4cb1-64a4-08dd67c9c81c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bFh1NWFYNlU2ZnNWWFRoenhkZk9XaUs4azJNdHBERHhzVWhWVjRiSlRUajFa?=
+ =?utf-8?B?LzR2MVIxd1d6bFU5SGpvQUxERkx0amNSSTgyOXJSSzNWUFBHK3BaVThSc05Z?=
+ =?utf-8?B?aEtmQ1BwV0VGSFFHRGVWMzRoN1ZvYTQ0aHRDamZmMWdWMUFkUlE3QmJNcFBt?=
+ =?utf-8?B?RGlBalRUUFlNcnVhUTRuT3hSOUEvMWQ0Wk15clZzN3p3TnlibE9objQ5RkJ1?=
+ =?utf-8?B?TlFUMlBzQS9EYVRCK2d6YzBHbitmNHBHWVE2blFJSG5UUFQrL2tSVTJzT3Fm?=
+ =?utf-8?B?WDdSV3FTRGhwNGpCdlVROTNiWXpMcTNEN2d6cDlrYlZmM0NZSnhjVzIrVXV6?=
+ =?utf-8?B?TmU0NXVwL0dZMEJDc1hnOFV1ZWNESEtPTnA1SCttNkpjWEc0ZHUxZ3JyUXh2?=
+ =?utf-8?B?L0pNdVNBWFIzbTBOOWY1dW5oY0YrMzRtUEhNY3JIZUp6ZEhmYUlDL0FtanZ3?=
+ =?utf-8?B?NWNFZUdKZXE4aUFhSTNGMGJVR0pMSElibW9WWTZ5U0ZXOUFialB5aGdRbHdC?=
+ =?utf-8?B?TnpUQ3piOEJiQkYxUklLQlZWTmIwdGlGTUluRExDVnJtYkdxcW5OVVFLSWhC?=
+ =?utf-8?B?TG1oWVFuWjdXaVFJMHZMREhXL0VXb1Vnb2Z3Q1N0YktTNkQ1UWphNXNLYktG?=
+ =?utf-8?B?cU1TTkt6OVZ2WGk0YUJScTl3b2ZpNlE2M1FYN0tTa0dMakkvNWJBeEUwbjRl?=
+ =?utf-8?B?bkx2UU9IbU10cERvNDl4ZHk3RHpqOXVMRUplQWM1YmtoK2R0L29VVXlob2Iy?=
+ =?utf-8?B?YnhaTUFaSzhXdGhveGNES0xJN2JVZ24wV0ZpeGo0VjBJRURKbFZaN0FaQ0l6?=
+ =?utf-8?B?WVYyTkVSQmUzSzdJZGdkNW52SVBXaSszdUwzTjN0cFdKZW5hcWxIM0VqZEhQ?=
+ =?utf-8?B?RzRpcHhTY3B5SjRQRFJFd3NQZ1dPckplUFJZdkVadjk3U2J2aTB1RDROcHVa?=
+ =?utf-8?B?bjlnZXVybGlsanB3TUZpQk9LL2ppaWVXQmk4eXFWWEtGS2RiS0c3YmlnMWxo?=
+ =?utf-8?B?R3UzR1JPdWRkcVdDU2VzM3BKSHRabmZMSVQ4aXIvQzJmcGkrcWVzRmNVQ3Vw?=
+ =?utf-8?B?TTRTbGJiYWZRTVU3NVkrRGtnVVRIY3hYWEswMGYrdHdBRVRRY3FIeWdYQVdw?=
+ =?utf-8?B?Z2t2OG1USHZpRDRESEUxMTZjRi9rSXp3UWhud0NDUmE0OGVhQ0owbkFGOW5C?=
+ =?utf-8?B?OHd4Y2tmaE83R3pBSGFoTDVRTlFlbEV6VnA0MUgrTHdiQnRURnoybXpNRHQ4?=
+ =?utf-8?B?V0pGdVcxclJyRzlGUVJuZ2ZTc1VHWVY4WjdtL3M2a0kxTUZaanh0S05Ndncz?=
+ =?utf-8?B?SVlpb2VQb0JOR091NzlTTlpGUDI3aCs0bzZ4c3pFNHJjWGtvdW4rQTFQd0ZJ?=
+ =?utf-8?B?RU5rV3kzTUVFN2hJMWRSRGU1Nm93SjZ6bU53ZkltVjI3OTFTeTJqR0YxeFZm?=
+ =?utf-8?B?RmNWbGpFRjl2NEc0YTZvcDNWRVZlSUltQmxUUmRUajlmQ0NNVWh5d3FCdVNH?=
+ =?utf-8?B?S0c1dHBINm9KTlIzd3R6QmYzRzNaT0NoYWhyTjVoNEFsYktrWDBBMTBPeGhR?=
+ =?utf-8?B?eW9kUFo2aEFnUzRDSnVzNVl4Q2NVRnA5cXU2ZHcwQ3hWWkovY29jSnV2dGZ6?=
+ =?utf-8?B?eTZOU0h3bzMrVWRtaDFHVFptaHdMY2tFWENBV3lzQW1TbEFWQldJTUZmZUp3?=
+ =?utf-8?B?VzIwODRNUDgrejc0MVJjZ3h0SDhsSDJ6WkwwM2prZGpPWWdDbEVwY1JmSFdI?=
+ =?utf-8?B?ZHNYUENLR0VjZ2RXU0dvL1ova3luajc3bTRNK3JqenE1N1NaZmcxRUNxcmNp?=
+ =?utf-8?B?MDkreHJRWUxybXlVblJXYjZGck16eUpHTnl4dkpyY2RTZVh6WDBSbnlySlVK?=
+ =?utf-8?Q?SdSFzv3kDk8zY?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?blk3S0FyZEEwQ3FoVDNXTEJqNzlVbUR5ejFXSkNXNEV6L2FhdzU3bm12Q1Bu?=
+ =?utf-8?B?a0VkMlFNVllxMDYrdTNCMWtncG9PTG00SXFoOHNkZmVsSFJack9wTnZiWDlh?=
+ =?utf-8?B?Z3lzTi9KSjV3MWRMRmFCSzJlTFBvdDkrTlBEbytod3N5VDZFdGdWRmRqMVFX?=
+ =?utf-8?B?QTdGQXQ3OElRb0JSNWlTL21icWtEc0VFaHNVMmt5L0l0WGRSbHJNaTFtTjhz?=
+ =?utf-8?B?amtuVmRyMDN3THloN2lxMlJ4UjZiTlBhaDRkNG5GQWdjSTFFam1nc0tQbmRt?=
+ =?utf-8?B?ekRSMEw1eWZ6YzA1UzU1dytxdVU5TGtHeHY3ZW1ycEE3VTdKWE1nV3Y2U2p4?=
+ =?utf-8?B?bkNkUGc2bUdqelgvSXpLTWVmTW5NbzVYVjFCWUl5NzY0VVFtQ1RaSUVnQVN1?=
+ =?utf-8?B?MnZRdEtWWVRCWTFoSzltVjJGTlFtUHF2Tldra1J6SmphL3BjdStqTkt4TTJx?=
+ =?utf-8?B?d2lhZlhZT0RUNHhRc013bk9naElkcGI5Rkd1MVhManJtbk5DS2FScnk4K1RJ?=
+ =?utf-8?B?ejZpaUVzc2k3cE4vL0RGbTFxdkhPSk9SUENDd254ZkdIZHNzbmNqZE5pRkIv?=
+ =?utf-8?B?bVpjbUowWWJpS051ODVLRko5aHh4TTgyTm9hZ05NMFpNTTVtc0tYUHV5bWlh?=
+ =?utf-8?B?UkZEdkdMZldXa0JvK3MvdDgycnlMUDBwU0hsL0NyY0J4b2RQMGNrejBMbUVp?=
+ =?utf-8?B?cFRWTUJVVGRiQ1VPdnJBbUdIWXpvN2tyd3NHZ1hucmtTZUlEN3FPTmI1Nlhr?=
+ =?utf-8?B?YVJjd1paVHYrcTBNazRoK09TMEpUdVZTdUlhd3o4WXpCSTUyUHZESkEzQmFB?=
+ =?utf-8?B?MzIzMmx2MC8zWXlCNWs5VDFxYTBhTHVGSnJTWjhVVy9GajNkUXFHc3hwN1Bo?=
+ =?utf-8?B?STVqdC93dlZ5K1N5SlA5R1pTWVNFaytzWUxXQmFidHl0ZDRMVkVxdmhrbUxO?=
+ =?utf-8?B?N3lVaWxmcGJvM05FOTlVNklELzFmMkJGNUZGcXduTFFWTE5zWk1aeU5XYnQx?=
+ =?utf-8?B?VjlIa3dITXBhSlVUQjd4OXl6ZG13MjFqTXJ0UXkyQTBGVGpHSlpEZTB4YmZu?=
+ =?utf-8?B?Qm1oWjdwN3M2aS8vbWVHemU2Z0ZuR2dNRHJHaDd1LzdtWlVmZkxURDNnM3R3?=
+ =?utf-8?B?c25JZ2JRVlI3V2dER3oyaEdDNGErT1M0Slk1bWtHeHpYZ2xUa0RBNUQ3RkxP?=
+ =?utf-8?B?dmZwYS9NdDJPNVpGUHhUTWRLZGF6TU16TzJvSG9pd0FId1h0ZDhlYnNJMExu?=
+ =?utf-8?B?MlkzMWJtdDhwd0I5YnY5R0hrcmdNZ3NoNk80MjQyeUVFM1VSR3dQMng2Q3JT?=
+ =?utf-8?B?dkVPVTU2R2cwcmdlSEs2NHdEODJraHh3TkIrTmUzN1RENUt2OUo3UVhVVDlq?=
+ =?utf-8?B?Qnl3eHZ5K25zdkFrRHRDT1c5RHVIRUxTT1BhakpXVC93NVJ3TkdxYk9iaWNP?=
+ =?utf-8?B?WXZud3Rxb3VVbExMZHlOTWp5OFA3SUY4ZEE4Uk9PYzhqRFNvREJDSDgyeU8x?=
+ =?utf-8?B?QkY2SnhjRTdFRmNPZU92S01iSjVFczFlcW1BcVlnbTk1N3RDSWVvQ016Tldi?=
+ =?utf-8?B?QWx5ZE92bHpHN0NaOUlYSEh6aUoybVRsandTOFlGdnNEMld2dlVvNCtlenVs?=
+ =?utf-8?B?RmluV1NLNlFNeXFCRW45UXVDVFp3M2J1a1c1bjA4UGIvNE5XTjZ2eGJFd29J?=
+ =?utf-8?B?dGh0L3M0RnZVeXdBaTBES3JMK0dXdlZEMUovSytJd2JwRFdHTEtLWTZtN3Js?=
+ =?utf-8?B?WVhqTk0vSmdqQzNqMG4xNmpHMmZZL0UrZm4wNWJGRWE5M1JDeXFXeC93Rk5z?=
+ =?utf-8?B?MW9nM0NaM0ZHcXhnTDBDUGd4a1d5NTBhcTlOTWZlc0dndTQ3ZXRMWERwVzBS?=
+ =?utf-8?B?eVFRWS9qZ29jaDBjdExBSHFuNDh2ZytWT0F5blVJOXg0a0VIdHAvL1lDL0tF?=
+ =?utf-8?B?bnlZTTh6eEZjSGE0VzBrUVlYRGVqNTF2WGtSVkk1VmE0THV3ZjkzK2pYL0pL?=
+ =?utf-8?B?ZnRTWjY5WTExL1ZjeHhraFo0eXErOEFqU05wNnZoK2pSdDdGMmNXL3kyY1d3?=
+ =?utf-8?B?U3ZKdGEyM3FEbk9FRmh1WGJvNXhJbUtWSlRXc0NYRE90cXgwQ3FOZ0lZaXcr?=
+ =?utf-8?Q?wV9AnCQ7fbdqMoubwlC2ZMAPs?=
 X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b43dfd69-7098-4cb1-64a4-08dd67c9c81c
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8178.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0360f954-db90-4691-fca2-08dd67b258ef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Mar 2025 13:23:05.0298
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Mar 2025 16:10:50.1452
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: EBT6TPvI+vUBn/jxZKPTdCtv8FRAehhc0EdngPKPpXstJkgutaDWUPhGXHvqeq2S9SZN5Wn/Om1cBbATC8nr5g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7263
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qtLgGSC6yZCnBYrKvX4aXDbTwS05wDP/ht03W7qtB2U3tIgY/GG/8AA+n1IDS8P4SqaZR2aSloz6bMhONOIBDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5963
 
-> > For SMBUS block read, do not continue to read if the message length
-> > passed from the device is '0'.
->=20
-> You probably should also check for I2C_SMBUS_BLOCK_MAX while here.
 
-Done. Posted a new version with this additional check.
+On 14/03/2025 07:33, Wayne Chang wrote:
+> The current implementation uses bias_pad_enable as a reference count to
+> manage the shared bias pad for all UTMI PHYs. However, during system
+> suspension with connected USB devices, multiple power-down requests for
+> the UTMI pad result in a mismatch in the reference count, which in turn
+> produces warnings such as:
+> 
+> [  237.762967] WARNING: CPU: 10 PID: 1618 at tegra186_utmi_pad_power_down+0x160/0x170
+> [  237.763103] Call trace:
+> [  237.763104]  tegra186_utmi_pad_power_down+0x160/0x170
+> [  237.763107]  tegra186_utmi_phy_power_off+0x10/0x30
+> [  237.763110]  phy_power_off+0x48/0x100
+> [  237.763113]  tegra_xusb_enter_elpg+0x204/0x500
+> [  237.763119]  tegra_xusb_suspend+0x48/0x140
+> [  237.763122]  platform_pm_suspend+0x2c/0xb0
+> [  237.763125]  dpm_run_callback.isra.0+0x20/0xa0
+> [  237.763127]  __device_suspend+0x118/0x330
+> [  237.763129]  dpm_suspend+0x10c/0x1f0
+> [  237.763130]  dpm_suspend_start+0x88/0xb0
+> [  237.763132]  suspend_devices_and_enter+0x120/0x500
+> [  237.763135]  pm_suspend+0x1ec/0x270
+> 
+> The root cause was traced back to the dynamic power-down changes
+> introduced in commit a30951d31b25 ("xhci: tegra: USB2 pad power controls"),
+> where the UTMI pad was being powered down without verifying its current
+> state. This unbalanced behavior led to discrepancies in the reference
+> count.
+> 
+> To rectify this issue, this patch replaces the single reference counter
+> with a bitmask, renamed to utmi_pad_enabled. Each bit in the mask
+> corresponds to one of the four USB2 PHYs, allowing us to track each pad's
+> enablement status individually.
+> 
+> With this change:
+>    - The bias pad is powered on only when the mask is clear.
+>    - Each UTMI pad is powered on or down based on its corresponding bit
+>      in the mask, preventing redundant operations.
+>    - The overall power state of the shared bias pad is maintained
+>      correctly during suspend/resume cycles.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: a30951d31b25 ("xhci: tegra: USB2 pad power controls")
+> Signed-off-by: Wayne Chang <waynec@nvidia.com>
+> ---
+>   drivers/phy/tegra/xusb-tegra186.c | 25 +++++++++++++++++--------
+>   1 file changed, 17 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
+> index fae6242aa730..77bb27a34738 100644
+> --- a/drivers/phy/tegra/xusb-tegra186.c
+> +++ b/drivers/phy/tegra/xusb-tegra186.c
+> @@ -237,6 +237,8 @@
+>   #define   DATA0_VAL_PD				BIT(1)
+>   #define   USE_XUSB_AO				BIT(4)
+>   
+> +#define TEGRA_UTMI_PAD_MAX 4
+> +
+>   #define TEGRA186_LANE(_name, _offset, _shift, _mask, _type)		\
+>   	{								\
+>   		.name = _name,						\
+> @@ -269,7 +271,7 @@ struct tegra186_xusb_padctl {
+>   
+>   	/* UTMI bias and tracking */
+>   	struct clk *usb2_trk_clk;
+> -	unsigned int bias_pad_enable;
+> +	DECLARE_BITMAP(utmi_pad_enabled, TEGRA_UTMI_PAD_MAX);
+>   
+>   	/* padctl context */
+>   	struct tegra186_xusb_padctl_context context;
+> @@ -605,7 +607,7 @@ static void tegra186_utmi_bias_pad_power_on(struct tegra_xusb_padctl *padctl)
+>   
+>   	mutex_lock(&padctl->lock);
+>   
+> -	if (priv->bias_pad_enable++ > 0) {
+> +	if (!bitmap_empty(priv->utmi_pad_enabled, TEGRA_UTMI_PAD_MAX)) {
+>   		mutex_unlock(&padctl->lock);
+>   		return;
+>   	}
+> @@ -669,12 +671,7 @@ static void tegra186_utmi_bias_pad_power_off(struct tegra_xusb_padctl *padctl)
+>   
+>   	mutex_lock(&padctl->lock);
+>   
+> -	if (WARN_ON(priv->bias_pad_enable == 0)) {
+> -		mutex_unlock(&padctl->lock);
+> -		return;
+> -	}
+> -
+> -	if (--priv->bias_pad_enable > 0) {
+> +	if (!bitmap_empty(priv->utmi_pad_enabled, TEGRA_UTMI_PAD_MAX)) {
+>   		mutex_unlock(&padctl->lock);
+>   		return;
+>   	}
+> @@ -697,6 +694,7 @@ static void tegra186_utmi_pad_power_on(struct phy *phy)
+>   {
+>   	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
+>   	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
+> +	struct tegra186_xusb_padctl *priv = to_tegra186_xusb_padctl(padctl);
+>   	struct tegra_xusb_usb2_port *port;
+>   	struct device *dev = padctl->dev;
+>   	unsigned int index = lane->index;
+> @@ -705,6 +703,9 @@ static void tegra186_utmi_pad_power_on(struct phy *phy)
+>   	if (!phy)
+>   		return;
+>   
+> +	if (test_bit(index, priv->utmi_pad_enabled))
+> +		return;
+> +
+>   	port = tegra_xusb_find_usb2_port(padctl, index);
+>   	if (!port) {
+>   		dev_err(dev, "no port found for USB2 lane %u\n", index);
+> @@ -724,18 +725,24 @@ static void tegra186_utmi_pad_power_on(struct phy *phy)
+>   	value = padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
+>   	value &= ~USB2_OTG_PD_DR;
+>   	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
+> +
+> +	set_bit(index, priv->utmi_pad_enabled);
+>   }
+>   
+>   static void tegra186_utmi_pad_power_down(struct phy *phy)
+>   {
+>   	struct tegra_xusb_lane *lane = phy_get_drvdata(phy);
+>   	struct tegra_xusb_padctl *padctl = lane->pad->padctl;
+> +	struct tegra186_xusb_padctl *priv = to_tegra186_xusb_padctl(padctl);
+>   	unsigned int index = lane->index;
+>   	u32 value;
+>   
+>   	if (!phy)
+>   		return;
+>   
+> +	if (!test_bit(index, priv->utmi_pad_enabled))
+> +		return;
+> +
+>   	dev_dbg(padctl->dev, "power down UTMI pad %u\n", index);
+>   
+>   	value = padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
+> @@ -748,6 +755,8 @@ static void tegra186_utmi_pad_power_down(struct phy *phy)
+>   
+>   	udelay(2);
+>   
+> +	clear_bit(index, priv->utmi_pad_enabled);
+> +
+>   	tegra186_utmi_bias_pad_power_off(padctl);
+>   }
+>   
 
-Thanks,
-Akhil
+
+Looks good to me!
+
+Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks for fixing!
+
+Jon
+
+-- 
+nvpublic
+
