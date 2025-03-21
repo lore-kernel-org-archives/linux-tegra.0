@@ -1,152 +1,146 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5B92236E9;
-	Fri, 21 Mar 2025 12:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5FF1E98EB;
+	Fri, 21 Mar 2025 12:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742560089; cv=none; b=pORVogvgjVRa17dUVXXdcga2KfXhk6zarn7EGOY9H3ipuIX5m1pSmR8k6LKPe/EBYOQErOySRigqXXgxBiE/6HVMQBES3QcK5d8MCzGX1fUPig7EyozZTb4BeuoaMo6WLps5RRoHAY/wT1mLo10m6Tp0T+uMrigki+P4JNZ1QFY=
+	t=1742560153; cv=none; b=pPv104fR+xjrsgdzd4JE4DowEThDnjeeiYYWaRZ3qpQl/ndDCGtd3+KHYQP/RNH8G4/6zDAhC0tBHYsZ8fOhwhS6GTklBcBI1EjjzGYJ2ctswLO+RlBa2a5ESyqwHkT0FPtV+WQEjX6kpIdA/0s1O9NUkMdjlsL+9Pzf8BNMTsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742560089; c=relaxed/simple;
-	bh=iUx74DWaXYjl5n37JkB2LEUqfjQfMhzFIo3WtYlEUrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I1JfscigWFyugZSgoygbOUQP4nZEsMobgmnVIQ0sq2N3pVlh7r3WYEmPCpzyKC4y/NN+wP+2PWrpG3dlrHrVfjb0faa/1M0Junrt84bwG4AZN+U8IqDIcHflqRbXNg8zPxfKmRwvMIaUIJ7gSPUIeO/cLoyiuk0YVeGxZEWzRzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=THHcexEG; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1742560153; c=relaxed/simple;
+	bh=lfdiISzEEgrO+slIfnGzPTZpHHwZmhdB5j/bOmU0rqs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=g0+RmCgQAKFVfXNrn4mYD7fiej19PSnYZ9xpfec8KvffpvAhD1Jcg3l5QeTWWTJcD+1dAWT0YPcFz3ZZwDY+bOfHaL+HPqA7LH1UyfYCs+k2nPAXQBXSYphhV1UPt/E2xAKOk3uMqdjDswzUdkHaagF1WXxO0Rgq/paRe2bGYkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=i57tvl4V; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lT051Oi2; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="THHcexEG"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43cec5cd73bso12425005e9.3;
-        Fri, 21 Mar 2025 05:28:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742560086; x=1743164886; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vKhZ3Y/IQNxI/2SaoTHGSv+w2iMheOqoB17NBzyhBMI=;
-        b=THHcexEGu3CsQq///VoMZzvpVphPZLEq8ceayCrs5U6qfK28vckSMMMitUtk8GZmB1
-         tLVphqiOzmkArfPeL+cfEzj4Uh80sNR992iBHUbh8WKFIZDevRqEI9WMJaDxzlCVEQ9v
-         Q3eulUvs+0s6r5xcDCJo/2U+ak/Yvz0A0HCggNdEtqqbJndLYRyk/zifglH04Itragn7
-         uUqZUifCyzqz3MDSyBf1LIDMV6KTq0DYGyMRejvJBwnAewlVuHxHxSqWjOd1iABDdOx8
-         CkRhscu3Wx8lKb2UA4T+bcynSc+FMpEWuVBODfy5K7YtgzkrIcDQIbhwvnmCQ10nfdrx
-         ugVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742560086; x=1743164886;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vKhZ3Y/IQNxI/2SaoTHGSv+w2iMheOqoB17NBzyhBMI=;
-        b=l9wYqujAE4hkP9mz9Wfe+9+Rgcr94nWfvgc867TNxf6vcWgjymnaR5wuSYAirJpNIF
-         uCtpFFPy+DvlQ0ppo06bnqQ9kCbdzCwdKkqh5oy1ZpuYAWIxojubTMp4238AglJvYQTC
-         eoHrrLPQN257wgzkHa+ehKZAQd+XuQHPSFncvRYGakXA7i8Vd8cYsLqP93N+gBS5ddlU
-         TgZuKJ5ZmeulUKNG0XBqnI6WqQCbe5cuNbnDLC4U+4/JCQyrCrWGHYrDChUNw/hMV2JH
-         Y1EVTeXOS9MlmsKwQZ4VAM/bqrFMVlupxdk3yvr2zn8RfLR3/hKIOvXINTR0RanVq4Yd
-         knjA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKOR2g8DlYaAGjaaHYr4vKI9nWDTdo4/Ti+qM1Qlb9eWrhcNRrCniDZWSMI2NwmjeeHVO1kIgEfNYYhh4=@vger.kernel.org, AJvYcCW0+0g17DGp8zPuJtD29lzue9GFKb+sKL6qoy8SSrgYQ2QODYutnNpaq+7JNuTKoUz9Eku2Iij9S8NMJoHQ@vger.kernel.org, AJvYcCWp4zQR0ysymiWkRudk7Sa0N0JtDcnjyjAYFHK/XlkDmPGK5gHOHnMck01K2PYrAq8ZWD7mnV183+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYLeMTtFA7LATONJDuXt00m1WWtj7/Ecg4XMbFtnDpA9wJeYpM
-	qBZX/FTQw2m0b4hpasDC+Ifto5kn6tNlSFm/FYdUYc2C1z0M05/U
-X-Gm-Gg: ASbGncu8TkhWF+IZM7n8vb20i4jIpFkfNOqwCWKuUkLvYLvSoke09f18PMbPkBtCG3G
-	TN3w6qG0f+Z+GR3qThkQsZ5/v7JBrXgm2IuUA8WsevIbMV8pPlENe8VSt4lVeQRhXbVOi3MPc2P
-	f0LuTHW6GyE4AHg2FucGvnYNNhXzWI6RRfBzDl4Ym72r9j7VmpwpVKnf+ynKaRV2pf5PLV+holv
-	xTX+Ye4XS741hj9vwhmpASNdyyHh6btS09m9V9NYNU6+gm9todcx76IMQWpGnncLp6ADtj2oAbN
-	tWxpk24xrZl8Gp7YD0XUEvMKNQyRV4Y0K4b7I6dFSOH8pAru3R3dmSspr4VdaTpKect6D1DJwi2
-	KB2sSEGRRZglr9Rq/+Jmzawg7IKVkwZTOYD71FNIjAw==
-X-Google-Smtp-Source: AGHT+IGLb4p3Lv6/BJqm7ea3HRYWfKinl7KNgUdvidDQWp4CgP3J9p6Du9pXp9p6zTGv45jW+KgDbg==
-X-Received: by 2002:a5d:47a5:0:b0:391:3d97:bd33 with SMTP id ffacd0b85a97d-3997f8f9fb9mr3867300f8f.13.1742560086094;
-        Fri, 21 Mar 2025 05:28:06 -0700 (PDT)
-Received: from orome (p200300e41f4bef00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:ef00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9a3a10sm2227252f8f.28.2025.03.21.05.28.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Mar 2025 05:28:05 -0700 (PDT)
-Date: Fri, 21 Mar 2025 13:28:03 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: ldewangan@nvidia.com, digetx@gmail.com, andi.shyti@kernel.org, 
-	jonathanh@nvidia.com, wsa@kernel.org, linux-i2c@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: tegra: check msg length in SMBUS block read
-Message-ID: <2rlnnjixgd65u6gbqxfuhzu5humehvjth7iysj23xvuv5fi2ft@i5su6kfrqnt5>
-References: <20250320132144.34764-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="i57tvl4V";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lT051Oi2"
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id BBD171383770;
+	Fri, 21 Mar 2025 08:29:08 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-09.internal (MEProxy); Fri, 21 Mar 2025 08:29:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742560148;
+	 x=1742646548; bh=N6kPZ0cFTmXIpixMnN6tF81nr1APN9wNYIh/tOxWbbw=; b=
+	i57tvl4VKDF5ha2G2v+8lAQuw6M4b1rAcdwypJljRX1jdQIIhzz0E6CEgVlFkLRO
+	QtFqzhLS998HFqJWRmkKelAQcaTcK0YLNtn49PmynzG8d5BS7EsoRVNiuYIoIn9I
+	cOiZVhYwtpQWmD2njqRcpGywgdu5+SQt/nPTb4yf8gMJbbwX9oQWrK8AkMTvoVOB
+	L9FmDRNfEoZgW12ShA0klsJ9QMNk9FrVQlr6W4xkhkSf5eGpp8IdkbpOJuEE/Qmg
+	lCPFhIGP50Wykl2lHlJ8xEpJHVYiNbUhYAS/6s/Ue5lmvLZ1GGZpHTY+Et+Yq5tZ
+	OE8D5fzFZEcdRDWUcd+hqQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742560148; x=
+	1742646548; bh=N6kPZ0cFTmXIpixMnN6tF81nr1APN9wNYIh/tOxWbbw=; b=l
+	T051Oi2UrKbm70CTM0+WU3RQEBl8O2InYlf0qdnaHHzwk5G/DKmvmQY4V+YoDLdm
+	QJB0kaHQp9VLye/2Xf+xPqSWKQXyi08/ivcZ8uo6Mjm7/UXyd4jeDd8oB94FhdAa
+	aC2Y99wIkKUoxgxQP84BNTei34kdy6grBEl3jybYMlOFcPhV2LExykGvfGQg7QXH
+	P5QYIGouVKBsllY6pY33yrQvIxGDFhPJFKGTV00z6bwu67sOPPpsFCxVuqIIVKfM
+	Qs66jVGIffYzvn79RakI8Q67HJVtLeA8bZT2RhUYwT+Cx7EXXNC2exbfSZPdwyak
+	fA7bufMcB9yyYIgUYf9Bg==
+X-ME-Sender: <xms:kVvdZ-dvlNxtgCueP5K-X9LrgmPY6bqsjmhT2RPPYtEaSwAWAGAdAQ>
+    <xme:kVvdZ0gcXISmmqq1VzvW-zdk0qyp2ODnRZoy7qxoIXaKjL5LU_X1LWe1jWEw4F8_G
+    dd1P2hZMkrAJWbSSTA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduheduudduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    feeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinh
+    hugidrohhrghdruhhkpdhrtghpthhtohepthhonhihsegrthhomhhiuggvrdgtohhmpdhr
+    tghpthhtohepkhhhihhlmhgrnhessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtoheprg
+    hnuhhpsegsrhgrihhnfhgruhhlthdrohhrghdprhgtphhtthhopegstghmqdhkvghrnhgv
+    lhdqfhgvvggusggrtghkqdhlihhsthessghrohgruggtohhmrdgtohhmpdhrtghpthhtoh
+    epfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomhdprhgtphht
+    thhopehrjhhuihessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepshgsrhgrnhguvg
+    hnsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehhvghinhhrihgthhdrshgthhhu
+    tghhrghrughtsegtrghnohhnihgtrghlrdgtohhm
+X-ME-Proxy: <xmx:kVvdZyTE_63LDgMM7nvl4LCgcIFqy_9iCOFIBpOZarDifNQuZnO2iA>
+    <xmx:kVvdZ9x64sGPKdZ2VIrCvWv-1MNkOWAp6cmotk7ZALObl9LtLLnk7A>
+    <xmx:kVvdZ9ft6EbGWl4xG5AO97oQzboLTu8b0zu7dl5RWqGY1OfLFgpFBA>
+    <xmx:kVvdZ5K36lITbTqEtI95TI43l1OeBmYuUxwKKiur1-FWuKwrE3_V5Q>
+    <xmx:lFvdZ0kCqZVFDyJTIxAcWCLqQ8EY8hX7Vh8b8wygXH59ssdCdw-ftcuY>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id CB0352220073; Fri, 21 Mar 2025 08:29:05 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="tpvgewegqqclwbhg"
-Content-Disposition: inline
-In-Reply-To: <20250320132144.34764-1-akhilrajeev@nvidia.com>
+X-ThreadId: Td2a26421dc1a91fa
+Date: Fri, 21 Mar 2025 13:28:43 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thierry Reding" <thierry.reding@gmail.com>
+Cc: "Celeste Liu" <uwu@coelacanthus.name>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Albert Ou" <aou@eecs.berkeley.edu>, guoren <guoren@kernel.org>,
+ "Anup Patel" <anup@brainfault.org>,
+ "Heinrich Schuchardt" <heinrich.schuchardt@canonical.com>,
+ "Huacai Chen" <chenhuacai@kernel.org>, "WANG Xuerui" <kernel@xen0n.name>,
+ "Yoshinori Sato" <ysato@users.sourceforge.jp>,
+ "Rich Felker" <dalias@libc.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Russell King" <linux@armlinux.org.uk>,
+ "Florian Fainelli" <florian.fainelli@broadcom.com>,
+ "Broadcom internal kernel review list"
+ <bcm-kernel-feedback-list@broadcom.com>, "Ray Jui" <rjui@broadcom.com>,
+ "Scott Branden" <sbranden@broadcom.com>,
+ "Tony Lindgren" <tony@atomide.com>, "Jon Hunter" <jonathanh@nvidia.com>,
+ "Aaro Koskinen" <aaro.koskinen@iki.fi>,
+ "Andreas Kemnade" <andreas@kemnade.info>,
+ "Kevin Hilman" <khilman@baylibre.com>,
+ "Roger Quadros" <rogerq@kernel.org>,
+ "Palmer Dabbelt" <palmer@rivosinc.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rpi-kernel@lists.infradead.org,
+ Linux-OMAP <linux-omap@vger.kernel.org>, linux-tegra@vger.kernel.org,
+ "Stefan Wahren" <wahrenst@gmx.net>,
+ "Thierry Reding" <treding@nvidia.com>, soc@lists.linux.dev
+Message-Id: <5fd4f314-e570-4b37-b7c2-af5b4bc85a39@app.fastmail.com>
+In-Reply-To: 
+ <t2dustbykx2qd24wazjeiw5hch5nwr6z2ewmaf4srg6r2grwrf@rdw47chzkef2>
+References: 
+ <20250115-fix-riscv-rt_group_sched-v4-0-607606fe73a5@coelacanthus.name>
+ <20250115-fix-riscv-rt_group_sched-v4-4-607606fe73a5@coelacanthus.name>
+ <t2dustbykx2qd24wazjeiw5hch5nwr6z2ewmaf4srg6r2grwrf@rdw47chzkef2>
+Subject: Re: [PATCH v4 4/4] arm: defconfig: drop RT_GROUP_SCHED=y from
+ bcm2835/tegra/omap2plus
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Thu, Mar 6, 2025, at 20:19, Thierry Reding wrote:
+> On Wed, Jan 15, 2025 at 04:41:23AM +0800, Celeste Liu wrote:
+>> ---
+>>  arch/arm/configs/bcm2835_defconfig   | 1 -
+>>  arch/arm/configs/omap2plus_defconfig | 1 -
+>>  arch/arm/configs/tegra_defconfig     | 1 -
+>>  3 files changed, 3 deletions(-)
+>
+> Hi Arnd,
+>
+> is this something that you could pick up? I think so far only the RISC-V
+> patch was picked up, but nobody seems to feel responsible for the ARM
+> patch here.
 
---tpvgewegqqclwbhg
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] i2c: tegra: check msg length in SMBUS block read
-MIME-Version: 1.0
+I've merged it now after going through stuff in my inbox. It's
+generally ok for patches like this one to be forwarded to
+soc@lists.linux.dev where they end up in patchwork for me to apply,
+in case you don't want it to get lost.
 
-On Thu, Mar 20, 2025 at 06:51:44PM +0530, Akhil R wrote:
-> For SMBUS block read, do not continue to read if the message length
-> passed from the device is '0' or greater than the maximum allowed bytes.
->=20
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
-> v1->v2: Add check for the maximum data as well.
->=20
->  drivers/i2c/busses/i2c-tegra.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index 87976e99e6d0..049b4d154c23 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1395,6 +1395,11 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap=
-, struct i2c_msg msgs[],
->  			ret =3D tegra_i2c_xfer_msg(i2c_dev, &msgs[i], MSG_END_CONTINUE);
->  			if (ret)
->  				break;
-> +
-> +			/* Validate message length before proceeding */
-> +			if (msgs[i].buf[0] =3D=3D 0 || msgs[i].buf[0] > I2C_SMBUS_BLOCK_MAX)
-
-I wonder if this can ever happen. Looking at the implementation of the
-i2c_smbus_{read,write}_i2c_block_data() functions, they already cap the
-length at I2C_SMBUS_BLOCK_MAX.
-
-I suppose some user could be explicitly sending off messages with bad
-lengths, but wouldn't it be better to return an error in that case
-instead of just aborting silently?
-
-Thierry
-
-> +				break;
-> +
->  			/* Set the msg length from first byte */
->  			msgs[i].len +=3D msgs[i].buf[0];
->  			dev_dbg(i2c_dev->dev, "reading %d bytes\n", msgs[i].len);
-> --=20
-> 2.43.2
->=20
-
---tpvgewegqqclwbhg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfdW1MACgkQ3SOs138+
-s6F99g/+I369Hc9CgbFx+qU0i5hGLPldDIIHDrHNF83zqin3pxlupe0UKLwIKZ/p
-Ow38aRmp4pYLz+9X07taZ+amWKo5tQJ35tbpyGY3YxJEBqCXlNLhN9sulZdSpnfi
-JvGgTQaQKNga+BMVrmm9zTBA8TELL6w0I7DWg2t7RKPFR+9eyBxctTyuxofTNQhV
-f1+kO5bl8I04uW3SdTbMN7uF86WGEInNokfMfScWuGZP4mSJgmzAEjK77gfost63
-tXMjMOjJ2wEBjQpAw0FCFDFTpuyXkYWiePfOij8ms3INXWZa4MtK9EnaYjsbkkYY
-4hxfYtaOw/qJeGSEMd/2frlwD96Iy1uBq6rCcgEN9v7HOIKDBKr6VrCwUK/wRF/3
-x9kFHqpRNsgPaaBY2Xwmm/hsQ13vvZg7gRVFLzW2hj1AQQxSm2h8msVRHPTZXtJH
-qPhTpRfaOr2zy0Og+MfMCZ4gkG2TcboPmA37bIoCmSn6bp3w0qYma3U65W1BzoYI
-gZ1Keed7cLPX337GeTcOUFgKAfV6cc/3uaHASiaErDU5L1tJu7k9gmcTR8u3prst
-iXA+hjKc/xNVD2P/MeCDAM5fXRBLb+G9QyDTMZEoKkKBIEFIH4fVsvoDsHUruOBX
-UqsM2fgqFIFMTt3XyxOMpboxcckeawHlJ/p66XXtgs25NzIcz8A=
-=t24C
------END PGP SIGNATURE-----
-
---tpvgewegqqclwbhg--
+     Arnd
