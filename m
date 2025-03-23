@@ -1,146 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A6A233159;
-	Fri, 21 Mar 2025 20:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A827AD24;
+	Sun, 23 Mar 2025 07:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742590217; cv=none; b=C9f7g+dvL62tIny7Bj7Ne/K+yHb7sDBSwcEZrPoZksJqn//+JQIMu//PsH1Y5DTNIH4UCW/R8LHyOUBX0T21szMuvuZtcfLuvEBXmjxbD5OuXh3f4yG/k+CTH1onKaf8ojunQO2/k3WIhx3C21TL9RNyU+2U86q6b62HR8Q25f8=
+	t=1742714093; cv=none; b=Rp6jFlQGiC439udYh5ADfZYsG1SjeC73Rxt7o7xhvBvkVH2MKv0BWALCRUMSRz9/7ja1/6Z2o5FcKrR+Aldy+F0IsPLkoNSodT9hFpunPnKwLIjzKg/H6IuGw8IQug4TlkbOYbJjbzEaWEAg2HR8IXm4IGv7qmWwVVaaQ6eslQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742590217; c=relaxed/simple;
-	bh=a0qLZel64/QsdIWwBiSnsOvC0cSyNrNE0QTZFd/S2qs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CwIWIhpEj1GKXc0mSDCD8Wosvcb1dxGh09wk3G+JhoCHDl7ta9+fmq3BIEhAx8xRK9bBgbb6MQ5MqVsQXbmIODXqeJrxhK3PNVuzNGmivZAQXRWyxcliIPGd7FqCh0ZFMH6B0xnI4NjhdRtONkoULbtH3BKd1L/Sr3cb8PlG5fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RYX1EHkF; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742714093; c=relaxed/simple;
+	bh=GJHelorMo/7+pcp0cFYxOAb4+HlzolzvwhZk6Y9/JeA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s27GiMtFKri/kk8W97/s1zm99SewsD3PmpTpizaryGnmYjyA+A85hqr504PwtInl05TJ5zgv0BMojFf5gWTPVqpeDf+QPTUOLaYHDFTtoZiggAAlmUOuHqA5QYp10s6eMwFgX84HNBv1qTUqXPQakxZF6VVTvT1NXtRFu7sXvLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVKqnD4t; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYX1EHkF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A2F2C4CEE3;
-	Fri, 21 Mar 2025 20:50:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742590217;
-	bh=a0qLZel64/QsdIWwBiSnsOvC0cSyNrNE0QTZFd/S2qs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RYX1EHkFPwqfraRjM9XTTcTEZelFgpYCNRkjDACcKivo1eYT6/iUcxffWaAIqd5Dh
-	 tKG/uyK6g7Y+WhS3/RPckpfUfJaE0HWnLmc45djpdEXa/dRKw9Mfg/U6COS3nHMCgU
-	 qlATulHqUWxXhJ4JM+jSEAsWRNnWkHcRwL2AktiSfCex8M52aBHurL1sMVFSWWXlUM
-	 Sut10Cw4d5ooIQWlkHz/U25GV7lBGlhaLxp6cXieUA3EzsnuWpeke1UYsLZScjMo/y
-	 LGXJN3+0TwPE/6fWhSQqmJnp5PXo/O6kpgwYBSUnC2kN7WJzN2e9kz+0va3vrdmYLd
-	 1WdDmhyZe/wSQ==
-Message-ID: <aef4574b-8167-4af3-a29c-8c962b396496@kernel.org>
-Date: Fri, 21 Mar 2025 21:50:09 +0100
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVKqnD4t"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e6167d0536so6471075a12.1;
+        Sun, 23 Mar 2025 00:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742714090; x=1743318890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FtNt80DAB335/uRKq5f5fTTE5QKZJIZOvKQIq5dr29k=;
+        b=DVKqnD4trgy56lWh77pMDYPY2wPCRqHeeyLtfcsHoWhhqRU0SJo/lPpry9z4zL0deX
+         k95hPsBtwjf/N/9bP6Z4X/vot9bL1KxBV+inkz5oGIA4Ji5pqTefzEFk4ZbHc8WGTcA6
+         9BU5NDfV011wesTDZ7h8VHP4ssl1wk0Hu/7CbBhGqmCXecYgZXnFIBE8w4f4QSPnTLy8
+         sb7Ci/ZmG6F+f4IkKjOUCHycuPS0CzIiseDE2SKc82wquo9yPUm6bkyQ7qkQ/5jKL1eP
+         ZhQlgfuslXQbw6k8Vi7+YX9XIHiCcVWSNhXgwoRtMGwummoQgwmcKf+kCv7X2E5DMZG8
+         uEkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742714090; x=1743318890;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FtNt80DAB335/uRKq5f5fTTE5QKZJIZOvKQIq5dr29k=;
+        b=AhsB3vLzP2jTuk/mXN5kIX4QLfogQOtqT8p3ezhW/W5DAmCLwQ7OdIzb4T9ZI43wJF
+         iIFtrrOI6uP7qYSltDxaT2DkyfhpDwFyOa8hCBlUEblBbuddqWiqxP2+bHgZGxO0d+Tj
+         VkfOHcSEBySpXSPGPnZo6eZ6NNGb0iJER8HxtPY86YtnxVi55bD6fGZwXUCKaKX9Z7h6
+         vB+3lL8MmIb9iWvwt0e1CBhwrfXFL7A2zXOqOSF48nyHxGg3PRIywED7fEeBHri5Ocxw
+         HE1RL0B995OEvl/q77nrhQj7WnG0q2/3HRxSmt5QbEi3ed5Sf3a2cESk0F6WPGZ9hpmq
+         EBuA==
+X-Forwarded-Encrypted: i=1; AJvYcCURIYxy5C1UaEFSGyB+JQnr3SNHbmMg+N5IhusF9DjiF2gYelrqPJGt0hdASLu2LqyHZcu3e+cH95RvBLw=@vger.kernel.org, AJvYcCV+19Nnx007XT1TrNSNdQDBipAsp25aj4k+CevpGWW/pKT+NkY+Gghw5d6AC+ESB2HlRtaigUhw9FwLtLE=@vger.kernel.org, AJvYcCWL46Z8lB2n24uzYPsH9Giimenm4xiZ7eYukV57Nw3OfBPTDPnwM2KtN3rTbzD7n1MQfbIna7kleC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT9ZUaH2nFpHU8aRMVJ4fBHcCzfAjGSTVgfuxX8g74G6kVxU4q
+	mxbtravAFtgdw9Xl4uwspSQmJHFbB1bEnMGRSbA0HicRUzIvmQiH
+X-Gm-Gg: ASbGncv5IEZ931tacW3NSS9K0tCYqhIegH5weAC+XKGLxcgWAhFJgmfeSo/heQ/MTY5
+	F7aHyI5oFexut6x/S6Gc48fkyem7M1if5QX21++DgcIf+5FnqE+3XdAWtcZdG6Ut6oAc25hlriN
+	vCSfmN6i9oI8DTLWDQnpS21RYxH9EIo55KywObrBFoIZ+gv2bjbMoR7ZCmZPa+fyKnUaubwXQ6I
+	9DeiTyaUxxSTpV3yauZHpR70foeoRHbH1XldfsRIl/GXE0JGlDTGMI5Gp9fEYmEY6OFKWbL0PVM
+	NApIbMwvMv8/l+DbU1kzudLOGXW1dDfSmMNs
+X-Google-Smtp-Source: AGHT+IEfM2FhgguV6hU5oZP0B6rU5mJe4cX3B7K6QzAse5rXY7gvhfVbQuMkX6QRZ3r/6inKt6vEwQ==
+X-Received: by 2002:a05:6402:42c5:b0:5eb:ca95:4a91 with SMTP id 4fb4d7f45d1cf-5ebcd51e684mr7106227a12.31.1742714089885;
+        Sun, 23 Mar 2025 00:14:49 -0700 (PDT)
+Received: from xeon.. ([188.163.112.51])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccfaecfbsm4218283a12.41.2025.03.23.00.14.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 00:14:49 -0700 (PDT)
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH v1 0/4] power: supply: add support for Pegatron Chagall battery
+Date: Sun, 23 Mar 2025 09:14:20 +0200
+Message-ID: <20250323071424.48779-1-clamor95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/3] drivers: clk: tegra: add DFLL support for Tegra 4
-To: Svyatoslav Ryhel <clamor95@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Peter De Schrijver <pdeschrijver@nvidia.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250321095556.91425-1-clamor95@gmail.com>
- <20250321095556.91425-3-clamor95@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250321095556.91425-3-clamor95@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 21/03/2025 10:55, Svyatoslav Ryhel wrote:
-> Extend the Tegra124 driver to include DFLL configuration settings required
-> for Tegra114 compatibility.
-> 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+The Pegatron Chagall is an Android tablet utilizing a customized Cypress
+CG7153AM microcontroller (MCU) as its battery fuel gauge. It supports a
+single-cell battery and features a dual-color charging LED.
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC (and consider --no-git-fallback argument, so you will
-not CC people just because they made one commit years ago). It might
-happen, that command when run on an older kernel, gives you outdated
-entries. Therefore please be sure you base your patches on recent Linux
-kernel.
+Svyatoslav Ryhel (4):
+  dt-bindings: vendor-prefixes: add prefix for Pegatron Corporation
+  dt-bindings: mfd: Document Infineon/Cypress CG7153AM MCU
+  power/supply: Add driver for Pegatron Chagall battery
+  ARM: tegra: chagall: Add embedded controller node
 
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-</form letter>
+ .../bindings/mfd/cypress,cg7153am.yaml        |  55 ++++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ .../dts/nvidia/tegra30-pegatron-chagall.dts   |  16 +
+ drivers/power/supply/Kconfig                  |  12 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/chagall-battery.c        | 308 ++++++++++++++++++
+ 6 files changed, 394 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/cypress,cg7153am.yaml
+ create mode 100644 drivers/power/supply/chagall-battery.c
 
+-- 
+2.43.0
 
-
-> +++ b/include/dt-bindings/reset/tegra114-car.h
-
-Filename based on compatible.
-
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +/*
-> + * This header provides Tegra114-specific constants for binding
-> + * nvidia,tegra114-car.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_RESET_TEGRA114_CAR_H
-> +#define _DT_BINDINGS_RESET_TEGRA114_CAR_H
-> +
-> +#define TEGRA114_RESET(x)		(5 * 32 + (x))
-
-
-Does not look like a binding, but some sort of register. Binding IDs
-start from 0 (or 1) and are incremented by 1.
-
-Best regards,
-Krzysztof
