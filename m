@@ -1,119 +1,181 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797A3261385;
-	Tue, 25 Mar 2025 17:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF9F25FA1B;
+	Tue, 25 Mar 2025 17:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742922347; cv=none; b=WuU70QB04XbTPSW9aEp8tEy+5rsuM8xLAU/K5NVawrv5tGNRIxQcvrjZFOwQiJf8bhjMa8tbDXmwSaroNvYDGMqPMvvPOwoSNAIewVqP+XSDg9aXrikNeaHzNCuXU7KrNWetcEPDIm89APlDXXRYUAthlK9RYDAAm/GA1bHGpP4=
+	t=1742922890; cv=none; b=O6wrPDqCCY1ZjplxyTUE6SY1qfjEbukfaBeDU8dOGe/UjQFmfo0cU6zMfaqBpRXfdwpX9TVDFNsaOEbfDHg4ixxTga0VvFjUp99Skb+KPYLVjOYeQtkxBBAolyyzUD4emIbhUlpZvutCDLkmEZCOC41Bq4/Lw5OZ5cHUoczbJNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742922347; c=relaxed/simple;
-	bh=L+dZh9VNjHig2YVj8zW9PJDGzaH1BlEcTcNOYS/YTLM=;
+	s=arc-20240116; t=1742922890; c=relaxed/simple;
+	bh=7LjuFHI+9x6bjZK/FeC+1TifxlFCEgZtEhKL3VJCkJ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E888ctoqVnkgXCldt832NoviNuKfadROPdILqwNcenLFBdSQwnaLbTk1+kXoIltr08uiOQNbZmPH+zxhCv8KzxGVJjIhLJLWTKfij+qrafjxp/xNkHj/tmq5kn+DYiMksl5wZTPpi0qvojVx5MEA7sZCGfmkCHFh2QLU5ptshd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9ZsP5QC; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=O2AfUzlY9BoWG2Bv9/yzgss7PRag2n0X2FxGfV9r3zSiGg/PtZMRXBe+y0qA0lom1N+ITjFBhejH/XscBWSZvMRjGQGj4QD4U/UAfIxQehUVoLGZdfOPadl2PC/+SDc5PLxFcXN1ExwBCWpUAxvcep8geVKVX0L+E4YJcbygLp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ahSCyNqj; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9ZsP5QC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2BF8C4CEE4;
-	Tue, 25 Mar 2025 17:05:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742922346;
-	bh=L+dZh9VNjHig2YVj8zW9PJDGzaH1BlEcTcNOYS/YTLM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l9ZsP5QCdkX3tNj/fzDABeyCKRsyBZtmKLP70K4rlNqHjjR5az54nRvAJTy7QcAfs
-	 6Yj9TTU56HDWh+8Qzdfse3722dnPphGjyT/466M2wlf0jUKFdDha0b13rSLKQ1nAoc
-	 zr0WjgDv718/WUVPdhsLNPKvZ5blXq0k3OaNoeAZ/y63Cq1pociB4MEfVFU8qNBZtl
-	 IGWbv9PfDS1Qt66XFlpEQChiC5zG7Zq3/eRUkKyvW+4YVRAJ0l34Y1Rp6r3fi/HFkJ
-	 siU2NdtiI3a52J5Eaik04Tg1zbwg3PFy+gymdzO0sS3MK1CcaR8x0N21npck4YZ5P3
-	 xQ5C0d3BA+rNg==
-Date: Tue, 25 Mar 2025 17:05:41 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Vishwaroop A <va@nvidia.com>,
-	krzk+dt@kernel.org, robh@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: spi: Add DT schema for Tegra SPIDEV
- controller
-Message-ID: <25857b7f-5c10-46ec-b0b7-9ff89ca5ab1e@sirena.org.uk>
-References: <e95f870f-1309-4ac3-a16f-ce58b02dc817@nvidia.com>
- <59ec100f-1915-447b-98fb-3cbe2ca53a1f@sirena.org.uk>
- <925fe847-68b4-4689-832c-08f8de3dfeb1@nvidia.com>
- <48f9c8c0-5cac-4812-8d06-501193be731b@sirena.org.uk>
- <909f0c92-d110-4253-903e-5c81e21e12c9@nvidia.com>
- <48248165-c800-484f-be62-7c48b3c6829b@sirena.org.uk>
- <4zic633abvwj377kfqem42zmc2yruflbwfmmqrpvjjgr6jae6h@jthoycb3vzzz>
- <ljxxml7z2k6xniamzzw4ssi7u75qqfpcvmidzy3ekr3imtoxau@eztnxovsjplg>
- <499703ae-dba1-49a6-869b-a60b44c2a85f@sirena.org.uk>
- <2oxhmcrhbwlwqgyqy62p77eoag6nkavhjwmwfjfizcrhunrkjv@eaxjy6uoxszq>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ahSCyNqj"
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-39149bccb69so5205280f8f.2;
+        Tue, 25 Mar 2025 10:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1742922887; x=1743527687; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QLnwbdMaL1/FwcJKrrohuVnu32gSpBukuyMJRAcqUuU=;
+        b=ahSCyNqjBqgKtmZRcIN1ij9XOpPD2vovZzsHll63bNdcRrwL+9nIBsxqfXWcm0QJOb
+         dAENJx1OkDh5eMHAcJlfR3+WHRcAmUP4FRZw4un6DW6C441jq6FywWWQAVQcw/Aa1Wib
+         oE8O3t4j0AAyCOVxGzzye/TExb8Z7i64nz6VUrOMwRZqXja+1ulPEPxpONY+qgXp7r8u
+         MaOPjjm3964XysIXFczlNZgJzFciOmf+XJdPqPqKwYb5J1KyHc6cVrskBJQME0yStXVR
+         Qu3xzAC/Or9lvGNFbIC7lPKq1eRqlsuojEpU0bOKHRB+c8slLT5nFqBepfWgThqe+OXW
+         fZ4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742922887; x=1743527687;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QLnwbdMaL1/FwcJKrrohuVnu32gSpBukuyMJRAcqUuU=;
+        b=kCSd6ywXIc/nIdOkuqA2N5UQVzU+bj0IR+p880lR5isO3OBe5ukR62eSKcYDM0AgWP
+         gNLfW/lg82K3LfYgdyUfRfwo/3L9EzEUetj4k6n/F6A8W+RUNBPXp3dI2ovuPmGXoc0e
+         5NXCkts5nniwau0ZAxg4cq+SyQifl0QcBh4aVTKAay3BQGfoia83PSFSJTbyre8hWw4J
+         4CyLfu6ruMfvRvFl+l0ZH4LDWV6iItArWimMT1K9/AJMlyWlEwzwt9M3ca81BD+lffHa
+         +WFYUNElJa8/FNbp2LC2KDMzQ5wQ2CkQa4oQbx85gdoM2NHdy2Zwcqzp15aXrLIFPlMv
+         ACtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkMceX2p2ocLITyuSFReCpe9ZOFAbxpSlEP6V9snF1XSos7PK8D87vJ1pQxb6u18laUFCBBOZWS1A=@vger.kernel.org, AJvYcCWWnuvdIUZet8SQVKCRnkmLAwP6Wiw8ARc2UmCr/xQniUELZo0kU0pTjpBOrJqG7u490JbPmDfVUvXqdf8=@vger.kernel.org, AJvYcCX+52sPWhPYhJjvIYnkXPXRR8XQYRtmLT2SMrtiE39FTWlgZAZqzCiIFsI1qbUL8zGw7jTaMAsc/zyl/bNI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtLFnKryr7pfijLaB8y13NKLt4Z38/cYF6/XnB6oiGQaIvfFz8
+	5jTdAJmOS59LzWntZ88mU4h+FxMi+f2u9U025Xyls/dp2OS03qJ6
+X-Gm-Gg: ASbGncsy1xCsVYMdxighPpchr5Y3WtLejYRvjrt2ieJApFO7T08If0GdHzomTYf1zA+
+	UPgUc2uVd9q7FT/siSveFkAI2cbnA4UQUNnRlg+3L5ClHDoRAZUNPaq053VQVg1dWxwbbtZYlQf
+	nD79ogRIpK9UWBinQF+uBlkl0b5xvDeIW1v/ae86TQFHg9fcSa/vGYm9/99EjtmpG0s0XOodQhu
+	rNi1Ht83Z2rMKHwBYkGzGcOyCsDmHtSGDYsYPT1fuuJqYJ73ODotxWWxwO13tTBE8ix/Ar04QFh
+	UF3fvm09I9hRAVnj9CF6wRDFAS8eDAl5R3FA8R5DV9wyL57ozAd3QTTvtfdEHQeJxGDYWxAOOmR
+	Mx5J109sLtIAAdKgTnedrXvOrIfoTY30=
+X-Google-Smtp-Source: AGHT+IHgo0Q0bPOcCYzchQiU6TCha3M2YaTp1OkI/gjnRtvmyKxZA1brxp4uLScoHj6BKvWm0D0joQ==
+X-Received: by 2002:a05:6000:188e:b0:391:31c8:ba59 with SMTP id ffacd0b85a97d-3997f8f26b5mr14688915f8f.4.1742922886794;
+        Tue, 25 Mar 2025 10:14:46 -0700 (PDT)
+Received: from orome (p200300e41f4bef00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4b:ef00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3997f9e674fsm14021551f8f.80.2025.03.25.10.14.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Mar 2025 10:14:45 -0700 (PDT)
+Date: Tue, 25 Mar 2025 18:14:43 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Akhil R <akhilrajeev@nvidia.com>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Andi Shyti <andi.shyti@kernel.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, 
+	"digetx@gmail.com" <digetx@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, 
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] i2c: tegra: check msg length in SMBUS block read
+Message-ID: <cao4thtbeenv6b5rbp5icijr7knp3k25zmzg7u7vdxi62hfyrt@ymchhtpwskke>
+References: <20250320132144.34764-1-akhilrajeev@nvidia.com>
+ <2rlnnjixgd65u6gbqxfuhzu5humehvjth7iysj23xvuv5fi2ft@i5su6kfrqnt5>
+ <PH7PR12MB817882F6F4EEC820E22C092DC0DB2@PH7PR12MB8178.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="prBnnAYoF93QFDyr"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mbx6h5ohg5ujq2jw"
 Content-Disposition: inline
-In-Reply-To: <2oxhmcrhbwlwqgyqy62p77eoag6nkavhjwmwfjfizcrhunrkjv@eaxjy6uoxszq>
-X-Cookie: Visit beautiful Vergas, Minnesota.
+In-Reply-To: <PH7PR12MB817882F6F4EEC820E22C092DC0DB2@PH7PR12MB8178.namprd12.prod.outlook.com>
 
 
---prBnnAYoF93QFDyr
-Content-Type: text/plain; charset=us-ascii
+--mbx6h5ohg5ujq2jw
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] i2c: tegra: check msg length in SMBUS block read
+MIME-Version: 1.0
 
-On Tue, Mar 25, 2025 at 05:38:57PM +0100, Thierry Reding wrote:
-> On Tue, Mar 25, 2025 at 03:55:02PM +0000, Mark Brown wrote:
+On Fri, Mar 21, 2025 at 01:09:32PM +0000, Akhil R wrote:
+> > > For SMBUS block read, do not continue to read if the message length
+> > > passed from the device is '0' or greater than the maximum allowed byt=
+es.
+> > >
+> > > Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> > > ---
+> > > v1->v2: Add check for the maximum data as well.
+> > >
+> > >  drivers/i2c/busses/i2c-tegra.c | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-=
+tegra.c
+> > > index 87976e99e6d0..049b4d154c23 100644
+> > > --- a/drivers/i2c/busses/i2c-tegra.c
+> > > +++ b/drivers/i2c/busses/i2c-tegra.c
+> > > @@ -1395,6 +1395,11 @@ static int tegra_i2c_xfer(struct i2c_adapter *=
+adap,
+> > struct i2c_msg msgs[],
+> > >  			ret =3D tegra_i2c_xfer_msg(i2c_dev, &msgs[i],
+> > MSG_END_CONTINUE);
+> > >  			if (ret)
+> > >  				break;
+> > > +
+> > > +			/* Validate message length before proceeding */
+> > > +			if (msgs[i].buf[0] =3D=3D 0 || msgs[i].buf[0] >
+> > I2C_SMBUS_BLOCK_MAX)
+> >=20
+> > I wonder if this can ever happen. Looking at the implementation of the
+> > i2c_smbus_{read,write}_i2c_block_data() functions, they already cap the
+> > length at I2C_SMBUS_BLOCK_MAX.
+> >=20
+> > I suppose some user could be explicitly sending off messages with bad
+> > lengths, but wouldn't it be better to return an error in that case
+> > instead of just aborting silently?
+>=20
+> For SMBUS read, if I understood it correctly, the check happens after the=
+ whole data
+> is read. So, I believe it makes sense to abort the operation before an er=
+roneous read.
+>=20
+> I have not verified this violation, but I think the error for I2C_SMBUS_B=
+LOCK_MAX will
+> also be printed at i2c_smbus_read_i2c_block_data() functions even though =
+we return
+> silently from the driver.
+>=20
+> The check for '0' is not printed anywhere, but it is probably, okay? Ther=
+e is no data to
+> be read anyway. Please let me know your thoughts.
 
-> > Possibly?  I think I've lost track of what the use case is here, usually
-> > for the spidev stuff DT overlays seem like they're the right thing but
-> > perhaps this is different?  If we are doing this at runtime sysfs seems
-> > like a reasonable way to trigger it, though you'd still need the DT to
-> > describe the controller and the chipselects that are available.
+I don't feel strongly either way. I think it's ultimately up to Wolfram
+and Andi to decide how they want host drivers to handle this. Na=C3=AFvely I
+would say that it's better for the core to check for validity, if
+possible, and refuse invalid messages or transfers, so that host drivers
+don't have to repeat these checks.
 
-> Heh... it's exactly the opposite for me. I feel like I don't understand
-> the need for spidev with a specific compatible string. If you've got a
-> compatible string (or in other words you have a device with a very
-> specific SPI chip connected), then why would you want to access it from
-> userspace? Isn't a proper kernel driver the better option in most cases?
-> That usually allows for better abstraction via some other subsystem. I
-> suppose there are cases where there may not be a subsystem, or for other
-> reasons it's more convenient to have direct access from userspace to
-> avoid the roundtrip. Or maybe users could be concerned about safety?
+It's also not clear to me how this should be handled if multiple
+messages are submitted and one of them ends up being invalid. Multiple
+messages in one means they are probably a logically atomic set, so any
+error should impact all of them.
 
-A lot of things would be happier with a driver, yes.  One of the use
-cases that did make sense to me longer term was DSP/coprocessor type
-things with flexible functions where distributing the firmware and
-application that talks to it together makes sense.
+However, these are all issues that can be resolved at a later point or
+not, and this patch looks correct (worst case it's doing too much
+checking), so:
 
-> In other cases users may just want to connect something completely
-> custom or just have a way to poke whatever they connect. There may not
-> be a proper driver for it. Or it could perhaps even be used temporarily
-> as a way to write a userspace driver conveniently before porting it to
-> Linux.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-> The way I imagine it, exporting would involve writing a chip-select to a
-> specific SPI controller's "export" sysfs attribute to have a SPI device
-> created for that particular chip-select and bind it to spidev.
-
-My general feeling with those is that if you're building for them you're
-probably either already modifiying your kernel or easily able to cope
-with doing so.
-
---prBnnAYoF93QFDyr
+--mbx6h5ohg5ujq2jw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfi4mUACgkQJNaLcl1U
-h9AAggf/ddwtkdC3foZB9TSzsiGjOcIsQSisMObY+BOUK68gMRWYjZrIOBjLJvjS
-R9gp0DqQy84zwfVrXF2nOUP5t5MF+7f68Dit9O7fWHpjsgKLxzRcU3oonJljaUOt
-LYTL6yjvqMyAjIrHA7Xa/NBZl49kDWA7GWDN+UUC4fYvlJoDJQ6jNdYQ5W2Ayf0H
-nHPB+KFeSrrYtFxohEYp95eNWaAwBJifkOoLegcTaFDKRMSclmxL99rymODO3XnO
-xNlgz1CRxJWdj4q6h2RhxiQtE4+PSbJm7nZ0DTYKEYRN9tdu9jm/XVa6edoPZLWI
-x993RorsXphByfCOzewHTFZ6FAmUnA==
-=zp+m
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfi5IMACgkQ3SOs138+
+s6HHTw/+PeOIPsaHfi1pl2ATeqelhwaOzvQK3qIYbNmfneM/eChVeb/as0cr+Fb0
+nYDYQ8mW+2HagWwz2ROgJcdZ8kKwOm+7QumnmPhKOE+kN3Khaf5wP5LKdLJRqhMD
+u5ocGlseFO1c8eynmhtyZgp7LhCViYgJNOkHU5zZixDf65Zh6481/Ssf/YvhHZOc
+2yoJeXl3/SLvHAlmRuYzAVPkP7WTfnCBzb/ziFS5LIm/IXqIflcOk59QBYx/5OXJ
+w8fWa2Ysuv9Rmue9uYpr9F2pN9LBAgt0/MuIXhUPyqQ/5EY9JZ+N8IKfjV/X8a+5
+/OszCOLHtZmgeS2dVUEwT5vKjSp2h7CxBuk0SsmMzVBxWGb1JKlsSBRo+8Vb1Adm
+QlhTSZrTVwFFmKapL5xKqigAWiujfu//4eVrQ9IM8LQ4Ow7LjXnFhps5w5C6Id6l
+fATsXL3p6b0cpuQVZWUrrfKbxCFOvE1XXRD4V4+ENkOe1ULR4PBkyi2jKxHqhPNo
+SG7GWWXmt3q5IY7Nv4fmCYS3lM1QhJyeuNZR2ksK0PkBCUiovNDDMwDVKuhd7OHN
+K4wensrK1DXmU/khTsx7Yn/ZDAAGWZt33HP5qePCh1i1s946y6iqXF0wyFY5Nyyd
+N2ubAvh8BMAjiA1nScI4a4AHBT8piLZNLhoz9w3knUUCnhLjprM=
+=x6ig
 -----END PGP SIGNATURE-----
 
---prBnnAYoF93QFDyr--
+--mbx6h5ohg5ujq2jw--
