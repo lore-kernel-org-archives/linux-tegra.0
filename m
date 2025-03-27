@@ -1,28 +1,28 @@
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9141AA1E0;
-	Thu, 27 Mar 2025 03:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFE4749C;
+	Thu, 27 Mar 2025 03:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743045846; cv=none; b=IoupBNcUVQcDm5JlxsjM3Y8sNRcTuTXVtnUln8bEDpzZWNy0ODjTy7Pt34RzqzcONQUtynOVUDhpy/atGDFELsVgNUGQ/vGqcffAiyynFd5hLx0x2lBWiOTR8umJacbjo0waZ6z4E9d7ttGkCcA7AhwEth486f9zMUdp3vFLOBA=
+	t=1743046559; cv=none; b=STxMoIGwMcDUUzg4b8hTEKOWGhiOU+7jsdiAYZRxXRxGHU5JMfz26MmefNf4IvVRzjnVRsImFbKSj7Fi6abw8S6ZtIqZiZysnQ9EqWpU6tUYGbUhP4SiZN6QqgXn2rGKkd1QB63IsViy8HIVZsTttTxCJox/2NfghU1neJTj7PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743045846; c=relaxed/simple;
-	bh=m14h3yoUTbAqVpXODC0zMSbRl54bX2+I393JGsWn+ik=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZG9PISJnXPxqqiBmSzq3ZlHZvozUPzxm3NSPIH45lYBxC4+NO9hNMHWaq2/3WOzrsEBGd3k6Mfq28T7QBk734X4Pb7VqqpQsmY8SZTJHq6yN/+RGbZe6IXqMudvW6eAY1qo91hm74gLwiKsyz8DvLp0ePShtoVpQlX+bYoNfm6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KszUwacK; arc=none smtp.client-ip=115.124.30.100
+	s=arc-20240116; t=1743046559; c=relaxed/simple;
+	bh=B4DFsCLzfJydiMiaUXd15k2xHQUR8806BueCQKWjvh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TU8w1d//o3BaqxjWL1kNu4MvzfMhPJIvZJv4QkGijX9zjGavoE6YjeOf2DaPWCd2fYdhNEEU/5lZxkcps0S9zCmnp20XSLdkUHJp5iLjg50fN4kS+ypAqgyl0FStSRcI2fGG/c93oyrP4+sjTBfEH2edpKtzHYmlJzADZEbuH0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=B1tQw4n8; arc=none smtp.client-ip=115.124.30.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KszUwacK"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="B1tQw4n8"
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1743045833; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=IzFeiGzmrelIDrN3T+p0dy+aeXecEBBAeMklppQIpr0=;
-	b=KszUwacK5zbgkjS1bePSQ0Ji3+/TMyiHCfy570l2kotxUlUEJc9meAAqpsfxhh6mx2Dc2SRicfUOwl3fuCd1v4oYPLoOZXoHkWf0ea0yN+4KksSVzExuZBaEczaWZbXkPA2v5YbcH6hNJMX/iVnSxoCOgDHd1bXmpTRnMaOCwGs=
-Received: from localhost(mailfrom:kanie@linux.alibaba.com fp:SMTPD_---0WT78S1A_1743045829 cluster:ay36)
+	t=1743046552; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=7fENAmjA5HlDqIU2S3l84f8tZ1auIWrnxR7dGJSHztU=;
+	b=B1tQw4n8uQzBAhx3+Hagr07uyaXrwzGLN9nxEu0b6EHprmb3odYdOkt6hklS+ePDEhIw5ky3+ozsfXHdkMC0+DWuSfhKD7w9YIOGqcJTDl9Ig+j0kJOe0FmIfH2HFhZyLyZsLG0+OzUGr2m8QtcV1jMpCMMg2CzJY4ZTEOP6hpY=
+Received: from localhost(mailfrom:kanie@linux.alibaba.com fp:SMTPD_---0WT7CZp1_1743045606 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Thu, 27 Mar 2025 11:23:53 +0800
+          Thu, 27 Mar 2025 11:20:10 +0800
 From: Guixin Liu <kanie@linux.alibaba.com>
 To: Linus Walleij <linus.walleij@linaro.org>,
 	Bartosz Golaszewski <brgl@bgdev.pl>,
@@ -31,9 +31,9 @@ To: Linus Walleij <linus.walleij@linaro.org>,
 Cc: linux-gpio@vger.kernel.org,
 	linux-tegra@vger.kernel.org,
 	stable@vger.kernel.org
-Subject: [PATCH v3] gpio: tegra186: fix resource handling in ACPI probe path
-Date: Thu, 27 Mar 2025 11:23:49 +0800
-Message-ID: <20250327032349.78809-1-kanie@linux.alibaba.com>
+Subject: [PATCH v2] gpio: tegra186: fix resource handling in ACPI probe path
+Date: Thu, 27 Mar 2025 11:20:06 +0800
+Message-ID: <20250327032006.73798-1-kanie@linux.alibaba.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
@@ -51,12 +51,8 @@ the driver emits two error messages during probing:
 Fix this by getting resource first and then do the ioremap.
 
 Fixes: 2606e7c9f5fc ("gpio: tegra186: Add ACPI support")
-Cc: stable@vger.kernel.org
 Signed-off-by: Guixin Liu <kanie@linux.alibaba.com>
 ---
-Changes from v2 to v3:
-- Add "CC: stable" to commit body.
-
 Changes from v1 to v2:
 - Add "Fixes" to commit body.
 
