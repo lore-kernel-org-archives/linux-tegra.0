@@ -1,91 +1,77 @@
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC3F1FBCB5;
-	Tue,  1 Apr 2025 11:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36CD2E336A;
+	Tue,  1 Apr 2025 12:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743507617; cv=none; b=M6HS5eyzg06VMhIdZFj2KacFXnxsNJ94gAk7CcxJJ/h3yxTnCBjw3nhEOZi/Au9ElA+CSETWAQRxOEa9eg+qZtAzb28qQecVe85kU5IIQBDob8iSwMzmihZlaXV7bI3OpxY/lv1ryG+F43GBd5nBzSGYIdh0AkeYT9Q8Hb+g0FM=
+	t=1743510719; cv=none; b=Bkax1GNRIwpdge8jLzcM4kr1/gvxO19B7U1ssf/Gle1p2tQqpkQwPP0qDad5piP8lQopPcGpYDc5NXGG0VYZ7uioi/SbcH4EHRZgubiDynKQyYiuM+hCRokZA5NihK/TPFmqxiks06KQ+sXlySaT7vhu5ivjgg86Z7uVhg78xKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743507617; c=relaxed/simple;
-	bh=ue7d8jD61yTTpVj7zd3g8WpLQYet8HY+YF7kTXHT4vo=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=hc1EscqAZMLy3ELgB3pDb7CS8f1jrcPThE6qHXPhCFJPs0RQqoB8nR2uZww9QTIO1x7x2yIuMitOZ4WkcY2STD/W08c5XJmC3axaIdrok/MJtsABVXli9wN5JgI+J2LEcjQ0npaFg/g474IDVsnIW8XixM4PJggPRZ/UJPAlZrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ZRmJY3zdRz5B1KR;
-	Tue,  1 Apr 2025 19:40:13 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 531Be38U094450;
-	Tue, 1 Apr 2025 19:40:04 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 1 Apr 2025 19:40:06 +0800 (CST)
-Date: Tue, 1 Apr 2025 19:40:06 +0800 (CST)
-X-Zmail-TransId: 2afb67ebd09627d-9a1f2
-X-Mailer: Zmail v1.0
-Message-ID: <20250401194006848hzqFNLT61SYyidkSwwH4C@zte.com.cn>
-In-Reply-To: <20250401193134281Nbc40spYmxjVmftwF0KTZ@zte.com.cn>
-References: 20250401193134281Nbc40spYmxjVmftwF0KTZ@zte.com.cn
+	s=arc-20240116; t=1743510719; c=relaxed/simple;
+	bh=e8Pt8SAdt8WiGEQXf1RN9YG6UNRDRbEDoi032Y4NLh4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IKOO/cuSSVqYslI42OrGoSOzN8aozWoLe5rAAO0+7Wk9S9qf2NB+ZwA71XVA+/6YpUtkb9gSeqGBqQbysLm8fIXnVZbrHRgfzMF7RSamik/hBu4hNK3lhuIyZw7d8S9ZrQ0YW6Tk/GBokN/Gio+WfN0/wITsMk+rzjDAIXyZKDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PESru5/K; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PESru5/K"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4445E441A4;
+	Tue,  1 Apr 2025 12:31:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1743510714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e8Pt8SAdt8WiGEQXf1RN9YG6UNRDRbEDoi032Y4NLh4=;
+	b=PESru5/KuLmCSyA7z95d84dFOw+XqBOHg4HrRwYpqL4B78A4zKJ8+DRiPP16jtgW70GimD
+	DOBiaWr8ksa4mJv7XAsKZLUoo7+VXQzYEQiJPI1pUb5yZMdIPUhu0FtT/vOY0cBKRL6PG4
+	U1f6J6yLK4/JC3BNbqHFXePIgt6r2Wl55C1VKVholpJoNHHvDe5GM36dcA3j2Z2lu3X41l
+	eqOYLOIccbUGGYTj0PrF6vwBhdY6E9anazrDWJttESNzU7BmQu0XxTlNGvO8kb0tdHW3WF
+	UiVErrsX2RpO5tFzcK6yx0ZwL+Fr5dNu5eNog0lyzOIX8F/CLBhG64GlBqvW7w==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: <shao.mingyin@zte.com.cn>
+Cc: <jckuo@nvidia.com>,  <vkoul@kernel.org>,  <kishon@kernel.org>,
+  <linux-phy@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
+  <thierry.reding@gmail.com>,  <jonathanh@nvidia.com>,
+  <linux-tegra@vger.kernel.org>,  <yang.yang29@zte.com.cn>,
+  <xu.xin16@zte.com.cn>,  <ye.xingchen@zte.com.cn>,  <xie.ludan@zte.com.cn>
+Subject: Re: [PATCH 1/2] phy: marvell: a3700-comphy:
+ =?utf-8?Q?Use=C2=A0devm=5Fplatform=5Fioremap=5Fresource=5Fbyname?=
+In-Reply-To: <20250401193836885cYSO33OlICvYYYmEMlB5J@zte.com.cn> (shao
+	mingyin's message of "Tue, 1 Apr 2025 19:38:36 +0800 (CST)")
+References: <20250401193836885cYSO33OlICvYYYmEMlB5J@zte.com.cn>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 01 Apr 2025 14:31:52 +0200
+Message-ID: <87cydwt64n.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <miquel.raynal@bootlin.com>, <jckuo@nvidia.com>
-Cc: <vkoul@kernel.org>, <kishon@kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <linux-tegra@vger.kernel.org>,
-        <yang.yang29@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <ye.xingchen@zte.com.cn>, <xie.ludan@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIDIvMl0gcGh5OiB0ZWdyYTogeHVzYjogVXNlwqBkZXZtX3BsYXRmb3JtX2lvcmVtYXBfcmVzb3VyY2VfYnluYW1l?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 531Be38U094450
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67EBD09D.001/4ZRmJY3zdRz5B1KR
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddukedvjeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeelvddrudekgedruddutddrudelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeelvddrudekgedruddutddrudelfedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtohepshhhrghordhmihhnghihihhnseiithgvrdgtohhmrdgtnhdprhgtphhtthhopehjtghkuhhosehnvhhiughirgdrtghomhdprhgtphhtthhopehvkhhouhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkihhshhhonheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhhhieslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrr
+ dhkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhivghrrhihrdhrvgguihhnghesghhmrghilhdrtghomhdprhgtphhtthhopehjohhnrghthhgrnhhhsehnvhhiughirgdrtghomh
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-From: Xie Ludan <xie.ludan@zte.com.cn>
+On 01/04/2025 at 19:38:36 +08, <shao.mingyin@zte.com.cn> wrote:
 
-Introduce devm_platform_ioremap_resource_byname() to simplify resource
-retrieval and mapping.This new function consolidates
-platform_get_resource_byname() and devm_ioremap_resource() into
-a single call, improving code readability and reducing API call overhead.
+> From: Xie Ludan <xie.ludan@zte.com.cn>
+>
+> Introduce devm_platform_ioremap_resource_byname() to simplify resource
+> retrieval and mapping.This new function consolidates
+> platform_get_resource_byname() and devm_ioremap_resource() into
+> a single call, improving code readability and reducing API call overhead.
+>
+> Signed-off-by: Xie Ludan <xie.ludan@zte.com.cn>
+> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
 
-Signed-off-by: Xie Ludan <xie.ludan@zte.com.cn>
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
----
- drivers/phy/tegra/xusb-tegra186.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-diff --git a/drivers/phy/tegra/xusb-tegra186.c b/drivers/phy/tegra/xusb-tegra186.c
-index fae6242aa730..6586472866e2 100644
---- a/drivers/phy/tegra/xusb-tegra186.c
-+++ b/drivers/phy/tegra/xusb-tegra186.c
-@@ -1485,7 +1485,6 @@ tegra186_xusb_padctl_probe(struct device *dev,
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct tegra186_xusb_padctl *priv;
--	struct resource *res;
- 	int err;
-
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-@@ -1495,8 +1494,7 @@ tegra186_xusb_padctl_probe(struct device *dev,
- 	priv->base.dev = dev;
- 	priv->base.soc = soc;
-
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ao");
--	priv->ao_regs = devm_ioremap_resource(dev, res);
-+	priv->ao_regs = devm_platform_ioremap_resource_byname(pdev, "ao");
- 	if (IS_ERR(priv->ao_regs))
- 		return ERR_CAST(priv->ao_regs);
-
--- 
-2.25.1
+Thanks,
+Miqu=C3=A8l
