@@ -1,121 +1,272 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965262045BC;
-	Tue,  1 Apr 2025 13:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331624501A;
+	Tue,  1 Apr 2025 13:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743515280; cv=none; b=F9yCAR1pXKGficXuy9SJGpD4qba9h38Wn2/wpy7r/VQqhKl5gP2I6DPqzWWxQkf/7ucf6sSxIG3VxovmYn+wJRAZrVZvYOS4zzSrJkMRGyKb1pIy8ufVPT9f3TkthZZFcipzoehDw31BGiq56308/ktwaYAolUPOdXqh4OLr1zA=
+	t=1743515779; cv=none; b=tJmXkMORLr5qi1gTLrBoWVJPyNM8wUQPmrph4siLX2il8uib3VdN+yxvBfwsqqZ9PhE4mTa8RK1+UMZ1Y87AADsRbyGOyND5/fr4V2rHYVAOQJB1KanwC7deQ26YdwsTHNNb4vOlgzF9vSD+jNtjC8kMmOuYAtWKyCclMIvRtaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743515280; c=relaxed/simple;
-	bh=orIhHZK2mBXOHJ9P6CPj8DtCz0DKuFngNgPnyToyf84=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Y6XZieIvANOGXQwrzCH2OnL9A346qizSyCP9OBtQTpRCFk8Fu6n/xdSULuhb7eZ8LpUIv83hpMZCZjLoqa4kIGLEjqajJTpNBGt+A6TjnS52O80qU1fGKt977RtP3fcgPTxzwFxYhaUtEMG/VAStviUPAw/x6CigRCdnZw0pTP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e60cfef9cfso9021410a12.2;
-        Tue, 01 Apr 2025 06:47:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743515277; x=1744120077;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X+rx1qskGEkuP5w6Tn0BhreVF2R/OVnokSpbvWp5rvw=;
-        b=pmJsMc+cSOOx1739QvgfUOpAifNREyMsF4uRcDtuKdwKrZQG5UvSMQyCtv84uphwsj
-         0kkDDZd8eVqwOPqmUk2CBZAbHSKr+DEPvIsuOE3GYuzBDlYwqtywB3Ouiqf1iw2RrBF5
-         x8C3g7eRb3T4ri9LmDNyZK45dTImEo+Un4HR7oZklT1WL37IP5e5ILSbVF74hg+JhAoN
-         36zPAAxDI5rNM85hJkHMBwgfDKXGS5ZqNFR6ZIMuEwmNATKKXTxFvXOiPEZSbgZ1tDxT
-         XFpuuLSqcl20zdwfTEVtJjXxWQ1+eGftYdh9ZrXBcx9PdvfhVRS/cbCuvvF5FngA0lfW
-         ljGg==
-X-Forwarded-Encrypted: i=1; AJvYcCURB4f4zSnasFcXYCzK+jnO1kJYPgYb4YvxxCmYMkdrIRE+9XSdR6JvA5yanoukohp47d5+B2ubr/kFX1k=@vger.kernel.org, AJvYcCXs/f3A0HDJvCBkteV8tB5OX/unr++Y1Cy2ntNn5WvcBwxfZJMnBFalnQOEHxTewmwqi/s+5lVM0XPh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXahS+YAQ83XMd4CasxR6HcaojE00YOAsh+cyNP4TisonnH13Z
-	gZ1Injl3xobw35Nfn7muT43X5GSTtFW21Rbkn9jYafBclWtnvneq
-X-Gm-Gg: ASbGncvTt8pLCGZL1GhUDRv0krpAbX0+v5P6SjyBRi8hzSAJVgyzm3NAZcSyXmy1tJq
-	JIWjBFj1aACQS7BKIrvsUujGEC4rj7fP3VU3tD4is6gIdDi5TY45F1ZryQdSZgTyBJNPJI2gleD
-	lEckIcC0zPyv2tpOvLezM2BxiLexI4Qmz6TbPCecGamrwkTz/j8m2Qak9HZUDRBdmi4VjMKxU6e
-	/hFsXtB+VJGGY0X40+Fj3MUtcIvaBD0GX5OUjHsnfi+WpS6XYGhVSX1a/+39FHn8QiIZNWQQas6
-	bwc2vJFaPYGQUy0f04VxKqJQqJbzCAKi13Q=
-X-Google-Smtp-Source: AGHT+IF1ZqchpsJl91cjnqOW0TqInkBNKXIBilhyIt5S+CcHOTDLL1ou0xV+jViKplohtQaHQNdGSg==
-X-Received: by 2002:a05:6402:348e:b0:5ec:25d2:8631 with SMTP id 4fb4d7f45d1cf-5edfce7682amr11659933a12.12.1743515276724;
-        Tue, 01 Apr 2025 06:47:56 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:7::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5edc17b30cdsm7015449a12.64.2025.04.01.06.47.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Apr 2025 06:47:56 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Tue, 01 Apr 2025 06:47:50 -0700
-Subject: [PATCH v2 2/2] spi: tegra210-quad: add rate limiting and simplify
- timeout error message
+	s=arc-20240116; t=1743515779; c=relaxed/simple;
+	bh=tjpdGmk7PsTYQICyO1o16SjzRJ5VUSgEoghI+wvraLw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=f0i6/jTyIrGrTtxy/UnO87pYFmNG0dnULD17L4mbGRfihBuhXtNualvIzvDeZ3Q2Ts3FczrNb2YP1w0x5+e3sufFRNEGxsboMtiLXId+ZPVxu6Ibk9nJE9ucY/spBfRTqx/MxQWe7NwTiC/rfbScV727SeC0rRbpALYCUDA5SjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZRqHp4HlwztRR6;
+	Tue,  1 Apr 2025 21:54:46 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id E1C7C180116;
+	Tue,  1 Apr 2025 21:56:11 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
+ (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 1 Apr
+ 2025 21:56:11 +0800
+Message-ID: <4a87269d-542e-4d4d-9c46-780f9eb55193@huawei.com>
+Date: Tue, 1 Apr 2025 21:56:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250401-tegra-v2-2-126c293ec047@debian.org>
-References: <20250401-tegra-v2-0-126c293ec047@debian.org>
-In-Reply-To: <20250401-tegra-v2-0-126c293ec047@debian.org>
-To: Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Sowjanya Komatineni <skomatineni@nvidia.com>, 
- Laxman Dewangan <ldewangan@nvidia.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-tegra@vger.kernel.org, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, rmikey@meta.com, 
- Breno Leitao <leitao@debian.org>, kernel-team@meta.com
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1318; i=leitao@debian.org;
- h=from:subject:message-id; bh=orIhHZK2mBXOHJ9P6CPj8DtCz0DKuFngNgPnyToyf84=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBn6+6IKYuj1Klp3ayQG0I42YY+kWGh8x3sA5+Lx
- 6v4mh/jxHOJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ+vuiAAKCRA1o5Of/Hh3
- bZFqEACDPf/gXpU56XhDJIj+HxwyNSXfqDbAYZhODhE8kgP6KjkOZWwTufYJMY7ncMpWLstBcfp
- TSvB2l9gtkkpJlq0p36i1dcMZXpM/WjpNGcEtZ1mbhjQ+NSbbf0Fu68jMpYvGfFJz1vnawGgKbV
- kRSW0SGsZMfdN96xdf2loH+jfGaKkOhTM/yMtWe1cMu5rsf5xkMrnIQEUgw/FYlU5g/YRtxGKDM
- +x0kPH0FRw4FPfRHjLZFTTWJJU/amfvtrguEiWrbhQ+iFTvRZ15FSwbfMvtSfDlz1gtjtrUTQ4i
- 3CAhkkjqHx7OBeuTchajs8Q6CFBzXO8pySTP02ONDG7s+ID18zP4Ne64NiNqKQRv43EzEvA+Aze
- yMXDPIlTKci6lJ3Ch3dNMsXAr/nTCmnAeXwB3VCkEmiuAKMXDoCO24inKOYg91aOAgQqviyJZbC
- luL5JO3p6Xzl4mBGsrFTneKnfDX1Dc5UT1GMexWfIve/nec/A/BNdYPLP83fuoO+yHeaNGZz80W
- Po4+jXp7giue21jQBHCEZyB+HOmk9KJiq1FpHFjKu+g+sKtefLlOQe8fnmZrQYudcCtahRl0EQc
- l1lHwDHVdwExl4VjOhJxtxMhoPwmqWzqsQUOZHk1isi4gwTIXX5QdASAGQZai7jcLVnjiL+ySAG
- Lr8Q8v8i0PDOaLQ==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch 0/5] Support Autonomous Selection mode in cppc_cpufreq
+To: Sumit Gupta <sumitg@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+CC: <lenb@kernel.org>, <robert.moore@intel.com>, <corbet@lwn.net>,
+	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <acpica-devel@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<treding@nvidia.com>, <jonathanh@nvidia.com>, <sashal@nvidia.com>,
+	<vsethi@nvidia.com>, <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>,
+	<bbasu@nvidia.com>
+References: <20250211103737.447704-1-sumitg@nvidia.com>
+ <20250211104428.dibsnxmkiluzixvz@vireshk-i7>
+ <b45d0d81-e4f7-474e-a146-0075a6145cc2@huawei.com>
+ <868d4c2a-583a-4cbb-a572-d884090a7134@nvidia.com>
+ <8d5e0035-d8fe-49ef-bda5-f5881ff96657@huawei.com>
+ <94bdab73-adc4-4b43-9037-5639f23e3d1e@nvidia.com>
+ <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
+ <e58a20f8-e8bf-409c-a878-af2bd3c7d243@nvidia.com>
+ <73fbf483-7afa-4cd2-84d1-6ace36549c53@huawei.com>
+ <f0f1b31b-a0fc-4d21-8b79-c896833dae35@nvidia.com>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <f0f1b31b-a0fc-4d21-8b79-c896833dae35@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-On malfunctioning hardware, timeout error messages can appear thousands
-of times, creating unnecessary system pressure and log bloat. This patch
-makes two improvements:
+Sorry for the delay.
 
-1. Replace dev_err() with dev_err_ratelimited() to prevent log flooding
-   when hardware errors persist
-2. Remove the redundant timeout value parameter from the error message,
-   as 'ret' is always zero in this error path
+On 2025/3/14 20:48, Sumit Gupta wrote:
+> 
+> 
+>>>>
+>>>> There seems to be some quite fundamental disagreement on how this
+>>>> should be done, so I'm afraid I cannot do much about it ATM.
+>>>>
+>>>> Please agree on a common approach and come back to me when you are ready.
+>>>>
+>>>> Sending two concurrent patchsets under confusingly similar names again
+>>>> and again isn't particularly helpful.
+>>>>
+>>>> Thanks!
+>>>
+>>> Hi Rafael,
+>>>
+>>> Thank you for looking into this.
+>>>
+>>> Hi Lifeng,
+>>>
+>>> As per the discussion, we can make the driver future extensible and
+>>> also can optimize the register read/write access.
+>>>
+>>> I gave some thought and below is my proposal.
+>>>
+>>> 1) Pick 'Patch 1-7' from your patch series [1] which optimize API's
+>>>     to read/write a cpc register.
+>>>
+>>> 2) Pick my patches in [2]:
+>>>     - Patch 1-4: Keep all cpc registers together under acpi_cppc sysfs.
+>>>                  Also, update existing API's to read/write regs in batch.
+>>>     - Patch 5: Creates 'cppc_cpufreq_epp_driver' instance for booting
+>>>       all CPU's in Auto mode and set registers with right values.
+>>>       They can be updated after boot from sysfs to change hints to HW.
+>>>       I can use the optimized API's from [1] where required in [2].
+>>>
+>>> Let me know if you are okay with this proposal.
+>>> I can also send an updated patch series with all the patches combined?
+>>>
+>>> [1] https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@huawei.com/
+>>> [2] https://lore.kernel.org/lkml/20250211103737.447704-1-sumitg@nvidia.com/
+>>>
+>>> Regards,
+>>> Sumit Gupta
+>>>
+>>
+>> Hi Sumit,
+>>
+>> Over the past few days, I've been thinking about your proposal and
+>> scenario.
+>>
+>> I think we both agree that PATCH 1-7 in [1] doesn't conflicts with [2], so
+>> the rest of the discussion focuses on the differences between [2] and the
+>> PATCH 8 in [1].
+>>
+>> We both tried to support autonomous selection mode in cppc_cpufreq but on
+>> different ways. I think the differences between these two approaches can be
+>> summarized into three questions:
+>>
+>> 1. Which sysfs files to expose? I think this is not a problem, we can keep
+>> all of them.
+>>
+>> 2. Where to expose these sysfs files? I understand your willing to keep all
+>> cpc registers together under acpi_cppc sysfs. But in my opinion, it is more
+>> suitable to expose them under cppc_cpufreq_attr, for these reasons:
+>>
+>>    1) It may probably introduce concurrency and data consistency issues, as
+>> I mentioned before.
+>>
+> 
+> As explained in previous reply, this will be solved with the ifdef
+> check to enable the attributes for only those CPUFREQ drivers which want
+> to use the generic nodes.
+>  e.g: '#ifdef CONFIG_ACPI_CPPC_CPUFREQ' for 'cppc_cpufreq'.
+>            
+> These CPC register read/write sysfs nodes are generic as per the ACPI
+> specification and without any vendor specific logic.
+> So, adding them in the lib file 'cppc_acpi.c'(CONFIG_ACPI_CPPC_LIB) will
+> avoid code duplication if a different or new ACPI based CPUFREQ driver
+> also wants to use them just by adding their macro check. Such ifdef check is also used in other places for attributes creation like below.
+> So, don't look like a problem.
+>  $ grep -A4 "acpi_cpufreq_attr\[" drivers/cpufreq/acpi-cpufreq.c
+>  static struct freq_attr *acpi_cpufreq_attr[] = {
+>     &freqdomain_cpus,
+>  #ifdef CONFIG_X86_ACPI_CPUFREQ_CPB
+>     &cpb,
+>  #endif
 
-These changes reduce logging overhead while maintaining necessary error
-reporting for debugging purposes.
+So in the future, we will see:
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/spi/spi-tegra210-quad.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+static struct attribute *cppc_attrs[] = {
+	...
+#ifdef CONFIG_XXX
+	&xxx.attr,
+	&xxx.attr,
+#endif
+#ifdef CONFIG_XXX
+	&xxx.attr,
+#endif
+#ifdef CONFIG_XXX
+	&xxx.attr,
+	...
+};
 
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index 2d320fbb8875f..64e1b2f8a0001 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -1118,8 +1118,8 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
- 					QSPI_DMA_TIMEOUT);
- 
- 			if (WARN_ON_ONCE(ret == 0)) {
--				dev_err(tqspi->dev, "QSPI Transfer failed with timeout: %d\n",
--					ret);
-+				dev_err_ratelimited(tqspi->dev,
-+						    "QSPI Transfer failed with timeout\n");
- 				if (tqspi->is_curr_dma_xfer &&
- 				    (tqspi->cur_direction & DATA_DIR_TX))
- 					dmaengine_terminate_all
+I think you are making things more complicated.
 
--- 
-2.47.1
+> 
+>>    2) The store functions call cpufreq_cpu_get() to get policy and update
+>> the driver_data which is a cppc_cpudata. Only the driver_data in
+>> cppc_cpufreq's policy is a cppc_cpudata! These operations are inappropriate
+>> in cppc_acpi. This file currently provides interfaces for cpufreq drivers
+>> to use. Reverse calls might mess up call relationships, break code
+>> structures, and cause problems that are hard to pinpoint the root cause!
+>>
+> 
+> If we don't want to update the cpufreq policy from 'cppc_acpi.c' and only update it from within the cpufreq,    then this could be one valid
+> point to not add the write syfs nodes in 'cppc_acpi.c' lib file.
+> 
+> @Rafael, @Viresh : Do you have any comments on this?
+
+I think updating cpufreq policy from 'cppc_acpi.c' should be forbidden.
+
+> 
+>>    3) Difficult to extend. Different cpufreq drivers may have different
+>> processing logic when reading from and writing to these CPC registers.
+>> Limiting all sysfs here makes it difficult for each cpufreq driver to
+>> extend. I think this is why there are only read-only interfaces under
+>> cppc_attrs before.
+>>
+> 
+> We are updating the CPC registers as per the generic ACPI specification.
+> So, any ACPI based CPUFREQ driver can use these generic nodes to
+> read/write reg's until they have a vendor specific requirement or
+> implementation.
+> As explained above, If someone wants to update in different way and use
+> their own CPUFREQ driver then these generic attributes won't be created
+> due to the CPUFREQ driver macro check.
+> I think AMD and Intel are doing more than just reading/updating the registers. That's why they needed their driver specific implementations.
+> 
+>> Adding a 'ifdef' is not a good way to solve these problems. Defining this
+>> config does not necessarily mean that the cpufreq driver is cppc_cpufreq.
+>>
+> 
+> It means that only.
+>  ./drivers/cpufreq/Makefile:obj-$(CONFIG_ACPI_CPPC_CPUFREQ) += cppc_cpufreq.o
+
+Compile this file does not mean that the cpufreq driver is cppc_cpufreq.
+Driver registration may fail, and the actually loaded driver may be
+another. It'll be dangerous to expose these sysfs files for users to update
+registers' value in this case.
+
+> 
+>> 3. Is it necessary to add a new driver instance? [1] exposed the sysfs
+>> files to support users dynamically change the auto selection mode of each
+>> policy. Each policy can be operated seperately. It seems to me that if you
+>> want to boot all CPUs in auto mode, it should be sufficient to set all
+>> relevant registers to the correct values at boot time. I can't see why the
+>> new instance is necessary unless you explain it further. Could you explain
+>> more about why you add a new instance starting from answer these questions:
+>>
+>> For a specific CPU, what is the difference between using the two instances
+>> when auto_sel is 1? And what is the difference when auto_sel is 0?
+>>
+> 
+> Explained this in previous reply. Let me elaborate more.
+> 
+> For hundred's of CPU's, we don't need to explicitly set multiple sysfs
+> after boot to enable and configure Auto mode with right params. That's why an easy option is to pass boot argument or module param for enabling
+> and configuration.
+> A separate instance 'cppc_cpufreq_epp' of the 'cppc_cpufreq' driver is
+> added because policy min/max need to be updated to the min/max_perf
+> and not nominal/lowest nonlinear perf which is done by the default
+> init hook. Min_perf value can be lower than lowest nonlinear perf and Max_perf can be higher than nominal perf.
+> If some CPU is booted with epp instance and later the auto mode is disabled or min/max_perf is changed from sysfs then also the policy
+> min/max need to be updated accordingly.
+> 
+> Another is that in Autonomous mode the freq selection and setting is
+> done by HW. So, cpufreq_driver->target() hook is not needed.
+> These are few reasons which I am aware of as of now.
+> I think in future there can be more. Having a separate instance
+> reflecting a HW based Autonomous frequency selection will make it easy
+> for any future changes.
+
+So CPUs will act totally differently under these two instance. But what if
+I want part of the CPUs in HW mode and others in SW mode? Should I boot on
+HW mode and set some policies' auto_set to false or the other way? It seems
+like the effects of theses two approaches are completely different. In my
+opinion, this new instance is more like a completely different driver than
+cppc_cpufreq.
+
+> 
+>> If it turns out that the new instance is necessary, I think we can reach a
+>> common approach by adding this new cpufreq driver instance and place the
+>> attributes in 'cppc_cpufreq_epp_attr', like amd-pstate did.
+>>
+>> What do you think?
+> 
+> I initially thought about this but there was a problem.
+> What if we boot with non-epp instance which doesn't have these attributes and later want to enable Auto mode for few CPU's from sysfs.
+
+That's the problem. CPUs can be set to Auto mode with or without this new
+instance. So what's the point of it?
+
+> 
+> 
+> Best Regards,
+> Sumit Gupta
 
