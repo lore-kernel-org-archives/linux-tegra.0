@@ -1,90 +1,102 @@
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6672235BF3;
-	Wed,  2 Apr 2025 12:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE286231A4D;
+	Wed,  2 Apr 2025 14:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743598219; cv=none; b=NWduInd+kNOeI5BDW8nDn9WXAo/7RPwhWcD31gzIQa1bQq4MwFodzPYT1/4EjLQkGy/l8lTjBpSb/XnrNv3UF8pGXOna/O5wj7vbnxHuvVJ0Bxc/IDom9gxkE9SC135q6F68rbLxIgNgu9g6FgOMoNLBSJpI9keEtK4Cs1EER30=
+	t=1743604890; cv=none; b=pPPuHb81NE7kjKEw3N7h3ulgdt+OzNCc3nBvg9icCtdgbOBpO4kBqC6Vf+fSQKr+GDTBVRnKMl0ha0YOzDNyWitBp3oLxSof8j+IMmxbBy++hhPPN3d+cwF4PirTkzWsEESrZRoz4U5BgE2ycq11fbkYsOS/LX7UrDlktpJ9XDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743598219; c=relaxed/simple;
-	bh=seEcfsTx/2axYLwPT5YXHyXv+dAslO1ezGacxvR5VHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XVI3cieQx4DRKfhnjlDbpNfpsXsc9wOe7p5FVuz0psg5+AiYCQP7RR2/MpWV1yxL41qKa6jBz45w6x2N2ACk7wTkXMEWwUlXH9UHQNq5Dl/84154nNGfDNH5mwN8GbHY5sonIZdGImm8JlPdP0Z3c0rxLNprGJBwLw9OKfF57M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=p+NQD2PD; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+	s=arc-20240116; t=1743604890; c=relaxed/simple;
+	bh=BELqzgis7jFozBSeJ6g38zZ1DIngTYXk7122T6OLrXw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R6bmVmnb15KK0CBt25OCzAOd0EVVbI/2pVzpAVrGGyCXHVpAs3Ev2UzYBAyHhZx8tI99iktPh9e3YvHAxAs+r54B8Y6iI7xULKMvm7YOKyZl1ozKreuxz0zXJdyzGiWDZq1dOOyincX5tqHaSIeqL+uJDq/x8wT3ItsvYtF1AFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBQpO9Je; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="p+NQD2PD"
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7FA8163B;
-	Wed,  2 Apr 2025 14:48:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1743598102;
-	bh=seEcfsTx/2axYLwPT5YXHyXv+dAslO1ezGacxvR5VHI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p+NQD2PD8PiA3RJhi7tyR7HaK5qJrm5RVlw6DEqp4nPt/pn08/DJEkLOqExnzuto+
-	 RUQSRPX6PgKd+D/v1ASa1EVrzqEn7FWNPxNG3tMPIIqWhkqmRSkJkw6Mnj62Hzl+H5
-	 n3SZJFRMETsYmMR2QNreddDMFnLLwc3ypynaMvOk=
-Date: Wed, 2 Apr 2025 15:49:51 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: shao.mingyin@zte.com.cn
-Cc: thierry.reding@gmail.com, mperttunen@nvidia.com, airlied@gmail.com,
-	simona@ffwll.ch, jonathanh@nvidia.com,
-	dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tomi.valkeinen@ideasonboard.com,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, michal.simek@amd.com,
-	linux-arm-kernel@lists.infradead.org, yang.yang29@zte.com.cn,
-	xu.xin16@zte.com.cn, ye.xingchen@zte.com.cn, zhang.enpei@zte.com.cn
-Subject: Re: [PATCH linux-next 2/2] gpu: drm: xlnx: zynqmp_dp: Use
- dev_err_probe()
-Message-ID: <20250402124951.GA13762@pendragon.ideasonboard.com>
-References: <20250402193656279azy9TKahAE5TQ5-i4XCQT@zte.com.cn>
- <20250402193852834atJ7eho66TlnKOIMSvpfr@zte.com.cn>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBQpO9Je"
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-2260c91576aso106049495ad.3;
+        Wed, 02 Apr 2025 07:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1743604888; x=1744209688; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BGWlUxREAIk1n0OSq7YsQ2Gc20plfDNCnJCmCbn1BdE=;
+        b=MBQpO9Je6QRfl9OoFlCy42pclFhfri4l5HQ8dLYoTYw0DchahlYbH2UF0UgumjElFA
+         Kqq8FBpegJqk/OgrvrGq9nULCXi21XWYRbFEeTmG3MvFybg8rT3qwNauQidPPkjoSwHL
+         9zisPiEBjDb7HZeljKFgbl9RGl4hOt5Ilh+//KScFkdxvAFywZIEBBHsajVea7led5rq
+         jtGwYrXiDN1tDS+WR0m9EOJ3FmUF5BdDg1uwt/rG45s/ZqbW9BlmnxyjiwkwWfqXA49D
+         7nKqfdQEYwPCBrfnc8A6ZJG230SuNIJMtqdFaWvp2TkvGeMzyDDKoknbo0++uJNSSjVc
+         M+ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743604888; x=1744209688;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BGWlUxREAIk1n0OSq7YsQ2Gc20plfDNCnJCmCbn1BdE=;
+        b=aKSp9HuFXIDvlEdhOYb0vvZyl0JDmvUJ2CFd+0Nt4vxf9AKpWK6fSw0ulcVeu8rJlU
+         JYdYALBDgkq4fWfY36KZEHcXHteJIzbsfY/59yhrrcxH16Q+CwjXd+O6zltFzNJNXHbE
+         P2ylwAzNrEn7pxQbDNnkfM3Ndd+le5s4dRFkSDJg+dXR/aBX4ePPXg5T39PrJyu0Bmj0
+         m3CAv/+lqAbHtgmVtCJDQktQj8mFFJ2eSnf02LuBpXESkAYwfnPFlOFrIZjtVZqJ7Rjv
+         fYSK189JUfrSxY8F0sJrK8nd9WiG2i4HrOgzCTDXz+oujmyHh2LphmE9awSwckm6seJ+
+         eH6g==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Ih0gChjDYcIkiUwyMOVrfgcZNGvmtg6B+Jcdrgn35K/M8d9MwozHp7elyXmciHwsfIkij/pJritZ9lo=@vger.kernel.org, AJvYcCW8hn4ZK1HD6oFM9g1SMvwwCJzBdWwY1ucTPkiG6dAHH9CjGLWDzjuvrLIp7hppjXAzlY4qUeKOVaycz2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/nATWLbDyIju5DYHoFcLI55Pcr6yGKTihE3VNBrhYqKkE8/bU
+	pg8bDVphqQGlu7quinNiYt6vrSOOZrY++nFfhuf+5tUrnp6hAMqy
+X-Gm-Gg: ASbGncvEb5CAtLQB6zicy6LAUhR9enVLuE5Hhhb0dsSBeo0pqnOihdprjxb5JWiGX/E
+	OHAcPQwW4XoWeqd07FG1l8PJZQKDMV0grvufclufDEAqloj+bYZm48tqou8W2FgXAkn7nl0m/z1
+	oSrdFXhEVE/hIJUSETTsHg+TKptQ4IYOZT4bq6xhyfEGMEeLyI7fIFwJz7DYsAeZGaH5w3maHu/
+	yVYv10eCOjcEFBiAsxzam/pn9D7g54wornuqkdnAZL7wB0bUJnz4APTI7X9RuOr0c/UbOyQ2m3S
+	OOvI8WwLKgVlmxzPvPTvagyS5ZKTh61qQ+7TIxW58JmCwn7o2zNJbrLjJJt/N/9IAFij64Q=
+X-Google-Smtp-Source: AGHT+IEc+PN2L6M5+Vl7gKBtP0eJdSZzb6AYIIImcmBTGM0KDPJd4BbOUVEmERuM3OIJXLQaL5bbVQ==
+X-Received: by 2002:a17:903:17ce:b0:21f:ba77:c45e with SMTP id d9443c01a7336-2292f9eb7a8mr246042105ad.45.1743604888022;
+        Wed, 02 Apr 2025 07:41:28 -0700 (PDT)
+Received: from henry.localdomain ([111.202.148.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2291f1ce1b4sm109142875ad.150.2025.04.02.07.41.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Apr 2025 07:41:27 -0700 (PDT)
+From: Henry Martin <bsdhenrymartin@gmail.com>
+To: jassisinghbrar@gmail.com
+Cc: thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Henry Martin <bsdhenrymartin@gmail.com>
+Subject: [PATCH v1] mailbox: tegra-hsp: Fix null-ptr-deref in tegra_hsp_doorbell_create()
+Date: Wed,  2 Apr 2025 22:41:15 +0800
+Message-Id: <20250402144115.45564-1-bsdhenrymartin@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250402193852834atJ7eho66TlnKOIMSvpfr@zte.com.cn>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 02, 2025 at 07:38:52PM +0800, shao.mingyin@zte.com.cn wrote:
-> From: Zhang Enpei <zhang.enpei@zte.com.cn>
-> 
-> Replace the open-code with dev_err_probe() to simplify the code.
-> 
-> Signed-off-by: Zhang Enpei <zhang.enpei@zte.com.cn>
-> Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
+devm_kstrdup_const() returns NULL when memory allocation fails.
+Currently, tegra_hsp_doorbell_create() does not check for this case,
+which results in a NULL pointer dereference.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Fixes: a54d03ed01b4 ("mailbox: tegra-hsp: use devm_kstrdup_const()")
+Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+---
+ drivers/mailbox/tegra-hsp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> ---
->  drivers/gpu/drm/xlnx/zynqmp_dp.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/xlnx/zynqmp_dp.c b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> index a6a4a871f197..28efa4c7ec8e 100644
-> --- a/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> +++ b/drivers/gpu/drm/xlnx/zynqmp_dp.c
-> @@ -2466,10 +2466,8 @@ int zynqmp_dp_probe(struct zynqmp_dpsub *dpsub)
-> 
->  	dp->reset = devm_reset_control_get(dp->dev, NULL);
->  	if (IS_ERR(dp->reset)) {
-> -		if (PTR_ERR(dp->reset) != -EPROBE_DEFER)
-> -			dev_err(dp->dev, "failed to get reset: %ld\n",
-> -				PTR_ERR(dp->reset));
-> -		ret = PTR_ERR(dp->reset);
-> +		ret = dev_err_probe(dp->dev, PTR_ERR(dp->reset),
-> +				    "failed to get reset\n");
->  		goto err_free;
->  	}
-> 
-
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index ed9a0bb2bcd8..147406149fec 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -293,6 +293,8 @@ tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
+ 	db->channel.hsp = hsp;
+ 
+ 	db->name = devm_kstrdup_const(hsp->dev, name, GFP_KERNEL);
++	if (!db->name)
++		return ERR_PTR(-ENOMEM);
+ 	db->master = master;
+ 	db->index = index;
+ 
 -- 
-Regards,
+2.34.1
 
-Laurent Pinchart
