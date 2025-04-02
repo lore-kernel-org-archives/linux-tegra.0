@@ -1,272 +1,216 @@
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331624501A;
-	Tue,  1 Apr 2025 13:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F98223534A
+	for <linux-tegra@vger.kernel.org>; Wed,  2 Apr 2025 09:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743515779; cv=none; b=tJmXkMORLr5qi1gTLrBoWVJPyNM8wUQPmrph4siLX2il8uib3VdN+yxvBfwsqqZ9PhE4mTa8RK1+UMZ1Y87AADsRbyGOyND5/fr4V2rHYVAOQJB1KanwC7deQ26YdwsTHNNb4vOlgzF9vSD+jNtjC8kMmOuYAtWKyCclMIvRtaM=
+	t=1743585086; cv=none; b=eEDFXtLdh6lALOhOV905nffkofS38X7/SAkOS4/8Y4J5XB6qzVXobVVqM8ScyRsD2qYOwOTKuoGstr1xtQF4J33r3q9EUo5o4UOFWs519P8cVCdpS9+XQKH27cFox9s/Wl7KPn4934v0tSEX+vcflYn0qN2gn8acUVYw0Dci4MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743515779; c=relaxed/simple;
-	bh=tjpdGmk7PsTYQICyO1o16SjzRJ5VUSgEoghI+wvraLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=f0i6/jTyIrGrTtxy/UnO87pYFmNG0dnULD17L4mbGRfihBuhXtNualvIzvDeZ3Q2Ts3FczrNb2YP1w0x5+e3sufFRNEGxsboMtiLXId+ZPVxu6Ibk9nJE9ucY/spBfRTqx/MxQWe7NwTiC/rfbScV727SeC0rRbpALYCUDA5SjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4ZRqHp4HlwztRR6;
-	Tue,  1 Apr 2025 21:54:46 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id E1C7C180116;
-	Tue,  1 Apr 2025 21:56:11 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
- (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 1 Apr
- 2025 21:56:11 +0800
-Message-ID: <4a87269d-542e-4d4d-9c46-780f9eb55193@huawei.com>
-Date: Tue, 1 Apr 2025 21:56:10 +0800
+	s=arc-20240116; t=1743585086; c=relaxed/simple;
+	bh=Un0Ig6gH9/dPaP2msToyYsAP+vG17bGdKGl0q2VD+Pw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=IbhQvPM+5CS0v3jfOQaTj/x9SlcvydyqyWyw1YqC/S9T8xELQgmOsMSFJPWDqliDfORrDHrac5vRw4am7TjaIWU76VeDhZZ4x9PXyErnX7hjoItFwKLolX9WPl3xqsgB2ffa/jjd0XOnCSuP53r4L07TlmpACqFZqNJwgj1exN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=AfFsMQhf reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="AfFsMQhf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=bNRCmZrHbl9qDe2w51s3ZpBql0GJNc2z9tWUQK3FY2A=; b=A
+	fFsMQhfYqGGVwCyf6dZ6uXGDbOr4hqf56n6lDr/2VdkXY9/ugSn8OjRBUzsUsbXw
+	LWW9MW7JeKQBwLOLH8ESbqDP/x3R3y84nY21VNzWlHsqNchNxfCYEj1AYDfJFg6W
+	DSmqcBd39U+l0AQOjDA9QlLijNqXBVi9V+nidxz9e0=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-114 (Coremail) ; Wed, 2 Apr 2025 17:10:16 +0800 (CST)
+Date: Wed, 2 Apr 2025 17:10:16 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
+Cc: lumag@kernel.org, thierry.reding@gmail.com, mperttunen@nvidia.com,
+	mripard@kernel.org, neil.armstrong@linaro.org,
+	dri-devel@lists.freedesktop.org, dianders@chromium.org,
+	jani.nikula@intel.com, lyude@redhat.com, jonathanh@nvidia.com,
+	victor.liu@nxp.com, rfoss@kernel.org,
+	linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+	"Andy Yan" <andy.yan@rock-chips.com>
+Subject: Re:Re: [PATCH v2 1/5] drm/dp: Pull drm_dp_link_power_up/down from
+ Tegra to common drm_dp_helper
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <0d44fd9e-ab84-4db4-955a-22670d2990ef@oss.qualcomm.com>
+References: <20250318063452.4983-1-andyshrk@163.com>
+ <76a55b32.acc9.195d79cf378.Coremail.andyshrk@163.com>
+ <0d44fd9e-ab84-4db4-955a-22670d2990ef@oss.qualcomm.com>
+X-NTES-SC: AL_Qu2fAfmTukgq4CWcZOkfmkcVgOw9UcO5v/Qk3oZXOJF8jDvp6CEgd21jJ0DK6eeEOiqAjTi3YBx39upQfaBdUrMAL7jsi0lxna/QwTocMlotHg==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch 0/5] Support Autonomous Selection mode in cppc_cpufreq
-To: Sumit Gupta <sumitg@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-CC: <lenb@kernel.org>, <robert.moore@intel.com>, <corbet@lwn.net>,
-	<linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <acpica-devel@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<treding@nvidia.com>, <jonathanh@nvidia.com>, <sashal@nvidia.com>,
-	<vsethi@nvidia.com>, <ksitaraman@nvidia.com>, <sanjayc@nvidia.com>,
-	<bbasu@nvidia.com>
-References: <20250211103737.447704-1-sumitg@nvidia.com>
- <20250211104428.dibsnxmkiluzixvz@vireshk-i7>
- <b45d0d81-e4f7-474e-a146-0075a6145cc2@huawei.com>
- <868d4c2a-583a-4cbb-a572-d884090a7134@nvidia.com>
- <8d5e0035-d8fe-49ef-bda5-f5881ff96657@huawei.com>
- <94bdab73-adc4-4b43-9037-5639f23e3d1e@nvidia.com>
- <CAJZ5v0iAg6HFROHctYQwW=V9XiV8p3XVYgeKUcX4qBgfwQK6Ow@mail.gmail.com>
- <e58a20f8-e8bf-409c-a878-af2bd3c7d243@nvidia.com>
- <73fbf483-7afa-4cd2-84d1-6ace36549c53@huawei.com>
- <f0f1b31b-a0fc-4d21-8b79-c896833dae35@nvidia.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <f0f1b31b-a0fc-4d21-8b79-c896833dae35@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+Message-ID: <4be9ef99.9728.195f5c3fae0.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:cigvCgDHD+X4_uxnEUuNAA--.7928W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAEjXmfs9k-9CwADsr
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Sorry for the delay.
-
-On 2025/3/14 20:48, Sumit Gupta wrote:
-> 
-> 
->>>>
->>>> There seems to be some quite fundamental disagreement on how this
->>>> should be done, so I'm afraid I cannot do much about it ATM.
->>>>
->>>> Please agree on a common approach and come back to me when you are ready.
->>>>
->>>> Sending two concurrent patchsets under confusingly similar names again
->>>> and again isn't particularly helpful.
->>>>
->>>> Thanks!
->>>
->>> Hi Rafael,
->>>
->>> Thank you for looking into this.
->>>
->>> Hi Lifeng,
->>>
->>> As per the discussion, we can make the driver future extensible and
->>> also can optimize the register read/write access.
->>>
->>> I gave some thought and below is my proposal.
->>>
->>> 1) Pick 'Patch 1-7' from your patch series [1] which optimize API's
->>>     to read/write a cpc register.
->>>
->>> 2) Pick my patches in [2]:
->>>     - Patch 1-4: Keep all cpc registers together under acpi_cppc sysfs.
->>>                  Also, update existing API's to read/write regs in batch.
->>>     - Patch 5: Creates 'cppc_cpufreq_epp_driver' instance for booting
->>>       all CPU's in Auto mode and set registers with right values.
->>>       They can be updated after boot from sysfs to change hints to HW.
->>>       I can use the optimized API's from [1] where required in [2].
->>>
->>> Let me know if you are okay with this proposal.
->>> I can also send an updated patch series with all the patches combined?
->>>
->>> [1] https://lore.kernel.org/all/20250206131428.3261578-1-zhenglifeng1@huawei.com/
->>> [2] https://lore.kernel.org/lkml/20250211103737.447704-1-sumitg@nvidia.com/
->>>
->>> Regards,
->>> Sumit Gupta
->>>
->>
->> Hi Sumit,
->>
->> Over the past few days, I've been thinking about your proposal and
->> scenario.
->>
->> I think we both agree that PATCH 1-7 in [1] doesn't conflicts with [2], so
->> the rest of the discussion focuses on the differences between [2] and the
->> PATCH 8 in [1].
->>
->> We both tried to support autonomous selection mode in cppc_cpufreq but on
->> different ways. I think the differences between these two approaches can be
->> summarized into three questions:
->>
->> 1. Which sysfs files to expose? I think this is not a problem, we can keep
->> all of them.
->>
->> 2. Where to expose these sysfs files? I understand your willing to keep all
->> cpc registers together under acpi_cppc sysfs. But in my opinion, it is more
->> suitable to expose them under cppc_cpufreq_attr, for these reasons:
->>
->>    1) It may probably introduce concurrency and data consistency issues, as
->> I mentioned before.
->>
-> 
-> As explained in previous reply, this will be solved with the ifdef
-> check to enable the attributes for only those CPUFREQ drivers which want
-> to use the generic nodes.
->  e.g: '#ifdef CONFIG_ACPI_CPPC_CPUFREQ' for 'cppc_cpufreq'.
->            
-> These CPC register read/write sysfs nodes are generic as per the ACPI
-> specification and without any vendor specific logic.
-> So, adding them in the lib file 'cppc_acpi.c'(CONFIG_ACPI_CPPC_LIB) will
-> avoid code duplication if a different or new ACPI based CPUFREQ driver
-> also wants to use them just by adding their macro check. Such ifdef check is also used in other places for attributes creation like below.
-> So, don't look like a problem.
->  $ grep -A4 "acpi_cpufreq_attr\[" drivers/cpufreq/acpi-cpufreq.c
->  static struct freq_attr *acpi_cpufreq_attr[] = {
->     &freqdomain_cpus,
->  #ifdef CONFIG_X86_ACPI_CPUFREQ_CPB
->     &cpb,
->  #endif
-
-So in the future, we will see:
-
-static struct attribute *cppc_attrs[] = {
-	...
-#ifdef CONFIG_XXX
-	&xxx.attr,
-	&xxx.attr,
-#endif
-#ifdef CONFIG_XXX
-	&xxx.attr,
-#endif
-#ifdef CONFIG_XXX
-	&xxx.attr,
-	...
-};
-
-I think you are making things more complicated.
-
-> 
->>    2) The store functions call cpufreq_cpu_get() to get policy and update
->> the driver_data which is a cppc_cpudata. Only the driver_data in
->> cppc_cpufreq's policy is a cppc_cpudata! These operations are inappropriate
->> in cppc_acpi. This file currently provides interfaces for cpufreq drivers
->> to use. Reverse calls might mess up call relationships, break code
->> structures, and cause problems that are hard to pinpoint the root cause!
->>
-> 
-> If we don't want to update the cpufreq policy from 'cppc_acpi.c' and only update it from within the cpufreq,    then this could be one valid
-> point to not add the write syfs nodes in 'cppc_acpi.c' lib file.
-> 
-> @Rafael, @Viresh : Do you have any comments on this?
-
-I think updating cpufreq policy from 'cppc_acpi.c' should be forbidden.
-
-> 
->>    3) Difficult to extend. Different cpufreq drivers may have different
->> processing logic when reading from and writing to these CPC registers.
->> Limiting all sysfs here makes it difficult for each cpufreq driver to
->> extend. I think this is why there are only read-only interfaces under
->> cppc_attrs before.
->>
-> 
-> We are updating the CPC registers as per the generic ACPI specification.
-> So, any ACPI based CPUFREQ driver can use these generic nodes to
-> read/write reg's until they have a vendor specific requirement or
-> implementation.
-> As explained above, If someone wants to update in different way and use
-> their own CPUFREQ driver then these generic attributes won't be created
-> due to the CPUFREQ driver macro check.
-> I think AMD and Intel are doing more than just reading/updating the registers. That's why they needed their driver specific implementations.
-> 
->> Adding a 'ifdef' is not a good way to solve these problems. Defining this
->> config does not necessarily mean that the cpufreq driver is cppc_cpufreq.
->>
-> 
-> It means that only.
->  ./drivers/cpufreq/Makefile:obj-$(CONFIG_ACPI_CPPC_CPUFREQ) += cppc_cpufreq.o
-
-Compile this file does not mean that the cpufreq driver is cppc_cpufreq.
-Driver registration may fail, and the actually loaded driver may be
-another. It'll be dangerous to expose these sysfs files for users to update
-registers' value in this case.
-
-> 
->> 3. Is it necessary to add a new driver instance? [1] exposed the sysfs
->> files to support users dynamically change the auto selection mode of each
->> policy. Each policy can be operated seperately. It seems to me that if you
->> want to boot all CPUs in auto mode, it should be sufficient to set all
->> relevant registers to the correct values at boot time. I can't see why the
->> new instance is necessary unless you explain it further. Could you explain
->> more about why you add a new instance starting from answer these questions:
->>
->> For a specific CPU, what is the difference between using the two instances
->> when auto_sel is 1? And what is the difference when auto_sel is 0?
->>
-> 
-> Explained this in previous reply. Let me elaborate more.
-> 
-> For hundred's of CPU's, we don't need to explicitly set multiple sysfs
-> after boot to enable and configure Auto mode with right params. That's why an easy option is to pass boot argument or module param for enabling
-> and configuration.
-> A separate instance 'cppc_cpufreq_epp' of the 'cppc_cpufreq' driver is
-> added because policy min/max need to be updated to the min/max_perf
-> and not nominal/lowest nonlinear perf which is done by the default
-> init hook. Min_perf value can be lower than lowest nonlinear perf and Max_perf can be higher than nominal perf.
-> If some CPU is booted with epp instance and later the auto mode is disabled or min/max_perf is changed from sysfs then also the policy
-> min/max need to be updated accordingly.
-> 
-> Another is that in Autonomous mode the freq selection and setting is
-> done by HW. So, cpufreq_driver->target() hook is not needed.
-> These are few reasons which I am aware of as of now.
-> I think in future there can be more. Having a separate instance
-> reflecting a HW based Autonomous frequency selection will make it easy
-> for any future changes.
-
-So CPUs will act totally differently under these two instance. But what if
-I want part of the CPUs in HW mode and others in SW mode? Should I boot on
-HW mode and set some policies' auto_set to false or the other way? It seems
-like the effects of theses two approaches are completely different. In my
-opinion, this new instance is more like a completely different driver than
-cppc_cpufreq.
-
-> 
->> If it turns out that the new instance is necessary, I think we can reach a
->> common approach by adding this new cpufreq driver instance and place the
->> attributes in 'cppc_cpufreq_epp_attr', like amd-pstate did.
->>
->> What do you think?
-> 
-> I initially thought about this but there was a problem.
-> What if we boot with non-epp instance which doesn't have these attributes and later want to enable Auto mode for few CPU's from sysfs.
-
-That's the problem. CPUs can be set to Auto mode with or without this new
-instance. So what's the point of it?
-
-> 
-> 
-> Best Regards,
-> Sumit Gupta
-
+CiBHZW50bGUgcGluZy4uLi4uLgoKQXQgMjAyNS0wMy0yNyAyMDo1NDozNywgIkRtaXRyeSBCYXJ5
+c2hrb3YiIDxkbWl0cnkuYmFyeXNoa292QG9zcy5xdWFsY29tbS5jb20+IHdyb3RlOgo+T24gMjcv
+MDMvMjAyNSAxNDozOSwgQW5keSBZYW4gd3JvdGU6Cj4+IAo+PiBIZWxsbyBEbWl0cnksCj4+ICAg
+ICAgIENvdWxkIHlvdSB0YWtlIHRoaXMgc2VyaWVzPyBJZiBzbywgbWVyZ2luZyBpdCBlYXJsaWVy
+IGNhbiBhdm9pZCBmdXR1cmUgY29uZmxpY3RzIGZyb20gb3RoZXIgcGF0Y2hlcy4KPj4gQmVzaWRl
+cywgSSBjYW4gdXBkYXRlIG15IERQIGRyaXZlciBiYXNlZCBvbiBkcm0tbWlzYy1uZXh0Lgo+Cj5J
+J2QgcmVhbGx5IGxpa2UgYW4gYWNrIGZyb20gVGhpZXJ5IG9yIE1pa2tvLgo+Cj5JZiB0ZXJlIGlz
+IG5vbmUgKGFuZCBubyBvYmplY3Rpb25zKSwgSSdsbCBwdXNoIGl0IG9uIE1vbmRheS4KPgo+PiAK
+Pj4gQXQgMjAyNS0wMy0xOCAxNDozNDozNSwgIkFuZHkgWWFuIiA8YW5keXNocmtAMTYzLmNvbT4g
+d3JvdGU6Cj4+PiBGcm9tOiBBbmR5IFlhbiA8YW5keS55YW5Acm9jay1jaGlwcy5jb20+Cj4+Pgo+
+Pj4gVGhlIGhlbHBlciBmdW5jdGlvbnMgZHJtX2RwX2xpbmtfcG93ZXJfdXAvZG93biB3ZXJlIG1v
+dmVkIHRvIFRlZ3JhCj4+PiBEUk0gaW4gY29tbWl0IDlhNDJjN2M2NDdhOSAoImRybS90ZWdyYTog
+TW92ZSBkcm1fZHBfbGluayBoZWxwZXJzIHRvIFRlZ3JhIERSTSIpIi4KPj4+Cj4+PiBOb3cgc2lu
+Y2UgbW9yZSBhbmQgbW9yZSB1c2VycyBhcmUgZHVwbGljYXRpbmcgdGhlIHNhbWUgY29kZSBpbiB0
+aGVpcgo+Pj4gb3duIGRyaXZlcnMsIGl0J3MgdGltZSB0byBtYWtlIHRoZW0gYXMgRFJNIERQIGNv
+bW1vbiBoZWxwZXJzIGFnYWluLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEFuZHkgWWFuIDxhbmR5
+LnlhbkByb2NrLWNoaXBzLmNvbT4KPj4+IEFja2VkLWJ5OiBEbWl0cnkgQmFyeXNoa292IDxkbWl0
+cnkuYmFyeXNoa292QG9zcy5xdWFsY29tbS5jb20+Cj4+PiAtLS0KPj4+Cj4+PiBDaGFuZ2VzIGlu
+IHYyOgo+Pj4gLSBGaXggY29tbWl0IG1lc3NhZ2UgYXMgc3VnZ2VzdGVkIGJ5IERtaXRyeQo+Pj4K
+Pj4+IGRyaXZlcnMvZ3B1L2RybS9kaXNwbGF5L2RybV9kcF9oZWxwZXIuYyB8IDY5ICsrKysrKysr
+KysrKysrKysrKysrKysrKysKPj4+IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcC5jICAgICAgICAg
+ICAgICB8IDY3IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+Pj4gZHJpdmVycy9ncHUvZHJtL3Rl
+Z3JhL2RwLmggICAgICAgICAgICAgIHwgIDIgLQo+Pj4gZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nv
+ci5jICAgICAgICAgICAgIHwgIDQgKy0KPj4+IGluY2x1ZGUvZHJtL2Rpc3BsYXkvZHJtX2RwX2hl
+bHBlci5oICAgICB8ICAyICsKPj4+IDUgZmlsZXMgY2hhbmdlZCwgNzMgaW5zZXJ0aW9ucygrKSwg
+NzEgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kaXNw
+bGF5L2RybV9kcF9oZWxwZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9kaXNwbGF5L2RybV9kcF9oZWxw
+ZXIuYwo+Pj4gaW5kZXggZGJjZTFjM2Y0OTY5Li5lNWRlYzY3ZTVmY2EgMTAwNjQ0Cj4+PiAtLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vZGlzcGxheS9kcm1fZHBfaGVscGVyLmMKPj4+ICsrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9kaXNwbGF5L2RybV9kcF9oZWxwZXIuYwo+Pj4gQEAgLTgzOCw2ICs4MzgsNzUg
+QEAgaW50IGRybV9kcF9kcGNkX3JlYWRfcGh5X2xpbmtfc3RhdHVzKHN0cnVjdCBkcm1fZHBfYXV4
+ICphdXgsCj4+PiB9Cj4+PiBFWFBPUlRfU1lNQk9MKGRybV9kcF9kcGNkX3JlYWRfcGh5X2xpbmtf
+c3RhdHVzKTsKPj4+Cj4+PiArLyoqCj4+PiArICogZHJtX2RwX2xpbmtfcG93ZXJfdXAoKSAtIHBv
+d2VyIHVwIGEgRGlzcGxheVBvcnQgbGluawo+Pj4gKyAqIEBhdXg6IERpc3BsYXlQb3J0IEFVWCBj
+aGFubmVsCj4+PiArICogQHJldmlzaW9uOiBEUENEIHJldmlzaW9uIHN1cHBvcnRlZCBvbiB0aGUg
+bGluawo+Pj4gKyAqCj4+PiArICogUmV0dXJucyAwIG9uIHN1Y2Nlc3Mgb3IgYSBuZWdhdGl2ZSBl
+cnJvciBjb2RlIG9uIGZhaWx1cmUuCj4+PiArICovCj4+PiAraW50IGRybV9kcF9saW5rX3Bvd2Vy
+X3VwKHN0cnVjdCBkcm1fZHBfYXV4ICphdXgsIHVuc2lnbmVkIGNoYXIgcmV2aXNpb24pCj4+PiAr
+ewo+Pj4gKwl1OCB2YWx1ZTsKPj4+ICsJaW50IGVycjsKPj4+ICsKPj4+ICsJLyogRFBfU0VUX1BP
+V0VSIHJlZ2lzdGVyIGlzIG9ubHkgYXZhaWxhYmxlIG9uIERQQ0QgdjEuMSBhbmQgbGF0ZXIgKi8K
+Pj4+ICsJaWYgKHJldmlzaW9uIDwgRFBfRFBDRF9SRVZfMTEpCj4+PiArCQlyZXR1cm4gMDsKPj4+
+ICsKPj4+ICsJZXJyID0gZHJtX2RwX2RwY2RfcmVhZGIoYXV4LCBEUF9TRVRfUE9XRVIsICZ2YWx1
+ZSk7Cj4+PiArCWlmIChlcnIgPCAwKQo+Pj4gKwkJcmV0dXJuIGVycjsKPj4+ICsKPj4+ICsJdmFs
+dWUgJj0gfkRQX1NFVF9QT1dFUl9NQVNLOwo+Pj4gKwl2YWx1ZSB8PSBEUF9TRVRfUE9XRVJfRDA7
+Cj4+PiArCj4+PiArCWVyciA9IGRybV9kcF9kcGNkX3dyaXRlYihhdXgsIERQX1NFVF9QT1dFUiwg
+dmFsdWUpOwo+Pj4gKwlpZiAoZXJyIDwgMCkKPj4+ICsJCXJldHVybiBlcnI7Cj4+PiArCj4+PiAr
+CS8qCj4+PiArCSAqIEFjY29yZGluZyB0byB0aGUgRFAgMS4xIHNwZWNpZmljYXRpb24sIGEgIlNp
+bmsgRGV2aWNlIG11c3QgZXhpdCB0aGUKPj4+ICsJICogcG93ZXIgc2F2aW5nIHN0YXRlIHdpdGhp
+biAxIG1zIiAoU2VjdGlvbiAyLjUuMy4xLCBUYWJsZSA1LTUyLCAiU2luawo+Pj4gKwkgKiBDb250
+cm9sIEZpZWxkIiAocmVnaXN0ZXIgMHg2MDApLgo+Pj4gKwkgKi8KPj4+ICsJdXNsZWVwX3Jhbmdl
+KDEwMDAsIDIwMDApOwo+Pj4gKwo+Pj4gKwlyZXR1cm4gMDsKPj4+ICt9Cj4+PiArRVhQT1JUX1NZ
+TUJPTChkcm1fZHBfbGlua19wb3dlcl91cCk7Cj4+PiArCj4+PiArLyoqCj4+PiArICogZHJtX2Rw
+X2xpbmtfcG93ZXJfZG93bigpIC0gcG93ZXIgZG93biBhIERpc3BsYXlQb3J0IGxpbmsKPj4+ICsg
+KiBAYXV4OiBEaXNwbGF5UG9ydCBBVVggY2hhbm5lbAo+Pj4gKyAqIEByZXZpc2lvbjogRFBDRCBy
+ZXZpc2lvbiBzdXBwb3J0ZWQgb24gdGhlIGxpbmsKPj4+ICsgKgo+Pj4gKyAqIFJldHVybnMgMCBv
+biBzdWNjZXNzIG9yIGEgbmVnYXRpdmUgZXJyb3IgY29kZSBvbiBmYWlsdXJlLgo+Pj4gKyAqLwo+
+Pj4gK2ludCBkcm1fZHBfbGlua19wb3dlcl9kb3duKHN0cnVjdCBkcm1fZHBfYXV4ICphdXgsIHVu
+c2lnbmVkIGNoYXIgcmV2aXNpb24pCj4+PiArewo+Pj4gKwl1OCB2YWx1ZTsKPj4+ICsJaW50IGVy
+cjsKPj4+ICsKPj4+ICsJLyogRFBfU0VUX1BPV0VSIHJlZ2lzdGVyIGlzIG9ubHkgYXZhaWxhYmxl
+IG9uIERQQ0QgdjEuMSBhbmQgbGF0ZXIgKi8KPj4+ICsJaWYgKHJldmlzaW9uIDwgRFBfRFBDRF9S
+RVZfMTEpCj4+PiArCQlyZXR1cm4gMDsKPj4+ICsKPj4+ICsJZXJyID0gZHJtX2RwX2RwY2RfcmVh
+ZGIoYXV4LCBEUF9TRVRfUE9XRVIsICZ2YWx1ZSk7Cj4+PiArCWlmIChlcnIgPCAwKQo+Pj4gKwkJ
+cmV0dXJuIGVycjsKPj4+ICsKPj4+ICsJdmFsdWUgJj0gfkRQX1NFVF9QT1dFUl9NQVNLOwo+Pj4g
+Kwl2YWx1ZSB8PSBEUF9TRVRfUE9XRVJfRDM7Cj4+PiArCj4+PiArCWVyciA9IGRybV9kcF9kcGNk
+X3dyaXRlYihhdXgsIERQX1NFVF9QT1dFUiwgdmFsdWUpOwo+Pj4gKwlpZiAoZXJyIDwgMCkKPj4+
+ICsJCXJldHVybiBlcnI7Cj4+PiArCj4+PiArCXJldHVybiAwOwo+Pj4gK30KPj4+ICtFWFBPUlRf
+U1lNQk9MKGRybV9kcF9saW5rX3Bvd2VyX2Rvd24pOwo+Pj4gKwo+Pj4gc3RhdGljIGludCByZWFk
+X3BheWxvYWRfdXBkYXRlX3N0YXR1cyhzdHJ1Y3QgZHJtX2RwX2F1eCAqYXV4KQo+Pj4gewo+Pj4g
+CWludCByZXQ7Cj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwLmMgYi9k
+cml2ZXJzL2dwdS9kcm0vdGVncmEvZHAuYwo+Pj4gaW5kZXggMDhmYmQ4ZjE1MWExLi45OTBlNzQ0
+YjA5MjMgMTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHAuYwo+Pj4gKysr
+IGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwLmMKPj4+IEBAIC0yNTUsNzMgKzI1NSw2IEBAIGlu
+dCBkcm1fZHBfbGlua19wcm9iZShzdHJ1Y3QgZHJtX2RwX2F1eCAqYXV4LCBzdHJ1Y3QgZHJtX2Rw
+X2xpbmsgKmxpbmspCj4+PiAJcmV0dXJuIDA7Cj4+PiB9Cj4+Pgo+Pj4gLS8qKgo+Pj4gLSAqIGRy
+bV9kcF9saW5rX3Bvd2VyX3VwKCkgLSBwb3dlciB1cCBhIERpc3BsYXlQb3J0IGxpbmsKPj4+IC0g
+KiBAYXV4OiBEaXNwbGF5UG9ydCBBVVggY2hhbm5lbAo+Pj4gLSAqIEBsaW5rOiBwb2ludGVyIHRv
+IGEgc3RydWN0dXJlIGNvbnRhaW5pbmcgdGhlIGxpbmsgY29uZmlndXJhdGlvbgo+Pj4gLSAqCj4+
+PiAtICogUmV0dXJucyAwIG9uIHN1Y2Nlc3Mgb3IgYSBuZWdhdGl2ZSBlcnJvciBjb2RlIG9uIGZh
+aWx1cmUuCj4+PiAtICovCj4+PiAtaW50IGRybV9kcF9saW5rX3Bvd2VyX3VwKHN0cnVjdCBkcm1f
+ZHBfYXV4ICphdXgsIHN0cnVjdCBkcm1fZHBfbGluayAqbGluaykKPj4+IC17Cj4+PiAtCXU4IHZh
+bHVlOwo+Pj4gLQlpbnQgZXJyOwo+Pj4gLQo+Pj4gLQkvKiBEUF9TRVRfUE9XRVIgcmVnaXN0ZXIg
+aXMgb25seSBhdmFpbGFibGUgb24gRFBDRCB2MS4xIGFuZCBsYXRlciAqLwo+Pj4gLQlpZiAobGlu
+ay0+cmV2aXNpb24gPCAweDExKQo+Pj4gLQkJcmV0dXJuIDA7Cj4+PiAtCj4+PiAtCWVyciA9IGRy
+bV9kcF9kcGNkX3JlYWRiKGF1eCwgRFBfU0VUX1BPV0VSLCAmdmFsdWUpOwo+Pj4gLQlpZiAoZXJy
+IDwgMCkKPj4+IC0JCXJldHVybiBlcnI7Cj4+PiAtCj4+PiAtCXZhbHVlICY9IH5EUF9TRVRfUE9X
+RVJfTUFTSzsKPj4+IC0JdmFsdWUgfD0gRFBfU0VUX1BPV0VSX0QwOwo+Pj4gLQo+Pj4gLQllcnIg
+PSBkcm1fZHBfZHBjZF93cml0ZWIoYXV4LCBEUF9TRVRfUE9XRVIsIHZhbHVlKTsKPj4+IC0JaWYg
+KGVyciA8IDApCj4+PiAtCQlyZXR1cm4gZXJyOwo+Pj4gLQo+Pj4gLQkvKgo+Pj4gLQkgKiBBY2Nv
+cmRpbmcgdG8gdGhlIERQIDEuMSBzcGVjaWZpY2F0aW9uLCBhICJTaW5rIERldmljZSBtdXN0IGV4
+aXQgdGhlCj4+PiAtCSAqIHBvd2VyIHNhdmluZyBzdGF0ZSB3aXRoaW4gMSBtcyIgKFNlY3Rpb24g
+Mi41LjMuMSwgVGFibGUgNS01MiwgIlNpbmsKPj4+IC0JICogQ29udHJvbCBGaWVsZCIgKHJlZ2lz
+dGVyIDB4NjAwKS4KPj4+IC0JICovCj4+PiAtCXVzbGVlcF9yYW5nZSgxMDAwLCAyMDAwKTsKPj4+
+IC0KPj4+IC0JcmV0dXJuIDA7Cj4+PiAtfQo+Pj4gLQo+Pj4gLS8qKgo+Pj4gLSAqIGRybV9kcF9s
+aW5rX3Bvd2VyX2Rvd24oKSAtIHBvd2VyIGRvd24gYSBEaXNwbGF5UG9ydCBsaW5rCj4+PiAtICog
+QGF1eDogRGlzcGxheVBvcnQgQVVYIGNoYW5uZWwKPj4+IC0gKiBAbGluazogcG9pbnRlciB0byBh
+IHN0cnVjdHVyZSBjb250YWluaW5nIHRoZSBsaW5rIGNvbmZpZ3VyYXRpb24KPj4+IC0gKgo+Pj4g
+LSAqIFJldHVybnMgMCBvbiBzdWNjZXNzIG9yIGEgbmVnYXRpdmUgZXJyb3IgY29kZSBvbiBmYWls
+dXJlLgo+Pj4gLSAqLwo+Pj4gLWludCBkcm1fZHBfbGlua19wb3dlcl9kb3duKHN0cnVjdCBkcm1f
+ZHBfYXV4ICphdXgsIHN0cnVjdCBkcm1fZHBfbGluayAqbGluaykKPj4+IC17Cj4+PiAtCXU4IHZh
+bHVlOwo+Pj4gLQlpbnQgZXJyOwo+Pj4gLQo+Pj4gLQkvKiBEUF9TRVRfUE9XRVIgcmVnaXN0ZXIg
+aXMgb25seSBhdmFpbGFibGUgb24gRFBDRCB2MS4xIGFuZCBsYXRlciAqLwo+Pj4gLQlpZiAobGlu
+ay0+cmV2aXNpb24gPCAweDExKQo+Pj4gLQkJcmV0dXJuIDA7Cj4+PiAtCj4+PiAtCWVyciA9IGRy
+bV9kcF9kcGNkX3JlYWRiKGF1eCwgRFBfU0VUX1BPV0VSLCAmdmFsdWUpOwo+Pj4gLQlpZiAoZXJy
+IDwgMCkKPj4+IC0JCXJldHVybiBlcnI7Cj4+PiAtCj4+PiAtCXZhbHVlICY9IH5EUF9TRVRfUE9X
+RVJfTUFTSzsKPj4+IC0JdmFsdWUgfD0gRFBfU0VUX1BPV0VSX0QzOwo+Pj4gLQo+Pj4gLQllcnIg
+PSBkcm1fZHBfZHBjZF93cml0ZWIoYXV4LCBEUF9TRVRfUE9XRVIsIHZhbHVlKTsKPj4+IC0JaWYg
+KGVyciA8IDApCj4+PiAtCQlyZXR1cm4gZXJyOwo+Pj4gLQo+Pj4gLQlyZXR1cm4gMDsKPj4+IC19
+Cj4+PiAtCj4+PiAvKioKPj4+ICAgKiBkcm1fZHBfbGlua19jb25maWd1cmUoKSAtIGNvbmZpZ3Vy
+ZSBhIERpc3BsYXlQb3J0IGxpbmsKPj4+ICAgKiBAYXV4OiBEaXNwbGF5UG9ydCBBVVggY2hhbm5l
+bAo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcC5oIGIvZHJpdmVycy9n
+cHUvZHJtL3RlZ3JhL2RwLmgKPj4+IGluZGV4IGNiMTJlZDBjNTRlNy4uNjk1MDYwY2FmYWMwIDEw
+MDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwLmgKPj4+ICsrKyBiL2RyaXZl
+cnMvZ3B1L2RybS90ZWdyYS9kcC5oCj4+PiBAQCAtMTY0LDggKzE2NCw2IEBAIGludCBkcm1fZHBf
+bGlua19yZW1vdmVfcmF0ZShzdHJ1Y3QgZHJtX2RwX2xpbmsgKmxpbmssIHVuc2lnbmVkIGxvbmcg
+cmF0ZSk7Cj4+PiB2b2lkIGRybV9kcF9saW5rX3VwZGF0ZV9yYXRlcyhzdHJ1Y3QgZHJtX2RwX2xp
+bmsgKmxpbmspOwo+Pj4KPj4+IGludCBkcm1fZHBfbGlua19wcm9iZShzdHJ1Y3QgZHJtX2RwX2F1
+eCAqYXV4LCBzdHJ1Y3QgZHJtX2RwX2xpbmsgKmxpbmspOwo+Pj4gLWludCBkcm1fZHBfbGlua19w
+b3dlcl91cChzdHJ1Y3QgZHJtX2RwX2F1eCAqYXV4LCBzdHJ1Y3QgZHJtX2RwX2xpbmsgKmxpbmsp
+Owo+Pj4gLWludCBkcm1fZHBfbGlua19wb3dlcl9kb3duKHN0cnVjdCBkcm1fZHBfYXV4ICphdXgs
+IHN0cnVjdCBkcm1fZHBfbGluayAqbGluayk7Cj4+PiBpbnQgZHJtX2RwX2xpbmtfY29uZmlndXJl
+KHN0cnVjdCBkcm1fZHBfYXV4ICphdXgsIHN0cnVjdCBkcm1fZHBfbGluayAqbGluayk7Cj4+PiBp
+bnQgZHJtX2RwX2xpbmtfY2hvb3NlKHN0cnVjdCBkcm1fZHBfbGluayAqbGluaywKPj4+IAkJICAg
+ICAgIGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAo+Pj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3Iu
+Ywo+Pj4gaW5kZXggZjk4ZjcwZWRhOTA2Li4yMWYzZGZkY2M1YzkgMTAwNjQ0Cj4+PiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMKPj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
+YS9zb3IuYwo+Pj4gQEAgLTI2NjYsNyArMjY2Niw3IEBAIHN0YXRpYyB2b2lkIHRlZ3JhX3Nvcl9k
+cF9kaXNhYmxlKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKPj4+IAkgKiB0aGUgQVVYIHRy
+YW5zYWN0aW9ucyB3b3VsZCBqdXN0IGJlIHRpbWluZyBvdXQuCj4+PiAJICovCj4+PiAJaWYgKG91
+dHB1dC0+Y29ubmVjdG9yLnN0YXR1cyAhPSBjb25uZWN0b3Jfc3RhdHVzX2Rpc2Nvbm5lY3RlZCkg
+ewo+Pj4gLQkJZXJyID0gZHJtX2RwX2xpbmtfcG93ZXJfZG93bihzb3ItPmF1eCwgJnNvci0+bGlu
+ayk7Cj4+PiArCQllcnIgPSBkcm1fZHBfbGlua19wb3dlcl9kb3duKHNvci0+YXV4LCBzb3ItPmxp
+bmsucmV2aXNpb24pOwo+Pj4gCQlpZiAoZXJyIDwgMCkKPj4+IAkJCWRldl9lcnIoc29yLT5kZXYs
+ICJmYWlsZWQgdG8gcG93ZXIgZG93biBsaW5rOiAlZFxuIiwKPj4+IAkJCQllcnIpOwo+Pj4gQEAg
+LTI4ODIsNyArMjg4Miw3IEBAIHN0YXRpYyB2b2lkIHRlZ3JhX3Nvcl9kcF9lbmFibGUoc3RydWN0
+IGRybV9lbmNvZGVyICplbmNvZGVyKQo+Pj4gCWVsc2UKPj4+IAkJZGV2X2RiZyhzb3ItPmRldiwg
+ImxpbmsgdHJhaW5pbmcgc3VjY2VlZGVkXG4iKTsKPj4+Cj4+PiAtCWVyciA9IGRybV9kcF9saW5r
+X3Bvd2VyX3VwKHNvci0+YXV4LCAmc29yLT5saW5rKTsKPj4+ICsJZXJyID0gZHJtX2RwX2xpbmtf
+cG93ZXJfdXAoc29yLT5hdXgsIHNvci0+bGluay5yZXZpc2lvbik7Cj4+PiAJaWYgKGVyciA8IDAp
+Cj4+PiAJCWRldl9lcnIoc29yLT5kZXYsICJmYWlsZWQgdG8gcG93ZXIgdXAgRFAgbGluazogJWRc
+biIsIGVycik7Cj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2Rpc3BsYXkvZHJtX2Rw
+X2hlbHBlci5oIGIvaW5jbHVkZS9kcm0vZGlzcGxheS9kcm1fZHBfaGVscGVyLmgKPj4+IGluZGV4
+IDVhZTQyNDE5NTlmMi4uZjlkYWJjZTQ4NGE3IDEwMDY0NAo+Pj4gLS0tIGEvaW5jbHVkZS9kcm0v
+ZGlzcGxheS9kcm1fZHBfaGVscGVyLmgKPj4+ICsrKyBiL2luY2x1ZGUvZHJtL2Rpc3BsYXkvZHJt
+X2RwX2hlbHBlci5oCj4+PiBAQCAtNTY2LDYgKzU2Niw4IEBAIGludCBkcm1fZHBfZHBjZF9yZWFk
+X2xpbmtfc3RhdHVzKHN0cnVjdCBkcm1fZHBfYXV4ICphdXgsCj4+PiBpbnQgZHJtX2RwX2RwY2Rf
+cmVhZF9waHlfbGlua19zdGF0dXMoc3RydWN0IGRybV9kcF9hdXggKmF1eCwKPj4+IAkJCQkgICAg
+IGVudW0gZHJtX2RwX3BoeSBkcF9waHksCj4+PiAJCQkJICAgICB1OCBsaW5rX3N0YXR1c1tEUF9M
+SU5LX1NUQVRVU19TSVpFXSk7Cj4+PiAraW50IGRybV9kcF9saW5rX3Bvd2VyX3VwKHN0cnVjdCBk
+cm1fZHBfYXV4ICphdXgsIHVuc2lnbmVkIGNoYXIgcmV2aXNpb24pOwo+Pj4gK2ludCBkcm1fZHBf
+bGlua19wb3dlcl9kb3duKHN0cnVjdCBkcm1fZHBfYXV4ICphdXgsIHVuc2lnbmVkIGNoYXIgcmV2
+aXNpb24pOwo+Pj4KPj4+IGludCBkcm1fZHBfZHBjZF93cml0ZV9wYXlsb2FkKHN0cnVjdCBkcm1f
+ZHBfYXV4ICphdXgsCj4+PiAJCQkgICAgICBpbnQgdmNwaWQsIHU4IHN0YXJ0X3RpbWVfc2xvdCwg
+dTggdGltZV9zbG90X2NvdW50KTsKPj4+IC0tIAo+Pj4gMi40My4wCj4KPgo+LS0gCj5XaXRoIGJl
+c3Qgd2lzaGVzCj5EbWl0cnkKPgo+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KPkxpbnV4LXJvY2tjaGlwIG1haWxpbmcgbGlzdAo+TGludXgtcm9ja2NoaXBA
+bGlzdHMuaW5mcmFkZWFkLm9yZwo+aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9saW51eC1yb2NrY2hpcAo=
