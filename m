@@ -1,211 +1,580 @@
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2074.outbound.protection.outlook.com [40.107.93.74])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838C815DBB3;
-	Fri,  4 Apr 2025 19:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743795179; cv=fail; b=YTemXVob9SBvsAPMUFfTUPR9bbtwqg947r+y9JsvCjn9NwdIOUBFLkfTq1s/wpjcuzi0RMHGlxxFdz9cgYtgk/05J7jyPWxoDsVwNGcJo+lr4d/MkJN0QelGM32sfLZjSK67rTuZ5hOomjjSxVofV5+hkR+470eIUe2oQU+fqPU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743795179; c=relaxed/simple;
-	bh=89rwE6RirR/U2jFn5EyBPZExnKtfDCHl8nSSk8Hpoxg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hewFVELGRQpWgrJAl7qYjuoIov+yEJYm0Q8vbWIFYSS57VvRNsSVJRBbVak4B+835ngoIwAudng5ua4o/pRXlOopJMZdFd/DeRe6m7/RJyj6Sc4K2aLMpIi/Cu92VUwYOjZ4/HfWvmCaXcvWW9DQ1tRDpU0vvd+xvr49Wwwy+Ik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=PEX1XjLg; arc=fail smtp.client-ip=40.107.93.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1405C101FF;
+	Fri,  4 Apr 2025 22:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1743804970; cv=none; b=NQ7k+UZCseGesWAsLFgY04uiDbErhaItftfx+DtnBnGXT28OVE7xbdiyDJ2MSArPiz/VVD+UJqdiOd+BQKrheSO1RNPp6n07V3nz9K41pjOQMKqe/vy1kZAtiDBr+THH5s3zjBC8tL29C+MYEVXvWPmQwBRh98V0x9kgtl8WHgM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1743804970; c=relaxed/simple;
+	bh=6+GDiLxz/CpwnE2Zi4MceDfHJkrAk8SovScxQPqNYIw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LGrPdHOhhTiW2J6+05TqRaeeGNgeLoReXWLhT9bGb8zbGkzFzokbuUYQEGUyk7UrJ4THWXr6VVWkpJHOptVjXs5ymKlRh1F8RSFtnliQjvXBaTmEDtncAQCnYtndWIG/5havb3a3l6Yzbw8LJl2+JhSyqtnEslysoeDRpwKfIRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qk+QQOji; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="PEX1XjLg"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vqjvYxVS+Njrog3zqyIWFBb7z2j3S/EzHV8DmfSyblXDEI2AJtGYGXp/mMbltm2sVBEQSR1p0qjQrtDkLZyPLNMp4hURa1apQfEuCq/iHM6bidnu5yQy73ttc3m4pOkCPjz3GNEnimRdsSInAs1VE3snlWAbqpnTp3Uk1AN2XT40oh3bIs1wf++lB3yY1dhoRFVjv/BEzUkXNv00FLb1LjACwsYXYSr3xZz95TJml/jW1whYGB/jA1cDnRZoeR681tWGAu9Rpit2ZyUnMj+9awckJjZ9HOfTT4u5+R0rhPmBvvm1qtek+W+43aRTAbdEB3sub4bq80EzXObF6a1//Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VBIpxzuEihRvVL4aqAYRM3BHEmt5PcR3lr2r18rQQdo=;
- b=hyvW19dukDSt9DwFGEZyA2uTKasrnwBrrVxaZHUF0FDCynECeFcjffK7vyQa1lHXVbGYCXNQ7dzZiUQQ4mpJPr7MpL1r4J2ejPzd7sKjYbiq16dLzN4/oM3bgEojzcEwFnvnRbzOdBna4QHLjyQNVJ71etx+i+JRmXpr4ZU8a0mbyjNkiH9CtyUcNDiSrpbXgHKy000JzD5WVJrSYbvHfeNza/Ny8rmy05ceQ7GFTVjTOQMM1hO4XcR8xvqKYKrstibe2146ctPSnZhqyznh8ijY9IygCb64VZnBylpZSeyjmRy80FrxZbWsgUSTZMPZYFl1wqBGuU1auq84fJFxyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VBIpxzuEihRvVL4aqAYRM3BHEmt5PcR3lr2r18rQQdo=;
- b=PEX1XjLgSeN7AElLPnfsoGSw6FnMzTjBpKBtlG+XmuUL9ATNPeQRa7b0Aafde2ZSKa7XaXcwLswDrx4W1xbe/l/nQ4/C5I8YJ4DByA+t3FAq+ejyoqOTPcIy/yQpxD0ESuaVpnNbf8zd7g+GFolNAtNjOsjYWspqqnNmrQea6ni7KoYv2UAAUOy/uZHeRP0sevO+Kr7I0xCjxcwzA/zgHR7RrR7+t9y1odU1/3iB3LpzVFYS/P1mSW/hc8QtB229P9AVxaCV4NfmKOkkhuaZAcTO0ukxeUqxvaFCclQRSbmsiQ7clbcXCDzyNK8m5BhXCrJIiPz9XOK5nSN3xtN3Ug==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
- by PH7PR12MB5806.namprd12.prod.outlook.com (2603:10b6:510:1d2::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.44; Fri, 4 Apr
- 2025 19:32:50 +0000
-Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
- ([fe80::1660:3173:eef6:6cd9%6]) with mapi id 15.20.8534.043; Fri, 4 Apr 2025
- 19:32:50 +0000
-Message-ID: <3fdb3d2f-8588-4b4f-a2a8-4b526419b5d3@nvidia.com>
-Date: Fri, 4 Apr 2025 20:32:39 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.14 00/21] 6.14.1-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-References: <20250403151621.130541515@linuxfoundation.org>
-From: Jon Hunter <jonathanh@nvidia.com>
-Content-Language: en-US
-In-Reply-To: <20250403151621.130541515@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0524.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:2c5::9) To SJ2PR12MB8784.namprd12.prod.outlook.com
- (2603:10b6:a03:4d0::11)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qk+QQOji"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2777AC4CEDD;
+	Fri,  4 Apr 2025 22:16:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743804969;
+	bh=6+GDiLxz/CpwnE2Zi4MceDfHJkrAk8SovScxQPqNYIw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Qk+QQOjiVIGLbL2Gga3ybmYlDAISHMQ1pcVmCMdQd/+PKPzQcQ2i/2u4tmq9o36T2
+	 FSTIQ8BCOlgTy8a+kVLy6Mh5ilnVJnUa4IGSvZpkbaTB1nastKqeS2c+iVsfOFdb4Q
+	 3hsqI2Q/Hf3gBrGBbHItZoBi8ajDHkA9T1fgsSTC7Cv7sw5U4CnqQpGY1htDyL2ii8
+	 UGDbF83sZkK6c7quza/XqKK3gHs3H1pnaQ1jri8B5TT8kk2dqSzcu9+k0P1k9XhK6B
+	 YeWEsOFXdimU+ibx9QOSzelkSb4pv/vOU+4Ppr58FUDHLTdEbJt4Lo+C6Ms46ZWXFB
+	 ePtLL05jolYjQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Vidya Sagar <vidyas@nvidia.com>
+Cc: Frank Li <Frank.li@nxp.com>,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: PCI: Remove obsolete .txt docs
+Date: Fri,  4 Apr 2025 17:15:57 -0500
+Message-ID: <20250404221559.552201-1-robh@kernel.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|PH7PR12MB5806:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54cb63b2-fd87-4ef6-f21f-08dd73af7c88
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q3RIazJqNXM0a2QxL2JqQmovZUN2OUFSSWpKSVMxV0R0S0pXaU80aWhXWGgz?=
- =?utf-8?B?NnBscGlvay9RbTFyWUYyRjJSb3pnR0dLdnRQbkZkd0IrUERZNEF5eVdiQUVi?=
- =?utf-8?B?OFJ6bzIwbkdFMnJUWXZKYzhIeHp6RXROY3NOUFRCc2lXaCt5TURnWjh0Wk9t?=
- =?utf-8?B?eDlWWUhwSUhsSXFaVVk1U1lvOFU1RFFabGFYN3hpTTdQWC9RSUpDMVVmY2My?=
- =?utf-8?B?R2ZCYVltdUxWbXFKT2JZYzNqdU1iZVkwU1RCUXpTSnNvZ0JpSXg2bG5VL1N5?=
- =?utf-8?B?U21JUUtCb2g0WEI1aHM0WWt5UXhHUmIzT0ZjUmkxRG1MOGdUUWRCL1RuWVZ2?=
- =?utf-8?B?SjVaUEdlOFljeVpKTkFmaFMwODJReXQ4Yk9NdjRiRFlTVUl4eWY5aXZkOGlY?=
- =?utf-8?B?OWR2ZDQyRzFjRkR1aEo5VzZFWTBva3dvUFdsUkZ5RGNWdmdvYXRTRExTSXA3?=
- =?utf-8?B?UFR6NjQvaDJDbmRHQm03QVAzMTh5MlcvT3ZBOE83aS9mS01iS1phSDRJMHNj?=
- =?utf-8?B?ck5RZTFDUkZLamFPNlJ3d0ViRjRLVXZ0a2wvRGprOGlIa3o5UC90K0NuZnRP?=
- =?utf-8?B?SWp3TUhPMTJEdXJYdHU1SUl0M1lYQ1BRMWFYWDRjaXRObmdoaWtBVXNIdEpv?=
- =?utf-8?B?OHJnbTNKSzM3QjJ5R203OTVXRVE3Y2RwK1gvZFYyZ05TVnBjTTVZZmlmYkVi?=
- =?utf-8?B?SGhCVWhUdVFqcC9taUNRS0NIRnorSlZxbExhZlkvYS9BVEhhOFJhV1pUN0s5?=
- =?utf-8?B?VkZuSDg5YlhWZ045SThBLytDSDREWGg3M3RmRU9ic2d4NU1TMXYwSXFXQUtS?=
- =?utf-8?B?aXRDMlBVUTRYSEc5cWVNWU9GN1FsazA4UkZzNVNadnVnZ3ViVnloWWpQb0xB?=
- =?utf-8?B?enhlRFlLZ1ExdHN6cGM5WmVZK09BeVhtVDg3QzdLdGFIbHBZVEgwNnJxQ3U1?=
- =?utf-8?B?cHJ4WWN3bkEzVmQ5ZGVCMXhzUWQrMHgvZUNHdW1LaEhwemYzNmpUTVJGR0sy?=
- =?utf-8?B?b242eXVwZ0tMdDdyWUs2SGVxdCtvczFoWWtvcDgyL1lzNzJtT084L0VVTk0z?=
- =?utf-8?B?ZElMK1J6Q1lKUUxkRFkzcWhCbkRsZmhsNUo2RkJlUlRTNDF5N3VQZFRsTnFI?=
- =?utf-8?B?RVBUK0dsbk9ZL2dmb2hoRHNWYXZvN2lLWG42dng2QktTVU1HaFdEcUJXaTVQ?=
- =?utf-8?B?NHBQMzN0K3JIUmxFYkppc1pwQ1hPd3BWYTVwTk1LSVRzYzBFZFdDYUs0cFZZ?=
- =?utf-8?B?QnBFTng5NUs1MzNNVktiWDFBVlRuU3lDYVNFR0JwVVcyZWlTUjhqcEVWb1JC?=
- =?utf-8?B?MGcxcTJIUjJKaUFyVkczNWR5TU9wNktxK2s5NVl2SHBxNFN4NjIwL3hSU0I5?=
- =?utf-8?B?UHRjZTZPelVDR25zMTlET3VTeVZ3Y3p6YVhRQWlyVHhhaStlOUNoUHlDOU5J?=
- =?utf-8?B?L09qRmNZemJRTUlPYllOd2RGTkxRUXBtZ1BUQ2dJdFVOUlg3MEFQcldzWnlK?=
- =?utf-8?B?VnF3cDQ3VHJZd01hNzJ2bGJkK3phZ0g3TDBMZHBMOFZyMzU2a0FoZloySDQw?=
- =?utf-8?B?QVVVVTNWemtWdFpoSndRaklTV2pPZExNMmYzQ1FmQjlGSm81WU9sRVdsZ0cr?=
- =?utf-8?B?MXlvanpldHFEVUJEZzdNODNIckI5amRNRDgvRTdTWWV4MXVzMDQ3ejF5UWV1?=
- =?utf-8?B?UGRBTm1LMGY3MWJ0RmdzWGF0cVRpWFZGRUFzZVh5ODRIV2JNNFFmR3p4b0tT?=
- =?utf-8?B?L1B5ZDVQam93MXE1TWpBSFF2Rll3MVEvU2NYaVBOL2NuN1ppM2FjczdXbFpQ?=
- =?utf-8?B?T2xQUDBpbmpOeG96QWY2L1ZhUmsvU0xxT2RHYnRsaEJCZFAvQjZ4MGF3bVFn?=
- =?utf-8?Q?RksbRuHd+FBvC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eStJRy9uM05qNXA1V1FBQkJMTC9uRXRydzk1cHZNSmYwbFhub1hDWnBOQ3ZR?=
- =?utf-8?B?dXZIaGF6SHlab2g5a04xVGE4aHlWcjBhWHlBRG5wRUl2ZFczTVRtbDN4YXFO?=
- =?utf-8?B?QkJOUnFHb0RnRmVML0gvUFR0NGo5M2x6eHhVbGRUUi9QSC9yd0dQNkV3bnkw?=
- =?utf-8?B?SmRoNzZ5VGZhbjYwa1FVSVBUSzFYK3NFVGJ1a0NsUWZOcThiU1NBMHowUnN2?=
- =?utf-8?B?L0VJZXZkeHF3V1R4Q2F5NUJSblg3bGZ4dllHL1RWaS9JWVpTd3FrNTVVaFhB?=
- =?utf-8?B?Uk5zUmowUUJBeGN2WldKNjZIY0RrYmp3TVp4bjZ3YUF3Sk5LY25QYVV5di9w?=
- =?utf-8?B?enZmUEtRZGNldkV5bDZBSFg4UnA4d1Mwb0gzMTQrMVB6RStYYWd6cDFWc2gv?=
- =?utf-8?B?Qm10NW9ENDVZZ1N0QjF2bmJSTXdyVGVCVzR1VWtPdnVUaHlkNE5KY2lHRXN6?=
- =?utf-8?B?aTdVeXRWTzRqUXVFZWR5eG5sN0ZiWkN2VmZyZUcwdUNRVHBRVlI3TFd5Y25E?=
- =?utf-8?B?UUFQZEViS0YzRzZPd21NTUpKZXA4ek5idUJLMllWek9KM3hsNUZtNGE5RmEx?=
- =?utf-8?B?ZTFvb3EvaG1JV21ISlhxR1ZRNFZZU3RyZVdvVkVCVjYrV1dUNXFjY3YrdEUx?=
- =?utf-8?B?aGlSSS9jT3o1TXVLaHh2d2hSY0lyLzZyei9TeDBzemlkdldzWEhuanZMR0ls?=
- =?utf-8?B?K2lMOFh5SU9CWENOQWlkYkV6R2l2QnZtK1lTRmJyRmFNbmMxSkdDWG84SmNK?=
- =?utf-8?B?NDBjcFlOYkxVUlZrVnB4R0s1TlMrZC8vUjkzQ1dtR0RmaFpMRzFTYk4zcDdS?=
- =?utf-8?B?N2wvdXFITjV3ZVpRcThEVlJaZHNCM3VtcmlhdnhpSUlEeDJudndSYUZoaW1K?=
- =?utf-8?B?YjdoSytRZC93R0MwVG5VWEVsQ3ZhSERLS1NXTTlaSSsxTklrQ3ZlR0ZyWTJo?=
- =?utf-8?B?MmdIRzY2QUdHMnJWSkN3ajQyb0o3SHMzdVN5cWo3dWlOQ012UTlKcWExUm0v?=
- =?utf-8?B?NDVXUGN1ZC83R0MxRXRVZXVtbkFPdDdUcEoyMG5LZHJSRzBOTUhEaHAvN1k3?=
- =?utf-8?B?bzV0TDgraldmZWt6cjlndThPc2NUbWdtdlE3dE01dW9rM1VrZTh6Y3ArbTlB?=
- =?utf-8?B?Y2tUZmRDUmZNWHRjdHRmVmFQMGxPYWNCcmw2ZWdwZTlLd2gramNkZGdxOVJj?=
- =?utf-8?B?cXVPM1JXN2VDZWMxbDZHRFg0Y05VTjY5R3VZZXQ4eXFXbnp5eEx5NVM5Zkl1?=
- =?utf-8?B?T3VCVmxyUWtMOHpLZDdnUFQyYmZJTjJpTkpQbTJPQURZek5IUGI5eElwbWRS?=
- =?utf-8?B?V0pFTnR6S1RCTTZuSUpHZFhVcDZCSXNFcFNSTURpYkJ5TXNkTzd5eVdkTTF4?=
- =?utf-8?B?KzlLdXBQRXBUWWxrcmowQXRKckJDUkd4QW8wMXpsVzJjTTIwNWRrYmpIUGpC?=
- =?utf-8?B?elBvY0RWWjlsV01GekM4ZmVHaGRWYzEvcnlIWDNRR0w1OGdVZThGdk80V2Fy?=
- =?utf-8?B?S0k4RGlGUzk3emdKNTBBSm96SVNtNHZrR09venhxNFpzN0RTTlRvY1BzNk00?=
- =?utf-8?B?UW1yaDVhT1J2N2dsUTVyc2RvbyttazFzUTJ6TDBCbzN6cm1RbGtURDV3QXdC?=
- =?utf-8?B?MG4xUWhYY2hTRkZ0dUVHcGtndGhNa2NEUU9wbUQ5a1ljNDNLZ2l3TlRObXhG?=
- =?utf-8?B?d29Ra1FvTTB1akpMazJZd3IzaGp0ZlhWYUZxZGUxakZqLzZuVTBGczVXSVlS?=
- =?utf-8?B?cXh2TVJPdjBsam4wOHFZYkNZRHJzOEE4TnhidHVuYk4wUGg2R2FHbk1FZ1hI?=
- =?utf-8?B?cVJtalh5Q0VjRlo4VEJ5VmFYdkFydkxhSHFndlpHNGhRU1lXdzdKUThhcnhB?=
- =?utf-8?B?aWtYQlhKNmtRU2x5bjZURldISHlhblBBNTg4eVdTbWk3TzlHd3djQy9BSWhm?=
- =?utf-8?B?azJTUHRobDhEbXZiL2U3M0JrRGl3eUpIMkNhQy94N0xJVS8ySGtZcVUyT080?=
- =?utf-8?B?ZnhJSkpiUkUxaGNiL00zamFnOUd0MjJSMWpRT0J2SnBjQ0lreWhESzZUbjNl?=
- =?utf-8?B?aTBUT3VyMTdvY0picThJZ1g0VERNVzhCT1RoNUIzMHlIOWdRc2hSZVpPMGkx?=
- =?utf-8?B?eUtpRG9kbnNMaEZGdzZPUTRiZ0c1REt3a2IrcmVHSENPNHBLVmNydzlrQ3B0?=
- =?utf-8?Q?Fr3LYXwYHDYpPFe9p6odGfTqS5CUYbnDEebGc4dM5wCh?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54cb63b2-fd87-4ef6-f21f-08dd73af7c88
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Apr 2025 19:32:50.5239
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XYUyUjlXCyJdwL2k72BdCCTopcKpXHXnBpspPW/OKk8WTbICuZpv7a9hfyq0ULFNNMW4+lKvuLmhmY6gp9thrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5806
+Content-Transfer-Encoding: 8bit
 
+The content in these files has been moved to the schemas in dtschema.
+pci.txt is covered by pci-bus-common.yaml and pci-host-bridge.yaml.
+pci-iommu.txt is covered by pci-iommu.yaml. pci-msi.txt is covered in
+msi-map property in pci-host-bridge.yaml.
 
-On 03/04/2025 16:20, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.14.1 release.
-> There are 21 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat, 05 Apr 2025 15:16:11 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.14.1-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Cc: Frank Li <Frank.li@nxp.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/pci/nvidia,tegra194-pcie-ep.yaml |   2 +-
+ .../devicetree/bindings/pci/pci-iommu.txt     | 171 --------------
+ .../devicetree/bindings/pci/pci-msi.txt       | 220 ------------------
+ Documentation/devicetree/bindings/pci/pci.txt |  84 -------
+ 4 files changed, 1 insertion(+), 476 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pci/pci-iommu.txt
+ delete mode 100644 Documentation/devicetree/bindings/pci/pci-msi.txt
+ delete mode 100644 Documentation/devicetree/bindings/pci/pci.txt
 
-
-No new regressions for Tegra ...
-
-Test results for stable-v6.14:
-     10 builds:	10 pass, 0 fail
-     28 boots:	28 pass, 0 fail
-     116 tests:	115 pass, 1 fail
-
-Linux version:	6.14.1-rc1-g8dba5209f1d8
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                 tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                 tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                 tegra210-p2371-2180, tegra210-p3450-0000,
-                 tegra30-cardhu-a04
-
-Test failures:	tegra186-p2771-0000: pm-system-suspend.sh
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-There is a known issue for Tegra186 that should be fixed in mainline 
-now. I will let you know what commits we need to resolve this.
-
-Jon
-
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.yaml
+index a24fb8307d29..6d6052a2748f 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.yaml
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie-ep.yaml
+@@ -74,7 +74,7 @@ properties:
+ 
+   reset-gpios:
+     description: Must contain a phandle to a GPIO controller followed by GPIO
+-      that is being used as PERST input signal. Please refer to pci.txt.
++      that is being used as PERST input signal.
+ 
+   phys:
+     minItems: 1
+diff --git a/Documentation/devicetree/bindings/pci/pci-iommu.txt b/Documentation/devicetree/bindings/pci/pci-iommu.txt
+deleted file mode 100644
+index 0def586fdcdf..000000000000
+--- a/Documentation/devicetree/bindings/pci/pci-iommu.txt
++++ /dev/null
+@@ -1,171 +0,0 @@
+-This document describes the generic device tree binding for describing the
+-relationship between PCI(e) devices and IOMMU(s).
+-
+-Each PCI(e) device under a root complex is uniquely identified by its Requester
+-ID (AKA RID). A Requester ID is a triplet of a Bus number, Device number, and
+-Function number.
+-
+-For the purpose of this document, when treated as a numeric value, a RID is
+-formatted such that:
+-
+-* Bits [15:8] are the Bus number.
+-* Bits [7:3] are the Device number.
+-* Bits [2:0] are the Function number.
+-* Any other bits required for padding must be zero.
+-
+-IOMMUs may distinguish PCI devices through sideband data derived from the
+-Requester ID. While a given PCI device can only master through one IOMMU, a
+-root complex may split masters across a set of IOMMUs (e.g. with one IOMMU per
+-bus).
+-
+-The generic 'iommus' property is insufficient to describe this relationship,
+-and a mechanism is required to map from a PCI device to its IOMMU and sideband
+-data.
+-
+-For generic IOMMU bindings, see
+-Documentation/devicetree/bindings/iommu/iommu.txt.
+-
+-
+-PCI root complex
+-================
+-
+-Optional properties
+--------------------
+-
+-- iommu-map: Maps a Requester ID to an IOMMU and associated IOMMU specifier
+-  data.
+-
+-  The property is an arbitrary number of tuples of
+-  (rid-base,iommu,iommu-base,length).
+-
+-  Any RID r in the interval [rid-base, rid-base + length) is associated with
+-  the listed IOMMU, with the IOMMU specifier (r - rid-base + iommu-base).
+-
+-- iommu-map-mask: A mask to be applied to each Requester ID prior to being
+-  mapped to an IOMMU specifier per the iommu-map property.
+-
+-
+-Example (1)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	iommu: iommu@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to the IOMMU is the RID,
+-		 * identity-mapped.
+-		 */
+-		iommu-map = <0x0 &iommu 0x0 0x10000>;
+-	};
+-};
+-
+-
+-Example (2)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	iommu: iommu@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to the IOMMU is the RID with the
+-		 * function bits masked out.
+-		 */
+-		iommu-map = <0x0 &iommu 0x0 0x10000>;
+-		iommu-map-mask = <0xfff8>;
+-	};
+-};
+-
+-
+-Example (3)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	iommu: iommu@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to the IOMMU is the RID,
+-		 * but the high bits of the bus number are flipped.
+-		 */
+-		iommu-map = <0x0000 &iommu 0x8000 0x8000>,
+-			    <0x8000 &iommu 0x0000 0x8000>;
+-	};
+-};
+-
+-
+-Example (4)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	iommu_a: iommu@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	iommu_b: iommu@b {
+-		reg = <0xb 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	iommu_c: iommu@c {
+-		reg = <0xc 0x1>;
+-		compatible = "vendor,some-iommu";
+-		#iommu-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * Devices with bus number 0-127 are mastered via IOMMU
+-		 * a, with sideband data being RID[14:0].
+-		 * Devices with bus number 128-255 are mastered via
+-		 * IOMMU b, with sideband data being RID[14:0].
+-		 * No devices master via IOMMU c.
+-		 */
+-		iommu-map = <0x0000 &iommu_a 0x0000 0x8000>,
+-			    <0x8000 &iommu_b 0x0000 0x8000>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/pci/pci-msi.txt b/Documentation/devicetree/bindings/pci/pci-msi.txt
+deleted file mode 100644
+index b73d839657b6..000000000000
+--- a/Documentation/devicetree/bindings/pci/pci-msi.txt
++++ /dev/null
+@@ -1,220 +0,0 @@
+-This document describes the generic device tree binding for describing the
+-relationship between PCI devices and MSI controllers.
+-
+-Each PCI device under a root complex is uniquely identified by its Requester ID
+-(AKA RID). A Requester ID is a triplet of a Bus number, Device number, and
+-Function number.
+-
+-For the purpose of this document, when treated as a numeric value, a RID is
+-formatted such that:
+-
+-* Bits [15:8] are the Bus number.
+-* Bits [7:3] are the Device number.
+-* Bits [2:0] are the Function number.
+-* Any other bits required for padding must be zero.
+-
+-MSIs may be distinguished in part through the use of sideband data accompanying
+-writes. In the case of PCI devices, this sideband data may be derived from the
+-Requester ID. A mechanism is required to associate a device with both the MSI
+-controllers it can address, and the sideband data that will be associated with
+-its writes to those controllers.
+-
+-For generic MSI bindings, see
+-Documentation/devicetree/bindings/interrupt-controller/msi.txt.
+-
+-
+-PCI root complex
+-================
+-
+-Optional properties
+--------------------
+-
+-- msi-map: Maps a Requester ID to an MSI controller and associated
+-  msi-specifier data. The property is an arbitrary number of tuples of
+-  (rid-base,msi-controller,msi-base,length), where:
+-
+-  * rid-base is a single cell describing the first RID matched by the entry.
+-
+-  * msi-controller is a single phandle to an MSI controller
+-
+-  * msi-base is an msi-specifier describing the msi-specifier produced for the
+-    first RID matched by the entry.
+-
+-  * length is a single cell describing how many consecutive RIDs are matched
+-    following the rid-base.
+-
+-  Any RID r in the interval [rid-base, rid-base + length) is associated with
+-  the listed msi-controller, with the msi-specifier (r - rid-base + msi-base).
+-
+-- msi-map-mask: A mask to be applied to each Requester ID prior to being mapped
+-  to an msi-specifier per the msi-map property.
+-
+-- msi-parent: Describes the MSI parent of the root complex itself. Where
+-  the root complex and MSI controller do not pass sideband data with MSI
+-  writes, this property may be used to describe the MSI controller(s)
+-  used by PCI devices under the root complex, if defined as such in the
+-  binding for the root complex.
+-
+-
+-Example (1)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	msi: msi-controller@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-controller";
+-		msi-controller;
+-		#msi-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to the MSI controller is
+-		 * the RID, identity-mapped.
+-		 */
+-		msi-map = <0x0 &msi_a 0x0 0x10000>,
+-	};
+-};
+-
+-
+-Example (2)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	msi: msi-controller@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-controller";
+-		msi-controller;
+-		#msi-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to the MSI controller is
+-		 * the RID, masked to only the device and function bits.
+-		 */
+-		msi-map = <0x0 &msi_a 0x0 0x100>,
+-		msi-map-mask = <0xff>
+-	};
+-};
+-
+-
+-Example (3)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	msi: msi-controller@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-controller";
+-		msi-controller;
+-		#msi-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to the MSI controller is
+-		 * the RID, but the high bit of the bus number is
+-		 * ignored.
+-		 */
+-		msi-map = <0x0000 &msi 0x0000 0x8000>,
+-			  <0x8000 &msi 0x0000 0x8000>;
+-	};
+-};
+-
+-
+-Example (4)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	msi: msi-controller@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-controller";
+-		msi-controller;
+-		#msi-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to the MSI controller is
+-		 * the RID, but the high bit of the bus number is
+-		 * negated.
+-		 */
+-		msi-map = <0x0000 &msi 0x8000 0x8000>,
+-			  <0x8000 &msi 0x0000 0x8000>;
+-	};
+-};
+-
+-
+-Example (5)
+-===========
+-
+-/ {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-
+-	msi_a: msi-controller@a {
+-		reg = <0xa 0x1>;
+-		compatible = "vendor,some-controller";
+-		msi-controller;
+-		#msi-cells = <1>;
+-	};
+-
+-	msi_b: msi-controller@b {
+-		reg = <0xb 0x1>;
+-		compatible = "vendor,some-controller";
+-		msi-controller;
+-		#msi-cells = <1>;
+-	};
+-
+-	msi_c: msi-controller@c {
+-		reg = <0xc 0x1>;
+-		compatible = "vendor,some-controller";
+-		msi-controller;
+-		#msi-cells = <1>;
+-	};
+-
+-	pci: pci@f {
+-		reg = <0xf 0x1>;
+-		compatible = "vendor,pcie-root-complex";
+-		device_type = "pci";
+-
+-		/*
+-		 * The sideband data provided to MSI controller a is the
+-		 * RID, but the high bit of the bus number is negated.
+-		 * The sideband data provided to MSI controller b is the
+-		 * RID, identity-mapped.
+-		 * MSI controller c is not addressable.
+-		 */
+-		msi-map = <0x0000 &msi_a 0x8000 0x08000>,
+-			  <0x8000 &msi_a 0x0000 0x08000>,
+-			  <0x0000 &msi_b 0x0000 0x10000>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/pci/pci.txt b/Documentation/devicetree/bindings/pci/pci.txt
+deleted file mode 100644
+index 6a8f2874a24d..000000000000
+--- a/Documentation/devicetree/bindings/pci/pci.txt
++++ /dev/null
+@@ -1,84 +0,0 @@
+-PCI bus bridges have standardized Device Tree bindings:
+-
+-PCI Bus Binding to: IEEE Std 1275-1994
+-https://www.devicetree.org/open-firmware/bindings/pci/pci2_1.pdf
+-
+-And for the interrupt mapping part:
+-
+-Open Firmware Recommended Practice: Interrupt Mapping
+-https://www.devicetree.org/open-firmware/practice/imap/imap0_9d.pdf
+-
+-Additionally to the properties specified in the above standards a host bridge
+-driver implementation may support the following properties:
+-
+-- linux,pci-domain:
+-   If present this property assigns a fixed PCI domain number to a host bridge,
+-   otherwise an unstable (across boots) unique number will be assigned.
+-   It is required to either not set this property at all or set it for all
+-   host bridges in the system, otherwise potentially conflicting domain numbers
+-   may be assigned to root buses behind different host bridges.  The domain
+-   number for each host bridge in the system must be unique.
+-- max-link-speed:
+-   If present this property specifies PCI gen for link capability.  Host
+-   drivers could add this as a strategy to avoid unnecessary operation for
+-   unsupported link speed, for instance, trying to do training for
+-   unsupported link speed, etc.  Must be '4' for gen4, '3' for gen3, '2'
+-   for gen2, and '1' for gen1. Any other values are invalid.
+-- reset-gpios:
+-   If present this property specifies PERST# GPIO. Host drivers can parse the
+-   GPIO and apply fundamental reset to endpoints.
+-- supports-clkreq:
+-   If present this property specifies that CLKREQ signal routing exists from
+-   root port to downstream device and host bridge drivers can do programming
+-   which depends on CLKREQ signal existence. For example, programming root port
+-   not to advertise ASPM L1 Sub-States support if there is no CLKREQ signal.
+-
+-PCI-PCI Bridge properties
+--------------------------
+-
+-PCIe root ports and switch ports may be described explicitly in the device
+-tree, as children of the host bridge node. Even though those devices are
+-discoverable by probing, it might be necessary to describe properties that
+-aren't provided by standard PCIe capabilities.
+-
+-Required properties:
+-
+-- reg:
+-   Identifies the PCI-PCI bridge. As defined in the IEEE Std 1275-1994
+-   document, it is a five-cell address encoded as (phys.hi phys.mid
+-   phys.lo size.hi size.lo). phys.hi should contain the device's BDF as
+-   0b00000000 bbbbbbbb dddddfff 00000000. The other cells should be zero.
+-
+-   The bus number is defined by firmware, through the standard bridge
+-   configuration mechanism. If this port is a switch port, then firmware
+-   allocates the bus number and writes it into the Secondary Bus Number
+-   register of the bridge directly above this port. Otherwise, the bus
+-   number of a root port is the first number in the bus-range property,
+-   defaulting to zero.
+-
+-   If firmware leaves the ARI Forwarding Enable bit set in the bridge
+-   above this port, then phys.hi contains the 8-bit function number as
+-   0b00000000 bbbbbbbb ffffffff 00000000. Note that the PCIe specification
+-   recommends that firmware only leaves ARI enabled when it knows that the
+-   OS is ARI-aware.
+-
+-Optional properties:
+-
+-- external-facing:
+-   When present, the port is external-facing. All bridges and endpoints
+-   downstream of this port are external to the machine. The OS can, for
+-   example, use this information to identify devices that cannot be
+-   trusted with relaxed DMA protection, as users could easily attach
+-   malicious devices to this port.
+-
+-Example:
+-
+-pcie@10000000 {
+-	compatible = "pci-host-ecam-generic";
+-	...
+-	pcie@0008 {
+-		/* Root port 00:01.0 is external-facing */
+-		reg = <0x00000800 0 0 0 0>;
+-		external-facing;
+-	};
+-};
 -- 
-nvpublic
+2.47.2
 
