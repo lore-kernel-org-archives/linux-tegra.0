@@ -1,131 +1,98 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE101193062
-	for <linux-tegra@vger.kernel.org>; Fri,  4 Apr 2025 11:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3C11C84DC;
+	Fri,  4 Apr 2025 12:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743765432; cv=none; b=VL3cJ9EU4Nu3KjkJz97pl642+LE7zL5Y0D5NtBBtr9yrVG6nlt/XsrWk5VqJZV9lTcKZ/Ss67MUAdnISItpOOA1ro8+xveGnVxYevuRGT6Ls8cq1azZIJTfE0zV8DAaORnvQ5zDJ3aYLQr4XlLftMPz6F67+Er41n8W3QTl1nBw=
+	t=1743770274; cv=none; b=sym0Tpxojcm6Rs0m/q4/Nte+S3fJ7cYOOXizxCJtbQvt6PgF5cJ3CgWshTXJdMeHTrlwDX4J+5u5p08+cfF78UX1UtZskSzPJic7z5LrPl7+/TyvCdxe2uhX9WFp+WYAAXF4jzvoR9uN9XhhEvbTnXccqxgUm/0lVIApidyyiG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743765432; c=relaxed/simple;
-	bh=JzgjzKapw5ruGykD9dozmhYg/WR1vmM3CkupC5JaPY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZRSRrOyvPihlr4T1UJN/oy0Uwyyliqs3hs2cAlv73qy7RFGVzWkmpujgtRKGZYJwOPeO9gKYS8rY19uDHP8jR9oBNYLvPZ+m7NLa2ixc6su58j6Ifzofsa+zIhyxW58hl4YIF9gfSoUsuQQgLFU8hnOv1lF7TkZFqispMhyM1Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q6/HPPZN; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1743770274; c=relaxed/simple;
+	bh=VvmsBy/mapPiKfdXXiu1j2lKuHaHgjbFqLZsrREc/14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/yiZrvCOfMjZWw8yYxwPckSerx0z//aKjV9LhfQU6Ggfai7zw8PqJ0BXL0UHElAnc1Cx9m1qWtBqlDXD98zvgR5IlFA2UL0Wl+HroNThUeu/0+fOYLGJssMBFXotJK4aYS2AhrZfObEHD71838+lvC5bvlwn6/XDeJ4TbbAVBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1NwqwB2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q6/HPPZN"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3996683dd7bso178035f8f.3
-        for <linux-tegra@vger.kernel.org>; Fri, 04 Apr 2025 04:17:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1743765429; x=1744370229; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OpV18robQpM1aQBorpHsla5rBJ39P6gOdClL/3spUBc=;
-        b=q6/HPPZNjAcEQWHsFq5kbmBoKoq7go33x/KOXX2TXqfEyBdHWtwRjNlzI3fE9L522W
-         XUeQdjXQVU3XGQ96+ANEvM7X6h1EtNEjP7n3+4zoSQKZ9i1W8VuRn2Ijak0eMjZVpeC6
-         cnb5nG6c3EBqI0i4tLGqkyOTgKyeK6yNTR+3czbMX+5z6PCF3YL7N+9HZM+wVuMWYPjo
-         5B6yd05G1YVzc7F/U0+i3yGPCO96r2QGQuHddm0LI2NRLD8kvsJrnv57xVh4X3sGFmDg
-         Ej86WTTMm+ad1wxnrTZodJ5MioymUcfM4C6gYOS5BrxNFZtGaiBRh1zzqpUZ8kMQeddv
-         ZdSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743765429; x=1744370229;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OpV18robQpM1aQBorpHsla5rBJ39P6gOdClL/3spUBc=;
-        b=MsCwrimuDAOj0KxUvw/sNjTgMP7FxphpQr/y7WfKkX7akWVJePjmvqOpBWjd7rXONc
-         h9XTlIoPXE2F+yKlnAAnFMpYroUAs5MIWxGuxSCqlIp3YOweF21c0e713UXx243e1aK8
-         5BORRa9GqG7ffM1jMK0BLx+orNkPo6OMg34NYM+Rxn2Ur0xXKi4LFKFkNhWs/AWsaMd0
-         EVxT9d57PxObPDT91kPwgk3Rg3lprM7IjA2LFrGASldQb9Iw3NqB1SyBmaz8zCPBOBOu
-         ytRrv9GfzGOFERUIgkstjTA8+sl3RI6LOCRv5b9EG6nE5KMaVhTnljvozYA0xE+vrBz3
-         maaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVpnUVNwF5VQcBNLOxUE00pWhHASy7ekendpsoVPF4B0AQoBtcwU17B9zYw0WKMOcXpZqqjPKS0OxmBdg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvyohKal6K+Tre/xzF2SVb8mmk0wnIgQLK2gkbqbqJjtkYf07A
-	aXrCuN0rBRlo11TWTMsn98EKkxjngSQ4M+R1rctyD6wyGDVG7dGjwWDfHT4km2Q=
-X-Gm-Gg: ASbGncs2zdw3Dw1N7U2U4FT8Hj3UD9pny57a3H+xlk/Pc/yZFYtoyRa8GNR+PyaJz98
-	7U6qEDyzOeR866uktf+zlZA/q4lE9535q8u5b4kFbMOh55B1OOOTNZMBoqUd5oqUU/IiQHhe7w7
-	Y5r9F+tfbQGPbZB23rI+RC7TD/FojjROcUAgL7TMqbICTDC/o+zge2LiYk6D9vEaO1p6K7Bqwtz
-	dCuJX0KhHlbbs8nabIwB8RPAC+ov7bmwOFMORf8M3jZobPfBvVOF68J1wqbR3yEuZ76lkV+uZoZ
-	QqQ0kaylqCcWMoogwXcee0AbeuELgXvGSCXiRCtwxocylbl2NIBfEA==
-X-Google-Smtp-Source: AGHT+IGXTrB28QDGBIjr1yPNyJxSbkOVOn21EqPmAGDTOL7vnSPAbrdSAJF9mdzI+7xxHc407ChNMg==
-X-Received: by 2002:a05:6000:2586:b0:39c:16a0:feea with SMTP id ffacd0b85a97d-39cba93789dmr827869f8f.11.1743765429146;
-        Fri, 04 Apr 2025 04:17:09 -0700 (PDT)
-Received: from shite.. ([178.197.198.86])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39c30226cf6sm4044377f8f.87.2025.04.04.04.17.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Apr 2025 04:17:08 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] memory: tegra: Do not enable by default during compile testing
-Date: Fri,  4 Apr 2025 13:17:03 +0200
-Message-ID: <20250404111703.235455-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250404111703.235455-1-krzysztof.kozlowski@linaro.org>
-References: <20250404111703.235455-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1NwqwB2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 923F1C4CEDD;
+	Fri,  4 Apr 2025 12:37:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743770274;
+	bh=VvmsBy/mapPiKfdXXiu1j2lKuHaHgjbFqLZsrREc/14=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t1NwqwB24nos3tDQ7j5m3JifuV9ILytu8D46XEYOG4J/KP/L+RAFCTSQm1KXrifu4
+	 4LI68DGxAZM5poiLYqZ4XI4D+N02CFHr5Invx5bcubxogk0wyHIE1zzCBS6x0CrAoB
+	 IOTz+7LUNZIwfw72m1nhuhPP1UQG3wwDGs8TFceph+mz6/z+gdXH2PGNQRxQVw36ar
+	 ScmsFUrhWkoso/zeBROuS18/0UFOzR2WBQvdyYObdon3XukPf/BiZWotYRevkAuph7
+	 A8Kz7F/4axvslbMjfBm9ZNOj4XQjFx7C5qLihsd/EQ3/qUpfKnL4B4oWRGtYKGq3VR
+	 K04VMlZhpxbZg==
+Date: Fri, 4 Apr 2025 14:37:48 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc: iommu@lists.linux.dev, David Woodhouse <dwmw2@infradead.org>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Joerg Roedel <joro@8bytes.org>, 
+	Kevin Tian <kevin.tian@intel.com>, Lu Baolu <baolu.lu@linux.intel.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Matthew Rosato <mjrosato@linux.ibm.com>, 
+	Niklas Schnelle <schnelle@linux.ibm.com>, Rob Clark <robdclark@gmail.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Tomasz Jeznach <tjeznach@rivosinc.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Will Deacon <will@kernel.org>, Yong Wu <yong.wu@mediatek.com>, virtualization@lists.linux.dev, 
+	linux-arm-msm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, pierrick.bouvier@linaro.org, Klaus Jensen <k.jensen@samsung.com>
+Subject: Re: RFC iommutests_: Testing software for everything IOMMU
+Message-ID: <qk32ie2b663it7tjpdqfjecgrlamtuycyxulb5m2elblymzyqy@jcvjiqwgsmww>
+References: <5zoh5r6eovbpijic22htkqik6mvyfbma5w7kjzcpz7kgbjufd2@yw6ymwy2a54s>
+ <20250401103519.GC2424925@myrica>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250401103519.GC2424925@myrica>
 
-Enabling the compile test should not cause automatic enabling of all
-drivers.
+On Tue, Apr 01, 2025 at 11:35:19AM +0100, Jean-Philippe Brucker wrote:
+> On Fri, Mar 28, 2025 at 10:11:13AM +0100, Joel Granados wrote:
+> > Custom qemu device: pci-ats-testdev
+> > -------------------------------------
+> > To support IOMMU testing under qemu, the pci-ats-testdev [10]
+> > (different from pci-testdev [11]) was used to emulate DMA transactions.
+> > It is a full fledged pci device capable of executing emulated DMA
+> > accesses. It was originally intended to test Linux kernel interactions
+> > with devices that had a working Address Translation Cache (ATC) but can
+> > become a platform capable of testing anything PCI/IOMMU related if
+> > needed.
+> 
+> Yes please!  Maybe "pcie-testdev" rather than "pci-ats-testdev"?  There
+Definitely. If it is a more general pcie test framework, we need to
+change the name to something like that; agreed.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/memory/tegra/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> are other PCIe features that are poorly tested at the moment, for example
+> PASID and PRI. The programming model of devices that actually implement
+Actually, PRI was what we used it for. I have this as one of the
+potential next steps for iommutests.
 
-diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
-index 3fe83d7c2bf8..fc5a27791826 100644
---- a/drivers/memory/tegra/Kconfig
-+++ b/drivers/memory/tegra/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config TEGRA_MC
- 	bool "NVIDIA Tegra Memory Controller support"
--	default y
-+	default ARCH_TEGRA
- 	depends on ARCH_TEGRA || (COMPILE_TEST && COMMON_CLK)
- 	select INTERCONNECT
- 	help
-@@ -12,7 +12,7 @@ if TEGRA_MC
- 
- config TEGRA20_EMC
- 	tristate "NVIDIA Tegra20 External Memory Controller driver"
--	default y
-+	default ARCH_TEGRA_2x_SOC
- 	depends on ARCH_TEGRA_2x_SOC || COMPILE_TEST
- 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	select PM_DEVFREQ
-@@ -25,7 +25,7 @@ config TEGRA20_EMC
- 
- config TEGRA30_EMC
- 	tristate "NVIDIA Tegra30 External Memory Controller driver"
--	default y
-+	default ARCH_TEGRA_3x_SOC
- 	depends on ARCH_TEGRA_3x_SOC || COMPILE_TEST
- 	select PM_OPP
- 	select DDR
-@@ -37,7 +37,7 @@ config TEGRA30_EMC
- 
- config TEGRA124_EMC
- 	tristate "NVIDIA Tegra124 External Memory Controller driver"
--	default y
-+	default ARCH_TEGRA_124_SOC
- 	depends on ARCH_TEGRA_124_SOC || COMPILE_TEST
- 	select TEGRA124_CLK_EMC if ARCH_TEGRA
- 	select PM_OPP
+> those can get too complex so we need something simpler to precisely stress
+> the IOMMU driver infrastructure. Driver unit-tests alone aren't good
+> enough for exercising TLB invalidation (DMA after removing a mapping must
+> crash), tricky cleanup paths (eg. killing a process bound to a device
+> that's issuing page requests), runtime PM, MSIs etc. I'm guessing testing
+Totally agree. PRI is tricky to test indeed.
+
+> newer/future features like TDISP would also benefit from a simple device.
+> 
+> Some time back I needed a device like that to reproduce some tricky races
+> but never got round to implementing extra PCIe features. Although this one
+> [1] is based on virtio any programming interface should work as long as it
+> can instruct the device to send precise DMA transactions, ideally many in
+> parallel.
+And it can be up-streamed to QEMU if it ends up being used for linux
+kernel testing.
+
+Best
+
 -- 
-2.45.2
 
+Joel Granados
