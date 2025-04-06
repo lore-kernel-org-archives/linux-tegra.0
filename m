@@ -1,164 +1,137 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B720615746F;
-	Sat,  5 Apr 2025 17:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D9B610D;
+	Sun,  6 Apr 2025 00:48:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743873062; cv=none; b=CxbZt9f/JEQvNEkVEiCqMX4Xdyc4KVtd8rMVUkf5ajMwQAIabvulD4l7SG222AcCvVlSa2P2epjuD8zIekYjYo44uiojerrtQ2fYhfvQAXsXluWWN7+7Gy8Or1LuDnWGiOHrHCvNHjkGOiDkrn47BLPtzTm3VojIELZhPn5hQtk=
+	t=1743900502; cv=none; b=nJr9OVKUHRTJ2CTSKMHF8CIT8hKunF/urehXfL/Ivx8OrMJ9HgiD1q4QOD68/5G/Mu7y2tnWhP8h92mQV3p4LgAhT/JDMuQl0W2GE2JDUnNVrnzvfDpuF77AG4166RQNGv+Jrj87N8uIt7EID0l65cQ67idoa8dtqspCKvLhWuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743873062; c=relaxed/simple;
-	bh=JqX86buw9HHooGIvsI0QsPGGPblozuLApWe0OsA9GRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RhymAysD8pj9oYmuIQaXXsWbLddWxHRzs1YsBCF5nGQu4TV6n6H6W6kZaAALnNrGJBAGCHdbCm9lrxk3XHT2wBms6Vv2RYd3ZFTqqQXPZNS0+ekuqqfi2dAiiK/ULHXL/QHlicUoXTm4vJu2g1Q1gEsVSQUbVQhvQiOOOdIYKKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=aXrl7SbA; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+	s=arc-20240116; t=1743900502; c=relaxed/simple;
+	bh=YtY8yKPGTxpv3/8LUl6pWN1bg8RbIw7n5Q9ES0ZaE5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nM2C4riUlK79SUj+bXwNozsdtM0a31EaJtc5zeTOFeV6r4LRtFSS/4jFBQO2Kq8XvNDk9UhyN4ITZGO6Hj/kjEJqiVxR/MkysFaAE/YoDZIuPnJ11ISCsHkmCY4NurGVT731r1CO0PuPaBhR29H/UgiMRe9Ui5kCADWlo6O8+Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MoB+DQ7V; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="aXrl7SbA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=A6OD+nPI3zJQy3gtWa6Pq3ez60axHp3q2+HfcZNxkxo=;
-	b=aXrl7SbA8gu2qJU8/UG8FP0vdx8c2FVx8N+Dw2v+4MDUtc9QhVXMQyO0XpzIhT
-	eLjHZ1+j9YneUEr3nCoMQNAL/liaRgquVXb85DXG/4Q0iYc9UONF946Qv3X4rS5j
-	sODPumDfAO6Ky02VzIidiAMn2ObBw554pftwOVMNIEoVI=
-Received: from [192.168.71.89] (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3PlsIZPFnVxK1CA--.4162S2;
-	Sun, 06 Apr 2025 01:10:33 +0800 (CST)
-Message-ID: <ce8bf6d5-9783-4bb5-9aa3-1c697978084f@163.com>
-Date: Sun, 6 Apr 2025 01:10:32 +0800
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MoB+DQ7V"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743900500; x=1775436500;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YtY8yKPGTxpv3/8LUl6pWN1bg8RbIw7n5Q9ES0ZaE5k=;
+  b=MoB+DQ7VfmmX9oT1KSAaNP575sZnIS3UEFHPSvyDsz3Pv9JINc10lp3/
+   sCesGt9VvCBZBiq0dEpLQtoWWD5Q8oegMuSZUui+4wYJl82BwV89YWt/u
+   RYyU6v2uYLXEkbpdxrC3ddTiRmflY+dBorlZHOrHBGxVqLJtRsAQwyJBQ
+   Xl38fWFKxysAYrEJd1AiduwZS3ZWtW4OQgKdASXjpQGbhJm8HTTCnijHv
+   RMCBwdYV6oyvi7km2KooJk/NMfLQZ50BcddA9G2i/Gkq2Z56SPAVIY3uf
+   ZD4/NupCtODn8p/+akhT/lhsG2ZgwJ1YwLNzRCVMqWu71m6zQOHVmRwBF
+   A==;
+X-CSE-ConnectionGUID: bFzB9honSVKcTwnxunihAQ==
+X-CSE-MsgGUID: LF5qSLEwQka3LOjRrbZScw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11395"; a="45199358"
+X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
+   d="scan'208";a="45199358"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2025 17:48:19 -0700
+X-CSE-ConnectionGUID: vtCmNRHnSni3xq2chpYLJQ==
+X-CSE-MsgGUID: BQdb/O19SvWkgWn0wVHYIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
+   d="scan'208";a="127499624"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 05 Apr 2025 17:48:16 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u1EBJ-0002NH-1g;
+	Sun, 06 Apr 2025 00:48:13 +0000
+Date: Sun, 6 Apr 2025 08:48:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hans Zhang <18255117159@163.com>, lpieralisi@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, manivannan.sadhasivam@linaro.org,
+	thierry.reding@gmail.com, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, jonathanh@nvidia.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org, Hans Zhang <18255117159@163.com>
+Subject: Re: [PATCH] pci: tegra194: Fix debugfs cleanup for !CONFIG_PCIEASPM
+Message-ID: <202504060814.4HRuwajf-lkp@intel.com>
+References: <20250405145459.26800-1-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pci: tegra194: Fix debugfs cleanup for !CONFIG_PCIEASPM
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: bhelgaas@google.com, jonathanh@nvidia.com, kw@linux.com,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-tegra@vger.kernel.org, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, thierry.reding@gmail.com
-References: <20250405152818.GA107831@bhelgaas>
- <c52ac489-51e9-4803-bf64-2bb6cfbf30bf@163.com>
- <da261a4c-6c27-454f-b21d-af1814b58b91@wanadoo.fr>
- <fa44eac9-8986-46d2-899d-df8811131925@163.com>
- <9dcd70b1-a146-419f-aa5e-bacf52cf81e8@163.com>
- <c0c1476c-75a2-4d45-83a2-4751a7487892@wanadoo.fr>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <c0c1476c-75a2-4d45-83a2-4751a7487892@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3PlsIZPFnVxK1CA--.4162S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGryxJF4fAr4DKFy5Ar1DKFg_yoWrJrW3p3
-	ykG3W5Kr4DJw15tr9ava1kAF1ft3ykAr1UX345uryIyr1vqr1rJr4Utr45uF9xur4kJF1U
-	XF4Fq3W3WF15AF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbo7NUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhAmo2fxWvLLhQAAsf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250405145459.26800-1-18255117159@163.com>
+
+Hi Hans,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on a8662bcd2ff152bfbc751cab20f33053d74d0963]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Hans-Zhang/pci-tegra194-Fix-debugfs-cleanup-for-CONFIG_PCIEASPM/20250405-230047
+base:   a8662bcd2ff152bfbc751cab20f33053d74d0963
+patch link:    https://lore.kernel.org/r/20250405145459.26800-1-18255117159%40163.com
+patch subject: [PATCH] pci: tegra194: Fix debugfs cleanup for !CONFIG_PCIEASPM
+config: arm-randconfig-002-20250406 (https://download.01.org/0day-ci/archive/20250406/202504060814.4HRuwajf-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 7.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250406/202504060814.4HRuwajf-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504060814.4HRuwajf-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/pci/controller/dwc/pcie-tegra194.c: In function 'tegra_pcie_dw_remove':
+>> drivers/pci/controller/dwc/pcie-tegra194.c:2301:18: error: passing argument 1 of 'deinit_debugfs' from incompatible pointer type [-Werror=incompatible-pointer-types]
+      deinit_debugfs(pcie->debugfs);
+                     ^~~~
+   drivers/pci/controller/dwc/pcie-tegra194.c:732:20: note: expected 'struct tegra_pcie_dw *' but argument is of type 'struct dentry *'
+    static inline void deinit_debugfs(struct tegra_pcie_dw *pcie) { return; }
+                       ^~~~~~~~~~~~~~
+   drivers/pci/controller/dwc/pcie-tegra194.c: In function 'tegra_pcie_dw_shutdown':
+   drivers/pci/controller/dwc/pcie-tegra194.c:2420:18: error: passing argument 1 of 'deinit_debugfs' from incompatible pointer type [-Werror=incompatible-pointer-types]
+      deinit_debugfs(pcie->debugfs);
+                     ^~~~
+   drivers/pci/controller/dwc/pcie-tegra194.c:732:20: note: expected 'struct tegra_pcie_dw *' but argument is of type 'struct dentry *'
+    static inline void deinit_debugfs(struct tegra_pcie_dw *pcie) { return; }
+                       ^~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
 
+vim +/deinit_debugfs +2301 drivers/pci/controller/dwc/pcie-tegra194.c
 
-On 2025/4/6 01:04, Christophe JAILLET wrote:
-> Le 05/04/2025 à 18:47, Hans Zhang a écrit :
->>
->>
->> On 2025/4/6 00:35, Hans Zhang wrote:
->>>
->>>
->>> On 2025/4/6 00:17, Christophe JAILLET wrote:
->>>> Le 05/04/2025 à 17:49, Hans Zhang a écrit :
->>>>>
->>>>>
->>>>> On 2025/4/5 23:28, Bjorn Helgaas wrote:
->>>>>> Follow subject line capitalization convention.
->>>>>>
->>>>>> On Sat, Apr 05, 2025 at 10:54:59PM +0800, Hans Zhang wrote:
->>>>>>> When CONFIG_PCIEASPM is disabled, debugfs entries are not 
->>>>>>> created, but
->>>>>>> tegra_pcie_dw_remove() and tegra_pcie_dw_shutdown() 
->>>>>>> unconditionally call
->>>>>>> debugfs_remove_recursive(), leading to potential NULL pointer 
->>>>>>> operations.
->>>>>>>
->>>>>>> Introduce deinit_debugfs() to wrap debugfs_remove_recursive(), 
->>>>>>> which is
->>>>>>> stubbed for !CONFIG_PCIEASPM. Use this function during removal/ 
->>>>>>> shutdown to
->>>>>>> ensure debugfs cleanup only occurs when entries were initialized.
->>>>>>>
->>>>>>> This prevents kernel warnings and instability when ASPM support is
->>>>>>> disabled.
->>>>>>
->>>>>> This looks like there should be a Fixes: tag to connect this to the
->>>>>> commit that introduced the problem.
->>>>>
->>>>> Hi Bjorn,
->>>>>
->>>>> Thanks your for reply. Will add.
->>>>>
->>>>> Fixes: bb617cbd8151 (PCI: tegra194: Clean up the exit path for 
->>>>> Endpoint mode)
->>>>>
->>>>>>
->>>>>> If this is something that broke with the v6.15 merge window, we 
->>>>>> should
->>>>>> include this in v6.15 via pci/for-linus.  If this broke earlier, we
->>>>>> would have to decide whether pci/for-linus is still appropriate or a
->>>>>> stable tag.
->>>>>>
->>>>>
->>>>> The original code that introduced the unconditional 
->>>>> `debugfs_remove_recursive()` calls was actually merged in an 
->>>>> earlier cycle.
->>>>>
->>>>>> We did merge some debugfs things for v6.15, but I don't see anything
->>>>>> specific to pcie-tegra194.c, so I'm confused about why this fix would
->>>>>> be in pcie-tegra194.c instead of some more generic place.
->>>>>>
->>>>>
->>>>> The Tegra194 driver conditionally initializes pcie->debugfs based 
->>>>> on CONFIG_PCIEASPM. When ASPM is disabled, pcie->debugfs remains 
->>>>> uninitialized, but tegra_pcie_dw_remove() and 
->>>>> tegra_pcie_dw_shutdown() unconditionally call 
->>>>> debugfs_remove_recursive(), leading to a NULL 
->>>>
->>>> debugfs IS initialized, because it is in a structure allocated with 
->>>> devm_kzalloc().
->>>>
->>>> And debugfs functions handle such cases.
->>>>
->>>
->>> Oh, my mind went wrong and I didn't pay attention to devm, and I'm 
-> 
-> Here, what is relevant in devm_kzalloc() is not devm but the kzalloc 
-> part. the "z" is for zeroing the allocated memory.
-> 
+  2292	
+  2293	static void tegra_pcie_dw_remove(struct platform_device *pdev)
+  2294	{
+  2295		struct tegra_pcie_dw *pcie = platform_get_drvdata(pdev);
+  2296	
+  2297		if (pcie->of_data->mode == DW_PCIE_RC_TYPE) {
+  2298			if (!pcie->link_state)
+  2299				return;
+  2300	
+> 2301			deinit_debugfs(pcie->debugfs);
+  2302			tegra_pcie_deinit_controller(pcie);
+  2303			pm_runtime_put_sync(pcie->dev);
+  2304		} else {
+  2305			disable_irq(pcie->pex_rst_irq);
+  2306			pex_ep_event_pex_rst_assert(pcie);
+  2307		}
+  2308	
+  2309		pm_runtime_disable(pcie->dev);
+  2310		tegra_bpmp_put(pcie->bpmp);
+  2311		if (pcie->pex_refclk_sel_gpiod)
+  2312			gpiod_set_value(pcie->pex_refclk_sel_gpiod, 0);
+  2313	}
+  2314	
 
-Hi Christophe,
-
-Thanks your for reply. I understand.
-
->>> really sorry about that.
->>>
->>> Another problem I noticed here is that currently, no matter what, 
->>> pcie->debugfs = debugfs_create_dir(name, NULL) is executed; if #if 
->>> defined(CONFIG_PCIEASPM) is valid, then pcie->debugfs = 
->>> debugfs_create_dir(name, NULL); Is it superfluous?
->>
->> Sorry, let me reply again:
->> Another problem I noticed here is that currently, no matter what, 
->> pcie-  >debugfs = debugfs_create_dir(name, NULL) is executed; if #if 
->> defined(CONFIG_PCIEASPM) is invalid, then pcie->debugfs = 
->> debugfs_create_dir(name, NULL); Is it superfluous?
-> 
-> AFAICT, it looks useless in this case.
-> 
-> I guess that moving debugfs_create_dir() and the
-> name = devm_kasprintf()...
-> above it, into init_debugfs() would do the trick.
-
-That's what I was thinking. I will submit the version again in the future.
-
-Best regards,
-Hans
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
