@@ -1,165 +1,83 @@
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CEA20E6EC;
-	Mon,  7 Apr 2025 01:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B891F221DBA;
+	Mon,  7 Apr 2025 04:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743988642; cv=none; b=aBV8oZLRDQx13ouI8eCzf+bcpKWYICFEyvu7H/lx7HrwH7lAXPqG1B5o1SgYCujPdQoqW/i38kqEAoBZdT6HWWf28mgHT4lBlz/3fNEjJ6icVwO7pYstIghd57M5qnqOhlS06azPW42RFB5CH7HmgC/awhtJPhKFgHK/4KMitr0=
+	t=1743998926; cv=none; b=Y/xPnKpXx3oO1zTA1OjGdnVu46XHe0yCLHp9U205R0+MdmktzaAlLHx3nntqAh9yW8HDw00QqJlJ25XPbqNSodpFoEhYZUNahCPPKtKRA+wPxw4g1D28jZrXKpB+BiRm8yGoDQJrDZakb+O0tlaj0Pl0AjFg+iScrSmB52GFJlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743988642; c=relaxed/simple;
-	bh=jTxtvHUQTiieJDKEaeHc+Dcy9dp+8XVM1kYkT75QTrY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GwjP6NmCgoS9mkTsuzg9P+wAcqnbSGSsBeAYCvtL9bwdaqyr/eKZ4Z+y5qXZ952Fd/K7z7346oMB0wWtfrHai/0CG/CHw6C4qtxI8SIekbS3xQkusLZlmsuQpmzaqFmP80ECF2upd7AUUtZDz47QJjKrzqt3KxWECpVhCF++Y34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eYW7R0s3; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eYW7R0s3"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=tyETaFYY/JUiWihlfOzZwF2bXPr6FQIVTqdDJM+AwWM=;
-	b=eYW7R0s3sqixY+4EyMqgiRBmm61SMYjAVWxwnwjr0r2msVAPN3Vk9KD6qRcawE
-	Gt1mMFO8eobEPLmNi/6gVr8MIHMWvP/sXCnUGpMbOVsZPb5rBEB8vrHTHEWLlGnV
-	loX1aiDj8Ji43n7ZbjrTK9MHctdDL6fniSiI/FKHQXDAY=
-Received: from [192.168.142.52] (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wD3NzlxJ_NnbeWaEg--.62095S2;
-	Mon, 07 Apr 2025 09:16:35 +0800 (CST)
-Message-ID: <c0582215-e09e-44f7-a225-7c255e26d29f@163.com>
-Date: Mon, 7 Apr 2025 09:16:33 +0800
+	s=arc-20240116; t=1743998926; c=relaxed/simple;
+	bh=6mw6RbWWwm0KqSb/ZoEKOOwbcNSmybbfsi4eILBrR+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CI8RDa2Z4N4rwDfBn54RLj/E1N0hpiAszIlK0+I/iek0Hsv1UiLtKR39139csgMY3qxcu9+aSuUZ6w2tkPQWVYqlGSb+wB2fvAsXPg/LOj1lVYdx/8BXEeO3G+OLAie2r7POoIq2Mrf7Yr9Bs/NqlmK9nqZ9U1wZfcANkm9Ok1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowACn3gbAT_NnBAjLBg--.10818S2;
+	Mon, 07 Apr 2025 12:08:32 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	kkartik@nvidia.com,
+	andriy.shevchenko@linux.intel.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] serial: tegra-utc: Remove unneeded semicolon
+Date: Mon,  7 Apr 2025 12:07:12 +0800
+Message-Id: <20250407040712.2577607-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2] PCI: tegra194: Fix debugfs directory creation when
- CONFIG_PCIEASPM is disabled
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: bhelgaas@google.com, jonathanh@nvidia.com, kw@linux.com,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-tegra@vger.kernel.org, lpieralisi@kernel.org,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, thierry.reding@gmail.com
-References: <20250406134355.49036-1-18255117159@163.com>
- <c51bbf38-0c6a-418f-b1e2-763d621186ff@wanadoo.fr>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <c51bbf38-0c6a-418f-b1e2-763d621186ff@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3NzlxJ_NnbeWaEg--.62095S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxury8Ar4rArW5uw4xGF1Dtrb_yoWrGF1rpa
-	95JFWYkw4xAa13WrZ3Za1DZr1SyrsayrZ7J34S9w1vvr1DAr98tFW8GryYqas7CrZ2qF18
-	Ar4YkFnrCr15XrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UpBTrUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDxooo2fzIeX3LgAAsX
+X-CM-TRANSID:zQCowACn3gbAT_NnBAjLBg--.10818S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXw4DWF1rWw4Uurg_yoWxuwc_CF
+	n7Wwn7Zr98CFZIywnxAFWfuFnIv34kZFs5Xw4I9FZ3W34qvF4rJryjgrs7Ww43W3y8uFyx
+	WwnrWFy7Ar15WjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbf8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r45MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbVbytUUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
+Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/tty/serial/tegra-utc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2025/4/7 02:10, Christophe JAILLET wrote:
-> Le 06/04/2025 à 15:43, Hans Zhang a écrit :
->> Previously, the debugfs directory was unconditionally created in
->> tegra_pcie_config_rp() regardless of the CONFIG_PCIEASPM setting.
->> This led to unnecessary directory creation when ASPM support was 
->> disabled.
->>
->> Move the debugfs directory creation into init_debugfs() which is
->> conditionally compiled based on CONFIG_PCIEASPM. This ensures:
->> - The directory is only created when ASPM-related debugfs entries are
->>    needed.
->> - Proper error handling for directory creation failures.
->> - Avoids cluttering debugfs with empty directories when ASPM is disabled.
->>
->> Signed-off-by: Hans Zhang <18255117159-9Onoh4P/yGk@public.gmane.org>
->> ---
->> Changes since v1:
->> https://lore.kernel.org/linux-pci/20250405145459.26800-1-18255117159-9Onoh4P/yGk@public.gmane.org
->>
->> - The first version was committed incorrectly because the judgment
->>    parameter in "debugfs_remove_recursive" was not noticed.
->> ---
->>   drivers/pci/controller/dwc/pcie-tegra194.c | 27 +++++++++++++---------
->>   1 file changed, 16 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c 
->> b/drivers/pci/controller/dwc/pcie-tegra194.c
->> index 5103995cd6c7..f048b2342af4 100644
->> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
->> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
->> @@ -711,16 +711,27 @@ static void init_host_aspm(struct tegra_pcie_dw 
->> *pcie)
->>       dw_pcie_writel_dbi(pci, PCIE_PORT_AFR, val);
->>   }
->> -static void init_debugfs(struct tegra_pcie_dw *pcie)
->> +static int init_debugfs(struct tegra_pcie_dw *pcie)
-> 
-> I would keep it a void function.
-> If devm_kasprintf() fails, which is unlikely, then the module should 
-> still work correctly. So just a return; should be fine IMHO.
-> 
-> Usually, errors related to debugfs are silently ignored as is does not 
-> prevent this to work.
-> 
-
-Hi Christophe,
-
-Thanks your for reply. Will change.
-
-Best regards,
-Hans
-
-> CJ
-> 
->>   {
->> -    debugfs_create_devm_seqfile(pcie->dev, "aspm_state_cnt", 
->> pcie->debugfs,
->> +    struct device *dev = pcie->dev;
->> +    char *name;
->> +
->> +    name = devm_kasprintf(dev, GFP_KERNEL, "%pOFP", dev->of_node);
->> +    if (!name)
->> +        return -ENOMEM;
->> +
->> +    pcie->debugfs = debugfs_create_dir(name, NULL);
->> +
->> +    debugfs_create_devm_seqfile(dev, "aspm_state_cnt", pcie->debugfs,
->>                       aspm_state_cnt);
->> +
->> +    return 0;
->>   }
->>   #else
->>   static inline void disable_aspm_l12(struct tegra_pcie_dw *pcie) { 
->> return; }
->>   static inline void disable_aspm_l11(struct tegra_pcie_dw *pcie) { 
->> return; }
->>   static inline void init_host_aspm(struct tegra_pcie_dw *pcie) { 
->> return; }
->> -static inline void init_debugfs(struct tegra_pcie_dw *pcie) { return; }
->> +static inline int init_debugfs(struct tegra_pcie_dw *pcie) { return 0; }
->>   #endif
->>   static void tegra_pcie_enable_system_interrupts(struct dw_pcie_rp *pp)
->> @@ -1634,7 +1645,6 @@ static void tegra_pcie_deinit_controller(struct 
->> tegra_pcie_dw *pcie)
->>   static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
->>   {
->>       struct device *dev = pcie->dev;
->> -    char *name;
->>       int ret;
->>       pm_runtime_enable(dev);
->> @@ -1664,14 +1674,9 @@ static int tegra_pcie_config_rp(struct 
->> tegra_pcie_dw *pcie)
->>           goto fail_host_init;
->>       }
->> -    name = devm_kasprintf(dev, GFP_KERNEL, "%pOFP", dev->of_node);
->> -    if (!name) {
->> -        ret = -ENOMEM;
->> +    ret = init_debugfs(pcie);
->> +    if (ret < 0)
->>           goto fail_host_init;
->> -    }
->> -
->> -    pcie->debugfs = debugfs_create_dir(name, NULL);
->> -    init_debugfs(pcie);
->>       return ret;
->>
->> base-commit: a8662bcd2ff152bfbc751cab20f33053d74d0963
+diff --git a/drivers/tty/serial/tegra-utc.c b/drivers/tty/serial/tegra-utc.c
+index 39b14fe813c9..0c70d3e7b9b9 100644
+--- a/drivers/tty/serial/tegra-utc.c
++++ b/drivers/tty/serial/tegra-utc.c
+@@ -434,7 +434,7 @@ static void tegra_utc_console_write_atomic(struct console *cons, struct nbcon_wr
+ 
+ 		outbuf += burst_size;
+ 		len -= burst_size;
+-	};
++	}
+ 
+ 	nbcon_exit_unsafe(wctxt);
+ }
+-- 
+2.25.1
 
