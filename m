@@ -1,73 +1,152 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2088.outbound.protection.outlook.com [40.107.244.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E672AE90;
-	Mon,  7 Apr 2025 05:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744003251; cv=none; b=eGxOO0ylDHbXaT4GaduzuX11B2R24Svs2qHFrvGrxLJDN37k1YQ5/FGPcOV3WZA1suGl1lZ1I5AfSRwJjIezew88KJBk1QTd3z1T85I4VSJHXeHqbAesgXxIIRVX7KDVyHHU56SB9AQnPHQLEaEdlcWuaAtFIS9R/ZFAeoJ8+eE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744003251; c=relaxed/simple;
-	bh=OTEQ1ZTFFuptBeQqjkypjU1aU78eHGga/dpkiCUlRGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kuK6FtZR0qm2KbafQqYAjozOe2AtS3AcbT6DsKwMfxpqcQ1yQ6GxGT91Rsa74o2zexbvTKluQvm3/DLmjjxrK9LsvwDvTSaRU68EQoxDRmS7hUg5e0EeHZhBv4PGDnXV771YDHR8ncPbKuBF23WZV8dZmsmxg2b2VhJUHdu/Vao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=C7eGr4hO; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB991225388;
+	Mon,  7 Apr 2025 08:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744014921; cv=fail; b=iIRv/bB7WxKv9IoBmWlIuAEylt+RdbUpaRZ5p0DkRz1a/HbNsuG3gBzOAtk31UcbuYfhojWlLK766+3Vh9z+nMcINtbvHOOuIvz0sNIuZychJXpeZJP2Q+jDIbeyMx+bjGzFNdx1U0LOf+kb1waSIbb/wUsXzlHgk1LRlrZrs84=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744014921; c=relaxed/simple;
+	bh=lD21JDg/k3h0pvkqEwDVwXPgYfV7UnVzsIfW0cq+DsM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Uh+ab5DTHunz4eGri6KNZgLYQaXCkWPVo1uGaoVkxYDmAd7W71LmusnppzqFM/dN0K31ZL3a+B3vfur02zWD6alB0C5aXxXib/S/4QUuXfho1B43al97/SvCP6v+WOiHVteQrEPFJBu/RPrjzdeRUHnll5sARmqmEpPabi1JzhM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=P/4N6SPw; arc=fail smtp.client-ip=40.107.244.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="C7eGr4hO"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=W/sFNnnYDP3WM5i4aaEONeZU2u5ojVBXsZftT/kGcgo=; b=C7eGr4hOTrTiiXEE3bGhJ84JQE
-	dD1jq82wFjlLLVOdirWYgTAS1eYh6TZtLyRaxQWAFRdRxgUsgRigv3SdxRhojeGCJQtvoor01W9sd
-	9WUF5M+mCpKAwwhZbdLXpal8Nio3GrWjkUcyvarWfx7oQL7ap4KkTXFW1o81G0V5SFHt02gniUH/q
-	B+kYilITx0XKqk5goMq5N6cpiGen0rsgTj41Pt4J/h57jgO1EZmdp5fumRvZQwKA89a/lOLZ2eh2r
-	M0lyVr/CZYVCoxr9aGi7E2oWxvTViCS/S7V7SMNMuTEl14PrVa3bKzjcgEcw98TSxS6+U2jjIvQRW
-	Lgv3gL6A==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1u1euY-00DNHA-10;
-	Mon, 07 Apr 2025 13:20:43 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 07 Apr 2025 13:20:42 +0800
-Date: Mon, 7 Apr 2025 13:20:42 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Akhil R <akhilrajeev@nvidia.com>
-Cc: davem@davemloft.net, thierry.reding@gmail.com, jonathanh@nvidia.com,
-	linux-crypto@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: tegra: Fix IV usage for AES ECB
-Message-ID: <Z_NgqqGqFtgF5xgT@gondor.apana.org.au>
-References: <20250326145111.57991-1-akhilrajeev@nvidia.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="P/4N6SPw"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p0eKiefc7oKiOclQhUqewKgG4ERpGDooG05D1/MT/sk54zjrURqylvXvs/gJ6NgFmfpHPZ6qoLd+sFhJGanNeFscB5rVrNY9EjenK85C6CAlHxeJB3PlpnqSF+7PfH4La3H8DWFzwsTfH9Nfyeq0BwOKQUHXB7p86H+JKRjp1+biYLMkl6sL4P77g14f1glKuQFKLLlAaC5n1MgfbXoUo8+EB5YsFyQybeF+xgfVT4nzm8Y663lczh5GmmA5Se9BaLasqwiFxH0qHTqpk1Tjl8TmShZl2vEGEhqpS5x4jmKYLDbZ+JPUWqJuSh3jb15h1KBorYuq27HnSwKVvh7U6A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y2XQ8rL5cX72dgpJ0+K/Y2c1m0qtDN/FGAVsDx1JxzI=;
+ b=Y5X9FU5/g69dLjchZS3YukMnwLKbMN7Hfpp+mkxdBvq161W+X1M7INrRYHcScsBnv4eiJal800VyNL0GOrKbE9fR9IyhaMI/y4VRRwHQjVlB3Jw0Wq/YCPyXM/qqEFWLN1+lKbA52n01/NOIYS6WR/r5l0T9DS9usl07LiKnDukggEtK9O8cx/CfduT3AL/z2hTMmNEMLEIYqehotzE7ieHFr8JACotsolC2TRDlbr3XIpxXYUxhi3m7qPdQ6n9dwMcHvwjbxVMM4M9EiBZDkV3ZSwDFWQ/bsthP+EXvv4oCQ23Cx6qEvM9RBk+q/SSSHhgIorcr/wXv6ZNmvl6sRA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y2XQ8rL5cX72dgpJ0+K/Y2c1m0qtDN/FGAVsDx1JxzI=;
+ b=P/4N6SPwe7BvRok6TtvjIrpQAWP3rTdHI7bD16IkFzjOoMHk8cuPTUoT9cOqqY9AB80bNnzwOVzlqQdc42BZciIE2u5KsqmT+zcVoudXDO1DkIjPQEf4UZJSuhVJYMLZRzogCChqWqxy7THu953MCsKHCWgYhUVCGf3ggyz4X193ViupVdGNLrhCmSgwKq7e4o8fRnKfU/DeOKFyhCl1c4RiT3939QINZLVxmTvAZEmTs7XnofHmjHG+2yifYFThMGEjlvPGrxhCjov6UBr3jeVlusNCyuWL+ncuxUIwRUHHCpWKYiFyk+3hMqsNUPiLfUbzwBCi5ucsdwfwIfblsQ==
+Received: from SA0PR11CA0195.namprd11.prod.outlook.com (2603:10b6:806:1bc::20)
+ by DM4PR12MB6664.namprd12.prod.outlook.com (2603:10b6:8:bb::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.34; Mon, 7 Apr
+ 2025 08:35:17 +0000
+Received: from SN1PEPF000397B3.namprd05.prod.outlook.com
+ (2603:10b6:806:1bc:cafe::c4) by SA0PR11CA0195.outlook.office365.com
+ (2603:10b6:806:1bc::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8606.32 via Frontend Transport; Mon,
+ 7 Apr 2025 08:35:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SN1PEPF000397B3.mail.protection.outlook.com (10.167.248.57) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8632.13 via Frontend Transport; Mon, 7 Apr 2025 08:35:16 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 7 Apr 2025
+ 01:35:06 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 7 Apr 2025 01:35:06 -0700
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.10) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Mon, 7 Apr 2025 01:35:05 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <will@kernel.org>
+CC: <thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <robin.murphy@arm.com>,
+	<joro@8bytes.org>, <jonathanh@nvidia.com>, <jgg@nvidia.com>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH rc 0/2] iommu/tegra241-cmdqv: Two bug fixes in fallback routine
+Date: Mon, 7 Apr 2025 01:34:58 -0700
+Message-ID: <cover.1744014481.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-tegra@vger.kernel.org
 List-Id: <linux-tegra.vger.kernel.org>
 List-Subscribe: <mailto:linux-tegra+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-tegra+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250326145111.57991-1-akhilrajeev@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000397B3:EE_|DM4PR12MB6664:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97ef0f10-1040-45e9-307c-08dd75af1fb6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?28s/QckuxZyX8U9U4RNNBV12v3dNBjuNcZp/TZnpIBJ5s6fPRAadORDH17yw?=
+ =?us-ascii?Q?ulRUr7YT1EjshI3hzcFp/daoK1x1+z/B2egnbuo7zxvZuqIwennzzf/pjbW4?=
+ =?us-ascii?Q?F10c86OLBiDQN1ZqsnTqDrgjPt8vZbijz8VIw9iE9Iokg+r0SuRDf3E/R7bX?=
+ =?us-ascii?Q?n/px6ObGgkrjRhb1qtIuBhUf6nlvQs1bZ4SFooP8wgrt2//7ZuIOoBd5EoSe?=
+ =?us-ascii?Q?HTcod04H4nZr8EhD3wgIyia0QTBJiPbW9++gYRtC+uRaaqQCC2kUmzI/wM9C?=
+ =?us-ascii?Q?6Qp1UyLxdlJIE6nO/E/aZC8jWsHSTM8i16Dr7YQdcKS5b4B4gpMO1Sk9myG9?=
+ =?us-ascii?Q?fj/ti4XIRSlgNLE09t+W9ogMnTQuyP0USw5w3oRMnexxPUm0RS2bYxwE0gG9?=
+ =?us-ascii?Q?XYqx8+mNGoeMebAnXlAd3QYE/iddsaucGdtcmM/vsBa4yYPiIHNrpc6bd3zS?=
+ =?us-ascii?Q?rBcO+3Llo40VoyIIbDgtEEOrIfc/YngIVot3HiHya5uW1YOjqwwq1bsjxeGm?=
+ =?us-ascii?Q?VELe23e1TZYHr4ILR2lCKyY5S+XZReU1lKJXQQz1fqTu/GcCuxT4EPdSNQNA?=
+ =?us-ascii?Q?KffgjRdG+p/65lMO1XcYjrVD5cRxWIZbBpeV4DNbbFfvY1ZijMJSjXLSiAhH?=
+ =?us-ascii?Q?W7hjwPTRTsZXgABBPHFKOzDaGMrpHWyHPX7agFincB4bjbMVt7Wj0I62AiBu?=
+ =?us-ascii?Q?N3cVV7A/CTV3dx+oK0hFzpv/bhQ1G/yRiwBtggTxH79bolkgEtEAe/VuuNwE?=
+ =?us-ascii?Q?izvXm72Z1nbwZRWoqi6vFENfbUJx2z4lJ192nAci9Z5953h+B57Bwu0do4QW?=
+ =?us-ascii?Q?0bFQY9wI/QlgKl136eZOf4TFCQoerHKEeZUfgYzKIm7yjno4o9H9Ribv+0uH?=
+ =?us-ascii?Q?fuh1h5tNXHoo+KartGEK4oXLdwBxq9U2AgPiQRXsnQeOITdJZCxikZKJXX9z?=
+ =?us-ascii?Q?Q3Tts4RtfHlS63pwndqxCtx9HJJwdgSowouLpYVh9f/h8HT6BYm09axTZybt?=
+ =?us-ascii?Q?YcKmhU/dAPaG91Mb95LTCFHCefre+q1fXlnPAA21IDkfYdvHK0uewtDZzLAh?=
+ =?us-ascii?Q?ixvoXYdcaQ2pnelbQAvAphf6ZvTCdwwLprRR88rajLli6mO/JFWR9J8P3Oxa?=
+ =?us-ascii?Q?2ThiKso3KqZj54GqY0Ahu0bOvp+m5OgGIrvM06FsXK8C/02UNz0CSYIT4ZjP?=
+ =?us-ascii?Q?/hewSpam5INhNABlQR76dghEUwfO3NhY4eUaLfoZVbi83241cKmB7JQD8SzW?=
+ =?us-ascii?Q?DKN1yl3j12BC5USMBcEd0lDGEig//9XxiNE4xpWXeIPnsimxi3tjAwSgGKEN?=
+ =?us-ascii?Q?d3ytfYpG9ryzaq1NJKh02zV3Zh1cmPy8V7i2HaD4hhfmqWorGRD9LxAzoYl3?=
+ =?us-ascii?Q?qvGpW0qeRPpJK0nuWuYRfGNFcjDMXc0xmR5cjCDRNhFkh4PGha9l0XQKPvDF?=
+ =?us-ascii?Q?vqArSDLeFiQHuUOjaxuO+KzMObXkviLBtrCgIiYoY/IwjpUfmVSmUvTXgbIA?=
+ =?us-ascii?Q?tbN1w2jtR846fZb0iOvXahSgdJrvMh3+98E8?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2025 08:35:16.6988
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97ef0f10-1040-45e9-307c-08dd75af1fb6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000397B3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6664
 
-On Wed, Mar 26, 2025 at 08:21:10PM +0530, Akhil R wrote:
-> Modifying the crypto_request turns out to be not the right way to handle
-> the stale value issue with the IV. Though the IV is not used for AES ECB,
-> it eventually get used in algorithms like LRW in the next step after
-> AES ECB encryption/decryption. Setting req->iv to NULL breaks the
-> implementation of such algorithms. Hence modify only the local reqctx
-> to check for IV.
-> 
-> Fixes: bde558220866 ("crypto: tegra - Set IV to NULL explicitly for AES ECB")
-> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
-> ---
->  drivers/crypto/tegra/tegra-se-aes.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+Hi Will,
 
-Patch applied.  Thanks.
+Here are two patches fixing two kernel warnings and a UAF bug.
+
+Both need to be delivered to stable trees.
+
+Thanks
+Nicolin
+
+Nicolin Chen (2):
+  iommu/tegra241-cmdqv: Fix warnings due to dmam_free_coherent()
+  iommu/tegra241-cmdqv: Fix UAF due to re-entry of
+    tegra241_cmdqv_remove()
+
+ drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.43.0
+
